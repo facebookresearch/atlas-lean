@@ -41,8 +41,11 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Complex.FiniteZerosInDiscOfHolomorphicWanted
 
-/-- Let $f$ be holomorphic on a neighborhood of $\overline{D}(P,r)$. Suppose that $f$ is not
-identically zero on $D(P,r)$. Prove that $f$ has at most finitely many zeros in $D(P,r)$.
+/-- **A holomorphic function not identically zero has finitely many zeros in a disc.** Let
+$P \in \mathbb{C}$ and $r > 0$, write $D(P,r)$ for the open disc and $\overline{D}(P,r)$ for the
+closed disc of center $P$ and radius $r$, and let $f : \mathbb{C} \to \mathbb{C}$ be holomorphic
+on some open set containing $\overline{D}(P,r)$. If $f$ does not vanish identically on $D(P,r)$,
+then $f$ has only finitely many zeros in $D(P,r)$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functions of a complex
 variable; General properties of functions of one complex variable),

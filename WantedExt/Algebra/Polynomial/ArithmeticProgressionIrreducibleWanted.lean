@@ -37,8 +37,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Perron's irreducibility criterion: a monic `f = x^n + a_{n-1} x^{n-1} + ⋯ + a_0 ∈ ℤ[x]`
-of degree `n ≥ 1` with `a_0 ≠ 0` and `|a_{n-1}| > 1 + |a_{n-2}| + ⋯ + |a_0|` is irreducible.
+/-- **Perron's irreducibility criterion.** Let $f = x^n + a_{n-1} x^{n-1} + \cdots + a_0$ be a
+monic polynomial in $\mathbb{Z}[x]$ of degree $n \ge 1$ with $a_0 \neq 0$ and
+$|a_{n-1}| > 1 + \sum_{i=0}^{n-2} |a_i|$. Then $f$ is irreducible in $\mathbb{Z}[x]$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Theorem 1 (Perron's criterion,
@@ -49,8 +50,10 @@ public theorem_wanted perron_irreducible {f : ℤ[X]} (hmonic : f.Monic) (hdeg :
       |f.coeff (f.natDegree - 1)|) :
     Irreducible f
 
-/-- Main theorem: for `m ≥ 2` and coprime positive integers `a`, `d` with `8a > m² d²`, the
-polynomial `a x^m + (a + d) x^(m-1) + ⋯ + (a + (m-1)d) x + (a + md)` is irreducible over `ℤ`.
+/-- **Irreducibility of polynomials with coefficients in an arithmetic progression.** Let
+$m \ge 2$ and let $a$, $d$ be coprime positive integers with $m^2 d^2 < 8a$. Then the polynomial
+$a x^m + (a + d) x^{m-1} + \cdots + (a + (m - 1)d) x + (a + md)$ is irreducible in
+$\mathbb{Z}[x]$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Theorem 2
@@ -59,9 +62,10 @@ public theorem_wanted arithProgPoly_irreducible {m a d : ℕ} (hm : 2 ≤ m) (ha
     (hd : 0 < d) (hcop : Nat.Coprime a d) (hbig : m ^ 2 * d ^ 2 < 8 * a) :
     Irreducible (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i))
 
-/-- For coprime positive integers `a ≥ d`, the quartic
-`A_4(x) = a x^4 + (a + d) x^3 + (a + 2d) x^2 + (a + 3d) x + (a + 4d)` is not a product of two
-quadratic polynomials in `ℤ[x]`.
+/-- **The arithmetic-progression quartic is not a product of two quadratics.** Let $a$, $d$ be
+coprime integers with $0 < d \le a$. Then the polynomial
+$a x^4 + (a + d) x^3 + (a + 2d) x^2 + (a + 3d) x + (a + 4d)$ is not the product of two
+polynomials of degree $2$ in $\mathbb{Z}[x]$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Theorem 4
@@ -71,9 +75,12 @@ public theorem_wanted arithProgPoly_four_not_mul_quadratics {a d : ℕ} (hd : 0 
     ¬ ∃ g h : ℤ[X], g.natDegree = 2 ∧ h.natDegree = 2 ∧
       ∑ i ∈ Finset.range 5, C ((a : ℤ) + i * d) * X ^ (4 - i) = g * h
 
-/-- If `m + 1` is prime and `d` has a prime divisor `p` with `p ≢ 0 (mod m + 1)` that is a
-primitive root modulo `m + 1`, then `A_m(x) = a x^m + (a + d) x^(m-1) + ⋯ + (a + md)` is
-irreducible over `ℤ` (for coprime positive `a`, `d`, the paper's standing assumption).
+/-- **Irreducibility when $d$ has a primitive-root prime factor.** Let $m \ge 2$ with $m + 1$
+prime, and let $a$, $d$ be coprime positive integers. Suppose $d$ has a prime divisor $p$ that is
+not divisible by $m + 1$ and whose residue modulo $m + 1$ has multiplicative order $m$ (that is,
+$p$ is a primitive root modulo $m + 1$). Then the polynomial
+$a x^m + (a + d) x^{m-1} + \cdots + (a + (m - 1)d) x + (a + md)$ is irreducible in
+$\mathbb{Z}[x]$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 6
@@ -84,9 +91,12 @@ public theorem_wanted arithProgPoly_irreducible_of_primitiveRoot {m a d p : ℕ}
     (hroot : orderOf (p : ZMod (m + 1)) = m) :
     Irreducible (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i))
 
-/-- Lemma 1, identity: with `a_n = a + (n - 1)d`,
-`A_m(x)(x - 1)² = a_1 x^{m+2} - a_0 x^{m+1} - a_{m+2} x + a_{m+1}`; stated for all `m, a, d ≥ 0`
-(the paper says positive).
+/-- **The arithmetic-progression polynomial times $(x - 1)^2$.** For all natural numbers $m$, $a$,
+$d$, the polynomial $A_m(x) = \sum_{i=0}^{m} (a + id) x^{m-i}$ satisfies, in $\mathbb{Z}[x]$,
+
+$$A_m(x)(x - 1)^2 = a x^{m+2} - (a - d) x^{m+1} - (a + (m + 1)d) x + (a + md).$$
+
+The source assumes $m$, $a$, $d$ positive.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 1 (`integers-2026-A92-lem-1`). -/
@@ -95,9 +105,16 @@ public theorem_wanted arithProgPoly_mul_sub_one_sq (m a d : ℕ) :
       C (a : ℤ) * X ^ (m + 2) - C ((a : ℤ) - d) * X ^ (m + 1) -
         C ((a : ℤ) + (m + 1) * d) * X + C ((a : ℤ) + m * d)
 
-/-- Lemma 1, equation (2): if `z ∈ ℂ` is a zero of `A_m(x)` or `z = 1`, then
-`z^{m+1} = (a_{m+2} z - a_{m+1}) / (a_1 z - a_0)` with `a_n = a + (n - 1)d`; stated for all
-`m, a ≥ 0` and `d ≥ 1` (the denominator never vanishes at such `z`).
+/-- **Power identity at the roots of an arithmetic-progression polynomial.** Let $m$ and $a$
+be natural numbers, let $d$ be a positive integer, and let
+$A_m(x) = a x^m + (a + d) x^{m-1} + \cdots + (a + md)$, that is,
+$A_m(x) = \sum_{i=0}^{m} (a + id) x^{m-i} \in \mathbb{Z}[x]$. If $z \in \mathbb{C}$ is a root of
+$A_m$ or $z = 1$, then
+
+$$z^{m+1} = \frac{(a + (m + 1)d) z - (a + md)}{a z - (a - d)}.$$
+
+With the paper's notation $a_n = a + (n - 1)d$ this reads
+$z^{m+1} = (a_{m+2} z - a_{m+1}) / (a_1 z - a_0)$. The denominator does not vanish at such $z$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 1, equation (2)
@@ -107,9 +124,10 @@ public theorem_wanted arithProgPoly_root_pow_eq (m a d : ℕ) (hd : 0 < d) (z : 
     z ^ (m + 1) =
       (((a : ℂ) + (m + 1) * d) * z - ((a : ℂ) + m * d)) / ((a : ℂ) * z - ((a : ℂ) - d))
 
-/-- For `m ≥ 2` and positive integers `a ≥ d`, the equation
-`a_1 x^{m+2} + a_0 x^{m+1} - a_{m+2} x - a_{m+1} = 0` (`a_n = a + (n - 1)d`), equation (3), has
-exactly one positive real solution, and it is larger than `1`.
+/-- **The auxiliary equation has a unique positive root, which exceeds $1$.** Let $m \ge 2$ and
+let $a$, $d$ be integers with $0 < d \le a$. Then the equation
+$a x^{m+2} + (a - d) x^{m+1} - (a + (m + 1)d) x - (a + md) = 0$ has exactly one positive real
+solution, and every positive real solution $x$ satisfies $x > 1$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 1
@@ -121,8 +139,11 @@ public theorem_wanted arithProgPoly_eq3_existsUnique_pos {m a d : ℕ} (hm : 2 �
     ∀ x : ℝ, 0 < x → (a : ℝ) * x ^ (m + 2) + ((a : ℝ) - d) * x ^ (m + 1) -
       ((a : ℝ) + (m + 1) * d) * x - ((a : ℝ) + m * d) = 0 → 1 < x
 
-/-- For `m ≥ 2`, positive integers `a ≥ d`, and `λ` the positive solution of equation (3),
-every zero `z ∈ ℂ` of `A_m(x)` has `|z| ≤ λ`, with equality only at `z = -λ`.
+/-- **Bound on the zeros of the arithmetic-progression polynomial.** Let $m \ge 2$, let $a$, $d$
+be integers with $0 < d \le a$, and let $\lambda > 0$ be a real number with
+$a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then every
+complex zero $z$ of $A_m(x) = a x^m + (a + d) x^{m-1} + \cdots + (a + md)$ satisfies
+$|z| \le \lambda$, and $|z| = \lambda$ only if $z = -\lambda$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 2
@@ -134,8 +155,10 @@ public theorem_wanted arithProgPoly_root_norm_le {m a d : ℕ} (hm : 2 ≤ m) (h
     (hz : aeval z (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i)) = 0) :
     ‖z‖ ≤ lam ∧ (‖z‖ = lam → z = -(lam : ℂ))
 
-/-- For `m ≥ 2`, positive integers `a ≥ d`, and `λ` the positive solution of equation (3),
-`a λ^m - a_{m+1} > 0`, i.e. `a + md < a λ^m`.
+/-- **Lower bound on a power of the auxiliary root.** Let $m \ge 2$, let $a$, $d$ be integers with
+$0 < d \le a$, and let $\lambda > 0$ be a real number with
+$a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then
+$a + md < a \lambda^m$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 2 (`integers-2026-A92-lem-2`). -/
@@ -145,15 +168,20 @@ public theorem_wanted arithProgPoly_lam_pow_gt {m a d : ℕ} (hm : 2 ≤ m) (hd 
       ((a : ℝ) + (m + 1) * d) * lam - ((a : ℝ) + m * d) = 0) :
     (a : ℝ) + m * d < a * lam ^ m
 
-/-- For real `x > 0` and integer `m ≥ 2`, `(1 + mx)^{1/m} > (2 + (m + 1)x) / (2 + (m - 1)x)`.
+/-- **A rational lower bound for $(1 + mx)^{1/m}$.** For every natural number $m \ge 2$ and every
+real $x > 0$,
+
+$$\frac{2 + (m + 1)x}{2 + (m - 1)x} < (1 + mx)^{1/m}.$$
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 3 (`integers-2026-A92-lem-3`). -/
 public theorem_wanted one_add_mul_rpow_inv_gt {m : ℕ} (hm : 2 ≤ m) {x : ℝ} (hx : 0 < x) :
     (2 + (m + 1) * x) / (2 + (m - 1) * x) < (1 + m * x) ^ (1 / (m : ℝ))
 
-/-- For `m ≥ 2`, positive integers `a`, `d` with `2a > (m + 1)d`, and `λ` the positive solution
-of equation (3): `⌊a λ^p⌋ < a_{p+1} = a + pd` for every `1 ≤ p ≤ m - 1`.
+/-- **Strict upper bound on floors at powers of the auxiliary root.** Let $m \ge 2$, let $a$, $d$
+be natural numbers with $d > 0$ and $(m + 1)d < 2a$, and let $\lambda > 0$ be a real number with
+$a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then
+$\lfloor a \lambda^p \rfloor < a + pd$ for every integer $p$ with $1 \le p \le m - 1$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 4
@@ -165,8 +193,11 @@ public theorem_wanted arithProgPoly_floor_lam_pow_lt {m a d : ℕ} (hm : 2 ≤ m
     (hpm : p ≤ m - 1) :
     ⌊(a : ℝ) * lam ^ p⌋ < (a : ℤ) + p * d
 
-/-- For `m ≥ 2`, positive integers `a`, `d`, `1 ≤ p ≤ m - 1` with `2a > p(m - p)d²`, and `λ` the
-positive solution of equation (3): `⌊a λ^p⌋ = a_{p+1} - 1 = a + pd - 1`.
+/-- **Exact floor at a power of the auxiliary root (single exponent).** Let $m \ge 2$, let $a$,
+$d$ be positive integers, and let $p$ be an integer with $1 \le p \le m - 1$ and
+$p(m - p)d^2 < 2a$. If $\lambda > 0$ is a real number with
+$a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$, then
+$\lfloor a \lambda^p \rfloor = a + pd - 1$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 5
@@ -178,8 +209,10 @@ public theorem_wanted arithProgPoly_floor_lam_pow_eq {m a d : ℕ} (hm : 2 ≤ m
       ((a : ℝ) + (m + 1) * d) * lam - ((a : ℝ) + m * d) = 0) :
     ⌊(a : ℝ) * lam ^ p⌋ = (a : ℤ) + p * d - 1
 
-/-- For `m ≥ 2` and positive integers `a`, `d` with `8a > m²d²`, and `λ` the positive solution
-of equation (3): `⌊a λ^p⌋ = a + pd - 1` for every `1 ≤ p ≤ m - 1`.
+/-- **Exact floors at powers of the auxiliary root (all exponents).** Let $m \ge 2$, let $a$, $d$
+be positive integers with $m^2 d^2 < 8a$, and let $\lambda > 0$ be a real number with
+$a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then
+$\lfloor a \lambda^p \rfloor = a + pd - 1$ for every integer $p$ with $1 \le p \le m - 1$.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 5, second statement
@@ -191,14 +224,16 @@ public theorem_wanted arithProgPoly_floor_lam_pow_eq_of_eight {m a d : ℕ} (hm 
     (hpm : p ≤ m - 1) :
     ⌊(a : ℝ) * lam ^ p⌋ = (a : ℤ) + p * d - 1
 
-/-- For an integer `d ≥ 2`: some positive integer `a` coprime to `d` makes
-`A_2(x) = ax² + (a + d)x + (a + 2d)` reducible over `ℤ` if and only if every prime divisor of
-`d` is `≡ 1 (mod 3)`; in that case there are exactly `2^{n-1}` such `a`, where `n` is the number
-of distinct prime divisors of `d`. Corrected reading: the record omits the paper's standing
-coprimality of `a` and `d` (without it `a = d = 7` gives content `7`) and allows `d = 1`, where
-the condition holds vacuously but `A_2` is irreducible for every `a ≥ 1` (discriminant
-`-3a² - 6a + 1 < 0`) and `2^{-1}` is not a count; the proof's conjugate-pair count needs
-`n ≥ 1`.
+/-- **Reducible quadratics with coefficients in an arithmetic progression.** Let $d \ge 2$ be an
+integer and, for a positive integer $a$, let $A_2(x) = ax^2 + (a + d)x + (a + 2d)$ in
+$\mathbb{Z}[x]$. There is a positive integer $a$ coprime to $d$ for which $A_2$ is not
+irreducible in $\mathbb{Z}[x]$ if and only if every prime divisor of $d$ is congruent to $1$
+modulo $3$. In that case the number of positive integers $a$ coprime to $d$ for which $A_2$ is
+not irreducible is exactly $2^{n-1}$, where $n$ is the number of distinct prime divisors of $d$.
+
+Both hypotheses matter: without coprimality, $a = d = 7$ gives $A_2(x) = 7(x^2 + 2x + 3)$, which
+is not irreducible in $\mathbb{Z}[x]$; and for $d = 1$ the prime condition holds vacuously while
+$A_2$ is irreducible for every $a \ge 1$, its discriminant $-3a^2 - 6a + 1$ being negative.
 
 Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
 Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Theorem 3
