@@ -187,11 +187,12 @@ jobs:
           fi
 
       # The native tests of the audit tools depend only on the runner image and on
-      # the tracked files fingerprinted here (contents and modes): this workflow,
-      # which runs them, the pins, every script except JSON data, and the modules
-      # test_compiled_audit_native.py builds. Pull requests and builds of main
-      # always run them, and a build of main that passes them saves the
-      # fingerprint in main's cache. A merge group with a saved fingerprint
+      # the files fingerprinted here: this workflow, which runs them, the pins,
+      # every tracked script except JSON data, and the modules
+      # test_compiled_audit_native.py builds. The fingerprint holds their modes
+      # and the bytes checked out, which the tests run. Pull requests and builds
+      # of main always run the tests, and a build of main that passes them saves
+      # the fingerprint in main's cache. A merge group with a saved fingerprint
       # skips them. With no image version or no fingerprint, the tests run.
       - name: Fingerprint the audit tools' inputs
         id: audit-tools-inputs
@@ -199,14 +200,18 @@ jobs:
         run: |
           set -euo pipefail
           [[ -n "${ImageVersion:-}" ]] || exit 0
-          digest="$(git ls-files --stage -z -- \
-            .github/workflows/ci.yml lean-toolchain lakefile.toml lake-manifest.json \
-            scripts ':(exclude,glob)scripts/**/*.json' ':(exclude,glob)scripts/**/*.jsonl' \
-            MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean \
-            MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean \
-            MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean \
-            MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean \
-            | sha256sum | cut -d ' ' -f 1)"
+          specs=(
+            .github/workflows/ci.yml lean-toolchain lakefile.toml lake-manifest.json
+            scripts ':(exclude,glob)scripts/**/*.json' ':(exclude,glob)scripts/**/*.jsonl'
+            MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean
+            MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean
+            MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean
+            MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean
+          )
+          digest="$({
+            git ls-files --stage -z -- "${specs[@]}"
+            git ls-files -z -- "${specs[@]}" | xargs -0 -r sha256sum --
+          } | sha256sum | cut -d ' ' -f 1)"
           echo "key=audit-tools-tested-${RUNNER_OS}-${ImageVersion}-${digest}" >> "$GITHUB_OUTPUT"
 
       - name: Look for a build of main that passed the audit tools' tests
