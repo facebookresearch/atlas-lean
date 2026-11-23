@@ -22,23 +22,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **A recursion for binomial sums of odd-indexed Fibonacci numbers.** Let $F_k$ be the Fibonacci
-numbers, with the convention $F_{-1} = 1$. For all integers $n \ge 1$ and $2 \le i \le n + 1$,
-$$\sum_{m=0}^{n-i+1} \binom{n-m-1}{i-2} F_{2m-1} =
-\binom{n-1}{i-2} + \sum_{j=i}^{n} \sum_{m=0}^{n-j} \binom{n-m-2}{j-2} F_{2m-1}$$
-(Mansour and Shattuck's Lemma 5, identity (21)). All differences in the binomial coefficients and
-in the summation bounds are nonnegative.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 5 (`integers-2025-A5-lem-5`). -/
-public theorem_wanted sum_choose_mul_fib_odd_eq_choose_add_sum (n i : ℕ) (hn : 1 ≤ n)
-    (hi : 2 ≤ i) (hin : i ≤ n + 1) :
-    ∑ m ∈ Finset.range (n + 2 - i),
-        (n - m - 1).choose (i - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1)) =
-      (n - 1).choose (i - 2) +
-        ∑ j ∈ Finset.Icc i n, ∑ m ∈ Finset.range (n - j + 1),
-          (n - m - 2).choose (j - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1))
-
 open Polynomial LaurentPolynomial
 
 /-- **Capacity of a word.** The capacity of a word $w = w_1 \cdots w_n$ of natural numbers,
