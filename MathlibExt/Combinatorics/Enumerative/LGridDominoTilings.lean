@@ -8,8 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
+import Mathlib.Data.Int.Fib.Lemmas
+import Mathlib.Tactic.LinearCombination
 
 @[expose] public section
 
@@ -31,7 +32,7 @@ Sequences 7 (2004), Article 04.2.3, Lemma (Section 2, equations Lformula and
 Lcassini), lines 200–221,
 https://cs.uwaterloo.ca/journals/JIS/VOL7/Tauraso/tauraso3.tex
 -/
-public theorem_wanted domino_tilings_L_grid_via_fibonacci :
+public theorem domino_tilings_L_grid_via_fibonacci :
     let L : ℕ → ℕ → ℕ := fun n m =>
       Nat.fib (n + 1) * Nat.fib m + Nat.fib n * Nat.fib (m + 1)
     let a : ℕ → ℕ := fun n =>
@@ -41,6 +42,20 @@ public theorem_wanted domino_tilings_L_grid_via_fibonacci :
         Nat.fib n * Nat.fib (m + 1)) ∧
     (∀ n : ℕ, 2 ≤ n → L n (n - 1) = a n) ∧
     (∀ n : ℕ, 2 ≤ n →
-      (L n (n - 1)) ^ 2 = L n n * L (n - 1) (n - 1) + 1)
+      (L n (n - 1)) ^ 2 = L n n * L (n - 1) (n - 1) + 1) := by
+  dsimp only
+  refine ⟨fun _ _ _ _ => rfl, ?_, ?_⟩
+  · intro n hn
+    rw [Nat.sub_add_cancel (by omega : 1 ≤ n), pow_two]
+  · intro n hn
+    rw [Nat.sub_add_cancel (by omega : 1 ≤ n)]
+    apply (Nat.cast_inj (R := ℤ)).mp
+    push_cast
+    -- Squaring Cassini removes the alternating sign.
+    have h := congrArg (fun x : ℤ => x ^ 2) (Int.fib_succ_mul_fib_pred_sub_fib_sq (n : ℤ))
+    rw [← Nat.cast_add_one, ← Int.natCast_pred_of_pos (by omega : 0 < n)] at h
+    simp only [Int.fib_natCast, Int.natAbs_natCast] at h
+    rw [pow_right_comm (-1 : ℤ), neg_one_sq, one_pow] at h
+    linear_combination h
 
 end MetaMathlibExt
