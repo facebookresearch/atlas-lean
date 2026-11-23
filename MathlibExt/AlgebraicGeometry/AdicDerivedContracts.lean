@@ -160,6 +160,23 @@ class PullbackDerivedNormalization {Y X : Scheme} (f : Y ⟶ X) : Prop where
 
 attribute [instance] PullbackDerivedNormalization.unit_isIso
 
+/-- Inverse image is exact, so it preserves quasi-isomorphisms and its right derived functor is
+computed by applying it degreewise: the derived unit is an isomorphism. -/
+instance pullbackDerivedNormalization {Y X : Scheme} (f : Y ⟶ X) :
+    PullbackDerivedNormalization R f where
+  unit_isIso K := by
+    have hF : (CochainComplex.Plus.quasiIso (ModuleSheaf R X)).IsInvertedBy
+        ((pullback R f).mapCochainComplexPlus ⋙ DerivedCategory.Plus.Q) := by
+      intro K L φ hφ
+      rw [CochainComplex.Plus.quasiIso_iff] at hφ
+      refine Localization.inverts DerivedCategory.Plus.Q (CochainComplex.Plus.quasiIso _) _ ?_
+      rw [CochainComplex.Plus.quasiIso_iff]
+      change QuasiIso (((pullback R f).mapHomologicalComplex _).map φ.hom)
+      infer_instance
+    have := Functor.isIso_of_isRightDerivedFunctor_of_inverts _
+      (pullback R f).rightDerivedFunctorPlusUnit hF
+    infer_instance
+
 /-- A derived adjunction between the fixed functors, with its actual
 ordinary/derived unit normalization on every cochain model. -/
 class DerivedAdjunction {Y X : Scheme} (f : Y ⟶ X) where

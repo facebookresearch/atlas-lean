@@ -68,6 +68,13 @@ attribute [local instance] HasDerivedCategory.standard
 example {X : Scheme.{0}} {F G : ModuleSheaf R X} (a : F ⟶ G) [IsIso a] :
     IsIso (singleMap R a) := inferInstance
 
+/-- Inverse image is exact, so its derived unit is an isomorphism, unconditionally. -/
+example {Y X : Scheme.{0}} (f : Y ⟶ X) (K : Cochains R X) :
+    IsIso ((pullback R f).rightDerivedFunctorPlusUnit.app K) := inferInstance
+
+example {Y X : Scheme.{0}} (f : Y ⟶ X) (A : ModuleSheaf R X) :
+    IsIso (pullbackUnitOfSheaf R f A) := inferInstance
+
 example {X Y Z : Scheme.{0}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     pullback R g ⋙ pullback R f ≅ pullback R (f ≫ g) := pullbackComp R f g
 
