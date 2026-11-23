@@ -7,17 +7,18 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Portions are adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under Apache 2.0:
-StacksFrontier/AlgebraicGeometry/FundamentalGroup/FiniteEtaleProper.lean,
-StacksFrontier/AlgebraicGeometry/FundamentalGroup/EtaleFundamentalGroup.lean,
-StacksFrontier/AlgebraicGeometry/FundamentalGroup/GaloisCategories/AutomorphismTopology.lean.
-These source files have no individual author or copyright notice.
-Modification notice: retain actual finite étale covers and lift-valued fibre
-functors; specialize permutation topologies to discrete finite fibres and
-normalize Frobenius by field automorphisms and actual geometric fibre paths.
--/
+Portions of this file are adapted from:
 
+`StacksFrontier/AlgebraicGeometry/FundamentalGroup/FiniteEtaleProper.lean`,
+`StacksFrontier/AlgebraicGeometry/FundamentalGroup/EtaleFundamentalGroup.lean` and
+`StacksFrontier/AlgebraicGeometry/FundamentalGroup/GaloisCategories/AutomorphismTopology.lean`
+(AxiomMath/Stacks, revision c496df0d9beea9deaeabcea8492605f9a0a2313b; these files carry no
+individual author or copyright notice):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modified: retain actual finite étale covers and lift-valued fibre functors; specialize
+permutation topologies to discrete finite fibres and normalize Frobenius by field automorphisms
+and actual geometric fibre paths.
+-/
 module
 
 public import Mathlib.AlgebraicGeometry.Morphisms.Etale
