@@ -249,9 +249,10 @@ jobs:
         run: |
           set -euo pipefail
           df -h / || true
-          # Unknown free space counts as too little.
-          free_kib="$(df --output=avail -k / | tail -n 1 | tr -d ' ')" || free_kib=""
-          if ! [[ "$free_kib" =~ ^[0-9]+$ ]] || (( free_kib < 60 * 1024 * 1024 )); then
+          # Unknown free space counts as too little: the second line of the
+          # report must be one decimal number.
+          free_kib="$(df --output=avail -k / | awk 'NR == 2 && NF == 1 && $1 ~ /^[0-9]+$/ { print $1 }')" || free_kib=""
+          if [[ -z "$free_kib" ]] || (( 10#$free_kib < 60 * 1024 * 1024 )); then
             sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
             df -h / || true
           fi

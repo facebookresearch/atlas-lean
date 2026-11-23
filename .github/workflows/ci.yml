@@ -99,9 +99,10 @@ jobs:
         run: |
           set -euo pipefail
           df -h / || true
-          # Unknown free space counts as too little.
-          free_kib="$(df --output=avail -k / | tail -n 1 | tr -d ' ')" || free_kib=""
-          if ! [[ "$free_kib" =~ ^[0-9]+$ ]] || (( free_kib < 60 * 1024 * 1024 )); then
+          # Unknown free space counts as too little: the second line of the
+          # report must be one decimal number.
+          free_kib="$(df --output=avail -k / | awk 'NR == 2 && NF == 1 && $1 ~ /^[0-9]+$/ { print $1 }')" || free_kib=""
+          if [[ -z "$free_kib" ]] || (( 10#$free_kib < 60 * 1024 * 1024 )); then
             sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
             df -h / || true
           fi
@@ -185,31 +186,37 @@ jobs:
             echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
           fi
 
-      # The native tests of the audit tools read only the files hashed in this
-      # key, and the runner image. Pull requests and builds of main always run
-      # them, and a build of main that passes them saves the key in main's
-      # cache. A merge group whose files and image have a saved key skips them.
-      - name: Read the runner image version
-        id: image
-        run: echo "version=${ImageVersion:-unknown}" >> "$GITHUB_OUTPUT"
+      # The native tests of the audit tools depend only on the runner image and on
+      # the tracked files fingerprinted here (contents and modes): this workflow,
+      # which runs them, the pins, every script except JSON data, and the modules
+      # test_compiled_audit_native.py builds. Pull requests and builds of main
+      # always run them, and a build of main that passes them saves the
+      # fingerprint in main's cache. A merge group with a saved fingerprint
+      # skips them. With no image version or no fingerprint, the tests run.
+      - name: Fingerprint the audit tools' inputs
+        id: audit-tools-inputs
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          [[ -n "${ImageVersion:-}" ]] || exit 0
+          digest="$(git ls-files --stage -z -- \
+            .github/workflows/ci.yml lean-toolchain lakefile.toml lake-manifest.json \
+            scripts ':(exclude,glob)scripts/**/*.json' ':(exclude,glob)scripts/**/*.jsonl' \
+            MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean \
+            MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean \
+            MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean \
+            MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean \
+            | sha256sum | cut -d ' ' -f 1)"
+          echo "key=audit-tools-tested-${RUNNER_OS}-${ImageVersion}-${digest}" >> "$GITHUB_OUTPUT"
 
       - name: Look for a build of main that passed the audit tools' tests
         id: audit-tools
-        if: github.event_name == 'merge_group'
+        if: github.event_name == 'merge_group' && steps.audit-tools-inputs.outputs.key != ''
         continue-on-error: true
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/audit-tools-tested
-          key: audit-tools-tested-${{ runner.os }}-${{ steps.image.outputs.version }}-${{ hashFiles(
-            'lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
-            'scripts/test_declaration_collisions_native.py', 'scripts/check_declaration_collisions.sh',
-            'scripts/check_declaration_collisions.lean', 'scripts/list_v2_modules.sh',
-            'scripts/test_compiled_audit_native.py', 'scripts/audit_compiled_modules.py',
-            'scripts/check_axioms.lean',
-            'MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
-            'MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean',
-            'MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
-            'MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean') }}
+          key: ${{ steps.audit-tools-inputs.outputs.key }}
 
       - name: Test the declaration collision check
         if: steps.audit-tools.outputs.cache-hit != 'true'
@@ -226,26 +233,17 @@ jobs:
         run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
 
       - name: Write the record of the audit tools' tests
-        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.audit-tools-inputs.outputs.key != ''
         continue-on-error: true
         run: printf '%s\n' "$GITHUB_SHA" > "$RUNNER_TEMP/audit-tools-tested"
 
       - name: Save that a build of main passed the audit tools' tests
-        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.audit-tools-inputs.outputs.key != ''
         continue-on-error: true
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/audit-tools-tested
-          key: audit-tools-tested-${{ runner.os }}-${{ steps.image.outputs.version }}-${{ hashFiles(
-            'lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
-            'scripts/test_declaration_collisions_native.py', 'scripts/check_declaration_collisions.sh',
-            'scripts/check_declaration_collisions.lean', 'scripts/list_v2_modules.sh',
-            'scripts/test_compiled_audit_native.py', 'scripts/audit_compiled_modules.py',
-            'scripts/check_axioms.lean',
-            'MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
-            'MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean',
-            'MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
-            'MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean') }}
+          key: ${{ steps.audit-tools-inputs.outputs.key }}
 
       - name: Build memory-heavy modules one at a time
         run: |

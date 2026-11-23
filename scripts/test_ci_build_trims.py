@@ -4,10 +4,11 @@
 - The job deletes unused SDKs only when less than 60 GiB of disk is known to be
   free.
 - A merge group skips the native tests of the audit tools when a build of main
-  passed them with the same files on the same runner image. A build of main that
-  passes them saves a marker in main's cache, keyed on the runner image and on
-  the hash of every repository file those tests read, so the key must hash all
-  of those files.
+  passed them on the same runner image with the same inputs. The step
+  "Fingerprint the audit tools' inputs" hashes those inputs (tracked files,
+  contents and modes); a build of main that passes the tests saves the
+  fingerprint in main's cache. Every repository file the native tests read must
+  therefore be fingerprinted, and the tests must be the ones the workflow runs.
 
 These tests guard against accidental edits of those steps. They do not model
 GitHub Actions.
@@ -18,7 +19,9 @@ Run with: python3 -m unittest discover -s scripts -p test_ci_build_trims.py
 from __future__ import annotations
 
 import ast
+import os
 import re
+import shlex
 import subprocess
 import tempfile
 import textwrap
@@ -29,18 +32,20 @@ import audit_rebuilt_modules as scoped
 from test_merge_queue_checks import block, jobs, value, workflow
 
 ROOT = Path(__file__).resolve().parent.parent
-NATIVE_TESTS = ("scripts/test_declaration_collisions_native.py", "scripts/test_compiled_audit_native.py")
 LIBRARIES = ("CSLibExt", "CSLibExtTest", "MathlibExt", "MathlibExtTest", "PhyslibExt",
              "PhyslibExtTest", "Domains", "DomainsTest", "WantedExt")
-IMAGE = "Read the runner image version"
+FINGERPRINT = "Fingerprint the audit tools' inputs"
 LOOKUP = "Look for a build of main that passed the audit tools' tests"
 WRITE = "Write the record of the audit tools' tests"
 SAVE = "Save that a build of main passed the audit tools' tests"
-NATIVE_STEPS = ("Test the declaration collision check", "Test initialized compiled-audit isolation")
+NATIVE_STEPS = {
+    "Test the declaration collision check": "test_declaration_collisions_native.py",
+    "Test initialized compiled-audit isolation": "test_compiled_audit_native.py",
+}
+NATIVE_TESTS = tuple(f"scripts/{name}" for name in NATIVE_STEPS.values())
+HAS_KEY = "steps.audit-tools-inputs.outputs.key != ''"
 MAIN_BUILD = ("(github.event_name == 'push' || github.event_name == 'workflow_dispatch')"
               " && github.ref == 'refs/heads/main'")
-KEY = re.compile(r"audit-tools-tested-\$\{\{ runner\.os \}\}-\$\{\{ steps\.image\.outputs\.version \}\}"
-                 r"-\$\{\{ hashFiles\((.*)\) \}\}")
 
 
 def steps(job: list[str]) -> dict[str, list[str]]:
@@ -72,35 +77,65 @@ def repository_files(literal: str, root: Path) -> set[str]:
             if not path.startswith(("/", "..")) and (root / path).is_file()}
 
 
-def python_modules(name: str, root: Path) -> set[str]:
-    """The local files a Python import of `name` (`a` or `a.b`) can load."""
+def python_modules(name: str, root: Path, packages: tuple[str, ...] = ("", "scripts/")) -> set[str]:
+    """The local files an import of `name` (`a` or `a.b`) can load from `packages`."""
     parts = name.split(".")
     found: set[str] = set()
     for end in range(1, len(parts) + 1):
         stem = "/".join(parts[:end])
-        found |= repository_files(f"{stem}.py", root) | repository_files(f"{stem}/__init__.py", root)
+        for package in packages:
+            found |= {candidate for candidate in (f"{package}{stem}.py", f"{package}{stem}/__init__.py")
+                      if (root / candidate).is_file()}
     return found
 
 
 def joined_path(node: ast.AST) -> str:
-    """`a / "b" / "c"`, `a.joinpath("b", "c")` or `os.path.join(a, "b", "c")` as
-    "b/c": the constant parts of a path built from pieces, or "" if none."""
-    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr in ("join", "joinpath"):
-        pieces = list(node.args)
+    """`a / "b" / "c"`, `Path(a, "b", "c")`, `a.joinpath("b", "c")` or
+    `os.path.join(a, "b", "c")` as "b/c": the constant parts of a path built from
+    pieces, or "" if none."""
+    pieces: list[ast.AST] = []
+    if isinstance(node, ast.Call):
+        name = node.func.attr if isinstance(node.func, ast.Attribute) else getattr(node.func, "id", "")
+        if name in ("join", "joinpath", "Path", "PurePath", "PosixPath", "PurePosixPath"):
+            pieces = list(node.args)
     else:
-        pieces = []
         while isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
             pieces.insert(0, node.right)
             node = node.left
     parts = [piece.value.strip("/") for piece in pieces
              if isinstance(piece, ast.Constant) and isinstance(piece.value, str)]
-    return "/".join(parts)
+    return "/".join(part for part in parts if part)
+
+
+def python_inputs(text: str, path: str, root: Path) -> set[str]:
+    """The repository files a Python source names, joins or imports."""
+    found: set[str] = set()
+    for node in ast.walk(ast.parse(text)):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            found |= repository_files(node.value, root)
+        elif isinstance(node, (ast.BinOp, ast.Call)):
+            found |= repository_files(joined_path(node), root)
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                found |= python_modules(alias.name, root)
+        elif isinstance(node, ast.ImportFrom):
+            packages: tuple[str, ...] = ("", "scripts/")
+            if node.level:  # relative to the importing file's package
+                package = Path(path).parent
+                for _ in range(node.level - 1):
+                    package = package.parent
+                packages = (f"{package.as_posix()}/" if package.as_posix() != "." else "",)
+            names = [node.module] if node.module else []
+            names += [f"{node.module}.{alias.name}" if node.module else alias.name for alias in node.names]
+            for name in names:
+                found |= python_modules(name, root, packages)
+    return found
 
 
 def native_test_inputs(root: Path = ROOT, tests: tuple[str, ...] = NATIVE_TESTS) -> set[str]:
     """Every repository file the native tests name or import, followed through the
-    local Python modules and shell scripts they use and the project modules their
-    Lean files import."""
+    local Python modules and shell scripts they use (with the Python those run)
+    and the project modules their Lean files import."""
     inputs: set[str] = set()
     pending = list(tests)
     while pending:
@@ -111,23 +146,16 @@ def native_test_inputs(root: Path = ROOT, tests: tuple[str, ...] = NATIVE_TESTS)
         text = (root / path).read_text(encoding="utf-8")
         found: set[str] = set()
         if path.endswith(".py"):
-            for node in ast.walk(ast.parse(text)):
-                if isinstance(node, ast.Constant) and isinstance(node.value, str):
-                    found |= repository_files(node.value, root)
-                elif isinstance(node, (ast.BinOp, ast.Call)):
-                    found |= repository_files(joined_path(node), root)
-                elif isinstance(node, ast.Import):
-                    for alias in node.names:
-                        found |= python_modules(alias.name, root)
-                elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
-                    for alias in node.names:
-                        found |= python_modules(f"{node.module}.{alias.name}", root)
+            found = python_inputs(text, path, root)
         elif path.endswith(".sh"):
             for name in re.findall(r"scripts/[\w./-]+", text):
                 found |= repository_files(name, root)
-            # Python run from the script, as a heredoc or with -c.
-            for module in re.findall(r"^\s*(?:import|from)\s+([\w.]+)", text, re.M):
-                found |= python_modules(module, root)
+            # Python run from the script, as a heredoc.
+            for _, body in re.findall(r"<<-?\s*['\"]?(\w+)['\"]?[^\n]*\n(.*?)\n\s*\1\s*$", text, re.M | re.S):
+                try:
+                    found |= python_inputs(body, path, root)
+                except SyntaxError:
+                    pass
         elif path.endswith(".lean") and path.split("/")[0] in LIBRARIES:
             # The scoped audit's own reading of imports: any `import X`, comments
             # and line breaks included.
@@ -139,12 +167,10 @@ def native_test_inputs(root: Path = ROOT, tests: tuple[str, ...] = NATIVE_TESTS)
     return inputs
 
 
-def hashed_files(step: list[str]) -> list[str]:
-    key = value(block(step, "with", 8), "key", 10)
-    match = KEY.fullmatch(key)
-    if match is None:
-        raise AssertionError(f"unexpected key: {key}")
-    return re.findall(r"'([^']+)'", match.group(1))
+def fingerprint_pathspecs(step: list[str]) -> list[str]:
+    script = run_block(step).replace("\\\n", " ")
+    command = script.split("git ls-files --stage -z --", 1)[1].split("|", 1)[0]
+    return shlex.split(command)
 
 
 class BuildTrims(unittest.TestCase):
@@ -153,56 +179,108 @@ class BuildTrims(unittest.TestCase):
 
     def test_merge_groups_skip_native_tests_only_after_main_passed_them(self):
         names = list(self.build)
-        self.assertIsNone(block(self.build[IMAGE], "if", 8))
-        self.assertLess(names.index(IMAGE), names.index(LOOKUP))
-        self.assertEqual(value(self.build[LOOKUP], "if", 8), "github.event_name == 'merge_group'")
-        for name in NATIVE_STEPS:
+        fingerprint = self.build[FINGERPRINT]
+        self.assertIsNone(block(fingerprint, "if", 8))
+        self.assertLess(names.index(FINGERPRINT), names.index(LOOKUP))
+        self.assertEqual(value(self.build[LOOKUP], "if", 8), f"github.event_name == 'merge_group' && {HAS_KEY}")
+        for name, test in NATIVE_STEPS.items():
+            step = self.build[name]
             self.assertLess(names.index(LOOKUP), names.index(name))
-            self.assertEqual(value(self.build[name], "if", 8),
-                             "steps.audit-tools.outputs.cache-hit != 'true'")
+            self.assertEqual(value(step, "if", 8), "steps.audit-tools.outputs.cache-hit != 'true'")
+            self.assertEqual(value(step, "run", 8), f"python3 -m unittest discover -s scripts -p {test} -v")
             # A native test that may fail would let a failing build of main save the marker.
-            self.assertIsNone(block(self.build[name], "continue-on-error", 8))
+            self.assertIsNone(block(step, "continue-on-error", 8))
         for name in (WRITE, SAVE):
-            self.assertEqual(value(self.build[name], "if", 8), MAIN_BUILD)
+            self.assertEqual(value(self.build[name], "if", 8), f"{MAIN_BUILD} && {HAS_KEY}")
             self.assertGreater(names.index(name), max(names.index(step) for step in NATIVE_STEPS))
-        self.assertEqual(hashed_files(self.build[LOOKUP]), hashed_files(self.build[SAVE]))
-        missing = native_test_inputs() - set(hashed_files(self.build[SAVE]))
-        self.assertFalse(missing, f"the native tests read files the key does not hash: {sorted(missing)}")
+        for name in (LOOKUP, SAVE):
+            self.assertEqual(value(block(self.build[name], "with", 8), "key", 10),
+                             "${{ steps.audit-tools-inputs.outputs.key }}")
+
+    def test_the_fingerprint_covers_every_input_of_the_native_tests(self):
+        pathspecs = fingerprint_pathspecs(self.build[FINGERPRINT])
+        self.assertIn(".github/workflows/ci.yml", pathspecs)
+        listed = subprocess.run(["git", "ls-files", "-z", "--", *pathspecs], cwd=ROOT, check=True,
+                                capture_output=True, text=True).stdout.split("\0")
+        missing = native_test_inputs() - set(listed)
+        self.assertFalse(missing, f"the native tests read files the fingerprint omits: {sorted(missing)}")
+
+    def test_the_fingerprint_follows_contents_modes_and_the_image(self):
+        script = run_block(self.build[FINGERPRINT])
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in (".github/workflows/ci.yml", "lean-toolchain", "scripts/check.sh",
+                         "scripts/taxonomy.json", "README.md"):
+                (root / name).parent.mkdir(parents=True, exist_ok=True)
+                (root / name).write_text(name)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+
+            def key(image: str | None = "20261116.1") -> str:
+                subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+                output = root / "output"
+                output.write_text("")
+                env = {**os.environ, "GITHUB_OUTPUT": str(output), "RUNNER_OS": "Linux"}
+                env.pop("ImageVersion", None)
+                if image is not None:
+                    env["ImageVersion"] = image
+                subprocess.run(["bash", "-c", script], cwd=root, env=env, check=True)
+                return output.read_text()
+
+            first = key()
+            self.assertTrue(first.startswith("key=audit-tools-tested-Linux-20261116.1-"), first)
+            self.assertEqual(key(None), "", "no image version, no fingerprint")
+            self.assertNotEqual(key("20261123.1"), first)
+            for path in ("scripts/taxonomy.json", "README.md"):  # not inputs
+                (root / path).write_text("changed")
+                self.assertEqual(key(), first, path)
+            (root / "scripts/check.sh").chmod(0o755)
+            moded = key()
+            self.assertNotEqual(moded, first, "a mode change must change the fingerprint")
+            (root / "scripts/new.py").write_text("")
+            self.assertNotEqual(key(), moded, "a new script must change the fingerprint")
 
     def test_native_test_inputs_follow_new_reads_and_imports(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             for name in ("CONTRIBUTING.md", "scripts/helper.py", "scripts/data.json", "scripts/run.sh",
                          "scripts/list.sh", "scripts/embedded.py", "scripts/fixtures/sample.txt",
-                         "scripts/bump/__init__.py", "scripts/bump/pinned.py", ".github/workflows/ci.yml",
-                         "MathlibExt/A.lean", "MathlibExt/B.lean"):
+                         "scripts/data/items.json", "scripts/bump/__init__.py", "scripts/bump/pinned.py",
+                         "scripts/bump/leaf.py", "scripts/pkg/__init__.py", "scripts/pkg/leaf.py",
+                         ".github/workflows/ci.yml", "MathlibExt/A.lean", "MathlibExt/B.lean"):
                 (root / name).parent.mkdir(parents=True, exist_ok=True)
                 (root / name).write_text("")
             (root / "scripts/helper.py").write_text('DATA = "data.json"\n')
-            (root / "scripts/run.sh").write_text("scripts/list.sh\npython3 - <<'PY'\nimport embedded\nPY\n")
+            (root / "scripts/bump/pinned.py").write_text("from . import leaf\n")
+            (root / "scripts/run.sh").write_text(
+                "scripts/list.sh\npython3 - <<'PY'\nimport embedded\nfrom pkg import leaf\nPY\n")
             (root / "MathlibExt/A.lean").write_text("module\npublic import\n  MathlibExt.B -- why\n")
             (root / "scripts/test_x_native.py").write_text(
                 'from helper import DATA\nfrom bump import pinned\n'
                 'TEXT = (ROOT / "CONTRIBUTING.md").read_text()\n'
                 'SAMPLE = (ROOT / "scripts" / "fixtures" / "sample.txt").read_text()\n'
+                'ITEMS = Path("scripts", "data", "items.json").read_text()\n'
                 'CI = ROOT.joinpath(".github", "workflows", "ci.yml").read_text()\n'
                 "RUN = ['scripts/run.sh']\nPAIR = ['MathlibExt.A']\n")
             self.assertEqual(native_test_inputs(root, ("scripts/test_x_native.py",)), {
                 "scripts/test_x_native.py", "scripts/helper.py", "scripts/data.json", "CONTRIBUTING.md",
-                "scripts/fixtures/sample.txt", ".github/workflows/ci.yml", "scripts/bump/__init__.py",
-                "scripts/bump/pinned.py", "scripts/run.sh", "scripts/list.sh", "scripts/embedded.py",
-                "MathlibExt/A.lean", "MathlibExt/B.lean"})
+                "scripts/fixtures/sample.txt", "scripts/data/items.json", ".github/workflows/ci.yml",
+                "scripts/bump/__init__.py", "scripts/bump/pinned.py", "scripts/bump/leaf.py",
+                "scripts/run.sh", "scripts/list.sh", "scripts/embedded.py", "scripts/pkg/__init__.py",
+                "scripts/pkg/leaf.py", "MathlibExt/A.lean", "MathlibExt/B.lean"})
 
     def test_disk_cleanup_runs_unless_60_gib_are_known_to_be_free(self):
-        cases = {"echo 62914560": False, "echo 62914559": True, "echo unknown": True, "return 1": True}
+        cases = {"62914560": False, "  62914560": False, "62914559": True, "000009": True,
+                 "1 00000000": True, "unknown": True, None: True}
         for name, job in (("ci.yml", "build"), ("bump-cache.yml", "warm")):
             script = run_block(steps(jobs(workflow(name))[job])["Free disk space for Lean caches"])
-            for probe, cleans in cases.items():
-                with self.subTest(workflow=name, probe=probe):
+            for available, cleans in cases.items():
+                with self.subTest(workflow=name, available=available):
+                    report = "return 1" if available is None else f"printf ' Avail\\n%s\\n' '{available}'"
                     stubs = ('sudo() { echo CLEANED; }\n'
-                             f'df() {{ if [[ "$1" == -h ]]; then echo df; else {probe}; fi; }}\n')
+                             f'df() {{ if [[ "$1" == -h ]]; then echo df; else {report}; fi; }}\n')
                     result = subprocess.run(["bash", "-c", stubs + script], capture_output=True, text=True)
                     self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(result.stderr, "")
                     self.assertEqual("CLEANED" in result.stdout, cleans)
 
 
