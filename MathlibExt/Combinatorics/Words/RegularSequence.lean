@@ -26,8 +26,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A `k`-regular integer sequence in the sense of Allouche and Shallit: the base satisfies
-`k ≥ 2` and the `ℤ`-module spanned by its `k`-kernel `kKernel k f` is finitely generated.
+/-- **$k$-regular sequence.** Let $k$ be a natural number. An integer sequence
+$f : \mathbb{N} \to \mathbb{Z}$ is $k$-regular, in the sense of Allouche and Shallit, if
+$k \ge 2$ and the $\mathbb{Z}$-submodule of the module of all integer sequences spanned by the
+$k$-kernel of $f$ is finitely generated.
 
 Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
 Integer Sequences 29 (2026), Article 26.4.1, Lemma 28 (`k`-regular sequences of
@@ -35,7 +37,8 @@ Allouche and Shallit) and Definition 1 (`k`-kernel). -/
 def IsKRegularSequence (k : ℕ) (f : ℕ → ℤ) : Prop :=
   2 ≤ k ∧ (Submodule.span ℤ (kKernel k f)).FG
 
-/-- Constant sequences are `k`-regular for every base `k ≥ 2`.
+/-- **Constant sequences are $k$-regular.** For every natural number $k \ge 2$ and every integer
+$c$, the constant sequence $n \mapsto c$ is $k$-regular.
 
 Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
 Integer Sequences 29 (2026), Article 26.4.1, Lemma 28. -/
@@ -47,7 +50,8 @@ theorem isKRegularSequence_const {k : ℕ} (hk : 2 ≤ k) (c : ℤ) :
   rintro g ⟨i, j, -, rfl⟩
   rfl
 
-/-- A `k`-regular sequence has base `k ≥ 2`.
+/-- **The base of a $k$-regular sequence is at least 2.** Let $k$ be a natural number. If an integer
+sequence $f$ is $k$-regular, then $k \ge 2$.
 
 Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
 Integer Sequences 29 (2026), Article 26.4.1, Lemma 28. -/
