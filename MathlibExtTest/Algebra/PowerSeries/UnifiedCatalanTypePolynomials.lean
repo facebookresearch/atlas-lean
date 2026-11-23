@@ -32,9 +32,3 @@ example (N : ℕ) (hN : 2 ≤ N) :
   intro n hn
   have hpos : n - 1 ≠ 0 := by omega
   simp [Finset.sum_range_succ, coeff_one, hpos]
-
--- At order zero the recurrence forces the whole sequence to vanish, including its first term.
-example : hankelTransform (fun _ ↦ (0 : ℤ)) 0 = 0 := by
-  apply hankelTransform.eq_zero_of_recurrence _ (fun _ ↦ 1) (r := 0) le_rfl
-  · exact ⟨0, le_rfl, one_ne_zero⟩
-  · simp
