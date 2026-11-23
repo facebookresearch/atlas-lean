@@ -19,6 +19,8 @@ public import MathlibExt.SetTheory.Ultrafilter.Ramsey
 
 -- Source: Lean Definition Library (Airtable) records: Logic 33
 
+open Set Cardinal
+
 /-!
 # Weakly compact cardinal
 
@@ -27,14 +29,14 @@ public import MathlibExt.SetTheory.Ultrafilter.Ramsey
 * Jech (for `IsWeaklyCompact`)
 -/
 
-open Set Cardinal
-
 namespace MetaMathlibExt
 
 -- Logic 33: Weakly compact cardinal
 
-/-- A cardinal κ is *weakly compact* if ℵ₀ < κ and κ → (κ)²₂: every 2-colouring of [I]², where |I| =
-κ, admits a homogeneous set H ⊆ I with |H| = κ.
+/-- **Weakly compact cardinal.** A cardinal $\kappa$ is *weakly compact* if $\aleph_0 < \kappa$
+and $\kappa \to (\kappa)^2_2$: for every set $I$ of cardinality $\kappa$ and every colouring $c$
+of the finite subsets of $I$ with two colours, there are a subset $H \subseteq I$ of cardinality
+$\kappa$ and a colour $k$ such that $c(s) = k$ for every two-element subset $s \subseteq H$.
 -/
 def IsWeaklyCompact (κ : Cardinal) : Prop :=
   ℵ₀ < κ ∧

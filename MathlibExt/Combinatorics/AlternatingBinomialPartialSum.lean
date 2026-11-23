@@ -12,7 +12,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Nat.Choose.Basic
-public import Mathlib.Data.Complex.Basic
+public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Data.Finset.Interval
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
@@ -21,9 +21,11 @@ public import Mathlib.Tactic.Ring
 
 namespace MetaMathlibExt
 
-/-- Alternating binomial identity for partial sums of a complex sequence:
-swapping the double sum and evaluating the inner alternating row by Pascal's
-rule telescopes to a single sum.
+/-- **Alternating binomial sums of partial sums.** For every sequence $a_0, a_1, a_2, \dots$ of
+complex numbers and every natural number $n$,
+$$\sum_{k=0}^{n} (-1)^k \binom{n}{k} \sum_{j=1}^{k} a_j =
+\sum_{k=0}^{n-1} (-1)^{k+1} \binom{n-1}{k} a_{k+1},$$
+where an empty sum is $0$, so both sides vanish when $n = 0$.
 
 Source: Necdet Batır and Anthony Sofo, "A Unified Treatment of Certain
 Classes of Combinatorial Identities," Journal of Integer Sequences 24

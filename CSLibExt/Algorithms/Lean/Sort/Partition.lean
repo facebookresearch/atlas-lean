@@ -32,7 +32,9 @@ universe u
 
 variable {α : Type u} [LinearOrder α]
 
-/-- The three stable classes produced by comparison with a pivot. -/
+/-- **Three-way partition record.** A three-way partition over a type $\alpha$ consists of three
+lists over $\alpha$, called below, equal and above. They are meant to hold the elements strictly
+below, equal to, and strictly above a pivot; the record itself imposes no condition on them. -/
 @[ext]
 structure ThreeWayPartition (α : Type u) where
   /-- Elements strictly below the pivot. -/
@@ -43,7 +45,12 @@ structure ThreeWayPartition (α : Type u) where
   above : List α
 deriving DecidableEq
 
-/-- Stably partition a list around `pivot`, charging once per comparison. -/
+/-- **Stable three-way partition.** Let $p$ be an element of a linearly ordered type $\alpha$. The
+three-way partition of a list over $\alpha$ around $p$, together with the time it is charged, is
+defined by recursion on the list. The empty list gives three empty lists at no cost. For a list
+with head $x$ and tail $xs$, one unit of time is charged for comparing $x$ with $p$, the tail $xs$
+is partitioned, and $x$ is put at the front of its below list if $x < p$, of its equal list if
+$x = p$, and of its above list if $p < x$. -/
 def partition3 (pivot : α) : List α → TimeM Nat (ThreeWayPartition α)
   | [] => pure { below := [], equal := [], above := [] }
   | x :: xs => do
@@ -54,7 +61,10 @@ def partition3 (pivot : α) : List α → TimeM Nat (ThreeWayPartition α)
       | .eq => return { parts with equal := x :: parts.equal }
       | .gt => return { parts with above := x :: parts.above }
 
-/-- Three-way partition performs exactly one comparison per input occurrence. -/
+/-- **Cost of the stable three-way partition.** For every element $p$ of a linearly ordered type
+$\alpha$ and every list $xs$ over $\alpha$, the time charged by the stable three-way partition of
+$xs$ around $p$ equals the length of $xs$: one unit for each comparison, one comparison per
+element. -/
 @[simp]
 theorem partition3_time (pivot : α) (xs : List α) :
     (partition3 pivot xs).time = xs.length := by
@@ -63,7 +73,11 @@ theorem partition3_time (pivot : α) (xs : List α) :
   | cons x xs ih =>
       cases hcmp : cmp x pivot <;> simp [partition3, hcmp, ih, Nat.add_comm]
 
-/-- Three-way partition preserves occurrences and classifies every output field. -/
+/-- **Correctness of the stable three-way partition.** Let $p$ be an element of a linearly ordered
+type $\alpha$, let $xs$ be a list over $\alpha$, and let $B$, $E$ and $A$ be the below, equal and
+above lists of the stable three-way partition of $xs$ around $p$. Then the concatenation $B$, $E$,
+$A$ is a permutation of $xs$, every element $x$ of $B$ satisfies $x < p$, every element of $E$
+equals $p$, and every element $x$ of $A$ satisfies $p < x$. -/
 theorem partition3_correct (pivot : α) (xs : List α) :
     List.Perm
         ((partition3 pivot xs).ret.below ++
@@ -138,22 +152,33 @@ private theorem partition3_eq_filters (pivot : α) (xs : List α) :
           have hne : x ≠ pivot := hgt.ne'
           simp [partition3, hcmp, ihBelow, ihEqual, ihAbove, hgt, hnbelow, hne]
 
-/-- The below field preserves the input order of all occurrences below the pivot. -/
+/-- **The below list of a three-way partition is a filter.** For every element $p$ of a linearly
+ordered type $\alpha$ and every list $xs$ over $\alpha$, the below list of the stable three-way
+partition of $xs$ around $p$ is the list of the elements $x$ of $xs$ with $x < p$, in their order
+in $xs$ and with their multiplicities. -/
 theorem partition3_below_eq_filter (pivot : α) (xs : List α) :
     (partition3 pivot xs).ret.below = xs.filter (fun x => x < pivot) :=
   (partition3_eq_filters pivot xs).1
 
-/-- The equal field preserves the input order of all occurrences equal to the pivot. -/
+/-- **The equal list of a three-way partition is a filter.** For every element $p$ of a linearly
+ordered type $\alpha$ and every list $xs$ over $\alpha$, the equal list of the stable three-way
+partition of $xs$ around $p$ is the list of the elements $x$ of $xs$ with $x = p$, in their order
+in $xs$ and with their multiplicities. -/
 theorem partition3_equal_eq_filter (pivot : α) (xs : List α) :
     (partition3 pivot xs).ret.equal = xs.filter (fun x => x = pivot) :=
   (partition3_eq_filters pivot xs).2.1
 
-/-- The above field preserves the input order of all occurrences above the pivot. -/
+/-- **The above list of a three-way partition is a filter.** For every element $p$ of a linearly
+ordered type $\alpha$ and every list $xs$ over $\alpha$, the above list of the stable three-way
+partition of $xs$ around $p$ is the list of the elements $x$ of $xs$ with $p < x$, in their order
+in $xs$ and with their multiplicities. -/
 theorem partition3_above_eq_filter (pivot : α) (xs : List α) :
     (partition3 pivot xs).ret.above = xs.filter (fun x => pivot < x) :=
   (partition3_eq_filters pivot xs).2.2
 
-/-- The three output fields contain exactly as many occurrences as the input. -/
+/-- **Sizes of the three parts of a three-way partition.** For every element $p$ of a linearly
+ordered type $\alpha$ and every list $xs$ over $\alpha$, the lengths of the below, equal and above
+lists of the stable three-way partition of $xs$ around $p$ add up to the length of $xs$. -/
 theorem partition3_length (pivot : α) (xs : List α) :
     (partition3 pivot xs).ret.below.length +
         (partition3 pivot xs).ret.equal.length +

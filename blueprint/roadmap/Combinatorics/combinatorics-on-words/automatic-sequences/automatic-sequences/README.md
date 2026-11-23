@@ -1,0 +1,16 @@
+# Automatic sequences
+
+- [Value of a base-$k$ digit word, least significant digit first](base-word-value-lsd.md)
+- [Automatic sequences via finite automata](is-kautomatic-sequence.md)
+- [Codings of prolongable uniform fixed points](is-coding-of-prolongable-kuniform-fixed.md)
+- [Cobham's characterization of automatic sequences](cobham-automatic-iff-uniform-morphic.md)
+- [Uniform fixed-point codings via iterates of a uniform map](is-coding-of-prolongable-kuniform-fixed-2.md)
+- [Uniform fixed-point codings are morphic](exists-is-morphic.md)
+- [Automatic sequences are morphic](exists-is-morphic-2.md)
+- [The $k$-kernel of a sequence](k-kernel.md)
+- [$k$-automatic sequence (finite-kernel definition)](is-kautomatic.md)
+- [The $p^r$-kernel lies in the $p$-kernel](chr-qkernel-subset.md)
+- [Finiteness of the $p$-kernel from the $p^r$-kernel](chr-pkernel-finite.md)
+- [The $q$-kernel is closed under decimation](chr-kernel-lam-mem.md)
+- [A sequence lies in its own kernel](chr-self-mem-kernel.md)
+- [Eilenberg's theorem: finite kernel iff automatic](is-kautomatic-iff-is-kautomatic-sequence.md)
