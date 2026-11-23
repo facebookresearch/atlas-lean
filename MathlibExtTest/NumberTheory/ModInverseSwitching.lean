@@ -12,6 +12,14 @@ import MathlibExt.NumberTheory.ModInverseSwitching
 
 open MathlibExt.NumberTheory.ModInverseSwitchingWanted
 
+-- The negative Bézout coefficient -2 represents the inverse of 7 modulo 5.
+example : (-2 : ℤ) * 7 ≡ 1 [ZMOD 5] ∧ (3 : ℤ) * 5 ≡ 1 [ZMOD 7] :=
+  bezout_coeffs_are_inverses 7 5 (by decide) (by decide) (by decide) (-2) 3 (by decide)
+
+-- A zero coefficient can represent an inverse modulo one.
+example : (0 : ℤ) * 4 ≡ 1 [ZMOD 1] ∧ (1 : ℤ) * 1 ≡ 1 [ZMOD 4] :=
+  bezout_coeffs_are_inverses 4 1 (by decide) (by decide) (by decide) 0 1 (by decide)
+
 -- A negative representative of 3 modulo 5 gives a switching pair.
 example : ∃ x y : ℤ, x * (-2) ≡ 1 [ZMOD 5] ∧ y * 5 ≡ 1 [ZMOD 3] ∧ x * 3 + y * 5 = 1 :=
   (exists_eq_mul_add_iff_switching 3 5 (by decide) (by decide) (-2) (by decide) (by decide)).mp
