@@ -25,9 +25,9 @@ Source (immutable, ATLAS NumberTheoryI N406 at commit
 
 Source-to-API map:
 - Lemma 21.7 at lines 958--1010 is reused via the stronger existing
-  formal-math theorem `ClassGroup.exists_mk0_eq_and_isCoprime`, which subsumes
-  it: every ideal class has an integral representative coprime to any
-  prescribed nonzero ideal;
+  formal-math theorem `MetaMathlibExt.ClassGroup.exists_mk0_eq_and_isCoprime`,
+  which subsumes it: every ideal class has an integral representative coprime
+  to any prescribed nonzero ideal;
 - ATLAS lines 1431--1465 to `fractionalIdealMk0_mem_coprimeFractionalIdeals`
   (the `mk0` membership/count bridge);
 - ATLAS lines 1466--1476 to `coprimeIdealClassMap_surjective` (coprime
@@ -83,7 +83,7 @@ theorem fractionalIdealMk0_mem_coprimeFractionalIdeals
       sup_le (Ideal.dvd_iff_le.mp hdvd) hv'
     rw [hsup] at hle
     exact v.isPrime.ne_top (top_le_iff.mp hle)
-  rw [FractionalIdeal.coe_mk0, FractionalIdeal.count_coe K v hI0]
+  rw [FractionalIdeal.coe_mk0, FractionalIdeal.count_coeIdeal K v hI0]
   have hcount : (Associates.mk v.asIdeal).count
       (Associates.mk (I : Ideal (𝓞 K))).factors = 0 := by
     by_contra hne
@@ -98,12 +98,12 @@ every prime dividing $\mathfrak m_0$ is $0$) to the class group of $\mathcal O_K
 such fractional ideal to its ideal class, is surjective.
 
 Source: ATLAS lines 1466--1476; Lemma 21.7 at lines 958--1010 is reused via the stronger
-`ClassGroup.exists_mk0_eq_and_isCoprime`. -/
+`MetaMathlibExt.ClassGroup.exists_mk0_eq_and_isCoprime`. -/
 theorem coprimeIdealClassMap_surjective (m : Modulus K) :
     Function.Surjective (coprimeIdealClassMap m) := by
   intro c
   obtain ⟨J, hJne, hJclass, hJcop⟩ :=
-    ClassGroup.exists_mk0_eq_and_isCoprime c
+    MetaMathlibExt.ClassGroup.exists_mk0_eq_and_isCoprime c
       (m.finitePart : Ideal (𝓞 K))
       (mem_nonZeroDivisors_iff_ne_zero.mp m.finitePart.property)
   have hJne0 : J ≠ 0 := by simpa using hJne

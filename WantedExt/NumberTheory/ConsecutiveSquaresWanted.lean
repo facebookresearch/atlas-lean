@@ -244,7 +244,7 @@ public theorem exists_isArithmeticPolygon_two_three :
         | (have hs : s = 1 := by linarith
            subst hs; norm_num)
   · unfold polygonReflexCount
-    convert Set.ncard_empty ℕ
+    convert Set.ncard_empty ℕ using 2
     ext k
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and, not_lt]
     intro hk

@@ -343,7 +343,7 @@ public theorem chain_exo_cov (b g₁ g₂ : ℝ) :
     rw [Matrix.mul_one]
     ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [exoLoading, Matrix.vecMul, dotProduct] <;> ring
+      simp [exoLoading, Matrix.vecMul, dotProduct, -Matrix.transpose_of] <;> ring
   rw [hM, chain_inv]
   ext i j
   fin_cases i <;> fin_cases j <;>
