@@ -119,7 +119,7 @@ def_wanted native_ordinary_coefficient_transport {A A' : CommAlgCat.{u} B.ring} 
     OrdinaryCoefficientTransport O L J C D B SB UL T F Q FB f G G' R R'
 
 /-- Relative perfection and universal negative field Ext are preserved by the actual native X_f derived inverse image. -/
-def_wanted native_complexes_coefficient_pullback {A A' : CommAlgCat.{u} B.ring} (f : A ⟶ A') :
+theorem_wanted native_complexes_coefficient_pullback {A A' : CommAlgCat.{u} B.ring} (f : A ⟶ A') :
     MathlibExt.AlgebraicGeometry.SpaceComplexAffinePresentations.ComplexesPullbackSource Q L J C (coefficientArrow D B f)
 
 /-- The complete native coefficient diagram transports the actual locus of the SAME realized source objects. -/
