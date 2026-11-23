@@ -1,0 +1,28 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import MathlibExt.Combinatorics.Enumerative.FibStepConvolution
+
+namespace MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted
+
+-- The fourth-order window initially extends past index zero.
+example : fibStepSeq 4 5 = [0, 1, 1, 2, 4, 8] := by decide
+
+-- At the lower endpoint the shifted convolution has just one summand.
+example : ∑ j ∈ Finset.range 2, fibStep 2 j * (fibStep 3 (1 - j) - fibStep 4 (1 - j)) = 0 := by
+  rw [sum_fib_mul_sub_eq 1 (by decide)]
+  decide
+
+-- The first nonzero convolution detects both the sign and the one-place shift.
+example : ∑ j ∈ Finset.range 7, fibStep 2 j * (fibStep 3 (6 - j) - fibStep 4 (6 - j)) = -1 := by
+  rw [sum_fib_mul_sub_eq 6 (by decide)]
+  decide
+
+end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted

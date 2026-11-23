@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Expand
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorInverseConvolution
+public import MathlibExt.RingTheory.PowerSeries.PowerRecursion
 
 /-!
 # Glaisher's divisors and infinite products: wishlist

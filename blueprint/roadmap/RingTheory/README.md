@@ -24,3 +24,5 @@ Hahn series, and the subject also has Hilbert's syzygy theorem, the Quillen–Su
 - [Modules over commutative rings](modules/README.md)
 - [Invariant theory](invariant-theory/README.md)
 - [Cluster algebras](cluster-algebras/README.md)
+- [Integral extensions and integral closure](integral-extensions/README.md)
+- [Commutative rings and ideals](commutative-rings/README.md)

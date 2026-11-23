@@ -19,6 +19,7 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Algebra.DeepPowerSumCongruences
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
 
 /-!
 # Elementary symmetric functions and deep power-sum congruences
@@ -46,16 +47,6 @@ open Polynomial
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Divided-power ideal.** An ideal $I$ of a commutative ring $A$ is a *divided-power ideal* when
-for every $a \in I$ and every integer $k \ge 1$ there is $c \in I$ with $a^k = k! \, c$, that is,
-$a^k \in k! \, I$. For a prime $p$, in a torsion-free $\mathbb{Z}_{(p)}$-algebra this says
-$a^k / k! \in I$.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Section 2.2. -/
-def IsDividedPowerIdeal {A : Type*} [CommRing A] (I : Ideal A) : Prop :=
-  ∀ a ∈ I, ∀ k : ℕ, 1 ≤ k → ∃ c ∈ I, a ^ k = (k.factorial : A) * c
 
 /-- **The zero ideal is a divided-power ideal.** In every commutative ring, the zero ideal is a
 divided-power ideal.
@@ -338,23 +329,6 @@ public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.P
     (s : Finset ι) (r : ι → ℕ) :
     padicValNat p (Nat.multinomial s r) =
       ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
-
-/-- **Powers of elements congruent modulo a divided-power ideal.** Let $p$ be a prime, let $A$ be
-a commutative ring in which every natural number not divisible by $p$ is a unit (a
-$\mathbb{Z}_{(p)}$-algebra), and let $\mathfrak{a}$ be a divided-power ideal of $A$. If
-$x, y \in A$ satisfy $x - y \in \mathfrak{a}$, then for every $m \ge 0$ there is
-$c \in \mathfrak{a}$ with $x^{p^m} - y^{p^m} = p^m c$, and for every $n \ge 0$ there is
-$c \in \mathfrak{a}$ with $x^n - y^n = n c$.
-
-The ring $A$ is not assumed to be torsion-free.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Lemma 25 (`integers-2024-A46-lem-25`). -/
-public theorem_wanted pow_sub_pow_mem_of_sub_mem {p : ℕ} [Fact p.Prime] {A : Type*} [CommRing A]
-    (hA : ∀ n : ℕ, ¬ p ∣ n → IsUnit (n : A)) {I : Ideal A} (hI : IsDividedPowerIdeal I)
-    {x y : A} (hxy : x - y ∈ I) :
-    (∀ m : ℕ, ∃ c ∈ I, x ^ p ^ m - y ^ p ^ m = (p : A) ^ m * c) ∧
-      ∀ n : ℕ, ∃ c ∈ I, x ^ n - y ^ n = (n : A) * c
 
 /-- **Congruence of products over a partition with multiplicities divisible by $p^v$.** Let $p$
 be a prime, $A$ a commutative ring and $\mathfrak{a}$ a divided-power ideal of $A$. Let

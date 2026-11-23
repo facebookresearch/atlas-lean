@@ -11,9 +11,9 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Nat.Fib.Basic
-public import Mathlib.FieldTheory.Separable
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
+public import MathlibExt.NumberTheory.RFibonacciPolynomial
 
 namespace MetaMathlibExt
 
@@ -981,26 +981,6 @@ public theorem_wanted negRLucas_generatingFunction {A : Type*} [CommRing A] {r :
         + PowerSeries.C (x * ↑y⁻¹) * PowerSeries.X ^ (r + 1)) *
       PowerSeries.mk (fun n => negRLucas r x y n)
       = PowerSeries.C ((r : A) + 1) - PowerSeries.C (↑y⁻¹ : A) * PowerSeries.X ^ r
-
-/-- **Separability of $t^{r+1} - y^{-1} t + x y^{-1}$.** Let $K$ be a field of characteristic zero,
-let $r \ge 1$, let $x \in K$ and let $y \in K$ be nonzero with $(r+1)^{r+1} x^r y \ne r^r$. Then
-the polynomial $t^{r+1} - y^{-1} t + x y^{-1} \in K[t]$ is separable, that is, coprime to its
-derivative; equivalently, it has no multiple zeros in an algebraic closure of $K$.
-
-This corrects Lemma 1 of the paper. The printed hypothesis $x \ne \frac{r}{r+1} ((r+1) y)^{-1/r}$
-names only one $r$-th root and is insufficient: $r = 2$, $y = 1/3$, $x = -2/3$ satisfies it, since
-$\frac{2}{3} \cdot 1^{-1/2} = \frac{2}{3}$, yet $t^3 - 3t - 2 = (t + 1)^2 (t - 2)$. The paper's
-proof shows that a multiple zero $\beta$ forces $x = r\beta/(r+1)$ with $\beta^r = 1/((r+1) y)$,
-that is, $(r+1)^{r+1} x^r y = r^r$, which is the branch-free condition used here.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Lemma 1 (`integers-2025-A38-lem-1`). -/
-public theorem_wanted separable_negRFibonacci_charPoly {K : Type*} [Field K] [CharZero K]
-    {r : ℕ} (hr : 1 ≤ r) (x : K) (y : Kˣ)
-    (h : ((r : K) + 1) ^ (r + 1) * x ^ r * y ≠ (r : K) ^ r) :
-    (Polynomial.X ^ (r + 1) - Polynomial.C (↑y⁻¹ : K) * Polynomial.X
-      + Polynomial.C (x * ↑y⁻¹) : Polynomial K).Separable
 
 /-- **Binet formula for the (-r)-Fibonacci polynomials.** Let $K$ be a field, $r \ge 2$,
 $x \in K$ and $y \in K$ nonzero, and write $U_n = U^{(-r)}_n(x, y)$. Suppose that

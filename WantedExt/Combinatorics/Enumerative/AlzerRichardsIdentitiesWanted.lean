@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsIdentities
 public import MathlibExt.Combinatorics.Enumerative.FubiniNumber
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
 
@@ -38,44 +39,6 @@ namespace MetaMathlibExt
 
 open Finset Polynomial
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry (chapter5EulerEven)
-
-/-- **Alzer–Richards derivative identity for powers of $1 - f$.** Let $r, j, n \ge 0$ be
-integers and let $f \colon \mathbb{R} \to \mathbb{R}$ be $r$ times continuously differentiable.
-Writing $g^{(i)}$ for the $i$-th derivative of a function $g$ and taking powers of $f$ pointwise,
-for every real $x$
-$$
-\sum_{k=0}^{n} (-1)^{k+1} \binom{n+1}{k+1} \bigl(f^{k+1+j}\bigr)^{(r)}(x) =
-\sum_{k=0}^{r} \binom{r}{k} \bigl(f^j\bigr)^{(k)}(x) \,
-\bigl((1-f)^{n+1} - 1\bigr)^{(r-k)}(x).
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 1, Equation (2). -/
-theorem_wanted sum_iteratedDeriv_pow_one_sub {f : ℝ → ℝ} {r : ℕ} (hf : ContDiff ℝ r f)
-    (j n : ℕ) (x : ℝ) :
-    ∑ k ∈ range (n + 1), (-1 : ℝ) ^ (k + 1) * ((n + 1).choose (k + 1) : ℝ) *
-        iteratedDeriv r (fun y => f y ^ (k + 1 + j)) x =
-      ∑ k ∈ range (r + 1), (r.choose k : ℝ) * iteratedDeriv k (fun y => f y ^ j) x *
-        iteratedDeriv (r - k) (fun y => (1 - f y) ^ (n + 1) - 1) x
-
-/-- **Alzer–Richards derivative identity for powers of $1 + f$.** Let $r, j, n \ge 0$ be
-integers and let $f \colon \mathbb{R} \to \mathbb{R}$ be $r$ times continuously differentiable
-with $f(y) \ne 0$ for every real $y$. Writing $g^{(i)}$ for the $i$-th derivative of a function
-$g$ and taking integer powers of $f$ pointwise, for every real $x$
-$$
-\sum_{k=0}^{n} \binom{n+1}{k+1} \bigl(f^{k+1-j}\bigr)^{(r)}(x) =
-\sum_{k=0}^{r} \binom{r}{k} \bigl(1/f^j\bigr)^{(k)}(x) \,
-\bigl((1+f)^{n+1} - 1\bigr)^{(r-k)}(x).
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 1, Equation (3). -/
-theorem_wanted sum_iteratedDeriv_zpow_one_add {f : ℝ → ℝ} {r : ℕ} (hf : ContDiff ℝ r f)
-    (hf0 : ∀ y, f y ≠ 0) (j n : ℕ) (x : ℝ) :
-    ∑ k ∈ range (n + 1), ((n + 1).choose (k + 1) : ℝ) *
-        iteratedDeriv r (fun y => f y ^ ((k : ℤ) + 1 - j)) x =
-      ∑ k ∈ range (r + 1), (r.choose k : ℝ) * iteratedDeriv k (fun y => 1 / f y ^ j) x *
-        iteratedDeriv (r - k) (fun y => (1 + f y) ^ (n + 1) - 1) x
 
 /-- **Alternating Stirling sums with $\binom{n+1}{k+1}$ give Bernoulli numbers.** Write $S(n, k)$
 for the Stirling numbers of the second kind and $B_n$ for the Bernoulli numbers, with
@@ -181,7 +144,8 @@ Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 6. -/
 theorem_wanted sum_eulerNumber_mul_sum_centralPowerSum {n : ℕ} (hn : 1 ≤ n)
     (T : ℕ → ℕ → ℚ)
     (hT : ∀ k n, T k n = (∑ j ∈ range (k + 1), (k.choose j : ℚ) * ((k : ℚ) - 2 * j) ^ n) / 2 ^ k) :
-    ∑ k ∈ range n, (n.choose k : ℚ) * ((if k % 2 = 1 then 0 else chapter5EulerEven (k / 2) : ℤ) : ℚ) *
+    ∑ k ∈ range n, (n.choose k : ℚ) *
+        ((if k % 2 = 1 then 0 else chapter5EulerEven (k / 2) : ℤ) : ℚ) *
         ∑ ν ∈ range (n + 2), ((n + 1).choose ν : ℚ) * T ν (n - k) +
       (2 ^ (n + 1) - 1) * ((if n % 2 = 1 then 0 else chapter5EulerEven (n / 2) : ℤ) : ℚ) =
     ∑ k ∈ range (n + 1), ((n + 1).choose (k + 1) : ℚ) * T k n

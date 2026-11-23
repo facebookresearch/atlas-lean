@@ -21,6 +21,7 @@ public import Mathlib.Topology.Instances.EReal.Lemmas
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
 public import MathlibExt.Combinatorics.Words.EquilibriousWord
+public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
 public import MathlibExt.Combinatorics.Words.PisaEigenvector
 
 /-!
@@ -905,24 +906,6 @@ public theorem_wanted letterPosition_diff_isomorphic_iff_fibonacci {w : ℕ → 
         letterPosition w true (n + 1) - letterPosition w true n = σa (w (n - 1)) ∧
           letterPosition w false (n + 1) - letterPosition w false n = σb (w (n - 1))) ↔
       w = (fun i => !fibInf i) ∨ w = fibInf
-
-/-- **Fibonacci and iccanobiF iterates of a.** Let $\varrho_F$ be the Fibonacci substitution
-$a \mapsto ab$, $b \mapsto a$ and let $\varrho_F'$ be the iccanobiF substitution $a \mapsto ba$,
-$b \mapsto a$, acting on finite words over the letters $a$ and $b$; thus $\varrho_F^m(a)$ is the
-finite Fibonacci word $f_m$ with each $0$ written as $a$ and each $1$ as $b$. Then for every
-$n \ge 1$, $ab\,\varrho_F^{2n}(a) = (\varrho_F')^{2n}(a)\,ba$ and
-$ba\,\varrho_F^{2n-1}(a) = (\varrho_F')^{2n-1}(a)\,ab$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 51
-(`jis-2025-25.1.5-prop-51`). -/
-public theorem_wanted fibonacci_iccanobiF_conjugate_a (n : ℕ) (hn : 1 ≤ n) :
-    [true, false] ++ (fibWord (2 * n)).map (!·) =
-        (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 *
-        n] [true] ++ [false, true] ∧
-      [false, true] ++ (fibWord (2 * n - 1)).map (!·) =
-        (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 * n -
-            1] [true] ++ [true, false]
 
 /-- **Conjugacy of the Fibonacci and iccanobiF iterates of $b$.** Let $\varrho_F'$ be the
 iccanobiF substitution $a \mapsto ba$, $b \mapsto a$, extended to finite words by concatenation,

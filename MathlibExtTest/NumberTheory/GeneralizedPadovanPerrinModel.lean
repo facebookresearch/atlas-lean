@@ -50,4 +50,26 @@ example : ∃ k₁ k₂ s : ℕ, 0 < k₁ ∧ 0 < k₂ ∧ 0 < s ∧
   have h := aeval_ne_zero_of_isCoprime hsep (-1 : ℂ)
   norm_num at h
 
+-- `padovanPerrin_charPoly_separable` at the smallest parameters it allows: `k₁ = 1`, `k₂ = 2`,
+-- `p = 2`, `s = 3`, so the five roots of `z⁵ - z² - 2` are distinct.
+example : (X ^ 5 - X ^ 2 - C 2 : ℂ[X]).Separable := by
+  simpa using padovanPerrin_charPoly_separable 1 2 2 3 one_pos le_rfl (by norm_num) (by norm_num)
+
+-- The hypothesis `k₁ ^ 2 < k₂` cannot be dropped: for `k₁ = 3`, `k₂ = 2`, `p = 2`, `s = 4`,
+-- `z⁶ - 3 z² - 2 = (z² + 1)² (z² - 2)` is not separable (`i` is also a root of its derivative).
+example : ∃ k₁ k₂ p s : ℕ, 0 < k₁ ∧ 2 ≤ p ∧ p < s ∧ ¬ k₁ ^ 2 < k₂ ∧
+    ¬ (X ^ (s + p) - C (k₁ : ℂ) * X ^ p - C (k₂ : ℂ)).Separable := by
+  refine ⟨3, 2, 2, 4, by norm_num, le_rfl, by norm_num, by norm_num, fun hsep => ?_⟩
+  have h := aeval_ne_zero_of_isCoprime hsep Complex.I
+  norm_num at h
+  exact h (by ring)
+
+-- Nor can `p < s` be dropped: for `k₁ = 60`, `k₂ = 5184`, `p = 3`, `s = 2`, where
+-- `k₁ ^ 2 = 3600 < k₂`, `-6` is a double root of `z⁵ - 60 z³ - 5184`.
+example : ∃ k₁ k₂ p s : ℕ, 0 < k₁ ∧ 2 ≤ p ∧ ¬ p < s ∧ k₁ ^ 2 < k₂ ∧
+    ¬ (X ^ (s + p) - C (k₁ : ℂ) * X ^ p - C (k₂ : ℂ)).Separable := by
+  refine ⟨60, 5184, 3, 2, by norm_num, by norm_num, by norm_num, by norm_num, fun hsep => ?_⟩
+  have h := aeval_ne_zero_of_isCoprime hsep (-6 : ℂ)
+  norm_num at h
+
 end MathlibExtTest.GeneralizedPadovanPerrinModel

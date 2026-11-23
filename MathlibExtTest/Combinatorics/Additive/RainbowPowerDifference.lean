@@ -73,4 +73,24 @@ example : c₇ 1 ∈ (Finset.Ico 2 7).image (fun n : ℕ => c₇ n) := by
     apply c₇_rainbowFree
     simp [h]
 
+-- The inputs 6 and 2 share a factor, have different colors, and occur in decreasing order.
+example : ∃ a b : ℕ, 0 < a ∧ 0 < b ∧ a.Coprime b ∧ c₇ a = 1 ∧ c₇ b = 2 ∧
+    ((a : ℤ) - b).natAbs = 4 :=
+  exists_coprime_same_colors_of_coprime_dist 7 c₇ 6 2 (by decide) (by decide) (by decide)
+
+-- At distance zero the representatives coincide, so coprimality forces both to be one.
+example (c : ZMod 1 → Fin 3) (i : ℕ) (hi : 0 < i) : c 1 = c i := by
+  obtain ⟨a, b, _, _, hcop, ha, _, hdist⟩ :=
+    exists_coprime_same_colors_of_coprime_dist 1 c i i hi hi (by simp)
+  obtain rfl : a = b := by omega
+  have ha₁ : a = 1 := by simpa [Nat.Coprime] using hcop
+  simpa only [ha₁, Nat.cast_one] using ha
+
+-- Modulus zero allows any coloring of the integers and forces the input distance to be one.
+example (c : ZMod 0 → Fin 3) (i : ℕ) (hi : 0 < i) :
+    ∃ a b : ℕ, 0 < a ∧ 0 < b ∧ a.Coprime b ∧ c a = c i ∧ c b = c (i + 1) ∧
+      ((a : ℤ) - b).natAbs = 1 := by
+  simpa using
+    exists_coprime_same_colors_of_coprime_dist 0 c i (i + 1) hi (by omega) (by simp)
+
 end MathlibExtTest.RainbowPowerDifference

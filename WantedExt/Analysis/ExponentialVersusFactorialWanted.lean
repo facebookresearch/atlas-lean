@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.MulLogUpperBound
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.RpowLowerBound
 public import MathlibExt.Data.Nat.Factorial.Iterate
 
@@ -37,14 +38,6 @@ public theorem_wanted iterate_logb_tetration_strictMono_and_converges {a b : ℝ
     StrictMono (fun n : ℕ => (Real.logb a)^[n] ((fun x : ℝ => b ^ x)^[n] 1)) ∧
       ∃ L : ℝ, Tendsto (fun n : ℕ => (Real.logb a)^[n] ((fun x : ℝ => b ^ x)^[n] 1))
         atTop (𝓝 L)
-
-/-- **Upper bound $\Gamma(x + 1) \ln \Gamma(x + 1) \le \Gamma(x)^{\Gamma(x)}$.** For every real
-number $x > 4$, $\Gamma(x + 1) \ln \Gamma(x + 1) \le \Gamma(x)^{\Gamma(x)}$.
-
-Source: Karol Gryszka, *Exponential versus Factorial Revisited*, Journal of
-Integer Sequences 28 (2025), Article 25.2.8, Lemma 9 (`jis-2025-25.2.8-lem-9`). -/
-public theorem_wanted Gamma_add_one_mul_log_le_Gamma_rpow_self {x : ℝ} (hx : 4 < x) :
-    Real.Gamma (x + 1) * Real.log (Real.Gamma (x + 1)) ≤ Real.Gamma x ^ Real.Gamma x
 
 /-- **Normalization of power towers.** Let $a, b > e^{1/e}$ be real numbers with $a \ne b$. For
 a real number $c$ and $m \ge 0$ let $E_m(b, c)$ be the $m$-fold iterate of $x \mapsto b^x$

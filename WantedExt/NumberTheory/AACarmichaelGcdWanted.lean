@@ -13,6 +13,7 @@ public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.ArithmeticFunction.Carmichael
+public import MathlibExt.NumberTheory.AACarmichaelAuxiliaryPrimes
 public import MathlibExt.NumberTheory.AACarmichaelGcd
 
 namespace MetaMathlibExt
@@ -47,29 +48,6 @@ public theorem_wanted aaCarmichael_count_ge_of_least_prime_in_progression_bound
           Real.log (Real.log (Real.log X))) ≤
         ({n : ℕ | (n : ℝ) ≤ X ∧ IsAACarmichael a n ∧
             n.primeFactors.gcd (fun p => (p : ℤ) - a) = ν}.ncard : ℝ)
-
-
-/-- **Size of the auxiliary primes in the construction.** For a natural number $z$, let $J$ be the
-product of the primes $r$ with $z/2 \le r \le z$, and write $\omega(g)$ for the number of distinct
-prime factors of $g$. For every real $A$ and all sufficiently large natural numbers $z$ the
-following holds: if $j$, $g$ and $q$ are natural numbers with $1 \le j \le (\log z)^{2A}$,
-$g \mid J$, $\omega(g) = \lfloor \log z \rfloor$, $q$ prime and $q = gj + 1$, then
-$$(z/6)^{\log z} \le q \le 2 z^{\log z} (\log z)^{2A}.$$
-
-In the paper the bound is stated for the primes $q$ of a chosen set $\mathcal{Q}_i$ of such primes
-with a fixed $j = j_0$, and $A \ge 2$ is the constant of Conjecture 2; the statement here covers
-every such $j$ and $q$, and every real $A$.
-
-Source: Thomas Wright, *(a,a)-Carmichael Numbers and Greatest Common Divisors of p-a*,
-INTEGERS 26 (2026), Article A123, Section 3 (definitions of `J`, `𝓡_j`, `𝒬ᵢ`) and Lemma 1
-(`integers-2026-A123-lem-1`). -/
-public theorem_wanted rpow_log_le_prime_of_eq_mul_add_one_of_dvd_prod_primes
-    (A : ℝ) :
-    ∀ᶠ z : ℕ in Filter.atTop, ∀ j g q : ℕ, 1 ≤ j → (j : ℝ) ≤ Real.log z ^ (2 * A) →
-      g ∣ ∏ r ∈ (Finset.Iic z).filter (fun r : ℕ => r.Prime ∧ (z : ℝ) / 2 ≤ r), r →
-      g.primeFactors.card = ⌊Real.log z⌋₊ → q.Prime → q = g * j + 1 →
-        ((z : ℝ) / 6) ^ Real.log z ≤ q ∧
-          (q : ℝ) ≤ 2 * (z : ℝ) ^ Real.log z * Real.log z ^ (2 * A)
 
 /-- **The Carmichael function of a product of auxiliary primes is small.** For a natural number
 $z$, let $J$ be the product of the primes $r$ with $z/2 \le r \le z$, and write $\omega(g)$ for the

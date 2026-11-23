@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.CentralBinomProductEquationOne
 public import MathlibExt.NumberTheory.CentralBinomProductEquationSmall
 
 /-!
@@ -189,15 +190,6 @@ INTEGERS 26 (2026), Article A26, Lemma 12 (`integers-2026-A26-lem-12`). -/
 public theorem_wanted centralBinom_add_ne_of_large_a (x a b : ℕ) (hx : 2 ≤ x) (hb : 0 < b)
     (hk : 150 ≤ a + b) (ha : 171 * x ≤ 121 * a) :
     (a + b).centralBinom ≠ a.centralBinom * (x + 2 * b).choose b
-
-/-- **Central binomial products with $x = 1$.** Let $a$ and $b$ be positive integers. Then
-$\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{1+2b}{b}$ if and only if $a = 1$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Proposition 2 (`integers-2026-A26-prop-2`). -/
-public theorem_wanted centralBinom_add_eq_centralBinom_mul_choose_one_iff (a b : ℕ) (ha : 0 < a)
-    (hb : 0 < b) :
-    (a + b).centralBinom = a.centralBinom * (1 + 2 * b).choose b ↔ a = 1
 
 /-- **No large solutions of the central binomial product equation with shift at least two.**
 For natural numbers $a$, $b$, $x$ with $a \ge 1$, $b \ge 1$, $x \ge 2$ and $a + b \ge 150$, we have

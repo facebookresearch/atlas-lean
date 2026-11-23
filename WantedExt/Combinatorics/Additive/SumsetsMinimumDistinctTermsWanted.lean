@@ -17,6 +17,7 @@ public import Mathlib.Data.ZMod.Defs
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.Combinatorics.AP.Basic
 public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumset
+public import MathlibExt.Combinatorics.Additive.SumsetsMinimumDistinctTerms
 
 namespace MetaMathlibExt
 
@@ -135,16 +136,6 @@ public theorem_wanted plagne_min_nsmul_card (m k h : ℕ) (hk : 1 ≤ k) (hkm : 
     (hh : 1 ≤ h) :
     sInf ((fun A : Finset (ZMod m) => (h • A).card) '' {A | A.card = k}) =
       sInf ((fun d => (h * ((k + d - 1) / d) - h + 1) * d) '' (m.divisors : Set ℕ))
-
-/-- **Bajnok's lemma on subset sums in $\mathbb{Z}/d\mathbb{Z}$.** Let $d$ and $t$ be natural
-numbers with $1 \le t \le d - 1$. Then every $\ell \in \mathbb{Z}/d\mathbb{Z}$ is the sum of the
-elements of some $t$-element subset $L \subseteq \mathbb{Z}/d\mathbb{Z}$.
-
-Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
-Article A12, Lemma 1 (Bajnok) (`integers-2025-A12-lem-1`). -/
-public theorem_wanted exists_card_eq_sum_eq_zmod (d t : ℕ) (ht : 1 ≤ t) (htd : t ≤ d - 1)
-    (ℓ : ZMod d) :
-    ∃ L : Finset (ZMod d), L.card = t ∧ L.sum id = ℓ
 
 /-- **Decomposition of sums with at least $r$ distinct terms.** Let $G$ be an abelian group, $A$
 a nonempty finite subset of $G$, and $r, h$ natural numbers with $1 \le r \le |A|$ and $r \le h$.
