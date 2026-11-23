@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.Karp.ThreeSatCorrect
 
 namespace Cslib.Complexity.Karp.Tests
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 -- Fresh numbers are odd and their codes are `true`, `u` times `false`, `true`.
 #guard (List.range 4).map fresh = [3, 5, 9, 17]

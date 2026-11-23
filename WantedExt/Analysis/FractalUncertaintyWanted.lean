@@ -79,7 +79,8 @@ def PorousOnLines (ν α₀ α₁ : ℝ) (X : Set ℝᵈ) : Prop :=
 /-- **Closed cubes in Euclidean space.** Let $d$ be a natural number. For real numbers $a$ and $b$,
 the cube $[a,b]^d$ is the set of points $x$ of the Euclidean space $\mathbb{R}^d$ with
 $a \le x_i \le b$ for every coordinate $i$. -/
-abbrev cube (a b : ℝ) : Set ℝᵈ := EuclideanSpace.equiv (Fin d) ℝ ⁻¹' Set.univ.pi fun _ ↦ Set.Icc a b
+noncomputable abbrev cube (a b : ℝ) : Set ℝᵈ :=
+  EuclideanSpace.equiv (Fin d) ℝ ⁻¹' Set.univ.pi fun _ ↦ Set.Icc a b
 
 /--
 **Cohen's fractal uncertainty principle for line-porous sets.** Let $d$ be a natural number and
