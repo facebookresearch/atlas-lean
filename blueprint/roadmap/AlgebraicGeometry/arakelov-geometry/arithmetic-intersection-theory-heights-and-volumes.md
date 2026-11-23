@@ -80,7 +80,7 @@ each citing the source and locator below.
    Poincaré–Lelong formula they use is described under
    [Birational geometry and vanishing theorems](../birational-geometry/README.md); the case of
    number fields is under
-   [Arakelov divisors](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/arakelov-divisors/README.md).
+   [Arakelov divisors](arakelov-divisors/README.md).
 2. Hermitian vector bundles and their arithmetic Chern classes, the determinant of cohomology and
    the Quillen metric, and the arithmetic Riemann–Roch theorem.
 3. Heights of cycles, and their comparison with the heights under

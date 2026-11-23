@@ -31,15 +31,18 @@ public import Mathlib.Logic.Equiv.Fin.Basic
 Real coordinates are fixed on every standard real/imaginary basis vector.
 The integral is the finite chart-partition sum against ordinary Lebesgue
 measure, with the actual chart pullback form. It is not a trace field.
-The wedge adapter is fixed on every tangent tuple by the signed-permutation
-sum divided by the two factorials. Ordinary wedge/Stokes/partition proofs
-are completed public source support in TauCetiProject/TauCeti
-62bbc0596dc3539d488232e4e924a338548ea0a9,
+The wedge is fixed on every tangent tuple by the signed-permutation sum
+divided by the two factorials.
+
+`WedgeTheory` (the smoothness of that pointwise wedge) and `IntegrationTheory`
+(integrability, linearity and Stokes for that integral) are hypothesis
+classes; everything using them is conditional on them. Their instances are
+requested in `WantedExt/AlgebraicGeometry/ManifoldDifferentialFormsWanted.lean`.
+TauCetiProject/TauCeti at 62bbc0596dc3539d488232e4e924a338548ea0a9 proves the
+corresponding facts for its own form API in
 `Geometry/Manifold/DifferentialForm/Wedge/Smooth/Basic.lean`,
 `DifferentialForm/Integration/Chart/Basic.lean` and
-`DifferentialForm/Integration/BoundarylessStokes.lean`
-(Apache 2.0); their native model integration is separate from the
-Kähler/period conclusions.
+`DifferentialForm/Integration/BoundarylessStokes.lean` (Apache 2.0).
 -/
 
 @[expose] public noncomputable section
@@ -65,8 +68,10 @@ variable (n : ℕ) (M : Type) [TopologicalSpace M] [ChartedSpace (Coordinates n)
 
 abbrev Forms (p : ℕ) := GlobalForms ℝ (Coordinates n) M p
 
-/-- The ordinary wedge is completely fixed on pointwise tangent tuples.
-Its smoothness/linearity adapters are source-supported background. -/
+/-- A smooth wedge product, fixed on every pointwise tangent tuple, with the
+constant unit `0`-form. The data are determined by their values; the content
+of an instance is that the pointwise wedge of smooth forms is smooth. Instances
+are requested in `ManifoldDifferentialFormsWanted`. -/
 class WedgeTheory where
   unit : Forms n M 0
   unit_value : ∀ x : M, unit.val ⟨x, by trivial⟩ (fun i : Fin 0 ↦ Fin.elim0 i) = 1
@@ -115,8 +120,9 @@ def chartDensity (α : Forms n M (n * 2)) (i : Fin A.count) (z : RealCoordinates
 def integral (α : Forms n M (n * 2)) : ℝ :=
   ∑ i, ∫ z : RealCoordinates n, chartDensity n M C A α i z
 
-/-- Ordinary linearity and Stokes on the displayed integral. No analytic
-cycle pairing or Kähler/period conclusion is included. -/
+/-- Integrability, linearity and Stokes' theorem for the displayed integral. No
+analytic cycle pairing or Kähler/period conclusion is included. Instances are
+requested in `ManifoldDifferentialFormsWanted`. -/
 class IntegrationTheory : Prop where
   integrable : ∀ α i, Integrable (chartDensity n M C A α i)
   add : ∀ α β, integral n M C A (α + β) = integral n M C A α + integral n M C A β
