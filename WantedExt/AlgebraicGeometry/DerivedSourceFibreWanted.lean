@@ -12,13 +12,19 @@ public import MathlibExt.AlgebraicGeometry.DerivedSourceFibreFrames
 public import MathlibExt.AlgebraicGeometry.DerivedArtinAtlasModels
 
 /-!
-# Source construction and nondegeneracy requests for actual isotropic fibres
+# Source construction requests for actual isotropic fibres
 
 Factories choose coupled source presentations. Boundary and residue
 requests concern their already computed b, h, cone[-1] and exact NC
-loop coefficients. The intersection nondegeneracy request assumes the
-original ambient symplectic form and both actual source Lagrangian
-maps; it concerns the new residue Theta on the derived intersection.
+loop coefficients.
+
+The PTVV intersection theorem (Theorem 2.9) is not requested yet. The
+Lagrangian test uses a chosen contraction pullback homotopy, which is
+determined only up to closed cochains, and the cotangent differentials
+are relative to chosen along representations; a closed correction can
+make the relative Theta nondegenerate while the residue on the
+intersection is unchanged. The theorem needs the geometric contraction
+comparison and the canonical along representations.
 
 Source: PTVV arXiv:1111.3209v4, Definitions 2.7--2.8 and Theorem 2.9.
 These are direct Batteries ProofWanted entries, with provider proofs
@@ -92,26 +98,5 @@ def_wanted native_fibre_source_frame [IsNoetherianRing k] (X Y T : DerivedStack 
 /-- Realize the exact closed NC cochain h+u-j-s0(left), with the native form degree n-1. -/
 def_wanted native_residue_closed_vertex {X : Prestack k} {F : GlobalNCModel D 2 NC X}
     {n : ℤ} (P : ResiduePaths F n) : ResidueClosedFormSource P
-
-/-- PTVV nondegeneracy concerns the same computed residue Theta and actual source Lagrangian maps. -/
-theorem_wanted native_intersection_residue_nondegenerate [IsNoetherianRing k]
-    {X Y T : DerivedStack Q} {P : NaturalPathModel T} {f : StackMap X T} {g : StackMap Y T}
-    {Z : FibreStackModel P f g} {n : ℤ}
-    (F : FibreSourceFrame (U := U) (R := R) (L := L) (D := D) (NC := NC) Z n)
-    (gx : IsDerivedArtin X) (gy : IsDerivedArtin Y) (gt : IsDerivedArtin T)
-    (lx : IsLocallyOfFinitePresentationStack X) (ly : IsLocallyOfFinitePresentationStack Y)
-    (lt : IsLocallyOfFinitePresentationStack T)
-    (ω : SourceClosedForm F.ambient n) (symplectic : IsSourceSymplectic F.ambient n ω)
-    (J : LinearPath F.path.firstEndpoint F.path.secondEndpoint F.path.homotopy F.path.homotopy_d ω)
-    (h : IsotropicPath F.first.forms n
-      ((closedPullback f F.ambient.forms F.first.forms n).app (op ⦋0⦌) ω))
-    (j : IsotropicPath F.second.forms n
-      ((closedPullback g F.ambient.forms F.second.forms n).app (op ⦋0⦌) ω))
-    (wh : IsotropicBoundaryWitness F.firstPullback n ω h)
-    (wj : IsotropicBoundaryWitness F.secondPullback n ω j)
-    (leftLagrangian : IsSourceLagrangian F.firstPullback F.firstRelative n ω h wh)
-    (rightLagrangian : IsSourceLagrangian F.secondPullback F.secondRelative n ω j wj)
-    (V : ResidueClosedFormSource (sourceFibreResiduePaths F ω J h j)) :
-    IsSourceSymplectic F.intersection (n - 1) V.vertex
 
 end WantedExt.AlgebraicGeometry.DerivedSourceFibreWanted

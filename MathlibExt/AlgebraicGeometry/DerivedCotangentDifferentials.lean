@@ -158,9 +158,8 @@ structure AlongCotangentRepresentation (C : CotangentContext R G) (f : X ⟶ Y)
 
 /-- The actual cotangent differential is the full Yoneda transpose of the native f-map, relative to
 the chosen along representation `C`. It therefore depends on `C`: changing `C` by an automorphism
-`φ` of `f^* L_Y` replaces `df` by `df ∘ φ⁻¹` (for `f = id`, `df = -id` is possible). Requests about
-the differential only use properties invariant under this change (existence, and equivalence or
-nondegeneracy conditions); the chain rule and `d(id) = id` need the canonical representation. -/
+`φ` of `f^* L_Y` replaces `df` by `df ∘ φ⁻¹` (for `f = id`, `df = -id` is possible). The chain rule
+and `d(id) = id` need the canonical representation and are not requested. -/
 structure CotangentDifferential (CX : CotangentContext R G) {GY : QCohEnhancement M U Y}
     (CY : CotangentContext R GY) (f : X ⟶ Y) (PB : PullbackDGModel f GY G)
     {A : AlongLiftProjection M R CX.kernels f CX.projection}

@@ -178,7 +178,9 @@ def globalContractionHomPullback (G : RelativeGeometry SX SY f) :
       homGlobal SX.tangent.object SX.context.cotangent.object :=
   (coefficientsToGlobal k).map (contractionHomPullback G)
 
-/-- The same pullback comparison is a full cochain homotopy between the two computed NC contraction maps. -/
+/-- The same pullback comparison is a full cochain homotopy between the two computed NC contraction maps.
+It is constrained only by its boundary, so it is determined up to closed cochains; it is not pinned
+to the comparison induced by the geometric pullback of forms. -/
 structure ContractionPullbackHomotopy (G : RelativeGeometry SX SY f) where
   cochain : Cochain ((ncComplex SY.forms)⟦-2⟧)
     (homGlobal SX.tangent.object SX.context.cotangent.object) (-1)
@@ -231,7 +233,10 @@ theorem relativeTheta_closed {G : RelativeGeometry SX SY f} (C : ContractionPull
     dgDifferential (LargeScalar k) (n - 1) (relativeTheta C T n ω h) = 0 :=
   isotropicArrow_closed T n (sourceB G n ω) (sourceB_closed G n ω) (sourceH C n ω h) W.boundary
 
-/-- Lagrangian nondegeneracy concerns this exact source-induced relative arrow. -/
+/-- Lagrangian nondegeneracy concerns this exact source-induced relative arrow, for the chosen
+contraction pullback homotopy `C` and the chosen along representation of `G`: adding a closed
+cochain to `C` changes the relative arrow, so this is the PTVV condition only for the geometric
+choices. -/
 def IsSourceLagrangian {G : RelativeGeometry SX SY f} (C : ContractionPullbackHomotopy G)
     (T : RelativeTangent (tangentArrow G) (tangentArrow_closed G))
     (n : ℤ) (ω : SourceClosedForm SY n)
