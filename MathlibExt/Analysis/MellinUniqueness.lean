@@ -91,6 +91,7 @@ private theorem lvqPair_apply {C : Type*} [TopologicalSpace C] [CompactSpace C] 
     lvqPair μ F g = ∫ x, F x * g x ∂μ :=
   rfl
 
+open scoped Pointwise in
 private theorem lvqZero {C : Type*} [Group C] [TopologicalSpace C] [CompactSpace C]
     [MeasurableSpace C] [BorelSpace C] (μ : Measure C) [IsFiniteMeasureOnCompacts μ]
     [μ.IsOpenPosMeasure]
