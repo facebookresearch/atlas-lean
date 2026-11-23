@@ -30,7 +30,8 @@ open MathlibExt.AlgebraicGeometry.PDivisibleGroupSchemes
 open MathlibExt.AlgebraicGeometry.PDivisibleCartierTowerModels
 open MathlibExt.AlgebraicGeometry.FullCrystallineRestrictionModels
 
-/-- Construct the full crystal and its original nilpotent-basis Ext restriction comparison. -/
+/-- Construct the full crystal, the nilpotent-basis crystal, and an isomorphism between the
+restricted full-basis Ext module and the nilpotent-basis Ext module. -/
 public def_wanted fullDieudonneCrystalExtension
     (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R]
     (G : PDivisibleGroup (Spec (.of R)) p) (D : CartierDualTower p R G)

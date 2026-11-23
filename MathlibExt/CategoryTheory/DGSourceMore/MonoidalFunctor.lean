@@ -3,15 +3,16 @@ Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: The Tau Ceti contributors
 -/
+module
 
 /-
-Source port of TauCeti/CategoryTheory/Monoidal/Functor.lean.
-TauCeti revision 62bbc0596dc3539d488232e4e924a338548ea0a9.
-Modifications: project namespaces/import paths and explicit universe
-parameters in the final namespace for autoImplicit=false.
-The original Apache 2.0 copyright and authors above are retained.
+This completed proof port retains the original Apache 2.0 license and author credit.
+Source: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/TauCeti/CategoryTheory/Monoidal/Functor.lean
+Original license: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/LICENSE
+Modifications: module/namespace paths are adapted for Atlas, and the
+universes of the final independent section are redeclared explicitly.
+Mathematical operations, hypotheses and proof bodies are retained.
 -/
-module
 
 public import Mathlib.CategoryTheory.Adjunction.Mates
 public import Mathlib.CategoryTheory.Monoidal.NaturalTransformation

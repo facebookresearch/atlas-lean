@@ -60,7 +60,10 @@ def restrictedCovariantModule :=
     (FullPDCrystallineExtModules.nativeModule p A (Over.mk s)
       (FullPDCrystallineSheaves.groupSheaf p A (Over.mk s) D.group) 1)
 
-/-- Both crystal constructions and their actual-basis module comparison are requested outputs. -/
+/-- Both crystal constructions, together with an isomorphism between the restriction of the
+full-basis covariant Ext module to the nilpotent basis and the nilpotent-basis covariant Ext
+module, are requested outputs. The isomorphism is not required to be a canonical restriction
+map: only its existence is recorded. -/
 structure ExtensionComparison where
   fullCrystal : FullPDCrystallineExtModules.CrystalRealization p A (Over.mk s)
     (FullPDCrystallineSheaves.groupSheaf p A (Over.mk s) D.group)

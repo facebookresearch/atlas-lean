@@ -15,7 +15,7 @@ module
 public import Mathlib.CategoryTheory.Monoidal.CommMon_
 public import Mathlib.CategoryTheory.Monoidal.Grp
 public import Mathlib.CategoryTheory.Monoidal.Mon
-public import MathlibExt.CategoryTheory.Monoidal.Functor
+public import MathlibExt.CategoryTheory.DGSourceMore.MonoidalFunctor
 
 /-!
 # Monoid objects
