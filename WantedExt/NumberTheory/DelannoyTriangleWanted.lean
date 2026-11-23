@@ -50,7 +50,7 @@ public import WantedExt.Combinatorics.Enumerative.GeneralizedMotzkinModPWanted
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
-public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
+public import MathlibExt.NumberTheory.DelannoyBinomialSum
 public import MathlibExt.NumberTheory.FermatQuotient
 
 set_option autoImplicit false
@@ -206,20 +206,6 @@ theorem_wanted choose_add_choose_mod (p j k : ℕ)
     (hp : p.Prime) (hjk : j ≤ k) (hk : k ≤ p - 2) :
     (Nat.choose (p - j) (k + 1) : ZMod p) +
         (-1) ^ k * (Nat.choose (k + j) (k + 1) : ZMod p) = 0
-
-/-- **A binomial sum through central Delannoy numbers.** For every natural number $k$,
-$$4 \sum_{j=0}^{k} \binom{k}{j} \binom{k+j}{k+1} = D_{k+1} - 3 D_k,$$
-where $D_n = A_{1,1}(n) = \sum_{i=0}^{n} \binom{n}{i} \binom{n+i}{i}$ is the binomial-power
-number with $r = s = 1$, that is, the $n$-th central Delannoy number.
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Lemma 13. -/
-theorem_wanted sum_choose_choose_binomialPowerSeq (k : ℕ) :
-    4 * (∑ j ∈ Finset.range (k + 1),
-        (Nat.choose k j * Nat.choose (k + j) (k + 1) : ℤ)) =
-      (MetaMathlibExt.binomialPowerSeq 1 1 (k + 1) : ℤ) -
-        3 * (MetaMathlibExt.binomialPowerSeq 1 1 k : ℤ)
 
 /-- Bridge to the existing symmetric-case API: the constant
 term of `(a x⁻¹ + b + a x)ⁿ`
