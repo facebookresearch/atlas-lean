@@ -79,7 +79,7 @@ def IsSmall {Y X : Scheme.{u}} (f : Y ⟶ X) (n : ℕ) : Prop :=
 structure CanonicalModule {k : Type u} [Field k]
     (X : Over (Spec (.of k))) (n : ℕ) where
   omega : X.left.Modules
-  coherent : IsLocallyFinitelyPresentedModule omega
+  coherent : SheafOfModules.IsFinitePresentation (R := X.left.ringCatSheaf) omega
   duality : ∀ r : ℕ, ∀ F : X.left.Modules, IsVectorBundle F r →
     (F ⟶ omega) ≃+ ((cohomology X.hom F n) →ₗ[k] k)
   naturality : ∀ (r s : ℕ) (F G : X.left.Modules)
@@ -102,10 +102,17 @@ def CanonicalQLine.lineBundle {k : Type u} [Field k]
     {X : Over (Spec (.of k))} {n : ℕ} (K : CanonicalQLine X n) : LineBundle X.left :=
   ⟨K.secondDual.dual, K.line⟩
 
+/-- Relative ampleness for a Noetherian source: the target is covered by affine opens over
+which the restriction of `L` is ample. -/
 def IsRelativelyAmple {k : Type u} [Field k]
-    {Y X : Over (Spec (.of k))} (f : Y ⟶ X) (L : LineBundle Y.left) : Prop :=
+    {Y X : Over (Spec (.of k))} [IsNoetherian Y.left] (f : Y ⟶ X) (L : LineBundle Y.left) :
+    Prop :=
   ∀ x : X.left, ∃ U : X.left.affineOpens, x ∈ U.1 ∧
     ∃ h : IsLineBundle ((Scheme.Modules.pullback (f.left ⁻¹ᵁ U.1).ι).obj L.val),
+      letI : IsNoetherian (f.left ⁻¹ᵁ U.1 : Scheme.{u}) :=
+        { toIsLocallyNoetherian := inferInstance
+          toCompactSpace := isCompact_iff_compactSpace.mp
+            (TopologicalSpace.NoetherianSpace.isCompact _) }
       IsAmpleLine ⟨(Scheme.Modules.pullback (f.left ⁻¹ᵁ U.1).ι).obj L.val, h⟩
 
 structure Flip {k : Type u} [Field k]
@@ -113,6 +120,7 @@ structure Flip {k : Type u} [Field k]
   source : Over (Spec (.of k))
   [integral : IsIntegral source.left]
   [properSource : IsProper source.hom]
+  [noetherianSource : IsNoetherian source.left]
   normal : IsNormalIntegral source.left
   projectiveSource : IsProjectiveVariety source
   map : source ⟶ C.target

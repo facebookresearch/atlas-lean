@@ -52,7 +52,7 @@ open _root_.MathlibExt.AlgebraicGeometry.NumericalCompactifiedJacobians
 
 universe u
 
-attribute [local instance] HasDerivedCategory.standard
+attribute [local instance] HasDerivedCategory.standard FineCompactifiedJacobian.proper
 
 /-- The actual ordinary tensor map, via presheaf tensor and sheafification. -/
 def moduleTensorMap {X : Scheme.{u}} {L L' M M' : X.Modules}
@@ -72,7 +72,7 @@ structure SheafDual {X : Scheme.{u}} (P : X.Modules) where
 
 /-- The closed-point maximal Cohen--Macaulay depth condition on affine charts. -/
 def IsClosedPointMCM {X : Scheme.{u}} (P : X.Modules) : Prop :=
-  IsCoherent P ∧ ∀ (U : X.Opens), IsAffineOpen U →
+  IsFiniteTypeQuasicoherent P ∧ ∀ (U : X.Opens), IsAffineOpen U →
     ∀ (p : Ideal Γ(X, U)) (hp : p.IsMaximal),
       letI : p.IsMaximal := hp
       (p.depth (ModuleCat.of Γ(X, U) Γ(P, U)) : WithBot ℕ∞) =
@@ -102,9 +102,9 @@ def diagonalKernel {k : Type u} [Field k] (J : Over (Spec (.of k))) :
 its line-bundle locus, its open Picard-zero family, its symmetry and its
 extension from the big open. Its geometric properties and the autoduality
 identities are the separate predicates `Properties` and `IsAutodual`. -/
-structure PoincareKernelModel {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    (q : Polarization C.left) (s : SmoothMarking C)
+structure PoincareKernelModel {k : Type u} [Field k] [IsAlgClosed k]
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    [TorsionFreeRestrictions C.left] (q : Polarization C.left) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) where
   /-- The canonical product/fiber-product comparison is pinned on projections. -/
   productComparison : (prod M.J M.J).left ≅ pullback M.J.hom M.J.hom
@@ -126,6 +126,8 @@ structure PoincareKernelModel {k : Type u} [Field k]
     p ⁻¹ᵁ lineOpen = ⊤ ↔
       IsLineBundle ((Scheme.Modules.pullback
         (pullback.fst (prod.snd : prod C M.J ⟶ M.J).left p)).obj M.F)
+  /-- `H⁰(J̄, 𝒪) = k`, so that `J̄` has a Picard-zero model. -/
+  [constantSections : HasConstantGlobalSections M.J.hom]
   /-- Picard zero of the compactified Jacobian, with its actual universal family. -/
   picard : PicardZeroModel M.J origin
   /-- The classifying map of the restricted family; `Properties.betaIso`
@@ -149,7 +151,8 @@ structure PoincareKernelModel {k : Type u} [Field k]
   /-- The internal dual of `P`, fixed by its universal property. -/
   dual : SheafDual P
 
-variable {k : Type u} [Field k] {C : Over (Spec (.of k))} [TorsionFreeRestrictions C.left]
+variable {k : Type u} [Field k] [IsAlgClosed k] {C : Over (Spec (.of k))}
+  [IsProperCurve C.hom] [HasConstantGlobalSections C.hom] [TorsionFreeRestrictions C.left]
   {q : Polarization C.left} {s : SmoothMarking C} {M : FineCompactifiedJacobian C q s}
 
 /-- Arinkin's geometric properties of the Poincaré sheaf: the line-bundle locus

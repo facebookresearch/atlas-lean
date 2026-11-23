@@ -65,6 +65,7 @@ structure FanoData (X : ComplexVariety) (n : ℕ) where
   canonicalDuality : SerreDualizingLine X.hom canonical.val n
   anticanonical : LineBundle X.left
   inverse : Nonempty (moduleTensor X.left canonical.val anticanonical.val ≅ structureModule X.left)
+  [noetherian : IsNoetherian X.left]
   ample : IsAmpleLine anticanonical
   hilbert : Polynomial ℚ
   dimension : hilbert.natDegree = n

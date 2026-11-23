@@ -49,6 +49,7 @@ theorem_wanted numerical_finiteDimensional (k : Type u) [Field k] [IsAlgClosed k
 /-- The finite cone decomposition after a genuine positive ample perturbation. -/
 theorem_wanted cone (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
+    [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
     (projective : IsProjectiveVariety X)
     (K H : LineBundle X.left)
@@ -66,6 +67,7 @@ theorem_wanted cone (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
 /-- Rationality of the actual nef threshold, with the smooth canonical denominator bound. -/
 theorem_wanted rationality (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
+    [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
     (projective : IsProjectiveVariety X)
     (K H : LineBundle X.left)
@@ -77,6 +79,7 @@ theorem_wanted rationality (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
 /-- Base-point-freeness with a genuinely ample anti-canonical perturbation. -/
 theorem_wanted basepointFree (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
+    [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
     (projective : IsProjectiveVariety X)
     (K L : LineBundle X.left)
@@ -101,6 +104,7 @@ def_wanted contraction (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
 /-- Existence of a geometrically specified canonical flip for a small contraction. -/
 def_wanted flip (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
+    [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
     (projective : IsProjectiveVariety X)
     (hn : 3 ≤ n) (K : LineBundle X.left)

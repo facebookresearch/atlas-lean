@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.LogPairs
 public import MathlibExt.AlgebraicGeometry.MoriContractionModels
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 public import Mathlib.AlgebraicGeometry.Morphisms.Immersion
 
 /-!
@@ -49,7 +50,7 @@ variable {k : Type u} [Field k]
 variable {X S : Over (Spec (.of k))}
 
 def IsQuasiProjectiveBase (S : Over (Spec (.of k))) : Prop :=
-  ∃ m : ℕ, ∃ i : S ⟶ SurfaceHilbertSchemes.projectiveSpace k m, IsImmersion i.left
+  ∃ m : ℕ, ∃ i : S ⟶ ProjectiveSpace.projectiveSpace k m, IsImmersion i.left
 
 /-- Relative N1 is a subspace of the existing actual degree-function space. -/
 def RelativeN1 (q : X ⟶ S) : Submodule ℝ (N1 X) :=

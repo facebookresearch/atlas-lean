@@ -15,10 +15,12 @@ public import MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 /-!
 # Pointed Picard-zero families
 
-Line bundles are normalized along a specified point of a curve. The
+Line bundles are normalized along a specified rational point of a proper
+scheme `X` (a curve, or for instance a compactified Jacobian). The
 representative below is characterized on all test schemes by actual
-pullbacks of its universal bundle. The group law is linked to the
-ordinary sheaf tensor, and the identity represents the trivial bundle.
+pullbacks of its universal bundle. The group law is linked to the ordinary
+sheaf tensor, and the identity represents the trivial bundle. Its relative
+dimension is `dim H¹(X, 𝒪_X)`, the genus for a curve with `H⁰(X, 𝒪_X) = k`.
 
 Reference: Bosch--Lütkebohmert--Raynaud, *Néron Models*, Chapter 9.
 -/
@@ -46,14 +48,21 @@ def IsNormalized {k : Type u} [Field k]
   Nonempty ((Scheme.Modules.pullback (sectionAt C T p).left).obj L ≅
     structureModule T.left)
 
-/-- A Picard-zero representative with its universal family and group laws. -/
+/-- A Picard-zero representative of a pointed proper scheme, with its universal family
+and group laws. It is smooth of relative dimension `dim H¹(X, 𝒪_X)`, which is the genus
+`genus C.hom` for a curve with `H⁰(X, 𝒪_X) = k`. Such a model exists when
+`H⁰(X, 𝒪_X) = k` for curves, and in characteristic zero for every such scheme (Pic⁰ is
+then smooth with tangent space `H¹(X, 𝒪_X)`); in positive characteristic, where Pic⁰ need
+not be reduced, it need not exist. The structure records the model; existence statements
+carry the hypotheses. -/
 structure PicardZeroModel {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) (p : 𝟙_ (Over (Spec (.of k))) ⟶ C) where
+    (C : Over (Spec (.of k))) [IsProper C.hom] (p : 𝟙_ (Over (Spec (.of k))) ⟶ C) where
   /-- The representing group scheme. -/
   J : Over (Spec (.of k))
   [group : GrpObj J]
   [commutative : IsCommMonObj J]
-  [smoothDimension : SmoothOfRelativeDimension (genus C.hom) J.hom]
+  [smoothDimension : SmoothOfRelativeDimension
+    (Module.finrank k (cohomology C.hom (structureModule C.left) 1)) J.hom]
   [connected : GeometricallyConnected J.hom]
   /-- The actual universal module. -/
   P : (prod C J).left.Modules

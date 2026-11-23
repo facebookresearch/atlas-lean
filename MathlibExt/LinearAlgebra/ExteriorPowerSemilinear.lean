@@ -7,25 +7,26 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/LinearAlgebra/TensorAlgebra/SemilinearMap.lean
-(Apache 2.0, as described in that repository's LICENSE).
-Modification: retain only the completed exterior-algebra and exterior-power
-base-change construction and its functoriality; omit the tensor-algebra
-and arbitrary target-ring lifting portions. No source author is stated
-because this source file does not list an individual author.
+Portions of this file are adapted from:
+
+`StacksFrontier/LinearAlgebra/TensorAlgebra/SemilinearMap.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: retain only the exterior-algebra and exterior-power base change and its
+functoriality; omit the tensor-algebra and target-ring lifting portions.
 -/
 module
 
 public import Mathlib.LinearAlgebra.ExteriorAlgebra.Grading
 public import Mathlib.LinearAlgebra.ExteriorPower.Basic
 
-/-! # Completed semilinear base change of exterior powers
+/-! # Semilinear base change of exterior algebras and exterior powers
 
-The maps are constructed from the actual exterior-algebra universal
-property, not supplied as formal fields. Their generator normalization,
-identity and composition laws are proved by the public source proof.
+A ring homomorphism `φ : R →+* S` and a `φ`-semilinear map `u : M →ₛₗ[φ] N` induce a ring
+homomorphism `ExteriorAlgebra.mapₛₗ φ u : ExteriorAlgebra R M →+* ExteriorAlgebra S N` with
+`ι R m ↦ ι S (u m)`, constructed from the universal property of the exterior algebra. It maps
+`⋀[R]^n M` into `⋀[S]^n N`, giving `φ`-semilinear maps `ExteriorAlgebra.powMapₛₗ n φ u`, which
+are compatible with identities and composition.
 -/
 
 @[expose] public noncomputable section
