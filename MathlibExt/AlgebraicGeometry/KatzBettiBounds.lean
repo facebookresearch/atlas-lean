@@ -20,9 +20,11 @@ set_option backward.isDefEq.respectTransparency false
 
 `affineVariety F` is the affine scheme `Spec(k[x_1, …, x_N]/(F_1, …, F_r))` over `k`. Its
 compactly supported rational `ℓ`-adic cohomology, computed in a compactification `c`, is
-`CompactAdicCohomology ell c n`: `Ext` from the constant sheaf into the compact-support kernel of
-the sheaf `C(-, ℚ_ℓ)`. `katzBound N r d = 6 · 2^r · (3 + r d)^(N + 1)` is Katz's bound for the sum
-of the compact Betti numbers.
+`CompactAdicCohomology ell c n`: `Ext` from the constant sheaf into the compact-support kernel
+`ker(F → i_* i^* F) = j_! j^* F` of the sheaf `F = C(-, ℚ_ℓ)`, that is `H^n(Y, j_! j^* F)`,
+which is `H^n_c` in the sense of Bhatt–Scholze, Definition 6.7.6 (see
+`ContinuousAdicCompactSupports`). `katzBound N r d = 6 · 2^r · (3 + r d)^(N + 1)` is Katz's bound
+for the sum of the compact Betti numbers.
 
 Reference: N. M. Katz, Sums of Betti numbers in arbitrary characteristic,
 Corollary of Theorem 1, p. 4, https://web.math.princeton.edu/~nmk/BettiSum14.pdf.

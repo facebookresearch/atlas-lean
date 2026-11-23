@@ -24,18 +24,21 @@ set_option backward.isDefEq.respectTransparency false
 For a scheme `X` over a field `k` with a compactification `c`: an open immersion `j` of `X` into a
 proper `k`-scheme `Y` whose complement is the image of a closed immersion `i : Z → Y`, the
 compact-support coefficient sheaf of a sheaf `F` on `Y` is the kernel of the unit
-`F → i_* i^* F` on the small pro-étale site. This is `j_! j^* F`: for a quasi-compact open
-immersion `j`, the sequence `0 → j_! j^* F → F → i_* i^* F → 0` of sheaves on the pro-étale
-site is exact (Stacks 09AH), and `j` is quasi-compact here since `Y`, proper over a field, is
-noetherian. Its cohomology is the compactly supported cohomology of `X` with coefficients in
-`F`. Taking kernels in the functor category makes the construction functorial in the
-coefficients.
+`F → i_* i^* F` on the small pro-étale site. This is `j_! j^* F` (Bhatt–Scholze, Lemma 6.1.11):
+for a quasi-compact open immersion `j`, the sequence `0 → j_! j^* F → F → i_* i^* F → 0` of
+sheaves on the pro-étale site is exact (Stacks 09AH), and `j` is quasi-compact here since `Y`,
+proper over a field, is noetherian. Its cohomology `H^n(Y, j_! j^* F)` is the compactly supported
+cohomology `H^n_c(X, j^* F)` of Bhatt–Scholze, Definition 6.7.6 (`RΓ_c(X, K) = RΓ(Y, j_! K)`, with
+`j_!` exact on the pro-étale site, applied to the sheaf `K = j^* F`). This is not the derived
+functor of `G ↦ Γ(Y, j_! G)` on sheaves on `X`, which differs in general (Bhatt–Scholze,
+Remark 6.7.8): here `RΓ(Y, -)` is applied to the single sheaf `j_! j^* F`. Taking kernels in the
+functor category makes the construction functorial in the coefficients.
 
 For continuous coefficients `ℤ_ℓ` and `ℤ/ℓ^(r+1)`, the reductions induce maps of compactly
 supported cohomology, compatible with the transitions; this gives a map to the inverse limit.
 
 References: Stacks Project, Tags 09AH, 03UT and 09BT; Bhatt--Scholze,
-The pro-étale topology for schemes, §6.8.
+The pro-étale topology for schemes, Lemma 6.1.11, Definition 6.7.6, Remark 6.7.8 and §6.8.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.ContinuousAdicCompactSupports
