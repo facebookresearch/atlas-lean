@@ -30,22 +30,32 @@ open scoped BigOperators
 
 namespace MetaMathlibExt
 
-/-- The content of a word: the multiplicity of each letter. -/
+/-- **Content of a word.** Let $r$ be a natural number. The content of a word $w$ over the alphabet
+$\{0, \dots, r-1\}$ is the function that assigns to each letter $i$ the number of occurrences of $i$
+in $w$. -/
 def wittWordContent {r : ℕ} (w : List (Fin r)) : Fin r → ℕ :=
   fun i => w.count i
 
-/-- A nonempty word which is strictly smaller than each nontrivial rotation. -/
+/-- **Lyndon word.** Let $\alpha$ be a linearly ordered alphabet, and order the words over
+$\alpha$ lexicographically. A word $w$ over $\alpha$ of length $n$ is a Lyndon word if it is
+nonempty and, for every $k$ with $0 < k < n$, $w$ is strictly smaller than its rotation by $k$,
+the word obtained by moving the first $k$ letters of $w$ to the end. -/
 def IsLyndonWord {α : Type*} [LinearOrder α] (w : List α) : Prop :=
   w ≠ [] ∧ ∀ k, 0 < k → k < w.length → w < w.rotate k
 
-/-- Word content is additive under concatenation. -/
+/-- **Content is additive under concatenation.** For a natural number $r$, words $u$ and $v$ over
+the alphabet $\{0, \dots, r-1\}$, and every letter $i$, the number of occurrences of $i$ in the
+concatenation $uv$ is the number of occurrences of $i$ in $u$ plus the number of occurrences
+of $i$ in $v$. -/
 @[simp]
 theorem wittWordContent_append {r : ℕ} (u v : List (Fin r)) :
     wittWordContent (u ++ v) = fun i => wittWordContent u i + wittWordContent v i := by
   funext i
   simp [wittWordContent]
 
-/-- The content of a one-letter word is the corresponding coordinate vector. -/
+/-- **Content of a one-letter word.** Let $r$ be a natural number. For every letter $i$ of the
+alphabet $\{0, \dots, r-1\}$, the content of the one-letter word $i$ takes the value $1$ at $i$ and
+the value $0$ at every other letter. -/
 @[simp]
 theorem wittWordContent_singleton {r : ℕ} (i : Fin r) :
     wittWordContent [i] = Function.update (fun _ => 0) i 1 := by
@@ -55,7 +65,10 @@ theorem wittWordContent_singleton {r : ℕ} (i : Fin r) :
     simp [wittWordContent]
   · simp [wittWordContent, h, Ne.symm h]
 
-/-- Prepending a letter increments its coordinate in the content. -/
+/-- **Content of a word after prepending a letter.** Let $r$ be a natural number, let $w$ be a word
+over the alphabet $\{0, \dots, r-1\}$, let $i$ be a letter, and write $c(u)$ for the content of a
+word $u$ (the number of occurrences of each letter in $u$). If $iw$ denotes $w$ with $i$ prepended,
+then $c(iw)(i) = c(w)(i) + 1$ and $c(iw)(j) = c(w)(j)$ for every letter $j \ne i$. -/
 @[simp]
 theorem wittWordContent_cons {r : ℕ} (i : Fin r) (w : List (Fin r)) :
     wittWordContent (i :: w) =
@@ -66,7 +79,9 @@ theorem wittWordContent_cons {r : ℕ} (i : Fin r) (w : List (Fin r)) :
     simp [wittWordContent]
   · simp [wittWordContent, h, Ne.symm h]
 
-/-- The sum of the content of a word is its length. -/
+/-- **The content of a word sums to its length.** For a natural number $r$ and a word $w$ over
+the alphabet $\{0, \dots, r-1\}$, summing over all letters $i$ the number of occurrences of $i$
+in $w$ gives the length of $w$. -/
 @[simp]
 theorem sum_wittWordContent {r : ℕ} (w : List (Fin r)) :
     (∑ i, wittWordContent w i) = w.length := by
@@ -77,11 +92,16 @@ theorem sum_wittWordContent {r : ℕ} (w : List (Fin r)) :
   · intro i _ hi
     exact List.count_eq_zero_of_not_mem (by simpa using hi)
 
-/-- Words with prescribed content. -/
+/-- **Words with prescribed content.** Let $r$ be a natural number. Given a function $d$ from the
+alphabet $\{0, \dots, r-1\}$ to the natural numbers, the words of content $d$ are the words $w$ over
+this alphabet whose content equals $d$, that is, in which each letter $i$ occurs exactly $d(i)$
+times. -/
 def WordsOfContent {r : ℕ} (degree : Fin r → ℕ) :=
   {w : List (Fin r) // wittWordContent w = degree}
 
-/-- Lyndon words with prescribed content. -/
+/-- **Lyndon words of given content.** For a natural number $r$ and natural numbers
+$n_0, \dots, n_{r-1}$, the set of Lyndon words over the alphabet $\{0, \dots, r-1\}$, ordered as
+the natural numbers, in which each letter $i$ occurs exactly $n_i$ times. -/
 def LyndonWordsOfContent {r : ℕ} (degree : Fin r → ℕ) :=
   {w : WordsOfContent degree // IsLyndonWord w.1}
 
@@ -265,7 +285,11 @@ private theorem multinomial_eq_sum_pred {r : ℕ} (degree : Fin r → ℕ)
     _ = (n - 1 + 1) * Nat.factorial (n - 1) := Nat.factorial_succ (n - 1)
     _ = n * Nat.factorial (n - 1) := by rw [hsucc]
 
-/-- The multinomial coefficient counts words with prescribed content. -/
+/-- **Words of given content are counted by the multinomial coefficient.** Let $r$ be a natural
+number, let $n_0, \dots, n_{r-1}$ be natural numbers, and let $n = n_0 + \dots + n_{r-1}$. The
+number of words over the alphabet $\{0, \dots, r-1\}$ in which each letter $i$ occurs exactly
+$n_i$ times is the multinomial coefficient
+$\binom{n}{n_0, \ldots, n_{r-1}} = \frac{n!}{n_0! \cdots n_{r-1}!}$. -/
 theorem card_wordsOfContent_eq_multinomial {r : ℕ} (degree : Fin r → ℕ) :
     Fintype.card (WordsOfContent degree) = Nat.multinomial Finset.univ degree := by
   induction hn : (∑ i, degree i) using Nat.strong_induction_on generalizing degree with
@@ -549,7 +573,10 @@ private theorem wittRotate_ne_of_nodup_cyclicPermutations {α : Type*} {w : List
   simp [i, j] at hval
   omega
 
-/-- A nonempty finite word is primitive if and only if its cyclic permutations are distinct. -/
+/-- **Primitivity via distinct rotations.** Let $w$ be a word of length $n$, and for
+$0 \le k < n$ let $w_k$ be the rotation of $w$ by $k$, obtained by moving the first $k$ letters
+of $w$ to the end. Then $w$ is primitive if and only if $w$ is nonempty and the $n$ words
+$w_0, w_1, \dots, w_{n-1}$ are pairwise distinct. -/
 theorem isPrimitiveWord_iff_nodup_cyclicPermutations {α : Type*} {w : List α} :
     IsPrimitiveWord w ↔ w ≠ [] ∧ w.cyclicPermutations.Nodup := by
   classical
@@ -573,7 +600,9 @@ theorem isPrimitiveWord_iff_nodup_cyclicPermutations {α : Type*} {w : List α} 
     exact wittRotate_ne_of_nodup_cyclicPermutations hw0 hw
       (wittPeriod_pos w hw0) hlt (wittRotate_period w hw0)
 
-/-- A primitive word is changed by every nontrivial rotation. -/
+/-- **Nontrivial rotations move a primitive word.** If $w$ is a primitive word of length $n$
+and $0 < k < n$, then the rotation of $w$ by $k$, obtained by moving the first $k$ letters of $w$
+to the end, is different from $w$. -/
 theorem rotate_ne_of_isPrimitiveWord {α : Type*} {w : List α}
     (hw : IsPrimitiveWord w) {k : ℕ} (hk0 : 0 < k) (hk : k < w.length) :
     w.rotate k ≠ w := by
@@ -730,7 +759,9 @@ private theorem wittRoot_isPrimitive {α : Type*} [DecidableEq α]
       exact length_wittRoot w hw
     _ ≤ q := hle
 
-/-- Primitive words with prescribed content. -/
+/-- **Primitive words of given content.** For a natural number $r$ and natural numbers
+$n_0, \dots, n_{r-1}$, the set of primitive words over the alphabet $\{0, \dots, r-1\}$ in which
+each letter $i$ occurs exactly $n_i$ times. -/
 def PrimitiveWordsOfContent {r : ℕ} (degree : Fin r → ℕ) :=
   {w : WordsOfContent degree // IsPrimitiveWord w.1}
 
@@ -768,7 +799,8 @@ private theorem wittRotate_injective {α : Type*} [LinearOrder α] {w : List α}
   · exact aux hij hj hrotate
   · exact aux hji hi hrotate.symm
 
-/-- Every Lyndon word is primitive. -/
+/-- **Lyndon words are primitive.** Every Lyndon word over a linearly ordered alphabet is
+primitive. -/
 theorem isPrimitiveWord_of_isLyndonWord {α : Type*} [LinearOrder α] {w : List α}
     (hw : IsLyndonWord w) : IsPrimitiveWord w := by
   apply isPrimitiveWord_iff_nodup_cyclicPermutations.mpr
@@ -1172,7 +1204,14 @@ private theorem card_primitiveWords_eq_moebius_sum {r : ℕ} (degree : Fin r →
       rw [Nat.div_div_self hdG hg0]
       exact_mod_cast card_wordsOfContent_eq_multinomial (fun i => degree i / d)
 
-/-- The number of Lyndon words with prescribed positive content is Witt's multigraded value. -/
+/-- **Witt's formula for the number of Lyndon words of given content.** Let $r$ be a natural
+number and let $n_0, \dots, n_{r-1}$ be natural numbers with $n = n_0 + \dots + n_{r-1} > 0$.
+Order the alphabet $\{0, \dots, r-1\}$ as the natural numbers and order words over it
+lexicographically. Then the number of Lyndon words over this alphabet in which each letter $i$
+occurs exactly $n_i$ times equals, as a rational number, Witt's multigraded value
+$M(n_0, \dots, n_{r-1}) = \frac{1}{n} \sum_{d \mid g} \mu(d) \binom{n/d}{n_0/d, \ldots, n_{r-1}/d}$,
+where $g = \gcd(n_0, \dots, n_{r-1})$, the sum runs over the positive divisors $d$ of $g$, and
+$\mu$ is the Möbius function. -/
 theorem card_lyndonWordsOfContent_eq_wittMultigradedValue {r : ℕ}
     (degree : Fin r → ℕ) (hdegree : 0 < ∑ i, degree i) :
     (Fintype.card (LyndonWordsOfContent degree) : ℚ) = wittMultigradedValue degree := by

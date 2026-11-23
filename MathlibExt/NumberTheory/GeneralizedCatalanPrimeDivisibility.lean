@@ -67,17 +67,19 @@ private lemma mul_eq_add_sub_mul {p n : ℕ} (hp1 : 1 ≤ p) : p * n = n + (p - 
   rw [Nat.add_mul, one_mul, add_comm]
 
 /--
-A prime `p` divides the generalized Catalan number `C (p * n) n / ((p - 1) * n + 1)`
-if and only if `n` is not a geometric-sum index `(p ^ k - 1) / (p - 1)`.
+**Prime divisibility of generalized Catalan numbers.** Let $p$ be a prime and $n$ a natural
+number. Then $p$ divides the generalized Catalan number $\frac{1}{(p-1)n+1}\binom{pn}{n}$ (an
+integer) if and only if $n$ is not of the form $\frac{p^k-1}{p-1}$ for any natural number $k$.
+
+The source theorem's "in particular" Mersenne-index clause is already recorded
+as `catalan_odd_iff`; this declaration keeps only the new general-`p` result.
+
+Proves `Wanted` entry `generalizedCatalan_prime_dvd_iff_not_geometric_sum`.
 
 Source: B. Sury, "Generalized Catalan Numbers: Linear Recursion and
 Divisibility," Journal of Integer Sequences 12 (2009), Article 09.7.5,
 Theorem (label divis), lines 154–158,
 https://cs.uwaterloo.ca/journals/JIS/VOL12/Sury/sury31.tex
-
-The source theorem's "in particular" Mersenne-index clause is already recorded
-as `catalan_odd_iff`; this declaration keeps only the new general-`p` result.
-Proves `Wanted` entry `generalizedCatalan_prime_dvd_iff_not_geometric_sum`.
 -/
 theorem generalizedCatalan_prime_dvd_iff_not_geometric_sum
     (p n : ℕ) (hp : p.Prime) :

@@ -26,7 +26,9 @@ namespace BurnsidePaqb
 
 variable {G : Type*} [Group G] [Fintype G]
 
-/-- Row orthogonality, self-pairing: `∑ g, χ g * χ g⁻¹ = |G|`. -/
+/-- **Self-orthogonality of an irreducible character.** Let $\rho$ be an irreducible representation
+of a finite group $G$ on a finite-dimensional complex vector space, with character $\chi$. Then
+$\sum_{g \in G} \chi(g)\chi(g^{-1}) = |G|$. -/
 theorem self_pair_sum {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
     [Representation.IsIrreducible ρ] :
@@ -48,7 +50,9 @@ theorem self_pair_sum {V : Type*} [AddCommGroup V] [Module ℂ V]
     _ = (Nat.card G : ℂ) := by rw [key, mul_one]
 
 open Classical in
-/-- A sum over the group splits as a sum over conjugacy classes. -/
+/-- **Splitting a sum over conjugacy classes.** For a finite group $G$ and every function
+$f : G \to \mathbb{C}$, $\sum_{g \in G} f(g) = \sum_{l} \sum_{x \in l} f(x)$, where $l$ runs over
+the conjugacy classes of $G$. -/
 theorem sum_over_classes (f : G → ℂ) :
     ∑ g : G, f g
       = ∑ l : ConjClasses G, ∑ x ∈ (ConjClasses.carrier l).toFinset, f x := by
@@ -70,7 +74,9 @@ theorem sum_over_classes (f : G → ℂ) :
   exact Finset.sum_coe_sort _ _
 
 open Classical in
-/-- Every class member is conjugate to its class representative. -/
+/-- **Members of a conjugacy class are conjugate to its representative.** Let $l$ be a conjugacy
+class of a finite group $G$ and $g_l$ its chosen representative. For every $x \in l$ there is
+$c \in G$ with $c x c^{-1} = g_l$. -/
 theorem conj_to_rep (l : ConjClasses G) (x : G)
     (hx : x ∈ (ConjClasses.carrier l).toFinset) :
     ∃ c : G, c * x * c⁻¹ = classRep l := by
@@ -82,7 +88,10 @@ theorem conj_to_rep (l : ConjClasses G) (x : G)
   exact isConj_iff.mp hconj
 
 open Classical in
-/-- Character values are constant on each class. -/
+/-- **Characters are constant on conjugacy classes.** Let $\rho$ be a representation of a finite
+group $G$ on a finite-dimensional complex vector space, with character $\chi$, and let $g_l$ be the
+chosen representative of a conjugacy class $l$ of $G$. Then $\chi(x) = \chi(g_l)$ for every
+$x \in l$. -/
 theorem char_eq_of_mem_carrier {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) (l : ConjClasses G)
     (x : G) (hx : x ∈ (ConjClasses.carrier l).toFinset) :
@@ -93,7 +102,10 @@ theorem char_eq_of_mem_carrier {V : Type*} [AddCommGroup V] [Module ℂ V]
   exact hcc.symm
 
 open Classical in
-/-- Character values at inverses are constant on each class. -/
+/-- **Characters at inverses are constant on conjugacy classes.** Let $\rho$ be a representation
+of a finite group $G$ on a finite-dimensional complex vector space, with character $\chi$, and let
+$g_l$ be the chosen representative of a conjugacy class $l$ of $G$. Then
+$\chi(x^{-1}) = \chi(g_l^{-1})$ for every $x \in l$. -/
 theorem char_inv_eq_of_mem_carrier {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) (l : ConjClasses G)
     (x : G) (hx : x ∈ (ConjClasses.carrier l).toFinset) :
@@ -105,7 +117,11 @@ theorem char_inv_eq_of_mem_carrier {V : Type*} [AddCommGroup V] [Module ℂ V]
   exact hcc.symm
 
 open Classical in
-/-- Each class contributes `degree * (ω l * χ g_l⁻¹)` to the self-pairing sum. -/
+/-- **Contribution of a conjugacy class to the self-pairing sum.** Let $\rho$ be an irreducible
+representation of a finite group $G$ on a finite-dimensional complex vector space $V$, with
+character $\chi$. For a conjugacy class $l$ of $G$, let $g_l$ be its chosen representative and
+$\omega(l)$ the central scalar of $l$, the scalar by which the class sum of $l$ acts on $V$. Then
+$\sum_{x \in l} \chi(x)\chi(x^{-1}) = (\dim_{\mathbb{C}} V)\,\omega(l)\,\chi(g_l^{-1})$. -/
 theorem class_inner_sum {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
     [Representation.IsIrreducible ρ] (l : ConjClasses G) :
@@ -137,7 +153,11 @@ theorem class_inner_sum {V : Type*} [AddCommGroup V] [Module ℂ V]
             = centralScalar ρ l * Module.finrank ℂ V := htrace.symm
         linear_combination h2 * ρ.character (classRep l)⁻¹
 
-/-- Bielefeld Corollary 2: the degree of an irreducible divides the group order. -/
+/-- **Degrees of irreducible representations divide the group order.** Let $\rho$ be an
+irreducible representation of a finite group $G$ on a nonzero finite-dimensional complex vector
+space $V$. Then $\dim_{\mathbb{C}} V$ divides $|G|$.
+
+Source: Bielefeld Corollary 2. -/
 theorem degree_dvd_card {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] [Nontrivial V] (ρ : Representation ℂ G V)
     [Representation.IsIrreducible ρ] :

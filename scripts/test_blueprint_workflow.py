@@ -48,8 +48,10 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
             "scripts/list_v2_modules.sh",
             "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
+            "scripts/mathgraph-map.jsonl", "scripts/import_mathgraph.py", "scripts/check_public_references.py",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
-            "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
+            "docs/BLUEPRINT.md", "docs/mathgraph-import.md", ".github/workflows/blueprint-pages.yml",
+            ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
         ):
             self.assertIn(path, paths)
@@ -59,11 +61,18 @@ class BlueprintWorkflowTests(unittest.TestCase):
         tests = self.step("Test the wiki scripts")["run"]
         for module in re.findall(r"scripts\.(test_\w+)", tests):
             self.assertIn(f"scripts/{module}.py", paths)
+        # So is every module of scripts/ the importer imports, whose tests run only in this job.
+        importer = (ROOT / "scripts" / "import_mathgraph.py").read_text()
+        modules = re.findall(r"(?m)^    from \. import (\w+)", importer)
+        self.assertIn("check_public_references", modules)
+        for module in modules:
+            self.assertIn(f"scripts/{module}.py", paths)
         # A path that no longer exists would silently stop triggering the check. The sync baseline
-        # scripts/wiki-sync.json arrives with the wiki's last page batch, so it may not exist yet. The card
+        # scripts/wiki-sync.json arrives with the wiki's last page batch, and the import map
+        # scripts/mathgraph-map.jsonl with the first imported manifest, so they may not exist yet. The card
         # inputs are checked by the card tests, in their own job, so that no card file can fail this one.
         for path in paths:
-            if path == "scripts/wiki-sync.json" or path in CARD_INPUTS:
+            if path in ("scripts/wiki-sync.json", "scripts/mathgraph-map.jsonl") or path in CARD_INPUTS:
                 continue
             target = ROOT / path.removesuffix("/**")
             self.assertTrue(target.is_dir() if path.endswith("/**") else target.is_file(), path)
@@ -113,14 +122,6 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertLess(positions[build["name"]], positions[dump["name"]])
         self.assertLess(positions[dump["name"]], positions[
             "Collapse dependencies onto the wiki articles"])
-
-    def test_the_committed_graph_is_checked_before_lean_facts_and_only_reports(self):
-        # After `lean-facts` a stale link is already gone, so only this step can report it.
-        step = self.step("Check the committed graph")
-        self.assertEqual(step["continue-on-error"], "true")
-        self.assertIn("autoform check blueprint --lean-root .", step["run"])
-        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
-        self.assertLess(positions[step["name"]], positions["Add the Lean-owned facts to the articles"])
 
     def test_memory_heavy_production_targets_are_serialized(self):
         script = self.step("Build memory-heavy modules one at a time")["run"]
@@ -198,22 +199,154 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertFalse((root / "v2-dependencies.jsonl").exists())
             self.assertFalse((root / "v2-dependencies.jsonl.gz").exists())
 
-    def test_the_build_cache_is_restored_from_ci_and_never_saved(self):
+    def test_the_import_map_only_grows(self):
+        # Right after the wiki tests: every line of scripts/mathgraph-map.jsonl is checked, and on a PR the base
+        # commit's map, which the checkout of the merge commit lacks until it is fetched, must be its start, each line
+        # appended since recording a page the PR adds.
+        name = "Check that the import map only grows"
+        names = [step.get("name") for step in self.steps]
+        self.assertEqual(names.index(name), names.index("Test the wiki scripts") + 1)
+        step = self.step(name)
+        self.assertNotIn("continue-on-error", step)
+        # The base commit arrives through the environment, never interpolated into the script.
+        self.assertEqual(step["env"], {"BASE_SHA": "${{ github.event.pull_request.base.sha || '' }}"})
+        self.assertNotIn("merge_group", step["env"]["BASE_SHA"])
+        self.assertNotIn("${{", step["run"])
+        # The importer imports Autoform: the step runs with the wiki tests' packages.
+        def packages(script):
+            return re.findall(r"--with (\S+)", script)
+
+        self.assertEqual(packages(step["run"]), packages(self.step("Test the wiki scripts")["run"]))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "bin").mkdir()
+            for tool in ("git", "uv"):
+                (root / "bin" / tool).write_text(f'#!/usr/bin/env bash\nprintf \'%s\\n\' "{tool} $*" >> calls.txt\n')
+                (root / "bin" / tool).chmod(0o755)
+            for base in ("", "0123456789abcdef0123456789abcdef01234567"):
+                with self.subTest(base=base):
+                    (root / "calls.txt").write_text("")
+                    result = subprocess.run(
+                        ["bash", "-c", step["run"]], cwd=root, text=True, capture_output=True, check=False,
+                        env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE_SHA": base,
+                             "AUTOFORM_SOURCE": "https://example.com/autoform.git", "AUTOFORM_REF": "0" * 40},
+                    )
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    calls = (root / "calls.txt").read_text().splitlines()
+                    command = "python scripts/import_mathgraph.py --check-map"
+                    if base:
+                        self.assertEqual(calls[0], f"git fetch --no-tags --depth=1 origin {base}")
+                        self.assertTrue(calls[1].startswith("uv run --no-project"))
+                        self.assertTrue(calls[1].endswith(f"{command} --base {base}"))
+                    else:
+                        self.assertEqual(len(calls), 1)
+                        self.assertTrue(calls[0].endswith(command))
+
+    def test_ci_builds_are_restored_and_only_the_mathlib_dump_is_saved_outside_pull_requests(self):
+        # CI's keys and paths, so that both workflows read the entries CI saves from main (ci.yml): the build of the
+        # commit a pull request is tested against, else main's newest, and the package builds, which only change with
+        # the pins. They are restored after `lake exe cache get` clones the packages.
+        names = [step.get("name") for step in self.steps]
+        pins = "${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}"
         restore = self.step("Restore local build")
         self.assertIn("actions/cache/restore@", restore["uses"])
-        self.assertIn("lake-build-", restore["with"]["restore-keys"])
-        for job in self.workflow["jobs"].values():
-            for step in job["steps"]:
-                uses = step.get("uses", "")
-                self.assertFalse(uses.startswith(("actions/cache@", "actions/cache/save@")), uses)
+        self.assertEqual(restore["with"]["path"], ".lake/build")
+        self.assertEqual(restore["with"]["key"], f"lake-build-{pins}-${{{{ steps.base.outputs.sha }}}}")
+        self.assertEqual(restore["with"]["restore-keys"].strip(), f"lake-build-{pins}-")
+        packages = self.step("Restore the package builds")
+        self.assertIn("actions/cache/restore@", packages["uses"])
+        self.assertEqual(packages["with"]["path"].splitlines(),
+                         [".lake/packages/cslib/.lake/build", ".lake/packages/Physlib/.lake/build"])
+        self.assertEqual(packages["with"]["key"], f"lake-deps-{pins}")
+        self.assertNotIn("restore-keys", packages["with"])
+        self.assertLess(names.index("Fetch Mathlib cache"), names.index("Restore the package builds"))
+        self.assertLess(names.index("Find the base build"), names.index("Restore local build"))
+        # A restore that fails part-way keeps what it extracted and reports no key: Lake must not trust it.
+        removal = self.step("Remove a failed restore")
+        self.assertEqual(removal["env"], {
+            "PACKAGE_BUILDS": "${{ steps.package-builds.outputs.cache-matched-key }}",
+            "LOCAL_BUILD": "${{ steps.build-cache.outputs.cache-matched-key }}",
+        })
+        self.assertEqual(packages["id"], "package-builds")
+        self.assertEqual(restore["id"], "build-cache")
+        self.assertEqual(names.index("Remove a failed restore"), names.index("Restore local build") + 1)
+        self.assertLess(names.index("Restore the package builds"), names.index("Remove a failed restore"))
+        self.assertLess(names.index("Remove a failed restore"), names.index("Build memory-heavy modules one at a time"))
+        builds = (".lake/packages/cslib/.lake/build", ".lake/packages/Physlib/.lake/build", ".lake/build")
+        for matched, kept in ((("", ""), ()), (("lake-deps-k", ""), builds[:2]), (("", "lake-build-k"), builds[2:]),
+                              (("lake-deps-k", "lake-build-k"), builds)):
+            with tempfile.TemporaryDirectory() as directory:
+                for build in builds:
+                    (Path(directory) / build / "lib").mkdir(parents=True)
+                subprocess.run(["bash", "-c", removal["run"]], cwd=directory, check=True,
+                               env={**os.environ, "PACKAGE_BUILDS": matched[0], "LOCAL_BUILD": matched[1]})
+                self.assertEqual([b for b in builds if (Path(directory) / b / "lib").is_dir()], list(kept), matched)
+        # A pull request's checkout is a merge commit whose first parent is the commit it is tested against; other
+        # runs look for their own commit.
+        with tempfile.TemporaryDirectory() as directory:
+            def git(*args):
+                return subprocess.run(["git", "-C", directory, "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                                      check=True, capture_output=True, text=True).stdout.strip()
+
+            git("init", "-q")
+            git("commit", "-q", "--allow-empty", "-m", "base")
+            base = git("rev-parse", "HEAD")
+            git("checkout", "-q", "-b", "topic")
+            git("commit", "-q", "--allow-empty", "-m", "change")
+            git("checkout", "-q", base)
+            git("merge", "-q", "--no-ff", "-m", "merge", "topic")
+            merge = git("rev-parse", "HEAD")
+            # The checkout is a depth-one clone, where `HEAD^1` does not resolve.
+            clone = Path(directory) / "clone"
+            subprocess.run(["git", "clone", "-q", "--depth", "1", f"file://{directory}", str(clone)], check=True)
+            for event, expected in (("pull_request", base), ("schedule", merge), ("workflow_dispatch", merge)):
+                output = Path(directory) / f"{event}.out"
+                subprocess.run(["bash", "-c", self.step("Find the base build")["run"]], cwd=clone, check=True,
+                               env={**os.environ, "GITHUB_EVENT_NAME": event, "GITHUB_SHA": merge,
+                                    "GITHUB_OUTPUT": str(output)})
+                self.assertEqual(output.read_text(), f"sha={expected}\n", event)
+        # The Mathlib dump and the graph built from it depend only on the pins and the scripts that make them. Runs
+        # other than pull requests save them once per key; a restored graph skips the dump and the graph. No other
+        # cache is saved here.
+        mathlib = {step.get("name"): step for step in self.workflow["jobs"]["mathlib"]["steps"]}
+        cached = mathlib["Restore the Mathlib graph"]
+        self.assertIn("actions/cache/restore@", cached["uses"])
+        self.assertEqual(cached["with"]["key"], "mathlib-graph-${{ runner.os }}-${{ hashFiles('lean-toolchain', "
+                         "'lake-manifest.json', 'scripts/dump_mathlib_dependencies.lean', "
+                         "'scripts/extract_mathlib_graph.py', 'scripts/extract_v2_lean_dependencies.py') }}")
+        self.assertNotIn("restore-keys", cached["with"])
+        self.assertEqual(cached["with"]["path"].splitlines(), [
+            f"mathlib-graph/{name}" for name in ("mathlib-dump.jsonl.gz", "mathlib-dump-meta.json", "nodes.jsonl.gz",
+                                                 "edges.jsonl.gz", "graph-meta.json")])
+        order = list(mathlib)
+        miss = "steps.mathlib-graph.outputs.cache-hit != 'true'"
+        self.assertEqual([name for name, step in mathlib.items() if "if" in step and "cache-hit" in step["if"]],
+                         ["Dump the Mathlib declarations", "Build the Mathlib graph", "Save the Mathlib graph"])
+        for name in ("Dump the Mathlib declarations", "Build the Mathlib graph"):
+            self.assertEqual(mathlib[name]["if"], miss, name)
+            self.assertLess(order.index("Restore the Mathlib graph"), order.index(name), name)
+        self.assertIn("extract_mathlib_graph.py graph", mathlib["Build the Mathlib graph"]["run"])
+        save = mathlib["Save the Mathlib graph"]
+        self.assertEqual(save["if"], f"{miss} && github.event_name != 'pull_request'")
+        self.assertEqual(save["with"], {"path": cached["with"]["path"],
+                                        "key": "${{ steps.mathlib-graph.outputs.cache-primary-key }}"})
+        self.assertEqual(order.index("Save the Mathlib graph"), order.index("Build the Mathlib graph") + 1)
+        self.assertEqual(order.index("Build the Mathlib graph"), order.index("Dump the Mathlib declarations") + 1)
+        saves = [step for job in self.workflow["jobs"].values() for step in job["steps"]
+                 if step.get("uses", "").startswith(("actions/cache@", "actions/cache/save@"))]
+        self.assertEqual(saves, [save])
 
     def test_deployment_is_opt_in_and_never_runs_on_pr_or_merge_group(self):
-        deploy = self.workflow["jobs"]["deploy"]
+        jobs = self.workflow["jobs"]
+        deploy, promote = jobs["deploy"], jobs["promote"]
         self.assertEqual(deploy["needs"], "wiki")
-        self.assertEqual(deploy["permissions"], {
-            "pages": "write", "id-token": "write",
-        })
-        conditions = [deploy["if"], self.step("Upload Pages artifact")["if"]]
+        for job in (deploy, promote):
+            self.assertEqual(job["permissions"], {
+                "pages": "write", "id-token": "write", "deployments": "read", "contents": "read",
+            })
+            self.assertEqual(job["environment"]["name"], "github-pages")
+        upload = next(step for step in jobs["mathlib-pages"]["steps"] if step.get("name") == "Upload the packed site")
+        conditions = [deploy["if"], promote["if"], self.step("Upload Pages artifact")["if"], upload["if"]]
         for condition in conditions:
             for clause in ("vars.BLUEPRINT_PAGES == 'true'",
                            "github.ref == 'refs/heads/main'",
@@ -222,42 +355,136 @@ class BlueprintWorkflowTests(unittest.TestCase):
                 self.assertIn(clause, condition)
             # Scheduled and manual runs of main publish, so no clause may require a push.
             self.assertNotIn("push", condition)
-        self.assertTrue(all("uses" in step for step in deploy["steps"]))
+        # Each job first reads the commit of the published site and fails, publishing nothing, unless the site is of
+        # this run's commit or of an ancestor: a re-run never takes the site back, and a deployment job that succeeds
+        # is one that published. It runs no repository code.
+        for job in (deploy, promote):
+            check, *publish = job["steps"]
+            self.assertEqual(check["name"], "Check the commit of the published site")
+            self.assertEqual(check["run"], deploy["steps"][0]["run"])
+            self.assertEqual(check["env"], {"GH_TOKEN": "${{ github.token }}"})
+            self.assertEqual([step["name"] for step in publish], ["Configure GitHub Pages", "Deploy"])
+            for step in publish:
+                self.assertIn("uses", step)
+                self.assertNotIn("if", step)
+                self.assertNotIn("continue-on-error", step)
+            self.assertNotIn("continue-on-error", check)
+            self.assertNotIn("run_attempt", job["if"])
+        # GitHub Pages publishes at most 1 GB: the wiki job's site is packed for it, checked to give back every file
+        # of the site, and measured as its upload packs it, before the upload.
+        names = [step.get("name") for step in self.steps]
+        pack, checked, upload = (self.step(name) for name in
+                                 ("Pack the site for GitHub Pages", "Check the packed site", "Upload Pages artifact"))
+        self.assertEqual(pack["run"], "python scripts/pack_pages_site.py pack site site-pages")
+        self.assertIn("python scripts/pack_pages_site.py check site site-pages", checked["run"])
+        self.assertIn("bash scripts/pages_size.sh site-pages 950000000", checked["run"])
+        self.assertEqual(upload["with"]["path"], "site-pages")
+        for step in (pack, checked):
+            self.assertEqual(step["if"], upload["if"])
+        self.assertEqual([names.index(name) for name in ("Keep the built site", "Pack the site for GitHub Pages",
+                                                          "Check the packed site", "Upload Pages artifact")],
+                         list(range(names.index("Keep the built site"), names.index("Keep the built site") + 4)))
+
+    def test_a_site_is_published_only_over_one_of_the_same_or_an_earlier_commit(self):
+        script = self.workflow["jobs"]["deploy"]["steps"][0]["run"]
+        fake_gh = """#!/usr/bin/env python3
+import json, os, sys
+path = next(arg for arg in sys.argv[1:] if arg.startswith("repos/"))
+state = json.loads(os.environ["FAKE"])
+if state.get("fail"):
+    sys.exit(1)
+if "/statuses" in path:
+    print(state["states"].get(path.split("/deployments/")[1].split("/")[0], ""))
+elif "/deployments?" in path:
+    print("\\n".join(state["deployments"]))
+elif "/deployments/" in path:
+    print(state["shas"][path.rsplit("/", 1)[1]])
+elif "/compare/" in path:
+    print(state["compare"])
+"""
+        live = {"shas": {"2": "b" * 40}}
+        cases = [
+            # Nothing was ever published, or only this job's own deployment is under way.
+            ({"deployments": []}, 0),
+            ({"deployments": ["4", "3"], "states": {"4": "in_progress", "3": "failure"}}, 0),
+            ({"deployments": ["4", "3", "2"], "states": {"4": "in_progress", "3": "failure", "2": "success"},
+              "compare": "ahead", **live}, 0),
+            ({"deployments": ["2"], "states": {"2": "success"}, "compare": "identical", **live}, 0),
+            ({"deployments": ["2"], "states": {"2": "success"}, "compare": "behind", **live}, 1),
+            ({"deployments": ["2"], "states": {"2": "success"}, "compare": "diverged", **live}, 1),
+            # Some deployment was live once and none is now: the published commit is unknown.
+            ({"deployments": ["3", "2"], "states": {"3": "failure", "2": "inactive"}}, 1),
+            ({"fail": True}, 1),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            bin_dir = Path(directory) / "bin"
+            bin_dir.mkdir()
+            (bin_dir / "gh").write_text(fake_gh)
+            (bin_dir / "gh").chmod(0o755)
+            for fake, expected in cases:
+                env = {**os.environ, "PATH": f"{bin_dir}:{os.environ['PATH']}", "FAKE": json.dumps(fake),
+                       "GITHUB_REPOSITORY": "owner/repo", "GITHUB_SHA": "a" * 40}
+                run = subprocess.run(["bash", "-c", script], env=env, capture_output=True, text=True)
+                self.assertEqual(run.returncode, expected, (fake, run.stdout, run.stderr))
+                if expected:
+                    self.assertTrue("::error::" in run.stdout or fake.get("fail"), run.stdout)
+
+    def test_the_pages_size_check_measures_the_archive_and_refuses_one_over_its_limit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            site = Path(directory) / "site"
+            site.mkdir()
+            (site / "index.html").write_text("x" * 1000)
+            (site / ".hidden").write_text("not uploaded")
+            summary = Path(directory) / "summary.md"
+            env = {**os.environ, "GITHUB_STEP_SUMMARY": str(summary)}
+            script = ROOT / "scripts" / "pages_size.sh"
+            fits = subprocess.run(["bash", str(script), str(site), "10240"], env=env, capture_output=True, text=True)
+            over = subprocess.run(["bash", str(script), str(site), "1000"], env=env, capture_output=True, text=True)
+            receipts = summary.read_text()
+        self.assertEqual(fits.returncode, 0, fits.stderr)
+        self.assertIn("2 files, 1012 bytes; Pages archive 10240 bytes; limit 10240 bytes", fits.stdout)
+        self.assertEqual(over.returncode, 1)
+        self.assertIn("::error::", over.stdout)
+        self.assertEqual(len(receipts.splitlines()), 2)
 
     def test_the_mathlib_layer_cannot_hold_back_the_site(self):
-        # The layer has its own job and check after the wiki job, and deployment waits for the wiki job alone.
+        # The layer has its own job and check beside the wiki job, and deployment waits for the wiki job alone.
         jobs = self.workflow["jobs"]
         mathlib = jobs["mathlib"]
-        self.assertEqual(mathlib["needs"], "wiki")
-        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        self.assertNotIn("needs", mathlib)
+        self.assertEqual(mathlib["timeout-minutes"], self.job["timeout-minutes"])
+        self.assertDeploysWhateverTheMathlibJobsDo()
         self.assertNotIn("permissions", mathlib)
         self.assertNotIn("continue-on-error", mathlib)
         checkout = next(step for step in mathlib["steps"] if step.get("name") == "Check out project")
         self.assertEqual(checkout["with"]["persist-credentials"], "false")
         self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])
         self.assertIn("!/Atlas/", checkout["with"]["sparse-checkout"])
-        # In the wiki job only the dump of the v2 declarations, which needs the ATLAS build. It comes after every
-        # step the site needs, cannot fail the job, and has a timeout, so a hang cannot hold the job until its own
-        # timeout either; its upload cannot fail the job. A missing dump fails the layer's job instead.
-        dump = "Dump the v2 declarations with their Mathlib uses"
-        wiki_steps = [step["name"] for step in self.steps if "extract_mathlib_graph.py" in step.get("run", "")]
-        self.assertEqual(wiki_steps, [dump])
-        self.assertEqual(self.step(dump)["continue-on-error"], "true")
-        self.assertLessEqual(int(self.step(dump)["timeout-minutes"]), 30)
-        self.assertIn("--jobs 1 --shards 1", self.step(dump)["run"])
-        names = [step.get("name") for step in self.steps]
-        upload = "Keep the v2 declarations with their Mathlib uses"
-        self.assertEqual(names[-2:], [dump, upload])
-        for site_step in ("Check routes, anchors, and article cards", "Keep dependency diagnostics",
-                          "Keep the built site", "Upload Pages artifact"):
-            self.assertLess(names.index(site_step), names.index(dump), site_step)
-        self.assertEqual(self.step(upload)["continue-on-error"], "true")
-        self.assertEqual(self.step(upload)["with"]["name"], "v2-mathlib-dump")
-        self.assertNotIn("mathlib-graph", self.step("Keep dependency diagnostics")["with"]["path"])
+        # The layer's job sets up Lean, restores CI's builds, builds what they lack and makes the v2 extraction with
+        # the wiki job's own steps, so that `bridge` checks the layer against the extraction the site uses. It
+        # downloads nothing from the wiki job, which no longer runs the layer's dump.
         steps = {step.get("name"): step for step in mathlib["steps"]}
-        self.assertEqual(steps["Fetch the v2 extraction"]["with"]["name"], "blueprint-dependencies")
-        fetch = steps["Fetch the v2 declarations with their Mathlib uses"]["with"]
-        self.assertEqual((fetch["name"], fetch["path"]), ("v2-mathlib-dump", "mathlib-graph"))
+        order = list(steps)
+        names = [step.get("name") for step in self.steps]
+        shared = names[names.index("Free disk space for Lean caches"):names.index("Add the Lean-owned facts to the articles")]
+        self.assertEqual(shared[-1], "Collapse dependencies onto the wiki articles")
+        self.assertEqual(order[order.index(shared[0]):order.index(shared[0]) + len(shared)], shared)
+        for name in shared:
+            self.assertEqual(steps[name], self.step(name), name)
+        self.assertFalse([step for step in mathlib["steps"] if "download-artifact" in step.get("uses", "")])
+        self.assertFalse([step["name"] for step in self.steps if "extract_mathlib_graph.py" in step.get("run", "")])
+        # Its dump of the v2 declarations with their Mathlib uses follows the extraction, runs one Lean process and
+        # has a timeout, so a hang cannot hold the job until its own; a failure fails the layer's check. The upload
+        # keeps it as before and cannot fail the job.
+        dump, upload = "Dump the v2 declarations with their Mathlib uses", "Keep the v2 declarations with their Mathlib uses"
+        self.assertEqual(order.index(dump), order.index(shared[-1]) + 1)
+        self.assertEqual(order.index(upload), order.index(dump) + 1)
+        self.assertLessEqual(int(steps[dump]["timeout-minutes"]), 30)
+        self.assertIn("--jobs 1 --shards 1", steps[dump]["run"])
+        self.assertIn("--modules v2-modules.txt", steps[dump]["run"])
+        self.assertEqual(steps[upload]["continue-on-error"], "true")
+        self.assertEqual(steps[upload]["with"]["name"], "v2-mathlib-dump")
+        self.assertNotIn("mathlib-graph", self.step("Keep dependency diagnostics")["with"]["path"])
         extract = steps["Extract the Mathlib layer"]["run"]
         self.assertIn("set -euo pipefail", extract)
         self.assertIn("test -s mathlib-graph/v2-mathlib-dump.jsonl.gz", extract)
@@ -266,9 +493,9 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for command in ("dump", "graph", "bridge", "stats"):
             self.assertTrue(any(f"extract_mathlib_graph.py {command}" in step.get("run", "")
                                 for step in mathlib["steps"]), command)
-        # Only the upload may fail without failing the layer's check.
+        # Only the uploads may fail without failing the layer's check.
         self.assertEqual([name for name, step in steps.items() if "continue-on-error" in step],
-                         ["Keep the Mathlib layer"])
+                         [upload, "Keep the Mathlib layer"])
         self.assertEqual(steps["Keep the Mathlib layer"]["with"]["name"], "mathlib-graph")
         self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
 
@@ -445,6 +672,29 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertEqual(steps["Keep the card data"]["with"]["name"], "cards")
         self.assertEqual(steps["Keep the card data"]["if"], "always()")
 
+    def test_mathlib_credited_pages_get_their_edges_from_the_same_dump(self):
+        # The credited Mathlib names are listed before the dump, which records their uses; the extraction writes the
+        # registry beside the unchanged v2 extraction, and lean-facts reads it in both jobs that run it.
+        names = [step.get("name") for step in self.steps]
+        listing = "List the Mathlib declarations the wiki credits"
+        self.assertIn("scripts/sync_wiki.py mathlib-names build/mathlib-names.txt", self.step(listing)["run"])
+        self.assertLess(names.index(listing), names.index("Dump declaration dependencies"))
+        dump = " ".join(self.step("Dump declaration dependencies")["run"].replace("\\\n", " ").split())
+        self.assertIn("dump_v2_dependencies.lean v2-modules.txt build/mathlib-names.txt > v2-dependencies.jsonl", dump)
+        self.assertIn("--registry build/mathlib-registry.json --names build/mathlib-names.txt",
+                      self.step("Collapse dependencies onto the wiki articles")["run"])
+        facts = "lean-facts build/lean-dependencies.json --registry build/mathlib-registry.json"
+        self.assertIn(facts, self.step("Add the Lean-owned facts to the articles")["run"])
+        self.assertIn("build/mathlib-registry.json", self.step("Keep dependency diagnostics")["with"]["path"])
+        cards = {step.get("name"): step for step in self.workflow["jobs"]["cards"]["steps"]}
+        self.assertIn(facts, cards["Add the Lean-owned facts to the articles"]["run"])
+        self.assertIn("--registry build/mathlib-registry.json", cards["Check the cards and derive their edges"]["run"])
+        # The card data the site shows comes from the same registry, so a Mathlib-credited main shows its edges.
+        names = [step.get("name") for step in self.steps]
+        derive = "Derive the card data the site shows"
+        self.assertIn("--registry build/mathlib-registry.json", self.step(derive)["run"])
+        self.assertLess(names.index("Collapse dependencies onto the wiki articles"), names.index(derive))
+
     def test_every_build_keeps_its_site_and_only_main_keeps_the_full_site(self):
         # The built site is a one-day artifact of every successful build, which the Mathlib pages job reads; only
         # main keeps the site with its Mathlib pages, and neither is a Pages upload.
@@ -468,7 +718,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         jobs = self.workflow["jobs"]
         pages = jobs["mathlib-pages"]
         self.assertEqual(pages["needs"], ["wiki", "mathlib"])
-        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        self.assertDeploysWhateverTheMathlibJobsDo()
         for key in ("permissions", "continue-on-error", "if"):
             self.assertNotIn(key, pages)
         self.assertFalse(any("build_mathlib_pages" in step.get("run", "") for step in self.steps))
@@ -487,7 +737,51 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertIn("build_mathlib_pages.py check site mathlib-graph site-full", steps["Check the site with its Mathlib pages"]["run"])
         for step in pages["steps"]:
             self.assertNotIn("continue-on-error", step)
-            self.assertFalse(step.get("uses", "").startswith(("actions/upload-pages-artifact@", "actions/deploy-pages@")))
+            self.assertFalse(step.get("uses", "").startswith("actions/deploy-pages@"))
+        # The full site, packed for GitHub Pages, goes up as a second Pages artifact, under the same conditions as the
+        # wiki job's, after the check that it gives back every file of the full site and of its size. The full site is
+        # kept as it is before it is packed.
+        self.assertIn("python -m unittest scripts.test_pack_pages_site", steps["Test the Pages packing script"]["run"])
+        self.assertIn("scripts/test_pack_pages_site.py", self.workflow["on"]["pull_request"]["paths"])
+        for path in ("scripts/pack_pages_site.py", "scripts/pages_packing.js", "scripts/pages_size.sh"):
+            self.assertIn(path, self.workflow["on"]["pull_request"]["paths"])
+        self.assertEqual(steps["Pack the full site for GitHub Pages"]["run"],
+                         "python scripts/pack_pages_site.py pack site-full site-pages")
+        checked = steps["Check the packed site"]["run"]
+        self.assertIn("python scripts/pack_pages_site.py check site-full site-pages", checked)
+        self.assertIn("bash scripts/pages_size.sh site-pages 950000000", checked)
+        upload = steps["Upload the packed site"]
+        self.assertIn("actions/upload-pages-artifact@", upload["uses"])
+        self.assertEqual((upload["with"]["name"], upload["with"]["path"]), ("github-pages-full", "site-pages"))
+        self.assertEqual(upload["if"], self.step("Upload Pages artifact")["if"])
+        names = [step["name"] for step in pages["steps"]]
+        for earlier, later in (("Check the site with its Mathlib pages", "Keep the site with its Mathlib pages"),
+                               ("Keep the site with its Mathlib pages", "Pack the full site for GitHub Pages"),
+                               ("Pack the full site for GitHub Pages", "Check the packed site"),
+                               ("Check the packed site", "Upload the packed site")):
+            self.assertLess(names.index(earlier), names.index(later))
+        for step in pages["steps"]:
+            if "pack_pages_site" in step.get("run", "") and "unittest" not in step["run"]:
+                self.assertNotIn("if", step)
+
+    def assertDeploysWhateverTheMathlibJobsDo(self):
+        # Deployment waits for the wiki job alone and publishes its site. Only after it, and only if the Mathlib pages
+        # job succeeded, a second job publishes that job's packed full site in its place.
+        jobs = self.workflow["jobs"]
+        deploy, promote = jobs["deploy"], jobs["promote"]
+        self.assertEqual(deploy["needs"], "wiki")
+        self.assertNotIn("mathlib", deploy["if"])
+        self.assertNotIn("with", next(step for step in deploy["steps"] if step["name"] == "Deploy"))
+        self.assertNotIn("name", self.step("Upload Pages artifact").get("with", {}))
+        self.assertEqual(promote["name"], "publish the full site")
+        self.assertEqual(promote["needs"], ["deploy", "mathlib-pages"])
+        for function in ("always()", "!cancelled()", "failure()"):
+            self.assertNotIn(function, promote["if"])
+        self.assertEqual(promote["if"], deploy["if"])
+        steps = {step["name"]: step for step in promote["steps"]}
+        self.assertEqual(steps["Deploy"]["with"], {"artifact_name": "github-pages-full"})
+        self.assertNotIn("cancel-in-progress", str(self.workflow["concurrency"]["group"]))
+        self.assertEqual(self.workflow["concurrency"]["cancel-in-progress"], "${{ github.ref != 'refs/heads/main' }}")
 
     def run_size_step(self, deploying, stubs):
         """Run the size step on an empty `site` with the commands in `stubs` (name -> script) ahead

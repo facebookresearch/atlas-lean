@@ -9,3 +9,5 @@ Convergence in probability implies convergence in distribution, but not converse
 ## Statements
 
 - [Convergence in distribution to a constant implies convergence in probability](tendsto-in-measure-of-tendsto-in-distrib.md)
+- [Delta method](delta-method.md): an application, whose proof uses the main statement
+- [Delta method in one dimension](delta-method-real.md): the delta method for real random variables

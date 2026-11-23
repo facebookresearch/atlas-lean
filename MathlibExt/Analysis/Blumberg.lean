@@ -937,10 +937,12 @@ private theorem blum_dense_cont (f : ℝ → ℝ) (σ : ℕ → ℚ × ℚ)
       rwa [dist_comm ℓ.2.2.1 (f d)] at h
     linarith [htri, hfy, hfd, hr, h2]
 
-/-- Blumberg's theorem (https://en.wikipedia.org/wiki/Blumberg_theorem, statement blumberg-s1):
-every function `f : ℝ → ℝ` is continuous on some dense set.
+/-- **Blumberg's theorem.** For every function $f : \mathbb{R} \to \mathbb{R}$ there is a dense
+set $D \subseteq \mathbb{R}$ such that the restriction of $f$ to $D$ is continuous.
 
 Proves `Wanted` entry `blumberg_theorem`.
+
+Source: https://en.wikipedia.org/wiki/Blumberg_theorem, statement blumberg-s1.
 -/
 theorem blumberg_theorem : ∀ f : ℝ → ℝ, ∃ D : Set ℝ, Dense D ∧ ContinuousOn f D := by
   intro f

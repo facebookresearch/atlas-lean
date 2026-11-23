@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Tree.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.SpecialFunctions.TakagiFunction
+public import MathlibExt.NumberTheory.Digits.BinaryDigitSum
 
 /-!
 # Takagi function identities on dyadic rationals
@@ -284,15 +285,6 @@ public theorem_wanted dcDNodes_eq_sum_dcLevelDNodes (n : ℕ) (hn : 0 < n) :
         ∑ i ∈ range (Nat.log 2 n),
           (((n / 2 ^ i % 2 : ℕ) : ℤ) * 2 ^ i + (-1) ^ (n / 2 ^ i % 2) * ((n % 2 ^ i : ℕ) : ℤ))
 
-/-- **Adding a larger power of two raises the Hamming weight by one.** For a natural number $m$,
-write $s_1(m)$ for the sum of the binary digits of $m$ (the number of ones in its binary
-expansion). For all natural numbers $k$ and $r$ with $r < 2^k$, $s_1(2^k + r) = s_1(r) + 1$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 13 (`jis-2024-24.2.7-lem-13`). -/
-public theorem_wanted hammingWeight_two_pow_add (k r : ℕ) (hr : r < 2 ^ k) :
-    (Nat.digits 2 (2 ^ k + r)).sum = (Nat.digits 2 r).sum + 1
-
 /-- **Hamming weight of the successor of an even number.** For a natural number $m$, write
 $s_1(m)$ for the sum of the binary digits of $m$ (the number of ones in its binary expansion).
 If $n$ is an even natural number (including $n = 0$), then $s_1(n + 1) = s_1(n) + 1$.
@@ -490,16 +482,6 @@ public theorem_wanted hammingWeight_eq_takagi_diff (k r : ℕ) (hr : r < 2 ^ k) 
     ((Nat.digits 2 (2 ^ k + r)).sum : ℝ) =
       2 ^ k / 2 * (takagiNewdef r ((k : ℤ) - 1) - takagiNewdef (r + 1) ((k : ℤ) - 1)) +
         ((k : ℝ) + 2) / 2
-
-/-- **Sum of binary digit sums below a power of two.** For a natural number $i$, let $s_1(i)$
-denote the sum of the binary digits of $i$. Then for every natural number $m$,
-$2 \sum_{i < 2^m} s_1(i) = 2^m m$; that is, the binary expansions of $0, 1, \dots, 2^m - 1$
-contain $2^m m / 2$ ones in total.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 29 (`jis-2024-24.2.7-lem-29`). -/
-public theorem_wanted two_mul_sum_hammingWeight_range_two_pow (m : ℕ) :
-    2 * ∑ i ∈ range (2 ^ m), (Nat.digits 2 i).sum = 2 ^ m * m
 
 /-- **Trollope's formula via the Takagi function.** For a natural number $m$, write $s_1(m)$ for
 the sum of the binary digits of $m$ and $S_1(m) = \sum_{i=0}^{m-1} s_1(i)$. Let $k$ and $r$ be

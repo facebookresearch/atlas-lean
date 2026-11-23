@@ -24,7 +24,9 @@ namespace Polynomial
 
 variable {K : Type*} [Ring K] [Nontrivial K]
 
-/-- Monic polynomials within l1-distance one have equal natural degree. -/
+/-- **Monic polynomials close in L1 norm have the same degree.** Let $K$ be a nontrivial ring
+and $v$ a real-valued absolute value on $K$. If $f, g \in K[x]$ are monic and the L1 norm of
+$f - g$ with respect to $v$ is strictly less than $1$, then $f$ and $g$ have the same degree. -/
 theorem natDegree_eq_of_monic_of_l1Norm_sub_lt_one (v : AbsoluteValue K ℝ)
     {f g : Polynomial K} (hf : f.Monic) (hg : g.Monic)
     (h : l1Norm v (f - g) < 1) : f.natDegree = g.natDegree := by

@@ -86,11 +86,15 @@ namespace MeasureTheory
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
   {ℱ : Filtration ℕ m0} {f : ℕ → Ω → ℝ}
 
-/-- The value of a process `f` at a possibly infinite stopping time `τ`:
-`f (τ ω) ω` when `τ ω < ∞`, and the limit `limUnder atTop (f · ω)` when
-`τ ω = ∞`. This extends `stoppedValue` (which uses an arbitrary finite index at `τ = ⊤`)
-to allow infinite stopping times, as required for the general optional
-stopping theorem. -/
+/-- **Value of a process at a possibly infinite time.** For a real-valued process
+$(f_n)_{n \in \mathbb{N}}$ on $\Omega$ and a map $\tau : \Omega \to \mathbb{N} \cup \{\infty\}$,
+the value $f_\tau$ of $f$ at $\tau$ is the function on $\Omega$ given by
+$f_\tau(\omega) = f_{\tau(\omega)}(\omega)$ when $\tau(\omega) < \infty$ and
+$f_\tau(\omega) = \lim_{n \to \infty} f_n(\omega)$ when $\tau(\omega) = \infty$, where the limit
+is an unspecified real number if $(f_n(\omega))_n$ does not converge.
+
+Unlike the usual stopped value, which uses an arbitrary finite index where $\tau = \infty$,
+this uses the limit there, as the general optional stopping theorem requires. -/
 noncomputable def stoppedValueAtTop (f : ℕ → Ω → ℝ) (τ : Ω → WithTop ℕ) : Ω → ℝ :=
   fun ω => if τ ω = ⊤ then Filter.limUnder atTop (fun n => f n ω) else f (τ ω).untopA ω
 
@@ -120,9 +124,13 @@ private theorem stoppedProcess_ae_eq_condExp_limitProcess
   exact condExp_condExp_of_le (hσ.measurableSpace_le_of_le_const (fun ω => min_le_left _ _))
     (ℱ.le n)
 
-/-- Stopping a uniformly integrable martingale at an arbitrary stopping
-time yields a uniformly integrable stopped process. The stopped process
-is a family of conditional expectations of the single integrable limit
+/-- **Optional stopping preserves uniform integrability of martingales.** Let $\mu$ be a
+probability measure and let $(f_n)_{n \in \mathbb{N}}$ be a real-valued martingale with respect
+to a filtration $(\mathcal{F}_n)_{n \in \mathbb{N}}$ that is uniformly integrable. Then for every
+stopping time $\tau$ with values in $\mathbb{N} \cup \{\infty\}$, the stopped process
+$(f_{\tau \wedge n})_{n \in \mathbb{N}}$ is uniformly integrable.
+
+The stopped process is a family of conditional expectations of the single integrable limit
 process, hence uniformly integrable. -/
 theorem Martingale.uniformIntegrable_stoppedProcess_of_uniformIntegrable
     (hmart : Martingale f ℱ μ) (hui : UniformIntegrable f 1 μ)
@@ -137,11 +145,14 @@ theorem Martingale.uniformIntegrable_stoppedProcess_of_uniformIntegrable
       (fun n => ((isStoppingTime_const ℱ n).min hτ).measurableSpace_le)
   exact hcond.ae_eq (fun n => (stoppedProcess_ae_eq_condExp_limitProcess hmart hui τ hτ n).symm)
 
-/-- **General optional stopping for uniformly integrable martingales.**
-If `f` is a uniformly integrable martingale and `τ` is any stopping
-time (possibly infinite), then the expectation at the stopping time
-equals the initial expectation and the expectation of the limit:
-`∫ f 0 = ∫ f_τ = ∫ f_∞`. -/
+/-- **General optional stopping for uniformly integrable martingales.** Let $\mu$ be a
+probability measure, let $(\mathcal{F}_n)_{n \in \mathbb{N}}$ be a filtration and let
+$(f_n)_{n \in \mathbb{N}}$ be a real-valued martingale with respect to $(\mathcal{F}_n)$ that is
+uniformly integrable. Let $f_\infty$ be the limit process of $f$ (its almost-everywhere limit, by
+the martingale convergence theorem). Then for every stopping time $\tau$ with values in
+$\mathbb{N} \cup \{\infty\}$, the value $f_\tau$ of $f$ at $\tau$ (at points where
+$\tau = \infty$ it is $\lim_n f_n$) satisfies
+$\int f_0 \, d\mu = \int f_\tau \, d\mu = \int f_\infty \, d\mu$. -/
 theorem Martingale.integral_stoppedValueAtTop_eq_of_uniformIntegrable
     (hmart : Martingale f ℱ μ) (hui : UniformIntegrable f 1 μ)
     (τ : Ω → WithTop ℕ) (hτ : IsStoppingTime ℱ τ) :

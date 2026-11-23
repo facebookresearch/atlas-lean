@@ -53,7 +53,11 @@ namespace MetaMathlibExt.TM2Program
 
 open Turing Function
 
-/-- One bit of machine state, used by the primitives to branch on the result of a pop. -/
+/-- **Flag bit of a machine state.** A flag on a type $\sigma$ of machine states consists of a map
+$\mathrm{tag} : \mathrm{Bool} \to \sigma$ that stores a bit in a state and a map
+$\mathrm{untag} : \sigma \to \mathrm{Bool}$ that reads it back, such that
+$\mathrm{untag}(\mathrm{tag}(\beta)) = \beta$ for every bit $\beta$. The program primitives use it
+to branch on whether a pop found a symbol. -/
 class Flag (σ : Type) where
   /-- Store a bit in the state. -/
   tag : Bool → σ
@@ -70,7 +74,10 @@ variable {K : Type} [DecidableEq K] {Γ : K → Type} {Λ σ : Type}
 
 /-! ### Runs and sequencing -/
 
-/-- A halted run stays halted: iterating the lifted step function from `none` gives `none`. -/
+/-- **A halted run stays halted.** Let $f : \sigma \to \mathrm{Option}\,\sigma$ be a partial step
+function and let $\hat f$ be its lift to $\mathrm{Option}\,\sigma$, which sends $\mathrm{none}$ to
+$\mathrm{none}$ and $\mathrm{some}\,x$ to $f(x)$. Then $\hat f^{\,n}(\mathrm{none}) = \mathrm{none}$
+for every $n \in \mathbb{N}$. -/
 theorem iter_none {σ : Type} (f : σ → Option σ) (n : ℕ) : (flip bind f)^[n] none = none := by
   induction n with
   | zero => rfl
@@ -80,7 +87,10 @@ section Run
 
 variable (M : Λ → TM2.Stmt Γ Λ σ)
 
-/-- `n` steps of `M` lead from `c` to `d`. -/
+/-- **Exact-length runs of a TM2 machine.** Let $M$ be a TM2 machine, given by a statement for
+each label, and let $c$ and $d$ be configurations. For $n \in \mathbb{N}$, $M$ runs from $c$ to
+$d$ in exactly $n$ steps when applying the step function of $M$ $n$ times, starting at $c$, is
+defined at every step (no configuration before the last one has halted) and ends at $d$. -/
 def Run (n : ℕ) (c d : TM2.Cfg Γ Λ σ) : Prop :=
   (flip bind (TM2.step M))^[n] (some c) = some d
 
@@ -102,7 +112,11 @@ theorem Run.trans {n m : ℕ} {c d e : TM2.Cfg Γ Λ σ} (h₁ : Run M n c d) (h
 theorem Run.of_eq {n m : ℕ} {c d : TM2.Cfg Γ Λ σ} (h : Run M n c d) (hn : n = m) :
     Run M m c d := hn ▸ h
 
-/-- One step at label `l` executes `M l`. -/
+/-- **A single step executes the statement at the current label.** Let $M$ be a TM2 machine, $l$
+a label, $v$ an internal state, $S$ an assignment of a list of symbols to each stack, and $d$ a
+configuration. If executing the statement $M(l)$ from state $v$ and stacks $S$ yields $d$, then
+$M$ runs in exactly one step from the configuration with label $l$, state $v$ and stacks $S$ to
+$d$. -/
 theorem Run.single {l : Λ} {v : σ} {S : ∀ k, List (Γ k)} {d : TM2.Cfg Γ Λ σ}
     (h : TM2.stepAux (M l) v S = d) : Run M 1 ⟨some l, v, S⟩ d :=
   Run.head (by simp [TM2.step, h]) (Run.zero _)
@@ -111,7 +125,8 @@ end Run
 
 /-! ### Unary counters -/
 
-/-- The value `n` of a counter with unit symbol `u`: the stack is exactly `u^n`. -/
+/-- **Unary counter.** The unary counter with unit symbol $u$ and value $n \in \mathbb{N}$ is the
+list $u^n$ consisting of exactly $n$ copies of $u$. -/
 abbrev cnt {α : Type} (u : α) (n : ℕ) : List α := List.replicate n u
 
 theorem cnt_length {α : Type} (u : α) (n : ℕ) : (cnt u n).length = n :=
@@ -133,11 +148,15 @@ section IncDec
 
 variable [Flag σ] {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- Push one unit on stack `k`, then go to `next`. -/
+/-- **Counter increment.** For a stack $k$, a symbol $u$ of stack $k$ (the unit of a unary
+counter) and a label $\ell$, this statement pushes $u$ onto stack $k$ and then goes to label
+$\ell$. -/
 def incr (k : K) (u : Γ k) (next : Λ) : TM2.Stmt Γ Λ σ :=
   .push k (fun _ => u) (.goto fun _ => next)
 
-/-- Pop stack `k`; go to `ifPos` if a symbol was popped, to `ifZero` if it was empty. -/
+/-- **Decrement.** For a stack $k$ and labels $\ell_0$ and $\ell_+$, this machine statement pops
+stack $k$, stores in the state whether a symbol was popped, and goes to $\ell_+$ if a symbol was
+popped and to $\ell_0$ if stack $k$ was empty. -/
 def decr (k : K) (ifZero ifPos : Λ) : TM2.Stmt Γ Λ σ :=
   .pop k (fun _ o => Flag.tag o.isSome)
     (.branch Flag.untag (.goto fun _ => ifPos) (.goto fun _ => ifZero))
@@ -178,13 +197,20 @@ end IncDec
 
 section Xfer
 
-/-- Push `p.2` on stack `p.1` for each `p ∈ ps` (in order), then continue with `q`. -/
+/-- **Pushing symbols onto several stacks.** Let $ps$ be a list of pairs $(k, x)$ of a stack index
+$k$ and a symbol $x$ of the alphabet of stack $k$, and let $q$ be a statement of a TM2 machine.
+This is the statement that, for each pair $(k, x)$ of $ps$ in list order, pushes $x$ onto stack
+$k$, and then continues with $q$. -/
 def pushAll (ps : List (Σ k, Γ k)) (q : TM2.Stmt Γ Λ σ) : TM2.Stmt Γ Λ σ :=
   ps.foldr (fun p q => .push p.1 (fun _ => p.2) q) q
 
-/-- Stack `k` receives `i` more copies of the symbol `x` of the first entry `⟨k, x⟩` of `ps`
-(`List.dlookup`); stacks without an entry are unchanged. The run lemmas assume `ps.NodupKeys`, so
-the first entry is the only one. -/
+/-- **Adding units to target stacks.** Let $ps$ be a list of pairs $(j, x)$ of a stack $j$ and a
+symbol $x$ of stack $j$, let $i \in \mathbb{N}$ and let $S$ be stacks. The resulting stacks are
+as follows: if $(k, x)$ is the first pair in $ps$ whose stack is $k$, stack $k$ holds $i$ copies
+of $x$ followed by $S_k$ (so the copies are on top); if no pair in $ps$ has stack $k$, stack $k$
+holds $S_k$.
+
+When the stacks in the pairs of $ps$ are distinct, the first pair with stack $k$ is the only one. -/
 def addU (ps : List (Σ k, Γ k)) (i : ℕ) (S : ∀ k, List (Γ k)) : ∀ k, List (Γ k) :=
   fun k => (List.dlookup k ps).elim (S k) (fun x => cnt x i ++ S k)
 
@@ -227,13 +253,28 @@ theorem stepAux_pushAll {ps : List (Σ k, Γ k)} (hps : ps.NodupKeys) (q : TM2.S
 
 variable [Flag σ] {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- Loop: pop stack `k` until empty; for each popped symbol push one unit on every target in
-`ps`. `ps = []` drains `k`, `ps = [⟨t, x⟩]` moves the counter, two targets copy it. -/
+/-- **Counter transfer loop.** For a stack $k$, a list $ps$ of pairs $(t, x)$ of a stack $t$ and a
+symbol $x$ of stack $t$, and labels $\ell$ and $\ell'$, this machine statement pops stack $k$,
+stores in the state whether a symbol was popped, and branches on it: if a symbol was popped, it
+pushes $x$ onto $t$ for each pair $(t, x)$ of $ps$ in list order and goes to $\ell$; if stack $k$
+was empty, it goes to $\ell'$.
+
+Placed at label $\ell$, it pops $k$ until $k$ is empty and pushes one copy of every target symbol
+per popped symbol: with $ps$ empty it drains $k$, with one target it moves the counter, and with
+two targets it copies it. -/
 def xfer (k : K) (ps : List (Σ k, Γ k)) (self next : Λ) : TM2.Stmt Γ Λ σ :=
   .pop k (fun _ o => Flag.tag o.isSome)
     (.branch Flag.untag (pushAll ps (.goto fun _ => self)) (.goto fun _ => next))
 
-/-- `xfer` on a counter of value `n` takes exactly `n + 1` steps. -/
+/-- **Running a counter transfer.** Let $M$ be a multi-stack machine whose state carries a
+flag bit, and suppose that at label $\ell$ it executes the transfer loop that empties stack $k$
+into the targets $p_1, \dots, p_m$ and then goes to label $\ell'$. Here each target $p_i$ is a
+pair of a stack $t_i$ and a symbol $x_i$ of its alphabet, the stacks $t_1, \dots, t_m$ are
+distinct, and $k$ is none of them. Let $u$ be a symbol of stack $k$. Then for every $n$, every
+state $v$ and all stack contents $S$ in which stack $k$ holds exactly $u^n$, the machine goes in
+exactly $n + 1$ steps from label $\ell$ with state $v$ and stacks $S$ to label $\ell'$ with the
+state that stores the flag value false and the stacks obtained from $S$ by emptying stack $k$
+and then pushing $n$ copies of $x_i$ on each stack $t_i$. -/
 theorem xfer_run {self next : Λ} {k : K} {ps : List (Σ k, Γ k)}
     (hp : M self = xfer k ps self next) (hps : ps.NodupKeys) (hk : k ∉ ps.keys) (u : Γ k) :
     ∀ (n : ℕ) (v : σ) (S : ∀ k, List (Γ k)), S k = cnt u n →
@@ -286,8 +327,14 @@ theorem compare_succ_succ (m n : ℕ) : compare (m + 1) (n + 1) = compare m n :=
 
 variable [Flag σ] {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- One round of comparing counters `a` and `b`: pop both, park the popped units on `ta`/`tb`.
-Both non-empty: repeat (`self`); otherwise go to `lt`, `eq` or `gt`. -/
+/-- **One round of counter comparison.** For stacks $a, b, t_a, t_b$, symbols $u_{t_a}$ of stack
+$t_a$ and $u_{t_b}$ of stack $t_b$, and labels $\mathit{self}$, $\mathit{lt}$, $\mathit{eq}$ and
+$\mathit{gt}$, this machine statement pops stack $a$ and then stack $b$; after each pop it stores
+in the state whether the pop found a symbol and branches on it. If both pops found a symbol, it
+pushes $u_{t_a}$ onto $t_a$, then $u_{t_b}$ onto $t_b$, and goes to $\mathit{self}$. If only the
+pop of $a$ found a symbol, it pushes $u_{t_a}$ onto $t_a$ and goes to $\mathit{gt}$; if only the
+pop of $b$ found one, it pushes $u_{t_b}$ onto $t_b$ and goes to $\mathit{lt}$; if neither did,
+it goes to $\mathit{eq}$. -/
 def cmpStep (a b ta tb : K) (uta : Γ ta) (utb : Γ tb)
     (self lt eq gt : Λ) : TM2.Stmt Γ Λ σ :=
   .pop a (fun _ o => Flag.tag o.isSome) <| .branch Flag.untag
@@ -298,8 +345,20 @@ def cmpStep (a b ta tb : K) (uta : Γ ta) (utb : Γ tb)
       (.push tb (fun _ => utb) <| .goto fun _ => lt)
       (.goto fun _ => eq))
 
-/-- The comparison loop: `min m n + 1` steps; afterwards `a` has lost `min m (n+1)` units and
-`b` has lost `min n (m+1)`, and they sit on `ta`, `tb`. Other stacks are untouched. -/
+/-- **The comparison loop.** Let $a, b, t_a, t_b$ be pairwise distinct stacks with unit symbols
+$u_a, u_b, u_{t_a}, u_{t_b}$, and let $r$ map each ordering to a label. Suppose the machine $M$
+has at label $\ell$ the comparison round of $a$ and $b$ with scratch stacks $t_a, t_b$ and units
+$u_{t_a}, u_{t_b}$ that repeats at $\ell$ and exits to $r(\mathrm{lt})$, $r(\mathrm{eq})$ and
+$r(\mathrm{gt})$: it pops $a$ and $b$, pushes $u_{t_a}$ onto $t_a$ if $a$ was non-empty and
+$u_{t_b}$ onto $t_b$ if $b$ was non-empty, and goes to $\ell$ if both were non-empty, to
+$r(\mathrm{lt})$ if only $b$ was, to $r(\mathrm{eq})$ if neither was and to $r(\mathrm{gt})$ if
+only $a$ was. Then for all $m, n, p, q \in \mathbb{N}$, every state $v$ and all stacks $S$ in
+which $a, b, t_a, t_b$ hold exactly $u_a^m, u_b^n, u_{t_a}^p, u_{t_b}^q$ respectively, there are
+a state $v'$ and stacks $S'$ such that exactly $\min(m, n) + 1$ steps of $M$ lead from label
+$\ell$ with state $v$ and stacks $S$ to label $r(\mathrm{compare}(m, n))$ with state $v'$ and
+stacks $S'$, where in $S'$ the stack $a$ holds $u_a^{m - \min(m, n+1)}$, $b$ holds
+$u_b^{n - \min(n, m+1)}$, $t_a$ holds $u_{t_a}^{p + \min(m, n+1)}$, $t_b$ holds
+$u_{t_b}^{q + \min(n, m+1)}$, and every other stack is as in $S$. -/
 theorem cmpLoop_run {a b ta tb : K} {ua : Γ a} {ub : Γ b} {uta : Γ ta} {utb : Γ tb}
     {self : Λ} {r : Ordering → Λ}
     (hp : M self = cmpStep a b ta tb uta utb self (r .lt) (r .eq) (r .gt))
@@ -381,9 +440,21 @@ theorem cmpLoop_run {a b ta tb : K} {ua : Γ a} {ub : Γ b} {uta : Γ ta} {utb :
           rw [h'k k h1 h2 h3 h4]
           simp [hS₁, update_of_ne h1, update_of_ne h2, update_of_ne h3, update_of_ne h4]
 
-/-- Full non-destructive comparison: the loop, then `xfer ta → a` and `xfer tb → b`. From counters
-`a = m`, `b = n` and empty scratch stacks `ta`, `tb`, it reaches `out (compare m n)` with **all
-stacks exactly as before**, in `3 · min m n + 3 + [m ≠ n]` steps. -/
+/-- **Non-destructive comparison of two counters.** Let $M$ be a TM2 machine whose state type
+carries a flag bit, let $a, b, t_a, t_b$ be pairwise distinct stacks with symbols $u_a$, $u_b$,
+$u_{t_a}$, $u_{t_b}$ of their alphabets, let $\ell$ be a label and let $r$, $r'$, $o$ map each
+ordering to a label. Suppose that $M$ has at $\ell$ the comparison round of $a$ and $b$ with
+scratch stacks $t_a, t_b$ and units $u_{t_a}, u_{t_b}$ that goes to $\ell$ again and exits to
+$r(\mathrm{lt})$, $r(\mathrm{eq})$ and $r(\mathrm{gt})$, and that for every ordering $\omega$,
+$M$ has at $r(\omega)$ the counter transfer loop of $t_a$ into the single target $(a, u_a)$ that
+repeats at $r(\omega)$ and exits to $r'(\omega)$, and has at $r'(\omega)$ the counter transfer
+loop of $t_b$ into the single target $(b, u_b)$ that repeats at $r'(\omega)$ and exits to
+$o(\omega)$. Write $\mathrm{compare}(m, n)$ for the ordering of natural numbers $m$ and $n$, and
+$[m \ne n]$ for $1$ if $m \ne n$ and $0$ otherwise. Then for all $m, n \in \mathbb{N}$, every
+state $v$ and all stacks $S$ in which $a$ holds exactly $u_a^m$, $b$ holds exactly $u_b^n$ and
+$t_a$ and $t_b$ are empty, $M$ runs in exactly $3\min(m, n) + 3 + [m \ne n]$ steps from label
+$\ell$ with state $v$ and stacks $S$ to label $o(\mathrm{compare}(m, n))$ with the state that
+stores the flag value false and with the same stacks $S$. -/
 theorem cmp_run {a b ta tb : K} {ua : Γ a} {ub : Γ b} {uta : Γ ta} {utb : Γ tb}
     {self : Λ} {r rB out : Ordering → Λ}
     (hp : M self = cmpStep a b ta tb uta utb self (r .lt) (r .eq) (r .gt))
@@ -430,7 +501,9 @@ end Cmp
 
 /-! ### For-loops over a counter -/
 
-/-- `sumFrom f i j = f i + f (i+1) + … + f (i+j-1)`. -/
+/-- **Sum of consecutive values.** For $f : \mathbb{N} \to \mathbb{N}$ and $i, j \in \mathbb{N}$,
+$\mathrm{sumFrom}(f, i, j) = f(i) + f(i+1) + \dots + f(i+j-1)$ is the sum of $f(t)$ over the
+$j$ indices $t$ with $i \le t < i + j$; it is $0$ when $j = 0$. -/
 def sumFrom (f : ℕ → ℕ) (i : ℕ) : ℕ → ℕ
   | 0 => 0
   | j + 1 => f i + sumFrom f (i + 1) j
@@ -440,7 +513,9 @@ theorem sumFrom_const (c i j : ℕ) : sumFrom (fun _ => c) i j = j * c := by
   | zero => simp [sumFrom]
   | succ j ih => rw [sumFrom, ih, Nat.succ_mul, Nat.add_comm]
 
-/-- Bounding a cost sum termwise over the index range `[i, i + j)`. -/
+/-- **Termwise bound on a sum of consecutive values.** Let $f : \mathbb{N} \to \mathbb{N}$ and
+$c, i, j \in \mathbb{N}$. If $f(t) \le c$ for every $t$ with $i \le t < i + j$, then
+$\mathrm{sumFrom}(f, i, j) = f(i) + f(i+1) + \dots + f(i+j-1)$ is at most $j \cdot c$. -/
 theorem sumFrom_le {f : ℕ → ℕ} {c : ℕ} :
     ∀ (i j : ℕ), (∀ t, i ≤ t → t < i + j → f t ≤ c) → sumFrom f i j ≤ j * c := by
   intro i j
@@ -456,16 +531,32 @@ section For
 
 variable [Flag σ] {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- Loop head: pop counter `c`. If a unit was popped, push one unit on the index stack `cd` and
-run the body from `body`; if `c` is empty go to `rest` (which restores `c` from `cd`). -/
+/-- **Loop head of a for loop over a counter.** For stacks $c$ and $c'$, a symbol $u'$ of stack
+$c'$ and labels $b$ and $r$, the loop head is the statement that pops stack $c$, replaces the
+machine state by the state whose flag bit records whether a symbol was popped, and branches on
+that bit: if a symbol was popped, it pushes $u'$ onto the index stack $c'$ and goes to label $b$
+(the loop body); if $c$ was empty, it goes to label $r$. -/
 def forHead (c cd : K) (ucd : Γ cd) (body rest : Λ) : TM2.Stmt Γ Λ σ :=
   .pop c (fun _ o => Flag.tag o.isSome) <| .branch Flag.untag
     (.push cd (fun _ => ucd) <| .goto fun _ => body) (.goto fun _ => rest)
 
-/-- `for i < n do body`, with `c` holding `n - i` (units still to do) and `cd` holding the
-index `i + 1` while the body of iteration `i` runs. The body must preserve `c` and `cd`, end at
-`head`, and take `cost i` steps; `P` is the caller's invariant, which must not depend on `c`, `cd`.
-Total: `Σ_{i<n} (cost i + 1) + n + 2` steps, and afterwards `c = n`, `cd = []` again. -/
+/-- **Exact running time of a for loop over a counter.** Let $M$ be a multi-stack machine whose
+states carry a flag bit, with $\mathrm{tag}(\beta)$ the state storing the bit $\beta$; write $(\ell,
+v, S)$ for the configuration at label $\ell$ with state $v$ and stack contents $S$, and $u^m$ for a
+stack holding exactly $m$ copies of the symbol $u$. Let $c \ne c'$ be stacks with a symbol $u$ of
+stack $c$ and a symbol $u'$ of stack $c'$, and let $h, b, r, e$ be labels such that at $h$ the
+machine runs the loop head on $c$ with index stack $c'$ (pop $c$; if a symbol was popped, push $u'$
+onto $c'$ and go to $b$, otherwise go to $r$), and at $r$ it runs the transfer that drains $c'$,
+pushing one $u$ onto $c$ per popped symbol, and then goes to $e$. Let $n \in \mathbb{N}$, let
+$\mathrm{cost} : \mathbb{N} \to \mathbb{N}$, and let $P(i, S)$ be a predicate such that $P(i, S)$
+implies $P(i, S')$ whenever $S$ and $S'$ agree on every stack other than $c$ and $c'$. Assume that
+for every $i < n$ and all stack contents $S$ with $S_c = u^{n-1-i}$, $S_{c'} = u'^{\,i+1}$ and $P(i,
+S)$, there are a state $v'$ and stack contents $S'$ such that $M$ goes from $(b,
+\mathrm{tag}(\mathrm{true}), S)$ to $(h, v', S')$ in exactly $\mathrm{cost}(i)$ steps, with $S'_c =
+S_c$, $S'_{c'} = S_{c'}$ and $P(i + 1, S')$. Then for every state $v$ and all stack contents $S$
+with $S_c = u^n$, $S_{c'}$ empty and $P(0, S)$, there are stack contents $S'$ such that $M$ goes
+from $(h, v, S)$ to $(e, \mathrm{tag}(\mathrm{false}), S')$ in exactly $\sum_{i < n}
+(\mathrm{cost}(i) + 1) + n + 2$ steps, with $S'_c = u^n$, $S'_{c'}$ empty and $P(n, S')$. -/
 theorem forLoop_run {c cd : K} {uc : Γ c} {ucd : Γ cd} {head body rest next : Λ}
     (hHead : M head = forHead c cd ucd body rest)
     (hRest : M rest = xfer cd [⟨c, uc⟩] rest next) (hc : c ≠ cd) (n : ℕ)
@@ -527,7 +618,10 @@ end For
 
 section Emit
 
-/-- Push the symbols `xs` on stack `k`, in order (so `xs.getLast` ends on top). -/
+/-- **Pushing a list of symbols onto one stack.** Let $k$ be a stack index, $xs = [x_1, \dots, x_m]$
+a list of symbols of the alphabet of stack $k$, and $q$ a statement of a TM2 machine. This is the
+statement that pushes $x_1, \dots, x_m$ onto stack $k$ in that order, so that $x_m$ ends on top
+when $m \ge 1$, and then continues with $q$. -/
 def pushList (k : K) (xs : List (Γ k)) (q : TM2.Stmt Γ Λ σ) : TM2.Stmt Γ Λ σ :=
   xs.foldr (fun x q => .push k (fun _ => x) q) q
 
@@ -543,7 +637,10 @@ theorem stepAux_pushList (k : K) (xs : List (Γ k)) (q : TM2.Stmt Γ Λ σ) (v :
 
 variable {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- Emit the constant list `xs` onto stack `k` in one step, then go to `next`. -/
+/-- **Pushing a constant list.** For a stack $k$, a list $(x_1, \dots, x_m)$ of symbols of
+stack $k$ and a label $\ell$, this statement pushes $x_1, \dots, x_m$ onto stack $k$ in this order,
+so that $x_m$ ends on top, and then goes to label $\ell$. The machine executes it in a single
+step. -/
 def emit (k : K) (xs : List (Γ k)) (next : Λ) : TM2.Stmt Γ Λ σ :=
   pushList k xs (.goto fun _ => next)
 
@@ -577,8 +674,16 @@ theorem addU_pair_ne {a b k : K} (x : Γ a) (y : Γ b) (i : ℕ) (S : ∀ k, Lis
 
 variable [Flag σ] {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- Non-destructive `c += a` through the empty scratch stack `t`: `xfer a → [c, t]`, then
-`xfer t → [a]`. Exactly `2m + 2` steps. -/
+/-- **Copying a counter through a scratch stack.** Let $a, c, t$ be pairwise distinct stacks with
+unit symbols $u_a, u_c, u_t$. Write $\mathrm{xfer}(k, ps, \ell, \ell')$ for the transfer loop at
+label $\ell$ that pops stack $k$ until it is empty, pushing $x$ onto stack $j$ for each pair
+$(j, x)$ in $ps$ per popped symbol, and then goes to $\ell'$. Suppose the machine $M$ has
+$M(l_1) = \mathrm{xfer}(a, [(c, u_c), (t, u_t)], l_1, l_2)$ and
+$M(l_2) = \mathrm{xfer}(t, [(a, u_a)], l_2, \mathit{next})$. Let $m, p \in \mathbb{N}$, let $v$
+be a state and let $S$ be stacks in which $a$ holds exactly $u_a^m$, $c$ holds $u_c^p$ and $t$ is
+empty. Then exactly $2m + 2$ steps of $M$ lead from label $l_1$ with state $v$ and stacks $S$ to
+label $\mathit{next}$ with the state storing the flag false and the stacks $S$ with $c$ replaced
+by $u_c^{m+p}$. -/
 theorem copy_run {a c t : K} {ua : Γ a} {uc : Γ c} {ut : Γ t} {l₁ l₂ next : Λ}
     (h₁ : M l₁ = xfer a [⟨c, uc⟩, ⟨t, ut⟩] l₁ l₂) (h₂ : M l₂ = xfer t [⟨a, ua⟩] l₂ next)
     (hac : a ≠ c) (hat : a ≠ t) (hct : c ≠ t) (m p : ℕ) (v : σ) (S : ∀ k, List (Γ k))
@@ -606,7 +711,19 @@ theorem copy_run {a c t : K} {ua : Γ a} {uc : Γ c} {ut : Γ t} {l₁ l₂ next
   rw [hfin] at r₂
   exact (r₁.trans r₂).of_eq (by omega)
 
-/-- `c += a + b`: two non-destructive copies through the scratch stack `t`. -/
+/-- **Adding two counters into a third.** Let $a, b, c, t$ be stacks with $a \ne c$, $a \ne t$,
+$b \ne c$, $b \ne t$ and $c \ne t$, with unit symbols $u_a, u_b, u_c, u_t$. Write
+$\mathrm{xfer}(k, ps, \ell, \ell')$ for the transfer loop at label $\ell$ that pops stack $k$ until
+it is empty, pushing $x$ onto stack $j$ for each pair $(j, x)$ in $ps$ per popped symbol, and then
+goes to $\ell'$. Suppose the machine $M$ has
+$M(l_1) = \mathrm{xfer}(a, [(c, u_c), (t, u_t)], l_1, l_2)$,
+$M(l_2) = \mathrm{xfer}(t, [(a, u_a)], l_2, l_3)$,
+$M(l_3) = \mathrm{xfer}(b, [(c, u_c), (t, u_t)], l_3, l_4)$ and
+$M(l_4) = \mathrm{xfer}(t, [(b, u_b)], l_4, \mathit{next})$. Let $m, n, p \in \mathbb{N}$, let $v$
+be a state and let $S$ be stacks in which $a$ holds exactly $u_a^m$, $b$ holds $u_b^n$, $c$ holds
+$u_c^p$ and $t$ is empty. Then exactly $2m + 2n + 4$ steps of $M$ lead from label $l_1$ with
+state $v$ and stacks $S$ to label $\mathit{next}$ with the state storing the flag false and the
+stacks $S$ with $c$ replaced by $u_c^{m+n+p}$. -/
 theorem add_run {a b c t : K} {ua : Γ a} {ub : Γ b} {uc : Γ c} {ut : Γ t}
     {l₁ l₂ l₃ l₄ next : Λ}
     (h₁ : M l₁ = xfer a [⟨c, uc⟩, ⟨t, ut⟩] l₁ l₂) (h₂ : M l₂ = xfer t [⟨a, ua⟩] l₂ l₃)
@@ -622,8 +739,21 @@ theorem add_run {a b c t : K} {ua : Γ a} {ub : Γ b} {uc : Γ c} {ut : Γ t}
   rw [update_idem, show n + (m + p) = m + n + p by omega] at r₂
   exact (r₁.trans r₂).of_eq (by omega)
 
-/-- `c += a · b`: a `for` loop over `a` (index on `ad`) whose body copies `b` into `c` through
-`t`. Exactly `m (2n + 3) + m + 2` steps; all stacks but `c` end as they started. -/
+/-- **Multiplying unary counters.** Let $M$ be a multi-stack machine whose states carry a flag
+bit, with $\mathrm{tag}(\mathrm{false})$ the state storing the bit false; write $(\ell, v, S)$ for
+the configuration at label $\ell$ with state $v$ and stack contents $S$, and $u^m$ for a stack
+holding exactly $m$ copies of the symbol $u$. Let $a, a', b, c, t$ be pairwise distinct stacks
+with symbols $u_a, u_{a'}, u_b, u_c, u_t$ of the respective stacks, and let $h, \ell_1, \ell_2, r,
+e$ be labels such that: at $h$ the machine runs the loop head on $a$ with index stack $a'$ (pop
+$a$; if a symbol was popped, push $u_{a'}$ onto $a'$ and go to $\ell_1$, otherwise go to $r$); at
+$\ell_1$ it runs the transfer that drains $b$, pushing $u_c$ onto $c$ and $u_t$ onto $t$ per
+popped symbol, and then goes to $\ell_2$; at $\ell_2$ it runs the transfer that drains $t$,
+pushing $u_b$ onto $b$ per popped symbol, and then goes to $h$; and at $r$ it runs the transfer
+that drains $a'$, pushing $u_a$ onto $a$ per popped symbol, and then goes to $e$. Then for all
+$m, n, p \in \mathbb{N}$, every state $v$ and all stack contents $S$ with $S_a = u_a^m$, $S_{a'}$
+empty, $S_b = u_b^n$, $S_c = u_c^p$ and $S_t$ empty, $M$ goes from $(h, v, S)$ to
+$(e, \mathrm{tag}(\mathrm{false}), S')$ in exactly $m(2n + 3) + m + 2$ steps, where $S'$ agrees
+with $S$ on every stack except $c$ and $S'_c = u_c^{mn + p}$. -/
 theorem mul_run {a ad b c t : K} {ua : Γ a} {uad : Γ ad} {ub : Γ b} {uc : Γ c} {ut : Γ t}
     {head body l₂ rest next : Λ}
     (hHead : M head = forHead a ad uad body rest)
@@ -678,7 +808,8 @@ end Arith
 
 section Gap
 
-/-- `n` copies of the block `ys`, concatenated. -/
+/-- **Repeated block.** For a list $ys$ and $n \in \mathbb{N}$, $\mathrm{rep}(ys, n)$ is the
+concatenation of $n$ copies of $ys$; it is the empty list when $n = 0$. -/
 def rep {α : Type} (ys : List α) (n : ℕ) : List α := (List.replicate n ys).flatten
 
 @[simp] theorem rep_zero {α : Type} (ys : List α) : rep ys 0 = [] := rfl
@@ -694,7 +825,10 @@ theorem rep_add {α : Type} (ys : List α) (m n : ℕ) : rep ys (m + n) = rep ys
 
 variable [Flag σ] {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- Prepend `ys` to stack `k` (so `ys` reads top-down): `emit` of the reversed list. -/
+/-- **Prepending a constant list.** For a stack $k$, a list $(y_1, \dots, y_m)$ of symbols of
+stack $k$ and a label $\ell$, this statement pushes $y_m, \dots, y_1$ onto stack $k$ in this order
+and then goes to label $\ell$; it is the constant-list push of the reversed list. Afterwards
+$y_1, \dots, y_m$ sit on top of stack $k$, read from the top down. -/
 def emitR (k : K) (ys : List (Γ k)) (next : Λ) : TM2.Stmt Γ Λ σ := emit k ys.reverse next
 
 omit [Flag σ] in
@@ -703,7 +837,14 @@ theorem emitR_run {self next : Λ} {k : K} {ys : List (Γ k)} (hp : M self = emi
     Run M 1 ⟨some self, v, S⟩ ⟨some next, v, update S k (ys ++ S k)⟩ := by
   simpa using emit_run (M := M) hp v S
 
-/-- Drain counter `k`, prepending `ys` to stack `o` once per unit. -/
+/-- **Draining a counter while prepending a block.** Let $k$ and $o$ be stack indices, $ys$ a list
+of symbols of the alphabet of stack $o$, and $\ell$ and $\ell'$ labels. This is the TM2 statement
+that pops stack $k$ and sets the internal state to the flag bit recording whether a symbol was
+popped. If one was, it prepends $ys$ to stack $o$ (so that $ys$ reads from the top down) and goes
+to $\ell$; if stack $k$ was empty, it goes to $\ell'$.
+
+Used as the statement at label $\ell$ with $k \ne o$, it empties a unary counter on stack $k$ and
+prepends one copy of $ys$ to stack $o$ per unit removed, then goes to $\ell'$. -/
 def xferE (k o : K) (ys : List (Γ o)) (self next : Λ) : TM2.Stmt Γ Λ σ :=
   .pop k (fun _ o => Flag.tag o.isSome)
     (.branch Flag.untag (pushList o ys.reverse (.goto fun _ => self)) (.goto fun _ => next))
@@ -743,10 +884,26 @@ theorem xferE_run {self next : Λ} {k o : K} {ys : List (Γ o)}
       rw [hfin] at key
       exact key
 
-/-- Gap emission. From `P = q + gap + 1` and `Q = q`: repeatedly decrement `P`, compare with `Q`
-(non-destructively), and while they differ prepend `ys` to `o`. Ends with `P = q`, having
-prepended `rep ys gap`. Labels: `dec` (decrement), `cmpL` + restore families `r`, `rB` (the
-comparison), `emitL` (prepend). `ifZero` is unreachable. -/
+/-- **Gap emission.** Let $P, Q, T_1, T_2, o$ be pairwise distinct stacks, with unit symbols
+$u_P, u_Q, u_{T_1}, u_{T_2}$ for the first four, and let $ys$ be a list of symbols of stack $o$.
+Write $\mathrm{xfer}(k, ps, \ell, \ell')$ for the transfer loop at label $\ell$ that pops stack
+$k$ until it is empty, pushing $x$ onto stack $j$ for each pair $(j, x)$ in $ps$ per popped
+symbol, and then goes to $\ell'$. Let $r, r_B, \mathit{out}$ map each ordering to a label, with
+$\mathit{out}(\mathrm{eq}) = \mathit{next}$ and $\mathit{out}(\omega) = \mathit{emit}$ for every
+ordering $\omega \ne \mathrm{eq}$. Suppose the machine $M$ has: at label $\mathit{dec}$ the
+decrement of $P$ that goes to $\mathit{cmp}$ if a symbol was popped and to $\mathit{ifZero}$ if
+$P$ was empty; at label $\mathit{cmp}$ the comparison round of $P$ and $Q$ with scratch stacks
+$T_1, T_2$ and units $u_{T_1}, u_{T_2}$ that repeats at $\mathit{cmp}$ and exits to
+$r(\mathrm{lt})$, $r(\mathrm{eq})$ and $r(\mathrm{gt})$; for every ordering $\omega$,
+$M(r(\omega)) = \mathrm{xfer}(T_1, [(P, u_P)], r(\omega), r_B(\omega))$ and
+$M(r_B(\omega)) = \mathrm{xfer}(T_2, [(Q, u_Q)], r_B(\omega), \mathit{out}(\omega))$; and at
+label $\mathit{emit}$ the statement that prepends $ys$ to stack $o$ (so that $ys$ reads top-down)
+and goes to $\mathit{dec}$. Let $q \in \mathbb{N}$. Then for every $g \in \mathbb{N}$, every
+state $v$ and all stacks $S$ in which $P$ holds exactly $u_P^{q+g+1}$, $Q$ holds $u_Q^q$, and
+$T_1$ and $T_2$ are empty, exactly $g(3q + 6) + 3q + 4$ steps of $M$ lead from label
+$\mathit{dec}$ with state $v$ and stacks $S$ to label $\mathit{next}$ with the state storing the
+flag false and the stacks $S$ with $P$ replaced by $u_P^q$ and $o$ replaced by $g$ copies of $ys$
+concatenated, followed by the old contents of $o$. -/
 theorem emitDiff_run {P Q T1 T2 o : K} {uP : Γ P} {uQ : Γ Q} {uT1 : Γ T1} {uT2 : Γ T2}
     {ys : List (Γ o)} {dec cmpL emitL ifZero next : Λ} {r rB out : Ordering → Λ}
     (hdec : M dec = decr P ifZero cmpL)
@@ -821,7 +978,9 @@ section Reach
 
 variable {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- Some number of steps of `M` lead from `c` to `d`. -/
+/-- **Reachability for a TM2 machine.** For a TM2 machine $M$ and configurations $c$ and $d$, $d$
+is reachable from $c$ when there is some $n \in \mathbb{N}$ such that $M$ runs from $c$ to $d$
+in exactly $n$ steps. -/
 def Reach (M : Λ → TM2.Stmt Γ Λ σ) (c d : TM2.Cfg Γ Λ σ) : Prop := ∃ n, Run M n c d
 
 theorem Run.reach {n : ℕ} {c d : TM2.Cfg Γ Λ σ} (h : Run M n c d) : Reach M c d := ⟨n, h⟩
@@ -836,8 +995,22 @@ theorem Reach.trans {c d e : TM2.Cfg Γ Λ σ} (h₁ : Reach M c d) (h₂ : Reac
 
 variable [Flag σ]
 
-/-- `forLoop_run` with a body whose step count may depend on the data (only existence of a
-run is tracked). -/
+/-- **A for loop over a counter reaches its exit.** Let $M$ be a multi-stack machine whose states
+carry a flag bit, with $\mathrm{tag}(\beta)$ the state storing the bit $\beta$; write $(\ell, v, S)$
+for the configuration at label $\ell$ with state $v$ and stack contents $S$, and $u^m$ for a stack
+holding exactly $m$ copies of the symbol $u$. Let $c \ne c'$ be stacks with a symbol $u$ of stack
+$c$ and a symbol $u'$ of stack $c'$, and let $h, b, r, e$ be labels such that at $h$ the machine
+runs the loop head on $c$ with index stack $c'$ (pop $c$; if a symbol was popped, push $u'$ onto
+$c'$ and go to $b$, otherwise go to $r$), and at $r$ it runs the transfer that drains $c'$, pushing
+one $u$ onto $c$ per popped symbol, and then goes to $e$. Let $n \in \mathbb{N}$, and let $P(i, S)$
+be a predicate such that $P(i, S)$ implies $P(i, S')$ whenever $S$ and $S'$ agree on every stack
+other than $c$ and $c'$. Assume that for every $i < n$ and all stack contents $S$ with $S_c =
+u^{n-1-i}$, $S_{c'} = u'^{\,i+1}$ and $P(i, S)$, there are a state $v'$ and stack contents $S'$ such
+that $M$ goes from $(b, \mathrm{tag}(\mathrm{true}), S)$ to $(h, v', S')$ in finitely many steps,
+with $S'_c = S_c$, $S'_{c'} = S_{c'}$ and $P(i + 1, S')$. Then for every state $v$ and all stack
+contents $S$ with $S_c = u^n$, $S_{c'}$ empty and $P(0, S)$, there are stack contents $S'$ such that
+$M$ goes from $(h, v, S)$ to $(e, \mathrm{tag}(\mathrm{false}), S')$ in finitely many steps, with
+$S'_c = u^n$, $S'_{c'}$ empty and $P(n, S')$. -/
 theorem forLoop_reach {c cd : K} {uc : Γ c} {ucd : Γ cd} {head body rest next : Λ}
     (hHead : M head = forHead c cd ucd body rest)
     (hRest : M rest = xfer cd [⟨c, uc⟩] rest next) (hc : c ≠ cd) (n : ℕ)
@@ -897,13 +1070,17 @@ section Bound
 
 variable {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- At most `B` steps of `M` lead from `c` to `d`. -/
+/-- **Runs within a step budget.** For a TM2 machine $M$, a bound $B \in \mathbb{N}$ and
+configurations $c$ and $d$, $M$ runs from $c$ to $d$ within $B$ steps when there is some
+$n \le B$ such that $M$ runs from $c$ to $d$ in exactly $n$ steps. -/
 def RunLe (M : Λ → TM2.Stmt Γ Λ σ) (B : ℕ) (c d : TM2.Cfg Γ Λ σ) : Prop :=
   ∃ n, n ≤ B ∧ Run M n c d
 
-/-- Budgeted run, for goal-directed chaining: `K` steps are already spent, the run from `c` to
-`d` takes `n` more, and `K + n ≤ X`. Chaining lemmas only extend `K`, so every implicit
-argument is fixed by first-order unification. -/
+/-- **Budgeted run.** For a machine $M$, numbers $K, X \in \mathbb{N}$ and configurations $c$ and
+$d$, the budgeted run from $c$ to $d$ with $K$ steps already spent and budget $X$ holds when there
+is an $n \in \mathbb{N}$ with $K + n \le X$ such that $n$ steps of $M$ lead from $c$ to $d$.
+
+It is used for goal-directed chaining of runs: the chaining lemmas only increase $K$. -/
 def Bud (M : Λ → TM2.Stmt Γ Λ σ) (K X : ℕ) (c d : TM2.Cfg Γ Λ σ) : Prop :=
   ∃ n, K + n ≤ X ∧ Run M n c d
 
@@ -939,8 +1116,22 @@ theorem Bud.fin {K X : ℕ} {c d : TM2.Cfg Γ Λ σ} (hK : K ≤ X) (h : c = d) 
 
 variable [Flag σ]
 
-/-- `forLoop_reach` with a time bound: if every iteration of the body takes at most `B` steps,
-the loop takes at most `n (B + 1) + n + 2`. -/
+/-- **Time bound for a for loop over a counter.** Let $M$ be a multi-stack machine whose states
+carry a flag bit, with $\mathrm{tag}(\beta)$ the state storing the bit $\beta$; write $(\ell, v, S)$
+for the configuration at label $\ell$ with state $v$ and stack contents $S$, and $u^m$ for a stack
+holding exactly $m$ copies of the symbol $u$. Let $c \ne c'$ be stacks with a symbol $u$ of stack
+$c$ and a symbol $u'$ of stack $c'$, and let $h, b, r, e$ be labels such that at $h$ the machine
+runs the loop head on $c$ with index stack $c'$ (pop $c$; if a symbol was popped, push $u'$ onto
+$c'$ and go to $b$, otherwise go to $r$), and at $r$ it runs the transfer that drains $c'$, pushing
+one $u$ onto $c$ per popped symbol, and then goes to $e$. Let $n \in \mathbb{N}$, let $B \in
+\mathbb{N}$, and let $P(i, S)$ be a predicate such that $P(i, S)$ implies $P(i, S')$ whenever $S$
+and $S'$ agree on every stack other than $c$ and $c'$. Assume that for every $i < n$ and all stack
+contents $S$ with $S_c = u^{n-1-i}$, $S_{c'} = u'^{\,i+1}$ and $P(i, S)$, there are a state $v'$ and
+stack contents $S'$ such that $M$ goes from $(b, \mathrm{tag}(\mathrm{true}), S)$ to $(h, v', S')$
+in at most $B$ steps, with $S'_c = S_c$, $S'_{c'} = S_{c'}$ and $P(i + 1, S')$. Then for every state
+$v$ and all stack contents $S$ with $S_c = u^n$, $S_{c'}$ empty and $P(0, S)$, there are stack
+contents $S'$ such that $M$ goes from $(h, v, S)$ to $(e, \mathrm{tag}(\mathrm{false}), S')$ in at
+most $n(B + 1) + n + 2$ steps, with $S'_c = u^n$, $S'_{c'}$ empty and $P(n, S')$. -/
 theorem forLoop_le {c cd : K} {uc : Γ c} {ucd : Γ cd} {head body rest next : Λ}
     (hHead : M head = forHead c cd ucd body rest)
     (hRest : M rest = xfer cd [⟨c, uc⟩] rest next) (hc : c ≠ cd) (n B : ℕ)

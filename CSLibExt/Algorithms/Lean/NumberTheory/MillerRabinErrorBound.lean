@@ -127,8 +127,9 @@ private theorem pow_two_pow_mod (n x i : ℕ) :
 
 /-! ## Non-witnesses -/
 
-/-- The squaring loop reports no witness only if its start is `1` or one of its values is
-`n - 1`. -/
+/-- **When the squaring loop finds no witness.** Let $n$, $k$ and $x$ be natural numbers with
+$x < n$. If the Miller–Rabin squaring loop modulo $n$, started at $x$ with $k$ squarings to
+perform, reports no witness, then $x = 1$ or $x^{2^i} \equiv -1 \pmod n$ for some $i < k$. -/
 theorem witnessLoop_eq_false_imp {n : ℕ} :
     ∀ k x, x < n → (witnessLoop n k x).ret = false →
       x = 1 ∨ ∃ i < k, x ^ (2 ^ i) % n = n - 1 := by
@@ -151,8 +152,9 @@ theorem witnessLoop_eq_false_imp {n : ℕ} :
             · exact Or.inr ⟨0, Nat.zero_lt_succ _, by simp [h1]⟩
         · exact Or.inr ⟨i + 1, by omega, by rwa [← pow_two_pow_mod]⟩
 
-/-- CLRS's description of a non-witness: with `n - 1 = 2^t u`, either `a^u ≡ 1` or
-`a^(2^i u) ≡ -1` for some `i < t`. -/
+/-- **What a non-witness satisfies.** Let $n > 1$ and write $n - 1 = 2^t u$ with $u$ odd. If $a$ is
+a natural number for which the Miller–Rabin witness test $\mathrm{WITNESS}(a, n)$ returns false,
+then $a^u \equiv 1 \pmod n$, or $a^{2^i u} \equiv -1 \pmod n$ for some $i < t$. -/
 theorem witness_eq_false_imp {n a : ℕ} (hn : 1 < n) (h : (witness a n).ret = false) :
     a ^ (twoAdicSplit (n - 1)).2 % n = 1 ∨
       ∃ i < (twoAdicSplit (n - 1)).1, a ^ (2 ^ i * (twoAdicSplit (n - 1)).2) % n = n - 1 := by
@@ -165,7 +167,9 @@ theorem witness_eq_false_imp {n a : ℕ} (hn : 1 < n) (h : (witness a n).ret = f
   · refine Or.inr ⟨i, hi, ?_⟩
     rwa [← Nat.pow_mod, ← pow_mul, Nat.mul_comm] at h1
 
-/-- A non-witness passes Fermat's test, hence is a unit modulo `n`. -/
+/-- **Non-witnesses pass Fermat's test and are units.** Let $n > 1$ and let $a$ be a natural number
+such that the witness test $\mathrm{WITNESS}(a, n)$ returns false. Then $a^{n-1} \equiv 1 \pmod n$
+and $a$ is coprime to $n$. -/
 theorem coprime_of_witness_eq_false {n a : ℕ} (hn : 1 < n) (h : (witness a n).ret = false) :
     a ^ (n - 1) % n = 1 ∧ a.Coprime n := by
   have hf : a ^ (n - 1) % n = 1 := by
@@ -176,13 +180,20 @@ theorem coprime_of_witness_eq_false {n a : ℕ} (hn : 1 < n) (h : (witness a n).
   rw [← Nat.cast_pow, natCast_eq_one_iff hn]
   exact hf
 
-/-- The non-witnesses among `1, …, n - 1`. -/
+/-- **Non-witnesses of a number.** For a natural number $n$, the non-witnesses of $n$ form the
+finite set of bases $a$ with $0 < a < n$ for which the Miller–Rabin witness test
+$\mathrm{WITNESS}(a, n)$ returns false, that is, the bases that do not witness the compositeness
+of $n$. -/
 def nonwitnesses (n : ℕ) : Finset ℕ := (Finset.Ioo 0 n).filter fun a => (witness a n).ret = false
 
 /-! ## Case 1: some unit fails Fermat's test -/
 
-/-- If some unit `x` has `x^(n-1) ≢ 1`, the non-witnesses lie in the proper subgroup
-`{y : y^(n-1) = 1}`. -/
+/-- **At most half the bases are non-witnesses when some unit fails Fermat's test.** Let $n > 1$,
+and suppose some $x$ coprime to $n$ has $x^{n-1} \not\equiv 1 \pmod n$. Then at most $(n - 1)/2$
+of the bases $1, \dots, n - 1$ are non-witnesses for $n$.
+
+The proof shows that the non-witnesses lie in the proper subgroup $\{y : y^{n-1} = 1\}$ of
+$(\mathbb{Z}/n\mathbb{Z})^\times$. -/
 theorem card_nonwitnesses_le_of_pow_ne_one {n x : ℕ} (hn : 1 < n) (hx : x.Coprime n)
     (hfx : x ^ (n - 1) % n ≠ 1) : (nonwitnesses n).card ≤ (n - 1) / 2 := by
   let B : Subgroup (ZMod n)ˣ := (powMonoidHom (n - 1) : (ZMod n)ˣ →* (ZMod n)ˣ).ker
@@ -331,8 +342,14 @@ private theorem not_mem_pmOnePowSubgroup {n na nb m : ℕ} (ha : na ∣ n) (hb :
   · rw [h', map_neg, map_one] at hgb
     exact ZMod.neg_one_ne_one hgb
 
-/-- CLRS Theorem 31.38, case 2: for a Carmichael number (Mathlib's `Nat.IsCarmichael`) the
-non-witnesses lie in the proper subgroup `{x : x^(2^j u) = ±1}`. -/
+/-- **At most half the bases are non-witnesses for a Carmichael number.** Let $n$ be a Carmichael
+number: $n > 2$, $n$ is not prime, and $b^{n-1} \equiv 1 \pmod n$ for every $b$ coprime to $n$.
+Then at most $(n - 1)/2$ of the bases $1, \dots, n - 1$ are non-witnesses for $n$.
+
+The proof shows that the non-witnesses lie in a proper subgroup of
+$(\mathbb{Z}/n\mathbb{Z})^\times$.
+
+Source: CLRS, third edition, Theorem 31.38, case 2. -/
 theorem card_nonwitnesses_le_of_carmichael {n : ℕ} (hC : n.IsCarmichael) :
     (nonwitnesses n).card ≤ (n - 1) / 2 := by
   have hn : 1 < n := by have := hC.two_lt; omega
@@ -375,8 +392,11 @@ private theorem isCarmichael_of_forall {n : ℕ} (hn : 1 < n) (hodd : n % 2 = 1)
   exact h b hb
 
 
-/-- CLRS Theorem 31.38: an odd composite `n` has at most `(n - 1) / 2` non-witnesses among the
-bases `1, …, n - 1`, that is, at least `(n - 1) / 2` witnesses. -/
+/-- **At most half the bases are non-witnesses.** Let $n > 1$ be odd and not prime. Then at most
+$(n - 1)/2$ of the bases $1, \dots, n - 1$ are non-witnesses for $n$; equivalently, at least
+$(n - 1)/2$ of them are witnesses to the compositeness of $n$.
+
+Source: CLRS, third edition, Theorem 31.38. -/
 theorem card_nonwitnesses_le {n : ℕ} (hn : 1 < n) (hodd : n % 2 = 1) (hcomp : ¬ n.Prime) :
     (nonwitnesses n).card ≤ (n - 1) / 2 := by
   by_cases h : ∃ x, x.Coprime n ∧ x ^ (n - 1) % n ≠ 1
@@ -385,7 +405,10 @@ theorem card_nonwitnesses_le {n : ℕ} (hn : 1 < n) (hodd : n % 2 = 1) (hcomp : 
   · push Not at h
     exact card_nonwitnesses_le_of_carmichael (isCarmichael_of_forall hn hodd hcomp h)
 
-/-- `MILLER-RABIN` answers *prime* exactly when no base is a witness. -/
+/-- **Miller–Rabin answers prime exactly when no base is a witness.** For every natural number
+$n$ and every list of bases, the Miller–Rabin test on $n$ with these bases answers *prime* if and
+only if, for every base $a$ in the list, the witness test $\mathrm{WITNESS}(a, n)$ returns false,
+that is, $a$ is not a witness to the compositeness of $n$. -/
 theorem millerRabin_eq_true_iff (n : ℕ) :
     ∀ bases : List ℕ, (millerRabin n bases).ret = true ↔ ∀ a ∈ bases, (witness a n).ret = false
   | [] => by simp [millerRabin]
@@ -405,9 +428,14 @@ private theorem millerRabin_errors_eq (n s : ℕ) :
     forall_exists_index, forall_apply_eq_imp_iff, nonwitnesses]
   exact ⟨fun ⟨h1, h2⟩ i => ⟨h1 i, h2 i⟩, fun h => ⟨fun i => (h i).1, fun i => (h i).2⟩⟩
 
-/-- CLRS Theorem 31.39 in counting form: of the `(n - 1)^s` lists of `s` bases from
-`1, …, n - 1`, at most `((n - 1) / 2)^s` make `MILLER-RABIN` answer *prime* on an odd composite
-`n`, so with uniformly random bases the error probability is at most `2^(-s)`. -/
+/-- **Half error bound for Miller–Rabin with several bases.** Let $n > 1$ be odd and not prime,
+and let $s$ be a natural number. Among the $(n - 1)^s$ lists $(b_1, \dots, b_s)$ of bases with
+$0 < b_i < n$, at most $((n - 1)/2)^s$ make the Miller–Rabin test of $n$ with bases
+$b_1, \dots, b_s$ answer *prime*.
+
+With uniformly random bases the error probability is therefore at most $2^{-s}$.
+
+Source: CLRS, third edition, Theorem 31.39, in counting form. -/
 theorem card_millerRabin_errors_le {n : ℕ} (hn : 1 < n) (hodd : n % 2 = 1) (hcomp : ¬ n.Prime)
     (s : ℕ) :
     ((Fintype.piFinset fun _ : Fin s => Finset.Ioo 0 n).filter
@@ -456,10 +484,10 @@ private theorem pow_two_mul_eq_one_of_mem {n m : ℕ} {g : (ZMod n)ˣ}
     (hg : g ∈ pmOnePowSubgroup n m) : g ^ (2 * m) = 1 := by
   rcases hg with h | h <;> rw [Nat.mul_comm, pow_mul, h] <;> simp
 
-/-- The non-witnesses of an odd `n` that is neither prime nor a prime power, and that has a
-unit `z` with `z^(n-1) ≠ 1`, number at most `(n - 1) / 4`: with `w` as in case 2, the units `w`,
-`z`, `w z` and `w⁻¹ z` lie outside the subgroup that holds the non-witnesses, because
-`w^(2m) = 1` and `z^(2m) ≠ 1`. -/
+/-- **At most a quarter of the bases are non-witnesses when some unit fails Fermat's test and the
+modulus is not a prime power.** Let $n > 1$ be odd and not prime, and not of the form $p^e$ with
+$p$ prime and $e \ge 2$. Suppose some $z$ coprime to $n$ has $z^{n-1} \not\equiv 1 \pmod n$. Then
+at most $(n - 1)/4$ of the bases $1, \dots, n - 1$ are non-witnesses for $n$. -/
 theorem card_nonwitnesses_le_quarter_of_pow_ne_one {n z : ℕ} (hn : 1 < n) (hodd : n % 2 = 1)
     (hcomp : ¬ n.Prime) (hpow : ∀ p e, p.Prime → 2 ≤ e → n ≠ p ^ e) (hz : z.Coprime n)
     (hfz : z ^ (n - 1) % n ≠ 1) : (nonwitnesses n).card ≤ (n - 1) / 4 := by
@@ -560,10 +588,13 @@ private theorem castHom_pow_inv {n d m : ℕ} (hd : d ∣ n) (g : (ZMod n)ˣ)
   rw [mul_inv_cancel, Units.val_one, one_pow, map_one, h, one_mul] at this
   exact this.symm
 
-/-- The non-witnesses of a Carmichael number number at most `(n - 1) / 4`: with three pairwise
-coprime factors `n₁ n₂ n₃ = n`, the units `w₁ ≡ v (mod n₁)` and `w₂ ≡ v (mod n₂)` (both `≡ 1`
-modulo the other factors) give four distinct cosets of the subgroup that holds the
-non-witnesses. -/
+/-- **At most a quarter of the bases are non-witnesses for a Carmichael number.** Let $n$ be a
+Carmichael number: $n > 2$, $n$ is not prime, and $b^{n-1} \equiv 1 \pmod n$ for every $b$
+coprime to $n$. Then at most $(n - 1)/4$ of the bases $1, \dots, n - 1$ are non-witnesses for
+$n$.
+
+The proof splits $n$ into three pairwise coprime factors greater than $1$ and finds four distinct
+cosets of a subgroup of $(\mathbb{Z}/n\mathbb{Z})^\times$ that holds the non-witnesses. -/
 theorem card_nonwitnesses_le_quarter_of_carmichael {n : ℕ} (hC : n.IsCarmichael) :
     (nonwitnesses n).card ≤ (n - 1) / 4 := by
   have hn : 1 < n := by have := hC.two_lt; omega
@@ -648,10 +679,12 @@ private theorem pow_modEq_of_modEq {p k x y : ℕ} (hp : p.Prime) (hp2 : p ≠ 2
   · rfl
   · exact (key x y h hx hxy).symm
 
-/-- The non-witnesses of an odd prime power `p^k` with `k ≥ 2` number at most `p - 1 ≤ (p^k - 1)/4`:
-they satisfy `a^(p^k - 1) ≡ 1`, and two of them that agree modulo `p` agree modulo `p^k`, since
-their quotient `x` has `x^(p^(k-1)) = 1` (lifting the exponent) and `x^(p^k - 1) = 1` with
-coprime exponents. -/
+/-- **At most a quarter of the bases are non-witnesses for an odd prime power.** Let $p$ be a prime
+and $k \ge 2$ with $p^k$ odd. Then at most $(p^k - 1)/4$ of the bases $1, \dots, p^k - 1$ are
+non-witnesses for $p^k$.
+
+The proof shows that there are at most $p - 1$ non-witnesses: they satisfy
+$a^{p^k - 1} \equiv 1 \pmod{p^k}$, and two of them that agree modulo $p$ agree modulo $p^k$. -/
 theorem card_nonwitnesses_le_quarter_of_prime_pow {p k : ℕ} (hp : p.Prime) (hk : 2 ≤ k)
     (hodd : p ^ k % 2 = 1) : (nonwitnesses (p ^ k)).card ≤ (p ^ k - 1) / 4 := by
   set n := p ^ k with hn_def
@@ -722,9 +755,9 @@ theorem card_nonwitnesses_le_quarter_of_prime_pow {p k : ℕ} (hp : p.Prime) (hk
   calc (nonwitnesses n).card * 4 ≤ (p - 1 - 0) * 4 := Nat.mul_le_mul_right _ hcard
     _ ≤ n - 1 := by omega
 
-/-- **The `1/4` bound.** An odd composite `n` has at most `(n - 1) / 4` non-witnesses among the
-bases `1, …, n - 1`, so one uniformly random base fails to expose `n` with probability at most
-`1/4`. -/
+/-- **At most a quarter of the bases are non-witnesses.** Let $n > 1$ be odd and not prime. Then
+at most $(n - 1)/4$ of the bases $1, \dots, n - 1$ are non-witnesses for $n$, so one uniformly
+random base fails to expose $n$ as composite with probability at most $1/4$. -/
 theorem card_nonwitnesses_le_quarter {n : ℕ} (hn : 1 < n) (hodd : n % 2 = 1) (hcomp : ¬ n.Prime) :
     (nonwitnesses n).card ≤ (n - 1) / 4 := by
   by_cases hpow : ∃ p e, p.Prime ∧ 2 ≤ e ∧ n = p ^ e
@@ -737,9 +770,12 @@ theorem card_nonwitnesses_le_quarter {n : ℕ} (hn : 1 < n) (hodd : n % 2 = 1) (
     · push Not at h
       exact card_nonwitnesses_le_quarter_of_carmichael (isCarmichael_of_forall hn hodd hcomp h)
 
-/-- The `1/4` bound in counting form for `s` independent bases: at most `((n - 1) / 4)^s` of the
-`(n - 1)^s` lists make `MILLER-RABIN` answer *prime* on an odd composite `n`, so the error
-probability is at most `4^(-s)`. -/
+/-- **Quarter error bound for Miller–Rabin with several bases.** Let $n > 1$ be odd and not
+prime, and let $s$ be a natural number. Among the $(n - 1)^s$ lists $(b_1, \dots, b_s)$ of bases
+with $0 < b_i < n$, at most $\lfloor (n - 1)/4 \rfloor^s$ make the Miller–Rabin test of $n$ with
+bases $b_1, \dots, b_s$ answer *prime*.
+
+With uniformly random bases the error probability is therefore at most $4^{-s}$. -/
 theorem card_millerRabin_errors_le_quarter {n : ℕ} (hn : 1 < n) (hodd : n % 2 = 1)
     (hcomp : ¬ n.Prime) (s : ℕ) :
     ((Fintype.piFinset fun _ : Fin s => Finset.Ioo 0 n).filter

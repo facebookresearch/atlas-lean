@@ -400,11 +400,14 @@ private theorem exists_ae_tendsto_of_forall_quadVar_le [IsProbabilityMeasure μ]
   exact ⟨c, by rwa [show (fun n => f n ω) = (fun n => g n ω) from
     funext (fun n => (hgf n).symm)]⟩
 
-/-- **Square-integrable martingale convergence.** Suppose `X_n` is a
-martingale with `E[X_n²] < ∞` for all `n` and let `A_n` be its
-predictable quadratic variation. Then `lim_{n → ∞} X_n` exists and is
-finite almost surely on the event that `A_n` converges (in particular,
-on `{A_∞ < ∞}`). -/
+/-- **Square-integrable martingale convergence.** Let $(X_n)_{n \in \mathbb{N}}$ be a
+real-valued martingale with respect to a filtration $(\mathcal{F}_n)$ on a probability space,
+with $E[X_n^2] < \infty$ for every $n$, and let $(A_n)$ be its predictable quadratic variation.
+Then for almost every $\omega$: if $A_n(\omega)$ converges to a real limit as $n \to \infty$,
+then $X_n(\omega)$ converges to a real limit as well.
+
+In particular, $X_n$ converges almost surely on the event $\{\sup_n A_n < \infty\}$, since
+$A_n$ is almost surely non-decreasing in $n$. -/
 theorem Martingale.ae_tendsto_of_tendsto_predictableQuadVar [IsProbabilityMeasure μ]
     (hmart : Martingale f ℱ μ) (hinteg : ∀ n, Integrable (fun ω => (f n ω) ^ 2) μ) :
     ∀ᵐ ω ∂μ, (∃ l, Tendsto (fun n => predictableQuadraticVariation μ ℱ f n ω) atTop (𝓝 l)) →

@@ -112,7 +112,10 @@ private lemma ksMixedDifferential_sum_smul {σ ι : Type*}
         rw [ksMixedDifferential_add, ksMixedDifferential_smul, ih]
   simpa using hfinset Finset.univ
 
-/-- The polynomial `det(x I + ∑ zᵢ Aᵢ)` used to define a mixed characteristic polynomial. -/
+/-- **Mixed determinant polynomial.** For square complex matrices $A_1, \dots, A_m$ whose rows and
+columns are indexed by a finite set $d$, the mixed determinant polynomial is
+$\det(x I + \sum_{i=1}^m z_i A_i)$, viewed as a polynomial with complex coefficients in the
+$m + 1$ variables $x, z_1, \dots, z_m$, where $I$ is the identity matrix. -/
 public noncomputable def mixedDetPolynomial {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
     (A : Fin m → Matrix d d ℂ) : MvPolynomial (Unit ⊕ Fin m) ℂ :=
   Matrix.det
@@ -120,7 +123,10 @@ public noncomputable def mixedDetPolynomial {m : ℕ} {d : Type*} [Fintype d] [D
       ∑ i, (X (Sum.inr i) : MvPolynomial (Unit ⊕ Fin m) ℂ) •
         (A i).map (C : ℂ → MvPolynomial (Unit ⊕ Fin m) ℂ))
 
-/-- Evaluating the determinant polynomial evaluates its scalar variables inside the determinant. -/
+/-- **Values of the mixed determinant polynomial.** Let $A_1, \dots, A_m$ be square complex
+matrices whose rows and columns are indexed by a finite set $d$. For all complex numbers
+$x, z_1, \dots, z_m$, the value of the mixed determinant polynomial of $A_1, \dots, A_m$ at the
+point $(x, z_1, \dots, z_m)$ is $\det(x I + \sum_{i=1}^m z_i A_i)$. -/
 public theorem eval_mixedDetPolynomial {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
     (A : Fin m → Matrix d d ℂ) (z : Unit ⊕ Fin m → ℂ) :
     MvPolynomial.eval z (mixedDetPolynomial A) =
@@ -203,7 +209,13 @@ private lemma ksMixedDet_update_matrix {m : ℕ} {d : Type*} [Fintype d] [Decida
   rw [hsum]
   abel
 
-/-- A determinant polynomial is affine in a variable whose coefficient matrix has rank one. -/
+/-- **Rank-one coefficients make the mixed determinant polynomial affine.** Let
+$A_1, \dots, A_m$ be square complex matrices whose rows and columns are indexed by a finite set
+$d$, and suppose that $A_i = u v^{\mathsf T}$ for some index $i$ and vectors
+$u, v \in \mathbb{C}^d$. Consider the mixed determinant polynomial
+$\det(x I + \sum_{j=1}^m z_j A_j)$ in the variables $x, z_1, \dots, z_m$, where $I$ is the
+identity matrix. Then its second partial derivative with respect to $z_i$ is zero; equivalently,
+it has degree at most one in $z_i$. -/
 public theorem mixedDetPolynomial_pderiv_sq_eq_zero_of_eq_vecMulVec
     {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
     (A : Fin m → Matrix d d ℂ) (i : Fin m) (u v : d → ℂ)
@@ -234,8 +246,12 @@ public theorem mixedDetPolynomial_pderiv_sq_eq_zero_of_eq_vecMulVec
   rw [ksEval_specializeAt] at heval
   simpa using heval
 
-/-- The mixed characteristic polynomial
-`(∏ᵢ (1 - ∂_{zᵢ})) det(x I + ∑ᵢ zᵢ Aᵢ)|_{z=0}`. -/
+/-- **Mixed characteristic polynomial.** For square complex matrices $A_1, \dots, A_m$ whose rows
+and columns are indexed by a finite set $d$, consider the mixed determinant polynomial
+$\det(x I + \sum_{i=1}^m z_i A_i)$ in the variables $x, z_1, \dots, z_m$, where $I$ is the
+identity matrix. The mixed characteristic polynomial is the polynomial in $x$ with complex
+coefficients obtained by applying the operator $\prod_{i=1}^m (1 - \partial_{z_i})$ to it and
+then setting $z_1 = \dots = z_m = 0$. -/
 public noncomputable def mixedCharacteristicPolynomial {m : ℕ} {d : Type*}
     [Fintype d] [DecidableEq d] (A : Fin m → Matrix d d ℂ) : Polynomial ℂ :=
   eval₂Hom Polynomial.C
@@ -500,7 +516,13 @@ private lemma ksEval_mixedDifferential_zero_eq_eval_neg_one
         (fun j hj ↦ hmulti j (by simp [hj]))]
       rw [ksSetVariables_update_of_not_mem i is (-1) (-1) x hnodup.1]
 
-/-- The mixed characteristic polynomial is affine in each matrix coordinate. -/
+/-- **The mixed characteristic polynomial is affine in each matrix.** Let $A_1, \dots, A_m$ be
+square complex matrices whose rows and columns are indexed by a finite set $d$, and fix an index
+$i$. Let $(C_a)_{a \in \iota}$ be a family of such matrices indexed by a finite set $\iota$, with
+real weights $w_a$, not necessarily nonnegative, such that $\sum_a w_a = 1$. Then the mixed
+characteristic polynomial of the family obtained from $A_1, \dots, A_m$ by replacing $A_i$ with
+$\sum_a w_a C_a$ equals $\sum_a w_a \mu_a$, where $\mu_a$ is the mixed characteristic polynomial of
+the family obtained by replacing $A_i$ with $C_a$. -/
 public theorem mixedCharacteristicPolynomial_update_sum
     {m : ℕ} {d ι : Type*} [Fintype d] [DecidableEq d] [Fintype ι]
     (A : Fin m → Matrix d d ℂ) (i : Fin m) (w : ι → ℝ)
@@ -586,7 +608,11 @@ public theorem mixedCharacteristicPolynomial_update_sum
       rw [Polynomial.eval_smul]
       rfl
 
-/-- Binary affine form of `mixedCharacteristicPolynomial_update_sum`. -/
+/-- **The mixed characteristic polynomial along a line.** Let $A_1, \dots, A_m$ be square complex
+matrices whose rows and columns are indexed by a finite set $d$, fix an index $i$, let $B$ and
+$C$ be two such matrices and let $t$ be a real number. Write $\mu_M$ for the mixed
+characteristic polynomial of the family obtained from $A_1, \dots, A_m$ by replacing $A_i$ with
+$M$. Then $\mu_{(1 - t) B + t C} = (1 - t)\, \mu_B + t\, \mu_C$. -/
 public theorem mixedCharacteristicPolynomial_update_affine
     {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
     (A : Fin m → Matrix d d ℂ) (i : Fin m) (B C : Matrix d d ℂ) (t : ℝ) :
@@ -604,8 +630,12 @@ public theorem mixedCharacteristicPolynomial_update_affine
   rw [Complex.ofReal_sub, Complex.ofReal_one] at h
   exact h
 
-/-- For rank-one inputs, the mixed characteristic polynomial is the characteristic polynomial of
-their sum. -/
+/-- **Mixed characteristic polynomials of outer products.** Let $A_1, \dots, A_m$ be square
+complex matrices whose rows and columns are indexed by a finite set $d$, and suppose that
+$A_i = u_i v_i^{\mathsf T}$ for vectors $u_i, v_i \in \mathbb{C}^d$, for every $i$. Then the
+mixed characteristic polynomial of $A_1, \dots, A_m$ equals the characteristic polynomial of the
+sum $\sum_{i=1}^m A_i$, that is, the polynomial $\det(x I - \sum_{i=1}^m A_i)$ in the variable
+$x$, where $I$ is the identity matrix. -/
 public theorem mixedCharacteristicPolynomial_eq_charpoly_sum_of_eq_vecMulVec
     {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
     (A : Fin m → Matrix d d ℂ) (u v : Fin m → d → ℂ)
@@ -652,8 +682,10 @@ public theorem mixedCharacteristicPolynomial_eq_charpoly_sum_of_eq_vecMulVec
   rw [Finset.sum_neg_distrib]
   abel
 
-/-- For one one-dimensional matrix, the mixed characteristic polynomial is its characteristic
-polynomial. -/
+/-- **Mixed characteristic polynomial of a single $1 \times 1$ matrix.** For every complex number
+$a$, the mixed characteristic polynomial of the family consisting of the single $1 \times 1$
+complex matrix $(a)$ is the polynomial $x - a$ in the variable $x$, which is the characteristic
+polynomial of $(a)$. -/
 public theorem mixedCharacteristicPolynomial_fin_one (a : ℂ) :
     mixedCharacteristicPolynomial (m := 1) (d := Fin 1)
       (fun _ ↦ !![a]) = Polynomial.X - Polynomial.C a := by

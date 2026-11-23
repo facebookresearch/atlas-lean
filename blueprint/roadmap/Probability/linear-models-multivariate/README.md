@@ -7,6 +7,7 @@ Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochr
 - [Gaussian graphical models](gaussian-graphical-models/README.md)
 - [Generalized least squares](generalized-least-squares/README.md)
 - [Lasso error bounds under restricted eigenvalues](lasso-error-bounds-under-restricted-eigenvalues/README.md)
+- [Ordinary least squares](ordinary-least-squares/README.md)
 - [Exact recovery by basis pursuit](exact-recovery-by-basis-pursuit/README.md)
 - [Principal component analysis](principal-component-analysis/README.md)
 - [Regularized covariance estimation by banding](regularized-covariance-estimation-by-banding/README.md)

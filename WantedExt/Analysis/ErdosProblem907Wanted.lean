@@ -26,14 +26,21 @@ erdosproblems.com/907. The upstream `answer(True)` is dropped; the
 right-hand side is stated directly. Status: resolved true (de Bruijn [dB51]);
 the registry links a proof-bearing external Lean development. -/
 
-/-- If every difference `f(· + h) - f(·)` is continuous, then `f` is the sum
-of a continuous function and an additive function. -/
+/-- **Erdős Problem 907.** The statement that every function $f : \mathbb{R} \to \mathbb{R}$
+such that $x \mapsto f(x + h) - f(x)$ is continuous for every $h > 0$ can be written as
+$f = g + a$ with $g : \mathbb{R} \to \mathbb{R}$ continuous and $a : \mathbb{R} \to \mathbb{R}$
+additive, that is, $a(x + y) = a(x) + a(y)$ for all real $x$ and $y$. -/
 def conjecture : Prop :=
   ∀ f : ℝ → ℝ, (∀ h : ℝ, 0 < h → Continuous fun x => f (x + h) - f x) →
     ∃ g a : ℝ → ℝ, Continuous g ∧ (∀ x y, a (x + y) = a x + a y) ∧ f = g + a
 
 /--
-Resolved true: Answered yes by de Bruijn; a proof is available in an external Lean development.
+**De Bruijn's theorem on continuous differences (Erdős Problem 907).** Let
+$f : \mathbb{R} \to \mathbb{R}$ be a function such that for every $h > 0$ the function
+$x \mapsto f(x + h) - f(x)$ is continuous. Then there are functions
+$g, a : \mathbb{R} \to \mathbb{R}$ with $g$ continuous and $a$ additive, that is,
+$a(x + y) = a(x) + a(y)$ for all real $x$ and $y$, such that $f = g + a$.
+
 Source: N. G. de Bruijn, Functions whose differences belong to a given class, Nieuw Archief voor
 Wiskunde (2) (1951), 194–218, https://mathscinet.ams.org/mathscinet-getitem?mr=43870; External
 Lean proof of Erdős Problem 907, plby/lean-proofs at commit

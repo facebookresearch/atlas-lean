@@ -72,10 +72,12 @@ open scoped unitInterval NNReal Topology Real
 
 namespace MathlibExt.Probability.CharFunStandardizedBinomial
 
-/-- **Standardized binomial distribution**.
+/-- **Standardized binomial distribution.** For a natural number $n$ and $p \in [0, 1]$, the
+standardized binomial distribution is the measure on $\mathbb{R}$ given by the law of
+$(S_n - np)/\sqrt{np(1-p)}$, where $S_n$ has the binomial distribution with parameters $n$ and
+$p$. When $np(1-p) = 0$ the division by $0$ is read as $0$, so the law is the point mass at $0$.
 
-The law of `(Sₙ − np) / √(np(1−p))` where `Sₙ ~ Binomial(n, p)`. This is the
-standardized sum appearing in the De Moivre–Laplace limit theorem. -/
+This is the standardized sum appearing in the De Moivre–Laplace limit theorem. -/
 noncomputable def standardizedBinomial (n : ℕ) (p : I) : Measure ℝ :=
   Bin(ℝ, n, p).map (fun x : ℝ ↦ (x - ↑n * ↑p) / Real.sqrt (↑n * ↑p * (1 - ↑p)))
 
@@ -86,9 +88,11 @@ instance isProbabilityMeasure_standardizedBinomial (n : ℕ) (p : I) :
   unfold standardizedBinomial
   infer_instance
 
-/-- **Affine transformation of a characteristic function.**
-
-If `Y = (X − a)/s` then `φ_Y(t) = φ_X(t/s) · exp(−i a t / s)`. -/
+/-- **Affine transformation of a characteristic function.** Let $\mu$ be a measure on
+$\mathbb{R}$, let $a, s, t \in \mathbb{R}$, and let $\nu$ be the image of $\mu$ under the map
+$x \mapsto (x - a)/s$. Then the characteristic functions satisfy
+$\varphi_\nu(t) = \varphi_\mu(t s^{-1}) \, e^{-i a t s^{-1}}$. Here $s^{-1}$ and division by $s$
+are read as $0$ when $s = 0$, so no hypothesis $s \neq 0$ is needed. -/
 theorem charFun_map_affine (μ : Measure ℝ) (a s t : ℝ) :
     charFun (μ.map (fun x => (x - a) / s)) t =
       charFun μ (t * s⁻¹) * Complex.exp (↑(-(a * (t * s⁻¹))) * Complex.I) := by
@@ -102,9 +106,11 @@ theorem charFun_map_affine (μ : Measure ℝ) (a s t : ℝ) :
   · congr 1
     simp [inner, mul_comm]
 
-/-- **Characteristic function of the real-valued binomial distribution.**
-
-`φ_{Bin(n, p)}(t) = ((1 − p) + p · e^{it})ⁿ`. -/
+/-- **Characteristic function of the real-valued binomial distribution.** For every natural
+number $n$, every $p \in [0, 1]$ and every real $t$, the characteristic function
+$\varphi_{\mathrm{Bin}(n, p)}$ of the binomial distribution $\mathrm{Bin}(n, p)$, viewed as a
+measure on $\mathbb{R}$, satisfies
+$\varphi_{\mathrm{Bin}(n, p)}(t) = \left((1 - p) + p e^{it}\right)^n$. -/
 theorem charFun_binomial_real (n : ℕ) (p : I) (t : ℝ) :
     charFun Bin(ℝ, n, p) t =
       ((1 - (p : ℝ)) + (p : ℝ) * Complex.exp (↑t * Complex.I)) ^ n := by
@@ -141,10 +147,9 @@ theorem charFun_binomial_real (n : ℕ) (p : I) (t : ℝ) :
         congr 1
         ring
 
-/-- **Second-order Taylor remainder bound for `exp`.**
-
-For `‖z‖ ≤ 1`, the remainder after the degree-2 Taylor polynomial of `exp` satisfies
-`‖e^z − 1 − z − z²/2‖ ≤ 2 ‖z‖³`. Used in the proof of the De Moivre–Laplace CLT. -/
+/-- **Second-order Taylor remainder bound for the exponential.** For every complex number $z$
+with $|z| \le 1$, the remainder after the degree-2 Taylor polynomial of the exponential
+satisfies $|e^z - 1 - z - z^2/2| \le 2|z|^3$. -/
 theorem exp_taylor2_err (z : ℂ) (hz : ‖z‖ ≤ 1) :
     ‖Complex.exp z - 1 - z - z ^ 2 / 2‖ ≤ 2 * ‖z‖ ^ 3 := by
   have h := Complex.exp_bound hz (n := 3) (by norm_num)
@@ -158,9 +163,12 @@ theorem exp_taylor2_err (z : ℂ) (hz : ‖z‖ ≤ 1) :
     _ ≤ ‖z‖ ^ 3 * 2 := by gcongr; norm_num
     _ = 2 * ‖z‖ ^ 3 := by ring
 
-/-- **Characteristic function of the standardized binomial** as a rescaling of the
-characteristic function of `Bin(n, p)`. Specialization of `charFun_map_affine` to the
-shift `np` and scale `s = √(np(1−p))`. -/
+/-- **Characteristic function of the standardized binomial.** For every natural number $n$,
+every $p \in [0, 1]$ and every real $t$, put $s = \sqrt{np(1-p)}$, with $s^{-1}$ read as $0$ when
+$s = 0$. Let $\psi$ be the characteristic function of the binomial distribution
+$\mathrm{Bin}(n, p)$ viewed as a measure on $\mathbb{R}$, and $\varphi$ that of the standardized
+binomial distribution with parameters $n$ and $p$. Then
+$\varphi(t) = \psi(t s^{-1}) \, e^{-i n p t s^{-1}}$. -/
 theorem charFun_standardizedBinomial (n : ℕ) (p : I) (t : ℝ) :
     let s := Real.sqrt (↑n * ↑p * (1 - ↑p))
     charFun (standardizedBinomial n p) t =
@@ -170,13 +178,12 @@ theorem charFun_standardizedBinomial (n : ℕ) (p : I) (t : ℝ) :
   unfold standardizedBinomial
   exact charFun_map_affine _ _ _ _
 
-/-- **Convergence of characteristic functions in De Moivre–Laplace.**
+/-- **Convergence of characteristic functions in De Moivre–Laplace.** Let $0 < p < 1$ and
+$t \in \mathbb{R}$. As $n \to \infty$, the characteristic function of the standardized binomial
+distribution with parameters $n$ and $p$, evaluated at $t$, converges to $e^{-t^2/2}$, the
+value at $t$ of the characteristic function of the standard normal distribution.
 
-For `0 < p < 1` and every `t ∈ ℝ`, the characteristic function of the standardized
-binomial converges to the characteristic function of the standard normal:
-`φ_{standardizedBinomial n p}(t) → exp(−t² / 2)`.
-
-This is the key analytic step in proving `deMoivreLaplace_clt` via Lévy's continuity
+This is the key analytic step in proving the De Moivre–Laplace theorem via Lévy's continuity
 theorem. -/
 theorem tendsto_charFun_standardizedBinomial (p : I) (hp₀ : (0 : ℝ) < p) (hp₁ : (p : ℝ) < 1)
     (t : ℝ) :
