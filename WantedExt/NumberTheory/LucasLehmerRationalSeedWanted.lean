@@ -13,6 +13,7 @@ import Mathlib.Tactic.NormNum.LegendreSymbol
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.OrderOfTwoMulCoprime
 
 /-!
 # The Lucas–Lehmer test with the rational seed `6/5`
