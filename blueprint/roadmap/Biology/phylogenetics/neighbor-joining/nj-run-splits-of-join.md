@@ -1,0 +1,3 @@
+# Neighbor joining forms the splits of a tree when every join forms a side
+
+Let $(G, \iota)$ be a [binary phylogenetic tree](is-binary-phylogenetic-tree.md) on a finite set $X$ and $D$ any real dissimilarity on $X$. Suppose that whenever a [run of neighbor joining](njrun.md) on $D$ has reached a partition $S$ of $X$ into [sides of edges](side.md) with $|S| \ge 4$ and distinct $a, b \in S$ minimize the [Q-criterion](q-criterion.md) of the current cluster dissimilarity, the union $a \cup b$ is again the side of some edge. Then every run reaching a cluster set $S$ with $|S| \le 3$, having formed the clusters $C$, satisfies: $A \in C$ or $X \setminus A \in C$ if and only if $A$ is the $a$-side of an edge $ab$ with neither endpoint a taxon vertex.
