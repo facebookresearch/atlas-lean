@@ -102,4 +102,3 @@ structure CycleOperations where
       cycleClass Y (d + r) (flatCycleMap f d r c)
 
 end AlgebraicGeometry.IntegralOperationalChow
-

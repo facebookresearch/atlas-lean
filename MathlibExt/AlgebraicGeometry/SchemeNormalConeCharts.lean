@@ -107,4 +107,3 @@ structure NormalConeModel where
       restrictionRingMap i (transition U V h) (chart U a)
 
 end MathlibExt.AlgebraicGeometry.SchemeNormalConeCharts
-
