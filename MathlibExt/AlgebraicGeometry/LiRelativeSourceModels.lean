@@ -43,7 +43,7 @@ variable {k : Type} [Field k]
   (P : RelativePair (k := k)) (R : ProjectiveLine P.divisor.left (normalLineModule P))
   (S : StandardSystem P R) {n r : ℕ} (G : FullType n r)
   [LocallyOfFiniteType P.target.hom] [IsNoetherian P.target.left]
-  (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
+  (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
   (M : ModuliModel P R S G beta)
 
 def actualFamily (C : SourceChart M.stack) : LiGluingRelativeTypes.Family P R S G C.spec :=

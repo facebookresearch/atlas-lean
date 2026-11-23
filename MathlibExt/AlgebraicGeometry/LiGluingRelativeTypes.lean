@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.RelativeModuliStackModels
 public import MathlibExt.AlgebraicGeometry.RelativeRootEquivalenceGroups
+public import MathlibExt.AlgebraicGeometry.StableMapDegreeLabels
 
 /-!
 # Full relative types, including the empty source
@@ -223,14 +224,17 @@ def IsStable (F : Family P R S G T) : Prop :=
 
 variable [LocallyOfFiniteType P.target.hom] [IsNoetherian P.target.left]
 
-def HasVertexClasses (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
+/-- Each vertex map has the degree of its label against the label's polarization (Li,
+Def. 4.6): a locally constant condition, so the stable families with these labels form a union of
+connected components of the moduli of stable relative maps. -/
+def HasVertexDegrees (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
     (F : Family P R S G T) : Prop :=
-  ∀ v, GeneralStableMapFamilies.HasCurveClass P.target T
-    (contractedFamily P R S T (F.maps v)) (beta v)
+  ∀ v, StableMapDegreeLabels.HasFibreDegree (contractedFamily P R S T (F.maps v)).curve.π
+    (contractedFamily P R S T (F.maps v)).map (beta v).line.val (beta v).degree
 
-abbrev StableFamily (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target) :=
+abbrev StableFamily (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left) :=
   (show ObjectProperty (Family P R S G T) from
-    fun F => IsStable P R S G T F ∧ HasVertexClasses P R S G T beta F).FullSubcategory
+    fun F => IsStable P R S G T F ∧ HasVertexDegrees P R S G T beta F).FullSubcategory
 
 structure FamilyBaseChange {T U : Over (Spec (.of k))} (f : T ⟶ U)
     (F : Family P R S G T) (H : Family P R S G U) where
@@ -245,7 +249,8 @@ structure FamilyBaseChange {T U : Over (Spec (.of k))} (f : T ⟶ U)
   evaluation : ∀ i : Fin r,
     LiGluingRelativeTypes.evaluation P R S G T F i = f ≫ LiGluingRelativeTypes.evaluation P R S G U H i
 
-structure ModuliModel (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target) where
+structure ModuliModel
+    (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left) where
   stack : Stack (Spec (.of k))
   family : ∀ T : Over (Spec (.of k)), stack.Fibre T ⥤ StableFamily P R S G T beta
   equivalence : ∀ T, (family T).IsEquivalence

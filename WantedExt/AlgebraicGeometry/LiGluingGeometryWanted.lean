@@ -38,20 +38,15 @@ open _root_.CategoryTheory _root_.AlgebraicGeometry _root_.MathlibExt.AlgebraicG
 open ExpandedTargetChainGeometry ExpandedTargetGluingModels LiGluingRelativeTypes
 open LiGluingGeometryModels LiGluingChowModels StackCycleRelations StackChowGroups
 
-theorem_wanted nativeCurveClassPushDescent (k : Type) [Field k]
-    (X Y : Over (Spec (.of k))) [LocallyOfFiniteType X.hom] [LocallyOfFiniteType Y.hom]
-    [IsNoetherian X.left] [IsNoetherian Y.left] (f : X ⟶ Y) [IsProper f.left] :
-    CurveClassPushDescent X Y f
-
 def_wanted nativeLiGeometry (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     (P Q : RelativePair (k := k)) (W0 : SingularTarget P Q)
     [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
     [LocallyOfFiniteType W0.scheme.hom]
     [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
     {n n' r g : ℕ} (G : FullType n r) (H : FullType n' r)
-    (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
-    (gamma : Fin H.vertices → RelativeCurveClasses.CurveClass Q.target)
-    (total : RelativeCurveClasses.CurveClass W0.scheme)
+    (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
+    (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
+    (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
     (eta : AdmissibleTriple (g := g) G H P Q W0 beta gamma total)
     (W : LiExpandedDegenerationModels.OneParameter P Q W0) :
     GeometryOutput G H P Q W0 beta gamma total eta W
@@ -62,9 +57,9 @@ def_wanted nativeLiChowOperations (k : Type) [Field k] [IsAlgClosed k] [CharZero
     [LocallyOfFiniteType W0.scheme.hom]
     [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
     {n n' r g : ℕ} (G : FullType n r) (H : FullType n' r)
-    (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
-    (gamma : Fin H.vertices → RelativeCurveClasses.CurveClass Q.target)
-    (total : RelativeCurveClasses.CurveClass W0.scheme)
+    (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
+    (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
+    (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
     (eta : AdmissibleTriple (g := g) G H P Q W0 beta gamma total)
     (W : LiExpandedDegenerationModels.OneParameter P Q W0)
     (D : StackCycleRelations.CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k))

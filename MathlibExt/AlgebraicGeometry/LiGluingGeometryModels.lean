@@ -29,8 +29,8 @@ central moduli stack. The degree is the computed root-group cardinal.
 
 Source: Jun Li arXiv:math/0110113v1, introduction pp3--4, Section3.1
 equations(3.1)--(3.2), pp31--32, and diagram(3.14), Theorem3.15, pp39--40.
-Actual cycle pushes use residue degrees and the native geometric-family
-quotient; their descent is a separate proof request (Stacks Tag02RY).
+Components are labelled by degrees against a polarization of the central fibre and its
+restrictions to the two sides (Li, math/0009097v1, Def. 4.6), which are locally constant.
 -/
 
 set_option autoImplicit false
@@ -55,38 +55,14 @@ structure LegOrdering (n n' : ℕ) where
   leftOrdered : StrictMono (fun i : Fin n => labels (Sum.inl i))
   rightOrdered : StrictMono (fun i : Fin n' => labels (Sum.inr i))
 
-section Degree
-
-variable (X Y : Over (Spec (.of k))) [LocallyOfFiniteType X.hom] [LocallyOfFiniteType Y.hom]
-  [IsNoetherian X.left] [IsNoetherian Y.left] (f : X ⟶ Y)
-
-def cyclePushBasis (x : X.left) : GeometricChow.CycleGroup Y.left 1 := by
-  classical
-  exact GeometricChow.dimensionPart Y.left 1
-    (Function.locallyFinsuppWithin.single (f.left x) (f.left.residueDegree x : ℚ))
-
-def curveCyclePush : GeometricChow.CycleGroup X.left 1 →ₗ[ℚ] GeometricChow.CycleGroup Y.left 1 :=
-  Finsupp.linearCombination ℚ (cyclePushBasis X Y f) ∘ₗ
-    GeometricChowOperators.cycleFinsupp X.left ∘ₗ (GeometricChow.cyclesOfDimension X.left 1).subtype
-
-structure CurveClassPushDescent : Prop where
-  preserves : RelativeCurveClasses.relations X 1 ≤
-    (RelativeCurveClasses.relations Y 1).comap (curveCyclePush X Y f)
-
-def curveClassPush (h : CurveClassPushDescent X Y f) :
-    RelativeCurveClasses.CurveClass X →ₗ[ℚ] RelativeCurveClasses.CurveClass Y :=
-  Submodule.mapQ _ _ (curveCyclePush X Y f) h.preserves
-
-end Degree
-
 variable {n n' r g : ℕ} (G : FullType n r) (H : FullType n' r)
   (P Q : RelativePair (k := k)) (W0 : SingularTarget P Q)
   [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
   [LocallyOfFiniteType W0.scheme.hom]
   [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-  (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
-  (gamma : Fin H.vertices → RelativeCurveClasses.CurveClass Q.target)
-  (total : RelativeCurveClasses.CurveClass W0.scheme)
+  (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
+  (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
+  (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
 
 structure AdmissibleTriple where
   contact : ∀ i : Fin r, G.order i = H.order i
@@ -98,10 +74,13 @@ structure AdmissibleTriple where
       (a = Sum.inl (G.rootLabels i).1 ∧ b = Sum.inr (H.rootLabels i).1) ∨
       (b = Sum.inl (G.rootLabels i).1 ∧ a = Sum.inr (H.rootLabels i).1)) a b
   legs : LegOrdering n n'
-  leftPush : CurveClassPushDescent P.target W0.scheme W0.left
-  rightPush : CurveClassPushDescent Q.target W0.scheme W0.right
-  degree : total = (∑ v, curveClassPush P.target W0.scheme W0.left leftPush (beta v)) +
-    ∑ v, curveClassPush Q.target W0.scheme W0.right rightPush (gamma v)
+  /-- The vertex polarizations are the restrictions of the polarization of the central fibre. -/
+  leftLine : ∀ v, Nonempty ((beta v).line.val ≅
+    (Scheme.Modules.pullback W0.left.left).obj total.line.val)
+  rightLine : ∀ v, Nonempty ((gamma v).line.val ≅
+    (Scheme.Modules.pullback W0.right.left).obj total.line.val)
+  /-- The degrees of the two sides add up to the total degree. -/
+  degree : total.degree = (∑ v, (beta v).degree) + ∑ v, (gamma v).degree
 
 variable (R : ProjectiveLine P.divisor.left (normalLineModule P))
   (R' : ProjectiveLine Q.divisor.left (normalLineModule Q))
@@ -222,8 +201,8 @@ variable (G : FullType n r) (H : FullType n' r)
   (R' : ProjectiveLine Q.divisor.left (normalLineModule Q))
   (S : StandardRelativeExpansionModels.StandardSystem P R)
   (S' : StandardRelativeExpansionModels.StandardSystem Q R')
-  (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
-  (gamma : Fin H.vertices → RelativeCurveClasses.CurveClass Q.target)
+  (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
+  (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
   (ML : LiGluingRelativeTypes.ModuliModel P R S G beta)
   (MR : LiGluingRelativeTypes.ModuliModel Q R' S' H gamma)
 
@@ -275,7 +254,7 @@ structure MatchingModel where
 
 variable (W : LiExpandedDegenerationModels.OneParameter P Q W0)
   (WS : LiExpandedDegenerationModels.StandardSystem W)
-  (total : RelativeCurveClasses.CurveClass W0.scheme)
+  (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
   (eta : AdmissibleTriple (g := g) G H P Q W0 beta gamma total)
   (MC : LiExpandedCentralModels.ModuliModel W WS (n + n') g total)
   (M : MatchingModel G H P Q W0 R R' S S' beta gamma ML MR)
@@ -350,9 +329,9 @@ variable {n n' r g : ℕ} (G : FullType n r) (H : FullType n' r)
   [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
   [LocallyOfFiniteType W0.scheme.hom]
   [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-  (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target)
-  (gamma : Fin H.vertices → RelativeCurveClasses.CurveClass Q.target)
-  (total : RelativeCurveClasses.CurveClass W0.scheme)
+  (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
+  (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
+  (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
   (eta : AdmissibleTriple (g := g) G H P Q W0 beta gamma total)
   (W : LiExpandedDegenerationModels.OneParameter P Q W0)
 

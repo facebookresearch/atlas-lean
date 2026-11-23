@@ -41,7 +41,7 @@ variable {k : Type} [Field k] (P Q : RelativePair (k := k)) (W0 : SingularTarget
   [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
   [LocallyOfFiniteType W0.scheme.hom]
   [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-  (N g : ℕ) (total : RelativeCurveClasses.CurveClass W0.scheme)
+  (N g : ℕ) (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
 
 structure Splitting where
   leftLegs : ℕ
@@ -50,9 +50,9 @@ structure Splitting where
   legs : leftLegs + rightLegs = N
   left : FullType leftLegs roots
   right : FullType rightLegs roots
-  leftClass : Fin left.vertices → RelativeCurveClasses.CurveClass P.target
-  rightClass : Fin right.vertices → RelativeCurveClasses.CurveClass Q.target
-  admissible : AdmissibleTriple (g := g) left right P Q W0 leftClass rightClass total
+  leftLabel : Fin left.vertices → StableMapDegreeLabels.DegreeLabel P.target.left
+  rightLabel : Fin right.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left
+  admissible : AdmissibleTriple (g := g) left right P Q W0 leftLabel rightLabel total
 
 variable {P Q W0 N g total}
 
@@ -71,8 +71,8 @@ def Relabeled (s t : Splitting P Q W0 N g total) : Prop :=
     (rightLegs : Fin s.rightLegs ≃ Fin t.rightLegs),
     (∀ v, t.left.genus (left v) = s.left.genus v) ∧
     (∀ v, t.right.genus (right v) = s.right.genus v) ∧
-    (∀ v, t.leftClass (left v) = s.leftClass v) ∧
-    (∀ v, t.rightClass (right v) = s.rightClass v) ∧
+    (∀ v, t.leftLabel (left v) = s.leftLabel v) ∧
+    (∀ v, t.rightLabel (right v) = s.rightLabel v) ∧
     (∀ i, t.leftMark (leftLegs i) = s.leftMark i) ∧
     (∀ i, t.rightMark (rightLegs i) = s.rightMark i) ∧
     (∀ i, (t.left.legLabels (leftLegs i)).1 = left (s.left.legLabels i).1) ∧
@@ -112,9 +112,9 @@ structure GeometricRealization where
   [algebra : Algebra k coefficient]
   [closed : IsAlgClosed coefficient]
   left : LiGluingRelativeTypes.StableFamily P E.leftLine E.leftExpanded s.left
-    (Over.mk (Spec.algebraMap k coefficient)) s.leftClass
+    (Over.mk (Spec.algebraMap k coefficient)) s.leftLabel
   right : LiGluingRelativeTypes.StableFamily Q E.rightLine E.rightExpanded s.right
-    (Over.mk (Spec.algebraMap k coefficient)) s.rightClass
+    (Over.mk (Spec.algebraMap k coefficient)) s.rightLabel
   roots : RootMatch s.left s.right P Q W0 E.leftLine E.rightLine E.leftExpanded E.rightExpanded
     (Over.mk (Spec.algebraMap k coefficient)) left.obj right.obj
 
@@ -144,12 +144,12 @@ theorem centralAt_stack : (centralAt E s).stack = E.central.stack := by
   exact centralTransport_stack E s.legs.symm E.central
 
 structure Entry where
-  left : LiGluingRelativeTypes.ModuliModel P E.leftLine E.leftExpanded s.left s.leftClass
-  right : LiGluingRelativeTypes.ModuliModel Q E.rightLine E.rightExpanded s.right s.rightClass
+  left : LiGluingRelativeTypes.ModuliModel P E.leftLine E.leftExpanded s.left s.leftLabel
+  right : LiGluingRelativeTypes.ModuliModel Q E.rightLine E.rightExpanded s.right s.rightLabel
   matching : MatchingModel s.left s.right P Q W0 E.leftLine E.rightLine E.leftExpanded E.rightExpanded
-    s.leftClass s.rightClass left right
+    s.leftLabel s.rightLabel left right
   gluing : GluingModel s.left s.right P Q W0 E.leftLine E.rightLine E.leftExpanded E.rightExpanded
-    s.leftClass s.rightClass left right W E.expanded total s.admissible (centralAt E s) matching
+    s.leftLabel s.rightLabel left right W E.expanded total s.admissible (centralAt E s) matching
 
 variable (P Q W0 N g total W)
 

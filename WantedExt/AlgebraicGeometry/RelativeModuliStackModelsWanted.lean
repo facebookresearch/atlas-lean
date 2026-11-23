@@ -12,14 +12,15 @@ public import MathlibExt.AlgebraicGeometry.RelativeModuliStackModels
 public import MathlibExt.AlgebraicGeometry.RelativeRootEquivalenceGroups
 
 /-!
-# Actual relative-map moduli realization and base-change requests
+# Base change of relative maps
 
 Actual expansion families, full contact ideals, etale pure node equations,
-disconnected groupoids, common target automorphisms, ordered root/leg
-types and native contracted curve classes are fixed in MathlibExt.
-The constructor supplies their moduli realization and actual Cartesian
-pullbacks. It does not assert existence of a relative map of any chosen
-curve class, or any virtual/gluing identity.
+disconnected groupoids, common target automorphisms and ordered root/leg
+types are fixed in MathlibExt. The constructor supplies the actual Cartesian
+pullbacks of relative maps. Moduli of relative maps are requested in
+`LiExpandedGeometryWanted` with degree labels: a fixed rational Chow class is
+not locally constant in families, so it does not label a finite-type moduli
+stack.
 Sources: Jun Li arXiv:math/0009097v1, Section4.3;
 arXiv:math/0110113v1, Sections1--3.
 -/
@@ -33,12 +34,6 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.AlgebraicGeometry
 open _root_.MathlibExt.AlgebraicGeometry
 open ExpandedTargetChainGeometry RelativeProjectiveLineModels StandardRelativeExpansionModels
 open ExpandedRelativeFamilies RelativeExpandedMapFamilies RelativeMapTypeModels RelativeModuliStackModels
-
-def_wanted nativeRelativeModuliStack (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
-    (P : RelativePair (k := k)) [LocallyOfFiniteType P.target.hom] [IsNoetherian P.target.left]
-    (R : ProjectiveLine P.divisor.left (normalLineModule P)) (S : StandardSystem P R)
-    {n r : ℕ} (G : RelativeType n r) (beta : Fin G.vertices → RelativeCurveClasses.CurveClass P.target) :
-    RelativeModuliModel P R S G beta
 
 def_wanted nativeRelativeMapReindex (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     (P : RelativePair (k := k)) (R : ProjectiveLine P.divisor.left (normalLineModule P))

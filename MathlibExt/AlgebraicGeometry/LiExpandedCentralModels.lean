@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.LiExpandedDegenerationModels
 public import MathlibExt.AlgebraicGeometry.StackChowGroups
+public import MathlibExt.AlgebraicGeometry.StableMapDegreeLabels
 
 /-!
 # Actual central stable-map families and their moduli realization
@@ -126,12 +127,15 @@ def IsStable (F : Family W S n g T) : Prop :=
 
 variable [LocallyOfFiniteType W0.scheme.hom] [IsNoetherian W0.scheme.left]
 
-def HasCurveClass (beta : RelativeCurveClasses.CurveClass W0.scheme) (F : Family W S n g T) : Prop :=
-  GeneralStableMapFamilies.HasCurveClass W0.scheme T (contractedFamily W S n g T F) beta
+/-- The family has the degree of its label against the label's polarization (Li, Def. 4.6). -/
+def HasDegree (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
+    (F : Family W S n g T) : Prop :=
+  StableMapDegreeLabels.HasFibreDegree (contractedFamily W S n g T F).curve.π
+    (contractedFamily W S n g T F).map beta.line.val beta.degree
 
-abbrev StableFamily (beta : RelativeCurveClasses.CurveClass W0.scheme) :=
+abbrev StableFamily (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left) :=
   (show ObjectProperty (Family W S n g T) from
-    fun F => IsStable W S n g T F ∧ HasCurveClass W S n g T beta F).FullSubcategory
+    fun F => IsStable W S n g T F ∧ HasDegree W S n g T beta F).FullSubcategory
 
 structure FamilyBaseChange {T U : Over (Spec (.of k))} (f : T ⟶ U)
     (F : Family W S n g T) (H : Family W S n g U) where
@@ -143,7 +147,7 @@ structure FamilyBaseChange {T U : Over (Spec (.of k))} (f : T ⟶ U)
   marking : ∀ i, F.curve.marking i ≫ source = f.left ≫ H.curve.marking i
   map : F.map ≫ target.left = source ≫ H.map
 
-structure ModuliModel (beta : RelativeCurveClasses.CurveClass W0.scheme) where
+structure ModuliModel (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left) where
   stack : Stack (Spec (.of k))
   family : ∀ T : Over (Spec (.of k)), stack.Fibre T ⥤ StableFamily W S n g T beta
   equivalence : ∀ T, (family T).IsEquivalence

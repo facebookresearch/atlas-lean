@@ -45,7 +45,7 @@ attribute [local instance] HasDerivedCategory.standard
 variable {k : Type} [Field k] {P Q : RelativePair (k := k)} {W0 : SingularTarget P Q}
   (W : OneParameter P Q W0) (S : LiExpandedDegenerationModels.StandardSystem W)
   {n g : ℕ} [LocallyOfFiniteType W0.scheme.hom] [IsNoetherian W0.scheme.left]
-  (beta : RelativeCurveClasses.CurveClass W0.scheme)
+  (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
   (M : LiExpandedCentralModels.ModuliModel W S n g beta)
 
 def actualFamily (C : SourceChart M.stack) : LiExpandedCentralModels.Family W S n g C.spec :=
