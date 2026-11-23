@@ -25,8 +25,10 @@ divisor-sheaf inclusion followed by that fixed finite-duality counit.
 Admissible boundary twists are the actual integral coefficients of
 (1-p^e)(K+Delta); local principality is a proof on the actual sheaf.
 Absolute Frobenius is used on schemes, without assuming it is k-linear.
-For imperfect F-finite k, the field basis includes the specified actual
-base p-basis parameters. Generic finite duality, O(D), Frobenius and
+The base field of a log pair is perfect (`LogPairs.CanonicalData.perfect`), so a
+Frobenius basis of the function field is given by `n` parameters (a separating
+transcendence basis is a p-basis), whose differentials also frame the top forms;
+imperfect base fields are not modelled. Generic finite duality, O(D), Frobenius and
 Cartier coefficient primitives are source integration; the geometric
 normalization/localization bridge is the remaining construction boundary.
 
@@ -89,21 +91,17 @@ def fieldCoefficient {K : Type} [Field K] {p e d : ℕ}
     [Fact p.Prime] [CharP K p] (B : FrobeniusFieldBasis K p e d) (a : K) : K :=
   B.basis.repr (a : FieldFrobeniusModule K p e) (fun _ => topExponent p e)
 
-/-- Matching the relative canonical form to the actual Frobenius basis.
-Extra p-basis parameters lie in the actual base field. -/
+/-- Matching the relative canonical form to the actual Frobenius basis: over the perfect base
+field of a log pair, the `n` parameters of a Frobenius basis of the function field also give the
+top form `dx₁ ∧ ⋯ ∧ dxₙ`. -/
 structure CanonicalTraceFrame (P : LogPair k n) (p e : ℕ)
     [Fact p.Prime] [CharP (FunctionField P.variety) p] where
-  baseDimension : ℕ
-  fieldBasis : FrobeniusFieldBasis (FunctionField P.variety) p e (n+baseDimension)
-  baseParameters : Fin baseDimension → k
-  baseNormalized : ∀ i,
-    fieldBasis.parameters (Fin.natAdd n i) = fractionScalar P.variety (baseParameters i)
+  fieldBasis : FrobeniusFieldBasis (FunctionField P.variety) p e n
   formBasis : Module.Basis Unit (FunctionField P.variety) (RationalTopForms P.variety)
   formNormalized :
     letI := fractionAlgebra P.variety
     formBasis () = exteriorPower.ιMulti (FunctionField P.variety) n
-      (fun i => KaehlerDifferential.D k (FunctionField P.variety)
-        (fieldBasis.parameters (Fin.castAdd baseDimension i)))
+      (fun i => KaehlerDifferential.D k (FunctionField P.variety) (fieldBasis.parameters i))
 
 /-- Corrected Cartier coefficient using the actual chosen canonical top-form coefficient. -/
 def canonicalFieldTrace {P : LogPair k n} {p e : ℕ}
