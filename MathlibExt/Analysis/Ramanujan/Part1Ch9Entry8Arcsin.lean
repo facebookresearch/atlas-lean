@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Analysis.SpecialFunctions.Dilog
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
@@ -40,8 +41,10 @@ noncomputable section
 def chapter9Entry8DilogTerm (x : ℝ) (n : ℕ) : ℝ :=
   x ^ (n + 1) / (((n + 1 : ℕ) : ℝ) ^ 2)
 
+/-- The dilogarithm in this entry is `Real.li2PowerSeries`; the name is kept for the
+chapter-local development below. -/
 def chapter9Entry8Dilog (x : ℝ) : ℝ :=
-  ∑' n : ℕ, chapter9Entry8DilogTerm x n
+  Real.li2PowerSeries x
 
 def chapter9OddHarmonic (n : ℕ) : ℝ :=
   ∑ j ∈ range n, 1 / ((2 * j + 1 : ℕ) : ℝ)
@@ -53,7 +56,8 @@ def chapter9Entry8FTerm (x : ℝ) (n : ℕ) : ℝ :=
 def chapter9Entry8F (x : ℝ) : ℝ :=
   ∑' n : ℕ, chapter9Entry8FTerm x n
 
-private lemma oddHarmonic_nonneg (n : ℕ) : 0 ≤ chapter9OddHarmonic n := by
+/-- The odd harmonic numbers `chapter9OddHarmonic n` are nonnegative. -/
+lemma oddHarmonic_nonneg (n : ℕ) : 0 ≤ chapter9OddHarmonic n := by
   unfold chapter9OddHarmonic
   apply Finset.sum_nonneg
   intro j _
@@ -72,21 +76,8 @@ private lemma oddHarmonic_le (n : ℕ) : chapter9OddHarmonic n ≤ n := by
     _ = n := by simp
 
 private lemma summable_dilogTerm {x : ℝ} (hx : |x| < 1) :
-    Summable (chapter9Entry8DilogTerm x) := by
-  have hax : |(|x|)| < 1 := by rwa [abs_abs]
-  have hgeo : Summable (fun n : ℕ => |x| ^ (n + 1)) := by
-    simpa [pow_succ] using (summable_geometric_of_abs_lt_one hax).mul_right |x|
-  apply Summable.of_norm_bounded hgeo
-  intro n
-  show ‖chapter9Entry8DilogTerm x n‖ ≤ |x| ^ (n + 1)
-  have h1 : (1 : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := by
-    exact_mod_cast Nat.succ_le_succ (Nat.zero_le n)
-  have h2 : (1 : ℝ) ≤ (((n + 1 : ℕ) : ℝ)) ^ 2 := one_le_pow₀ h1
-  have hnn : (0 : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := Nat.cast_nonneg _
-  have habs : |(((n + 1 : ℕ)) : ℝ)| = (((n + 1 : ℕ)) : ℝ) := abs_of_nonneg hnn
-  unfold chapter9Entry8DilogTerm
-  simp only [norm_div, norm_pow, Real.norm_eq_abs, habs]
-  exact div_le_self (by positivity) h2
+    Summable (chapter9Entry8DilogTerm x) :=
+  (Real.hasSum_li2PowerSeries hx).summable
 
 private lemma summable_FTerm {z : ℝ} (hz : |z| < 1) :
     Summable (chapter9Entry8FTerm z) := by
@@ -491,56 +482,12 @@ private lemma hasDerivAt_Ffun {x0 R : ℝ} (hR0 : 0 < R) (hR1 : R < 1) (hx0 : |x
   rw [efun] at hmain
   exact hmain
 
-private lemma hasDerivAt_Dfun {x0 R : ℝ} (hR0 : 0 < R) (hR1 : R < 1) (hx0 : |x0| < R) :
+private lemma hasDerivAt_Dfun {x0 R : ℝ} (_hR0 : 0 < R) (hR1 : R < 1)
+    (hx0 : |x0| < R) :
     HasDerivAt (fun x => chapter9Entry8Dilog x)
       (∑' n, x0 ^ n / (((n + 1 : ℕ)) : ℝ)) x0 := by
-  have hmem : x0 ∈ Set.Ioo (-R) R := Set.mem_Ioo.mpr (abs_lt.mp hx0)
-  have hR1' : |R| < 1 := by rwa [abs_of_pos hR0]
-  have hsumv : Summable (fun n : ℕ => R ^ n) :=
-    summable_geometric_of_abs_lt_one hR1'
-  have hDne : ∀ n : ℕ, (((n + 1 : ℕ)) : ℝ) ≠ 0 := fun n =>
-    Nat.cast_ne_zero.mpr (by omega)
-  have hderiv1 : ∀ n : ℕ, ∀ y ∈ Set.Ioo (-R) R,
-      HasDerivAt (fun x => x ^ (n + 1) / ((((n + 1 : ℕ)) : ℝ) ^ 2))
-        (y ^ n / (((n + 1 : ℕ)) : ℝ)) y := by
-    intro n y hy
-    have h1 := ((hasDerivAt_id' y).pow (n + 1)).div_const
-      ((((n + 1 : ℕ)) : ℝ) ^ 2)
-    simp only [Pi.pow_apply] at h1
-    rw [Nat.add_sub_cancel] at h1
-    have hval : (↑(n + 1) * y ^ n * 1) / ((((n + 1 : ℕ)) : ℝ) ^ 2)
-        = y ^ n / (((n + 1 : ℕ)) : ℝ) := by
-      have hD := hDne n
-      field_simp
-    rw [hval] at h1
-    exact h1
-  have hbound : ∀ n : ℕ, ∀ y ∈ Set.Ioo (-R) R,
-      ‖y ^ n / (((n + 1 : ℕ)) : ℝ)‖ ≤ R ^ n := by
-    intro n y hy
-    have hyR : |y| ≤ R := le_of_lt (abs_lt.mpr (Set.mem_Ioo.mp hy))
-    have hD1 : (1 : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := by
-      exact_mod_cast Nat.succ_le_succ (Nat.zero_le n)
-    have hnn : (0 : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := Nat.cast_nonneg _
-    have hDn : ‖(((n + 1 : ℕ)) : ℝ)‖ = (((n + 1 : ℕ)) : ℝ) := by
-      rw [Real.norm_eq_abs]
-      exact abs_of_nonneg hnn
-    have hYp : |y| ^ n ≤ R ^ n := pow_le_pow_left₀ (abs_nonneg _) hyR n
-    simp only [norm_div, norm_pow, Real.norm_eq_abs, hDn]
-    calc |y| ^ n / ((n + 1 : ℕ) : ℝ) ≤ R ^ n / ((n + 1 : ℕ) : ℝ) :=
-          div_le_div_of_nonneg_right hYp hnn
-      _ ≤ R ^ n := div_le_self (by positivity) hD1
   have hx01 : |x0| < 1 := lt_trans hx0 hR1
-  have hsum0 : Summable
-      (fun n : ℕ => x0 ^ (n + 1) / ((((n + 1 : ℕ)) : ℝ) ^ 2)) :=
-    summable_dilogTerm hx01
-  have hmain := hasDerivAt_tsum_of_isPreconnected hsumv isOpen_Ioo
-    (convex_Ioo (-R) R).isPreconnected hderiv1 hbound hmem hsum0 hmem
-  have efun : (fun z => ∑' n, z ^ (n + 1) / ((((n + 1 : ℕ)) : ℝ) ^ 2))
-      = (fun x => chapter9Entry8Dilog x) := by
-    funext z
-    simp only [chapter9Entry8Dilog, chapter9Entry8DilogTerm]
-  rw [efun] at hmain
-  exact hmain
+  simpa only [chapter9Entry8Dilog] using Real.hasDerivAt_li2PowerSeries_tsum hx01
 
 private lemma hasDerivAt_Gfun {x0 R : ℝ} (hR0 : 0 < R) (hR1 : R < 1) (hx0 : |x0| < R) :
     HasDerivAt (fun x => (1 / 8 : ℝ) * (Real.log (1 - x)) ^ 2
@@ -714,7 +661,16 @@ private lemma derivEq_zero :
   rw [htsumF, htsumD]
   norm_num [Real.log_one]
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9,
+/-- **Ramanujan's odd harmonic series identity.** Let $x$ be a real number with $|x| < 1$. For
+$n \ge 0$ put $h_n = 1 + \frac{1}{3} + \cdots + \frac{1}{2n+1}$, for real $y$ let
+$F(y) = \sum_{n \ge 0} \frac{h_n}{2n+1} y^{2n+1}$, and let
+$\operatorname{Li}_2(x) = \sum_{k \ge 1} \frac{x^k}{k^2}$. Then $1 - x > 0$, $2 - x \ne 0$ and
+$|x/(2-x)| < 1$; the series defining $F(x/(2-x))$ and the series defining
+$\operatorname{Li}_2(x)$ are both summable; and
+
+$$F\left(\frac{x}{2-x}\right) = \frac{(\log(1-x))^2}{8} + \frac{\operatorname{Li}_2(x)}{2}.$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9,
 Entry 8, pp. 249–250.
 Proves `Wanted` entry `ramanujan_part1_ch9_entry8_arcsin`.
 -/
@@ -748,16 +704,7 @@ theorem ramanujan_part1_ch9_entry8_arcsin (x : ℝ) (hx : |x| < 1) :
     show (∑' n, chapter9Entry8FTerm ((0 : ℝ) / (2 - 0)) n) = 0
     rw [ef]
     exact tsum_zero
-  have e1 : chapter9Entry8Dilog (0 : ℝ) = 0 := by
-    have ef : (fun n : ℕ => chapter9Entry8DilogTerm (0 : ℝ) n)
-        = fun _ => (0 : ℝ) := by
-      funext n
-      show (0 : ℝ) ^ (n + 1) / ((((n + 1 : ℕ)) : ℝ) ^ 2) = 0
-      rw [zero_pow (by omega : n + 1 ≠ 0)]
-      exact zero_div _
-    show (∑' n, chapter9Entry8DilogTerm (0 : ℝ) n) = 0
-    rw [ef]
-    exact tsum_zero
+  have e1 : chapter9Entry8Dilog (0 : ℝ) = 0 := Real.li2PowerSeries_zero
   have hderiv : ∀ t ∈ Set.uIcc (0 : ℝ) x,
       HasDerivAt ((fun x => chapter9Entry8F (x / (2 - x)))
         - (fun x => (1 / 8 : ℝ) * Real.log (1 - x) ^ 2
