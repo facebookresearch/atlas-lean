@@ -103,13 +103,6 @@ def IsStable {S : Scheme.{u}} {n g : ℕ} (C : MarkedFamily S n g) : Prop :=
     Finite (MarkedAut (fiberCurve C.π p) n
       (fun i ↦ fiberMark C.π (C.marking i) (C.section_eq i) p))
 
-/-- Module-sheaf pushforward acts additively on the actual morphisms. -/
-instance pushforward_additive {X Y : Scheme.{u}} (f : X ⟶ Y) :
-    (Scheme.Modules.pushforward f).Additive where
-  map_add := by
-    intro M N a b
-    rfl
-
 /-- The contraction's structure-sheaf images use actual derived functors. -/
 def IsGenusPreservingContraction {X Y : Scheme.{u}} (f : X ⟶ Y) : Prop :=
   IsProper f ∧ Function.Surjective f ∧

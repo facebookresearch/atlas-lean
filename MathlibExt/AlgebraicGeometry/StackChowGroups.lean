@@ -84,10 +84,13 @@ structure TwoCartesianSquare {X T Y : Stack S} (f : StackHom X Y) (g : StackHom 
       ⟨StackCycleGeometry.component fst U, StackCycleGeometry.component snd U,
         commutes.app U⟩).IsEquivalence
 
-/-- The actual base change of a bundle, with its rank and total-space square. -/
+/-- The actual base change of a bundle: its sections are the pulled sections of `E`, linearly,
+and its total space maps to that of `E` by the induced map, in a 2-Cartesian square. -/
 structure BundlePullback {T X : Stack S} (p : StackHom T X) (E : VectorBundle X) where
   bundle : VectorBundle T
   rank_eq : bundle.rank = E.rank
+  /-- The sections of the pulled bundle are the pulled sections of `E`, as modules. -/
+  sections : bundle.module.val.presheaf ≅ pulledPresheaf p E.module.val.presheaf
   map : StackHom bundle.total E.total
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp map E.projection)
     (Pseudofunctor.StrongTrans.vcomp bundle.projection p)
@@ -96,6 +99,10 @@ structure BundlePullback {T X : Stack S} (p : StackHom T X) (E : VectorBundle X)
       (StackCycleGeometry.component E.projection U) (StackCycleGeometry.component p U) _).obj
       ⟨StackCycleGeometry.component map U, StackCycleGeometry.component bundle.projection U,
         commutes.app U⟩).IsEquivalence
+  /-- The total-space map is the one induced by `sections`, so it is linear on fibres: it
+  preserves the zero section and cannot, for example, translate a trivial line. -/
+  normalized : bundle.comparison.functor ⋙ (presheafSectionMap sections.hom).mapElements.op ⋙
+      (pulledElements p E.module.val).op ≅ affineMap map ⋙ E.comparison.functor
 
 structure BundleStage (X : Stack S) where
   bundle : VectorBundle X
@@ -201,6 +208,13 @@ structure ProjectiveAtlasLift {T X : Stack S} (p : StackHom T X) (a : CycleAtlas
   comparison : FibreCategory p a.atlas.U a.atlas.point ≌ Over atlas.atlas.U.left
   overBase : comparison.functor ⋙ Over.map map.left ≅
     fibreForget p a.atlas.U a.atlas.point ⋙ a.atlas.U.iteratedSliceForward
+  /-- The displayed square is 2-Cartesian: its own object of the fibre category (the atlas point
+  of `T` over `map`, with `pointIso`) is terminal. So `comparison` is the equivalence induced by
+  the square, and not one through, say, a nontrivial étale self-cover of the atlas. -/
+  universal : IsTerminal (CostructuredArrow.mk (S := totalMap p) (T := point a.atlas.U a.atlas.point)
+    (Y := point atlas.atlas.U atlas.atlas.point)
+    (⟨map, pointIso.hom⟩ : (totalMap p).obj (point atlas.atlas.U atlas.atlas.point) ⟶
+      point a.atlas.U a.atlas.point))
   rank_eq : atlas.relativeRank = a.relativeRank
 
 structure NaiveProjectivePushData (D : CycleConstructionData S scope) {T X : Stack S}

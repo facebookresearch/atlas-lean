@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.StackAffineModules
+public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Pushforward
 public import Mathlib.CategoryTheory.Elements
 
 /-!
@@ -85,5 +86,27 @@ structure BundleMap {X : Stack S} (F E : VectorBundle X) where
 def BundleMap.IsSurjective {X : Stack S} {F E : VectorBundle X}
     (f : BundleMap F E) : Prop :=
   ∀ a : (AffinePoint X)ᵒᵖ, Function.Surjective (f.linear.app a)
+
+/-- The sections of `M` pulled back along `p`: at an affine point of `T` they are the sections of
+`M` at the image affine point of `X`, a module over the same coordinate ring
+(`(affineMap p).op ⋙ rings X` is `rings T` by definition). -/
+abbrev pulledPresheaf {T X : Stack S} (p : StackHom T X) (M : ModulePresheaf X) :
+    ModulePresheaf T :=
+  (PresheafOfModules.pushforward₀OfCommRingCat (affineMap p) (rings X)).obj M
+
+/-- An element of the pulled sections is an element of the sections of `M` at the image point. -/
+def pulledElements {T X : Stack S} (p : StackHom T X) (M : FPModule X) :
+    ((pulledPresheaf p M.presheaf).presheaf ⋙ forget AddCommGrpCat).Elements ⥤
+      (sectionPresheaf M).Elements :=
+  Functor.Elements.precomp (affineMap p).op (sectionPresheaf M)
+
+/-- The map on sections underlying a morphism of module presheaves. -/
+def presheafSectionMap {X : Stack S} {M N : ModulePresheaf X} (f : M ⟶ N) :
+    M.presheaf ⋙ forget AddCommGrpCat ⟶ N.presheaf ⋙ forget AddCommGrpCat where
+  app a := ↾fun m => f.app a m
+  naturality {a b} g := by
+    apply ConcreteCategory.hom_ext
+    intro m
+    exact PresheafOfModules.naturality_apply f g m
 
 end AlgebraicGeometry.StackVectorBundles
