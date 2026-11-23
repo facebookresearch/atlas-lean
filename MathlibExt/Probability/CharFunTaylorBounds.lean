@@ -40,12 +40,13 @@ open MeasureTheory Filter Complex
 
 namespace MathlibExt.Probability.CharFunTaylorBounds
 
-/-- Second-order estimate along the imaginary axis:
-`‖e^{iu} - 1 - iu‖ ≤ u²`, for every real `u` (no size restriction).
-The proof splits at `u² ≤ 27`: in that range the squared norm is
-`(1 - cos u)² + (u - sin u)² ≤ u⁴ / 4 + u⁶ / 36 ≤ u⁴`, using
-`1 - cos u ≤ u² / 2` and `|u - sin u| ≤ |u|³ / 6`; outside that range
-`|u| > 5` and the triangle inequality gives `2 + |u| ≤ u²`. -/
+/-- **Global second-order bound for the imaginary exponential.** For every real number $u$,
+$|e^{iu} - 1 - iu| \le u^2$, with no restriction on the size of $u$.
+
+The proof splits at $u^2 \le 27$: in that range the squared norm is
+$(1 - \cos u)^2 + (u - \sin u)^2 \le u^4/4 + u^6/36 \le u^4$, using $1 - \cos u \le u^2/2$ and
+$|u - \sin u| \le |u|^3/6$; outside that range $|u| > 5$ and the triangle inequality gives
+$2 + |u| \le u^2$. -/
 theorem norm_exp_ofReal_mul_I_sub_one_sub_le (u : ℝ) :
     ‖Complex.exp (↑u * Complex.I) - 1 - ↑u * Complex.I‖ ≤ u ^ 2 := by
   by_cases h27 : u ^ 2 ≤ 27
@@ -129,9 +130,10 @@ theorem norm_exp_ofReal_mul_I_sub_one_sub_le (u : ℝ) :
           nlinarith [hu2, mul_pos (show (0 : ℝ) < |u| - 2 by linarith)
             (show (0 : ℝ) < |u| + 1 by linarith)]
 
-/-- Second-order Taylor bound for the characteristic function: for a
-square-integrable real random variable `X`,
-`‖φ_X(t) - 1 - it𝔼[X]‖ ≤ t² 𝔼[X²]`. -/
+/-- **Second-order Taylor bound for the characteristic function.** Let $X$ be a measurable real
+random variable on a probability space with $X^2$ integrable, and let $\varphi_X$ be the
+characteristic function of the law of $X$. Then for every real $t$,
+$|\varphi_X(t) - 1 - it\,\mathbb{E}[X]| \le t^2 \, \mathbb{E}[X^2]$. -/
 theorem norm_charFun_sub_one_sub_le
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     (X : Ω → ℝ) (hmeas : Measurable X)
@@ -207,9 +209,10 @@ theorem norm_charFun_sub_one_sub_le
     _ = t ^ 2 * ∫ ω, (X ω) ^ 2 ∂μ := by
         rw [integral_const_mul]
 
-/-- First-order Taylor bound for the characteristic function: for an
-integrable real random variable `X`,
-`‖φ_X(t) - 1‖ ≤ |t| 𝔼|X|`. -/
+/-- **First-order Taylor bound for the characteristic function.** Let $X$ be a measurable real
+random variable on a probability space with $|X|$ integrable, and let $\varphi_X$ be the
+characteristic function of the law of $X$. Then for every real $t$,
+$|\varphi_X(t) - 1| \le |t| \, \mathbb{E}|X|$. -/
 theorem norm_charFun_sub_one_le
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     (X : Ω → ℝ) (hmeas : Measurable X) (hX_int : Integrable (fun ω => |X ω|) μ)
@@ -253,10 +256,10 @@ theorem norm_charFun_sub_one_le
           _ = |t| * |X ω| := abs_mul _ _
     _ = |t| * ∫ ω, |X ω| ∂μ := by rw [integral_const_mul]
 
-/-- **Characteristic-function second-order bound** (v1
-`norm_charFun_sub_one_le_sq_mul_variance`, proved here as stated): for a
-mean-zero, square-integrable real random variable `X`,
-`‖φ_X(t) - 1‖ ≤ t² 𝔼[X²]`. -/
+/-- **Characteristic-function second-order bound.** Let $X$ be a measurable real random variable
+on a probability space with $\mathbb{E}[X] = 0$ and $X^2$ integrable, and let $\varphi_X$ be the
+characteristic function of the law of $X$. Then for every real $t$,
+$|\varphi_X(t) - 1| \le t^2 \, \mathbb{E}[X^2]$. -/
 theorem norm_charFun_sub_one_le_sq_mul_variance
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     (X : Ω → ℝ) (hmeas : Measurable X)

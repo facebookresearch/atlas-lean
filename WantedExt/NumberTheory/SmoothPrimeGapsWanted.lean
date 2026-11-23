@@ -33,15 +33,17 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A tuple `H` is difference `y`-smooth if `h_i - h_j` is `y`-smooth for all
-distinct `h_i, h_j ∈ H`.
+/-- **Difference-smooth sets of integers.** Let $y$ be a natural number. A finite set $H$ of
+integers is difference $y$-smooth if for all distinct $h, h' \in H$ every prime factor of
+$h - h'$ is at most $y$.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Definition 3. -/
 def IsDifferenceSmooth (y : ℕ) (H : Finset ℤ) : Prop :=
   ∀ a ∈ H, ∀ b ∈ H, a ≠ b → (a - b).natAbs ∈ Nat.smoothNumbers (y + 1)
 
-/-- A one-element tuple is difference `y`-smooth for every `y`.
+/-- **One-element sets are difference smooth.** For every natural number $y$ and every integer
+$a$, the set $\{a\}$ is difference $y$-smooth.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Definition 3. -/
@@ -50,7 +52,8 @@ theorem isDifferenceSmooth_singleton (y : ℕ) (a : ℤ) : IsDifferenceSmooth y 
   rw [Finset.mem_singleton] at hb hc
   exact absurd (hb.trans hc.symm) hbc
 
-/-- Infinitely many pairs of primes `p > q` have `47`-smooth difference `p - q`.
+/-- **Infinitely many prime pairs with $47$-smooth difference.** There are infinitely many pairs
+of primes $p > q$ such that every prime factor of $p - q$ is at most $47$.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Theorem 1 (`integers-2025-A44-thm-1`). -/
@@ -58,11 +61,9 @@ public theorem_wanted infinite_prime_pairs_smooth_47_gap :
     {pq : ℕ × ℕ | pq.1.Prime ∧ pq.2.Prime ∧ pq.2 < pq.1 ∧
       pq.1 - pq.2 ∈ Nat.smoothNumbers 48}.Infinite
 
-/-- Maynard–Tao theorem: for every `m ≥ 2` there is `k_m` such that for every
-admissible tuple `H` with at least `k_m` elements there are infinitely many
-integers `n` with `n + h` a (positive) prime for at least `m` elements `h ∈ H`.
-The historical remarks on admissible values of `k_2` and the bound
-`k_m < c m² e^{4m}` are not included.
+/-- **Maynard–Tao theorem.** For every natural number $m \ge 2$ there is a natural number $k$
+such that for every admissible finite set $H$ of at least $k$ integers there are infinitely many
+integers $n$ for which $n + h$ is a (positive) prime for at least $m$ elements $h \in H$.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Theorem 2 (`integers-2025-A44-thm-2`), citing
@@ -71,13 +72,14 @@ public theorem_wanted maynard_tao_admissible_tuples (m : ℕ) (hm : 2 ≤ m) :
     ∃ k : ℕ, ∀ H : Finset ℤ, IsAdmissibleFinset H → k ≤ H.card →
       {n : ℤ | m ≤ (H.filter (fun h => (n + h).toNat.Prime)).card}.Infinite
 
-/-- Prime `m`-tuples with smooth gaps: if `k` is an admissible value of `k_m` in
-the Maynard–Tao theorem (every admissible tuple with at least `k` elements has
-infinitely many shifts containing `m` primes), then there are infinitely many
-increasing `m`-tuples of primes `p_1 < ⋯ < p_m` all of whose gaps `p_i - p_j` are
-`y_m`-smooth, `y_m` the largest prime `≤ k`. The gaps are stated as
-`k`-smooth, which is the same condition; the paper applies this with the values
-`k_m` of its Table 1 and remarks.
+/-- **Prime $m$-tuples with smooth gaps.** Let $m \ge 2$ and $k$ be natural numbers such that
+every admissible finite set $H$ of at least $k$ integers has infinitely many integers $n$ for
+which $n + h$ is a (positive) prime for at least $m$ elements $h \in H$. Then there are
+infinitely many $m$-tuples of primes $p_1 < p_2 < \dots < p_m$ such that for all $j < i$ every
+prime factor of $p_i - p_j$ is at most $k$.
+
+Equivalently, every gap is $y$-smooth for $y$ the largest prime at most $k$; the paper applies
+this with the admissible values $k_m$ of the Maynard–Tao theorem listed in its Table 1.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Theorem 3 (`integers-2025-A44-thm-3`). -/
@@ -87,8 +89,9 @@ public theorem_wanted infinite_prime_tuples_smooth_gaps (m k : ℕ) (hm : 2 ≤ 
     {P : Fin m → ℕ | (∀ i, (P i).Prime) ∧
       ∀ i j, j < i → P j < P i ∧ P i - P j ∈ Nat.smoothNumbers (k + 1)}.Infinite
 
-/-- Assuming the Elliott-Halberstam conjecture, there are infinitely many pairs of
-primes `p > q` whose difference `p - q` is `5`-smooth.
+/-- **Prime pairs with $5$-smooth difference under Elliott–Halberstam.** If the
+Elliott–Halberstam conjecture holds, then there are infinitely many pairs of primes $p > q$ such
+that every prime factor of $p - q$ is at most $5$.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Theorem 4 (`integers-2025-A44-thm-4`). -/
@@ -97,17 +100,19 @@ public theorem_wanted infinite_prime_pairs_smooth_5_gap_of_elliottHalberstam :
     {pq : ℕ × ℕ | pq.1.Prime ∧ pq.2.Prime ∧ pq.2 < pq.1 ∧
       pq.1 - pq.2 ∈ Nat.smoothNumbers 6}.Infinite
 
-/-- For every `k` there is an admissible `k`-tuple of integers that is
-difference `k`-smooth.
+/-- **Admissible difference-smooth sets of every size.** For every natural number $k$ there is
+an admissible set $H$ of exactly $k$ integers that is difference $k$-smooth: for all distinct
+$h, h' \in H$, every prime factor of $h - h'$ is at most $k$.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Theorem 5 (`integers-2025-A44-thm-5`). -/
 public theorem_wanted exists_admissible_differenceSmooth (k : ℕ) :
     ∃ H : Finset ℤ, H.card = k ∧ IsAdmissibleFinset H ∧ IsDifferenceSmooth k H
 
-/-- An admissible `k`-tuple, `k ≥ 2`, is not difference `ℓ`-smooth for any
-`ℓ < z_k`, `z_k` the largest prime `≤ k`; equivalently, for every prime
-`z ≤ k` and every `ℓ < z`.
+/-- **Admissible sets are not difference smooth at small bounds.** Let $H$ be an admissible
+finite set of $k \ge 2$ integers, let $z \le k$ be a prime and let $\ell < z$ be a natural
+number. Then $H$ is not difference $\ell$-smooth. Equivalently, $H$ is not difference
+$\ell$-smooth for any $\ell$ less than the largest prime at most $k$.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Proposition 1 (`integers-2025-A44-prop-1`). -/

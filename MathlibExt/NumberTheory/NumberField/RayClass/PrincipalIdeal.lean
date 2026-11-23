@@ -47,20 +47,30 @@ namespace Modulus
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Principal-ideal map out of ray elements, landing in ideals coprime to `m`. -/
+/-- **Principal ray ideal map.** Let $\mathfrak m$ be a modulus of a number field $K$ with ring of
+integers $\mathcal O_K$. The principal ray ideal map is the group homomorphism from the group of
+ray elements for $\mathfrak m$ (the $x \in K^\times$ whose principal ideal is coprime to
+$\mathfrak m$) to the group of fractional ideals coprime to $\mathfrak m$ that sends $x$ to the
+principal fractional ideal $x\mathcal O_K$. -/
 noncomputable def principalRayIdealMap (m : Modulus K) :
     rayElements m →* coprimeFractionalIdeals m :=
   ((toPrincipalIdeal (𝓞 K) K).domRestrict (rayElements m)).codRestrict
     (coprimeFractionalIdeals m)
     (fun x => (mem_rayElements_iff m _).mp x.property)
 
-/-- Pointwise evaluation of the principal-ideal map on ray elements. -/
+/-- **Value of the principal ray ideal map.** Let $\mathfrak m$ be a modulus of a number field
+$K$ with ring of integers $\mathcal O_K$. For every ray element $x \in K^\times$ for
+$\mathfrak m$, the image of $x$ under the principal ray ideal map, viewed as an invertible
+fractional ideal of $K$, is the principal fractional ideal $x\mathcal O_K$. -/
 @[simp] theorem principalRayIdealMap_apply (m : Modulus K) (x : rayElements m) :
     (principalRayIdealMap m x : (FractionalIdeal (𝓞 K)⁰ K)ˣ) =
       toPrincipalIdeal (𝓞 K) K (x : Kˣ) := by
   rfl
 
-/-- Equality of principal ideals is equality up to an integral unit. -/
+/-- **Principal ideals agree exactly up to an integral unit.** Let $K$ be a number field with ring
+of integers $\mathcal O_K$. For all $x, y \in K^\times$, the principal fractional ideals
+$x\mathcal O_K$ and $y\mathcal O_K$ are equal if and only if $x = uy$ for some unit
+$u \in \mathcal O_K^\times$. -/
 theorem toPrincipalIdeal_eq_iff_exists_integralUnit_mul (x y : Kˣ) :
     toPrincipalIdeal (𝓞 K) K x = toPrincipalIdeal (𝓞 K) K y ↔
       ∃ u : (𝓞 K)ˣ,
@@ -99,7 +109,11 @@ theorem toPrincipalIdeal_eq_iff_exists_integralUnit_mul (x y : Kˣ) :
       rwa [FractionalIdeal.spanSingleton_one] at hmem
     rw [hunit, one_mul]
 
-/-- The ray group is exactly the image of ray-one elements. -/
+/-- **The ray group is the image of the ray-one elements.** Let $\mathfrak m$ be a modulus of a
+number field $K$. The ray group of $\mathfrak m$ equals the image under the principal ray ideal
+map of the subgroup of ray-one elements, that is, of the ray elements for $\mathfrak m$ that are
+congruent to $1$ modulo the finite part of $\mathfrak m$ and positive at every real place in
+its infinite part. -/
 theorem rayGroup_eq_map_rayOneElements (m : Modulus K) :
     rayGroup m = (rayOneElements m).map (principalRayIdealMap m) := by
   apply le_antisymm
