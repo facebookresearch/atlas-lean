@@ -24,10 +24,8 @@ The same argument applies to an open lattice in a topological module:
 on quasi-compact objects one common denominator clears all its values,
 and sheafification accounts for arbitrary objects.
 
-Generic adic systems, completion criteria and compact-group integral
-lattices are already supplied by the public Axiom implementations.
-This request identifies their coefficient models with the actual
-continuous coefficient sheaf through its specified scalar-extension map.
+For example, with `R = ℤ_ℓ`, `S = ℚ_ℓ` and `L = ℤ_ℓⁿ ⊆ V = ℚ_ℓⁿ`, the sheafified extension of
+scalars of `C(-, ℤ_ℓⁿ)` is `C(-, ℚ_ℓⁿ)`.
 -/
 
 namespace WantedExt.AlgebraicGeometry.ContinuousAdicCoefficients
@@ -37,9 +35,9 @@ open _root_.MathlibExt.AlgebraicGeometry.ContinuousAdicCoefficients
 
 universe u
 
-/-- Sheafified scalar extension identifies the continuous coefficient
-model of a full open lattice with that of its localized module.
-The hypotheses are actual openness, finiteness and denominator coverage. -/
+/-- For an open, finitely generated `R`-submodule `L` of a topological `R[1/a]`-module `V` such that
+every vector has a multiple by a power of `a` in `L`, the comparison from the sheafified extension
+of scalars of `C(-, L)` to `C(-, V)` is an isomorphism. -/
 public theorem_wanted latticeScalarComparison_isIso
     (R S : Type) [CommRing R] [CommRing S] [Algebra R S]
     (a : R) [IsLocalization.Away a S]
