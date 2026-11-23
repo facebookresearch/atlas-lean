@@ -10,7 +10,9 @@ module
 public import MathlibExt.AlgebraicGeometry.DivisorialModuleSheaves
 public import MathlibExt.AlgebraicGeometry.GenericSectionMaps
 public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
+public import Mathlib.AlgebraicGeometry.Morphisms.Finite
 public import Mathlib.AlgebraicGeometry.Normalization
+public import Mathlib.AlgebraicGeometry.ResidueField
 public import Mathlib.RingTheory.Conductor
 
 /-!
@@ -80,12 +82,23 @@ def pullOpenSection {X S : Over (Spec (.of k))} (i : S ⟶ X)
     (GenericSectionMaps.homSection SU (pullbackSection a q ≫ comparison))
 
 /-- A genuine generic hypersurface residue chart, with both rational top-form bases fixed, for a
-Cartier log-adjoint power `A = m (K_X + Δ)` (`adjointPower`). -/
+Cartier log-adjoint power `A = m (K_X + Δ)` with `m > 0` (`positive`, `adjointPower`).
+
+The divisor side is the normalization of a coefficient-one boundary component: `i` is finite,
+sends the generic point of `S` to the component `component`, and induces an isomorphism of its
+residue field with the function field of `S` (`birational`). Since `S` is normal, this identifies
+`S` with the normalization of the closure of `component`, where the different lives. -/
 structure ResidueChart (P : LogPair k (n + 1)) (m : ℕ) (A : CartierLine P.variety)
     (S : NormalVariety k n) (C : CanonicalData S) (i : S.X ⟶ P.variety.X)
     (R : CartierRationalization A) where
+  positive : 0 < m
   adjointPower : realCast A.divisor =
     (m : ℝ) • (realCast (canonicalDivisor P.canonical) + P.boundary)
+  component : PrimePoint P.variety
+  coefficientOne : P.boundary component = 1
+  [finite : IsFinite i.left]
+  generic : i.left (genericPoint S.X.left) = component.val
+  birational : IsIso (i.left.residueFieldMap (genericPoint S.X.left))
   ambientOpen : P.variety.X.left.Opens
   divisorOpen : S.X.left.Opens
   [ambientNonempty : Nonempty ambientOpen]
@@ -143,7 +156,8 @@ structure ResidueComparison {P : LogPair k (n + 1)} {m : ℕ} {A : CartierLine P
         (moduleComparison.hom.app (cartier.opens j) (cartier.sections j))) =
       (cartier.functions j : FunctionField S)⁻¹
 
-/-- The actual adjunction different, coefficientwise derived from the fixed residue comparison. -/
+/-- The adjunction different on the normalization `S` of the coefficient-one component, computed
+from the fixed residue comparison: `(1/m) · div(residue) - K_S`. -/
 def different {P : LogPair k (n + 1)} {m : ℕ} {A : CartierLine P.variety}
     {S : NormalVariety k n} {C : CanonicalData S} {i : S.X ⟶ P.variety.X}
     {R : CartierRationalization A} {F : ResidueChart P m A S C i R}
