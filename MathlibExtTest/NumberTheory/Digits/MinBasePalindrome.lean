@@ -60,6 +60,14 @@ example (N b : ℕ) (hb : 2 ≤ b) (hN : N.Prime) (hp : (Nat.digits b N).Palindr
   ((hN.eq_one_or_self_of_dvd _ (succ_dvd_of_palindrome_even_length N b hb hp he)).resolve_left
     (by omega)).symm
 
+-- The smallest allowed base: `3 = (1, 1)_2`.
+example : ∃ x : ℕ, 2 = 3 ^ x - 1 :=
+  base_eq_prime_pow_sub_one_of_palindrome 3 1 2 Nat.prime_three le_rfl (by decide) (by decide)
+
+-- `3 ^ 3 = (3, 3)_8`, where the exponent in `8 + 1 = 3 ^ 2` is less than the input exponent.
+example : ∃ x : ℕ, 8 = 3 ^ x - 1 :=
+  base_eq_prime_pow_sub_one_of_palindrome 3 3 8 Nat.prime_three (by decide) (by decide) (by decide)
+
 -- Test section: neither hypothesis can be dropped.
 
 -- `101 = (1, 0, 1)_10` is a palindrome with an odd number of digits, and `11 ∤ 101`.
