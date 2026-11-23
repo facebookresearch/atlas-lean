@@ -43,7 +43,9 @@ namespace MetaMathlibExt
 
 variable {α : Type*} [Primcodable α]
 
-/-- Computable predicates are closed under conjunction. -/
+/-- **Computable predicates are closed under conjunction.** Let $\alpha$ be a type with a
+primitive recursive encoding into $\mathbb{N}$. If $p$ and $q$ are computable predicates on
+$\alpha$, then the predicate $a \mapsto p(a) \land q(a)$ is computable. -/
 theorem ComputablePred.and {p q : α → Prop} (hp : ComputablePred p) (hq : ComputablePred q) :
     ComputablePred fun a ↦ p a ∧ q a := by
   obtain ⟨f, hf, rfl⟩ := ComputablePred.computable_iff.mp hp
@@ -53,7 +55,9 @@ theorem ComputablePred.and {p q : α → Prop} (hp : ComputablePred p) (hq : Com
   · funext a
     simp
 
-/-- Computable predicates are closed under disjunction. -/
+/-- **Computable predicates are closed under disjunction.** Let $\alpha$ be a type with a
+primitive recursive encoding into $\mathbb{N}$. If $p$ and $q$ are computable predicates on
+$\alpha$, then the predicate $a \mapsto p(a) \lor q(a)$ is computable. -/
 theorem ComputablePred.or {p q : α → Prop} (hp : ComputablePred p) (hq : ComputablePred q) :
     ComputablePred fun a ↦ p a ∨ q a := by
   obtain ⟨f, hf, rfl⟩ := ComputablePred.computable_iff.mp hp
@@ -63,8 +67,11 @@ theorem ComputablePred.or {p q : α → Prop} (hp : ComputablePred p) (hq : Comp
   · funext a
     simp
 
-/-- R.e. predicates are closed under conjunction: run one semi-decision procedure, then the
-other. -/
+/-- **Recursively enumerable predicates are closed under conjunction.** Let $\alpha$ be a type
+with a primitive recursive encoding into $\mathbb{N}$. If $p$ and $q$ are recursively enumerable
+predicates on $\alpha$, then the predicate $a \mapsto p(a) \land q(a)$ is recursively enumerable.
+
+The proof runs one semi-decision procedure, then the other. -/
 theorem REPred.and {p q : α → Prop} (hp : REPred p) (hq : REPred q) :
     REPred fun a ↦ p a ∧ q a := by
   have hb : Partrec fun a ↦ (Part.assert (p a) fun _ ↦ Part.some ()).bind fun _ ↦
@@ -76,8 +83,11 @@ theorem REPred.and {p q : α → Prop} (hp : REPred p) (hq : REPred q) :
   · rintro ⟨h₁, h₂⟩
     exact ⟨⟨h₁, trivial⟩, h₂, trivial⟩
 
-/-- R.e. predicates are closed under disjunction: run both semi-decision procedures in
-parallel. -/
+/-- **Recursively enumerable predicates are closed under disjunction.** Let $\alpha$ be a type
+with a primitive recursive encoding into $\mathbb{N}$. If $p$ and $q$ are recursively enumerable
+predicates on $\alpha$, then the predicate $a \mapsto p(a) \lor q(a)$ is recursively enumerable.
+
+The proof runs both semi-decision procedures in parallel. -/
 theorem REPred.or {p q : α → Prop} (hp : REPred p) (hq : REPred q) :
     REPred fun a ↦ p a ∨ q a := by
   obtain ⟨k, hk, H⟩ := Partrec.merge' hp hq
@@ -86,9 +96,15 @@ theorem REPred.or {p q : α → Prop} (hp : REPred p) (hq : REPred q) :
   exact ⟨fun h ↦ h.imp (fun ⟨h, _⟩ ↦ h) (fun ⟨h, _⟩ ↦ h),
     fun h ↦ h.imp (fun h ↦ ⟨h, trivial⟩) (fun h ↦ ⟨h, trivial⟩)⟩
 
-/-- **Dovetailing.** An r.e. relation, existentially quantified over a primitive recursive
-finite list of candidates, is r.e.: search for a step bound `k` at which the simulation
-`evaln k` of some candidate halts. -/
+/-- **Bounded existential quantification preserves recursive enumerability.** Let $\alpha$ and
+$\beta$ be types with primitive recursive encodings into $\mathbb{N}$, let $R$ be a relation
+between $\alpha$ and $\beta$ that is recursively enumerable as a predicate on pairs $(a, b)$, and
+let $c$ be a primitive recursive function sending each $a \in \alpha$ to a finite list $c(a)$ of
+elements of $\beta$. Then the predicate $a \mapsto \exists b \in c(a),\ R(a, b)$ is recursively
+enumerable.
+
+The proof is by dovetailing: it searches for a step bound $k$ at which the simulation of the
+semi-decision procedure for $R$ halts on $(a, b)$ for some $b$ in $c(a)$. -/
 theorem REPred.exists_mem {β : Type*} [Primcodable β] {R : α → β → Prop}
     (hR : REPred fun p : α × β ↦ R p.1 p.2) {c : α → List β} (hc : Primrec c) :
     REPred fun a ↦ ∃ b ∈ c a, R a b := by
@@ -130,9 +146,16 @@ theorem REPred.exists_mem {β : Type*} [Primcodable β] {R : α → β → Prop}
     obtain ⟨k, hk⟩ := Nat.Partrec.Code.evaln_complete.mp hx
     exact ⟨k, (List.any_eq_true.mpr ⟨b, hb, Option.isSome_iff_exists.mpr ⟨x, hk⟩⟩).symm⟩
 
-/-- An r.e. predicate holds on every element of a primitive recursive finite list: search for
-one step bound `k` at which the simulation `evaln k` halts on all of them (`evaln` is monotone
-in `k`). -/
+/-- **Bounded universal quantification preserves recursive enumerability.** Let $\alpha$ and
+$\beta$ be types with primitive recursive encodings into $\mathbb{N}$, let $R$ be a relation
+between $\alpha$ and $\beta$ that is recursively enumerable as a predicate on pairs $(a, b)$, and
+let $c$ be a primitive recursive function sending each $a \in \alpha$ to a finite list $c(a)$ of
+elements of $\beta$. Then the predicate $a \mapsto \forall b \in c(a),\ R(a, b)$ is recursively
+enumerable.
+
+The proof searches for one step bound $k$ at which the simulation of the semi-decision procedure
+for $R$ halts on $(a, b)$ for every $b$ in $c(a)$; the step-bounded simulation is monotone in $k$.
+-/
 theorem REPred.forall_mem {β : Type*} [Primcodable β] {R : α → β → Prop}
     (hR : REPred fun p : α × β ↦ R p.1 p.2) {c : α → List β} (hc : Primrec c) :
     REPred fun a ↦ ∀ b ∈ c a, R a b := by
@@ -180,7 +203,14 @@ theorem REPred.forall_mem {β : Type*} [Primcodable β] {R : α → β → Prop}
     refine Option.isSome_iff_exists.mpr ⟨x, Nat.Partrec.Code.evaln_mono ?_ hx⟩
     exact List.le_max_of_le' 0 (List.mem_map_of_mem hb) le_rfl
 
-/-- `List.any` with a computable test is computable: scan the indices with `Nat.rec`. -/
+/-- **Searching a computable list with a computable test is computable.** Let $\gamma$ and
+$\beta$ be types with primitive recursive encodings into $\mathbb{N}$, let $l$ be a computable
+function sending each $x \in \gamma$ to a finite list $l(x)$ of elements of $\beta$, and let $g$
+be a computable Boolean-valued function of $x \in \gamma$ and $b \in \beta$. Then the
+Boolean-valued function that sends $x$ to true exactly when $g(x, b)$ is true for some $b$ in
+$l(x)$ is computable.
+
+The proof scans the indices of $l(x)$ by primitive recursion. -/
 theorem computable_list_any {γ β : Type*} [Primcodable γ] [Primcodable β]
     {l : γ → List β} {g : γ → β → Bool} (hl : Computable l) (hg : Computable₂ g) :
     Computable fun x ↦ (l x).any (g x) := by
@@ -222,9 +252,15 @@ theorem computable_list_any {γ β : Type*} [Primcodable γ] [Primcodable β]
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hb
     exact ⟨i, (List.getElem?_eq_some_iff.mp hi).1, b, hi, hgb⟩
 
-/-- **Selection for r.e. relations.** A partial recursive function picks a witness of `R a`
-whenever one exists: search over pairs of a candidate and a step bound, by dovetailing with
-`Nat.Partrec.Code.evaln`. -/
+/-- **Selection for r.e. relations.** Let $\alpha$ and $\beta$ be types with primitive recursive
+encodings into $\mathbb{N}$, and let $R$ be a relation between $\alpha$ and $\beta$ that is
+recursively enumerable as a predicate on pairs $(a, b)$. Then there is a partial recursive
+function $g$ from $\alpha$ to $\beta$ such that, for every $a \in \alpha$, if $g(a)$ is defined
+then its value $b$ satisfies $R(a, b)$, and $g(a)$ is defined whenever some $b \in \beta$
+satisfies $R(a, b)$.
+
+The proof searches over pairs of a candidate $b$ and a step bound by dovetailing with the
+step-bounded simulation of the semi-decision procedure for $R$. -/
 theorem REPred.exists_partrec_choose {β : Type*} [Primcodable β] {R : α → β → Prop}
     (hR : REPred fun p : α × β ↦ R p.1 p.2) :
     ∃ g : α →. β, Partrec g ∧ (∀ a b, b ∈ g a → R a b) ∧ ∀ a, (∃ b, R a b) → (g a).Dom := by
@@ -285,8 +321,12 @@ theorem REPred.exists_partrec_choose {β : Type*} [Primcodable β] {R : α → �
     obtain ⟨b', hb', -⟩ := hfound a _ hspec'.symm
     exact ⟨hd, by simp [hb']⟩
 
-/-- R.e. predicates are closed under (unbounded) existential projection: the domain of the
-selection function `REPred.exists_partrec_choose`. -/
+/-- **Existential projection preserves recursive enumerability.** Let $\alpha$ and $\beta$ be
+types with primitive recursive encodings into $\mathbb{N}$, and let $R$ be a relation between
+$\alpha$ and $\beta$ that is recursively enumerable as a predicate on pairs $(a, b)$. Then the
+predicate $a \mapsto \exists b \in \beta,\ R(a, b)$ is recursively enumerable.
+
+The predicate is the domain of the partial recursive function that selects a witness of $R$. -/
 theorem REPred.exists {β : Type*} [Primcodable β] {R : α → β → Prop}
     (hR : REPred fun p : α × β ↦ R p.1 p.2) : REPred fun a ↦ ∃ b, R a b := by
   obtain ⟨g, hg, hsound, hdom⟩ := REPred.exists_partrec_choose hR

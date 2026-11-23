@@ -6,11 +6,13 @@
 
 <p align="center">
   <a href="https://github.com/facebookresearch/atlas-lean/actions/workflows/ci.yml"><img src="https://github.com/facebookresearch/atlas-lean/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status" /></a>
-  <a href="https://github.com/leanprover/lean4/releases/tag/v4.35.0"><img src="https://img.shields.io/badge/Lean-v4.35.0-blue" alt="Lean v4.35.0" /></a>
+  <a href="https://github.com/leanprover/lean4/releases/tag/v4.36.0"><img src="https://img.shields.io/badge/Lean-v4.36.0-blue" alt="Lean v4.36.0" /></a>
 </p>
 
 > [!NOTE]
-> **ATLAS V2 is live.** The original release is preserved in [`v1/`](v1/).
+> **ATLAS V2 is live.** Explore the interactive graph at
+> [facebookresearch.github.io/atlas-lean](https://facebookresearch.github.io/atlas-lean/).
+> The original release is preserved in [`v1/`](v1/).
 
 ## About ATLAS
 

@@ -1,6 +1,6 @@
 # Newton's identities for traces of matrix powers
 
-- [Traces of powers of a $2 \times 2$ matrix](trace-pow-two.md)
-- [Integral of $x^r (1 - x)^r$ over $(0, 1)$](integral-pow-one-sub-pow.md)
-- [Characteristic-polynomial coefficients in descending order](charpoly-descending-coeff.md)
-- [Newton's trace identities for the characteristic polynomial](trace-cayley-hamilton-newton.md)
+Newton's identities relate the traces of the powers of a square matrix to the coefficients of its characteristic polynomial; this topic also holds an integral identity from the same source.
+
+- [Newton's identities for traces of matrix powers](newton-s-identities/README.md)
+- [An integral of $x^r (1 - x)^r$](integral-of-x-r-1-x-r/README.md)
