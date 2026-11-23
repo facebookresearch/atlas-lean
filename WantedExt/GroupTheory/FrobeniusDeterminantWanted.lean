@@ -60,23 +60,26 @@ of the Knill survey.
 open MvPolynomial Matrix
 
 
-/-- The **group matrix** of Dedekind/Frobenius: a `G × G` matrix over the
-polynomial ring `ℂ[x_g : g ∈ G]`, with entry `(g, h)` the variable indexed by
-the product `g * h`. -/
+/-- **Group matrix.** For a finite group $G$, the group matrix of Dedekind and Frobenius is the
+$G \times G$ matrix over the polynomial ring $\mathbb{C}[x_g : g \in G]$ whose entry at $(g, h)$ is
+the variable $x_{gh}$. -/
 noncomputable def groupMatrix (G : Type*) [Group G] [Fintype G] [DecidableEq G] :
     Matrix G G (MvPolynomial G ℂ) :=
   fun g h => MvPolynomial.X (g * h)
 
-/-- The **group determinant** `Θ(G) = det(A)`, a polynomial in the variables
-`x_g`. -/
+/-- **Group determinant.** For a finite group $G$, the group determinant $\Theta(G)$ is the
+determinant of the group matrix of $G$, the $G \times G$ matrix over $\mathbb{C}[x_g : g \in G]$
+whose entry at $(g, h)$ is the variable $x_{gh}$; it is a polynomial in these variables. -/
 noncomputable def groupDeterminant (G : Type*) [Group G] [Fintype G] [DecidableEq G] :
     MvPolynomial G ℂ :=
   (groupMatrix G).det
 
-/-- **Frobenius determinant theorem** (§171). The group determinant factors as
-a product of irreducible polynomials, each appearing to the power of its own
-(total) degree `d_j = deg p_j`, with the factors pairwise non-associated
-(*distinct*) and their number equal to the number of conjugacy classes of `G`.
+/-- **Frobenius determinant theorem.** Let $G$ be a finite group and let $r$ be the number of
+conjugacy classes of $G$. Then there exist polynomials $p_1, \dots, p_r$ in
+$\mathbb{C}[x_g : g \in G]$ such that each $p_j$ is irreducible, $p_i$ and $p_j$ are not associated
+for $i \neq j$, and the group determinant of $G$ equals $\prod_{j=1}^{r} p_j^{\deg p_j}$, where
+$\deg p_j$ is the total degree of $p_j$.
+
 Source: Knill, *Some fundamental theorems in mathematics*, §171. Via leanprover/lean-eval@38361be, problem `frobenius_group_determinant`.
 -/
 public theorem_wanted frobenius_group_determinant

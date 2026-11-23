@@ -34,25 +34,36 @@ relation) invariant under right multiplication; right- and left-orderability are
 ↔ b⁻¹ ≤ a⁻¹`).
 -/
 
-/-- `h` is a generalized torsion element: `h ≠ 1` and some nonempty product of conjugates of `h` is
-trivial. -/
+/-- **Generalized torsion elements (Kourovka 16.48).** An element $h$ of a group $H$ is a
+generalized torsion element if $h \ne 1$ and there are $n \ge 1$ elements
+$x_1, \dots, x_n \in H$, not necessarily distinct, such that
+$(x_1^{-1} h x_1)(x_2^{-1} h x_2) \cdots (x_n^{-1} h x_n) = 1$. -/
 def IsGeneralizedTorsion {H : Type*} [Group H] (h : H) : Prop :=
   h ≠ 1 ∧ ∃ l : List H, l ≠ [] ∧ (l.map fun x => x⁻¹ * h * x).prod = 1
 
-/-- The right orders of `G`: linear orders (as relations) invariant under right multiplication. -/
+/-- **Right orders on a group (Kourovka 16.48).** The right orders of a group $G$ are the binary
+relations $\preceq$ on $G$ that are linear orders (reflexive, transitive, antisymmetric and total)
+and are invariant under right multiplication: $a \preceq b$ implies $ac \preceq bc$ for all
+$a, b, c \in G$. -/
 def rightOrders (G : Type*) [Group G] : Set (G → G → Prop) :=
   {r | IsLinearOrder G r ∧ ∀ a b c : G, r a b → r (a * c) (b * c)}
 
-/-- Kourovka 16.48 (V. M. Kopytov, N. Ya. Medvedev): every group without generalized torsion is
-right-orderable. -/
+/-- **The Kopytov–Medvedev question (Kourovka 16.48).** This is the proposition that every group
+$H$ with no generalized torsion element is right-orderable, that is, admits a right order. -/
 def noGeneralizedTorsionRightOrderable : Prop :=
   ∀ (H : Type) [Group H], (∀ h : H, ¬ IsGeneralizedTorsion h) → (rightOrders H).Nonempty
 
 /--
+**Some group without generalized torsion is not right-orderable (Kourovka 16.48).** The
+Kopytov–Medvedev proposition is false: there is a group $H$ with no generalized torsion element
+that admits no right order.
+
 Resolved false: Cai and Clay give a condition ensuring that an amalgam is generalized torsion-free
-and use it to construct a group that is generalized torsion-free but not left-orderable (Theorem
-1.3, proved in Section 7), hence not right-orderable; the Kourovka Notebook (21st issue) answers
-16.48 "No, not every". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+and use it to construct a group that is generalized torsion-free but not left-orderable (their
+Theorem 1.3, proved in Section 7), hence not right-orderable; the Kourovka Notebook (21st issue)
+answers 16.48 "No, not every".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.48 (V. M. Kopytov,
 N. Ya. Medvedev); resolution: T. W. Cai and A. Clay, Generalized torsion in amalgams, preprint,
 arXiv:2504.08084 (2025), Theorem 1.3 (there exists a group which is generalized torsion-free and not

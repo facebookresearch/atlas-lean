@@ -15,34 +15,44 @@ public import Mathlib.Data.Int.Basic
 
 namespace MathlibExt.NumberTheory.BuchiSquareSequenceBoundWanted
 
-/-- A length-`M` integer Büchi sequence: the second differences of the squared
-terms are constantly `2`. Only the prefix `j < M` of the total function `u`
-is observed. -/
+/-- **Büchi sequences.** Let $M$ be a natural number. A sequence of integers
+$u_0, u_1, u_2, \dots$ is a Büchi sequence of length $M$ when the second differences of its
+squares equal $2$ along its first $M$ terms, that is,
+$u_{j+2}^2 - 2u_{j+1}^2 + u_j^2 = 2$ for every $j$ with $j + 2 < M$.
+
+Only the terms $u_j$ with $j < M$ are constrained. -/
 def IsBuchiSequence (M : ℕ) (u : ℕ → ℤ) : Prop :=
   ∀ j : ℕ, j + 2 < M →
     u (j + 2) ^ 2 - 2 * u (j + 1) ^ 2 + u j ^ 2 = 2
 
-/-- A length-`M` Büchi sequence is trivial when, up to independently changing
-the signs of its terms, it is a run of consecutive increasing integers. Since
-independent signs do not change squares, and equality of integer squares
-supplies the necessary signs, this is encoded by requiring an integer `x`
-with `u j ^ 2 = (x + j) ^ 2` for every `j < M`. -/
+/-- **Trivial sequences in Büchi's problem.** Let $M$ be a natural number. A sequence of
+integers $u_0, u_1, u_2, \dots$ is trivial at length $M$ when there is an integer $x$ with
+$u_j^2 = (x + j)^2$ for every $j < M$; equivalently, after changing the signs of some of its
+terms, its first $M$ terms are the consecutive integers $x, x + 1, \dots, x + M - 1$. -/
 def IsTrivial (M : ℕ) (u : ℕ → ℤ) : Prop :=
   ∃ x : ℤ, ∀ j : ℕ, j < M →
     u j ^ 2 = (x + (j : ℤ)) ^ 2
 
-/-- Büchi's integer-square sequence conjecture in general existential-length
-form: there exists a length `M ≥ 5` for which every length-`M` Büchi sequence
-is trivial. -/
+/-- **Büchi's square-sequence conjecture.** There is a natural number $M \ge 5$ such that
+every integer Büchi sequence of length $M$ is trivial: for every sequence of integers
+$u_0, u_1, u_2, \dots$ with $u_{j+2}^2 - 2u_{j+1}^2 + u_j^2 = 2$ for all $j$ with
+$j + 2 < M$, there is an integer $x$ with $u_j^2 = (x + j)^2$ for all $j < M$. -/
 def conjecture : Prop :=
   ∃ M : ℕ, 5 ≤ M ∧
     ∀ u : ℕ → ℤ, IsBuchiSequence M u → IsTrivial M u
 
 /--
-Resolved true: Stanley Yao Xiao (arXiv:2412.16740v3, Jun 2025) proves unconditionally that five
-integer squares with constant second difference 2 are consecutive (Theorem 1.3), so the
-formalized existential-length claim holds with M = 5; the earlier length-8 bound was Vojta's
-conditional result under Bombieri-Lang. Source: Stanley Yao Xiao, Hilbert's tenth problem for
+**Resolution of Büchi's square-sequence conjecture.** There is a natural number $M \ge 5$
+such that every integer Büchi sequence of length $M$ is trivial: for every sequence of
+integers $u_0, u_1, u_2, \dots$ with $u_{j+2}^2 - 2u_{j+1}^2 + u_j^2 = 2$ for all $j$ with
+$j + 2 < M$, there is an integer $x$ with $u_j^2 = (x + j)^2$ for all $j < M$.
+
+Stanley Yao Xiao (arXiv:2412.16740v3, Jun 2025) proves unconditionally that five integer
+squares with constant second difference $2$ are consecutive (Theorem 1.3), so the statement
+holds with $M = 5$; the earlier length-8 bound was Vojta's conditional result under
+Bombieri–Lang.
+
+Source: Stanley Yao Xiao, Hilbert's tenth problem for
 systems of diagonal quadratic forms, and Büchi's problem, arXiv:2412.16740v3 (2025),
 https://arxiv.org/abs/2412.16740v3. Moved from
 `OpenConjectures/NumberTheory/BuchiSquareSequenceBound`.

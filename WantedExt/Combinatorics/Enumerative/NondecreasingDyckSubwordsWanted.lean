@@ -39,8 +39,10 @@ namespace MetaMathlibExt
 
 open DyckStep
 
-/-- The heights of the valley vertices of a step list, read from left to right:
-for each factor `DU`, the height reached after its `D`.
+/-- **Valley heights.** For a finite sequence $l$ of up steps $U$ and down steps $D$, the valley
+heights of $l$ form the list with one entry for each factor $DU$ of $l$, from left to right:
+the number of $U$ steps minus the number of $D$ steps in $l$ up to and including the $D$ of
+that factor, taken to be $0$ when negative.
 
 Source: Flórez and Ramírez, *Restricted Dyck paths on valleys sequence*,
 arXiv:2108.08299, Section 1, the definition of non-decreasing Dyck paths used by
@@ -50,22 +52,27 @@ public def dyckValleyHeights (l : List DyckStep) : List ℕ :=
   ((List.range l.length).filter fun i => decide (l[i]? = some D ∧ l[i + 1]? = some U)).map
     fun i => (l.take (i + 1)).count U - (l.take (i + 1)).count D
 
-/-- The path `UUDUDDUD` has valley heights `1, 0`, so it is not non-decreasing.
+/-- **Valley heights of UUDUDDUD.** The Dyck path $UUDUDDUD$ has exactly two valleys, of heights
+$1$ and $0$ from left to right.
+
+In particular this path is not non-decreasing.
 
 Source: Flórez and Ramírez, *Restricted Dyck paths on valleys sequence*,
 arXiv:2108.08299, Section 1. -/
 public theorem dyckValleyHeights_UUDUDDUD :
     dyckValleyHeights [U, U, D, U, D, D, U, D] = [1, 0] := by decide
 
-/-- The path `UDUUDUDD` has valley heights `0, 1`.
+/-- **Valley heights of UDUUDUDD.** The Dyck path $UDUUDUDD$ has exactly two valleys, of heights
+$0$ and $1$ from left to right.
 
 Source: Flórez and Ramírez, *Restricted Dyck paths on valleys sequence*,
 arXiv:2108.08299, Section 1. -/
 public theorem dyckValleyHeights_UDUUDUDD :
     dyckValleyHeights [U, D, U, U, D, U, D, D] = [0, 1] := by decide
 
-/-- A Dyck path is non-decreasing when its valley heights are non-decreasing
-from left to right.
+/-- **Non-decreasing Dyck paths.** A Dyck path is non-decreasing when its valley heights (the
+heights reached after the $D$ of each factor $DU$), read from left to right, form a
+non-decreasing sequence.
 
 Source: Flórez and Ramírez, *Restricted Dyck paths on valleys sequence*,
 arXiv:2108.08299, Section 1 (the `0`-Dyck paths), as used by Flórez, Junes,
@@ -82,59 +89,78 @@ public instance : DecidablePred IsNondecreasingDyckPath := fun p => by
   unfold IsNondecreasingDyckPath
   infer_instance
 
-/-- The set `D_n` of non-decreasing Dyck paths of semilength `n`.
+/-- **Non-decreasing Dyck paths of semilength $n$.** For a natural number $n$, $D_n$ is the finite
+set of Dyck paths of semilength $n$ that are non-decreasing: the heights of their valleys (the
+height reached after the $D$ of each factor $DU$), read from left to right, form a non-decreasing
+sequence.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
 public def nondecreasingDyckWords (n : ℕ) : Finset {p : DyckWord // p.semilength = n} :=
   Finset.univ.filter fun p => IsNondecreasingDyckPath p.1
 
-/-- All five Dyck paths of semilength `3` are non-decreasing.
+/-- **Five non-decreasing Dyck paths of semilength 3.** There are exactly $5$ non-decreasing
+Dyck paths of semilength $3$.
+
+These are all five Dyck paths of semilength $3$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
 public theorem card_nondecreasingDyckWords_three : (nondecreasingDyckWords 3).card = 5 := by
   decide +kernel
 
-/-- There are `13` non-decreasing Dyck paths of semilength `4` (all `14` Dyck paths
-except `UUDUDDUD`).
+/-- **Thirteen non-decreasing Dyck paths of semilength 4.** There are exactly $13$
+non-decreasing Dyck paths of semilength $4$.
+
+They are all $14$ Dyck paths of semilength $4$ except $UUDUDDUD$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
 public theorem card_nondecreasingDyckWords_four : (nondecreasingDyckWords 4).card = 13 := by
   decide +kernel
 
-/-- The number of occurrences of the contiguous subword `w` in the step list
-`l`, overlapping occurrences counted separately.
+/-- **Number of occurrences of a subword.** For finite words $w$ and $l$ in the up step $U$ and
+the down step $D$, the number of occurrences of $w$ in $l$ is the number of suffixes of $l$,
+including $l$ itself and the empty suffix, that begin with $w$. Thus every occurrence of $w$ as a
+contiguous subword of $l$ is counted, overlapping occurrences separately.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
 public def dyckSubwordCount (w l : List DyckStep) : ℕ :=
   l.tails.countP fun t => w.isPrefixOf t
 
-/-- `UUUDDD` contains the subword `UU` twice (the occurrences overlap).
+/-- **Occurrences of UU in UUUDDD.** The contiguous subword $UU$ occurs exactly $2$ times in
+$UUUDDD$; the two occurrences overlap.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
 public theorem dyckSubwordCount_UU_UUUDDD :
     dyckSubwordCount [U, U] [U, U, U, D, D, D] = 2 := by decide
 
-/-- `UDUDUD` contains the subword `UDU` twice.
+/-- **Occurrences of UDU in UDUDUD.** The contiguous subword $UDU$ occurs exactly $2$ times in
+$UDUDUD$; the two occurrences overlap.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
 public theorem dyckSubwordCount_UDU_UDUDUD :
     dyckSubwordCount [U, D, U] [U, D, U, D, U, D] = 2 := by decide
 
-/-- `d_w(n)`: the total number of occurrences of the subword `w` over all
-non-decreasing Dyck paths of semilength `n`.
+/-- **Total occurrences of a subword in non-decreasing Dyck paths.** For a word $w$ in the steps
+$U$ and $D$ and for $n \ge 0$, $d_w(n)$ is the total number of occurrences of $w$ as a contiguous
+subword (overlapping occurrences counted separately), summed over all non-decreasing Dyck paths
+of semilength $n$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
 public def nondecreasingDyckSubwordTotal (w : List DyckStep) (n : ℕ) : ℕ :=
   ∑ p ∈ nondecreasingDyckWords n, dyckSubwordCount w p.1.toList
 
-/-- The `10` peaks over the five paths of semilength `3`: `d_UD(3) = 10`.
+/-- **Peaks in the non-decreasing Dyck paths of semilength three.** Let $d_w(n)$ be the total
+number of occurrences of the subword $w$ over all non-decreasing Dyck paths of semilength $n$.
+Then $d_{UD}(3) = 10$; that is, the non-decreasing Dyck paths of semilength $3$ have $10$ peaks
+$UD$ in total.
+
+All five Dyck paths of semilength $3$ are non-decreasing.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
@@ -142,8 +168,13 @@ public theorem nondecreasingDyckSubwordTotal_UD_three :
     nondecreasingDyckSubwordTotal [U, D] 3 = 10 := by
   decide +kernel
 
-/-- The bivariate generating function `F_w(x, y)`: the coefficient of `x^n`
-(`n ≥ 1`) is `∑_{P ∈ D_n} y^{#w(P)}` in `ℤ[y]`; the empty path is not counted.
+/-- **Bivariate generating function of a subword in non-decreasing Dyck paths.** For a word $w$
+in the steps $U$ and $D$, let $D_n$ be the set of non-decreasing Dyck paths of semilength $n$,
+and let $\#w(P)$ be the number of occurrences of $w$ as a contiguous subword of a path $P$,
+overlapping occurrences counted separately. The bivariate generating function $F_w(x, y)$ is
+the power series in $x$ with coefficients in $\mathbb{Z}[y]$ given by
+$$F_w(x, y) = \sum_{n \ge 1} \sum_{P \in D_n} y^{\#w(P)} x^n,$$
+so its constant coefficient is $0$: the empty path is not counted.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
@@ -153,7 +184,11 @@ public noncomputable def nondecreasingDyckSubwordBivariateGF (w : List DyckStep)
     if n = 0 then 0
     else ∑ p ∈ nondecreasingDyckWords n, Polynomial.X ^ dyckSubwordCount w p.1.toList
 
-/-- The univariate generating function `D_w(x) = ∑ d_w(n) x^n`.
+/-- **Generating function of the total subword count in non-decreasing Dyck paths.** For a word
+$w$ in the steps $U$ and $D$, let $d_w(n)$ be the total number of occurrences of $w$ as a
+contiguous subword (overlapping occurrences counted separately) over all non-decreasing Dyck
+paths of semilength $n$. The univariate generating function of $w$ is the integer power series
+$$D_w(x) = \sum_{n \ge 0} d_w(n) x^n.$$
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Section 1. -/
@@ -161,7 +196,10 @@ public noncomputable def nondecreasingDyckSubwordTotalGF (w : List DyckStep) :
     PowerSeries ℤ :=
   PowerSeries.mk fun n => (nondecreasingDyckSubwordTotal w n : ℤ)
 
-/-- The height of the last peak (factor `UD`) of a step list, if it has one.
+/-- **Height of the last peak.** For a finite sequence $l$ of up steps $U$ and down steps $D$,
+the last peak height of $l$ is undefined when $l$ has no factor $UD$. Otherwise it is the
+height of the peak of the rightmost factor $UD$: the number of $U$ steps minus the number of
+$D$ steps in $l$ up to and including the $U$ of that factor, taken to be $0$ when negative.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 16. -/
@@ -170,22 +208,26 @@ public def dyckLastPeakHeight (l : List DyckStep) : Option ℕ :=
       decide (l[i]? = some U ∧ l[i + 1]? = some D)).getLast?.map
     fun i => (l.take (i + 1)).count U - (l.take (i + 1)).count D
 
-/-- The last peak of `UDUUDD` has height `2`.
+/-- **Last peak height of UDUUDD.** The last peak of the Dyck path $UDUUDD$ has height $2$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 16. -/
 public theorem dyckLastPeakHeight_UDUUDD :
     dyckLastPeakHeight [U, D, U, U, D, D] = some 2 := by decide
 
-/-- `l_{n,k}`: the number of non-decreasing Dyck paths of semilength `n` whose
-last peak has height `k`.
+/-- **Non-decreasing Dyck paths by height of the last peak.** For natural numbers $n$ and $k$,
+$l_{n,k}$ is the number of non-decreasing Dyck paths of semilength $n$ whose last peak (the last
+factor $UD$) has height $k$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 16. -/
 public def nondecreasingDyckLastPeakCount (n k : ℕ) : ℕ :=
   ((nondecreasingDyckWords n).filter fun p => dyckLastPeakHeight p.1.toList = some k).card
 
-/-- Four of the paths in `D_4` have last peak of height `1`: `l_{4,1} = 4`.
+/-- **Non-decreasing Dyck paths of semilength four with last peak at height one.** Exactly four
+non-decreasing Dyck paths of semilength $4$ have their last peak at height $1$; that is,
+$l_{4,1} = 4$, where $l_{n,k}$ is the number of non-decreasing Dyck paths of semilength $n$
+whose last peak has height $k$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 16. -/
@@ -200,8 +242,17 @@ local notation "𝒚" => PowerSeries.C (Polynomial.X : Polynomial ℤ)
 /-- The variable `x` of the univariate generating functions. -/
 local notation "𝒛" => (PowerSeries.X : PowerSeries ℤ)
 
-/-- Subword `UD` in non-decreasing Dyck paths: `F_UD(x, y)`, `D_UD(x)`, and the closed form of
-`d_UD(n)` for `n ≥ 1`.
+/-- **Generating functions and closed form for the subword $UD$ in non-decreasing Dyck paths.**
+For $n \ge 0$ let $\mathcal{D}_n$ be the set of non-decreasing Dyck paths of semilength $n$, let
+$\#_{UD}(P)$ be the number of occurrences of the subword $UD$ in a path $P$, and let
+$d_{UD}(n) = \sum_{P \in \mathcal{D}_n} \#_{UD}(P)$. Let
+$F_{UD}(x, y) = \sum_{n \ge 1} \sum_{P \in \mathcal{D}_n} y^{\#_{UD}(P)} x^n$, a power series in
+$x$ with coefficients in $\mathbb{Z}[y]$, and $D_{UD}(x) = \sum_{n \ge 0} d_{UD}(n) x^n$ in
+$\mathbb{Z}[[x]]$. Then $(1 - 2x + x^2 - xy) F_{UD}(x, y) = (1 - x) x y$ and
+$(1 - 3x + x^2)^2 D_{UD}(x) = x (1 - x)^3$, and for every $n \ge 1$,
+$$10\, d_{UD}(n) = (5n - 7) F_{2n} - (n - 5) L_{2n},$$
+where $F_k$ and $L_k$ are the Fibonacci and Lucas numbers ($F_0 = 0$, $F_1 = 1$, $L_0 = 2$,
+$L_1 = 1$).
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 1
@@ -213,8 +264,15 @@ public theorem_wanted nondecreasingDyck_subword_UD :
       10 * (nondecreasingDyckSubwordTotal [U, D] n : ℤ) =
         (5 * (n : ℤ) - 7) * (Nat.fib (2 * n) : ℤ) - ((n : ℤ) - 5) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subword `DU` in non-decreasing Dyck paths: `F_DU(x, y)`, `D_DU(x)`, and the closed form of
-`d_DU(n)` for `n ≥ 1`.
+/-- **The subword $DU$ in non-decreasing Dyck paths.** Let $F_{DU}(x, y)$ and $D_{DU}(x)$ be the
+bivariate and univariate generating functions of the subword $DU$ in non-decreasing Dyck paths,
+let $d_{DU}(n)$ be the total number of occurrences of $DU$ over all non-decreasing Dyck paths of
+semilength $n$, and let $F_n$ and $L_n$ denote the Fibonacci and Lucas numbers. Then
+$$(1 - 2x + x^2 - xy) F_{DU}(x, y) = (1 - x) x$$
+in $\mathbb{Z}[y][[x]]$,
+$$(1 - 3x + x^2)^2 D_{DU}(x) = (1 - x) x^2$$
+in $\mathbb{Z}[[x]]$, and for every $n \ge 1$,
+$$10 d_{DU}(n) = (5n - 2) F_{2n} - n L_{2n}.$$
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 2
@@ -226,8 +284,17 @@ public theorem_wanted nondecreasingDyck_subword_DU :
       10 * (nondecreasingDyckSubwordTotal [D, U] n : ℤ) =
         (5 * (n : ℤ) - 2) * (Nat.fib (2 * n) : ℤ) - (n : ℤ) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subwords `UU` and `DD` in non-decreasing Dyck paths: for `w ∈ {UU, DD}`,
-`F_w(x, y)`, `D_w(x)`, and the closed form of `d_w(n)` for `n ≥ 1`.
+/-- **Generating functions and closed form for the subwords $UU$ and $DD$ in non-decreasing Dyck
+paths.** Let $w$ be $UU$ or $DD$. For $n \ge 0$ let $\mathcal{D}_n$ be the set of non-decreasing
+Dyck paths of semilength $n$, let $\#_w(P)$ be the number of occurrences of the subword $w$ in a
+path $P$, and let $d_w(n) = \sum_{P \in \mathcal{D}_n} \#_w(P)$. Let
+$F_w(x, y) = \sum_{n \ge 1} \sum_{P \in \mathcal{D}_n} y^{\#_w(P)} x^n$, a power series in $x$
+with coefficients in $\mathbb{Z}[y]$, and $D_w(x) = \sum_{n \ge 0} d_w(n) x^n$ in
+$\mathbb{Z}[[x]]$. Then $(1 - x - 2xy + x^2 y^2) F_w(x, y) = x (1 - xy)$ and
+$(1 - 3x + x^2)^2 D_w(x) = x^2 (1 - x + x^2)$, and for every $n \ge 1$,
+$$10\, d_w(n) = (7 - 10n) F_{2n} + (6n - 5) L_{2n},$$
+where $F_k$ and $L_k$ are the Fibonacci and Lucas numbers ($F_0 = 0$, $F_1 = 1$, $L_0 = 2$,
+$L_1 = 1$).
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 3
@@ -241,8 +308,15 @@ public theorem_wanted nondecreasingDyck_subword_UU_DD (w : List DyckStep)
       10 * (nondecreasingDyckSubwordTotal w n : ℤ) =
         (7 - 10 * (n : ℤ)) * (Nat.fib (2 * n) : ℤ) + (6 * (n : ℤ) - 5) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subword `UUU` in non-decreasing Dyck paths: `F_UUU(x, y)`, `D_UUU(x)`, and the closed form of
-`d_UUU(n)` for `n ≥ 1`.
+/-- **Subword $UUU$ in non-decreasing Dyck paths.** Let $F_{UUU}(x, y) \in \mathbb{Z}[y][[x]]$ be
+the bivariate generating function with constant term $0$ in which, for $n \ge 1$, the coefficient
+of $x^n$ is the sum of $y^{k(P)}$ over the non-decreasing Dyck paths $P$ of semilength $n$, where
+$k(P)$ is the number of occurrences of the subword $UUU$ in $P$ (overlapping occurrences counted
+separately). Let $d_{UUU}(n)$ be the total number of occurrences of $UUU$ over all non-decreasing
+Dyck paths of semilength $n$, let $D_{UUU}(x) = \sum_{n \ge 0} d_{UUU}(n) x^n \in \mathbb{Z}[[x]]$,
+and let $F_n$ and $L_n$ denote the Fibonacci and Lucas numbers. Then
+$(1 - x(2 + y) + x^2 y) F_{UUU}(x, y) = (1 - xy) x$, $(1 - 3x + x^2)^2 D_{UUU}(x) = x^3$, and
+for every $n \ge 1$, $10\, d_{UUU}(n) = -(5n + 4) F_{2n} + 3n L_{2n}$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 4
@@ -255,8 +329,17 @@ public theorem_wanted nondecreasingDyck_subword_UUU :
       10 * (nondecreasingDyckSubwordTotal [U, U, U] n : ℤ) =
         -(5 * (n : ℤ) + 4) * (Nat.fib (2 * n) : ℤ) + 3 * (n : ℤ) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subword `UDU` in non-decreasing Dyck paths: `F_UDU(x, y)`, `D_UDU(x)`, and the closed form of
-`d_UDU(n)` for `n ≥ 1`.
+/-- **Generating functions and closed form for the subword $UDU$ in non-decreasing Dyck paths.**
+For $n \ge 0$ let $\mathcal{D}_n$ be the set of non-decreasing Dyck paths of semilength $n$, let
+$\#_{UDU}(P)$ be the number of occurrences of the subword $UDU$ in a path $P$, and let
+$d_{UDU}(n) = \sum_{P \in \mathcal{D}_n} \#_{UDU}(P)$. Let
+$F_{UDU}(x, y) = \sum_{n \ge 1} \sum_{P \in \mathcal{D}_n} y^{\#_{UDU}(P)} x^n$, a power series
+in $x$ with coefficients in $\mathbb{Z}[y]$, and $D_{UDU}(x) = \sum_{n \ge 0} d_{UDU}(n) x^n$ in
+$\mathbb{Z}[[x]]$. Then $(1 - x(2 + y) + x^2 y) F_{UDU}(x, y) = (1 - x) x$ and
+$(1 - 3x + x^2)^2 D_{UDU}(x) = x^2 (1 - x)^2$, and for every $n \ge 1$,
+$$10\, d_{UDU}(n) = (11 - 5n) F_{2n} + (3n - 5) L_{2n},$$
+where $F_k$ and $L_k$ are the Fibonacci and Lucas numbers ($F_0 = 0$, $F_1 = 1$, $L_0 = 2$,
+$L_1 = 1$).
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 5
@@ -268,8 +351,20 @@ public theorem_wanted nondecreasingDyck_subword_UDU :
       10 * (nondecreasingDyckSubwordTotal [U, D, U] n : ℤ) =
         (-5 * (n : ℤ) + 11) * (Nat.fib (2 * n) : ℤ) + (3 * (n : ℤ) - 5) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subword `UDD` in non-decreasing Dyck paths: `F_UDD(x, y)`, `D_UDD(x)`, and the closed form of
-`d_UDD(n)` for `n ≥ 2`.
+/-- **Generating functions and closed form for the subword $UDD$ in non-decreasing Dyck paths.**
+For $n \ge 0$ let $\mathcal{D}_n$ be the set of non-decreasing Dyck paths of semilength $n$, let
+$\#_{UDD}(P)$ be the number of occurrences of the subword $UDD$ in a path $P$, and let
+$d_{UDD}(n) = \sum_{P \in \mathcal{D}_n} \#_{UDD}(P)$. Let
+$F_{UDD}(x, y) = \sum_{n \ge 1} \sum_{P \in \mathcal{D}_n} y^{\#_{UDD}(P)} x^n$, a power series
+in $x$ with coefficients in $\mathbb{Z}[y]$, and $D_{UDD}(x) = \sum_{n \ge 0} d_{UDD}(n) x^n$ in
+$\mathbb{Z}[[x]]$. Then
+$$(1 - 3x + x^2 (2 - y)) (1 - 2x + x^2 (1 - y)) F_{UDD}(x, y) = (1 - x)(1 - 2x)(1 - x(1 - y)) x$$
+and
+$$(1 - 2x)(1 - 3x + x^2)^2 D_{UDD}(x) = (1 - x)(1 - 3x + 2x^2 - x^3) x^2,$$
+and for every $n \ge 2$,
+$$5\, d_{UDD}(n) = (5n - 9) F_{2n} + (5 - 2n) L_{2n} - 5 \cdot 2^{n-2},$$
+where $F_k$ and $L_k$ are the Fibonacci and Lucas numbers ($F_0 = 0$, $F_1 = 1$, $L_0 = 2$,
+$L_1 = 1$).
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 6
@@ -285,8 +380,15 @@ public theorem_wanted nondecreasingDyck_subword_UDD :
         (5 * (n : ℤ) - 9) * (Nat.fib (2 * n) : ℤ) + (-2 * (n : ℤ) + 5) * (lucasNumber (2 * n) : ℤ)
             - 5 * 2 ^ (n - 2)
 
-/-- Subword `DUU` in non-decreasing Dyck paths: `F_DUU(x, y)`, `D_DUU(x)`, and the closed form of
-`d_DUU(n)` for `n ≥ 3`.
+/-- **The subword $DUU$ in non-decreasing Dyck paths.** Let $F_{DUU}(x, y)$ and $D_{DUU}(x)$ be
+the bivariate and univariate generating functions of the subword $DUU$ in non-decreasing Dyck
+paths, let $d_{DUU}(n)$ be the total number of occurrences of $DUU$ over all non-decreasing Dyck
+paths of semilength $n$, and let $F_n$ and $L_n$ denote the Fibonacci and Lucas numbers. Then
+$$(1 - 3x + x^2(3 - 2y) - x^3(1 - y)) F_{DUU}(x, y) = x - x^2 + x^3(1 - y)$$
+in $\mathbb{Z}[y][[x]]$,
+$$(1 - 3x + x^2)^2 D_{DUU}(x) = x^3$$
+in $\mathbb{Z}[[x]]$, and for every $n \ge 3$,
+$$10 d_{DUU}(n) = -(5n + 4) F_{2n} + 3n L_{2n}.$$
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 7
@@ -299,8 +401,15 @@ public theorem_wanted nondecreasingDyck_subword_DUU :
       10 * (nondecreasingDyckSubwordTotal [D, U, U] n : ℤ) =
         -(5 * (n : ℤ) + 4) * (Nat.fib (2 * n) : ℤ) + 3 * (n : ℤ) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subword `DUD` in non-decreasing Dyck paths: `F_DUD(x, y)`, `D_DUD(x)`, and the closed form of
-`d_DUD(n)` for `n ≥ 3`.
+/-- **The subword $DUD$ in non-decreasing Dyck paths.** Let $F_{DUD}(x, y)$ and $D_{DUD}(x)$ be
+the bivariate and univariate generating functions of the subword $DUD$ in non-decreasing Dyck
+paths, let $d_{DUD}(n)$ be the total number of occurrences of $DUD$ over all non-decreasing Dyck
+paths of semilength $n$, and let $F_n$ and $L_n$ denote the Fibonacci and Lucas numbers. Then
+$$(1 - x^2(1 - 2y) + x^3(1 - y) - x(2 + y)) F_{DUD}(x, y) = x (1 - x - x^2(1 - y))$$
+in $\mathbb{Z}[y][[x]]$,
+$$(1 - 3x + x^2)^2 D_{DUD}(x) = x^2 - 2x^3$$
+in $\mathbb{Z}[[x]]$, and for every $n \ge 3$,
+$$5 d_{DUD}(n) = (5n + 1) F_{2n} - 2n L_{2n}.$$
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 8
@@ -313,8 +422,15 @@ public theorem_wanted nondecreasingDyck_subword_DUD :
       5 * (nondecreasingDyckSubwordTotal [D, U, D] n : ℤ) =
         (5 * (n : ℤ) + 1) * (Nat.fib (2 * n) : ℤ) - 2 * (n : ℤ) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subword `DDU` in non-decreasing Dyck paths: `F_DDU(x, y)`, `D_DDU(x)`, and the closed form of
-`d_DDU(n)` for `n ≥ 3`.
+/-- **The subword $DDU$ in non-decreasing Dyck paths.** Let $F_{DDU}(x, y)$ and $D_{DDU}(x)$ be
+the bivariate and univariate generating functions of the subword $DDU$ in non-decreasing Dyck
+paths, let $d_{DDU}(n)$ be the total number of occurrences of $DDU$ over all non-decreasing Dyck
+paths of semilength $n$, and let $F_n$ and $L_n$ denote the Fibonacci and Lucas numbers. Then
+$$(1 - 3x + x^2(2 - y)) F_{DDU}(x, y) = (1 - x) x$$
+in $\mathbb{Z}[y][[x]]$,
+$$(1 - 3x + x^2)^2 D_{DDU}(x) = (1 - x) x^3$$
+in $\mathbb{Z}[[x]]$, and for every $n \ge 3$,
+$$10 d_{DDU}(n) = (10n - 13) F_{2n} + (-4n + 5) L_{2n}.$$
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 9
@@ -326,8 +442,16 @@ public theorem_wanted nondecreasingDyck_subword_DDU :
       10 * (nondecreasingDyckSubwordTotal [D, D, U] n : ℤ) =
         (10 * (n : ℤ) - 13) * (Nat.fib (2 * n) : ℤ) + (-4 * (n : ℤ) + 5) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subword `DDD` in non-decreasing Dyck paths: `F_DDD(x, y)`, `D_DDD(x)`, and the closed form of
-`d_DDD(n)` for `n ≥ 3`.
+/-- **The subword $DDD$ in non-decreasing Dyck paths.** Let $F_{DDD}(x, y)$ and $D_{DDD}(x)$ be
+the bivariate and univariate generating functions of the subword $DDD$ in non-decreasing Dyck
+paths, let $d_{DDD}(n)$ be the total number of occurrences of $DDD$ over all non-decreasing Dyck
+paths of semilength $n$, and let $F_n$ and $L_n$ denote the Fibonacci and Lucas numbers. Then
+$$(1 - x(1 + y) - x^2(1 - y)) (1 - x(1 + 2y) - x^2(1 - y - y^2)) F_{DDD}(x, y) =
+x (1 - xy) (1 - 2xy - x^2(1 - y^2))$$
+in $\mathbb{Z}[y][[x]]$,
+$$(1 - 2x) (1 - 3x + x^2)^2 D_{DDD}(x) = x^3 (1 - 2x + x^2 - x^3)$$
+in $\mathbb{Z}[[x]]$, and for every $n \ge 3$,
+$$4 d_{DDD}(n) = (-8n + 10) F_{2n} + (4n - 6) L_{2n} + 2^n.$$
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 10
@@ -343,8 +467,18 @@ public theorem_wanted nondecreasingDyck_subword_DDD :
         (-8 * (n : ℤ) + 10) * (Nat.fib (2 * n) : ℤ) + (4 * (n : ℤ) - 6) * (lucasNumber (2 * n) : ℤ)
             + 2 ^ n
 
-/-- Subword `UUD` in non-decreasing Dyck paths: `F_UUD(x, y)`, `D_UUD(x)`, and the closed form of
-`d_UUD(n)` for `n ≥ 3`.
+/-- **Generating functions and closed form for the subword $UUD$ in non-decreasing Dyck paths.**
+For $n \ge 0$ let $\mathcal{D}_n$ be the set of non-decreasing Dyck paths of semilength $n$, let
+$\#_{UUD}(P)$ be the number of occurrences of the subword $UUD$ in a path $P$, and let
+$d_{UUD}(n) = \sum_{P \in \mathcal{D}_n} \#_{UUD}(P)$. Let
+$F_{UUD}(x, y) = \sum_{n \ge 1} \sum_{P \in \mathcal{D}_n} y^{\#_{UUD}(P)} x^n$, a power series
+in $x$ with coefficients in $\mathbb{Z}[y]$, and $D_{UUD}(x) = \sum_{n \ge 0} d_{UUD}(n) x^n$ in
+$\mathbb{Z}[[x]]$. Then
+$$(1 - 3x + x^2 (3 - 2y) - x^3 (1 - y)) F_{UUD}(x, y) = (1 - x) x (1 - x(1 - y))$$
+and $(1 - 3x + x^2)^2 D_{UUD}(x) = (1 - x)^2 x^2$, and for every $n \ge 3$,
+$$10\, d_{UUD}(n) = (11 - 5n) F_{2n} + (3n - 5) L_{2n},$$
+where $F_k$ and $L_k$ are the Fibonacci and Lucas numbers ($F_0 = 0$, $F_1 = 1$, $L_0 = 2$,
+$L_1 = 1$).
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 11
@@ -357,8 +491,16 @@ public theorem_wanted nondecreasingDyck_subword_UUD :
       10 * (nondecreasingDyckSubwordTotal [U, U, D] n : ℤ) =
         (-5 * (n : ℤ) + 11) * (Nat.fib (2 * n) : ℤ) + (3 * (n : ℤ) - 5) * (lucasNumber (2 * n) : ℤ)
 
-/-- Subword `UUUD` in non-decreasing Dyck paths: `F_UUUD(x, y)`, `D_UUUD(x)`, and the closed form of
-`d_UUUD(n)` for `n ≥ 3`.
+/-- **Subword $UUUD$ in non-decreasing Dyck paths.** Let $F_{UUUD}(x, y) \in \mathbb{Z}[y][[x]]$ be
+the bivariate generating function with constant term $0$ in which, for $n \ge 1$, the coefficient
+of $x^n$ is the sum of $y^{k(P)}$ over the non-decreasing Dyck paths $P$ of semilength $n$, where
+$k(P)$ is the number of occurrences of the subword $UUUD$ in $P$. Let $d_{UUUD}(n)$ be the total
+number of occurrences of $UUUD$ over all non-decreasing Dyck paths of semilength $n$, let
+$D_{UUUD}(x) = \sum_{n \ge 0} d_{UUUD}(n) x^n \in \mathbb{Z}[[x]]$, and let $F_n$ and $L_n$ denote
+the Fibonacci and Lucas numbers. Then
+$(1 - 3x + x^2 + (3 - 3y) x^3 - 2(1 - y) x^4) F_{UUUD}(x, y) = (1 - x)(x + x^3 (y - 1))$,
+$(1 + x(x - 3))^2 D_{UUUD}(x) = (x - 1)^2 x^3 (x + 1)$, and for every $n \ge 3$,
+$d_{UUUD}(n) = n F_{2n-5} - L_{2n-6}$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 12
@@ -372,12 +514,17 @@ public theorem_wanted nondecreasingDyck_subword_UUUD :
       (nondecreasingDyckSubwordTotal [U, U, U, D] n : ℤ) =
         (n : ℤ) * (Nat.fib (2 * n - 5) : ℤ) - (lucasNumber (2 * n - 6) : ℤ)
 
-/-- Subword `U^m` (`m ≥ 1`) in non-decreasing Dyck paths: for `n > m`,
-`d_{U^m}(n) = 3 d_{U^m}(n-1) - d_{U^m}(n-2) + F_{2(n-m)} + F_{2(n-2)}
-- ∑_{k=1}^{m-2} k F_{2(n-k-2)}`; `d_{U^m}(n) = 0` for `n < m`; and
-`d_{U^m}(m) = 1`. The source writes `n ≤ m` for the vanishing case, which
-contradicts `d_{U^n}(n) = 1` at `n = m`; the vanishing case is stated for
-`n < m`.
+/-- **Recurrence for the subword $U^m$ in non-decreasing Dyck paths.** Let $m \ge 1$. Let
+$d_w(n)$ be the total number of occurrences of the subword $w$ over all non-decreasing Dyck paths
+of semilength $n$, and let $F_k$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). Then for every
+$n > m$,
+$$d_{U^m}(n) = 3\,d_{U^m}(n-1) - d_{U^m}(n-2) + F_{2(n-m)} + F_{2(n-2)} -
+\sum_{k=1}^{m-2} k\,F_{2(n-k-2)}$$
+(the sum is empty when $m \le 2$); moreover $d_{U^m}(n) = 0$ for every $n < m$, and
+$d_{U^m}(m) = 1$.
+
+The source writes $n \le m$ for the vanishing case, which contradicts $d_{U^m}(m) = 1$; the
+vanishing case is stated for $n < m$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 13
@@ -392,12 +539,16 @@ public theorem_wanted nondecreasingDyck_subword_U_pow (m : ℕ) (hm : 1 ≤ m) :
     (∀ n : ℕ, n < m → nondecreasingDyckSubwordTotal (List.replicate m U) n = 0) ∧
     nondecreasingDyckSubwordTotal (List.replicate m U) m = 1
 
-/-- Subword `U^m D` (`m ≥ 1`) in non-decreasing Dyck paths: for `n ≥ m + 2`,
-`d_{U^mD}(n) = 3 d_{U^mD}(n-1) - d_{U^mD}(n-2) + F_{2(n-m)-3} + m F_{2(n-m-1)}`;
-`d_{U^mD}(n) = 0` for `n < m`; `d_{U^mD}(m) = 1`; and `d_{U^mD}(m+1) = m + 2`.
-The source states the recurrence for `n ≥ m`, where `n = m` and `n = m + 1` give
-negative Fibonacci indices; those two values are the separately stated initial
-values, and the recurrence is stated for `n ≥ m + 2`.
+/-- **Recurrence for the subword $U^mD$ in non-decreasing Dyck paths.** Let $m \ge 1$. Let
+$d_w(n)$ be the total number of occurrences of the subword $w$ over all non-decreasing Dyck paths
+of semilength $n$, and let $F_k$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). Then for every
+$n \ge m + 2$,
+$$d_{U^mD}(n) = 3\,d_{U^mD}(n-1) - d_{U^mD}(n-2) + F_{2(n-m)-3} + m\,F_{2(n-m-1)};$$
+moreover $d_{U^mD}(n) = 0$ for every $n < m$, $d_{U^mD}(m) = 1$, and $d_{U^mD}(m+1) = m + 2$.
+
+The source states the recurrence for $n \ge m$, where $n = m$ and $n = m + 1$ give negative
+Fibonacci indices; those two values are the separately stated initial values, and the recurrence
+is stated for $n \ge m + 2$.
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 15
@@ -412,14 +563,17 @@ public theorem_wanted nondecreasingDyck_subword_U_pow_D (m : ℕ) (hm : 1 ≤ m)
     nondecreasingDyckSubwordTotal (List.replicate m U ++ [D]) m = 1 ∧
     nondecreasingDyckSubwordTotal (List.replicate m U ++ [D]) (m + 1) = m + 2
 
-/-- Subword `U D^m` (`m ≥ 1`) in non-decreasing Dyck paths: for `n > m` and
-`n ≥ 3`, `d_{UD^m}(n) = 3 d_{UD^m}(n-1) - d_{UD^m}(n-2) + F_{2(n-m)-1}
-+ l_{n-1,m-1} - l_{n-2,m-1}`, where `l_{n,k}` counts the paths in `D_n` whose last
-peak has height `k`; `d_{UD^m}(n) = 0` for `n < m`; and `d_{UD^m}(m) = 1`. The
-source states the recurrence for `n ≥ m`; `n = m` is the separately stated
-initial value, and the added `n ≥ 3` excludes only `(m, n) = (1, 2)`, where
-`d_{UD}(2) = 3` but the right side is `3·1 - 0 + F_1 + l_{1,0} - l_{0,0} = 4`
-(the empty path has no peak).
+/-- **Recurrence for the subword $UD^m$ in non-decreasing Dyck paths.** Let $m \ge 1$. Let
+$d_w(n)$ be the total number of occurrences of the subword $w$ over all non-decreasing Dyck paths
+of semilength $n$, let $l_{n,k}$ be the number of non-decreasing Dyck paths of semilength $n$
+whose last peak has height $k$, and let $F_k$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$).
+Then for every $n$ with $n > m$ and $n \ge 3$,
+$$d_{UD^m}(n) = 3\,d_{UD^m}(n-1) - d_{UD^m}(n-2) + F_{2(n-m)-1} + l_{n-1,m-1} - l_{n-2,m-1};$$
+moreover $d_{UD^m}(n) = 0$ for every $n < m$, and $d_{UD^m}(m) = 1$.
+
+The source states the recurrence for $n \ge m$; $n = m$ is the separately stated initial value,
+and the added condition $n \ge 3$ excludes only $(m, n) = (1, 2)$, where $d_{UD}(2) = 3$ but the
+right side is $3 \cdot 1 - 0 + F_1 + l_{1,0} - l_{0,0} = 4$ (the empty path has no peak).
 
 Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
 Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 16

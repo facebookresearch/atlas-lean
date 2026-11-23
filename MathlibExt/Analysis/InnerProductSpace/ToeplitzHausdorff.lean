@@ -17,30 +17,33 @@ namespace MathlibExt.Analysis.InnerProductSpace.ToeplitzHausdorffWanted
 
 open scoped _root_.InnerProductSpace
 
-/-- Numerical range `W(A) = { ⟪A x, x⟫_ℂ | ‖x‖ = 1 }` for a bounded operator. -/
+/-- **Numerical range.** For a bounded linear operator $A$ on a complex inner product space $E$,
+the numerical range of $A$ is the set
+$W(A) = \{\langle A x, x \rangle : x \in E,\ \|x\| = 1\} \subseteq \mathbb{C}$, where the inner
+product $\langle \cdot, \cdot \rangle$ of $E$ is conjugate-linear in its first argument and linear
+in its second. -/
 noncomputable def numericalRange
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (A : E →L[ℂ] E) : Set ℂ :=
   { c : ℂ | ∃ x : E, ‖x‖ = 1 ∧ inner (𝕜 := ℂ) (A x) x = c }
 
-/-- Membership in the numerical range, unfolded. -/
+/-- **Membership in the numerical range.** Let $A$ be a bounded linear operator on a complex inner
+product space $E$. A complex number $c$ lies in the numerical range $W(A)$ if and only if there is
+a vector $x \in E$ with $\|x\| = 1$ and $\langle A x, x \rangle = c$. -/
 theorem mem_numericalRange_iff
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (A : E →L[ℂ] E) (c : ℂ) :
     c ∈ numericalRange A ↔ ∃ x : E, ‖x‖ = 1 ∧ inner (𝕜 := ℂ) (A x) x = c :=
   Iff.rfl
 
-/-- `⟪A x, x⟫` lies in the numerical range for every unit vector `x`. -/
+/-- **Unit vectors give points of the numerical range.** Let $A$ be a bounded linear operator on a
+complex inner product space $E$. For every $x \in E$ with $\|x\| = 1$, the number
+$\langle A x, x \rangle$ lies in the numerical range $W(A)$. -/
 theorem inner_mem_numericalRange
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (A : E →L[ℂ] E) {x : E} (hx : ‖x‖ = 1) :
     inner (𝕜 := ℂ) (A x) x ∈ numericalRange A :=
   ⟨x, hx, rfl⟩
-
-/-- The exponential `exp (φ * I)` has norm one. -/
-private theorem exp_im_unit (φ : ℝ) : ‖Complex.exp ((φ : ℂ) * Complex.I)‖ = 1 := by
-  rw [Complex.exp_ofReal_mul_I, Complex.ofReal_cos, Complex.ofReal_sin,
-    Complex.norm_cos_add_sin_mul_I]
 
 /-- Shifting the phase by `π` negates the exponential. -/
 private theorem exp_im_add_pi (φ : ℝ) :
@@ -52,8 +55,8 @@ private theorem exp_im_add_pi (φ : ℝ) :
     ring
   rw [h, Complex.exp_add_pi_mul_I]
 
-/-- Toeplitz-Hausdorff theorem: the numerical range of a bounded operator on a complex inner
-product space is convex. Completeness is not needed. -/
+/-- **Toeplitz–Hausdorff theorem without completeness.** The numerical range of a bounded linear
+operator on a complex inner product space is convex. Completeness of the space is not needed. -/
 theorem toeplitz_hausdorff_general
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (A : E →L[ℂ] E) :
@@ -94,7 +97,7 @@ theorem toeplitz_hausdorff_general
     -- Phase exponential and its basic facts.
     set α : ℝ → ℂ := fun φ => Complex.exp ((φ : ℂ) * Complex.I) with hα
     have hαne : ∀ φ : ℝ, α φ ≠ 0 := fun φ => Complex.exp_ne_zero _
-    have hαnorm : ∀ φ : ℝ, ‖α φ‖ = 1 := fun φ => exp_im_unit φ
+    have hαnorm : ∀ φ : ℝ, ‖α φ‖ = 1 := fun φ => Complex.norm_exp_ofReal_mul_I φ
     have hαconj : ∀ φ : ℝ, α φ * (starRingEnd ℂ) (α φ) = 1 := by
       intro φ
       rw [RCLike.mul_conj, hαnorm φ]
@@ -503,14 +506,16 @@ theorem toeplitz_hausdorff_general
 
 
 /--
-The numerical range of a bounded operator on a complex Hilbert space is convex.
+**Toeplitz–Hausdorff theorem.** The numerical range of a bounded linear operator on a complex
+Hilbert space is convex.
+
+Proves `Wanted` entry `toeplitz_hausdorff`.
+
 Source: O. Toeplitz, Das algebraische Analogon zu einem Satze von Fejer, Math. Z. 2 (1918), 187-197,
 DOI 10.1007/BF01212904; F. Hausdorff, Der Wertvorrat einer Bilinearform, Math. Z. 3 (1919), 314-316,
 DOI 10.1007/BF01292610.
 It follows from `toeplitz_hausdorff_general`; the hypothesis `CompleteSpace E` is unused and keeps
 the source's shape.
-
-Proves `Wanted` entry `toeplitz_hausdorff`.
 -/
 @[nolint unusedArguments]
 theorem toeplitz_hausdorff
