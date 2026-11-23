@@ -14,6 +14,7 @@ public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 public import MathlibExt.NumberTheory.TrinomialCoefficient
@@ -36,18 +37,6 @@ open PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Fundamental theorem of Riordan arrays.** Write $[t^m]F$ for the coefficient of $t^m$ in a
-power series $F$. Let $R$ be a commutative ring and let $d$, $h$, $f$ be power series over
-$R$ with $h(0) = 0$. Then for every $n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{n} \left([t^n]\,d(t)\,h(t)^k\right) [t^k]\,f = [t^n]\,d(t)\,f(h(t)).$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 1 (`jis-2025-25.3.5-thm-1`). -/
-public theorem_wanted riordan_array_sum_eq_coeff_subst {R : Type*} [CommRing R]
-    (d h f : PowerSeries R) (hh : constantCoeff h = 0) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), coeff n (d * h ^ k) * coeff k f = coeff n (d * f.subst h)
 
 /-- **Trinomial coefficients as coefficients of a rational series.** Write $\binom{n}{k}_2$ for
 the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and $[t^m]\,F$ for the
