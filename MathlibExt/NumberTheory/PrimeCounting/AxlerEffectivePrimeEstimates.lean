@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.PrimeCounting
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Tactic.FieldSimp
@@ -16,10 +17,13 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# Truncated series lower bounds for prime counting
+# Axler's bounds for prime counting
 
 The convolution defining the reciprocal coefficients cancels all positive degrees through
 the truncation order. The remaining terms in the product have nonpositive coefficients.
+
+The bounds by the auxiliary functions $J$ follow from Abel summation and a two-sided
+estimate for Chebyshev's theta function.
 -/
 
 namespace MetaMathlibExt
@@ -121,5 +125,116 @@ public theorem series_lt_primeCounting_of_lt_primeCounting (n : ℕ) (hn : 1 ≤
     simp [u]
   rw [hden] at htrunc
   linarith only [hsplit, htrunc]
+
+open MeasureTheory Real
+
+namespace primeCounting_mem_Icc_auxJ
+
+-- Extend Abel summation below the first prime. The jump of theta at 2 contributes
+-- nothing to the integral over an interval ending there.
+private theorem primeCounting_eq_theta_integral (x : ℝ) :
+    (Nat.primeCounting ⌊x⌋₊ : ℝ) =
+      Chebyshev.theta x / log x + ∫ t in 2..x, Chebyshev.theta t / (t * log t ^ 2) := by
+  rcases le_or_gt 2 x with hx | hx
+  · exact Chebyshev.primeCounting_eq_theta_div_log_add_integral hx
+  have hfloor : ⌊x⌋₊ < 2 := (Nat.floor_lt' (by decide : 2 ≠ 0)).2 (by simpa using hx)
+  rw [Nat.primeCounting_eq_zero_iff.mpr (by omega), Chebyshev.theta_eq_zero_of_lt_two hx,
+    intervalIntegral.integral_symm]
+  have hzero := intervalIntegral.integral_congr_Ioo_of_le (μ := volume) hx.le
+    (f := fun t ↦ Chebyshev.theta t / (t * log t ^ 2)) (g := fun _ ↦ 0)
+    (fun t ht ↦ by simp [Chebyshev.theta_eq_zero_of_lt_two ht.2])
+  simp [hzero]
+
+private theorem intervalIntegrable_theta_div {a b : ℝ} (ha : 1 < a) (hb : 1 < b) :
+    IntervalIntegrable (fun t ↦ Chebyshev.theta t / (t * log t ^ 2)) volume a b := by
+  simp only [div_eq_mul_inv]
+  apply Chebyshev.theta_mono.intervalIntegrable.mul_continuousOn
+  intro t ht
+  have ht₁ : 1 < t := (lt_min ha hb).trans_le ht.1
+  have ht₀ : 0 < t := zero_lt_one.trans ht₁
+  have hlog := log_pos ht₁
+  fun_prop (disch := positivity)
+
+end primeCounting_mem_Icc_auxJ
+
+open primeCounting_mem_Icc_auxJ in
+-- The comparison uses only the error bound, independently of the positivity of k and η.
+set_option linter.unusedVariables false in
+/-- **Prime counting between the auxiliary functions $J$.** Let $\pi(x)$ be the number of primes
+$p \le x$ and $\vartheta(x) = \sum_{p \le x} \log p$ Chebyshev's function. Let $k \ge 1$ be an
+integer and let $\eta > 0$ and $x_1 > 1$ be reals with $|\vartheta(y) - y| < \eta y / \log^k y$
+for every real $y \ge x_1$. For reals $e$ and $x \ge x_1$ set
+$J_e(x) = \pi(x_1) - \frac{\vartheta(x_1)}{\log x_1} + \frac{x}{\log x} +
+\frac{e\,x}{\log^{k+1} x} + \int_{x_1}^{x} \left(\frac{1}{\log^2 t} +
+\frac{e}{\log^{k+2} t}\right) dt$.
+Then $J_{-\eta}(x) \le \pi(x) \le J_{\eta}(x)$ for every real $x \ge x_1$.
+
+The inequalities are non-strict, as the paper prints them.
+
+Source: Christian Axler, *Effective Estimates for Some Functions Defined over Primes*,
+INTEGERS 24 (2024), Article A34, Lemma 1 (`integers-2024-A34-lem-1`). -/
+public theorem primeCounting_mem_Icc_auxJ (k : ℕ) (hk : 0 < k) (η x₁ : ℝ) (hη : 0 < η)
+    (hx₁ : 1 < x₁)
+    (hθ : ∀ y : ℝ, x₁ ≤ y → |Chebyshev.theta y - y| < η * y / Real.log y ^ k)
+    (x : ℝ) (hx : x₁ ≤ x) :
+    let J : ℝ → ℝ := fun e =>
+      (Nat.primeCounting ⌊x₁⌋₊ : ℝ) - Chebyshev.theta x₁ / Real.log x₁ + x / Real.log x +
+        e * x / Real.log x ^ (k + 1) +
+          ∫ t in x₁..x, (1 / Real.log t ^ 2 + e / Real.log t ^ (k + 2))
+    J (-η) ≤ (Nat.primeCounting ⌊x⌋₊ : ℝ) ∧ (Nat.primeCounting ⌊x⌋₊ : ℝ) ≤ J η := by
+  intro J
+  -- F evaluates the endpoint and integral terms of Abel summation on a given function.
+  let B (e t : ℝ) := t + e * t / log t ^ k
+  let F (f : ℝ → ℝ) :=
+    (Nat.primeCounting ⌊x₁⌋₊ : ℝ) - Chebyshev.theta x₁ / log x₁ + f x / log x +
+      ∫ t in x₁..x, f t / (t * log t ^ 2)
+  have hx' := hx₁.trans_le hx
+  have hπ : F Chebyshev.theta = (Nat.primeCounting ⌊x⌋₊ : ℝ) := by
+    dsimp [F]
+    have hadd := intervalIntegral.integral_add_adjacent_intervals
+      (intervalIntegrable_theta_div one_lt_two hx₁) (intervalIntegrable_theta_div hx₁ hx')
+    linarith only [primeCounting_eq_theta_integral x, primeCounting_eq_theta_integral x₁, hadd]
+  have hJ (e : ℝ) : J e = F (B e) := by
+    have hend : B e x / log x = x / log x + e * x / log x ^ (k + 1) := by
+      dsimp only [B]
+      rw [add_div, div_div, pow_succ]
+    have hint (t : ℝ) (ht : t ∈ Set.uIcc x₁ x) :
+        B e t / (t * log t ^ 2) = 1 / log t ^ 2 + e / log t ^ (k + 2) := by
+      have ht₁ := hx₁.trans_le ((Set.uIcc_of_le hx ▸ ht).1)
+      have ht₀ := zero_lt_one.trans ht₁
+      have hlog := log_pos ht₁
+      dsimp [B]
+      rw [pow_add]
+      field_simp
+    dsimp only [F, J]
+    rw [hend, intervalIntegral.integral_congr hint]
+    ring
+  have hmono {f g : ℝ → ℝ}
+      (hf : IntervalIntegrable (fun t ↦ f t / (t * log t ^ 2)) volume x₁ x)
+      (hg : IntervalIntegrable (fun t ↦ g t / (t * log t ^ 2)) volume x₁ x)
+      (hfg : ∀ t ∈ Set.Icc x₁ x, f t ≤ g t) : F f ≤ F g := by
+    dsimp only [F]
+    have hend := div_le_div_of_nonneg_right (hfg x ⟨hx, le_rfl⟩) (log_pos hx').le
+    refine add_le_add (add_le_add_right hend _) (intervalIntegral.integral_mono_on hx hf hg ?_)
+    intro t ht
+    exact div_le_div_of_nonneg_right (hfg t ht)
+      (mul_nonneg (zero_lt_one.trans (hx₁.trans_le ht.1)).le (sq_nonneg _))
+  have hB (e : ℝ) : IntervalIntegrable (fun t ↦ B e t / (t * log t ^ 2)) volume x₁ x := by
+    apply ContinuousOn.intervalIntegrable
+    intro t ht
+    have ht₁ := hx₁.trans_le ((Set.uIcc_of_le hx ▸ ht).1)
+    have ht₀ := zero_lt_one.trans ht₁
+    have hlog := log_pos ht₁
+    dsimp only [B]
+    fun_prop (disch := positivity)
+  have hbounds (t : ℝ) (ht : x₁ ≤ t) :
+      B (-η) t ≤ Chebyshev.theta t ∧ Chebyshev.theta t ≤ B η t := by
+    obtain ⟨hlo, hhi⟩ := abs_lt.mp (hθ t ht)
+    dsimp [B]
+    rw [neg_mul, neg_div]
+    constructor <;> linarith
+  rw [hJ, hJ, ← hπ]
+  exact ⟨hmono (hB _) (intervalIntegrable_theta_div hx₁ hx') (fun t ht ↦ (hbounds t ht.1).1),
+    hmono (intervalIntegrable_theta_div hx₁ hx') (hB _) (fun t ht ↦ (hbounds t ht.1).2)⟩
 
 end MetaMathlibExt
