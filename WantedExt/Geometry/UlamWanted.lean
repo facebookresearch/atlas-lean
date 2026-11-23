@@ -65,7 +65,7 @@ local notation "ℝᵈ" => EuclideanSpace ℝ (Fin d)
 variable (d) in
 /-- **Unit sphere.** For a natural number $d$, the unit sphere
 $S^{d-1} = \{x \in \mathbb{R}^d : \|x\| = 1\}$ in $\mathbb{R}^d$, centered at the origin. -/
-abbrev S : Set ℝᵈ := Metric.sphere 0 1
+noncomputable abbrev S : Set ℝᵈ := Metric.sphere 0 1
 
 /-- **Origin-symmetric set.** A set $K \subseteq \mathbb{R}^d$ is origin-symmetric if $K = -K$,
 where $-K = \{-x : x \in K\}$. -/

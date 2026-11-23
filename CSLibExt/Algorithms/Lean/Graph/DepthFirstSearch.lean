@@ -1180,7 +1180,7 @@ private theorem parent_chain_reaches_forestRoot_aux {V : Type u}
       ∃ r ∈ (dfs adj roots).forestRoots,
         Relation.ReflTransGen (ParentRel (dfs adj roots).parents) v r := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro v hv hidx
       rcases mem_forestRoots_or_existsUnique_parent adj roots v hv with hroot | hparent
       · exact ⟨v, hroot, .refl⟩

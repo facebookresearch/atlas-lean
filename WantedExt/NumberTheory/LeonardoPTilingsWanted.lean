@@ -34,6 +34,7 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.NumberTheory.IncompleteLeonardoP
 public import MathlibExt.NumberTheory.IncompleteLeonardoPBinomialSum
+public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
 public import WantedExt.NumberTheory.LeonardoPWanted
 
 namespace MetaMathlibExt
@@ -396,22 +397,6 @@ public theorem_wanted leonardoPK_self_homogeneous (p : ℕ) (hp : 1 ≤ p) :
         leonardoPK p p (n - 1) + leonardoPK p p (n - p) - leonardoPK p p (n - 2 * p - 1)) ∧
     (∀ i, i ≤ p → leonardoPK p p i = 1) ∧
     (∀ j, 1 ≤ j → j ≤ p → leonardoPK p p (p + j) = (j : ℤ) + 1 + j * p)
-
-/-- **Partial sums of incomplete Leonardo p-numbers.** For natural numbers $p \ge 1$, $n$, $k$ and
-$r$ with $n \ge (p + 1)(k + 1)$, the incomplete Leonardo $p$-numbers $\mathcal{L}_{p,m}(j)$
-satisfy
-$$
-\sum_{i=0}^{r-1} \mathcal{L}_{p,n-p+i}(k) + rp =
-\mathcal{L}_{p,n+r}(k + 1) - \mathcal{L}_{p,n}(k + 1),
-$$
-where the sum is empty when $r = 0$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 8. -/
-public theorem_wanted sum_incompleteLeonardoP (p n k r : ℕ) (hp : 1 ≤ p)
-    (hn : (p + 1) * (k + 1) ≤ n) :
-    ∑ i ∈ Finset.range r, incompleteLeonardoP p (n - p + i) k + (r : ℤ) * p =
-      incompleteLeonardoP p (n + r) (k + 1) - incompleteLeonardoP p n (k + 1)
 
 /-- **Binomial addition formula for hyper Leonardo $p$-numbers.** For natural numbers $p \ge 1$,
 $n \ge 1$, $m \ge 1$ and $k \ge m$, the hyper Leonardo $p$-numbers satisfy

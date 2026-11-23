@@ -215,7 +215,7 @@ theorem norm_le_of_modulus (f : C(Set.Icc (0 : ℝ) 1, ℝ))
   have hchain : ∀ k, |f (p k)| ≤ k := by
     intro k
     induction k with
-    | zero => simp [hp0, hf0]
+    | zero => rw [hp0, hf0]; simp
     | succ k ih =>
       have := hosc _ _ (hstep k)
       rw [Real.dist_eq] at this
