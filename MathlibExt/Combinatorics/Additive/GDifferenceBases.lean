@@ -154,9 +154,8 @@ public theorem boundedDiffSetNumber_one (g : ℕ) : boundedDiffSetNumber g 1 = 1
       simp [subRepCount, Finset.filter_singleton, Ne.symm hx]
     omega
 
-namespace sqrt_two_mul_le_diffBasisNumber_div_sqrt
-
-private theorem exists_min_basis (g n : ℕ) :
+/-- The minimum defining the interval difference basis number is attained. -/
+public theorem diffBasisNumber_le_succ_mul.exists_min_basis (g n : ℕ) :
     ∃ A : Finset ℤ, A.card = diffBasisNumber g n ∧
       ∀ x ∈ Finset.Icc (1 : ℤ) n, g ≤ subRepCount A x := by
   apply Nat.sInf_mem (s := {k | ∃ A : Finset ℤ, A.card = k ∧
@@ -175,6 +174,8 @@ private theorem exists_min_basis (g n : ℕ) :
         omega
       · intro a _ b _ hab
         exact congrArg Prod.snd hab
+
+namespace sqrt_two_mul_le_diffBasisNumber_div_sqrt
 
 private theorem mul_le_card_choose_two {g n : ℕ} (A : Finset ℤ)
     (hA : ∀ x ∈ Finset.Icc (1 : ℤ) n, g ≤ subRepCount A x) :
@@ -204,7 +205,7 @@ Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INT
 (2025), Article A77, Lemma 1 (`integers-2025-A77-lem-1`). -/
 public theorem sqrt_two_mul_le_diffBasisNumber_div_sqrt (g n : ℕ) (hn : 1 < n) :
     Real.sqrt (2 * g) ≤ (diffBasisNumber g n : ℝ) / Real.sqrt n := by
-  obtain ⟨A, hcard, hA⟩ := exists_min_basis g n
+  obtain ⟨A, hcard, hA⟩ := diffBasisNumber_le_succ_mul.exists_min_basis g n
   have hcount := mul_le_card_choose_two A hA
   rw [Nat.choose_two_right] at hcount
   have hsq : 2 * g * n ≤ A.card ^ 2 := calc
