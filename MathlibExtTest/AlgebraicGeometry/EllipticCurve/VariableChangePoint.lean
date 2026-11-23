@@ -36,4 +36,21 @@ set_option maxHeartbeats 400000 in
 example : Nat.card ((change • curve).toAffine.Point) = Nat.card curve.toAffine.Point :=
   VariableChange.natCard_point_eq change curve
 
+/-- `exactSource` consumer with the original binders. -/
+example {K : Type*} [Field K] [DecidableEq K]
+    (C : WeierstrassCurve.VariableChange K) (W : WeierstrassCurve.Affine K)
+    (P Q : W.Point) :
+    WeierstrassCurve.Affine.Point.vcInvFun C W (P + Q) =
+      WeierstrassCurve.Affine.Point.vcInvFun C W P +
+        WeierstrassCurve.Affine.Point.vcInvFun C W Q :=
+  WeierstrassCurve.Affine.Point.vcInvFun_add P Q
+
+/-- The inverse variable change fixes the point at infinity, so the hypothesis
+that a point is affine is essential for coordinate formulae: at infinity
+there are no coordinates to transform. -/
+example {K : Type*} [Field K] [DecidableEq K]
+    (C : WeierstrassCurve.VariableChange K) (W : WeierstrassCurve.Affine K) :
+    WeierstrassCurve.Affine.Point.vcInvFun C W (0 : W.Point) = 0 :=
+  WeierstrassCurve.Affine.Point.vcInvFun_zero
+
 end MathlibExtTest.AlgebraicGeometry.EllipticCurve.VariableChangePoint
