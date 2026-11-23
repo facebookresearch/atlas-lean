@@ -25,8 +25,8 @@ normalization is obtained from the actual compact-support pullback, not a
 separately supplied trace operator.
 
 `CycleMap` and `CycleRealization` specify the input required by subsequent
-geometry. Their global construction is not asserted here: it is a Wanted
-request. The compatible purity family is selected with that construction;
+geometry. Their construction is neither asserted nor requested in this
+module. The compatible purity family is selected with that construction;
 the normalization does not quantify over independently rescaled purities.
 No canonical complex-orientation choice is claimed by this interface.
 
@@ -80,7 +80,7 @@ variable
     (f : X ⟶ Y) [IsProper f.left], ProperPullback (spaceMap f))
 
 /-- Actual Chow-to-Borel–Moore maps normalized on smooth proper presentations.
-This is specified input data. Existence is a separate Wanted request. -/
+This is specified input data; its existence is not asserted here. -/
 structure CycleMap where
   /-- A compatible selected purity, relative to which fundamental classes
   and their traces are interpreted. -/
@@ -150,18 +150,14 @@ theorem fundamentalClass_isIso (Z : TopCat.{0}) (DZ : DualizingComplex Z)
   unfold fundamentalClass
   infer_instance
 
-/-- Transport a class between equal actual cohomological degrees. -/
-def cohomologyCast {Z : TopCat.{0}} {n m : ℤ} (h : n = m) :
-    BettiRealization.Cohomology Z n →ₗ[ℚ]
-      BettiRealization.Cohomology Z m where
-  toFun a := a ≫ eqToHom
-    (congrArg (fun k : ℤ => (BettiRealization.rationalUnit Z)⟦k⟧) h)
-  map_add' a b := by simp [Preadditive.add_comp]
-  map_smul' q a := by simp [Linear.smul_comp]
+/-! The degree cast of Betti cohomology is `BettiRealization.cohomologyCast`,
+also available as `BettiCycleRealization.cohomologyCast`. -/
+
+export BettiRealization (cohomologyCast)
 
 /-- The ordinary product compatibility is anchored to an actual transverse
 smooth closed intersection. Full singular intersection machinery is not
-silently assumed. The realization itself remains a requested provider. -/
+silently assumed. The existence of a realization is not asserted here. -/
 structure CycleRealization where
   /-- The selected actual cycle map and its fundamental normalizations. -/
   toCycleMap : CycleMap D P

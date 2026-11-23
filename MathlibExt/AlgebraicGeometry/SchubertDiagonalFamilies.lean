@@ -109,7 +109,7 @@ abbrev ProjectiveGrading := MvPolynomial.homogeneousSubmodule (Fin 2) ℂ
 instance projectiveGradedAlgebra : GradedAlgebra ProjectiveGrading := MvPolynomial.gradedAlgebra
 
 def projectiveLine : ComplexScheme :=
-  Over.mk (RelativeLefschetz.gradedProjToSpec ProjectiveGrading)
+  Over.mk (DeCataldoMiglioriniDecompositionWanted.gradedProjToSpec ProjectiveGrading)
 
 def chartPolynomial (infinity : Bool) : MvPolynomial (Fin 2) ℂ →+* Polynomial ℂ :=
   MvPolynomial.eval₂Hom (Polynomial.C) (fun i ↦
