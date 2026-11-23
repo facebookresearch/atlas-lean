@@ -7,15 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The sectionwise forms and the Witt-vector reduction are adapted from
-AxiomMath/Stacks at c496df0d9beea9deaeabcea8492605f9a0a2313b:
-StacksFrontier/Algebra/Category/ModuleCat/Sheaf/DeRhamSectionwise.lean;
-StacksFrontier/Topology/Sheaves/Modules/DeRhamExistence.lean;
-StacksFrontier/AlgebraicGeometry/DeRham/HodgeSpreadingOut/WittLift.lean.
-Released under Apache 2.0 as described in that repository's LICENSE.
-Modifications: use the prime-field constant presheaf and the scheme
-structure map, construct the sectionwise forms and their sheafifications,
-and construct the de Rham differential from
+Portions of this file are adapted from:
+
+`StacksFrontier/Algebra/Category/ModuleCat/Sheaf/DeRhamSectionwise.lean`,
+`StacksFrontier/Topology/Sheaves/Modules/DeRhamExistence.lean` and
+`StacksFrontier/AlgebraicGeometry/DeRham/HodgeSpreadingOut/WittLift.lean` (AxiomMath/Stacks,
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b), for the sectionwise forms and the Witt-vector
+reduction:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: use the prime-field constant presheaf and the scheme structure map, sheafify the
+sectionwise forms, and construct the de Rham differential from
 `MathlibExt.RingTheory.Kaehler.DeRham`.
 -/
 module
@@ -44,7 +45,8 @@ In characteristic `p` the de Rham differential is linear over `p`-th powers,
 `F_*` restricts scalars along the Frobenius `a ↦ a^p` (`frobeniusForms`). A `Differential` is a
 family of such morphisms squaring to zero and given on local generators by the de Rham formula
 `d (a₀ da₁ ∧ ⋯ ∧ daᵢ) = da₀ ∧ da₁ ∧ ⋯ ∧ daᵢ`; `Differential.deRham` is the de Rham differential,
-constructed sectionwise from `KaehlerDifferential.deRham`. Sheafifying its complex gives the
+constructed sectionwise from `KaehlerDifferential.deRham`, and it is the only one
+(`Differential.eq_deRham`). Sheafifying its complex gives the
 de Rham complex `F_* Ω^•_{X/F_p}` (`Differential.complex`) and its object in the derived
 category (`Differential.derived`).
 
@@ -240,6 +242,35 @@ def Differential.deRham : Differential p X where
     let := ((scalarMap p X).app U).hom.toAlgebra
     exact Subtype.ext (KaehlerDifferential.deRham_smul_ιMulti (R := (constants p X).obj U)
       (A := X.left.presheaf.obj U) i a b)
+
+/-- A differential is determined by the de Rham formula: the local generators
+`a • db₀ ∧ ⋯ ∧ dbᵢ₋₁` span the sections additively. -/
+theorem Differential.d_eq (D D' : Differential p X) (i : ℕ) : D.d i = D'.d i := by
+  ext U x
+  let := ((scalarMap p X).app U).hom.toAlgebra
+  let f : ⋀[X.left.presheaf.obj U]^i
+      (KaehlerDifferential ((constants p X).obj U) (X.left.presheaf.obj U)) →+
+        (formsPresheaf p X (i + 1)).obj U :=
+    AddMonoidHom.mk' (fun y => (D.d i).app U y) fun y z => map_add ((D.d i).app U).hom y z
+  let g : ⋀[X.left.presheaf.obj U]^i
+      (KaehlerDifferential ((constants p X).obj U) (X.left.presheaf.obj U)) →+
+        (formsPresheaf p X (i + 1)).obj U :=
+    AddMonoidHom.mk' (fun y => (D'.d i).app U y) fun y z => map_add ((D'.d i).app U).hom y z
+  have h : f = g := KaehlerDifferential.addMonoidHom_ext_ιMulti fun a b =>
+    (D.generator i U a b).trans (D'.generator i U a b).symm
+  exact DFunLike.congr_fun h x
+
+/-- There is exactly one differential: `Differential.deRham`. -/
+instance : Subsingleton (Differential p X) where
+  allEq D D' := by
+    have h : D.d = D'.d := funext (Differential.d_eq p X D D')
+    cases D
+    cases D'
+    cases h
+    rfl
+
+theorem Differential.eq_deRham (D : Differential p X) : D = Differential.deRham p X :=
+  Subsingleton.elim _ _
 
 /-- The reduction `W₂(F_p) → F_p` to the zeroth Witt coordinate. -/
 def wittReduction : TruncatedWittVector p 2 (ZMod p) →+* ZMod p where

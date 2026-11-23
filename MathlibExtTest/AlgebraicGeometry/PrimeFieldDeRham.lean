@@ -11,9 +11,10 @@ import MathlibExt.AlgebraicGeometry.PrimeFieldDeRham
 
 /-! # Tests for the de Rham complex of a scheme over `F_p`
 
-The constructed differential satisfies the de Rham formula on local generators (in particular
-`d a = da` on functions and `d (da) = 0`), squares to zero, is linear over `p`-th powers and
-commutes with restriction. The Witt reduction `W₂(F_p) → F_p` is the zeroth coordinate.
+The constructed differential satisfies the de Rham formula on local generators (in
+particular `d a = da` on functions and `d (da) = 0`), squares to zero, is linear over `p`-th
+powers, commutes with restriction, and is the only differential. The Witt reduction
+`W₂(F_p) → F_p` is the zeroth coordinate.
 -/
 
 open CategoryTheory AlgebraicGeometry MathlibExt.AlgebraicGeometry.PrimeFieldDeRham
@@ -65,6 +66,9 @@ example (i : ℕ) {U V : X.left.Opensᵒᵖ} (f : U ⟶ V) (x : (formsPresheaf p
     deRhamApp p X i V ((formsPresheaf p X i).map f x) =
       (formsPresheaf p X (i + 1)).map f (deRhamApp p X i U x) :=
   deRhamApp_naturality p X i f x
+
+/-- The de Rham formula determines the differential. -/
+example (D : Differential p X) : D = Differential.deRham p X := Differential.eq_deRham p X D
 
 example (x : TruncatedWittVector p 2 (ZMod p)) : wittReduction p x = x.coeff 0 := rfl
 

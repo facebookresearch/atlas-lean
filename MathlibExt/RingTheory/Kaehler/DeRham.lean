@@ -511,6 +511,35 @@ theorem mapₛₗ_deRham {R' B : Type*} [CommRing R'] [CommRing B] [Algebra R' B
       rw [deRham_mul, map_add, map_mul, map_mul, hx, hy, ← involute_mapₛₗ, map_mul, deRham_mul]
   | add _ _ hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
 
+/-- Additive maps out of `⋀ⁿ Ω[A⁄R]` agreeing on the generators `a • D b₁ ∧ ⋯ ∧ D bₙ` are equal:
+these generators span `⋀ⁿ Ω[A⁄R]` additively. -/
+theorem addMonoidHom_ext_ιMulti {N : Type*} [AddCommGroup N] {n : ℕ}
+    {f g : ⋀[A]^n Ω[A⁄R] →+ N}
+    (h : ∀ (a : A) (b : Fin n → A),
+      f (a • exteriorPower.ιMulti A n fun i => KaehlerDifferential.D R A (b i)) =
+        g (a • exteriorPower.ιMulti A n fun i => KaehlerDifferential.D R A (b i))) :
+    f = g := by
+  ext x
+  have key : ∀ y ∈ Submodule.span A (exteriorPower.ιMulti A n ''
+      {b | Set.range b ⊆ Set.range (KaehlerDifferential.D R A)}),
+      ∀ c : A, f (c • y) = g (c • y) := by
+    intro y hy
+    induction hy using Submodule.span_induction with
+    | mem y hy =>
+        obtain ⟨b, hb, rfl⟩ := hy
+        intro c
+        choose e he using fun j => hb (Set.mem_range_self j)
+        obtain rfl : b = fun j => KaehlerDifferential.D R A (e j) := funext fun j => (he j).symm
+        exact h c e
+    | zero => intro c; rw [smul_zero, map_zero, map_zero]
+    | add y z _ _ hy hz => intro c; rw [smul_add, map_add, map_add, hy, hz]
+    | smul a y _ hy => intro c; rw [smul_smul]; exact hy (c * a)
+  have hx := key x (by
+    rw [exteriorPower.ιMulti_span_of_span (R := A) (n := n) (M := Ω[A⁄R])
+      (KaehlerDifferential.span_range_derivation R A)]
+    trivial) 1
+  rwa [one_smul] at hx
+
 /-- The de Rham differential `⋀ⁿ Ω[A⁄R] → ⋀ⁿ⁺¹ Ω[A⁄R]` in degree `n`. -/
 def deRhamPow (n : ℕ) : ⋀[A]^n Ω[A⁄R] →+ ⋀[A]^(n + 1) Ω[A⁄R] where
   toFun x := ⟨deRham R A x, deRham_mem_exteriorPower x.2⟩
