@@ -1393,11 +1393,11 @@ private lemma lr_sq_mul_mem {k m : ℕ} (hk0 : k ≠ 0) (hm0 : m ≠ 0)
     intro hdvd
     have hmem : q ∈ m.primeFactors := Nat.mem_primeFactors.mpr ⟨hqP, hdvd, hm0⟩
     exact (lrH_eq_one.mp hm).2 q hmem hq3
-  have h1 : padicValNat q m = 0 := padicValNat.eq_zero_of_not_dvd hqm
-  have h2 : padicValNat q (k ^ 2 * m) = 2 * padicValNat q k := by
-    rw [padicValNat.mul (pow_ne_zero 2 hk0) hm0, padicValNat.pow, h1, add_zero]
-  rw [h2]
-  exact ⟨padicValNat q k, by ring⟩
+  have h1 : multiplicity q m = 0 := multiplicity_eq_zero_of_not_dvd hqm
+  have h2 : multiplicity q (k ^ 2 * m) = 2 * multiplicity q k := by
+    rw [Nat.multiplicity_mul (pow_ne_zero 2 hk0) hm0, Nat.multiplicity_pow, h1, add_zero]
+  rw [Nat.padicValNat_def, h2]
+  exact ⟨multiplicity q k, by ring⟩
 
 /-- Uniqueness of the `k ^ 2 * m` decomposition. -/
 private lemma lr_sq_mul_inj {k m k' m' : ℕ} (hk0 : k ≠ 0) (hm0 : m ≠ 0)
@@ -1409,33 +1409,33 @@ private lemma lr_sq_mul_inj {k m k' m' : ℕ} (hk0 : k ≠ 0) (hm0 : m ≠ 0)
     intro p
     by_cases hpP : p.Prime
     · have : Fact p.Prime := ⟨hpP⟩
-      have hval : padicValNat p (k ^ 2 * m) = padicValNat p (k' ^ 2 * m') := by
+      have hval : multiplicity p (k ^ 2 * m) = multiplicity p (k' ^ 2 * m') := by
         rw [h]
-      rw [padicValNat.mul (pow_ne_zero 2 hk0) hm0, padicValNat.pow,
-        padicValNat.mul (pow_ne_zero 2 hk0') hm0', padicValNat.pow] at hval
+      rw [Nat.multiplicity_mul (pow_ne_zero 2 hk0) hm0, Nat.multiplicity_pow,
+        Nat.multiplicity_mul (pow_ne_zero 2 hk0') hm0', Nat.multiplicity_pow] at hval
       by_cases hp3 : p % 4 = 3
-      · have hvm : padicValNat p m = 0 := by
-          apply padicValNat.eq_zero_of_not_dvd
+      · have hvm : multiplicity p m = 0 := by
+          apply multiplicity_eq_zero_of_not_dvd
           intro hdvd
           have hmem : p ∈ m.primeFactors :=
             Nat.mem_primeFactors.mpr ⟨hpP, hdvd, hm0⟩
           exact (lrH_eq_one.mp hm).2 p hmem hp3
-        have hvm' : padicValNat p m' = 0 := by
-          apply padicValNat.eq_zero_of_not_dvd
+        have hvm' : multiplicity p m' = 0 := by
+          apply multiplicity_eq_zero_of_not_dvd
           intro hdvd
           have hmem : p ∈ m'.primeFactors :=
             Nat.mem_primeFactors.mpr ⟨hpP, hdvd, hm0'⟩
           exact (lrH_eq_one.mp hm').2 p hmem hp3
-        have hkk2 : padicValNat p k = padicValNat p k' := by omega
+        have hkk2 : multiplicity p k = multiplicity p k' := by omega
         rw [Nat.factorization_def _ hpP, Nat.factorization_def _ hpP, hkk2]
-      · have hvk : padicValNat p k = 0 := by
-          apply padicValNat.eq_zero_of_not_dvd
+      · have hvk : multiplicity p k = 0 := by
+          apply multiplicity_eq_zero_of_not_dvd
           intro hdvd
           have hmem : p ∈ k.primeFactors :=
             Nat.mem_primeFactors.mpr ⟨hpP, hdvd, hk0⟩
           exact hp3 ((lrG_eq_one.mp hk).2 p hmem)
-        have hvk' : padicValNat p k' = 0 := by
-          apply padicValNat.eq_zero_of_not_dvd
+        have hvk' : multiplicity p k' = 0 := by
+          apply multiplicity_eq_zero_of_not_dvd
           intro hdvd
           have hmem : p ∈ k'.primeFactors :=
             Nat.mem_primeFactors.mpr ⟨hpP, hdvd, hk0'⟩
@@ -1463,7 +1463,7 @@ private lemma lr_exists_sq_mul {n : ℕ} (hn1 : 1 ≤ n)
     intro p hp
     have hpf : p ∈ n.primeFactors := Finset.mem_of_mem_filter p hp
     have hpp := (hmemS p hp).1
-    rw [Nat.factorization_def n hpp]
+    rw [Nat.factorization_def n hpp, ← Nat.padicValNat_def]
     exact hchar p hpf (hmemS p hp).2
   have hksq : k ^ 2 = ∏ p ∈ S, p ^ (n.factorization p) := by
     rw [hkdef, pow_two, ← Finset.prod_mul_distrib]

@@ -39,7 +39,7 @@ endomorphism.
 /-- The free soluble group of rank `2` and derived length `d`: the quotient `F₂ / F₂⁽ᵈ⁾` of the free
 group on two generators by the `d`-th term of its derived series. -/
 abbrev FreeSolubleGroupRankTwo (d : ℕ) : Type :=
-  FreeGroup (Fin 2) ⧸ derivedSeries (FreeGroup (Fin 2)) d
+  FreeGroup (Fin 2) ⧸ Subgroup.derivedSeries (FreeGroup (Fin 2)) d
 
 /-- **Test element.** An element $u$ of a group $G$ is a test element of $G$ if every endomorphism
 $\varphi$ of $G$ with $\varphi(u) = u$ is bijective, that is, an automorphism of $G$. -/
