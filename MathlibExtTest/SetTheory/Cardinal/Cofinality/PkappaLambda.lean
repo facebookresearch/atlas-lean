@@ -12,8 +12,6 @@ Author: Steven Warner
 module
 
 public import MathlibExt.SetTheory.Cardinal.Cofinality.PkappaLambda
-public import Mathlib.SetTheory.Cardinal.Aleph
-public import Mathlib.SetTheory.Ordinal.Basic
 
 @[expose] public section
 
