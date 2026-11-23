@@ -12,13 +12,15 @@ public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
 public import MathlibExt.Probability.MarkovChainContraction
 
 /-!
-# Approximate max-divergence decomposition, part 1 (finite discrete)
+# Approximate max-divergence decomposition (finite discrete)
 
-Part 1 of Dwork and Roth, Section 3.5.1, Lemma 3.17, over a finite
-outcome type: an approximate max-divergence bound yields a repaired
-distribution `P~` within total variation `δ` of `P` with pure
-max-divergence `D∞ (P~‖Q) ≤ ε`. Part 2 of the lemma (repairing `Q`
-simultaneously as well) is not formalized here.
+Parts 1 and 2 of Dwork and Roth, Section 3.5.1, Lemma 3.17, over a
+finite outcome type. Part 1: an approximate max-divergence bound
+yields a repaired distribution `P~` within total variation `δ` of
+`P` with pure max-divergence `D∞ (P~‖Q) ≤ ε`. Part 2: the two
+approximate bounds together hold exactly when two witnesses `P'`,
+`Q'` within `δ / (exp ε + 1)` of `P`, `Q` satisfy the pure bound in
+both directions (`approxMaxDivLE_both_iff_exists_repair`).
 
 Finite outcome scope: `[Fintype Outcome] [Nonempty Outcome]`. Total
 variation is the shared `MarkovChainContraction.tvDist`. The finite
@@ -595,5 +597,700 @@ theorem exists_repair_of_isApproxDP {Outcome : Type*} [Fintype Outcome]
     ∃ Ptilde, tvDist (M d) Ptilde ≤ delta ∧ maxDivLE Ptilde (M d') eps :=
   exists_repair_of_approx (M d) (M d') eps delta h.1 h.2.1
     (approxMaxDivLE_of_isApproxDP h hadj)
+
+/-
+Part 2 of Dwork-Roth Lemma 3.17 (§3.5.1): simultaneous repair.
+
+The book prints a one-directional pure bound in the conclusion, but the
+iff with a one-directional pure bound is false (e.g. `ε = log 2`,
+`δ = 0`, `P = (1, 0)`, `Q = (1/2, 1/2)` satisfies the one-directional
+conclusion with zero movement while the reverse approximate bound
+fails). The formal statement therefore requires `maxDivLE` in BOTH
+directions for the SAME witnesses; this deviation is deliberate.
+-/
+
+/-- Balanced lower envelope: per-atom mean mass over `exp ε + 1`. -/
+private noncomputable def repair2L {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (w : Outcome) : ℝ :=
+  ((P w).toReal + (Q w).toReal) / (Real.exp eps + 1)
+
+/-- Balanced upper envelope: `exp ε` times the lower envelope. -/
+private noncomputable def repair2U {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (w : Outcome) : ℝ :=
+  Real.exp eps * repair2L P Q eps w
+
+/-- `P` masses clamped into the balanced interval. -/
+private noncomputable def repair2R {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (w : Outcome) : ℝ :=
+  min (max ((P w).toReal) (repair2L P Q eps w)) (repair2U P Q eps w)
+
+private theorem exp_add_one_pos (eps : ℝ) : (0:ℝ) < Real.exp eps + 1 := by
+  linarith [Real.exp_pos eps]
+
+private theorem repair2L_nonneg {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (w : Outcome) :
+    0 ≤ repair2L P Q eps w := by
+  simp only [repair2L]
+  exact div_nonneg (add_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg)
+    (le_of_lt (exp_add_one_pos eps))
+
+private theorem repair2L_le_U {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (heps : 0 ≤ eps)
+    (w : Outcome) :
+    repair2L P Q eps w ≤ repair2U P Q eps w := by
+  have h1 : (1:ℝ) ≤ Real.exp eps := Real.one_le_exp heps
+  have hL := repair2L_nonneg P Q eps w
+  calc repair2L P Q eps w = 1 * repair2L P Q eps w := (one_mul _).symm
+    _ ≤ Real.exp eps * repair2L P Q eps w :=
+        mul_le_mul_of_nonneg_right h1 hL
+    _ = repair2U P Q eps w := rfl
+
+private theorem repair2R_ge_L {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (heps : 0 ≤ eps)
+    (w : Outcome) :
+    repair2L P Q eps w ≤ repair2R P Q eps w := by
+  simp only [repair2R]
+  exact le_min (le_max_right _ _) (repair2L_le_U P Q eps heps w)
+
+private theorem repair2R_le_U {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (w : Outcome) :
+    repair2R P Q eps w ≤ repair2U P Q eps w := by
+  simp only [repair2R]
+  exact min_le_right _ _
+
+private theorem not_mem_excess_both {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (heps : 0 ≤ eps)
+    (w : Outcome) (hPQ : w ∈ excessSet P Q eps)
+    (hQP : w ∈ excessSet Q P eps) : False := by
+  rw [mem_excessSet] at hPQ hQP
+  have ha1 : (1:ℝ) ≤ Real.exp eps := Real.one_le_exp heps
+  have hapos : (0:ℝ) < Real.exp eps := Real.exp_pos eps
+  have hpnn : (0:ℝ) ≤ (P w).toReal := ENNReal.toReal_nonneg
+  have hsq : Real.exp eps * (Real.exp eps * (P w).toReal) < (P w).toReal := by
+    calc Real.exp eps * (Real.exp eps * (P w).toReal)
+        < Real.exp eps * (Q w).toReal :=
+          mul_lt_mul_of_pos_left hQP hapos
+      _ < (P w).toReal := hPQ
+  have hge : (P w).toReal ≤
+      Real.exp eps * (Real.exp eps * (P w).toReal) := by
+    have haa : (1:ℝ) ≤ Real.exp eps * Real.exp eps := by
+      calc (1:ℝ) = 1 * 1 := (mul_one 1).symm
+        _ ≤ Real.exp eps * Real.exp eps :=
+            mul_le_mul ha1 ha1 zero_le_one (le_of_lt hapos)
+    calc (P w).toReal = 1 * (P w).toReal := (one_mul _).symm
+      _ ≤ (Real.exp eps * Real.exp eps) * (P w).toReal :=
+          mul_le_mul_of_nonneg_right haa hpnn
+      _ = Real.exp eps * (Real.exp eps * (P w).toReal) := by ring
+  linarith
+
+private theorem repair2L_le_of_mem {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (heps : 0 ≤ eps)
+    (w : Outcome) (hw : w ∈ excessSet P Q eps) :
+    repair2L P Q eps w ≤ (P w).toReal := by
+  have ha1 : (1:ℝ) ≤ Real.exp eps := Real.one_le_exp heps
+  have hc := exp_add_one_pos eps
+  have hpnn : (0:ℝ) ≤ (P w).toReal := ENNReal.toReal_nonneg
+  have hqnn : (0:ℝ) ≤ (Q w).toReal := ENNReal.toReal_nonneg
+  rw [mem_excessSet] at hw
+  have hqa : (Q w).toReal ≤ Real.exp eps * (P w).toReal :=
+    le_trans (le_mul_of_one_le_left hqnn ha1)
+      (le_trans (le_of_lt hw) (le_mul_of_one_le_left hpnn ha1))
+  simp only [repair2L]
+  rw [div_le_iff₀ hc]
+  linarith [hqa]
+
+private theorem repair2U_le_of_mem {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ)
+    (w : Outcome) (hw : w ∈ excessSet P Q eps) :
+    repair2U P Q eps w ≤ (P w).toReal := by
+  have hc := exp_add_one_pos eps
+  rw [mem_excessSet] at hw
+  simp only [repair2U, repair2L, ← mul_div_assoc, div_le_iff₀ hc]
+  linarith [le_of_lt hw]
+
+private theorem repair2R_eq_U_of_mem {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (heps : 0 ≤ eps)
+    (w : Outcome) (hw : w ∈ excessSet P Q eps) :
+    repair2R P Q eps w = repair2U P Q eps w := by
+  simp only [repair2R, max_eq_left (repair2L_le_of_mem P Q eps heps w hw),
+    min_eq_right (repair2U_le_of_mem P Q eps w hw)]
+
+private theorem repair2L_ge_of_mem_swap {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (w : Outcome)
+    (hw : w ∈ excessSet Q P eps) :
+    (P w).toReal ≤ repair2L P Q eps w := by
+  have hc := exp_add_one_pos eps
+  rw [mem_excessSet] at hw
+  simp only [repair2L]
+  rw [le_div_iff₀ hc]
+  linarith [le_of_lt hw]
+
+private theorem repair2R_eq_L_of_mem_swap {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (heps : 0 ≤ eps)
+    (w : Outcome) (hw : w ∈ excessSet Q P eps) :
+    repair2R P Q eps w = repair2L P Q eps w := by
+  simp only [repair2R, max_eq_right (repair2L_ge_of_mem_swap P Q eps w hw),
+    min_eq_left (repair2L_le_U P Q eps heps w)]
+
+private theorem repair2R_eq_of_not_mem {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (w : Outcome)
+    (hPQ : w ∉ excessSet P Q eps) (hQP : w ∉ excessSet Q P eps) :
+    repair2R P Q eps w = (P w).toReal := by
+  have hc := exp_add_one_pos eps
+  have hle1 : (P w).toReal ≤ Real.exp eps * (Q w).toReal := by
+    have h := mt (mem_excessSet P Q eps w).mpr hPQ
+    exact le_of_not_gt h
+  have hle2 : (Q w).toReal ≤ Real.exp eps * (P w).toReal := by
+    have h := mt (mem_excessSet Q P eps w).mpr hQP
+    exact le_of_not_gt h
+  have hLp : repair2L P Q eps w ≤ (P w).toReal := by
+    simp only [repair2L]
+    rw [div_le_iff₀ hc]
+    linarith [hle2]
+  have hUp : (P w).toReal ≤ repair2U P Q eps w := by
+    simp only [repair2U, repair2L, ← mul_div_assoc, le_div_iff₀ hc]
+    linarith [hle1]
+  simp only [repair2R, max_eq_left hLp, min_eq_left hUp]
+
+private theorem sum_repair2R_sub {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (heps : 0 ≤ eps) :
+    (∑ w, repair2R P Q eps w) - 1 =
+      (excessMass Q P eps - excessMass P Q eps) / (Real.exp eps + 1) := by
+  classical
+  have hc0 : Real.exp eps + 1 ≠ 0 := ne_of_gt (exp_add_one_pos eps)
+  have hdisj : Disjoint (excessSet P Q eps) (excessSet Q P eps) :=
+    Finset.disjoint_left.mpr (fun w hPQ hQP =>
+      not_mem_excess_both P Q eps heps w hPQ hQP)
+  have hvan : ∀ w ∈ (Finset.univ : Finset Outcome),
+      w ∉ excessSet P Q eps ∪ excessSet Q P eps →
+      repair2R P Q eps w - (P w).toReal = 0 := by
+    intro w _ hw
+    rw [Finset.mem_union, not_or] at hw
+    rw [repair2R_eq_of_not_mem P Q eps w hw.1 hw.2, sub_self]
+  have hsplit : ∑ w, (repair2R P Q eps w - (P w).toReal) =
+      (∑ w ∈ excessSet P Q eps, (repair2R P Q eps w - (P w).toReal)) +
+      (∑ w ∈ excessSet Q P eps, (repair2R P Q eps w - (P w).toReal)) := by
+    have hsub := Finset.sum_subset (Finset.subset_univ
+      (excessSet P Q eps ∪ excessSet Q P eps)) hvan
+    rw [Finset.sum_union hdisj] at hsub
+    exact hsub.symm
+  have hP : ∀ w ∈ excessSet P Q eps,
+      repair2R P Q eps w - (P w).toReal =
+        (Real.exp eps * (Q w).toReal - (P w).toReal) / (Real.exp eps + 1) := by
+    intro w hw
+    rw [repair2R_eq_U_of_mem P Q eps heps w hw]
+    simp only [repair2U, repair2L]
+    field_simp
+    ring
+  have hQ : ∀ w ∈ excessSet Q P eps,
+      repair2R P Q eps w - (P w).toReal =
+        ((Q w).toReal - Real.exp eps * (P w).toReal) / (Real.exp eps + 1) := by
+    intro w hw
+    rw [repair2R_eq_L_of_mem_swap P Q eps heps w hw]
+    simp only [repair2L]
+    field_simp
+    ring
+  have hexpPQ : excessMass P Q eps =
+      (∑ w ∈ excessSet P Q eps, (P w).toReal) -
+        Real.exp eps * ∑ w ∈ excessSet P Q eps, (Q w).toReal := by
+    simp only [excessMass, Finset.sum_sub_distrib, Finset.mul_sum]
+  have hexpQP : excessMass Q P eps =
+      (∑ w ∈ excessSet Q P eps, (Q w).toReal) -
+        Real.exp eps * ∑ w ∈ excessSet Q P eps, (P w).toReal := by
+    simp only [excessMass, Finset.sum_sub_distrib, Finset.mul_sum]
+  have hfactor : ∀ (s : Finset Outcome) (f : Outcome → ℝ),
+      (∑ w ∈ s, f w / (Real.exp eps + 1)) =
+        (Real.exp eps + 1)⁻¹ * ∑ w ∈ s, f w := by
+    intro s f
+    have hterm : ∀ w ∈ s, f w / (Real.exp eps + 1) =
+        (Real.exp eps + 1)⁻¹ * f w := by
+      intro w _
+      simp only [div_eq_mul_inv]
+      ring
+    rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum]
+  have hPsum : ∑ w ∈ excessSet P Q eps,
+      (repair2R P Q eps w - (P w).toReal) =
+      -(excessMass P Q eps) / (Real.exp eps + 1) := by
+    rw [Finset.sum_congr rfl hP,
+      hfactor _ (fun w => Real.exp eps * (Q w).toReal - (P w).toReal),
+      Finset.sum_sub_distrib, ← Finset.mul_sum, hexpPQ, div_eq_mul_inv]
+    ring
+  have hQsum : ∑ w ∈ excessSet Q P eps,
+      (repair2R P Q eps w - (P w).toReal) =
+      (excessMass Q P eps) / (Real.exp eps + 1) := by
+    rw [Finset.sum_congr rfl hQ,
+      hfactor _ (fun w => (Q w).toReal - Real.exp eps * (P w).toReal),
+      Finset.sum_sub_distrib, ← Finset.mul_sum, hexpQP, div_eq_mul_inv]
+    ring
+  have htot : ∑ w, (repair2R P Q eps w - (P w).toReal) =
+      (excessMass Q P eps - excessMass P Q eps) / (Real.exp eps + 1) := by
+    rw [hsplit, hPsum, hQsum]
+    ring
+  have hdecomp : ∑ w, (repair2R P Q eps w - (P w).toReal) =
+      (∑ w, repair2R P Q eps w) - 1 := by
+    rw [Finset.sum_sub_distrib, pmf_toReal_sum_univ P]
+  rw [← hdecomp, htot]
+
+private theorem sum_abs_sub_repair2R {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) (heps : 0 ≤ eps) :
+    ∑ w, |(P w).toReal - repair2R P Q eps w| =
+      (excessMass P Q eps + excessMass Q P eps) / (Real.exp eps + 1) := by
+  classical
+  have hc0 : Real.exp eps + 1 ≠ 0 := ne_of_gt (exp_add_one_pos eps)
+  have hdisj : Disjoint (excessSet P Q eps) (excessSet Q P eps) :=
+    Finset.disjoint_left.mpr (fun w hPQ hQP =>
+      not_mem_excess_both P Q eps heps w hPQ hQP)
+  have hvan : ∀ w ∈ (Finset.univ : Finset Outcome),
+      w ∉ excessSet P Q eps ∪ excessSet Q P eps →
+      |(P w).toReal - repair2R P Q eps w| = 0 := by
+    intro w _ hw
+    rw [Finset.mem_union, not_or] at hw
+    rw [repair2R_eq_of_not_mem P Q eps w hw.1 hw.2, sub_self, abs_zero]
+  have hsplit : ∑ w, |(P w).toReal - repair2R P Q eps w| =
+      (∑ w ∈ excessSet P Q eps, |(P w).toReal - repair2R P Q eps w|) +
+      (∑ w ∈ excessSet Q P eps, |(P w).toReal - repair2R P Q eps w|) := by
+    have hsub := Finset.sum_subset (Finset.subset_univ
+      (excessSet P Q eps ∪ excessSet Q P eps)) hvan
+    rw [Finset.sum_union hdisj] at hsub
+    exact hsub.symm
+  have hP : ∀ w ∈ excessSet P Q eps,
+      |(P w).toReal - repair2R P Q eps w| =
+        ((P w).toReal - Real.exp eps * (Q w).toReal) / (Real.exp eps + 1) := by
+    intro w hw
+    rw [repair2R_eq_U_of_mem P Q eps heps w hw,
+      abs_of_nonneg (sub_nonneg.mpr (repair2U_le_of_mem P Q eps w hw))]
+    simp only [repair2U, repair2L]
+    field_simp
+    ring
+  have hQ : ∀ w ∈ excessSet Q P eps,
+      |(P w).toReal - repair2R P Q eps w| =
+        ((Q w).toReal - Real.exp eps * (P w).toReal) / (Real.exp eps + 1) := by
+    intro w hw
+    rw [repair2R_eq_L_of_mem_swap P Q eps heps w hw,
+      abs_of_nonpos (sub_nonpos.mpr (repair2L_ge_of_mem_swap P Q eps w hw))]
+    simp only [repair2L]
+    field_simp
+    ring
+  have hexpPQ : excessMass P Q eps =
+      (∑ w ∈ excessSet P Q eps, (P w).toReal) -
+        Real.exp eps * ∑ w ∈ excessSet P Q eps, (Q w).toReal := by
+    simp only [excessMass, Finset.sum_sub_distrib, Finset.mul_sum]
+  have hexpQP : excessMass Q P eps =
+      (∑ w ∈ excessSet Q P eps, (Q w).toReal) -
+        Real.exp eps * ∑ w ∈ excessSet Q P eps, (P w).toReal := by
+    simp only [excessMass, Finset.sum_sub_distrib, Finset.mul_sum]
+  have hfactor : ∀ (s : Finset Outcome) (f : Outcome → ℝ),
+      (∑ w ∈ s, f w / (Real.exp eps + 1)) =
+        (Real.exp eps + 1)⁻¹ * ∑ w ∈ s, f w := by
+    intro s f
+    have hterm : ∀ w ∈ s, f w / (Real.exp eps + 1) =
+        (Real.exp eps + 1)⁻¹ * f w := by
+      intro w _
+      simp only [div_eq_mul_inv]
+      ring
+    rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum]
+  have hPsum : ∑ w ∈ excessSet P Q eps, |(P w).toReal - repair2R P Q eps w| =
+      (excessMass P Q eps) / (Real.exp eps + 1) := by
+    rw [Finset.sum_congr rfl hP,
+      hfactor _ (fun w => (P w).toReal - Real.exp eps * (Q w).toReal),
+      Finset.sum_sub_distrib, ← Finset.mul_sum, hexpPQ, div_eq_mul_inv]
+    ring
+  have hQsum : ∑ w ∈ excessSet Q P eps, |(P w).toReal - repair2R P Q eps w| =
+      (excessMass Q P eps) / (Real.exp eps + 1) := by
+    rw [Finset.sum_congr rfl hQ,
+      hfactor _ (fun w => (Q w).toReal - Real.exp eps * (P w).toReal),
+      Finset.sum_sub_distrib, ← Finset.mul_sum, hexpQP, div_eq_mul_inv]
+    ring
+  rw [hsplit, hPsum, hQsum]
+  ring
+
+private theorem sum_repair2L {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) :
+    ∑ w, repair2L P Q eps w = 2 / (Real.exp eps + 1) := by
+  have hsum : ∑ w, ((P w).toReal + (Q w).toReal) = 2 := by
+    rw [Finset.sum_add_distrib, pmf_toReal_sum_univ P, pmf_toReal_sum_univ Q]
+    norm_num
+  have hterm : ∀ w ∈ (Finset.univ : Finset Outcome), repair2L P Q eps w =
+      (Real.exp eps + 1)⁻¹ * ((P w).toReal + (Q w).toReal) := by
+    intro w _
+    simp only [repair2L, div_eq_mul_inv]
+    ring
+  rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum, hsum, div_eq_mul_inv]
+  ring
+
+private theorem sum_repair2U {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps : ℝ) :
+    ∑ w, repair2U P Q eps w = Real.exp eps * (2 / (Real.exp eps + 1)) := by
+  simp only [repair2U, ← Finset.mul_sum, sum_repair2L]
+
+private theorem add_add_abs_eq_two_max (A B : ℝ) :
+    A + B + |A - B| = 2 * max A B := by
+  rcases le_total A B with h | h
+  · rw [abs_of_nonpos (sub_nonpos.mpr h), max_eq_right h]
+    ring
+  · rw [abs_of_nonneg (sub_nonneg.mpr h), max_eq_left h]
+    ring
+
+private theorem exists_interp_sum_one {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (lo hi r : Outcome → ℝ)
+    (hlo : ∀ w, lo w ≤ r w) (hhi : ∀ w, r w ≤ hi w)
+    (hlo_sum : ∑ w, lo w ≤ 1) (hhi_sum : 1 ≤ ∑ w, hi w) :
+    ∃ r' : Outcome → ℝ, (∀ w, lo w ≤ r' w) ∧ (∀ w, r' w ≤ hi w) ∧
+      (∑ w, r' w = 1) ∧ (∑ w, |r w - r' w| = |1 - ∑ w, r w|) := by
+  by_cases h1 : ∑ w, r w = 1
+  · refine ⟨r, hlo, hhi, h1, ?_⟩
+    simp only [sub_self, abs_zero, Finset.sum_const_zero]
+    rw [h1, sub_self, abs_zero]
+  · by_cases hlt : ∑ w, r w < 1
+    · -- Push up toward `hi`.
+      have hD : (0:ℝ) < (∑ w, hi w) - ∑ w, r w := by linarith [hhi_sum, hlt]
+      have hD0 : (∑ w, hi w) - ∑ w, r w ≠ 0 := ne_of_gt hD
+      set lam : ℝ := (1 - ∑ w, r w) / ((∑ w, hi w) - ∑ w, r w) with hlam
+      have hlam0 : (0:ℝ) ≤ lam := by
+        rw [hlam]
+        exact div_nonneg (by linarith [hlt]) (le_of_lt hD)
+      have hlam1 : lam ≤ 1 := by
+        rw [hlam, div_le_one hD]
+        linarith [hhi_sum]
+      have hcancel : lam * ((∑ w, hi w) - ∑ w, r w) = 1 - ∑ w, r w := by
+        rw [hlam, div_mul_cancel₀ _ hD0]
+      have hsum1 : (∑ w, (r w + lam * (hi w - r w))) = 1 := by
+        have hsum : (∑ w, (r w + lam * (hi w - r w))) =
+            (∑ w, r w) + lam * ((∑ w, hi w) - ∑ w, r w) := by
+          rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.sum_sub_distrib]
+        rw [hsum, hcancel]
+        ring
+      refine ⟨fun w => r w + lam * (hi w - r w), ?_, ?_, hsum1, ?_⟩
+      · intro w
+        show lo w ≤ r w + lam * (hi w - r w)
+        have hnn : (0:ℝ) ≤ lam * (hi w - r w) :=
+          mul_nonneg hlam0 (sub_nonneg.mpr (hhi w))
+        linarith [hlo w, hnn]
+      · intro w
+        show r w + lam * (hi w - r w) ≤ hi w
+        have hle : lam * (hi w - r w) ≤ hi w - r w := by
+          have h := mul_le_mul_of_nonneg_right hlam1 (sub_nonneg.mpr (hhi w))
+          simpa using h
+        linarith [hle]
+      · show (∑ w, |r w - (r w + lam * (hi w - r w))|) = |1 - ∑ w, r w|
+        have hpt : ∀ w ∈ (Finset.univ : Finset Outcome),
+            |r w - (r w + lam * (hi w - r w))| =
+              ((r w + lam * (hi w - r w)) - r w) := by
+          intro w _
+          have hle : r w - (r w + lam * (hi w - r w)) ≤ 0 := by
+            have hnn : (0:ℝ) ≤ lam * (hi w - r w) :=
+              mul_nonneg hlam0 (sub_nonneg.mpr (hhi w))
+            linarith [hnn]
+          rw [abs_of_nonpos hle]
+          ring
+        rw [Finset.sum_congr rfl hpt, Finset.sum_sub_distrib, hsum1,
+          abs_of_pos (by linarith [hlt] : (0:ℝ) < 1 - ∑ w, r w)]
+    · -- Push down toward `lo`.
+      have hgt : (1:ℝ) < ∑ w, r w :=
+        lt_of_le_of_ne' (le_of_not_gt hlt) h1
+      have hD : (0:ℝ) < (∑ w, r w) - ∑ w, lo w := by linarith [hlo_sum, hgt]
+      have hD0 : (∑ w, r w) - ∑ w, lo w ≠ 0 := ne_of_gt hD
+      set lam : ℝ := ((∑ w, r w) - 1) / ((∑ w, r w) - ∑ w, lo w) with hlam
+      have hlam0 : (0:ℝ) ≤ lam := by
+        rw [hlam]
+        exact div_nonneg (by linarith [hgt]) (le_of_lt hD)
+      have hlam1 : lam ≤ 1 := by
+        rw [hlam, div_le_one hD]
+        linarith [hlo_sum]
+      have hcancel : lam * ((∑ w, lo w) - ∑ w, r w) = -((∑ w, r w) - 1) := by
+        have hpos : lam * ((∑ w, r w) - ∑ w, lo w) = (∑ w, r w) - 1 := by
+          rw [hlam, div_mul_cancel₀ _ hD0]
+        have hneg : lam * ((∑ w, lo w) - ∑ w, r w) =
+            -(lam * ((∑ w, r w) - ∑ w, lo w)) := by ring
+        rw [hneg, hpos]
+      have hsum1 : (∑ w, (r w + lam * (lo w - r w))) = 1 := by
+        have hsum : (∑ w, (r w + lam * (lo w - r w))) =
+            (∑ w, r w) + lam * ((∑ w, lo w) - ∑ w, r w) := by
+          rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.sum_sub_distrib]
+        rw [hsum, hcancel]
+        ring
+      refine ⟨fun w => r w + lam * (lo w - r w), ?_, ?_, hsum1, ?_⟩
+      · intro w
+        show lo w ≤ r w + lam * (lo w - r w)
+        have hle : lam * (r w - lo w) ≤ 1 * (r w - lo w) :=
+          mul_le_mul_of_nonneg_right hlam1 (sub_nonneg.mpr (hlo w))
+        linarith [hle]
+      · intro w
+        show r w + lam * (lo w - r w) ≤ hi w
+        have hle : lam * (lo w - r w) ≤ lam * 0 :=
+          mul_le_mul_of_nonneg_left (sub_nonpos.mpr (hlo w)) hlam0
+        simp only [mul_zero] at hle
+        linarith [hle, hhi w]
+      · show (∑ w, |r w - (r w + lam * (lo w - r w))|) = |1 - ∑ w, r w|
+        have hpt : ∀ w ∈ (Finset.univ : Finset Outcome),
+            |r w - (r w + lam * (lo w - r w))| =
+              (r w - (r w + lam * (lo w - r w))) := by
+          intro w _
+          apply abs_of_nonneg
+          have hle : lam * (lo w - r w) ≤ lam * 0 :=
+            mul_le_mul_of_nonneg_left (sub_nonpos.mpr (hlo w)) hlam0
+          simp only [mul_zero] at hle
+          linarith [hle]
+        rw [Finset.sum_congr rfl hpt, Finset.sum_sub_distrib, hsum1,
+          abs_of_neg (by linarith [hgt] : (1:ℝ) - ∑ w, r w < 0)]
+        ring
+
+private theorem tvDist_symm {Outcome : Type*} [Fintype Outcome]
+    (P Q : PMF Outcome) : tvDist P Q = tvDist Q P :=
+  MathlibExt.Probability.MarkovMixing.tvDist_comm _ _
+
+private theorem approx_of_repair_pair {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps delta : ℝ)
+    (P' Q' : PMF Outcome)
+    (htvP : tvDist P P' ≤ delta / (Real.exp eps + 1))
+    (htvQ : tvDist Q Q' ≤ delta / (Real.exp eps + 1))
+    (hmax : maxDivLE P' Q' eps) :
+    approxMaxDivLE P Q eps delta := by
+  have hapos : (0:ℝ) < Real.exp eps := Real.exp_pos eps
+  have hc0 : Real.exp eps + 1 ≠ 0 := ne_of_gt (exp_add_one_pos eps)
+  intro s
+  have hdiff1 := event_diff_le_tvDist P P' s
+  have hdiff2 := event_diff_le_tvDist Q' Q s
+  rw [tvDist_symm Q' Q] at hdiff2
+  have hsum : (∑ w ∈ s, (P' w).toReal) ≤
+      Real.exp eps * ∑ w ∈ s, (Q' w).toReal := by
+    have hpt : ∀ w ∈ s, (P' w).toReal ≤ Real.exp eps * (Q' w).toReal :=
+      fun w _ => hmax w
+    have hle := Finset.sum_le_sum hpt
+    rw [Finset.mul_sum]
+    exact hle
+  have hQ'a : Real.exp eps * (∑ w ∈ s, (Q' w).toReal) ≤
+      Real.exp eps * (∑ w ∈ s, (Q w).toReal) +
+        Real.exp eps * tvDist Q Q' := by
+    have hle : (∑ w ∈ s, (Q' w).toReal) ≤
+        (∑ w ∈ s, (Q w).toReal) + tvDist Q Q' := by linarith [hdiff2]
+    have hmul := mul_le_mul_of_nonneg_left hle (le_of_lt hapos)
+    rw [mul_add] at hmul
+    exact hmul
+  have hdtv : Real.exp eps * tvDist Q Q' + tvDist P P' ≤ delta := by
+    have hbase : Real.exp eps * (delta / (Real.exp eps + 1)) +
+        delta / (Real.exp eps + 1) = delta := by
+      field_simp
+    calc Real.exp eps * tvDist Q Q' + tvDist P P'
+        ≤ Real.exp eps * (delta / (Real.exp eps + 1)) +
+            delta / (Real.exp eps + 1) := by
+          apply add_le_add _ htvP
+          exact mul_le_mul_of_nonneg_left htvQ (le_of_lt hapos)
+      _ = delta := hbase
+  have hPs : (∑ w ∈ s, (P w).toReal) ≤
+      (∑ w ∈ s, (P' w).toReal) + tvDist P P' := by linarith [hdiff1]
+  linarith [hPs, hsum, hQ'a, hdtv]
+
+private theorem approx_both_of_exists_repair_both {Outcome : Type*}
+    [Fintype Outcome] [Nonempty Outcome] (P Q : PMF Outcome) (eps delta : ℝ)
+    (P' Q' : PMF Outcome)
+    (htvP : tvDist P P' ≤ delta / (Real.exp eps + 1))
+    (htvQ : tvDist Q Q' ≤ delta / (Real.exp eps + 1))
+    (hmaxPQ : maxDivLE P' Q' eps) (hmaxQP : maxDivLE Q' P' eps) :
+    approxMaxDivLE P Q eps delta ∧ approxMaxDivLE Q P eps delta :=
+  ⟨approx_of_repair_pair P Q eps delta P' Q' htvP htvQ hmaxPQ,
+    approx_of_repair_pair Q P eps delta Q' P' htvQ htvP hmaxQP⟩
+
+private theorem exists_repair_both_of_approx_both {Outcome : Type*}
+    [Fintype Outcome] [Nonempty Outcome] (P Q : PMF Outcome) (eps delta : ℝ)
+    (heps : 0 ≤ eps) (_hdelta : 0 ≤ delta)
+    (hPQ : approxMaxDivLE P Q eps delta)
+    (hQP : approxMaxDivLE Q P eps delta) :
+    ∃ P' Q' : PMF Outcome, tvDist P P' ≤ delta / (Real.exp eps + 1) ∧
+      tvDist Q Q' ≤ delta / (Real.exp eps + 1) ∧
+      maxDivLE P' Q' eps ∧ maxDivLE Q' P' eps := by
+  classical
+  have ha1 : (1:ℝ) ≤ Real.exp eps := Real.one_le_exp heps
+  have hapos : (0:ℝ) < Real.exp eps := Real.exp_pos eps
+  have ha0 : (0:ℝ) ≤ Real.exp eps := le_of_lt hapos
+  have hc := exp_add_one_pos eps
+  have hc0 : Real.exp eps + 1 ≠ 0 := ne_of_gt hc
+  have hAle : excessMass P Q eps ≤ delta :=
+    excessMass_le_delta P Q eps delta hPQ
+  have hBle : excessMass Q P eps ≤ delta :=
+    excessMass_le_delta Q P eps delta hQP
+  have hL1 : ∑ w, repair2L P Q eps w ≤ 1 := by
+    rw [sum_repair2L P Q eps, div_le_one hc]
+    linarith [ha1]
+  have hU1 : 1 ≤ ∑ w, repair2U P Q eps w := by
+    rw [sum_repair2U P Q eps]
+    have e : Real.exp eps * (2 / (Real.exp eps + 1)) =
+        2 * Real.exp eps / (Real.exp eps + 1) := by ring
+    rw [e, le_div_iff₀ hc]
+    linarith [ha1]
+  obtain ⟨r', hlo, hhi, hsum1, hmove⟩ := exists_interp_sum_one
+    (repair2L P Q eps) (repair2U P Q eps) (repair2R P Q eps)
+    (fun w => repair2R_ge_L P Q eps heps w)
+    (fun w => repair2R_le_U P Q eps w)
+    hL1 hU1
+  have hsL : ∀ w : Outcome, ((P w).toReal + (Q w).toReal) -
+      repair2L P Q eps w = repair2U P Q eps w := by
+    intro w
+    simp only [repair2U, repair2L]
+    field_simp
+    ring
+  have hsU : ∀ w : Outcome, ((P w).toReal + (Q w).toReal) -
+      repair2U P Q eps w = repair2L P Q eps w := by
+    intro w
+    simp only [repair2U, repair2L]
+    field_simp
+    ring
+  have hqlo : ∀ w : Outcome, repair2L P Q eps w ≤
+      ((P w).toReal + (Q w).toReal) - r' w := by
+    intro w
+    have h2 := hsL w
+    linarith [hhi w, h2]
+  have hqhi : ∀ w : Outcome,
+      ((P w).toReal + (Q w).toReal) - r' w ≤ repair2U P Q eps w := by
+    intro w
+    have h2 := hsU w
+    linarith [hlo w, h2]
+  have hnnP : ∀ w : Outcome, 0 ≤ r' w := fun w =>
+    le_trans (repair2L_nonneg P Q eps w) (hlo w)
+  have hnnQ : ∀ w : Outcome,
+      0 ≤ (P w).toReal + (Q w).toReal - r' w := fun w =>
+    le_trans (repair2L_nonneg P Q eps w) (hqlo w)
+  have hsumQ : (∑ w, ((P w).toReal + (Q w).toReal - r' w)) = 1 := by
+    rw [Finset.sum_sub_distrib, Finset.sum_add_distrib,
+      pmf_toReal_sum_univ P, pmf_toReal_sum_univ Q, hsum1]
+    norm_num
+  set P' : PMF Outcome := PMF.ofFintype (fun w => ENNReal.ofReal (r' w)) (by
+    have hnn : ∀ i, i ∈ Finset.univ → 0 ≤ r' i := fun i _ => hnnP i
+    have hof := ENNReal.ofReal_sum_of_nonneg (s := Finset.univ) (f := r') hnn
+    rw [hsum1, ENNReal.ofReal_one] at hof
+    exact hof.symm) with hP'def
+  set Q' : PMF Outcome := PMF.ofFintype
+    (fun w => ENNReal.ofReal ((P w).toReal + (Q w).toReal - r' w)) (by
+    have hnn : ∀ i, i ∈ Finset.univ →
+        0 ≤ (P i).toReal + (Q i).toReal - r' i := fun i _ => hnnQ i
+    have hof := ENNReal.ofReal_sum_of_nonneg (s := Finset.univ)
+      (f := fun w => (P w).toReal + (Q w).toReal - r' w) hnn
+    rw [hsumQ, ENNReal.ofReal_one] at hof
+    exact hof.symm) with hQ'def
+  have hP'toReal : ∀ w : Outcome, (P' w).toReal = r' w := by
+    intro w
+    simp only [hP'def, PMF.ofFintype_apply]
+    exact ENNReal.toReal_ofReal (hnnP w)
+  have hQ'toReal : ∀ w : Outcome, (Q' w).toReal =
+      (P w).toReal + (Q w).toReal - r' w := by
+    intro w
+    simp only [hQ'def, PMF.ofFintype_apply]
+    exact ENNReal.toReal_ofReal (hnnQ w)
+  have hmaxPQ : maxDivLE P' Q' eps := by
+    intro w
+    rw [hP'toReal w, hQ'toReal w]
+    calc r' w ≤ repair2U P Q eps w := hhi w
+      _ = Real.exp eps * repair2L P Q eps w := rfl
+      _ ≤ Real.exp eps * ((P w).toReal + (Q w).toReal - r' w) :=
+          mul_le_mul_of_nonneg_left (hqlo w) ha0
+  have hmaxQP : maxDivLE Q' P' eps := by
+    intro w
+    rw [hP'toReal w, hQ'toReal w]
+    calc (P w).toReal + (Q w).toReal - r' w ≤ repair2U P Q eps w := hqhi w
+      _ = Real.exp eps * repair2L P Q eps w := rfl
+      _ ≤ Real.exp eps * r' w := mul_le_mul_of_nonneg_left (hlo w) ha0
+  have hsig : (∑ w, repair2R P Q eps w) - 1 =
+      (excessMass Q P eps - excessMass P Q eps) / (Real.exp eps + 1) :=
+    sum_repair2R_sub P Q eps heps
+  have habs : ∑ w, |(P w).toReal - repair2R P Q eps w| =
+      (excessMass P Q eps + excessMass Q P eps) / (Real.exp eps + 1) :=
+    sum_abs_sub_repair2R P Q eps heps
+  have h1sig : |1 - ∑ w, repair2R P Q eps w| =
+      |excessMass P Q eps - excessMass Q P eps| / (Real.exp eps + 1) := by
+    have h1 : (1:ℝ) - ∑ w, repair2R P Q eps w =
+        (excessMass P Q eps - excessMass Q P eps) / (Real.exp eps + 1) := by
+      have hneg : (excessMass P Q eps - excessMass Q P eps) /
+          (Real.exp eps + 1) =
+          -(((excessMass Q P eps - excessMass P Q eps)) /
+            (Real.exp eps + 1)) := by
+        ring
+      rw [hneg]
+      linarith [hsig]
+    rw [h1, abs_div, abs_of_pos hc]
+  have htri : ∑ w, |(P w).toReal - r' w| ≤
+      (∑ w, |(P w).toReal - repair2R P Q eps w|) +
+        ∑ w, |repair2R P Q eps w - r' w| := by
+    have hpt : ∀ w ∈ (Finset.univ : Finset Outcome),
+        |(P w).toReal - r' w| ≤ |(P w).toReal - repair2R P Q eps w| +
+          |repair2R P Q eps w - r' w| :=
+      fun w _ => abs_sub_le _ _ _
+    have hle := Finset.sum_le_sum hpt
+    rwa [Finset.sum_add_distrib] at hle
+  have hM : (excessMass P Q eps + excessMass Q P eps +
+      |excessMass P Q eps - excessMass Q P eps|) =
+      2 * max (excessMass P Q eps) (excessMass Q P eps) :=
+    add_add_abs_eq_two_max _ _
+  have hMle : max (excessMass P Q eps) (excessMass Q P eps) ≤ delta :=
+    max_le hAle hBle
+  have hTV : (1/2) * ∑ w, |(P w).toReal - r' w| ≤
+      delta / (Real.exp eps + 1) := by
+    have hS : ∑ w, |(P w).toReal - r' w| ≤
+        (excessMass P Q eps + excessMass Q P eps) / (Real.exp eps + 1) +
+          |excessMass P Q eps - excessMass Q P eps| /
+            (Real.exp eps + 1) := by
+      calc ∑ w, |(P w).toReal - r' w|
+          ≤ (∑ w, |(P w).toReal - repair2R P Q eps w|) +
+              ∑ w, |repair2R P Q eps w - r' w| := htri
+        _ = (excessMass P Q eps + excessMass Q P eps) / (Real.exp eps + 1) +
+            |excessMass P Q eps - excessMass Q P eps| /
+              (Real.exp eps + 1) := by
+            rw [habs, hmove, h1sig]
+    have hE : (excessMass P Q eps + excessMass Q P eps) / (Real.exp eps + 1) +
+        |excessMass P Q eps - excessMass Q P eps| / (Real.exp eps + 1) =
+        2 * max (excessMass P Q eps) (excessMass Q P eps) /
+          (Real.exp eps + 1) := by
+      have hXX : (excessMass P Q eps + excessMass Q P eps) +
+          |excessMass P Q eps - excessMass Q P eps| =
+          2 * max (excessMass P Q eps) (excessMass Q P eps) := by
+        linarith [hM]
+      rw [← add_div, hXX]
+    calc (1/2) * ∑ w, |(P w).toReal - r' w|
+        ≤ (1/2) * ((excessMass P Q eps + excessMass Q P eps) /
+              (Real.exp eps + 1) +
+            |excessMass P Q eps - excessMass Q P eps| /
+              (Real.exp eps + 1)) :=
+          mul_le_mul_of_nonneg_left hS (by norm_num)
+      _ = max (excessMass P Q eps) (excessMass Q P eps) /
+          (Real.exp eps + 1) := by
+          rw [hE, ← mul_div_assoc]
+          congr 1
+          ring
+      _ ≤ delta / (Real.exp eps + 1) :=
+          div_le_div_of_nonneg_right hMle (le_of_lt hc)
+  have htvP : tvDist P P' ≤ delta / (Real.exp eps + 1) := by
+    rw [tvDist_unfold]
+    simp only [hP'toReal]
+    exact hTV
+  have htvQ : tvDist Q Q' ≤ delta / (Real.exp eps + 1) := by
+    rw [tvDist_unfold]
+    have hQQ : ∑ w, |(Q w).toReal - (Q' w).toReal| =
+        ∑ w, |(P w).toReal - r' w| := by
+      apply Finset.sum_congr rfl
+      intro w _
+      rw [hQ'toReal w]
+      have heq : (Q w).toReal - ((P w).toReal + (Q w).toReal - r' w) =
+          -((P w).toReal - r' w) := by ring
+      rw [heq, abs_neg]
+    rw [hQQ]
+    exact hTV
+  exact ⟨P', Q', htvP, htvQ, hmaxPQ, hmaxQP⟩
+
+/-- Simultaneous repair iff: both approximate bounds hold exactly when two
+witnesses within `δ / (exp ε + 1)` satisfy the pure bound in both
+directions. The two-sided pure bound (rather than the book's
+one-directional conclusion) is required for the reverse direction. -/
+theorem approxMaxDivLE_both_iff_exists_repair {Outcome : Type*}
+    [Fintype Outcome] [Nonempty Outcome] (P Q : PMF Outcome) (eps delta : ℝ)
+    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :
+    (approxMaxDivLE P Q eps delta ∧ approxMaxDivLE Q P eps delta) ↔
+      ∃ P' Q' : PMF Outcome, tvDist P P' ≤ delta / (Real.exp eps + 1) ∧
+        tvDist Q Q' ≤ delta / (Real.exp eps + 1) ∧
+        maxDivLE P' Q' eps ∧ maxDivLE Q' P' eps := by
+  constructor
+  · rintro ⟨hPQ, hQP⟩
+    exact exists_repair_both_of_approx_both P Q eps delta heps hdelta hPQ hQP
+  · rintro ⟨P', Q', htvP, htvQ, hmaxPQ, hmaxQP⟩
+    exact approx_both_of_exists_repair_both P Q eps delta P' Q' htvP htvQ
+      hmaxPQ hmaxQP
 
 end CSLibExt.Privacy.MaxDivergenceDecomposition
