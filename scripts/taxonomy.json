@@ -9999,6 +9999,7 @@
   "MathlibExt/Combinatorics/Enumerative/HeilermannWeightedMotzkinDeterminant": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Heilermann's formula"},
   "MathlibExt/Combinatorics/Enumerative/HsuShiueGeneralizedStirlingNumber": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Hsu–Shiue generalized Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/IdentityProductNecklace": {"to": "Combinatorics/elementary-enumeration", "title": "Necklaces over a group with identity product"},
+  "MathlibExt/Combinatorics/Enumerative/IncompleteBinomialHarmonicSums": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Kollár's incomplete binomial sums"},
   "MathlibExt/Combinatorics/Enumerative/InvertTransform": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "INVERT transform"},
   "MathlibExt/Combinatorics/Enumerative/JacobiStirlingFirstKind": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Jacobi–Stirling and Legendre–Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/JosephusFunction": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
