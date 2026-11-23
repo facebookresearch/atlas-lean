@@ -7,13 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under Apache 2.0,
-StacksFrontier/AlgebraicGeometry/Flatness/FlatQuotientPullbackMono.lean.
-The original file has no individual author or copyright notice.
-Modification notice: port the complete algebraic tensor-base-change
-statements directly on Mathlib objects; geometric stalk/graph producers
-remain source-covered prerequisites rather than additional Wanted claims.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Flatness/FlatQuotientPullbackMono.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: port the algebraic tensor-base-change statements directly on Mathlib objects; the
+geometric stalk and graph producers remain source-covered prerequisites rather than additional
+Wanted claims.
 -/
 module
 

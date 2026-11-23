@@ -7,15 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/NumberTheory/Drinfeld/Shtuka/Basic.lean.
+Portions of this file are adapted from:
+
+`StacksFrontier/NumberTheory/Drinfeld/Shtuka/Basic.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
 Copyright (c) 2026 the Stacks project formalization contributors.
-Released under Apache 2.0 license as described in that repository's LICENSE.
-Modification: specialize to the prime field, use ATLAS's actual Zariski
-bundle trivializations, and add the fixed sheaf-module pushout describing
-the pole partial-Frobenius modification. Its geometric bundle/cokernel
-conditions are separated from the completed categorical construction.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: specialize to the prime field, use the Zariski bundle trivializations of this
+repository, and add the sheaf-module pushout describing the pole partial-Frobenius modification.
+Its geometric bundle and cokernel conditions are separated from the completed categorical
+construction.
 -/
 module
 
