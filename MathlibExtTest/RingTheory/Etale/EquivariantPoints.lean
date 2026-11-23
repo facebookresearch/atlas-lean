@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.Etale.EquivariantPoints
 set_option autoImplicit false
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     {K : Type*} [Field K] {Ω : Type*} [Field Ω] [Algebra K Ω]
     [IsAlgClosed Ω] [Algebra.IsAlgebraic K Ω] [IsGalois K Ω]
     {B : Type*} {C : Type*} [CommRing B] [CommRing C] [Algebra K B] [Algebra K C]

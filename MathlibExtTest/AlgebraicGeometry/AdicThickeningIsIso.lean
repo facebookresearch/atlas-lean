@@ -20,7 +20,7 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
 attribute [local instance] MvPolynomial.gradedAlgebra
 
-theorem exactSource
+private theorem exactSource
     {R : Type u} [CommRing R] [IsNoetherianRing R] (I : Ideal R) [IsAdicComplete I R]
     {Γ X : Scheme.{u}} (γ : Γ ⟶ Spec (CommRingCat.of R)) (f : X ⟶ Spec (CommRingCat.of R))
     (N : ℕ) (ιΓ : Γ ⟶ Proj (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R))

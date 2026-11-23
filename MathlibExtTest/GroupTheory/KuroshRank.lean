@@ -22,7 +22,7 @@ public import MathlibExt.GroupTheory.KuroshRank
 
 @[expose] public section
 
-theorem exactSource {G : Fin 2 → Type*} [∀ i, Group (G i)] [∀ i, Finite (G i)]
+private theorem exactSource {G : Fin 2 → Type*} [∀ i, Group (G i)] [∀ i, Finite (G i)]
     (H : Subgroup (Monoid.CoprodI G)) [H.FiniteIndex]
     (hH : ∀ (i : Fin 2) (g : Monoid.CoprodI G) (x : G i),
       g⁻¹ * Monoid.CoprodI.of x * g ∈ H → x = 1) :
@@ -41,7 +41,7 @@ theorem exactSourceIsTree {G : Fin 2 → Type*} [∀ i, Group (G i)] :
   Monoid.CoprodI.isTree_cosetGraph
 
 /-- The rank formula in a higher universe. -/
-theorem exactSourceTypeOne {G : Fin 2 → Type 1} [∀ i, Group (G i)] [∀ i, Finite (G i)]
+private theorem exactSourceTypeOne {G : Fin 2 → Type 1} [∀ i, Group (G i)] [∀ i, Finite (G i)]
     (H : Subgroup (Monoid.CoprodI G)) [H.FiniteIndex]
     (hH : ∀ (i : Fin 2) (g : Monoid.CoprodI G) (x : G i),
       g⁻¹ * Monoid.CoprodI.of x * g ∈ H → x = 1) :

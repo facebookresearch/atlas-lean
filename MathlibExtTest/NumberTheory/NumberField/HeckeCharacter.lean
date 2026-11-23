@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
 open NumberField IsDedekindDomain
 
 /-- Exact-source consumer: the original binders and conclusion. -/
-theorem exactSource
+private theorem exactSource
     (K : Type*) [Field K] [NumberField K]
     (χ₁ χ₂ : (AdeleRing (𝓞 K) K)ˣ →* ℂˣ)
     (hχ₁ : NumberField.IsIdeleClassChar (𝓞 K) K χ₁)

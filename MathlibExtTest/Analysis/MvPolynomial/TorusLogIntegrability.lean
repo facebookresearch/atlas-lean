@@ -15,7 +15,7 @@ public import MathlibExt.Analysis.MvPolynomial.TorusLogIntegrability
 open MeasureTheory
 
 /-- Consumer with the original binders. -/
-theorem exactSource {n : ℕ} (P : MvPolynomial (Fin n) ℂ) :
+private theorem exactSource {n : ℕ} (P : MvPolynomial (Fin n) ℂ) :
     IntegrableOn
       (fun θ : Fin n → ℝ ↦ Real.log ‖MvPolynomial.eval (fun i ↦ circleMap 0 1 (θ i)) P‖)
       (MvPolynomial.torusBox n) :=

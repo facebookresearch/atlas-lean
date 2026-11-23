@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.Smooth.NilpotentComparison
 universe u v w x
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     {R : Type u} [CommRing R] (I : Ideal R) (hI : IsNilpotent I)
     {A : Type v} {A' : Type w} {A₀ : Type x} [CommRing A] [CommRing A'] [CommRing A₀]
     [Algebra R A] [Algebra R A'] [Algebra R A₀]

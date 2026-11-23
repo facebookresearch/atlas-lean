@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.Ideal.FiniteSpan
 universe u
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource {B : Type u} [CommRing B] (P : B → Prop)
+private theorem exactSource {B : Type u} [CommRing B] (P : B → Prop)
     (hloc : ∀ 𝔭 : Ideal B, 𝔭.IsPrime → ∃ f : B, f ∉ 𝔭 ∧ P f) :
     ∃ (ι : Type u) (_ : Finite ι) (f : ι → B),
       Ideal.span (Set.range f) = ⊤ ∧ ∀ i : ι, P (f i) :=

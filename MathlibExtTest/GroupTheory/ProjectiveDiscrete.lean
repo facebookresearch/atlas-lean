@@ -17,7 +17,7 @@ open scoped MatrixGroups
 
 /-- Consumer with the original binders: discreteness unfolds to
 finiteness of the bounded-lift sets at every nonzero threshold. -/
-theorem exactSource {K₀ : Type*} [Field K₀] (K : Type*) [Field K]
+private theorem exactSource {K₀ : Type*} [Field K₀] (K : Type*) [Field K]
     [Algebra K₀ K] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     [Valued K Γ₀] {G : Type*} [Group G] (ρ : G →* PGL(2, K₀)) :
     IsDiscrete K ρ ↔

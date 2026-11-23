@@ -17,7 +17,7 @@ open scoped TensorProduct
 universe u v w
 
 /-- Consumer with the original binders. -/
-theorem exactSource
+private theorem exactSource
     (R : Type u) [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
     (K : Type v) [Field K] [Algebra R K] [IsFractionRing R K]
     (S : Type w) [CommRing S] [Algebra R S] [Algebra.FiniteType R S] [Module.Flat R S]
@@ -27,7 +27,7 @@ theorem exactSource
 
 /-- Higher-universe consumer: the algebra may live in `Type 2` while the
 base ring and its fraction field live in lower universes. -/
-theorem exactSourceHigherUniverse
+private theorem exactSourceHigherUniverse
     (R : Type 1) [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
     (K : Type 1) [Field K] [Algebra R K] [IsFractionRing R K]
     (S : Type 2) [CommRing S] [Algebra R S] [Algebra.FiniteType R S] [Module.Flat R S]

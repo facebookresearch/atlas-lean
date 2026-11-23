@@ -16,7 +16,7 @@ open Polynomial
 
 universe u v
 
-theorem exactSource
+private theorem exactSource
     {R : Type u} [CommRing R] (n : ℕ) (u : R) (hn : IsUnit (n : R)) (hu : IsUnit u) :
     Algebra.Etale R (AdjoinRoot (X ^ n - C u : R[X])) ∧
       Module.Finite R (AdjoinRoot (X ^ n - C u : R[X])) :=

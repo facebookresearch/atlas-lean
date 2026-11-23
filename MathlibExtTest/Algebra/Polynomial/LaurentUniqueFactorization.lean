@@ -20,7 +20,7 @@ open LaurentPolynomial
 universe u v
 
 /-- Consumer with the original binders and universe. -/
-theorem exactSource (R : Type u) [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R] :
+private theorem exactSource (R : Type u) [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R] :
     UniqueFactorizationMonoid R[T;T⁻¹] :=
   LaurentPolynomial.uniqueFactorizationMonoid R
 

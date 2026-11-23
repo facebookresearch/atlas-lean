@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.MvPowerSeries.ArtinianLocalization
 open scoped TensorProduct
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     (K : Type*) [Field K] {m r : ℕ} (g : Fin r → MvPolynomial (Fin m) K)
     (𝔫 : Ideal (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g))) [𝔫.IsMaximal]
     (h𝔫 : ∀ j, Ideal.Quotient.mk (Ideal.span (Set.range g)) (MvPolynomial.X j) ∈ 𝔫)

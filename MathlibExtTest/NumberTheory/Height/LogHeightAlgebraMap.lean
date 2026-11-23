@@ -18,7 +18,7 @@ import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 universe u v w
 
 /-- Source-shaped consumer with the original binders. -/
-theorem exactSource {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L]
+private theorem exactSource {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L]
     [Algebra K L] {ι : Type*} [Finite ι] (x : ι → K) :
     Height.logHeight (fun i => algebraMap K L (x i))
       = (Module.finrank K L : ℝ) * Height.logHeight x :=

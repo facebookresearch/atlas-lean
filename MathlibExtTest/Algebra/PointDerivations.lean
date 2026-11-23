@@ -92,7 +92,7 @@ universe u w
 
 /-- Consumer with the original binders: the field, algebra and coefficient
 modules share one universe, as in the source statement. -/
-theorem exactSource (k : Type u) [Field k] (A : Type u) [CommRing A]
+private theorem exactSource (k : Type u) [Field k] (A : Type u) [CommRing A]
     [Algebra k A] [Algebra.FiniteType k A] (ev : A →ₐ[k] k) :
     ∃ Ψ : ∀ (M : Type u) [AddCommGroup M] [Module k M],
         ↥(Algebra.PointDerivations k A ev M) ≃ₗ[k]

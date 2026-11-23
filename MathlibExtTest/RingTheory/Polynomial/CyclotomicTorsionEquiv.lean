@@ -17,7 +17,7 @@ universe u v
 open Polynomial Module
 
 /-- Consumer with the original binders, including independent universes. -/
-theorem exactSource
+private theorem exactSource
     {M : Type u} [AddCommGroup M] [Module ℚ[X] M] [Module ℚ M]
     [IsScalarTower ℚ ℚ[X] M] [FiniteDimensional ℚ M]
     {N : Type v} [AddCommGroup N] [Module ℚ[X] N] [Module ℚ N]
