@@ -8,8 +8,9 @@ What the tools own), as `autoform work list --json` lists them on the last main 
 from. This script downloads it, or reads a local copy, and lists through the GitHub API the repository's open pull
 requests, whatever their base, and those merged into main since that commit, whose work tasks.json may not show yet:
 GitHub's times are to the second, so one merged in the commit's second counts too. It finds those with GitHub's
-search, by the time they were merged, and among the closed pull requests updated last, which the search may not show
-yet; so it reads what main merged, however many other pull requests were closed or touched meanwhile.
+search, by the time they were merged, and among the closed pull requests updated in the last ten minutes, which the
+search may not show yet: it assumes that the search shows a merged pull request within ten minutes. So it reads what
+main merged, however many other pull requests were closed or touched meanwhile.
 Such a pull request takes a task when its title, body or branch name holds, as a whole word:
 
 - the task's article id (af_...), or one of its Lean declarations in full; or
@@ -32,8 +33,8 @@ waiting are waiting for, then the proofs, each in tasks.json's order, which is b
 for agents, with Autoform's fields.
 
 Reading the open pull requests needs no token, within the GitHub API's limit of 60 requests an hour from one
-address, but reading those merged since tasks.json's commit does, as their branches come from GitHub's GraphQL API:
-set GH_TOKEN (or GITHUB_TOKEN). Every request to the API sends that token, and a redirect away from it drops the
+address, but reading those merged since tasks.json's commit does, if there are any, as they come from GitHub's GraphQL
+API: set GH_TOKEN (or GITHUB_TOKEN). Every request to the API sends that token, and a redirect away from it drops the
 token. Only the Python standard library is used.
 """
 
@@ -63,10 +64,14 @@ MAIN = "main"
 SCHEMA = "autoform-work/v2"
 PER_PAGE = 100
 # Open pull requests are read a page at a time, at most this many pages. GitHub's search lists at most this many
-# pages of results, so a span of merge times with more is searched in two halves; the pull requests it finds are read
-# this many at a time through GitHub's GraphQL API.
+# pages of results, so a span of merge times with more is searched in two halves. As the search may not show the
+# latest merges yet, the closed pull requests updated in the last LAG are listed too, at most this many pages: the
+# search is assumed to show a merged pull request within LAG. The pull requests merged are read this many at a time
+# through GitHub's GraphQL API.
 OPEN_PAGES = 30
 SEARCH_PAGES = 10
+TAIL_PAGES = 30
+LAG = timedelta(minutes=10)
 BATCH = 100
 GRAPHQL = f"{API}/graphql"
 # A component of a declaration shared by at most this many tasks' declarations is specific enough to say which
@@ -209,32 +214,68 @@ def pull_requests(repository: str, since: str | None, token: str | None) -> list
                       "reads")
     if since:
         cutoff = moment(since)
-
-        def merged(row: dict) -> bool:
-            # The commit's second counts, as the commit and GitHub's merge times are both to the second.
-            return (bool(row.get("merged_at")) and moment(row["merged_at"]) >= cutoff
-                    and (row.get("base") or {}).get("ref") == MAIN)
-
-        # The closed pull requests updated last, which hold any merged since the search last indexed them, then the
-        # rest of those merged since the cutoff, which the search finds by their merge times, up to now.
-        recent = [row for row in listed(f"{API}/repos/{repository}/pulls?state=closed&sort=updated&direction=desc"
-                                        f"&per_page={PER_PAGE}", token, RENDERED) if merged(row)]
         now = datetime.now(timezone.utc).replace(microsecond=0)
-        numbers = sorted(merged_numbers(repository, cutoff.astimezone(timezone.utc).replace(microsecond=0), now, token)
-                         - {row["number"] for row in recent})
+        # Those merged in the last LAG, from the closed pull requests updated since, then all those merged since the
+        # cutoff that the search shows, up to now.
+        numbers = recently_merged(repository, max(cutoff, now - LAG), cutoff, token)
+        numbers |= merged_numbers(repository, cutoff.astimezone(timezone.utc).replace(microsecond=0), now, token)
         if numbers and not token:
             raise Failure("reading the pull requests merged into main since tasks.json was computed needs a token, as "
-                          "their branches come from GitHub's GraphQL API: set GH_TOKEN to a GitHub token")
-        found += recent
-        for start in range(0, len(numbers), BATCH):
-            found += [row for row in merged_pulls(repository, numbers[start:start + BATCH], token) if merged(row)]
+                          "they come from GitHub's GraphQL API: set GH_TOKEN to a GitHub token")
+        ordered = sorted(numbers)
+        for start in range(0, len(ordered), BATCH):
+            found += [row for row in merged_pulls(repository, ordered[start:start + BATCH], token)
+                      if merged_into_main(row, cutoff)]
     return found
+
+
+def merged_into_main(row: dict, cutoff: datetime) -> bool:
+    """Whether the pull request *row* was merged into MAIN at or after *cutoff*. The commit's second counts, as the
+    commit and GitHub's merge times are both to the second."""
+    return (bool(row.get("merged_at")) and moment(row["merged_at"]) >= cutoff
+            and (row.get("base") or {}).get("ref") == MAIN)
+
+
+def recently_merged(repository: str, window: datetime, cutoff: datetime, token: str | None) -> set[int]:
+    """The numbers of the closed pull requests updated at or after *window* that were merged into MAIN at or after
+    *cutoff*. GitHub lists closed pull requests by their last update, newest first, and one merged at or after
+    *window* was updated then too, so it is among those, whether or not the search shows it yet. One updated while
+    they are read moves to the first page, so that page is read once more at the end: a whole page of those, which may
+    hide more, or more pages than this script reads, stop it."""
+    url = f"{API}/repos/{repository}/pulls?state=closed&sort=updated&direction=desc&per_page={PER_PAGE}&page="
+    numbers: set[int] = set()
+    first: set[tuple[int, str]] = set()
+
+    def read(page: int) -> list[dict]:
+        rows = listed(url + str(page), token)
+        try:
+            numbers.update(row["number"] for row in rows if merged_into_main(row, cutoff))
+            return [{**row, "updated": moment(row["updated_at"])} for row in rows]
+        except (KeyError, TypeError, ValueError):
+            raise Failure(f"{url}{page} did not list what it should") from None
+
+    for page in range(1, TAIL_PAGES + 1):
+        rows = read(page)
+        if page == 1:
+            first = {(row["number"], row["updated_at"]) for row in rows}
+        if len(rows) < PER_PAGE or rows[-1]["updated"] < window:
+            break
+    else:
+        raise Failure(f"more than {TAIL_PAGES * PER_PAGE} closed pull requests were updated since "
+                      f"{window.isoformat()}, more than this script reads; run it again in a few minutes")
+    if page > 1:
+        rows = read(1)
+        if len(rows) == PER_PAGE and not any((row["number"], row["updated_at"]) in first for row in rows):
+            raise Failure("so many closed pull requests were updated while this script read them that it may have "
+                          "missed one; run it again")
+    return numbers
 
 
 def merged_numbers(repository: str, start: datetime, end: datetime, token: str | None) -> set[int]:
     """The numbers of the pull requests merged into MAIN from *start* to *end*, both to the second and included, as
     GitHub's search finds them by their merge times. A span with more than the search lists is searched in two
-    halves, and a search that timed out, or listed fewer than it counted, stops the script."""
+    halves. A search that timed out, or that listed fewer than it counted, on any page or in its halves, stops the
+    script."""
     stamp = "%Y-%m-%dT%H:%M:%SZ"
     query = f"repo:{repository} is:pr is:merged base:{MAIN} merged:{start.strftime(stamp)}..{end.strftime(stamp)}"
     numbers: set[int] = set()
@@ -253,14 +294,15 @@ def merged_numbers(repository: str, start: datetime, end: datetime, token: str |
         if answer.get("incomplete_results"):
             raise Failure("GitHub's search timed out before it listed every pull request merged into main since "
                           "tasks.json was computed; run this script again")
-        total = answer["total_count"]
+        total = max(total, answer["total_count"])
         if total > SEARCH_PAGES * PER_PAGE:
             if end <= start:
                 raise Failure(f"more than {SEARCH_PAGES * PER_PAGE} pull requests were merged into main at "
                               f"{start.strftime(stamp)}, more than this script reads")
-            middle = start + (end - start) // 2
-            return (merged_numbers(repository, start, middle, token)
-                    | merged_numbers(repository, middle + timedelta(seconds=1), end, token))
+            middle = start + timedelta(seconds=int((end - start).total_seconds()) // 2)
+            numbers |= (merged_numbers(repository, start, middle, token)
+                        | merged_numbers(repository, middle + timedelta(seconds=1), end, token))
+            break
         numbers |= {item["number"] for item in items}
         if len(items) < PER_PAGE:
             break
