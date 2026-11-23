@@ -66,7 +66,7 @@ theorem test_moment_pure_uniform : renyiMoment P1 Q1 2 = 2 := by
     show ((2 : ℝ) : EReal) = 2 from rfl]
 
 theorem test_div_pure_uniform : renyiDiv P1 Q1 2 = (Real.log 2 : EReal) := by
-  rw [renyiDiv_of_support test_support (show (2 : ℝ) ≠ 1 by norm_num)]
+  rw [renyiDiv_of_support test_support (by norm_num : (1 : ℝ) < 2)]
   unfold renyiDivReal
   rw [test_momentReal_pure_uniform, EReal.coe_eq_coe_iff]
   norm_num
@@ -101,7 +101,11 @@ theorem test_P1_ne_Q1 : P1 ≠ Q1 := by
 /-- Regression test: at order 1 the divergence is infinite, not 0. -/
 theorem test_div_order_one_top : renyiDiv P1 Q1 1 = ⊤ := by
   unfold renyiDiv
-  exact ite_eq_right (fun h => h.2 rfl)
+  exact ite_eq_right (fun h => lt_irrefl 1 h.2)
+
+/-- Regression test: below order 1 the divergence is infinite. -/
+theorem test_div_order_half_top : renyiDiv P1 Q1 (1/2 : ℝ) = ⊤ :=
+  renyiDiv_of_le_one (by norm_num)
 
 theorem test_moment_off_support_top : renyiMoment P1 Q0 2 = ⊤ :=
   renyiMoment_of_not_support test_not_support_off
@@ -145,8 +149,7 @@ theorem test_isRDP_excludes_one (ε : ℝ) : ¬ IsRDP Mtest adjTest 1 ε := by
 theorem test_isApproxDP :
     CSLibExt.Privacy.DifferentialPrivacy.IsApproxDP Mtest adjTest
       (rdpEps2 (Real.log 2) (1 / 2) 2) (1 / 2) :=
-  isApproxDP_of_isRDP (Real.log_nonneg (by norm_num))
-    (by norm_num) (by norm_num) test_isRDP
+  isApproxDP_of_isRDP (by norm_num) (by norm_num) test_isRDP
 
 theorem test_isRDP_bind :
     IsRDP (fun d => (Mtest d).bind PMF.pure) adjTest 2 (Real.log 2) :=
