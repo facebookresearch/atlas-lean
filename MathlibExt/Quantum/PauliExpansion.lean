@@ -9,14 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Quantum.PauliXZ
-public import Mathlib.Analysis.Matrix.Spectrum
+public import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Matrix.Spectrum
 public import Mathlib.LinearAlgebra.Matrix.PosDef
-public import Mathlib.Analysis.Matrix.Order
-public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.Analysis.Complex.Order
+import Mathlib.Analysis.Matrix.Order
+import Mathlib.Analysis.RCLike.Basic
+import Mathlib.Analysis.Complex.Order
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.LinearAlgebra.Matrix.ConjTranspose
-import Mathlib.Analysis.Matrix.PosDef
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 
 /-!
@@ -250,7 +250,7 @@ private theorem star_neg_one_pow (n : ℕ) : star ((-1 : ℂ) ^ n) = (-1 : ℂ) 
   have hs1 : star (-1 : ℂ) = -1 := by rw [star_neg, star_one]
   rw [hs1]
 
-/-- real coefficients -/
+/-- The Hermitian Pauli string `hermPauli a b` is Hermitian: the phase `i^|a∧b|` makes `X^a Z^b` self-adjoint. -/
 theorem hermPauli_isHermitian {k : ℕ} (a b : Fin k → ZMod 2) : (hermPauli a b).IsHermitian := by
   unfold Matrix.IsHermitian
   ext y x
