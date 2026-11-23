@@ -83,7 +83,7 @@ private theorem sum_survivalWeight_aux {S : Type*} [Fintype S] [DecidableEq S]
           intro a b t
           change (Fin.snocEquiv fun _ => S) (b, a) t
             = Fin.snoc (α := fun _ => S) a b t
-          exact Fin.snocEquiv_apply _ _ _
+          exact congrFun (Fin.snocEquiv_apply _ _) t
         have hef : ∀ a b, e (a, b) = Fin.snoc (α := fun _ => S) a b :=
           fun a b => funext (he a b)
         calc ∑ y : Fin (n + 1 + 1) → S,
