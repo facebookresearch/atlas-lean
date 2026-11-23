@@ -142,6 +142,8 @@ def native_test_inputs(root: Path = ROOT, tests: tuple[str, ...] = NATIVE_TESTS)
         if path in inputs:
             continue
         inputs.add(path)
+        if not path.endswith((".py", ".sh", ".lean")):
+            continue  # data: an input, but nothing to follow
         text = (root / path).read_text(encoding="utf-8")
         found: set[str] = set()
         if path.endswith(".py"):
@@ -208,10 +210,11 @@ class BuildTrims(unittest.TestCase):
         script = run_block(self.build[FINGERPRINT])
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
+            lean = "MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean"
             for name in (".github/workflows/ci.yml", "lean-toolchain", "scripts/check.sh",
-                         "scripts/taxonomy.json", "README.md"):
+                         "scripts/taxonomy.json", "README.md", lean):
                 (root / name).parent.mkdir(parents=True, exist_ok=True)
-                (root / name).write_text(name)
+                (root / name).write_text(name + "\n")
             subprocess.run(["git", "init", "-q"], cwd=root, check=True)
 
             def key(image: str | None = "20261116.1", failing: str = "") -> str:
@@ -252,14 +255,20 @@ class BuildTrims(unittest.TestCase):
             (root / "scripts/new.py").write_text("")
             added = key()
             self.assertNotEqual(added, moded, "a new script must change the fingerprint")
-            # The same index, checked out with other line endings.
+            # The same index, checked out with other line endings: a script, a pin
+            # and a Lean source in turn.
             subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x"],
                            cwd=root, check=True)
-            (root / ".git/info/attributes").write_text("*.sh text eol=crlf\n")
-            (root / "scripts/check.sh").unlink()
-            subprocess.run(["git", "checkout", "--", "scripts/check.sh"], cwd=root, check=True)
-            self.assertIn(b"\r\n", (root / "scripts/check.sh").read_bytes())
-            self.assertNotEqual(key(), added, "other checked-out bytes must change the fingerprint")
+            previous = added
+            for path in ("scripts/check.sh", "lean-toolchain", lean):
+                with (root / ".git/info/attributes").open("a") as attributes:
+                    attributes.write(f"{path} text eol=crlf\n")
+                (root / path).unlink()
+                subprocess.run(["git", "checkout", "--", path], cwd=root, check=True)
+                self.assertIn(b"\r\n", (root / path).read_bytes())
+                converted = key()
+                self.assertNotEqual(converted, previous, f"other checked-out bytes of {path} must count")
+                previous = converted
 
     def test_native_test_inputs_follow_new_reads_and_imports(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -269,10 +278,12 @@ class BuildTrims(unittest.TestCase):
                          "scripts/data/items.json", "scripts/bump/__init__.py", "scripts/bump/pinned.py",
                          "scripts/bump/leaf.py", "scripts/pkg/__init__.py", "scripts/pkg/leaf.py",
                          ".github/workflows/ci.yml", "MathlibExt/A.lean", "MathlibExt/B.lean",
-                         "blueprint/priorities.json", "scripts/check.lean", "MathlibExt/Helper.lean"):
+                         "blueprint/priorities.json", "scripts/check.lean", "MathlibExt/Helper.lean",
+                         "scripts/fixtures/sample.bin"):
                 (root / name).parent.mkdir(parents=True, exist_ok=True)
                 (root / name).write_text("")
             (root / "scripts/helper.py").write_text('DATA = "data.json"\n')
+            (root / "scripts/fixtures/sample.bin").write_bytes(b"\xff\x00")
             (root / "scripts/bump/pinned.py").write_text("from . import leaf\n")
             (root / "scripts/run.sh").write_text(
                 "scripts/list.sh\npython3 - <<'PY'\nimport embedded\nfrom pkg import leaf\nPY\n")
@@ -285,6 +296,7 @@ class BuildTrims(unittest.TestCase):
                 'ITEMS = Path("scripts", "data", "items.json").read_text()\n'
                 'PRIORITIES = (Path("blueprint") / "priorities.json").read_text()\n'
                 "DRIVER = 'scripts/check.lean'\n"
+                'BLOB = (ROOT / "scripts/fixtures/sample.bin").read_bytes()\n'
                 'CI = ROOT.joinpath(".github", "workflows", "ci.yml").read_text()\n'
                 "RUN = ['scripts/run.sh']\nPAIR = ['MathlibExt.A']\n")
             self.assertEqual(native_test_inputs(root, ("scripts/test_x_native.py",)), {
@@ -293,23 +305,29 @@ class BuildTrims(unittest.TestCase):
                 "scripts/bump/__init__.py", "scripts/bump/pinned.py", "scripts/bump/leaf.py",
                 "scripts/run.sh", "scripts/list.sh", "scripts/embedded.py", "scripts/pkg/__init__.py",
                 "scripts/pkg/leaf.py", "MathlibExt/A.lean", "MathlibExt/B.lean", "blueprint/priorities.json",
-                "scripts/check.lean", "MathlibExt/Helper.lean"})
+                "scripts/check.lean", "MathlibExt/Helper.lean", "scripts/fixtures/sample.bin"})
 
     def test_disk_cleanup_runs_unless_60_gib_are_known_to_be_free(self):
         cases = {"62914560": False, "  62914560": False, "62914559": True, "000009": True,
                  "1 00000000": True, "unknown": True, None: True}
+        removal = "rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc"
         for name, job in (("ci.yml", "build"), ("bump-cache.yml", "warm")):
             script = run_block(steps(jobs(workflow(name))[job])["Free disk space for Lean caches"])
             for available, cleans in cases.items():
                 with self.subTest(workflow=name, available=available):
+                    # Free space in KiB, only when asked in KiB.
                     report = "return 1" if available is None else f"printf ' Avail\\n%s\\n' '{available}'"
-                    stubs = ('sudo() { echo CLEANED; }\n'
-                             f'df() {{ if [[ "$1" == -h ]]; then echo df; else {report}; fi; }}\n')
+                    stubs = ('sudo() { echo "SUDO $*"; }\n'
+                             'df() {\n'
+                             '  if [[ "$*" == "-h /" ]]; then echo df\n'
+                             f'  elif [[ "$*" == "--output=avail -k /" ]]; then {report}\n'
+                             '  else echo "unexpected df $*" >&2; return 2; fi\n'
+                             '}\n')
                     result = subprocess.run(["bash", "-c", stubs + script], capture_output=True, text=True)
                     self.assertEqual(result.returncode, 0, result.stderr)
                     self.assertEqual(result.stderr, "")
-                    self.assertEqual("CLEANED" in result.stdout, cleans)
-
+                    calls = [line for line in result.stdout.splitlines() if line.startswith("SUDO ")]
+                    self.assertEqual(calls, [f"SUDO {removal}"] if cleans else [])
 
 if __name__ == "__main__":
     unittest.main()
