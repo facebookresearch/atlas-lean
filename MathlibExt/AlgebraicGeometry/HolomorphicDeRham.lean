@@ -7,13 +7,18 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The tangent-covector description is adapted from AxiomMath/TauCeti,
-62bbc0596dc3539d488232e4e924a338548ea0a9,
-TauCeti/Geometry/Manifold/DifferentialForm/Basic.lean.
+Portions of this file are adapted from:
+
+`TauCeti/Geometry/Manifold/DifferentialForm/Basic.lean` in
+https://github.com/TauCetiProject/TauCeti
+at commit 62bbc0596dc3539d488232e4e924a338548ea0a9:
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Authors: The Tau Ceti contributors. Apache License 2.0.
-Modification: complex coefficients, holomorphic coordinate regularity and
-sectionwise normalization of the sheaf de Rham differential.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Tau Ceti contributors
+
+Modification notice: the tangent-covector description of forms, specialized to
+complex coefficients with holomorphic coordinate regularity and a sectionwise
+normalization of the sheaf de Rham differential.
 -/
 module
 
@@ -21,8 +26,13 @@ public import Mathlib.Topology.Algebra.Module.Alternating.Basic
 public import Mathlib.Geometry.Manifold.MFDeriv.Basic
 public import Mathlib.Algebra.Homology.Single
 public import Mathlib.Algebra.Homology.QuasiIso
+public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
+public import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
+public import Mathlib.Algebra.Category.ModuleCat.Limits
+public import Mathlib.CategoryTheory.Sites.ConstantSheaf
+public import Mathlib.CategoryTheory.Sites.LeftExact
+public import Mathlib.Topology.Sheaves.Abelian
 public import MathlibExt.AlgebraicGeometry.AnalyticRealization
-public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 
 /-!
 # A sectionwise characterized holomorphic de Rham complex
@@ -45,7 +55,7 @@ namespace MathlibExt.AlgebraicGeometry.HolomorphicDeRham
 
 open CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace
 open scoped Manifold ContDiff
-open AnalyticRealization ConstructibleComplexes
+open AnalyticRealization
 
 variable (X : AnalyticRealization.ComplexScheme) (d : ℕ) [AnalyticManifold X d]
 
@@ -129,8 +139,8 @@ def holomorphicForms (U : Opens (ComplexAnalytification.space X)) (p : ℕ) :
 
 /-- Rational coefficients of a complex sheaf, with the sheaf preserved by
 the actual restriction-of-scalars functor. -/
-def rationalRestriction : CoefficientSheaf ℂ (ComplexAnalytification.space X) ⥤
-    CoefficientSheaf ℚ (ComplexAnalytification.space X) :=
+def rationalRestriction : TopCat.Sheaf (ModuleCat.{0} ℂ) (ComplexAnalytification.space X) ⥤
+    TopCat.Sheaf (ModuleCat.{0} ℚ) (ComplexAnalytification.space X) :=
   sheafCompose (Opens.grothendieckTopology (ComplexAnalytification.space X))
     (ModuleCat.restrictScalars (algebraMap ℚ ℂ))
 
@@ -139,13 +149,14 @@ instance rationalRestriction_additive : (rationalRestriction X).Additive where
 
 /-- The constant rational sheaf concentrated in degree zero. -/
 def rationalUnitComplex : CochainComplex
-    (CoefficientSheaf ℚ (ComplexAnalytification.space X)) ℤ :=
+    (TopCat.Sheaf (ModuleCat.{0} ℚ) (ComplexAnalytification.space X)) ℤ :=
   (HomologicalComplex.single _ (ComplexShape.up ℤ) 0).obj
-    (PerverseSheaves.rationalConstantSheaf (ComplexAnalytification.space X))
+    ((constantSheaf (Opens.grothendieckTopology (ComplexAnalytification.space X))
+      (ModuleCat.{0} ℚ)).obj (ModuleCat.of ℚ ℚ))
 
 /-- The constant complex sheaf concentrated in degree zero. -/
 def complexUnitComplex : CochainComplex
-    (CoefficientSheaf ℂ (ComplexAnalytification.space X)) ℤ :=
+    (TopCat.Sheaf (ModuleCat.{0} ℂ) (ComplexAnalytification.space X)) ℤ :=
   (HomologicalComplex.single _ (ComplexShape.up ℤ) 0).obj
     ((constantSheaf (Opens.grothendieckTopology (ComplexAnalytification.space X))
       (ModuleCat.{0} ℂ)).obj (ModuleCat.of ℂ ℂ))
@@ -154,7 +165,7 @@ def complexUnitComplex : CochainComplex
 coordinate differential and constant-unit map. No realization is asserted
 to exist by this structure definition. -/
 structure HolomorphicDeRhamData where
-  complex : CochainComplex (CoefficientSheaf ℂ (ComplexAnalytification.space X)) ℤ
+  complex : CochainComplex (TopCat.Sheaf (ModuleCat.{0} ℂ) (ComplexAnalytification.space X)) ℤ
   negative : ∀ j : ℤ, j < 0 → IsZero (complex.X j)
   sections (U : Opens (ComplexAnalytification.space X)) (p : ℕ) :
     (complex.X (p : ℤ)).obj.obj (op U) ≃ₗ[ℂ] holomorphicForms X d U p
@@ -196,7 +207,7 @@ the form degree and unchanged terms at and above that degree. This is not
 the cohomological truncation of a complex after taking global sections. -/
 structure HodgeCut {X : AnalyticRealization.ComplexScheme} {d : ℕ}
     [AnalyticManifold X d] (D : HolomorphicDeRhamData X d) (p : ℤ) where
-  complex : CochainComplex (CoefficientSheaf ℂ (ComplexAnalytification.space X)) ℤ
+  complex : CochainComplex (TopCat.Sheaf (ModuleCat.{0} ℂ) (ComplexAnalytification.space X)) ℤ
   inclusion : complex ⟶ D.complex
   zero_below : ∀ j, j < p → IsZero (complex.X j)
   unchanged_above : ∀ j, p ≤ j → IsIso (inclusion.f j)

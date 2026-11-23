@@ -7,8 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Algebra.Homology.DerivedCategory.Basic
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
+public import Mathlib.Topology.Sheaves.Abelian
 public import MathlibExt.AlgebraicGeometry.HolomorphicDeRham
 public import MathlibExt.Geometry.RationalHodgeStructures
 
@@ -31,14 +33,14 @@ Peters--Steenbrink, *Mixed Hodge Structures*, Chapters 2 and 3.
 namespace MathlibExt.AlgebraicGeometry.HodgeRealization
 
 open CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace
-open AnalyticRealization ConstructibleComplexes HolomorphicDeRham
+open AnalyticRealization HolomorphicDeRham
 open MathlibExt.Geometry.RationalHodgeStructures
 
 attribute [local instance] HasDerivedCategory.standard
 
 /-- Global sections of the actual sheaf, evaluated at the maximal open. -/
 def globalSections (k : Type) [Field k] (Z : TopCat.{0}) :
-    CoefficientSheaf k Z ⥤ ModuleCat.{0} k :=
+    TopCat.Sheaf (ModuleCat.{0} k) Z ⥤ ModuleCat.{0} k :=
   (sheafSections (Opens.grothendieckTopology Z) (ModuleCat.{0} k)).obj (op ⊤)
 
 instance globalSections_additive (k : Type) [Field k] (Z : TopCat.{0}) :
@@ -49,8 +51,8 @@ instance globalSections_additive (k : Type) [Field k] (Z : TopCat.{0}) :
 specified geometric complex. These are toolbox data, not a replacement for
 the geometric complex. -/
 structure InjectiveCochainResolution (k : Type) [Field k] (Z : TopCat.{0})
-    (K : CochainComplex (CoefficientSheaf k Z) ℤ) where
-  complex : CochainComplex (CoefficientSheaf k Z) ℤ
+    (K : CochainComplex (TopCat.Sheaf (ModuleCat.{0} k) Z) ℤ) where
+  complex : CochainComplex (TopCat.Sheaf (ModuleCat.{0} k) Z) ℤ
   comparison : K ⟶ complex
   quasiIso : QuasiIso comparison
   injective : ∀ j, Injective (complex.X j)

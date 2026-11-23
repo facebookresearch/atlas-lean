@@ -26,6 +26,7 @@ assumed here.
 -/
 module
 
+public import Mathlib.Algebra.Algebra.Rat
 public import Mathlib.Algebra.Category.ModuleCat.Basic
 public import Mathlib.LinearAlgebra.Complex.Module
 public import Mathlib.LinearAlgebra.DirectSum.Finsupp
@@ -35,11 +36,12 @@ public import Mathlib.RingTheory.TensorProduct.IsBaseChangeHom
 # Rational pure and mixed Hodge data
 
 The rational carrier is a finite-dimensional rational vector space, and the
-complex carrier is a genuine base change of it. Conjugation fixes its rational
-image. Mixed purity is expressed by the opposed-bigrading characterization
-proved in the TauCeti source, including recovery of both filtrations and
-conjugation modulo lower weight. A bare existence of an unrelated Hodge
-structure on graded pieces would lose that link.
+complex carrier is a genuine base change of it along a rational linear map.
+Conjugation fixes its rational image. Mixed purity is expressed by the
+opposed-bigrading characterization proved in the TauCeti source, including
+recovery of both filtrations and conjugation modulo lower weight. A bare
+existence of an unrelated Hodge structure on graded pieces would lose that
+link.
 
 These are completed definitions; the geometry producing them is requested
 separately. Sources: P. Deligne, *Théorie de Hodge II*, §§1.2 and 2.3;
@@ -60,9 +62,13 @@ structure RationalComplexification (V : ModuleCat.{0} ℚ) where
   [finiteDimensional : FiniteDimensional ℚ V]
   /-- The complex vector space. -/
   complexSpace : ModuleCat.{0} ℂ
-  /-- The comparison map from the rational carrier. -/
-  comparisonMap : V →ₗ[ℤ] complexSpace
-  /-- It exhibits the complex space as the base change of the rational one. -/
+  /-- Its rational structure, restricted from the complex one. -/
+  [ratModule : Module ℚ complexSpace]
+  /-- The rational and complex scalar actions are compatible. -/
+  [isScalarTower : IsScalarTower ℚ ℂ complexSpace]
+  /-- The rational comparison map from the rational carrier. -/
+  comparisonMap : V →ₗ[ℚ] complexSpace
+  /-- It exhibits the complex space as the base change `ℂ ⊗[ℚ] V`. -/
   baseChange : IsBaseChange ℂ comparisonMap
   /-- The complex conjugation. -/
   conjugation : complexSpace ≃ₛₗ[starRingEnd ℂ] complexSpace
@@ -70,6 +76,9 @@ structure RationalComplexification (V : ModuleCat.{0} ℚ) where
   involutive : Function.Involutive conjugation
   /-- Conjugation fixes the rational image. -/
   rational_fixed : ∀ v, conjugation (comparisonMap v) = comparisonMap v
+
+attribute [instance] RationalComplexification.ratModule
+  RationalComplexification.isScalarTower
 
 /-- Complexification of a rational subspace through the fixed comparison map. -/
 def complexifiedSubspace {V : ModuleCat.{0} ℚ} (C : RationalComplexification V)

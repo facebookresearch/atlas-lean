@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import MathlibExt.AlgebraicGeometry.HodgeRealization
+public import MathlibExt.AlgebraicGeometry.Variety
 
 /-!
 # Geometric pure Hodge realization
@@ -31,7 +32,7 @@ namespace WantedExt.AlgebraicGeometry.HodgeRealizationWanted
 open CategoryTheory
 open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry
-open AnalyticRealization HolomorphicDeRham HodgeRealization PerverseSheaves
+open AnalyticRealization HolomorphicDeRham HodgeRealization
 
 /-- The actual holomorphic de Rham unit is a quasi-isomorphism. Its degree
 zero map is fixed by the constant global function `1`; its higher arrows
@@ -44,7 +45,7 @@ public theorem_wanted holomorphic_poincare
 cohomology as a pure rational Hodge structure of weight its cohomological
 degree, with precisely the geometric brutal-cut Hodge filtration. -/
 public def_wanted smooth_proper_hodge_realization
-    (X : AnalyticRealization.ComplexScheme) (d : ℕ) [IsComplexVariety X]
+    (X : AnalyticRealization.ComplexScheme) (d : ℕ) [IsVariety ℂ X.left]
     [Smooth X.hom] [IsProper X.hom] [AnalyticManifold X d]
     [RegularFunctions X d] (D : HolomorphicDeRhamData X d)
     (R : BettiDeRhamResolution X d D) (n : ℕ) : PureBettiHodgeData R (n : ℤ)
