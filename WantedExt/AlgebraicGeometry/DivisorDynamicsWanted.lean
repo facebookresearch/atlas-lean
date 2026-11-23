@@ -9,7 +9,6 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.DivisorDynamics
-public import MathlibExt.AlgebraicGeometry.SmoothKrullDim
 
 /-!
 # Degree growth and nef eigenclasses of actual endomorphisms
@@ -44,9 +43,9 @@ theorem_wanted degreeGrowth_converges (k : Type u) [Field k] [IsAlgClosed k] [Ch
     (d : ℕ) (hd : 0 < d) [SmoothOfRelativeDimension d X.hom]
     (projective : IsProjectiveVariety X) (H : LineBundle X.left)
     (ample : IsAmpleLine H) (f : X ⟶ X) [IsFinite f.left] [IsDominant f.left] :
-    0 < firstDynamicalDegree d (SmoothOfRelativeDimension.topologicalKrullDim_le X.hom d) H f ∧
-      Tendsto (degreeGrowth d (SmoothOfRelativeDimension.topologicalKrullDim_le X.hom d) H f) atTop
-        (𝓝 (firstDynamicalDegree d (SmoothOfRelativeDimension.topologicalKrullDim_le X.hom d) H f))
+    0 < firstDynamicalDegree d (topologicalKrullDim_eq_of_smooth X d) hd H ample f ∧
+      Tendsto (degreeGrowth d (topologicalKrullDim_eq_of_smooth X d) hd H f) atTop
+        (𝓝 (firstDynamicalDegree d (topologicalKrullDim_eq_of_smooth X d) hd H ample f))
 
 theorem_wanted firstDynamicalDegree_independent (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom] [IsNoetherian X.left]
@@ -54,8 +53,8 @@ theorem_wanted firstDynamicalDegree_independent (k : Type u) [Field k] [IsAlgClo
     (projective : IsProjectiveVariety X) (H : LineBundle X.left)
     (ample : IsAmpleLine H) (f : X ⟶ X) [IsFinite f.left] [IsDominant f.left]
     (H' : LineBundle X.left) (ample' : IsAmpleLine H') :
-    firstDynamicalDegree d (SmoothOfRelativeDimension.topologicalKrullDim_le X.hom d) H f =
-      firstDynamicalDegree d (SmoothOfRelativeDimension.topologicalKrullDim_le X.hom d) H' f
+    firstDynamicalDegree d (topologicalKrullDim_eq_of_smooth X d) hd H ample f =
+      firstDynamicalDegree d (topologicalKrullDim_eq_of_smooth X d) hd H' ample' f
 
 def_wanted nefEigenclass (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom] [IsNoetherian X.left]
@@ -64,7 +63,7 @@ def_wanted nefEigenclass (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (ample : IsAmpleLine H) (f : X ⟶ X) [IsFinite f.left] [IsDominant f.left] :
     {v : NDiv X // v ≠ 0 ∧ IsNefClass v ∧
       ∀ C, v.val (composeCurve f C) =
-        firstDynamicalDegree d (SmoothOfRelativeDimension.topologicalKrullDim_le X.hom d) H f *
+        firstDynamicalDegree d (topologicalKrullDim_eq_of_smooth X d) hd H ample f *
           v.val C}
 
 end WantedExt.AlgebraicGeometry.DivisorDynamicsWanted

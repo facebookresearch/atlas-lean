@@ -39,17 +39,19 @@ open scoped BigOperators
 
 universe u
 
-/-- A curve on `X`: a morphism to `X` from a smooth proper integral curve over `k`. -/
+/-- A curve on `X`: a morphism to `X` from a proper integral curve over `k`, possibly
+singular. Every integral curve in `X` is one, with its inclusion, so this works over every
+field, including imperfect fields, where an integral curve need not be the image of a
+smooth curve. -/
 structure Curve {k : Type u} [Field k] (X : Over (Spec (.of k))) where
   /-- The source curve. -/
   source : Over (Spec (.of k))
-  [proper : IsProper source.hom]
-  [smooth : SmoothOfRelativeDimension 1 source.hom]
+  [properCurve : IsProperCurve source.hom]
   [integral : IsIntegral source.left]
   /-- The morphism to `X`. -/
   map : source ⟶ X
 
-attribute [instance] Curve.proper Curve.smooth Curve.integral
+attribute [instance] Curve.properCurve Curve.integral
 
 /-- The degree of every line bundle on `X` along a curve: the degree of its pullback to
 the source curve. -/
