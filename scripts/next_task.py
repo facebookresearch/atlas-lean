@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Print the next ready formalization tasks of ATLAS that no pull request has taken.
 
-    python3 scripts/next_task.py [-n N] [--json] [--tasks FILE_OR_URL] [--repo OWNER/NAME]
+    python3 scripts/next_task.py [-n N] [--json] [--tasks FILE_OR_URL] [--priorities FILE_OR_URL] [--repo OWNER/NAME]
 
 The site publishes tasks.json: the articles Autoform finds ready to state or to prove (docs/BLUEPRINT.md,
 What the tools own), as `autoform work list --json` lists them on the last main build, with the commit they come
@@ -26,8 +26,13 @@ GitHub shows as code: an HTML comment, a link's title, or a block that GitHub sh
 or a full declaration counts wherever the body's Markdown holds it, though, and counts as written there.
 
 Of the free tasks it prints the next N: the statements still to write first, as they are what the results still
-waiting are waiting for, then the proofs, each in tasks.json's order, which is by article path. --json prints them
-for agents, with Autoform's fields.
+waiting are waiting for, then the proofs. Among the statements, and among the proofs, the tasks of higher priority
+come first, and those of equal priority in tasks.json's order. blueprint/priorities.json gives the priorities
+(CONTRIBUTING.md, Picking a task): a weight for a subject or a field of the graph, named as the start of the node
+ids under it (`NumberTheory/zeta-l-functions`), which counts for each task under it that no longer name covers, and
+a default for the others. --priorities reads another such file, or a URL; without one, as when this script runs
+outside the repository, all tasks have the same priority. --json prints the tasks for agents, with Autoform's
+fields, and their priorities.
 
 The GitHub API needs no token, within its limit of 60 requests an hour from one address; when GH_TOKEN (or
 GITHUB_TOKEN) is set, every request to it sends that token, and a redirect away from it drops the token. Only the
@@ -40,6 +45,7 @@ import argparse
 import gzip
 import html.parser
 import json
+import math
 import os
 import re
 import string
@@ -58,6 +64,9 @@ API = "https://api.github.com"
 MAIN = "main"
 # The `autoform work list --json` format tasks.json has; another one may mean other fields.
 SCHEMA = "autoform-work/v2"
+# The priorities of the graph's areas, in the checkout this script is in, and the format of that file.
+PRIORITIES = Path(__file__).resolve().parent.parent / "blueprint" / "priorities.json"
+PRIORITIES_SCHEMA = "atlas-task-priorities/v1"
 PER_PAGE = 100
 # Open pull requests are read a page at a time, and closed ones newest first until they predate tasks.json's
 # commit; at most this many pages of each.
@@ -168,6 +177,77 @@ def usable(item: object) -> bool:
             and isinstance(item.get("lean_targets"), list) and (item["lean_targets"] != [] or item["phase"] != "proof")
             and all(isinstance(target, dict) and isinstance(target.get("declaration"), str)
                     and target["declaration"].strip() != "" for target in item["lean_targets"]))
+
+
+class Repeated(Exception):
+    """A key that a JSON object gives twice."""
+
+
+def unique(pairs: list[tuple[str, object]]) -> dict:
+    """A JSON object, refused when it gives a key twice, whose first value JSON would otherwise silently drop."""
+    found: dict = {}
+    for key, value in pairs:
+        if key in found:
+            raise Repeated(key)
+        found[key] = value
+    return found
+
+
+def not_json(constant: str) -> float:
+    """Refuse NaN and the infinities, which are not JSON, though Python's reader takes them."""
+    raise ValueError(f"{constant} is not JSON")
+
+
+def weight(value: object) -> bool:
+    """Whether *value* can be a priority: a positive number, neither infinite nor a boolean."""
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and 0 < value < math.inf
+
+
+def load_priorities(source: str | os.PathLike) -> dict:
+    """blueprint/priorities.json from a URL or a file, checked: its schema, an optional `about` text, the `default`
+    priority and the `weights`, each a priority for a subject, a field or a page, named as a node id or as the start
+    of one that ends before a slash. Each priority is a positive number."""
+    source = os.fspath(source)
+    try:
+        data = request(source) if re.match(r"https?://", source) else Path(source).read_bytes()
+        priorities = json.loads(data, object_pairs_hook=unique, parse_constant=not_json)
+    except OSError as error:
+        raise Failure(f"{source}: {error.strerror or error}") from None
+    except Repeated as repeated:
+        raise Failure(f"{source} gives {repeated.args[0]!r} twice") from None
+    except ValueError:
+        raise Failure(f"{source} is not JSON") from None
+    if not isinstance(priorities, dict) or priorities.get("schema") != PRIORITIES_SCHEMA:
+        raise Failure(f"{source} is not a list of priorities ({PRIORITIES_SCHEMA})")
+    unknown = sorted(set(priorities) - {"schema", "about", "default", "weights"})
+    if unknown:
+        raise Failure(f"{source} has a key it should not: {unknown[0]!r}")
+    if not isinstance(priorities.get("about", ""), str):
+        raise Failure(f"{source}: its about is not a text")
+    if not weight(priorities.get("default")):
+        raise Failure(f"{source}: its default {priorities.get('default')!r} is not a positive number")
+    weights = priorities.get("weights")
+    if not isinstance(weights, dict):
+        raise Failure(f"{source}: its weights are not an object")
+    for key, value in weights.items():
+        if any(part == "" or part.strip() != part for part in key.split("/")):
+            raise Failure(f"{source}: {key!r} is not a node id or the start of one")
+        if not weight(value):
+            raise Failure(f"{source}: the weight of {key!r}, {value!r}, is not a positive number")
+    return priorities
+
+
+def priority(item: dict, priorities: dict | None) -> int | float:
+    """A task's priority: the weight that *priorities* gives its node id, or else the longest start of it that ends
+    before a slash and has one, or else their default; 1 when there are no priorities."""
+    if priorities is None:
+        return 1
+    parts = str(item.get("node_id") or "").split("/")
+    for end in range(len(parts), 0, -1):
+        found = priorities["weights"].get("/".join(parts[:end]))
+        if found is not None:
+            return found
+    return priorities["default"]
 
 
 def moment(text: str) -> datetime:
@@ -354,9 +434,10 @@ def shown(value: object) -> str:
     return "".join(c if c.isprintable() else c.encode("unicode_escape").decode("ascii") for c in str(value))
 
 
-def ordered(items: list[dict]) -> list[dict]:
-    """The statements still to write first, then the proofs, each in tasks.json's order."""
-    return sorted(items, key=lambda item: item.get("phase") != "statement")
+def ordered(items: list[dict], priorities: dict | None = None) -> list[dict]:
+    """The statements still to write first, then the proofs; among each, by priority, highest first, then in
+    tasks.json's order."""
+    return sorted(items, key=lambda item: (item.get("phase") != "statement", -priority(item, priorities)))
 
 
 def positive(text: str) -> int:
@@ -370,24 +451,30 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("-n", "--count", type=positive, default=5, help="how many tasks to print (default 5)")
     parser.add_argument("--json", action="store_true", help="print JSON for agents")
     parser.add_argument("--tasks", default=TASKS, metavar="FILE_OR_URL", help=f"the task list (default {TASKS})")
+    parser.add_argument("--priorities", metavar="FILE_OR_URL",
+                        help="the priorities of the graph's areas (default blueprint/priorities.json in the checkout "
+                             "this script is in, if there is one; without it all tasks have the same priority)")
     parser.add_argument("--repo", default=REPOSITORY, metavar="OWNER/NAME",
                         help=f"the repository whose pull requests take tasks (default {REPOSITORY})")
     args = parser.parse_args(argv)
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or None
+    source = args.priorities if args.priorities is not None else str(PRIORITIES) if PRIORITIES.is_file() else None
     try:
         tasks = load_tasks(args.tasks)
+        priorities = None if source is None else load_priorities(source)
         pulls = pull_requests(args.repo, tasks.get("commit_date"), token)
     except Failure as failure:
         print(f"error: {shown(failure)}", file=sys.stderr)
         return 1
     held = taken(tasks["items"], pulls)
-    free = [item for item in ordered(tasks["items"]) if item["node_id"] not in held]
+    free = [item for item in ordered(tasks["items"], priorities) if item["node_id"] not in held]
     chosen = free[:args.count]
     if args.json:
         print(json.dumps({
             "tasks": args.tasks, "commit": tasks.get("commit"), "commit_date": tasks.get("commit_date"),
-            "autoform_ref": tasks.get("autoform_ref"), "ready": len(tasks["items"]), "taken": len(held),
-            "free": len(free), "next": chosen,
+            "autoform_ref": tasks.get("autoform_ref"), "priorities": source, "ready": len(tasks["items"]),
+            "taken": len(held), "free": len(free), "next": chosen,
+            "priority": {item["node_id"]: priority(item, priorities) for item in chosen},
             "taken_by": [{"node_id": node_id, "pull_requests": numbers} for node_id, numbers in held.items()],
         }, indent=2))  # ASCII only, so no character of the list reaches the terminal unescaped.
         return 0
@@ -397,10 +484,12 @@ def main(argv: list[str] | None = None) -> int:
           "are free.")
     if not tasks.get("commit_date"):
         print("This task list records no commit date, so pull requests merged since it was computed are not read.")
+    print(f"Priorities from {shown(source)}." if source is not None else
+          "No priorities, so all tasks have the same priority.")
     for item in chosen:
         print(f"\n{shown(item['phase'])}: {shown(item.get('title'))}\n  article id   {shown(item['article_id'])}\n"
               f"  node         {shown(item['node_id'])}\n  Lean         {shown(', '.join(declarations(item)) or '-')}\n"
-              f"  article      {shown(item.get('article_path'))}")
+              f"  article      {shown(item.get('article_path'))}\n  priority     {shown(priority(item, priorities))}")
     if chosen:
         print("\nTo take one, open a draft pull request that names its article id (CONTRIBUTING.md, Picking a task).")
     return 0
