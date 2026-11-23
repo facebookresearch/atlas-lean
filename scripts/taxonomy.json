@@ -10317,6 +10317,7 @@
   "MathlibExt/Combinatorics/Matroid/MatroidIntersection": {"to": "Combinatorics/matroid-theory", "title": "Matroid intersection theorem"},
   "MathlibExt/Combinatorics/Matroid/MatroidPartition": {"to": "Combinatorics/matroid-theory", "title": "Matroid partition theorem"},
   "MathlibExt/Combinatorics/Matroid/Rado": {"to": "Combinatorics/matroid-theory", "title": "Rado's theorem on independent transversals"},
+  "MathlibExt/Combinatorics/MaximumNimJosephus": {"to": "GameTheory/combinatorial-games", "title": "Maximum Nim"},
   "MathlibExt/Combinatorics/NoncrossingPartition": {"to": "Combinatorics/set-partitions", "title": "Noncrossing partitions"},
   "MathlibExt/Combinatorics/Optimization/GoemansWilliamsonConstant": {"to": "ComputerScience/approximation-algorithms", "title": "Goemans–Williamson MAX-CUT algorithm"},
   "MathlibExt/Combinatorics/Optimization/MaxCutRelaxation": {"to": "ComputerScience/approximation-algorithms", "title": "Goemans–Williamson MAX-CUT algorithm"},
