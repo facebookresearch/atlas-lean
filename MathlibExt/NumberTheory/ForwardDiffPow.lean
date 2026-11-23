@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Algebra.Group.ForwardDiff
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.Polynomial.Degree.SmallDegree
 
 /-!
 # Iterated forward differences of powers
@@ -38,5 +39,20 @@ public theorem iterate_forwardDiff_pow_eq_sum (r x : ℝ)
   change (fwdDiff r)^[k] (fun y : ℝ => y ^ n) x = _
   rw [fwdDiff_iter_eq_sum_shift]
   simp [mul_comm r]
+
+open Polynomial in
+/-- For any real step, the iterated forward difference of a power vanishes once
+the order of the difference exceeds the exponent. -/
+public theorem iterate_forwardDiff_pow_eq_zero_of_lt (r : ℝ) {n k : ℕ} (hnk : n < k) :
+    (fwdDiff r)^[k] (fun y : ℝ => y ^ n) = 0 := by
+  funext x
+  let p := (C r * X + C x) ^ n
+  have hdeg : p.natDegree ≤ n := by
+    simpa [p] using natDegree_pow_le_of_le n (natDegree_linear_le (a := r) (b := x))
+  have hzero := congrFun (Polynomial.fwdDiff_iter_eq_zero_of_degree_lt (hdeg.trans_lt hnk)) 0
+  rw [fwdDiff_iter_eq_sum_shift] at hzero
+  calc
+    _ = _ := iterate_forwardDiff_pow_eq_sum r x k n
+    _ = _ := by simpa [p, add_comm] using hzero
 
 end MathlibExt.NumberTheory.FiniteSumsFibLucasWanted

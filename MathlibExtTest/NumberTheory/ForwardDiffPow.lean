@@ -33,4 +33,11 @@ example (r x : ℝ) : (fwdDiff r)^[2] (fun y : ℝ => y ^ 2) x = 2 * r ^ 2 := by
       norm_num [Finset.sum_range_succ, Nat.choose]
       ring
 
+-- One order above the exponent, the alternating sum cancels for every step.
+example (r x : ℝ) (n : ℕ) :
+    ∑ j ∈ Finset.range (n + 2), (-1 : ℝ) ^ (n + 1 - j) * (Nat.choose (n + 1) j : ℝ) *
+        (x + r * j) ^ n = 0 := by
+  rw [← iterate_forwardDiff_pow_eq_sum]
+  exact congrFun (iterate_forwardDiff_pow_eq_zero_of_lt r (Nat.lt_succ_self n)) x
+
 end MathlibExt.NumberTheory.FiniteSumsFibLucasWanted
