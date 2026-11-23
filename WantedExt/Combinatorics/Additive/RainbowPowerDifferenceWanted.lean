@@ -255,24 +255,6 @@ public theorem_wanted rainbowNumber_powDiff_of_odd (p k : ℕ) [Fact p.Prime] (h
       sInf {r : ℕ | 3 ≤ r ∧ ∀ c : ZMod p → Fin r, Function.Surjective c →
         ∃ x y z : ZMod p, x - y = z ^ k ∧ c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z} = 4)
 
-
-/-- **The color of one dominates bichromatic strings.** Let $r$ and $k$ be natural numbers and let
-$c$ be a coloring of the positive integers with $r$ colors that uses every color on some positive
-integer and is rainbow-free for $x - y = z^k$: no positive integers $x, y, z$ with $x = y + z^k$
-have $c(x), c(y), c(z)$ pairwise distinct. Then for every positive integer $i$ and every natural
-number $\ell$, if $c$ takes exactly two colors on $i, i + 1, \dots, i + \ell - 1$, one of these
-integers has the color $c(1)$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 1
-(`integers-2024-A105-lem-1`). -/
-public theorem_wanted color_one_dominant_of_rainbowFree_powDiff (r k : ℕ) (c : ℕ → Fin r)
-    (hc : ∀ j : Fin r, ∃ i : ℕ, 0 < i ∧ c i = j)
-    (hrf : ∀ x y z : ℕ, 0 < x → 0 < y → 0 < z → x = y + z ^ k →
-      ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
-    (i ℓ : ℕ) (hi : 0 < i) (hbi : ((Finset.Ico i (i + ℓ)).image c).card = 2) :
-    c 1 ∈ (Finset.Ico i (i + ℓ)).image c
-
 /-- **Shifting monochromatic strings by $k$-th powers.** Let $k$ be a natural number and let $c$
 be a coloring of the positive integers by three distinct colors $R$, $B$, $G$ with no rainbow
 solution of $x - y = z^k$: there are no positive integers $x, y, z$ with $x = y + z^k$ and

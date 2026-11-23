@@ -20,10 +20,9 @@ Proved in `MathlibExt.NumberTheory.PowerfulNumbers`: Lemmas 1–3
 `MetaMathlibExt.three_exact_dvd_sq_add_self_add_one`, and
 `MetaMathlibExt.three_exact_dvd_sq_sub_self_add_one`).
 
-Lemma 4 is encoded with a nonzero `X` in the resulting elliptic-curve
-solution.  This is the conclusion produced by the paper's proof
-(`X = a*x^2 ≠ 0`) and used later in the paper; without it, `(0, 0)`
-would trivialize the displayed curve for every `a`, `c`, and `e`.
+The proof of Lemma 4 in `MathlibExt.NumberTheory.QuarticToCubic` constructs the cubic
+point `(a * x ^ 2, a * x * y)`. Its nonzero first coordinate excludes the solution
+`(0, 0)` that occurs for every choice of coefficients.
 
 The Pell generations in Lemmas 5 and 6 use Mathlib's quadratic
 integers `ℤ√3`. Lemma 6, proved in `MathlibExt.NumberTheory.PellThreeNegTwo`,
@@ -37,24 +36,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.PellThreeNegTwo
 public import MathlibExt.NumberTheory.PowerfulNumbers
+public import MathlibExt.NumberTheory.QuarticToCubic
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PowerfulNumbersWanted
-
-/-- **Integer points on a quartic give integer points on a cubic.** Let $a$, $c$ and $e$ be
-integers with $a \neq 0$. If there are integers $x \neq 0$ and $y$ with
-$y^2 = a x^4 + c x^2 + e$, then there are integers $X \neq 0$ and $Y$ with
-$Y^2 = X^3 + c X^2 + a e X$.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Lemma 4. -/
-theorem_wanted exists_int_point_elliptic_of_exists_int_point_quartic
-    (a c e : ℤ) (ha : a ≠ 0)
-    (h : ∃ x y : ℤ, x ≠ 0 ∧ y ^ 2 = a * x ^ 4 + c * x ^ 2 + e) :
-    ∃ X Y : ℤ, X ≠ 0 ∧ Y ^ 2 = X ^ 3 + c * X ^ 2 + a * e * X
 
 /-- **Positive solutions of $x^2 - 3y^2 = 1$.** For integers $x$ and $y$, we have $x > 0$,
 $y > 0$ and $x^2 - 3y^2 = 1$ if and only if $x + y\sqrt{3} = (2 + \sqrt{3})^k$ in
