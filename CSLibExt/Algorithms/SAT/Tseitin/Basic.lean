@@ -22,7 +22,8 @@ equisatisfiable CNF formula of linear size by naming every compound
 subformula with a fresh variable and adding three clauses that force the name
 to agree with its connective.
 
-Formulas are upstream CSLib's `Proposition Atom` (atoms, `∧`, `∨`, `→`), read by
+Formulas are CSLib v4.35's `Proposition Atom` (atoms, `∧`, `∨`, `→`), restored in
+`Cslib.Logic.LegacyPL` and read by
 `Proposition.evalBool`.  CNF variables are natural numbers
 (`CSLibExt/Logics/Propositional/CNF`, shared with the DPLL solver): an injective
 `ι : Atom → ℕ` sends the atom `a` to the variable `2 * ι a`, and the compound
@@ -42,7 +43,7 @@ families never collide.
 - `Proposition.tseitinBot ι A` : `tseitin` plus the unit clause making the atom
   `⊥` false, for the classical reading of `⊥`.
 
-The transformation and its theorems live in `Cslib.Logic.PL.Proposition`, so they
+The transformation and its theorems live in `Cslib.Logic.LegacyPL.Proposition`, so they
 apply with dot notation (`A.tseitin ι`); the gate clauses and the invariant of one
 encoding step (`Tseitin.Spec`) live in `Cslib.Algorithms.SAT.Tseitin`.
 
@@ -72,7 +73,7 @@ variable {Atom : Type u}
 
 namespace Cslib.Algorithms.SAT.Tseitin
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- **Complementary literal.** The complement of a literal $(x, b)$ with variable $x$ and
 polarity $b$ is the literal $(x, \lnot b)$: the same variable with the opposite polarity. -/
@@ -121,7 +122,7 @@ def accStep (cl : Nat × Bool → Nat × Bool → Nat × Bool → CNF)
 
 end Cslib.Algorithms.SAT.Tseitin
 
-namespace Cslib.Logic.PL.Proposition
+namespace Cslib.Logic.LegacyPL.Proposition
 
 open Cslib.Algorithms.SAT.Tseitin
 
@@ -292,11 +293,11 @@ theorem length_le_three_of_mem_tseitin (ι : Atom → ℕ) (A : Proposition Atom
   · simp
   · exact length_le_three_of_mem_tseitinAux ι A 0 (hX.mem_iff.mp hC)
 
-end Cslib.Logic.PL.Proposition
+end Cslib.Logic.LegacyPL.Proposition
 
 namespace Cslib.Algorithms.SAT.Tseitin
 
-open Cslib.Logic.PL Cslib.Logic.PL.Proposition
+open Cslib.Logic.LegacyPL Cslib.Logic.LegacyPL.Proposition
 
 /-! ### Literal semantics and gate clauses -/
 
@@ -323,7 +324,7 @@ theorem clauseSatisfies_iff {σ : ℕ → Bool} {C : CNFClause} :
 values to the natural-number variables and all CNF formulas $\varphi$ and $\psi$, $\sigma$
 satisfies the formula consisting of the clauses of $\varphi$ followed by those of $\psi$ if
 and only if $\sigma$ satisfies both $\varphi$ and $\psi$. -/
-@[deprecated "use Cslib.Logic.PL.CNF.satisfies_append instead" (since := "2026-10-15")]
+@[deprecated "use Cslib.Logic.LegacyPL.CNF.satisfies_append instead" (since := "2026-10-15")]
 theorem satisfies_append {σ : ℕ → Bool} {φ ψ : CNF} :
     (φ ++ ψ).Satisfies σ ↔ φ.Satisfies σ ∧ ψ.Satisfies σ :=
   CNF.satisfies_append
@@ -525,7 +526,7 @@ theorem spec_tseitinAux (ι : Atom → ℕ) (A : Proposition Atom) (k : ℕ) :
 
 end Cslib.Algorithms.SAT.Tseitin
 
-namespace Cslib.Logic.PL.Proposition
+namespace Cslib.Logic.LegacyPL.Proposition
 
 open Cslib.Algorithms.SAT.Tseitin
 
@@ -592,4 +593,4 @@ theorem cnfSat_tseitinBot_iff [Bot Atom] {ι : Atom → ℕ} (hι : Function.Inj
     simp only [tseitinBot, CNF.satisfies_cons, CNFClause.satisfies_def, List.mem_singleton,
       exists_eq_left, hσ, hv, hsat, and_true]
 
-end Cslib.Logic.PL.Proposition
+end Cslib.Logic.LegacyPL.Proposition

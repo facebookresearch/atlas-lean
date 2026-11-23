@@ -2597,7 +2597,7 @@ private theorem local_package (P : Ideal C) [P.IsMaximal] :
       mem_nonunits_iff,
       mem_nonunits_iff, isUnit_map_iff]
   rw [h2]
-  exact Localization.AtPrime.comap_maximalIdeal (I := P)
+  exact Localization.AtPrime.under_maximalIdeal (I := P)
 
 end localPackage
 open FiniteLocallyFreeQuotient.QuotFLF.Tgt FiniteLocallyFreeQuotient.QuotFLF.L1

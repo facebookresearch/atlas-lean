@@ -65,7 +65,7 @@ example : ∃ q : MvPolynomial (Fin 2) ℚ,
     MvPolynomial.eval ![1, 2] (MvPolynomial.esymm (Fin 2) ℚ 1) =
       MvPolynomial.eval
         (fun i : Fin 2 => (-1 : ℚ) ^ (i.val + 1) *
-          Polynomial.coeff (∏ j : Fin 2, (Polynomial.X - Polynomial.C (![1, 2] j)))
+          (∏ j : Fin 2, (Polynomial.X - Polynomial.C (![1, 2] j)) : Polynomial ℚ).coeff
             (2 - (i.val + 1))) q := by
   obtain ⟨q, -, hq⟩ := Polynomial.symmetric_polynomial_in_esymm
     (MvPolynomial.esymm (Fin 2) ℚ 1) (MvPolynomial.esymm_isSymmetric (Fin 2) ℚ 1)
@@ -77,7 +77,7 @@ example : ∃ q : MvPolynomial (Fin 1) ℚ,
     MvPolynomial.eval ![3] (MvPolynomial.C (5 : ℚ)) =
       MvPolynomial.eval
         (fun i : Fin 1 => (-1 : ℚ) ^ (i.val + 1) *
-          Polynomial.coeff (∏ j : Fin 1, (Polynomial.X - Polynomial.C (![3] j)))
+          (∏ j : Fin 1, (Polynomial.X - Polynomial.C (![3] j)) : Polynomial ℚ).coeff
             (1 - (i.val + 1))) q := by
   obtain ⟨q, -, hq⟩ := Polynomial.symmetric_polynomial_in_esymm
     (MvPolynomial.C (5 : ℚ)) (MvPolynomial.IsSymmetric.C 5)
@@ -91,13 +91,13 @@ example : ∃ q : MvPolynomial (Fin 2) ℚ,
         (MvPolynomial.esymm (Fin 2) ℚ 1 + MvPolynomial.esymm (Fin 2) ℚ 2) =
       MvPolynomial.eval
         (fun i : Fin 2 => (-1 : ℚ) ^ (i.val + 1) *
-          Polynomial.coeff (∏ j : Fin 2, (Polynomial.X - Polynomial.C (![1, 2] j)))
+          (∏ j : Fin 2, (Polynomial.X - Polynomial.C (![1, 2] j)) : Polynomial ℚ).coeff
             (2 - (i.val + 1))) q ∧
     MvPolynomial.eval ![1, 3]
         (MvPolynomial.esymm (Fin 2) ℚ 1 + MvPolynomial.esymm (Fin 2) ℚ 2) =
       MvPolynomial.eval
         (fun i : Fin 2 => (-1 : ℚ) ^ (i.val + 1) *
-          Polynomial.coeff (∏ j : Fin 2, (Polynomial.X - Polynomial.C (![1, 3] j)))
+          (∏ j : Fin 2, (Polynomial.X - Polynomial.C (![1, 3] j)) : Polynomial ℚ).coeff
             (2 - (i.val + 1))) q := by
   obtain ⟨q, -, hq⟩ := Polynomial.symmetric_polynomial_in_esymm
     (MvPolynomial.esymm (Fin 2) ℚ 1 + MvPolynomial.esymm (Fin 2) ℚ 2)
