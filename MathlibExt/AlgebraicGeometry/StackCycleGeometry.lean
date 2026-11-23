@@ -22,7 +22,7 @@ module
 public import MathlibExt.AlgebraicGeometry.GeneralStackGeometry
 public import Mathlib.AlgebraicGeometry.AlgebraicCycle.Basic
 public import Mathlib.AlgebraicGeometry.FunctionField
-public import Mathlib.AlgebraicGeometry.OrderOfVanishing
+public import Mathlib.AlgebraicGeometry.OrderOfVanishing.Basic
 public import Mathlib.AlgebraicGeometry.Noetherian
 public import Mathlib.GroupTheory.FreeAbelianGroup
 public import Mathlib.RingTheory.Length

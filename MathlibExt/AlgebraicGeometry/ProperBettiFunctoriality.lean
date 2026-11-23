@@ -48,6 +48,7 @@ abbrev compactDerived (Z : TopCat.{0}) := (sections Z).rightDerivedFunctorPlus
 
 /-- Compact support of the fixed section map, not a choice of map. -/
 structure SectionSupport {Z W : TopCat.{0}} (f : Z ⟶ W) : Prop where
+  /-- The inverse image of a compactly supported section has compact support. -/
   compact : ∀ (F : RationalSheaf W) (s : compactSections F),
     IsCompact (closure (germSupport ((pullback ℚ f).obj F)
       (((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℚ) f).unit.app F).hom.app
@@ -71,6 +72,8 @@ def sectionPullbackNat {Z W : TopCat.{0}} (f : Z ⟶ W) (P : SectionSupport f) :
     have h := (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℚ) f).unit.naturality a
     exact congrArg (fun b => (b.hom.app (op ⊤)).hom s.1) h
 
+/-- The rational vector space `ℚ`, in degree zero of the derived category of
+rational vector spaces. -/
 abbrev rationalVectorUnit : DerivedCategory (ModuleCat.{0} ℚ) :=
   (DerivedCategory.singleFunctor (ModuleCat.{0} ℚ) 0).obj (ModuleCat.of ℚ ℚ)
 /-- Actual compact-support derived Hom into the rational coefficient unit. -/
@@ -108,6 +111,8 @@ def bmDualHomEquiv (Z : TopCat.{0}) (D : DualizingComplex Z) (n : ℤ) :
   (bmAdjointEquiv Z D n).trans
     (D.representation.app (op ((unitPlus Z)⟦n⟧))).toLinearEquiv
 
+/-- The constant rational sheaf as a bounded-below cochain complex in degree
+zero. -/
 def unitComplex (Z : TopCat.{0}) : CochainComplex.Plus (RationalSheaf Z) :=
   ⟨(CochainComplex.singleFunctor (RationalSheaf Z) 0).obj (rationalConstantSheaf Z),
     ⟨0, inferInstance⟩⟩
@@ -116,6 +121,8 @@ def unitComplex (Z : TopCat.{0}) : CochainComplex.Plus (RationalSheaf Z) :=
 @[simp] theorem unitComplex_image (Z : TopCat.{0}) :
     DerivedCategory.Plus.Q.obj (unitComplex Z) = unitPlus Z := by rfl
 
+/-- The comparison `ℚ_Z ⟶ R⁺f^* ℚ_W` induced by the constant-sheaf comparison
+`f^* ℚ_W ≅ ℚ_Z` and the derived unit. -/
 def coefficientUnitMap {Z W : TopCat.{0}} (f : Z ⟶ W) :
     unitPlus Z ⟶ (inverseImagePlus f).obj (unitPlus W) := by
   let k : unitComplex Z ⟶ (pullback ℚ f).mapCochainComplexPlus.obj (unitComplex W) :=
@@ -129,15 +136,38 @@ def coefficientUnitMap {Z W : TopCat.{0}} (f : Z ⟶ W) :
 
 /-- A derived compact-support pullback fixed by actual cochain maps and units. -/
 structure ProperPullback {Z W : TopCat.{0}} (f : Z ⟶ W) where
+  /-- Inverse image preserves compact supports. -/
   support : SectionSupport f
+  /-- The coefficient comparison `R⁺f^* ℚ_W ≅ ℚ_Z`. -/
   unitIso : (inverseImagePlus f).obj (unitPlus W) ≅ unitPlus Z
+  /-- It is the canonical comparison. -/
   unit_normalization : unitIso.inv = coefficientUnitMap f
+  /-- The derived pullback of compactly supported sections. -/
   map : compactDerived W ⟶ inverseImagePlus f ⋙ compactDerived Z
+  /-- It is induced by the pullback of compactly supported sections; this
+  determines it, by the universal property of right derived functors. -/
   compatibility : ∀ K : CochainComplex.Plus (RationalSheaf W),
     (sections W).rightDerivedFunctorPlusUnit.app K ≫ map.app (DerivedCategory.Plus.Q.obj K) =
       DerivedCategory.Plus.Q.map ((sectionPullbackNat f support).mapCochainComplexPlus.app K) ≫
         (sections Z).rightDerivedFunctorPlusUnit.app ((pullback ℚ f).mapCochainComplexPlus.obj K) ≫
         (compactDerived Z).map ((pullback ℚ f).rightDerivedFunctorPlusUnit.app K)
+
+/-- Proper pullback data are unique: the compatibility determines the derived
+map by the universal property of right derived functors, and the normalization
+determines the coefficient comparison. -/
+instance {Z W : TopCat.{0}} (f : Z ⟶ W) : Subsingleton (ProperPullback f) where
+  allEq P Q := by
+    have hmap : P.map = Q.map := by
+      apply Functor.rightDerived_ext _ (sections W).rightDerivedFunctorPlusUnit
+        (CochainComplex.Plus.quasiIso _)
+      exact NatTrans.ext (funext fun K => (P.compatibility K).trans (Q.compatibility K).symm)
+    have hunit : P.unitIso = Q.unitIso :=
+      Iso.ext_inv (P.unit_normalization.trans Q.unit_normalization.symm)
+    cases P
+    cases Q
+    cases hmap
+    cases hunit
+    rfl
 
 /-- The fixed compact-support pullback on shifted rational coefficient complexes. -/
 def compactPullback {Z W : TopCat.{0}} {f : Z ⟶ W} (P : ProperPullback f) (n : ℤ) :

@@ -11,13 +11,13 @@ public import Mathlib.AlgebraicGeometry.Birational.Birational
 public import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
-public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
+public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 /-!
 # Normalized birational resolutions
 
-Birationality is witnessed by Mathlib's actual dense-open isomorphism,
-with its map required to be the restriction of the given scheme morphism.
+Birationality is Mathlib's `Scheme.BirationalOver`: an actual dense-open
+isomorphism whose map is the restriction of the given scheme morphism.
 A resolution has a smooth integral source, a locally projective proper morphism,
 and an isomorphism over every smooth open of the original variety.
 
@@ -35,19 +35,18 @@ Stacks Project, Tag 0BHW (definition of a resolution).
 namespace MathlibExt.AlgebraicGeometry.BirationalResolution
 
 open CategoryTheory _root_.AlgebraicGeometry
-open MathlibExt.AlgebraicGeometry.PlurigenusFamilies
+open MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 universe u
 
-/-- The actual morphism agrees with an isomorphism on dense opens. -/
-def IsBirationalMorphism {X Y : Scheme.{u}} (f : Y ⟶ X) : Prop :=
-  ∃ p : Scheme.PartialIso Y X,
-    p.source.ι ≫ f = p.iso.hom ≫ p.target.ι
+/-- The actual morphism agrees with an isomorphism between dense opens: `Y` is birational
+to `X` over `X` (Mathlib's `Scheme.BirationalOver f (𝟙 X)`). -/
+abbrev IsBirationalMorphism {X Y : Scheme.{u}} (f : Y ⟶ X) : Prop :=
+  Scheme.BirationalOver f (𝟙 X)
 
 theorem isBirationalMorphism_id (X : Scheme.{u}) :
-    IsBirationalMorphism (𝟙 X) := by
-  refine ⟨Scheme.PartialIso.refl X, ?_⟩
-  simp [Scheme.PartialIso.refl]
+    IsBirationalMorphism (𝟙 X) :=
+  Scheme.BirationalOver.refl (𝟙 X)
 
 /-- Restriction of the actual morphism and its field structure to a target open. -/
 def restrictOver {k : Type u} [Field k]
@@ -60,11 +59,13 @@ def restrictOver {k : Type u} [Field k]
       Scheme.Hom.resLE_comp_ι,
       Category.assoc, f.w])
 
-/-- The projective-space presentation is local on actual affine target opens. -/
+/-- Local projectivity: over each point of the target, the restriction to an affine open
+neighbourhood is H-projective (over an affine base, H-projective and projective agree,
+Stacks, Tag 01WB). -/
 def IsLocallyProjectiveOver {k : Type u} [Field k]
     {Y X : Over (Spec (.of k))} (f : Y ⟶ X) : Prop :=
   ∀ x : X.left, ∃ U : X.left.affineOpens, x ∈ U.1 ∧
-    IsProjectiveOver (restrictOver f U.1)
+    IsHProjectiveOver (restrictOver f U.1)
 
 /-- A resolution with its genuine geometric morphism and local normalization. -/
 structure ResolutionModel {k : Type u} [Field k]
