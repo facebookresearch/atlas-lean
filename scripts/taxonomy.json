@@ -11223,6 +11223,7 @@
   "MathlibExt/NumberTheory/ModularForms/RamanujanExponent": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Ramanujan–Petersson conjecture"},
   "MathlibExt/NumberTheory/ModularForms/SelbergSpectralGap": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Selberg's eigenvalue conjecture"},
   "MathlibExt/NumberTheory/ModularForms/StrictPeriodsGamma0": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular group and congruence subgroups"},
+  "MathlibExt/NumberTheory/ModularInverseProductMean": {"to": "NumberTheory/exponential-sums", "title": "Mean values of products of modular inverses"},
   "MathlibExt/NumberTheory/MultipleCountingJacobsthalSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Multiple-counting Jacobsthal sequences"},
   "MathlibExt/NumberTheory/MultipleHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Multiple harmonic sums"},
   "MathlibExt/NumberTheory/MultipleHarmonicPolynomialCongruence": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Multiple harmonic sums"},
