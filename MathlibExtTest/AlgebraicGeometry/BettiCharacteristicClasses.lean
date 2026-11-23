@@ -28,7 +28,7 @@ namespace MathlibExtTest.AlgebraicGeometry.BettiCharacteristicClasses
 
 /-- The structure sheaf is invertible. -/
 example (X : Scheme.{0}) : IsLine (SheafOfModules.unit X.ringCatSheaf) :=
-  fun _ => ⟨⊤, trivial, ⟨pullbackUnit _ _ _⟩⟩
+  MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries.isLineBundle_structureModule X
 
 /-- The total spaces are smooth of the expected dimensions, and a projective
 bundle over a proper base is proper. -/
