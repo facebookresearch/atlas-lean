@@ -1,0 +1,3 @@
+# Sinclair's Corollary 6: $\lambda_1 \le 1 - 1/(\rho \ell)$
+
+Under the hypotheses of [Sinclair's canonical-path bound on the spectral gap](one-le-mul-one-sub-of-eigenvector.md), suppose every path $\gamma_{xy}$ has at most $\ell$ edges and every edge carries at most $\rho\,\pi(u)P(u,v)$ (unweighted) load, with $\rho\ell > 0$. Then every real eigenvalue $\mu \ne 1$ of $P$ satisfies $\mu \le 1 - 1/(\rho\ell)$ (A. Sinclair, *Combinatorics, Probability and Computing* 1 (1992), Corollary 6). Sinclair notes that this beats the conductance route, $\lambda_1 \le 1 - 1/(8\rho^2)$ (his Corollary 4), whenever the paths are short compared with $\rho$, which is how he improves the known mixing bounds for the monomer-dimer, matching and Ising chains.

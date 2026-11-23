@@ -66,9 +66,12 @@ private lemma ae_norm_le_of_tendstoInMeasure_of_forall_ae_norm_le
   filter_upwards [hms, hbound_all] with a ha hb
   exact le_of_tendsto ha.norm (Eventually.of_forall fun n => hb (ms n))
 
-/-- **Bounded convergence theorem, `L¹` form.** If `F n` is uniformly bounded
-(`‖F n a‖ ≤ C` almost everywhere) on a finite measure space and `F n → f` in
-measure, then `∫ ‖F n - f‖ → 0`. -/
+/-- **Bounded convergence theorem, $L^1$ form.** Let $\mu$ be a finite measure on a measurable
+space $\alpha$, let $G$ be a real normed space, let $C$ be a real number, and let
+$F_n : \alpha \to G$ for $n \in \mathbb{N}$ and $f : \alpha \to G$ be functions. Suppose that each
+$F_n$ is almost everywhere strongly measurable, that for every $n$ we have $\|F_n(a)\| \le C$ for
+$\mu$-almost every $a$, and that $F_n \to f$ in $\mu$-measure. Then
+$\int_\alpha \|F_n(a) - f(a)\| \, d\mu(a) \to 0$ as $n \to \infty$. -/
 theorem tendsto_integral_norm_sub_of_bounded_convergence
     {α : Type*} {m : MeasurableSpace α} {μ : Measure α} [IsFiniteMeasure μ]
     {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
@@ -102,9 +105,12 @@ theorem tendsto_integral_norm_sub_of_bounded_convergence
       simpa using h0)
   simpa using hDCT
 
-/-- **Bounded convergence theorem.** If `F n` is uniformly bounded
-(`‖F n a‖ ≤ C` almost everywhere) on a finite measure space and `F n → f` in
-measure (i.e. in probability), then `∫ F n dμ → ∫ f dμ`. -/
+/-- **Bounded convergence theorem.** Let $\mu$ be a finite measure on a measurable space $\alpha$,
+let $G$ be a real normed space, let $C$ be a real number, and let $F_n : \alpha \to G$ for
+$n \in \mathbb{N}$ and $f : \alpha \to G$ be functions. Suppose that each $F_n$ is almost
+everywhere strongly measurable, that for every $n$ we have $\|F_n(a)\| \le C$ for $\mu$-almost
+every $a$, and that $F_n \to f$ in $\mu$-measure (in probability). Then
+$\int_\alpha F_n \, d\mu \to \int_\alpha f \, d\mu$ as $n \to \infty$. -/
 theorem tendsto_integral_of_bounded_convergence
     {α : Type*} {m : MeasurableSpace α} {μ : Measure α} [IsFiniteMeasure μ]
     {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]

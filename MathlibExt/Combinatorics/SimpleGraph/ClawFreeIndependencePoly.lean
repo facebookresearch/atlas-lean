@@ -42,10 +42,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Claw-free graph: no induced `K₁,₃`, i.e. no center `c` with three
-pairwise nonadjacent, mutually distinct neighbors. `independencePoly G`
-counts independent vertex sets by size; the wanted theorem says its real
-image splits, i.e. it has only real zeros.
+/-- **Claw-free finite graph.** A simple graph $G$ on a finite vertex set $V$ is claw-free if it
+has no induced claw $K_{1,3}$: there are no vertices $c, \ell_1, \ell_2, \ell_3 \in V$ such that
+$\ell_1, \ell_2, \ell_3$ are pairwise distinct, each is adjacent to $c$ and different from $c$,
+and no two of them are adjacent.
 
 Source: Moussa Benoumhani, "On the Modes of the Independence Polynomial of
 the Centipede," Journal of Integer Sequences 15 (2012), Article 12.5.1,
@@ -2049,10 +2049,13 @@ private lemma cf_splits_of_no_roots_upperHalfPlane (p : Polynomial ℝ)
 
 @[expose] public section
 
-/-- Claw-free graph: no induced `K₁,₃`, i.e. no center `c` with three
-pairwise nonadjacent, mutually distinct neighbors. `independencePoly G`
-counts independent vertex sets by size; the wanted theorem says its real
-image splits, i.e. it has only real zeros.
+/-- **Chudnovsky–Seymour theorem.** Let $G$ be a claw-free simple graph on a finite vertex set
+$V$, and let $I(G) = \sum_{k=0}^{|V|} i_k X^k \in \mathbb{Z}[X]$ be its independence polynomial,
+where $i_k$ is the number of independent sets of $G$ with $k$ vertices. Then $I(G)$, viewed as a
+polynomial with real coefficients, splits over $\mathbb{R}$: it is a constant times a product of
+linear factors $X - r$ with $r \in \mathbb{R}$, so all its roots are real.
+
+Proves `Wanted` entry `independence_poly_of_claw_free_splits`.
 
 Source: Moussa Benoumhani, "On the Modes of the Independence Polynomial of
 the Centipede," Journal of Integer Sequences 15 (2012), Article 12.5.1,
@@ -2060,9 +2063,7 @@ unnumbered Chudnovsky–Seymour theorem, lines 142–144,
 https://cs.uwaterloo.ca/journals/JIS/VOL15/Benoumhani/benoumhani8.tex
 quoting M. Chudnovsky and P. Seymour, "The roots of the independence
 polynomial of a clawfree graph," J. Combin. Theory Ser. B 97 (2007), 350–357
-(biblio lines 499–501).
-
-Proves `Wanted` entry `independence_poly_of_claw_free_splits`. -/
+(biblio lines 499–501). -/
 public theorem independence_poly_of_claw_free_splits :
     ∀ {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],
       clawFree G → ((independencePoly G).map (Int.castRingHom ℝ)).Splits := by
@@ -2073,8 +2074,11 @@ public theorem independence_poly_of_claw_free_splits :
   exact cf_main_nonvanishing _ _ _ (cf_clawFree_univ _ hcf)
     (fun _ _ => one_pos) z hz
 
-/-- `clawFree G` holds if and only if the claw — the star graph on `Fin 4`
-centered at `0` — is not an induced subgraph of `G`. -/
+/-- **Claw-free finite graphs have no induced claw.** Let $G$ be a simple graph on a finite
+vertex set. Then $G$ is claw-free if and only if the claw $K_{1,3}$, the star graph on four
+vertices whose center is adjacent to the other three, is not an induced subgraph of $G$, that is,
+there is no injective map from its vertices to those of $G$ that preserves both adjacency and
+nonadjacency. -/
 public theorem clawFree_iff_not_isIndContained {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     clawFree G ↔ ¬ (SimpleGraph.starGraph (0 : Fin 4)).IsIndContained G := by
@@ -2147,8 +2151,11 @@ public theorem clawFree_iff_not_isIndContained {V : Type*} [Fintype V] [Decidabl
         | exact iff_of_false hn23 (by decide)
         | exact iff_of_false (fun h => hn23 h.symm) (by decide)
 
-/-- The `k`-th coefficient of `independencePoly G` is the number of independent
-sets of `G` with `k` vertices. -/
+/-- **Coefficients of the independence polynomial.** Let $G$ be a simple graph on a finite vertex
+set $V$, and let $I(G) = \sum_{k=0}^{|V|} i_k X^k \in \mathbb{Z}[X]$ be its independence
+polynomial, where $i_k$ is the number of independent sets of $G$ with $k$ vertices. Then for every
+natural number $k$, the coefficient of $X^k$ in $I(G)$ is the number of independent sets of $G$
+with exactly $k$ vertices. -/
 public theorem independencePoly_coeff {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) :
     (independencePoly G).coeff k = ((G.indepSetFinset k).card : ℤ) := by
@@ -2199,8 +2206,11 @@ public theorem independencePoly_coeff {V : Type*} [Fintype V] [DecidableEq V]
       omega
     simp [hempty, h]
 
-/-- Evaluating `independencePoly G` at `x` sums `x ^ s.card` over all
-independent sets `s` of `G`. -/
+/-- **Evaluating the independence polynomial.** Let $G$ be a simple graph on a finite vertex set
+$V$, and let $I(G) = \sum_{k=0}^{|V|} i_k X^k \in \mathbb{Z}[X]$ be its independence polynomial,
+where $i_k$ is the number of independent sets of $G$ with $k$ vertices. Then for every element
+$x$ of a commutative ring $R$, the value of $I(G)$ at $x$ is $\sum_S x^{|S|}$, the sum running
+over all independent sets $S \subseteq V$ of $G$, the empty set included. -/
 public theorem aeval_independencePoly {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {R : Type*} [CommRing R] (x : R) :
     Polynomial.aeval x (independencePoly G)
@@ -2268,7 +2278,10 @@ public theorem aeval_independencePoly {V : Type*} [Fintype V] [DecidableEq V]
   exact ((Finset.sum_congr rfl (fun j hj => hterm j hj)).trans
     (Finset.sum_fiberwise_of_maps_to hmem _))
 
-/-- The independence polynomial of the empty graph is `(1 + X) ^ card V`. -/
+/-- **Independence polynomial of the edgeless graph.** Let $V$ be a finite set. For a simple
+graph $G$ on $V$, let $I(G) = \sum_{k=0}^{|V|} i_k X^k \in \mathbb{Z}[X]$ be its independence
+polynomial, where $i_k$ is the number of independent sets of $G$ with $k$ vertices. If $G$ is the
+graph on $V$ with no edges, then $I(G) = (1 + X)^{|V|}$. -/
 public theorem independencePoly_bot {V : Type*} [Fintype V] [DecidableEq V] :
     independencePoly (⊥ : SimpleGraph V) = (1 + Polynomial.X) ^ Fintype.card V := by
   classical
@@ -2295,7 +2308,10 @@ public theorem independencePoly_bot {V : Type*} [Fintype V] [DecidableEq V] :
   rw [independencePoly_coeff, Polynomial.coeff_one_add_X_pow, hset,
     Finset.card_powersetCard, Finset.card_univ]
 
-/-- The independence polynomial of the complete graph is `1 + (card V) * X`. -/
+/-- **Independence polynomial of the complete graph.** Let $V$ be a finite set. For a simple
+graph $G$ on $V$, let $I(G) = \sum_{k=0}^{|V|} i_k X^k \in \mathbb{Z}[X]$ be its independence
+polynomial, where $i_k$ is the number of independent sets of $G$ with $k$ vertices. If $G$ is the
+complete graph on $V$, then $I(G) = 1 + |V|\,X$. -/
 public theorem independencePoly_top {V : Type*} [Fintype V] [DecidableEq V] :
     independencePoly (⊤ : SimpleGraph V)
       = 1 + Polynomial.C (Fintype.card V : ℤ) * Polynomial.X := by
@@ -2387,15 +2403,19 @@ end MetaMathlibExt
 
 namespace SimpleGraph
 
-/-- Claw-free graph: no induced `K₁,₃`, i.e. no center `c` with three
-pairwise nonadjacent, mutually distinct neighbors. Unlike `MetaMathlibExt.clawFree`,
-this applies to graphs on arbitrary types. -/
+/-- **Claw-free graph.** A simple graph $G$ on a vertex set $V$, not necessarily finite, is
+claw-free if it has no induced claw $K_{1,3}$: there are no vertices
+$c, \ell_1, \ell_2, \ell_3 \in V$ such that $\ell_1, \ell_2, \ell_3$ are pairwise distinct, each
+is adjacent to $c$ and different from $c$, and no two of them are adjacent. -/
 public def IsClawFree {V : Type*} (G : SimpleGraph V) : Prop :=
   ¬ ∃ c l₁ l₂ l₃ : V, c ≠ l₁ ∧ c ≠ l₂ ∧ c ≠ l₃ ∧ l₁ ≠ l₂ ∧ l₁ ≠ l₃ ∧ l₂ ≠ l₃ ∧
     G.Adj c l₁ ∧ G.Adj c l₂ ∧ G.Adj c l₃ ∧ ¬ G.Adj l₁ l₂ ∧ ¬ G.Adj l₁ l₃ ∧ ¬ G.Adj l₂ l₃
 
-/-- `IsClawFree G` holds if and only if the claw — the star graph on `Fin 4`
-centered at `0` — is not an induced subgraph of `G`. -/
+/-- **Claw-free graphs have no induced claw.** Let $G$ be a simple graph on an arbitrary vertex
+set. Then $G$ is claw-free if and only if the claw $K_{1,3}$, the star graph on four vertices
+whose center is adjacent to the other three, is not an induced subgraph of $G$, that is, there is
+no injective map from its vertices to those of $G$ that preserves both adjacency and
+nonadjacency. -/
 public theorem isClawFree_iff_not_isIndContained {V : Type*} (G : SimpleGraph V) :
     G.IsClawFree ↔ ¬ (starGraph (0 : Fin 4)).IsIndContained G := by
   constructor
@@ -2471,7 +2491,9 @@ end SimpleGraph
 
 namespace MetaMathlibExt
 
-/-- The Wanted `clawFree` predicate agrees with `SimpleGraph.IsClawFree`. -/
+/-- **The two definitions of claw-free agree.** A simple graph on a finite vertex set is a
+claw-free finite graph if and only if it is a claw-free graph in the sense defined for graphs on
+arbitrary vertex sets. -/
 public theorem clawFree_iff_isClawFree {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     clawFree G ↔ G.IsClawFree :=

@@ -1,0 +1,84 @@
+{
+  "format": "atlas-source-provenance-v1",
+  "purpose": "Reproducible source evidence for adapted Pi name-scoping transport.",
+  "snapshot": {
+    "path": "docs/provenance/pi-scoping/finite-session-basic.lean.txt",
+    "sha256": "eb82d1892e50921192fb8b02a9f9424ac531cbc62a055e3282a2cd13e15da432",
+    "bytes": 5944,
+    "lines": 164,
+    "encoding": "UTF-8",
+    "compiled_library": false,
+    "copyright_and_license": "Exact Meta copyright/license header retained; see repository LICENSE."
+  },
+  "origin": {
+    "repository": "facebookresearch/atlas-lean",
+    "development": "Meta finite-session typing development in this project",
+    "path": "CSLibExt/Languages/SessionTypes/Basic.lean",
+    "revision": "a578d21dd840e286f88b1799fee9403c902b6f24",
+    "revision_status": "Unpublished development commit. This is an origin label, not a required fetchable Git revision; the in-tree snapshot is the source of record."
+  },
+  "source_substrate": {
+    "path": "CSLibExt/Languages/PiCalculus/Basic.lean",
+    "sha256": "aac754d5cf2ab46b1493862e4d6b071e40f0393ebcfc5ba09ca0a4c778bbd7b2",
+    "matches_current_tree": true,
+    "lean_toolchain": "leanprover/lean4:v4.35.0",
+    "lake_manifest_sha256": "843076db4bbce37806a2abc1622de13f06070b5ed7234a9d6b38a2f9a07cf38e"
+  },
+  "adaptations": [
+    {
+      "source_declaration": "Cslib.SessionTypes.NameScoped",
+      "source_lines": [
+        76,
+        78
+      ],
+      "source_span_sha256": "5718a8712fb273c104c96740d3910aca93610e3db8c2c8bc040bdc765bc6cd57",
+      "target_path": "CSLibExt/Languages/PiCalculus/Scoping.lean",
+      "target_declaration": "Cslib.PiCalculus.Name.ClosedAt",
+      "relationship": "Reference predicate used by the source proofs; definitionally the same scoped-name concept now shared canonically."
+    },
+    {
+      "source_declaration": "Cslib.SessionTypes.NameScoped.lift",
+      "source_lines": [
+        81,
+        87
+      ],
+      "source_span_sha256": "f633bbf4cda822339585322ac9be7dfcedcc1e4a1d26b78c2a306091ac650403",
+      "target_path": "CSLibExt/Languages/PiCalculus/Scoping.lean",
+      "target_declaration": "Cslib.PiCalculus.Name.ClosedAt.lift",
+      "relationship": "Adapted and generalized from cutoff zero to an arbitrary cutoff, including the newly required nonshifted branch."
+    },
+    {
+      "source_declaration": "Cslib.SessionTypes.NameScoped.subst",
+      "source_lines": [
+        90,
+        103
+      ],
+      "source_span_sha256": "b226a6ee9f8943c208b1ed48e3459a2eff10dfa0f0e130e9c4e574d96b39e19a",
+      "target_path": "CSLibExt/Languages/PiCalculus/Scoping.lean",
+      "target_declaration": "Cslib.PiCalculus.Name.ClosedAt.subst",
+      "relationship": "Adapted with the same scoping hypotheses and cutoff bound; predicate and namespace are canonicalized."
+    },
+    {
+      "source_declaration": "Cslib.SessionTypes.HasType.substProc",
+      "source_lines": [
+        119,
+        137
+      ],
+      "source_span_sha256": "393aeb899f9189ac90f180de0e05775558fa7250e4e3b3041cb6b8aaaf97aaf5",
+      "target_path": "CSLibExt/Languages/PiCalculus/Scoping.lean",
+      "target_declaration": "Cslib.PiCalculus.Proc.ClosedAt.substProc",
+      "relationship": "The binder-recursion pattern informs the new process-scoping proof. The target is scoping, not session typing, and handles every Pi constructor."
+    }
+  ],
+  "consumer_reference": {
+    "source_declaration": "Cslib.SessionTypes.HasType.substProc",
+    "source_lines": [
+      119,
+      137
+    ],
+    "cutoff_zero_lift_call_line": 133,
+    "target_path": "CSLibExtTest/Languages/PiCalculus/ScopingTests.lean",
+    "target_declaration": "Cslib.PiCalculus.ScopingTests.session_lift_call"
+  },
+  "scope": "Source snapshot only. No finite-session library/API or progress theorem is added by this provenance asset."
+}

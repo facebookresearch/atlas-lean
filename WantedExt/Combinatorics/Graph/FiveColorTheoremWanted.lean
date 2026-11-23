@@ -16,8 +16,9 @@ public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 
 namespace MetaMathlibExt
 
-/-- Five color theorem: a finite planar simple graph is properly vertex-colorable with
-five colors.
+/-- **Five color theorem.** Every straight-line planar simple graph $G$ on a finite vertex set
+has a proper vertex coloring with five colors.
+
 Source: https://en.wikipedia.org/wiki/Five_color_theorem (statement five-color-s1). -/
 theorem_wanted five_color_theorem {V : Type*} [Finite V] (G : SimpleGraph V)
     (hG : G.IsPlanar) :

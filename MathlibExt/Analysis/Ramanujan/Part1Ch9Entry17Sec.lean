@@ -1365,9 +1365,14 @@ private lemma entry17_eq_of_nonneg {x : ℝ}
   rw [hL]
   linarith [hKS]
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
+/-- **The inverse tangent integral at $\tan x$.** Let $x$ be a real number with
+$|x| \le \pi/4$, and let $P(x) = x \log|\tan x|$ for $x \ne 0$ and $P(0) = 0$. Then
+$\cos x \ne 0$, the series
+$T(x) = \sum_{k=0}^{\infty} (-1)^k \frac{\tan^{2k+1} x}{(2k+1)^2}$ (the inverse tangent integral
+of $\tan x$) and $F(x) = \sum_{j=0}^{\infty} \frac{\sin((4j+2)x)}{(2j+1)^2}$ are both summable,
+and $T(x) = P(x) + F(x)$.
 
-Proves `Wanted` entry `ramanujan_part1_ch9_entry17_sec`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
 -/
 theorem ramanujan_part1_ch9_entry17_sec (x : ℝ) (hx : |x| ≤ Real.pi / 4) :
     Real.cos x ≠ 0 ∧
