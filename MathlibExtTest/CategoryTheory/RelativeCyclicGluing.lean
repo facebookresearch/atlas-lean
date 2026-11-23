@@ -20,6 +20,8 @@ set_option backward.defeqAttrib.useBackward true
 
 noncomputable section
 
+namespace MathlibExtTest.CategoryTheory.RelativeCyclicGluing
+
 abbrev K := (𝟙_ (Cochains ℚ))
 abbrev e : K ⟶ K := 0
 abbrev f : K ⟶ K := 𝟙 _
@@ -159,3 +161,5 @@ example : sourceCInjection ≫ (sourceToCompatibleIso e f g h).hom.f (-1) ≫
   simpa only [Category.assoc, Int.reduceNeg, Int.reduceAdd] using
     (congrArg (fun m => sourceCInjection ≫ (sourceToCompatibleIso e f g h).hom.f (-1) ≫ m) he).trans
       source_C_projection_negative
+
+end MathlibExtTest.CategoryTheory.RelativeCyclicGluing

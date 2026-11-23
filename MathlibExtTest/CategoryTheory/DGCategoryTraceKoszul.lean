@@ -17,6 +17,8 @@ open MathlibExt.CategoryTheory.DGModelContracts
 set_option backward.isDefEq.respectTransparency false
 noncomputable section
 
+namespace MathlibExtTest.CategoryTheory.DGCategoryTraceKoszul
+
 abbrev flat : Cochains ℚ where
   X _ := ModuleCat.of ℚ ℚ
   d _ _ := 0
@@ -46,3 +48,5 @@ example : TensorProduct.tmul ℚ (1 : ℚ) (1 : ℚ) ≠ 0 := by
   intro h
   have hm := congrArg (TensorProduct.lid ℚ ℚ) h
   norm_num at hm
+
+end MathlibExtTest.CategoryTheory.DGCategoryTraceKoszul
