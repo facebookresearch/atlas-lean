@@ -16,6 +16,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.EuclideanChainLength
 
 namespace MetaMathlibExt
 
@@ -200,57 +201,6 @@ Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Theorem 1. -/
 public theorem coconutCountTerm_zero (x : ℕ) : coconutCountTerm x 0 = catalan (x - 1) := by
   simp [coconutCountTerm]
 
-/-- **Euclidean chain function.** For natural numbers $x_1$ and $x_2$, the Euclidean chain
-$x_1, x_2, x_3, \dots$ is given by $x_{i+1} = (-x_{i-1}) \bmod x_i$ (the least nonnegative
-residue) while $x_i \ne 0$, and by $x_{i+1} = 0$ once $x_i = 0$. The Euclidean chain function is
-defined by the recursion $F(x, 0) = 1$ and $F(x, y) = 1 + F(y, (-x) \bmod y)$ for $y \ne 0$. For
-$x_1 > 0$, $F(x_1, x_2)$ is the number of positive terms of the Euclidean chain.
-
-For $x_1 = 0$ the recursion also counts the first term $0$: $F(0, 0) = 1$ and $F(0, 1) = 2$,
-although the chains $0, 0$ and $0, 1, 0$ have $0$ and $1$ positive terms.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 4.12
-(arXiv numbering). -/
-public def euclideanChainLength (x y : ℕ) : ℕ :=
-  if h : y = 0 then 1 else 1 + euclideanChainLength y ((y - x % y) % y)
-termination_by y
-decreasing_by exact Nat.mod_lt _ (Nat.pos_of_ne_zero h)
-
-/-- **Euclidean chain function with second argument zero.** For every natural number $x$, the
-Euclidean chain function $F$ satisfies $F(x, 0) = 1$.
-
-For $x = 0$ this is the value given by the recursive definition of $F$, not a count of positive
-terms.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 4.12
-(arXiv numbering). -/
-public theorem euclideanChainLength_zero (x : ℕ) : euclideanChainLength x 0 = 1 := by
-  rw [euclideanChainLength]
-  simp
-
-/-- **Recursion for the Euclidean chain function.** For natural numbers $x$ and $y$ with $y \ne 0$,
-the Euclidean chain function $F$ satisfies $F(x, y) = 1 + F(y, (-x) \bmod y)$, where
-$(-x) \bmod y$ is the least nonnegative residue of $-x$ modulo $y$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 4.12
-(arXiv numbering). -/
-public theorem euclideanChainLength_of_ne_zero (x : ℕ) {y : ℕ} (hy : y ≠ 0) :
-    euclideanChainLength x y = 1 + euclideanChainLength y ((y - x % y) % y) := by
-  rw [euclideanChainLength]
-  simp [hy]
-
-/-- **Euclidean chain function of 13 and 60.** The Euclidean chain function $F$ satisfies
-$F(13, 60) = 8$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Example 4.13
-(arXiv numbering). -/
-public theorem euclideanChainLength_thirteen_sixty : euclideanChainLength 13 60 = 8 := by
-  simp [euclideanChainLength_of_ne_zero, euclideanChainLength_zero]
-
 /-- **Monotonicity criteria for arithmetical structures on coconut trees.** Let $(d, r)$ be an
 arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$, and
 write $d_k = d(v_k)$ and $r_k = r(v_k)$. The following are equivalent: (1) $d_k \ge 2$ for
@@ -377,17 +327,6 @@ Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 4
 (`integers-2025-A82-cor-4`). -/
 public theorem_wanted euclideanChainLength_of_dvd {x y : ℕ} (hx : 0 < x) (hy : 0 < y)
     (hxy : x ∣ y) : euclideanChainLength x y = 1 + y / x
-
-/-- **Euclidean chain function at one.** For every natural number $y$, the Euclidean chain
-function $F$ satisfies $F(1, y) = y + 1$, and for every natural number $x \ge 1$ it satisfies
-$F(x, 1) = 2$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 5
-(`integers-2025-A82-cor-5`). -/
-public theorem_wanted euclideanChainLength_one_left_and_one_right (y : ℕ) {x : ℕ}
-    (hx : 0 < x) :
-    euclideanChainLength 1 y = y + 1 ∧ euclideanChainLength x 1 = 2
 
 /-- **Smooth coconut structures with prescribed labels.** Let $s \ge 1$ and let $c$ and
 $a_1, \dots, a_s$ be natural numbers with $a_i > 0$, $a_i \mid c$ and $a_i < c$ for every $i$, such
