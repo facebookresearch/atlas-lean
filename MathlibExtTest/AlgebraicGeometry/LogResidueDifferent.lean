@@ -36,3 +36,23 @@ example [Nontrivial R] : ringConductor (C : R →+* R[X]) = ⊥ := by
     RingHom.algebraMap_toAlgebra, coeff_C, coeff_C_mul_X] at h1
   rw [Ideal.mem_bot]
   simpa using h1.symm
+
+section ResidueChart
+
+open MathlibExt.AlgebraicGeometry.LogPairs
+
+/-- A residue chart has a positive index: there is none for the zeroth power, whose trivial
+Cartier line would satisfy the log-adjoint normalization for every boundary. -/
+example {k : Type} [Field k] {n : ℕ} (P : LogPair k (n + 1)) (A : CartierLine P.variety)
+    (S : NormalVariety k n) (C : CanonicalData S) (i : S.X ⟶ P.variety.X)
+    (R : CartierRationalization A) : IsEmpty (ResidueChart P 0 A S C i R) :=
+  ⟨fun F ↦ (lt_irrefl 0 F.positive).elim⟩
+
+/-- The divisor side of a residue chart is finite over the ambient variety. -/
+example {k : Type} [Field k] {n m : ℕ} {P : LogPair k (n + 1)} {A : CartierLine P.variety}
+    {S : NormalVariety k n} {C : CanonicalData S} {i : S.X ⟶ P.variety.X}
+    {R : CartierRationalization A} (F : ResidueChart P m A S C i R) :
+    AlgebraicGeometry.IsFinite i.left :=
+  F.finite
+
+end ResidueChart

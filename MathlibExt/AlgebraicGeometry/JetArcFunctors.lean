@@ -26,9 +26,9 @@ morphisms from its actual product with that disc. Truncation is induced
 by the literal quotient ring map. The arc functor is the inverse limit
 of these exact functors, not an arbitrarily named set of arcs.
 
-Representation is a separate construction request. For an affine target,
-the source identifies arc values with maps out of the power-series ring;
-for general targets its field-valued assertion is kept distinct.
+Representation is a separate construction request. For an affine target `Spec B`,
+the source identifies arcs with ring maps `B → A⟦t⟧`, that is, with morphisms out of
+`Spec A⟦t⟧`; for general targets its field-valued assertion is kept distinct.
 
 Reference: Ein--Mustata, *Jet schemes and singularities*,
 arXiv:math/0612862, equation (2.1), Proposition 2.2 and section 3.

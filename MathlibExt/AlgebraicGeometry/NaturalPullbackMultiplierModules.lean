@@ -86,7 +86,11 @@ def naturalDivisor (M : CanonicalModel V C) (D : IntegerWeil V) (h : NaturalSupp
     IntegerWeil M.variety :=
   Finsupp.ofSupportFinite (naturalCoefficient V C M D) h.finite
 
-/-- Actual order of the pulled-back ideal at a prime, using every affine local section. -/
+/-- Actual order of the pulled-back ideal at a prime: the least order at `p` of a nonzero local
+section of the pulled-back ideal on an affine open containing `p`. Such orders are nonnegative.
+For a nonzero ideal on the integral base the set of orders is nonempty, since the model maps
+birationally onto the base; for the zero ideal it is empty and the value is the `sInf ∅ = 0`
+convention, not an order, which is why `IdealSupport` requires a nonzero ideal. -/
 def idealCoefficient (M : CanonicalModel V C) (I : V.X.left.IdealSheafData)
     (p : PrimePoint M.variety) : ℤ :=
   sInf {a | ∃ (U : M.variety.X.left.Opens) (hU : IsAffineOpen U) (hp : p.val ∈ U),
@@ -95,29 +99,33 @@ def idealCoefficient (M : CanonicalModel V C) (I : V.X.left.IdealSheafData)
       s ∈ (I.comap M.map.left).ideal ⟨U,hU⟩ ∧
       a = M.variety.X.left.ord (M.variety.X.left.germToFunctionField U s) p.val}
 
+/-- The ideal is nonzero, so that `idealCoefficient` is its actual order, and its coefficient
+function has finite support. -/
 structure IdealSupport (M : CanonicalModel V C) (I : V.X.left.IdealSheafData) : Prop where
+  nonzero : I ≠ ⊥
   finite : (Function.support (idealCoefficient V C M I)).Finite
 
 def idealDivisor (M : CanonicalModel V C) (I : V.X.left.IdealSheafData)
     (h : IdealSupport V C M I) : IntegerWeil M.variety :=
   Finsupp.ofSupportFinite (idealCoefficient V C M I) h.finite
 
-/-- The actual m-limiting relative canonical divisor K_Y-(1/m)f-natural(mK_X). -/
-def limitingRelativeCanonical (M : CanonicalModel V C) (m : ℕ)
-    (h : NaturalSupport V C M ((m : ℤ) • canonicalDivisor C)) : RealWeil M.variety :=
+/-- The actual `m`-limiting relative canonical divisor `K_Y - (1/m) f^♮(m K_X)`, for a positive
+index `m` (de Fernex--Hacon, Definition 3.1). -/
+def limitingRelativeCanonical (M : CanonicalModel V C) (m : ℕ+)
+    (h : NaturalSupport V C M (((m : ℕ) : ℤ) • canonicalDivisor C)) : RealWeil M.variety :=
   realCast (canonicalDivisor M.canonical) -
-    (1/(m : ℝ)) • realCast (naturalDivisor V C M ((m : ℤ) • canonicalDivisor C) h)
+    (1/((m : ℕ) : ℝ)) • realCast (naturalDivisor V C M (((m : ℕ) : ℤ) • canonicalDivisor C) h)
 
 /-- The literal round-up divisor defining the multiplier candidate. -/
 def multiplierDivisor (M : CanonicalModel V C) (I : V.X.left.IdealSheafData)
-    (m : ℕ) (c : ℝ) (h : NaturalSupport V C M ((m : ℤ) • canonicalDivisor C))
+    (m : ℕ+) (c : ℝ) (h : NaturalSupport V C M (((m : ℕ) : ℤ) • canonicalDivisor C))
     (hI : IdealSupport V C M I) : IntegerWeil M.variety :=
   Finsupp.mapRange Int.ceil (by simp)
     (limitingRelativeCanonical V C M m h - c • realCast (idealDivisor V C M I hI))
 
 /-- The actual pushed divisor module, without an arbitrary multiplier-ideal carrier. -/
 def multiplierCandidate (M : CanonicalModel V C) (I : V.X.left.IdealSheafData)
-    (m : ℕ) (c : ℝ) (h : NaturalSupport V C M ((m : ℤ) • canonicalDivisor C))
+    (m : ℕ+) (c : ℝ) (h : NaturalSupport V C M (((m : ℕ) : ℤ) • canonicalDivisor C))
     (hI : IdealSupport V C M I) : V.X.left.Modules := by
   letI := M.dvr
   exact (Scheme.Modules.pushforward M.map.left).obj
@@ -126,7 +134,7 @@ def multiplierCandidate (M : CanonicalModel V C) (I : V.X.left.IdealSheafData)
 /-- A multiplier ideal presentation is pinned on every affine section
 to the exact candidate image. -/
 structure CandidateImage (M : CanonicalModel V C) (I : V.X.left.IdealSheafData)
-    (m : ℕ) (c : ℝ) (h : NaturalSupport V C M ((m : ℤ) • canonicalDivisor C))
+    (m : ℕ+) (c : ℝ) (h : NaturalSupport V C M (((m : ℕ) : ℤ) • canonicalDivisor C))
     (hI : IdealSupport V C M I) where
   map : multiplierCandidate V C M I m c h hI ⟶
     CoherentCurveLinearSeries.structureModule V.X.left
@@ -183,24 +191,25 @@ structure FractionalPullback (M : CanonicalModel V C) (D : IntegerWeil V)
       (DivisorialModuleSheaves.sheaf M.variety (-naturalDivisor V C M D hD))
 
 /-- Exact smooth/SNC resolution input for the actual fractional and ideal pullbacks. -/
-structure ResolvedMultiplierModel (I : V.X.left.IdealSheafData) (m : ℕ) where
+structure ResolvedMultiplierModel (I : V.X.left.IdealSheafData) (m : ℕ+) where
   model : CanonicalModel V C
   [smooth : Smooth model.variety.X.hom]
-  naturalSupport : NaturalSupport V C model ((m : ℤ) • canonicalDivisor C)
+  naturalSupport : NaturalSupport V C model (((m : ℕ) : ℤ) • canonicalDivisor C)
   idealSupport : IdealSupport V C model I
-  fractional : FractionalPullback V C model ((m : ℤ) • canonicalDivisor C) naturalSupport
+  fractional : FractionalPullback V C model (((m : ℕ) : ℤ) • canonicalDivisor C) naturalSupport
   idealPrincipal : CartierIdealModels.IsEffectiveCartier (I.comap model.map.left)
   crossings : NormalCrossingsModels.IsStrictNormalCrossings model.variety.X
     (Scheme.IdealSheafData.vanishingIdeal
       ((model.map.left ⁻¹ᵁ isomorphismOpen V C model).compl ⊔
-        divisorSupport (naturalDivisor V C model ((m : ℤ) • canonicalDivisor C) naturalSupport) ⊔
+        divisorSupport
+          (naturalDivisor V C model (((m : ℕ) : ℤ) • canonicalDivisor C) naturalSupport) ⊔
           (I.comap model.map.left).support))
 
 /-- Actual selected resolved models and exact candidate images for every positive degree. -/
 structure LimitingFamily (I : V.X.left.IdealSheafData) (c : ℝ) where
-  model : ∀ m : PNat, ResolvedMultiplierModel V C I m.val
+  model : ∀ m : PNat, ResolvedMultiplierModel V C I m
   image : ∀ m : PNat,
-    CandidateImage V C (model m).model I m.val c (model m).naturalSupport (model m).idealSupport
+    CandidateImage V C (model m).model I m c (model m).naturalSupport (model m).idealSupport
 
 /-- The local limiting multiplier ideal is the literal supremum of the fixed candidate images. -/
 def localLimitingIdeal {I : V.X.left.IdealSheafData} {c : ℝ}

@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.RationalResolution
+public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 public import Mathlib.AlgebraicGeometry.Morphisms.Separated
 
 /-!

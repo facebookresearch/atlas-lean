@@ -34,10 +34,11 @@ required, so no radicality of compatible ideals is claimed.
 
 For a family of such maps indexed by admissible degrees, `indexedStableTraceImage` is the
 intersection of their images and `indexedCompatibleIdealInfimum` the infimum of the nonzero
-ideals compatible with all of them. For the family of all trace maps of a pair these are the
-non-F-pure ideal and the candidate test ideal; that they are nonzero or minimal, and their
-agreement with the geometric sheaves, needs F-finiteness and localization and is not asserted
-here.
+ideals compatible with all of them. The family matters: for the iterates of the normalized trace
+map of a pair (unique up to units, Hacon--Xu §2.3) these are the non-F-pure ideal and the
+candidate test ideal, whereas an arbitrary family need not give them (the zero map alone makes
+the intersection of images zero). That they are nonzero or minimal, and their agreement with the
+geometric sheaves, needs F-finiteness and localization and is not asserted here.
 
 Sources: Schwede, arXiv0901.1154v4, Definition 2.12 and Theorem 5.2;
 Hacon--Xu arXiv1302.0298v2, §2.3.
