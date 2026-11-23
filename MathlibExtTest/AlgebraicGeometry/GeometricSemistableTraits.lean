@@ -7,12 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import MathlibExt.AlgebraicGeometry.GeometricSemistableTraits
+import MathlibExt.AlgebraicGeometry.RapoportZinkContracts
 
 /-! # Tests for the geometric traits of a semistable degeneration
 
 The Galois actions on the generic fibre and on the normalized model are compatible with the
-generic arrow, and inertia acts trivially on the special fibre, by instance search.
+generic arrow, and inertia acts trivially on the special fibre, by instance search; the identity
+acts as the identity of the generic fibre; the logarithm of the nearby monodromy truncated at degree
+zero vanishes.
 -/
 
 namespace MathlibExtTest.AlgebraicGeometry.GeometricSemistableTraits
@@ -37,5 +39,31 @@ example (σ : Inertia π T) :
 example (σ : Inertia π T) :
     specialArrow π T X ≫ normalGalois (K := K) X σ.1.1 = specialArrow π T X :=
   InertiaSchemeCompatibility.specialSquare σ
+
+/-- The identity of the Galois group acts as the identity of the generic fibre. -/
+example : genericGalois (K := K) X (1 : Galois K L) = 𝟙 _ := by
+  apply Limits.pullback.hom_ext
+  · simp
+  · rw [genericGalois_snd, Category.id_comp]
+    have h : CommRingCat.ofHom (1 : Galois K L).toRingHom = 𝟙 (CommRingCat.of L) := rfl
+    rw [h, Spec.map_id, Category.comp_id]
+
+section Nearby
+
+open MathlibExt.AlgebraicGeometry.RapoportZinkContracts
+open MathlibExt.AlgebraicGeometry.AdicDerivedContracts
+open MathlibExt.AlgebraicGeometry.SemistableWeilDeligne
+open MathlibExt.AlgebraicGeometry.ProEtaleCohomologyFunctoriality
+open MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
+
+variable (ell : ℕ) [Fact ell.Prime] [IsProper X.hom] [DerivedFunctorTheory ℚ_[ell]]
+  [∀ σ : Galois K L, IsIso (coefficientPullback ℚ_[ell] (RationalCoefficients.{0} ell)
+    (genericGalois (K := K) X σ))]
+
+/-- The logarithm truncated at degree zero is zero. -/
+example (B : TameCoordinate ell R K L π T) : nearbyLog ell R K L π T X 0 B = 0 := by
+  simp [nearbyLog, Finset.sum_filter]
+
+end Nearby
 
 end MathlibExtTest.AlgebraicGeometry.GeometricSemistableTraits
