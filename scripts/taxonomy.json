@@ -11426,6 +11426,7 @@
   "MathlibExt/NumberTheory/HyperLeonardo": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Hyper-Leonardo numbers"},
   "MathlibExt/NumberTheory/HyperfactorialPartition": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Hyperfactorial partitions"},
   "MathlibExt/NumberTheory/ImaginaryQuadraticDiscriminant": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Imaginary quadratic discriminants"},
+  "MathlibExt/NumberTheory/InclExclLikeSumBounds": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
   "MathlibExt/NumberTheory/IncompleteExponentialSum": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "MathlibExt/NumberTheory/IncompleteLeonardoP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/InitialRepetitionsC8": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
