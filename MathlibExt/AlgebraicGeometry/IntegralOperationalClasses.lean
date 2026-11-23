@@ -21,8 +21,8 @@ Cup product is literal composition of the cap operations.
 Sources: Fulton, *Intersection Theory*, chapter 17;
 AxiomMath/Stacks c496df0d9beea9deaeabcea8492605f9a0a2313b,
 Chow/BivariantLemmas/VirtualNormalBundleClassConstruction.lean and Chow/GysinConstruction,
-Apache 2.0. The ordinary compatibility and cup-closure facts are source
-integration, distinct from the toric Minkowski comparison.
+Apache 2.0. The compatibility of the identity and closure under cup product
+are proved here: only degree casts move.
 -/
 
 set_option backward.isDefEq.respectTransparency false
@@ -34,7 +34,7 @@ open CategoryTheory IntegerSchemeChow IntegralOperationalChow IntegralGysinRecip
 
 variable {k : Type} [Field k] (O : CycleOperations (k := k)) (X : FieldScheme k)
 
-def reindex (T : TestScheme X) {Y : FieldScheme k} (f : Y.scheme ⟶ T.source.scheme) :
+abbrev reindex (T : TestScheme X) {Y : FieldScheme k} (f : Y.scheme ⟶ T.source.scheme) :
     TestScheme X := ⟨Y, f ≫ T.map⟩
 
 abbrev ActionFamily (q : ℤ) :=
@@ -100,19 +100,81 @@ def cupFamily {q r : ℤ} (A : Class O X q) (B : Class O X r) : ActionFamily X (
 
 def identityFamily : ActionFamily X 0 := fun T d ↦ chowCast T.source (by omega)
 
-/-- Ordinary bivariant closure is a precisely fixed source theorem,
-not a chosen product or a toric comparison assumption. -/
-structure ProductCompatibility : Prop where
-  cup : ∀ (q r : ℤ) (A : Class O X q) (B : Class O X r),
-    Compatible O X (q + r) (cupFamily O X A B)
-  identity : Compatible O X 0 (identityFamily X)
+section Casts
 
-def cupClass (P : ProductCompatibility O X) {q r : ℤ}
-    (A : Class O X q) (B : Class O X r) : Class O X (q + r) :=
-  ⟨cupFamily O X A B, P.cup q r A B⟩
+variable {X}
 
-def unitClass (P : ProductCompatibility O X) : Class O X 0 :=
-  ⟨identityFamily X, P.identity⟩
+theorem chowCast_chowCast (Y : FieldScheme k) {a b c : ℤ} (h : a = b) (h' : b = c)
+    (x : ChowGroup Y a) : chowCast Y h' (chowCast Y h x) = chowCast Y (h.trans h') x := by
+  subst h h'
+  rfl
+
+theorem chowCast_rfl (Y : FieldScheme k) {a : ℤ} (h : a = a) (x : ChowGroup Y a) :
+    chowCast Y h x = x :=
+  rfl
+
+theorem action_chowCast {q : ℤ} (A : ActionFamily X q) (T : TestScheme X) {a b : ℤ}
+    (h : a = b) (x : ChowGroup T.source a) :
+    A T b (chowCast T.source h x) = chowCast T.source (by rw [h]) (A T a x) := by
+  subst h
+  rfl
+
+theorem proper_chowCast {Y Z : FieldScheme k} (f : Y.scheme ⟶ Z.scheme) [IsProper f.left]
+    {a b : ℤ} (h : a = b) (x : ChowGroup Y a) :
+    O.proper f b (chowCast Y h x) = chowCast Z h (O.proper f a x) := by
+  subst h
+  rfl
+
+theorem flat_chowCast {Y Z : FieldScheme k} (f : Y.scheme ⟶ Z.scheme) [Flat f.left] (r : ℕ)
+    (hr : PureRelativeDimension f r) {a b : ℤ} (h : a = b) (x : ChowGroup Z a) :
+    O.flat f r hr b (chowCast Z h x) = chowCast Y (by rw [h]) (O.flat f r hr a x) := by
+  subst h
+  rfl
+
+theorem refinedGysin_chowCast {Z Y T : FieldScheme k} {i : Z.scheme ⟶ Y.scheme}
+    [IsClosedImmersion i.left] {t : T.scheme ⟶ Y.scheme} {c : ℕ}
+    (G : RefinedGeometry O i t c) (S : Specialization O G) {a b : ℤ} (h : a = b)
+    (x : ChowGroup T a) :
+    refinedGysin O G S b (chowCast T h x) =
+      chowCast G.square.source (by rw [h]) (refinedGysin O G S a x) := by
+  subst h
+  rfl
+
+end Casts
+
+/-- The identity family commutes with every operation: only degree casts move. -/
+theorem identityFamily_compatible : Compatible O X 0 (identityFamily X) where
+  proper T Y f _ d alpha := proper_chowCast O f _ alpha
+  flat T Y f _ r hr d alpha := by
+    simp only [identityFamily]
+    rw [flat_chowCast, chowCast_chowCast]
+  gysin Y Z T i _ t c G S d alpha := by
+    simp only [identityFamily]
+    rw [refinedGysin_chowCast, chowCast_chowCast]
+
+/-- The composite of two compatible families is compatible: apply the two
+compatibility laws in turn and move the degree casts. -/
+theorem cupFamily_compatible {q r : ℤ} (A : Class O X q) (B : Class O X r) :
+    Compatible O X (q + r) (cupFamily O X A B) where
+  proper T Y f _ d alpha := by
+    simp only [cupFamily, AddMonoidHom.comp_apply]
+    rw [proper_chowCast, A.property.proper, B.property.proper]
+  flat T Y f _ r' hr d alpha := by
+    simp only [cupFamily, AddMonoidHom.comp_apply]
+    rw [B.property.flat, action_chowCast, A.property.flat, flat_chowCast]
+    simp only [chowCast_chowCast]
+  gysin Y Z T i _ t c G S d alpha := by
+    simp only [cupFamily, AddMonoidHom.comp_apply]
+    rw [B.property.gysin, action_chowCast, A.property.gysin, refinedGysin_chowCast]
+    simp only [chowCast_chowCast]
+
+/-- The cup product: literal composition of the cap operations. -/
+def cupClass {q r : ℤ} (A : Class O X q) (B : Class O X r) : Class O X (q + r) :=
+  ⟨cupFamily O X A B, cupFamily_compatible O X A B⟩
+
+/-- The unit class: the identity cap operation. -/
+def unitClass : Class O X 0 :=
+  ⟨identityFamily X, identityFamily_compatible O X⟩
 
 variable {X} (Y : FieldScheme k) (f : Y.scheme ⟶ X.scheme)
 

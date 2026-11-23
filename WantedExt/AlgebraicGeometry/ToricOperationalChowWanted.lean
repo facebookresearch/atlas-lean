@@ -32,6 +32,12 @@ open MathlibExt.AlgebraicGeometry.FiniteToricCoordinates
 open MathlibExt.AlgebraicGeometry.ToricMinkowskiWeights
 open MathlibExt.AlgebraicGeometry.ToricOperationalChow
 
+/-- The torus-orbit closures of a toric variety, with their chart ideals:
+`V(σ) ∩ U_τ` is cut out by the characters of `τ^∨ ∩ M` not vanishing on `σ`
+when `σ` is a face of `τ`, and is empty otherwise (Cox–Little–Schenck,
+Toric Varieties, Proposition 3.2.7 and Theorem 3.2.6). -/
+def_wanted orbitClosures (n : ℕ) (F : FiniteFan n) (M : Model F) : OrbitClosures F M
+
 theorem_wanted cap_balanced (n : ℕ) (F : FiniteFan n) (_complete : F.IsComplete)
     (M : Model F) (V : OrbitClosures F M) (O : CycleOperations (k := ℂ))
     (D : ∀ sigma : F.Face, DegreeComparison (V.source sigma))
@@ -48,11 +54,11 @@ def_wanted unique_operational_lift (n : ℕ) (F : FiniteFan n) (_complete : F.Is
 theorem_wanted cup_displacement (n : ℕ) (F : FiniteFan n) (_complete : F.IsComplete)
     (M : Model F) (V : OrbitClosures F M) (O : CycleOperations (k := ℂ))
     (D : ∀ sigma : F.Face, DegreeComparison (V.source sigma))
-    (P : ProductCompatibility O M.source) (k l : ℕ)
+    (k l : ℕ)
     (A : Class O M.source (k : ℤ)) (B : Class O M.source (l : ℤ))
     (v : RealSpace n) (_generic : GenericDisplacement F v) :
     capHom F M V O D (k + l)
-      (degreeCast O M.source (by omega) (cupClass O M.source P A B)) =
+      (degreeCast O M.source (by omega) (cupClass O M.source A B)) =
         displacementProduct F k l (capHom F M V O D k A) (capHom F M V O D l B) v
 
 theorem_wanted subdivision_cap (n : ℕ) (F G : FiniteFan n)

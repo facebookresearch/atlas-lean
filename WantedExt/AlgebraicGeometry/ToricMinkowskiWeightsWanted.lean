@@ -27,6 +27,11 @@ namespace WantedExt.AlgebraicGeometry.ToricMinkowskiWeightsWanted
 open MathlibExt.AlgebraicGeometry.FiniteToricCoordinates
 open MathlibExt.AlgebraicGeometry.ToricMinkowskiWeights
 
+/-- Every codimension-one face pair of a rational fan has a positive primitive
+normal in the quotient lattice (Fulton–Sturmfels, Intersection theory on toric
+varieties, §2). -/
+def_wanted normalData (n : ℕ) (F : FiniteFan n) : NormalData F
+
 theorem_wanted product_balanced (n : ℕ) (F : FiniteFan n) (N : NormalData F)
     (_complete : F.IsComplete) (k l : ℕ) (w : weights F N k) (v : weights F N l)
     (a : RealSpace n) (_generic : GenericDisplacement F a) :
