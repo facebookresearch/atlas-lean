@@ -36,7 +36,6 @@
 ## Kingman's coalescent under a bottleneck
 
 - [Kingman holding times after the bottleneck time change](bottleneck-times.md)
-- [The time-changed holding times form a measurable sequence](measurable-bottleneck-times.md)
 - [Each time-changed holding time is measurable](measurable-bottleneck-times-apply.md)
 - [The time-changed holding times generate a sub-σ-algebra of Kingman's](comap-bottleneck-times-le.md)
 - [Almost-sure bounds on the time-changed epochs](ae-bottleneck-times-bounds.md)

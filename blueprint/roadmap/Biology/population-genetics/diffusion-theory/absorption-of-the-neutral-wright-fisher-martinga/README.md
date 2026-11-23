@@ -15,7 +15,6 @@
 
 ## Absorption time
 
-- [Kimura–Ohta mean absorption time of a neutral solution](integral-absorption-time-eq.md)
 - [From an interior frequency the mean absorption time is positive](integral-absorption-time-pos.md)
 - [Absorption from an interior frequency takes a positive time](ae-absorption-time-pos.md)
 - [Started at 0 or 1, the absorption time is zero](ae-absorption-time-eq-zero.md)

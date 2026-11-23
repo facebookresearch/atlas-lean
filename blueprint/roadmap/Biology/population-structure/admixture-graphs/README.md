@@ -36,7 +36,6 @@
 - [Three-population statistic at an admixture node](f3-admixture.md)
 - [Three-population statistic at an admixture node without edge drift](f3-admixture-of-len-eq-zero.md)
 - [Root-relative second moment on a tree is the shared lineage length](root-second-moment-eq-sum-inter-of-is-tr.md)
-- [Three-population statistic at an admixture node in terms of α alone](f3-admixture-one-sub.md)
 - [Three-population statistic at an admixture node with proportion one](f3-admixture-of-prop-eq-one.md)
 - [Three-population statistic at an admixture node with proportion zero](f3-admixture-of-prop-eq-zero.md)
 - [Drift on the edge to a single parent adds its length to f3](f3-of-parents-eq-singleton.md)

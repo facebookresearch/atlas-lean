@@ -17,7 +17,6 @@
 - [An unrooted binary tree resolves every four-taxon set](exists-induces.md)
 - [A binary tree induces at most one resolution of each four-taxon set](induces-unique.md)
 - [The induced quartet tree is well defined](exists-unique-induces.md)
-- [Exactly one resolution of each four-taxon set is induced](card-filter-induces.md)
 - [Under strict plurality the species tree maximizes quartet support](quartet-score-le.md)
 - [Equal support forces the same quartet trees under strict plurality](induces-iff-of-quartet-score-eq.md)
 - [Displaying a quartet is inducing its resolution](displays-quartet-iff-induces.md)

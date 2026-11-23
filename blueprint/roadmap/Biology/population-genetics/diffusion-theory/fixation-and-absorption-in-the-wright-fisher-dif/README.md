@@ -25,7 +25,6 @@
 - [At fixed s > 0 the limit is 1 − exp(−2s) < 2s, closed-form version](tendsto-one-sub-exp-of-kimura-form.md)
 - [Closed form of Kimura's fixation probability for nonzero σ](kimura-fixation-eq-of-ne-zero.md)
 - [Closed form of the slope constant for nonzero σ](kimura-slope-eq-of-ne-zero.md)
-- [Scaled new-mutant fixation probability tends to the slope constant](tendsto-nat-cast-mul-kimura-fixation-one.md)
 - [Slope constant of Kimura's formula is asymptotic to 2α as α → ∞](kimura-slope-is-equivalent-two-mul.md)
 - [Haldane's 2s approximation holds in the joint regime](tendsto-kimura-fixation-div-two-mul.md)
 - [Haldane's 2s approximation holds only in the joint regime](tendsto-zero-and-tendsto-at-top-of-tends.md)

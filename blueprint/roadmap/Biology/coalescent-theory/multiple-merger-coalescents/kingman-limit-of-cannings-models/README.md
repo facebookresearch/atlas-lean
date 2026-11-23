@@ -44,7 +44,6 @@
 
 ## Pairs of lineages
 
-- [Pairs of lineage labels in increasing order](lineage-pairs.md)
 - [Number of pairs of lineages that pick the same parent](coll-count.md)
 
 ## The ancestral process of a sample
@@ -58,7 +57,6 @@
 ## One-generation transition probabilities
 
 - [Bound for events that force three children to share a parent](expect-le-triple.md)
-- [Bound for two coalescing pairs among four given children](expect-le-double.md)
 - [Bound for two different pairs of lineages coalescing together](expect-two-pairs-le.md)
 - [Expected number of coalescing pairs among b lineages](expect-coll-count.md)
 - [Bound on the second factorial moment of the coalescing-pair count](expect-coll-count-sq-le.md)

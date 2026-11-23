@@ -8,5 +8,5 @@ the edge `(c, p)`. Let `X` be a node with `pa(X) = {A, B}`, `A ≠ B`, put `α =
 be a node with `pa(Y) = {X}`. Then
 `f3(Y; A, B) = α² ℓ(X, A) + (1 - α)² ℓ(X, B) - α (1 - α) f2(A, B) + ℓ(Y, X)` for the
 [f2](../patterson-s-f-statistics/f2.md) and [f3](../patterson-s-f-statistics/f3.md) statistics of
-the population frequencies of `M`: the [admixture formula at `X`](f3-admixture-one-sub.md) plus the
+the population frequencies of `M`: the [admixture formula at `X`](f3-admixture.md) plus the
 drift on the edge `(Y, X)`.

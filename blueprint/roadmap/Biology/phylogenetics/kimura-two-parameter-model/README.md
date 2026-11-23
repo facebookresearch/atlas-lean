@@ -17,7 +17,6 @@
 - [Transitions and transversions together are all the differences](transition-prop-add-transversion-prop.md)
 - [Transition proportion of the Kimura matrix](transition-prop-kimura-prob.md)
 - [Transversion proportion of the Kimura matrix](transversion-prop-kimura-prob.md)
-- [Kimura's identity for 1 − 2Q](one-sub-two-mul-transversion-prop-kimura.md)
 - [Kimura's identity for 1 − 2P − Q](one-sub-two-mul-transition-prop-sub-tran.md)
 
 ## Recovery of the composite parameters and the Kimura distance

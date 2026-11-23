@@ -17,7 +17,6 @@
 ## Laws of the realization
 
 - [The one-time law of the realization is the neutral kernel](map-modified-state.md)
-- [The one-time law of the realization as a measure on the real line](map-modified-process.md)
 - [The two-time law of the realization at times s < t](map-modified-state-pair-of-lt.md)
 - [Finite-dimensional laws of the realization](map-modified-state-comp-eq-finite-chain.md)
 - [Expectations of the realization are given by the semigroup](integral-modified-state.md)

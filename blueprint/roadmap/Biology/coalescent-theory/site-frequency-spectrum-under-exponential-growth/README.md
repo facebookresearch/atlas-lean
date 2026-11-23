@@ -43,7 +43,6 @@
 
 - [Kingman holding times after the exponential-growth time change](growth-times.md)
 - [Kingman holding times are positive almost everywhere](ae-t-pos.md)
-- [The sequence of time-changed holding times is measurable](measurable-growth-times.md)
 - [Each time-changed holding time is measurable](measurable-growth-times-apply.md)
 - [The time-changed holding times generate a coarser σ-algebra](comap-growth-times-le.md)
 - [Almost-everywhere bounds on the time-changed holding times](ae-growth-times-bounds.md)

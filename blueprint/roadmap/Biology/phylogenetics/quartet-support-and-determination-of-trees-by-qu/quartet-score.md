@@ -6,5 +6,5 @@ The total quartet support of an
 [unrooted binary phylogenetic tree](../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/unrooted-binary-tree.md)
 `T` on `X` is `S_f(T) = ∑_q ∑_ρ f q ρ`, the sum over the [four-taxon subsets](quartets.md) `q` of
 `X` and over the [resolutions](resolutions.md) `ρ` of `q` that `T` [induces](induces.md). As `T`
-induces [exactly one](card-filter-induces.md) resolution `T|q` of each four-taxon set,
+induces [exactly one](exists-unique-induces.md) resolution `T|q` of each four-taxon set,
 `S_f(T) = ∑_q f q (T|q)`.

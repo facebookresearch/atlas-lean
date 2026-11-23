@@ -2,7 +2,6 @@
 
 ## Quartet f4 statistics and the four-point condition
 
-- [Twice f4 is a difference of two quartet pair sums of f2](two-mul-f4-eq-sub.md)
 - [Under the four-point condition one f4 of each quartet vanishes](f4-eq-zero-or-of-four-point-condition.md)
 - [f4 of a quartet split as AB and CD when f2 is a tree metric](f4-split-of-is-tree-metric.md)
 - [Three nonzero f4 of a quartet show that f2 is not a tree metric](not-is-tree-metric-of-f4-ne-zero.md)

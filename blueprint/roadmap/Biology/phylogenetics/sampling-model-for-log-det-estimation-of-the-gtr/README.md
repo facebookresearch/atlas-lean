@@ -2,7 +2,6 @@
 
 ## The GTR divergence law
 
-- [GTR divergence weight of a site pair](divergence-weight.md)
 - [Full support of the GTR divergence law for a positive branch length](divergence-weight-pos.md)
 - [GTR divergence law on site pairs](divergence-law.md)
 

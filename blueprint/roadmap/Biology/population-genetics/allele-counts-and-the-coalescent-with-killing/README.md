@@ -9,7 +9,6 @@
 - [The partition and configuration forms of the Ewens formula agree](ewens-prob-eq-ewens-config-prob.md)
 - [Ewens sampling formula as the law of the allele-count configuration](sum-ewens-prob-allele-count-eq.md)
 - [Configurations not totalling the sample size get zero Ewens weight](sum-ewens-prob-allele-count-eq-zero.md)
-- [Expected number of alleles in configuration form](sum-ewens-prob-mul-sum-allele-count.md)
 
 ## The coalescent with killing
 

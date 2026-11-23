@@ -119,7 +119,6 @@
 
 ## Four distinct lineages: two disjoint pairs
 
-- [Genes in one lineage are interchangeable for apartness](pair-apart-congr-of-together.md)
 - [Four genes in four distinct lineages after $t$ events](apart4.md)
 - [Genes in distinct lineages stay apart unless step $t$ joins them](pair-apart-succ-iff-sorted.md)
 - [Coordinates for the next step from four distinct lineages](apart4-succ-iff.md)

@@ -3,7 +3,6 @@
 - [Pitman's merger rate](merger-rate.md)
 - [Total merger rate of a Λ-coalescent](total-merger-rate.md)
 - [Generator of the Λ-coalescent block-counting process](block-counting-generator.md)
-- [Merger rates are mixed moments of Λ for 2 ≤ k ≤ b](merger-rate-eq-unit-interval-moment.md)
 - [Pitman's integral formula for merger rates when $2 \le k \le b$](merger-rate-of-le.md)
 - [Nonnegativity of Λ-coalescent merger rates](merger-rate-nonneg.md)
 - [Pair merger rate of a Λ-coalescent](merger-rate-two-two.md)

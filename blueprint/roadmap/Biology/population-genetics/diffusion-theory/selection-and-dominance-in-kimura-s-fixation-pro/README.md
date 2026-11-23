@@ -2,7 +2,6 @@
 
 ## Dominance cases of the scale-function ratio
 
-- [At dominance h = 1/2 the scale-function ratio is Kimura's formula](fixation-prob-dominance-half.md)
 - [Scale-function ratio for a recessive allele](fixation-prob-dominance-zero-h.md)
 - [Scale-function ratio for a dominant allele](fixation-prob-dominance-one-h.md)
 - [Without selection the scale-function ratio is the initial frequency](fixation-prob-dominance-zero-c.md)

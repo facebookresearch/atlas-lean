@@ -15,4 +15,3 @@
 - [Gaussian drift model with one edge and one population](gaussian-drift-model.md)
 - [Frequency of the Gaussian drift model](gaussian-drift-model-freq.md)
 - [Gaussian drift model exits the unit interval on a non-null set](gaussian-drift-model-freq-not-mem-icc.md)
-- [Gaussian drift model exits the unit interval with positive probability](gaussian-drift-model-freq-not-mem-icc-po.md)
