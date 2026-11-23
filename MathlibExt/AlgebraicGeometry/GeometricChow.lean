@@ -7,14 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/Chow/Vocabulary.lean,
-StacksFrontier/AlgebraicGeometry/Chow/CycleAssociatedClosed/Basic.lean,
-StacksFrontier/AlgebraicGeometry/Chow/RationalEquivalence/
-GeometricRationalEquivalence.lean, under Apache 2.0.
-Modifications: use rational coefficients, restrict to finite-type complex
-schemes, and present relations by flat affine-line families at 0 and 1.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Chow/Vocabulary.lean`,
+`StacksFrontier/AlgebraicGeometry/Chow/CycleAssociatedClosed/Basic.lean` and
+`StacksFrontier/AlgebraicGeometry/Chow/RationalEquivalence/GeometricRationalEquivalence.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks,
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no individual author or copyright notice.
+Modification notice: used rational coefficients, schemes over the complex
+numbers, and relations given by flat families over the affine line at 0 and 1.
 -/
 module
 
@@ -33,14 +36,19 @@ public import Mathlib.Basic.Complex.Basic
 # Concrete cycle and geometric rational-equivalence carriers
 
 The cycles are Mathlib algebraic cycles, indexed by generic scheme points.
-Their dimension grading uses `Order.height`, which is the dimension of the
-closure of a point for a finite-type complex scheme. Fundamental cycles have
+Their dimension grading uses `Order.height`: Mathlib orders the points of a
+scheme by specialization (`AlgebraicGeometry.Scheme.le_iff_specializes`:
+`x ≤ y ↔ y ⤳ x`), so closed points are minimal and `Order.height x` is the
+dimension of the closure of `x`, while `Order.coheight` is its codimension.
+This is the convention of Mathlib's `AlgebraicCycle`. Fundamental cycles have
 the lengths of the actual generic local rings as multiplicities.
 
-Relations come from integral flat closed families in `X × ℂ[t]`, with their
-actual scheme-theoretic fibres at 0 and 1. The quotient is a concrete geometric
-presentation. This file does not assert its equivalence with another public
-Chow-group model or furnish cohomological cycle classes.
+Relations come from integral flat closed families in `X × 𝔸¹`, with their
+actual scheme-theoretic fibres at 0 and 1. The definitions apply to every
+scheme over `ℂ`; for schemes of finite type over `ℂ` the quotient is a
+presentation of the rational Chow groups (Fulton, *Intersection Theory*,
+§1.6, with `𝔸¹` and the points `0, 1` in place of `ℙ¹` and `0, ∞`). This file
+does not prove that comparison or furnish cohomological cycle classes.
 -/
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
@@ -115,8 +123,10 @@ def dimensionPart (X : Scheme) (r : ℕ) (c : AlgebraicCycle X ℚ) :
 def componentPoint (X : Scheme) (Z : irreducibleComponents X) : X :=
   Z.2.1.genericPoint
 
-/-- The length multiplicity of an irreducible component in the scheme. -/
-def componentMultiplicity (X : Scheme) (Z : irreducibleComponents X) : ℕ :=
+/-- The length multiplicity of an irreducible component in a Noetherian scheme.
+The local ring at the generic point of a component is Artinian, so its length
+is finite and the conversion to `ℕ` loses nothing. -/
+def componentMultiplicity (X : Scheme) [IsNoetherian X] (Z : irreducibleComponents X) : ℕ :=
   (Module.length (X.presheaf.stalk (componentPoint X Z))
     (X.presheaf.stalk (componentPoint X Z))).toNat
 
@@ -153,7 +163,8 @@ def parameterSection (X : ComplexScheme) (a : ℂ) :
           𝟙 (CommRingCat.of ℂ) := by
       ext z
       simp
-    simp [affineLine, affinePoint, ← Spec.map_comp, h])
+    simp only [affineLine, affinePoint, Over.mk_hom, Category.id_comp, Category.assoc,
+      ← Spec.map_comp, h, Spec.map_id, Category.comp_id])
 
 /-- A genuine integral flat closed family in `X × ℂ[t]`. -/
 structure FlatFamily (X : ComplexScheme) (r : ℕ) where

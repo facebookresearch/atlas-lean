@@ -88,3 +88,4 @@ def compose {phi : P.Ring →+* Q.Ring} {beta : B →+* C}
     rfl
 
 end MathlibExt.AlgebraicGeometry.AffineNormalConeMaps
+

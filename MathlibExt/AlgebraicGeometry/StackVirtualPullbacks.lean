@@ -193,9 +193,10 @@ structure TestPasting {F G : Stack S} {f : StackHom F G}
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp source P.square.snd)
     (Pseudofunctor.StrongTrans.vcomp Q.square.snd base)
   cartesian : ∀ T : Over S,
-    (isoFibreLift (StackCycleGeometry.component P.square.snd T)
-      (StackCycleGeometry.component base T) (StackCycleGeometry.component source T)
-      (StackCycleGeometry.component Q.square.snd T) (commutes.app T)).IsEquivalence
+    ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (StackCycleGeometry.component P.square.snd T) (StackCycleGeometry.component base T) _).obj
+      ⟨StackCycleGeometry.component source T, StackCycleGeometry.component Q.square.snd T,
+        commutes.app T⟩).IsEquivalence
 
 /-- The target has genuine rank-c normal bundle; its pullback fixes the
 refined Gysin map on the source square, even when the base change is not regular. -/
