@@ -22,3 +22,12 @@ example : 1 ∈ ({1} : Finset ℕ) ∧ 2 ∉ ({1} : Finset ℕ) := by
 
 -- In 221133, car 2 takes spot 3 before either car preferring 3 arrives.
 example : stirlingLuckySet (n := 3) ![2, 2, 1, 1, 3, 3] = {1, 3} := by decide
+
+-- The first position has an empty prefix.
+example : Odd 1 :=
+  stirling_odd_of_lt_all_before 1 ![1, 1] (by unfold IsStirlingPermutation; decide) 0 (by decide)
+
+-- In 233211 the new minimum at position five follows two nested pairs.
+example : Odd 5 :=
+  stirling_odd_of_lt_all_before 3 ![2, 3, 3, 2, 1, 1] (by unfold IsStirlingPermutation; decide)
+    4 (by decide)

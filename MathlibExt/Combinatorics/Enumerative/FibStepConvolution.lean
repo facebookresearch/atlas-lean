@@ -16,7 +16,7 @@ import Mathlib.Data.List.GetD
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# A convolution of the Fibonacci, tribonacci and tetranacci numbers
+# Convolutions of consecutive Fibonacci step sequences
 
 The recurrence for the Fibonacci `m`-step numbers gives the denominator of their generating
 function. Subtracting the identities for consecutive orders expresses both sides of the
@@ -114,6 +114,22 @@ private lemma fibStepGF_sub_succ (m : ℕ) :
   apply X_mul_cancel
   linear_combination fibStepGF (m + 1) * hm - fibStepGF m * hs
 
+private lemma sum_consecutive_mul_sub_eq (m n : ℕ) (hn : 1 ≤ n) :
+    ∑ j ∈ Finset.range (n + 1), fibStep m j *
+        (fibStep (m + 1) (n - j) - fibStep (m + 2) (n - j)) =
+      ∑ j ∈ Finset.range n,
+        (fibStep m j - fibStep (m + 1) j) * fibStep (m + 2) (n - 1 - j) := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  have h : fibStepGF m * (fibStepGF (m + 1) - fibStepGF (m + 2)) =
+      X * ((fibStepGF m - fibStepGF (m + 1)) * fibStepGF (m + 2)) := by
+    rw [fibStepGF_sub_succ (m + 1), fibStepGF_sub_succ m, pow_succ X m]
+    ring
+  have hc := congrArg (coeff (k + 1) (R := ℚ)) h
+  rw [coeff_succ_X_mul] at hc
+  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, map_sub,
+    fibStepGF, coeff_mk] at hc
+  exact_mod_cast hc
+
 /-- **Convolution of the Fibonacci numbers with tribonacci minus tetranacci.** Write $F_n$, $T_n$
 and $Q_n$ for the Fibonacci, tribonacci and tetranacci numbers, that is, the Fibonacci $m$-step
 numbers $F^{(m)}_n$ for $m = 2, 3, 4$ ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each later term is the
@@ -128,16 +144,25 @@ theorem sum_fib_mul_sub_eq (n : ℕ) (hn : 1 ≤ n) :
     ∑ j ∈ Finset.range (n + 1), fibStep 2 j *
         (fibStep 3 (n - j) - fibStep 4 (n - j)) =
       ∑ j ∈ Finset.range n,
-        (fibStep 2 j - fibStep 3 j) * fibStep 4 (n - 1 - j) := by
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
-  have h : fibStepGF 2 * (fibStepGF 3 - fibStepGF 4) =
-      X * ((fibStepGF 2 - fibStepGF 3) * fibStepGF 4) := by
-    rw [fibStepGF_sub_succ 3, fibStepGF_sub_succ 2]
-    ring
-  have hc := congrArg (coeff (k + 1) (R := ℚ)) h
-  rw [coeff_succ_X_mul] at hc
-  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, map_sub,
-    fibStepGF, coeff_mk] at hc
-  exact_mod_cast hc
+        (fibStep 2 j - fibStep 3 j) * fibStep 4 (n - 1 - j) :=
+  sum_consecutive_mul_sub_eq 2 n hn
+
+/-- **Convolution of the Fibonacci 3-step numbers with differences of 4- and 5-step numbers.**
+Let $T_j$, $Q_j$ and $P_j$ be the Fibonacci $3$-, $4$- and $5$-step numbers, where the Fibonacci
+$k$-step numbers start $0, 1$ and each later term is the sum of the $k$ terms before it (terms of
+negative index being $0$). For every natural number $n \ge 1$,
+
+$$\sum_{j=0}^{n} T_j \bigl(Q_{n-j} - P_{n-j}\bigr) =
+\sum_{j=0}^{n-1} \bigl(T_j - Q_j\bigr) P_{n-1-j}.$$
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Corollary 11. -/
+theorem sum_trib_mul_sub_eq (n : ℕ) (hn : 1 ≤ n) :
+    ∑ j ∈ Finset.range (n + 1), fibStep 3 j *
+        (fibStep 4 (n - j) - fibStep 5 (n - j)) =
+      ∑ j ∈ Finset.range n,
+        (fibStep 3 j - fibStep 4 j) * fibStep 5 (n - 1 - j) :=
+  sum_consecutive_mul_sub_eq 3 n hn
 
 end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted

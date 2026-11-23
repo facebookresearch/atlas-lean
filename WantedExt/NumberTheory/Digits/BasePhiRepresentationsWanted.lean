@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 import Mathlib.Tactic.LinearCombination
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.Digits.FibMemLucasIntervals
 public import MathlibExt.NumberTheory.LucasSequence
 
 /-!
@@ -333,20 +334,6 @@ public theorem_wanted naturalExpansionCount_eq_of_recursion (N : ℕ) (n : ℕ)
       (Even (s k) → 2 * r k = (s k + 2) * r (k - 1)) ∧
       (Odd (s k) → 2 * r k = (s k + 3) * r (k - 1) - 2 * r (k - 2))) :
     (naturalExpansionCount N : ℤ) = r n
-
-/-- **Fibonacci numbers in the Lucas intervals.** Let $F_k$ be the Fibonacci numbers
-($F_0 = 0$, $F_1 = 1$) and $L_k$ the Lucas numbers ($L_0 = 2$, $L_1 = 1$). Call
-$\Lambda_{2n} = [L_{2n}, L_{2n+1}]$ the even Lucas interval and
-$\Lambda_{2n+1} = [L_{2n+1} + 1, L_{2n+2} - 1]$ the odd Lucas interval. For every $n \ge 1$,
-$F_{2n+2} \in \Lambda_{2n}$ and $F_{2n+3} \in \Lambda_{2n+1}$.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Lemma 4.2
-(`fq-2024-dekking11102023-lem-4.2`). -/
-public theorem_wanted fib_mem_lucasIntervals (n : ℕ) (hn : 1 ≤ n) :
-    Nat.fib (2 * n + 2) ∈ Set.Icc (lucasNumber (2 * n)) (lucasNumber (2 * n + 1)) ∧
-      Nat.fib (2 * n + 3) ∈
-        Set.Icc (lucasNumber (2 * n + 1) + 1) (lucasNumber (2 * n + 2) - 1)
 
 /-- **Natural expansions of Fibonacci numbers.** Write $\mathrm{Tot}_\nu(N)$ for the number of
 natural base phi expansions of a natural number $N$ and $F_k$ for the $k$-th Fibonacci number.

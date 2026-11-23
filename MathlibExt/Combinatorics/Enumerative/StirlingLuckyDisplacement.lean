@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 import Mathlib.Data.List.OfFn
+import Mathlib.Order.Interval.Finset.Fin
 public import MathlibExt.Combinatorics.Enumerative.LuckyCars
 public import MathlibExt.Combinatorics.Enumerative.StirlingPermutation
 
@@ -245,6 +246,40 @@ public theorem one_mem_and_two_mul_not_mem (n : ℕ) (hn : 1 ≤ n)
     exact (pref_val_add_one hw j).trans (Finset.mem_filter.mp hj).2
 
 end IsAdmissibleLuckySet
+
+/-- **Left-to-right minima of a Stirling permutation sit at odd positions.** Let
+$w = w_1 \cdots w_{2n}$ be a Stirling permutation of order $n$ and let $j \in \{1, \dots, 2n\}$.
+If $w_j < w_i$ for every $i < j$, then $j$ is odd.
+
+In the paper, $j$ is the first car preferring spot $w_j$; the hypothesis $w_j < w_i$ for all
+$i < j$ already implies this, and $w_j \in \{1, \dots, n\}$ holds for every Stirling permutation.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Lemma 3.7 (`jis-2024-24.6.7-lem-27`). -/
+public theorem stirling_odd_of_lt_all_before (n : ℕ) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) (j : Fin (2 * n)) (hj : ∀ i < j, w j < w i) :
+    Odd (j.val + 1) := by
+  -- Every letter in the prefix has both of its occurrences there.
+  have pairs (v : ℕ) (hv : v ∈ (Finset.Iio j).image w) :
+      ((Finset.Iio j).filter fun k => w k = v).card = 2 := by
+    obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hv
+    have hij := Finset.mem_Iio.mp hi
+    have hfilter : (Finset.Iio j).filter (fun k => w k = w i) =
+        Finset.univ.filter (fun k => w k = w i) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_Iio, Finset.mem_univ, true_and,
+        and_iff_right_iff_imp]
+      intro hk
+      rcases lt_trichotomy k j with h | rfl | h
+      · exact h
+      · exact ((hj i hij).ne hk).elim
+      · exact ((hj i hij).asymm (hw.2.2 _ (hw.1 i) i j k hij h rfl hk)).elim
+    rw [hfilter]
+    exact hw.2.1 _ (hw.1 i)
+  have hcard := (Finset.card_eq_sum_card_image w (Finset.Iio j)).trans (Finset.sum_const_nat pairs)
+  rw [Fin.card_Iio, Nat.mul_comm _ 2] at hcard
+  exact ⟨_, congrArg (· + 1) hcard⟩
 
 end
 

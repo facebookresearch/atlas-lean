@@ -411,6 +411,61 @@ python scripts/build_mathlib_pages.py check site mathlib-graph site-full
 
 ## Maintaining articles
 
+A pull request that changes the Lean runs the sync scoped to its own changes,
+from the commit its branch starts at on the branch it targets (here `main`,
+with `origin` this repository), and commits what it writes:
+
+```sh
+python scripts/sync_wiki.py declarations --base "$(git merge-base origin/main HEAD)"
+```
+
+Its own declarations are those its Lean adds, documents, makes public or no
+longer deprecates, compared with the Lean at the base; both are read with the
+working tree's tools and taxonomy. Each of them that has no page gets one from
+its docstring, laid out as below, and its annotation row goes among the rows of
+its links file in path order, so that pull requests that add pages in different
+places add lines in different places. A folder the run makes gets none of the
+part folders `generate_wiki.py` would split it into, and where a part lists a
+page or a folder the run adds, the run refreshes that part's copy on its
+parent's page. In `scripts/wiki-sync.json` the run changes only the entries the
+whole run below would change because of the pull request: the digests of its
+own declarations and of those whose docstring it edits, and the entries of
+those it removes. It lists the pages whose declaration's docstring the pull
+request edits or removes, to check. It writes no page for any other
+declaration, such as an older documented one of a module the changes touch, and
+leaves `blueprint/atlas.json` and `blueprint/coverage/README.md` to the run
+over the whole project.
+
+A link the changes leave naming a declaration the Lean no longer has, and a
+held marker they leave unusable, are errors, and the run then writes nothing:
+relink the row to the declaration's successor and keep its article id, or
+remove the link and keep the page as a planned page ([Writing
+pages](#writing-pages)). So is a row the build refuses ([Mathlib-credited
+pages](#mathlib-credited-pages)) that the changes add, as is a symbolic link
+among the files the run reads (the wiki, the Lean libraries, the baseline and
+the other graph files, the site configuration), since a read or write through
+it could lead anywhere, a line of a links file that is no JSON object, and Lean
+staged otherwise than the working tree has it; a refused row the base already
+had stops a run that has something to write. A row of one of its declarations whose page is missing, or reached
+through a link, is an error too, as is such a page, or a folder the pull
+request adds on its way up to the roadmap's own page, that its folder page does
+not list, or whose folder page or annotation row is missing. A second run
+writes nothing.
+
+With `--check`, the run writes nothing. It prints first whether the pull
+request is in step, exiting 1 when it is not, with the command that brings it
+in step, and whether the pull request's wiki changes are exactly what that
+command writes on the base's wiki, file contents and executable bits: a fresh
+article id on a new row counts as the same, and every row the base has must
+keep its bytes. It reads the working tree; where the index holds a file
+otherwise than the working tree, staged by hand, it asks for the two to agree
+first, since a commit may take either. `--report FILE` also writes the findings
+as JSON. The `graph
+sync` check runs it on every pull request and merge group, and only reports for
+now ([GitHub Actions and publication](#github-actions-and-publication)).
+
+After an upstream merge, a maintainer runs the sync over the whole project:
+
 ```sh
 python scripts/sync_wiki.py declarations
 ```
@@ -621,11 +676,12 @@ their tests, `scripts/check_public_references.py`, which the importer imports,
 `scripts/taxonomy.json`, `scripts/wiki-sync.json`,
 `scripts/mathgraph-map.jsonl`, the site
 configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document,
-`docs/mathgraph-import.md`, the workflow,
+`docs/mathgraph-import.md`, the workflow, the `Graph sync` workflow,
 `.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
 `lake-manifest.json`, `lakefile.toml`). A Lean-only PR skips it, because
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
-than a failure; `main` still builds the whole wiki once a day. Merge groups skip
+than a failure; `main` still builds the whole wiki once a day, and `Graph sync`
+checks every PR's declarations. Merge groups skip
 it too: it is not a required check, so a merge-group run could not stop a merge,
 and CI's required build already imports every v2 module together
 (`scripts/check_declaration_collisions.sh`). Do not make
@@ -660,6 +716,16 @@ otherwise, or if that commit cannot be read, the job fails and publishes
 nothing. A re-run, after "Re-run failed jobs" say, therefore never takes the
 site back to an earlier commit. Runs from before this check have no such guard:
 do not re-run their deployment.
+
+`Graph sync` runs on every PR, Lean-only ones included, and on every merge
+group. Its `graph sync` job checks out the PR merged into its base, installs
+Autoform at `.github/autoform-ref` as the wiki job does, and runs the scoped
+check of [Maintaining articles](#maintaining-articles) against the merge
+commit's first parent, or the queue's base on a merge group. It reads the Lean
+sources only, with no Lean build, and takes a few minutes. It only reports for
+now: the check's step cannot fail the job, which is not a required check. The
+verdict, the command that fixes it and whether the PR's wiki changes are only
+the sync's go to the job summary and the `graph-sync` artifact.
 
 Publication is disabled until a repository maintainer:
 

@@ -40,6 +40,7 @@ public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.NumberTheory.Digits.ReverseDivisibility
 public import MathlibExt.NumberTheory.Digits.ReverseDivisor
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorFourDigits
 
 set_option autoImplicit false
 
@@ -110,16 +111,6 @@ theorem_wanted basic_reverseDivisors (k : ℕ) (hk : 2 ≤ k) :
       (Nat.digits 10 (22 * (10 ^ k - 1))).length = k + 2 ∧
       Nat.reverseDigits 10 (22 * (10 ^ k - 1)) =
         4 * (22 * (10 ^ k - 1))
-
-/-- **Reverse divisors have at least four digits.** Every reverse divisor has at least four
-decimal digits.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Theorem 1 (quoted from the literature). -/
-theorem_wanted four_le_length_digits (n : ℕ)
-    (h : IsReverseDivisor n) :
-    4 ≤ (Nat.digits 10 n).length
 
 /-- **Reverse divisors with quotient $4$ lack property $P^*$.** If $n > 0$ is a natural number
 whose decimal reversal equals $4n$, then $n$ does not have the property $P^*$.
