@@ -33,7 +33,7 @@ open scoped Manifold ContDiff
 variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
 
 /-- The native simplex affine maps preserve this exact smooth extension predicate. -/
-proof_wanted native_smooth_singular_source [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] :
+theorem_wanted native_smooth_singular_source [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] :
   SmoothSingularSource (n := n) (M := M)
 
 variable [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
@@ -46,18 +46,18 @@ def_wanted native_even_deRham_quotient_source (q : ℕ) : EvenDeRhamQuotientSour
 def_wanted native_smooth_singular_integration : SingularIntegrationSource (n := n) (M := M)
 
 /-- The genuine de Rham theorem concerns the same actual integration map. -/
-proof_wanted native_smooth_singular_integration_quasiIso [T2Space M] [SecondCountableTopology M]
+theorem_wanted native_smooth_singular_integration_quasiIso [T2Space M] [SecondCountableTopology M]
     (I : SingularIntegrationSource (n := n) (M := M)) : QuasiIso I.map
 
 /-- Smooth approximation compares the literal continuous-to-smooth dual cochain map. -/
-proof_wanted native_continuous_smooth_cochains_quasiIso [T2Space M] [SecondCountableTopology M]
+theorem_wanted native_continuous_smooth_cochains_quasiIso [T2Space M] [SecondCountableTopology M]
     (R : Type) [CommRing R] : QuasiIso (continuousToSmoothCochains (n := n) (M := M) R)
 
 /-- The actual coefficient inclusion acts on every native simplex generator. -/
 def_wanted native_rational_singular_coefficient_source : RationalCoefficientSource (n := n) (M := M)
 
 /-- This actual coefficient/smooth-restriction cohomology map is injective. -/
-proof_wanted native_rational_to_smooth_real_class_injective [T2Space M] [SecondCountableTopology M]
+theorem_wanted native_rational_to_smooth_real_class_injective [T2Space M] [SecondCountableTopology M]
     (S : RationalCoefficientSource (n := n) (M := M)) (p : ℕ) :
   Function.Injective (rationalToSmoothRealClass S p).hom
 
@@ -66,7 +66,7 @@ def_wanted native_connection_chernWeil_form {r : ℕ} (B : SmoothComplexBundle n
     (C : SmoothConnection B) (q : ℕ) : ChernWeilFormSource B C q
 
 /-- Chern--Weil connection independence concerns the actual classes of the same smooth bundle. -/
-proof_wanted native_chernWeil_class_independence {r : ℕ} (B : SmoothComplexBundle n M r)
+theorem_wanted native_chernWeil_class_independence {r : ℕ} (B : SmoothComplexBundle n M r)
     (C D : SmoothConnection B) (q : ℕ) (P : ChernWeilFormSource B C q)
     (Q : ChernWeilFormSource B D q) : chernWeilClass B P = chernWeilClass B Q
 

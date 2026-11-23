@@ -56,17 +56,30 @@ abbrev CompactSheaf := (IsCompactSupported k X).FullSubcategory
 /-- This native lift preserves all objects/maps of the original compact-support category. -/
 abbrev SmallCompactSheaf := AsSmall.{1} (CompactSheaf k X)
 
-/-- The ordinary structural input refers to the prescribed compact-support category. -/
-class CompactSheafSource where
-  [abelian : Abelian (CompactSheaf k X)]
+/-- The ordinary structural input: the compact-support sheaves, with the hom-groups inherited
+from all sheaves, have finite products, kernels and cokernels, and every coimage-image
+comparison is an isomorphism. This is a property of the prescribed full subcategory, not
+extra data: the abelian structure below is built from the inherited preadditive structure. -/
+class CompactSheafSource : Prop where
+  [hasFiniteProducts : Limits.HasFiniteProducts (CompactSheaf k X)]
+  [hasKernels : Limits.HasKernels (CompactSheaf k X)]
+  [hasCokernels : Limits.HasCokernels (CompactSheaf k X)]
+  coimageImage : ∀ {F G : CompactSheaf k X} (f : F ⟶ G),
+    IsIso (Abelian.coimageImageComparison f)
 
-attribute [instance_reducible, instance] CompactSheafSource.abelian
+attribute [instance] CompactSheafSource.hasFiniteProducts CompactSheafSource.hasKernels
+  CompactSheafSource.hasCokernels
+
+/-- The abelian structure of the compact-support sheaves, on their inherited hom-groups. -/
+instance [CompactSheafSource k X] : Abelian (CompactSheaf k X) :=
+  haveI : ∀ {F G : CompactSheaf k X} (f : F ⟶ G), IsIso (Abelian.coimageImageComparison f) :=
+    fun f => CompactSheafSource.coimageImage f
+  Abelian.ofCoimageImageComparisonIsIso
 
 /-- Native Ind construction on actual compact-supported sheaves. -/
 abbrev IndSheaf := Ind (SmallCompactSheaf k X)
 
 instance [CompactSheafSource k X] : Abelian (IndSheaf k X) :=
-  letI : Abelian (CompactSheaf k X) := CompactSheafSource.abelian
   letI : Abelian (SmallCompactSheaf k X) := AsSmall.abelian (CompactSheaf k X)
   CategoryTheory.instAbelianInd (C := SmallCompactSheaf k X)
 

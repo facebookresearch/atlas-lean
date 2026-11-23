@@ -69,15 +69,15 @@ def_wanted native_holomorphic_tensor_associator : TensorAssociatorSource (n := n
 def_wanted native_holomorphic_cotangent_wedge : CotangentWedgeSource (n := n) (M := M)
 
 /-- Actual native smooth coefficient multiplication preserves the same bundle sections. -/
-proof_wanted native_smooth_bundle_section_calculus {r : ℕ} (B : SmoothComplexBundle n M r)
+theorem_wanted native_smooth_bundle_section_calculus {r : ℕ} (B : SmoothComplexBundle n M r)
     (A : OneFormValue B) : SectionCalculus B A
 
 /-- Actual native smooth coefficient multiplication preserves the same bundle sections. -/
-proof_wanted native_smooth_bundle_section_multiplication {r : ℕ} (B : SmoothComplexBundle n M r) :
+theorem_wanted native_smooth_bundle_section_multiplication {r : ℕ} (B : SmoothComplexBundle n M r) :
   SmoothSectionMultiplication B
 
 /-- Native smooth bundle section kernels have their ordinary local sheaf condition. -/
-proof_wanted native_smooth_bundle_section_gluing {r : ℕ} (B : SmoothComplexBundle n M r)
+theorem_wanted native_smooth_bundle_section_gluing {r : ℕ} (B : SmoothComplexBundle n M r)
     [SectionCalculus B 0] [SmoothSectionMultiplication B] : SmoothBundleSheafCondition B
 
 /-- The actual sheaf Higgs object admits finite holomorphic frames and the same native smooth scalar realization. -/
@@ -108,7 +108,7 @@ def_wanted native_harmonic_kernel_smooth_extension {r : ℕ} (B : SmoothComplexB
     (hh : IsPluriharmonic B h A) : KernelSmoothExtensionSource B h A S
 
 /-- The literal reconstruction from a holomorphic Higgs field satisfies the three actual extraction equations. -/
-proof_wanted native_reconstructed_higgs_pluriharmonic {r : ℕ} (B : SmoothComplexBundle n M r)
+theorem_wanted native_reconstructed_higgs_pluriharmonic {r : ℕ} (B : SmoothComplexBundle n M r)
     (h : HermitianMetric B) (H : HolomorphicHiggsField B)
     (C : ConnectionRealization B (reconstructedConnection B h H.value)) : IsPluriharmonic B h C.connection
 
@@ -125,7 +125,7 @@ def_wanted native_inverse_higgs_kernel_comparison
     (H : HarmonicHiggsModel R.physical.bundle h C.connection) : HiggsKernelComparison S E R h C H
 
 /-- A semisimple flat connection's actual harmonic kernel is polystable for the actual determinant integral. -/
-proof_wanted flat_harmonic_kernel_polystable [CompactSpace M] [T2Space M] [SecondCountableTopology M]
+theorem_wanted flat_harmonic_kernel_polystable [CompactSpace M] [T2Space M] [SecondCountableTopology M]
     [ConnectedSpace M] [Nonempty M]
     (S : HolomorphicSmoothInclusionSource (n := n) (M := M)) (D : DeterminantDegreeTheory S)
     (eta : KahlerStructure n M) (R : RealCoordinateMap n) (P : IntegrationAtlas n M)
@@ -155,7 +155,7 @@ def_wanted polystable_higgs_harmonic_metric [CompactSpace M] [T2Space M] [Second
   {h : HermitianMetric F.physical.bundle // IsHarmonicMetric F.physical.bundle h F.geometry}
 
 /-- A genuine pluriharmonic metric on the actual flat connection yields a semisimple horizontal local system. -/
-proof_wanted pluriharmonic_flat_horizontals_semisimple [CompactSpace M] [T2Space M] [SecondCountableTopology M]
+theorem_wanted pluriharmonic_flat_horizontals_semisimple [CompactSpace M] [T2Space M] [SecondCountableTopology M]
     [ConnectedSpace M] [Nonempty M] (eta : KahlerStructure n M)
     {r : ℕ} (B : SmoothComplexBundle n M r) (h : HermitianMetric B) (A : SmoothConnection B)
     [SectionCalculus B A.value] [HasSheafify (Opens.grothendieckTopology M) (ModuleCat.{0} ℂ)]

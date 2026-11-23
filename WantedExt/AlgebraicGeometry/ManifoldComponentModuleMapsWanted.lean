@@ -38,5 +38,5 @@ variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n)
   [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
 
 /-- The same actual module is recovered from its actual native component restrictions. -/
-proof_wanted native_component_module_assembly_isIso (P : FiniteComponentPartition (M := M))
+theorem_wanted native_component_module_assembly_isIso (P : FiniteComponentPartition (M := M))
     (E : HolomorphicModules (n := n) (M := M)) : IsIso (componentAssemblyUnit (n := n) P E)

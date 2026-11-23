@@ -39,7 +39,7 @@ def_wanted native_local_system_monodromy (G : CoefficientSheaf (M := M))
     (h : LocallyConstantFinite G) : StalkMonodromySource G
 
 /-- Actual flat horizontal sections form the same finite locally constant coefficient sheaf. -/
-proof_wanted native_flat_horizontal_locally_constant (n : ℕ) [ChartedSpace (Coordinates n) M]
+theorem_wanted native_flat_horizontal_locally_constant (n : ℕ) [ChartedSpace (Coordinates n) M]
     [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
     (r : ℕ) (B : SmoothComplexBundle n M r) (A : SmoothConnection B)
     [SectionCalculus B A.value] [HasSheafify (Opens.grothendieckTopology M) (ModuleCat.{0} ℂ)]

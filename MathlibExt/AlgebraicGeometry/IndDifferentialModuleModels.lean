@@ -88,7 +88,10 @@ def betaOrdinaryModule : OrdinaryModule X R ⥤
     Bimod (nativeBetaRing X T I A B R S M) (betaCoefficientRing X T I A B) :=
   O.functor ⋙ P.functor
 
-/-- Structural native bimodule-category hypotheses for this original Ind tensor. -/
+/-- Structural native bimodule-category hypotheses for this original Ind tensor. The abelian
+structure of each bimodule category is required to use the inherited hom-groups: a sum of
+bimodule maps has the sum of the underlying Ind-sheaf maps. Bimodule maps are determined by
+their underlying maps, so this fixes the additive structure; it is not free extra data. -/
 class NativeModuleCalculus where
   [coequalizers : HasCoequalizers (IndSheaf ℂ X)]
   [leftColimits : ∀ K : IndSheaf ℂ X,
@@ -96,6 +99,8 @@ class NativeModuleCalculus where
   [rightColimits : ∀ K : IndSheaf ℂ X,
     PreservesColimitsOfSize.{0, 0} (tensorRight K)]
   [abelian : ∀ D E : Mon (IndSheaf ℂ X), Abelian (Bimod D E)]
+  hom_add : ∀ (D E : Mon (IndSheaf ℂ X)) {P Q : Bimod D E} (f g : P ⟶ Q),
+    (f + g).hom = f.hom + g.hom
 
 attribute [instance] NativeModuleCalculus.coequalizers
   NativeModuleCalculus.leftColimits NativeModuleCalculus.rightColimits

@@ -73,9 +73,9 @@ class NativeTemperedSourcePacket where
   bimodule : TemperedDoubleModuleSource n M compactOpen chartOpen density quotientRestriction
     indDistribution chartProjection localHolomorphic localConjugate
 
-attribute [instance_reducible, instance] NativeTemperedSourcePacket.localCompact
-  NativeTemperedSourcePacket.localContext NativeTemperedSourcePacket.localD
-  NativeTemperedSourcePacket.localDbar
+attribute [instance] NativeTemperedSourcePacket.localCompact
+attribute [instance_reducible, instance] NativeTemperedSourcePacket.localContext
+  NativeTemperedSourcePacket.localD NativeTemperedSourcePacket.localDbar
 
 def actualDistributionModule (S : NativeTemperedSourcePacket n M) : TemperedBimodule n M :=
   letI := S.localCompact

@@ -37,7 +37,10 @@ variable (X : TopCat.{0}) (R : TopCat.Sheaf RingCat.{0} X)
 
 abbrev OrdinaryModule := SheafOfModules.{0} R
 
-/-- The actual complex constants in each original ring-sheaf section. -/
+/-- A `ℂ`-algebra structure on every section ring of the ring sheaf, natural under
+restriction. For a sheaf of holomorphic functions or differential operators this is meant to be
+the constant functions; the class records the structure as a hypothesis and does not identify
+it with those constants for an arbitrary ring sheaf. -/
 class ComplexRingSheafSource where
   [algebra : ∀ U : Opens X, Algebra ℂ (R.obj.obj (op U))]
   natural : ∀ {U V : Opens X} (h : V ≤ U) (c : ℂ),

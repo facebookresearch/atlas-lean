@@ -34,25 +34,25 @@ variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n)
   {r : ℕ}
 
 /-- Holomorphic multiplication satisfies the actual full bar-derivative Leibniz rule. -/
-proof_wanted holomorphic_bar_multiplication
+theorem_wanted holomorphic_bar_multiplication
     [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
     (B : SmoothComplexBundle n M r)
     (h : HermitianMetric B) (A : SmoothConnection B) : BarMultiplicationCalculus B h A
 
 /-- The actual holomorphic scalar ring has the ordinary local sheaf condition. -/
-proof_wanted holomorphic_coefficient_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
+theorem_wanted holomorphic_coefficient_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
   MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M
 
 /-- Actual holomorphic tangent covectors satisfy ordinary local multiplication and restriction calculus. -/
-proof_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
+theorem_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
   CotangentSectionCalculus (n := n) (M := M)
 
 /-- The same actual cotangent-form presheaves satisfy the ordinary gluing condition. -/
-proof_wanted holomorphic_cotangent_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
+theorem_wanted holomorphic_cotangent_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
     [CotangentSectionCalculus (n := n) (M := M)] : CotangentSheafCondition (n := n) (M := M)
 
 /-- The kernel of this same local PDE glues, without an integrability assumption. -/
-proof_wanted harmonic_holomorphic_kernel_sheaf_condition
+theorem_wanted harmonic_holomorphic_kernel_sheaf_condition
     [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
     (B : SmoothComplexBundle n M r)
     (h : HermitianMetric B) (A : SmoothConnection B)
@@ -95,5 +95,5 @@ def_wanted pluriharmonic_holomorphic_higgs_model [T2Space M] [SecondCountableTop
 def_wanted harmonic_higgs_exterior_square (H : HarmonicHiggsModel B h A) : HiggsExteriorSquare B h A H
 
 /-- The third pluriharmonic equation makes that actual O-linear exterior square zero. -/
-proof_wanted pluriharmonic_higgs_integrable (hh : IsPluriharmonic B h A)
+theorem_wanted pluriharmonic_higgs_integrable (hh : IsPluriharmonic B h A)
     (H : HarmonicHiggsModel B h A) (S : HiggsExteriorSquare B h A H) : IsIntegrable B h A S
