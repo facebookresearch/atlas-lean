@@ -488,7 +488,7 @@ omit [DecidableEq n] [Fintype m] [DecidableEq m] in
 /-- The variant contribution to the mean: `gⱼᵀ N gⱼ`. -/
 theorem transpose_mul_mul_apply_self (N : Matrix n n ℝ) (j : m) :
     (Gᵀ * N * G) j j = (fun i => G i j) ⬝ᵥ N *ᵥ (fun i => G i j) := by
-  simp only [mul_apply, transpose_apply, dotProduct, mulVec, Finset.sum_mul, Finset.mul_sum]
+  simp only [Matrix.mul_apply, transpose_apply, dotProduct, mulVec, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun l _ => ?_
   ring

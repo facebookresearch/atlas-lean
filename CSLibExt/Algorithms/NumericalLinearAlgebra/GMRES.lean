@@ -120,7 +120,8 @@ theorem rss_le_of_isGMRESIterate {A : Matrix (Fin n) (Fin n) ℝ} {b x₀ x : Fi
       (aeval A p *ᵥ (b - A *ᵥ x₀)) ⬝ᵥ (aeval A p *ᵥ (b - A *ᵥ x₀)) := by
   set r₀ := b - A *ᵥ x₀
   have hdvd : X ∣ 1 - p := by
-    rw [X_dvd_iff, coeff_sub, coeff_one_zero, coeff_zero_eq_eval_zero, hp0, sub_self]
+    rw [X_dvd_iff, coeff_sub, AddMonoidAlgebra.coeff_one_zero, coeff_zero_eq_eval_zero, hp0,
+      sub_self]
   obtain ⟨q, hq⟩ := hdvd
   have hpq : p = 1 - X * q := by rw [← hq]; ring
   have hmem : aeval A q *ᵥ r₀ ∈ krylov A r₀ k := by
