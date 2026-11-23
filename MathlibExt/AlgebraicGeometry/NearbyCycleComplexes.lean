@@ -137,7 +137,7 @@ def cochainUnit {Z W : TopCat.{0}} (f : Z ⟶ W) :
         exact ((TopCat.Sheaf.pullbackPushforwardAdjunction
           (ModuleCat.{0} ℚ) f).unit.naturality (K.d i j)).symm }
   naturality K L a := by
-    ext n
+    refine HomologicalComplex.hom_ext _ _ (fun n ↦ ?_)
     exact (TopCat.Sheaf.pullbackPushforwardAdjunction
       (ModuleCat.{0} ℚ) f).unit.naturality (a.f n)
 

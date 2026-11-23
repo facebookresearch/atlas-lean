@@ -84,7 +84,7 @@ lemma ordinaryDeckMonodromy_unit {V X : TopCat.{0}} (q : V ⟶ X)
     (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℚ) q).unit ≫
       (ordinaryDeckMonodromy q d h).hom =
         (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℚ) q).unit := by
-  ext F
+  refine NatTrans.ext (funext fun F ↦ ?_)
   let a := TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℚ) q
   let b := TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℚ) d.hom
   let P := pullback ℚ q
@@ -267,7 +267,7 @@ lemma ordinaryCochainDeckMonodromy_unit {V X : TopCat.{0}} (q : V ⟶ X)
     (d : V ≅ V) (h : d.hom ≫ q = q) (K : QCochain X) :
     (cochainUnit q).app K ≫ (ordinaryCochainDeckMonodromy q d h).hom.app K =
       (cochainUnit q).app K := by
-  ext n
+  ext1 n
   change (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℚ) q).unit.app (K.X n) ≫
     (ordinaryDeckMonodromy q d h).hom.app (K.X n) =
       (TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℚ) q).unit.app (K.X n)
