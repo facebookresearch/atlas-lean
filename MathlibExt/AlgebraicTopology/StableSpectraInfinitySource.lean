@@ -9,18 +9,27 @@ module
 
 public import MathlibExt.AlgebraicTopology.StableInfinityCategoryModels
 public import MathlibExt.AlgebraicTopology.SpectraSource.AlgebraicTopology.Spectra.Stabilization
+public import MathlibExt.AlgebraicTopology.SpectraSource.CategoryTheory.Monoidal.Mod.Closed
+public import Mathlib.CategoryTheory.Adjunction.Limits
+public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Terminal
 
 /-!
 # The stable infinity category of the actual native symmetric spectra
 
 The source category is Tau Ceti's sphere-module category of symmetric
 spectra. Level weak maps use the actual pointed simplicial levels and
-geometric weak homotopy equivalence. Stabilization uses the completed
-native free stabilization maps F_(1+n)(S1 smash K) to F_n(K).
+geometric weak homotopy equivalence. Cofibrancy uses the native free-zero
+initial map and levelwise boundary lifting; Omega-fibrancy uses the level
+Kan conditions and the adjoint sphere structure maps. Stabilization uses the
+completed native free stabilization maps F_(1+n)(S1 smash K) to F_n(K).
 
 The stable source is a full infinity-categorical localization of that
-entire category at these maps. Its universal condition uses full functor
-categories, retaining every higher natural transformation. No K spectrum,
+entire category at the stable equivalences of Hovey--Shipley--Smith,
+tested on mapping spaces into Omega-fibrant spectra. The level
+equivalences and free stabilization maps generate them only under
+homotopy colimits: localizing at the generators alone does not invert the
+wedge of a free stabilization map with an identity. Its universal condition
+uses full functor categories, retaining every higher natural transformation. No K spectrum,
 K vanishing, additive invariant or motive equivalence defines this source.
 
 References: Hovey--Shipley--Smith, Symmetric spectra, Sections 3.1--3.4;
@@ -49,15 +58,65 @@ abbrev level (E : SymmetricSpectrum) (n : ℕ) : PointedSSet.{0} :=
 def IsLevelWeak {E F : SymmetricSpectrum} (f : E ⟶ F) : Prop :=
   ∀ n : ℕ, WeakEquivalence (((SymmetricSpectrum.evaluation n).map f).right)
 
-/-- These are the actual source maps generating stable localization. -/
+/-- The level equivalences and the free stabilization maps, which generate the stable
+equivalences under homotopy colimits. Localizing at these maps alone does not invert all stable
+equivalences: the wedge of a free stabilization map with an identity is not inverted. -/
 def StableGenerator {E F : SymmetricSpectrum} (f : E ⟶ F) : Prop :=
   IsLevelWeak f ∨ ∃ (n : ℕ) (K : PointedSSet.{0}),
     HEq f (SymmetricSpectrum.freeStabilizationMap n K)
 
-/-- A functor vertex inverts exactly the stated native generating maps. -/
-def InvertsStableGenerators (Z : SSet.{1})
+/-- The native pointed zero object is the identity pointing of Delta[0]. -/
+abbrev pointedZero : PointedSSet.{0} := Under.mk (𝟙 (Δ[0] : SSet.{0}))
+
+/-- Its actual free-zero spectrum is the source initial spectrum. -/
+abbrev zeroSpectrum : SymmetricSpectrum := (SymmetricSpectrum.free 0).obj pointedZero
+
+/-- The unique based map from the actual pointed zero object. -/
+def pointedZeroMap (X : PointedSSet.{0}) : pointedZero ⟶ X :=
+  Under.homMk X.hom (by simp)
+
+/-- The native free-spectrum adjunction supplies the actual initial map. -/
+def initialSpectrumMap (E : SymmetricSpectrum) : zeroSpectrum ⟶ E :=
+  SymmetricSpectrum.freeDesc E (pointedZeroMap (level E 0))
+
+/-- The native free-spectrum left adjoint preserves the actual pointed initial object. -/
+def zeroSpectrumIsInitial : IsInitial zeroSpectrum := by
+  letI : (SymmetricSpectrum.free 0).IsLeftAdjoint :=
+    (SymmetricSpectrum.freeEvaluationAdjunction 0).isLeftAdjoint
+  exact (Under.mkIdInitial (X := (Δ[0] : SSet.{0}))).isInitialObj
+    (SymmetricSpectrum.free 0) _
+
+/-- Every actual level boundary has the right lifting property for a trivial level fibration. -/
+def IsLevelTrivialFibration {E F : SymmetricSpectrum} (f : E ⟶ F) : Prop :=
+  ∀ (n m : ℕ), HasLiftingProperty (SSet.boundary m).ι
+    (((SymmetricSpectrum.evaluation n).map f).right)
+
+/-- The source projective cofibration test uses the native initial free-spectrum map. -/
+def IsCofibrant (E : SymmetricSpectrum) : Prop :=
+  ∀ (X Y : SymmetricSpectrum) (f : X ⟶ Y), IsLevelTrivialFibration f →
+    HasLiftingProperty (initialSpectrumMap E) f
+
+/-- Omega-fibrancy uses actual level Kan complexes and actual adjoint sphere maps. -/
+def IsOmegaFibrant (E : SymmetricSpectrum) : Prop :=
+  (∀ n : ℕ, SSet.KanComplex (level E n).right) ∧
+    ∀ n : ℕ, WeakEquivalence (E.smashPowAdjointStructureMap n).right
+
+/-- The stable equivalences of symmetric spectra (Hovey–Shipley–Smith, Def. 3.1.3, in the
+projective form): after replacing `f` by a map `f'` of cofibrant spectra over it along level
+trivial fibrations, `f'` induces weak equivalences of the mapping spaces `Map(-, E)` (level zero
+of the function spectra) into every Omega-fibrant spectrum `E`. Every such replacement is tested;
+one always exists. -/
+def IsStableEquivalence {X Y : SymmetricSpectrum} (f : X ⟶ Y) : Prop :=
+  ∀ (X' Y' : SymmetricSpectrum) (p : X' ⟶ X) (q : Y' ⟶ Y) (f' : X' ⟶ Y'),
+    IsCofibrant X' → IsCofibrant Y' → IsLevelTrivialFibration p → IsLevelTrivialFibration q →
+      f' ≫ q = p ≫ f → ∀ E : SymmetricSpectrum, IsOmegaFibrant E →
+        WeakEquivalence
+          ((SymmetricSpectrum.evaluation 0).map ((MonoidalClosed.pre f').app E)).right
+
+/-- A functor vertex inverts every stable equivalence. -/
+def InvertsStableEquivalences (Z : SSet.{1})
     (a : (mapping (nerve SymmetricSpectrum) Z) _⦋0⦌) : Prop :=
-  ∀ (E F : SymmetricSpectrum) (f : E ⟶ F), StableGenerator f →
+  ∀ (E F : SymmetricSpectrum) (f : E ⟶ F), IsStableEquivalence f →
     IsEquivalenceEdge Z
       (((mappingZero (nerve SymmetricSpectrum) Z).symm a).app (op ⦋1⦌) (nerve.edgeMk f).edge)
 
@@ -66,13 +125,13 @@ structure SpectrumInfinitySource where
   category : StableInfinityCategory.{1}
   source : nerve SymmetricSpectrum ⟶ category.toSSet
   source_objects : Function.Bijective (source.app (op ⦋0⦌))
-  invert : ∀ (E F : SymmetricSpectrum) (f : E ⟶ F), StableGenerator f →
+  invert : ∀ (E F : SymmetricSpectrum) (f : E ⟶ F), IsStableEquivalence f →
     IsEquivalenceEdge category.toSSet
       (source.app (op ⦋1⦌) (nerve.edgeMk f).edge)
   universal : ∀ (Z : SSet.{1}) [SSet.Quasicategory Z],
     ∃ f : mapping category.toSSet Z ⟶
       ((mapping (nerve SymmetricSpectrum) Z).fullEnhancedSubcategory
-        (InvertsStableGenerators Z)).toSSet,
+        (InvertsStableEquivalences Z)).toSSet,
       f ≫ (SSet.Subcomplex.ι _) = precomposition source Z ∧ CategoricalWeakEquivalence f
 
 /-- An actual point-set spectrum is sent to its original source vertex. -/

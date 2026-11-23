@@ -82,10 +82,10 @@ def spectrumCoherentEdge (N : SpectrumSimplicialEnrichment)
     {E F : SymmetricSpectrum} (f : E ⟶ F) : (spectrumCoherentNerve N) _⦋1⦌ :=
   (spectrumOrdinaryToCoherent N).app (op ⦋1⦌) (nerve.edgeMk f).edge
 
-/-- Inverting the native stabilization maps is tested on this entire coherent source. -/
-def InvertsCoherentStableGenerators (N : SpectrumSimplicialEnrichment) (C : SSet.{1})
+/-- Inverting the stable equivalences is tested on this entire coherent source. -/
+def InvertsCoherentStableEquivalences (N : SpectrumSimplicialEnrichment) (C : SSet.{1})
     (a : (mapping (spectrumCoherentNerve N) C) _⦋0⦌) : Prop :=
-  ∀ (E F : SymmetricSpectrum) (f : E ⟶ F), StableGenerator f →
+  ∀ (E F : SymmetricSpectrum) (f : E ⟶ F), IsStableEquivalence f →
     IsEquivalenceEdge C (((mappingZero _ _).symm a).app (op ⦋1⦌)
       (spectrumCoherentEdge N f))
 
@@ -94,13 +94,13 @@ structure SpectrumCoherentLocalization (N : SpectrumSimplicialEnrichment)
     (S : SpectrumInfinitySource) where
   map : spectrumCoherentNerve N ⟶ S.category.toSSet
   ordinary_normalization : spectrumOrdinaryToCoherent N ≫ map = S.source
-  invert : ∀ (E F : SymmetricSpectrum) (f : E ⟶ F), StableGenerator f →
+  invert : ∀ (E F : SymmetricSpectrum) (f : E ⟶ F), IsStableEquivalence f →
     IsEquivalenceEdge S.category.toSSet
       (map.app (op ⦋1⦌) (spectrumCoherentEdge N f))
   universal : ∀ (C : SSet.{1}) [SSet.Quasicategory C],
     ∃ f : mapping S.category.toSSet C ⟶
       ((mapping (spectrumCoherentNerve N) C).fullEnhancedSubcategory
-        (InvertsCoherentStableGenerators N C)).toSSet,
+        (InvertsCoherentStableEquivalences N C)).toSSet,
       f ≫ (SSet.Subcomplex.ι _) = precomposition map C ∧ CategoricalWeakEquivalence f
 
 end MathlibExt.AlgebraicTopology.NativeSpectraSimplicialSource

@@ -15,10 +15,9 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Terminal
 /-!
 # Derived constructions on the actual Tau Ceti spectrum carrier
 
-Cofibrancy uses the native free-zero initial map and levelwise boundary
-lifting. Fibrancy uses every actual level Kan condition and every native
-adjoint sphere structure map. Replacement augmentations are weak in the
-actual stable infinity localization, without a strict-bijectivity test.
+Cofibrancy and Omega-fibrancy are those of `StableSpectraInfinitySource`.
+Replacement augmentations are weak in the actual stable infinity
+localization, without a strict-bijectivity test.
 
 The derived function spectrum is the native internal function spectrum
 from a cofibrant source to a fibrant target. Derived loops use the actual
@@ -44,42 +43,6 @@ open QuasicategoricalModels StableInfinityMappingSpaces
 open StableInfinityMappingSpaceMaps StableSpectraInfinitySource
 open MathlibExt.SpectraSource
 open scoped Simplicial
-
-/-- The native pointed zero object is the identity pointing of Delta[0]. -/
-abbrev pointedZero : PointedSSet.{0} := Under.mk (𝟙 (Δ[0] : SSet.{0}))
-
-/-- Its actual free-zero spectrum is the source initial spectrum. -/
-abbrev zeroSpectrum : SymmetricSpectrum := (SymmetricSpectrum.free 0).obj pointedZero
-
-/-- The unique based map from the actual pointed zero object. -/
-def pointedZeroMap (X : PointedSSet.{0}) : pointedZero ⟶ X :=
-  Under.homMk X.hom (by simp)
-
-/-- The native free-spectrum adjunction supplies the actual initial map. -/
-def initialSpectrumMap (E : SymmetricSpectrum) : zeroSpectrum ⟶ E :=
-  SymmetricSpectrum.freeDesc E (pointedZeroMap (level E 0))
-
-/-- The native free-spectrum left adjoint preserves the actual pointed initial object. -/
-def zeroSpectrumIsInitial : IsInitial zeroSpectrum := by
-  letI : (SymmetricSpectrum.free 0).IsLeftAdjoint :=
-    (SymmetricSpectrum.freeEvaluationAdjunction 0).isLeftAdjoint
-  exact (Under.mkIdInitial (X := (Δ[0] : SSet.{0}))).isInitialObj
-    (SymmetricSpectrum.free 0) _
-
-/-- Every actual level boundary has the right lifting property for a trivial level fibration. -/
-def IsLevelTrivialFibration {E F : SymmetricSpectrum} (f : E ⟶ F) : Prop :=
-  ∀ (n m : ℕ), HasLiftingProperty (SSet.boundary m).ι
-    (((SymmetricSpectrum.evaluation n).map f).right)
-
-/-- The source projective cofibration test uses the native initial free-spectrum map. -/
-def IsCofibrant (E : SymmetricSpectrum) : Prop :=
-  ∀ (X Y : SymmetricSpectrum) (f : X ⟶ Y), IsLevelTrivialFibration f →
-    HasLiftingProperty (initialSpectrumMap E) f
-
-/-- Omega-fibrancy uses actual level Kan complexes and actual adjoint sphere maps. -/
-def IsOmegaFibrant (E : SymmetricSpectrum) : Prop :=
-  (∀ n : ℕ, SSet.KanComplex (level E n).right) ∧
-    ∀ n : ℕ, WeakEquivalence (E.smashPowAdjointStructureMap n).right
 
 /-- Stable weakness is measured in the actual native stable localization. -/
 def IsStableWeak (S : SpectrumInfinitySource) {E F : SymmetricSpectrum}
