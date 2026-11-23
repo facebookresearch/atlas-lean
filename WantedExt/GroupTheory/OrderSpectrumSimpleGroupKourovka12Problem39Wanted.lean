@@ -34,20 +34,28 @@ Simple is `IsSimpleGroup`, which includes the cyclic groups of prime order (wher
 immediate); the set of element orders is the range of `orderOf`.
 -/
 
-/-- The set of orders of elements of `G`. -/
+/-- **Set of element orders (Kourovka 12.39).** For a group $G$, the set of natural numbers that
+occur as the order of some element of $G$, where an element of infinite order is counted as
+having order $0$. -/
 def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
-/-- Kourovka 12.39 (W. J. Shi): a finite group and a finite simple group with equal orders and
-the same set of element orders are isomorphic. -/
+/-- **Shi's conjecture on recognition by order and element orders (Kourovka 12.39).** The
+statement that for every finite group $G$ and every finite simple group $S$, if $G$ and $S$ have
+the same order and the same set of element orders, then $G$ is isomorphic to $S$. -/
 def simpleGroupRecognizedByOrderAndSpectrum : Prop :=
   ∀ (G S : Type) [Group G] [Finite G] [Group S] [Finite S], IsSimpleGroup S →
     Nat.card G = Nat.card S → elementOrders G = elementOrders S → Nonempty (G ≃* S)
 
 /--
-Resolved true: the Kourovka Archive answers 12.39 "Yes, they must" (Shi's conjecture), proved by Xu
-and Shi (Algebra Colloq. 10 (2003)) and Vasil'ev, Grechkoseeva and Mazurov (Algebra Logic 48
-(2009)). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Finite simple groups are recognized by order and element orders.** For every finite group $G$
+and every finite simple group $S$, if $G$ and $S$ have the same order and the same set of element
+orders, then $G$ is isomorphic to $S$. That is, Shi's conjecture (Kourovka Problem 12.39) holds.
+
+Here a simple group may be cyclic of prime order. The Kourovka Archive records the answer "Yes,
+they must", proved by Xu and Shi and by Vasil'ev, Grechkoseeva and Mazurov.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.39
 (W. J. Shi; A. S. Kondratiev); resolution: M. C. Xu and W. J. Shi, Algebra Colloq. 10 (2003),
 427-443; A. V. Vasil'ev, M. A. Grechkoseeva and V. D. Mazurov, Algebra Logic 48 (2009), 385-409,

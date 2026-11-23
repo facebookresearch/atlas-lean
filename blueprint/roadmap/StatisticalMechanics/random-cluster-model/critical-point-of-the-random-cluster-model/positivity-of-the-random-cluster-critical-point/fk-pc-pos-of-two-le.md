@@ -1,0 +1,3 @@
+# Positive random-cluster critical point for $d \ge 2$, $q \ge 1$
+
+If $d \ge 2$ and $q \ge 1$, then $p_c(q) > 0$, where $p_c(q)$ is the [critical point](../the-critical-point-of-the-random-cluster-model/fk-pc.md) $p_c(q) = \sup\{p \in (0, 1) : \theta^1(p, q) = 0\}$ of $\mathbb{Z}^d$ (with $\sup \emptyset = 0$), $\theta^1(p, q)$ being the probability, under the [wired infinite-volume random-cluster measure](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) $\phi^1_{p,q}$ on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures), that the open cluster of the origin is infinite (the [wired percolation probability](../the-critical-point-of-the-random-cluster-model/fk-theta.md)).
