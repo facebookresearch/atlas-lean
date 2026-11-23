@@ -16,16 +16,22 @@ Proposition 1.6).
 
 Log resolutions exist: the blow-up sequence $\Pi$ given by
 [principalization](principalization-of-ideal-sheaves.md) of the ideal sheaf of the support of $D$,
-with $E = \emptyset$, is one. Indeed, in Kollár's construction the pull-back of this ideal sheaf, whose
-cosupport is the support of $\Pi^* D$, is supported on the total exceptional set
-$\mathrm{Ex}_{\mathrm{tot}}(\Pi)$, an snc divisor that contains $\operatorname{Exc}(\Pi)$ (Kollár,
-Theorem 35 and its proof in 72). Demailly appeals to Hironaka's theorem for the same purpose
+with $E = \emptyset$, is one. Indeed, the pull-back of this ideal sheaf is the ideal sheaf of an
+effective divisor with snc support whose support is that of $\Pi^* D$; in Kollár's construction this
+support is the total exceptional set $\mathrm{Ex}_{\mathrm{tot}}(\Pi)$, which contains
+$\operatorname{Exc}(\Pi)$ (Kollár, Theorem 35 and its proof in 72). Demailly appeals to Hironaka's theorem for the same purpose
 (Analytic methods, (6.23)).
 
 Lazarsfeld reduces Proposition 1.6, using that any two log resolutions are dominated by a third, to
-the case of a divisor $D$ that already has snc support, where for every log resolution $\mu$ one has
-$\mu_* \mathcal{O}_{X'}(K_{X'/X} - \lfloor \mu^* D \rfloor) = \mathcal{O}_X(-\lfloor D \rfloor)$
-(Lemma 1.7; he refers to Positivity II, 9.2.19, for the computation). In particular
+the case of a divisor $D$ that already has snc support, where for every further log resolution $\mu$ one
+has $\mu_* \mathcal{O}_{X'}(K_{X'/X} - \lfloor \mu^* D \rfloor) = \mathcal{O}_X(-\lfloor D \rfloor)$
+(Lemma 1.7; he refers to Positivity II, 9.2.19, for the computation). A common refinement of two log
+resolutions $\mu_1, \mu_2$ is obtained by resolving the closure of the graph of the birational map
+between them and then applying principalization once more to the ideal of the support of the pull-back
+of $D$, so that the result is again a log resolution, which factors through both; on it the two
+constructions agree by Lemma 1.7 applied on $X_1$ and on $X_2$, together with the composition rule
+$\mu_* (\mathcal{O}_{X'}(K_{X'/X}) \otimes \mathcal{J}(X', \mu^* D)) = \mathcal{J}(X, D)$ for proper
+birational $\mu$ (Lemma 1.9). In particular
 $\mathcal{J}(D) = \mathcal{O}_X(-\lfloor D \rfloor)$ when $D$ has snc support. Writing
 $\mu^* D = \sum_i r_i E_i$ and $K_{X'/X} = \sum_i b_i E_i$ with distinct prime divisors $E_i$ on $X'$,
 $\mathcal{J}(D)$ is the sheaf of rational functions $f$ with
@@ -53,7 +59,11 @@ defines it ((6.23)–(6.24′)).
 ## Proof depends on
 
 - [Functorial resolution of schemes of finite type in characteristic zero](functorial-resolution-of-schemes-of-finite-type.md),
-  to dominate two log resolutions by a third in the proof of Proposition 1.6
+  to resolve the closure of the graph in the common refinement of two log resolutions
+- [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), to
+  make the common refinement a log resolution
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for the projection formula in Lemma 1.9
 
 ## Sources
 

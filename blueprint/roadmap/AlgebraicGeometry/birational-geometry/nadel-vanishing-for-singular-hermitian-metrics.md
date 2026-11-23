@@ -34,11 +34,7 @@ with Corollary 5.3.
 For an effective $\mathbb{Q}$-divisor $D = \sum_j a_j D_j$ on a smooth complex algebraic variety, with
 local equations $g_j$ of the $D_j$, $\mathcal{I}(\sum_j a_j \log|g_j|)$ is the analytic sheaf
 associated with the [multiplier ideal](multiplier-ideal-of-a-q-divisor.md) $\mathcal{J}(D)$
-(Lazarsfeld, Proposition 1.8; Demailly (6.23)). Demailly derives from the theorem a vanishing
-theorem for these ideals (Theorem 6.25): if $X$ is a projective manifold and $F$ a line bundle such
-that $mF = L + D$ for some $m \ge 1$, a nef line bundle $L$ and an effective divisor $D$, then
-$H^q(X, \mathcal{O}(K_X + F) \otimes \mathcal{I}(m^{-1} D)) = 0$ for $q > n - \operatorname{nd}(L)$, where
-$\operatorname{nd}(L)$ is the largest $k$ with $c_1(L)^k \ne 0$ (6.20).
+(Lazarsfeld, Proposition 1.8; Demailly (6.23)).
 
 ## Proof depends on
 
@@ -52,7 +48,6 @@ $\operatorname{nd}(L)$ is the largest $k$ with $c_1(L)^k \ne 0$ (6.20).
   <https://www-fourier.univ-grenoble-alpes.fr/~demailly/manuscripts/analmeth_book.pdf>: Definition
   (5.4), p. 35; Proposition (5.7), p. 37; the definition of $\mathcal{I}(h)$ before Theorem (5.11) and
   Theorem (5.11) (Nadel vanishing theorem) with its proof, p. 39; weakly pseudoconvex manifolds,
-  §5.A, p. 34; singular metrics and their weights, (3.10)–(3.12), pp. 25–26; (6.20), p. 49;
-  (6.23)–(6.25), p. 50.
+  §5.A, p. 34; singular metrics and their weights, (3.10)–(3.12), pp. 25–26; (6.23), p. 50.
 - R. Lazarsfeld, "A short course on multiplier ideals", arXiv:0901.0651 (version 1),
   <https://arxiv.org/abs/0901.0651v1>: Definition 1.1 and Proposition 1.8, pp. 2 and 5.

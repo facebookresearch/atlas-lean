@@ -47,6 +47,8 @@ why $BR$ has to be defined on disconnected affine schemes (Warning 38).
 - [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), for
   Theorem 35 with $E = \emptyset$, including its compatibility with smooth morphisms, change of fields
   and closed embeddings
+- [Embeddings and descent for blow-up sequence functors](embedding-and-descent-for-blow-up-sequence-functors.md),
+  for Proposition 37 and Lemmas 39 and 41
 
 ## Sources
 

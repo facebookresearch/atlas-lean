@@ -44,12 +44,20 @@ A good expansion has pages for:
   $b > 0$; its proof uses that the cyclic covers of $X$ and $X'$ have quotient singularities and that
   quotient singularities are rational, which is shown after the claim with desingularizations.
 
-The arguments also use Serre's vanishing theorem (Theorem 1.1) and Serre duality. Kawamata's
+The arguments also use Serre's vanishing theorem (Theorem 1.1), Serre duality and GAGA, among the
+[standard results of coherent cohomology](standard-results-of-coherent-cohomology.md). Kawamata's
 Lemma 5.11 serves only for Corollary 5.12 b) and is not needed for the Kodaira and Kawamata–Viehweg
 theorems.
 
+## Depends on
+
+- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for normal crossing divisors and
+  their components
+
 ## Proof depends on
 
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for Serre vanishing, Serre duality and GAGA
 - [Resolution of singularities of quasi-projective varieties](resolution-of-singularities-of-quasi-projective-varieties.md),
   for the desingularizations of cyclic covers in the proof of Claim 5.13
 - [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), to

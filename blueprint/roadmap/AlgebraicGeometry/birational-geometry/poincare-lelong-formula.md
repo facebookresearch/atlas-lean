@@ -39,6 +39,12 @@ $\frac{i}{\pi}\partial\bar\partial \log|z| = \delta_0$ in $\mathbb{C}$; the diff
 a closed current of order $0$ supported on an analytic set of dimension less than $n - 1$, hence zero
 (*Complex analytic and differential geometry*, III (2.10)–(2.11)).
 
+## Proof depends on
+
+- [Currents of integration and the support theorems](currents-of-integration.md), for Lelong's theorem,
+  the fundamental solution of $\partial\bar\partial$ on $\mathbb{C}$ and the support theorem
+  (Demailly, Chapter III, Corollary (2.11)) used in the proof
+
 ## Sources
 
 - J.-P. Demailly, *Complex Analytic and Differential Geometry*, version of 21 June 2012,
@@ -54,9 +60,3 @@ a closed current of order $0$ supported on an analytic set of dimension less tha
 - H. Gillet and C. Soulé, "Arithmetic intersection theory", Publ. Math. IHÉS 72 (1990), 93–174,
   <http://www.numdam.org/item?id=PMIHES_1990__72__93_0>: 1.1.6 (ii) ($d^c = \frac{i}{4\pi}(\bar\partial -
   \partial)$, $dd^c = \frac{i}{2\pi}\partial\bar\partial$), p. 100; (1.3.1.1), p. 103.
-- Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses a specialised
-  integrated form of the formula for a section of a hermitian line bundle, an identity between
-  integrals of $\log \lVert s \rVert$ and of logarithms of metrics against products of first Chern forms
-  over the complex points of an arithmetic variety, with a sum over the horizontal components of
-  $\operatorname{div}(s)$, as `GlobalTheory.CompanionTheory.Hypotheses₂.PoincareLelongInv`.

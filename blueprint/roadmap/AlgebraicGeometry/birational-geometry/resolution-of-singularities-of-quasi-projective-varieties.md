@@ -15,9 +15,9 @@ variety. Embed $X$ into a smooth variety $P$ with $\dim P \ge \dim X + 2$, for i
 $P = \mathbb{P}^N$ with $N$ large, let $\bar X$ be the closure of $X$ and $I \subset \mathcal{O}_P$ its
 ideal sheaf, and apply principalization to $(P, I, \emptyset)$. As $\bar X$ has codimension at least
 $2$, $I$ is not locally principal at the generic point of $X$, so some blow-up centre contains this
-point; for the first such centre $Z_j \subset P_j$, the composite of the earlier blow-ups restricts to
-a birational morphism $g \colon Z_j \to \bar X$ from the smooth variety $Z_j$ (Corollary 22 and its
-proof). The functoriality of principalization for smooth morphisms, together with the fact that any
+point; let $Z_j \subset P_j$ be the first such centre and, if it is disconnected, replace it by its
+connected component dominating $\bar X$; the composite of the earlier blow-ups restricts to a birational
+morphism $g \colon Z_j \to \bar X$ from this smooth variety (Corollary 22 and its proof). The functoriality of principalization for smooth morphisms, together with the fact that any
 two smooth points of $X$ have isomorphic étale neighbourhoods in their embeddings into $P$, shows that
 $g$ is an isomorphism over the smooth locus of $\bar X$; and
 $g^{-1}(\operatorname{Sing} \bar X) = Z_j \cap \mathrm{Ex}_{\mathrm{tot}}(\pi_0 \circ \dots \circ \pi_{j-1})$

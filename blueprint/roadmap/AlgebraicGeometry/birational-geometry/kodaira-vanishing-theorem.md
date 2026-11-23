@@ -27,6 +27,9 @@ logarithmic de Rham complexes of cyclic covers.
 
 - [Logarithmic de Rham complexes and E₁-degeneration](logarithmic-de-rham-complexes-and-e1-degeneration.md),
   for Theorem 5.1 a) of Esnault–Viehweg
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for Serre vanishing and Serre duality, and Bertini's theorem for the general section of $A^N$, whose
+  zero divisor is smooth
 
 ## Sources
 

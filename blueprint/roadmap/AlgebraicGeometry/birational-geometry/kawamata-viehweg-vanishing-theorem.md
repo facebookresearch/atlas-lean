@@ -49,6 +49,8 @@ desingularizations of them.
   the blow-ups that make the divisors of the proof normal crossing divisors
 - [Resolution of singularities of quasi-projective varieties](resolution-of-singularities-of-quasi-projective-varieties.md),
   for the desingularizations of the cyclic covers in the proof of Claim 5.13
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for Serre duality in the translation of Esnault–Viehweg's form
 - [Volume of a line bundle](volume-of-a-line-bundle.md), for the criterion that a nef invertible sheaf
   $\mathcal{L}$ has $\kappa(\mathcal{L}) = n$ if and only if $c_1(\mathcal{L})^n > 0$ (Esnault–Viehweg,
   Lemma 5.8 a))

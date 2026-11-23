@@ -24,10 +24,12 @@ states the criterion for bigness).
 **Algebraic form.** Let $X$ be a smooth projective variety of dimension $n$ over an algebraically
 closed field of characteristic zero and $L$ a nef invertible sheaf on $X$. Then $\kappa(L) = n$ if and
 only if $c_1(L)^n > 0$ (Esnault–Viehweg, Lemma 5.8 a)). Their proof combines the Hirzebruch–Riemann–Roch
-theorem, by which $\chi(X, L^\nu)$ is a polynomial in $\nu$ of degree $n$ with leading coefficient
-$c_1(L)^n / n!$, with the bounds $\dim H^b(X, F \otimes L^\nu) \le c_b\, \nu^{n-b}$ for every invertible
-sheaf $F$ and every $b \ge 0$ (Lemma 5.8 b)), which they prove by induction on the dimension from the
-[Kodaira vanishing theorem](kodaira-vanishing-theorem.md); together these give
+theorem, by which $\chi(X, L^\nu)$ is a polynomial in $\nu$ of degree at most $n$ whose coefficient of
+$\nu^n$ is $c_1(L)^n / n!$ (for $L = \mathcal{O}$ on $\mathbb{P}^1$ it is the constant $1$), with the
+bounds $\dim H^b(X, F \otimes L^\nu) \le c_b\, \nu^{n-b}$ for every invertible
+sheaf $F$ and every $b \ge 0$ (Lemma 5.8 b)), which they prove by induction on the dimension through
+hyperplane sections, from the [Kodaira vanishing theorem](kodaira-vanishing-theorem.md) and the
+characterization of nef sheaves by Seshadri's criterion (Lemma 5.7); together these give
 $\dim H^0(X, L^\nu) = \frac{c_1(L)^n}{n!} \nu^n + O(\nu^{n-1})$. Lazarsfeld states the criterion for nef
 divisors on irreducible complex projective varieties and notes that it holds for nef
 $\mathbb{Q}$-divisors (Lemma 2.1).
@@ -41,6 +43,9 @@ $\mathbb{Q}$-divisors (Lemma 2.1).
 - [L² estimates for the ∂̄ operator](l2-estimates-for-the-dbar-operator.md), for the holomorphic Morse
   inequalities, their Corollary 8.4 and the Riemann–Roch formula, in the Kähler nef case
 - [Kodaira vanishing theorem](kodaira-vanishing-theorem.md), in Esnault–Viehweg's proof of Lemma 5.8 b)
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for the Hirzebruch–Riemann–Roch theorem, hyperplane sections and Seshadri's criterion (Esnault–Viehweg,
+  Lemmas 5.7 and 5.8)
 
 ## Sources
 

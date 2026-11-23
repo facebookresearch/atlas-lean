@@ -131,21 +131,29 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arithmetic-geometry/faltings-s-theorem/principal-apply.md"}], "id": "af_81bc296c106652dd5b3f449a", "object": [{"location": {"declaration": "MathlibExt.AlgebraicGeometry.FaltingsWanted.AlgebraicGeometry.Faltings.Adele.principal_apply"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arithmetic-geometry/faltings-s-theorem/principal.md"}], "id": "af_060a9331f3e7fede8da51ab5", "object": [{"location": {"declaration": "MathlibExt.AlgebraicGeometry.FaltingsWanted.AlgebraicGeometry.Faltings.Adele.principal"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arithmetic-geometry/weil-conjectures.md"}], "object": [{"location": {"declaration": "MathlibExt.AlgebraicGeometry.WeilConjecturesWanted.AlgebraicGeometry.WeilConjectures.weil_conjectures"}}], "id": "af_6931a7c6f7ce925e9bb7b553"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/currents-of-integration.md"}], "id": "af_54ea391ece775ac3cca30adf", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/embedding-and-descent-for-blow-up-sequence-functors.md"}], "id": "af_8ba3b4aee03a73c765b6df87"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/functorial-resolution-of-schemes-of-finite-type.md"}], "id": "af_fd6d23fdb6fb93a78fb65147"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/integrated-poincare-lelong-formula.md"}], "id": "af_3677d9d24b158c908a2f4695"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/intersection-numbers-of-nef-line-bundles.md"}], "id": "af_e91934ef23c94622d894bc01", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/kawamata-viehweg-vanishing-theorem.md"}], "id": "af_39ddea946fa4b7e3d3f3d3e7"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/kodaira-vanishing-theorem.md"}], "id": "af_fd6ec205bcda21bcd0922e06"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/l2-estimates-for-the-dbar-operator.md"}], "id": "af_6bcaa929650b0bae713069b4", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/l2-extension-from-log-canonical-subvarieties.md"}], "id": "af_3596cccd3a3954f76ec9927c"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/local-vanishing-for-multiplier-ideals.md"}], "id": "af_6faf6bd29e79ff2abd691069"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/logarithmic-de-rham-complexes-and-e1-degeneration.md"}], "id": "af_237846cd8d2dd6a3a2bac188", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/multiplier-ideal-of-a-q-divisor.md"}], "id": "af_5bf0f0c912bf42c1ba481041"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/nadel-vanishing-for-klt-pairs-and-point-separation.md"}], "id": "af_8cbc24e2d4ed52a3a7d24874", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/nadel-vanishing-for-singular-hermitian-metrics.md"}], "id": "af_9dcbfd2fab3ef456b56ee8ae"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/nadel-vanishing-theorem.md"}], "id": "af_9f1324311065e199c2a17ad4"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/nef-and-big-line-bundles.md"}], "id": "af_3f2a4b4b8007f90623cd473a"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/ohsawa-takegoshi-extension-theorem.md"}], "id": "af_d0314541e615aa1d1d9937b9"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/order-reduction-for-marked-ideals.md"}], "id": "af_7ff3d6129c9888b90e148aa1", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/poincare-lelong-formula.md"}], "id": "af_0472f6ab34f87c1353bfb48b"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/principalization-of-ideal-sheaves.md"}], "id": "af_8883ab466a5310f0c3f14540"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md"}], "id": "af_9c1b8f184a6c33777f1ac02f"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/simple-normal-crossing-divisor.md"}], "id": "af_8751edfda49aa74b6f0232b6"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/standard-results-of-coherent-cohomology.md"}], "id": "af_738047d944a8ca30681812b6", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/volume-of-a-line-bundle.md"}], "id": "af_3a1936ed261ff1abef33db50"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/elliptic-curves/README.md"}], "id": "af_ecd304dc3422aacbf5d4bb19"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/elliptic-curves/galois-action-on-torsion-points/README.md"}], "id": "af_f8846f482e722f40947debce", "extensions": {"org.autoform": {"navigation": "module"}}}

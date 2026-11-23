@@ -7,7 +7,10 @@ $$H^i\bigl(X, \mathcal{O}_X(K_X + L) \otimes \mathcal{J}(D)\bigr) = 0 \qquad (i 
 
 where $\mathcal{J}(D)$ is the [multiplier ideal](multiplier-ideal-of-a-q-divisor.md) of $D$.
 
-No normal crossing hypothesis is made on $D$. When $D$ has snc support,
+No normal crossing hypothesis is made on $D$. The analogues for pairs on normal varieties, and the
+construction of isolated non-klt centres by which adjoint linear systems separate points, are the
+subject of the node [Nadel vanishing for pairs and separation of points by
+sections](nadel-vanishing-for-klt-pairs-and-point-separation.md). When $D$ has snc support,
 $\mathcal{J}(D) = \mathcal{O}_X(-\lfloor D \rfloor)$ and the statement is the complex case of the
 [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md).
 
@@ -30,6 +33,8 @@ images of this sheaf vanish, so the two cohomology groups agree.
 
 - [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md), on a log resolution
 - [Local vanishing theorem for multiplier ideals](local-vanishing-for-multiplier-ideals.md)
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for the projection formula and the Leray spectral sequence
 
 ## Sources
 
@@ -38,9 +43,3 @@ images of this sheaf vanish, so the two cohomology groups agree.
   R. Lazarsfeld, *Positivity in Algebraic Geometry I, II*, Ergebnisse der Mathematik und ihrer
   Grenzgebiete 48, 49, Springer, 2004: the chapter "Multiplier Ideal Sheaves" (volume II,
   pp. 139–231).
-- Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses a related
-  statement, for pairs on normal complex projective varieties and with the multiplier ideal replaced
-  by an ideal sheaf whose cosupport is the non-klt locus, as the first part of
-  `GlobalTheory.Published.NadelVanishingAndNonKltDivisor`, whose second part, on divisors with an
-  isolated non-klt centre, is a different statement.

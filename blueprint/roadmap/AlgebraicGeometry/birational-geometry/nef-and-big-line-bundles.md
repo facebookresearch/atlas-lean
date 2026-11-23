@@ -9,11 +9,12 @@ $$\kappa(L) = \max\{\dim \varphi_\nu(X) : \nu \ge 1,\ H^0(X, L^\nu) \ne 0\};$$
 
 it lies in $\{-\infty, 0, 1, \dots, \dim X\}$. The sheaf $L$ is *big* if $\kappa(L) = \dim X$, and
 *nef* (numerically effective) if $\deg(L|_C) \ge 0$ for every irreducible curve $C \subset X$, that is,
-if the intersection number $(L \cdot C)$ is non-negative for every such curve. A divisor $B$ is called
-nef or big if $\mathcal{O}_X(B)$ is. Lazarsfeld extends both notions "in the evident manner" to
-$\mathbb{Q}$-divisors $D$ on a smooth projective variety: $D$ is nef if $(D \cdot C) \ge 0$ for every
-irreducible curve $C$, the intersection number being extended $\mathbb{Q}$-linearly, and big if some
-positive multiple of $D$ is an integral big divisor.
+if the intersection number $(L \cdot C)$ is non-negative for every such curve. A Cartier divisor $B$,
+for instance any divisor when $X$ is smooth, is called nef or big if $\mathcal{O}_X(B)$ is. Lazarsfeld
+extends both notions "in the evident manner" to $\mathbb{Q}$-divisors $D$ on a smooth projective
+variety: $D$ is nef if $(D \cdot C) \ge 0$ for every irreducible curve $C$, the intersection number
+being extended $\mathbb{Q}$-linearly, and big if some positive multiple of $D$ is an integral big
+divisor.
 
 Bigness is maximal growth of the spaces of sections, which is how Lazarsfeld phrases it
 ($h^0(X, \mathcal{O}_X(mB))$ grows like $m^{\dim X}$): if $H^0(X, L^\nu) \ne 0$ for some $\nu \ge 1$,
@@ -36,7 +37,13 @@ where $V_m = H^0(X, mL)$ and $B_m = \bigcap_{\sigma \in V_m} \sigma^{-1}(0)$ is 
 $\kappa(L) = -\infty$ if $V_m = 0$ for all $m \ge 1$; $L$ is big if $\kappa(L) = \dim X$
 (Definition 6.12). On a projective manifold carrying an ample line bundle $A$, the following are
 equivalent: $L$ is nef in the sense of curves; $kL + A$ is ample for every integer $k \ge 1$; $L$ is
-nef in the analytic sense, a condition that does not depend on $\omega$ (Proposition 6.10).
+nef in the analytic sense, a condition that does not depend on $\omega$ (Proposition 6.10, whose proof
+uses the Nakai–Moishezon criterion for ampleness).
+
+## Proof depends on
+
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for the Nakai–Moishezon criterion in the proof of Demailly's Proposition 6.10
 
 ## Sources
 
