@@ -174,12 +174,29 @@ def derivedExtensionByZero [PreservesFiniteLimits (extensionByZero E j)] :
 
 variable [PreservesFiniteLimits (extensionByZero E j)]
 
-/-- The exact-extension comparison is the fixed native derived unit. -/
+/-- The derived unit of extension by zero is an isomorphism on every complex: extension by zero is
+exact, so its derived functor is computed degreewise (`extensionNormalization`). -/
 class ExtensionNormalization : Prop where
   unitIsIso (K : Cochains E X) :
     IsIso ((extensionByZero E j).rightDerivedFunctorPlusUnit.app K)
 
 attribute [instance] ExtensionNormalization.unitIsIso
+
+/-- An exact extension by zero preserves quasi-isomorphisms, so its derived unit is an
+isomorphism. -/
+instance extensionNormalization : ExtensionNormalization E j where
+  unitIsIso K := by
+    have hF : (CochainComplex.Plus.quasiIso (ModuleSheaf E X)).IsInvertedBy
+        ((extensionByZero E j).mapCochainComplexPlus ⋙ DerivedCategory.Plus.Q) := by
+      intro K L φ hφ
+      rw [CochainComplex.Plus.quasiIso_iff] at hφ
+      refine Localization.inverts DerivedCategory.Plus.Q (CochainComplex.Plus.quasiIso _) _ ?_
+      rw [CochainComplex.Plus.quasiIso_iff]
+      change QuasiIso (((extensionByZero E j).mapHomologicalComplex _).map φ.hom)
+      infer_instance
+    have := Functor.isIso_of_isRightDerivedFunctor_of_inverts _
+      (extensionByZero E j).rightDerivedFunctorPlusUnit hF
+    infer_instance
 
 variable [PreservesFiniteLimits (pullback E j)]
 
