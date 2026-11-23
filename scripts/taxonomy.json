@@ -11994,6 +11994,7 @@
   "MathlibExt/Probability/BernoulliSumPmf": {"to": "Probability/distributions/discrete", "title": "Poisson binomial distribution"},
   "MathlibExt/Probability/BerryEsseen": {"to": "Probability/central-limit-theorems", "title": "Berry–Esseen theorem"},
   "MathlibExt/Probability/BerryEsseenConstant": {"to": "Probability/central-limit-theorems", "title": "Optimal Berry–Esseen constant"},
+  "MathlibExt/Probability/BerryEsseenLeftCDF": {"to": "Probability/central-limit-theorems", "title": "Optimal Berry–Esseen constant"},
   "MathlibExt/Probability/BerryEsseenModel": {"to": "Probability/central-limit-theorems", "title": "Berry–Esseen theorem"},
   "MathlibExt/Probability/BertrandBallot": {"to": "Probability/random-walks", "title": "Bertrand's ballot theorem"},
   "MathlibExt/Probability/BirkhoffErgodicL1": {"to": "Dynamics/ergodic-theory", "title": "Birkhoff ergodic theorem"},
