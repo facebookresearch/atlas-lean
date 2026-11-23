@@ -325,20 +325,6 @@ public theorem_wanted sum_choose_mul_pow_div_sq (n : ℕ) (x : ℝ) :
       ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, (1 + x) ^ j / j -
         ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, 1 / (j : ℝ)
 
-/-- **Alternating binomial sum with inverse-square weights.** For every natural number $n$, with
-$H_k = \sum_{j=1}^{k} 1/j$ the $k$-th harmonic number,
-
-$$\sum_{k=1}^{n} (-1)^{k-1} \frac{1}{k^2} \binom{n}{k} = \sum_{k=1}^{n} \frac{H_k}{k}.$$
-
-This is the case $x = -1$ of identity (3.6) of the source.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
-public theorem_wanted sum_neg_one_pow_choose_div_sq_eq_sum_harmonic (n : ℕ) :
-    ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k - 1) * n.choose k / (k : ℚ) ^ 2 =
-      ∑ k ∈ Finset.Icc 1 n, harmonic k / k
-
 end
 
 end MetaMathlibExt
