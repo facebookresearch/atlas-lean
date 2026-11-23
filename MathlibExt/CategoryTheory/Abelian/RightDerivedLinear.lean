@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Ported from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Homology/DerivedLinear.lean.
-The source has no individual copyright or author notice and is licensed
-under Apache 2.0. Modification notice: move the completed proofs to
-CategoryTheory.DerivedLinear in a standalone MathlibExt module, with no
-Stacks import, axiom or unresolved request.
+Portions of this file are adapted from:
+
+`StacksFrontier/Homology/DerivedLinear.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no per-file copyright notice or author list.
+Modified: the completed proofs are moved to `CategoryTheory.DerivedLinear` in a
+standalone module; no Stacks package is imported.
 -/
 module
 

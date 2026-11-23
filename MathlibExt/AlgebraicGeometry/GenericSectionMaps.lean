@@ -109,4 +109,3 @@ def localPullbackSection {X Y : Scheme.{0}} (f : Y ⟶ X) (M : X.Modules)
       (1 : Γ(W.toScheme,⊤)))
 
 end MathlibExt.AlgebraicGeometry.GenericSectionMaps
-

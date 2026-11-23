@@ -165,4 +165,3 @@ def ordinaryBaseChangeMap {X' X Y' Y : Scheme.{0}}
           ((Scheme.Modules.pullbackPushforwardAdjunction f).counit.app M))
 
 end MathlibExt.AlgebraicGeometry.ModuleDerivedSquares
-
