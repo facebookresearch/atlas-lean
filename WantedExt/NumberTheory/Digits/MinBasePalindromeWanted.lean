@@ -13,6 +13,8 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.Digits.BinomialFormTwoPowBase
+public import MathlibExt.NumberTheory.Digits.DigitsPowAndPowAddOne
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
 
@@ -124,18 +126,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
 public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
     (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
 
-/-- **Bases of binomial forms of powers of 2.** Let $n$, $b \ge 2$, $\alpha \ge 1$ and $k \ge 1$
-be natural numbers. If the base-$b$ digits of $2^n$, from the most significant to the least
-significant, are $\alpha\binom{k}{k}, \alpha\binom{k}{k-1}, \dots, \alpha\binom{k}{0}$, then
-$b = 2^x - 1$ for some natural number $x \le n$, and $\alpha = 2^i$ for some natural number $i$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 2
-(`integers-2024-A69-lem-2`). -/
-public theorem_wanted binomialForm_two_pow_base (n b α k : ℕ) (hb : 2 ≤ b) (hα : 1 ≤ α)
-    (hk : 1 ≤ k) (h : Nat.digits b (2 ^ n) = (List.range (k + 1)).map fun i => α * k.choose i) :
-    (∃ x ≤ n, b = 2 ^ x - 1) ∧ ∃ i, α = 2 ^ i
-
 /-- **Even-length palindromic powers of 2 have base one less than a power of 2.** Let $n$ and
 $b \ge 2$ be natural numbers. If the base-$b$ representation of $2^n$ is a palindrome with an
 even number of digits, then $b = 2^x - 1$ for some natural number $x$.
@@ -204,20 +194,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 5
 (`integers-2024-A69-thm-5`). -/
 public theorem_wanted exists_small_base_binomialForm_two_pow (n : ℕ) (hn : 2 ≤ n) :
     ∃ y b : ℕ, y ≤ ⌈Real.sqrt (2 * n)⌉₊ + 1 ∧ 2 ≤ b ∧ b ≤ 2 ^ y - 1 ∧ HasBinomialForm b (2 ^ n)
-
-/-- **Digits of a power of the base and of its successor.** Let $z \ge 2$ and $n$ be natural
-numbers. Then the base-$z$ digits of $z^n$ are a $1$ followed by $n$ zeros, and, if $n \ge 1$,
-the base-$z$ digits of $z^n + 1$ are a $1$, then $n - 1$ zeros, then a $1$.
-
-Part (III) of the source theorem is omitted: as printed ($z^n - 1 = (1, 1, \dots, 1)_z$) it is
-false for $z \ge 3$, for example $3^2 - 1 = 8 = (2, 2)_3$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 7
-(`integers-2024-A69-thm-7`), parts (I) and (II). -/
-public theorem_wanted digits_pow_and_pow_add_one (z n : ℕ) (hz : 2 ≤ z) :
-    Nat.digits z (z ^ n) = List.replicate n 0 ++ [1] ∧
-      (1 ≤ n → Nat.digits z (z ^ n + 1) = [1] ++ List.replicate (n - 1) 0 ++ [1])
 
 /-- **The Nagell–Ljunggren equation in natural numbers (Bugeaud–Mihăilescu).** Let $x, y, n, q$
 be natural numbers with $x \ge 2$, $y \ge 2$, $n \ge 3$ and $q \ge 2$ such that

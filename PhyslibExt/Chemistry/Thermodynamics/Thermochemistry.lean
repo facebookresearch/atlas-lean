@@ -206,14 +206,15 @@ theorem kirchhoff_law (H Cp : ℝ → ℝ) (T1 T2 : ℝ)
   have h := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
   linarith
 
-/-- Kirchhoff's law for continuous `ΔCp`: continuity on the unordered interval supplies the
-integrability hypothesis. -/
+/-- Kirchhoff's law for `ΔCp` continuous on all of `ℝ`: continuity supplies the integrability
+hypothesis. -/
 lemma kirchhoff_of_continuous (H Cp : ℝ → ℝ) (T1 T2 : ℝ)
     (hCp : Continuous Cp) (hderiv : ∀ T ∈ Set.uIcc T1 T2, HasDerivAt H (Cp T) T) :
     H T2 = H T1 + ∫ T in T1..T2, Cp T :=
   kirchhoff_law H Cp T1 T2 hderiv (hCp.intervalIntegrable T1 T2)
 
-/-- Kirchhoff's law with the endpoints swapped: `ΔH T1 = ΔH T2 + ∫ T in T2..T1, ΔCp T`. -/
+/-- Kirchhoff's law with the endpoints swapped: when `ΔH` has derivative `ΔCp` at every temperature
+between `T1` and `T2` and `ΔCp` is interval-integrable, `ΔH T1 = ΔH T2 + ∫ T in T2..T1, ΔCp T`. -/
 lemma kirchhoff_swapped (H Cp : ℝ → ℝ) (T1 T2 : ℝ)
     (hderiv : ∀ T ∈ Set.uIcc T1 T2, HasDerivAt H (Cp T) T)
     (hint : IntervalIntegrable Cp volume T1 T2) :
@@ -240,7 +241,8 @@ lemma calorimetry_reaction_heat (C dT q_rxn : ℝ)
   unfold calorimeterHeat at hisol ⊢
   linarith
 
-/-- The calorimeter temperature change from the reaction heat: `ΔT = -q_rxn / C` for `C ≠ 0`. -/
+/-- The calorimeter temperature change from the reaction heat in an isolated calorimeter
+(`q_rxn + C * ΔT = 0`): `ΔT = -q_rxn / C` for `C ≠ 0`. -/
 lemma calorimetry_temp_change (C dT q_rxn : ℝ) (hC : C ≠ 0)
     (hisol : q_rxn + calorimeterHeat C dT = 0) :
     dT = -q_rxn / C := by
@@ -250,8 +252,8 @@ lemma calorimetry_temp_change (C dT q_rxn : ℝ) (hC : C ≠ 0)
   rw [eq_div_iff hC, mul_comm dT C]
   exact hmul
 
-/-- Sign convention: with positive heat capacity, the reaction is exothermic (`q_rxn < 0`) iff the
-calorimeter temperature rises (`0 < ΔT`). -/
+/-- Sign convention: in an isolated calorimeter (`q_rxn + C * ΔT = 0`) with positive heat capacity,
+the reaction is exothermic (`q_rxn < 0`) iff the calorimeter temperature rises (`0 < ΔT`). -/
 lemma calorimetry_exothermic_iff_temp_rise (C dT q_rxn : ℝ) (hC : 0 < C)
     (hisol : q_rxn + calorimeterHeat C dT = 0) :
     q_rxn < 0 ↔ 0 < dT := by
