@@ -11,6 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import MathlibExt.NumberTheory.AlternatingReciprocalIntegral
+public import MathlibExt.NumberTheory.AlternatingSumFloorDiv
+public import MathlibExt.NumberTheory.DivisorCountBound
+public import MathlibExt.NumberTheory.RoundQuotientOddCount
 
 namespace MetaMathlibExt
 
@@ -58,29 +62,6 @@ Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
 Article 24.2.5, Figure 1. -/
 public theorem ceilQuotientOddCount_nine : ceilQuotientOddCount 9 = 5 := by
-  decide +kernel
-
-/-- **Rounding sequence parity count.** For a natural number $n$, the rounding sequence parity
-count $\mathcal R_n$ is the number of integers $k$ with $1 \le k \le n$ for which the nearest
-integer to $n/k$ is odd, where half-integers are rounded up: the nearest integer to a rational
-number $x$ is taken to be $\lfloor x + 1/2 \rfloor$.
-
-Rounding half-integers up is the paper's convention for $\mathrm{nint}$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Section 1 (definition of `𝓡_n` and the footnote on `nint`). -/
-public def roundQuotientOddCount (n : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).filter (fun k : ℕ => Odd (round ((n : ℚ) / (k : ℚ))))).card
-
-/-- **The rounding sequence parity count at $10$.** The number $\mathcal{R}_{10}$ of integers $k$
-with $1 \le k \le 10$ for which the nearest integer to $10/k$ (half-integers rounded up) is odd
-equals $7$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Figure 1. -/
-public theorem roundQuotientOddCount_ten : roundQuotientOddCount 10 = 7 := by
   decide +kernel
 
 /-- **Residue counts of the shifted floor sequence.** For a natural number $n$, real numbers
@@ -225,16 +206,6 @@ public theorem_wanted ceilQuotientOddCount_asymptotic :
     Tendsto (fun n : ℕ => (ceilQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (1 - Real.log 2))
 
-/-- **Square-root bound for the number of divisors.** For every natural number $n$, the number
-of positive divisors of $n$ is at most $2\sqrt{n}$. For $n = 0$ the set of divisors is taken to
-be empty, so the bound holds trivially.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Lemma 12 (`jis-2024-24.2.5-lem-12`). -/
-public theorem_wanted card_divisors_le_two_mul_sqrt (n : ℕ) :
-    (n.divisors.card : ℝ) ≤ 2 * Real.sqrt n
-
 /-- **Counting large terms of the rounded quotient sequence.** Let $n$ be a natural number.
 Every $d$ with $1 \le d \le n$ satisfies $\lfloor n/d + 1/2 \rfloor \ge 1$, and for every
 integer $k \ge 2$ the number of $d$ with $1 \le d \le n$ and $\lfloor n/d + 1/2 \rfloor \ge k$
@@ -250,17 +221,6 @@ public theorem_wanted round_div_sequence_card_ge (n : ℕ) :
         ((Finset.Icc 1 n).filter
             (fun d : ℕ => (k : ℤ) ≤ ⌊(n : ℚ) / (d : ℚ) + 1 / 2⌋)).card =
           2 * n / (2 * k - 1)
-
-/-- **Alternating-sum formula for the rounding sequence parity count.** For every natural
-number $n$, the rounding sequence parity count $\mathcal{R}_n$ satisfies
-$\mathcal{R}_n = -n + \sum_{d=1}^{n} (-1)^{d+1} \lfloor 2n/(2d-1) \rfloor$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 14 (`jis-2024-24.2.5-prop-14`). -/
-public theorem_wanted roundQuotientOddCount_eq_alternating_sum (n : ℕ) :
-    (roundQuotientOddCount n : ℤ) =
-      -n + ∑ d ∈ Finset.Icc 1 n, ((2 * n / (2 * d - 1) : ℕ) : ℤ) * (-1) ^ (d + 1)
 
 /-- **Divisor-sum formula for the rounding sequence parity count.** For a positive integer $k$
 and $r \in \{1, 3\}$, let $d_{r,4}(k)$ be the number of positive divisors of $k$ congruent to
@@ -442,20 +402,6 @@ public theorem_wanted shiftedFloorResidueCount_one_asymptotic_series (m : ℕ)
           (-α * n / (1 - α) +
             n * ∑' i : ℕ, (1 / (1 + (i : ℝ) * m - α) - 1 / (2 + (i : ℝ) * m - α)))|
         ≤ C * Real.sqrt n
-
-/-- **Integral formula for an alternating series of reciprocals.** Let $r$ and $m$ be natural
-numbers with $2 \le r \le m$ and let $\alpha$ be a real number with $0 \le \alpha < 1$. Then
-
-$$\sum_{i \ge 0} \Bigl( \frac{1}{r + im - \alpha} - \frac{1}{r + 1 + im - \alpha} \Bigr) =
-\int_0^1 \frac{(1 - x)\, x^{r - 1 - \alpha}}{1 - x^m} \, dx.$$
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 36 (`jis-2024-24.2.5-prop-36`). -/
-public theorem_wanted tsum_alternating_inv_eq_integral (r m : ℕ) (hr : 2 ≤ r)
-    (hrm : r ≤ m) (α : ℝ) (hα₀ : 0 ≤ α) (hα₁ : α < 1) :
-    ∑' i : ℕ, (1 / ((r : ℝ) + i * m - α) - 1 / ((r : ℝ) + 1 + i * m - α)) =
-      ∫ x in (0 : ℝ)..1, (1 - x) * x ^ ((r : ℝ) - 1 - α) / (1 - x ^ m)
 
 /-- **Integral asymptotics for the shifted floor residue counts.** Let $m \ge 1$ be a natural
 number and let $\alpha$ and $\nu$ be real numbers with $0 \le \alpha < 1$ and $0 \le \nu < 1$.

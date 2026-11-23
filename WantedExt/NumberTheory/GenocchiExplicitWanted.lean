@@ -38,6 +38,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.GenocchiExplicit
 public import MathlibExt.NumberTheory.GenocchiNumber
 
 set_option autoImplicit false
@@ -54,16 +55,6 @@ $y \mapsto f(y + 1) - f(y)$. -/
 noncomputable def diffPowEval (x : ℚ) (k n : ℕ) : ℚ :=
   ((fun f : ℚ → ℚ => fun y => f (y + 1) - f y)^[k]
     (fun y => y ^ n)) x
-
-/-- **The Zerroukhat–Khaldi sum $U(m, k)$.** For natural numbers $m$ and $k$, define the rational
-number
-$$U(m, k) = \sum_{j=0}^{m} (-1)^{k+j+m} \frac{(k+j-1)!}{2^{k+j-1}} S(m, j),$$
-where $S(m, j)$ is the Stirling number of the second kind and, in the term with $k = j = 0$,
-$k + j - 1$ is read as $0$, so that this term is $(-1)^m S(m, 0)$. -/
-def zerroU (m k : ℕ) : ℚ :=
-  ∑ j ∈ Finset.range (m + 1),
-    (-1 : ℚ) ^ (k + j + m) * ((k + j - 1).factorial : ℚ) /
-      2 ^ (k + j - 1) * (Nat.stirlingSecond m j : ℚ)
 
 /-- **The Zerroukhat–Khaldi sum $H_{n,m}$.** For natural numbers $n$ and $m$, define the rational
 number
@@ -136,16 +127,6 @@ theorem_wanted neg_one_pow_mul_bernoulli_eq_sum_one
               ((k + j).factorial : ℚ) / k.factorial *
               (Nat.stirlingSecond r j : ℚ)) *
           (diffPowEval 1 k (n - 1 - r) / 2 ^ (k + 1 + r))
-
-/-- **Recurrence for the Zerroukhat–Khaldi sums $U$.** Let $U(m, k)$ be the Zerroukhat–Khaldi
-sum. For all natural numbers $r$ and $k$ with $k \ge 1$,
-$U(r+1, k) = U(r, k+1) + k \, U(r, k)$.
-
-Source: Schehrazade Zerroukhat and Laala Khaldi, "A Note
-on Explicit Formulas for Bernoulli and Genocchi Numbers",
-Lemma 3. -/
-theorem_wanted zerroU_succ (r k : ℕ) (hk : 1 ≤ k) :
-    zerroU (r + 1) k = zerroU r (k + 1) + (k : ℚ) * zerroU r k
 
 /-- **A step identity for the Zerroukhat–Khaldi sums $H_{n,m}$.** Let $H_{n,m}$ denote the
 Zerroukhat–Khaldi sum. For all natural numbers $n$ and $r$ with $r \ge 1$ and $n \ge r + 1$,

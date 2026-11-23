@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.Int.ModEq
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.SecondOrderGenValue
 
 /-!
 # Integer values of generating functions of `A_{n+1} = p A_n + A_{n-1}` (wanted statements)
@@ -26,27 +27,6 @@ For `p ≠ 0` the denominator `1 - p x - x²` has no rational root, so `A(x)` is
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Generating function of the recurrence $A_{n+1} = pA_n + A_{n-1}$.** For integers $a$, $b$,
-$p$ and a rational number $x$, $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$, with the convention
-that a fraction with denominator $0$ is $0$. As a rational function, $A$ is the generating function
-$\sum_{n \ge 0} A_n x^n$ of the sequence with $A_0 = a$, $A_1 = b$ and $A_{n+1} = pA_n + A_{n-1}$;
-for $p \ne 0$ the denominator $1 - px - x^2$ has no rational root.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Section 2. -/
-def secondOrderGenValue (a b p : ℤ) (x : ℚ) : ℚ :=
-  (a * (1 - p * x) + b * x) / (1 - p * x - x ^ 2)
-
-/-- **Value of the generating function at zero.** For all integers $a, b, p$, the function
-$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ on the rationals satisfies $A(0) = a$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, proof of Theorem 2. -/
-theorem secondOrderGenValue_zero (a b p : ℤ) : secondOrderGenValue a b p 0 = a := by
-  simp [secondOrderGenValue]
 
 /-- **Forward part of a second-order sequence.** For integers $p, r, s$, this is the sequence
 $(A^{(r,s)}_n)_{n \ge 0}$ of integers with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
@@ -233,23 +213,6 @@ public theorem_wanted secondOrderGenValue_trivial_families_integer (a b p : ℤ)
       ((secondOrderBiSeq p 0 1 n : ℚ) / secondOrderBiSeq p 0 1 (n + 1)) = z) ∧
     ∀ n : ℤ, secondOrderBiSeq p (-b) a (n + 1) ≠ 0 → ∃ z : ℤ, secondOrderGenValue a b p
       ((secondOrderBiSeq p (-b) a n : ℚ) / secondOrderBiSeq p (-b) a (n + 1)) = z
-
-/-- **Integrality criterion at a rational point.** Let $a, b, p$ be integers with $p \ne 0$ and let
-$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$. Let $r, s$ be coprime integers
-with $s \ne 0$ and put $D = s^2 - prs - r^2$. Then $A(r/s)$ is an integer if and only if
-$b \equiv -art \pmod{D}$ for every integer $t$ with $st \equiv 1 \pmod{D}$.
-
-Since $s$ is invertible modulo $D$, this is the congruence $b \equiv -ars^{-1} \pmod{|D|}$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Lemma 4 (`jis-2025-25.8.3-lem-4`). -/
-public theorem_wanted secondOrderGenValue_integer_iff (a b p : ℤ) (hp : p ≠ 0) (r s : ℤ)
-    (hs : s ≠ 0)
-    (hrs : Int.gcd r s = 1) :
-    (∃ z : ℤ, secondOrderGenValue a b p ((r : ℚ) / s) = z) ↔
-      ∀ t : ℤ, s * t ≡ 1 [ZMOD (s ^ 2 - p * r * s - r ^ 2)] →
-        b ≡ -a * r * t [ZMOD (s ^ 2 - p * r * s - r ^ 2)]
 
 /-- **Neighbours of an integer value.** Let $a, b, p$ be integers with $p \ne 0$ and let
 $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$. If $r, s$ are coprime integers

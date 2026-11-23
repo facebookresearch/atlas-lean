@@ -57,6 +57,8 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.NumberTheory.BernoulliFibonacciMultinomial
+public import MathlibExt.NumberTheory.ForwardDiffPow
 public import MathlibExt.NumberTheory.GenocchiNumber
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -411,38 +413,6 @@ theorem_wanted add_mul_fibBeta_pow_eq_sum (q m : ℕ)
               ((jℓ.1 i).val + 1 : ℕ))) *
             x ^ (m - n)
 
-/-- **A multinomial sum of Bernoulli and Fibonacci numbers equal to one.** Let $F_n$ be the
-Fibonacci numbers and let $B_k$ be the Bernoulli numbers, with $B_1 = -\tfrac{1}{2}$. For every
-natural number $m$,
-$$\sum_{n=0}^{m} \sum_{j_1 + j_2 + \ell_1 + \ell_2 = n} \sqrt{5}^{\,\ell_1 + \ell_2 + m - n}
-\frac{n!}{j_1!\, j_2!\, \ell_1!\, \ell_2!} \binom{m}{n} B_{\ell_1} B_{\ell_2}
-\frac{F_{j_1+1}}{j_1+1} \cdot \frac{F_{j_2+1}}{j_2+1} = 1,$$
-where the inner sum runs over all quadruples $(j_1, j_2, \ell_1, \ell_2)$ of natural numbers with
-sum $n$.
-
-This is the case $q = 2$, $x = \sqrt{5}$ of Theorem 15, since $\sqrt{5} + 2\beta = 1$ for
-$\beta = (1 - \sqrt{5})/2$. The paper's displayed multinomial coefficient omits the factors
-$\ell_1!\, \ell_2!$; with that coefficient the sum at $m = 2$ is $8/3$, not $1$.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 17. -/
-theorem_wanted sum_bernoulli_fib_two_eq_one (m : ℕ) :
-    ∑ n ∈ Finset.range (m + 1),
-        ∑ jℓ ∈ (Finset.univ :
-            Finset ((Fin 2 → Fin (n + 1)) ×
-              (Fin 2 → Fin (n + 1)))).filter
-            (fun jℓ => (∑ i, (jℓ.1 i).val) +
-              (∑ i, (jℓ.2 i).val) = n),
-          (Real.sqrt 5) ^ ((∑ i, (jℓ.2 i).val) + m - n) *
-            ((n.factorial : ℝ) /
-              ((∏ i, ((jℓ.1 i).val.factorial : ℝ)) *
-                ∏ i, ((jℓ.2 i).val.factorial : ℝ))) *
-            (Nat.choose m n : ℝ) *
-            (∏ i, (bernoulli (jℓ.2 i).val : ℝ)) *
-            (∏ i, ((Nat.fib ((jℓ.1 i).val + 1) : ℝ) /
-              ((jℓ.1 i).val + 1 : ℕ))) = 1
-
 /-- **Euler–Lucas multinomial expansion of $(x + q/2)^m$.** Let $E_k$ be the Euler (secant)
 numbers, with exponential generating function $2/(e^t + e^{-t})$, and let $L_k$ be the Lucas
 numbers ($L_0 = 2$, $L_1 = 1$, $L_{k+2} = L_{k+1} + L_k$). For all natural numbers $q \ge 1$ and
@@ -512,26 +482,6 @@ theorem_wanted two_sqrt5_pow_mul_add (q m : ℕ) (hq : 1 ≤ q)
           ((n.factorial : ℝ) /
               ∏ i, ((j i).val.factorial : ℝ)) *
             ∏ i, genLucasCoeff (j i).val
-
-/-- **Iterated forward differences of a power as an alternating binomial sum.** For a real
-number $r$, let $\Delta_r$ be the forward difference operator with step $r$, sending a function
-$f : \mathbb{R} \to \mathbb{R}$ to $y \mapsto f(y + r) - f(y)$, and let $\Delta_r^k$ be its
-$k$-fold iterate (the identity when $k = 0$). For all real numbers $r$ and $x$ and all natural
-numbers $k$ and $n$, applying $\Delta_r^k$ to the function $y \mapsto y^n$ and evaluating at $x$
-gives $\sum_{j=0}^{k} (-1)^{k-j} \binom{k}{j} (x + rj)^n$.
-
-The paper states this for nonzero complex $r$ and positive $k$; here $r$ is real and $k = 0$ is
-allowed.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Lemma 21. -/
-theorem_wanted iterate_forwardDiff_pow_eq_sum (r x : ℝ)
-    (k n : ℕ) :
-    ((fun f : ℝ → ℝ => fun y => f (y + r) - f y)^[k]
-        (fun y => y ^ n)) x =
-      ∑ j ∈ Finset.range (k + 1), (-1 : ℝ) ^ (k - j) *
-        (Nat.choose k j : ℝ) * (x + r * j) ^ n
 
 /-- **Genocchi numbers via Stirling numbers of the second kind.** For every natural number
 $n \ge 1$, the Genocchi number $G_n$ satisfies, in $\mathbb{Q}$,

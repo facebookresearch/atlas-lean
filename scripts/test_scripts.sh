@@ -22,6 +22,7 @@ reset_fixture() {
     "$REPO_ROOT/scripts/check_axioms.sh" \
     "$REPO_ROOT/scripts/check_axioms.lean" \
     "$REPO_ROOT/scripts/audit_compiled_modules.py" \
+    "$REPO_ROOT/scripts/audit_rebuilt_modules.py" \
     "$REPO_ROOT/scripts/check_health.sh" \
     "$REPO_ROOT/scripts/check_lake_surface.py" \
     "$TMP_ROOT/repo/scripts/"
@@ -357,6 +358,64 @@ if grep -q '^import v1\.' "$FAKE_LEAN_INPUT"; then
   fail "axiom input included archived v1 source"
 fi
 
+# A pull request audits only the modules whose .olean is missing, new,
+# rewritten or not audited at the restored commit, and only under its policy.
+OLEANS="$TMP_ROOT/repo/.lake/build/lib/lean"
+for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt; do
+  mkdir -p "$OLEANS/$library" && : >"$OLEANS/$library/Sentinel.olean"
+done
+# The restored commit has no WantedExt.Sentinel, which left a stale .olean.
+git -C "$TMP_ROOT/repo" init -q && git -C "$TMP_ROOT/repo" add scripts \
+  CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest &&
+  git -C "$TMP_ROOT/repo" -c user.name=t -c user.email=t@t commit -qm restored
+python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/restored.json" HEAD
+printf 'x' >"$OLEANS/MathlibExt/Sentinel.olean"
+rm "$OLEANS/DomainsTest/Sentinel.olean"
+if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
+  "$TMP_ROOT/repo/scripts/check_axioms.sh" >"$TMP_ROOT/output.log" 2>&1; then
+  cat "$TMP_ROOT/output.log" >&2
+  fail "scoped compiled audit failed"
+fi
+grep -q 'compiled audit: 3 modules rebuilt since the restored build, 3 with their importers, 9 modules in their batches' \
+  "$TMP_ROOT/output.log" || fail "scoped compiled audit found the wrong rebuilt modules"
+[[ "$(grep -c -x 'import [A-Za-z]*\.Sentinel' "$FAKE_LEAN_INPUT")" == 9 ]] ||
+  fail "scoped compiled audit did not run the whole batch"
+PYTHONPATH="$TMP_ROOT/repo/scripts" python3 -c '
+import audit_rebuilt_modules as scoped
+assert scoped.batches_with(list("abcde"), {"d"}, 2) == list("cd")
+assert scoped.batches_with(list("abcde"), {"a", "e"}, 2) == list("abe")
+assert scoped.batches_with(list("abcde"), set(), 2) == []' || fail "scoped compiled audit chose the wrong batches"
+mkdir -p "$TMP_ROOT/graph/MathlibExt" "$TMP_ROOT/graph/WantedExt"
+printf 'module\n' >"$TMP_ROOT/graph/MathlibExt/A.lean"
+printf 'module\nimport MathlibExt.A\n' >"$TMP_ROOT/graph/MathlibExt/B.lean"
+printf 'module\npublic import\n  MathlibExt.B--note\n' >"$TMP_ROOT/graph/WantedExt/C.lean"
+printf 'module\nimport MathlibExt.D\n' >"$TMP_ROOT/graph/WantedExt/E.lean"
+printf 'module\nimport «WantedExt».C\n' >"$TMP_ROOT/graph/WantedExt/F.lean"
+printf 'module\nimport /- a /- nested -/ note -/ WantedExt.F -- why\n' >"$TMP_ROOT/graph/WantedExt/G.lean"
+PYTHONPATH="$TMP_ROOT/repo/scripts" python3 -c '
+import sys; from pathlib import Path
+import audit_rebuilt_modules as scoped
+assert scoped.importers(Path(sys.argv[1]), {"MathlibExt.A"}) == {"MathlibExt.A", "MathlibExt.B", "WantedExt.C", "WantedExt.F", "WantedExt.G"}
+assert scoped.importers(Path(sys.argv[1]), set()) == set()' "$TMP_ROOT/graph" ||
+  fail "scoped compiled audit missed an importer"
+: >"$OLEANS/DomainsTest/Sentinel.olean"
+git -C "$TMP_ROOT/repo" add WantedExt && git -C "$TMP_ROOT/repo" -c user.name=t -c user.email=t@t commit -qm audited
+python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/restored.json" HEAD
+: >"$FAKE_LAKE_LOG"
+if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
+  "$TMP_ROOT/repo/scripts/check_axioms.sh" >"$TMP_ROOT/output.log" 2>&1 || [[ -s "$FAKE_LAKE_LOG" ]]; then
+  fail "scoped compiled audit of an unchanged build ran Lean or failed"
+fi
+for policy in audit_compiled_modules.py check_axioms.lean audit_rebuilt_modules.py; do
+  cp "$TMP_ROOT/repo/scripts/$policy" "$TMP_ROOT/$policy"
+  printf '\n' >>"$TMP_ROOT/repo/scripts/$policy"
+  if python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/changed.json" HEAD \
+    >/dev/null || [[ -e "$TMP_ROOT/changed.json" ]]; then
+    fail "a restored build audited under another $policy was recorded"
+  fi
+  cp "$TMP_ROOT/$policy" "$TMP_ROOT/repo/scripts/$policy"
+done
+
 # Declaration collisions: every tracked v2 module, and nothing else, is imported
 # into one environment; a module without its .olean, or a failing `git ls-files`,
 # fails before Lean runs; and the module list is the one the wiki's dependency dump
@@ -501,7 +560,9 @@ python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_merge_queue_checks.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_bump_cache_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_next_task.py -v
 python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
+python3 "$REPO_ROOT/scripts/bump/test_bump_branch.py"
 
 echo "ok [scripts]: repository policy regression tests passed."

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+public import MathlibExt.NumberTheory.OddMultiplePrimeHalfSets
 public import WantedExt.NumberTheory.GobelSequenceWanted
 
 /-!
@@ -260,20 +261,6 @@ public theorem_wanted gobelSequence_nonintegral_congruence_class_of_odd_multiple
       ∀ l', 0 < l' → l' % p = l % p →
         padicValRat p (gobelSequence k l' p) < 0 ∧
         ∃ n, 1 ≤ n ∧ n ≤ p ∧ ¬∃ z : ℤ, gobelSequence k l' n = z
-
-/-- **The odd multiples of $(p-1)/2$ admit no finite subcover.** For a prime $p$ write
-$A_p = \{\tfrac{p-1}{2}(2m+1) : m \in \mathbb{N}\}$ for the set of odd multiples of $(p-1)/2$. For
-every finite set $S$ of primes $q$ with $q \ge 13$ and $q \equiv 1 \pmod 4$, there is a natural
-number $k$ that lies in $A_p$ for some prime $p \ge 13$ with $p \equiv 1 \pmod 4$ but lies in no
-$A_q$ with $q \in S$.
-
-Source: Yuh Kobayashi and Shin-ichiro Seki, *A Note on Non-Integrality of the (k, l)-
-Göbel Sequences*, Journal of Integer Sequences 29 (2026), Article 26.3.8, Lemma 3. -/
-public theorem_wanted odd_multiple_prime_half_sets_not_finitely_coverable :
-    ∀ S : Finset ℕ, (∀ p ∈ S, p.Prime ∧ 13 ≤ p ∧ p % 4 = 1) → ∃ k,
-      (∃ p m, p.Prime ∧ 13 ≤ p ∧ p % 4 = 1 ∧
-        k = ((p - 1) / 2) * (2 * m + 1)) ∧
-      ∀ p ∈ S, ¬∃ m, k = ((p - 1) / 2) * (2 * m + 1)
 
 /-- **Index-scaled Göbel terms with $k = (p-1)/2$ are congruent to the residue walk.** Let $p$
 be an odd prime and $l \le p - 1$ a natural number. Write $k = (p-1)/2$, let $g_{k,l}$ be the
