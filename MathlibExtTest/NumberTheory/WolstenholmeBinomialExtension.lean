@@ -31,3 +31,13 @@ example : (70 : ℚ) = 6 * (5 * 7) / (1 * 3) ∧ (70 : ℚ) = (15 * 28) / (1 * 6
 example (x : ℚ_[2]) : ‖x + x‖ ≤ ‖x‖ := by
   simpa only [Nat.choose_one_right, add_nsmul, one_nsmul] using
     (norm_choose_nsmul_coeff_le (p := 2) (fun _ => x) ‖x‖ (fun _ => le_rfl) 1 1)
+
+-- The upper index can be zero for any admissible lower index.
+example (p k : ℕ) (hp : 0 < p) (hk : 1 ≤ k) : Ring.choose (0 : ℤ) (k * p) = 0 := by
+  simpa using (ringChoose_neg_mul_mul_eq p 0 k hp hk).2
+
+-- At p = 1 and odd lower index, the sign is negative and the ratio is nonintegral.
+example : Ring.choose (-2 : ℤ) 3 = -4 := by
+  have h := (ringChoose_neg_mul_mul_eq 1 2 3 (by decide) (by decide)).1
+  norm_num [Nat.choose] at h
+  exact_mod_cast h

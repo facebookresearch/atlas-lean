@@ -187,18 +187,6 @@ public theorem_wanted harmonicMeanSq_le_of_isSZumkeller (n : ℕ) (h : IsSZumkel
     (he : Even n) :
     (n.divisors.card : ℚ) / ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 ≤ 2 * n.divisors.card / 3
 
-/-- **Harmonic mean of squared divisors of s-Zumkeller numbers $2^\alpha(2^{\alpha+1}-1)$.** Let
-$\alpha \ge 1$ be an integer, let $n = 2^\alpha (2^{\alpha+1} - 1)$ and let $\tau(n)$ be the
-number of positive divisors of $n$. If $n$ is s-Zumkeller, then
-$\tau(n) / \sum_{d \mid n} d^{-2} < 2^{2\alpha+3}/3$, where the sum runs over the positive
-divisors $d$ of $n$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 10. -/
-public theorem_wanted harmonicMeanSq_lt_of_isSZumkeller_mersenne (α n : ℕ) (hα : 1 ≤ α)
-    (hn : n = 2 ^ α * (2 ^ (α + 1) - 1)) (h : IsSZumkeller n) :
-    (n.divisors.card : ℚ) / ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 < 2 ^ (2 * α + 3) / 3
-
 /-- **Lower bounds for unitary s-Zumkeller numbers.** Let $n$ be a unitary s-Zumkeller
 number, let $q$ be the least unitary divisor of $n$ greater than $1$, and for each prime $p$
 dividing $n$ let $k_p$ be the exponent of $p$ in $n$. Then, with both sums over all unitary
