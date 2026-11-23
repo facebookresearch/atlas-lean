@@ -11890,6 +11890,7 @@
   "MathlibExt/NumberTheory/SocialistPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Socialist primes"},
   "MathlibExt/NumberTheory/SophieGermain": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Sophie Germain's theorem"},
   "MathlibExt/NumberTheory/SophieGermainPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sophie Germain primes"},
+  "MathlibExt/NumberTheory/SmoothPrimeGaps": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Smooth gaps between primes"},
   "MathlibExt/NumberTheory/SpectralNormUnitBall": {"to": "NumberTheory/p-adic-numbers", "title": "Spectral norm on algebraic extensions"},
   "MathlibExt/NumberTheory/SpoofLehmerFactorization": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/SquareModEight": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Squares modulo powers of two"},
