@@ -8,6 +8,7 @@ any applicable license terms.
 Files:
   MathlibExt/CategoryTheory/Waldhausen/Basic.lean
   MathlibExt/CategoryTheory/Waldhausen/SConstruction/FiniteStage.lean
+  MathlibExt/KTheory/Waldhausen/K0/Basic.lean
   MathlibExtTest/CategoryTheory/Waldhausen/SConstruction/FiniteStageTests.lean
 
 Author: @toskua, Avocado
