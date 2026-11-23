@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.NthRoot.Defs
 public import Mathlib.Tactic.IntervalCases
+public import MathlibExt.NumberTheory.AscFactorialBounds
 
 /-!
 # Algorithms for complementary sequences (wanted statements)
@@ -359,20 +360,6 @@ public theorem_wanted nthNonValue_add_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (h
     let h := Nat.nthRoot (k + 1) ((k + 1) * n)
     nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
       if n ≤ ∑ i ∈ Finset.Icc 1 h, i ^ k then n + h - 1 else n + h
-
-/-- **Rising factorial between consecutive $k$-th powers.** Let $k$ and $n$ be natural numbers,
-write $n^{\overline{k}} = n (n + 1) \cdots (n + k - 1)$ for the rising factorial, and let
-$r = \lfloor (k^2 - 4k + 6)/4 \rfloor$ if $k$ is even and $r = \lfloor (k^2 - 6k + 11)/4 \rfloor$
-if $k$ is odd. If $n \ge r$, then
-$(n + \lfloor k/2 \rfloor - 1)^k \le n^{\overline{k}} \le (n + \lfloor k/2 \rfloor)^k$.
-
-Both numerators are positive: $k^2 - 4k + 6 = (k - 2)^2 + 2$ and $k^2 - 6k + 11 = (k - 3)^2 + 2$.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Lemma 1, Equation (8). -/
-public theorem_wanted ascFactorial_bounds_half (k n : ℕ)
-    (hn : (if Even k then (k ^ 2 + 6 - 4 * k) / 4 else (k ^ 2 + 11 - 6 * k) / 4) ≤ n) :
-    (n + k / 2 - 1) ^ k ≤ n.ascFactorial k ∧ n.ascFactorial k ≤ (n + k / 2) ^ k
 
 /-- **Formula for the non-simplex numbers.** Let $k$ satisfy $1 < k \le 5$, $k = 7$ or $k = 9$.
 For every integer $n \ge 1$, put $R = \lfloor (k!\, n)^{1/k} \rfloor$ and let
