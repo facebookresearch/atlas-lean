@@ -219,16 +219,18 @@ noncomputable def glsResidual (X : Matrix n q ℝ) (V : Matrix n n ℝ) (y : n �
   y - X *ᵥ (glsMatrix X V *ᵥ y)
 
 /-- The SKAT variance-component score statistic `Q = (V⁻¹ r)ᵀ K (V⁻¹ r)`, `r = y - X α̂`, which
-is `rᵀ V⁻¹ K V⁻¹ r` for symmetric `V`. With the convention that the inverse of a singular matrix
-is `0`, `Q = 0` when `V` is singular. For `V = σ² I`, `σ² > 0`, and `Xᵀ X` invertible it is
-`σ⁻⁴` times the statistic `(y - μ̂)ᵀ K (y - μ̂)` of Wu et al. (2011, eq. (3)). -/
+is `rᵀ V⁻¹ K V⁻¹ r` for symmetric `V`. The intended use has `V` and `Xᵀ V⁻¹ X` invertible. With
+the convention that the inverse of a singular matrix is `0`, `Q = 0` when `V` is singular, and
+`r = y`, so `Q = (V⁻¹ y)ᵀ K (V⁻¹ y)`, when `V` is invertible but `Xᵀ V⁻¹ X` is singular. For
+`V = σ² I`, `σ² > 0`, and `Xᵀ X` invertible it is `σ⁻⁴` times the statistic
+`(y - μ̂)ᵀ K (y - μ̂)` of Wu et al. (2011, eq. (3)). -/
 noncomputable def skatQ (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ) (w : m → ℝ)
     (y : n → ℝ) : ℝ :=
   (V⁻¹ *ᵥ glsResidual X V y) ⬝ᵥ skatKernel G w *ᵥ (V⁻¹ *ᵥ glsResidual X V y)
 
 /-- The null projection `P = V⁻¹ - V⁻¹ X (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹`. With the convention that the
 inverse of a singular matrix is `0`, `P = 0` when `V` is singular and `P = V⁻¹` when `V` is
-invertible but `Xᵀ V⁻¹ X` is singular. -/
+invertible but `Xᵀ V⁻¹ X` is singular. The intended use has `V` and `Xᵀ V⁻¹ X` invertible. -/
 noncomputable def projP (X : Matrix n q ℝ) (V : Matrix n n ℝ) : Matrix n n ℝ :=
   V⁻¹ - V⁻¹ * X * glsMatrix X V
 

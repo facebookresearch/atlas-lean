@@ -819,8 +819,9 @@ theorem existsUnique_isMaxOn_logMarginalLik [Nonempty ι] {σ : ℝ} (hσ : 0 < 
   · by_contra hne
     exact absurd (hp.2.2 (a, b) ha hb) (not_le.2 (hmax p hp.1 hp.2.1 hne))
 
-/-- **Every joint MLE solves the score equations.** At a common size factor and an overdispersed
-sample, a maximizer of `ℓ` over `(0, ∞)²` is the root of the joint score equations. -/
+/-- **Every joint MLE solves the score equations.** At a common size factor `σ > 0` and an
+overdispersed sample (`0 < M < V`), a maximizer of `ℓ` over `(0, ∞)²` is the root of the joint score
+equations. -/
 theorem score_eq_zero_of_isMaxOn [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) (hMV : countMean k < countVar k) {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hmax : ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →
@@ -933,9 +934,9 @@ theorem strictMonoOn_logMarginalLik_rateRoot [Nonempty ι] {σ : ℝ} (hσ : 0 <
   rw [logMarginalLik_rateRoot hσ ha hM, logMarginalLik_rateRoot hσ ha' hM]
   linarith [hP ha ha' h]
 
-/-- **No finite joint MLE when `V ≤ M`** (Levin and Reeds 1977, Theorem 2, converse half: the
-maximum occurs at a finite shape only if `M < V`). At a common size factor `σ > 0` and a sample
-with `0 < M` and `V ≤ M`, the log marginal likelihood has no maximizer on `(0, ∞)²`: every
+/-- **No finite joint MLE when `V ≤ M`** (Levin and Reeds 1977, Theorem 2, converse half for
+`M > 0`: the maximum occurs at a finite shape only if `M < V`). At a common size factor `σ > 0` and
+a sample with `0 < M` and `V ≤ M`, the log marginal likelihood has no maximizer on `(0, ∞)²`: every
 `(a, b)` is beaten by `(a + 1, σ (a + 1) / M)`. -/
 theorem not_exists_isMaxOn_logMarginalLik [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) (hVM : countVar k ≤ countMean k) :

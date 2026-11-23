@@ -9,5 +9,5 @@ in the shape `a` and the rate `b`. If `M > 0` and `V ≤ M`, then `ℓ` has no m
 no `(â, b̂)` with `â > 0` and `b̂ > 0` satisfies `ℓ(a, b) ≤ ℓ(â, b̂)` for all `a > 0` and `b > 0`.
 Indeed every `(a, b) ∈ (0, ∞)²` has `ℓ(a, b) < ℓ(a + 1, σ (a + 1) / M)`.
 
-This is the converse half of Levin and Reeds (1977), Theorem 2: the maximum occurs at a finite shape
-only if `M < V`.
+This is the converse half of Levin and Reeds (1977), Theorem 2, for samples with `M > 0`: the
+maximum occurs at a finite shape only if `M < V`.

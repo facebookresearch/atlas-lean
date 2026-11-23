@@ -455,8 +455,8 @@ private lemma continuousOn_rateScoreLog (a : ℝ) {s : ι → ℝ} (hs : ∀ i, 
   positivity
 
 /-- **Existence of the rate MLE at a fixed shape.** If at least one count is positive, then for
-every shape `a > 0` the rate score equation has a positive solution (unique by
-`rateScore_eq_zero_unique`). -/
+every shape `a > 0` and positive size factors the rate score equation has a positive solution (the
+only positive one, by `rateScore_eq_zero_unique`). -/
 theorem exists_rateScore_eq_zero {a : ℝ} [Nonempty ι] (ha : 0 < a) {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ} (hk : ∃ i, 0 < k i) :
     ∃ b, 0 < b ∧ rateScore a b s k = 0 := by
@@ -486,8 +486,9 @@ theorem exists_rateScore_eq_zero {a : ℝ} [Nonempty ι] (ha : 0 < a) {s : ι �
   rw [hc0] at this
   exact (mul_eq_zero.1 this).resolve_right hc0'
 
-/-- **The rate root is the global maximizer.** For a fixed shape `a > 0`, a positive root `b̂` of
-the rate score equation is the unique maximizer of `b ↦ ℓ(a, b)` over `b > 0`. -/
+/-- **The rate root is the global maximizer.** For a fixed shape `a > 0`, positive size factors and
+a nonempty sample, a positive root `b̂` of the rate score equation is the unique maximizer of
+`b ↦ ℓ(a, b)` over `b > 0`. -/
 theorem logMarginalLik_lt_of_rateScore_eq_zero {a bhat b : ℝ} [Nonempty ι] (ha : 0 < a)
     (hbhat : 0 < bhat) (hb : 0 < b) (hne : b ≠ bhat) {s : ι → ℝ} (hs : ∀ i, 0 < s i) {k : ι → ℕ}
     (h : rateScore a bhat s k = 0) : logMarginalLik a b s k < logMarginalLik a bhat s k := by
@@ -676,7 +677,10 @@ theorem not_concaveOn_logMarginalLik :
 `E[∑_{j<K} 1 / (a + j)] - (log (a + E K) - log a)`. The integrals are Bochner integrals with respect
 to `μ` (`0` for a non-integrable integrand), expectations when `μ` is a probability measure; for
 such `μ`, an integrable `K` and `a > 0` it is the almost sure limit of
-`n⁻¹ · profileShapeScore a (K₁, …, Kₙ)` for i.i.d. copies `Kᵢ` of `K`. -/
+`n⁻¹ · profileShapeScore a (K₁, …, Kₙ)` for i.i.d. copies `Kᵢ` of `K`. The logarithm is the real
+one, with `log 0 = 0` and `log x = log |x|`, and a term with `a + j = 0` is `0` (`0⁻¹ = 0`); the
+intended domain is `a > 0`, where every `a + j` and, as `E K ≥ 0`, both arguments of `log` are
+positive. -/
 noncomputable def popProfileShapeScore {Ω : Type*} {_ : MeasurableSpace Ω} (μ : Measure Ω)
     (K : Ω → ℕ) (a : ℝ) : ℝ :=
   μ[fun ω => digammaIncrement a (K ω)] - (log (a + μ[fun ω => (K ω : ℝ)]) - log a)

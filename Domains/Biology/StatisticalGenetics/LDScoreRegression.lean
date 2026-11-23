@@ -123,7 +123,8 @@ the ordinary (unweighted) least-squares slope of the statistics `χ` on the LD s
 markers and `N` is the sample size. It is an unweighted analogue of the estimator of Bulik-Sullivan
 et al. (2015), who fit the slope by weighted least squares; for finite samples the two slopes
 generally differ. With the convention `x / 0 = 0` it is `0` when `N = 0`, and `olsSlope` is `0` when
-the LD scores are all equal, where the slope is not identified. -/
+the LD scores are all equal, where the slope is not identified. It is meant for `N ≥ 1` and LD
+scores that are not all equal. -/
 noncomputable def olsH2Hat (N M : ℕ) (ℓ χ : Fin M → ℝ) : ℝ := olsSlope ℓ χ * M / N
 
 /-- If the statistics are exactly affine in the LD scores with slope `N h² / M`, then

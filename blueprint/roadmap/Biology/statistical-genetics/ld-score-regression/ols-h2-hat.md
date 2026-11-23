@@ -9,10 +9,11 @@ S_{xy} = \sum_{j=1}^{M} (x_j - \bar x)(y_j - \bar y),
 $$
 
 where $\hat b$ is the ordinary least-squares slope of $\chi$ on $\ell$ and $\bar x$ is the mean of
-$x_1, \dots, x_M$. With the convention $x/0 = 0$, $\hat b = 0$ when the LD scores are all equal
-($S_{\ell\ell} = 0$, where the slope is not identified), and $\hat h^2 = 0$ when $N = 0$. It is an
-unweighted analogue of the estimator of Bulik-Sullivan et al. (2015), who fit the slope by weighted
-least squares; for finite samples the two slopes generally differ.
+$x_1, \dots, x_M$. The estimator is meant for $N \ge 1$ and LD scores that are not all equal. With
+the convention $x/0 = 0$, $\hat b = 0$ when the LD scores are all equal ($S_{\ell\ell} = 0$, where
+the slope is not identified), and $\hat h^2 = 0$ when $N = 0$. It is an unweighted analogue of the
+estimator of Bulik-Sullivan et al. (2015), who fit the slope by weighted least squares; for finite
+samples the two slopes generally differ.
 
 ## Sources
 

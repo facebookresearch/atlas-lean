@@ -362,7 +362,8 @@ theorem walkMax_eq_zero_of_forall {l : List ℝ} (h : ∀ j ≤ l.length, (l.tak
   rw [← hsum, List.prefix_iff_eq_take.1 hs]
   exact h _ hs.length_le
 
-/-- The first ladder epoch is unique. -/
+/-- The first ladder epoch is unique: at most one prefix `l.take j` with `j ≤ l.length` ends at the
+first ladder epoch (a list need not have one). -/
 theorem eq_of_isFirstLadder_take {l : List ℝ} {j k : ℕ} (hj : IsFirstLadder (l.take j))
     (hk : IsFirstLadder (l.take k)) (hjl : j ≤ l.length) (hkl : k ≤ l.length) : j = k := by
   have key : ∀ {a b : ℕ}, IsFirstLadder (l.take a) → IsFirstLadder (l.take b) → b ≤ l.length →

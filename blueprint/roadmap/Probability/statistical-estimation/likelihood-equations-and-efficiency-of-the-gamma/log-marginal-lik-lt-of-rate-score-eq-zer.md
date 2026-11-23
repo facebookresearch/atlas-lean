@@ -1,4 +1,4 @@
-# The rate root is the global maximizer
+# At a fixed shape the rate root is the global maximizer over b > 0
 
 Let $\iota$ be a finite nonempty set of $n \ge 1$ observations, with counts $k_i \in \mathbb{N}$ and
 size factors $s_i$. Let $a > 0$, let the size factors be positive, and let $\hat b > 0$ solve the

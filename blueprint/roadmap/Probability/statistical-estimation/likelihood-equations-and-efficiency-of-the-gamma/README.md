@@ -37,7 +37,7 @@
 - [At most one rate root](rate-score-eq-zero-unique.md)
 - [All-zero counts: no rate root](rate-score-pos-of-counts-eq-zero.md)
 - [With a positive count a rate root exists at every shape](exists-rate-score-eq-zero.md)
-- [The rate root is the global maximizer](log-marginal-lik-lt-of-rate-score-eq-zer.md)
+- [At a fixed shape the rate root is the global maximizer over b > 0](log-marginal-lik-lt-of-rate-score-eq-zer.md)
 
 ## Score equations at a common size factor
 

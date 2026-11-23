@@ -24,7 +24,7 @@
 - [Up to the first ladder epoch the walk maximum is the ladder height](walk-max-of-is-first-ladder.md)
 - [Ladder decomposition of the walk maximum](walk-max-append-of-is-first-ladder.md)
 - [Without a ladder epoch the walk maximum is zero](walk-max-eq-zero-of-forall.md)
-- [The first ladder epoch is unique](eq-of-is-first-ladder-take.md)
+- [At most one prefix of a score list ends at its first ladder epoch](eq-of-is-first-ladder-take.md)
 - [A positive walk maximum has a first ladder epoch](exists-is-first-ladder-take.md)
 
 ## Weighted averages over score sequences

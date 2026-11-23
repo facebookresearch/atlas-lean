@@ -192,8 +192,8 @@ theorem rateRoot_spec {a : ℝ} [Nonempty ι] (ha : 0 < a) {s : ι → ℝ} (hs 
   rw [rateRoot, dite_eq_left h]
   exact h.choose_spec
 
-/-- **Characterization of the rate root.** For positive size factors, any positive root of the
-rate score equation at the shape `a > 0` is `b̂(a)`. -/
+/-- **Characterization of the rate root.** For positive size factors and a nonempty sample, any
+positive root of the rate score equation at the shape `a > 0` is `b̂(a)`. -/
 theorem rateRoot_eq {a b : ℝ} [Nonempty ι] (ha : 0 < a) (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ} (h : rateScore a b s k = 0) : rateRoot a s k = b := by
   have hex : ∃ b, 0 < b ∧ rateScore a b s k = 0 := ⟨b, hb, h⟩
@@ -214,9 +214,9 @@ theorem profileShapeScoreVarying_const {a σ : ℝ} [Nonempty ι] (ha : 0 < a) (
     profileShapeScoreVarying a (fun _ => σ) k = profileShapeScore a k := by
   rw [profileShapeScoreVarying, rateRoot_const ha hσ hM, shapeScore_const_rateRoot ha hσ hM]
 
-/-- **The joint score equations reduce to the profile.** For `a, b > 0` and positive size factors,
-`(a, b)` solves both score equations iff `b = b̂(a)` and `a` is a zero of the profile shape
-score. -/
+/-- **The joint score equations reduce to the profile.** For `a, b > 0`, positive size factors and
+a nonempty sample, `(a, b)` solves both score equations iff `b = b̂(a)` and `a` is a zero of the
+profile shape score. -/
 theorem score_eq_zero_iff_rateRoot {a b : ℝ} [Nonempty ι] (ha : 0 < a) (hb : 0 < b)
     {s : ι → ℝ} (hs : ∀ i, 0 < s i) {k : ι → ℕ} :
     shapeScore a b s k = 0 ∧ rateScore a b s k = 0 ↔
@@ -620,8 +620,9 @@ theorem existsUnique_score_root_const_varying [Nonempty ι] {σ : ℝ} (hσ : 0 
   existsUnique_score_root hσ (countMean_pos_of_overdispersed hQ)
     ((overdispersed_const_iff hσ k).1 hQ)
 
-/-- **The profile shape score has at most one positive zero at a common size factor**, under the
-overdispersion condition (Levin and Reeds 1977, via `profileShapeScore_eq_zero_unique`). -/
+/-- **The profile shape score has at most one positive zero at a common size factor** `s ≡ σ > 0`,
+under the overdispersion condition (Levin and Reeds 1977, via
+`profileShapeScore_eq_zero_unique`). -/
 theorem profileShapeScoreVarying_eq_zero_unique_const [Nonempty ι] {σ : ℝ} (hσ : 0 < σ)
     {k : ι → ℕ} (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - σ * pooledMean (fun _ => σ) k) ^ 2)
     {a a' : ℝ} (ha : 0 < a) (ha' : 0 < a') (h : profileShapeScoreVarying a (fun _ => σ) k = 0)
@@ -632,8 +633,8 @@ theorem profileShapeScoreVarying_eq_zero_unique_const [Nonempty ι] {σ : ℝ} (
   exact profileShapeScore_eq_zero_unique ((overdispersed_const_iff hσ k).1 hQ) ha ha' h h'
 
 /-- **Existence and uniqueness of the joint MLE at a common size factor** (Levin and Reeds 1977,
-via `existsUnique_isMaxOn_logMarginalLik`), under the overdispersion condition of
-`exists_score_root_of_overdispersed_varying`: `ℓ` has exactly one maximizer over `(0, ∞)²`. -/
+via `existsUnique_isMaxOn_logMarginalLik`). At `s ≡ σ > 0` and under the overdispersion condition
+of `exists_score_root_of_overdispersed_varying`, `ℓ` has exactly one maximizer over `(0, ∞)²`. -/
 theorem existsUnique_isMaxOn_logMarginalLik_const_varying [Nonempty ι] {σ : ℝ} (hσ : 0 < σ)
     {k : ι → ℕ} (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - σ * pooledMean (fun _ => σ) k) ^ 2) :
     ∃! p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →

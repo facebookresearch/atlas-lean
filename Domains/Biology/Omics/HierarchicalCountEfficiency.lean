@@ -147,7 +147,9 @@ noncomputable def trigammaIncrement (a : ℝ) (k : ℕ) : ℝ := ∑ j ∈ range
 
 /-- The derivative of `countScore σ · k` at `θ = (a, b)` for `a, b > 0` and `σ ≥ 0` (for `σ > 0`,
 the Hessian of the log marginal likelihood of one count), as the operator of the symmetric matrix
-`[[-∑_{j<k} 1/(a+j)², 1/b - 1/(b+σ)], [1/b - 1/(b+σ), (a+k)/(b+σ)² - a/b²]]`. -/
+`[[-∑_{j<k} 1/(a+j)², 1/b - 1/(b+σ)], [1/b - 1/(b+σ), (a+k)/(b+σ)² - a/b²]]`. It is defined for all
+real `σ`, `a` and `b`, with `0⁻¹ = 0`: a term whose denominator vanishes (`a + j = 0`, `b = 0` or
+`b + σ = 0`) is `0`. -/
 noncomputable def countHessian (σ : ℝ) (θ : E₂) (k : ℕ) : E₂ →L[ℝ] E₂ :=
   Matrix.toEuclideanCLM (𝕜 := ℝ) !![-trigammaIncrement (θ 0) k, (θ 1)⁻¹ - (θ 1 + σ)⁻¹;
     (θ 1)⁻¹ - (θ 1 + σ)⁻¹, (θ 0 + k) / (θ 1 + σ) ^ 2 - θ 0 / θ 1 ^ 2]
