@@ -5,3 +5,14 @@ Let $d, N \in \mathbb{N}$ and let $e$ be an unordered pair of vertices of the bo
 $$\phi^0_{p,2}(e \text{ open}) \le \phi(e \text{ open}) \le \phi^1_{p,2}(e \text{ open}),$$
 
 then $\phi(e \text{ open}) = \phi^0_{p,2}(e \text{ open})$ and $\phi(e \text{ open}) = \phi^1_{p,2}(e \text{ open})$. Here $\phi^0_{p,2}$ and $\phi^1_{p,2}$ are the [free](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md) and [wired](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) infinite-volume random-cluster measures on $\mathbb{Z}^d$ at $q = 2$ (chosen subsequential weak limits of the box measures), and $\phi(e \text{ open})$ is the real value of the $\phi$-measure of the set of configurations in which $e$ is open (an infinite value is read as $0$).
+
+## Depends on
+
+- [Finite-volume tilt data for a box edge at $q = 2$](fksecant-data.md)
+- [Free infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md)
+- [Wired infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md)
+- [Event that a box edge is open](../infinite-volume-random-cluster-measures/box-edge-open-event.md)
+- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
+- [Restriction of a configuration of $\mathbb{Z}^d$ to a box](../infinite-volume-random-cluster-measures/two-point-functions-of-infinite-volume-fk-measur/box-restrict.md)
+- [Site of the hypercubic lattice](../../../GraphTheory/graph-families-and-operations/hypercubic-lattice-graphs/site.md)
+- [Configuration space of a statistical-mechanics model](../../../Probability/random-fields/spin-and-bond-configuration-spaces/config-space.md)

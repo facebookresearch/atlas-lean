@@ -7,23 +7,25 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Algebra/Category/ModuleCat/Sheaf/SectionwiseAlgebras.lean
-(Apache 2.0, as described in that repository's LICENSE).
-Modification: retain only the actual sectionwise exterior-power presheaf
-and its section identification, using the complete semilinear core.
+Portions of this file are adapted from:
+
+`StacksFrontier/Algebra/Category/ModuleCat/Sheaf/SectionwiseAlgebras.lean` (AxiomMath/Stacks,
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: retain only the sectionwise exterior-power presheaf and its sections, using the
+semilinear base change of `ExteriorPowerSemilinear`.
 -/
 module
 
 public import Mathlib.Algebra.Category.ModuleCat.Presheaf.OfCommRing
 public import MathlibExt.LinearAlgebra.ExteriorPowerSemilinear
 
-/-! # Actual sectionwise exterior-power presheaves
+/-! # Sectionwise exterior powers of presheaves of modules
 
-The restriction maps are the exterior powers of the actual semilinear
-module restrictions. This completes the source construction; no exterior
-power is supplied as a formal law-bearing field.
+For a presheaf of modules `F` over a presheaf of commutative rings `O`,
+`PresheafOfModules.extPow n F` is the presheaf of modules with sections `⋀ⁿ_{O(X)} F(X)` over `X`,
+whose restriction maps are the exterior powers of the restriction maps of `F`, semilinear along
+those of `O` (`ExteriorAlgebra.powMapₛₗ`).
 -/
 
 @[expose] public noncomputable section
@@ -114,6 +116,15 @@ noncomputable def extPow (n : ℕ)
     PresheafOfModules.{max w a} (O ⋙ forget₂ _ RingCat) :=
   PresheafOfModules.ofPresheaf (extPowAb n F) fun {_ _} _ r _ => Subtype.ext
     (ExteriorAlgebra.mapₛₗ_smul _ _ r _)
+
+/-- Restricting a wedge of sections gives the wedge of their restrictions. -/
+@[simp]
+theorem extPow_map_ιMulti (n : ℕ)
+    (F : PresheafOfModules.{max w a} (O ⋙ forget₂ _ RingCat)) {X Y : Cᵒᵖ} (f : X ⟶ Y)
+    (v : Fin n → F.obj X) :
+    (extPow n F).map f (exteriorPower.ιMulti _ n v) =
+      exteriorPower.ιMulti _ n fun i => F.map f (v i) :=
+  ExteriorAlgebra.powMapₛₗ_ιMulti n _ (F.restrictₛₗ f) v
 
 /-- The sections of `extPow n F` over `X` are the `n`-th
 exterior power of the sections of `F` over `X`. -/
