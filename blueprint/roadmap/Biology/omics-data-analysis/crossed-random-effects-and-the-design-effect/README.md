@@ -1,0 +1,16 @@
+# Crossed random effects and the design effect
+
+- [Crossed Design](crossed-design.md)
+- [Crossed Cov](crossed-cov.md)
+- [Pos Semidef crossed Cov](pos-semidef-crossed-cov.md)
+- [Phen Cov crossed apply](phen-cov-crossed-apply.md)
+- [Covariance crossed response](covariance-crossed-response.md)
+- [Variance contrast crossed response](variance-contrast-crossed-response.md)
+- [Cluster Design](cluster-design.md)
+- [Phen Cov cluster apply](phen-cov-cluster-apply.md)
+- [The Gaussian cluster response is a random-intercept model](is-random-intercept-cluster-response.md)
+- [Variance cluster row](variance-cluster-row.md)
+- [Variance cluster mean](variance-cluster-mean.md)
+- [Variance cluster mean eq design Effect](variance-cluster-mean-eq-design-effect.md)
+- [Variance cluster row div lt mean](variance-cluster-row-div-lt-mean.md)
+- [Le variance cluster mean](le-variance-cluster-mean.md)

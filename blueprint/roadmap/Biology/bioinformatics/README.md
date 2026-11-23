@@ -14,4 +14,5 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Optimal leaf ordering of dendrograms](optimal-leaf-ordering-of-dendrograms/README.md)
 - [Position weight matrices](position-weight-matrices/README.md)
 - [Profile scores for amino acid substitutions](profile-scores-for-amino-acid-substitutions/README.md)
+- [Sorting by reversals](sorting-by-reversals/README.md)
 - [Zuker's minimum free energy algorithm](zuker-s-minimum-free-energy-algorithm/README.md)

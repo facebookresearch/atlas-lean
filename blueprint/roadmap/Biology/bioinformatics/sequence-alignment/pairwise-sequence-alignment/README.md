@@ -30,6 +30,7 @@
 - [Needleman–Wunsch is reversal-invariant](nw-score-reverse.md)
 - [The Needleman–Wunsch recurrence, end-peeling](nw-score-snoc.md)
 - [Maximum of an integer list with floor zero](list-max.md)
+- [List Max mem](list-max-mem.md)
 - [Pairs of suffixes](suffix-pairs.md)
 - [Suffix maximum of Needleman–Wunsch scores](suffix-max.md)
 - [Suffix pairs score at most the suffix maximum](nw-score-le-suffix-max.md)
