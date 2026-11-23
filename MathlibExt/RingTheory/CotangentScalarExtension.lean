@@ -44,8 +44,9 @@ the pure differentials `1 ⊗ d p`.
 
 Mathlib states the pure-tensor formula for `fromExtendScalars` only through
 `HomEquiv.fromExtendScalars_hom_apply`, which composes it with `TensorProduct.lift`; using that
-at a pure tensor needs `erw`. The formula below holds by `rfl`, so a single `rw` with it does
-the same work.
+at a pure tensor needs `erw`. The formula below holds by `rfl`, so on a pure tensor written with
+`⊗ₜ[R,f]` a single `rw` with it does the same work; on other spellings of the same element (for
+example with the left factor typed in a restriction of scalars) use it through `Eq.trans`.
 
 Extensionality for the functor value is proved by transporting along the adjunction isomorphism,
 whose value on an element is `rfl`, and then inducting over the submodule spanned by the

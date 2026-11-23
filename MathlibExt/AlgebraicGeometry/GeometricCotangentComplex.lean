@@ -14,20 +14,22 @@ public import Mathlib.AlgebraicGeometry.Scheme
 public import MathlibExt.RingTheory.ResolutionCotangent
 
 /-!
-# A computed affine cotangent complex from actual polynomial resolution data
+# The affine cotangent complex computed from a polynomial resolution
 
-The algebra map fixes `Spec B → Spec A`. Polynomial-resolution data have
-actual simplicial algebra terms, an actual augmentation, polynomial
-identifications and an actual alternating-face quasi-isomorphism. These
-are the equivalent resolution criterion proved in AxiomMath/Stacks,
-`StacksFrontier/Cotangent/Resolution.lean` (08QI). The cotangent model is
-then literally `B ⊗[P_n] Ω[P_n/A]`, with the actual induced differentials,
-in cohomological degree `-n`; its derived carrier is Mathlib's quotient.
+For an algebra `A → B`, a `PolynomialResolution A B` is a simplicial commutative `A`-algebra `P•`
+with an augmentation `ε : P• ⟶ B` such that every `Pₙ` is a polynomial `A`-algebra, every `εₙ` is
+surjective, and `ε` induces a quasi-isomorphism of alternating face map complexes. By Stacks
+Remark 08QI, under the first two conditions the third is equivalent to `ε` being a trivial Kan
+fibration of underlying simplicial sets, that is, to `P•` being a resolution of `B` over `A`.
+AxiomMath/Stacks proves this as `CommAlgCat.isResolution_quasiIso_homotopyEquivalence_tfae` in
+`StacksFrontier/Cotangent/Resolution.lean`, with the quasi-isomorphism stated for underlying
+abelian groups, which is equivalent to the `A`-module version used here.
 
-No freely named derived object is supplied as a cotangent complex.
-Existence of standard resolution, independence and its comparisons are
-already complete in the public source and are not requested as novel gaps.
-General scheme globalization is outside this affine core's construction.
+`affineComplex R` is the complex `Ω[P•⁄A] ⊗[P•] B` of `CommAlgCat.resolutionCotangentComplex`,
+with `B ⊗[Pₙ] Ω[Pₙ⁄A]` and its induced differentials in cohomological degree `-n`
+(`affineDegreeIso`), and `affineDerived R` is its image in the derived category. That it does not
+depend on the resolution, and hence is the cotangent complex `L_{B/A}` of Stacks Tag 08PN, is not
+proved here. Only the affine case is treated.
 -/
 
 @[expose] public noncomputable section
@@ -35,15 +37,17 @@ General scheme globalization is outside this affine core's construction.
 namespace MathlibExt.AlgebraicGeometry.GeometricCotangentComplex
 
 open CategoryTheory CategoryTheory.Limits Opposite AlgebraicTopology Simplicial
-open _root_.AlgebraicGeometry
 
 attribute [local instance] HasDerivedCategory.standard
 
 universe u
 
-/-- Actual polynomial resolution data for the specified affine algebra map.
-The criterion is source-proved equivalent to IsResolution, rather than
-an arbitrary predicate named a resolution. -/
+/-- Polynomial resolution data for `A → B` (Stacks, Remark 08QI): a simplicial commutative
+`A`-algebra with an augmentation to `B` that is a degreewise surjection from polynomial
+`A`-algebras and a quasi-isomorphism of alternating face map complexes of `A`-modules. Under the
+first two conditions the third is equivalent to being a resolution, a trivial Kan fibration of
+underlying simplicial sets (AxiomMath/Stacks,
+`CommAlgCat.isResolution_quasiIso_homotopyEquivalence_tfae`). -/
 structure PolynomialResolution (A B : Type u) [CommRing A] [CommRing B] [Algebra A B] where
   algebra : SimplicialObject (CommAlgCat.{u} A)
   augmentation : algebra ⟶ (SimplicialObject.const (CommAlgCat.{u} A)).obj (CommAlgCat.of A B)
@@ -56,22 +60,18 @@ structure PolynomialResolution (A B : Type u) [CommRing A] [CommRing B] [Algebra
         (forget₂ (CommAlgCat.{u} A) (AlgCat.{u} A) ⋙
           forget₂ (AlgCat.{u} A) (ModuleCat.{u} A))))
 
-/-- The actual affine scheme morphism to which the model is attached. -/
-abbrev affineMorphism (A B : Type u) [CommRing A] [CommRing B] [Algebra A B] :
-    Spec (CommRingCat.of B) ⟶ Spec (CommRingCat.of A) := Spec.algebraMap A B
-
-/-- The computed integer-indexed cochain complex of the actual resolution. -/
+/-- The complex `Ω[P•⁄A] ⊗[P•] B` computed from the resolution, with simplicial degree `n` in
+cohomological degree `-n`. -/
 def affineComplex {A B : Type u} [CommRing A] [CommRing B] [Algebra A B]
     (R : PolynomialResolution A B) : CochainComplex (ModuleCat.{u} B) ℤ :=
   CommAlgCat.resolutionCotangentComplex A (CommAlgCat.of A B) R.algebra R.augmentation
 
-/-- The full affine cotangent model as an actual derived-category object,
-constructed from the specified genuine polynomial resolution. -/
+/-- The image of `affineComplex R` in the derived category of `B`-modules. -/
 def affineDerived {A B : Type u} [CommRing A] [CommRing B] [Algebra A B]
     (R : PolynomialResolution A B) : DerivedCategory (ModuleCat.{u} B) :=
   DerivedCategory.Q.obj (affineComplex R)
 
-/-- Its actual component is the base-changed differential module. -/
+/-- The component of `affineComplex R` in degree `-n` is `B ⊗[Pₙ] Ω[Pₙ⁄A]`. -/
 def affineDegreeIso {A B : Type u} [CommRing A] [CommRing B] [Algebra A B]
     (R : PolynomialResolution A B) (n : ℕ) :
     (affineComplex R).X (-(n : ℤ)) ≅

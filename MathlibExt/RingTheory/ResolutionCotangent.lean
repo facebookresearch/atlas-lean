@@ -28,8 +28,10 @@ public import MathlibExt.RingTheory.CotangentScalarExtension
 
 For an augmented simplicial commutative `A`-algebra `ε : P• ⟶ B`, the degreewise base-changed
 modules of differentials `B ⊗[Pₙ] Ω[Pₙ⁄A]` form a simplicial `B`-module, and its reindexed
-alternating face map complex is the complex `Ω[P•⁄A] ⊗[P•] B` of `B`-modules. For the standard
-resolution this is the cotangent complex of `StacksFrontier.Cotangent.Complex`.
+alternating face map complex is the complex `Ω[P•⁄A] ⊗[P•] B` of `B`-modules, with simplicial
+degree `n` in cohomological degree `-n`. For the standard resolution of `B` over `A` this is the
+cotangent complex `L_{B/A}` of Stacks Tag 08PN, and by Stacks Remark 08QI every resolution gives
+a complex isomorphic to it in `D(B)`; neither identification is formalized here.
 
 ## Main definitions
 
@@ -44,11 +46,10 @@ resolution this is the cotangent complex of `StacksFrontier.Cotangent.Complex`.
 
 ## Main results
 
-The actual scalar-extension maps are normalized on pure differentials.
-The simplicial object and negative-indexed alternating-face complex are
-completed constructions for the supplied actual augmentation. Standard
-resolution and independence are covered in the public source; they are
-not re-requested here.
+* `CommAlgCat.resolutionCotangentPush_D` and `CommAlgCat.resolutionCotangentMap_D`: the induced
+  maps send `1 ⊗ d p` to `1 ⊗ d (g p)`.
+* `CommAlgCat.resolutionCotangentTerm_hom_ext`: a map out of a term is determined by its values
+  on the pure differentials `1 ⊗ d p`.
 
 ## References
 
@@ -222,6 +223,17 @@ noncomputable def resolutionCotangentSimplicialModule :
     map_differential := by
       intro i j f p
       simp }
+
+theorem resolutionCotangentSimplicialModule_object_obj (n : SimplexCategoryᵒᵖ) :
+    (resolutionCotangentSimplicialModule A B P ε).object.obj n =
+      resolutionCotangentTerm A B P ε n :=
+  rfl
+
+@[simp]
+theorem resolutionCotangentSimplicialModule_object_map {i j : SimplexCategoryᵒᵖ} (f : i ⟶ j) :
+    (resolutionCotangentSimplicialModule A B P ε).object.map f =
+      resolutionCotangentMap A B P ε f :=
+  rfl
 
 /-- The complex `Ω[P•⁄A] ⊗[P•] B` of an augmented simplicial algebra, with simplicial degree `n`
 in cohomological degree `-n`. -/
