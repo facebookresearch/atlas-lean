@@ -17,6 +17,7 @@ into two cliques.
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Order.CompletePartialOrder
 

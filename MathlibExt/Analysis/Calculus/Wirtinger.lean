@@ -19,7 +19,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 # Wirtinger's inequality
 
 This file proves the endpoint-zero form of Wirtinger's integral inequality on `[0, π]` using a
-smooth Riccati comparison function.
+smooth Riccati comparison function, together with the scaled derivative-field form on a
+general interval `[a, b]`.
 -/
 
 @[expose] public section
@@ -195,18 +196,20 @@ private theorem wirtinger_limit {A B : ℝ}
         ring
   exact (not_lt_of_ge (hscaled c hc_pos hc_lt_one)) hstrict
 
-/-- Wirtinger's inequality for functions: a C1 function on `[0, π]` vanishing at the endpoints
-satisfies `∫₀^π f² ≤ ∫₀^π (f')²`.
-
-Source: G. H. Hardy, J. E. Littlewood, and G. Pólya, *Inequalities*, second edition,
-Cambridge University Press, 1952, §7.7 (the endpoint-zero form on `[0, L]`).
-
-Proves `Wanted` entry `wirtinger_inequality`.
+/-- **Wirtinger's inequality.** Let $f, f' : \mathbb{R} \to \mathbb{R}$ be functions such that
+for every $x \in [0, \pi]$ the function $f$ has derivative $f'(x)$ at $x$ within $[0, \pi]$, $f'$
+is continuous on $[0, \pi]$, and $f(0) = f(\pi) = 0$. Then
+$\int_0^\pi f(x)^2 \, dx \le \int_0^\pi f'(x)^2 \, dx$.
 
 Proof: A Picone-type comparison. For `0 < c < 1` the weight `h x = -c * tan (c * (x - π / 2))` is
 smooth on `[0, π]` with `h' + h ^ 2 = -c ^ 2`, so integrating
 `f' ^ 2 = (f' - h * f) ^ 2 + (h * f ^ 2)' + c ^ 2 * f ^ 2` gives `c ^ 2 * ∫ f ^ 2 ≤ ∫ f' ^ 2`;
 then let `c` tend to one.
+
+Proves `Wanted` entry `wirtinger_inequality`.
+
+Source: G. H. Hardy, J. E. Littlewood, and G. Pólya, *Inequalities*, second edition,
+Cambridge University Press, 1952, §7.7 (the endpoint-zero form on `[0, L]`).
 -/
 public theorem wirtinger_inequality (f f' : ℝ → ℝ)
     (hf_deriv : ∀ x ∈ Set.Icc (0 : ℝ) Real.pi,
@@ -218,5 +221,64 @@ public theorem wirtinger_inequality (f f' : ℝ → ℝ)
   apply wirtinger_limit
   intro c hc_pos hc_lt_one
   exact wirtinger_scaled_integral_le f f' hf_deriv hf_deriv_cont h0 hpi hc_pos hc_lt_one
+
+/-- Wirtinger's inequality on a general interval `[a, b]`, in derivative-field
+form: a function `f` with derivative field `f'` within `[a, b]`, vanishing at the
+endpoints, satisfies `∫ₐᵇ f² ≤ ((b - a) / π)² ∫ₐᵇ (f')²`.
+
+Proof: rescale `[a, b]` to `[0, π]` and apply `wirtinger_inequality`. -/
+public theorem wirtinger_inequality_Icc {a b : ℝ} (hab : a < b) (f f' : ℝ → ℝ)
+    (hf_deriv : ∀ x ∈ Set.Icc a b, HasDerivWithinAt f (f' x) (Set.Icc a b) x)
+    (hf_deriv_cont : ContinuousOn f' (Set.Icc a b))
+    (ha : f a = 0) (hb : f b = 0) :
+    intervalIntegral (fun x => (f x) ^ 2) a b MeasureTheory.volume ≤
+      ((b - a) / Real.pi) ^ 2 *
+        intervalIntegral (fun x => (f' x) ^ 2) a b MeasureTheory.volume := by
+  set s := (b - a) / Real.pi with hs
+  have hs0 : 0 < s := div_pos (sub_pos.mpr hab) Real.pi_pos
+  have hend : a + s * Real.pi = b := by
+    rw [hs, div_mul_cancel₀ _ Real.pi_pos.ne']
+    ring
+  have hmem : ∀ t ∈ Set.Icc (0 : ℝ) Real.pi, a + s * t ∈ Set.Icc a b := by
+    intro t ht
+    constructor
+    · have hnonneg : 0 ≤ s * t := mul_nonneg hs0.le ht.1
+      linarith
+    · have hle : s * t ≤ s * Real.pi := mul_le_mul_of_nonneg_left ht.2 hs0.le
+      linarith [hend]
+  have hF : ∀ t ∈ Set.Icc (0 : ℝ) Real.pi,
+      HasDerivWithinAt (fun t => f (a + s * t)) (f' (a + s * t) * s)
+        (Set.Icc 0 Real.pi) t := by
+    intro t ht
+    have h1a : HasDerivAt (fun t : ℝ => a + s * t) s t := by
+      simpa using ((hasDerivAt_id t).const_mul s).const_add a
+    have h1 : HasDerivWithinAt (fun t : ℝ => a + s * t) s (Set.Icc 0 Real.pi) t :=
+      h1a.hasDerivWithinAt
+    exact (hf_deriv _ (hmem t ht)).comp t h1 (fun u hu => hmem u hu)
+  have hlin : Continuous fun t : ℝ => a + s * t := by fun_prop
+  have hcomp : ContinuousOn (fun t => f' (a + s * t)) (Set.Icc 0 Real.pi) :=
+    hf_deriv_cont.comp' hlin.continuousOn (fun t ht => hmem t ht)
+  have hw := wirtinger_inequality (fun t => f (a + s * t))
+    (fun t => f' (a + s * t) * s) (fun t ht => hF t ht)
+    (hcomp.mul_const s) (by simp [ha]) (by simp [hend, hb])
+  have h1 : ∫ t in (0 : ℝ)..Real.pi, f (a + s * t) ^ 2 =
+      s⁻¹ * ∫ x in a..b, f x ^ 2 := by
+    have := intervalIntegral.integral_comp_add_mul (fun x => f x ^ 2) (a := 0)
+      (b := Real.pi) hs0.ne' a
+    simpa [hend] using this
+  have h2 : ∫ t in (0 : ℝ)..Real.pi, (f' (a + s * t) * s) ^ 2 =
+      s ^ 2 * (s⁻¹ * ∫ x in a..b, f' x ^ 2) := by
+    have := intervalIntegral.integral_comp_add_mul (fun x => f' x ^ 2) (a := 0)
+      (b := Real.pi) hs0.ne' a
+    simp only [mul_zero, add_zero, hend, smul_eq_mul] at this
+    rw [← this, ← intervalIntegral.integral_const_mul]
+    refine intervalIntegral.integral_congr fun t _ => ?_
+    ring
+  rw [h1, h2] at hw
+  have hmul := mul_le_mul_of_nonneg_left hw hs0.le
+  rw [← mul_assoc, mul_inv_cancel₀ hs0.ne', one_mul] at hmul
+  calc ∫ x in a..b, f x ^ 2 ≤ s * (s ^ 2 * (s⁻¹ * ∫ x in a..b, f' x ^ 2)) := hmul
+    _ = s ^ 2 * ∫ x in a..b, f' x ^ 2 := by
+        field_simp
 
 end MetaMathlibExt

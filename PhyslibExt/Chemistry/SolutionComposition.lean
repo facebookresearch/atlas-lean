@@ -146,27 +146,35 @@ namespace Chemistry.SolutionComposition
 -/
 
 /-- Molarity `c = n / V`: amount of solute per volume of solution, with the volume in litres
-(or m³, fixed per lemma). Molarity is a different function from `molality`: the denominator
-here is a solution volume, not a solvent mass. No Mathlib definition provides this chemistry
-convention (Loogle finds no `molarity`), so it is defined here. -/
+(or m³, fixed per lemma). It is defined for every real `V`: for `V = 0` the convention
+`x / 0 = 0` makes it `0`, and the intended domain is `V > 0`. Molarity is a different function
+from `molality`: the denominator here is a solution volume, not a solvent mass. No Mathlib
+definition provides this chemistry convention (Loogle finds no `molarity`), so it is defined
+here. -/
 noncomputable def molarity (n V : ℝ) : ℝ := n / V
 
 /-- Molality `b = n / mSolvent`: amount of solute per mass of solvent, with the mass in kg
-(or g, fixed per lemma). Molality is a different function from `molarity`: the denominator
-here is a solvent mass, not a solution volume. No Mathlib definition provides this chemistry
-convention (Loogle finds no `molality`), so it is defined here. -/
+(or g, fixed per lemma). It is defined for every real `mSolvent`: for `mSolvent = 0` the
+convention `x / 0 = 0` makes it `0`, and the intended domain is `mSolvent > 0`. Molality is a
+different function from `molarity`: the denominator here is a solvent mass, not a solution
+volume. No Mathlib definition provides this chemistry convention (Loogle finds no `molality`),
+so it is defined here. -/
 noncomputable def molality (n mSolvent : ℝ) : ℝ := n / mSolvent
 
 /-- Molarity-to-molality conversion `b = c / (ρ - c * M)` for solution density `ρ` and solute
 molar mass `M`, meant for the physical domain `0 ≤ c ∧ c < ρ / M`, which it maps bijectively
-onto `b ≥ 0` for positive `ρ` and `M` (`bijOn_molarityToMolality`). No Mathlib definition
-provides this conversion, so it is defined here. -/
+onto `b ≥ 0` for positive `ρ` and `M` (`bijOn_molarityToMolality`). It is defined for all real
+`ρ`, `M` and `c`: where `ρ - c * M = 0` the convention `x / 0 = 0` makes it `0`; on the physical
+domain the denominator is positive. No Mathlib definition provides this conversion, so it is
+defined here. -/
 noncomputable def molarityToMolality (ρ M c : ℝ) : ℝ := c / (ρ - c * M)
 
 /-- Molality-to-molarity conversion `c = b * ρ / (1 + b * M)` for solution density `ρ` and
 solute molar mass `M`, meant for `b ≥ 0`, which it maps bijectively onto the physical molarity
-domain for positive `ρ` and `M` (`bijOn_molalityToMolarity`). No Mathlib definition provides
-this conversion, so it is defined here. -/
+domain for positive `ρ` and `M` (`bijOn_molalityToMolarity`). It is defined for all real `ρ`,
+`M` and `b`: where `1 + b * M = 0` the convention `x / 0 = 0` makes it `0`; for `b ≥ 0` and
+`M > 0` the denominator is positive. No Mathlib definition provides this conversion, so it is
+defined here. -/
 noncomputable def molalityToMolarity (ρ M b : ℝ) : ℝ := b * ρ / (1 + b * M)
 
 /-- The conversion denominator `ρ - c * M` (solvent mass per solution volume) is positive
@@ -242,7 +250,7 @@ lemma injOn_molarityToMolality {ρ M : ℝ} (hM : 0 < M) :
   rw [e₂] at e₁
   exact e₁.symm
 
-/-- Molality-to-molarity is injective on `b ≥ 0`. -/
+/-- Molality-to-molarity is injective on `b ≥ 0`, for positive `ρ` and `M`. -/
 lemma injOn_molalityToMolarity {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
     Set.InjOn (molalityToMolarity ρ M) {b | 0 ≤ b} := by
   intro b₁ hb₁ b₂ hb₂ h
@@ -281,7 +289,7 @@ lemma bijOn_molalityToMolarity {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
     simp only [Set.mem_ofPred_eq] at hc
     exact molalityToMolarity_molarityToMolality hM hc.1 hc.2
 
-/-- At the boundary `c = ρ / M` the conversion denominator vanishes. -/
+/-- At the boundary `c = ρ / M` the conversion denominator vanishes, for `M ≠ 0`. -/
 lemma boundary_denom_eq_zero {ρ M : ℝ} (hM : M ≠ 0) : ρ - ρ / M * M = 0 := by
   rw [div_mul_cancel₀ _ hM, sub_self]
 
@@ -296,10 +304,11 @@ lemma no_molality_at_boundary {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
   simp only [mul_zero] at hb
   exact (div_pos hρ hM).ne' hb
 
-/-- Mass fraction `w = mSolute / mSoln`: solute mass over total solution mass. This is the
-single-solute ratio `mSolute / mSoln`; it is NOT `Chemistry.Amounts.massFraction`, which is
-the family version `n i * M i / ∑ j, n j * M j` over per-species molar masses. No Mathlib
-definition provides this single-solute convention. -/
+/-- Mass fraction `w = mSolute / mSoln`: solute mass over total solution mass. It is defined for
+every real `mSoln`: for `mSoln = 0` the convention `x / 0 = 0` makes it `0`, and the intended
+domain is `mSoln > 0`. This is the single-solute ratio `mSolute / mSoln`; it is NOT
+`Chemistry.Amounts.massFraction`, which is the family version `n i * M i / ∑ j, n j * M j` over
+per-species molar masses. No Mathlib definition provides this single-solute convention. -/
 noncomputable def massFraction (mSolute mSoln : ℝ) : ℝ := mSolute / mSoln
 
 /-- With solute mass `n * M` and solution mass `ρ * V`, the mass fraction is `c * M / ρ` (an
@@ -323,9 +332,11 @@ lemma amounts_massFraction_eq_massFraction {ι : Type*} [Fintype ι] (M n : ι �
 -/
 
 /-- The computed final volume `V₂ = c₁ * V₁ / c₂` for diluting from `c₁, V₁` to the target
-concentration `c₂`. For positive `c₁`, `V₁` and a target `0 < c₂ ≤ c₁` it is at least `V₁` and
-achieves the target (`dilutionVolume_dilutes`). This pins the dilution-volume convention; no
-Mathlib definition provides it (Loogle finds no `dilutionVolume`). -/
+concentration `c₂`. It is defined for every real `c₂`: for `c₂ = 0` the convention `x / 0 = 0`
+makes it `0`, and the intended domain is `c₂ > 0`. For positive `c₁`, `V₁` and a target
+`0 < c₂ ≤ c₁` it is at least `V₁` and achieves the target (`dilutionVolume_dilutes`). This pins
+the dilution-volume convention; no Mathlib definition provides it (Loogle finds no
+`dilutionVolume`). -/
 noncomputable def dilutionVolume (c₁ V₁ c₂ : ℝ) : ℝ := c₁ * V₁ / c₂
 
 /-- Amount conservation as an algebraic identity: if `n₁ = n₂` with `c₁ = n₁ / V₁` and
@@ -479,8 +490,10 @@ lemma molarity_div_molarity {n V V' : ℝ} (hn : n ≠ 0) (hV : V ≠ 0) (hV' : 
 no Mathlib definition provides it. -/
 noncomputable def ppmByMass (w : ℝ) : ℝ := 10 ^ 6 * w
 
-/-- Parts-per-million by volume: `10^6` times solute volume over solution volume. This pins
-the ppm-by-volume convention; no Mathlib definition provides it. -/
+/-- Parts-per-million by volume: `10^6` times solute volume over solution volume. It is defined
+for every real solution volume: for a solution volume of `0` the convention `x / 0 = 0` makes it
+`0`, and the intended domain is a positive solution volume. This pins the ppm-by-volume
+convention; no Mathlib definition provides it. -/
 noncomputable def ppmByVolume (vSolute vSoln : ℝ) : ℝ := 10 ^ 6 * (vSolute / vSoln)
 
 /-- `ppmByMass` is `10^6` times the mass fraction. -/
@@ -510,8 +523,8 @@ lemma ppmByMass_eq_mul_ppmByVolume {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
   rw [ppmByMass_eq, massFraction_of_volumes hs h hρ hv, ppmByVolume]
   ring
 
-/-- For a nonzero volume fraction, ppm by mass equals ppm by volume exactly when the solute
-and solution densities agree. -/
+/-- For a nonzero volume fraction and a nonzero solution density, ppm by mass equals ppm by
+volume exactly when the solute and solution densities agree. -/
 lemma ppmByMass_eq_ppmByVolume_iff {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
     (hs : mSolute = ρs * vSolute) (h : mSoln = ρ * vSoln)
     (hρ : ρ ≠ 0) (hv : vSoln ≠ 0) (hvs : vSolute ≠ 0) :

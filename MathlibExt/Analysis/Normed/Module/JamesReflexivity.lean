@@ -39,7 +39,7 @@ private def jamesClusterHull {X : Type*} [TopologicalSpace X]
     [AddCommGroup X] [Module ℝ X] (u : ℕ → X) : Set X :=
   closedConvexHull ℝ (jamesClusterSet u)
 
-private def jamesDualBall (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] :
+private noncomputable def jamesDualBall (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] :
     Set (WeakDual ℝ E) :=
   WeakDual.toStrongDual ⁻¹' Metric.closedBall (0 : StrongDual ℝ E) 1
 
@@ -383,7 +383,7 @@ private theorem james_clusterHull_eq_iInter_tail
   · intro x hx
     simp only [Set.mem_iInter]
     intro n
-    apply closedConvexHull_min (𝕜 := ℝ)
+    apply closedConvexHull_min (𝕜 := ℝ) (s := jamesClusterSet u)
       (t := closure (convexHull ℝ (u '' Set.Ici n)))
     · intro z hz
       have htail : z ∈ closure (u '' Set.Ici n) := by
@@ -1188,17 +1188,22 @@ private theorem james_norm_attainment_of_surjective
       rw [hfx, hΦeval, RCLike.norm_ofReal, abs_of_nonneg (norm_nonneg f)]
 
 /--
-For a Banach space over `ℝ` or `ℂ`, the canonical embedding into the bidual is surjective iff
-every continuous linear functional attains its norm on the closed unit ball. Source:
-R. C. James, Reflexivity and the Supremum of Linear Functionals, Ann. of Math. 66 (1957),
-DOI 10.2307/1970122; Bourbaki form; Lean states `RCLike` Banach case with norm-attainment
-equivalence for reflexivity.
+**James' reflexivity theorem.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and let $E$ be a
+Banach space over $\mathbb{K}$. The canonical embedding of $E$ into its bidual $E^{**}$ is
+surjective if and only if every continuous linear functional $f \colon E \to \mathbb{K}$ attains
+its norm on the closed unit ball, that is, there is $x \in E$ with $\|x\| \le 1$ and
+$|f(x)| = \|f\|$.
+
+Proof: The reverse implication uses the general real James convex-block argument, with Goldstine
+approximation and weak-star cluster hulls. Restriction of scalars transfers the result from real
+scalars to $\mathbb{K}$.
 
 Proves `Wanted` entry `james_reflexivity`.
 
-Proof: The reverse implication uses the general real James convex-block argument, with Goldstine
-approximation and weak-star cluster hulls. Restriction of scalars transfers the result to `RCLike`
-fields.
+Source:
+R. C. James, Reflexivity and the Supremum of Linear Functionals, Ann. of Math. 66 (1957),
+DOI 10.2307/1970122; Bourbaki form; Lean states `RCLike` Banach case with norm-attainment
+equivalence for reflexivity.
 -/
 theorem james_reflexivity
     {𝕜 : Type*} [RCLike 𝕜]

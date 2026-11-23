@@ -34,28 +34,43 @@ statement of this problem.
 -/
 
 open Classical in
-/-- The Sidon subsets of `{1, …, N}`. -/
+/-- **Sidon subsets of $\{1, \dots, N\}$.** For a natural number $N$, this is the finite family
+of all subsets of $\{1, \dots, N\}$ that are Sidon sets of natural numbers, including the empty
+set and the singletons. -/
 noncomputable def sidonSubsetsUpTo (N : ℕ) : Finset (Finset ℕ) :=
   (Finset.Icc 1 N).powerset.filter fun S => (S : Set ℕ).IsSidon
 
-/-- `f(N)`: the largest size of a Sidon subset of `{1, …, N}`. -/
+/-- **Largest Sidon subset of $\{1, \dots, N\}$ (Erdős Problem 861).** For a natural number $N$,
+$f(N)$ is the largest cardinality of a Sidon subset of $\{1, \dots, N\}$. -/
 noncomputable def maxSidonSize (N : ℕ) : ℕ :=
   (sidonSubsetsUpTo N).sup Finset.card
 
-/-- Erdős Problem 861, first question: `A(N) / 2^{f(N)} → ∞`. -/
+/-- **Erdős Problem 861, first question.** Let $A(N)$ be the number of Sidon subsets of
+$\{1, \dots, N\}$, including the empty set and the singletons, and let $f(N)$ be the
+largest size of a Sidon subset of $\{1, \dots, N\}$. The statement is that
+$A(N) / 2^{f(N)} \to \infty$ as $N \to \infty$. -/
 def sidonCountOverTwoPowMaxDiverges : Prop :=
   Filter.Tendsto (fun N : ℕ => ((sidonSubsetsUpTo N).card : ℝ) / 2 ^ maxSidonSize N)
     Filter.atTop Filter.atTop
 
-/-- Erdős Problem 861, second question: `A(N) = 2^{(1 + o(1)) f(N)}`. -/
+/-- **Erdős Problem 861, second question.** Let $A(N)$ be the number of Sidon subsets of
+$\{1, \dots, N\}$, including the empty set and the singletons, and let $f(N)$ be the
+largest size of a Sidon subset of $\{1, \dots, N\}$. The statement is that
+$\log_2 A(N) / f(N) \to 1$ as $N \to \infty$, that is, $A(N) = 2^{(1 + o(1)) f(N)}$. -/
 def sidonCountExponentAsymptotic : Prop :=
   Filter.Tendsto (fun N : ℕ => Real.logb 2 (sidonSubsetsUpTo N).card / maxSidonSize N)
     Filter.atTop (nhds 1)
 
 /--
-Resolved true: Saxton and Thomason proved `A(N) ≥ 2^{(1.16 + o(1)) √N}` (Theorem 2.11), and `f(N) ∼
-√N`, so `A(N) / 2^{f(N)} ≥ 2^{(0.16 + o(1)) √N} → ∞`; erdosproblems.com/861 settles the first
-question positively. Source: T. F. Bloom, Erdős Problems, Problem #861,
+**Erdős Problem 861, first question: positive answer.** Let $A(N)$ be the number of Sidon
+subsets of $\{1, \dots, N\}$, including the empty set and the singletons, and let $f(N)$ be the
+largest size of a Sidon subset of $\{1, \dots, N\}$. Then $A(N) / 2^{f(N)} \to \infty$ as
+$N \to \infty$.
+
+Saxton and Thomason proved $A(N) \ge 2^{(1.16 + o(1)) \sqrt{N}}$ (Theorem 2.11), and
+$f(N) \sim \sqrt{N}$, so $A(N) / 2^{f(N)} \ge 2^{(0.16 + o(1)) \sqrt{N}} \to \infty$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #861,
 https://www.erdosproblems.com/861 (status SOLVED); resolution: D. Saxton and A. Thomason, Hypergraph
 containers, Invent. Math. (2015), 925-992, arXiv:1204.6595 (lower bound); Y. Kohayakawa, S. J. Lee,
 V. Rödl and W. Samotij, The number of Sidon sets and the maximum size of Sidon sets contained in a
@@ -69,8 +84,14 @@ https://arxiv.org/abs/1204.6595.
 public theorem_wanted sidonCountOverTwoPowMaxDiverges_holds : sidonCountOverTwoPowMaxDiverges
 
 /--
-Resolved false: `A(N) ≥ 2^{(1.16 + o(1)) √N}` (Saxton and Thomason, Theorem 2.11) and `f(N) ∼ √N`
-give `log₂ A(N) / f(N) ≥ 1.16 + o(1)`; erdosproblems.com/861 settles the second question negatively.
+**Erdős Problem 861, second question: negative answer.** Let $A(N)$ be the number of Sidon
+subsets of $\{1, \dots, N\}$, including the empty set and the singletons, and let $f(N)$ be the
+largest size of a Sidon subset of $\{1, \dots, N\}$. Then the ratio $\log_2 A(N) / f(N)$ does not
+tend to $1$ as $N \to \infty$; that is, $A(N) = 2^{(1 + o(1)) f(N)}$ fails.
+
+Saxton and Thomason proved $A(N) \ge 2^{(1.16 + o(1)) \sqrt{N}}$ (Theorem 2.11), and
+$f(N) \sim \sqrt{N}$, so $\log_2 A(N) / f(N) \ge 1.16 + o(1)$.
+
 Source: T. F. Bloom, Erdős Problems, Problem #861, https://www.erdosproblems.com/861 (status
 SOLVED); resolution: D. Saxton and A. Thomason, Hypergraph containers, Invent. Math. (2015),
 925-992, arXiv:1204.6595 (lower bound); Y. Kohayakawa, S. J. Lee, V. Rödl and W. Samotij, The number

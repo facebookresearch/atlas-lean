@@ -10,7 +10,7 @@ Its variance is $2b^2$. It is the symmetric version of the exponential distribut
 
 ## Background
 
-- The Laplace density: the same density, centred at $0$, used there as a prior for the lasso.
+- [The Laplace density](../../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/laplace-pdf.md): the same density, centred at $0$, used there as a prior for the lasso.
 
 ## Sources
 

@@ -1,10 +1,5 @@
-name: Claim task issues
+name: Claim Atlas task issues
 
-# `/claim` on a task issue (task:formalize or task:dag-work) assigns the
-# commenter when nobody holds the task, and `/unclaim` releases it; a
-# maintainer may `/unclaim @someone`. issue_comment runs this workflow and
-# its script from the default branch; the comment is read from the event
-# file as data and never interpolated into a command.
 on:
   issue_comment:
     types: [created]
@@ -13,28 +8,30 @@ permissions: {}
 
 jobs:
   claim:
-    name: answer a claim
+    name: answer a task claim
     if: >-
+      vars.ATLAS_TASK_CLAIMS == 'true' && github.run_attempt == 1 &&
       github.event.issue.pull_request == null &&
-      (startsWith(github.event.comment.body, '/claim') ||
-       startsWith(github.event.comment.body, '/unclaim'))
+      (startsWith(github.event.comment.body, '/claim') || startsWith(github.event.comment.body, '/unclaim'))
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     concurrency:
-      group: claim-${{ github.event.issue.number }}
+      group: atlas-issue-writer
       cancel-in-progress: false
+      queue: max
     permissions:
       contents: read
       issues: write
     steps:
-      - name: Check out the claim script
+      - name: Check out trusted issue scripts
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: scripts/frontier_issues.py
+          sparse-checkout: |
+            scripts/claim_task_issue.py
+            scripts/frontier_issues.py
           sparse-checkout-cone-mode: false
-
       - name: Answer the comment
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: python3 scripts/frontier_issues.py claim --event "$GITHUB_EVENT_PATH" --repo "$GITHUB_REPOSITORY"
+        run: python3 scripts/claim_task_issue.py --event "$GITHUB_EVENT_PATH" --repo "$GITHUB_REPOSITORY"

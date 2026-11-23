@@ -12,11 +12,16 @@ public import Mathlib.Analysis.Complex.CauchyIntegral
 public import Mathlib.Analysis.Complex.SqrtDeriv
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
+import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.MeasureTheory.Integral.CircleIntegral
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
@@ -58,6 +63,9 @@ far-field expansion are hypotheses, not derived from flow equations.
   at the Kutta circulation, signed lift `-ρUΓ`, lift coefficient
   `2π sin α` at chord `4a`, and the small-angle bound
   `π |α|^3 / 3`.
+- `FluidDynamics.IdealAirfoilModels.CylinderPressure.blasiusForce_eq_surfaceForce`:
+  the Blasius contour force on the cylinder equals the surface-pressure force
+  `(surfaceForceX, surfaceForceY) = (0, -ρUΓ)` under the Bernoulli pressure law.
 - `FluidDynamics.IdealAirfoilModels.CylinderFlow.cylStream_deriv_y` and
   `cylStream_deriv_x`: the single-valued stream function
   `ψ = U(y - a²y/r²) - (Γ / 2π) log (r / a)` generates the cylinder
@@ -69,6 +77,7 @@ far-field expansion are hypotheses, not derived from flow equations.
 - B. Blasius force from a far-field expansion
 - C. Signed lift and lift coefficient
 - D. Cylinder velocity and single-valued stream function
+- E. Cylinder pressure and the contour force
 
 ## iv. References
 
@@ -1374,5 +1383,241 @@ lemma cylStream_deriv_x {U a Γ x y : ℝ} (ha : 0 < a)
   ring
 
 end CylinderFlow
+
+/-! ## E. Cylinder pressure and the contour force -/
+
+namespace CylinderPressure
+
+/-- The `x` component of the pressure force per unit span on the circle `r = a`. On the arc
+element `a dθ` at `a e^{iθ}` the pressure pushes along the normal `-(cos θ, sin θ)` that points
+into the body, so `Fx = -∫₀^{2π} p (a e^{iθ}) cos θ a dθ`. -/
+noncomputable def surfaceForceX (p : ℂ → ℝ) (a : ℝ) : ℝ :=
+  -(a * ∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.cos θ)
+
+/-- The `y` component of the pressure force per unit span on the circle `r = a`,
+`Fy = -∫₀^{2π} p (a e^{iθ}) sin θ a dθ`. -/
+noncomputable def surfaceForceY (p : ℂ → ℝ) (a : ℝ) : ℝ :=
+  -(a * ∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.sin θ)
+
+/-- At zero incidence the circle-plane velocity is the cylinder field read as `u - I * v`:
+for `z ≠ 0`, `circleVelocity a U Γ 0 z = cylU - cylV * I` at `(z.re, z.im)`. -/
+lemma circleVelocity_zero_eq_cyl {a U Γ : ℝ} {z : ℂ} (hz : z ≠ 0) :
+    JoukowskiBranch.circleVelocity a U Γ 0 z =
+      (CylinderFlow.cylU U a Γ z.re z.im : ℂ) -
+        (CylinderFlow.cylV U a Γ z.re z.im : ℂ) * Complex.I := by
+  have hn : Complex.normSq z ≠ 0 := by
+    rwa [Ne, Complex.normSq_eq_zero]
+  have hr : z.re * z.re + z.im * z.im ≠ 0 := by
+    rwa [Complex.normSq_apply] at hn
+  have hr2 : z.re ^ 2 + z.im ^ 2 ≠ 0 := by
+    simpa [sq] using hr
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hw : (a : ℂ) ^ 2 / z ^ 2 = (a : ℂ) ^ 2 * (z⁻¹) ^ 2 := by
+    rw [div_eq_mul_inv, inv_pow]
+  have hv : (Γ : ℂ) / (2 * Real.pi * Complex.I * z) =
+      ((Γ / (2 * Real.pi) : ℝ) : ℂ) * (-Complex.I) * z⁻¹ := by
+    simp only [div_eq_mul_inv, mul_inv, Complex.inv_I]
+    push_cast
+    ring
+  unfold JoukowskiBranch.circleVelocity CylinderFlow.cylU CylinderFlow.cylV
+  simp only [Complex.ofReal_zero, neg_zero, zero_mul, Complex.exp_zero, mul_one]
+  rw [hw, hv]
+  apply Complex.ext
+  · simp only [Complex.add_re, Complex.sub_re, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
+      Complex.ofReal_im, Complex.one_re, Complex.inv_re, Complex.inv_im,
+      Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im, pow_two, Complex.normSq_apply]
+    field_simp
+    ring
+  · simp only [Complex.add_im, Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
+      Complex.ofReal_im, Complex.one_im, Complex.inv_re, Complex.inv_im,
+      Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im, pow_two, Complex.normSq_apply]
+    field_simp
+    ring
+
+/-- On the cylinder `z = a e^{iθ}` the squared speed `‖W‖ ^ 2` is
+`(2 * U * sin θ - Γ / (2 * π * a)) ^ 2`. -/
+lemma norm_sq_circleVelocity_zero_circleMap {a U Γ : ℝ} (ha : 0 < a) (θ : ℝ) :
+    ‖JoukowskiBranch.circleVelocity a U Γ 0 (circleMap 0 a θ)‖ ^ 2 =
+      (2 * U * Real.sin θ - Γ / (2 * Real.pi * a)) ^ 2 := by
+  have hz : circleMap 0 a θ ≠ 0 := circleMap_ne_center ha.ne'
+  rw [circleVelocity_zero_eq_cyl hz, Complex.sq_norm, Complex.normSq_apply]
+  have hre : (circleMap 0 a θ).re = a * Real.cos θ := by
+    simp [circleMap, Complex.mul_re, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im]
+  have him : (circleMap 0 a θ).im = a * Real.sin θ := by
+    simp [circleMap, Complex.mul_im, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im]
+  rw [hre, him]
+  have hr2 : (a * Real.cos θ) ^ 2 + (a * Real.sin θ) ^ 2 = a ^ 2 := by
+    have := Real.cos_sq_add_sin_sq θ
+    nlinarith [this]
+  unfold CylinderFlow.cylU CylinderFlow.cylV
+  rw [hr2]
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have ha' : a ≠ 0 := ha.ne'
+  simp only [Complex.sub_re, Complex.sub_im, Complex.ofReal_re, Complex.ofReal_im,
+    Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im]
+  field_simp
+  have hc : Real.cos θ ^ 2 = 1 - Real.sin θ ^ 2 := by
+    have := Real.cos_sq_add_sin_sq θ; linarith
+  ring_nf
+  rw [show Real.cos θ ^ 4 = (Real.cos θ ^ 2) ^ 2 by ring]
+  rw [hc]
+  ring
+
+/-- Under the whole-domain pressure law, the pressure on the cylinder is
+`p (a e^{iθ}) = p∞ + ρ * (U ^ 2 - (2 * U * sin θ - Γ / (2 * π * a)) ^ 2) / 2`. -/
+lemma surfacePressure_circleMap {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
+    (hp : ∀ z : ℂ, a ≤ ‖z‖ →
+      p z = pInf + ρ * (U ^ 2 - ‖JoukowskiBranch.circleVelocity a U Γ 0 z‖ ^ 2) / 2) (θ : ℝ) :
+    p (circleMap 0 a θ) =
+      pInf + ρ * (U ^ 2 - (2 * U * Real.sin θ - Γ / (2 * Real.pi * a)) ^ 2) / 2 := by
+  have hz : a ≤ ‖circleMap 0 a θ‖ := by
+    rw [norm_circleMap_zero, abs_of_pos ha]
+  rw [hp _ hz, norm_sq_circleVelocity_zero_circleMap ha θ]
+
+/-- A constant pressure exerts no net force on the closed circle: the normal
+`(cos θ, sin θ)` integrates to zero over `[0, 2π]`. This removes `p∞`. -/
+lemma surfaceForce_const (c a : ℝ) :
+    surfaceForceX (fun _ => c) a = 0 ∧ surfaceForceY (fun _ => c) a = 0 := by
+  constructor
+  · unfold surfaceForceX
+    rw [intervalIntegral.integral_const_mul, integral_cos, Real.sin_two_pi, Real.sin_zero]
+    ring
+  · unfold surfaceForceY
+    rw [intervalIntegral.integral_const_mul, integral_sin, Real.cos_two_pi, Real.cos_zero]
+    ring
+
+/-- Under the whole-domain pressure law, both surface-pressure integrands are interval
+integrable on `[0, 2π]`: the surface integral is a regular integral. -/
+lemma surfacePressure_intervalIntegrable {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
+    (hp : ∀ z : ℂ, a ≤ ‖z‖ →
+      p z = pInf + ρ * (U ^ 2 - ‖JoukowskiBranch.circleVelocity a U Γ 0 z‖ ^ 2) / 2) :
+    IntervalIntegrable (fun θ => p (circleMap 0 a θ) * Real.cos θ) MeasureTheory.volume 0
+        (2 * Real.pi) ∧
+      IntervalIntegrable (fun θ => p (circleMap 0 a θ) * Real.sin θ) MeasureTheory.volume 0
+        (2 * Real.pi) := by
+  have hfun : (fun θ => p (circleMap 0 a θ)) = fun θ =>
+      pInf + ρ * (U ^ 2 - (2 * U * Real.sin θ - Γ / (2 * Real.pi * a)) ^ 2) / 2 := by
+    funext θ
+    exact surfacePressure_circleMap ha hp θ
+  have hc : Continuous (fun θ => p (circleMap 0 a θ)) := by
+    rw [hfun]
+    fun_prop
+  exact ⟨(hc.mul Real.continuous_cos).intervalIntegrable _ _,
+    (hc.mul Real.continuous_sin).intervalIntegrable _ _⟩
+
+/-- Under the whole-domain pressure law, the surface-pressure force on the cylinder is
+`(Fx, Fy) = (0, -ρ * U * Γ)`. -/
+lemma surfaceForce_eq {p : ℂ → ℝ} {pInf ρ a U Γ : ℝ} (ha : 0 < a)
+    (hp : ∀ z : ℂ, a ≤ ‖z‖ →
+      p z = pInf + ρ * (U ^ 2 - ‖JoukowskiBranch.circleVelocity a U Γ 0 z‖ ^ 2) / 2) :
+    surfaceForceX p a = 0 ∧ surfaceForceY p a = -ρ * U * Γ := by
+  set c := Γ / (2 * Real.pi * a) with hc
+  set A := pInf + ρ * (U ^ 2 - c ^ 2) / 2 with hA
+  set B := 2 * ρ * U * c with hB
+  set C := -2 * ρ * U ^ 2 with hC
+  have hfun : ∀ θ, p (circleMap 0 a θ) = A + B * Real.sin θ + C * Real.sin θ ^ 2 := by
+    intro θ
+    rw [surfacePressure_circleMap ha hp θ, hA, hB, hC]
+    ring
+  have hX : (∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.cos θ) = 0 := by
+    have heq : (fun θ => p (circleMap 0 a θ) * Real.cos θ) = fun θ =>
+        A * Real.cos θ + B * (Real.sin θ * Real.cos θ) + C * (Real.sin θ ^ 2 * Real.cos θ) := by
+      funext θ
+      rw [hfun]
+      ring
+    rw [heq, intervalIntegral.integral_add, intervalIntegral.integral_add,
+      intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul,
+      intervalIntegral.integral_const_mul, integral_cos, integral_sin_mul_cos₁,
+      integral_sin_sq_mul_cos]
+    · simp [Real.sin_two_pi]
+    all_goals (apply Continuous.intervalIntegrable; fun_prop)
+  have hY : (∫ θ in (0 : ℝ)..2 * Real.pi, p (circleMap 0 a θ) * Real.sin θ) = B * Real.pi := by
+    have heq : (fun θ => p (circleMap 0 a θ) * Real.sin θ) = fun θ =>
+        A * Real.sin θ + B * Real.sin θ ^ 2 + C * Real.sin θ ^ (1 + 2) := by
+      funext θ
+      rw [hfun]
+      ring
+    rw [heq, intervalIntegral.integral_add, intervalIntegral.integral_add,
+      intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul,
+      intervalIntegral.integral_const_mul, integral_sin, integral_sin_sq, integral_sin_pow]
+    · simp only [pow_one, integral_sin, Real.sin_two_pi, Real.cos_two_pi, Real.sin_zero,
+        Real.cos_zero]
+      ring
+    all_goals (apply Continuous.intervalIntegrable; fun_prop)
+  refine ⟨?_, ?_⟩
+  · unfold surfaceForceX
+    rw [hX, mul_zero, neg_zero]
+  · unfold surfaceForceY
+    rw [hY, hB, hc]
+    have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+    field_simp
+
+/-- The Blasius contour force at zero incidence, on every circle `|z| = R` with `a ≤ R`, is
+`I * ρ * U * Γ`: `Fx = 0` and `Fy = -ρ * U * Γ`. -/
+lemma blasiusForce_circleVelocity_zero {ρ a U Γ R : ℝ} (hρ : 0 < ρ) (ha : 0 < a)
+    (hU : 0 < U) (hR : a ≤ R) :
+    BlasiusForce.blasiusForce ρ (JoukowskiBranch.circleVelocity a U Γ 0) R =
+      Complex.I * ρ * U * Γ := by
+  have hpi : ((Real.pi : ℝ) : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
+  have h2πI : (2 * Real.pi * Complex.I : ℂ) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero two_ne_zero hpi) Complex.I_ne_zero
+  have hne : ∀ z : ℂ, a / 2 < ‖z‖ → z ≠ 0 := by
+    intro z hz h
+    rw [h, norm_zero] at hz
+    linarith
+  have hW : DifferentiableOn ℂ (JoukowskiBranch.circleVelocity a U Γ 0)
+      {z : ℂ | a / 2 < ‖z‖} := by
+    intro z hz
+    have hz0 : z ≠ 0 := hne z hz
+    have hpow2 : DifferentiableAt ℂ (fun ζ : ℂ => ζ ^ 2) z := differentiableAt_pow 2
+    have hsub : DifferentiableAt ℂ
+        (fun ζ : ℂ => Complex.exp (-((0 : ℝ) : ℂ) * Complex.I) -
+          (a : ℂ) ^ 2 * Complex.exp (((0 : ℝ) : ℂ) * Complex.I) / ζ ^ 2) z :=
+      ((differentiableAt_const ((a : ℂ) ^ 2 * Complex.exp (((0 : ℝ) : ℂ) * Complex.I))).fun_div
+        hpow2 (pow_ne_zero 2 hz0)).const_sub _
+    have hfirst := hsub.const_mul (U : ℂ)
+    have hlin : DifferentiableAt ℂ (fun ζ : ℂ => 2 * Real.pi * Complex.I * ζ) z :=
+      differentiableAt_id.const_mul _
+    have hsecond : DifferentiableAt ℂ
+        (fun ζ : ℂ => (Γ : ℂ) / (2 * Real.pi * Complex.I * ζ)) z :=
+      (differentiableAt_const (Γ : ℂ)).fun_div hlin (mul_ne_zero h2πI hz0)
+    exact (hfirst.fun_add hsecond).differentiableWithinAt
+  have h := BlasiusForce.blasiusForce_eq (ρ := ρ) (U := U) (Γ := Γ) (α := 0) (R0 := a / 2)
+    (R1 := a) (K := U * a ^ 2) (W := JoukowskiBranch.circleVelocity a U Γ 0)
+    (e := fun z => -((U : ℂ) * (a : ℂ) ^ 2 / z ^ 2)) hρ hU (by positivity) (by linarith) hW
+    ?_ ?_ ?_ (R := R) (by linarith)
+  · simpa using h
+  · intro z hz
+    have hz0 : z ≠ 0 := hne z (by linarith)
+    unfold JoukowskiBranch.circleVelocity
+    simp only [Complex.ofReal_zero, neg_zero, zero_mul, Complex.exp_zero, mul_one]
+    field_simp
+    ring
+  · intro z hz
+    have hz0 : z ≠ 0 := hne z (by linarith)
+    apply DifferentiableAt.neg
+    exact (differentiableAt_const ((U : ℂ) * (a : ℂ) ^ 2)).fun_div
+      (differentiableAt_pow (𝕜 := ℂ) 2) (pow_ne_zero 2 hz0)
+  · intro z hz
+    have hz0 : z ≠ 0 := hne z (by linarith)
+    rw [norm_neg, norm_div, norm_mul, norm_pow, norm_pow, Complex.norm_real, Complex.norm_real,
+      Real.norm_eq_abs, Real.norm_eq_abs, abs_of_pos hU, sq_abs]
+
+/-- The regular surface-pressure force agrees with the contour force: on every circle
+`|z| = R` with `a ≤ R`, the Blasius force is `Fx - I * Fy` for the surface-pressure force
+`(Fx, Fy)` of the whole-domain pressure law. -/
+lemma blasiusForce_eq_surfaceForce {p : ℂ → ℝ} {pInf ρ a U Γ R : ℝ} (hρ : 0 < ρ)
+    (ha : 0 < a) (hU : 0 < U)
+    (hp : ∀ z : ℂ, a ≤ ‖z‖ →
+      p z = pInf + ρ * (U ^ 2 - ‖JoukowskiBranch.circleVelocity a U Γ 0 z‖ ^ 2) / 2) (hR : a ≤ R) :
+    BlasiusForce.blasiusForce ρ (JoukowskiBranch.circleVelocity a U Γ 0) R =
+      (surfaceForceX p a : ℂ) - Complex.I * (surfaceForceY p a : ℂ) := by
+  rw [blasiusForce_circleVelocity_zero hρ ha hU hR]
+  obtain ⟨hx, hy⟩ := surfaceForce_eq ha hp
+  rw [hx, hy]
+  push_cast
+  ring
+
+end CylinderPressure
 
 end FluidDynamics.IdealAirfoilModels

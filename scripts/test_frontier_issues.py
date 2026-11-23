@@ -26,7 +26,7 @@ def task(key="node:A/b", kind="formalize", phase="proof", **extra) -> dict:
 
 
 def frontier(*tasks, finished=()) -> dict:
-    return {"schema": fi.SCHEMA, "commit": "0" * 40, "source_revision": "r", "tasks": list(tasks), "finished": list(finished)}
+    return {"schema": fi.SCHEMA, "commit": "0" * 40, "repo": REPO, "source_revision": "r", "resolved_leaves": 1, "missing_ids": 0, "dag_nodes": [t["node_id"] for t in tasks], "tasks": list(tasks), "finished": list(finished)}
 
 
 def issue(number, item=None, state="open", state_reason=None, title=None, body=None, labels=None, marks=None) -> dict:
@@ -58,7 +58,7 @@ class Rendering(unittest.TestCase):
         self.assertIn("and 5 more", body)
         self.assertIn("3 unfinished node(s)", body)
         self.assertIn("`theorem_wanted` is gone", body)
-        self.assertIn("`unexpanded` marker is gone", fi.issue_body(task(kind="dag-work", phase=None), REPO))
+        self.assertIn("replace the node and its annotation", fi.issue_body(task(kind="dag-work", phase=None), REPO))
 
     def test_a_field_issue_lists_its_ready_results_by_module(self) -> None:
         items = [{"title": f"R{n}", "page": f"blueprint/roadmap/A/f/m{n % 2}/r{n}.md", "phase": "proof" if n else "statement",
@@ -132,7 +132,7 @@ class Planning(unittest.TestCase):
         open_issue = issue(1, item)
         plan = self.plan(frontier(), [open_issue])
         self.assertEqual([(i["number"], reason) for i, reason in plan.close], [(1, "not_planned")])
-        github = FakeGitHub()
+        github = FakeGitHub(issues=[open_issue])
         fi.apply_plan(plan, github, REPO, max_writes=10)
         closed = dict(open_issue, state="closed", state_reason="not_planned",
                       body=github.calls[-1][5])
@@ -174,13 +174,20 @@ class Planning(unittest.TestCase):
         self.assertEqual(plan.unchanged, 1)
         self.assertEqual([(i["number"], reason) for i, reason in plan.close], [(1, "not_planned")])
 
+    def test_incomplete_or_mismatched_snapshot_is_refused(self) -> None:
+        with self.assertRaisesRegex(ValueError, "incomplete or mismatched"):
+            self.plan({"schema": fi.SCHEMA, "tasks": []}, [issue(1, task())])
+        with self.assertRaisesRegex(ValueError, "incomplete or mismatched"):
+            self.plan(dict(frontier(), repo="unrelated/project"), [issue(1, task())])
+
     def test_a_frontier_of_another_schema_is_refused(self) -> None:
         with self.assertRaises(ValueError):
             self.plan({"schema": "other", "tasks": []}, [])
 
 
 class FakeGitHub:
-    def __init__(self, limit_after: int | None = None) -> None:
+    def __init__(self, limit_after: int | None = None, issues=()) -> None:
+        self.issues = {issue["number"]: issue for issue in issues}
         self.calls: list[tuple] = []
         self.limit_after = limit_after
 
@@ -195,6 +202,9 @@ class FakeGitHub:
 
     def create_issue(self, title, body, labels):
         return self._record("create", title, tuple(labels))
+
+    def read_issue(self, number):
+        return self.issues[number]
 
     def update_issue(self, number, **fields):
         return self._record("update", number, fields.get("state"), fields.get("state_reason"),
@@ -211,19 +221,29 @@ class Applying(unittest.TestCase):
         )
 
     def test_closes_then_updates_then_creates_keeping_other_labels(self) -> None:
-        github = FakeGitHub()
-        self.assertEqual(fi.apply_plan(self.plan(), github, REPO, max_writes=100), 6)
+        plan = self.plan()
+        github = FakeGitHub(issues=[issue for issue, _ in plan.close + plan.update])
+        self.assertEqual(fi.apply_plan(plan, github, REPO, max_writes=100), 6)
         self.assertEqual([call[0] for call in github.calls], ["label", "label", "update", "update", "create", "create"])
         self.assertEqual([call[1] for call in github.calls[:2]], ["area:A", "task:dag-work"])
         self.assertEqual(github.calls[2][:4], ("update", 2, "closed", "not_planned"))
-        self.assertEqual(github.calls[3][:3], ("update", 1, "open"))
+        self.assertEqual(github.calls[3][:3], ("update", 1, None))
         self.assertIn("triage", github.calls[3][4])
         self.assertEqual([call[1] for call in github.calls[4:]], ["Prove: Result B", "Prove: Result B"])
 
+    def test_a_refresh_does_not_reopen_a_concurrently_closed_issue(self) -> None:
+        old, new = task(statement="Before"), task(statement="After")
+        planned = issue(1, old)
+        plan = fi.plan_sync(frontier(new), [planned], set(fi.issue_labels(old)) | {"task:dag-work"}, REPO)
+        github = FakeGitHub(issues=[dict(planned, state="closed", state_reason="not_planned")])
+        self.assertEqual(fi.apply_plan(plan, github, REPO, max_writes=10), 0)
+        self.assertEqual(github.calls, [])
+
     def test_writes_stop_at_the_cap_and_at_a_rate_limit(self) -> None:
-        github = FakeGitHub()
-        self.assertEqual(fi.apply_plan(self.plan(), github, REPO, max_writes=3), 3)
-        limited = FakeGitHub(limit_after=2)
+        plan = self.plan()
+        github = FakeGitHub(issues=[issue for issue, _ in plan.close + plan.update])
+        self.assertEqual(fi.apply_plan(plan, github, REPO, max_writes=3), 3)
+        limited = FakeGitHub(limit_after=2, issues=[issue for issue, _ in plan.close + plan.update])
         messages: list[str] = []
         self.assertEqual(fi.apply_plan(self.plan(), limited, REPO, max_writes=100, log=messages.append), 2)
         self.assertIn("the next run continues", messages[0])
@@ -235,64 +255,6 @@ class Applying(unittest.TestCase):
         self.assertIn("| close issues | 1 |", summary)
 
 
-DAY = 86400.0
-NOW = fi.parse_time("2026-11-20T00:00:00Z")
-
-
-def assigned(login, when):
-    return {"event": "assigned", "assignee": {"login": login}, "created_at": when}
-
-
-def referenced(state):
-    return {"event": "cross-referenced", "source": {"type": "issue", "issue": {"pull_request": {"url": "x"}, "state": state}}}
-
-
-class LapsedClaims(unittest.TestCase):
-    def held(self, *logins, state="open"):
-        return dict(issue(1, task()), state=state, assignees=[{"login": login} for login in logins])
-
-    def test_a_claim_lapses_after_seven_days_without_an_open_pr(self) -> None:
-        timeline = [assigned("ada", "2026-11-10T00:00:00Z"), assigned("bob", "2026-11-18T00:00:00Z"), referenced("closed")]
-        self.assertEqual(fi.stale_claims(self.held("ada", "bob"), timeline, NOW), ["ada"])
-
-    def test_an_open_pr_keeps_every_claim(self) -> None:
-        timeline = [assigned("ada", "2026-11-01T00:00:00Z"), referenced("open")]
-        self.assertEqual(fi.stale_claims(self.held("ada"), timeline, NOW), [])
-
-    def test_the_latest_assignment_counts_and_closed_issues_are_left_alone(self) -> None:
-        timeline = [assigned("ada", "2026-11-01T00:00:00Z"), assigned("ada", "2026-11-19T00:00:00Z")]
-        self.assertEqual(fi.stale_claims(self.held("ada"), timeline, NOW), [])
-        self.assertEqual(fi.stale_claims(self.held("ada", state="closed"), [assigned("ada", "2026-11-01T00:00:00Z")], NOW), [])
-
-    def test_releases_skip_issues_being_closed_and_issues_without_marks(self) -> None:
-        plan = fi.Plan()
-        kept, closing = dict(self.held("ada"), number=1), dict(self.held("ada"), number=2)
-        unmarked = dict(self.held("ada"), number=3, body="by hand")
-        plan.close.append((closing, "completed"))
-        old = [assigned("ada", "2026-11-01T00:00:00Z")]
-        fi.plan_releases(plan, [kept, closing, unmarked], lambda number: old, NOW)
-        self.assertEqual([(i["number"], logins) for i, logins in plan.release], [(1, ["ada"])])
-        read: list[int] = []
-        fi.plan_releases(fi.Plan(), [dict(kept, number=n, updated_at=f"2026-11-0{n}") for n in (3, 1, 2)],
-                         lambda number: read.append(number) or old, NOW, limit=2)
-        self.assertEqual(read, [1, 2])
-
-    def test_a_release_unassigns_and_says_why(self) -> None:
-        class Recorder(FakeGitHub):
-            def unassign(self, number, logins):
-                return self._record("unassign", number, tuple(logins))
-
-            def comment(self, number, body):
-                return self._record("comment", number, body)
-
-        plan = fi.Plan(release=[(self.held("ada"), ["ada"])])
-        github = Recorder()
-        self.assertEqual(fi.apply_plan(plan, github, REPO, max_writes=10), 2)
-        self.assertEqual(github.calls[0], ("unassign", 1, ("ada",)))
-        self.assertIn("Released the claim of @ada", github.calls[1][2])
-        self.assertEqual(fi.apply_plan(plan, Recorder(), REPO, max_writes=1), 0)
-
-
 class Command(unittest.TestCase):
     def test_sync_needs_a_token(self) -> None:
         with tempfile.TemporaryDirectory() as directory, patch.dict("os.environ", {}, clear=True):
@@ -301,135 +263,17 @@ class Command(unittest.TestCase):
             self.assertEqual(fi.main(["sync", str(path), "--repo", REPO]), 2)
 
 
-def comment_event(body="/claim", login="ada", association="CONTRIBUTOR", assignees=(), labels=("task:formalize",),
-                  state="open", pull_request=False, user_type="User") -> dict:
-    issue = {"number": 7, "state": state, "labels": [{"name": name} for name in labels],
-             "assignees": [{"login": name} for name in assignees]}
-    if pull_request:
-        issue["pull_request"] = {"url": "x"}
-    return {"action": "created", "issue": issue,
-            "comment": {"id": 99, "body": body, "author_association": association, "user": {"login": login, "type": user_type}}}
-
-
-class Claims(unittest.TestCase):
-    def test_claim_assigns_a_free_task(self) -> None:
-        self.assertEqual(fi.decide_claim(comment_event()), fi.ClaimDecision(add="ada", react=True))
-        self.assertEqual(fi.decide_claim(comment_event("/claim\n\nI'll take it.")), fi.ClaimDecision(add="ada", react=True))
-
-    def test_claim_of_a_held_task_says_who_holds_it(self) -> None:
-        decision = fi.decide_claim(comment_event(assignees=["bob"]))
-        self.assertIsNone(decision.add)
-        self.assertIn("already claimed by @bob", decision.reply)
-        self.assertIn("`/unclaim @bob`", decision.reply)
-        self.assertEqual(fi.decide_claim(comment_event(assignees=["ada"])), fi.ClaimDecision(react=True))
-
-    def test_a_field_issue_takes_several_holders_up_to_githubs_limit(self) -> None:
-        event = comment_event(assignees=["bob"])
-        event["issue"]["body"] = "<!-- atlas-task: field:A/f -->\n"
-        self.assertEqual(fi.decide_claim(event), fi.ClaimDecision(add="ada", react=True))
-        event["issue"]["assignees"] = [{"login": f"u{n}"} for n in range(fi.MAX_HOLDERS)]
-        self.assertIn("already claimed", fi.decide_claim(event).reply)
-
-    def test_claim_is_for_yourself_and_for_open_tasks(self) -> None:
-        self.assertIn("@bob can claim it", fi.decide_claim(comment_event("/claim @bob")).reply)
-        self.assertIn("closed", fi.decide_claim(comment_event(state="closed")).reply)
-
-    def test_unclaim_releases_your_own_task_and_maintainers_free_others(self) -> None:
-        self.assertEqual(fi.decide_claim(comment_event("/unclaim", assignees=["ada"])), fi.ClaimDecision(remove="ada", react=True))
-        self.assertIn("only a maintainer", fi.decide_claim(comment_event("/unclaim @bob", assignees=["bob"])).reply)
-        # Organization membership is not enough; the caller checks the repository role.
-        self.assertIn("only a maintainer",
-                      fi.decide_claim(comment_event("/unclaim @bob", association="MEMBER", assignees=["bob"])).reply)
-        self.assertEqual(fi.decide_claim(comment_event("/unclaim @Bob", assignees=["bob"]), maintainer=True),
-                         fi.ClaimDecision(remove="bob", react=True))
-        self.assertIn("does not hold", fi.decide_claim(comment_event("/unclaim")).reply)
-
-    def test_other_comments_and_issues_are_ignored(self) -> None:
-        for event in (comment_event("please /claim"), comment_event("/claimed"), comment_event("/claim now please"),
-                      comment_event(labels=("bug",)), comment_event(pull_request=True), comment_event(user_type="Bot")):
-            self.assertIsNone(fi.decide_claim(event), event["comment"]["body"])
-
-    def test_applying_a_claim_assigns_and_reacts_or_explains(self) -> None:
-        class Recorder:
-            repo = REPO
-
-            def __init__(self, assigned):
-                self.calls, self.assigned = [], assigned
-
-            def request(self, method, path, payload=None):
-                self.calls.append((method, path, payload))
-                if path.endswith("/assignees") and method == "POST":
-                    return {"assignees": [{"login": name} for name in self.assigned]}, {}
-                return {}, {}
-
-        event = comment_event()
-        github = Recorder(["ada"])
-        fi.apply_claim(fi.ClaimDecision(add="ada", react=True), event, github)
-        self.assertEqual([call[:2] for call in github.calls], [
-            ("POST", f"/repos/{REPO}/issues/7/assignees"), ("POST", f"/repos/{REPO}/issues/comments/99/reactions")])
-        github = Recorder([])
-        fi.apply_claim(fi.ClaimDecision(add="ada", react=True), event, github)
-        self.assertEqual(github.calls[-1][1], f"/repos/{REPO}/issues/7/comments")
-        self.assertIn("would not assign you", github.calls[-1][2]["body"])
-        github = Recorder([])
-        fi.apply_claim(fi.ClaimDecision(remove="ada", react=True), event, github)
-        self.assertEqual(github.calls[0][:2], ("DELETE", f"/repos/{REPO}/issues/7/assignees"))
-
-    def test_the_command_decides_on_the_current_issue_and_the_commenters_role(self) -> None:
-        class Current:
-            calls: list = []
-
-            def __init__(self, repo, token, api, pause):
-                self.repo = repo
-
-            def request(self, method, path, payload=None):
-                Current.calls.append((method, path))
-                if path.endswith("/issues/7"):
-                    # Since the event was captured, bob claimed the task.
-                    return comment_event(assignees=["bob"])["issue"], {}
-                if path.endswith("/collaborators/ada/permission"):
-                    return {"permission": "read", "role_name": "triage"}, {}
-                return {}, {}
-
-        with tempfile.TemporaryDirectory() as directory, patch.dict("os.environ", {"GITHUB_TOKEN": "t"}), \
-                patch.object(fi, "GitHub", Current):
-            path = Path(directory) / "event.json"
-            path.write_text(json.dumps(comment_event()))
-            self.assertEqual(fi.main(["claim", "--event", str(path), "--repo", REPO]), 0)
-            self.assertEqual(Current.calls[0], ("GET", f"/repos/{REPO}/issues/7"))
-            self.assertEqual(Current.calls[-1], ("POST", f"/repos/{REPO}/issues/7/comments"))  # already claimed by bob
-            Current.calls.clear()
-            path.write_text(json.dumps(comment_event("/unclaim @bob", association="MEMBER")))
-            fi.main(["claim", "--event", str(path), "--repo", REPO])
-            self.assertIn(("GET", f"/repos/{REPO}/collaborators/ada/permission"), Current.calls)
-            self.assertNotIn(("DELETE", f"/repos/{REPO}/issues/7/assignees"), Current.calls)
-
-    def test_the_workflow_runs_from_the_default_branch_with_only_issue_writes(self) -> None:
-        import yaml
-
-        workflow = yaml.load((Path(fi.__file__).resolve().parent.parent / ".github/workflows/claim.yml").read_text(),
-                             Loader=yaml.BaseLoader)
-        self.assertEqual(list(workflow["on"]), ["issue_comment"])
-        self.assertEqual(workflow["permissions"], {})
-        job = workflow["jobs"]["claim"]
-        self.assertEqual(job["permissions"], {"contents": "read", "issues": "write"})
-        self.assertIn("github.event.issue.pull_request == null", job["if"])
-        self.assertEqual(job["steps"][0]["with"]["persist-credentials"], "false")
-        self.assertNotIn("comment.body", job["steps"][-1]["run"])
-        for step in job["steps"]:
-            if "uses" in step:
-                self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
-
-
 @unittest.skipUnless(HAS_AUTOFORM, "needs Autoform, as the wiki build installs it")
 class Frontier(unittest.TestCase):
     """A built vault, as lean-facts leaves it: a proved definition, a stated theorem resting on it, a stated
-    theorem whose proof rests on that one, a wanted definition, and a node marked unexpanded."""
+    theorem whose proof rests on that one, a wanted definition, and a node marked not_ready."""
 
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
         root = Path(self.tmp.name)
         self.blueprint = root / "blueprint"
+        (root / "scripts").mkdir()
+        (root / "scripts/taxonomy.json").write_text(json.dumps({"subjects": {"T": {"fields": [{"slug": "second"}]}}}))
         pages = {
             "README.md": "# ATLAS roadmap\n\n- [Topoi](T/README.md)\n",
             "T/README.md": "# Topoi\n\n- [Topos](topos.md)\n- [Slice](slice.md)\n- [Deep](deep.md)\n- [Jacobian](jacobian.md)\n- [Hodge](hodge.md)\n- [Second module](second/README.md)\n",
@@ -465,7 +309,7 @@ class Frontier(unittest.TestCase):
                 row("T/slice.md", "X.slice", kind="theorem", status="stated"),
                 row("T/deep.md", "X.deep", kind="theorem", status="stated"),
                 row("T/jacobian.md", "X.Jacobian", kind="def"),
-                row("T/hodge.md", extensions={fi.OWN: {fi.UNEXPANDED: True}}),
+                row("T/hodge.md", extensions={"org.autoform": {"not_ready": True}}),
             ],
         }
         (self.blueprint / "links").mkdir()
@@ -486,7 +330,7 @@ class Frontier(unittest.TestCase):
         self.assertEqual([(i["title"], i["phase"]) for i in topoi["items"]], [("Slice", "proof"), ("Jacobian", "statement")])
         self.assertEqual(topoi["items"][0]["declarations"], ["X.slice"])
         self.assertEqual((topoi["unlocks"], topoi["subject"], topoi["page"]), (1, "T", "blueprint/roadmap/T/README.md"))
-        # A second-level folder is a field (with no taxonomy to say otherwise); its module's parts are one module.
+        # A module's numbered parts remain in the same field and module.
         self.assertEqual([(i["title"], i["module"]) for i in tasks["field:T/second"]["items"]], [("Far", "Second module")])
         self.assertEqual((tasks["node:T/hodge"]["kind"], tasks["node:T/hodge"]["phase"]), ("dag-work", None))
         self.assertIn("decl:X.Topos", result["finished"])
@@ -513,6 +357,23 @@ class Frontier(unittest.TestCase):
         links.write_text(links.read_text() + json.dumps(row) + "\n")
         topoi = next(t for t in fi.build_frontier(self.blueprint, "abc")["tasks"] if t["key"] == "field:T")
         self.assertEqual([i["declarations"] for i in topoi["items"]].count(["X.slice"]), 1)
+
+    def test_the_unbuilt_vault_is_not_a_snapshot(self) -> None:
+        links = self.blueprint / "links" / "T.jsonl"
+        rows = [json.loads(line) for line in links.read_text().splitlines()]
+        for row in rows:
+            row.pop("kind", None)
+            row.pop("status", None)
+        links.write_text("".join(json.dumps(row) + "\n" for row in rows))
+        with self.assertRaisesRegex(ValueError, "build the vault with lean-facts"):
+            fi.build_frontier(self.blueprint)
+
+    def test_a_marked_dag_article_with_an_unproved_proof_prerequisite_is_not_ready(self) -> None:
+        page = self.blueprint / "roadmap/T/hodge.md"
+        page.write_text(page.read_text() + "\n## Proof depends on\n\n- [Slice](slice.md)\n")
+        snapshot = fi.build_frontier(self.blueprint)
+        self.assertIn("T/hodge", snapshot["dag_nodes"])
+        self.assertNotIn("node:T/hodge", {item["key"] for item in snapshot["tasks"]})
 
     def test_the_command_writes_the_frontier(self) -> None:
         output = Path(self.tmp.name) / "build" / "frontier.json"

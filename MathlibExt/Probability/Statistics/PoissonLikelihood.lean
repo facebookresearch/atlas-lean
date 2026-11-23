@@ -28,7 +28,7 @@ For counts `k : ι → ℕ` with means `E : ι → ℝ` over a finite index type
   that joint law is `poissonLogLik E k`.
 
 These declarations are shared: the Poisson-random-field likelihood of
-`MathlibExt.Biology.PopulationGenetics.DistributionOfFitnessEffects` re-exports them, and the
+`Domains.Biology.PopulationGenetics.DistributionOfFitnessEffects` re-exports them, and the
 canonical Poisson GLM likelihood `MathlibExt.Probability.Statistics.GLM.poissonLogLik` is
 `poissonLogLik` at the means `exp ηᵢ`.
 -/
@@ -36,9 +36,26 @@ canonical Poisson GLM likelihood `MathlibExt.Probability.Statistics.GLM.poissonL
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Real
-open scoped NNReal
+open scoped NNReal Nat
 
 namespace MathlibExt.Probability.Statistics.PoissonLikelihood
+
+/-- The Poisson likelihood `e^{-μ} μ^o / (o!)` of an observed count `o` at mean `μ`. -/
+noncomputable def poissonLik (μ : ℝ) (o : ℕ) : ℝ := exp (-μ) * μ ^ o / (o ! : ℝ)
+
+/-- The likelihood is positive at a positive mean. -/
+theorem poissonLik_pos {μ : ℝ} (hμ : 0 < μ) (o : ℕ) : 0 < poissonLik μ o := by
+  unfold poissonLik
+  positivity
+
+/-- The likelihood recursion `P(o + 1 | μ) = P(o | μ) μ / (o + 1)`. -/
+theorem poissonLik_succ (μ : ℝ) (o : ℕ) :
+    poissonLik μ (o + 1) = poissonLik μ o * μ / (o + 1) := by
+  unfold poissonLik
+  rw [Nat.factorial_succ]
+  push_cast
+  field_simp
+  ring
 
 variable {ι : Type*} [Fintype ι]
 

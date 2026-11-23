@@ -40,8 +40,9 @@ open MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted
 
 @[expose] public section
 
-/-- A length-`3` pattern from its zero-based one-line values, e.g.
-`pattern3 ![0, 2, 1]` is the pattern `132`; bijectivity is checked by `decide`.
+/-- **Length-three pattern from one-line values.** Given a bijection $v$ from $\{0, 1, 2\}$ to
+itself, this is the permutation of $\{0, 1, 2\}$ that sends $i$ to $v(i)$. The values are listed
+zero-based, so $v = (0, 2, 1)$ gives the pattern $132$ in the usual one-based one-line notation.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1. -/
@@ -61,9 +62,10 @@ public instance {n k : ℕ} (σ : Equiv.Perm (Fin n)) (π : Fin k → Fin k) :
   unfold HasPattern
   infer_instance
 
-/-- `A_n(τ, ρ)`: the number of permutations of length `n` avoiding both classical
-patterns `τ` and `ρ` (containment is
-`MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted.HasPattern`).
+/-- **Number of permutations avoiding two patterns of length three.** For a natural number $n$
+and permutations $\tau$ and $\rho$ of $\{0, 1, 2\}$, $A_n(\tau, \rho)$ is the number of
+permutations of $\{0, 1, \dots, n - 1\}$ that contain neither $\tau$ nor $\rho$ as a classical
+pattern.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Theorem 1. -/
@@ -71,8 +73,9 @@ public def twoPatternAvoiderCount (n : ℕ) (τ ρ : Equiv.Perm (Fin 3)) : ℕ :
   (Finset.univ.filter fun σ : Equiv.Perm (Fin n) =>
     ¬ HasPattern σ τ ∧ ¬ HasPattern σ ρ).card
 
-/-- `A_3(123, 132) = 4`: of the six permutations of length `3`, only `123` and
-`132` are excluded.
+/-- **Permutations of length three avoiding $123$ and $132$.** Exactly $4$ permutations of
+$\{0, 1, 2\}$ avoid both patterns $123$ and $132$, that is, $A_3(123, 132) = 4$: of the six
+permutations of length $3$, only $123$ and $132$ themselves are excluded.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Theorem 1. -/
@@ -80,7 +83,9 @@ public theorem twoPatternAvoiderCount_three_123_132 :
     twoPatternAvoiderCount 3 (pattern3 ![0, 1, 2]) (pattern3 ![0, 2, 1]) = 4 := by
   decide +kernel
 
-/-- `A_4(132, 321) = 7 = 1 + binom(4, 2)`.
+/-- **Permutations of length four avoiding $132$ and $321$.** Exactly $7$ permutations of
+$\{0, 1, 2, 3\}$ avoid both patterns $132$ and $321$, that is,
+$A_4(132, 321) = 7 = 1 + \binom{4}{2}$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Theorem 1. -/
@@ -88,13 +93,16 @@ public theorem twoPatternAvoiderCount_four_132_321 :
     twoPatternAvoiderCount 4 (pattern3 ![0, 2, 1]) (pattern3 ![2, 1, 0]) = 7 := by
   decide +kernel
 
-/-- Simion and Schmidt's enumeration, as recalled by the source, for `n ≥ 1`:
-(a) `A_n(123,132) = A_n(123,213) = A_n(321,231) = A_n(321,312) = 2^{n-1}`;
-(b) `A_n(231,312) = A_n(132,213) = 2^{n-1}`;
-(c) `A_n(213,312) = A_n(132,231) = 2^{n-1}`;
-(d) `A_n(213,231) = A_n(132,312) = 2^{n-1}`;
-(e) `A_n(132,321) = A_n(123,231) = A_n(123,312) = A_n(213,321) = 1 + binom(n, 2)`;
-(f) `A_n(123,321)` is `n` for `n ≤ 2`, `4` for `n = 3, 4`, and `0` for `n ≥ 5`.
+/-- **Simion–Schmidt enumeration of permutations avoiding two patterns of length three.** For
+every $n \ge 1$, writing $A_n(\tau, \rho)$ for the number of permutations of
+$\{0, 1, \dots, n - 1\}$ avoiding both patterns $\tau$ and $\rho$:
+(a) $A_n(123, 132) = A_n(123, 213) = A_n(321, 231) = A_n(321, 312) = 2^{n-1}$;
+(b) $A_n(231, 312) = A_n(132, 213) = 2^{n-1}$;
+(c) $A_n(213, 312) = A_n(132, 231) = 2^{n-1}$;
+(d) $A_n(213, 231) = A_n(132, 312) = 2^{n-1}$;
+(e) $A_n(132, 321) = A_n(123, 231) = A_n(123, 312) = A_n(213, 321) = 1 + \binom{n}{2}$;
+(f) $A_n(123, 321)$ equals $n$ if $n \le 2$, equals $4$ if $n \in \{3, 4\}$, and equals $0$ if
+$n \ge 5$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Theorem 1
@@ -117,22 +125,28 @@ public theorem_wanted twoPatternAvoiderCount_length_three {n : ℕ} (hn : 1 ≤ 
     twoPatternAvoiderCount n (pattern3 ![0, 1, 2]) (pattern3 ![2, 1, 0]) =
       if n ≤ 2 then n else if n ≤ 4 then 4 else 0
 
-/-- `asc σ`: the number of ascents of `σ`, positions `i` with `i + 1 < n` and `σ i < σ (i + 1)`.
+/-- **Ascent number of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$,
+$\operatorname{asc}(\sigma)$ is the number of positions $i$ with $i + 1 < n$ and
+$\sigma(i) < \sigma(i + 1)$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`asc`, `des`). -/
 public def permAscents {n : ℕ} (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i : Fin n => ∃ h : i.val + 1 < n, σ i < σ ⟨i.val + 1, h⟩).card
 
-/-- `des σ`: the number of descents of `σ`, positions `i` with `i + 1 < n` and
-`σ (i + 1) < σ i`.
+/-- **Descent number of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$,
+$\operatorname{des}(\sigma)$ is the number of positions $i$ with $i + 1 < n$ and
+$\sigma(i + 1) < \sigma(i)$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`asc`, `des`). -/
 public def permDescents {n : ℕ} (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i : Fin n => ∃ h : i.val + 1 < n, σ ⟨i.val + 1, h⟩ < σ i).card
 
-/-- The identity of length `3` (`123`) has two ascents and no descents; `132` has one of each.
+/-- **Ascents and descents of $123$ and $132$.** Writing permutations of $\{0, 1, 2\}$ in
+one-based one-line notation, the identity $123$ has two ascents and no descents,
+$\operatorname{asc}(123) = 2$ and $\operatorname{des}(123) = 0$, and $132$ has one of each,
+$\operatorname{asc}(132) = \operatorname{des}(132) = 1$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`asc`, `des`). -/
@@ -141,8 +155,15 @@ public theorem permAscents_permDescents_small :
       permAscents (pattern3 ![0, 2, 1]) = 1 ∧ permDescents (pattern3 ![0, 2, 1]) = 1 := by
   decide +kernel
 
-/-- The joint generating function `∑_{n ≥ 0} ∑_{σ ∈ S_n(τ, ρ)} xⁿ p^{asc σ} q^{des σ}` in
-`(MvPolynomial (Fin 2) ℚ)⟦x⟧`, with `p = X 0`, `q = X 1` (the empty permutation contributes `1`).
+/-- **Ascent–descent generating function of a pair of patterns.** For permutations $\tau$ and
+$\rho$ of $\{0, 1, 2\}$, let $S_n(\tau, \rho)$ be the set of permutations of
+$\{0, 1, \dots, n-1\}$ that contain neither $\tau$ nor $\rho$ as a classical pattern. The
+ascent–descent generating function of $(\tau, \rho)$ is the formal power series
+$$\sum_{n \ge 0} \sum_{\sigma \in S_n(\tau, \rho)}
+x^n p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)}$$
+in $x$ with coefficients in the polynomial ring $\mathbb{Q}[p, q]$, where $\mathrm{asc}(\sigma)$
+and $\mathrm{des}(\sigma)$ are the numbers of ascents and descents of $\sigma$. The empty
+permutation ($n = 0$) contributes the constant term $1$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`asc`, `des`). -/
@@ -152,10 +173,13 @@ public noncomputable def ascDesGF (τ ρ : Equiv.Perm (Fin 3)) :
     ¬ HasPattern σ τ ∧ ¬ HasPattern σ ρ),
       MvPolynomial.X 0 ^ permAscents σ * MvPolynomial.X 1 ^ permDescents σ
 
-/-- Corollary 1, equation (5): over `S_n(123, 132)`,
-`∑ xⁿ p^{asc} q^{des} = (1 + x - 2qx + px² - qx² - pqx² + q²x²) / (1 - 2qx - pqx² + q²x²)`,
-stated after clearing the denominator. Only the `(asc, des)` identity of the corollary is
-stated (its `(dasc, ddes)` and `(pk, vl)` identities use statistics defined in the paper body).
+/-- **Ascents and descents over permutations avoiding $123$ and $132$.** Let
+$$G = \sum_{n \ge 0} \sum_{\sigma} x^n p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)},$$
+where $\sigma$ runs over the permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
+$123$ and $132$, and $\mathrm{asc}(\sigma)$ and $\mathrm{des}(\sigma)$ are the numbers of ascents
+and descents of $\sigma$; $G$ is a formal power series in $x$ with coefficients in
+$\mathbb{Q}[p, q]$. Then
+$$(1 - 2qx - pqx^2 + q^2x^2)\, G = 1 + x - 2qx + px^2 - qx^2 - pqx^2 + q^2x^2.$$
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Corollary 1
@@ -168,9 +192,13 @@ public theorem_wanted ascDesGF_123_132 :
       1 + PowerSeries.X - 2 * q * PowerSeries.X + p * PowerSeries.X ^ 2 -
         q * PowerSeries.X ^ 2 - p * q * PowerSeries.X ^ 2 + q ^ 2 * PowerSeries.X ^ 2
 
-/-- Corollary 2, equation (13): over `S_n(132, 321)`,
-`∑ xⁿ p^{asc} q^{des} = (1 + x - 3px - 2px² + 3p²x² + qx² + p²x³ - p³x³) / (1 - px)³`, stated after
-clearing the denominator; only the `(asc, des)` identity is stated.
+/-- **Ascents and descents over permutations avoiding $132$ and $321$.** Let
+$$G = \sum_{n \ge 0} \sum_{\sigma} x^n p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)},$$
+where $\sigma$ runs over the permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
+$132$ and $321$, and $\mathrm{asc}(\sigma)$ and $\mathrm{des}(\sigma)$ are the numbers of ascents
+and descents of $\sigma$; $G$ is a formal power series in $x$ with coefficients in
+$\mathbb{Q}[p, q]$. Then
+$$(1 - px)^3\, G = 1 + x - 3px - 2px^2 + 3p^2x^2 + qx^2 + p^2x^3 - p^3x^3.$$
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Corollary 2
@@ -183,10 +211,16 @@ public theorem_wanted ascDesGF_132_321 :
         3 * p ^ 2 * PowerSeries.X ^ 2 + q * PowerSeries.X ^ 2 + p ^ 2 * PowerSeries.X ^ 3 -
         p ^ 3 * PowerSeries.X ^ 3
 
-/-- Corollary 4, equation (30): over `S_n(213, 231)`,
-`∑ xⁿ p^{asc} q^{des} = (1 + x - px - qx) / (1 - px - qx)`, stated after clearing the
-denominator; only the `(asc, des)` identity is stated. (The record's lead-in names
-`S_n(213, 312)`, the sums `S_n(213, 231)`; both classes have this distribution.)
+/-- **Ascents and descents over permutations avoiding $213$ and $231$.** Let
+$$G = \sum_{n \ge 0} \sum_{\sigma} x^n p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)},$$
+where $\sigma$ runs over the permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
+$213$ and $231$, and $\mathrm{asc}(\sigma)$ and $\mathrm{des}(\sigma)$ are the numbers of ascents
+and descents of $\sigma$; $G$ is a formal power series in $x$ with coefficients in
+$\mathbb{Q}[p, q]$. Then
+$$(1 - px - qx)\, G = 1 + x - px - qx.$$
+
+The lead-in of the source's Corollary 4 names the permutations avoiding $213$ and $312$ instead;
+both classes have this distribution of ascents and descents.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Corollary 4
@@ -198,8 +232,11 @@ public theorem_wanted ascDesGF_213_231 :
         ascDesGF (pattern3 ![1, 0, 2]) (pattern3 ![1, 2, 0]) =
       1 + PowerSeries.X - p * PowerSeries.X - q * PowerSeries.X
 
-/-- The left-to-right and right-to-left extrema of `132` and `213`: `132` has
-`lrmax = rlmax = rlmin = 2` and `lrmin = 1`; `213` has `lrmax = lrmin = rlmin = 2` and `rlmax = 1`.
+/-- **Left-to-right and right-to-left extrema of $132$ and $213$.** Writing permutations of
+$\{0, 1, 2\}$ in one-based one-line notation, $132$ has $2$ left-to-right maxima, $2$
+right-to-left maxima, $1$ left-to-right minimum and $2$ right-to-left minima, and $213$ has $2$
+left-to-right maxima, $1$ right-to-left maximum, $2$ left-to-right minima and $2$ right-to-left
+minima.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1
@@ -215,9 +252,13 @@ public theorem permExtrema_small :
       permRightToLeftMinCount (pattern3 ![1, 0, 2]) = 2 := by
   decide +kernel
 
-/-- Double ascents, double descents, peaks and valleys on length `3`: `123` has one double
-ascent, `321` one double descent, `132` one peak and no valley, `213` one valley and no peak, and
-`132` has no double ascent or double descent.
+/-- **Double ascents, double descents, peaks and valleys in length three.** Writing permutations
+of $\{0, 1, 2\}$ in one-based one-line notation, and $\operatorname{dasc}$,
+$\operatorname{ddes}$, $\operatorname{pk}$ and $\operatorname{vl}$ for the numbers of double
+ascents, double descents, peaks and valleys, $\operatorname{dasc}(123) = 1$,
+$\operatorname{ddes}(321) = 1$, $\operatorname{dasc}(132) = \operatorname{ddes}(132) = 0$,
+$\operatorname{pk}(132) = 1$, $\operatorname{vl}(132) = 0$, $\operatorname{pk}(213) = 0$ and
+$\operatorname{vl}(213) = 1$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1
@@ -231,10 +272,21 @@ public theorem permDoubleAscents_peaks_small :
       permPeaks (pattern3 ![1, 0, 2]) = 0 ∧ permValleys (pattern3 ![1, 0, 2]) = 1 := by
   decide +kernel
 
-/-- The joint generating function `F_(τ,ρ)(x, p, q, u, v, s, t, y, z, ℓ, m) = ∑_{n ≥ 0}
-∑_{σ ∈ S_n(τ, ρ)} xⁿ p^{asc} q^{des} u^{lrmax} v^{rlmax} s^{lrmin} t^{rlmin} y^{dasc}
-z^{ddes} ℓ^{pk} m^{vl}` in `(MvPolynomial (Fin 10) ℚ)⟦x⟧`, with `p, q, u, v, s, t, y, z, ℓ, m`
-the variables `X 0, …, X 9` in that order (the empty permutation contributes `1`).
+/-- **Generating function of ten classical statistics over a pair of patterns.** For
+permutations $\tau$ and $\rho$ of $\{0, 1, 2\}$, let $S_n(\tau, \rho)$ be the set of permutations
+of $\{0, 1, \dots, n-1\}$ that contain neither $\tau$ nor $\rho$ as a classical pattern. The
+generating function $F_{(\tau, \rho)}$ is the formal power series
+$$F_{(\tau, \rho)} = \sum_{n \ge 0} \sum_{\sigma \in S_n(\tau, \rho)} x^n
+p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)} u^{\mathrm{lrmax}(\sigma)}
+v^{\mathrm{rlmax}(\sigma)} s^{\mathrm{lrmin}(\sigma)} t^{\mathrm{rlmin}(\sigma)}
+y^{\mathrm{dasc}(\sigma)} z^{\mathrm{ddes}(\sigma)} \ell^{\mathrm{pk}(\sigma)}
+m^{\mathrm{vl}(\sigma)}$$
+in $x$ with coefficients in the polynomial ring $\mathbb{Q}[p, q, u, v, s, t, y, z, \ell, m]$.
+Here $\mathrm{asc}$ and $\mathrm{des}$ count ascents and descents, $\mathrm{lrmax}$ and
+$\mathrm{rlmax}$ left-to-right and right-to-left maxima, $\mathrm{lrmin}$ and $\mathrm{rlmin}$
+left-to-right and right-to-left minima, $\mathrm{dasc}$ and $\mathrm{ddes}$ double ascents and
+double descents, and $\mathrm{pk}$ and $\mathrm{vl}$ peaks and valleys. The empty permutation
+($n = 0$) contributes the constant term $1$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1
@@ -251,8 +303,15 @@ public noncomputable def classicalStatGF (τ ρ : Equiv.Perm (Fin 3)) :
         MvPolynomial.X 6 ^ permDoubleAscents σ * MvPolynomial.X 7 ^ permDoubleDescents σ *
         MvPolynomial.X 8 ^ permPeaks σ * MvPolynomial.X 9 ^ permValleys σ
 
-/-- The joint generating function `∑_{n ≥ 0} ∑_{σ ∈ S_n(τ, ρ)} xⁿ y^{dasc σ} z^{ddes σ}` in
-`(MvPolynomial (Fin 2) ℚ)⟦x⟧`, with `y = X 0`, `z = X 1` (the empty permutation contributes `1`).
+/-- **Double ascent–double descent generating function of a pair of patterns.** For
+permutations $\tau$ and $\rho$ of $\{0, 1, 2\}$, let $S_n(\tau, \rho)$ be the set of permutations
+of $\{0, 1, \dots, n-1\}$ that contain neither $\tau$ nor $\rho$ as a classical pattern. The
+double ascent–double descent generating function of $(\tau, \rho)$ is the formal power series
+$$\sum_{n \ge 0} \sum_{\sigma \in S_n(\tau, \rho)}
+x^n y^{\mathrm{dasc}(\sigma)} z^{\mathrm{ddes}(\sigma)}$$
+in $x$ with coefficients in the polynomial ring $\mathbb{Q}[y, z]$, where $\mathrm{dasc}(\sigma)$
+and $\mathrm{ddes}(\sigma)$ are the numbers of double ascents and double descents of $\sigma$.
+The empty permutation ($n = 0$) contributes the constant term $1$.
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`dasc`, `ddes`). -/
@@ -262,8 +321,20 @@ public noncomputable def dascDdesGF (τ ρ : Equiv.Perm (Fin 3)) :
     ¬ HasPattern σ τ ∧ ¬ HasPattern σ ρ),
       MvPolynomial.X 0 ^ permDoubleAscents σ * MvPolynomial.X 1 ^ permDoubleDescents σ
 
-/-- Theorem 2, equation (1): over `S_n(123, 132)`, `F = A / (1 - ℓmpqsvx² - qsxz - qsvxz +
-q²s²vx²z²)` with the paper's numerator `A`, stated after clearing the denominator.
+/-- **Ten classical statistics over permutations avoiding $123$ and $132$.** Let $F$ be the
+joint generating function of the ten classical statistics over the permutations avoiding both
+patterns $123$ and $132$: a formal power series in $x$ over
+$\mathbb{Q}[p, q, u, v, s, t, y, z, \ell, m]$ in which $x$ marks the length and
+$p, q, u, v, s, t, y, z, \ell, m$ mark the numbers of ascents, descents, left-to-right maxima,
+right-to-left maxima, left-to-right minima, right-to-left minima, double ascents, double
+descents, peaks and valleys, respectively. Then
+$$
+(1 - \ell m p q s v x^2 - q s x z - q s v x z + q^2 s^2 v x^2 z^2)\, F = 1 +
+s x \bigl(t u v + p t^2 u^2 v x - q(\ell m p v x + z + v z)\bigr) +
+q^2 s^3 t u v^2 x^3 \bigl(\ell p u x (m - z) + z(-1 - m p t u x + z + p t u x z)\bigr) +
+q s^2 v x^2 \bigl(q z^2 + p t^2 u x \bigl(m(u + v) - u(1 + v) z\bigr) +
+t u \bigl(-z - v(-1 + \ell p (m - u) x + z)\bigr)\bigr).
+$$
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Theorem 2
@@ -289,8 +360,25 @@ public theorem_wanted classicalStatGF_123_132 :
         * (u + v) - u * (1 + v) * z) + t * u * (-z - v * (-1 + ℓ * p * (m - u) * x + z)))
 
 set_option maxHeartbeats 400000 in
-/-- Theorem 3, equation (8): over `S_n(132, 321)`, `F = A / ((1 - ptxy)(1 - puxy)(1 - ptuxy))`
-with the paper's numerator `A` (expanded polynomial), stated after clearing the denominator.
+/-- **Ten classical statistics over permutations avoiding $132$ and $321$.** Let $F$ be the
+joint generating function of the ten classical statistics over the permutations avoiding both
+patterns $132$ and $321$: a formal power series in $x$ over
+$\mathbb{Q}[p, q, u, v, s, t, y, z, \ell, m]$ in which $x$ marks the length and
+$p, q, u, v, s, t, y, z, \ell, m$ mark the numbers of ascents, descents, left-to-right maxima,
+right-to-left maxima, left-to-right minima, right-to-left minima, double ascents, double
+descents, peaks and valleys, respectively. Then $(1 - ptxy)(1 - puxy)(1 - ptuxy)\, F$ equals
+$$
+1 + stuvx + pst^2u^2vx^2 + qs^2tuv^2x^2 + mpqs^2t^2u^2vx^3 + mpqs^2t^2uv^2x^3 +
+\ell pqs^2tu^2v^2x^3 + \ell mp^2qs^2t^2u^3vx^4 + \ell mp^2qs^2t^2u^2v^2x^4 - ptxy - puxy -
+pqs^2tu^2v^2x^3y - pst^2uvx^2y - pstu^2vx^2y - pst^2u^2vx^2y - p^2st^3u^2vx^3y -
+p^2st^2u^3vx^3y - pqs^2t^2uv^2x^3y - ptuxy - pqs^2t^2u^2v^2x^3y - mp^2qs^2t^2u^3vx^4y -
+\ell p^2qs^2t^2u^2v^2x^4y - mp^2qs^2t^2u^2v^2x^4y - mp^2qs^2t^3u^2v^2x^4y -
+\ell p^2qs^2t^2u^3v^2x^4y - \ell mp^3qs^2t^3u^3v^2x^5y + p^2tux^2y^2 + p^2t^2ux^2y^2 +
+p^2tu^2x^2y^2 + p^2st^2u^2vx^3y^2 + p^2st^3u^2vx^3y^2 + p^2st^2u^3vx^3y^2 +
+p^3st^3u^3vx^4y^2 + p^2qs^2t^2u^2v^2x^4y^2 + p^2qs^2t^3u^2v^2x^4y^2 +
+p^2qs^2t^2u^3v^2x^4y^2 + \ell p^3qs^2t^3u^3v^2x^5y^2 + mp^3qs^2t^3u^3v^2x^5y^2 -
+p^3t^2u^2x^3y^3 - p^3st^3u^3vx^4y^3 - p^3qs^2t^3u^3v^2x^5y^3.
+$$
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Theorem 3
@@ -331,9 +419,23 @@ public theorem_wanted classicalStatGF_132_321 :
         - p ^ 3 * t ^ 2 * u ^ 2 * x ^ 3 * y ^ 3 - p ^ 3 * s * t ^ 3 * u ^ 3 * v * x ^ 4 * y ^ 3
         - p ^ 3 * q * s ^ 2 * t ^ 3 * u ^ 3 * v ^ 2 * x ^ 5 * y ^ 3
 
-/-- Theorem 5, equation (25): over `S_n(213, 231)`, `F = A / B` with the paper's `A` and
-`B = (1 - ptuxy)(1 - qsvxz)((1 - ptxy)(1 - qvxz) - ℓmpqtvx²)`, stated after clearing the
-denominator.
+/-- **Ten classical statistics over permutations avoiding $213$ and $231$.** Let $F$ be the
+joint generating function of the ten classical statistics over the permutations avoiding both
+patterns $213$ and $231$: a formal power series in $x$ over
+$\mathbb{Q}[p, q, u, v, s, t, y, z, \ell, m]$ in which $x$ marks the length and
+$p, q, u, v, s, t, y, z, \ell, m$ mark the numbers of ascents, descents, left-to-right maxima,
+right-to-left maxima, left-to-right minima, right-to-left minima, double ascents, double
+descents, peaks and valleys, respectively. Then
+$(1 - ptuxy)(1 - qsvxz)\bigl((1 - ptxy)(1 - qvxz) - \ell mpqtvx^2\bigr)\, F$ equals
+$$
+svx\Bigl(qz(qvxz - 1) + p^2t^3u^2x^2y\bigl(\ell(m - 1)qvx - (y - 1)(qvxz - 1)\bigr) +
+t\bigl(u(1 - qvxz)(1 + pqxyz) + pqxz(\ell mqvx + y - qvxyz)\bigr) -
+pt^2ux\bigl(-\ell quvx - u(y - 1)(qvxz - 1) + (1 + pqxyz)(\ell mqvx + y - qvxyz)\bigr)\Bigr) -
+qs^2tuv^2x^2\Bigl(mptx(ptuxy - 1)\bigl(1 + (\ell - 1)qvxz\bigr) -
+(ptxy - 1)\bigl((1 - z)(qvxz - 1) +
+ptux\bigl(z(1 + \ell qvx - qvxz) + y(z - 1)(qvxz - 1)\bigr)\bigr)\Bigr) +
+(ptuxy - 1)\bigl(\ell mpqtvx^2 - (1 - ptxy)(1 - qvxz)\bigr).
+$$
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Theorem 5
@@ -363,13 +465,19 @@ public theorem_wanted classicalStatGF_213_231 :
         * (q * v * x * z - 1)))) + (p * t * u * x * y - 1) * (ℓ * m * p * q * t * v * x ^ 2 - (1 - p
         * t * x * y) * (1 - q * v * x * z))
 
-/-- Corollary 3, equation (23): over `S_n(231, 312)`,
-`∑ xⁿ y^{dasc} z^{ddes} = (1 + x²(1 + x)(1 - y)(1 - z) + x(1 - y - z)) /
-(1 - x(y + z) - x²(1 - yz))`,
-stated after clearing the denominator. Only (23) is stated: the corollary's `(asc, des)` identity
-(22) and `(pk, vl)` identity (24) are false as printed (at `p = 2`, `q = 1` the `x⁵` coefficient of
-(22) is `75`, the true value `81`; at `ℓ = 2`, `m = 1` the `x⁵` coefficient of (24) is `28`, the
-true value `29`).
+/-- **Double ascents and double descents over permutations avoiding $231$ and $312$.** Let
+$$H = \sum_{n \ge 0} \sum_{\sigma} x^n y^{\mathrm{dasc}(\sigma)} z^{\mathrm{ddes}(\sigma)},$$
+where $\sigma$ runs over the permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
+$231$ and $312$, and $\mathrm{dasc}(\sigma)$ and $\mathrm{ddes}(\sigma)$ are the numbers of
+double ascents and double descents of $\sigma$; $H$ is a formal power series in $x$ with
+coefficients in $\mathbb{Q}[y, z]$. Then
+$$(1 - x(y + z) - x^2(1 - yz))\, H = 1 + x^2(1 + x)(1 - y)(1 - z) + x(1 - y - z).$$
+
+The source's Corollary 3 also gives an identity (22) for ascents and descents, marked by $p$
+and $q$, and an identity (24) for peaks and valleys, marked by $\ell$ and $m$, over this class;
+both are false as printed (at $p = 2$, $q = 1$ the coefficient of $x^5$ in (22) is $75$, the true
+value $81$; at $\ell = 2$, $m = 1$ the coefficient of $x^5$ in (24) is $28$, the true value
+$29$).
 
 Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
 Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Corollary 3

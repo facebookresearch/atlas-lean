@@ -1,0 +1,9 @@
+# GitHub supports the bounded concurrency queue, but the pinned actionlint
+# version does not recognize it yet. Keep every other check enabled.
+paths:
+  .github/workflows/blueprint-pages.yml:
+    ignore:
+      - '^unexpected key "queue" for "concurrency" section\.'
+  .github/workflows/claim.yml:
+    ignore:
+      - '^unexpected key "queue" for "concurrency" section\.'

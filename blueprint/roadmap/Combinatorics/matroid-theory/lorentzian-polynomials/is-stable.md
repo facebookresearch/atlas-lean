@@ -6,5 +6,5 @@ half plane $\mathbb{H} = \{z \in \mathbb{C} : \operatorname{Im} z > 0\}$.
 
 ## Background
 
-- Stable polynomials:
+- [Stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-stable.md):
   the same notion for polynomials with complex coefficients, and its closure properties.

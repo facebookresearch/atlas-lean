@@ -205,13 +205,6 @@ private lemma aux_abs_tan_le_one (x : ℝ) (hx : |x| ≤ Real.pi / 4) :
     exact (Real.strictMonoOn_tan.le_iff_le hmem hmem2).mpr hx2
   exact abs_le.mpr ⟨hlo, hhi⟩
 
-private lemma aux_oddHarmonic_nonneg (n : ℕ) : 0 ≤ chapter9OddHarmonic n := by
-  change 0 ≤ ∑ j ∈ Finset.range n, 1 / ((((2 * j + 1 : ℕ))) : ℝ)
-  apply Finset.sum_nonneg
-  intro i _
-  apply one_div_nonneg.mpr
-  exact le_of_lt (Nat.cast_pos.mpr (by omega))
-
 private lemma aux_sqrt_self_le (n : ℕ) : Real.sqrt ((n : ℝ)) ≤ (n : ℝ) := by
   rcases Nat.eq_zero_or_pos n with rfl | hpos
   · simp
@@ -303,7 +296,7 @@ private lemma aux_left_norm_le (x : ℝ) (j : ℕ) (hx : |x| ≤ Real.pi / 4) :
     have hH : chapter9OddHarmonic (j + 1)
         ≤ 2 * Real.sqrt ((((j + 1 : ℕ))) : ℝ) :=
       aux_oddHarmonic_le (j + 1)
-    have hHnn : 0 ≤ chapter9OddHarmonic (j + 1) := aux_oddHarmonic_nonneg (j + 1)
+    have hHnn : 0 ≤ chapter9OddHarmonic (j + 1) := Entry8Arcsin.oddHarmonic_nonneg (j + 1)
     have htpos : (0 : ℝ) < ((((j + 1 : ℕ))) : ℝ) :=
       Nat.cast_pos.mpr (by omega)
     have h2kcast : ((((2 * (j + 1) : ℕ))) : ℝ) = 2 * ((((j + 1 : ℕ))) : ℝ) := by
@@ -713,7 +706,7 @@ private lemma aux_deriv_norm_le (b x : ℝ) (j : ℕ) (hb0 : 0 ≤ b)
   have htan_le := aux_abs_tan_le_tan_b b x hb2 hx
   have hcos_le := aux_cos_inv_sq_le b x hb2 hx
   have hdiv_le := aux_oddHarmonic_div_le j
-  have hHnn := aux_oddHarmonic_nonneg (j + 1)
+  have hHnn := Entry8Arcsin.oddHarmonic_nonneg (j + 1)
   have hNpos : (0 : ℝ) < ((((2 * (j + 1) : ℕ))) : ℝ) :=
     Nat.cast_pos.mpr (by omega)
   have hmem_x : x ∈ Set.Ioo (-(Real.pi / 2)) (Real.pi / 2) := by
@@ -2316,9 +2309,16 @@ private lemma aux_RHS_eq_integral (x : ℝ) (hx : |x| ≤ Real.pi / 4) :
   exact tendsto_nhds_unique' hne (aux_Fr_tendsto_RHS x hx)
     (aux_Fr_tendsto_integral x hx)
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
+/-- **A series in even powers of $\tan x$ with odd harmonic numbers.** Let $x$ be a real number
+with $|x| \le \pi/4$. Let $h_k = \sum_{j=0}^{k-1} \frac{1}{2j+1}$, let
+$N(x) = \frac{x^2}{2} \log|\tan x|$ for $x \ne 0$ and $N(0) = 0$, and let
+$\lambda(3) = \sum_{j=0}^{\infty} (2j+1)^{-3}$. Then the series $\sum_{j=0}^{\infty} (2j+1)^{-3}$,
+$A(x) = \sum_{k=1}^{\infty} (-1)^{k-1} \frac{h_k \tan^{2k} x}{(2k)^2}$,
+$B(x) = \sum_{j=0}^{\infty} \frac{\sin((4j+2)x)}{(2j+1)^2}$ and
+$E(x) = \sum_{j=0}^{\infty} \frac{\cos((4j+2)x)}{(2j+1)^3}$ are all summable, and
+$A(x) = N(x) + x B(x) + \frac{1}{2} E(x) - \frac{1}{2} \lambda(3)$.
 
-Proves `Wanted` entry `ramanujan_part1_ch9_entry21_piseries2`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
 -/
 theorem ramanujan_part1_ch9_entry21_piseries2 (x : ℝ) (hx : |x| ≤ Real.pi / 4) :
     Summable chapter9Chi3Term ∧

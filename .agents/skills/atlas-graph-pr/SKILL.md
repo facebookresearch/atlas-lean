@@ -1,97 +1,19 @@
 ---
 name: atlas-graph-pr
-description: >-
-  Make a pull request that changes the ATLAS graph (blueprint/roadmap/,
-  blueprint/links/, scripts/taxonomy.json): expand a node marked unexpanded,
-  add or move pages, edit statements, or add informal edges. Use for any
-  task:dag-work issue, and whenever a PR touches the wiki.
+description: Prepare an ATLAS wiki change, including a planned node expansion, page or card moves, and changes to annotations, links, or taxonomy.
 ---
 
-# Make a graph PR
+# Prepare an ATLAS graph PR
 
-The rules are the [graph rules](../../../docs/BLUEPRINT.md#graph-rules), each
-with its reason, and reviewers apply them from
-[REVIEWING.md](../../../REVIEWING.md#wiki-and-graph-prs). Read both before you
-change anything. This skill only gives the order of work.
+This skill is for authors. When reviewing a PR, take `REVIEWING.md` and the
+applicable graph rules from the PR's base branch, not the checkout under review.
 
-## 1. Start from the issue
+1. Read the [graph rules](../../../docs/BLUEPRINT.md#graph-rules), [contribution requirements](../../../CONTRIBUTING.md#graph-prs), and [review rubric](../../../REVIEWING.md#wiki-and-graph-prs). Use those rules if an older source-review issue gives conflicting dependency or annotation instructions. Start from current upstream `main` and search the vault and pinned Mathlib before adding a result.
+2. Distinguish the two ways to work on a planned article marked `not_ready`:
+   - **Replace it with an expansion:** follow [Expanding a node](../../../docs/BLUEPRINT.md#expanding-a-node). Check the cited source and the replacements' coverage. Before removing the old page and annotation, account for incoming links, including informal ones, and keep each prerequisite its replacements still need.
+   - **Complete an imported page in place:** follow [the mathgraph import policy](../../../docs/mathgraph-import.md#policy). Keep the page and its article ID. Link each verified prerequisite under `## Depends on` or `## Proof depends on` and remove its `pending` entry in the same edit. Remove `## Expansion` and `not_ready` with the last entry. Leave the import map's historical snapshot unchanged.
 
-- A graph PR works one issue. For DAG work, that is a `task:dag-work` issue
-  naming one node marked `"org.atlas-wiki": {"unexpanded": true}` in its
-  annotation. Comment `/claim` on it before you start, as
-  [atlas-solve-issue](../atlas-solve-issue/SKILL.md) describes.
-- Branch from the latest `main` and keep the PR to that issue.
-
-## 2. Find what exists
-
-Before adding a page or a statement, search for it. A duplicate is the most
-common review finding.
-
-```sh
-autoform search blueprint "<words from the statement>"
-git grep -n "<a likely Lean name>" -- MathlibExt CSLibExt PhyslibExt WantedExt
-```
-
-Search pinned Mathlib too. A result Mathlib already has gets no new
-statement; link the existing page instead.
-
-## 3. Make the change
-
-**Expanding a node (DAG work):**
-
-1. Read the node's page, its sources, and its parent folder page. Decide on
-   children that each fit one PR of work. Leaf statements are usually a lemma
-   or a definition, a few hundred lines of Lean at most.
-2. Write each low-level child as a `theorem_wanted` (a result) or
-   `def_wanted` (a definition) in the matching `WantedExt` module, with a
-   docstring. The docstring's first sentence is the page's statement. Add a
-   `Source:` line for the reference. The module must import
-   `Batteries.Util.ProofWanted` directly ([WantedExt/README.md](../../../WantedExt/README.md)).
-3. Run `python scripts/sync_wiki.py declarations` to write the children's
-   pages, then edit their prose. Never hand-write a page for a declaration.
-4. Write each child that is still high-level as a new page with no
-   declaration, and give its annotation the `unexpanded` marker. Its page says
-   what it covers and which sources it follows.
-5. Remove the marker from the node you expanded. It becomes the folder page
-   that lists its children.
-6. Give the new marked nodes their prerequisites with their own
-   `## Depends on` (rule 10), which counts toward readiness. The Lean orders
-   the wanted statements. Use `## Informally uses` only for what a source
-   cites but the mathematics doesn't need.
-
-**Other graph edits:**
-
-- Moving a page or folder: `autoform move blueprint OLD NEW`, plus the
-  `scripts/taxonomy.json` placement in the same PR.
-- A statement on a page must match its declaration, hypotheses and
-  conventions included (`x / 0 = 0`, truncated subtraction, `[NeZero q]`).
-  Fix the Lean docstring on `main` too (rule 7).
-
-On a page tied to a declaration, never commit `## Depends on` or `## Proof
-depends on`, and never commit `site/`, `site-src/` or the dependency dump. The
-build writes them.
-
-## 4. Check locally
-
-```sh
-python scripts/check_graph_rules.py --base origin/main
-python -m unittest scripts.test_check_graph_rules
-autoform check blueprint
-lake build WantedExt        # when you added wanted statements
-scripts/check.sh preflight
-```
-
-Install Autoform as [docs/BLUEPRINT.md](../../../docs/BLUEPRINT.md) shows, at the
-commit in `.github/autoform-ref`.
-
-## 5. Open the PR
-
-- Title: what changes in the graph, for example "Expand Hodge theory into its
-  first results".
-- Body: `Closes #<issue>`, the nodes added or changed, and for an expansion,
-  why these children and this granularity.
-- Keep it under 3,000 files. Split a large change by subject.
-- A graph PR needs a code owner's approval as well as Codex's. Reply to every
-  Codex finding: fix it and push, or explain with evidence why it does not
-  apply. Then follow the PR through to merge, as
-  [atlas-solve-issue](../atlas-solve-issue/SKILL.md) describes.
+   Never promote a leaf to a wanted declaration just to make it show up as ready.
+3. For moves follow [Moving a page](../../../docs/BLUEPRINT.md#moving-a-page); for card edits use [the card guide](../../../docs/cards.md). Use the [declarations sync](../../../docs/BLUEPRINT.md#maintaining-articles) for new documented Lean declarations, and preserve existing IDs as described in [What the tools own](../../../docs/BLUEPRINT.md#what-the-tools-own). Keep unrelated sync changes and generated build output out of the PR.
+4. With the reviewed Autoform pin and [documented checkout](../../../docs/BLUEPRINT.md#local-environment-and-tests), run `autoform check blueprint --lean-root .` on authored changes and inspect its warnings as well as failures. Run the relevant card checks or focused Lean tests when those inputs change. If you run `lean-facts` to verify built dependencies or readiness, use a clean disposable worktree; do not commit its output.
+5. Explain the scope, source, and verification in the PR. Follow the graph PR requirements for the issue reference, code-owner approval, and Codex review. Describe which checks you actually ran and any you could not run.

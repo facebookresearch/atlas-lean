@@ -1,31 +1,10 @@
 # Agent guidance for ATLAS
 
-User instructions override this file.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and [REVIEWING.md](REVIEWING.md) before making a PR. [README.md](README.md) maps the libraries. [Graph rules](docs/BLUEPRINT.md#graph-rules) are the source of truth for changes to the blueprint; the same document covers setup and verification.
 
-- [README.md](README.md) maps the libraries: `MathlibExt`, `CSLibExt`,
-  `PhyslibExt`, `WantedExt` and their test libraries.
-  [REVIEWING.md](REVIEWING.md) is the rubric every PR is reviewed against,
-  and [CONTRIBUTING.md](CONTRIBUTING.md) covers copyright headers and the CLA.
-- The ATLAS wiki under `blueprint/` is the graph of the library's plan.
-  [docs/BLUEPRINT.md](docs/BLUEPRINT.md) gives its
-  [rules](docs/BLUEPRINT.md#graph-rules) and explains how to build and sync it.
-- Work is tracked as GitHub issues: `task:formalize`, one per field of the
-  taxonomy with ready results (grouped by Lean module), and `task:dag-work`,
-  one per node to expand.
-
-## Skills
-
-| Skill | Use it to |
+| Skill | Use it for |
 | --- | --- |
-| [atlas-solve-issue](.agents/skills/atlas-solve-issue/SKILL.md) | pick up a task issue, take it, and carry its PR through review to merge |
-| [atlas-graph-pr](.agents/skills/atlas-graph-pr/SKILL.md) | change the graph, including expanding a node marked unexpanded |
+| [atlas-graph-pr](.agents/skills/atlas-graph-pr/SKILL.md) | Expanding a planned node, editing or moving graph pages, or changing annotations or links |
+| [atlas-solve-issue](.agents/skills/atlas-solve-issue/SKILL.md) | Picking up an issue, coordinating work, and preparing a PR for review |
 
-`.claude/skills` links to the same folder for Claude Code.
-
-## Before you open a PR
-
-- Run `scripts/check.sh` from the repository root. If you changed
-  `blueprint/`, also run `python scripts/check_graph_rules.py --base origin/main`.
-- Reference the issue in the body: `Part of #<issue>` for a field issue (one
-  module of its list per PR), `Closes #<issue>` for a node to expand.
-- Address every Codex finding before you ask for human review.
+Read the relevant file directly if your agent does not discover repository skills. If a source-review issue conflicts with the graph rules, follow the rules and call out the discrepancy in the PR.

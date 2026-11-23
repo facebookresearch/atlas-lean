@@ -3,7 +3,6 @@
 
     python scripts/frontier_issues.py frontier blueprint --output build/frontier.json
     python scripts/frontier_issues.py sync build/frontier.json --repo OWNER/NAME [--apply]
-    python scripts/frontier_issues.py claim --event "$GITHUB_EVENT_PATH" --repo OWNER/NAME
 
 `frontier` runs in the wiki build, after `sync_wiki.py lean-facts` has added
 the Lean's facts, and needs Autoform. It writes the tasks that can start now:
@@ -13,9 +12,8 @@ the Lean's facts, and needs Autoform. It writes the tasks that can start now:
   proof can start, by Autoform's own readiness rule (the derived `can_state`
   and `can_prove` states behind `autoform work list`). The field's issue
   lists them all, grouped by Lean module;
-- `dag-work`: an article whose annotation carries
-  `"org.atlas-wiki": {"unexpanded": true}`, a node still to be broken down
-  (rule 12 of the graph rules in docs/BLUEPRINT.md).
+- `dag-work`: a planned article with Autoform's `not_ready` flag and no
+  unresolved statement or proof prerequisites (graph rule 12).
 
 `sync` needs only the standard library and a token in GITHUB_TOKEN. It opens
 an issue for each task without one, updates an issue whose task changed, and
@@ -25,12 +23,6 @@ It never reopens an issue a person closed as not planned, and it keeps the
 labels people added while it owns the kind and `area:` labels. Without --apply it only reports the plan. Writes are
 paced and capped per run (--max-writes), so a large backlog opens over several
 runs within GitHub's limits on content creation.
-
-`claim` answers a `/claim` or `/unclaim` comment on a task issue: `/claim`
-assigns the commenter when nobody holds the task, and `/unclaim` releases it.
-A maintainer may `/unclaim @someone` to free a task held by someone else.
-`sync` releases a claim held for more than seven days with no open pull
-request that references the issue, as an AutoformBot claim lapses.
 """
 
 from __future__ import annotations
@@ -47,19 +39,15 @@ import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
 
-SCHEMA = "atlas-frontier/v1"
-OWN = "org.atlas-wiki"
-UNEXPANDED = "unexpanded"
+SCHEMA = "atlas-frontier/v2"
 KINDS = {"formalize": "task:formalize", "dag-work": "task:dag-work"}
 GRAPH_LABEL = "math graph"
 TASK_MARK = re.compile(r"<!-- atlas-task: (\S+) -->")
 NODE_MARK = re.compile(r"<!-- atlas-node: (\S+) -->")
+BODY_END = "<!-- atlas-generated-end -->"
 # Added when the sync closes an unfinished task that left the frontier, so it can reopen the issue when the task
 # is ready again; an issue a person closed as not planned has no such line and stays closed.
 OFF_FRONTIER = "<!-- atlas-closed: off-frontier -->"
-# A claim lapses after this many days without an open pull request that references the issue, as an
-# AutoformBot claim lapses after seven days.
-CLAIM_DAYS = 7
 STATEMENT_LIMIT = 1500
 DEPENDENCY_LIMIT = 20
 # Results listed in one field issue; the rest are on the field's page. Keeps a body far below GitHub's limit.
@@ -94,21 +82,6 @@ def statement_of(page: Path) -> str:
     return text
 
 
-def unexpanded_pages(blueprint: Path) -> set[Path]:
-    """The pages whose annotation marks them as nodes still to expand."""
-    marked = set()
-    for source in sorted((blueprint / "links").rglob("*.jsonl")):
-        for line in source.read_text(encoding="utf-8").splitlines():
-            if not line.strip():
-                continue
-            annotation = json.loads(line)
-            own = annotation.get("extensions", {}).get(OWN, {})
-            if isinstance(own, dict) and own.get(UNEXPANDED) is True:
-                for subject in annotation.get("subject", []):
-                    marked.add((source.parent / subject["uri"]).resolve())
-    return marked
-
-
 def module_folders(blueprint: Path) -> set[Path]:
     """The folders whose page is a Lean module's page (`navigation: module` in its annotation): generate_wiki
     lays out one per module, and splits a long one into transparent parts below it."""
@@ -127,13 +100,16 @@ def module_folders(blueprint: Path) -> set[Path]:
     return folders
 
 
-def taxonomy_fields(path: Path) -> dict[str, set[str]] | None:
-    """Each subject's field slugs from scripts/taxonomy.json, or None without it."""
+def taxonomy_fields(path: Path) -> dict[str, set[str]]:
+    """Read field boundaries; a bad taxonomy must not look like a new frontier."""
     try:
         subjects = json.loads(path.read_text(encoding="utf-8"))["subjects"]
-    except (OSError, ValueError, KeyError):
-        return None
-    return {name: {field["slug"] for field in subject.get("fields", [])} for name, subject in subjects.items()}
+        result = {name: {entry["slug"] for entry in subject["fields"]} for name, subject in subjects.items()}
+        if not result or any(not isinstance(slug, str) or not slug for fields in result.values() for slug in fields):
+            raise ValueError("invalid subject or field slugs")
+        return result
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        raise ValueError(f"cannot read frontier taxonomy: {error}") from error
 
 
 def page_title(page: Path) -> str | None:
@@ -146,14 +122,16 @@ def page_title(page: Path) -> str | None:
     return None
 
 
-def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
+def build_frontier(blueprint: Path, commit: str | None = None, repo: str | None = None) -> dict:
     from autoform_cli.runtime import load_runtime_graph  # the wiki build installs the pinned Autoform
 
     blueprint = blueprint.resolve()
     repository = blueprint.parent
     runtime = load_runtime_graph(blueprint)
     nodes = {node.id: node for node in runtime.nodes}
-    marked = unexpanded_pages(blueprint)
+    resolved_leaves = sum(bool(node.lean_targets and node.dispatchable) for node in runtime.nodes)
+    if not resolved_leaves:
+        raise ValueError("no resolved Lean leaves: build the vault with lean-facts before computing the frontier")
 
     def page(node) -> Path:
         path = Path(node.article_path)
@@ -169,6 +147,8 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
                 dependents[dependency] = dependents.get(dependency, 0) + 1
 
     tasks, finished = [], []
+    missing_ids = 0
+    dag_nodes: list[str] = []
     for node in runtime.nodes:
         declarations = [target.declaration for target in node.lean_targets]
         key = task_key(node.id, declarations)
@@ -176,11 +156,18 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
             # Both keys: a proved result often has a new name, so its issue is found by its page too.
             finished += [key, f"node:{node.id}"]
             continue
-        if page(node).resolve() in marked:
+        if node.dispatchable and not node.article_id:
+            missing_ids += 1
+        if (node.assertions.not_ready and not node.formalizable and not declarations
+                and not node.catalog and page(node).name != "README.md"):
+            dag_nodes.append(node.id)
+            if node.status.waiting_on:
+                continue
             kind, phase = "dag-work", None
         elif (
             node.dispatchable
             and not node.assertions.not_ready
+            and declarations
             and not node.status.waiting_on
         ):
             kind, phase = "formalize", "proof" if node.status.stated else "statement"
@@ -232,7 +219,7 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
         if len(parts) < 2:
             return roadmap
         subject = roadmap / parts[0]
-        if len(parts) >= 3 and (fields is None or parts[1] in fields.get(parts[0], ())):
+        if len(parts) >= 3 and parts[1] in fields.get(parts[0], ()):
             return subject / parts[1]
         return subject
 
@@ -240,12 +227,16 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
         return folder.relative_to(roadmap).as_posix() if folder != roadmap else "."
 
     groups: dict[Path, list[dict]] = {}
+    module_titles: dict[Path, str] = {}
     for task in tasks:
         if task["kind"] == "formalize":
             path = (repository / task["page"]).resolve()
             folder = module_of(path)
-            task["module"] = page_title(folder / "README.md") or folder.name
-            task["module_page"] = (folder / "README.md").relative_to(repository).as_posix()
+            readme = folder / "README.md"
+            if folder not in module_titles:
+                module_titles[folder] = page_title(readme) or folder.name
+            task["module"] = module_titles[folder]
+            task["module_page"] = readme.relative_to(repository).as_posix() if readme.is_file() else task["page"]
             groups.setdefault(field_of(path), []).append(task)
     unfinished = {
         field_of(page(node).resolve())
@@ -288,7 +279,11 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
     return {
         "schema": SCHEMA,
         "commit": commit,
+        "repo": repo,
         "source_revision": runtime.source_revision,
+        "resolved_leaves": resolved_leaves,
+        "missing_ids": missing_ids,
+        "dag_nodes": sorted(dag_nodes),
         "tasks": grouped,
         "finished": sorted(set(finished)),
     }
@@ -341,7 +336,7 @@ def issue_body(task: dict, repo: str) -> str:
     items = task.get("items") or []
     if items:
         modules = len({item.get("module_page") for item in items})
-        lines += [f"Ready now: {len(items)} result(s) in {modules} module(s), each with every prerequisite finished.", ""]
+        lines += [f"Ready now: {len(items)} result(s) in {modules} module(s), with prerequisites satisfied for the listed phase.", ""]
         current = None
         for item in items[:ITEM_LIMIT]:
             if item.get("module_page") != current:
@@ -354,7 +349,7 @@ def issue_body(task: dict, repo: str) -> str:
             lines.append(f"- [ ] {verb} [{item['title']}]({blob}{urllib.parse.quote(item['page'])})" + (f" ({lean})" if lean else ""))
         if len(items) > ITEM_LIMIT:
             rest = items[ITEM_LIMIT:]
-            lines += ["", f"… and {len(rest)} more in {len({item.get('module_page') for item in rest})} module(s), listed on the field's page."]
+            lines += ["", f"… and {len(rest)} more in {len({item.get('module_page') for item in rest})} module(s). See the `blueprint-frontier` artifact from the Blueprint Pages run for the complete list."]
         lines.append("")
     lines.append(f"- **Page:** [`{task['page']}`]({blob}{urllib.parse.quote(task['page'])})")
     if task["declarations"]:
@@ -383,9 +378,9 @@ def issue_body(task: dict, repo: str) -> str:
         ]
     elif task["kind"] == "dag-work":
         lines += [
-            "- the node's `unexpanded` marker is gone, and its children are in the graph: `theorem_wanted` or",
-            "  `def_wanted` statements in `WantedExt` for leaves, marked nodes for the rest (graph rules 12-13);",
-            "- `scripts/check_graph_rules.py` and the `build the wiki` job pass, and a code owner approved the PR.",
+            "- replace the node and its annotation, repoint incoming links, and preserve the prerequisites",
+            "  each replacement still needs. Keep blocked leaves planned (graph rules 10–13);",
+            "- the wiki build passes and the PR meets the review requirements in rule 16.",
         ]
     elif task["phase"] == "proof":
         lines += [
@@ -401,13 +396,20 @@ def issue_body(task: dict, repo: str) -> str:
         ]
     lines += [
         "",
-        f"How to work it: [atlas-solve-issue]({blob}{SKILL}). Comment `/claim` before you start (`/unclaim`",
-        "if you stop), and reference this issue in the PR (`Closes #<this issue>` when it finishes the list).",
+        f"How to work it: [atlas-solve-issue]({blob}{SKILL}). Coordinate before starting. Use a non-closing",
+        "reference (`Part of #…`) for a field issue; report completion in the PR and let sync close the issue.",
         "",
         "<sub>Opened from the graph on `main` by `scripts/frontier_issues.py`. It is updated while the",
         "task is on the frontier and closed when its field or node is finished or leaves it.</sub>",
+        BODY_END,
     ]
-    return "\n".join(lines) + "\n"
+    # Strip reserved markers from graph-derived prose before adding machine-readable headers.
+    rendered = "\n".join(lines[2:-1]).replace("<!-- atlas-", "&lt;!-- atlas-")
+    # Only modules visible in this issue can be reserved through the issue.
+    modules = sorted({item["module_page"] for item in items[:ITEM_LIMIT]
+                      if re.fullmatch(r"blueprint/roadmap/[^\s<>]+\.md", item["module_page"])})
+    headers = lines[:2] + [f"<!-- atlas-module: {module} -->" for module in modules]
+    return "\n".join([*headers, rendered, BODY_END]) + "\n"
 
 
 class RateLimited(Exception):
@@ -473,17 +475,11 @@ class GitHub:
     def create_issue(self, title: str, body: str, labels: list[str]) -> dict:
         return self.request("POST", f"/repos/{self.repo}/issues", {"title": title, "body": body, "labels": labels})[0]
 
+    def read_issue(self, number: int) -> dict:
+        return self.request("GET", f"/repos/{self.repo}/issues/{number}")[0]
+
     def update_issue(self, number: int, **fields) -> dict:
         return self.request("PATCH", f"/repos/{self.repo}/issues/{number}", fields)[0]
-
-    def timeline(self, number: int) -> list[dict]:
-        return self.paginate(f"/repos/{self.repo}/issues/{number}/timeline?per_page=100")
-
-    def unassign(self, number: int, logins: list[str]) -> None:
-        self.request("DELETE", f"/repos/{self.repo}/issues/{number}/assignees", {"assignees": logins})
-
-    def comment(self, number: int, body: str) -> None:
-        self.request("POST", f"/repos/{self.repo}/issues/{number}/comments", {"body": body})
 
 
 @dataclass
@@ -493,24 +489,40 @@ class Plan:
     update: list[tuple[dict, dict]] = field(default_factory=list)
     reopen: list[tuple[dict, dict]] = field(default_factory=list)
     close: list[tuple[dict, str]] = field(default_factory=list)
-    release: list[tuple[dict, list[str]]] = field(default_factory=list)
     unchanged: int = 0
     declined: int = 0
 
     def writes(self) -> int:
-        return (len(self.labels) + len(self.create) + len(self.update) + len(self.reopen) + len(self.close)
-                + 2 * len(self.release))
+        return len(self.labels) + len(self.create) + len(self.update) + len(self.reopen) + len(self.close)
 
 
 def marks(issue: dict) -> tuple[str | None, str | None]:
-    body = issue.get("body") or ""
-    task, node = TASK_MARK.search(body), NODE_MARK.search(body)
-    return (task.group(1) if task else None, node.group(1) if node else None)
+    # Only headers count; issue prose can contain example markers.
+    lines = (issue.get("body") or "").splitlines()[:2]
+    task = TASK_MARK.fullmatch(lines[0]) if lines else None
+    node = NODE_MARK.fullmatch(lines[1]) if len(lines) > 1 else None
+    return (task.group(1), node.group(1)) if task and node else (None, None)
+
+
+def notes(issue: dict) -> str:
+    """Human text after the generated section; don't replace it on refresh."""
+    return (issue.get("body") or "").partition(BODY_END)[2].replace(OFF_FRONTIER, "")
+
+
+def task_body(task: dict, repo: str, issue: dict) -> str:
+    existing_notes = notes(issue)
+    return issue_body(task, repo).rstrip("\n") + existing_notes if existing_notes.strip() else issue_body(task, repo)
 
 
 def plan_sync(frontier: dict, issues: list[dict], existing_labels: set[str], repo: str) -> Plan:
     if frontier.get("schema") != SCHEMA:
         raise ValueError(f"expected a {SCHEMA} frontier, got {frontier.get('schema')!r}")
+    if (frontier.get("repo") != repo or not frontier.get("source_revision")
+            or not isinstance(frontier.get("commit"), str) or not re.fullmatch(r"[0-9a-f]{40}", frontier["commit"])
+            or type(frontier.get("resolved_leaves")) is not int or frontier["resolved_leaves"] <= 0
+            or type(frontier.get("missing_ids")) is not int or frontier["missing_ids"] < 0
+            or any(not isinstance(frontier.get(key), list) for key in ("tasks", "finished", "dag_nodes"))):
+        raise ValueError("incomplete or mismatched frontier snapshot; rerun the validated wiki build")
     plan = Plan()
     tasks = frontier["tasks"]
     wanted_labels = sorted({label for task in tasks for label in issue_labels(task)} | set(KINDS.values()))
@@ -523,12 +535,14 @@ def plan_sync(frontier: dict, issues: list[dict], existing_labels: set[str], rep
         key, node = marks(issue)
         if key:
             by_key[key] = issue
-        if node:
+        if key and node:
             by_node[node] = issue
 
     # Match one-to-one: first by task key, then by node path for a task whose key changed (its declaration was
     # renamed, or it gained one). An issue another task already holds by key is never taken by path, so a page
     # that takes over an old path does not take over the moved task's issue.
+    if len({task["key"] for task in tasks}) != len(tasks):
+        raise ValueError("frontier has duplicate task keys")
     matched: set[int] = set()
     pairs: dict[str, dict] = {}
     for task in tasks:
@@ -558,7 +572,7 @@ def plan_sync(frontier: dict, issues: list[dict], existing_labels: set[str], rep
                 plan.reopen.append((issue, task))
             continue
         have = {label["name"] for label in issue.get("labels", [])}
-        title, body = issue_title(task), issue_body(task, repo)
+        title, body = issue_title(task), task_body(task, repo, issue)
         if issue["title"] != title or (issue.get("body") or "") != body or have != set(merged_labels(issue, task)):
             plan.update.append((issue, task))
         else:
@@ -567,57 +581,17 @@ def plan_sync(frontier: dict, issues: list[dict], existing_labels: set[str], rep
     finished = set(frontier.get("finished", []))
     for issue in issues:
         key, node = marks(issue)
-        if issue["state"] != "open" or issue["number"] in matched or not (key or node):
+        if issue["state"] != "open" or issue["number"] in matched or not (key and node):
             continue
         done = key in finished or f"node:{node}" in finished
+        if key.startswith("node:") and KINDS["dag-work"] in {label.get("name") for label in issue.get("labels", [])}:
+            done = done or node not in frontier["dag_nodes"]
         plan.close.append((issue, "completed" if done else "not_planned"))
     return plan
 
 
-def parse_time(value: str) -> float:
-    from datetime import datetime
-
-    return datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
-
-
-def stale_claims(issue: dict, timeline: list[dict], now: float, days: int = CLAIM_DAYS) -> list[str]:
-    """The assignees of an open task issue whose claim has lapsed: assigned more than `days` ago, with no open
-    pull request referencing the issue."""
-    holders = [assignee["login"] for assignee in issue.get("assignees", [])]
-    if issue.get("state") != "open" or not holders:
-        return []
-    for event in timeline:
-        source = (event.get("source") or {}).get("issue") or {}
-        if event.get("event") == "cross-referenced" and source.get("pull_request") and source.get("state") == "open":
-            return []
-    assigned: dict[str, float] = {}
-    for event in timeline:
-        if event.get("event") == "assigned" and event.get("assignee") and event.get("created_at"):
-            assigned[event["assignee"]["login"]] = parse_time(event["created_at"])
-    return [holder for holder in holders if holder in assigned and now - assigned[holder] > days * 86400]
-
-
-def plan_releases(plan: Plan, issues: list[dict], timeline_of, now: float, limit: int = 100) -> None:
-    """Add to the plan the lapsed claims on task issues that stay open; `timeline_of(number)` reads a timeline.
-
-    At most `limit` timelines are read per run, least recently updated first, to keep within the token's
-    request budget; the rest wait for the next run.
-    """
-    closing = {issue["number"] for issue, _ in plan.close}
-    held = [
-        issue for issue in issues
-        if issue["state"] == "open" and issue.get("assignees") and issue["number"] not in closing and marks(issue)[0]
-    ]
-    held.sort(key=lambda issue: issue.get("updated_at") or "")
-    for issue in held[:limit]:
-        lapsed = stale_claims(issue, timeline_of(issue["number"]), now)
-        if lapsed:
-            plan.release.append((issue, lapsed))
-
-
 def apply_plan(plan: Plan, github: GitHub, repo: str, max_writes: int, log=print) -> int:
-    """Carry out the plan: labels, closes, lapsed claims, updates, then creates, up to max_writes. Returns the
-    writes made."""
+    """Carry out the plan, closes first, then updates, then creates, up to max_writes. Returns the writes made."""
     done = 0
 
     def room() -> bool:
@@ -632,27 +606,31 @@ def apply_plan(plan: Plan, github: GitHub, repo: str, max_writes: int, log=print
         for issue, reason in plan.close:
             if not room():
                 return done
+            live = github.read_issue(issue["number"])
+            if live["state"] != "open" or marks(live) != marks(issue):
+                continue
+            issue = live
             fields = {"state": "closed", "state_reason": reason}
             if reason == "not_planned":
                 fields["body"] = (issue.get("body") or "").rstrip("\n") + "\n\n" + OFF_FRONTIER + "\n"
             github.update_issue(issue["number"], **fields)
             done += 1
-        for issue, lapsed in plan.release:
-            if done + 2 > max_writes:
-                return done
-            github.unassign(issue["number"], lapsed)
-            holders = ", ".join(f"@{login}" for login in lapsed)
-            github.comment(issue["number"], (
-                f"Released the claim of {holders}: {CLAIM_DAYS} days without an open pull request that references "
-                "this issue. Comment `/claim` to take the task again."
-            ))
-            done += 2
-        for issue, task in plan.reopen + plan.update:
-            if not room():
-                return done
-            github.update_issue(issue["number"], state="open", title=issue_title(task),
-                                body=issue_body(task, repo), labels=merged_labels(issue, task))
-            done += 1
+        for reopen, updates in ((True, plan.reopen), (False, plan.update)):
+            for issue, task in updates:
+                if not room():
+                    return done
+                live = github.read_issue(issue["number"])
+                if marks(live) != marks(issue):
+                    continue
+                if reopen and (live["state"] != "closed" or live.get("state_reason") != issue.get("state_reason")
+                               or live.get("updated_at") != issue.get("updated_at")):
+                    continue
+                if not reopen and live["state"] != "open":
+                    continue
+                fields = {"state": "open"} if reopen else {}
+                github.update_issue(issue["number"], title=issue_title(task),
+                                    body=task_body(task, repo, live), labels=merged_labels(live, task), **fields)
+                done += 1
         for task in plan.create:
             if not room():
                 return done
@@ -681,10 +659,11 @@ def summarize(plan: Plan, frontier: dict, applied: int | None, max_writes: int) 
         f"| update issues | {len(plan.update)} |",
         f"| reopen issues | {len(plan.reopen)} |",
         f"| close issues | {len(plan.close)} |",
-        f"| release lapsed claims | {len(plan.release)} |",
         f"| unchanged | {plan.unchanged} |",
         f"| closed as not planned, left closed | {plan.declined} |",
     ]
+    if frontier.get("missing_ids"):
+        lines += ["", f"Issue publication is blocked: {frontier['missing_ids']} unfinished leaves lack IDs (#5524)."]
     if plan.create:
         lines += ["", "First issues to open:", ""]
         lines += [f"- {issue_title(task)} (`{task['page']}`)" for task in plan.create[:20]]
@@ -692,107 +671,6 @@ def summarize(plan: Plan, frontier: dict, applied: int | None, max_writes: int) 
         lines += ["", "Issues to close:", ""]
         lines += [f"- #{issue['number']} {issue['title']} ({reason})" for issue, reason in plan.close[:20]]
     return "\n".join(lines) + "\n"
-
-
-# ---------------------------------------------------------------------------
-# claim: /claim and /unclaim on task issues
-
-CLAIM = re.compile(r"\A/(claim|unclaim)(?:[ \t]+@([A-Za-z0-9](?:[A-Za-z0-9-]{0,38})))?[ \t]*\Z")
-# Repository roles that may free a task someone else holds (the collaborator permission API's role_name).
-MAINTAINER_ROLES = frozenset({"admin", "maintain", "write"})
-# GitHub's limit on assignees per issue.
-MAX_HOLDERS = 10
-
-
-@dataclass(frozen=True)
-class ClaimDecision:
-    """What to do about one comment: assign or unassign someone, and what to say."""
-
-    add: str | None = None
-    remove: str | None = None
-    reply: str | None = None
-    react: bool = False
-
-
-def claim_command(event: dict) -> tuple[str, str | None] | None:
-    """The command a comment gives, as (verb, named login), or None when it is not a claim command."""
-    issue, comment = event.get("issue") or {}, event.get("comment") or {}
-    if not issue or not comment or issue.get("pull_request") or event.get("action", "created") != "created":
-        return None
-    if (comment.get("user") or {}).get("type") == "Bot":
-        return None
-    lines = (comment.get("body") or "").strip().splitlines()
-    command = CLAIM.match(lines[0].strip()) if lines else None
-    return (command.group(1), command.group(2)) if command else None
-
-
-def decide_claim(event: dict, maintainer: bool = False) -> ClaimDecision | None:
-    """The answer to a comment, or None when the comment is not a claim command on a task issue.
-
-    `event["issue"]` should be the issue as it is now, not as the event captured it, so that two claims
-    answered one after the other see each other; `maintainer` says whether the commenter may write to the
-    repository.
-    """
-    issue, comment = event.get("issue") or {}, event.get("comment") or {}
-    if not issue or not comment or issue.get("pull_request") or event.get("action", "created") != "created":
-        return None
-    if not {label.get("name") for label in issue.get("labels", [])} & set(KINDS.values()):
-        return None
-    user = comment.get("user") or {}
-    if user.get("type") == "Bot":
-        return None
-    lines = (comment.get("body") or "").strip().splitlines()
-    command = CLAIM.match(lines[0].strip()) if lines else None
-    if not command:
-        return None
-    verb, named = command.group(1), command.group(2)
-    login = user.get("login", "")
-    holders = [assignee.get("login") for assignee in issue.get("assignees", [])]
-
-    if verb == "claim":
-        if named and named.casefold() != login.casefold():
-            return ClaimDecision(reply=f"@{login} `/claim` takes the task for yourself; @{named} can claim it.")
-        if issue.get("state") != "open":
-            return ClaimDecision(reply=f"@{login} this task is closed, so it can't be claimed.")
-        if login in holders:
-            return ClaimDecision(react=True)
-        # A field issue lists many modules, so several people may hold it at once, one module each, up to
-        # GitHub's ten assignees; they say in the comment which module they take.
-        shared = "<!-- atlas-task: field:" in (issue.get("body") or "")
-        if holders and shared and len(holders) < MAX_HOLDERS:
-            return ClaimDecision(add=login, react=True)
-        if holders:
-            others = ", ".join(f"@{holder}" for holder in holders)
-            return ClaimDecision(reply=(
-                f"@{login} this task is already claimed by {others}. Ask them first; if it has stalled, a "
-                f"maintainer can free it with `/unclaim @{holders[0]}`."
-            ))
-        return ClaimDecision(add=login, react=True)
-
-    target = named or login
-    if target.casefold() != login.casefold() and not maintainer:
-        return ClaimDecision(reply=f"@{login} only a maintainer can unclaim a task someone else holds.")
-    holder = next((holder for holder in holders if holder.casefold() == target.casefold()), None)
-    if holder is None:
-        return ClaimDecision(reply=f"@{login} @{target} does not hold this task.")
-    return ClaimDecision(remove=holder, react=True)
-
-
-def apply_claim(decision: ClaimDecision, event: dict, github: GitHub) -> None:
-    number, comment = event["issue"]["number"], event["comment"]
-    repo = github.repo
-    reply = decision.reply
-    if decision.add:
-        result = github.request("POST", f"/repos/{repo}/issues/{number}/assignees", {"assignees": [decision.add]})[0]
-        if decision.add not in [assignee.get("login") for assignee in (result or {}).get("assignees", [])]:
-            reply = (f"@{decision.add} GitHub would not assign you. It assigns people with access to the "
-                     "repository and people who have commented on the issue; ask a maintainer to assign you.")
-    if decision.remove:
-        github.request("DELETE", f"/repos/{repo}/issues/{number}/assignees", {"assignees": [decision.remove]})
-    if decision.react and reply is None:
-        github.request("POST", f"/repos/{repo}/issues/comments/{comment['id']}/reactions", {"content": "+1"})
-    if reply:
-        github.request("POST", f"/repos/{repo}/issues/{number}/comments", {"body": reply})
 
 
 # ---------------------------------------------------------------------------
@@ -805,20 +683,19 @@ def main(argv: list[str] | None = None) -> int:
     frontier.add_argument("blueprint", type=Path)
     frontier.add_argument("--output", type=Path, required=True)
     frontier.add_argument("--commit", default=os.environ.get("GITHUB_SHA"))
+    frontier.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
     sync = commands.add_parser("sync", help="make the task issues match a frontier")
     sync.add_argument("frontier", type=Path)
     sync.add_argument("--repo", required=True)
+    sync.add_argument("--expected-commit", help="bind sync to the build commit")
     sync.add_argument("--apply", action="store_true", help="write to GitHub; without it, only report the plan")
     sync.add_argument("--max-writes", type=int, default=250)
     sync.add_argument("--pause", type=float, default=1.0, help="seconds between writes")
     sync.add_argument("--summary", type=Path, help="append a Markdown summary here (GITHUB_STEP_SUMMARY)")
-    claim = commands.add_parser("claim", help="answer a /claim or /unclaim comment on a task issue")
-    claim.add_argument("--event", type=Path, required=True, help="the issue_comment event (GITHUB_EVENT_PATH)")
-    claim.add_argument("--repo", required=True)
     args = parser.parse_args(argv)
 
     if args.command == "frontier":
-        result = build_frontier(args.blueprint, args.commit)
+        result = build_frontier(args.blueprint, args.commit, args.repo)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(result, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
         kinds = {}
@@ -831,36 +708,16 @@ def main(argv: list[str] | None = None) -> int:
     if not token:
         print("GITHUB_TOKEN is not set", file=sys.stderr)
         return 2
-    api = os.environ.get("GITHUB_API_URL", "https://api.github.com")
-    if args.command == "claim":
-        event = json.loads(args.event.read_text(encoding="utf-8"))
-        command = claim_command(event)
-        if command is None:
-            print("not a claim command")
-            return 0
-        github = GitHub(args.repo, token, api, pause=0)
-        # Decide on the issue as it is now: the event's copy predates any claim answered since. The workflow
-        # answers one comment per issue at a time, so this read and the write after it do not interleave.
-        number = event["issue"]["number"]
-        event = dict(event, issue=github.request("GET", f"/repos/{args.repo}/issues/{number}")[0])
-        maintainer = False
-        verb, named = command
-        login = event["comment"]["user"]["login"]
-        if verb == "unclaim" and named and named.casefold() != login.casefold():
-            permission = github.request("GET", f"/repos/{args.repo}/collaborators/{login}/permission")[0] or {}
-            maintainer = permission.get("role_name") in MAINTAINER_ROLES or permission.get("permission") in {"admin", "write"}
-        decision = decide_claim(event, maintainer)
-        if decision is None:
-            print("not a claim command on a task issue")
-            return 0
-        apply_claim(decision, event, github)
-        print(decision)
-        return 0
     frontier_data = json.loads(args.frontier.read_text(encoding="utf-8"))
-    github = GitHub(args.repo, token, api, args.pause)
+    if args.apply and not args.expected_commit:
+        parser.error("publication requires --expected-commit from the build")
+    if args.expected_commit and frontier_data.get("commit") != args.expected_commit:
+        parser.error("frontier snapshot is not from the expected commit")
+    if args.apply and frontier_data.get("missing_ids") != 0:
+        parser.error("issue publication requires every unfinished formalizable leaf to have an article ID (#5524)")
+    github = GitHub(args.repo, token, os.environ.get("GITHUB_API_URL", "https://api.github.com"), args.pause)
     issues = {issue["number"]: issue for label in KINDS.values() for issue in github.issues(label)}
     plan = plan_sync(frontier_data, list(issues.values()), github.labels(), args.repo)
-    plan_releases(plan, list(issues.values()), github.timeline, time.time())
     applied = apply_plan(plan, github, args.repo, args.max_writes) if args.apply else None
     summary = summarize(plan, frontier_data, applied, args.max_writes)
     print(summary)

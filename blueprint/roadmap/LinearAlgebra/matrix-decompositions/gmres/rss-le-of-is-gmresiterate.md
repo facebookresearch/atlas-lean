@@ -9,7 +9,7 @@ on the spectrum (or pseudospectra) of $A$.
 
 ## Background
 
-- Minimax property of the Chebyshev polynomials: the extremal polynomial problem on an interval that gives the classical Chebyshev bounds for CG and for GMRES on symmetric definite matrices.
+- [Minimax property of the Chebyshev polynomials](../../../Analysis/approximation-theory/minimax-property-of-the-chebyshev-polynomials/README.md): the extremal polynomial problem on an interval that gives the classical Chebyshev bounds for CG and for GMRES on symmetric definite matrices.
 - [The Chebyshev bound for Krylov energy minimizers](../conjugate-gradient-method/energy-norm-le-of-is-min-krylov.md): the analogous energy-norm statement for CG.
 
 ## Sources
