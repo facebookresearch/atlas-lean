@@ -77,7 +77,7 @@ def_wanted actualGlobalIntegrationRepresentative (k : Type u) [CommRing k] [Alge
     NCIntegrationRepresentative FP FF d
       (globalIntegrationClass B.family.model B.absolute B.scalar B.gamma A projectionWeak W K η shift NP NF)
 
-proof_wanted actualGlobalKappaNaturality (k : Type u) [CommRing k] [Algebra ℚ k]
+theorem_wanted actualGlobalKappaNaturality (k : Type u) [CommRing k] [Algebra ℚ k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M) (RM : RawModuleRealization M)
     (Q : AlgebraReplacementFunctor k) (D : AffineDRSystem Q) (R : ProductReplacementSystem Q)
@@ -101,7 +101,7 @@ proof_wanted actualGlobalKappaNaturality (k : Type u) [CommRing k] [Algebra ℚ 
     globalKappa B.family.model B.absolute B.scalar B.gamma A weak ≫
       (mixedQ (LargeScalar k)).map tensorPullback.map
 
-proof_wanted actualIntegrationUnderlyingSquare (R : Type u) [CommRing R]
+theorem_wanted actualIntegrationUnderlyingSquare (R : Type u) [CommRing R]
     (p : ℤ) (N : NCCategoryModel R p) (E F : GradedMixed R) (C : Cochains R)
     (P : PureTensorModel F C) (κ : (mixedQ R).obj E ⟶ (mixedQ R).obj P.mixed)
     (B : Comparison P p (N.diagram.toModel F) (N.diagram.toModel P.mixed))

@@ -67,7 +67,7 @@ def_wanted native_large_projective_module_lift (k : Type u) [CommRing k]
     (h : IsCofibrantModule M) : LargeProjectiveModuleLift UL T M
 
 /-- Its actual componentwise endomorphism map is a coefficient-universe isomorphism, not a geometric conclusion. -/
-proof_wanted native_large_module_endomorphism_isomorphism (k : Type u) [CommRing k]
+theorem_wanted native_large_module_endomorphism_isomorphism (k : Type u) [CommRing k]
     (UL : CochainLiftModel k) (T : DGCat k) (M : RightModule k T)
     (ML : LargeProjectiveModuleLift UL T M) : IsIso ML.endomorphismMap
 
@@ -123,15 +123,15 @@ def_wanted native_proper_geometric_moduli_point :
 variable (G : GeometricModuliPoint O L J C D B SB UL T F P A Q FB SA R V M ML Y I Z)
 
 /-- The actual weak point comparison induces the fixed target-Hom quasi-isomorphism from a projective source. -/
-proof_wanted native_point_module_post_hom_quasi_isomorphism :
+theorem_wanted native_point_module_post_hom_quasi_isomorphism :
   QuasiIso (pointModulePostHomLeg O L J C D B SB UL T F P A Q FB SA R V M ML Y I Z G)
 
 /-- Its actual source-Hom comparison is a quasi-isomorphism between the same projective modules. -/
-proof_wanted native_point_module_pre_hom_quasi_isomorphism :
+theorem_wanted native_point_module_pre_hom_quasi_isomorphism :
   QuasiIso (pointModulePreHomLeg O L J C D B SB UL T F P A Q FB SA R V M ML Y I Z G)
 
 /-- The actual all-perfect-test enveloping Yoneda replacement identifies this same geometric Hom complex. -/
-proof_wanted native_point_geometric_module_hom_quasi_isomorphism :
+theorem_wanted native_point_geometric_module_hom_quasi_isomorphism :
   QuasiIso (pointGeometryModuleHomLeg O L J C D B SB UL T F P A Q FB SA R V M ML Y I Z G)
 
 end WantedExt.AlgebraicGeometry.ProperGeometricModuliRHomWanted

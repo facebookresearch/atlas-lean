@@ -58,21 +58,21 @@ def_wanted compatibleSourcedScalarFamily (k : Type u) [CommRing k] [Algebra ℚ 
     (Q : AlgebraReplacementFunctor k) (L : CochainLiftModel k) (V : NerveLiftModel L)
     (X : DerivedStack Q) : SourcedScalarFamily M U R Q L V X.functor
 
-proof_wanted actualStructureUnitPerfect (k : Type u) [CommRing k]
+theorem_wanted actualStructureUnitPerfect (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M)
     (Q : AlgebraReplacementFunctor k) (L : CochainLiftModel k) (V : NerveLiftModel L)
     (X : Prestack k) (B : FamilyModel M U Q L V X) :
     ∀ A : SAlg k, IsPerfect (B.model A) (B.model A).unit
 
-proof_wanted actualCompactScalarBaseChange (k : Type u) [CommRing k] [Algebra ℚ k]
+theorem_wanted actualCompactScalarBaseChange (k : Type u) [CommRing k] [Algebra ℚ k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M) (R : RawModuleRealization M)
     (Q : AlgebraReplacementFunctor k) (L : CochainLiftModel k) (V : NerveLiftModel L)
     (X : Prestack k) (B : SourcedScalarFamily M U R Q L V X)
     (compact : IsSourcedOCompact B.family) : IsScalarBaseChange B.family.model B.absolute B.scalar
 
-proof_wanted actualCompactGammaPerfect (k : Type u) [CommRing k] [Algebra ℚ k]
+theorem_wanted actualCompactGammaPerfect (k : Type u) [CommRing k] [Algebra ℚ k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M) (R : RawModuleRealization M)
     (Q : AlgebraReplacementFunctor k) (L : CochainLiftModel k) (V : NerveLiftModel L)
@@ -89,7 +89,7 @@ def_wanted actualPerfectHomotopyDual (k : Type u) [CommRing k] [Algebra ℚ k]
     (H : CoherentMonoidalEnhancement G) (E : G.category) (perfect : IsPerfect G E) :
     PerfectDual H.monoidal E
 
-proof_wanted nativeCoefficientPairingBalanced (k : Type u) [CommRing k]
+theorem_wanted nativeCoefficientPairingBalanced (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M)
     (Q : AlgebraReplacementFunctor k) (L : CochainLiftModel k) (V : NerveLiftModel L)

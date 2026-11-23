@@ -151,7 +151,7 @@ def_wanted coherent_native_global_exterior_sources (k : Type u) [CommRing k] [Al
         Σ B : UniversalExteriorFamilies D L X.functor G C H E, CoherentExteriorCone B
 
 /-- The actual augmentation evaluator is a source affine Yoneda equivalence on every full mapping space. -/
-proof_wanted native_affine_parameter_evaluation_weak (k : Type u) [CommRing k]
+theorem_wanted native_affine_parameter_evaluation_weak (k : Type u) [CommRing k]
     (Q : AlgebraReplacementFunctor k) (X : DerivedStack Q) :
     ∀ A : SAlg k, MathlibExt.AlgebraicGeometry.SimplicialDerivedModels.WeakEquivalence
       ((affineParameterPoint Q X.functor).app A)

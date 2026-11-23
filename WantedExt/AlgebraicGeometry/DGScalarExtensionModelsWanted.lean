@@ -37,6 +37,6 @@ def_wanted cofibrant_dg_module_scalar_extension (k : Type u) [CommRing k]
     (C D : DGCat k) (f : C ⟶ D) (R : RestrictionModel f) : ExtensionModel f R
 
 /-- Scalar extension preserves the native localized finite-cell retractions. -/
-proof_wanted dg_scalar_extension_preserves_perfect (k : Type u) [CommRing k]
+theorem_wanted dg_scalar_extension_preserves_perfect (k : Type u) [CommRing k]
     (C D : DGCat k) (f : C ⟶ D) (R : RestrictionModel f) (L : ExtensionModel f R) :
   PreservesPerfect L

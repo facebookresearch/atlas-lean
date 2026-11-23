@@ -43,7 +43,7 @@ def_wanted affine_dg_module_fibration (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N) : AffineModuleFibration N S
 
 /-- Cocartesian sections form the actual categorical limit quasicategory. -/
-proof_wanted native_cocartesian_section_quasicategory (A B E : SSet.{u})
+theorem_wanted native_cocartesian_section_quasicategory (A B E : SSet.{u})
     [SSet.Quasicategory A] [SSet.Quasicategory B] [SSet.Quasicategory E]
     (p : E ⟶ B) (q : A ⟶ B) (P : CocartesianFibration p) :
   SSet.Quasicategory (sectionsOver p q)

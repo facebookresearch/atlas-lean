@@ -50,7 +50,7 @@ open scoped Simplicial
 universe u
 
 /-- Prove the sheaf axiom for the actual global-section presheaf on the small étale site. -/
-proof_wanted classical_etale_structure_source (X : Scheme.{u}) : EtaleStructureSource X
+theorem_wanted classical_etale_structure_source (X : Scheme.{u}) : EtaleStructureSource X
 
 /-- Assemble actual ringed inverse images and their native total left derivations. -/
 def_wanted classical_etale_pullback_system
@@ -67,7 +67,7 @@ def_wanted classical_etale_pushforward_coherence
   EtalePushforwardCoherence L
 
 /-- The displayed native counit composite is a total left derivation of the actual composite pullback. -/
-proof_wanted classical_etale_composite_derivation
+theorem_wanted classical_etale_composite_derivation
     (O : ∀ X : Scheme.{u}, EtaleStructureSource X) (L : EtalePullbackSystem O)
     (C : EtalePushforwardCoherence L) (X Y Z : Scheme.{u}) (f : X ⟶ Y) (g : Y ⟶ Z) :
   EtaleCompositeDerivationSource C f g
@@ -117,14 +117,14 @@ def_wanted classical_coefficient_map_system (k : Type u) [CommRing k]
   CoefficientMapSystem Z
 
 /-- The source field-Ext condition is preserved by this actual derived inverse image. -/
-proof_wanted classical_pullback_preserves_source
+theorem_wanted classical_pullback_preserves_source
     (O : ∀ X : Scheme.{u}, EtaleStructureSource X) (L : EtalePullbackSystem O)
     (A B : CommRingCat.{u}) (f : A ⟶ B)
     (J : AffineEtaleModuleSource O A) (J' : AffineEtaleModuleSource O B) :
   ClassicalPullbackSource L f J J'
 
 /-- A native coefficient-perfect vertex yields an actual bounded projective affine presentation. -/
-proof_wanted classical_vertex_is_affine_perfect (k : Type u) [CommRing k]
+theorem_wanted classical_vertex_is_affine_perfect (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (R : DGFrame k (oppositeCategory (scalarCategory k))) (r : ScalarFramePoint R)
     (P : StrictPerfectSystem N S) (A : CommAlgCat.{u} k)
@@ -144,7 +144,7 @@ def_wanted classical_complex_groupoid_comparison (k : Type u) [CommRing k]
     (J : AffineEtaleModuleSource O (ordinaryRing A)) : ClassicalComplexComparison F V L J
 
 /-- Equivalence is a theorem about the actual constructed functor on the correct restricted locus. -/
-proof_wanted classical_complex_groupoid_comparison_equivalence (k : Type u) [CommRing k]
+theorem_wanted classical_complex_groupoid_comparison_equivalence (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (R : DGFrame k (oppositeCategory (scalarCategory k))) (r : ScalarFramePoint R)
     (I : ScalarFrameInterval r) (P : StrictPerfectSystem N S) (A : CommAlgCat.{u} k)
@@ -154,7 +154,7 @@ proof_wanted classical_complex_groupoid_comparison_equivalence (k : Type u) [Com
   G.functor.IsEquivalence
 
 /-- The displayed scalar comparison is an isomorphism; its source map is already fixed independently. -/
-proof_wanted classical_coefficient_family_map_isIso (k : Type u) [CommRing k]
+theorem_wanted classical_coefficient_family_map_isIso (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (R : DGFrame k (oppositeCategory (scalarCategory k))) (r : ScalarFramePoint R)
     (P : StrictPerfectSystem N S) (O : ∀ X : Scheme.{u}, EtaleStructureSource X)
@@ -163,7 +163,7 @@ proof_wanted classical_coefficient_family_map_isIso (k : Type u) [CommRing k]
   IsIso (coefficientFamilyMap D f E)
 
 /-- Identity coefficients give the exact native derived unit, with actual functor-law transports. -/
-proof_wanted classical_coefficient_family_unit (k : Type u) [CommRing k]
+theorem_wanted classical_coefficient_family_unit (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (R : DGFrame k (oppositeCategory (scalarCategory k))) (r : ScalarFramePoint R)
     (P : StrictPerfectSystem N S) (O : ∀ X : Scheme.{u}, EtaleStructureSource X)
@@ -175,7 +175,7 @@ proof_wanted classical_coefficient_family_unit (k : Type u) [CommRing k]
       (vertexEtaleDerived r P A (Z.module A) (Z.etale A) E))
 
 /-- Composite coefficients give the exact native derived composition mate and the two actual unit maps. -/
-proof_wanted classical_coefficient_family_composition (k : Type u) [CommRing k]
+theorem_wanted classical_coefficient_family_composition (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (R : DGFrame k (oppositeCategory (scalarCategory k))) (r : ScalarFramePoint R)
     (P : StrictPerfectSystem N S) (O : ∀ X : Scheme.{u}, EtaleStructureSource X)
@@ -206,20 +206,20 @@ def_wanted classical_complex_comparison_coefficient_naturality (k : Type u) [Com
   ClassicalCoefficientNaturality Z f G G' H (D.tilde f) (D.ordinary f) (D.etale f)
 
 /-- Adapt the actual source projection, including every literal X_y to X_A field comparison. -/
-proof_wanted classical_identity_source_transport (k : Type u) [CommRing k]
+theorem_wanted classical_identity_source_transport (k : Type u) [CommRing k]
     (O : ∀ X : Scheme.{u}, EtaleStructureSource X) (L : EtalePullbackSystem O)
     (A : CommAlgCat.{u} k) (J : AffineEtaleModuleSource O (ordinaryRing A)) :
   IdentityComplexesTransportSource L A J
 
 /-- The actual projection inverse image identifies the two presentations of the native source fibre. -/
-proof_wanted classical_identity_source_transport_equivalence (k : Type u) [CommRing k]
+theorem_wanted classical_identity_source_transport_equivalence (k : Type u) [CommRing k]
     (O : ∀ X : Scheme.{u}, EtaleStructureSource X) (L : EtalePullbackSystem O)
     (A : CommAlgCat.{u} k) (J : AffineEtaleModuleSource O (ordinaryRing A))
     (H : IdentityComplexesTransportSource L A J) :
   (identityComplexesTransport H).IsEquivalence
 
 /-- The final truncation comparison is to the literal native perfect/no-negative-fibre-Ext X_A groupoid. -/
-proof_wanted classical_native_identity_moduli_comparison_equivalence (k : Type u) [CommRing k]
+theorem_wanted classical_native_identity_moduli_comparison_equivalence (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (R : DGFrame k (oppositeCategory (scalarCategory k))) (r : ScalarFramePoint R)
     (I : ScalarFrameInterval r) (P : StrictPerfectSystem N S) (A : CommAlgCat.{u} k)
@@ -230,7 +230,7 @@ proof_wanted classical_native_identity_moduli_comparison_equivalence (k : Type u
   (nativeIdentityModuliComparison G H).IsEquivalence
 
 /-- The ordinary source locus has no higher automorphism homotopy, for this literal nerve comparison. -/
-proof_wanted classical_native_identity_ordinary_space_comparison (k : Type u) [CommRing k]
+theorem_wanted classical_native_identity_ordinary_space_comparison (k : Type u) [CommRing k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (R : DGFrame k (oppositeCategory (scalarCategory k))) (r : ScalarFramePoint R)
     (I : ScalarFrameInterval r) (P : StrictPerfectSystem N S) (A : CommAlgCat.{u} k)

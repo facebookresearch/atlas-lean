@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.DerivedMonoidalCoherenceModels
-public import MathlibExt.Algebra.Homology.ClosedCochainShifts
+public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexShift
 public import MathlibExt.CategoryTheory.DGBimoduleEnvelopingModels
 
 /-!
@@ -43,7 +43,6 @@ open MathlibExt.AlgebraicGeometry.DerivedQCohModuleFamilies
 open MathlibExt.AlgebraicGeometry.DerivedPrestackMapping
 open MathlibExt.AlgebraicGeometry.DerivedGlobalTensorModels
 open MathlibExt.AlgebraicGeometry.DerivedMonoidalCoherenceModels
-open MathlibExt.Algebra.Homology.ClosedCochainShifts
 open CochainComplex.HomComplex
 
 universe u
@@ -135,8 +134,7 @@ def shiftedPostcomposition (P L T : G.category) (n : ℤ)
   let z := F.dgMap n a
   have hz : dgDifferential (LargeScalar k) n z = 0 := by
     rw [← F.dgMap_dgDifferential, ha, map_zero]
-  apply homToShift
-  apply Cocycle.mk z (n + 1) rfl
+  refine Cocycle.equivHomShift.symm (Cocycle.mk z (n + 1) rfl ?_)
   simpa only [dgDifferential_linearHomComplex] using hz
 
 /-- Shifted equivalence tests the actual representable complexes, not an abstract flag. -/

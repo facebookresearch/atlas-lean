@@ -50,7 +50,7 @@ def_wanted native_algebraic_space_module_pullback (X Y : SourceSpace.{u})
     [SiteSource X] [SiteSource Y] (f : X ⟶ Y) : ModulePullbackSource f
 
 /-- The prescribed source module inverse image has its native total left derivation. -/
-proof_wanted native_algebraic_space_pullback_derivation (X Y : SourceSpace.{u})
+theorem_wanted native_algebraic_space_pullback_derivation (X Y : SourceSpace.{u})
     [SiteSource X] [SiteSource Y] (f : X ⟶ Y) (P : ModulePullbackSource f) :
   DerivedPullbackSource P
 
@@ -75,12 +75,12 @@ def_wanted native_pseudo_coherent_affine_resolution (B : CommRingCat.{u})
   PseudoCoherentResolution B K
 
 /-- Adapt the native pseudo-coherent/finite-Tor criterion to the exact bounded-flat affine presentation. -/
-proof_wanted native_relative_perfect_affine_criterion (A B : CommRingCat.{u}) (α : A ⟶ B)
+theorem_wanted native_relative_perfect_affine_criterion (A B : CommRingCat.{u}) (α : A ⟶ B)
     (hflat : RingHom.Flat α.hom) (K : CochainComplex (ModuleCat.{u} B) ℤ) :
   IsCanonicalRelativePerfect α hflat K ↔ HasRelativePerfectPresentation α K
 
 /-- Both space criteria use the same native X_T object, actual chart restrictions and native A-Tor complexes. -/
-proof_wanted native_space_relative_perfect_criterion
+theorem_wanted native_space_relative_perfect_criterion
     (O : ∀ S : Scheme.{u}, EtaleStructureSource S) [SourceTheory.{u}]
     (L : EtalePullbackSystem O) (J : ∀ A : CommRingCat.{u}, AffineEtaleModuleSource O A)
     (R : ChartRestrictionSystem O) (D : ProperSpaceSituation.{u})
@@ -89,7 +89,7 @@ proof_wanted native_space_relative_perfect_criterion
     MathlibExt.AlgebraicGeometry.SpaceComplexAffinePresentations.IsRelativelyPerfect L J R D T E
 
 /-- Both native conditions are preserved by actual derived inverse image under the same X_h. -/
-proof_wanted native_space_complexes_pullback_preserves
+theorem_wanted native_space_complexes_pullback_preserves
     (O : ∀ S : Scheme.{u}, EtaleStructureSource S) [SourceTheory.{u}]
     (P : PullbackSystem.{u}) (L : EtalePullbackSystem O)
     (J : ∀ A : CommRingCat.{u}, AffineEtaleModuleSource O A) (R : ChartRestrictionSystem O)
@@ -97,7 +97,7 @@ proof_wanted native_space_complexes_pullback_preserves
   MathlibExt.AlgebraicGeometry.SpaceComplexAffinePresentations.ComplexesPullbackSource P L J R h
 
 /-- The general scheme source is preserved without an absolute-perfect restriction. -/
-proof_wanted native_scheme_complexes_pullback_preserves
+theorem_wanted native_scheme_complexes_pullback_preserves
     (O : ∀ S : Scheme.{u}, EtaleStructureSource S) (L : EtalePullbackSystem O)
     (J : ∀ A : CommRingCat.{u}, AffineEtaleModuleSource O A)
     (D : ProperComplexesSituation.{u}) (T T' : MathlibExt.AlgebraicGeometry.ProperComplexFamilySources.FamilyTest D) (h : T ⟶ T') :

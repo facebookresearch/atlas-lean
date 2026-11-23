@@ -121,7 +121,7 @@ def_wanted nativeGlobalRelativeDR (k : Type u) [CommRing k] [Algebra ℚ k]
     (P : PureTensorModel G.mixed (gammaCoefficients B.family.model B.absolute B.scalar)) :
     GlobalRelativeModel B.family.model B.absolute B.scalar B.gamma R SL G GP P
 
-proof_wanted actualGlobalProjectionFormulaQuasiIso (k : Type u) [CommRing k] [Algebra ℚ k]
+theorem_wanted actualGlobalProjectionFormulaQuasiIso (k : Type u) [CommRing k] [Algebra ℚ k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M) (RM : RawModuleRealization M)
     (Q : AlgebraReplacementFunctor k) (D : AffineDRSystem Q) (R : ProductReplacementSystem Q)

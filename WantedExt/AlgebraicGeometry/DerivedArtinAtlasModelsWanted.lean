@@ -29,13 +29,13 @@ open MathlibExt.AlgebraicGeometry.DerivedArtinAtlasModels
 universe u
 
 /-- Products of actual derived Artin stacks remain derived Artin. -/
-proof_wanted derived_artin_product (k : Type u) [CommRing k]
+theorem_wanted derived_artin_product (k : Type u) [CommRing k]
     (Q : AlgebraReplacementFunctor k) (F G : DerivedStack Q)
     (hF : IsDerivedArtin F) (hG : IsDerivedArtin G) (M : ProductStackModel F G) :
   IsDerivedArtin M.stack
 
 /-- The fixed native homotopy pullback of derived Artin stacks is derived Artin. -/
-proof_wanted derived_artin_homotopy_pullback (k : Type u) [CommRing k]
+theorem_wanted derived_artin_homotopy_pullback (k : Type u) [CommRing k]
     (Q : AlgebraReplacementFunctor k) (F G H : DerivedStack Q)
     (hF : IsDerivedArtin F) (hG : IsDerivedArtin G) (hH : IsDerivedArtin H)
     (P : NaturalPathModel H) (f : StackMap F H) (g : StackMap G H)

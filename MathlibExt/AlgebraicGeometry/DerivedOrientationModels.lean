@@ -9,7 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.DerivedScalarGlobalSections
 public import MathlibExt.AlgebraicGeometry.DerivedMonoidalCoherenceModels
-public import MathlibExt.Algebra.Homology.ClosedCochainShifts
+public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexShift
 
 /-!
 # Actual O-orientation traces and coefficient-linear realization
@@ -47,7 +47,6 @@ open MathlibExt.AlgebraicGeometry.DerivedScalarGlobalSections
 open MathlibExt.AlgebraicGeometry.DerivedGlobalSectionBaseChange
 open MathlibExt.AlgebraicGeometry.DerivedMonoidalCoherenceModels
 open MathlibExt.AlgebraicGeometry.DerivedGlobalTensorModels
-open MathlibExt.Algebra.Homology.ClosedCochainShifts
 open CochainComplex.HomComplex
 open MathlibExt.AlgebraicTopology.SimplicialAlgebraShuffle
 open MathlibExt.AlgebraicGeometry.SimplicialAlgebraGeometry
@@ -68,7 +67,7 @@ def moduleCocycle {R : Type u} [CommRing R] {C : DGCat R} (o : C)
 def moduleToShift {R : Type u} [CommRing R] {C : DGCat R} (o : C)
     {P Z : RightModule R C} {n : ℤ} (f : DGHom R n P Z)
     (h : dgDifferential R n f = 0) : value C o P ⟶ (value C o Z)⟦n⟧ :=
-  homToShift (moduleCocycle o f h)
+  Cocycle.equivHomShift.symm (moduleCocycle o f h)
 
 variable {k : Type u} [CommRing k]
     {N : ShuffleAlgebraFunctor k} {S : AffineScalarSystem N} {M : AffineModuleFibration N S}
@@ -120,7 +119,7 @@ def IsScalarBaseChange : Prop :=
 
 /-- The source trace is the actual morphism RΓ(X,O_X)→k[-d]. -/
 def absoluteTrace {d : ℤ} (T : TraceSystem B G D d) :
-    globalHom G G.unit ⟶ (𝟙_ (Cochains (LargeScalar k)))⟦-d⟧ := homToShift T.absolute
+    globalHom G G.unit ⟶ (𝟙_ (Cochains (LargeScalar k)))⟦-d⟧ := Cocycle.equivHomShift.symm T.absolute
 
 /-- Every A-trace is the corresponding actual shifted coefficient-module cochain map. -/
 def coefficientTrace {d : ℤ} (T : TraceSystem B G D d) (A : SAlg k) :

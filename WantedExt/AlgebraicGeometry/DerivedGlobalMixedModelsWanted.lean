@@ -74,7 +74,7 @@ def_wanted nativeGlobalNCPacket (k : Type u) [CommRing k]
     (N : NegativeCyclicDiagram D.functor (p : ℤ)) (X : Prestack k)
     (G : GlobalMixedModel D T X) (F : GlobalNCModel D p N X) : GlobalNCData G F
 
-proof_wanted nativeGlobalNCComparisonQuasiIso (k : Type u) [CommRing k]
+theorem_wanted nativeGlobalNCComparisonQuasiIso (k : Type u) [CommRing k]
     (Q : AlgebraReplacementFunctor k) (D : AffineDRSystem Q)
     (L : CochainLiftModel k) (T : MixedLiftModel L) (p : ℕ)
     (N : NegativeCyclicDiagram D.functor (p : ℤ)) (X : Prestack k)

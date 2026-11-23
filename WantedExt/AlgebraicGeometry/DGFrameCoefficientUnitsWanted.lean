@@ -76,7 +76,7 @@ variable {k : Type u} [CommRing k] {T : DGCat k} (F : DGFrame k (oppositeCategor
   (M : DGDerivedModules k (frameEnvelope F (N := N) A ⦋1⦌))
 
 /-- Each actual endpoint map restricts the same induction unit, and is an objectwise weak module comparison. -/
-proof_wanted native_endpoint_induction_unit_quasi_isomorphism (i : Fin 2)
+theorem_wanted native_endpoint_induction_unit_quasi_isomorphism (i : Fin 2)
     (x : (frameEnvelope F (N := N) A ⦋0⦌)ᵒᵖ) :
   QuasiIso (moduleComponent (endpointInductionUnit F A B R E S I M i) x)
 

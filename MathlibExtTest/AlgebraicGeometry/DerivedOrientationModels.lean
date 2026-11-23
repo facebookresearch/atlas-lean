@@ -15,7 +15,6 @@ import Mathlib.Algebra.TrivSqZeroExt.Basic
 open CategoryTheory CategoryTheory.MonoidalCategory Opposite
 open MathlibExt.DGSource
 open MathlibExt.CategoryTheory.DGModelContracts
-open MathlibExt.Algebra.Homology.ClosedCochainShifts
 open MathlibExt.Algebra.Homology.ShiftedTensorUnits
 open MathlibExt.AlgebraicGeometry.SimplicialAlgebraGeometry
 open MathlibExt.AlgebraicGeometry.SimplicialDeRhamModels
@@ -65,7 +64,3 @@ example (X : Cochains ℚ) (U : UnitTensorModel X (-1)) (x : X.X 1) :
       (TensorProduct.tmul ℚ x (shiftedUnit (-1) (1 : ℚ)))) = -x := by
   simpa using U.normalized 1 x (1 : ℚ)
 
--- Every homogeneous closed map retains its exact integer target degree.
-example {F G : Cochains ℚ} {n : ℤ} (z : Cocycle F G n) (i : ℤ) :
-    (homToShift z).f i ≫ (CochainComplex.shiftFunctorObjXIso G n i (i + n) rfl).hom =
-      (z : Cochain F G n).v i (i + n) rfl := homToShift_component z i

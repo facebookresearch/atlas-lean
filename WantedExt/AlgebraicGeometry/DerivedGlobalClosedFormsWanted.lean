@@ -48,7 +48,7 @@ def_wanted global_closed_form_realization (k : Type u) [CommRing k]
   GlobalFormModel D p n NC X
 
 /-- The actual limit of the specified injectively fibrant space diagram is Kan. -/
-proof_wanted sized_space_homotopy_limit_kan (J : Type v) [Category.{w} J]
+theorem_wanted sized_space_homotopy_limit_kan (J : Type v) [Category.{w} J]
     (D : J ⥤ SSet.{max u v w}) (R : SpaceDiagramReplacement.{u, v, w} D) :
   SSet.KanComplex (Limits.limit R.diagram)
 

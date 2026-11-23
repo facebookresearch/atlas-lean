@@ -80,20 +80,20 @@ def_wanted native_all_perfect_tests_yoneda_replacement :
 variable (P : YonedaReplacementDiagram O L J R S U Q)
 
 /-- Every original geometric Hom is compared through the fixed native projective-module RHom leg. -/
-proof_wanted native_all_perfect_tests_rhom_comparison (x y : Q.category) :
+theorem_wanted native_all_perfect_tests_rhom_comparison (x y : Q.category) :
   QuasiIso (allPerfectTestRHomLeg O L J R S U Q P x y)
 
 /-- The actual enriched replacement functor realizes the all-perfect-test derived Yoneda equivalence. -/
-proof_wanted native_all_perfect_tests_yoneda_quasi_equivalence :
+theorem_wanted native_all_perfect_tests_yoneda_quasi_equivalence :
   P.functor.IsQuasiEquivalence
 
 /-- Proper flat source geometry makes every absolute perfect complex pseudo-perfect on every actual test. -/
-proof_wanted native_proper_perfect_is_pseudo_perfect
+theorem_wanted native_proper_perfect_is_pseudo_perfect
     (E : perfectDGCategory O L J R S) :
   IsSourcePseudoPerfect O L J R S ((perfectIntoQCoh O L J R S).obj E)
 
 /-- Smooth source geometry supplies the opposite implication; it is not asserted for singular proper sources. -/
-proof_wanted native_smooth_pseudo_perfect_is_perfect
+theorem_wanted native_smooth_pseudo_perfect_is_perfect
     (smooth : ∀ C : EtaleChart (familySpace D T.test),
       Smooth (chartStructuralMap (affineProperProjection D T) C))
     (E : qcohDGCategory O L J R S) (h : IsSourcePseudoPerfect O L J R S E) :

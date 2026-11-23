@@ -79,7 +79,7 @@ def_wanted actualCoherentCoefficientUnit (k : Type u) [CommRing k]
     (B : EnrichedDiagramReplacement C G D) (V : UnitCoefficientDiagram C G D)
     (T : UnitCoefficientLift C G B V) : CoherentUnitCone C G T
 
-proof_wanted actualAllEGammaComparisonQuasiIso (k : Type u) [CommRing k] [Algebra ℚ k]
+theorem_wanted actualAllEGammaComparisonQuasiIso (k : Type u) [CommRing k] [Algebra ℚ k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M)
     (L : CochainLiftModel k) (X : Prestack k) (R : RawModuleRealization M)
