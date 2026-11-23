@@ -45,10 +45,10 @@ project:
   # credited under automation, not here.
   authors:
     - "Adam Kiezun"
-    - "Jack McCarthy"
     - "Vivien Cabannes"
-    - "Tsutomu Okano"
+    - "Jack McCarthy"
     - "emd"
+    - "Tsutomu Okano"
     - "George Morris"
     - "Zibo Yang"
     - "Robert Joseph"
@@ -308,10 +308,10 @@ automation:
     textbooks (see the paper above). The root libraries started in October 2026
     from imports and ports of existing formalizations, chiefly the Formal-Math
     snapshot, and grow through agent-written pull requests. AI agents wrote
-    most of the Lean code; the models are not recorded for most commits, and
-    Co-authored-by trailers name Claude Opus 5.5 on some. People choose the
-    targets, run the pipelines, review some of the changes and maintain the
-    repository.
+    most of the Lean code; the models are not recorded for most commits.
+    Co-authored-by trailers name Claude Opus 5.5 or Codex on some, and the
+    Codex trailers do not name a model. People choose the targets, run the
+    pipelines, review some of the changes and maintain the repository.
 
 fidelity:
   divergences: >-
