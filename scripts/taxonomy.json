@@ -11537,6 +11537,7 @@
   "MathlibExt/NumberTheory/Height/LehmerConstant": {"to": "NumberTheory/heights-mahler-measure", "title": "Lehmer's Mahler measure problem"},
   "MathlibExt/NumberTheory/Height/PrimitiveMahler": {"to": "NumberTheory/heights-mahler-measure", "title": "Absolute height and Mahler measure"},
   "MathlibExt/NumberTheory/Height/SchurSiegelSmyth": {"to": "NumberTheory/heights-mahler-measure", "title": "Schur–Siegel–Smyth trace problem"},
+  "MathlibExt/NumberTheory/Height/SchurSiegelSmyth/AbsoluteTrace": {"to": "NumberTheory/heights-mahler-measure", "title": "Schur–Siegel–Smyth trace problem"},
   "MathlibExt/NumberTheory/HenselFactorization": {"to": "RingTheory/valuation-rings", "title": "Henselian rings and Hensel's lemma"},
   "MathlibExt/NumberTheory/HenselFactorizationUniqueness": {"to": "RingTheory/valuation-rings", "title": "Henselian rings and Hensel's lemma"},
   "MathlibExt/NumberTheory/HigherOrderHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Higher-order harmonic numbers"},
