@@ -24,7 +24,7 @@ only, and scoped to those synced files, so a pull request fails only if it touch
   the pin only with the `formal-math-sync` label (pushes and merge groups are maintainer-only). In CI the base is the push's
   `before` commit, the merge group's base, or for a pull request the merge ref's first parent,
   fetched if the checkout is shallow (unreadable fails closed); locally the merge-base with
-  origin/main (including all incoming parents during a local merge), falling back to HEAD's
+  origin/main (including the incoming parent during a local merge), falling back to HEAD's
   first parent;
 - files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
@@ -513,20 +513,8 @@ def ci_base(root: Path) -> tuple[str | None, str]:
     return first_parent(root), "first parent of HEAD"
 
 
-def local_merge_heads(root: Path) -> list[str]:
-    """Other parents of a pending local merge, including in a linked worktree."""
-    if os.environ.get("GITHUB_ACTIONS"):
-        return []
-    path = git(root, "rev-parse", "--git-path", "MERGE_HEAD")
-    if path is None:
-        return []
-    try:
-        return (root / path).read_text(encoding="ascii").splitlines()
-    except FileNotFoundError:
-        return []
-
-
-def base_commit(root: Path, base: str | None, *merge_heads: str) -> tuple[str | None, str | None]:
+def base_commit(root: Path, base: str | None,
+                merge_head: str | None = None) -> tuple[str | None, str | None]:
     """The commit whose manifest this tree is compared with: (commit, None) or (None, why not)."""
     if git(root, "rev-parse", "--show-toplevel") != str(root.resolve()):
         return None, "not a git checkout"
@@ -540,9 +528,9 @@ def base_commit(root: Path, base: str | None, *merge_heads: str) -> tuple[str | 
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
         return None, f"cannot read the base commit ({source})"
-    # With several tips after origin/main, git uses their hypothetical merge as the other side.
-    merge_base = git(root, "merge-base", "origin/main", "HEAD", *merge_heads)
-    for candidate in (merge_base, first_parent(root)):
+    # With multiple heads, git finds the base of origin/main and their hypothetical merge.
+    heads = ("HEAD", merge_head) if merge_head else ("HEAD",)
+    for candidate in (git(root, "merge-base", "origin/main", *heads), first_parent(root)):
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
     return None, "no origin/main merge-base and no readable parent commit"
@@ -606,24 +594,6 @@ def copy_and_rename_status(root: Path, commit: str, *, staged: bool) -> str | No
     return done.stdout
 
 
-def unstaged_problems(root: Path, manifest: str) -> list[str]:
-    """A pending merge commits the index, but this check reads the working tree: they must agree at
-    the manifest and at the Lean files under the roots (no unstaged edit or deletion, unmerged path,
-    or untracked file)."""
-    pathspec = ("--", manifest, *ROOTS)
-    changed = git(root, "diff", "--no-ext-diff", "--name-only", "-z", *pathspec)
-    untracked = git(root, "ls-files", "--others", "--exclude-standard", "-z", *pathspec)
-    if changed is None or untracked is None:
-        return ["manifest: a merge is pending, but git cannot compare the working tree with the index"]
-    paths = sorted({path for path in f"{changed}\0{untracked}".split("\0")
-                    if path == manifest or path.endswith(".lean")})
-    if not paths:
-        return []
-    shown = ", ".join(paths[:5]) + (f" and {len(paths) - 5} more" if len(paths) > 5 else "")
-    return [f"manifest: a merge is pending, and the working tree differs from the index at {shown}; the merge "
-            "commit is built from the index, so stage (git add) or discard those changes"]
-
-
 def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[list[str], list[str]]:
     """Compare the manifest with the base manifest. Returns (problems, warnings).
 
@@ -639,8 +609,10 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
             return [f"manifest: {why}; cannot compare with the base manifest"], []
         return [], [f"skipping the base-manifest comparison: {why}"]
 
-    merge_heads = local_merge_heads(root)
-    commit, why = base_commit(root, base, *merge_heads)
+    merge_head = None
+    if not os.environ.get("GITHUB_ACTIONS"):
+        merge_head = git(root, "rev-parse", "--verify", "MERGE_HEAD")
+    commit, why = base_commit(root, base, merge_head)
     if commit is None:
         return unreadable(why or "no base commit")
     if symlinked_component(root, manifest_path):
@@ -674,11 +646,9 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
     tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
-    if merge_heads:  # moves are read from the index, the manifest and files from the working tree
-        problems += unstaged_problems(root, rel)
-    moves = copy_and_rename_status(root, commit, staged=bool(merge_heads))
+    moves = copy_and_rename_status(root, commit, staged=bool(merge_head))
     if moves is None:
-        target = "the index" if merge_heads else "HEAD"
+        target = "the index" if merge_head else "HEAD"
         found, note = unreadable(f"cannot diff base {commit} with {target} for renames")
         problems += found
         warnings = note
