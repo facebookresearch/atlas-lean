@@ -31,7 +31,8 @@ structure. This is a specialization, used only to orient the chart integrals
 coherently: an arbitrary smooth reference atlas would not do, since a reflected
 chart can cancel the partition integral while keeping `IntegrationTheory`. The
 complex structures in the requests still range over all hyperkähler
-structures on the underlying smooth manifold.
+structures on the underlying smooth manifold compatible with the fixed
+orientation.
 
 Ordinary de Rham and coefficient targets below are specific native
 source-integration adapters. They do not re-request the already completed
