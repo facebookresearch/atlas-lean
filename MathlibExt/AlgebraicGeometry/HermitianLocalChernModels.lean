@@ -29,7 +29,7 @@ expression, not an assigned Chern-measure oracle. Locally integrable weights
 are actual differences of continuous plurisubharmonic functions equal to
 the original metric weight. Smooth positive/negative approximations converge
 uniformly on the fixed outer ball. Their compact-test limit defines the
-signed local measure; proving its construction is a separate Wanted request.
+signed local measure; its construction is deferred and not requested here.
 
 Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 4.2--4.3, especially
 printed pp119--120; the source explicitly distinguishes the denominator
