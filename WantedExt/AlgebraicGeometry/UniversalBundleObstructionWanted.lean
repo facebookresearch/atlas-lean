@@ -10,7 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Complex.Basic
-public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
+public import Mathlib.Analysis.Complex.Polynomial.Basic
 public import Mathlib.Data.Int.GCD
 public import MathlibExt.AlgebraicGeometry.UniversalBundleObstruction
 
@@ -48,11 +48,11 @@ open _root_.MathlibExt.AlgebraicGeometry.UniversalBundleObstruction
 /-- Noncoprime rank and degree obstruct a global universal stable family
 on the stable moduli of a smooth complex curve of genus at least three. -/
 public theorem_wanted noGlobalUniversalStableFamily
-    (C : Over (Spec (.of ℂ))) [IsProper C.hom]
-    [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
+    (C : Over (Spec (.of ℂ))) [IsProperCurve C.hom]
+    [SmoothOfRelativeDimension 1 C.hom] [IsIntegral C.left]
     (hgenus : 3 ≤ genus C.hom) (r : ℕ) (hr : 0 < r) (d : ℤ)
     (noncoprime : 1 < Nat.gcd r d.natAbs) :
-    ¬ Nonempty (GlobalUniversalStableFamily C r d)
+    ¬ Nonempty (GlobalUniversalStableFamily C r hr d)
 
 end WantedExt.AlgebraicGeometry.UniversalBundleObstruction
 

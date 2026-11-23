@@ -33,30 +33,44 @@ namespace MathlibExt.AlgebraicGeometry.UniversalBundleObstruction
 open CategoryTheory
 open _root_.AlgebraicGeometry
 open _root_.MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
+open _root_.MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open _root_.MathlibExt.AlgebraicGeometry.StableBundleModuli
 
 universe u
 
-/-- A genuine global universal stable family on a finite-type parameter
-scheme. No universal object or conclusion is supplied as an assumption
-to the nonexistence theorem. -/
-structure GlobalUniversalStableFamily {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) (r : ℕ) (d : ℤ) where
+/-- A genuine global universal stable family on a finite-type separated parameter scheme over an
+algebraically closed field: its universal bundle is a stable family, and every stable family over
+a parameter scheme of finite type is its pullback along a unique map, up to a base twist. No
+universal object or conclusion is supplied as an assumption to the nonexistence theorem. -/
+structure GlobalUniversalStableFamily {k : Type u} [Field k] [IsAlgClosed k]
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] (r : ℕ) (hr : 0 < r) (d : ℤ) where
+  /-- The parameter scheme. -/
   M : Over (Spec (.of k))
-  [finiteType : LocallyOfFiniteType M.hom]
-  [quasiCompact : QuasiCompact M.hom]
   [separated : IsSeparated M.hom]
+  /-- The universal bundle on `C × M`. -/
   universalBundle : (CategoryTheory.Limits.prod C M).left.Modules
-  stableFamily : IsStableFamily C M r d universalBundle
-  universal : ∀ (T : Over (Spec (.of k))),
-    LocallyOfFiniteType T.hom → QuasiCompact T.hom →
-      ∀ E : (CategoryTheory.Limits.prod C T).left.Modules,
-        IsStableFamily C T r d E →
-          ∃! f : T ⟶ M,
-            IsBaseTwist C T (familyPullback C M T universalBundle f) E
+  stableFamily : IsStableFamily C M r hr d universalBundle
+  universal : ∀ (T : Over (Spec (.of k))) (E : (CategoryTheory.Limits.prod C T).left.Modules),
+    IsStableFamily C T r hr d E →
+      ∃! f : T ⟶ M, IsBaseTwist C T (familyPullback C M T universalBundle f) E
 
-attribute [instance] GlobalUniversalStableFamily.finiteType
-  GlobalUniversalStableFamily.quasiCompact GlobalUniversalStableFamily.separated
+attribute [instance] GlobalUniversalStableFamily.separated
+
+namespace GlobalUniversalStableFamily
+
+variable {k : Type u} [Field k] [IsAlgClosed k] {C : Over (Spec (.of k))} [IsProperCurve C.hom]
+  [SmoothOfRelativeDimension 1 C.hom] [IsIntegral C.left] {r : ℕ} {hr : 0 < r} {d : ℤ}
+
+/-- The parameter scheme is of finite type, as a stable family is. -/
+instance (G : GlobalUniversalStableFamily C r hr d) : LocallyOfFiniteType G.M.hom :=
+  G.stableFamily.1
+
+/-- The parameter scheme is quasi-compact, as a stable family is. -/
+instance (G : GlobalUniversalStableFamily C r hr d) : QuasiCompact G.M.hom :=
+  G.stableFamily.2.1
+
+end GlobalUniversalStableFamily
 
 end MathlibExt.AlgebraicGeometry.UniversalBundleObstruction
 
