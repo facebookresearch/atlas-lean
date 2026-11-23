@@ -37,9 +37,8 @@ open CategoryTheory CategoryTheory.Limits Opposite Module
 open _root_.AlgebraicGeometry
 open ModuleInternalHom CoherentCurveLinearSeries CurveVectorBundles
 
-attribute [local implicit_reducible] AlgebraicGeometry.SheafedSpace.sheaf TopCat.Sheaf
-  AlgebraicGeometry.Scheme.Modules AlgebraicGeometry.Scheme.Modules.Hom
-  ModuleInternalHom.ORestr ModuleInternalHom.restrFun
+attribute [local implicit_reducible] AlgebraicGeometry.Scheme.Modules
+  AlgebraicGeometry.Scheme.Modules.Hom ModuleInternalHom.ORestr ModuleInternalHom.restrFun
 
 universe u
 
