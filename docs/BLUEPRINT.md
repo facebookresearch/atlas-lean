@@ -93,10 +93,12 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   ready to state, planned, or not ready when marked `not_ready`; its topic does
   not read fully proved while it remains, and once ready it is a task. So such
   a page lists under `## Depends on` every page its statement uses, planned
-  ones included. A page that defines an object and also proves results about
-  it records `def` and counts once; it links a declaration only once that
-  declaration states the whole page (Leave no gaps), and its results count
-  each only on pages of their own. An exposition records no kind, as
+  ones included. A page whose main statement defines an object, and which
+  also proves results about it, records a definition kind and counts once; it
+  links a declaration only once that declaration states the whole page (Leave
+  no gaps), and its results count each only on pages of their own. A page
+  whose main statement is a result records `theorem` or `lemma`, even if it
+  first defines notation. An exposition records no kind, as
   Autoform's format gives it no declaration, and nothing counts it. A page
   whose result the Lean states under a declaration it does not link is
   relinked to it rather than given a kind.
