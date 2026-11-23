@@ -60,7 +60,7 @@ theorem_wanted actual_torsion_pair_hall_identity {X : Over base} (HX : Threefold
         (InfiniteHallStackFunctions.symbol (cutGenerator Q))
 
 theorem_wanted actual_corrected_slope_window_middle {X : Over base} {HX : Threefold X}
-    (N : NumericalData X HX) (L : LineBundle X.left) (hL : IsAmpleLine L)
+    [IsNoetherian X.left] (N : NumericalData X HX) (L : LineBundle X.left) (hL : IsAmpleLine L)
     (F : ThreeStepFiltration (X := X) complexPoint) (s mu : ℝ) (hs : 0≤s) (hmu : 0<mu)
     (bound : (filtrationDegree N L F : ℝ)*s<mu)
     (hE : SlopeWindow L F.second.middle (-s) s)
