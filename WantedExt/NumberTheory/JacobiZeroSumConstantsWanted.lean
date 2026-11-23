@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Index
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.JacobiAgreementChineseRemainder
 public import MathlibExt.NumberTheory.JacobiKernelLift
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumPrimePower
 
@@ -360,26 +361,6 @@ public theorem_wanted units_prime_subset_image_jacobi_eq_legendre (n p' : ℕ) (
     (hp' : p'.Prime) (hp'n : p' ∣ n) (hcop : Nat.Coprime p' (n / p')) (z : ZMod p')
     (hz : IsUnit z) :
     ∃ x ∈ jacobiEqSet n p', ZMod.castHom hp'n (ZMod p') x = z
-
-/-- **Chinese remainder lifts into the Jacobi agreement set.** Let $n$ be an odd squarefree natural
-number, $p'$ a prime divisor of $n$ and $n' = n/p'$. For a residue $x$ modulo $N$ and an odd $m$,
-write $(x/m)$ for the Jacobi symbol $(a/m)$ of the representative $0 \le a < N$ of $x$. Let $U(m)$
-be the group of units of $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$, let
-$S(n') = \{y \in U(n') : (y/n') = 1\}$ and $L(n;p') = \{x \in U(n) : (x/n) = (x/p')\}$, and for
-$m \mid n$ let $f_{n,m} : \mathbb{Z}_n \to \mathbb{Z}_m$ be reduction modulo $m$. Then for every
-$y \in S(n')$ and every $z \in U(p')$ there is $x \in L(n;p')$ with $f_{n,n'}(x) = y$ and
-$f_{n,p'}(x) = z$. That is, the Chinese remainder isomorphism
-$\psi = (f_{n,n'}, f_{n,p'}) : U(n) \to U(n') \times U(p')$ satisfies
-$S(n') \times U(p') \subseteq \psi(L(n;p'))$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Lemma 31
-(`jis-2024-24.1.7-lem-31`). -/
-public theorem_wanted jacobi_kernel_prod_units_subset_crt_image (n p' : ℕ) (hn : Odd n)
-    (hsf : Squarefree n) (hp' : p'.Prime) (hp'n : p' ∣ n) (y : ZMod (n / p'))
-    (hy : y ∈ jacobiOneSet (n / p')) (z : ZMod p') (hz : IsUnit z) :
-    ∃ x ∈ jacobiEqSet n p', ZMod.castHom (Nat.div_dvd_of_dvd hp'n) (ZMod (n / p')) x = y ∧
-      ZMod.castHom hp'n (ZMod p') x = z
 
 open Classical in
 /-- **Weighted zero-sum criterion for the Jacobi–Legendre weights.** Let $n$ be a squarefree

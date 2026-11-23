@@ -23,6 +23,10 @@ sequence `(aₙ)` lists the positive integers `n` with `D(C(n)) = C(D(n))`; stat
 *compatible* (`IsCompatibleSemiprimePair p q r s`) when `p, q, r, s` are primes and `r, s` are
 the roots of `2x² - (p + q)x + 3pq + 1 = 0`, that is, `2(r + s) = p + q` and
 `2rs = 3pq + 1`.
+
+The statements already proved, such as the oddness of every positive `n` with
+`D(C(n)) = C(D(n))`, live in `MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, which
+this module imports publicly.
 -/
 module
 
@@ -56,18 +60,6 @@ public theorem_wanted arithmeticDerivative_bounds (n : ℕ) (hn : 2 ≤ n) :
     lower ≤ arithmeticDerivative n ∧ (arithmeticDerivative n : ℝ) ≤ upper ∧
       (lower = arithmeticDerivative n ↔ IsPrimePow n) ∧
       ((arithmeticDerivative n : ℝ) = upper ↔ IsPrimePow n)
-
-/-- **Positive solutions of the Collatz arithmetic differential equation are odd.** Let $D$ be
-the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$ with
-$D(C(n)) = C(D(n))$ is odd.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 2 (`jis-2025-25.1.8-prop-2`). -/
-public theorem_wanted odd_of_arithmeticDerivative_collatz_comm (n : ℕ) (hn : 0 < n)
-    (h : arithmeticDerivative (collatzAccelerated n) =
-      collatzAccelerated (arithmeticDerivative n)) :
-    Odd n
 
 /-- **Positive solutions of the Collatz arithmetic differential equation are composite.** Let
 $D$ be the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$
@@ -156,17 +148,6 @@ Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1
 public theorem_wanted IsCompatibleSemiprimePair.odd {p q r s : ℕ}
     (h : IsCompatibleSemiprimePair p q r s) :
     Odd p ∧ Odd q ∧ Odd r ∧ Odd s
-
-/-- **Compatible semiprimes modulo 4.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
-$2rs = 3pq + 1$, so that the semiprime $pq$ is compatible with the semiprime $rs$. Then
-$pq \equiv 3 \pmod 4$, and one of $p, q$ is congruent to $1$ and the other to $3$ modulo $4$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 10 (`jis-2025-25.1.8-prop-10`). -/
-public theorem_wanted IsCompatibleSemiprimePair.mod_four {p q r s : ℕ}
-    (h : IsCompatibleSemiprimePair p q r s) :
-    p * q % 4 = 3 ∧ ((p % 4 = 1 ∧ q % 4 = 3) ∨ (p % 4 = 3 ∧ q % 4 = 1))
 
 /-- **Bounds on the factors of compatible semiprimes.** Suppose the semiprimes $pq$ and $rs$ are
 compatible, where $q < p$. Then $r \ge 241$, $s \ge 241$, $3q < r < 3p$ and $3q < s < 3p$.
