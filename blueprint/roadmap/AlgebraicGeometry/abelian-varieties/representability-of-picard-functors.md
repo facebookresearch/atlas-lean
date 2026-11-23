@@ -1,0 +1,51 @@
+# Representability of relative Picard functors
+
+This node is still to be broken down. It covers the representability theorems for relative Picard
+functors, and the bound on the cohomology of the structure sheaf of a group variety, that the
+constructions of the [dual abelian variety](dual-abelian-variety.md) and of the
+[dual abelian scheme](dual-abelian-scheme.md) use.
+
+For a morphism $f \colon X \to S$ the relative Picard functor $\mathcal{P}ic_{X/S}$ is the fppf sheaf
+associated with $T \mapsto \operatorname{Pic}(X \times_S T)$. If $f$ is proper, flat and of finite
+presentation, $\mathcal{O}_T \cong f_{T*} \mathcal{O}_{X_T}$ for every $S$-scheme $T$ (a universal
+$\mathcal{O}$-morphism), and $f$ has a section $e$, then $\mathcal{P}ic_{X/S}(T)$ is the group of
+isomorphism classes of line bundles on $X \times_S T$ rigidified along $e_T$. The targets are:
+
+1. (Artin; Raynaud.) If $f$ is proper, flat, locally of finite presentation and cohomologically flat in
+   dimension zero, $\mathcal{P}ic_{X/S}$ is a quasi-separated algebraic space; if moreover $f$ is a
+   universal $\mathcal{O}$-morphism with a section, there is a universal rigidified line bundle on
+   $X \times_S \mathcal{P}ic_{X/S}$; its Lie algebra is
+   $R^1 f_* \mathcal{O}_X$; if the geometric fibres are integral it is separated, and if moreover $f$ is
+   smooth its closed subspaces of finite type over $S$ are proper (Robert, Theorem 2.3.4 (i)–(iii),
+   (v)).
+2. (Grothendieck.) If $f$ is projective, flat, of finite presentation with integral geometric fibres,
+   $\mathcal{P}ic_{X/S}$ is a separated scheme locally of finite presentation over $S$, a disjoint union
+   of quasi-projective pieces indexed by Hilbert polynomials (Robert, Theorem 2.3.4 (vi)).
+3. Over a field $k$, for $X$ proper and geometrically reduced, $\mathcal{P}ic_{X/k}$ is a scheme locally
+   of finite type, separated if $X$ is geometrically integral; if $X$ is smooth and geometrically
+   connected its identity component is proper, and projective if $X$ is projective, of dimension at
+   most $\dim_k H^1(X, \mathcal{O}_X)$, with equality exactly when it is smooth (Robert, Corollary
+   2.3.5).
+4. (Raynaud.) An abelian algebraic space over a scheme is an abelian scheme (Robert, Theorem 2.3.2).
+5. For a group variety $X$ over a field $k$, $H^\bullet(X, \mathcal{O}_X)$ is a graded bialgebra and
+   $\dim_k H^1(X, \mathcal{O}_X) \le \dim X$ (van der Geer–Moonen, Proposition (6.15), through the
+   Borel–Hopf structure theorem (6.12) and Corollary (6.13)).
+
+A good expansion has pages for: Artin's representability criterion for algebraic spaces and its
+application to Picard functors; Grothendieck's construction through Hilbert and Quot schemes in the
+projective case; Raynaud's theorem; and the passage from a quasi-separated group algebraic space over
+a field to a scheme, through its dense schematic open subspace.
+
+## Sources
+
+- D. Robert, *Theory of abelian varieties and their moduli spaces*, draft book (version of 7 March
+  2023), <https://www.math.u-bordeaux.fr/~damienrobert/pro/publications/books/avtheory.pdf>: §2.3.2,
+  the definition of $\mathcal{P}ic_{X/S}$, the exact sequences (2.2)–(2.4) and rigidified line bundles,
+  Theorem 2.3.4 with its proof, Corollary 2.3.5 with its proof, and Theorem 2.3.2 with its proof,
+  pp. 12–14.
+- G. van der Geer and B. Moonen, *Abelian Varieties*, book draft, Chapter VI, "The Picard scheme of an
+  abelian variety", <https://www.math.ru.nl/personal/bmoonen/BookAV/DualAV1.pdf>: §1 (relative Picard
+  functors, admitted from the general theory), Corollary (6.6), §2 with Theorem (6.12), Corollary
+  (6.13) and Proposition (6.15), and the beginning of §3, pp. 85–95.
+- S. Bosch, W. Lütkebohmert and M. Raynaud, *Néron Models*, Ergebnisse der Mathematik (3) 21,
+  Springer, 1990: Chapter 8, as cited by Robert.

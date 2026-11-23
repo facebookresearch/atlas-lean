@@ -1,5 +1,8 @@
 # Néron model of an abelian variety
 
+This node is still to be broken down: the statement is precise, but its proof and the reduction theory
+built on it are not.
+
 Let $R$ be a discrete valuation ring with fraction field $K$ and residue field $k$, and let $A$ be an
 [abelian variety](abelian-scheme.md) over $K$. The functor on smooth $R$-schemes
 
@@ -13,8 +16,7 @@ property); by the Yoneda lemma $\mathcal{A}$ is unique up to unique isomorphism.
 the smooth algebraic group $\mathcal{A}_k = \mathcal{A} \times_R k$ over $k$, and $A$ has **good
 reduction** if $\mathcal{A}_k$ is an abelian variety.
 
-This node is still to be broken down: the statement is precise, but its proof and the reduction
-theory built on it are not. A good expansion follows Bosch, Lütkebohmert and Raynaud and has pages for:
+A good expansion follows Bosch, Lütkebohmert and Raynaud and has pages for:
 
 - the definition of Néron models and their basic properties (BLR, chapter "What Is a Néron Model?",
   pp. 6–30), and Néron's existence theorem for abelian varieties with its construction (BLR, the
@@ -24,10 +26,14 @@ theory built on it are not. A good expansion follows Bosch, Lütkebohmert and Ra
   of $K$ (BLR, chapter "Properties of Néron Models", pp. 172–198; Conrad, §4, discussion before and
   after Theorem 4.4 and Corollary 4.5);
 - the ingredients of the proof of the
-  [semistable reduction theorem](semistable-reduction-theorem.md): its reduction to Jacobians of
-  smooth proper geometrically connected curves (Conrad, Proposition 4.3), the semistable reduction
-  theorem for curves, and Raynaud's description of the Néron model of a Jacobian through the Picard
-  functor, with the open immersion criterion of Conrad's Theorem 4.4;
+  [semistable reduction theorem](semistable-reduction-theorem.md): the invariance of semistable
+  reduction under isogenies (Conrad, Proposition 4.1) and products; the reduction to Jacobians of
+  smooth proper geometrically connected curves, by writing an abelian variety as a quotient of a
+  Jacobian and using Poincaré's reducibility theorem (Conrad, Proposition 4.3); the semistable
+  reduction theorem for curves, a separate input from the representability of Néron models; and, for
+  a Jacobian, Raynaud's theorem that $\operatorname{Pic}^0_{X/S}$ of a regular proper flat semistable
+  curve $X$ over $R$ with smooth generic fibre is a separated scheme (Conrad, Theorem 7.13), the
+  semi-abelian special fibre (Proposition 7.14) and the open immersion criterion of Theorem 4.4;
 - the ingredients of the proof of the
   [potential good reduction of abelian varieties with complex multiplication](good-reduction-of-cm-abelian-varieties.md),
   following Serre and Tate: the Néron–Ogg–Shafarevich criterion for abelian varieties (good reduction
@@ -50,7 +56,8 @@ theory built on it are not. A good expansion follows Bosch, Lütkebohmert and Ra
   Springer, 1990: the chapters "What Is a Néron Model?" (pp. 6–30) and "Properties of Néron Models"
   (pp. 172–198).
 - B. Conrad, "Semistable reduction for abelian varieties", seminar notes, Stanford, 2011,
-  <http://math.stanford.edu/~conrad/mordellsem/Notes/L13.pdf>: §4 (Proposition 4.3, Theorem 4.4,
-  Corollary 4.5 and the discussion of base change of Néron models).
+  <http://math.stanford.edu/~conrad/mordellsem/Notes/L13.pdf>: §4 (Propositions 4.1 and 4.3,
+  Theorem 4.4, Corollary 4.5 and the discussion of base change of Néron models) and §7 (Theorem 7.13
+  and Proposition 7.14).
 - J.-P. Serre and J. Tate, "Good reduction of abelian varieties", Ann. of Math. (2) 88 (1968),
   492–517.

@@ -1,5 +1,8 @@
 # Analytic torsion and Quillen metrics
 
+This node is still to be broken down: its definitions are precise, but the analytic theorems below
+are not.
+
 Let $f \colon X \to Y$ be a projective morphism of
 [arithmetic varieties](arithmetic-variety.md) over an arithmetic ring $A$ whose restriction to the
 generic fibres is smooth, and choose on the relative tangent bundle $Tf_\mathbb{C}$ a smooth hermitian
@@ -26,10 +29,10 @@ Soulé proved that the Quillen metric is smooth (on the inverse of the Knudsen�
 their convention, with norms instead of scalar products and the Laplacian $2\Delta$), so that
 $(\lambda(\mathcal{F}), h_Q)$ is a hermitian line bundle on $Y$.
 
-This node is still to be broken down: the definitions above are precise, but the analytic theorems
-on which the [arithmetic Riemann–Roch theorem](arithmetic-riemann-roch-theorem.md) and Gillet and
-Soulé's form of the [arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md) rest
-are not. A good expansion has pages for:
+The definitions above are precise, but the analytic theorems on which the [arithmetic Riemann–Roch
+theorem](arithmetic-riemann-roch-theorem.md) and Gillet and Soulé's form of the [arithmetic
+Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md) rest are not. A good expansion has pages
+for:
 
 - the zeta-regularized determinant $\det' \Delta_q = \exp(-\zeta_q'(0))$ and the analytic torsion of a
   hermitian holomorphic vector bundle on a compact Kähler manifold (Ray and Singer, for flat bundles;

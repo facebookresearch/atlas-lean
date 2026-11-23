@@ -1,59 +1,76 @@
 # Line bundles on abelian varieties
 
-This node is still to be broken down. It covers the theory of invertible sheaves on an
-[abelian variety](abelian-scheme.md) $A$ over a field $k$ that the proofs of
-[projectivity](abelian-varieties-are-projective.md), of the existence of the
-[dual abelian variety](dual-abelian-variety.md), and of the facts on
-[polarizations](polarization.md) and [Zarhin's trick](zarhin-trick.md) use. Its central results are
-the theorem of the cube and the theorem of the square: for an invertible sheaf $L$ on $A$ and points
-$a, b \in A(k)$,
+This node is still to be broken down. It covers the results on line bundles on an
+[abelian variety](abelian-scheme.md) $A$ of dimension $g$ over a field $k$ that come after the
+construction of the [dual abelian variety](dual-abelian-variety.md) $A^\vee$, and that the facts on
+[polarizations](polarization.md) and [Zarhin's trick](zarhin-trick.md) use; the earlier results, the
+theorems of the cube and of the square, the seesaw principle and the group $K(L)$, are in
+[Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md). The
+targets are:
 
-$$t_{a+b}^* L \otimes L \cong t_a^* L \otimes t_b^* L,$$
+1. For an ample line bundle $L$, the homomorphism $\varphi_L \colon A \to A^\vee$ is an isogeny with
+   kernel $K(L)$; it is surjective as a morphism of schemes, hence on points over an algebraic closure of
+   $k$, but not in general on $k$-points: for the elliptic curve $E \colon y^2 = x^3 - x$ over
+   $\mathbb{R}$ and $L = \mathcal{O}(2[0])$, identifying $E^\vee$ with $E$, $\varphi_L$ is multiplication
+   by $\pm 2$, and the doubles of the points of $E(\mathbb{R})$, which has two connected components, lie
+   in the identity component. Over an algebraically closed field every class in
+   $\operatorname{Pic}^0(A)$ is of the form $t_a^* L \otimes L^{-1}$.
+2. (Riemann–Roch.) For $L = \mathcal{O}(D)$, $\chi(L) = (D^g)/g!$, and $\deg \varphi_L = \chi(L)^2$.
+3. (Vanishing theorem.) If $K(L)$ is finite, there is a unique integer $i(L)$, $0 \le i(L) \le g$, with
+   $H^{i(L)}(A, L) \ne 0$, and $i(L^{-1}) = g - i(L)$; moreover $L$ is ample if and only if $K(L)$ is
+   finite and $i(L) = 0$. Hence for ample $L$, $H^i(A, L) = 0$ for $i > 0$ and
+   $h^0(A, L)^2 = \chi(L)^2 = \deg \varphi_L$; in particular, if $\varphi_L$ is an isomorphism, then
+   $h^0(A, L) = 1$.
+4. (Weil pairings and descent of polarizations.) For a symmetric isogeny $\lambda \colon A \to A^\vee$, the
+   pairing $e_\lambda$ on the scheme-valued points of $\operatorname{Ker}(\lambda)$; for an isogeny
+   $f \colon A \to B$, a symmetric isogeny $\mu \colon B \to B^\vee$ with $\lambda = f^\vee \circ \mu
+   \circ f$ exists if and only if $\operatorname{Ker}(f) \subset \operatorname{Ker}(\lambda)$ is totally
+   isotropic for $e_\lambda$, it is then unique, and it is a polarization exactly when $\lambda$ is;
+   for $\alpha \in M_r(\mathbb{Z})$ the endomorphism $[\alpha]$ of $A^r$ has degree
+   $\det(\alpha)^{2g}$, and $[\beta]^\vee = [{}^t \beta]$ for an integral $r \times s$ matrix $\beta$.
+5. Every finite subgroup scheme of $A$, for instance the kernel of an isogeny, is contained in $A[m]$
+   for some integer $m \ge 1$.
 
-where $t_a$ is translation by $a$, so that $\varphi_L \colon A(k) \to \operatorname{Pic}(A)$,
-$a \mapsto t_a^* L \otimes L^{-1}$, is a homomorphism whose image lies in $\operatorname{Pic}^0(A)$.
-
-A good expansion follows Milne's notes and has pages for:
-
-- the theorem of the cube for complete geometrically irreducible varieties with base points
-  (Milne, Theorem I.5.1, proved at the end of §I.5), its Corollaries I.5.2–I.5.4, in
-  particular $n_A^* L \cong L^{(n^2+n)/2} \otimes (-1)_A^* L^{(n^2-n)/2}$, and the theorem of the
-  square (Theorem I.5.5 and Remark I.5.6);
-- the seesaw principle (Theorem I.5.16, Corollaries I.5.17 and I.5.18) and the closedness of the
-  set of points over which a family of invertible sheaves on a complete variety is trivial
-  (Proposition I.5.19);
-- the group $K(L)$, the subgroup $\operatorname{Pic}^0(A)$ (Proposition I.8.4, Lemma I.8.8) and the
-  ampleness criterion of Proposition I.8.1;
-- quotients of varieties by finite groups and descent of coherent sheaves along them
-  (Propositions I.8.10 and I.8.13, after Mumford's *Abelian Varieties*, pp. 66 and 70), and the
-  surjectivity of $\varphi_L$ onto $\operatorname{Pic}^0(A)$ for ample $L$ (Proposition I.8.14,
-  Mumford, §8, p. 77), which give the construction of the dual abelian variety in characteristic
-  zero (Milne, §I.8); in positive characteristic the construction divides by a finite subgroup scheme
-  (Mumford, Chapter III, as cited by Milne);
-- the Riemann–Roch theorem for abelian varieties (Theorem I.11.1, after Mumford, p. 150): the degree
-  of $\varphi_L$ is $\chi(L)^2$, $\chi(L) = (D^g)/g!$ for $L = \mathcal{L}(D)$ and $g = \dim A$, and
-  exactly one cohomology group of $L$ is nonzero when $K(L)$ is finite; with the vanishing of the
-  higher cohomology of ample invertible sheaves on $A$, it shows that an ample $L$ whose
-  $\varphi_L$ is a principal polarization has a one-dimensional space of global sections, and a page
-  for this consequence should cite a source for that vanishing;
-- Weil pairings and the criteria for descending polarizations along isogenies (Lemma I.13.1,
-  Proposition I.13.2, Proposition I.13.8 and Corollaries I.13.10 and I.13.11), on which Milne's proof
-  of Zarhin's trick rests.
+A good expansion has pages for: the surjectivity of $\varphi_L$ (van der Geer–Moonen, Theorem (6.18),
+and, over an algebraically closed field, Milne's Proposition I.8.14, after Mumford's *Abelian
+Varieties*, §8); Mumford's Riemann–Roch and vanishing theorems (Mumford, §16; Milne, Theorem I.11.1;
+Robert, Theorem 2.2.10, and Proposition 2.3.14 over a base); theta groups and the Weil pairings
+$e_\lambda$, with the descent criterion of van der Geer and Moonen (Propositions (11.21), (11.25) and
+(11.28), through their Example (8.26)); and, for 5, the existence for an isogeny $f$ of an isogeny $h$
+and an integer $n \ne 0$ with $h \circ f = n_A$ (used in the proof of Conrad's Proposition 4.1), or
+Deligne's theorem that a finite commutative group scheme over a field is killed by its order. Milne's Lemma I.13.1, Proposition I.13.2 and
+Corollaries I.13.10–I.13.11 are the case of kernels of order prime to the characteristic.
 
 ## Depends on
 
 - [Abelian scheme](abelian-scheme.md), for abelian varieties over a field
+- [Dual abelian variety](dual-abelian-variety.md), for $A^\vee$, $\varphi_L$ and dual homomorphisms
+- [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md), for
+  $K(L)$
+- [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for isogenies and their degrees
 
 ## Sources
 
+- G. van der Geer and B. Moonen, *Abelian Varieties*, book draft, Chapter VI, "The Picard scheme of an
+  abelian variety", <https://www.math.ru.nl/personal/bmoonen/BookAV/DualAV1.pdf>: Theorem (6.18),
+  p. 95; and Chapter XI, "Polarizations and Weil pairings",
+  <https://www.math.ru.nl/personal/bmoonen/BookAV/PolWp.pdf>: Propositions (11.21), (11.25) and
+  (11.28), pp. 166–170.
+- D. Robert, *Theory of abelian varieties and their moduli spaces*, draft book (version of 7 March
+  2023), <https://www.math.u-bordeaux.fr/~damienrobert/pro/publications/books/avtheory.pdf>:
+  Theorem 2.2.10 (Riemann–Roch, $\deg \varphi_L = \chi(L)^2$, vanishing theorem, ampleness criterion;
+  referring to Mumford, §16) and Proposition 2.3.14 (over a base).
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),
-  <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, §5 (Theorem 5.1, Corollaries 5.2–5.4,
-  Theorem 5.5, Remark 5.6, Theorem 5.16, Corollaries 5.17–5.18, Proposition 5.19), §8 (Propositions
-  8.1, 8.4, 8.10, 8.13, 8.14, Lemma 8.8 and the construction of the dual), §11 (Theorem 11.1), §13
-  (Lemma 13.1, Propositions 13.2 and 13.8, Corollaries 13.10 and 13.11).
+  <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, §8 (Proposition 8.14, in the
+  construction preceding Proposition 8.10, where $k$ is assumed algebraically closed), §11 (Theorem
+  11.1) and §13 (Lemma 13.1, Proposition 13.2, Corollaries 13.10 and 13.11).
 - D. Mumford, *Abelian Varieties*, Tata Institute of Fundamental Research Studies in Mathematics 5,
-  Oxford University Press, 1970: the pages cited by Milne above.
+  Oxford University Press, 1970: §8 and §16, as cited above.
+- J. Tate and F. Oort, "Group schemes of prime order", Ann. Sci. École Norm. Sup. (4) 3 (1970), 1–21:
+  §1 (Deligne's theorem).
+- B. Conrad, "Semistable reduction for abelian varieties", seminar notes, Stanford, 2011,
+  <http://math.stanford.edu/~conrad/mordellsem/Notes/L13.pdf>: the proof of Proposition 4.1.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses the consequence of the Riemann–Roch theorem for a
-  principal polarization over an algebraically closed field, as
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) states the consequence of 3 for a principal polarization over an
+  algebraically closed field, that its line bundle has a one-dimensional space of global sections, as
   `GlobalTheory.Published.principalPolarisationOneSection`.

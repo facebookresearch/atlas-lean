@@ -17,10 +17,15 @@ extension $K'/K$ such that $A_{K'}$ has semistable reduction over the integral c
 in $K'$.
 
 Since $K'/K$ is separable, $R'$ is a finite $R$-module and a semi-local Dedekind domain, which may have
-several maximal ideals; it is local when $R$ is henselian, for instance complete. Conrad proves the
-theorem by reducing it to Jacobians of smooth proper geometrically connected curves, and deduces the
-case of Jacobians from the semistable reduction theorem for curves and Raynaud's description of the
-Néron model of a Jacobian.
+several maximal ideals; it is local when $R$ is henselian, for instance complete. When $A$ has
+semistable reduction over $R$, the relative identity component $\mathcal{A}^0$ of its Néron model, the
+complement of the non-identity components of the special fibre, is a semi-abelian scheme over $R$ with
+generic fibre $A$, and it commutes with finite extensions, possibly ramified: for a finite extension
+$K_1/K$ and a discrete valuation ring $R_1$ of $K_1$ dominating $R$, $(\mathcal{A}^0)_{R_1}$ is the
+identity component of the Néron model of $A_{K_1}$ (Conrad, Theorem 4.4 and Corollary 4.5); the full
+Néron model, whose component group may grow, need not commute with such extensions. Conrad proves the theorem by reducing it to Jacobians of
+smooth proper geometrically connected curves, and deduces the case of Jacobians from the semistable
+reduction theorem for curves and Raynaud's description of the Néron model of a Jacobian.
 
 ## Depends on
 
@@ -40,7 +45,8 @@ Néron model of a Jacobian.
   varieties and Theorem 3.1 (descent of the torus); §4, the definition of semistable reduction over a
   discrete valuation ring and over a semi-local Dedekind ring, Theorem 4.2 (semistable reduction after
   a finite separable extension, over the integral closure; the integral closure "of $R$ in $K$" there
-  is a misprint for $K'$), the remarks after it, and Proposition 4.3.
+  is a misprint for $K'$), the remarks after it, Proposition 4.3, Theorem 4.4 and Corollary 4.5 with
+  the discussion after it; §7, Theorem 7.13 and Proposition 7.14.
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),
   <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, Remark 17.2 and Theorem 17.3
   (statement: an abelian variety acquires semistable reduction after a finite extension).
