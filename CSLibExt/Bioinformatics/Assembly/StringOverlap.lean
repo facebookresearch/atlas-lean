@@ -35,7 +35,8 @@ def OverlapMatch {α : Type*} [DecidableEq α] (a b : List α) (k : Nat) : Prop 
 def overlapAux {α : Type*} [DecidableEq α] (a b : List α) : Nat → Nat
   | 0 => 0
   | (n + 1) =>
-    if a.drop (a.length - (n + 1)) = b.take (n + 1) then (n + 1)
+    if (n + 1) ≤ min a.length b.length ∧
+        a.drop (a.length - (n + 1)) = b.take (n + 1) then (n + 1)
     else overlapAux a b n
 
 /-- Largest overlap length between `a` and `b`. -/
@@ -49,6 +50,16 @@ theorem overlapAux_le {α : Type*} [DecidableEq α] (a b : List α) (n : Nat) :
   | succ n ih =>
     unfold overlapAux
     split_ifs with h <;> omega
+
+theorem overlapAux_le_min {α : Type*} [DecidableEq α] (a b : List α) (n : Nat) :
+    overlapAux a b n ≤ min a.length b.length := by
+  induction n with
+  | zero => simp [overlapAux]
+  | succ n ih =>
+    unfold overlapAux
+    split_ifs with h
+    · exact h.1
+    · exact ih
 
 theorem overlapAux_match {α : Type*} [DecidableEq α] (a b : List α) (n : Nat) :
     n ≤ min a.length b.length → OverlapMatch a b (overlapAux a b n) := by
@@ -64,7 +75,7 @@ theorem overlapAux_match {α : Type*} [DecidableEq α] (a b : List α) (n : Nat)
     unfold overlapAux
     split_ifs with h
     · exact ⟨Nat.le_trans hn (Nat.min_le_left _ _),
-        Nat.le_trans hn (Nat.min_le_right _ _), h⟩
+        Nat.le_trans hn (Nat.min_le_right _ _), h.2⟩
     · exact ih hn'
 
 theorem overlapAux_ge {α : Type*} [DecidableEq α] (a b : List α) (n : Nat) :
@@ -83,7 +94,9 @@ theorem overlapAux_ge {α : Type*} [DecidableEq α] (a b : List α) (n : Nat) :
     · omega
     · by_cases hkn1 : k = n + 1
       · subst hkn1
-        exact absurd hk.2.2 h
+        have hmin : n + 1 ≤ min a.length b.length :=
+          Nat.le_min.mpr ⟨hk.1, hk.2.1⟩
+        exact absurd ⟨hmin, hk.2.2⟩ h
       · have hkn' : k ≤ n := by omega
         have hn' : n ≤ min a.length b.length := by omega
         exact ih k hk hkn' hn'
@@ -153,26 +166,6 @@ theorem isSuffix_merge {α : Type*} [DecidableEq α] (a b : List α) :
         rw [hmatch]
     _ = a ++ b.drop (overlap a b) := by rw [ha]
 
-/-- Substring containment, stated with explicit splittings. -/
-def ContainsStr {α : Type*} (s t : List α) : Prop :=
-  ∃ x y : List α, t = x ++ s ++ y
-
-theorem contains_of_prefix {α : Type*} {s t : List α} (h : s <+: t) :
-    ContainsStr s t := by
-  obtain ⟨z, hz⟩ := h
-  exact ⟨[], z, by simp [hz]⟩
-
-theorem contains_of_suffix {α : Type*} {s t : List α} (h : s <:+ t) :
-    ContainsStr s t := by
-  obtain ⟨x, hx⟩ := h
-  exact ⟨x, [], by simp [hx]⟩
-
-theorem contains_trans {α : Type*} {r s t : List α}
-    (hrs : ContainsStr r s) (hst : ContainsStr s t) : ContainsStr r t := by
-  obtain ⟨x1, y1, h1⟩ := hrs
-  obtain ⟨x2, y2, h2⟩ := hst
-  exact ⟨x2 ++ x1, y1 ++ y2, by simp [h2, h1, List.append_assoc]⟩
-
 /-- Left fold of `merge` over a fixed ordering. -/
 def mergeAll {α : Type*} [DecidableEq α] (l : List (List α)) : List α :=
   l.foldl merge []
@@ -190,7 +183,7 @@ theorem foldl_merge_prefix {α : Type*} [DecidableEq α] (l : List (List α)) :
     exact (isPrefix_merge_self init hd).trans (ih _)
 
 theorem foldl_merge_contains {α : Type*} [DecidableEq α] (l : List (List α)) :
-    ∀ (init s : List α), s ∈ l → ContainsStr s (l.foldl merge init) := by
+    ∀ (init s : List α), s ∈ l → s <:+: (l.foldl merge init) := by
   induction l with
   | nil =>
     intro init s hmem
@@ -202,13 +195,13 @@ theorem foldl_merge_contains {α : Type*} [DecidableEq α] (l : List (List α)) 
     cases hmem with
     | inl heq =>
       rw [heq]
-      exact contains_trans (contains_of_suffix (isSuffix_merge init hd))
-        (contains_of_prefix (foldl_merge_prefix tl (merge init hd)))
+      exact (List.IsSuffix.isInfix (isSuffix_merge init hd)).trans
+        (List.IsPrefix.isInfix (foldl_merge_prefix tl (merge init hd)))
     | inr hmem' => exact ih _ _ hmem'
 
 /-- Every input string appears in the folded merge (superstring soundness). -/
 theorem mem_mergeAll_contains {α : Type*} [DecidableEq α] (l : List (List α))
-    (s : List α) (hmem : s ∈ l) : ContainsStr s (mergeAll l) :=
+    (s : List α) (hmem : s ∈ l) : s <:+: mergeAll l :=
   foldl_merge_contains l [] s hmem
 
 /-- Regrouping coherence of the fold along a fixed ordering: merging along
@@ -301,19 +294,19 @@ theorem overlap_eq_right_length_iff_suffix {α : Type*} [DecidableEq α]
 
 /-- Substring-free inputs overlap strictly below full length, both ways. -/
 theorem overlap_lt_of_substring_free {α : Type*} [DecidableEq α]
-    (a b : List α) (hb : ¬ContainsStr b a) (ha : ¬ContainsStr a b) :
+    (a b : List α) (hb : ¬b <:+: a) (ha : ¬a <:+: b) :
     overlap a b < b.length ∧ overlap b a < a.length := by
   constructor
   · have hle : overlap a b ≤ b.length := overlap_le_right a b
     have hne : overlap a b ≠ b.length := by
       intro hcon
-      exact hb (contains_of_suffix
+      exact hb (List.IsSuffix.isInfix
         ((overlap_eq_right_length_iff_suffix a b).mp hcon))
     omega
   · have hle : overlap b a ≤ a.length := overlap_le_right b a
     have hne : overlap b a ≠ a.length := by
       intro hcon
-      exact ha (contains_of_suffix
+      exact ha (List.IsSuffix.isInfix
         ((overlap_eq_right_length_iff_suffix b a).mp hcon))
     omega
 

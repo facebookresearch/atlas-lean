@@ -81,17 +81,17 @@ theorem test_mergeAll_value :
 
 /-- First input appears in the folded merge. -/
 theorem test_mergeAll_contains_first :
-    ContainsStr [1, 2] (mergeAll [[1, 2], [2, 3], [3, 4]]) :=
+    [1, 2] <:+: (mergeAll [[1, 2], [2, 3], [3, 4]]) :=
   mem_mergeAll_contains _ _ (by simp)
 
 /-- Second input appears in the folded merge. -/
 theorem test_mergeAll_contains_second :
-    ContainsStr [2, 3] (mergeAll [[1, 2], [2, 3], [3, 4]]) :=
+    [2, 3] <:+: (mergeAll [[1, 2], [2, 3], [3, 4]]) :=
   mem_mergeAll_contains _ _ (by simp)
 
 /-- Third input appears in the folded merge. -/
 theorem test_mergeAll_contains_third :
-    ContainsStr [3, 4] (mergeAll [[1, 2], [2, 3], [3, 4]]) :=
+    [3, 4] <:+: (mergeAll [[1, 2], [2, 3], [3, 4]]) :=
   mem_mergeAll_contains _ _ (by simp)
 
 /-- Prefix property at concrete values. -/
@@ -114,7 +114,7 @@ theorem test_suffix_iff_instance :
   overlap_eq_right_length_iff_suffix [1, 2, 3] [2, 3]
 
 /-- `[3, 4]` is not a substring of `[1, 2]`. -/
-theorem test_not_contains_right : ¬ContainsStr [3, 4] [1, 2] := by
+theorem test_not_contains_right : ¬[3, 4] <:+: [1, 2] := by
   intro h
   obtain ⟨x, y, hxy⟩ := h
   cases x with
@@ -125,7 +125,7 @@ theorem test_not_contains_right : ¬ContainsStr [3, 4] [1, 2] := by
     omega
 
 /-- `[1, 2]` is not a substring of `[3, 4]`. -/
-theorem test_not_contains_left : ¬ContainsStr [1, 2] [3, 4] := by
+theorem test_not_contains_left : ¬[1, 2] <:+: [3, 4] := by
   intro h
   obtain ⟨x, y, hxy⟩ := h
   cases x with
