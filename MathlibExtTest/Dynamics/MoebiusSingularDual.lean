@@ -62,4 +62,16 @@ example : ¬ ∀ α β γ δ ξ : ℝ, 0 < α → β < 1 → 0 ≤ δ →
     (by norm_num) (by norm_num)
   norm_num at h'
 
+-- At the boundary δ = 0, the dual can collapse to a nonzero endpoint.
+example :
+    let α : ℝ := 2 / 3
+    let β : ℝ := 2 / 3
+    let η : ℝ := (-2 + 2 * β + 0) / (2 - β)
+    (0 - 2 * α - α * η) / (2 * α + 1 + α * η) = -(1 / 2) := by
+  intro α β η
+  calc
+    _ = η := by
+      apply moebius_naturalDual_singular α β 0 0 <;> norm_num [α, β]
+    _ = _ := by norm_num [η, β]
+
 end MathlibExtTest.Dynamics.MoebiusSingularDual

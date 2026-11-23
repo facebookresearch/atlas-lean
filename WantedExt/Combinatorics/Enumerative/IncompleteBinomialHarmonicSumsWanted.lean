@@ -31,19 +31,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSumsWanted
 
-/-- **Kollár's recursion for incomplete binomial sums.** Let $(a_k)_{k \ge 0}$ be a sequence of
-real numbers and let $m$ and $N$ be positive integers with $m \le N$. Then
-$$\sum_{k=0}^{m} \binom{N}{k} a_k =
-\sum_{k=0}^{m-1} \binom{N-1}{k} (a_k + a_{k+1}) + \binom{N-1}{m} a_m.$$
-
-Source: Richard Kollár, "Incomplete Finite Binomial Sums of
-Harmonic Numbers", Lemma 1. -/
-theorem_wanted sum_range_choose_mul_eq_sum_range_choose_add
-    (a : ℕ → ℝ) (m N : ℕ) (hm : 0 < m) (hN : 0 < N) (hmN : m ≤ N) :
-    (∑ k ∈ Finset.range (m + 1), (N.choose k : ℝ) * a k) =
-      (∑ k ∈ Finset.range m, ((N - 1).choose k : ℝ) * (a k + a (k + 1))) +
-        ((N - 1).choose m : ℝ) * a m
-
 /-- **Kollár's recursion for incomplete binomial sums with top index $2n$.** Let
 $(a_k)_{k \ge 0}$ be a sequence of real numbers and let $m$ and $n$ be positive integers with
 $m \le n$. Then
