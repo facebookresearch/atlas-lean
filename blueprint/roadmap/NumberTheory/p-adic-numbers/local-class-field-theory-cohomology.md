@@ -53,7 +53,11 @@ III.
    the Hilbert symbol $(a, b) \in \mu_n$, defined by cup product from the invariant map: the symbol is
    nondegenerate on $K^\times / K^{\times n}$, by the cup-product formula of item 3 and the density of the
    image of the local Artin map, and $(a, b) = 1$ if and only if $b$ is a norm from $K[a^{1/n}]$ (Milne,
-   Proposition III.4.3 and Theorem III.4.4(c), (d)). For every finite extension $L/K$, the norm group
+   Proposition III.4.3 and Theorem III.4.4(c), (d)). The proof also uses the local norm limitation
+   theorem: for every finite extension $L/K$, with $E$ the largest abelian extension of $K$ in $L$,
+   $\mathrm{Nm}_{L/K}(L^\times) = \mathrm{Nm}_{E/K}(E^\times)$ (Milne, Theorem III.3.5), so that the
+   intersection of the norm groups of all finite extensions is that of the abelian ones. For every finite
+   extension $L/K$, the norm group
    $\mathrm{Nm}_{L/K}(L^\times)$ is open if it has finite index (Milne, Lemma I.1.3), and in characteristic
    $0$ every subgroup of finite index of $K^\times$ is open (Milne, 1.7, by Newton's lemma).
 
@@ -79,5 +83,5 @@ uses are in [functoriality and explicit reciprocity](local-class-field-theory-fu
   <https://www.jmilne.org/math/CourseNotes/CFT.pdf>: Chapter I, Section 1 (Corollary 1.2, Lemma 1.3,
   Theorem 1.4, Corollary 1.5, 1.6, 1.7, Theorem 1.13); Chapter II, Remark 3.5 and Theorem 3.11 (Tate's
   theorem); Chapter III, Sections 1–5 (Propositions 1.1, 1.2 and 1.9, Theorem 2.1, Lemmas 2.4 and 2.5,
-  Theorem 3.1, 3.3 with its footnote 3, Theorem 3.4, Proposition 3.6, Lemma 3.7, Propositions 4.1 and
-  4.3, Theorem 4.4, Theorem 5.1); Section VIII.4 (the invariant map of $\mathbb{R}$).
+  Theorem 3.1, 3.3 with its footnote 3, Theorems 3.4 and 3.5, Proposition 3.6, Lemma 3.7, Propositions
+  4.1 and 4.3, Theorem 4.4, Theorem 5.1); Section VIII.4 (the invariant map of $\mathbb{R}$).

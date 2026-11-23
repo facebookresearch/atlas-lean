@@ -46,11 +46,11 @@ theory.
 ## Depends on
 
 - [Global Artin map](global-artin-map.md)
-- [Norm-one idele class group](../adeles-and-ideles/norm-one-idele-class-group.md), for the compact group of item 1
 
 ## Proof depends on
 
 - [Global reciprocity law](global-reciprocity-law.md), for the dense image in item 1 and the triviality on $K^\times$
+- [Norm-one idele class group](../adeles-and-ideles/norm-one-idele-class-group.md), for the compact group whose image is that of $\phi_K$, in item 1
 - [Existence theorem of global class field theory](../existence-theorem/existence-of-class-fields.md), for the kernel in item 2
 - [Local class field theory: the local Artin map](../../../p-adic-numbers/local-class-field-theory.md), for item 3
 
