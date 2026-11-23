@@ -27,10 +27,10 @@ where $\sigma$ is the semicircle distribution.
 - [Talagrand's concentration inequality around a median](../../concentration-inequalities/talagrand-s-concentration-inequality/talagrand-concentration-median.md):
   background; concentration of the linear statistics $\frac{1}{n}\operatorname{tr} f(W_n/\sqrt{n})$
   upgrades convergence in expectation to almost sure convergence.
-- [Hoffman–Wielandt inequality for Hermitian matrices](../../../LinearAlgebra/positive-definite-matrices/hoffman-wielandt-hermitian.md):
+- [Hoffman–Wielandt inequality for Hermitian matrices](../../../LinearAlgebra/positive-definite-matrices/hoffman-wielandt-inequality/hoffman-wielandt-hermitian.md):
   background; it bounds how far the empirical spectral distribution moves under a perturbation of
   small Frobenius norm, which is how truncation reduces the theorem to bounded entries.
-- [Lipschitz linear statistics of Hermitian spectra are stable](../../../LinearAlgebra/positive-definite-matrices/abs-sum-sub-sum-le-of-lipschitz-with.md):
+- [Lipschitz linear statistics of Hermitian spectra are stable](../../../LinearAlgebra/positive-definite-matrices/hoffman-wielandt-inequality/abs-sum-sub-sum-le-of-lipschitz-with.md):
   background; the form of that bound used for linear statistics $\frac{1}{n}\sum_i f(\lambda_i)$.
 - [Expected moments of a Wigner matrix converge to the semicircle moments](tendsto-expected-moment-wigner-matrix-re.md):
   background; the first half of the moment method under moments of all orders (Anderson, Guionnet

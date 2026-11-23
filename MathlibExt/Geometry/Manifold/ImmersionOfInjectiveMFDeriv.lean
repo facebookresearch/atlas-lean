@@ -247,7 +247,13 @@ private theorem immersionInj_codChart
     rw [J.right_inv]
     simp [J.range_eq_univ]
 
-/-- An injective manifold differential with closed complemented range gives an immersion. -/
+/-- **Injective differential with complemented range gives an immersion.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $n \ge 1$ be a smoothness degree (possibly $\infty$ or
+$\omega$), and let $M$ and $N$ be $C^n$ manifolds without boundary over $\mathbb{K}$, modelled on
+Banach spaces $E$ and $E'$. Let $f \colon M \to N$ be $C^n$ at every point of some neighbourhood
+of a point $x \in M$, and suppose that its differential $df_x \colon E \to E'$ is injective and
+that there is a continuous linear projection of $E'$ onto the range of $df_x$. Then $f$ is a
+$C^n$ immersion at $x$. -/
 theorem Manifold.IsImmersionAt.of_injective_mfderiv_of_closedComplemented_range
     {𝕜 E E' H G M N : Type*} [NontriviallyNormedField 𝕜]
     [CompleteSpace 𝕜] [IsRCLikeNormedField 𝕜]
@@ -389,15 +395,20 @@ variable {M N : Type*}
 variable {n : ℕ∞ω}
 
 /--
-A map between finite-dimensional manifolds without boundary over `ℝ` or `ℂ` that is `C^n` on a
-neighbourhood of `x` and has injective differential at `x` is an immersion at `x`.
-Sources: Mathlib `Mathlib/Geometry/Manifold/Immersion.lean` TODO (finite-dimensional
-injective-`mfderiv` criterion); J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
+**Injective differential gives an immersion.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $n \ge 1$ be a smoothness degree (possibly $\infty$ or $\omega$), and let
+$M$ and $N$ be $C^n$ manifolds without boundary over $\mathbb{K}$, modelled on
+finite-dimensional normed $\mathbb{K}$-vector spaces. If a map $f \colon M \to N$ is $C^n$ at
+every point of some neighbourhood of a point $x \in M$ and its differential $df_x$ at $x$ is
+injective, then $f$ is a $C^n$ immersion at $x$.
 
 Proves `Wanted` entry `immersionAt_of_injective_mfderiv`.
 
 Proof: Choose a complement to the differential's range, apply the inverse function theorem to
 the resulting product map in extended charts, and use its local inverse as a target chart.
+
+Sources: Mathlib `Mathlib/Geometry/Manifold/Immersion.lean` TODO (finite-dimensional
+injective-`mfderiv` criterion); J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
 -/
 theorem immersionAt_of_injective_mfderiv
     [CompleteSpace 𝕜] [IsRCLikeNormedField 𝕜]

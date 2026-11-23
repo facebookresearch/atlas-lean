@@ -11,3 +11,4 @@ Algebras over commutative rings: étale algebras and the trace form, norm and tr
 - [Tensor products of reduced algebras and domains](tensor-products-of-reduced-algebras-and-domains/README.md)
 - [Étale algebras and the trace form](tale-algebras-and-the-trace-form/README.md)
 - [Universal-property criterion for a pushout square of algebras](is-pushout-of-forall-exists-unique-alg-h.md)
+- [A finitely generated commutative algebra over a Noetherian commutative ring is Noetherian](finitely-generated-algebra-noetherian.md)
