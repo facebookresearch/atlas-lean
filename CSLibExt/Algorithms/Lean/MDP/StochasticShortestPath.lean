@@ -44,8 +44,8 @@ stage (`MDP.toSSP`; Bertsekas, *A Course in Reinforcement Learning*, 2nd ed., Se
 item (b)): every policy is then proper (`proper_toSSP`) and its SSP value is its discounted value
 (`sspValue_toSSP`).
 
-Bellman's equation for the optimal value under the strong SSP conditions is recorded in
-`WantedExt.ComputerScience.StochasticShortestPathWanted`.
+The `bellman_ssp` theorem below gives Bellman's equation and convergence of value iteration under
+the strong SSP conditions, with optimality among deterministic stationary policies.
 -/
 
 @[expose] public section
@@ -275,6 +275,181 @@ theorem tendsto_sum_pow_mulVec :
   simpa only [policyBellman_iterate_zero] using tendsto_policyBellman_iterate hM hμ 0
 
 end Proper
+
+section Optimal
+
+/-! ## Bellman's equation under the strong SSP conditions -/
+
+omit [DecidableEq S] in
+private theorem qValue_one_mono (hM : M.Substochastic) {U V : S → ℝ} (h : U ≤ V)
+    (s : S) (a : A) : qValue M 1 U s a ≤ qValue M 1 V s a := by
+  simp only [qValue, one_mul]
+  exact add_le_add_right (Finset.sum_le_sum fun s' _ =>
+    mul_le_mul_of_nonneg_left (h s') (hM.1 s a s')) _
+
+omit [DecidableEq S] in
+private theorem monotone_sspPolicyBellman (hM : M.Substochastic) (μ : S → A) :
+    Monotone (policyBellman M 1 μ) := fun _ _ h s => qValue_one_mono hM h s (μ s)
+
+-- A policy that improves an estimate has iterates bounded below from that
+-- estimate, and substochasticity transfers the bound to iterates from zero.
+private theorem proper_of_le_sspPolicyBellman (hM : M.Substochastic) {μ : S → A}
+    (himproper : ¬ M.Proper μ →
+      ∃ s, ¬ BddBelow (Set.range fun N : ℕ => (policyBellman M 1 μ)^[N] 0 s))
+    {V : S → ℝ} (hV : V ≤ policyBellman M 1 μ V) : M.Proper μ := by
+  by_contra hμ
+  obtain ⟨s, hs⟩ := himproper hμ
+  apply hs
+  refine ⟨V s - dist V 0, ?_⟩
+  rintro _ ⟨n, rfl⟩
+  have hmono := (monotone_sspPolicyBellman hM μ).monotone_iterate_of_le_map hV
+  have hlow : V s ≤ (policyBellman M 1 μ)^[n] V s := hmono (Nat.zero_le n) s
+  have hdist := (dist_le_pi_dist ((policyBellman M 1 μ)^[n] V)
+    ((policyBellman M 1 μ)^[n] 0) s).trans
+      (dist_iterate_le hM μ n V 0 zero_le_one
+        (transitionMatrix_pow_nonneg_and_sum_le hM μ n).2)
+  rw [Real.dist_eq, one_mul] at hdist
+  linarith [le_abs_self ((policyBellman M 1 μ)^[n] V s - (policyBellman M 1 μ)^[n] 0 s)]
+
+variable [Fintype A] [Nonempty A]
+
+omit [DecidableEq S] in
+private theorem monotone_sspBellman (hM : M.Substochastic) : Monotone (bellman M 1) :=
+  fun _ _ h s => Finset.sup'_le _ _ fun a ha =>
+    (qValue_one_mono hM h s a).trans (Finset.le_sup' _ ha)
+
+omit [DecidableEq S] in
+private theorem continuous_sspBellman : Continuous (bellman M 1) := by
+  refine continuous_pi fun s => Continuous.finset_sup'_apply Finset.univ_nonempty fun a _ => ?_
+  unfold qValue
+  fun_prop
+
+-- Raising a fixed point by a nonnegative constant gives a supersolution.
+omit [DecidableEq S] in
+private theorem sspBellman_add_const_le (hM : M.Substochastic) (V : S → ℝ)
+    {c : ℝ} (hc : 0 ≤ c) : bellman M 1 (fun s => V s + c) ≤ fun s => bellman M 1 V s + c := by
+  intro s
+  refine Finset.sup'_le _ _ fun a ha =>
+    le_trans ?_ (add_le_add_left (Finset.le_sup' (qValue M 1 V s) ha) c)
+  have hrow : (∑ s', M.prob s a s') * c ≤ c := by
+    simpa only [one_mul] using mul_le_mul_of_nonneg_right (hM.2 s a) hc
+  simp only [qValue, one_mul, mul_add, Finset.sum_add_distrib, ← Finset.sum_mul]
+  linarith
+
+/-- **Bellman's equation for stochastic shortest path problems** (Bertsekas, *Abstract Dynamic
+Programming*, 3rd ed., Example 1.2.6, after Bertsekas and Tsitsiklis 1991). Let `M` have finitely
+many nonterminal states, finitely many actions (at least one, all available in every state) and
+substochastic transitions. Assume the strong SSP conditions: (a) some deterministic stationary
+policy is proper; (b) for every improper deterministic stationary policy `μ` there is a state `s`
+from which the `N`-stage total rewards `(T_μ^N 0)(s)` are unbounded below. With cost equal to
+negative reward, this is infinite limsup cost, not a requirement that the costs tend to infinity.
+Then there is `V*` such that
+
+* `V*` is the unique solution of Bellman's equation `T V* = V*` (`T = bellman M 1`);
+* value iteration `T^k J` converges to `V*` from every `J`;
+* no deterministic stationary policy does better than `V*`: for every such `μ` (proper or not)
+  and every state `s`, the `N`-stage total rewards `(T_μ^N 0)(s)` are frequently at most
+  `V*(s) + ε`, for every `ε > 0`; that is, `liminf_N (T_μ^N 0)(s) ≤ V*(s)`, the reward form of
+  Bertsekas's `J*(s) ≤ J_μ(s) = limsup_N` (`N`-stage cost);
+* in particular `sspValue M μ ≤ V*` for every proper `μ`;
+* a deterministic stationary policy `μ` satisfies `T_μ V* = T V*` exactly when it is proper and
+  `sspValue M μ = V*`, i.e. exactly when it is optimal among deterministic stationary policies.
+
+The source compares more general policies and allows the available actions to depend on the
+state. -/
+theorem bellman_ssp {S A : Type*} [Fintype S] [DecidableEq S] [Fintype A] [Nonempty A]
+    {M : MDP S A ℝ} (hM : M.Substochastic) (hproper : ∃ μ : S → A, M.Proper μ)
+    (himproper : ∀ μ : S → A, ¬ M.Proper μ →
+      ∃ s, ¬ BddBelow (Set.range fun N : ℕ => (policyBellman M 1 μ)^[N] 0 s)) :
+    ∃ V : S → ℝ, bellman M 1 V = V ∧ (∀ W, bellman M 1 W = W → W = V) ∧
+      (∀ J, Tendsto (fun k => (bellman M 1)^[k] J) atTop (𝓝 V)) ∧
+      (∀ (μ : S → A) (s : S), ∀ ε > 0, ∃ᶠ N in atTop, (policyBellman M 1 μ)^[N] 0 s ≤ V s + ε) ∧
+      (∀ μ, M.Proper μ → sspValue M μ ≤ V) ∧
+      ∀ μ, policyBellman M 1 μ V = bellman M 1 V ↔ M.Proper μ ∧ sspValue M μ = V := by
+  classical
+  have hmono := monotone_sspBellman hM
+  have hiter (μ : S → A) (n : ℕ) (J : S → ℝ) :
+      (policyBellman M 1 μ)^[n] J ≤ (bellman M 1)^[n] J :=
+    (monotone_sspPolicyBellman hM μ).iterate_le_of_le (policyBellman_le_bellman μ) n J
+  -- The pointwise maximum over proper policy values is a subsolution.
+  let ps : Finset (S → A) := Finset.univ.filter fun μ => M.Proper μ
+  have hps : ps.Nonempty := by
+    obtain ⟨μ, hμ⟩ := hproper
+    exact ⟨μ, Finset.mem_filter.2 ⟨Finset.mem_univ _, hμ⟩⟩
+  let V : S → ℝ := fun s => ps.sup' hps fun μ => sspValue M μ s
+  have hp_le (μ : S → A) (hμ : M.Proper μ) : sspValue M μ ≤ V := fun s =>
+    Finset.le_sup' (fun π => sspValue M π s) (Finset.mem_filter.2 ⟨Finset.mem_univ _, hμ⟩)
+  have hsub : V ≤ bellman M 1 V := fun s => Finset.sup'_le _ _ fun μ hμ => by
+    have hp := (Finset.mem_filter.1 hμ).2
+    calc sspValue M μ s = policyBellman M 1 μ (sspValue M μ) s :=
+          (congrFun (policyBellman_sspValue hM hp) s).symm
+      _ ≤ policyBellman M 1 μ V s := monotone_sspPolicyBellman hM μ (hp_le μ hp) s
+      _ ≤ bellman M 1 V s := policyBellman_le_bellman μ V s
+  -- A greedy policy at the subsolution is proper; its limit bounds the next iterate.
+  let μ := greedy M 1 V
+  have hg : policyBellman M 1 μ V = bellman M 1 V := policyBellman_greedy V
+  have himprove : V ≤ policyBellman M 1 μ V := hg ▸ hsub
+  have hμ := proper_of_le_sspPolicyBellman hM (himproper μ) himprove
+  have hinc := (monotone_sspPolicyBellman hM μ).monotone_iterate_of_le_map himprove
+  have hstep : policyBellman M 1 μ V ≤ sspValue M μ :=
+    ge_of_tendsto (tendsto_policyBellman_iterate hM hμ V) <|
+      (eventually_ge_atTop 1).mono fun n hn => by simpa only [Function.iterate_one] using hinc hn
+  have hV : bellman M 1 V = V := le_antisymm (hg ▸ hstep.trans (hp_le μ hμ)) hsub
+  -- Any fixed point is the value of its own proper greedy policy and dominates
+  -- every proper policy value.
+  have huniq (W : S → ℝ) (hW : bellman M 1 W = W) : W = V := by
+    have hgreedy : policyBellman M 1 (greedy M 1 W) W = W := (policyBellman_greedy W).trans hW
+    have hp := proper_of_le_sspPolicyBellman hM (himproper _) hgreedy.ge
+    refine le_antisymm ((eq_sspValue_of_policyBellman_eq hM hp hgreedy).le.trans (hp_le _ hp)) ?_
+    intro s
+    refine Finset.sup'_le _ _ fun ν hν => ?_
+    have hlim := tendsto_policyBellman_iterate hM (Finset.mem_filter.1 hν).2 W
+    have hbound := (monotone_sspPolicyBellman hM ν).antitone_iterate_of_map_le
+      ((policyBellman_le_bellman ν W).trans_eq hW)
+    exact (le_of_tendsto' hlim fun n => by
+      simpa only [Function.iterate_zero_apply] using hbound (Nat.zero_le n)) s
+  -- For any start, squeeze between the greedy policy iterates and the decreasing
+  -- Bellman iterates from a supersolution. The latter limit is a fixed point.
+  have hconv (J : S → ℝ) : Tendsto (fun k => (bellman M 1)^[k] J) atTop (𝓝 V) := by
+    let U : S → ℝ := fun s => V s + dist J V
+    have hJU : J ≤ U := fun s => sub_le_iff_le_add'.1
+      ((le_abs_self (J s - V s)).trans (by simpa only [Real.dist_eq] using dist_le_pi_dist J V s))
+    have hVU : V ≤ U := fun s => le_add_of_nonneg_right dist_nonneg
+    have hU : bellman M 1 U ≤ U := (sspBellman_add_const_le hM V dist_nonneg).trans_eq (by rw [hV])
+    have hdec := hmono.antitone_iterate_of_map_le hU
+    let L : S → ℝ := fun s => ⨅ n : ℕ, (bellman M 1)^[n] U s
+    have hlim : Tendsto (fun n => (bellman M 1)^[n] U) atTop (𝓝 L) :=
+      tendsto_pi_nhds.2 fun s => tendsto_atTop_ciInf (fun _ _ h => hdec h s) ⟨V s, by
+        rintro _ ⟨n, rfl⟩
+        simpa only [Function.iterate_fixed hV] using (hmono.iterate n hVU) s⟩
+    have hnext : Tendsto (fun n => (bellman M 1)^[n + 1] U) atTop (𝓝 L) :=
+      (tendsto_add_atTop_iff_nat 1).2 hlim
+    have hL : bellman M 1 L = L := tendsto_nhds_unique
+      ((continuous_sspBellman (M := M)).tendsto L |>.comp hlim) (by
+        simpa only [Function.iterate_succ_apply', Function.comp_def] using hnext)
+    rw [huniq L hL] at hlim
+    have hμV : sspValue M μ = V := (eq_sspValue_of_policyBellman_eq hM hμ (hg.trans hV)).symm
+    have hlower := tendsto_policyBellman_iterate hM hμ J
+    rw [hμV] at hlower
+    exact tendsto_pi_nhds.2 fun s => tendsto_of_tendsto_of_tendsto_of_le_of_le
+      (tendsto_pi_nhds.1 hlower s) (tendsto_pi_nhds.1 hlim s)
+      (fun n => hiter μ n J s) (fun n => hmono.iterate n hJU s)
+  refine ⟨V, hV, huniq, hconv, ?_, hp_le, ?_⟩
+  · intro ν s ε hε
+    have hlim := ((continuous_apply s).tendsto V).comp (hconv 0)
+    exact ((hlim.eventually_lt_const (lt_add_of_pos_right _ hε)).mono
+      fun n hn => ((hiter ν n 0) s).trans hn.le).frequently
+  · intro ν
+    constructor
+    · intro h
+      have hfix := h.trans hV
+      have hp := proper_of_le_sspPolicyBellman hM (himproper ν) hfix.ge
+      exact ⟨hp, (eq_sspValue_of_policyBellman_eq hM hp hfix).symm⟩
+    · rintro ⟨hp, hval⟩
+      rw [hV, ← hval]
+      exact policyBellman_sspValue hM hp
+
+end Optimal
 
 section Discounted
 

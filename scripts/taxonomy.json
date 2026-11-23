@@ -13793,7 +13793,6 @@
   "WantedExt/ComputerScience/PACFundamentalTheoremWanted": {"to": "ComputerScience/machine-learning/pac-learning", "title": "Fundamental theorem of PAC learning"},
   "WantedExt/ComputerScience/ShorOrderToFactorProbabilityWanted": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's reduction of factoring to order finding"},
   "WantedExt/ComputerScience/SoftmaxPolicyGradientWanted": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Policy gradients for softmax policies"},
-  "WantedExt/ComputerScience/StochasticShortestPathWanted": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Stochastic shortest path problems"},
   "WantedExt/ComputerScience/UnionFindInverseAckermannWanted": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Disjoint-set data structure"},
   "WantedExt/ComputerScience/UnrelatedMachinesRoundingWanted": {"to": "ComputerScience/approximation-algorithms", "title": "Scheduling unrelated parallel machines"},
   "WantedExt/ComputerScience/WeakLearnabilityWanted": {"to": "ComputerScience/machine-learning/pac-learning", "title": "Weak learnability"},
