@@ -28,8 +28,11 @@ open NativeKParametrizedSource NativeSpectraSimplicialSource StableSpectraInfini
 open NativeEnrichedSpectrumReplacements NativeSpectrumConeSources NativeDerivedSpectrumModels
 open BGTNativeNonconnectiveModels StableInfinityCategoryModels StableInfinityFilteredColimits
 
-def_wanted native_sigma_full_parameters (A : StableCategoryEnrichment) {k : UncountableRegularCardinal}
-    (P : SigmaKappaSystem k) : SigmaFunctorAction A P
+/-- Construct the Sigma objects and maps together with their strict enriched action. For an
+arbitrary Sigma system the action need not exist: equivalent but non-isomorphic quotient models
+chosen for isomorphic categories cannot be strictly functorial. -/
+def_wanted native_sigma_full_parameters (A : StableCategoryEnrichment)
+    (k : UncountableRegularCardinal) : Σ P : SigmaKappaSystem k, SigmaFunctorAction A P
 
 def_wanted native_closed_loop_parameters (N : SpectrumSimplicialEnrichment) {S : SpectrumInfinitySource}
     (R : EnrichedSpectrumReplacements N S) : LoopFunctorActions N R
@@ -40,9 +43,10 @@ variable {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment}
     (L : SpectrumCoherentLocalization N S) {k : UncountableRegularCardinal} (P : SigmaKappaSystem k)
     (B : ∀ C : StableInfinityCategory.{0}, KBoundaryStage Z K R L P C)
 
-/-- The IK tower functor, for natural boundary stages. -/
-def_wanted native_full_IK_tower_functor (hB : IsNaturalBoundary Z K R L P B) :
-    NativeIKSource K R L P B
+/-- The IK tower functor, for a Sigma system with a strict enriched action and natural boundary
+stages. -/
+def_wanted native_full_IK_tower_functor (sig : SigmaFunctorAction A P)
+    (hB : IsNaturalBoundary Z K R L P B) : NativeIKSource K R L P B
 
 def_wanted native_IK_localizing_invariant (I : NativeIKSource K R L P B) : NativeIKLocalizing I
 

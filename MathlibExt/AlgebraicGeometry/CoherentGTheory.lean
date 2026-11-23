@@ -57,8 +57,9 @@ def supported (X : Scheme.{0}) (U : X.Opens) : ObjectProperty X.Modules := fun F
 theorem supported_finitelyPresented (X : Scheme.{0}) (U : X.Opens) (F : X.Modules)
     (h : supported X U F) : finitelyPresented X F := h.imp id And.left
 
-/-- The S-construction space of finitely presented sheaves; Quillen's G-theory space when `X`
-is Noetherian (`gSpace`). -/
+/-- The realization of the S-construction of finitely presented sheaves: a delooping of their
+K-theory space, so `HigherFP X n` is `π_(n+1)`. For Noetherian `X` it is the delooping of
+Quillen's G-theory space (`gSpace`). -/
 abbrev fpSpace (X : Scheme.{0}) := SSet.toTop.obj (diagonal (finitelyPresented X))
 abbrev supportedSpace (X : Scheme.{0}) (U : X.Opens) := SSet.toTop.obj (diagonal (supported X U))
 abbrev fpBase (X : Scheme.{0}) := basePoint (finitelyPresented X) (Or.inl (isZero_zero _))
@@ -68,7 +69,8 @@ abbrev supportedBase (X : Scheme.{0}) (U : X.Opens) :=
 abbrev HigherFP (X : Scheme.{0}) (n : ℕ) :=
   HigherGroup (finitelyPresented X) (Or.inl (isZero_zero _)) n
 
-/-- Quillen's G-theory space of a Noetherian scheme. -/
+/-- The delooping of Quillen's G-theory space of a Noetherian scheme (realization of the
+S-construction of coherent sheaves). -/
 abbrev gSpace (X : Scheme.{0}) [IsNoetherian X] := fpSpace X
 
 /-- The base point of the G-theory space of a Noetherian scheme. -/
