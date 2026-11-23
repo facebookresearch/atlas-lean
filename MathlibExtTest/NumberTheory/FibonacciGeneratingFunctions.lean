@@ -19,6 +19,31 @@ example (a b : ℤ) : IsGibonacciGood a b 0 := by
 example (a b : ℤ) : IsGibonacciGood a b (2 / 3) :=
   isGibonacciGood_fib_div a b 3
 
+-- Both steps from 1/3 must preserve integrality with quadratic denominator 5.
+example : IsGibonacciGood 1 3 (3 / 4) ∧ IsGibonacciGood 1 3 2 := by
+  have h : IsGibonacciGood 1 3 (1 / 3) :=
+    ⟨by norm_num, 3, by norm_num [gibonacciGeneratingValue]⟩
+  obtain ⟨hf, hb⟩ := isGibonacciGood_transform 1 3 1 3 (by decide) (by decide) h
+  norm_num at hf hb
+  exact ⟨hf, hb⟩
+
+-- At zero only the forward step is defined.
+example (a b : ℤ) : IsGibonacciGood a b 1 := by
+  have hf := (isGibonacciGood_transform a b 0 1 (by decide) (by decide)
+    (by simpa using isGibonacciGood_zero a b)).1 (by decide)
+  simpa using hf
+
+-- At -1 only the backward step is defined.
+example (a b : ℤ) : IsGibonacciGood a b (-2) := by
+  have h : IsGibonacciGood a b (-1) := by
+    refine ⟨by norm_num, 2 * a - b, ?_⟩
+    push_cast
+    simp [gibonacciGeneratingValue]
+    ring
+  have hb := (isGibonacciGood_transform a b (-1) 1 (by decide) (by decide) (by simpa using h)).2
+  norm_num at hb
+  exact hb
+
 -- Consecutive indices give opposite signs for the denominator.
 example : gibonacciGeneratingValue (-2) 5 (1 / 2) = 6 := by
   norm_num [gibonacciGeneratingValue]
