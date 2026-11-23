@@ -152,7 +152,7 @@ private theorem count_ofFn_stirling {n : ℕ} {w : Fin (2 * n) → ℕ}
     (hw : IsStirlingPermutation n w) (v : ℕ) :
     (List.ofFn w).count v = if v ∈ Finset.Icc 1 n then 2 else 0 := by
   by_cases hv : v ∈ Finset.Icc 1 n
-  · rw [ite_eq_left hv, ← List.Vector.toList_ofFn, ← Fin.card_filter_univ_eq_vector_get_eq_count]
+  · rw [ite_eq_left hv, ← List.Vector.toList_ofFn, List.Vector.count_toList]
     simpa only [List.Vector.get_ofFn] using hw.2.1 v hv
   · rw [ite_eq_right hv, List.count_eq_zero]
     simpa only [List.mem_ofFn, Set.mem_range] using

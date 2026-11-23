@@ -39,7 +39,7 @@ b, a b ≠ b a`, and trivial centre is `Subgroup.center H = ⊥`.
 /-- **The set of conjugacy class sizes.** For a group $G$, $N(G)$ is the set of natural numbers
 $|\{y \in G : y \text{ is conjugate to } x\}|$ for $x \in G$, that is, the set of sizes of the
 conjugacy classes of $G$, where an infinite class counts as size $0$. -/
-def classSizes (G : Type*) [Group G] : Set ℕ :=
+noncomputable def classSizes (G : Type*) [Group G] : Set ℕ :=
   Set.range fun x : G => Nat.card {y : G // IsConj x y}
 
 /-- **Thompson's conjecture on conjugacy class sizes.** Write $N(G)$ for the set of sizes of the
