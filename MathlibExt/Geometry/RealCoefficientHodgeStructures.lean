@@ -45,7 +45,7 @@ namespace MathlibExt.Geometry.RealCoefficientHodgeStructures
 
 open _root_.CategoryTheory
 open MathlibExt.AlgebraicGeometry.RealCoefficientPerverseSheaves
-open scoped ChangeOfRings ComplexOrder
+open scoped ChangeOfRings
 
 variable (A : Subfield ℝ) (V : ModuleCat.{0} A)
 
@@ -104,7 +104,8 @@ structure PurePolarization (C : Conjugation A V) (w : ℤ) (H : PureHodgeStructu
   orthogonal : ∀ p v t, v ∈ H.F p → t ∈ H.F (w + 1 - p) → complexForm v t = 0
   hodgeRiemann : ∀ (p q : ℤ), p + q = w → ∀ v : complexCarrier A V,
     v ∈ H.F p ⊓ (H.F q).map C.map.toLinearMap → v ≠ 0 →
-      0 < Complex.I ^ (p - q) * (-1 : ℂ) ^ (w * (w - 1) / 2) * complexForm v (C.map v)
+      (Complex.I ^ (p - q) * (-1 : ℂ) ^ (w * (w - 1) / 2) * complexForm v (C.map v)).im = 0 ∧
+      0 < (Complex.I ^ (p - q) * (-1 : ℂ) ^ (w * (w - 1) / 2) * complexForm v (C.map v)).re
 
 def PurePolarization.tateForm {C : Conjugation A V} {w : ℤ} {H : PureHodgeStructure A V C w}
     (P : PurePolarization A V C w H) :
