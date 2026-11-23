@@ -11,11 +11,10 @@ module
 import MathlibExt.AlgebraicGeometry.SheafModuleGradedCohomology
 
 /-!
-# Actual coefficient-unit and cup boundary checks
+# Tests for the cup product and the continuous coefficient classes
 
-The unit is the actual nonzero continuous coefficient class over a nonempty
-scheme. Cup uses that identity class, and the discrete/continuous coefficient
-normalization retains its literal sheaf map. No graded-ring provider is assumed.
+The unit is a nonzero class over a nonempty scheme, so cup product with it is not the zero map;
+the degree-zero `Ext` classes of the coefficient maps recover those maps.
 -/
 
 noncomputable section
@@ -43,7 +42,7 @@ section ContinuousCoefficients
 variable (E : Type) [CommRing E] [TopologicalSpace E] [IsTopologicalRing E] [Nontrivial E]
   (X : Scheme.{0}) [Nonempty X] [HasExt.{e} (CoefficientModules E X)]
 
-/-- The identity is forced to be a nonzero actual coefficient class. -/
+/-- Over a nonempty scheme, the unit is nonzero. -/
 example : one (coefficientRing E X) ≠ 0 := by
   intro h
   have h' : Adic.constantClass E X 1 = Adic.constantClass E X 0 := by
@@ -52,7 +51,7 @@ example : one (coefficientRing E X) ≠ 0 := by
   have hbad : (1 : E) = 0 := Adic.constantClass_injective E X h'
   exact one_ne_zero hbad
 
-/-- A zero cup operation would violate the native unit law. -/
+/-- Cup product with the unit is the identity, so it is not the zero map. -/
 example {n : ℕ} (x : Adic.Cohomology E X n) (hx : x ≠ 0) :
     cup (coefficientRing E X) (Adic.constantClass E X 1) x (zero_add n) ≠ 0 := by
   simpa only [Adic.constantClass_one, one_cup] using hx
@@ -64,7 +63,7 @@ section UnitComparison
 variable (E : Type) [CommRing E] [TopologicalSpace E] [IsTopologicalRing E]
   (X : Scheme.{0}) [HasExt.{e} (CoefficientSheaf X E)]
 
-/-- Degree-zero identification recovers the original actual coefficient map. -/
+/-- The degree-zero class of the coefficient map is that map. -/
 example :
     Abelian.Ext.homEquiv₀ (Adic.coefficientUnitClass E X) = unitCoefficientMap E X := by
   apply (Abelian.Ext.mk₀_bijective
@@ -72,7 +71,7 @@ example :
     (continuousModuleSheaf E (ULift.{1} E) X)).1
   simp [Adic.coefficientUnitClass]
 
-/-- The underlying-unit comparison also retains the original native isomorphism. -/
+/-- The degree-zero class of `unitUnderlyingIso` is that isomorphism. -/
 example :
     Abelian.Ext.homEquiv₀ (Adic.underlyingUnitClass E X) = (unitUnderlyingIso E X).hom := by
   apply (Abelian.Ext.mk₀_bijective
