@@ -62,17 +62,61 @@ def cgroup_usage(group: Path) -> int:
     return max(0, current - inactive)
 
 
-def cgroup_headroom() -> int | None:
-    """The memory this process's cgroup v2 and its ancestors still allow, if any of them limits it."""
+def unescape_mount_path(path: str) -> str:
+    """Undo the octal escapes (`\040` for a space) of /proc/self/mountinfo paths."""
+    return re.sub(r'\\([0-7]{3})', lambda match: chr(int(match.group(1), 8)), path)
+
+
+def cgroup_directories() -> tuple[Path, Path] | None:
+    """This process's cgroup v2 directory and the cgroup2 mount point above it; None without one.
+
+    /proc/self/cgroup gives the membership relative to the cgroup namespace, and
+    /proc/self/mountinfo which part of the hierarchy the cgroup2 mount shows and
+    where. Raises LookupError when a memory cgroup applies but cannot be read
+    here: a cgroup v1 memory controller, or a membership the mount does not show.
+    """
     try:
         with open('/proc/self/cgroup', encoding='utf-8') as membership:
-            paths = [line.rstrip('\n').split(':', 2)[2] for line in membership if line.startswith('0::')]
-    except (OSError, IndexError):
+            lines = membership.read().splitlines()
+    except OSError:
         return None
-    if not paths:
+    fields = [line.split(':', 2) for line in lines]
+    if any(len(field) == 3 and 'memory' in field[1].split(',') for field in fields):
+        raise LookupError('a cgroup v1 memory controller applies')
+    unified = [field[2] for field in fields if len(field) == 3 and field[0] == '0' and field[1] == '']
+    if not unified:
         return None
+    member = unified[0]
+    try:
+        with open('/proc/self/mountinfo', encoding='utf-8') as mounts:
+            entries = [line.split() for line in mounts]
+    except OSError as error:
+        raise LookupError('the cgroup2 mount is unknown') from error
+    for entry in entries:
+        if '-' not in entry:
+            continue
+        separator = entry.index('-')
+        if separator < 5 or len(entry) <= separator + 1 or entry[separator + 1] != 'cgroup2':
+            continue
+        root, mount = unescape_mount_path(entry[3]).rstrip('/'), Path(unescape_mount_path(entry[4]))
+        if member == root or member.startswith(root + '/'):
+            return mount / member[len(root):].lstrip('/'), mount
+    raise LookupError('the cgroup2 mount does not show this process\'s cgroup')
+
+
+def cgroup_headroom() -> int | None:
+    """Memory this process's cgroup v2 and its visible ancestors still allow, if any limits it.
+
+    None when no cgroup limit applies; 0 when one may apply but cannot be read.
+    """
+    try:
+        found = cgroup_directories()
+    except LookupError:
+        return 0
+    if found is None:
+        return None
+    group, mount = found
     headroom = None
-    group = Path('/sys/fs/cgroup') / paths[0].lstrip('/')
     while True:
         try:
             limit = (group / 'memory.max').read_text(encoding='ascii').strip()
@@ -81,7 +125,7 @@ def cgroup_headroom() -> int | None:
                 headroom = left if headroom is None else min(headroom, left)
         except (OSError, ValueError):
             pass
-        if group == Path('/sys/fs/cgroup') or group.parent == group:
+        if group == mount or group.parent == group:
             return headroom
         group = group.parent
 
@@ -97,15 +141,15 @@ def available_memory() -> int | None:
     if available is None:
         return None
     headroom = cgroup_headroom()
-    return available if headroom is None else min(available, headroom)
+    return available if headroom is None else max(0, min(available, headroom))
 
 
 def worker_count(groups: int) -> int:
     """How many initial groups run at once: ATLAS_AUDIT_WORKERS, else what memory holds."""
     value = os.environ.get(WORKERS_VARIABLE, '').strip()
     if value:
-        if not value.isdigit() or int(value) < 1:
-            raise AuditFailure(f'{WORKERS_VARIABLE} must be a positive integer, not {value!r}')
+        if not re.fullmatch(r'[0-9]{1,4}', value, re.ASCII) or int(value) < 1:
+            raise AuditFailure(f'{WORKERS_VARIABLE} must be an integer from 1 to 9999, not {value!r}')
         workers = int(value)
     else:
         available = available_memory()
@@ -115,26 +159,72 @@ def worker_count(groups: int) -> int:
     return max(1, min(workers, groups))
 
 
-class MemoryGate:
-    """Starts a Lean batch only while no other one runs or BATCH_MEMORY is still available.
+class SkippedGroup(AuditFailure):
+    """A group not started because an earlier group failed or the audit was cancelled."""
 
-    The worker count is sized once; the gate keeps parallel batches from
-    starting while something else on the machine has taken the memory since.
+
+class Admission:
+    """Decides when a Lean batch of an initial group may start.
+
+    A batch of group i does not start once a group before i has failed, nor
+    after the audit is cancelled; earlier groups keep running, so the first
+    failing group is always found. Batches waiting to start do so in group
+    order. Each running batch reserves BATCH_MEMORY: a
+    new one starts while none runs, or while the available memory covers the
+    running batches' reservations and its own (when the available memory is
+    unknown, an explicit ATLAS_AUDIT_WORKERS count applies as given). The worker
+    count is sized once; this keeps parallel batches from starting when
+    something else on the machine has taken the memory since.
     """
 
     def __init__(self) -> None:
         self.condition = threading.Condition()
         self.running = 0
+        self.next_group = 0
+        self.waiting: set[int] = set()
+        self.first_failure: int | None = None
+        self.cancelled = False
 
-    def __enter__(self) -> None:
+    def blocked(self, index: int) -> bool:
+        return self.cancelled or (self.first_failure is not None and index > self.first_failure)
+
+    def start(self, index: int, first: bool) -> None:
+        """Wait until a batch of group `index` may start (`first`: the group's first batch).
+
+        Groups start in group order, and waiting batches start lowest group first.
+        """
         with self.condition:
-            while self.running and (available_memory() or 0) < BATCH_MEMORY:
-                self.condition.wait(timeout=5)
-            self.running += 1
+            self.waiting.add(index)
+            try:
+                while True:
+                    if self.blocked(index):
+                        raise SkippedGroup('an audit group was skipped without an earlier failure')
+                    if index == min(self.waiting) and (not first or index == self.next_group):
+                        memory = available_memory()
+                        if not self.running or memory is None or memory >= (self.running + 1) * BATCH_MEMORY:
+                            self.running += 1
+                            if first:
+                                self.next_group += 1
+                            return
+                    self.condition.wait(timeout=5)
+            finally:
+                self.waiting.discard(index)
+                self.condition.notify_all()
 
-    def __exit__(self, *_: object) -> None:
+    def finish(self) -> None:
         with self.condition:
             self.running -= 1
+            self.condition.notify_all()
+
+    def fail(self, index: int) -> None:
+        with self.condition:
+            if self.first_failure is None or index < self.first_failure:
+                self.first_failure = index
+            self.condition.notify_all()
+
+    def cancel(self) -> None:
+        with self.condition:
+            self.cancelled = True
             self.condition.notify_all()
 
 
@@ -148,76 +238,97 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
     placed in G groups, and successful groups never share assigned modules.
 
     The initial groups are consecutive `batch_size` slices of `modules`, as in a
-    sequential run. They may run in parallel (`workers`, default `worker_count`),
-    but their results are combined in group order: the checked modules, the
-    counts and the progress lines are those of a sequential run, and a failure
-    reported is the first failing group's.
+    sequential run. With more than one worker (`workers`, default `worker_count`)
+    they run in parallel, and their results are combined in group order: the
+    checked modules, the counts and the progress lines are those of a sequential
+    run, and the failure reported is the first failing group's. With one worker
+    they run one after another in the calling thread, as before.
     """
     if not modules or len(set(modules)) != len(modules) or batch_size < 1:
         raise AuditFailure('invalid nonempty, unique audit inventory or batch bound')
     if workers is not None and workers < 1:
         raise AuditFailure('invalid audit worker count')
-    gate = MemoryGate()
+    initial = [modules[offset:offset + batch_size] for offset in range(0, len(modules), batch_size)]
+    initial_groups = len(initial)
+    count = worker_count(initial_groups) if workers is None else min(workers, initial_groups)
+    admission = Admission()
 
-    def check(batch: list[str], tally: dict) -> None:
+    def check(index: int, batch: list[str], tally: dict, first: bool = False) -> None:
         tally['attempts'] += 1
         with tempfile.NamedTemporaryFile(mode='w', suffix='.lean', prefix='atlas-axioms-',
                                          encoding='utf-8') as driver:
             driver.write(''.join(f'import {module}\n' for module in batch))
             driver.write(checker)
             driver.flush()
-            with gate:
+            admission.start(index, first)
+            try:
                 result = subprocess.run(['lake', 'env', 'lean', driver.name], cwd=root,
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                         text=True, timeout=1200)
+                split = result.returncode != 0 and only_import_collision(result.stdout) and len(batch) > 1
+                if result.returncode != 0 and not split:
+                    admission.fail(index)
+            except BaseException:
+                admission.fail(index)
+                raise
+            finally:
+                # A failure is recorded before the gate lets a later batch start.
+                admission.finish()
         if result.returncode == 0:
             tally['checked'].extend(batch)
             tally['groups'] += 1
             return
-        if only_import_collision(result.stdout) and len(batch) > 1:
+        if split:
             tally['splits'] += 1
             middle = len(batch) // 2
-            check(batch[:middle], tally)
-            check(batch[middle:], tally)
+            check(index, batch[:middle], tally)
+            check(index, batch[middle:], tally)
             return
         raise AuditFailure(result.stdout.rstrip() or f'Lean audit exited {result.returncode}')
 
-    stop = threading.Event()
-
-    def run_group(batch: list[str]) -> dict | None:
-        # After a failure, groups that have not started are skipped; groups that
-        # have started finish, so the first failing group can still be found.
-        if stop.is_set():
-            return None
+    def run_group(index: int, batch: list[str]) -> dict:
         tally = {'checked': [], 'attempts': 0, 'splits': 0, 'groups': 0}
         try:
-            check(batch, tally)
+            check(index, batch, tally, first=True)
+        except SkippedGroup:
+            raise
         except BaseException:
-            stop.set()
+            admission.fail(index)
             raise
         return tally
 
-    initial = [modules[offset:offset + batch_size] for offset in range(0, len(modules), batch_size)]
-    initial_groups = len(initial)
-    count = worker_count(initial_groups) if workers is None else min(workers, initial_groups)
+    if count > 1:
+        # Lake loads, and if needed rewrites, its workspace configuration under a
+        # lock it does not wait for, so load it once before the batches run at once.
+        warm = subprocess.run(['lake', 'env', 'true'], cwd=root, stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT, text=True, timeout=1200)
+        if warm.returncode != 0:
+            raise AuditFailure(warm.stdout.rstrip() or f'lake env exited {warm.returncode}')
     checked = []
     attempts = splits = groups = 0
-    with ThreadPoolExecutor(max_workers=count) as pool:
-        futures = [pool.submit(run_group, batch) for batch in initial]
-        try:
-            for future in futures:
-                tally = future.result()
-                if tally is None:
-                    raise AuditFailure('an audit group was skipped without an earlier failure')
-                checked.extend(tally['checked'])
-                attempts += tally['attempts']
-                splits += tally['splits']
-                groups += tally['groups']
-                print(f'compiled audit: {len(checked)}/{len(modules)} assigned modules checked', flush=True)
-        except BaseException:
-            for pending in futures:
-                pending.cancel()
-            raise
+
+    def combine(tally: dict) -> None:
+        nonlocal attempts, splits, groups
+        checked.extend(tally['checked'])
+        attempts += tally['attempts']
+        splits += tally['splits']
+        groups += tally['groups']
+        print(f'compiled audit: {len(checked)}/{len(modules)} assigned modules checked', flush=True)
+
+    if count == 1:
+        for index, batch in enumerate(initial):
+            combine(run_group(index, batch))
+    else:
+        with ThreadPoolExecutor(max_workers=count) as pool:
+            futures = [pool.submit(run_group, index, batch) for index, batch in enumerate(initial)]
+            try:
+                for future in futures:
+                    combine(future.result())
+            except BaseException:
+                admission.cancel()
+                for pending in futures:
+                    pending.cancel()
+                raise
     if checked != modules or len(set(checked)) != len(modules):
         raise AuditFailure('successful audit groups differ from the complete assigned inventory')
     return {'modules': len(modules), 'batchSize': batch_size, 'initialGroups': initial_groups,
