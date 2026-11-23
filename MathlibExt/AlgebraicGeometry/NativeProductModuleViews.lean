@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.ProductDifferentialOperatorModels
 public import MathlibExt.AlgebraicGeometry.NativeBetaInverseCompatibility
 public import MathlibExt.AlgebraicGeometry.NativeBetaModuleDerivedModels
+public import MathlibExt.AlgebraicGeometry.CanonicalOppositeRings
 
 /-!
 # Actual inverse-ring X/P views for the native product tempered object
@@ -86,9 +87,18 @@ def pEmbedding : InverseDP X IP ⟶ ProductDX n X :=
   (inverseBetaRingComparison (pProjection X) IP PRing NP PP).hom ≫
     betaRingMap (ProductSpace X) (ProjectedPRing X) (FullProductRing n X) Operators.pMap MP
 
+/-- The two operator views on the product. The opposite structures are the inverse images of the
+canonical anti-identifications of the opposite differential rings of the two factors. -/
 structure ProductModuleViewSource where
   pOpposite : OppositeMonoidSource (InverseDP X IP) (InverseDPop X IP)
   xOpposite : OppositeMonoidSource (InverseDX n X IX) (InverseDXop n X IX)
+  pCanonical : CanonicalOppositeRings.CanonicalOppositeCarrier ProjectiveLine
+    (analyticCoefficients 1 ProjectiveLine)
+  xCanonical : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X)
+  pOpposite_canonical : CanonicalOppositeRings.IsInverseImageOpposite (pProjection X) IP
+    pCanonical.betaMap pOpposite
+  xOpposite_canonical : CanonicalOppositeRings.IsInverseImageOpposite (xProjection X) IX
+    xCanonical.betaMap xOpposite
   commuting : CommutingEmbeddings (ProductDX n X)
     (InverseDX n X IX) (InverseDP X IP)
     (xEmbedding n X IX NX PX Structure Operators MX)

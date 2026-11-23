@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.NativeTemperedHolomorphicModels
 public import MathlibExt.AlgebraicGeometry.NativeBetaModuleDerivedModels
 public import MathlibExt.AlgebraicGeometry.IndSheafDerivedAlphaModels
 public import MathlibExt.CategoryTheory.NativeBoundedBimoduleModels
+public import MathlibExt.AlgebraicGeometry.CanonicalOppositeRings
 
 /-!
 # Genuine native analytic Ind construction requests
@@ -130,7 +131,15 @@ def_wanted actual_conjugate_structure_module : ConjugateStructureModuleSource n 
 def_wanted actual_native_tempered_distribution_source [T2Space M] [LocallyCompactSpace M]
     [SecondCountableTopology M] : NativeTemperedSourcePacket n M
 
-def_wanted actual_conjugate_opposite_ring : OppositeMonoidSource (Dbar n M) (DbarOp n M)
+/-- The canonical identification of the coefficient sheaves of the conjugate opposite
+differential ring and the conjugate differential ring. -/
+def_wanted actual_conjugate_canonical_carrier :
+  CanonicalOppositeRings.CanonicalOppositeCarrier M (analyticConjugateCoefficients n M)
+
+/-- The opposite monoid structure whose carrier is the β-image of the canonical carrier. -/
+def_wanted actual_conjugate_opposite_ring
+    (c : CanonicalOppositeRings.CanonicalOppositeCarrier M (analyticConjugateCoefficients n M)) :
+  {RO : OppositeMonoidSource (Dbar n M) (DbarOp n M) // CanonicalOppositeRings.IsCanonicalOpposite c RO}
 
 def_wanted actual_coefficient_opposite_ring : OppositeMonoidSource (K M) (K M)
 

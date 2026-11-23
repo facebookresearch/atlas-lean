@@ -22,7 +22,10 @@ Omega is the actual top-form regular-D transfer tensored with O, with
 its original right D action. DR is balanced Omega tensor and Sol is the
 native contravariant left-D module Hom into O. Coefficient forgetting
 and actual derived alpha return ordinary complex sheaves. No comparison
-object or final solution functor is supplied independently.
+object or final solution functor is supplied independently. The right
+view of Omega depends on the opposite structure `RBack`; comparisons with
+classical de Rham complexes require it to be the canonical
+anti-identification (`CanonicalOppositeRings.IsCanonicalBack`).
 
 Source: DK1311.2374v2 Section2.5 and Definition9.1.1;
 Mathlib56a005 native tensor/Hom, beta/alpha and Q, Apache2.0.

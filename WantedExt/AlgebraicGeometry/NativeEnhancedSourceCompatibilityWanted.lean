@@ -13,6 +13,7 @@ public import MathlibExt.AlgebraicGeometry.NativeDModuleDualityModels
 public import MathlibExt.AlgebraicGeometry.EnhancedConstructibleIndModels
 public import MathlibExt.AlgebraicGeometry.NativeOrdinaryDRSolModels
 public import MathlibExt.AlgebraicGeometry.OrdinaryEnhancedEmbeddingModels
+public import MathlibExt.AlgebraicGeometry.CanonicalOppositeRings
 
 /-!
 # Source compatibility outputs on the actual enhanced DR/Sol functors
@@ -189,6 +190,7 @@ variable [HolomorphicCoefficientSheaves.SheafCondition
 variable [LeftTensorDerivationSource (RealInverseDX n X Real IX Graph) (KY X) (KY X)]
   [LeftTensorHomSource (RealInverseDX n X Real IX Graph) (KY X) (KY X)]
 
+
 open NativeKernelReconstructionModels
 
 variable [T2Space X] [(Bimod.forget (B := KY X) (KY X)).Additive]
@@ -242,13 +244,19 @@ variable [LocallyCompactSpace X] [SecondCountableTopology X]
     (((Opens.grothendieckTopology X).over U).over W).WEqualsLocallyBijective AddCommGrpCat.{0}]
 
 
-theorem_wanted actual_holonomic_enhanced_DR_full :
+theorem_wanted actual_holonomic_enhanced_DR_full
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hRBack : CanonicalOppositeRings.IsInverseImageBack (realGraphInclusion (TopCat.of X) Real)
+      Graph ((originalInverse (xProjection X) IX).map cX.betaMap) RBack) :
   (actualHolonomicEnhancedDR n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
     Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
       Representatives Omega OmegaFirst OmegaGraph RBack UnitOppY RightView RightExact
         CoefficientExact Boundary Projection DRBounded).Full
 
-theorem_wanted actual_holonomic_enhanced_DR_faithful :
+theorem_wanted actual_holonomic_enhanced_DR_faithful
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hRBack : CanonicalOppositeRings.IsInverseImageBack (realGraphInclusion (TopCat.of X) Real)
+      Graph ((originalInverse (xProjection X) IX).map cX.betaMap) RBack) :
   (actualHolonomicEnhancedDR n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
     Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
       Representatives Omega OmegaFirst OmegaGraph RBack UnitOppY RightView RightExact
@@ -272,6 +280,10 @@ variable [LeftTensorDerivationSource (Rop n X) (R n X) (U X)]
       Ordinary Normalize BetaExact M))
 
 theorem_wanted actual_holonomic_dual_DR_shift_bounded
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hROX : CanonicalOppositeRings.IsCanonicalOpposite cX ROX)
+    (hRBack : CanonicalOppositeRings.IsInverseImageBack (realGraphInclusion (TopCat.of X) Real)
+      Graph ((originalInverse (xProjection X) IX).map cX.betaMap) RBack)
     (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M) :
   IsBounded ℂ (enhancedSpace (TopCat.of X)).ambient
     ((shiftFunctor (IndDerived ℂ (enhancedSpace (TopCat.of X)).ambient) (-(n : ℤ))).obj
@@ -283,6 +295,10 @@ theorem_wanted actual_holonomic_dual_DR_shift_bounded
         Ordinary Normalize BetaExact M)))
 
 def_wanted actual_enhanced_Sol_DR_duality_iso
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hROX : CanonicalOppositeRings.IsCanonicalOpposite cX ROX)
+    (hRBack : CanonicalOppositeRings.IsInverseImageBack (realGraphInclusion (TopCat.of X) Real)
+      Graph ((originalInverse (xProjection X) IX).map cX.betaMap) RBack)
     (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M)
     (ShiftBounded : IsBounded ℂ (enhancedSpace (TopCat.of X)).ambient
       ((shiftFunctor (IndDerived ℂ (enhancedSpace (TopCat.of X)).ambient) (-(n : ℤ))).obj
@@ -377,6 +393,9 @@ def_wanted actual_ordinary_ind_compactified_extension_iso :
     ordinaryBorderedRealization X IotaRC IotaExactRC IotaBoundedRC JRC
 
 theorem_wanted actual_holonomic_enhanced_DR_real_constructible
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hRBack : CanonicalOppositeRings.IsInverseImageBack (realGraphInclusion (TopCat.of X) Real)
+      Graph ((originalInverse (xProjection X) IX).map cX.betaMap) RBack)
     (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M) :
   IsEnhancedRConstructible n X IotaRC IotaExactRC IotaBoundedRC JRC OrdinaryExtensionExactRC
     Boundary Projection
@@ -425,7 +444,9 @@ variable (OrdinaryStructure : StructureModuleSource X (analyticCoefficients n X)
   (OrdinaryIotaExact : ExactImageSource (ordinaryToInd ℂ (TopCat.of X) OrdinaryIota))
   (OrdinaryIotaBounded : BoundedIotaSource ℂ (TopCat.of X) OrdinaryIota OrdinaryIotaExact)
 
-theorem_wanted actual_regular_holonomic_ordinary_DR_bounded :
+theorem_wanted actual_regular_holonomic_ordinary_DR_bounded
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hOrdinaryRBack : CanonicalOppositeRings.IsCanonicalBack cX OrdinaryRBack) :
   ∀ L : RegularHolonomicModels.RegularHolonomicDerived n X,
     IsBoundedDerived (OrdinarySheaf ℂ (TopCat.of X))
       ((NativeOrdinaryDRSolModels.actualOrdinaryDR n X Ordinary Normalize BetaExact
@@ -439,7 +460,11 @@ variable (OrdinaryDRBounded : ∀ L : RegularHolonomicModels.RegularHolonomicDer
         OrdinaryCoefficientExact OrdinaryAlphaExact).obj L.obj))
 
 /-- Proposition9.1.3, with actual native maps and arbitrary-support regular holonomic cohomology. -/
-def_wanted actual_regular_holonomic_enhanced_DR_iso :
+def_wanted actual_regular_holonomic_enhanced_DR_iso
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hRBack : CanonicalOppositeRings.IsInverseImageBack (realGraphInclusion (TopCat.of X) Real)
+      Graph ((originalInverse (xProjection X) IX).map cX.betaMap) RBack)
+    (hOrdinaryRBack : CanonicalOppositeRings.IsCanonicalBack cX OrdinaryRBack) :
   actualRegularHolonomicEnhancedDR n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
     Real Graph Proper Adj Image Derivation Geometry BoundedO Ordinary Normalize BetaExact
       Representatives Omega OmegaFirst OmegaGraph RBack UnitOppY RightView RightExact

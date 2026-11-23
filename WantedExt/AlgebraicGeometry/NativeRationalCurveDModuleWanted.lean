@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.NativeOrdinaryDRSolModels
 public import MathlibExt.AlgebraicGeometry.NativeRationalCurveModuleModels
+public import MathlibExt.AlgebraicGeometry.CanonicalOppositeRings
 
 /-!
 # Full native D-module curve realization and gauge requests
@@ -101,7 +102,13 @@ def_wanted actual_curve_native_connection {r : ℕ}
 variable {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions)
   (C : CurveCoordinateSource S) (MA : RationalConnectionModuleSource S A C)
 
-def_wanted actual_curve_native_DR_iso (D : AnalyticConnectionDeRhamData S r A) :
+/-- The ordinary de Rham complex of the native connection module, formed with the canonical
+anti-identification of the opposite differential ring, is the two-term connection complex shifted
+by one. -/
+def_wanted actual_curve_native_DR_iso (D : AnalyticConnectionDeRhamData S r A)
+    (c : CanonicalOppositeRings.CanonicalOppositeCarrier (puncturedLine S)
+      (analyticCoefficients 1 (puncturedLine S)))
+    (hRBack : CanonicalOppositeRings.IsCanonicalBack c RBack) :
   (actualOrdinaryDR 1 (puncturedLine S) Ordinary Normalize BetaExact Structure Omega
     RBack UnitOpp RightView RightExact CoefficientExact AlphaExact).obj
       ((DerivedCategory.singleFunctor (RingedComplexCoefficientModels.OrdinaryModule

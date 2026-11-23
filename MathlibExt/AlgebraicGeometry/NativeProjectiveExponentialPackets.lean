@@ -11,6 +11,7 @@ public import MathlibExt.AlgebraicGeometry.ProjectiveExponentialSectionModels
 public import MathlibExt.AlgebraicGeometry.NativeBetaModuleDerivedModels
 public import MathlibExt.AlgebraicGeometry.NativeIndModuleInverseModels
 public import MathlibExt.CategoryTheory.NativeOppositeBimoduleModels
+public import MathlibExt.AlgebraicGeometry.CanonicalOppositeRings
 
 /-!
 # Full native exp(tau) and r(exp(-tau)) product inputs
@@ -69,6 +70,11 @@ class ProjectiveExponentialData where
     (analyticOppositeDifferentialRing 1 ProjectiveLine)
   opposite : OppositeMonoidSource DP DPop
   oppositeBack : OppositeMonoidSource DPop DP
+  /-- Both opposite structures are the canonical anti-identification and its inverse. -/
+  canonical : CanonicalOppositeRings.CanonicalOppositeCarrier ProjectiveLine
+    (analyticCoefficients 1 ProjectiveLine)
+  opposite_canonical : CanonicalOppositeRings.IsCanonicalOpposite canonical opposite
+  oppositeBack_canonical : CanonicalOppositeRings.IsCanonicalBack canonical oppositeBack
   unitOpposite : OppositeMonoidSource KP KP
   plusView : OppositeBimoduleSource DP KP DPop KP opposite unitOpposite
   minusView : OppositeBimoduleSource DPop KP DP KP oppositeBack unitOpposite

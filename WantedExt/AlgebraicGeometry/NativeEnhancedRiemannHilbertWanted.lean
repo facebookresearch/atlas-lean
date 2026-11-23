@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.NativeEnhancedHolomorphicModels
 public import MathlibExt.AlgebraicGeometry.HolonomicCharacteristicSupportModels
+public import MathlibExt.AlgebraicGeometry.CanonicalOppositeRings
 
 /-!
 # Source-qualified enhanced Riemann--Hilbert reconstruction request
@@ -119,6 +120,7 @@ variable [TensorDerivationSource (Mon.trivial (IndSheaf ℂ (ProductSpace X)))
   (Back : OppositeBimoduleSource (Mon.trivial (IndSheaf ℂ (ProductSpace X)))
     (InverseDXop n X IX) (Mon.trivial (IndSheaf ℂ (ProductSpace X))) (InverseDX n X IX) UnitOpp XBack)
   [Back.functor.Additive] (BE : ExactImageSource Back.functor)
+
 
 variable (Real : RealProjectiveMapSource)
   (Graph : InverseMonoidalSource (realGraphInclusion (TopCat.of X) Real))
@@ -234,12 +236,18 @@ theorem_wanted actual_enhanced_O_bounded : IsBoundedDerived
     (actualEnhancedORaw n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
       Real Graph Proper Adj Image Derivation)
 
-theorem_wanted actual_enhanced_O_right_bounded : IsBoundedDerived
+theorem_wanted actual_enhanced_O_right_bounded
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hXBack : CanonicalOppositeRings.IsInverseImageBack (xProjection X) IX cX.betaMap XBack) :
+    IsBoundedDerived
     (Bimod (RealInverseDX n X Real IX Graph) (KY X))
     (actualEnhancedORightRaw n X IX IP NX NP PX PP Structure Operators MX MP V Ot TE
       Exp Minus XBack UnitOpp Back BE Real Graph Proper Adj Image Derivation)
 
-def_wanted actual_enhanced_O_right_iso (RightBounded : IsBoundedDerived
+def_wanted actual_enhanced_O_right_iso
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hXBack : CanonicalOppositeRings.IsInverseImageBack (xProjection X) IX cX.betaMap XBack)
+    (RightBounded : IsBoundedDerived
     (Bimod (RealInverseDX n X Real IX Graph) (KY X))
     (actualEnhancedORightRaw n X IX IP NX NP PX PP Structure Operators MX MP V Ot TE
       Exp Minus XBack UnitOpp Back BE Real Graph Proper Adj Image Derivation)) :
@@ -257,6 +265,8 @@ variable [(Bimod.forget (B := KY X) (RealInverseDX n X Real IX Graph)).Additive]
 
 /-- Definition8.2.1/Theorem8.2.2 compare these objects in the bordered coefficient category. -/
 def_wanted actual_right_local_O_bordered_realization
+    (cX : CanonicalOppositeRings.CanonicalOppositeCarrier X (analyticCoefficients n X))
+    (hXBack : CanonicalOppositeRings.IsInverseImageBack (xProjection X) IX cX.betaMap XBack)
     (RightBounded : IsBoundedDerived (Bimod (RealInverseDX n X Real IX Graph) (KY X))
       (actualEnhancedORightRaw n X IX IP NX NP PX PP Structure Operators MX MP V Ot TE
         Exp Minus XBack UnitOpp Back BE Real Graph Proper Adj Image Derivation)) :

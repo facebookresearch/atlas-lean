@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.NativeTemperedHolomorphicModels
 public import MathlibExt.AlgebraicGeometry.NativeBetaModuleDerivedModels
 public import MathlibExt.CategoryTheory.NativeRingedAdjointImageModels
+public import MathlibExt.AlgebraicGeometry.CanonicalOppositeRings
 
 /-!
 # Complete native source data for the actual tempered O object
@@ -51,6 +52,11 @@ class TemperedOData where
   conjugate : ConjugateStructureModuleSource n M
   ordinary : OrdinaryBetaModuleSource (TopCat.of M) (analyticConjugateDifferentialRing n M)
   conjugateOpposite : OppositeMonoidSource (Dbar n M) (DbarOp n M)
+  /-- The conjugate opposite structure is the canonical anti-identification. -/
+  conjugateCanonical : CanonicalOppositeRings.CanonicalOppositeCarrier M
+    (analyticConjugateCoefficients n M)
+  conjugateOpposite_canonical :
+    CanonicalOppositeRings.IsCanonicalOpposite conjugateCanonical conjugateOpposite
   coefficientOpposite : OppositeMonoidSource (K M) (K M)
   conjugateView : OppositeBimoduleSource (Dbar n M) (K M) (DbarOp n M) (K M)
     conjugateOpposite coefficientOpposite
