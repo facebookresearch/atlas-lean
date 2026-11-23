@@ -1119,6 +1119,21 @@ class Progress(Vault):
         self.assertEqual((card["main"]["state"], card["main"]["headline"]), ("can_state", "page_only"))
         self.assertEqual((card["supporting"]["total"], card["supporting"]["fully_proved"]), (1, 1))
 
+    def test_a_planned_statement_with_a_kind_reads_as_its_state(self) -> None:
+        # A planned page that counts as a statement not yet in Lean has the kind lean-facts gave it (docs/BLUEPRINT.md,
+        # Writing pages): a task once ready, it reads as Autoform's state, not as page only.
+        g = "Algebra/groups"
+        self.leaf(f"{g}/a/helper.md", 11)
+        self.leaf(f"{g}/a/a-main.md", 10, facts=None, statement=(f"{g}/a/helper.md",), row={"kind": "theorem"})
+        self.leaf(f"{g}/a/planned.md", 12, facts=None, row={"kind": "def"})
+        self.leaf(f"{g}/a/untyped.md", 13, facts=None)
+        self.card(f"{g}/a", 1, 10, ["a-main", "helper", "planned", "untyped"])
+        card = self.rollup()["cards"][0]
+        self.assertEqual((card["main"]["state"], card["main"]["headline"]), ("can_state", "can_state"))
+        supporting = card["supporting"]
+        self.assertEqual((supporting["total"], supporting["fully_proved"], supporting["can_state"],
+                          supporting["page_only"]), (3, 1, 1, 1))
+
     def test_markers_come_before_states(self) -> None:
         g = "Algebra/groups"
         self.leaf(f"{g}/a/a-main.md", 10, facts=None, row={"extensions": {
@@ -1217,6 +1232,17 @@ class Check(Vault):
         self.leaf(f"{self.g}/p/p-main.md", 30, facts=None)
         self.card(f"{self.g}/p", 3, 30, ["p-main"], kind="concept")
         self.assertEqual(self.errors(), [])
+
+    def test_a_planned_main_statement_with_a_kind_matches_the_card_kind(self) -> None:
+        # A planned main that counts as a statement not yet in Lean has the kind lean-facts gave it, which has to fit
+        # the card as a credited main's kind does.
+        self.leaf(f"{self.g}/p/p-main.md", 30, facts=None, row={"kind": "def"})
+        self.card(f"{self.g}/p", 3, 30, ["p-main"], kind="result")
+        self.leaf(f"{self.g}/q/q-main.md", 31, facts=None, row={"kind": "theorem"})
+        self.card(f"{self.g}/q", 4, 31, ["q-main"], kind="result")
+        errors = self.errors()
+        self.assert_found("a result card's main statement Algebra/groups/p/p-main is a `def`", errors)
+        self.assertFalse([error for error in errors if "q-main" in error], errors)
 
     def test_supports_point_outside_the_card(self) -> None:
         self.card(f"{self.g}/a", 1, 10, ["a-main", "a-lemma"], supports=[af(11), af(20), af(99)])
