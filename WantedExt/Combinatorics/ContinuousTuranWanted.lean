@@ -19,6 +19,7 @@ of `[0, n]²`.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.ContinuousTuran
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Analysis.Asymptotics.Theta
@@ -648,59 +649,6 @@ Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article 
 public theorem_wanted osat_singleton_and_opx_singleton (n : ℝ) (p : ℝ × ℝ) :
     osat n {p} = 0 ∧ opx n {p} = 0
 
-/-- **Containment of point sets in $\mathbb{R}^d$.** Let $d$ be a natural number and let
-$S, P \subseteq \mathbb{R}^d$. Then $S$ contains $P$ when there are maps
-$f_1, \dots, f_d : \mathbb{R} \to \mathbb{R}$ that expand distances between coordinates of points
-of $P$, that is, $f_i(p_i) - f_i(q_i) \ge p_i - q_i$ for every $i$ and all $p, q \in P$ with
-$p_i > q_i$, and such that $(f_1(p_1), \dots, f_d(p_d)) \in S$ for every $p \in P$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of containment in `ℝ^d`). -/
-public def ContainsPatternD {d : ℕ} (S P : Set (Fin d → ℝ)) : Prop :=
-  ∃ f : Fin d → ℝ → ℝ,
-    (∀ i, ∀ p ∈ P, ∀ q ∈ P, q i < p i → p i - q i ≤ f i (p i) - f i (q i)) ∧
-    ∀ p ∈ P, (fun i => f i (p i)) ∈ S
-
-/-- **Every set in $\mathbb{R}^d$ contains the empty pattern.** For every natural number $d$ and
-every set $S \subseteq \mathbb{R}^d$, $S$ contains the empty set $\emptyset \subseteq \mathbb{R}^d$
-in the sense of containment of point sets in $\mathbb{R}^d$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of containment in `ℝ^d`). -/
-public theorem containsPatternD_empty {d : ℕ} (S : Set (Fin d → ℝ)) : ContainsPatternD S ∅ :=
-  ⟨fun _ => id, by simp, by simp⟩
-
-/-- **Continuous Turán number in $\mathbb{R}^d$.** For a natural number $d$, a real number $n$
-and a set $P \subseteq \mathbb{R}^d$, the continuous Turán number $\mathrm{opx}(n, P, d)$ is the
-supremum of the $d$-dimensional Lebesgue measures $\mu_d(S)$ over all open sets
-$S \subseteq [0, n]^d$ that do not contain $P$ in the sense of containment of point sets in
-$\mathbb{R}^d$; it is $0$ when there is no such set.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of `opx(n, P, d)`). -/
-public noncomputable def opxD (d : ℕ) (n : ℝ) (P : Set (Fin d → ℝ)) : ℝ :=
-  sSup ((fun S => (MeasureTheory.volume S).toReal) ''
-    {S | IsOpen S ∧ S ⊆ Set.Icc 0 (fun _ => n) ∧ ¬ ContainsPatternD S P})
-
-/-- **Higher-dimensional continuous Turán numbers are nonnegative.** For every dimension $d$,
-real number $n$ and set $P \subseteq \mathbb{R}^d$, $\mathrm{opx}(n, P, d) \ge 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of `opx(n, P, d)`). -/
-public theorem opxD_nonneg (d : ℕ) (n : ℝ) (P : Set (Fin d → ℝ)) : 0 ≤ opxD d n P := by
-  apply Real.sSup_nonneg
-  rintro _ ⟨S, -, rfl⟩
-  exact ENNReal.toReal_nonneg
-
-/-- **The higher-dimensional continuous Turán number of the empty pattern.** For every dimension
-$d$ and every real number $n$, $\mathrm{opx}(n, \emptyset, d) = 0$: every set contains the empty
-pattern, so no set is free of it.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of `opx(n, P, d)`). -/
-public theorem opxD_empty (d : ℕ) (n : ℝ) : opxD d n ∅ = 0 := by
-  simp [opxD, containsPatternD_empty]
-
 /-- **Containment of a point pattern in d-dimensional grid cells.** Let $d$ be a natural number,
 let $A \subseteq \mathbb{N}^d$ be a set of cells and let $P \subseteq \mathbb{R}^d$. Then $A$
 contains $P$ when there are maps $f_1, \dots, f_d : \mathbb{R} \to \mathbb{N}$ such that each $f_i$
@@ -771,22 +719,6 @@ Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article 
 (`integers-2024-A1-lem-5-2`). -/
 public theorem_wanted opxD_mono_left {d : ℕ} (P : Set (Fin d → ℝ)) {m n : ℝ} (hmn : m ≤ n) :
     opxD d m P ≤ opxD d n P
-
-/-- **Increment bound for the d-dimensional continuous Turán number.** Let $d \ge 2$ be a
-natural number, let $P \subseteq \mathbb{R}^d$, and let $n, \varepsilon$ be real numbers with
-$n > 0$ and $0 < \varepsilon < n$. Then the $d$-dimensional continuous Turán number
-$\mathrm{opx}$ satisfies $\mathrm{opx}(n, P, d) \le \mathrm{opx}(n + \varepsilon, P, d)$ and
-$\mathrm{opx}(n + \varepsilon, P, d) < \mathrm{opx}(n, P, d) + d (2n)^{d-1} \varepsilon$.
-
-The hypothesis $d \ge 2$ is needed: for $d = 1$ and $P = \{0, L\}$ with $L > n + \varepsilon$,
-every open subset of $[0, n + \varepsilon]$ avoids $P$, so
-$\mathrm{opx}(n + \varepsilon, P, 1) = n + \varepsilon = \mathrm{opx}(n, P, 1) + \varepsilon$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.3
-(`integers-2024-A1-lem-5-3`). -/
-public theorem_wanted opxD_add_lt {d : ℕ} (hd : 2 ≤ d) (P : Set (Fin d → ℝ)) {n ε : ℝ}
-    (hn : 0 < n) (hε : 0 < ε) (hεn : ε < n) :
-    opxD d n P ≤ opxD d (n + ε) P ∧ opxD d (n + ε) P < opxD d n P + d * (2 * n) ^ (d - 1) * ε
 
 /-- **Continuity of the d-dimensional continuous Turán number.** For every natural number $d$
 and every $P \subseteq \mathbb{R}^d$, the $d$-dimensional continuous Turán number
