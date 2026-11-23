@@ -1487,11 +1487,11 @@ theorem coop_eval_coopClause_nodup (C : CNFClause) (s : CoopSt) (σ : ℕ → Bo
     simp
   rw [hstab, hclause]
 
-/-- Left as `sorry`: false as stated. With duplicate root indices (e.g. roots
-`[(7, 3), (5, 3)]`), a `coopRoot` lookup hit returns an index whose first `find?` entry
-names a different variable, so the OR chain reads the wrong variable's value. The true
-version (extra `(s.roots.map Prod.snd).Nodup` hypothesis) is `coop_eval_coopClause_nodup`. -/
-
+/-- **The built network evaluates the formula.** Under assignment `σ`, the accumulator
+node of the constructed network for `φ` evaluates to `φ.all (clauseVal σ)`: every clause
+node reads its clause's value, and the AND chain collects them. The clause step needs the
+duplicate-free root-index invariant (`coop_eval_coopClause_nodup`), which the construction
+maintains. -/
 theorem eval_coopSt_acc (φ : CNF) (σ : ℕ → Bool) :
     (coopSt φ).eval σ ⟨(coopSt φ).acc, (good_coopSt φ).acc_lt⟩ =
       φ.all (clauseVal σ) := by
@@ -2369,13 +2369,12 @@ theorem encodeLit_length_ge_two (l : ℕ × Bool) : 2 ≤ (encodeLit l).length :
   unfold encodeLit
   have h := encodeNatPrefix_length_ge_one l.1
   simp [List.length_append] at h ⊢
-  try omega
 
 theorem encodeClause_length_eq (C : CNFClause) :
     (encodeClause C).length = C.length + 1 + (C.flatMap encodeLit).length := by
   unfold encodeClause
   simp only [List.length_append, List.length_replicate, List.length_cons, List.length_nil]
-  try omega
+  omega
 
 theorem flatMap_encodeLit_length_ge (C : CNFClause) :
     C.length ≤ (C.flatMap encodeLit).length := by
