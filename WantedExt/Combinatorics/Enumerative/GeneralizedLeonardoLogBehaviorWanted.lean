@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Enumerative.GeneralizedLeonardoLogBehavior
 public import WantedExt.NumberTheory.GenLeonardoWanted
 
 namespace MetaMathlibExt
@@ -64,34 +65,6 @@ public theorem_wanted logConvex_of_linearRecurrence_of_initial_logConvex
       z n = c 1 * z (n - 1) - ∑ j ∈ Finset.Icc 2 k, c j * z (n - j))
     (hinit : ∀ i, 1 ≤ i → i < k → z i ^ 2 ≤ z (i - 1) * z (i + 1)) :
     ∀ n, 1 ≤ n → z n ^ 2 ≤ z (n - 1) * z (n + 1)
-
-/-- **Log-balancedness of reciprocals along a three-term recurrence.** Let $c_1$ and $c_2$ be
-real numbers with $c_2 \ge 0$, and let $(z_n)_{n \ge 0}$ be a sequence of positive real numbers
-with $z_{n+1} = c_1 z_n - c_2 z_{n-2}$ for every $n \ge 2$. Write $w_n = 1/z_n$ and
-$x_n = z_{n+1}/z_n$, and let $n_0 \ge 0$ be an integer. Suppose that for $n = n_0 + 1$ and
-$n = n_0 + 2$
-$$w_n^2 \le w_{n-1} w_{n+1} \quad \text{and} \quad
-\frac{w_{n-1}}{(n-1)!} \cdot \frac{w_{n+1}}{(n+1)!} \le \left(\frac{w_n}{n!}\right)^2,$$
-and that $c_1 x_n x_{n+1} \ge 3 c_2$ for every $n \ge n_0$. Then both inequalities hold for
-every $n \ge n_0 + 1$; that is, the sequence $(1/z_n)_{n \ge n_0}$ is log-balanced (Došlić).
-
-The paper also assumes $c_1 > 0$; this follows from positivity, the recurrence and $c_2 \ge 0$.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
-Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Lemma 2
-(`integers-2024-A82-lem-2`). -/
-public theorem_wanted inv_logBalanced_of_recurrence_of_initial (c₁ c₂ : ℝ) (hc₂ : 0 ≤ c₂)
-    (z : ℕ → ℝ) (hpos : ∀ n, 0 < z n)
-    (hrec : ∀ n, 2 ≤ n → z (n + 1) = c₁ * z n - c₂ * z (n - 2)) (n₀ : ℕ)
-    (hinit : ∀ n, n₀ + 1 ≤ n → n ≤ n₀ + 2 →
-      (1 / z n) ^ 2 ≤ (1 / z (n - 1)) * (1 / z (n + 1)) ∧
-        (1 / z (n - 1) / (n - 1).factorial) * (1 / z (n + 1) / (n + 1).factorial) ≤
-          (1 / z n / n.factorial) ^ 2)
-    (hx : ∀ n, n₀ ≤ n → 3 * c₂ ≤ c₁ * (z (n + 1) / z n) * (z (n + 2) / z (n + 1))) :
-    ∀ n, n₀ + 1 ≤ n →
-      (1 / z n) ^ 2 ≤ (1 / z (n - 1)) * (1 / z (n + 1)) ∧
-        (1 / z (n - 1) / (n - 1).factorial) * (1 / z (n + 1) / (n + 1).factorial) ≤
-          (1 / z n / n.factorial) ^ 2
 
 /-- **Log-balancedness of the reciprocals of generalized Leonardo numbers.** Let $k \ge 1$ be an
 integer and let $L_{k,n}$ be the generalized Leonardo numbers. Then the sequence

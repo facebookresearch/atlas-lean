@@ -337,30 +337,6 @@ public theorem_wanted prod_one_add_inv_prime_bounds (x : ℝ) (hx : 175712663079
         Real.exp (0.024334 / (3 * Real.log x ^ 3) * (1 + 15 / (4 * Real.log x))) *
         Real.log x
 
-
-/-- **Prime counting between the auxiliary functions $J$.** Let $\pi(x)$ be the number of primes
-$p \le x$ and $\vartheta(x) = \sum_{p \le x} \log p$ Chebyshev's function. Let $k \ge 1$ be an
-integer and let $\eta > 0$ and $x_1 > 1$ be reals with $|\vartheta(y) - y| < \eta y / \log^k y$
-for every real $y \ge x_1$. For reals $e$ and $x \ge x_1$ set
-$J_e(x) = \pi(x_1) - \frac{\vartheta(x_1)}{\log x_1} + \frac{x}{\log x} +
-\frac{e\,x}{\log^{k+1} x} + \int_{x_1}^{x} \left(\frac{1}{\log^2 t} +
-\frac{e}{\log^{k+2} t}\right) dt$.
-Then $J_{-\eta}(x) \le \pi(x) \le J_{\eta}(x)$ for every real $x \ge x_1$.
-
-The inequalities are non-strict, as the paper prints them.
-
-Source: Christian Axler, *Effective Estimates for Some Functions Defined over Primes*,
-INTEGERS 24 (2024), Article A34, Lemma 1 (`integers-2024-A34-lem-1`). -/
-public theorem_wanted primeCounting_mem_Icc_auxJ (k : ℕ) (hk : 0 < k) (η x₁ : ℝ) (hη : 0 < η)
-    (hx₁ : 1 < x₁)
-    (hθ : ∀ y : ℝ, x₁ ≤ y → |Chebyshev.theta y - y| < η * y / Real.log y ^ k)
-    (x : ℝ) (hx : x₁ ≤ x) :
-    let J : ℝ → ℝ := fun e =>
-      (Nat.primeCounting ⌊x₁⌋₊ : ℝ) - Chebyshev.theta x₁ / Real.log x₁ + x / Real.log x +
-        e * x / Real.log x ^ (k + 1) +
-          ∫ t in x₁..x, (1 / Real.log t ^ 2 + e / Real.log t ^ (k + 2))
-    J (-η) ≤ (Nat.primeCounting ⌊x⌋₊ : ℝ) ∧ (Nat.primeCounting ⌊x⌋₊ : ℝ) ≤ J η
-
 /-- **Büthe's bound of the prime-counting function by the logarithmic integral.** Let $\pi(x)$
 denote the number of primes $p \le x$, and let $\operatorname{li}(x)$ be the logarithmic integral,
 the principal value $\mathrm{PV}\int_0^x \frac{dt}{\log t}$. For every real $x$ with
