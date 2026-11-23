@@ -36,6 +36,13 @@ open NativeLineDuals CoherentCurveLinearSeries
 def_wanted nativeLineDuality (X : Scheme.{0}) (L : X.Modules) (line : IsLineBundle L) :
     LineDuality X L
 
+/-- The affine determinant package for the native derived functors: Knudsen–Mumford
+determinant transports over every ring, the coherence of derived pullback under composition
+and identities, the comparison of derived pullback along `Spec` of a ring map with derived
+scalar extension, and full faithfulness of the derived tilde functor. -/
+def_wanted affineSources [HasDerivedPullbacks.{0}] [HasDerivedScalarExtensions.{0}]
+    [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)] : AffineSources
+
 def_wanted positiveDeterminantScalarComparison [HasDerivedPullbacks.{0}]
     [HasDerivedScalarExtensions.{0}]
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]

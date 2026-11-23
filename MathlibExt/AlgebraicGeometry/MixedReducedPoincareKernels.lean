@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.ReducedPoincareFamilies
+public import MathlibExt.AlgebraicGeometry.BoundedCoherent
 
 /-!
 # Actual mixed compactified-Jacobian Poincare kernels
@@ -150,12 +151,9 @@ def bounded (X : Scheme.{0}) (K : FourierMukai.D X) : Prop :=
 def boundedQuasicoherent (X : Scheme.{0}) : ObjectProperty (FourierMukai.D X) :=
   fun K => quasicoherent X K ∧ bounded X K
 
-def boundedCoherent (X : Scheme.{0}) : ObjectProperty (FourierMukai.D X) :=
-  fun K => (∀ i : ℤ,
-    IsFiniteTypeQuasicoherent ((DerivedCategory.homologyFunctor X.Modules i).obj K)) ∧ bounded X K
-
 abbrev BoundedQCoh (X : Scheme.{0}) := (boundedQuasicoherent X).FullSubcategory
-abbrev BoundedCoh (X : Scheme.{0}) := (boundedCoherent X).FullSubcategory
+/-- Bounded complexes with coherent cohomology (`BoundedCoherent.boundedCoherent`). -/
+abbrev BoundedCoh (X : Scheme.{0}) := (BoundedCoherent.boundedCoherent X).FullSubcategory
 
 variable [HasDerivedTensors.{0}]
 
@@ -169,11 +167,11 @@ structure MixedFourierMukaiEquivalence where
     (boundedQuasicoherent N.J.left).ι ⋙
       fourierMukai N.J.hom M.J.hom (reverseKernel S A C q q' s M N L L' D P)
   coherent : BoundedCoh M.J.left ≌ BoundedCoh N.J.left
-  coherent_forward : coherent.functor ⋙ (boundedCoherent N.J.left).ι ≅
-    (boundedCoherent M.J.left).ι ⋙
+  coherent_forward : coherent.functor ⋙ (BoundedCoherent.boundedCoherent N.J.left).ι ≅
+    (BoundedCoherent.boundedCoherent M.J.left).ι ⋙
       fourierMukai M.J.hom N.J.hom (forwardKernel S A C q q' s M N L L' D P)
-  coherent_reverse : coherent.inverse ⋙ (boundedCoherent M.J.left).ι ≅
-    (boundedCoherent N.J.left).ι ⋙
+  coherent_reverse : coherent.inverse ⋙ (BoundedCoherent.boundedCoherent M.J.left).ι ≅
+    (BoundedCoherent.boundedCoherent N.J.left).ι ⋙
       fourierMukai N.J.hom M.J.hom (reverseKernel S A C q q' s M N L L' D P)
 
 end MathlibExt.AlgebraicGeometry.MixedReducedPoincareKernels

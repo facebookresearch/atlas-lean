@@ -162,18 +162,23 @@ def FieldInvariant {X : Scheme.{u}} {L : X.Modules} {r : ℕ}
   ∃ theta : F ⟶ moduleTensor X F L,
     i ≫ E.field = theta ≫ tensorMap i (𝟙 L)
 
-/-- Curve slope stability uses the actual saturated invariant subobjects. -/
+/-- Slope stability of a twisted bundle on a smooth proper integral curve, tested on the
+actual invariant subbundles. On such a curve a saturated subsheaf of a vector bundle is a
+subbundle with locally free quotient (torsion-free modules over a discrete valuation ring are
+free), so these are the saturated invariant subsheaves of the slope condition. -/
 def IsStableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) [IsProperCurve C.hom] {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   0 < r ∧ ∀ s : ℕ, 0 < s → s < r → ∀ (F : C.left.Modules) (i : F ⟶ E.module),
     Mono i → ∀ hF : IsVectorBundle F s, IsVectorBundle (cokernel i) (r-s) →
     FieldInvariant E F i →
       (bundleDegree C.hom F s hF : ℚ) / s < (bundleDegree C.hom E.module r E.bundle : ℚ) / r
 
-/-- Semistability tests the same actual saturated invariant subobjects. -/
+/-- Semistability tests the same invariant subbundles, on a smooth proper integral curve. -/
 def IsSemistableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) [IsProperCurve C.hom] {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   0 < r ∧ ∀ s : ℕ, 0 < s → s < r → ∀ (F : C.left.Modules) (i : F ⟶ E.module),
     Mono i → ∀ hF : IsVectorBundle F s, IsVectorBundle (cokernel i) (r-s) →
@@ -183,7 +188,8 @@ def IsSemistableCurve {k : Type u} [Field k]
 /-- Polystability is a genuine finite direct sum of stable same-slope fields;
 it does not assume existence of a harmonic metric. -/
 def IsPolystableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) [IsProperCurve C.hom] {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   let : HasFiniteBiproducts C.left.Modules := HasFiniteBiproducts.of_hasFiniteProducts
   ∃ (n : ℕ) (rank : Fin n → ℕ)

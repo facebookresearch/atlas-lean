@@ -21,11 +21,13 @@ such conclusion is encoded in their standing input data.
 
 Sources read: MRV arXiv:1207.7233v5, Section 5/Theorem C; MRV
 arXiv:1308.0564v2, Equation (4.1), Remark 4.2, Theorem 4.6/Theorem A.
-The latter equivalence retains char(k)=0 or char(k)>p_a(C), where the
-arithmetic genus p_a(C) is h¹(C, 𝒪_C) (H⁰(C, 𝒪_C) = k for a reduced connected
-proper curve over an algebraically closed field). Canonical
-universal-sheaf independence is degree-zero scope; chosen kernels outside
-that scope keep their supplied universal families. Scalar bases for
+The Cohen–Macaulay and flatness request and the mixed equivalence retain
+MRV II's hypothesis char(k)=0 or char(k)>p_a(C) (Theorem 4.6, Theorem A), where
+the arithmetic genus p_a(C) is h¹(C, 𝒪_C) (H⁰(C, 𝒪_C) = k for a reduced
+connected proper curve over an algebraically closed field); Picard-zero
+autoduality (MRV I, Theorem C) has no such restriction. The mixed equivalence
+is requested for the kernel of the chosen universal sheaves; their
+independence in degree zero (MRV II, Remark 4.2) is not requested. Scalar bases for
 D(O_C) and an O_C compactification point are not requested.
 -/
 
@@ -154,35 +156,15 @@ theorem_wanted mixedPoincareCohenMacaulay
     (L : LineLocus C q s M) (L' : LineLocus C q' s N)
     (D : OpenCohomologyData C q q' s M N L L')
     (P : ProductCoordinates C q q' s M N)
-    (planar : IsLocallyPlanar C) :
+    (planar : IsLocallyPlanar C)
+    (characteristic : CharZero k ∨ ∃ p : ℕ, CharP k p ∧
+      Module.finrank k (cohomology C.hom (structureModule C.left) 1) < p) :
     CompactifiedPoincareKernels.IsClosedPointMCM (mixedKernelModule S A C q q' s M N L L' D) ∧
       IsFlatOver (prod.fst : prod M.J N.J ⟶ M.J).left (mixedKernelModule S A C q q' s M N L L' D) ∧
       IsFlatOver (prod.snd : prod M.J N.J ⟶ N.J).left (mixedKernelModule S A C q q' s M N L L' D)
 
-def_wanted canonicalMixedPoincareEquivalence
-    [HasDerivedPullbacks.{0}] [HasDerivedScalarExtensions.{0}] [HasDerivedPushforwards.{0}]
-    [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
-    (k : Type) [Field k] [IsAlgClosed k]
-    (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (projective : ProjectiveLineSystems.IsProjectiveVariety C)
-    (q q' : Polarization C.left) (general : IsNondegenerate C q)
-    (general' : IsNondegenerate C q') (s : SmoothMarking C)
-    (M : FineCompactifiedJacobian C q s) (N : FineCompactifiedJacobian C q' s)
-    (S : AffineSources) (A : DeterminantSystem S)
-    (L : LineLocus C q s M) (L' : LineLocus C q' s N)
-    (D : OpenCohomologyData C q q' s M N L L')
-    (P : ProductCoordinates C q q' s M N)
-    [HasDerivedTensors.{0}] (planar : IsLocallyPlanar C)
-    (characteristic : CharZero k ∨ ∃ p : ℕ, CharP k p ∧
-      Module.finrank k (cohomology C.hom (structureModule C.left) 1) < p)
-    (degree_zero : totalWeight q =
-      1 - (Module.finrank k (cohomology C.hom (structureModule C.left) 1) : ℚ))
-    (degree_zero' : totalWeight q' =
-      1 - (Module.finrank k (cohomology C.hom (structureModule C.left) 1) : ℚ)) :
-    MixedFourierMukaiEquivalence S A C q q' s M N L L' D P
-
-/-- Outside degree zero, the supplied universal sheaves remain part of the chosen kernel. -/
+/-- The mixed Fourier–Mukai equivalence given by the kernel of the chosen universal sheaves
+(MRV II, Theorem A); the universal sheaves are part of the data. -/
 def_wanted chosenMixedPoincareEquivalence
     [HasDerivedPullbacks.{0}] [HasDerivedScalarExtensions.{0}] [HasDerivedPushforwards.{0}]
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
