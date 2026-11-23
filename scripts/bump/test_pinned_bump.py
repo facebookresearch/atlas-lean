@@ -1067,6 +1067,53 @@ class GuardTests(unittest.TestCase):
             [], [], "x" * 1_000_001, [], set(), "oversize")
         self.assertTrue(any("1,000,000-char" in p for p in problems), problems)
 
+    def test_written_regions_pairs_changed_lines(self):
+        # Offsets from the line-by-line diff, with and without a change
+        # in the line count.
+        original = 'mathlib "' + "3" * 40 + '"\nkeep this line\nlean "v4.35.0"\n'
+        current = 'mathlib "' + "4" * 40 + '"\nkeep this line\nlean "v4.36.0"\n'
+        self.assertEqual(
+            pinned_bump._written_regions(original, current), [(9, 49), (76, 77)])
+        self.assertEqual(pinned_bump._written_regions(original, original), [])
+        self.assertEqual(
+            pinned_bump._written_regions("a\nb\nc 1.0\n", "a\nX\nb\nc 2.0\n"),
+            [(2, 4), (8, 9)])
+
+    def test_rule_simulation_fits_budget_on_large_pin_policy(self):
+        # The simulation diffs each added rule's input against the text
+        # before the transition. A whole-file character diff is
+        # quadratic and used up the 10 s budget on the 9 KB pin-policy
+        # file, failing valid same-pin dependency additions as
+        # "timed out".
+        sha_rule = '({name}\\.get\\("rev"\\) != \\(\\s*")[0-9a-f]{{40}}(")'
+        base_config = json.loads(json.dumps(CONFIG))
+        base_config["doc_replacements"] = []
+        base_config["pin_policy"] = {"path": "policy.py", "replacements": [
+            {"pattern": '"v[0-9]+\\.[0-9]+\\.[0-9]+"', "replacement": '"{target}"'},
+            {"pattern": sha_rule.format(name="mathlib"),
+             "replacement": "{g1}{sha:mathlib}{g2}"},
+        ]}
+        pr_config = json.loads(json.dumps(base_config))
+        pr_config["deps"].append({"name": "repl", "repo": "leanprover-community/repl"})
+        pr_config["pin_policy"]["replacements"].append(
+            {"pattern": sha_rule.format(name="repl"), "replacement": "{g1}{sha:repl}{g2}"})
+        filler = "".join(f"# policy note {i}: keep this file in sync\n" for i in range(700))
+        policy = (
+            filler
+            + 'mathlib.get("inputRev") != "v4.35.0"\n'
+            + 'mathlib.get("rev") != ("'
+            + SHAS[("leanprover-community/mathlib4", "v4.35.0")] + '")\n'
+            + filler
+            + 'repl.get("rev") != ("' + SHAS[("leanprover-community/repl", "v4.35.0")] + '")\n'
+        )
+        self.assertGreater(len(policy), 50_000)
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "policy.py").write_text(policy)
+            problems = pinned_bump.validate_replacement_rules(
+                base_config, pr_config, tree, "v4.35.0", FakeGitHub(tags={}))
+        self.assertEqual(problems, [])
+
     def test_tailored_lookahead_is_rejected_and_removable(self):
         tags = ["v4.35.0", "v5.36.1", "v6.37.2"]
         encoded = ["".join(r"\x" + format(ord(c), "02x") for c in tag) for tag in tags]

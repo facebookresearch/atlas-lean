@@ -34,6 +34,32 @@ Congruences*, INTEGERS 24 (2024), Article A46, Section 2.2. -/
 @[expose] public def IsDividedPowerIdeal {A : Type*} [CommRing A] (I : Ideal A) : Prop :=
   ∀ a ∈ I, ∀ k : ℕ, 1 ≤ k → ∃ c ∈ I, a ^ k = (k.factorial : A) * c
 
+/-- If two elements agree modulo a divided-power ideal, their `n`th powers differ by
+`n` times an element of the ideal. -/
+public theorem IsDividedPowerIdeal.exists_pow_sub_pow_eq_mul {A : Type*} [CommRing A]
+    {I : Ideal A} (hI : IsDividedPowerIdeal I) {x y : A} (hxy : x - y ∈ I) (n : ℕ) :
+    ∃ c ∈ I, x ^ n - y ^ n = (n : A) * c := by
+  choose d hd hpow using fun k : ℕ => hI (x - y) hxy (k + 1) (Nat.succ_pos k)
+  cases n with
+  | zero => exact ⟨0, I.zero_mem, by simp⟩
+  | succ n =>
+    refine ⟨∑ k ∈ Finset.range (n + 1), (n.descFactorial k : A) * y ^ (n - k) * d k,
+      I.sum_mem fun k _ => I.mul_mem_left _ (hd k), ?_⟩
+    rw [← sub_add_cancel x y, add_pow, Finset.sum_range_succ']
+    simp only [pow_zero, one_mul, tsub_zero, Nat.choose_zero_right, Nat.cast_one, mul_one,
+      add_sub_cancel_right, Nat.succ_sub_succ_eq_sub, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro k _
+    rw [hpow]
+    calc
+      _ = ((k + 1).factorial * (n + 1).choose (k + 1) : ℕ) * y ^ (n - k) * d k := by
+        rw [Nat.cast_mul]
+        ring
+      _ = _ := by
+        rw [← Nat.descFactorial_eq_factorial_mul_choose, Nat.succ_descFactorial_succ,
+          Nat.cast_mul]
+        ring
+
 -- Factorial divisibility gives the result without using the unit hypothesis.
 set_option linter.unusedVariables false in
 /-- **Powers of elements congruent modulo a divided-power ideal.** Let $p$ be a prime, let $A$ be
@@ -52,27 +78,7 @@ public theorem pow_sub_pow_mem_of_sub_mem {p : ℕ} [Fact p.Prime] {A : Type*} [
     {x y : A} (hxy : x - y ∈ I) :
     (∀ m : ℕ, ∃ c ∈ I, x ^ p ^ m - y ^ p ^ m = (p : A) ^ m * c) ∧
       ∀ n : ℕ, ∃ c ∈ I, x ^ n - y ^ n = (n : A) * c := by
-  choose d hd hpow using fun k : ℕ => hI (x - y) hxy (k + 1) (Nat.succ_pos k)
-  have h (n : ℕ) : ∃ c ∈ I, x ^ n - y ^ n = (n : A) * c := by
-    cases n with
-    | zero => exact ⟨0, I.zero_mem, by simp⟩
-    | succ n =>
-      refine ⟨∑ k ∈ Finset.range (n + 1), (n.descFactorial k : A) * y ^ (n - k) * d k,
-        I.sum_mem fun k _ => I.mul_mem_left _ (hd k), ?_⟩
-      rw [← sub_add_cancel x y, add_pow, Finset.sum_range_succ']
-      simp only [pow_zero, one_mul, tsub_zero, Nat.choose_zero_right, Nat.cast_one, mul_one,
-        add_sub_cancel_right, Nat.succ_sub_succ_eq_sub, Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro k _
-      rw [hpow]
-      calc
-        _ = ((k + 1).factorial * (n + 1).choose (k + 1) : ℕ) * y ^ (n - k) * d k := by
-          rw [Nat.cast_mul]
-          ring
-        _ = _ := by
-          rw [← Nat.descFactorial_eq_factorial_mul_choose, Nat.succ_descFactorial_succ,
-            Nat.cast_mul]
-          ring
+  have h := hI.exists_pow_sub_pow_eq_mul hxy
   exact ⟨fun m => by simpa only [Nat.cast_pow] using h (p ^ m), h⟩
 
 end MetaMathlibExt

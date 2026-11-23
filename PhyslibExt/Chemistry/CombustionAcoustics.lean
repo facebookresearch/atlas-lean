@@ -192,11 +192,12 @@ namespace Chemistry.CombustionAcoustics
 /-- Zeroth-order Arrhenius heat-release rate with Newton cooling:
 `rate(T) = G * exp(-B / T) - H * (T - Ta)`, for heat-generation scale
 `G`, cooling coefficient `H`, activation ratio `B = E / R`, and
-ambient `Ta`. Read for `T > 0`. -/
+ambient `Ta`. Read for `T > 0`. It is defined for every real `T`: for
+`T = 0` the convention `x / 0 = 0` makes it `G + H * Ta`. -/
 noncomputable def arrheniusRate (G H B Ta T : ℝ) : ℝ :=
   G * Real.exp (-B / T) - H * (T - Ta)
 
-/-- At ambient temperature the rate is the positive generation term:
+/-- At ambient temperature the rate is the generation term (positive for `G > 0`):
 `rate(Ta) = G * exp(-B / Ta)`. -/
 lemma arrheniusRate_ambient (G H B Ta : ℝ) :
     arrheniusRate G H B Ta Ta = G * Real.exp (-B / Ta) := by
@@ -421,7 +422,7 @@ theorem arrhenius_equilibrium_exists {G H B Ta : ℝ} (hG : 0 < G)
   obtain ⟨T, hTmem, hTeq⟩ := himg
   exact ⟨T, hTmem, hTeq⟩
 
-/-- Finite-horizon trapping: if `T` has within-derivative
+/-- Finite-horizon trapping: for positive `G`, `H`, `B`, `Ta`, if `T` has within-derivative
 `arrheniusRate G H B Ta (T s) / C` on `Set.Icc 0 t` at every
 `s ∈ [0, t]`, with `C > 0` and `0 < T s` on the interval (the
 rate is a thermal model only for positive temperatures), then
@@ -489,9 +490,9 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
 
 
 /-- Forward trapping for a forward solution defined for all
-`t ≥ 0`: if `T` has within-derivative
+`t ≥ 0`: for positive `G`, `H`, `B`, `Ta`, if `T` has within-derivative
 `arrheniusRate G H B Ta (T t) / C` on `Set.Ici 0` at every
-`t ≥ 0`, with `C > 0`, then `T t` lies in `[lo, hi]` where
+`t ≥ 0`, with `C > 0` and `0 < T s` for every `s ≥ 0`, then `T t` lies in `[lo, hi]` where
 `lo = min (T 0) Ta` and `hi = max (T 0) (Ta + G / H)`, for every
 `t ≥ 0`. This is the finite-horizon trapping lemma applied on
 `[0, t]`; it presupposes a solution existing for all forward
@@ -513,7 +514,10 @@ lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
 /-- Acoustic modal energy for one standing mode with pressure amplitude
 `A` and velocity amplitude `B` in a duct of length `L`, ratio of
 specific heats `γ`, mean pressure `pbar`, and density `ρ`:
-`E = L * (A^2 / (γ * pbar) + ρ * B^2) / 4`. -/
+`E = L * (A^2 / (γ * pbar) + ρ * B^2) / 4`. It is defined for all real
+arguments: for `γ * pbar = 0` the convention `x / 0 = 0` drops the
+pressure term, leaving `L * ρ * B^2 / 4`. The intended domain is
+`γ, pbar > 0`. -/
 noncomputable def acousticModeEnergy (γ pbar ρ L A B : ℝ) : ℝ :=
   L * (A ^ 2 / (γ * pbar) + ρ * B ^ 2) / 4
 
@@ -532,8 +536,8 @@ private lemma hasDerivAt_div_const' {f : ℝ → ℝ} {f' x : ℝ}
     (h : HasDerivAt f f' x) (c : ℝ) : HasDerivAt (fun y => f y / c) (f' / c) x :=
   h.div_const c
 
-/-- Energy identity for the acoustic mode: if `A` and `B` are
-differentiable in time with
+/-- Energy identity for the acoustic mode: for nonzero `γ`, `pbar` and `L`,
+if `A` and `B` are differentiable in time with
 `A' = -γ * pbar * (π / L) * B + (γ - 1) * H` and
 `ρ * B' = (π / L) * A - r * B` (with `B'` the derivative value), then
 the energy `E(t) = L * (A(t)^2 / (γ * pbar) + ρ * B(t)^2) / 4` has
@@ -577,9 +581,8 @@ lemma hasDerivAt_acousticModeEnergy
   exact hE.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => by
     simp only [acousticModeEnergy, Pi.add_apply])
 
-/-- Signed dissipation with no heat release: under `0 ≤ r` and
-`0 < L`, with `H = 0`, the modal energy derivative is
-`-(r * L * B(t)^2 / 2)`, which is nonpositive. -/
+/-- Signed dissipation with no heat release: under `γ ≠ 0`, `pbar ≠ 0`, `0 ≤ r` and `0 < L`, with
+`H = 0`, the modal energy derivative is `-(r * L * B(t)^2 / 2)`, which is nonpositive. -/
 lemma acousticModeEnergy_deriv_nonpos_of_no_heat
     {γ pbar ρ L r : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
     (hL : 0 < L) (hr : 0 ≤ r) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
@@ -598,10 +601,9 @@ lemma acousticModeEnergy_deriv_nonpos_of_no_heat
     div_nonneg (mul_nonneg (mul_nonneg hr (le_of_lt hL)) (sq_nonneg _)) (by norm_num)
   linarith
 
-/-- Integrated energy balance over a time interval `[t0, t1]`: under
-the same modal equations at every time, the energy change equals the
-integral of the heat-release source minus the algebraic
-damping term. -/
+/-- Integrated energy balance over a time interval `[t0, t1]`: for positive `γ`, `pbar` and `L`,
+under the modal equations at every time of the interval, the energy change equals the integral of
+the heat-release source minus the algebraic damping term. -/
 lemma acousticModeEnergy_sub_eq_integral
     {γ pbar ρ L r H : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar)
     (hL : 0 < L) {A B A' B' : ℝ → ℝ} (t0 t1 : ℝ)
@@ -642,10 +644,9 @@ lemma acousticModeEnergy_sub_eq_integral
       MeasureTheory.volume t0 t1 := hcont.intervalIntegrable
   exact (intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint).symm
 
-/-- With no heat release and no dissipation, the modal energy has
-zero derivative at any single time satisfying the modal equations.
-Genuine conservation between two times is
-`acousticModeEnergy_eq_of_conserved`. -/
+/-- With no heat release and no dissipation, and with `γ`, `pbar` and `L` nonzero, the modal energy
+has zero derivative at any single time satisfying the modal equations. Genuine conservation between
+two times is `acousticModeEnergy_eq_of_conserved`. -/
 lemma hasDerivAt_acousticModeEnergy_conserved
     {γ pbar ρ L : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
     (hL : L ≠ 0) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
@@ -663,9 +664,9 @@ lemma hasDerivAt_acousticModeEnergy_conserved
   rw [e] at h
   exact h
 
-/-- Genuine conservation: if the modal equations with no heat
-release (`H = 0`) and no damping (`r = 0`) hold at every time, the
-modal energy takes the same value at any two times. -/
+/-- Genuine conservation: for positive `γ`, `pbar` and `L`, if the modal equations with no heat
+release (`H = 0`) and no damping (`r = 0`) hold at every time, the modal energy takes the same value
+at any two times. -/
 theorem acousticModeEnergy_eq_of_conserved
     {γ pbar ρ L : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar)
     (hL : 0 < L) {A B A' B' : ℝ → ℝ}
@@ -690,7 +691,9 @@ theorem acousticModeEnergy_eq_of_conserved
 /-! ## C. Semenov critical ratio and folds -/
 
 /-- Semenov critical ratio `q(T) = (T - Ta) * exp(B / T)`: for
-`H, T > 0`, equilibrium of the Arrhenius rate is `G / H = q(T)`. -/
+`H, T > 0`, equilibrium of the Arrhenius rate is `G / H = q(T)`. It is
+defined for every real `T`: for `T = 0` the convention `x / 0 = 0` makes
+it `-Ta`. The intended domain is `T > 0`. -/
 noncomputable def critRatio (Ta B T : ℝ) : ℝ :=
   (T - Ta) * Real.exp (B / T)
 
@@ -848,7 +851,7 @@ theorem critRatio_two_folds {Ta B : ℝ} (hTa : 0 < Ta)
   have hdp := (critRatio_deriv_eq_zero_iff hTa hTp).mpr hQp
   exact ⟨hdm, hdp, hTm, hord⟩
 
-/-- Degenerate fold: at `B = 4 * Ta` there is exactly one stationary
+/-- Degenerate fold: for `Ta > 0` and `B = 4 * Ta` there is exactly one stationary
 point above `Ta`, at `T = 2 * Ta`; it is not two ordinary folds. -/
 theorem critRatio_degenerate_fold {Ta : ℝ} (hTa : 0 < Ta) {T : ℝ}
     (hT : Ta < T) :
@@ -1195,7 +1198,8 @@ lemma one_add_log_le_fkField {δ : ℝ} (hδ : 0 < δ) (θ : ℝ) :
   change 1 + Real.log δ ≤ δ * Real.exp θ - θ
   linarith
 
-/-- The bound is positive exactly in the supercritical range `δ > exp (-1)`. -/
+/-- For `δ > 0`, the lower bound `1 + log δ` of the field is positive exactly in the supercritical
+range `δ > exp (-1)`. -/
 lemma one_add_log_pos_iff {δ : ℝ} (hδ : 0 < δ) :
     0 < 1 + Real.log δ ↔ Real.exp (-1) < δ := by
   rw [← Real.lt_log_iff_exp_lt hδ]
@@ -1523,39 +1527,50 @@ state `(ρ2, u2, p2, T2)` of a calorically perfect gas with gas constant `R`, he
 `γ` (the same on both sides) and heat release `q` per unit mass: the ideal-gas law `p = ρ R T` at
 both states, conservation of the mass flux `ρ u` and the momentum flux `p + ρ u ^ 2`, and the
 reactive total-enthalpy jump `cp T1 + u1 ^ 2 / 2 + q = cp T2 + u2 ^ 2 / 2` with
-`cp = γ R / (γ - 1)`. Read for `γ > 1`; velocities are in the wave frame. -/
+`cp = γ R / (γ - 1)`. Read for `γ > 1`; velocities are in the wave frame. It is defined for every
+real `γ`: for `γ = 1` the convention `x / 0 = 0` makes `cp = 0`, so the energy condition reads
+`u1 ^ 2 / 2 + q = u2 ^ 2 / 2`. -/
 def IsReactiveJump (γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2 : ℝ) : Prop :=
   p1 = ρ1 * R * T1 ∧ p2 = ρ2 * R * T2 ∧ ρ1 * u1 = ρ2 * u2 ∧
     p1 + ρ1 * u1 ^ 2 = p2 + ρ2 * u2 ^ 2 ∧
     γ * R / (γ - 1) * T1 + u1 ^ 2 / 2 + q = γ * R / (γ - 1) * T2 + u2 ^ 2 / 2
 
 /-- The heat-release parameter `Q = (γ ^ 2 - 1) q / a1 ^ 2` of the heat release `q` per unit mass
-against the upstream sound speed `a1`. Read for `a1 ^ 2 = γ R T1 > 0`. -/
+against the upstream sound speed `a1`. Read for `a1 ^ 2 = γ R T1 > 0`. It is defined for every
+real `a1`: for `a1 = 0` the convention `x / 0 = 0` makes it `0`. -/
 noncomputable def cjHeatParameter (γ q a1 : ℝ) : ℝ :=
   (γ ^ 2 - 1) * q / a1 ^ 2
 
 /-- The detonation root `1 + Q + √(Q (Q + 2))` of `m ^ 2 - 2 (1 + Q) m + 1 = 0`, the larger of
-its two roots. Read for `Q ≥ 0`. -/
+its two roots. Read for `Q ≥ 0`. It is defined for every real `Q`: for `-2 < Q < 0` it is `1 + Q`,
+since `√x = 0` for `x < 0`. -/
 noncomputable def cjDetonationMachSq (Q : ℝ) : ℝ :=
   1 + Q + Real.sqrt (Q * (Q + 2))
 
 /-- The other root `1 + Q - √(Q (Q + 2))` of `m ^ 2 - 2 (1 + Q) m + 1 = 0`, the
-Chapman-Jouguet deflagration point. It is never the detonation branch. Read for `Q ≥ 0`. -/
+Chapman-Jouguet deflagration point. For `Q > 0` it is below the detonation root. Read for
+`Q ≥ 0`. It is defined for every real `Q`: for `-2 < Q < 0` it is `1 + Q`, since `√x = 0` for
+`x < 0`. -/
 noncomputable def cjDeflagrationMachSq (Q : ℝ) : ℝ :=
   1 + Q - Real.sqrt (Q * (Q + 2))
 
 /-- The density ratio `ρ2 / ρ1 = (γ + 1) m / (1 + γ m)` of a reactive jump to a sonic downstream
-state, at the squared upstream Mach number `m = M1 ^ 2 > 0`. -/
+state, at the squared upstream Mach number `m = M1 ^ 2 > 0`. It is defined for all real `γ` and
+`m`: where `1 + γ m = 0` the convention `x / 0 = 0` makes it `0`. The intended domain is `γ > 1`
+and `m > 0`. -/
 noncomputable def cjDensityRatio (γ m : ℝ) : ℝ :=
   (γ + 1) * m / (1 + γ * m)
 
 /-- The pressure ratio `p2 / p1 = (1 + γ m) / (γ + 1)` of a reactive jump to a sonic downstream
-state, at `m = M1 ^ 2`. -/
+state, at `m = M1 ^ 2`. It is defined for every real `γ`: for `γ = -1` the convention `x / 0 = 0`
+makes it `0`. The intended domain is `γ > 1`. -/
 noncomputable def cjPressureRatio (γ m : ℝ) : ℝ :=
   (1 + γ * m) / (γ + 1)
 
 /-- The temperature ratio `T2 / T1` of a reactive jump to a sonic downstream state: the pressure
-ratio over the density ratio, `(1 + γ m) ^ 2 / ((γ + 1) ^ 2 m)` for `m > 0`. -/
+ratio over the density ratio, `(1 + γ m) ^ 2 / ((γ + 1) ^ 2 m)` for `m > 0`. It is defined for all
+real `γ` and `m`: for `m = 0` or `γ = -1` the convention `x / 0 = 0` makes it `0`. The intended
+domain is `γ > 1` and `m > 0`. -/
 noncomputable def cjTemperatureRatio (γ m : ℝ) : ℝ :=
   cjPressureRatio γ m / cjDensityRatio γ m
 
@@ -1925,7 +1940,9 @@ lemma isReactiveJump_cj {γ R q ρ1 u1 p1 T1 a1 M1 : ℝ} (hγ : 1 < γ) (hR : 0
       ring
     linarith
 
-/-- **Vanishing heat release.** As `q → 0⁺` the detonation root tends to the sonic value `1`. -/
+/-- **Vanishing heat release.** For any `γ` and `a1`, as `q → 0⁺` the detonation root tends to the
+sonic value `1`. For `a1 = 0` the heat parameter is `0` for every `q` by the convention `x / 0 = 0`,
+and the root is `1` throughout. -/
 lemma tendsto_cjDetonationMachSq (γ a1 : ℝ) :
     Tendsto (fun q => cjDetonationMachSq (cjHeatParameter γ q a1)) (𝓝[>] 0) (𝓝 1) := by
   have hc : Continuous (fun q => cjDetonationMachSq (cjHeatParameter γ q a1)) := by
@@ -1937,9 +1954,10 @@ lemma tendsto_cjDetonationMachSq (γ a1 : ℝ) :
   rw [h0] at h
   exact tendsto_nhdsWithin_of_tendsto_nhds h
 
-/-- **No heat release selects no normal shock.** For `γ > 1`, `R > 0`, a positive upstream state
-entering at `u1 > 0` and a normal-shock jump to a sonic downstream state, `M1 ^ 2 = 1` and the
-downstream state is the upstream one: the sonic condition admits only the trivial normal shock. -/
+/-- **A normal shock with a sonic downstream state is trivial.** For `γ > 1`, `R > 0`, a positive
+upstream state entering at `u1 > 0` and a normal-shock jump to a sonic downstream state,
+`M1 ^ 2 = 1` and the downstream state is the upstream one: the sonic condition admits only the
+trivial normal shock. -/
 lemma normalShock_sonic_trivial {γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 a2 : ℝ} (hγ : 1 < γ)
     (hR : 0 < R) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hu1 : 0 < u1) (ha1 : a1 ^ 2 = γ * R * T1)
     (hM1 : M1 = |u1| / a1) (ha2 : a2 ^ 2 = γ * R * T2) (hM2 : |u2| / a2 = 1)

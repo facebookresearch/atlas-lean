@@ -127,20 +127,6 @@ public theorem_wanted leonardo_generatingFunction :
       PowerSeries.mk (fun n => genLeonardo 1 n) * ((1 - X - X ^ 2) * (1 - X)) =
         2 * (1 - X) - (1 - X - X ^ 2)
 
-/-- **Generating function of the hyper-Leonardo numbers.** For every natural number $r$, the
-formal power series $\sum_{n \ge 0} \mathrm{Le}^{(r)}_n t^n$ of the hyper-Leonardo numbers of
-order $r$ satisfies
-$\left(\sum_{n \ge 0} \mathrm{Le}^{(r)}_n t^n\right)(1-2t+t^3)(1-t)^r = 1-t+t^2$ in
-$\mathbb{Z}[[t]]$, that is,
-$\sum_{n \ge 0} \mathrm{Le}^{(r)}_n t^n = \frac{1-t+t^2}{(1-2t+t^3)(1-t)^r}$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Theorem 1, Equation (10)
-(`integers-2026-A48-thm-1`). -/
-public theorem_wanted hyperLeonardo_generatingFunction (r : ℕ) :
-    PowerSeries.mk (fun n => hyperLeonardo r n) * ((1 - 2 * X + X ^ 3) * (1 - X) ^ r) =
-      1 - X + X ^ 2
-
 /-- **Hyper-Leonardo numbers in terms of hyper-Fibonacci numbers.** For all natural numbers $r$
 and $n$, the hyper-Leonardo number $\mathrm{Le}^{(r)}_n$ and the hyper-Fibonacci number
 $F^{(r)}_{n+1}$ satisfy $\mathrm{Le}^{(r)}_n = 2F^{(r)}_{n+1} - \binom{n+r}{r}$ as integers.

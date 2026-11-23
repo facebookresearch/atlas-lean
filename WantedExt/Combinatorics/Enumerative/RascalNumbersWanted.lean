@@ -18,7 +18,7 @@ arXiv:2405.11045).
 The Rascal numbers `R_{n,k}` are defined in the paper by the
 diamond recurrence of Angorro et al. together with the value
 `0` outside `0 ≤ k ≤ n`; since Angorro et al. proved
-`R_{n,k} = k(n-k) + 1` in range, `rascalZ` below is defined
+`R_{n,k} = k(n-k) + 1` in range, `rascalZ` is defined
 directly by that closed form on `ℤ`. The paper's `B_k(n)`
 (binary words of length `n` with exactly `k` ones and at most
 one ascent) and its generalization `B_k^{(j)}(n)` (at most `j`
@@ -52,6 +52,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.RascalNumbers
 
 set_option autoImplicit false
 
@@ -67,14 +68,6 @@ def wordAscents : List ℕ → ℕ
   | [] => 0
   | [_] => 0
   | a :: b :: t => (if a < b then 1 else 0) + wordAscents (b :: t)
-
-/-- **Rascal numbers on the integers.** For integers $n$ and $k$, the Rascal number $R_{n,k}$ is
-$k(n-k) + 1$ if $0 \le k \le n$, and $0$ otherwise.
-
-Gibbs and Miceli define $R_{n,k}$ by the diamond recurrence of Angorro et al., with value $0$
-outside $0 \le k \le n$; Angorro et al. proved that it equals $k(n-k) + 1$ in that range. -/
-def rascalZ (n k : ℤ) : ℤ :=
-  if 0 ≤ k ∧ k ≤ n then k * (n - k) + 1 else 0
 
 /-- **Binary words with few ascents.** For natural numbers $j$, $k$ and $n$, $B^{(j)}_k(n)$ is
 the set of words $w$ of length $n$ over the alphabet $\{0, 1\}$ with exactly $k$ ones and at most
@@ -262,21 +255,6 @@ theorem_wanted sum_sum_rascalZ (n : ℕ) (hn : 2 ≤ n) :
     ∑ i ∈ Finset.Icc 1 n, ∑ j ∈ Finset.Icc 1 (i - 1),
         rascalZ (i : ℤ) (j : ℤ) =
       (Nat.choose (n + 2) 4 : ℤ) + (Nat.choose n 2 : ℤ)
-
-/-- **Vanishing higher finite differences of Rascal numbers.** For natural numbers $n$, $k$ and
-$r$ with $k \le n$ and $r \ge 2$, the Rascal numbers satisfy
-$\sum_{j=0}^{r} (-1)^{r-j} \binom{r}{j} R_{n+j,k} = 0$.
-
-For $k \le n$ the value $R_{n+j,k}$ is a linear function of $j$, and the sum is its $r$-th
-finite difference.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 12. -/
-theorem_wanted sum_negOnePow_choose_rascalZ (n k r : ℕ)
-    (hkn : k ≤ n) (hr : 2 ≤ r) :
-    ∑ j ∈ Finset.range (r + 1),
-        (-1 : ℤ) ^ (r - j) * (Nat.choose r j : ℤ) *
-          rascalZ ((n + j : ℕ) : ℤ) (k : ℤ) = 0
 
 /-- **Alternating row sums of the Rascal triangle, odd rows.**
 For every natural number $m$, the Rascal numbers

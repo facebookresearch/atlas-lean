@@ -44,3 +44,17 @@ example (e : Fin 1 → ℤ) (Q : AddMonoidAlgebra ℤ (Fin 1 → ℤ)) :
     split <;> decide
   simpa using constantTerm_pow_mul_modEq_tilde (p := 2) (a := 2) (ℓ := 1)
     (by decide) (by decide) (single e 3) (single e 5) (by simpa using h) Q 1 2
+
+-- For P̃ = 8x and k = 4, the Cartier step reads the coefficient of x⁻⁷ in Q.
+example (Q : AddMonoidAlgebra ℤ (Fin 1 → ℤ)) :
+    (single (fun _ => 1) 8 ^ 7 * Q).coeff 0 ≡ 8 ^ 5 * Q.coeff (fun _ => -7) [ZMOD 9] := by
+  let e : Fin 1 → ℤ := fun _ => 1
+  have h (j : Fin 1 → ℤ) : (single (3 • e) (512 : ℤ)).coeff j ≡
+      (single (3 • e) 8).coeff j [ZMOD 9] := by
+    classical
+    simp only [coeff_single, Finsupp.single_apply]
+    split <;> decide
+  have step := constantTerm_tilde_pow_mul_modEq_laurentCartier (p := 3) (a := 2)
+    (by decide) (single e 8) (by simpa using h) Q 1 4
+  simpa [coeff_laurentCartier (by decide : 3 ≠ 0), e, Pi.mul_def, Pi.neg_def, Pi.add_def,
+    ← mul_assoc] using step
