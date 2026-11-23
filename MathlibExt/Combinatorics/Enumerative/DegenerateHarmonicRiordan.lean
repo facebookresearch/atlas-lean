@@ -372,6 +372,40 @@ theorem degenerateHarmonic_alternating_binomial_sum {lam : ℝ} (hlam : 0 < lam)
       refine Finset.sum_congr rfl fun k hk => ?_
       rw [Ring.choose_natCast, Nat.choose_symm (Finset.mem_range_succ_iff.mp hk)]
 
+set_option linter.unusedVariables false in
+/-- **Partial sums of degenerate harmonic numbers of rank as a convolution.** Let $\lambda > 0$
+and $\alpha > 0$ be real and let $n$ and $r$ be natural numbers. Write $H_\lambda(k, r, \alpha)$
+for the generalized degenerate harmonic numbers of rank $r$ and $H_{m,\lambda}(\alpha)$ for the
+generalized degenerate harmonic numbers. Then
+$$\sum_{k=0}^{n} H_\lambda(k, r+1, \alpha) =
+\sum_{k=0}^{n} H_{n-k,\lambda}(\alpha) \, H_\lambda(k, r, \alpha).$$
+
+Source: Ömer Duran, Neşe Ömür and Sibel Koparal, *Generalized Degenerate Harmonic Numbers and
+Their Applications with Riordan Arrays*, INTEGERS 24 (2024), Article A41, Theorem 4
+(`integers-2024-A41-thm-4`). -/
+theorem degenerateHarmonicRank_succ_partial_sum {lam α : ℝ}
+    (hlam : 0 < lam) (hα : 0 < α) (n r : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), degenerateHarmonicRank lam α k (r + 1) =
+      ∑ k ∈ Finset.range (n + 1),
+        generalizedDegenerateHarmonic lam α (n - k) * degenerateHarmonicRank lam α k r := by
+  let L := PowerSeries.mk (degenerateHarmonicTerm lam α)
+  let G : PowerSeries ℝ := PowerSeries.mk fun _ => 1
+  have partialSum (f : PowerSeries ℝ) (m : ℕ) :
+      PowerSeries.coeff m (f * G) = ∑ k ∈ Finset.range (m + 1), PowerSeries.coeff k f := by
+    simp [PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, G]
+  have rank (m s : ℕ) : degenerateHarmonicRank lam α m s =
+      PowerSeries.coeff m (L ^ (s + 1) * G) := (partialSum _ _).symm
+  have product : (L ^ (r + 1) * G) * (L * G) = (L ^ (r + 1 + 1) * G) * G := by
+    rw [pow_succ L (r + 1)]
+    ac_rfl
+  calc
+    _ = PowerSeries.coeff n ((L ^ (r + 1 + 1) * G) * G) := by
+      simp_rw [rank, partialSum (L ^ (r + 1 + 1) * G)]
+    _ = _ := by
+      rw [← product, PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+      simp only [← degenerateHarmonicRank_zero_right lam α, rank, Nat.zero_add, pow_one]
+      exact Finset.sum_congr rfl fun k _ => mul_comm _ _
+
 end
 
 end MetaMathlibExt

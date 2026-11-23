@@ -40,3 +40,23 @@ example {A : ℝ} (hA : 0 < A) (hA₁ : A ≤ 1)
   calc
     A ≤ letendreXi (3 / 8) (5 / 16) := h.2 ⟨hA, hA₁, htest⟩
     _ = 1 / 4 := by norm_num [letendreXi]
+
+-- At zero margin and η = θ² the cutoff is forced to be one, allowing α = 1 and t = 0.
+example : ∃ A : ℝ, A = 1 ∧ 0 ≤ ((1 / 2 - 0) / A) ^ 2 - (1 / 4 - 0) / A := by
+  obtain ⟨A, hA, hlo, hhi, hquad⟩ := exists_alpha_with_margin
+    (θ := 1 / 2) (η := 1 / 4) (δ := 0) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
+  norm_num [letendreXi] at hlo hhi
+  have heq := le_antisymm hhi hlo
+  exact ⟨A, heq, by simpa using hquad A hA le_rfl 0 le_rfl (by rw [heq]; norm_num)⟩
+
+-- The lower endpoint η = θ² - (θ(1 - θ))²δ allows a positive margin even below θ².
+example {t : ℝ} (ht : 0 ≤ t) (ht₁ : t ≤ 1 / 2) :
+    1 / 32 ≤ ((1 / 2 - t) / (1 / 2)) ^ 2 - (7 / 32 - t) / (1 / 2) := by
+  obtain ⟨A, _, hlo, _, hquad⟩ := exists_alpha_with_margin
+    (θ := 1 / 2) (η := 7 / 32) (δ := 1 / 2) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
+  norm_num [letendreXi] at hlo
+  have h := hquad (1 / 2) (by norm_num) hlo t ht (by norm_num; exact ht₁)
+  norm_num at h ⊢
+  exact h
