@@ -15,6 +15,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Order.Lattice.Nat
+public import MathlibExt.NumberTheory.Digits.KaprekarProjectiveOrderTotient
 
 /-!
 # Four-digit Kaprekar dynamics in odd bases (Chen, Ono, Schwartz, Thakur)
@@ -34,6 +35,11 @@ The structural classification (Theorem 1, with Lemma 11, Lemma 14 and Propositio
 is already proved as `MetaMathlibExt.four_digit_kaprekar_structural_classification` in
 `MathlibExt/NumberTheory/Digits/KaprekarStructuralClassification.lean`, whose
 `let`-bound map `kaprekar` is the same formula as `kaprekarFourDigitStep` below.
+
+The projective order of `2` (`MetaMathlibExt.projectiveOrderTwo`), with its characterization and
+sample values, and the bound on the cycle lengths of doubling on pairs of projective classes are
+proved in `MathlibExt/NumberTheory/Digits/KaprekarProjectiveDoubling.lean`. The bound by half
+the totient is proved in `MathlibExt/NumberTheory/Digits/KaprekarProjectiveOrderTotient.lean`.
 -/
 
 namespace MetaMathlibExt
@@ -99,84 +105,6 @@ display (2) and the proof of Corollary 27. -/
 public theorem kaprekarFourDigitStates_card_examples :
     (kaprekarFourDigitStates 3).card = 5 ∧ (kaprekarFourDigitStates 7).card = 27 := by
   decide
-
-/-- **Projective order of 2.** For a natural number $n$, the projective order of $2$ modulo $n$ is
-the least $m > 0$ with $2^m \equiv 1$ or $2^m \equiv -1 \pmod{n}$,
-$$\lambda(n) = \min \{m > 0 : 2^m \equiv \pm 1 \pmod{n}\},$$
-and $\lambda(n) = 0$ when no such $m$ exists, which happens exactly when $n$ is even (including
-$n = 0$, where congruence modulo $0$ is equality of integers). For odd $n$ these are the terms of
-OEIS A003558, which lists $\lambda(2k + 1)$ at index $k$.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-Definition 19, display (13). -/
-public noncomputable def projectiveOrderTwo (n : ℕ) : ℕ :=
-  sInf {m : ℕ | 0 < m ∧ ((2 : ZMod n) ^ m = 1 ∨ (2 : ZMod n) ^ m = -1)}
-
-/-- **Characterization of the projective order of 2.** Let $n$ and $m$ be natural numbers with
-$m > 0$. Suppose that $2^m \equiv 1$ or $2^m \equiv -1 \pmod{n}$, and that for every $k$ with
-$0 < k < m$ neither $2^k \equiv 1$ nor $2^k \equiv -1 \pmod{n}$. Then the projective order of $2$
-modulo $n$ is $\lambda(n) = m$.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-Definition 19, display (13). -/
-public theorem projectiveOrderTwo_eq_of {n m : ℕ} (hm : 0 < m)
-    (h : (2 : ZMod n) ^ m = 1 ∨ (2 : ZMod n) ^ m = -1)
-    (hmin : ∀ k < m, 0 < k → (2 : ZMod n) ^ k ≠ 1 ∧ (2 : ZMod n) ^ k ≠ -1) :
-    projectiveOrderTwo n = m := by
-  unfold projectiveOrderTwo
-  refine le_antisymm (Nat.sInf_le ⟨hm, h⟩) (le_csInf ⟨m, hm, h⟩ ?_)
-  rintro k ⟨hk, hk2⟩
-  by_contra hlt
-  have hne := hmin k (lt_of_not_ge hlt) hk
-  rcases hk2 with h' | h'
-  · exact hne.1 h'
-  · exact hne.2 h'
-
-/-- **Values of the projective order of 2.** Writing $\lambda(n)$ for the projective order of $2$
-modulo $n$, we have $\lambda(7) = 3$, $\lambda(9) = 3$, $\lambda(11) = 5$ and $\lambda(17) = 4$.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-Examples 7-10 and 23. -/
-public theorem projectiveOrderTwo_examples :
-    projectiveOrderTwo 7 = 3 ∧ projectiveOrderTwo 9 = 3 ∧ projectiveOrderTwo 11 = 5 ∧
-      projectiveOrderTwo 17 = 4 :=
-  ⟨projectiveOrderTwo_eq_of (by omega) (by decide) (by decide),
-    projectiveOrderTwo_eq_of (by omega) (by decide) (by decide),
-    projectiveOrderTwo_eq_of (by omega) (by decide) (by decide),
-    projectiveOrderTwo_eq_of (by omega) (by decide) (by decide)⟩
-
-/-- **Cycle lengths of doubling on pairs of projective classes.** Let $B > 3$ be odd. For
-$x \in \mathbb{Z}/B\mathbb{Z}$ write $[x] = \{x, -x\}$ and $2C = \{2c : c \in C\}$ for a subset
-$C$ of $\mathbb{Z}/B\mathbb{Z}$, and let $D$ be the doubling map sending a set $T$ of subsets of
-$\mathbb{Z}/B\mathbb{Z}$ to $\{2C : C \in T\}$. If $S = \{[r], [s]\}$ for nonzero
-$r, s \in \mathbb{Z}/B\mathbb{Z}$ with $[r] \ne [s]$, then $S$ is a periodic point of $D$ and
-its minimal period is at most $\lambda(B)$, the projective order of $2$ modulo $B$.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7, Lemma 20
-(`jis-2026-26.4.7-lem-20`). -/
-public theorem_wanted projective_doubling_minimalPeriod_le_projectiveOrderTwo (B : ℕ)
-    (hB : Odd B) (hB3 : 3 < B) (S : Finset (Finset (ZMod B)))
-    (hS : S.card = 2 ∧ ∀ C ∈ S, ∃ x : ZMod B, x ≠ 0 ∧ C = {x, -x}) :
-    0 < Function.minimalPeriod
-        (fun T : Finset (Finset (ZMod B)) => T.image fun C => C.image (· * 2)) S ∧
-      Function.minimalPeriod
-        (fun T : Finset (Finset (ZMod B)) => T.image fun C => C.image (· * 2)) S ≤
-        projectiveOrderTwo B
-
-/-- **Projective order of 2 is at most half the totient.** For every odd natural number $B > 3$,
-the projective order of $2$ modulo $B$ satisfies $\lambda(B) \le \lfloor \varphi(B)/2 \rfloor$,
-where $\varphi$ is Euler's totient function.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7, Lemma 21
-(quoting Kay and Downes-Ward, Theorem 2) (`jis-2026-26.4.7-lem-21`). -/
-public theorem_wanted projectiveOrderTwo_le_totient_div_two (B : ℕ) (hB : Odd B)
-    (hB3 : 3 < B) :
-    projectiveOrderTwo B ≤ B.totient / 2
 
 /-- **Long Kaprekar cycles force a prime base.** Let $B > 3$ be odd, let $K_B$ be the four-digit
 Kaprekar map and $X_B$ its state space. Every point of $X_B$ that is periodic for $K_B$ has

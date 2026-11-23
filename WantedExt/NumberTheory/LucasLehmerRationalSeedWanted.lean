@@ -12,7 +12,8 @@ import Batteries.Util.ProofWanted
 import Mathlib.Tactic.NormNum.LegendreSymbol
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import Mathlib.NumberTheory.LucasLehmer
-public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.OrderOfTwoMulCoprime
+public import MathlibExt.NumberTheory.PellEulerSolutions
 
 /-!
 # The Lucas–Lehmer test with the rational seed `6/5`
@@ -138,27 +139,6 @@ public theorem_wanted mersenne_dvd_lehmerV_of_diophantine {n : ℕ} (hn : Odd n)
     (hrd : jacobiSym (r * d) (mersenne n) = -1) (hqr : jacobiSym (q * r) (mersenne n) = -1) :
     (mersenne n : ℤ) ∣ lehmerV (r * X ^ 2) (q * Y ^ 2) (2 ^ (n - 1))
 
-/-- **Euler's family of solutions of $aT^2 - bU^2 = c$.** Let $a$, $b$, $c$ be integers
-with $ab > 1$, $ab$ not a perfect square and $c \ne 0$, and let $T_1$, $U_1$ be integers with
-$aT_1^2 - bU_1^2 = c$. Let $\varepsilon = x_1 + y_1\sqrt{ab}$ be the fundamental solution of
-$x^2 - ab\,y^2 = 1$ and, for every natural number $j$, write
-$\varepsilon^j = x_j + y_j\sqrt{ab}$. Then for every $j \ge 0$ the integers
-$T = T_1 x_j + b U_1 y_j$ and $U = a T_1 y_j + U_1 x_j$ satisfy $aT^2 - bU^2 = c$, and different
-$j$ give different pairs $(T, U)$.
-
-The hypothesis $c \ne 0$ is added to the source statement: for $c = 0$ the only integer solution
-is $(0, 0)$, since $ab$ is not a square.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Theorem 8. -/
-public theorem_wanted pell_euler_solutions (a b c T₁ U₁ : ℤ) (hab : 1 < a * b)
-    (hsq : ¬ IsSquare (a * b)) (hc : c ≠ 0) (h₁ : a * T₁ ^ 2 - b * U₁ ^ 2 = c)
-    (ε : Pell.Solution₁ (a * b)) (hε : Pell.IsFundamental ε) :
-    (∀ j : ℕ, a * (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y) ^ 2 -
-        b * (a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x) ^ 2 = c) ∧
-      Function.Injective fun j : ℕ =>
-        (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y, a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x)
-
 /-! ### Squarefree parts, the order of `2`, and condition (etar) -/
 
 /-- **Odd squarefree part.** For an integer $N$ and a natural number $k$, $k$ is an odd
@@ -260,21 +240,6 @@ public theorem_wanted infinite_acceptableSeeds_same_parts {n : ℕ} (h3 : 3 ≤ 
       (mersenne n : ℤ) ∣ (fun x : ℤ => x ^ 2 - 2)^[n - 2] s₁) :
     {S : ℤ | 3 ≤ S ∧ IsOddSquarefreePart (S - 2) sm ∧ IsOddSquarefreePart (S + 2) sp ∧
       ((mersenne n).Prime ↔ (mersenne n : ℤ) ∣ (fun x : ℤ => x ^ 2 - 2)^[n - 2] S)}.Infinite
-
-/-- **Order of $2$ modulo a product of coprime odd numbers.** Let $m_1$ and $m_2$ be coprime odd
-natural numbers, and write $\omega(m)$ for the multiplicative order of $2$ modulo $m$. Then
-$\omega(m_1 m_2) = \operatorname{lcm}(\omega(m_1), \omega(m_2))$.
-
-The printed $\operatorname{lcm}(\omega(m_1)\omega(m_2))$ is read as
-$\operatorname{lcm}(\omega(m_1), \omega(m_2))$; the product reading fails, since $\omega(15) = 4$
-while $\omega(3)\omega(5) = 8$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Proposition 11. -/
-public theorem_wanted orderOf_two_mul_coprime {m₁ m₂ : ℕ} (h₁ : Odd m₁) (h₂ : Odd m₂)
-    (hc : m₁.Coprime m₂) :
-    orderOf (2 : ZMod (m₁ * m₂)) =
-      Nat.lcm (orderOf (2 : ZMod m₁)) (orderOf (2 : ZMod m₂))
 
 /-- **A zero Legendre symbol forces $\gcd(n, \Omega) > 1$.** Let $s_1 \ge 3$ be an integer, let
 $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$, and let

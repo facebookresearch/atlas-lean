@@ -14,53 +14,74 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Ordered steps of a multi-marked Dyck path: horizontal `E = (1,0)`, plain
-vertical `N = (0,1)`, and marked vertical steps `N*_t = (0,1)` whose index
-`t >= 2` is carried with its proof, so invalid marked steps cannot be
-constructed. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Steps of a multi-marked Dyck path.** A step of a multi-marked Dyck path is one of the
+horizontal step $E = (1, 0)$, the plain vertical step $N = (0, 1)$, or, for an integer
+$t \ge 2$, the marked vertical step $N^*_t = (0, 1)$ of index $t$. There are no marked steps
+of index less than $2$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 inductive MultiMarkedStep where
   | E : MultiMarkedStep
   | N : MultiMarkedStep
   | marked : (t : Nat) → 2 ≤ t → MultiMarkedStep
 
-/-- Count `E(P)` of horizontal `E` steps in the ordered step sequence.
-Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Number of horizontal steps in a multi-marked step sequence.** For a finite sequence $P$ of
+multi-marked steps (horizontal steps $E$, plain vertical steps $N$ and marked vertical steps
+$N^*_t$ with index $t \ge 2$), $E(P)$ is the number of horizontal steps $E$ in $P$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedCountE : List MultiMarkedStep → Nat
   | [] => 0
   | .E :: xs => multiMarkedCountE xs + 1
   | .N :: xs => multiMarkedCountE xs
   | .marked _ _ :: xs => multiMarkedCountE xs
 
-/-- Count `N(P)` of plain (unmarked) vertical `N` steps in the ordered step
-sequence. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Number of plain vertical steps.** For a finite sequence $P$ of multi-marked steps
+(horizontal steps $E$, plain vertical steps $N$ and marked vertical steps $N^*_t$ with index
+$t \ge 2$), $N(P)$ is the number of plain (unmarked) vertical steps $N$ in $P$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedCountPlainN : List MultiMarkedStep → Nat
   | [] => 0
   | .E :: xs => multiMarkedCountPlainN xs
   | .N :: xs => multiMarkedCountPlainN xs + 1
   | .marked _ _ :: xs => multiMarkedCountPlainN xs
 
-/-- Total number of vertical steps (plain `N` plus marked `N*_t`) in the
-ordered step sequence. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Number of vertical steps.** For a finite sequence $P$ of multi-marked steps (horizontal
+steps $E$, plain vertical steps $N$ and marked vertical steps $N^*_t$ with index $t \ge 2$),
+this is the number of vertical steps in $P$, plain steps $N$ and marked steps $N^*_t$ counted
+together.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedCountVert : List MultiMarkedStep → Nat
   | [] => 0
   | .E :: xs => multiMarkedCountVert xs
   | .N :: xs => multiMarkedCountVert xs + 1
   | .marked _ _ :: xs => multiMarkedCountVert xs + 1
 
-/-- Total number of steps in the ordered step sequence.
-Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Number of steps.** For a finite sequence $P$ of multi-marked steps (horizontal steps $E$,
+plain vertical steps $N$ and marked vertical steps $N^*_t$ with index $t \ge 2$), this is the
+total number of steps in $P$, that is, the length of $P$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedCountTotal : List MultiMarkedStep → Nat
   | [] => 0
   | _ :: xs => multiMarkedCountTotal xs + 1
 
-/-- Finite sum over marked-step occurrences of their indices `t`; the exact
-occurrence-level representation of the source sum `∑ t * N*_t(P)` grouped by
-index. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Index sum of a multi-marked step sequence.** For a finite sequence $s$ of steps of a
+multi-marked Dyck path, the index sum of $s$ is the sum of the indices $t$ over all occurrences
+of marked steps $N^*_t$ in $s$, each occurrence counted separately; the steps $E$ and $N$
+contribute nothing.
+
+Grouping the occurrences by index, the index sum equals $\sum_t t \cdot N^*_t(s)$, where
+$N^*_t(s)$ is the number of marked steps of index $t$ in $s$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedIndexSum : List MultiMarkedStep → Nat
   | [] => 0
@@ -68,9 +89,15 @@ def multiMarkedIndexSum : List MultiMarkedStep → Nat
   | .N :: xs => multiMarkedIndexSum xs
   | .marked t _ :: xs => t + multiMarkedIndexSum xs
 
-/-- Finite sum over marked-step occurrences of `t - 1`; the exact
-occurrence-level representation of the source sum `∑ (t - 1) * N*_t(P)`
-grouped by index. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Shifted index sum of a multi-marked step sequence.** For a finite sequence $s$ of steps of
+a multi-marked Dyck path, the shifted index sum of $s$ is the sum of $t - 1$ over all
+occurrences of marked steps $N^*_t$ in $s$, each occurrence counted separately; the steps $E$
+and $N$ contribute nothing.
+
+Grouping the occurrences by index, the shifted index sum equals
+$\sum_t (t - 1) \cdot N^*_t(s)$, where $N^*_t(s)$ is the number of marked steps of index $t$ in $s$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedShiftedIndexSum : List MultiMarkedStep → Nat
   | [] => 0
@@ -78,27 +105,37 @@ def multiMarkedShiftedIndexSum : List MultiMarkedStep → Nat
   | .N :: xs => multiMarkedShiftedIndexSum xs
   | .marked t _ :: xs => (t - 1) + multiMarkedShiftedIndexSum xs
 
-/-- Grouped count statistic `N*_t(P)`: number of marked steps with index
-exactly `t` in the ordered step sequence. Concept
-`jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Number of marked steps of a given index.** For a finite sequence $P$ of multi-marked steps
+(horizontal steps $E$, plain vertical steps $N$ and marked vertical steps $N^*_s$ with index
+$s \ge 2$) and a natural number $t$, $N^*_t(P)$ is the number of marked steps in $P$ whose index
+is exactly $t$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedCountMarkedT : List MultiMarkedStep → Nat → Nat
   | [], _ => 0
   | .marked s _ :: xs, t => (if s == t then 1 else 0) + multiMarkedCountMarkedT xs t
   | _ :: xs, t => multiMarkedCountMarkedT xs t
 
-/-- Size of a step sequence: `E(P)` plus the occurrence sum of `t - 1` over
-marked steps. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Size of a multi-marked step sequence.** The size of a finite sequence $s$ of steps of a
+multi-marked Dyck path is $E(s) + \sum (t - 1)$, where $E(s)$ is the number of horizontal steps
+$E$ in $s$ and the sum runs over all occurrences of marked steps $N^*_t$ in $s$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedSize (l : List MultiMarkedStep) : Nat :=
   multiMarkedCountE l + multiMarkedShiftedIndexSum l
 
-/-- A multi-marked Dyck path: an ordered finite step sequence starting at
-`(0,0)` whose every prefix is underdiagonal (vertical-step count at most the
-`E`-step count) and whose full path ends on the diagonal (`E` count equals
-total vertical-step count). Both plain `N` and marked `N*_t` steps move
-vertically by one. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Multi-marked Dyck path.** A multi-marked Dyck path is a finite sequence $P$ of steps, each
+a horizontal step $E = (1,0)$, a plain vertical step $N = (0,1)$ or a marked vertical step
+$N^*_t = (0,1)$ carrying an index $t \ge 2$, such that every prefix of $P$, including the empty
+prefix and $P$ itself, has at most as many vertical steps (plain and marked) as horizontal
+steps, and $P$ has exactly as many vertical steps as horizontal steps.
+
+Read as a lattice path from $(0,0)$, $P$ never rises above the diagonal and ends on it.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 structure MultiMarkedDyckPath where
   steps : List MultiMarkedStep
   underdiagonal :
@@ -106,17 +143,23 @@ structure MultiMarkedDyckPath where
       multiMarkedCountVert (steps.take k) ≤ multiMarkedCountE (steps.take k)
   diagonal_endpoint : multiMarkedCountE steps = multiMarkedCountVert steps
 
-/-- Diagonal count equality: the `E` count of a multi-marked Dyck path equals
-its total vertical-step count. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Equal horizontal and vertical step counts.** For every multi-marked Dyck path $P$, the
+number $E(P)$ of horizontal steps of $P$ equals the number of vertical steps of $P$, plain steps
+$N$ and marked steps $N^*_t$ counted together.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 theorem multiMarkedCountEq (P : MultiMarkedDyckPath) :
     multiMarkedCountE P.steps = multiMarkedCountVert P.steps :=
   P.diagonal_endpoint
 
-/-- Occurrence-level size identity: for any step sequence, the vertical count
-plus the shifted index sum equals the plain count plus the index sum (each
-marked step of index `t` contributes `1 + (t - 1) = t`).
-Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Vertical count plus shifted index sum.** For every finite sequence $s$ of steps of a
+multi-marked Dyck path, the number of vertical steps of $s$ plus the shifted index sum of $s$
+equals the number of plain vertical steps $N$ of $s$ plus the index sum of $s$.
+
+Each marked step $N^*_t$ contributes $1 + (t - 1)$ to the left side and $t$ to the right side.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 theorem multiMarkedVertShifted_eq (l : List MultiMarkedStep) :
     multiMarkedCountVert l + multiMarkedShiftedIndexSum l =
@@ -138,9 +181,16 @@ theorem multiMarkedVertShifted_eq (l : List MultiMarkedStep) :
         multiMarkedCountPlainN, multiMarkedIndexSum]
       omega
 
-/-- Size equality: the size `E(P) + ∑ (t - 1) N*_t(P)` equals
-`N(P) + ∑ t N*_t(P)`, derived from the diagonal endpoint via the
-occurrence-level identity. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Two expressions for the size of a multi-marked Dyck path.** For every multi-marked Dyck
+path $P$, the size $E(P) + \sum (t - 1)$ of $P$ equals $N(P) + \sum t$, where $E(P)$ is the
+number of horizontal steps $E$ of $P$, $N(P)$ is the number of plain vertical steps $N$ of $P$,
+and both sums run over all occurrences of marked steps $N^*_t$ in $P$.
+
+Grouped by index, this reads
+$E(P) + \sum_t (t - 1) N^*_t(P) = N(P) + \sum_t t N^*_t(P)$, where $N^*_t(P)$ is the number of
+marked steps of index $t$ in $P$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 theorem multiMarkedSizeEq (P : MultiMarkedDyckPath) :
     multiMarkedSize P.steps =
@@ -150,42 +200,61 @@ theorem multiMarkedSizeEq (P : MultiMarkedDyckPath) :
   have he := multiMarkedCountEq P
   omega
 
-/-- Vertical-step test used to delimit the final run of vertical steps.
-Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Vertical steps of a multi-marked Dyck path.** A step of a multi-marked Dyck path is
+vertical when it is the plain step $N$ or a marked step $N^*_t$; the horizontal step $E$ is not
+vertical. This test delimits the final run of vertical steps of a step sequence.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedIsVert : MultiMarkedStep → Bool
   | .E => false
   | .N => true
   | .marked _ _ => true
 
-/-- Final (trailing) run of vertical steps: the suffix after the last `E`
-step, or the whole sequence if there is no `E` step.
-Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Final run of vertical steps.** The final run of vertical steps of a finite sequence $s$
+of steps of a multi-marked Dyck path is the longest suffix of $s$ consisting of vertical steps
+($N$ or $N^*_t$): the part of $s$ after its last horizontal step $E$, or all of $s$ if $s$ has
+no step $E$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 def multiMarkedTrailingVert (l : List MultiMarkedStep) : List MultiMarkedStep :=
   (l.reverse.takeWhile multiMarkedIsVert).reverse
 
-/-- A marked tail: the final run of vertical steps contains at least one
-marked `N*_t` step. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Marked tail.** A multi-marked Dyck path $P$ has a marked tail when its final run of
+vertical steps (the steps after its last horizontal step $E$, or all of $P$ if $P$ has no step
+$E$) contains a marked vertical step $N^*_t$ for some index $t \ge 2$.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 def MultiMarkedDyckPath.HasMarkedTail (P : MultiMarkedDyckPath) : Prop :=
   ∃ (t : Nat) (h : 2 ≤ t),
     MultiMarkedStep.marked t h ∈ multiMarkedTrailingVert P.steps
 
-/-- An unmarked tail: the final run of vertical steps contains no marked
-step. Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Unmarked tail.** A multi-marked Dyck path $P$ has an unmarked tail when it does not
+have a marked tail, that is, when its final run of vertical steps (the steps after its last
+horizontal step $E$, or all of $P$ if $P$ has no step $E$) contains no marked vertical step.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 def MultiMarkedDyckPath.HasUnmarkedTail (P : MultiMarkedDyckPath) : Prop :=
   ¬ P.HasMarkedTail
 
-/-- The set `P̃_n` of multi-marked Dyck paths of size `n`.
-Concept `jis_sem_ee7327c841ed4326952fd4fb`;
-source statement `jis_54a13fcd4eb84116f24d6935`. -/
+/-- **Multi-marked Dyck paths of a given size.** For a natural number $n$, $\tilde P_n$ is the
+set of multi-marked Dyck paths $P$ of size $n$. Here the size of $P$ is $E(P) + \sum (t - 1)$,
+where $E(P)$ is the number of horizontal steps of $P$ and the sum runs over the marked steps
+$N^*_t$ of $P$, each occurrence counted separately.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`; source statement
+`jis_54a13fcd4eb84116f24d6935`. -/
 def MultiMarkedDyckPathOfSize (n : Nat) : Type :=
   { P : MultiMarkedDyckPath // multiMarkedSize P.steps = n }
 
-/-- The set `R̃_n` of size-`n` multi-marked Dyck paths with an unmarked tail.
-Concept `jis_sem_ee7327c841ed4326952fd4fb`;
+/-- **Multi-marked Dyck paths with an unmarked tail.** For a natural number $n$, $\tilde R_n$ is
+the set of multi-marked Dyck paths of size $n$ with an unmarked tail, that is, whose final
+run of vertical steps contains no marked step.
+
+Source: concept `jis_sem_ee7327c841ed4326952fd4fb`,
 source statement `jis_54a13fcd4eb84116f24d6935`. -/
 def MultiMarkedUnmarkedTail (n : Nat) : Type :=
   { P : MultiMarkedDyckPath //

@@ -36,23 +36,6 @@ theorem survivalWeight_mul_ratioWeight {S : Type*} (T Q : S → S → ℝ)
     simp [h, hT]
   · field_simp
 
-/-- Appending a final state preserves a path's initial state. -/
-private theorem snoc_apply_zero {S : Type*} (n : ℕ) (x : Fin (n + 1) → S) (j : S) :
-    Fin.snoc (α := fun _ => S) x j 0 = x 0 := by
-  rw [← Fin.castSucc_zero, Fin.snoc_castSucc]
-
-/-- Survival weight factors over the appended last transition. -/
-private theorem survivalWeight_snoc {S : Type*} (Q : S → S → ℝ)
-    (n : ℕ) (x : Fin (n + 1) → S) (j : S) :
-    survivalWeight Q (Fin.snoc (α := fun _ => S) x j) =
-      survivalWeight Q x * Q (x (Fin.last n)) j := by
-  have hcast : ∀ k : Fin n, k.castSucc.succ = k.succ.castSucc := fun k => by ext; simp
-  have hlast : (Fin.last n).succ = Fin.last (n + 1) := by ext; simp
-  unfold survivalWeight
-  rw [Fin.prod_univ_castSucc]
-  rw [hlast]
-  simp only [Fin.snoc_castSucc, Fin.snoc_last, hcast]
-
 /-- Path-sum expansion of matrix powers, with the emission vector and start
 state generalized for the induction step. -/
 private theorem sum_survivalWeight_aux {S : Type*} [Fintype S] [DecidableEq S]
@@ -100,7 +83,7 @@ private theorem sum_survivalWeight_aux {S : Type*} [Fintype S] [DecidableEq S]
           intro a b t
           change (Fin.snocEquiv fun _ => S) (b, a) t
             = Fin.snoc (α := fun _ => S) a b t
-          exact Fin.snocEquiv_apply _ _ _
+          exact congrFun (Fin.snocEquiv_apply _ _) t
         have hef : ∀ a b, e (a, b) = Fin.snoc (α := fun _ => S) a b :=
           fun a b => funext (he a b)
         calc ∑ y : Fin (n + 1 + 1) → S,
@@ -120,7 +103,7 @@ private theorem sum_survivalWeight_aux {S : Type*} [Fintype S] [DecidableEq S]
               intro x _
               apply Finset.sum_congr rfl
               intro j _
-              rw [hef, snoc_apply_zero, survivalWeight_snoc, Fin.snoc_last]
+              rw [hef, Fin.snoc_apply_zero, survivalWeight_snoc, Fin.snoc_last]
           _ = ∑ x : Fin (n + 1) → S,
                 (if x 0 = i then survivalWeight T x * (Matrix.of T).mulVec E (x (Fin.last n))
                 else 0) := by

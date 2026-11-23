@@ -17,12 +17,13 @@ namespace MetaMathlibExt
 @[expose]
 public section
 
-/-- Toeplitz matrix, JIS VOL18/Felsner `felsner2.tex`, lines 271-283, Definition
-(Toeplitz matrix): a real `(n + 1)` by `(n + 1)` matrix `A = (aᵢⱼ)` is Toeplitz
-iff there exist real coefficients `c₋ₙ, …, cₙ` such that `aᵢⱼ = cᵢ₋ⱼ` for all
-indices (equivalently, `A` is constant on every diagonal).
+/-- **Toeplitz matrix.** A real $(n+1) \times (n+1)$ matrix $A = (a_{ij})$, with rows and columns
+indexed by $\{0, \dots, n\}$, is Toeplitz if there is a function $c : \mathbb{Z} \to \mathbb{R}$
+such that $a_{ij} = c(i - j)$ for all $i, j$. Equivalently, $A$ is constant along each of its
+diagonals.
 
-The witness `c` is total on `ℤ`; only the offsets in `[-n, n]` are observed.
+Only the values $c(k)$ with $-n \le k \le n$ enter the condition, so this is the same as asking
+for real coefficients $c_{-n}, \dots, c_n$.
 
 Concept id: `jis_term_af166143477154e55b2be88d`.
 Source: https://cs.uwaterloo.ca/journals/JIS/VOL18/Felsner/felsner2.tex
@@ -31,10 +32,10 @@ Definition block SHA-256: `17bf8967c8c4965db527869b4efe74d630e63681258d740ad2f98
 def IsToeplitzMatrix {n : ℕ} (A : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ) : Prop :=
   ∃ c : ℤ → ℝ, ∀ i j, A i j = c ((i.val : ℤ) - (j.val : ℤ))
 
-/-- Symmetric Toeplitz matrix, same source (`felsner2.tex`, lines 271-283): a
-Toeplitz matrix whose witnessing coefficients satisfy `c₋ₖ = cₖ` for every
-integer `k`. The same witness `c` both satisfies the symmetry condition and
-represents the entries.
+/-- **Symmetric Toeplitz matrix.** A real $(n+1) \times (n+1)$ matrix $A = (a_{ij})$, with rows
+and columns indexed by $\{0, \dots, n\}$, is symmetric Toeplitz if there is a function
+$c : \mathbb{Z} \to \mathbb{R}$ such that $c(-k) = c(k)$ for every integer $k$ and
+$a_{ij} = c(i - j)$ for all $i, j$.
 
 Concept id: `jis_term_af166143477154e55b2be88d`.
 Source: https://cs.uwaterloo.ca/journals/JIS/VOL18/Felsner/felsner2.tex
@@ -44,27 +45,35 @@ def IsSymmetricToeplitzMatrix {n : ℕ} (A : Matrix (Fin (n + 1)) (Fin (n + 1)) 
   ∃ c : ℤ → ℝ, (∀ k : ℤ, c (-k) = c k) ∧
     ∀ i j, A i j = c ((i.val : ℤ) - (j.val : ℤ))
 
-/-- Construction of a Toeplitz matrix from an explicit coefficient witness. -/
+/-- **Toeplitz matrices from coefficients.** Let $A = (a_{ij})$ be a real $(n+1) \times (n+1)$
+matrix with rows and columns indexed by $\{0, \dots, n\}$. If $c : \mathbb{Z} \to \mathbb{R}$
+satisfies $a_{ij} = c(i - j)$ for all $i, j$, then $A$ is a Toeplitz matrix. -/
 theorem isToeplitzMatrix_of_witness {n : ℕ}
     {A : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ} {c : ℤ → ℝ}
     (h : ∀ i j, A i j = c ((i.val : ℤ) - (j.val : ℤ))) : IsToeplitzMatrix A :=
   ⟨c, h⟩
 
-/-- Construction of a symmetric Toeplitz matrix from an even witness. -/
+/-- **Symmetric Toeplitz matrices from even coefficients.** Let $A = (a_{ij})$ be a real
+$(n+1) \times (n+1)$ matrix with rows and columns indexed by $\{0, \dots, n\}$. If
+$c : \mathbb{Z} \to \mathbb{R}$ satisfies $c(-k) = c(k)$ for every integer $k$ and
+$a_{ij} = c(i - j)$ for all $i, j$, then $A$ is a symmetric Toeplitz matrix. -/
 theorem isSymmetricToeplitzMatrix_of_witness {n : ℕ}
     {A : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ} {c : ℤ → ℝ}
     (hsym : ∀ k : ℤ, c (-k) = c k)
     (h : ∀ i j, A i j = c ((i.val : ℤ) - (j.val : ℤ))) : IsSymmetricToeplitzMatrix A :=
   ⟨c, hsym, h⟩
 
-/-- Every symmetric Toeplitz matrix is Toeplitz (forget the symmetry). -/
+/-- **Symmetric Toeplitz matrices are Toeplitz.** Every real $(n+1) \times (n+1)$ symmetric
+Toeplitz matrix is a Toeplitz matrix. -/
 theorem IsSymmetricToeplitzMatrix.isToeplitz {n : ℕ}
     {A : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ}
     (h : IsSymmetricToeplitzMatrix A) : IsToeplitzMatrix A := by
   obtain ⟨c, _, hr⟩ := h
   exact ⟨c, hr⟩
 
-/-- Entries of a symmetric Toeplitz matrix commute: `A i j = A j i`. -/
+/-- **Symmetric Toeplitz matrices are symmetric.** If $A = (a_{ij})$ is a real
+$(n+1) \times (n+1)$ symmetric Toeplitz matrix, with rows and columns indexed by
+$\{0, \dots, n\}$, then $a_{ij} = a_{ji}$ for all $i, j$. -/
 theorem IsSymmetricToeplitzMatrix.entry_comm {n : ℕ}
     {A : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ}
     (h : IsSymmetricToeplitzMatrix A) (i j : Fin (n + 1)) : A i j = A j i := by
