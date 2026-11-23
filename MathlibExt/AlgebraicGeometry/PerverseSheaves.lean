@@ -125,7 +125,11 @@ theorem of_isReduced (X : ComplexScheme) [IsReduced X.left] [IsSeparated X.hom]
 
 end IsComplexVariety
 
-/-- A finite partition by smooth locally closed algebraic subvarieties. -/
+/-- A finite partition by smooth locally closed algebraic subvarieties.
+No frontier or Whitney condition is imposed: this is the finite decomposition
+into locally closed pieces that defines constructibility in de Cataldo–Migliorini
+(2009), §1.5, not a stratification in the sense of their (2005), §3.2. An
+arbitrary such partition need not be locally trivial along its pieces. -/
 structure AlgebraicStratification (X : ComplexScheme) where
   /-- Number of strata; zero is permitted for an empty variety. -/
   count : ℕ
@@ -201,9 +205,10 @@ theorem isFiniteRankLocalSystem_constantSheaf (k : Type) [Field k] (Z : TopCat.{
     (ModuleCat.{0} k) (isTerminalTop (α := Opens (TopCat.of (⊤ : Opens Z))))
   exact (a.leftAdjointUniq b).app V
 
-/-- Bounded complexes with a common finite smooth algebraic stratification on
-which every cohomology sheaf is a finite-rank local system.
-Source: de Cataldo–Migliorini (2005), §3.3; Dimca, *Sheaves in Topology*,
+/-- Bounded complexes with a common finite partition into smooth locally closed
+subvarieties on each of which every cohomology sheaf restricts to a finite-rank
+local system.
+Source: de Cataldo–Migliorini (2009), §1.5; Dimca, *Sheaves in Topology*,
 Chapter 4. -/
 def boundedConstructible (k : Type) [Field k] (X : ComplexScheme) :
     ObjectProperty (CoefficientDerived k (space X)) := fun K ↦
@@ -237,7 +242,7 @@ abbrev IsFiniteRankLocalSystem (Z : TopCat.{0}) (F : RationalSheaf Z) : Prop :=
 
 /-- Bounded constructible rational complexes:
 `ConstructibleComplexes.boundedConstructible` at `k = ℚ`.
-Source: de Cataldo–Migliorini (2005), §3.3. -/
+Source: de Cataldo–Migliorini (2009), §1.5. -/
 abbrev boundedConstructible (X : ComplexScheme) :
     ObjectProperty (RationalDerived (space X)) :=
   ConstructibleComplexes.boundedConstructible ℚ X

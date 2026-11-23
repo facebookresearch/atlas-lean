@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.Algebra.Homology.DerivedCategory.ExactFunctor
 public import Mathlib.Algebra.Homology.DerivedCategory.RightDerivedFunctorPlus
 public import Mathlib.CategoryTheory.Abelian.GrothendieckCategory.EnoughInjectives
+public import Mathlib.CategoryTheory.Sites.Adjunction
+public import Mathlib.RingTheory.Flat.CategoryTheory
 public import MathlibExt.AlgebraicGeometry.PerverseSheaves
 
 /-!
@@ -25,18 +27,20 @@ notions are their specializations at `k = ℚ`. This module adds change of
 coefficients, exact inverse image and the bounded-below derived direct image.
 
 All carriers are actual sheaves on complex analytification. Scalar extension
-is performed on presheaves and then sheafified; pointwise tensoring a sheaf
-with a coefficient field need not already satisfy the sheaf condition.
+is performed on presheaves and then sheafified (Mathlib's
+`Sheaf.composeAndSheafify`); pointwise tensoring a sheaf with a coefficient
+field need not already satisfy the sheaf condition. Inverse image and scalar
+extension are exact, so their derived functors need no hypothesis.
 
-The constructions below are complete. Exactness of scalar extension and the
-closure and preservation properties of constructibility are requested in
+The constructions below are complete. The closure and preservation properties
+of constructibility are requested in
 `WantedExt/AlgebraicGeometry/ConstructibleComplexesWanted.lean`.
 
 ## References
 
 * A. Dimca, *Sheaves in Topology*, Chapters 2–4.
 * M. de Cataldo and L. Migliorini, https://arxiv.org/abs/0712.0349, §1.5.
-* The Stacks Project, Tags 00W1 (sheafification) and 09YH (constructibility).
+* The Stacks Project, Tag 00W1 (sheafification).
 -/
 
 @[expose] public noncomputable section
@@ -48,29 +52,62 @@ open _root_.AlgebraicGeometry ComplexAnalytification PerverseSheaves
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- Scalar extension of sheaves: forget, extend coefficients, sheafify. -/
-def scalarExtension (k l : Type) [Field k] [Field l] [Algebra k l] (Z : TopCat.{0}) :
+/-- Extension of scalars along a field extension preserves finite limits,
+since `l` is flat over `k`; it preserves finite colimits as a left adjoint. -/
+instance extendScalars_preservesFiniteLimits (k l : Type) [Field k] [Field l]
+    [Algebra k l] :
+    PreservesFiniteLimits (ModuleCat.extendScalars.{0, 0, 0} (algebraMap k l)) := by
+  let F := ModuleCat.extendScalars.{0, 0, 0} (algebraMap k l)
+  have : F.Additive := rightExactFunctor_le_additiveFunctor _ _ F
+    (show PreservesFiniteColimits F from
+      inferInstanceAs (PreservesFiniteColimits (ModuleCat.extendScalars (algebraMap k l))))
+  have h (S : ShortComplex (ModuleCat.{0} k)) (hS : S.Exact) : (S.map F).Exact := by
+    rw [ShortComplex.ShortExact.moduleCat_exact_iff_function_exact] at hS ⊢
+    let : Module k l := Module.compHom l (algebraMap k l)
+    exact Module.Flat.lTensor_exact l hS
+  have h' : PreservesFiniteLimits F ∧ PreservesFiniteColimits F :=
+    ((Functor.exact_tfae F).out 2 4).mp h
+  exact h'.1
+
+/-- Scalar extension of sheaves: extend coefficients objectwise, then
+sheafify. -/
+abbrev scalarExtension (k l : Type) [Field k] [Field l] [Algebra k l] (Z : TopCat.{0}) :
     CoefficientSheaf k Z ⥤ CoefficientSheaf l Z :=
-  TopCat.Sheaf.forget (ModuleCat.{0} k) Z ⋙
-    (Functor.whiskeringRight (Opens Z)ᵒᵖ (ModuleCat.{0} k) (ModuleCat.{0} l)).obj
-      (ModuleCat.extendScalars (algebraMap k l)) ⋙
-    presheafToSheaf (Opens.grothendieckTopology Z) (ModuleCat.{0} l)
+  Sheaf.composeAndSheafify (Opens.grothendieckTopology Z)
+    (ModuleCat.extendScalars (algebraMap k l))
 
-/-- Exactness of this fixed scalar-extension functor; no instance is claimed
-here. Each field is an actual Mathlib preservation condition. -/
-class ScalarExtensionExact (k l : Type) [Field k] [Field l] [Algebra k l]
-    (Z : TopCat.{0}) : Prop where
-  [additive : (scalarExtension k l Z).Additive]
-  [limits : PreservesFiniteLimits (scalarExtension k l Z)]
-  [colimits : PreservesFiniteColimits (scalarExtension k l Z)]
+/-- Scalar extension of sheaves preserves finite limits: objectwise
+extension does, and so does sheafification. -/
+instance scalarExtension_preservesFiniteLimits (k l : Type) [Field k] [Field l]
+    [Algebra k l] (Z : TopCat.{0}) : PreservesFiniteLimits (scalarExtension k l Z) := by
+  constructor
+  intro J _ _
+  let W := (Functor.whiskeringRight (Opens Z)ᵒᵖ (ModuleCat.{0} k) (ModuleCat.{0} l)).obj
+    (ModuleCat.extendScalars (algebraMap k l))
+  let S := presheafToSheaf (Opens.grothendieckTopology Z) (ModuleCat.{0} l)
+  have : PreservesLimitsOfShape J W := by dsimp [W]; infer_instance
+  have : PreservesLimitsOfShape J S := by dsimp [S]; infer_instance
+  have : PreservesLimitsOfShape J (W ⋙ S) := comp_preservesLimitsOfShape _ _
+  change PreservesLimitsOfShape J (TopCat.Sheaf.forget (ModuleCat.{0} k) Z ⋙ W ⋙ S)
+  exact comp_preservesLimitsOfShape _ _
 
-attribute [instance] ScalarExtensionExact.additive ScalarExtensionExact.limits
-  ScalarExtensionExact.colimits
+/-- Scalar extension of sheaves preserves finite colimits, as a left adjoint. -/
+instance scalarExtension_preservesFiniteColimits (k l : Type) [Field k] [Field l]
+    [Algebra k l] (Z : TopCat.{0}) : PreservesFiniteColimits (scalarExtension k l Z) := by
+  change PreservesFiniteColimits (Sheaf.composeAndSheafify (Opens.grothendieckTopology Z)
+    (ModuleCat.extendScalars (algebraMap k l)))
+  infer_instance
 
-/-- Derived scalar extension, induced by the fixed exact sheaf functor. -/
+/-- Scalar extension of sheaves is additive, since it preserves finite
+products. -/
+instance scalarExtension_additive (k l : Type) [Field k] [Field l] [Algebra k l]
+    (Z : TopCat.{0}) : (scalarExtension k l Z).Additive :=
+  Functor.additive_of_preserves_binary_products _
+
+/-- Derived scalar extension, induced by the exact scalar extension of
+sheaves. -/
 def derivedScalarExtension (k l : Type) [Field k] [Field l] [Algebra k l]
-    (Z : TopCat.{0}) [ScalarExtensionExact k l Z] :
-    CoefficientDerived k Z ⥤ CoefficientDerived l Z :=
+    (Z : TopCat.{0}) : CoefficientDerived k Z ⥤ CoefficientDerived l Z :=
   (scalarExtension k l Z).mapDerivedCategory
 
 /-- The ordinary inverse-image functor with the coefficient field fixed. -/

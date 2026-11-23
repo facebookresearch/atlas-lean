@@ -41,10 +41,31 @@ example : derivedPullback k f = (pullback k f).mapDerivedCategory := rfl
 /-- Derived inverse image on rational complexes. -/
 example : RationalDerived W ⥤ RationalDerived Z := derivedPullback ℚ f
 
-/-- Derived scalar extension uses the requested exactness of scalar extension. -/
-example (l : Type) [Field l] [Algebra k l] [ScalarExtensionExact k l Z] :
+/-- Scalar extension of sheaves is exact, for every field extension and space,
+so derived scalar extension needs no hypothesis. -/
+example (l : Type) [Field l] [Algebra k l] :
+    PreservesFiniteLimits (scalarExtension k l Z) := inferInstance
+example (l : Type) [Field l] [Algebra k l] :
+    PreservesFiniteColimits (scalarExtension k l Z) := inferInstance
+example (l : Type) [Field l] [Algebra k l] : (scalarExtension k l Z).Additive :=
+  inferInstance
+example (l : Type) [Field l] [Algebra k l] :
     CoefficientDerived k Z ⥤ CoefficientDerived l Z :=
   derivedScalarExtension k l Z
+
+/-- Scalar extension extends coefficients objectwise and then sheafifies. -/
+example (l : Type) [Field l] [Algebra k l] :
+    scalarExtension k l Z =
+      TopCat.Sheaf.forget (ModuleCat.{0} k) Z ⋙
+        (Functor.whiskeringRight (Opens Z)ᵒᵖ (ModuleCat.{0} k) (ModuleCat.{0} l)).obj
+          (ModuleCat.extendScalars (algebraMap k l)) ⋙
+        presheafToSheaf (Opens.grothendieckTopology Z) (ModuleCat.{0} l) :=
+  rfl
+
+/-- Extension of scalars of modules along a field extension is left exact. -/
+example (l : Type) [Field l] [Algebra k l] :
+    PreservesFiniteLimits (ModuleCat.extendScalars.{0, 0, 0} (algebraMap k l)) :=
+  inferInstance
 
 /-- Bounded-below derived direct image along an algebraic morphism. -/
 example {X Y : ComplexScheme} (g : X ⟶ Y) :

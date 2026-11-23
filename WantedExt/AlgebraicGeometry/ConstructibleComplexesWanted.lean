@@ -34,10 +34,6 @@ open MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- Field extension, followed by sheafification, is exact. -/
-public instance_wanted scalarExtension_exact (k l : Type) [Field k] [Field l]
-    [Algebra k l] (Z : TopCat.{0}) : ScalarExtensionExact k l Z
-
 /-- Kernels of morphisms of finite-rank local systems are finite-rank local systems. -/
 public theorem_wanted localSystem_kernel (k : Type) [Field k] (Z : TopCat.{0})
     (F G : CoefficientSheaf k Z) (a : F ⟶ G)
