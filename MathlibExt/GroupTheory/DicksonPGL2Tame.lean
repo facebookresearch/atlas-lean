@@ -1390,9 +1390,9 @@ private lemma dickson_order_twenty_four
         simpa [Q₀, R] using (Subgroup.zpowers_le.mpr hgnorm)
       have hall (Q : Sylow 3 G) : Q = Q₀ := by
         have hQ₀Q : (Q₀ : Subgroup G) ≤ Q := by
-          rw [← inf_eq_left, ← Q₀.isPGroup'.inf_normalizer_sylow Q]
+          rw [← inf_eq_left, ← Q₀.isPGroup.inf_normalizer_sylow Q]
           exact inf_eq_left.mpr (hQ₀norm Q)
-        exact Sylow.ext (Q₀.is_maximal' Q.isPGroup' hQ₀Q)
+        exact Sylow.ext (Q₀.maximal_isPGroup.eq_of_ge Q.isPGroup hQ₀Q)
       have hsub : Subsingleton (Sylow 3 G) := ⟨fun Q _ => (hall Q).trans (hall _).symm⟩
       have hone := (Nat.card_eq_one_iff_unique.mpr ⟨hsub, inferInstance⟩)
       omega

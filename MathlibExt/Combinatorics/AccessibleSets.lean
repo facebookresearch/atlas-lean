@@ -12,6 +12,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Topology.MetricSpace.Defs
 import Mathlib.Data.Fin.Tuple.Basic
 import Mathlib.Data.Nat.Find
+import Mathlib.Data.Nat.ModEq
 import Mathlib.Logic.Equiv.Fin.Basic
 
 /-!
@@ -175,6 +176,29 @@ public theorem IsRAccessible.mono (D : Set ℕ) {r s : ℕ} (h : IsRAccessible s
   refine ⟨x, ?_, hdiff⟩
   intro i j
   exact Fin.castLE_inj.mp (hx i j)
+
+/-- **Multiples of $d$ in an accessible set.** Let $d \ge 1$ and $r$ be natural numbers and let $A$
+be a set of natural numbers. If $A$ is $rd$-accessible, then the set $\{a \in A : d \mid a\}$ of
+members of $A$ divisible by $d$ is $r$-accessible.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Theorem 11(ii). -/
+public theorem accessible_divisible_subset (A : Set ℕ) (d r : ℕ)
+    (hd : 0 < d) (hA : IsRAccessible (r * d) A) :
+    IsRAccessible r {a : ℕ | a ∈ A ∧ a % d = 0} := by
+  obtain ⟨hpos, hrd, hseq⟩ := hA
+  refine ⟨fun _ ha => hpos ha.1, Nat.pos_of_mul_pos_right hrd, ?_⟩
+  intro c k hk
+  let residue (n : ℕ+) : Fin d := ⟨(n : ℕ) % d, Nat.mod_lt _ hd⟩
+  obtain ⟨x, hx, hdiff⟩ := hseq (fun n => finProdFinEquiv (c n, residue n)) k hk
+  have hpair (i j : Fin k) := Prod.mk.inj (finProdFinEquiv.injective (hx i j))
+  refine ⟨x, fun i j => (hpair i j).1, ?_⟩
+  intro i hi
+  obtain ⟨a, ha, hgap⟩ := hdiff i hi
+  have hmod : Nat.ModEq d (x ⟨i, by omega⟩) (x ⟨i + 1, hi⟩) :=
+    congrArg Fin.val (hpair _ _).2
+  refine ⟨a, ⟨ha, Nat.mod_eq_zero_of_dvd ?_⟩, hgap⟩
+  exact Int.natCast_dvd_natCast.mp (hgap ▸ hmod.dvd)
 
 /-- **Accessible sets.** A set $D$ of natural numbers is accessible if it is $r$-accessible for
 every natural number $r \ge 1$.

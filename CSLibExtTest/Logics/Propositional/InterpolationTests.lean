@@ -24,7 +24,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Logics.Propositional.Interpolation
 
-open Cslib.Logic Cslib.Logic.PL Proposition Theory InferenceSystem
+open Cslib.Logic Cslib.Logic.LegacyPL Proposition Theory InferenceSystem
 
 /-- Three ordinary atoms plus a separate falsum atom `⊥`. -/
 inductive At where
