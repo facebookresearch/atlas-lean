@@ -10795,6 +10795,7 @@
   "MathlibExt/Geometry/Convex/Covering": {"to": "Geometry/packings-and-coverings", "title": "Hadwiger covering and illumination problem"},
   "MathlibExt/Geometry/Convex/CubeCovering": {"to": "Geometry/packings-and-coverings", "title": "Hadwiger covering and illumination problem"},
   "MathlibExt/Geometry/Convex/Illumination": {"to": "Geometry/packings-and-coverings", "title": "Hadwiger covering and illumination problem"},
+  "MathlibExt/Geometry/Convex/IlluminationFiniteMinimum": {"to": "Geometry/packings-and-coverings", "title": "Hadwiger covering and illumination problem"},
   "MathlibExt/Geometry/Convex/Kirchberger": {"to": "Geometry/convex-geometry", "title": "Kirchberger's theorem"},
   "MathlibExt/Geometry/Convex/PickTheorem": {"to": "Geometry/discrete-geometry", "title": "Pick's theorem"},
   "MathlibExt/Geometry/Convex/RadoCenterpoint": {"to": "Geometry/convex-geometry", "title": "Centerpoint theorem"},
