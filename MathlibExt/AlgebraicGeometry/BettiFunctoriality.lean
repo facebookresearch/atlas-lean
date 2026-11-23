@@ -80,6 +80,27 @@ def cohomologyPullback {Z W : TopCat.{0}} (f : Z ⟶ W) (n : ℤ) :
   map_smul' r a := by
     simp [Functor.map_smul, Linear.comp_smul, Linear.smul_comp]
 
+/-- The pullback of a class is its derived inverse image as a shifted morphism
+(`ShiftedHom.map`), conjugated by the coefficient-unit comparison. -/
+theorem cohomologyPullback_apply {Z W : TopCat.{0}} (f : Z ⟶ W) (n : ℤ)
+    (a : BettiRealization.Cohomology W n) :
+    cohomologyPullback f n a = (unitInverseImageIso f).inv ≫
+      ShiftedHom.map a (derivedPullback ℚ f) ≫
+        (shiftFunctor (RationalDerived Z) n).map (unitInverseImageIso f).hom := by
+  simp [cohomologyPullback, ShiftedHom.map]
+
+/-- Pullback sends the unit class to the unit class. -/
+theorem cohomologyPullback_mk₀_id {Z W : TopCat.{0}} (f : Z ⟶ W) :
+    cohomologyPullback f 0 (ShiftedHom.mk₀ (0 : ℤ) rfl (𝟙 (rationalUnit W))) =
+      ShiftedHom.mk₀ (0 : ℤ) rfl (𝟙 (rationalUnit Z)) := by
+  dsimp only [cohomologyPullback, LinearMap.coe_mk, AddHom.coe_mk]
+  rw [← Category.assoc ((derivedPullback ℚ f).map _), ← ShiftedHom.map, ShiftedHom.map_mk₀]
+  simp only [ShiftedHom.mk₀, Functor.comp_obj, CategoryTheory.Functor.map_id,
+    Category.id_comp]
+  rw [← (shiftFunctorZero' (RationalDerived Z) (0 : ℤ) rfl).inv.naturality
+    (unitInverseImageIso f).hom]
+  simp
+
 /-- The canonical coefficient map into direct image, fixed by the
 constant-sheaf/global-section adjunction. -/
 def unitPushforward {Z W : TopCat.{0}} (f : Z ⟶ W) :

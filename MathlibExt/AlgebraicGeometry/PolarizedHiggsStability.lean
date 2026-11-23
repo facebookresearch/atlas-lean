@@ -57,7 +57,7 @@ structure HilbertNumerics (X : ComplexScheme) (H : LineBundle X.left) (d : ℕ) 
   polynomial : ∀ F : X.left.Modules, IsCoherent F → Polynomial ℚ
   normalization : ∀ (F : X.left.Modules) (hF : IsCoherent F), ∃ N : ℕ,
     ∀ n : ℕ, N ≤ n → (polynomial F hF).eval (n : ℚ) =
-      (DivisorDynamics.eulerCharacteristic X d
+      (DivisorDynamics.truncatedEuler X d
         (moduleTensor X.left F (power H.val n)) : ℚ)
   finiteCohomology : ∀ (F : X.left.Modules), IsCoherent F → ∀ n i : ℕ,
     FiniteDimensional ℂ (cohomology X.hom (moduleTensor X.left F (power H.val n)) i)

@@ -7,14 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Ported from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/FunctorsAndMorphisms/IntegralTransformQcoh/Basic.lean,
-baseRingToSections, baseScalar, baseRingToCenter and modulesLinear.
-Public source: https://github.com/AxiomMath/Stacks
-Licensed under Apache License 2.0; the source has no individual author
-or copyright notice. Modification notice: copy only this complete base
-scalar/linearity section into its own namespace, without Stacks imports.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/FunctorsAndMorphisms/IntegralTransformQcoh/Basic.lean`
+(AxiomMath/Stacks at commit c496df0d9beea9deaeabcea8492605f9a0a2313b,
+https://github.com/AxiomMath/Stacks): `baseRingToSections`, `baseScalar`,
+`baseRingToCenter` and `modulesLinear`.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modification notice: only this base scalar and linearity section is copied, into
+its own namespace and without Stacks imports, with documentation added.
 -/
 module
 
@@ -129,7 +130,12 @@ noncomputable def baseRingToCenter (R : Type u) [CommRing R]
       baseRingToSections R X U r • x + baseRingToSections R X U s • x
     simp [add_smul]
 
-/-- The canonical linear structure on module sheaves over a scheme over `R`. -/
+/-- The canonical linear structure on module sheaves over a scheme over `R`.
+
+This is not an instance: the action depends on the structure morphism `X.hom`,
+which `X.left.Modules` does not record, so two `R`-scheme structures on one
+scheme give two linear structures. Install it locally, for instance with
+`local instance : Linear R X.left.Modules := modulesLinear R X`. -/
 @[instance_reducible]
 noncomputable def modulesLinear (R : Type u) [CommRing R]
     (X : Over (Spec (.of R))) : Linear R X.left.Modules :=
