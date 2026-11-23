@@ -462,7 +462,7 @@ private theorem minimal_return_of_return {f : ℝ → ℝ × ℝ} {d : ℝ × �
     exact hearly' S hS (lt_of_not_ge h) hret
   let A := Icc ε S ∩ f ⁻¹' {f 0}
   have hAc : IsCompact A := isCompact_Icc.of_isClosed_subset
-    ((hc.mono (fun s hs => hε.le.trans hs.1)).preimage_isClosed_of_isClosed
+    ((hc.mono (fun s (hs : s ∈ Icc ε S) => hε.le.trans hs.1)).preimage_isClosed_of_isClosed
       isClosed_Icc isClosed_singleton) inter_subset_left
   have hAn : A.Nonempty := ⟨S, ⟨⟨hεS, le_rfl⟩, hret⟩⟩
   obtain ⟨T, hTA, hmin⟩ := hAc.exists_isMinOn hAn continuousOn_id

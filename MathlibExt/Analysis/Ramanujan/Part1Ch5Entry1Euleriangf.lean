@@ -473,9 +473,9 @@ private theorem ite_deriv_monomial_coeff (c : ℝ) (k j n : ℕ) (hjk : j ≤ k)
   rw [iterate_derivative_monomial c k n]
   by_cases hn : n = k - j
   · subst hn
-    rw [ite_eq_left (Nat.sub_le k j), Nat.sub_sub_self hjk, Polynomial.coeff_monomial,
+    rw [ite_eq_left (Nat.sub_le k j), Nat.sub_sub_self hjk, Polynomial.coeff_monomial_apply,
       ite_eq_left (rfl : j = j), ite_eq_left (rfl : k - j = k - j)]
-  · rw [ite_eq_right hn, ite_eq_left hnk, Polynomial.coeff_monomial,
+  · rw [ite_eq_right hn, ite_eq_left hnk, Polynomial.coeff_monomial_apply,
       ite_eq_right (by omega : ¬ k - n = j)]
 
 private theorem expansion_monomial_coeff (c h : ℝ) (k j : ℕ) (hjk : j ≤ k) :
@@ -653,7 +653,7 @@ private theorem monomial_case (c h : ℝ) (k : ℕ) :
     have hS := shift_expansion_monomial_coeff c h k j hjk
     have hR : (Polynomial.C h * (Polynomial.monomial k c).derivative).coeff j
         = h * (if k - 1 = j then c * ((k:ℕ):ℝ) else 0) := by
-      rw [Polynomial.derivative_monomial, Polynomial.coeff_C_mul, Polynomial.coeff_monomial]
+      rw [Polynomial.derivative_monomial, Polynomial.coeff_C_mul, Polynomial.coeff_monomial_apply]
     rw [Polynomial.coeff_add, hS, hE, hR]
     have hG : ∀ n ∈ Finset.range (k-j+1),
         (chapter5Entry1PlusCoeff n * h^n * (c * (((k.descFactorial n : ℕ)):ℝ))) *
@@ -710,7 +710,7 @@ private theorem monomial_case (c h : ℝ) (k : ℕ) :
       intro n hn
       have hnk : n ≤ k := Nat.le_of_lt_succ (Finset.mem_range.mp hn)
       rw [Polynomial.coeff_C_mul, iterate_derivative_monomial c k n, ite_eq_left hnk,
-        Polynomial.coeff_monomial, ite_eq_right (by omega : ¬ k - n = j), mul_zero]
+        Polynomial.coeff_monomial_apply, ite_eq_right (by omega : ¬ k - n = j), mul_zero]
     have hS0 : (chapter5PolynomialShift h (chapter5DerivativeExpansion
         chapter5Entry1PlusCoeff h (Polynomial.monomial k c))).coeff j = 0 := by
       rw [shift_expansion_form c h k, coeff_finset_sum]
@@ -728,7 +728,7 @@ private theorem monomial_case (c h : ℝ) (k : ℕ) :
       rw [hC, Polynomial.coeff_C_mul, shift_pow_coeff h (k-n) j,
         ite_eq_right (by omega : ¬ j ≤ k - n), mul_zero]
     have hR0 : (Polynomial.C h * (Polynomial.monomial k c).derivative).coeff j = 0 := by
-      rw [Polynomial.derivative_monomial, Polynomial.coeff_C_mul, Polynomial.coeff_monomial,
+      rw [Polynomial.derivative_monomial, Polynomial.coeff_C_mul, Polynomial.coeff_monomial_apply,
         ite_eq_right (by omega : ¬ k - 1 = j), mul_zero]
     rw [Polynomial.coeff_add, hS0, hE0, hR0, add_zero]
 

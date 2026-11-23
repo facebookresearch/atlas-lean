@@ -52,7 +52,7 @@ theorem P₂_rev : ∀ x y, unif x * P₂ x y = unif y * P₂ y x := by
   intro x y; norm_num [P₂, unif]
 
 theorem P₂_mul_self : P₂ * P₂ = P₂ := by
-  ext i j; norm_num [P₂, mul_apply, Fin.sum_univ_two]
+  ext i j; norm_num [P₂, Matrix.mul_apply, Fin.sum_univ_two]
 
 theorem P₂_pow : ∀ t, 1 ≤ t → P₂ ^ t = P₂ := by
   intro t ht

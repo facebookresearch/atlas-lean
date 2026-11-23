@@ -712,7 +712,7 @@ private theorem compare_images {k : ℕ} (hk : 2 ≤ k) (n : ℕ) :
   have hk₁ : 1 ≤ k := by omega
   have hs : 1 ≤ k + 1 := by omega
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero => simp [image_zero]
     | succ m =>
