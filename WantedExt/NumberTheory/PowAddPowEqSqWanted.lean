@@ -36,6 +36,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.PowAddPowEqSq
+public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
 
 set_option autoImplicit false
 
@@ -147,14 +148,5 @@ theorem_wanted two_pow_add_fifteen_pow (x y z : ℕ) :
     2 ^ x + 15 ^ y = z ^ 2 ↔
       (x = 3 ∧ y = 0 ∧ z = 3) ∨ (x = 0 ∧ y = 1 ∧ z = 4) ∨
         (x = 6 ∧ y = 2 ∧ z = 17)
-
-/-- **Solutions of $3^x + 35^y = z^2$.** The natural numbers $x$, $y$, $z$ with
-$3^x + 35^y = z^2$ are exactly $(x, y, z) = (1, 0, 2)$ and $(x, y, z) = (0, 1, 6)$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Corollary 4. -/
-theorem_wanted three_pow_add_thirtyfive_pow (x y z : ℕ) :
-    3 ^ x + 35 ^ y = z ^ 2 ↔
-      (x = 1 ∧ y = 0 ∧ z = 2) ∨ (x = 0 ∧ y = 1 ∧ z = 6)
 
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted

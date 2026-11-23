@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import MathlibExt.NumberTheory.AlternatingSumFloorDiv
 
 namespace MetaMathlibExt
 

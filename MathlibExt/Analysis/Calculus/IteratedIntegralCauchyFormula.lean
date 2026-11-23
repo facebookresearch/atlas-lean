@@ -1,5 +1,19 @@
 /-
-# Iterated integral equals ∫ (s - t) f(t) dt
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_44.lean` (openbmb/ma-proofbench, commit
+31bab4c78fd1b0c464e767d62e9202163d1e9029): the statement of Cauchy's formula.
+Authors: Lushi Pu, Weiming Zhang, Xinheng Xie, Zixuan Fu, Bingxiang He, Hongya Lyu, Xin Li,
+Jie Zhou and Yudong Wang (MA-ProofBench)
+Licensed under the MIT License.
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +34,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_44.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_44 … := by sorry` into the Batteries `theorem_wanted`
-`intervalIntegral_intervalIntegral_eq_integral_sub_smul`; moved the informal problem statement
-docstring onto it and placed the declarations in namespace
-`MathlibExt.Analysis.Calculus.IteratedIntegralCauchyFormulaWanted`; replaced `import Mathlib` by
-`public import Mathlib` under the module system.
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 
-@[expose] public section
+/-!
+# Cauchy's formula for the twice-iterated integral
+
+Integrate by parts with the weight `t ↦ s - t` and the primitive `t ↦ ∫ τ in α..t, f τ`.
+The weight vanishes at the upper endpoint and the primitive vanishes at the lower endpoint.
+-/
+
+open Set MeasureTheory intervalIntegral
 
 namespace MathlibExt.Analysis.Calculus.IteratedIntegralCauchyFormulaWanted
 
@@ -50,11 +59,22 @@ $$\int_\alpha^s \Bigl(\int_\alpha^t f(\tau)\,d\tau\Bigr)\,dt = \int_\alpha^s (s 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Functions of
 one variable), `benchmark/level1/ma_proofbench_l1_44.lean` at openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted intervalIntegral_intervalIntegral_eq_integral_sub_smul
+public theorem intervalIntegral_intervalIntegral_eq_integral_sub_smul
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     {α β : ℝ} (hαβ : α ≤ β) (f : ℝ → E) (hf : ContinuousOn f (Set.Icc α β)) :
     ∀ s ∈ Set.Icc α β,
       (∫ t in α..s, (∫ τ in α..t, f τ))
-        = (∫ t in α..s, (s - t) • f t)
+        = (∫ t in α..s, (s - t) • f t) := by
+  intro s hs
+  have hcont : ContinuousOn f (uIcc α s) := hf.mono (uIcc_subset_Icc ⟨le_rfl, hαβ⟩ hs)
+  have hprim (x : ℝ) (hx : x ∈ uIcc α s) :
+      HasDerivWithinAt (fun t => ∫ τ in α..t, f τ) (f x) (uIcc α s) x := by
+    have : Fact (x ∈ uIcc α s) := ⟨hx⟩
+    exact integral_hasDerivWithinAt_right (hcont.intervalIntegrable.mono_set
+      (uIcc_subset_uIcc_left hx))
+      (hcont.stronglyMeasurableAtFilter_nhdsWithin measurableSet_uIcc x) (hcont x hx)
+  simpa using (integral_smul_deriv_eq_deriv_smul_of_hasDerivWithinAt
+    (u' := fun _ => (-1 : ℝ)) (fun x _ => ((hasDerivAt_id x).const_sub s).hasDerivWithinAt)
+    hprim intervalIntegrable_const hcont.intervalIntegrable).symm
 
 end MathlibExt.Analysis.Calculus.IteratedIntegralCauchyFormulaWanted
