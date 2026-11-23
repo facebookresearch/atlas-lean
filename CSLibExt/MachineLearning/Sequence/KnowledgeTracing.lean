@@ -49,13 +49,17 @@ noncomputable def bkt (p L g s : ℝ) : HMM Bool Bool ℝ where
   trans k k' := if k then (if k' then 1 else 0) else (if k' then L else 1 - L)
   emit k r := if k then (if r then 1 - s else s) else (if r then g else 1 - g)
 
-/-- The posterior learned probability after a correct response:
-`p (1 - s) / (p (1 - s) + (1 - p) g)`. -/
+/-- The posterior learned probability after a correct response, under positive
+evidence: `p (1 - s) / (p (1 - s) + (1 - p) g)`. At zero evidence Lean's
+totalized division (`x / 0 = 0`) gives `0`; that value is not a posterior
+probability. -/
 noncomputable def correctPosterior (p g s : ℝ) : ℝ :=
   p * (1 - s) / (p * (1 - s) + (1 - p) * g)
 
-/-- The posterior learned probability after an incorrect response:
-`p s / (p s + (1 - p) (1 - g))`. -/
+/-- The posterior learned probability after an incorrect response, under
+positive evidence: `p s / (p s + (1 - p) (1 - g))`. At zero evidence
+Lean's totalized division (`x / 0 = 0`) gives `0`; that value is not a
+posterior probability. -/
 noncomputable def incorrectPosterior (p g s : ℝ) : ℝ :=
   p * s / (p * s + (1 - p) * (1 - g))
 
@@ -210,5 +214,4 @@ theorem filter_formulas {p L g s : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1)
     constructor
     · rw [learnedPosterior, ← hb.1 true, hSt]
     · rw [learnedNextPrior, ← hb.2 true, hPr]
-
 end Cslib.MachineLearning.Sequence.KnowledgeTracing
