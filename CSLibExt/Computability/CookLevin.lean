@@ -38,9 +38,9 @@ Information Transmission* 9.3 (1973), 265–266.
 namespace Cslib.CookLevin
 
 /- Compatibility aliases: the CNF representation now lives in
-`Cslib.Logic.PL` (`CSLibExt.Logics.Propositional.CNF.Basic`); these keep
+`Cslib.Logic.LegacyPL` (`CSLibExt.Logics.Propositional.CNF.Basic`); these keep
 the `Cslib.CookLevin` names resolving to the same constants. -/
-export Cslib.Logic.PL (CNFClause CNF CNFSat)
+export Cslib.Logic.LegacyPL (CNFClause CNF CNFSat)
 
 /-- **Reading a unary length prefix.** On a list of Booleans that begins with $k$ copies of
 $\mathrm{true}$ followed by $\mathrm{false}$, the reader returns $k$ together with the rest of
