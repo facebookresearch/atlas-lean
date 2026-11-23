@@ -106,11 +106,13 @@ def hodgeFiltration (n p : ℤ) : Submodule ℂ ((deRhamComplex R).homology n) :
       (((globalSections ℂ (ComplexAnalytification.space X)).mapHomologicalComplex
         (ComplexShape.up ℤ)).map (R.cutMap p)) n).hom
 
-/-- The degreewise rational-to-complex map fixed by the unit square. -/
+/-- The degreewise rational-to-complex map fixed by the unit square. It is
+`ℚ`-linear, with the complex de Rham term viewed as a `ℚ`-module. -/
 def comparisonInDegree (n : ℤ) :
-    (bettiComplex R).X n →ₗ[ℤ] (deRhamComplex R).X n :=
+    (bettiComplex R).X n →ₗ[ℚ]
+      (ModuleCat.restrictScalars (algebraMap ℚ ℂ)).obj ((deRhamComplex R).X n) :=
   ((((globalSections ℚ (ComplexAnalytification.space X)).mapHomologicalComplex
-    (ComplexShape.up ℤ)).map R.comparison).f n).hom.restrictScalars ℤ
+    (ComplexShape.up ℤ)).map R.comparison).f n).hom
 
 /-- A pure realization on the actual rational Betti cohomology. The cycle
 and quotient conditions pin its complexification map to the actual chain
@@ -118,7 +120,8 @@ comparison, and the filtration is the fixed geometric image filtration. -/
 structure PureBettiHodgeData (n : ℤ) where
   complexification : RationalComplexification ((bettiComplex R).homology n)
   complexIso : complexification.complexSpace ≅ (deRhamComplex R).homology n
-  cyclesMap : (bettiComplex R).cycles n →ₗ[ℤ] (deRhamComplex R).cycles n
+  cyclesMap : (bettiComplex R).cycles n →ₗ[ℚ]
+    (ModuleCat.restrictScalars (algebraMap ℚ ℂ)).obj ((deRhamComplex R).cycles n)
   cycles_normalization : ∀ z,
     ((deRhamComplex R).iCycles n) (cyclesMap z) =
       comparisonInDegree R n (((bettiComplex R).iCycles n) z)

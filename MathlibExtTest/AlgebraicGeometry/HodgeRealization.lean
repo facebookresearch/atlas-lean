@@ -66,6 +66,11 @@ example (n : ℤ) (H : PureBettiHodgeData R n) : Antitone (hodgeFiltration R n) 
   change H.complexIso.hom (H.complexIso.inv x) ∈ hodgeFiltration R n p at hh
   simpa using hh
 
+/-- The degreewise comparison is `ℚ`-linear. -/
+example (n : ℤ) (q : ℚ) (x : (bettiComplex R).X n) :
+    comparisonInDegree R n (q • x) = q • comparisonInDegree R n x :=
+  map_smul _ q x
+
 /-- The map on cycles of a realization is determined by the chain comparison. -/
 example (n : ℤ) (H H' : PureBettiHodgeData R n) : H.cyclesMap = H'.cyclesMap := by
   ext z
