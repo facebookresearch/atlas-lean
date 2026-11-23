@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
-public import WantedExt.NumberTheory.SierpinskiRieselRepdigitsWanted
+public import MathlibExt.NumberTheory.SierpinskiRieselRepdigits
 
 namespace MetaMathlibExt
 
