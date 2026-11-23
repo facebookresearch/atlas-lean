@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Rayleigh
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.Beatty.FloorFiber
 
 /-! # Decomposition of Beatty and complementary sequences (Polanco)
 
@@ -151,19 +152,6 @@ public theorem_wanted beatty_floor_fiber_card_eq_or_eq_succ {α : ℝ} {k : ℕ}
         {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1) ∧
       {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k}.Infinite ∧
       {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1}.Infinite
-
-/-- **Multiplicity $k + 1$ for $\alpha$ is multiplicity $k$ for $\alpha/(1 - \alpha)$.** Let $k$ be
-a positive integer, let $\alpha$ be a real number with $1/(k + 1) < \alpha < 1/k$, and let
-$\beta = \alpha/(1 - \alpha)$. Then a non-negative integer $t$ equals $\lfloor n\alpha\rfloor$ for
-exactly $k + 1$ positive integers $n$ if and only if it equals $\lfloor n\beta\rfloor$ for exactly
-$k$ positive integers $n$.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Lemma 2 (`integers-2025-A104-lem-2`). -/
-public theorem_wanted beatty_floor_fiber_card_succ_iff {α : ℝ} {k : ℕ}
-    (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) (t : ℕ) :
-    {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1 ↔
-      {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * (α / (1 - α))⌋ = t}.ncard = k
 
 /-- **The values of $\lfloor n\alpha\rfloor$ of each multiplicity form Beatty sets.** Let $k$ be a
 positive integer and let $\alpha$ be an irrational number with $1/(k + 1) < \alpha < 1/k$. Then

@@ -9,11 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
+public import MathlibExt.NumberTheory.FloorIdentities
 
 /-!
 # Palindromes in arithmetic progressions (statements)
@@ -36,24 +36,6 @@ namespace MetaMathlibExt
 open Int
 
 @[expose] public section
-
-/-- **Two floor-function identities.** For every real number $x$, the sum
-$\lfloor x \rfloor + \lfloor -x \rfloor$ equals $0$ if $x$ is an integer and $-1$ otherwise.
-For all real numbers $x$ and $y$, $\lfloor x + y \rfloor = \lfloor x \rfloor + \lfloor y \rfloor$ if
-$(x - \lfloor x \rfloor) + (y - \lfloor y \rfloor) < 1$, and
-$\lfloor x + y \rfloor = \lfloor x \rfloor + \lfloor y \rfloor + 1$ otherwise.
-
-These are parts (iii) and (v) of the cited lemma; its remaining parts are not restated here.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and
-Prapanpong Pongsriiam, *Exact Formulas for the Number of Palindromes in Certain Arithmetic
-Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, Lemma 6
-(`jis-2024-24.4.8-lem-6`). -/
-public theorem_wanted floor_add_floor_neg_and_floor_add_eq :
-    (∀ x : ℝ, (∃ n : ℤ, x = n) → ⌊x⌋ + ⌊-x⌋ = 0) ∧
-      (∀ x : ℝ, (¬ ∃ n : ℤ, x = n) → ⌊x⌋ + ⌊-x⌋ = -1) ∧
-      ∀ x y : ℝ, ⌊x + y⌋ =
-        if fract x + fract y < 1 then ⌊x⌋ + ⌊y⌋ else ⌊x⌋ + ⌊y⌋ + 1
 
 /-- **Palindromes in an arithmetic progression.** For natural numbers $b$, $m$, $q$ and $r$,
 $A_b(m, q, r)$ is the number of base-$b$ palindromes $n$ with $1 \le n \le m$ and

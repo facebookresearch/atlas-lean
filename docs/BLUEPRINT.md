@@ -148,17 +148,43 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   map honest about what uses what.
 - **A move that retires an address goes into `scripts/card-moves.jsonl`,**
   and a page gets an `id` before it moves. `scripts/cards.py check` must pass.
+- **A planned page may record its counterparts,** the Mathlib or ATLAS
+  declarations that state its result or a close form, with how each compares
+  ([cards.md](cards.md#counterparts)). Each is verified clause by clause against
+  its declaration before it is written; it is data only, and gives no credit,
+  makes no edge and never changes readiness.
 
 ### What the tools own
 
 The tools write these, so they are never edited or committed by hand:
 
-- `## Depends on` and `## Proof depends on` on a page linked to a declaration
-  (an annotation with an `object`, or the module and name an earlier sync
-  wrote): `sync_wiki.py lean-facts` writes them from the compiled Lean.
-- `kind` and `status` on an annotation, which `lean-facts` adds at build time.
+- `## Depends on` and `## Proof depends on` on a page linked to a declaration,
+  of ATLAS or of Mathlib (an annotation with an `object`, or the module and
+  name an earlier sync wrote): `sync_wiki.py lean-facts` writes them from the
+  compiled Lean, those between ATLAS and Mathlib-credited pages from the
+  Mathlib registry ([Mathlib-credited pages](#mathlib-credited-pages)).
+- What `lean-facts` writes into rows at build time: `kind` and `status`; the
+  Lean link of the declaration a row an earlier sync wrote with only a module
+  and a name stands for; and, when a page's declaration is gone, the edits that
+  unlink it: the link naming it, or a Mathlib link and the `mathlib` flag,
+  removed, the row's other declarations of this project made references
+  (`role: uses`), the module and name retired, and an empty `object` or
+  `"mathlib": false` where a link or flag the folder defaults give must be
+  masked.
 - Build outputs, which are never committed: `lean-facts` output, `site-src/`,
   `site/`, the dependency dump.
+
+`lean-facts` runs only on a clean checkout: it refuses when `blueprint/`
+differs from HEAD (a file changed, staged, deleted or untracked there), its own
+output of an earlier run included, so that every run derives its writes from the
+authored rows and pages. Run the build's steps in a fresh, disposable checkout or
+worktree, as the wiki job does, after saving or stashing your own work. Only in a
+disposable checkout, and after reviewing any untracked files there, restore
+`blueprint/` with `git restore --source=HEAD --staged --worktree -- blueprint` (or
+`git checkout HEAD -- blueprint`), also after a run that failed part-way.
+`declarations` and `ids`, which write committed rows, refuse rows that carry
+`kind` or `status` (a check of those two fields, not of every edit lean-facts
+makes), and the wiki tests fail on a committed row that carries them.
 - `scripts/wiki-sync.json` and `blueprint/atlas.json`, which change only as
   [Maintaining articles](#maintaining-articles) describes.
 - `scripts/mathgraph-map.jsonl`, to which `import_mathgraph.py` appends a line
@@ -170,10 +196,9 @@ so one such row stops the task list. `sync_wiki.py declarations` gives each row
 it adds an `id`, and `sync_wiki.py ids` gives one to every row that has none,
 such as a row written by hand; the wiki tests fail on a row without one.
 
-Blueprint Pages' `build the wiki` job runs `autoform check blueprint`, which
-fails on cycles, dangling dependency targets and missing declarations. The job
-is advisory, so a reviewer skips those only once it has passed on the PR's
-head commit, and otherwise reports them. Nothing runs `autoform audit` in CI;
+CI's required `check the graph` job runs `autoform check blueprint` on the
+committed graph, which fails on cycles, dangling dependency targets and missing
+declarations. Nothing runs `autoform audit` in CI;
 authors may run `autoform audit blueprint --lean-root .`, and reviewers still
 check what it reports, such as overfull folders (`overfull-container`) and two
 pages for one declaration (`duplicate-lean-target`). `autoform work` lists the
@@ -259,14 +284,18 @@ lake build MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound
 lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt
 
 scripts/list_v2_modules.sh v2-modules.txt
+python scripts/sync_wiki.py mathlib-names build/mathlib-names.txt
 lake env lean --run scripts/dump_v2_dependencies.lean v2-modules.txt \
-  > v2-dependencies.jsonl
+  build/mathlib-names.txt > v2-dependencies.jsonl
 python scripts/extract_v2_lean_dependencies.py \
-  v2-dependencies.jsonl build/lean-dependencies.json
-python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
+  v2-dependencies.jsonl build/lean-dependencies.json \
+  --registry build/mathlib-registry.json --names build/mathlib-names.txt
+python scripts/sync_wiki.py lean-facts build/lean-dependencies.json \
+  --registry build/mathlib-registry.json
 autoform check blueprint --lean-root .
 python scripts/cards.py rollup build/cards.json \
-  --dependencies build/lean-dependencies.json
+  --dependencies build/lean-dependencies.json \
+  --registry build/mathlib-registry.json
 autoform render blueprint --output site-src --lean-root . \
   --require-declarations --ileans .lake/build/lib/lean
 mkdocs build --strict
@@ -276,7 +305,8 @@ python scripts/check_blueprint_site.py site-src site
 
 These shell snippets use Bash; the second runs in a subshell that stops at the
 first failing command without changing your shell's options. `lean-facts` updates the local articles and
-annotations for rendering; do not commit those derived changes. Because the
+annotations for rendering: run it in a disposable checkout, never commit those derived changes, and run it
+again only on a clean one ([What the tools own](#what-the-tools-own)). Because the
 rendered blueprint then differs from the commit, `autoform render` leaves out
 each page's link to its Markdown source; restoring those links is tracked in
 [#4993](https://github.com/facebookresearch/atlas-lean/issues/4993). Missing
@@ -294,13 +324,19 @@ semantics above, bridge edges from the articles to the Mathlib nodes they use,
 and each node's topic from the `Mathlib/...` keys of `scripts/taxonomy.json`.
 [`mathlib-layer.md`](mathlib-layer.md) gives the node rules and the files. Like
 the dependency dump, it is a build output: the workflow's `build the Mathlib
-layer` job builds it once `build the wiki` has succeeded, from the v2
-extraction and the dump of the v2 declarations with their Mathlib uses that
-`build the wiki` makes last, after the site steps, and keeps as the
+layer` job builds it beside `build the wiki`. It restores the same builds,
+builds what they lack and makes the v2 extraction as `build the wiki` does,
+then dumps the v2 declarations with their Mathlib uses, which it keeps as the
 `v2-mathlib-dump` artifact. It uploads the layer as the `mathlib-graph`
-artifact. A failure fails that job's check only; it never holds back the site
-or its deployment, which do not read the layer. After the build and the v2
-extraction above:
+artifact. The edges of the site's own Mathlib-credited pages come from the wiki
+job's registry ([Mathlib-credited pages](#mathlib-credited-pages)), not from
+this layer. A failure fails that job's check only; it never holds back the site
+or its deployment, which do not read the layer. The dump of the Mathlib
+declarations and the graph `graph` builds from it depend only on the pins and
+the scripts that make them: runs other than PRs keep them in a
+`mathlib-graph-*` cache, and a run that restores it skips them. `stats`
+therefore takes the layer's ATLAS commit from the v2 dump. After the build and
+the v2 extraction above:
 
 ```sh
 python scripts/extract_mathlib_graph.py dump mathlib-graph/mathlib-dump.jsonl.gz
@@ -359,7 +395,10 @@ card or below one: such a page goes to the card's parent folder and is listed
 as unassigned, for an editor to place in a card, and no new page takes the name
 of a folder or an address `scripts/card-moves.jsonl` records. It also refreshes
 the source-derived area catalog and coverage metadata without replacing article
-prose.
+prose. A row the build refuses ([Mathlib-credited
+pages](#mathlib-credited-pages)), such as a flagged row that also names a
+declaration of this project, is reported as an error, and the run then writes
+nothing: such a row neither keeps a declaration from its page nor places one.
 It edits within a folder page only where every line of the page is simple: a
 blank line, a heading, a single-line `- [title](page)` item with plain text
 after it, or a line of plain text that opens no other block, with no item next to
@@ -388,14 +427,22 @@ problems, `reason` names the one in its statement. `declarations` gives a held
 declaration no page and lists it as held. A marker that names no declaration,
 sits on a linked row, names a declaration the Lean index does not resolve, or
 holds back a declaration that another row links or holds is reported as an
-error, and the run then writes nothing. Relink the page once every listed issue
+error, and the run then writes nothing. The build's own steps (the extraction,
+`lean-facts` and the cards) likewise refuse, before writing, a held row that
+credits a declaration, of this project or of Mathlib, and a held declaration
+that another row credits. Relink the page once every listed issue
 is fixed and the declaration states what the page does: restore its `object`
 and remove `held`.
 
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept
 as unlinked mathematical articles during rendering until an editor resolves
-the report; no old Lean-source link is fabricated.
+the report; no old Lean-source link is fabricated. Unlinking takes out the Lean
+links that name the removed declaration, with its kind and status; the row's
+other declarations of this project stay as references (role `uses`), so that
+none of them takes the page's credit, and its other links stay. A module and name
+an earlier sync wrote on the row go too, so that no later pass reads the page as
+another declaration's.
 
 Every page under `blueprint/roadmap/` needs a row in `blueprint/links/`;
 `lean-facts` fails on a page without one. A folder page takes the navigation of
@@ -409,6 +456,111 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
 model-driven audit, or required personal token.
+
+### Mathlib-credited pages
+
+A page may state a Mathlib declaration instead of an ATLAS one when the wiki
+needs a result or concept that only Mathlib proves: for a card, as a
+prerequisite a planned page lists, or as an entry of a reviewed mathgraph
+manifest ([mathgraph-import.md](mathgraph-import.md)). Its annotation, in its
+subject's links file like every other ([Placing pages](#placing-pages)), names
+Mathlib's repository in its Lean link and says so in Autoform's extension:
+
+```json
+{"subject": [{"type": "generic", "uri": "../roadmap/<folder>/<page>.md"}], "id": "af_...",
+ "object": [{"type": "lean", "uri": "https://github.com/leanprover-community/mathlib4",
+             "location": {"declaration": "<Mathlib name>", "module": "<Mathlib module>"}}],
+ "extensions": {"org.autoform": {"mathlib": true}}}
+```
+
+Autoform shows it as in Mathlib, and it is never a task ([What the tools
+own](#what-the-tools-own)). Its page states what the declaration states
+([Writing pages](#writing-pages)) and commits no dependency section ([What the
+tools own](#what-the-tools-own)). The `mathlib` flag is what credits Mathlib: a
+Mathlib link on a row without it is a reference, which leaves the page's own
+declaration its credit. The build reads every row as Autoform does, over the
+links folder's defaults: a link with no `uri` is a Lean link to this project,
+and a link with a `uri` but no `type` is no Lean link at all. The defaults never
+set `kind` or `status`, which the build derives for each page from the Lean. A
+page's own declaration is its Lean link to this project with role `states`, or
+its only such link when none has a role, never the first by position. A link of
+another type (PDF, HTML, LaTeX, generic) is a reference, whatever its role; so
+is a Lean link to another repository, but one with role `states`, like a link of
+a type Autoform does not know with that role, says the page is stated elsewhere,
+and the page then credits none of this project's declarations. A flagged row
+names exactly one Mathlib declaration, in a Lean link to Mathlib's repository,
+and none of this project. A row's subject names its whole page: a
+percent-encoded spelling is the same page, while a subject with a query, a
+fragment or a location names only part of one, and Autoform leaves such a row
+out. A page has one row, a row names a page that exists, a folder page's row
+credits nothing and has no `kind` or `status`, and a declaration has one page;
+otherwise the build stops before writing anything. A row an earlier sync wrote with only a module and a
+name counts as the one declaration the Lean index gives it, and as none when the
+index gives none or several. The extraction, `lean-facts` and `declarations`
+decide so, and stop when it and another page stand for one declaration, or when
+the row also holds that declaration back; `lean-facts` then gives the build's row
+that declaration's Lean link, which Autoform and the cards read as any other.
+
+The build lists such declarations (`sync_wiki.py mathlib-names`, whose output
+may not lie inside `blueprint/`), imports their
+modules in the dependency dump, and records which of them each article and each
+of them reaches, through the constants no page credits, the project's and
+Mathlib's alike, by the rules of the [Source ownership](#source-ownership)
+list: a statement through what those constants state, a proof through
+everything they use, their types included. An article depends on such a
+declaration only where its statement or its proof names it itself (a
+definition's body and an inductive type's constructors count as its
+statement): one it reaches only through other constants gives the page no edge
+to it. `extract_v2_lean_dependencies.py --registry` writes that registry beside
+an unchanged `build/lean-dependencies.json`, with the digest of the credited
+names, of the dump and of that extraction, and Mathlib's revision. `lean-facts`
+and the cards take the registry only beside the extraction it was written with;
+like that extraction, it holds only for the dump and the checkout it was made
+from, which they cannot check, so the wiki job makes all three in one run. Before
+it writes either file, the extractor
+refuses a dump that is not in the current format, was made at another Mathlib,
+is not one whole stream (its header first, its footer last, rows between), has a
+row unlike those the dump writes, or does not answer exactly the listed names.
+`lean-facts --registry` checks that the registry is
+well formed, was made from the checkout's credited names at its Mathlib, that
+its found and missing names split them, that each of its edges joins a
+declaration a page credits to one it found and none is both kept and left out,
+and that a module a row names is the declaration's, before it writes anything;
+with or without the registry, it also stops when the extraction has no row for a
+declaration a page credits and the Lean sources declare, which means it was made
+for another state of the wiki. It then gives each page its declaration's kind
+and its dependencies on the other pages, as for an ATLAS page. As there, they
+are dependencies among the wiki's pages: a page with none has no prerequisite
+among them. A credited name the build does not find in a Mathlib module, or
+that is a declaration of the project, unlinks the page with a warning, as a
+removed ATLAS declaration does: its Lean link, kind, status and `mathlib` flag
+go, so the page no longer shows as in Mathlib, and its other links stay. A row
+that names no module is looked for only in the modules the build imports. A
+Mathlib bump that moves a credited declaration to another module stops
+`lean-facts`, which names the new module, until the row names it: the bump
+updates the row in the same change.
+
+### Pages imported from mathgraph
+
+`scripts/import_mathgraph.py` adds pages adapted from mathgraph, Jack McCarthy's
+graph of textbook results, from a manifest reviewed row by row
+([mathgraph-import.md](mathgraph-import.md)): planned pages, and pages credited
+to a Mathlib declaration ([Mathlib-credited pages](#mathlib-credited-pages)).
+The annotation of such a page records its origin under `org.atlas-wiki` as
+`"seed": {"source": "mathgraph", "node": "<node id>", "revision": "<commit>"}`.
+A planned page also lists there each prerequisite not yet linked by the import,
+in `"pending": [{"key": "<mathgraph key>", "kind": "statement" | "proof",
+"reason": "<reason>"}]`; a pending entry does not imply that no page states it.
+Such a planned page is then a [node still to expand](#nodes-still-to-expand): it
+carries `not_ready`, and its `## Expansion` section names the prerequisites a
+good expansion links. A Mathlib-credited page has no pending entries, no
+`not_ready` and no `## Expansion`. The importer never edits a page it imported
+again. An editor who links a prerequisite under `## Depends on` or
+`## Proof depends on` removes its entry in the same change, and `## Expansion`
+and `not_ready` with the last one; no tool makes or checks that edit. After the
+import a page is edited like any other; `scripts/mathgraph-map.jsonl` keeps the
+digests of mathgraph's text, so that a later release can tell what a later
+mathgraph revision changed.
 
 ## Page chrome
 
@@ -447,8 +599,11 @@ it requirable would need a first job that checks the changed paths and a
 job-level `if` on the wiki job. Its unique `build the wiki` check must succeed
 before deployment. Tests, Lean compilation, dependency extraction, rendering,
 and strict site checks run in one read-only job from one checkout. The job
-restores CI's `lake-build-*` cache and saves no cache of its own. The Mathlib
-layer is built afterwards in a second read-only job, `build the Mathlib layer`,
+restores the builds CI saves from `main`, under CI's keys: the `lake-build-*`
+build of the commit a PR is tested against, else `main`'s newest, and the
+`lake-deps-*` package builds. It saves no cache of its own. The Mathlib
+layer is built beside it, from the same builds, in a second read-only job,
+`build the Mathlib layer`,
 the Mathlib pages in a third, `build the Mathlib pages`, and the card scripts are
 tested and the cards checked in a fourth, `check the cards`, from the wiki job's
 dependency artifact ([cards.md](cards.md#checks-and-ci)); deployment waits for

@@ -20,6 +20,7 @@ from unittest.mock import patch
 
 import jsonschema
 
+from scripts import cards
 from scripts import generate_wiki as wiki
 from scripts import import_mathgraph as importer
 from scripts import sync_wiki as sync
@@ -759,7 +760,7 @@ class Endpoints(Fixture):
                       planned("b", depends=[on("a")]), planned("c", depends=[on("d")]), {"key": "d", "kind": "alias"}],
                      "manifest line 2 (b): depends/0: a is a row of this manifest that fails its checks",
                      "manifest line 3 (c): depends/0: d is a row of this manifest that fails its checks",
-                     "manifest line 4 (d): kind: 'alias' is not one of ['planned']")
+                     "manifest line 4 (d): kind: 'alias' is not one of ['planned', 'mathlib']")
 
     def test_a_pending_prerequisite_that_the_manifest_writes(self) -> None:
         self.refused([planned("a"), planned("b", pending=[missing("a")], not_ready=True, prose_missing="It uses a.")],
@@ -1648,9 +1649,8 @@ class MkdirWindow(Fixture):
         self.assertEqual(self.snapshot(), {**before, self.FOLDER: None, f"{self.FOLDER}/stray.md": b"# Stray\n"})
 
 
-class Map(Fixture):
-    """Every line of the map is as the importer writes it, and on a pull request the map only grows: the importer and
-    --check-map refuse a map with any other line, naming it, and --check-map --base a map whose base lines changed."""
+class MapFixture(Fixture):
+    """The fixture with the map's helpers: writing it, checking it, and committing the fixture as a base."""
 
     def write_map(self, *lines: str, end: str = "\n") -> None:
         self.write("scripts/mathgraph-map.jsonl", "\n".join(lines) + end)
@@ -1682,6 +1682,11 @@ class Map(Fixture):
         self.git("add", "-A")
         self.git("commit", "-q", "--allow-empty", "-m", "base")
         return self.git("rev-parse", "HEAD")
+
+
+class Map(MapFixture):
+    """Every line of the map is as the importer writes it, and on a pull request the map only grows: the importer and
+    --check-map refuse a map with any other line, naming it, and --check-map --base a map whose base lines changed."""
 
     def test_a_map_the_importer_writes_passes(self) -> None:
         self.applied([planned("sylow-existence", pending=[missing("p-group", "proof", "not-imported")], not_ready=True,
@@ -1804,21 +1809,24 @@ class Map(Fixture):
         self.assertIn("the 1 lines of the map at", self.check_map("--base", base)[1])
 
     def test_the_map_only_grows_from_the_base(self) -> None:
-        alpha, beta, gamma = (importer.map_line(map_row(key)) for key in ("alpha", "beta", "gamma"))
         rule = "the map only grows: lines are appended to it, never edited, removed or moved"
         empty = self.commit()
-        # The base has no map, and the map is valid.
-        self.write_map(alpha, beta)
+        # The base has no map, and the change imports two results, as the first content PR does: the map is valid and
+        # its lines are appended, each recording a page the change adds.
+        self.applied([planned("alpha"), planned("beta", sketch="It follows.", pending=[missing("p-group")],
+                                                    not_ready=True, prose_missing="It uses p-groups.")])
         code, out, err = self.check_map("--base", empty)
         self.assertEqual((code, err), (0, ""))
-        self.assertIn(f"the 0 lines of the map at {empty} are its first, unchanged, and 2 are appended", out)
+        self.assertIn(f"the 0 lines of the map at {empty} are its first, unchanged, and 2 are appended, each recording "
+                      "a page this change adds", out)
         base = self.commit()
-        # Lines appended.
-        self.write_map(alpha, beta, gamma)
+        # Lines appended by a later import.
+        self.applied([planned("gamma")])
         code, out, err = self.check_map("--base", base)
         self.assertEqual((code, err), (0, ""))
         self.assertIn(f"the 2 lines of the map at {base} are its first, unchanged, and 1 are appended", out)
-        edited = importer.map_line(map_row("beta", statement_sha256=digest("another statement")))
+        alpha, beta, gamma = importer.MAP.read_text().splitlines()
+        edited = importer.map_line({**json.loads(beta), "statement_sha256": digest("another statement")})
         for name, lines, message in (
                 ("edited", (alpha, edited, gamma), f"line 2: not line 2 of the map at {base}: that line is edited or "
                                                    f"removed; {rule}"),
@@ -1835,6 +1843,360 @@ class Map(Fixture):
         self.write_map(alpha, beta)
         self.map_refused("--base 'no-such-commit' names no commit of the repository", "--base", "no-such-commit")
         self.map_refused("--base '--all' names no commit of the repository", "--base=--all")
+
+
+class AppendedLines(MapFixture):
+    """With --base, each line appended to the map since that commit records a page the same change adds: the page,
+    absent at the commit, has one annotation, with the line's seed, the id that seed gives and the line's pending list,
+    and the line's statement and sketch digests are the page's. The lines of the map at the commit are never checked
+    against the pages."""
+
+    def where(self, base: str, number: int = 1, key: str = "alpha") -> str:
+        return f"scripts/mathgraph-map.jsonl line {number} ({key}), appended since {base}"
+
+    def imported(self) -> tuple[str, dict, Path, str]:
+        """The fixture committed, then a result imported with a sketch and a pending prerequisite: the base commit, the
+        map's line, the links file and the links file's text."""
+        base = self.commit()
+        self.applied([planned("alpha", sketch="It follows.", pending=[missing("p-group")], not_ready=True,
+                              prose_missing="It uses p-groups.")])
+        code, out, err = self.check_map("--base", base)
+        self.assertEqual((code, err), (0, ""))
+        links = sync.LINKS / "Algebra.jsonl"
+        return base, json.loads(importer.MAP.read_text()), links, links.read_text()
+
+    def test_a_line_for_no_page_or_for_a_page_the_base_has(self) -> None:
+        base = self.commit()
+        self.write_map(importer.map_line(map_row("alpha", pending=[])))
+        # Without --base, the lines alone are checked.
+        code, out, err = self.check_map()
+        self.assertEqual((code, err), (0, ""))
+        self.map_refused(f"{self.where(base)}: its page blueprint/roadmap/Algebra/groups/alpha.md is no file in the "
+                         "worktree, so this change did not add it", "--base", base)
+        self.write_map(importer.map_line(map_row("lagrange", page="blueprint/roadmap/Algebra/groups/lagrange.md",
+                                                 pending=[])))
+        self.map_refused(f"{self.where(base, key='lagrange')}: its page blueprint/roadmap/Algebra/groups/lagrange.md is "
+                         f"in the tree of {base} already, so this change did not add it", "--base", base)
+
+    def test_a_line_whose_digests_seed_or_pending_list_differ_from_its_page(self) -> None:
+        base, line, _, _ = self.imported()
+        where, other = self.where(base), digest("another statement")
+        cases = {
+            "statement": ({**line, "statement_sha256": other},
+                          f"{where}: statement_sha256 is {other}, but its page's statement, as Autoform reads it, has "
+                          f"the SHA-256 {line['statement_sha256']}"),
+            "sketch": ({**line, "sketch_sha256": digest("")},
+                       f"{where}: sketch_sha256 is {digest('')}, but its page's sketch, as Autoform reads it (the empty "
+                       f"string when it has none), has the SHA-256 {line['sketch_sha256']}"),
+            "pending": ({**line, "pending": []}, f"{where}: its pending list is not that of its page's annotation, "
+                                                 f"{json.dumps([missing('p-group')])}"),
+            "revision": ({**line, "revision": "f" * 40}, f"{where}: the seed of its page's annotation is"),
+        }
+        for name, (row, message) in cases.items():
+            with self.subTest(name):
+                self.write_map(importer.map_line(row))
+                self.map_refused(message, "--base", base)
+        # The page's own text, read as Autoform reads it.
+        self.write_map(importer.map_line(line))
+        page = wiki.ROADMAP / "Algebra/groups/alpha.md"
+        text = page.read_text()
+        page.write_text(text.replace("The statement of alpha.", "Another statement."))
+        self.map_refused(f"{where}: statement_sha256 is {line['statement_sha256']}, but its page's statement",
+                         "--base", base)
+        page.write_text(text.replace("## Proof sketch\n\nIt follows.\n", "## Proof sketch\n\nIt follows.\n\n## Proof "
+                                     "sketch\n\nAgain.\n"))
+        self.map_refused(f"{where}: its page has more than one `## Proof sketch` section", "--base", base)
+        page.unlink()
+        page.symlink_to(self.write("elsewhere.md", text))
+        self.map_refused(f"{where}: blueprint/roadmap/Algebra/groups/alpha.md is a symbolic link", "--base", base)
+
+    def test_a_line_whose_page_has_no_matching_annotation(self) -> None:
+        base, line, links, text = self.imported()
+        where = self.where(base)
+        rows = [json.loads(entry) for entry in text.splitlines()]
+        mine = next(row for row in rows if row["subject"][0]["uri"].endswith("/alpha.md"))
+        other_seed = {**mine["extensions"][sync.OWN]["seed"], "revision": "e" * 40}
+
+        def with_rows(*replaced: dict) -> str:
+            return "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in replaced)
+
+        cases = {
+            "another seed": (with_rows(*[row if row is not mine else
+                                         {**mine, "extensions": {**mine["extensions"],
+                                                                 sync.OWN: {**mine["extensions"][sync.OWN],
+                                                                            "seed": other_seed}}} for row in rows]),
+                             f"{where}: the seed of its page's annotation is {json.dumps(other_seed)}, not the line's "
+                             f"{json.dumps(mine['extensions'][sync.OWN]['seed'])}"),
+            "another id": (with_rows(*[row if row is not mine else {**mine, "id": "af_" + "0" * 24} for row in rows]),
+                           f"{where}: its page's annotation id is \"af_{'0' * 24}\", not {mine['id']}, which the line's "
+                           "seed gives"),
+            "no annotation": (with_rows(*[row for row in rows if row is not mine]),
+                              f"{where}: its page blueprint/roadmap/Algebra/groups/alpha.md has no annotation"),
+            "two annotations": (text + with_rows(mine),
+                                f"{where}: its page blueprint/roadmap/Algebra/groups/alpha.md has more than one "
+                                "annotation row"),
+        }
+        for name, (written, message) in cases.items():
+            with self.subTest(name):
+                links.write_text(written)
+                self.map_refused(message, "--base", base)
+        links.write_text(text)
+        self.assertEqual(self.check_map("--base", base)[0], 0)
+
+    def test_lines_of_the_base_map_are_never_checked_against_the_pages(self) -> None:
+        # A line's page may move or go after it was written: the line keeps its snapshot, and only the lines appended
+        # since the base are checked.
+        self.applied([planned("alpha")])
+        base = self.commit()
+        self.applied([planned("beta")])
+        links = sync.LINKS / "Algebra.jsonl"
+        (wiki.ROADMAP / "Algebra/groups/alpha.md").unlink()
+        links.write_text("".join(entry + "\n" for entry in links.read_text().splitlines() if "/alpha.md" not in entry))
+        code, out, err = self.check_map("--base", base)
+        self.assertEqual((code, err), (0, ""))
+        self.assertIn(f"the 1 lines of the map at {base} are its first, unchanged, and 1 are appended", out)
+
+
+MATHLIB_REV = "56a005855ea17e0b0958f73ec801ae140b0a1679"
+
+
+def credited(key: str, declaration: str = "irrational_sqrt_two", module: str = "Mathlib.NumberTheory.Real.Irrational",
+             **fields) -> dict:
+    """A Mathlib-credited row: a page that states what *declaration*, in *module*, states."""
+    return planned(key, kind="mathlib", mathlib={"declaration": declaration, "module": module}, **fields)
+
+
+class MathlibRows(MapFixture):
+    """A `mathlib` row writes a page credited to one Mathlib declaration, in the format sync_wiki reads (docs/BLUEPRINT.md,
+    "Mathlib-credited pages"), here beside a page the wiki already credits to Mathlib, and with Mathlib pinned in
+    lake-manifest.json."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write("lake-manifest.json", json.dumps({"version": 7, "packages": [{"name": "mathlib", "rev": MATHLIB_REV}]}))
+        self.write("blueprint/roadmap/Algebra/groups/card-dvd.md",
+                   "# The order of a subgroup\n\nThe order of a subgroup divides the order of the group.\n")
+        self.annotate("Algebra/groups/card-dvd.md", id="af_" + "c" * 24, object=[
+            {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "Subgroup.card_subgroup_dvd_card",
+                                                               "module": "Mathlib.GroupTheory.Coset.Card"}}],
+            extensions={"org.autoform": {"mathlib": True}})
+
+    def row_of(self, page: str) -> dict:
+        return next(row for row in self.rows() if row["subject"][0]["uri"] == f"../roadmap/{page}")
+
+    def test_a_mathlib_row_writes_a_page_credited_as_the_format_says(self) -> None:
+        base = self.commit()
+        out = self.applied([credited("sqrt-two-irrational", title="The square root of two is irrational",
+                                     statement="The square root of 2 is irrational.")])
+        # The plan names the kind of each row and of each page.
+        self.assertIn(", 1 rows (0 planned, 1 Mathlib-credited)", out)
+        self.assertIn("blueprint/roadmap/Algebra/groups/sqrt-two-irrational.md\n      the Mathlib-credited page of "
+                      "sqrt-two-irrational, in the existing folder blueprint/roadmap/Algebra/groups", out)
+        self.assertEqual(self.page("Algebra/groups/sqrt-two-irrational.md"), "# The square root of two is irrational\n\n"
+                         f"The square root of 2 is irrational.\n\n## Sources\n\n- {SOURCE}\n")
+        row = self.row_of("Algebra/groups/sqrt-two-irrational.md")
+        self.assertEqual(row, {
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/sqrt-two-irrational.md"}],
+            "id": importer.article_id(seed("sqrt-two-irrational")),
+            "object": [{"type": "lean", "uri": "https://github.com/leanprover-community/mathlib4",
+                        "location": {"declaration": "irrational_sqrt_two", "module": "Mathlib.NumberTheory.Real.Irrational"}}],
+            "extensions": {"org.atlas-wiki": {"seed": seed("sqrt-two-irrational")}, "org.autoform": {"mathlib": True}}})
+        line = json.loads(importer.MAP.read_text())
+        self.assertEqual(list(line)[-2:], ["pending", "mathlib"])
+        self.assertEqual(line["mathlib"], {"declaration": "irrational_sqrt_two", "module": "Mathlib.NumberTheory.Real.Irrational",
+                                           "rev": MATHLIB_REV})
+        # sync_wiki's readers credit it, as mathlib-names and the cards read credit.
+        names, problems = sync.credited_mathlib(sync.read_annotations())
+        self.assertEqual(problems, [])
+        self.assertEqual(names["irrational_sqrt_two"], ("Mathlib.NumberTheory.Real.Irrational",
+                                                        "Algebra/groups/sqrt-two-irrational.md"))
+        listed = self.tmp / "names.txt"
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(sync.main(["mathlib-names", str(listed)]), 0)
+        self.assertIn("irrational_sqrt_two", listed.read_text().split())
+        self.assertEqual((cards.credit(row), cards.declaration(row)), ("mathlib", "irrational_sqrt_two"))
+        # The map's line records the page, its annotation and its credit, as the check of an appended line finds them.
+        code, out, err = self.check_map("--base", base)
+        self.assertEqual((code, err), (0, ""))
+
+    def test_a_planned_row_may_depend_on_a_mathlib_rows_page(self) -> None:
+        self.applied([credited("sqrt-two-irrational"), planned("uses-it", depends=[on("sqrt-two-irrational")])])
+        self.assertIn("## Depends on\n\n- [Title of sqrt-two-irrational](sqrt-two-irrational.md)\n",
+                      self.page("Algebra/groups/uses-it.md"))
+        self.assertNotIn("## Depends on", self.page("Algebra/groups/sqrt-two-irrational.md"))
+
+    def test_a_mathlib_row_has_a_statement_and_sources_only(self) -> None:
+        self.refused([credited("a", sketch="It follows."), credited("b", depends=[on("a")]),
+                      credited("c", pending=[missing("p-group")], not_ready=True, prose_missing="It uses p-groups."),
+                      planned("d", mathlib={"declaration": "Foo.bar", "module": "Mathlib.Foo"}),
+                      planned("e", kind="mathlib"), credited("f", declaration="two words", module="Batteries.Data.List")],
+                     "manifest line 1 (a): sketch: 'It follows.' is not of type 'null'",
+                     "manifest line 2 (b): depends: [{'target': 'a', 'kind': 'statement'}] is expected to be empty",
+                     "manifest line 3 (c): pending: ", "manifest line 3 (c): not_ready: False was expected",
+                     "manifest line 3 (c): prose_missing: 'It uses p-groups.' is not of type 'null'",
+                     "manifest line 4 (d): mathlib is allowed only on a row of kind mathlib",
+                     "manifest line 5 (e): 'mathlib' is a required property",
+                     "manifest line 6 (f): mathlib/declaration: 'two words' does not match",
+                     "manifest line 6 (f): mathlib/module: 'Batteries.Data.List' does not match")
+
+    def test_the_names_a_row_may_give(self) -> None:
+        # A module component may hold an apostrophe, as sync_wiki's own pattern allows (sync_wiki.mathlib_module).
+        self.applied([credited("primed", declaration="Foo.bar'", module="Mathlib.Foo'")])
+        self.assertEqual(sync.page_owner(self.row_of("Algebra/groups/primed.md")), ("mathlib", "Foo.bar'", "Mathlib.Foo'"))
+        # Narrower than sync_wiki on purpose: a name with whitespace, as a «»-quoted Lean name may have, and a module
+        # outside Mathlib are refused.
+        self.refused([credited("quoted", declaration="Foo.«bar baz»", module="Mathlib.Foo"),
+                      credited("elsewhere", declaration="List.foo", module="Batteries.Data.List")],
+                     "manifest line 1 (quoted): mathlib/declaration: 'Foo.«bar baz»' does not match",
+                     "manifest line 2 (elsewhere): mathlib/module: 'Batteries.Data.List' does not match")
+
+    def test_a_declaration_has_one_page(self) -> None:
+        self.refused([credited("a", declaration="Subgroup.card_subgroup_dvd_card",
+                               module="Mathlib.GroupTheory.Coset.Card"), credited("b"), credited("c"),
+                      credited("d", declaration="QuotientGroup.leftRel", module="Mathlib.GroupTheory.Coset.Defs")],
+                     "manifest line 1 (a): mathlib/declaration: blueprint/roadmap/Algebra/groups/card-dvd.md credits "
+                     "Subgroup.card_subgroup_dvd_card to Mathlib too; a declaration has one page",
+                     "manifest line 3 (c): mathlib/declaration irrational_sqrt_two is also that of manifest line 2 (b); "
+                     "a declaration has one page",
+                     "manifest line 4 (d): mathlib/declaration: blueprint/roadmap/Algebra/groups/cosets.md credits "
+                     "QuotientGroup.leftRel as a declaration of this project too; a declaration has one page")
+
+    def test_a_declaration_has_one_page_whoever_credits_it(self) -> None:
+        # A page that credits the name as a declaration of this project is a claimant as much as a Mathlib-credited
+        # one: the importer refuses the row, and --check-map --base the appended line, with one message.
+        message = ("blueprint/roadmap/Algebra/groups/cosets.md credits irrational_sqrt_two as a declaration of this "
+                   "project too; a declaration has one page")
+        links = sync.LINKS / "Algebra.jsonl"
+        text = links.read_text()
+        cosets = self.row_of("Algebra/groups/cosets.md")
+        claimed = "".join(json.dumps({**cosets, "object": [{"location": {"declaration": "irrational_sqrt_two"}}]}
+                                     if row == cosets else row, ensure_ascii=False) + "\n"
+                          for row in map(json.loads, text.splitlines()))
+        links.write_text(claimed)
+        self.assertEqual(sync.page_owner(self.row_of("Algebra/groups/cosets.md")), ("atlas", "irrational_sqrt_two", None))
+        self.refused([credited("sqrt-two-irrational")], f"manifest line 1 (sqrt-two-irrational): mathlib/declaration: "
+                     f"{message}")
+        links.write_text(text)
+        base = self.commit()
+        self.applied([credited("sqrt-two-irrational")])
+        after = links.read_text()
+        links.write_text(after.replace(text, claimed, 1))
+        self.map_refused(f"scripts/mathgraph-map.jsonl line 1 (sqrt-two-irrational), appended since {base}: {message}",
+                         "--base", base)
+
+    def test_a_mathlib_link_without_the_flag_is_a_reference_not_a_claim(self) -> None:
+        # A Mathlib link on a row without the `mathlib` flag, and with no role `states`, is a reference (docs/BLUEPRINT.md,
+        # "Mathlib-credited pages"): it credits nothing, so the declaration may still have its page.
+        self.write("blueprint/roadmap/Algebra/groups/notes.md", "# Notes\n\nThe square root of 2 is irrational.\n")
+        self.annotate("Algebra/groups/notes.md", id="af_" + "f" * 24, object=[
+            {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "irrational_sqrt_two",
+                                                               "module": "Mathlib.NumberTheory.Real.Irrational"}}])
+        self.assertEqual(sync.page_owner(self.row_of("Algebra/groups/notes.md")), ("none", None, None))
+        base = self.commit()
+        self.applied([credited("sqrt-two-irrational")])
+        code, out, err = self.check_map("--base", base)
+        self.assertEqual((code, err), (0, ""))
+
+    def test_credits_the_links_folder_leaves_ambiguous(self) -> None:
+        self.write("blueprint/roadmap/Algebra/groups/both.md", "# Both\n\nIt states two results.\n")
+        self.annotate("Algebra/groups/both.md", id="af_" + "d" * 24, object=[
+            {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": name, "module": "Mathlib.Foo"}}
+            for name in ("Foo.one", "Foo.two")], extensions={"org.autoform": {"mathlib": True}})
+        self.refused([credited("x")], "the links folder's credits are ambiguous, as sync_wiki.py mathlib-names reads "
+                     "them: Algebra/groups/both.md sets `mathlib` but names 2 Mathlib declarations")
+
+    def test_a_mathlib_row_needs_the_mathlib_revision_lake_manifest_pins(self) -> None:
+        (self.tmp / "lake-manifest.json").unlink()
+        self.refused([credited("x")], "lake-manifest.json pins no Mathlib commit; the map records the Mathlib revision "
+                     "for a Mathlib-credited row")
+        # A file sync_wiki cannot read is refused by name, never a traceback.
+        self.write("lake-manifest.json", "{not json")
+        self.refused([credited("x")], "lake-manifest.json cannot be read as sync_wiki reads it: Expecting property name")
+        self.write("lake-manifest.json", json.dumps({"version": 7, "packages": [{"name": "mathlib", "rev": "main"}]}))
+        self.refused([credited("x")], "lake-manifest.json pins no Mathlib commit")
+        with patch.object(sync, "mathlib_revision", side_effect=PermissionError(13, "Permission denied")):
+            self.refused([credited("x")], "lake-manifest.json cannot be read as sync_wiki reads it: [Errno 13] "
+                         "Permission denied")
+        (self.tmp / "lake-manifest.json").unlink()
+        (self.tmp / "lake-manifest.json").mkdir()
+        self.refused([credited("x")], "lake-manifest.json pins no Mathlib commit")
+        (self.tmp / "lake-manifest.json").rmdir()
+        # A planned row needs no Mathlib revision.
+        self.applied([planned("y")])
+
+    def test_the_rows_the_change_writes_are_read_as_sync_wiki_reads_them(self) -> None:
+        # The links folder already has a row for the new page's path: the page would have two rows.
+        self.annotate("Algebra/groups/x.md", id="af_" + "e" * 24)
+        self.refused([credited("x")], "the links folder as the change would leave it: Algebra/groups/x.md has 2 rows, "
+                     "which Autoform reads together; a page has one row")
+        # A declaration sync_wiki cannot read as text names no Mathlib declaration.
+        self.refused([credited("y", declaration="irrational\u200bsqrt_two")],
+                     "manifest line 1 (y): Algebra/groups/y.md sets `mathlib` but names 0 Mathlib declarations")
+
+    def test_a_line_with_a_mathlib_credit(self) -> None:
+        line = map_row("alpha", pending=[], sketch_sha256=digest(""),
+                       mathlib={"declaration": "Foo.bar", "module": "Mathlib.Foo", "rev": MATHLIB_REV})
+        self.write_map(importer.map_line(line))
+        code, out, err = self.check_map()
+        self.assertEqual((code, err), (0, ""))
+        moved = json.dumps({**{name: line[name] for name in importer.MAP_FIELDS if name != "pending"},
+                            "mathlib": line["mathlib"], "pending": []}, ensure_ascii=False)
+        for name, written, message in (
+                ("a pending entry", importer.map_line({**line, "pending": [missing("p-group")]}), "line 1: pending: "),
+                ("a sketch", importer.map_line({**line, "sketch_sha256": digest("A sketch.")}), "line 1: sketch_sha256: "),
+                ("another revision", importer.map_line({**line, "mathlib": {**line["mathlib"], "rev": "main"}}),
+                 "line 1: mathlib/rev: 'main' does not match"),
+                ("its fields out of order", moved, "line 1: it is not written as the importer writes its row")):
+            with self.subTest(name):
+                self.write_map(written)
+                self.map_refused(f"scripts/mathgraph-map.jsonl {message}")
+
+    def test_an_appended_line_and_its_pages_credit_agree(self) -> None:
+        base = self.commit()
+        self.applied([credited("sqrt-two-irrational"), planned("alpha")])
+        self.assertEqual(self.check_map("--base", base)[0], 0)
+        links = sync.LINKS / "Algebra.jsonl"
+        text = links.read_text()
+        rows = [json.loads(entry) for entry in text.splitlines()]
+        mine = self.row_of("Algebra/groups/sqrt-two-irrational.md")
+        planned_row = self.row_of("Algebra/groups/alpha.md")
+
+        def where(number: int, key: str) -> str:
+            return f"scripts/mathgraph-map.jsonl line {number} ({key}), appended since {base}"
+
+        unflagged = {**mine, "extensions": {"org.atlas-wiki": mine["extensions"]["org.atlas-wiki"]}}
+        moved = {**mine, "object": [{**mine["object"][0], "location": {"declaration": "irrational_sqrt_two",
+                                                                       "module": "Mathlib.Other"}}]}
+        claimed = {**planned_row, "object": mine["object"], "extensions": {**planned_row["extensions"],
+                                                                          "org.autoform": {"mathlib": True}}}
+        for name, old, new, message in (
+                ("a credited page that lost its flag", mine, unflagged,
+                 f"{where(1, 'sqrt-two-irrational')}: its page's annotation credits no declaration, as sync_wiki reads "
+                 "it, not the Mathlib declaration irrational_sqrt_two in Mathlib.NumberTheory.Real.Irrational"),
+                ("a credited page with another module", mine, moved,
+                 f"{where(1, 'sqrt-two-irrational')}: its page's annotation credits the Mathlib declaration "
+                 "irrational_sqrt_two in Mathlib.Other, as sync_wiki reads it, not the Mathlib declaration "
+                 "irrational_sqrt_two in Mathlib.NumberTheory.Real.Irrational"),
+                ("a planned page that credits a declaration", planned_row, claimed,
+                 f"{where(2, 'alpha')}: its page's annotation credits the Mathlib declaration irrational_sqrt_two in "
+                 "Mathlib.NumberTheory.Real.Irrational, as sync_wiki reads it, not no declaration")):
+            with self.subTest(name):
+                links.write_text("".join(json.dumps(new if row == old else row, ensure_ascii=False) + "\n"
+                                         for row in rows))
+                self.map_refused(message, "--base", base)
+        # Another page that credits the same declaration, which sync_wiki refuses: a declaration has one page.
+        cosets = self.row_of("Algebra/groups/cosets.md")
+        links.write_text("".join(json.dumps({**cosets, "object": mine["object"], "extensions": {
+            "org.autoform": {"mathlib": True}}} if row == cosets else row, ensure_ascii=False) + "\n" for row in rows))
+        self.map_refused(f"{where(1, 'sqrt-two-irrational')}: blueprint/roadmap/Algebra/groups/cosets.md credits "
+                         "irrational_sqrt_two to Mathlib too; a declaration has one page", "--base", base)
+        links.write_text(text)
+        self.write("lake-manifest.json", json.dumps({"version": 7, "packages": [{"name": "mathlib", "rev": "f" * 40}]}))
+        self.map_refused(f"{where(1, 'sqrt-two-irrational')}: mathlib/rev is {MATHLIB_REV}, not the Mathlib revision "
+                         f"lake-manifest.json pins: {'f' * 40}", "--base", base)
+        self.write("lake-manifest.json", "{not json")
+        self.map_refused(f"{where(1, 'sqrt-two-irrational')}: mathlib/rev is {MATHLIB_REV}, not the Mathlib revision "
+                         "lake-manifest.json pins: lake-manifest.json cannot be read as sync_wiki reads it", "--base", base)
 
 
 class Documentation(unittest.TestCase):

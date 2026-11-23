@@ -13,6 +13,7 @@ import Mathlib.Tactic.NormNum.LegendreSymbol
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import Mathlib.NumberTheory.LucasLehmer
 public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.OrderOfTwoMulCoprime
 
 /-!
 # The Lucas–Lehmer test with the rational seed `6/5`
@@ -260,21 +261,6 @@ public theorem_wanted infinite_acceptableSeeds_same_parts {n : ℕ} (h3 : 3 ≤ 
       (mersenne n : ℤ) ∣ (fun x : ℤ => x ^ 2 - 2)^[n - 2] s₁) :
     {S : ℤ | 3 ≤ S ∧ IsOddSquarefreePart (S - 2) sm ∧ IsOddSquarefreePart (S + 2) sp ∧
       ((mersenne n).Prime ↔ (mersenne n : ℤ) ∣ (fun x : ℤ => x ^ 2 - 2)^[n - 2] S)}.Infinite
-
-/-- **Order of $2$ modulo a product of coprime odd numbers.** Let $m_1$ and $m_2$ be coprime odd
-natural numbers, and write $\omega(m)$ for the multiplicative order of $2$ modulo $m$. Then
-$\omega(m_1 m_2) = \operatorname{lcm}(\omega(m_1), \omega(m_2))$.
-
-The printed $\operatorname{lcm}(\omega(m_1)\omega(m_2))$ is read as
-$\operatorname{lcm}(\omega(m_1), \omega(m_2))$; the product reading fails, since $\omega(15) = 4$
-while $\omega(3)\omega(5) = 8$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Proposition 11. -/
-public theorem_wanted orderOf_two_mul_coprime {m₁ m₂ : ℕ} (h₁ : Odd m₁) (h₂ : Odd m₂)
-    (hc : m₁.Coprime m₂) :
-    orderOf (2 : ZMod (m₁ * m₂)) =
-      Nat.lcm (orderOf (2 : ZMod m₁)) (orderOf (2 : ZMod m₂))
 
 /-- **A zero Legendre symbol forces $\gcd(n, \Omega) > 1$.** Let $s_1 \ge 3$ be an integer, let
 $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$, and let

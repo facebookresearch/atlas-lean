@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import MathlibExt.NumberTheory.AlternatingSumFloorDiv
 
 namespace MetaMathlibExt
 
@@ -392,25 +393,6 @@ public theorem_wanted shiftedFloorResidueCount_eq_sum_floor_sub (n m : ℕ)
         ∑ i ∈ Finset.range (n + 1),
           (⌊((n : ℝ) - ν) / (r + i * m - α)⌋ -
             ⌊((n : ℝ) - ν) / (r + 1 + i * m - α)⌋)
-
-/-- **Alternating sums of floor quotients along an increasing sequence.** Let $0 \le \nu < 1$
-and let $b_0, b_1, b_2, \dots$ be a strictly increasing sequence of real numbers with $b_k \ge 1$
-and $b_k \ge k$ for every $k \ge 0$. Then there is a real constant $C$ such that for every integer
-$n \ge 1$, with both sums taken over the integers $k$ satisfying $0 \le k \le n - \nu$,
-
-$$\Bigl| \sum_k (-1)^k \lfloor (n - \nu)/b_k \rfloor - n \sum_k (-1)^k/b_k \Bigr| \le C\sqrt{n}.$$
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 32 (`jis-2024-24.2.5-prop-32`). -/
-public theorem_wanted alternating_sum_floor_div_eq_add_bigO (ν : ℝ)
-    (hν₀ : 0 ≤ ν) (hν₁ : ν < 1) (b : ℕ → ℝ) (hb : StrictMono b)
-    (hb₁ : ∀ k, 1 ≤ b k) (hbk : ∀ k : ℕ, (k : ℝ) ≤ b k) :
-    ∃ C : ℝ, ∀ n : ℕ, 1 ≤ n →
-      |(∑ k ∈ (Finset.range (n + 1)).filter (fun k : ℕ => (k : ℝ) ≤ n - ν),
-            (⌊((n : ℝ) - ν) / b k⌋ : ℝ) * (-1) ^ k) -
-          n * ∑ k ∈ (Finset.range (n + 1)).filter (fun k : ℕ => (k : ℝ) ≤ n - ν),
-            (-1) ^ k / b k| ≤ C * Real.sqrt n
 
 /-- **Series asymptotics for the shifted floor residue counts with $2 \le r \le m$.** Let $r$ and
 $m$ be natural numbers with $2 \le r \le m$, and let $\alpha$ and $\nu$ be real numbers with

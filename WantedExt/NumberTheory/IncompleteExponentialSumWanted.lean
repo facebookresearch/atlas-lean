@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import MathlibExt.NumberTheory.IncompleteExponentialSum
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)
@@ -23,6 +24,8 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 `Φ(f, p) = max_{0 ≤ y ≤ p-1} |∑_{x=1}^{p} e_p(f(x) + y x)|` of (1.1) is written inline as a
 `Finset.sup` of `‖·‖₊` over `Finset.range p`, and `d_p(f)` as the `natDegree` of the image of
 `f` in `(ZMod p)[X]`.
+
+Lemma 3.1 (`one_div_sin_pi_lt`) is proved in `MathlibExt.NumberTheory.IncompleteExponentialSum`.
 -/
 
 namespace MetaMathlibExt
@@ -30,16 +33,6 @@ namespace MetaMathlibExt
 open Complex Finset
 
 @[expose] public section
-
-/-- **Partial-fraction bound for the cosecant.** For every real number $x$ with $0 < x < 1$,
-$$\frac{1}{\sin(\pi x)} < \frac{1}{\pi}\left(\frac{1}{x} + \frac{2x}{1 - x^2}\right).$$
-That is, the first two terms of the partial-fraction expansion of $\pi / \sin(\pi x)$ bound it
-from above.
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.1 (quoted from [3, Lemma 2.2]) (`integers-2025-A48-lem-3-1`). -/
-public theorem_wanted one_div_sin_pi_lt (x : ℝ) (hx₀ : 0 < x) (hx₁ : x < 1) :
-    1 / Real.sin (Real.pi * x) < (1 / Real.pi) * (1 / x + 2 * x / (1 - x ^ 2))
 
 /-- **Bound for a sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer not
 divisible by $p$, let $B$ be an integer with $1 \le B < p/2$, and let $\gamma$ be the
