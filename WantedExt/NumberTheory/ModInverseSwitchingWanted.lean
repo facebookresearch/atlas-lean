@@ -152,15 +152,4 @@ theorem_wanted abs_eq_halves_iff_eq_two_of_odd_even
     (2 * |s 1| = (r 0 : ℤ) - 1 ∧ 2 * |s 2| = (r 1 : ℤ)) ↔
       r 1 = 2
 
-/-- **First inverses not both extremal, even–odd case.** Let $(r_i)$, $(s_i)$ and $N$ be
-Euclidean switching data with $r_0$ even and $r_1$ odd. Then $2|s_1| < r_0$ or
-$2|s_2| < r_1 - 1$; that is, $|s_1| < r_0/2$ or $|s_2| < (r_1 - 1)/2$.
-
-Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
-Sequence of Modular Inverse Switching Formulas", Lemma 8. -/
-theorem_wanted abs_lt_of_even_odd
-    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
-    (h0 : Even (r 0)) (h1 : Odd (r 1)) :
-    2 * |s 1| < (r 0 : ℤ) ∨ 2 * |s 2| < (r 1 : ℤ) - 1
-
 end MathlibExt.NumberTheory.ModInverseSwitchingWanted
