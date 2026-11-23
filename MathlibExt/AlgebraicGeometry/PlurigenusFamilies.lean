@@ -42,7 +42,7 @@ open _root_.MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open _root_.MathlibExt.AlgebraicGeometry.CurveVectorBundles
 open _root_.MathlibExt.AlgebraicGeometry.CurvePositivity
 
-export _root_.MathlibExt.AlgebraicGeometry.RelativeProjectivity (IsProjectiveOver)
+export _root_.MathlibExt.AlgebraicGeometry.RelativeProjectivity (IsHProjectiveOver)
 
 universe u
 
@@ -91,9 +91,9 @@ abbrev fiberCanonical {k : Type u} [Field k]
     {Ω : Type u} [Field Ω] (x : Spec (.of Ω) ⟶ B.left) : (fiberScheme f x).Modules :=
   (Scheme.Modules.pullback (pullback.fst f.left x)).obj K
 
-/-- A smooth projective general-type family, with a line bundle that restricts to the
-canonical line of every geometric fiber (characterized there by Serre duality). It
-contains no constancy conclusion. -/
+/-- A smooth projective general-type family (H-projective: embedded in `ℙᴺ_B` over the
+base), with a line bundle that restricts to the canonical line of every geometric fiber
+(characterized there by Serre duality). It contains no constancy conclusion. -/
 structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
   B : Over (Spec (.of k))
   [smoothBase : SmoothOfRelativeDimension 1 B.hom]
@@ -103,7 +103,7 @@ structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
   f : X ⟶ B
   [proper : IsProper f.left]
   [smoothFibers : SmoothOfRelativeDimension n f.left]
-  projective : IsProjectiveOver f
+  projective : IsHProjectiveOver f
   /-- A line bundle on the total space whose restriction to every geometric fiber is
   that fiber's canonical line (determined only up to twists pulled back from the base). -/
   canonical : X.left.Modules

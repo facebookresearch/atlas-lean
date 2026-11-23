@@ -15,10 +15,13 @@ public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 @[expose] public noncomputable section
 
 /-!
-# Projective morphisms of schemes over a field
+# H-projective morphisms of schemes over a field
 
-A morphism `f : X ⟶ B` of schemes over a field `k` is projective if it factors as
-a closed immersion `X ⟶ ℙᴺ_k ×ₖ B` followed by the projection to `B`.
+A morphism `f : X ⟶ B` of schemes over a field `k` is H-projective if it factors as
+a closed immersion `X ⟶ ℙᴺ_k ×ₖ B = ℙᴺ_B` followed by the projection to `B`
+(Stacks, Tag 01W8; this is Hartshorne's definition of a projective morphism). A
+projective morphism in the sense of the Stacks Project embeds into a projective bundle
+`P(E)` instead; over an affine base the two notions agree (Stacks, Tag 01WB).
 -/
 
 namespace MathlibExt.AlgebraicGeometry.RelativeProjectivity
@@ -27,9 +30,9 @@ open CategoryTheory CategoryTheory.Limits _root_.AlgebraicGeometry
 
 universe u
 
-/-- Relative projectivity is a genuine closed immersion into projective
-space over the parameter scheme, with the projection equation fixed. -/
-def IsProjectiveOver {k : Type u} [Field k]
+/-- H-projectivity: a genuine closed immersion into projective space `ℙᴺ_B` over the
+parameter scheme, with the projection equation fixed (Stacks, Tag 01W8). -/
+def IsHProjectiveOver {k : Type u} [Field k]
     {X B : Over (Spec (.of k))} (f : X ⟶ B) : Prop :=
   ∃ N : ℕ,
     ∃ i : X ⟶ prod (ProjectiveSpace.projectiveSpace k N) B,

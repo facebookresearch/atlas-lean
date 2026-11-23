@@ -50,6 +50,6 @@ example {X : Scheme.{u}} (f : X ⟶ Spec (.of k)) [IsProper f] (K : X.Modules)
     HasGeneralTypeGrowth f K hK n :=
   ⟨1, one_pos, 0, fun m _ ↦ by simpa using h m⟩
 
--- Relative projectivity is the single definition of `RelativeProjectivity`, re-exported here.
-example : @MathlibExt.AlgebraicGeometry.PlurigenusFamilies.IsProjectiveOver =
-    @MathlibExt.AlgebraicGeometry.RelativeProjectivity.IsProjectiveOver := rfl
+-- H-projectivity is the single definition of `RelativeProjectivity`, re-exported here.
+example : @MathlibExt.AlgebraicGeometry.PlurigenusFamilies.IsHProjectiveOver =
+    @MathlibExt.AlgebraicGeometry.RelativeProjectivity.IsHProjectiveOver := rfl
