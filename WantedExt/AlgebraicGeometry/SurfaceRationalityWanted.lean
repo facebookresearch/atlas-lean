@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 public import MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 public import Mathlib.AlgebraicGeometry.Birational.Birational
 
 /-!
@@ -39,7 +40,8 @@ universe u
 
 theorem_wanted castelnuovo (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
-    [SmoothOfRelativeDimension 2 X.hom] (hX : IsProjectiveVariety X)
+    [SmoothOfRelativeDimension 2 X.hom]
+    (hX : MathlibExt.AlgebraicGeometry.ProjectiveSpace.IsProjective X)
     (K : X.left.Modules) (hK : SerreDualizingLine X.hom K 2)
     (hq : Module.finrank k (cohomology X.hom (structureModule X.left) 1) = 0)
     (hP2 : Module.finrank k (cohomology X.hom (power K 2) 0) = 0) :

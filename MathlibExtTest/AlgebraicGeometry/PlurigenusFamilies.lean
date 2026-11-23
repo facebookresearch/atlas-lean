@@ -23,7 +23,7 @@ variable {k : Type u} [Field k] {n : ℕ}
 
 -- The fiber conditions hold at every geometric point, over any algebraically closed
 -- field `Ω`, not only at `k`-rational points of the base.
-example (P : SmoothGeneralTypeFamily (k := k) n) (Ω : Type u) [Field Ω] [IsAlgClosed Ω]
+example (P : SmoothGeneralTypeFamilyOverCurve (k := k) n) (Ω : Type u) [Field Ω] [IsAlgClosed Ω]
     (x : Spec (.of Ω) ⟶ P.B.left) :
     GeometricallyIrreducible (fiberStructure P.f x) ∧
       HasGeneralTypeGrowth (fiberStructure P.f x) (fiberCanonical P.f P.canonical x)
@@ -31,13 +31,13 @@ example (P : SmoothGeneralTypeFamily (k := k) n) (Ω : Type u) [Field Ω] [IsAlg
   ⟨P.fiberIrreducible Ω x, P.generalType Ω x⟩
 
 -- The fiber of a proper family is proper, as `HasGeneralTypeGrowth` requires.
-example (P : SmoothGeneralTypeFamily (k := k) n) (Ω : Type u) [Field Ω]
+example (P : SmoothGeneralTypeFamilyOverCurve (k := k) n) (Ω : Type u) [Field Ω]
     (x : Spec (.of Ω) ⟶ P.B.left) : IsProper (fiberStructure P.f x) :=
   inferInstance
 
 -- The plurigenus at a geometric point is the dimension over `Ω` of the sections of the
 -- tensor powers of the fiber's canonical line.
-example (P : SmoothGeneralTypeFamily (k := k) n) (Ω : Type u) [Field Ω]
+example (P : SmoothGeneralTypeFamilyOverCurve (k := k) n) (Ω : Type u) [Field Ω]
     (x : Spec (.of Ω) ⟶ P.B.left) (m : ℕ) :
     plurigenus P x m =
       Module.finrank Ω (cohomology (fiberStructure P.f x)
