@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The tautological quotient interface follows the completed ATLAS
-MathlibExt/AlgebraicGeometry/AlgebraicBundleGeometry.lean interface and its
-AxiomMath/Stacks source at c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/Chow/ProjectiveBundleFormula/Formula.lean
-(Apache 2.0). Modification: fix the total scheme to polynomial Proj over
-a number field, retain all test-scheme quotient compatibility, and pin
-K-point coordinates by actual homogeneous-polynomial vanishing.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Chow/ProjectiveBundleFormula/Formula.lean`
+(AxiomMath/Stacks, revision c496df0d9beea9deaeabcea8492605f9a0a2313b), through the
+ATLAS `MathlibExt/AlgebraicGeometry/AlgebraicBundleGeometry.lean` interface:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modification: the tautological quotient interface is specialized to polynomial Proj over a
+number field, keeps the quotient compatibility on every test scheme, and pins K-point
+coordinates by homogeneous-polynomial vanishing.
 -/
 module
 
