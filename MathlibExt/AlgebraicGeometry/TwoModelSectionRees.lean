@@ -201,7 +201,7 @@ structure Realization where
   coefficients : A.HasReesCoefficients C u
   genericAlgebra : A.genericAlgebra C u = A.sectionLaurentAlgebra
   [flat : Flat G.projection]
-  projective : PlurigenusFamilies.IsProjectiveOver G.overProjection
+  projective : RelativeProjectivity.IsHProjectiveOver G.overProjection
   genericIso : pullback G.overProjection
       (PolarizedTestConfigurations.torusInclusion (IsLocalRing.ResidueField R)) ≅
     A.variety.X ⊗ PolarizedTestConfigurations.Torus (IsLocalRing.ResidueField R)

@@ -62,9 +62,12 @@ def order {V : NormalVariety k n} (v : CenteredValuation V) (a : (FunctionField 
 def filteredSpace {V : NormalVariety k n} (v : CenteredValuation V) (M : V.X.left.Modules)
     (E : Evaluation V v.center M) (t : ℝ) : Submodule k (SectionSpace V M) := by
   letI := fractionAlgebra V
+  have h0 : v.valuation (E.map 0) ≤ Real.toNNReal (Real.exp (-t)) := by
+    rw [E.map.map_zero, Valuation.map_zero]
+    exact zero_le
   exact
     { carrier := {s | v.valuation (E.map s) ≤ Real.toNNReal (Real.exp (-t))}
-      zero_mem' := by simp
+      zero_mem' := h0
       add_mem' := by
         intro a b ha hb
         change v.valuation (E.map (a + b)) ≤ _
@@ -73,7 +76,9 @@ def filteredSpace {V : NormalVariety k n} (v : CenteredValuation V) (M : V.X.lef
         intro a s hs
         by_cases h : a = 0
         · subst a
-          simp
+          change v.valuation (E.map ((0 : k) • s)) ≤ _
+          rw [zero_smul]
+          exact h0
         · change v.valuation (E.map (a • s)) ≤ _
           rw [E.map.map_smul]
           change v.valuation (algebraMap k (FunctionField V) a * E.map s) ≤ _

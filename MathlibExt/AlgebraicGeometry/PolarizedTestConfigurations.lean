@@ -10,7 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.GenericSectionMaps
 public import MathlibExt.AlgebraicGeometry.LinearizedLineBundles
 public import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
-public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
+public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 
 /-!
@@ -75,7 +75,7 @@ structure TestConfiguration (X : Over (Base k)) (L : X.left.Modules) where
   projection : total ⟶ AffineLine k
   [flat : Flat projection.left]
   [proper : IsProper projection.left]
-  projective : PlurigenusFamilies.IsProjectiveOver projection
+  projective : RelativeProjectivity.IsHProjectiveOver projection
   [action : ModObj (Torus k) total]
   baseAction : ModObj (Torus k) (AffineLine k)
   equivariant :

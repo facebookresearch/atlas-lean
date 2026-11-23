@@ -41,7 +41,7 @@ abbrev RationalPoint (B : ComplexVariety) := 𝟙_ (Over (Spec (.of ℂ))) ⟶ B
 
 /-- The actual fibre as a complex scheme. -/
 abbrev fiberVariety {X B : ComplexVariety} (f : X ⟶ B) (b : RationalPoint B) :
-    ComplexVariety := Over.mk (fiberStructure f b)
+    ComplexVariety := Over.mk (fiberStructure (Ω := ℂ) f b.left)
 
 /-- A smooth projective Fano family, including the actual anticanonical fibre data. -/
 structure SmoothFanoFamily (n : ℕ) where
@@ -54,7 +54,7 @@ structure SmoothFanoFamily (n : ℕ) where
   morphism : X ⟶ B
   [proper : IsProper morphism.left]
   [smooth : SmoothOfRelativeDimension n morphism.left]
-  projective : IsProjectiveOver morphism
+  projective : IsHProjectiveOver morphism
   anticanonical : LineBundle X.left
   fiberData : ∀ b : RationalPoint B, FanoData (fiberVariety morphism b) n
   fiberAnticanonical : ∀ b : RationalPoint B,
