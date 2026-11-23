@@ -22,7 +22,6 @@ set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
 noncomputable section
 
-attribute [local instance_reducible] TopCat.Sheaf CategoryTheory.sheafCompose
   AlgebraicGeometry.SheafedSpace.sheaf
 
 open CategoryTheory AlgebraicGeometry
