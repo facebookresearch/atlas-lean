@@ -46,21 +46,29 @@ namespace InverseLimit
 variable {ι : Type*} [Preorder ι]
 variable {X : ι → Type*}
 
-/-- The concrete inverse limit from ATLAS NumberTheoryI Definition 8.9: the set
-of dependent functions `x : ∀ i, X i` compatible with the transition maps,
-that is, `f h (x j) = x i` whenever `h : i ≤ j`. -/
+/-- **Inverse limit as compatible tuples.** Let $I$ be a preordered set, let $(X_i)_{i \in I}$
+be a family of sets, and for every $i \le j$ let $f_{ij} \colon X_j \to X_i$ be a map. The inverse
+limit is the set of tuples $x = (x_i)_{i \in I}$ in the product $\prod_{i \in I} X_i$ such that
+$f_{ij}(x_j) = x_i$ whenever $i \le j$.
+
+Source: ATLAS NumberTheoryI, Definition 8.9. -/
 def carrier (f : ∀ ⦃i j : ι⦄, i ≤ j → X j → X i) : Set (∀ i, X i) :=
   { x | ∀ ⦃i j : ι⦄ (h : i ≤ j), f h (x j) = x i }
 
-/-- Membership in the inverse limit is exactly the compatibility condition. -/
+/-- **Membership in the inverse limit.** Let $I$ be a preordered set, let $(X_i)_{i \in I}$ be a
+family of sets, and for every $i \le j$ let $f_{ij} \colon X_j \to X_i$ be a map. A tuple
+$x \in \prod_{i \in I} X_i$ lies in the inverse limit if and only if $f_{ij}(x_j) = x_i$ for all
+$i \le j$. -/
 @[simp]
 theorem mem_carrier_iff {f : ∀ ⦃i j : ι⦄, i ≤ j → X j → X i}
     {x : ∀ i, X i} :
     x ∈ carrier f ↔ ∀ ⦃i j : ι⦄ (h : i ≤ j), f h (x j) = x i :=
   Iff.rfl
 
-/-- Projection compatibility for limit elements: applying a transition map to
-a higher component agrees with the lower component. -/
+/-- **Elements of the inverse limit are compatible.** Let $I$ be a preordered set, let
+$(X_i)_{i \in I}$ be a family of sets, and for every $i \le j$ let $f_{ij} \colon X_j \to X_i$ be
+a map. If $x = (x_i)_{i \in I}$ lies in the inverse limit, then $f_{ij}(x_j) = x_i$ for all
+$i \le j$. -/
 theorem proj_compat {f : ∀ ⦃i j : ι⦄, i ≤ j → X j → X i}
     {x : ∀ i, X i} (hx : x ∈ carrier f) ⦃i j : ι⦄ (h : i ≤ j) :
     f h (x j) = x i :=
@@ -68,10 +76,14 @@ theorem proj_compat {f : ∀ ⦃i j : ι⦄, i ≤ j → X j → X i}
 
 variable [∀ i, TopologicalSpace (X i)]
 
-/-- The inverse limit set is closed in the product when every factor is
-Hausdorff and every transition map is continuous. Each compatibility equation
-`f h (x j) = x i` cuts out a closed set by `isClosed_eq`, and the limit is the
-intersection of all of them. -/
+/-- **The inverse limit is closed.** Let $I$ be a preordered set, let $(X_i)_{i \in I}$ be a
+family of Hausdorff topological spaces, and for every $i \le j$ let $f_{ij} \colon X_j \to X_i$
+be a continuous map. Then the inverse limit
+$\{x \in \prod_{i \in I} X_i : f_{ij}(x_j) = x_i \text{ for all } i \le j\}$ is closed in the
+product $\prod_{i \in I} X_i$.
+
+Each equation $f_{ij}(x_j) = x_i$ cuts out a closed set because $X_i$ is Hausdorff, and the
+limit is the intersection of all of them. -/
 theorem isClosed_carrier [∀ i, T2Space (X i)]
     {f : ∀ ⦃i j : ι⦄, i ≤ j → X j → X i}
     (hf : ∀ ⦃i j : ι⦄ (h : i ≤ j), Continuous (f h)) :
@@ -84,9 +96,13 @@ theorem isClosed_carrier [∀ i, T2Space (X i)]
   exact isClosed_iInter fun i => isClosed_iInter fun j => isClosed_iInter fun h =>
     isClosed_eq ((hf h).comp (continuous_apply j)) (continuous_apply i)
 
-/-- The inverse limit set is compact in the product when every factor is
-compact Hausdorff and every transition map is continuous: it is a closed
-subset of a compact product. -/
+/-- **The inverse limit of compact Hausdorff spaces is compact.** Let $I$ be a preordered set, let
+$(X_i)_{i \in I}$ be a family of compact Hausdorff topological spaces, and for every $i \le j$
+let $f_{ij} \colon X_j \to X_i$ be a continuous map. Then the inverse limit
+$\{x \in \prod_{i \in I} X_i : f_{ij}(x_j) = x_i \text{ for all } i \le j\}$ is compact in the
+product $\prod_{i \in I} X_i$.
+
+It is a closed subset of a compact product. -/
 theorem isCompact_carrier [∀ i, CompactSpace (X i)] [∀ i, T2Space (X i)]
     {f : ∀ ⦃i j : ι⦄, i ≤ j → X j → X i}
     (hf : ∀ ⦃i j : ι⦄ (h : i ≤ j), Continuous (f h)) :
