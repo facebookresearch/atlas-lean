@@ -1,0 +1,3 @@
+# A connection to outside the box passes through the box boundary
+
+Let $d, n \in \mathbb{N}$ with $n \ge 1$ and $x \in \mathbb{Z}^d \setminus \Lambda_n$, where $\Lambda_n = \{-n, \dots, n\}^d$. Every configuration in which $0 \leftrightarrow x$ lies in $\{0 \leftrightarrow \partial\Lambda_n\}$, where $x \leftrightarrow y$ means that $x$ and $y$ are joined by a path of open nearest-neighbour edges and $\{0 \leftrightarrow \partial\Lambda_n\}$ is the [box-boundary connection event](../box-boundary-connection-probabilities-for-the-wi/box-bdry-conn-event.md) (the origin joined to $\partial\Lambda_n = \Lambda_n \setminus \Lambda_{n-1}$ by open edges of $\Lambda_n$).

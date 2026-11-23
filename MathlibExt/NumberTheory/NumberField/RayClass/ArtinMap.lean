@@ -63,33 +63,60 @@ variable {L : Type*} [Field L] [NumberField L] [Algebra K L] [IsAbelianGalois K 
 variable (m : Modulus K)
 
 open scoped IsMulCommutative in
-/-- Kernel containment descending the free-group Frobenius map to coprime
-fractional ideals: the B0 presentation kernel lies in the commutator subgroup,
-which dies in the abelian Galois target. -/
+/-- **Kernel containment for the free-group Frobenius map.** Let $L/K$ be an abelian Galois
+extension of number fields and $\mathfrak m$ a modulus of $K$ with finite part $\mathfrak m_0$,
+such that every prime of $\mathcal O_K$ not dividing $\mathfrak m_0$ is unramified in $L$. Let
+$F$ be the free group on the primes $\mathfrak p$ of $\mathcal O_K$ not dividing $\mathfrak m_0$.
+Then the kernel of the homomorphism from $F$ to the group of fractional ideals of $K$ coprime to
+$\mathfrak m_0$ sending each generator $\mathfrak p$ to the ideal $\mathfrak p$ is contained in
+the kernel of the homomorphism $F \to \mathrm{Gal}(L/K)$ sending each generator $\mathfrak p$ to
+the arithmetic Frobenius at a chosen prime of $\mathcal O_L$ above $\mathfrak p$.
+
+The first kernel lies in the commutator subgroup of $F$, which the second map kills because
+$\mathrm{Gal}(L/K)$ is abelian. -/
 theorem freeGroupToCoprime_ker_le_freeGroupToGal_ker (h : m.IsUnramifiedOutside L) :
     MonoidHom.ker m.freeGroupToCoprime ≤
       MonoidHom.ker (m.freeGroupToGal (L := L) h) :=
   le_trans m.freeGroupToCoprime_ker_le_commutator
     (Abelianization.commutator_subset_ker _)
 
-/-- The Artin map on fractional ideals coprime to `m`, descended directly with
-Mathlib's quotient universal property `MonoidHom.liftOfSurjective`. -/
+/-- **Artin map.** Let $L/K$ be an abelian Galois extension of number fields and $\mathfrak m$
+a modulus of $K$ with finite part $\mathfrak m_0$, such that every prime of $\mathcal O_K$ not
+dividing $\mathfrak m_0$ is unramified in $L$. Let $I^{\mathfrak m}$ be the group of fractional
+ideals of $K$ coprime to $\mathfrak m_0$ and $F$ the free group on the primes $\mathfrak p$ of
+$\mathcal O_K$ not dividing $\mathfrak m_0$. The homomorphism $F \to I^{\mathfrak m}$ sending
+each generator $\mathfrak p$ to the ideal $\mathfrak p$ is surjective, and its kernel lies in the
+kernel of the homomorphism $F \to \mathrm{Gal}(L/K)$ sending each generator $\mathfrak p$ to the
+arithmetic Frobenius at a chosen prime of $\mathcal O_L$ above $\mathfrak p$. The Artin map is
+the homomorphism $I^{\mathfrak m} \to \mathrm{Gal}(L/K)$ induced by the second map through the
+first. -/
 noncomputable def artinMap (h : m.IsUnramifiedOutside L) :
     m.coprimeFractionalIdeals →* (L ≃ₐ[K] L) :=
   (m.freeGroupToCoprime.liftOfSurjective m.freeGroupToCoprime_surjective)
     ⟨m.freeGroupToGal (L := L) h,
       m.freeGroupToCoprime_ker_le_freeGroupToGal_ker (L := L) h⟩
 
-/-- Exact factorization identity: the Artin map composed with the free-group
-presentation is the free-group Frobenius map. Proved through the public
-`liftOfRightInverse` simp API, keeping `Function.surjInv` opaque. -/
+/-- **The Artin map factors the free-group Frobenius map.** Let $L/K$ be an abelian Galois
+extension of number fields and $\mathfrak m$ a modulus of $K$ with finite part $\mathfrak m_0$,
+such that every prime of $\mathcal O_K$ not dividing $\mathfrak m_0$ is unramified in $L$. Let
+$F$ be the free group on the primes $\mathfrak p$ of $\mathcal O_K$ not dividing $\mathfrak m_0$,
+and let $I^{\mathfrak m}$ be the group of fractional ideals of $K$ coprime to $\mathfrak m_0$.
+Then the Artin map $I^{\mathfrak m} \to \mathrm{Gal}(L/K)$ composed with the homomorphism
+$F \to I^{\mathfrak m}$ sending each generator $\mathfrak p$ to the ideal $\mathfrak p$ equals the
+homomorphism $F \to \mathrm{Gal}(L/K)$ sending each generator $\mathfrak p$ to the arithmetic
+Frobenius at a chosen prime of $\mathcal O_L$ above $\mathfrak p$. -/
 @[simp]
 theorem artinMap_comp_freeGroupToCoprime (h : m.IsUnramifiedOutside L) :
     (m.artinMap (L := L) h).comp m.freeGroupToCoprime =
       m.freeGroupToGal (L := L) h := by
   simp only [artinMap, MonoidHom.liftOfRightInverse_comp]
 
-/-- The Artin map evaluates on a prime generator as the unramified Frobenius. -/
+/-- **The Artin map at a prime.** Let $L/K$ be an abelian Galois extension of number fields and
+$\mathfrak m$ a modulus of $K$ with finite part $\mathfrak m_0$, such that every prime of
+$\mathcal O_K$ not dividing $\mathfrak m_0$ is unramified in $L$. For every prime $\mathfrak p$
+of $\mathcal O_K$ not dividing $\mathfrak m_0$, the Artin map sends $\mathfrak p$, viewed as a
+fractional ideal coprime to $\mathfrak m_0$, to the arithmetic Frobenius in $\mathrm{Gal}(L/K)$
+at a chosen prime of $\mathcal O_L$ above $\mathfrak p$. -/
 @[simp]
 theorem artinMap_primeCoprimeUnit (h : m.IsUnramifiedOutside L)
     (v : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (hvm : ¬ m.finiteSupported v) :

@@ -1,0 +1,3 @@
+# Span of some eigenvectors is orthogonal to the remaining ones
+
+Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $E$ be an inner product space over $\mathbb{K}$ of finite dimension $n$, and let $T$ be a self-adjoint linear operator on $E$, with eigenvalues $\lambda_0 \ge \lambda_1 \ge \dots \ge \lambda_{n-1}$ (repeated according to multiplicity, in decreasing order) and a corresponding orthonormal eigenbasis $e_0, \dots, e_{n-1}$, $T e_i = \lambda_i e_i$. Let $v_0, \dots, v_{m-1} \in E$ and let $x$ lie in their span. If $\langle e_i, v_j \rangle = 0$ for every $j$, then $\langle e_i, x \rangle = 0$.

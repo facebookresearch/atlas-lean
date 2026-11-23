@@ -33,10 +33,14 @@ namespace Cslib.Complexity.DenseSAT
 open MetaMathlibExt ComplexityTheory
 
 open Classical in
-/-- Dense CNF-SAT as a decision problem: accept exactly the bit strings in `SAT`. -/
+/-- **Dense CNF-SAT as a decision problem.** The decision problem of dense CNF-SAT accepts a bit
+string $w$ exactly when $w$ belongs to dense CNF-SAT, that is, when the formula decoded from $w$
+in the dense clause encoding has a satisfying assignment. -/
 noncomputable def denseSatDec : DecisionProblem := fun w => decide (SAT w)
 
-/-- The certificate check is polynomial-time computable in formal-math's sense. -/
+/-- **The dense certificate check runs in polynomial time.** The map sending a pair $(w, y)$ of bit
+strings to the result of the certificate check on formula bits $w$ and assignment bits $y$ is
+polynomial-time computable, where pairs of bit strings carry their canonical bitstring encoding. -/
 theorem isPolyTime_check : IsPolyTime (fun p : List Bool × List Bool => check p.1 p.2) :=
   tm2ComputableInPolyTime_comp Converter.computable Verifier.verifier
 

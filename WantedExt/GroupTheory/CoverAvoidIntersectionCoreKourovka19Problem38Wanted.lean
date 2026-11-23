@@ -38,18 +38,26 @@ shared definition in `WantedExt/GroupTheory/KourovkaNotebookShared.lean`.
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared
 
-/-- A chief factor `A / B` is a Frattini chief factor: `A / B ≤ Φ(G / B)`, that is, `A` lies in
-every maximal subgroup of `G` containing `B`. -/
+/-- **Frattini chief factor.** For subgroups $A$ and $B$ of a group $G$, $A/B$ is a Frattini chief
+factor of $G$ when $A/B$ is a chief factor of $G$ and $A$ is contained in every maximal subgroup
+of $G$ that contains $B$; equivalently, $A/B \le \Phi(G/B)$, where $\Phi$ denotes the Frattini
+subgroup. -/
 def IsFrattiniChiefFactor {G : Type*} [Group G] (A B : Subgroup G) : Prop :=
   IsChiefFactor A B ∧ ∀ M : Subgroup G, IsCoatom M → B ≤ M → A ≤ M
 
-/-- A chief factor `A / B` is complemented: some subgroup `M` has `M ⊔ A = G` and `M ⊓ A = B`. -/
+/-- **Complemented chief factor.** For subgroups $A$ and $B$ of a group $G$, $A/B$ is a
+complemented chief factor of $G$ when $A/B$ is a chief factor of $G$ and some subgroup $M$ of $G$
+satisfies $\langle M, A \rangle = G$ and $M \cap A = B$ (as $A$ is normal, the first condition
+says $MA = G$). -/
 def IsComplementedChiefFactor {G : Type*} [Group G] (A B : Subgroup G) : Prop :=
   IsChiefFactor A B ∧ ∃ M : Subgroup G, M ⊔ A = ⊤ ∧ M ⊓ A = B
 
-/-- Kourovka 19.38 (S. F. Kamornikov): if a subgroup `H` of a finite soluble group `G` covers every
-Frattini chief factor `A / B` (`A ≤ H B`) and avoids every complemented chief factor (`H ∩ A ≤ B`),
-then `H ∩ H^x ∩ H^y = H_G` for some `x, y ∈ G`, where `H_G` is the normal core of `H`. -/
+/-- **Kourovka Problem 19.38.** The statement that for every finite soluble group $G$ and every
+subgroup $H$ of $G$ that covers every Frattini chief factor $A/B$ of $G$, that is,
+$A \le \langle H, B \rangle$ (which is $HB$, as $B$ is normal), and avoids every complemented
+chief factor $A/B$ of $G$, that is, $H \cap A \le B$, there are $x, y \in G$ such that
+$H \cap H^x \cap H^y = H_G$, where $H^x = xHx^{-1}$ and $H_G$ is the normal core of $H$, the
+largest normal subgroup of $G$ contained in $H$. -/
 def coverAvoidTripleIntersectionCore : Prop :=
   ∀ (G : Type) [Group G] [Finite G], Group.IsSolvable G → ∀ H : Subgroup G,
     (∀ A B : Subgroup G, IsFrattiniChiefFactor A B → A ≤ H ⊔ B) →
@@ -57,9 +65,14 @@ def coverAvoidTripleIntersectionCore : Prop :=
     ∃ x y : G, H ⊓ H.map (MulAut.conj x).toMonoidHom ⊓ H.map (MulAut.conj y).toMonoidHom =
       H.normalCore
 
-/--
-Resolved true: Kamornikov and Shemetkova proved that such an `H` satisfies `H ∩ H^x ∩ H^y = H_G` for
-some `x, y`; the 21st issue of the Kourovka Notebook marks 19.38 solved ("Yes, it is true"). Source:
+/-- **Kamornikov–Shemetkova theorem (Kourovka Problem 19.38).** Let $H$ be a subgroup of a
+finite soluble group $G$. Suppose that $H$ covers every Frattini chief factor $A/B$ of $G$, that
+is, $A \le \langle H, B \rangle$ (which is $HB$, as $B$ is normal), and avoids every complemented
+chief factor $A/B$ of $G$, that is, $H \cap A \le B$. Then there are $x, y \in G$ such that
+$H \cap H^x \cap H^y = H_G$, where $H^x = xHx^{-1}$ and $H_G$ is the normal core of $H$, the
+largest normal subgroup of $G$ contained in $H$.
+
+Source:
 E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
 21st issue, arXiv:1401.0300v49 (2026), Problem 19.38 (S. F. Kamornikov); resolution: S. F.
 Kamornikov and O. L. Shemetkova, On a question concerning the intersection of Φ-isolators of finite
