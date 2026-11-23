@@ -256,8 +256,10 @@ lemma log_boltzmannProb {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) (i
 
 -/
 
-/-- The Shannon entropy `H(p) = -∑ i, p i * log (p i)`. With Mathlib's convention
-`Real.log 0 = 0`, a state with `p i = 0` contributes `0`. -/
+/-- The Shannon entropy `H(p) = -∑ i, p i * log (p i)` of a probability distribution `p` (`p i ≥ 0`,
+`∑ i, p i = 1`). With Mathlib's convention `Real.log 0 = 0`, a state with `p i = 0` contributes `0`.
+The formula accepts any real `p`; for other inputs it need not be an entropy (one state of weight
+`2` gives `-2 log 2 < 0`), and a negative entry uses `log x = log |x|`. -/
 noncomputable def shannonEntropy {ι : Type*} [Fintype ι] (p : ι → ℝ) : ℝ :=
   -∑ i, p i * Real.log (p i)
 
@@ -446,11 +448,14 @@ lemma shannonEntropy_eq_shannonEntropy_boltzmannProb_iff {ι : Type*} [Fintype �
 
 -/
 
-/-- The mean energy `U = ∑ i, p i * E i` of the Boltzmann distribution. -/
+/-- The mean energy `U = ∑ i, p i * E i` under the Boltzmann probabilities. For a nonempty finite
+state space they form a probability distribution; for an empty one, `Z = 0` and `U = 0`. -/
 noncomputable def meanEnergy {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   ∑ i, boltzmannProb E β i * E i
 
-/-- The energy variance `Var(E) = ∑ i, p i * (E i - U) ^ 2` of the Boltzmann distribution. -/
+/-- The energy variance `Var(E) = ∑ i, p i * (E i - U) ^ 2` under the Boltzmann probabilities. For a
+nonempty finite state space it is the variance of the energy under the Boltzmann distribution; for
+an empty one it is `0`. -/
 noncomputable def energyVariance {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   ∑ i, boltzmannProb E β i * (E i - meanEnergy E β) ^ 2
 
