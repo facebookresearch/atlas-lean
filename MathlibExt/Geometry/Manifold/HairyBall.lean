@@ -849,13 +849,6 @@ private theorem VHair_Ft_lintegral_eq
     norm_num at hx
   exact (VHair_Ft_hasFDerivAt h hh hne t x hne_x).hasFDerivWithinAt
 
-/-- Step 4 helper: Lipschitz bound controls `‖fderiv V‖` everywhere. -/
-private theorem VHair_fderiv_bound_L
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    (V : E → E) (L : NNReal) (hlip : LipschitzWith L V) (z : E) :
-    ‖fderiv ℝ V z‖ ≤ (L : ℝ) :=
-  norm_fderiv_le_of_lipschitz ℝ hlip
-
 /-- Step 4c: the volume integral is a polynomial in `t`, by Lagrange
 interpolation at `finrank + 1` nodes. -/
 private theorem VHair_volume_poly
@@ -1246,7 +1239,7 @@ private theorem VHair_volume_eq
         + t • fderiv ℝ (VHair h) x).det := by
     intro x hx
     simp only [Set.mem_ofPred_eq] at hx
-    have hbound := VHair_fderiv_bound_L (VHair h) L hlip x
+    have hbound := norm_fderiv_le_of_lipschitz ℝ (x₀ := x) hlip
     have hM : ‖t • fderiv ℝ (VHair h) x‖ < 1 := by
       calc ‖t • fderiv ℝ (VHair h) x‖
           = |t| * ‖fderiv ℝ (VHair h) x‖ := by
@@ -1294,13 +1287,17 @@ private theorem VHair_volume_eq
   rw [hP t, hQQ]
 
 /--
-On `S^{2k} ⊆ E` with `dim E = 2k+1`, every continuous map orthogonal to the radius vector has a
-zero. Source: H. Poincaré proved the 2-sphere case in 1885 and L. E. J. Brouwer extended it to
+**Hairy ball theorem.** Let $k \in \mathbb{N}$ and let $E$ be a real inner product space of
+dimension $2k + 1$, with unit sphere $S = \{x \in E : \|x\| = 1\}$. If $f : S \to E$ is
+continuous and $\langle f(x), x \rangle = 0$ for every $x \in S$, then $f(x) = 0$ for some
+$x \in S$.
+
+Proves `Wanted` entry `hairyBall_even_sphere_ambient`.
+
+Source: H. Poincaré proved the 2-sphere case in 1885 and L. E. J. Brouwer extended it to
 higher even-dimensional spheres in 1912; J. Milnor, Topology from the Differentiable Viewpoint
 hairy ball; Guillemin-Pollack, Differential Topology; Lean states even-sphere ambient
 finite-dimensional inner-product specialization via `inner = 0`.
-
-Proves `Wanted` entry `hairyBall_even_sphere_ambient`.
 -/
 theorem hairyBall_even_sphere_ambient
     {k : ℕ} {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]

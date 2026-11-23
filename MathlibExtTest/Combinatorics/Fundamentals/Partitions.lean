@@ -37,14 +37,12 @@ theorem setComposition_two_singletons :
 
 -- Combinatorics 444: Conjugate Partition
 
-
 theorem List.partitionConjugate_example :
     [4, 2, 2, 1].partitionConjugate = [4, 3, 1, 1] ∧
       [4, 3, 1, 1].partitionConjugate = [4, 2, 2, 1] := by
   decide
 
 -- Combinatorics 445: Self-Conjugate Partition
-
 
 theorem List.isSelfConjugate_example :
     List.IsSelfConjugate [3, 1, 1] ∧
@@ -53,7 +51,6 @@ theorem List.isSelfConjugate_example :
   refine ⟨by decide, by decide⟩
 
 -- Combinatorics 452: Partitions in a Box
-
 
 theorem Nat.partitionsInBox_sanity :
     (∀ j k : ℕ, Nat.partitionsInBox j k 0 = 1) ∧
@@ -73,7 +70,6 @@ theorem Nat.partitionsInBox_sanity :
       · intro x hx; simp at hx; omega
 
 -- Combinatorics 460: V-Partition
-
 
 theorem Nat.VPartition.exists_ne_two_and_eq_zero :
     (∃ p q : Nat.VPartition 2, p ≠ q) ∧
@@ -107,7 +103,6 @@ theorem Nat.VPartition.exists_ne_two_and_eq_zero :
 
 -- Combinatorics 461: Unimodal Sequence
 
-
 theorem List.isUnimodal_plateau_and_not :
     List.IsUnimodal [1, 3, 3, 2] ∧
       ¬ List.IsUnimodal [2, 1, 3] ∧
@@ -116,7 +111,6 @@ theorem List.isUnimodal_plateau_and_not :
   decide
 
 -- Combinatorics 489: Dominance Order
-
 
 theorem Nat.Partition.dominates_six :
     let a : Nat.Partition 6 := ⟨{3, 1, 1, 1}, by decide, rfl⟩

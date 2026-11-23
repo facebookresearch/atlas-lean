@@ -41,19 +41,24 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Complex.InjectiveDiskMapExtremalDerivWanted
 
-/-- The open unit disc. -/
+/-- **Open unit disc.** The open unit disc is the set of complex numbers $z$ with $|z| < 1$, the
+open ball of radius $1$ about $0$ in $\mathbb{C}$. -/
 abbrev unitDisk : Set ℂ := Metric.ball (0 : ℂ) 1
 
-/-- Injective holomorphic maps from `Ω` into the unit disc that fix `0`. -/
+/-- **Admissible maps into the unit disc.** For a set $\Omega \subseteq \mathbb{C}$, the
+admissible family of $\Omega$ is the set of functions $f : \mathbb{C} \to \mathbb{C}$ that are
+complex differentiable on $\Omega$, injective on $\Omega$, satisfy $f(0) = 0$, and map $\Omega$
+into the open unit disc $\{z \in \mathbb{C} : |z| < 1\}$. -/
 def AdmissibleFamily (Ω : Set ℂ) : Set (ℂ → ℂ) :=
   {f | DifferentiableOn ℂ f Ω ∧ Set.InjOn f Ω ∧ f 0 = 0 ∧ Set.MapsTo f Ω unitDisk}
 
-/-- Assume $0 \in \Omega$ is an open connected subset of the unit disk $D$. Let $F$ be the
-family of all the holomorphic maps $f : \Omega \to D$ such that $f$ is injective, $f(0) = 0$ and
-$f(\Omega) \subset D$. Prove that there is a holomorphic map $g \in F$ such that
-\[
-|g'(0)| = \sup_{f \in F} |f'(0)|.
-\]
+/-- **Existence of an extremal injective map into the unit disc.** Let $D$ be the open unit disc
+$\{z \in \mathbb{C} : |z| < 1\}$, let $\Omega \subseteq D$ be open and connected with
+$0 \in \Omega$, and let $F$ be the family of functions $f$ that are holomorphic and injective on
+$\Omega$, map $\Omega$ into $D$, and satisfy $f(0) = 0$. Then some $g \in F$ attains the supremum
+of $|f'(0)|$ over $F$:
+
+$$|g'(0)| = \sup_{f \in F} |f'(0)|.$$
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functions of a complex
 variable; Geometric function theory), `benchmark/level2/ma_proofbench_l2_22.lean` at
