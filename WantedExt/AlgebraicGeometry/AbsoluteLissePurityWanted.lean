@@ -47,13 +47,13 @@ public theorem_wanted absoluteLissePureWeightZero
     (X : Over (Spec (.of k))) [SmoothOfRelativeDimension 1 X.hom]
     [QuasiCompact X.hom] [IsSeparated X.hom] [GeometricallyConnected X.hom]
     (K : Type u) [Field K] [IsAlgClosed K] (x : Spec (.of K) ⟶ X.left)
-    (r : ℕ) (ρ : LisseRepresentation ell x r) (continuousρ : Continuous ρ)
+    (r : ℕ) (ρ : LisseRepresentation ell x r)
     (absolutelyIrreducible : AbsolutelyIrreducible ell x r ρ)
     (finiteArithmeticDeterminant : FiniteArithmeticDeterminant ell x r ρ)
     (κ : Type u) [Field κ] [Fintype κ] [Algebra k κ] [Algebra κ K]
     (y : Spec (.of κ) ⟶ X.left) [IsClosedImmersion y]
     (pointOverBase : y ≫ X.hom = Spec.map (CommRingCat.ofHom (algebraMap k κ)))
-    (σ : K ≃ₐ[κ] K) (arithmeticFrobenius : ∀ a : K, σ a = a ^ Fintype.card κ)
+    (σ : ArithmeticFrobenius κ K)
     (path : fibreFunctor x ≅ fibreFunctor (closedPointGeometricPoint (K := K) y))
     (ι : ℚ_[ell] →+* ℂ) (α : ℂ)
     (root : (frobeniusPolynomial ell x r ρ y σ path ι).IsRoot α) :

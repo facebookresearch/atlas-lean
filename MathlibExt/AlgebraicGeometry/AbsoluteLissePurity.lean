@@ -15,6 +15,7 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Topology.Algebra.Group.Matrix
+public import Mathlib.Topology.Algebra.ContinuousMonoidHom
 
 @[expose] public noncomputable section
 
@@ -39,9 +40,10 @@ universe u
 variable (ell : ℕ) [Fact ell.Prime] {X : Scheme.{u}} {K : Type u}
   [Field K] [IsAlgClosed K] (x : Spec (.of K) ⟶ X) (r : ℕ)
 
-/-- The actual continuous rational representation carrier. -/
-abbrev LisseRepresentation := ArithmeticFundamentalGroup x →*
-  Matrix.GeneralLinearGroup (Fin r) ℚ_[ell]
+/-- Lisse rational coefficients: continuous representations of the arithmetic fundamental group
+(with its profinite topology) in `GL_r(ℚ_ell)` (with its `ell`-adic topology). -/
+abbrev LisseRepresentation := ContinuousMonoidHom (ArithmeticFundamentalGroup x)
+  (Matrix.GeneralLinearGroup (Fin r) ℚ_[ell])
 
 /-- Absolute irreducibility after actual coefficient extension. -/
 def AbsolutelyIrreducible (ρ : LisseRepresentation ell x r) : Prop :=
@@ -55,10 +57,11 @@ def AbsolutelyIrreducible (ρ : LisseRepresentation ell x r) : Prop :=
 def FiniteArithmeticDeterminant (ρ : LisseRepresentation ell x r) : Prop :=
   ∃ N : ℕ, 0 < N ∧ ∀ g : ArithmeticFundamentalGroup x, (ρ g).val.det ^ N = 1
 
-/-- The actual Frobenius characteristic polynomial under a coefficient embedding. -/
-def frobeniusPolynomial {κ : Type u} [Field κ] [Algebra κ K]
+/-- The characteristic polynomial of geometric Frobenius at the `κ`-valued point `y`, for a finite
+field `κ`, mapped to `ℂ` by a coefficient embedding. -/
+def frobeniusPolynomial {κ : Type u} [Field κ] [Fintype κ] [Algebra κ K]
     (ρ : LisseRepresentation ell x r) (y : Spec (.of κ) ⟶ X)
-    (σ : K ≃ₐ[κ] K)
+    (σ : ArithmeticFrobenius κ K)
     (path : fibreFunctor x ≅ fibreFunctor (closedPointGeometricPoint (K := K) y))
     (ι : ℚ_[ell] →+* ℂ) : Polynomial ℂ :=
   ((ρ (geometricFrobeniusElement x y σ path)).val.charpoly).map ι

@@ -30,8 +30,7 @@ example (σ : Aut F) (X : C) (s : F.obj X) :
     componentEmbedding F σ X s = σ.asIso.hom.app X s :=
   rfl
 
--- The stabilizer of a point of a fibre is open: the topology is the one of pointwise
--- stabilizers (discrete on each fibre's permutations).
+-- The stabilizer of a point of a fibre is open (each fibre's permutation group is discrete).
 example (X : C) (s : F.obj X) :
     @IsOpen (Aut F) (fibreAutomorphismTopology F) {σ | σ.asIso.hom.app X s = s} := by
   let (X : C) : TopologicalSpace (Equiv.Perm (F.obj X)) := ⊥
@@ -90,14 +89,25 @@ example (y : Spec (.of κ) ⟶ X) (σ τ : K ≃ₐ[κ] K) (Y : FiniteEtaleOver 
   rw [← Category.assoc, ← Spec.map_comp]
   rfl
 
--- Geometric Frobenius is the action of the inverse field automorphism, transported along the
--- fibre path: on a lift at the closed point it precomposes with `Spec` of `σ⁻¹`.
+-- The inverse-automorphism element is the action of `σ⁻¹`, transported along the fibre path;
+-- on a lift over `y` it precomposes with `Spec` of `σ⁻¹`.
 example [IsAlgClosed K] (x : Spec (.of K) ⟶ X) (y : Spec (.of κ) ⟶ X) (σ : K ≃ₐ[κ] K)
     (path : fibreFunctor x ≅ fibreFunctor (closedPointGeometricPoint (K := K) y)) :
-    geometricFrobeniusElement x y σ path = transportFibreAutomorphism path
+    inverseFieldAutomorphismElement x y σ path = transportFibreAutomorphism path
       (fibreFieldAutomorphism _ (fieldSchemeIso σ.symm.toRingEquiv)
         (closedPoint_fixed y σ.symm)) :=
   rfl
+
+-- Geometric Frobenius is that element for a certified arithmetic Frobenius of a finite field.
+example [IsAlgClosed K] [Fintype κ] (x : Spec (.of K) ⟶ X) (y : Spec (.of κ) ⟶ X)
+    (σ : ArithmeticFrobenius κ K)
+    (path : fibreFunctor x ≅ fibreFunctor (closedPointGeometricPoint (K := K) y)) :
+    geometricFrobeniusElement x y σ path = inverseFieldAutomorphismElement x y σ.1 path :=
+  rfl
+
+-- A certified arithmetic Frobenius really is the `#κ`-power map.
+example [Fintype κ] (σ : ArithmeticFrobenius κ K) (a : K) : σ.1 a = a ^ Fintype.card κ :=
+  σ.2 a
 
 example (y : Spec (.of κ) ⟶ X) (σ : K ≃ₐ[κ] K) (Y : FiniteEtaleOver X)
     (s : geometricFibre (closedPointGeometricPoint (K := K) y) Y) :

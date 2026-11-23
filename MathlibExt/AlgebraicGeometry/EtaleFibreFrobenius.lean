@@ -25,6 +25,7 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Etale
 public import Mathlib.AlgebraicGeometry.Morphisms.Finite
 public import Mathlib.CategoryTheory.MorphismProperty.OverAdjunction
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
+public import Mathlib.Data.Fintype.Card
 public import Mathlib.Topology.Algebra.Group.Basic
 public import Mathlib.Topology.Instances.Discrete
 
@@ -84,13 +85,16 @@ variable {C : Type v} [Category.{w} C] (F : C ⥤ Type u)
 def componentEmbedding : Aut F →* ∀ X, Equiv.Perm (F.obj X) :=
   MonoidHom.mk' (fun σ X ↦ (σ.asIso.app X).toEquiv) (fun _ _ ↦ rfl)
 
-/-- The product of discrete permutation topologies for finite fibres. -/
+/-- The product of the discrete topologies on the permutation groups of the fibres. When every
+fibre is finite (as for finite étale covers), this gives the profinite topology on `Aut F`;
+for a functor with infinite fibres it is not the topology of pointwise convergence. -/
 @[instance_reducible]
 def fibrePermutationTopology : TopologicalSpace (∀ X, Equiv.Perm (F.obj X)) := by
   let (X : C) : TopologicalSpace (Equiv.Perm (F.obj X)) := ⊥
   exact inferInstance
 
-/-- Stabilizers of finite étale lifts define the actual profinite topology. -/
+/-- The topology on `Aut F` induced by the action on all fibres, each permutation group being
+discrete; for finite fibres the stabilizers of points form a basis of neighbourhoods of `1`. -/
 @[instance_reducible]
 def fibreAutomorphismTopology : TopologicalSpace (Aut F) :=
   TopologicalSpace.induced (componentEmbedding F) (fibrePermutationTopology F)
@@ -174,7 +178,8 @@ def transportFibreAutomorphism {X : Scheme.{u}} {K : Type u} [Field K]
     (σ : Aut (fibreFunctor y)) : Aut (fibreFunctor x) :=
   Aut.of (path ≪≫ σ.asIso ≪≫ path.symm)
 
-/-- The geometric point obtained from a genuine closed point Spec κ -> X. -/
+/-- The geometric point `Spec K → Spec κ → X` over a `κ`-valued point `y` of `X` (for instance a
+closed point with residue field `κ`). -/
 abbrev closedPointGeometricPoint {X : Scheme.{u}} {κ K : Type u}
     [Field κ] [Field K] [Algebra κ K] (y : Spec (.of κ) ⟶ X) : Spec (.of K) ⟶ X :=
   Spec.map (CommRingCat.ofHom (algebraMap κ K)) ≫ y
@@ -191,9 +196,10 @@ theorem closedPoint_fixed {X : Scheme.{u}} {κ K : Type u}
   change Spec.map _ ≫ (Spec.map _ ≫ y) = Spec.map _ ≫ y
   rw [← Category.assoc, ← Spec.map_comp, h]
 
-/-- Geometric Frobenius is Spec of the inverse arithmetic q-power
-automorphism, transported through the actual geometric fibre path. -/
-def geometricFrobeniusElement {X : Scheme.{u}} {κ K : Type u}
+/-- The action of the inverse of a field automorphism `σ` of `K` over `κ` on the lifts of the
+geometric point over `y`, transported to the base fibre through a geometric fibre path. For the
+arithmetic Frobenius `σ` this is geometric Frobenius (`geometricFrobeniusElement`). -/
+def inverseFieldAutomorphismElement {X : Scheme.{u}} {κ K : Type u}
     [Field κ] [Field K] [Algebra κ K] [IsAlgClosed K]
     (x : Spec (.of K) ⟶ X) (y : Spec (.of κ) ⟶ X) (σ : K ≃ₐ[κ] K)
     (path : fibreFunctor x ≅ fibreFunctor (closedPointGeometricPoint (K := K) y)) :
@@ -201,5 +207,19 @@ def geometricFrobeniusElement {X : Scheme.{u}} {κ K : Type u}
   transportFibreAutomorphism path
     (fibreFieldAutomorphism (closedPointGeometricPoint (K := K) y)
       (fieldSchemeIso σ.symm.toRingEquiv) (closedPoint_fixed y σ.symm))
+
+/-- Arithmetic Frobenius of a finite field `κ` acting on an extension field `K`: an automorphism
+of `K` over `κ` that raises every element to the power `#κ`. -/
+def ArithmeticFrobenius (κ K : Type u) [Field κ] [Fintype κ] [Field K] [Algebra κ K] :=
+  {σ : K ≃ₐ[κ] K // ∀ a : K, σ a = a ^ Fintype.card κ}
+
+/-- Geometric Frobenius: `Spec` of the inverse of the arithmetic `#κ`-power automorphism, acting
+on the lifts of the geometric point over `y` and transported through the geometric fibre path. -/
+def geometricFrobeniusElement {X : Scheme.{u}} {κ K : Type u}
+    [Field κ] [Fintype κ] [Field K] [Algebra κ K] [IsAlgClosed K]
+    (x : Spec (.of K) ⟶ X) (y : Spec (.of κ) ⟶ X) (σ : ArithmeticFrobenius κ K)
+    (path : fibreFunctor x ≅ fibreFunctor (closedPointGeometricPoint (K := K) y)) :
+    ArithmeticFundamentalGroup x :=
+  inverseFieldAutomorphismElement x y σ.1 path
 
 end MathlibExt.AlgebraicGeometry.EtaleFibreFrobenius

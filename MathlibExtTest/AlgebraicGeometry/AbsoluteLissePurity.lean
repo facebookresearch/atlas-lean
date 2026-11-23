@@ -50,9 +50,14 @@ example : ¬ AbsolutelyIrreducible ell x 2 1 := by
     obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp this
     simpa using congr_fun hc 1
 
+-- Lisse coefficients are continuous by construction.
+example (r : ℕ) (ρ : LisseRepresentation ell x r) : Continuous ρ :=
+  ρ.continuous_toFun
+
 -- The Frobenius polynomial of the trivial representation is `(X - 1) ^ r` under every
 -- coefficient embedding.
-example {κ : Type u} [Field κ] [Algebra κ K] (r : ℕ) (y : Spec (.of κ) ⟶ X) (σ : K ≃ₐ[κ] K)
+example {κ : Type u} [Field κ] [Fintype κ] [Algebra κ K] (r : ℕ) (y : Spec (.of κ) ⟶ X)
+    (σ : ArithmeticFrobenius κ K)
     (path : fibreFunctor x ≅ fibreFunctor (closedPointGeometricPoint (K := K) y))
     (ι : ℚ_[ell] →+* ℂ) :
     frobeniusPolynomial ell x r 1 y σ path ι = (Polynomial.X - 1) ^ r := by
