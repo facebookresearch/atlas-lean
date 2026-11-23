@@ -1,9 +1,11 @@
-"""Real Lean regressions for the v2 declaration-collision check (build-tier only)."""
+"""Real Lean regressions for the declaration-collision check (build-tier only)."""
 from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
+
+import audit_compiled_modules as audit
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCES = {
@@ -16,15 +18,34 @@ SOURCES = {
     'WantedExt.CollisionFixture.PrivateB': 'module\nprivate def helperFixture : Nat := 2\n',
     # A non-ASCII file name is read literally.
     'MathlibExt.CollisionFixture.Étale': 'module\npublic def etaleFixture : Nat := 1\n',
-    # Test libraries are not imported by the wiki, so the check leaves them out.
+    # The compiled audit imports the test libraries with the others, so the check does too.
     'MathlibExtTest.CollisionFixture.Test': 'theorem collisionFixture : 2 = 2 := rfl\n',
+    # A test's own private helper is qualified by its module.
+    'CSLibExtTest.CollisionFixture.PrivateTest':
+        'module\nprivate theorem collisionFixture : 3 = 3 := rfl\n',
+    # Two modules whose declarations differ but whose initializers register the same option:
+    # they load together only if their initializers are not run.
+    'MathlibExtTest.CollisionFixture.OptionA':
+        'import Lean\ninitialize optionFixtureA : Lean.Option Bool ←\n'
+        '  Lean.Option.register `collisionFixture.option { defValue := false, descr := "A" }\n',
+    'CSLibExtTest.CollisionFixture.OptionB':
+        'import Lean\ninitialize optionFixtureB : Lean.Option Bool ←\n'
+        '  Lean.Option.register `collisionFixture.option { defValue := true, descr := "B" }\n',
 }
 
 DOTTED_SOURCE = 'MathlibExt/CollisionFixture/Finite.Product.lean'
+# `CSLibExtTest/CollisionFixture/PrivateTest.lean` renamed so that it keeps its flattened module
+# name, now declaring a public `collisionFixture`.
+RENAMED_SOURCE = 'CSLibExtTest/CollisionFixture.PrivateTest.lean'
 
 
 def source_path(module: str) -> str:
     return module.replace('.', '/') + '.lean'
+
+
+TEXTS = {**{source_path(module): text for module, text in SOURCES.items()},
+         DOTTED_SOURCE: 'module\npublic def dottedFixture : Nat := 1\n',
+         RENAMED_SOURCE: 'theorem collisionFixture : 4 = 4 := rfl\n'}
 
 
 class DeclarationCollisionTests(unittest.TestCase):
@@ -38,18 +59,18 @@ class DeclarationCollisionTests(unittest.TestCase):
             shutil.copyfile(ROOT / name, cls.fixture / name)
         (cls.fixture / 'scripts').mkdir()
         for name in ('check_declaration_collisions.sh', 'check_declaration_collisions.lean',
-                     'list_v2_modules.sh'):
+                     'list_v2_modules.sh', 'audit_compiled_modules.py'):
             shutil.copy2(ROOT / 'scripts' / name, cls.fixture / 'scripts' / name)
         (cls.fixture / '.lake').mkdir()
         (cls.fixture / '.lake/packages').symlink_to((ROOT / '.lake/packages').resolve(),
                                                     target_is_directory=True)
-        for module, text in SOURCES.items():
-            path = cls.fixture / source_path(module)
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(text)
+        # The compiled audit's inventory needs every library it audits.
+        for library in audit.ROOTS:
+            (cls.fixture / library).mkdir()
         # Lake builds a file whose name contains a dot as one module component.
-        dotted = cls.fixture / DOTTED_SOURCE
-        dotted.write_text('module\npublic def dottedFixture : Nat := 1\n')
+        for path, text in TEXTS.items():
+            (cls.fixture / path).parent.mkdir(parents=True, exist_ok=True)
+            (cls.fixture / path).write_text(text)
         result = subprocess.run(['lake', 'build', *('+' + module for module in SOURCES),
                                  '+MathlibExt.CollisionFixture.«Finite.Product»'],
                                 cwd=cls.fixture, stdout=subprocess.PIPE,
@@ -62,11 +83,28 @@ class DeclarationCollisionTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.storage.cleanup()
 
-    def check(self, *modules: str, paths: tuple[str, ...] = ()) -> subprocess.CompletedProcess:
+    def check(self, *modules: str, paths: tuple[str, ...] = (), untracked: tuple[str, ...] = (),
+              deleted: tuple[str, ...] = (),
+              directories: tuple[str, ...] = ()) -> subprocess.CompletedProcess:
+        # The compiled audit imports every source file of its libraries, tracked or not, so
+        # the working tree holds only this case's sources; every .olean stays built. After
+        # they are tracked, `deleted` sources are removed and `directories` replace sources.
+        tracked = [*map(source_path, modules), *paths]
+        for path, text in TEXTS.items():
+            target = self.fixture / path
+            if target.is_dir():
+                target.rmdir()
+            if path in tracked or path in untracked:
+                target.write_text(text)
+            else:
+                target.unlink(missing_ok=True)
         subprocess.run(['git', 'rm', '-q', '--cached', '-r', '--ignore-unmatch', '.'],
                        cwd=self.fixture, check=True)
-        subprocess.run(['git', 'add', *map(source_path, modules), *paths], cwd=self.fixture,
-                       check=True)
+        subprocess.run(['git', 'add', *tracked], cwd=self.fixture, check=True)
+        for path in (*deleted, *directories):
+            (self.fixture / path).unlink()
+        for path in directories:
+            (self.fixture / path).mkdir()
         return subprocess.run(['scripts/check_declaration_collisions.sh'], cwd=self.fixture,
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
@@ -118,14 +156,72 @@ class DeclarationCollisionTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn('Module path is not a Lean module name (a directory or file name contains '
                       f'a dot or a line break): {DOTTED_SOURCE}', result.stderr)
-        self.assertIn('FAIL [declaration collisions]: could not list the compiled v2 modules',
+        self.assertIn('FAIL [declaration collisions]: could not list the compiled modules',
                       result.stderr)
 
-    def test_test_libraries_are_not_imported(self):
+    def test_collision_with_a_test_library_names_both(self):
         result = self.check('MathlibExt.CollisionFixture.Original',
                             'MathlibExtTest.CollisionFixture.Test')
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertRegex(result.stderr, r'FAIL \[declaration collisions\]: collisionFixture is '
+                                        r'declared in both (MathlibExt\.CollisionFixture\.Original '
+                                        r'and MathlibExtTest\.CollisionFixture\.Test|MathlibExtTest'
+                                        r'\.CollisionFixture\.Test and MathlibExt\.CollisionFixture'
+                                        r'\.Original)\.')
+
+    def test_untracked_audited_source_fails(self):
+        # The compiled audit would import the untracked copy and split on it.
+        result = self.check('MathlibExt.CollisionFixture.Original',
+                            untracked=(source_path('Domains.CollisionFixture.Copy'),))
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn('FAIL [declaration collisions]: Domains/CollisionFixture/Copy.lean is not '
+                      'tracked by Git, but the compiled audit imports it; add it, or remove it.',
+                      result.stderr)
+        self.assertNotIn('import together', result.stdout)
+
+    def test_initializers_that_conflict_fail(self):
+        # The compiled audit imports as `lean` does, running every initializer.
+        result = self.check('MathlibExtTest.CollisionFixture.OptionA',
+                            'CSLibExtTest.CollisionFixture.OptionB')
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn('FAIL [declaration collisions]: could not import the modules together:',
+                      result.stderr)
+        self.assertIn('collisionFixture.option', result.stderr)
+
+    def test_initializers_run(self):
+        result = self.check('MathlibExt.CollisionFixture.Original',
+                            'MathlibExtTest.CollisionFixture.OptionA')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn('ok [declaration collisions]: 1 module imports together.', result.stdout)
+        self.assertIn('ok [declaration collisions]: 2 modules import together.', result.stdout)
+
+    def test_source_renamed_to_the_same_module_name_fails(self):
+        # The untracked `CollisionFixture.PrivateTest.lean` flattens to the module name of the
+        # tracked, deleted `CollisionFixture/PrivateTest.lean`, whose .olean is still built.
+        old = source_path('CSLibExtTest.CollisionFixture.PrivateTest')
+        result = self.check('MathlibExt.CollisionFixture.Original',
+                            'CSLibExtTest.CollisionFixture.PrivateTest',
+                            deleted=(old,), untracked=(RENAMED_SOURCE,))
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn(f'FAIL [declaration collisions]: {RENAMED_SOURCE} is not tracked by Git, '
+                      'but the compiled audit imports it; add it, or remove it.', result.stderr)
+        self.assertIn(f'FAIL [declaration collisions]: {old} is tracked by Git, but missing '
+                      'from the working tree.', result.stderr)
+        self.assertNotIn('import together', result.stdout)
+
+    def test_directory_in_place_of_a_source_fails(self):
+        old = source_path('CSLibExtTest.CollisionFixture.PrivateTest')
+        result = self.check('MathlibExt.CollisionFixture.Original',
+                            'CSLibExtTest.CollisionFixture.PrivateTest', directories=(old,))
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn(f'FAIL [declaration collisions]: {old} is not a regular file.',
+                      result.stderr)
+        self.assertNotIn('import together', result.stdout)
+
+    def test_private_test_helpers_pass(self):
+        result = self.check('MathlibExt.CollisionFixture.Original',
+                            'CSLibExtTest.CollisionFixture.PrivateTest')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('ok [declaration collisions]: 2 modules import together.', result.stdout)
 
 
 if __name__ == '__main__':

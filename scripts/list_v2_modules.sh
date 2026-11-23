@@ -1,22 +1,45 @@
 #!/usr/bin/env bash
-# Write the module name of every tracked source file of MathlibExt, CSLibExt,
-# PhyslibExt, Domains and WantedExt to OUTPUT, one per line, after checking that
-# each has been compiled. Run it from the repository root.
+# Write the module name of every tracked source file of LIBRARY... to OUTPUT, one
+# per line, after checking that each has been compiled. The libraries default to
+# MathlibExt, CSLibExt, PhyslibExt, Domains and WantedExt. Run it from the
+# repository root.
 #
-#   scripts/list_v2_modules.sh OUTPUT
+#   scripts/list_v2_modules.sh OUTPUT [LIBRARY...]
 #
-# The declaration-collision check and the blueprint's dependency dump both import
-# exactly this list.
+# The blueprint's dependency dump imports the default list; the declaration-
+# collision check imports the list of every library the compiled audit checks.
 set -euo pipefail
 
-if [[ $# -ne 1 ]]; then
-  echo "usage: scripts/list_v2_modules.sh OUTPUT" >&2
+if [[ $# -lt 1 ]]; then
+  echo "usage: scripts/list_v2_modules.sh OUTPUT [LIBRARY...]" >&2
   exit 2
 fi
 output="$1"
+shift
 
 # A failed run leaves no list behind, neither a partial one nor an older one.
 rm -f "$output"
+libraries=("$@")
+if [[ ${#libraries[@]} -eq 0 ]]; then
+  libraries=(MathlibExt CSLibExt PhyslibExt Domains WantedExt)
+else
+  for library in "${libraries[@]}"; do
+    # A library is one top-level directory, named like a Lean identifier. A missing
+    # one would otherwise drop out of the list unnoticed.
+    if [[ ! "$library" =~ ^[A-Za-z][A-Za-z0-9_]*$ ]]; then
+      echo "Not a library name: ${library@Q}" >&2
+      exit 2
+    fi
+    if [[ ! -d "$library" || -L "$library" ]]; then
+      echo "No library directory: $library" >&2
+      exit 2
+    fi
+  done
+fi
+pathspecs=()
+for library in "${libraries[@]}"; do
+  pathspecs+=("$library/*.lean")
+done
 olean_root=.lake/build/lib/lean
 [ -d "$olean_root" ] || olean_root=.lake/build/lib
 sources="$(mktemp "${TMPDIR:-/tmp}/atlas-v2-sources.XXXXXX")"
@@ -26,8 +49,7 @@ modules="$(mktemp "$output.XXXXXX")"
 # Git's output goes to a file, not a pipe or a process substitution, so that a
 # failing `git ls-files` stops this script instead of leaving a partial list.
 # -z keeps non-ASCII paths literal instead of quoting them.
-git ls-files -z -- 'MathlibExt/*.lean' 'CSLibExt/*.lean' 'PhyslibExt/*.lean' 'Domains/*.lean' 'WantedExt/*.lean' \
-  > "$sources"
+git ls-files -z -- "${pathspecs[@]}" > "$sources"
 
 while IFS= read -r -d '' source; do
   module="${source%.lean}"
