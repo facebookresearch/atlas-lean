@@ -9,6 +9,7 @@ Arithmetic varieties over the integers or over rings of integers, with hermitian
 - [Chow groups with supports and their products](chow-groups-with-supports.md)
 - [Arithmetic intersection product](arithmetic-intersection-product.md)
 - [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md)
+- [Poincaré–Lelong formula on arithmetic cycles](poincare-lelong-formula-on-arithmetic-cycles.md)
 - [Geometric degrees as integrals of first Chern forms](geometric-degrees-as-integrals-of-chern-forms.md)
 - [Arithmetic characteristic classes of hermitian vector bundles](arithmetic-chern-classes.md)
 - [Analytic torsion and Quillen metrics](analytic-torsion-and-quillen-metrics.md)

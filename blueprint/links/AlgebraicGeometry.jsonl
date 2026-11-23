@@ -125,6 +125,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/height-of-a-cycle.md"}], "id": "af_d42a95ea9d1ab5e910dfae7c"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/heights-of-chow-forms.md"}], "id": "af_d2d191cee3bda5642c94776f", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/moriwaki-fundamental-estimate.md"}], "id": "af_47f07f5a0692e958ab19dbc6"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/poincare-lelong-formula-on-arithmetic-cycles.md"}], "id": "af_b80b6bc2a80a49c12cd624f6", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/positivity-of-hermitian-line-bundles.md"}], "id": "af_6779e77d6211dc4628897af7"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/small-elements-of-normed-lattices.md"}], "id": "af_70f5ff48a6f5e88e9dd2a552", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/small-sections-and-coordinate-lattices.md"}], "id": "af_95d09d090568b3bc235ea625", "extensions": {"org.autoform": {"not_ready": true}}}
@@ -143,7 +144,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arithmetic-geometry/faltings-s-theorem/principal.md"}], "id": "af_060a9331f3e7fede8da51ab5", "object": [{"location": {"declaration": "MathlibExt.AlgebraicGeometry.FaltingsWanted.AlgebraicGeometry.Faltings.Adele.principal"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arithmetic-geometry/weil-conjectures.md"}], "object": [{"location": {"declaration": "MathlibExt.AlgebraicGeometry.WeilConjecturesWanted.AlgebraicGeometry.WeilConjectures.weil_conjectures"}}], "id": "af_6931a7c6f7ce925e9bb7b553"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/currents-of-integration.md"}], "id": "af_54ea391ece775ac3cca30adf", "extensions": {"org.autoform": {"not_ready": true}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/embedding-and-descent-for-blow-up-sequence-functors.md"}], "id": "af_8ba3b4aee03a73c765b6df87"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/embedding-and-descent-for-blow-up-sequence-functors.md"}], "id": "af_8ba3b4aee03a73c765b6df87", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/functorial-resolution-of-schemes-of-finite-type.md"}], "id": "af_fd6d23fdb6fb93a78fb65147"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/integrated-poincare-lelong-formula.md"}], "id": "af_3677d9d24b158c908a2f4695"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/intersection-numbers-of-nef-line-bundles.md"}], "id": "af_e91934ef23c94622d894bc01", "extensions": {"org.autoform": {"not_ready": true}}}
@@ -162,6 +163,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/order-reduction-for-marked-ideals.md"}], "id": "af_7ff3d6129c9888b90e148aa1", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/poincare-lelong-formula.md"}], "id": "af_0472f6ab34f87c1353bfb48b"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/principalization-of-ideal-sheaves.md"}], "id": "af_8883ab466a5310f0c3f14540"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/principalization-relative-to-a-simple-normal-crossing-divisor.md"}], "id": "af_41a39859341d5cd54035149a"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md"}], "id": "af_9c1b8f184a6c33777f1ac02f"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/simple-normal-crossing-divisor.md"}], "id": "af_8751edfda49aa74b6f0232b6"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/standard-results-of-coherent-cohomology.md"}], "id": "af_738047d944a8ca30681812b6", "extensions": {"org.autoform": {"not_ready": true}}}

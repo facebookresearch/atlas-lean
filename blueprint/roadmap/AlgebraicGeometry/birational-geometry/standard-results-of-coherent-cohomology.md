@@ -2,34 +2,81 @@
 
 This node is still to be broken down. It collects the classical results of coherent cohomology and
 projective geometry that the proofs of the vanishing theorems and of the asymptotic Riemann–Roch
-statements use without proof. Let $X$ be a projective variety over a field $k$. The targets are:
+statements use without proof. The setting is given in each item. The targets are:
 
-1. the projection formula $R^q f_*(\mathcal{F} \otimes f^* \mathcal{L}) \cong R^q f_* \mathcal{F}
-   \otimes \mathcal{L}$ for a morphism $f$ and a locally free sheaf $\mathcal{L}$, and the
-   degeneration of the Leray spectral sequence: if $R^q f_* \mathcal{F} = 0$ for $q > 0$, then
-   $H^i(X', \mathcal{F}) \cong H^i(X, f_* \mathcal{F})$;
-2. Serre's vanishing theorem and Serre duality on smooth projective varieties, and GAGA over
-   $\mathbb{C}$;
-3. the Hirzebruch–Riemann–Roch theorem, and the fact that $\chi(X, L^{\otimes \nu})$ is a polynomial in
-   $\nu$ of degree at most $\dim X$ whose coefficient of $\nu^{\dim X}$ is $(L^{\dim X})/(\dim X)!$
-   (for $L = \mathcal{O}$ on $\mathbb{P}^1$ it is the constant $1$);
-4. Bertini's theorem: for a smooth projective variety over an algebraically closed field of
-   characteristic zero and a linear system without base points, a general member is smooth, and meets a
-   given simple normal crossing divisor transversally;
-5. Seshadri's criterion for ampleness, and its consequence that an invertible sheaf $L$ on a projective
-   manifold is nef if and only if $L^{\nu} \otimes A$ is ample for every ample $A$ and every $\nu > 0$
-   (Esnault–Viehweg, Lemma 5.7);
-6. the Nakai–Moishezon criterion: a line bundle $L$ on a projective scheme is ample if and only if
-   $(L^{\dim Z} \cdot Z) > 0$ for every integral closed subscheme $Z$ of positive dimension;
-7. the embedding criterion: on a complete variety over an algebraically closed field, a complete linear
-   system that separates points and tangent vectors defines a closed immersion into projective space
-   (Milne, *Abelian Varieties*, Proposition I.6.3);
-8. descent of ampleness: a complete variety over a field $k$ has an ample divisor if its extension of
-   scalars to an algebraic closure of $k$ has one (Milne, Proposition I.6.6 (d)).
+1. (Projection formula and Leray.) For a morphism $f \colon X' \to X$ of schemes, a quasi-coherent
+   sheaf $\mathcal{F}$ on $X'$ and a **finite** locally free sheaf $\mathcal{L}$ on $X$, $R^q
+   f_*(\mathcal{F} \otimes f^* \mathcal{L}) \cong R^q f_* \mathcal{F} \otimes \mathcal{L}$ (for a
+   locally free sheaf of infinite rank this fails: for $f \colon \coprod_{j \in \mathbb{N}}
+   \operatorname{Spec} k \to \operatorname{Spec} k$ the product of copies of an infinite-dimensional
+   space is not the tensor product); and if $R^q f_* \mathcal{F} = 0$ for $q > 0$, then $H^i(X',
+   \mathcal{F}) \cong H^i(X, f_* \mathcal{F})$.
+2. (Serre, GAGA and base change.) Serre's vanishing theorem: for a projective scheme over a field, a
+   coherent sheaf $\mathcal{F}$ and an ample $A$, $H^i(\mathcal{F} \otimes A^{\otimes t}) = 0$ for
+   $i > 0$ and all large $t$. Serre duality on a smooth projective variety $X$ of pure dimension
+   $n$: $H^i(X, E)^\vee \cong H^{n-i}(X, E^\vee \otimes \omega_X)$ for a finite locally free $E$,
+   and $H^i(X, \mathcal{F})^\vee \cong \operatorname{Ext}^{n-i}(\mathcal{F}, \omega_X)$ for a
+   coherent $\mathcal{F}$ (for the skyscraper $k(p)$ on a smooth curve the naive formula fails, its
+   sheaf dual being $0$). GAGA: for a complex projective scheme, the comparison maps $H^q(X,
+   \mathcal{F}) \to H^q(X^{\mathrm{an}}, \mathcal{F}^{\mathrm{an}})$ are isomorphisms in all degrees
+   $q \ge 0$, and coherent analytic sheaves are algebraic. Flat base change along a field extension
+   $k \subset k'$: $H^q(X_{k'}, \mathcal{F}_{k'}) = H^q(X, \mathcal{F}) \otimes_k k'$.
+3. (Riemann–Roch.) For a proper scheme over a field, a coherent sheaf $\mathcal{F} \ne 0$ with
+   support of dimension $e$ and a line bundle $L$, $\chi(X, \mathcal{F} \otimes L^{\otimes \nu})$ is
+   a polynomial in $\nu$ of degree at most $e$ whose coefficient of $\nu^e$ is $\sum_Z
+   \operatorname{length}(\mathcal{F}_{\eta_Z}) (L^e \cdot Z)/e!$, over the $e$-dimensional integral
+   components $Z$ of the support (for $L = \mathcal{O}$ on $\mathbb{P}^1$ and $\mathcal{F} =
+   \mathcal{O}$ it is the constant $1$); and, for smooth projective $X$ only, the
+   Hirzebruch–Riemann–Roch formula $\chi(E) = \deg(\operatorname{ch}(E) \operatorname{td}(T_X))$.
+4. (Bertini.) On a smooth variety over an algebraically closed field of characteristic zero, a
+   general member of a linear system without base points is smooth (possibly disconnected), and
+   meets every stratum of a given
+   [simple normal crossing divisor](simple-normal-crossing-divisor.md) transversally: restrict the
+   system to each of the finitely many strata. In characteristic $p$ it fails: the pencil $\langle
+   x^p, y^p \rangle$ on $\mathbb{P}^1$ is base-point-free and every member is a multiple point.
+5. (Seshadri.) A line bundle $A$ on a projective variety over an algebraically closed field is ample
+   if and only if there is $\varepsilon > 0$, the same for all curves, with $\deg(A|_C) \ge
+   \varepsilon \operatorname{mult}_x C$ for every integral curve $C$ and closed point $x \in C$; and
+   its consequence that a line bundle $L$ on a projective manifold, nef in the sense of nonnegative
+   degrees on curves, has $L^{\nu} \otimes A$ ample for every ample $A$ and every $\nu > 0$
+   (Esnault–Viehweg, Lemma 5.7).
+6. (Nakai–Moishezon.) A line bundle $L$ on a projective scheme over a field is ample if and only if
+   $(L^{\dim Z} \cdot Z) > 0$ for every integral closed subscheme $Z$ of positive dimension (testing
+   $X$ alone is not enough: $\mathcal{O}(-1)$ on $\mathbb{P}^2$ has positive square).
+7. (Embedding criterion.) On a complete variety over an algebraically closed field, a complete
+   linear system **without base points** that separates points and tangent vectors defines a closed
+   immersion into projective space (Milne, *Abelian Varieties*, Propositions I.6.2–6.3).
+8. (Descent of the existence of an ample divisor.) A complete variety over a field $k$ has some
+   ample divisor if its extension of scalars to an algebraic closure of $k$ has one (Milne,
+   Proposition I.6.6 (d)); the given class need not descend (a real conic without real points has
+   $\mathcal{O}(1)$ over $\mathbb{C}$ but no real line bundle of degree $1$).
 
-A good expansion has a page for each of 1–8, with the standard proofs (for instance Hartshorne,
-*Algebraic Geometry*, II, Exercise 5.1, III, Exercise 8.1, Theorem 5.2, Corollary 7.7 and
-Corollary 10.9, and Appendix A; Serre, "Géométrie algébrique et géométrie analytique").
+9. (Growth of sections.) For a line bundle $L$ on a projective variety over a field with $H^0(X,
+   L^\nu) \ne 0$ for some $\nu \ge 1$, of Iitaka dimension $\kappa$, the largest dimension of the
+   images of the rational maps given by the $|L^m|$, there are $a, b > 0$ with $a \mu^\kappa \le
+   \dim H^0(X, L^{\nu\mu}) \le b \mu^\kappa$ for $\mu \ge 1$ (Esnault–Viehweg, Properties 5.4 b),
+   which refer to Mori, §1).
+10. (Kodaira's lemma.) $\kappa = \dim X$ if and only if $L^\nu(-C)$ is ample for some $\nu \ge 1$
+    and some effective Cartier divisor $C$ (Esnault–Viehweg, Properties 5.4 d), through the
+    restriction sequence and the growth bound on an ample divisor).
+
+In 7 and 8 the variety is complete, not assumed projective, since 8 is an input of the projectivity
+of abelian varieties. Item 5 uses only the definition of nef by degrees on curves, so that the page
+on nef and big line bundles, which uses 6, does not form a cycle with this node. A good expansion
+has separate pages for the independent results: the projection formula and the Leray degeneration
+(Stacks Project, Tags 01E8, 01F2 and 01F4); Serre vanishing (Tag 0B5U; Esnault–Viehweg, Theorem
+1.1); Serre duality for vector bundles and for coherent sheaves (Tags 0FVV and 0FW0); GAGA (Serre,
+§12, Theorems 1–3); flat base change along field extensions (Tag 02KH; Esnault–Viehweg, 8.1); the
+Euler polynomial of a coherent sheaf (Tags 0BEM, 0BEN and 0BEP) and, separately,
+Hirzebruch–Riemann–Roch on smooth projective varieties (Tag 02UO, a statement); Bertini's theorem
+(Kleiman, *Bertini and his two fundamental theorems*, Theorem 4.1 and its proof); Seshadri's and
+Nakai's criteria, with the definitions of ample and nef line bundles kept on a page of their own
+(Keeler, Propositions 2.10 and 2.13); and the embedding and descent criteria (Milne; Stacks Project,
+Tags 0E8S, 0BDC and 0BDG).
+
+## Depends on
+
+- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for the transversality in 4
 
 ## Sources
 
@@ -41,7 +88,14 @@ Corollary 10.9, and Appendix A; Serre, "Géométrie algébrique et géométrie a
 - R. Lazarsfeld, "A short course on multiplier ideals", arXiv:0901.0651 (version 1),
   <https://arxiv.org/abs/0901.0651v1>: the proof of Theorem 2.4 (projection formula and the Leray
   spectral sequence), pp. 11–12.
-- R. Hartshorne, *Algebraic Geometry*, Graduate Texts in Mathematics 52, Springer, 1977: as cited
-  above.
+- J.-P. Serre, "Géométrie algébrique et géométrie analytique", Ann. Inst. Fourier 6 (1956), 1–42,
+  <https://www.numdam.org/item/AIF_1956__6__1_0/>: §12, Theorems 1–3, pp. 19–20.
+- S. L. Kleiman, "Bertini and his two fundamental theorems", arXiv:alg-geom/9704018 (version 1): §4,
+  Theorem 4.1, p. 16, and its proof, pp. 18–19.
+- D. S. Keeler, "Ample filters of invertible sheaves", arXiv:math/0108068 (version 5): Propositions
+  2.10 and 2.13, pp. 5–6.
+- The Stacks Project, <https://stacks.math.columbia.edu>: Tags 01E8, 01F2, 01F4, 02KH, 02UO, 0B5U,
+  0BDC, 0BDG, 0BEM, 0BEN, 0BEP, 0E8S, 0FVV and 0FW0.
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),
-  <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, Propositions 6.3 and 6.6 (d).
+  <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, Propositions 6.2–6.3, p. 29, and 6.6
+  (d), p. 31.

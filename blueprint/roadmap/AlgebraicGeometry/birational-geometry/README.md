@@ -5,6 +5,7 @@ Resolution of singularities and principalization of ideals in characteristic zer
 - [Simple normal crossing divisor](simple-normal-crossing-divisor.md)
 - [Order reduction for marked ideals](order-reduction-for-marked-ideals.md)
 - [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md)
+- [Principalization relative to a simple normal crossing divisor](principalization-relative-to-a-simple-normal-crossing-divisor.md)
 - [Resolution of singularities of quasi-projective varieties](resolution-of-singularities-of-quasi-projective-varieties.md)
 - [Embeddings and descent for blow-up sequence functors](embedding-and-descent-for-blow-up-sequence-functors.md)
 - [Functorial resolution of schemes of finite type in characteristic zero](functorial-resolution-of-schemes-of-finite-type.md)
