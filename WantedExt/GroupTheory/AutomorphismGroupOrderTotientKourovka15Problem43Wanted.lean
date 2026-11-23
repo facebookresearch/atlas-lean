@@ -32,17 +32,27 @@ Deaconescu). UnsolvedMath record UM-00701131 (`KOU-15.43`), dataset ulamai/Unsol
 `Type`.
 -/
 
-/-- Kourovka 15.43(a) (M. Deaconescu): every finite group `G` satisfies `|Aut G| ≥ φ(|G|)`. -/
+/-- **Deaconescu's totient lower bound conjecture (Kourovka 15.43(a)).** The statement that every
+finite group $G$ satisfies $\varphi(|G|) \le |\mathrm{Aut}(G)|$, where $\varphi$ is Euler's totient
+function and $\mathrm{Aut}(G)$ is the group of automorphisms of $G$. -/
 def totientLeAutOrder : Prop :=
   ∀ (G : Type) [Group G] [Finite G], (Nat.card G).totient ≤ Nat.card (MulAut G)
 
-/-- Kourovka 15.43(b) (M. Deaconescu): every finite group `G` with `|Aut G| = φ(|G|)` is cyclic. -/
+/-- **Deaconescu's cyclicity conjecture (Kourovka 15.43(b)).** The statement that every finite group
+$G$ with $|\mathrm{Aut}(G)| = \varphi(|G|)$ is cyclic, where $\varphi$ is Euler's totient function
+and $\mathrm{Aut}(G)$ is the group of automorphisms of $G$. -/
 def autOrderEqTotientImpliesCyclic : Prop :=
   ∀ (G : Type) [Group G] [Finite G], Nat.card (MulAut G) = (Nat.card G).totient → IsCyclic G
 
 /--
-Resolved false: the Kourovka Archive answers 15.43(a) negatively (Bray and Wilson): some finite
-groups have `|Aut G| < φ(|G|)`, and the ratio `|Aut G| / φ(|G|)` can be made arbitrarily small.
+**Deaconescu's totient lower bound conjecture fails (Kourovka 15.43(a)).** Not every finite group
+$G$ satisfies $\varphi(|G|) \le |\mathrm{Aut}(G)|$: there is a finite group $G$ with
+$|\mathrm{Aut}(G)| < \varphi(|G|)$, where $\varphi$ is Euler's totient function and
+$\mathrm{Aut}(G)$ is the group of automorphisms of $G$.
+
+Bray and Wilson prove more than is stated here: the ratio $|\mathrm{Aut}(G)| / \varphi(|G|)$ can be
+made arbitrarily small.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.43 (M.
 Deaconescu); resolution: J. N. Bray and R. A. Wilson, On the orders of automorphism groups of finite
@@ -54,14 +64,20 @@ https://webspace.maths.qmul.ac.uk/j.n.bray/web/Publ/AutG/.
 public theorem_wanted totientLeAutOrder_refuted : ¬ totientLeAutOrder
 
 /--
-Resolved false: the Kourovka Archive answers 15.43(b) negatively: Bray and Wilson construct
-infinitely many non-cyclic finite groups with `|Aut G| = φ(|G|)`. Source: E. I. Khukhro and V. D.
-Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
-arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.43 (M. Deaconescu); resolution: J.
-N. Bray and R. A. Wilson, On the orders of automorphism groups of finite groups, Bull. London Math.
-Soc. 37 (2005), no. 3, 381-385, main results (groups with |Aut G| < φ(|G|), infinitely many
-non-cyclic groups with |Aut G| = φ(|G|), and |Aut G|/φ(|G|) arbitrarily small); Kourovka Archive,
-Problem 15.43 (both answers negative), https://webspace.maths.qmul.ac.uk/j.n.bray/web/Publ/AutG/.
+**Deaconescu's cyclicity conjecture fails (Kourovka 15.43(b)).** Not every finite group $G$ with
+$|\mathrm{Aut}(G)| = \varphi(|G|)$ is cyclic: there is a non-cyclic finite group $G$ with
+$|\mathrm{Aut}(G)| = \varphi(|G|)$, where $\varphi$ is Euler's totient function and
+$\mathrm{Aut}(G)$ is the group of automorphisms of $G$.
+
+Bray and Wilson prove more than is stated here: there are infinitely many such non-cyclic groups.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.43 (M.
+Deaconescu); resolution: J. N. Bray and R. A. Wilson, On the orders of automorphism groups of finite
+groups, Bull. London Math. Soc. 37 (2005), no. 3, 381-385, main results (groups with |Aut G| <
+φ(|G|), infinitely many non-cyclic groups with |Aut G| = φ(|G|), and |Aut G|/φ(|G|) arbitrarily
+small); Kourovka Archive, Problem 15.43 (both answers negative),
+https://webspace.maths.qmul.ac.uk/j.n.bray/web/Publ/AutG/.
 -/
 public theorem_wanted autOrderEqTotientImpliesCyclic_refuted : ¬ autOrderEqTotientImpliesCyclic
 

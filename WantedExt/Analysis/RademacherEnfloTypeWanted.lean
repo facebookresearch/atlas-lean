@@ -116,12 +116,15 @@ open scoped ENNReal
 instance : Neg ({-1, 1} : Set ℤ) where
   neg x := ⟨Neg.neg (α := ℤ) (x : ℤ), by grind⟩
 
-/-- Definition of Rademacher distribution as a measure on `{-1, 1}` (as a subset of `ℤ`). -/
+/-- **Rademacher distribution.** The Rademacher distribution is the measure on $\{-1, 1\}$,
+viewed as a subset of $\mathbb{Z}$, that gives mass $1/2$ to each of $1$ and $-1$. -/
 noncomputable def rademacherDistribution : Measure ({-1, 1} : Set ℤ) :=
   bernoulliMeasure ⟨1, by decide⟩ ⟨-1, by decide⟩ ⟨1 / 2, by norm_num⟩
 
-/-- Definition of the distribution of a sequence of independent Rademacher variables
-indexed by the type `ι`, which is a measure on `ι → {-1,1}`. -/
+/-- **Product Rademacher distribution.** For an index type $\iota$, this is the product over
+$\iota$ of copies of the Rademacher distribution: the joint law of a family
+$(\varepsilon_i)_{i \in \iota}$ of independent Rademacher random variables, as a measure on the
+functions $\iota \to \{-1, 1\}$. -/
 noncomputable def rademacherProductDistribution (ι : Type*) :
     Measure (ι → ({-1, 1} : Set ℤ)) :=
   infinitePi (fun _ : ι ↦ rademacherDistribution)
@@ -129,10 +132,15 @@ noncomputable def rademacherProductDistribution (ι : Type*) :
 /- Let `X` be a Banach space. -/
 variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
 
-/-- Definition of the discrete partial derivative. Given a function `f : {-1, 1}ⁿ → X`
-we define
-
-`Dⱼf(ε) := (f(ε₁, …, εⱼ, …, εₙ) - f(ε₁, …, -εⱼ, …, εₙ)) / 2`.
+/-- **Discrete partial derivative on the Rademacher cube.** Let $X$ be a real Banach space, $n$ a
+natural number and $f : \{-1, 1\}^n \to X$. For $j \in \{1, \dots, n\}$ and
+$\varepsilon = (\varepsilon_1, \dots, \varepsilon_n) \in \{-1, 1\}^n$, the discrete partial
+derivative of $f$ in direction $j$ at $\varepsilon$ is
+$$
+D_j f(\varepsilon) = \frac{1}{2}\bigl(f(\varepsilon) -
+f(\varepsilon_1, \dots, -\varepsilon_j, \dots, \varepsilon_n)\bigr),
+$$
+where only the $j$-th coordinate of $\varepsilon$ is negated in the second term.
 -/
 noncomputable def D {n : ℕ} (j : Fin n) (f : (Fin n → ({-1, 1} : Set ℤ)) → X)
       (ε : Fin n → ({-1, 1} : Set ℤ)) : X :=
@@ -141,42 +149,52 @@ noncomputable def D {n : ℕ} (j : Fin n) (f : (Fin n → ({-1, 1} : Set ℤ)) �
 /- Let `X` be a Banach space. -/
 variable (X : Type*) [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
 
-/-- `IsRademacherType X C p` is the proposition that for all `n ≥ 1`, and `x₁, …, xₙ ∈ X`
-
-`𝔼‖∑ j ∈ {1,…,n}, εⱼxⱼ‖ᵖ ≤ Cᵖ ∑ j ∈ {1,…,n}, ‖xⱼ‖ᵖ`
-
-where `ε₁, …, εₙ` is a sequence of independent Rademacher variables.
+/-- **Rademacher type.** Let $X$ be a real Banach space, $C \in [0, \infty]$ and $p$ a real
+number. We say that $X$ has Rademacher type $p$ with constant $C$ if for every $n \ge 1$ and all
+$x_1, \dots, x_n \in X$,
+$$
+\mathbb{E}\Bigl\|\sum_{j=1}^n \varepsilon_j x_j\Bigr\|^p \le C^p \sum_{j=1}^n \|x_j\|^p,
+$$
+where $\varepsilon_1, \dots, \varepsilon_n$ are independent Rademacher random variables. Both
+sides are computed in $[0, \infty]$.
 -/
 def IsRademacherType (C : ℝ≥0∞) (p : ℝ) : Prop :=
   ∀ n ≥ 1, ∀ (x : Fin n → X),
     𝔼⁻[‖ ∑ j : Fin n, ((ε j) : ℝ) • (x j) ‖ₑ ^ p; ε ∼ rademacherProductDistribution (Fin n)]
     ≤ C ^ p * ∑ j : Fin n, ‖ x j ‖ₑ ^ p
 
-/-- `Tᴿₚ(X)` is defined to be the infimum over all `C` such that the
-proposition `IsRademacherType X C p` holds. -/
+/-- **Rademacher type constant.** For a real Banach space $X$ and a real number $p$,
+$T^R_p(X)$ is the infimum in $[0, \infty]$ of all $C \in [0, \infty]$ such that $X$ has
+Rademacher type $p$ with constant $C$. -/
 noncomputable def TR (p : ℝ) : ℝ≥0∞ := sInf {C : ℝ≥0∞ | IsRademacherType X C p}
 
-/-- `IsEnfloType X C p` is the proposition that for all `n ≥ 1`, and `f : {-1,1}ⁿ → X`
-
-`𝔼‖ (f(ε) - f(-ε)) / 2 ‖ᵖ ≤ Cᵖ ∑ j ∈ {1,…,n}, 𝔼‖Dⱼf(ε)‖ᵖ`
-
-where `ε₁, …, εₙ` is a sequence of independent Rademacher variables.
+/-- **Enflo type.** Let $X$ be a real Banach space, $C \in [0, \infty]$ and $p$ a real number. We
+say that $X$ has Enflo type $p$ with constant $C$ if for every $n \ge 1$ and every function
+$f : \{-1, 1\}^n \to X$,
+$$
+\mathbb{E}\Bigl\|\frac{f(\varepsilon) - f(-\varepsilon)}{2}\Bigr\|^p \le
+C^p \sum_{j=1}^n \mathbb{E}\,\|D_j f(\varepsilon)\|^p,
+$$
+where $\varepsilon = (\varepsilon_1, \dots, \varepsilon_n)$ is a sequence of independent
+Rademacher random variables, $-\varepsilon = (-\varepsilon_1, \dots, -\varepsilon_n)$, and
+$D_j f$ is the discrete partial derivative of $f$ in direction $j$. Both sides are computed in
+$[0, \infty]$.
 -/
 def IsEnfloType (C : ℝ≥0∞) (p : ℝ) : Prop :=
     ∀ n ≥ 1, ∀ (f : (Fin n → ({-1, 1} : Set ℤ)) → X),
   𝔼⁻[‖ (1 / (2 : ℝ)) • (f ε - f (- ε)) ‖ₑ ^ p; ε ∼ rademacherProductDistribution (Fin n)]
   ≤ C ^ p * ∑ j : Fin n, 𝔼⁻[‖ D j f ε ‖ₑ ^ p; ε ∼ rademacherProductDistribution (Fin n)]
 
-/-- `Tᴱₚ(X)` is defined to be the infimum over all `C` such that the
-proposition `IsEnfloType X C p` holds. -/
+/-- **Enflo type constant.** For a real Banach space $X$ and a real number $p$, $T^E_p(X)$ is
+the infimum in $[0, \infty]$ of all $C \in [0, \infty]$ such that $X$ has Enflo type $p$ with
+constant $C$. -/
 noncomputable def TE (p : ℝ) : ℝ≥0∞ := sInf {C : ℝ≥0∞ | IsEnfloType X C p}
 
 /--
-Statement of Theorem 1.1:
+**Comparison of Rademacher and Enflo type constants.** For every real Banach space $X$ and every
+real number $p$ with $1 \le p \le 2$, the Rademacher type constant and the Enflo type constant
+of $X$ satisfy $T^R_p(X) \le T^E_p(X) \le \frac{\pi}{\sqrt{2}}\, T^R_p(X)$.
 
-For any `p ∈ [1,2]`, and Banach space `X`
-
-`TRₚ(X) ≤ TEₚ(X) ≤ (π / √2) TRₚ(X)`.
 Source: P. Ivanisvili, R. van Handel, and A. Volberg, `Rademacher type and Enflo type coincide`, Annals of Math, 192 (2) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-2-RademacherEnfloType.lean Via leanprover/lean-eval@38361be, problem `annals_rademacher_enflo_type`.
 -/
 public theorem_wanted theorem_1_1 (p : ℝ) (h1p : 1 ≤ p) (hp2 : p ≤ 2) :

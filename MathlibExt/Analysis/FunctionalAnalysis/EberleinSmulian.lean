@@ -8,10 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Normed.Module.DoubleDual
 import Mathlib.Analysis.Normed.Operator.BanachSteinhaus
 import Mathlib.Topology.MetricSpace.PiNat
-
-public import Mathlib.Analysis.Normed.Module.DoubleDual
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
@@ -796,13 +795,17 @@ namespace MathlibExt.Analysis.FunctionalAnalysis.BanachSpaceWanted
 open Set Metric
 
 /--
-For a Banach space over `ℝ` or `ℂ`, a set in the weak topology `WeakSpace 𝕜 E` is compact iff it
-is sequentially compact. Source: W. F. Eberlein, Weak Compactness in Banach Spaces,
+**Eberlein–Šmulian theorem.** Let $E$ be a Banach space over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$. A subset of $E$ is compact in the weak topology if and only if it is sequentially
+compact in the weak topology, that is, every sequence in it has a subsequence that converges
+weakly to a point of the subset.
+
+Proves `Wanted` entry `eberlein_smulian`.
+
+Source: W. F. Eberlein, Weak Compactness in Banach Spaces,
 PNAS 33 (1947), 51–53, DOI 10.1073/pnas.33.3.51, and V. Smulian (1947); Dunford-Schwartz,
 Linear Operators I, 1958, V.5-6; Lean states `RCLike` Banach case with
 `IsCompact ↔ IsSeqCompact` in `WeakSpace`.
-
-Proves `Wanted` entry `eberlein_smulian`.
 -/
 theorem eberlein_smulian
     {𝕜 : Type*} [RCLike 𝕜]

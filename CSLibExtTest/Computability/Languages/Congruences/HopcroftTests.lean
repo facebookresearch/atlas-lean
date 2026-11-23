@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Computability.Languages.Congruences.Hopcroft
-public meta import CSLibExt.Computability.Languages.Congruences.Hopcroft
+public import CSLibExt.Computability.Languages.Congruences.HopcroftCost
+public meta import CSLibExt.Computability.Languages.Congruences.HopcroftCost
 
 /-!
 # Tests for Hopcroft's minimization algorithm
@@ -125,6 +125,88 @@ example (p q : Fin 4) :
 example {α σ : Type*} [Fintype α] [FinEnum α] [Fintype σ] [DecidableEq σ] (M : DFA α σ)
     [DecidablePred (· ∈ M.accept)] : M.hopcroftRel = M.mooreRel :=
   M.hopcroftRel_eq_mooreRel
+
+/-! Splitter traces -/
+
+/-- The splitter trace is the list of splitters the loop pops, in order. The boundary
+cases: `still12` has an empty waiting list, so its trace is empty; `parity4` pops both
+initial waiting entries `[({0, 2}, false), ({0, 2}, true)]` and splits nothing (the
+`false` step is the identity, and the preimage of `{0, 2}` under the `true` step is the
+rejecting block `{1, 3}`). -/
+example : (Hopcroft.hopcroftSplitters still12 1 (Hopcroft.initP still12) (Hopcroft.initW still12)) =
+    [] := by decide +kernel
+example : (Hopcroft.hopcroftSplitters parity4 20 (Hopcroft.initP parity4) (Hopcroft.initW parity4)) =
+    [({0, 2}, false), ({0, 2}, true)] := by decide +kernel
+
+/-- The trace and the loop agree on the fixtures: running the loop for exactly the
+trace's length gives the loop's result, for each fuel budget. -/
+example : parity4.hopcroftLoop
+    ((Hopcroft.hopcroftSplitters parity4 20 (Hopcroft.initP parity4) (Hopcroft.initW parity4)).length)
+    (Hopcroft.initP parity4) (Hopcroft.initW parity4) =
+    parity4.hopcroftLoop 20 (Hopcroft.initP parity4) (Hopcroft.initW parity4) :=
+  Hopcroft.hopcroftLoop_eq_hopcroftLoop_of_length parity4 20 _ _
+example : withDead.hopcroftLoop
+    ((Hopcroft.hopcroftSplitters withDead 20 (Hopcroft.initP withDead) (Hopcroft.initW withDead)).length)
+    (Hopcroft.initP withDead) (Hopcroft.initW withDead) =
+    withDead.hopcroftLoop 20 (Hopcroft.initP withDead) (Hopcroft.initW withDead) :=
+  Hopcroft.hopcroftLoop_eq_hopcroftLoop_of_length withDead 20 _ _
+
+/-- `withDead` has a nontrivial trace: popping `({1}, true)` splits `{0, 2}` into `{0}` and
+`{2}`, so the smaller half `{0}` is added with both letters and popped in turn, for four
+splitters in total. Its predecessor cost is `(1 + 1) + (1 + 1) + (1 + 1) + (1 + 1) = 8`:
+each splitter's preimage has exactly one state (`false` is the identity on `{0, 1}`, and
+`true` swaps `0` and `1`), plus `1` per-splitter overhead. This is the quantity the
+total-work bound (`hopcroft_total_work`) constrains. -/
+example : (Hopcroft.hopcroftSplitters withDead 20 (Hopcroft.initP withDead) (Hopcroft.initW withDead)) =
+    [({1}, false), ({1}, true), ({0}, false), ({0}, true)] := by decide +kernel
+example : Hopcroft.hopcroftCost withDead (Hopcroft.hopcroftSplitters withDead 20
+    (Hopcroft.initP withDead) (Hopcroft.initW withDead)) = 8 := by decide +kernel
+
+/-- `parity8` pops its two initial waiting entries with no split. Its predecessor cost
+is `(4 + 1) + (4 + 1) = 10`: the preimage of the even block under `false` (the identity)
+is the even block itself (size 4), and under `true` (successor) it is the odd block
+(size 4), plus `1` per-splitter overhead. -/
+example : (Hopcroft.hopcroftSplitters parity8 20 (Hopcroft.initP parity8) (Hopcroft.initW parity8)) =
+    [({0, 2, 4, 6}, false), ({0, 2, 4, 6}, true)] := by decide +kernel
+example : Hopcroft.hopcroftCost parity8 (Hopcroft.hopcroftSplitters parity8 20
+    (Hopcroft.initP parity8) (Hopcroft.initW parity8)) = 10 := by decide +kernel
+
+/-- The predecessor cost is the right summand, not the splitter size: a singleton
+splitter can cost `n` predecessor visits. In `parity8`, the singleton splitter
+`({0}, true)` has preimage `{7}` of size 1, but in the `collapse` automaton below every
+state transitions on `true` to `0`, so the singleton splitter `({0}, true)` has the
+whole 8-state preimage. -/
+def collapse : DFA Bool (Fin 8) :=
+  ⟨fun _ b => if b then 0 else 0, 0, {0}⟩
+
+instance : DecidablePred (· ∈ collapse.accept) :=
+  inferInstanceAs (DecidablePred (· ∈ ({0} : Set (Fin 8))))
+
+example : (Hopcroft.preimage collapse {0} true).card = 8 := by decide +kernel
+example : Hopcroft.hopcroftCost collapse [({0}, true)] = 9 := by decide +kernel
+
+#eval show IO Unit from do
+  let mut s := 7
+  for run in [0:300] do
+    s := nextSeed s
+    let k := 1 + s / 7 % 13
+    let mut tbl : List ℕ := []
+    let mut acc : List Bool := []
+    for _ in [0:2 * (k + 1)] do
+      s := nextSeed s
+      tbl := tbl ++ [s / 11]
+    for _ in [0:k + 1] do
+      s := nextSeed s
+      acc := acc ++ [s / 13 % 3 == 0]
+    let M := tableDFA k tbl acc
+    let trace := Hopcroft.hopcroftSplitters M (2 * (k + 2)) (Hopcroft.initP M) (Hopcroft.initW M)
+    unless (M.hopcroftLoop trace.length (Hopcroft.initP M) (Hopcroft.initW M)) =
+        M.hopcroftLoop (2 * (k + 2)) (Hopcroft.initP M) (Hopcroft.initW M) do
+      throw (IO.userError s!"run {run}: trace length does not reproduce the loop")
+    unless trace.length ≤ 2 * (k + 2) do
+      throw (IO.userError s!"run {run}: trace exceeds fuel")
+  IO.println "300 random automata: the splitter trace length reproduces the loop \
+    and never exceeds the fuel"
 
 #print axioms DFA.hopcroftRel_eq_mooreRel
 #print axioms DFA.mem_hopcroftRel_iff

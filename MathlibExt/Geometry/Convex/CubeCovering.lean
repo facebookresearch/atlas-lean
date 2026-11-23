@@ -27,22 +27,29 @@ three, the eight centers with coordinates `±1/2` give an actual matching cover.
 
 namespace ConvexCovering
 
-/-- The coordinate cube in the actual Euclidean space. -/
+/-- **Coordinate cube.** For $n \in \mathbb{N}$, the coordinate cube is the set $[-1, 1]^n$ of
+points $x$ of the Euclidean space $\mathbb{R}^n$ with $-1 \le x_i \le 1$ for every coordinate
+$i$. -/
 def coordinateCube (n : ℕ) : Set (EuclideanSpace ℝ (Fin n)) :=
   {x | ∀ i, x i ∈ Set.Icc (-1 : ℝ) 1}
 
-/-- The coordinate cube is the `|x i| ≤ 1` box. -/
+/-- **The coordinate cube as an absolute-value box.** For every $n$, the coordinate cube in
+$\mathbb{R}^n$ equals the set of points $x \in \mathbb{R}^n$ with $|x_i| \le 1$ for every
+coordinate $i$. -/
 theorem coordinateCube_eq_absSet (n : ℕ) :
     coordinateCube n = {x : EuclideanSpace ℝ (Fin n) | ∀ i, |x i| ≤ 1} := by
   ext x
   simp only [coordinateCube, Set.mem_setOf_eq, Set.mem_Icc, abs_le]
 
-/-- An affine cube is the image under a genuinely invertible affine map. -/
+/-- **Affine cube.** A set $K \subseteq \mathbb{R}^n$ is an affine cube if $K = e([-1, 1]^n)$ for
+some affine bijection $e : \mathbb{R}^n \to \mathbb{R}^n$, where $[-1, 1]^n$ is the coordinate cube
+$\{x \in \mathbb{R}^n : -1 \le x_i \le 1 \text{ for all } i\}$. -/
 def IsAffineCube {n : ℕ} (K : Set (EuclideanSpace ℝ (Fin n))) : Prop :=
   ∃ e : EuclideanSpace ℝ (Fin n) ≃ᵃ[ℝ] EuclideanSpace ℝ (Fin n),
     K = e '' coordinateCube n
 
-/-- Interior membership is strict in every coordinate. -/
+/-- **Interior of the coordinate cube.** A point $x \in \mathbb{R}^n$ lies in the interior of
+the coordinate cube $[-1, 1]^n$ if and only if $-1 < x_i < 1$ for every coordinate $i$. -/
 theorem coordinateCube_interior_iff {n : ℕ} (x : EuclideanSpace ℝ (Fin n)) :
     x ∈ interior (coordinateCube n) ↔ ∀ i, -1 < x i ∧ x i < 1 := by
   have hcube : coordinateCube n = (PiLp.homeomorph 2 (fun _ : Fin n ↦ ℝ)) ⁻¹'
@@ -59,7 +66,9 @@ theorem coordinateCube_interior_iff {n : ℕ} (x : EuclideanSpace ℝ (Fin n)) :
     interior_Icc, Set.mem_Ioo]
   rfl
 
-/-- The cube is compact, convex and has nonempty ambient interior. -/
+/-- **The coordinate cube is a convex body.** For every $n$, the coordinate cube $[-1, 1]^n$ in
+$\mathbb{R}^n$ is a convex body: it is compact and convex, and its interior in $\mathbb{R}^n$ is
+nonempty. -/
 theorem coordinateCube_isConvexBody (n : ℕ) : IsConvexBody (coordinateCube n) := by
   refine ⟨?_, ?_, 0, ?_⟩
   · have hcube : coordinateCube n = (PiLp.homeomorph 2 (fun _ : Fin n ↦ ℝ)) ⁻¹'
@@ -76,7 +85,9 @@ theorem coordinateCube_isConvexBody (n : ℕ) : IsConvexBody (coordinateCube n) 
     change -1 < (0 : ℝ) ∧ (0 : ℝ) < 1
     norm_num
 
-/-- Reflection about the origin preserves the cube. -/
+/-- **The coordinate cube is centrally symmetric.** For every $n$, the coordinate cube
+$[-1, 1]^n$ in $\mathbb{R}^n$ is centrally symmetric: there is a point $c \in \mathbb{R}^n$ such
+that for every $x \in \mathbb{R}^n$, $x$ lies in the cube if and only if $2c - x$ does. -/
 theorem coordinateCube_isCentrallySymmetric (n : ℕ) :
     IsCentrallySymmetric (coordinateCube n) := by
   refine ⟨0, ?_⟩
@@ -109,7 +120,10 @@ private theorem cubeVertex_unique {n : ℕ} (v : EuclideanSpace ℝ (Fin n))
     linarith
   · rfl
 
-/-- An actual interior-translate cover of the cube requires at least `2^n` members. -/
+/-- **Covering the cube by translates of its interior needs $2^n$ translates.** Let
+$C_n = [-1, 1]^n$ be the coordinate cube in $\mathbb{R}^n$. If $C_n$ is contained in the union of
+$q$ translates $v_1 + \operatorname{int} C_n, \dots, v_q + \operatorname{int} C_n$ of its interior,
+then $2^n \le q$. -/
 theorem coordinateCube_coveringCount_ge_two_pow {n q : ℕ}
     (h : CoveredByInteriorTranslates (coordinateCube n) q) : 2 ^ n ≤ q := by
   classical
@@ -130,23 +144,38 @@ theorem coordinateCube_coveringCount_ge_two_pow {n q : ℕ}
     simpa only [hab] using hf b
   simpa using Fintype.card_le_of_injective f hinj
 
-/-- The actual cube obstructs every universal interior-translate bound. -/
+/-- **Lower bound $2^n$ for uniform interior-translate covering.** Let $n$ and $q$ be natural
+numbers. If every convex body $K \subseteq \mathbb{R}^n$ (a compact convex set with nonempty
+interior) can be covered by $q$ not necessarily distinct translates of its interior, then
+$2^n \le q$.
+
+The coordinate cube $[-1, 1]^n$ already needs $2^n$ translates. -/
 theorem uniformInteriorTranslateBound_ge_two_pow {n q : ℕ}
     (h : UniformInteriorTranslateBound n q) : 2 ^ n ≤ q :=
   coordinateCube_coveringCount_ge_two_pow
     (h (coordinateCube n) (coordinateCube_isConvexBody n))
 
-/-- The classical three-dimensional lower-bound row. -/
+/-- **Uniform interior-translate bounds in dimension three are at least eight.** If $q$ is a
+natural number such that every convex body $K \subseteq \mathbb{R}^3$ is contained in the union of
+$q$ translates of its interior $\operatorname{int} K$, then $8 \le q$. -/
 theorem cubeLowerBound (q : ℕ) (h : UniformInteriorTranslateBound 3 q) : 8 ≤ q := by
   simpa using uniformInteriorTranslateBound_ge_two_pow h
 
-/-- The centrally symmetric class has the same actual cube obstruction. -/
+/-- **Lower bound $2^n$ for centrally symmetric interior-translate covering.** Let $n$ and $q$ be
+natural numbers. If every centrally symmetric convex body $K \subseteq \mathbb{R}^n$ (a compact
+convex set with nonempty interior that is symmetric about some point) can be covered by $q$ not
+necessarily distinct translates of its interior, then $2^n \le q$.
+
+The coordinate cube $[-1, 1]^n$ is such a body and already needs $2^n$ translates. -/
 theorem symmetricInteriorTranslateBound_ge_two_pow {n q : ℕ}
     (h : UniformSymmetricInteriorTranslateBound n q) : 2 ^ n ≤ q :=
   coordinateCube_coveringCount_ge_two_pow (h (coordinateCube n)
     (coordinateCube_isConvexBody n) (coordinateCube_isCentrallySymmetric n))
 
-/-- Eight actual translates of the interior cover the three-dimensional cube. -/
+/-- **Eight translates of the interior cover the three-dimensional cube.** Let
+$C_3 = [-1, 1]^3$ be the coordinate cube in $\mathbb{R}^3$. There are vectors
+$v_1, \dots, v_8 \in \mathbb{R}^3$ such that $C_3$ is contained in the union of the translates
+$v_1 + \operatorname{int} C_3, \dots, v_8 + \operatorname{int} C_3$ of its interior. -/
 theorem coordinateCube_three_coveredByInteriorTranslates :
     CoveredByInteriorTranslates (coordinateCube 3) 8 := by
   classical
@@ -172,14 +201,20 @@ theorem coordinateCube_three_coveredByInteriorTranslates :
   · simp only [Equiv.symm_apply_apply]
     exact add_sub_cancel _ _
 
-/-- The matching cover and vertex obstruction give an actual least count of eight. -/
+/-- **Eight is the least number of interior translates covering the three-dimensional cube.**
+Let $C_3 = [-1, 1]^3$ be the coordinate cube in $\mathbb{R}^3$. Then $8$ is the least natural
+number $q$ such that $C_3$ is contained in the union of $q$ translates of its interior
+$\operatorname{int} C_3$. -/
 theorem coordinateCube_three_least_coveringCount :
     IsLeast {q : ℕ | CoveredByInteriorTranslates (coordinateCube 3) q} 8 := by
   refine ⟨coordinateCube_three_coveredByInteriorTranslates, ?_⟩
   intro q hq
   simpa using coordinateCube_coveringCount_ge_two_pow hq
 
-/-- The generic covering-number data evaluates to eight for the actual cube. -/
+/-- **Translate covering number of the three-dimensional cube by its interior.** Let
+$C_3 = [-1, 1]^3$ be the coordinate cube in $\mathbb{R}^3$. The translate covering number of $C_3$
+by its interior $\operatorname{int} C_3$, the least number of translates of $\operatorname{int} C_3$
+whose union contains $C_3$, equals $8$. -/
 theorem coordinateCube_three_translateCoveringNumber :
     translateCoveringNumber (coordinateCube 3) (interior (coordinateCube 3)) =
       (8 : WithTop ℕ) :=
