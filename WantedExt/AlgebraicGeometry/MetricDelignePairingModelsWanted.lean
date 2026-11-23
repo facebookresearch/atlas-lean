@@ -67,7 +67,7 @@ public def_wanted metricPairing (G : GroundBase (K := K)) (f : X ⟶ Y) (n : ℕ
 /-- Descend the actual metric Deligne construction to the SAME native rational Picard quotients. -/
 public def_wanted pairingOnPicard (G : GroundBase (K := K)) (f : X ⟶ Y) (n : ℕ)
     (scope : RelativeScope f.left n) :
-    {F : MultilinearMap ℚ (fun _ : Fin (n+1) ↦ PicardVector (A := A) (X := X) (G := G))
+    {F : MultilinearMap (RingHom.id ℚ) (fun _ : Fin (n+1) ↦ PicardVector (A := A) (X := X) (G := G))
         (PicardVector (A := A) (X := Y) (G := G)) //
       ∀ (M : Fin (n+1) → LineObject (A := A) (X := X) G)
         (I : DeterminantSources)
