@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Quantum.RationalSnapping
-public import Mathlib.Tactic
+import Mathlib.Tactic
 
 /-!
 # Tests: rational snapping

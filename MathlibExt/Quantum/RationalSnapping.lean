@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Topology.EMetricSpace.Lipschitz
-public import Mathlib.Tactic
+import Mathlib.Tactic
 
 /-!
 # Stereographic snapping to rational points of `S^1` and `S^3`
@@ -36,15 +36,6 @@ def stereoSnap {n : ℕ} (w : Fin (n + 1) → ℚ) (k : Fin (n + 1)) : Fin (n + 
   let t : Fin (n + 1) → ℚ := fun j => if j = k then 0 else w j / (1 + s * w k)
   let r : ℚ := ∑ j, t j ^ 2
   fun j => if j = k then s * (1 - r) / (1 + r) else 2 * t j / (1 + r)
-
-/-- Cancel a nonzero right factor (proved here to avoid depending on the exact
-Mathlib spelling of the cancellation lemma). -/
-private theorem mul_right_cancel₀ {F : Type*} [Field F] {a b c : F} (hb : b ≠ 0)
-    (h : a * b = c * b) : a = c := by
-  have h0 : (a - c) * b = 0 := by rw [sub_mul, h, sub_self]
-  rcases mul_eq_zero.mp h0 with h1 | h1
-  · linear_combination h1
-  · exact absurd h1 hb
 
 /-- Inverse stereographic formulas land on the unit sphere when the pole sign squares
 to one and the projected coordinate at the pole index vanishes. -/
