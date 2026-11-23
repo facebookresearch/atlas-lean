@@ -11067,6 +11067,7 @@
   "MathlibExt/NumberTheory/Cyclotomic/TwoCosAlgebraicDegree": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Real cyclotomic polynomials and 2cos(2πk/n)"},
   "MathlibExt/NumberTheory/DPRM": {"to": "TheoryOfComputation/undecidable-problems", "title": "Diophantine sets and Hilbert's tenth problem"},
   "MathlibExt/NumberTheory/DeBruijnNewman": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "De Bruijn–Newman constant"},
+  "MathlibExt/NumberTheory/Digits/BinaryDigitSum": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Takagi function"},
   "MathlibExt/NumberTheory/Digits/Cohn": {"to": "Algebra/polynomials", "title": "Irreducibility criteria for integer polynomials"},
   "MathlibExt/NumberTheory/Digits/GrundmanNivenBound": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Niven numbers"},
   "MathlibExt/NumberTheory/Digits/HappySixMin": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Happy numbers"},
