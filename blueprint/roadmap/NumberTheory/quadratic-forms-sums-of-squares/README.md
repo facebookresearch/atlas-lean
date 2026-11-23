@@ -8,4 +8,7 @@ Representations by quadratic forms: sums of two, three and four squares, binary 
 - [Quadratic packing polynomials](quadratic-packing-polynomials/README.md)
 - [Local–global principle for Hermitian spaces over a quadratic extension](hermitian-local-global-principle.md)
 - [Strong approximation for special unitary groups](strong-approximation-special-unitary.md)
-- [Mass ratio of the standard unimodular Hermitian lattices in consecutive ranks](hermitian-unimodular-mass-ratio.md)
+- [Siegel's mass formula for definite Hermitian lattices over a quadratic extension](hermitian-siegel-mass-formula.md)
+- [Local factor of a unimodular Hermitian lattice at a split prime](hermitian-unimodular-local-factor-split.md)
+- [Local factor of a unimodular Hermitian lattice at an inert prime](hermitian-unimodular-local-factor-inert.md)
+- [Mass ratio of the standard unimodular Hermitian lattices in consecutive ranks](hermitian-standard-lattice-mass-ratio.md)

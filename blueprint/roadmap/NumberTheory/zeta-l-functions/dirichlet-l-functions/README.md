@@ -14,6 +14,9 @@ Dirichlet characters, conductors, primitive and quadratic characters, Dirichlet 
 - [Functional equation of Hecke L-functions](hecke-l-function-functional-equation.md)
 - [Non-vanishing of Hecke L-functions on the line Re s = 1](hecke-l-function-nonvanishing-on-re-one.md)
 - [Functional equation of the Dirichlet beta function](ramanujan-part1-ch7-entry18-bernoullidif.md)
+- [Dedekind zeta function of a quadratic field as $\zeta(s) L(s, \chi_D)$](dedekind-zeta-quadratic-field-factorization.md)
+- [Lerch's formula for the Hurwitz zeta function at $s = 0$](lerch-formula-hurwitz-zeta.md)
+- [The derivative at $s = 0$ of a Dirichlet $L$-function through the gamma function](dirichlet-l-derivative-at-zero-gamma.md)
 
 ## Zeros of Dirichlet L-functions
 
