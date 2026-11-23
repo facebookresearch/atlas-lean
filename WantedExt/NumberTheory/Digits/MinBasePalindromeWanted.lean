@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
 
 /-!
 # Minimum-base palindromic representations of powers of 2
@@ -25,6 +26,10 @@ The base-`b` representation `(c_k, …, c_0)_b` of `N` (leading digit nonzero) i
 Mathlib's little-endian `Nat.digits b N = [c_0, …, c_k]`; `N` is a palindrome in
 base `b` when this list is a `List.Palindrome`. A `(k+1)`-digit representation
 has `(Nat.digits b N).length = k + 1`.
+
+The divisibility of even-length palindromes in base `b` by `b + 1` is proved, with the same name,
+statement and docstring, as `succ_dvd_of_palindrome_even_length` in
+`MathlibExt.NumberTheory.Digits.MinBasePalindrome`.
 -/
 
 namespace MetaMathlibExt
@@ -129,16 +134,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 2
 public theorem_wanted binomialForm_two_pow_base (n b α k : ℕ) (hb : 2 ≤ b) (hα : 1 ≤ α)
     (hk : 1 ≤ k) (h : Nat.digits b (2 ^ n) = (List.range (k + 1)).map fun i => α * k.choose i) :
     (∃ x ≤ n, b = 2 ^ x - 1) ∧ ∃ i, α = 2 ^ i
-
-/-- **Even-length palindromes are divisible by the base plus one.** Let $b \ge 2$ and let $N$ be a
-natural number whose base-$b$ digits form a palindrome with an even number of digits. Then
-$b + 1$ divides $N$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 3
-(`integers-2024-A69-lem-3`). -/
-public theorem_wanted succ_dvd_of_palindrome_even_length (N b : ℕ) (hb : 2 ≤ b)
-    (hp : (Nat.digits b N).Palindrome) (he : Even (Nat.digits b N).length) : b + 1 ∣ N
 
 /-- **Even-length palindromic powers of 2 have base one less than a power of 2.** Let $n$ and
 $b \ge 2$ be natural numbers. If the base-$b$ representation of $2^n$ is a palindrome with an

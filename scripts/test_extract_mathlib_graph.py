@@ -450,5 +450,23 @@ class Bridge(unittest.TestCase):
         code, agreement = self.run_bridge_against({"MathlibExt.D": d, "MathlibExt.T": d})
         self.assertEqual((code, agreement["articles_differing"], agreement["examples"]), (1, 1, ["MathlibExt.T"]))
 
+
+class Stats(unittest.TestCase):
+    def test_the_layers_atlas_commit_is_the_v2_dumps(self) -> None:
+        # The Mathlib dump depends only on the pins, and the workflow may restore it from a cache made at another
+        # commit; the Mathlib pages check the layer's ATLAS commit against the site's.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            out = root / "out"
+            with patch("sys.stdout"):
+                self.assertEqual(graph.main(["graph", str(write_dump(root, [row("A", "def")])), str(out)]), 0)
+                for name, commit in (("mathlib-dump", "a" * 40), ("v2-mathlib-dump", "b" * 40)):
+                    graph.write_json(out / f"{name}-meta.json", {"lean_version": "v", "mathlib_rev": "c" * 40,
+                                                                 "atlas_commit": commit, "dump": {"seconds": 1.0}})
+                    self.assertEqual(graph.main(["stats", str(out)]), 0)
+                    stats = json.loads((out / "stats.json").read_text())
+                    self.assertEqual(stats["versions"]["atlas_commit"], commit)
+        self.assertEqual(set(stats["seconds"]), {"graph", "mathlib-dump", "v2-mathlib-dump"})
+
 if __name__ == "__main__":
     unittest.main()

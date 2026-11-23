@@ -23,6 +23,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Rat.Init
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.RationalRightTriangleReciprocalSums
 
 set_option autoImplicit false
 
@@ -76,22 +77,6 @@ theorem_wanted primitive_pythagorean_sides_sum_two_cubes_infinite :
             0 < x ∧ 0 < y ∧ 0 < p ∧ 0 < q ∧ 0 < r ∧ 0 < s ∧
               X = x ^ 3 + y ^ 3 ∧ Y = p ^ 3 + q ^ 3 ∧
                 Z = r ^ 3 + s ^ 3}
-
-/-- **Infinitely many rational right triangles with sides sums of unit fractions.** There are
-infinitely many triples $(X, Y, Z)$ of positive rational numbers with $X^2 + Y^2 = Z^2$ such
-that each of $X$, $Y$ and $Z$ has the form $1/u + 1/v$ for some positive integers $u$ and $v$.
-
-Source: Yangcheng Li and Yong Zhang, "Primitive Pythagorean Triangles
-with Sides of Certain Forms", Theorem 3. -/
-theorem_wanted rational_right_triangles_reciprocal_sums_infinite :
-    Set.Infinite
-      {(X, Y, Z) : ℚ × ℚ × ℚ |
-        0 < X ∧ 0 < Y ∧ 0 < Z ∧ X ^ 2 + Y ^ 2 = Z ^ 2 ∧
-          ∃ x y p q r s : ℕ,
-            0 < x ∧ 0 < y ∧ 0 < p ∧ 0 < q ∧ 0 < r ∧ 0 < s ∧
-              X = 1 / (x : ℚ) + 1 / (y : ℚ) ∧
-                Y = 1 / (p : ℚ) + 1 / (q : ℚ) ∧
-                  Z = 1 / (r : ℚ) + 1 / (s : ℚ)}
 
 /-- **Infinitely many rational right triangles with sides differences of unit fractions.** There
 are infinitely many triples $(X, Y, Z)$ of positive rational numbers with $X^2 + Y^2 = Z^2$ such

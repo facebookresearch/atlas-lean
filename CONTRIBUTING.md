@@ -273,8 +273,8 @@ request is pending; `GET .../merge-async/{uuid}` gives a request's result. A
 queue request is not a merge: read the PR's state afterwards to learn whether
 it was queued, merged, or removed from the queue.
 
-The queue builds up to 20 merge groups at once, and consecutive PRs that pass
-land together, up to 20 at a time; GitHub may exceed that by up to half to keep
+The queue builds up to 30 merge groups at once, and consecutive PRs that pass
+land together, up to 30 at a time; GitHub may exceed that by up to half to keep
 a stack together. The queue removes a PR whose required checks fail on its merge
 group, or do not conclude within 6 hours; the PR's timeline says why, and the
 PRs behind it rebuild without it. In a stack of pull requests, the PRs above it
@@ -297,11 +297,12 @@ group before it merges:
 
 - `repository integrity` (CI): the deterministic repository checks.
 - `build` (CI): the Lean build and its policy checks.
+- `check the graph` (CI): `autoform check` on the graph as committed.
 - `source-diagnostics` (Source diagnostics).
 - `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
   checks a pin change again against the queue's base.
 
-The three workflows that report these four checks are configured for
+The three workflows that report these five checks are configured for
 `pull_request` and `merge_group`, without branch or path filters. If a PR has a merge conflict, resolve it before expecting
 its PR checks; a fork PR may also need a maintainer to approve the workflow run.
 `scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,

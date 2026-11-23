@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import Mathlib.Algebra.Polynomial.Reverse
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.NumberTheory.Recurrences.CRecursiveModularRepresentations
 
 namespace MetaMathlibExt
 

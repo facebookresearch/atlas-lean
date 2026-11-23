@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
 
 /-! # Rainbow-free colorings for `x - y = z ^ k`
 
