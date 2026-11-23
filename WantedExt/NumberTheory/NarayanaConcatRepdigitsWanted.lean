@@ -19,6 +19,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Finset.Insert
+public import MathlibExt.Analysis.SpecialFunctions.Log.GuzmanSanchezLuca
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
 public import MathlibExt.NumberTheory.NarayanaConcatRepdigits
 
