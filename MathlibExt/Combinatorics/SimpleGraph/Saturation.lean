@@ -38,8 +38,9 @@ namespace SimpleGraph
 
 variable {V W : Type*} (H : SimpleGraph V)
 
-/-- `H`-saturation: `G` is `H`-free and maximal with that property in the
-graph-inclusion order. -/
+/-- **$H$-saturated graphs.** Let $H$ be a simple graph. A simple graph $G$ is $H$-saturated if $G$
+is $H$-free (it contains no copy of $H$ as a subgraph) and is maximal with this property: every
+$H$-free simple graph $G'$ on the same vertex set as $G$ with $G \subseteq G'$ equals $G$. -/
 def IsSaturated (G : SimpleGraph W) : Prop :=
   Maximal H.Free G
 
@@ -47,13 +48,19 @@ theorem isSaturated_def (G : SimpleGraph W) :
     H.IsSaturated G ↔ H.Free G ∧ ∀ ⦃G' : SimpleGraph W⦄, H.Free G' → G ≤ G' → G' ≤ G :=
   Iff.rfl
 
-/-- Maximality unfolded with strict extensions. -/
+/-- **Saturation via strict supergraphs.** Let $H$ be a simple graph. A simple graph $G$ is
+$H$-saturated if and only if $G$ is $H$-free and every simple graph $G'$ on the same vertex set
+with $G \subsetneq G'$ contains a copy of $H$. -/
 theorem isSaturated_iff_forall_gt (G : SimpleGraph W) :
     H.IsSaturated G ↔ H.Free G ∧ ∀ ⦃G' : SimpleGraph W⦄, G < G' → ¬ H.Free G' :=
   maximal_iff_forall_gt
 
-/-- Equivalence with the source's missing-edge formulation: `G` is `H`-saturated
-iff it is `H`-free and every one-edge extension contains a copy of `H`. -/
+/-- **Saturation via missing edges.** Let $H$ be a simple graph. A simple graph $G$ is
+$H$-saturated if and only if $G$ is $H$-free and, for all distinct vertices $s$ and $t$ of $G$
+that are not adjacent in $G$, the graph $G + st$ obtained from $G$ by adding the edge $st$
+contains a copy of $H$.
+
+This is the usual missing-edge definition of $H$-saturation. -/
 theorem isSaturated_iff_missing_edge (G : SimpleGraph W) :
     H.IsSaturated G ↔
       H.Free G ∧ ∀ s t : W, s ≠ t → ¬ G.Adj s t → ¬ H.Free (G ⊔ edge s t) := by
@@ -71,31 +78,45 @@ theorem isSaturated_iff_missing_edge (G : SimpleGraph W) :
     have hle2 : G ⊔ edge s t ≤ G' := sup_le hle ((edge_le_iff (G := G')).mpr (Or.inr hadj'))
     exact hfree' ((not_free.mp (hall s t hst hadj)).mono_right hle2)
 
-/-- A complete host has no missing edge, so it is saturated exactly when it is
-`H`-free. The host lives on its own vertex type, so this is meaningful: a
-forbidden graph need not embed in a complete host with fewer vertices. -/
+/-- **Saturation of complete graphs.** Let $H$ be a simple graph. The complete graph on any vertex
+set is $H$-saturated if and only if it is $H$-free.
+
+A complete graph has no missing edge, so only $H$-freeness matters. The vertex set of the complete
+graph is independent of that of $H$, so this condition is not vacuous: $H$ need not embed in a
+complete graph with fewer vertices. -/
 theorem isSaturated_top : H.IsSaturated (⊤ : SimpleGraph W) ↔ H.Free (⊤ : SimpleGraph W) := by
   constructor
   · exact fun h => h.1
   · intro h
     exact maximal_iff_forall_gt.mpr ⟨h, fun _ hlt => absurd hlt not_top_lt⟩
 
-/-- Edge counts of `H`-saturated graphs on `Fin n`. -/
+/-- **Edge counts of saturated graphs.** Let $H$ be a simple graph and $n$ a natural number.
+The set of saturated edge counts of $H$ on $n$ vertices is the set of natural numbers $m$ such
+that some $H$-saturated simple graph on the vertex set $\{0, 1, \dots, n - 1\}$ has exactly $m$
+edges. -/
 def satCounts (n : ℕ) : Set ℕ :=
   { m | ∃ G : SimpleGraph (Fin n), ∃ _ : DecidableRel G.Adj, H.IsSaturated G ∧
     G.edgeFinset.card = m }
 
-/-- The saturation number `sat(n, H)`: the minimum size of an `H`-saturated
-graph on `n` vertices. This is `0` when no saturated graph exists. -/
+/-- **Saturation number.** Let $H$ be a simple graph and $n$ a natural number. The saturation
+number $\operatorname{sat}(n, H)$ is the minimum number of edges of an $H$-saturated simple graph
+on the vertex set $\{0, 1, \dots, n - 1\}$, and is $0$ when no such graph exists. -/
 noncomputable def sat (n : ℕ) : ℕ :=
   sInf (H.satCounts n)
 
-/-- Explicit total value on the empty admissible family. -/
+/-- **The saturation number is zero when no saturated graph exists.** Let $H$ be a simple graph,
+$n$ a natural number, and $\operatorname{sat}(n, H)$ the saturation number of $H$ on $n$
+vertices. If the set of saturated edge counts of $H$ on $n$ vertices is empty, that is, no
+$H$-saturated simple graph on the vertex set $\{0, 1, \dots, n - 1\}$ exists, then
+$\operatorname{sat}(n, H) = 0$. -/
 theorem sat_eq_zero_of_counts_empty (n : ℕ) (h : H.satCounts n = ∅) : H.sat n = 0 := by
   change sInf (H.satCounts n) = 0
   rw [h, Nat.sInf_empty]
 
-/-- Upper bound: `sat(n, H)` is at most the edge count of any saturated graph. -/
+/-- **Saturated graphs bound the saturation number.** Let $H$ be a simple graph, $n$ a natural
+number, and $\operatorname{sat}(n, H)$ the saturation number of $H$ on $n$ vertices. Every
+$H$-saturated simple graph on the vertex set $\{0, 1, \dots, n - 1\}$ has at least
+$\operatorname{sat}(n, H)$ edges. -/
 theorem sat_le_card_of_isSaturated (n : ℕ) (G : SimpleGraph (Fin n))
     [DecidableRel G.Adj] (h : H.IsSaturated G) :
     H.sat n ≤ G.edgeFinset.card := by

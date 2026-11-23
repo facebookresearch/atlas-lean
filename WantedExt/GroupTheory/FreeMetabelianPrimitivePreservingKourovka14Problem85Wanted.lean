@@ -34,27 +34,41 @@ basis element `xᵢ` under an automorphism of `M_n`. Stated for every rank `n` (
 ranks at most `2` were known).
 -/
 
-/-- The free metabelian group `M_n = F_n / F_n''` of rank `n`. -/
+/-- **Free metabelian group $M_n$ (Kourovka 14.85).** For a natural number $n$, the free metabelian
+group $M_n = F_n / F_n''$ of rank $n$: the quotient of the free group $F_n$ on $n$ generators by
+its second derived subgroup $F_n'' = [[F_n, F_n], [F_n, F_n]]$. -/
 abbrev FreeMetabelianGroup (n : ℕ) : Type :=
   FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
 
-/-- `y ∈ M_n` is primitive: it belongs to a free basis of `M_n`, that is, `y = σ(xᵢ)` for an
-automorphism `σ` of `M_n` and a basis element `xᵢ` (the image of a free generator of `F_n`). -/
+/-- **Primitive elements of the free metabelian group.** Let $F_n$ be the free group on $n$
+generators, let $F_n''$ be its second derived subgroup, and let $M_n = F_n / F_n''$ be the free
+metabelian group of rank $n$. Let $x_0, \dots, x_{n-1}$ be the images in $M_n$ of the free
+generators of $F_n$. An element $y$ of $M_n$ is primitive when $y = \sigma(x_i)$ for some
+automorphism $\sigma$ of $M_n$ and some index $i$; that is, $y$ is the image of a standard basis
+element under an automorphism of $M_n$. -/
 def IsPrimitive {n : ℕ} (y : FreeMetabelianGroup n) : Prop :=
   ∃ (σ : FreeMetabelianGroup n ≃* FreeMetabelianGroup n) (i : Fin n),
     σ (QuotientGroup.mk (FreeGroup.of i)) = y
 
-/-- Kourovka 14.85 (E. I. Timoshenko, V. Shpilrain): for every rank `n`, an endomorphism of the
-free metabelian group `M_n` that maps every primitive element to a primitive element is an
-automorphism. -/
+/-- **Primitive-preserving endomorphism problem for free metabelian groups (Kourovka 14.85).**
+The statement, posed by E. I. Timoshenko and V. Shpilrain, that for every natural number $n$,
+every endomorphism $\varphi$ of the free metabelian group $M_n$ of rank $n$ that maps every
+primitive element of $M_n$ to a primitive element is bijective, hence an automorphism. -/
 def primitivePreservingEndomorphismIsAutomorphism : Prop :=
   ∀ (n : ℕ) (φ : FreeMetabelianGroup n →* FreeMetabelianGroup n),
     (∀ y, IsPrimitive y → IsPrimitive (φ y)) → Function.Bijective φ
 
 /--
-Resolved true: Ionin and Semidetnov (Section 1, Answer 1.2) prove that every primitive-preserving
-endomorphism of the free metabelian group `M_n` is an automorphism; the Kourovka Notebook (21st
-issue) answers 14.85 "Yes, it is". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
+**Primitive-preserving endomorphisms of free metabelian groups are automorphisms.** For every
+natural number $n$, every endomorphism $\varphi$ of the free metabelian group $M_n$ of rank $n$
+that maps every primitive element of $M_n$ to a primitive element is bijective, hence an
+automorphism of $M_n$. This answers Kourovka Problem 14.85 positively.
+
+Ionin and Semidetnov (Section 1, Answer 1.2) prove that every primitive-preserving endomorphism of
+the free metabelian group $M_n$ is an automorphism; the Kourovka Notebook (21st issue) answers
+Problem 14.85 "Yes, it is".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
 in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.85 (E. I.
 Timoshenko, V. Shpilrain); resolution: V. Ionin and A. Semidetnov, On some more problems from the
 Kourovka Notebook, preprint, arXiv:2608.29219 (2026), Section 1, Answer 1.2: every

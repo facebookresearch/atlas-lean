@@ -40,7 +40,10 @@ namespace Cslib.Algorithms.Lean.TimeM
 
 variable {R : Type u} [CommRing R]
 
-/-- Materialize the ordered even and odd subsequences, charging their reads and writes. -/
+/-- **Even–odd split for the FFT.** For a commutative ring $R$, a natural number $m$ and a vector
+$x = (x_0, \dots, x_{2m-1}) \in R^{2m}$, the split returns the pair of vectors
+$(x_0, x_2, \dots, x_{2m-2})$ and $(x_1, x_3, \dots, x_{2m-1})$ in $R^m$ of the entries of $x$ at
+even and at odd indices, in order, at a time cost of $4m$ (the charged reads and writes). -/
 def fftSplit {m : Nat} (xs : Vector R (m * 2)) :
     TimeM Nat (Vector R m × Vector R m) :=
   let even := Vector.ofFn fun i : Fin m =>
@@ -49,7 +52,10 @@ def fftSplit {m : Nat} (xs : Vector R (m * 2)) :
     xs[2 * i.val + 1]'(by have hi := i.isLt; omega)
   ⟨(even, odd), 4 * m⟩
 
-/-- Write one butterfly pair and advance the stored twiddle. -/
+/-- **One FFT butterfly.** For a commutative ring $R$, an element $\omega \in R$, vectors
+$q, r \in R^m$, a state $(w, y)$ with $w \in R$ and $y \in R^{2m}$, and an index $k < m$, the
+butterfly at $k$ returns the state $(w \omega, y')$, where $y'$ is obtained from $y$ by setting
+entry $k$ to $q_k + w r_k$ and entry $k + m$ to $q_k - w r_k$, at a time cost of $8$. -/
 def fftButterfly {m : Nat} (omega : R) (q r : Vector R m)
     (state : R × Vector R (m * 2)) (k : Fin m) :
     TimeM Nat (R × Vector R (m * 2)) :=
@@ -61,14 +67,25 @@ def fftButterfly {m : Nat} (omega : R) (q r : Vector R m)
   let both := low.set (k.val + m) (a - t) (by have hk := k.isLt; omega)
   ⟨(w * omega, both), 8⟩
 
-/-- Apply each butterfly once in increasing index order. -/
+/-- **FFT butterfly pass.** For a commutative ring $R$, an element $\omega \in R$ and vectors
+$q, r \in R^m$ and $y \in R^{2m}$, the butterfly pass starts from the state $(1, y)$, applies the
+FFT butterfly with $\omega$, $q$ and $r$ at the indices $k = 0, 1, \dots, m - 1$ in increasing
+order, and returns the final state; its time cost is the sum of the costs of these $m$
+butterflies. -/
 def fftButterflies {m : Nat} (omega : R) (q r : Vector R m)
     (out : Vector R (m * 2)) : TimeM Nat (R × Vector R (m * 2)) :=
   (List.finRange m).foldlM (fftButterfly omega q r) (1, out)
 
-/-- Radix-two FFT on `2^d` actual array entries, with supplied sample root.
-The two transformed subsequences are stored once and combined with a running
-twiddle. Root assumptions are needed for correctness, not for execution. -/
+/-- **Radix-two fast Fourier transform.** For a commutative ring $R$, a natural number $d$, an
+element $\omega \in R$ and a vector $x \in R^{2^d}$, the FFT of $x$ with root $\omega$ is defined
+by recursion on $d$. For $d = 0$ it returns $x$ at cost $0$. For $d + 1$ it splits $x$ into its
+even- and odd-indexed subvectors $e, o \in R^{2^d}$ (cost $4 \cdot 2^d$), computes $\omega^2$
+(cost $1$), computes the FFTs $q$ of $e$ and $r$ of $o$ with root $\omega^2$, writes a zero vector
+$y \in R^{2^{d+1}}$ (cost $2^{d+1}$), and returns the vector part of the result of the butterfly
+pass with $\omega$, $q$ and $r$ on $y$. Its time cost is the sum of the costs of all these steps.
+
+The two transformed halves are stored once and combined with a running twiddle factor. No
+assumption on $\omega$ is needed to run the algorithm; one is needed only for its correctness. -/
 def fft : (d : Nat) → R → Vector R (2 ^ d) → TimeM Nat (Vector R (2 ^ d))
   | 0, _, xs => pure xs
   | d + 1, omega, xs => do
