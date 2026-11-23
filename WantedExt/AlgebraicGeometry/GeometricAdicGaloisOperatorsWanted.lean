@@ -22,8 +22,9 @@ public import Mathlib.LinearAlgebra.Basis.Defs
 
 For a proper smooth scheme `X` over a field `k`, a separable closure `K` of `k` and a prime `ℓ`
 invertible in `k`, the absolute Galois group `Aut_k(K)`, with its Krull topology, acts
-continuously on the finite-dimensional `ℚ_ℓ`-vector space `H^n(X_K, ℚ_ℓ)`: in any basis, the
-matrix coefficients of the action are continuous.
+continuously on the finite-dimensional `ℚ_ℓ`-vector space `H^n(X_K, ℚ_ℓ)`: the operators
+`galoisCohomologyOperator` are `ℚ_ℓ`-linear and form a representation of `Aut_k(K)`, and in any
+basis its matrix coefficients are continuous.
 
 Here `H^n(X_K, ℚ_ℓ)` is the cohomology of the pro-étale sheaf `C(-, ℚ_ℓ)`
 (`MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators.AdicCohomology`), which computes
@@ -40,16 +41,19 @@ open MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
 
 universe u
 
-/-- The action of the absolute Galois group on `ℓ`-adic cohomology is continuous: every matrix
-coefficient `σ ↦ (b.repr (σ • v)) i`, for a basis `b` of `H^n(X_K, ℚ_ℓ)`, is continuous for the
+/-- The absolute Galois group acts continuously on `ℓ`-adic cohomology: the operators
+`galoisCohomologyOperator` form a `ℚ_ℓ`-linear representation `ρ` of `Aut_k(K)`, and every matrix
+coefficient `σ ↦ (b.repr (ρ σ v)) i`, for a basis `b` of `H^n(X_K, ℚ_ℓ)`, is continuous for the
 Krull topology. -/
 public theorem_wanted galoisCohomologyOperator_coordinate_continuous
     (ell : ℕ) [Fact ell.Prime] (k K : Type u) [Field k] [Field K]
     [Algebra k K] [IsSepClosure k K]
     (X : Over (Spec (.of k))) [IsProper X.hom] [Smooth X.hom]
     (ellInvertible : (ell : k) ≠ 0) (n r : ℕ)
-    (b : Module.Basis (Fin r) ℚ_[ell] (AdicCohomology ell (geometricFibre X K) n))
-    (v : AdicCohomology ell (geometricFibre X K) n) (i : Fin r) :
-    Continuous (fun σ : K ≃ₐ[k] K ↦ b.repr (galoisCohomologyOperator X K ell σ n v) i)
+    (b : Module.Basis (Fin r) ℚ_[ell] (AdicCohomology ell (geometricFibre X K) n)) :
+    ∃ ρ : (K ≃ₐ[k] K) →* Module.End ℚ_[ell] (AdicCohomology ell (geometricFibre X K) n),
+      (∀ σ v, ρ σ v = galoisCohomologyOperator X K ell σ n v) ∧
+        ∀ (v : AdicCohomology ell (geometricFibre X K) n) (i : Fin r),
+          Continuous (fun σ : K ≃ₐ[k] K ↦ b.repr (ρ σ v) i)
 
 end WantedExt.AlgebraicGeometry.GeometricAdicGaloisOperators
