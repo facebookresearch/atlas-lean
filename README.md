@@ -47,6 +47,12 @@ scripts/check.sh
 The existing `Atlas/` developments and archived `v1/` release are not part of
 this root build. They retain their own build configuration.
 
+## Classical algebraic K-theory
+
+[Classical algebraic K-theory](MathlibExt/KTheory/README.md) presents exact and
+Waldhausen constructions, Q/S and independent-plus comparisons, Matsumoto's
+theorem, finite-field K₂, and field K₀/K₁ coefficient maps with public examples.
+
 ## Dependency explorer
 
 The [blueprint](blueprint/README.md) presents the v2 libraries as a
