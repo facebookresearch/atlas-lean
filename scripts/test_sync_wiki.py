@@ -4494,6 +4494,49 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["wiki_changes"]), (1, "none"))
 
 
+    def test_a_stale_copy_of_an_outer_part_is_found_past_a_current_inner_one(self) -> None:
+        # The inner part's copy on the outer part's page is current; the outer part's copy on the folder's page misses
+        # an entry the outer part lists: the sync would refresh that copy, so the page under them is not in step.
+        roadmap = self.root / "blueprint/roadmap"
+        self.write("blueprint/roadmap/Algebra/nested/README.md",
+                   "# Nested\n\nNested.\n\n## [Part 1](part-01/README.md)\n\n- [Cosets](part-01/cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/nested/part-01/README.md",
+                   "# Nested, part 1\n\n- [Cosets](cosets/README.md)\n- [Units](units/README.md)\n\n"
+                   "## [Part 2](part-02/README.md)\n\n- [Fields](part-02/fields/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/nested/part-01/part-02/README.md",
+                   "# Nested, part 2\n\n- [Fields](fields/README.md)\n")
+        page = self.write("blueprint/roadmap/Algebra/nested/part-01/part-02/fields/field.md", "# Field\n\nA field.\n")
+        self.assertEqual(sync.stale_copies(page), ["Algebra/nested/part-01/README.md"])
+        outer = roadmap / "Algebra/nested/README.md"
+        outer.write_text(outer.read_text() + "- [Units](part-01/units/README.md)\n- [Part 2](part-01/part-02/README.md)\n")
+        text, _ = sync.read_page(outer)
+        refreshed = sync.with_part_lists(outer, text, {"part-01/README.md"})[0]
+        outer.write_text(refreshed)
+        self.assertEqual(sync.stale_copies(page), [])
+
+
+    def test_a_line_that_is_no_json_object_is_a_row_autoform_cannot_read(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        for line in ("not json", "[1, 2]"):
+            kept = links.read_text()
+            links.write_text(kept + line + "\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"]), (1, False), line)
+            number = len(kept.splitlines()) + 1
+            self.assertEqual(report["errors"], [f"blueprint/links/Algebra.jsonl:{number} is a line that is no JSON "
+                                                f"object: {line}: make it a row, or remove it"])
+            links.write_text(kept)
+
+    def test_a_refusal_prints_both_verdicts(self) -> None:
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (self.root / "MathlibExt/Linked").symlink_to(elsewhere)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual(status, 1)
+        self.assertIn("In step: no\nWiki changes since the base: none\n", out)
+
+
 
 INDEX_DIFFERS = sync.INDEX_DIFFERS
 

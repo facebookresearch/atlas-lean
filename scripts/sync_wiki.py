@@ -3024,9 +3024,35 @@ def lean_view(index, targets: list, unindexed: list[str], changed: frozenset[str
 
 def numbered_rows() -> list[tuple[Path, int, dict]]:
     """Every annotation of the links files (see LINKS), with its file and line, its lines split as Autoform splits
-    them (see records)."""
-    return [(path, number, json.loads(line)) for path in sorted(LINKS.glob("*.jsonl"))
+    them (see records); a line that is no JSON object is left to malformed_rows."""
+    found = []
+    for path, number, line in link_lines():
+        row = json_object(line)
+        if row is not None:
+            found.append((path, number, row))
+    return found
+
+
+def link_lines() -> list[tuple[Path, int, str]]:
+    """Every nonblank line of the links files, with its file and line (see numbered_rows)."""
+    return [(path, number, line) for path in sorted(LINKS.glob("*.jsonl"))
             for number, line in enumerate(records(path.read_text(encoding="utf-8"))[0], 1) if line.strip()]
+
+
+def json_object(line: str) -> dict | None:
+    """The JSON object *line* holds, or None when it holds none."""
+    try:
+        row = json.loads(line)
+    except ValueError:
+        return None
+    return row if isinstance(row, dict) else None
+
+
+def malformed_rows() -> list[str]:
+    """The lines of the links files that hold no JSON object, which neither Autoform nor the sync can read, each named
+    by its file, line and text."""
+    return [location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number) + " is a line that is no JSON object: "
+            + line.strip()[:120] for path, number, line in link_lines() if json_object(line) is None]
 
 
 def unreadable(annotation: dict) -> str | None:
@@ -3352,12 +3378,29 @@ def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path
             what = f"the page of {key}" if folder == page else "a folder the changes add"
             return [f"{folder.relative_to(wiki.ROADMAP)}, {what}, is listed on no folder page: list it on "
                     f"{readme.relative_to(wiki.ROADMAP)}"], stale
-        holder = folder.parent
-        if PART.fullmatch(holder.name) and not copied(holder.parent / "README.md", holder.name, entry):
-            stale.append(readme.relative_to(wiki.ROADMAP).as_posix())
-        folder = holder
+        folder = folder.parent
         if folder == wiki.ROADMAP or not new:
-            return [], stale
+            return [], stale_copies(page)
+
+
+def stale_copies(page: Path) -> list[str]:
+    """The pages of the parts on the way up from *page* whose copy on their parent's page the sync would refresh (see
+    with_part_lists), by their path in the roadmap: each, however deep, past the folders a pull request adds as well,
+    since the sync refreshes each it is given (see refresh_part_lists)."""
+    found = []
+    for folder in page.parents:
+        if folder == wiki.ROADMAP or not folder.is_relative_to(wiki.ROADMAP):
+            break
+        parent = folder.parent / "README.md"
+        if PART.fullmatch(folder.name) and parent.is_file():
+            text, _ = read_page(parent)
+            refreshed, unrefreshed, _ = with_part_lists(parent, text, {f"{folder.name}/README.md"})
+            # A copy the sync cannot refresh is stale when it misses the entry on the way to the page.
+            child = page.relative_to(folder).parts[0]
+            entry = child if folder / child == page else f"{child}/README.md"
+            if refreshed != text or unrefreshed and not copied(parent, folder.name, entry):
+                found.append((folder / "README.md").relative_to(wiki.ROADMAP).as_posix())
+    return found
 
 
 def copied(readme: Path, part: str, entry: str) -> bool:
@@ -3572,9 +3615,12 @@ def run_scoped(argv: list[str]) -> int:
         disagree = {**unusual, **disagree}
         graph = sorted(set(graph) | {path for path in disagree if graph_file(path)})
     unsettled = {path: what for path, what in disagree.items() if lean_source(path)}
-    if linked or unsettled:
+    # A line of a links file that is no JSON object stops the run too: no row can be read from it.
+    malformed = [] if linked else malformed_rows()
+    if linked or unsettled or malformed:
         errors = [f"{path} is a link: the sync reads and writes through none; put what it links to in its place"
-                  for path in linked] + [f"{path}: {what}" for path, what in unsettled.items()]
+                  for path in linked] + [f"{path}: {what}" for path, what in unsettled.items()] + [
+                  f"{row}: make it a row, or remove it" for row in malformed]
         # The wiki changes from Git's records alone: the working tree's; what the index changes from the base and
         # was staged by hand, changed from HEAD; and any link or submodule the index changes from the base.
         try:
@@ -3585,6 +3631,8 @@ def run_scoped(argv: list[str]) -> int:
             return 2
         if options.check:
             print("In step: no")
+            print("Wiki changes since the base: " + ("not only what the scoped sync writes for the changes' own "
+                                                     "declarations" if graph or staged_graph else "none"))
         for row in errors:
             print(f"error: {row}", file=sys.stderr)
         if not options.check:

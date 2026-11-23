@@ -405,10 +405,12 @@ held marker they leave unusable, are errors, and the run then writes nothing:
 relink the row to the declaration's successor and keep its article id, or
 remove the link and keep the page as a planned page ([Writing
 pages](#writing-pages)). So is a row the build refuses ([Mathlib-credited
-pages](#mathlib-credited-pages)) that the changes add, as is a symbolic link in
-the wiki or at `scripts/wiki-sync.json`, since a write through it could leave
-them; a refused row the base already had stops a run that has something to
-write. A row of one of its declarations whose page is missing, or reached
+pages](#mathlib-credited-pages)) that the changes add, as is a symbolic link
+among the files the run reads (the wiki, the Lean libraries, the baseline and
+the other graph files, the site configuration), since a read or write through
+it could lead anywhere, a line of a links file that is no JSON object, and Lean
+staged otherwise than the working tree has it; a refused row the base already
+had stops a run that has something to write. A row of one of its declarations whose page is missing, or reached
 through a link, is an error too, as is such a page, or a folder the pull
 request adds on its way up to the roadmap's own page, that its folder page does
 not list, or whose folder page or annotation row is missing. A second run
