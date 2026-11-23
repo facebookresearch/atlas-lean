@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
+public import MathlibExt.Analysis.Series.BaseAdicMultiples
 public import MathlibExt.Analysis.SpecialFunctions.LambertSeries
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
@@ -106,20 +107,6 @@ public theorem_wanted tsum_baseAdic_parametric_multisection (B : ℕ) (hB : 2 �
     ∑' x : ℕ × ℕ, (q ^ x.1 * ∑ i : Fin (B - 1), c ((B * (x.2 + 1) - (i + 1)) * B ^ x.1)
         - q ^ x.1 * (q - 1) * c (B * (x.2 + 1) * B ^ x.1))
       = ∑' m : ℕ, c (m + 1)
-
-/-- **Regrouping the multiples of B by their B-adic factorization.** Let $B \ge 2$ be a natural
-number and let $(c_m)_{m \ge 1}$ be a sequence of complex numbers such that the family
-$(c_{Bm})_{m \ge 1}$ is summable. Then
-$$\sum_{j \ge 1,\, n \ge 1} \sum_{k=1}^{B-1} c_{(Bn-k) B^j} = \sum_{m \ge 1} c_{Bm},$$
-where the outer sum on the left is an unconditional sum over the pairs $(j, n)$.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 7, deduced identity in sum form (`jis-2024-24.5.5-prop-7`). -/
-public theorem_wanted tsum_baseAdic_multiples_regroup (B : ℕ) (hB : 2 ≤ B) (c : ℕ → ℂ)
-    (hc : Summable fun m : ℕ => c (B * (m + 1))) :
-    ∑' x : ℕ × ℕ, ∑ i : Fin (B - 1), c ((B * (x.2 + 1) - (i + 1)) * B ^ (x.1 + 1))
-      = ∑' m : ℕ, c (B * (m + 1))
 
 /-- **Weighted base-B multisection of a series.** Let $B \ge 2$ be a natural number, let
 $\varphi, \chi : \mathbb{N} \to \mathbb{C}$ be weights and let $(c_m)_{m \ge 1}$ be a sequence
