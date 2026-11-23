@@ -14,13 +14,42 @@ import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
 
 /-!
-# Tests for reciprocal log-balancedness
+# Tests for log-concavity and reciprocal log-balancedness
 
-The sequence `z n = n + 1` satisfies the recurrence with coefficients `3 / 2` and `1 / 2`.
-Its initial block starts at zero, and the two inequalities propagate to every positive index.
+The arithmetic progression `z n = n + 1` illustrates both propagation results.
+A geometric progression realizes equality in log-concavity at the minimum order.
 -/
 
 namespace MetaMathlibExt
+
+-- Both lags contribute to the order-three recurrence for the arithmetic progression.
+example (n : ℕ) (hn : 1 ≤ n) :
+    ((n - 1 : ℕ) + 1 : ℝ) * (↑(n + 1) + 1 : ℝ) ≤ (n + 1 : ℝ) ^ 2 := by
+  let c (j : ℕ) : ℝ := if j = 1 then 7 / 4 else if j = 2 then 1 / 2 else 1 / 4
+  apply logConcave_of_linearRecurrence_of_initial_logConcave 3 (by decide) c _
+    (fun i => (i : ℝ) + 1) (by intro i; positivity) _ _ n hn
+  · intro j hj hj'
+    interval_cases j <;> norm_num [c]
+  · intro i hi
+    rw [show Finset.Icc 2 3 = {2, 3} by decide]
+    norm_num [c, Nat.cast_sub (show 1 ≤ i by omega), Nat.cast_sub (show 2 ≤ i by omega),
+      Nat.cast_sub hi]
+    linarith
+  · intro i hi hk
+    interval_cases i <;> norm_num
+
+-- At the minimum order, a zero lag coefficient gives a geometric progression.
+example (a : ℝ) (ha : 0 < a) (n : ℕ) (hn : 1 ≤ n) :
+    a ^ (n - 1) * a ^ (n + 1) ≤ (a ^ n) ^ 2 := by
+  apply logConcave_of_linearRecurrence_of_initial_logConcave 2 (by decide)
+    (fun j => if j = 1 then a else 0) _ (fun i => a ^ i) (pow_pos ha) _ _ n hn
+  · intro j hj _
+    simp [show j ≠ 1 by omega]
+  · intro i hi
+    simp [← pow_succ', Nat.sub_add_cancel (Nat.le_of_succ_le hi)]
+  · intro i hi hk
+    interval_cases i
+    simp
 
 example (n : ℕ) (hn : 1 ≤ n) :
     (1 / (n + 1 : ℝ)) ^ 2 ≤ (1 / ((n - 1 : ℕ) + 1 : ℝ)) * (1 / (↑(n + 1) + 1 : ℝ)) ∧

@@ -9,11 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.ModEq
+public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.PolygonalNumber
+import Mathlib.Algebra.Polynomial.Degree.SmallDegree
 import Mathlib.Algebra.Ring.Int.Parity
+import Mathlib.Data.Nat.Choose.Cast
+import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.Tactic.Lift
 import Mathlib.Tactic.LinearCombination
 
-/-! # Square roots modulo powers of two -/
+/-! # Congruences for sums of practical and polygonal numbers -/
 
 namespace MetaMathlibExt
 
@@ -49,5 +54,42 @@ public theorem exists_sq_modEq_eight_mul_add_one (m n : ℕ) (hm : 0 < m) (hn : 
   · push_cast
     rw [show k.succ + 2 = k + 3 from rfl, pow_add]
     linear_combination hq
+
+open Polynomial in
+/-- **Sums of two polygonal numbers modulo an odd prime.** For a natural number $s > 3$ and a
+natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For
+every odd prime $p$ and every natural number $n > 0$ there are natural numbers $x, y > 0$ with
+$P_s(x) + P_s(y) \equiv n \pmod{p}$.
+
+Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
+Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 6
+(arXiv Lemma 4.1; `jis-2024-24.5.1-lem-6`). -/
+public theorem exists_polygonal_add_polygonal_modEq_prime (p n s : ℕ) (hp : p.Prime)
+    (hp2 : p ≠ 2) (hn : 0 < n) (hs : 3 < s) :
+    ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ Nat.polygonalNumber s x + Nat.polygonalNumber s y ≡ n [MOD p] := by
+  have : Fact p.Prime := ⟨hp⟩
+  have : NeZero (2 : ZMod p) :=
+    NeZero.of_not_dvd (R := ZMod p) ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).not.mpr hp2)
+  let a : ZMod p := (s - 2) / 2
+  have hP (k : ℕ) : (Nat.polygonalNumber s k : ZMod p) =
+      a * k ^ 2 + (1 - a) * k := by
+    rw [Nat.polygonalNumber, Nat.cast_add, Nat.cast_mul, Nat.cast_sub (by omega : 2 ≤ s),
+      Nat.cast_two, Nat.cast_choose_two]
+    dsimp [a]
+    ring
+  by_cases ha : a = 0
+  · -- The polygonal polynomial reduces to the identity.
+    refine ⟨n, p, hn, hp.pos, (ZMod.natCast_eq_natCast_iff ..).mp ?_⟩
+    simp [Nat.cast_add, hP, ha]
+  · -- Two quadratic images in a field of odd order must intersect after reflection.
+    let f (c : ZMod p) := C a * X ^ 2 + C (1 - a) * X + C c
+    have hdeg (c : ZMod p) : (f c).degree = 2 := degree_quadratic ha
+    obtain ⟨x, y, hxy⟩ := FiniteField.exists_root_sum_quadratic (hdeg 0) (hdeg (-n))
+      (by rw [ZMod.card]; exact hp.eq_two_or_odd.resolve_left hp2)
+    refine ⟨x.val + p, y.val + p, Nat.add_pos_right _ hp.pos, Nat.add_pos_right _ hp.pos,
+      (ZMod.natCast_eq_natCast_iff ..).mp ?_⟩
+    simp only [Nat.cast_add, hP, ZMod.natCast_zmod_val, ZMod.natCast_self, add_zero]
+    rw [← sub_eq_zero]
+    simpa [f, sub_eq_add_neg, ← add_assoc] using hxy
 
 end MetaMathlibExt
