@@ -23,12 +23,15 @@ are fixed in MathlibExt. These requests construct their source providers
 and prove the normalized geometric conclusions, including the native
 diffeomorphism of every actual connected component.
 
-The reference atlas of `M` is only a smooth atlas; the complex structures
-vary. Integrals use the chart integral of `CoordinateFormIntegrals` for that
-atlas, and the requests assume its laws `[IntegrationTheory …]`. These hold
-for every oriented atlas; `ManifoldDifferentialFormsWanted` requests them for
-an atlas of holomorphic charts, such as the charts of one of the hyperkähler
-complex structures.
+The BBF, period and Torelli requests are stated for a reference atlas of `M`
+with holomorphic transitions (`[IsManifold 𝓘(ℂ, Ambient n) ∞ M]`), for
+instance the charts of one of the hyperkähler complex structures; every
+compact hyperkähler manifold has such an atlas, compatible with its smooth
+structure. This is a specialization, used only to orient the chart integrals
+coherently: an arbitrary smooth reference atlas would not do, since a reflected
+chart can cancel the partition integral while keeping `IntegrationTheory`. The
+complex structures in the requests still range over all hyperkähler
+structures on the underlying smooth manifold.
 
 Ordinary de Rham and coefficient targets below are specific native
 source-integration adapters. They do not re-request the already completed
@@ -93,7 +96,7 @@ set_option maxHeartbeats 1500000 in
 def_wanted bbf_form (n : ℕ) (M : Type) [TopologicalSpace M]
     [CompactSpace M] [T2Space M] [SecondCountableTopology M] [Nonempty M]
     [ConnectedSpace M] [SimplyConnectedSpace M] [ChartedSpace (Ambient n) M]
-    [IsManifold 𝓘(ℝ, Ambient n) ∞ M]
+    [IsManifold 𝓘(ℝ, Ambient n) ∞ M] [IsManifold 𝓘(ℂ, Ambient n) ∞ M]
     [ExteriorTheory ℝ (Ambient n) M] [WedgeTheory (2 * n) M]
     (C : RealCoordinateMap (2 * n)) (A : IntegrationAtlas (2 * n) M)
     [IntegrationTheory (2 * n) M C A] [LocalExteriorTheory n M] [IntegerCoefficientTheory M]
@@ -103,7 +106,7 @@ def_wanted bbf_form (n : ℕ) (M : Type) [TopologicalSpace M]
 def_wanted marked_period_point (n : ℕ) (M : Type) [TopologicalSpace M]
     [CompactSpace M] [T2Space M] [SecondCountableTopology M] [Nonempty M]
     [ConnectedSpace M] [SimplyConnectedSpace M] [ChartedSpace (Ambient n) M]
-    [IsManifold 𝓘(ℝ, Ambient n) ∞ M]
+    [IsManifold 𝓘(ℝ, Ambient n) ∞ M] [IsManifold 𝓘(ℂ, Ambient n) ∞ M]
     [ExteriorTheory ℝ (Ambient n) M] [WedgeTheory (2 * n) M]
     (C : RealCoordinateMap (2 * n)) (A : IntegrationAtlas (2 * n) M)
     [IntegrationTheory (2 * n) M C A] [LocalExteriorTheory n M] [IntegerCoefficientTheory M]
@@ -118,7 +121,7 @@ def_wanted marked_period_point (n : ℕ) (M : Type) [TopologicalSpace M]
 def_wanted marked_period_map (n : ℕ) (M : Type) [TopologicalSpace M]
     [CompactSpace M] [T2Space M] [SecondCountableTopology M] [Nonempty M]
     [ConnectedSpace M] [SimplyConnectedSpace M] [ChartedSpace (Ambient n) M]
-    [IsManifold 𝓘(ℝ, Ambient n) ∞ M]
+    [IsManifold 𝓘(ℝ, Ambient n) ∞ M] [IsManifold 𝓘(ℂ, Ambient n) ∞ M]
     [ExteriorTheory ℝ (Ambient n) M] [WedgeTheory (2 * n) M]
     (C : RealCoordinateMap (2 * n)) (A : IntegrationAtlas (2 * n) M)
     [IntegrationTheory (2 * n) M C A] [LocalExteriorTheory n M] [IntegerCoefficientTheory M]
@@ -132,7 +135,7 @@ def_wanted marked_period_map (n : ℕ) (M : Type) [TopologicalSpace M]
 def_wanted quadric_period_atlas (n : ℕ) (M : Type) [TopologicalSpace M]
     [CompactSpace M] [T2Space M] [SecondCountableTopology M] [Nonempty M]
     [ConnectedSpace M] [SimplyConnectedSpace M] [ChartedSpace (Ambient n) M]
-    [IsManifold 𝓘(ℝ, Ambient n) ∞ M]
+    [IsManifold 𝓘(ℝ, Ambient n) ∞ M] [IsManifold 𝓘(ℂ, Ambient n) ∞ M]
     [ExteriorTheory ℝ (Ambient n) M] [WedgeTheory (2 * n) M]
     (C : RealCoordinateMap (2 * n)) (A : IntegrationAtlas (2 * n) M)
     [IntegrationTheory (2 * n) M C A] [LocalExteriorTheory n M] [IntegerCoefficientTheory M]
@@ -146,7 +149,7 @@ def_wanted quadric_period_atlas (n : ℕ) (M : Type) [TopologicalSpace M]
 def_wanted birational_teich_atlas (n : ℕ) (M : Type) [TopologicalSpace M]
     [CompactSpace M] [T2Space M] [SecondCountableTopology M] [Nonempty M]
     [ConnectedSpace M] [SimplyConnectedSpace M] [ChartedSpace (Ambient n) M]
-    [IsManifold 𝓘(ℝ, Ambient n) ∞ M]
+    [IsManifold 𝓘(ℝ, Ambient n) ∞ M] [IsManifold 𝓘(ℂ, Ambient n) ∞ M]
     [ExteriorTheory ℝ (Ambient n) M] [WedgeTheory (2 * n) M]
     (C : RealCoordinateMap (2 * n)) (A : IntegrationAtlas (2 * n) M)
     [IntegrationTheory (2 * n) M C A] [LocalExteriorTheory n M] [IntegerCoefficientTheory M]
@@ -160,7 +163,7 @@ def_wanted birational_teich_atlas (n : ℕ) (M : Type) [TopologicalSpace M]
 def_wanted birational_torelli (n : ℕ) (M : Type) [TopologicalSpace M]
     [CompactSpace M] [T2Space M] [SecondCountableTopology M] [Nonempty M]
     [ConnectedSpace M] [SimplyConnectedSpace M] [ChartedSpace (Ambient n) M]
-    [IsManifold 𝓘(ℝ, Ambient n) ∞ M]
+    [IsManifold 𝓘(ℝ, Ambient n) ∞ M] [IsManifold 𝓘(ℂ, Ambient n) ∞ M]
     [ExteriorTheory ℝ (Ambient n) M] [WedgeTheory (2 * n) M]
     (C : RealCoordinateMap (2 * n)) (A : IntegrationAtlas (2 * n) M)
     [IntegrationTheory (2 * n) M C A] [LocalExteriorTheory n M] [IntegerCoefficientTheory M]
