@@ -25,4 +25,25 @@ example : (pcAdjacency (lawOracle xorNet.joint)).skeleton ≠ xorNet.skeleton :=
 /-- The XOR law is Markov to its graph. -/
 example : xorNet.MarkovOracle (lawOracle xorNet.joint) := xorNet_markovOracle
 
+
+/-- An oracle that declares every query independent. -/
+private def alwaysIndep : CIOracle 3 where
+  Indep _ _ _ := True
+  decIndep _ _ _ := isTrue trivial
+
+/-- An oracle that declares every query dependent. -/
+private def neverIndep : CIOracle 3 where
+  Indep _ _ _ := False
+  decIndep _ _ _ := isFalse id
+
+/-- Direct computation: against the always-independent oracle the phase deletes
+every edge already in round 0, recording the empty separator. -/
+example : ∀ i j : Fin 3, ¬ (pcAdjacency alwaysIndep).skeleton.Adj i j := by decide
+
+example : (pcAdjacency alwaysIndep).sepset 0 2 = ∅ := by decide
+
+/-- Direct computation: against the never-independent oracle the phase keeps the
+complete skeleton. -/
+example : ∀ i j : Fin 3, (pcAdjacency neverIndep).skeleton.Adj i j ↔ i ≠ j := by decide
+
 end Cslib.MachineLearning.GraphicalModels.PCSkeleton
