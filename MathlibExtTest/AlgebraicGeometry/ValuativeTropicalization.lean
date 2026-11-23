@@ -29,3 +29,21 @@ example : scale (fun _ : Fin 1 => two)
 example : IsEmpty (Point (⊤ : Ideal (CoordinateRing ℚ 1)) ℚ) := ⟨fun p => by
   have h : p.hom (1 : CoordinateRing ℚ 1) = 0 := p.annihilates (by trivial)
   simp at h⟩
+
+section IntegralEmbedding
+
+variable {K : Type} [Field K] [Valued K NNReal]
+
+/-- The integral translation used by initial degenerations scales the monomial `x` by `t⁻¹`. -/
+example (t : Fin 1 → Kˣ) :
+    integralEmbedding t (AddMonoidAlgebra.single (coordinateExponent (0 : Fin 1)) 1) =
+      AddMonoidAlgebra.single (coordinateExponent (0 : Fin 1)) (((t 0)⁻¹ : Kˣ) : K) := by
+  simp [integralEmbedding, scale, scaledMonomials, characterEval, coordinateExponent]
+
+/-- and the monomial `x⁻¹` by `t`, so a reversed sign convention is detected. -/
+example (t : Fin 1 → Kˣ) :
+    integralEmbedding t (AddMonoidAlgebra.single (-(coordinateExponent (0 : Fin 1))) 1) =
+      AddMonoidAlgebra.single (-(coordinateExponent (0 : Fin 1))) ((t 0 : Kˣ) : K) := by
+  simp [integralEmbedding, scale, scaledMonomials, characterEval, coordinateExponent]
+
+end IntegralEmbedding
