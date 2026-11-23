@@ -18,6 +18,7 @@ public import Mathlib.RingTheory.DividedPowers.Basic
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.Algebra.DeepPowerSumCongruences
 
 /-!
 # Elementary symmetric functions and deep power-sum congruences

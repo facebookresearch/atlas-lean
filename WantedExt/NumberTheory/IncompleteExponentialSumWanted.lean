@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import MathlibExt.NumberTheory.IncompleteExponentialSum
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)

@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 public import Mathlib.RingTheory.Norm.Basic
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.Data.Nat.Nth
+public import MathlibExt.NumberTheory.Schatunowsky
 
 /-!
 # Bertrand postulates and Schatunowsky-type theorems in ℕ and Gaussian and Eisenstein integers
