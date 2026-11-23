@@ -11217,6 +11217,7 @@
   "MathlibExt/MeasureTheory/StrictLiminfGapFiniteSetCountable": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Strict liminf gaps of real functions"},
   "MathlibExt/ModelTheory/GroupLanguage": {"to": "Logic/model-theory", "title": "First-order language of groups"},
   "MathlibExt/ModelTheory/LabelledStructureCount": {"to": "Logic/model-theory", "title": "Zero-one law for first-order logic"},
+  "MathlibExt/ModelTheory/RealClosedFieldQE": {"to": "Logic/model-theory", "title": "Quantifier elimination for real closed fields"},
   "MathlibExt/ModelTheory/Term/LeafCount": {"to": "Logic/first-order-logic", "title": "First-order syntax"},
   "MathlibExt/NumberTheory/AACarmichaelAuxiliaryPrimes": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Generalized Carmichael numbers"},
   "MathlibExt/NumberTheory/AACarmichaelAuxiliaryProduct": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Generalized Carmichael numbers"},
