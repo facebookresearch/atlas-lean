@@ -40,25 +40,6 @@ namespace MetaMathlibExt
 open Finset Polynomial
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry (chapter5EulerEven)
 
-/-- **Alzer–Richards derivative identity for powers of $1 - f$.** Let $r, j, n \ge 0$ be
-integers and let $f \colon \mathbb{R} \to \mathbb{R}$ be $r$ times continuously differentiable.
-Writing $g^{(i)}$ for the $i$-th derivative of a function $g$ and taking powers of $f$ pointwise,
-for every real $x$
-$$
-\sum_{k=0}^{n} (-1)^{k+1} \binom{n+1}{k+1} \bigl(f^{k+1+j}\bigr)^{(r)}(x) =
-\sum_{k=0}^{r} \binom{r}{k} \bigl(f^j\bigr)^{(k)}(x) \,
-\bigl((1-f)^{n+1} - 1\bigr)^{(r-k)}(x).
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 1, Equation (2). -/
-theorem_wanted sum_iteratedDeriv_pow_one_sub {f : ℝ → ℝ} {r : ℕ} (hf : ContDiff ℝ r f)
-    (j n : ℕ) (x : ℝ) :
-    ∑ k ∈ range (n + 1), (-1 : ℝ) ^ (k + 1) * ((n + 1).choose (k + 1) : ℝ) *
-        iteratedDeriv r (fun y => f y ^ (k + 1 + j)) x =
-      ∑ k ∈ range (r + 1), (r.choose k : ℝ) * iteratedDeriv k (fun y => f y ^ j) x *
-        iteratedDeriv (r - k) (fun y => (1 - f y) ^ (n + 1) - 1) x
-
 /-- **Alternating Stirling sums with $\binom{n+1}{k+1}$ give Bernoulli numbers.** Write $S(n, k)$
 for the Stirling numbers of the second kind and $B_n$ for the Bernoulli numbers, with
 $B_1 = -1/2$. Let $n$ be a natural number. Then for every natural number $r \le n$,
