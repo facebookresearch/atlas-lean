@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
+public import MathlibExt.NumberTheory.SquaresModTwoPow
 
 namespace MetaMathlibExt
 
@@ -33,21 +34,6 @@ public theorem_wanted isSquare_mod_two_pow_odd_not_even_iff (k : ℕ) (x : ℕ)
     (hx : x < 2 ^ (2 * k)) :
     (IsSquare (x : ZMod (2 ^ (2 * k - 1))) ∧ ¬IsSquare (x : ZMod (2 ^ (2 * k)))) ↔
       x = 2 ^ (2 * k - 1) ∨ x = 2 ^ (2 * k - 1) + 2 ^ (2 * k - 2)
-
-/-- **Residues that are squares modulo $2^{2k}$ but not modulo $2^{2k+1}$.** Let $k \ge 0$ and let
-$x$ be an integer with $0 \le x < 2^{2k+1}$, where the exponent $2k - 2$ is truncated at $0$. Then
-$x$ is a square modulo $2^{2k}$ but not a square modulo $2^{2k+1}$ if and only if
-$x = 2^{2k} + 2^{2k-2}$.
-
-For $k \ge 1$ this is the unique such residue; for $k = 0$ both sides of the equivalence are false.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32, Lemma 3
-(`integers-2025-A32-lem-3`). -/
-public theorem_wanted isSquare_mod_two_pow_even_not_odd_iff (k : ℕ) (x : ℕ)
-    (hx : x < 2 ^ (2 * k + 1)) :
-    (IsSquare (x : ZMod (2 ^ (2 * k))) ∧ ¬IsSquare (x : ZMod (2 ^ (2 * k + 1)))) ↔
-      x = 2 ^ (2 * k) + 2 ^ (2 * k - 2)
 
 open scoped Classical in
 /-- **Residues $r$ with $16r + 1$ and $8r + 1$ both non-squares modulo $p$.** For every prime $p$,
