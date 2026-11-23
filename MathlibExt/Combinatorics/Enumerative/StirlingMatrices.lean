@@ -122,9 +122,11 @@ private theorem key : ∀ n m, (∑ k ∈ Finset.range (n + 1), signedStirlingFi
           simp
         · simp [h1, h2]
 
-/-- Scalar form of `stirlingMatrices_mutualInverse_and_lowerTriangular`: the signed first-kind
-and the second-kind Stirling numbers are orthogonal, `∑_{k=0}^n (-1)^(n-k) s(n,k) S(k,m) = δ_{nm}`
-for all `n` and `m`. -/
+/-- **Orthogonality relation for Stirling numbers.** Write $c(n,k)$ for the unsigned Stirling
+numbers of the first kind, $s(n,k) = (-1)^{n-k} c(n,k)$ for the signed ones, and $S(k,m)$ for the
+Stirling numbers of the second kind. For all natural numbers $n$ and $m$,
+$$\sum_{k=0}^{n} s(n,k)\, S(k,m) = \delta_{nm},$$
+where $\delta_{nm}$ is $1$ if $n = m$ and $0$ otherwise. -/
 theorem sum_signedStirlingFirst_mul_stirlingSecond (n m : ℕ) :
     ∑ k ∈ Finset.range (n + 1), signedStirlingFirst n k * (Nat.stirlingSecond k m : ℤ) =
       if n = m then 1 else 0 :=
@@ -169,16 +171,17 @@ private theorem Smat_lower (N : ℕ) (i j : Fin N) (h : i < j) : Smat N i j = 0 
   exact Ssv_eq_zero_of_lt _ _ (Fin.lt_def.mp h)
 
 /--
-Every finite truncation of the signed first-kind and second-kind Stirling
-matrices consists of mutual inverses, and both matrices are lower triangular.
+**Stirling matrices are mutually inverse and lower triangular.** Let $N$ be a natural number,
+and let $A$ and $B$ be the $N \times N$ integer matrices with rows and columns indexed by
+$0, 1, \dots, N-1$ and entries $A_{ij} = (-1)^{i-j} c(i,j)$ and $B_{ij} = S(i,j)$, where $c(i,j)$
+is the unsigned Stirling number of the first kind and $S(i,j)$ the Stirling number of the second
+kind. Then $AB = BA = I$, and $A_{ij} = B_{ij} = 0$ whenever $i < j$.
 
 Source: Benjamin Schreyer, "Rigged Horse Numbers and their Modular
 Periodicity", Journal of Integer Sequences 28 (2025), Article 25.4.1,
 Proposition (equation stirlinginvs), lines 120–126,
 https://cs.uwaterloo.ca/journals/JIS/VOL28/Schreyer/schreyer7.tex
 (quoting L. Comtet, Advanced Combinatorics, Eqn. 6f, p. 144).
-
-Proves `Wanted` entry `stirlingMatrices_mutualInverse_and_lowerTriangular`.
 -/
 theorem stirlingMatrices_mutualInverse_and_lowerTriangular (N : ℕ) :
     let s : Matrix (Fin N) (Fin N) ℤ := fun i j =>

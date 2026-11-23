@@ -48,6 +48,23 @@ example (P : Finpartition (Finset.univ : Finset (Fin 3))) {B : Finset (Fin 3)} (
   have h := Finpartition.card_le_of_mem_parts P hB
   simpa using h
 
+/-- The empty finset has exactly one finpartition. -/
+example : Fintype.card (Finpartition (∅ : Finset (Fin 3))) = 1 := by
+  rw [Finpartition.card_eq_bell]
+  simp
+
+/-- A two-element finset has `Bell(2) = 2` finpartitions. -/
+example : Fintype.card (Finpartition (Finset.univ : Finset (Fin 2))) = 2 := by
+  rw [Finpartition.card_eq_bell, Finset.card_univ, Fintype.card_fin,
+    show (2 : ℕ) = 1 + 1 from rfl, Nat.bell_succ']
+  simp [Finset.Nat.antidiagonal_succ]
+
+/-- A three-element finset has `Bell(3) = 5` finpartitions. -/
+example : Fintype.card (Finpartition (Finset.univ : Finset (Fin 3))) = 5 := by
+  rw [Finpartition.card_eq_bell, Finset.card_univ, Fintype.card_fin,
+    show (3 : ℕ) = 2 + 1 from rfl, Nat.bell_succ']
+  simp [Finset.Nat.antidiagonal_succ]
+
 /-- Atomising `Fin 3` at the singleton `{0}` leaves `{0}` and its complement. -/
 example :
     (Finpartition.atomise (Finset.univ : Finset (Fin 3)) ({{0}} : Finset (Finset (Fin 3)))).parts =

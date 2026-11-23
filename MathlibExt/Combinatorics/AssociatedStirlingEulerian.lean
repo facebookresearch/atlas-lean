@@ -19,33 +19,34 @@ namespace MetaMathlibExt
 @[expose]
 public section
 
-/-- Excedance count of a permutation of `Fin n`: the number of `i` with `σ i > i`.
+/-- **Number of excedances.** For a permutation $\sigma$ of $\{0, 1, \dots, n-1\}$, an excedance
+of $\sigma$ is a point $i$ with $\sigma(i) > i$, and the excedance count $e(\sigma)$ is the number
+of excedances of $\sigma$.
 
-Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
+Source: Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
 Lines 130-132; URL https://cs.uwaterloo.ca/journals/JIS/VOL28/Rakotoson/rakoto12.tex. -/
 def excedanceCount (n : ℕ) (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter (fun i : Fin n => i < σ i)).card
 
-/-- An `r`-minus-cycle permutation of `Fin n`: every cycle length is at most `r`.
+/-- **Permutations with all cycles of length at most $r$.** A permutation $\sigma$ of
+$\{0, 1, \dots, n-1\}$ is an $r$-minus-associated cycle permutation when every cycle of $\sigma$,
+fixed points counted as cycles of length one, has length at most $r$: every fixed point of
+$\sigma$ forces $1 \le r$, and every cycle of $\sigma$ of length at least $2$ has length at most
+$r$. For $n = 0$ the empty permutation qualifies for every $r$.
 
-Fixed one-cycles are omitted by `Equiv.Perm.cycleType`, so they are handled
-explicitly: a fixed point requires `1 ≤ r`, and every nontrivial entry of
-`σ.cycleType` requires `≤ r`. The point condition is vacuous for `Fin 0`.
-
-Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
+Source: Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
 Lines 106-108 and Lines 257-259;
 URL https://cs.uwaterloo.ca/journals/JIS/VOL28/Rakotoson/rakoto12.tex. -/
 def IsRMinusAssociatedCyclePerm (r n : ℕ) (σ : Equiv.Perm (Fin n)) : Prop :=
   (∀ i, σ i = i → 1 ≤ r) ∧ ∀ m ∈ σ.cycleType.toFinset, m ≤ r
 
-/-- An `r`-associated-cycle permutation of `Fin n`: every cycle length exceeds `r`.
+/-- **Permutations with all cycles longer than $r$.** A permutation $\sigma$ of
+$\{0, 1, \dots, n-1\}$ is an $r$-associated cycle permutation when every cycle of $\sigma$, fixed
+points counted as cycles of length one, has length greater than $r$: every fixed point of $\sigma$
+forces $r < 1$, and every cycle of $\sigma$ of length at least $2$ has length greater than $r$.
+For $n = 0$ the empty permutation qualifies for every $r$.
 
-Fixed one-cycles are omitted by `Equiv.Perm.cycleType`, so they are handled
-explicitly: a fixed point requires `r < 1`, and every nontrivial entry of
-`σ.cycleType` requires `r <` its length. The point condition is vacuous for
-`Fin 0`, including when `r = 0`.
-
-Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
+Source: Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
 Lines 106-108 and Lines 653-657;
 URL https://cs.uwaterloo.ca/journals/JIS/VOL28/Rakotoson/rakoto12.tex. -/
 def IsRAssociatedCyclePerm (r n : ℕ) (σ : Equiv.Perm (Fin n)) : Prop :=
@@ -57,33 +58,38 @@ instance (r n : ℕ) : DecidablePred (IsRMinusAssociatedCyclePerm r n) :=
 instance (r n : ℕ) : DecidablePred (IsRAssociatedCyclePerm r n) :=
   fun σ => by unfold IsRAssociatedCyclePerm; infer_instance
 
-/-- The `r`-minus-associated Stirling Eulerian number `A^(r-minus)_(n,m)`:
-the cardinality of permutations of `n` objects with all cycle lengths at most
-`r` and exactly `m` excedances.
+/-- **$r$-minus-associated Stirling Eulerian numbers.** For natural numbers $r$, $n$ and
+$m$, the $r$-minus-associated Stirling Eulerian number is the number of permutations $\sigma$ of
+$\{0, \dots, n-1\}$ all of whose cycles, fixed points counted as cycles of length $1$, have
+length at most $r$, and that have exactly $m$ excedances, that is, exactly $m$ indices $i$ with
+$\sigma(i) > i$.
 
-Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
+Source: Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
 Lines 257-259; URL https://cs.uwaterloo.ca/journals/JIS/VOL28/Rakotoson/rakoto12.tex. -/
 def rMinusAssociatedStirlingEulerian (r n m : ℕ) : ℕ :=
   ((Finset.univ.filter (IsRMinusAssociatedCyclePerm r n)).filter
     (fun σ => excedanceCount n σ = m)).card
 
-/-- The `r`-associated Stirling Eulerian number `A^r_(n,m)`: the cardinality of
-permutations of `n` objects with all cycle lengths greater than `r` and exactly
-`m` excedances.
+/-- **$r$-associated Stirling Eulerian numbers.** For natural numbers $r$, $n$ and $m$, the
+$r$-associated Stirling Eulerian number $A^{r}_{n,m}$ is the number of permutations $\sigma$ of
+$\{0, \dots, n-1\}$ all of whose cycles, fixed points counted as cycles of length $1$, have
+length greater than $r$, and that have exactly $m$ excedances, that is, exactly $m$ indices $i$
+with $\sigma(i) > i$.
 
-Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
+Source: Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/rakoto12.tex
 Lines 653-657; URL https://cs.uwaterloo.ca/journals/JIS/VOL28/Rakotoson/rakoto12.tex. -/
 def rAssociatedStirlingEulerian (r n m : ℕ) : ℕ :=
   ((Finset.univ.filter (IsRAssociatedCyclePerm r n)).filter
     (fun σ => excedanceCount n σ = m)).card
 
-/-- The circular Eulerian number `C_{n,m}`: the number of circular permutations of
-`n ≥ 1` objects (a single cycle through all points, so the identity of one point is
-circular) with exactly `m` excedances. A permutation of `Fin n` is circular when
-`n ≥ 1` and all points lie in one cycle (`Equiv.Perm.SameCycle`); for `n ≥ 2` this is
-Mathlib's `n`-cycle `σ.IsCycle ∧ σ.support = Finset.univ`
-(`sameCycle_all_iff_isCycle_support_eq_univ`). The empty permutation of `Fin 0` has no
-cycle, so `C_{0,m} = 0`.
+/-- **Circular Eulerian numbers.** For natural numbers $n$ and $m$, the circular Eulerian number
+$C_{n,m}$ is the number of permutations $\sigma$ of $\{0, 1, \dots, n-1\}$ such that $n \ge 1$,
+all points lie in a single cycle of $\sigma$ (for any two points $i$ and $j$ there is an integer
+$k$ with $\sigma^k(i) = j$), and $\sigma$ has exactly $m$ excedances, that is, exactly $m$ points
+$i$ with $\sigma(i) > i$. In particular $C_{0,m} = 0$ for every $m$, and the identity permutation
+of a single point counts as circular.
+
+For $n \ge 2$ the permutations with a single cycle through all points are exactly the $n$-cycles.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -94,8 +100,11 @@ def circularEulerian (n m : ℕ) : ℕ :=
     (0 < n ∧ ∀ i j : Fin n, σ.SameCycle i j) ∧
       excedanceCount n σ = m)).card
 
-/-- Characteristic values `C_{0,0} = 0`, `C_{1,0} = 1` and `C_{3,1} = C_{3,2} = 1`:
-of the two 3-cycles, `1 ↦ 3 ↦ 2 ↦ 1` has one excedance and `1 ↦ 2 ↦ 3 ↦ 1` has two.
+/-- **Small circular Eulerian numbers.** Writing $C_{n,m}$ for the circular Eulerian number, we have
+$C_{0,0} = 0$, $C_{1,0} = 1$, $C_{3,1} = 1$ and $C_{3,2} = 1$.
+
+Of the two cyclic permutations of $\{1, 2, 3\}$, $1 \mapsto 3 \mapsto 2 \mapsto 1$ has one
+excedance and $1 \mapsto 2 \mapsto 3 \mapsto 1$ has two.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -105,8 +114,11 @@ theorem circularEulerian_small :
       circularEulerian 3 2 = 1 := by
   decide
 
-/-- For `n ≥ 2`, a permutation of `Fin n` has a single cycle through all points exactly
-when it is an `n`-cycle in Mathlib's sense, `σ.IsCycle ∧ σ.support = Finset.univ`.
+/-- **Circular permutations are the full cycles.** Let $n \ge 2$ and let $\sigma$ be a
+permutation of $\{0, \dots, n-1\}$. Any two points $i$ and $j$ lie in the same cycle of
+$\sigma$ (that is, $j = \sigma^k(i)$ for some integer $k$) if and only if $\sigma$ is a cycle,
+meaning that it moves some point and any two points it moves lie in the same cycle, and
+$\sigma$ moves every point.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -131,9 +143,13 @@ theorem sameCycle_all_iff_isCycle_support_eq_univ {n : ℕ} (hn : 2 ≤ n)
     have hmov : ∀ z, σ z ≠ z := fun z => Equiv.Perm.mem_support.mp (hs ▸ Finset.mem_univ z)
     exact hc.sameCycle (hmov i) (hmov j)
 
-/-- An `r`-cycle permutation of `Fin n` (the paper's `(r)`-cycle permutations, the set
-`S_n^r` of Corollary 25): every cycle, fixed points included as one-cycles, has length
-exactly `r`, i.e. every `σ`-orbit has `r` elements. The condition is vacuous for `Fin 0`.
+/-- **Permutations with all cycles of length $r$.** A permutation $\sigma$ of
+$\{0, 1, \dots, n-1\}$ is an $r$-cycle permutation when every cycle of $\sigma$, fixed points
+counted as cycles of length one, has exactly $r$ elements: for every point $i$, exactly $r$
+points $j$ satisfy $\sigma^k(i) = j$ for some integer $k$. For $n = 0$ the condition holds for
+every $r$.
+
+These are the paper's $(r)$-cycle permutations, the set $S_n^r$ of Corollary 25.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -144,9 +160,10 @@ def IsRCyclePerm (r n : ℕ) (σ : Equiv.Perm (Fin n)) : Prop :=
 instance (r n : ℕ) : DecidablePred (IsRCyclePerm r n) :=
   fun σ => by unfold IsRCyclePerm; infer_instance
 
-/-- Characterization of `r`-cycle permutations through the cycle type: `σ` is an `r`-cycle
-permutation iff every fixed point forces `r = 1` and every nontrivial cycle length in
-`σ.cycleType` equals `r`.
+/-- **Cycle-type characterization of $r$-cycle permutations.** A permutation $\sigma$ of
+$\{0, 1, \dots, n-1\}$ has all its cycles, fixed points counted as cycles of length one, of length
+exactly $r$ if and only if every fixed point of $\sigma$ forces $r = 1$ and every cycle of $\sigma$
+of length at least $2$ has length exactly $r$.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -190,8 +207,10 @@ theorem isRCyclePerm_iff {r n : ℕ} (σ : Equiv.Perm (Fin n)) :
       exact ⟨σ.cycleOf i, Finset.mem_val.mpr
         (Equiv.Perm.cycleOf_mem_cycleFactorsFinset_iff.mpr (Equiv.Perm.mem_support.mpr hi)), rfl⟩
 
-/-- The number `A^{(r)}_{n,m}` of `r`-cycle permutations of `n` objects (all cycle
-lengths equal to `r`) with exactly `m` excedances.
+/-- **$r$-cycle Stirling Eulerian numbers.** For natural numbers $r$, $n$ and $m$, the number
+$A^{(r)}_{n,m}$ is the number of permutations $\sigma$ of $\{0, \dots, n-1\}$ all of whose
+cycles, fixed points counted as cycles of length $1$, have length exactly $r$, and that have
+exactly $m$ excedances, that is, exactly $m$ indices $i$ with $\sigma(i) > i$.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -199,9 +218,12 @@ Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 2
 def rCycleStirlingEulerian (r n m : ℕ) : ℕ :=
   ((Finset.univ.filter (IsRCyclePerm r n)).filter (fun σ => excedanceCount n σ = m)).card
 
-/-- Characteristic values: `A^{(r)}_{0,0} = 1` (the empty permutation),
-`A^{(2)}_{2,1} = 1` (the transposition), `A^{(2)}_{3,1} = 0`, and
-`A^{(3)}_{3,1} = A^{(3)}_{3,2} = 1` (the two 3-cycles).
+/-- **Small $r$-cycle Stirling Eulerian numbers.** Write $A^{(r)}_{n,m}$ for the number of
+permutations $\sigma$ of $\{0, \dots, n-1\}$ all of whose cycles, fixed points counted as
+cycles of length $1$, have length exactly $r$, and that have exactly $m$ excedances (indices $i$
+with $\sigma(i) > i$). Then $A^{(2)}_{0,0} = 1$ (the empty permutation), $A^{(2)}_{2,1} = 1$
+(the transposition), $A^{(2)}_{3,1} = 0$, and $A^{(3)}_{3,1} = A^{(3)}_{3,2} = 1$ (the two
+$3$-cycles).
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -212,12 +234,17 @@ theorem rCycleStirlingEulerian_small :
       rCycleStirlingEulerian 3 3 2 = 1 := by
   decide
 
-/-- The exponential generating function of the excedance and cycle distribution over a
-family `P` of permutations, in the paper's convention
-`∑_{n ≥ 0} ∑_{σ ∈ P_n} x^{e(σ)} q^{c(σ)} u^n / n!`, with `e` the excedance count and `c`
-the number of cycles (fixed points included; the existing `cycleQuotientCount`), over a
-commutative `ℚ`-algebra `R` (so `x` and `q` can be indeterminates). With `q = 1` it is the paper's `P(x, u)`, with general `q` its
-`q`-analogue `P(q, x, u)`.
+/-- **Excedance and cycle generating function of a permutation family.** Let $R$ be a
+commutative $\mathbb{Q}$-algebra, let $x, q \in R$, and for each $n$ let $P_n$ be a set of
+permutations of $\{0, 1, \dots, n-1\}$. The excedance and cycle exponential generating function
+of the family $(P_n)$ is the formal power series in $u$ over $R$
+
+$$\sum_{n \ge 0} \frac{1}{n!} \Big(\sum_{\sigma \in P_n} x^{e(\sigma)} q^{c(\sigma)}\Big) u^n,$$
+
+where $e(\sigma)$ is the number of excedances of $\sigma$ (points $i$ with $\sigma(i) > i$) and
+$c(\sigma)$ its number of cycles, fixed points counted as cycles of length one.
+
+With $q = 1$ this is the paper's $P(x, u)$, and for general $q$ its $q$-analogue $P(q, x, u)$.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -229,9 +256,13 @@ noncomputable def permExcedanceCycleEGF {R : Type*} [CommRing R] [Algebra ℚ R]
   PowerSeries.mk fun n => ((n.factorial : ℚ)⁻¹) •
     ∑ σ ∈ Finset.univ.filter (P n), x ^ excedanceCount n σ * q ^ cycleQuotientCount σ
 
-/-- The coefficient of `u^n` in `permExcedanceCycleEGF P x q` is
-`(1/n!) ∑_{σ ∈ P_n} x^{e(σ)} q^{c(σ)}`; for the family of all permutations the constant
-coefficient is `1` (the empty permutation).
+/-- **Coefficients of the excedance and cycle generating function.** Let $R$ be a commutative
+$\mathbb{Q}$-algebra, let $x, q \in R$, and for each $n$ let $P_n$ be a set of permutations of
+$\{0, 1, \dots, n-1\}$. For every $n \ge 0$, the coefficient of $u^n$ in the excedance and cycle
+exponential generating function of the family $(P_n)$ is
+$\frac{1}{n!} \sum_{\sigma \in P_n} x^{e(\sigma)} q^{c(\sigma)}$, where $e(\sigma)$ is the number
+of excedances of $\sigma$ and $c(\sigma)$ its number of cycles, fixed points counted as cycles of
+length one.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
@@ -242,8 +273,11 @@ theorem coeff_permExcedanceCycleEGF {R : Type*} [CommRing R] [Algebra ℚ R]
       ∑ σ ∈ Finset.univ.filter (P n), x ^ excedanceCount n σ * q ^ cycleQuotientCount σ := by
   simp [permExcedanceCycleEGF]
 
-/-- The constant coefficient of the series of all permutations is `1`: the only
-permutation of `Fin 0` has no excedance and no cycle.
+/-- **Constant coefficient of the generating function of all permutations.** Let $R$ be a
+commutative $\mathbb{Q}$-algebra and let $x, q \in R$. In the excedance and cycle exponential
+generating function of the family of all permutations, the coefficient of $u^0$ is $1$.
+
+The only permutation of the empty set has no excedance and no cycle.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
 Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28

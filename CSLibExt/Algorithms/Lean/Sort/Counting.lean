@@ -33,7 +33,14 @@ namespace Cslib.Algorithms.Lean.TimeM
 
 universe u
 
-/-- Stable counting sort for records whose keys lie in `Fin k`. -/
+/-- **Counting sort.** Let $k$ be a natural number and let $\mathrm{key}$ assign to each record a
+key in $\{0, \dots, k-1\}$. Counting sort of an array $A$ of records returns an array together
+with a count of charged operations. It starts $k$ counters at zero, counts the records of $A$ with
+each key, replaces the counters by cumulative counts so that the counter of key $q$ holds the
+number of records with key at most $q$, and then scans $A$ from right to left: for each record it
+decrements the counter of the record's key and writes the record at the resulting position of the
+output, which starts as a copy of $A$. One operation is charged for each counter initialization,
+key evaluation, counter read, counter write and output write. -/
 def countingSort {α : Type u} {k : Nat} (key : α → Fin k)
     (input : Array α) : TimeM Nat (Array α) :=
   let rec initCounters : (n : Nat) → TimeM Nat {a : Array Nat // a.size = n}
@@ -633,7 +640,11 @@ private theorem bucketedList_pairwise {α : Type u} {k : Nat} (key : α → Fin 
     apply Fin.mk_le_mk.mpr
     omega
 
-/-- Counting sort returns a sorted, stable permutation of the input records. -/
+/-- **Correctness of counting sort.** Let $k$ be a natural number, let $\mathrm{key}$ assign to
+each record a key in $\{0, \dots, k-1\}$, and let $A$ be an array of records. The array that
+counting sort returns on $A$ lists its records in nondecreasing order of key, is a permutation of
+$A$, and is stable: for every key $q < k$, the records of the output with key $q$, read from left
+to right, form the same sequence as the records of $A$ with key $q$. -/
 theorem countingSort_correct {α : Type u} {k : Nat} (key : α → Fin k)
     (input : Array α) :
     List.Pairwise (fun x y => key x ≤ key y) (countingSort key input).ret.toList ∧
@@ -645,7 +656,10 @@ theorem countingSort_correct {α : Type u} {k : Nat} (key : α → Fin k)
   exact ⟨bucketedList_pairwise key input.toList, bucketedList_perm key input.toList,
     bucketedList_filter key input.toList⟩
 
-/-- Counting sort uses at most `7 * n + 3 * k` charged operations. -/
+/-- **Running time of counting sort.** Let $k$ be a natural number, let $\mathrm{key}$ assign to
+each record a key in $\{0, \dots, k-1\}$, and let $A$ be an array of $n$ records. Counting sort on
+$A$ with this key is charged at most $7n + 3k$ operations, where one operation is charged for each
+counter initialization, key evaluation, counter read, counter write and output write. -/
 theorem countingSort_time {α : Type u} {k : Nat} (key : α → Fin k)
     (input : Array α) :
     (countingSort key input).time ≤ 7 * input.size + 3 * k := by

@@ -36,16 +36,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The lattice cube in `ℕ^t` with least corner `a` and side `m`, i.e. the points
-`x` with `a i ≤ x i < a i + m` for every coordinate `i`; it is a subcube of size
-`m^t`.
+/-- **Lattice cube.** For $t, m \in \mathbb{N}$ and $a \in \mathbb{N}^t$, the lattice cube
+with least corner $a$ and side $m$ is the set of points $x \in \mathbb{N}^t$ such that
+$a_i \le x_i < a_i + m$ for every coordinate $i$; it is a subcube of size $m^t$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Lemma 1 (subcubes of `N^t` of size `m^t`). -/
 def latticeCube {t : ℕ} (a : Fin t → ℕ) (m : ℕ) : Set (Fin t → ℕ) :=
   Set.univ.pi fun i => Set.Ico (a i) (a i + m)
 
-/-- Membership in a lattice cube, coordinatewise.
+/-- **Membership in a lattice cube.** For $t, m \in \mathbb{N}$ and $a, x \in \mathbb{N}^t$,
+the point $x$ lies in the lattice cube with least corner $a$ and side $m$ if and only if
+$a_i \le x_i < a_i + m$ for every coordinate $i$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Lemma 1 (subcubes of `N^t` of size `m^t`). -/
@@ -53,7 +55,8 @@ theorem mem_latticeCube {t : ℕ} {a x : Fin t → ℕ} {m : ℕ} :
     x ∈ latticeCube a m ↔ ∀ i, a i ≤ x i ∧ x i < a i + m := by
   simp [latticeCube]
 
-/-- A lattice cube of side `1` is a single point.
+/-- **Lattice cube of side one.** For $t \in \mathbb{N}$ and $a \in \mathbb{N}^t$, the lattice
+cube with least corner $a$ and side $1$ is the singleton $\{a\}$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Lemma 1 (subcubes of `N^t` of size `m^t`). -/
@@ -68,14 +71,17 @@ theorem latticeCube_one {t : ℕ} (a : Fin t → ℕ) : latticeCube a 1 = {a} :=
     rw [h i]
     omega
 
-/-- `C` is `d`-dense in `M`: every subcube of size `d^t` contained in `M` meets `C`.
+/-- **Density in subcubes.** Let $d \in \mathbb{N}$ and let $C, M \subseteq \mathbb{N}^t$. The set
+$C$ is $d$-dense in $M$ when every subcube of $\mathbb{N}^t$ of side $d$ that is contained in $M$
+meets $C$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Lemma 1 (definition of `m_{i-1}`-dense in `M'`). -/
 def IsDenseInCubes {t : ℕ} (d : ℕ) (C M : Set (Fin t → ℕ)) : Prop :=
   ∀ b : Fin t → ℕ, latticeCube b d ⊆ M → (latticeCube b d ∩ C).Nonempty
 
-/-- Being `1`-dense in `M` means containing `M`.
+/-- **Density one means containment.** For sets $C, M \subseteq \mathbb{N}^t$, the set $C$ is
+$1$-dense in $M$ if and only if $M \subseteq C$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Lemma 1 (definition of `m_{i-1}`-dense in `M'`, with `m_0 = 1`). -/
@@ -85,8 +91,10 @@ theorem isDenseInCubes_one_iff {t : ℕ} {C M : Set (Fin t → ℕ)} :
     Set.singleton_inter_nonempty]
   exact Iff.rfl
 
-/-- A set `A ⊆ ℕ^t` is piecewise syndetic when for some `d` the set
-`A + [0, d]^t` contains subcubes of every size.
+/-- **Piecewise syndetic set.** Let $t \in \mathbb{N}$. A set $A \subseteq \mathbb{N}^t$ is
+piecewise syndetic if there is $d \in \mathbb{N}$ such that, writing
+$[0, d] = \{0, 1, \dots, d\}$, for every $m \in \mathbb{N}$ the set
+$A + [0, d]^t = \{y + z : y \in A,\ z \in [0, d]^t\}$ contains a lattice cube of side $m$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Proof 1 of Theorem 2 (meaning of piecewise syndetic). -/
@@ -94,7 +102,8 @@ def IsPiecewiseSyndetic {t : ℕ} (A : Set (Fin t → ℕ)) : Prop :=
   ∃ d : ℕ, ∀ m : ℕ, ∃ a : Fin t → ℕ,
     latticeCube a m ⊆ {x | ∃ y ∈ A, ∃ z ∈ latticeCube 0 (d + 1), x = y + z}
 
-/-- The whole space is piecewise syndetic.
+/-- **The whole space is piecewise syndetic.** For every $t \in \mathbb{N}$, the whole space
+$\mathbb{N}^t$ is piecewise syndetic.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Proof 1 of Theorem 2 (meaning of piecewise syndetic). -/
@@ -102,7 +111,8 @@ theorem isPiecewiseSyndetic_univ {t : ℕ} : IsPiecewiseSyndetic (Set.univ : Set
   ⟨0, fun _ => ⟨0, fun x _ => ⟨x, Set.mem_univ _, 0,
     by rw [zero_add, latticeCube_one]; exact Set.mem_singleton _, (add_zero x).symm⟩⟩⟩
 
-/-- The empty set is not piecewise syndetic.
+/-- **The empty set is not piecewise syndetic.** For every $t \in \mathbb{N}$, the empty
+subset of $\mathbb{N}^t$ is not piecewise syndetic.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Proof 1 of Theorem 2 (meaning of piecewise syndetic). -/
@@ -113,12 +123,15 @@ theorem not_isPiecewiseSyndetic_empty {t : ℕ} :
   obtain ⟨y, hy, -⟩ := ha (by rw [latticeCube_one]; exact Set.mem_singleton a)
   exact hy
 
-/-- **Lemma 1.** Let `1 = m 0 < m 1 < m 2 < ⋯`. If a subcube `M` of size `(m r)^t`
-is colored with colors `1, …, r`, then for some color `i` there is a subcube
-`M' ⊆ M` of size `(m i)^t` in which the color class of `i` is `m (i - 1)`-dense.
+/-- **A color class is dense in a subcube (Brown, Lemma 1).** Let $t, r \in \mathbb{N}$ and let
+$1 = m_0 < m_1 < m_2 < \cdots$ be a strictly increasing sequence of natural numbers. Let $M$ be a
+subcube of $\mathbb{N}^t$ of side $m_r$, and let $c$ be a coloring of $\mathbb{N}^t$ by natural
+numbers with $1 \le c(x) \le r$ for every $x \in M$. Then for some color $i$ with $1 \le i \le r$
+there is a subcube $M' \subseteq M$ of side $m_i$ in which the class of color $i$ is
+$m_{i-1}$-dense.
 
-The paper fixes `t ≥ 1` and `r ≥ 1`; both are dropped, since `t = 0` holds
-trivially and `r = 0` admits no coloring of the nonempty cube.
+The paper fixes $t \ge 1$ and $r \ge 1$; both are dropped, since $t = 0$ holds trivially and
+$r = 0$ admits no coloring of the nonempty cube $M$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Lemma 1 (`integers-2024-A2-lem-1`). -/
@@ -128,12 +141,14 @@ public theorem_wanted exists_subcube_isDenseInCubes_colorClass (t : ℕ) (m : �
     ∃ i ∈ Set.Icc 1 r, ∃ a' : Fin t → ℕ, latticeCube a' (m i) ⊆ latticeCube a (m r) ∧
       IsDenseInCubes (m (i - 1)) {x | c x = i} (latticeCube a' (m i))
 
-/-- **Lemma 2.** Given `r, t` and `f : ℕ → ℕ`, there is `A` such that every
-`r`-coloring of `[1, A]^t` has a color class `C`, positive integers `d, m` with
-`m > f d`, and a subcube `M ⊆ [1, A]^t` of size `m^t` in which `C` is `d`-dense.
+/-- **A color class is dense in a large subcube (Brown, Lemma 2).** Let $r, t \in \mathbb{N}$ and
+let $f : \mathbb{N} \to \mathbb{N}$. There is $A \in \mathbb{N}$ such that for every coloring of
+$\mathbb{N}^t$ with $r$ colors there are natural numbers $d \ge 1$ and $m > f(d)$, a color $j$, and
+a subcube $M$ of side $m$ with $M \subseteq [1, A]^t$ in which the class of color $j$ is
+$d$-dense. Here $[1, A]^t$ is the set of points $x$ with $1 \le x_i \le A$ for every coordinate $i$.
 
-The paper's "(a smallest)" is omitted: it follows from existence. Colorings are of
-all of `ℕ^t`; only their restriction to `[1, A]^t` matters.
+The paper's "(a smallest)" is omitted: it follows from existence. Only the restriction of the
+coloring to $[1, A]^t$ matters.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Lemma 2 (`integers-2024-A2-lem-2`). -/
@@ -142,8 +157,9 @@ public theorem_wanted exists_cube_bound_isDenseInCubes (r t : ℕ) (f : ℕ → 
       ∃ a : Fin t → ℕ, latticeCube a m ⊆ latticeCube (fun _ => 1) A ∧
         IsDenseInCubes d {x | c x = j} (latticeCube a m)
 
-/-- **Theorem 1.** If a piecewise syndetic set `A ⊆ ℕ^t` is the union
-`A₁ ∪ ⋯ ∪ A_r`, then some `Aᵢ` is piecewise syndetic.
+/-- **Piecewise syndeticity is partition regular.** Let $A \subseteq \mathbb{N}^t$ be piecewise
+syndetic and let $A_1, \dots, A_r \subseteq \mathbb{N}^t$ with $A = A_1 \cup \dots \cup A_r$. Then
+some $A_i$ is piecewise syndetic.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Theorem 1 (`integers-2024-A2-thm-1`). -/
@@ -151,12 +167,15 @@ public theorem_wanted IsPiecewiseSyndetic.exists_of_eq_iUnion {t r : ℕ}
     {A : Set (Fin t → ℕ)} (hA : IsPiecewiseSyndetic A) (B : Fin r → Set (Fin t → ℕ))
     (hAB : A = ⋃ i, B i) : ∃ i, IsPiecewiseSyndetic (B i)
 
-/-- The gap size `gs(S)` of a set `S ⊆ ℕ^t` (Definition 5): the least `d ≥ 1` such that `S`
-is `d`-dense in some subcube containing `S`, i.e. the minimum over subcubes `M ⊇ S` of the
-least `d` with `S` `d`-dense in `M` (for `t = 1` this is the largest gap of `S`, and `1` for a
-singleton, Definition 1). The paper defines `gs` for finite sets; on a set contained in no
-subcube (an unbounded set) the defining set is empty and the value is `0`, while every finite
-set has positive gap size when `t ≥ 1` (`cubeGapSize_pos`).
+/-- **Gap size.** For a set $S \subseteq \mathbb{N}^t$, the gap size $\operatorname{gs}(S)$ is the
+least $d \ge 1$ such that $S$ is $d$-dense in some subcube of $\mathbb{N}^t$ that contains $S$. If
+no such $d$ exists (for instance when $S$ is unbounded, so that no subcube contains it), the value
+is $0$.
+
+For $t = 1$, the gap size of a finite set with at least two points is the largest difference
+between consecutive elements, and a one-point set has gap size $1$ (Definition 1). The paper
+defines $\operatorname{gs}$ only for finite sets; when $t \ge 1$, every finite set has positive gap
+size.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Definition 5. -/
@@ -164,7 +183,9 @@ public noncomputable def cubeGapSize {t : ℕ} (S : Set (Fin t → ℕ)) : ℕ :
   sInf {d : ℕ | 0 < d ∧ ∃ (a : Fin t → ℕ) (m : ℕ), S ⊆ latticeCube a m ∧
     IsDenseInCubes d S (latticeCube a m)}
 
-/-- If `S` is `d`-dense (`d ≥ 1`) in a subcube containing `S`, then `gs(S) ≤ d`.
+/-- **Density bounds the gap size.** Let $S \subseteq \mathbb{N}^t$, let $d \ge 1$, and let $M$ be a
+subcube of $\mathbb{N}^t$ with $S \subseteq M$. If $S$ is $d$-dense in $M$, then the gap size of $S$
+satisfies $\operatorname{gs}(S) \le d$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Definition 5 (and Proof 1 of Theorem 2, "hence `gs(S) ≤ d`"). -/
@@ -173,8 +194,11 @@ public theorem cubeGapSize_le_of_isDenseInCubes {t d m : ℕ} {S : Set (Fin t �
     (hdense : IsDenseInCubes d S (latticeCube a m)) : cubeGapSize S ≤ d :=
   Nat.sInf_le ⟨hd, a, m, hS, hdense⟩
 
-/-- For `t ≥ 1`, every finite set has positive gap size: it lies in some subcube `[0, m)^t`,
-and it is vacuously `(m + 1)`-dense there, since no subcube of side `m + 1` fits inside.
+/-- **Finite sets in positive dimension have positive gap size.** Let $t \ge 1$. Every finite set
+$S \subseteq \mathbb{N}^t$ has gap size $\operatorname{gs}(S) > 0$.
+
+Indeed, $S$ lies in some subcube $[0, m)^t$, and it is vacuously $(m + 1)$-dense there, since no
+subcube of side $m + 1$ fits inside.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Definition 5. -/
@@ -204,7 +228,8 @@ public theorem cubeGapSize_pos {t : ℕ} (ht : 1 ≤ t) (S : Finset (Fin t → �
     ⟨m + 1, Nat.succ_pos m, _, m, hS, hdense⟩
   exact (Nat.sInf_mem hne).1
 
-/-- A one-point set has gap size `1`.
+/-- **Gap size of a singleton.** For every point $x \in \mathbb{N}^t$, the one-point set
+$\lbrace x \rbrace$ has gap size $\operatorname{gs}(\lbrace x \rbrace) = 1$.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Definitions 1 and 5 ("If `|S| = 1`, we set `gs(S) = 1`"). -/
@@ -218,14 +243,17 @@ public theorem cubeGapSize_singleton {t : ℕ} (x : Fin t → ℕ) : cubeGapSize
       latticeCube a m ∧ IsDenseInCubes d {x} (latticeCube a m)}.Nonempty := ⟨1, hmem⟩
   exact (Nat.sInf_mem hne).1
 
-/-- **Theorem 2.** For `t ≥ 1`, `r`, and a nondecreasing `f : ℕ → ℕ`, there is `B` such that
-every `r`-coloring of `[1, B]^t` has a finite monochromatic set `S ⊆ [1, B]^t` with
-`|S| > f(gs(S))`.
+/-- **Monochromatic sets that are large relative to their gap size.** Let $r, t \in \mathbb{N}$ with
+$t \ge 1$, and let $f : \mathbb{N} \to \mathbb{N}$ be nondecreasing. There is $B \in \mathbb{N}$
+such that for every coloring of $\mathbb{N}^t$ with $r$ colors there is a finite monochromatic set
+$S \subseteq [1, B]^t$ with $|S| > f(\operatorname{gs}(S))$, where $\operatorname{gs}(S)$ is the gap
+size of $S$ and $[1, B]^t$ is the set of points $x$ with $1 \le x_i \le B$ for every coordinate $i$.
 
-The paper's "(a smallest)" is omitted: it follows from existence. Colorings are of all of
-`ℕ^t`; only their restriction to `[1, B]^t` matters. `t ≥ 1` is the paper's hypothesis
-(`t = 0` fails when `f 1 ≥ 1`: the only point gives `|S| = 1 = gs(S)`). The paper's `r ≥ 1` is
-dropped: for `r = 0` there is no coloring and the statement holds vacuously.
+The paper's "(a smallest)" is omitted: it follows from existence. Only the restriction of the
+coloring to $[1, B]^t$ matters. The hypothesis $t \ge 1$ is the paper's; for $t = 0$ and $r \ge 1$
+the statement fails when $f(1) \ge 1$, since the only point gives $|S| = 1 = \operatorname{gs}(S)$.
+The paper's hypothesis $r \ge 1$ is dropped: for $r = 0$ there is no coloring and the statement
+holds vacuously.
 
 Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 (2024), Article A2, Theorem 2 (`integers-2024-A2-thm-2`). -/
