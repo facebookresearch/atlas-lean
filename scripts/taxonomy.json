@@ -11348,6 +11348,7 @@
   "MathlibExt/NumberTheory/EulerPrime": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
   "MathlibExt/NumberTheory/EvenPerfectNumbers": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Euclid–Euler theorem"},
   "MathlibExt/NumberTheory/EvenPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Even pseudoprimes"},
+  "MathlibExt/NumberTheory/ExistsUniqueRadicalExpansionCoeffs": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/ExponentialPascalMatrix": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Exponential Riordan arrays of Pascal type"},
   "MathlibExt/NumberTheory/ExtendedContinuant": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
   "MathlibExt/NumberTheory/ExtremelyAbundantNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Extremely abundant numbers"},
