@@ -13,6 +13,24 @@ import Mathlib.MeasureTheory.Measure.Real
 
 open MetaMathlibExt Set MeasureTheory
 
+namespace MetaMathlibExt.opx_translate
+
+-- A two-point pattern can be placed at the origin, leaving only its displacement vector.
+example (n : ℝ) (p q : ℝ × ℝ) : opx n {p, q} = opx n {0, q - p} := by
+  simpa only [Set.image_pair, add_neg_cancel, sub_eq_add_neg] using
+    (opx_translate n {p, q} (-p)).symm
+
+-- The horizontal gap of this pair exceeds the width of the unit square.
+example : ¬ PointSetContainsPattern (Icc (0 : ℝ) 1 ×ˢ Icc (0 : ℝ) 1) {(3, 4), (5, 4)} := by
+  rintro ⟨f, g, hf, -, hmem⟩
+  have hgap := hf (5, 4) (by simp) (3, 4) (by simp) (by norm_num)
+  have hlo := (hmem (3, 4) (by simp)).1.1
+  have hhi := (hmem (5, 4) (by simp)).1.2
+  dsimp at hgap hlo hhi
+  linarith
+
+end MetaMathlibExt.opx_translate
+
 namespace MetaMathlibExt.opxD_add_lt
 
 -- At the first admissible dimension the coefficient is 8 for n = 2 and ε = 1.
