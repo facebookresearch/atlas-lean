@@ -179,20 +179,21 @@ private lemma conv_id_phi : LSeries.convolution idRaw phiRaw = gcdRaw := by
     rw [idRaw_apply]
 
 /--
-Dirichlet series of the gcd-sum `g(n) = ∑_{i=1}^n gcd(n,i)`: for `2 < s.re`,
-the series `∑ g(n)/n^s` equals `ζ(s-1)^2/ζ(s)`.
+**Dirichlet series of the gcd-sum function.** For $n \ge 1$ let
+$g(n) = \sum_{i=1}^{n} \gcd(n, i)$. For every complex number $s$ with $\operatorname{Re} s > 2$,
+the series $\sum_{n \ge 1} g(n)/n^s$ sums to $\zeta(s-1)^2/\zeta(s)$, where $\zeta$ is the
+Riemann zeta function.
+
+The function $g$ is the Dirichlet convolution of the identity function with Euler's totient
+function $\varphi$, which gives the factorization $\zeta(s-1) \cdot (\zeta(s-1)/\zeta(s))$.
+
+Proves `Wanted` entry `dirichlet_series_gcd_sum`.
 
 Source: Kevin A. Broughan,
 "The gcd-sum function,"
 Journal of Integer Sequences 4 (2001), Article 01.2.2,
 Theorem (unlabeled), equations (labels 12, 8), lines 336–349,
 https://cs.uwaterloo.ca/journals/JIS/VOL4/BROUGHAN/gcdsum.tex
-
-The source writes `g` as the Dirichlet convolution of `id` with `φ`,
-giving `ζ(s-1) · (ζ(s-1)/ζ(s))`; the convolution identity
-`g(n) = ∑_{d|n} d * φ(n/d)` was checked for `n = 1..200`, and partial
-sums at `s = 3` converge toward `ζ(2)^2/ζ(3)` as expected.
-Proves `Wanted` entry `dirichlet_series_gcd_sum`.
 -/
 theorem dirichlet_series_gcd_sum
     (s : ℂ) (hs : 2 < s.re) :

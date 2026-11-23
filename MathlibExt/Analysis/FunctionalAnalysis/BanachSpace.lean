@@ -249,12 +249,16 @@ private theorem closedBall_subset_closure_image_closedBall
   linarith
 
 /--
-For a normed space over `ℝ` or `ℂ` (`RCLike 𝕜`), the image of the unit ball under
-`StrongDual.toWeakDual ∘ inclusionInDoubleDual` is weak-star dense, with closure equal to the
-bidual unit ball in `WeakDual`. Source: H. H. Goldstine, Weakly complete Banach spaces,
+**Goldstine's theorem.** Let $E$ be a normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$,
+let $E^{**}$ be its bidual and let $J : E \to E^{**}$ be the canonical embedding. In the
+weak-star topology of $E^{**}$, the closure of the image under $J$ of the closed unit ball of $E$
+is exactly the closed unit ball of $E^{**}$.
+
+Proves `Wanted` entry `goldstine`.
+
+Source: H. H. Goldstine, Weakly complete Banach spaces,
 Duke Math. J. 4 (1938), DOI 10.1215/S0012-7094-38-00410-7; Rudin, Functional Analysis, 2nd
 ed.; Lean states `RCLike` field case with metric closedBall formulation.
-Proves `Wanted` entry `goldstine`.
 -/
 theorem goldstine
     {𝕜 : Type*} [RCLike 𝕜]
