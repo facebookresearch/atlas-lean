@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.NumberTheory.Rayleigh
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.OddFibonacciGoldenRatio
 public import MathlibExt.NumberTheory.OddFibonacciRepresentation
 public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
@@ -46,20 +47,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Finset
-
-/-- **Odd-indexed Fibonacci numbers times the golden ratio.** Let $F_n$ be the Fibonacci numbers
-($F_0 = 0$, $F_1 = 1$, $F_{n+2} = F_{n+1} + F_n$) and $\varphi = (1 + \sqrt 5)/2$ the golden
-ratio. For every natural number $k$,
-$F_{2k+1} \varphi = F_{2k+2} + \left((\sqrt 5 - 1)/2\right)^{2k+1}$ and
-$F_{2k+1} (1 + \varphi) = F_{2k+3} + \left((\sqrt 5 - 1)/2\right)^{2k+1}$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Proposition 1. -/
-theorem_wanted fib_odd_mul_goldenRatio (k : ℕ) :
-    (Nat.fib (2 * k + 1) : ℝ) * Real.goldenRatio =
-        Nat.fib (2 * k + 2) + ((Real.sqrt 5 - 1) / 2) ^ (2 * k + 1) ∧
-      (Nat.fib (2 * k + 1) : ℝ) * (1 + Real.goldenRatio) =
-        Nat.fib (2 * k + 3) + ((Real.sqrt 5 - 1) / 2) ^ (2 * k + 1)
 
 /-- **Odd Pell and even Pell–Lucas numbers times $1 + \sqrt 2$.** Let $P_n$ be the Pell numbers and
 $H_n$ the Pell–Lucas numbers ($H_0 = H_1 = 1$, $H_{n+2} = 2H_{n+1} + H_n$). For every natural
