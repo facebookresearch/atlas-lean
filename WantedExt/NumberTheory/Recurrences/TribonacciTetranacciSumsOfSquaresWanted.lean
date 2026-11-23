@@ -21,15 +21,16 @@ of denominators.  In the Tetranacci boundary term the sign is
 extracted statement's displayed minus sign is not correct for
 arbitrary initial conditions.
 
-Proved in `MathlibExt.NumberTheory.Recurrences.TribonacciSumOfSquares`,
-which this module imports: the sum of squares of a Tribonacci
-sequence (`four_mul_sum_tribonacci_sq`).
+The square-sum formulas are proved in the imported modules
+`MathlibExt.NumberTheory.Recurrences.TribonacciSumOfSquares` and
+`MathlibExt.NumberTheory.Recurrences.TetranacciSumOfSquares`.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.Recurrences.TetranacciSumOfSquares
 public import MathlibExt.NumberTheory.Recurrences.TribonacciSumOfSquares
 
 set_option autoImplicit false
@@ -74,29 +75,6 @@ theorem_wanted three_mul_sum_tetranacci_mul_sub_two_add_sub_three
       (Q ((n : ℤ) + 1) - Q ((n : ℤ) - 1)) ^ 2 -
         (Q 1 - Q (-1)) ^ 2 -
         Q ((n : ℤ) - 2) * (Q n + Q ((n : ℤ) - 3)) +
-        Q (-2) * (Q 0 + Q (-3))
-
-/-- **Sum of squares of a Tetranacci sequence.** Let $Q \colon \mathbb{Z} \to \mathbb{Z}$ satisfy
-$Q(m+4) = Q(m+3) + Q(m+2) + Q(m+1) + Q(m)$ for every integer $m$. Then for every natural
-number $n$,
-$$3 \sum_{k=1}^{n} Q(k)^2 = 3\,Q(n)\,Q(n+1) - 3\,Q(0)\,Q(1) - \bigl(Q(n+1) - Q(n-1)\bigr)^2 +
-\bigl(Q(1) - Q(-1)\bigr)^2 + Q(n-2)\bigl(Q(n) + Q(n-3)\bigr) - Q(-2)\bigl(Q(0) + Q(-3)\bigr).$$
-
-Inside the boundary terms the sums $Q(n) + Q(n-3)$ and $Q(0) + Q(-3)$ carry a plus sign, as in
-Gryszka's Lemma 2; this sign is the one forced by the paper's telescoping calculation.
-
-Source: Karol Gryszka, "A Simple Proof of the Formula for the Sum
-of Tribonacci and Tetranacci Numbers Squared", Theorem 2. -/
-theorem_wanted three_mul_sum_tetranacci_sq
-    (Q : ℤ → ℤ)
-    (hQ : ∀ n : ℤ, Q (n + 4) =
-      Q (n + 3) + Q (n + 2) + Q (n + 1) + Q n)
-    (n : ℕ) :
-    3 * (∑ k ∈ Finset.Icc 1 n, (Q k) ^ 2) =
-      3 * Q n * Q ((n : ℤ) + 1) - 3 * Q 0 * Q 1 -
-        (Q ((n : ℤ) + 1) - Q ((n : ℤ) - 1)) ^ 2 +
-        (Q 1 - Q (-1)) ^ 2 +
-        Q ((n : ℤ) - 2) * (Q n + Q ((n : ℤ) - 3)) -
         Q (-2) * (Q 0 + Q (-3))
 
 end MathlibExt.NumberTheory.Recurrences.TribonacciTetranacciSumsOfSquaresWanted
