@@ -32,7 +32,7 @@ open DenominatorRootStacks FiniteRootTowers KatoChartCoefficientModels LogRootSo
 open InfiniteRootPreservationModels RepresentableStackFppfSites
 open CanonicalKummerFlatSiteModels KummerFlatSiteComparisonModels
 
-public def_wanted nativeRootSiteLocalRefinements [InverseImageTheory.{0}]
+public theorem_wanted nativeRootSiteLocalRefinements [InverseImageTheory.{0}]
     [N : NativeCategoryModel.{0}] (I : NativeDFImages.{0}) (D : RegularSectionComparisons)
     (X : LogScheme.{0}) (hX : X.IsFineSaturated) (RX : RootRealization X D I)
     [HasBaseChanges RX.infinite.stack] [∀ n : Exponent, HasBaseChanges (RX.finite n).stack]

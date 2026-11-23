@@ -29,14 +29,14 @@ open _root_.AlgebraicGeometry.StackCycleGeometry
 open MathlibExt.AlgebraicGeometry.InfiniteRootSectionModels
 open MathlibExt.AlgebraicGeometry.InfiniteRootPreservationModels
 
-public def_wanted nativeRelativeStackBaseChanges (S : Scheme.{0}) (R : Stack S) :
+public theorem_wanted nativeRelativeStackBaseChanges (S : Scheme.{0}) (R : Stack S) :
   HasBaseChanges R
 
 public def_wanted nativeBaseChangedArrow (S : Scheme.{0}) (X Y : Stack S)
     [HasBaseChanges X] [HasBaseChanges Y] (f : StackHom X Y)
     (T : Scheme.{0}) (b : T ⟶ S) : BaseChangedMap f b
 
-public def_wanted nativeBaseChangedTensor (S : Scheme.{0}) (R : Stack S)
+public theorem_wanted nativeBaseChangedTensor (S : Scheme.{0}) (R : Stack S)
     [HasBaseChanges R] (T : Scheme.{0}) (b : T ⟶ S) :
     HasTensorLanding (baseChanged R b)
 

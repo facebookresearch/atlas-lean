@@ -34,13 +34,13 @@ open EtaleLogSchemes EtaleLogDiagrams EtaleLogNativeCategory
 open KatoChartCoefficientModels NativeKummerFlatModels
 
 /-- Ordinary regular-function descent for the specified native etale unit. -/
-public def_wanted regularSections : RegularSectionComparisons
+public theorem_wanted regularSections : RegularSectionComparisons
 
 variable [InverseImageTheory.{0}] [N : NativeCategoryModel.{0}]
 
 /-- The categorical fs log pullback retains the original log objects
 and all native arrows; no scheme-pullback equality is asserted. -/
-public def_wanted fineSaturatedLogPullbacks : HasPullbacks FineSaturatedSchemes
+public theorem_wanted fineSaturatedLogPullbacks : HasPullbacks FineSaturatedSchemes
 
 public def_wanted kummerFlatIdentity (D : RegularSectionComparisons)
     (X : LogScheme.{0}) (hX : X.IsFineSaturated) :

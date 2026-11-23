@@ -30,5 +30,5 @@ open MathlibExt.AlgebraicGeometry.RootWeightEvaluations
 universe u
 
 /-- Prove laws for the fixed native line/section arrow recipe. -/
-def_wanted groupifiedLineWeightFunctorLaws (Y : Scheme.{u}) (P : CommMonCat.{u})
+theorem_wanted groupifiedLineWeightFunctorLaws (Y : Scheme.{u}) (P : CommMonCat.{u})
     (D : DeligneFaltingsChart Y P) (G : GroupifiedChart D) : LineFunctorLaws G
