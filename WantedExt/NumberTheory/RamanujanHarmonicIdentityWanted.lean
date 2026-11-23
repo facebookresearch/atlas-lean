@@ -17,15 +17,17 @@ The publisher TeX at
 <https://cs.uwaterloo.ca/journals/JIS/VOL29/Alzer/alzer22.tex>
 is the source used for the formulas below.
 
-Three records from this paper are already proved in MathlibExt and
+The diagonal uniqueness theorem is proved in the imported module
+`MathlibExt.NumberTheory.RamanujanHarmonicIdentity`.
+Three other records from this paper are already proved in MathlibExt and
 are not restated here: Theorem 1 is
-`MathlibExt.NumberTheory.binomial_harmonic_convolution`; Lemma 2
-is the third conjunct of
-`MathlibExt.Analysis.Ramanujan.Part1Ch9.Entry33Zeta3integral.ramanujan_part1_ch9_entry33_zeta3integral_general`
+`MetaMathlibExt.binomial_harmonic_convolution`; Lemma 2
+is the third conjunct of `ramanujan_part1_ch9_entry33_zeta3integral_general`
+in the namespace `MathlibExt.Analysis.Ramanujan.Part1Ch9.Entry33Zeta3integral`
 (after unfolding `chapter9Entry33WeightedIntegrand`, and stronger:
 it also proves integrability and holds at `n = 0`); and the final
 theorem that `∑_{ν=2}^{n} H_ν` is not an integer is
-`MathlibExt.NumberTheory.harmonic_partial_sum_not_int`.
+`MetaMathlibExt.harmonic_partial_sum_not_int`.
 
 Generalized binomial coefficients of a real top are Mathlib's
 `Ring.choose`.  The infinite series in Lemma 1 is stated with
@@ -42,6 +44,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
+public import MathlibExt.NumberTheory.RamanujanHarmonicIdentity
 
 set_option autoImplicit false
 
@@ -139,26 +142,5 @@ theorem_wanted sum_neg_one_pow_div_mul_choose_eq
         ((-1 : ℝ) ^ ν / (x - (ν : ℝ))) *
           (Nat.choose N ν : ℝ) =
       (-1 : ℝ) ^ N / ((x - (N : ℝ)) * Ring.choose x N)
-
-/-- **Uniqueness of the harmonic solution of the diagonal Ramanujan identity.** Let
-$K : \mathbb{N} \to \mathbb{C}$ be a sequence such that for every integer $n \ge 2$
-$$
-\sum_{\nu=2}^{n} \Bigl(\binom{2n-\nu-2}{n-1} - \binom{2n-\nu-2}{n-2}\Bigr) K(\nu) =
-\binom{2n-1}{n-1} \bigl(K(n-1) - K(n)\bigr).
-$$
-Then there is a constant $\lambda \in \mathbb{C}$ such that $K(r) = \lambda H_r$ for every integer
-$r \ge 1$, where $H_r = \sum_{j=1}^{r} 1/j$ is the $r$-th harmonic number.
-
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Theorem 8. -/
-theorem_wanted eq_lambda_mul_harmonic_of_sum_choose_sub_mul_eq
-    (K : ℕ → ℂ)
-    (hK : ∀ n : ℕ, 2 ≤ n →
-      ∑ ν ∈ Finset.Icc 2 n,
-          (((Nat.choose (2 * n - ν - 2) (n - 1) : ℂ) -
-            (Nat.choose (2 * n - ν - 2) (n - 2) : ℂ)) * K ν) =
-        (Nat.choose (2 * n - 1) (n - 1) : ℂ) * (K (n - 1) - K n)) :
-    ∃ lam : ℂ, ∀ r : ℕ, 1 ≤ r → K r = lam * (harmonic r : ℂ)
 
 end MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted

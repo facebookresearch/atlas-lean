@@ -1,5 +1,18 @@
 /-
-# Signed radial function is not differentiable at the origin
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_06.lean` in openbmb/ma-proofbench at
+commit 31bab4c78fd1b0c464e767d62e9202163d1e9029 (theorem statement and informal description).
+Authors: L. Pu et al. (MA-ProofBench)
+Licensed under the MIT License.
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +33,23 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_06.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_06 … := by sorry` into the Batteries `theorem_wanted`
-`not_differentiableAt_signed_norm_zero`; moved the informal problem statement docstring onto it
-and placed the declarations in namespace
-`MathlibExt.Analysis.Calculus.SignedRadialNotDifferentiableWanted`; replaced `import Mathlib` by
-`public import Mathlib` under the module system.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.Calculus.FDeriv.Basic
+public import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Analysis.Calculus.LineDeriv.Basic
 
-@[expose] public section
+/-!
+# The signed radial function at the origin
+
+The two diagonal restrictions agree by reflection, so their derivatives at zero must agree.
+Linearity would then force the horizontal derivative to vanish, but the horizontal
+restriction is the identity.
+-/
+
+public section
 
 namespace MathlibExt.Analysis.Calculus.SignedRadialNotDifferentiableWanted
 
@@ -59,10 +71,27 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions;
 several variables), `benchmark/level1/ma_proofbench_l1_06.lean` at
 openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted not_differentiableAt_signed_norm_zero
+theorem not_differentiableAt_signed_norm_zero
     {f : ℝ × ℝ → ℝ} (hpos : ∀ x y : ℝ, y > 0 → f (x, y) = Real.sqrt (x ^ 2 + y ^ 2))
     (hzero : ∀ x : ℝ, f (x, 0) = x)
     (hneg : ∀ x y : ℝ, y < 0 → f (x, y) = -Real.sqrt (x ^ 2 + y ^ 2)) :
-    ¬ DifferentiableAt ℝ f (0, 0)
+    ¬ DifferentiableAt ℝ f (0, 0) := by
+  rintro ⟨L, hL⟩
+  have hline (a b : ℝ) : deriv (fun t : ℝ ↦ f (t * a, t * b)) 0 = L (a, b) := by
+    simpa [lineDeriv, ← Prod.zero_eq_mk, Prod.smul_mk, smul_eq_mul] using
+      (hL.hasLineDerivAt (a, b)).lineDeriv
+  have haxis : L (1, 0) = 1 := by
+    simpa [hzero] using (hline 1 0).symm
+  have hreflect (t : ℝ) : f (-t, t) = f (t, t) := by
+    rcases lt_trichotomy t 0 with ht | rfl | ht
+    · simp [hneg _ _ ht]
+    · simp
+    · simp [hpos _ _ ht]
+  have hdiag : L (-1, 1) = L (1, 1) := by
+    simp [← hline, hreflect]
+  have h : L ((0, 1) - (1, 0)) = L ((0, 1) + (1, 0)) := by
+    simpa [Prod.mk_sub_mk, Prod.mk_add_mk] using hdiag
+  rw [map_sub, map_add, haxis] at h
+  linarith
 
 end MathlibExt.Analysis.Calculus.SignedRadialNotDifferentiableWanted
