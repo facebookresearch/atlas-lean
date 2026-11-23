@@ -51,10 +51,9 @@ private theorem asymmetric_factors (ω : (Fin 2 × Fin 2) × (Fin 2 × Fin 2))
   ring
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 private theorem asymmetricGridValue :
     gridValue {0, 1} {0} asymmetricTensor (fun _ => asymmetricKernel) = 1050 := by
-  decide
+  decide +kernel
 
 private example : ∏ w, asymmetricVertexWeight w = 210 := by
   decide
