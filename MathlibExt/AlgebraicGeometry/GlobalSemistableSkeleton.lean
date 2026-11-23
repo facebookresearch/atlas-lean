@@ -104,13 +104,15 @@ def stratumLocus
   {x | (∀ Z : irreducibleComponents (SemistableFormalAtlas.specialFibre P), x ∈ Z.val ↔ Z ∈ I) ∧
     ∀ j : Fin P.boundarySize, x ∈ horizontalLocus P j ↔ j ∈ J}
 
-/-- Indices are actual global residue strata, independent of a chart cover. -/
+/-- Indices are actual global residue strata, independent of a chart cover. The generic point is
+taken in the locally closed stratum locus, with the subspace topology: a stratum need not be
+closed in the special fibre. -/
 structure GlobalStratum where
   vertical : Finset (irreducibleComponents (SemistableFormalAtlas.specialFibre P))
   horizontal : Finset (Fin P.boundarySize)
   component : irreducibleComponents (stratumLocus P vertical horizontal)
-  genericPoint : SemistableFormalAtlas.specialFibre P
-  generic : IsGenericPoint genericPoint (Subtype.val '' component.val)
+  genericPoint : stratumLocus P vertical horizontal
+  generic : IsGenericPoint genericPoint component.val
 
 structure GlobalAtlas where
   chart : ∀ i : Fin P.atlasSize, ChartComparison P (P.chart i)
@@ -136,7 +138,7 @@ def skeleton : Set (AnalyticPoint P) :=
     q ∈ SemistableFormalAtlas.localSkeleton (P.chart i) (A.chart i).reduction}
 
 def stratumCell (S : GlobalStratum P) : Set (AnalyticPoint P) :=
-  closure {p | p ∈ skeleton P A ∧ A.reduction p = S.genericPoint}
+  closure {p | p ∈ skeleton P A ∧ A.reduction p = S.genericPoint.val}
 
 structure GlobalRetraction where
   map : AnalyticPoint P → AnalyticPoint P

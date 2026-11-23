@@ -57,10 +57,10 @@ structure AdaptedCell (S : GlobalStratum P) where
   comparison : ChartComparison P chart
   stratum : SemistableFormalAtlas.Stratum chart
   fullVanishing : stratum.vanishing = Finset.univ.image (boundaryEmbedding P chart)
-  sourceGeneric : comparison.specialMap stratum.genericPoint = S.genericPoint
+  sourceGeneric : comparison.specialMap stratum.genericPoint.val = S.genericPoint.val
   reductionCompatibility : ∀ q,
     A.reduction (comparison.map q) = comparison.specialMap (comparison.reduction.map q)
-  interior : {p : AnalyticPoint P | p ∈ skeleton P A ∧ A.reduction p = S.genericPoint} =
+  interior : {p : AnalyticPoint P | p ∈ skeleton P A ∧ A.reduction p = S.genericPoint.val} =
     comparison.map '' {q | IsGaussPoint chart comparison.reduction stratum q q}
 
 variable (F : ∀ S : GlobalStratum P, AdaptedCell P A S)
@@ -178,14 +178,18 @@ def genericScalar : GenericResidue m I →+* Γ(genericFibre P m I phi, ⊤) :=
   ((Scheme.ΓSpecIso (CommRingCat.of (GenericResidue m I))).inv ≫
     (genericProjection P m I phi).appTop).hom
 
-def genericDegree : ℕ := by
-  letI := (genericScalar P m I phi).toAlgebra
-  exact Module.finrank (GenericResidue m I) Γ(genericFibre P m I phi, ⊤)
-
 structure GenericallyFinite : Prop where
   dense : DenseRange phi.left
   finite : IsFinite (genericProjection P m I phi)
   finiteVector : letI := (genericScalar P m I phi).toAlgebra
     Module.Finite (GenericResidue m I) Γ(genericFibre P m I phi, ⊤)
+
+/-- The generic degree of a generically finite map: the dimension of the functions on the generic
+fibre over the residue field of the generic point. Without the finiteness witness this `finrank`
+would silently be `0` for an infinite-dimensional generic fibre. -/
+@[nolint unusedArguments]
+def genericDegree (_finite : GenericallyFinite P m I phi) : ℕ := by
+  letI := (genericScalar P m I phi).toAlgebra
+  exact Module.finrank (GenericResidue m I) Γ(genericFibre P m I phi, ⊤)
 
 end MathlibExt.AlgebraicGeometry.SkeletalTropicalDegree

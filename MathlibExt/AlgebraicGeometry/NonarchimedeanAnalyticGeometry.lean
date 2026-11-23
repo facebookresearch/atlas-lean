@@ -313,8 +313,7 @@ def pullbackUnitIso (A : AnalyticSpace X) :
 variable (A : AnalyticSpace X) [PreservesFiniteLimits A.pullback]
 
 instance pullbackAdditive : A.pullback.Additive :=
-  leftExactFunctor_le_additiveFunctor _ _ _
-    ((leftExactFunctor_iff _).2 inferInstance)
+  Functor.additive_of_preserves_binary_products _
 
 instance pullbackFiniteColimits : PreservesFiniteColimits A.pullback :=
   by infer_instance

@@ -110,7 +110,9 @@ def coordinateStratum (I : Finset (Fin n)) : Set (PrimeSpectrum (SpecialRing C))
   {x | ∀ j : Fin n, j.val < r + 1 + s →
     (Ideal.Quotient.mk (specialIdeal C) (C.coordinate j) ∈ x.asIdeal ↔ j ∈ I)}
 
-/-- A component of the actual prescribed coordinate stratum. -/
+/-- A component of the actual prescribed coordinate stratum. Its generic point is taken in the
+locally closed coordinate locus, with the subspace topology: a stratum need not be closed in the
+special fibre, so it is not the closure of its generic point there. -/
 structure Stratum where
   vanishing : Finset (Fin n)
   allowed : ∀ j ∈ vanishing, j.val < r + 1 + s
@@ -119,8 +121,8 @@ structure Stratum where
   locusComponent : Set (coordinateStratum C vanishing)
   maximal_irreducible : locusComponent ∈ irreducibleComponents (coordinateStratum C vanishing)
   component_eq : component = Subtype.val '' locusComponent
-  genericPoint : PrimeSpectrum (SpecialRing C)
-  generic : IsGenericPoint genericPoint component
+  genericPoint : coordinateStratum C vanishing
+  generic : IsGenericPoint genericPoint locusComponent
 
 def coordinateFibre (R : Reduction C) (S : Stratum C) (p : C.model.GenericPoint) :
     Set C.model.GenericPoint :=
@@ -131,7 +133,7 @@ def coordinateFibre (R : Reduction C) (S : Stratum C) (p : C.model.GenericPoint)
 
 /-- A singleton Shilov boundary maximizes every actual affinoid function. -/
 def IsSkeletalPoint (R : Reduction C) (S : Stratum C) (p q : C.model.GenericPoint) : Prop :=
-  q ∈ coordinateFibre C R S p ∧ R.map q = S.genericPoint ∧
+  q ∈ coordinateFibre C R S p ∧ R.map q = S.genericPoint.val ∧
   ∀ (a : C.model.genericAlgebra) (z : C.model.GenericPoint),
     z ∈ coordinateFibre C R S p → z.val.seminorm a ≤ q.val.seminorm a
 

@@ -96,7 +96,7 @@ theorem_wanted skeletal_Sturmfels_Tevelev (K : Type) [NormedField K] [IsUltramet
       (Y.cycle.complex.cell tau).carrier)
     (_generic : GenericTargetPoint P A m I phi (weightVector t)) :
     letI := Y.initialNoetherian t
-    genericDegree P m I phi * tropicalMultiplicity I t =
+    genericDegree P m I phi _finite * tropicalMultiplicity I t =
       indexSum P A F m I phi L (Y.cycle.complex.cell tau) (weightVector t)
 
 end WantedExt.AlgebraicGeometry.GlobalSemistableSkeletonWanted

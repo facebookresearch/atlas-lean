@@ -121,6 +121,10 @@ def coordinateStratum (I : Finset (Fin C.n)) : Set (PrimeSpectrum (SpecialRing C
   {x | ∀ j : Fin C.n, j.val < C.r + 1 + C.s →
     (Ideal.Quotient.mk (specialIdeal C) (coordinate C j) ∈ x.asIdeal ↔ j ∈ I)}
 
+/-- A stratum: an irreducible component of the locally closed locus where exactly the prescribed
+coordinates vanish. Its generic point is taken in the locus, with the subspace topology; a
+stratum need not be closed in the special fibre (the open stratum `T ≠ 0` of the affine line is
+not), so it is not the closure of its generic point there. -/
 structure Stratum where
   vanishing : Finset (Fin C.n)
   allowed : ∀ j ∈ vanishing, j.val < C.r + 1 + C.s
@@ -128,8 +132,8 @@ structure Stratum where
   maximal_irreducible : locusComponent ∈ irreducibleComponents (coordinateStratum C vanishing)
   component : Set (PrimeSpectrum (SpecialRing C))
   component_eq : component = Subtype.val '' locusComponent
-  genericPoint : PrimeSpectrum (SpecialRing C)
-  generic : IsGenericPoint genericPoint component
+  genericPoint : coordinateStratum C vanishing
+  generic : IsGenericPoint genericPoint locusComponent
 
 def coordinateFibre (R : Reduction C) (S : Stratum C) (p : C.model.GenericPoint) :
     Set C.model.GenericPoint :=
@@ -139,7 +143,7 @@ def coordinateFibre (R : Reduction C) (S : Stratum C) (p : C.model.GenericPoint)
 
 /-- The entire point is fixed by its actual singleton Shilov boundary. -/
 def IsGaussPoint (R : Reduction C) (S : Stratum C) (p q : C.model.GenericPoint) : Prop :=
-  q ∈ coordinateFibre C R S p ∧ R.map q = S.genericPoint ∧
+  q ∈ coordinateFibre C R S p ∧ R.map q = S.genericPoint.val ∧
     ∀ (a : C.model.genericAlgebra) (z : C.model.GenericPoint),
       z ∈ coordinateFibre C R S p → z.val.seminorm a ≤ q.val.seminorm a
 
