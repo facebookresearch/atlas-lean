@@ -8,26 +8,30 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
+public import CSLibExt.Planning.MotionPlanning.ConfigurationSpace
+public import Mathlib.Algebra.Group.Pointwise.Set.Basic
+
+import Mathlib.Tactic.Abel
+
+/-!
+# C-obstacle of a translating robot as a Minkowski sum
+
+For a robot translating in a vector space, with body `A₀` at the reference
+placement `0`, the C-obstacle of `translatePlacement` is the Minkowski
+(pointwise) sum `O + (-A₀)`, and free space is its complement.
+
+## References
+
+* T. Lozano-Pérez, _Spatial Planning: A Configuration Space Approach_,
+  IEEE Transactions on Computers 32(2), 1983, pp. 108-120.
+* S. M. LaValle, _Planning Algorithms_, Cambridge University Press, 2006, Ch. 4.
+-/
 
 @[expose] public section
 
 namespace Cslib.Planning.MotionPlanning
 
 open Pointwise
-
-/-- A configuration collides iff some placed body point lands in the obstacle set. -/
-def cObs (C V : Type*) (placement : C → Set V) (O : Set V) : Set C :=
-  {q | ∃ y, y ∈ placement q ∧ y ∈ O}
-
-/-- Membership in the C-obstacle unfolds to the collision witness. -/
-theorem mem_cObs (C V : Type*) (placement : C → Set V) (O : Set V) (q : C) :
-    q ∈ cObs C V placement O ↔ ∃ y, y ∈ placement q ∧ y ∈ O :=
-  Iff.rfl
-
-/-- Free space is the complement of the C-obstacle. -/
-def cFree (C V : Type*) (placement : C → Set V) (O : Set V) : Set C :=
-  (cObs C V placement O)ᶜ
 
 /-- Translating placement of a rigid body `A₀` (given at placement `0`):
 configuration `q` shifts every body point by `q`. -/
@@ -45,7 +49,7 @@ theorem mem_cObs_translatePlacement (V : Type*) [AddCommGroup V]
   · rintro ⟨y, ⟨a, ha, rfl⟩, hy⟩
     exact ⟨a, ha, hy⟩
   · rintro ⟨a, ha, hy⟩
-    exact ⟨_, ⟨a, ha, rfl⟩, hy⟩
+    exact ⟨a + q, ⟨a, ha, rfl⟩, hy⟩
 
 /-- The C-obstacle of a translating robot is the Minkowski sum `O ⊕ (-A₀)`,
 with the reference point at the origin. -/
