@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Data.Rat.Defs
-public import MathlibExt.NumberTheory.PrimitiveDivisor
+public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowAddOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisor
 
 /-!
@@ -124,22 +124,6 @@ public theorem_wanted primitivePrimeDivisor_pow_sub_one_mod_eq_one (a n p : ℕ)
     (hn : 2 ≤ n)
     (hp : IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - 1) n p) :
     p % n = 1
-
-/-- **Primitive prime factors of $a^n + 1$.** Let $a \ge 2$ and $n \ge 1$ be integers with
-$(a, n) \ne (2, 3)$, and if $n = 1$ suppose that $a + 1$ is not a power of $2$. Then $a^n + 1$
-has a primitive prime factor $p$, that is, a prime $p$ that divides $a^n + 1$ but divides no
-$a^m + 1$ with $1 \le m < n$, such that $p \equiv 1 \pmod{2n}$.
-
-The second exception is not in the printed statement: for $a = 3$, $n = 1$ the only prime factor
-of $3 + 1 = 4$ is $2 \not\equiv 1 \pmod 2$; the paper's proof applies Lemma 2.3 to
-$a^{2n} - 1$, whose exceptions include exactly this case.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 5 (`jis-2025-25.4.5-lem-5`). -/
-public theorem_wanted exists_primitivePrimeDivisor_pow_add_one (a n : ℕ) (ha : 2 ≤ a)
-    (hn : 1 ≤ n) (hexc : ¬ (a = 2 ∧ n = 3)) (hexc' : ¬ (n = 1 ∧ ∃ k : ℕ, a + 1 = 2 ^ k)) :
-    ∃ p, IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m + 1) n p ∧
-      p % (2 * n) = 1
 
 /-- **Prime factors of the biunitary divisor sum of a power of $3$.** Let $f$, $t$ and $\eta$ be
 natural numbers with $\eta \in \{0, 1\}$ and $f = 2t - 1 - \eta$, suppose $f \ge 5$, and write
