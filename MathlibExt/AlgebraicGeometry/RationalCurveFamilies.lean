@@ -80,9 +80,4 @@ structure RationalCurveFamily {k : Type u} [Field k]
 def IsRationallyConnected {k : Type u} [Field k]
     (X : Over (Spec (.of k))) : Prop := Nonempty (RationalCurveFamily X)
 
-def BirationalOver {k : Type u} [Field k]
-    (X Y : Over (Spec (.of k))) : Prop :=
-  ∃ p : Scheme.PartialIso X.left Y.left,
-    p.iso.hom ≫ p.target.ι ≫ Y.hom = p.source.ι ≫ X.hom
-
 end MathlibExt.AlgebraicGeometry.RationalCurveFamilies

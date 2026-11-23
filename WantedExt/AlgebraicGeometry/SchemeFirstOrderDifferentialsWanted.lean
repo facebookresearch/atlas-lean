@@ -35,8 +35,15 @@ attribute [local instance] HasDerivedCategory.standard
 
 variable [HasDerivedPullbacks.{0}] [HasDerivedPushforwards.{0}] [HasDerivedTensors.{0}]
 
+/-- A cotangent normalization together with a strict projection to Kähler one-forms. A strict
+projection need not exist for an arbitrary representative of the cotangent complex: on
+`Spec k[t]` the quasi-isomorphic model `[k[t] → k[t]/(t)]` (degrees 0 and 1, receiving
+`dt ↦ t`) has no `k[t]`-linear map back sending `t` to `dt`. So the representative is chosen
+together with its projection, as for the standard degree-nonpositive model, whose degree-zero
+term maps onto `Ω¹`. -/
 def_wanted normalizedCotangentFormsProjection (k : Type) [CommRing k]
-    (U : Over (Spec (.of k))) (P : CotangentNormalization U.hom) : CotangentFormsProjection U P
+    (U : Over (Spec (.of k))) :
+    (P : CotangentNormalization U.hom) × CotangentFormsProjection U P
 
 def_wanted normalizedPullbackH0 {X Y : Scheme.{0}} (f : X ⟶ Y) (M : Y.Modules) : PullbackH0 f M
 
@@ -52,7 +59,7 @@ def_wanted actualPointDifferential (k : Type) [CommRing k]
     (b : Spec (.of Ω) ⟶ Spec (.of k)) (hp : p ≫ U.hom = b) (D : PointDeformation p hp) :
     PointDifferential U p hp D
 
-proof_wanted actualPointClassChainRule (k : Type) [CommRing k]
+theorem_wanted actualPointClassChainRule (k : Type) [CommRing k]
     (U V : Over (Spec (.of k))) (f : U ⟶ V)
     (P : CotangentNormalization U.hom) (Q : CotangentNormalization V.hom)
     (F : CotangentFormsProjection U P) (G : CotangentFormsProjection V Q)

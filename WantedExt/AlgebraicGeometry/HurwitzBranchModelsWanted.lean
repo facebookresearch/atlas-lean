@@ -39,11 +39,11 @@ attribute [local instance] HasDerivedCategory.standard
 
 universe u
 
-proof_wanted actualTorsionDeterminantUnit (R : Type u) [CommRing R]
+theorem_wanted actualTorsionDeterminantUnit (R : Type u) [CommRing R]
     (C : CochainComplex (ModuleCat.{u} R) ℤ) (P : TorsionPresentation C)
     (e : OddIndex P ≃ EvenIndex P) : IsUnit (torsionDeterminant P e)
 
-proof_wanted actualCartierOriginUnique {Y S : Scheme.{0}} (q : Y ⟶ S) (r : ℕ)
+theorem_wanted actualCartierOriginUnique {Y S : Scheme.{0}} (q : Y ⟶ S) (r : ℕ)
     (D E : EffectiveCartierFamily q r) (C : FourierMukai.D Y)
     (A : CartierOrigin D C) (B : CartierOrigin E C) : D.idealSubobject = E.idealSubobject
 

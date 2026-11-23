@@ -17,8 +17,8 @@ public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 The output is a genuine family of rational curves with dominant two-point
 evaluation. The anti-canonical hypothesis uses an actual inverse to the
 Serre-characterized canonical line and the coherent global-generation
-criterion for ampleness. Birational invariance uses an actual dense-open
-isomorphism over the field.
+criterion for ampleness. Birational invariance uses Mathlib's
+`Scheme.BirationalOver`, a dense-open isomorphism over the field.
 
 References: Campana, *Connexité rationnelle des variétés de Fano*,
 Annales scientifiques de l'ENS 25 (1992), 539–545;
@@ -51,7 +51,7 @@ theorem_wanted birational_invariance (k : Type u) [Field k] [IsAlgClosed k] [Cha
     (X Y : Over (Spec (.of k))) [IsIntegral X.left] [IsIntegral Y.left]
     [IsProper X.hom] [IsProper Y.hom] [Smooth X.hom] [Smooth Y.hom]
     (projectiveX : IsProjectiveVariety X) (projectiveY : IsProjectiveVariety Y)
-    (birational : BirationalOver X Y) :
+    (birational : Scheme.BirationalOver X.hom Y.hom) :
     IsRationallyConnected X ↔ IsRationallyConnected Y
 
 end WantedExt.AlgebraicGeometry.RationalConnectednessWanted
