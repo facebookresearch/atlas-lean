@@ -1,5 +1,17 @@
 /-
-# The inf-convolution g_n(x) = inf_p f(p) + n·d(x,p) is n-Lipschitz
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_36.lean` (openbmb/ma-proofbench, commit 31bab4c).
+The following MIT license applies to the adapted definition and theorem statement.
+Authors: Lushi Pu et al.
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,22 +32,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_36.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_36 … := by sorry` into the Batteries `theorem_wanted`
-`abs_toReal_g_sub_le_mul_dist`; moved the informal problem statement docstring onto it and
-placed the declarations in namespace `MathlibExt.MeasureTheory.InfConvolutionLipschitzWanted`;
-replaced `import Mathlib` by `public import Mathlib` under the module system; added docstrings
-to helper definitions.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Topology.MetricSpace.Defs
+public import Mathlib.Topology.Semicontinuity.Defs
+
+/-! # Lipschitz regularization by inf-convolution -/
 
 @[expose] public section
 
@@ -53,6 +57,17 @@ the infimum being taken in $[0,\infty]$.
 noncomputable def g (f : X → ENNReal) (n : ℕ) (x : X) : ENNReal :=
   sInf (Set.range fun p : X => f p + n * ENNReal.ofReal (dist x p))
 
+private theorem g_le_add_edist (f : X → ENNReal) (n : ℕ) (x y : X) :
+    g f n x ≤ g f n y + n * edist x y := by
+  simp only [g, sInf_range, ← edist_dist, ENNReal.iInf_add]
+  refine iInf_mono fun p ↦ ?_
+  calc
+    f p + n * edist x p ≤ f p + n * (edist x y + edist y p) :=
+      add_le_add_right (mul_le_mul_right (edist_triangle x y p) _) _
+    _ = _ := by rw [mul_add, add_assoc, add_comm ((n : ENNReal) * edist x y)]
+
+-- The benchmark includes lower semicontinuity even though the metric estimate holds without it.
+set_option linter.unusedVariables false in
 /-- **The inf-convolution of a lower semicontinuous function is Lipschitz.** Let $X$ be a metric
 space with metric $d$, and let $f : X \to [0,\infty]$ be lower semicontinuous with $f(p) < \infty$
 for at least one $p \in X$. For a natural number $n$ and $x \in X$ let
@@ -69,9 +84,20 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functional anal
 functional analysis), `benchmark/level1/ma_proofbench_l1_36.lean` at
 openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted abs_toReal_g_sub_le_mul_dist (f : X → ENNReal) (hf : LowerSemicontinuous f)
+theorem abs_toReal_g_sub_le_mul_dist (f : X → ENNReal) (hf : LowerSemicontinuous f)
     (hp : ∃ p : X, f p < ⊤)
     (n : ℕ) (x y : X) :
-    |(g f n x).toReal - (g f n y).toReal| ≤ n * dist x y
+    |(g f n x).toReal - (g f n y).toReal| ≤ n * dist x y := by
+  obtain ⟨p, hp⟩ := hp
+  have hfin (z : X) : g f n z < ⊤ := by
+    refine lt_of_le_of_lt (iInf_le (fun q ↦ f q + n * ENNReal.ofReal (dist z q)) p) ?_
+    exact ENNReal.add_lt_top.mpr ⟨hp, ENNReal.mul_lt_top (ENNReal.natCast_lt_top n)
+      ENNReal.ofReal_lt_top⟩
+  have hle (a b : X) : (g f n a).toReal ≤ (g f n b).toReal + n * dist a b := by
+    simpa only [ENNReal.toReal_mul, ENNReal.toReal_natCast, ← dist_edist] using
+      ENNReal.toReal_le_add (g_le_add_edist f n a b) (hfin b).ne
+        (ENNReal.mul_ne_top (ENNReal.natCast_ne_top n) (edist_ne_top a b))
+  rw [abs_sub_le_iff, sub_le_iff_le_add', sub_le_iff_le_add']
+  exact ⟨hle x y, by simpa only [dist_comm y x] using hle y x⟩
 
 end MathlibExt.MeasureTheory.InfConvolutionLipschitzWanted
