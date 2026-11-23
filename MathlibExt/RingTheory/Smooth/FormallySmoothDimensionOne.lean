@@ -211,7 +211,7 @@ private theorem relDim_eq_one {k R : Type*} [Field k] [CommRing R] [IsDomain R] 
   haveI h𝔫'p : 𝔫'.IsPrime := IsLocalization.isPrime_of_isPrime_disjoint (Submonoid.powers f) _ 𝔫
     h𝔫p hdisj
   have hunder : 𝔫'.comap (algebraMap R (Localization.Away f)) = 𝔫 :=
-    IsLocalization.comap_map_of_isPrime_disjoint (Submonoid.powers f) (Localization.Away f) h𝔫p
+    IsLocalization.under_map_of_isPrime_disjoint (Submonoid.powers f) (Localization.Away f) h𝔫p
       hdisj
   haveI hEt : Algebra.Etale (MvPolynomial (Fin n) k) (Localization.Away f) := inferInstance
   haveI hflat : Module.Flat (MvPolynomial (Fin n) k) (Localization.Away f) := inferInstance
@@ -350,7 +350,7 @@ theorem Algebra.FormallySmooth.isDiscreteValuationRing_localizationAtPrime_of_kr
   haveI h𝔫'p : 𝔫'.IsPrime :=
     IsLocalization.isPrime_of_isPrime_disjoint (Submonoid.powers f) Rf 𝔫 inferInstance hdisj
   have hcomap : 𝔫'.comap (algebraMap R Rf) = 𝔫 :=
-    IsLocalization.comap_map_of_isPrime_disjoint (Submonoid.powers f) Rf inferInstance hdisj
+    IsLocalization.under_map_of_isPrime_disjoint (Submonoid.powers f) Rf inferInstance hdisj
   haveI : 𝔫'.IsMaximal := by
     refine ⟨⟨h𝔫'p.ne_top, fun Q hQ => ?_⟩⟩
     by_contra hQtop
