@@ -50,14 +50,10 @@ def liftRings : CommRingCat.{u} ⥤ CommRingCat.{u+1} where
 def rawRing (X : Scheme.{u}) : X.Etaleᵒᵖ ⥤ CommRingCat.{u+1} :=
   (Scheme.Etale.forget X ⋙ Over.forget X).op ⋙ Scheme.Γ ⋙ liftRings
 
-instance ringSheafification (X : Scheme.{u}) :
-    HasSheafify X.smallEtaleTopology CommRingCat.{u+1} :=
-  HasSheafify.mk' _ _ (plusPlusAdjunction _ _)
-
 /-- The native sheafification of those regular functions. Its maps remain
 fixed even before the existing etale descent comparison is integrated. -/
 def structureRing (X : Scheme.{u}) : RingSheaf X.smallEtaleTopology :=
-  (presheafToSheaf X.smallEtaleTopology CommRingCat).obj (rawRing X)
+  (presheafToSheaf X.smallEtaleTopology CommRingCat.{u+1}).obj (rawRing X)
 
 /-- Actual regular-function pullback on a base-changed etale chart. -/
 def rawPullback {X Y : Scheme.{u}} (f : X ⟶ Y) :
@@ -80,9 +76,9 @@ def ringSharp {X Y : Scheme.{u}} (f : X ⟶ Y) [HasInverseImage f] :
     structureRing Y ⟶
       ((etaleBaseChange f).sheafPushforwardContinuous CommRingCat
         Y.smallEtaleTopology X.smallEtaleTopology).obj (structureRing X) :=
-  ((sheafificationAdjunction Y.smallEtaleTopology CommRingCat).homEquiv _ _).symm
+  ((sheafificationAdjunction Y.smallEtaleTopology CommRingCat.{u+1}).homEquiv _ _).symm
     (rawPullback f ≫ Functor.whiskerLeft (etaleBaseChange f).op
-      ((sheafificationAdjunction X.smallEtaleTopology CommRingCat).unit.app (rawRing X)))
+      ((sheafificationAdjunction X.smallEtaleTopology CommRingCat.{u+1}).unit.app (rawRing X)))
 
 /-- Arbitrary log schemes on the native small-etale ringed site. -/
 structure LogScheme where

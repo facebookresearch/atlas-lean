@@ -38,7 +38,12 @@ universe u v
 local instance (A : Type*) : DecidableEq A := Classical.decEq A
 
 /-- Pure contact data; geometric callers identify the monoids with actual
-small-etale fibres and the two maps with actual branch generizations. -/
+small-etale fibres and the two maps with actual branch generizations.
+
+The source's dual graphs are finite: for finite `V` and `E` (all geometric
+callers index by `Fin`) the products used below are the direct sums of
+Construction 1.16. For infinite index types the construction is not the
+source's basic monoid. -/
 structure ContactDiagram (V E : Type v) where
   vertex : V → CommMonCat.{u}
   node : E → CommMonCat.{u}
@@ -77,6 +82,13 @@ def groupProjection {V E : Type v} (D : ContactDiagram.{u,v} V E) :
     TotalGroup D →+ BasicGroup D :=
   (QuotientAddGroup.mk' (AddCommGroup.torsion (RelationQuotient D))).comp
     (QuotientAddGroup.mk' (relations D))
+
+/-- Every node relation vanishes in the basic group. -/
+theorem groupProjection_relation {V E : Type v} (D : ContactDiagram.{u,v} V E) (e : E)
+    (m : D.node e) : groupProjection D (relation D e m) = 0 := by
+  have h : (QuotientAddGroup.mk' (relations D)) (relation D e m) = 0 :=
+    (QuotientAddGroup.eq_zero_iff _).2 (AddSubgroup.subset_closure ⟨e, m, rfl⟩)
+  simp only [groupProjection, AddMonoidHom.comp_apply, h, map_zero]
 
 /-- The actual product of positive vertex and smoothing entries. -/
 abbrev PositiveData {V E : Type v} (D : ContactDiagram.{u,v} V E) :=

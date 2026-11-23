@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.AlgebraicGeometry.LogMapBasicMonoids
 public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Abel
 
 set_option backward.isDefEq.respectTransparency false
 @[expose] public noncomputable section
@@ -46,3 +48,79 @@ example : Multiplicative.ofAdd (1 : ℤ) ∈
     norm_num
   rw [he]
   exact Submonoid.subset_closure (by simp)
+
+namespace LogBasicMonoidsTest
+
+open MathlibExt.AlgebraicGeometry.LogMapBasicMonoids
+
+/-- One node joining vertex `0` (first branch) to vertex `1` (second branch);
+both generizations are the identity of `ℕ` and `u` is the contact order. -/
+def twoVertexDiagram (u : Additive (Algebra.GrothendieckGroup (Multiplicative ℕ)) →+ ℤ) :
+    ContactDiagram.{0, 0} (Fin 2) Unit where
+  vertex _ := CommMonCat.of (Multiplicative ℕ)
+  node _ := CommMonCat.of (Multiplicative ℕ)
+  branch1 _ := 0
+  branch2 _ := 1
+  generization1 _ := MonoidHom.id _
+  generization2 _ := MonoidHom.id _
+  contact _ := u
+
+/-- A self-node: both branches lie on the single vertex. -/
+def loopDiagram : ContactDiagram.{0, 0} Unit Unit where
+  vertex _ := CommMonCat.of (Multiplicative ℕ)
+  node _ := CommMonCat.of (Multiplicative ℕ)
+  branch1 _ := ()
+  branch2 _ := ()
+  generization1 _ := MonoidHom.id _
+  generization2 _ := MonoidHom.id _
+  contact _ := 0
+
+variable (u : Additive (Algebra.GrothendieckGroup (Multiplicative ℕ)) →+ ℤ)
+  (m : Multiplicative ℕ)
+
+/-- The first branch enters the relation with a plus sign. -/
+example : (relation (twoVertexDiagram u) () m).1 0 =
+    Additive.ofMul (Algebra.GrothendieckGroup.of m) := by
+  simp [relation, twoVertexDiagram]
+
+/-- The second branch enters the relation with a minus sign. -/
+example : (relation (twoVertexDiagram u) () m).1 1 =
+    -Additive.ofMul (Algebra.GrothendieckGroup.of m) := by
+  simp [relation, twoVertexDiagram]
+
+/-- The node coordinate of the relation is the contact order. -/
+example : (relation (twoVertexDiagram u) () m).2 () =
+    u (Additive.ofMul (Algebra.GrothendieckGroup.of m)) := by
+  simp [relation, twoVertexDiagram]
+
+/-- On a self-node the two branch contributions cancel in the same slot. -/
+example : (relation loopDiagram () m).1 () = 0 := by
+  simp [relation, loopDiagram]
+
+/-- In the basic group the second branch image minus the first is the contact
+order times the smoothing generator (Gross--Siebert, equation (1.8)). -/
+example :
+    groupProjection (twoVertexDiagram u)
+        (Pi.single 1 (Additive.ofMul (Algebra.GrothendieckGroup.of m)), 0) -
+      groupProjection (twoVertexDiagram u)
+        (Pi.single 0 (Additive.ofMul (Algebra.GrothendieckGroup.of m)), 0) =
+    u (Additive.ofMul (Algebra.GrothendieckGroup.of m)) •
+      groupProjection (twoVertexDiagram u) (0, Pi.single () 1) := by
+  have hrel : relation (twoVertexDiagram u) () m =
+      ((Pi.single 0 (Additive.ofMul (Algebra.GrothendieckGroup.of m)), 0) :
+          TotalGroup (twoVertexDiagram u)) -
+        ((Pi.single 1 (Additive.ofMul (Algebra.GrothendieckGroup.of m)), 0) :
+          TotalGroup (twoVertexDiagram u)) +
+        u (Additive.ofMul (Algebra.GrothendieckGroup.of m)) •
+          ((0, Pi.single () 1) : TotalGroup (twoVertexDiagram u)) := by
+    refine Prod.ext (funext fun i => ?_) (funext fun q => ?_)
+    · fin_cases i <;> simp [relation, twoVertexDiagram]
+    · simp [relation, twoVertexDiagram]
+  have h := groupProjection_relation (twoVertexDiagram u) () m
+  rw [hrel, map_add, map_sub, map_zsmul] at h
+  apply sub_eq_zero.mp
+  rw [← neg_eq_zero]
+  convert h using 1
+  abel
+
+end LogBasicMonoidsTest

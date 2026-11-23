@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.BasicLogCurves
+public import MathlibExt.AlgebraicGeometry.BasicLogGeometricGhosts
 public import MathlibExt.AlgebraicGeometry.BasicLogMapFamilies
 public import MathlibExt.AlgebraicGeometry.LogMapBasicMonoids
 public import Mathlib.Basic.Complex.Basic
@@ -21,7 +22,9 @@ sheaf comparisons. The curve output is initial among log structures on the
 same marked nodal family. Stable-map basicization is initial in the actual
 category of enhancements of an already given stable log map, retaining its
 underlying ordinary map. Fine/fs and characteristic-zero finite-type scope
-are explicit on each geometric request.
+are explicit on each geometric request, and stable-map basicization keeps the
+source's standing assumption that the target and base log structures are
+Zariski: fs charts exist on Zariski open neighbourhoods of every point.
 
 Sources: F. Kato, log smooth curves; Gross--Siebert,
 https://arxiv.org/abs/1102.4322v2, §1.2, Construction1.16,
@@ -37,6 +40,7 @@ open MathlibExt.AlgebraicGeometry.EtaleLogDiagrams
 open MathlibExt.AlgebraicGeometry.GeometricLogGhosts
 open MathlibExt.AlgebraicGeometry.BasicLogCurves
 open MathlibExt.AlgebraicGeometry.BasicLogMapFamilies
+open MathlibExt.AlgebraicGeometry.BasicLogGeometricGhosts
 open MathlibExt.AlgebraicGeometry.MarkedCurveStabilization
 
 /-- The actual stalk map is fixed on every etale log-section generator. -/
@@ -50,9 +54,11 @@ def_wanted basicLogCurve [InverseImageTheory.{0}] (T : Scheme.{0})
     (n g : ℕ) (F : MarkedFamily T n g) : BasicLogCurve F
 
 /-- Canonical comparison from a basic enhancement; input M carries the
-actual original stable log map and its log-curve geometry. -/
+actual original stable log map and its log-curve geometry. The target and
+base log structures are fs and Zariski, as in the source. -/
 def_wanted basicization [InverseImageTheory.{0}] (X S : LogScheme.{0})
     (hX : X.IsFineSaturated) (hS : S.IsFineSaturated)
+    (hXZariski : HasZariskiFineSaturatedCharts X) (hSZariski : HasZariskiFineSaturatedCharts S)
     (q : MathlibExt.AlgebraicGeometry.EtaleLogSchemes.Hom X S) [LocallyOfFiniteType q.map] [QuasiCompact q.map]
     (c : S.scheme ⟶ Spec (.of ℂ)) [LocallyOfFiniteType c] [QuasiCompact c]
     (n g : ℕ) (T : Scheme.{0}) [IsNoetherian T]
