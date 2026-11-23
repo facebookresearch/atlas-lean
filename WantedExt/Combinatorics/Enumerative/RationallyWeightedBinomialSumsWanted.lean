@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import MathlibExt.Combinatorics.Enumerative.HsuShiueGeneralizedStirlingNumber
+public import MathlibExt.Combinatorics.Enumerative.PolynomiallyWeightedFibonacciSums
 public import MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums
 public import MathlibExt.NumberTheory.LucasSequence
 import MathlibExt.Combinatorics.Enumerative.StirlingSecondExplicit
@@ -110,24 +111,6 @@ Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.3. -/
 public theorem_wanted sum_neg_one_pow_choose_two_pow_mul_sq (N : ℕ) :
     ∑ k ∈ Finset.Icc 1 N, (-1 : ℤ) ^ k * (N.choose k : ℤ) * 2 ^ (N - k) * (k : ℤ) ^ 2 =
       (N : ℤ) ^ 2 - 2 * N
-
-/-- **Polynomially weighted Fibonacci sums via derivatives.** Let $F_n$ denote the Fibonacci
-numbers and $S(r, i)$ the Stirling numbers of the second kind. Let $t$ and $N$ be natural numbers,
-let $A_0, \dots, A_t$ be complex numbers, let $h(y) = \sum_{r=0}^{t} A_r y^r$, and let $P$ be the
-polynomial $P(y) = \sum_{j=0}^{N} F_j y^j$, with $i$-th derivative $P^{(i)}$. Then for every
-$x \in \mathbb{C}$,
-$$\sum_{k=0}^{N} h(k) F_k x^k = \sum_{r=0}^{t} A_r \sum_{i=0}^{r} S(r, i) \, x^i P^{(i)}(x).$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.4. -/
-public theorem_wanted sum_poly_mul_fib_pow_eq_sum_stirlingSecond_derivative (A : ℕ → ℂ)
-    (t N : ℕ) (x : ℂ) :
-    ∑ k ∈ Finset.range (N + 1),
-        (∑ r ∈ Finset.range (t + 1), A r * (k : ℂ) ^ r) * (Nat.fib k : ℂ) * x ^ k =
-      ∑ r ∈ Finset.range (t + 1), A r * ∑ i ∈ Finset.range (r + 1),
-        (Nat.stirlingSecond r i : ℂ) * x ^ i *
-          (derivative^[i] (∑ j ∈ Finset.range (N + 1), C (Nat.fib j : ℂ) * X ^ j)).eval x
 
 /-- **Power-weighted binomial sums of Lucas numbers.** Let $L_n$ denote the Lucas numbers
 ($L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$), $S(r, i)$ the Stirling numbers of the second
