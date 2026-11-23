@@ -95,6 +95,18 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    that is exactly as its own `git merge` left it (or its own unedited draft of
    the manifest): once you edit a file, `git add` it when it is resolved.
 
+   For a domain-sharded ledger, stage the affected JSON shards as well as the
+   resolved Lean files. Do not start an automatic bump merge across the one-time
+   layout cutover. For a manual merge, keep the sharded layout and both parents'
+   records, then stage the result and validate it without committing:
+
+   ```sh
+   python3 scripts/bump/bump_branch.py resolve-manifest --check-only
+   ```
+
+   The check rejects lost records from either parent before running preflight
+   provenance validation against main. A v2 checkout must not restore inline rows.
+
    Other conflicts are yours:
 
    1. Resolve each conflicted file and `git add` it.
