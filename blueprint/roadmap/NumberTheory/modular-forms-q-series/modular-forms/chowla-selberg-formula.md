@@ -23,8 +23,10 @@ Proof. By [Kronecker's limit formula at $s = 0$](kronecker-limit-formula-imagina
 $\zeta_K(0) = -h/w$ and $\zeta_K'(0) = -\frac{1}{12w} \sum_c \log F(\mathfrak{a}_c)$. The factorization
 [$\zeta_K(s) = \zeta(s) L(s, \chi)$](../../zeta-l-functions/dirichlet-l-functions/dedekind-zeta-quadratic-field-factorization.md),
 which persists by analytic continuation as an identity of meromorphic functions, with
-$\zeta(0) = -\frac{1}{2}$ and $\zeta'(0) = -\frac{1}{2} \log 2\pi$, gives $L(0, \chi) = 2h/w$ and
-$\zeta_K'(0) = -\frac{h}{w} \log 2\pi - \frac{1}{2} L'(0, \chi)$, and
+$\zeta(0) = -\frac{1}{2}$ and $\zeta'(0) = -\frac{1}{2} \log 2\pi$ (the case $a = 1$ of [Lerch's formula](../../zeta-l-functions/dirichlet-l-functions/lerch-formula-hurwitz-zeta.md)),
+gives $L(0, \chi) = 2h/w$ and $\zeta_K'(0) = -\frac{h}{w} \log 2\pi - \frac{1}{2} L'(0, \chi)$. The character $\chi$ is not
+the principal character modulo $|D|$: for that character
+$L(s, \chi) = \zeta(s) \prod_{p \mid D} (1 - p^{-s})$ vanishes at $s = 0$, whereas $L(0, \chi) = 2h/w \neq 0$. So
 [the formula for $L'(0, \chi)$](../../zeta-l-functions/dirichlet-l-functions/dirichlet-l-derivative-at-zero-gamma.md)
 gives $L'(0, \chi) = \sum_{a=1}^{|D| - 1} \chi(a) \log \Gamma(a / |D|) - \frac{2h}{w} \log |D|$. Hence
 $\sum_c \log F(\mathfrak{a}_c) = 12 h \log (2\pi / |D|) + 6 w \sum_{a} \chi(a) \log \Gamma(a / |D|)$, which is the
@@ -39,6 +41,7 @@ $\frac{1}{h} \sum_c \log(4\pi \operatorname{Im}(\tau_c) |\eta(\tau_c)|^4) = \fra
 
 - [Kronecker's limit formula for an imaginary quadratic field at $s = 0$](kronecker-limit-formula-imaginary-quadratic.md)
 - [Dedekind zeta function of a quadratic field as $\zeta(s) L(s, \chi_D)$](../../zeta-l-functions/dirichlet-l-functions/dedekind-zeta-quadratic-field-factorization.md)
+- [Lerch's formula for the Hurwitz zeta function at $s = 0$](../../zeta-l-functions/dirichlet-l-functions/lerch-formula-hurwitz-zeta.md), for $\zeta(0) = -\frac{1}{2}$ and $\zeta'(0) = -\frac{1}{2} \log 2\pi$, its case $a = 1$
 - [The derivative at $s = 0$ of a Dirichlet $L$-function through the gamma function](../../zeta-l-functions/dirichlet-l-functions/dirichlet-l-derivative-at-zero-gamma.md)
 
 ## Sources

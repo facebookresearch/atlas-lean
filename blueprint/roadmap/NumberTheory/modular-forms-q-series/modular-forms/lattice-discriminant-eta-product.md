@@ -11,12 +11,17 @@ Then
 $$g_2(\tau)^3 - 27 g_3(\tau)^2 = (2\pi)^{12} \eta(\tau)^{24} = (2\pi)^{12} \, q \prod_{n \ge 1} (1 - q^n)^{24}, \qquad q = e^{2\pi i \tau}.$$
 
 In terms of the Eisenstein series $E_k$ normalised to have constant term $1$, the identities
-$\sum_{(m, n) \neq (0, 0)} (m\tau + n)^{-k} = 2 \zeta(k) E_k(\tau)$ for $k = 4, 6$, $\zeta(4) = \pi^4/90$ and $\zeta(6) = \pi^6/945$ give
+$\sum_{(m, n) \neq (0, 0)} (m\tau + n)^{-k} = 2 \zeta(k) E_k(\tau)$ for $k = 4, 6$ and the
+[even zeta values](../../zeta-l-functions/riemann-zeta/zeta-even-integers-bernoulli.md) $\zeta(4) = \pi^4/90$ and $\zeta(6) = \pi^6/945$ give
 $g_2 = \frac{4\pi^4}{3} E_4$ and $g_3 = \frac{8\pi^6}{27} E_6$, so the formula is the identity
 $\Delta = (E_4^3 - E_6^2)/1728$ for $\Delta(\tau) = q \prod_{n \ge 1} (1 - q^n)^{24}$. Zagier proves the latter from
 the modularity of $\Delta$ in weight $12$, the fact that the modular forms of weight $12$ for $\mathrm{SL}_2(\mathbb{Z})$
 form a space of dimension at most $2$, spanned by $E_4^3$ and $E_6^2$, and the first coefficients of the
 $q$-expansions $E_4^3 = 1 + 720 q + \cdots$, $E_6^2 = 1 - 1008 q + \cdots$ and $\Delta = q + \cdots$.
+
+## Proof depends on
+
+- [Even zeta values and Bernoulli numbers](../../zeta-l-functions/riemann-zeta/zeta-even-integers-bernoulli.md), for $\zeta(4) = \pi^4/90$ and $\zeta(6) = \pi^6/945$
 
 ## Sources
 

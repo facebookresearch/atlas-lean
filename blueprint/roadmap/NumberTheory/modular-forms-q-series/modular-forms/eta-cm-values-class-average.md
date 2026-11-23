@@ -24,8 +24,9 @@ $$\zeta_K(s, c^{-1}) = \frac{2\pi}{w \sqrt{|D|}} \left( \frac{1}{s - 1} + 2\gamm
 
 Summing over the classes gives the expansion of $\zeta_K(s)$ at $s = 1$, and
 [$\zeta_K(s) = \zeta(s) L(s, \chi)$](../../zeta-l-functions/dirichlet-l-functions/dedekind-zeta-quadratic-field-factorization.md)
-with $\zeta(s) = \frac{1}{s - 1} + \gamma + O(s - 1)$ and $L(s, \chi)$ holomorphic at $s = 1$ gives
-$\zeta_K(s) = \frac{L(1, \chi)}{s - 1} + \gamma L(1, \chi) + L'(1, \chi) + O(s - 1)$. Comparing the residues gives
+for $\operatorname{Re} s > 1$, with $\zeta(s) = \frac{1}{s - 1} + \gamma + O(s - 1)$, shows that
+$L(s, \chi) = \zeta_K(s) / \zeta(s)$ is holomorphic at $s = 1$, as a quotient of two functions with simple poles there,
+and gives $\zeta_K(s) = \frac{L(1, \chi)}{s - 1} + \gamma L(1, \chi) + L'(1, \chi) + O(s - 1)$. Comparing the residues gives
 Dirichlet's class number formula $L(1, \chi) = 2\pi h / (w \sqrt{|D|})$, and comparing the constant terms gives
 
 $$\frac{L'(1, \chi)}{L(1, \chi)} = \gamma - \log |D| - \frac{1}{h} \sum_c \log\bigl(N(\mathfrak{b}_c) |\eta(\tau_c)|^4\bigr),$$
