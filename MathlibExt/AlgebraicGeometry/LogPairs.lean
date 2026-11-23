@@ -20,7 +20,7 @@ Native function-field/ord operations are Mathlib at
 
 module
 
-public import Mathlib.AlgebraicGeometry.OrderOfVanishing
+public import Mathlib.AlgebraicGeometry.OrderOfVanishing.DVR
 public import Mathlib.Algebra.Category.ModuleCat.Stalk
 public import Mathlib.RingTheory.Kaehler.Basic
 public import Mathlib.Topology.KrullDimension

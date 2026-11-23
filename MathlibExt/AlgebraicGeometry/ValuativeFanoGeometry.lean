@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 public import MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 public import MathlibExt.AlgebraicGeometry.BirationalResolution
 public import MathlibExt.AlgebraicGeometry.FiniteCoverLocalComparison
@@ -65,6 +66,7 @@ structure FanoData (X : ComplexVariety) (n : ℕ) where
   canonicalDuality : SerreDualizingLine X.hom canonical.val n
   anticanonical : LineBundle X.left
   inverse : Nonempty (moduleTensor X.left canonical.val anticanonical.val ≅ structureModule X.left)
+  [noetherian : IsNoetherian X.left]
   ample : IsAmpleLine anticanonical
   hilbert : Polynomial ℚ
   dimension : hilbert.natDegree = n
