@@ -9134,6 +9134,7 @@
   "MathlibExt/Algebra/Polynomial/BesselPolynomial": {"to": "Algebra/orthogonal-polynomials", "title": "Bessel polynomials"},
   "MathlibExt/Algebra/Polynomial/BitVec": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Binary polynomial arithmetic on bitvectors"},
   "MathlibExt/Algebra/Polynomial/ChebyshevCPositivity": {"to": "Algebra/orthogonal-polynomials", "title": "Kassel–Reutenauer polynomials"},
+  "MathlibExt/Algebra/Polynomial/ChebyshevCTrace": {"to": "Algebra/orthogonal-polynomials", "title": "Kassel–Reutenauer polynomials"},
   "MathlibExt/Algebra/Polynomial/ChebyshevUCoefficients": {"to": "Algebra/orthogonal-polynomials", "title": "Chebyshev polynomials of the second kind"},
   "MathlibExt/Algebra/Polynomial/CoefficientDenominator": {"to": "Algebra/polynomials", "title": "Denominators of rational polynomials"},
   "MathlibExt/Algebra/Polynomial/DegreeStability": {"to": "Algebra/zeros-of-polynomials", "title": "L1 norm and root bounds for polynomials"},
