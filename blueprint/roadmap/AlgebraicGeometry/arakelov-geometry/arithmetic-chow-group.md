@@ -78,7 +78,23 @@ theorem*, §2.1, Definition 2, and §2.3.1, Theorem 3).
 - [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
 - [Poincaré–Lelong formula](../birational-geometry/poincare-lelong-formula.md), for $dd^c \, i_*[\log |f|^2] = \delta_{\operatorname{div}(f)}$, which makes $\widehat{\operatorname{div}}(f)$ an arithmetic cycle (Gillet–Soulé 3.3.3), and for the Green current $-\log \lVert s \rVert^2$ of $\operatorname{div}(s)$ (Gillet–Soulé 1.3.1)
 - [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution $\widetilde W_\infty \to W_\infty$ through which $i_* \log |f|^2$ is defined (Gillet–Soulé 3.3.3)
-- [Green forms of logarithmic type and the star product](green-forms-of-logarithmic-type.md), for the existence of Green currents (Gillet–Soulé, Theorem 1.3.5)
+- [Currents of integration and the support theorems](../birational-geometry/currents-of-integration.md),
+  for the currents of integration $\delta_Y$
+
+## Proof depends on
+
+- [Green forms of logarithmic type and the star product](green-forms-of-logarithmic-type.md), for
+  Gillet and Soulé's Theorem 1.2.2 and Lemma 1.2.4 (item 4), which make
+  $\widetilde{A}^{p,p}(X_\mathbb{R}) \to \widetilde{\mathcal{D}}^{p,p}(X_\mathbb{R})$ injective and
+  show that two Green currents for the same cycle differ by an element of
+  $\widetilde{A}^{p-1,p-1}(X_\mathbb{R})$, and for the existence of Green currents (item 1,
+  Gillet–Soulé, Theorem 1.3.5), which makes $\zeta$ surjective
+- [Poincaré–Lelong formula](../birational-geometry/poincare-lelong-formula.md), for $dd^c \,
+  i_*[\log |f|^2] = \delta_{\operatorname{div}(f)}$, which gives
+  $\omega(\widehat{\operatorname{div}}(f)) = 0$
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md),
+  for the independence of $i_*[\log |f|^2]$ from the resolution, two resolutions being dominated by
+  a third
 
 ## Sources
 

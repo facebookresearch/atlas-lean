@@ -39,6 +39,11 @@ $\frac{i}{\pi}\partial\bar\partial \log|z| = \delta_0$ in $\mathbb{C}$; the diff
 a closed current of order $0$ supported on an analytic set of dimension less than $n - 1$, hence zero
 (*Complex analytic and differential geometry*, III (2.10)–(2.11)).
 
+## Depends on
+
+- [Currents of integration and the support theorems](currents-of-integration.md), for currents of
+  bidegree $(1, 1)$ and Lelong's currents of integration $[Z_j]$
+
 ## Proof depends on
 
 - [Currents of integration and the support theorems](currents-of-integration.md), for Lelong's theorem,

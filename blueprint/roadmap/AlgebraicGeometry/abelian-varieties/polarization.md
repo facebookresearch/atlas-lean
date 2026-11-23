@@ -28,6 +28,16 @@ A^{tt}$ the biduality isomorphism; over a field this is the identity $\varphi_L 
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for isogenies and their degrees
 - [Abelian scheme](abelian-scheme.md), for abelian schemes
 
+## Proof depends on
+
+- [Dual abelian variety](dual-abelian-variety.md), for $\varphi_L = \varphi_L^\vee \circ \kappa_A$
+  (item 4), the symmetry of a polarization over a field
+- [Dual abelian scheme](dual-abelian-scheme.md), for the dual homomorphism $\lambda^t$ and the
+  biduality isomorphism $\kappa$ over $S$, which restrict on the fibres to those of the dual abelian
+  varieties
+- [Rigidity lemma](rigidity-lemma.md), which extends the identity $\lambda = \lambda^t \circ \kappa$
+  from the geometric fibres to $S$
+
 ## Sources
 
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),

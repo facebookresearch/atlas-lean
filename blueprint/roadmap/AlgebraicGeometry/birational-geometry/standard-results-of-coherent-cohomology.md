@@ -13,18 +13,21 @@ statements use without proof. The setting is given in each item. The targets are
    \mathcal{F}) \cong H^i(X, f_* \mathcal{F})$.
 2. (Serre, GAGA and base change.) Serre's vanishing theorem: for a projective scheme over a field, a
    coherent sheaf $\mathcal{F}$ and an ample $A$, $H^i(\mathcal{F} \otimes A^{\otimes t}) = 0$ for
-   $i > 0$ and all large $t$. Serre duality on a smooth projective variety $X$ of pure dimension
-   $n$: $H^i(X, E)^\vee \cong H^{n-i}(X, E^\vee \otimes \omega_X)$ for a finite locally free $E$,
-   and $H^i(X, \mathcal{F})^\vee \cong \operatorname{Ext}^{n-i}(\mathcal{F}, \omega_X)$ for a
-   coherent $\mathcal{F}$ (for the skyscraper $k(p)$ on a smooth curve the naive formula fails, its
-   sheaf dual being $0$). GAGA: for a complex projective scheme and a coherent sheaf $\mathcal{F}$,
-   the comparison maps $H^q(X, \mathcal{F}) \to H^q(X^{\mathrm{an}}, \mathcal{F}^{\mathrm{an}})$ are
-   isomorphisms in all degrees $q \ge 0$, and coherent analytic sheaves are algebraic. Flat base
-   change along a field extension $k \subset k'$, for $X$ quasi-compact and quasi-separated over $k$
-   (for instance projective) and $\mathcal{F}$ quasi-coherent: $H^q(X_{k'}, \mathcal{F}_{k'}) =
-   H^q(X, \mathcal{F}) \otimes_k k'$. Without quasi-compactness it fails already in degree $0$: for
-   $X$ a disjoint union of countably many points and $k'/k$ of infinite degree, $(\prod k) \otimes_k
-   k' \to \prod k'$ is not surjective.
+   $i > 0$ and all large $t$. Finiteness: for a proper morphism $f \colon X \to Y$ to a locally
+   noetherian scheme and a coherent sheaf $\mathcal{F}$ on $X$, the sheaves $R^q f_* \mathcal{F}$
+   are coherent; in particular, for $X$ proper over a noetherian ring $A$, the $A$-modules $H^q(X,
+   \mathcal{F})$ are finitely generated. Serre duality on a smooth projective variety $X$ of pure
+   dimension $n$: $H^i(X, E)^\vee \cong H^{n-i}(X, E^\vee \otimes \omega_X)$ for a finite locally
+   free $E$, and $H^i(X, \mathcal{F})^\vee \cong \operatorname{Ext}^{n-i}(\mathcal{F}, \omega_X)$
+   for a coherent $\mathcal{F}$ (for the skyscraper $k(p)$ on a smooth curve the naive formula
+   fails, its sheaf dual being $0$). GAGA: for a complex projective scheme and a coherent sheaf
+   $\mathcal{F}$, the comparison maps $H^q(X, \mathcal{F}) \to H^q(X^{\mathrm{an}},
+   \mathcal{F}^{\mathrm{an}})$ are isomorphisms in all degrees $q \ge 0$, and coherent analytic
+   sheaves are algebraic. Flat base change along a field extension $k \subset k'$, for $X$
+   quasi-compact and quasi-separated over $k$ (for instance projective) and $\mathcal{F}$
+   quasi-coherent: $H^q(X_{k'}, \mathcal{F}_{k'}) = H^q(X, \mathcal{F}) \otimes_k k'$. Without
+   quasi-compactness it fails already in degree $0$: for $X$ a disjoint union of countably many
+   points and $k'/k$ of infinite degree, $(\prod k) \otimes_k k' \to \prod k'$ is not surjective.
 3. (Riemann–Roch.) For a proper scheme over a field, a coherent sheaf $\mathcal{F} \ne 0$ with
    support of dimension $e$ and a line bundle $L$, $\chi(X, \mathcal{F} \otimes L^{\otimes \nu})$ is
    a polynomial in $\nu$ of degree at most $e$ whose coefficient of $\nu^e$ is $\sum_Z
@@ -93,6 +96,9 @@ Tags 0E8S, 0BDC and 0BDG).
 - R. Lazarsfeld, "A short course on multiplier ideals", arXiv:0901.0651 (version 1),
   <https://arxiv.org/abs/0901.0651v1>: the proof of Theorem 2.4 (projection formula and the Leray
   spectral sequence), pp. 11–12.
+- A. Grothendieck, "Éléments de géométrie algébrique III. Étude cohomologique des faisceaux
+  cohérents, première partie", Publ. Math. IHÉS 11 (1961), 5–167,
+  <https://www.numdam.org/item/PMIHES_1961__11__5_0/>: Théorème (3.2.1) (finiteness), p. 116.
 - J.-P. Serre, "Géométrie algébrique et géométrie analytique", Ann. Inst. Fourier 6 (1956), 1–42,
   <https://www.numdam.org/item/AIF_1956__6__1_0/>: §12, Theorems 1–3, pp. 19–20.
 - S. L. Kleiman, "Bertini and his two fundamental theorems", arXiv:alg-geom/9704018 (version 1): §4,

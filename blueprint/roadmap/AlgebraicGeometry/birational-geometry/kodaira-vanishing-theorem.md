@@ -24,6 +24,11 @@ surjective for every $b$; as $A^{-1}(-D) \cong A^{-N-1}$, the target vanishes fo
 5.1 is their vanishing theorem for restriction maps, which they derive from the $E_1$-degeneration
 of the logarithmic de Rham complexes of cyclic covers.
 
+## Depends on
+
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for smooth projective varieties over a field
+
 ## Proof depends on
 
 - [Logarithmic de Rham complexes and E₁-degeneration](logarithmic-de-rham-complexes-and-e1-degeneration.md),

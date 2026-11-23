@@ -87,6 +87,14 @@ with the residue measure obtained by push-forward from the log canonical places 
 and the role of smaller log canonical centres and of maximal centres with several log canonical
 places (Kim, Theorems 1.2–1.3 and §3.1), is not part of this page.
 
+## Depends on
+
+- [Nadel vanishing theorem for singular hermitian metrics](nadel-vanishing-for-singular-hermitian-metrics.md),
+  for weakly pseudoconvex Kähler manifolds and, in the version for a line bundle with a singular
+  metric, singular hermitian metrics
+- [Currents of integration and the support theorems](currents-of-integration.md), for the curvature
+  condition of that version, in the sense of currents
+
 ## Proof depends on
 
 - [L² estimates for the ∂̄ operator](l2-estimates-for-the-dbar-operator.md), for the twisted $L^2$

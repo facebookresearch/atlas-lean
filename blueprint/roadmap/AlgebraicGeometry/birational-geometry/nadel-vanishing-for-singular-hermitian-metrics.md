@@ -36,10 +36,22 @@ local equations $g_j$ of the $D_j$, $\mathcal{I}(\sum_j a_j \log|g_j|)$ is the a
 associated with the [multiplier ideal](multiplier-ideal-of-a-q-divisor.md) $\mathcal{J}(D)$
 (Lazarsfeld, Proposition 1.8; Demailly (6.23)).
 
+## Depends on
+
+- [Currents of integration and the support theorems](currents-of-integration.md), for the curvature
+  current of a singular metric and the inequality $i\Theta_{F,h} \ge \varepsilon\omega$ in the sense
+  of currents
+- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for $\mathbb{Q}$-divisors
+- [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md), for
+  $\mathcal{J}(D)$
+
 ## Proof depends on
 
 - [L² estimates for the ∂̄ operator](l2-estimates-for-the-dbar-operator.md), for Hörmander's $L^2$
   estimates for singular metrics (Demailly, Corollary 5.3)
+- [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md), for its analytic
+  description (Lazarsfeld, Proposition 1.8), which identifies $\mathcal{I}(\sum_j a_j \log|g_j|)$
+  with the analytic sheaf of $\mathcal{J}(D)$
 
 ## Sources
 

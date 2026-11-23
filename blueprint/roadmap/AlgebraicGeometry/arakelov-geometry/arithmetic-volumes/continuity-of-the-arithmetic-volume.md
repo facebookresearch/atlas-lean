@@ -38,6 +38,7 @@ follows by bounding each $\bar A_i$ between $-\bar B$ and $\bar B$ for one ample
 ## Depends on
 
 - [Arithmetic volume](arithmetic-volume.md), for $\widehat{\mathrm{vol}}$ on $\widehat{\mathrm{Pic}}(X) \otimes \mathbb{Q}$
+- [Arithmetic varieties and hermitian vector bundles](../arithmetic-variety.md)
 
 ## Proof depends on
 

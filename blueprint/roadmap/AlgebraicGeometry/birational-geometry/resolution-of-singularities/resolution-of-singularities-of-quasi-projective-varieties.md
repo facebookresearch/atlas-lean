@@ -49,6 +49,8 @@ and Aside 46).
 ## Depends on
 
 - [Simple normal crossing divisor](../simple-normal-crossing-divisor.md)
+- [Geometrically reduced variety over a field](../../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for quasi-projective varieties over a field
 
 ## Proof depends on
 

@@ -35,6 +35,8 @@ $\bar\partial$ of (2.2)–(2.4).
 
 - [Positivity of hermitian line bundles](positivity-of-hermitian-line-bundles.md), for Zhang's ampleness and relative semipositivity
 - [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
+- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for
+  the intersection numbers $(\hat c_1(\bar L|_Y)^{\dim Y})$
 
 ## Proof depends on
 

@@ -16,6 +16,14 @@ variety $S$ over a field, an abelian scheme is what Milne calls a family of abel
 $S$: a proper smooth map with a law of composition and a section such that each fibre is an abelian
 variety.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+This node has no prerequisites.
+
 ## Sources
 
 - D. Mumford, *Geometric Invariant Theory*, Ergebnisse der Mathematik 34, Springer, 1965:

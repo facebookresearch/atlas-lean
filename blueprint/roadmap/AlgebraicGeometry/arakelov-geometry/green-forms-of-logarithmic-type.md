@@ -34,6 +34,16 @@ logarithmic type along $Y$ such that $dd^c [g_Y] + \delta_Y$ is smooth; for exam
    (g_Z * g_W) = (g_Y * g_Z) * g_W$ modulo $\operatorname{im} \partial + \operatorname{im}
    \bar\partial$: Gillet and Soulé prove this when $X$ is projective (Theorem 2.2.14), Bost, Gillet
    and Soulé for smooth quasi-projective $X$ (Theorem 1.3.2 (ii)).
+4. (Gillet–Soulé, Theorem 1.2.2 (i)–(ii), 1.2.3 and Lemma 1.2.4.) Let $M$ be a complex manifold, and
+   let $\widetilde{A}^{p,q}(M)$ and $\widetilde{\mathcal{D}}^{p,q}(M)$ be the smooth forms and the
+   currents of type $(p, q)$ on $M$ modulo $\operatorname{im} \partial + \operatorname{im}
+   \bar\partial$. A current $\gamma$ with $\partial\bar\partial\gamma$ smooth is $\gamma = \omega +
+   \partial\alpha + \bar\partial\beta$ with $\omega$ smooth and currents $\alpha$, $\beta$, and a
+   smooth form $\omega = \partial u + \bar\partial v$ with currents $u$, $v$ is $\partial\alpha +
+   \bar\partial\beta$ with smooth forms $\alpha$, $\beta$. Hence $\widetilde{A}^{p,q}(M) \to
+   \widetilde{\mathcal{D}}^{p,q}(M)$ is injective, and any two Green currents for an analytic cycle
+   $Y$ of codimension $p$ on $M$, classes $g \in \widetilde{\mathcal{D}}^{p-1,p-1}(M)$ of real
+   currents with $dd^c g + \delta_Y$ smooth, differ by an element of $\widetilde{A}^{p-1,p-1}(M)$.
 
 A good expansion has pages for:
 
@@ -43,7 +53,9 @@ A good expansion has pages for:
   image of $Y$ a divisor with normal crossings, the $\partial\bar\partial$-lemma on a smooth
   projective compactification, and restriction to $X$ (Gillet–Soulé 1.3.6–1.3.9);
 - the star product and its properties, items 2 and 3 (Gillet–Soulé §§2.1–2.2; Bost–Gillet–Soulé
-  §1.3).
+  §1.3);
+- the proof of item 4, from the equality of the $d$-, $\partial$- and $\bar\partial$-cohomology of
+  currents and of smooth forms (Gillet–Soulé, proof of Theorem 1.2.2).
 
 ## Depends on
 
@@ -62,10 +74,11 @@ A good expansion has pages for:
 ## Sources
 
 - H. Gillet and C. Soulé, "Arithmetic intersection theory", Publ. Math. IHÉS 72 (1990), 93–174,
-  <http://www.numdam.org/item/PMIHES_1990__72__93_0/>: Definition 1.3.2 and 1.3.3–1.3.4 (forms of
-  logarithmic type), pp. 103–105; 1.3.5 (Green forms of logarithmic type) and Theorem 1.3.5, p. 106,
-  with its proof 1.3.6–1.3.9, pp. 106–109; 2.1.3 and Theorem 2.1.4 (star product), pp. 111–113;
-  Corollaries 2.2.9–2.2.11 and Theorem 2.2.14, pp. 121–123.
+  <http://www.numdam.org/item/PMIHES_1990__72__93_0/>: Theorem 1.2.2 (i) and (ii), p. 101, with its
+  proof, pp. 101–102, 1.2.3, p. 102, and Lemma 1.2.4 (Green currents), pp. 102–103; Definition 1.3.2
+  and 1.3.3–1.3.4 (forms of logarithmic type), pp. 103–105; 1.3.5 (Green forms of logarithmic type)
+  and Theorem 1.3.5, p. 106, with its proof 1.3.6–1.3.9, pp. 106–109; 2.1.3 and Theorem 2.1.4 (star
+  product), pp. 111–113; Corollaries 2.2.9–2.2.11 and Theorem 2.2.14, pp. 121–123.
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.
   Amer. Math. Soc. 7 (1994), 903–1027, archived publisher scan
   <https://web.archive.org/web/20170815232351id_/https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/S0894-0347-1994-1260106-X.pdf>:

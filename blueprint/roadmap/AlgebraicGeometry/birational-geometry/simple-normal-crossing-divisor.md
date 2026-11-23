@@ -80,6 +80,15 @@ the sequence attached to the base change $(X_{L,\sigma}, I_{L,\sigma}, E_{L,\sig
 $X_{L,\sigma} = X \times_{\operatorname{Spec} K} \operatorname{Spec} L$, is the base change of $B(X,
 I, E)$.
 
+## Depends on
+
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for smooth varieties over $k$
+
+## Proof depends on
+
+This node has no prerequisites.
+
 ## Sources
 
 - J. Kollár, "Resolution of singularities – Seattle lecture", arXiv:math/0508332 (version 3),

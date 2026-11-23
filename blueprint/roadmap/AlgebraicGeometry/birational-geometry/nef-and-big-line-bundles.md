@@ -50,6 +50,11 @@ Fubini–Study metric by a very ample power, whence metrics on $L$ with curvatur
 $\omega$ the curvature of $A$; and the third gives the first by integrating the curvature over
 curves and letting $\varepsilon \to 0$.
 
+## Depends on
+
+- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for $\mathbb{Q}$-divisors on
+  a smooth projective variety
+
 ## Proof depends on
 
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),

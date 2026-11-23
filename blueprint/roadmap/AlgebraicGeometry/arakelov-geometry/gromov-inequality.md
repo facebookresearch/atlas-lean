@@ -13,9 +13,18 @@ $$\max_{x \in M} |s|^p(x) \le C \lceil p \rceil^{2n} (m_1 + \dots + m_l + 1)^{2n
 For $p = 2$ and one line bundle $\bar H$ this compares the sup norm and the $L^2$ norm on
 $H^0(M, mH)$: $\lVert s \rVert_{\sup} \le C' (m + 1)^n \lVert s \rVert_{L^2}$ with
 $C' = 2^n C^{1/2}$, while $\lVert s \rVert_{L^2} \le (\int_M \Omega)^{1/2} \lVert s \rVert_{\sup}$
-trivially. Moriwaki deduces the inequality from a local version on polydiscs (his Lemma 1.1.1), proved
-by a mean-value estimate for holomorphic functions, by covering $M$ with finitely many coordinate
-polydiscs on which the metrics are close to constant.
+trivially. Moriwaki deduces the inequality from a local version on polydiscs (his Lemma 1.1.1),
+proved by the sub-mean-value property of $|f|^p$ over polycircles, $|f|^p$ being subharmonic in each
+variable for a holomorphic function $f$, and an elementary integral estimate (his Claim 1.1.1.1), by
+covering $M$ with finitely many coordinate polydiscs on which the metrics are close to constant.
+
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+This node has no prerequisites.
 
 ## Sources
 

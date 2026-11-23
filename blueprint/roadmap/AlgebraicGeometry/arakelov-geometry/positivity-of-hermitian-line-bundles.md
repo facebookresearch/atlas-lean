@@ -61,6 +61,16 @@ theorem (Moriwaki, Theorem 4.5 and Remark 4.6), stated with the
 - [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for the intersection numbers $(\hat c_1(\bar L|_Y)^{\dim Y})$ and the degrees $\widehat{\deg}(\bar L|_\Gamma)$
 - [Nef and big line bundles](../birational-geometry/nef-and-big-line-bundles.md), for the bigness of $L_\mathbb{Q}$ on $X_\mathbb{Q}$
 
+## Proof depends on
+
+- [Geometric degrees as integrals of first Chern forms](geometric-degrees-as-integrals-of-chern-forms.md),
+  for $\deg(L_\mathbb{Q}|_C)$ as the integral of $c_1(\bar L)$ over the normalization of
+  $C(\mathbb{C})$, nonnegative when the curvature is semipositive, so that $L_\mathbb{Q}$ is nef
+  when $\bar L$ is relatively semipositive (Chambert-Loir, after Definition (5.1))
+- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for
+  the recursion along the divisor of a section by which Yuan shows that $(L, e^{-c} \lVert \cdot
+  \rVert)$ is ample for large $c$ (Section 2.1)
+
 ## Sources
 
 - S.-W. Zhang, "Positive line bundles on arithmetic varieties", J. Amer. Math. Soc. 8 (1995),

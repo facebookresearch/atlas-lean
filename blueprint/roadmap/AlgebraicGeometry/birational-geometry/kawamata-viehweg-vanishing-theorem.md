@@ -58,6 +58,8 @@ singularities, which is shown with desingularizations of them.
 - [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for $\mathbb{Q}$-divisors, their
   round-down and snc support
 - [Nef and big line bundles](nef-and-big-line-bundles.md), for nef and big $\mathbb{Q}$-divisors
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for smooth projective varieties over a field
 
 ## Proof depends on
 

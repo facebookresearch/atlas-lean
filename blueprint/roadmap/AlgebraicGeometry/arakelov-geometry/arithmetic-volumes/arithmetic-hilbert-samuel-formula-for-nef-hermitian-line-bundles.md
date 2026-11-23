@@ -27,6 +27,7 @@ $\limsup$.
 - [Positivity of hermitian line bundles](../positivity-of-hermitian-line-bundles.md), for nef and big hermitian line bundles
 - [Arithmetic degree and arithmetic intersection numbers](../arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$
 - [Arithmetic volume](arithmetic-volume.md), for $\widehat{\mathrm{vol}}$
+- [Arithmetic varieties and hermitian vector bundles](../arithmetic-variety.md)
 
 ## Proof depends on
 

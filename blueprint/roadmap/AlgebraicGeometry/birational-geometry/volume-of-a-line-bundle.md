@@ -39,6 +39,8 @@ projective varieties and notes that it holds for nef $\mathbb{Q}$-divisors (Lemm
 ## Depends on
 
 - [Nef and big line bundles](nef-and-big-line-bundles.md)
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the algebraic form, on a smooth projective variety
 
 ## Proof depends on
 

@@ -59,6 +59,8 @@ defines it ((6.23)–(6.24′)).
   round-down and snc support
 - [Principalization of ideal sheaves in characteristic zero](resolution-of-singularities/principalization-of-ideal-sheaves.md), for
   the existence of log resolutions
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for smooth complex algebraic varieties
 
 ## Proof depends on
 

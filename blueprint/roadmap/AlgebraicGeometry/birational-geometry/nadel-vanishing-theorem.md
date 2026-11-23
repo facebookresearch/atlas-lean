@@ -28,6 +28,8 @@ images of this sheaf vanish, so the two cohomology groups agree.
 
 - [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md)
 - [Nef and big line bundles](nef-and-big-line-bundles.md), for nef and big $\mathbb{Q}$-divisors
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for smooth complex projective varieties
 
 ## Proof depends on
 

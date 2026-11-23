@@ -29,6 +29,8 @@ $\operatorname{div}(s)$ that meet the generic fibre contribute.
 
 - [Poincaré–Lelong formula](poincare-lelong-formula.md), for divisors of meromorphic sections and
   currents of integration
+- [Currents of integration and the support theorems](currents-of-integration.md), for currents and
+  their derivatives, defined by duality
 
 ## Proof depends on
 

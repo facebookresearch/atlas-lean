@@ -30,6 +30,13 @@ duality of the kernels of isogenies gives $(A[p^\infty])^t = A^t[p^\infty]$.
   $A[p^i]$ and their ranks
 - [Dual abelian scheme](../dual-abelian-scheme.md), for $A^t$ and the duality of kernels of isogenies
 
+## Proof depends on
+
+- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for the kernels $A[p^i]$ of
+  multiplication by $p^i$, finite locally free of rank $p^{2gi}$, which form $A[p^\infty]$
+- [Dual abelian scheme](../dual-abelian-scheme.md), for the duality of the kernels of an isogeny and
+  of its dual, which gives $(A[p^\infty])^t = A^t[p^\infty]$
+
 ## Sources
 
 - C.-L. Chai and F. Oort, "Moduli of abelian varieties and p-divisible groups: density of Hecke
