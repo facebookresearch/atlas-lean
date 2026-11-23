@@ -10859,6 +10859,7 @@
   "MathlibExt/Geometry/Manifold/MorseTheory": {"to": "Geometry/differential-topology", "title": "Morse theory"},
   "MathlibExt/Geometry/Manifold/OneDimensional": {"to": "Geometry/differential-topology", "title": "Classification of one-manifolds"},
   "MathlibExt/Geometry/Manifold/ParametricSard": {"to": "Geometry/differential-topology", "title": "Sard's theorem"},
+  "MathlibExt/Geometry/Manifold/RiemannSurfaceGenus": {"to": "AlgebraicGeometry/algebraic-curves", "title": "Jacobians of compact Riemann surfaces"},
   "MathlibExt/Geometry/Manifold/Riemannian/Conformal": {"to": "Geometry/riemannian-geometry", "title": "Conformal classes of Riemannian metrics"},
   "MathlibExt/Geometry/Manifold/Riemannian/Curvature": {"to": "Geometry/riemannian-geometry", "title": "Curvature of Riemannian manifolds"},
   "MathlibExt/Geometry/Manifold/Riemannian/GeodesicFlow": {"to": "Geometry/riemannian-geometry", "title": "Geodesic flow"},
