@@ -13,6 +13,8 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.ZMod.Defs
 
+import Mathlib.Logic.Equiv.Bool
+
 /-!
 # Binary Ulam words
 
@@ -144,6 +146,103 @@ Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 public theorem ulamResidueCount_three_two :
     ulamResidueCount 3 2 0 = 0 ∧ ulamResidueCount 3 2 1 = 1 ∧ ulamResidueCount 3 2 2 = 1 := by
   decide
+
+namespace isUlamWord_map_not_and_ulamResidueCount_eq
+
+-- Complementation commutes with taking each factor of a cut and reflects their inequality.
+private theorem aux_map_not (f : ℕ) (w : List Bool) :
+    ulamWordAux f (w.map not) = ulamWordAux f w := by
+  induction f generalizing w with
+  | zero => rfl
+  | succ f ih =>
+    simp only [ulamWordAux, List.length_map]
+    split
+    · rfl
+    · apply congrArg (· == 1)
+      apply List.countP_congr
+      intro k _
+      simp only [← List.map_take, ← List.map_drop, ih, Bool.and_eq_true, bne_iff_ne,
+        (List.map_injective_iff.mpr Bool.not_injective).ne_iff]
+
+-- Read the digits least significant first, as in Nat.ofDigits.
+private theorem ofDigits_not_add (w : List Bool) :
+    Nat.ofDigits 2 ((w.map not).map Bool.toNat) + Nat.ofDigits 2 (w.map Bool.toNat) + 1 =
+      2 ^ w.length := by
+  induction w with
+  | nil => rfl
+  | cons b w ih =>
+    simp only [List.map_cons, Nat.ofDigits_cons, List.length_cons, pow_succ]
+    cases b <;> simp only [Bool.not_true, Bool.not_false, Bool.toNat_true, Bool.toNat_false] <;>
+      omega
+
+private theorem card_complement (N n : ℕ) (a : ZMod N) :
+    ulamResidueCount N n a = ulamResidueCount N n (2 ^ n - 1 - a) := by
+  unfold ulamResidueCount
+  apply Finset.card_equiv (Equiv.piCongrRight fun _ => Equiv.boolNot)
+  intro v
+  have hsum := congrArg (Nat.cast : ℕ → ZMod N) (ofDigits_not_add (List.ofFn v).reverse)
+  simp only [Nat.cast_add, Nat.cast_one, Nat.cast_pow, Nat.cast_ofNat, List.length_reverse,
+    List.length_ofFn] at hsum
+  have hword : List.ofFn ((Equiv.piCongrRight fun _ => Equiv.boolNot) v) =
+      (List.ofFn v).map not := (List.map_ofFn (g := not) (f := v)).symm
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  simp only [hword, IsUlamWord, List.length_map, aux_map_not,
+    ← List.map_reverse (f := not)]
+  rw [eq_sub_iff_add_eq.mpr (eq_sub_iff_add_eq.mpr hsum), sub_right_inj]
+
+end isUlamWord_map_not_and_ulamResidueCount_eq
+
+open isUlamWord_map_not_and_ulamResidueCount_eq in
+/-- **Complement symmetry of Ulam words.** For a word $w$ over $\{0, 1\}$, let $\bar w$ be its
+complement (every letter swapped) and let $\pi(w)$ be the integer whose binary expansion is $w$,
+most significant letter first. If $w$ is an Ulam word of length $n$, then $\bar w$ is an Ulam
+word and $\pi(\bar w) + \pi(w) = 2^n - 1$. Moreover, for all natural numbers $N$ and $n$ and every
+$a \in \mathbb{Z}/N\mathbb{Z}$, the number of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv a \pmod N$ equals the number of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv 2^n - 1 - a \pmod N$.
+
+For $n \ge 1$, writing $\rho_{a,N}(n)$ for the proportion of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv a \pmod N$ among all Ulam words of length $n$, the second statement says
+$\rho_{a,N}(n) = \rho_{2^n-1-a,N}(n)$.
+
+Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 11. -/
+public theorem isUlamWord_map_not_and_ulamResidueCount_eq :
+    (∀ w : List Bool, IsUlamWord w →
+      IsUlamWord (w.map not) ∧
+        Nat.ofDigits 2 ((w.map not).reverse.map Bool.toNat) +
+            Nat.ofDigits 2 (w.reverse.map Bool.toNat) = 2 ^ w.length - 1) ∧
+      ∀ (N n : ℕ) (a : ZMod N),
+        ulamResidueCount N n a = ulamResidueCount N n (2 ^ n - 1 - a) := by
+  refine ⟨?_, card_complement⟩
+  intro w hw
+  constructor
+  · simpa only [IsUlamWord, List.length_map, aux_map_not] using hw
+  · simpa only [List.map_reverse (f := not), List.length_reverse] using
+      Nat.eq_sub_of_add_eq (ofDigits_not_add w.reverse)
+
+/-- **Residue symmetries of Ulam words modulo 2 and 3.** For natural numbers $N$ and $n$ and a
+residue $a \in \mathbb{Z}/N\mathbb{Z}$, let $c_{a,N}(n)$ be the number of Ulam words of length
+$n$ whose value as a binary numeral, most significant letter first, is congruent to $a$ modulo
+$N$. Then for every $n \ge 1$ we have $c_{0,2}(n) = c_{1,2}(n)$, and for every
+$a \in \mathbb{Z}/3\mathbb{Z}$ we have $c_{a,3}(n) = c_{-a,3}(n)$ if $n$ is even and
+$c_{a,3}(n) = c_{1-a,3}(n)$ if $n$ is odd.
+
+Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102,
+Corollary 2. -/
+public theorem ulamResidueCount_mod_two_three (n : ℕ) (hn : 1 ≤ n) :
+    ulamResidueCount 2 n 0 = ulamResidueCount 2 n 1 ∧
+      ∀ a : ZMod 3, ulamResidueCount 3 n a =
+        if Even n then ulamResidueCount 3 n (-a) else ulamResidueCount 3 n (1 - a) := by
+  constructor
+  · simpa only [show (2 : ZMod 2) = 0 by decide, zero_pow (by omega : n ≠ 0),
+      sub_zero, show (0 : ZMod 2) - 1 = 1 by decide] using
+      isUlamWord_map_not_and_ulamResidueCount_eq.2 2 n 0
+  · intro a
+    rw [isUlamWord_map_not_and_ulamResidueCount_eq.2 3 n a,
+      show (2 : ZMod 3) = -1 by decide, neg_one_pow_eq_ite]
+    split <;> simp [show (-1 : ZMod 3) - 1 = 1 by decide]
 
 /-- **Sorted binary values of Ulam words.** For a natural number $n$, this is the list
 $u_1 < u_2 < \dots < u_k$ of the distinct binary values $\pi(w)$, read with the most significant
