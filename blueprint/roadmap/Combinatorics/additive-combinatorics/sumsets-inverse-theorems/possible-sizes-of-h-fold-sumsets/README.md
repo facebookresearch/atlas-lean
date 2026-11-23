@@ -1,0 +1,15 @@
+# Possible sizes of h-fold sumsets
+
+- [Trivial elements of an $h$-fold sumset](sumset-trivial-elements.md)
+- [No trivial elements for $k = 0$](sumset-trivial-elements-zero.md)
+- [Trivial elements of a one-element set](sumset-trivial-elements-one.md)
+- [Adjacent sums are trivial elements](adjacent-sum-mem-sumset-trivial-elements.md)
+- [Characterization of the trivial elements](mem-sumset-trivial-elements-iff.md)
+- [Dropping the largest element keeps nontrivial sums nontrivial](nsmul-sumset-erase-max-nontrivial.md)
+- [Many nontrivial sums when the last gap is not a multiple of the previous one](nontrivial-sumset-card-of-last-gap-ne-ns.md)
+- [Many nontrivial sums when the last gap is a proper multiple of the previous one](nontrivial-sumset-card-of-last-gap-eq-ns.md)
+- [Equal last two gaps: an arithmetic progression or many nontrivial sums](arith-prog-or-nontrivial-sumset-card-of.md)
+- [A gap in the possible sumset sizes](card-nsmul-not-mem-icc-of-is-add-torsion.md)
+- [Sumset sizes between $hk - h + 1$ and $hk$](sumset-sizes-inter-icc-of-is-add-torsion.md)
+- [Sumset of an arithmetic progression with its second-to-last term removed](card-nsmul-arith-prog-skip-penultimate.md)
+- [Rajagopal's family of missing sumset sizes](card-nsmul-not-mem-icc-add-mul-of-is-add.md)

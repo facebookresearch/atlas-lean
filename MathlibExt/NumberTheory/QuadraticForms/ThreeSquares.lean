@@ -16,11 +16,12 @@ import Mathlib.Data.ZMod.Basic
 
 namespace Nat
 
-/-- `threeSquareRepresentationCount n` counts ordered triples `(x, y, z)` with
-    `x, y, z ∈ [-(n : ℤ), n]` and `x ^ 2 + y ^ 2 + z ^ 2 = n`. The interval
-    `[-(n : ℤ), n]` contains every integer solution and handles `n = 0`, so
-    this realizes the exact source count `r₃(n)`.
-    Primary source: E. T. Mortenson, arXiv:1702.01627v2,
+/-- **Number of representations as a sum of three squares.** For a natural number $n$, $r_3(n)$
+is the number of ordered triples $(x, y, z)$ of integers in the interval $[-n, n]$ with
+$x^2 + y^2 + z^2 = n$. Every integer solution of $x^2 + y^2 + z^2 = n$ lies in this interval
+(also for $n = 0$), so $r_3(n)$ is the number of all ordered integer solutions.
+
+Source: Primary source: E. T. Mortenson, arXiv:1702.01627v2,
     `Mortenson-AC-Gauss-arxiv-v2.tex` lines 127-131 (span SHA-256
     `2f2704bfc2f61e5fc50b27df3e14542a0ef19ddd4c7580c7f589f23d38ccff12`,
     file SHA-256 `13bccb58b9397a2bf3fb713779f0d76623513aec5c0f313a3cf95cf8466b5cf3`)
@@ -33,7 +34,12 @@ def threeSquareRepresentationCount (n : ℕ) : ℕ :=
       (Finset.Icc (-(n : ℤ)) (n : ℤ))).filter
       (fun p : (ℤ × ℤ) × ℤ => p.1.1 ^ 2 + p.1.2 ^ 2 + p.2 ^ 2 = (n : ℤ))).card
 
-/-- Gauss formula, residue 7 mod 8: `r₃(n) = 0`. Source: arXiv:2307.05244
+/-- **Numbers congruent to 7 modulo 8 are not sums of three squares.** For a natural number $m$,
+let $r_3(m)$ denote the number of ordered triples of integers $(x, y, z)$ with
+$x^2 + y^2 + z^2 = m$. For every positive natural number $n$ with $n \equiv 7 \pmod 8$,
+$r_3(n) = 0$. This is the case $n \equiv 7 \pmod 8$ of Gauss's formula for $r_3$.
+
+Source: arXiv:2307.05244
     `main.tex` lines 191-199 (span SHA-256
     `39c31ed010dd887f8865ff9c7c36f814bf598c58f691b2954a6d0f62ad1fc1e2`). -/
 theorem threeSquareRepresentationCount_eq_zero_of_mod_eight_eq_seven
@@ -65,7 +71,12 @@ theorem threeSquareRepresentationCount_eq_zero_of_mod_eight_eq_seven
   unfold threeSquareRepresentationCount
   rw [hempty, Finset.card_empty]
 
-/-- Gauss formula, `4 ∣ n`: `r₃(n) = r₃(n / 4)`. Source: arXiv:2307.05244
+/-- **Removing a factor of 4 preserves the three-square count.** For a natural number $m$, let
+$r_3(m)$ denote the number of ordered triples of integers $(x, y, z)$ with $x^2 + y^2 + z^2 = m$.
+For every positive natural number $n$ divisible by $4$, $r_3(n) = r_3(n/4)$. This is the case
+$4 \mid n$ of Gauss's formula for $r_3$.
+
+Source: arXiv:2307.05244
     `main.tex` lines 191-199 (span SHA-256
     `39c31ed010dd887f8865ff9c7c36f814bf598c58f691b2954a6d0f62ad1fc1e2`). -/
 theorem threeSquareRepresentationCount_eq_threeSquareRepresentationCount_div_four

@@ -21,13 +21,17 @@ universe u
 
 namespace Cslib.Algorithms.Lean.TimeM
 
-/-- Each materialized pointwise entry multiplies the two stored input entries. -/
+/-- **Entries of the pointwise product.** Let $R$ be a type with a multiplication, let $n$ be a
+natural number and let $x$ and $y$ be vectors of length $n$ over $R$. For every index $i < n$,
+entry $i$ of the pointwise product of $x$ and $y$ equals $x_i y_i$. -/
 theorem fftPointwise_ret {R : Type u} [Mul R] {n : Nat}
     (xs ys : Vector R n) (i : Fin n) :
     (fftPointwise xs ys).ret[i.val] = xs[i.val] * ys[i.val] := by
   exact Vector.getElem_zipWith i.isLt
 
-/-- Direct padding preserves every original input entry in its original order. -/
+/-- **Zero padding keeps the input prefix.** Let $R$ be a type with a zero, let $d$ be a natural
+number and let $x$ be a vector of length $2^d$ over $R$. For every index $i < 2^d$, entry $i$
+of the zero-padded vector of length $2^{d+1}$ produced from $x$ equals $x_i$. -/
 theorem fftPad_ret_low {R : Type u} [Zero R] (d : Nat)
     (xs : Vector R (2 ^ d)) (i : Fin (2 ^ d)) :
     (fftPad d xs).ret[i.val]'(by
@@ -36,13 +40,20 @@ theorem fftPad_ret_low {R : Type u} [Zero R] (d : Nat)
       omega) = xs[i.val] := by
   simp [fftPad, Vector.getElem_ofFn, i.isLt]
 
-/-- Every entry in the materialized padding suffix is zero. -/
+/-- **Zero padding fills the second half with zeros.** Let $R$ be a type with a zero, let $d$
+be a natural number and let $x$ be a vector of length $2^d$ over $R$. For every index $i$ with
+$2^d \le i < 2^{d+1}$, entry $i$ of the zero-padded vector of length $2^{d+1}$ produced from
+$x$ is $0$. -/
 theorem fftPad_ret_high {R : Type u} [Zero R] (d : Nat)
     (xs : Vector R (2 ^ d)) (i : Fin (2 ^ (d + 1))) (hi : 2 ^ d ≤ i.val) :
     (fftPad d xs).ret[i.val] = 0 := by
   simp [fftPad, Vector.getElem_ofFn, not_lt_of_ge hi]
 
-/-- Circular admission fails exactly when its tested source size conditions fail. -/
+/-- **Rejection by array circular convolution.** Let $R$ be a field with a star-ring
+structure, let $\omega \in R$, and let $x$ and $y$ be arrays over $R$. The array
+circular-convolution procedure with root $\omega$ returns no result on $x$ and $y$ if and only
+if it is not the case that the length of $x$ is a power of two $2^k$ with $k \ge 0$ and $y$ has
+the same length as $x$. -/
 theorem fftCircularArray_eq_none_iff {R : Type u} [Field R] [StarRing R]
     (omega : R) (xs ys : Array R) :
     (fftCircularArray omega xs ys).ret = none ↔
@@ -63,7 +74,11 @@ theorem fftCircularArray_eq_none_iff {R : Type u} [Field R] [StarRing R]
     · intro _
       rfl
 
-/-- Linear admission fails exactly when its tested input size conditions fail. -/
+/-- **Rejection by array linear convolution.** Let $R$ be a field with a star-ring structure,
+let $\omega \in R$, and let $x$ and $y$ be arrays over $R$. The array zero-padded
+linear-convolution procedure with root $\omega$ returns no result on $x$ and $y$ if and only if
+it is not the case that the length of $x$ is a power of two $2^k$ with $k \ge 0$ and $y$ has the
+same length as $x$. -/
 theorem fftLinearArray_eq_none_iff {R : Type u} [Field R] [StarRing R]
     (omega : R) (xs ys : Array R) :
     (fftLinearArray omega xs ys).ret = none ↔

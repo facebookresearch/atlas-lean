@@ -16,10 +16,11 @@ public import Mathlib.Data.Nat.Basic
 
 Client examples exercise empty and singleton trees, empty, reversed,
 out-of-range, prefix, and suffix queries, in-range and out-of-range
-updates, validity preservation, and elaboration over an arbitrary
-additive monoid (no commutativity). The range-32 prefix query is a
-regression test for pruning right-disjoint subtrees and for reading
-cached segment sizes instead of traversing subtrees.
+updates, validity preservation, node counts of built trees (even, odd,
+and empty lengths), and elaboration over an arbitrary additive monoid
+(no commutativity). The range-32 prefix query is a regression test for
+pruning right-disjoint subtrees and for reading cached segment sizes
+instead of traversing subtrees.
 -/
 
 @[expose] public section
@@ -42,9 +43,14 @@ example : (build ([] : List Nat)).query 0 0 = 0 := by
 
 example : (build ([] : List Nat)).Valid := valid_build _
 
+/-- The empty list builds the empty tree, which stores no nodes. -/
+example : (build ([] : List Nat)).nodeCount = 0 := nodeCount_build _
+
 example : (build [7] : SegmentTree Nat).toList = [7] := toList_build _
 
 example : (build [7] : SegmentTree Nat).size = 1 := size_build _
+
+example : (build [7] : SegmentTree Nat).nodeCount = 1 := nodeCount_build _
 
 example : (build [7] : SegmentTree Nat).query 0 1 = 7 := by
   rw [query_build]
@@ -63,6 +69,22 @@ private def sample : SegmentTree Nat := build [10, 20, 30, 40]
 example : sample.toList = [10, 20, 30, 40] := toList_build _
 
 example : sample.size = 4 := size_build _
+
+/-- Four leaves and three internal nodes. -/
+example : sample.nodeCount = 7 := nodeCount_build _
+
+/-- An odd length splits unevenly, into two and three entries, and still
+gives `2 * 5 - 1` nodes. -/
+example : (build [1, 2, 3, 4, 5] : SegmentTree Nat).nodeCount = 9 :=
+  nodeCount_build _
+
+/-- `nodeCount` counts constructors directly: a node over two leaves has
+three, and the empty tree has none. -/
+example :
+    (.node 3 2 (.leaf 1) (.leaf 2) : SegmentTree Nat).nodeCount = 3 :=
+  rfl
+
+example : (SegmentTree.empty : SegmentTree Nat).nodeCount = 0 := rfl
 
 example : sample.agg = 100 := agg_build _
 
@@ -180,6 +202,11 @@ example {M : Type} [AddMonoid M] (xs : List M) (l r : Nat) :
     (build xs).query l r = ((xs.drop l).take (r - l)).sum :=
   query_build xs l r
 
+/-- The `2 * n - 1` storage bound, for every list. -/
+example {M : Type} [AddMonoid M] (xs : List M) :
+    (build xs).nodeCount ≤ 2 * xs.length - 1 :=
+  (nodeCount_build xs).le
+
 example {M : Type} [AddMonoid M] {xs : List M} {i : Nat}
     (hi : i < xs.length) (y : M) (l r : Nat) :
     ((build xs).update i y).query l r =
@@ -209,6 +236,7 @@ example : (build (List.range 32)).query 0 32 = 496 := by
 #check SegmentTree.toList_build
 #check SegmentTree.size_build
 #check SegmentTree.agg_build
+#check SegmentTree.nodeCount_build
 #check SegmentTree.query_eq
 #check SegmentTree.query_build
 #check SegmentTree.Valid.update
@@ -222,6 +250,7 @@ example : (build (List.range 32)).query 0 32 = 496 := by
 #print axioms SegmentTree.toList_build
 #print axioms SegmentTree.size_build
 #print axioms SegmentTree.agg_build
+#print axioms SegmentTree.nodeCount_build
 #print axioms SegmentTree.query_eq
 #print axioms SegmentTree.query_build
 #print axioms SegmentTree.size_update

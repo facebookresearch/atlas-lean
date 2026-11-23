@@ -1363,12 +1363,15 @@ namespace MathlibExt.Geometry.Manifold.MorseExistenceWanted
 open MathlibExt.Geometry.Manifold.ReebSphereWanted
 
 /--
-Every Hausdorff second-countable boundaryless finite-dimensional `C^∞` manifold `M` admits a `C^∞`
-Morse function `f : M → ℝ`. Source: J. Milnor, Morse Theory, Ann. of Math. Studies 51 (1963); M.
-Hirsch, Differential Topology; J. Lee, Intro to Smooth Manifolds, 2nd ed.; Lean states
-boundaryless finite-dimensional second-countable specialization.
+**Existence of Morse functions.** Every Hausdorff, second-countable $C^\infty$ manifold $M$
+without boundary, modelled on a finite-dimensional real normed space, admits a Morse function
+$f \colon M \to \mathbb{R}$.
 
 Proves `Wanted` entry `morse_function_exists`.
+
+Source: J. Milnor, Morse Theory, Ann. of Math. Studies 51 (1963); M.
+Hirsch, Differential Topology; J. Lee, Intro to Smooth Manifolds, 2nd ed.; Lean states
+boundaryless finite-dimensional second-countable specialization.
 -/
 public theorem morse_function_exists
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
