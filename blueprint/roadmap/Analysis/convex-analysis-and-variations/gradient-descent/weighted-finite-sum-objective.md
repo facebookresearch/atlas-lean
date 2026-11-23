@@ -10,11 +10,27 @@ f_v(x)=\frac{1}{n}\sum_{i=1}^n v_i f_i(x),
 \qquad f(x)=\frac{1}{n}\sum_{i=1}^n f_i(x).
 $$
 
-For each draw the weights are held fixed when differentiating, so
-$\nabla f_v(x)=n^{-1}\sum_{i=1}^n v_i\nabla f_i(x)$. For each fixed $x$,
-$f_v(x)$ and the vector $\nabla f_v(x)$ are integrable: each is a finite
-linear combination of integrable weights with deterministic coefficients.
-By linearity and $\mathbb E_{\mathcal D}[v_i]=1$,
+For each draw the weights are held fixed when differentiating. In finite
+coordinates the sup norm and Euclidean norm are equivalent, so we can
+compute the Fréchet derivative with the sup norm. For a direction $h$,
+the rules for finite sums and constant scalar multiples give
+
+$$
+D f_v(x)[h]
+= \frac{1}{n}\sum_{i=1}^n v_i\langle \nabla f_i(x),h\rangle
+= \left\langle\frac{1}{n}\sum_{i=1}^n v_i\nabla f_i(x),h\right\rangle.
+$$
+
+The dot-product rule identifies the Euclidean gradient as
+$\nabla f_v(x)=n^{-1}\sum_{i=1}^n v_i\nabla f_i(x)$. The same calculation
+with all weights set to one gives the formula for $\nabla f(x)$.
+
+For each fixed $x$, the value $f_v(x)$ and each coordinate of
+$\nabla f_v(x)$ are integrable, since each is a finite linear combination
+of integrable weights with deterministic coefficients. Take the gradient
+expectation coordinatewise. Applying linearity of the real integral to
+the value and to each gradient coordinate, and using
+$\mathbb E_{\mathcal D}[v_i]=1$, gives
 
 $$
 \mathbb E_{\mathcal D}[f_v(x)]=f(x),
@@ -32,6 +48,9 @@ requires a second moment.
 
 ## Proof depends on
 
+- [Fréchet derivative of a constant scalar multiple](../../calculus-in-normed-spaces/frechet-derivatives/derivatives-of-sums-constants-and-scalar-multipl/has-fderiv-at-const-smul.md)
+- [Fréchet derivative of a finite sum](../../calculus-in-normed-spaces/frechet-derivatives/derivatives-of-sums-constants-and-scalar-multipl/has-fderiv-at-sum.md)
+- [A Fréchet derivative given by a dot product is a gradient](../../real-functions/multivariable-calculus/gradient/has-gradient-at-of-lp.md)
 - [Additivity of the integral of integrable functions](../../../MeasureTheory/integration/nonnegative-lebesgue-integral/additivity-of-the-integral/integral-add.md)
 - [Homogeneity of the integral](../../../MeasureTheory/integration/nonnegative-lebesgue-integral/additivity-of-the-integral/integral-smul.md)
 
