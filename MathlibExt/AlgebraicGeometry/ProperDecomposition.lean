@@ -7,30 +7,30 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.Category.ModuleCat.AB
-public import Mathlib.Algebra.Homology.DerivedCategory.RightDerivedFunctorPlus
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Pullbacks
-public import Mathlib.CategoryTheory.Abelian.GrothendieckCategory.EnoughInjectives
-public import MathlibExt.AlgebraicGeometry.PerverseSheaves
+public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 
 /-!
 # Proper images, semismall defect and support data
 
-The normalized image is the actual `Rf_* Q_X[d]`. The amplitude parameter is
-geometric: `dim(X ×_Y X) ≤ d + r`. It is not an independently named bound.
-Unlike the original projective-source request, the matching Wanted module
-allows every smooth complex source and proper algebraic map.
+The normalized image of `f : X ⟶ Y` is the actual `Rf_* ℚ_X[d]`: the derived
+direct image `ConstructibleComplexes.derivedPushforwardPlus` of the rational
+constant sheaf placed in cohomological degree `-d`. The defect bound is
+geometric: `dim (X ×_Y X) ≤ d + r`, measured on the actual scheme fiber
+product. Fibers over complex points are actual scheme pullbacks.
 
-The normalized direct-image construction follows the completed Mathlib-based
-construction in ATLAS PR1970, `ProjectiveDirectImage.lean`. The functions below
-have complete bodies and import no perverse-provider or decomposition request.
+Everything here is a complete definition. The decomposition, semisimplicity,
+amplitude and relevance statements, and the constructibility of the image, are
+requested in `WantedExt/AlgebraicGeometry/ProperDecompositionWanted.lean`.
 
 ## References
 
-* de Cataldo–Migliorini, https://arxiv.org/abs/0712.0349, Theorem 1.6.1,
-  §§3.3.2 and 4.2.
-* BBD, *Faisceaux pervers*, Astérisque 100 (1982), Theorem 6.2.5.
+* M. A. de Cataldo and L. Migliorini, *The decomposition theorem, perverse
+  sheaves and the topology of algebraic maps*, https://arxiv.org/abs/0712.0349,
+  Theorem 1.6.1, §§3.3.2 and 4.2.
+* A. Beilinson, J. Bernstein and P. Deligne, *Faisceaux pervers*,
+  Astérisque 100 (1982), Theorem 6.2.5.
 -/
 
 @[expose] public noncomputable section
@@ -42,22 +42,24 @@ open _root_.AlgebraicGeometry ComplexAnalytification PerverseSheaves
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- The actual rational direct image of a constant sheaf in degree `-d`. -/
+/-- The actual rational direct image `Rf_* ℚ_X[d]` of the constant sheaf placed
+in cohomological degree `-d`. -/
 def normalizedDirectImage (X Y : ComplexScheme) (f : X ⟶ Y) (d : ℕ) :
     RationalDerived (space Y) :=
-  DerivedCategory.Plus.ι.obj
-    (((TopCat.Sheaf.pushforward (ModuleCat.{0} ℚ) (spaceMap f)).rightDerivedFunctorPlus).obj
-      ((DerivedCategory.Plus.singleFunctor (RationalSheaf (space X)) (-(d : ℤ))).obj
-        (rationalConstantSheaf (space X))))
+  (ConstructibleComplexes.derivedPushforwardPlus ℚ f).obj
+    ((DerivedCategory.Plus.singleFunctor (RationalSheaf (space X)) (-(d : ℤ))).obj
+      (rationalConstantSheaf (space X)))
 
-/-- Package the image in the actual constructible category once its external
-constructibility hypothesis is supplied. -/
+/-- The image as an object of the bounded constructible category, given its
+constructibility. -/
 def constructibleImage (X Y : ComplexScheme) (f : X ⟶ Y) (d : ℕ)
     (hK : boundedConstructible Y (normalizedDirectImage X Y f d)) :
     (boundedConstructible Y).FullSubcategory :=
   ⟨normalizedDirectImage X Y f d, hK⟩
 
-/-- Geometric defect bound: the self-fiber-product has dimension at most `d+r`. -/
+/-- Geometric defect bound: the self-fiber product `X ×_Y X` has Krull
+dimension at most `d + r`. For `X` smooth of dimension `d`, the least such `r`
+is the defect of semismallness of `f`. -/
 def DefectLE {X Y : ComplexScheme} (f : X ⟶ Y) (d r : ℕ) : Prop :=
   topologicalKrullDim (pullback f.left f.left : Scheme.{0}) ≤
     ((d + r : ℕ∞) : WithBot ℕ∞)
