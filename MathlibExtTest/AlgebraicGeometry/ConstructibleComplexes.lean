@@ -72,6 +72,17 @@ example {X Y : ComplexScheme} (g : X ⟶ Y) :
     DerivedCategory.Plus (CoefficientSheaf k (space X)) ⥤ CoefficientDerived k (space Y) :=
   derivedPushforwardPlus k g
 
+/-- The normalized direct image is the derived direct image of the constant
+sheaf placed in degree `-n`. -/
+example {X Y : ComplexScheme} (g : X ⟶ Y) (n : ℕ) :
+    normalizedDirectImage k X Y g n =
+      DerivedCategory.Plus.ι.obj
+        (((TopCat.Sheaf.pushforward (ModuleCat.{0} k) (spaceMap g)).rightDerivedFunctorPlus).obj
+          ((DerivedCategory.Plus.singleFunctor (CoefficientSheaf k (space X)) (-(n : ℤ))).obj
+            ((constantSheaf (Opens.grothendieckTopology (space X)) (ModuleCat.{0} k)).obj
+              (ModuleCat.of k k)))) :=
+  rfl
+
 /-- The constant sheaf of a finite-dimensional space is a finite-rank local
 system, for any coefficient field. -/
 example (V : ModuleCat.{0} k) [FiniteDimensional k V] :
