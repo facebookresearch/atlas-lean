@@ -34,20 +34,28 @@ for all `y, z ∈ X`, including `y = z` (order `1`). No finite group is an examp
 `Z*`-theorem it would have a subgroup of index `2`.
 -/
 
-/-- Kourovka 10.62 (A. I. Sozutov): some periodic group without subgroups of index `2` is generated
-by a conjugacy class `X` of involutions such that the product of any two members of `X` has odd
-order. -/
+/-- **Kourovka Problem 10.62 on involution classes with products of odd order.** The proposition
+(Kourovka 10.62, A. I. Sozutov) that there is a periodic group $G$ that has no subgroup of index
+$2$ and contains an involution $x$ such that the conjugacy class $X$ of $x$ generates $G$ and the
+product $yz$ has odd order for all $y, z \in X$.
+
+The condition includes $y = z$, where $yz = 1$ has order $1$. -/
 def periodicGroupGeneratedByOddInvolutionClass : Prop :=
   ∃ (G : Type) (_ : Group G), (∀ g : G, IsOfFinOrder g) ∧ (∀ H : Subgroup G, H.index ≠ 2) ∧
     ∃ x : G, orderOf x = 2 ∧ Subgroup.closure {y | IsConj x y} = ⊤ ∧
       ∀ y z : G, IsConj x y → IsConj x z → Odd (orderOf (y * z))
 
-/--
-Resolved true: Kinyon and Urban's 2026 preprint (an AI-generated solution confirmed by M. Amelio;
-Section 3.7, Proposition 3.5) constructs, for every sufficiently large odd prime `p`, an infinite
-three-generated perfect group of exponent `2p` whose involutions form one conjugacy class generating
-the group, the product of any two distinct involutions having order `p`; being perfect, it has no
-subgroup of index `2`. The Kourovka Notebook (21st issue) marks 10.62 solved, "Example constructed".
+/-- **Positive answer to Kourovka Problem 10.62.** There is a periodic group $G$ that has no
+subgroup of index $2$ and contains an involution $x$ such that the conjugacy class $X$ of $x$
+generates $G$ and the product $yz$ has odd order for all $y, z \in X$.
+
+Kinyon and Urban's 2026 preprint (an AI-generated solution confirmed by M. Amelio; Section 3.7,
+Proposition 3.5) constructs, for every sufficiently large odd prime $p$, an infinite
+three-generated perfect group of exponent $2p$ whose involutions form one conjugacy class
+generating the group, the product of any two distinct involutions having order $p$; being perfect,
+it has no subgroup of index $2$. The Kourovka Notebook (21st issue) marks 10.62 solved, "Example
+constructed".
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 10.62 (A. I. Sozutov); resolution: M.
 Kinyon and J. Urban (with Codex gpt-6-astra), Results on problems from the Kourovka Notebook,

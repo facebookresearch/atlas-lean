@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.Graph.BipartiteMatching
+public import CSLibExt.Algorithms.Lean.Online.BipartiteMatching
 public import Mathlib.Data.List.Forall2
 
 /-!
@@ -39,6 +40,11 @@ Main results:
   `not_competitive_of_lt`: so for `d < 2 * c` and `b < n`, `d * ALG + b < c * OPT` on some
   sequence (a finite-size obstruction); `not_competitive`: for a family of algorithms, one per
   size, every additive constant `b` fails at some size.
+* `greedyMatcher`: the greedy algorithm of `Online/BipartiteMatching.lean` as an `OnlineMatcher`;
+  `matched_greedyMatcher_eq_card`: it matches as many arrivals as `greedyAll` has edges on the
+  arrivals' graph `toAdj σ`, so `card_le_two_mul_matched_greedyMatcher` carries greedy's `1/2`
+  bound into this model, and `greedy_tight`: greedy matches exactly half of a perfect matching on
+  the adversary's arrivals, so it attains the best ratio a deterministic algorithm can.
 
 ## Cost model
 
@@ -51,18 +57,25 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.Online.MatchingLowerBound
 
-/-- A deterministic online bipartite matching algorithm with `a` offline (left) vertices: on each
-arrival it sees the neighbour lists of all earlier arrivals and of the current one, and proposes a
-left vertex to match the arrival to, or none. -/
+/-- **Deterministic online bipartite matching algorithm.** A deterministic online bipartite
+matching algorithm with $a$ offline (left) vertices $0, \dots, a - 1$ is given by a proposal
+rule: on each arrival it receives the neighbour lists (lists of left vertices) of all earlier
+arrivals, in order, and the neighbour list of the current arrival, and proposes a left vertex to
+match the arrival to, or none. -/
 structure OnlineMatcher (a : ℕ) where
   /-- The proposal for the current arrival, from the earlier arrivals and the current one. -/
   choose : List (List (Fin a)) → List (Fin a) → Option (Fin a)
 
 variable {a : ℕ}
 
-/-- The run of `A` on the arrivals `σ` (neighbour lists), after the history `h` and with the left
-vertices `used` already matched: the number of arrivals matched. A proposal is accepted when it
-is a neighbour of the arrival and still free; otherwise the arrival stays unmatched. -/
+/-- **Number of arrivals an online matcher matches.** Let $A$ be an online matcher with $a$ left
+vertices, $h$ a history (the neighbour lists of earlier arrivals), $U$ a list of left vertices
+already matched, and $\sigma$ a sequence of arrivals, each given by its list of left neighbours.
+The run of $A$ on $\sigma$ takes the arrivals in order: on an arrival with neighbour list $N$,
+$A$ proposes a left vertex, or none, from the current history and $N$; a proposal $i$ with
+$i \in N$ and $i \notin U$ is accepted, counting the arrival as matched and adding $i$ to $U$,
+and otherwise the arrival stays unmatched; then $N$ is appended to the history. The value is the
+number of arrivals matched. -/
 def matched (A : OnlineMatcher a) : List (List (Fin a)) → List (Fin a) → List (List (Fin a)) → ℕ
   | _, _, [] => 0
   | h, used, nbrs :: σ =>
@@ -72,18 +85,24 @@ def matched (A : OnlineMatcher a) : List (List (Fin a)) → List (Fin a) → Lis
           else matched A (h ++ [nbrs]) used σ
       | none => matched A (h ++ [nbrs]) used σ
 
-/-- `m` matches the arrivals `σ` (in order) to distinct neighbours: a matching that covers every
-arrival. -/
+/-- **Perfect matchings of a sequence of arrivals.** A list $m$ of left vertices is a perfect
+matching of a sequence $\sigma$ of arrivals (neighbour lists) when $m$ and $\sigma$ have the same
+length, the entries of $m$ are pairwise distinct, and for each $j$ the $j$-th entry of $m$ lies
+in the $j$-th neighbour list of $\sigma$. -/
 def IsPerfect (σ : List (List (Fin a))) (m : List (Fin a)) : Prop :=
   m.Nodup ∧ List.Forall₂ (fun i nbrs => i ∈ nbrs) m σ
 
-/-- The bipartite graph of a sequence of arrivals, in the vocabulary of
-`Graph/BipartiteMatching.lean`: left vertex `i` is adjacent to arrival `j` when `i ∈ σ[j]`. -/
+/-- **Graph of a sequence of arrivals.** For a sequence $\sigma = (\sigma_0, \dots, \sigma_{k-1})$
+of arrivals, each a list of left vertices in $\{0, \dots, a - 1\}$, the bipartite graph of $\sigma$
+is given by adjacency lists: left vertex $i$ is sent to the list, in increasing order, of the
+arrivals $j < k$ with $i \in \sigma_j$. -/
 def toAdj (σ : List (List (Fin a))) : Fin a → List (Fin σ.length) :=
   fun i => (List.finRange σ.length).filter fun j => decide (i ∈ σ[j])
 
-/-- A perfect matching of the arrivals is a matching (`BipartiteMatching.IsMatching`) of their
-graph with one edge per arrival. -/
+/-- **Perfect matchings of the arrivals are matchings of their graph.** Let $\sigma$ be a sequence
+of arrivals (neighbour lists) and $m$ a perfect matching of $\sigma$. Then the bipartite graph of
+$\sigma$, in which left vertex $i$ is adjacent to arrival $j$ when $i$ lies in the $j$-th
+neighbour list, has a matching with as many edges as $\sigma$ has arrivals. -/
 theorem exists_isMatching_of_isPerfect {σ : List (List (Fin a))} {m : List (Fin a)}
     (hp : IsPerfect σ m) : ∃ M : Finset (Fin a × Fin σ.length),
       BipartiteMatching.IsMatching (toAdj σ) M ∧ M.card = σ.length := by
@@ -106,9 +125,14 @@ theorem exists_isMatching_of_isPerfect {σ : List (List (Fin a))} {m : List (Fin
 
 /-! ## The adversary -/
 
-/-- The adversary on gadgets `(u, v)`: an arrival adjacent to `u` and `v`, then an arrival
-adjacent only to `v` if the algorithm proposed `v` for the first one, and only to `u` otherwise
-(a proposal of `u`, of no vertex, or of a non-neighbour). -/
+/-- **The adversary for online bipartite matching.** Let $A$ be an online matcher, $h$ a list of
+earlier neighbour lists and $ps$ a list of gadgets, pairs $(u, v)$ of left vertices. The
+adversary's sequence of arrivals is empty when $ps$ is empty. Otherwise, for the first gadget
+$(u, v)$, let $x = v$ if $A$, after the history $h$, proposes $v$ for an arrival with neighbour
+list $[u, v]$, and $x = u$ otherwise (a proposal of $u$, of no vertex, or of a non-neighbour).
+The sequence is an arrival with neighbour list $[u, v]$, then an arrival with neighbour list
+$[x]$, then the adversary's sequence for $A$, the history $h$ extended by $[u, v]$ and $[x]$, and
+the remaining gadgets. -/
 def adversary (A : OnlineMatcher a) : List (List (Fin a)) → List (Fin a × Fin a) →
     List (List (Fin a))
   | _, [] => []
@@ -116,15 +140,23 @@ def adversary (A : OnlineMatcher a) : List (List (Fin a)) → List (Fin a × Fin
       let x := if A.choose h [u, v] = some v then v else u
       [u, v] :: [x] :: adversary A (h ++ [[u, v], [x]]) ps
 
-/-- The offline matching of the adversary's arrivals: in each gadget, the first arrival takes the
-vertex the second one does not. -/
+/-- **The adversary's offline matching.** Let $A$ be an online matcher, $h$ a list of earlier
+neighbour lists and $ps$ a list of gadgets, pairs $(u, v)$ of left vertices. The list
+$\mathrm{opt}(A, h, ps)$ of left vertices is empty when $ps$ is empty. Otherwise, for the first
+gadget $(u, v)$, let $x = v$ if $A$, after the history $h$, proposes $v$ for an arrival with
+neighbour list $[u, v]$, and $x = u$ otherwise; the list starts with $u, v$ in the first case and
+with $v, u$ in the second, and continues with $\mathrm{opt}(A, h', ps')$, where $h'$ is $h$
+extended by the neighbour lists $[u, v]$ and $[x]$ and $ps'$ is the list of remaining gadgets. -/
 def adversaryOpt (A : OnlineMatcher a) : List (List (Fin a)) → List (Fin a × Fin a) → List (Fin a)
   | _, [] => []
   | h, (u, v) :: ps =>
       let x := if A.choose h [u, v] = some v then v else u
       (if A.choose h [u, v] = some v then u else v) :: x :: adversaryOpt A (h ++ [[u, v], [x]]) ps
 
-/-- Gadgets with distinct vertices: within each gadget, and across gadgets. -/
+/-- **Gadgets with distinct vertices.** A list of gadgets, pairs $(u, v)$ of left vertices, has
+distinct vertices when $u \ne v$ for every gadget $(u, v)$ of the list, and any two gadgets
+$(u, v)$ and $(u', v')$ at different positions of the list share no vertex:
+$u \ne u'$, $u \ne v'$, $v \ne u'$ and $v \ne v'$. -/
 def GadgetsDisjoint (ps : List (Fin a × Fin a)) : Prop :=
   (∀ p ∈ ps, p.1 ≠ p.2) ∧
     ps.Pairwise fun p q => p.1 ≠ q.1 ∧ p.1 ≠ q.2 ∧ p.2 ≠ q.1 ∧ p.2 ≠ q.2
@@ -136,7 +168,10 @@ theorem length_adversary (A : OnlineMatcher a) : ∀ (h : List (List (Fin a)))
       simp only [adversary, List.length_cons, length_adversary A _ ps]
       omega
 
-/-- **The adversary holds every algorithm to one match per gadget.** -/
+/-- **The adversary holds every algorithm to one match per gadget.** For every online matcher
+$A$, every list $h$ of earlier neighbour lists, every list $U$ of left vertices and every list of
+$k$ gadgets, the run of $A$ on the adversary's arrivals for $A$, $h$ and the gadgets, after the
+history $h$ and with the left vertices of $U$ already matched, matches at most $k$ arrivals. -/
 theorem matched_adversary_le (A : OnlineMatcher a) : ∀ (h : List (List (Fin a)))
     (used : List (Fin a)) (ps : List (Fin a × Fin a)),
     matched A h used (adversary A h ps) ≤ ps.length
@@ -197,8 +232,11 @@ theorem mem_adversaryOpt (A : OnlineMatcher a) : ∀ (h : List (List (Fin a)))
       · obtain ⟨q, hq, hxq⟩ := mem_adversaryOpt A _ ps x hx
         exact ⟨q, List.mem_cons_of_mem _ hq, hxq⟩
 
-/-- **The adversary's arrivals have a perfect matching** when the gadgets have distinct vertices:
-in each gadget the first arrival takes the vertex the second one does not. -/
+/-- **The adversary's arrivals have a perfect matching.** For every online matcher $A$, every
+list $h$ of earlier neighbour lists and every list of gadgets with distinct vertices, the
+adversary's offline matching for $A$, $h$ and the gadgets is a perfect matching of the
+adversary's arrivals for $A$, $h$ and the gadgets. In each gadget, the first arrival takes the
+vertex the second one does not. -/
 theorem isPerfect_adversaryOpt (A : OnlineMatcher a) : ∀ (h : List (List (Fin a)))
     (ps : List (Fin a × Fin a)), GadgetsDisjoint ps →
     IsPerfect (adversary A h ps) (adversaryOpt A h ps)
@@ -230,7 +268,9 @@ theorem isPerfect_adversaryOpt (A : OnlineMatcher a) : ∀ (h : List (List (Fin 
         · split_ifs <;> simp
         · simp
 
-/-- `n` gadgets on the left vertices `2k, 2k + 1` of `Fin (2 * n)`. -/
+/-- **The $n$ gadgets on $2n$ left vertices.** For $n \in \mathbb{N}$, the list of gadgets
+$(0, 1), (2, 3), \dots, (2n - 2, 2n - 1)$ of left vertices in $\{0, \dots, 2n - 1\}$, that is, the
+pairs $(2k, 2k + 1)$ for $k = 0, \dots, n - 1$ in increasing order of $k$. -/
 def gadgets (n : ℕ) : List (Fin (2 * n) × Fin (2 * n)) :=
   (List.finRange n).map fun (k : Fin n) =>
     (⟨2 * k, by have := k.isLt; omega⟩, ⟨2 * k + 1, by have := k.isLt; omega⟩)
@@ -258,8 +298,12 @@ theorem exists_perfect_matched_le (n : ℕ) (A : OnlineMatcher (2 * n)) :
   · rw [length_adversary, length_gadgets]
   · simpa [length_gadgets] using matched_adversary_le A [] [] (gadgets n)
 
-/-- The same in the vocabulary of `Graph/BipartiteMatching.lean`: the arrivals' graph has a
-matching (`BipartiteMatching.IsMatching`) with `2 n` edges. -/
+/-- **The $1/2$ lower bound with a matching of the arrivals' graph.** For every $n \in \mathbb{N}$
+and every online matcher $A$ with $2n$ left vertices, there is a sequence $\sigma$ of arrivals
+(neighbour lists) such that the bipartite graph of $\sigma$, in which left vertex $i$ is adjacent
+to arrival $j$ when $i$ lies in the $j$-th neighbour list, has a matching with $2n$ edges, while
+$A$, run on $\sigma$ from the empty history with no left vertex matched, matches at most $n$
+arrivals. -/
 theorem exists_isMatching_matched_le (n : ℕ) (A : OnlineMatcher (2 * n)) :
     ∃ σ : List (List (Fin (2 * n))), ∃ M : Finset (Fin (2 * n) × Fin σ.length),
       BipartiteMatching.IsMatching (toAdj σ) M ∧ M.card = 2 * n ∧ matched A [] [] σ ≤ n := by
@@ -267,10 +311,15 @@ theorem exists_isMatching_matched_le (n : ℕ) (A : OnlineMatcher (2 * n)) :
   obtain ⟨M, hM, hc⟩ := exists_isMatching_of_isPerfect hm
   exact ⟨σ, M, hM, hc.trans hσ, hle⟩
 
-/-- **The finite-size obstruction**: if `d < 2 * c` and `b < n`, every algorithm with `2 n` left
-vertices has a sequence with a perfect matching `m` on which `d * ALG + b < c * |m|`. (At a fixed
-size some additive constant always suffices, so `b` is bounded by `n`; `not_competitive` lets the
-size grow.) -/
+/-- **Finite-size lower bound for deterministic online matching.** Let $n$, $b$, $c$, $d$ be
+natural numbers with $d < 2c$ and $b < n$. For every online matcher $A$ with $2n$ left vertices
+there are a sequence $\sigma$ of arrivals and a perfect matching $m$ of $\sigma$ such that
+$d \cdot \mathrm{ALG} + b < c \cdot |m|$, where $\mathrm{ALG}$ is the number of arrivals of
+$\sigma$ that $A$ matches when run from the empty history with no left vertex matched, and $|m|$
+is the length of $m$.
+
+At a fixed size some additive constant always suffices, which is why $b$ is bounded by $n$;
+letting the size grow removes the bound. -/
 theorem not_competitive_of_lt (n : ℕ) {c d : ℕ} (hcd : d < 2 * c) {b : ℕ} (hb : b < n)
     (A : OnlineMatcher (2 * n)) :
     ∃ σ m, IsPerfect σ m ∧ d * matched A [] [] σ + b < c * m.length := by
@@ -284,12 +333,189 @@ theorem not_competitive_of_lt (n : ℕ) {c d : ℕ} (hcd : d < 2 * c) {b : ℕ} 
     _ ≤ 2 * c * n := h2
     _ = c * (2 * n) := by rw [Nat.mul_comm 2 c, Nat.mul_assoc]
 
-/-- **No deterministic online matcher beats ratio `1/2`, with any additive constant**: for a
-family of algorithms, one for each even number `2 n` of left vertices, and all `c d b` with
-`d < 2 * c`, some size and some sequence with a perfect matching `m` give
-`d * ALG + b < c * |m|`; for `0 < d`, the family is not `c / d`-competitive. -/
+/-- **No deterministic online matcher beats ratio $1/2$, with any additive constant.** Let
+$(A_n)_{n \in \mathbb{N}}$ be a family of online matchers, $A_n$ having $2n$ left vertices, and
+let $b$, $c$, $d$ be natural numbers with $d < 2c$. Then for some $n$ there are a sequence
+$\sigma$ of arrivals on the left vertices of $A_n$ and a perfect matching $m$ of $\sigma$ such
+that $d \cdot \mathrm{ALG} + b < c \cdot |m|$, where $\mathrm{ALG}$ is the number of arrivals of
+$\sigma$ that $A_n$ matches when run from the empty history with no left vertex matched, and
+$|m|$ is the length of $m$.
+
+For $d > 0$ this says that the family is not $c/d$-competitive, whatever the additive constant. -/
 theorem not_competitive (A : ∀ n, OnlineMatcher (2 * n)) {c d : ℕ} (hcd : d < 2 * c) (b : ℕ) :
     ∃ n σ m, IsPerfect σ m ∧ d * matched (A n) [] [] σ + b < c * m.length :=
   ⟨b + 1, not_competitive_of_lt (b + 1) hcd (Nat.lt_succ_self b) (A (b + 1))⟩
+
+/-! ## Greedy as an online matcher -/
+
+/-- Greedy's proposal: the free left neighbour of least index, if any. -/
+def greedyPick (used nbrs : List (Fin a)) : Option (Fin a) :=
+  (List.finRange a).find? fun i => decide (i ∈ nbrs) && decide (i ∉ used)
+
+/-- The left vertices the greedy algorithm has matched after the arrivals `h`. -/
+def greedyUsed (h : List (List (Fin a))) : List (Fin a) :=
+  h.foldl (fun used nbrs => match greedyPick used nbrs with
+    | some i => i :: used
+    | none => used) []
+
+/-- **Greedy as an online matcher**: it replays the history to recover the left vertices it has
+already matched (`greedyUsed`) and proposes the free neighbour of least index (`greedyPick`), the
+choice of `Online.BipartiteMatching.step`. -/
+def greedyMatcher : OnlineMatcher a := ⟨fun h nbrs => greedyPick (greedyUsed h) nbrs⟩
+
+private theorem greedyUsed_append_singleton (h : List (List (Fin a))) (nbrs : List (Fin a)) :
+    greedyUsed (h ++ [nbrs]) = match greedyPick (greedyUsed h) nbrs with
+      | some i => i :: greedyUsed h
+      | none => greedyUsed h := by
+  simp [greedyUsed, List.foldl_append]
+
+private theorem matched_greedyMatcher_aux : ∀ (σ h : List (List (Fin a))),
+    matched greedyMatcher h (greedyUsed h) σ + (greedyUsed h).length =
+      (greedyUsed (h ++ σ)).length
+  | [], h => by simp [matched]
+  | nbrs :: σ, h => by
+      have ih := matched_greedyMatcher_aux σ (h ++ [nbrs])
+      rw [greedyUsed_append_singleton] at ih
+      rw [show h ++ nbrs :: σ = h ++ [nbrs] ++ σ by simp]
+      simp only [matched]
+      change (match greedyPick (greedyUsed h) nbrs with
+        | some i => if i ∈ nbrs ∧ i ∉ greedyUsed h then
+            1 + matched greedyMatcher (h ++ [nbrs]) (i :: greedyUsed h) σ
+            else matched greedyMatcher (h ++ [nbrs]) (greedyUsed h) σ
+        | none => matched greedyMatcher (h ++ [nbrs]) (greedyUsed h) σ) + _ = _
+      cases hc : greedyPick (greedyUsed h) nbrs with
+      | none => rw [hc] at ih; simpa using ih
+      | some i =>
+          rw [hc] at ih
+          have hi := List.find?_some hc
+          simp only [Bool.and_eq_true, decide_eq_true_eq] at hi
+          simp only [hi, not_false_eq_true, and_self, ↓reduceIte]
+          simp only [List.length_cons] at ih
+          omega
+
+/-- `greedyMatcher` matches one arrival per left vertex it records as used. -/
+theorem matched_greedyMatcher (σ : List (List (Fin a))) :
+    matched greedyMatcher [] [] σ = (greedyUsed σ).length := by
+  simpa [greedyUsed] using matched_greedyMatcher_aux σ []
+
+open Cslib.Algorithms.Lean.BipartiteMatching in
+/-- The invariant of the run of `greedyAll` on the arrivals' graph after the first `k` arrivals:
+later arrivals are unmatched, and the free left vertices and the matching size agree with
+`greedyUsed`. -/
+private theorem greedy_take_inv (σ : List (List (Fin a))) : ∀ k, k ≤ σ.length →
+    let mate := Online.BipartiteMatching.greedy (toAdj σ) ((List.finRange σ.length).take k)
+      (fun _ => none)
+    (∀ j : Fin σ.length, k ≤ j.1 → mate j = none) ∧
+    (∀ i, Free mate i ↔ i ∉ greedyUsed (σ.take k)) ∧
+    (pairs mate).card = (greedyUsed (σ.take k)).length
+  | 0, _ => by
+      refine ⟨fun _ _ => rfl, fun i => ?_, ?_⟩
+      · simp [greedyUsed, Online.BipartiteMatching.greedy, Free]
+      · simp [greedyUsed, Online.BipartiteMatching.greedy, pairs]
+  | k + 1, hk => by
+      obtain ⟨h1, h2, h3⟩ := greedy_take_inv σ k (by omega)
+      intro mate
+      set m := Online.BipartiteMatching.greedy (toAdj σ) ((List.finRange σ.length).take k)
+        (fun _ => none) with hm
+      set used := greedyUsed (σ.take k) with hused
+      let j : Fin σ.length := ⟨k, by omega⟩
+      have hmj : m j = none := h1 j le_rfl
+      have htake : (List.finRange σ.length).take (k + 1) =
+          (List.finRange σ.length).take k ++ [j] := by
+        rw [List.take_add_one, List.getElem?_eq_getElem (by simp; omega)]
+        simp [j]
+      have hσ : σ.take (k + 1) = σ.take k ++ [σ[k]] := by
+        rw [List.take_add_one, List.getElem?_eq_getElem (by omega)]
+        rfl
+      have hpred : (fun i => decide (j ∈ toAdj σ i) && decide (Free m i)) =
+          fun i => decide (i ∈ σ[k]) && decide (i ∉ used) := by
+        funext i
+        simp [toAdj, h2 i, j]
+      have hc : (List.finRange a).find? (fun i => decide (j ∈ toAdj σ i) && decide (Free m i)) =
+          greedyPick used σ[k] := by
+        rw [hpred]; rfl
+      have hmate : mate = Function.update m j (greedyPick used σ[k]) := by
+        simp only [mate, htake, Online.BipartiteMatching.greedy, List.foldl_append,
+          List.foldl_cons, List.foldl_nil]
+        change Online.BipartiteMatching.step (toAdj σ) m j = _
+        simp only [Online.BipartiteMatching.step, hc]
+      have hU : greedyUsed (σ.take (k + 1)) = match greedyPick used σ[k] with
+          | some i => i :: used
+          | none => used := by
+        rw [hσ, greedyUsed_append_singleton]
+      rw [hmate, hU]
+      refine ⟨fun j' hj' => ?_, fun i => ?_, ?_⟩
+      · have hne : j' ≠ j := fun e => by have := congrArg Fin.val e; simp only [j] at this; omega
+        rw [Function.update_of_ne hne]
+        exact h1 j' (by omega)
+      · have hfree : Free (Function.update m j (greedyPick used σ[k])) i ↔
+            greedyPick used σ[k] ≠ some i ∧ Free m i := by
+          constructor
+          · intro hf
+            refine ⟨fun e => hf j (by simp [e]), fun j' => ?_⟩
+            by_cases hj' : j' = j
+            · rw [hj', hmj]; simp
+            · have := hf j'
+              rwa [Function.update_of_ne hj'] at this
+          · rintro ⟨hne, hf⟩ j'
+            by_cases hj' : j' = j
+            · rw [hj', Function.update_self]; exact hne
+            · rw [Function.update_of_ne hj']; exact hf j'
+        rw [hfree, h2 i]
+        cases greedyPick used σ[k] with
+        | none => simp
+        | some i₀ =>
+            simp only [ne_eq, Option.some.injEq, List.mem_cons, not_or]
+            tauto
+      · cases hg : greedyPick used σ[k] with
+        | none =>
+            have : Function.update m j none = m := by
+              rw [Function.update_eq_self_iff]; exact hmj.symm
+            rw [this]; exact h3
+        | some i₀ =>
+            have hnot : (i₀, j) ∉ pairs m := by simp [pairs, hmj]
+            have : pairs (Function.update m j (some i₀)) = insert (i₀, j) (pairs m) := by
+              ext ⟨i, j'⟩
+              by_cases hj' : j' = j
+              · subst hj'
+                simp [pairs, hmj, eq_comm]
+              · simp [pairs, hj']
+            rw [this, Finset.card_insert_of_notMem hnot, h3, List.length_cons]
+
+open Cslib.Algorithms.Lean.BipartiteMatching in
+/-- **`greedyMatcher` is the greedy algorithm of `Online/BipartiteMatching.lean`**: on every arrival
+sequence it matches as many arrivals as `greedyAll` has edges on the arrivals' graph. -/
+theorem matched_greedyMatcher_eq_card (σ : List (List (Fin a))) :
+    matched greedyMatcher [] [] σ =
+      (pairs (Online.BipartiteMatching.greedyAll (toAdj σ))).card := by
+  have := (greedy_take_inv σ σ.length le_rfl).2.2
+  rw [List.take_length, List.take_of_length_le (by simp)] at this
+  rw [matched_greedyMatcher, Online.BipartiteMatching.greedyAll_eq, this]
+
+/-- **Greedy is `1/2`-competitive in the `OnlineMatcher` model**: every matching of the arrivals'
+graph has at most twice as many edges as `greedyMatcher` matches arrivals
+(`Online.BipartiteMatching.card_le_two_mul_greedyAll` through `matched_greedyMatcher_eq_card`). -/
+theorem card_le_two_mul_matched_greedyMatcher {σ : List (List (Fin a))}
+    {M : Finset (Fin a × Fin σ.length)} (hM : BipartiteMatching.IsMatching (toAdj σ) M) :
+    M.card ≤ 2 * matched greedyMatcher [] [] σ := by
+  rw [matched_greedyMatcher_eq_card]
+  exact Online.BipartiteMatching.card_le_two_mul_greedyAll (toAdj σ) hM
+
+/-- The same against a perfect matching of the arrivals: `|m| ≤ 2 * ALG`. -/
+theorem length_le_two_mul_matched_greedyMatcher {σ : List (List (Fin a))} {m : List (Fin a)}
+    (hm : IsPerfect σ m) : m.length ≤ 2 * matched greedyMatcher [] [] σ := by
+  obtain ⟨M, hM, hc⟩ := exists_isMatching_of_isPerfect hm
+  rw [hm.2.length_eq, ← hc]
+  exact card_le_two_mul_matched_greedyMatcher hM
+
+/-- **The ratio `1/2` is tight for greedy, and greedy is optimal among deterministic online
+matchers**: `length_le_two_mul_matched_greedyMatcher` and, from the adversary of
+`exists_perfect_matched_le`, for every `n` some `2 n` arrivals have a perfect matching `m` of
+which `greedyMatcher` matches exactly half. -/
+theorem greedy_tight (n : ℕ) : ∃ σ m, IsPerfect σ m ∧ m.length = 2 * n ∧
+    2 * matched (greedyMatcher (a := 2 * n)) [] [] σ = m.length := by
+  obtain ⟨σ, m, hm, hml, -, hle⟩ := exists_perfect_matched_le n greedyMatcher
+  have := length_le_two_mul_matched_greedyMatcher hm
+  exact ⟨σ, m, hm, hml, by omega⟩
 
 end Cslib.Algorithms.Lean.Online.MatchingLowerBound

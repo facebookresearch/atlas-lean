@@ -43,21 +43,27 @@ open scoped FourierTransform
 
 namespace MathlibExt.Analysis.Fourier.HighFrequencySupNormSobolevBoundWanted
 
-/-- The homogeneous Sobolev seminorm `‖f‖_{Ḣˢ} = (∫ |ξ| ^ (2 s) * ‖𝓕 f ξ‖ ^ 2 dξ) ^ (1 / 2)` of a
-Schwartz function. -/
+/-- **Homogeneous Sobolev seminorm for the high-frequency sup-norm bound.** For a real number $s$
+and a Schwartz function $f : \mathbb{R} \to \mathbb{C}$ with Fourier transform
+$\hat f(\xi) = \int_{\mathbb{R}} e^{-2\pi i x \xi} f(x) \, dx$, the homogeneous Sobolev seminorm
+of $f$ is
+$$
+\|f\|_{\dot H^s} = \left( \int_{\mathbb{R}} |\xi|^{2s} \, |\hat f(\xi)|^2 \, d\xi \right)^{1/2},
+$$
+where the integral is taken to be $0$ when the integrand is not integrable. -/
 noncomputable def dotHSeminorm (s : ℝ) (f : SchwartzMap ℝ ℂ) : ℝ :=
   Real.sqrt (∫ ξ : ℝ, Real.rpow ‖ξ‖ (2 * s) * ‖(𝓕 f) ξ‖ ^ 2)
 
-/-- Fix $s\in \left(\tfrac12,1\right]$. For a Schwartz function $f:\mathbb{R}\to\mathbb{C}$, define
-\[
-\|f\|_{\dot H^{s}(\mathbb{R})} = \left( \int_{\mathbb{R}} |\xi|^{2s} |\widehat{f}|^{2}(\xi)\, d\xi
-\right)^{1/2}.
-\]
-Prove that there exists $C_2>0$ such that whenever $f\in \mathcal{S}(\mathbb{R})$ and
-$\operatorname{supp}(\widehat f)\subset \mathbb{R}\setminus [-A,A]$, then
- \[
- \|f\|_{L^\infty(\mathbb{R})} \le C_2 A^{-s+\frac12}\, \|f\|_{\dot H^{s}(\mathbb{R})}.
- \]
+/-- **Sup bound for Schwartz functions with high-frequency Fourier support.** Let
+$s \in (\tfrac12, 1]$, and for a Schwartz function $f : \mathbb{R} \to \mathbb{C}$ with Fourier
+transform $\hat f$ let
+$\|f\|_{\dot H^s} = \left( \int_{\mathbb{R}} |\xi|^{2s} |\hat f(\xi)|^2 \, d\xi \right)^{1/2}$
+be its homogeneous Sobolev seminorm. There is a constant $C_2 > 0$ such that for every real
+$A > 0$ and every Schwartz function $f : \mathbb{R} \to \mathbb{C}$ whose Fourier transform has
+closed support contained in $\mathbb{R} \setminus [-A, A]$,
+$$
+\sup_{x \in \mathbb{R}} |f(x)| \le C_2 \, A^{-s + \frac12} \, \|f\|_{\dot H^s}.
+$$
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis; Linear
 function spaces and their duals), `benchmark/level2/ma_proofbench_l2_05.lean` at

@@ -25,7 +25,11 @@ namespace Modulus
 
 variable {K : Type*} [Field K] [NumberField K] {m1 m2 : Modulus K}
 
-/-- Finite exponents are monotone under modulus divisibility. -/
+/-- **Exponents of a modulus grow under divisibility.** Let $m_1$ and $m_2$ be moduli of a number
+field $K$ with $m_1 \mid m_2$, that is, the finite part of $m_2$ is contained in the finite part
+of $m_1$ and every real place of $m_1$ is a real place of $m_2$. Then for every finite prime $v$
+of $K$ (a height-one prime of the ring of integers $\mathcal{O}_K$), the exponent of $v$ in the
+finite part of $m_1$ is at most the exponent of $v$ in the finite part of $m_2$. -/
 theorem finiteExponent_le_of_dvd (h : m1 ∣ m2)
     (v : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) :
     finiteExponent m1 v ≤ finiteExponent m2 v := by
@@ -41,12 +45,23 @@ private theorem coprime_le_of_dvd (h : m1 ∣ m2) :
   intro u hu v hv
   exact hu v (le_trans ((dvd_unfold m1 m2).mp h).1 hv)
 
-/-- Natural level-change map on coprime fractional ideals. -/
+/-- **Inclusion of coprime ideal groups under divisibility of moduli.** Let $m_1$ and $m_2$ be
+moduli of a number field $K$ with $m_1 \mid m_2$, that is, the finite part of $m_2$ is contained
+in the finite part of $m_1$ and every real place of $m_1$ is a real place of $m_2$. Then every
+fractional ideal of $K$ coprime to $m_2$ is coprime to $m_1$, and this map is the inclusion
+homomorphism from the group of fractional ideals coprime to $m_2$ into the group of fractional
+ideals coprime to $m_1$. -/
 def coprimeInclusion (h : m1 ∣ m2) :
     coprimeFractionalIdeals m2 →* coprimeFractionalIdeals m1 :=
   Subgroup.inclusion (coprime_le_of_dvd h)
 
-/-- Ray-one mod `m2` implies ray-one mod `m1`. -/
+/-- **Ray congruence to $1$ passes to divisors of the modulus.** Let $m_1$ and $m_2$ be moduli
+of a number field $K$ with $m_1 \mid m_2$, that is, the finite part of $m_2$ is contained in the
+finite part of $m_1$ and every real place of $m_1$ is a real place of $m_2$. If a nonzero element
+$x$ of $K$ is congruent to $1$ modulo $m_2$ in the ray sense (its principal ideal is coprime to
+$m_2$, for each prime $v$ dividing the finite part of $m_2$ either $x = 1$ or the exponent of
+$v$ in $x - 1$ is at least its exponent in that finite part, and $x$ is positive at every real
+place of $m_2$), then $x$ is congruent to $1$ modulo $m_1$ in the same sense. -/
 theorem IsRayElementOne.of_dvd (h : m1 ∣ m2) {x : Kˣ}
     (hx : IsRayElementOne m2 x) : IsRayElementOne m1 x := by
   have hfin := ((dvd_unfold m1 m2).mp h).1
@@ -75,22 +90,47 @@ theorem rayGroup_le_comap_of_dvd (h : m1 ∣ m2) :
   intro y hy
   exact rayGenerators_map_of_dvd h y hy
 
-/-- Level-change map on ray class groups. -/
+/-- **Level-change map on ray class groups.** Let $m_1$ and $m_2$ be moduli of a number field $K$
+with $m_1 \mid m_2$, that is, the finite part of $m_2$ is contained in the finite part of $m_1$
+and every real place of $m_1$ is a real place of $m_2$. The inclusion of the group of fractional
+ideals coprime to $m_2$ into the group of fractional ideals coprime to $m_1$ maps the ray group
+modulo $m_2$ into the ray group modulo $m_1$, so it induces a group homomorphism from the ray
+class group modulo $m_2$ to the ray class group modulo $m_1$, sending the class of an ideal
+modulo $m_2$ to its class modulo $m_1$. -/
 def RayClassGroup.mapOfDvd (h : m1 ∣ m2) : RayClassGroup m2 →* RayClassGroup m1 :=
   QuotientGroup.map (rayGroup m2) (rayGroup m1) (coprimeInclusion h) (rayGroup_le_comap_of_dvd h)
 
-/-- `mapOfDvd` on canonical representatives. -/
+/-- **The level-change map on ray classes.** Let $m_1$ and $m_2$ be moduli of a number field $K$
+with $m_1 \mid m_2$, that is, the finite part of $m_2$ is contained in the finite part of $m_1$
+and every real place of $m_1$ is a real place of $m_2$. For every fractional ideal
+$\mathfrak{a}$ of $K$ coprime to $m_2$, the level-change homomorphism from the ray class group
+modulo $m_2$ to the ray class group modulo $m_1$ sends the ray class of $\mathfrak{a}$ modulo
+$m_2$ to the ray class of $\mathfrak{a}$ modulo $m_1$ (an ideal coprime to $m_2$ is also coprime
+to $m_1$). -/
 @[simp] theorem RayClassGroup.mapOfDvd_rayClassMap (h : m1 ∣ m2)
     (x : coprimeFractionalIdeals m2) :
     mapOfDvd h (rayClassMap m2 x) = rayClassMap m1 (coprimeInclusion h x) := by
   simp only [mapOfDvd, rayClassMap, QuotientGroup.mk'_apply, QuotientGroup.map_mk]
 
-/-- A character at `m2` induced by one at `m1` via level change. -/
+/-- **Induced ray class character.** Let $m_1$ and $m_2$ be moduli of a number field $K$ with
+$m_1 \mid m_2$, that is, the finite part of $m_2$ is contained in the finite part of $m_1$ and
+every real place of $m_1$ is a real place of $m_2$. A ray class character $\chi_2$ modulo $m_2$
+is induced by a ray class character $\chi_1$ modulo $m_1$ when $\chi_2 = \chi_1 \circ \pi$, where
+$\pi$ is the level-change homomorphism from the ray class group modulo $m_2$ to the ray class
+group modulo $m_1$ that sends the class of an ideal coprime to $m_2$ to its class modulo
+$m_1$. -/
 def RayClassCharacter.IsInducedBy (chi2 : RayClassCharacter m2)
     (chi1 : RayClassCharacter m1) (h : m1 ∣ m2) : Prop :=
   chi2 = chi1.comp (RayClassGroup.mapOfDvd h)
 
-/-- Induction holds iff pullbacks agree on all ideals coprime to `m2`. -/
+/-- **Induced characters agree on coprime ideals.** Let $m_1$ and $m_2$ be moduli of a number
+field $K$ with $m_1 \mid m_2$, that is, the finite part of $m_2$ is contained in the finite part
+of $m_1$ and every real place of $m_1$ is a real place of $m_2$. Let $\chi_1$ be a ray class
+character modulo $m_1$ and $\chi_2$ a ray class character modulo $m_2$. Then $\chi_2$ is induced
+by $\chi_1$ if and only if, for every fractional ideal $\mathfrak{a}$ of $K$ coprime to $m_2$,
+the value of $\chi_2$ on the ray class of $\mathfrak{a}$ modulo $m_2$ equals the value of
+$\chi_1$ on the ray class of $\mathfrak{a}$ modulo $m_1$ (an ideal coprime to $m_2$ is also
+coprime to $m_1$). -/
 theorem RayClassCharacter.isInducedBy_iff (chi2 : RayClassCharacter m2)
     (chi1 : RayClassCharacter m1) (h : m1 ∣ m2) :
     chi2.IsInducedBy chi1 h ↔ ∀ x : coprimeFractionalIdeals m2,
@@ -105,12 +145,21 @@ theorem RayClassCharacter.isInducedBy_iff (chi2 : RayClassCharacter m2)
       ← pullback_apply, ← pullback_apply]
     exact hall x
 
-/-- A character is primitive if induced only from the same modulus. -/
+/-- **Primitive ray class character.** Let $m$ be a modulus of a number field $K$. A ray class
+character $\chi$ modulo $m$ is primitive when, for every modulus $m_0$ of $K$ with $m_0 \mid m$
+(the finite part of $m$ is contained in the finite part of $m_0$ and every real place of $m_0$
+is a real place of $m$) and every ray class character $\chi_0$ modulo $m_0$ by which $\chi$ is
+induced, $m_0 = m$. -/
 def RayClassCharacter.IsPrimitive (chi : RayClassCharacter m2) : Prop :=
   ∀ (m0 : Modulus K) (chi0 : RayClassCharacter m0) (h : m0 ∣ m2),
     chi.IsInducedBy chi0 h → m0 = m2
 
-/-- Unfolding of primitivity to an explicit induction equation. -/
+/-- **Primitivity in terms of the level-change map.** Let $m$ be a modulus of a number field $K$.
+A ray class character $\chi$ modulo $m$ is primitive if and only if, for every modulus $m_0$ of
+$K$ with $m_0 \mid m$ (the finite part of $m$ is contained in the finite part of $m_0$ and every
+real place of $m_0$ is a real place of $m$) and every ray class character $\chi_0$ modulo $m_0$
+with $\chi = \chi_0 \circ \pi$, where $\pi$ is the level-change homomorphism from the ray class
+group modulo $m$ to the ray class group modulo $m_0$, we have $m_0 = m$. -/
 theorem RayClassCharacter.isPrimitive_iff (chi : RayClassCharacter m2) :
     chi.IsPrimitive ↔ ∀ (m0 : Modulus K) (chi0 : RayClassCharacter m0)
       (h : m0 ∣ m2), chi = chi0.comp (RayClassGroup.mapOfDvd h) → m0 = m2 :=

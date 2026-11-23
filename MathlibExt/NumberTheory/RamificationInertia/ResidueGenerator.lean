@@ -34,12 +34,14 @@ namespace Ideal
 
 variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B]
 
-/-- If `B` is generated over `A` by an element `π ∈ q`, then the canonical
-`A`-algebra map `A ⧸ q.comap (algebraMap A B) → B ⧸ q` is surjective.
+/-- **Surjectivity of the residue map for a singly generated algebra.** Let $A$ and $B$ be
+commutative rings, $B$ an $A$-algebra, $\mathfrak q$ an ideal of $B$ and $\mathfrak p$ its
+preimage under $A \to B$. If $B$ is generated as an $A$-algebra by a single element
+$\pi \in \mathfrak q$, then the canonical map $A/\mathfrak p \to B/\mathfrak q$ is surjective.
 
-Indeed, lift a class to `b : B`, write `b` as `Polynomial.aeval π p`, and use
-the constant coefficient `p.coeff 0`: all higher terms vanish in `B ⧸ q`
-because `π` maps to zero. -/
+Indeed, every element of $B$ is $f(\pi)$ for a polynomial $f$ with coefficients in $A$, and
+modulo $\mathfrak q$ it agrees with the image of the constant coefficient of $f$, because $\pi$
+maps to zero. -/
 theorem quotient_algebraMap_surjective_of_adjoin_singleton_eq_top
     (q : Ideal B) (π : B) (hπ : π ∈ q)
     (hgen : Algebra.adjoin A {π} = ⊤) :
@@ -54,10 +56,13 @@ theorem quotient_algebraMap_surjective_of_adjoin_singleton_eq_top
   rw [Polynomial.hom_eval₂, Ideal.Quotient.eq_zero_iff_mem.mpr hπ, Polynomial.eval₂_at_zero]
   rfl
 
-/-- If `B` is generated over `A` by an element `π ∈ q`, then the inertia
-degree of a maximal `q` over a maximal `q.under A` is `1`: the residue
-algebras coincide via the surjective canonical map, so the extension has
-finite rank one. -/
+/-- **Inertia degree one for a singly generated algebra.** Let $A$ and $B$ be commutative rings,
+$B$ an $A$-algebra, and $\mathfrak q$ a maximal ideal of $B$ whose preimage $\mathfrak p$ under
+$A \to B$ is maximal. If $B$ is generated as an $A$-algebra by a single element
+$\pi \in \mathfrak q$, then the inertia degree of $\mathfrak q$ over $\mathfrak p$ is $1$.
+
+The canonical map $A/\mathfrak p \to B/\mathfrak q$ is surjective, so the residue field
+extension has degree one. -/
 theorem inertiaDeg_eq_one_of_adjoin_singleton_eq_top
     {A B : Type*} [CommRing A] [CommRing B] [Algebra A B]
     (q : Ideal B) [q.IsMaximal] [(q.under A).IsMaximal]

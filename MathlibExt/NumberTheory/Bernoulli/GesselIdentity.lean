@@ -446,7 +446,16 @@ private theorem q_antisym (n r m : ℕ) (hr : Odd r) :
   simp only [neg_one_smul] at h
   exact h
 
-/-- Gessel's Bernoulli-number identity (Belbachir–Rahmani form of Gessel's identity).
+/-- **Gessel's Bernoulli-number identity.** Let $B_j$ denote the $j$-th Bernoulli number, with
+$B_1 = -1/2$. For all natural numbers $n$, $r$ and $m$ with $r$ odd and $m \ge 1$,
+$$\sum_{k=0}^{n+r} m^{n+r-k} \binom{n+r}{k} \binom{n+k+r}{r} B_{n+k} =
+\frac{r+1}{2} \sum_{k=1}^{m-1} \sum_{j=0}^{r+1} \binom{n+r}{j} \binom{n+r}{r+1-j}
+k^{j+n-1} (k-m)^{n+r-j}.$$
+
+The powers on the right have integer exponents and nonzero rational bases: for $n = 0$ the terms
+$j = 0$ and $j = r + 1$ have exponent $-1$.
+
+Proves `Wanted` entry `gessel_bernoulli_number_identity`.
 
 Source: Redha Chellal and Farid Bencherif, *An Identity for Generalized
 Bernoulli Polynomials*, Journal of Integer Sequences 23 (2020), Article 20.11.2,
@@ -456,15 +465,6 @@ Quoted there from H. Belbachir and M. Rahmani, *On Gessel-Kaneko's identity
 for Bernoulli numbers*, Appl. Anal. Discrete Math. 7 (2013), 1–10.
 Original: I. M. Gessel, *Applications of the classical umbral calculus*,
 Algebra Universalis 49 (2003), 397–434.
-
-`bernoulli` is Mathlib's `bernoulli`, with `B₁ = -1/2`.
-
-The two right-hand exponents are stated with rational `zpow` and integer
-exponents `((j : ℤ) + (n : ℤ) - 1)` and `((n : ℤ) + (r : ℤ) - (j : ℤ))`
-rather than `ℕ` subtraction: at `n = 0` the endpoints `j = 0` and `j = r + 1`
-give exponent `-1`, which `ℕ` subtraction would silently truncate to `0`.
-
-Proves `Wanted` entry `gessel_bernoulli_number_identity`.
 -/
 theorem gessel_bernoulli_number_identity (n r m : ℕ) (hr : Odd r) (hm : 1 ≤ m) :
     Finset.sum (Finset.range (n + r + 1)) (fun k =>
