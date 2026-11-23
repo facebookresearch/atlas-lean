@@ -137,7 +137,7 @@ private theorem vecL_apply (X : Matrix n n ℂ) (p : n × n) : (vecL X).ofLp p =
 
 omit [DecidableEq n] in
 private theorem inner_vecL (X Y : Matrix n n ℂ) : ⟪vecL X, vecL Y⟫_ℂ = trace (Xᴴ * Y) := by
-  simp only [PiLp.inner_apply, vecL_apply, trace, diag, mul_apply, conjTranspose_apply,
+  simp only [PiLp.inner_apply, vecL_apply, trace, diag, Matrix.mul_apply, conjTranspose_apply,
     Fintype.sum_prod_type, RCLike.inner_apply]
   rw [Finset.sum_comm]
   simp [mul_comm]

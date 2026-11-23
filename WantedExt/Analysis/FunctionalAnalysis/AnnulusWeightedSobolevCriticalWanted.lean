@@ -51,19 +51,19 @@ abbrev R2 : Type := EuclideanSpace ℝ (Fin 2)
 /-- **Discs about the origin for the critical weighted Sobolev inequality.** For a real number $r$,
 $B_r$ is the open disc $\{x \in \mathbb{R}^2 : |x| < r\}$ of radius $r$ about the origin of the
 Euclidean plane $\mathbb{R}^2$. -/
-abbrev B (r : ℝ) : Set R2 := Metric.ball (0 : R2) r
+noncomputable abbrev B (r : ℝ) : Set R2 := Metric.ball (0 : R2) r
 
 /-- **The annulus of the critical weighted Sobolev inequality.** Let $B_r$ denote the open disc of
 radius $r$ about the origin of the Euclidean plane $\mathbb{R}^2$. The annulus $\Omega_1$ is
 $B_3 \setminus \overline{B}_1$, the set of points of $B_3$ outside the closure of $B_1$, that is,
 $\Omega_1 = \{x \in \mathbb{R}^2 : 1 < |x| < 3\}$. -/
-abbrev Omega1 : Set R2 := B 3 \ closure (B 1)
+noncomputable abbrev Omega1 : Set R2 := B 3 \ closure (B 1)
 
 /-- **The outer annulus of the critical weighted Sobolev inequality.** Let $B_r$ denote the open
 disc of radius $r$ about the origin of the Euclidean plane $\mathbb{R}^2$. The outer annulus
 $\Omega_2$ is $B_3 \setminus \overline{B}_2$, the set of points of $B_3$ outside the closure of
 $B_2$, that is, $\Omega_2 = \{x \in \mathbb{R}^2 : 2 < |x| < 3\}$. -/
-abbrev Omega2 : Set R2 := B 3 \ closure (B 2)
+noncomputable abbrev Omega2 : Set R2 := B 3 \ closure (B 2)
 
 /-- **The weight of the critical weighted Sobolev inequality.** For $x$ in the Euclidean plane
 $\mathbb{R}^2$, the weight is $\phi(x) = \max\{|x| - 1, 0\}$, the distance from $x$ to the closed
