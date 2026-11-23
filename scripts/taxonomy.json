@@ -10566,6 +10566,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/VertexTransitive": {"to": "GraphTheory/algebraic-graph-theory", "title": "Vertex-transitive graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/Vizing": {"to": "GraphTheory/graph-coloring", "title": "Edge coloring"},
   "MathlibExt/Combinatorics/SimpleGraph/WalkPath": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Walks and paths"},
+  "MathlibExt/Combinatorics/SlowCubeVertexNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/Sperner": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Sperner's lemma"},
   "MathlibExt/Combinatorics/StaverReciprocalBinomialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Staver's identity"},
   "MathlibExt/Combinatorics/StrehlFranel": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Franel numbers"},
