@@ -25,8 +25,13 @@ Attribution and modification notice: the statement below is taken from openbmb/m
 commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_72.lean`
 (MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
 Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. The imported statement keeps its
-name, signature, and source docstring here; this move supplies a proof and narrows the imports.
+openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
+`theorem ma_proofbench_l1_72 … := by sorry` into the Batteries `theorem_wanted`
+`integrable_comp_sub_mul_of_integrable_fin_append`; moved the informal problem statement
+docstring onto it and placed the declarations in namespace
+`MathlibExt.MeasureTheory.ConvolutionIntegrandIntegrableEuclideanWanted`; replaced `import
+Mathlib` by `public import Mathlib` under the module system. The move to this proved module
+supplies the proof and narrows the imports, without changing the ATLAS name or statement.
 -/
 module
 
