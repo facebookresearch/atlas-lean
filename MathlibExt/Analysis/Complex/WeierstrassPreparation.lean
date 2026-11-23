@@ -1565,7 +1565,7 @@ private theorem wprep_jacobian_injective
     have key : ∀ n : ℕ, ∀ j : Fin d, (j : ℕ) = n → (α - β) j = 0 := by
       intro n
       induction n using Nat.strong_induction_on with
-      | h n ih =>
+      | ind n ih =>
         intro j hj
         have hmj : ((Fin.rev j : Fin d) : ℕ) = d - ((j : ℕ) + 1) :=
           Fin.val_rev _

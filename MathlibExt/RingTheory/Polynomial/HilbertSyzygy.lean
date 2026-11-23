@@ -18,6 +18,7 @@ import Mathlib.Algebra.Polynomial.Module.TensorProduct
 import Mathlib.Algebra.MvPolynomial.Equiv
 import Mathlib.RingTheory.MvPolynomial.Basic
 import Mathlib.Algebra.Module.Projective
+import Mathlib.LinearAlgebra.TensorProduct.Projective
 import Mathlib.LinearAlgebra.Finsupp.Pi
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.RingTheory.TensorProduct.Basic

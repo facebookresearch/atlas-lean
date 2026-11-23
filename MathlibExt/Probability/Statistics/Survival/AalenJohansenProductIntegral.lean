@@ -486,13 +486,13 @@ non-negative. -/
 theorem orderedProd_nonneg : ∀ {k : ℕ} (A : Fin k → Matrix ι ι ℝ) (act : Fin k → Prop)
     [DecidablePred act], (∀ j h l, 0 ≤ (1 + A j) h l) → ∀ h l, 0 ≤ orderedProd A act h l
   | 0, A, act, _, _ => fun h l => by
-    rw [orderedProd_zero, one_apply]; split_ifs <;> norm_num
+    rw [orderedProd_zero, Matrix.one_apply]; split_ifs <;> norm_num
   | k + 1, A, act, _, hA => fun h l => by
-    rw [orderedProd_succ, mul_apply]
+    rw [orderedProd_succ, Matrix.mul_apply]
     refine sum_nonneg fun x _ => mul_nonneg (orderedProd_nonneg _ _ (fun j => hA _) h x) ?_
     split_ifs
     · exact hA _ x l
-    · rw [one_apply]; split_ifs <;> norm_num
+    · rw [Matrix.one_apply]; split_ifs <;> norm_num
 
 /-- **The Aalen–Johansen estimator is entrywise non-negative** when at most `Y_h(tⱼ)` subjects
 leave each state `h` at each time `tⱼ`. -/
@@ -500,7 +500,7 @@ theorem transitionMatrix_nonneg
     (hD : ∀ j h, ∑ l ∈ univ.erase h, D.transitions j h l ≤ D.atRisk j h) (s t : ℝ) (h l : ι) :
     0 ≤ D.transitionMatrix s t h l := by
   refine orderedProd_nonneg _ _ (fun j h l => ?_) h l
-  rw [Matrix.add_apply, one_apply, naIncrement]
+  rw [Matrix.add_apply, Matrix.one_apply, naIncrement]
   by_cases hhl : h = l
   · subst hhl
     simp only [↓reduceIte, neg_div]
@@ -559,12 +559,12 @@ def NoReturn (M : Matrix (Option (Fin r)) (Option (Fin r)) ℝ) : Prop := ∀ c,
 
 theorem NoReturn.mul {M N : Matrix (Option (Fin r)) (Option (Fin r)) ℝ} (hM : NoReturn M)
     (hN : NoReturn N) : NoReturn (M * N) := fun c => by
-  rw [mul_apply, Fintype.sum_option, hM c, zero_mul, zero_add]
+  rw [Matrix.mul_apply, Fintype.sum_option, hM c, zero_mul, zero_add]
   exact sum_eq_zero fun c' _ => by rw [hN c', mul_zero]
 
 theorem mul_none_none {M N : Matrix (Option (Fin r)) (Option (Fin r)) ℝ} (hN : NoReturn N) :
     (M * N) none none = M none none * N none none := by
-  rw [mul_apply, Fintype.sum_option, add_eq_left]
+  rw [Matrix.mul_apply, Fintype.sum_option, add_eq_left]
   exact sum_eq_zero fun c _ => by rw [hN c, mul_zero]
 
 /-- The transient-to-transient entry of a time-ordered product of no-return factors is the
@@ -624,8 +624,9 @@ theorem transitionMatrix_none_some {s : ℝ} (hs : ∀ j, s < D.time j) (t : ℝ
     ⟨fun h => h.2, fun h => ⟨hs j, h⟩⟩
   rw [apply_ite (fun M : Matrix _ _ ℝ => M none (some c)), Matrix.zero_apply]
   refine if_congr hact ?_ rfl
-  rw [mul_apply, Fintype.sum_option, sum_eq_zero fun c' _ => by rw [D.naIncrement_some, mul_zero],
-    add_zero, jumpProdLT, orderedProd_naIncrement_none_none, naIncrement_none_some,
+  rw [Matrix.mul_apply, Fintype.sum_option,
+    sum_eq_zero fun c' _ => by rw [D.naIncrement_some, mul_zero], add_zero, jumpProdLT,
+    orderedProd_naIncrement_none_none, naIncrement_none_some,
     CompetingRiskData.cifIncrement, CompetingRiskData.survivalBefore, prod_filter]
   congr 1
   refine prod_congr rfl fun i _ => if_congr ?_ rfl rfl

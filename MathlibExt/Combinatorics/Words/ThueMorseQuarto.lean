@@ -101,7 +101,7 @@ public theorem thueMorseQuarto_eq_xor (n : ℕ) :
     simp [flip]
   change thueMorseQuarto n = f n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn : n < 4
     · obtain rfl | rfl | rfl | rfl : n = 0 ∨ n = 1 ∨ n = 2 ∨ n = 3 := by omega
       all_goals decide +kernel
