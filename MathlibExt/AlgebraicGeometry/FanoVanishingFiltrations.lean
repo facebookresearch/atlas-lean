@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.ValuativeFanoGeometry
+public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Algebra.Order.Floor.Ring
 
@@ -66,11 +67,6 @@ theorem sectionHom_app (X : ComplexVariety) (M : X.left.Modules) (s : SectionSpa
         (M.val.map (homOfLE (le_top : U ≤ ⊤)).op) s) := by
   rfl
 
-/-- Actual pullback of a section through the normalized coefficient unit. -/
-def pullSection {X Y : Scheme.{0}} (f : Y ⟶ X) {M : X.Modules}
-    (s : structureModule X ⟶ M) : structureModule Y ⟶ (Scheme.Modules.pullback f).obj M :=
-  (pullbackStructureIso f).inv ≫ (Scheme.Modules.pullback f).map s
-
 /-- A genuine local trivialization of the pulled line at the divisor point. -/
 structure SectionFrame {X Y : ComplexVariety} (f : Y ⟶ X) (y : Y.left)
     (M : X.left.Modules) where
@@ -82,8 +78,8 @@ structure SectionFrame {X Y : ComplexVariety} (f : Y ⟶ X) (y : Y.left)
 /-- The actual regular-function value of a pulled section in the displayed local frame. -/
 def localSectionValue {X Y : ComplexVariety} {f : Y ⟶ X} {y : Y.left}
     {M : X.left.Modules} (e : SectionFrame f y M) (s : SectionSpace X M) : LocalRing Y y :=
-  let hY := pullSection f.left (sectionHom X M s)
-  let hU := pullSection e.openSet.ι hY ≫ e.trivialization.hom
+  let hY := LineBundleTaskContracts.pullbackSection f.left (sectionHom X M s)
+  let hU := LineBundleTaskContracts.pullbackSection e.openSet.ι hY ≫ e.trivialization.hom
   let value : Γ(e.openSet.toScheme, ⊤) :=
     (hU.val.app (op ⊤)).hom (1 : Γ(e.openSet.toScheme, ⊤))
   (Y.left.presheaf.germ e.openSet y e.contains).hom (e.openSet.topIso.hom value)
