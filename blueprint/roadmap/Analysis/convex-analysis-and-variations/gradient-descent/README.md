@@ -16,6 +16,12 @@
 - [Convergence of the subgradient method](subgradient-method-rate.md)
 - [Convergence of stochastic gradient descent](integral-sgd-average-sub-le.md)
 
+## Finite-sum stochastic gradients
+
+- [Sampling vector](sampling-vector.md)
+- [Weighted finite-sum objective](weighted-finite-sum-objective.md)
+- [Expected smoothness at a minimizer](expected-smoothness-at-a-minimizer.md)
+
 ## Strongly convex functions
 
 - [First-order condition for strong convexity](add-inner-add-le-of-strong-convex-on.md)
