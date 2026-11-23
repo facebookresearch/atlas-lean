@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.AlgebraicGeometry.Sites.EtalePoint
+public import Mathlib.AlgebraicGeometry.ResidueField
+public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
 public import MathlibExt.AlgebraicGeometry.CotangentBundleTestModels
 
 /-!
@@ -95,6 +97,21 @@ structure Generization where
   point : Spec (.of field.carrier) ⟶ LY.scheme
 
 variable (M : LocalMorphism Ω x f LX LY) (t : Generization Ω x f LY)
+
+variable {Ω x f LY} in
+/-- The image point of a generization in the strict local base. -/
+def Generization.base : LY.scheme :=
+  (Scheme.SpecToEquivOfField t.field.carrier LY.scheme t.point).1
+
+variable {Ω x f LY} in
+/-- The generization is algebraic: its field is algebraic (equivalently, integral) over the
+residue field of its image point. Saito, *The characteristic cycle and the singular support of a constructible
+sheaf*, §1.2, tests local acyclicity on a separable closure of that residue field; an
+algebraic closure differs from it by a purely inseparable extension, which étale
+cohomology does not see (Stacks, Tag 04DY). A transcendental extension does change the
+Milnor fibre, so local acyclicity quantifies over algebraic generizations only. -/
+def Generization.IsAlgebraic : Prop :=
+  (Scheme.SpecToEquivOfField t.field.carrier LY.scheme t.point).2.hom.IsIntegral
 
 /-- Saito's Milnor fibre, as the literal scheme fibre product. -/
 abbrev milnorFibre : Scheme.{0} := pullback M.map t.point

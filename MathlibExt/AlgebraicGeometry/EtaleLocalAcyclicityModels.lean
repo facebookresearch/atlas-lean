@@ -43,6 +43,8 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.AlgebraicGeometry
 open AdicDerivedContracts FiniteEtaleConstructibleModels
 open CotangentBundleTestModels CotangentTransversalTests EtaleStrictLocalizationModels
 
+export FiniteEtaleConstructibleModels (geometricStalk)
+
 attribute [local instance] HasDerivedCategory.standard
 
 variable (Λ : Type) [CommRing Λ] [DerivedFunctorTheory Λ]
@@ -67,10 +69,6 @@ def globalRestriction {Z W : Scheme.{0}} (f : Z ⟶ W) (K : Derived Λ W) :
 
 variable {X : Scheme.{0}} (Ω : GeometricField) (x : Spec (.of Ω.carrier) ⟶ X)
   (L : StrictLocalization Ω x) (K : Derived Λ X)
-
-/-- Actual stalk sections at the original geometric point. -/
-def geometricStalk : DerivedCategory.Plus (ModuleCat.{1} Λ) :=
-  (derivedSections Λ (Spec (.of Ω.carrier))).obj ((derivedPullback Λ x).obj K)
 
 /-- The native comparison around the strict-local closed point. -/
 def pointPullbackIso : derivedPullback Λ L.map ⋙ derivedPullback Λ L.point ≅
@@ -125,12 +123,14 @@ def VanishingModel.object [IsIso (closedStalkArrow Λ Ω x LX K)]
 
 variable {Ω x K}
 
-/-- Local acyclicity quantifies over every geometric point and every actual
-generization in its strict local base. -/
+/-- Local acyclicity quantifies over every geometric point and every actual algebraic
+generization in its strict local base (its field algebraic over the residue field of its
+image, as in Saito §1.2). -/
 def IsLocalAcyclic (G : StrictLocalizationSystem) {X Y : Scheme.{0}}
     (f : X ⟶ Y) (K : Derived Λ X) (S : ClosedStalkSystem Λ K) : Prop :=
   ∀ (Ω : GeometricField) (x : Spec (.of Ω.carrier) ⟶ X)
     (t : Generization Ω x f (G.model Y Ω (x ≫ f))),
+    t.IsAlgebraic →
     let LX := G.model X Ω x
     let LY := G.model Y Ω (x ≫ f)
     letI := S.isIso Ω x LX

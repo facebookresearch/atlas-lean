@@ -113,9 +113,10 @@ def IsBoundedConstructible (X : Over (Spec (.of k))) (K : Derived Λ X.left) : P
 
 variable {k} {X : Over (Spec (.of k))}
 
-/-- Actual geometric stalk, with no independently given representation space. -/
-def stalk (Ω : GeometricField) (x : Spec (.of Ω.carrier) ⟶ X.left)
-    (K : Derived Λ X.left) : DerivedCategory.Plus (ModuleCat.{1} Λ) :=
+/-- Actual stalk sections at a geometric point of a scheme, with no independently given
+representation space. -/
+def geometricStalk {Y : Scheme.{0}} (Ω : GeometricField) (x : Spec (.of Ω.carrier) ⟶ Y)
+    (K : Derived Λ Y) : DerivedCategory.Plus (ModuleCat.{1} Λ) :=
   (derivedSections Λ (Spec (.of Ω.carrier))).obj ((derivedPullback Λ x).obj K)
 
 /-- Finite Tor amplitude on the actual stalks, uniformly over geometric points. -/
@@ -124,6 +125,6 @@ def HasFiniteTorAmplitude (K : Derived Λ X.left) : Prop :=
     ∃ C : CochainComplex (ModuleCat.{1} Λ) ℤ,
       (∀ j : ℤ, j < a ∨ b < j → IsZero (C.X j)) ∧
       (∀ j : ℤ, Module.Flat Λ (C.X j)) ∧
-      Nonempty (DerivedCategory.Q.obj C ≅ (stalk Λ Ω x K).obj)
+      Nonempty (DerivedCategory.Q.obj C ≅ (geometricStalk Λ Ω x K).obj)
 
 end MathlibExt.AlgebraicGeometry.FiniteEtaleConstructibleModels

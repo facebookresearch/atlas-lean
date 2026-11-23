@@ -14,8 +14,9 @@ public import Batteries.Util.ProofWanted
 # Derived scalar extension and derived tensor product of modules
 
 Every complex of modules over a commutative ring has a K-flat (indeed K-projective) resolution
-(Spaltenstein; Stacks Project, Tags 06Y0 and 064K), so the degreewise scalar extension along a
-ring map and the total tensor product of complexes have left derived functors. These requests
+(Spaltenstein; Stacks Project, Tag 06Y4), and tensoring with a K-flat complex preserves
+quasi-isomorphisms (Tag 06Y0), so the degreewise scalar extension along a ring map and the
+total tensor product of complexes have left derived functors. These requests
 provide the classes `HasExtension` and `HasTensor` of `DerivedModuleScalarOperations`.
 -/
 
