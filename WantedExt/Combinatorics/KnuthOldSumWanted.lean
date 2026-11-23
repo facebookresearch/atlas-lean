@@ -31,31 +31,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
-public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.KnuthOldSum
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.KnuthOldSumWanted
-
-/-- **Weight in Knuth's old sum.** For a natural number $m$, the weight $w(m)$ is the rational
-number $(4^m + 2^m)/2$, which equals $(2^m + 1) 2^{m-1}$.
-
-It is the number of words of length $m$ over a four-letter alphabet in which a fixed letter
-occurs an even number of times. -/
-def knuthOldSumWeight (m : ℕ) : ℚ := ((4 : ℚ) ^ m + (2 : ℚ) ^ m) / 2
-
-/-- **Counting words with an even number of $a$'s.** For every natural number $n$, the number of
-words of length $n$ over the four-letter alphabet $\{a, b, c, d\}$ in which the letter $a$ occurs
-an even number of times is $(4^n + 2^n)/2$.
-
-Source: Akalu Tefera and Aklilu Zeleke, "Combinatorial Identities
-Inspired by Knuth's Old Sum", Lemma 1. -/
-theorem_wanted card_evenACount_words (n : ℕ) :
-    Nat.card {w : Fin n → Fin 4 //
-      Even (Finset.univ.filter (fun i => w i = 0)).card} =
-        (4 ^ n + 2 ^ n) / 2
 
 /-- **Tefera–Zeleke identity with binomial quotients.** Let $n$ and $j$ be natural numbers, let
 $N = n + 2j + 1$, and let $w(m) = (4^m + 2^m)/2$ be the weight in Knuth's old sum. Then, in the
