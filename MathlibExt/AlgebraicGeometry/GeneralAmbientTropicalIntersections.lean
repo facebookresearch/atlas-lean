@@ -103,6 +103,8 @@ instance relevantFinite (tau : Polyhedron n) : Finite (RelevantComponent K n P t
   let : Finite P.Component := componentFinite K n P
   exact Finite.of_injective (fun Z : RelevantComponent K n P tau ↦ Z.val) Subtype.val_injective
 
+/-- Serre's alternating Tor coefficients of the relevant components, times their tropical
+multiplicities. -/
 def weightedTorSum (tau : Polyhedron n) (t : Fin n → Kˣ)
     (T : ∀ Z : RelevantComponent K n P tau, P.LocalTor Z.val)
     (C : ∀ Z : RelevantComponent K n P tau,
@@ -114,6 +116,10 @@ def weightedTorSum (tau : Polyhedron n) (t : Fin n → Kˣ)
     letI := C Z
     P.componentCoefficient Z.val (T Z) * tropicalMultiplicity (componentIdeal K n P Z.val) t
 
+/-- The sum of the local length coefficients `length(O_Z / (I + J))` times the tropical
+multiplicities. Each length is converted with `ENat.toNat`, so this is the intended sum only when
+every local length is finite, as it is when the local Tor modules have finite length
+(`weightedSum_of_higherTor_zero`). -/
 def weightedSchemeSum (tau : Polyhedron n) (t : Fin n → Kˣ)
     (C : ∀ Z : RelevantComponent K n P tau,
       _root_.AlgebraicGeometry.IsNoetherian
