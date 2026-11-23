@@ -68,15 +68,24 @@ section Unramified
 variable {l : ℕ} (S : System l)
 
 /-- Unramified classes form a subgroup containing every sum of unramified classes. -/
-example (k K : Type) [Field k] [Field K] [Algebra k K] (i : ℤ) (j : ℕ)
-    (a b : S.toData.H (Spec (.of K)) i j) (ha : IsUnramified S k K i j a)
-    (hb : IsUnramified S k K i j b) : IsUnramified S k K i j (a + b) :=
-  (unramifiedSubgroup S k K i j).add_mem ha hb
+example (k K : Type) [Field k] [Field K] [Algebra k K] (hl : IsUnit (l : k)) (i : ℤ) (j : ℕ)
+    (a b : S.toData.H (Spec (.of K)) i j) (ha : IsUnramified S k K hl i j a)
+    (hb : IsUnramified S k K hl i j b) : IsUnramified S k K hl i j (a + b) :=
+  (unramifiedSubgroup S k K hl i j).add_mem ha hb
+
+/-- A class that does not extend over some discrete-valuation subalgebra is not
+unramified: the condition is tested at every such subalgebra (`l` being invertible in `k`). -/
+example (k K : Type) [Field k] [Field K] [Algebra k K] (hl : IsUnit (l : k)) (i : ℤ) (j : ℕ)
+    (a : S.toData.H (Spec (.of K)) i j) (A : Subalgebra k K) [IsDiscreteValuationRing A]
+    [IsFractionRing A K]
+    (h : ∀ b : S.toData.H (Spec (.of A)) i j, S.toData.restriction (dvrGenericMap A) i j b ≠ a) :
+    ¬ IsUnramified S k K hl i j a :=
+  fun ha => (ha A).elim fun b hb => h b hb
 
 /-- The local evaluation at a point does not depend on the chosen lifts. -/
-example {k : Type} [Field k] {n : ℕ} (V : NormalVariety k n) (i : ℤ) (j : ℕ)
-    (a : varietyUnramified S V i j) (D E : LocalEvaluationData S V i j a) (x : V.X.left) :
-    D.evaluate x = E.evaluate x :=
+example {k : Type} [Field k] {n : ℕ} (V : NormalVariety k n) (hl : IsUnit (l : k)) (i : ℤ)
+    (j : ℕ) (a : varietyUnramified S V hl i j) (D E : LocalEvaluationData S V hl i j a)
+    (x : V.X.left) : D.evaluate x = E.evaluate x :=
   evaluation_independent D E x
 
 end Unramified

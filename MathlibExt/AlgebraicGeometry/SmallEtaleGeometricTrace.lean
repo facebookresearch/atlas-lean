@@ -116,8 +116,10 @@ structure StalkProjection {Y X : Scheme.{0}} (f : Y ⟶ X) {Ω : Type} [Field Ω
     map (stalkSection p ((pushforward f).obj F) U t a) =
       stalkSection s.val F ((baseChange f).obj U) (pulledLift f p s U t) a
 
-/-- Actual geometric-fibre length, including inseparable multiplicities. -/
-def fibreMultiplicity {Y X : Scheme.{0}} (f : Y ⟶ X) {Ω : Type} [Field Ω]
+/-- Actual geometric-fibre length, including inseparable multiplicities. The morphism is
+finite, so the geometric fibre is a finite scheme over the field and its local rings are
+Artinian, of finite length; the conversion to `ℕ` loses nothing. -/
+def fibreMultiplicity {Y X : Scheme.{0}} (f : Y ⟶ X) [IsFinite f] {Ω : Type} [Field Ω]
     (p : Spec (.of Ω) ⟶ X) (s : Lifts f p) : ℕ := by
   let B := pullback f p
   let b : Spec (.of Ω) ⟶ B := pullback.lift s.val (𝟙 _) (by simpa using s.property)
@@ -134,9 +136,12 @@ structure StalkSources where
   finite : ∀ {Y X : Scheme.{0}} (f : Y ⟶ X) [IsFinite f]
     (Ω : Type) [Field Ω] [IsAlgClosed Ω] (p : Spec (.of Ω) ⟶ X), Finite (Lifts f p)
 
-/-- Finite-flat coefficient trace fixed by the actual weighted geometric-fibre sum. -/
+/-- Finite-flat coefficient trace fixed by the actual weighted geometric-fibre sum. The
+coefficient prime `l` is invertible on the target (`_hX`), so every geometric point of `X`
+has a primitive `l`-th root of unity and the normalization applies at all of them; without
+this the condition would not constrain the trace where `l` vanishes. -/
 structure CoefficientTrace {Y X : Scheme.{0}} (f : Y ⟶ X) [IsFinite f] [Flat f]
-    (P : StalkSources S) where
+    (P : StalkSources S) (_hX : IsUnit (l : Γ(X, ⊤))) where
   map : ∀ j : ℕ, (pushforward f).obj (S.coefficient Y j) ⟶ S.coefficient X j
   normalized : ∀ (j : ℕ) (Ω : Type) [Field Ω] [IsAlgClosed Ω]
     (p : Spec (.of Ω) ⟶ X) (ζ : Ωˣ) (hu : IsUnit (l : Ω)) (hζ : IsPrimitiveRoot ζ l)

@@ -87,7 +87,10 @@ def genericSectionMap {X : Over (Spec (.of R))} {M : X.left.Modules}
       mul_one] using
       B.comparison.map_smul (algebraMap R K a) (1 ⊗ₜ[R] s)
 
-/-- The literal actual R-section lattice inside the generic fibre's actual H0. -/
+/-- The image of the `R`-sections inside the generic fibre's `H⁰`, an `R`-submodule
+spanning it over `K`. It is a lattice (finitely generated) when the `R`-sections are
+finitely generated, e.g. for a coherent module on a proper `R`-scheme; the section
+comparison alone does not ensure this. -/
 def sectionLattice {X : Over (Spec (.of R))} {M : X.left.Modules}
     (B : SectionBaseChange (K := K) X M) :=
   LinearMap.range (genericSectionMap B)

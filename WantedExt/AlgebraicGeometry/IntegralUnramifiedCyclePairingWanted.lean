@@ -44,9 +44,9 @@ def_wanted smoothPointLocalLift
     [AllDerivedSectionsSources] [AllDerivedPushSources]
     {k : Type} [Field k] (l : ℕ) [Fact l.Prime] (invertible : IsUnit (l : k))
     (S : System l) {n : ℕ} (V : NormalVariety k n) [LocallyOfFinitePresentation V.X.hom]
-    (i : ℤ) (j : ℕ) (a : varietyUnramified S V i j) (x : V.X.left)
+    (i : ℤ) (j : ℕ) (a : varietyUnramified S V invertible i j) (x : V.X.left)
     (smooth : x ∈ V.X.hom.smoothLocus) :
-    {L : LocalLift S V i j a x //
+    {L : LocalLift S V invertible i j a x //
       Function.Injective (S.toData.restriction (localGenericMap V x) i j)}
 
 def_wanted globalIntegralChowPairing
@@ -65,10 +65,10 @@ def_wanted unramifiedIntegralChowPairing
     (S : System l) {n : ℕ} (V : NormalVariety k n) [IsProper V.X.hom] [Smooth V.X.hom]
     (P : CycleSupport (varietyFieldScheme V))
     (T : PointTransfers S.toData (varietyFieldScheme V)) (i : ℤ) (j : ℕ)
-    (D : ∀ a : varietyUnramified S V i j, LocalEvaluationData S V i j a) :
-    {pairing : varietyUnramified S V i j →+
+    (D : ∀ a : varietyUnramified S V invertible i j, LocalEvaluationData S V invertible i j a) :
+    {pairing : varietyUnramified S V invertible i j →+
         (ChowGroup (varietyFieldScheme V) 0 →+ S.toData.H (Spec (.of k)) i j) //
       ∀ a c, pairing a (cycleClass (varietyFieldScheme V) 0 c) =
-        unramifiedCycleSum S V P T i j a (D a) c}
+        unramifiedCycleSum S V P T invertible i j a (D a) c}
 
 end MathlibExt.AlgebraicGeometry.IntegralUnramifiedCyclePairing

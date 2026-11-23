@@ -93,8 +93,8 @@ def varietyFieldScheme {k : Type} [Field k] {n : ℕ} (V : NormalVariety k n) : 
 def unramifiedCycleSum {l : ℕ} (S : System l) {k : Type} [Field k] {n : ℕ}
     (V : NormalVariety k n) (P : CycleSupport (varietyFieldScheme V))
     (T : PointTransfers S.toData (varietyFieldScheme V))
-    (i : ℤ) (j : ℕ) (a : varietyUnramified S V i j)
-    (D : LocalEvaluationData S V i j a) :=
+    (hl : IsUnit (l : k)) (i : ℤ) (j : ℕ) (a : varietyUnramified S V hl i j)
+    (D : LocalEvaluationData S V hl i j a) :=
   cycleSum S.toData (varietyFieldScheme V) P i j
     (fun p => (T.transfer p).map i j (D.evaluate p.val))
 

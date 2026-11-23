@@ -71,7 +71,9 @@ structure FiniteTransfer {l : ℕ} (S : Data l) {Y X : Scheme.{0}} (f : Y ⟶ X)
   [finite : IsFinite f]
   [flat : Flat f]
   stalks : StalkSources S
-  trace : CoefficientTrace S f stalks
+  /-- The coefficient prime is invertible on the target. -/
+  invertible : IsUnit (l : Γ(X, ⊤))
+  trace : CoefficientTrace S f stalks invertible
   exact : ∀ j : ℕ,
     IsIso ((pushUnit f).app
       ((CochainComplex.singleFunctor (Coefficients Y) 0).obj (S.coefficient Y j)))
