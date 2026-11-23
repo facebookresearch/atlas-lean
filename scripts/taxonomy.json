@@ -11733,6 +11733,7 @@
   "MathlibExt/NumberTheory/Recurrences/DegenerateSecondOrder": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Periods and averages of Lucas sequences modulo n"},
   "MathlibExt/NumberTheory/Recurrences/DominantRootBounds": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/DresdenDuSimplifiedBinet": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
+  "MathlibExt/NumberTheory/Recurrences/FibonacciLinearCoefficients": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci representations with polynomial coefficients"},
   "MathlibExt/NumberTheory/Recurrences/FibonacciPolynomialCoefficients": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci representations with polynomial coefficients"},
   "MathlibExt/NumberTheory/Recurrences/FibonacciPrimeDivisibility": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Divisibility of Fibonacci numbers by primes"},
   "MathlibExt/NumberTheory/Recurrences/FibonacciPrimitiveDivisor": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Primitive divisors"},
