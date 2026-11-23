@@ -46,4 +46,32 @@ example : (pcAdjacency alwaysIndep).sepset 0 2 = ∅ := by decide
 complete skeleton. -/
 example : ∀ i j : Fin 3, (pcAdjacency neverIndep).skeleton.Adj i j ↔ i ≠ j := by decide
 
+/-- An oracle whose only independence is `0` from `2` given `{1}`: the separator
+is found from the first endpoint's neighbourhood in round 1. -/
+private def sepAtOne : CIOracle 3 where
+  Indep i j S := i = 0 ∧ j = 2 ∧ S = {1}
+  decIndep _ _ _ := inferInstance
+
+/-- An oracle that also deletes `0-1` in round 0, so by round 1 the set `{1}`
+separating `0` from `2` is found from the second endpoint's neighbourhood. -/
+private def sepAtOneSecond : CIOracle 3 where
+  Indep i j S := (i = 0 ∧ j = 1 ∧ S = ∅) ∨ (i = 0 ∧ j = 2 ∧ S = {1})
+  decIndep _ _ _ := inferInstance
+
+/-- Direct computation in a nonempty round: the `0-2` edge survives round 0
+(the complete skeleton after round 0 still has it), is deleted in round 1, and
+records the nonempty separator `{1}`. -/
+example : ∀ i j : Fin 3, (pcAdjacency sepAtOne).skeleton.Adj i j ↔ i ≠ j ∧ ¬ (i = 0 ∧ j = 2 ∨ i = 2 ∧ j = 0) := by
+  decide
+
+example : (pcAdjacency sepAtOne).sepset 0 2 = {1} := by decide
+
+/-- Direct computation: with `0-1` deleted in round 0, the round-1 separator
+for `0-2` comes from the second endpoint's neighbourhood. -/
+example : (pcAdjacency sepAtOneSecond).sepset 0 2 = {1} := by decide
+
+example : (pcAdjacency sepAtOneSecond).skeleton.Adj 1 2 ∧
+    ¬ (pcAdjacency sepAtOneSecond).skeleton.Adj 0 1 ∧
+    ¬ (pcAdjacency sepAtOneSecond).skeleton.Adj 0 2 := by decide
+
 end Cslib.MachineLearning.GraphicalModels.PCSkeleton

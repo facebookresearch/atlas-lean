@@ -1428,50 +1428,8 @@ theorem lawOracle_xorNet_iff {i j : Fin 3} {S : Finset (Fin 3)} (hij : i ≠ j) 
     · exact (hij rfl).elim
 
 /-- The XOR law is a Markov oracle for its graph. -/
-theorem xorNet_markovOracle : xorNet.MarkovOracle (lawOracle xorNet.joint) := by
-  have fin3_cases : ∀ k : Fin 3, k = 0 ∨ k = 1 ∨ k = 2 := by decide
-  have dsep01_empty : ∀ (S : Finset (Fin 3)), xorNet.DSeparated {0} {1} ↑S →
-      (0 : Fin 3) ∉ S → (1 : Fin 3) ∉ S → S = ∅ := by
-    intro S hsep hi hj
-    have h2 : (2 : Fin 3) ∉ S := by
-      intro hmem
-      have hadj02 : xorNet.Adj 0 2 := Or.inl (by decide)
-      have hadj21 : xorNet.Adj 2 1 := Or.inr (by decide)
-      have hpath : xorNet.IsPath 0 1 [0, 2, 1] :=
-        ⟨by decide, List.isChain_cons_cons.2 ⟨hadj02, List.isChain_pair.2 hadj21⟩, rfl, rfl⟩
-      have hb := hsep 0 (Set.mem_singleton_iff.mpr rfl) 1 (Set.mem_singleton_iff.mpr rfl)
-        [0, 2, 1] hpath
-      obtain ⟨k, hk, hblk⟩ := hb
-      simp only [List.length_cons, List.length_nil] at hk
-      have hk0 : k = 0 := by omega
-      subst hk0
-      change xorNet.BlockedAt ↑S 0 2 1 at hblk
-      unfold BayesNet.BlockedAt at hblk
-      rcases hblk with ⟨-, -, hall⟩ | ⟨hnc, -⟩
-      · have hall2 := hall 2 Relation.ReflTransGen.refl
-        simp only [Finset.mem_coe] at hall2
-        exact hall2 hmem
-      · exact hnc ⟨by decide, by decide⟩
-    rw [Finset.eq_empty_iff_forall_notMem]
-    intro v hv
-    rcases fin3_cases v with rfl | rfl | rfl <;> simp_all
-  intro i j S hij hi hj hsep
-  rw [lawOracle_xorNet_iff hij hi hj]
-  show S = ∅
-  rcases fin3_cases i with rfl | rfl | rfl <;> rcases fin3_cases j with rfl | rfl | rfl
-  · exact (hij rfl).elim
-  · exact dsep01_empty S hsep hi hj
-  · have hadj : xorNet.Adj 0 2 := Or.inl (by decide)
-    exact (xorNet.not_dSeparated_of_adj hadj _ hsep).elim
-  · exact dsep01_empty S hsep.symm hj hi
-  · exact (hij rfl).elim
-  · have hadj : xorNet.Adj 1 2 := Or.inl (by decide)
-    exact (xorNet.not_dSeparated_of_adj hadj _ hsep).elim
-  · have hadj : xorNet.Adj 2 0 := Or.inr (by decide)
-    exact (xorNet.not_dSeparated_of_adj hadj _ hsep).elim
-  · have hadj : xorNet.Adj 2 1 := Or.inr (by decide)
-    exact (xorNet.not_dSeparated_of_adj hadj _ hsep).elim
-  · exact (hij rfl).elim
+theorem xorNet_markovOracle : xorNet.MarkovOracle (lawOracle xorNet.joint) :=
+  BayesNet.markovOracle_lawOracle_joint xorNet
 
 /-- The XOR law is not adjacency-faithful to its graph. -/
 theorem xorNet_not_adjacencyFaithful : ¬ xorNet.AdjacencyFaithful (lawOracle xorNet.joint) := by
