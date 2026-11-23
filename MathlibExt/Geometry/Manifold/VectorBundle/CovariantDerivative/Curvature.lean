@@ -69,23 +69,31 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   [∀ x, IsTopologicalAddGroup (V x)] [∀ x, ContinuousSMul 𝕜 (V x)]
   [FiberBundle F V]
 
-/-- The curvature expression of a covariant derivative `cov` on a vector bundle `V`, at a point `x`,
-on tangent vectors `u v : T_x M` and a vector `σ : V x`:
-`(∇_X ∇_Y S - ∇_Y ∇_X S - ∇_[X, Y] S)(x)`, where `X`, `Y`, `S` are the extensions
-`extend E u`, `extend E v`, `extend F σ`.
+/-- **Curvature expression of a covariant derivative on extensions.** Let $\nabla$ be a covariant
+derivative on a vector bundle $V$ over a manifold $M$, let $x \in M$, let $u, v \in T_x M$ and let
+$\sigma \in V_x$. Let $X$ and $Y$ be the vector fields on $M$ whose coordinates in the preferred
+local trivialization of $TM$ at $x$ are constant, equal to those of $u$ and $v$, on the base set
+of that trivialization, with a fixed but unspecified value at each point outside it; let $S$ be
+the section of $V$ obtained in the same way from $\sigma$ and the preferred local trivialization
+of $V$ at $x$. The curvature expression of $\nabla$ at $x$ on $u$, $v$, $\sigma$ is the vector
+$$R(u, v)\sigma = \nabla_u (\nabla_Y S) - \nabla_v (\nabla_X S) - \nabla_{[X, Y](x)} S \in V_x,$$
+where $\nabla_Y S$ is the section $y \mapsto \nabla_{Y(y)} S$ and $[X, Y]$ is the Lie bracket.
 
-When `cov` sends `C²` sections to `C¹` sections (for instance the Levi-Civita connection of a `C^∞`
-metric), this is the curvature `R(u, v) σ` with the sign convention of the module docstring, and
-it does not depend on the extensions. For other connections it can
-depend on unconstrained values of `cov`; see the module docstring. -/
+When $\nabla$ sends $C^2$ sections to $C^1$ sections (for instance the Levi-Civita connection of a
+$C^\infty$ metric), this is the curvature tensor
+$R(X, Y) = \nabla_X \nabla_Y - \nabla_Y \nabla_X - \nabla_{[X, Y]}$ applied to $u$, $v$, $\sigma$,
+and it does not depend on the extensions. For other connections it can depend on values of
+$\nabla$ that the axioms of a covariant derivative leave unconstrained. -/
 def extendCurvature (cov : CovariantDerivative I F V) (x : M) (u v : TangentSpace I x) (σ : V x) :
     V x :=
   cov (fun y ↦ cov (extend F σ) y (extend E v y)) x u
     - cov (fun y ↦ cov (extend F σ) y (extend E u y)) x v
     - cov (extend F σ) x (mlieBracket I (extend E u) (extend E v) x)
 
-/-- The curvature expression is antisymmetric in its two tangent arguments:
-`R(u, v) σ = - R(v, u) σ`. -/
+/-- **Antisymmetry of the curvature expression.** For every covariant derivative $\nabla$ on a
+vector bundle $V$ over a manifold $M$, every $x \in M$, all $u, v \in T_x M$ and every
+$\sigma \in V_x$, the curvature expression $R$ of $\nabla$ on extensions satisfies
+$R(u, v)\sigma = -R(v, u)\sigma$. -/
 theorem extendCurvature_antisymm (cov : CovariantDerivative I F V) (x : M)
     (u v : TangentSpace I x) (σ : V x) :
     cov.extendCurvature x u v σ = - cov.extendCurvature x v u σ := by
@@ -97,11 +105,18 @@ section Ricci
 
 variable [FiniteDimensional 𝕜 E]
 
-/-- The Ricci contraction of the curvature expression of a covariant derivative on the tangent
-bundle: `Ric(v, w) = tr (z ↦ R(z, v) w)` (Lang, *Lecture Notes on Riemannian Geometry*, Def. 2.7),
-with the trace computed in the basis `Module.finBasis 𝕜 (T_x M)` and its coordinate
-functionals. No metric is involved. For a connection to which `extendCurvature` applies (see the
-module docstring), `z ↦ R(z, v) w` is linear and this is its trace, independent of the basis. -/
+/-- **Ricci contraction of the curvature expression.** Let $M$ be a manifold modelled on a
+finite-dimensional normed space over a nontrivially normed field $\mathbb{K}$, let $\nabla$ be a
+covariant derivative on the tangent bundle of $M$, let $R$ be its curvature expression on
+extensions, let $x \in M$ and let $v, w \in T_x M$. With $e_1, \dots, e_n$ the fixed basis of
+$T_x M$ chosen for every finite-dimensional space and $e_1^*, \dots, e_n^*$ its coordinate
+functionals, the Ricci contraction is
+$$\operatorname{Ric}(v, w) = \sum_{i=1}^n e_i^*(R(e_i, v) w) \in \mathbb{K},$$
+the trace of $z \mapsto R(z, v) w$ computed in that basis (Lang, *Lecture Notes on Riemannian
+Geometry*, Def. 2.7). No metric is involved.
+
+When $z \mapsto R(z, v) w$ is linear, as it is for a connection that sends $C^2$ sections to $C^1$
+sections, this is its trace and does not depend on the basis. -/
 def extendRicci (cov : CovariantDerivative I E (TangentSpace I : M → Type _)) (x : M)
     (v w : TangentSpace I x) : 𝕜 :=
   ∑ i, (Module.finBasis 𝕜 (TangentSpace I x)).coord i

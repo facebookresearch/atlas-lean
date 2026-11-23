@@ -28,6 +28,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.Harmonic.Defs
+public import MathlibExt.NumberTheory.WilsonQuotients
 
 set_option autoImplicit false
 
@@ -63,18 +64,6 @@ rational number $\sum_{k=0}^{n-1} M_k^+(n)$, where $M_k^+(n) = ((-1)^k + k!\,(n-
 Morozov's sign-adjusted quotient. -/
 def wilsonQuotientZPlus (n : ℕ) : ℚ :=
   ∑ k ∈ Finset.range n, wilsonQuotientMPlus k n
-
-/-- **A generalized Wilson criterion for primality.** Let $n \ge 1$ and $k < n$ be natural
-numbers. Then $(-1)^k \, k! \, (n - k - 1)! \equiv -1 \pmod{n}$ if and only if $n = 1$ or $n$
-is prime.
-
-Source: Ivan V. Morozov, "On Quotients of a More General
-Theorem of Wilson", Corollary 1. -/
-theorem_wanted neg_one_pow_mul_factorial_mul_factorial_modEq_neg_one_iff
-    (n k : ℕ) (hn : 1 ≤ n) (hk : k < n) :
-    ((-1 : ℤ) ^ k * (Nat.factorial k * Nat.factorial (n - k - 1) : ℤ) ≡
-        -1 [ZMOD (n : ℤ)]) ↔
-      n = 1 ∨ n.Prime
 
 /-- **The Wilson quotient sum is an integer.** For every natural number $n \ge 1$, Morozov's
 Wilson quotient sum $Z(n)$ is an integer.

@@ -9,10 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.TwistedCompleteExponentialSum
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import MathlibExt.NumberTheory.IncompleteExponentialSum
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)
@@ -23,6 +25,9 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 `Φ(f, p) = max_{0 ≤ y ≤ p-1} |∑_{x=1}^{p} e_p(f(x) + y x)|` of (1.1) is written inline as a
 `Finset.sup` of `‖·‖₊` over `Finset.range p`, and `d_p(f)` as the `natDegree` of the image of
 `f` in `(ZMod p)[X]`.
+
+Lemma 2.2 is proved in `MathlibExt.NumberTheory.TwistedCompleteExponentialSum` and
+Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`.
 -/
 
 namespace MetaMathlibExt
@@ -30,16 +35,6 @@ namespace MetaMathlibExt
 open Complex Finset
 
 @[expose] public section
-
-/-- **Partial-fraction bound for the cosecant.** For every real number $x$ with $0 < x < 1$,
-$$\frac{1}{\sin(\pi x)} < \frac{1}{\pi}\left(\frac{1}{x} + \frac{2x}{1 - x^2}\right).$$
-That is, the first two terms of the partial-fraction expansion of $\pi / \sin(\pi x)$ bound it
-from above.
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.1 (quoted from [3, Lemma 2.2]) (`integers-2025-A48-lem-3-1`). -/
-public theorem_wanted one_div_sin_pi_lt (x : ℝ) (hx₀ : 0 < x) (hx₁ : x < 1) :
-    1 / Real.sin (Real.pi * x) < (1 / Real.pi) * (1 / x + 2 * x / (1 - x ^ 2))
 
 /-- **Bound for a sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer not
 divisible by $p$, let $B$ be an integer with $1 \le B < p/2$, and let $\gamma$ be the
@@ -156,19 +151,6 @@ public theorem_wanted exists_incompleteSum_eq_completeSum_add (p : ℕ) (hp : p.
             ((((Icc 1 (p - 1)).sup fun y : ℕ =>
               ‖∑ x ∈ Icc 1 p,
                 exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) : ℂ)
-
-/-- **Lower bound for the maximal twisted complete exponential sum.** Let $p$ be a prime, let $f$
-be a polynomial with integer coefficients, and write $e_p(t) = e^{2\pi i t / p}$ for integers $t$.
-Then
-$$\max_{0 \le y \le p - 1} \left| \sum_{x=1}^{p} e_p(f(x) + yx) \right| \ge \sqrt{p}.$$
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 2.2 (`integers-2025-A48-lem-2-2`). -/
-public theorem_wanted sqrt_le_sup_norm_completeSum (p : ℕ) (hp : p.Prime) (f : Polynomial ℤ) :
-    Real.sqrt p ≤
-      (((range p).sup fun y : ℕ =>
-        ‖∑ x ∈ Icc 1 p,
-          exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
 
 /-- **Explicit completion bound for incomplete exponential sums.** Let $p$ be a prime, write
 $e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients whose reduction

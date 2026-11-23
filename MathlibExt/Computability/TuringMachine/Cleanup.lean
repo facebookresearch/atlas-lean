@@ -31,13 +31,19 @@ open Turing Function
 
 variable {K : Type} [DecidableEq K] {Γ : K → Type} {Λ σ : Type} [Flag σ]
 
-/-- Pop every stack of `ks` once, or-ing into the flag whether some pop found a symbol. -/
+/-- **Popping a list of stacks.** For a list $ks$ of stacks and a statement $q$, this is the
+statement that pops the stacks listed in $ks$ in order, once per entry (an empty stack stays
+empty), after each pop replacing the state by the one storing the old flag or-ed with whether
+that pop found a symbol, and then continues with $q$. -/
 def popAll : List K → TM2.Stmt Γ Λ σ → TM2.Stmt Γ Λ σ
   | [], q => q
   | k :: ks, q => .pop k (fun s o => Flag.tag (Flag.untag s || o.isSome)) (popAll ks q)
 
-/-- One cleanup round at label `self`: pop every stack of `ks` once; repeat if something was
-popped, otherwise go to `next`. -/
+/-- **Cleanup round.** For a list $ks$ of stacks and labels $\mathit{self}$ and $\mathit{next}$,
+the cleanup round is the statement that sets the state to the one storing the flag value false,
+pops the stacks listed in $ks$ in order, once per entry (an empty stack stays empty), while
+recording in the flag whether some pop found a symbol, and then goes to $\mathit{self}$ if one
+did and to $\mathit{next}$ otherwise. -/
 def cleanS (ks : List K) (self next : Λ) : TM2.Stmt Γ Λ σ :=
   .load (fun _ => Flag.tag false) <| popAll ks <|
     .branch Flag.untag (.goto fun _ => self) (.goto fun _ => next)
@@ -72,9 +78,14 @@ theorem stepAux_popAll (q : TM2.Stmt Γ Λ σ) :
           · simp [h, h']
           · simp [h, h']
 
-/-- **Cleanup**: with every stack of `ks` holding at most `m` symbols, `cleanS ks self next`
-reaches `next` within `m + 1` steps, with flag `false`, the stacks of `ks` emptied and the
-others unchanged. -/
+/-- **Cleanup empties its stacks.** Let $ks$ be a list of pairwise distinct stacks of a program
+$M$ whose state carries a flag bit, and $\mathit{self}$, $\mathit{next}$ labels such that $M$
+runs at $\mathit{self}$ the cleanup round for $ks$, looping at $\mathit{self}$ and exiting to
+$\mathit{next}$. Let $m$ be a natural number and $S$ stack contents in which every stack of $ks$
+holds at most $m$ symbols. Then for every state $v$, $M$ runs in at most $m + 1$ steps from label
+$\mathit{self}$, state $v$ and stacks $S$ to label $\mathit{next}$, the state storing the flag
+value false, and the stacks $S'$ with $S'(k)$ empty for every $k$ in $ks$ and $S'(k) = S(k)$ for
+every other stack $k$. -/
 theorem clean_run {M : Λ → TM2.Stmt Γ Λ σ} {ks : List K} {self next : Λ}
     (hM : M self = cleanS ks self next) (hks : ks.Nodup) :
     ∀ (m : ℕ) (v : σ) (S : ∀ k, List (Γ k)), (∀ k ∈ ks, (S k).length ≤ m) →

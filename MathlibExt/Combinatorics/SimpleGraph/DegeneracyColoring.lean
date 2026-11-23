@@ -45,15 +45,17 @@ namespace SimpleGraph
 variable {V : Type*} [Finite V]
 variable {G : SimpleGraph V} {k l : ℕ}
 
-/-- Every nonempty finite vertex set in a degenerate region contains a vertex of
-small degree inside that set. -/
+/-- **A degenerate vertex set has a vertex of small degree.** Let $G$ be a simple graph
+on a finite vertex set $V$ and let $s \subseteq V$ be nonempty. If $G$ is
+$k$-degenerate on $s$, then some vertex $v \in s$ has at most $k$ neighbors in $s$. -/
 theorem IsDegenerateOn.exists_small_vertex (s : Finset V)
     (h : G.IsDegenerateOn (↑s : Set V) k) (hs : s.Nonempty) :
     ∃ v ∈ s, (G.neighborSet v ∩ ↑s).ncard ≤ k := by
   obtain ⟨v, hv, hdeg⟩ := h (↑s) (Finset.coe_nonempty.mpr hs) Set.Subset.rfl
   exact ⟨v, Finset.mem_coe.mp hv, hdeg⟩
 
-/-- The edgeless graph is `k`-degenerate for every `k`. -/
+/-- **The edgeless graph is degenerate.** For every natural number $k$, the edgeless
+graph on a finite vertex set is $k$-degenerate. -/
 theorem isDegenerate_bot (k : ℕ) : (⊥ : SimpleGraph V).IsDegenerate k := by
   intro W hWne _
   obtain ⟨v, hv⟩ := hWne
@@ -64,12 +66,15 @@ theorem isDegenerate_bot (k : ℕ) : (⊥ : SimpleGraph V).IsDegenerate k := by
   rw [hempty, Set.ncard_empty]
   exact Nat.zero_le k
 
-/-- Increasing the degree bound preserves degeneracy. -/
+/-- **Degeneracy is monotone in the bound.** Let $G$ be a simple graph on a finite
+vertex set. If $G$ is $k$-degenerate and $k \le l$, then $G$ is $l$-degenerate. -/
 theorem IsDegenerate.mono (h : G.IsDegenerate k) (hkl : k ≤ l) :
     G.IsDegenerate l :=
   IsDegenerateOn.mono h hkl
 
-/-- A global degree bound implies degeneracy. -/
+/-- **Bounded maximum degree implies degeneracy.** Let $G$ be a simple graph on a
+finite vertex set. If every vertex of $G$ has degree at most $k$, then $G$ is
+$k$-degenerate. -/
 theorem IsDegenerate.of_forall_degree_le [Fintype V] [DecidableRel G.Adj]
     (h : ∀ v, G.degree v ≤ k) : G.IsDegenerate k := by
   intro W hWne _
@@ -85,14 +90,19 @@ theorem IsDegenerate.of_forall_degree_le [Fintype V] [DecidableRel G.Adj]
     _ = G.degree v := by rw [Set.ncard_coe_finset]; rfl
     _ ≤ k := h v
 
-/-- A degeneracy ordering of `G` with bound `k`: an injective vertex labelling
-such that every vertex has at most `k` neighbors with a greater label. -/
+/-- **Degeneracy ordering.** Let $G$ be a simple graph on a finite vertex set $V$ and
+let $k$ be a natural number. A map $e : V \to \mathbb{N}$ is a degeneracy ordering of
+$G$ with bound $k$ if $e$ is injective and every vertex $v$ has at most $k$ neighbors
+$w$ with $e(v) < e(w)$. -/
 def IsDegeneracyOrdering (G : SimpleGraph V) (k : ℕ) (e : V → ℕ) : Prop :=
   Function.Injective e ∧ ∀ v, (G.neighborSet v ∩ {w | e v < e w}).ncard ≤ k
 
-/-- Degeneracy ordering on a finite vertex set: an injective labelling whose
-later-neighborhoods inside the set are small. Proved by peeling off a
-small-degree vertex and labelling it `0`. -/
+/-- **Degeneracy orderings of a vertex set.** Let $G$ be a simple graph on a finite
+vertex set $V$ and let $s \subseteq V$. If $G$ is $k$-degenerate on $s$, then there is
+a map $e : V \to \mathbb{N}$, injective on $s$, such that every $v \in s$ has at most
+$k$ neighbors $w \in s$ with $e(v) < e(w)$.
+
+The proof removes a vertex of small degree in $s$ and labels it $0$. -/
 theorem IsDegenerateOn.exists_injOn_ordering (s : Finset V)
     (h : G.IsDegenerateOn (↑s : Set V) k) :
     ∃ e : V → ℕ, Set.InjOn e ↑s ∧
@@ -148,7 +158,10 @@ theorem IsDegenerateOn.exists_injOn_ordering (s : Finset V)
     intro x hx y hy _
     exact (hs ⟨x, Finset.mem_coe.mp hx⟩).elim
 
-/-- Every `k`-degenerate finite graph has a degeneracy ordering. -/
+/-- **Degenerate graphs have degeneracy orderings.** If $G$ is a $k$-degenerate simple
+graph on a finite vertex set $V$, then $G$ has a degeneracy ordering with bound $k$:
+an injective map $e : V \to \mathbb{N}$ such that every vertex $v$ has at most $k$
+neighbors $w$ with $e(v) < e(w)$. -/
 theorem IsDegenerate.exists_degeneracyOrdering (h : G.IsDegenerate k) :
     ∃ e : V → ℕ, G.IsDegeneracyOrdering k e := by
   have := Fintype.ofFinite V
@@ -161,9 +174,13 @@ theorem IsDegenerate.exists_degeneracyOrdering (h : G.IsDegenerate k) :
   have hb := hbound v (Finset.mem_univ v)
   simpa using hb
 
-/-- A degenerate region can be properly colored with `k + 1` colors on that
-region. Proved by peeling off a small-degree vertex and reusing a color absent
-from its neighborhood. -/
+/-- **Coloring a $k$-degenerate vertex set with $k + 1$ colors.** Let $G$ be a simple graph
+on a finite vertex set $V$, let $s \subseteq V$ and let $k$ be a natural number. If $G$ is
+$k$-degenerate on $s$, then there is a map $f : V \to \{0, 1, \dots, k\}$ such that
+$f(a) \ne f(b)$ for all adjacent vertices $a, b \in s$.
+
+The proof removes a vertex of small degree and gives it a color absent from its
+neighborhood. -/
 theorem IsDegenerateOn.exists_coloringFun (s : Finset V)
     (h : G.IsDegenerateOn (↑s : Set V) k) :
     ∃ f : V → Fin (k + 1), ∀ a ∈ s, ∀ b ∈ s, G.Adj a b → f a ≠ f b := by
@@ -222,7 +239,10 @@ theorem IsDegenerateOn.exists_coloringFun (s : Finset V)
         b (Finset.mem_erase.mpr ⟨hb', hb⟩) hab
   · exact ⟨fun _ => 0, fun a ha _ _ _ => (hs ⟨a, ha⟩).elim⟩
 
-/-- Every `k`-degenerate finite graph is `(k + 1)`-colorable (Diestel, §5.1–5.2). -/
+/-- **$k$-degenerate graphs are $(k + 1)$-colorable.** Let $k$ be a natural number. Every
+$k$-degenerate simple graph on a finite vertex set is $(k + 1)$-colorable.
+
+Source: Diestel, §5.1–5.2. -/
 theorem IsDegenerate.colorable (h : G.IsDegenerate k) : G.Colorable (k + 1) := by
   have := Fintype.ofFinite V
   have huniv : G.IsDegenerateOn (↑(Finset.univ : Finset V)) k := h.isDegenerateOn _
@@ -230,7 +250,9 @@ theorem IsDegenerate.colorable (h : G.IsDegenerate k) : G.Colorable (k + 1) := b
   exact ⟨Coloring.mk f
     (fun hadj => hf _ (Finset.mem_univ _) _ (Finset.mem_univ _) hadj)⟩
 
-/-- The chromatic number of a `k`-degenerate finite graph is at most `k + 1`. -/
+/-- **Chromatic number of a degenerate graph.** Let $k$ be a natural number. If $G$ is a
+$k$-degenerate simple graph on a finite vertex set, then the chromatic number of $G$ is at
+most $k + 1$. -/
 theorem IsDegenerate.chromaticNumber_le (h : G.IsDegenerate k) :
     G.chromaticNumber ≤ k + 1 := by
   have hle := h.colorable.chromaticNumber_le
