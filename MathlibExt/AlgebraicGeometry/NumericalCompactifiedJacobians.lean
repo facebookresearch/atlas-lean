@@ -180,17 +180,19 @@ def IsStableFamily {k : Type u} [Field k] [IsAlgClosed k] (C T : Over (Spec (.of
       IsStable C q ((Scheme.Modules.pullback (pointSection C T x).left).obj F)
 
 /-- A fine moduli representative with a normalized actual universal sheaf, for a proper
-curve with `H⁰(C, 𝒪_C) = k` over an algebraically closed field: it represents the moduli
-functor of stable normalized families restricted to parameter schemes locally of finite
-type and quasi-compact over `k`. Its dimension is the genus. -/
+curve over an algebraically closed field: it represents the moduli functor of stable
+normalized families restricted to parameter schemes locally of finite type and
+quasi-compact over `k`. Its dimension is `dim H¹(C, 𝒪_C)`, the arithmetic genus of a
+curve with `H⁰(C, 𝒪_C) = k` (such as a connected reduced one). -/
 structure FineCompactifiedJacobian {k : Type u} [Field k] [IsAlgClosed k]
-    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom]
     [TorsionFreeRestrictions C.left] (q : Polarization C.left) (s : SmoothMarking C) where
   J : Over (Spec (.of k))
   [proper : IsProper J.hom]
   [reduced : IsReduced J.left]
   [connected : ConnectedSpace J.left]
-  dimension : topologicalKrullDim J.left = genus C.hom
+  dimension : topologicalKrullDim J.left =
+    Module.finrank k (cohomology C.hom (structureModule C.left) 1)
   F : (prod C J).left.Modules
   stableFamily : IsStableFamily C J q F
   normalized : IsNormalized C J s.p F

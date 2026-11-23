@@ -44,20 +44,20 @@ public instance_wanted torsionFreeRestrictions
 
 /-- A general polarization of a connected reduced planar curve has a fine
 compactified Jacobian with its normalized universal sheaf: a proper, reduced,
-connected representative of dimension the genus (Melo–Rapagnetta–Viviani also
-prove projectivity, which this request does not record). Such a curve has
-`H⁰(C, 𝒪_C) = k`; this is recorded as `HasConstantGlobalSections`, so that the
-genus is defined. -/
+connected representative of dimension the arithmetic genus `dim H¹(C, 𝒪_C)`
+(Melo–Rapagnetta–Viviani also prove projectivity, which this request does not
+record). -/
 public def_wanted fineCompactifiedJacobian
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (C : Over (Spec (.of k))) [IsProperCurve C.hom] [IsReduced C.left]
-    [ConnectedSpace C.left] [HasConstantGlobalSections C.hom]
+    [ConnectedSpace C.left]
     [TorsionFreeRestrictions C.left]
     (planar : ∀ x : C.left, IsClosed ({x} : Set C.left) →
       Module.finrank (IsLocalRing.ResidueField (C.left.presheaf.stalk x))
         (IsLocalRing.CotangentSpace (C.left.presheaf.stalk x)) ≤ 2)
     (d : ℤ) (q : Polarization C.left)
-    (hqDegree : totalWeight q = ((d + 1 - (genus C.hom : ℤ) : ℤ) : ℚ))
+    (hqDegree : totalWeight q =
+      ((d + 1 - (Module.finrank k (cohomology C.hom (structureModule C.left) 1) : ℤ) : ℤ) : ℚ))
     (s : SmoothMarking C)
     (hq : IsNondegenerate C q) : FineCompactifiedJacobian C q s
 
