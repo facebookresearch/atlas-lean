@@ -12,11 +12,14 @@ $H = \{ x \in \mathbb{R}^{S_\infty} : \sum_v x_v = 0 \}$, of dimension $r + s - 
 basis of $H$. Consequently $U_K$ is finitely generated and $U_K \cong \mu(K) \times \mathbb{Z}^{r+s-1}$.
 
 For any infinite place $v_0$, leaving out the coordinate of $v_0$ is a linear isomorphism of $H$ onto
-$\mathbb{R}^{S_\infty \setminus \{v_0\}}$, with inverse $x \mapsto (x, -\sum_{v \ne v_0} x_v)$. So the statement
-is equivalent to: the image of $U_K$ under $u \mapsto (\log |u|_v)_{v \ne v_0}$ is a full lattice in
-$\mathbb{R}^{S_\infty \setminus \{v_0\}}$. This is the form Mathlib proves, with the logarithmic embedding
-$x \mapsto (m_v \log w_v(x))_{v \ne v_0}$, $m_v \in \{1, 2\}$ the multiplicity of the place, which is the
-same map.
+$\mathbb{R}^{S_\infty \setminus \{v_0\}}$, with inverse $x \mapsto (x, -\sum_{v \ne v_0} x_v)$. So the lattice
+statement is equivalent to: the image of $U_K$ under $u \mapsto (\log |u|_v)_{v \ne v_0}$, that is,
+$u \mapsto (m_v \log \|u\|_v)_{v \ne v_0}$ with $\|\cdot\|_v$ the usual absolute value and $m_v \in \{1, 2\}$
+the number of embeddings into $\mathbb{C}$ that induce $v$, is a full lattice in
+$\mathbb{R}^{S_\infty \setminus \{v_0\}}$. Milne uses the usual absolute values instead,
+$L(\alpha) = (\log |\sigma_1 \alpha|, \dots, \log |\sigma_{r+s} \alpha|)$, and the hyperplane
+$x_1 + \dots + x_r + 2x_{r+1} + \dots + 2x_{r+s} = 0$; doubling the coordinates of the complex places is a
+linear isomorphism that carries his form of the statement to this one.
 
 Milne's proof: $\lambda(U_K)$ meets every bounded set in finitely many points, since there are finitely
 many algebraic integers of bounded degree whose conjugates are all bounded, so it is a lattice in $H$ and
@@ -42,7 +45,8 @@ infinite place $v$, a unit $u_v$ with $|u_v|_w < 1$ for every infinite place $w 
   5.8 and Theorem 5.9 (the image is a full lattice in $H$), with their proofs and Lemma 5.10.
 - The mathlib Community, *mathlib4* at revision 56a005855ea17e0b0958f73ec801ae140b0a1679, module
   `Mathlib.NumberTheory.NumberField.Units.DirichletTheorem`: `NumberField.Units.instZLattice_unitLattice`
-  (the image of the logarithmic embedding with one infinite place left out is a full lattice),
+  (the image of the logarithmic embedding $x \mapsto (m_w \log w(x))_{w \ne w_0}$, with one infinite place
+  $w_0$ left out, is a full lattice; this is the equivalent form above),
   https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean#L374-L375;
   `NumberField.Units.unitLattice_rank` (its rank is $r + s - 1$),
   https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean#L384-L388;
