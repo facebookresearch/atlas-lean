@@ -7,15 +7,19 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The Chern/Segre coefficient pattern follows AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/Chow/GenuineChern/Segre.lean and
-StacksFrontier/AlgebraicGeometry/Chow/ProjectiveBundleFormula/Formula.lean,
-licensed under Apache 2.0. Modification notice: use the actual rational
-Betti cup/push/pull maps, obtain Chern coefficients from the inverse of
-the displayed projective-bundle map, and define Segre coefficients by
-the explicit inverse-series recurrence. The global compatible theory
-is an input construction requested separately, not an implemented instance.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Chow/GenuineChern/Segre.lean` and
+`StacksFrontier/AlgebraicGeometry/Chow/ProjectiveBundleFormula/Formula.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks,
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no individual author or copyright notice.
+Modification notice: used the rational Betti cup, pushforward and pullback
+maps, obtained Chern coefficients from the inverse of the displayed
+projective-bundle map, and defined Segre coefficients by the explicit
+inverse-series recurrence. The global compatible theory is an input
+construction requested separately, not an implemented instance.
 -/
 
 module
@@ -60,31 +64,36 @@ variable (F : PureFamily D) {X : ComplexScheme} [IsComplexVariety X]
   (B : ProjectiveBundle X dx r E)
   (V : LineTotalSpace B.total (dx + r) B.tautological)
 
+/-- The hyperplane class `h = c₁(𝒪(1)) ∈ H²(ℙ(E))`: the Euler class of the
+tautological line, zero-section Gysin image of `1` pulled back by the zero
+section, relative to the purity family `F`. -/
 def hyperplane : BettiRealization.Cohomology (space B.total) 2 :=
   BettiCycleRealization.cohomologyCast (by omega)
     (cohomologyPullback (spaceMap V.zero) _
       (cohomologyPushforward (P V.zero) (D B.total) (D V.total) (dx + r) (dx + r + 1)
         (F.iso _ (dx + r)) (F.iso _ (dx + r + 1)) 0 (unitClass (space B.total))))
 
-def cupPower (Z : TopCat.{0}) (h : BettiRealization.Cohomology Z 2) :
-    (n : ℕ) → BettiRealization.Cohomology Z (2 * n)
-  | 0 => unitClass Z
-  | n + 1 => BettiCycleRealization.cohomologyCast (by omega) (cup Z (cupPower Z h n) h)
-
+/-- The source `∏_{i ≤ r} Hⁿ⁻²ⁱ(X)` of the projective-bundle map. -/
 abbrev BundleDomain (X : ComplexScheme) (r : ℕ) (n : ℤ) :=
   (i : Fin (r + 1)) → BettiRealization.Cohomology (space X) (n - 2 * (i : ℕ))
 
+/-- The `i`-th component `a ↦ hⁱ ∪ π^* a` of the projective-bundle map. -/
 def bundleComponent (n : ℤ) (i : Fin (r + 1)) :
     BundleDomain X r n →ₗ[ℚ] BettiRealization.Cohomology (space B.total) n :=
   BettiCycleRealization.cohomologyCast (by omega) ∘ₗ
-    cupRight (space B.total) (cupPower (space B.total) (hyperplane D P F dx r E B V) i) ∘ₗ
+    cupRight (space B.total) (powerClass (space B.total) (hyperplane D P F dx r E B V) i) ∘ₗ
       cohomologyPullback (spaceMap B.projection) (n - 2 * (i : ℕ)) ∘ₗ LinearMap.proj i
 
+/-- The projective-bundle map `(aᵢ) ↦ ∑ᵢ hⁱ ∪ π^* aᵢ`. -/
 def bundleMap (n : ℤ) : BundleDomain X r n →ₗ[ℚ] BettiRealization.Cohomology (space B.total) n :=
   ∑ i : Fin (r + 1), bundleComponent D P F dx r E B V n i
 
+/-- A purity family for which the projective-bundle map is bijective for every
+projective bundle (the projective bundle formula). -/
 structure ProjectiveBundleTheory where
+  /-- The purity family. -/
   family : PureFamily D
+  /-- The projective bundle formula. -/
   bijective : ∀ (X : ComplexScheme) [IsComplexVariety X] (dx r : ℕ)
     [SmoothOfRelativeDimension dx X.hom] (E : X.left.Modules)
     (B : ProjectiveBundle X dx r E) (V : LineTotalSpace B.total (dx + r) B.tautological) (n : ℤ),
@@ -92,17 +101,22 @@ structure ProjectiveBundleTheory where
 
 variable (T : ProjectiveBundleTheory D P)
 
+/-- The projective-bundle map as a linear equivalence. -/
 def bundleEquiv (n : ℤ) :
     BundleDomain X r n ≃ₗ[ℚ] BettiRealization.Cohomology (space B.total) n :=
   LinearEquiv.ofBijective (bundleMap D P T.family dx r E B V n) (T.bijective X dx r E B V n)
 
+/-- The Chern class `c_{i+1}(E)`: up to the sign `(-1)^{i+2}`, the coefficient of
+`h^{r-i}` in the expansion of `h^{r+1}`, so that
+`h^{r+1} = ∑ₖ (-1)^{k+1} cₖ(E) h^{r+1-k}` for invertible quotients. -/
 def positiveChern (i : Fin (r + 1)) :
     BettiRealization.Cohomology (space X) (2 * ((i : ℕ) + 1)) :=
   (-1 : ℚ) ^ ((i : ℕ) + 2) • BettiCycleRealization.cohomologyCast (by dsimp; omega)
     (((bundleEquiv D P dx r E B V T (2 * (r + 1))).symm
-      (cupPower (space B.total) (hyperplane D P T.family dx r E B V) (r + 1)))
+      (powerClass (space B.total) (hyperplane D P T.family dx r E B V) (r + 1)))
         ⟨r - (i : ℕ), by omega⟩)
 
+/-- The Chern classes `cᵢ(E)`, with `c₀ = 1` and `cᵢ = 0` above the rank. -/
 def chern (i : ℕ) : BettiRealization.Cohomology (space X) (2 * i) :=
   if h0 : i = 0 then by subst i; exact unitClass (space X)
   else if hr : i ≤ r + 1 then
@@ -110,6 +124,9 @@ def chern (i : ℕ) : BettiRealization.Cohomology (space X) (2 * i) :=
       (positiveChern D P dx r E B V T ⟨i - 1, by omega⟩)
   else 0
 
+/-- The coefficients of `1/c(-t)`, by the recurrence
+`s_{n+1} = ∑_{k ≤ n+1} (-1)^{k+1} cₖ s_{n+1-k}`; these are the pushforwards
+`π_*(h^{r+n})`. -/
 def projectiveSegre : (n : ℕ) → BettiRealization.Cohomology (space X) (2 * n)
   | 0 => unitClass (space X)
   | n + 1 => ∑ i : Fin (n + 1), (-1 : ℚ) ^ ((i : ℕ) + 2) •
@@ -123,13 +140,15 @@ decreasing_by omega
 def segre (n : ℕ) : BettiRealization.Cohomology (space X) (2 * n) :=
   (-1 : ℚ) ^ n • projectiveSegre D P dx r E B V T n
 
+/-- The pushforward `π_*(hⁱ ∪ π^* a)` to the base. -/
 def projectionCapPower (i : ℕ) (n : ℤ) (a : BettiRealization.Cohomology (space X) n) :
     BettiRealization.Cohomology (space X) (2 * (dx : ℤ) - (2 * ((dx + r) : ℤ) - (2 * i + n))) :=
   cohomologyPushforward (P B.projection) (D B.total) (D X) (dx + r) dx
     (F.iso _ (dx + r)) (F.iso _ dx) (2 * i + n)
-    (cup (space B.total) (cupPower (space B.total) (hyperplane D P F dx r E B V) i)
+    (cup (space B.total) (powerClass (space B.total) (hyperplane D P F dx r E B V) i)
       (cohomologyPullback (spaceMap B.projection) n a))
 
+/-- The degree-`k` part `∑ᵢ cᵢ(E) cₖ₋ᵢ(G)` of `c(E) c(G)`. -/
 def whitneyCoefficient (s : ℕ) (G : X.left.Modules)
     (BG : ProjectiveBundle X dx s G)
     (VG : LineTotalSpace BG.total (dx + s) BG.tautological) (k : ℕ) :
@@ -138,25 +157,30 @@ def whitneyCoefficient (s : ℕ) (G : X.left.Modules)
     (cup (space X) (chern D P dx r E B V T i)
       (chern D P dx s G BG VG T (k - (i : ℕ))))
 
+/-- A projective-bundle theory whose Chern and Segre classes satisfy the
+standard pushforward, pullback, Whitney and projection formulas. -/
 structure CharacteristicClassTheory extends ProjectiveBundleTheory D P where
+  /-- `π_*(h^r ∪ π^* a) = a`. -/
   projection_top : ∀ (X : ComplexScheme) [IsComplexVariety X] (dx r : ℕ)
     [SmoothOfRelativeDimension dx X.hom] (E : X.left.Modules)
     (B : ProjectiveBundle X dx r E) (V : LineTotalSpace B.total (dx + r) B.tautological)
     (n : ℤ) (a : BettiRealization.Cohomology (space X) n),
     BettiCycleRealization.cohomologyCast (by omega)
       (projectionCapPower D P family dx r E B V r n a) = a
+  /-- `π_*(hⁱ ∪ π^* a) = 0` for `i < r`. -/
   projection_lower : ∀ (X : ComplexScheme) [IsComplexVariety X] (dx r : ℕ)
     [SmoothOfRelativeDimension dx X.hom] (E : X.left.Modules)
     (B : ProjectiveBundle X dx r E) (V : LineTotalSpace B.total (dx + r) B.tautological)
     (i : ℕ) (_hi : i < r) (n : ℤ) (a : BettiRealization.Cohomology (space X) n),
     projectionCapPower D P family dx r E B V i n a = 0
+  /-- `π_*(h^{r+n}) = s_n`. -/
   segre_pushforward : ∀ (X : ComplexScheme) [IsComplexVariety X] (dx r : ℕ)
     [SmoothOfRelativeDimension dx X.hom] (E : X.left.Modules)
     (B : ProjectiveBundle X dx r E) (V : LineTotalSpace B.total (dx + r) B.tautological) (n : ℕ),
     BettiCycleRealization.cohomologyCast (by omega)
       (projectionCapPower D P family dx r E B V (r + n) 0 (unitClass (space X))) =
         projectiveSegre D P dx r E B V toProjectiveBundleTheory n
-
+  /-- Chern classes are natural under pullback. -/
   pullback_chern : ∀ (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
     (dx dy r : ℕ) [SmoothOfRelativeDimension dx X.hom] [SmoothOfRelativeDimension dy Y.hom]
     (E : X.left.Modules) (E' : Y.left.Modules)
@@ -167,6 +191,7 @@ structure CharacteristicClassTheory extends ProjectiveBundleTheory D P where
     cohomologyPullback (spaceMap f) (2 * i)
       (chern D P dx r E B V toProjectiveBundleTheory i) =
         chern D P dy r E' B' V' toProjectiveBundleTheory i
+  /-- The Whitney sum formula for short exact sequences. -/
   whitney : ∀ (X : ComplexScheme) [IsComplexVariety X] (dx r s t : ℕ)
     [SmoothOfRelativeDimension dx X.hom] (E G H : X.left.Modules)
     (BE : ProjectiveBundle X dx r E) (BG : ProjectiveBundle X dx s G)
@@ -179,6 +204,7 @@ structure CharacteristicClassTheory extends ProjectiveBundleTheory D P where
     (_exact : (ShortComplex.mk u v w).ShortExact) (k : ℕ),
     chern D P dx t H BH VH toProjectiveBundleTheory k =
       whitneyCoefficient D P dx r E BE VE toProjectiveBundleTheory s G BG VG k
+  /-- The projection formula `π_*(π^* a ∪ b) = a ∪ π_* b`. -/
   projection_formula : ∀ (X : ComplexScheme) [IsComplexVariety X] (dx r : ℕ)
     [SmoothOfRelativeDimension dx X.hom] (E : X.left.Modules)
     (B : ProjectiveBundle X dx r E)
