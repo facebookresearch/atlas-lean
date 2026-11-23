@@ -16,7 +16,8 @@ import Mathlib.Tactic.NormNum.Prime
 # The accelerated Collatz map and compatible semiprimes
 
 For compatible semiprimes, the equations for the sums and products of the prime factors
-determine their residues modulo three up to the order of each pair.
+determine their residues modulo three up to the order of each pair. The factors of the first
+semiprime have opposite odd residues modulo four.
 -/
 
 namespace MetaMathlibExt
@@ -102,6 +103,31 @@ theorem IsCompatibleSemiprimePair.mod_three {p q r s : ℕ}
   refine ⟨?_, hrs, hpq, hrs'⟩
   rw [Nat.mul_mod]
   rcases hpq with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ <;> rw [h₁, h₂]
+
+/-- **Compatible semiprimes modulo 4.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
+$2rs = 3pq + 1$, so that the semiprime $pq$ is compatible with the semiprime $rs$. Then
+$pq \equiv 3 \pmod 4$, and one of $p, q$ is congruent to $1$ and the other to $3$ modulo $4$.
+
+Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
+Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
+Proposition 10 (`jis-2025-25.1.8-prop-10`). -/
+theorem IsCompatibleSemiprimePair.mod_four {p q r s : ℕ}
+    (h : IsCompatibleSemiprimePair p q r s) :
+    p * q % 4 = 3 ∧ ((p % 4 = 1 ∧ q % 4 = 3) ∨ (p % 4 = 3 ∧ q % 4 = 1)) := by
+  obtain ⟨hp, hq, hr, hs, hsum, hprod⟩ := h
+  -- If either r or s were two, the compatibility equations would give p * q < p + q.
+  have hpq : p + q ≤ p * q := Nat.add_le_mul hp.two_le hq.two_le
+  obtain rfl | hr_odd := hr.eq_two_or_odd
+  · omega
+  obtain rfl | hs_odd := hs.eq_two_or_odd
+  · omega
+  have hrs : r * s % 2 = 1 := by rw [Nat.mul_mod, hr_odd, hs_odd]
+  have hmod : p * q % 4 = 3 := by omega
+  refine ⟨hmod, ?_⟩
+  obtain rfl | hp_odd := hp.eq_two_or_odd
+  · omega
+  -- Since r and s are odd, the sum equation makes p + q a multiple of four.
+  omega
 
 end
 
