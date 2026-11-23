@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Cards: the wiki's reading level, above its statement pages.
 
-    python scripts/cards.py check [--dependencies FILE] [--base-ledger FILE --base-links DIR --renames FILE]
-                                                                    validate the cards and the move ledger
-    python scripts/cards.py rollup OUTPUT.json --dependencies FILE [--base-ledger FILE --base-links DIR
-           --renames FILE]                                          check, then write the derived card data
+    python scripts/cards.py check [--dependencies FILE [--registry FILE]]
+           [--base-ledger FILE --base-links DIR --renames FILE]     validate the cards and the move ledger
+    python scripts/cards.py rollup OUTPUT.json --dependencies FILE [--registry FILE]
+           [--base-ledger FILE --base-links DIR --renames FILE]     check, then write the derived card data
 
 A card is one idea a reader navigates by: a concept card (a definition that a textbook would give its own
 paragraph) or a result card (a theorem worth naming or citing). It is a folder below blueprint/roadmap/ whose
@@ -26,10 +26,15 @@ say which pages the authors credited, so that a link lean-facts dropped shows as
 page. With --dependencies (the strict check, which rollup always runs), every dependency of an ATLAS-credited page
 must be a typed edge the given extraction recorded and every edge it recorded between pages a dependency, and the
 move ledger must exist; an edge this extraction cannot vouch for (from an ATLAS-credited page to a Mathlib-credited
-one, or any edge a Mathlib-credited page lists) is an error, so every derived edge is `compiled` or, from a page-only
-page, `planned`. With --base-ledger, the ledger the base commit published must stay the first rows of the ledger;
-with --base-links (the base commit's blueprint/links/) and --renames (`git diff --name-status -M BASE HEAD --
-blueprint/roadmap`), every change since the base commit is checked against the rows added since. Run
+one, or any edge a Mathlib-credited page lists) is an error unless --registry gives the build's Mathlib registry,
+whose bridges and Mathlib edges those edges must then equal, while the registry must have been made from the
+committed rows' credited names and find exactly the declarations the build's pages credit to Mathlib, one page each
+with the registry's kind and the declaration its committed row credits, and a Mathlib main heads a result card
+exactly when its type is a proposition; so every derived edge is `compiled`, `bridge` or `mathlib` (checked) or, from a page-only
+page, `planned`. With --base-ledger, the ledger the base commit published
+must stay the first rows of the ledger; with --base-links (the base commit's blueprint/links/) and --renames (`git
+diff --name-status -M BASE HEAD -- blueprint/roadmap`), every change since the base commit is checked against the
+rows added since. Run
 with a Python that has Autoform and the site's Markdown extensions installed (see blueprint-pages.yml).
 
 The wiki job runs rollup the same way before render, for the card data the site shows (hooks/card_pages.py):
@@ -48,9 +53,11 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 
 if __package__:
+    from . import extract_v2_lean_dependencies as extract
     from . import generate_wiki as wiki
     from . import sync_wiki as sync
 else:
+    import extract_v2_lean_dependencies as extract
     import generate_wiki as wiki
     import sync_wiki as sync
 
@@ -67,7 +74,6 @@ REQUIRED = ("kind", "main_article_id", "importance", "level")
 SEED_KEYS = {"source", "node", "revision"}
 # The org.autoform keys a card's folder page may keep: presentation only.
 FOLDER_KEYS = {"navigation", "area"}
-MATHLIB = "https://github.com/leanprover-community/mathlib4"
 # The declaration kinds lean-facts writes (a wanted declaration as the kind it stands for), by the card they can head.
 CONCEPT_KINDS = frozenset({"def", "definition", "abbrev", "structure", "class", "inductive", "instance", "opaque",
                            "irreducible_def"})
@@ -119,14 +125,17 @@ def statement_nodes(graph) -> dict[str, Path]:
 
 
 def parse_rows(text: str) -> list[dict]:
-    return [json.loads(line) for line in text.splitlines() if line.strip()]
+    return sync.read_rows(text)
 
 
 def by_page(rows_by_file: dict[str, list[dict]]) -> dict[Path, dict]:
+    """Rows by the page each is about, as sync_wiki.subject_path reads it for extraction and the sync; a row Autoform
+    leaves out is about no page (sync_wiki.credit_problems reports it)."""
     rows = {}
     for rows_of_file in rows_by_file.values():
         for annotation in rows_of_file:
-            rows[(links_dir() / annotation["subject"][0]["uri"]).resolve()] = annotation
+            if (page := sync.subject_path(annotation)) is not None:
+                rows[page] = annotation
     return rows
 
 
@@ -162,27 +171,36 @@ def source_commit() -> str | None:
 
 
 def legacy(annotation: dict | None) -> tuple[str, str] | None:
-    """The module and name of a row an earlier sync wrote without a Lean link, which lean-facts resolves through
-    the Lean index and treats as linked (the graph rules' What the tools own)."""
-    own = (annotation or {}).get("extensions", {}).get(OWN, {})
-    if not (annotation or {}).get("object") and isinstance(own, dict) and "module" in own and "name" in own:
-        return own["module"], own["name"]
-    return None
+    """The module and name of a row an earlier sync wrote without a Lean link (sync_wiki.legacy_pair, the one test of
+    such a row). lean-facts resolves it through the Lean index and gives the build's row the Lean link of the one
+    declaration it finds; the cards read that link, and never resolve such a row themselves."""
+    return sync.legacy_pair(annotation)
 
 
 def credit(annotation: dict | None) -> str:
-    """Whom a row credits: `atlas` for a declaration of the project, `mathlib` for one of Mathlib, else `none`."""
-    for end in (annotation or {}).get("object", []):
-        if end.get("location", {}).get("declaration"):
-            return "mathlib" if end.get("uri") == MATHLIB else "atlas"
+    """Whom a row credits, by sync_wiki.page_owner: `mathlib` for a Mathlib-credited row (a flagged row whose
+    credit is ambiguous counts too, and check reports it), `atlas` for a declaration of the project (or a row an
+    earlier sync wrote with a module and a name, which credits a declaration once lean-facts gives it that
+    declaration's Lean link, and is stale otherwise), else `none`."""
+    if annotation is None:
+        return "none"
+    try:
+        owner = sync.page_owner(annotation)[0]
+    except sync.CreditError:
+        return "mathlib"
+    if owner != "none":
+        return owner
     return "atlas" if legacy(annotation) else "none"
 
 
 def declaration(annotation: dict | None) -> str | None:
-    for end in (annotation or {}).get("object", []):
-        if name := end.get("location", {}).get("declaration"):
-            return name
-    return None
+    """The declaration a row credits, by sync_wiki.page_owner: its Mathlib declaration, or its project declaration."""
+    if annotation is None:
+        return None
+    try:
+        return sync.page_owner(annotation)[1]
+    except sync.CreditError:
+        return None
 
 
 @dataclass
@@ -497,14 +515,18 @@ def check_record(card: Card, by_id: dict[str, Path], annotations: dict[Path, dic
 
 def check(annotations: dict[Path, dict] | None = None, graph=None, committed: dict[Path, dict] | None = None,
           dependencies: dict | None = None, base_ledger: str | None = None,
-          base_annotations: dict[Path, dict] | None = None,
-          renames: list[tuple[str, str]] | None = None) -> tuple[list[str], list[str]]:
+          base_annotations: dict[Path, dict] | None = None, renames: list[tuple[str, str]] | None = None,
+          registry: dict | None = None) -> tuple[list[str], list[str]]:
     """The errors and the warnings about every card and the move ledger. ``graph`` is Autoform's graph of the
     checkout (loaded here when None and there are cards or ``dependencies``); ``committed`` the committed
     annotations (the checkout's when None); ``dependencies`` an extraction every credited page's dependencies must
     come from (the strict check, which also needs the ledger); ``base_ledger`` the ledger the base commit published,
     which must stay a prefix; ``base_annotations`` the base commit's rows, against which every changed address needs
-    its ledger row."""
+    its ledger row; ``registry`` the build's Mathlib registry."""
+    # A registry is read only once its form is the extractor's: a table of another type would otherwise stop the
+    # check with a traceback rather than an error.
+    if registry is not None and (problems := sync.registry_form_problems(registry)):
+        return problems, []
     annotations = read_annotations() if annotations is None else annotations
     committed = annotations if committed is None else committed
     cards = card_folders(annotations)
@@ -512,7 +534,9 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
     # Each card's main statement, as its record names it (check_record says when that is wrong).
     main_pages = {folder: by_id.get(card.record.get("main_article_id")) for folder, card in cards.items()
                   if isinstance(card.record, dict) and isinstance(card.record.get("main_article_id"), str)}
+    # No credit overrides a held marker (sync_wiki.held_conflicts, as the extraction and lean-facts refuse it).
     errors: list[str] = misplaced_records(annotations)
+    errors += sync.held_conflicts({Path("links"): list(annotations.values())})
     warnings: list[str] = []
     mains: dict[Path, str] = {}
     teaching: dict[Path, list[Path]] = {}
@@ -543,8 +567,26 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
         if main_page is not None and record.get("kind") in KINDS:
             own, authored = annotations.get(main_page, {}), credit(committed.get(main_page))
             kind = own.get("kind")
-            # Every credited main, ATLAS's or Mathlib's, with the kind lean-facts gave it; a page-only main has none.
-            if authored != "none" and kind is not None:
+            if authored == "mathlib" and credit(own) == "mathlib":
+                # Mathlib's own classification of the declaration, from the registry, decides.
+                found = (registry or {}).get("mathlib", {}).get(declaration(own) or "")
+                if found is None and kind is not None:
+                    # Without the registry, a kind lean-facts gave still has to fit, as for an ATLAS main.
+                    allowed = CONCEPT_KINDS if record["kind"] == "concept" else RESULT_KINDS
+                    if kind not in allowed:
+                        errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is a "
+                                      f"`{kind}`")
+                elif found is None:
+                    warnings.append(f"{where}: the kind of the Mathlib main statement {node_id(main_page)} is unknown "
+                                    "without the build's registry")
+                elif not isinstance(found.get("proposition"), bool):
+                    errors.append(f"{where}: the registry does not say whether the Mathlib main statement "
+                                  f"{declaration(own)} states a proposition")
+                elif found["proposition"] is not (record["kind"] == "result"):
+                    what = "states a proposition" if found["proposition"] else "does not state a proposition"
+                    errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is "
+                                  f"Mathlib's {declaration(own)}, which {what}")
+            elif authored == "atlas" and kind is not None:
                 allowed = CONCEPT_KINDS if record["kind"] == "concept" else RESULT_KINDS
                 if kind not in allowed:
                     errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is a `{kind}`")
@@ -707,14 +749,25 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
                 if target in nodes:
                     warnings.append(f"{node.id}: `## Informally uses` links the card {target}, not a statement")
     if graph is not None and dependencies is not None:
-        errors += integrity(graph, annotations, dependencies)
+        errors += integrity(graph, annotations, dependencies, registry)
         resolved = resolved_names(graph, annotations, dependencies)
+        # The declarations the pages stand for, a row an earlier sync wrote with a module and a name included once
+        # lean-facts gave it its Lean link.
+        errors += mathlib_credit_problems(graph, annotations, committed, registry, set(resolved.values()))
+        # A declaration has one page, whatever names it (sync_wiki.owner_problems has the Lean index for the same check
+        # before lean-facts writes); a page whose committed row has only a module and a name is labelled so.
+        standing: dict[str, dict[str, bool]] = defaultdict(dict)
+        files = statement_nodes(graph)
+        for path, name in sorted(resolved.items()):
+            authored = committed.get(files[path])
+            standing[name][path] = legacy(authored) is not None and declaration(authored) is None
+        errors += [sync.shared_owner(name, paths) for name, paths in sorted(standing.items()) if len(paths) > 1]
         for page, annotation in sorted(annotations.items()):
             path = node_id(page)
             if (page.name != "README.md" and path in graph.nodes and legacy(annotation) is not None
                     and path not in resolved):
-                warnings.append(f"{path}: its module-and-name row names no compiled declaration; it counts as stale, "
-                                "not as credited")
+                warnings.append(f"{path}: its module-and-name row names no declaration the Lean index resolves, so "
+                                "lean-facts gave it no Lean link; it counts as stale, not as credited")
     return errors, warnings
 
 
@@ -738,12 +791,9 @@ def read_renames(path: Path) -> list[tuple[str, str]]:
 
 
 def read_links(folder: Path) -> dict[Path, dict]:
-    """The annotations of a links folder (the base commit's, say), by the page path they name below roadmap/."""
-    rows = {}
-    for path in sorted(folder.glob("*.jsonl")):
-        for annotation in parse_rows(path.read_text()):
-            rows[(wiki.VAULT / "links" / annotation["subject"][0]["uri"]).resolve()] = annotation
-    return rows
+    """The annotations of a links folder (the base commit's, say), by the page path they name below roadmap/, read as
+    the checkout's are (by_page)."""
+    return by_page({path.name: parse_rows(path.read_text()) for path in sorted(folder.glob("*.jsonl"))})
 
 
 def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: str | None = None,
@@ -1076,55 +1126,107 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
 
 
 def resolved_names(graph, annotations: dict[Path, dict], dependencies: dict) -> dict[str, str]:
-    """The declaration each ATLAS-credited statement page that Autoform loaded stands for in the extraction, by page
-    id: its `declaration`, or for a row an earlier sync wrote with a module and a name, the one compiled article of
-    that module with that name. A legacy row the extraction cannot resolve stands for nothing: it is no current
-    credit (the graph rules' Writing pages)."""
-    articles = dependencies.get("articles", {})
+    """The declaration each ATLAS-credited statement page that Autoform loaded stands for, by page id: the one its
+    build row's Lean link names. A row an earlier sync wrote with a module and a name has one once lean-facts
+    resolved it through the Lean index (sync_wiki.legacy_lean_name, the one decision); one it did not resolve stands
+    for nothing, however few of the extraction's articles share its module and name, and is no current credit (the
+    graph rules' Writing pages)."""
     names = {}
     for path, page in statement_nodes(graph).items():
         annotation = annotations.get(page)
-        if credit(annotation) != "atlas":
-            continue
-        name = declaration(annotation)
-        if name is None:
-            module, short = legacy(annotation)
-            found = [other for other, entry in articles.items()
-                     if entry.get("module") == module and other.split(".")[-1] == short.split(".")[-1]]
-            name = found[0] if len(found) == 1 else None
-        if name is not None:
+        if credit(annotation) == "atlas" and (name := declaration(annotation)) is not None:
             names[path] = name
     return names
 
 
-def integrity(graph, annotations: dict[Path, dict], dependencies: dict) -> list[str]:
+def mathlib_credit_problems(graph, annotations: dict[Path, dict], committed: dict[Path, dict] | None,
+                            registry: dict | None, owners: set[str] | None = None) -> list[str]:
+    """What the edges cannot show about Mathlib credit. The committed rows credit no declaration ambiguously and none
+    twice; with the registry, it was made from their list of credited names (sync_wiki.registry_problems), and the
+    declarations it found are exactly those the build's statement pages credit to Mathlib, one page each, each page
+    with the registry's kind: a page whose declaration the registry did not find was unlinked by lean-facts, and a
+    page the registry has no row for is an error, never shown as in Mathlib."""
+    files = {sync.LINKS: list((committed or {}).values())}
+    _, problems = sync.credited_mathlib(files)
+    errors = list(problems)
+    if registry is None or errors:
+        return errors
+    errors += sync.registry_problems(registry, files, owners)
+    if errors:
+        return errors
+    built: dict[str, list[str]] = defaultdict(list)
+    pages = statement_nodes(graph)
+    committed_names = {page: declaration(row) for page, row in (committed or {}).items() if credit(row) == "mathlib"}
+    for node, page in sorted(pages.items()):
+        annotation = annotations.get(page)
+        if credit(annotation) == "mathlib":
+            built[declaration(annotation) or ""].append(node)
+            # Each page keeps the declaration its committed row credits.
+            if committed_names.get(page) != declaration(annotation):
+                errors.append(f"{node}: the build credits {declaration(annotation)}, but its committed row credits "
+                              f"{committed_names.get(page)}")
+    found = registry["mathlib"]
+    for name, nodes in sorted(built.items()):
+        if name not in found:
+            errors.append(f"{nodes[0]}: credits the Mathlib declaration {name or '?'}, which the registry does not "
+                          "find")
+        elif len(nodes) > 1:
+            errors.append(f"{', '.join(nodes)}: all credit the Mathlib declaration {name}; a declaration has one page")
+        elif (kind := annotations[pages[nodes[0]]].get("kind")) != found[name].get("kind"):
+            errors.append(f"{nodes[0]}: its kind is {kind!r}, but the registry finds {name} a "
+                          f"`{found[name].get('kind')}`; run sync_wiki.py lean-facts with this registry")
+    for name in sorted(found.keys() - built.keys()):
+        errors.append(f"the registry finds the Mathlib declaration {name}, which no statement page of the build "
+                      "credits")
+    return errors
+
+
+def integrity(graph, annotations: dict[Path, dict], dependencies: dict, registry: dict | None = None) -> list[str]:
     """The differences between the dependencies of the checkout and the extraction lean-facts wrote them from, as
     sets of oriented typed edges, both ways: every dependency of an ATLAS-credited statement page must be a typed
     edge the extraction records, and every edge it records between two declarations that credit statement pages
     must be a dependency of the checkout, of the same kind. lean-facts writes a dependency that is both a statement
     and a proof dependency as a statement one, so a page never lists one target under both. An edge that leaves a
     Mathlib-credited page, or reaches one from an ATLAS-credited page, cannot be checked against this extraction,
-    which records only the project's declarations: it is an error, never shown as compiled."""
+    which records only the project's declarations: it is an error, never shown as compiled, unless ``registry`` (the
+    build's Mathlib registry, `extract_v2_lean_dependencies.py --registry`) is given: then the edges from
+    ATLAS-credited to Mathlib-credited pages must equal its bridges, and those between Mathlib-credited pages its
+    Mathlib edges, as typed sets both ways."""
     articles = dependencies.get("articles", {})
     pages = {path: annotations.get(page) for path, page in statement_nodes(graph).items()}
     name_of = resolved_names(graph, annotations, dependencies)
     page_of = {name: path for path, name in name_of.items()}
     errors = []
+    # A page that credits a declaration of this project by its Lean link, and whose kind lean-facts found, has its
+    # row in the extraction, even one with no edges: otherwise the extraction was made for another state of the
+    # wiki, and the page would show no prerequisites.
+    for path, annotation in sorted(pages.items()):
+        name = declaration(annotation) if credit(annotation) == "atlas" else None
+        if name is not None and "kind" in (annotation or {}) and name not in articles:
+            errors.append(f"{path}: credits {name}, which the extraction has no row for; it was made for another "
+                          "state of the wiki")
     rendered: dict[tuple[str, str], set[str]] = defaultdict(set)
+    linked: dict[tuple[str, str], set[str]] = defaultdict(set)
     for node in sorted(graph.nodes.values(), key=lambda node: node.id):
         source_credit = credit(pages.get(node.id))
         for kind, targets in (("statement", node.statement_dependencies), ("proof", node.proof_dependencies)):
             for target in targets:
                 target_credit = credit(pages.get(target))
                 if source_credit == "mathlib":
-                    errors.append(f"{node.id}: a Mathlib-credited page lists a {kind} dependency on {target}; "
-                                  "nothing here can check it")
+                    if registry is None or target_credit != "mathlib":
+                        errors.append(f"{node.id}: a Mathlib-credited page lists a {kind} dependency on {target}; "
+                                      "nothing here can check it")
+                    else:
+                        linked[(node.id, target)].add(kind)
                     continue
                 if source_credit != "atlas":
                     continue
                 if target_credit == "mathlib":
-                    errors.append(f"{node.id}: its {kind} dependency on the Mathlib-credited page {target} cannot be "
-                                  "checked against the extraction")
+                    if registry is None:
+                        errors.append(f"{node.id}: its {kind} dependency on the Mathlib-credited page {target} "
+                                      "cannot be checked against the extraction")
+                    else:
+                        linked[(node.id, target)].add(kind)
                     continue
                 if target_credit != "atlas" or node.id not in name_of or target not in name_of:
                     errors.append(f"{node.id}: its {kind} dependency {target} joins no two declarations the "
@@ -1162,6 +1264,52 @@ def integrity(graph, annotations: dict[Path, dict], dependencies: dict) -> list[
         other = "proof" if kind == "statement" else "statement"
         if (source, target, other) not in shown:
             errors.append(f"{source}: the extraction records a {kind} dependency on {target}, which the page lacks")
+    if registry is not None:
+        errors += registry_differences(pages, name_of, linked, registry)
+    return errors
+
+
+def registry_differences(pages: dict[str, dict | None], name_of: dict[str, str],
+                         linked: dict[tuple[str, str], set[str]], registry: dict) -> list[str]:
+    """The differences, as typed sets both ways, between the edges that reach Mathlib-credited pages and the
+    registry the build wrote them from: its bridges (ATLAS declaration to Mathlib declaration) and its Mathlib
+    edges (between Mathlib declarations), each between two declarations that credit statement pages."""
+    errors = []
+    mathlib_page = {declaration(annotation): path for path, annotation in pages.items() if credit(annotation) == "mathlib"}
+    atlas_page = {name: path for path, name in name_of.items()}
+    for (source, target), kinds in sorted(linked.items()):
+        if len(kinds) > 1:
+            errors.append(f"{source}: lists the Mathlib-credited {target} as both a statement and a proof dependency")
+    shown = {(source, target, "statement" if "statement" in kinds else "proof")
+             for (source, target), kinds in linked.items()}
+    expected_kinds: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for table, sources in (("bridges", atlas_page), ("mathlib", mathlib_page)):
+        for name, entry in sorted(registry.get(table, {}).items()):
+            # An edge the registry records between declarations that do not each credit one statement page is an
+            # error, never left out of the comparison.
+            if name not in sources:
+                errors.append(f"the registry records the dependencies of {name}, which credits no statement page")
+                continue
+            for kind in ("statement", "proof"):
+                for other in entry.get(kind, []):
+                    if other not in mathlib_page:
+                        errors.append(f"the registry records {name} -> {other}, and {other} credits no statement page")
+                    elif mathlib_page[other] != sources[name]:
+                        expected_kinds[(sources[name], mathlib_page[other])].add(kind)
+    expected = {(source, target, "statement" if "statement" in kinds else "proof")
+                for (source, target), kinds in expected_kinds.items()}
+    for source, target, kind in sorted(shown - expected):
+        other = "proof" if kind == "statement" else "statement"
+        if (source, target, other) in expected:
+            errors.append(f"{source}: its dependency on the Mathlib-credited {target} is a {kind} dependency, but the "
+                          f"registry records a {other} one")
+        else:
+            errors.append(f"{source}: its {kind} dependency on the Mathlib-credited {target} is not in the registry")
+    for source, target, kind in sorted(expected - shown):
+        other = "proof" if kind == "statement" else "statement"
+        if (source, target, other) not in shown:
+            errors.append(f"{source}: the registry records a {kind} dependency on the Mathlib-credited {target}, "
+                          "which the page lacks")
     return errors
 
 
@@ -1278,7 +1426,8 @@ class Leaf:
 
 
 def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, graph=None,
-           committed: dict[Path, dict] | None = None, commit: str | None = None, checked: bool = False) -> dict:
+           committed: dict[Path, dict] | None = None, commit: str | None = None, checked: bool = False,
+           registry: dict | None = None) -> dict:
     """The cards with their status and progress, and their derived edges with the dependencies that witness them,
     from the edges the strict check validated against ``dependencies`` (the extraction): every edge between two
     ATLAS-credited pages is then one it records, so `compiled` is a checked origin. Unless the caller already ran
@@ -1290,7 +1439,7 @@ def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, grap
     cards = card_folders(annotations)
     graph = load_graph() if graph is None else graph
     if not checked:
-        errors, _ = check(annotations, graph, committed, dependencies)
+        errors, _ = check(annotations, graph, committed, dependencies, registry=registry)
         if errors:
             raise ValueError("the strict check fails: " + "; ".join(errors[:5]))
     statuses = derive(graph)
@@ -1299,7 +1448,7 @@ def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, grap
     resolved = resolved_names(graph, annotations, dependencies)
 
     def current_credit(path: str, annotation: dict | None) -> str:
-        """A legacy module-and-name row counts as ATLAS credit only when the extraction resolves it."""
+        """A module-and-name row counts as ATLAS credit only once lean-facts gave it its declaration's Lean link."""
         found = credit(annotation)
         if found == "atlas" and declaration(annotation) is None and path not in resolved:
             return "none"
@@ -1361,13 +1510,16 @@ def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, grap
 
     def origin(source: str, target: str) -> str:
         """`planned` from a page-only page (its editors wrote it, as Writing pages says); `compiled` between two
-        ATLAS-credited pages, which the check matched against the extraction. No other pair passes the check."""
+        ATLAS-credited pages, which the check matched against the extraction; `bridge` (ATLAS to Mathlib) and
+        `mathlib` (between Mathlib-credited pages), which it matched against the registry. No other pair passes."""
         source_credit, target_credit = leaf(source).credit, leaf(target).credit
         if source_credit == "none":
             return "planned"
-        if (source_credit, target_credit) == ("atlas", "atlas"):
-            return "compiled"
-        raise AssertionError(f"{source} -> {target}: an edge the check does not allow")
+        found = {("atlas", "atlas"): "compiled", ("atlas", "mathlib"): "bridge",
+                 ("mathlib", "mathlib"): "mathlib"}.get((source_credit, target_credit))
+        if found is None or (found != "compiled" and registry is None):
+            raise AssertionError(f"{source} -> {target}: an edge the check does not allow")
+        return found
 
     edges: dict[str, list[tuple[str, str]]] = defaultdict(list)
     witnesses: dict[tuple[str, str], set[tuple[str, str, str]]] = defaultdict(set)
@@ -1495,28 +1647,73 @@ def run(argv: list[str]) -> int:
     argv, base_file = option(argv, "--base-ledger")
     argv, base_links = option(argv, "--base-links")
     argv, renames_file = option(argv, "--renames")
-    if argv not in (["check"],) and not (len(argv) == 2 and argv[0] == "rollup" and dependency_file is not None):
+    argv, registry_file = option(argv, "--registry")
+    output = Path(argv[1]) if len(argv) == 2 and argv[0] == "rollup" else None
+    if output is not None:
+        # The output is a file of its own: one inside blueprint/ or the --base-links folder, one that is an input (by
+        # its path, a symbolic link or a hard link), a symbolic link itself or no regular file is refused before
+        # anything is touched.
+        inputs = {"--dependencies": dependency_file, "--registry": registry_file, "--base-ledger": base_file,
+                  "--base-links": base_links, "--renames": renames_file}
+        files = {"OUTPUT": output, **{flag: Path(given) for flag, given in inputs.items() if given is not None},
+                 **{f"the links file {path.name}": path for path in sorted(links_dir().glob("*.jsonl"))}}
+        folders = {"blueprint/": wiki.VAULT, **({"--base-links": Path(base_links)} if base_links is not None else {})}
+        problem = extract.file_problem(files, ("OUTPUT",), folders)
+        if problem:
+            print(f"error: {problem}", file=sys.stderr)
+            return 2
+        # The site shows card data only from a rollup that passed: once the arguments are read, an earlier rollup's
+        # file never outlives a failure of this one.
+        output.unlink(missing_ok=True)
+    if registry_file is not None and dependency_file is None:
         print(__doc__, file=sys.stderr)
         return 2
-    output = Path(argv[1]) if argv[0] == "rollup" else None
-    if output is not None:
-        # The site shows card data only from a rollup that passed: an earlier rollup's file never outlives a
-        # failure of this one.
-        output.unlink(missing_ok=True)
+    if argv not in (["check"],) and not (output is not None and dependency_file is not None):
+        print(__doc__, file=sys.stderr)
+        return 2
     history = (base_file, base_links, renames_file)
     if any(option is not None for option in history) and not all(option is not None for option in history):
         # Half a history would check the ledger's prefix and skip the moves since the base commit.
         print("error: --base-ledger, --base-links and --renames go together", file=sys.stderr)
         return 2
-    dependencies = None if dependency_file is None else json.loads(Path(dependency_file).read_text())
+    loaded = {}
+    for flag, given in (("--dependencies", dependency_file), ("--registry", registry_file)):
+        if given is None:
+            continue
+        try:
+            loaded[flag] = json.loads(Path(given).read_text())
+        except (OSError, ValueError) as error:
+            print(f"error: {flag} {given}: {error}", file=sys.stderr)
+            return 1
+        # A file given is checked whatever it holds: JSON `null` is no run without it.
+        if not isinstance(loaded[flag], dict):
+            print(f"error: {flag} {given} holds no JSON object; extract_v2_lean_dependencies.py writes it",
+                  file=sys.stderr)
+            return 1
+    dependencies, registry = loaded.get("--dependencies"), loaded.get("--registry")
+    # A registry of the extractor's form, before anything reads its tables, made beside the extraction given: the
+    # two are valid only as the pair one extractor run wrote.
+    if registry is not None and (problems := sync.registry_form_problems(registry)
+                                 or sync.extraction_problems(registry, Path(dependency_file))):
+        for problem in problems:
+            print(f"error: {problem}", file=sys.stderr)
+        return 1
     base = None if base_file is None else Path(base_file).read_text()
     base_annotations = None if base_links is None else read_links(Path(base_links))
     renames = None if renames_file is None else read_renames(Path(renames_file))
+    # Rows Autoform would read otherwise, or not at all, which rows by page cannot show, are refused first, as
+    # extraction and the sync refuse them.
+    rows = {path: parse_rows(path.read_text()) for path in sorted(links_dir().glob("*.jsonl"))}
+    problems = sync.credit_problems(rows) + sync.pageless_rows(rows)
+    if problems:
+        for problem in problems:
+            print(f"error: {problem}", file=sys.stderr)
+        return 1
     annotations = read_annotations()
     committed = committed_annotations()
     cards = card_folders(annotations)
     graph = load_graph() if cards or dependencies is not None else None
-    errors, warnings = check(annotations, graph, committed, dependencies, base, base_annotations, renames)
+    errors, warnings = check(annotations, graph, committed, dependencies, base, base_annotations, renames, registry)
     for warning in warnings:
         print(f"warning: {warning}", file=sys.stderr)
     for error in errors:
@@ -1525,12 +1722,9 @@ def run(argv: list[str]) -> int:
           f"{len(errors)} errors, {len(warnings)} warnings")
     if errors or argv[0] == "check":
         return 1 if errors else 0
-    result = rollup(dependencies, annotations, graph, committed, source_commit(), checked=True)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    # Written whole or not at all.
-    partial = output.with_name(f".{output.name}.partial")
-    partial.write_text(json.dumps(result, ensure_ascii=False, indent=1, sort_keys=True) + "\n")
-    partial.replace(output)
+    result = rollup(dependencies, annotations, graph, committed, source_commit(), checked=True, registry=registry)
+    # Written whole or not at all, through a temporary file of a name no file has.
+    extract.write_whole({output: json.dumps(result, ensure_ascii=False, indent=1, sort_keys=True) + "\n"})
     counts = result["counts"]
     print(f"{counts['uses']} card edges, {counts['needs']} main-statement edges, {counts['clusters']} cyclic clusters, "
           f"{counts['unassigned']} statement pages in no card of their subjects")
