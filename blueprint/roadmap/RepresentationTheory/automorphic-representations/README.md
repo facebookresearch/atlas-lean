@@ -6,3 +6,5 @@ Automorphic forms and automorphic representations of reductive groups over numbe
 - [Automorphic representations of GLₙ](automorphic-representations-of-gl-n/README.md)
 - [Endoscopic classification and base change for unitary groups](endoscopic-classification-and-base-change-for-unitary-groups.md)
 - [Theta correspondence for unitary dual pairs](theta-correspondence/README.md)
+- [Theta integral identities and local matching for unitary dual pairs](theta-integral-identities-for-unitary-dual-pairs.md)
+- [Definite-side hypotheses for families of characters](definite-side-hypotheses-for-character-families.md)

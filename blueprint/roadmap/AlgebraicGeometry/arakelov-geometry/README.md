@@ -23,3 +23,4 @@ Arithmetic varieties over the integers or over rings of integers, with hermitian
 - [Extension of small sections and bases of small sections](extension-of-small-sections.md)
 - [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md)
 - [Arithmetic volumes](arithmetic-volumes/README.md)
+- [Covolume bound for the families of characters](covolume-bound-for-character-families.md)
