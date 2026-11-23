@@ -43,7 +43,7 @@ public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
-public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficient
+public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
 
 set_option autoImplicit false
 
@@ -116,19 +116,6 @@ theorem_wanted two_pow_factorization_add_one_lt_radical
     (n : ℕ) (hne : Even n)
     (hn : IsPrimitiveNondeficient n) :
     2 ^ (n.factorization 2 + 1) < ∏ q ∈ n.primeFactors, q
-
-/-- **Abundancy ratio at an exactly dividing prime power.** Let $n$ be a positive integer, $p$ a
-prime and $a \ge 1$ an integer such that $p^a$ exactly divides $n$ (that is, $p^a \mid n$ and
-$p^{a+1} \nmid n$). Then $h(n)/h(n/p) \le 1 + 1/p^a$, where $h(m) = \sigma(m)/m$ is the abundancy
-index and $\sigma(m)$ is the sum of the positive divisors of $m$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma (label `correctedPAlemma`). -/
-theorem_wanted abundancyIndex_div_le
-    (n p a : ℕ) (hn0 : 0 < n) (hp : p.Prime) (ha : 1 ≤ a)
-    (hpa : n.factorization p = a) :
-    abundancyIndex n / abundancyIndex (n / p) ≤
-      1 + 1 / (p : ℚ) ^ a
 
 /-- **Generalized Puchta lemma.** Let $n$ be a primitive non-deficient number with $k$ distinct
 prime factors, the least of which is $p_1$, and suppose that $(p_1, k) \ne (3, 3)$. Let $\alpha$
