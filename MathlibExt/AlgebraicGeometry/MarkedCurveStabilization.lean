@@ -50,12 +50,14 @@ abbrev NodeRing (k : Type u) [Field k] :=
 def nodeCurve (k : Type u) [Field k] : Over (Spec (.of k)) :=
   Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k (NodeRing k))))
 
-/-- A curve is nodal if closed points lift to an actual étale neighborhood
+/-- A curve is nodal if every point lifts to an actual étale neighborhood
 with an étale map to the standard node. The chart is an étale neighborhood,
 so an irreducible nodal curve may split into its two local branches there.
-Smooth points map to a smooth point of the same standard nodal curve. -/
+Smooth points map to a smooth point of the same standard nodal curve.
+Every point is tested, closed or not, so no finiteness hypothesis on `C` is
+needed; such charts force `C` to be locally of finite type of dimension at most one. -/
 def IsNodal {k : Type u} [Field k] (C : Over (Spec (.of k))) : Prop :=
-  ∀ x : C.left, IsClosed ({x} : Set C.left) →
+  ∀ x : C.left,
     ∃ (V : Scheme.{u}) (a : V ⟶ C.left) (v : V)
       (f : V ⟶ (nodeCurve k).left),
       Etale a ∧ Etale f ∧ a v = x ∧ a ≫ C.hom = f ≫ (nodeCurve k).hom
