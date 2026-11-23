@@ -1557,13 +1557,16 @@ def duplicate_names(annotation: dict) -> list[str]:
     exactly the result of the declaration its row credits, which Lean states more than once. The page states it once:
     a listed declaration gets no page of its own, and the extraction counts a use of it as a use of the row's
     declaration (see docs/BLUEPRINT.md). The list is no Lean link, so it credits nothing and names no second
-    declaration on the row; an entry that is no name is left out (see duplicate_markers)."""
+    declaration on the row; an entry that is no name is left out (see duplicate_markers): one that is no string, an
+    empty one, and one holding a control character, a tab or a line feed say, or a lone surrogate, which no Lean name
+    holds. A name may hold a space, quoted in «»."""
     extensions = annotation.get("extensions")
     own = extensions.get(OWN) if isinstance(extensions, dict) else None
     listed = own.get("duplicates") if isinstance(own, dict) else None
     if not isinstance(listed, list):
         return []
-    return list(dict.fromkeys(name for name in listed if isinstance(name, str) and name))
+    return list(dict.fromkeys(name for name in listed if isinstance(name, str) and name
+                              and all(unicodedata.category(character) not in ("Cc", "Cs") for character in name)))
 
 
 def annotation_key(annotation: dict, index=None) -> str | None:

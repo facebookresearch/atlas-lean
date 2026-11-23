@@ -503,7 +503,8 @@ uses, as for an undocumented declaration, and never on itself. Where the
 declaration names the duplicate itself, it also names what the duplicate names,
 a Mathlib-credited declaration included. The row's own `object` credits a
 declaration of this project; an unlinked, planned, held or Mathlib-credited row
-lists none. Each name is given once. It is not the row's own declaration, and
+lists none. Each name is given once, and holds no control character, as no Lean
+name does. It is not the row's own declaration, and
 no other row links it, holds it back or lists it. `declarations` reports any
 other list as an error and then writes nothing; a pull request's run stops only
 on a list its changes break, as for a held marker. The extraction also writes

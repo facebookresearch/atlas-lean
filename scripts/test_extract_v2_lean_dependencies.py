@@ -978,14 +978,14 @@ class BridgeConvention(unittest.TestCase):
             output, found = run_registry(rows, ["C", "A"], duplicates={"c": "C"})
         self.assertEqual(output["articles"]["A"]["statement"], ["C"])
         # The registry records which duplicates its edges count as their articles.
-        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b"c\tC\n").hexdigest())
+        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b'[["C",["c"]]]').hexdigest())
         self.assertEqual(found["bridges"], {"A": {"statement": [], "proof": ["M.space"]},
                                             "C": {"statement": ["M.space"], "proof": []}})
         self.assertEqual(found["left_out"], {"A": {"statement": ["M.measure"], "proof": []}})
         # Unlisted, c's statement takes M.space for A's statement: A keeps no bridge, and all c reaches is left out.
         with redirect_stdout(io.StringIO()):
             _, found = run_registry(rows, ["C", "A"])
-        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b"").hexdigest())
+        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b"[]").hexdigest())
         self.assertEqual(found["bridges"], {"C": {"statement": ["M.space"], "proof": []}})
         self.assertEqual(found["left_out"], {"A": {"statement": ["M.measure", "M.space"], "proof": ["M.fubini"]}})
 
@@ -1039,9 +1039,21 @@ class BridgeConvention(unittest.TestCase):
                          (({}, {"C": {"statement": [], "proof": ["M"]}}),
                           ({"C": {"statement": [], "proof": ["M"]}}, {})))
         self.assertEqual((before["inputs"]["aliases_sha256"], after["inputs"]["aliases_sha256"]),
-                         (hashlib.sha256(b"").hexdigest(), hashlib.sha256(b"h\tC\n").hexdigest()))
+                         (hashlib.sha256(b"[]").hexdigest(), hashlib.sha256(b'[["C",["h"]]]').hexdigest()))
         self.assertEqual((before["inputs"]["format"], extract.REGISTRY_FORMAT), (6, 6))
         self.assertNotEqual(extract.REGISTRY_FORMAT, extract.DUMP_FORMAT["format"])
+
+    def test_the_duplicates_digest_spells_each_list_one_way_only(self) -> None:
+        # One `name<TAB>article` line per duplicate let a tab and a line feed in a name, or in an article, pass for the
+        # separators: each pair below gave the same lines, so a registry made for one list passed for the other. The
+        # digest hashes compact JSON instead, each character past ASCII escaped, so any strings at all encode.
+        lines = lambda aliases: "".join(f"{name}\t{article}\n" for name, article in sorted(aliases.items()))
+        for first, second in (({"a": "C", "b": "C"}, {"a\tC\nb": "C"}), ({"a": "C", "b": "C"}, {"a": "C\nb\tC"})):
+            with self.subTest(second=second):
+                self.assertEqual(lines(first), lines(second))
+                self.assertNotEqual(extract.aliases_digest(first), extract.aliases_digest(second))
+        self.assertEqual(extract.aliases_digest({"d": "C", "c": "C", "\u03b1\ud800": "E"}),
+                         hashlib.sha256(b'[["C",["c","d"]],["E",["\\u03b1\\ud800"]]]').hexdigest())
 
     def test_a_duplicate_whose_article_is_gone_gives_no_bridge(self) -> None:
         # The Lean deleted C, whose row lists c as a duplicate; c's type names M.space and its proof M.fubini. A uses
@@ -1055,7 +1067,7 @@ class BridgeConvention(unittest.TestCase):
             output, found = run_registry(rows, ["C", "A"], duplicates={"c": "C"}, declared={"c", "A"})
         self.assertEqual(output["articles"]["A"], {"module": "MathlibExt.T", "statement": [], "proof": []})
         self.assertEqual((found["bridges"], found["left_out"]), ({}, {}))
-        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b"c\tC\n").hexdigest())
+        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b'[["C",["c"]]]').hexdigest())
         # Unlisted, c is a hidden theorem: A reaches through it what its proof names.
         with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
             _, found = run_registry(rows, ["C", "A"])

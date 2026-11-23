@@ -518,6 +518,25 @@ class LeanFacts(Vault):
         self.assertEqual(code, 0, err)
         self.assertIn("## Proof depends on\n\n- [M](m.md)\n", page.read_text())
 
+    def test_no_registry_passes_for_a_list_whose_name_spells_other_entries(self) -> None:
+        # Ext.T's row lists Ext.a and Ext.b, and the registry was made for that list. An edit to the one name
+        # `Ext.a<TAB>Ext.T<LF>Ext.b` spelled the same digest lines, so the registry passed for the edited rows. No Lean
+        # name holds a control character: such a list is refused, and the digest now spells the two lists apart.
+        self.page("Algebra/t.md", "# T\n\nA theorem.\n")
+        theorem = self.about("Algebra/t.md", object=[{"location": {"declaration": "Ext.T"}}])
+        listing = lambda names: {**theorem, "extensions": {sync.OWN: {"duplicates": names}}}
+        self.annotate([listing(["Ext.a", "Ext.b"])])
+        registry = {"left_out": {}, "bridges": {}, "mathlib": {}, "missing": [], "project": [], "mutual": [],
+                    "inputs": {"names_sha256": hashlib.sha256(b"").hexdigest(), "dump_sha256": "d" * 64,
+                               "mathlib_rev": None, "requested": 0, "aliases_sha256": duplicates_digest(),
+                               "format": sync.REGISTRY_FORMAT}}
+        self.assertEqual(sync.registry_problems(registry, sync.read_annotations()), [])
+        self.annotate([listing(["Ext.a\tExt.T\nExt.b"])])
+        self.assertEqual(sync.registry_problems(registry, sync.read_annotations()),
+                         ["Algebra/t.md: its duplicates list is not a list of declaration names, each given once"])
+        self.assertNotEqual(extract.aliases_digest({"Ext.a\tExt.T\nExt.b": "Ext.T"}),
+                            registry["inputs"]["aliases_sha256"])
+
     def test_an_extraction_without_a_live_credited_declaration_writes_nothing(self) -> None:
         # Ext.main's page was added after the extraction was made: its statement depends on Ext.blocked, but the
         # earlier extraction, otherwise valid, has no row for Ext.main, nor for Ext.old, which an earlier sync's

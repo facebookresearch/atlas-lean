@@ -516,12 +516,16 @@ def resolve_aliases(listed: dict[str, str], manifest: set[str], rows: dict[str, 
 
 
 def aliases_digest(aliases: dict[str, str]) -> str:
-    """The digest of the duplicates the rows list, each with its article (article_aliases), sorted, one
-    `name<TAB>article` a line: the lists a registry records it was made for, which a consumer computes again from its
-    checkout's rows (sync_wiki.registry_problems). A `duplicates` edit can change the bridges and leave the extraction
-    as it was, so its digest cannot show it."""
-    return hashlib.sha256("".join(f"{name}\t{article}\n"
-                                  for name, article in sorted(aliases.items())).encode("utf-8")).hexdigest()
+    """The digest of the duplicates the rows list, each with its article (article_aliases): each article, sorted, with
+    its duplicates, sorted, as compact JSON with every character past ASCII escaped, which spells any lists one way
+    only, whatever their strings hold (a tab, a line feed, a lone surrogate). These are the lists a registry records
+    it was made for, which a consumer computes again from its checkout's rows (sync_wiki.registry_problems). A
+    `duplicates` edit can change the bridges and leave the extraction as it was, so its digest cannot show it."""
+    lists: dict[str, list[str]] = {}
+    for name, article in aliases.items():
+        lists.setdefault(article, []).append(name)
+    encoded = json.dumps(sorted((article, sorted(names)) for article, names in lists.items()), separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("ascii")).hexdigest()
 
 
 def lean_index():
