@@ -41,7 +41,9 @@ noncomputable def multipleZetaValue (k : List ℕ) : ℝ :=
 
 namespace CyclicSumFormula
 
-/-- Bundle a positive list as a multiple-zeta index. -/
+/-- **The index of a list of positive integers.** A list $(l_1, \dots, l_r)$ of positive
+integers determines the multiple-zeta index whose entries are $l_1, \dots, l_r$ in this order;
+its weight is $l_1 + \cdots + l_r$. -/
 noncomputable def toIndex (l : List ℕ) (hpos : ∀ x ∈ l, 0 < x) :
     MultipleZeta.Index :=
   ⟨l.sum, ⟨l, fun {x} hx => hpos x hx, rfl⟩⟩
@@ -107,8 +109,11 @@ private theorem rightList_adm (k : List ℕ) (hk_pos : ∀ n ∈ k, 1 ≤ n)
   · intro x hx
     exact rightList_pos k hk_pos j x (List.mem_cons_of_mem _ hx)
 
-/-- The left-hand index of the cyclic sum formula, bundled as a
-`MultipleZeta.Index`. Off the summation range it defaults to `[2]`. -/
+/-- **Left-hand indices of the cyclic sum formula.** Let $k = (k_1, \dots, k_l)$ be a list of
+positive integers, with subscripts read modulo $l$. For $1 \le j \le l$ and a natural number
+$i$, the left-hand index of $k$ at $(j, i)$ is the index
+$(k_j - i + 1, k_{j+1}, \dots, k_{j+l-1}, i)$ when $1 \le i \le k_j - 1$, and the index $(2)$
+otherwise. The run $k_{j+1}, \dots, k_{j+l-1}$ is empty when $l = 1$. -/
 noncomputable def leftIndex (k : List ℕ) (hk_pos : ∀ n ∈ k, 1 ≤ n)
     (j : Fin k.length) (i : ℕ) : MultipleZeta.Index :=
   if hmem : i ∈ Finset.Icc 1 (k.get j - 1) then
@@ -129,8 +134,10 @@ noncomputable def leftIndex (k : List ℕ) (hk_pos : ∀ n ∈ k, 1 ≤ n)
   else
     toIndex [2] (fun x hx => by rw [List.mem_singleton] at hx; omega)
 
-/-- The right-hand index of the cyclic sum formula, bundled as a
-`MultipleZeta.Index`. -/
+/-- **Right-hand indices of the cyclic sum formula.** Let $k = (k_1, \dots, k_l)$ be a list of
+positive integers, with subscripts read modulo $l$. For $1 \le j \le l$, the right-hand index of
+$k$ at $j$ is the index $(k_j + 1, k_{j+1}, \dots, k_{j+l-1})$, where the run
+$k_{j+1}, \dots, k_{j+l-1}$ is empty when $l = 1$. -/
 noncomputable def rightIndex (k : List ℕ) (hk_pos : ∀ n ∈ k, 1 ≤ n)
     (j : Fin k.length) : MultipleZeta.Index :=
   toIndex ((k.get j + 1) :: (k.rotate j.1).tail) (by
@@ -143,7 +150,9 @@ noncomputable def rightIndex (k : List ℕ) (hk_pos : ∀ n ∈ k, 1 ≤ n)
       have h1 := hk_pos x hxR
       omega)
 
-/-- The left-hand index is always admissible or empty. -/
+/-- **Left-hand indices of the cyclic sum formula are admissible or empty.** For every list
+$k = (k_1, \dots, k_l)$ of positive integers, every $1 \le j \le l$ and every natural number $i$,
+the left-hand index of the cyclic sum formula of $k$ at $(j, i)$ is admissible or empty. -/
 theorem leftIndex_isAdmissibleOrEmpty (k : List ℕ) (hk_pos : ∀ n ∈ k, 1 ≤ n)
     (j : Fin k.length) (i : ℕ) :
     (leftIndex k hk_pos j i).IsAdmissibleOrEmpty := by
@@ -159,7 +168,9 @@ theorem leftIndex_isAdmissibleOrEmpty (k : List ℕ) (hk_pos : ∀ n ∈ k, 1 �
     intro x hx
     simp at hx
 
-/-- The right-hand index is always admissible or empty. -/
+/-- **Right-hand indices of the cyclic sum formula are admissible or empty.** For every list
+$k = (k_1, \dots, k_l)$ of positive integers and every $1 \le j \le l$, the right-hand index of
+the cyclic sum formula of $k$ at $j$ is admissible or empty. -/
 theorem rightIndex_isAdmissibleOrEmpty (k : List ℕ) (hk_pos : ∀ n ∈ k, 1 ≤ n)
     (j : Fin k.length) :
     (rightIndex k hk_pos j).IsAdmissibleOrEmpty := by
@@ -1547,10 +1558,18 @@ private lemma cycT_ne_top (l : List ℕ) (hpos : ∀ x ∈ l, 1 ≤ x)
 end CyclicSumFormula
 
 /--
-The Hoffman-Ohno cyclic sum formula for multiple zeta values, stated via the
-canonical strict multiple-zeta API (`MetaMathlibExt.MultipleZeta.strictValue`).
-
-`Wanted` entry `hoffman_ohno_cyclic_sum_formula` is proved from this below.
+**Cyclic sum formula for strict multiple zeta values of indices.** Let $k = (k_1, \dots, k_l)$
+be a nonempty list of positive integers, not all equal to $1$, with subscripts read modulo $l$,
+and write $\zeta$ for the strict multiple zeta value. For $1 \le j \le l$ and
+$1 \le i \le k_j - 1$ the left-hand index of the cyclic sum formula of $k$ at $(j, i)$ is
+$(k_j - i + 1, k_{j+1}, \dots, k_{j+l-1}, i)$, and its right-hand index at $j$ is
+$(k_j + 1, k_{j+1}, \dots, k_{j+l-1})$; the run $k_{j+1}, \dots, k_{j+l-1}$ is empty when
+$l = 1$. Then
+$$
+\sum_{j=1}^{l} \sum_{i=1}^{k_j - 1} \zeta(k_j - i + 1, k_{j+1}, \dots, k_{j+l-1}, i)
+= \sum_{j=1}^{l} \zeta(k_j + 1, k_{j+1}, \dots, k_{j+l-1}),
+$$
+where the inner sum is empty when $k_j = 1$.
 -/
 theorem hoffman_ohno_cyclic_sum_formula_strict
     (k : List ℕ)
@@ -1711,7 +1730,19 @@ theorem hoffman_ohno_cyclic_sum_formula_strict
   exact hL.symm.trans (hcongr.trans hR)
 
 /--
-The Hoffman-Ohno cyclic sum formula for multiple zeta values.
+**Cyclic sum formula (Hoffman–Ohno).** For a finite list $(n_1, \dots, n_r)$ of natural numbers
+let $\zeta(n_1, \dots, n_r)$ be the sum of $(m_1^{n_1} \cdots m_r^{n_r})^{-1}$ over all integers
+$m_1 > m_2 > \cdots > m_r > 0$, taken to be $0$ when this family is not summable. Let
+$k = (k_1, \dots, k_l)$ be a nonempty list of positive integers, not all equal to $1$, with
+subscripts read modulo $l$. Then
+$$
+\sum_{j=1}^{l} \sum_{i=1}^{k_j - 1} \zeta(k_j - i + 1, k_{j+1}, \dots, k_{j+l-1}, i)
+= \sum_{j=1}^{l} \zeta(k_j + 1, k_{j+1}, \dots, k_{j+l-1}),
+$$
+where the inner sum is empty when $k_j = 1$ and the run $k_{j+1}, \dots, k_{j+l-1}$ is empty
+when $l = 1$.
+
+Proves `Wanted` entry `hoffman_ohno_cyclic_sum_formula`.
 
 Source: Shingo Saito, Tatsushi Tanaka, and Noriko Wakabayashi,
 "Combinatorial Remarks on the Cyclic Sum Formula for Multiple Zeta Values,"
@@ -1719,8 +1750,6 @@ Journal of Integer Sequences 14 (2011), Article 11.2.4,
 Theorem `thm:CSF` ("Cyclic sum formula," first proved by Hoffman-Ohno), lines 242–248;
 index set `check{I}^1` at lines 150–166,
 <https://cs.uwaterloo.ca/journals/JIS/VOL14/Saito/saito22.tex>.
-
-Proves `Wanted` entry `hoffman_ohno_cyclic_sum_formula`.
 -/
 theorem hoffman_ohno_cyclic_sum_formula
     (k : List ℕ)

@@ -25,10 +25,6 @@ Finite bipartite: max matching size = min vertex cover size.
 Source: D. Kőnig, Mat. Fiz. Lapok 38 (1931); J. Egerváry (1931).
 -/
 
-/-- Every set in a finite type is finite. -/
-private lemma konig_fin {V : Type*} [Finite V] (s : Set V) : s.Finite :=
-  Set.finite_univ.subset (Set.subset_univ s)
-
 /-- A matching whose vertices split as `s ∪ t` with every edge across has
 `edgeSet.ncard = s.ncard`. -/
 private lemma konig_count {V : Type*} {G : SimpleGraph V}
@@ -164,8 +160,9 @@ private lemma konig_hall_match {V : Type*} [DecidableEq V] {G : SimpleGraph V} {
   · exact Or.inl hxA
   · exact Or.inr (hrB hxr)
 
-/-- Kőnig's theorem for a bipartite simple graph on a `Finite` vertex type: there is a matching
-`M` and a vertex cover `C` with `M.edgeSet.ncard = C.ncard`. -/
+/-- **Kőnig's theorem on a finite vertex type.** Let $G$ be a bipartite simple graph on a finite
+vertex type $V$. Then there are a matching $M$ in $G$ and a vertex cover $C \subseteq V$ of $G$ such
+that the number of edges of $M$ equals the number of vertices in $C$. -/
 theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
     (hBip : G.IsBipartite) :
     ∃ (M : G.Subgraph) (C : Set V),
@@ -213,7 +210,7 @@ theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
       intro x hxS hxs
       exact ((Set.mem_sdiff _).mp (hs hxs)).2 hxS
     have e1 : (Sstarv ∪ s).ncard = Sstarv.ncard + s.ncard :=
-      Set.ncard_union_eq hdisjSs (konig_fin _) (konig_fin _)
+      Set.ncard_union_eq hdisjSs (Set.toFinite _) (Set.toFinite _)
     have hNun : (⋃ x ∈ Sstarv ∪ s, G.neighborSet x)
         = (⋃ x ∈ Sstarv, G.neighborSet x) ∪ ⋃ x ∈ s, G.neighborSet x := by
       ext y
@@ -244,7 +241,7 @@ theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
         · rintro ⟨⟨x, hx, hxy⟩, hyN⟩
           exact ⟨x, hx, hxy, hyN⟩
       rw [hNun, hun, heq]
-      exact Set.ncard_union_eq hdisjN (konig_fin _) (konig_fin _)
+      exact Set.ncard_union_eq hdisjN (Set.toFinite _) (Set.toFinite _)
     omega
   -- Hall condition on the `NstarU` side, inside `Sstarv`.
   have Hset2 : ∀ s : Set V, s ⊆ NstarU →
@@ -262,7 +259,7 @@ theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
         simp only [Set.mem_sdiff, Set.mem_inter_iff]
         tauto
       rw [heq]
-      exact Set.ncard_sdiff hsub (konig_fin _)
+      exact Set.ncard_sdiff hsub (Set.toFinite _)
     have hNDsub : (⋃ x ∈ Sstarv \ (⋃ x ∈ s, G.neighborSet x), G.neighborSet x)
         ⊆ NstarU \ s := by
       intro z hz
@@ -278,11 +275,11 @@ theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
       exact (Set.mem_sdiff _).mpr ⟨hzN, hzs⟩
     have e2 : (⋃ x ∈ Sstarv \ (⋃ x ∈ s, G.neighborSet x), G.neighborSet x).ncard
         ≤ NstarU.ncard - s.ncard := by
-      have h1 := Set.ncard_le_ncard hNDsub (konig_fin _)
+      have h1 := Set.ncard_le_ncard hNDsub (Set.toFinite _)
       have h2 : (NstarU \ s).ncard = NstarU.ncard - s.ncard :=
-        Set.ncard_sdiff hs (konig_fin _)
+        Set.ncard_sdiff hs (Set.toFinite _)
       rwa [h2] at h1
-    have hsN : s.ncard ≤ NstarU.ncard := Set.ncard_le_ncard hs (konig_fin _)
+    have hsN : s.ncard ≤ NstarU.ncard := Set.ncard_le_ncard hs (Set.toFinite _)
     have heq : (⋃ x ∈ s, G.neighborSet x \ Sstarvᶜ)
         = (⋃ x ∈ s, G.neighborSet x) ∩ Sstarv := by
       ext y
@@ -383,7 +380,7 @@ theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
     have ha2 : a ∈ M2.support := (SimpleGraph.Subgraph.mem_support M2).mpr ⟨b, h2⟩
     exact Set.disjoint_left.mp hsupdisj ha1 ha2
   have hMcard : M.edgeSet.ncard = A.ncard + NstarU.ncard := by
-    rw [hedge, Set.ncard_union_eq hedisj (konig_fin _) (konig_fin _), hc1, hc2]
+    rw [hedge, Set.ncard_union_eq hedisj (Set.toFinite _) (Set.toFinite _), hc1, hc2]
   set C : Set V := A ∪ NstarU with hC
   have hCcover : G.IsVertexCover C := by
     intro v w hadj
@@ -407,19 +404,21 @@ theorem konig_matching_cover_general {V : Type*} [Finite V] (G : SimpleGraph V)
     exact Set.ncard_union_eq
       (Set.disjoint_left.mpr (fun x hxA hxN =>
         Set.disjoint_left.mp hLR.disjoint (hsubAL hxA) (hNR hxN)))
-      (konig_fin _) (konig_fin _)
+      (Set.toFinite _) (Set.toFinite _)
   exact ⟨M, C, hMmatch, hCcover, by rw [hMcard, hCcard]⟩
 
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
 /--
-Kőnig's theorem (matching-cover equality, finite bipartite): every finite bipartite simple graph has
-a matching `M` and a vertex cover `C` with `M.edgeSet.ncard = C.ncard`.
+**Kőnig's theorem for finite bipartite graphs.** Every bipartite simple graph $G$ on a finite
+vertex type $V$ has a matching $M$ and a vertex cover $C \subseteq V$ such that the number of edges
+of $M$ equals the number of vertices in $C$.
+
+Proves `Wanted` entry `konig_matching_cover`.
+
 Source: D. Kőnig (1931); J. Egerváry (1931) weighted form.
 It follows from `konig_matching_cover_general`; the instances `[DecidableEq V]` and
 `[DecidableRel G.Adj]` are unused and keep the source's shape.
-
-Proves `Wanted` entry `konig_matching_cover`.
 -/
 @[nolint unusedArguments]
 theorem konig_matching_cover {V : Type*} [Fintype V]
