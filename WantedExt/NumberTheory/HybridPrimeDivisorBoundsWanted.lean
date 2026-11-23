@@ -15,6 +15,7 @@ public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 public import MathlibExt.NumberTheory.Cyclotomic.CommonPrimeDivisorEvalPow
+public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
 
 namespace MetaMathlibExt
 
@@ -44,16 +45,6 @@ public theorem_wanted prime_dvd_pow_sub_one_iff_cyclotomic {p r a : ℕ} (hp : p
     (p : ℤ) ∣ x ^ (r * p ^ a) - 1 ↔
       (p : ℤ) ∣ x ^ r - 1 ∧
         ∀ i ∈ Finset.Icc 1 a, (p : ℤ) ∣ (cyclotomic p ℤ).eval (x ^ (r * p ^ (i - 1)))
-
-/-- **Prime divisors of $\Phi_p(x)$ other than $p$ are $1$ modulo $p$.** Let $\rho$ and $p$ be
-distinct primes, let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th cyclotomic
-polynomial with integer coefficients. If $\rho \mid \Phi_p(x)$, then $\rho \equiv 1 \pmod p$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 1 (`integers-2026-A95-prop-1`). -/
-public theorem_wanted prime_modEq_one_of_dvd_cyclotomic_eval {ρ p : ℕ} (hρ : ρ.Prime)
-    (hp : p.Prime) (hne : ρ ≠ p) {x : ℤ} (hx : 0 < x)
-    (h : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval x) : Nat.ModEq p ρ 1
 
 /-- The hybrid bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with distinct primes `p_i` (in any order),
 `x > 1`, and `ω_n = ω(x^n - 1)`. With `p_0 := 1`, let

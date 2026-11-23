@@ -4,3 +4,4 @@ Compact, locally compact, σ-compact, Lindelöf, countably compact and paracompa
 
 - [The continuous image of a compact space is compact](compact-image.md)
 - [A closed subset of a compact space is compact](closed-subset-compact.md)
+- [Generalized tube lemma for a product of two compact sets](generalized-tube-lemma.md)

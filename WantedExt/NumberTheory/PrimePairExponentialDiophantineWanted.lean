@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Order.Ring.Int
 public import MathlibExt.NumberTheory.PrimePairPowAddPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowSubTwoPowOddMulPowEqSq
 public import MathlibExt.NumberTheory.PrimePairTwoPowEvenMulPowSubPowEqSq
+public import MathlibExt.NumberTheory.PrimePowAddOneEqSq
 
 /-!
 # The equations `(-1)^α pˣ + (-1)^β (2ᵏ(2p - 1))ʸ = z²` for prime pairs `(p, 2p - 1)`
@@ -27,14 +28,6 @@ subtraction are read in `ℤ`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Prime powers one less than a square.** Let $p$ be a prime. Then non-negative integers $x$
-and $y$ satisfy $p^x + 1 = y^2$ if and only if $(p, x, y) = (2, 3, 3)$ or $(p, x, y) = (3, 1, 2)$.
-
-Source: Jing Zhang and Yuan Li, *On the Equation (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for
-Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Lemma 2. -/
-theorem_wanted prime_pow_add_one_eq_sq_iff {p : ℕ} (hp : p.Prime) (x y : ℕ) :
-    p ^ x + 1 = y ^ 2 ↔ (p, x, y) = (2, 3, 3) ∨ (p, x, y) = (3, 1, 2)
 
 /-- **Squares of the form $1 + (2^k(2p - 1))^y$ for prime pairs.** Let $p$ be an odd prime such
 that $2p - 1$ is prime, and let $k \ge 1$ be an integer. Then non-negative integers $y$ and $z$

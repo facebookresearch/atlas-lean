@@ -25,4 +25,14 @@ example : ∑ j ∈ Finset.range 7, fibStep 2 j * (fibStep 3 (6 - j) - fibStep 4
   rw [sum_fib_mul_sub_eq 6 (by decide)]
   decide
 
+-- For the next three orders, the shifted sum again starts at index zero.
+example : ∑ j ∈ Finset.range 2, fibStep 3 j * (fibStep 4 (1 - j) - fibStep 5 (1 - j)) = 0 := by
+  rw [sum_trib_mul_sub_eq 1 (by decide)]
+  decide
+
+-- The tetranacci and pentanacci terms first differ at index six.
+example : ∑ j ∈ Finset.range 8, fibStep 3 j * (fibStep 4 (7 - j) - fibStep 5 (7 - j)) = -1 := by
+  rw [sum_trib_mul_sub_eq 7 (by decide)]
+  decide
+
 end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted

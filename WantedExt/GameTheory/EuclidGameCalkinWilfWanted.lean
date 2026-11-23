@@ -47,24 +47,6 @@ public theorem_wanted euclidPPosition_branch_step (x y : ℕ) (hx : 0 < x) (hy :
     (euclidPPosition (x + y) y = true → euclidPPosition (2 * x + y) (x + y) = true) ∧
       (euclidPPosition x (x + y) = true → euclidPPosition (x + y) (x + 2 * y) = true)
 
-/-- **Aunt or cousin of a P-position.** Call a pair $(a, b)$ of natural numbers a P-position when
-the Euclid P-position test returns true at $(a, b)$, and let its son be $s(a, b) = (a, a + b)$ and
-its daughter $d(a, b) = (a + b, b)$, as in the Calkin–Wilf tree. Let $x, y$ be positive integers,
-let $r = (x, y)$, let $q$ be one of the two children $s(r)$ and $d(r)$ of $r$, and let $q'$ be the
-other one. If the daughter $d(q)$ is a P-position, then exactly one of its aunt $q'$ and its male
-cousin $s(q')$ is a P-position. If the son $s(q)$ is a P-position, then exactly one of its uncle
-$q'$ and its female cousin $d(q')$ is a P-position.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 4.3. -/
-public theorem_wanted euclidPPosition_aunt_xor_cousin (x y : ℕ) (hx : 0 < x) (hy : 0 < y) :
-    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
-    let d : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
-    let P : ℕ × ℕ → Prop := fun p => euclidPPosition p.1 p.2 = true
-    let r := (x, y)
-    (P (d (s r)) → (P (d r) ↔ ¬P (s (d r)))) ∧ (P (d (d r)) → (P (s r) ↔ ¬P (s (s r)))) ∧
-      (P (s (d r)) → (P (s r) ↔ ¬P (d (s r)))) ∧ (P (s (s r)) → (P (d r) ↔ ¬P (d (d r))))
-
 /-- **Self-similarity of the P-positions of Euclid.** Call a pair $(a, b)$ of natural numbers a
 P-position when the Euclid P-position test returns true at $(a, b)$, and read it as the vertex
 $a/b$ of the Calkin–Wilf tree, with son $a/(a+b)$ and daughter $(a+b)/b$. Let $V$ be a vertex in
