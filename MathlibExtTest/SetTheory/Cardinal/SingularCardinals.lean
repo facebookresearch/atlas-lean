@@ -12,7 +12,6 @@ Author: Nam Trang
 module
 
 public import MathlibExt.SetTheory.Cardinal.SingularCardinals
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Cardinal.Regular
 
 @[expose] public section

@@ -71,12 +71,20 @@ variable {K L : Type*} [Field K] [Field L] [NumberField K] [NumberField L]
 variable (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L))
   [w.asIdeal.LiesOver v.asIdeal]
 
-/-- Global residue-field quotient map along `𝓞 K → 𝓞 L`. -/
+/-- **Residue map of rings of integers.** Let $L/K$ be an extension of number fields, let $v$ be
+a nonzero prime ideal of $\mathcal{O}_K$ and $w$ a nonzero prime ideal of $\mathcal{O}_L$ lying
+over $v$. This is the ring homomorphism $\mathcal{O}_K/v \to \mathcal{O}_L/w$ induced by the
+canonical map $\mathcal{O}_K \to \mathcal{O}_L$. -/
 noncomputable def ringOfIntegersResidueQuotientMap :
     𝓞 K ⧸ v.asIdeal →+* 𝓞 L ⧸ w.asIdeal :=
   Ideal.quotientMap w.asIdeal (algebraMap (𝓞 K) (𝓞 L)) (Ideal.over_def w.asIdeal v.asIdeal).le
 
-/-- Completion residue-field quotient map along the adic integer map. -/
+/-- **Residue map of completed integer rings.** Let $L/K$ be an extension of number fields, let
+$v$ be a nonzero prime ideal of $\mathcal{O}_K$ and $w$ a nonzero prime ideal of $\mathcal{O}_L$
+lying over $v$. Let $\mathcal{O}_{K_v}$ and $\mathcal{O}_{L_w}$ be the rings of integers of the
+completions $K_v$ and $L_w$, with maximal ideals $\mathfrak{m}_v$ and $\mathfrak{m}_w$. This is
+the ring homomorphism $\mathcal{O}_{K_v}/\mathfrak{m}_v \to \mathcal{O}_{L_w}/\mathfrak{m}_w$
+induced by the canonical map $\mathcal{O}_{K_v} \to \mathcal{O}_{L_w}$. -/
 noncomputable def adicCompletionResidueQuotientMap :
     (↥(v.adicCompletionIntegers K) ⧸
       IsLocalRing.maximalIdeal ↥(v.adicCompletionIntegers K)) →+*
@@ -86,7 +94,16 @@ noncomputable def adicCompletionResidueQuotientMap :
     (adicCompletionIntegersMap v w)
     (comap_maximalIdeal_adicCompletionIntegersMap v w).ge
 
-/-- Naturality of the residue-field equivalences with explicit quotient maps. -/
+/-- **Naturality of the residue field identifications.** Let $L/K$ be an extension of number
+fields, let $v$ be a nonzero prime ideal of $\mathcal{O}_K$ and $w$ a nonzero prime ideal of
+$\mathcal{O}_L$ lying over $v$. Let $\mathcal{O}_{K_v}$ and $\mathcal{O}_{L_w}$ be the rings of
+integers of the completions $K_v$ and $L_w$, with maximal ideals $\mathfrak{m}_v$ and
+$\mathfrak{m}_w$. Then the two maps $\mathcal{O}_{K_v}/\mathfrak{m}_v \to \mathcal{O}_L/w$ agree:
+the residue field isomorphism $\mathcal{O}_{K_v}/\mathfrak{m}_v \cong \mathcal{O}_K/v$ followed by
+the map $\mathcal{O}_K/v \to \mathcal{O}_L/w$ induced by $\mathcal{O}_K \to \mathcal{O}_L$, and
+the map $\mathcal{O}_{K_v}/\mathfrak{m}_v \to \mathcal{O}_{L_w}/\mathfrak{m}_w$ induced by the
+canonical map $\mathcal{O}_{K_v} \to \mathcal{O}_{L_w}$ followed by the residue field isomorphism
+$\mathcal{O}_{L_w}/\mathfrak{m}_w \cong \mathcal{O}_L/w$. -/
 theorem completionResidueFieldEquiv_naturality :
     (ringOfIntegersResidueQuotientMap v w).comp
       (completionResidueFieldEquiv v).toRingHom =

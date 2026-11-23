@@ -26,8 +26,9 @@ namespace MathlibExt.GroupTheory.AlmostSimpleShared
 
 universe u
 
-/-- A group is almost simple when it is isomorphic to a subgroup between the inner and
-full automorphism groups of a nonabelian finite simple group. -/
+/-- **Almost simple groups.** A group $G$ is almost simple when there is a nonabelian finite simple
+group $S$ such that $G$ is isomorphic to a subgroup $A$ of the automorphism group $\mathrm{Aut}(S)$
+that contains the inner automorphism group $\mathrm{Inn}(S)$. -/
 def IsAlmostSimple (G : Type u) [Group G] : Prop :=
   ∃ (S : Type u) (groupStructure : Group S) (finiteS : Finite S)
       (simpleS : IsSimpleGroup S),

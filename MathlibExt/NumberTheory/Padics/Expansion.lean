@@ -28,10 +28,9 @@ namespace PadicInt
 
 variable {p : ℕ} [Fact p.Prime]
 
-/-- Uniqueness of the `p`-adic expansion: two `p`-adic integers with the
-same digits at every place are equal. The proof compares the approximations
-`appr` by induction, using `appr_succ_eq`, and then applies
-`PadicInt.ext_of_toZModPow`. -/
+/-- **$p$-adic digits determine a $p$-adic integer.** Let $p$ be a prime. If two $p$-adic
+integers $a, a' \in \mathbb{Z}_p$ have the same $n$-th $p$-adic digit for every $n \ge 0$, then
+$a = a'$. -/
 theorem eq_of_padicDigit_eq {a a' : ℤ_[p]}
     (h : ∀ n, padicDigit a n = padicDigit a' n) : a = a' := by
   suffices happr : ∀ n, a.appr n = a'.appr n by
@@ -46,11 +45,12 @@ theorem eq_of_padicDigit_eq {a a' : ℤ_[p]}
   | succ n ih =>
     rw [appr_succ_eq a n, appr_succ_eq a' n, ih, h n]
 
-/-- Existence of a `p`-adic integer with prescribed digits: every sequence
-`(b n)` of integers in `[0, p - 1]` is the `p`-adic expansion of some
-`a : ℤ_[p]`. The witness is `PadicInt.ofIntSeq` applied to the partial
-sums `∑ k < n, b k * p ^ k`; its approximations are those partial sums,
-which is read off from `toZModPow` because both sides are below `p ^ n`. -/
+/-- **Existence of a $p$-adic integer with prescribed digits.** Let $p$ be a prime. For every
+sequence $(b_n)_{n \ge 0}$ of natural numbers with $b_n < p$ for all $n$, there is a $p$-adic
+integer $a \in \mathbb{Z}_p$ whose $n$-th $p$-adic digit is $b_n$ for every $n \ge 0$.
+
+The witness is the $p$-adic limit of the partial sums $\sum_{k=0}^{n-1} b_k p^k$, which are its
+approximations modulo $p^n$. -/
 theorem exists_padicDigit_eq (b : ℕ → ℕ) (hb : ∀ n, b n < p) :
     ∃ a : ℤ_[p], ∀ n, padicDigit a n = b n := by
   have hp : 0 < p := (Nat.Prime.pos (Fact.out : p.Prime))
@@ -122,15 +122,20 @@ theorem exists_padicDigit_eq (b : ℕ → ℕ) (hb : ∀ n, b n < p) :
   rw [hdiff, mul_comm (b n) (p ^ n)]
   exact Nat.mul_div_cancel_left _ (pow_pos hp n)
 
-/-- Proposition 8.17 of ATLAS `NumberTheoryI`: every sequence of digits in
-`[0, p - 1]` is the `p`-adic expansion of a unique `p`-adic integer. -/
+/-- **Existence and uniqueness of $p$-adic integers with prescribed digits.** Let $p$ be a prime.
+For every sequence $(b_n)_{n \ge 0}$ of natural numbers with $b_n < p$ for all $n$, there is
+exactly one $p$-adic integer $a \in \mathbb{Z}_p$ whose $n$-th $p$-adic digit is $b_n$ for every
+$n \ge 0$.
+
+Source: ATLAS `NumberTheoryI`, Proposition 8.17. -/
 theorem existsUnique_padicDigit_eq (b : ℕ → ℕ) (hb : ∀ n, b n < p) :
     ∃! a : ℤ_[p], ∀ n, padicDigit a n = b n := by
   obtain ⟨a, ha⟩ := exists_padicDigit_eq b hb
   exact ⟨a, ha, fun a' ha' =>
     eq_of_padicDigit_eq (fun n => (ha' n).trans (ha n).symm)⟩
 
-/-- Equal bundled expansions determine equal `p`-adic integers. -/
+/-- **The $p$-adic expansion map is injective.** Let $p$ be a prime. If two $p$-adic integers
+$a, a' \in \mathbb{Z}_p$ have the same $p$-adic expansion, then $a = a'$. -/
 theorem padicExpansion_injective :
     Function.Injective (padicExpansion (p := p)) := by
   intro a a' h
@@ -139,7 +144,9 @@ theorem padicExpansion_injective :
   simpa only [padicExpansion_val] using
     congrArg (fun f : ℕ → Fin p => (f n).val) h
 
-/-- Every `Fin p`-valued digit sequence is a bundled `p`-adic expansion. -/
+/-- **The $p$-adic expansion map is surjective.** Let $p$ be a prime. Every sequence
+$(b_n)_{n \ge 0}$ with values in $\{0, 1, \dots, p - 1\}$ is the $p$-adic expansion of some
+$p$-adic integer $a \in \mathbb{Z}_p$. -/
 theorem padicExpansion_surjective :
     Function.Surjective (padicExpansion (p := p)) := by
   intro b
@@ -147,7 +154,11 @@ theorem padicExpansion_surjective :
     (fun n => (b n).isLt)
   exact ⟨a, funext fun n => Fin.ext (ha n)⟩
 
-/-- Proposition 8.17: the bundled `p`-adic expansion map is bijective. -/
+/-- **The $p$-adic expansion map is bijective.** Let $p$ be a prime. The map sending a $p$-adic
+integer $a \in \mathbb{Z}_p$ to its $p$-adic expansion is a bijection from $\mathbb{Z}_p$ onto
+the set of all sequences $(b_n)_{n \ge 0}$ with values in $\{0, 1, \dots, p - 1\}$.
+
+Source: ATLAS `NumberTheoryI`, Proposition 8.17. -/
 theorem padicExpansion_bijective :
     Function.Bijective (padicExpansion (p := p)) :=
   ⟨padicExpansion_injective, padicExpansion_surjective⟩

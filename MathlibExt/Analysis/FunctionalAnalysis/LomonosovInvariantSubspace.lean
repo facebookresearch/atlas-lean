@@ -405,14 +405,17 @@ private theorem lomo_false_of_transitive
   exact absurd hm.2 (not_le_of_gt hm.1)
 
 /--
-In an infinite-dimensional complex Banach space `E`, if `K ≠ 0` is compact and `T : E →L[ℂ] E`
-commutes with `K`, then `T` has a nontrivial proper closed `ℂ`-invariant subspace `M` with `M ≠
-⊥`, `M ≠ ⊤`, `IsClosed M`, `T '' M ⊆ M`. Source: V. Lomonosov, Functional Anal. Appl. 7 (1973)
+**Lomonosov's invariant subspace theorem.** Let $E$ be an infinite-dimensional complex Banach
+space, let $K$ be a nonzero compact operator on $E$, and let $T$ be a bounded linear operator on
+$E$ with $TK = KT$. Then there is a closed linear subspace $M$ of $E$ with $M \ne \{0\}$ and
+$M \ne E$ that is invariant under $T$: $T x \in M$ for every $x \in M$.
+
+Proves `Wanted` entry `lomonosov_invariantSubspace`.
+
+Source: V. Lomonosov, Functional Anal. Appl. 7 (1973)
 and J. Hilden elementary proof, Bull. Amer. Math. Soc.; Aronszajn-Smith 1954 precursor;
 Radjavi-Rosenthal invariant subspace book, 1973; Lean states complex Banach infinite-dimensional
 case `K≠0` compact commuting with `T` yields nontrivial closed invariant subspace.
-
-Proves `Wanted` entry `lomonosov_invariantSubspace`.
 -/
 theorem lomonosov_invariantSubspace
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]

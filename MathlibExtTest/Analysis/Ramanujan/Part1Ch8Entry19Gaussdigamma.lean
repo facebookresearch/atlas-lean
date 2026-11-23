@@ -23,4 +23,16 @@ example :
   have h := (ramanujan_part1_ch8_entry19_gaussdigamma 1).1 0 (by omega)
   simpa [chapter8LogPowerConstant, riemannZeta_zero] using h
 
+example :
+    Tendsto (chapter8LogPowerConstantApprox 1) atTop
+      (𝓝 (-deriv (fun s : ℝ => (riemannZeta (s : ℂ)).re) 0)) := by
+  simpa [chapter8LogPowerConstant, iteratedDeriv_one] using
+    (ramanujan_part1_ch8_entry19_gaussdigamma 2).1 1 (by omega)
+
+example :
+    Asymptotics.IsBigO atTop
+      (fun x : ℕ => chapter8Entry19Combination 2 x - chapter8Entry19Approx 2 x)
+      (fun x : ℕ => 1 / (x : ℝ) ^ 5) := by
+  simpa using (ramanujan_part1_ch8_entry19_gaussdigamma 2).2
+
 end MathlibExtTest.Analysis.Ramanujan.Part1Ch8Entry19Gaussdigamma
