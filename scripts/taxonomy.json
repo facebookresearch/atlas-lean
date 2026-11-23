@@ -833,16 +833,22 @@
    "title": "Mathematical Physics",
    "description": "Mathematical physics describes mechanical, electromagnetic and quantum systems through mathematical models and their laws.",
    "fields": [
+    {"slug": "quantities-and-measurement", "title": "Quantities, units and measurement", "description": "Physical quantities and their dimensions in the International System of Quantities, unit conversions and dimensionless groups, and the propagation of measurement uncertainty through linear, linearized and Lipschitz models. Calibration in analytical chemistry is under Chemistry.", "msc": ["00A73", "62P35"], "subfields": []},
     {"slug": "elasticity-and-structures", "title": "Elasticity and structural mechanics", "description": "Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.", "msc": ["74B05", "74A10", "74K10", "74H45", "74R10"], "subfields": []},
-    {"slug": "fluid-mechanics", "title": "Fluid mechanics", "description": "Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, and continuum models of traffic flow with their shocks. Rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.", "msc": ["76A02", "76D07", "76A30", "35L65"], "subfields": []}
+    {"slug": "fluid-mechanics", "title": "Fluid mechanics", "description": "Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, and continuum models of traffic flow with their shocks. Rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.", "msc": ["76A02", "76D07", "76A30", "35L65"], "subfields": []},
+    {"slug": "quantum-mechanics", "title": "Quantum mechanics", "description": "Nonrelativistic quantum mechanics: states, observables and the Born rule in finite dimensions, unitary evolution, and exactly solvable models such as the particle in a box and the harmonic oscillator. Quantum chemistry is under Chemistry and quantum information under Quantum Information.", "msc": ["81P16", "81Q05", "81Q10"], "subfields": []}
    ]
   },
   "Chemistry": {
    "title": "Mathematical Chemistry",
    "description": "Mathematical chemistry studies quantitative models of chemical systems and reactions.",
    "fields": [
+    {"slug": "amounts-and-stoichiometry", "title": "Amounts, composition and stoichiometry", "description": "Amounts of substance, molar masses and composition, flows of process streams, and the stoichiometry of balanced reactions: conserved balance coordinates, reaction extents, limiting reagents and yields.", "msc": ["92E20", "80A50", "15A06"], "subfields": []},
+    {"slug": "chemical-thermodynamics", "title": "Chemical thermodynamics", "description": "Equilibrium thermodynamics of gases and chemical systems: equations of state and the kinetic theory of gases, the canonical ensemble, the first and second laws, the fundamental relation, thermochemistry, Gibbs energy, phase equilibria and the phase rule.", "msc": ["80A10", "80A50", "82B05", "82C40"], "subfields": []},
     {"slug": "solutions-and-aqueous-equilibria", "title": "Solutions and aqueous equilibria", "description": "Concentrations of solutions and the equilibria of aqueous systems: charge and mass balances and the proton condition, acid dissociation, carbonate speciation and alkalinity, Henry's law and air–water gas exchange.", "msc": ["92E20", "80A50", "26C10"], "subfields": []},
-    {"slug": "chemical-kinetics", "title": "Chemical kinetics and reactors", "description": "Rates of chemical reactions and well-mixed reactors: integrated rate laws and half-lives, the Arrhenius law, conservation laws of reaction networks, and stirred-tank and box reactors. Biochemical reaction networks are under Biology.", "msc": ["80A30", "92E20", "34A30"], "subfields": []}
+    {"slug": "chemical-kinetics", "title": "Chemical kinetics and reactors", "description": "Rates of chemical reactions and well-mixed reactors: integrated rate laws and half-lives, the Arrhenius law, conservation laws of reaction networks, and stirred-tank and box reactors. Biochemical reaction networks are under Biology.", "msc": ["80A30", "92E20", "34A30"], "subfields": []},
+    {"slug": "quantum-chemistry-and-spectroscopy", "title": "Quantum chemistry and spectroscopy", "description": "Quantum models of atoms and molecules and their spectra: angular momentum, the rigid rotor and hydrogen-like atoms, variational and perturbation methods and Hückel theory, molecular symmetry and vibrational modes, and nuclear magnetic resonance.", "msc": ["81V45", "81V55", "92E10", "20C35"], "subfields": []},
+    {"slug": "analytical-chemistry", "title": "Analytical chemistry", "description": "Quantitative chemical analysis: statistical treatment of replicate measurements, calibration lines and inverse prediction with their error budgets, and mass spectrometry and isotope patterns.", "msc": ["62P30", "62J05", "62F25"], "subfields": []}
    ]
   },
   "EarthScience": {
@@ -9926,6 +9932,8 @@
   "Domains/Biology/StatisticalGenetics/StratifiedLDScore": {"to": "Biology/statistical-genetics", "title": "Stratified LD-score regression"},
   "Domains/Biology/StatisticalGenetics/SummaryImputation": {"to": "Biology/statistical-genetics", "title": "Imputation of association summary statistics"},
   "Domains/Biology/StatisticalGenetics/TransmissionTest": {"to": "Biology/statistical-genetics", "title": "Transmission disequilibrium test"},
+  "Domains/Chemistry/Aqueous/Balances": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Charge balance, mass balance and the proton condition"},
+  "Domains/Chemistry/Spectrometry/IsotopePatterns": {"to": "Chemistry/analytical-chemistry", "title": "Mass spectrometry and isotope patterns"},
   "MathlibExt/CategoryTheory/Abelian/LeftDerived/Additive": {"to": "CategoryTheory/homological-algebra", "title": "Additivity of derived functors"},
   "MathlibExt/CategoryTheory/Monoidal/Braided": {"to": "CategoryTheory/monoidal-categories", "title": "Braided monoidal categories"},
   "MathlibExt/CategoryTheory/Monoidal/Tor/Additive": {"to": "CategoryTheory/homological-algebra", "title": "Additivity of derived functors"},
@@ -12484,6 +12492,31 @@
   "MathlibExt/Topology/TDA/ZeroDimensionalPersistence": {"to": "Topology/algebraic-topology", "title": "Persistence modules and barcodes"},
   "MathlibExt/Topology/ThreeManifold": {"to": "Topology/manifolds-geometric-topology", "title": "Topological 3-manifolds"},
   "Domains/Urban/StockNonneg": {"to": "Economics/inventory-transport-and-spatial-models", "title": "Stock balances on transfer networks"},
+  "PhyslibExt/Chemistry/Amounts/MolarMassComposition": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Amount of substance and molar mass"},
+  "PhyslibExt/Chemistry/AngularMomentumRotorHydrogen": {"to": "Chemistry/quantum-chemistry-and-spectroscopy", "title": "Angular momentum, rigid rotor and hydrogen-like atom"},
+  "PhyslibExt/Chemistry/Calibration": {"to": "Chemistry/analytical-chemistry", "title": "Analytical calibration and inverse prediction"},
+  "PhyslibExt/Chemistry/CombustionAcoustics": {"to": "Chemistry/chemical-kinetics", "title": "Thermal runaway and combustion acoustics"},
+  "PhyslibExt/Chemistry/CombustionPorts": {"to": "Chemistry/chemical-thermodynamics", "title": "Complete combustion and the adiabatic flame temperature"},
+  "PhyslibExt/Chemistry/FiniteEnsembles": {"to": "Chemistry/chemical-thermodynamics", "title": "Canonical ensemble of a finite system"},
+  "PhyslibExt/Chemistry/GasEquations": {"to": "Chemistry/chemical-thermodynamics", "title": "Equations of state of gases"},
+  "PhyslibExt/Chemistry/KineticTheory": {"to": "Chemistry/chemical-thermodynamics", "title": "Kinetic theory of gases"},
+  "PhyslibExt/Chemistry/Kinetics/RateLaws": {"to": "Chemistry/chemical-kinetics", "title": "Rate laws"},
+  "PhyslibExt/Chemistry/QuantitativeNMR": {"to": "Chemistry/quantum-chemistry-and-spectroscopy", "title": "Nuclear magnetic resonance"},
+  "PhyslibExt/Chemistry/QuantityCalculus": {"to": "Physics/quantities-and-measurement", "title": "Quantity calculus and dimensionless groups"},
+  "PhyslibExt/Chemistry/Quantum/FinitePostulates": {"to": "Physics/quantum-mechanics", "title": "Postulates of finite-dimensional quantum mechanics"},
+  "PhyslibExt/Chemistry/Quantum/OneDimensionalModels": {"to": "Physics/quantum-mechanics", "title": "Particle in a box and one-dimensional models"},
+  "PhyslibExt/Chemistry/ReactingTransportPorts": {"to": "Chemistry/chemical-kinetics", "title": "Exothermic stirred-tank reactor"},
+  "PhyslibExt/Chemistry/SolutionComposition": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Concentration units of solutions"},
+  "PhyslibExt/Chemistry/StatisticalTreatment": {"to": "Chemistry/analytical-chemistry", "title": "Statistical treatment of analytical data"},
+  "PhyslibExt/Chemistry/Stoichiometry/Balance": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Balanced reactions and stoichiometric conservation"},
+  "PhyslibExt/Chemistry/Stoichiometry/Extent": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Reaction extent, limiting reagents and yield"},
+  "PhyslibExt/Chemistry/Symmetry/GroupRepresentations": {"to": "Chemistry/quantum-chemistry-and-spectroscopy", "title": "Molecular symmetry and vibrational modes"},
+  "PhyslibExt/Chemistry/Thermodynamics/Entropy": {"to": "Chemistry/chemical-thermodynamics", "title": "Entropy, heat engines and the third law"},
+  "PhyslibExt/Chemistry/Thermodynamics/FirstLaw": {"to": "Chemistry/chemical-thermodynamics", "title": "First law of thermodynamics for the ideal gas"},
+  "PhyslibExt/Chemistry/Thermodynamics/FundamentalRelation": {"to": "Chemistry/chemical-thermodynamics", "title": "Fundamental relation of thermodynamics"},
+  "PhyslibExt/Chemistry/Thermodynamics/Thermochemistry": {"to": "Chemistry/chemical-thermodynamics", "title": "Thermochemistry and Hess's law"},
+  "PhyslibExt/Chemistry/Uncertainty/Propagation": {"to": "Physics/quantities-and-measurement", "title": "Propagation of measurement uncertainty"},
+  "PhyslibExt/Chemistry/VariationalPerturbationHuckel": {"to": "Chemistry/quantum-chemistry-and-spectroscopy", "title": "Variational method, perturbation theory and Hückel theory"},
   "PhyslibExt/CondensedMatter/IsingModel": {"to": "StatisticalMechanics/spin-models", "title": "Ising model on a finite graph"},
   "PhyslibExt/CondensedMatter/IsingModel/AizenmanBarsky": {"to": "StatisticalMechanics/random-currents-and-sharpness", "title": "Sharpness of the phase transition for the Ising model"},
   "PhyslibExt/CondensedMatter/IsingModel/AizenmanHdom": {"to": "StatisticalMechanics/correlation-inequalities", "title": "Griffiths–Hurst–Sherman inequality"},
