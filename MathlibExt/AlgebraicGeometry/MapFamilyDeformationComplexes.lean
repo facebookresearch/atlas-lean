@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.LocalDifferentialPullbacks
 public import MathlibExt.AlgebraicGeometry.GlobalPerfectObstructionTheory
 public import MathlibExt.AlgebraicGeometry.RelativeReflexiveCanonicalPowers
 public import MathlibExt.AlgebraicGeometry.NormalizedModuleTensorMaps
+public import MathlibExt.AlgebraicGeometry.DerivedInternalHom
 
 /-!
 # Actual map-family deformation complexes and evaluation derivatives
@@ -58,6 +59,7 @@ open MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open MathlibExt.AlgebraicGeometry.FiniteCoverLocalComparison
 open MathlibExt.AlgebraicGeometry.RationalResolution
+open MathlibExt.AlgebraicGeometry.DerivedInternalHom
 attribute [local instance] HasDerivedCategory.standard
 
 variable {k : Type} [CommRing k]
@@ -86,11 +88,6 @@ def fixedDeformation (C V T : Over (Spec (.of k))) (F : FixedMap C.hom V.hom T) 
   (derivedPushforward (fixedProjection C T)).obj
     ((derivedPullback F.map).obj
       ((DerivedCategory.singleFunctor V.left.Modules 0).obj (tangent V)))
-
-/-- Genuine derived internal Hom, right adjoint to the fixed native tensor functor. -/
-def internalHom (X : Scheme.{0}) (K N : D X)
-    [((derivedTensor X).obj K).IsLeftAdjoint] : D X :=
-  (Functor.rightAdjoint ((derivedTensor X).obj K)).obj N
 
 /-- The varying-source object retains C→V×_S T and the full actual cotangent normalization. -/
 def varyingDeformation {V S T : Scheme.{0}} {q : V ⟶ S} {n g : ℕ} {b : T ⟶ S}
@@ -226,4 +223,3 @@ def FixedHomDifferentialData.kodairaSpencer {C V : Over (Spec (.of k))}
     B.precomposition B.dualParameter B.dualTarget B.adjunction B.flatParameter B.targetBundle
 
 end MathlibExt.AlgebraicGeometry.MapFamilyDeformationComplexes
-

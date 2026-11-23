@@ -44,6 +44,7 @@ open MathlibExt.AlgebraicGeometry.FourierMukai
 open MathlibExt.AlgebraicGeometry.GlobalPerfectObstructionTheory
 open MathlibExt.AlgebraicGeometry.GeometricCotangentComplex
 open MathlibExt.AlgebraicGeometry.MapFamilyDeformationComplexes
+open MathlibExt.AlgebraicGeometry.DerivedInternalHom
 open MathlibExt.AlgebraicGeometry.GenericSectionMaps
 open MathlibExt.AlgebraicGeometry.BirationalDualityReferences
 open MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies
@@ -120,14 +121,6 @@ def RelativeDifferential.derived {X Y T : Scheme.{0}} {p : X ⟶ T} {q : Y ⟶ T
     (derivedPullback f).obj (DerivedCategory.Q.obj Q.complex) ⟶ DerivedCategory.Q.obj P.complex :=
   (derivedPullbackCounit f).app Q.complex ≫ DerivedCategory.Q.map D.map
 
-/-- Internal-Hom precomposition by the actual native right-adjunction transpose. -/
-def derivedPrecomposition (X : Scheme.{0}) (K L N : D X) (a : K ⟶ L)
-    [((derivedTensor X).obj K).IsLeftAdjoint]
-    [((derivedTensor X).obj L).IsLeftAdjoint] : internalHom X L N ⟶ internalHom X K N :=
-  ((Adjunction.ofIsLeftAdjoint ((derivedTensor X).obj K)).homEquiv _ _)
-    (((derivedTensor X).map a).app (internalHom X L N) ≫
-      (Adjunction.ofIsLeftAdjoint ((derivedTensor X).obj L)).counit.app N)
-
 /-- The actual ideal inclusion of all marked sections. -/
 def markingInclusion {V S T : Scheme.{0}} {q : V ⟶ S} {n g : ℕ} {b : T ⟶ S}
     (F : Family q n g T b) : markingIdeal F ⟶ structureModule F.curve.X :=
@@ -149,9 +142,7 @@ def markedArrow {V S T : Scheme.{0}} {q : V ⟶ S} {n g : ℕ} {b : T ⟶ S}
       (derivedUnit F.curve.X) :=
   (Functor.rightAdjoint ((derivedTensor F.curve.X).obj (DerivedCategory.Q.obj P.complex))).map
       ((DerivedCategory.singleFunctor F.curve.X.Modules 0).map (markingInclusion F)) ≫
-    derivedPrecomposition F.curve.X
-      ((derivedPullback (mapToRelativeTarget F)).obj (DerivedCategory.Q.obj Q.complex))
-      (DerivedCategory.Q.obj P.complex) (derivedUnit F.curve.X) D.derived
+    precomp D.derived (derivedUnit F.curve.X)
 
 /-- Cochain cone representative fixed by the displayed actual derived arrow. -/
 structure ConeModel {X : Scheme.{0}} {K L : D X} (a : K ⟶ L) where

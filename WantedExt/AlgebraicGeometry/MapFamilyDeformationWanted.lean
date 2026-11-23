@@ -39,4 +39,3 @@ theorem_wanted fixedHomTangentComparison
     IsIso ((DerivedCategory.homologyFunctor a.U.left.Modules 0).map B.kodairaSpencer)
 
 end MathlibExt.AlgebraicGeometry.MapFamilyDeformationComplexes
-
