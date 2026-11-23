@@ -24,25 +24,35 @@ open TopologicalSpace MeasureTheory
 
 namespace DirichletLaplacian
 
-/-- Smooth compactly supported test functions on `Ω`: the Dirichlet form core.
-Support inside `Ω` comes from the bundled `TestFunction` type, not from an
-unchecked function predicate. -/
+/-- **Smooth test functions.** For an open set $\Omega \subseteq \mathbb{R}^n$, the space of smooth
+test functions on $\Omega$ is the real vector space of infinitely differentiable functions
+$f : \mathbb{R}^n \to \mathbb{R}$ whose support is compact and contained in $\Omega$.
+
+These functions form the core of the Dirichlet form. -/
 abbrev SmoothTestSpace {n : ℕ} (Ω : Opens (EuclideanSpace ℝ (Fin n))) :=
   TestFunction Ω ℝ ⊤
 
-/-- Rayleigh quotient of a smooth compactly supported test function: the
-full-space `volume` integral of the squared operator norm of `fderiv` divided
-by the full-space `volume` integral of `|f| ^ 2`. -/
+/-- **Rayleigh quotient.** For a smooth test function $f$ on an open set
+$\Omega \subseteq \mathbb{R}^n$, the Rayleigh quotient of $f$ is
+$$R(f) = \frac{\int_{\mathbb{R}^n} \|Df(x)\|^2 \, dx}{\int_{\mathbb{R}^n} |f(x)|^2 \, dx},$$
+where $\|Df(x)\|$ is the operator norm of the derivative of $f$ at $x$ (equal to
+$|\nabla f(x)|$) and both integrals are against Lebesgue measure. For $f = 0$ the quotient
+$0/0$ is read as $0$. -/
 noncomputable def rayleighQuotient {n : ℕ} {Ω : Opens (EuclideanSpace ℝ (Fin n))}
     (f : SmoothTestSpace Ω) : ℝ :=
   (∫ x, ‖fderiv ℝ (f : EuclideanSpace ℝ (Fin n) → ℝ) x‖ ^ 2 ∂volume) /
     (∫ x, |f x| ^ 2 ∂volume)
 
-/-- Zero-based Courant--Fischer min--max value at index `j`: the infimum, over
-`(j + 1)`-dimensional submodules `V` of the smooth test space, of the supremum
-of the Rayleigh quotient over the nonzero vectors of `V`. This is a
-definition only; no existence, nonnegativity, monotonicity, divergence, or
-operator-spectrum claim is made here. -/
+/-- **Variational eigenvalue.** For an open set $\Omega \subseteq \mathbb{R}^n$ and an index
+$j \ge 0$, the variational eigenvalue of $\Omega$ at index $j$ is the Courant–Fischer min–max
+value
+$$\lambda_j(\Omega) = \inf_V \, \sup_{f \in V,\ f \ne 0} R(f),$$
+where $V$ ranges over the $(j+1)$-dimensional subspaces of the space of smooth test functions
+on $\Omega$ and $R(f)$ is the Rayleigh quotient of $f$. Infima and suprema are taken in
+$\mathbb{R}$, where an empty set, or a set unbounded in the relevant direction, has value $0$.
+
+This is a definition only: it does not claim that the values are attained, nonnegative,
+monotone in $j$, divergent, or eigenvalues of an operator. -/
 noncomputable def variationalEigenvalue {n : ℕ}
     (Ω : Opens (EuclideanSpace ℝ (Fin n))) (j : ℕ) : ℝ :=
   sInf {a : ℝ | ∃ V : Submodule ℝ (SmoothTestSpace Ω),
@@ -53,9 +63,10 @@ noncomputable def variationalEigenvalue {n : ℕ}
 
 end DirichletLaplacian
 
-/-- A nonnegative discrete spectrum is the Dirichlet spectrum of `Ω` when every
-zero-based sequence value equals the variational min--max value. This is a
-pointwise equality, not an unconstrained certificate field. -/
+/-- **Dirichlet spectrum of an open set.** A nonnegative discrete spectrum $S = (S_j)_{j \ge 0}$
+is the Dirichlet spectrum of an open set $\Omega \subseteq \mathbb{R}^n$ when
+$S_j = \lambda_j(\Omega)$ for every $j \ge 0$, where $\lambda_j(\Omega)$ is the variational
+eigenvalue of $\Omega$ at index $j$. -/
 def NonnegativeDiscreteSpectrum.IsDirichletSpectrum {n : ℕ}
     (S : NonnegativeDiscreteSpectrum)
     (Ω : Opens (EuclideanSpace ℝ (Fin n))) : Prop :=
@@ -63,28 +74,36 @@ def NonnegativeDiscreteSpectrum.IsDirichletSpectrum {n : ℕ}
 
 namespace EuclideanLaplacian
 
-/-- Real volume of the Euclidean unit ball in `ℝⁿ`: the canonical `volume`
-measure of `Metric.ball 0 1`, coerced to `ℝ` via `Measure.real`. -/
+/-- **Volume of the unit ball.** For $n \ge 0$, $\omega_n$ is the Lebesgue measure of the open
+unit ball $\{x \in \mathbb{R}^n : |x| < 1\}$ of Euclidean space $\mathbb{R}^n$, as a real
+number. -/
 noncomputable def unitBallVolume (n : ℕ) : ℝ :=
   (volume : Measure (EuclideanSpace ℝ (Fin n))).real
     (Metric.ball (0 : EuclideanSpace ℝ (Fin n)) 1)
 
-/-- Real volume of an open domain `Ω ⊂ ℝⁿ`: the canonical `volume` measure of
-the underlying set, coerced to `ℝ` via `Measure.real`. -/
+/-- **Volume of a domain.** For an open set $\Omega \subseteq \mathbb{R}^n$, the volume $|\Omega|$
+is the Lebesgue measure of $\Omega$ taken as a real number, with $|\Omega| = 0$ when the
+Lebesgue measure of $\Omega$ is infinite. -/
 noncomputable def domainVolume {n : ℕ}
     (Ω : Opens (EuclideanSpace ℝ (Fin n))) : ℝ :=
   (volume : Measure (EuclideanSpace ℝ (Fin n))).real (Ω : Set _)
 
-/-- Semiclassical counting coefficient `ωₙ |Ω| / (2π)ⁿ`: the product of the
-unit-ball volume and the domain volume, divided by `(2π)ⁿ`. -/
+/-- **Semiclassical counting coefficient.** For an open set $\Omega \subseteq \mathbb{R}^n$, the
+semiclassical counting coefficient is $\omega_n |\Omega| / (2\pi)^n$, where $\omega_n$ is the
+volume of the unit ball in $\mathbb{R}^n$ and $|\Omega|$ is the Lebesgue measure of $\Omega$
+taken as a real number, with $|\Omega| = 0$ when that measure is infinite. -/
 noncomputable def semiclassicalCountingCoefficient {n : ℕ}
     (Ω : Opens (EuclideanSpace ℝ (Fin n))) : ℝ :=
   unitBallVolume n * domainVolume Ω / (2 * Real.pi) ^ n
 
-/-- Zero-based eigenvalue benchmark at index `j`: `(2π)²` times the real power
-of the one-based eigenvalue number `((j + 1 : ℕ) : ℝ)` divided by
-`ωₙ |Ω|`, with exponent `2 / (n : ℝ)`. The one-based numerator is kept explicit
-because `NonnegativeDiscreteSpectrum` is zero-based. -/
+/-- **Pólya eigenvalue benchmark.** For an open set $\Omega \subseteq \mathbb{R}^n$ and an index
+$j \ge 0$, the Pólya benchmark at index $j$ is
+$$(2\pi)^2 \left(\frac{j+1}{\omega_n |\Omega|}\right)^{2/n},$$
+where $\omega_n$ is the volume of the unit ball in $\mathbb{R}^n$ and $|\Omega|$ is the volume of
+$\Omega$. Indices start at $0$, so index $j$ belongs to the $(j+1)$-st eigenvalue.
+
+Division by zero is read as $0$: the exponent is $0$ when $n = 0$, and the base is $0$ when
+$\omega_n |\Omega| = 0$. -/
 noncomputable def polyaEigenvalueBenchmark {n : ℕ}
     (Ω : Opens (EuclideanSpace ℝ (Fin n))) (j : ℕ) : ℝ :=
   (2 * Real.pi) ^ 2 *
