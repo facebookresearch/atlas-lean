@@ -24408,7 +24408,7 @@
 "MathlibExt.Analysis.Complex.StripBoundedHolomorphicGrowthWanted.D": "3233683add2e89b4",
 "MathlibExt.Analysis.Complex.StripBoundedHolomorphicGrowthWanted.norm_le_two_div_pi_mul_log_of_abs_re_lt_one": "929a8e59fc0c8fc6",
 "MathlibExt.Analysis.Complex.SupOnTangentCirclesLogConvexWanted.sq_sSup_norm_circle_one_le_mul": "57674a84def62fdd",
-"MathlibExt.Analysis.Complex.UnimodularBoundaryImageContainsDiscWanted.ball_subset_image_of_norm_eq_one_on_sphere": "d9e3d5c2e67db22d",
+"MathlibExt.Analysis.Complex.UnimodularBoundaryImageContainsDiscWanted.ball_subset_image_of_norm_eq_one_on_sphere": "7d02c628734f545a",
 "MathlibExt.Analysis.Complex.UnivalentImageBoundaryDistLeOneWanted.infDist_zero_frontier_image_ball_le_one": "fde478321c39f7ef",
 "MathlibExt.Analysis.Complex.UpperHalfPlaneSchwarzLemmaWanted.norm_le_norm_cayley_of_upperHalfPlane_bounded_vanishing_at_I": "2c37b87c7b55a88c",
 "MathlibExt.Analysis.Complex.UpperHalfPlaneSelfMapDerivBoundWanted.norm_deriv_I_le_sqrt_three_halves_of_mapsTo_upperHalfPlane": "96c0ebf9a5633145",
