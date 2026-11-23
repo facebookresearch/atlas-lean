@@ -14,3 +14,7 @@ Homotopy groups, singular homology and other algebraic invariants of spaces, wit
 - [Adams' theorem on spheres that are H-spaces](h-space-sphere-iff.md)
 - [Borsuk–Ulam theorem](borsuk-ulam.md)
 - [Ham sandwich theorem](ham-sandwich.md)
+- [Eilenberg-Zilber theorem: the singular chain complex of X × Y is chain homotopy equivalent to C(X) ⊗ C(Y)](eilenberg-zilber-theorem.md)
+- [Poincaré duality: for a closed R-oriented n-manifold M, α ↦ \[M\] ⌢ α is an isomorphism H^k(M; R) → H_{n−k}(M; R)](poincare-duality-theorem.md)
+- [Stable equivalence: a map of sequential spectra inducing isomorphisms on all homotopy groups π_k, k ∈ Z](stable-equivalence-spectra.md)
+- [A closed connected nonorientable n-manifold M has H_n(M; Z) = 0](top-homology-nonorientable.md)
