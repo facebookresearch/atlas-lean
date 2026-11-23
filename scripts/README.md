@@ -16,6 +16,11 @@ their own even when they declare the same name; this check fails on such a colli
 and names the declaration and both modules. Keep one declaration and import its module
 where the other was used. It also rejects a module whose directory or file name is not
 a Lean identifier, since Lean tools cannot import such a module by name.
+The build checks run in this order: the build with its compiler diagnostics, this
+collision check (seconds), then the audit of the compiled environment's trust and
+dependency policies (minutes). Every check runs and every failure is reported, unless
+`ATLAS_CHECK_FAIL_FAST=1`, which CI sets for merge groups: `scripts/check.sh` then stops
+at the first failing check.
 Preflight also validates the semantic Lake target graph so the archived `v1/`
 package cannot enter the root build through a glob, dependency, or extra target.
 The approved `theorem_wanted` and `def_wanted` source forms are enforced in
