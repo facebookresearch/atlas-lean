@@ -53,33 +53,48 @@ structure AffineUntilting where
 
 attribute [instance] AffineUntilting.input
 
-/-- A pair of actual maps satisfying every integral sharp equation. -/
+/-- A map of untilts: actual maps of the original and tilted pairs together with the induced map
+of integral tilt rings, which the tilted map extends and along which the original map commutes
+with `sharp`. -/
 structure Hom (P Q : AffineUntilting p) where
   original : RingMap Q.pair.toHuberPair P.pair.toHuberPair
   tilted : P.tilt.pair ⟶ Q.tilt.pair
-  sharp : ∀ a : IntegralRing p Q.pair, ∃ b : IntegralRing p P.pair,
-    tilted.hom (TiltModel.integralMap p Q.pair Q.tilt a) =
-      TiltModel.integralMap p P.pair P.tilt b ∧
-    original.hom (sharp p Q.pair (D := Q.input) a) =
-      sharp p P.pair (D := P.input) b
+  integral : IntegralRing p Q.pair →+* IntegralRing p P.pair
+  tilted_integral : tilted.hom.comp (TiltModel.integralMap p Q.pair Q.tilt) =
+    (TiltModel.integralMap p P.pair P.tilt).comp integral
+  sharp_integral : ∀ a : IntegralRing p Q.pair,
+    original.hom (sharp p Q.pair (D := Q.input) a) = sharp p P.pair (D := P.input) (integral a)
 
 namespace Hom
 
 variable {p}
 
 @[ext] theorem ext {P Q : AffineUntilting p} (f g : Hom p P Q)
-    (h : f.original = g.original) (h' : f.tilted = g.tilted) : f = g := by
+    (h : f.original = g.original) (h' : f.tilted = g.tilted) (h'' : f.integral = g.integral) :
+    f = g := by
   cases f
   cases g
   cases h
   cases h'
+  cases h''
   rfl
+
+/-- Every integral element satisfies the sharp equations through the integral map. -/
+theorem sharp {P Q : AffineUntilting p} (f : Hom p P Q) (a : IntegralRing p Q.pair) :
+    f.tilted.hom (TiltModel.integralMap p Q.pair Q.tilt a) =
+        TiltModel.integralMap p P.pair P.tilt (f.integral a) ∧
+      f.original.hom (sharp p Q.pair (D := Q.input) a) =
+        sharp p P.pair (D := P.input) (f.integral a) :=
+  ⟨congrArg (fun φ : IntegralRing p Q.pair →+* P.tilt.pair.ring ↦ φ a) f.tilted_integral,
+    f.sharp_integral a⟩
 
 /-- The actual identity, including its sharp normalization. -/
 def id (P : AffineUntilting p) : Hom p P P where
   original := ⟨RingHom.id _, continuous_id, fun _ h ↦ h⟩
   tilted := 𝟙 P.tilt.pair
-  sharp a := ⟨a, rfl, rfl⟩
+  integral := RingHom.id _
+  tilted_integral := rfl
+  sharp_integral _ := rfl
 
 /-- Compose actual maps and the corresponding integral sharp equations. -/
 def comp {P Q R : AffineUntilting p} (f : Hom p P Q) (g : Hom p Q R) :
@@ -89,14 +104,16 @@ def comp {P Q R : AffineUntilting p} (f : Hom p P Q) (g : Hom p Q R) :
       f.original.continuous.comp g.original.continuous,
       fun a h ↦ f.original.plus _ (g.original.plus _ h)⟩
   tilted := f.tilted ≫ g.tilted
-  sharp a := by
-    obtain ⟨b, hb, hb'⟩ := g.sharp a
-    obtain ⟨c, hc, hc'⟩ := f.sharp b
-    refine ⟨c, ?_, ?_⟩
-    · change f.tilted.hom (g.tilted.hom _) = _
-      rw [hb, hc]
-    · change f.original.hom (g.original.hom _) = _
-      rw [hb', hc']
+  integral := f.integral.comp g.integral
+  tilted_integral := by
+    ext a
+    change f.tilted.hom (g.tilted.hom _) = _
+    rw [(g.sharp a).1, (f.sharp (g.integral a)).1]
+    rfl
+  sharp_integral a := by
+    change f.original.hom (g.original.hom _) = _
+    rw [g.sharp_integral a, f.sharp_integral]
+    rfl
 
 end Hom
 
@@ -108,14 +125,17 @@ instance : Category (AffineUntilting p) where
     apply Hom.ext
     · apply RingMap.ext; ext a; rfl
     · exact Category.id_comp f.tilted
+    · ext a; rfl
   comp_id f := by
     apply Hom.ext
     · apply RingMap.ext; ext a; rfl
     · exact Category.comp_id f.tilted
+    · ext a; rfl
   assoc f g h := by
     apply Hom.ext
     · apply RingMap.ext; ext a; rfl
     · exact Category.assoc f.tilted g.tilted h.tilted
+    · ext a; rfl
 
 /-- The actual local tilting functor, on rings and on normalized maps. -/
 def tiltFunctor : AffineUntilting p ⥤ Affine p where
