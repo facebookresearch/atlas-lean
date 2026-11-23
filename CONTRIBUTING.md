@@ -420,8 +420,17 @@ under [Public references](#public-references) is in place. `graph sync` is
 configured to run on every PR and merge group, without filters, and reports
 whether the PR's wiki is in step with its Lean
 ([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)).
-Blueprint Pages, Check workflows and Binary64 conformance are path-filtered on
-PRs, and Blueprint Pages also builds `main` once a day.
+Check workflows and Binary64 conformance are path-filtered on PRs. Blueprint
+Pages builds `main` once a day. On a PR, its first job reads the whole diff and
+lets the build run only when the PR changes the wiki (`blueprint/`), the import
+map, the card move ledger, the tooling that builds and checks the site, the
+toolchain pins, a path where the build writes or fetches its outputs, Git
+attributes, or a file named like an Autoform output marker; PRs that change
+only Lean library files, `scripts/taxonomy.json` or `scripts/wiki-sync.json`
+run only its unit tests, in a few minutes
+([GitHub Actions and publication](docs/BLUEPRINT.md#github-actions-and-publication)).
+With write access, `gh workflow run blueprint-pages.yml --ref <branch>` builds
+and checks a branch on demand; only `main` publishes.
 
 ## Lean and Mathlib bumps
 
