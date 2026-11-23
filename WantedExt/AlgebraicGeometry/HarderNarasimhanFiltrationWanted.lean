@@ -10,7 +10,6 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarderNarasimhanFiltration
 public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
-public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 
 /-!
@@ -33,6 +32,7 @@ is the geometric slope-filtration provider for smooth proper curves.
 namespace WantedExt.AlgebraicGeometry.HarderNarasimhanFiltrationWanted
 
 open CategoryTheory _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open MathlibExt.AlgebraicGeometry.CurveVectorBundles
 open MathlibExt.AlgebraicGeometry.HarderNarasimhanFiltration
 
@@ -40,7 +40,7 @@ universe u
 
 theorem_wanted exists_harderNarasimhanFiltration
     (k : Type u) [Field k] [IsAlgClosed k]
-    (C : Over (Spec (.of k))) [IsProper C.hom]
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
     (E : C.left.Modules) (r : ℕ) (hr : 0 < r)
     (hE : IsVectorBundle E r) : Nonempty (Filtration C.hom E r)
