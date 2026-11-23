@@ -276,21 +276,6 @@ public theorem_wanted power_coeff_convolution_zpow {K : Type*} [Field K] [CharZe
       ((n : K) - ((u : K) / v + 1) * k) * coeff (n - k) ((A ^ u : (PowerSeries K)ˣ) : PowerSeries K) *
         coeff k ((A ^ v : (PowerSeries K)ˣ) : PowerSeries K) = 0
 
-/-- **Power recursion lemma for positive exponents.** Let $K$ be a field of characteristic zero,
-let $A \in K[[X]]$ be a formal power series, and let $u$ and $v$ be positive integers. Write
-$a_u(k)$ and $a_v(k)$ for the coefficients of $X^k$ in $A^u$ and $A^v$. Then for every natural
-number $n$,
-
-$$\sum_{k=0}^{n} \left(n - \left(\frac{u}{v} + 1\right) k\right) a_u(n-k)\, a_v(k) = 0.$$
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 17
-(`jis-2024-24.1.6-lem-17`). -/
-public theorem_wanted power_coeff_convolution_pow {K : Type*} [Field K] [CharZero K]
-    (A : PowerSeries K) (u v : ℕ) (hu : u ≠ 0) (hv : v ≠ 0) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-      ((n : K) - ((u : K) / v + 1) * k) * coeff (n - k) (A ^ u) * coeff k (A ^ v) = 0
-
 /-- **Six divisor-function identities from the power recursion lemma.** Let $n \ge 1$ be a
 natural number. Write $\sigma(m)$ for the sum of the positive divisors of $m$,
 $\bar\sigma_3(m) = \sum_{d \mid m,\ m/d \text{ odd}} d^3$,
