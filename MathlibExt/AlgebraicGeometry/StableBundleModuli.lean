@@ -23,8 +23,8 @@ Let `C` be a smooth proper integral curve over an algebraically closed field
 subbundle of smaller positive rank has strictly smaller slope. A family over a
 parameter scheme `T` is a vector bundle on `C × T` whose restriction to the
 fibre `C × {t}` over every rational point `t` of `T` is stable of the given
-degree. For `T` of finite type over the algebraically closed field `k`, the
-rational points are exactly the closed points, and stability is open in
+degree, for `T` of finite type over the algebraically closed field `k`: the
+rational points are then exactly the closed points, and stability is open in
 families, so this tests every fibre. The moduli property compares universal
 pullbacks up to tensoring by a line bundle from the base, the scalar
 automorphism ambiguity.
@@ -54,14 +54,16 @@ def IsStable {k : Type u} [Field k] {X : Scheme.{u}}
     ∀ (F : X.Modules) (i : F ⟶ E), Mono i → ∀ hF : IsVectorBundle F s,
       IsVectorBundle (cokernel i) (r - s) → slope f F s hF hs < slope f E r hE hr
 
-/-- A family of stable bundles of rank `r` and degree `d` on `C`, parametrized by `T`:
-a vector bundle on `C × T` whose restriction to the fibre over every rational point of
-`T` is a stable vector bundle of rank `r` and degree `d`. -/
+/-- A family of stable bundles of rank `r` and degree `d` on `C`, parametrized by a
+scheme `T` of finite type over `k`: a vector bundle on `C × T` whose restriction to the
+fibre over every rational point of `T` is a stable vector bundle of rank `r` and degree
+`d`. The rational points of `T` are its closed points, since `k` is algebraically
+closed and `T` of finite type. -/
 def IsStableFamily {k : Type u} [Field k] [IsAlgClosed k]
     (C T : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [IsIntegral C.left] (r : ℕ) (hr : 0 < r) (d : ℤ)
     (E : (prod C T).left.Modules) : Prop :=
-  IsVectorBundle E r ∧
+  LocallyOfFiniteType T.hom ∧ QuasiCompact T.hom ∧ IsVectorBundle E r ∧
     ∀ x : 𝟙_ (Over (Spec (.of k))) ⟶ T,
       let F := (Scheme.Modules.pullback (pointSection C T x).left).obj E
       ∃ hF : IsVectorBundle F r, IsStable C.hom F r hF hr ∧ bundleDegree C.hom F r hF = d
@@ -91,10 +93,8 @@ structure StableModuliModel {k : Type u} [Field k] [IsAlgClosed k]
   /-- The universal bundle on `C × M`. -/
   universalBundle : (prod C M).left.Modules
   stableFamily : IsStableFamily C M r hr d universalBundle
-  universal : ∀ (T : Over (Spec (.of k))),
-    LocallyOfFiniteType T.hom → QuasiCompact T.hom →
-      ∀ E : (prod C T).left.Modules, IsStableFamily C T r hr d E →
-        ∃! f : T ⟶ M,
-          IsBaseTwist C T (familyPullback C M T universalBundle f) E
+  universal : ∀ (T : Over (Spec (.of k))) (E : (prod C T).left.Modules),
+    IsStableFamily C T r hr d E →
+      ∃! f : T ⟶ M, IsBaseTwist C T (familyPullback C M T universalBundle f) E
 
 end MathlibExt.AlgebraicGeometry.StableBundleModuli

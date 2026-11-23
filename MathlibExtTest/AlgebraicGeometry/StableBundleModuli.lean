@@ -46,9 +46,14 @@ example (d : ℤ) (M : StableModuliModel C 1 one_pos d) (hg : genus C.hom = 0) :
   rw [hg] at this
   omega
 
--- A stable family is a vector bundle on `C × T` with stable fibres of the given degree.
+-- A stable family is a vector bundle on `C × T`, for `T` of finite type.
 example (T : Over (Spec (.of k))) (r : ℕ) (hr : 0 < r) (d : ℤ)
     (E : (prod C T).left.Modules) (hE : IsStableFamily C T r hr d E) : IsVectorBundle E r :=
-  hE.1
+  hE.2.2.1
+
+example (T : Over (Spec (.of k))) (r : ℕ) (hr : 0 < r) (d : ℤ)
+    (E : (prod C T).left.Modules) (hE : IsStableFamily C T r hr d E) :
+    LocallyOfFiniteType T.hom ∧ QuasiCompact T.hom :=
+  ⟨hE.1, hE.2.1⟩
 
 end MathlibExt.AlgebraicGeometry.StableBundleModuli
