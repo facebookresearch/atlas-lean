@@ -34,7 +34,6 @@ existence theorem. Reference: Behrend--Fantechi, §4,
 https://arxiv.org/abs/alg-geom/9601010.
 -/
 
-set_option backward.isDefEq.respectTransparency false
 @[expose] public noncomputable section
 
 namespace MathlibExt.AlgebraicGeometry.GlobalPerfectObstructionTheory
@@ -46,8 +45,11 @@ open MathlibExt.AlgebraicGeometry.GlobalObstructionMorphisms
 open MathlibExt.AlgebraicGeometry.GeometricCotangentComplex
 attribute [local instance] HasDerivedCategory.standard
 
+/-- A pair of affine opens `U ⊆ X` and `V ⊆ Y` with `U ⊆ f⁻¹ V`. -/
 structure AffineChart {X Y : Scheme.{0}} (f : X ⟶ Y) where
+  /-- The affine open of the source. -/
   source : X.Opens
+  /-- The affine open of the target. -/
   target : Y.Opens
   source_affine : IsAffineOpen source
   target_affine : IsAffineOpen target
@@ -55,23 +57,29 @@ structure AffineChart {X Y : Scheme.{0}} (f : X ⟶ Y) where
 
 namespace AffineChart
 variable {X Y : Scheme.{0}} {f : X ⟶ Y}
+/-- The ring of the target chart. -/
 abbrev base (a : AffineChart f) := Γ(Y, a.target)
+/-- The ring of the source chart. -/
 abbrev ring (a : AffineChart f) := Γ(X, a.source)
+/-- The chart ring map `Γ(Y, V) → Γ(X, U)` induced by `f`. -/
 instance (a : AffineChart f) : Algebra a.base a.ring :=
   (f.appLE a.target a.source a.over).hom.toAlgebra
 end AffineChart
 
+/-- Sections over an open, as a functor from sheaves of modules. -/
 def moduleSections {X : Scheme.{0}} (U : X.Opens) : X.Modules ⥤ ModuleCat.{0} Γ(X, U) :=
   SheafOfModules.evaluation X.ringCatSheaf (op U)
 
 instance {X : Scheme.{0}} (U : X.Opens) : (moduleSections U).Additive where
   map_add := by intros; rfl
 
+/-- The complex of sections over an open of a complex of sheaves of modules. -/
 def sectionsComplex {X : Scheme.{0}} (C : Complex X) (U : X.Opens) :
     CochainComplex (ModuleCat.{0} Γ(X, U)) ℤ :=
   ((moduleSections U).mapHomologicalComplex
     (ComplexShape.up ℤ)).obj C
 
+/-- Restriction of sections from `U` to `V ⊆ U`, as a map of complexes over `Γ(X, U)`. -/
 def sectionRestriction {X : Scheme.{0}} (C : Complex X) {U V : X.Opens} (h : V ≤ U) :
     sectionsComplex C U ⟶
       ((ModuleCat.restrictScalars (X.presheaf.map (homOfLE h).op).hom).mapHomologicalComplex
