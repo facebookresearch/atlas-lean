@@ -36,8 +36,9 @@ the finite-sample form of the Karaman-Frazzoli algorithms, with no
 asymptotic-optimality claim.
 
 All four planners share one oracle bundle (`Oracles`): a point-collision test
-`free`, a local planner `link` between configurations, a cost proxy `cost`
-valued in the rationals so that examples compute by `decide`, and a connection
+`free`, a local planner `link` between configurations, a steering function
+`steer` from a vertex toward a sample, a cost proxy `cost` valued in
+the rationals so that examples compute by `decide`, and a connection
 radius `radius`.
 
 * sPRM: the vertices are the collision-free samples with duplicates removed.
@@ -45,20 +46,30 @@ radius `radius`.
   the cost bound in both directions and `link` success in both directions.
   Both directions are required (rather than one), which keeps the edge
   relation symmetric by construction.
-* RRT: a fold over the sample list. For each collision-free sample, the
-  nearest current tree vertex (the first cost minimizer in list order, computed
-  by `nearest`) is linked to the sample when the local planner succeeds.
-  Samples already present in the tree are skipped by an explicit `s ∉ verts`
-  check. This keeps the vertex list duplicate free and the edge set a tree.
+* RRT: a fold over the sample list. For each sample `s`, let `u` be the
+  nearest current tree vertex (the first cost minimizer in list order,
+  computed by `nearest`) and `x := O.steer u s` the steered configuration;
+  `x` is inserted with edge `(u, x)` when `x` is free, the local planner
+  links `u` to `x`, and `x` is fresh. There is no check on the raw sample
+  `s` itself: a non-free sample can still extend the tree through its
+  steered point, and there is no explicit skip for samples already in the
+  tree (only RRT* skips raw duplicates). The `x`-is-fresh conjunct still
+  keeps the vertex list duplicate free, and each insertion adds exactly one
+  edge into its fresh vertex, so the edge set stays a tree.
 * PRM*: like sPRM, except the connection radius is given by `radiusOf`
   applied to the vertex count instead of the fixed `radius`. Pairs connect
   when the cost bound holds in both directions and `link` succeeds in both
   directions.
 * RRT*: a fold over the sample list threading vertices, parent edges, and a
-  cost-to-come table. Each free new sample chooses the parent minimizing
-  cost-to-come plus edge cost among vertices within `radius` (the first
-  minimizer in list order), then nearby vertices are rewired through the new
-  sample when that is strictly cheaper (one pass, no cascade).
+  cost-to-come table. Each sample `s` already among the vertices is skipped;
+  otherwise `s` is steered from its nearest vertex `u` (`x := O.steer u s`)
+  and skipped unless `x` is free, the nearest edge links, `x` is fresh, and
+  `x` has a parent. The parent is the first minimizer in list order of
+  cost-to-come plus edge cost among vertices that link to `x` and are
+  `radiusOf`-near it, falling back to the vertex nearest `x` when it links;
+  then nearby vertices that `x` links to are rewired through `x` when that
+  is strictly cheaper (sequential per-flip recompute, no cascade), and costs
+  are fully recomputed.
 
 Non-goals: nearest-neighbour data structures, probabilistic completeness, and
 asymptotic optimality are out of scope.
@@ -70,6 +81,10 @@ structure Oracles (C : Type) where
   free : C → Bool
   /-- Local planner: attempts to connect the first configuration to the second. -/
   link : C → C → Bool
+  /-- Steering function: `steer u s` is the configuration reached from `u`
+      toward sample `s` (identity steering `steer u s = s` is the
+      unbounded-step case). -/
+  steer : C → C → C
   /-- Cost proxy between configurations, valued in `Rat` so examples compute. -/
   cost : C → C → Rat
   /-- Connection radius for the roadmap. -/
@@ -273,14 +288,17 @@ def nearest {C : Type} (O : Oracles C) (verts : List C) (dflt : C) (s : C) : C :
       vs.foldl (fun best w => if O.cost w s < O.cost best s then w else best) v
 
 /-- RRT growth folded over the samples by structural recursion. For each sample
-`s` that is collision free, links the nearest current vertex to `s` when the
-local planner succeeds. Samples already in the tree are skipped. -/
+`s`, steer from the nearest current vertex toward `s` and link to the steered
+configuration when it is collision free and the local planner succeeds.
+Steered configurations already in the tree are skipped. -/
 def rrtAux {C : Type} [DecidableEq C] (O : Oracles C) (start : C) :
     List C → List C → List (C × C) → List C × List (C × C)
   | [], verts, edges => (verts, edges)
   | s :: ss, verts, edges =>
-      if O.free s = true ∧ O.link (nearest O verts start s) s = true ∧ s ∉ verts then
-        rrtAux O start ss (s :: verts) ((nearest O verts start s, s) :: edges)
+      let u := nearest O verts start s
+      let x := O.steer u s
+      if O.free x = true ∧ O.link u x = true ∧ x ∉ verts then
+        rrtAux O start ss (x :: verts) ((u, x) :: edges)
       else
         rrtAux O start ss verts edges
 
@@ -291,8 +309,11 @@ theorem rrtAux_nil {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
 theorem rrtAux_cons {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
     (s : C) (ss : List C) (verts : List C) (edges : List (C × C)) :
     rrtAux O start (s :: ss) verts edges =
-      (if O.free s = true ∧ O.link (nearest O verts start s) s = true ∧ s ∉ verts then
-        rrtAux O start ss (s :: verts) ((nearest O verts start s, s) :: edges)
+      (if O.free (O.steer (nearest O verts start s) s) = true ∧
+          O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
+          O.steer (nearest O verts start s) s ∉ verts then
+        rrtAux O start ss (O.steer (nearest O verts start s) s :: verts)
+          ((nearest O verts start s, O.steer (nearest O verts start s) s) :: edges)
       else
         rrtAux O start ss verts edges) := rfl
 
@@ -315,7 +336,9 @@ theorem rrtAux_invar {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
       intro verts edges hmem hnd
       rw [rrtAux_cons]
       by_cases hcond :
-        O.free s = true ∧ O.link (nearest O verts start s) s = true ∧ s ∉ verts
+        O.free (O.steer (nearest O verts start s) s) = true ∧
+          O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
+          O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond]
         obtain ⟨-, -, hnotmem⟩ := hcond
         apply ih
@@ -336,14 +359,15 @@ theorem rrtAux_invar {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
       · rw [ite_eq_right hcond]
         exact ih _ _ hmem hnd
 
-/-- Fold invariant: vertices come from the start configuration or the samples
-seen so far. -/
+/-- Fold invariant: every output vertex is the start configuration, one of the
+input vertices `seen`, or `O.steer u s` for some remaining sample `s ∈ ss`
+and some configuration `u`. -/
 theorem rrtAux_subset {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
     (ss : List C) (seen : List C) :
     ∀ (verts : List C) (edges : List (C × C)),
       (∀ v ∈ verts, v = start ∨ v ∈ seen) →
       ∀ v ∈ (rrtAux O start ss verts edges).1,
-        v = start ∨ v ∈ seen ∨ v ∈ ss := by
+        v = start ∨ v ∈ seen ∨ ∃ s ∈ ss, ∃ u, v = O.steer u s := by
   induction ss generalizing seen with
   | nil =>
       intro verts edges h v hv
@@ -356,9 +380,12 @@ theorem rrtAux_subset {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
       intro verts edges h v hv
       rw [rrtAux_cons] at hv
       by_cases hcond :
-        O.free s = true ∧ O.link (nearest O verts start s) s = true ∧ s ∉ verts
+        O.free (O.steer (nearest O verts start s) s) = true ∧
+          O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
+          O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond] at hv
-        have hstep : ∀ w ∈ s :: verts, w = start ∨ w ∈ s :: seen := by
+        have hstep : ∀ w ∈ O.steer (nearest O verts start s) s :: verts,
+            w = start ∨ w ∈ O.steer (nearest O verts start s) s :: seen := by
           intro w hw
           simp only [List.mem_cons] at hw ⊢
           rcases hw with rfl | hw
@@ -366,20 +393,21 @@ theorem rrtAux_subset {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
           · rcases h w hw with rfl | hw'
             · exact Or.inl rfl
             · exact Or.inr (Or.inr hw')
-        have hmem := ih (s :: seen) (s :: verts) _ hstep v hv
-        simp only [List.mem_cons] at hmem ⊢
-        rcases hmem with rfl | (rfl | h') | h'
+        have hmem := ih (O.steer (nearest O verts start s) s :: seen)
+          (O.steer (nearest O verts start s) s :: verts) _ hstep v hv
+        simp only [List.mem_cons] at hmem
+        rcases hmem with rfl | (rfl | h') | ⟨s', hs'mem, u, rfl⟩
         · exact Or.inl rfl
-        · exact Or.inr (Or.inr (Or.inl rfl))
+        · exact Or.inr (Or.inr ⟨s, List.mem_cons_self,
+            nearest O verts start s, rfl⟩)
         · exact Or.inr (Or.inl h')
-        · exact Or.inr (Or.inr (Or.inr h'))
+        · exact Or.inr (Or.inr ⟨s', List.mem_cons_of_mem s hs'mem, u, rfl⟩)
       · rw [ite_eq_right hcond] at hv
         have hmem := ih seen verts edges h v hv
-        simp only [List.mem_cons] at ⊢
-        rcases hmem with rfl | h' | h'
+        rcases hmem with rfl | h' | ⟨s', hs'mem, u, rfl⟩
         · exact Or.inl rfl
         · exact Or.inr (Or.inl h')
-        · exact Or.inr (Or.inr (Or.inr h'))
+        · exact Or.inr (Or.inr ⟨s', List.mem_cons_of_mem s hs'mem, u, rfl⟩)
 
 /-- Fold invariant: at most one edge is added per sample. -/
 theorem rrtAux_length {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
@@ -396,9 +424,12 @@ theorem rrtAux_length {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
       intro verts edges
       rw [rrtAux_cons]
       by_cases hcond :
-        O.free s = true ∧ O.link (nearest O verts start s) s = true ∧ s ∉ verts
+        O.free (O.steer (nearest O verts start s) s) = true ∧
+          O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
+          O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond]
-        have h := ih (s :: verts) ((nearest O verts start s, s) :: edges)
+        have h := ih (O.steer (nearest O verts start s) s :: verts)
+          ((nearest O verts start s, O.steer (nearest O verts start s) s) :: edges)
         simp only [List.length_cons] at h ⊢
         omega
       · rw [ite_eq_right hcond]
@@ -423,11 +454,14 @@ theorem rrtAux_edge_of_mem {C : Type} [DecidableEq C] (O : Oracles C) (start : C
       intro verts edges h v hv
       rw [rrtAux_cons] at hv ⊢
       by_cases hcond :
-        O.free s = true ∧ O.link (nearest O verts start s) s = true ∧ s ∉ verts
+        O.free (O.steer (nearest O verts start s) s) = true ∧
+          O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
+          O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond] at hv ⊢
-        have hstep : ∀ w ∈ s :: verts,
+        have hstep : ∀ w ∈ O.steer (nearest O verts start s) s :: verts,
             w = start ∨
-              w ∈ ((nearest O verts start s, s) :: edges).map Prod.snd := by
+              w ∈ ((nearest O verts start s,
+                O.steer (nearest O verts start s) s) :: edges).map Prod.snd := by
           intro w hw
           simp only [List.mem_cons] at hw
           rcases hw with rfl | hw
@@ -445,10 +479,11 @@ def rrt {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
     (samples : List C) : List C × List (C × C) :=
   rrtAux O start samples [start] []
 
-/-- RRT vertices lie in `start :: samples`. -/
+/-- Every RRT vertex is the start configuration or is steered from some
+configuration toward some sample. -/
 theorem rrt_verts_subset {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
     (samples : List C) (v : C) (hv : v ∈ (rrt O start samples).1) :
-    v ∈ start :: samples := by
+    v = start ∨ ∃ s ∈ samples, ∃ u, v = O.steer u s := by
   have h0 : ∀ w ∈ ([start] : List C), w = start ∨ w ∈ ([] : List C) := by
     intro w hw
     simp at hw
@@ -1847,44 +1882,31 @@ theorem parentChain_nodup {C : Type} [DecidableEq C] (O : Oracles C)
               · exact hcost x (List.mem_cons_of_mem u (List.mem_cons_of_mem w hx))
             exact ih hchain' hcost'
 -- RRT* tail: candidates through rrtStar.
--- Append inside the SamplingPlanners namespace, after the cost machinery.
---
 -- Design (intentional deviations from an earlier draft):
--- * Costs are recomputed ONCE per tree change. `extendStar` finishes by
---   setting `costs := recomputeCosts O verts' edges' start`. At step
---   boundaries `costs` IS the recomputed table, so `chooseParent` never reads
---   stale descendant costs. During one rewire pass, comparisons read the
---   pass-start table (single-pass rewiring as in RRT* pseudocode).
+-- * Costs are recomputed at each `extendStar` step, twice: the post-insertion
+--   guard table handed to `rewireAux` and the final table over the new edges;
+--   inside `rewireAux` the guard table is recomputed after every flip
+--   (sequential per-flip recompute, not a pass-start snapshot). At step
+--   boundaries `costs` is exactly the recomputed table, so `chooseParent`
+--   never reads stale descendant costs.
+-- * Steering and the nearest-edge gate: `extendStar` steers the raw sample
+--   `s` from its nearest vertex `u` to `x := O.steer u s` and proceeds only
+--   when `x` is free, the nearest edge `u ~ x` links, and `x` is fresh.
 -- * `candidates` is a single filter over `verts`. `chooseParent` computes it
 --   internally and returns the first minimizer, or `none` when empty.
 -- * `radiusOf : ℕ → ℚ` is threaded through `candidates`, `chooseParent`,
---   `rewireAux`, `extendStar`, `rrtStarAux` and `rrtStar`. It is evaluated at
---   the current vertex count: `verts.length` before adding (candidates) and
---   `(s :: verts).length` after adding (rewire). See each docstring.
+--   `rewireAux`, `extendStar`, `rrtStarAux` and `rrtStar`. It is evaluated
+--   once at the pre-insertion vertex count `verts.length`, shared by parent
+--   selection (candidates) and rewiring. See each docstring.
 -- * Rewiring replaces a vertex's parent edge via `replaceParent` on edge
---   lists. Self-loops are impossible (`s ∉ verts`, `w ≠ s`).
---
--- Signature changes vs the old region (all reported):
--- * `candidates` gains `radiusOf` and `start` (start seeds `nearest`).
--- * `chooseParent` takes `verts`/`radiusOf`/`start` and computes `candidates`
---   internally (old form took a precomputed candidate list).
--- * `rewireAux` gains `radiusOf`, an explicit count `n`, `start`, `s` and `p`.
--- * `extendStar`, `rrtStarAux`, `rrtStar` gain `radiusOf` (and `start`).
--- * `StarInvar` is new (structure bundle, see below).
+--   lists. Self-loops are impossible (`x ∉ verts`, `w ≠ x`).
 -- * Helpers `mem_candidates`, `foldl_mem`, `findParent`, `parentChain`,
 --   `nodup_length_le`, `chain_ppath_cons`, `reachable_of_invar` are new.
 -- No declarations are dropped; `firstTightParent` (prefix) is not used here.
---
--- Stub forms relied on (names only; bodies are the integrator's):
--- `Oracles` fields, `Int × Nat`/`pairVal`/`ccAdd`/`ccLt`/`ccLe`,
--- `costToCome`, `nearest`, `DenomsPos`/`Costed`, `recomputeCosts` and its
--- `*_denoms`, `*_cost_start`, `*_tight`, `parent_edge_cost_lt` lemmas,
--- `PPath` (`refl`/`step`) with `PPath.append`, `nodupTargets_unique`,
--- `IsParentChain` with `parentChain_nodup`.
 
 /-- Candidate parents for `s`: linked vertices within `radiusOf` at the
     current count (`verts.length`, before adding), plus the nearest vertex
-    as fallback (in its list position). -/
+    as fallback when it links (in its list position). -/
 def candidates {S : Type} [DecidableEq S] (O : Oracles S) (verts : List S)
     (radiusOf : ℕ → ℚ) (start s : S) : List S :=
   verts.filter (fun v =>
@@ -2090,6 +2112,13 @@ theorem parentChain_mem_verts {S : Type} [DecidableEq S] (edges : List (S × S))
             | inr hmem => exact ih (v := u) hu_verts x hmem
 
 
+/-- One rewire pass over all the old vertices `ws`: flip `w`'s parent to the
+    new vertex `s` (the `x` passed by `extendStar`) when `w` is admissible
+    (`w` differs from `start`, `s`, and `p`; `w ∉ forbid`; `w` is within
+    `radiusOf n` of `s`; `s` links to `w`) and routing through `s` is strictly
+    cheaper by the current guard table. The guard table is recomputed after
+    each flip; the parent `p`, the new vertex `s`, and the `forbid` chain are
+    never reparented. -/
 def rewireAux {S : Type} [DecidableEq S] (O : Oracles S)
     (costs : List (S × Int × Nat)) (radiusOf : ℕ → ℚ) (n : ℕ) (forbid : List S) (start s p : S) :
     List S → List (S × S) → List (S × S)
@@ -2771,23 +2800,28 @@ theorem parentChain_cons_eq {S : Type} [DecidableEq S] (edges : List (S × S))
             have hu_verts := (hend (u, v) hu_mem).1
             exact congrArg (v :: ·) (ih (v := u) hu_verts)
 
-/-- Extend the tree by one sample: if `s` is free and has a parent `p`,
-    add `s` and `(p, s)`, rewire over the old vertices at count
-    `(s :: verts).length` while refusing `p`'s ancestor chain, then
-    recompute costs once. -/
+/-- Extend the tree by one steered sample: steer `s` from its nearest vertex
+    `u` to `x`, and if `x` is free, the nearest edge links, `x` is fresh, and
+    `x` has a parent `p`, add `x` and `(p, x)`, rewire over the old vertices
+    at the pre-insertion count `verts.length` while refusing `p`'s ancestor
+    chain, judging flips by the post-insertion recomputed guard table
+    (recomputed again after each flip inside `rewireAux`); the final costs
+    are the recomputation over the new edges. -/
 def extendStar {S : Type} [DecidableEq S] (O : Oracles S) (verts : List S)
     (edges : List (S × S)) (costs : List (S × (Int × Nat))) (radiusOf : ℕ → ℚ)
     (start s : S) : List S × List (S × S) × List (S × (Int × Nat)) :=
-  if O.free s = true then
-    match chooseParent O verts costs radiusOf start s with
+  let u := nearest O verts start s
+  let x := O.steer u s
+  if O.free x = true ∧ O.link u x = true ∧ x ∉ verts then
+    match chooseParent O verts costs radiusOf start x with
     | none => (verts, edges, costs)
     | some p =>
-        let verts' := s :: verts
-        let edges0 := (p, s) :: edges
+        let verts' := x :: verts
+        let edges0 := (p, x) :: edges
         let forbid := parentChain edges0 start p verts.length
         let edges' :=
-          rewireAux O (recomputeCosts O verts' edges0 start) radiusOf verts'.length
-            forbid start s p verts edges0
+          rewireAux O (recomputeCosts O verts' edges0 start) radiusOf verts.length
+            forbid start x p verts edges0
         let costs' := recomputeCosts O verts' edges' start
         (verts', edges', costs')
   else (verts, edges, costs)
@@ -2795,67 +2829,71 @@ def extendStar {S : Type} [DecidableEq S] (O : Oracles S) (verts : List S)
 theorem extendStar_invar {S : Type} [DecidableEq S] (O : Oracles S)
     (verts : List S) (edges : List (S × S)) (costs : List (S × (Int × Nat)))
     (radiusOf : ℕ → ℚ) (start s : S)
-    (h : StarInvar O verts edges costs start) (hs : s ∉ verts) :
+    (h : StarInvar O verts edges costs start) :
     StarInvar O (extendStar O verts edges costs radiusOf start s).1
       (extendStar O verts edges costs radiusOf start s).2.1
       (extendStar O verts edges costs radiusOf start s).2.2 start := by
   unfold extendStar
-  by_cases hfree : O.free s = true
-  · rw [ite_eq_left hfree]
-    cases hcp : chooseParent O verts costs radiusOf start s with
+  dsimp only
+  set u := nearest O verts start s with hu
+  set x := O.steer u s with hx
+  by_cases hgate : O.free x = true ∧ O.link u x = true ∧ x ∉ verts
+  · rw [ite_eq_left hgate]
+    cases hcp : chooseParent O verts costs radiusOf start x with
     | none =>
         exact h
     | some p =>
-        have hpmem : p ∈ candidates O verts radiusOf start s :=
-          chooseParent_mem O verts costs radiusOf start s p hcp
-        have hmem := (mem_candidates O verts radiusOf start s p).mp hpmem
+        have hpmem : p ∈ candidates O verts radiusOf start x :=
+          chooseParent_mem O verts costs radiusOf start x p hcp
+        have hmem := (mem_candidates O verts radiusOf start x p).mp hpmem
         obtain ⟨hp_verts, _, _⟩ := hmem
-        have hs_ne : s ≠ start := fun heq => hs (heq.symm ▸ h.start_mem)
-        have hp_ne_s : p ≠ s := fun heq => hs (heq ▸ hp_verts)
-        have hs_new : s ∈ s :: verts := List.mem_cons_self
-        have hp_new : p ∈ s :: verts := List.mem_cons_of_mem s hp_verts
-        have hws : ∀ w ∈ verts, w ∈ s :: verts := fun w hw =>
-          List.mem_cons_of_mem s hw
-        have h_end0 : ∀ e ∈ (p, s) :: edges,
-            e.1 ∈ s :: verts ∧ e.2 ∈ s :: verts := by
+        have hx_fresh : x ∉ verts := hgate.2.2
+        have hx_ne : x ≠ start := fun heq => hx_fresh (heq.symm ▸ h.start_mem)
+        have hp_ne_x : p ≠ x := fun heq => hx_fresh (heq ▸ hp_verts)
+        have hx_new : x ∈ x :: verts := List.mem_cons_self
+        have hp_new : p ∈ x :: verts := List.mem_cons_of_mem x hp_verts
+        have hws : ∀ w ∈ verts, w ∈ x :: verts := fun w hw =>
+          List.mem_cons_of_mem x hw
+        have h_end0 : ∀ e ∈ (p, x) :: edges,
+            e.1 ∈ x :: verts ∧ e.2 ∈ x :: verts := by
           intro e he
           simp only [List.mem_cons] at he
           cases he with
           | inl heq =>
               subst heq
-              exact ⟨hp_new, hs_new⟩
+              exact ⟨hp_new, hx_new⟩
           | inr hmem =>
               have hend := h.edges_endpoints e hmem
-              exact ⟨List.mem_cons_of_mem s hend.1,
-                List.mem_cons_of_mem s hend.2⟩
-        have h_nodup0 : (((p, s) :: edges).map Prod.snd).Nodup := by
-          have hs_nmem : s ∉ edges.map Prod.snd := by
+              exact ⟨List.mem_cons_of_mem x hend.1,
+                List.mem_cons_of_mem x hend.2⟩
+        have h_nodup0 : (((p, x) :: edges).map Prod.snd).Nodup := by
+          have hx_nmem : x ∉ edges.map Prod.snd := by
             intro hcontra
             obtain ⟨e, he_mem, he_eq⟩ := List.mem_map.mp hcontra
             have hend := (h.edges_endpoints e he_mem).2
             rw [he_eq] at hend
-            exact hs hend
-          show (s :: edges.map Prod.snd).Nodup
+            exact hx_fresh hend
+          show (x :: edges.map Prod.snd).Nodup
           rw [List.nodup_cons]
-          exact ⟨hs_nmem, h.targets_nodup⟩
-        have h_noself0 : ∀ e ∈ (p, s) :: edges, e.1 ≠ e.2 := by
+          exact ⟨hx_nmem, h.targets_nodup⟩
+        have h_noself0 : ∀ e ∈ (p, x) :: edges, e.1 ≠ e.2 := by
           intro e he
           simp only [List.mem_cons] at he
           cases he with
           | inl heq =>
               subst heq
-              exact hp_ne_s
+              exact hp_ne_x
           | inr hmem => exact h.no_self e hmem
-        have h_nestart0 : ∀ e ∈ (p, s) :: edges, e.2 ≠ start := by
+        have h_nestart0 : ∀ e ∈ (p, x) :: edges, e.2 ≠ start := by
           intro e he
           simp only [List.mem_cons] at he
           cases he with
           | inl heq =>
               subst heq
-              exact hs_ne
+              exact hx_ne
           | inr hmem => exact h.target_ne_start e hmem
-        have h_parent0 : ∀ v ∈ s :: verts, v ≠ start →
-            ∃ u, (u, v) ∈ (p, s) :: edges := by
+        have h_parent0 : ∀ v ∈ x :: verts, v ≠ start →
+            ∃ u, (u, v) ∈ (p, x) :: edges := by
           intro v hv hne
           simp only [List.mem_cons] at hv
           cases hv with
@@ -2864,94 +2902,88 @@ theorem extendStar_invar {S : Type} [DecidableEq S] (O : Oracles S)
               exact ⟨p, List.mem_cons_self⟩
           | inr hmem =>
               obtain ⟨u, hu⟩ := h.has_parent v hmem hne
-              exact ⟨u, List.mem_cons_of_mem (p, s) hu⟩
+              exact ⟨u, List.mem_cons_of_mem (p, x) hu⟩
         have hrew := rewireAux_invar O
-          (recomputeCosts O (s :: verts) ((p, s) :: edges) start)
-          radiusOf ((s :: verts).length)
-          (parentChain ((p, s) :: edges) start p verts.length)
-          start s p
-          (s :: verts) verts ((p, s) :: edges)
-          hs_new hp_new hws h_end0 h_nodup0 h_noself0 h_nestart0 h_parent0 hs_ne
+          (recomputeCosts O (x :: verts) ((p, x) :: edges) start)
+          radiusOf verts.length
+          (parentChain ((p, x) :: edges) start p verts.length)
+          start x p
+          (x :: verts) verts ((p, x) :: edges)
+          hx_new hp_new hws h_end0 h_nodup0 h_noself0 h_nestart0 h_parent0 hx_ne
         obtain ⟨h_end', h_nodup', h_noself', h_nestart', h_parent'⟩ := hrew
-        have h_verts_nodup : (s :: verts).Nodup :=
-          List.nodup_cons.mpr ⟨hs, h.verts_nodup⟩
-        have h_all_costed : ∀ v ∈ verts, v ∈ costs.map Prod.fst := by
-          intro v hv
-          obtain ⟨k, ⟨hp⟩⟩ := h.reachable v hv
-          obtain ⟨k', hp', hnodup, _hle⟩ := PPath.exists_simple_le O hp
-          have htgt : ∀ e ∈ edges, e.2 ∈ verts := fun e he =>
-            (h.edges_endpoints e he).2
-          have hlen := PPath.simple_length_le verts h.start_mem htgt
-            h.verts_nodup hp' hnodup
-          have hkn : k' ≤ verts.length := by omega
-          have hcost :=
-            bellmanFord_upper O edges start v k' hp' verts.length hkn
-          rw [h.costs_eq]
-          simpa [recomputeCosts] using hcost.1
-        have hchain_mem : ∀ x ∈ parentChain edges start p verts.length, x ∈ verts :=
-          parentChain_mem_verts edges verts start p verts.length h.edges_endpoints hp_verts
-        have hcosted : ∀ x ∈ parentChain edges start p verts.length,
-            x ∈ costs.map Prod.fst :=
-          fun x hx => h_all_costed x (hchain_mem x hx)
-        have hp_start_old : start ∈ parentChain edges start p verts.length :=
-          parentChain_has_start O verts edges costs start p
-            h.targets_nodup h.no_self h.has_parent h.edges_endpoints h.costs_eq
-            h.start_mem h.verts_nodup h.target_ne_start hcosted hp_verts
-        have hchains : parentChain ((p, s) :: edges) start p verts.length =
-            parentChain edges start p verts.length :=
-          parentChain_cons_eq edges verts start (p, s) p verts.length
-            h.edges_endpoints hp_verts hs
-        have hp_start0 :
-            start ∈ parentChain ((p, s) :: edges) start p verts.length := by
-          rw [hchains]
-          exact hp_start_old
-        obtain ⟨k1, Pc, hPcsub⟩ :=
-          parentChain_ppath_verts ((p, s) :: edges) start p verts.length
-            hp_start0
-        have hps_mem : (p, s) ∈ (p, s) :: edges := List.mem_cons_self
-        have hhs0 : ∀ x ∈ (PPath.step Pc hps_mem).verts,
-            x = s ∨ x ∈ parentChain ((p, s) :: edges) start p verts.length := by
-          intro x hx
-          have happ := PPath.verts_append Pc hps_mem x hx
-          cases happ with
-          | inl heq => exact Or.inl heq
-          | inr hmem => exact Or.inr (hPcsub x hmem)
-        have hreach : ∀ v ∈ s :: verts, ∃ (k : ℕ), Nonempty
+        have h_verts_nodup : (x :: verts).Nodup :=
+          List.nodup_cons.mpr ⟨hx_fresh, h.verts_nodup⟩
+        have hpx_mem : (p, x) ∈ (p, x) :: edges := List.mem_cons_self
+        have hreach : ∀ v ∈ x :: verts, ∃ (k : ℕ), Nonempty
             (PPath (rewireAux O
-              (recomputeCosts O (s :: verts) ((p, s) :: edges) start)
-              radiusOf ((s :: verts).length)
-              (parentChain ((p, s) :: edges) start p verts.length) start s p
+              (recomputeCosts O (x :: verts) ((p, x) :: edges) start)
+              radiusOf verts.length
+              (parentChain ((p, x) :: edges) start p verts.length) start x p
               verts
-              ((p, s) :: edges)) start v k) := by
+              ((p, x) :: edges)) start v k) := by
+          have h_all_costed : ∀ v ∈ verts, v ∈ costs.map Prod.fst := by
+            intro v hv
+            obtain ⟨k, ⟨hp⟩⟩ := h.reachable v hv
+            obtain ⟨k', p', hnodup, _⟩ := PPath.exists_simple_le O hp
+            have hu : start ∈ verts := h.start_mem
+            have htgt : ∀ e ∈ edges, e.2 ∈ verts := fun e he => (h.edges_endpoints e he).2
+            have hndv : verts.Nodup := h.verts_nodup
+            have hlen : k' + 1 ≤ verts.length :=
+              PPath.simple_length_le verts hu htgt hndv p' hnodup
+            have hk_le : k' ≤ verts.length := by omega
+            have hbf := bellmanFord_upper O edges start v k' p' verts.length hk_le
+            have hmem : v ∈ (recomputeCosts O verts edges start).map Prod.fst := by
+              simpa [recomputeCosts] using hbf.1
+            rwa [← h.costs_eq] at hmem
+          have hcosted : ∀ x ∈ parentChain edges start p verts.length, x ∈ costs.map Prod.fst := by
+            intro x hx
+            exact h_all_costed x (parentChain_mem_verts edges verts start p verts.length
+              h.edges_endpoints hp_verts x hx)
+          have hstart_chain : start ∈ parentChain edges start p verts.length :=
+            parentChain_has_start O verts edges costs start p h.targets_nodup h.no_self h.has_parent
+              h.edges_endpoints h.costs_eq h.start_mem h.verts_nodup
+              h.target_ne_start hcosted hp_verts
+          have hchain_eq : parentChain ((p, x) :: edges) start p verts.length =
+              parentChain edges start p verts.length :=
+            parentChain_cons_eq edges verts start (p, x) p verts.length
+              h.edges_endpoints hp_verts hx_fresh
+          have hmem_cons : start ∈ parentChain ((p, x) :: edges) start p verts.length := by
+            rw [hchain_eq]
+            exact hstart_chain
+          obtain ⟨kp, pp, hpp_chain⟩ :=
+            parentChain_ppath_verts ((p, x) :: edges) start p verts.length hmem_cons
+          have hverts : ∀ y ∈ (PPath.step pp hpx_mem).verts,
+              y = x ∨ y ∈ parentChain ((p, x) :: edges) start p verts.length := by
+            intro y hy
+            have hy' : y ∈ pp.verts ++ [x] := hy
+            rw [List.mem_append] at hy'
+            cases hy' with
+            | inl hmem_verts =>
+                exact Or.inr (hpp_chain y hmem_verts)
+            | inr hmem_x =>
+                simp only [List.mem_singleton] at hmem_x
+                exact Or.inl hmem_x
+          have hmain := ppath_rewireAux_all O
+            (recomputeCosts O (x :: verts) ((p, x) :: edges) start)
+            radiusOf verts.length
+            (parentChain ((p, x) :: edges) start p verts.length)
+            start x p verts ((p, x) :: edges) (kp + 1)
+            (PPath.step pp hpx_mem) hverts
           intro v hv
           simp only [List.mem_cons] at hv
           cases hv with
           | inl heq =>
-              subst v
-              exact ppath_rewireAux_all O
-                (recomputeCosts O (s :: verts) ((p, s) :: edges) start)
-                radiusOf ((s :: verts).length)
-                (parentChain ((p, s) :: edges) start p verts.length)
-                start s p
-                verts
-                ((p, s) :: edges) (k1 + 1) (PPath.step Pc hps_mem) hhs0 s
-                (k1 + 1) (PPath.step Pc hps_mem)
-          | inr hmem =>
-              obtain ⟨k, ⟨hp⟩⟩ := h.reachable v hmem
-              have hp0 : Nonempty (PPath ((p, s) :: edges) start v k) :=
-                ppath_mono edges ((p, s) :: edges)
-                  (fun e he => List.mem_cons_of_mem (p, s) he) start v k hp
-              obtain ⟨hp0'⟩ := hp0
-              exact ppath_rewireAux_all O
-                (recomputeCosts O (s :: verts) ((p, s) :: edges) start)
-                radiusOf ((s :: verts).length)
-                (parentChain ((p, s) :: edges) start p verts.length)
-                start s p
-                verts
-                ((p, s) :: edges) (k1 + 1) (PPath.step Pc hps_mem) hhs0 v k
-                hp0'
+              subst heq
+              obtain ⟨k', hk'⟩ := hmain x (kp + 1) (PPath.step pp hpx_mem)
+              exact ⟨k', hk'⟩
+          | inr hmem_v =>
+              obtain ⟨k, ⟨pv⟩⟩ := h.reachable v hmem_v
+              obtain ⟨pv0⟩ := ppath_mono edges ((p, x) :: edges)
+                (fun e he => List.mem_cons_of_mem (p, x) he) start v k pv
+              obtain ⟨k', hk'⟩ := hmain v k pv0
+              exact ⟨k', hk'⟩
         refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-        · exact List.mem_cons_of_mem s h.start_mem
+        · exact List.mem_cons_of_mem x h.start_mem
         · exact h_verts_nodup
         · exact h_end'
         · exact h_nodup'
@@ -2960,22 +2992,44 @@ theorem extendStar_invar {S : Type} [DecidableEq S] (O : Oracles S)
         · exact h_parent'
         · exact hreach
         · rfl
-  · rw [ite_eq_right hfree]
+  · rw [ite_eq_right hgate]
     dsimp only
     exact h
 
+/-- The extended tree still prices `start` at `(0, 1)`. -/
 theorem extendStar_cost_start {S : Type} [DecidableEq S] (O : Oracles S)
     (verts : List S) (edges : List (S × S)) (costs : List (S × (Int × Nat)))
     (radiusOf : ℕ → ℚ) (start s : S)
-    (h : StarInvar O verts edges costs start) (hs : s ∉ verts) :
-    costToCome (extendStar O verts edges costs radiusOf start s).2.2 start =
-      (0, 1) := by
-  have hinv := extendStar_invar O verts edges costs radiusOf start s h hs
-  rw [hinv.costs_eq]
-  exact recomputeCosts_cost_start O _ _ start hinv.target_ne_start
+    (h : StarInvar O verts edges costs start) :
+    costToCome (extendStar O verts edges costs radiusOf start s).2.2 start = (0, 1) := by
+  unfold extendStar
+  dsimp only
+  set u := nearest O verts start s with hu
+  set x := O.steer u s with hx
+  by_cases hgate : O.free x = true ∧ O.link u x = true ∧ x ∉ verts
+  · rw [ite_eq_left hgate]
+    cases hcp : chooseParent O verts costs radiusOf start x with
+    | none =>
+        dsimp only
+        rw [h.costs_eq]
+        exact recomputeCosts_cost_start O verts edges start h.target_ne_start
+    | some p =>
+        dsimp only
+        have hinv := extendStar_invar O verts edges costs radiusOf start s h
+        have hne := hinv.target_ne_start
+        unfold extendStar at hne
+        rw [ite_eq_left hgate] at hne
+        rw [hcp] at hne
+        dsimp only at hne
+        exact rewireAux_cost_start O _ _ _ _ _ _ _ _ _ _ hne
+  · rw [ite_eq_right hgate]
+    dsimp only
+    rw [h.costs_eq]
+    exact recomputeCosts_cost_start O verts edges start h.target_ne_start
 
-/-- Main loop: extend by each sample in turn, skipping samples already in the
-    tree (which would break `Nodup`). Samples come last. -/
+/-- The RRT* fold over the sample list, threading vertices, edges, and the
+    cost table: a raw sample already among `verts` is skipped outright,
+    otherwise the tree is extended by `extendStar`. -/
 def rrtStarAux {S : Type} [DecidableEq S] (O : Oracles S) (radiusOf : ℕ → ℚ)
     (start : S) (verts : List S) (edges : List (S × S))
     (costs : List (S × (Int × Nat))) : List S → List S × List (S × S) ×
@@ -3022,15 +3076,14 @@ theorem rrtStarAux_invar {S : Type} [DecidableEq S] (O : Oracles S)
         exact ih (verts := verts) (edges := edges) (costs := costs) h
       · rw [ite_eq_right hmem]
         dsimp only
-        have h' := extendStar_invar O verts edges costs radiusOf start s h hmem
+        have h' := extendStar_invar O verts edges costs radiusOf start s h
         exact ih _ _ _ h'
-
-/-- Output vertices come from the input tree or the samples. -/
+/-- Output vertices come from the input tree or steered samples. -/
 theorem rrtStarAux_subset {S : Type} [DecidableEq S] (O : Oracles S)
     (radiusOf : ℕ → ℚ) (start : S) (samples : List S) (verts : List S)
     (edges : List (S × S)) (costs : List (S × (Int × Nat))) (v : S)
     (hmem : v ∈ (rrtStarAux O radiusOf start verts edges costs samples).1) :
-    v ∈ verts ∨ v ∈ samples := by
+    v ∈ verts ∨ ∃ s ∈ samples, ∃ u, v = O.steer u s := by
   induction samples generalizing verts edges costs with
   | nil =>
       simp only [rrtStarAux_nil] at hmem
@@ -3043,7 +3096,8 @@ theorem rrtStarAux_subset {S : Type} [DecidableEq S] (O : Oracles S)
         cases hor with
         | inl hv => exact Or.inl hv
         | inr hs =>
-            exact Or.inr (List.mem_cons_of_mem s hs)
+            obtain ⟨s', hs', u, heq⟩ := hs
+            exact Or.inr ⟨s', List.mem_cons_of_mem s hs', u, heq⟩
       · rw [ite_eq_right hvs] at hmem
         dsimp only at hmem
         have hor := ih
@@ -3054,9 +3108,14 @@ theorem rrtStarAux_subset {S : Type} [DecidableEq S] (O : Oracles S)
         cases hor with
         | inl hv =>
             unfold extendStar at hv
-            by_cases hfree : O.free s = true
-            · rw [ite_eq_left hfree] at hv
-              cases hcp : chooseParent O verts costs radiusOf start s with
+            dsimp only at hv
+            by_cases hcond : (O.free (O.steer (nearest O verts start s) s) = true ∧
+              O.link (nearest O verts start s)
+                (O.steer (nearest O verts start s) s) = true ∧
+              O.steer (nearest O verts start s) s ∉ verts)
+            · rw [ite_eq_left hcond] at hv
+              cases hcp : chooseParent O verts costs radiusOf start
+                (O.steer (nearest O verts start s) s) with
               | none =>
                   simp only [hcp] at hv
                   exact Or.inl hv
@@ -3065,14 +3124,15 @@ theorem rrtStarAux_subset {S : Type} [DecidableEq S] (O : Oracles S)
                   simp only [List.mem_cons] at hv
                   cases hv with
                   | inl heq =>
-                      subst heq
-                      exact Or.inr (List.mem_cons_self)
+                      exact Or.inr ⟨s, List.mem_cons_self,
+                        nearest O verts start s, heq⟩
                   | inr hv2 => exact Or.inl hv2
-            · rw [ite_eq_right hfree] at hv
+            · rw [ite_eq_right hcond] at hv
               dsimp only at hv
               exact Or.inl hv
         | inr hs =>
-            exact Or.inr (List.mem_cons_of_mem s hs)
+            obtain ⟨s', hs', u, heq⟩ := hs
+            exact Or.inr ⟨s', List.mem_cons_of_mem s hs', u, heq⟩
 
 theorem rrtStarAux_start_mem {S : Type} [DecidableEq S] (O : Oracles S)
     (radiusOf : ℕ → ℚ) (start : S) (samples : List S) (verts : List S)
@@ -3136,11 +3196,11 @@ theorem all_costed_of_invar {S : Type} [DecidableEq S] (O : Oracles S)
   have hbf := bellmanFord_upper O edges start v k' p' verts.length hk_le
   simpa [recomputeCosts] using hbf.1
 
-/-- Output vertices are `start` or samples. -/
+/-- Output vertices are `start` or steered samples. -/
 theorem rrtStar_verts_subset {S : Type} [DecidableEq S] (O : Oracles S)
     (radiusOf : ℕ → ℚ) (start : S) (samples : List S) (v : S)
     (hmem : v ∈ (rrtStar O radiusOf start samples).1) :
-    v = start ∨ v ∈ samples := by
+    v = start ∨ ∃ s ∈ samples, ∃ u, v = O.steer u s := by
   have hmem2 : v ∈ (rrtStarAux O radiusOf start [start] []
       (recomputeCosts O [start] [] start) samples).1 := by
     simpa [rrtStar] using hmem

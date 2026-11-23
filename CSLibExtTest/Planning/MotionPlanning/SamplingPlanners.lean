@@ -18,13 +18,15 @@ namespace Cslib.Planning.MotionPlanning.SamplingPlanners
 # Tests for deterministic sampling-based motion planners
 
 Concrete checks over configurations `Int × Int` with a squared-distance cost
-proxy: sPRM vertices and edges on four samples, RRT growth on three samples
-(one a duplicate, exercising the skip), the tree property instance, the RRT
-nearest tie-break, PRM* edges under a vertex-count radius schedule, RRT*
-choose-parent and rewiring with recomputed tree costs, descendant cost
-freshness, the nearest-vertex candidate fallback, ancestor rejection on
-rewire, `rewireAux` forbid-guard isolation with a synthetic cost table, an
-RRT* size-dependent radius schedule, and axiom probes on the main lemmas.
+proxy and identity steering (plus one midpoint-steering oracle): sPRM vertices
+and edges on four samples, RRT growth on three samples (one a duplicate,
+exercising the skip), the tree property instance, the RRT nearest tie-break,
+PRM* edges under a vertex-count radius schedule, RRT* choose-parent and
+rewiring with recomputed tree costs, descendant cost freshness, the
+nearest-vertex candidate fallback, ancestor rejection on rewire, `rewireAux`
+forbid-guard isolation with a synthetic cost table, an RRT* size-dependent
+radius schedule, steering-oracle midpoint insertion for RRT and RRT*, the
+nearest-edge gate regression, and axiom probes on the main lemmas.
 -/
 
 /-- Squared Euclidean distance on `Int × Int`, as the RRT/sPRM cost proxy,
@@ -67,6 +69,7 @@ theorem sqDist_pos (p q : Int × Int) (h : p ≠ q) : 0 < sqDist p q := by
 def testOracles : Oracles (Int × Int) :=
   { free := fun _ => true
     link := fun _ _ => true
+    steer := fun _ s => s
     cost := sqDist
     radius := 2
     cost_nonneg := sqDist_nonneg
@@ -77,6 +80,7 @@ def testOracles : Oracles (Int × Int) :=
 def testOraclesObs : Oracles (Int × Int) :=
   { free := fun p => decide (p.1 < 5)
     link := fun _ _ => true
+    steer := fun _ s => s
     cost := sqDist
     radius := 2
     cost_nonneg := sqDist_nonneg
@@ -87,6 +91,7 @@ def testOraclesObs : Oracles (Int × Int) :=
 def testOraclesBig : Oracles (Int × Int) :=
   { free := fun _ => true
     link := fun _ _ => true
+    steer := fun _ s => s
     cost := sqDist
     radius := 100
     cost_nonneg := sqDist_nonneg
@@ -98,8 +103,35 @@ nearest-vertex fallback test. -/
 def testOraclesFallback : Oracles (Int × Int) :=
   { free := fun _ => true
     link := fun a b => a == (0, 0) && b == (5, 0)
+    steer := fun _ s => s
     cost := sqDist
     radius := 100
+    cost_nonneg := sqDist_nonneg
+    cost_self := sqDist_self
+    cost_pos := sqDist_pos }
+
+/-- Oracles isolating the RRT* nearest-edge gate: the start links to both
+`(5, 0)` and `(6, 0)`, while `(5, 0)` links to nothing, so once `(5, 0)` has
+joined, the sample `(6, 0)` has nearest `(5, 0)` with that edge blocked even
+though the start would still be a valid parent. -/
+def testOraclesStarGate : Oracles (Int × Int) :=
+  { free := fun _ => true
+    link := fun a b => a == (0, 0) && (b == (5, 0) || b == (6, 0))
+    steer := fun _ s => s
+    cost := sqDist
+    radius := 100
+    cost_nonneg := sqDist_nonneg
+    cost_self := sqDist_self
+    cost_pos := sqDist_pos }
+
+/-- Oracles with midpoint steering: from `u` toward `s` the planner reaches
+the `Int` midpoint, so inserted vertices differ from the raw samples. -/
+def testOraclesSteer : Oracles (Int × Int) :=
+  { free := fun _ => true
+    link := fun _ _ => true
+    steer := fun u s => (u.1 + (s.1 - u.1) / 2, u.2 + (s.2 - u.2) / 2)
+    cost := sqDist
+    radius := 2
     cost_nonneg := sqDist_nonneg
     cost_self := sqDist_self
     cost_pos := sqDist_pos }
@@ -141,10 +173,11 @@ theorem testRrt_tree :
 theorem testRrt_tree_decide :
     ((rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2.map Prod.snd).Nodup := by decide
 
-/-- Vertex-subset instance, via the general lemma. -/
+/-- Vertex-subset instance, via the general lemma (steered form: vertices are
+the start or steered images of samples). -/
 theorem testRrt_subset :
     ∀ v ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1,
-      v ∈ (0, 0) :: [(1, 0), (2, 0), (1, 0)] :=
+      v = (0, 0) ∨ ∃ s ∈ [(1, 0), (2, 0), (1, 0)], ∃ u, v = testOracles.steer u s :=
   fun v hv => rrt_verts_subset _ _ _ v hv
 
 /-- Edge-count instance, via the general lemma. -/
@@ -169,6 +202,19 @@ theorem testRrt_tiebreak :
 /-- `nearest` returns the first minimizer in list order on ties. -/
 theorem testNearest_firstMinimizer :
     nearest testOracles [(2, 0), (0, 0)] (0, 0) (1, 0) = (2, 0) := by decide
+
+/-- Steering midpoint: from `(0, 0)` toward `(4, 0)` the RRT inserts `(2, 0)`,
+not the raw sample. -/
+theorem testRrt_steerMidpoint :
+    rrt testOraclesSteer (0, 0) [(4, 0)] =
+      ([(2, 0), (0, 0)], [((0, 0), (2, 0))]) := by decide
+
+/-- Nearest-edge gate: with `testOraclesFallback` (linking only
+`(0, 0) → (5, 0)`), sample `(6, 0)` has nearest `(0, 0)` but the edge is
+blocked, so `rrt` inserts nothing. -/
+theorem testRrt_nearestBlocked :
+    rrt testOraclesFallback (0, 0) [(6, 0)] =
+      ([(0, 0)], []) := by decide
 
 /-- Edge-existence instance, via the general lemma. -/
 theorem testRrt_edge_of_mem :
@@ -244,11 +290,11 @@ theorem testRrtStar_cost :
       (0, 0) [(10, 0), (9, 0)]).2.2 (0, 0) = (0, 1) :=
   rrtStar_cost_start _ _ _ _
 
-/-- RRT* vertex-subset instance, via the general lemma. -/
+/-- RRT* vertex-subset instance, via the general lemma (steered form). -/
 theorem testRrtStar_subset :
     ∀ v ∈ (rrtStar testOraclesBig (fun _ => testOraclesBig.radius)
         (0, 0) [(10, 0), (9, 0)]).1,
-      v = (0, 0) ∨ v ∈ [(10, 0), (9, 0)] :=
+      v = (0, 0) ∨ ∃ s ∈ [(10, 0), (9, 0)], ∃ u, v = testOraclesBig.steer u s :=
   fun v hv => rrtStar_verts_subset _ _ _ _ v hv
 
 /-- Descendant cost freshness: vertices, newest first. -/
@@ -327,12 +373,12 @@ theorem testRewireAux_forbidAbsentFlips :
       [((0, 0), (10, 0)), ((0, 0), (9, 0))] =
       [((9, 0), (10, 0)), ((0, 0), (9, 0))] := by decide
 
-/-- Convention: `extendStar` evaluates `radiusOf` at `(s :: verts).length`
-(the post-insertion vertex count) for the rewire pass, while `candidates`
-uses the pre-insertion `verts.length` (reached via `chooseParent` before `s`
-is added). The schedule below is wide (`1000`) at counts `≤ 2` and `0`
-afterwards, so the first two insertions choose parents from the full near
-set while the third insertion falls back to its nearest vertex. -/
+/-- Convention: `extendStar` evaluates `radiusOf` at `verts.length` (the
+pre-insertion vertex count) for both parent selection (`candidates` via
+`chooseParent`) and the rewire pass, so the two agree. The schedule below is
+wide (`1000`) at counts `≤ 2` and `0` afterwards, so the first two insertions
+choose parents from the full near set and rewire widely, while the third
+insertion falls back to its nearest vertex. -/
 def testRadiusOf (n : Nat) : Rat := if n ≤ 2 then 1000 else 0
 
 /-- RRT* under the nonconstant schedule: vertices, newest first. -/
@@ -342,13 +388,14 @@ theorem testRrtStar_schedule_verts :
       [(8, 0), (9, 0), (10, 0), (0, 0)] := by decide
 
 /-- RRT* under the nonconstant schedule: exact edges. `(10, 0)` attaches to
-`(0, 0)`; `(9, 0)` takes the cheaper non-nearest parent `(0, 0)` (radius
-`1000` at count `2`, but the rewire pass at count `3` already sees radius
-`0`, so no flip); `(8, 0)` falls back to its nearest vertex `(9, 0)`. -/
+`(0, 0)`; `(9, 0)` takes the cheaper non-nearest parent `(0, 0)` and
+`(10, 0)` rewires through it (radius `1000` at pre-insertion count `2` for
+both parent selection and rewiring); `(8, 0)` falls back to its nearest
+vertex `(9, 0)` (radius `0` at count `3`). -/
 theorem testRrtStar_schedule_edges :
     (rrtStar testOraclesBig testRadiusOf (0, 0)
       [(10, 0), (9, 0), (8, 0)]).2.1 =
-      [((9, 0), (8, 0)), ((0, 0), (9, 0)), ((0, 0), (10, 0))] := by decide
+      [((9, 0), (8, 0)), ((0, 0), (9, 0)), ((9, 0), (10, 0))] := by decide
 
 /-- The constant-`0` schedule on the same samples: `(9, 0)` takes its nearest
 vertex `(10, 0)` as parent instead of `(0, 0)`. -/
@@ -390,6 +437,41 @@ theorem testRrtStar_guardPostInsertion :
       [(4, 9), (0, 10)]).2.1 =
       [((0, 0), (0, 10)), ((0, 0), (4, 9))] := by decide
 
+/-- Steering midpoint for RRT*: from `(0, 0)` toward `(4, 0)` the tree inserts
+`(2, 0)` at cost `(4, 1)`, not the raw sample. -/
+theorem testRrtStar_steerMidpoint :
+    rrtStar testOraclesSteer (fun _ => 100) (0, 0) [(4, 0)] =
+      ([(2, 0), (0, 0)], [((0, 0), (2, 0))],
+       [((2, 0), (4, 1)), ((0, 0), (0, 1))]) := by decide
+
+/-- RRT* nearest-edge gate: with `testOraclesStarGate`, sample `(5, 0)` inserts
+through the allowed link while sample `(6, 0)` — whose nearest vertex is
+`(5, 0)` at squared distance `1` (against `36` from `(0, 0)`), with that edge
+blocked — inserts nothing, so the tree keeps exactly the permitted vertex and
+edge. Without the gate, `(6, 0)` would insert with parent `(0, 0)`, which links
+to it and is within radius (`36 ≤ 100`). -/
+theorem testRrtStar_nearestBlocked :
+    rrtStar testOraclesStarGate (fun _ => testOraclesStarGate.radius) (0, 0)
+      [(5, 0), (6, 0)] =
+      ([(5, 0), (0, 0)], [((0, 0), (5, 0))],
+       [((5, 0), (25, 1)), ((0, 0), (0, 1))]) := by decide
+
+/-- Step schedule pinning the pre-insertion radius count: wide (`1000`) at
+exactly count `2`, `0` at every other count (including count `1`). -/
+def testRadiusPre (n : Nat) : Rat := if n = 2 then 1000 else 0
+
+/-- RRT* rewiring uses the pre-insertion vertex count: inserting `(9, 0)` at
+pre-insertion count `2` sees radius `1000`, so `(10, 0)` rewires through
+`(9, 0)` (edge cost `1`); at any other count the radius is `0`, so the flip
+would be excluded both at the post-insertion count `3` and at the first
+step's pre-insertion count `1` (where the first sample still inserts through
+the nearest-vertex fallback, with no rewire). -/
+-- The flip of `(10, 0)`'s parent edge from `(0, 0)` to `(9, 0)` pins exactly count `2`.
+theorem testRrtStar_radiusPreInsertion :
+    (rrtStar testOraclesBig testRadiusPre (0, 0)
+      [(10, 0), (9, 0)]).2.1 =
+      [((0, 0), (9, 0)), ((9, 0), (10, 0))] := by decide
+
 
 #print axioms sprmVertices_all_free
 #print axioms sprmEdges_symmetric
@@ -423,5 +505,10 @@ theorem testRrtStar_guardPostInsertion :
 #print axioms testRrtStar_schedule_constHi_edges
 #print axioms testRrtStar_schedule_differs
 #print axioms testRrtStar_guardPostInsertion
+#print axioms testRrt_steerMidpoint
+#print axioms testRrt_nearestBlocked
+#print axioms testRrtStar_steerMidpoint
+#print axioms testRrtStar_nearestBlocked
+#print axioms testRrtStar_radiusPreInsertion
 
 end Cslib.Planning.MotionPlanning.SamplingPlanners
