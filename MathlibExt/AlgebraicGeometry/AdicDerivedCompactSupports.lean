@@ -432,6 +432,46 @@ class DerivedRefinementPasting where
       DerivedCategory.Plus.Q.map (refinementCochainPasting E r K).hom ≫
         (pullback E c.openMap).rightDerivedFunctorPlusUnit.app K
 
+/-- `refinementCochainPasting` as a natural isomorphism. -/
+def refinementCochainPastingIso :
+    (pullback E r.map).mapCochainComplexPlus ⋙ (pullback E d.openMap).mapCochainComplexPlus ≅
+      (pullback E c.openMap).mapCochainComplexPlus :=
+  NatIso.ofComponents (refinementCochainPasting E r) (fun {K L} φ => by
+    apply ObjectProperty.hom_ext
+    exact (Functor.mapHomologicalComplexCompIso (refinementPullbackPasting E r)
+      (.up ℤ)).hom.naturality φ.hom)
+
+/-- The derived refinement pasting exists: the three inverse images are exact, so their derived
+units are isomorphisms and the comparison descends through the localization from the pasting on
+complexes. -/
+noncomputable instance derivedRefinementPasting : DerivedRefinementPasting E r := by
+  have : IsIso (pullback E r.map).rightDerivedFunctorPlusUnit := NatIso.isIso_of_isIso_app _
+  have : IsIso (pullback E d.openMap).rightDerivedFunctorPlusUnit := NatIso.isIso_of_isIso_app _
+  have : IsIso (pullback E c.openMap).rightDerivedFunctorPlusUnit := NatIso.isIso_of_isIso_app _
+  let ur := asIso (pullback E r.map).rightDerivedFunctorPlusUnit
+  let ud := asIso (pullback E d.openMap).rightDerivedFunctorPlusUnit
+  let uc := asIso (pullback E c.openMap).rightDerivedFunctorPlusUnit
+  let e : DerivedCategory.Plus.Q ⋙ (derivedPullback E r.map ⋙ derivedPullback E d.openMap) ≅
+      DerivedCategory.Plus.Q ⋙ derivedPullback E c.openMap :=
+    (Functor.associator _ _ _).symm ≪≫ Functor.isoWhiskerRight ur.symm _ ≪≫
+      Functor.associator _ _ _ ≪≫ Functor.isoWhiskerLeft _ ud.symm ≪≫
+      (Functor.associator _ _ _).symm ≪≫
+      Functor.isoWhiskerRight (refinementCochainPastingIso E r) _ ≪≫ uc
+  let W := Localization.whiskeringLeftFunctor' DerivedCategory.Plus.Q
+    (CochainComplex.Plus.quasiIso (ModuleSheaf E c.ambient)) (Derived E X)
+  exact
+    { comparison := W.preimageIso e
+      unit_normalization := fun K => by
+        have h : (W.preimageIso e).hom.app (DerivedCategory.Plus.Q.obj K) = e.hom.app K :=
+          NatTrans.congr_app (W.map_preimage e.hom) K
+        rw [h]
+        simp only [e, ur, ud, uc, refinementCompositeUnit, Iso.trans_hom, Iso.symm_hom,
+          NatTrans.comp_app, Functor.isoWhiskerRight_hom, Functor.isoWhiskerLeft_hom,
+          Functor.whiskerRight_app, Functor.whiskerLeft_app, Functor.associator_hom_app,
+          Functor.associator_inv_app, asIso_hom, asIso_inv, Category.id_comp, Category.assoc]
+        rw [← Functor.map_comp_assoc]
+        simp [refinementCochainPastingIso, derivedPullback] }
+
 variable [(pullback E c.openMap).IsRightAdjoint]
   [(pullback E d.openMap).IsRightAdjoint]
   [PreservesFiniteLimits (extensionByZero E c.openMap)]
