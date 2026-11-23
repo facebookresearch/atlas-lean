@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.RpowLowerBound
+public import MathlibExt.Data.Nat.Factorial.Iterate
 
 namespace MetaMathlibExt
 
@@ -77,16 +78,6 @@ public theorem_wanted exists_tetration_eq_iterate_rpow {a b : ℝ}
     (ha : Real.exp (1 / Real.exp 1) < a) (hb : Real.exp (1 / Real.exp 1) < b) {n : ℕ}
     (hn : 0 < n) :
     ∃ p : ℕ, ∃ c ∈ Set.Ioc 1 b, (fun x : ℝ => a ^ x)^[n] 1 = (fun x : ℝ => b ^ x)^[p] c
-
-/-- **Comparison of iterated factorials.** For natural numbers $j$ and $m$ let $F_j(m)$ be the
-$j$-fold iterated factorial $m!\cdots!$ (with $j$ factorials). Let $n, n' \ge 3$ and $k > k'$ be
-natural numbers. If $n' < F_{k-k'}(n)$, then $F_{k'}(n') < F_k(n)$.
-
-Source: Karol Gryszka, *Exponential versus Factorial Revisited*, Journal of Integer
-Sequences 28 (2025), Article 25.2.8, Theorem 4 (`jis-2025-25.2.8-thm-4`). -/
-public theorem_wanted iterate_factorial_lt_iterate_factorial {n n' k k' : ℕ} (hn : 3 ≤ n)
-    (hn' : 3 ≤ n') (hk : k' < k) (h : n' < Nat.factorial^[k - k'] n) :
-    Nat.factorial^[k'] n' < Nat.factorial^[k] n
 
 /-- **Iterated factorials as base-$10$ power towers.** Let $k \ge 3$ be a natural number, let
 $F_n(k)$ be the $n$-fold iterated factorial of $k$, viewed as a real number, and for a real

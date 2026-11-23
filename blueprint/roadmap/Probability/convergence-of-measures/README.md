@@ -14,3 +14,5 @@ Weak convergence and convergence in probability, tightness and Prokhorov's theor
 - [Cramér–Wold device](cramer-wold-theorem/README.md)
 - [Prokhorov's theorem on the real line](prokhorov-theorem/README.md)
 - [Skorokhod representation theorem](skorokhod-representation-theorem/README.md)
+- [Skorokhod representation on the real line](skorokhod-representation-on-the-real-line/README.md)
+- [Convergence in distribution and bounded continuous functions](convergence-in-distribution-and-bounded-continuous-functions/README.md)
