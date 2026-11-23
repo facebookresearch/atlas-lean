@@ -60,8 +60,6 @@
 
 ## Further properties of the χ²₁ tail and its real-valued form
 
-- [The χ²₁ tail probability is finite at every threshold](chi-sq-one-tail-ne-top-2.md)
-- [The χ²₁ tail is nonincreasing on the whole real line](antitone-chi-sq-one-tail.md)
 - [The χ²₁ tail is positive at every nonnegative threshold](chi-sq-one-tail-pos.md)
 - [The χ²₁ tail as a real-valued function](chi-sq-one-tail-real.md)
 - [The real-valued χ²₁ tail is nonincreasing](antitone-chi-sq-one-tail-real.md)

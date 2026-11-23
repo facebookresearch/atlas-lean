@@ -12,7 +12,7 @@ Suppose that
   is square integrable, and
 - for a constant $C$, every absolute row sum of the matrix $K_{pq} = \int d_p\, d_q \, d\mu$ of
   the [deviations](he-dev.md) $d_{(i,j)} = y_i y_j - h^2 A_{ij}$, indexed by the
-  [pairs](pairs.md) $p$ and $q$, is at most $C$: $\sum_q |K_{pq}| \le C$ for every pair $p$.
+  [pairs](../../bioinformatics/sequence-alignment/multiple-sequence-alignment/pair-finset.md) $p$ and $q$, is at most $C$: $\sum_q |K_{pq}| \le C$ for every pair $p$.
 
 Then for every $t > 0$ the [Haseman–Elston estimator](he-estimate.md) $\hat h^2$ computed from
 $A$ and the phenotypes satisfies

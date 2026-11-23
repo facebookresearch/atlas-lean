@@ -12,7 +12,7 @@ of $n$:
 
 - for every $n$, every cross-product $y_i y_j$ of
   [phenotypes](../ld-score-regression/pheno.md) with $i < j$ is square integrable;
-- for every $n$ and every [pair](pairs.md) $p$, the absolute row sum
+- for every $n$ and every [pair](../../bioinformatics/sequence-alignment/multiple-sequence-alignment/pair-finset.md) $p$, the absolute row sum
   $\sum_q \bigl|\int d_p\, d_q \, d\mu_n\bigr|$ over the pairs $q$, where
   $d_{(i,j)} = y_i y_j - h^2 A^{(n)}_{ij}$ are the [deviations](he-dev.md), is at most $C$;
 - $S_n = \sum_{i<j} \bigl(A^{(n)}_{ij}\bigr)^2 \to \infty$ as $n \to \infty$.

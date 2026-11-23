@@ -9,7 +9,6 @@
 
 ## Haseman–Elston regression as least squares
 
-- [Pairs of individuals with $i < j$](pairs.md)
 - [Each pair $i < j$ consists of two distinct individuals](ne-of-mem-pairs.md)
 - [Haseman–Elston estimator](he-estimate.md)
 - [Residual sum of squares of Haseman–Elston regression](he-rss.md)

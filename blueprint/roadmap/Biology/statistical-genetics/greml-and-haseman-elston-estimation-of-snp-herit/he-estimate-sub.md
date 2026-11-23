@@ -6,5 +6,5 @@ $A_{ij}$ with $i < j$ is nonzero, let $y \in \mathbb{R}^N$ and let $h \in \mathb
 
 $$\hat h^2 - h = \frac{1}{S} \sum_{i<j} A_{ij} \bigl(y_i y_j - h A_{ij}\bigr):$$
 
-the estimation error is the sum, over the [pairs](pairs.md) $i < j$, of the deviations
+the estimation error is the sum, over the [pairs](../../bioinformatics/sequence-alignment/multiple-sequence-alignment/pair-finset.md) $i < j$, of the deviations
 $y_i y_j - h A_{ij}$ of the cross-products from $h A_{ij}$, weighted by $A_{ij} / S$.

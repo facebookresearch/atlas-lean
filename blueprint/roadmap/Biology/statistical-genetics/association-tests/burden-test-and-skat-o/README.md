@@ -9,7 +9,6 @@ to the burden test at `ρ = 1`, and its p-values with Davies' inversion formula.
 
 - [Variance-component score statistic of a general kernel](kernel-q.md)
 - [Mixture-weight matrix of a kernel score statistic](kernel-mixture-matrix.md)
-- [SKAT is the kernel score statistic of the SKAT kernel](skat-q-eq-kernel-q.md)
 - [The SKAT mixture matrix is the mixture matrix of the SKAT kernel](skat-mixture-matrix-eq-kernel-mixture-ma.md)
 - [The mixture matrix of a symmetric kernel is symmetric](is-hermitian-kernel-mixture-matrix.md)
 - [A positive semidefinite kernel gives nonnegative mixture weights](eigenvalues-kernel-mixture-matrix-nonneg.md)

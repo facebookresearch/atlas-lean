@@ -6,7 +6,7 @@ Haseman–Elston (cross-product) estimator is
 
 $$\hat h^2 = \frac{\sum_{i<j} A_{ij}\, y_i y_j}{\sum_{i<j} A_{ij}^2},$$
 
-where both sums run over the [pairs](pairs.md) $i < j$; only the entries of $A$ above the
+where both sums run over the [pairs](../../bioinformatics/sequence-alignment/multiple-sequence-alignment/pair-finset.md) $i < j$; only the entries of $A$ above the
 diagonal enter. If these entries are not all $0$, $\hat h^2$ is the unique least-squares slope,
 through the origin, of the cross-products $y_i y_j$ on the entries $A_{ij}$: it
 [minimizes the residual sum of squares](he-rss-he-estimate-le.md), and

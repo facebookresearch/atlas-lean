@@ -16,7 +16,7 @@ the [maximal ungapped alignment score](max-align-score.md) of the two words (Kar
 
 No lattice condition is imposed; the intended regime is that of nonlattice scores with `K > 0`.
 For a common letter law `p = q` with every letter of positive probability, negative mean score and
-some positive score, the root `θ > 0` exists and is [unique](exists-unique-karlin-altschul-root.md).
+some positive score, the root `θ > 0` exists and is [unique](../../position-weight-matrices/exists-unique-pair-mgf-eq-one.md).
 The dependence between diagonals enters only through `Δ_k`: the
 [Bonferroni upper](two-prob-max-align-score-le-le.md) and
 [lower](le-two-prob-max-align-score-le.md) bounds sandwich `P(M_{m,n} ≤ t)` between partial sums
