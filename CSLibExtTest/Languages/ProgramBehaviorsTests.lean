@@ -80,4 +80,10 @@ theorem nondet_has_two_behaviors :
     (terminates_mem_iff nondetToy).mpr ⟨NondetToyCfg.b2, hM2, hF2⟩
   exact ⟨hm1, hm2⟩
 
+/-- From the nondeterministic to the deterministic toy, form (1) fails while form (2) holds. -/
+theorem nondet_to_det_preserves1_fails_preserves2_holds :
+    ¬ Preserves1 nondetToy detToy NondetToyCfg.a NondetToyCfg.a ∧
+      Preserves2 nondetToy detToy NondetToyCfg.a NondetToyCfg.a :=
+  ⟨preserves1_fails_nondet_to_det, preserves2_nondet_to_det⟩
+
 end Cslib.Languages.ProgramBehaviorsTests

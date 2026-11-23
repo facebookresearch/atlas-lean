@@ -199,4 +199,46 @@ theorem preserves1_fails_nondet_to_det :
   obtain ⟨_, hlabel, _⟩ := hTrD
   cases hlabel
 
+/-- Preservation in form (2) holds from the nondeterministic to the deterministic toy. -/
+theorem preserves2_nondet_to_det :
+    Preserves2 nondetToy detToy NondetToyCfg.a NondetToyCfg.a := by
+  unfold Preserves2
+  intro _ b hb
+  have hTr : ∀ {x : NondetToyCfg} {μ : Bool} {y : NondetToyCfg},
+      detToy.lts.Tr x μ y → nondetToy.lts.Tr x μ y := fun h => Or.inl h
+  have hMTr : ∀ {x : NondetToyCfg} {μs : List Bool} {y : NondetToyCfg},
+      detToy.lts.MTr x μs y → nondetToy.lts.MTr x μs y := by
+    intro x μs y h
+    induction h with
+    | refl => exact Cslib.LTS.MTr.refl
+    | stepL htr _ ih => exact Cslib.LTS.MTr.stepL (hTr htr) ih
+  have hfrom : ∀ {μs : List Bool} {y : NondetToyCfg},
+      detToy.lts.MTr NondetToyCfg.a μs y → y = NondetToyCfg.a ∨ y = NondetToyCfg.b1 := by
+    intro μs y h
+    cases h with
+    | refl => exact Or.inl rfl
+    | stepL htr hrest =>
+      obtain ⟨_, _, rfl⟩ := htr
+      cases hrest with
+      | refl => exact Or.inr rfl
+      | stepL htr2 _ =>
+        obtain ⟨hb1, _, _⟩ := htr2
+        cases hb1
+  cases b with
+  | terminates μs =>
+    obtain ⟨c', hm, hf⟩ := (terminates_mem_iff detToy).mp hb
+    exact (terminates_mem_iff nondetToy).mpr ⟨c', hMTr hm, hf⟩
+  | diverges μs =>
+    obtain ⟨ss, _, hexec⟩ := (diverges_mem_iff detToy).mp hb
+    obtain ⟨_, _, h1⟩ := hexec 0
+    obtain ⟨h2, _, _⟩ := hexec 1
+    have hcontra : NondetToyCfg.b1 = NondetToyCfg.a := h1.symm.trans h2
+    cases hcontra
+  | goesWrong μs =>
+    obtain ⟨c', hm, hst⟩ := (goesWrong_mem_iff detToy).mp hb
+    obtain ⟨hnf, hterm⟩ := (OpSem.stuck_iff detToy).mp hst
+    rcases hfrom hm with rfl | rfl
+    · exact (hterm true NondetToyCfg.b1 ⟨rfl, rfl, rfl⟩).elim
+    · exact (hnf (Or.inl rfl)).elim
+
 end Cslib.Languages.ProgramBehaviors
