@@ -23,7 +23,7 @@ The map to Kresch's bundle/projective presentation is computed through the
 zero-bundle stage and identity projective stage. Its bijectivity is a theorem
 request. No comparison map or inverse is selected independently of cycle classes.
 
-Source: Kresch, math/9810166v1, Definition 2.1.4 and Theorem 2.1.12(ii).
+Source: Kresch, math/9810166v1, Definition 2.1.4 and Theorem 2.1.12(i).
 The discrete-category functor uses the native Mathlib typeToCat construction
 at revision 56a005855ea17e0b0958f73ec801ae140b0a1679, with small discrete
 Hom universes; original source is Apache 2.0, Mathlib contributors.

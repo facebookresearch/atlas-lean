@@ -13,7 +13,7 @@ public import MathlibExt.AlgebraicGeometry.AlgebraicSpaceChowComparison
 /-!
 # The ordinary algebraic-space to Kresch Chow comparison
 
-Kresch, math/9810166v1, Theorem 2.1.12(ii). The actual etale quotient
+Kresch, math/9810166v1, Theorem 2.1.12(i). The actual etale quotient
 space, its whole coherent point diagram, finite-type diagonal scope and
 zero-bundle/identity-stage cycle map are fixed before this theorem request.
 -/

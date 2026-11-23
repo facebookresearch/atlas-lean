@@ -33,15 +33,10 @@ open StackCycleGeometry StackCycleRelations StackFibreModels StackVectorBundles
 open StackChowGroups StackFirstChernOperators StackFirstChernSchemeComparison
 open IntegerSchemeChow IntegralOperationalChow
 
+/-- Every vector bundle on a stack has its zero section, a closed immersion
+normalized by the zero element. -/
 def_wanted stackZeroSection {S : Scheme.{0}} (X : Stack S) (E : VectorBundle X) :
-    ZeroSection E
-
-/-- The pullback bundle map and its zero are constructed together; an
-arbitrary translated Cartesian bundle map is not assumed to preserve zero. -/
-def_wanted stackZeroSectionPullback {S : Scheme.{0}} {T X : Stack S}
-    (p : StackHom T X) (E : VectorBundle X) (z : ZeroSection E) :
-    Σ P : BundlePullback p E, Σ z' : ZeroSection P.bundle,
-      ZeroSectionBaseChange p E P z z'
+    StackBundleCones.ZeroSection E
 
 def_wanted stackFirstChernData (k : Type) [Field k]
     (D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k))

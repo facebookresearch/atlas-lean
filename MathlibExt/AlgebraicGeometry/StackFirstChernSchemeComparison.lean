@@ -23,6 +23,12 @@ completed AxiomMath/Stacks scheme source; they are not new Wanted theorems.
 
 The stack comparison keeps the full total-space, projection and zero maps,
 and the actual cycle-class comparison to the same scheme Chow groups.
+Conventions: here the total space of the line module `L` represents sections
+`𝒪 → f^*L`, so it is `Spec Sym(Lᵛ)` and the self-intersection of its zero
+section caps with `+c₁(L)`. The pinned AxiomMath
+`Chow/AffineBundle/ZeroSectionSelfIntersection.lean` uses the total space
+`Spec Sym(ℒ)` and obtains `-c₁(ℒ)`; it applies with `ℒ = Lᵛ`.
+
 References: Kresch, arXiv:math/9810166v1, Theorem 2.1.12; Fulton,
 Intersection Theory, Sections 2.1 and 3.3; AxiomMath/Stacks
 c496df0d9beea9deaeabcea8492605f9a0a2313b,
@@ -102,7 +108,7 @@ def schemeFirstChern {O : CycleOperations (k := k)}
 /-- The full native total-space and zero diagrams identify the line geometry;
 the desired cap equality is not part of this background identification. -/
 structure SchemeGeometry {X : Stack (Spec (.of k))} {E : VectorBundle X}
-    (z : ZeroSection E) {U : FieldScheme k}
+    (z : StackBundleCones.ZeroSection E) {U : FieldScheme k}
     (dictionary : SchemeCycleDictionary U X)
     {O : CycleOperations (k := k)} {L : U.scheme.left.Modules}
     (source : SchemeLineSource O U L) where
