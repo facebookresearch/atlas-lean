@@ -7,13 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Ported from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/CategoryTheory/Triangulated/ExceptionalCollectionFiniteness.lean.
-Public source: https://github.com/AxiomMath/Stacks
-Licensed under Apache License 2.0. The source has no individual author
-or copyright notice. Modification notice: move the complete standalone
-proof to MathlibExt without any Stacks dependency; original names retained.
+Portions of this file are adapted from:
+
+`StacksFrontier/CategoryTheory/Triangulated/ExceptionalCollectionFiniteness.lean`
+(AxiomMath/Stacks at commit c496df0d9beea9deaeabcea8492605f9a0a2313b,
+https://github.com/AxiomMath/Stacks):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modification notice: the complete standalone proof is moved to MathlibExt without any Stacks
+dependency; original names retained.
 -/
 module
 
