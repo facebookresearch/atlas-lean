@@ -16,3 +16,4 @@ Point-set topology of topological and metric spaces: connectedness, separation a
 - [Krull dimension drops on proper closed subsets of irreducible sets](topological-krull-dim-add-one-le-of-is-c.md)
 - [Kuratowski's closure-complement theorem](kuratowski-closure-complement.md)
 - [Non-strictly separated sets](is-separated.md)
+- [Normal space: points are closed and disjoint closed sets have disjoint open neighbourhoods](normal-space.md)
