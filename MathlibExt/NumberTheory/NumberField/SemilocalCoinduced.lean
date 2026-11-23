@@ -86,7 +86,8 @@ theorem uniformContinuous_congr_of_forall_eq (v : Valuation K Γ₀) (f : K ≃+
     UniformContinuous (WithVal.congr v v f) := by
   apply uniformContinuous_addMonoidHom_of_continuous
   apply continuous_of_continuousAt_zero (WithVal.congr v v f).toAddMonoidHom
-  rw [ContinuousAt, map_zero, (Valued.hasBasis_nhds_zero _ _).tendsto_iff (Valued.hasBasis_nhds_zero _ _)]
+  rw [ContinuousAt, map_zero,
+    (Valued.hasBasis_nhds_zero _ _).tendsto_iff (Valued.hasBasis_nhds_zero _ _)]
   intro γ _
   refine ⟨γ, trivial, fun x hx => ?_⟩
   simp only [Set.mem_setOf_eq] at hx ⊢
@@ -97,7 +98,8 @@ theorem uniformContinuous_congr_of_forall_eq (v : Valuation K Γ₀) (f : K ≃+
   rw [Valuation.restrict_lt_iff_lt_embedding] at hx ⊢
   rwa [key]
 
-theorem le_exp_neg_one_of_lt_one {t : WithZero (Multiplicative ℤ)} (ht : t < 1) : t ≤ WithZero.exp (-1) := by
+theorem le_exp_neg_one_of_lt_one {t : WithZero (Multiplicative ℤ)} (ht : t < 1) : t ≤
+  WithZero.exp (-1) := by
   rcases eq_or_ne t 0 with rfl | h0
   · exact zero_le'
   · rw [← WithZero.exp_log h0] at ht ⊢
@@ -186,7 +188,8 @@ noncomputable def actRingEquiv (σ : decomp E K w) : w.adicCompletion K ≃+* w.
       (uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2).continuous
       (by
         rw [WithVal.congr_symm]
-        exact (uniformContinuous_congr_of_mem ((σ⁻¹ : decomp E K w) : K ≃ₐ[E] K) (σ⁻¹).2).continuous))).trans
+        exact (uniformContinuous_congr_of_mem ((σ⁻¹ : decomp E K w) : K ≃ₐ[E]
+          K) (σ⁻¹).2).continuous))).trans
     (HeightOneSpectrum.adicCompletion.equiv K w).symm
 
 theorem actRingEquiv_apply (σ : decomp E K w) (x : w.adicCompletion K) :
@@ -197,7 +200,8 @@ theorem actRingEquiv_apply (σ : decomp E K w) (x : w.adicCompletion K) :
 
 theorem actRingEquiv_coe (σ : decomp E K w) (x : WithVal (w.valuation K)) :
     actRingEquiv σ (x : w.adicCompletion K)
-      = ((WithVal.congr (w.valuation K) (w.valuation K) ((σ : K ≃ₐ[E] K) : K ≃+* K) x : WithVal (w.valuation K)) : w.adicCompletion K) := by
+      = ((WithVal.congr (w.valuation K) (w.valuation K) ((σ : K ≃ₐ[E] K) : K ≃+* K) x
+        : WithVal (w.valuation K)) : w.adicCompletion K) := by
   apply HeightOneSpectrum.adicCompletion.ext
   rw [actRingEquiv_apply, HeightOneSpectrum.adicCompletion.toCompletion_ofCompletion,
     HeightOneSpectrum.adicCompletion.toCompletion_ofCompletion,
@@ -212,7 +216,8 @@ theorem continuous_actRingEquiv (σ : decomp E K w) : Continuous (actRingEquiv �
     funext fun x => HeightOneSpectrum.adicCompletion.ext (h := actRingEquiv_apply σ x)
   rw [this]
   exact (HeightOneSpectrum.adicCompletion.continuous_ofCompletion K w).comp
-    (UniformSpace.Completion.continuous_map.comp (HeightOneSpectrum.adicCompletion.continuous_toCompletion K w))
+    (UniformSpace.Completion.continuous_map.comp
+      (HeightOneSpectrum.adicCompletion.continuous_toCompletion K w))
 
 theorem actRingEquiv_one : actRingEquiv (1 : decomp E K w) = RingEquiv.refl _ := by
   apply RingEquiv.ext
@@ -220,11 +225,14 @@ theorem actRingEquiv_one : actRingEquiv (1 : decomp E K w) = RingEquiv.refl _ :=
   apply HeightOneSpectrum.adicCompletion.ext
   rw [actRingEquiv_apply]
   change _ = id x.toCompletion
-  refine congrFun (UniformSpace.Completion.ext UniformSpace.Completion.continuous_map continuous_id fun a => ?_) _
-  rw [UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem ((1 : decomp E K w) : K ≃ₐ[E] K) (1 : decomp E K w).2)]
+  refine congrFun (UniformSpace.Completion.ext UniformSpace.Completion.continuous_map continuous_id
+    fun a => ?_) _
+  rw [UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem
+        ((1 : decomp E K w) : K ≃ₐ[E] K) (1 : decomp E K w).2)]
   rfl
 
-theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actRingEquiv τ).trans (actRingEquiv σ) := by
+theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actRingEquiv
+  τ).trans (actRingEquiv σ) := by
   apply RingEquiv.ext
   intro x
   apply HeightOneSpectrum.adicCompletion.ext
@@ -234,7 +242,8 @@ theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actR
     (UniformSpace.Completion.continuous_map.comp UniformSpace.Completion.continuous_map) fun a =>
       ?_) _
   change _ = UniformSpace.Completion.map _ (UniformSpace.Completion.map _ _)
-  rw [UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem ((σ * τ : decomp E K w) : K ≃ₐ[E] K) (σ * τ).2),
+  rw [UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem
+        ((σ * τ : decomp E K w) : K ≃ₐ[E] K) (σ * τ).2),
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem (τ : K ≃ₐ[E] K) τ.2),
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2)]
   rfl
@@ -247,11 +256,13 @@ noncomputable def actHom : decomp E K w →* (w.adicCompletion K ≃+* w.adicCom
 theorem smul_withVal_def (σ : decomp E K w) (y : WithVal (w.valuation K)) :
     σ • y = WithVal.toVal (w.valuation K) ((σ : K ≃ₐ[E] K) y.ofVal) := rfl
 
-noncomputable scoped instance instMulActionWithVal : MulAction (decomp E K w) (WithVal (w.valuation K)) where
+noncomputable scoped instance instMulActionWithVal : MulAction (decomp E K w) (WithVal (w.valuation
+  K)) where
   one_smul y := by rw [smul_withVal_def]; rfl
   mul_smul σ τ y := by rw [smul_withVal_def, smul_withVal_def, smul_withVal_def]; rfl
 
-noncomputable scoped instance instDistribMulActionWithVal : DistribMulAction (decomp E K w) (WithVal (w.valuation K)) where
+noncomputable scoped instance instDistribMulActionWithVal : DistribMulAction (decomp E K
+  w) (WithVal (w.valuation K)) where
   smul_zero σ := by rw [smul_withVal_def]; simp
   smul_add σ x y := by
     rw [smul_withVal_def, smul_withVal_def, smul_withVal_def]
@@ -262,18 +273,27 @@ noncomputable scoped instance instUniformContinuousConstSMul :
     UniformContinuousConstSMul (decomp E K w) (WithVal (w.valuation K)) :=
   ⟨fun σ => uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2⟩
 
-noncomputable scoped instance instMulSemiringAction : MulSemiringAction (decomp E K w) (w.adicCompletion K) where
+noncomputable scoped instance instMulSemiringAction : MulSemiringAction (decomp E K
+  w) (w.adicCompletion K) where
   smul σ x := actRingEquiv σ x
   one_smul x := by change actRingEquiv 1 x = x; rw [actRingEquiv_one]; rfl
-  mul_smul σ τ x := by change actRingEquiv (σ * τ) x = actRingEquiv σ (actRingEquiv τ x); rw [actRingEquiv_mul]; rfl
+  mul_smul σ τ x := by
+    change actRingEquiv (σ * τ) x = actRingEquiv σ (actRingEquiv τ x)
+    rw [actRingEquiv_mul]
+    rfl
   smul_zero σ := by change actRingEquiv σ 0 = 0; rw [map_zero]
-  smul_add σ x y := by change actRingEquiv σ (x + y) = actRingEquiv σ x + actRingEquiv σ y; rw [map_add]
+  smul_add σ x y := by
+    change actRingEquiv σ (x + y) = actRingEquiv σ x + actRingEquiv σ y
+    rw [map_add]
   smul_one σ := by change actRingEquiv σ 1 = 1; rw [map_one]
-  smul_mul σ x y := by change actRingEquiv σ (x * y) = actRingEquiv σ x * actRingEquiv σ y; rw [map_mul]
+  smul_mul σ x y := by
+    change actRingEquiv σ (x * y) = actRingEquiv σ x * actRingEquiv σ y
+    rw [map_mul]
 
 theorem smul_def (σ : decomp E K w) (x : w.adicCompletion K) : σ • x = actRingEquiv σ x := rfl
 
-noncomputable scoped instance instMulDistribMulActionUnits : MulDistribMulAction (decomp E K w) (w.adicCompletion K)ˣ :=
+noncomputable scoped instance instMulDistribMulActionUnits : MulDistribMulAction (decomp E K
+  w) (w.adicCompletion K)ˣ :=
   Units.mulDistribMulActionRight
 
 set_option synthInstance.maxHeartbeats 200000 in
@@ -284,16 +304,19 @@ section integers
 
 open WithZeroTopology in
 
-theorem valued_actRingEquiv (σ : decomp E K w) (x : w.adicCompletion K) : Valued.v (actRingEquiv σ x) = Valued.v x := by
+theorem valued_actRingEquiv (σ : decomp E K w) (x : w.adicCompletion K) : Valued.v (actRingEquiv σ
+  x) = Valued.v x := by
   have hclosed : IsClosed {y : w.adicCompletion K | Valued.v (actRingEquiv σ y) = Valued.v y} := by
     have : {y : w.adicCompletion K | Valued.v (actRingEquiv σ y) = Valued.v y}
         = {y | Valued.v.restrict (actRingEquiv σ y) = Valued.v.restrict y} :=
       Set.ext fun y => (Valuation.restrict_inj _).symm
     rw [this]
-    exact isClosed_eq (Valued.continuous_valuation.comp (continuous_actRingEquiv σ)) Valued.continuous_valuation
+    exact isClosed_eq (Valued.continuous_valuation.comp (continuous_actRingEquiv σ))
+      Valued.continuous_valuation
   obtain ⟨x, rfl⟩ := HeightOneSpectrum.adicCompletion.ofCompletion_surjective K w x
   refine UniformSpace.Completion.induction_on
-    (p := fun y => Valued.v (actRingEquiv σ (HeightOneSpectrum.adicCompletion.ofCompletion y)) = Valued.v (HeightOneSpectrum.adicCompletion.ofCompletion y : w.adicCompletion K)) x
+    (p := fun y => Valued.v (actRingEquiv σ (HeightOneSpectrum.adicCompletion.ofCompletion y)) =
+      Valued.v (HeightOneSpectrum.adicCompletion.ofCompletion y : w.adicCompletion K)) x
     (by simpa only [Set.preimage_ofPred_eq] using
       hclosed.preimage (HeightOneSpectrum.adicCompletion.continuous_ofCompletion K w)) fun a => ?_
   show Valued.v (actRingEquiv σ (a : w.adicCompletion K)) = Valued.v (a : w.adicCompletion K)
@@ -321,22 +344,28 @@ theorem coe_smul_integers (σ : decomp E K w) (x : w.adicCompletionIntegers K) :
 
 set_option synthInstance.maxHeartbeats 200000 in
 
-noncomputable scoped instance instMulSemiringActionIntegers : MulSemiringAction (decomp E K w) (w.adicCompletionIntegers K) :=
+noncomputable scoped instance instMulSemiringActionIntegers : MulSemiringAction (decomp E K
+  w) (w.adicCompletionIntegers K) :=
   { instSMulIntegers (E := E) (K := K) (w := w) with
     one_smul := fun x => Subtype.ext (by rw [coe_smul_integers, one_smul])
     mul_smul := fun σ τ x => Subtype.ext (by rw [coe_smul_integers, coe_smul_integers,
       coe_smul_integers, mul_smul])
     smul_zero := fun σ => Subtype.ext (by rw [coe_smul_integers]; exact smul_zero σ)
-    smul_add := fun σ x y => Subtype.ext (by rw [coe_smul_integers]; exact smul_add σ (x : w.adicCompletion K) y)
+    smul_add := fun σ x y => Subtype.ext (by
+      rw [coe_smul_integers]; exact smul_add σ (x : w.adicCompletion K) y)
     smul_one := fun σ => Subtype.ext (by rw [coe_smul_integers]; exact smul_one σ)
-    smul_mul := fun σ x y => Subtype.ext (by rw [coe_smul_integers]; exact MulSemiringAction.smul_mul σ (x : w.adicCompletion K) y) }
+    smul_mul := fun σ x y => Subtype.ext (by
+      rw [coe_smul_integers]
+      exact MulSemiringAction.smul_mul σ (x : w.adicCompletion K) y) }
 
 set_option synthInstance.maxHeartbeats 200000 in
 
-noncomputable scoped instance instMulDistribMulActionIntegerUnits : MulDistribMulAction (decomp E K w) (w.adicCompletionIntegers K)ˣ :=
+noncomputable scoped instance instMulDistribMulActionIntegerUnits : MulDistribMulAction (decomp E K
+  w) (w.adicCompletionIntegers K)ˣ :=
   Units.mulDistribMulActionRight
 
-noncomputable scoped instance instMulActionIntegers : MulAction (decomp E K w) (w.adicCompletionIntegers K) :=
+noncomputable scoped instance instMulActionIntegers : MulAction (decomp E K
+  w) (w.adicCompletionIntegers K) :=
   (instMulSemiringActionIntegers (E := E) (K := K) (w := w)).toMulAction
 
 set_option synthInstance.maxHeartbeats 200000 in
@@ -344,7 +373,8 @@ noncomputable scoped instance instSMulUnits : SMul (decomp E K w) (w.adicComplet
   (instMulDistribMulActionUnits (E := E) (K := K) (w := w)).toMulAction.toSMul
 
 set_option synthInstance.maxHeartbeats 200000 in
-noncomputable scoped instance instSMulIntegerUnits : SMul (decomp E K w) (w.adicCompletionIntegers K)ˣ :=
+noncomputable scoped instance instSMulIntegerUnits : SMul (decomp E K w) (w.adicCompletionIntegers
+  K)ˣ :=
   (instMulDistribMulActionIntegerUnits (E := E) (K := K) (w := w)).toMulAction.toSMul
 
 set_option synthInstance.maxHeartbeats 200000 in
@@ -352,7 +382,8 @@ noncomputable scoped instance instMulActionUnits : MulAction (decomp E K w) (w.a
   (instMulDistribMulActionUnits (E := E) (K := K) (w := w)).toMulAction
 
 set_option synthInstance.maxHeartbeats 200000 in
-noncomputable scoped instance instMulActionIntegerUnits : MulAction (decomp E K w) (w.adicCompletionIntegers K)ˣ :=
+noncomputable scoped instance instMulActionIntegerUnits : MulAction (decomp E K
+  w) (w.adicCompletionIntegers K)ˣ :=
   (instMulDistribMulActionIntegerUnits (E := E) (K := K) (w := w)).toMulAction
 
 end integers
@@ -379,7 +410,8 @@ theorem uniformContinuous_congr_of_forall_eq (v : Valuation R Γ₀) (v' : Valua
   have hx₀' : Valued.v.restrict (WithVal.toVal v x₀) ≠ 0 := fun h0 => by
     have h1 := (Valuation.restrict_eq_zero_iff Valued.v).1 h0
     rw [WithVal.valued_toVal, hx₀] at h1
-    exact γ.ne_zero (MonoidWithZeroHom.ValueGroup₀.embedding_strictMono.injective (h1.trans (map_zero _).symm))
+    exact γ.ne_zero (MonoidWithZeroHom.ValueGroup₀.embedding_strictMono.injective
+      (h1.trans (map_zero _).symm))
   refine Valued.mem_nhds_zero.2 ⟨Units.mk0 _ hx₀', fun x hx => hγ ?_⟩
   simp only [Set.mem_setOf_eq, Units.val_mk0, Valuation.restrict_lt_iff, WithVal.valued_toVal,
     hx₀] at hx
@@ -392,7 +424,8 @@ end general
 
 variable (E K : Type*) [Field E] [Field K] [Algebra E K]
 
-noncomputable scoped instance instMulActionHeightOneSpectrum : MulAction (K ≃ₐ[E] K) (HeightOneSpectrum (𝓞 K)) where
+noncomputable scoped instance instMulActionHeightOneSpectrum : MulAction (K ≃ₐ[E]
+  K) (HeightOneSpectrum (𝓞 K)) where
   smul σ w := HeightOneSpectrum.comap (MulSemiringAction.toRingEquiv (K ≃ₐ[E] K) (𝓞 K) σ⁻¹ : 𝓞 K →+*
     𝓞 K)
     (MulSemiringAction.toRingEquiv (K ≃ₐ[E] K) (𝓞 K) σ⁻¹).surjective w
@@ -421,7 +454,8 @@ theorem smul_mem_smul_asIdeal_iff (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (�
   rw [mem_smul_asIdeal_iff, inv_smul_smul]
 
 theorem smul_asIdeal_eq_map (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) :
-    (σ • w).asIdeal = Ideal.map ((MulSemiringAction.toRingEquiv (K ≃ₐ[E] K) (𝓞 K) σ : 𝓞 K ≃+* 𝓞 K) : 𝓞 K →+* 𝓞 K) w.asIdeal := by
+    (σ • w).asIdeal = Ideal.map ((MulSemiringAction.toRingEquiv (K ≃ₐ[E] K) (𝓞 K) σ : 𝓞 K ≃+* 𝓞 K)
+      : 𝓞 K →+* 𝓞 K) w.asIdeal := by
   rw [Ideal.map_comap_of_equiv]
   ext x
   rw [mem_smul_asIdeal_iff, Ideal.mem_comap, MulSemiringAction.toRingEquiv_symm_apply]
@@ -433,7 +467,8 @@ theorem smul_mem_smul_asIdeal_pow_iff (σ : K ≃ₐ[E] K) (w : HeightOneSpectru
     MulSemiringAction.toRingEquiv_symm_apply,
     inv_smul_smul]
 
-theorem inv_smul_eq_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w') : σ⁻¹ • w' = w := by
+theorem inv_smul_eq_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w')
+  : σ⁻¹ • w' = w := by
   rw [← h, inv_smul_smul]
 
 variable [NumberField K]
@@ -496,13 +531,15 @@ theorem transport_apply (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)}
 theorem transport_coe (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w') (x
   : WithVal (w.valuation K)) :
     transport σ h (x : w.adicCompletion K)
-      = ((WithVal.congr (w.valuation K) (w'.valuation K) ((σ : K ≃ₐ[E] K) : K ≃+* K) x : WithVal (w'.valuation K)) : w'.adicCompletion K) := by
+      = ((WithVal.congr (w.valuation K) (w'.valuation K) ((σ : K ≃ₐ[E] K) : K ≃+* K) x
+        : WithVal (w'.valuation K)) : w'.adicCompletion K) := by
   apply HeightOneSpectrum.adicCompletion.ext
   rw [transport_apply, HeightOneSpectrum.adicCompletion.toCompletion_ofCompletion,
     HeightOneSpectrum.adicCompletion.toCompletion_ofCompletion,
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_smul_eq h)]
 
-theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w') : Continuous (transport σ h) := by
+theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w')
+  : Continuous (transport σ h) := by
   have : (transport σ h : w.adicCompletion K → w'.adicCompletion K)
       = HeightOneSpectrum.adicCompletion.ofCompletion ∘
         UniformSpace.Completion.map (WithVal.congr (w.valuation K) (w'.valuation K) ((σ : K ≃ₐ[E] K)
@@ -511,13 +548,15 @@ theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (�
     funext fun x => HeightOneSpectrum.adicCompletion.ext (h := transport_apply σ h x)
   rw [this]
   exact (HeightOneSpectrum.adicCompletion.continuous_ofCompletion K w').comp
-    (UniformSpace.Completion.continuous_map.comp (HeightOneSpectrum.adicCompletion.continuous_toCompletion K w))
+    (UniformSpace.Completion.continuous_map.comp
+      (HeightOneSpectrum.adicCompletion.continuous_toCompletion K w))
 
 theorem isClopen_setOf_valued_le (w : HeightOneSpectrum (𝓞 K)) {c : WithZero (Multiplicative ℤ)} (hc
   : c ≠ 0) :
     IsClopen {y : w.adicCompletion K | Valued.v y ≤ c} := by
   obtain ⟨y₁, rfl⟩ := w.valuedAdicCompletion_surjective K c
-  have hr : Valued.v.restrict y₁ ≠ 0 := fun h0 => hc ((Valuation.restrict_eq_zero_iff Valued.v).1 h0)
+  have hr : Valued.v.restrict y₁ ≠ 0 := fun h0 => hc ((Valuation.restrict_eq_zero_iff Valued.v).1
+    h0)
   have : {y : w.adicCompletion K | Valued.v y ≤ Valued.v y₁} = {y | Valued.v.restrict y ≤
     Valued.v.restrict y₁} :=
     Set.ext fun y => (Valuation.restrict_le_iff Valued.v (x := y) (y := y₁)).symm
@@ -531,12 +570,14 @@ theorem valued_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)
   have key : ∀ c : WithZero (Multiplicative ℤ), c ≠ 0 → ∀ y : w.adicCompletion K,
     (Valued.v (transport σ h y) ≤ c ↔ Valued.v y ≤ c) := by
     intro c hc y
-    have hclosed : IsClosed {y : w.adicCompletion K | Valued.v (transport σ h y) ≤ c ↔ Valued.v y ≤ c} := by
+    have hclosed : IsClosed {y : w.adicCompletion K | Valued.v (transport σ h y) ≤ c ↔ Valued.v y ≤
+      c} := by
       have h1 : IsClopen {y : w.adicCompletion K | Valued.v (transport σ h y) ≤ c} :=
         (isClopen_setOf_valued_le w' hc).preimage (continuous_transport σ h)
       have h2 : IsClopen {y : w.adicCompletion K | Valued.v y ≤ c} := isClopen_setOf_valued_le w hc
       have : {y : w.adicCompletion K | Valued.v (transport σ h y) ≤ c ↔ Valued.v y ≤ c}
-          = ({y | Valued.v (transport σ h y) ≤ c} ∩ {y | Valued.v y ≤ c}) ∪ ({y | Valued.v (transport σ h y) ≤ c}ᶜ ∩ {y | Valued.v y ≤ c}ᶜ) := by
+          = ({y | Valued.v (transport σ h y) ≤ c} ∩ {y | Valued.v y ≤ c}) ∪ ({y
+            | Valued.v (transport σ h y) ≤ c}ᶜ ∩ {y | Valued.v y ≤ c}ᶜ) := by
         ext y
         simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_inter_iff, Set.mem_compl_iff]
         tauto
@@ -544,11 +585,13 @@ theorem valued_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)
       exact ((h1.inter h2).union (h1.compl.inter h2.compl)).isClosed
     obtain ⟨y, rfl⟩ := HeightOneSpectrum.adicCompletion.ofCompletion_surjective K w y
     refine UniformSpace.Completion.induction_on
-      (p := fun y => Valued.v (transport σ h (HeightOneSpectrum.adicCompletion.ofCompletion y)) ≤ c ↔
+      (p := fun y => Valued.v (transport σ h (HeightOneSpectrum.adicCompletion.ofCompletion y)) ≤ c
+        ↔
         Valued.v (HeightOneSpectrum.adicCompletion.ofCompletion y : w.adicCompletion K) ≤ c) y
       (by simpa only [Set.preimage_ofPred_eq] using
         hclosed.preimage (HeightOneSpectrum.adicCompletion.continuous_ofCompletion K w)) fun a => ?_
-    show Valued.v (transport σ h (a : w.adicCompletion K)) ≤ c ↔ Valued.v (a : w.adicCompletion K) ≤ c
+    show Valued.v (transport σ h (a : w.adicCompletion K)) ≤ c ↔ Valued.v (a : w.adicCompletion K) ≤
+      c
     rw [transport_coe, HeightOneSpectrum.adicCompletion.valued_ofCompletion,
       HeightOneSpectrum.adicCompletion.valued_ofCompletion, Valued.valuedCompletion_apply,
         Valued.valuedCompletion_apply, ← WithVal.apply_ofVal, ← WithVal.apply_ofVal,
@@ -563,7 +606,8 @@ theorem valued_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)
 
 theorem transport_mem_adicCompletionIntegers_iff (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h
   : σ • w = w')
-    (x : w.adicCompletion K) : transport σ h x ∈ w'.adicCompletionIntegers K ↔ x ∈ w.adicCompletionIntegers K := by
+    (x : w.adicCompletion K) : transport σ h x ∈ w'.adicCompletionIntegers K ↔ x ∈
+      w.adicCompletionIntegers K := by
   rw [HeightOneSpectrum.mem_adicCompletionIntegers, HeightOneSpectrum.mem_adicCompletionIntegers,
     valued_transport]
 
@@ -574,7 +618,9 @@ noncomputable def transportIntegers (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectr
   w') :
     w.adicCompletionIntegers K ≃+* w'.adicCompletionIntegers K where
   toFun x := ⟨transport σ h x, (transport_mem_adicCompletionIntegers_iff σ h _).2 x.2⟩
-  invFun y := ⟨(transport σ h).symm y, (transport_mem_adicCompletionIntegers_iff σ h _).1 (by rw [RingEquiv.apply_symm_apply]; exact y.2)⟩
+  invFun y := ⟨(transport σ h).symm y,
+    (transport_mem_adicCompletionIntegers_iff σ h _).1
+      (by rw [RingEquiv.apply_symm_apply]; exact y.2)⟩
   left_inv x := Subtype.ext ((transport σ h).symm_apply_apply x)
   right_inv y := Subtype.ext ((transport σ h).apply_symm_apply y)
   map_mul' x y := Subtype.ext (map_mul (transport σ h) (x : w.adicCompletion K) (y
@@ -610,18 +656,21 @@ private theorem NumberField.PlaceTransport.transport_one (E K : Type*) [Field E]
   K] [NumberField K] [Algebra E K]
     (w : IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers K)) (h : (1 : K ≃ₐ[E] K) • w
       = w) :
-    NumberField.PlaceTransport.transport (1 : K ≃ₐ[E] K) h = RingEquiv.refl (w.adicCompletion K) := by
+    NumberField.PlaceTransport.transport (1 : K ≃ₐ[E] K) h = RingEquiv.refl (w.adicCompletion K)
+      := by
   apply RingEquiv.ext
   intro x
   obtain ⟨y, rfl⟩ := IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion_surjective K w x
   have := UniformSpace.Completion.ext
     (f := fun y => (NumberField.PlaceTransport.transport (1 : K ≃ₐ[E] K) h
       (IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion y) : w.adicCompletion K))
-    (g := fun y => (IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion y : w.adicCompletion K))
+    (g := fun y => (IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion y
+      : w.adicCompletion K))
     ((NumberField.PlaceTransport.continuous_transport (1 : K ≃ₐ[E] K) h).comp
       (IsDedekindDomain.HeightOneSpectrum.adicCompletion.continuous_ofCompletion K w))
     (IsDedekindDomain.HeightOneSpectrum.adicCompletion.continuous_ofCompletion K w) fun a => by
-      show NumberField.PlaceTransport.transport (1 : K ≃ₐ[E] K) h (a : w.adicCompletion K) = (a : w.adicCompletion K)
+      show NumberField.PlaceTransport.transport (1 : K ≃ₐ[E] K) h (a : w.adicCompletion K) = (a
+        : w.adicCompletion K)
       rw [NumberField.PlaceTransport.transport_coe]; rfl
   exact congrFun this y
 
@@ -635,7 +684,8 @@ private theorem NumberField.PlaceTransport.transport_trans_transport (E K : Type
   intro x
   obtain ⟨x, rfl⟩ := IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion_surjective K w x
   have := UniformSpace.Completion.ext
-    (f := fun y => NumberField.PlaceTransport.transport σ h₂ (NumberField.PlaceTransport.transport τ h₁
+    (f := fun y => NumberField.PlaceTransport.transport σ h₂ (NumberField.PlaceTransport.transport τ
+      h₁
       (IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion y : w.adicCompletion K)))
     (g := fun y => NumberField.PlaceTransport.transport (σ * τ) h₃
       (IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion y : w.adicCompletion K))
@@ -644,7 +694,8 @@ private theorem NumberField.PlaceTransport.transport_trans_transport (E K : Type
         (IsDedekindDomain.HeightOneSpectrum.adicCompletion.continuous_ofCompletion K w)))
     ((NumberField.PlaceTransport.continuous_transport (σ * τ) h₃).comp
       (IsDedekindDomain.HeightOneSpectrum.adicCompletion.continuous_ofCompletion K w)) fun a => by
-      show NumberField.PlaceTransport.transport σ h₂ (NumberField.PlaceTransport.transport τ h₁ (a : w.adicCompletion K))
+      show NumberField.PlaceTransport.transport σ h₂ (NumberField.PlaceTransport.transport τ h₁ (a
+        : w.adicCompletion K))
         = NumberField.PlaceTransport.transport (σ * τ) h₃ (a : w.adicCompletion K)
       rw [NumberField.PlaceTransport.transport_coe, NumberField.PlaceTransport.transport_coe,
         NumberField.PlaceTransport.transport_coe]
@@ -673,7 +724,8 @@ private theorem NumberField.PlaceTransport.stabilizer_eq_decomp (E K : Type*) [F
     ext x
     rw [ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem, Valuation.mem_valuationSubring_iff,
       Valuation.mem_valuationSubring_iff, show σ⁻¹ • x = σ⁻¹ x from rfl,
-      NumberField.PlaceTransport.valuation_apply_of_smul_eq (NumberField.PlaceTransport.inv_smul_eq_of_smul_eq h)]
+      NumberField.PlaceTransport.valuation_apply_of_smul_eq
+        (NumberField.PlaceTransport.inv_smul_eq_of_smul_eq h)]
   · intro hσ
 
     have hσ' : σ⁻¹ ∈ NumberField.PlaceDecomp.decomp E K w := inv_mem hσ
@@ -706,7 +758,8 @@ namespace NumberField.PlaceTransport.OrbitAux
 
 open IsDedekindDomain NumberField
 
-private theorem numberField_of_algebra (E K : Type*) [Field E] [Field K] [NumberField K] [Algebra E K] : NumberField E := by
+private theorem numberField_of_algebra (E K : Type*) [Field E] [Field K] [NumberField K] [Algebra E
+  K] : NumberField E := by
   haveI : CharZero E := RingHom.charZero (algebraMap E K)
   exact { to_charZero := inferInstance,
           to_finiteDimensional :=
@@ -829,7 +882,8 @@ noncomputable def actRingEquiv (σ : decomp E K w) : w.Completion ≃+* w.Comple
       (uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2).continuous
       (by
         rw [WithAbs.congr_symm]
-        exact (uniformContinuous_congr_of_mem ((σ⁻¹ : decomp E K w) : K ≃ₐ[E] K) (σ⁻¹).2).continuous))).trans
+        exact (uniformContinuous_congr_of_mem ((σ⁻¹ : decomp E K w) : K ≃ₐ[E]
+          K) (σ⁻¹).2).continuous))).trans
     (InfinitePlace.Completion.equiv w).symm
 
 theorem actRingEquiv_apply (σ : decomp E K w) (x : w.Completion) :
@@ -839,7 +893,8 @@ theorem actRingEquiv_apply (σ : decomp E K w) (x : w.Completion) :
   rfl
 
 theorem actRingEquiv_coe (σ : decomp E K w) (x : WithAbs w.1) :
-    actRingEquiv σ (x : w.Completion) = ((WithAbs.congr w.1 w.1 ((σ : K ≃ₐ[E] K) : K ≃+* K) x : WithAbs w.1) : w.Completion) := by
+    actRingEquiv σ (x : w.Completion) = ((WithAbs.congr w.1 w.1 ((σ : K ≃ₐ[E] K) : K ≃+* K) x
+      : WithAbs w.1) : w.Completion) := by
   apply InfinitePlace.Completion.ext
   rw [actRingEquiv_apply, InfinitePlace.Completion.coe_toCompletion,
     InfinitePlace.Completion.coe_toCompletion,
@@ -868,7 +923,8 @@ theorem actRingEquiv_one : actRingEquiv (1 : decomp E K w) = RingEquiv.refl _ :=
     (uniformContinuous_congr_of_mem ((1 : decomp E K w) : K ≃ₐ[E] K) (1 : decomp E K w).2)]
   rfl
 
-theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actRingEquiv τ).trans (actRingEquiv σ) := by
+theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actRingEquiv
+  τ).trans (actRingEquiv σ) := by
   apply RingEquiv.ext
   intro x
   apply InfinitePlace.Completion.ext
@@ -878,7 +934,8 @@ theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actR
     (UniformSpace.Completion.continuous_map.comp UniformSpace.Completion.continuous_map) fun a =>
       ?_) _
   change _ = UniformSpace.Completion.map _ (UniformSpace.Completion.map _ _)
-  rw [UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem ((σ * τ : decomp E K w) : K ≃ₐ[E] K) (σ * τ).2),
+  rw [UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem
+        ((σ * τ : decomp E K w) : K ≃ₐ[E] K) (σ * τ).2),
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem (τ : K ≃ₐ[E] K) τ.2),
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2)]
   rfl
@@ -895,32 +952,40 @@ noncomputable scoped instance instMulActionWithAbs : MulAction (decomp E K w) (W
   one_smul y := by rw [smul_withAbs_def]; rfl
   mul_smul σ τ y := by rw [smul_withAbs_def, smul_withAbs_def, smul_withAbs_def]; rfl
 
-noncomputable scoped instance instDistribMulActionWithAbs : DistribMulAction (decomp E K w) (WithAbs w.1) where
+noncomputable scoped instance instDistribMulActionWithAbs : DistribMulAction (decomp E K w) (WithAbs
+  w.1) where
   smul_zero σ := by rw [smul_withAbs_def]; simp
   smul_add σ x y := by
     rw [smul_withAbs_def, smul_withAbs_def, smul_withAbs_def]
     show WithAbs.toAbs _ ((σ : K ≃ₐ[E] K) (x.ofAbs + y.ofAbs)) = _
     rw [map_add]; rfl
 
-noncomputable scoped instance instUniformContinuousConstSMul : UniformContinuousConstSMul (decomp E K w) (WithAbs w.1) :=
+noncomputable scoped instance instUniformContinuousConstSMul : UniformContinuousConstSMul (decomp E
+  K w) (WithAbs w.1) :=
   ⟨fun σ => uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2⟩
 
-noncomputable scoped instance instMulSemiringAction : MulSemiringAction (decomp E K w) w.Completion where
+noncomputable scoped instance instMulSemiringAction : MulSemiringAction (decomp E K w) w.Completion
+  where
   smul σ x := actRingEquiv σ x
   one_smul x := by change actRingEquiv 1 x = x; rw [actRingEquiv_one]; rfl
   mul_smul σ τ x := by
     change actRingEquiv (σ * τ) x = actRingEquiv σ (actRingEquiv τ x); rw [actRingEquiv_mul]; rfl
   smul_zero σ := by change actRingEquiv σ 0 = 0; rw [map_zero]
-  smul_add σ x y := by change actRingEquiv σ (x + y) = actRingEquiv σ x + actRingEquiv σ y; rw [map_add]
+  smul_add σ x y := by
+    change actRingEquiv σ (x + y) = actRingEquiv σ x + actRingEquiv σ y
+    rw [map_add]
   smul_one σ := by change actRingEquiv σ 1 = 1; rw [map_one]
-  smul_mul σ x y := by change actRingEquiv σ (x * y) = actRingEquiv σ x * actRingEquiv σ y; rw [map_mul]
+  smul_mul σ x y := by
+    change actRingEquiv σ (x * y) = actRingEquiv σ x * actRingEquiv σ y
+    rw [map_mul]
 
 theorem smul_def (σ : decomp E K w) (x : w.Completion) : σ • x = actRingEquiv σ x := rfl
 
 scoped instance instContinuousConstSMul : ContinuousConstSMul (decomp E K w) w.Completion :=
   ⟨fun σ => continuous_actRingEquiv σ⟩
 
-noncomputable scoped instance instMulDistribMulActionUnits : MulDistribMulAction (decomp E K w) (w.Completion)ˣ :=
+noncomputable scoped instance instMulDistribMulActionUnits : MulDistribMulAction (decomp E K
+  w) (w.Completion)ˣ :=
   Units.mulDistribMulActionRight
 
 noncomputable scoped instance instMulActionUnits : MulAction (decomp E K w) (w.Completion)ˣ :=
@@ -973,10 +1038,12 @@ end general
 
 variable {E K : Type*} [Field E] [Field K] [Algebra E K]
 
-theorem apply_apply_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w') (x : K) : w' (σ x) = w x := by
+theorem apply_apply_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w') (x : K)
+  : w' (σ x) = w x := by
   rw [← h, InfinitePlace.smul_apply, AlgEquiv.symm_apply_apply]
 
-theorem inv_smul_eq_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w') : σ⁻¹ • w' = w := by
+theorem inv_smul_eq_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w') : σ⁻¹ • w'
+  = w := by
   rw [← h, inv_smul_smul]
 
 theorem uniformContinuous_congr_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w')
@@ -1008,7 +1075,8 @@ theorem toCompletion_transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h 
   rfl
 
 theorem transport_coe (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') (x : WithAbs w.1) :
-    transport σ h (x : w.Completion) = ((WithAbs.congr w.1 w'.1 ((σ : K ≃ₐ[E] K) : K ≃+* K) x : WithAbs w'.1) : w'.Completion) := by
+    transport σ h (x : w.Completion) = ((WithAbs.congr w.1 w'.1 ((σ : K ≃ₐ[E] K) : K ≃+* K) x
+      : WithAbs w'.1) : w'.Completion) := by
   rw [transport_apply, InfinitePlace.Completion.coe_toCompletion,
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_smul_eq h)]
 
@@ -1032,7 +1100,8 @@ end NumberField.InfinitePlaceTransport
 private theorem NumberField.InfinitePlaceTransport.transport_one (E K : Type*) [Field E] [Field
   K] [Algebra E K]
     (w : NumberField.InfinitePlace K) (h : (1 : K ≃ₐ[E] K) • w = w) :
-    NumberField.InfinitePlaceTransport.transport (1 : K ≃ₐ[E] K) h = RingEquiv.refl w.Completion := by
+    NumberField.InfinitePlaceTransport.transport (1 : K ≃ₐ[E] K) h = RingEquiv.refl w.Completion
+      := by
   apply RingEquiv.ext
   intro x
   rw [RingEquiv.refl_apply]
@@ -1040,7 +1109,8 @@ private theorem NumberField.InfinitePlaceTransport.transport_one (E K : Type*) [
     (isClosed_eq (NumberField.InfinitePlaceTransport.continuous_transport (1 : K ≃ₐ[E] K) h)
       continuous_id)
     fun a => ?_
-  change NumberField.InfinitePlaceTransport.transport (1 : K ≃ₐ[E] K) h (a : w.Completion) = (a : w.Completion)
+  change NumberField.InfinitePlaceTransport.transport (1 : K ≃ₐ[E] K) h (a : w.Completion) = (a
+    : w.Completion)
   rw [NumberField.InfinitePlaceTransport.transport_coe]
   rfl
 
@@ -1053,7 +1123,8 @@ private theorem NumberField.InfinitePlaceTransport.transport_trans_transport (E 
       = NumberField.InfinitePlaceTransport.transport (σ * τ) h₃ := by
   apply RingEquiv.ext
   intro x
-  show NumberField.InfinitePlaceTransport.transport σ h₂ (NumberField.InfinitePlaceTransport.transport τ h₁ x)
+  show NumberField.InfinitePlaceTransport.transport σ
+    h₂ (NumberField.InfinitePlaceTransport.transport τ h₁ x)
     = NumberField.InfinitePlaceTransport.transport (σ * τ) h₃ x
   refine NumberField.InfinitePlace.Completion.induction_on _ x
     (isClosed_eq
@@ -1061,7 +1132,8 @@ private theorem NumberField.InfinitePlaceTransport.transport_trans_transport (E 
         (NumberField.InfinitePlaceTransport.continuous_transport τ h₁))
       (NumberField.InfinitePlaceTransport.continuous_transport (σ * τ) h₃))
     fun a => ?_
-  change NumberField.InfinitePlaceTransport.transport σ h₂ (NumberField.InfinitePlaceTransport.transport τ h₁ (a : w.Completion))
+  change NumberField.InfinitePlaceTransport.transport σ
+    h₂ (NumberField.InfinitePlaceTransport.transport τ h₁ (a : w.Completion))
     = NumberField.InfinitePlaceTransport.transport (σ * τ) h₃ (a : w.Completion)
   rw [NumberField.InfinitePlaceTransport.transport_coe,
     NumberField.InfinitePlaceTransport.transport_coe,
@@ -1095,7 +1167,8 @@ private theorem transportUnits_trans (σ τ : K ≃ₐ[E] K) {w w' w'' : HeightO
     (h₃ : (σ * τ) • w = w'') (u : (w.adicCompletion K)ˣ) :
     transportUnits σ h₂ (transportUnits τ h₁ u) = transportUnits (σ * τ) h₃ u := by
   ext : 1
-  change transport σ h₂ (transport τ h₁ (u : w.adicCompletion K)) = transport (σ * τ) h₃ (u : w.adicCompletion K)
+  change transport σ h₂ (transport τ h₁ (u : w.adicCompletion K)) = transport (σ * τ) h₃ (u
+    : w.adicCompletion K)
   rw [← NumberField.PlaceTransport.transport_trans_transport E K σ τ h₁ h₂ h₃]
   rfl
 
@@ -1111,16 +1184,19 @@ private theorem transportUnits_eq_smul {w : HeightOneSpectrum (𝓞 K)} (d : Pla
   w) (h : (d : K ≃ₐ[E] K) • w = w)
     (u : (w.adicCompletion K)ˣ) : transportUnits (d : K ≃ₐ[E] K) h u = d • u := by
   ext : 1
-  change transport (d : K ≃ₐ[E] K) h (u : w.adicCompletion K) = ((d • u : (w.adicCompletion K)ˣ) : w.adicCompletion K)
+  change transport (d : K ≃ₐ[E] K) h (u : w.adicCompletion K) = ((d • u : (w.adicCompletion K)ˣ)
+    : w.adicCompletion K)
   rw [NumberField.PlaceTransport.transport_eq_actRingEquiv E K w d h, PlaceDecomp.coe_smul_units,
     PlaceDecomp.smul_def]
 
-private theorem decomp_smul {w : HeightOneSpectrum (𝓞 K)} (d : PlaceDecomp.decomp E K w) : (d : K ≃ₐ[E] K) • w = w := by
+private theorem decomp_smul {w : HeightOneSpectrum (𝓞 K)} (d : PlaceDecomp.decomp E K w) : (d
+  : K ≃ₐ[E] K) • w = w := by
   have hd : (d : K ≃ₐ[E] K) ∈ MulAction.stabilizer (K ≃ₐ[E] K) w := by
     rw [NumberField.PlaceTransport.stabilizer_eq_decomp E K w]; exact d.2
   exact hd
 
-private theorem mem_decomp_of_smul_eq {w : HeightOneSpectrum (𝓞 K)} {σ : K ≃ₐ[E] K} (h : σ • w = w) : σ ∈ PlaceDecomp.decomp E K w := by
+private theorem mem_decomp_of_smul_eq {w : HeightOneSpectrum (𝓞 K)} {σ : K ≃ₐ[E] K} (h : σ • w = w)
+  : σ ∈ PlaceDecomp.decomp E K w := by
   rw [← NumberField.PlaceTransport.stabilizer_eq_decomp E K w]; exact h
 
 end general
@@ -1135,7 +1211,8 @@ private noncomputable abbrev Cv (v : HeightOneSpectrum (𝓞 E)) : Rep ℤ (K �
 
 private theorem under_above (v : HeightOneSpectrum (𝓞 E)) : (PlaceAbove.above E K v).under (𝓞 E) = v
   :=
-  HeightOneSpectrum.ext (by rw [HeightOneSpectrum.under_asIdeal]; exact PlaceAbove.comap_above E K v)
+  HeightOneSpectrum.ext
+    (by rw [HeightOneSpectrum.under_asIdeal]; exact PlaceAbove.comap_above E K v)
 
 variable {E K}
 variable (v : HeightOneSpectrum (𝓞 E))
@@ -1198,7 +1275,8 @@ private theorem bwdFun_apply (u : Π w : Idx E K v, (w.1.adicCompletion K)ˣ) (x
         v, mem_idx v x⟩) := rfl
 
 private theorem bwdFun_mem (u : Π w : Idx E K v, (w.1.adicCompletion K)ˣ) :
-    bwdFun v u ∈ Representation.coindV (FiniteSIdele.D E K v).subtype (FiniteSIdele.localUnits E K v).ρ := by
+    bwdFun v u ∈ Representation.coindV (FiniteSIdele.D E K v).subtype (FiniteSIdele.localUnits E K
+      v).ρ := by
   refine (Representation.mem_coindV _ _ _).2 fun d x => ?_
   apply Additive.toMul.injective
   change Additive.toMul (bwdFun v u ((d : K ≃ₐ[E] K) * x)) = d • Additive.toMul (bwdFun v u x)
@@ -1243,7 +1321,8 @@ private theorem fwd_eq (f : Cv E K v) (w : Idx E K v) (y : K ≃ₐ[E] K) (hy : 
     fwd v f w = transportUnits y⁻¹ (inv_smul_eq_of_smul_eq hy) (fval v f y) :=
   (indep v f y (sel v w) w.1 (inv_smul_eq_of_smul_eq hy) (inv_sel_smul v w))
 
-private theorem fwd_add (f₁ f₂ : Cv E K v) (w : Idx E K v) : fwd v (f₁ + f₂) w = fwd v f₁ w * fwd v f₂ w := by
+private theorem fwd_add (f₁ f₂ : Cv E K v) (w : Idx E K v) : fwd v (f₁ + f₂) w = fwd v f₁ w * fwd v
+  f₂ w := by
   change transportUnits _ _ (fval v (f₁ + f₂) (sel v w)) = _
   rw [fval_add, map_mul]
   rfl
@@ -1251,7 +1330,8 @@ private theorem fwd_add (f₁ f₂ : Cv E K v) (w : Idx E K v) : fwd v (f₁ + f
 private theorem fwd_ρ (g : K ≃ₐ[E] K) (f : Cv E K v) (w w' : Idx E K v) (h : g • w'.1 = w.1) :
     fwd v ((Cv E K v).ρ g f) w = transportUnits g h (fwd v f w') := by
   have hy : (sel v w * g) • w'.1 = PlaceAbove.above E K v := by rw [mul_smul, h, sel_smul]
-  rw [fwd_eq v f w' (sel v w * g) hy, transportUnits_trans g (sel v w * g)⁻¹ (inv_smul_eq_of_smul_eq hy) h
+  rw [fwd_eq v f w' (sel v w * g) hy,
+    transportUnits_trans g (sel v w * g)⁻¹ (inv_smul_eq_of_smul_eq hy) h
       (by rw [mul_inv_rev, mul_inv_cancel_left]; exact inv_sel_smul v w),
     transportUnits_congr (show g * (sel v w * g)⁻¹ = (sel v w)⁻¹ by rw [mul_inv_rev,
       mul_inv_cancel_left]) _ (inv_sel_smul v w)]
@@ -1262,7 +1342,8 @@ private theorem fwd_bwd (u : Π w : Idx E K v,
   have hidx : (⟨(sel v w)⁻¹ • PlaceAbove.above E K v,
     mem_idx v (sel v w)⟩ : Idx E K v) = w := Subtype.ext (inv_sel_smul v w)
   change transportUnits (sel v w)⁻¹ (inv_sel_smul v w) (Additive.toMul (bwdFun v u (sel v w))) = u w
-  rw [bwdFun_apply, transportUnits_trans (sel v w)⁻¹ (sel v w) (smul_inv_smul (sel v w) _) (inv_sel_smul v w)
+  rw [bwdFun_apply,
+    transportUnits_trans (sel v w)⁻¹ (sel v w) (smul_inv_smul (sel v w) _) (inv_sel_smul v w)
       (by rw [inv_mul_cancel, one_smul]; exact inv_sel_smul v w),
     transportUnits_congr (inv_mul_cancel (sel v w)) _ (by rw [one_smul]; exact inv_sel_smul v w)]
   exact transportUnits_one_idx v u hidx _
@@ -1336,7 +1417,8 @@ private theorem transportUnits_trans (σ τ : K ≃ₐ[E] K) {w w' w'' : Infinit
     (h₃ : (σ * τ) • w = w'') (u : (w.Completion)ˣ) :
     transportUnits σ h₂ (transportUnits τ h₁ u) = transportUnits (σ * τ) h₃ u := by
   ext : 1
-  change transport σ h₂ (transport τ h₁ (u : w.Completion)) = transport (σ * τ) h₃ (u : w.Completion)
+  change transport σ h₂ (transport τ h₁ (u : w.Completion)) = transport (σ * τ) h₃ (u
+    : w.Completion)
   rw [← NumberField.InfinitePlaceTransport.transport_trans_transport E K σ τ h₁ h₂ h₃]
   rfl
 
@@ -1412,7 +1494,8 @@ private theorem indep (f : Cv E K v) (x y : K ≃ₐ[E] K) (w : InfinitePlace K)
     ArchIdele.above E K v =
       ArchIdele.above E K v := (d⁻¹).2
   rw [coind_mem, transportUnits_congr (show ((d : K ≃ₐ[E] K) * x)⁻¹ =
-        x⁻¹ * ((d⁻¹ : InfPlaceDecomp.decomp E K (ArchIdele.above E K v)) : K ≃ₐ[E] K) by rw [mul_inv_rev]; rfl) hy
+        x⁻¹ * ((d⁻¹ : InfPlaceDecomp.decomp E K (ArchIdele.above E K v)) : K ≃ₐ[E] K) by
+          rw [mul_inv_rev]; rfl) hy
       (by rw [mul_smul]; exact (congrArg (x⁻¹ • ·) hd1).trans hx),
     ← transportUnits_trans x⁻¹ ((d⁻¹ : InfPlaceDecomp.decomp E K (ArchIdele.above E K v)) : K ≃ₐ[E]
       K) hd1 hx,
@@ -1474,7 +1557,8 @@ private theorem fwd_eq (f : Cv E K v) (w : Idx E K v) (y : K ≃ₐ[E] K) (hy : 
     fwd v f w = transportUnits y⁻¹ (inv_smul_eq_of_smul_eq hy) (fval v f y) :=
   (indep v f y (sel v w) w.1 (inv_smul_eq_of_smul_eq hy) (inv_sel_smul v w))
 
-private theorem fwd_add (f₁ f₂ : Cv E K v) (w : Idx E K v) : fwd v (f₁ + f₂) w = fwd v f₁ w * fwd v f₂ w := by
+private theorem fwd_add (f₁ f₂ : Cv E K v) (w : Idx E K v) : fwd v (f₁ + f₂) w = fwd v f₁ w * fwd v
+  f₂ w := by
   change transportUnits _ _ (fval v (f₁ + f₂) (sel v w)) = _
   rw [fval_add, map_mul]
   rfl
@@ -1482,7 +1566,8 @@ private theorem fwd_add (f₁ f₂ : Cv E K v) (w : Idx E K v) : fwd v (f₁ + f
 private theorem fwd_ρ (g : K ≃ₐ[E] K) (f : Cv E K v) (w w' : Idx E K v) (h : g • w'.1 = w.1) :
     fwd v ((Cv E K v).ρ g f) w = transportUnits g h (fwd v f w') := by
   have hy : (sel v w * g) • w'.1 = ArchIdele.above E K v := by rw [mul_smul, h, sel_smul]
-  rw [fwd_eq v f w' (sel v w * g) hy, transportUnits_trans g (sel v w * g)⁻¹ (inv_smul_eq_of_smul_eq hy) h
+  rw [fwd_eq v f w' (sel v w * g) hy,
+    transportUnits_trans g (sel v w * g)⁻¹ (inv_smul_eq_of_smul_eq hy) h
       (by rw [mul_inv_rev, mul_inv_cancel_left]; exact inv_sel_smul v w),
     transportUnits_congr (show g * (sel v w * g)⁻¹ = (sel v w)⁻¹ by rw [mul_inv_rev,
       mul_inv_cancel_left]) _ (inv_sel_smul v w)]
@@ -1493,7 +1578,8 @@ private theorem fwd_bwd (u : Π w : Idx E K v,
   have hidx : (⟨(sel v w)⁻¹ • ArchIdele.above E K v,
     mem_idx v (sel v w)⟩ : Idx E K v) = w := Subtype.ext (inv_sel_smul v w)
   change transportUnits (sel v w)⁻¹ (inv_sel_smul v w) (Additive.toMul (bwdFun v u (sel v w))) = u w
-  rw [bwdFun_apply, transportUnits_trans (sel v w)⁻¹ (sel v w) (smul_inv_smul (sel v w) _) (inv_sel_smul v w)
+  rw [bwdFun_apply,
+    transportUnits_trans (sel v w)⁻¹ (sel v w) (smul_inv_smul (sel v w) _) (inv_sel_smul v w)
       (by rw [inv_mul_cancel, one_smul]; exact inv_sel_smul v w),
     transportUnits_congr (inv_mul_cancel (sel v w)) _ (by rw [one_smul]; exact inv_sel_smul v w)]
   exact transportUnits_one_idx v u hidx _
