@@ -42,7 +42,10 @@ namespace MathlibExt.NumberTheory.QuadraticForms.BinaryQuadraticArithmeticProgre
 
 /-- If an integral binary quadratic form represents each term of a finite arithmetic
 progression over the rationals, then it represents every term over the integers after
-multiplying the progression by a single nonzero integer square. -/
+multiplying the progression by a single nonzero integer square.
+
+Source: Ajai Choudhry, "Arithmetic Progressions Represented by
+Binary Quadratic Forms", Lemma 1. -/
 theorem exists_int_representations_of_rat_arithmetic_progression
     (a b c : ℤ) (n : ℕ) (u0 d : ℚ)
     (hrep : ∀ i ∈ Finset.range n, ∃ x y : ℚ,

@@ -28,7 +28,11 @@ numbers fixes every integer from 1 through 11.
 
 The ATLAS article *Nonagonal additive uniqueness: the values up to 11* attributes this result to
 Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for Multiplicative
-Functions*, INTEGERS 25 (2025), Article A99, Lemma 1. -/
+Functions*, INTEGERS 25 (2025), Article A99, Lemma 1.
+
+Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
+Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Lemma 1
+(`integers-2025-A99-lem-1`). -/
 public theorem multiplicative_nonagonal_additive_eq_self_of_le_eleven
     (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
     (hadd : ∀ a b : ℕ, 0 < a → 0 < b →

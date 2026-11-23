@@ -89,7 +89,11 @@ open sl_hurwitz_numbers_den_coprime
 
 /-- At the index `2 * (ℓ - 1) / 3`, the reduced denominator of the Sl coefficient is prime to
 `ℓ` when `ℓ ≡ 7 [MOD 9]`. For `ℓ ≡ 4 [MOD 9]` the same holds for the Laurent coefficient of
-`1/Sl`, obtained by inverting the unit series `Sl(u)/u` and shifting the index by one. -/
+`1/Sl`, obtained by inverting the unit series `Sl(u)/u` and shifting the index by one.
+
+Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
+Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
+(2026), Article A112, Theorem 3 (`integers-2026-A112-thm-3`), first sentence. -/
 public theorem sl_hurwitz_numbers_den_coprime (S C : PowerSeries ℚ)
     (hS : PowerSeries.derivative (R := ℚ) S = C ^ 2)
     (hC : PowerSeries.derivative (R := ℚ) C = -(S ^ 2))
