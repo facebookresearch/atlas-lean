@@ -26,8 +26,6 @@ public import Mathlib.RingTheory.RegularLocalRing.Defs
 
 @[expose] public noncomputable section
 
-set_option backward.isDefEq.respectTransparency false
-
 /-!
 # Actual strict normal crossings boundary models
 
@@ -76,6 +74,19 @@ def IsStrictNormalCrossings {k : Type u} [Field k]
   IsReduced D.subscheme ∧ StrictStalkCrossings D ∧
     ∀ C : irreducibleComponents D.subscheme,
       Smooth ((componentIdeal D C).subschemeι ≫ X.hom)
+
+/-- A boundary with empty support, such as the unit ideal, has strict normal crossings: its
+subscheme is empty, so the stalk and component conditions are vacuous. -/
+theorem isStrictNormalCrossings_of_support_eq_bot {k : Type u} [Field k]
+    {X : Over (Spec (.of k))} {D : X.left.IdealSheafData} (h : D.support = ⊥) :
+    IsStrictNormalCrossings X D := by
+  have : IsEmpty D.subscheme := ⟨fun y => by
+    have hy : D.subschemeι y ∈ (D.support : Set X.left) := by
+      rw [← D.range_subschemeι]
+      exact ⟨y, rfl⟩
+    simp [h] at hy⟩
+  have : ∀ y : D.subscheme, _root_.IsReduced (D.subscheme.presheaf.stalk y) := isEmptyElim
+  exact ⟨isReduced_of_isReduced_stalk _, isEmptyElim, fun C => isEmptyElim C.2.1.nonempty.some⟩
 
 /-- The actual reduced boundary of the scheme-theoretic pullback. -/
 def reducedPullbackBoundary {X Y : Scheme.{u}} (f : Y ⟶ X) (D : X.IdealSheafData) :

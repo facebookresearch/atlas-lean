@@ -49,6 +49,23 @@ def genericDegree {X Y : Scheme.{u}} [IsIntegral X] [IsIntegral Y]
   letI : Algebra X.functionField Y.functionField := (genericFieldMap f h).hom.toAlgebra
   Module.finrank X.functionField Y.functionField
 
+/-- The generic field map of the identity is the identity. -/
+@[simp]
+theorem genericFieldMap_id (X : Scheme.{u}) [IsIntegral X]
+    (h : (𝟙 X : X ⟶ X) (genericPoint X) = genericPoint X) :
+    genericFieldMap (𝟙 X) h = 𝟙 X.functionField := by
+  simp only [genericFieldMap, Scheme.Hom.stalkMap_id]
+  change eqToHom (rfl : X.functionField = X.functionField) ≫ 𝟙 _ = _
+  simp
+
+/-- The identity has generic degree one. -/
+@[simp]
+theorem genericDegree_id (X : Scheme.{u}) [IsIntegral X]
+    (h : (𝟙 X : X ⟶ X) (genericPoint X) = genericPoint X) : genericDegree (𝟙 X) h = 1 := by
+  unfold genericDegree
+  rw [genericFieldMap_id]
+  exact Module.finrank_self _
+
 /-- A genuine smooth proper integral model over the coefficient field. -/
 structure SmoothProperModel (k : Type u) [Field k] where
   variety : Over (Spec (.of k))
@@ -75,8 +92,8 @@ structure PrimeToEllAlteration {k : Type u} [Field k]
     letI : Algebra X.left.functionField source.variety.left.functionField :=
       (genericFieldMap morphism.left genericPointMap).hom.toAlgebra
     Module.Finite X.left.functionField source.variety.left.functionField
-  /-- The actual generic degree is prime to ell. -/
-  primeDegree : ¬ell ∣ genericDegree morphism.left genericPointMap
+  /-- The actual generic degree is prime to `ell`. -/
+  coprimeDegree : Nat.Coprime ell (genericDegree morphism.left genericPointMap)
   /-- The actual reduced inverse-image boundary has strict crossings. -/
   crossings : IsStrictNormalCrossings source.variety (reducedPullbackBoundary morphism.left D)
 
