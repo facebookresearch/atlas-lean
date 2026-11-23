@@ -377,9 +377,17 @@ private theorem entry16LeftEq (r : ℂ) (x : ℝ) (hr : -1 < r.re) (hx0 : 0 < x)
   field_simp
   ring
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 16.
+/-- **A cosine series for $\varphi_r(x-1) + \varphi_r(-x)$.** For complex $r$ and real $-1 < y < 0$
+let $\varphi_r(y) = \zeta(-r) - \zeta(-r, y + 1)$, where $\zeta$ is the Riemann zeta function and
+$\zeta(s, a)$ is the Hurwitz zeta function. Let $r$ be a complex number with
+$\operatorname{Re} r > -1$ and let $0 < x < 1$. Then the partial sums of
+$\sum_{k \ge 1} \cos(2\pi k x) / (2\pi k)^{r+1}$ converge to a limit $L$, and
+$$\frac{\varphi_r(x-1) + \varphi_r(-x) - 2\zeta(-r)}{4\,\Gamma(r+1)}
+  = \sin\left(\frac{\pi r}{2}\right) L.$$
 
 Proves `Wanted` entry `ramanujan_part1_ch7_entry16_kummercongruence`.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 16.
 -/
 theorem ramanujan_part1_ch7_entry16_kummercongruence
     (r : ℂ) (x : ℝ) (hr : -1 < r.re) (hx0 : 0 < x) (hx1 : x < 1) :

@@ -144,16 +144,21 @@ private theorem final_of_data (LL MM NN R r x y z hh : ℝ)
     apply mul_left_cancel₀ (ne_of_gt hLLpos) hEq
   linarith
 
-/-- Carnot's theorem (inradius, circumradius), general form: for a nondegenerate triangle with
-    circumcenter `O`, circumradius `R`, incenter `I`, and inradius `r`, the signed
-    distances `x`, `y`, `z` from `O` to the three sidelines (each measured with an
-    inward unit normal, hence positive toward the opposite vertex) satisfy
-    `x + y + z = R + r`.
-    Source: https://en.wikipedia.org/wiki/Carnot%27s_theorem_(inradius,_circumradius).
-    Statement ID: carnot-inradius-s1.
+/-- **Carnot's theorem (inradius and circumradius), general form.** Let $A, B, C$ be non-collinear
+points of a Euclidean affine plane lying on the circle with center $O$ and radius $R > 0$. Take
+unit vectors $n_a$, $n_b$, $n_c$ normal to the sides and pointing toward the opposite vertices:
+$n_a \perp C - B$ with $\langle A - B, n_a \rangle > 0$, $n_b \perp A - C$ with
+$\langle B - C, n_b \rangle > 0$, and $n_c \perp B - A$ with $\langle C - A, n_c \rangle > 0$.
+Let $x = \langle O - B, n_a \rangle$, $y = \langle O - C, n_b \rangle$ and
+$z = \langle O - A, n_c \rangle$ be the signed distances from $O$ to the lines $BC$, $CA$, $AB$.
+If a point $I$ and a real number $r$ satisfy
+$\langle I - B, n_a \rangle = \langle I - C, n_b \rangle = \langle I - A, n_c \rangle = r$
+(so $I$ is the incenter and $r$ the inradius), then $x + y + z = R + r$.
 
-Unlike `carnot_inradius_circumradius`, this drops the hypotheses `O ∈ affineSpan ℝ {A, B, C}`
-    and `0 < r`, which the proof never needs.
+This form does not assume $r > 0$ or that $O$ lies in the affine span of $A, B, C$.
+
+Source: https://en.wikipedia.org/wiki/Carnot%27s_theorem_(inradius,_circumradius).
+Statement ID: carnot-inradius-s1.
 -/
 theorem carnot_inradius_circumradius_general
     {V : Type*} {P : Type*}
@@ -656,17 +661,24 @@ theorem carnot_inradius_circumradius_general
     hL2 hInrad hYZ hMMNN hMN
 
 set_option linter.unusedVariables false in
-/-- Carnot's theorem (inradius, circumradius): for a nondegenerate triangle with
-    circumcenter `O`, circumradius `R`, incenter `I`, and inradius `r`, the signed
-    distances `x`, `y`, `z` from `O` to the three sidelines (each measured with an
-    inward unit normal, hence positive toward the opposite vertex) satisfy
-    `x + y + z = R + r`.
-    Source: https://en.wikipedia.org/wiki/Carnot%27s_theorem_(inradius,_circumradius).
-    Statement ID: carnot-inradius-s1.
+/-- **Carnot's theorem (inradius and circumradius).** Let $A, B, C$ be non-collinear points of a
+Euclidean affine plane lying on the circle with center $O$ and radius $R > 0$, and suppose $O$
+lies in the affine span of $A, B, C$. Take unit vectors $n_a$, $n_b$, $n_c$ normal to the sides
+and pointing toward the opposite vertices: $n_a \perp C - B$ with $\langle A - B, n_a \rangle > 0$,
+$n_b \perp A - C$ with $\langle B - C, n_b \rangle > 0$, and $n_c \perp B - A$ with
+$\langle C - A, n_c \rangle > 0$. Let $x = \langle O - B, n_a \rangle$,
+$y = \langle O - C, n_b \rangle$ and $z = \langle O - A, n_c \rangle$ be the signed distances
+from $O$ to the lines $BC$, $CA$, $AB$. If a point $I$ and a real number $r > 0$ satisfy
+$\langle I - B, n_a \rangle = \langle I - C, n_b \rangle = \langle I - A, n_c \rangle = r$
+(so $I$ is the incenter and $r$ the inradius), then $x + y + z = R + r$.
 
-It follows from `carnot_inradius_circumradius_general`; the hypotheses `hOplane` and `hrpos`
-    are unused and keep the `Wanted` statement's shape.
+The hypotheses $r > 0$ and that $O$ lies in the affine span of $A, B, C$ are not used; the
+general form of the theorem drops them.
+
 Proves `Wanted` entry `carnot_inradius_circumradius`.
+
+Source: https://en.wikipedia.org/wiki/Carnot%27s_theorem_(inradius,_circumradius).
+Statement ID: carnot-inradius-s1.
 -/
 theorem carnot_inradius_circumradius
     {V : Type*} {P : Type*}

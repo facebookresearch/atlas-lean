@@ -35,37 +35,52 @@ set_option autoImplicit false
 
 namespace Cslib.Decidability
 
-/-- The `e`-th recursively enumerable set, enumerated by `Nat.Partrec.Code`.
+/-- **Standard enumeration of the recursively enumerable sets.** For natural numbers $e$ and $n$,
+$n$ belongs to $W_e$, the $e$-th recursively enumerable set, when the partial recursive function
+$\varphi_e$ computed by the program with index $e$ in the standard numbering of partial recursive
+programs is defined at $n$; thus $W_e$ is the domain of $\varphi_e$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (standard enumeration of the partial recursive functions). -/
 def enumRE (e n : ℕ) : Prop :=
   (Nat.Partrec.Code.eval (Denumerable.ofNat Nat.Partrec.Code e) n).Dom
 
-/-- A set is **productive** when a partial recursive function witnesses, for
-every index `e` of an RE subset of it, a member outside that subset.
+/-- **Productive set.** A set $A$ of natural numbers is productive when there is a partial
+recursive function $f$ such that for every natural number $e$ with $W_e \subseteq A$, where $W_e$
+is the $e$-th recursively enumerable set in the standard enumeration, $f(e)$ is defined,
+$f(e) \in A$ and $f(e) \notin W_e$.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 5.1. -/
 def Productive (P : ℕ → Prop) : Prop :=
   ∃ f : ℕ →. ℕ, Partrec f ∧ ∀ e, (∀ n, enumRE e n → P n) →
     ∃ h : (f e).Dom, P ((f e).get h) ∧ ¬ enumRE e ((f e).get h)
 
-/-- A set is **creative** when it is RE and its complement is productive.
+/-- **Creative set.** A set $A$ of natural numbers is creative when it is recursively enumerable
+and its complement $\mathbb{N} \setminus A$ is productive.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 5.2. -/
 def Creative (P : ℕ → Prop) : Prop :=
   REPred P ∧ Productive (fun n ↦ ¬ P n)
 
-/-- A set is **immune** when it is infinite and contains no infinite RE subset.
+/-- **Immune set.** A set $A$ of natural numbers is immune when it is infinite and every
+recursively enumerable set $B \subseteq A$ is finite.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 5.4. -/
 def Immune (P : ℕ → Prop) : Prop :=
   Set.Infinite {n | P n} ∧ ∀ A : ℕ → Prop, REPred A → (∀ n, A n → P n) →
     Set.Finite {n | A n}
 
-/-- A set is **simple** when it is RE and its complement is immune.
+/-- **Simple set.** A set $P$ of natural numbers is **simple** when it is recursively enumerable
+and its complement $\{n \mid \neg P(n)\}$ is immune.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 5.3. -/
 def Simple (P : ℕ → Prop) : Prop :=
   REPred P ∧ Immune (fun n ↦ ¬ P n)
 
-/-- **A productive set is not recursively enumerable**: if it were `Wₑ`, its
-productive function would produce a member outside `Wₑ`.
+/-- **A productive set is not recursively enumerable.** No productive set of natural numbers is
+recursively enumerable: if it were the $e$-th recursively enumerable set $W_e$, its productive
+function would produce a member of it outside $W_e$.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Theorem 5.5. -/
 theorem productive_not_re {P : ℕ → Prop} (hP : Productive P) : ¬ REPred P := by
   intro hRE
