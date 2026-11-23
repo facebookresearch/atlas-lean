@@ -188,7 +188,7 @@ noncomputable def continuousOverlap (f g : ℝ → ℝ) (x : ℝ) : ℝ :=
 overlap values of $f$ and $g$ is the image of the translation interval $[-2, 2]$ under the overlap
 $x \mapsto \int_{-1}^{1} f(t)\,g(x + t)\,dt$, where the integral is taken to be $0$ when
 $t \mapsto f(t)\,g(x + t)$ is not integrable on $[-1, 1]$. -/
-def continuousOverlapValues (f g : ℝ → ℝ) : Set ℝ :=
+noncomputable def continuousOverlapValues (f g : ℝ → ℝ) : Set ℝ :=
   continuousOverlap f g '' continuousTranslationInterval
 
 /-- **Admissible pairs for the continuous minimum-overlap problem.** A pair of functions

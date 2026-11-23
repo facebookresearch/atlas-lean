@@ -117,14 +117,14 @@ def Xz : Matrix (Fin 3) (Fin 2) ℝ := !![1, 0; -1, 0; 2, 0]
 
 /-- The marginal estimate of the first marker is `x₀ᵀ y / x₀ᵀ x₀ = (1 - 2 + 6) / 6`. -/
 example : marginalEstimate Xz ![1, 2, 3] 0 = 5 / 6 := by
-  simp [marginalEstimate, Xz, mulVec, dotProduct, mul_apply, Fin.sum_univ_three]
+  simp [marginalEstimate, Xz, mulVec, dotProduct, Matrix.mul_apply, Fin.sum_univ_three]
   norm_num
 
 /-- Boundary: for the zero column the marginal estimate is the junk value `0 / 0 = 0`, and
 `Xᵀ y = D β̂` still holds there (both sides are `0`). -/
 example : marginalEstimate Xz ![1, 2, 3] 1 = 0 ∧
     (Xzᵀ *ᵥ ![1, 2, 3]) 1 = (gramDiag Xz *ᵥ marginalEstimate Xz ![1, 2, 3]) 1 := by
-  refine ⟨by simp [marginalEstimate, Xz, mulVec, dotProduct, mul_apply, Fin.sum_univ_three],
+  refine ⟨by simp [marginalEstimate, Xz, mulVec, dotProduct, Fin.sum_univ_three],
     by rw [transpose_mulVec_eq_gramDiag_mulVec]⟩
 
 /-- Two uncorrelated markers (orthogonal columns): the joint estimate is the vector of marginal
@@ -134,11 +134,11 @@ def Xo : Matrix (Fin 4) (Fin 2) ℝ := !![1, 1; 1, -1; -1, 1; -1, -1]
 theorem gram_Xo : Xoᵀ * Xo = gramDiag Xo := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [gramDiag, Xo, mul_apply, Fin.sum_univ_four, diagonal]
+    simp [gramDiag, Xo, Matrix.mul_apply, Fin.sum_univ_four, diagonal]
 
 example (y : Fin 4 → ℝ) : (Xoᵀ * Xo)⁻¹ *ᵥ (Xoᵀ *ᵥ y) = marginalEstimate Xo y :=
   cojo_joint_of_diagonal Xo y gram_Xo fun j => by
-    fin_cases j <;> simp [Xo, mul_apply, Fin.sum_univ_four] <;> norm_num
+    fin_cases j <;> simp [Xo, Matrix.mul_apply, Fin.sum_univ_four] <;> norm_num
 
 /-! ### Stratified LD-score regression -/
 
@@ -303,7 +303,7 @@ def yfull : Fin 2 → ℝ := ![2, 3]
 interpretation and recovers the second response coordinate. -/
 example : IsUnit (X1fullᵀ * X1full).det ∧ IsUnit (X2fullᵀ * X2full).det ∧
     conditionalEstimate X1full X2full yfull 0 = 3 := by
-  norm_num [conditionalEstimate, X1full, X2full, yfull, mulVec, dotProduct, mul_apply,
+  norm_num [conditionalEstimate, X1full, X2full, yfull, mulVec, dotProduct, Matrix.mul_apply,
     Matrix.det_fin_one, Matrix.nonsing_inv_apply, Fin.sum_univ_two]
 
 /-- A singular nonzero design with two identical columns. -/

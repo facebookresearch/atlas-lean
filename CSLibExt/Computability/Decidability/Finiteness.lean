@@ -131,7 +131,7 @@ theorem manyOneReducible_not_halting_finite :
   simp only [FiniteCode, hdom]
   constructor
   · intro hd
-    convert Set.finite_empty
+    convert Set.finite_empty using 1
     ext k
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     intro hs
