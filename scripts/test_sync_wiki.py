@@ -1418,7 +1418,8 @@ class LeanFacts(Vault):
 
     def test_a_page_with_no_lean_link_takes_the_kind_it_records(self) -> None:
         # A page that holds no declaration back, or whose declaration the Lean no longer has, takes the kind its
-        # annotation records under OWN when it is a kind lean-facts gives linked pages; a linked page takes the Lean's.
+        # annotation records under OWN when it is a kind lean-facts gives linked pages (run_lean_facts refuses any other
+        # value first, kind_problems); a linked page takes the Lean's.
         (self.tmp / "Ext").mkdir()
         (self.tmp / "Ext" / "Groups.lean").write_text("theorem lagrange : True := trivial\n")
         body = "# Planned\n\nA definition.\n\n## Depends on\n\n- [Lagrange](lagrange.md)\n"
@@ -1533,6 +1534,52 @@ class LeanFacts(Vault):
         self.assertEqual({str(sync.subject_path(row).relative_to(wiki.ROADMAP / "Algebra")): row.get("kind")
                           for row in rows},
                          {"sub/README.md": None, "f.md": None, "g.md": "def", "h.md": None, "d.md": None})
+
+    def test_lean_facts_refuses_a_kind_it_would_not_take(self) -> None:
+        # A recorded kind lean-facts would not take is an error before anything is written, not a page silently left
+        # uncounted or counted as its held declaration's kind: a value that is no kind, and a kind on a held page other
+        # than `theorem` or `lemma` over a definition command. Folder rows are not read.
+        (self.tmp / "Ext").mkdir()
+        (self.tmp / "Ext" / "Held.lean").write_text("theorem claim : True := trivial\ndef claim_prop : Prop := True\n")
+        names = ("typo", "listed", "planned", "over-theorem", "over-def", "def-over-def")
+        self.page("README.md", "# Roadmap\n\n- [Algebra](Algebra/README.md)\n")
+        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{name}]({name}.md)\n" for name in names))
+        for name in names:
+            self.page(f"Algebra/{name}.md", f"# {name}\n\nA statement.\n")
+
+        def own(**fields) -> dict:
+            return {sync.OWN: fields}
+
+        held = lambda name: {"declaration": name, "reason": "false", "issue": 1}
+        self.annotate([
+            self.about("README.md"),
+            self.about("Algebra/README.md", extensions=own(kind="theroem")),
+            self.about("Algebra/typo.md", extensions=own(kind="theroem")),
+            self.about("Algebra/listed.md", extensions=own(kind=["theorem"])),
+            self.about("Algebra/planned.md", extensions=own(kind="lemma")),
+            self.about("Algebra/over-theorem.md", extensions=own(held=held("Ext.claim"), kind="def")),
+            self.about("Algebra/over-def.md", extensions=own(held=held("Ext.claim_prop"), kind="theorem")),
+            self.about("Algebra/def-over-def.md", extensions=own(held=held("Ext.claim_prop"), kind="def")),
+        ])
+        path = Path("Ext/Held.lean")
+        index = SimpleNamespace(declarations={"Ext.claim": SimpleNamespace(keyword="theorem", path=path),
+                                              "Ext.claim_prop": SimpleNamespace(keyword="def", path=path)})
+        files = sync.read_annotations()
+        self.assertEqual([problem.split(":")[0] for problem in sync.kind_problems(files)],
+                         ["Algebra/typo.md", "Algebra/listed.md"])
+        self.assertEqual([problem.split(":")[0] for problem in sync.kind_problems(files, index)],
+                         ["Algebra/typo.md", "Algebra/listed.md", "Algebra/over-theorem.md", "Algebra/def-over-def.md"])
+        self.assertIn("it records the kind 'theroem', which is none of", sync.kind_problems(files)[0])
+        before = (sync.LINKS / "Algebra.jsonl").read_bytes()
+        (self.tmp / "deps.json").write_text(json.dumps({"articles": {}}))
+        with patch("autoform_cli.lean.index_project", return_value=index):
+            err = io.StringIO()
+            with redirect_stderr(err):
+                code = sync.run_lean_facts(self.tmp / "deps.json")
+        self.assertEqual(code, 1)
+        self.assertIn("Algebra/over-theorem.md: it holds Ext.claim back, a theorem, and records the kind def",
+                      err.getvalue())
+        self.assertEqual((sync.LINKS / "Algebra.jsonl").read_bytes(), before)
 
     def test_an_expansion_keeps_a_planned_prerequisite_only_on_a_planned_page(self) -> None:
         # Graph rules, expanding a node: a new page whose proof needs the planned page B stays planned and keeps that
@@ -3533,6 +3580,11 @@ class CommittedAnnotations(unittest.TestCase):
         self.assertEqual(problems, [])
         self.assertEqual(len(without), 0, f"annotations without an id, such as {without[:3]}: "
                                           "`python scripts/sync_wiki.py ids` gives them theirs")
+
+    def test_every_kind_a_page_records_is_one_lean_facts_takes(self) -> None:
+        # Writing pages (docs/BLUEPRINT.md): a page with no Lean link records one of the kinds lean-facts gives, which
+        # lean-facts refuses otherwise (kind_problems); with the index, it also checks the kinds held pages record.
+        self.assertEqual(sync.kind_problems(sync.read_annotations()), [])
 
     def test_no_committed_row_carries_what_lean_facts_writes(self) -> None:
         # What the tools own: `kind` and `status` are written at build time, never committed. lean-facts writes them

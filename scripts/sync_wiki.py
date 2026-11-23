@@ -1174,6 +1174,36 @@ def usable_holds(files: dict[Path, list[dict]], index) -> set[int]:
     return {id(rows[0]) for name, rows in holders.items() if name not in pages}
 
 
+def kind_problems(files: dict[Path, list[dict]], index=None) -> list[str]:
+    """The kinds statement pages record under OWN that lean-facts would not take (see unlinked_kind), which it refuses
+    before writing rather than leave a page uncounted or counted as another kind: a value that is not one of KINDS
+    (a typo, say), and, with the Lean index, a kind on a held row whose held declaration the index resolves other than
+    `theorem` or `lemma` over a definition command, the one kind a held page records. Folder rows, which lean-facts
+    never reads, are left out."""
+    roadmap = os.path.join(os.path.dirname(os.fspath(LINKS)), "roadmap")
+    problems = []
+    for rows in files.values():
+        for annotation in rows:
+            page = subject_path(annotation)
+            extensions = annotation.get("extensions")
+            own = extensions.get(OWN) if isinstance(extensions, dict) else None
+            if page is None or page.name == "README.md" or not isinstance(own, dict) or "kind" not in own:
+                continue
+            where, kind = os.path.relpath(page, roadmap), own["kind"]
+            if not (isinstance(kind, str) and kind in KINDS):
+                problems.append(f"{where}: it records the kind {kind!r}, which is none of {', '.join(sorted(KINDS))}")
+                continue
+            name = held_name(annotation) if "held" in own else None
+            declaration = index.declarations.get(name) if index is not None and name else None
+            if declaration is not None:
+                keyword = wiki.WANTED.get(declaration.keyword, declaration.keyword)
+                if not (kind in ("theorem", "lemma") and keyword in wiki.DEFINITION_DECLARATIONS):
+                    problems.append(f"{where}: it holds {name} back, a {keyword}, and records the kind {kind}; a held "
+                                    "page takes its declaration's kind, and records `theorem` or `lemma` only when it "
+                                    "states a result held back as a definition")
+    return problems
+
+
 def unlinked_kind(annotation: dict, index, usable: set[int]) -> str | None:
     """The kind of a page that builds with no Lean link. It is a statement not yet in Lean, which Autoform counts,
     as ready to state, planned or not ready, only with a kind. A held page takes that of the declaration it holds
@@ -1456,9 +1486,10 @@ def run_lean_facts(dependency_file: Path, registry_file: Path | None = None) -> 
               file=sys.stderr)
         return 1
     index = index_project(wiki.ROOT, exclude_roots=("v1", "Atlas"))
-    # With the index, a row an earlier sync wrote with a module and a name stands for a declaration too; and no credit
-    # overrides a held marker.
-    problems = owner_problems(read_annotations(), index) + held_conflicts(read_annotations(), index)
+    # With the index, a row an earlier sync wrote with a module and a name stands for a declaration too; no credit
+    # overrides a held marker; and every kind a page records is one lean-facts takes.
+    problems = (owner_problems(read_annotations(), index) + held_conflicts(read_annotations(), index)
+                + kind_problems(read_annotations(), index))
     if problems:
         for problem in problems:
             print(f"error: {problem}", file=sys.stderr)

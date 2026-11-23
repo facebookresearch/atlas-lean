@@ -88,7 +88,10 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   which it takes instead; any other page that builds with no Lean link takes
   the kind its annotation records, as
   `"extensions": {"org.atlas-wiki": {"kind": "theorem"}}` (or `lemma`, `def`,
-  `abbrev`, `instance`, `structure`, `class`, `inductive` or `opaque`). A page
+  `abbrev`, `instance`, `structure`, `class`, `inductive` or `opaque`). A held
+  definition may so become a theorem, never a held theorem a definition:
+  `lean-facts` refuses any other kind a held page records, and any value that
+  is not a kind, such as a misspelt one. A page
   whose row still names a declaration of this project in a Lean link, as a
   reference, gets none, as Autoform would take that declaration for the
   page's own. Its readiness is Autoform's, from the prerequisites it lists:
