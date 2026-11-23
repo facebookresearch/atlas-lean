@@ -37,16 +37,20 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The position after playing on the stacks in `S`: one token is removed from each stack of
-`S`.
+/-- **Playing on a set of stacks.** Let $p$ be a position of Slow$A$-Nim on $n$ stacks, with
+$p_i$ tokens on stack $i$, and let $S$ be a set of stacks. The position after playing on $S$ is
+obtained by removing one token from each stack of $S$: its stack $i$ holds $p_i - 1$ if
+$i \in S$ and $p_i$ otherwise, where an empty stack of $S$ stays empty.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 1. -/
 public def slowANimAfter {n : ℕ} (p : Fin n → ℕ) (S : Finset (Fin n)) : Fin n → ℕ :=
   fun i => if i ∈ S then p i - 1 else p i
 
-/-- The options of `p` in Slow`A`-Nim: play on a nonempty set `S` of `|S| ∈ A` stacks, each
-holding at least one token.
+/-- **Options in Slow A-Nim.** Let $A$ be a finite set of natural numbers and $p$ a position on
+$n$ stacks. The options of $p$ in Slow$A$-Nim are the positions obtained from $p$ by choosing a
+nonempty set $S$ of stacks with $|S| \in A$, each holding at least one token, and removing one
+token from each stack of $S$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 1. -/
@@ -54,7 +58,9 @@ public def slowANimMoves {n : ℕ} (A : Finset ℕ) (p : Fin n → ℕ) : Finset
   ((Finset.univ : Finset (Finset (Fin n))).filter
       fun S => S.Nonempty ∧ S.card ∈ A ∧ ∀ i ∈ S, 1 ≤ p i).image (slowANimAfter p)
 
-/-- A move removes tokens, so the total number of tokens strictly decreases.
+/-- **Moves in Slow$A$-Nim decrease the token count.** For every finite set $A$ of natural numbers
+and all positions $p$, $q$ of Slow$A$-Nim on $n$ stacks, if $q$ is reached from $p$ by one move,
+then the total number of tokens strictly decreases: $\sum_i q_i < \sum_i p_i$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 1. -/
@@ -72,8 +78,12 @@ public theorem sum_lt_of_mem_slowANimMoves {n : ℕ} (A : Finset ℕ) (p q : Fin
     simp only [slowANimAfter, hj, ite_true]
     omega
 
-/-- Slow`A`-Nim `SN(n, A)` as an `ImpartialGame` (ranked by the token count; the `start`
-field is unused here and set to the empty position).
+/-- **Slow$A$-Nim.** For $n \in \mathbb{N}$ and a finite set $A$ of natural numbers, Slow$A$-Nim
+$\mathrm{SN}(n, A)$ is the impartial game whose positions assign a number $p_i$ of tokens to
+each of $n$ labelled stacks $i$, and whose options from $p$ are obtained by choosing a nonempty
+set $S$ of stacks with $|S| \in A$, each holding at least one token, and removing one token from
+each stack of $S$. Its rank is the total number of tokens $\sum_i p_i$, which every move lowers,
+and its start position is the empty position.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 1. -/
@@ -85,7 +95,8 @@ public def slowANimGame (n : ℕ) (A : Finset ℕ) : SpragueGrundy.ImpartialGame
   rank_lt := sum_lt_of_mem_slowANimMoves A
   start := fun _ => 0
 
-/-- The empty position has no options.
+/-- **The empty position has no options.** For every finite set $A$ of natural numbers, the
+position of Slow$A$-Nim on $n$ stacks in which every stack is empty has no options.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Section 2. -/
@@ -100,7 +111,9 @@ public theorem slowANimMoves_zero {n : ℕ} (A : Finset ℕ) :
   have := hp j hj
   omega
 
-/-- The empty position is a P-position (it has no options).
+/-- **The empty position is a P-position.** For every $n$ and every finite set $A$ of natural
+numbers, the position of Slow$A$-Nim $\mathrm{SN}(n, A)$ with all $n$ stacks empty is a
+P-position, since it has no options.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Section 2. -/
@@ -112,9 +125,13 @@ public theorem slowANim_isP_zero (n : ℕ) (A : Finset ℕ) :
   rw [h0] at hq
   simp at hq
 
-/-- A position `p` is reduced (has no unplayable tokens): for every stack `i` some terminal
-position reachable from `p` has stack `i` empty, i.e. `u_i(p) = 0` for all `i` in the paper's
-notation `u_i(p) = min_j t^{(j)}_i(p)` over the terminal positions `t^{(j)}(p)` of `p`.
+/-- **Reduced positions of Slow $A$-Nim.** A position $p$ of Slow $A$-Nim on $n$ stacks is
+reduced when for every stack $i$ there is a terminal position $t$ (one with no options) that is
+reachable from $p$ by a sequence of zero or more moves and has $t_i = 0$.
+
+In the source's notation, $u_i(p) = \min_j t^{(j)}_i(p)$, the minimum over the terminal
+positions $t^{(j)}(p)$ reachable from $p$, counts the unplayable tokens of stack $i$, and $p$ is
+reduced exactly when $u_i(p) = 0$ for every $i$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 3.1. -/
@@ -122,8 +139,11 @@ public def SlowANimReduced {n : ℕ} (A : Finset ℕ) (p : Fin n → ℕ) : Prop
   ∀ i, ∃ t, Relation.ReflTransGen (fun x y => y ∈ slowANimMoves A x) p t ∧
     slowANimMoves A t = ∅ ∧ t i = 0
 
-/-- The reduction `r(p) = p - u(p)`, where `u_i(p)` is the least height of stack `i` over the
-terminal positions reachable from `p`.
+/-- **Reduction of a Slow$A$-Nim position.** Let $A$ be a finite set of natural numbers and let $p$
+be a position of Slow$A$-Nim on $n$ stacks. For each stack $i$, let $u_i(p)$ be the least height
+of stack $i$ over all terminal positions (positions with no moves) reachable from $p$ by a sequence
+of zero or more moves. The reduction of $p$ is the position $r(p)$ with $r(p)_i = p_i - u_i(p)$
+for every stack $i$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 3.1. -/
@@ -133,7 +153,8 @@ public noncomputable def slowANimReduction {n : ℕ} (A : Finset ℕ) (p : Fin n
     {t | Relation.ReflTransGen (fun x y => y ∈ slowANimMoves A x) p t ∧
       slowANimMoves A t = ∅})
 
-/-- The empty position is reduced.
+/-- **The empty position is reduced.** For every finite set $A$ of natural numbers and every
+$n$, the position of Slow $A$-Nim on $n$ stacks in which every stack is empty is reduced.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 3.1. -/
@@ -142,7 +163,9 @@ public theorem slowANimReduced_zero {n : ℕ} (A : Finset ℕ) :
   intro i
   exact ⟨fun _ => 0, Relation.ReflTransGen.refl, slowANimMoves_zero A, rfl⟩
 
-/-- The reduction never adds tokens: `r(p)_i ≤ p_i`.
+/-- **The reduction never adds tokens.** For every finite set $A$ of natural numbers, every
+position $p$ of Slow$A$-Nim on $n$ stacks and every stack $i$, the reduction $r(p)$ of $p$
+satisfies $r(p)_i \le p_i$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 3.1. -/
@@ -150,8 +173,11 @@ public theorem slowANimReduction_le {n : ℕ} (A : Finset ℕ) (p : Fin n → �
     slowANimReduction A p i ≤ p i :=
   Nat.sub_le _ _
 
-/-- Legality of a sequence of Slow`A`-Nim moves (each move given by its set of stacks) from a
-position.
+/-- **Legal move sequences in Slow A-Nim.** Let $A$ be a finite set of natural numbers and $p$ a
+position of Slow$A$-Nim on $n$ stacks. A finite sequence $S_1, \dots, S_m$ of sets of stacks is
+legal from $p$ when it is empty, or when $S_1$ is nonempty, $|S_1| \in A$, every stack in $S_1$
+holds at least one token in $p$, and $S_2, \dots, S_m$ is legal from the position obtained from
+$p$ by removing one token from each stack of $S_1$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 1 and its proof. -/
@@ -160,7 +186,8 @@ public def SlowANimLegalSeq {n : ℕ} (A : Finset ℕ) : (Fin n → ℕ) → Lis
   | p, S :: ss =>
     S.Nonempty ∧ S.card ∈ A ∧ (∀ i ∈ S, 1 ≤ p i) ∧ SlowANimLegalSeq A (slowANimAfter p S) ss
 
-/-- The empty move sequence is legal from every position.
+/-- **The empty move sequence is legal.** For every finite set $A$ of natural numbers and every
+position $p$ of Slow$A$-Nim on $n$ stacks, the empty sequence of moves is legal from $p$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 1 and its proof. -/
@@ -168,17 +195,21 @@ public theorem slowANimLegalSeq_nil {n : ℕ} (A : Finset ℕ) (p : Fin n → �
     SlowANimLegalSeq A p [] :=
   trivial
 
-/-- A set `P` of positions is the set of P-positions of the game with move relation `R`
-(`R x y`: `y` is an option of `x`) when no move joins two elements of `P` and every position
-outside `P` has a move into `P`; for a terminating game this set is unique
-(`IsPPositionSet.eq`).
+/-- **Set of P-positions.** Let $R$ be a move relation on a type of positions, where $R\,x\,y$
+means that $y$ is an option of $x$. A set $P$ of positions is a set of P-positions for $R$ when
+no position of $P$ has an option in $P$, and every position outside $P$ has an option in $P$.
+
+When there is no infinite sequence of moves, there is at most one such set.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Section 1 (characterization of P-positions). -/
 public def IsPPositionSet {α : Type*} (R : α → α → Prop) (P : Set α) : Prop :=
   (∀ x y, x ∈ P → R x y → y ∉ P) ∧ ∀ x, x ∉ P → ∃ y, R x y ∧ y ∈ P
 
-/-- For a terminating game, the set of P-positions is unique.
+/-- **Uniqueness of the set of P-positions.** Let $R$ be a move relation on a type of positions,
+where $R\,x\,y$ means that $y$ is an option of $x$, and suppose that there is no infinite
+sequence of moves (the relation "$y$ is an option of $x$" is well-founded). If $P$ and $Q$ are
+both sets of P-positions for $R$, then $P = Q$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Section 1 (characterization of P-positions). -/
@@ -187,8 +218,10 @@ public theorem IsPPositionSet.eq {α : Type*} {R : α → α → Prop}
     (hQ : IsPPositionSet R Q) : P = Q :=
   pPositions_unique R hR P Q hP.1 hP.2 hQ.1 hQ.2
 
-/-- Proposition 1 (Partial Structure Result): in `SN(n, A)`, a position with no odd stack is
-a P-position, and a position whose number of odd stacks lies in `A` is an N-position.
+/-- **Partial structure of the P-positions of Slow $A$-Nim.** Let $A \subseteq \{1, \dots, n\}$
+and let $p$ be a position of Slow $A$-Nim on $n$ stacks. If every stack height of $p$ is even,
+then $p$ is a P-position. If the number of stacks of $p$ with odd height lies in $A$, then $p$
+is not a P-position.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Proposition 1. -/
@@ -198,8 +231,9 @@ public theorem_wanted slowANim_partialStructure (n : ℕ) (A : Finset ℕ)
       ((Finset.univ.filter fun i => Odd (p i)).card ∈ A →
         ¬ SpragueGrundy.IsP (slowANimGame n A) p)
 
-/-- Theorem 2 (1): for `A = {1, k}` with `k` odd, the P-positions of `SN(n, A)` are the
-positions with an even number of tokens.
+/-- **P-positions of Slow A-Nim with A = {1, k}, k odd.** Let $k$ be odd with $1 \le k \le n$
+and let $A = \{1, k\}$. A position $p = (p_1, \dots, p_n)$ of Slow$A$-Nim on $n$ stacks is a
+P-position if and only if its total number of tokens $p_1 + \dots + p_n$ is even.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 2. -/
@@ -207,8 +241,10 @@ public theorem_wanted slowANim_one_odd_isP_iff (n k : ℕ) (hA : ({1, k} : Finse
     (hk : Odd k) (p : Fin n → ℕ) :
     SpragueGrundy.IsP (slowANimGame n {1, k}) p ↔ Even (∑ i, p i)
 
-/-- Theorem 2 (2): for `A = {1, n}` with `n` even, the P-positions of `SN(n, A)` are the
-positions whose token count and minimal stack are both even.
+/-- **P-positions of Slow A-Nim with A = {1, n}, n even.** Let $n \ge 1$ be even and let
+$A = \{1, n\}$. A position $p = (p_1, \dots, p_n)$ of Slow$A$-Nim on $n$ stacks is a P-position
+if and only if its total number of tokens $p_1 + \dots + p_n$ and its smallest stack
+$\min_i p_i$ are both even.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 2. -/
@@ -217,16 +253,19 @@ public theorem_wanted slowANim_one_n_even_isP_iff (n : ℕ) (hn : 0 < n) (hne : 
     SpragueGrundy.IsP (slowANimGame n {1, n}) p ↔
       Even (∑ i, p i) ∧ ∃ i, (∀ j, p i ≤ p j) ∧ Even (p i)
 
-/-- Theorem 3 (1): for `A = {1, 2}` and `n = 3`, a position in canonical (non-decreasing)
-form is a P-position iff its parity pattern is `(e,e,e)` or `(o,o,o)`.
+/-- **P-positions of Slow $\{1,2\}$-Nim on three stacks.** In Slow $A$-Nim with $A = \{1, 2\}$
+on three stacks, let $p = (p_0, p_1, p_2)$ be a position with $p_0 \le p_1 \le p_2$. Then $p$
+is a P-position if and only if its three stack heights are all even or all odd.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 3. -/
 public theorem_wanted slowANim_one_two_three_isP_iff (p : Fin 3 → ℕ) (hp : Monotone p) :
     SpragueGrundy.IsP (slowANimGame 3 {1, 2}) p ↔ (∀ i, Even (p i)) ∨ ∀ i, Odd (p i)
 
-/-- Theorem 3 (2): for `A = {1, 2}` and `n = 4`, a position in canonical form is a
-P-position iff its parity pattern is `(e,e,e,e)` or `(e,o,o,o)`.
+/-- **P-positions of Slow $\{1,2\}$-Nim on four stacks.** In Slow $A$-Nim with $A = \{1, 2\}$
+on four stacks, let $p = (p_0, p_1, p_2, p_3)$ be a position with
+$p_0 \le p_1 \le p_2 \le p_3$. Then $p$ is a P-position if and only if either all four stack
+heights are even, or $p_0$ is even and $p_1$, $p_2$, $p_3$ are odd.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 3. -/
@@ -234,9 +273,11 @@ public theorem_wanted slowANim_one_two_four_isP_iff (p : Fin 4 → ℕ) (hp : Mo
     SpragueGrundy.IsP (slowANimGame 4 {1, 2}) p ↔
       (∀ i, Even (p i)) ∨ (Even (p 0) ∧ Odd (p 1) ∧ Odd (p 2) ∧ Odd (p 3))
 
-/-- Theorem 3 (3): for `A = {1, 2}` and `n = 5`, a position in canonical form is a
-P-position iff its parity pattern is `(e,e,e,e,e)`, `(e,e,o,o,o)`, `(o,o,e,e,o)` or
-`(o,o,o,o,e)`.
+/-- **P-positions of Slow A-Nim with A = {1, 2} on five stacks.** Let $A = \{1, 2\}$ and let
+$p = (p_1, \dots, p_5)$ be a position of Slow$A$-Nim on five stacks in canonical form, that is,
+$p_1 \le p_2 \le \dots \le p_5$. Then $p$ is a P-position if and only if all five stacks are
+even, or $p_1, p_2$ are even and $p_3, p_4, p_5$ are odd, or $p_1, p_2, p_5$ are odd and
+$p_3, p_4$ are even, or $p_1, p_2, p_3, p_4$ are odd and $p_5$ is even.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 3. -/
@@ -247,9 +288,12 @@ public theorem_wanted slowANim_one_two_five_isP_iff (p : Fin 5 → ℕ) (hp : Mo
       (Odd (p 0) ∧ Odd (p 1) ∧ Even (p 2) ∧ Even (p 3) ∧ Odd (p 4)) ∨
       (Odd (p 0) ∧ Odd (p 1) ∧ Odd (p 2) ∧ Odd (p 3) ∧ Even (p 4))
 
-/-- Theorem 4 (NIRB condition): for `a = min A`, a position `p` of `SN(n, A)` is
-reduced iff `a · max(p) ≤ Σ(p)`. The paper assumes `n ≥ 3`; the statement is kept for all `n`
-(exhaustive checks for `n = 1, 2` agree).
+/-- **NIRB criterion for reduced positions.** Let $A \subseteq \{1, \dots, n\}$ be nonempty with
+least element $a$, and let $p$ be a position of Slow $A$-Nim on $n$ stacks. Then $p$ is reduced
+if and only if $a \cdot M \le \sum_i p_i$, where $M$ is the largest stack height of $p$ (taken
+to be $0$ when $n = 0$).
+
+The source assumes $n \ge 3$; the statement here is made for every $n$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 4. -/
@@ -257,7 +301,9 @@ public theorem_wanted slowANimReduced_iff_nirb (n : ℕ) (A : Finset ℕ)
     (hA : A ⊆ Finset.Icc 1 n) (hAne : A.Nonempty) (p : Fin n → ℕ) :
     SlowANimReduced A p ↔ A.min' hAne * Finset.univ.sup p ≤ ∑ i, p i
 
-/-- Lemma 1: a sequence of moves is legal from `p` iff it is legal from its reduction `r(p)`.
+/-- **Legal move sequences depend only on the reduction.** Let $A \subseteq \{1, \dots, n\}$ and
+let $p$ be a position of Slow$A$-Nim on $n$ stacks, with reduction $r(p)$. A finite sequence of
+moves, each given by its set of stacks, is legal from $r(p)$ if and only if it is legal from $p$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 1. -/
@@ -265,7 +311,10 @@ public theorem_wanted slowANimLegalSeq_reduction_iff (n : ℕ) (A : Finset ℕ)
     (hA : A ⊆ Finset.Icc 1 n) (p : Fin n → ℕ) (ss : List (Finset (Fin n))) :
     SlowANimLegalSeq A (slowANimReduction A p) ss ↔ SlowANimLegalSeq A p ss
 
-/-- Corollary 1: positions with the same reduction are in the same outcome class.
+/-- **Positions with the same reduction have the same outcome.** Let
+$A \subseteq \{1, \dots, n\}$. If two positions $p$ and $q$ of Slow$A$-Nim $\mathrm{SN}(n, A)$
+have the same reduction, $r(p) = r(q)$, then $p$ is a P-position if and only if $q$ is a
+P-position.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Corollary 1. -/
@@ -274,8 +323,10 @@ public theorem_wanted slowANim_isP_iff_of_reduction_eq (n : ℕ) (A : Finset ℕ
     (h : slowANimReduction A p = slowANimReduction A q) :
     SpragueGrundy.IsP (slowANimGame n A) p ↔ SpragueGrundy.IsP (slowANimGame n A) q
 
-/-- Lemma 2: chopping a reduced position at any height `m` (`ctt(p, m)_i = min(p_i, m)`) gives
-a reduced position.
+/-- **Chopping a reduced position keeps it reduced.** Let $A \subseteq \{1, \dots, n\}$ and let
+$p$ be a reduced position of Slow $A$-Nim on $n$ stacks. Then for every $m \in \mathbb{N}$ the
+position $\mathrm{ctt}(p, m)$ with stack heights $\mathrm{ctt}(p, m)_i = \min(p_i, m)$ is
+reduced.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 2. -/
@@ -283,7 +334,12 @@ public theorem_wanted slowANimReduced_min (n : ℕ) (A : Finset ℕ) (hA : A ⊆
     (p : Fin n → ℕ) (hp : SlowANimReduced A p) (m : ℕ) :
     SlowANimReduced A fun i => min (p i) m
 
-/-- Lemma 3: `r(p) = ctt(p, m)` for the largest `m ≤ max(p)` with `ctt(p, m)` reduced.
+/-- **The reduction chops at the largest reduced height.** Let $A \subseteq \{1, \dots, n\}$ and
+let $p$ be a position of Slow$A$-Nim on $n$ stacks, with largest stack height $M = \max_i p_i$
+($M = 0$ when $n = 0$). For $m \in \mathbb{N}$ write $\mathrm{ctt}(p, m)$ for the position whose
+stack $i$ has height $\min(p_i, m)$. If $m \le M$, the position $\mathrm{ctt}(p, m)$ is reduced,
+and $\mathrm{ctt}(p, m')$ is not reduced for any $m'$ with $m < m' \le M$, then the reduction of
+$p$ is $r(p) = \mathrm{ctt}(p, m)$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 3. -/
@@ -293,11 +349,15 @@ public theorem_wanted slowANimReduction_eq_min (n : ℕ) (A : Finset ℕ) (hA : 
     (hmax : ∀ m', m < m' → m' ≤ Finset.univ.sup p → ¬ SlowANimReduced A fun i => min (p i) m') :
     slowANimReduction A p = fun i => min (p i) m
 
-/-- Lemma 4 (General Reduction Lemma): if a move on a set `S` of `ℓ = |S| ∈ A` stacks from a
-reduced position `p` leads to a position that is not reduced, then, with `a = min A`,
-`M = max(p)` and `Σ(p) = a M + r`, either (R1) `ℓ > a`, all maximal stacks are played on and
-`0 ≤ r < ℓ - a`, or (R2) some maximal stack is omitted and `0 ≤ r < ℓ`. The hypothesis that
-`p` is reduced is implicit in the paper (its proof uses `r ≥ 0`, the NIRB condition for `p`).
+/-- **General reduction lemma.** Let $A \subseteq \{1, \dots, n\}$ be nonempty with least element
+$a$, and let $p$ be a reduced position of Slow$A$-Nim $\mathrm{SN}(n, A)$ with largest stack
+height $M$ and total $\Sigma(p) = \sum_i p_i$. Let $S$ be a set of $\ell \in A$ stacks, each
+holding at least one token, and suppose that the position obtained from $p$ by removing one token
+from each stack of $S$ is not reduced. Then $a M \le \Sigma(p)$ and, writing
+$r = \Sigma(p) - a M$, either (R1) $\ell > a$, every stack of height $M$ lies in $S$, and
+$r < \ell - a$; or (R2) some stack of height $M$ is not in $S$, and $r < \ell$.
+
+The hypothesis that $p$ is reduced is implicit in the source, whose proof uses $r \ge 0$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 4. -/
@@ -312,12 +372,14 @@ public theorem_wanted slowANim_generalReduction (n : ℕ) (A : Finset ℕ)
         A.min' hAne * Finset.univ.sup p ≤ ∑ i, p i ∧
         ∑ i, p i < A.min' hAne * Finset.univ.sup p + S.card)
 
-/-- Proposition 7: let `P` be the P-positions of a game with move relation `M`, and extend the
-moves by `E`. If `Q ⊆ P` is such that (1) no move in `E` joins two elements of `P \ Q`, (2)
-every N-position with an `M`-move into `Q` has an `M ∪ E`-move into `P \ Q`, and (3) every
-position of `Q` has an `E`-move into `P \ Q`, then `P \ Q` is the set of P-positions of the
-extended game (so its N-positions are `N ∪ Q`). The paper's disjointness `M ∩ E = ∅` is not
-needed and is omitted.
+/-- **P-positions after adding moves.** Let $M$ and $E$ be move relations on a type of positions,
+let $P$ be a set of P-positions for $M$, and let $Q \subseteq P$. Suppose that (1) no element of
+$P \setminus Q$ has an $E$-move to an element of $P \setminus Q$, (2) every position outside $P$
+that has an $M$-move into $Q$ has an $M$-move or an $E$-move into $P \setminus Q$, and (3) every
+position of $Q$ has an $E$-move into $P \setminus Q$. Then $P \setminus Q$ is a set of
+P-positions for the move relation "$M$ or $E$".
+
+The relations $M$ and $E$ need not be disjoint.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Proposition 7. -/
@@ -328,9 +390,10 @@ public theorem_wanted isPPositionSet_extend {α : Type*} (M E : α → α → Pr
     (h3 : ∀ x ∈ Q, ∃ y ∈ P \ Q, E x y) :
     IsPPositionSet (fun x y => M x y ∨ E x y) (P \ Q)
 
-/-- The move relation of the playable (reduced) game graph `G̃` of `SN(n, A)`: its positions are
-the reduced positions, and a move from `p` goes to the reduction `r(p')` of an option `p'` of `p`
-in `SN(n, A)` (the paper's adjusted move `m̃ = m + Δu(p')`).
+/-- **Moves of the playable game graph of Slow $A$-Nim.** The playable (reduced) game graph of
+Slow $A$-Nim on $n$ stacks has the reduced positions as its positions. For reduced positions
+$x$ and $y$, there is a move from $x$ to $y$ when $y$ is the reduction $r(q)$ of some option
+$q$ of $x$ in Slow $A$-Nim, that is, of some position reached from $x$ by one legal move.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition 3. -/
@@ -338,7 +401,9 @@ public def SlowANimReducedGraphMove {n : ℕ} (A : Finset ℕ)
     (x y : {p : Fin n → ℕ // SlowANimReduced A p}) : Prop :=
   ∃ q ∈ slowANimMoves A x.1, y.1 = slowANimReduction A q
 
-/-- The empty position has no moves in the playable game graph.
+/-- **The empty position is terminal in the playable game graph.** For every $n$ and every finite
+set $A$ of natural numbers, the position of Slow$A$-Nim $\mathrm{SN}(n, A)$ with all $n$ stacks
+empty has no move to any position in the playable game graph of $\mathrm{SN}(n, A)$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition 3. -/
@@ -349,9 +414,14 @@ public theorem not_slowANimReducedGraphMove_zero {n : ℕ} (A : Finset ℕ)
   rw [slowANimMoves_zero] at hq
   simp at hq
 
-/-- Game graph correspondence: if `P̃` is the set of P-positions of the playable game graph `G̃`
-of `SN(n, A)`, then a position `p` of `SN(n, A)` is a P-position exactly when its reduction
-`r(p)` lies in `P̃` (the paper's two "only if" statements, for `P` and for `N = Pᶜ`, together).
+/-- **P-positions of Slow $A$-Nim via the playable game graph.** Let $n \in \mathbb{N}$ and
+$A \subseteq \{1, \dots, n\}$. Let $\tilde P$ be a set of P-positions for the moves of the
+playable game graph of Slow$A$-Nim $\mathrm{SN}(n, A)$, whose positions are the reduced
+positions: no position in $\tilde P$ has a move to a position in $\tilde P$, and every reduced
+position outside $\tilde P$ has a move to a position in $\tilde P$. Then a position $p$ of
+$\mathrm{SN}(n, A)$ is a P-position if and only if its reduction $r(p)$ lies in $\tilde P$.
+
+This combines the source's two statements, one for P-positions and one for N-positions.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 5. -/
@@ -360,12 +430,17 @@ public theorem_wanted slowANim_isP_iff_reduction_mem (n : ℕ) (A : Finset ℕ)
     (hP : IsPPositionSet (SlowANimReducedGraphMove A) P) (p : Fin n → ℕ) :
     SpragueGrundy.IsP (slowANimGame n A) p ↔ ∃ q ∈ P, q.1 = slowANimReduction A p
 
-/-- Options without reduction in `SN(n, k)`, `k = n - 1` (`n ≥ 2`). Let `p` be reduced with
-`s = Σ(p) mod 2k` and `o` odd stacks, and let `p'` be obtained by playing on a set `S` of `k`
-nonempty stacks, omitting stack `j`. If `p'` is reduced, then `s' = s + k` for `s < k` and
-`s' = s - k` for `s ≥ k`, and `o' = n - o + 1` if stack `j` is odd, `o' = n - o - 1` if it is
-even. The record's closing remark that both values of `o'` are legal when `0 < o < n` is
-omitted: it fails in `SN(3, 2)` at `p = (0, 1, 1)`, whose only move omits the empty stack.
+/-- **Options without reduction in Slow {n - 1}-Nim.** Let $n \ge 2$, $k = n - 1$ and $A = \{k\}$,
+so that a move removes one token from each of exactly $k$ nonempty stacks. Let $p$ be a reduced
+position of Slow$A$-Nim on $n$ stacks, with $s = (p_1 + \dots + p_n) \bmod 2k$ and $o$ odd stacks.
+Let $p'$ be obtained from $p$ by playing on a set $S$ of $k$ stacks, each holding at least one
+token in $p$, and let $j$ be the stack not in $S$. If $p'$ is reduced, then
+$s' = (p'_1 + \dots + p'_n) \bmod 2k$ equals $s + k$ when $s < k$ and $s - k$ when $s \ge k$, and
+the number $o'$ of odd stacks of $p'$ is $n - o + 1$ if $p_j$ is odd and $n - o - 1$ if $p_j$ is
+even.
+
+The closing remark of Lemma 5 that both values of $o'$ are legal when $0 < o < n$ is omitted: it
+fails for $n = 3$ at $p = (0, 1, 1)$, whose only move omits the empty stack.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 5. -/
@@ -380,15 +455,20 @@ public theorem_wanted slowANim_n_sub_one_option_of_reduced (n : ℕ) (hn : 2 ≤
         if Odd (p j) then n - (Finset.univ.filter fun i => Odd (p i)).card + 1
         else n - (Finset.univ.filter fun i => Odd (p i)).card - 1
 
-/-- Options with reduction in `SN(n, n - 1)` (`n ≥ 2`, `k = n - 1`). Let `p` be reduced with
-`s = Σ(p) mod 2k`, `o` odd stacks, maximum `M` attained by `α` stacks, and let `p'` (a move on
-`k` stacks) need reduction. Then `M` is even if `s < k` and odd otherwise, and:
-if `s ≢ 0 (mod k)`, `r(p') = p - 1` (every stack lowered by one), `o' = n - o` and
-`s' = s + k - 1` for `s < k`, `s' = s - (k + 1)` for `s > k`; if `s ≡ 0 (mod k)`, `r(p')` lowers
-the maximal stacks by two and the others by one, and for `s = 0`, `α ≤ min(n - o, n - 2)` and
-`(s', o') = (k - 1 - α, n - o - α)`, while for `s = k`, `α ≤ min(o, n - 2)` and
-`(s', o') = (2k - 1 - α, n - o + α)`. Stacks are labelled, so the paper's canonical-form display
-of `r(p')` is written stackwise.
+/-- **Options with reduction in Slow {n - 1}-Nim.** Let $n \ge 2$, $k = n - 1$ and $A = \{k\}$.
+Let $p$ be a reduced position of Slow$A$-Nim on $n$ stacks, with $s = (p_1 + \dots + p_n) \bmod 2k$,
+$o$ odd stacks, and maximum $M = \max_i p_i$ attained by $\alpha$ stacks. Let $p'$ be obtained
+from $p$ by playing on a set $S$ of $k$ stacks, each holding at least one token in $p$, and
+suppose that $p'$ is not reduced. Write $r = r(p')$ for its reduction,
+$s' = (r_1 + \dots + r_n) \bmod 2k$ and $o'$ for the number of odd stacks of $r$. Then $M$ is
+even if $s < k$ and odd if $s \ge k$. If $s \not\equiv 0 \pmod k$, then $r_i = \max(p_i - 1, 0)$
+for every stack $i$, $o' = n - o$, and $s' = s + k - 1$ if $s < k$, $s' = s - (k + 1)$ if
+$s > k$. If $s \equiv 0 \pmod k$, then $r_i = \max(p_i - 2, 0)$ for the stacks with $p_i = M$
+and $r_i = \max(p_i - 1, 0)$ for the others; moreover, if $s = 0$ then
+$\alpha \le \min(n - o, n - 2)$, $s' = k - 1 - \alpha$ and $o' = n - o - \alpha$, and if $s = k$
+then $\alpha \le \min(o, n - 2)$, $s' = 2k - 1 - \alpha$ and $o' = n - o + \alpha$.
+
+Stacks are labelled, so the paper's canonical-form display of $r(p')$ is written stackwise.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 6. -/
@@ -411,12 +491,14 @@ public theorem_wanted slowANim_n_sub_one_option_of_not_reduced (n : ℕ) (hn : 2
         (s = 0 → α ≤ n - o ∧ α ≤ n - 2 ∧ s' = k - 1 - α ∧ o' = n - o - α) ∧
         (s = k → α ≤ o ∧ α ≤ n - 2 ∧ s' = 2 * k - 1 - α ∧ o' = n - o + α))
 
-/-- P-positions of the reduced game `SNG̃(n, k)`, `k = n - 1` (`n ≥ 2`). For a reduced position
-`p` with `s = Σ(p) mod 2k` and `o` odd stacks, `s` and `o` have the same parity, and `p` is a
-P-position of the playable game graph exactly when `(s, o)` lies in
-`S₁ = {0 ≤ s < k - 1, o ≤ s}`, `S₂ = {s = n - 2, o ≡ n (mod 2)}` or
-`S₃ = {k - 1 < s < 2k - 1, o ≤ 2(k - 1) - s}`; the paper's "same parity" clauses in `S₁` and
-`S₃` follow from the first assertion and are not repeated.
+/-- **P-positions of the reduced game of Slow $\{n-1\}$-Nim.** Let $n \ge 2$ and $A = \{n - 1\}$,
+and let $\tilde P$ be a set of P-positions of the playable game graph of Slow $A$-Nim on $n$
+stacks: no move of that graph joins two elements of $\tilde P$, and every reduced position
+outside $\tilde P$ has a move into $\tilde P$. For a reduced position $q$, let $s$ be the
+remainder of $\sum_i q_i$ modulo $2(n - 1)$ and let $o$ be the number of stacks of $q$ of odd
+height. Then $s$ and $o$ have the same parity, and $q \in \tilde P$ if and only if $s < n - 2$
+and $o \le s$, or $s = n - 2$ and $o \equiv n \pmod 2$, or $n - 2 < s < 2n - 3$ and
+$o \le 2(n - 2) - s$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 6. -/
@@ -430,11 +512,14 @@ public theorem_wanted slowANimReduced_mem_pPositions_n_sub_one_iff (n : ℕ) (hn
       (q ∈ P ↔ (s < n - 2 ∧ o ≤ s) ∨ (s = n - 2 ∧ o % 2 = n % 2) ∨
         (n - 2 < s ∧ s < 2 * (n - 1) - 1 ∧ o ≤ 2 * (n - 2) - s))
 
-/-- P-positions of the reduced game `SNG̃(n, {n - 1, n})` (`n ≥ 2`). For a reduced position `p`
-with `s = Σ(p) mod (2n - 2)` and `o` odd stacks, `s` and `o` have the same parity, and `p` is a
-P-position of the playable game graph exactly when `(s, o)` lies in `S₁ = {s < n - 2, o ≤ s}`,
-`S₂ = {s = n - 2, o ≡ n (mod 2), o ≠ n}` or `S₃ = {n - 2 < s < 2n - 3, o ≤ 2(n - 2) - s}`; the
-"same parity" clauses of `S₁` and `S₃` follow from the first assertion and are not repeated.
+/-- **P-positions of the reduced game of Slow $\{n-1, n\}$-Nim.** Let $n \ge 2$ and
+$A = \{n - 1, n\}$, and let $\tilde P$ be a set of P-positions of the playable game graph of
+Slow $A$-Nim on $n$ stacks: no move of that graph joins two elements of $\tilde P$, and every
+reduced position outside $\tilde P$ has a move into $\tilde P$. For a reduced position $q$, let
+$s$ be the remainder of $\sum_i q_i$ modulo $2n - 2$ and let $o$ be the number of stacks of $q$
+of odd height. Then $s$ and $o$ have the same parity, and $q \in \tilde P$ if and only if
+$s < n - 2$ and $o \le s$, or $s = n - 2$, $o \equiv n \pmod 2$ and $o \ne n$, or
+$n - 2 < s < 2n - 3$ and $o \le 2(n - 2) - s$.
 
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 8. -/

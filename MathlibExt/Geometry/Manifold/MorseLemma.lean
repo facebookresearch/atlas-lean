@@ -215,9 +215,6 @@ private theorem contDiff_parametric_intervalIntegral {n : ℕ} {F : Type*}
   intro x₀
   exact contDiffAt_parametric_aux m hH x₀
 
-/-- Smoothness order arithmetic. -/
-private lemma top_succ_le : ((⊤ : ℕ∞) : ℕ∞ω) + 1 ≤ (⊤ : ℕ∞) := by simp
-
 /-- `ContDiffOn` on a set from pointwise `ContDiffAt`. -/
 private lemma contDiffOn_of_contDiffAt {E F : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] [NormedAddCommGroup F] [NormedSpace ℝ F] {V : Set E}
@@ -250,12 +247,12 @@ private lemma morse_coeff_form {n : ℕ} {f : EuclideanSpace ℝ (Fin n) → ℝ
     f x = f 0 + ∑ i, ∑ j, (x i) * (x j) * morseCoeff f x i j := by
   have hDf : ∀ y : EuclideanSpace ℝ (Fin n), HasFDerivAt f (fderiv ℝ f y) y :=
     fun y => (hf.contDiffAt.differentiableAt top_order_ne_zero).hasFDerivAt
-  have hD1 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ f) := hf.fderiv_right top_succ_le
+  have hD1 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ f) := hf.fderiv_right ENat.coe_top_add_one.le
   have hDDf : ∀ y : EuclideanSpace ℝ (Fin n),
       HasFDerivAt (fderiv ℝ f) (fderiv ℝ (fderiv ℝ f) y) y :=
     fun y => (hD1.contDiffAt.differentiableAt top_order_ne_zero).hasFDerivAt
   have hD2c : Continuous (fderiv ℝ (fderiv ℝ f)) :=
-    (hD1.fderiv_right top_succ_le).continuous
+    (hD1.fderiv_right ENat.coe_top_add_one.le).continuous
   have hc : ∀ t : ℝ, HasDerivAt (fun t : ℝ => t • x) x t := by
     intro t
     simpa using (hasDerivAt_id t).smul_const x
@@ -389,7 +386,7 @@ private lemma morse_coeff_smooth {n : ℕ} {f : EuclideanSpace ℝ (Fin n) → �
     (hf : ContDiff ℝ (⊤ : ℕ∞) f) :
     ContDiff ℝ (⊤ : ℕ∞) (morseCoeff f) := by
   have hD2 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ (fderiv ℝ f)) :=
-    (hf.fderiv_right top_succ_le).fderiv_right top_succ_le
+    (hf.fderiv_right ENat.coe_top_add_one.le).fderiv_right ENat.coe_top_add_one.le
   have hsm : ContDiff ℝ (⊤ : ℕ∞)
       (fun p : ℝ × EuclideanSpace ℝ (Fin n) => p.1 • p.2) :=
     contDiff_fst.smul contDiff_snd
@@ -1450,15 +1447,21 @@ private theorem morse_normal_form_near_zero {n : ℕ}
   rw [h𝓑form (Linv y), h2, key]
 
 /--
-If `f : ℝⁿ → ℝ` is `C^∞` with `fderiv ℝ f 0 = 0` and nondegenerate Hessian at `0`, then there
-exist `k ≤ n`, a `C^∞` local diffeomorphism `φ` at `0` with `φ 0 = 0`, and open `U ∋ 0` such that
-`f x = f 0 + Q_k (φ x)` on `U`, where `Q_k = morseQuadratic k n`. Source: J. Milnor, Morse Theory,
+**Morse lemma.** Let $f \colon \mathbb{R}^n \to \mathbb{R}$ be a $C^\infty$ function with
+$Df(0) = 0$ whose Hessian at $0$ is nondegenerate: if $v \in \mathbb{R}^n$ satisfies
+$D^2 f(0)(v, w) = 0$ for all $w \in \mathbb{R}^n$, then $v = 0$. Then there exist an integer
+$0 \le k \le n$, a map $\varphi \colon \mathbb{R}^n \to \mathbb{R}^n$ that is a local $C^\infty$
+diffeomorphism at $0$ with $\varphi(0) = 0$, and an open set $U$ containing $0$ such that
+$f(x) = f(0) + Q_k(\varphi(x))$ for all $x \in U$. Here $Q_k$ is the Morse quadratic form
+$Q_k(y) = -y_1^2 - \dots - y_k^2 + y_{k+1}^2 + \dots + y_n^2$ on $\mathbb{R}^n$.
+
+Proves `Wanted` entry `morse_lemma`.
+
+Source: J. Milnor, Morse Theory,
 Ann. of Math. Studies 51 (1963) Lemma 2.2; M. Hirsch, Differential Topology; J. Lee, Intro to
 Smooth Manifolds, 2nd ed., Morse lemma; Lean states Euclidean origin finite-dimensional
 specialization with corrected nondegeneracy grouping `(∀ w, (fderiv (fderiv f) 0 v) w = 0) → v =
 0`.
-
-Proves `Wanted` entry `morse_lemma`.
 -/
 theorem morse_lemma
     {n : ℕ} (f : EuclideanSpace ℝ (Fin n) → ℝ)

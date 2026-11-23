@@ -56,16 +56,19 @@ variable {v : IsDedekindDomain.HeightOneSpectrum (𝓞 K)}
 variable {w : IsDedekindDomain.HeightOneSpectrum (𝓞 L)}
 variable [hvw : w.asIdeal.LiesOver v.asIdeal]
 
-noncomputable scoped instance : Algebra (v.adicCompletion K) (w.adicCompletion L) :=
+noncomputable scoped instance instAlgebraAdicCompletionRingOfIntegers_mathlibExt :
+    Algebra (v.adicCompletion K) (w.adicCompletion L) :=
   (adicCompletionMap v w).toAlgebra
 
-scoped instance : IsScalarTower K (v.adicCompletion K) (w.adicCompletion L) := by
+scoped instance instIsScalarTowerAdicCompletionRingOfIntegers_mathlibExt :
+    IsScalarTower K (v.adicCompletion K) (w.adicCompletion L) := by
   apply IsScalarTower.of_algebraMap_eq
   intro x
   rw [RingHom.algebraMap_toAlgebra]
   exact (adicCompletionMap_algebraMap v w x).symm
 
-scoped instance : ContinuousSMul (v.adicCompletion K) (w.adicCompletion L) where
+scoped instance instContinuousSMulAdicCompletionRingOfIntegers_mathlibExt :
+    ContinuousSMul (v.adicCompletion K) (w.adicCompletion L) where
   continuous_smul :=
     ((continuous_adicCompletionMap v w).comp continuous_fst).mul continuous_snd
 
