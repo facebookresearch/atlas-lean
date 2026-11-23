@@ -29,8 +29,10 @@ python3 scripts/check_formal_math_sync.py --split-by-domain
 python3 scripts/check_formal_math_sync.py --base origin/main
 ```
 
-Conversion must leave every row and all shared metadata unchanged. Once adopted, the checker
-rejects reverting to monolithic storage. An authorized upstream sync remains a separate operation.
+Conversion must leave every row and all shared metadata unchanged. Keep it in its own merge
+batch; if an earlier queued change edits the monolithic ledger, regenerate the conversion on
+updated `main`. Once adopted, the checker rejects reverting to monolithic storage. An authorized
+upstream sync remains a separate operation.
 
 ## Row schema
 

@@ -977,6 +977,49 @@ class SyncTest(unittest.TestCase):
     def rows(self) -> dict[str, dict]:
         return {row["path"]: row for row in json.loads((self.atlas / c.MANIFEST).read_text())["rows"]}
 
+    def test_sync_report_cannot_overwrite_ledger(self) -> None:
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        path = self.atlas / c.MANIFEST
+        self.assertEqual(quiet(c.main, ["--root", str(self.atlas), "--split-by-domain"])[0], 0)
+        old, _ = c.load(path)
+        documents = c.manifest_documents(path, old)
+        shard = c.shard_path(path, "MathlibExt/Same.lean")
+        alias = path.parent / "report-alias.md"
+        os.link(shard, alias)
+        for target in (path, shard, alias):
+            with self.subTest(target=target), self.assertRaises(SystemExit):
+                self.sync("--report", str(target))
+            self.assertEqual({t: t.read_text(encoding="utf-8") for t in documents}, documents)
+
+    def test_sync_refuses_missing_committed_retirement_shard(self) -> None:
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        path = self.atlas / c.MANIFEST
+        manifest, _ = c.load(path)
+        retired = "WantedExt/Combinatorics/Retired.lean"
+        manifest["rows"].append({"path": retired, "disposition": "retired"})
+        manifest["rows"].sort(key=lambda row: row["path"])
+        manifest["schema_version"] = c.SHARDED_SCHEMA_VERSION
+        c.write_manifest(path, manifest)
+        run_git(self.atlas, "init", "-q")
+        run_git(self.atlas, "add", "-A")
+        run_git(self.atlas, "commit", "-qm", "sharded ledger with a retirement")
+        c.shard_path(path, retired).unlink()
+        header = path.read_bytes()
+        with self.assertRaisesRegex(SystemExit, retired):
+            self.sync("--rationales", str(self.rationales))
+        self.assertEqual(path.read_bytes(), header)
+
+    def test_sync_refuses_malformed_legacy_rows(self) -> None:
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        path = self.atlas / c.MANIFEST
+        manifest, _ = c.load(path)
+        manifest["rows"].insert(0, manifest["rows"][0])
+        text = c.dump_manifest(manifest)
+        path.write_text(text, encoding="utf-8")
+        with self.assertRaisesRegex(SystemExit, "sorted and unique"):
+            self.sync("--rationales", str(self.rationales))
+        self.assertEqual(path.read_text(encoding="utf-8"), text)
+
     def test_sync_preserves_sharded_layout_and_defers_failed_writes(self) -> None:
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
         path = self.atlas / c.MANIFEST

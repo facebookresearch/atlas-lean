@@ -95,6 +95,11 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    that is exactly as its own `git merge` left it (or its own unedited draft of
    the manifest): once you edit a file, `git add` it when it is resolved.
 
+   For a domain-sharded ledger, stage the affected JSON shards as well as the
+   resolved Lean files. Do not start a bump merge across the one-time layout
+   cutover: first replay the bump's row changes onto the sharded baseline and
+   verify the complete ledger. A v2 checkout must not restore the inline rows.
+
    Other conflicts are yours:
 
    1. Resolve each conflicted file and `git add` it.

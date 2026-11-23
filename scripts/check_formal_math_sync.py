@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Check, and record divergences in, provenance/formal-math-sync.json.
+"""Check and update the Formal-Math ledger in provenance/.
 
     scripts/check_formal_math_sync.py                      check (check.sh preflight); exit 1 on failure
     scripts/check_formal_math_sync.py --record-divergence PATH... --rationale TEXT --backport pending|<url>
     scripts/check_formal_math_sync.py --retire PATH...
+    scripts/check_formal_math_sync.py --split-by-domain    convert the legacy ledger without row changes
 
 The manifest pins a fairinternal/formal-math commit and has a row for every root-library Lean file
 taken from it (see `provenance/README.md`). The check is offline, deterministic, standard library
@@ -371,7 +372,7 @@ def manifest_documents(manifest_path: Path, manifest: dict) -> dict[Path, str]:
     for row in manifest["rows"]:
         groups.setdefault(shard_path(manifest_path, row["path"]), []).append(row)
     header = {key: value for key, value in manifest.items() if key != "rows"}
-    documents = {manifest_path: json.dumps(header, indent=2, ensure_ascii=False) + "\n"}
+    documents = {manifest_path: json.dumps(header, indent=2, ensure_ascii=False, sort_keys=True) + "\n"}
     for shard, rows in sorted(groups.items()):
         documents[shard] = dump_manifest({"rows": sorted(rows, key=lambda row: row["path"])})
     return documents
@@ -461,6 +462,8 @@ def load(manifest_path: Path) -> tuple[dict | None, list[str]]:
         absolute = manifest_path.absolute()
         if symlinked_component(Path(absolute.anchor), absolute):
             raise ValueError("manifest path must not go through a symlink")
+        if not manifest_path.is_file():
+            raise ValueError("expected a regular manifest file")
         manifest = parse_manifest(manifest_path, manifest_path.read_text(encoding="utf-8"),
                                   worktree_shards(manifest_path))
     except (OSError, ValueError) as error:
@@ -572,6 +575,16 @@ def load_revision(
 ) -> tuple[dict | None, list[str]]:
     """Load the full historical ledger from Git, checking file modes as well as contents."""
     header = Path(manifest_path)
+    for parent in reversed(header.parents):
+        if parent == Path("."):
+            continue
+        listing = git(root, "ls-tree", "--full-tree", "-z", revision, "--", parent.as_posix())
+        if listing is None:
+            return None, [f"cannot read {parent} in the manifest tree at {revision}"]
+        if not listing:
+            return None, []  # no ancestor (and hence no ledger) in this revision
+        if not listing.startswith("040000 tree "):
+            return None, [f"{revision}:{parent}: expected a real manifest directory"]
     directory = shard_directory(header)
     listing = git(root, "ls-tree", "--full-tree", "-r", "-z", revision, "--",
                   header.as_posix(), directory.as_posix())
@@ -985,6 +998,8 @@ def main(argv: list[str] | None = None) -> int:
         return edit(a.root, manifest_path, a.retire, retire)
 
     problems, fixes, rows = check(a.root, manifest_path)
+    if os.environ.get("GITHUB_ACTIONS") and manifest_rel(a.root, manifest_path) != MANIFEST:
+        problems.append(f"manifest: CI requires the canonical ledger at {MANIFEST}")
     removed, warnings = base_problems(a.root, manifest_path, a.base)
     problems += removed
     for warning in warnings:
