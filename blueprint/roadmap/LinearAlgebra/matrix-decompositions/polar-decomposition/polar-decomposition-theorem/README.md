@@ -12,4 +12,5 @@ The polar decomposition is the matrix analogue of writing a complex number as $z
 - [Uniqueness of the polar decomposition of an invertible matrix](exists-unique-unitary-group-pos-def-of-i.md): uniqueness for invertible matrices
 - [Polar decomposition of invertible complex matrices](polar-decomposition-gl-complex.md): invertible complex matrices
 - [Polar decomposition of invertible real matrices](polar-decomposition-gl-real.md): invertible real matrices: orthogonal times positive definite symmetric
-- [Canonical polar factor of a rectangular matrix](rectangular-polar-factor.md): the orthogonal factor for an invertible real square matrix; otherwise a canonical partial isometry
+- [Canonical polar factor of a rectangular matrix](rectangular-polar-factor.md): defined from a compact singular value decomposition
+- [Properties of the canonical polar factor](canonical-polar-factor-properties.md): the orthogonal factor for an invertible real square matrix; otherwise a canonical partial isometry
