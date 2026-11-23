@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
 public import Mathlib.Data.Int.GCD
 public import MathlibExt.AlgebraicGeometry.StableBundleModuli
 
@@ -35,12 +34,12 @@ open _root_.MathlibExt.AlgebraicGeometry.StableBundleModuli
 universe u
 
 /-- Proper smooth rank-r degree-d stable-bundle moduli with universal bundle
-in the coprime case. -/
+in the coprime case, for a smooth proper integral curve of genus at least two. -/
 public def_wanted stableBundleModuli
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (C : Over (Spec (.of k))) [IsProper C.hom]
-    [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
+    (C : Over (Spec (.of k))) [IsIntegral C.left] [IsProper C.hom]
+    [SmoothOfRelativeDimension 1 C.hom]
     (hgenus : 2 ≤ genus C.hom) (r : ℕ) (hr : 0 < r) (d : ℤ)
-    (coprime : Nat.gcd r d.natAbs = 1) : StableModuliModel C r d
+    (coprime : Nat.gcd r d.natAbs = 1) : StableModuliModel C r hr d
 
 end WantedExt.AlgebraicGeometry.StableBundleModuli

@@ -11,18 +11,22 @@ module
 public import Mathlib.AlgebraicGeometry.Geometrically.Connected
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
-public import MathlibExt.AlgebraicGeometry.HarderNarasimhanFiltration
 public import MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 
 @[expose] public noncomputable section
 
 /-!
-# Actual stable-bundle families and their moduli property
+# Stable-bundle families on a curve and their moduli property
 
-Stability tests positive-rank saturated subbundles by their actual rational
-slopes. Families are actual vector bundles on C times T, with fixed
-fiber degree. The moduli property compares their actual universal pullbacks
-up to tensoring by a line bundle from the base, retaining the scalar
+Let `C` be a smooth proper integral curve over an algebraically closed field
+`k`. A vector bundle of positive rank on `C` is stable when every saturated
+subbundle of smaller positive rank has strictly smaller slope. A family over a
+parameter scheme `T` is a vector bundle on `C × T` whose restriction to the
+fibre `C × {t}` over every rational point `t` of `T` is stable of the given
+degree. For `T` of finite type over the algebraically closed field `k`, the
+rational points are exactly the closed points, and stability is open in
+families, so this tests every fibre. The moduli property compares universal
+pullbacks up to tensoring by a line bundle from the base, the scalar
 automorphism ambiguity.
 
 Source: Huybrechts--Lehn, The Geometry of Moduli Spaces of Sheaves,
@@ -39,22 +43,28 @@ open _root_.MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 
 universe u
 
-/-- Stability with actual saturated-subobject strict slope inequalities. -/
+/-- Stability of a vector bundle `E` of positive rank `r` on a smooth integral proper
+curve: every saturated subbundle of rank `0 < s < r`, an actual monomorphism from a
+vector bundle of rank `s` whose cokernel is a vector bundle of rank `r - s`, has
+strictly smaller slope. -/
 def IsStable {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) (E : X.Modules) (r : ℕ) : Prop :=
-  0 < r ∧ HarderNarasimhanFiltration.IsSemistable f E r ∧
-    ∀ (s : ℕ), 0 < s → s < r →
-      ∀ (F : X.Modules) (i : F ⟶ E), Mono i → IsVectorBundle F s →
-        IsVectorBundle (cokernel i) (r - s) → slope f F s < slope f E r
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] [SmoothOfRelativeDimension 1 f] [IsIntegral X]
+    (E : X.Modules) (r : ℕ) (hE : IsVectorBundle E r) (hr : 0 < r) : Prop :=
+  ∀ (s : ℕ) (hs : 0 < s), s < r →
+    ∀ (F : X.Modules) (i : F ⟶ E), Mono i → ∀ hF : IsVectorBundle F s,
+      IsVectorBundle (cokernel i) (r - s) → slope f F s hF hs < slope f E r hE hr
 
-/-- Stable degree-d rank-r families, tested on all closed field points. -/
-def IsStableFamily {k : Type u} [Field k]
-    (C T : Over (Spec (.of k))) (r : ℕ) (d : ℤ)
+/-- A family of stable bundles of rank `r` and degree `d` on `C`, parametrized by `T`:
+a vector bundle on `C × T` whose restriction to the fibre over every rational point of
+`T` is a stable vector bundle of rank `r` and degree `d`. -/
+def IsStableFamily {k : Type u} [Field k] [IsAlgClosed k]
+    (C T : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] (r : ℕ) (hr : 0 < r) (d : ℤ)
     (E : (prod C T).left.Modules) : Prop :=
   IsVectorBundle E r ∧
     ∀ x : 𝟙_ (Over (Spec (.of k))) ⟶ T,
       let F := (Scheme.Modules.pullback (pointSection C T x).left).obj E
-      IsStable C.hom F r ∧ bundleDegree C.hom F r = d
+      ∃ hF : IsVectorBundle F r, IsStable C.hom F r hF hr ∧ bundleDegree C.hom F r hF = d
 
 /-- The scalar automorphism ambiguity is tensor by an actual base line bundle. -/
 def IsBaseTwist {k : Type u} [Field k] (C T : Over (Spec (.of k)))
@@ -63,19 +73,27 @@ def IsBaseTwist {k : Type u} [Field k] (C T : Over (Spec (.of k)))
     Nonempty (moduleTensor (prod C T).left E
       ((Scheme.Modules.pullback (prod.snd : prod C T ⟶ T).left).obj L) ≅ F)
 
-/-- Proper smooth moduli with an actual universal bundle, modulo base twists. -/
-structure StableModuliModel {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) (r : ℕ) (d : ℤ) where
+/-- A proper, smooth, geometrically connected moduli space of stable bundles of rank
+`r` and degree `d` on `C`, of dimension `r²(g - 1) + 1` (computed in `ℤ`), with a
+universal bundle that represents stable families over parameter schemes of finite
+type up to base twists. -/
+structure StableModuliModel {k : Type u} [Field k] [IsAlgClosed k]
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left] (r : ℕ) (hr : 0 < r) (d : ℤ) where
+  /-- The moduli space. -/
   M : Over (Spec (.of k))
   [proper : IsProper M.hom]
-  [smoothDimension : SmoothOfRelativeDimension
-    (r * r * (genus C.hom - 1) + 1) M.hom]
+  /-- The dimension of the moduli space. -/
+  dimension : ℕ
+  dimension_eq : (dimension : ℤ) = (r : ℤ) * r * ((genus C.hom : ℤ) - 1) + 1
+  [smoothDimension : SmoothOfRelativeDimension dimension M.hom]
   [connected : GeometricallyConnected M.hom]
+  /-- The universal bundle on `C × M`. -/
   universalBundle : (prod C M).left.Modules
-  stableFamily : IsStableFamily C M r d universalBundle
+  stableFamily : IsStableFamily C M r hr d universalBundle
   universal : ∀ (T : Over (Spec (.of k))),
     LocallyOfFiniteType T.hom → QuasiCompact T.hom →
-      ∀ E : (prod C T).left.Modules, IsStableFamily C T r d E →
+      ∀ E : (prod C T).left.Modules, IsStableFamily C T r hr d E →
         ∃! f : T ⟶ M,
           IsBaseTwist C T (familyPullback C M T universalBundle f) E
 
