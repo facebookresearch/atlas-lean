@@ -68,16 +68,24 @@ def exceptionalLocus {Y X : Scheme.{u}} (f : Y ⟶ X) : Set Y :=
   {y | ¬∃ U : Y.Opens, y ∈ U ∧ ∃ V : X.Opens, ∃ e : U.toScheme ≅ V.toScheme,
     U.ι ≫ f = e.hom ≫ V.ι}
 
-/-- A small birational morphism from an `n`-dimensional source: its exceptional
-locus is nonempty of dimension at most `n - 2`, stated without natural-number
-subtraction (so no small morphism has a source of dimension below two). -/
+/-- A small birational morphism from an `n`-dimensional source: the source has
+dimension `n` and the exceptional locus is nonempty of dimension at most `n - 2`
+(codimension at least two), stated without natural-number subtraction (so no small
+morphism has a source of dimension below two). -/
 def IsSmall {Y X : Scheme.{u}} (f : Y ⟶ X) (n : ℕ) : Prop :=
   IsBirationalMorphism f ∧ (exceptionalLocus f).Nonempty ∧
-    topologicalKrullDim (exceptionalLocus f) + 2 ≤ (n : WithBot ℕ∞)
+    topologicalKrullDim (exceptionalLocus f) + 2 ≤ (n : WithBot ℕ∞) ∧
+    topologicalKrullDim Y = (n : WithBot ℕ∞)
 
-/-- Canonical module fixed by natural top-degree Serre duality. -/
+/-- Canonical module of a proper `n`-dimensional scheme over `k`, fixed by natural
+top-degree Serre duality: it represents `F ↦ Hⁿ(X, F)^∨` on vector bundles. Properness
+and the dimension are part of the data: on a nonproper scheme the duality is not
+Serre's (on `𝔸¹`, `ω = 0` would satisfy it for `n = 1`). On a projective scheme this
+determines the dualizing sheaf, every coherent sheaf being a quotient of vector
+bundles. -/
 structure CanonicalModule {k : Type u} [Field k]
-    (X : Over (Spec (.of k))) (n : ℕ) where
+    (X : Over (Spec (.of k))) [IsProper X.hom] (n : ℕ) where
+  dimension : topologicalKrullDim X.left = (n : WithBot ℕ∞)
   omega : X.left.Modules
   coherent : SheafOfModules.IsFinitePresentation (R := X.left.ringCatSheaf) omega
   duality : ∀ r : ℕ, ∀ F : X.left.Modules, IsVectorBundle F r →
@@ -90,7 +98,7 @@ structure CanonicalModule {k : Type u} [Field k]
 
 /-- A positive reflexive canonical power that is genuinely a line bundle. -/
 structure CanonicalQLine {k : Type u} [Field k]
-    (X : Over (Spec (.of k))) (n : ℕ) where
+    (X : Over (Spec (.of k))) [IsProper X.hom] (n : ℕ) where
   canonical : CanonicalModule X n
   index : ℕ
   positive : 0 < index
@@ -99,7 +107,8 @@ structure CanonicalQLine {k : Type u} [Field k]
   line : IsLineBundle secondDual.dual
 
 def CanonicalQLine.lineBundle {k : Type u} [Field k]
-    {X : Over (Spec (.of k))} {n : ℕ} (K : CanonicalQLine X n) : LineBundle X.left :=
+    {X : Over (Spec (.of k))} [IsProper X.hom] {n : ℕ} (K : CanonicalQLine X n) :
+    LineBundle X.left :=
   ⟨K.secondDual.dual, K.line⟩
 
 /-- Relative ampleness for a Noetherian source: the target is covered by affine opens over
