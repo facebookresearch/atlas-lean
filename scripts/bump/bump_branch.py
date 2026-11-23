@@ -709,6 +709,9 @@ def provenance_rows(manifest: dict | None, revision: str) -> dict[str, dict]:
 def inherited_row_problems(
     path: str, before: dict, row: dict, revision: str, *, same_pin: bool, bound_at_pin: bool,
 ) -> list[str]:
+    if (before.get("disposition") in ("identical", "attributed")
+            and not same_pin and not bound_at_pin):
+        return [f"{path}: source is bound only at {revision[:12]}; sync it at the selected pin first"]
     if row == before:
         return []
     short = revision[:12]

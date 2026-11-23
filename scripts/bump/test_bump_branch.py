@@ -53,6 +53,27 @@ class MergeManifestTest(unittest.TestCase):
     def merge(self, base, ours, theirs, files=None):
         return bb.merge_manifest(manifest(base), manifest(ours), manifest(theirs), versions=versions_as(files or {}))
 
+    def test_header_only_rows_retain_their_global_pin_binding(self) -> None:
+        path = "MathlibExt/Algebra/New.lean"
+        for disposition in ("identical", "attributed"):
+            row = {"path": path, "disposition": disposition,
+                   "published_sha256": "a" * 64, "upstream_sha256": "b" * 64}
+            if disposition == "attributed":
+                row["notice"] = "/- Portions adapted from a public source. -/"
+            with self.subTest(disposition=disposition):
+                self.assertTrue(bb.inherited_row_problems(
+                    path, row, row, "a" * 40, same_pin=False, bound_at_pin=False,
+                ))
+                for same_pin, bound_at_pin in ((True, False), (False, True)):
+                    self.assertEqual(bb.inherited_row_problems(
+                        path, row, row, "a" * 40,
+                        same_pin=same_pin, bound_at_pin=bound_at_pin,
+                    ), [])
+        behind = {**row, "disposition": "behind", "upstream_commit": "c" * 40}
+        self.assertEqual(bb.inherited_row_problems(
+            path, behind, behind, "a" * 40, same_pin=False, bound_at_pin=False,
+        ), [])
+
     def test_one_sided_and_adjacent_rows_take_their_side(self):
         a, b, c = (diverged(f"MathlibExt/{n}.lean", n, f"edit {n}") for n in "ABC")
         a2, b2 = diverged(a["path"], "A2", "edit A, more"), diverged(b["path"], "B2", "edit B, main")
