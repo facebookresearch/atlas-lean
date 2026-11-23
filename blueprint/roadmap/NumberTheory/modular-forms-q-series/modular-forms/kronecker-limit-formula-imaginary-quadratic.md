@@ -10,7 +10,8 @@ meromorphic function on $\mathbb{C}$ that is regular at $s = 0$, with
 $$\zeta_K(0) = -\frac{h}{w}, \qquad \zeta_K'(0) = -\frac{1}{w} \sum_{c} \log \frac{8\pi^2 \operatorname{Im}(\tau_c)\, |\eta(\tau_c)|^4}{\sqrt{|D|}},$$
 
 the sum running over the $h$ ideal classes; each term depends only on $c$, because
-$\operatorname{Im}(\tau) |\eta(\tau)|^4$ is invariant under $\mathrm{SL}_2(\mathbb{Z})$.
+$\operatorname{Im}(\tau) |\eta(\tau)|^4$ is invariant under $\mathrm{SL}_2(\mathbb{Z})$. Changing the oriented basis of $\mathfrak{a}_c$ acts on $\tau_c$ by $\mathrm{SL}_2(\mathbb{Z})$, and scaling $\mathfrak{a}_c$
+does not change $\tau_c$.
 
 Kaneko writes the formula through the discriminant $\Delta(L) = g_2(L)^3 - 27 g_3(L)^2$ of a lattice
 $L \subset \mathbb{C}$, where $g_2(L) = 60 \sum_{\omega \in L \setminus 0} \omega^{-4}$ and
@@ -41,10 +42,11 @@ classes, where $Z(\tau, s) = \sum_{(m, n) \neq (0, 0)} (\operatorname{Im} \tau)^
 $\mathbb{C}$, regular at $s = 0$, with $Z(\tau, 0) = -1$, and
 $\Lambda(\tau, s) = \pi^{-s} \Gamma(s) Z(\tau, s)$ satisfies $\Lambda(\tau, s) = \Lambda(\tau, 1 - s)$. Near
 $s = 1$, [Kronecker's first limit formula](kronecker-first-limit-formula.md) and
-$\pi^{-s}\Gamma(s) = \pi^{-1}(1 - (\gamma + \log \pi)(s - 1) + \cdots)$ give
+$\pi^{-s}\Gamma(s) = \pi^{-1}(1 - (\gamma + \log \pi)(s - 1) + \cdots)$, which uses $\Gamma(1) = 1$ and $\Gamma'(1) = -\gamma$, give
 $\Lambda(\tau, s) = \frac{1}{s - 1} + 2(\gamma - \log 2 - \log(\sqrt{y} |\eta(\tau)|^2)) - \gamma - \log \pi + O(s - 1)$
 with $y = \operatorname{Im} \tau$; the functional equation turns this into the expansion of $\Lambda(\tau, s)$ at
-$s = 0$, and comparing it with $\pi^{-s} \Gamma(s) = \frac{1}{s} - \gamma - \log \pi + O(s)$ gives
+$s = 0$, and comparing it with $\pi^{-s} \Gamma(s) = \frac{1}{s} - \gamma - \log \pi + O(s)$, which follows from
+$\Gamma(s) = \Gamma(s + 1)/s$ with $\Gamma(1) = 1$ and $\Gamma'(1) = -\gamma$, gives
 
 $$\frac{\partial Z}{\partial s}(\tau, 0) = -\log\bigl(4\pi^2 \operatorname{Im}(\tau)\, |\eta(\tau)|^4\bigr).$$
 
@@ -54,13 +56,13 @@ written out here.)
 
 ## Depends on
 
-- [Kronecker's first limit formula](kronecker-first-limit-formula.md), for the invariance of $\operatorname{Im}(\tau) |\eta(\tau)|^4$ under $\mathrm{SL}_2(\mathbb{Z})$, which makes each term depend only on $c$
+This node has no prerequisites.
 
 ## Proof depends on
 
 - [Partial zeta functions of an imaginary quadratic field as Epstein zeta functions](imaginary-quadratic-partial-zeta-epstein.md)
 - [Functional equation of the Epstein zeta function of a binary form](epstein-zeta-binary-functional-equation.md)
-- [Kronecker's first limit formula](kronecker-first-limit-formula.md)
+- [Kronecker's first limit formula](kronecker-first-limit-formula.md), for the expansion of $Z(\tau, s)$ at $s = 1$ and for the invariance of $\operatorname{Im}(\tau) |\eta(\tau)|^4$ under $\mathrm{SL}_2(\mathbb{Z})$, which makes each term independent of the choice of $\mathfrak{a}_c$ and of its basis
 - [Jacobi's product formula for the discriminant of a lattice](lattice-discriminant-eta-product.md), for Kaneko's form
 - [Decomposition of rational primes in a quadratic field](../../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md), for $\mathfrak{p}\overline{\mathfrak{p}} = N(\mathfrak{p}) \mathcal{O}_K$, in Kaneko's form
 
@@ -78,3 +80,6 @@ written out here.)
   <https://www.math.tifr.res.in/~publ/ln/tifr23.pdf> (copy:
   <https://www-users.cse.umn.edu/~garrett/m/mfms/notes_2013-14/Siegel_AdvAnNoTh.pdf>), Chapter 1, §2,
   formula (17) (p. 15).
+- F. W. J. Olver et al. (eds.), *NIST Digital Library of Mathematical Functions*, Version 1.2.8 of 2026-09-15,
+  <https://dlmf.nist.gov/5.4> and <https://dlmf.nist.gov/5.5>: equations 5.4.1 ($\Gamma(1) = 1$), 5.4.12
+  ($\psi(1) = -\gamma$, so $\Gamma'(1) = \Gamma(1) \psi(1) = -\gamma$) and 5.5.1 ($\Gamma(z + 1) = z \Gamma(z)$).

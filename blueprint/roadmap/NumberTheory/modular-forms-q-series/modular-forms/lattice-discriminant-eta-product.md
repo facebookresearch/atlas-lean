@@ -15,17 +15,20 @@ $\sum_{(m, n) \neq (0, 0)} (m\tau + n)^{-k} = 2 \zeta(k) E_k(\tau)$ for $k = 4, 
 [even zeta values](../../zeta-l-functions/riemann-zeta/zeta-even-integers-bernoulli.md) $\zeta(4) = \pi^4/90$ and $\zeta(6) = \pi^6/945$ give
 $g_2 = \frac{4\pi^4}{3} E_4$ and $g_3 = \frac{8\pi^6}{27} E_6$, so the formula is the identity
 $\Delta = (E_4^3 - E_6^2)/1728$ for $\Delta(\tau) = q \prod_{n \ge 1} (1 - q^n)^{24}$. Zagier proves the latter from
-the modularity of $\Delta$ in weight $12$, the fact that the modular forms of weight $12$ for $\mathrm{SL}_2(\mathbb{Z})$
-form a space of dimension at most $2$, spanned by $E_4^3$ and $E_6^2$, and the first coefficients of the
-$q$-expansions $E_4^3 = 1 + 720 q + \cdots$, $E_6^2 = 1 - 1008 q + \cdots$ and $\Delta = q + \cdots$.
+the modularity of $\Delta$ in weight $12$ (his Proposition 7), the dimension bound $\dim M_{12}(\mathrm{SL}_2(\mathbb{Z})) \le 2$
+for the modular forms of weight $12$ (his Corollary 1 to Proposition 2), by which $M_{12}(\mathrm{SL}_2(\mathbb{Z}))$ is spanned by
+$E_4^3$ and $E_6^2$, and the first coefficients of the $q$-expansions $E_4^3 = 1 + 720 q + \cdots$,
+$E_6^2 = 1 - 1008 q + \cdots$ and $\Delta = q + \cdots$, the coefficient of $q$ in $\Delta$ being
+[$\tau(1) = 1$](ramanujan-tau-function/one.md).
 
 ## Depends on
 
-None.
+This node has no prerequisites.
 
 ## Proof depends on
 
 - [Even zeta values and Bernoulli numbers](../../zeta-l-functions/riemann-zeta/zeta-even-integers-bernoulli.md), for $\zeta(4) = \pi^4/90$ and $\zeta(6) = \pi^6/945$
+- [Normalisation of the Ramanujan $\tau$-function](ramanujan-tau-function/one.md), only for the coefficient $1$ of $q$ in $\Delta$
 
 ## Sources
 
@@ -38,4 +41,5 @@ None.
   Universitext, Springer (2008), 1–103,
   <https://people.mpim-bonn.mpg.de/zagier/files/doi/10.1007/978-3-540-74119-0_1/fulltext.pdf>: §2.1,
   formulas (10) and (11), $G_k(z) = \frac{1}{2} \sum_{(m,n) \neq (0,0)} (mz + n)^{-k} = \zeta(k) E_k(z)$; §2.4, the
-  definition (22) of $\Delta$ and formula (23), $\Delta = \frac{1}{1728}(E_4^3 - E_6^2)$, with its proof (pp. 20–21).
+  definition (22) of $\Delta$, Proposition 7 ($\Delta$ is a modular form of weight $12$) and formula (23),
+  $\Delta = \frac{1}{1728}(E_4^3 - E_6^2)$, with its proof from Corollary 1 to Proposition 2 (§1.3) (pp. 20–21).

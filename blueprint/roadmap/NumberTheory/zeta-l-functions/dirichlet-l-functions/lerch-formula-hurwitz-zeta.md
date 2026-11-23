@@ -20,16 +20,22 @@ $f(a) = \frac{\partial \zeta}{\partial s}(0, a)$ satisfies $f(a + 1) = f(a) + \l
 $\zeta(s, a) - \zeta(s, a + 1) = a^{-s}$ at $s = 0$, and it is convex on $(0, \infty)$: for $\operatorname{Re} s > 1$,
 differentiating the series termwise gives $\frac{\partial^2 \zeta}{\partial a^2}(s, a) = s(s + 1) \zeta(s + 2, a)$, both sides
 are analytic on $\{\operatorname{Re} s > -1, s \neq 1\}$, so the identity holds there, and differentiating it in $s$ at
-$s = 0$, which commutes with $\partial^2 / \partial a^2$, gives $f''(a) = \zeta(2, a) > 0$. So $f(a) - f(1) = \log \Gamma(a)$ by the Bohr–Mollerup characterization of $\log \Gamma$, and
-$f(1) = \zeta'(0) = -\frac{1}{2} \log (2\pi)$.
+$s = 0$, which commutes with $\partial^2 / \partial a^2$, gives $f''(a) = \zeta(2, a) > 0$. So $F(a) = e^{f(a) - f(1)}$ is a
+positive function on $(0, \infty)$ with $F(1) = 1$, $F(a + 1) = a F(a)$ and $\log F$ convex, and the Bohr–Mollerup theorem
+gives $F = \Gamma$, that is, $f(a) = \log \Gamma(a) + f(1)$. To find $f(1)$, note that
+$\zeta(s, \tfrac{1}{2}) = \sum_{n \ge 0} 2^s (2n + 1)^{-s} = (2^s - 1) \zeta(s)$ for $\operatorname{Re} s > 1$, hence for all $s \neq 1$;
+differentiating at $s = 0$, with $\zeta(0) = \zeta(0, 1) = -\frac{1}{2}$ by the first formula, gives
+$f(\tfrac{1}{2}) = -\frac{1}{2} \log 2$. As [$\Gamma(\tfrac{1}{2}) = \sqrt{\pi}$](../../../Analysis/sequences-and-series/trigonometric-and-harmonic-series/series-from-n-rlund-s-digamma-identity/gamma-add-half-and-gamma-half-sub-nat.md),
+$f(1) = f(\tfrac{1}{2}) - \log \Gamma(\tfrac{1}{2}) = -\frac{1}{2} \log (2\pi)$.
 
 ## Depends on
 
-None.
+This node has no prerequisites.
 
 ## Proof depends on
 
 - [Euler–Maclaurin formula](../../../Analysis/asymptotic-analysis/euler-maclaurin-formula.md), of order $2$ on $[0, N]$, for the representation of $\zeta(s, a)$
+- [The Gamma function at $r + \tfrac12$ and at $\tfrac12 - r$](../../../Analysis/sequences-and-series/trigonometric-and-harmonic-series/series-from-n-rlund-s-digamma-identity/gamma-add-half-and-gamma-half-sub-nat.md), at $r = 0$, for $\Gamma(\tfrac{1}{2}) = \sqrt{\pi}$
 
 ## Sources
 
@@ -37,7 +43,8 @@ None.
   2026-09-15, <https://dlmf.nist.gov/25.11>: equations 25.11.1 (definition), 25.11.6 (the representation above, for
   $s \neq 1$, $\operatorname{Re} s > -1$, $a > 0$), 25.11.13 ($\zeta(0, a) = \frac{1}{2} - a$) and 25.11.18
   ($\zeta'(0, a) = \ln \Gamma(a) - \frac{1}{2} \ln(2\pi)$, $a > 0$), and §25.11(i) (meromorphic continuation with a
-  single simple pole at $s = 1$).
+  single simple pole at $s = 1$); <https://dlmf.nist.gov/5.5>, §5.5(iv) (the Bohr–Mollerup theorem: a positive
+  function $f$ on $(0, \infty)$ with $f(x + 1) = x f(x)$, $f(1) = 1$ and $\ln f$ convex is $\Gamma$).
 - E. T. Whittaker and G. N. Watson, *A Course of Modern Analysis*, 3rd edition, Cambridge University Press
   (1920), <https://archive.org/details/cu31924001549660>, §13.11 (the generalised zeta function, for
   $0 < a \le 1$) and §13.21 (p. 271): $\zeta(0, a) = \frac{1}{2} - a$ and

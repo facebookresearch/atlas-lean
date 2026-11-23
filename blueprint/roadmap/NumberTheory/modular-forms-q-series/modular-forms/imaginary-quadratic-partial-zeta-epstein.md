@@ -20,18 +20,23 @@ Choosing such a $\mathfrak{b}_A = \mathbb{Z} + \mathbb{Z} z_A$ in $A^{-1}$ for e
 $\zeta_K(s) = \frac{1}{w} \bigl(2/\sqrt{|D|}\bigr)^{s} \sum_A Z(z_A, s)$ for $\operatorname{Re} s > 1$.
 
 Indeed, $\mathfrak{a} \mapsto \mathfrak{a} \mathfrak{b}$ maps the integral ideals of $A$ bijectively onto the
-principal ideals $(\gamma)$ with $0 \neq \gamma \in \mathfrak{b}$, each of which has exactly $w$ generators,
-and $N(\mathfrak{a}) = N(\gamma) / N(\mathfrak{b}) = |\gamma|^2 / N(\mathfrak{b})$ with $\gamma = m + n z$.
-The relation $2 \operatorname{Im} z = N(\mathfrak{b}) \sqrt{|D|}$ compares the discriminant of the basis
-$(1, z)$, which is $(z - \bar z)^2$, with $N(\mathfrak{b})^2 D$.
+principal ideals $(\gamma)$ with $0 \neq \gamma \in \mathfrak{b}$, and $N(\mathfrak{a}) = N(\gamma) / N(\mathfrak{b}) = |\gamma|^2 / N(\mathfrak{b})$
+with $\gamma = m + n z$. Each such ideal has exactly $w$ generators: its generators are the $\gamma u$ with $u$ a unit of
+$\mathcal{O}_K$, and the units, which have norm $|u|^2 = 1$, are the points of the lattice $\mathcal{O}_K \subset \mathbb{C}$ on the
+unit circle, a finite group, hence the group of the $w$ roots of unity of $K$. For the relation
+$2 \operatorname{Im} z = N(\mathfrak{b}) \sqrt{|D|}$, choose a positive integer $d$ with $d \mathfrak{b} \subseteq \mathcal{O}_K$. The
+matrix expressing the basis $(d, d z)$ of $d \mathfrak{b}$ in a $\mathbb{Z}$-basis of $\mathcal{O}_K$ has determinant
+$\pm [\mathcal{O}_K : d \mathfrak{b}] = \pm N(d \mathfrak{b}) = \pm d^2 N(\mathfrak{b})$, so the discriminant of $(d, d z)$, which is
+$d^4 (z - \bar z)^2 = -4 d^4 (\operatorname{Im} z)^2$, equals $d^4 N(\mathfrak{b})^2 D = -d^4 N(\mathfrak{b})^2 |D|$; dividing by $-d^4$ gives
+$4 (\operatorname{Im} z)^2 = N(\mathfrak{b})^2 |D|$.
 
 ## Depends on
 
-None.
+This node has no prerequisites.
 
 ## Proof depends on
 
-None.
+This node has no prerequisites.
 
 ## Sources
 
