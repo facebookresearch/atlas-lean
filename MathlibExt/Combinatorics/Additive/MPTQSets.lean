@@ -50,14 +50,15 @@ INTEGERS 24 (2024), Article A96, Definition 1. -/
 theorem not_isMPTQSet_of_zero_mem {A : Finset ℝ} (h : (0 : ℝ) ∈ A) : ¬ IsMPTQSet A :=
   fun hA => hA.1 h
 
+set_option linter.unusedVariables false in
 /-- **One equal pairing of products excludes the other two.** Let $a$, $b$, $c$, $d$ be pairwise
 distinct positive real numbers with $ab = cd$. Then $ad \neq bc$ and $ac \neq bd$.
 
 Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
 INTEGERS 24 (2024), Article A96, Lemma 2 (`integers-2024-A96-lem-2`). -/
-theorem mul_ne_of_mul_eq_of_distinct {a b c d : ℝ} (_ha : 0 < a) (hb : 0 < b)
-    (hc : 0 < c) (hd : 0 < d) (_hab : a ≠ b) (hac : a ≠ c) (had : a ≠ d) (_hbc : b ≠ c)
-    (_hbd : b ≠ d) (_hcd : c ≠ d) (h : a * b = c * d) : a * d ≠ b * c ∧ a * c ≠ b * d := by
+theorem mul_ne_of_mul_eq_of_distinct {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (hc : 0 < c) (hd : 0 < d) (hab : a ≠ b) (hac : a ≠ c) (had : a ≠ d) (hbc : b ≠ c)
+    (hbd : b ≠ d) (hcd : c ≠ d) (h : a * b = c * d) : a * d ≠ b * c ∧ a * c ≠ b * d := by
   constructor
   · intro hadbc
     apply hac

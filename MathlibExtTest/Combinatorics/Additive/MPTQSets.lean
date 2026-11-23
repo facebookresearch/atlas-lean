@@ -15,7 +15,8 @@ open MetaMathlibExt
 
 -- The pairing 1 · 6 = 2 · 3 satisfies every hypothesis.
 example : (1 : ℝ) * 3 ≠ 6 * 2 ∧ (1 : ℝ) * 2 ≠ 6 * 3 := by
-  apply mul_ne_of_mul_eq_of_distinct <;> norm_num
+  apply mul_ne_of_mul_eq_of_distinct (ha := ?_) (hab := ?_) (hbc := ?_)
+    (hbd := ?_) (hcd := ?_) <;> norm_num
 
 example : ¬ IsMPTQSet ({1} : Finset ℝ) :=
   not_isMPTQSet_singleton 1
