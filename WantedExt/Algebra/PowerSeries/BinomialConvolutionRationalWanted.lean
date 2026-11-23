@@ -9,11 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.RingTheory.Polynomial.PairwiseSumResultant
 public import MathlibExt.RingTheory.PowerSeries.BinomialProductGeometric
+public import MathlibExt.RingTheory.PowerSeries.BinomialProductMonomial
 
 /-!
 # Binomial convolutions for rational power series
@@ -123,20 +123,6 @@ public theorem_wanted binomialProduct_rational_general {K : Type*} [Field K] [Ch
       binomialProduct A B * ((∏ i, (1 - C (α i) * X)) ^ (S.natDegree + 1 - n) *
         (∏ j, (1 - C (β j) * X)) ^ (R.natDegree + 1 - m) *
         ∏ i, ∏ j, (1 - C (α i + β j) * X)) = (T : PowerSeries K)
-
-/-- **Binomial product with a monomial.** For every field $K$ of characteristic $0$, every
-$m \in \mathbb{N}$ and every power series $A(x)$ over $K$,
-
-$$x^m \odot A(x) = \frac{x^m}{m!} \frac{d^m}{dx^m}\bigl(x^m A(x)\bigr),$$
-
-where $\odot$ is the binomial product and $d/dx$ is the formal derivative.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Lemma 8 (`jis-2024-24.1.3-lem-8`). -/
-public theorem_wanted binomialProduct_X_pow {K : Type*} [Field K] [CharZero K] (m : ℕ)
-    (A : PowerSeries K) :
-    binomialProduct (X ^ m) A =
-      C ((m.factorial : K)⁻¹) * X ^ m * (⇑(PowerSeries.derivative (R := K)))^[m] (X ^ m * A)
 
 /-- **Binomial square of the Lucas generating function.** Let $K$ be a field of characteristic
 $0$, let $a, b \in K$, and let $g(x) = \sum_{n \ge 0} G_n x^n$ be a power series over $K$ with

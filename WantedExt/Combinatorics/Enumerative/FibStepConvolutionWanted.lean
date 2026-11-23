@@ -267,23 +267,6 @@ theorem_wanted trib_sub_fib_eq_sum (n : ℕ) (hn : 1 ≤ n) :
     fibStep 3 (n + 1) - fibStep 2 (n + 1) =
       ∑ j ∈ Finset.range n, fibStep 3 j * fibStep 2 (n - 1 - j)
 
-/-- **Convolution of the Fibonacci 3-step numbers with differences of 4- and 5-step numbers.**
-Let $T_j$, $Q_j$ and $P_j$ be the Fibonacci $3$-, $4$- and $5$-step numbers, where the Fibonacci
-$k$-step numbers start $0, 1$ and each later term is the sum of the $k$ terms before it (terms of
-negative index being $0$). For every natural number $n \ge 1$,
-
-$$\sum_{j=0}^{n} T_j \bigl(Q_{n-j} - P_{n-j}\bigr) =
-\sum_{j=0}^{n-1} \bigl(T_j - Q_j\bigr) P_{n-1-j}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Corollary 11. -/
-theorem_wanted sum_trib_mul_sub_eq (n : ℕ) (hn : 1 ≤ n) :
-    ∑ j ∈ Finset.range (n + 1), fibStep 3 j *
-        (fibStep 4 (n - j) - fibStep 5 (n - j)) =
-      ∑ j ∈ Finset.range n,
-        (fibStep 3 j - fibStep 4 j) * fibStep 5 (n - 1 - j)
-
 /-- **Convolution of the $(m-1)$-step and $m$-step Fibonacci numbers against powers of two.**
 Write $F^{(m)}_n$ for the Fibonacci $m$-step numbers ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each
 later term is the sum of the $m$ terms before it, terms at negative indices being $0$). For all

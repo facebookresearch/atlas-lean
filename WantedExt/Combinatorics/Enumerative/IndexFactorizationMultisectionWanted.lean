@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.Series.ThreeAdicMultiples
+public import MathlibExt.Analysis.Series.TwoAdicNonmultiples
 public import MathlibExt.Analysis.SpecialFunctions.LambertSeries
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
@@ -146,20 +147,6 @@ Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
 Corollary 14, first display in sum form (`jis-2024-24.5.5-cor-14`). -/
 public theorem_wanted tsum_twoAdic_high_regroup (J : ℕ) (c : ℕ → ℂ) :
     ∑' x : ℕ × ℕ, c ((2 * x.2 + 1) * 2 ^ (x.1 + J)) = ∑' p : ℕ, c ((p + 1) * 2 ^ J)
-
-/-- **Two-adic regrouping of the non-multiples of a power of two.** For every natural number $J$
-and every sequence $c : \mathbb{N} \to \mathbb{C}$,
-$$\sum_{0 \le j < J,\ n \ge 1} c_{(2n-1) 2^j} = \sum_{p \ge 1,\ 2^J \nmid p} c_p,$$
-where the left side runs over the pairs $(j, n)$ of natural numbers with $j < J$ and $n \ge 1$,
-the right side runs over the positive integers $p$ not divisible by $2^J$, and each side is an
-unconditional sum, taken to be $0$ when its family is not summable.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Corollary 14, second display in sum form (`jis-2024-24.5.5-cor-14`). -/
-public theorem_wanted tsum_twoAdic_low_regroup (J : ℕ) (c : ℕ → ℂ) :
-    ∑' x : Fin J × ℕ, c ((2 * x.2 + 1) * 2 ^ (x.1 : ℕ))
-      = ∑' p : {p : ℕ // 0 < p ∧ ¬ 2 ^ J ∣ p}, c p
 
 /-- **Double 2-adic multisection of a double series.** Let $(b_{p,q})_{p, q \ge 1}$ be a double
 sequence of complex numbers such that each of the four families
