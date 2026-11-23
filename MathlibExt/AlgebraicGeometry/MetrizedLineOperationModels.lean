@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.MetrizedFibrePowerModels
 public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 public import MathlibExt.AlgebraicGeometry.GenericSectionMaps
+public import MathlibExt.AlgebraicGeometry.CurvePositivity
 
 /-!
 # Actual metric isometry, tensor, dual and pullback normalizations
