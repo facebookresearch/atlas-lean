@@ -1850,8 +1850,11 @@ class Declarations(Vault):
     def test_a_duplicates_list_needs_the_row_s_own_lean_link(self) -> None:
         # The links folder's defaults link Ext.t, so a row with no `object`, or with an end the defaults fill in whole
         # (`{}`, or one giving only a role), credits it as Autoform reads it; the folder page's row masks them. Such a
-        # row lists no duplicates: its own `object` names no declaration. The shorthand end that names the declaration
-        # and takes the defaults' type and uri is the row's own.
+        # row lists no duplicates: its own `object` names no declaration. Nor does a row whose end with role `states`
+        # takes Ext.t from the defaults while another end names it, with role `uses` or with no role, whatever their
+        # order: that end is a reference, and the credit is not its. The shorthand end that names the declaration and
+        # takes the defaults' type and uri is the row's own, beside an inherited reference too, and so is one of the
+        # ends with no role that give the credit together.
         self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
         self.page("Algebra/t.md", "# T\n")
         self.links_folder()
@@ -1861,9 +1864,16 @@ class Declarations(Vault):
         index = SimpleNamespace(declarations={"Ext.t": None, "Ext.twin": None})
         problem = ("Algebra/t.md: it lists duplicates but credits no declaration of this project by a Lean link of "
                    "its own")
+        named = {"location": {"declaration": "Ext.t"}}
         for fields, problems in (({}, [problem]), ({"object": [{}]}, [problem]),
                                  ({"object": [{"role": "states"}]}, [problem]),
-                                 ({"object": [{"location": {"declaration": "Ext.t"}}]}, [])):
+                                 ({"object": [{"role": "states"}, {"role": "uses", **named}]}, [problem]),
+                                 ({"object": [{"role": "uses", **named}, {"role": "states"}]}, [problem]),
+                                 ({"object": [{"role": "states"}, named]}, [problem]),
+                                 ({"object": [named]}, []),
+                                 ({"object": [{"role": "states", **named}, {"role": "uses"}]}, []),
+                                 ({"object": [{"role": "uses"}, {"role": "states", **named}]}, []),
+                                 ({"object": [{}, named]}, [])):
             with self.subTest(fields=fields):
                 self.annotate([self.about("Algebra/README.md", object=[]),
                                self.about("Algebra/t.md", **fields, extensions=listed)])
@@ -5173,9 +5183,11 @@ class BuildPath(Vault):
 
     def test_a_list_on_a_row_whose_declaration_only_the_defaults_give_stops_every_reader(self) -> None:
         # The links folder's defaults name Local.p, so the row `object: [{}]` credits it as Autoform reads it, by no
-        # link of its own. Its duplicates list is refused before anything is written by each reader of the lists: the
-        # v2 extraction, the Mathlib layer's bridge, which reads them as the extraction does, and a registry's check
-        # (sync_wiki.registry_problems), which lean-facts and the cards run. With a link of its own, the list is read.
+        # link of its own, and so does a row whose end with role `states` takes Local.p from the defaults while another
+        # end, with role `uses` or with no role, names it as a reference, in either order. Its duplicates list is
+        # refused before anything is written by each reader of the lists: the v2 extraction, the Mathlib layer's
+        # bridge, which reads them as the extraction does, and a registry's check (sync_wiki.registry_problems), which
+        # lean-facts and the cards run. With a link of its own, beside an inherited reference too, the list is read.
         from scripts import extract_mathlib_graph as graph
         from scripts.test_extract_mathlib_graph import row as dump_row, write_dump
 
@@ -5197,7 +5209,11 @@ class BuildPath(Vault):
                                     "doc": True, "type": [], "value": []}) + "\n")
         bridge = ["bridge", str(write_dump(self.tmp, [dump_row("Local.p", module="Local")], "v2.jsonl.gz")), str(out),
                   "--mathlib-dump", str(write_dump(self.tmp, [dump_row("X")], "mathlib.jsonl.gz"))]
-        for ends, refused in (([{}], True), ([{"location": {"declaration": "Local.p"}}], False)):
+        named = {"location": {"declaration": "Local.p"}}
+        for ends, refused in (([{}], True), ([{"role": "states"}, {"role": "uses", **named}], True),
+                              ([{"role": "uses", **named}, {"role": "states"}], True),
+                              ([{"role": "states"}, named], True), ([named], False),
+                              ([{"role": "uses"}, {"role": "states", **named}], False)):
             with self.subTest(ends=ends), patch.object(extract, "BLUEPRINT", wiki.VAULT), \
                     patch.object(graph.v2, "article_manifest", extract.article_manifest), \
                     patch.object(graph.v2, "article_aliases", extract.article_aliases):

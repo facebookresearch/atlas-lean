@@ -530,18 +530,25 @@ def owner_of(annotation: dict, read: dict | None) -> tuple[str, str | None, str 
 
 
 def own_lean_credit(annotation: dict) -> str | None:
-    """The declaration of this project a row credits (page_owner) when the row's own `object`, as written, names it:
-    an end that credits it gives `location.declaration` itself, a Lean link of the row's own. The links folder's
-    defaults may fill in an end's type and uri, which is how a row names this project, but a declaration they fill
-    in, into an end such as `{}`, is no link of the row's own. None otherwise."""
+    """The declaration of this project a row credits (page_owner) when the row's own `object`, as written, names it
+    at an end the credit comes from: an end with role `states` when such an end gives the credit (atlas_credit), else
+    one of the ends with no role, which give it together. That end gives `location.declaration` itself, a Lean link of
+    the row's own. The links folder's defaults may fill in its type and uri, which is how a row names this project,
+    but a declaration they fill in, into an end such as `{}` or `{"role": "states"}`, is no link of the row's own,
+    and nor is an end that only refers to the declaration, with role `uses` say, or with no role beside an end with
+    role `states`. None otherwise."""
     owner, credited, _module = page_owner(annotation)
     written = annotation.get("object")
     if owner != "atlas" or not isinstance(written, list):
         return None
-    for name, _role, place in lean_ends(annotation).own:
+    own = lean_ends(annotation).own
+    # The ends atlas_credit takes the credit from: those with role `states`, all naming it, or else every end, none
+    # with a role.
+    crediting = [place for _name, role, place in own if role == "states"] or [place for _name, _role, place in own]
+    for place in crediting:
         end = written[place] if place < len(written) else None
         location = end.get("location") if isinstance(end, dict) else None
-        if name == credited and isinstance(location, dict) and location.get("declaration") == credited:
+        if isinstance(location, dict) and location.get("declaration") == credited:
             return credited
     return None
 
