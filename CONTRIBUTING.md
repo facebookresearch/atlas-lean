@@ -55,23 +55,26 @@ it takes, and adds `new` when it adds declarations that get pages under
 
 - **A new declaration gets its page in the same pull request.** Run the sync
   scoped to the pull request ([Maintaining
-  articles](docs/BLUEPRINT.md#maintaining-articles)), from a clone whose
-  `origin` is this repository, and commit what it writes:
+  articles](docs/BLUEPRINT.md#maintaining-articles)) and commit what it writes.
+  For a pull request that targets `main`, from a clone whose `origin` is this
+  repository:
 
   ```sh
   python scripts/sync_wiki.py declarations --base "$(git merge-base origin/main HEAD)"
   ```
 
-  It writes only what the pull request's own declarations need, and the
-  `graph sync` check reports a pull request that is not in step, with the
-  command to run. When the sync cannot find a new module's subject, or puts it
-  in the wrong place, also place the module in `scripts/taxonomy.json`.
+  A pull request that targets another branch uses its merge base with that
+  branch. The sync writes only what the pull request's own declarations need,
+  and the `graph sync` check reports a pull request that is not in step, with
+  the command to run. When the sync cannot find a new module's subject, or puts
+  it in the wrong place, also place the module in `scripts/taxonomy.json`.
 - **A renamed or removed declaration keeps its pages.** In the same pull
-  request, update each annotation that names it, as its Lean link or as a
-  `held` marker, and keep the article id. When a declaration goes with no
-  successor, remove the Lean link or `held` marker, whichever names it, and
-  keep the page as a planned page
-  ([Writing pages](docs/BLUEPRINT.md#writing-pages)).
+  request, point each link to it at its successor, keeping every article id. A
+  link that is only a reference may instead be removed: the page keeps its own
+  declaration. When a page's own declaration goes with no successor, remove its
+  link and keep the page as a planned page
+  ([Writing pages](docs/BLUEPRINT.md#writing-pages)). Update or remove a `held`
+  marker that names it in the same way.
 
 These are graph changes; [Graph PRs](#graph-prs) says what they need.
 
