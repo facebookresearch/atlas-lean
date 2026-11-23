@@ -9135,6 +9135,7 @@
   "MathlibExt/Algebra/Polynomial/CoefficientDenominator": {"to": "Algebra/polynomials", "title": "Denominators of rational polynomials"},
   "MathlibExt/Algebra/Polynomial/DegreeStability": {"to": "Algebra/zeros-of-polynomials", "title": "L1 norm and root bounds for polynomials"},
   "MathlibExt/Algebra/Polynomial/DoubleRoot": {"to": "Algebra/zeros-of-polynomials", "title": "Taylor expansion and double roots"},
+  "MathlibExt/Algebra/Polynomial/FactorialEvalBound": {"to": "RingTheory/ideals-and-constructions", "title": "Locally integer polynomial functions"},
   "MathlibExt/Algebra/Polynomial/FavardForward": {"to": "Algebra/orthogonal-polynomials", "title": "Favard's theorem"},
   "MathlibExt/Algebra/Polynomial/FavardIff": {"to": "Algebra/orthogonal-polynomials", "title": "Favard's theorem"},
   "MathlibExt/Algebra/Polynomial/FormalOrthogonality": {"to": "Algebra/orthogonal-polynomials", "title": "Favard's theorem"},
