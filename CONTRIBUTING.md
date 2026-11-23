@@ -29,6 +29,10 @@ one, and people and agents follow the same steps:
    that others see the task is taken. Mark it ready for review when it is done,
    or close it if you stop.
 
+For planned wiki work, [list marked articles](docs/BLUEPRINT.md#finding-planned-wiki-work).
+This is separate from the formalization task picker; use the same early draft
+PR convention to coordinate the article or issue you intend to work on.
+
 ## Pull Requests
 We actively welcome your pull requests.
 

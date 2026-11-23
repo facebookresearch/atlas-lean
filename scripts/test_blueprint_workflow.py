@@ -108,21 +108,6 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertIn("!/Atlas/", checkout["with"]["sparse-checkout"])
         self.assertNotIn("secrets.", self.text)
 
-    def test_frontier_only_writes_in_opted_in_successful_main_runs(self):
-        job = self.workflow["jobs"]["frontier-issues"]
-        self.assertEqual(job["needs"], "wiki")
-        self.assertIn("refs/heads/main", job["if"])
-        self.assertIn("schedule", job["if"])
-        self.assertIn("workflow_dispatch", job["if"])
-        self.assertEqual(job["permissions"], {"contents": "read", "issues": "write"})
-        self.assertEqual(job["steps"][0]["with"]["persist-credentials"], "false")
-        command = job["steps"][-1]["run"]
-        self.assertIn('"${FRONTIER_ISSUES:-}" = "true"', command)
-        self.assertIn('--expected-commit "$GITHUB_SHA"', command)
-        names = [step.get("name") for step in self.steps]
-        self.assertLess(names.index("Validate the theorem DAG and its declarations"), names.index("Compute the task frontier"))
-        self.assertLess(names.index("Compute the task frontier"), names.index("Keep the task frontier"))
-
     def test_current_build_and_dump_fail_closed(self):
         build = self.step("Build the current v2 libraries")
         self.assertEqual(build["run"],
@@ -632,16 +617,23 @@ elif "/compare/" in path:
         self.assertEqual(jobs["deploy"]["needs"], "wiki")
         self.assertNotIn("permissions", cards)
         self.assertNotIn("continue-on-error", cards)
-        # The card tests do not run in the wiki job. It derives the card data its site shows in one step, after
-        # lean-facts and before render, which can neither fail the job nor hold it past its timeout.
+        # The card tests do not run in the wiki job. It checks the move ledger the site serves and derives the card
+        # data its site shows in two steps, after lean-facts and before render, each of which can neither fail the
+        # job nor hold it past its timeout.
         self.assertFalse(any("test_cards" in step.get("run", "") for step in self.steps))
-        derive = "Derive the card data the site shows"
-        self.assertEqual([step["name"] for step in self.steps if "cards.py" in step.get("run", "")], [derive])
-        self.assertEqual(self.step(derive)["continue-on-error"], "true")
-        self.assertLessEqual(int(self.step(derive)["timeout-minutes"]), 15)
+        moves, derive = "Check the move ledger the site serves", "Derive the card data the site shows"
+        self.assertEqual([step["name"] for step in self.steps if "cards.py" in step.get("run", "")], [moves, derive])
         wiki_names = [step.get("name") for step in self.steps]
-        self.assertLess(wiki_names.index("Add the Lean-owned facts to the articles"), wiki_names.index(derive))
-        self.assertLess(wiki_names.index(derive), wiki_names.index("Render the blueprint"))
+        for name in (moves, derive):
+            self.assertEqual(self.step(name)["continue-on-error"], "true")
+            self.assertLessEqual(int(self.step(name)["timeout-minutes"]), 15)
+            self.assertLess(wiki_names.index("Add the Lean-owned facts to the articles"), wiki_names.index(name))
+            self.assertLess(wiki_names.index(name), wiki_names.index("Render the blueprint"))
+        # The ledger check, independent of the strict card check, removes any earlier receipt before it runs.
+        check_moves = self.step(moves)["run"]
+        self.assertLess(check_moves.index("rm -f build/card-moves.json"),
+                        check_moves.index("python scripts/cards.py moves build/card-moves.json"))
+        self.assertIn('uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"', check_moves)
         checkout = next(step for step in cards["steps"] if step.get("name") == "Check out project")
         self.assertEqual(checkout["with"]["persist-credentials"], "false")
         self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])

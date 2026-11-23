@@ -23,8 +23,8 @@ on:
       - "scripts/dump_mathlib_dependencies.lean"
       - "scripts/check_blueprint_site.py"
       - "scripts/next_task.py"
-      - "scripts/frontier_issues.py"
-      - "scripts/test_frontier_issues.py"
+      - "scripts/graph_work.py"
+      - "scripts/test_graph_work.py"
       - "scripts/build_mathlib_pages.py"
       - "scripts/mathlib_link.py"
       - "scripts/mathlib_pages.css"
@@ -80,8 +80,6 @@ jobs:
     name: build the wiki
     runs-on: ubuntu-24.04
     timeout-minutes: 360
-    outputs:
-      frontier-ready: ${{ steps.keep-frontier.outcome }}
     steps:
       # v1 and Atlas are separate packages. Indexing them with the root package
       # makes declarations ambiguous and would link the wrong Lean source.
@@ -119,7 +117,7 @@ jobs:
           scripts.test_generate_wiki_navigation
           scripts.test_generate_wiki_docstrings
           scripts.test_sync_wiki
-          scripts.test_frontier_issues
+          scripts.test_graph_work
           scripts.test_import_mathgraph
           scripts.test_extract_v2_lean_dependencies
           scripts.test_extract_mathlib_graph
@@ -278,13 +276,29 @@ jobs:
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+      # The move ledger the site serves (docs/cards.md#move-ledger), checked on
+      # its own, independently of the strict card check: the site keeps the
+      # moved addresses only with the receipt this step writes for this commit,
+      # its ledger and its annotations, so a card error never costs a redirect.
+      # It removes any earlier receipt first and writes one only when the
+      # ledger is valid. This step can neither fail this job nor hold it past
+      # its timeout.
+      - name: Check the move ledger the site serves
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          rm -f build/card-moves.json
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            python scripts/cards.py moves build/card-moves.json
+
       # The card data the site shows (docs/cards.md#reading): this checkout's
       # own rollup, from the extraction and the Mathlib registry above, as the
       # `check the cards` job makes it (that job alone also checks the moves
       # against the base commit). It fails closed: an error leaves no card data,
-      # the site then renders exactly as without cards, and that job reports
-      # the error. This step can neither fail this job nor hold it past its
-      # timeout.
+      # the site then shows no card (it still keeps the moved addresses, with
+      # the step above), and that job reports the error. This step can neither
+      # fail this job nor hold it past its timeout.
       - name: Derive the card data the site shows
         continue-on-error: true
         timeout-minutes: 10
@@ -346,26 +360,6 @@ jobs:
         with:
           name: tasks
           path: build/tasks.json
-          if-no-files-found: error
-          retention-days: 14
-
-      - name: Compute the task frontier
-        id: frontier
-        timeout-minutes: 10
-        continue-on-error: true
-        run: >-
-          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
-          python scripts/frontier_issues.py frontier blueprint
-          --output build/frontier.json --repo "$GITHUB_REPOSITORY"
-
-      - name: Keep the task frontier
-        id: keep-frontier
-        if: steps.frontier.outcome == 'success' && github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-        continue-on-error: true
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: blueprint-frontier
-          path: build/frontier.json
           if-no-files-found: error
           retention-days: 14
 
@@ -993,41 +987,3 @@ jobs:
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
         with:
           artifact_name: github-pages-full
-
-  frontier-issues:
-    name: sync task issues
-    needs: wiki
-    if: needs.wiki.outputs.frontier-ready == 'success' && github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-    concurrency:
-      group: frontier-issues
-      cancel-in-progress: false
-    permissions:
-      contents: read
-      issues: write
-    steps:
-      - name: Check out the sync script
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-          sparse-checkout: scripts/frontier_issues.py
-          sparse-checkout-cone-mode: false
-
-      - name: Download the task frontier
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: blueprint-frontier
-          path: build
-
-      - name: Sync the task issues
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          FRONTIER_ISSUES: ${{ vars.FRONTIER_ISSUES }}
-        run: |
-          set -euo pipefail
-          args=(sync build/frontier.json --repo "$GITHUB_REPOSITORY" --expected-commit "$GITHUB_SHA" --summary "$GITHUB_STEP_SUMMARY")
-          if [ "${FRONTIER_ISSUES:-}" = "true" ]; then
-            args+=(--apply)
-          fi
-          python3 scripts/frontier_issues.py "${args[@]}"
