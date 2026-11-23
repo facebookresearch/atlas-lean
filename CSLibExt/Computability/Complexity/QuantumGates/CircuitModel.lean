@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Computability.Complexity.QuantumGates.ExactGates
+public import CSLibExt.Computability.Complexity.Classes
 public import Mathlib.LinearAlgebra.UnitaryGroup
 
 /-!
@@ -24,7 +24,6 @@ namespace Cslib.Complexity.Classes
 
 set_option autoImplicit false
 
-open QuantumGates
 
 /-- Atlas well-formedness is qubit order plus membership of the decoded
 matrix in `U(4)`. -/
