@@ -315,9 +315,23 @@ Codex change request can cancel the PR's CI run while it is still queued or
 running; if `build` is cancelled, CI must pass before the PR can be queued. A
 completed build is unaffected. `public-references` is configured to run on PRs
 and merge groups, but stays advisory until the workflow governance described
-under [Public references](#public-references) is in place. Blueprint Pages,
-Check workflows and Binary64 conformance are path-filtered on PRs, and Blueprint
-Pages also builds `main` once a day.
+under [Public references](#public-references) is in place. `graph sync` is
+configured to run on every PR and merge group, without filters, and reports
+whether the PR's wiki is in step with its Lean
+([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)).
+Blueprint Pages, Check workflows and Binary64 conformance are path-filtered on
+PRs, and Blueprint Pages also builds `main` once a day.
+
+## Lean and Mathlib bumps
+
+Lean, Mathlib, CSLib and Physlib move together to the next final release that
+all of them have tagged, and `guard` checks the pins. A bump touches many files
+and starts CI from an empty cache, so it follows its own routine, described in
+[docs/BUMPS.md](docs/BUMPS.md): one owner keeps the bump branch close to `main`
+with `scripts/bump/bump_branch.py`, warms CI's cache with `bump-cache.yml` right
+before queueing it, and queues it at the front of the queue at a quiet hour. If
+the queue removes your PR just after a bump, merge `main`, fix the PR on the new
+toolchain, and queue it again.
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need

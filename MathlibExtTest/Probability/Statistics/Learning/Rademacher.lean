@@ -127,4 +127,42 @@ theorem empiricalRademacher_image_smul_le_massart {n : ℕ} {A : Finset (Fin n �
   rw [empiricalRademacher_image_smul]
   exact mul_le_mul_of_nonneg_left (empiricalRademacher_le_massart hA) (abs_nonneg c)
 
+/-- Translation invariance on the two-vector class: shifting by `![1, 1]` keeps `1 / 4`. -/
+example : empiricalRademacher (({![1, 0], ![0, 1]} : Finset (Fin 2 → ℝ)).image
+    fun a => a + ![1, 1]) = 1 / 4 := by
+  rw [empiricalRademacher_image_add_const]
+  rw [empiricalRademacher_eq_sup' (Finset.insert_nonempty _ _),
+    ← Equiv.sum_comp (piFinTwoEquiv fun _ => Bool).symm _]
+  simp [Fintype.sum_prod_type, piFinTwoEquiv_symm_apply,
+    Fin.cons_zero, Fin.cons_one, Fin.sum_univ_two, Finset.sup'_insert,
+    Finset.sup'_singleton]
+  norm_num
+
+/-- Centered Massart bound for the two basis vectors around the center `![1, 0]`. -/
+theorem empiricalRademacher_le_massart_centered_basis_two :
+    empiricalRademacher ({![1, 0], ![0, 1]} : Finset (Fin 2 → ℝ)) ≤
+      Real.sqrt 2 * Real.sqrt (2 * Real.log 2) / 2 := by
+  have hA : ({![1, 0], ![0, 1]} : Finset (Fin 2 → ℝ)).Nonempty :=
+    Finset.insert_nonempty _ _
+  have h := empiricalRademacher_le_massart_centered hA ![1, 0]
+  have hne : (![1, 0] : Fin 2 → ℝ) ≠ ![0, 1] := by
+    intro hcon
+    have h0 := congrFun hcon 0
+    simp at h0
+  rw [Finset.card_pair hne,
+    Finset.sup'_insert (Finset.singleton_nonempty _), Finset.sup'_singleton] at h
+  have e1 : Real.sqrt (∑ i, ((![1, 0] : Fin 2 → ℝ) i -
+      (![1, 0] : Fin 2 → ℝ) i) ^ 2) = 0 := by
+    simp
+  have e2 : Real.sqrt (∑ i, ((![0, 1] : Fin 2 → ℝ) i -
+      (![1, 0] : Fin 2 → ℝ) i) ^ 2) = Real.sqrt 2 := by
+    congr 1
+    simp [Fin.sum_univ_two]
+    norm_num
+  simp only [e1, e2, sup_of_le_right (Real.sqrt_nonneg 2), Nat.cast_ofNat] at h
+  exact h
+
+#print axioms empiricalRademacher_image_add_const
+#print axioms empiricalRademacher_le_massart_centered
+
 end MathlibExtTest.Probability.Statistics.Learning.Rademacher

@@ -47,24 +47,6 @@ public theorem_wanted euclidPPosition_branch_step (x y : ℕ) (hx : 0 < x) (hy :
     (euclidPPosition (x + y) y = true → euclidPPosition (2 * x + y) (x + y) = true) ∧
       (euclidPPosition x (x + y) = true → euclidPPosition (x + y) (x + 2 * y) = true)
 
-/-- **Aunt or cousin of a P-position.** Call a pair $(a, b)$ of natural numbers a P-position when
-the Euclid P-position test returns true at $(a, b)$, and let its son be $s(a, b) = (a, a + b)$ and
-its daughter $d(a, b) = (a + b, b)$, as in the Calkin–Wilf tree. Let $x, y$ be positive integers,
-let $r = (x, y)$, let $q$ be one of the two children $s(r)$ and $d(r)$ of $r$, and let $q'$ be the
-other one. If the daughter $d(q)$ is a P-position, then exactly one of its aunt $q'$ and its male
-cousin $s(q')$ is a P-position. If the son $s(q)$ is a P-position, then exactly one of its uncle
-$q'$ and its female cousin $d(q')$ is a P-position.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 4.3. -/
-public theorem_wanted euclidPPosition_aunt_xor_cousin (x y : ℕ) (hx : 0 < x) (hy : 0 < y) :
-    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
-    let d : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
-    let P : ℕ × ℕ → Prop := fun p => euclidPPosition p.1 p.2 = true
-    let r := (x, y)
-    (P (d (s r)) → (P (d r) ↔ ¬P (s (d r)))) ∧ (P (d (d r)) → (P (s r) ↔ ¬P (s (s r)))) ∧
-      (P (s (d r)) → (P (s r) ↔ ¬P (d (s r)))) ∧ (P (s (s r)) → (P (d r) ↔ ¬P (d (d r))))
-
 /-- **Self-similarity of the P-positions of Euclid.** Call a pair $(a, b)$ of natural numbers a
 P-position when the Euclid P-position test returns true at $(a, b)$, and read it as the vertex
 $a/b$ of the Calkin–Wilf tree, with son $a/(a+b)$ and daughter $(a+b)/b$. Let $V$ be a vertex in
@@ -150,37 +132,6 @@ public theorem_wanted fibonacci_arch_positions (n k : ℕ) (hn : 1 ≤ n) :
         (L.2 : ℤ) = F (2 * n + 1) + (k - 1) * F (2 * n - 1) ∧ euclidPPosition L.1 L.2 = true) ∧
       (R = (F (2 * n) + k * F (2 * n - 2), F (2 * n) + (k + 1) * F (2 * n - 2)) ∧
         euclidPPosition R.1 R.2 = true)
-
-/-- **Fibonacci arch tops.** Index the Fibonacci numbers as in the source, $F_0 = F_1 = 1$ and
-$F_{j+2} = F_{j+1} + F_j$. Write $a/b$ for the position $(a, b)$ of Euclid, and call $a/(a+b)$
-its son and $(a+b)/b$ its daughter. Let $n \ge 1$ and $k \ge 0$ be integers, and let
-$X = (F_{2n+1} + kF_{2n-1})/(F_{2n+1} + (k-1)F_{2n-1})$ and
-$Y = (F_{2n} + kF_{2n-2})/(F_{2n} + (k+1)F_{2n-2})$. Then $X$ is a P-position of Euclid, and so
-are its son's daughter $(3F_{2n+1} + (3k-1)F_{2n-1})/(2F_{2n+1} + (2k-1)F_{2n-1})$ and its
-daughter's son $(2F_{2n+1} + (2k-1)F_{2n-1})/(3F_{2n+1} + (3k-2)F_{2n-1})$. Likewise $Y$ is a
-P-position of Euclid, and so are its son's daughter
-$(3F_{2n} + (3k+1)F_{2n-2})/(2F_{2n} + (2k+1)F_{2n-2})$ and its daughter's son
-$(2F_{2n} + (2k+1)F_{2n-2})/(3F_{2n} + (3k+2)F_{2n-2})$.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Corollary 5.3. -/
-public theorem_wanted fibonacci_arch_tops (n k : ℕ) (hn : 1 ≤ n) :
-    let F : ℕ → ℕ := fun j => Nat.fib (j + 1)
-    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
-    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
-    let P : ℕ × ℕ → Prop := fun p => euclidPPosition p.1 p.2 = true
-    let X := (F (2 * n + 1) + k * F (2 * n - 1), F (2 * n + 1) + k * F (2 * n - 1) - F (2 * n - 1))
-    let Y := (F (2 * n) + k * F (2 * n - 2), F (2 * n) + (k + 1) * F (2 * n - 2))
-    (P X ∧ P (t (s X)) ∧ P (s (t X)) ∧
-      ((t (s X)).1 : ℤ) = 3 * F (2 * n + 1) + (3 * k - 1) * F (2 * n - 1) ∧
-      ((t (s X)).2 : ℤ) = 2 * F (2 * n + 1) + (2 * k - 1) * F (2 * n - 1) ∧
-      ((s (t X)).1 : ℤ) = 2 * F (2 * n + 1) + (2 * k - 1) * F (2 * n - 1) ∧
-      ((s (t X)).2 : ℤ) = 3 * F (2 * n + 1) + (3 * k - 2) * F (2 * n - 1)) ∧
-    (P Y ∧ P (t (s Y)) ∧ P (s (t Y)) ∧
-      t (s Y) = (3 * F (2 * n) + (3 * k + 1) * F (2 * n - 2),
-        2 * F (2 * n) + (2 * k + 1) * F (2 * n - 2)) ∧
-      s (t Y) = (2 * F (2 * n) + (2 * k + 1) * F (2 * n - 2),
-        3 * F (2 * n) + (3 * k + 2) * F (2 * n - 2)))
 
 /-- **Positions of a Calkin–Wilf row with maximal optimal play in Euclid.** For every $k \ge 0$,
 the number of positions in row $k$ of the Calkin–Wilf tree whose Smith remoteness in the Euclid

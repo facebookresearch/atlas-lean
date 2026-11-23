@@ -15,6 +15,92 @@ import MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings
 
 namespace MetaMathlibExt
 
+-- All `3 ^ 2 = 9` maps from two cells to three designs are fixed by the identity.
+example : fixedTilingCount (α := Fin 2) (T := Fin 3) id 1 = 9 := by
+  decide +kernel
+
+-- A cell map that cycles the three cells of `ZMod 3` fixes exactly the constant tilings.
+example : fixedTilingCount (fun c : ZMod 3 => c + 1) (1 : Equiv.Perm (Fin 2)) = 2 := by
+  decide +kernel
+
+-- The 2 × 3 grid with two designs: all `2 ^ 6 = 64` tilings are fixed by the identity.
+example :
+    fixedTilingCount (id : ZMod 2 × ZMod 3 → ZMod 2 × ZMod 3) (1 : Equiv.Perm (Fin 2)) = 64 := by
+  rw [rectangularGrid_identity 2 3 1 (one_pow 1), Fintype.card_fin]
+  rfl
+
+-- The count of the theorem agrees with a direct computation on the 1 × 2 grid.
+example :
+    fixedTilingCount (id : ZMod 1 × ZMod 2 → ZMod 1 × ZMod 2) (1 : Equiv.Perm (Fin 3)) =
+      Fintype.card (Fin 3) ^ (1 * 2) ∧
+    fixedTilingCount (id : ZMod 1 × ZMod 2 → ZMod 1 × ZMod 2) (1 : Equiv.Perm (Fin 3)) = 9 :=
+  ⟨rectangularGrid_identity 1 2 1 (one_pow 1), by decide +kernel⟩
+
+-- Edge case `n = m = 1`: the grid has one cell, and each tile gives one fixed tiling.
+example {T : Type*} [Fintype T] [DecidableEq T] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
+    fixedTilingCount (id : ZMod 1 × ZMod 1 → ZMod 1 × ZMod 1) σ = Fintype.card T := by
+  rw [rectangularGrid_identity 1 1 σ hσ, Nat.mul_one, pow_one]
+
+-- Edge case of no tiles: a grid with at least one cell has no tiling at all.
+example (n m : ℕ) [NeZero n] [NeZero m] :
+    fixedTilingCount (id : ZMod n × ZMod m → ZMod n × ZMod m) (1 : Equiv.Perm Empty) = 0 := by
+  rw [rectangularGrid_identity n m 1 (one_pow 1), Fintype.card_empty,
+    zero_pow (Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m))]
+
+-- The hypothesis `σ ^ 1 = 1` is needed: the swap of two designs fixes no design, so no tiling
+-- of the 1 × 2 grid satisfies `F c = σ (F c)`, while `2 ^ (1 * 2) = 4`.
+example :
+    fixedTilingCount (id : ZMod 1 × ZMod 2 → ZMod 1 × ZMod 2) (Equiv.swap (0 : Fin 2) 1) = 0 := by
+  decide +kernel
+
+-- The 3 × 3 grid with two designs: all `2 ^ 9 = 512` tilings are fixed by the identity.
+example :
+    fixedTilingCount (id : ZMod 3 × ZMod 3 → ZMod 3 × ZMod 3) (1 : Equiv.Perm (Fin 2)) = 512 := by
+  rw [squareGrid_identity 3 1 (one_pow 1), Fintype.card_fin]
+  rfl
+
+-- The count of the theorem agrees with a direct computation on the 2 × 2 grid.
+example :
+    fixedTilingCount (id : ZMod 2 × ZMod 2 → ZMod 2 × ZMod 2) (1 : Equiv.Perm (Fin 3)) =
+      Fintype.card (Fin 3) ^ (2 ^ 2) ∧
+    fixedTilingCount (id : ZMod 2 × ZMod 2 → ZMod 2 × ZMod 2) (1 : Equiv.Perm (Fin 3)) = 81 :=
+  ⟨squareGrid_identity 2 1 (one_pow 1), by decide +kernel⟩
+
+-- The square grid is the rectangular grid with `m = n`: both theorems count the same tilings.
+example {T : Type*} [Fintype T] [DecidableEq T] (n : ℕ) [NeZero n] (σ : Equiv.Perm T)
+    (hσ : σ ^ 1 = 1) : Fintype.card T ^ (n ^ 2) = Fintype.card T ^ (n * n) :=
+  (squareGrid_identity n σ hσ).symm.trans (rectangularGrid_identity n n σ hσ)
+
+-- Edge case `n = 1`: the grid has one cell, and each tile gives one fixed tiling.
+example {T : Type*} [Fintype T] [DecidableEq T] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
+    fixedTilingCount (id : ZMod 1 × ZMod 1 → ZMod 1 × ZMod 1) σ = Fintype.card T := by
+  rw [squareGrid_identity 1 σ hσ, one_pow, pow_one]
+
+-- Edge case of a single design: every square grid has exactly one tiling.
+example (n : ℕ) [NeZero n] :
+    fixedTilingCount (id : ZMod n × ZMod n → ZMod n × ZMod n) (1 : Equiv.Perm Unit) = 1 := by
+  rw [squareGrid_identity n 1 (one_pow 1), Fintype.card_unit, one_pow]
+
+-- The hypothesis `σ ^ 1 = 1` is needed: the swap of two designs fixes no design, so no tiling
+-- of the 2 × 2 grid satisfies `F c = σ (F c)`, while `2 ^ (2 ^ 2) = 16`.
+example :
+    fixedTilingCount (id : ZMod 2 × ZMod 2 → ZMod 2 × ZMod 2) (Equiv.swap (0 : Fin 2) 1) = 0 := by
+  decide +kernel
+
+-- On the 2 × 2 torus the zero shift fixes 16 binary tilings and each other shift fixes four.
+example : torusShiftSum 2 2 id (1 : Equiv.Perm (Fin 2)) = 28 := by
+  decide +kernel
+
+-- On the 2 × 3 torus the two shifts of order six each fix the two constant tilings.
+example : torusShiftSum 2 3 id (1 : Equiv.Perm (Fin 2)) = 84 := by
+  rw [rectangularTorus_identity 2 3 1 (one_pow 1)]
+  decide +kernel
+
+-- On a single row of two cells a tile swap fixes only the two alternating tilings,
+-- both under the nonzero shift.
+example : torusShiftSum 1 2 id (Equiv.swap (0 : Fin 2) 1) = 2 := by
+  decide +kernel
+
 -- For `n = 5` and `a = 2` the coefficient is `(5 + 1) / 2 = 3`, and the unique solution is
 -- `3 * (-1 - 2) = -9 = 1` in `ZMod 5`.
 example : {x : ZMod 5 | x = -1 - x - 2} = {1} := by

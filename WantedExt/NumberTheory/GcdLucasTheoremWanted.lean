@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Real.Irrational
 public import MathlibExt.NumberTheory.ChoosePowMulModEq
 public import MathlibExt.NumberTheory.GcdPowAddNegOnePow
+public import MathlibExt.NumberTheory.PrimeDvdChoosePowMulPowMul
 
 /-!
 # Greatest common divisors of radical-expansion coefficients and Lucas's theorem
@@ -66,16 +67,6 @@ public theorem_wanted gcd_radical_expansion_coeffs_eq_one {N u v : ℕ}
       ∑ i : Fin N, (a n i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ))
     (n : ℕ) (hn : 1 ≤ n) :
     Finset.univ.gcd (a n) = 1
-
-/-- **$p$ divides $\binom{p^r a}{p^s b}$ when $r > s$.** Let $p$ be a prime, let $r > s$ be
-natural numbers, and let $a, b$ be natural numbers not divisible by $p$. Then
-$p \mid \binom{p^r a}{p^s b}$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Corollary 14
-(`jis-2025-25.2.2-cor-14`). -/
-public theorem_wanted prime_dvd_choose_pow_mul_pow_mul {p a b r s : ℕ} (hp : p.Prime)
-    (hrs : s < r) (hpa : ¬p ∣ a) (hpb : ¬p ∣ b) : p ∣ (p ^ r * a).choose (p ^ s * b)
 
 /-- **Gcd of the coefficients of $(u + \sqrt{v})^n$.** Let $u, v$ be coprime positive integers
 with $\sqrt{v}$ irrational, let $a_n, b_n$ (for natural $n$) be integers with

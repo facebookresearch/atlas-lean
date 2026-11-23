@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Additive.ConsecutiveOrthogonal
 public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
+public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Coset.Defs
@@ -144,19 +146,6 @@ public theorem_wanted consecutive_prod_ge {R M N : Type*} [Ring R] [AddCommGroup
     (hM : IsLeast (consecutiveSet R M A) cM) (hN : IsLeast (consecutiveSet R N A) cN)
     (h : IsLeast (consecutiveSet R (M × N) A) c) :
     cM * cN ≤ c
-
-/-- **A block of consecutive coordinates orthogonal to $a$ vectors of $\mathbb{Z}_2^m$.** Let
-$\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$, let $2^a \le m$ and let
-$v_1, \dots, v_a \in \mathbb{Z}_2^m$, with coordinates indexed by $\{0, \dots, m - 1\}$. Then there
-are indices $s \le t$ in $\{0, \dots, m - 1\}$ such that $\sum_{j = s}^{t} (v_i)_j = 0$ in
-$\mathbb{Z}_2$ for every $i$; that is, the nonzero vector whose ones occupy exactly the positions
-$s, \dots, t$ is orthogonal to every $v_i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 3.2 (`integers-2024-A38-lem-3-2`). -/
-public theorem_wanted exists_consecutive_orthogonal {a m : ℕ} (hm : 2 ^ a ≤ m)
-    (v : Fin a → Fin m → ZMod 2) :
-    ∃ s t : Fin m, s ≤ t ∧ ∀ i, ∑ j ∈ Finset.Icc s t, v i j = 0
 
 /-- **A block of consecutive integers meeting $a$ given sets evenly.** Let $2^a \le m$ and let
 $X_1, \dots, X_a$ be finite sets of natural numbers. Then there are integers $s, t$ with
@@ -354,22 +343,6 @@ public theorem_wanted unitWeightedZeroSum_of_even_units {r k : ℕ} (x : Fin k �
     (h0 : (Finset.univ.filter fun j => IsUnit (x j)).card ≠ 0)
     (he : Even (Finset.univ.filter fun j => IsUnit (x j)).card) :
     IsUnitWeightedZeroSum (2 ^ r) x
-
-/-- **Unit-weighted zero sums of multiples of a prime.** Let $p$ be a prime, let $n'$ and $k$ be
-natural numbers, put $n = p n'$, and let $z_1, \dots, z_k \in \mathbb{Z}/n\mathbb{Z}$. Write
-$\bar z_i$ for the reduction of $z_i$ modulo $n'$. If there are units $a_1, \dots, a_k$ of
-$\mathbb{Z}/n'\mathbb{Z}$ with $\sum_i a_i \bar z_i = 0$, then there are units $b_1, \dots, b_k$
-of $\mathbb{Z}/n\mathbb{Z}$ with $\sum_i b_i \, p z_i = 0$.
-
-In the source the sequence $(p z_1, \dots, p z_k)$ determines the $z_i$ only modulo $n'$, so the
-hypothesis does not depend on the choice of the $z_i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 6.7 (`integers-2024-A38-lem-6-7`). -/
-public theorem_wanted unitWeightedZeroSum_of_div_prime {p n' k : ℕ} (hp : p.Prime)
-    (z : Fin k → ZMod (p * n'))
-    (h : IsUnitWeightedZeroSum n' (fun i => ZMod.castHom (dvd_mul_left n' p) (ZMod n') (z i))) :
-    IsUnitWeightedZeroSum (p * n') (fun i => (p : ZMod (p * n')) * z i)
 
 /-- **Halving consecutive unit-weighted zero-sum free sequences modulo a power of two.** Let
 $s \ge 0$, $n = 2^{s+1}$ and $n' = 2^s$. Say that a sequence $y_1, \dots, y_L$ in $\mathbb{Z}_m$ has

@@ -109,6 +109,121 @@ theorem isSumFreeMod_three_two_singleton_one : IsSumFreeMod 3 2 {1} := by
   rw [Fin.sum_univ_two, hx 0, hx 1]
   decide
 
+/-- **When a singleton set is sum-free.** Let $a$, $l$ and $m$ be natural numbers with
+$l \ge 1$, $m \ge 1$ and $m \nmid a$, and let $d = \gcd(a, m)$. If $d = 1$, then $\{a\}$ is not
+$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m}$. If $d > 1$, then $\{a\}$ is not
+$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m/d}$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Theorem 4
+(`integers-2025-A62-thm-4`). -/
+theorem not_isSumFreeMod_singleton_iff (a l m : ℕ) (hl : 0 < l) (hm : 0 < m)
+    (_ha : ¬ m ∣ a) :
+    (Nat.gcd a m = 1 → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m])) ∧
+      (1 < Nat.gcd a m → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m])) := by
+  have hle : a ≤ l * a := by simpa using Nat.mul_le_mul_right a hl
+  have criterion : ¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m] := calc
+    ¬ IsSumFreeMod m l {(a : ℤ)} ↔ l * a ≡ a [MOD m] := by
+      rw [← Int.natCast_modEq_iff]
+      simp [IsSumFreeMod, ← funext_iff (g := fun _ : Fin l => (a : ℤ))]
+    _ ↔ m ∣ a * (l - 1) := by
+      rw [Nat.ModEq.comm, Nat.modEq_iff_dvd' hle, Nat.mul_sub, Nat.mul_one, Nat.mul_comm a l]
+    _ ↔ m / Nat.gcd a m ∣ l - 1 := by
+      rw [Nat.gcd_comm a m, Nat.div_dvd_iff_dvd_mul (Nat.gcd_dvd_left m a)
+        (Nat.gcd_pos_of_pos_left a hm), Nat.dvd_gcd_mul_iff_dvd_mul]
+    _ ↔ l ≡ 1 [MOD m / Nat.gcd a m] := (Nat.modEq_iff_dvd' hl).symm.trans Nat.ModEq.comm
+  exact ⟨fun hd => by simpa only [hd, Nat.div_one] using criterion, fun _ => criterion⟩
+
+namespace modularSchurNumber_two_mul
+
+-- Give each integer its own color, so all summands in its class must equal it.
+private theorem partition_of_not_modEq {m k l r : ℕ} (hk : 0 < k) (hr : r ≤ k)
+    (h : ∀ a, 1 ≤ a → a ≤ r → ¬ l * a ≡ a [MOD m]) : HasSumFreePartitionMod m k l r := by
+  let c (a : ℕ) : Fin k := ⟨(a - 1) % k, Nat.mod_lt _ hk⟩
+  have hc {a : ℕ} (ha : 1 ≤ a) (ha' : a ≤ r) : (c a).val = a - 1 :=
+    Nat.mod_eq_of_lt (by omega)
+  refine ⟨c, fun j x hx y hy hsum => ?_⟩
+  obtain ⟨a, ha, ha', hja, rfl⟩ := hy
+  have hx' (i : Fin l) : x i = (a : ℤ) := by
+    obtain ⟨b, hb, hb', hjb, hxi⟩ := hx i
+    have heq := congrArg Fin.val (hjb.trans hja.symm)
+    rw [hc hb hb', hc ha ha'] at heq
+    have : b = a := by omega
+    simpa only [this] using hxi
+  apply h a ha ha'
+  apply Int.natCast_modEq_iff.mp
+  simpa only [hx', Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+    Int.natCast_mul] using hsum
+
+-- If the sum of l copies of a is congruent to a, no color class can contain a.
+private theorem lt_of_modEq {m k l r a : ℕ} (hp : HasSumFreePartitionMod m k l r)
+    (ha : 0 < a) (h : l * a ≡ a [MOD m]) : r < a := by
+  by_contra! har
+  obtain ⟨c, hc⟩ := hp
+  have hmem : (a : ℤ) ∈ {x : ℤ | ∃ b : ℕ, 1 ≤ b ∧ b ≤ r ∧ c b = c a ∧ x = b} :=
+    ⟨a, ha, har, rfl, rfl⟩
+  apply hc (c a) (fun _ => a) (fun _ => hmem) a hmem
+  simpa only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+    Int.natCast_mul] using Int.natCast_modEq_iff.mpr h
+
+private theorem mul_two_modEq_iff {n l : ℕ} (hl : 0 < l) (hl1 : ¬ l ≡ 1 [MOD 2 * n]) :
+    l * 2 ≡ 2 [MOD 2 * n] ↔ l ≡ n + 1 [MOD 2 * n] := by
+  have hcancel : l * 2 ≡ 2 [MOD 2 * n] ↔ l ≡ 1 [MOD n] := by
+    simpa only [Nat.mul_comm 2 l, Nat.mul_one] using
+      (Nat.ModEq.mul_left_cancel_iff' (a := l) (b := 1) (m := n) (by decide : 2 ≠ 0))
+  rw [hcancel]
+  constructor
+  · intro h
+    obtain ⟨q, hq⟩ := (Nat.modEq_iff_exists_eq_add hl).mp h.symm
+    obtain ⟨t, ht | ht⟩ := Nat.even_or_odd' q
+    · apply (hl1 ?_).elim
+      calc
+        l = (2 * n) * t + 1 := by rw [hq, ht]; ring
+        _ ≡ 1 [MOD 2 * n] := Nat.ModEq.modulus_mul_add
+    · calc
+        l = (2 * n) * t + (n + 1) := by rw [hq, ht]; ring
+        _ ≡ n + 1 [MOD 2 * n] := Nat.ModEq.modulus_mul_add
+  · intro h
+    exact (h.of_mul_left 2).trans Nat.add_modEq_left
+
+end modularSchurNumber_two_mul
+
+open modularSchurNumber_two_mul
+
+/-- **Modular Schur numbers modulo an even number.** Let $k$, $l$ and $n$ be natural numbers with
+$k \ge 2$, $n \ge 2$, $l \ge 1$ and $l \not\equiv 1 \pmod{2n}$, and let $S_{2n}(k, l)$ be the
+generalized Schur number modulo $2n$. If $l \equiv n + 1 \pmod{2n}$, then $S_{2n}(k, l) = 1$;
+otherwise $S_{2n}(k, l) \ge 2$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 4
+(`integers-2025-A62-cor-4`). -/
+theorem modularSchurNumber_two_mul (k l n : ℕ) (hk : 2 ≤ k) (hn : 2 ≤ n)
+    (hl : 0 < l) (hl1 : ¬ l ≡ 1 [MOD 2 * n]) :
+    (l ≡ n + 1 [MOD 2 * n] → modularSchurNumber (2 * n) k l = 1) ∧
+      (¬ l ≡ n + 1 [MOD 2 * n] → 2 ≤ modularSchurNumber (2 * n) k l) := by
+  have htwo := mul_two_modEq_iff hl hl1
+  constructor
+  · intro h
+    apply IsGreatest.csSup_eq
+    constructor
+    · apply partition_of_not_modEq (by omega) (by omega)
+      intro a ha ha'
+      have : a = 1 := by omega
+      simpa [this] using hl1
+    · intro r hr
+      exact Nat.le_of_lt_succ (lt_of_modEq hr (by decide) (htwo.mpr h))
+  · intro h
+    refine le_csSup (s := {r | HasSumFreePartitionMod (2 * n) k l r}) ?_ ?_
+    · refine ⟨2 * n, fun r hr => ?_⟩
+      exact (lt_of_modEq hr (by omega : 0 < 2 * n)
+        (by simp [Nat.ModEq])).le
+    · apply partition_of_not_modEq (by omega) hk
+      intro a ha ha'
+      obtain rfl | rfl : a = 1 ∨ a = 2 := by omega
+      · simpa using hl1
+      · exact fun hmod => h (htwo.mp hmod)
+
 /-- **Modular Schur numbers modulo a prime power for many classes.** Let $p$ be a prime, let $i$
 and $l$ be positive integers with $l \not\equiv 1 \pmod p$, and let $k$ be a natural number with
 $k \ge p^i - 1$. Then the generalized Schur number modulo $p^i$ satisfies
@@ -126,21 +241,8 @@ theorem modularSchurNumber_prime_pow_eq (p i k l : ℕ) (hp : p.Prime) (hi : 0 <
     exact hp.coprime_iff_not_dvd.mpr fun h => hlp ((Nat.modEq_iff_dvd' hl).mpr h).symm
   apply IsGreatest.csSup_eq
   constructor
-  · -- Give each integer in the range its own color.
-    let c (a : ℕ) : Fin k := ⟨(a - 1) % k, Nat.mod_lt _ (by omega)⟩
-    have hc {a : ℕ} (ha : 1 ≤ a) (ha' : a ≤ p ^ i - 1) : (c a).val = a - 1 :=
-      Nat.mod_eq_of_lt (by omega)
-    refine ⟨c, fun j x hx y hy hsum => ?_⟩
-    obtain ⟨a, ha, ha', hja, rfl⟩ := hy
-    have hx' (t : Fin l) : x t = (a : ℤ) := by
-      obtain ⟨b, hb, hb', hjb, hxt⟩ := hx t
-      have heq := congrArg Fin.val (hjb.trans hja.symm)
-      rw [hc hb hb', hc ha ha'] at heq
-      have : b = a := by omega
-      simpa only [this] using hxt
-    have hmod : l * a ≡ a [MOD p ^ i] := Int.natCast_modEq_iff.mp (by
-      simpa only [hx', Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
-        Int.natCast_mul] using hsum)
+  · apply partition_of_not_modEq (by omega) hk
+    intro a ha ha' hmod
     have hdvd : p ^ i ∣ (l - 1) * a := by
       simpa only [Nat.sub_mul, one_mul] using hmod.symm.dvd'
     have := Nat.le_of_dvd ha (hcop.dvd_of_dvd_mul_left hdvd)

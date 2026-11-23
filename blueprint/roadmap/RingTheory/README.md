@@ -26,3 +26,5 @@ Hahn series, and the subject also has Hilbert's syzygy theorem, the Quillen–Su
 - [Cluster algebras](cluster-algebras/README.md)
 - [Integral extensions and integral closure](integral-extensions/README.md)
 - [Commutative rings and ideals](commutative-rings/README.md)
+- [Noetherian and Artinian rings](noetherian-and-artinian-rings/README.md)
+- [Factorization in integral domains](factorization-domains/README.md)

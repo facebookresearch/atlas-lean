@@ -15,12 +15,13 @@ public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.NumberTheory.Padics.PadicNumbers
+public import Mathlib.RingTheory.Binomial
 
 /-!
 # Binomial extensions of Wolstenholme's theorem
 
-The ATLAS wiki attributes the product formulas and the coefficient bound for divided derivatives
-to Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*,
+The ATLAS wiki attributes these binomial identities and the coefficient bound for divided
+derivatives to Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*,
 INTEGERS 26 (2026).
 -/
 
@@ -49,7 +50,11 @@ private theorem choose_blocks_eq_quotient (d m p : ℕ) :
     exact_mod_cast Nat.choose_ne_zero (show p ≤ (j + 1) * p by simp [Nat.succ_mul])
 
 /-- For prime `p` and `1 ≤ m ≤ n`, the binomial coefficient at `(n * p, m * p)` is a
-quotient of products of binomial coefficients with lower index `p - 1` or `p`. -/
+quotient of products of binomial coefficients with lower index `p - 1` or `p`.
+
+Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
+Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 6
+(`integers-2026-A32-lem-6`). -/
 public theorem choose_mul_prime_eq_prod_div_prod (p m n : ℕ) (hp : p.Prime) (_hm : 1 ≤ m)
     (hmn : m ≤ n) :
     ((n * p).choose (m * p) : ℚ) =
@@ -86,5 +91,52 @@ public theorem norm_choose_nsmul_coeff_le {p : ℕ} [Fact p.Prime] {B : Type*}
     (hC : ∀ k, ‖a k‖ ≤ C) (n k : ℕ) :
     ‖(k + n).choose n • a (k + n)‖ ≤ C :=
   (IsUltrametricDist.norm_nsmul_le (a (k + n)) _).trans (hC (k + n))
+
+/-- **Binomial coefficients with upper index $-np$.** Let $p$, $n$ and $k$ be natural numbers
+with $p \ge 1$ and $k \ge 1$. For an integer $x$ and a natural number $r$ write
+$\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$. Then
+$$
+\binom{-np}{kp} = (-1)^{kp} \, \frac{n}{k} \binom{(n+k)p - 1}{kp - 1} =
+(-1)^{kp} \, \frac{n}{n+k} \binom{(n+k)p}{kp}.
+$$
+
+The paper takes $p$ prime.
+
+Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
+Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 5
+(`integers-2026-A32-lem-5`). -/
+public theorem ringChoose_neg_mul_mul_eq (p n k : ℕ) (hp : 0 < p) (hk : 1 ≤ k) :
+    ((Ring.choose (-((n * p : ℕ) : ℤ)) (k * p) : ℤ) : ℚ) =
+        (-1) ^ (k * p) * ((n : ℚ) / k) * (((n + k) * p - 1).choose (k * p - 1) : ℚ) ∧
+      ((Ring.choose (-((n * p : ℕ) : ℤ)) (k * p) : ℤ) : ℚ) =
+        (-1) ^ (k * p) * ((n : ℚ) / (n + k)) * (((n + k) * p).choose (k * p) : ℚ) := by
+  have hkp : 0 < k * p := Nat.mul_pos hk hp
+  have htop : 0 < (n + k) * p := Nat.mul_pos (by omega) hp
+  let t := (n + k) * p - 1
+  have hindex : ((n * p : ℕ) : ℤ) + (k * p : ℕ) - 1 = (t : ℤ) := by
+    unfold t
+    rw [Nat.cast_sub htop, Nat.cast_one, Nat.add_mul, Nat.cast_add]
+  have hneg : ((Ring.choose (-((n * p : ℕ) : ℤ)) (k * p) : ℤ) : ℚ) =
+      (-1) ^ (k * p) * (t.choose (k * p) : ℚ) := by
+    rw [Ring.choose_neg, hindex, Ring.choose_natCast, Units.smul_def, zsmul_eq_mul,
+      Int.cast_id, Int.coe_negOnePow_natCast]
+    push_cast
+    rfl
+  have ht : t + 1 = (n + k) * p := Nat.sub_add_cancel htop
+  have hdiff : t - (k * p - 1) = n * p := by
+    dsimp [t]
+    rw [Nat.add_mul]
+    omega
+  -- Shift the lower index for the first ratio and the upper index for the second.
+  have lower := Nat.choose_succ_right_eq t (k * p - 1)
+  rw [Nat.sub_add_cancel hkp, hdiff, ← Nat.mul_assoc, ← Nat.mul_assoc] at lower
+  have upper := Nat.choose_mul_succ_eq t (k * p)
+  rw [ht, show (n + k) * p - k * p = n * p by rw [Nat.add_mul, Nat.add_sub_cancel],
+    ← Nat.mul_assoc, ← Nat.mul_assoc] at upper
+  constructor <;> rw [hneg, mul_assoc] <;> congr 1
+  · rw [div_mul_eq_mul_div, eq_div_iff (by positivity), mul_comm (n : ℚ)]
+    exact_mod_cast Nat.mul_right_cancel hp lower
+  · rw [div_mul_eq_mul_div, eq_div_iff (by positivity), mul_comm (n : ℚ)]
+    exact_mod_cast Nat.mul_right_cancel hp upper
 
 end MetaMathlibExt

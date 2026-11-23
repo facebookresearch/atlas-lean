@@ -25,7 +25,12 @@ open Int
 
 /-- The floors of a real number and its negative sum to zero at integers and to minus one
 elsewhere. Adding two reals produces a carry in the floor exactly when their fractional
-parts sum to at least one. -/
+parts sum to at least one.
+
+Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and
+Prapanpong Pongsriiam, *Exact Formulas for the Number of Palindromes in Certain Arithmetic
+Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, Lemma 6
+(`jis-2024-24.4.8-lem-6`). -/
 public theorem floor_add_floor_neg_and_floor_add_eq :
     (∀ x : ℝ, (∃ n : ℤ, x = n) → ⌊x⌋ + ⌊-x⌋ = 0) ∧
       (∀ x : ℝ, (¬ ∃ n : ℤ, x = n) → ⌊x⌋ + ⌊-x⌋ = -1) ∧
