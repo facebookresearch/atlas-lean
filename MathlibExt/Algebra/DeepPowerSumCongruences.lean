@@ -126,7 +126,8 @@ public theorem padicValNat_sum_le_add_padicValNat_multinomial {p : ℕ} [Fact p.
       fun h => hr (Finset.sum_eq_zero_iff.mp h j hj)
     rw [hsplit, hn, hk, ← mul_assoc, mul_comm (k + 1), ← Nat.add_one_mul_choose_eq, mul_assoc]
     exact dvd_mul_right _ _
-  rw [← padicValNat.mul hr hM, ← padicValNat_dvd_iff_le (mul_ne_zero hr hM)]
-  exact pow_padicValNat_dvd.trans hdvd
+  simp only [Nat.padicValNat_def]
+  rw [← Nat.multiplicity_mul hr hM, ← multiplicity_dvd_iff_le (mul_ne_zero hr hM)]
+  exact (pow_multiplicity_dvd _ _).trans hdvd
 
 end MetaMathlibExt
