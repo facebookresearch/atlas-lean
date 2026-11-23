@@ -16,6 +16,7 @@ public import Mathlib.Logic.Equiv.Fin.Rotate
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.RingTheory.Trace.Basic
 public import MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCyclic
+public import MathlibExt.Combinatorics.Enumerative.NormalBasisMapRotationIffConj
 public import MathlibExt.Combinatorics.Enumerative.TotientWeightedDivisorSum
 public import MathlibExt.Data.Int.GCD
 
@@ -32,7 +33,9 @@ paper's `[G ÷ m]` is the number `#{a ∈ G | a^m = 1}`, and `[G ÷ K ÷ m] = #{
 `MetaMathlibExt.identity_product_necklace_count`. The rotation orbits `tupleRotationOrbit` are
 defined in `MathlibExt.Combinatorics.Enumerative.TupleRotationOrbit`, and the count over a product
 of cyclic groups (Corollary 6) is proved in
-`MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCyclic`.
+`MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCyclic`. The correspondence between
+rotation orbits of normal basis coordinates and conjugate elements of a finite field
+(Corollary 29) is proved in `MathlibExt.Combinatorics.Enumerative.NormalBasisMapRotationIffConj`.
 -/
 
 namespace MetaMathlibExt
@@ -231,24 +234,6 @@ public theorem_wanted normalBasisMap_bijective_frobenius (n : ℕ)
     Function.Bijective (fun a : Fin n → F => ∑ i, a i • β ^ (Fintype.card F ^ (i : ℕ))) ∧
       ∀ a : Fin n → F, (∑ i, a i • β ^ (Fintype.card F ^ (i : ℕ))) ^ Fintype.card F =
         ∑ i, (a ∘ ⇑(finRotate n).symm) i • β ^ (Fintype.card F ^ (i : ℕ))
-
-/-- **Rotation orbits correspond to conjugate elements.** Let $K$ be a finite field that is an
-algebra over a finite field $F$, let $q = |F|$ and $n = [K : F]$, and let $\beta \in K$ be such
-that $\beta, \beta^q, \dots, \beta^{q^{n-1}}$ are linearly independent over $F$. Define
-$\Phi : F^n \to K$ by $\Phi(a_0, \dots, a_{n-1}) = \sum_{i=0}^{n-1} a_i \beta^{q^i}$. Then for all
-$a, b \in F^n$, the tuple $b$ lies in the rotation orbit of $a$ if and only if $\Phi(a)$ and
-$\Phi(b)$ have the same minimal polynomial over $F$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Corollary 29
-(`jis-2026-26.4.6-cor-29`). -/
-public theorem_wanted normalBasisMap_rotation_iff_conj (n : ℕ)
-    (hn : Module.finrank F K = n) (β : K)
-    (hβ : LinearIndependent F (fun i : Fin n => β ^ (Fintype.card F ^ (i : ℕ))))
-    (a b : Fin n → F) :
-    b ∈ tupleRotationOrbit a ↔
-      minpoly F (∑ i, a i • β ^ (Fintype.card F ^ (i : ℕ))) =
-        minpoly F (∑ i, b i • β ^ (Fintype.card F ^ (i : ℕ)))
 
 /-- **Zero-sum tuples correspond to trace-zero elements.** Let $K$ be a finite field that is an
 algebra over a finite field $F$, let $q = |F|$ and $n = [K : F]$, and let $\beta \in K$ be such

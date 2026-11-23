@@ -33,4 +33,28 @@ example :
     (∑ i ∈ ({7, 8, 9} : Finset ℕ), bridgeWeight i) + 9 = 9 + (7 + 8 + 9 : ℚ) := by
   decide +kernel
 
+-- For a single returner the return inequality says that its weight is nonnegative.
+example (p : ℕ) (hp : 0 < p) : 0 ≤ bridgeWeight p := by
+  have hp0 : 0 ∉ ({p} : Finset ℕ) := by simp [hp.ne]
+  simpa using bridgeWeight_return_inequality {p} (singleton_nonempty p) (by simp) hp0
+
+-- A single return by any of the three fastest people attains equality.
+example : ∀ p ∈ ({1, 2, 3} : Finset ℕ),
+    9 / 2 * ((({p} : Finset ℕ).card : ℚ) - 1) +
+      ((({p} : Finset ℕ).max' (singleton_nonempty p) : ℕ) : ℚ) +
+      ∑ i ∈ ({p} : Finset ℕ), (bridgeWeight i - (i : ℚ)) = 0 := by
+  decide +kernel
+
+-- Returns of two or three people leave slack, for example `5 / 2` for `{2, 3}` and `6` for
+-- `{2, 3, 4}`.
+example :
+    9 / 2 * ((({2, 3} : Finset ℕ).card : ℚ) - 1) + 3 +
+      ∑ i ∈ ({2, 3} : Finset ℕ), (bridgeWeight i - (i : ℚ)) = 5 / 2 := by
+  decide +kernel
+
+example :
+    9 / 2 * ((({2, 3, 4} : Finset ℕ).card : ℚ) - 1) + 4 +
+      ∑ i ∈ ({2, 3, 4} : Finset ℕ), (bridgeWeight i - (i : ℚ)) = 6 := by
+  decide +kernel
+
 end MetaMathlibExt.BridgeTorchGeneralizations

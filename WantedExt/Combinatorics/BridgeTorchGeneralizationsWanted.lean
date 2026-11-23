@@ -133,18 +133,6 @@ public theorem_wanted parity_interpolation (f g a : ℕ → ℝ)
     (heven : ∀ m, a (2 * m) = f m) (hodd : ∀ m, a (2 * m + 1) = g m) (n : ℕ) :
     a n = (1 + (-1 : ℝ) ^ n) / 2 * f (n / 2) + (1 - (-1 : ℝ) ^ n) / 2 * g (n / 2)
 
-/-- **Return inequality for the capacity-3 weights.** Let $y_i$ be the weights of the capacity-3
-lower bound. For every nonempty set $R$ of positive integers with $|R| \le 3$,
-$$\frac{9}{2}(|R| - 1) + \max R + \sum_{i \in R} (y_i - i) \ge 0.$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 16 (`jis-2026-26.5.6-lem-16`). -/
-public theorem_wanted bridgeWeight_return_inequality (R : Finset ℕ) (hR : R.Nonempty)
-    (hR3 : R.card ≤ 3) (hpos : 0 ∉ R) :
-    0 ≤ 9 / 2 * ((R.card : ℚ) - 1) + ((R.max' hR : ℕ) : ℚ) +
-      ∑ i ∈ R, (bridgeWeight i - (i : ℚ))
-
 /-- **The capacity-3 closed form is an integer close to the lower bound.** For every integer
 $n \ge 7$, let $U(n) = n^2/6 + 2n - 181/36 + (-1)^n/4 - (2/9)\cos(2n\pi/3)$ and
 $V(n) = n^2/6 + 2n - 11/2$. Then $U(n)$ is an integer and $0 \le U(n) - V(n) < 1$.
