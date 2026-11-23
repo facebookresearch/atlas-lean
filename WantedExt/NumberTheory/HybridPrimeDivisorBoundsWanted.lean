@@ -14,22 +14,14 @@ public import Mathlib.Data.Nat.Totient
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import MathlibExt.NumberTheory.Cyclotomic.CommonPrimeDivisorEvalPow
+public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Polynomial
-
-/-- **A common prime divisor of $x - 1$ and $\Phi_p(x)$ is $p$.** Let $\rho$ and $p$ be primes,
-let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th cyclotomic polynomial with integer
-coefficients. If $\rho \mid x - 1$ and $\rho \mid \Phi_p(x)$, then $\rho = p$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 1 (`integers-2026-A95-lem-1`). -/
-public theorem_wanted prime_eq_of_dvd_sub_one_of_dvd_cyclotomic_eval {ρ p : ℕ}
-    (hρ : ρ.Prime) (hp : p.Prime) {x : ℤ} (hx : 0 < x) (h₁ : (ρ : ℤ) ∣ x - 1)
-    (h₂ : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval x) : ρ = p
 
 /-- **Divisibility of $x^p - 1$ by $p$.** Let $p$ be a prime, let $x$ be a positive integer, and
 let $\Phi_p$ be the $p$-th cyclotomic polynomial with integer coefficients. Then
@@ -40,17 +32,6 @@ Article A95, Lemma 2 (`integers-2026-A95-lem-2`). -/
 public theorem_wanted prime_dvd_pow_self_sub_one_iff {p : ℕ} (hp : p.Prime) {x : ℤ}
     (hx : 0 < x) :
     (p : ℤ) ∣ x ^ p - 1 ↔ (p : ℤ) ∣ x - 1 ∧ (p : ℤ) ∣ (cyclotomic p ℤ).eval x
-
-/-- **A common prime divisor of $y - 1$ and $\Phi_p(y^{p^{a-1}})$ is $p$.** Let $\rho$ and $p$ be
-primes, let $a \ge 1$ be a natural number, let $y$ be a positive integer, and let $\Phi_p$ be the
-$p$-th cyclotomic polynomial with integer coefficients. If $\rho \mid y - 1$ and
-$\rho \mid \Phi_p(y^{p^{a-1}})$, then $\rho = p$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 3 (`integers-2026-A95-lem-3`). -/
-public theorem_wanted prime_eq_of_dvd_sub_one_of_dvd_cyclotomic_eval_pow {ρ p a : ℕ}
-    (hρ : ρ.Prime) (hp : p.Prime) (ha : 0 < a) {y : ℤ} (hy : 0 < y) (h₁ : (ρ : ℤ) ∣ y - 1)
-    (h₂ : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval (y ^ p ^ (a - 1))) : ρ = p
 
 /-- **Divisibility of $x^{rp^a} - 1$ by $p$.** Let $p$ be a prime, let $r$ and $a$ be natural
 numbers with $r$ coprime to $p$, let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th
@@ -64,16 +45,6 @@ public theorem_wanted prime_dvd_pow_sub_one_iff_cyclotomic {p r a : ℕ} (hp : p
     (p : ℤ) ∣ x ^ (r * p ^ a) - 1 ↔
       (p : ℤ) ∣ x ^ r - 1 ∧
         ∀ i ∈ Finset.Icc 1 a, (p : ℤ) ∣ (cyclotomic p ℤ).eval (x ^ (r * p ^ (i - 1)))
-
-/-- **Prime divisors of $\Phi_p(x)$ other than $p$ are $1$ modulo $p$.** Let $\rho$ and $p$ be
-distinct primes, let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th cyclotomic
-polynomial with integer coefficients. If $\rho \mid \Phi_p(x)$, then $\rho \equiv 1 \pmod p$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 1 (`integers-2026-A95-prop-1`). -/
-public theorem_wanted prime_modEq_one_of_dvd_cyclotomic_eval {ρ p : ℕ} (hρ : ρ.Prime)
-    (hp : p.Prime) (hne : ρ ≠ p) {x : ℤ} (hx : 0 < x)
-    (h : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval x) : Nat.ModEq p ρ 1
 
 /-- The hybrid bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with distinct primes `p_i` (in any order),
 `x > 1`, and `ω_n = ω(x^n - 1)`. With `p_0 := 1`, let

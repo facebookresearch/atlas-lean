@@ -53,25 +53,6 @@ public theorem_wanted coeff_add_one_pow_mul_X_pow_add_one_pow (p n j k : ℕ) (h
       ∑ s ∈ Finset.range (j + 1),
         if s ≤ k then (j * p).choose (s * p) * (n - j).choose (k - s) else 0
 
-/-- **Binomial coefficients with upper index $-np$.** Let $p$, $n$ and $k$ be natural numbers
-with $p \ge 1$ and $k \ge 1$. For an integer $x$ and a natural number $r$ write
-$\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$. Then
-$$
-\binom{-np}{kp} = (-1)^{kp} \, \frac{n}{k} \binom{(n+k)p - 1}{kp - 1} =
-(-1)^{kp} \, \frac{n}{n+k} \binom{(n+k)p}{kp}.
-$$
-
-The paper takes $p$ prime.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 5
-(`integers-2026-A32-lem-5`). -/
-public theorem_wanted ringChoose_neg_mul_mul_eq (p n k : ℕ) (hp : 0 < p) (hk : 1 ≤ k) :
-    ((Ring.choose (-((n * p : ℕ) : ℤ)) (k * p) : ℤ) : ℚ) =
-        (-1) ^ (k * p) * ((n : ℚ) / k) * (((n + k) * p - 1).choose (k * p - 1) : ℚ) ∧
-      ((Ring.choose (-((n * p : ℕ) : ℤ)) (k * p) : ℤ) : ℚ) =
-        (-1) ^ (k * p) * ((n : ℚ) / (n + k)) * (((n + k) * p).choose (k * p) : ℚ)
-
 /-- **Congruences for $\binom{tp}{p}$ modulo $p^5$, $p^6$ and $p^7$.** Let $p \ge 11$ be a prime
 and $t$ a natural number. Write $H_{p-1}^{(r)} = \sum_{j=1}^{p-1} 1/j^r$ for the harmonic number of
 order $r$ and $H_{p-1}(1, 1) = \sum_{1 \le i < j \le p-1} 1/(ij)$. For rational numbers $x$, $y$
@@ -142,24 +123,6 @@ public theorem_wanted ringChoose_mul_prime_sub_one_mul_congr (p : ℕ) (α : ℤ
         7 ≤ padicValRat p (R - (1 + (p : ℚ) ^ 2 * H2 + (p : ℚ) ^ 4 / 2 * (H2 ^ 2 + H4))))
 
 /-! ### Higher `p`-adic mean value theorem -/
-
-/-- **Coefficient bound for the divided derivatives $D^n/n!$.** Let $p$ be a prime and $B$ a
-normed vector space over $\mathbb{Q}_p$ whose norm is ultrametric. Let $(a_k)_{k \ge 0}$ be a
-sequence in $B$ and $C$ a real number with $\|a_k\| \le C$ for every $k$. Then for all natural
-numbers $n$ and $k$,
-$$\Big\| \binom{k+n}{n} a_{k+n} \Big\| \le C.$$
-
-The vectors $\binom{k+n}{n} a_{k+n}$ are the coefficients of $D^n f / n!$ for
-$f = \sum_k a_k t^k$, so this is the coefficientwise form of the bound $\|D^n / n!\| \le 1$ on
-the Tate algebra $B\{t\}$ with the sup norm.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 1
-(`integers-2026-A32-lem-1`). -/
-public theorem_wanted norm_choose_nsmul_coeff_le {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] [IsUltrametricDist B] (a : ℕ → B) (C : ℝ)
-    (hC : ∀ k, ‖a k‖ ≤ C) (n k : ℕ) :
-    ‖(k + n).choose n • a (k + n)‖ ≤ C
 
 /-- **Higher $p$-adic mean value theorem.** Let $p$ be a prime, let $|\cdot|$ be the $p$-adic
 absolute value on $\mathbb{Q}_p$, and let $B$ be a normed vector space over $\mathbb{Q}_p$ whose

@@ -10,3 +10,7 @@ Local rings and their residue fields, Krull dimension, adic completion, regular 
 - [Regular local rings](regular-local-rings/README.md)
 - [Flat local maps reflect integrally closed domains](is-domain-and-is-integrally-closed-of-fl.md)
 - [Length bound for a quotient containing a kernel](length-quotient-le-of-ker-le.md)
+- [Regular sequence on a module](regular-sequence.md)
+- [Artin–Rees lemma for modules over a commutative Noetherian ring](artin-rees-lemma.md)
+- [Krull's principal ideal theorem for commutative Noetherian rings](krull-principal-ideal-theorem.md)
+- [Krull's height theorem for commutative Noetherian rings](krull-height-theorem.md)

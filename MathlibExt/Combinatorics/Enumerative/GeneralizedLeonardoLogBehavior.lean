@@ -8,21 +8,128 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Log-balancedness of reciprocals
+# Log-convexity, log-concavity and log-balancedness along recurrences
+
+Log-convexity and log-concavity of a positive sequence propagate along a linear recurrence
+that subtracts nonnegative multiples of the earlier terms.
 
 For a positive sequence with successive ratios `x n = z (n + 1) / z n`, the reciprocals
 are log-balanced exactly when `x n` decreases and `(n + 1) * x n` increases.
 -/
 
 namespace MetaMathlibExt
+
+namespace logConvex_of_linearRecurrence_of_initial_logConvex
+
+-- Scaling the successive ratios by 1 or -1 gives the two directions of propagation.
+private theorem propagate (a : ℝ) (k : ℕ) (hk : 2 ≤ k) (c : ℕ → ℝ)
+    (hc : ∀ j, 2 ≤ j → j ≤ k → 0 ≤ c j) (z : ℕ → ℝ) (hpos : ∀ n, 0 < z n)
+    (hrec : ∀ n, k ≤ n →
+      z n = c 1 * z (n - 1) - ∑ j ∈ Finset.Icc 2 k, c j * z (n - j))
+    (hinit : ∀ i, 1 ≤ i → i < k → a * z i ^ 2 ≤ a * (z (i - 1) * z (i + 1))) :
+    ∀ n, 1 ≤ n → a * z n ^ 2 ≤ a * (z (n - 1) * z (n + 1)) := by
+  let x (i : ℕ) := a * z (i + 1) / z i
+  have step_iff (i : ℕ) :
+      x i ≤ x (i + 1) ↔ a * z (i + 1) ^ 2 ≤ a * (z i * z (i + 2)) := by
+    simp [x, div_le_div_iff₀ (hpos _) (hpos _), pow_two, mul_comm, mul_left_comm]
+  have ratio_rec (i : ℕ) (hi : k ≤ i) :
+      x (i - 1) = a * c 1 - ∑ j ∈ Finset.Icc 2 k, c j * (a * z (i - j) / z (i - 1)) := by
+    dsimp [x]
+    rw [Nat.sub_add_cancel (Nat.le_of_succ_le (hk.trans hi)), hrec i hi, mul_sub, sub_div,
+      ← mul_assoc, mul_div_cancel_right₀ _ (hpos _).ne', Finset.mul_sum, Finset.sum_div]
+    simp only [mul_left_comm a, mul_div_assoc]
+  -- Compare the current ratio to every earlier one, including each lag in the recurrence.
+  have ratios (n : ℕ) : ∀ m ≤ n, x m ≤ x n := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      have step : x n ≤ x (n + 1) := by
+        by_cases hn : n + 1 < k
+        · exact (step_iff n).2 (by simpa using hinit (n + 1) (by omega) hn)
+        · have h₀ := ratio_rec (n + 1) (by omega)
+          have h₁ := ratio_rec (n + 1 + 1) (by omega)
+          simp only [Nat.add_sub_cancel] at h₀ h₁
+          rw [h₀, h₁]
+          apply sub_le_sub_left
+          apply Finset.sum_le_sum
+          intro j hj
+          obtain ⟨hj₂, hjk⟩ := Finset.mem_Icc.mp hj
+          apply mul_le_mul_of_nonneg_left _ (hc j hj₂ hjk)
+          apply (div_le_div_iff₀ (hpos (n + 1)) (hpos n)).2
+          have h := (div_le_div_iff₀ (hpos (n + 1 - j)) (hpos n)).1
+            (ih (n + 1 - j) (by omega))
+          rw [show n + 1 + 1 - j = n + 1 - j + 1 by omega]
+          simpa only [mul_assoc, mul_comm, mul_left_comm] using h
+      intro m hm
+      rcases hm.eq_or_lt with rfl | hm
+      · exact le_rfl
+      · exact (ih m (by omega)).trans step
+  rintro (_ | n) hn
+  · omega
+  · exact (step_iff n).1 (ratios (n + 1) n (by omega))
+
+end logConvex_of_linearRecurrence_of_initial_logConvex
+
+/-- **Log-concavity propagates along a linear recurrence.** Let $k \ge 2$ be an integer, let
+$c_1, \dots, c_k$ be real numbers with $c_j \ge 0$ for $2 \le j \le k$, and let
+$(z_n)_{n \ge 0}$ be a sequence of positive real numbers with
+$$z_n = c_1 z_{n-1} - \sum_{j=2}^{k} c_j z_{n-j} \quad (n \ge k).$$
+If $z_{i-1} z_{i+1} \le z_i^2$ for $1 \le i < k$, then $z_{n-1} z_{n+1} \le z_n^2$ for every
+$n \ge 1$; that is, the whole sequence is log-concave.
+
+The paper assumes that the block $z_0, \dots, z_{k+1}$ is log-concave, which adds the
+inequality for $i = k$, and that $c_1 > 0$. Both follow from the other hypotheses: the
+recurrence at $n = k + 1$ propagates the inequality for $i = k$ from those for $i < k$, and
+the recurrence at $n = k$ forces $c_1 > 0$.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
+Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Lemma 1
+(quoted from the paper's reference [17]) (`integers-2024-A82-lem-1`). -/
+public theorem logConcave_of_linearRecurrence_of_initial_logConcave
+    (k : ℕ) (hk : 2 ≤ k) (c : ℕ → ℝ) (hc : ∀ j, 2 ≤ j → j ≤ k → 0 ≤ c j)
+    (z : ℕ → ℝ) (hpos : ∀ n, 0 < z n)
+    (hrec : ∀ n, k ≤ n →
+      z n = c 1 * z (n - 1) - ∑ j ∈ Finset.Icc 2 k, c j * z (n - j))
+    (hinit : ∀ i, 1 ≤ i → i < k → z (i - 1) * z (i + 1) ≤ z i ^ 2) :
+    ∀ n, 1 ≤ n → z (n - 1) * z (n + 1) ≤ z n ^ 2 := by
+  simpa using logConvex_of_linearRecurrence_of_initial_logConvex.propagate (-1) k hk c hc z hpos
+    hrec (by simpa using hinit)
+
+/-- **Log-convexity propagates along a linear recurrence.** Let $k \ge 2$ be an integer, let
+$c_1, \dots, c_k$ be real numbers with $c_j \ge 0$ for $2 \le j \le k$, and let
+$(z_n)_{n \ge 0}$ be a sequence of positive real numbers with
+$$z_n = c_1 z_{n-1} - \sum_{j=2}^{k} c_j z_{n-j} \quad (n \ge k).$$
+If $z_i^2 \le z_{i-1} z_{i+1}$ for $1 \le i < k$, then $z_n^2 \le z_{n-1} z_{n+1}$ for every
+$n \ge 1$; that is, the whole sequence is log-convex.
+
+The paper assumes that the block $z_0, \dots, z_{k+1}$ is log-convex, which adds the
+inequality for $i = k$, and that $c_1 > 0$. Both follow from the other hypotheses: the
+recurrence propagates the inequality for $i = k$, and the recurrence at $n = k$ forces
+$c_1 > 0$.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
+Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Lemma 1,
+log-convex reading (quoted from the paper's reference [17])
+(`integers-2024-A82-lem-1`). -/
+public theorem logConvex_of_linearRecurrence_of_initial_logConvex
+    (k : ℕ) (hk : 2 ≤ k) (c : ℕ → ℝ) (hc : ∀ j, 2 ≤ j → j ≤ k → 0 ≤ c j)
+    (z : ℕ → ℝ) (hpos : ∀ n, 0 < z n)
+    (hrec : ∀ n, k ≤ n →
+      z n = c 1 * z (n - 1) - ∑ j ∈ Finset.Icc 2 k, c j * z (n - j))
+    (hinit : ∀ i, 1 ≤ i → i < k → z i ^ 2 ≤ z (i - 1) * z (i + 1)) :
+    ∀ n, 1 ≤ n → z n ^ 2 ≤ z (n - 1) * z (n + 1) := by
+  simpa using logConvex_of_linearRecurrence_of_initial_logConvex.propagate 1 k hk c hc z hpos
+    hrec (by simpa using hinit)
 
 private theorem balanced_iff_ratios (n : ℕ) {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hc : 0 < c) :

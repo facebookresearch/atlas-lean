@@ -157,26 +157,6 @@ Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)
 theorem negPellF_two_one : negPellF 2 1 = 1 ∧ negPellG 2 1 = 1 := by
   simp [negPellF, negPellG, negPellFund_two]
 
-/-- **Angle bisectors satisfy the bisector equation.** Let $a, b, c$ be real numbers with
-$|a| \ne |b|$ and $c \ne 0$, and suppose that the lines $y = cx$ and $y = -c^{-1} x$ both bisect
-the angles between the lines $y = ax$ and $y = bx$, that is,
-$$
-\frac{|a - c|}{\sqrt{a^2 + 1}} = \frac{|b - c|}{\sqrt{b^2 + 1}} \quad\text{and}\quad
-\frac{|a + c^{-1}|}{\sqrt{a^2 + 1}} = \frac{|b + c^{-1}|}{\sqrt{b^2 + 1}}.
-$$
-Then $(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1)$.
-
-A line $y = sx$ bisects the angles between $y = ax$ and $y = bx$ exactly when the point $(1, s)$
-is equidistant from both lines, that is, when $|a - s| / \sqrt{a^2 + 1} = |b - s| / \sqrt{b^2 + 1}$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 1(a)
-(`integers-2024-A111-prop-1`). -/
-public theorem_wanted bisector_slope_equation (a b c : ℝ) (hab : |a| ≠ |b|) (hc : c ≠ 0)
-    (hbis : |a - c| / √(a ^ 2 + 1) = |b - c| / √(b ^ 2 + 1))
-    (hbis' : |a + c⁻¹| / √(a ^ 2 + 1) = |b + c⁻¹| / √(b ^ 2 + 1)) :
-    (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)
-
 /-- **Rational solutions of the bisector equation.** Let $a, b, c$ be rational numbers with
 $|a| \ne |b|$ and $(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1)$. Then there are a square-free
 natural number $d > 0$ and rational numbers $a_2, b_2$ with $a^2 - d a_2^2 = -1$ and
@@ -464,17 +444,6 @@ Rational Slopes*, INTEGERS 24 (2024), Article A111, Lemma 1(c), first sentence
 (`integers-2024-A111-lem-1`). -/
 public theorem_wanted even_of_abs_sq_sub_mul_sq_four_mod_eight (d z : ℤ) (hd : d % 8 = 1)
     (hz : z % 8 = 4) (x y : ℤ) (h : |x ^ 2 - d * y ^ 2| = z) : Even x ∧ Even y
-
-/-- **Solutions of |x² − dy²| = z are even when d ≡ 5 and z ≡ 0 (mod 8).** Let $d$ and $z$ be
-integers with $d \equiv 5 \pmod 8$ and $z \equiv 0 \pmod 8$. If integers $x$ and $y$ satisfy
-$|x^2 - dy^2| = z$, then $x$ and $y$ are both even.
-
-The paper also assumes $z > 1$; this is not needed.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Lemma 1(d) (`integers-2024-A111-lem-1`). -/
-public theorem_wanted even_of_abs_sq_sub_mul_sq_zero_mod_eight (d z : ℤ) (hd : d % 8 = 5)
-    (hz : z % 8 = 0) (x y : ℤ) (h : |x ^ 2 - d * y ^ 2| = z) : Even x ∧ Even y
 
 open Classical in
 /-- **Primes with strictly primitive representations.** For an integer $d$, $S(d)$ is the set of

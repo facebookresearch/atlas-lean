@@ -44,18 +44,6 @@ public theorem_wanted oresme_convolution_self (n : ℕ) :
     ∑ k ∈ Finset.range (n + 1), ((k : ℚ) / 2 ^ k) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
       ((n : ℚ) + 1) * n * ((n : ℚ) - 1) / (6 * 2 ^ n)
 
-/-- **Fibonacci–Oresme convolution.** Let $F_m$ denote the Fibonacci numbers, with $F_0 = 0$,
-$F_1 = 1$ and $F_{m+2} = F_{m+1} + F_m$, and let $O_m = m/2^m$ denote the Oresme numbers. For
-every natural number $n$,
-$\sum_{k=0}^{n} F_k O_{n-k} = \frac{2}{5} F_{n+1} - \frac{2(n+1)}{5 \cdot 2^n}$.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Proposition 4.1 (`fq-2024-cookbacon061124-prop-4.1`). -/
-public theorem_wanted fib_oresme_convolution (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), (Nat.fib k : ℚ) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
-      2 / 5 * (Nat.fib (n + 1) : ℚ) - 2 * ((n : ℚ) + 1) / (5 * 2 ^ n)
-
 /-- **Lucas–Oresme convolution.** Let $L_m$ denote the Lucas numbers and let $O_m = m/2^m$
 denote the Oresme numbers. For every natural number $n$,
 $\sum_{k=0}^{n} L_k O_{n-k} = \frac{2}{5} L_{n+1} - \frac{2}{5 \cdot 2^n}$.
@@ -149,21 +137,6 @@ Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2
 Article cookbacon061124, Corollary 6.3 (`fq-2024-cookbacon061124-cor-6.3`). -/
 public theorem_wanted two_pow_mul_jacobsthal_succ_modEq_nine (n : ℕ) :
     2 ^ n * lucasU ⟨1, -2, by decide⟩ (n + 1) ≡ n + 1 [ZMOD 9]
-
-/-- **Jacobsthal–Lucas–Oresme convolution.** Let $j_m$ denote the Jacobsthal–Lucas numbers and
-let $O_m = m/2^m$ denote the Oresme numbers. For every natural number $n$,
-$\sum_{k=0}^{n} j_k O_{n-k} = \frac{2}{9} j_{n+1} - \frac{2}{9 \cdot 2^n}$.
-
-The paper prints $+$ where the equality sign belongs, with no relation between the two sides;
-this is the equality reading, which matches Propositions 4.3 and 6.2 and Corollary 6.5.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Proposition 6.4 (`fq-2024-cookbacon061124-prop-6.4`). -/
-public theorem_wanted jacobsthalLucasNumber_oresme_convolution (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (jacobsthalLucasNumber k : ℚ) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
-      2 / 9 * (jacobsthalLucasNumber (n + 1) : ℚ) - 2 / (9 * 2 ^ n)
 
 /-- **Powers of two times Jacobsthal–Lucas numbers modulo 9.** Let $j_m$ denote the
 Jacobsthal–Lucas numbers. For every natural number $n$, $2^n j_{n+1} \equiv 1 \pmod{9}$.

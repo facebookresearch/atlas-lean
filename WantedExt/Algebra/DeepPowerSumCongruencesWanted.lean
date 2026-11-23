@@ -19,6 +19,8 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Algebra.DeepPowerSumCongruences
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
+public import MathlibExt.Algebra.DeepPowerSumCongruences.PartitionProduct
 
 /-!
 # Elementary symmetric functions and deep power-sum congruences
@@ -46,16 +48,6 @@ open Polynomial
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Divided-power ideal.** An ideal $I$ of a commutative ring $A$ is a *divided-power ideal* when
-for every $a \in I$ and every integer $k \ge 1$ there is $c \in I$ with $a^k = k! \, c$, that is,
-$a^k \in k! \, I$. For a prime $p$, in a torsion-free $\mathbb{Z}_{(p)}$-algebra this says
-$a^k / k! \in I$.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Section 2.2. -/
-def IsDividedPowerIdeal {A : Type*} [CommRing A] (I : Ideal A) : Prop :=
-  ∀ a ∈ I, ∀ k : ℕ, 1 ≤ k → ∃ c ∈ I, a ^ k = (k.factorial : A) * c
 
 /-- **The zero ideal is a divided-power ideal.** In every commutative ring, the zero ideal is a
 divided-power ideal.
@@ -338,48 +330,6 @@ public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.P
     (s : Finset ι) (r : ι → ℕ) :
     padicValNat p (Nat.multinomial s r) =
       ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
-
-/-- **Powers of elements congruent modulo a divided-power ideal.** Let $p$ be a prime, let $A$ be
-a commutative ring in which every natural number not divisible by $p$ is a unit (a
-$\mathbb{Z}_{(p)}$-algebra), and let $\mathfrak{a}$ be a divided-power ideal of $A$. If
-$x, y \in A$ satisfy $x - y \in \mathfrak{a}$, then for every $m \ge 0$ there is
-$c \in \mathfrak{a}$ with $x^{p^m} - y^{p^m} = p^m c$, and for every $n \ge 0$ there is
-$c \in \mathfrak{a}$ with $x^n - y^n = n c$.
-
-The ring $A$ is not assumed to be torsion-free.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Lemma 25 (`integers-2024-A46-lem-25`). -/
-public theorem_wanted pow_sub_pow_mem_of_sub_mem {p : ℕ} [Fact p.Prime] {A : Type*} [CommRing A]
-    (hA : ∀ n : ℕ, ¬ p ∣ n → IsUnit (n : A)) {I : Ideal A} (hI : IsDividedPowerIdeal I)
-    {x y : A} (hxy : x - y ∈ I) :
-    (∀ m : ℕ, ∃ c ∈ I, x ^ p ^ m - y ^ p ^ m = (p : A) ^ m * c) ∧
-      ∀ n : ℕ, ∃ c ∈ I, x ^ n - y ^ n = (n : A) * c
-
-/-- **Congruence of products over a partition with multiplicities divisible by $p^v$.** Let $p$
-be a prime, $A$ a commutative ring and $\mathfrak{a}$ a divided-power ideal of $A$. Let
-$f, g : \mathbb{N} \to A$ satisfy $f_n - g_n \in \mathfrak{a}$ for every $n \ge 1$. For a
-partition $\lambda = (\lambda_1, \dots, \lambda_k)$ of a natural number $m$, write
-$f_\lambda = f_{\lambda_1} \cdots f_{\lambda_k}$ and
-$g_\lambda = g_{\lambda_1} \cdots g_{\lambda_k}$. If $v$ is a natural number such that every part
-of $\lambda$ occurs a multiple of $p^v$ times, then $f_\lambda - g_\lambda = p^v c$ for some
-$c \in \mathfrak{a}$, that is, $f_\lambda \equiv g_\lambda \bmod p^v \mathfrak{a}$.
-
-The paper takes $v = v_p(\lambda) = \min_i v_p(\lambda_i)$, which is false: for $p = 2$,
-$\lambda = (2)$, $A = \mathbb{Z}_{(2)}$, $\mathfrak{a} = (2)$, $f_n = e_n(X^2 + 2)$ and
-$g_n = e_n(X^2)$, where $e_n(P)$ is the $n$-th elementary symmetric function of the roots of $P$,
-$f_n \equiv g_n \bmod 2$ for all $n$ but $f_2 - g_2 = 2 \notin 4\mathbb{Z}_{(2)}$. The paper's
-proof writes $\lambda = \mu^{p^v}$ in the partition monoid, which uses the multiplicity condition
-stated here. The paper's symmetric functions are abstracted to arbitrary sequences $f, g$, as the
-statement only uses their values.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 26 (`integers-2024-A46-cor-26`). -/
-public theorem_wanted multiset_prod_sub_prod_mem_of_count_dvd {p : ℕ} [Fact p.Prime]
-    {A : Type*} [CommRing A] {I : Ideal A} (hI : IsDividedPowerIdeal I) (f g : ℕ → A)
-    (hfg : ∀ n, 1 ≤ n → f n - g n ∈ I) {n : ℕ} (l : n.Partition) {v : ℕ}
-    (hv : ∀ a ∈ l.parts, p ^ v ∣ l.parts.count a) :
-    ∃ c ∈ I, (l.parts.map f).prod - (l.parts.map g).prod = (p : A) ^ v * c
 
 /-- **Möbius sum over the divisors prime to a given prime.** Let $p$ be a prime, $\mu$ the Möbius
 function and $n \ge 1$. The sum of $\mu(d)$ over the divisors $d$ of $n$ with $p \nmid d$ is $1$ if

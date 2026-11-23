@@ -67,7 +67,8 @@ with $B_1 = -\tfrac12$. For every positive integer $n$,
 $$\sum_{j=1}^{n} \left(\binom{n}{j} + 1\right) \frac{B_j}{j} \left(1 - 2^j\right) = 1.$$
 
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, Corollary 2, <https://arxiv.org/abs/2602.03440>.
+Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 2,
+equation (14).
 -/
 public theorem sum_bernoulli_one_sub_two_pow (n : ℕ) (hn : 0 < n) :
     (∑ j ∈ Finset.Icc 1 n,
