@@ -83,9 +83,15 @@ variable (P : YonedaReplacementDiagram O L J R S U Q)
 theorem_wanted native_all_perfect_tests_rhom_comparison (x y : Q.category) :
   QuasiIso (allPerfectTestRHomLeg O L J R S U Q P x y)
 
-/-- The actual enriched replacement functor realizes the all-perfect-test derived Yoneda equivalence. -/
-theorem_wanted native_all_perfect_tests_yoneda_quasi_equivalence :
-  P.functor.IsQuasiEquivalence
+/-- Essential surjectivity of the derived Yoneda functor onto the modules with `u`-small
+cohomology; with `native_all_perfect_tests_rhom_comparison` (full faithfulness) this is the
+all-perfect-test derived Yoneda equivalence onto those modules. The whole module category over
+`LargeScalar A` is not reached: it contains `u+1`-large modules (`HasSmallCohomology`). -/
+theorem_wanted native_all_perfect_tests_yoneda_small_essential_image
+    (M : DGDerivedModules (LargeScalar T.ring) (perfectDGCategory O L J R S))
+    (_hM : HasSmallCohomology O L J R S M) :
+  ∃ x : Q.category, Nonempty (DGHomotopyCategory.of (LargeScalar T.ring) (P.functor.obj x) ≅
+    DGHomotopyCategory.of (LargeScalar T.ring) M)
 
 /-- Proper flat source geometry makes every absolute perfect complex pseudo-perfect on every actual test. -/
 theorem_wanted native_proper_perfect_is_pseudo_perfect

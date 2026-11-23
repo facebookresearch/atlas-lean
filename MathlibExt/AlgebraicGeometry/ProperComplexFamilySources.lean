@@ -103,8 +103,10 @@ structure PseudoCoherentResolution (B : CommRingCat.{u}) (K : CochainComplex (Mo
   augmentation : complex ⟶ K
   quasiIso : QuasiIso augmentation
 
-/-- Tor is computed by the actual chart scalar restriction of that source resolution and native tensor with M. -/
-def relativeTorComplex {A B : CommRingCat.{u}} (α : A ⟶ B)
+/-- The ordinary tensor product with `M` of the scalar restriction of the resolution. It computes
+the relative Tor complex `K ⊗ᴸ_A M` when `α` is flat (as in `IsCanonicalRelativePerfect`): the
+restriction of a complex of projective `B`-modules is then a complex of flat `A`-modules. -/
+def restrictedTensorComplex {A B : CommRingCat.{u}} (α : A ⟶ B)
     {K : CochainComplex (ModuleCat.{u} B) ℤ} (R : PseudoCoherentResolution B K)
     (M : ModuleCat.{u} A) : CochainComplex (ModuleCat.{u} A) ℤ :=
   ((tensorRight M).mapHomologicalComplex (.up ℤ)).obj
@@ -116,7 +118,7 @@ def IsCanonicalRelativePerfect {A B : CommRingCat.{u}} (α : A ⟶ B)
   ∃ R : PseudoCoherentResolution B K, ∃ lower upper : ℤ,
     ∀ (M : ModuleCat.{u} A) (i : ℤ), i < lower ∨ upper < i →
       IsZero ((HomologicalComplex.homologyFunctor (ModuleCat.{u} A) (.up ℤ) i).obj
-        (relativeTorComplex α R M))
+        (restrictedTensorComplex α R M))
 
 /-- A bounded relative-perfect affine presentation retains the actual A-action and pseudo-coherence over B. -/
 structure RelativePerfectComplex {A B : CommRingCat.{u}} (α : A ⟶ B) where

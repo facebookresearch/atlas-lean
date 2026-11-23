@@ -10,6 +10,7 @@ module
 import MathlibExt.AlgebraicGeometry.AffineSquareZeroCotangentClasses
 import Mathlib.Algebra.TrivSqZeroExt.Basic
 import Mathlib.Tactic.NormNum
+import Mathlib.Algebra.Homology.Single
 
 /-!
 The coefficient is the actual kernel of Q plus Q to Q. Multiplication
@@ -18,7 +19,7 @@ the lift's nilpotent part7. The extension-class target is in degree -1.
 -/
 
 noncomputable section
-open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.AlgebraicGeometry
+open _root_.CategoryTheory _root_.CategoryTheory.Limits
 open MathlibExt.AlgebraicGeometry.AffineSquareZeroCotangentClasses
 
 private abbrev Dual := TrivSqZeroExt ℚ ℚ

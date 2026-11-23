@@ -89,13 +89,6 @@ def_wanted native_fibre_source_frame [IsNoetherianRing k] (X Y T : DerivedStack 
     (lt : IsLocallyOfFinitePresentationStack T) :
     FibreSourceFrame (U := U) (R := R) (L := L) (D := D) (NC := NC) Z n
 
-/-- Realize the fixed entire cochain-homotopy coefficient by its native DK edge. -/
-def_wanted native_linear_closing_path {A B : GlobalComplex k} (a b : A ⟶ B)
-    (h : CochainComplex.HomComplex.Cochain A B (-1))
-    (dh : CochainComplex.HomComplex.δ (-1) 0 h =
-      CochainComplex.HomComplex.Cochain.ofHom b - CochainComplex.HomComplex.Cochain.ofHom a)
-    (ω : ((realize k).obj A) _⦋0⦌) : LinearPath a b h dh ω
-
 /-- Realize the exact closed NC cochain h+u-j-s0(left), with the native form degree n-1. -/
 def_wanted native_residue_closed_vertex {X : Prestack k} {F : GlobalNCModel D 2 NC X}
     {n : ℤ} (P : ResiduePaths F n) : ResidueClosedFormSource P

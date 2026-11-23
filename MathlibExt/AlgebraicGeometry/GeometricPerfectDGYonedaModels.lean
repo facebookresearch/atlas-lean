@@ -79,6 +79,15 @@ theorem restrictedYonedaFunctor_obj (E : qcohDGCategory O L J R S) :
     (restrictedYonedaFunctor O L J R S U).obj E = allPerfectTestsYoneda O L J R S E :=
   U.object_eq ((dgYoneda (LargeScalar A)).obj E)
 
+/-- A derived module whose cohomology at every perfect test is `u`-small. Geometric Yoneda modules
+have this property (their values are computed by `u`-small affine presentations), while the module
+category over `LargeScalar A` also contains `u+1`-large modules, e.g. a direct sum of
+representables indexed by `Cardinal.{u}`; these are not in the essential image. -/
+def HasSmallCohomology (M : DGDerivedModules (LargeScalar A) (perfectDGCategory O L J R S)) :
+    Prop :=
+  ∀ (E : perfectDGCategory O L J R S) (n : ℤ),
+    Small.{u} ((M.obj.toEnrichedFunctor.obj (op E)).homology n)
+
 variable (Q : CofibrantReplacement (qcohDGCategory O L J R S))
 
 /-- The actual indexed source functor, using the given native DG augmentation. -/

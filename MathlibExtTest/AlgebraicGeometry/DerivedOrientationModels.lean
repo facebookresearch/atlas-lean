@@ -63,4 +63,3 @@ example (X : Cochains ℚ) (U : UnitTensorModel X (-1)) (x : X.X 1) :
         (CochainComplex.shiftFunctorObjXIso X (-1) 2 1 (by omega)).hom).hom
       (TensorProduct.tmul ℚ x (shiftedUnit (-1) (1 : ℚ)))) = -x := by
   simpa using U.normalized 1 x (1 : ℚ)
-
