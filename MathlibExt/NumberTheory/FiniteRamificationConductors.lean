@@ -43,9 +43,11 @@ powers of its maximal ideal. Conductors use Mathlib's invariant subspaces
 finite, so the decomposition group and its lower groups are finite and the
 weights are ratios of positive integers.
 
-A bound N is supplied with the actual proposition G_N=1. Existing public
-ramification theory produces such bounds; no new existence goal is made
-here. The completed independence theorem makes the finite sums intrinsic.
+The conductors take a certified bound: an index N with the actual proposition
+G_N=1, beyond which every summand vanishes. Existing public ramification theory
+produces such bounds; no new existence goal is made here. The completed
+independence theorems show that the conductors do not depend on the bound; the
+raw partial sums over i < N for an arbitrary N are named separately.
 The remaining integrality theorem concerns arbitrary finite-dimensional
 rational adic representations, beyond the covered one-dimensional
 abelian Artin-conductor formula.
@@ -103,15 +105,17 @@ theorem lowerGroup_eq_bot_of_bound (N : ℕ) (hN : lowerGroup K L N = ⊥)
 section Conductors
 
 variable (ell : ℕ) [Fact ell.Prime] (V : Type w) [AddCommGroup V] [Module ℚ_[ell] V]
-  [Module.Finite ℚ_[ell] V] (ρ : Representation ℚ_[ell] (DecompositionGroup K L) V)
+  (ρ : Representation ℚ_[ell] (DecompositionGroup K L) V)
 
 /-- Codimension of the subspace fixed by the displayed ramification subgroup, using
-Mathlib's invariants of the restricted representation. -/
-def invariantCodimension (H : Subgroup (DecompositionGroup K L)) : ℕ :=
+Mathlib's invariants of the restricted representation. It is defined only for a
+finite-dimensional representation, where it is a genuine codimension. -/
+def invariantCodimension [Module.Finite ℚ_[ell] V] (H : Subgroup (DecompositionGroup K L)) : ℕ :=
   Module.finrank ℚ_[ell] V -
     Module.finrank ℚ_[ell] (Representation.invariants (ρ.comp H.subtype))
 
-omit [Module.Finite ℚ_[ell] V] in
+variable [Module.Finite ℚ_[ell] V]
+
 theorem invariantCodimension_bot : invariantCodimension K L ell V ρ ⊥ = 0 := by
   have : Representation.invariants (ρ.comp (⊥ : Subgroup (DecompositionGroup K L)).subtype) =
       ⊤ := by
@@ -129,17 +133,28 @@ def conductorSummand [FiniteDimensional K L] (i : ℕ) : ℚ :=
   (Nat.card (lowerGroup K L i) : ℚ) / (Nat.card (lowerGroup K L 0) : ℚ) *
     invariantCodimension K L ell V ρ (lowerGroup K L i)
 
-/-- Artin conductor, including the inertia contribution at i=0. -/
-def artinConductor [FiniteDimensional K L] (N : ℕ) : ℚ :=
+/-- The partial Artin sum over the indices `i < N`, including the inertia contribution at
+`i = 0`. It is the Artin conductor only when `G_N = 1` (`artinConductor`). -/
+def partialArtinSum [FiniteDimensional K L] (N : ℕ) : ℚ :=
   ∑ i ∈ Finset.range N, conductorSummand K L ell V ρ i
 
-/-- Swan conductor, omitting the inertia term i=0. -/
-def swanConductor [FiniteDimensional K L] (N : ℕ) : ℚ :=
+/-- The partial Swan sum over the indices `0 < i < N`, omitting the inertia term `i = 0`. It is
+the Swan conductor only when `G_N = 1` (`swanConductor`). -/
+def partialSwanSum [FiniteDimensional K L] (N : ℕ) : ℚ :=
   ∑ i ∈ Finset.range N, if i = 0 then 0 else conductorSummand K L ell V ρ i
+
+/-- The Artin conductor, computed from a certified ramification bound `N` with `G_N = 1`; it does
+not depend on the bound (`artinConductor_eq`). -/
+def artinConductor [FiniteDimensional K L] (N : {N : ℕ // lowerGroup K L N = ⊥}) : ℚ :=
+  partialArtinSum K L ell V ρ N
+
+/-- The Swan conductor, computed from a certified ramification bound `N` with `G_N = 1`; it does
+not depend on the bound (`swanConductor_eq`). -/
+def swanConductor [FiniteDimensional K L] (N : {N : ℕ // lowerGroup K L N = ⊥}) : ℚ :=
+  partialSwanSum K L ell V ρ N
 
 variable [FiniteDimensional K L]
 
-omit [Module.Finite ℚ_[ell] V] in
 /-- The `i = 0` summand has weight `#G_0/#G_0 = 1`: it is the codimension of the inertia
 invariants. -/
 theorem conductorSummand_zero :
@@ -147,54 +162,63 @@ theorem conductorSummand_zero :
   have : (Nat.card (lowerGroup K L 0) : ℚ) ≠ 0 := by exact_mod_cast Nat.card_pos.ne'
   simp [conductorSummand, this]
 
-omit [Module.Finite ℚ_[ell] V] in
 theorem conductorSummand_eq_zero_of_bound (N : ℕ) (hN : lowerGroup K L N = ⊥)
     (i : ℕ) (hi : N ≤ i) : conductorSummand K L ell V ρ i = 0 := by
   unfold conductorSummand
   rw [lowerGroup_eq_bot_of_bound K L N hN i hi, invariantCodimension_bot]
   simp
 
-omit [Module.Finite ℚ_[ell] V] in
-/-- The Artin sum is the Swan sum plus the codimension of the inertia invariants. -/
-theorem artinConductor_eq_swanConductor_add (N : ℕ) (hN : 0 < N) :
-    artinConductor K L ell V ρ N = swanConductor K L ell V ρ N +
+/-- For a positive cutoff, the partial Artin sum is the partial Swan sum plus the codimension
+of the inertia invariants. -/
+theorem partialArtinSum_eq_partialSwanSum_add (N : ℕ) (hN : 0 < N) :
+    partialArtinSum K L ell V ρ N = partialSwanSum K L ell V ρ N +
       invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
   obtain ⟨M, rfl⟩ : ∃ M, N = M + 1 := ⟨N - 1, by omega⟩
-  simp [artinConductor, swanConductor, Finset.sum_range_succ', conductorSummand_zero]
+  simp [partialArtinSum, partialSwanSum, Finset.sum_range_succ', conductorSummand_zero]
 
-omit [Module.Finite ℚ_[ell] V] in
-/-- Once actual ramification vanishes, extending the Artin sum changes nothing. -/
-theorem artinConductor_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
-    (hNM : N ≤ M) : artinConductor K L ell V ρ N = artinConductor K L ell V ρ M := by
-  unfold artinConductor
+/-- Once actual ramification vanishes, extending the partial Artin sum changes nothing. -/
+theorem partialArtinSum_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
+    (hNM : N ≤ M) : partialArtinSum K L ell V ρ N = partialArtinSum K L ell V ρ M := by
+  unfold partialArtinSum
   apply Finset.sum_subset (Finset.range_mono hNM)
   intro i _ hi
   exact conductorSummand_eq_zero_of_bound K L ell V ρ N hN i
     (by simpa using hi)
 
-omit [Module.Finite ℚ_[ell] V] in
-/-- The Artin sum is independent of the actual finite ramification bound. -/
-theorem artinConductor_independent (N M : ℕ) (hN : lowerGroup K L N = ⊥)
-    (hM : lowerGroup K L M = ⊥) : artinConductor K L ell V ρ N =
-      artinConductor K L ell V ρ M := by
-  rcases le_total N M with h | h
-  · exact artinConductor_eq_of_le_bound K L ell V ρ N M hN h
-  · exact (artinConductor_eq_of_le_bound K L ell V ρ M N hM h).symm
+/-- Once actual ramification vanishes, extending the partial Swan sum changes nothing. -/
+theorem partialSwanSum_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
+    (hNM : N ≤ M) : partialSwanSum K L ell V ρ N = partialSwanSum K L ell V ρ M := by
+  unfold partialSwanSum
+  apply Finset.sum_subset (Finset.range_mono hNM)
+  intro i _ hi
+  simp [conductorSummand_eq_zero_of_bound K L ell V ρ N hN i (by simpa using hi)]
 
-omit [Module.Finite ℚ_[ell] V] in
-/-- The Swan sum is independent of the actual finite ramification bound. -/
-theorem swanConductor_independent (N M : ℕ) (hN : lowerGroup K L N = ⊥)
-    (hM : lowerGroup K L M = ⊥) : swanConductor K L ell V ρ N =
-      swanConductor K L ell V ρ M := by
-  have hle (a b : ℕ) (ha : lowerGroup K L a = ⊥) (hab : a ≤ b) :
-      swanConductor K L ell V ρ a = swanConductor K L ell V ρ b := by
-    unfold swanConductor
-    apply Finset.sum_subset (Finset.range_mono hab)
-    intro i _ hi
-    simp [conductorSummand_eq_zero_of_bound K L ell V ρ a ha i (by simpa using hi)]
-  rcases le_total N M with h | h
-  · exact hle N M hN h
-  · exact (hle M N hM h).symm
+/-- The Artin conductor is independent of the certified ramification bound. -/
+theorem artinConductor_eq (N M : {N : ℕ // lowerGroup K L N = ⊥}) :
+    artinConductor K L ell V ρ N = artinConductor K L ell V ρ M := by
+  unfold artinConductor
+  rcases le_total N.1 M.1 with h | h
+  · exact partialArtinSum_eq_of_le_bound K L ell V ρ N M N.2 h
+  · exact (partialArtinSum_eq_of_le_bound K L ell V ρ M N M.2 h).symm
+
+/-- The Swan conductor is independent of the certified ramification bound. -/
+theorem swanConductor_eq (N M : {N : ℕ // lowerGroup K L N = ⊥}) :
+    swanConductor K L ell V ρ N = swanConductor K L ell V ρ M := by
+  unfold swanConductor
+  rcases le_total N.1 M.1 with h | h
+  · exact partialSwanSum_eq_of_le_bound K L ell V ρ N M N.2 h
+  · exact (partialSwanSum_eq_of_le_bound K L ell V ρ M N M.2 h).symm
+
+/-- The Artin conductor is the Swan conductor plus the codimension of the inertia
+invariants. -/
+theorem artinConductor_eq_swanConductor_add (N : {N : ℕ // lowerGroup K L N = ⊥}) :
+    artinConductor K L ell V ρ N = swanConductor K L ell V ρ N +
+      invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
+  rcases Nat.eq_zero_or_pos N.1 with h | h
+  · have h0 : lowerGroup K L 0 = ⊥ := by simpa [h] using N.2
+    simp [artinConductor, swanConductor, partialArtinSum, partialSwanSum, h, h0,
+      invariantCodimension_bot]
+  · exact partialArtinSum_eq_partialSwanSum_add K L ell V ρ N h
 
 end Conductors
 

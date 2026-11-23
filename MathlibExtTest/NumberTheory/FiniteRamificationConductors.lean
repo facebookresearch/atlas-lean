@@ -28,11 +28,20 @@ example : lowerGroup K L (-1) = ⊤ :=
 example : lowerGroup K L 2 ≤ lowerGroup K L 1 :=
   lowerGroup_antitone K L (by norm_num)
 
-/-! ### Conductors -/
+/-! ### Codimensions, partial sums and conductors -/
 
 variable [FiniteDimensional K L] (ell : ℕ) [Fact ell.Prime] (V : Type*) [AddCommGroup V]
   [Module ℚ_[ell] V] [Module.Finite ℚ_[ell] V]
   (ρ : Representation ℚ_[ell] (DecompositionGroup K L) V)
+
+-- The codimension (hence every conductor) is only defined for finite-dimensional
+-- representations: without `Module.Finite`, `finrank` would collapse to `0`.
+set_option linter.unusedVariables false in
+example (W : Type) [AddCommGroup W] [Module ℚ_[ell] W]
+    (σ : Representation ℚ_[ell] (DecompositionGroup K L) W)
+    (H : Subgroup (DecompositionGroup K L)) : True := by
+  fail_if_success have := invariantCodimension K L ell W σ H
+  trivial
 
 -- The trivial representation has no ramification codimension, so both conductors vanish.
 example (H : Subgroup (DecompositionGroup K L)) :
@@ -44,46 +53,49 @@ example (H : Subgroup (DecompositionGroup K L)) :
     simp [Representation.mem_invariants]
   rw [invariantCodimension, this, finrank_top, Nat.sub_self]
 
-example (N : ℕ) :
+example (N : {N : ℕ // lowerGroup K L N = ⊥}) :
     artinConductor K L ell V
       (Representation.trivial ℚ_[ell] (DecompositionGroup K L) V) N = 0 := by
-  have (H : Subgroup (DecompositionGroup K L)) : Representation.invariants
-      ((Representation.trivial ℚ_[ell] (DecompositionGroup K L) V).comp H.subtype) = ⊤ := by
-    ext v
-    simp [Representation.mem_invariants]
   have hc (H : Subgroup (DecompositionGroup K L)) : invariantCodimension K L ell V
       (Representation.trivial ℚ_[ell] (DecompositionGroup K L) V) H = 0 := by
+    have : Representation.invariants
+        ((Representation.trivial ℚ_[ell] (DecompositionGroup K L) V).comp H.subtype) = ⊤ := by
+      ext v
+      simp [Representation.mem_invariants]
     rw [invariantCodimension, this, finrank_top, Nat.sub_self]
-  simp [artinConductor, conductorSummand, hc]
+  simp [artinConductor, partialArtinSum, conductorSummand, hc]
 
--- The Artin sum includes the inertia term `i = 0` with weight `#G₀/#G₀ = 1`, while the Swan
--- sum omits it.
-example : artinConductor K L ell V ρ 1 = invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
-  simp [artinConductor, conductorSummand_zero]
+-- The partial Artin sum includes the inertia term `i = 0` with weight `#G₀/#G₀ = 1`, while the
+-- partial Swan sum omits it.
+example : partialArtinSum K L ell V ρ 1 =
+    invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
+  simp [partialArtinSum, conductorSummand_zero]
 
-example : swanConductor K L ell V ρ 1 = 0 := by
-  simp [swanConductor]
+example : partialSwanSum K L ell V ρ 1 = 0 := by
+  simp [partialSwanSum]
 
--- The sum up to `N` stops before index `N`: the term `i = N` is not included.
-example (N : ℕ) : artinConductor K L ell V ρ (N + 1) =
-    artinConductor K L ell V ρ N + conductorSummand K L ell V ρ N := by
-  simp [artinConductor, Finset.sum_range_succ]
+-- The partial sum up to `N` stops before index `N`.
+example (N : ℕ) : partialArtinSum K L ell V ρ (N + 1) =
+    partialArtinSum K L ell V ρ N + conductorSummand K L ell V ρ N := by
+  simp [partialArtinSum, Finset.sum_range_succ]
 
--- For every positive bound, Artin = Swan + the codimension of the inertia invariants.
-example (N : ℕ) : artinConductor K L ell V ρ (N + 1) =
-    swanConductor K L ell V ρ (N + 1) + invariantCodimension K L ell V ρ (lowerGroup K L 0) :=
-  artinConductor_eq_swanConductor_add K L ell V ρ (N + 1) N.succ_pos
+-- Artin = Swan + the codimension of the inertia invariants, for every certified bound.
+example (N : {N : ℕ // lowerGroup K L N = ⊥}) :
+    artinConductor K L ell V ρ N =
+      swanConductor K L ell V ρ N + invariantCodimension K L ell V ρ (lowerGroup K L 0) :=
+  artinConductor_eq_swanConductor_add K L ell V ρ N
 
--- Unramified case: when `G₀ = 1` both sums vanish for every bound.
-example (hG : lowerGroup K L 0 = ⊥) (N : ℕ) : artinConductor K L ell V ρ N = 0 := by
-  rw [artinConductor_independent K L ell V ρ N 0 (lowerGroup_eq_bot_of_bound K L 0 hG N
-    (Nat.zero_le N)) hG]
-  simp [artinConductor]
+-- Unramified case: when `G₀ = 1`, the bound `0` is certified and both conductors vanish.
+example (hG : lowerGroup K L 0 = ⊥) : artinConductor K L ell V ρ ⟨0, hG⟩ = 0 := by
+  simp [artinConductor, partialArtinSum]
 
--- Bound independence: the sums do not change past a terminating index.
+example (hG : lowerGroup K L 0 = ⊥) : swanConductor K L ell V ρ ⟨0, hG⟩ = 0 := by
+  simp [swanConductor, partialSwanSum]
+
+-- Bound independence: any two certified bounds give the same conductors.
 example (N : ℕ) (hN : lowerGroup K L N = ⊥) :
-    swanConductor K L ell V ρ N = swanConductor K L ell V ρ (N + 5) :=
-  swanConductor_independent K L ell V ρ N (N + 5) hN
-    (lowerGroup_eq_bot_of_bound K L N hN (N + 5) (by omega))
+    swanConductor K L ell V ρ ⟨N, hN⟩ = swanConductor K L ell V ρ ⟨N + 5,
+      lowerGroup_eq_bot_of_bound K L N hN (N + 5) (by omega)⟩ :=
+  swanConductor_eq K L ell V ρ _ _
 
 end MathlibExtTest.NumberTheory.FiniteRamificationConductors

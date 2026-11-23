@@ -51,7 +51,7 @@ public theorem_wanted finiteImage_artin_swan_integral
     (V : Type w) [AddCommGroup V] [Module ℚ_[ell] V] [Module.Finite ℚ_[ell] V]
     (ρ : Representation ℚ_[ell] (DecompositionGroup K L) V)
     (N : ℕ) (finiteRamification : lowerGroup K L N = ⊥) :
-    (∃ a : ℕ, artinConductor K L ell V ρ N = a) ∧
-      ∃ s : ℕ, swanConductor K L ell V ρ N = s
+    (∃ a : ℕ, artinConductor K L ell V ρ ⟨N, finiteRamification⟩ = a) ∧
+      ∃ s : ℕ, swanConductor K L ell V ρ ⟨N, finiteRamification⟩ = s
 
 end WantedExt.AlgebraicGeometry.RamificationConductors
