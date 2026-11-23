@@ -10651,6 +10651,7 @@
   "MathlibExt/GameTheory/BlackwellApproachability": {"to": "GameTheory/noncooperative-games", "title": "Blackwell approachability"},
   "MathlibExt/GameTheory/BondarevaShapley": {"to": "GameTheory/cooperative-games", "title": "Bondareva–Shapley theorem"},
   "MathlibExt/GameTheory/BoutonNim": {"to": "GameTheory/combinatorial-games", "title": "Nim"},
+  "MathlibExt/GameTheory/ChocolateBarNSProperty": {"to": "GameTheory/combinatorial-games", "title": "Chocolate bar games"},
   "MathlibExt/GameTheory/CorrelatedEquilibrium": {"to": "GameTheory/noncooperative-games", "title": "Correlated equilibria"},
   "MathlibExt/GameTheory/ImpartialAcyclicGame": {"to": "GameTheory/combinatorial-games", "title": "Sprague–Grundy theorem"},
   "MathlibExt/GameTheory/InteractiveEpistemology/AgreementTheorem": {"to": "GameTheory/noncooperative-games", "title": "Common knowledge and the agreement theorem"},
