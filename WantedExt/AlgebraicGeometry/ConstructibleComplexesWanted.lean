@@ -15,7 +15,8 @@ public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 # Closure, preservation and coefficients for constructible complexes
 
 The requests use actual sheaves, kernels/cokernels, algebraic stratifications
-and derived functors. No perverse-theory or decomposition request is included.
+and derived functors. The perverse t-structure is requested separately, in
+`WantedExt/AlgebraicGeometry/PerverseSheavesWanted.lean`.
 Sources: Dimca, *Sheaves in Topology*, Chapters 2–4; de Cataldo–Migliorini,
 https://arxiv.org/abs/0712.0349, §1.5.
 -/
