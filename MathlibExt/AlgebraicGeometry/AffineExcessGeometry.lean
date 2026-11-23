@@ -113,8 +113,9 @@ instance quotientMorphismClosed (A : Type) [CommRing A] [Algebra ℂ A]
 
 variable (S : Type) [CommRing S] [Algebra ℂ S] (E : Type) [AddCommGroup E] [Module S E]
 
-/-- The total space `Spec (Sym_S E^∨)` of the vector bundle given by an
-`S`-module `E`. -/
+/-- The affine scheme `Spec (Sym_S E^∨)` of an `S`-module `E`. For a finite
+projective `E` this is the total space of the vector bundle of `E`; for other
+modules it need not be (a torsion module has zero dual). -/
 def bundleSpace : Over (Spec (.of ℂ)) :=
   Over.mk (Spec.map (CommRingCat.ofHom (algebraMap S (SymmetricAlgebra S (Module.Dual S E)))) ≫
     (affine S).hom)

@@ -20,8 +20,9 @@ cotangent base-change map, and its dual normal space and zero section are
 constructed. Euler and Gysin operators use the actual compact-support
 duality and the same selected purity family.
 
-The request constructs a compatible family realizing the excess formula;
-it does not assume the desired equation as a theorem hypothesis. This is an
+The request constructs one purity family, chosen once for all smooth
+varieties, realizing the excess formula on every such square; it does not
+assume the desired equation as a theorem hypothesis. This is an
 affine Betti bridge, and does not claim a full general lci bivariant theory.
 The generic algebraic formula already exists in AxiomMath/Stacks:
 https://github.com/AxiomMath/Stacks/blob/c496df0d9beea9deaeabcea8492605f9a0a2313b/StacksFrontier/AlgebraicGeometry/Chow/GysinLocalCompleteIntersection/BaseChangeExcessFormula.lean
@@ -38,14 +39,13 @@ open MathlibExt.AlgebraicGeometry
 open PerverseSheaves ComplexAnalytification CompactSupportBetti ProperBettiFunctoriality
 open AffineExcessBetti
 
-/-- Construct compatible smooth purities and the displayed Betti excess
-formula, with rank and dimensions supplied by the actual smooth normal space. -/
-public def_wanted compatible_excess (A B : Type) [CommRing A] [CommRing B]
-    [Algebra ℂ A] [Algebra ℂ B] [Algebra A B] [IsScalarTower ℂ A B] (I : Ideal A)
+/-- Construct one family of smooth purities for which the displayed Betti excess
+formula holds on every smooth affine excess square, with rank and dimensions
+supplied by the actual smooth normal space. -/
+public def_wanted compatible_excess
     (D : ∀ (X : ComplexScheme) [IsComplexVariety X], DualizingComplex (space X))
     (P : ∀ {X Y : ComplexScheme} [IsComplexVariety X] [IsComplexVariety Y]
-      (f : X ⟶ Y) [IsProper f.left], ProperPullback (spaceMap f))
-    (dx dx' c' e : ℕ) [SmoothExcessSquare A B I dx dx' c' e] :
-    ExcessPurities A B I D P dx dx' c' e
+      (f : X ⟶ Y) [IsProper f.left], ProperPullback (spaceMap f)) :
+    ExcessPurities D P
 
 end WantedExt.AlgebraicGeometry.BettiExcessIntersectionWanted

@@ -23,8 +23,10 @@ normal bundle, including a nonempty base.
 The Euler class is zero-section Gysin followed by pullback, using the same
 selected purity family as the other proper cohomological Gysin maps. Thus
 no Gysin map, excess bundle or top Chern class is an arbitrary operator field.
-`ExcessPurities` records the still-unconstructed compatible family and excess
-formula; no existence or global instance is claimed here.
+`ExcessFormula` is the excess formula on one square for a given purity
+family, and `ExcessPurities` is a single family, chosen once, satisfying it on
+every square, so that the Gysin maps on a scheme shared by two squares agree.
+No existence or global instance is claimed here.
 
 Reference: Fulton, *Intersection Theory*, Theorem 6.3 and §19.1; Stacks Tag
 0FV9. The already implemented generic algebraic formula is credited in
@@ -39,6 +41,8 @@ open MathlibExt.AlgebraicGeometry
 open ComplexAnalytification PerverseSheaves BettiRealization CompactSupportBetti
 open ProperBettiFunctoriality BettiFunctoriality BettiGysin AffineExcessGeometry
 attribute [local instance] HasDerivedCategory.standard
+
+section Square
 
 variable (A B : Type) [CommRing A] [CommRing B] [Algebra ℂ A] [Algebra ℂ B]
   [Algebra A B] [IsScalarTower ℂ A B] (I : Ideal A)
@@ -97,22 +101,36 @@ def euler (F : PureFamily D) : BettiRealization.Cohomology (space (affine (base 
         (F.iso _ dx') (F.iso _ (dx' + e)) 0
           (unitClass (space (affine (base A B I))))))
 
-/-- A purity family for which the excess intersection formula
-`g^* i_! a = j_!(e(E) ∪ g'^* a)` holds on the square. -/
-structure ExcessPurities where
-  /-- The purity family. -/
-  family : PureFamily D
-  /-- The excess intersection formula. -/
-  excess : ∀ (n : ℤ) (a : BettiRealization.Cohomology (space (affine (A ⧸ I))) n),
+/-- The excess intersection formula `g^* i_! a = j_!(e(E) ∪ g'^* a)` on the
+square, for the Gysin maps and Euler class of the purity family `F`. -/
+def ExcessFormula (F : PureFamily D) : Prop :=
+  ∀ (n : ℤ) (a : BettiRealization.Cohomology (space (affine (A ⧸ I))) n),
     cohomologyPullback (spaceMap (affineMap A B)) _
       (cohomologyPushforward (P (quotientMorphism A I))
         (D (affine (A ⧸ I))) (D (affine A)) dx (dx + (c' + e))
-        (family.iso _ dx) (family.iso _ (dx + (c' + e))) n a) =
+        (F.iso _ dx) (F.iso _ (dx + (c' + e))) n a) =
     BettiCycleRealization.cohomologyCast (by omega)
       (cohomologyPushforward (P (quotientMorphism B (extendedIdeal A B I)))
         (D (affine (base A B I))) (D (affine B)) dx' (dx' + c')
-        (family.iso _ dx') (family.iso _ (dx' + c')) (2 * e + n)
-        (cup _ (euler A B I D P dx dx' c' e family)
+        (F.iso _ dx') (F.iso _ (dx' + c')) (2 * e + n)
+        (cup _ (euler A B I D P dx dx' c' e F)
           (cohomologyPullback (spaceMap (quotientBaseMap A B I)) n a)))
+
+end Square
+
+variable
+  (D : ∀ (X : ComplexScheme) [IsComplexVariety X], DualizingComplex (space X))
+  (P : ∀ {X Y : ComplexScheme} [IsComplexVariety X] [IsComplexVariety Y]
+    (f : X ⟶ Y) [IsProper f.left], ProperPullback (spaceMap f))
+
+/-- One purity family, chosen once for all smooth complex varieties, for which
+the excess intersection formula holds on every smooth affine excess square. -/
+structure ExcessPurities where
+  /-- The purity family. -/
+  family : PureFamily D
+  /-- The excess intersection formula on every square. -/
+  excess : ∀ (A B : Type) [CommRing A] [CommRing B] [Algebra ℂ A] [Algebra ℂ B]
+    [Algebra A B] [IsScalarTower ℂ A B] (I : Ideal A) (dx dx' c' e : ℕ)
+    [SmoothExcessSquare A B I dx dx' c' e], ExcessFormula A B I D P dx dx' c' e family
 
 end MathlibExt.AlgebraicGeometry.AffineExcessBetti
