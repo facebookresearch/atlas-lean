@@ -149,7 +149,7 @@ lemma sampleVarUnbiased_nonneg (n : ℕ) (hn : 2 ≤ n) (x : Fin n → ℝ) :
   have h2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
   exact div_nonneg (Finset.sum_nonneg fun i _ => sq_nonneg _) (by linarith)
 
-/-- Constant samples have zero sample variance. -/
+/-- A nonempty constant sample (`n ≥ 1`) has zero sample variance. -/
 lemma sampleVarUnbiased_const (n : ℕ) (hn : n ≠ 0) (c : ℝ) (x : Fin n → ℝ)
     (h : ∀ i, x i = c) : sampleVarUnbiased x = 0 := by
   rw [sampleVarUnbiased_eq_sum_div, sampleMean_const n hn c x h,
@@ -171,7 +171,7 @@ noncomputable def sampleStdDev {n : ℕ} (x : Fin n → ℝ) : ℝ :=
 lemma sampleStdDev_nonneg {n : ℕ} (x : Fin n → ℝ) : 0 ≤ sampleStdDev x :=
   Real.sqrt_nonneg _
 
-/-- Constant samples have zero standard deviation. -/
+/-- A nonempty constant sample (`n ≥ 1`) has zero standard deviation. -/
 lemma sampleStdDev_const (n : ℕ) (hn : n ≠ 0) (c : ℝ) (x : Fin n → ℝ)
     (h : ∀ i, x i = c) : sampleStdDev x = 0 := by
   unfold sampleStdDev

@@ -312,7 +312,7 @@ lemma temp_pos {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (hx : x ∈ thermoDomain k) : 0 < temp F.S x :=
   one_div_pos.mpr (F.h_pos x hx)
 
-/-- Entropy is strictly increasing in `U` at fixed positive `V` and `N`: a
+/-- Entropy is strictly increasing in `U` on `U > 0` at fixed positive `V` and `N`: a
 consequence of `∂S/∂U > 0` and differentiability. -/
 lemma FundamentalRelation.strictMonoOn_energy {k : ℕ} (F : FundamentalRelation k)
     {V : ℝ} {N : Fin k → ℝ} (hV : 0 < V) (hN : ∀ i, 0 < N i) :

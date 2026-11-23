@@ -241,7 +241,8 @@ lemma hasDerivAt_zeroOrderSol (A0 k t : ℝ) :
   show HasDerivAt (fun s : ℝ => A0 - k * s) (-k) t
   exact hfinal
 
-/-- Uniqueness for the zero-order ODE `f' = -k` on `t ≥ 0`. -/
+/-- Uniqueness for the zero-order ODE: if `g' = -k` at every `t ≥ 0` and `g 0 = A0`, then
+`g t = A0 - k t` for every `t ≥ 0`. -/
 theorem zeroOrderSol_unique (A0 k : ℝ) (g : ℝ → ℝ)
     (hg : ∀ t : ℝ, 0 ≤ t → HasDerivAt g (-k) t) (hg0 : g 0 = A0)
     (t : ℝ) (ht : 0 ≤ t) : g t = zeroOrderSol A0 k t := by
@@ -675,12 +676,13 @@ lemma hasDerivAt_secondOrderABSolB (A0 B0 k t : ℝ)
   exact hfinal
 
 /-- By construction of `secondOrderABSolB`, the explicit pair keeps `[B] - [A] = [B]₀ - [A]₀`;
-`ab_conservation` proves this for every solution pair. -/
+`ab_conservation` proves it for every solution of the rate equations on `t ≥ 0`. -/
 lemma secondOrderABSol_conserved (A0 B0 k t : ℝ) :
     secondOrderABSolB A0 B0 k t - secondOrderABSolA A0 B0 k t = B0 - A0 := by
   simp only [secondOrderABSolB]; ring
 
-/-- Any `A + B` solution pair conserves `[B] - [A]`. -/
+/-- If `gA` and `gB` satisfy the `A + B` rate equations `gA' = gB' = -k gA gB` at every
+`t ≥ 0`, with `gA 0 = A0` and `gB 0 = B0`, then `gB t - gA t = B0 - A0` for every `t ≥ 0`. -/
 lemma ab_conservation (A0 B0 k : ℝ) (gA gB : ℝ → ℝ)
     (hgA : ∀ t : ℝ, 0 ≤ t → HasDerivAt gA (-k * gA t * gB t) t)
     (hgB : ∀ t : ℝ, 0 ≤ t → HasDerivAt gB (-k * gA t * gB t) t)
