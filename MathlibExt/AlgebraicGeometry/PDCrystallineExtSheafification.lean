@@ -7,16 +7,21 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.AlgebraicGeometry.PDCrystallineLocalExtModules
+public import MathlibExt.AlgebraicGeometry.GeometricPDCrystallineSheaves
 public import MathlibExt.AlgebraicGeometry.GeometricPDModuleCrystals
+public import MathlibExt.CategoryTheory.RingedSliceExtModules
 public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Sheafification
 
 /-!
 # The fixed crystalline Ext coefficient module
 
 The module is the native sheafification of the original slice-Ext
-module presheaf. Its coefficients already act by target multiplication
-on actual derived Ext classes. Restriction to the actual thickening-ring
+module presheaf: at a PD test `P` it is degree-`n` Ext from the restriction of `F` to the
+restriction of the structure sheaf on the slice site over `P`, with restrictions given by the
+exact slice pullbacks. This presheaf is the generic ringed-slice construction
+`MathlibExt.CategoryTheory.RingedSliceExtModules.localExtModulePresheaf` on the nilpotent PD
+site, the one also used on the full PD basis. Its coefficients already act by target
+multiplication on actual derived Ext classes. Restriction to the actual thickening-ring
 presheaf uses the original ring-sheafification unit. No module carrier or
 scalar action is chosen by the later crystal realization request.
 
@@ -31,7 +36,6 @@ namespace MathlibExt.AlgebraicGeometry.PDCrystallineExtSheafification
 
 open _root_.CategoryTheory _root_.CategoryTheory.Limits Opposite
 open GeometricPDCrystallineTests GeometricPDCrystallineSheaves
-open PDCrystallineLocalExtModules
 
 variable (p : ℕ) [Fact p.Prime] (A : PDBase) (S : Over A.reduction)
 
@@ -49,6 +53,12 @@ def coefficientUnit : structureRingPresheaf p A S ⋙ forget₂ CommRingCat.{1} 
 
 variable (F : CoefficientSheaves p A S)
 
+/-- The presheaf of local Ext modules over the structure ring: at a PD test `P`, degree-`n` Ext
+from `F` to the structure sheaf on the slice site over `P`, acted on by target multiplication. -/
+abbrev localExtModulePresheaf (n : ℕ) :=
+  MathlibExt.CategoryTheory.RingedSliceExtModules.localExtModulePresheaf
+    (topology p A S) (structureRingSheaf p A S) F n
+
 /-- Native module sheafification of the original local Ext values and scalar action. -/
 def moduleSheaf (n : ℕ) : SheafOfModules.{1} (coefficientRing p A S) :=
   (PresheafOfModules.sheafification (𝟙 (coefficientRing p A S).obj)).obj
@@ -63,6 +73,7 @@ def nativeModule (n : ℕ) : GeometricPDModuleCrystals.Modules p A S :=
 def additiveSheaf (n : ℕ) : CoefficientSheaves p A S :=
   (SheafOfModules.toSheaf (coefficientRing p A S)).obj (moduleSheaf p A S F n)
 
+omit [Fact p.Prime] in
 /-- Restriction of coefficients changes no additive section or restriction map. -/
 theorem nativeModule_isSheaf (n : ℕ) : Presheaf.IsSheaf (topology p A S)
     (nativeModule p A S F n).presheaf := by
