@@ -16,9 +16,8 @@ public import MathlibExt.CategoryTheory.Waldhausen.Basic
 /-!
 # Finite Waldhausen stages from `Ar[n]`
 
-Small Prop-valued foundation for the finite stages of Waldhausen's
-S-construction, using the actual indexing category
-`Ar[n] = Arrow (Fin (n + 1))`.
+Prop-valued finite stages of the S-construction on a Waldhausen structure
+without gluing, using the indexing category `Ar[n] = Arrow (Fin (n + 1))`.
 
 An object of `Ar[n]` is an interval `(i, j)` with `i ≤ j`.
 A morphism is a commuting square in `Fin (n + 1)`.
@@ -43,7 +42,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Finite Waldhausen indexing category `Ar[n] = Arrow (Fin (n + 1))`.
 

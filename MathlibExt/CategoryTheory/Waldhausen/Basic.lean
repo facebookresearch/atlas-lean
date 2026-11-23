@@ -15,45 +15,32 @@ public import Mathlib.CategoryTheory.Limits.Shapes.ZeroMorphisms
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Defs
 
 /-!
-# Waldhausen categories (one-categorical, nonadditive)
+# One-categorical Waldhausen structure without gluing
 
-Minimal one-categorical Waldhausen interface. This file provides the
-basic cofibration/weak-equivalence structure and cofiber sequences used by
-K₀ and the S-construction. It is intentionally nonadditive
-and does not assume `Preadditive`, biproducts, or enrichment.
+This nonadditive interface provides cofibrations, weak equivalences and cofiber
+sequences for K₀ and the finite stages of the S-construction. It does not
+assume gluing: for a map between two pushout diagrams along cofibrations,
+objectwise weak equivalences on the two spans would then imply that the
+induced map of the pushouts is a weak equivalence.
 
 ## Main definitions
-* `CategoryTheory.WaldhausenCategory` — Waldhausen structure on a category
+* `CategoryTheory.WaldhausenCategoryWithoutGluing` — structure on a category
   with zero object, with cofibrations and weak equivalences as
   `MorphismProperty C`, each multiplicative and respecting isomorphisms,
   with `0 ⟶ X` always a cofibration and pushouts along cofibrations
   existing with cofibration leg.
-* `CategoryTheory.WaldhausenCategory.IsCofibration` — abbreviation for
-  membership in `cofibrations`.
-* `CategoryTheory.WaldhausenCategory.IsWeakEquivalence` — abbreviation for
-  membership in `weakEquivalences`.
+* `CategoryTheory.IsCofibration` — abbreviation for membership in `cofibrations`.
+* `CategoryTheory.IsWeakEquivalence` — abbreviation for membership in `weakEquivalences`.
 * `CategoryTheory.IsCofibrationSequence.comp_eq_zero` — every
   cofibration-sequence composite is zero.
-* `CategoryTheory.WaldhausenCategory.exists_cofiberSequence_of_cofibration`
-  — existence of a cofiber for any cofibration.
+* `CategoryTheory.exists_cofiberSequence_of_cofibration` — existence of a cofiber
+  for any cofibration.
 
 ## Implementation notes
-Waldhausen categories are one-categorical and nonadditive. An additive
-category may support more than one Waldhausen structure, encoded by this
-typeclass. The pushout axiom is existential
-(`cofibration_pushout`), following `CategoryTheory.ExactCategory.admissibleMono_pushout`,
-and does not require all pushouts in `C` to exist. Only existential pushouts
-along cofibrations are required, with the cobase-changed leg again a
-cofibration.
-
-Non-axioms in this first file (documented for later mixins, not assumed):
-`Preadditive`, biproducts, `Mono`-as-cofibration, two-out-of-three,
-saturation, factorization, cylinder objects, and the gluing axiom.
-Later packets will introduce these as separate mixins/predicates without
-changing this basic interface.
-
-We prefer the exact pinned Mathlib APIs `MorphismProperty`,
-`HasZeroObject`, and `IsPushout` and keep imports minimal.
+The structure is a typeclass, does not assume biproducts or enrichment, and
+requires only existence of pushouts along cofibrations. The cobase-changed leg
+is again a cofibration. No two-out-of-three, saturation, factorization or
+cylinder axiom is imposed.
 
 ## References
 * F. Waldhausen, *Algebraic K-theory of spaces*, Lecture Notes in Math. 1126.
@@ -70,26 +57,15 @@ namespace CategoryTheory
 
 variable {C : Type u} [Category.{v} C] [HasZeroObject C]
 
-/-- Minimal one-categorical Waldhausen structure.
+/-- A nonadditive Waldhausen structure without the gluing axiom.
 
-A category with zero object equipped with classes of cofibrations and weak
-equivalences satisfying the basic Waldhausen axioms used by K₀.
-This is nonadditive and does not assume `Preadditive`, biproducts,
-two-out-of-three, saturation, factorization, cylinders, or gluing.
-Those are documented as later mixins and must not be added to this file
-as placeholder definitions.
+The cofibrations and weak equivalences are multiplicative and respect
+isomorphisms. Every map out of the zero object is a cofibration, and cobase
+changes of cofibrations exist and remain cofibrations.
 
-* `cofibrations` and `weakEquivalences` are `MorphismProperty C`,
-  each multiplicative (`IsMultiplicative`) and respects isomorphisms
-  (`RespectsIso`).
-* Every map `0 ⟶ X` is a cofibration.
-* Pushouts along cofibrations exist (existential) and the cobase-changed
-  leg remains a cofibration, following
-  `CategoryTheory.ExactCategory.admissibleMono_pushout`.
-
-No Waldhausen K0 quotient, exact-category bridge, gluing, S-dot, nerve,
-realization, homotopy groups, or spectra are defined here. -/
-class WaldhausenCategory (C : Type u) [Category.{v} C] [HasZeroObject C] where
+Gluing would additionally say that an objectwise weak equivalence between
+spans along cofibrations induces a weak equivalence of their pushouts. -/
+class WaldhausenCategoryWithoutGluing (C : Type u) [Category.{v} C] [HasZeroObject C] where
   /-- The class of cofibrations. -/
   cofibrations : MorphismProperty C
   /-- The class of weak equivalences. -/
@@ -108,61 +84,58 @@ class WaldhausenCategory (C : Type u) [Category.{v} C] [HasZeroObject C] where
 
   For a cofibration `i : X ⟶ Y` and any `f : X ⟶ X'`, there exists a
   pushout square with lower leg `inl : X' ⟶ P` again a cofibration.
-  This follows the existential shape of
-  `CategoryTheory.ExactCategory.admissibleMono_pushout` and does not
-  require all pushouts to exist in `C`. -/
+  No pushouts other than those along cofibrations are required. -/
   cofibration_pushout :
     ∀ {X Y : C} (i : X ⟶ Y), cofibrations i →
       ∀ (X' : C) (f : X ⟶ X'),
         ∃ (P : C) (inl : X' ⟶ P) (inr : Y ⟶ P),
           IsPushout f i inl inr ∧ cofibrations inl
 
-namespace WaldhausenCategory
+namespace WaldhausenCategoryWithoutGluing
 
-variable [WaldhausenCategory C]
+variable [WaldhausenCategoryWithoutGluing C]
 
 instance instCofibrationsIsMultiplicative : (cofibrations (C := C)).IsMultiplicative :=
-  WaldhausenCategory.cofibrations_isMultiplicative
+  WaldhausenCategoryWithoutGluing.cofibrations_isMultiplicative
 
 instance instCofibrationsRespectsIso : (cofibrations (C := C)).RespectsIso :=
-  WaldhausenCategory.cofibrations_respectsIso
+  WaldhausenCategoryWithoutGluing.cofibrations_respectsIso
 
-/-- Cofibrations in a Waldhausen category are stable under arbitrary cobase
-change. This is the standard morphism-property form of the existential
-Waldhausen pushout axiom. -/
+/-- Cofibrations are stable under arbitrary cobase change, without using
+any gluing axiom. -/
 instance instCofibrationsIsStableUnderCobaseChange :
     (cofibrations (C := C)).IsStableUnderCobaseChange :=
   MorphismProperty.IsStableUnderCobaseChange.of_forall_exists_isPullback <| by
     intro X Y Z f g _ hf
     obtain ⟨P, inY, inX, hpush, hinY⟩ :=
-      WaldhausenCategory.cofibration_pushout (C := C) f hf Y g
+      WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C) f hf Y g
     exact ⟨P, inX, inY, hpush.flip, hinY⟩
 
 instance instWeakEquivalencesIsMultiplicative : (weakEquivalences (C := C)).IsMultiplicative :=
-  WaldhausenCategory.weakEquivalences_isMultiplicative
+  WaldhausenCategoryWithoutGluing.weakEquivalences_isMultiplicative
 
 instance instWeakEquivalencesRespectsIso : (weakEquivalences (C := C)).RespectsIso :=
-  WaldhausenCategory.weakEquivalences_respectsIso
+  WaldhausenCategoryWithoutGluing.weakEquivalences_respectsIso
 
-end WaldhausenCategory
+end WaldhausenCategoryWithoutGluing
 
 section Predicates
 
-variable [WaldhausenCategory C]
+variable [WaldhausenCategoryWithoutGluing C]
 
-/-- A cofibration is a morphism in `WaldhausenCategory.cofibrations`. -/
+/-- A cofibration is a morphism in `WaldhausenCategoryWithoutGluing.cofibrations`. -/
 abbrev IsCofibration {X Y : C} (f : X ⟶ Y) : Prop :=
-  WaldhausenCategory.cofibrations (C := C) f
+  WaldhausenCategoryWithoutGluing.cofibrations (C := C) f
 
-/-- A weak equivalence is a morphism in `WaldhausenCategory.weakEquivalences`. -/
+/-- A weak equivalence is a morphism in `WaldhausenCategoryWithoutGluing.weakEquivalences`. -/
 abbrev IsWeakEquivalence {X Y : C} (f : X ⟶ Y) : Prop :=
-  WaldhausenCategory.weakEquivalences (C := C) f
+  WaldhausenCategoryWithoutGluing.weakEquivalences (C := C) f
 
 end Predicates
 
 section CofibrationSequence
 
-variable [WaldhausenCategory C]
+variable [WaldhausenCategoryWithoutGluing C]
 
 /-- A cofibration sequence `X ⟶ Y ⟶ Z` is a cofibration `f : X ⟶ Y`
 together with a pushout of `f` along the unique map `X ⟶ 0`.
@@ -170,7 +143,7 @@ together with a pushout of `f` along the unique map `X ⟶ 0`.
 This is the standard Waldhausen quotient `Z = Y / X`.
 We use the `IsPushout` orientation `IsPushout (X ⟶ 0) f (0 ⟶ Z) g` so
 that the existence lemma `exists_cofiberSequence_of_cofibration`
-follows directly from `WaldhausenCategory.cofibration_pushout`.
+follows directly from `WaldhausenCategoryWithoutGluing.cofibration_pushout`.
 Any `h : X ⟶ (0 : C)` is uniquely determined, and the condition is
 equivalent to requiring the canonical terminal map
 `HasZeroObject.zeroIsTerminal.from X` as the pushout leg. -/
@@ -207,7 +180,7 @@ lemma exists_cofiberSequence_of_cofibration {X Y : C} (f : X ⟶ Y)
     ∃ (Z : C) (g : Y ⟶ Z), IsCofibrationSequence (C := C) f g := by
   have h : X ⟶ (0 : C) := HasZeroObject.zeroIsTerminal.from X
   obtain ⟨P, inl, inr, hpush, _⟩ :=
-    WaldhausenCategory.cofibration_pushout (C := C) f hf (0 : C) h
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C) f hf (0 : C) h
   exact ⟨P, inr, hf, h, inl, hpush⟩
 
 end CofibrationSequence
