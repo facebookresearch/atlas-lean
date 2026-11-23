@@ -25,6 +25,14 @@ and $N(\mathfrak{a}) = N(\gamma) / N(\mathfrak{b}) = |\gamma|^2 / N(\mathfrak{b}
 The relation $2 \operatorname{Im} z = N(\mathfrak{b}) \sqrt{|D|}$ compares the discriminant of the basis
 $(1, z)$, which is $(z - \bar z)^2$, with $N(\mathfrak{b})^2 D$.
 
+## Depends on
+
+None.
+
+## Proof depends on
+
+None.
+
 ## Sources
 
 - C. L. Siegel, *Lectures on advanced analytic number theory*, notes by S. Raghavan, Tata Institute of

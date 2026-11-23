@@ -19,6 +19,10 @@ the modularity of $\Delta$ in weight $12$, the fact that the modular forms of we
 form a space of dimension at most $2$, spanned by $E_4^3$ and $E_6^2$, and the first coefficients of the
 $q$-expansions $E_4^3 = 1 + 720 q + \cdots$, $E_6^2 = 1 - 1008 q + \cdots$ and $\Delta = q + \cdots$.
 
+## Depends on
+
+None.
+
 ## Proof depends on
 
 - [Even zeta values and Bernoulli numbers](../../zeta-l-functions/riemann-zeta/zeta-even-integers-bernoulli.md), for $\zeta(4) = \pi^4/90$ and $\zeta(6) = \pi^6/945$

@@ -36,6 +36,7 @@ which is the identity above, rewritten with $N(\mathfrak{b}_c) = 2 \operatorname
 ## Depends on
 
 - [Quadratic Dirichlet character of a fundamental discriminant](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md)
+- [Kronecker's first limit formula](kronecker-first-limit-formula.md), for the invariance of $\operatorname{Im}(\tau) |\eta(\tau)|^4$ under $\mathrm{SL}_2(\mathbb{Z})$, which makes each term depend only on $c$
 
 ## Proof depends on
 

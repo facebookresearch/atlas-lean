@@ -52,6 +52,10 @@ Differentiating $\zeta_K(s) = \frac{1}{w} (2/\sqrt{|D|})^s \sum_c Z(\tau_c, s)$ 
 (Kaneko derives the formula from Kronecker's first limit formula, following Weil; the computation is
 written out here.)
 
+## Depends on
+
+- [Kronecker's first limit formula](kronecker-first-limit-formula.md), for the invariance of $\operatorname{Im}(\tau) |\eta(\tau)|^4$ under $\mathrm{SL}_2(\mathbb{Z})$, which makes each term depend only on $c$
+
 ## Proof depends on
 
 - [Partial zeta functions of an imaginary quadratic field as Epstein zeta functions](imaginary-quadratic-partial-zeta-epstein.md)

@@ -13,6 +13,10 @@ $\frac{\partial \zeta}{\partial s}(0, a) = \log \Gamma(a) - \frac{1}{2} \log(2\p
 $\sum_{r=1}^{k-1} \chi(r) = 0$ for a non-principal character. (The computation is carried out here; the
 sources give its two ingredients.)
 
+## Depends on
+
+- [Dirichlet character of a given modulus](conductors-and-primitive-dirichlet-characters/is-dirichlet-character-modulus.md), for Dirichlet characters modulo $k$
+
 ## Proof depends on
 
 - [Lerch's formula for the Hurwitz zeta function at $s = 0$](lerch-formula-hurwitz-zeta.md)

@@ -28,6 +28,10 @@ pole, through $\zeta(2s - 1)$, and the constant term of the Laurent expansion of
 Euler's constant; the terms of nonzero frequency, computed at $s = 1$ by residues, add up to the
 logarithm of the product defining $\eta$ (Siegel, pp. 11–13).
 
+## Depends on
+
+None.
+
 ## Proof depends on
 
 - [Laurent expansion of $\zeta$ at $s = 1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), for its constant term $c_0 = \gamma$

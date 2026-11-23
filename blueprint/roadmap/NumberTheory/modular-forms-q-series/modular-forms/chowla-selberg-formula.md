@@ -36,6 +36,7 @@ $\frac{1}{h} \sum_c \log(4\pi \operatorname{Im}(\tau_c) |\eta(\tau_c)|^4) = \fra
 ## Depends on
 
 - [Quadratic Dirichlet character of a fundamental discriminant](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md)
+- [Kronecker's first limit formula](kronecker-first-limit-formula.md), for the invariance of $\operatorname{Im}(\tau) |\eta(\tau)|^4$ under $\mathrm{SL}_2(\mathbb{Z})$, which makes the second form independent of the choice of $\mathfrak{a}_c$ and of its basis
 
 ## Proof depends on
 

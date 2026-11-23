@@ -23,6 +23,10 @@ are analytic on $\{\operatorname{Re} s > -1, s \neq 1\}$, so the identity holds 
 $s = 0$, which commutes with $\partial^2 / \partial a^2$, gives $f''(a) = \zeta(2, a) > 0$. So $f(a) - f(1) = \log \Gamma(a)$ by the Bohr–Mollerup characterization of $\log \Gamma$, and
 $f(1) = \zeta'(0) = -\frac{1}{2} \log (2\pi)$.
 
+## Depends on
+
+None.
+
 ## Proof depends on
 
 - [Euler–Maclaurin formula](../../../Analysis/asymptotic-analysis/euler-maclaurin-formula.md), of order $2$ on $[0, N]$, for the representation of $\zeta(s, a)$

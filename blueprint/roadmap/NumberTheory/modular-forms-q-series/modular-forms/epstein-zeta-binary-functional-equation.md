@@ -26,6 +26,14 @@ $\sum_{n \in \mathbb{Z}} e^{-\pi \xi (n + v)^2} = \xi^{-1/2} \sum_{n \in \mathbb
 $v$ and $\operatorname{Re} \xi > 0$ with the branch of $\sqrt{\xi}$ that is positive for $\xi > 0$ (his formula (52)); for
 the binary form $Q_z$ the two steps apply it in $m_1$ for fixed $m_2$, with the shift $m_2 x$, and then in $m_2$.
 
+## Depends on
+
+None.
+
+## Proof depends on
+
+None.
+
 ## Sources
 
 - C. L. Siegel, *Lectures on advanced analytic number theory*, notes by S. Raghavan, Tata Institute of
