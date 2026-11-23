@@ -30,7 +30,7 @@ open MathlibExt.Geometry.LimitingHodgeStructures
 /-- The normalized untwisted period filtration extends holomorphically to
 zero for a polarized variation with unipotent deck operator. -/
 public theorem_wanted unipotent_period_extension
-    (V : ModuleCat.{0} ℚ) [FiniteDimensional ℚ V]
+    (V : ModuleCat.{0} ℚ)
     (C : RationalComplexification V) (r : ℕ)
     (e : C.complexSpace ≃ₗ[ℂ] EuclideanSpace ℂ (Fin r)) (w : ℤ)
     (H : PolarizedPeriodVariation C e w) (b : ℕ) (hb : 0 < b)
@@ -40,7 +40,7 @@ public theorem_wanted unipotent_period_extension
 /-- The actual limiting flag and kernel/image monodromy filtration form a
 rational MHS; its actual logarithm lowers F by one. -/
 public def_wanted limiting_mixed_hodge_realization
-    (V : ModuleCat.{0} ℚ) [FiniteDimensional ℚ V]
+    (V : ModuleCat.{0} ℚ)
     (C : RationalComplexification V) (r : ℕ)
     (e : C.complexSpace ≃ₗ[ℂ] EuclideanSpace ℂ (Fin r)) (w : ℤ)
     (H : PolarizedPeriodVariation C e w) (b : ℕ) (hb : 0 < b)

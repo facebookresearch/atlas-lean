@@ -12,8 +12,11 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.LinearAlgebra.BilinearForm.Properties
+public import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
+public import Mathlib.Algebra.Category.ModuleCat.Limits
+public import Mathlib.CategoryTheory.Sites.LeftExact
+public import Mathlib.Topology.Sheaves.Sheaf
 public import MathlibExt.Geometry.RationalHodgeStructures
-public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 
 /-!
 # Polarized period data and limiting mixed Hodge realizations
@@ -126,7 +129,8 @@ variable {V : ModuleCat.{0} ℚ} (C : RationalComplexification V)
 
 /-- A filtration is a holomorphic subbundle if it has local holomorphic
 frames of exactly its fixed fiber subspaces. -/
-def HolomorphicFiltrationOn (F : ℂ → ℤ → Submodule ℂ C.complexSpace) (U : Set ℂ) : Prop :=
+def HolomorphicFiltrationOn (F : ℂ → ℤ → Submodule ℂ C.complexSpace) (U : Set ℂ) :
+    Prop :=
   ∀ z ∈ U, ∀ p : ℤ, ∃ ε : ℝ, 0 < ε ∧ Metric.ball z ε ⊆ U ∧
     ∃ n : ℕ, ∃ s : Fin n → ℂ → EuclideanSpace ℂ (Fin r),
       (∀ i, DifferentiableOn ℂ (s i) (Metric.ball z ε)) ∧
