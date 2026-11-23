@@ -359,26 +359,6 @@ public theorem_wanted isRecurrentSeq_constantTerm_mod_prime {r p : ℕ} (hp : p.
 coefficientwise; the substitution `x ↦ x^q` is `AddMonoidAlgebra.mapDomain (q • ·)`. The paper
 takes `ℓ` as large as possible; the statements below hold for every such pair `(ℓ, P̃)`. -/
 
-/-- **Divisibility of constant terms of powers of $P$ and $\tilde P$.** Let $p$ be a prime, let
-$a \ge 1$ and $\ell$ be natural numbers, and let $P$ and $\tilde P$ be Laurent polynomials in $r$
-variables with integer coefficients such that $P^{p^{a-1}} \equiv \tilde P(x^{p^\ell}) \pmod{p^a}$
-coefficientwise, where $\tilde P(x^q)$ is obtained from $\tilde P$ by replacing each monomial
-$x^e$ with $x^{qe}$. Write $\operatorname{ct}[F]$ for the constant term of a Laurent polynomial
-$F$. Then $p$ divides $\operatorname{ct}[P^{n_0}]$ for some natural number $n_0$ if and only if
-$p$ divides $\operatorname{ct}[\tilde P^{n_1}]$ for some natural number $n_1$; moreover, for every
-natural number $n_0$ with $p \mid \operatorname{ct}[P^{n_0}]$, also
-$p \mid \operatorname{ct}[\tilde P^{n_0}]$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 22 (`jis-2026-26.4.2-lem-22`). -/
-public theorem_wanted exists_constantTerm_pow_dvd_iff_tilde {r p a ℓ : ℕ} (hp : p.Prime)
-    (ha : 0 < a) (P Pt : AddMonoidAlgebra ℤ (Fin r → ℤ))
-    (hPt : ∀ j, (P ^ (p ^ (a - 1))).coeff j ≡
-      (AddMonoidAlgebra.mapDomain (fun j => p ^ ℓ • j) Pt).coeff j [ZMOD (p : ℤ) ^ a]) :
-    ((∃ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0) ↔ ∃ n₁, (p : ℤ) ∣ (Pt ^ n₁).coeff 0) ∧
-      ∀ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0 → (p : ℤ) ∣ (Pt ^ n₀).coeff 0
-
 /-- **Degree bound for the Rowland–Zeilberger states mod $p^a$.** Let $p$ be a prime, let $a$
 be a natural number, and let $\tilde P$ and $Q_0$ be Laurent polynomials in $r$ variables with
 coefficients in $\mathbb{Z}/p^a\mathbb{Z}$. Write $\deg F$ for the largest absolute value of an
