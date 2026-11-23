@@ -10,8 +10,8 @@ module
 public import MathlibExt.AlgebraicGeometry.BoundedCoherent
 public import MathlibExt.AlgebraicGeometry.FourierMukai
 public import MathlibExt.AlgebraicGeometry.SchemeModuleLinear
-public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PullbackFree
+public import Mathlib.AlgebraicGeometry.Noetherian
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 
@@ -22,12 +22,15 @@ The kernel is the actual cone O_{X×X} → Δ_*O_X, with the canonical
 unit-to-pushforward-unit morphism. The derived operator uses the completed
 fixed Fourier--Mukai cochain sources. The coefficient action is the actual
 base-ring action on all regular sections, rather than an arbitrary linear
-structure. Sphericality is the standard finite graded self-Hom condition
-and nondegeneracy of actual composition into the top trace line.
+structure. Sphericality of the structure sheaf of a noetherian scheme is the
+finite graded self-Hom condition and nondegeneracy of actual composition into
+the top trace line, conditions (S2)–(S4) of Seidel–Thomas; their condition (S1),
+a finite resolution by quasi-coherent injectives, follows from (S4) on a
+noetherian scheme (their Lemma 2.16).
 
 Source: Seidel--Thomas, *Braid group actions on derived categories of
-coherent sheaves*, https://arxiv.org/abs/math/0001043, Definition 2.9,
-Proposition 2.10 and Theorem 1.2. Generic bounded/coherent preservation
+coherent sheaves*, https://arxiv.org/abs/math/0001043, Definition 2.14,
+Lemma 2.16, Proposition 2.10 and Theorem 1.2. Generic bounded/coherent preservation
 and Fourier--Mukai comparison results are positively covered in Axiom's
 DerivedVarieties/FourierMukai source and are not requested as new results.
 -/
@@ -38,7 +41,7 @@ namespace MathlibExt.AlgebraicGeometry.SphericalTwists
 
 open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry
-open BoundedCoherent FourierMukai CoherentCurveLinearSeries SchemeModuleLinear
+open BoundedCoherent FourierMukai SchemeModuleLinear
 
 attribute [local instance] HasDerivedCategory.standard
 
@@ -47,8 +50,9 @@ universe u
 /-- The structure-sheaf spherical twist has a literal degree-zero mapping-cone kernel. -/
 def kernel {k : Type u} [Field k] (X : Over (Spec (.of k))) : D (pullback X.hom X.hom) :=
   let P := pullback X.hom X.hom
-  let e : structureModule P ⟶
-      (Scheme.Modules.pushforward (pullback.diagonal X.hom)).obj (structureModule X.left) :=
+  let e : SheafOfModules.unit P.ringCatSheaf ⟶
+      (Scheme.Modules.pushforward (pullback.diagonal X.hom)).obj
+        (SheafOfModules.unit X.left.ringCatSheaf) :=
     SheafOfModules.unitToPushforwardObjUnit (pullback.diagonal X.hom).toRingCatSheafHom
   DerivedCategory.Q.obj (CochainComplex.mappingCone
     ((CochainComplex.singleFunctor P.Modules 0).map e))
@@ -61,7 +65,7 @@ local instance : Linear k X.left.Modules := modulesLinear k X
 
 /-- The actual structure sheaf in the actual derived category. -/
 abbrev structureObject : D X.left := (DerivedCategory.singleFunctor X.left.Modules 0).obj
-  (structureModule X.left)
+  (SheafOfModules.unit X.left.ringCatSheaf)
 
 /-- Composition into the actual degree-d endomorphism space, with shifts normalized. -/
 def traceComposition {M : D X.left} (d i : ℤ)
@@ -71,9 +75,14 @@ def traceComposition {M : D X.left} (d i : ℤ)
   b ≫ a⟦d - i⟧' ≫
     (shiftFunctorAdd' (D X.left) i (d - i) d (by omega)).inv.app (structureObject k X)
 
-/-- The standard `d`-spherical condition for `d > 0` (Seidel--Thomas, Definition 2.9),
-tied to actual Hom and composition maps. -/
-structure SphericalStructure (d : ℤ) where
+/-- The structure sheaf of a noetherian scheme `X` over `k` is `d`-spherical for `d > 0`
+(Seidel--Thomas, Definition 2.14), tied to actual Hom and composition maps: its graded
+self-Homs are `k` in degrees `0` and `d` and vanish otherwise (S3), its graded Homs with
+bounded coherent objects are finite-dimensional and bounded (S2), and composition into
+the degree-`d` self-Homs is a nondegenerate pairing (S4). Condition (S1), a finite
+resolution by quasi-coherent injectives, follows from (S4) on a noetherian scheme
+(Seidel--Thomas, Lemma 2.16). -/
+structure SphericalStructure [IsNoetherian X.left] (d : ℤ) where
   /-- Sphericality is defined in positive degree; degree zero is a different notion. -/
   positive : 0 < d
   degreeZero : k ≃ₗ[k] (structureObject k X ⟶ structureObject k X)

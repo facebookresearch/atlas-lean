@@ -30,7 +30,8 @@ example (k : Type u) [Field k] (X : Over (Spec (.of k))) :
   rfl
 
 -- Sphericality is only defined in positive degree.
-example (k : Type u) [Field k] (X : Over (Spec (.of k))) : IsEmpty (SphericalStructure k X 0) :=
+example (k : Type u) [Field k] (X : Over (Spec (.of k))) [IsNoetherian X.left] :
+    IsEmpty (SphericalStructure k X 0) :=
   ⟨fun S ↦ (lt_irrefl _ S.positive).elim⟩
 
 end MathlibExt.AlgebraicGeometry.SphericalTwists
