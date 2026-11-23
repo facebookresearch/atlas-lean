@@ -9,3 +9,7 @@ A stochastic process $(X_i)_{i \in \iota}$ is often described only through its f
 ## Statements
 
 - [Kolmogorov extension theorem](kolmogorov-extension.md)
+
+## Background
+
+- [Kolmogorov's extension theorem for sequences](../kolmogorov-extension-theorem-for-sequences/README.md): the classical case of real sequences, with uniqueness

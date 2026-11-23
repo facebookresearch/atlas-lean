@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
 
@@ -145,21 +146,6 @@ Lemma 11 (`integers-2025-A59-lem-11`). -/
 public theorem_wanted oddPerfect_factorization_five_eq_one_of_dvd
     (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h165 : 165 ∣ n) :
     n.factorization 5 = 1
-
-/-- **Bound on a prime that pushes $\prod p/(p-1)$ past $2$.** Let $s$ be a finite set of odd
-primes with $\prod_{p \in s} p/(p-1) \le 2$, and let $q$ be an odd prime with
-$\left(\prod_{p \in s} p/(p-1)\right) \cdot q/(q-1) > 2$. Then
-$q \le 2 \prod_{p \in s} (p - 1) - 1$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 12 (`integers-2025-A59-lem-12`). -/
-public theorem_wanted le_two_mul_prod_sub_one_sub_one_of_two_lt
-    (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime ∧ Odd p)
-    (hle : ∏ p ∈ s, (p : ℚ) / ((p : ℚ) - 1) ≤ 2)
-    (q : ℕ) (hq : q.Prime) (hqodd : Odd q)
-    (hgt : 2 < (∏ p ∈ s, (p : ℚ) / ((p : ℚ) - 1)) * ((q : ℚ) / ((q : ℚ) - 1))) :
-    q ≤ 2 * ∏ p ∈ s, (p - 1) - 1
 
 /-- **Cohen–Hagis–Suryanarayana bounds on the prime reciprocal sum of an odd perfect number.**
 Let $n$ be an odd perfect number and $T(n) = \sum_{p \mid n} 1/p$, the sum over the primes $p$
