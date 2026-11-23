@@ -92,7 +92,10 @@ structure MarkedFamily (S : Scheme.{u}) (n g : ℕ) where
     ∃ s : S ⟶ U.toScheme, s ≫ U.ι = marking i
   fibers : ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (p : Spec (.of Ω) ⟶ S),
     GeometricallyConnected (fiberCurve π p).hom ∧
-    IsNodal (fiberCurve π p) ∧ genus (fiberCurve π p).hom = g
+    IsNodal (fiberCurve π p) ∧
+    ∃ (_ : IsProperCurve (fiberCurve π p).hom)
+      (_ : HasConstantGlobalSections (fiberCurve π p).hom),
+      genus (fiberCurve π p).hom = g
 
 /-- Fiberwise finite marked automorphisms, the characteristic-zero stability test. -/
 def IsStable {S : Scheme.{u}} {n g : ℕ} (C : MarkedFamily S n g) : Prop :=

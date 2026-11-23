@@ -79,9 +79,10 @@ structure TwoCartesianSquare {X T Y : Stack S} (f : StackHom X Y) (g : StackHom 
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp fst f)
     (Pseudofunctor.StrongTrans.vcomp snd g)
   cartesian : ∀ U : Over S,
-    (isoFibreLift (StackCycleGeometry.component f U) (StackCycleGeometry.component g U)
-      (StackCycleGeometry.component fst U) (StackCycleGeometry.component snd U)
-      (commutes.app U)).IsEquivalence
+    ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (StackCycleGeometry.component f U) (StackCycleGeometry.component g U) _).obj
+      ⟨StackCycleGeometry.component fst U, StackCycleGeometry.component snd U,
+        commutes.app U⟩).IsEquivalence
 
 /-- The actual base change of a bundle, with its rank and total-space square. -/
 structure BundlePullback {T X : Stack S} (p : StackHom T X) (E : VectorBundle X) where
@@ -91,9 +92,10 @@ structure BundlePullback {T X : Stack S} (p : StackHom T X) (E : VectorBundle X)
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp map E.projection)
     (Pseudofunctor.StrongTrans.vcomp bundle.projection p)
   cartesian : ∀ U : Over S,
-    (isoFibreLift (StackCycleGeometry.component E.projection U)
-      (StackCycleGeometry.component p U) (StackCycleGeometry.component map U)
-      (StackCycleGeometry.component bundle.projection U) (commutes.app U)).IsEquivalence
+    ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (StackCycleGeometry.component E.projection U) (StackCycleGeometry.component p U) _).obj
+      ⟨StackCycleGeometry.component map U, StackCycleGeometry.component bundle.projection U,
+        commutes.app U⟩).IsEquivalence
 
 structure BundleStage (X : Stack S) where
   bundle : VectorBundle X

@@ -7,50 +7,58 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The algebraic-stack, representable-diagonal and atlas contracts follow
+The algebraic-stack, representable-diagonal and atlas definitions follow
 AxiomMath/Stacks at c496df0d9beea9deaeabcea8492605f9a0a2313b:
 StacksFrontier/AlgebraicGeometry/Stacks/AlgebraicStack.lean,
 StacksFrontier/AlgebraicGeometry/Stacks/RepresentableDiagonal.lean,
 StacksFrontier/AlgebraicGeometry/Spaces/Basic.lean and Smooth.lean.
 Public source: https://github.com/AxiomMath/Stacks.
 The source is licensed under Apache 2.0 and has no individual author or
-copyright notice in those files. Modification notice: use the existing
-actual scheme-pseudofunctor stack carrier, Mathlib's actual morphism
-presheaf, and an explicit chosen étale-presentation model of algebraic
-spaces. The actual pointwise 2-fibre category is the isomorphism part of
-Mathlib's comma category; no Axiom package import or new existence
-request is introduced.
+copyright notice in those files. Modifications: the stacks are the fppf
+stacks in groupoids of `FppfStacks`, isomorphism presheaves are Mathlib's
+`Pseudofunctor.presheafHom`, algebraic spaces are modelled by chosen étale
+presentations, and 2-fibre products of categories are Mathlib's categorical
+pullbacks.
 -/
 module
 
 public import MathlibExt.AlgebraicGeometry.EtaleSpacePresentations
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
-public import Mathlib.CategoryTheory.Comma.Basic
-public import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
+public import Mathlib.CategoryTheory.Bicategory.Modification.Pseudo
+public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.Categorical.Basic
 public import Mathlib.CategoryTheory.Sites.Descent.IsPrestack
 
 /-!
-# General algebraic-stack and actual 2-fibre task contracts
+# Algebraic spaces over a scheme, algebraic stacks and Deligne–Mumford stacks
 
-The carrier is the existing fppf stack in groupoids on all schemes. An
-algebraic space is modelled by its actual quotient fppf sheaf with a
-chosen étale equivalence presentation. Such presentations and their
-quotient algebraicity are complete public Axiom mathematics (including
-`Spaces/QuotientSheafPresentationUnconditional.lean`); choosing a
-presentation is not a restriction to a special class of algebraic spaces.
-The full source comparison/provider closure is tracked separately.
+The stacks are the fppf stacks in groupoids over all schemes of
+`MathlibExt.AlgebraicGeometry.FppfStacks` (and, for stacks over a base scheme `S`, fppf stacks in
+groupoids on schemes over `S`). An algebraic space over a scheme `T` is modelled by the quotient
+fppf sheaf of a chosen étale equivalence relation together with a structure map to `T`; every
+algebraic space admits such a presentation (Stacks, Lemma 65.9.1).
 
-The diagonal uses actual sheaves of fibre morphisms, which are
-isomorphisms because the fibres are groupoids. Atlas base changes use
-the actual scheme arrows and actual fibre isomorphisms, with the native
-pseudofunctor coherence in every restriction map. Smoothness and étaleness
-are checked on actual scheme charts, and surjectivity is the actual
-epimorphism of fppf sheaves. These contracts do not assert an atlas or
-algebraicity for an arbitrary stack.
+* `HasRepresentableDiagonal`: for every scheme `T` and objects `x y` over `T`, the sheaf of
+  isomorphisms `Isom(x, y)` on schemes over `T` is an algebraic space over `T`; this is equivalent
+  to representability of the diagonal by algebraic spaces (Stacks, Lemma 94.10.11).
+* `SmoothAtlas`, `EtaleAtlas`: a scheme `U` with an object `u` over `U` such that for every scheme
+  `T` and object `y` over `T` the 2-fibre product `U ×_X T` is an algebraic space over `T` whose
+  structure map is surjective and smooth (resp. étale). Properties of the structure map of an
+  algebraic space are checked on the étale atlas of its presentation.
+* `IsArtinStack`, `IsDeligneMumfordStack`: representable diagonal together with a smooth
+  (resp. étale) atlas (Stacks, Definitions 94.12.1 and 94.12.2).
 
-Sources: Stacks Project, Tags 025Y, 026O, 03ZC, 045G and 03YO;
-the completed Axiom sources quoted above. The source's generic stack and
-2-fibre results are not re-requested as Wanted items.
+The file also provides the 2-fibre product of categories (`IsoFibre`), used pointwise for 2-fibre
+products of stacks (`TwoFibreSquare`, `TwoFibreModel`), and the same notions for stacks over a base
+scheme (`RelativeStack`).
+
+## References
+
+* [Stacks Project, Lemma 65.9.1 (Tag 0262)](https://stacks.math.columbia.edu/tag/0262)
+* [Stacks Project, Section 67.5 (Tag 03MC)](https://stacks.math.columbia.edu/tag/03MC)
+* [Stacks Project, Definition 67.37.1 (Tag 03ZC)](https://stacks.math.columbia.edu/tag/03ZC)
+* [Stacks Project, Lemma 94.10.11 (Tag 045G)](https://stacks.math.columbia.edu/tag/045G)
+* [Stacks Project, Definition 94.12.1 (Tag 026O)](https://stacks.math.columbia.edu/tag/026O)
+* [Stacks Project, Definition 94.12.2 (Tag 03YO)](https://stacks.math.columbia.edu/tag/03YO)
 -/
 
 @[expose] public noncomputable section
@@ -59,6 +67,7 @@ namespace AlgebraicGeometry.GeneralStackGeometry
 
 open CategoryTheory CategoryTheory.Limits Opposite
 open FppfStacks EtaleSpacePresentations
+open scoped Pseudofunctor.StrongTrans
 
 universe u v w
 
@@ -67,159 +76,120 @@ section TwoFibre
 variable {A : Type u} {B : Type v} {C : Type w}
   [Category A] [Category B] [Category C]
 
-/-- The actual 2-fibre category: objects are `(a,b,f(a) ≅ g(b))`, and
-morphisms are actual pairs commuting with the comparison isomorphism. -/
-abbrev IsoFibre (f : A ⥤ C) (g : B ⥤ C) :=
-  (show ObjectProperty (Comma f g) from fun q ↦ IsIso q.hom).FullSubcategory
+/-- The 2-fibre product of categories: Mathlib's categorical pullback, whose objects are triples
+`(a, b, f a ≅ g b)` and whose morphisms are pairs of morphisms commuting with the comparison
+isomorphisms. Its projections are `Limits.CategoricalPullback.π₁` and `π₂`, its 2-cell is the
+`CatCommSq` instance, and functors into it correspond to such data
+(`Limits.CategoricalPullback.functorEquiv`). -/
+abbrev IsoFibre (f : A ⥤ C) (g : B ⥤ C) := Limits.CategoricalPullback f g
 
-/-- The actual 2-fibre category of groupoids is itself a groupoid;
-inverses are the literal inverses of both component arrows. -/
+/-- The 2-fibre product of groupoids is a groupoid. -/
 instance isoFibre_isGroupoid (f : A ⥤ C) (g : B ⥤ C)
     [IsGroupoid A] [IsGroupoid B] : IsGroupoid (IsoFibre f g) where
-  all_isIso h := by
-    let k := ObjectProperty.homMk (P := fun q : Comma f g ↦ IsIso q.hom)
-      (X := _) (Y := _)
-      { left := inv h.hom.left
-        right := inv h.hom.right
-        w := by
-          apply (cancel_epi (f.map h.hom.left)).mp
-          simp only [← Category.assoc, ← Functor.map_comp, IsIso.hom_inv_id]
-          rw [h.hom.w]
-          simp [Category.assoc] }
-    exact ⟨⟨k, by
-      apply ObjectProperty.hom_ext
-      apply Comma.hom_ext <;> simp [k], by
-      apply ObjectProperty.hom_ext
-      apply Comma.hom_ext <;> simp [k]⟩⟩
-
-/-- The literal first projection from the actual isomorphism-comma category. -/
-@[implicit_reducible]
-def isoFibreFst (f : A ⥤ C) (g : B ⥤ C) : IsoFibre f g ⥤ A :=
-  (show ObjectProperty (Comma f g) from fun q ↦ IsIso q.hom).ι ⋙ Comma.fst f g
-
-/-- The literal second projection from the same category. -/
-@[implicit_reducible]
-def isoFibreSnd (f : A ⥤ C) (g : B ⥤ C) : IsoFibre f g ⥤ B :=
-  (show ObjectProperty (Comma f g) from fun q ↦ IsIso q.hom).ι ⋙ Comma.snd f g
-
-/-- The actual invertible 2-cell retained by a 2-fibre product. -/
-def isoFibreComparison (f : A ⥤ C) (g : B ⥤ C) :
-    isoFibreFst f g ⋙ f ≅ isoFibreSnd f g ⋙ g :=
-  NatIso.ofComponents (fun q : IsoFibre f g ↦ by
-    change f.obj q.obj.left ≅ g.obj q.obj.right
-    exact @asIso _ _ _ _ q.obj.hom q.property) (by
-      intro p q h
-      change f.map h.hom.left ≫ q.obj.hom = p.obj.hom ≫ g.map h.hom.right
-      exact h.hom.w)
-
-/-- A normalized actual cone induces its literal functor into the 2-fibre category. -/
-def isoFibreLift {D : Type*} [Category D] (f : A ⥤ C) (g : B ⥤ C)
-    (p : D ⥤ A) (q : D ⥤ B) (e : p ⋙ f ≅ q ⋙ g) : D ⥤ IsoFibre f g where
-  obj d := ⟨⟨p.obj d, q.obj d, e.hom.app d⟩, by dsimp; infer_instance⟩
-  map h := ObjectProperty.homMk ⟨p.map h, q.map h, e.hom.naturality h⟩
-  map_id d := by
-    apply ObjectProperty.hom_ext
-    apply Comma.hom_ext <;> simp
-  map_comp h k := by
-    apply ObjectProperty.hom_ext
-    apply Comma.hom_ext <;> simp
-
-@[simp]
-theorem isoFibreLift_comparison {D : Type*} [Category D] (f : A ⥤ C) (g : B ⥤ C)
-    (p : D ⥤ A) (q : D ⥤ B) (e : p ⋙ f ≅ q ⋙ g) (d : D) :
-    ((isoFibreLift f g p q e).obj d).obj.hom = e.hom.app d := rfl
+  all_isIso h := (Limits.CategoricalPullback.isIso_iff f g h).2 ⟨inferInstance, inferInstance⟩
 
 end TwoFibre
 
-/-- The actual fibre category of the specified fppf stack. -/
+/-- The fibre category of a stack over a scheme `T`. -/
 abbrev Fibre (X : StackInGroupoids.{u}) (T : Scheme.{u}) :=
   X.toSchPseudofunctor.obj (.mk (op T))
 
-/-- Actual contravariant pullback in the specified stack. -/
+/-- Pullback along a morphism of schemes `V ⟶ T`. -/
 abbrev reindex (X : StackInGroupoids.{u}) {T V : Scheme.{u}} (a : V ⟶ T) :
     Fibre X T ⥤ Fibre X V :=
   (X.toSchPseudofunctor.map a.op.toLoc).toFunctor
 
-/-- The actual component of a strong stack morphism. -/
+/-- The component at a scheme `T` of a morphism of stacks. -/
 abbrev component {X Y : StackInGroupoids.{u}} (f : StackInGroupoids.Hom X Y)
     (T : Scheme.{u}) : Fibre X T ⥤ Fibre Y T := (f.app (.mk (op T))).toFunctor
 
-/-- Pointwise 2-fibres of actual strong stack morphisms. -/
+/-- The 2-fibre product over a scheme `T` of the components of two morphisms of stacks. -/
 abbrev twoFibreAt {X Y Z : StackInGroupoids.{u}}
     (f : StackInGroupoids.Hom X Z) (g : StackInGroupoids.Hom Y Z) (T : Scheme.{u}) :=
   IsoFibre (component f T) (component g T)
 
-/-- An actual invertible modification of strong stack transformations.
-Its naturality is the literal compatibility with the two strong
-pullback-comparison isomorphisms. -/
-structure TwoIso {X Y : StackInGroupoids.{u}} (p q : StackInGroupoids.Hom X Y) where
-  app : ∀ T : Scheme.{u}, component p T ≅ component q T
-  naturality : ∀ {T V : Scheme.{u}} (a : V ⟶ T),
-    Functor.whiskerLeft (reindex X a) (app V).hom ≫
-        (Cat.Hom.toNatIso (q.naturality a.op.toLoc)).hom =
-      (Cat.Hom.toNatIso (p.naturality a.op.toLoc)).hom ≫
-        Functor.whiskerRight (app T).hom (reindex Y a)
+/-- An invertible modification between two morphisms of stacks: an isomorphism in Mathlib's
+category `Pseudofunctor.StrongTrans.homCategory` of strong transformations and modifications. -/
+abbrev TwoIso {X Y : StackInGroupoids.{u}} (p q : StackInGroupoids.Hom X Y) : Type (u + 1) :=
+  @Iso (X.toSchPseudofunctor ⟶ Y.toSchPseudofunctor) _ p q
 
-/-- The identity invertible modification. -/
-def TwoIso.refl {X Y : StackInGroupoids.{u}} (p : StackInGroupoids.Hom X Y) :
-    TwoIso p p where
-  app _ := Iso.refl _
-  naturality _ := by simp
+/-- The component over a scheme `T` of an invertible modification between morphisms of stacks. -/
+def componentIso {X Y : StackInGroupoids.{u}} {p q : StackInGroupoids.Hom X Y} (e : TwoIso p q)
+    (T : Scheme.{u}) : component p T ≅ component q T :=
+  Cat.Hom.toNatIso
+    { hom := e.hom.as.app (.mk (op T))
+      inv := e.inv.as.app (.mk (op T))
+      hom_inv_id := congrArg (fun m => m.as.app (.mk (op T))) e.hom_inv_id
+      inv_hom_id := congrArg (fun m => m.as.app (.mk (op T))) e.inv_hom_id }
 
-/-- A genuine 2-commutative square of stacks, retaining both strong
-projection transformations and their actual invertible modification. -/
+@[simp]
+theorem componentIso_hom_app {X Y : StackInGroupoids.{u}} {p q : StackInGroupoids.Hom X Y}
+    (e : TwoIso p q) (T : Scheme.{u}) (x : Fibre X T) :
+    (componentIso e T).hom.app x = (e.hom.as.app (.mk (op T))).toNatTrans.app x := rfl
+
+/-- A 2-commutative square of stacks: morphisms `fst : W ⟶ X` and `snd : W ⟶ Y` with an invertible
+modification `fst ≫ f ≅ snd ≫ g`. -/
 structure TwoFibreSquare {X Y Z : StackInGroupoids.{u}}
     (f : StackInGroupoids.Hom X Z) (g : StackInGroupoids.Hom Y Z) where
+  /-- The apex of the square. -/
   apex : StackInGroupoids.{u}
+  /-- The first leg. -/
   fst : StackInGroupoids.Hom apex X
+  /-- The second leg. -/
   snd : StackInGroupoids.Hom apex Y
-  commutes : TwoIso (Pseudofunctor.StrongTrans.vcomp fst f)
-    (Pseudofunctor.StrongTrans.vcomp snd g)
+  /-- The invertible modification making the square 2-commute. -/
+  commutes : TwoIso (Pseudofunctor.StrongTrans.vcomp fst f) (Pseudofunctor.StrongTrans.vcomp snd g)
 
-/-- The comparison functor is computed from the literal square legs and
-2-cell; it is not an independently supplied equivalence or an object map. -/
+/-- The functor from the fibre of the apex of a 2-commutative square to the 2-fibre product of
+the fibres, induced by the legs of the square and its 2-cell. -/
 def TwoFibreSquare.comparisonFunctor {X Y Z : StackInGroupoids.{u}}
     {f : StackInGroupoids.Hom X Z} {g : StackInGroupoids.Hom Y Z}
     (P : TwoFibreSquare f g) (T : Scheme.{u}) : Fibre P.apex T ⥤ twoFibreAt f g T :=
-  isoFibreLift (component f T) (component g T) (component P.fst T)
-    (component P.snd T) (P.commutes.app T)
+  (Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+    (component f T) (component g T) (Fibre P.apex T)).obj
+      ⟨component P.fst T, component P.snd T, componentIso P.commutes T⟩
 
-/-- The computed 2-fibre comparison has the given first stack projection. -/
+/-- The comparison functor followed by the first projection is the first leg. -/
 theorem TwoFibreSquare.comparison_fst {X Y Z : StackInGroupoids.{u}}
     {f : StackInGroupoids.Hom X Z} {g : StackInGroupoids.Hom Y Z}
     (P : TwoFibreSquare f g) (T : Scheme.{u}) :
-    P.comparisonFunctor T ⋙ isoFibreFst (component f T) (component g T) =
+    P.comparisonFunctor T ⋙ Limits.CategoricalPullback.π₁ (component f T) (component g T) =
       component P.fst T := rfl
 
-/-- It also has the given second stack projection. -/
+/-- The comparison functor followed by the second projection is the second leg. -/
 theorem TwoFibreSquare.comparison_snd {X Y Z : StackInGroupoids.{u}}
     {f : StackInGroupoids.Hom X Z} {g : StackInGroupoids.Hom Y Z}
     (P : TwoFibreSquare f g) (T : Scheme.{u}) :
-    P.comparisonFunctor T ⋙ isoFibreSnd (component f T) (component g T) =
+    P.comparisonFunctor T ⋙ Limits.CategoricalPullback.π₂ (component f T) (component g T) =
       component P.snd T := rfl
 
-/-- A normalized actual stack 2-fibre model: the computed comparison is
-an equivalence on every fibre, including actual Hom sets. Existence and
-algebraicity of stack 2-fibre products are completed Axiom results; their
-provider port is separate, and is not re-requested here. -/
+/-- The comparison functor sends an object to the comparison isomorphism given by the 2-cell. -/
+@[simp]
+theorem TwoFibreSquare.comparisonFunctor_obj_iso {X Y Z : StackInGroupoids.{u}}
+    {f : StackInGroupoids.Hom X Z} {g : StackInGroupoids.Hom Y Z}
+    (P : TwoFibreSquare f g) (T : Scheme.{u}) (w : Fibre P.apex T) :
+    ((P.comparisonFunctor T).obj w).iso = (componentIso P.commutes T).app w := rfl
+
+/-- A 2-fibre product of two morphisms of stacks: a 2-commutative square whose comparison functor
+is an equivalence on the fibres over every scheme. -/
 structure TwoFibreModel {X Y Z : StackInGroupoids.{u}}
     (f : StackInGroupoids.Hom X Z) (g : StackInGroupoids.Hom Y Z)
     extends TwoFibreSquare f g where
   comparison_equivalence : ∀ T : Scheme.{u},
     (toTwoFibreSquare.comparisonFunctor T).IsEquivalence
 
-/-- An actual algebraic-space model over T, with its actual structural
-map from a chosen étale quotient presentation. -/
+/-- An algebraic space over a scheme `T`, presented as the quotient sheaf of an étale equivalence
+relation, together with its structure map to `T`. -/
 structure AlgebraicSpaceOver (T : Scheme.{u}) where
   presentation : EtaleEquivalencePresentation.{u}
   structural : quotientSheaf presentation ⟶ represented.obj T
 
-/-- The actual quotient sheaf underlying the chosen algebraic space. -/
+/-- The fppf sheaf underlying the algebraic space. -/
 abbrev AlgebraicSpaceOver.sheaf {T : Scheme.{u}} (A : AlgebraicSpaceOver T) :=
   quotientSheaf A.presentation
 
-/-- The actual presheaf of sections of an algebraic space which lie over
-the specified scheme-valued point of T. -/
+/-- The algebraic space as a presheaf on schemes over `T`: its value on `V ⟶ T` is the set of
+points of the space over `V` lying over that morphism. -/
 def AlgebraicSpaceOver.relativePresheaf {T : Scheme.{u}} (A : AlgebraicSpaceOver T) :
     (Over T)ᵒᵖ ⥤ Type (u + 1) where
   obj V := {x : A.sheaf.obj.obj (op V.unop.left) //
@@ -249,31 +219,39 @@ def AlgebraicSpaceOver.relativePresheaf {T : Scheme.{u}} (A : AlgebraicSpaceOver
     exact ConcreteCategory.congr_hom
       (A.sheaf.obj.map_comp a.unop.left.op b.unop.left.op) x.val
 
-/-- An actual scheme chart of the structural map, normalized through the
-chosen quotient atlas and the fully faithful represented-sheaf functor. -/
+/-- A morphism of schemes `U ⟶ T` from the atlas of the presentation inducing the structure map.
+It exists and is unique since the represented-sheaf functor is fully faithful. -/
 structure AlgebraicSpaceOver.Chart {T : Scheme.{u}} (A : AlgebraicSpaceOver T) where
   map : A.presentation.U ⟶ T
   normalization : atlas A.presentation ≫ A.structural = represented.map map
 
-/-- Smoothness through actual étale scheme charts of the actual space. -/
+/-- The algebraic space is smooth over `T`: smoothness can be checked on the étale atlas of the
+presentation (Stacks, Definition 67.37.1). -/
 def AlgebraicSpaceOver.IsSmooth {T : Scheme.{u}} (A : AlgebraicSpaceOver T) : Prop :=
   ∃ c : A.Chart, Smooth c.map
 
-/-- Étaleness through those same actual scheme charts. -/
+/-- The algebraic space is étale over `T`, checked on the étale atlas of the presentation. -/
 def AlgebraicSpaceOver.IsEtale {T : Scheme.{u}} (A : AlgebraicSpaceOver T) : Prop :=
   ∃ c : A.Chart, Etale c.map
 
-/-- Actual fppf-local surjectivity of the structural map. -/
-abbrev AlgebraicSpaceOver.IsSurjective {T : Scheme.{u}} (A : AlgebraicSpaceOver T) :=
+/-- The algebraic space is surjective over `T`, checked on the étale atlas of the presentation
+(surjective on underlying points; Stacks, Section 67.5). This is weaker than being an epimorphism
+of fppf sheaves (`AlgebraicSpaceOver.IsFppfLocallySurjective`) in general, and equivalent to it
+for smooth structure maps. -/
+def AlgebraicSpaceOver.IsSurjective {T : Scheme.{u}} (A : AlgebraicSpaceOver T) : Prop :=
+  ∃ c : A.Chart, Surjective c.map
+
+/-- The structure map is an epimorphism of fppf sheaves: points of `T` lift to the space fppf
+locally. -/
+abbrev AlgebraicSpaceOver.IsFppfLocallySurjective {T : Scheme.{u}} (A : AlgebraicSpaceOver T) :=
   Epi A.structural
 
-/-- The literal isomorphism presheaf in a stack fibre. The morphisms are
-all invertible because X is a stack in groupoids. -/
+/-- The presheaf `Isom(x, y)` on schemes over `T` (the presheaf of morphisms, all of which are
+invertible since the fibres are groupoids). -/
 abbrev isomPresheaf (X : StackInGroupoids.{u}) {T : Scheme.{u}} (x y : Fibre X T) :=
   X.toSchPseudofunctor.presheafHom x y ⋙ uliftFunctor.{u + 1, u}
 
-/-- The morphism-presheaf values are exactly the actual isomorphisms,
-with no extra invertibility predicate or freely supplied set of arrows. -/
+/-- The values of `isomPresheaf` are the isomorphisms between the pullbacks. -/
 def isomPresheafObjEquiv (X : StackInGroupoids.{u}) {T : Scheme.{u}}
     (x y : Fibre X T) (V : Over T) :
     ULift.{u + 1} ((reindex X V.hom).obj x ≅ (reindex X V.hom).obj y) ≃
@@ -283,18 +261,19 @@ def isomPresheafObjEquiv (X : StackInGroupoids.{u}) {T : Scheme.{u}}
   left_inv e := by apply ULift.ext; apply Iso.ext; rfl
   right_inv a := rfl
 
-/-- Representability of the actual stack diagonal by algebraic spaces,
-equivalently the actual isomorphism sheaves of every pair of scheme points. -/
+/-- The diagonal is representable by algebraic spaces: for every scheme `T` and objects `x y`
+over `T`, the presheaf `Isom(x, y)` is an algebraic space over `T` (Stacks, Lemma 94.10.11). -/
 def HasRepresentableDiagonal (X : StackInGroupoids.{u}) : Prop :=
   ∀ (T : Scheme.{u}) (x y : Fibre X T), ∃ A : AlgebraicSpaceOver T,
     Nonempty (A.relativePresheaf ≅ isomPresheaf X x y)
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
-/-- The actual comparison-morphism presheaf of two points of a
-Cat-valued pseudofunctor. In groupoid fibres all these comparisons are
-isomorphisms. The same construction applies to schemes and schemes over
-a specified base. -/
+/-- The presheaf of comparison arrows between two points `x` over `U` and `y` over `T` of a
+`Cat`-valued pseudofunctor, on objects over `T`: its value on `V ⟶ T` consists of a morphism
+`a : V ⟶ U` and a morphism `a^* x ⟶ (V ⟶ T)^* y` in the fibre over `V`. When the fibres are
+groupoids (as for stacks in groupoids) these morphisms are isomorphisms and this presheaf is the
+2-fibre product `U ×_F T`; in general it is a comma construction. -/
 def pointComparisonPresheaf {D : Type (u + 1)} [Category.{u} D]
     (F : Pseudofunctor (LocallyDiscrete Dᵒᵖ) Cat.{u, u + 1}) {U T : D}
     (x : F.obj (.mk (op U))) (y : F.obj (.mk (op T))) : (Over T)ᵒᵖ ⥤ Type u where
@@ -337,19 +316,20 @@ def pointComparisonPresheaf {D : Type (u + 1)} [Category.{u} D]
       Subtype.ext (Category.assoc _ _ _)
     exact congrArg pair harg
 
-/-- The actual 2-fibre of two scheme-valued points of a stack, using its
-genuine comparison isomorphisms and pullback maps. -/
+/-- The 2-fibre product `U ×_X T` of two points of a stack in groupoids, as a presheaf on schemes
+over `T`. -/
 abbrev schemePointFibrePresheaf (X : StackInGroupoids.{u}) {U T : Scheme.{u}}
     (x : Fibre X U) (y : Fibre X T) :=
   pointComparisonPresheaf X.toSchPseudofunctor x y
 
-/-- The actual scheme-point fibre presheaf at the quotient-sheaf universe. -/
+/-- `schemePointFibrePresheaf`, lifted to the universe of the quotient sheaves. -/
 abbrev atlasFibrePresheaf (X : StackInGroupoids.{u}) {U T : Scheme.{u}}
     (x : Fibre X U) (y : Fibre X T) :=
   schemePointFibrePresheaf X x y ⋙ uliftFunctor.{u + 1, u}
 
-/-- A scheme atlas candidate, with every actual scheme base change
-represented by its actual algebraic-space model and normalized presheaf. -/
+/-- A scheme `U` with an object `point` over `U` such that for every scheme `T` and object `y`
+over `T` the 2-fibre product `U ×_X T` is an algebraic space over `T` whose structure map is
+surjective. -/
 structure Atlas (X : StackInGroupoids.{u}) where
   U : Scheme.{u}
   point : Fibre X U
@@ -358,46 +338,44 @@ structure Atlas (X : StackInGroupoids.{u}) where
     (baseChange T y).relativePresheaf ≅ atlasFibrePresheaf X point y
   surjective : ∀ (T : Scheme.{u}) (y : Fibre X T), (baseChange T y).IsSurjective
 
-/-- A smooth surjective actual scheme atlas, with no existence asserted
-for a general stack. -/
+/-- A smooth atlas: an atlas whose base changes are smooth over `T`. -/
 structure SmoothAtlas (X : StackInGroupoids.{u}) extends Atlas X where
   smooth : ∀ (T : Scheme.{u}) (y : Fibre X T), (baseChange T y).IsSmooth
 
-/-- An étale surjective actual scheme atlas. -/
+/-- An étale atlas: an atlas whose base changes are étale over `T`. -/
 structure EtaleAtlas (X : StackInGroupoids.{u}) extends Atlas X where
   etale : ∀ (T : Scheme.{u}) (y : Fibre X T), (baseChange T y).IsEtale
 
-/-- An actual étale atlas is an actual smooth atlas by the completed
-scheme implication, using the same charts and normalization maps. -/
+/-- An étale atlas is a smooth atlas. -/
 def EtaleAtlas.toSmoothAtlas {X : StackInGroupoids.{u}} (a : EtaleAtlas X) : SmoothAtlas X where
   toAtlas := a.toAtlas
   smooth T y := by
     obtain ⟨c, hc⟩ := a.etale T y
     exact ⟨c, by have := hc; infer_instance⟩
 
-/-- The general algebraic/Artin-stack contract on the actual fppf stack. -/
+/-- An algebraic (Artin) stack: representable diagonal and a smooth atlas (Stacks,
+Definition 94.12.1). -/
 def IsArtinStack (X : StackInGroupoids.{u}) : Prop :=
   HasRepresentableDiagonal X ∧ Nonempty (SmoothAtlas X)
 
-/-- The general Deligne--Mumford-stack contract on that same carrier. -/
+/-- A Deligne–Mumford stack: representable diagonal and an étale atlas (Stacks,
+Definition 94.12.2). -/
 def IsDeligneMumfordStack (X : StackInGroupoids.{u}) : Prop :=
   HasRepresentableDiagonal X ∧ Nonempty (EtaleAtlas X)
 
-/-- The Deligne--Mumford contract implies the general Artin contract. -/
+/-- A Deligne–Mumford stack is an algebraic stack. -/
 theorem isArtinStack_of_isDeligneMumfordStack {X : StackInGroupoids.{u}}
     (h : IsDeligneMumfordStack X) : IsArtinStack X :=
   ⟨h.1, h.2.map EtaleAtlas.toSmoothAtlas⟩
 
-/-! ## Native stacks over a specified base scheme
+/-! ## Stacks over a base scheme
 
-These adapters retain the native `(Over S)`-indexed pseudofunctor.
-Representability and atlas contracts use the very same actual
-algebraic-space models, via the completed iterated-slice equivalence.
-For example, a root-stack pseudofunctor over X can bind these types
-directly with its groupoid and fppf-stack dependencies.
+Stacks in groupoids on schemes over a base scheme `S`, with the same notions of representable
+diagonal and atlas; algebraic spaces over `T ⟶ S` are those over `T`, through the equivalence
+between objects over `T` in `Over S` and schemes over `T`.
 -/
 
-/-- The actual relative stack carrier, indexed by schemes over S. -/
+/-- An fppf stack in groupoids on schemes over `S`. -/
 structure RelativeStack (S : Scheme.{u}) where
   toPseudofunctor : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u + 1}
   isGroupoid : ∀ T : Over S, IsGroupoid (toPseudofunctor.obj (.mk (op T)))
@@ -405,8 +383,8 @@ structure RelativeStack (S : Scheme.{u}) where
 
 attribute [instance] RelativeStack.isGroupoid RelativeStack.isStack
 
-/-- Bind an existing native relative pseudofunctor and its named
-groupoid/stack dependencies, retaining that exact pseudofunctor. -/
+/-- The stack over `S` given by a pseudofunctor with groupoid fibres satisfying the stack
+condition. -/
 def RelativeStack.of (S : Scheme.{u})
     (F : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u + 1})
     (groupoids : ∀ T : Over S, IsGroupoid (F.obj (.mk (op T))))
@@ -420,24 +398,21 @@ theorem RelativeStack.of_toPseudofunctor (S : Scheme.{u})
     (stack : F.IsStack (Scheme.fppfTopology.over S)) :
     (RelativeStack.of S F groupoids stack).toPseudofunctor = F := rfl
 
-/-- Actual fibres of the native relative stack. -/
+/-- The fibre category over a scheme over `S`. -/
 abbrev RelativeStack.Fibre {S : Scheme.{u}} (X : RelativeStack S) (T : Over S) :=
   X.toPseudofunctor.obj (.mk (op T))
 
-/-- Actual space sections on the native iterated slice, transported by
-Mathlib's fixed scheme-map normalization. -/
+/-- An algebraic space over `T.left` as a presheaf on objects over `T` in `Over S`. -/
 abbrev relativeSpacePresheaf {S : Scheme.{u}} (T : Over S)
     (A : AlgebraicSpaceOver T.left) := T.iteratedSliceForward.op ⋙ A.relativePresheaf
 
-/-- Relative diagonal representability, on the actual isomorphism
-presheaf of the supplied native pseudofunctor. -/
+/-- The diagonal of a stack over `S` is representable by algebraic spaces. -/
 def RelativeStack.HasRepresentableDiagonal {S : Scheme.{u}} (X : RelativeStack S) : Prop :=
   ∀ (T : Over S) (x y : X.Fibre T), ∃ A : AlgebraicSpaceOver T.left,
     Nonempty (relativeSpacePresheaf T A ≅
       X.toPseudofunctor.presheafHom x y ⋙ uliftFunctor.{u + 1, u})
 
-/-- A native relative scheme atlas with actual normalized algebraic-space
-base changes and actual fppf-local surjectivity. -/
+/-- An atlas of a stack over `S`; see `Atlas`. -/
 structure RelativeStack.Atlas {S : Scheme.{u}} (X : RelativeStack S) where
   U : Over S
   point : X.Fibre U
@@ -447,21 +422,21 @@ structure RelativeStack.Atlas {S : Scheme.{u}} (X : RelativeStack S) where
       pointComparisonPresheaf X.toPseudofunctor point y ⋙ uliftFunctor.{u + 1, u}
   surjective : ∀ (T : Over S) (y : X.Fibre T), (baseChange T y).IsSurjective
 
-/-- Actual smooth relative atlases, on schemes over the given base. -/
+/-- A smooth atlas of a stack over `S`. -/
 structure RelativeStack.SmoothAtlas {S : Scheme.{u}} (X : RelativeStack S)
     extends X.Atlas where
   smooth : ∀ (T : Over S) (y : X.Fibre T), (baseChange T y).IsSmooth
 
-/-- Actual étale relative atlases on the same native carrier. -/
+/-- An étale atlas of a stack over `S`. -/
 structure RelativeStack.EtaleAtlas {S : Scheme.{u}} (X : RelativeStack S)
     extends X.Atlas where
   etale : ∀ (T : Over S) (y : X.Fibre T), (baseChange T y).IsEtale
 
-/-- The general Artin condition directly on the native relative stack. -/
+/-- A stack over `S` is algebraic (Artin): representable diagonal and a smooth atlas. -/
 def RelativeStack.IsArtinStack {S : Scheme.{u}} (X : RelativeStack S) : Prop :=
   X.HasRepresentableDiagonal ∧ Nonempty X.SmoothAtlas
 
-/-- The general DM condition directly on that same relative carrier. -/
+/-- A stack over `S` is Deligne–Mumford: representable diagonal and an étale atlas. -/
 def RelativeStack.IsDeligneMumfordStack {S : Scheme.{u}} (X : RelativeStack S) : Prop :=
   X.HasRepresentableDiagonal ∧ Nonempty X.EtaleAtlas
 
