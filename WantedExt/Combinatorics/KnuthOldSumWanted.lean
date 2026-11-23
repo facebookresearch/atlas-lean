@@ -31,34 +31,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
-public import MathlibExt.Combinatorics.KnuthOldSum
+public import MathlibExt.Combinatorics.KnuthOldSumBinomialQuotients
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.KnuthOldSumWanted
-
-/-- **Tefera–Zeleke identity with binomial quotients.** Let $n$ and $j$ be natural numbers, let
-$N = n + 2j + 1$, and let $w(m) = (4^m + 2^m)/2$ be the weight in Knuth's old sum. Then, in the
-rational numbers,
-$$\sum_{k=0}^{n} \binom{N}{n-k} w(n-k) (-1)^k
-= \binom{N}{n} \sum_{k=0}^{n} \frac{\binom{n}{k}}{\binom{2j+1+k}{2j+1}} w(n-k) (-1)^k.$$
-
-This is Equation (1) of the paper, whose weight $(2^m + 1) 2^{m-1}$ is written here as
-$(4^m + 2^m)/2$.
-
-Source: Akalu Tefera and Aklilu Zeleke, "Combinatorial Identities
-Inspired by Knuth's Old Sum", Theorem 1. -/
-theorem_wanted knuthOldSum_eq_mul_sum_div (n j : ℕ) :
-    (∑ k ∈ Finset.range (n + 1),
-      (Nat.choose (n + 2 * j + 1) (n - k) : ℚ) *
-        knuthOldSumWeight (n - k) * (-1 : ℚ) ^ k) =
-      (Nat.choose (n + 2 * j + 1) n : ℚ) *
-        ∑ k ∈ Finset.range (n + 1),
-          ((Nat.choose n k : ℚ) /
-            (Nat.choose (2 * j + 1 + k) (2 * j + 1) : ℚ)) *
-            knuthOldSumWeight (n - k) * (-1 : ℚ) ^ k
 
 /-- **Tefera–Zeleke identity with powers of $2$, $3$ and $4$.** Let $n$ and $j$ be natural numbers,
 let $N = n + 2j + 1$, and let $w(m) = (4^m + 2^m)/2$ be the weight in Knuth's old sum. Then, in the
