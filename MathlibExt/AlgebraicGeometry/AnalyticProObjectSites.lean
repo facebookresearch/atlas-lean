@@ -96,9 +96,18 @@ theorem finiteEtale_identity (X : AnalyticAdicSpace p) :
       coordinates := fun _ ↦ rfl }
   refine ⟨V, f, ?_, ?_, ?_⟩
   · simp [f]
-  · change Module.Finite V.pair.ring V.pair.ring ∧
-      Algebra.Etale V.pair.ring V.pair.ring
-    constructor <;> infer_instance
+  · refine ⟨Module.Finite.self _, inferInstanceAs (Algebra.Etale V.pair.ring V.pair.ring),
+      fun s ↦ ?_⟩
+    change s ∈ V.pair.plus ↔ V.pair.plus.subtype.IsIntegralElem s
+    constructor
+    · intro hs
+      exact V.pair.plus.subtype.isIntegralElem_map (x := ⟨s, hs⟩)
+    · intro hs
+      have := V.pair.plus_integral
+      obtain ⟨y, hy⟩ :=
+        (IsIntegrallyClosedIn.isIntegral_iff (R := V.pair.plus) (A := V.pair.ring)).mp hs
+      rw [← hy]
+      exact y.property
   · rfl
 
 /-- An original étale object has its native one-object pro-presentation. -/

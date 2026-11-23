@@ -106,6 +106,7 @@ structure GenericChart where
   genericInclusion : affinoid.valued ⟶ G.obj
   generic_open : IsOpenEmbedding genericInclusion.val.base
   generic_stalk_iso : ∀ x, IsIso (genericInclusion.val.stalkMap x)
+  generic_sections : AnalyticTateAdicModels.SectionsHomeomorphic genericInclusion.val
 
 attribute [instance] GenericChart.openCharts
 
@@ -114,7 +115,8 @@ namespace GenericChart
 variable {p C X G} (A : GenericChart p C X G)
 
 def chart : AnalyticDiamondEtaleSites.Chart p G :=
-  ⟨A.pair, A.affinoid, A.genericInclusion, A.generic_open, A.generic_stalk_iso⟩
+  ⟨A.pair, A.affinoid, A.genericInclusion, A.generic_open, A.generic_stalk_iso,
+    A.generic_sections⟩
 
 end GenericChart
 
