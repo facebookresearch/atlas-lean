@@ -64,4 +64,3 @@ theorem_wanted embedded_model_independence
     infer_instance
 
 end MathlibExt.AlgebraicGeometry.EmbeddedDuBoisZero
-

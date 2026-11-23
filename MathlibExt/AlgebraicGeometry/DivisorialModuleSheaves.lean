@@ -132,4 +132,3 @@ theorem ofLE_inclusion {D E : IntegerWeil V} (h : ∀ p, D p ≤ E p) :
   rfl
 
 end MathlibExt.AlgebraicGeometry.DivisorialModuleSheaves
-

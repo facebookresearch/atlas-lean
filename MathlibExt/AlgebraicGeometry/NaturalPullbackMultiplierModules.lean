@@ -208,4 +208,3 @@ def localLimitingIdeal {I : V.X.left.IdealSheafData} {c : ℝ}
   ⨆ m : PNat, (F.image m).ideal.ideal U
 
 end MathlibExt.AlgebraicGeometry.NaturalPullbackMultiplierModules
-

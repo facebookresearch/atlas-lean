@@ -80,4 +80,3 @@ theorem_wanted duBoisCanonicalIsomorphismCriterion
     IsIso C.map ↔ IsIso (embeddedUnit V F e)
 
 end MathlibExt.AlgebraicGeometry.DuBoisCanonicalComparison
-

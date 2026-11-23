@@ -86,4 +86,3 @@ def IsEmbeddedDuBois {S : Over (Spec (.of k))} {I : S.left.IdealSheafData}
   IsIso (duBoisUnit F)
 
 end MathlibExt.AlgebraicGeometry.EmbeddedDuBoisZero
-

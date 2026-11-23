@@ -180,4 +180,3 @@ def sectionTraceImage (U : UntwistedIdentification P p e hp) (A : AdmissibleBoun
     (boundaryTrace P p e hp U A)).hom
 
 end MathlibExt.AlgebraicGeometry.BoundaryFrobeniusTraces
-

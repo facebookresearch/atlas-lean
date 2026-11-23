@@ -156,4 +156,3 @@ structure CanonicalComparison (V : NormalVariety k n) (KX : CanonicalData V)
       (precomp (embeddedUnit V F e) (canonicalDualizing V D))
 
 end MathlibExt.AlgebraicGeometry.DuBoisCanonicalComparison
-
