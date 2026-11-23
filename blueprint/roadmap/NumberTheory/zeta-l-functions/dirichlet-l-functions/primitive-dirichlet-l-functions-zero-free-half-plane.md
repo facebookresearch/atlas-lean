@@ -84,9 +84,24 @@ The other inputs are the following pages; those that are nodes are themselves st
 [uniqueness of cuspidal support](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/uniqueness-of-cuspidal-support.md),
 [depth under parabolic induction and Jacquet functors](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/depth-under-parabolic-induction-and-jacquet-functors.md),
 [Galois cohomology and p-adic Hodge theory](../../algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md),
-[vanishing theorems and resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md),
-[arithmetic intersection theory, heights and arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes.md)
-and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-varieties/abelian-schemes-and-their-moduli.md).
+[principalization of ideal sheaves in characteristic zero](../../../AlgebraicGeometry/birational-geometry/principalization-of-ideal-sheaves.md),
+[functorial resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/functorial-resolution-of-schemes-of-finite-type.md),
+[the Poincaré–Lelong formula](../../../AlgebraicGeometry/birational-geometry/poincare-lelong-formula.md),
+[the Kawamata–Viehweg vanishing theorem](../../../AlgebraicGeometry/birational-geometry/kawamata-viehweg-vanishing-theorem.md),
+[the Nadel vanishing theorem](../../../AlgebraicGeometry/birational-geometry/nadel-vanishing-theorem.md),
+[the Ohsawa–Takegoshi extension theorem](../../../AlgebraicGeometry/birational-geometry/ohsawa-takegoshi-extension-theorem.md),
+[volumes of line bundles](../../../AlgebraicGeometry/birational-geometry/volume-of-a-line-bundle.md),
+[the arithmetic Hilbert–Samuel formula for nef hermitian line bundles](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-hilbert-samuel-formula-for-nef-hermitian-line-bundles.md),
+[the generalized Hodge index theorem for arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/generalized-hodge-index-theorem.md),
+[arithmetic intersection numbers](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-numbers.md),
+[heights of cycles](../../../AlgebraicGeometry/arakelov-geometry/height-of-a-cycle.md),
+[the toroidal compactifications of Siegel moduli spaces](../../../AlgebraicGeometry/abelian-varieties/moduli-of-principally-polarized-abelian-varieties.md),
+[line bundles on abelian varieties](../../../AlgebraicGeometry/abelian-varieties/line-bundles-on-abelian-varieties.md),
+[the dual abelian variety](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md),
+[Zarhin's trick](../../../AlgebraicGeometry/abelian-varieties/zarhin-trick.md),
+[the semistable reduction theorem for abelian varieties](../../../AlgebraicGeometry/abelian-varieties/semistable-reduction-theorem.md),
+[the Grothendieck–Messing deformation theorem](../../../AlgebraicGeometry/abelian-varieties/grothendieck-messing-theorem.md)
+and [Grothendieck's existence theorem](../../../AlgebraicGeometry/abelian-varieties/grothendieck-existence-theorem.md).
 
 ## Proof depends on
 
@@ -131,9 +146,24 @@ and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-variet
 - [Global reciprocity law](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the global Artin map, whose reciprocal is used to construct the compatible local Artin map in the partial correspondence
 - [The global Artin map on the Galois group of the maximal abelian extension](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/artin-map-on-the-maximal-abelian-extension.md), for the surjectivity, openness, kernel and local properties of that reciprocal map, which the partial correspondence uses
 - [Galois cohomology and p-adic Hodge theory](../../algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md)
-- [Vanishing theorems and resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md)
-- [Arithmetic intersection theory, heights and arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes.md)
-- [Abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-varieties/abelian-schemes-and-their-moduli.md)
+- [Principalization of ideal sheaves in characteristic zero](../../../AlgebraicGeometry/birational-geometry/principalization-of-ideal-sheaves.md)
+- [Functorial resolution of schemes of finite type in characteristic zero](../../../AlgebraicGeometry/birational-geometry/functorial-resolution-of-schemes-of-finite-type.md), for reduced schemes
+- [Poincaré–Lelong formula](../../../AlgebraicGeometry/birational-geometry/poincare-lelong-formula.md)
+- [Kawamata–Viehweg vanishing theorem](../../../AlgebraicGeometry/birational-geometry/kawamata-viehweg-vanishing-theorem.md)
+- [Nadel vanishing theorem](../../../AlgebraicGeometry/birational-geometry/nadel-vanishing-theorem.md)
+- [Ohsawa–Takegoshi L² extension theorem](../../../AlgebraicGeometry/birational-geometry/ohsawa-takegoshi-extension-theorem.md)
+- [Volume of a line bundle](../../../AlgebraicGeometry/birational-geometry/volume-of-a-line-bundle.md), for nef line bundles
+- [Arithmetic Hilbert–Samuel formula for nef hermitian line bundles](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-hilbert-samuel-formula-for-nef-hermitian-line-bundles.md)
+- [Moriwaki's generalized Hodge index theorem](../../../AlgebraicGeometry/arakelov-geometry/generalized-hodge-index-theorem.md), for its corollary on hermitian line bundles that are nef on the fibres and have semipositive curvature
+- [Arithmetic degree and arithmetic intersection numbers](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-numbers.md)
+- [Height of a cycle](../../../AlgebraicGeometry/arakelov-geometry/height-of-a-cycle.md)
+- [Moduli of principally polarized abelian varieties and their compactifications](../../../AlgebraicGeometry/abelian-varieties/moduli-of-principally-polarized-abelian-varieties.md), for the toroidal compactifications of Siegel moduli spaces
+- [Line bundles on abelian varieties](../../../AlgebraicGeometry/abelian-varieties/line-bundles-on-abelian-varieties.md), for the global sections of a principal polarization
+- [Dual abelian variety](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md)
+- [Zarhin's trick](../../../AlgebraicGeometry/abelian-varieties/zarhin-trick.md)
+- [Semistable reduction theorem for abelian varieties](../../../AlgebraicGeometry/abelian-varieties/semistable-reduction-theorem.md)
+- [Grothendieck–Messing deformation theorem](../../../AlgebraicGeometry/abelian-varieties/grothendieck-messing-theorem.md)
+- [Grothendieck's existence theorem](../../../AlgebraicGeometry/abelian-varieties/grothendieck-existence-theorem.md)
 
 ## Sources
 

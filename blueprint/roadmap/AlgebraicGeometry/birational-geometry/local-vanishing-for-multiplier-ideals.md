@@ -1,0 +1,31 @@
+# Local vanishing theorem for multiplier ideals
+
+Let $X$ be a smooth complex variety, $D$ an effective $\mathbb{Q}$-divisor on $X$ and
+$\mu \colon X' \to X$ a [log resolution](multiplier-ideal-of-a-q-divisor.md) of $D$. Then
+
+$$R^j \mu_* \mathcal{O}_{X'}\bigl(K_{X'/X} - \lfloor \mu^* D \rfloor\bigr) = 0 \qquad (j > 0).$$
+
+For $j = 0$ the direct image is the [multiplier ideal](multiplier-ideal-of-a-q-divisor.md)
+$\mathcal{J}(D)$, so that $\mathcal{O}_{X'}(K_{X'/X} - \lfloor \mu^* D \rfloor)$ computes
+$\mathcal{J}(D)$ without higher direct images.
+
+Lazarsfeld sketches the proof: one reduces to the case where $X$ is projective and applies the
+[Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md) in that global setting.
+He refers to Positivity II, §9.4.A, for an account.
+
+## Depends on
+
+- [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md), for log
+  resolutions, the relative canonical divisor and $\mathcal{J}(D)$
+
+## Proof depends on
+
+- [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md)
+
+## Sources
+
+- R. Lazarsfeld, "A short course on multiplier ideals", arXiv:0901.0651 (version 1),
+  <https://arxiv.org/abs/0901.0651v1>: Theorem 2.3 and the remark on its proof after the proof of
+  Theorem 2.4, pp. 11–12. See also R. Lazarsfeld, *Positivity in Algebraic Geometry I, II*, Ergebnisse
+  der Mathematik und ihrer Grenzgebiete 48, 49, Springer, 2004: the chapter "Multiplier Ideal Sheaves"
+  (volume II, pp. 139–231), whose §9.4.A the short course cites for the proof.
