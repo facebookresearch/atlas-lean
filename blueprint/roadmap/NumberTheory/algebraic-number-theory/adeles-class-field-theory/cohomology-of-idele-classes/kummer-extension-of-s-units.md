@@ -35,5 +35,7 @@ of extensions unramified at $v$ is unramified at $v$.
   (the extension $M = K[U(S)^{1/p}]$, with $U(S)/U(S)^p \approx (\mathbb{Z}/p\mathbb{Z})^s$), and the
   proof of Lemma VII.9.3 (the same extension: $U(S) \cap K^{\times p} = U(S)^p$ and
   $(U(S) : U(S)^p) = p^s$); Appendix to Chapter VII, Theorem A.3 (Kummer theory) and Proposition A.5
-  ($K[a_1^{1/n}, \dots, a_m^{1/n}]$ is unramified at a finite prime $v$ at which $n a_i$ is a unit for
-  all $i$, by the discriminant of $X^n - a$).
+  ($K[a_1^{1/n}, \dots, a_m^{1/n}]$ is unramified at a finite prime $v$ at which $n$ and every $a_i$ are
+  units, by the discriminant $\pm n^n a^{n-1}$ of $X^n - a$; Milne's statement says "$n a_i$ is a unit",
+  which does not suffice, as $K = \mathbb{Q}$, $n = 2$, $a = 1/2$, $v = 2$ shows; the discriminant argument
+  needs $n$ and $a_i$ to be units separately).

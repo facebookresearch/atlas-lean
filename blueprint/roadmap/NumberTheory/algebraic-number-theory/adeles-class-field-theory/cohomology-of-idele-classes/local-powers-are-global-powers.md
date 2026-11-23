@@ -21,8 +21,8 @@ $D = \prod_{v \in S} K_v^\times \times \prod_{v \in T} \mathcal{O}_v^{\times n} 
 Then $D \subseteq \mathrm{Nm}_{L/K}(\mathbb{I}_L)$: for $v \in S$, $X^n - b$ splits in $K_v$, so $L_w = K_v$;
 for $v \in T$, the index of the local norm group is $[L_w : K_v]$, which divides $n$, by the
 [local Artin map](../../../p-adic-numbers/local-class-field-theory.md); for $v \notin S \cup T$, $L_w/K_v$ is
-unramified, since $n b$ is a unit at $v$ and so $v$ does not divide the discriminant $\pm n^n b^{n-1}$ of
-$X^n - b$, and the norm maps units onto units. The surjectivity hypothesis gives
+unramified, since $n$ and $b$ are both units at $v$ and so $v$ does not divide the discriminant
+$\pm n^n b^{n-1}$ of $X^n - b$, and the norm maps units onto units. The surjectivity hypothesis gives
 $\mathbb{I}_{K,S} = D \, U(S)$, so $K^\times D = \mathbb{I}_K$, and the
 [density criterion](norm-density-criterion.md) gives $L = K$.
 
