@@ -9,17 +9,18 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.CurvePositivity
-public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 
 /-!
 # Curve semiampleness, torsion and asymptotic positivity
 
-Semiampleness of a line bundle on a smooth proper curve means positive
-degree or torsion. In particular, degree-zero nefness does not by itself
-imply semiampleness. Bigness is identified with positive degree using
-actual asymptotic global-section dimensions.
+Semiampleness of a line bundle on a smooth proper integral curve means
+positive degree or torsion. In particular, degree-zero nefness does not by
+itself imply semiampleness. Bigness is identified with positive degree
+using actual asymptotic global-section dimensions. Over an algebraically
+closed field, a smooth curve is integral exactly when it is geometrically
+irreducible.
 
 Reference: Lazarsfeld, *Positivity in Algebraic Geometry I*, Chapter 1,
 https://doi.org/10.1007/978-3-642-18808-4.
@@ -44,17 +45,17 @@ universe u
 /-- The precise degree-zero torsion exception in semiampleness. -/
 theorem_wanted semiample_iff (k : Type u) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [IsProper C.hom]
-    [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
+    [SmoothOfRelativeDimension 1 C.hom] [IsIntegral C.left]
     (L : C.left.Modules)
     (hL : IsLineBundle L) :
-    IsSemiample L ↔ 0 < degree C.hom L ∨ IsTorsion L
+    IsSemiample L ↔ 0 < degree C.hom L hL ∨ IsTorsion L
 
 /-- Positive asymptotic section growth agrees with numerical positive degree. -/
 theorem_wanted big_iff (k : Type u) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [IsProper C.hom]
-    [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
+    [SmoothOfRelativeDimension 1 C.hom] [IsIntegral C.left]
     (L : C.left.Modules)
     (hL : IsLineBundle L) :
-    IsBigOnCurve C.hom L ↔ 0 < degree C.hom L
+    IsBigOnCurve C.hom L hL ↔ 0 < degree C.hom L hL
 
 end WantedExt.AlgebraicGeometry.CurvePositivityWanted
