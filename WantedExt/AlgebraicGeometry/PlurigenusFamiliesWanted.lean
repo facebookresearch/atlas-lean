@@ -43,7 +43,7 @@ base (these include points over non-closed points, through embeddings of their
 residue fields into `ℂ`). The dimension restriction selects the
 higher-dimensional-variety packet. -/
 public theorem_wanted deformationInvarianceOfPlurigenera
-    (n : ℕ) (hn : 2 ≤ n) (P : SmoothGeneralTypeFamily (k := ℂ) n)
+    (n : ℕ) (hn : 2 ≤ n) (P : SmoothGeneralTypeFamilyOverCurve (k := ℂ) n)
     (m : ℕ) (hm : 0 < m)
     (x y : Spec (.of ℂ) ⟶ P.B.left) :
     plurigenus P x m = plurigenus P y m
