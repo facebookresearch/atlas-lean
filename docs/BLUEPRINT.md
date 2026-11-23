@@ -44,7 +44,7 @@ These rules apply to any PR that changes the graph: `blueprint/roadmap/`,
 `scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl` or
 `scripts/mathgraph-map.jsonl`. They add only what ATLAS
 needs to AutoformBot's
-[blueprint format](https://github.com/facebookresearch/autoform-bot/blob/6126f7fce521c0040796d0b67d952d36ee051f3f/autoform_cli/reference/blueprint-format.md),
+[blueprint format](https://github.com/facebookresearch/autoform-bot/blob/b1fe52ba726bb675d9c974203fce427fe4927ff9/autoform_cli/reference/blueprint-format.md),
 at the commit in `.github/autoform-ref`; where ATLAS needs something the
 format lacks, open an AutoformBot issue rather than diverge.
 
