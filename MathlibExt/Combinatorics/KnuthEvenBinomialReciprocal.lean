@@ -10,9 +10,7 @@ module
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Algebra.Ring.Parity
-import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
 
 /-! # An even-index binomial sum with odd reciprocal weights -/
 
