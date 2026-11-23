@@ -11,7 +11,7 @@ public import Mathlib.AlgebraicGeometry.Birational.Birational
 public import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
-public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
+public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 /-!
 # Normalized birational resolutions
@@ -35,7 +35,7 @@ Stacks Project, Tag 0BHW (definition of a resolution).
 namespace MathlibExt.AlgebraicGeometry.BirationalResolution
 
 open CategoryTheory _root_.AlgebraicGeometry
-open MathlibExt.AlgebraicGeometry.PlurigenusFamilies
+open MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 universe u
 
@@ -59,11 +59,13 @@ def restrictOver {k : Type u} [Field k]
       Scheme.Hom.resLE_comp_ι,
       Category.assoc, f.w])
 
-/-- The projective-space presentation is local on actual affine target opens. -/
+/-- Local projectivity: over each point of the target, the restriction to an affine open
+neighbourhood is H-projective (over an affine base, H-projective and projective agree,
+Stacks, Tag 01WB). -/
 def IsLocallyProjectiveOver {k : Type u} [Field k]
     {Y X : Over (Spec (.of k))} (f : Y ⟶ X) : Prop :=
   ∀ x : X.left, ∃ U : X.left.affineOpens, x ∈ U.1 ∧
-    IsProjectiveOver (restrictOver f U.1)
+    IsHProjectiveOver (restrictOver f U.1)
 
 /-- A resolution with its genuine geometric morphism and local normalization. -/
 structure ResolutionModel {k : Type u} [Field k]

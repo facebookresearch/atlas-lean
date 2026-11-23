@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 public import MathlibExt.AlgebraicGeometry.DltBoundaryFlipModels
 public import Batteries.Util.ProofWanted
 
@@ -26,7 +27,7 @@ open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.LogPairs
 open MathlibExt.AlgebraicGeometry.RelativeMoriContracts
 open MathlibExt.AlgebraicGeometry.MoriContractionModels
-open MathlibExt.AlgebraicGeometry.PlurigenusFamilies
+open MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 def_wanted standardDltThreefoldFlip
     {k : Type} [Field k] [IsAlgClosed k] (p : ℕ) [CharP k p] (large : 5 < p)
@@ -35,7 +36,7 @@ def_wanted standardDltThreefoldFlip
     (standard : ∀ d : PrimePoint P.variety,
       P.boundary d = 1 ∨ ∃ m : ℕ, 0 < m ∧ P.boundary d = 1 - 1 / (m : ℝ))
     (S : Over (Spec (.of k))) (base : IsQuasiProjectiveBase S)
-    (q : P.variety.X ⟶ S) (projective : IsProjectiveOver q)
+    (q : P.variety.X ⟶ S) (projective : IsHProjectiveOver q)
     (v : RelativeN1 q) (extremal : IsExtremal v)
     (negative : combinationOnClass q P.adjoint v < 0)
     (C : RelativeContraction P q v) (small : IsSmall C.map.left 3)

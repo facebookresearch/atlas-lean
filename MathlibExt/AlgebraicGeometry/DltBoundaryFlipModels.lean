@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 public import MathlibExt.AlgebraicGeometry.RelativeMoriContracts
 public import MathlibExt.AlgebraicGeometry.NormalCrossingsModels
 public import MathlibExt.AlgebraicGeometry.RestrictedAdjointSections
@@ -39,9 +40,9 @@ namespace MathlibExt.AlgebraicGeometry.DltBoundaryFlipModels
 open _root_.CategoryTheory _root_.AlgebraicGeometry _root_.TopologicalSpace
 open MathlibExt.AlgebraicGeometry.LogPairs
 open MathlibExt.AlgebraicGeometry.RelativeMoriContracts
-open MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 open MathlibExt.AlgebraicGeometry.RationalResolution
 open MathlibExt.AlgebraicGeometry.MoriContractionModels
+open MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 variable {k : Type} [Field k] {n : ℕ}
 
@@ -90,7 +91,7 @@ structure BoundaryFlip {S : Over (Spec (.of k))} {P : LogPair k n}
   qfactorial : IsQFactorial source.variety
   map : source.variety.X ⟶ C.target
   [proper : IsProper map.left]
-  projective : IsProjectiveOver map
+  projective : IsHProjectiveOver map
   unit : IsIso (structureUnit map.left)
   small : IsSmall map.left n
   identification : Scheme.PartialIso P.variety.X.left source.variety.X.left

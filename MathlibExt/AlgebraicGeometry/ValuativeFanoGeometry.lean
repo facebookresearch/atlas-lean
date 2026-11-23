@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 public import MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 public import MathlibExt.AlgebraicGeometry.BirationalResolution
 public import MathlibExt.AlgebraicGeometry.FiniteCoverLocalComparison
