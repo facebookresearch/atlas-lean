@@ -40,37 +40,37 @@ theorem birth_products (s : Fin 2) :
 
 /-- A birth reaction fires at its rate constant regardless of state. -/
 theorem birth_propensity (x : Fin 2 → ℕ) :
-    propensity birthNet birthK () x = 2 := by
-  unfold propensity
+    birthNet.propensity birthK () x = 2 := by
+  unfold ReactionNetwork.propensity
   simp [birth_k, birth_reactants, Nat.descFactorial_zero,
     Finset.prod_const_one]
 
 /-- Firing the birth reaction from the empty state produces one `A`. -/
 theorem birth_fire_empty :
-    fire birthNet () initState
+    birthNet.fire () initState
       = fun s => if s = (0 : Fin 2) then 1 else 0 := by
   funext s
-  simp [fire, initState, birth_reactants, birth_products]
+  simp [ReactionNetwork.fire, initState, birth_reactants, birth_products]
 
-theorem birth_fire_zero : fire birthNet () initState 0 = 1 := by
-  simp [fire, initState, birth_reactants, birth_products]
+theorem birth_fire_zero : birthNet.fire () initState 0 = 1 := by
+  simp [ReactionNetwork.fire, initState, birth_reactants, birth_products]
 
 theorem birth_fire_ne (s : Fin 2) (hs : s ≠ 0) :
-    fire birthNet () initState s = 0 := by
-  simp [fire, initState, birth_reactants, birth_products, hs]
+    birthNet.fire () initState s = 0 := by
+  simp [ReactionNetwork.fire, initState, birth_reactants, birth_products, hs]
 
 /-- Single-reaction selection: the birth reaction is selected and the new
 state has one `A`; the waiting time stays symbolic. -/
 theorem birth_step_some :
     step birthNet birthK [()] initState (1 / 2) (1 / 2) =
       some (Real.log (1 / (1 / 2)) / 2, (),
-        fire birthNet () initState) := by
+        birthNet.fire () initState) := by
   have ha0 : totalPropensity birthNet birthK [()] initState = 2 := by
     simp [totalPropensity, birth_propensity]
-  have hle2 : (1 / 2 : ℝ) * 2 ≤ propensity birthNet birthK () initState := by
+  have hle2 : (1 / 2 : ℝ) * 2 ≤ birthNet.propensity birthK () initState := by
     rw [birth_propensity]
     norm_num
-  have hpos2 : 0 < propensity birthNet birthK () initState := by
+  have hpos2 : 0 < birthNet.propensity birthK () initState := by
     rw [birth_propensity]
     norm_num
   have hsel2 : selectAux birthNet birthK [()] initState ((1 / 2 : ℝ) * 2) =
@@ -100,7 +100,10 @@ theorem birth_tau_nonneg : 0 ≤ Real.log (1 / (1 / 2 : ℝ)) / 2 := by
 #print axioms totalPropensity_eq_zero_iff
 #print axioms selectAux_some_pos
 #print axioms selectAux_mem
+#print axioms selectAux_none_of_total_lt
+#print axioms selectAux_some_of_le_total
 #print axioms step_some_sound
+#print axioms step_some_of_pos
 #print axioms step_none_of_empty
 #print axioms birth_fire_empty
 #print axioms birth_fire_zero
@@ -119,12 +122,12 @@ def boundaryNet : ReactionNetwork Unit (Fin 2) :=
 /-- Unit rate function for the boundary network. -/
 def boundaryK : Fin 2 → ℝ := fun _ => 1
 
-theorem boundary_prop1 : propensity boundaryNet boundaryK 0 (fun _ => 0) = 1 := by
-  unfold propensity boundaryNet boundaryK
+theorem boundary_prop1 : boundaryNet.propensity boundaryK 0 (fun _ => 0) = 1 := by
+  unfold ReactionNetwork.propensity boundaryNet boundaryK
   simp [Nat.descFactorial_zero]
 
-theorem boundary_prop2 : propensity boundaryNet boundaryK 1 (fun _ => 0) = 1 := by
-  unfold propensity boundaryNet boundaryK
+theorem boundary_prop2 : boundaryNet.propensity boundaryK 1 (fun _ => 0) = 1 := by
+  unfold ReactionNetwork.propensity boundaryNet boundaryK
   simp [Nat.descFactorial_zero]
 
 theorem boundary_total :

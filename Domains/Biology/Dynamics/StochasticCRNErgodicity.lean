@@ -133,14 +133,14 @@ theorem fire_eq_iff {r : ρ} {w x : S → ℕ} (hw : N.src r ≤ w) :
     fire N r w = x ↔ N.prod r ≤ x ∧ w = unfire N r x := by
   constructor
   · rintro rfl
-    refine ⟨fun s => by simp [fire], funext fun s => ?_⟩
+    refine ⟨fun s => by simp [fire, ReactionNetwork.fire], funext fun s => ?_⟩
     have : N.src r s ≤ w s := hw s
-    simp only [fire, unfire]
+    simp only [fire, unfire, ReactionNetwork.fire, ReactionNetwork.unfire]
     omega
   · rintro ⟨hx, rfl⟩
     funext s
     have : N.prod r s ≤ x s := hx s
-    simp only [fire, unfire]
+    simp only [fire, unfire, ReactionNetwork.fire, ReactionNetwork.unfire]
     omega
 
 /-- `p` solves the **stationary chemical master equation** (the stationary Kolmogorov forward
