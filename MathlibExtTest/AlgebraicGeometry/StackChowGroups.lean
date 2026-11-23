@@ -59,4 +59,28 @@ example {T X : Stack S} {p : StackHom T X} {E : VectorBundle X} (P : BundlePullb
     P.sections.hom.app b (m + n) = P.sections.hom.app b m + P.sections.hom.app b n :=
   map_add _ _ _
 
+/-- The total-space comparison of a pulled-back bundle lies over the given 2-cell: projected to
+affine points of the base, its component is pinned by the `overBase` comparisons and the inverse of
+`commutes` (so it cannot hide an automorphism of a stabilizer). -/
+example {T X : Stack S} {p : StackHom T X} {E : VectorBundle X} (P : BundlePullback p E)
+    (b : StackAffineModules.AffinePoint P.bundle.total) :
+    ((sectionForget E.module.val).map (P.normalized.hom.app b)).hom.base =
+      ((affineMap p).map (P.bundle.overBase.hom.app b)).hom.base ≫
+        (P.commutes.pointInv b).hom.base ≫
+          (E.overBase.inv.app ((affineMap P.map).obj b)).hom.base := by
+  rw [P.based b]; rfl
+
+/-- The inverse cell of a modification is over the identity of the base scheme. -/
+example {X Y : Stack S} {p q : StackHom X Y} (e : TwoIso p q)
+    (a : StackAffineModules.AffinePoint X) :
+    (e.pointInv a).hom.base = 𝟙 a.obj.base := rfl
+
+/-- The same holds for every bundle map over the identity. -/
+example {X : Stack S} {F E : VectorBundle X} (f : BundleMap F E)
+    (b : StackAffineModules.AffinePoint F.total) :
+    (sectionForget E.module.val).map (f.normalized.hom.app b) =
+      F.overBase.hom.app b ≫ f.overBase.pointInv b ≫
+        E.overBase.inv.app ((affineMap f.total).obj b) :=
+  f.based b
+
 end StackChowGroupsTest
