@@ -36,9 +36,10 @@ This file proves the analytic part of Ferguson's §2.1:
   `P_{r₁} → 1/e` as `n → ∞`.
 
 Equation (3) itself is derived from the random-order model in
-`MathlibExt.Probability.OptimalStopping.SecretaryModel`; the reduction from all rank-based rules to
-threshold rules is the wanted statement
-`MathlibExt.Probability.Secretary.card_rankRule_wins_div_factorial_le`.
+`MathlibExt.Probability.OptimalStopping.SecretaryModel`, and
+`MathlibExt.Probability.Secretary.card_rankRule_wins_div_factorial_le` in
+`MathlibExt.Probability.OptimalStopping.SecretaryOptimality` shows that no rule based on relative
+ranks does better than `N_{r₁}`.
 -/
 
 @[expose] public section
