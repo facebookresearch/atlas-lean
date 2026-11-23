@@ -151,4 +151,36 @@ theorem hermPauli_one_one_entries :
     rw [hexp, pow_one, Matrix.smul_apply, smul_eq_mul, pauliXZ_apply,
       ite_eq_right (by decide : ¬((1 : Fin 1 → ZMod 2) = 1 + 1)), mul_zero]
 
+/-- Singleton acceptance at the upper boundary: with `L = Fin 1`, `c = 1` and `e = 1`, the acceptance sum equals `0`. -/
+theorem pauliTest_acceptance_singleton_upper :
+    ∑ l : Fin 1, |(fun _ => (1 : ℝ)) l| / (∑ l' : Fin 1, |(fun _ => (1 : ℝ)) l'|) * ((1 - signOne ((fun _ => (1 : ℝ)) l) * (fun _ => (1 : ℝ)) l) / 2) = 0 := by
+  rw [pauliTest_acceptance_eq (c := fun _ => (1 : ℝ)) (e := fun _ => (1 : ℝ))
+    (hΛ := by simp only [Fin.sum_univ_one, abs_one, zero_lt_one])
+    (he := by simp only [Fin.forall_fin_one, abs_one, le_refl])]
+  simp only [Fin.sum_univ_one]
+  norm_num [abs_one]
+
+/-- Singleton acceptance at the lower boundary: with `L = Fin 1`, `c = 1` and `e = -1`, the acceptance sum equals `1`. -/
+theorem pauliTest_acceptance_singleton_lower :
+    ∑ l : Fin 1, |(fun _ => (1 : ℝ)) l| / (∑ l' : Fin 1, |(fun _ => (1 : ℝ)) l'|) * ((1 - signOne ((fun _ => (1 : ℝ)) l) * (fun _ => (-1 : ℝ)) l) / 2) = 1 := by
+  rw [pauliTest_acceptance_eq (c := fun _ => (1 : ℝ)) (e := fun _ => (-1 : ℝ))
+    (hΛ := by simp only [Fin.sum_univ_one, abs_one, zero_lt_one])
+    (he := by simp only [Fin.forall_fin_one, abs_neg, abs_one, le_refl])]
+  simp only [Fin.sum_univ_one]
+  norm_num [abs_one]
+
+/-- Each acceptance factor lies in `[0, 1]` when `|e| ≤ 1`, since `signOne` takes values in `{1, -1}`. -/
+theorem pauliTest_term_mem_Icc (c e : ℝ) (he : |e| ≤ 1) :
+    (1 - signOne c * e) / 2 ∈ Set.Icc (0 : ℝ) 1 := by
+  unfold signOne
+  split
+  · rw [Set.mem_Icc]
+    have h2 := abs_le.mp he
+    obtain ⟨hlo, hhi⟩ := h2
+    constructor <;> linarith
+  · rw [Set.mem_Icc]
+    have h2 := abs_le.mp he
+    obtain ⟨hlo, hhi⟩ := h2
+    constructor <;> linarith
+
 end MathlibExtTest.Quantum.PauliExpansion

@@ -1099,8 +1099,8 @@ theorem signOne_mul_abs (c : ℝ) : signOne c * |c| = c := by
     rw [abs_of_neg hlt]
     ring
 
-/-- labeled-unmerged MNS eqs. (4)-(5): label mass |c_l|/Λ (zero-coefficient labels get mass 0), accept iff sign(c_l)·parity = -1, e l = ⟨ψ|P_l|ψ⟩; RHS = 1/2 - E/(2Λ) once E = Σ_l c_l e_l -/
-theorem pauliTest_acceptance_eq {L : Type*} [Fintype L] (c e : L → ℝ) (hΛ : 0 < ∑ l, |c l|) : ∑ l, |c l| / (∑ l', |c l'|) * ((1 - signOne (c l) * e l) / 2) = 1 / 2 - (∑ l, c l * e l) / (2 * ∑ l, |c l|) := by
+/-- labeled-unmerged MNS eqs. (4)-(5): label mass |c_l|/Λ (zero-coefficient labels get mass 0), accept iff sign(c_l)·parity = -1, e l = ⟨ψ|P_l|ψ⟩; RHS = 1/2 - E/(2Λ) once E = Σ_l c_l e_l; e l are Pauli expectation values, hence |e l| ≤ 1, so each acceptance factor (1 - signOne (c l) * e l) / 2 lies in [0, 1] -/
+theorem pauliTest_acceptance_eq {L : Type*} [Fintype L] (c e : L → ℝ) (hΛ : 0 < ∑ l, |c l|) (he : ∀ l, |e l| ≤ 1) : ∑ l, |c l| / (∑ l', |c l'|) * ((1 - signOne (c l) * e l) / 2) = 1 / 2 - (∑ l, c l * e l) / (2 * ∑ l, |c l|) := by
   have hne : (∑ l, |c l|) ≠ 0 := ne_of_gt hΛ
   have h2ne : (2 : ℝ) * ∑ l, |c l| ≠ 0 := by
     apply mul_ne_zero _ hne
