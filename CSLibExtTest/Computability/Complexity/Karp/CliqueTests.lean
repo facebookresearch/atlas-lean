@@ -16,7 +16,7 @@ public meta import CSLibExt.Computability.Complexity.Karp.Clique
 
 namespace Cslib.Complexity.Karp.CliqueTests
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 -- Pair order: rows ascending, columns descending.
 #guard pairs 4 = [(0, 3), (0, 2), (0, 1), (1, 3), (1, 2), (2, 3)]
