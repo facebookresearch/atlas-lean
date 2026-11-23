@@ -53,7 +53,7 @@ and `h⁰ - h¹` is the actual Euler characteristic.
 * `degree f L hL` is `χ(L) - χ(𝒪_X)` for an invertible sheaf `L`
   (Stacks, Tag 0AYR).
 * `LinearSeries f d r` is a linear series `g^r_d`: an invertible sheaf of
-  degree `d` with an `(r + 1)`-dimensional space of global sections.
+  degree `d ≥ 0` with an `(r + 1)`-dimensional space of global sections.
 
 References: Arbarello--Cornalba--Griffiths--Harris, *Geometry of Algebraic
 Curves I*, Chapters II and V; Stacks Project, Sections 33.44 (Tag 0AYQ) and 53.8
@@ -177,15 +177,18 @@ theorem degree_structureModule {k : Type u} [Field k] {X : Scheme.{u}}
   simp [degree]
 
 /-- A linear series `g^r_d` on a proper curve: an invertible sheaf `L` of
-degree `d` with an `(r + 1)`-dimensional space `V` of global sections. -/
+degree `d` with an `(r + 1)`-dimensional space `V` of global sections. The degree `d` is
+a natural number, as for linear series on smooth curves: on an integral curve a line
+bundle with a nonzero section has nonnegative degree, but on a reducible or disconnected
+curve the total degree of such a line bundle can be negative. -/
 structure LinearSeries {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (d : ℤ) (r : ℕ) where
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (d r : ℕ) where
   /-- The invertible sheaf. -/
   L : X.Modules
   /-- `L` is invertible. -/
   isLineBundle : IsLineBundle L
   /-- `L` has degree `d`. -/
-  degree_eq : degree f L isLineBundle = d
+  degree_eq : degree f L isLineBundle = (d : ℤ)
   /-- The selected space of global sections. -/
   V : Submodule k (cohomology f L 0)
   /-- The selected space has projective dimension `r`. -/
