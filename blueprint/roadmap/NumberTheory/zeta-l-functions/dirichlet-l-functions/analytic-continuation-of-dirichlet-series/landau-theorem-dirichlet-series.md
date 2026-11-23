@@ -5,10 +5,12 @@ and suppose that its abscissa of absolute convergence $\sigma_a$ is a real numbe
 is holomorphic on the half-plane $\operatorname{Re} s > \sigma_a$, does not extend to a holomorphic
 function on any neighbourhood of $s = \sigma_a$.
 
-The proof expands $f$ in a power series about a real point $c > \sigma_a$: all its coefficients
-$\sum_n a_n n^{-c} (\log n)^k / k!$ are non-negative, so if $f$ were holomorphic near $\sigma_a$ the
-double series would converge absolutely at a real point to the left of $\sigma_a$, and so would the
-Dirichlet series.
+The proof expands $f(c - z)$, for a real point $c > \sigma_a$, in powers of $z = c - s$: the
+coefficients $b_k = \sum_n a_n n^{-c} (\log n)^k / k!$ are non-negative. If $f$ extended to a
+holomorphic function on a disc of radius $\delta$ about $\sigma_a$, then, for $c$ chosen within
+$\delta/2$ of $\sigma_a$, this power series would converge at a real point $z > c - \sigma_a$; by
+non-negativity the double series in $n$ and $k$ would converge absolutely there, and so would the
+Dirichlet series at the real point $c - z < \sigma_a$, a contradiction.
 
 ## Sources
 
