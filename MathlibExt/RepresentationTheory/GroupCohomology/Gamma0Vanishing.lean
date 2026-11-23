@@ -1,0 +1,944 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`Theorems/Thm_TW12CD1Dock_subsingleton_H2_gamma0.lean`
+and
+`P2M/Sol/S_TW12CD1Dock_subsingleton_H2_gamma0.lean`
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
+The source is machine-generated proof code built around a proof-extraction
+framework; the statements and proofs are reused here with that machinery
+removed and the names restated in Mathlib style.
+-/
+
+module
+
+public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
+public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import Mathlib.GroupTheory.FreeGroup.IsFreeGroup
+public import Mathlib.Algebra.Group.MinimalAxioms
+public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Shapiro
+public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
+public import Mathlib.RepresentationTheory.FiniteIndex
+public import Mathlib.RepresentationTheory.Coinduced
+public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
+public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
+public import Mathlib.GroupTheory.FreeGroup.Basic
+public import Mathlib.GroupTheory.FreeGroup.Reduce
+public import Mathlib.GroupTheory.FreeGroup.NielsenSchreier
+public import Mathlib.GroupTheory.Index
+
+/-!
+# Vanishing of `H²` for congruence subgroups `Γ₀(M)` when `6` is a unit
+
+The congruence subgroup `Γ(4)` is free (Sanov subgroup), of finite index
+in `Γ₀(M)` dividing `48`. Restriction to a free subgroup kills `H²`, and
+corestriction composed with restriction is multiplication by the index.
+Since the index divides `48` and `6` is a unit, `2` and hence the index
+are units, so `H²(Γ₀(M), A)` vanishes for every representation `A`.
+-/
+
+@[expose] public section
+
+
+namespace Gamma0H2
+
+set_option autoImplicit false
+
+open CategoryTheory groupCohomology
+
+universe u
+
+namespace TW12CD1
+
+section CD1c
+variable {k G : Type u} [CommRing k] [Group G] {A : Rep k G}
+
+@[ext] structure Ext₂ (f : cocycles₂ A) where
+
+  a : A
+
+  g : G
+
+namespace Ext₂
+
+variable (f : cocycles₂ A)
+
+instance : Mul (Ext₂ f) := ⟨fun x y => ⟨x.a + A.ρ x.g y.a + f (x.g, y.g), x.g * y.g⟩⟩
+instance : One (Ext₂ f) := ⟨⟨-f (1, 1), 1⟩⟩
+instance : Inv (Ext₂ f) := ⟨fun x => ⟨-f (1, 1) - A.ρ x.g⁻¹ x.a - f (x.g⁻¹, x.g), x.g⁻¹⟩⟩
+
+theorem mul_def (x y : Ext₂ f) :
+    x * y = ⟨x.a + A.ρ x.g y.a + f (x.g, y.g), x.g * y.g⟩ := rfl
+theorem one_def : (1 : Ext₂ f) = ⟨-f (1, 1), 1⟩ := rfl
+theorem inv_def (x : Ext₂ f) :
+    x⁻¹ = ⟨-f (1, 1) - A.ρ x.g⁻¹ x.a - f (x.g⁻¹, x.g), x.g⁻¹⟩ := rfl
+
+instance : Group (Ext₂ f) := Group.ofLeftAxioms
+  (fun x y z => by
+    ext
+    · have hc := (mem_cocycles₂_iff (f : G × G → A)).1 f.2 x.g y.g z.g
+      simp only [mul_def, map_add, map_mul, Module.End.mul_apply]
+      rw [eq_sub_of_add_eq hc]
+      abel
+    · simp only [mul_def, mul_assoc])
+  (fun x => by
+    ext
+    · simp only [mul_def, one_def, map_one, Module.End.one_apply, cocycles₂_map_one_fst f x.g]
+      abel
+    · simp only [mul_def, one_def, one_mul])
+  (fun x => by
+    ext
+    · simp only [mul_def, inv_def, one_def]
+      abel
+    · simp only [mul_def, inv_def, one_def, inv_mul_cancel])
+
+def proj : Ext₂ f →* G where
+  toFun x := x.g
+  map_one' := rfl
+  map_mul' _ _ := rfl
+
+@[simp] theorem proj_apply (x : Ext₂ f) : proj f x = x.g := rfl
+
+theorem mem_coboundaries₂_of_section (s : G →* Ext₂ f) (hs : ∀ g, (s g).g = g) :
+    (f : G × G → A) ∈ coboundaries₂ A := by
+  refine ⟨fun g => -(s g).a, funext fun gh => ?_⟩
+  obtain ⟨g, h⟩ := gh
+  have hmul := congrArg Ext₂.a (s.map_mul g h)
+  simp only [mul_def, hs] at hmul
+  rw [d₁₂_hom_apply]
+  simp only [map_neg, hmul]
+  abel
+
+end Ext₂
+
+theorem mem_coboundaries₂_of_isFreeGroup [IsFreeGroup G] (f : cocycles₂ A) :
+    (f : G × G → A) ∈ coboundaries₂ A := by
+  let s : G →* Ext₂ f := IsFreeGroup.lift fun x => ⟨0, IsFreeGroup.of x⟩
+  have hs : (Ext₂.proj f).comp s = MonoidHom.id G :=
+    IsFreeGroup.ext_hom fun x => by simp [s, IsFreeGroup.lift_of]
+  exact Ext₂.mem_coboundaries₂_of_section f s fun g => DFunLike.congr_fun hs g
+
+theorem subsingleton_H2_of_isFreeGroup [IsFreeGroup G] (A : Rep k G) : Subsingleton (H2 A) := by
+  refine ⟨fun x y => ?_⟩
+  induction x using H2_induction_on with
+  | h x =>
+    induction y using H2_induction_on with
+    | h y => exact (H2π_eq_iff x y).2 (mem_coboundaries₂_of_isFreeGroup (x - y))
+
+end CD1c
+
+section CD1de
+
+open CategoryTheory groupCohomology
+
+variable {k G : Type u} [CommRing k] [Group G] (S : Subgroup G) [S.FiniteIndex]
+  [DecidableRel (QuotientGroup.rightRel S)]
+
+noncomputable def unitCoind (A : Rep.{u} k G) :
+    A ⟶ (Rep.coindFunctor k S.subtype).obj ((Rep.resFunctor S.subtype).obj A) :=
+  (Rep.resCoindAdjunction k S.subtype).unit.app A
+
+noncomputable def traceHom (A : Rep.{u} k G) :
+    (Rep.coindFunctor k S.subtype).obj ((Rep.resFunctor S.subtype).obj A) ⟶ A :=
+  (Rep.coindResAdjunction k S).counit.app A
+
+attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex
+
+theorem unit_trace (A : Rep.{u} k G) : unitCoind S A ≫ traceHom S A = S.index • 𝟙 A := by
+  ext a
+  simp only [unitCoind, traceHom, Rep.coindResAdjunction_counit_app,
+    Adjunction.mkOfHomEquiv_unit_app, Rep.indResAdjunction,
+    Adjunction.mkOfHomEquiv_counit_app]
+  change ((Rep.resCoindHomEquiv S.subtype A ((Rep.resFunctor S.subtype).obj A) (𝟙 _) ≫
+      (Rep.res S.subtype A).indCoindIso.inv ≫
+      (Rep.indResHomEquiv S.subtype ((Rep.resFunctor S.subtype).obj A) A).symm
+        (𝟙 _))).hom.toLinearMap a = _
+  simp only [Rep.resCoindHomEquiv_apply, Rep.indResHomEquiv_symm_apply, Rep.hom_comp,
+    Representation.IntertwiningMap.comp_toLinearMap, LinearMap.coe_comp,
+    Function.comp_apply, Rep.hom_ofHom,
+    Representation.IntertwiningMap.coe_toLinearMap]
+  have hinv : ∀ x, (Rep.Hom.hom (Rep.res S.subtype A).indCoindIso.inv) x =
+      (Rep.res S.subtype A).coindToInd x :=
+    fun x => rfl
+  have hunit : ∀ g : G, ((Rep.Hom.hom (Rep.resCoindToHom S.subtype A
+      (Rep.of (MonoidHom.comp A.ρ S.subtype))
+      (𝟙 (Rep.res S.subtype A)))) a).1 g = A.ρ g a := fun g => rfl
+  simp only [hinv]
+  erw [Rep.coindToInd_apply]
+  rw [map_sum]
+  rw [Finset.sum_congr rfl (g := fun _ => a) ?_]
+  · rw [Finset.sum_const, Finset.card_univ, Rep.nsmul_hom, Rep.hom_id,
+      Representation.IntertwiningMap.coe_nsmul, Pi.smul_apply,
+      Representation.IntertwiningMap.id_apply,
+      Fintype.card_congr (QuotientGroup.quotientRightRelEquivQuotientLeftRel S),
+      ← Nat.card_eq_fintype_card,
+      ← Subgroup.index_eq_card]
+  · intro q _
+    induction q using Quotient.inductionOn with
+    | h g =>
+      simp only [Quotient.liftOn_mk, LinearMap.comp_apply, TensorProduct.mk_apply,
+        Representation.Coinvariants.lift_mk, TensorProduct.lift.tmul, Finsupp.lift_apply,
+        MonoidAlgebra.coeffLinearEquiv_apply, MonoidAlgebra.coeff_single, LinearMap.coe_comp,
+        Function.comp_apply, LinearEquiv.coe_coe, Finsupp.sum_single_index, zero_smul,
+        one_smul, hunit, Rep.hom_id, Representation.IntertwiningMap.coe_toLinearMap,
+        Representation.IntertwiningMap.id_apply]
+      rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
+
+noncomputable def shapiroIso (A : Rep.{u} k G) (n : ℕ) :
+    groupCohomology ((Rep.coindFunctor k S.subtype).obj ((Rep.resFunctor S.subtype).obj A)) n ≅
+      groupCohomology ((Rep.resFunctor S.subtype).obj A) n :=
+  coindIso ((Rep.resFunctor S.subtype).obj A) n
+
+noncomputable def res' (A : Rep.{u} k G) (n : ℕ) :
+    groupCohomology A n ⟶ groupCohomology ((Rep.resFunctor S.subtype).obj A) n :=
+  (functor k G n).map (unitCoind S A) ≫ (shapiroIso S A n).hom
+
+noncomputable def cores (A : Rep.{u} k G) (n : ℕ) :
+    groupCohomology ((Rep.resFunctor S.subtype).obj A) n ⟶ groupCohomology A n :=
+  (shapiroIso S A n).inv ≫ (functor k G n).map (traceHom S A)
+
+instance functor_additive (n : ℕ) : (functor k G n).Additive where
+  map_add {A B f g} := by
+    show (cochainsFunctor k G ⋙ HomologicalComplex.homologyFunctor _ _ n).map (f + g) =
+      (cochainsFunctor k G ⋙ HomologicalComplex.homologyFunctor _ _ n).map f +
+        (cochainsFunctor k G ⋙ HomologicalComplex.homologyFunctor _ _ n).map g
+    exact Functor.map_add _
+
+theorem res'_cores (A : Rep.{u} k G) (n : ℕ) :
+    res' S A n ≫ cores S A n = S.index • 𝟙 (groupCohomology A n) := by
+  rw [res', cores]
+  erw [Category.assoc, Iso.hom_inv_id_assoc, ← Functor.map_comp, unit_trace,
+    Functor.map_nsmul, CategoryTheory.Functor.map_id]
+  rfl
+
+theorem subsingleton_of_subsingleton_res (A : Rep.{u} k G) (n : ℕ)
+    [hS : Subsingleton (groupCohomology ((Rep.resFunctor S.subtype).obj A) n)]
+    (hidx : IsUnit (S.index : k)) : Subsingleton (groupCohomology A n) := by
+  have key : ∀ z : groupCohomology A n, (S.index : k) • z = 0 := fun z => by
+    have h := congrArg (fun φ => (ModuleCat.Hom.hom φ) z) (res'_cores S A n)
+    simp only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_nsmul, ModuleCat.hom_id,
+      LinearMap.smul_apply, LinearMap.id_apply] at h
+    rw [Subsingleton.elim ((ModuleCat.Hom.hom (res' S A n)) z) 0, map_zero] at h
+    rw [Nat.cast_smul_eq_nsmul, ← h]
+  have hz : ∀ z : groupCohomology A n, z = 0 := fun z =>
+    (hidx.smul_left_cancel).1 (by rw [key z, smul_zero])
+  exact ⟨fun x y => by rw [hz x, hz y]⟩
+
+end CD1de
+
+variable {k G : Type u} [CommRing k] [Group G]
+
+theorem subsingleton_H2_of_free_finiteIndex (S : Subgroup G) [S.FiniteIndex] [IsFreeGroup S]
+    (hS : IsUnit (S.index : k)) (A : Rep.{u} k G) : Subsingleton (groupCohomology A 2) := by
+  classical
+  haveI : Subsingleton (groupCohomology ((Rep.resFunctor S.subtype).obj A) 2) :=
+    subsingleton_H2_of_isFreeGroup ((Rep.resFunctor S.subtype).obj A)
+  exact subsingleton_of_subsingleton_res S A 2 hS
+
+end TW12CD1
+
+namespace TW12CD1
+
+open Matrix
+
+open scoped MatrixGroups
+
+def sanA : SL(2, ℤ) :=
+  ⟨Matrix.of ![![1, 2], ![0, 1]], by simp [Matrix.det_fin_two]⟩
+
+
+def sanB : SL(2, ℤ) :=
+  ⟨Matrix.of ![![1, 0], ![2, 1]], by simp [Matrix.det_fin_two]⟩
+
+
+def DomX (v : Fin 2 → ℤ) : Prop := |v 1| < |v 0|
+
+def DomY (v : Fin 2 → ℤ) : Prop := |v 0| < |v 1|
+
+theorem abs_lt_abs_add_two_mul {x y n : ℤ} (hn : n ≠ 0) (h : |x| < |y|) :
+    |y| < |x + 2 * n * y| := by
+  have h1 : (1 : ℤ) ≤ |n| := Int.one_le_abs hn
+  have h2 : |2 * n * y| - |x| ≤ |x + 2 * n * y| := by
+    have h := abs_sub_abs_le_abs_add (2 * n * y) x
+    rwa [add_comm] at h
+  have h3 : |2 * n * y| = 2 * |n| * |y| := by
+    rw [abs_mul, abs_mul]; norm_num
+  nlinarith [mul_nonneg (sub_nonneg.mpr h1) (abs_nonneg y)]
+
+theorem sanA_zpow_coe (n : ℤ) :
+    ((sanA ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) = !![1, 2 * n; 0, 1] := by
+  have hA : sanA = ModularGroup.T ^ (2 : ℤ) := by
+    apply Subtype.ext
+    rw [ModularGroup.coe_T_zpow]
+    rfl
+  rw [hA, ← zpow_mul]
+  exact ModularGroup.coe_T_zpow (2 * n)
+
+theorem sanB_zpow_coe (n : ℤ) :
+    ((sanB ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) = !![1, 0; 2 * n, 1] := by
+  induction n using Int.induction_on with
+  | zero =>
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp
+  | succ k ih =>
+    rw [zpow_add_one, SpecialLinearGroup.coe_mul, ih]
+    ext i j
+    fin_cases i <;> fin_cases j
+    all_goals simp [sanB, Matrix.mul_apply, Fin.sum_univ_succ]
+    all_goals ring
+  | pred k ih =>
+    rw [zpow_sub_one, SpecialLinearGroup.coe_mul, ih, SpecialLinearGroup.coe_inv]
+    ext i j
+    fin_cases i <;> fin_cases j
+    all_goals simp [sanB, Matrix.adjugate_fin_two, Matrix.mul_apply, Fin.sum_univ_succ]
+    all_goals ring
+
+theorem sanA_zpow_mulVec (n : ℤ) (v : Fin 2 → ℤ) :
+    (((sanA ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)).mulVec v
+      = ![v 0 + 2 * n * v 1, v 1] := by
+  rw [sanA_zpow_coe]
+  funext i
+  fin_cases i
+  all_goals simp [Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+
+theorem sanB_zpow_mulVec (n : ℤ) (v : Fin 2 → ℤ) :
+    (((sanB ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)).mulVec v
+      = ![v 0, v 1 + 2 * n * v 0] := by
+  rw [sanB_zpow_coe]
+  funext i
+  fin_cases i
+  all_goals simp [Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+  all_goals ring
+
+theorem domX_sanA_zpow_mulVec {n : ℤ} (hn : n ≠ 0) {v : Fin 2 → ℤ} (hv : DomY v) :
+    DomX (((sanA ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec v) := by
+  rw [sanA_zpow_mulVec]
+  unfold DomX
+  unfold DomY at hv
+  simp only [Matrix.cons_val_one, Matrix.cons_val_zero]
+  exact abs_lt_abs_add_two_mul hn hv
+
+theorem domY_sanB_zpow_mulVec {n : ℤ} (hn : n ≠ 0) {v : Fin 2 → ℤ} (hv : DomX v) :
+    DomY (((sanB ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec v) := by
+  rw [sanB_zpow_mulVec]
+  unfold DomY
+  unfold DomX at hv
+  simp only [Matrix.cons_val_one, Matrix.cons_val_zero]
+  exact abs_lt_abs_add_two_mul hn hv
+
+def syllProd (L : List (Fin 2 × ℤ)) : SL(2, ℤ) :=
+  (L.map fun p => (![sanA, sanB] p.1) ^ p.2).prod
+
+def seedOf (g : Fin 2) : Fin 2 → ℤ := fun i => if i = g then 0 else 1
+
+def PingInv (g : Fin 2) (u : Fin 2 → ℤ) : Prop := |u (g + 1)| < |u g| ∧ 1 < |u g|
+
+theorem pingInv_syllProd :
+    ∀ (t : List (Fin 2 × ℤ)) (p : Fin 2 × ℤ),
+      List.IsChain (fun a b => a.1 ≠ b.1) (p :: t) →
+      (∀ x ∈ p :: t, x.2 ≠ 0) →
+      PingInv p.1 (((syllProd (p :: t) : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec
+        (seedOf ((p :: t).getLast (List.cons_ne_nil p t)).1)) := by
+  intro t
+  induction t with
+  | nil =>
+    intro p _ hexp
+    obtain ⟨g, n⟩ := p
+    have hn : n ≠ 0 := hexp _ List.mem_cons_self
+    have h2 : (1 : ℤ) < |2 * n| := by
+      have h1 : (1 : ℤ) ≤ |n| := Int.one_le_abs hn
+      rw [abs_mul]
+      norm_num
+      linarith
+    rcases eq_or_ne g 0 with rfl | hgne
+    · rw [show syllProd [((0 : Fin 2), n)] = sanA ^ n from by simp [syllProd],
+        sanA_zpow_mulVec]
+      unfold PingInv seedOf
+      simp only [List.getLast_singleton']
+      constructor <;> simpa using h2
+    · have hg1 : g = 1 := by
+        fin_cases g
+        · exact absurd rfl hgne
+        · rfl
+      subst hg1
+      rw [show syllProd [((1 : Fin 2), n)] = sanB ^ n from by simp [syllProd],
+        sanB_zpow_mulVec]
+      unfold PingInv seedOf
+      simp only [List.getLast_singleton']
+      constructor <;> simpa using h2
+  | cons q t' ih =>
+    intro p halt hexp
+    cases halt with
+    | cons_cons hpq hrest =>
+    have hIH := ih q hrest (fun x hx => hexp x (List.mem_cons_of_mem _ hx))
+    obtain ⟨g, n⟩ := p
+    have hn : n ≠ 0 := hexp _ List.mem_cons_self
+    rcases eq_or_ne g 0 with rfl | hgne
+    ·
+      have hq1 : q.1 = 1 := by
+        rcases q with ⟨gq, m⟩
+        fin_cases gq
+        · simp at hpq
+        · rfl
+      rw [hq1] at hIH
+      obtain ⟨hdom, hgrow⟩ := hIH
+      rw [show syllProd (((0 : Fin 2), n) :: q :: t') = sanA ^ n * syllProd (q :: t') from
+          by simp [syllProd],
+        SpecialLinearGroup.coe_mul, ← Matrix.mulVec_mulVec, sanA_zpow_mulVec]
+      unfold PingInv
+      have hdom' : |(((syllProd (q :: t') : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec
+          (seedOf ((q :: t').getLast (List.cons_ne_nil q t')).1)) 0|
+          < |(((syllProd (q :: t') : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec
+          (seedOf ((q :: t').getLast (List.cons_ne_nil q t')).1)) 1| := hdom
+      have hstep := abs_lt_abs_add_two_mul hn hdom'
+      constructor
+      · simpa using hstep
+      · simpa using lt_trans hgrow hstep
+    ·
+      have hg1 : g = 1 := by
+        fin_cases g
+        · exact absurd rfl hgne
+        · rfl
+      subst hg1
+      have hq0 : q.1 = 0 := by
+        rcases q with ⟨gq, m⟩
+        fin_cases gq
+        · rfl
+        · simp at hpq
+      rw [hq0] at hIH
+      obtain ⟨hdom, hgrow⟩ := hIH
+      rw [show syllProd (((1 : Fin 2), n) :: q :: t') = sanB ^ n * syllProd (q :: t') from
+          by simp [syllProd],
+        SpecialLinearGroup.coe_mul, ← Matrix.mulVec_mulVec, sanB_zpow_mulVec]
+      unfold PingInv
+      have hdom' : |(((syllProd (q :: t') : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec
+          (seedOf ((q :: t').getLast (List.cons_ne_nil q t')).1)) 1|
+          < |(((syllProd (q :: t') : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec
+          (seedOf ((q :: t').getLast (List.cons_ne_nil q t')).1)) 0| := hdom
+      have hstep := abs_lt_abs_add_two_mul hn hdom'
+      constructor
+      · simpa using hstep
+      · simpa using lt_trans hgrow hstep
+
+theorem syllProd_ne_one (L : List (Fin 2 × ℤ)) (hne : L ≠ [])
+    (halt : List.IsChain (fun a b => a.1 ≠ b.1) L) (hexp : ∀ x ∈ L, x.2 ≠ 0) :
+    syllProd L ≠ 1 := by
+  obtain ⟨p, t, rfl⟩ : ∃ p t, L = p :: t := by
+    cases L with
+    | nil => exact absurd rfl hne
+    | cons p t => exact ⟨p, t, rfl⟩
+  intro h1
+  have hinv := pingInv_syllProd t p halt hexp
+  rw [h1] at hinv
+  have hseed : ∀ i, ((1 : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec
+      (seedOf ((p :: t).getLast (List.cons_ne_nil p t)).1) i
+      = seedOf ((p :: t).getLast (List.cons_ne_nil p t)).1 i := by
+    intro i
+    rw [SpecialLinearGroup.coe_one, Matrix.one_mulVec]
+  obtain ⟨-, hgrow⟩ := hinv
+  rw [hseed] at hgrow
+
+  unfold seedOf at hgrow
+  split at hgrow <;> simp at hgrow
+
+def sgn (b : Bool) : ℤ := if b then 1 else -1
+
+def toSylls : List (Fin 2 × Bool) → List (Fin 2 × ℤ)
+  | [] => []
+  | (g, b) :: L =>
+    match toSylls L with
+    | [] => [(g, sgn b)]
+    | (g', n) :: t => if g = g' then (g', n + sgn b) :: t else (g, sgn b) :: (g', n) :: t
+
+theorem toSylls_eq_nil_iff {L : List (Fin 2 × Bool)} : toSylls L = [] ↔ L = [] := by
+  constructor
+  · intro h
+    cases L with
+    | nil => rfl
+    | cons hd tl =>
+      obtain ⟨g, b⟩ := hd
+      unfold toSylls at h
+      split at h
+      · simp_all
+      · split at h <;> simp_all
+  · rintro rfl; rfl
+
+theorem syllProd_toSylls : ∀ L : List (Fin 2 × Bool),
+    syllProd (toSylls L)
+      = (L.map fun x => cond x.2 (![sanA, sanB] x.1) (![sanA, sanB] x.1)⁻¹).prod := by
+  intro L
+  induction L with
+  | nil => simp [toSylls, syllProd]
+  | cons hd tl ih =>
+    obtain ⟨g, b⟩ := hd
+    show syllProd (toSylls ((g, b) :: tl)) = _
+    unfold toSylls
+    cases htl : toSylls tl with
+    | nil =>
+      rw [toSylls_eq_nil_iff.mp htl] at ih ⊢
+      simp only [List.map_cons, List.prod_cons, List.map_nil, List.prod_nil, mul_one] at ih ⊢
+      rw [show syllProd [(g, sgn b)] = (![sanA, sanB] g) ^ sgn b from by simp [syllProd]]
+      cases b <;> simp [sgn]
+    | cons p t =>
+      obtain ⟨g', n⟩ := p
+      rw [htl] at ih
+      by_cases hg : g = g'
+      · subst hg
+        simp only [if_true]
+        have hL : syllProd ((g, n + sgn b) :: t)
+            = (![sanA, sanB] g) ^ (sgn b) * syllProd ((g, n) :: t) := by
+          simp only [syllProd, List.map_cons, List.prod_cons]
+          rw [← mul_assoc, ← zpow_add, add_comm n (sgn b)]
+        rw [hL, ih, List.map_cons, List.prod_cons]
+        cases b <;> simp [sgn]
+      · simp only [if_neg hg]
+        have hL : syllProd ((g, sgn b) :: (g', n) :: t)
+            = (![sanA, sanB] g) ^ (sgn b) * syllProd ((g', n) :: t) := by
+          simp [syllProd]
+        rw [hL, ih, List.map_cons, List.prod_cons]
+        cases b <;> simp [sgn]
+
+theorem toSylls_spec : ∀ L : List (Fin 2 × Bool), FreeGroup.IsReduced L →
+    List.IsChain (fun a b => a.1 ≠ b.1) (toSylls L) ∧
+    (∀ x ∈ toSylls L, x.2 ≠ 0) ∧
+    (∀ g b L', L = (g, b) :: L' →
+      ∃ n t, toSylls L = (g, n) :: t ∧ (if b then 0 < n else n < 0)) := by
+  intro L
+  induction L with
+  | nil =>
+    intro _
+    refine ⟨List.isChain_nil, by simp [toSylls], ?_⟩
+    intro g b L' h
+    exact absurd h (List.cons_ne_nil _ _).symm
+  | cons hd tl ih =>
+    intro hred
+    obtain ⟨g, b⟩ := hd
+    cases tl with
+    | nil =>
+      refine ⟨?_, ?_, ?_⟩
+      · show List.IsChain _ [(g, sgn b)]
+        exact List.isChain_singleton _
+      · intro x hx
+        simp only [show toSylls [(g, b)] = [(g, sgn b)] from rfl, List.mem_singleton] at hx
+        subst hx
+        cases b <;> simp [sgn]
+      · intro g₀ b₀ L' h
+        obtain ⟨⟨rfl, rfl⟩, rfl⟩ : (g₀ = g ∧ b₀ = b) ∧ L' = [] := by
+          simpa using h.symm
+        refine ⟨sgn b₀, [], rfl, ?_⟩
+        cases b₀ <;> simp [sgn]
+    | cons hd₂ tl₂ =>
+      obtain ⟨g₂, b₂⟩ := hd₂
+      have hadj : g = g₂ → b = b₂ := (FreeGroup.isReduced_cons_cons.mp hred).1
+      have hred₂ : FreeGroup.IsReduced ((g₂, b₂) :: tl₂) :=
+        (FreeGroup.isReduced_cons_cons.mp hred).2
+      obtain ⟨ihchain, ihexp, ihhead⟩ := ih hred₂
+      obtain ⟨n₂, t₂, hsyl₂, hsgn₂⟩ := ihhead g₂ b₂ tl₂ rfl
+      have hunf : toSylls ((g, b) :: (g₂, b₂) :: tl₂)
+          = if g = g₂ then (g₂, n₂ + sgn b) :: t₂
+            else (g, sgn b) :: (g₂, n₂) :: t₂ := by
+        unfold toSylls
+        rw [hsyl₂]
+      by_cases hg : g = g₂
+      ·
+        have hb : b = b₂ := hadj hg
+        subst hb
+        rw [hunf, if_pos hg]
+        have hn : if b then 0 < n₂ + sgn b else n₂ + sgn b < 0 := by
+          cases b <;> simp [sgn] at hsgn₂ ⊢ <;> omega
+        refine ⟨?_, ?_, ?_⟩
+        · rw [hsyl₂] at ihchain
+          cases t₂ with
+          | nil => exact List.isChain_singleton _
+          | cons c t₃ =>
+            exact List.isChain_cons_cons.mpr
+              ⟨(List.isChain_cons_cons.mp ihchain).1,
+               (List.isChain_cons_cons.mp ihchain).2⟩
+        · intro x hx
+          rcases List.mem_cons.mp hx with rfl | hx'
+          · have : (g₂, n₂ + sgn b).2 ≠ 0 := by
+              cases b <;> simp [sgn] at hn ⊢ <;> omega
+            exact this
+          · exact ihexp x (by rw [hsyl₂]; exact List.mem_cons_of_mem _ hx')
+        · intro g₀ b₀ L' h
+          obtain ⟨⟨rfl, rfl⟩, -⟩ : (g₀ = g ∧ b₀ = b) ∧ L' = (g₂, b) :: tl₂ := by
+            simpa using h.symm
+          refine ⟨n₂ + sgn b₀, t₂, ?_, hn⟩
+          rw [← hg]
+      ·
+        rw [hunf, if_neg hg]
+        refine ⟨?_, ?_, ?_⟩
+        · rw [hsyl₂] at ihchain
+          exact List.isChain_cons_cons.mpr ⟨hg, ihchain⟩
+        · intro x hx
+          rcases List.mem_cons.mp hx with rfl | hx'
+          · cases b <;> simp [sgn]
+          · exact ihexp x (by rw [hsyl₂]; exact hx')
+        · intro g₀ b₀ L' h
+          obtain ⟨⟨rfl, rfl⟩, -⟩ : (g₀ = g ∧ b₀ = b) ∧ L' = (g₂, b₂) :: tl₂ := by
+            simpa using h.symm
+          refine ⟨sgn b₀, (g₂, n₂) :: t₂, ?_, ?_⟩
+          · rfl
+          · cases b₀ <;> simp [sgn]
+
+theorem sanov_lift_injective :
+    Function.Injective (FreeGroup.lift ![sanA, sanB] : FreeGroup (Fin 2) →* SL(2, ℤ)) := by
+  rw [injective_iff_map_eq_one]
+  intro w hw
+  by_contra hne
+  have hnil : w.toWord ≠ [] := fun h => hne (FreeGroup.toWord_eq_nil_iff.mp h)
+  obtain ⟨hchain, hexp, -⟩ := toSylls_spec w.toWord FreeGroup.isReduced_toWord
+  have hprod : FreeGroup.lift ![sanA, sanB] w = syllProd (toSylls w.toWord) := by
+    conv_lhs => rw [← FreeGroup.mk_toWord (x := w)]
+    rw [FreeGroup.lift_mk, syllProd_toSylls]
+  exact syllProd_ne_one _ (fun h => hnil (toSylls_eq_nil_iff.mp h)) hchain hexp
+    (hprod ▸ hw)
+
+theorem isFreeGroup_sanov_range :
+    IsFreeGroup ↥(FreeGroup.lift ![sanA, sanB] : FreeGroup (Fin 2) →* SL(2, ℤ)).range := by
+  have e : FreeGroup (Fin 2) ≃* (FreeGroup.lift ![sanA, sanB] :
+      FreeGroup (Fin 2) →* SL(2, ℤ)).range := MonoidHom.ofInjective sanov_lift_injective
+  exact (FreeGroupBasis.ofFreeGroup (Fin 2)).map e |>.isFreeGroup
+
+def SanovEntries (γ : SL(2, ℤ)) : Prop :=
+  γ.1 0 0 % 4 = 1 ∧ γ.1 1 1 % 4 = 1 ∧ 2 ∣ γ.1 0 1 ∧ 2 ∣ γ.1 1 0
+
+theorem mem_range_of_lowerLeft_eq_zero (γ : SL(2, ℤ)) (h : SanovEntries γ)
+    (hc : γ.1 1 0 = 0) :
+    γ ∈ (FreeGroup.lift ![sanA, sanB] : FreeGroup (Fin 2) →* SL(2, ℤ)).range := by
+  obtain ⟨ha, -, ⟨k, hb⟩, -⟩ := h
+  have hdet : γ.1.det = 1 := γ.2
+  rw [Matrix.det_fin_two, hc, mul_zero, sub_zero] at hdet
+  have ha1 : γ.1 0 0 = 1 := by
+    have hu : IsUnit (γ.1 0 0) := IsUnit.of_mul_eq_one (γ.1 1 1) hdet
+    rcases Int.isUnit_iff.mp hu with h1 | h1 <;> omega
+  have hd1 : γ.1 1 1 = 1 := by rw [ha1] at hdet; omega
+  refine ⟨(FreeGroup.of (0 : Fin 2)) ^ k, ?_⟩
+  rw [map_zpow, FreeGroup.lift_apply_of]
+  apply Subtype.ext
+  show (((![sanA, sanB] (0 : Fin 2) : SL(2, ℤ)) ^ k : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
+    = γ.1
+  rw [show (![sanA, sanB] (0 : Fin 2)) = sanA from rfl, sanA_zpow_coe]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [ha1, hd1, hc, hb]
+
+theorem exists_balanced_pos (x y : ℤ) (hy : 0 < y) : ∃ m : ℤ, |x - 2 * m * y| ≤ |y| := by
+  refine ⟨if x % (2 * y) ≤ y then x / (2 * y) else x / (2 * y) + 1, ?_⟩
+  have hdm : x % (2 * y) + 2 * y * (x / (2 * y)) = x := Int.emod_add_mul_ediv x (2 * y)
+  have hr0 : 0 ≤ x % (2 * y) := Int.emod_nonneg x (by positivity)
+  have hrlt : x % (2 * y) < 2 * y := Int.emod_lt_of_pos x (by positivity)
+  rw [abs_of_pos hy]
+  split
+  next hle =>
+    rw [show x - 2 * (x / (2 * y)) * y = x % (2 * y) from by linarith]
+    rw [abs_of_nonneg hr0]
+    exact hle
+  next hgt =>
+    rw [show x - 2 * (x / (2 * y) + 1) * y = x % (2 * y) - 2 * y from by linarith]
+    rw [abs_of_nonpos (by linarith)]
+    linarith
+
+theorem exists_balanced (x y : ℤ) (hy : y ≠ 0) : ∃ m : ℤ, |x - 2 * m * y| ≤ |y| := by
+  rcases lt_or_gt_of_ne hy with hneg | hpos
+  · obtain ⟨m, hm⟩ := exists_balanced_pos x (-y) (by linarith)
+    refine ⟨-m, ?_⟩
+    rw [show x - 2 * -m * y = x - 2 * m * -y from by ring]
+    rwa [abs_neg] at hm
+  · exact exists_balanced_pos x y hpos
+
+theorem abs_lt_of_abs_le_of_odd_even {r y : ℤ} (h : |r| ≤ |y|) (hr : r % 2 = 1)
+    (hy : y % 2 = 0) : |r| < |y| := by
+  rcases lt_or_eq_of_le h with h' | h'
+  · exact h'
+  · exfalso
+    rcases abs_eq_abs.mp h' with rfl | rfl <;> omega
+
+theorem coe_sanA_zpow_mul (m : ℤ) (γ : SL(2, ℤ)) :
+    ((sanA ^ m * γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
+      = !![γ.1 0 0 + 2 * m * γ.1 1 0, γ.1 0 1 + 2 * m * γ.1 1 1;
+           γ.1 1 0, γ.1 1 1] := by
+  rw [SpecialLinearGroup.coe_mul, sanA_zpow_coe]
+  ext i j
+  fin_cases i <;> fin_cases j
+  all_goals simp [Matrix.mul_apply, Fin.sum_univ_succ]
+
+theorem coe_sanB_zpow_mul (m : ℤ) (γ : SL(2, ℤ)) :
+    ((sanB ^ m * γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
+      = !![γ.1 0 0, γ.1 0 1;
+           γ.1 1 0 + 2 * m * γ.1 0 0, γ.1 1 1 + 2 * m * γ.1 0 1] := by
+  rw [SpecialLinearGroup.coe_mul, sanB_zpow_coe]
+  ext i j
+  fin_cases i <;> fin_cases j
+  all_goals simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  all_goals ring
+
+theorem sanovEntries_sanA_zpow_mul (m : ℤ) (γ : SL(2, ℤ)) (h : SanovEntries γ) :
+    SanovEntries (sanA ^ m * γ) := by
+  obtain ⟨ha, hd, ⟨kb, hb⟩, ⟨kc, hc⟩⟩ := h
+  unfold SanovEntries
+  rw [coe_sanA_zpow_mul]
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp
+  · rw [hc, show γ.1 0 0 + 2 * m * (2 * kc) = γ.1 0 0 + 4 * (m * kc) from by ring,
+      Int.add_mul_emod_self_left]
+    exact ha
+  · exact hd
+  · exact ⟨kb + m * γ.1 1 1, by rw [hb]; ring⟩
+  · exact ⟨kc, hc⟩
+
+theorem sanovEntries_sanB_zpow_mul (m : ℤ) (γ : SL(2, ℤ)) (h : SanovEntries γ) :
+    SanovEntries (sanB ^ m * γ) := by
+  obtain ⟨ha, hd, ⟨kb, hb⟩, ⟨kc, hc⟩⟩ := h
+  unfold SanovEntries
+  rw [coe_sanB_zpow_mul]
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp
+  · exact ha
+  · rw [hb, show γ.1 1 1 + 2 * m * (2 * kb) = γ.1 1 1 + 4 * (m * kb) from by ring,
+      Int.add_mul_emod_self_left]
+    exact hd
+  · exact ⟨kb, hb⟩
+  · exact ⟨kc + m * γ.1 0 0, by rw [hc]; ring⟩
+
+theorem sanA_mem_range :
+    sanA ∈ (FreeGroup.lift ![sanA, sanB] : FreeGroup (Fin 2) →* SL(2, ℤ)).range :=
+  ⟨FreeGroup.of 0, by rw [FreeGroup.lift_apply_of]; rfl⟩
+
+theorem sanB_mem_range :
+    sanB ∈ (FreeGroup.lift ![sanA, sanB] : FreeGroup (Fin 2) →* SL(2, ℤ)).range :=
+  ⟨FreeGroup.of 1, by rw [FreeGroup.lift_apply_of]; rfl⟩
+
+theorem mem_range_of_sanovEntries_bounded :
+    ∀ (n : ℕ) (γ : SL(2, ℤ)), SanovEntries γ → (γ.1 1 0).natAbs ≤ n →
+      γ ∈ (FreeGroup.lift ![sanA, sanB] : FreeGroup (Fin 2) →* SL(2, ℤ)).range := by
+  intro n
+  induction n with
+  | zero =>
+    intro γ h hn
+    exact mem_range_of_lowerLeft_eq_zero γ h (Int.natAbs_eq_zero.mp (Nat.le_zero.mp hn))
+  | succ n IH =>
+    intro γ h hn
+    by_cases hc0 : γ.1 1 0 = 0
+    · exact mem_range_of_lowerLeft_eq_zero γ h hc0
+    · obtain ⟨ha, hd, hb2, hc2⟩ := h
+
+      obtain ⟨m₀, hm₀⟩ := exists_balanced (γ.1 0 0) (γ.1 1 0) hc0
+      have h₁ : SanovEntries (sanA ^ (-m₀) * γ) :=
+        sanovEntries_sanA_zpow_mul (-m₀) γ ⟨ha, hd, hb2, hc2⟩
+      have ha₁ : (sanA ^ (-m₀) * γ : SL(2, ℤ)).1 0 0 = γ.1 0 0 - 2 * m₀ * γ.1 1 0 := by
+        rw [coe_sanA_zpow_mul]
+        simp
+        ring
+      have hc₁ : (sanA ^ (-m₀) * γ : SL(2, ℤ)).1 1 0 = γ.1 1 0 := by
+        rw [coe_sanA_zpow_mul]
+        simp
+      have hodd : (γ.1 0 0 - 2 * m₀ * γ.1 1 0) % 2 = 1 := by
+        rw [show γ.1 0 0 - 2 * m₀ * γ.1 1 0 = γ.1 0 0 + 2 * -(m₀ * γ.1 1 0) from by ring,
+          Int.add_mul_emod_self_left]
+        omega
+      have hceven : γ.1 1 0 % 2 = 0 := by
+        obtain ⟨k, hk⟩ := hc2
+        omega
+      have hstrict : |γ.1 0 0 - 2 * m₀ * γ.1 1 0| < |γ.1 1 0| :=
+        abs_lt_of_abs_le_of_odd_even hm₀ hodd hceven
+      have ha₁0 : γ.1 0 0 - 2 * m₀ * γ.1 1 0 ≠ 0 := by
+        intro h0
+        rw [h0] at hodd
+        omega
+
+      obtain ⟨m₁, hm₁⟩ := exists_balanced (γ.1 1 0) (γ.1 0 0 - 2 * m₀ * γ.1 1 0) ha₁0
+      have h₂ : SanovEntries (sanB ^ (-m₁) * (sanA ^ (-m₀) * γ)) :=
+        sanovEntries_sanB_zpow_mul (-m₁) _ h₁
+      have hc₂ : (sanB ^ (-m₁) * (sanA ^ (-m₀) * γ) : SL(2, ℤ)).1 1 0
+          = γ.1 1 0 - 2 * m₁ * (γ.1 0 0 - 2 * m₀ * γ.1 1 0) := by
+        rw [coe_sanB_zpow_mul, ha₁, hc₁]
+        simp
+        ring
+      have hmeas : ((sanB ^ (-m₁) * (sanA ^ (-m₀) * γ) : SL(2, ℤ)).1 1 0).natAbs ≤ n := by
+        have hlt : |γ.1 1 0 - 2 * m₁ * (γ.1 0 0 - 2 * m₀ * γ.1 1 0)| < |γ.1 1 0| :=
+          lt_of_le_of_lt hm₁ hstrict
+        rw [hc₂]
+        rw [Int.abs_eq_natAbs, Int.abs_eq_natAbs] at hlt
+        omega
+      have hrec := IH _ h₂ hmeas
+      have hre : γ = sanA ^ m₀ * (sanB ^ m₁ * (sanB ^ (-m₁) * (sanA ^ (-m₀) * γ))) := by
+        simp [zpow_neg, mul_inv_cancel_left]
+      rw [hre]
+      exact mul_mem (Subgroup.zpow_mem _ sanA_mem_range m₀)
+        (mul_mem (Subgroup.zpow_mem _ sanB_mem_range m₁) hrec)
+
+theorem mem_range_of_sanovEntries (γ : SL(2, ℤ)) (h : SanovEntries γ) :
+    γ ∈ (FreeGroup.lift ![sanA, sanB] : FreeGroup (Fin 2) →* SL(2, ℤ)).range :=
+  mem_range_of_sanovEntries_bounded (γ.1 1 0).natAbs γ h le_rfl
+
+end TW12CD1
+
+set_option autoImplicit false
+
+open Matrix CongruenceSubgroup Matrix.SpecialLinearGroup
+
+open scoped MatrixGroups
+
+namespace W11CD1b
+
+def sanA : SL(2, ℤ) := ⟨!![1, 2; 0, 1], by simp [Matrix.det_fin_two_of]⟩
+
+
+def sanB : SL(2, ℤ) := ⟨!![1, 0; 2, 1], by simp [Matrix.det_fin_two_of]⟩
+
+
+def sanovRange : Subgroup SL(2, ℤ) := (FreeGroup.lift ![sanA, sanB]).range
+
+instance Gamma4_subgroupOf_normal (M : ℕ) :
+    ((Gamma 4).subgroupOf (Gamma0 M)).Normal :=
+  (Gamma_normal 4).comap (Gamma0 M).subtype
+
+theorem Gamma4_a_d_eq_one {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma 4) :
+    (γ 0 0 : ZMod 4) = 1 ∧ (γ 1 1 : ZMod 4) = 1 := by
+  rw [Gamma_mem] at hγ
+  exact ⟨hγ.1, hγ.2.2.2⟩
+
+theorem Gamma4_le_Gamma2 : Gamma 4 ≤ Gamma 2 := by
+  intro γ hγ
+  rw [Gamma_mem] at hγ ⊢
+  have key : ∀ a : ℤ, ((a : ZMod 2) : ZMod 2) =
+      ZMod.castHom (show (2:ℕ) ∣ 4 by norm_num) (ZMod 2) ((a : ZMod 4) : ZMod 4) :=
+    fun a => (map_intCast (ZMod.castHom (show (2:ℕ) ∣ 4 by norm_num) (ZMod 2)) a).symm
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [key]; simp [hγ.1]
+  · rw [key]; simp [hγ.2.1]
+  · rw [key]; simp [hγ.2.2.1]
+  · rw [key]; simp [hγ.2.2.2]
+
+theorem index_Gamma4_subgroupOf_dvd (M : ℕ) :
+    ((Gamma 4).subgroupOf (Gamma0 M)).index ∣ (Gamma 4).index := by
+  haveI : (Gamma 4).Normal := Gamma_normal 4
+  exact Subgroup.relIndex_dvd_index_of_normal (H := Gamma 4) (K := Gamma0 M)
+
+theorem Gamma4_index_dvd_card :
+    (Gamma 4).index ∣ Nat.card (SL(2, ZMod 4)) := by
+  have h : (Gamma 4).index = Nat.card
+      (Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod 4))).range :=
+    Subgroup.index_ker _
+  rw [h]
+  exact Subgroup.card_subgroup_dvd_card _
+
+theorem card_SL2_ZMod4 : Nat.card (SL(2, ZMod 4)) = 48 := by
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+theorem index_Gamma4_subgroupOf_dvd_48 (M : ℕ) :
+    ((Gamma 4).subgroupOf (Gamma0 M)).index ∣ 48 :=
+  (index_Gamma4_subgroupOf_dvd M).trans
+    (Gamma4_index_dvd_card.trans (dvd_of_eq card_SL2_ZMod4))
+
+end W11CD1b
+
+open Matrix CongruenceSubgroup Matrix.SpecialLinearGroup
+open scoped MatrixGroups
+
+namespace W11CD1bDock
+
+theorem sanA_eq : W11CD1b.sanA = TW12CD1.sanA := by
+  apply Subtype.ext; ext i j; fin_cases i <;> fin_cases j <;> rfl
+
+theorem sanB_eq : W11CD1b.sanB = TW12CD1.sanB := by
+  apply Subtype.ext; ext i j; fin_cases i <;> fin_cases j <;> rfl
+
+theorem sanovRange_eq : W11CD1b.sanovRange
+    = (FreeGroup.lift ![TW12CD1.sanA, TW12CD1.sanB]).range :=
+  rfl
+
+theorem Gamma4_sanovEntries {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma 4) :
+    TW12CD1.SanovEntries γ := by
+  rw [Gamma_mem] at hγ
+  obtain ⟨ha, hb, hc, hd⟩ := hγ
+
+  refine ⟨?_, ?_, ?_, ?_⟩
+  ·
+    have : (4 : ℤ) ∣ γ.1 0 0 - 1 := by
+      have := (ZMod.intCast_zmod_eq_zero_iff_dvd (γ.1 0 0 - 1) 4).mp (by push_cast; simp [ha])
+      simpa using this
+    omega
+  · have : (4 : ℤ) ∣ γ.1 1 1 - 1 := by
+      have := (ZMod.intCast_zmod_eq_zero_iff_dvd (γ.1 1 1 - 1) 4).mp (by push_cast; simp [hd])
+      simpa using this
+    omega
+  · have h4 : (4 : ℤ) ∣ γ.1 0 1 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ 4).mp hb
+    exact dvd_trans (by norm_num) h4
+  · have h4 : (4 : ℤ) ∣ γ.1 1 0 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ 4).mp hc
+    exact dvd_trans (by norm_num) h4
+
+theorem Gamma4_le_sanovRange : Gamma 4 ≤ W11CD1b.sanovRange := by
+  rw [sanovRange_eq]
+  exact fun γ hγ => TW12CD1.mem_range_of_sanovEntries γ (Gamma4_sanovEntries hγ)
+
+@[reducible] noncomputable def isFreeGroup_Gamma4_subgroupOf (M : ℕ) :
+    IsFreeGroup ↥((Gamma 4).subgroupOf (Gamma0 M)) := by
+
+  haveI : IsFreeGroup ↥(W11CD1b.sanovRange) := sanovRange_eq ▸ TW12CD1.isFreeGroup_sanov_range
+
+  haveI : IsFreeGroup ↥((Gamma 4).subgroupOf W11CD1b.sanovRange) :=
+    subgroupIsFreeOfIsFree ((Gamma 4).subgroupOf W11CD1b.sanovRange)
+  haveI : IsFreeGroup ↥(Gamma 4) :=
+    IsFreeGroup.ofMulEquiv (Subgroup.subgroupOfEquivOfLe Gamma4_le_sanovRange)
+
+  haveI : IsFreeGroup ↥((Gamma0 M).subgroupOf (Gamma 4)) :=
+    subgroupIsFreeOfIsFree ((Gamma0 M).subgroupOf (Gamma 4))
+  exact IsFreeGroup.ofMulEquiv
+    <| (MulEquiv.subgroupCongr (Subgroup.inf_subgroupOf_right (Gamma0 M) (Gamma 4)).symm).trans
+    <| (Subgroup.subgroupOfEquivOfLe (inf_le_right : Gamma0 M ⊓ Gamma 4 ≤ Gamma 4)).trans
+    <| (MulEquiv.subgroupCongr (inf_comm (Gamma0 M) (Gamma 4))).trans
+    <| (Subgroup.subgroupOfEquivOfLe (inf_le_right : Gamma 4 ⊓ Gamma0 M ≤ Gamma0 M)).symm.trans
+    <| MulEquiv.subgroupCongr (Subgroup.inf_subgroupOf_right (Gamma 4) (Gamma0 M))
+
+end W11CD1bDock
+
+namespace TW12CD1Dock
+
+open scoped MatrixGroups
+open CongruenceSubgroup
+
+theorem isUnit_natCast_of_dvd {k : Type*} [CommRing k] {a b : ℕ} (h : a ∣ b)
+    (hb : IsUnit (b : k)) : IsUnit (a : k) := by
+  obtain ⟨c, rfl⟩ := h
+  rw [Nat.cast_mul] at hb
+  exact isUnit_of_mul_isUnit_left hb
+
+theorem cd1_dock {k : Type} [CommRing k] (M : ℕ) (h6 : IsUnit (6 : k))
+    (A : Rep k ↥(Gamma0 M)) : Subsingleton (groupCohomology A 2) := by
+  haveI : IsFreeGroup ↥((Gamma 4).subgroupOf (Gamma0 M)) :=
+    W11CD1bDock.isFreeGroup_Gamma4_subgroupOf M
+  have h2 : IsUnit (2 : k) := isUnit_of_mul_isUnit_left
+    (show IsUnit ((2 : k) * 3) by norm_num; exact h6)
+  have h48 : IsUnit ((48 : ℕ) : k) := by
+    have : ((48 : ℕ) : k) = 6 * (2 * (2 * 2)) := by norm_num
+    rw [this]; exact h6.mul (h2.mul (h2.mul h2))
+  exact TW12CD1.subsingleton_H2_of_free_finiteIndex ((Gamma 4).subgroupOf (Gamma0 M))
+    (isUnit_natCast_of_dvd (W11CD1b.index_Gamma4_subgroupOf_dvd_48 M) h48) A
+
+end TW12CD1Dock
+
+end Gamma0H2
+open CongruenceSubgroup in
+/-- `H²(Γ₀(M), A) = 0` for every representation `A` of `Γ₀(M)` over a
+commutative ring in which `6` is a unit. -/
+theorem CongruenceSubgroup.subsingleton_H2_gamma0 {k : Type} [CommRing k]
+    (M : ℕ) (h6 : IsUnit (6 : k)) (A : Rep k ↥(Gamma0 M)) :
+    Subsingleton (groupCohomology A 2) :=
+  Gamma0H2.TW12CD1Dock.cd1_dock M h6 A
