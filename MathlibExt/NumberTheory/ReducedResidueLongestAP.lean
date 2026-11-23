@@ -18,7 +18,8 @@ import Mathlib.Tactic.IntervalCases
 # Lengths of arithmetic progressions in reduced residue systems
 
 For a squarefree modulus, the largest prime factor bounds the length of a progression
-with fixed positive difference in any reduced residue window.
+with fixed positive difference in any reduced residue window. For twice an odd prime `p`,
+the absolute least reduced residues form a progression of length `p - 1`.
 -/
 
 namespace MetaMathlibExt
@@ -199,6 +200,49 @@ public theorem longestAPLengthWithDiff_le_gpf_sub_one_of_squarefree (m : ℤ) {n
       rw [hgcd] at hcommon
       exact hp.not_dvd_one (Int.natCast_dvd_natCast.mp hcommon)
     omega
+
+/-- **Longest progressions of absolute least residues: twice an odd prime.** For an odd prime
+$p$, the length $g(2p)$ of the longest arithmetic progression in the absolute least reduced
+residue system modulo $2p$ is $p - 1$.
+
+Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
+Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
+Theorem 1 (`integers-2026-A6-thm-1`). -/
+public theorem absLeastAPLength_two_mul_prime {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) :
+    absLeastAPLength (2 * p) = p - 1 := by
+  have hodd := hp.odd_of_ne_two hp2
+  have hc : ⌈((2 * p : ℕ) : ℚ) / 2⌉ = (p : ℤ) := by
+    simp [mul_comm (2 : ℚ)]
+  unfold absLeastAPLength longestAPLength
+  rw [hc]
+  apply le_antisymm
+  · apply csSup_le'
+    rintro s ⟨b, d, hd, h⟩
+    have hs : s ≤ longestAPLengthWithDiff (-p) (2 * p) d :=
+      le_csSup ⟨2 * p, fun _ ⟨_, h⟩ => apLength_le hd h⟩ ⟨b, h⟩
+    have hsq := (Nat.squarefree_mul hodd.coprime_two_left).2 ⟨Nat.squarefree_two, hp.squarefree⟩
+    have hbound := longestAPLengthWithDiff_le_gpf_sub_one_of_squarefree (-(p : ℤ))
+      (one_lt_mul_of_lt_of_le one_lt_two hp.one_le) hd hsq
+    simpa [Nat.primeFactors_mul (by decide : 2 ≠ 0) hp.ne_zero, Nat.prime_two.primeFactors,
+      hp.primeFactors, Finset.sup_union, max_eq_right hp.two_le] using hs.trans hbound
+  · refine le_csSup ⟨2 * p, fun _ ⟨_, _, hd, h⟩ => apLength_le hd h⟩
+      ⟨2 - (p : ℤ), 2, by decide, ?_⟩
+    intro i hi
+    let a := 2 - (p : ℤ) + i * 2
+    change a ∈ reducedResidueWindow (-(p : ℤ)) (2 * p)
+    have ha : Odd a := by
+      obtain ⟨k, hk⟩ := hodd
+      refine ⟨(i : ℤ) - k, ?_⟩
+      dsimp [a]
+      omega
+    have ha_bounds : -(p : ℤ) < a ∧ a < p := by dsimp [a]; omega
+    have hlt : (a.natAbs : ℤ) < p := by rwa [Int.natCast_natAbs, abs_lt]
+    have hcop := Nat.coprime_of_lt_prime ha.natAbs.pos.ne' (by exact_mod_cast hlt) hp
+    refine Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ?_, ?_⟩
+    · push_cast
+      omega
+    · change a.natAbs.Coprime (2 * p)
+      exact ha.natAbs.coprime_two_right.mul_right hcop.symm
 
 end
 
