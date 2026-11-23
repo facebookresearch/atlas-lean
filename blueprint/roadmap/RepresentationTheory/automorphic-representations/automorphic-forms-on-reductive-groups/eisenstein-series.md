@@ -38,7 +38,8 @@ A good expansion has pages for the definition and absolute convergence of Eisens
 intertwining operators, for the constant term formula, for the meromorphic continuation and functional
 equations, for the automorphy of Eisenstein series, for the spectral decomposition, and for the vanishing
 lemma. The spectral decomposition should follow Langlands's route through wave packets: for a
-Paley–Wiener function $\Psi(\lambda)$ with values in a finite-dimensional space of cuspidal data $\mathcal{H}^0_{P,\mathrm{cusp},\sigma}$, the
+Paley–Wiener function $\Psi(\lambda)$ with values in a finite-dimensional subspace of the space of cuspidal data
+$\mathcal{H}^0_{P,\mathrm{cusp},\sigma}$ (which itself need not be finite-dimensional; Arthur, §12, pp. 65–66), the
 pseudo-Eisenstein series $E\psi$ of $\psi(x) = \int_{\Lambda + i\mathfrak{a}_P^*} e^{(\lambda + \rho_P)(H_P(x))} \Psi(\lambda, x)\, d\lambda$ is square integrable (Arthur's Lemma 12.2),
 the inner product formula (12.3) for two such series holds with $\Lambda$ in the cone of absolute convergence of the
 intertwining operators (Lemma 12.3), and $L^2(G(k) \backslash G(\mathbb{A}))$ is the orthogonal sum of the closed subspaces generated
