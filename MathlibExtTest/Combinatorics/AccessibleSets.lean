@@ -12,12 +12,12 @@ import Mathlib.Data.Fintype.Pigeonhole
 import Mathlib.Order.OrderIsoNat
 import MathlibExt.Combinatorics.AccessibleSets
 
-/-! # Tests for accessibility and its partition property -/
+/-! # Tests for accessible sets and diffsequences -/
 
-namespace MetaMathlibExt.accessible_union_partition
+namespace MetaMathlibExt.accessible_divisible_subset
 
 -- Enumerating an infinite color class in order witnesses accessibility of all positive gaps.
-example : IsAccessible (Set.Ioi 0) := by
+private theorem isAccessible_Ioi_zero : IsAccessible (Set.Ioi 0) := by
   intro r hr
   refine ⟨Set.Subset.rfl, hr, ?_⟩
   intro c k _
@@ -28,6 +28,16 @@ example : IsAccessible (Set.Ioi 0) := by
   intro i hi
   have hlt : (e i).val < (e (i + 1)).val := e.strictMono (Nat.lt_succ_self i)
   exact ⟨(e (i + 1)).val - (e i).val, Nat.sub_pos_of_lt hlt, by simp⟩
+
+-- A two-coloring admits arbitrarily long monochromatic sequences with positive gaps divisible by 3.
+example : IsRAccessible 2 {a : ℕ | 0 < a ∧ 3 ∣ a} := by
+  simpa only [Set.mem_Ioi, Nat.dvd_iff_mod_eq_zero] using
+    accessible_divisible_subset (Set.Ioi 0) 3 2 (by decide)
+      (isAccessible_Ioi_zero 6 (by decide))
+
+end MetaMathlibExt.accessible_divisible_subset
+
+namespace MetaMathlibExt.accessible_union_partition
 
 -- In the parity partition of an accessible set, the even gaps must be accessible.
 example {D : Set ℕ} (hD : IsAccessible D) : IsAccessible {d ∈ D | d % 2 = 0} := by
