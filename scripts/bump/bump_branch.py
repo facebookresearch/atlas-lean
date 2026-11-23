@@ -20,7 +20,8 @@
         Finish a merge that `merge-main` left open. It replaces only conflicted provenance
         files, and only the file `git merge` left or its own unedited draft. After merging
         main yourself, or to throw away your edits, pass --regenerate (the replaced files
-        are saved first).
+        are saved first). Use --check-only to validate a fully staged merge, including one
+        across the sharding cutover, without resolving conflicts or committing.
 
     scripts/bump/bump_branch.py breakage LOG [--main REF] [--since REV]
         Read a failed `lake build` log and list each failing module with the main pull
@@ -653,7 +654,8 @@ def merge_uses_shards(ours: str, theirs: str, *, in_progress: bool = False) -> b
         raise Stop(
             f"cannot automatically merge across the provenance sharding cutover. {action}; "
             "keep the sharded layout and carry over both sides' row changes. Stage the "
-            f"resolution and run `python3 {CHECKER} --base MERGE_HEAD` before committing."
+            "resolution, then run `python3 scripts/bump/bump_branch.py resolve-manifest "
+            "--check-only` before committing."
         )
     return all(sharded)
 
@@ -690,18 +692,60 @@ def merge_provenance_file(path: str) -> tuple[str, dict[str, int], list[str]]:
         raise Stop(f"{path}: {error}; resolve and stage it by hand") from error
 
 
+def provenance_paths(manifest: dict | None, revision: str) -> set[str]:
+    paths: set[str] = set()
+    if manifest is None:
+        return paths
+    for row in manifest["rows"]:
+        path = row.get("path") if isinstance(row, dict) else None
+        if not isinstance(path, str) or not path:
+            raise Stop(f"provenance at {revision} has an invalid row path")
+        if path in paths:
+            raise Stop(f"provenance at {revision} has duplicate row path {path}")
+        paths.add(path)
+    return paths
+
+
+def check_parent_rows(tree: str, bump: str, main: str) -> None:
+    merged = provenance_at(tree)
+    parents = [(revision, provenance_at(revision)) for revision in (bump, main)]
+    required = set().union(*(provenance_paths(manifest, rev) for rev, manifest in parents))
+    missing = required - provenance_paths(merged, tree)
+    if missing:
+        listed = "\n".join(f"  {path}" for path in sorted(missing))
+        raise Stop(
+            "the staged merge drops provenance rows from its parents; nothing was committed. "
+            f"Restore the rows (use --retire for deleted files) and stage them:\n{listed}"
+        )
+    # The canonical checker compares with main. Protect against rollback when it is
+    # the bump parent that already uses the sharded layout.
+    sharded = fms.SHARDED_SCHEMA_VERSION
+    if any(manifest is not None and manifest["schema_version"] == sharded
+           for _, manifest in parents) and (merged is None or merged["schema_version"] != sharded):
+        raise Stop("the staged merge must keep sharded provenance; nothing was committed")
+
+
 def check_candidate() -> None:
-    """Check the manifest on the exact tree that would be committed, against main, the
-    way pull request CI checks it: in a scratch worktree of a temporary merge commit."""
+    """Require both parents' rows and run the canonical checker against main on the staged tree."""
+    if unmerged_paths():
+        raise Stop("the merge has unresolved conflicts; resolve and stage them first")
+    if git("diff", "--quiet", check=False).returncode != 0:
+        raise Stop("some tracked files differ from what is staged; `git add` or restore them first")
+    bump, main = rev("HEAD"), merge_head()
     tree = git("write-tree").stdout.strip()
-    candidate = git("commit-tree", tree, "-p", "HEAD", "-p", "MERGE_HEAD", "-m", "candidate merge").stdout.strip()
+    check_parent_rows(tree, bump, main)
+    candidate = git(
+        "commit-tree", tree, "-p", bump, "-p", main, "-m", "candidate merge"
+    ).stdout.strip()
     if git_bytes("cat-file", "-e", f"{candidate}:{CHECKER}") is None:
         raise Stop(f"{CHECKER} is missing from the merge; cannot check the manifest")
     scratch = Path(tempfile.mkdtemp(prefix="bump-branch-check-"))
     try:
         git("worktree", "add", "--detach", "--quiet", str(scratch / "tree"), candidate)
-        check = subprocess.run([sys.executable, str(scratch / "tree" / CHECKER), "--root", str(scratch / "tree"),
-                                "--base", merge_head()], cwd=scratch / "tree", capture_output=True, text=True)
+        check = subprocess.run(
+            [sys.executable, str(scratch / "tree" / CHECKER), "--root", str(scratch / "tree"),
+             "--base", main], cwd=scratch / "tree", capture_output=True, text=True,
+        )
     finally:
         git("worktree", "remove", "--force", str(scratch / "tree"), check=False)
         shutil.rmtree(scratch, ignore_errors=True)
@@ -796,10 +840,17 @@ def clear_state() -> None:
     git_path("bump-branch-draft.json").unlink(missing_ok=True)
 
 
-def resolve_manifest(commit: bool, adjacent: bool = False, regenerate: bool = False) -> int:
+def resolve_manifest(
+    commit: bool, adjacent: bool = False, regenerate: bool = False, *, check_only: bool = False
+) -> int:
     main = merge_head()
     if not main:
         raise Stop("no merge in progress; run `merge-main`")
+    if check_only:
+        if adjacent or regenerate:
+            raise Stop("--check-only cannot be combined with --adjacent or --regenerate")
+        check_candidate()
+        return 0
     sharded = merge_uses_shards("HEAD", main, in_progress=True)
     return finish_merge(commit, adjacent, regenerate, sharded=sharded)
 
@@ -837,8 +888,6 @@ def finish_merge(commit: bool, adjacent: bool, regenerate: bool, *, sharded: boo
         print(f"Once all provenance files parse, you can use {CHECKER} --record-divergence "
               "or --retire. Stage the resolved files and run resolve-manifest again.")
         return 3
-    if git("diff", "--quiet", check=False).returncode != 0:
-        raise Stop("some tracked files differ from what is staged; `git add` or restore them first")
     check_candidate()
     if commit:
         git("commit", "--no-edit")
@@ -937,6 +986,8 @@ def main(argv: list[str] | None = None) -> int:
                        help="also merge a conflict where one side rewrote a whole doc comment and the other "
                             "changed the one line next to it")
         if name == "resolve-manifest":
+            p.add_argument("--check-only", action="store_true",
+                           help="validate the staged merge without resolving or committing it")
             p.add_argument("--regenerate", action="store_true",
                            help="replace unresolved provenance files this tool did not write "
                                 "(existing files are saved first)")
@@ -955,7 +1006,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "merge-main":
             return merge_main(args.main, commit=not args.no_commit, adjacent=args.adjacent)
         if args.command == "resolve-manifest":
-            return resolve_manifest(commit=not args.no_commit, adjacent=args.adjacent, regenerate=args.regenerate)
+            return resolve_manifest(
+                commit=not args.no_commit, adjacent=args.adjacent,
+                regenerate=args.regenerate, check_only=args.check_only,
+            )
         return breakage(args.log, args.main, args.since)
     except Stop as stop:
         print(f"bump_branch: {stop}", file=sys.stderr)

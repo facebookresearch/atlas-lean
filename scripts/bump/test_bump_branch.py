@@ -540,11 +540,68 @@ class GitTest(unittest.TestCase):
         self.assertEqual(resolve.returncode, 0, resolve.stdout + resolve.stderr)
         self.assertEqual(self.git("status", "--porcelain").stdout, "")
 
+    def test_manual_sharded_merge_rejects_dropped_bump_only_rows(self) -> None:
+        main_path, new_path, retired_path = (
+            f"MathlibExt/Algebra/{name}.lean" for name in "ABC"
+        )
+        base_text, main_text = "def a := 1\n", "def a : Nat := 1\n"
+        new_text, retired_text = "def b := 2\n", "def c := 3\n"
+        base_row = diverged(main_path, base_text, "Port A.")
+        main_row = diverged(main_path, main_text, "Type A.")
+        new_row = diverged(new_path, new_text, "Add B on the bump.")
+        retired_row = diverged(retired_path, retired_text, "Add C on the bump.")
+        sharded = fms.SHARDED_SCHEMA_VERSION
+        self.write({main_path: base_text}, [base_row], "base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({new_path: new_text, retired_path: retired_text},
+                   [base_row, new_row, retired_row], "add B and C", schema_version=sharded)
+        (self.repo / retired_path).unlink()
+        tombstone = fms.retired_row(retired_row, retired_path, retired_text)
+        self.write({}, [base_row, new_row, tombstone], "retire C", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        self.write({main_path: main_text}, [main_row], "type A", schema_version=sharded)
+        self.git("checkout", "-q", "bump")
+        original_head = self.git("rev-parse", "HEAD").stdout
+        merge = self.git("merge", "--no-ff", "--no-commit", "main", check=False)
+        self.assertEqual(merge.returncode, 1, merge.stdout + merge.stderr)
+        shard = fms.shard_path(Path(bb.MANIFEST), main_path)
+        self.git("checkout", "--theirs", "--", str(shard))
+        self.git("add", "--", str(shard))
+        staged = self.git("write-tree").stdout
+        shard_bytes = (self.repo / shard).read_bytes()
+
+        # Main has neither row. The canonical main-relative check alone misses the loss.
+        main_check = subprocess.run(
+            [sys.executable, bb.CHECKER, "--base", "MERGE_HEAD"], cwd=self.repo,
+            capture_output=True, text=True, env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
+        )
+        self.assertEqual(main_check.returncode, 0, main_check.stdout + main_check.stderr)
+        blocked = self.tool("resolve-manifest")
+        self.assertEqual(blocked.returncode, 2, blocked.stdout + blocked.stderr)
+        self.assertIn(new_path, blocked.stderr)
+        self.assertIn(retired_path, blocked.stderr)
+        self.assertEqual(self.git("write-tree").stdout, staged)
+        self.assertEqual((self.repo / shard).read_bytes(), shard_bytes)
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, original_head)
+
+        fixed = fms.dump_manifest({"rows": [main_row, new_row, tombstone]}) + "\n"
+        (self.repo / shard).write_text(fixed)
+        self.git("add", "--", str(shard))
+        resolved = self.tool("resolve-manifest")
+        self.assertEqual(resolved.returncode, 0, resolved.stdout + resolved.stderr)
+        self.assertIn("ok [formal-math-sync]", resolved.stdout)
+        self.assertEqual(self.git("show", f"HEAD:{shard}").stdout, fixed)
+
     def test_mixed_layout_is_reported_and_left_for_manual_merge(self) -> None:
         files, rows = self.base_tree()
-        path = "MathlibExt/A.lean"
+        path, bump_only_path = "MathlibExt/A.lean", "MathlibExt/OnlyBump.lean"
         self.git("checkout", "-q", "-b", "bump")
-        self.write(*self.edit(files, rows, path, files[path] + "-- bump\n", BUMP), message="bump")
+        bump_files, bump_rows = self.edit(files, rows, path, files[path] + "-- bump\n", BUMP)
+        bump_only_text = "def onlyBump := 5\n"
+        bump_only_row = diverged(bump_only_path, bump_only_text, "Add module only on the bump.")
+        self.write(
+            {**bump_files, bump_only_path: bump_only_text}, [*bump_rows, bump_only_row], "bump"
+        )
         self.git("checkout", "-q", "main")
         self.write({}, rows, "shard the ledger", schema_version=fms.SHARDED_SCHEMA_VERSION)
         status = self.tool("status", "--main", "bump", "--json")
@@ -555,7 +612,7 @@ class GitTest(unittest.TestCase):
         merged = self.tool("merge-main", "--main", "main")
         self.assertEqual(merged.returncode, 2, merged.stdout + merged.stderr)
         self.assertIn("provenance sharding cutover", merged.stderr)
-        self.assertIn("--base MERGE_HEAD", merged.stderr)
+        self.assertIn("resolve-manifest --check-only", merged.stderr)
         self.assertEqual(self.git("status", "--porcelain").stdout, "")
         merge_head = self.git("rev-parse", "--verify", "MERGE_HEAD", check=False)
         self.assertNotEqual(merge_head.returncode, 0)
@@ -569,6 +626,38 @@ class GitTest(unittest.TestCase):
         self.assertEqual(self.git("status", "--porcelain").stdout, before)
         self.assertEqual((self.repo / bb.MANIFEST).read_bytes(), original_manifest)
         self.assertEqual(self.git("rev-parse", "HEAD").stdout, original_head)
+        unresolved = self.tool("resolve-manifest", "--check-only")
+        self.assertEqual(unresolved.returncode, 2, unresolved.stdout + unresolved.stderr)
+        self.assertIn("unresolved conflicts", unresolved.stderr)
+        self.assertEqual(self.git("status", "--porcelain").stdout, before)
+        self.assertEqual((self.repo / bb.MANIFEST).read_bytes(), original_manifest)
+
+        self.git("checkout", "--theirs", "--", bb.MANIFEST)
+        self.git("add", "--", bb.MANIFEST)
+        shard = fms.shard_path(Path(bb.MANIFEST), path)
+        shard_file = self.repo / shard
+        shard_file.write_text(fms.dump_manifest({"rows": bump_rows}))
+        self.git("add", "--", str(shard))
+        staged = self.git("write-tree").stdout
+        blocked = self.tool("resolve-manifest", "--check-only")
+        self.assertEqual(blocked.returncode, 2, blocked.stdout + blocked.stderr)
+        self.assertIn(bump_only_path, blocked.stderr)
+        self.assertEqual(self.git("write-tree").stdout, staged)
+
+        fixed = fms.dump_manifest({"rows": [*bump_rows, bump_only_row]}) + "\n"
+        shard_file.write_text(fixed)
+        self.git("add", "--", str(shard))
+        staged = self.git("write-tree").stdout
+        metadata = (self.repo / bb.MANIFEST).read_bytes()
+        checked = self.tool("resolve-manifest", "--check-only")
+        self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
+        self.assertIn("ok [formal-math-sync]", checked.stdout)
+        self.assertEqual(self.git("write-tree").stdout, staged)
+        self.assertEqual(shard_file.read_text(), fixed)
+        self.assertEqual((self.repo / bb.MANIFEST).read_bytes(), metadata)
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, original_head)
+        self.assertEqual(self.git("rev-parse", "MERGE_HEAD").stdout,
+                         self.git("rev-parse", "main").stdout)
 
     def test_lean_conflict_is_left_to_the_user(self):
         d = "MathlibExt/D.lean"
