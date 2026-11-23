@@ -57,6 +57,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.NumberTheory.BernoulliFibonacciMultinomial
 public import MathlibExt.NumberTheory.ForwardDiffPow
 public import MathlibExt.NumberTheory.GenocchiNumber
 public import MathlibExt.NumberTheory.LucasSequence
@@ -411,38 +412,6 @@ theorem_wanted add_mul_fibBeta_pow_eq_sum (q m : ℕ)
             (∏ i, ((Nat.fib ((jℓ.1 i).val + 1) : ℝ) /
               ((jℓ.1 i).val + 1 : ℕ))) *
             x ^ (m - n)
-
-/-- **A multinomial sum of Bernoulli and Fibonacci numbers equal to one.** Let $F_n$ be the
-Fibonacci numbers and let $B_k$ be the Bernoulli numbers, with $B_1 = -\tfrac{1}{2}$. For every
-natural number $m$,
-$$\sum_{n=0}^{m} \sum_{j_1 + j_2 + \ell_1 + \ell_2 = n} \sqrt{5}^{\,\ell_1 + \ell_2 + m - n}
-\frac{n!}{j_1!\, j_2!\, \ell_1!\, \ell_2!} \binom{m}{n} B_{\ell_1} B_{\ell_2}
-\frac{F_{j_1+1}}{j_1+1} \cdot \frac{F_{j_2+1}}{j_2+1} = 1,$$
-where the inner sum runs over all quadruples $(j_1, j_2, \ell_1, \ell_2)$ of natural numbers with
-sum $n$.
-
-This is the case $q = 2$, $x = \sqrt{5}$ of Theorem 15, since $\sqrt{5} + 2\beta = 1$ for
-$\beta = (1 - \sqrt{5})/2$. The paper's displayed multinomial coefficient omits the factors
-$\ell_1!\, \ell_2!$; with that coefficient the sum at $m = 2$ is $8/3$, not $1$.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 17. -/
-theorem_wanted sum_bernoulli_fib_two_eq_one (m : ℕ) :
-    ∑ n ∈ Finset.range (m + 1),
-        ∑ jℓ ∈ (Finset.univ :
-            Finset ((Fin 2 → Fin (n + 1)) ×
-              (Fin 2 → Fin (n + 1)))).filter
-            (fun jℓ => (∑ i, (jℓ.1 i).val) +
-              (∑ i, (jℓ.2 i).val) = n),
-          (Real.sqrt 5) ^ ((∑ i, (jℓ.2 i).val) + m - n) *
-            ((n.factorial : ℝ) /
-              ((∏ i, ((jℓ.1 i).val.factorial : ℝ)) *
-                ∏ i, ((jℓ.2 i).val.factorial : ℝ))) *
-            (Nat.choose m n : ℝ) *
-            (∏ i, (bernoulli (jℓ.2 i).val : ℝ)) *
-            (∏ i, ((Nat.fib ((jℓ.1 i).val + 1) : ℝ) /
-              ((jℓ.1 i).val + 1 : ℕ))) = 1
 
 /-- **Euler–Lucas multinomial expansion of $(x + q/2)^m$.** Let $E_k$ be the Euler (secant)
 numbers, with exponential generating function $2/(e^t + e^{-t})$, and let $L_k$ be the Lucas

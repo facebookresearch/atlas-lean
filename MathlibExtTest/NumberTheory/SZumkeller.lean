@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.SZumkeller
 
-/-! # Tests for the criterion for even s-Zumkeller numbers -/
+/-! # Tests for s-Zumkeller numbers -/
 
 open MetaMathlibExt
 
@@ -25,3 +25,9 @@ example : ¬ IsSZumkeller 2 := by
   obtain ⟨S, _, hsum⟩ := (isSZumkeller_iff_of_even 2 (by decide) (by decide)).1 h
   have hneg : 4 * (∑ d ∈ S, d ^ 2 : ℤ) < 0 := hsum.trans_lt (by decide)
   exact hneg.not_ge (mul_nonneg (by decide) (Finset.sum_nonneg fun d _ => sq_nonneg (d : ℤ)))
+
+-- At α = 3 the proper divisors 5, 15, and 60 have squared sum 3850, half the total.
+example : ((120 : ℕ).divisors.card : ℚ) / ∑ d ∈ (120 : ℕ).divisors, 1 / (d : ℚ) ^ 2 <
+    512 / 3 := by
+  apply harmonicMeanSq_lt_of_isSZumkeller_mersenne 3 120 (by decide) (by decide)
+  exact ⟨{5, 15, 60}, by decide, by decide, by decide, by decide⟩

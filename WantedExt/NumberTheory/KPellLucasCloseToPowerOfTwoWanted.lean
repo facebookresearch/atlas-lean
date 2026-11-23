@@ -18,7 +18,7 @@ public import MathlibExt.NumberTheory.KPellLucasCloseToPowerOfTwo
 # `k`-Pell–Lucas numbers close to a power of 2
 
 Statements from Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers
-Close to a Power of 2*, INTEGERS 25 (2025), Article A67. The recurrence and Lemmas 6 and 7 are in
+Close to a Power of 2*, INTEGERS 25 (2025), Article A67. The recurrence and Lemmas 6–8 are in
 `MathlibExt.NumberTheory.KPellLucasCloseToPowerOfTwo`.
 
 The `k`-generalized Pell–Lucas sequence starts with `k - 2` zeros followed by `Q_0 = Q_1 = 2`,
@@ -117,18 +117,6 @@ public theorem_wanted lt_abs_sub_div_of_max_partialQuotient (τ : ℝ) (hτ : Ir
     (hxM : (x : ℝ) < M) :
     1 / (((Finset.range (N + 1)).sup' Finset.nonempty_range_add_one a + 2) * (x : ℝ) ^ 2) <
       |τ - y / x|
-
-/-- **Exponent bounds for $k$-Pell–Lucas numbers close to a power of two (Lemma 8).** Let $k$, $n$
-and $m$ be natural numbers with $k \ge 2$, $n \ge 1$, $m \ge 2$ and $n \ge k + 1$, and let
-$Q^{(k)}_n$ be the $n$th $k$-Pell–Lucas number. If $|Q^{(k)}_n - 2^m| < 2^{m/2}$, then
-$0.69n - 1.69 < m < 1.39n + 3.78$.
-
-Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
-a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 8 (`integers-2025-A67-lem-8`). -/
-public theorem_wanted kPellLucas_close_two_pow_exponent_bounds (k n m : ℕ) (hk : 2 ≤ k)
-    (hn : 1 ≤ n) (hm : 2 ≤ m) (hkn : k + 1 ≤ n)
-    (hclose : |(kPellLucas k n : ℝ) - 2 ^ m| < (2 : ℝ) ^ ((m : ℝ) / 2)) :
-    (0.69 : ℝ) * n - 1.69 < m ∧ (m : ℝ) < 1.39 * n + 3.78
 
 /-- **Absolute bounds for $k$-Pell–Lucas numbers close to a power of two (Lemma 9).** Let $k$, $n$
 and $m$ be natural numbers with $k \ge 2$, $m \ge 1$ and $n \ge k + 1$, and let $Q^{(k)}_n$ be

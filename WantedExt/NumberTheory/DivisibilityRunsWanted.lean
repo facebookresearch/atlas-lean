@@ -10,55 +10,12 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Data.Int.GCD
-public import Mathlib.Data.Int.Interval
 public import Mathlib.NumberTheory.Real.GoldenRatio
-public import MathlibExt.NumberTheory.GeneralizedTribonacci
-public import MathlibExt.NumberTheory.GibonacciNumber
+public import MathlibExt.NumberTheory.DivisibilityRuns
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Divisibility runs.** For integers $x, y, a, b, c$ and a natural number $L$, let
-$(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, and let $(Q_n)_{n \ge 0}$
-be the generalized Tribonacci sequence with $Q_0 = a$, $Q_1 = b$ and $Q_2 = c$. The configuration
-$(x, y; a, b, c)$ has a divisibility run of length at least $L$ when $P_i \ne 0$ and
-$P_i \mid Q_i$ for every $i < L$.
-
-This is the statement that the run length $L(x, y; a, b, c)$ of the paper's Equation (1) is at
-least $L$; the paper indexes the sequences from $1$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Equation (1) and
-Proposition 3. -/
-public def IsDivRunUpTo (x y a b c : ℤ) (L : ℕ) : Prop :=
-  ∀ i : ℕ, i < L → gibonacciNumber x y i ≠ 0 ∧ gibonacciNumber x y i ∣ generalizedTribonacci a b c i
-
-/-- **Divisibility runs of length zero.** For integers $x, y, a, b, c$, let $(P_n)_{n \ge 0}$ be
-the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, let $(Q_n)_{n \ge 0}$ be the generalized
-Tribonacci sequence with $Q_0 = a$, $Q_1 = b$ and $Q_2 = c$, and say $(x, y; a, b, c)$ has a
-divisibility run of length at least $L$ when $P_i \ne 0$ and $P_i \mid Q_i$ for every natural
-number $i < L$. Then $(x, y; a, b, c)$ always has a divisibility run of length at least $0$, since
-no natural number $i$ satisfies $i < 0$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Equation (1). -/
-public theorem isDivRunUpTo_zero (x y a b c : ℤ) : IsDivRunUpTo x y a b c 0 :=
-  fun i hi => (Nat.not_lt_zero i hi).elim
-
-/-- **Gibonacci terms two apart have the gcd of the initial values.** Let $x, y$ be integers and
-let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$. For every $n \ge 2$,
-the nonnegative greatest common divisor of $P_n$ and $P_{n-2}$ equals that of $x$ and $y$:
-$\gcd(P_n, P_{n-2}) = \gcd(x, y)$.
-
-The paper indexes the sequence from $1$ and states this for $n \ge 3$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 2
-(`integers-2026-A122-lem-2`). -/
-public theorem_wanted int_gcd_gibonacciNumber_sub_two (x y : ℤ) (n : ℕ) (hn : 2 ≤ n) :
-    Int.gcd (gibonacciNumber x y n) (gibonacciNumber x y (n - 2)) = Int.gcd x y
 
 /-- **Backward recurrence for Gibonacci numbers.** Let $x, y$ be integers and let
 $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$. For every $n \ge 3$,
@@ -165,41 +122,6 @@ public theorem_wanted gibonacci_generalizedTribonacci_growth_bounds :
           ≤ |(gibonacciNumber x y n : ℝ)|) ∧
     (∀ τ : ℝ, τ ^ 3 = τ ^ 2 + τ + 1 → ∀ (a b c : ℤ) (n : ℕ),
       |(generalizedTribonacci a b c n : ℝ)| ≤ (|(a : ℝ)| + |(b : ℝ)| + |(c : ℝ)|) * τ ^ n)
-
-/-- Run-length conditions are decidable (finitely many indices, integer divisibility).
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Equation (1). -/
-public instance (x y a b c : ℤ) (L : ℕ) : Decidable (IsDivRunUpTo x y a b c L) := by
-  unfold IsDivRunUpTo
-  infer_instance
-
-/-- **Counting configurations with long divisibility runs.** For natural numbers $B$ and $r$,
-$A_B(r)$ is the number of integer tuples $(x, y, a, b, c)$ with all five entries in $[-B, B]$,
-$(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at
-least $r$: for every $i < r$, the Gibonacci number $P_i$ with initial values $P_0 = x$, $P_1 = y$
-is nonzero and divides the generalized Tribonacci number $Q_i$ with initial values $Q_0 = a$,
-$Q_1 = b$, $Q_2 = c$ (indices start at $0$).
-
-The tuples satisfying the size and nonvanishing conditions form the paper's set
-$\mathcal{C}_B$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Equation (2). -/
-public def divRunCount (B r : ℕ) : ℕ :=
-  ((Finset.Icc (-(B : ℤ)) B ×ˢ Finset.Icc (-(B : ℤ)) B ×ˢ Finset.Icc (-(B : ℤ)) B ×ˢ
-      Finset.Icc (-(B : ℤ)) B ×ˢ Finset.Icc (-(B : ℤ)) B).filter fun t =>
-    (t.1, t.2.1) ≠ (0, 0) ∧ (t.2.2.1, t.2.2.2.1, t.2.2.2.2) ≠ (0, 0, 0) ∧
-      IsDivRunUpTo t.1 t.2.1 t.2.2.1 t.2.2.2.1 t.2.2.2.2 r).card
-
-/-- **Run count at bound 1 and length 1.** Exactly $156$ integer tuples $(x, y, a, b, c)$ with
-all entries in $\{-1, 0, 1\}$, $(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ have a
-divisibility run of length at least $1$; that is, $A_1(1) = 156$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 4 (`integers-2026-A122-prop-4`). -/
-public theorem divRunCount_one_one : divRunCount 1 1 = 156 := by
-  decide +kernel
 
 /-- **Divisibility runs have logarithmic length.** There is a real constant $C > 0$ such that for
 every natural number $B \ge 2$, all integers $x, y, a, b, c \in [-B, B]$ with $(x, y) \ne (0, 0)$
