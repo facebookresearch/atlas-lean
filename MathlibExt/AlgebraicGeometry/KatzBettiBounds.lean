@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.ContinuousAdicCompactSupports
-public import MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
 public import Mathlib.Algebra.MvPolynomial.Degrees
 
 @[expose] public noncomputable section
@@ -36,7 +35,6 @@ open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme
 open MathlibExt.AlgebraicGeometry.ContinuousAdicCoefficients
 open MathlibExt.AlgebraicGeometry.ProEtaleCohomologyFunctoriality
 open MathlibExt.AlgebraicGeometry.ContinuousAdicCompactSupports
-open MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
 
 universe u
 
@@ -67,7 +65,7 @@ abbrev CompactAdicCohomology {k : Type u} [Field k] {X : Over (Spec (.of k))}
     (ell : ℕ) [Fact ell.Prime] (c : ClosedCompactification X) (n : ℕ) :=
   Cohomology ℚ_[ell] c.ambient.left
     ((moduleBoundaryKernel ℚ_[ell] c.closedMap).obj
-      (continuousModuleSheaf ℚ_[ell] (RationalCoefficients.{u} ell) c.ambient.left)) n
+      (continuousModuleSheaf ℚ_[ell] (ULift.{u + 1} ℚ_[ell]) c.ambient.left)) n
 
 /-- Katz's explicit constant in the Corollary of Theorem 1. -/
 def katzBound (N r d : ℕ) : ℕ := 6 * 2 ^ r * (3 + r * d) ^ (N + 1)
