@@ -83,6 +83,12 @@ theorem birth_tau_nonneg : 0 ≤ Real.log (1 / (1 / 2 : ℝ)) / 2 := by
   exact h.1
 
 #print axioms birth_propensity
+#print axioms propensity_nonneg
+#print axioms propensity_eq_zero_of_insufficient
+#print axioms totalPropensity_eq_zero_iff
+#print axioms selectAux_some_pos
+#print axioms step_some_sound
+#print axioms step_none_of_empty
 #print axioms birth_fire_empty
 #print axioms birth_fire_zero
 #print axioms birth_fire_ne

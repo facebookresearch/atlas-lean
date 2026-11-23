@@ -237,11 +237,4 @@ theorem step_none_of_empty {S : Type*} [Fintype S] (x : S → ℕ) (u1 u2 : ℝ)
   rw [step_eq]
   simp [totalPropensity]
 
-#print axioms propensity_nonneg
-#print axioms propensity_eq_zero_of_insufficient
-#print axioms totalPropensity_eq_zero_iff
-#print axioms selectAux_some_pos
-#print axioms step_some_sound
-#print axioms step_none_of_empty
-
 end Cslib.Bioinformatics.CRN
