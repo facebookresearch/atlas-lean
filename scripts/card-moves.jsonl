@@ -817,3 +817,6 @@
 {"page": "NumberTheory/algebraic-number-theory/adeles-class-field-theory/arakelov-divisors/size-hom-coe", "to": "AlgebraicGeometry/arakelov-geometry/arakelov-divisors/size-hom-coe", "article_id": "af_fc988aa496533b65782082eb"}
 {"page": "NumberTheory/algebraic-number-theory/adeles-class-field-theory/arakelov-divisors/size-hom", "to": "AlgebraicGeometry/arakelov-geometry/arakelov-divisors/size-hom", "article_id": "af_b46c60c2385b6c5ab1006046"}
 {"page": "NumberTheory/algebraic-number-theory/adeles-class-field-theory/arakelov-divisors/size-principal", "to": "AlgebraicGeometry/arakelov-geometry/arakelov-divisors/size-principal", "article_id": "af_8208f29235d37afe9557fde2"}
+{"statement": "af_2b8e2467c266d5c9a87465e2", "page": "NumberTheory/algebraic-number-theory/adeles-class-field-theory/global-artin-reciprocity", "replaced_by": "af_000a198fbd88d7084bf41537"}
+{"statement": "af_df7647adc7d1d58ab4627873", "page": "NumberTheory/algebraic-number-theory/adeles-class-field-theory/global-existence-theorem", "replaced_by": "af_fb5835257523ad9b52d4101a"}
+{"statement": "af_8c3b1f7cbd289256a6751243", "page": "NumberTheory/algebraic-number-theory/adeles-class-field-theory/idele-class-tate-cohomology-of-cyclic-extension", "replaced_by": "af_a13c3e0fa45ae5675c444f5f"}
