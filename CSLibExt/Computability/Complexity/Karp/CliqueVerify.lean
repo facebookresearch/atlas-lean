@@ -46,7 +46,9 @@ open Cslib.Complexity.SatVerifier (Sym)
 
 /-! ### The verifier as a pure function -/
 
-/-- The three problems sharing the verifier. -/
+/-- **Modes of the clique verifier.** A mode is one of three values, clique, independent set
+and vertex cover, naming the three graph problems CLIQUE, INDEPENDENT-SET and VERTEX-COVER that
+share one NP verifier. -/
 inductive Mode | clique | indep | cover
   deriving DecidableEq
 
@@ -55,13 +57,23 @@ instance Mode.instFintypeEnumFix : Fintype Mode where
   elems := ⟨↑[Mode.clique, .indep, .cover], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- The pairwise condition: bit of `{i, j}`, then whether `i` and `j` are chosen. -/
+/-- **Pair condition of the clique verifier.** For a mode $m$, the adjacency bit $b$ of a vertex
+pair $\{i, j\}$, and flags $s_i$, $s_j$ saying whether $i$ and $j$ are chosen, the pair
+condition $\mathrm{ok}_m(b, s_i, s_j)$ is $\lnot(s_i \land s_j) \lor b$ for clique,
+$\lnot(s_i \land s_j) \lor \lnot b$ for independent set, and $\lnot b \lor s_i \lor s_j$ for
+vertex cover. -/
 def Mode.ok : Mode → Bool → Bool → Bool → Bool
   | .clique, b, si, sj => !(si && sj) || b
   | .indep, b, si, sj => !(si && sj) || !b
   | .cover, b, si, sj => !b || si || sj
 
-/-- The verifier: `w`'s first `n` bits choose the vertices. -/
+/-- **The verifier for CLIQUE, INDEPENDENT-SET and VERTEX-COVER.** For a mode $m$, an input
+$x$ and a witness $w$ (bit lists), the verifier rejects if $x$ does not decode to a triple
+$(k, n, \mathit{bits})$. Otherwise it accepts if and only if $\mathit{bits}$ has one bit per
+pair $(i, j)$ with $i < j < n$, $w$ has at least $n$ bits, exactly $k$ of the first $n$ bits of
+$w$ are set, and for every pair $(i, j)$, matched with its bit $b$ in the encoding order of the
+pairs, the pair condition of $m$ holds for $b$, $w_i$ and $w_j$. So the first $n$ bits of $w$
+choose the vertices. -/
 def kgCheck (m : Mode) (x w : List Bool) : Bool :=
   match decodeKG x with
   | none => false
@@ -69,25 +81,44 @@ def kgCheck (m : Mode) (x w : List Bool) : Bool :=
       (w.take n).count true == k &&
       ((pairs n).zip bits).all fun pb => m.ok pb.2 (w.getD pb.1.1 false) (w.getD pb.1.2 false)
 
-/-- Vertex `i` alone settles every pair `{i, j}`: `i` unchosen (clique, independent set) or
-chosen (cover). -/
+/-- **Vertices that settle their pairs alone.** For a mode and the Boolean saying whether a
+vertex $i$ is chosen, the result is true when $i$ alone settles the condition on every pair
+$\{i, j\}$: in the clique and independent-set modes it is true exactly when $i$ is not chosen,
+and in the vertex-cover mode exactly when $i$ is chosen. -/
 def Mode.free : Mode → Bool → Bool
   | .cover, si => si
   | _, si => !si
 
-/-- The pair condition when `i` does not settle it: bit `b`, whether `j` is chosen. -/
+/-- **The pair condition left to the later vertex.** For a mode $m$, a pair bit $b$ and a
+flag $s_j$ saying whether vertex $j$ is chosen, $\mathrm{sat}_m(b, s_j)$ is
+$\lnot s_j \lor b$ for clique, $\lnot s_j \lor \lnot b$ for independent set, and
+$\lnot b \lor s_j$ for vertex cover.
+
+It is the pair condition on $\{i, j\}$ when vertex $i$ does not settle it. -/
 def Mode.sat : Mode → Bool → Bool → Bool
   | .clique, b, sj => !sj || b
   | .indep, b, sj => !sj || !b
   | .cover, b, sj => !b || sj
 
-/-- The pair condition splits into the part `i` settles and the part left to `j`. -/
+/-- **The pair condition splits by vertex.** For a mode $m$ and Booleans $b$, $s_i$, $s_j$, let
+$\mathrm{ok}_m(b, s_i, s_j)$ be the pair condition of $m$: $\lnot(s_i \land s_j) \lor b$ for
+clique, $\lnot(s_i \land s_j) \lor \lnot b$ for independent set and $\lnot b \lor s_i \lor s_j$
+for vertex cover. Let $\mathrm{free}_m(s_i)$, the part that vertex $i$ alone settles, be
+$\lnot s_i$ for clique and independent set and $s_i$ for vertex cover, and let
+$\mathrm{sat}_m(b, s_j)$, the part left to $j$, be $\lnot s_j \lor b$ for clique,
+$\lnot s_j \lor \lnot b$ for independent set and $\lnot b \lor s_j$ for vertex cover. Then for
+every mode $m$ and all Booleans $b$, $s_i$, $s_j$, we have
+$\mathrm{ok}_m(b, s_i, s_j) = \mathrm{free}_m(s_i) \lor \mathrm{sat}_m(b, s_j)$. -/
 theorem Mode.ok_eq (m : Mode) (b si sj : Bool) : m.ok b si sj = (m.free si || m.sat b sj) := by
   cases m <;> cases b <;> cases si <;> cases sj <;> rfl
 
 /-! ### The pair order -/
 
-/-- Row `0` of `pairs (n + 1)`, then the pairs of `n` shifted by one. -/
+/-- **Vertex pairs in encoding order for one more vertex.** For a natural number $m$, write
+$P(m)$ for the list of pairs $(i, j)$ of natural numbers with $i < j < m$, ordered by $i$
+ascending and, for each $i$, by $j$ descending. Then for every natural number $n$, $P(n + 1)$ is
+the list $(0, n), (0, n - 1), \dots, (0, 1)$ (empty when $n = 0$) followed by the pairs
+$(i + 1, j + 1)$ for the pairs $(i, j)$ of $P(n)$, in the order of $P(n)$. -/
 theorem pairs_succ (n : ℕ) : pairs (n + 1) = (List.range n).reverse.map (fun j => (0, j + 1)) ++
     (pairs n).map fun p => (p.1 + 1, p.2 + 1) := by
   have hr : (0 :: (List.range n).map Nat.succ).reverse =
@@ -101,16 +132,24 @@ theorem pairs_succ (n : ℕ) : pairs (n + 1) = (List.range n).reverse.map (fun j
 
 /-! ### The row-by-row check -/
 
-/-- The chosen-flags of the two ends of each pair of `pairs s.length`, read off `s`. -/
+/-- **Chosen-flag pairs.** For a list $s = (s_0, \dots, s_{\ell - 1})$ of Booleans, the
+chosen-flag pairs of $s$ are the pairs $(s_i, s_j)$, one for each vertex pair $(i, j)$ with
+$i < j < \ell$, listed in the encoding order of the vertex pairs of $\ell$ vertices (rows $i$
+ascending, within a row $j$ descending). -/
 def pairVals (s : List Bool) : List (Bool × Bool) :=
   (pairs s.length).map fun p => (s.getD p.1 false, s.getD p.2 false)
 
-/-- Reading a list at every index in turn gives it back. -/
+/-- **Reading a list at every index.** For every list $s$ of Booleans of length $\ell$,
+reading $s$ at the indices $0, 1, \dots, \ell - 1$ in turn (with default value false) gives
+back $s$. -/
 theorem map_getD_range (s : List Bool) : (List.range s.length).map (s.getD · false) = s := by
   refine List.ext_getElem (by simp) fun t h₁ h₂ => ?_
   simp [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h₂]
 
-/-- Row `0` of `a :: s` pairs `a` with the later vertices, last first. -/
+/-- **Chosen-flag pairs of a list with a new head.** For a Boolean $a$ and a list
+$s = (s_0, \dots, s_{\ell - 1})$ of Booleans, the chosen-flag pairs of the list
+$(a, s_0, \dots, s_{\ell - 1})$ are $(a, s_{\ell - 1}), (a, s_{\ell - 2}), \dots, (a, s_0)$,
+followed by the chosen-flag pairs of $s$. -/
 theorem pairVals_cons (a : Bool) (s : List Bool) :
     pairVals (a :: s) = s.reverse.map (a, ·) ++ pairVals s := by
   rw [pairVals, List.length_cons, pairs_succ, List.map_append, List.map_map, List.map_map]
@@ -118,16 +157,25 @@ theorem pairVals_cons (a : Bool) (s : List Bool) :
   conv_rhs => rw [← map_getD_range s]
   simp [List.map_reverse, Function.comp_def]
 
-/-- What the machine checks, vertex by vertex: row `i` (vertex `s`, later vertices `rest`) takes
-`rest.length` pair bits, met in the order of `rest.reverse`; then the rows of `rest`, and at the
-end no bit may be left. -/
+/-- **The row-by-row check of the clique verifier.** For a mode $m$, the row-by-row check of
+a list of chosen-flags against a list $b$ of pair bits is defined by recursion on the flags.
+For the empty list it holds iff $b$ is empty. For a flag $a$ followed by the flags $r$ of the
+later vertices, write $\rho$ for the reverse of $r$: the check holds iff $|r| \le |b|$,
+either $a$ is free for $m$ or $\mathrm{sat}_m(b_t, \rho_t)$ holds for every $t < |r|$
+(indices from $0$), and the check of $r$ against $b$ with its first $|r|$ bits dropped holds.
+
+This is what the machine checks, vertex by vertex; at the end no bit may be left. -/
 def rowsOk (m : Mode) : List Bool → List Bool → Bool
   | [], bs => bs.isEmpty
   | s :: rest, bs => decide (rest.length ≤ bs.length) &&
       (m.free s || (rest.reverse.zip bs).all fun p => m.sat p.2 p.1) &&
       rowsOk m rest (bs.drop rest.length)
 
-/-- The row-by-row check is the pairwise check over `pairs`, with the bit count. -/
+/-- **The row-by-row check is the pairwise check.** For every mode $m$ and all lists of bits
+$s$ and $b$, the row-by-row check of $s$ against $b$ holds if and only if $b$ has exactly
+one bit per pair $i < j < |s|$ and, listing these pairs in encoding order (rows $i$
+ascending, within a row $j$ descending), the $t$-th pair $(i, j)$ and the $t$-th bit $b_t$
+satisfy the pair condition $\mathrm{ok}_m(b_t, s_i, s_j)$ for every $t$. -/
 theorem rowsOk_eq (m : Mode) : ∀ (s bs : List Bool), rowsOk m s bs =
     (bs.length == (pairVals s).length &&
       ((pairVals s).zip bs).all fun q => m.ok q.2 q.1.1 q.1.2)
@@ -152,7 +200,11 @@ theorem rowsOk_eq (m : Mode) : ∀ (s bs : List Bool), rowsOk m s bs =
         rw [hl]
         simp [h]
 
-/-- On a decodable instance with the right count, the verifier is the row-by-row check. -/
+/-- **The verifier as a row-by-row check.** Let $m$ be a mode and $x$, $w$ bit lists.
+Suppose that $x$ decodes to $(k, n, \mathit{bits})$, that $w$ has at least $n$ bits, and that
+exactly $k$ of the first $n$ bits of $w$ are set. Then the verifier for mode $m$ on input $x$
+and witness $w$ returns the same value as the row-by-row check for mode $m$ of the first $n$
+bits of $w$ against the pair bits $\mathit{bits}$. -/
 theorem kgCheck_eq_rowsOk {m : Mode} {x w : List Bool} {k n : ℕ} {bits : List Bool}
     (hx : decodeKG x = some (k, n, bits)) (hn : n ≤ w.length) (hk : (w.take n).count true = k) :
     kgCheck m x w = rowsOk m (w.take n) bits := by
@@ -166,7 +218,9 @@ theorem kgCheck_eq_rowsOk {m : Mode} {x w : List Bool} {k n : ℕ} {bits : List 
 
 /-! ### Bridge to the graph languages -/
 
-/-- With distinct keys, `lookup` finds the value paired with a key. -/
+/-- **Lookup in a list of pairs with distinct keys.** Let $l$ be a list of pairs whose keys lie
+in a type with a lawful Boolean equality and are pairwise distinct. If $(a, b)$ occurs in $l$,
+then looking up the key $a$ in $l$ returns $b$. -/
 theorem lookup_of_mem {α β : Type} [BEq α] [LawfulBEq α] :
     ∀ {l : List (α × β)} {a : α} {b : β}, (l.map Prod.fst).Nodup → (a, b) ∈ l →
       l.lookup a = some b
@@ -179,8 +233,12 @@ theorem lookup_of_mem {α β : Type} [BEq α] [LawfulBEq α] :
         have hne : (a == a') = false := beq_eq_false_iff_ne.2 fun e => hnd.1 (by simpa [e] using hm)
         simp [List.lookup_cons, hne, lookup_of_mem hnd.2 h]
 
-/-- With one bit per pair, a check over `(pairs n).zip bits` is a check of `adjBits` on every
-pair `i < j < n`. -/
+/-- **Checking each listed vertex pair against its bit.** Let $n$ be a natural number and $b$ a
+list of bits with one bit per vertex pair, that is, with as many entries as the list of pairs
+$(i, j)$ with $i < j < n$. Then for every Boolean predicate $P$ on a pair of natural numbers and
+a bit, $P$ holds on every entry of the pair list zipped with $b$ (the $t$-th pair together with
+the $t$-th bit of $b$) if and only if, for all natural numbers $i < j < n$, $P$ holds on the
+pair $(i, j)$ together with the adjacency bit of $\{i, j\}$ in $b$. -/
 theorem all_zip_pairs {n : ℕ} {bits : List Bool} (h : bits.length = (pairs n).length)
     (P : ℕ × ℕ → Bool → Bool) :
     ((pairs n).zip bits).all (fun pb => P pb.1 pb.2) = true ↔
@@ -207,8 +265,12 @@ theorem all_zip_pairs {n : ℕ} {bits : List Bool} (h : bits.length = (pairs n).
     have := hall p.1 p.2 h1 h2
     rwa [hlk p b hpb] at this
 
-/-- The verifier accepts iff `x` is an instance with one bit per pair, `w` has at least `n` bits,
-`k` of the first `n` are set, and every pair meets the mode's condition. -/
+/-- **Characterization of the CLIQUE verifier.** For a mode $m$ and bit lists $x$ and $w$, the
+verifier for mode $m$ accepts input $x$ with witness $w$ if and only if there are $k$, $n$ and a
+bit list $\mathit{bits}$ such that $x$ is the encoding of the instance $(k, n, \mathit{bits})$,
+$\mathit{bits}$ has one bit per pair $(i, j)$ with $i < j < n$, $w$ has at least $n$ bits,
+exactly $k$ of the first $n$ bits of $w$ are set, and for all $i < j < n$ the pair condition of
+$m$ holds for the bit of the pair $\{i, j\}$ and the bits $w_i$ and $w_j$. -/
 theorem kgCheck_iff (m : Mode) (x w : List Bool) : kgCheck m x w = true ↔
     ∃ k n bits, x = encodeKG k n bits ∧ bits.length = (pairs n).length ∧ n ≤ w.length ∧
       (w.take n).count true = k ∧ ∀ i j, i < j → j < n →
@@ -229,7 +291,10 @@ theorem kgCheck_iff (m : Mode) (x w : List Bool) : kgCheck m x w = true ↔
     exact ⟨⟨⟨hl, hn⟩, hk⟩,
       (all_zip_pairs hl fun p b => m.ok b (w.getD p.1 false) (w.getD p.2 false)).2 hall⟩
 
-/-- The set bits of `List.ofFn f` count the indices where `f` holds. -/
+/-- **Counting the set bits of a list built from a function.** For every natural number $n$ and
+every function $f$ from $\{0, \dots, n-1\}$ to the Booleans, the number of entries equal to
+true in the list $f(0), f(1), \dots, f(n-1)$ equals the number of indices $i < n$ with $f(i)$
+true. -/
 theorem count_ofFn : ∀ {n : ℕ} (f : Fin n → Bool),
     (List.ofFn f).count true = (Finset.univ.filter fun i => f i = true).card
   | 0, f => by simp
@@ -238,18 +303,31 @@ theorem count_ofFn : ∀ {n : ℕ} (f : Fin n → Bool),
         Fin.sum_univ_succ]
       cases f 0 <;> simp [add_comm]
 
-/-- The first `n` bits of `w`, as a function on `Fin n`. -/
+/-- **The first $n$ bits of a list, read index by index.** If a bit list $w$ has length at
+least $n$, then the first $n$ entries of $w$ form the list $(w_0, \dots, w_{n-1})$, where $w_i$
+is the entry of $w$ at index $i$ (taken as false past the end of $w$). -/
 theorem take_eq_ofFn {n : ℕ} {w : List Bool} (hn : n ≤ w.length) :
     w.take n = List.ofFn fun i : Fin n => w.getD i false := by
   refine List.ext_getElem (by simp [hn]) fun t h₁ h₂ => ?_
   simp [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem (show t < w.length by
     simp at h₁; omega)]
 
-/-- A vertex set meets the mode's condition on every pair `i < j`. -/
+/-- **Vertex sets meeting a mode's pair condition.** For a mode $m$, a number $n$, a list of
+pair bits and a set $s$ of vertices in $\{0, \dots, n - 1\}$, the set $s$ meets the condition
+of $m$ when for all vertices $i < j$ the pair condition
+$\mathrm{ok}_m(b_{ij}, [i \in s], [j \in s])$ holds, where $[i \in s]$ says whether $i$ is
+chosen and $b_{ij}$ is the bit of the pair $\{i, j\}$: listing the pairs $i' < j' < n$ in
+encoding order (rows $i'$ ascending, within a row $j'$ descending), the $t$-th bit of the list
+belongs to the $t$-th pair, and $b_{ij}$ is false if the list has no bit for $\{i, j\}$. -/
 def SetOk (m : Mode) (n : ℕ) (bits : List Bool) (s : Finset (Fin n)) : Prop :=
   ∀ i j : Fin n, i < j → m.ok (adjBits n bits i j) (decide (i ∈ s)) (decide (j ∈ s)) = true
 
-/-- An accepted witness chooses a vertex set of size `k` meeting the mode's condition. -/
+/-- **An accepted input encodes an instance with a good vertex set.** Fix a mode (clique,
+independent set or vertex cover) and bit strings $x$ and $w$. If the verifier in that mode
+accepts the input $x$ with witness $w$, then there are natural numbers $k$ and $n$ and a list of
+bits $b$ such that $x$ is the encoding of the instance $(k, n, b)$, $b$ has exactly one bit per
+vertex pair $(i, j)$ with $i < j < n$, and some set of exactly $k$ of the vertices
+$0, \dots, n-1$ meets the mode's pair condition on every pair $i < j$. -/
 theorem exists_setOk {m : Mode} {x w : List Bool} (h : kgCheck m x w = true) :
     ∃ k n bits, x = encodeKG k n bits ∧ bits.length = (pairs n).length ∧
       ∃ s : Finset (Fin n), s.card = k ∧ SetOk m n bits s := by
@@ -262,7 +340,12 @@ theorem exists_setOk {m : Mode} {x w : List Bool} (h : kgCheck m x w = true) :
     rw [e, e]
     exact hall i j hij j.isLt
 
-/-- The characteristic vector of a vertex set meeting the mode's condition is accepted. -/
+/-- **The characteristic vector of a good vertex set is accepted.** Let $m$ be a mode, $k$ and
+$n$ natural numbers, let $\mathit{bits}$ be a bit list with one bit per pair $(i, j)$,
+$i < j < n$, and let $s$ be a set of $k$ vertices of $\{0, \dots, n - 1\}$ that meets the pair
+condition of $m$ on every pair $i < j$. Then the verifier for mode $m$ accepts the encoding of
+$(k, n, \mathit{bits})$ with witness the characteristic vector of $s$: the list of $n$ bits whose
+$i$-th bit is set if and only if $i \in s$. -/
 theorem kgCheck_ofFn {m : Mode} {k n : ℕ} {bits : List Bool} (hl : bits.length = (pairs n).length)
     {s : Finset (Fin n)} (hs : s.card = k) (hok : SetOk m n bits s) :
     kgCheck m (encodeKG k n bits) (List.ofFn fun i : Fin n => decide (i ∈ s)) = true := by
@@ -275,8 +358,13 @@ theorem kgCheck_ofFn {m : Mode} {k n : ℕ} {bits : List Bool} (hl : bits.length
   · rw [hg i (by omega), hg j hjn]
     exact hok ⟨i, by omega⟩ ⟨j, hjn⟩ hij
 
-/-- A language `kgDec P` whose property is "some vertex set of size `k` meets the mode's
-condition" is verified by `kgCheck m` with witnesses no longer than the input. -/
+/-- **Verifying a graph language defined by a vertex-set condition.** Let $m$ be a mode and
+$P$ a property of a number $k$ and a graph on $n$ vertices. Suppose that for all $n$, $k$ and
+every bit list $\mathit{bits}$ with one bit per pair $(i, j)$, $i < j < n$, the property $P$
+holds for $k$ and the graph given by $\mathit{bits}$ exactly when some set of $k$ vertices meets
+the pair condition of $m$ on every pair $i < j$. Then for every bit list $x$, $x$ belongs to
+the language of instances satisfying $P$ if and only if the verifier for mode $m$ accepts $x$
+with some witness $w$ of length $|w| \le |x|$. -/
 theorem kgDec_iff_exists (m : Mode) (P : ∀ n : ℕ, ℕ → SimpleGraph (Fin n) → Prop)
     (hP : ∀ n k bits, bits.length = (pairs n).length →
       (P n k (toGraph n bits) ↔ ∃ s : Finset (Fin n), s.card = k ∧ SetOk m n bits s))
@@ -290,13 +378,19 @@ theorem kgDec_iff_exists (m : Mode) (P : ∀ n : ℕ, ℕ → SimpleGraph (Fin n
     obtain ⟨k, n, bits, rfl, hl, s, hs, hok⟩ := exists_setOk hw
     exact ⟨k, n, bits, rfl, hl, (hP n k bits hl).2 ⟨s, hs, hok⟩⟩
 
-/-- For a symmetric relation, the distinct pairs are checked by the pairs `i < j`. -/
+/-- **Symmetric relations on increasing pairs.** Let $n$ be a natural number and $R$ a relation
+on $\{0, \dots, n-1\}$ such that $R(i, j)$ implies $R(j, i)$. Then $R(i, j)$ holds for all
+$i \ne j$ if and only if $R(i, j)$ holds for all $i < j$. -/
 theorem forall_ne_iff_lt {n : ℕ} {R : Fin n → Fin n → Prop} (hR : ∀ i j, R i j → R j i) :
     (∀ i j, i ≠ j → R i j) ↔ ∀ i j, i < j → R i j :=
   ⟨fun h i j hij => h i j hij.ne, fun h i j hij =>
     (lt_or_gt_of_ne hij).elim (h i j) fun hji => hR _ _ (h j i hji)⟩
 
-/-- A `k`-clique is a `k`-set meeting the clique condition on every pair. -/
+/-- **Cliques of the graph given by pair bits.** For natural numbers $n$ and $k$ and a list of
+bits $b$, the graph on the vertices $0, \dots, n-1$ read off $b$ has a clique of exactly $k$
+vertices if and only if there is a set $s$ of exactly $k$ of these vertices meeting the
+clique-mode pair condition on every pair $i < j$: whenever $i$ and $j$ both lie in $s$, the
+bit of the pair $\{i, j\}$ in $b$ is set. -/
 theorem clique_iff (n k : ℕ) (bits : List Bool) : (∃ s, (toGraph n bits).IsNClique k s) ↔
     ∃ s : Finset (Fin n), s.card = k ∧ SetOk .clique n bits s := by
   refine exists_congr fun s => ?_
@@ -310,7 +404,11 @@ theorem clique_iff (n k : ℕ) (bits : List Bool) : (∃ s, (toGraph n bits).IsN
   refine forall₂_congr fun i j => forall_congr' fun _ => ?_
   by_cases hi : i ∈ s <;> by_cases hj : j ∈ s <;> simp [Mode.ok, hi, hj]
 
-/-- A `k`-independent set is a `k`-set meeting the independence condition on every pair. -/
+/-- **Independent sets of the graph given by pair bits.** For natural numbers $n$ and $k$ and a
+list of bits $b$, the graph on the vertices $0, \dots, n-1$ read off $b$ has an independent set
+of exactly $k$ vertices if and only if there is a set $s$ of exactly $k$ of these vertices
+meeting the independent-set-mode pair condition on every pair $i < j$: whenever $i$ and $j$ both
+lie in $s$, the bit of the pair $\{i, j\}$ in $b$ is not set. -/
 theorem indep_iff (n k : ℕ) (bits : List Bool) : (∃ s, (toGraph n bits).IsNIndepSet k s) ↔
     ∃ s : Finset (Fin n), s.card = k ∧ SetOk .indep n bits s := by
   refine exists_congr fun s => ?_
@@ -325,7 +423,11 @@ theorem indep_iff (n k : ℕ) (bits : List Bool) : (∃ s, (toGraph n bits).IsNI
   refine forall₂_congr fun i j => forall_congr' fun _ => ?_
   by_cases hi : i ∈ s <;> by_cases hj : j ∈ s <;> simp [Mode.ok, hi, hj]
 
-/-- A `k`-vertex cover is a `k`-set meeting the cover condition on every pair. -/
+/-- **Vertex covers of the graph given by pair bits.** For natural numbers $n$ and $k$ and a list
+of bits $b$, the graph on the vertices $0, \dots, n-1$ read off $b$ has a vertex cover of
+exactly $k$ vertices if and only if there is a set $s$ of exactly $k$ of these vertices meeting
+the cover-mode pair condition on every pair $i < j$: whenever the bit of the pair $\{i, j\}$ in
+$b$ is set, $i$ or $j$ lies in $s$. -/
 theorem cover_iff (n k : ℕ) (bits : List Bool) :
     (∃ s : Finset (Fin n), s.card = k ∧ (toGraph n bits).IsVertexCover (s : Set (Fin n))) ↔
       ∃ s : Finset (Fin n), s.card = k ∧ SetOk .cover n bits s := by
@@ -338,27 +440,35 @@ theorem cover_iff (n k : ℕ) (bits : List Bool) :
   refine forall₂_congr fun i j => forall_congr' fun _ => ?_
   by_cases hi : i ∈ s <;> by_cases hj : j ∈ s <;> simp [Mode.ok, hi, hj]
 
-/-- **CLIQUE is verified by `kgCheck .clique`**, with witnesses no longer than the input. -/
+/-- **CLIQUE is verified with witnesses no longer than the input.** For every bit string $x$,
+$x$ is in CLIQUE if and only if there is a bit string $w$ of length at most the length of $x$
+such that the shared CLIQUE / INDEPENDENT-SET / VERTEX-COVER verifier, run in clique mode,
+accepts the input $x$ with witness $w$. -/
 theorem cliqueDec_iff (x : List Bool) :
     cliqueDec x = true ↔ ∃ w, w.length ≤ x.length ∧ kgCheck .clique x w = true :=
   kgDec_iff_exists .clique _ (fun n k bits _ => clique_iff n k bits) x
 
-/-- **INDEPENDENT-SET is verified by `kgCheck .indep`**, with witnesses no longer than the
-input. -/
+/-- **INDEPENDENT-SET is verified with witnesses no longer than the input.** For every bit string
+$x$, $x$ is in INDEPENDENT-SET if and only if there is a bit string $w$ of length at most the
+length of $x$ such that the shared CLIQUE / INDEPENDENT-SET / VERTEX-COVER verifier, run in
+independent-set mode, accepts the input $x$ with witness $w$. -/
 theorem indSetDec_iff (x : List Bool) :
     indSetDec x = true ↔ ∃ w, w.length ≤ x.length ∧ kgCheck .indep x w = true :=
   kgDec_iff_exists .indep _ (fun n k bits _ => indep_iff n k bits) x
 
-/-- **VERTEX-COVER is verified by `kgCheck .cover`**, with witnesses no longer than the
-input. -/
+/-- **VERTEX-COVER is verified by the clique verifier in cover mode.** A bit string $x$ is in
+VERTEX-COVER if and only if there is a bit string $w$, no longer than $x$, such that the
+clique-family verifier in vertex-cover mode accepts $x$ with witness $w$. -/
 theorem vertexCoverDec_iff (x : List Bool) :
     vertexCoverDec x = true ↔ ∃ w, w.length ≤ x.length ∧ kgCheck .cover x w = true :=
   kgDec_iff_exists .cover _ (fun n k bits _ => cover_iff n k bits) x
 
 /-! ### The machine -/
 
-/-- Stacks: the input `X` and the witness `W`, the counters `C` (for `k`) and `N` (for `n`), the
-vertex stack `V` and its scratch stack `T`. -/
+/-- **Stacks of the CLIQUE verifier.** The verifier machine for CLIQUE, INDEPENDENT-SET and
+VERTEX-COVER, run on an instance with target size $k$ and $n$ vertices, has six stacks: the
+input $X$, the witness $W$, the counter $C$ (holding $k$), the counter $N$ (holding $n$), the
+vertex stack $V$ and its scratch stack $T$. -/
 inductive K | X | W | C | N | V | T
   deriving DecidableEq
 
@@ -367,8 +477,10 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .W, .C, .N, .V, .T], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Labels: read `k`, read `n`, load the witness, walk a row (with the conjunction `c` of its
-pair conditions so far), put the row back, accept, reject. -/
+/-- **Labels of the CLIQUE verifier.** On an instance with target size $k$ and $n$ vertices, the
+verifier machine has the labels: read $k$, read $n$, load the witness, walk a row (carrying a bit
+$c$, the conjunction of the row's pair conditions so far), put the row back, accept, and
+reject. -/
 inductive Lab | rdK | rdN | load | walk (c : Bool) | back | yes | no
   deriving DecidableEq
 
@@ -377,19 +489,35 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
   elems := ⟨↑[Lab.rdK, .rdN, .load, .walk false, .walk true, .back, .yes, .no], by decide⟩
   complete := by rintro (_ | _ | _ | ⟨_ | _⟩ | _ | _ | _) <;> decide
 
-/-- Statements of the verifier. -/
+/-- **Statements of the clique verifier.** The statements of the verifier are those of a
+multi-stack Turing machine (Mathlib's TM2 model) with the six stacks $X, W, C, N, V, T$, each
+over the symbol alphabet of the SAT verifier, the verifier's labels, and one Boolean of local
+state. -/
 abbrev Stmt := TM2.Stmt (fun _ : K => Sym) Lab Bool
 
-/-- Read a unary number off `X` onto the counter `c`: a `true` adds a unit, the `false`
-terminator moves on to `next`, an exhausted `X` rejects. -/
+/-- **The clique verifier's unary reader.** For a stack $c$ and labels $\ell$ (its own) and
+$\ell'$ (the next), the unary reader onto $c$ is the verifier statement that inspects the
+input stack $X$ and sets the state to whether $X$ is empty: if it is, it goes to the rejecting
+label; otherwise it pops the top symbol of $X$ and sets the state to whether that symbol is
+the bit $1$; if so, it pushes the bit $1$ onto $c$ and goes to $\ell$, while any other symbol
+(normally the terminating $0$) sends it to $\ell'$.
+
+Run from $\ell$, it reads a unary number off $X$ onto the counter $c$. -/
 def readU (c : K) (self next : Lab) : Stmt :=
   .peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .no) <|
     .pop .X (fun _ o => bitOf Sym.bit? o) <| .branch id
       (.push c (fun _ => .bit true) (.goto fun _ => self)) (.goto fun _ => next)
 
-/-- Load one witness bit per unit of `N` from `W` onto `V` (bit `n - 1` ends on top), taking a
-unit off `C` per set bit. Rejects if `W` runs out or more than `k` bits are set; at the end `C`
-must be empty. -/
+/-- **Load step of the CLIQUE verifier.** The statement run at the load label. If the counter
+$N$ is nonempty, it takes a unit off $N$, rejects if the witness stack $W$ is empty, and
+otherwise pops the top of $W$ and pushes its bit (false for a non-bit symbol) onto the vertex
+stack $V$; if that bit is set it also takes a unit off the counter $C$, rejecting if $C$ is
+empty; then it returns to the load label. If $N$ is empty, it goes to the walk label with its
+flag $c$ (the conjunction of the row's pair conditions so far) set to true when $C$ is empty,
+and rejects otherwise.
+
+Started from $n$ on $N$ and $k$ on $C$, it loads the first $n$ witness bits onto $V$, bit
+$n - 1$ on top, and rejects if $W$ runs out or the number of set bits among them is not $k$. -/
 def loadS : Stmt :=
   .pop .N (fun _ o => o.isSome) <| .branch id
     (.peek .W (fun _ o => o.isNone) <| .branch id (.goto fun _ => .no) <|
@@ -400,9 +528,15 @@ def loadS : Stmt :=
     (.peek .C (fun _ o => o.isNone) <| .branch id (.goto fun _ => .walk true)
       (.goto fun _ => .no))
 
-/-- The rest of a walk step, after popping the vertex bit `z`. If `V` is now empty, `z` is the
-row's own vertex `i`: the row passes iff `i` settles it or `c` holds. Otherwise `z` is a later
-vertex `j`: park it on `T` and fold the next pair bit of `X` into `c` (reject if `X` is out). -/
+/-- **Rest of a walk step of the clique verifier.** Write $\mathrm{free}_m(s)$ for the condition
+that, in mode $m$, a vertex with chosen-flag $s$ settles every pair of its row, and
+$\mathrm{sat}_m(b', s')$ for the pair condition on pair bit $b'$ and later vertex flag $s'$. In
+mode $m$ with row flag $c$, after a bit $z$ has been popped off the vertex stack $V$: if $V$ is
+now empty, the machine moves to the put-back label when $\mathrm{free}_m(z)$ or $c$ holds, and to
+the reject label otherwise. If $V$ is not empty, it pushes $z$ onto the scratch stack $T$; then
+it moves to the reject label if the input stack $X$ is empty, and otherwise pops the top symbol
+of $X$, reads it as a bit $b$ (a non-bit symbol reads as false), and moves to the walk label
+with flag $c \wedge \mathrm{sat}_m(b, z)$. -/
 def walkZ (m : Mode) (c z : Bool) : Stmt :=
   .peek .V (fun _ o => o.isNone) <| .branch id
     (.goto fun _ => if m.free z || c then .back else .no) <|
@@ -411,14 +545,29 @@ def walkZ (m : Mode) (c z : Bool) : Stmt :=
   .pop .X (fun _ o => bitOf Sym.bit? o) <| .branch id
     (.goto fun _ => .walk (c && m.sat true z)) (.goto fun _ => .walk (c && m.sat false z))
 
-/-- A walk step: with `V` empty every row is done, and the verifier accepts iff no pair bit is
-left on `X`; otherwise pop the top vertex bit and go on with `walkZ`. -/
+/-- **Walk step of the clique verifier.** In mode $m$ with row flag $c$, the walk step looks at
+the vertex stack $V$. If $V$ is empty, it moves to the accept label if the input stack $X$ is
+empty and to the reject label otherwise. If $V$ is not empty, it pops the top symbol of $V$,
+reads it as a bit $z$ (a non-bit symbol reads as false), and continues with the rest of the walk
+step for $m$, $c$ and $z$. -/
 def walkS (m : Mode) (c : Bool) : Stmt :=
   .peek .V (fun _ o => o.isNone) <| .branch id
     (.peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .yes) (.goto fun _ => .no)) <|
   .pop .V (fun _ o => bitOf Sym.bit? o) <| .branch id (walkZ m c true) (walkZ m c false)
 
-/-- The verifier for mode `m`: parse `k` and `n`, load the witness, walk the rows. -/
+/-- **Program of the clique verifier.** For a mode $m$ (clique, independent set or vertex
+cover), the verifier program of mode $m$ assigns a statement to each label of the verifier: to
+the label that reads the instance's target size $k$, the unary reader onto the counter $C$ with
+own label this label and next label the label that reads the instance's number $n$ of vertices;
+to the label that reads $n$, the unary reader onto the counter $N$ with own label this label and
+next label the load label; to the load label, the load step; to the walk label with flag $c$,
+the walk step of mode $m$ with flag $c$; to the put-back label, the bit-moving loop from the
+scratch stack $T$ to the vertex stack $V$ that reads name-bit symbols as bits and writes each
+bit $b$ as the name bit $b$, with own label the put-back label and next label the walk label
+with flag true; and to the accept and reject labels, the statement that halts.
+
+Run from the label that reads $k$, it parses $k$ and $n$, loads the witness and walks the
+rows. -/
 def prog (m : Mode) : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .rdK => readU .C .rdK .rdN
   | .rdN => readU .N .rdN .load
@@ -428,12 +577,19 @@ def prog (m : Mode) : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .yes => .halt
   | .no => .halt
 
-/-- The start label. -/
+/-- **Start label of the clique verifier.** The verifier for CLIQUE, INDEPENDENT-SET and
+VERTEX-COVER starts at the label that reads the instance's size parameter $k$ (the number of
+vertices to choose) in unary off the input stack $X$ onto the counter $C$. -/
 def start : Lab := .rdK
 
 /-! ### Runs of the phases -/
 
-/-- A step whose label is known: some state and stacks follow. -/
+/-- **One step of a clique-verifier program to a known label.** Let $M$ be a program that
+assigns a verifier statement to each label, $\ell$ and $\ell'$ labels, $v$ a state and $S$
+stack contents. If executing the statement $M(\ell)$ from state $v$ and stacks $S$ ends at
+label $\ell'$, then there are a state $v'$ and stack contents $S'$ such that $M$ runs in
+exactly one step from label $\ell$ with state $v$ and stacks $S$ to label $\ell'$ with
+state $v'$ and stacks $S'$. -/
 theorem run_one {M : Lab → Stmt} {l l' : Lab} {v : Bool} {S : ∀ _ : K, List Sym}
     (h : (TM2.stepAux (M l) v S).l = some l') :
     ∃ v' S', Run M 1 ⟨some l, v, S⟩ ⟨some l', v', S'⟩ :=
@@ -443,8 +599,16 @@ section Phases
 
 variable (m : Mode)
 
-/-- `readU` on `k` in unary: `k + 1` steps to `next`, with `k` more units on the counter and
-the rest of `X` left. -/
+/-- **The clique verifier's unary reader succeeds.** Let $m$ be a mode, $c$ a stack other
+than the input stack $X$, and $\ell$, $\ell'$ labels such that the verifier program of
+mode $m$ runs, at label $\ell$, the unary reader onto $c$ with own label $\ell$ and next
+label $\ell'$. Let $k, j \in \mathbb{N}$, let $r$ be a list of bits, $v$ a state and $S$
+stack contents in which $X$ holds, from the top, $k$ ones, then a zero, then the bits of
+$r$, and $c$ holds exactly $j$ copies of the bit $1$. Then there are a state $v'$ and
+stack contents $S'$ such that the program runs in exactly $k + 1$ steps from label $\ell$
+with state $v$ and stacks $S$ to label $\ell'$ with state $v'$ and stacks $S'$, where in
+$S'$ the stack $X$ holds the bits of $r$, the stack $c$ holds exactly $k + j$ copies of
+the bit $1$, and every stack other than $X$ and $c$ is as in $S$. -/
 theorem readU_some {c : K} {self next : Lab} (hp : prog m self = readU c self next)
     (hc : c ≠ .X) : ∀ (k j : ℕ) (r : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
       St .X = (List.replicate k true ++ false :: r).map Sym.bit → St c = cnt (Sym.bit true) j →
@@ -471,7 +635,13 @@ theorem readU_some {c : K} {self next : Lab} (hp : prog m self = readU c self ne
         fun q h1 h2 => by rw [hF' q h1 h2, hSt₁, update_of_ne h2, update_of_ne h1]⟩
       simp [TM2.step, hp, readU, TM2.stepAux, hX, bitOf, Sym.bit?, hSt₁, update_of_ne hc]
 
-/-- `readU` on an unterminated unary prefix rejects. -/
+/-- **Reading an unterminated unary number rejects.** Let $m$ be a mode, $c$ a stack other
+than the input stack $X$, and $\lambda$, $\mu$ labels such that the verifier for $m$ runs at
+$\lambda$ the unary reader onto $c$ that loops at $\lambda$ and exits to $\mu$. Let $l$ be a
+list of Booleans from which no unary length can be read (it contains no false). Then for every
+machine variable $v$ and all stack contents in which $X$ holds exactly the bits of $l$, the
+verifier for $m$ goes from label $\lambda$ to the rejecting label no in at most $|l| + 1$
+steps. -/
 theorem readU_none {c : K} {self next : Lab} (hp : prog m self = readU c self next)
     (hc : c ≠ .X) : ∀ (l : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
       readUnaryLength l = none → St .X = l.map Sym.bit →
@@ -495,9 +665,14 @@ theorem readU_none {c : K} {self next : Lab} (hp : prog m self = readU c self ne
           refine ⟨v', S', (((Run.single ?_).le le_rfl).trans h).mono (by simp; omega)⟩
           simp [hp, readU, TM2.stepAux, hX, bitOf, Sym.bit?, update_of_ne hc]
 
-/-- The load phase: from counters `n` on `N` and `j` on `C`, the witness `w` on `W` and `acc` on
-`V`, it reaches `walk true` if `w` has at least `n` bits, `j` of the first `n` set, and `no`
-otherwise; on success the first `n` bits sit on `V`, last on top. -/
+/-- **Run of the load phase.** Let $m$ be a mode, $n$ and $j$ natural numbers and $w$ and
+$\mathit{acc}$ bit lists. Start the verifier for mode $m$ at the load label, in any internal
+state, with $n$ in unary on the counter $N$, $j$ in unary on the counter $C$, $w$ on the witness
+stack $W$ and $\mathit{acc}$ on the vertex stack $V$. Then within at most $n + 1$ steps the
+machine reaches the walk label with its flag $c$ (the conjunction of the row's pair conditions
+so far) set to true if $w$ has at least $n$ bits and exactly $j$ of its first $n$ bits are set,
+and the reject label otherwise. In the first case $V$ then holds the first $n$ bits of $w$, bit
+$n - 1$ on top, above $\mathit{acc}$, and the stacks $X$ and $T$ are unchanged. -/
 theorem load_run : ∀ (n : ℕ) (w acc : List Bool) (j : ℕ) (v : Bool) (St : ∀ _ : K, List Sym),
     St .N = cnt (Sym.bit true) n → St .W = w.map Sym.bit → St .C = cnt (Sym.bit true) j →
     St .V = acc.map Sym.bit →
@@ -564,10 +739,19 @@ theorem load_run : ∀ (n : ℕ) (w acc : List Bool) (j : ℕ) (v : Bool) (St : 
               · obtain ⟨h1, h2, h3⟩ := hF (by simpa using h)
                 exact ⟨by simpa using h1, by simpa [hSt₁] using h2, by simpa [hSt₁] using h3⟩
 
-/-- The walk along one row: from `walk c` with the later vertices `zs` (as met) above the row's
-own vertex `si` on `V` and the pair bits `bs` on `X`, it pairs `zs` with the first bits of `bs`,
-parks `zs` on `T` and decides the row: `back` iff there are enough bits and `si` settles the row
-or every pair condition holds (and `c` does). -/
+/-- **Walking the pairs of one row of the clique verifier.** Let $m$ be a mode and $s$ a bit.
+Let $z = (z_0, \dots, z_{r-1})$ and $b = (b_0, \dots, b_{q-1})$ be lists of bits, $c$ a bit, $v$
+a state and $S$ stack contents in which the vertex stack $V$ holds, from the top, the name bits
+$z_0, \dots, z_{r-1}$ followed by the name bit $s$, and the input stack $X$ holds, from the top,
+the name bits $b_0, \dots, b_{q-1}$. Then there are a state $v'$ and stack contents $S'$ such
+that within at most $r + 1$ steps the verifier program of mode $m$ goes from the walk label with
+flag $c$, state $v$ and stacks $S$ to state $v'$ and stacks $S'$ at the put-back label if
+$r \le q$ and either $\mathrm{free}_m(s)$ holds (a vertex with chosen-flag $s$ settles its pairs
+alone) or both $c$ and $\mathrm{sat}_m(b_t, z_t)$ for every $t < r$ hold (the pair condition
+left to the later vertex, with pair bit $b_t$ and later-vertex flag $z_t$), and at the reject
+label otherwise. Moreover, if $r \le q$, then in $S'$ the stack $V$ is empty, the scratch stack
+$T$ holds $z_{r-1}, \dots, z_0$ from the top above its contents in $S$, and $X$ holds, from the
+top, $b_r, \dots, b_{q-1}$. -/
 theorem walkRow_run (si : Bool) : ∀ (zs : List Bool) (c : Bool) (bs : List Bool) (v : Bool)
     (St : ∀ _ : K, List Sym), St .V = (zs ++ [si]).map Sym.bit → St .X = bs.map Sym.bit →
     ∃ v' S', RunLe (prog m) (zs.length + 1) ⟨some (.walk c), v, St⟩
@@ -606,7 +790,17 @@ theorem walkRow_run (si : Bool) : ∀ (zs : List Bool) (c : Bool) (bs : List Boo
           · obtain ⟨h1, h2, h3⟩ := hF (by simpa using h)
             exact ⟨h1, by simp [h2, hSt₁], by simpa using h3⟩
 
-/-- One row: the walk, then `back` restores the later vertices on `V`. -/
+/-- **One row of the clique verifier's walk.** Let $m$ be a mode, $s_i$ a bit, $r$ and $b$
+lists of bits, $v$ a state and $S$ stack contents in which the vertex stack $V$ holds, from
+the top, the bits of the reverse $\rho$ of $r$ followed by $s_i$, the scratch stack $T$ is
+empty, and the input stack $X$ holds the bits $b$. Call the row condition: $|r| \le |b|$,
+and either $s_i$ is free for $m$ or $\mathrm{sat}_m(b_t, \rho_t)$ holds for every $t < |r|$
+(indices from $0$). Then there are a state $v'$ and stack contents $S'$ such that within at
+most $2|r| + 2$ steps the verifier program of mode $m$ goes from label walk(true) with
+state $v$ and stacks $S$ to state $v'$ and stacks $S'$ at label walk(true) if the row
+condition holds and at the rejecting label otherwise; and if the row condition holds, then
+in $S'$ the stack $V$ holds the bits of $\rho$, $T$ is empty, and $X$ holds $b$ with its
+first $|r|$ bits dropped. -/
 theorem row_run (si : Bool) (rest bs : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
     (hV : St .V = (rest.reverse ++ [si]).map Sym.bit) (hT : St .T = [])
     (hX : St .X = bs.map Sym.bit) :
@@ -634,8 +828,14 @@ theorem row_run (si : Bool) (rest bs : List Bool) (v : Bool) (St : ∀ _ : K, Li
   · rw [ite_eq_right hc] at h₁ ⊢
     exact ⟨v₁, S₁, h₁.mono (by omega), fun h => absurd h hc⟩
 
-/-- All rows: from `walk true` with the vertices `rs` on `V` (last on top), `T` empty and the
-pair bits `bs` on `X`, the walk reaches `yes` iff `rowsOk m rs bs`. -/
+/-- **All rows of the clique verifier's walk.** Let $m$ be a mode, $r$ and $b$ lists of
+bits, $v$ a state and $S$ stack contents in which the vertex stack $V$ holds, from the top,
+the bits of the reverse of $r$ (so the last entry of $r$ is on top), the scratch stack $T$
+is empty, and the input stack $X$ holds the bits $b$. Then there are a state $v'$ and stack
+contents $S'$ such that within at most $|r|(2|r| + 2) + 1$ steps the verifier program of
+mode $m$ goes from label walk(true) with state $v$ and stacks $S$ to state $v'$ and stacks
+$S'$ at the accepting label if the row-by-row check of $r$ against $b$ holds for $m$, and
+at the rejecting label otherwise. -/
 theorem rows_run : ∀ (rs bs : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
     St .V = rs.reverse.map Sym.bit → St .T = [] → St .X = bs.map Sym.bit →
     ∃ v' S', RunLe (prog m) (rs.length * (2 * rs.length + 2) + 1) ⟨some (.walk true), v, St⟩
@@ -674,9 +874,14 @@ theorem rows_run : ∀ (rs bs : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
 
 end Phases
 
-/-- **The verifier machine.** From `start` with `x` on `X`, `w` on `W` and the other stacks
-empty, `prog m` reaches `yes` if `kgCheck m x w` and `no` otherwise, within
-`8 (|x| + |w| + 1)³` steps. -/
+/-- **The verifier machine for clique, independent set and vertex cover.** Let $m$ be a
+mode, $x$ and $w$ lists of bits, $v$ a state and $S$ stack contents in which the input
+stack $X$ holds the bits of $x$, the witness stack $W$ holds the bits of $w$, and every other
+stack is empty. Then there are a state $v'$ and stack contents $S'$ such that within at most
+$8(|x| + |w| + 1)^3$ steps the verifier program of mode $m$ goes from the start label with
+state $v$ and stacks $S$ to state $v'$ and stacks $S'$ at the accepting label if the
+verifier check of mode $m$ accepts $x$ with witness $w$, and at the rejecting label
+otherwise. -/
 theorem run (m : Mode) (x w : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
     (hX : St .X = x.map Sym.bit) (hW : St .W = w.map Sym.bit)
     (h0 : ∀ k, k ≠ .X → k ≠ .W → St k = []) :

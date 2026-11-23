@@ -45,17 +45,28 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A precoloring-extension instance: vertex count, edge list, partial coloring (0 uncolored,
-k+1 color k), number of colors. -/
+/-- **Instances of PRECOLORING EXTENSION.** An instance of precoloring extension is a tuple
+$(n, E, c, K)$ consisting of a natural number $n$ (the number of vertices), a list $E$ of pairs
+of natural numbers (the edges), a list $c$ of natural numbers (the partial coloring, where an
+entry $0$ means uncolored and an entry $k + 1$ means color $k$), and a natural number $K$ (the
+number of colors). -/
 abbrev PrecoloringExtensionInstance := ℕ × List (ℕ × ℕ) × List ℕ × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed precoloring extension instances.** An instance $(n, E, c, K)$ of precoloring
+extension is well formed when the edge list $E$ has no repeated entries, every edge $(u, v)$ in
+$E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$, and the partial coloring $c$
+has length $n$. -/
 def WellFormed (i : PrecoloringExtensionInstance) : Prop :=
   i.2.1.Nodup ∧
     (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
     i.2.2.1.length = i.1
 
-/-- A proper extension of the partial coloring. -/
+/-- **Feasible precoloring extension instances.** An instance $(n, E, c, K)$ of precoloring
+extension is feasible when there is a list $\chi = (\chi_0, \dots, \chi_{n-1})$ of $n$ natural
+numbers such that $\chi_v < K$ for every vertex $v < n$, $\chi_v = c_v - 1$ for every vertex
+$v < n$ with $c_v \ne 0$, and $\chi_u \ne \chi_v$ for every edge $(u, v)$ in $E$. Here $c_v$ is
+the entry of $c$ at position $v$, and an entry of a list at a position beyond its length is read
+as $0$. -/
 def PrecoloringExtensionFeasible
     (i : PrecoloringExtensionInstance) : Prop :=
   ∃ coloring : List ℕ, coloring.length = i.1 ∧ (∀ v < i.1, coloring.getD v 0 < i.2.2.2) ∧
@@ -63,7 +74,10 @@ def PrecoloringExtensionFeasible
     ∀ e ∈ i.2.1, coloring.getD e.1 0 ≠ coloring.getD e.2 0
 
 open Classical in
-/-- PRECOLORING EXTENSION as a decision problem over bitstrings. -/
+/-- **PRECOLORING EXTENSION as a decision problem.** The decision problem PRECOLORING EXTENSION
+accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a
+precoloring extension instance that is well formed and feasible; bitstrings that do not decode
+are rejected. -/
 noncomputable def precoloringExtensionDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -71,7 +85,10 @@ noncomputable def precoloringExtensionDec :
   | some i => decide (WellFormed i ∧ PrecoloringExtensionFeasible i)
   | none => false
 
-/-- **PRECOLORING EXTENSION is NP-complete.** Source: M. Biro, M. Hujter, and Z. Tuza,
+/-- **PRECOLORING EXTENSION is NP-complete.** The decision problem PRECOLORING EXTENSION lies in
+NP, and every decision problem in NP reduces to it by a polynomial-time many-one reduction.
+
+Source: M. Biro, M. Hujter, and Z. Tuza,
 "Precoloring extension. I. Interval graphs", Discrete Mathematics 100 (1992), 267-279 (NP-
 completeness on interval graphs, hence on general graphs); hardness also follows directly
 from Garey-Johnson CHROMATIC NUMBER (GT4) by taking the precoloring to be empty. -/

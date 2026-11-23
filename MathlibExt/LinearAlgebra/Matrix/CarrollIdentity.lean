@@ -146,14 +146,11 @@ private noncomputable def carrollSplitEquiv (p q : Fin (m + 2)) (hp : p = i ∨ 
     (hq : q = i ∨ q = j) (hqp : q ≠ p) : Fin (m + 1) ≃ {k : Fin (m + 2) // k ≠ i ∧ k ≠ j} ⊕ Fin 1 :=
   Equiv.ofBijective _ (carrollSplit_bijective i j p q hp hq hqp)
 
-private lemma carroll_ofBijective_apply {α β : Sort*} (f : α → β) (h : Function.Bijective f)
-    (a : α) : Equiv.ofBijective f h a = f a := rfl
-
 private lemma carrollSplitEquiv_inr (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     (hq : q = i ∨ q = j) (hqp : q ≠ p) (a : Fin (m + 1))
     (h : Fin.succAbove p a = q) :
     carrollSplitEquiv i j p q hp hq hqp a = Sum.inr 0 := by
-  simp only [carrollSplitEquiv, carroll_ofBijective_apply, carrollSplit, dif_pos h]
+  simp only [carrollSplitEquiv, Equiv.ofBijective_apply, carrollSplit, dif_pos h]
 
 private lemma carrollSplitEquiv_inl (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     (hq : q = i ∨ q = j) (hqp : q ≠ p) (a : Fin (m + 1))
@@ -165,7 +162,7 @@ private lemma carrollSplitEquiv_inl (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
         · exact ⟨Fin.succAbove_ne _ _, h⟩
         · exact ⟨h, Fin.succAbove_ne _ _⟩
         · exact absurd rfl hqp⟩ := by
-  simp only [carrollSplitEquiv, carroll_ofBijective_apply, carrollSplit, dite_eq_right h]
+  simp only [carrollSplitEquiv, Equiv.ofBijective_apply, carrollSplit, dite_eq_right h]
 
 private def carrollFwd : {k : Fin (m + 2) // k ≠ i ∧ k ≠ j} ⊕ Fin 2 → Fin (m + 2) :=
   Sum.elim Subtype.val ![i, j]
@@ -970,15 +967,15 @@ private lemma carroll_succ (m : ℕ) (hm : 1 ≤ m) (R : Type*) [CommRing R]
 
 end
 
-/-- Carroll (Dodgson condensation) identity: for an `(n + 2) × (n + 2)` matrix
-over a commutative ring and arbitrary distinct indices `i j`, the product of the
-full determinant with the double-deletion minor equals the difference of the
-products of complementary single-deletion minors.
+/-- **Carroll (Desnanot–Jacobi) identity.** Let $R$ be a commutative ring, let $n$ be a natural
+number, and let $C$ be an $(n + 2) \times (n + 2)$ matrix over $R$. For indices $a$ and $b$,
+write $C^{a}_{b}$ for the $(n + 1) \times (n + 1)$ matrix obtained from $C$ by deleting row $a$
+and column $b$. Let $i \ne j$ be distinct indices and let $C^{ij}_{ij}$ be the $n \times n$
+matrix obtained from $C$ by deleting rows $i$ and $j$ and columns $i$ and $j$. Then
 
-The `(n + 2) × (n + 2)` indexing permits two distinct deleted indices `i ≠ j`.
-Each single-deletion minor (via `Fin.succAbove`) has size `n + 1`, while the
-double minor deleting both `i` and `j` has size `n`. For `n = 0`, the double
-minor is a `0 × 0` matrix, whose determinant in Mathlib is `1`.
+$$\det C \cdot \det C^{ij}_{ij} = \det C^{i}_{i} \det C^{j}_{j} - \det C^{i}_{j} \det C^{j}_{i}.$$
+
+For $n = 0$ the matrix $C^{ij}_{ij}$ is empty and its determinant is $1$.
 
 Source: Charles Delorme and Guillermo Pineda-Villavicencio, "Quadratic Form
 Representations via Generalized Continuants", Journal of Integer Sequences 18
