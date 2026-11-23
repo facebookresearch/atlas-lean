@@ -91,12 +91,20 @@ jobs:
         with:
           persist-credentials: false
 
+      # A cold build of the libraries and their dependencies peaks at about
+      # 40 GB on this disk. Deleting unused SDKs takes one to three minutes, so
+      # do it only when less than 60 GiB is known to be free (the runner had
+      # 85 GB in November 2026).
       - name: Free disk space for Lean caches
         run: |
           set -euo pipefail
-          df -h /
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
-          df -h /
+          df -h / || true
+          # Unknown free space counts as too little.
+          free_kib="$(df --output=avail -k / | tail -n 1 | tr -d ' ')" || free_kib=""
+          if ! [[ "$free_kib" =~ ^[0-9]+$ ]] || (( free_kib < 60 * 1024 * 1024 )); then
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h / || true
+          fi
 
       - name: Add swap for cold Lean builds
         run: |
@@ -177,7 +185,34 @@ jobs:
             echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
           fi
 
+      # The native tests of the audit tools read only the files hashed in this
+      # key, and the runner image. Pull requests and builds of main always run
+      # them, and a build of main that passes them saves the key in main's
+      # cache. A merge group whose files and image have a saved key skips them.
+      - name: Read the runner image version
+        id: image
+        run: echo "version=${ImageVersion:-unknown}" >> "$GITHUB_OUTPUT"
+
+      - name: Look for a build of main that passed the audit tools' tests
+        id: audit-tools
+        if: github.event_name == 'merge_group'
+        continue-on-error: true
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/audit-tools-tested
+          key: audit-tools-tested-${{ runner.os }}-${{ steps.image.outputs.version }}-${{ hashFiles(
+            'lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
+            'scripts/test_declaration_collisions_native.py', 'scripts/check_declaration_collisions.sh',
+            'scripts/check_declaration_collisions.lean', 'scripts/list_v2_modules.sh',
+            'scripts/test_compiled_audit_native.py', 'scripts/audit_compiled_modules.py',
+            'scripts/check_axioms.lean',
+            'MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
+            'MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean',
+            'MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
+            'MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean') }}
+
       - name: Test the declaration collision check
+        if: steps.audit-tools.outputs.cache-hit != 'true'
         run: python3 -m unittest discover -s scripts -p test_declaration_collisions_native.py -v
 
       # Each of these peaks at 13-15 GB when built alone. Lake builds several
@@ -187,7 +222,30 @@ jobs:
       # one fails, the full build is skipped: it would retry that module
       # alongside the others.
       - name: Test initialized compiled-audit isolation
+        if: steps.audit-tools.outputs.cache-hit != 'true'
         run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
+
+      - name: Write the record of the audit tools' tests
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: printf '%s\n' "$GITHUB_SHA" > "$RUNNER_TEMP/audit-tools-tested"
+
+      - name: Save that a build of main passed the audit tools' tests
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/audit-tools-tested
+          key: audit-tools-tested-${{ runner.os }}-${{ steps.image.outputs.version }}-${{ hashFiles(
+            'lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
+            'scripts/test_declaration_collisions_native.py', 'scripts/check_declaration_collisions.sh',
+            'scripts/check_declaration_collisions.lean', 'scripts/list_v2_modules.sh',
+            'scripts/test_compiled_audit_native.py', 'scripts/audit_compiled_modules.py',
+            'scripts/check_axioms.lean',
+            'MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
+            'MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean',
+            'MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
+            'MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean') }}
 
       - name: Build memory-heavy modules one at a time
         run: |
