@@ -37,6 +37,13 @@ example (a : ℕ → ℝ) : a 0 + 3 * a 1 + 3 * a 2 =
   norm_num [Finset.sum_range_succ, Nat.choose] at h
   exact h
 
+-- At the half-row cutoff m = n = 2, the endpoint contributes 3 * a 2.
+example (a : ℕ → ℝ) : a 0 + 4 * a 1 + 6 * a 2 =
+    (a 0 + a 1) + 3 * (a 1 + a 2) + 3 * a 2 := by
+  have h := sum_range_choose_two_mul_mul_eq a 2 2 (by decide) (by decide) le_rfl
+  norm_num [Finset.sum_range_succ, Nat.choose] at h
+  exact h
+
 -- The auxiliary sums start with an empty interval and include the upper endpoint.
 example : invPowTwoSum 0 = 0 ∧ centralBinomWeightedSum 0 = 0 := by decide
 example : invPowTwoSum 2 = 5 / 8 ∧ centralBinomWeightedSum 2 = 11 / 32 := by
