@@ -1,5 +1,18 @@
 /-
-# Points where f is not sequentially approachable form a countable set
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level2/ma_proofbench_l2_63.lean` (openbmb/ma-proofbench, commit
+31bab4c78fd1b0c464e767d62e9202163d1e9029), for the theorem statement and its description.
+Authors: Lushi Pu et al. (MA-ProofBench).
+Licensed under the MIT License.
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +33,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level2/ma_proofbench_l2_63.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l2_63 … := by sorry` into the Batteries `theorem_wanted`
-`countable_diff_setOf_exists_seq_tendsto_and_tendsto_apply`; moved the informal problem
-statement docstring onto it and placed the declarations in namespace
-`MathlibExt.Analysis.Calculus.GraphNonAccumulationPointsCountableWanted`; replaced `import
-Mathlib` by `public import Mathlib` under the module system.
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.Topology.Sequences
 
-@[expose] public section
+/-!
+# Isolated points of a graph are countable
+
+For a function between Euclidean spaces, the isolated points of its graph over any set form a
+countable set. A countable dense subset of the graph contains every isolated point.
+-/
+
+public section
 
 namespace MathlibExt.Analysis.Calculus.GraphNonAccumulationPointsCountableWanted
 
@@ -50,7 +59,7 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Real functions
 several variables), `benchmark/level2/ma_proofbench_l2_63.lean` at
 openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted countable_diff_setOf_exists_seq_tendsto_and_tendsto_apply
+theorem countable_diff_setOf_exists_seq_tendsto_and_tendsto_apply
     {n : ℕ}
     (E F : Set (EuclideanSpace ℝ (Fin n)))
     (f : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
@@ -61,6 +70,17 @@ public theorem_wanted countable_diff_setOf_exists_seq_tendsto_and_tendsto_apply
           (∀ k : ℕ, xk k ∈ E ∧ xk k ≠ x) ∧
           Filter.Tendsto xk Filter.atTop (nhds x) ∧
           Filter.Tendsto (fun k : ℕ => f (xk k)) Filter.atTop (nhds (f x))) :
-    Set.Countable (E \ F)
+    Set.Countable (E \ F) := by
+  let G : Set (EuclideanSpace ℝ (Fin n) × EuclideanSpace ℝ (Fin n)) :=
+    {p | p.1 ∈ E ∧ p.2 = f p.1}
+  obtain ⟨D, hD, hDG, hGD⟩ := TopologicalSpace.exists_countable_dense_subset G
+  apply (hD.image Prod.fst).mono
+  rintro x ⟨hxE, hxF⟩
+  by_contra hxD
+  have hxG : (x, f x) ∈ G := ⟨hxE, rfl⟩
+  obtain ⟨p, hp, hlim⟩ := mem_closure_iff_seq_limit.mp (hGD hxG)
+  refine hxF ((hF x).2 ⟨hxE, fun k => (p k).1, ?_, hlim.fst_nhds, ?_⟩)
+  · exact fun k => ⟨(hDG (hp k)).1, fun heq => hxD ⟨p k, hp k, heq⟩⟩
+  · exact hlim.snd_nhds.congr fun k => (hDG (hp k)).2
 
 end MathlibExt.Analysis.Calculus.GraphNonAccumulationPointsCountableWanted
