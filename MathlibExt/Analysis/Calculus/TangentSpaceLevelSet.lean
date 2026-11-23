@@ -31,18 +31,20 @@ namespace MetaMathlibExt
 open Filter
 open scoped Topology
 
-/-- Tangent vectors to a Euclidean level set lie in the kernel: if a curve
-through `x` stays in the level set `{f = c}` with velocity `v`, then the
-Frechet derivative kills `v`.
+/-- **Velocities of curves in a level set lie in the kernel of the derivative.** Let $E$ be a
+real normed space, $c \in \mathbb{R}$, and $f : E \to \mathbb{R}$ a function differentiable at
+$x \in E$. If a curve $\gamma : \mathbb{R} \to E$ satisfies $\gamma(0) = x$, has derivative $v$ at
+$0$, and satisfies $f(\gamma(t)) = c$ for all $t \in \mathbb{R}$, then $Df(x)v = 0$.
+
+Proof: Apply the chain rule to `f ∘ γ`, then compare its derivative with that of the constant
+function determined by the level-set equation.
+
+Proves `Wanted` entry `levelSet_tangent_vel_of_curve`.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Submanifolds of R^n`, entry `tangent space` (unmapped);
 J. M. Lee, Introduction to Smooth Manifolds, 2nd ed., Theorem 5.12;
 stable ref https://en.wikipedia.org/wiki/Tangent_space.
-
-Proves `Wanted` entry `levelSet_tangent_vel_of_curve`.
-
-Proof: Apply the chain rule to `f ∘ γ`, then compare its derivative with that of the constant
-function determined by the level-set equation.
 -/
 theorem levelSet_tangent_vel_of_curve
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -133,19 +135,22 @@ private theorem levelSet_global_curve
   · intro t
     exact hlocal (hψmem t)
 
-/-- Every kernel vector is tangent to a regular level set: at a point where
-the Frechet derivative is surjective, each `v` with `fderiv = 0` is the
-velocity of a curve staying in the level set.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Submanifolds of R^n`, entry `tangent space` (unmapped);
-J. M. Lee, Introduction to Smooth Manifolds, 2nd ed., Theorem 5.12.
-
-Proves `Wanted` entry `levelSet_curve_of_tangent_vel`.
+/-- **Kernel vectors are velocities of curves in a regular level set.** Let $E$ be a real
+Banach space, $f : E \to \mathbb{R}$ a $C^1$ function, $c \in \mathbb{R}$, and $x \in E$ a point
+with $f(x) = c$ at which the derivative $Df(x) : E \to \mathbb{R}$ is surjective. Then for every
+$v \in E$ with $Df(x)v = 0$ there is a curve $\gamma : \mathbb{R} \to E$ with $\gamma(0) = x$,
+$\gamma'(0) = v$ and $f(\gamma(t)) = c$ for all $t \in \mathbb{R}$.
 
 Proof: Use the implicit function theorem to construct a local curve tangent to the kernel vector,
 then compose it with a bounded arctangent reparametrization to obtain a curve on all of `ℝ`
 (implicit function theorem, Banach space version:
 https://en.wikipedia.org/wiki/Implicit_function_theorem).
+
+Proves `Wanted` entry `levelSet_curve_of_tangent_vel`.
+
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Submanifolds of R^n`, entry `tangent space` (unmapped);
+J. M. Lee, Introduction to Smooth Manifolds, 2nd ed., Theorem 5.12.
 -/
 theorem levelSet_curve_of_tangent_vel
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]

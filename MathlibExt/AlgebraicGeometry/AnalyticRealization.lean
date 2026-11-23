@@ -7,11 +7,19 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The holomorphic-sheaf abbreviation follows AxiomMath/Weil, revision
-27cdb2049be62ee2911429b47f54774078450e32,
-Weil/Geometry/Manifold/Sheaf/Holomorphic.lean, under Apache 2.0.
-Modifications: specialize to the canonical complex-point space of a scheme;
-add a pointwise normalized regular-function map and module pullback.
+Portions of this file are adapted from:
+
+`Weil/Geometry/Manifold/Sheaf/Holomorphic.lean` (the holomorphic-sheaf
+abbreviation) in https://github.com/AxiomMath/Weil
+at commit 27cdb2049be62ee2911429b47f54774078450e32.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source file carries no copyright notice or author list; the repository is
+published by AxiomMath, and the commit that added the file is authored by
+Tony Yue Yu.
+
+Modification notice: specialized the abbreviation to the complex-point space of
+a scheme; added the pointwise normalized regular-function map and the module
+pullback.
 -/
 module
 
@@ -26,11 +34,19 @@ public import MathlibExt.AlgebraicGeometry.ComplexAnalytification
 The carrier and topology are the actual complex points of the scheme. The
 analytic structure is a complex manifold structure on that carrier, and its
 structure sheaf consists of complex-smooth, hence holomorphic, functions.
-The map from regular functions is fixed by evaluation at every complex point.
+The map from regular functions is fixed by evaluation at every complex point:
+`RegularFunctions X d` is a subsingleton.
 
 `AnalyticManifold` and `RegularFunctions` are characterized input data. This
 file constructs their ringed-space and module functors; it does not assert
-that every smooth complex scheme has such data.
+that any scheme has such data. For `X` smooth of relative dimension `d`, the
+evaluation condition pins the complex structure down to the standard one
+(étale coordinates are holomorphic local coordinates, and a holomorphic
+homeomorphism between complex manifolds of the same dimension is
+biholomorphic); neither the existence nor this uniqueness is formalized here.
+Without smoothness the data need not be the analytification: the cuspidal cubic
+`y² = x³` admits it with `d = 1` through its normalization `t ↦ (t², t³)`,
+whose holomorphic functions are not those of the analytic cusp.
 -/
 
 open CategoryTheory TopologicalSpace Opposite
@@ -60,6 +76,11 @@ def pointMap (X : ComplexScheme) : space X ⟶ X.left.toRingedSpace.carrier :=
       ext p
       exact ComplexPoints.schemePoint_mem_iff p V⟩
 
+@[simp]
+theorem pointMap_apply {X : ComplexScheme} (p : space X) :
+    pointMap X p = ComplexPoints.schemePoint p :=
+  rfl
+
 /-- A complex manifold structure on the fixed complex-point topology. -/
 class AnalyticManifold (X : ComplexScheme) (d : ℕ) where
   /-- Coordinate charts on the actual complex points. -/
@@ -68,7 +89,7 @@ class AnalyticManifold (X : ComplexScheme) (d : ℕ) where
   isManifold : @IsManifold ℂ _ (CoordinateSpace d) _ _
     (CoordinateSpace d) _ 𝓘(ℂ, CoordinateSpace d) ∞ (space X) _ chartedSpace
 
-attribute [instance, instance_reducible] AnalyticManifold.chartedSpace
+attribute [instance_reducible, instance] AnalyticManifold.chartedSpace
 attribute [instance] AnalyticManifold.isManifold
 
 variable (X : ComplexScheme) (d : ℕ) [AnalyticManifold X d]
@@ -88,6 +109,13 @@ noncomputable abbrev holomorphicRingSheaf :
 def analyticOpen (U : X.left.Opens) : Opens (space X) :=
   (Opens.map (pointMap X)).obj U
 
+variable {X} in
+/-- The analytic open of a scheme open consists of the complex points in it. -/
+@[simp]
+theorem mem_analyticOpen {U : X.left.Opens} {p : space X} :
+    p ∈ analyticOpen X U ↔ ComplexPoints.Mem p U :=
+  ComplexPoints.schemePoint_mem_iff p U
+
 /-- The analytic structure map sends every regular function to its actual
 complex-point evaluation. Its ring and restriction laws are those of the
 natural transformation; the normalization excludes a free map of rings. -/
@@ -103,6 +131,19 @@ class RegularFunctions where
       from regularMap.app (op U) g) p =
       ComplexPoints.eval g p.1
         ((ComplexPoints.schemePoint_mem_iff p.1 U).mp p.2)
+
+/-- The evaluation condition determines the regular-function map, so
+`RegularFunctions X d` carries no further data. -/
+instance : Subsingleton (RegularFunctions X d) := by
+  constructor
+  rintro ⟨m₁, h₁⟩ ⟨m₂, h₂⟩
+  have : m₁ = m₂ := by
+    ext U g
+    apply ContMDiffMap.ext
+    intro p
+    exact (h₁ U g p).trans (h₂ U g p).symm
+  subst this
+  rfl
 
 variable [RegularFunctions X d]
 
@@ -128,7 +169,8 @@ noncomputable def ringMap : X.left.ringCatSheaf ⟶
 /-- Sheaves of modules over the actual holomorphic structure sheaf. -/
 abbrev AnalyticModules := SheafOfModules.{0} (holomorphicRingSheaf X d)
 
-/-- The existing presheaf pullback constructor applies to these small sites. -/
+/-- Mathlib's presheaf pullback construction, specialized to `ringMap`:
+instance search does not find Mathlib's general instance for `ringMap`. -/
 instance presheafPushforward_isRightAdjoint :
     (PresheafOfModules.pushforward.{0} (F := Opens.map (pointMap X))
       (ringMap X d).hom).IsRightAdjoint :=
@@ -136,7 +178,8 @@ instance presheafPushforward_isRightAdjoint :
     (PresheafOfModules.pullbackObjIsDefined_eq_top
       (F := Opens.map (pointMap X)) (ringMap X d).hom)
 
-/-- The sheaf pullback is supplied by the actual sheafification adjunction. -/
+/-- Mathlib's sheaf pullback construction (presheaf pullback followed by
+sheafification), specialized to `ringMap` for the same reason. -/
 instance sheafPushforward_isRightAdjoint :
     (SheafOfModules.pushforward.{0} (F := Opens.map (pointMap X))
       (ringMap X d)).IsRightAdjoint :=

@@ -37,10 +37,13 @@ module is elementary abelian, so these are its subspaces over `𝔽ₚ`). `|G/G'
 size `M`, the latter implied by the two orbits of size `M`.
 -/
 
-/-- Kourovka 18.44 (T. M. Keller): let `G` be a finite non-abelian group and `V` a finite faithful
-irreducible `G`-module (a nonzero finite abelian group on which `G` acts faithfully by automorphisms
-with no invariant subgroups other than `0` and `V`). If `M = |G / G'|` is the largest orbit size of
-`G` on `V` and exactly two orbits have size `M`, then `G` is dihedral of order `8` and `|V| = 9`. -/
+/-- **Keller's question on two largest orbits and the dihedral group of order eight (Kourovka
+Problem 18.44).** The statement that for every finite non-abelian group $G$, with derived subgroup
+$G'$, and every finite faithful irreducible $G$-module $V$ (a nonzero finite abelian group on which
+$G$ acts faithfully by automorphisms with no $G$-invariant subgroups other than $0$ and $V$),
+writing $M = |G/G'|$: if every orbit of $G$ on $V$ has at most $M$ elements and exactly two orbits
+have exactly $M$ elements, then $G$ is isomorphic to the dihedral group of order $8$ and
+$|V| = 9$. -/
 def twoLargestOrbitsImpliesDihedralEight : Prop :=
   ∀ (G : Type) [Group G] [Finite G] (V : Type) [AddCommGroup V] [Finite V]
     [DistribMulAction G V], (∃ a b : G, a * b ≠ b * a) → FaithfulSMul G V → Nontrivial V →
@@ -51,9 +54,18 @@ def twoLargestOrbitsImpliesDihedralEight : Prop :=
     Nonempty (G ≃* DihedralGroup 4) ∧ Nat.card V = 9
 
 /--
-Resolved true: Jones-Keller (2020), Theorem 3.1, accepted in the Kourovka Notebook (21st issue) as
-answering 18.44: under these hypotheses `G` is dihedral of order `8` and `V = V(2, 3)`, so `|V| =
-9`. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+**Two largest orbits force the dihedral group of order eight (Kourovka 18.44).** Let $G$ be a
+finite non-abelian group, let $G'$ be its derived subgroup, and let $V$ be a finite faithful
+irreducible $G$-module, that is, a nonzero finite abelian group on which $G$ acts faithfully by
+automorphisms with no $G$-invariant subgroups other than $0$ and $V$. Write $M = |G/G'|$. If every
+orbit of $G$ on $V$ has at most $M$ elements and exactly two orbits have exactly $M$ elements, then
+$G$ is isomorphic to the dihedral group of order $8$ and $|V| = 9$.
+
+Jones and Keller (2020), Theorem 3.1, prove this, showing moreover that $V$ is the $2$-dimensional
+vector space $V(2, 3)$ over the field with $3$ elements; the Kourovka Notebook (21st issue) accepts
+it as answering 18.44.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 18.44 (T. M. Keller); resolution: N. A.
 Jones and T. M. Keller, Orbit sizes and the dihedral group of order eight, Ann. Mat. Pura Appl. 199
 (2020), 2323-2340, Theorem 3.1: G finite nonabelian, V finite faithful irreducible G-module, M =

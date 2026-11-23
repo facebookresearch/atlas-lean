@@ -16,9 +16,14 @@ open TopologicalSpace
 
 namespace EuclideanLaplacian
 
-/-- Zero-based Neumann Pólya benchmark. The numerator `j` corresponds to
-the source's one-based eigenvalue number minus one, so index zero records the
-constant Neumann mode in positive dimension. -/
+/-- **Neumann Pólya benchmark.** For an open set $\Omega \subseteq \mathbb{R}^n$ and a natural
+number $j$, the Neumann Pólya benchmark of $\Omega$ at index $j$ is the real number
+$(2\pi)^2 \left(j / (\omega_n |\Omega|)\right)^{2/n}$, where $\omega_n$ is the volume of the unit
+ball of $\mathbb{R}^n$, $|\Omega|$ is the volume of $\Omega$, the power is the real power with
+exponent $2/n$, and a quotient by $0$ is read as $0$.
+
+The index is zero-based: $j$ is the source's one-based eigenvalue number minus one, so index
+zero records the constant Neumann mode in positive dimension. -/
 noncomputable def neumannPolyaEigenvalueBenchmark {n : ℕ}
     (Ω : Opens (EuclideanSpace ℝ (Fin n))) (j : ℕ) : ℝ :=
   (2 * Real.pi) ^ 2 *
@@ -35,8 +40,12 @@ theorem neumannPolyaEigenvalueBenchmark_nonneg {n : ℕ}
       (div_nonneg (Nat.cast_nonneg _)
         (mul_nonneg (unitBallVolume_nonneg n) (domainVolume_nonneg Ω))) _)
 
-/-- The source's Neumann index `j + 2` has the same Weyl benchmark as the
-Dirichlet index `j + 1`; in zero-based API indices this is `j + 1` versus `j`. -/
+/-- **Neumann and Dirichlet Pólya benchmarks agree after an index shift.** For every open set
+$\Omega \subseteq \mathbb{R}^n$ and every natural number $j$, the Neumann Pólya benchmark of
+$\Omega$ at index $j + 1$ equals the Pólya eigenvalue benchmark of $\Omega$ at index $j$.
+
+In the source's one-based numbering, the Neumann index $j + 2$ has the same Weyl benchmark as
+the Dirichlet index $j + 1$. -/
 @[simp] theorem neumannPolyaEigenvalueBenchmark_succ {n : ℕ}
     (Ω : Opens (EuclideanSpace ℝ (Fin n))) (j : ℕ) :
     neumannPolyaEigenvalueBenchmark Ω (j + 1) =

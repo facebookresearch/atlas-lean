@@ -1,0 +1,61 @@
+name: Build cache
+
+# The merge queue fast-forwards main to the head of a merge group whose CI run
+# built and fully checked that exact commit, and that run uploads its build
+# (ci.yml). Caches saved by a merge-group run are scoped to the queue's ref,
+# where pull requests cannot read them, so save the build again from main;
+# pull requests then restore the build of their exact base. When several groups
+# land in one push, only the pushed head gets a build.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  save:
+    name: save the merge group's build for main
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download the merge group's build
+        id: download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Artifact names are not unique, so take the artifact of the
+          # successful merge-group CI run that built this exact commit.
+          run="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?event=merge_group&head_sha=${GITHUB_SHA}&status=success" \
+            --jq '.workflow_runs[0].id // empty')"
+          id=""
+          if [[ -n "$run" ]]; then
+            id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run}/artifacts?name=lake-build-${GITHUB_SHA}" \
+              --jq '[.artifacts[] | select(.expired | not)][0].id // empty')"
+          fi
+          if [[ -z "$id" ]]; then
+            echo "No merge-group build for ${GITHUB_SHA}: CI's push run saves its own."
+            exit 0
+          fi
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "${RUNNER_TEMP}/lake-build.zip"
+          mkdir -p .lake
+          unzip -p "${RUNNER_TEMP}/lake-build.zip" lake-build.tar.zst | zstd -dc | tar -x -C .lake
+          echo "found=true" >> "$GITHUB_OUTPUT"
+
+      - name: Save the build for main
+        if: steps.download.outputs.found == 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
