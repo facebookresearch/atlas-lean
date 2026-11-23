@@ -682,7 +682,7 @@ public theorem card_irrCharacters_eq_card_conjClasses (G : Type*)
     (Set.range (Subtype.val : I → (G → ℂ)))) = Fintype.card I at hfinrank
   have hrange : Set.range (Subtype.val : I → (G → ℂ)) =
       {χ : G → ℂ | ∃ V : FDRep ℂ G, Simple V ∧ V.character = χ} :=
-    Subtype.range_val
+    Subtype.range_val_subtype
   rw [hrange, hspan] at hfinrank
   change Nat.card I = Nat.card (ConjClasses G)
   rw [Nat.card_eq_fintype_card]

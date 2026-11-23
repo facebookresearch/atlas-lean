@@ -219,20 +219,6 @@ theorem_wanted sum_neg_one_pow_k_lucasAB (k : ℂ) (m n : ℕ)
         (-1 : ℂ) ^ i * lucasAB k 1 (2 * (i + m)) =
       (-1) ^ n * fibAB k 1 (2 * (n + m) + 1) + fibAB k 1 (2 * m - 1)
 
-/-- **Sums of (a, b)-Fibonacci numbers weighted by powers of c.** Let $a, b, c$ be complex
-numbers with $c \ne 0$ and $c^2 - ac - b \ne 0$, and let $(F_n)$ be the $(a, b)$-Fibonacci
-numbers. Then for every integer $n \ge 1$,
-$$\sum_{i=1}^{n} c^{n-i} F_i = \frac{c^{n+1} - c F_{n+1} - b F_n}{c^2 - ac - b}.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Theorem 12. -/
-theorem_wanted sum_c_pow_fibAB (a b c : ℂ) (hc : c ≠ 0)
-    (hc2 : c ^ 2 - a * c - b ≠ 0) (n : ℕ) (hn : 1 ≤ n) :
-    ∑ i ∈ Finset.Icc 1 n, c ^ (n - i) * fibAB a b i =
-      (c ^ (n + 1) - c * fibAB a b (n + 1) - b * fibAB a b n) /
-        (c ^ 2 - a * c - b)
-
 /-- **A convolution of (a, b)-Lucas and (a, d)-Fibonacci numbers.** Let $a, b, d$ be complex
 numbers with $b \ne d$, and write $L^{a,b}_n$ for the $(a,b)$-Lucas numbers and $F^{a,b}_n$ for
 the $(a,b)$-Fibonacci numbers. Then for every natural number $n$,
