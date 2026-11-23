@@ -29,57 +29,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Containment of planar point sets.** A set $S \subseteq \mathbb{R}^2$ contains a set
-$P \subseteq \mathbb{R}^2$ when there are maps $f_X, f_Y : \mathbb{R} \to \mathbb{R}$ such that
-$f_X(x_0) - f_X(x_1) \ge x_0 - x_1$ whenever $x_0 > x_1$ are $x$-coordinates of points of $P$,
-$f_Y(y_0) - f_Y(y_1) \ge y_0 - y_1$ whenever $y_0 > y_1$ are $y$-coordinates of points of $P$,
-and $(f_X(x), f_Y(y)) \in S$ for every $(x, y) \in P$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of containment). -/
-public def PointSetContainsPattern (S P : Set (ℝ × ℝ)) : Prop :=
-  ∃ fX fY : ℝ → ℝ,
-    (∀ p ∈ P, ∀ q ∈ P, q.1 < p.1 → p.1 - q.1 ≤ fX p.1 - fX q.1) ∧
-    (∀ p ∈ P, ∀ q ∈ P, q.2 < p.2 → p.2 - q.2 ≤ fY p.2 - fY q.2) ∧
-    ∀ p ∈ P, (fX p.1, fY p.2) ∈ S
-
-/-- **Every planar set contains the empty pattern.** Every set $S \subseteq \mathbb{R}^2$ contains
-the empty set $\emptyset$ in the sense of containment of planar point sets.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of containment). -/
-public theorem pointSetContainsPattern_empty (S : Set (ℝ × ℝ)) : PointSetContainsPattern S ∅ :=
-  ⟨id, id, by simp, by simp, by simp⟩
-
-/-- **Continuous Turán number in the plane.** For a real number $n$ and a set
-$P \subseteq \mathbb{R}^2$, the continuous Turán number $\operatorname{opx}(n, P)$ is the supremum
-of the Lebesgue measures $\mu_2(S)$ over all open sets $S \subseteq [0, n]^2$ that do not contain
-$P$ in the sense of point-set pattern containment; it is $0$ when there is no such set.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of `opx(n, P)`). -/
-public noncomputable def opx (n : ℝ) (P : Set (ℝ × ℝ)) : ℝ :=
-  sSup ((fun S => (MeasureTheory.volume S).toReal) ''
-    {S | IsOpen S ∧ S ⊆ Set.Icc 0 n ×ˢ Set.Icc 0 n ∧ ¬ PointSetContainsPattern S P})
-
-/-- **Nonnegativity of the continuous Turán number.** For every real number $n$ and every set
-$P \subseteq \mathbb{R}^2$, $\operatorname{opx}(n, P) \ge 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of `opx(n, P)`). -/
-public theorem opx_nonneg (n : ℝ) (P : Set (ℝ × ℝ)) : 0 ≤ opx n P := by
-  apply Real.sSup_nonneg
-  rintro _ ⟨S, -, rfl⟩
-  exact ENNReal.toReal_nonneg
-
-/-- **Continuous Turán number of the empty pattern.** For every real number $n$,
-$\mathrm{opx}(n, \emptyset) = 0$: every set contains the empty pattern, so no set avoids it.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of `opx(n, P)`). -/
-public theorem opx_empty (n : ℝ) : opx n ∅ = 0 := by
-  simp [opx, pointSetContainsPattern_empty]
-
 /-- **Rotation and reflection invariance of the continuous Turán number.** For every real
 number $n$ and every set $P \subseteq \mathbb{R}^2$, the value $\operatorname{opx}(n, P)$ does
 not change when $P$ is replaced by its image under the rotation by $90^\circ$,
@@ -92,16 +41,6 @@ public theorem_wanted opx_rotate_reflect (n : ℝ) (P : Set (ℝ × ℝ)) :
     opx n ((fun p : ℝ × ℝ => (-p.2, p.1)) '' P) = opx n P ∧
       opx n ((fun p : ℝ × ℝ => (-p.1, p.2)) '' P) = opx n P ∧
       opx n ((fun p : ℝ × ℝ => (p.1, -p.2)) '' P) = opx n P
-
-/-- **Translation invariance of the continuous Turán number.** Let $n$ be a real number,
-$P \subseteq \mathbb{R}^2$ a set and $v \in \mathbb{R}^2$ a vector, and let
-$P + v = \{p + v : p \in P\}$ be the translate of $P$ by $v$. Then
-$\operatorname{opx}(n, P + v) = \operatorname{opx}(n, P)$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.2
-(`integers-2024-A1-lem-2-2`). -/
-public theorem_wanted opx_translate (n : ℝ) (P : Set (ℝ × ℝ)) (v : ℝ × ℝ) :
-    opx n ((fun p => p + v) '' P) = opx n P
 
 /-- **Monotonicity of the continuous Turán number under containment.** Let $n$ be a real number
 and let $P, Q \subseteq \mathbb{R}^2$. If $Q$ contains $P$ in the sense of containment of planar

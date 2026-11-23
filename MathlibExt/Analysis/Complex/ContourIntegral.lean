@@ -13,10 +13,11 @@ public import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
-# Fundamental theorem of contour integration
+# Contour integrals
 
 The contour integral of a complex derivative along a continuously differentiable path is the
-difference of its primitive at the endpoints.
+difference of its primitive at the endpoints. The ML estimate bounds the norm of a contour
+integral by the product of uniform bounds on the integrand and the path's speed.
 -/
 
 public section
@@ -58,5 +59,46 @@ theorem contourIntegral_of_hasDerivAt
         ((hγ.differentiableOn one_ne_zero t (mem_Icc_of_Ioo ht)).hasDerivWithinAt.hasDerivAt
           (Icc_mem_nhds ht.1 ht.2))
     _ = F b - F a := by simp only [Function.comp_apply, Path.extend_one, Path.extend_zero]
+
+/--
+**ML estimate for contour integrals.** Let $f : \mathbb{C} \to \mathbb{C}$ and let
+$\gamma : [0, 1] \to \mathbb{C}$ be a path from $a$ to $b$ which is continuously differentiable
+on $[0, 1]$, with derivative $\gamma'$ (one-sided at the endpoints). Let $M$ and $L$ be real
+numbers with $|f(\gamma(t))| \le M$ and $|\gamma'(t)| \le L$ for every $t \in [0, 1]$. If
+$t \mapsto f(\gamma(t))\,\gamma'(t)$ is integrable on $[0, 1]$, then
+$\left|\int_\gamma f(z)\,dz\right| \le ML$, where
+$\int_\gamma f(z)\,dz = \int_0^1 f(\gamma(t))\,\gamma'(t)\,dt$.
+
+The parameter interval has length one, so $L$ bounds the length of $\gamma$.
+
+Sources: Mathlib `docs/undergrad.yaml`, section "Functions on one complex variable",
+entry "contour integrals of continuous functions in ℂ";
+L. V. Ahlfors, Complex Analysis, 3rd ed., Ch. 4, §1.1 to §1.3 (line integrals).
+-/
+theorem norm_contourIntegral_le
+    {f : ℂ → ℂ} {a b : ℂ} {γ : Path a b} {M L : ℝ}
+    (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
+    (hf : ∀ t ∈ Set.Icc (0 : ℝ) 1, ‖f (γ.extend t)‖ ≤ M)
+    (hγ' : ∀ t ∈ Set.Icc (0 : ℝ) 1, ‖derivWithin γ.extend (Set.Icc 0 1) t‖ ≤ L)
+    (h_int : CurveIntegrable (fun z => f z • ContinuousLinearMap.id ℂ ℂ) γ) :
+    ‖curveIntegral (fun z => f z • ContinuousLinearMap.id ℂ ℂ) γ‖ ≤ M * L := by
+  let speed (t : ℝ) := ‖derivWithin γ.extend (Icc 0 1) t‖
+  have hspeed : ContinuousOn speed (Icc 0 1) :=
+    (hγ.continuousOn_derivWithin uniqueDiffOn_Icc_zero_one le_rfl).norm
+  have hbound : IntervalIntegrable (fun t => M * speed t) MeasureTheory.volume 0 1 :=
+    (hspeed.intervalIntegrable_of_Icc zero_le_one).const_mul M
+  have hM : 0 ≤ M := (norm_nonneg _).trans (hf 0 ⟨le_rfl, zero_le_one⟩)
+  rw [curveIntegral_def]
+  calc
+    _ ≤ ∫ t in 0..1, ‖curveIntegralFun (fun z => f z • ContinuousLinearMap.id ℂ ℂ) γ t‖ :=
+      intervalIntegral.norm_integral_le_integral_norm zero_le_one
+    _ ≤ ∫ t in 0..1, M * speed t := by
+      refine intervalIntegral.integral_mono_on zero_le_one h_int.norm hbound fun t ht => ?_
+      rw [curveIntegralFun_def, smul_apply, ContinuousLinearMap.id_apply, norm_smul]
+      exact mul_le_mul_of_nonneg_right (hf t ht) (norm_nonneg _)
+    _ ≤ ∫ _ in (0 : ℝ)..1, M * L :=
+      intervalIntegral.integral_mono_on zero_le_one hbound intervalIntegrable_const
+        fun t ht => mul_le_mul_of_nonneg_left (hγ' t ht) hM
+    _ = M * L := by simp
 
 end MathlibExt.Analysis.Complex.ContourIntegralWanted

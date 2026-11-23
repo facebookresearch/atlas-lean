@@ -5,11 +5,13 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import os
 import re
 import shutil
+import subprocess
 import tempfile
 import unittest
-from contextlib import redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -3043,6 +3045,1549 @@ class ArticleIds(Vault):
         path = self.links("Algebra.jsonl", text)
         self.assertEqual(sync.apply_ids(write=False), (["blueprint/links/Algebra.jsonl:1"], []))
         self.assertEqual(path.read_bytes().decode("utf-8"), text)
+
+
+class ScopedRows(Vault):
+    """A scoped run adds each row where its page's path puts it among the others, and changes no other byte."""
+
+    def test_a_row_goes_after_the_row_whose_page_comes_last_before_its_own(self) -> None:
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        rows = ['{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/b.md"}], "id": "af_000000000000000000000002"}',
+                # A row written another way, and one out of order, keep their bytes and their places.
+                '{ "subject":[{"uri":"../roadmap/Algebra/d/README.md","type":"generic"}],"id":"af_000000000000000000000004"}',
+                '{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/a.md"}], "id": "af_000000000000000000000001"}']
+        path.write_text("\n".join(rows) + "\n")
+        new = [self.about(page, id=f"af_00000000000000000000000{number}")
+               for number, page in ((5, "Algebra/c.md"), (6, "Algebra/d/e.md"), (7, "Algebra/0.md"), (8, "Algebra/d/f.md"))]
+        sync.insert_rows(path, new)
+        dumped = [json.dumps(row, ensure_ascii=False) for row in new]
+        self.assertEqual(path.read_text().split("\n"),
+                         # "0.md" comes before every page; "c.md" after "b.md" (not "a.md", which sorts lower but sits
+                         # later); "d/e.md" and "d/f.md" after the folder page of d/.
+                         [dumped[2], rows[0], dumped[0], rows[1], dumped[1], dumped[3], rows[2], ""])
+        # A file that is not there yet holds the rows alone, in path order.
+        sync.insert_rows(sync.LINKS / "Logic.jsonl", [self.about("Logic/b.md"), self.about("Logic/a.md")])
+        self.assertEqual((sync.LINKS / "Logic.jsonl").read_text(),
+                         "".join(json.dumps(self.about(f"Logic/{name}.md")) + "\n" for name in "ab"))
+
+    def test_rows_added_to_a_file_of_carriage_returns_come_out_whole(self) -> None:
+        # Each record keeps its own separator, and the added rows take the file's: taking them out gives back its
+        # bytes, whatever its separators.
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        for separator, last in (("\r\n", "\r\n"), ("\r", "\r"), ("\n", ""), ("\r\n", "")):
+            rows = [json.dumps(self.about(f"Algebra/{name}.md")) for name in "bd"]
+            original = separator.join(rows) + last
+            path.write_bytes(original.encode())
+            added = [self.about(f"Algebra/{name}.md") for name in "ace"]
+            sync.insert_rows(path, added)
+            text = path.read_bytes().decode()
+            lines, ends = sync.records(text)
+            self.assertEqual([json.loads(line)["subject"][0]["uri"] for line in lines if line],
+                             [f"../roadmap/Algebra/{name}.md" for name in "abcde"], repr(separator + last))
+            for row in added:
+                dumped = json.dumps(row)
+                text = text.replace(dumped + separator, "", 1) if dumped + separator in text else text.replace(
+                    separator + dumped, "", 1)
+            self.assertEqual(text, original, repr(separator + last))
+
+    def test_each_row_is_placed_by_its_page_once(self) -> None:
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        path.write_text("".join(json.dumps(self.about(f"Algebra/p{number:02d}.md")) + "\n" for number in range(20)))
+        calls = []
+        real = sync.page_name
+        with patch.object(sync, "page_name", lambda row: calls.append(1) or real(row)):
+            sync.insert_rows(path, [self.about(f"Algebra/q{number}.md") for number in range(3)])
+        self.assertEqual(len(calls), 23)
+
+    def test_a_file_without_a_last_line_end_keeps_its_bytes(self) -> None:
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        last = json.dumps(self.about("Algebra/b.md"))
+        path.write_text(last)
+        sync.insert_rows(path, [self.about("Algebra/a.md")])
+        self.assertEqual(path.read_text(), json.dumps(self.about("Algebra/a.md")) + "\n" + last)
+
+
+class ScopedLayout(Vault):
+    def test_a_scoped_run_passes_over_generate_wikis_parts_in_the_folders_it_makes(self) -> None:
+        # generate_wiki splits a field by what it lays out for every declaration, most of which a scoped run leaves out:
+        # its "Part 2 of 10" would stand alone. A folder the wiki has keeps its parts either way.
+        self.page("Algebra/README.md", "# Algebra\n")
+        self.page("Algebra/split/README.md", "# Split\n\n## [Part 1 of 2](part-01/README.md)\n\n- [A](part-01/a.md)\n")
+        self.page("Algebra/split/part-01/README.md", "# Part 1 of 2\n\n- [A](a.md)\n")
+        new = wiki.ROADMAP / "Algebra" / "not-yet-classified" / "part-02" / "rings"
+        folder, laid_out = sync.kept_layout(new, {})
+        self.assertEqual((folder, laid_out[new / "README.md"]), (new, new / "README.md"))
+        flat = wiki.ROADMAP / "Algebra" / "not-yet-classified" / "rings"
+        folder, laid_out = sync.kept_layout(new, {}, flat=True)
+        # Each folder the run makes takes generate_wiki's page of the folder it stands for.
+        self.assertEqual((folder, laid_out[flat / "README.md"], laid_out[flat.parent / "README.md"]),
+                         (flat, new / "README.md", flat.parent / "README.md"))
+        self.assertNotIn(new.parent / "README.md", laid_out)
+        kept = wiki.ROADMAP / "Algebra" / "split" / "part-03" / "fields"
+        self.assertEqual(sync.kept_layout(kept, {}, flat=True)[0], wiki.ROADMAP / "Algebra" / "split" / "part-01" / "fields")
+
+    def test_a_scoped_refresh_copies_only_the_parts_it_adds_to(self) -> None:
+        text = ("# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Old](part-01/old.md)\n\n"
+                "## [Part 2 of 2](part-02/README.md)\n\n- [Late](part-02/late.md)\n")
+        readme = self.page("Algebra/groups/README.md", text)
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 2\n\n- [Old](old.md)\n- [Older](older.md)\n")
+        self.page("Algebra/groups/part-02/README.md", "# Part 2 of 2\n\n- [Late](late.md)\n- [New](new.md)\n")
+        refreshed, unrefreshed, dropped = sync.with_part_lists(readme, text, {"part-02/README.md"})
+        self.assertEqual(refreshed, text + "- [New](part-02/new.md)\n")
+        self.assertEqual((unrefreshed, dropped), ([], []))
+        self.assertIn("- [Older](part-01/older.md)\n", sync.with_part_lists(readme, text)[0])
+
+
+class ScopedRun(unittest.TestCase):
+    """declarations --base, the run a pull request makes, on a repository of a few files with a git history: a base
+    commit, then the pull request's changes in the working tree."""
+
+    TAXONOMY = {"schema": wiki.TAXONOMY_SCHEMA, "regions": {"Algebra & Number Theory": ["Algebra"]},
+                "subjects": {"Algebra": {"title": "Algebra", "description": "Operations.", "fields": [
+                    {"slug": "groups", "title": "Groups", "description": "Groups.", "subfields": []}]}},
+                "placements": {"MathlibExt/Algebra/Groups": {"to": "Algebra/groups", "title": "Group basics"}}}
+    LAGRANGE = "The order of a subgroup divides the order of the group."
+    GROUPS = ("namespace Ext\n\n/-- {lagrange} -/\ntheorem lagrange : True := trivial\n\n"
+              "/-- A result that has no page yet. -/\ntheorem backlog : True := trivial\n\n{more}end Ext\n")
+    PAGES = {"README.md": "# ATLAS roadmap\n\n## Algebra & Number Theory\n\n- [Algebra](Algebra/README.md)\n",
+             "Algebra/README.md": "# Algebra\n\nOperations.\n\n- [Groups](groups/README.md)\n",
+             "Algebra/groups/README.md": "# Groups\n\nGroups.\n\n- [Group basics](group-basics/README.md)\n",
+             "Algebra/groups/group-basics/README.md": "# Group basics\n\n- [Lagrange](lagrange.md)\n",
+             "Algebra/groups/group-basics/lagrange.md": f"# Lagrange\n\n{LAGRANGE}\n"}
+
+    def setUp(self) -> None:
+        self.root = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, self.root, True)
+        vault = self.root / "blueprint"
+        for one in (patch.object(wiki, "ROOT", self.root), patch.object(wiki, "VAULT", vault),
+                    patch.object(wiki, "ROADMAP", vault / "roadmap"), patch.object(wiki, "PAGE_MAP", vault / "pages.json"),
+                    patch.object(wiki, "SOURCES", vault / "sources"),
+                    patch.object(wiki, "TAXONOMY", self.root / "scripts" / "taxonomy.json"),
+                    patch.object(sync, "LINKS", vault / "links"),
+                    patch.object(sync, "STATE", self.root / "scripts" / "wiki-sync.json")):
+            one.start()
+            self.addCleanup(one.stop)
+        self.write("scripts/taxonomy.json", json.dumps(self.TAXONOMY))
+        self.groups()
+        rows = []
+        for number, (page, text) in enumerate(self.PAGES.items(), 1):
+            self.write(f"blueprint/roadmap/{page}", text)
+            row = {"subject": [{"type": "generic", "uri": f"../roadmap/{page}"}], "id": f"af_{number:024x}"}
+            if page.endswith("lagrange.md"):
+                row["object"] = [{"location": {"declaration": "Ext.lagrange"}}]
+            if page.endswith("group-basics/README.md"):
+                row["extensions"] = {"org.autoform": {"navigation": "module"}}
+            rows.append(row)
+        self.write("blueprint/links/roadmap.jsonl", json.dumps(rows[0]) + "\n")
+        self.write("blueprint/links/Algebra.jsonl", "".join(json.dumps(row) + "\n" for row in rows[1:]))
+        # The defaults the repository's links folder has, which Autoform merges every row over.
+        self.write("blueprint/links/_defaults.json", json.dumps(sync.DEFAULTS) + "\n")
+        self.write("scripts/wiki-sync.json", json.dumps({"docstrings": {
+            "Ext.backlog": sync.digest("A result that has no page yet."), "Ext.lagrange": sync.digest(self.LAGRANGE)}},
+            indent=0) + "\n")
+        self.git("init", "-q")
+        self.git("add", "-A")
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "base")
+        self.base = self.git("rev-parse", "HEAD")
+
+    def write(self, path: str, text: str) -> Path:
+        target = self.root / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text)
+        return target
+
+    def git(self, *args: str) -> str:
+        return subprocess.run(["git", "-C", str(self.root), *args], check=True, capture_output=True, text=True).stdout.strip()
+
+    def groups(self, lagrange: str = LAGRANGE, more: str = "", name: str = "lagrange") -> None:
+        text = self.GROUPS.format(lagrange=lagrange, more=more)
+        self.write("MathlibExt/Algebra/Groups.lean", text.replace("theorem lagrange", f"theorem {name}"))
+
+    def run_sync(self, *flags: str) -> tuple[int, str, str, dict]:
+        out, err = io.StringIO(), io.StringIO()
+        report = self.root.parent / f"{self.root.name}-report.json"
+        self.addCleanup(report.unlink, True)
+        with redirect_stdout(out), redirect_stderr(err):
+            status = sync.main(["declarations", "--base", self.base, *flags, "--report", str(report)])
+        return status, out.getvalue(), err.getvalue(), json.loads(report.read_text())
+
+    def tree(self) -> dict[str, bytes]:
+        return {path.relative_to(self.root).as_posix(): path.read_bytes() for path in sorted(self.root.rglob("*"))
+                if path.is_file() and ".git" not in path.relative_to(self.root).parts}
+
+    def test_a_pull_request_writes_its_own_declarations_pages_and_nothing_else(self) -> None:
+        # A new declaration in a module the wiki has, beside an older one with no page, which stays without, and a
+        # new module the taxonomy does not place yet.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.write("MathlibExt/Algebra/Rings.lean", "namespace Ext.Rings\n\n/-- Rings have units. -/\ntheorem units : True := "
+                   "trivial\n\n/-- Fields are rings. -/\ntheorem fields : True := trivial\n\nend Ext.Rings\n")
+        before = self.tree()
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        self.assertEqual(sorted(report["new"]), ["Ext.Rings.fields", "Ext.Rings.units", "Ext.fresh"])
+        roadmap = self.root / "blueprint" / "roadmap"
+        self.assertEqual((roadmap / "Algebra/groups/group-basics/fresh.md").read_text(), "# Fresh\n\nA new result.\n")
+        self.assertEqual((roadmap / "Algebra/groups/group-basics/README.md").read_text(),
+                         "# Group basics\n\n- [Lagrange](lagrange.md)\n- [Fresh](fresh.md)\n")
+        self.assertEqual(list(roadmap.rglob("backlog.md")), [])
+        self.assertEqual(sorted(path.name for path in (roadmap / "Algebra/not-yet-classified/rings").iterdir()),
+                         ["README.md", "fields.md", "units.md"])
+        self.assertIn("- [Not yet classified](not-yet-classified/README.md)", (roadmap / "Algebra/README.md").read_text())
+        self.assertIn("- [Rings](rings/README.md)", (roadmap / "Algebra/not-yet-classified/README.md").read_text())
+        # Only the new pages, the folder pages that list them, the links file and the baseline changed; no catalog.
+        after = self.tree()
+        self.assertEqual(sorted(path for path in after if before.get(path) != after[path]), sorted(report["written"]))
+        self.assertEqual(sorted(report["written"]), [
+            "blueprint/links/Algebra.jsonl", "blueprint/roadmap/Algebra/README.md",
+            "blueprint/roadmap/Algebra/groups/group-basics/README.md", "blueprint/roadmap/Algebra/groups/group-basics/fresh.md",
+            "blueprint/roadmap/Algebra/not-yet-classified/README.md",
+            "blueprint/roadmap/Algebra/not-yet-classified/rings/README.md",
+            "blueprint/roadmap/Algebra/not-yet-classified/rings/fields.md",
+            "blueprint/roadmap/Algebra/not-yet-classified/rings/units.md", "scripts/wiki-sync.json"])
+        # The rows the base had keep their bytes and places; each new one sits in path order with a fresh id.
+        old = before["blueprint/links/Algebra.jsonl"].decode().splitlines()
+        new = after["blueprint/links/Algebra.jsonl"].decode().splitlines()
+        self.assertEqual([row for row in new if row in old], old)
+        rows = [json.loads(row) for row in new]
+        self.assertEqual(rows, sorted(rows, key=sync.row_order))
+        ids = [json.loads(row)["id"] for row in new]
+        self.assertEqual(len(set(ids)), len(ids))
+        self.assertTrue(all(sync.ARTICLE_ID.fullmatch(article_id) for article_id in ids))
+        state = json.loads(after["scripts/wiki-sync.json"])["docstrings"]
+        self.assertEqual(sorted(state), ["Ext.Rings.fields", "Ext.Rings.units", "Ext.backlog", "Ext.fresh", "Ext.lagrange"])
+        self.assertEqual(state["Ext.fresh"], sync.digest("A new result."))
+        # A second run writes nothing, and the check finds the tree in step, its wiki changes the sync's own.
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, report["missing"], report["digests"]), (0, [], {}))
+        self.assertIn("Nothing to write.", out)
+        self.assertEqual(self.tree(), after)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"), out + err)
+        self.assertEqual(self.tree(), after)
+
+    def test_the_check_names_what_a_lean_change_still_needs_and_the_command_that_writes_it(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", "head")
+        before = self.tree()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual(status, 1)
+        self.assertEqual((report["in_step"], report["missing"], report["wiki_changes"]), (False, ["Ext.fresh"], "none"))
+        self.assertEqual(report["digests"], {"Ext.fresh": sync.digest("A new result.")})
+        self.assertIn(f"  python3 scripts/sync_wiki.py declarations --base {self.base}\n", out)
+        self.assertEqual(self.tree(), before)
+
+    def test_a_docstring_edit_rewrites_its_digest_and_names_its_page(self) -> None:
+        self.groups(lagrange="The order of a subgroup divides the order of a finite group.")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"]), (1, []))
+        self.assertEqual(report["changed"], ["Ext.lagrange (Algebra/groups/group-basics/lagrange.md)"])
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, report["written"]), (0, ["scripts/wiki-sync.json"]))
+        self.assertEqual(json.loads((self.root / "scripts/wiki-sync.json").read_text())["docstrings"]["Ext.lagrange"],
+                         sync.digest("The order of a subgroup divides the order of a finite group."))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"))
+
+    def test_a_renamed_declaration_stops_the_run_until_its_link_follows(self) -> None:
+        self.groups(name="lagrange_divides")
+        before = self.tree()
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 1)
+        self.assertIn("error: blueprint/links/Algebra.jsonl:4 (Algebra/groups/group-basics/lagrange.md) links Ext.lagrange, "
+                      "which the Lean no longer has", err)
+        self.assertIn("The run wrote nothing", err)
+        self.assertEqual(self.tree(), before)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"], len(report["errors"])), (1, ["Ext.lagrange_divides"], 1))
+        # The link follows the declaration and keeps its id: the page stays, and the new name needs no other.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace('"Ext.lagrange"', '"Ext.lagrange_divides"'))
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, report["missing"], report["written"]), (0, [], ["scripts/wiki-sync.json"]))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"))
+        # The sync never relinks a row: on the base's wiki it stops at the stale link instead.
+        self.assertEqual(report["differences"], [
+            "the sync stops on the base's wiki: blueprint/links/Algebra.jsonl:4 (Algebra/groups/group-basics/lagrange.md) "
+            "links Ext.lagrange, which the Lean no longer has: relink the row to the declaration's successor and keep its "
+            "article id, or remove the link and keep the page as a planned page"])
+
+    def test_a_held_marker_the_changes_leave_unusable_stops_the_run(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/backlog.md", "# Backlog\n\nAs the source states it.\n")
+        held = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/backlog.md"}],
+                "id": "af_" + "f" * 24, "extensions": {"org.atlas-wiki": {"held": {"declaration": "Ext.backlog",
+                                                                                     "reason": "vacuous", "issue": 1}}}}
+        links.write_text(links.read_text() + json.dumps(held) + "\n")
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", "held")
+        self.base = self.git("rev-parse", "HEAD")
+        self.write("MathlibExt/Algebra/Groups.lean", self.GROUPS.format(lagrange=self.LAGRANGE, more="").replace(
+            "/-- A result that has no page yet. -/\ntheorem backlog : True := trivial\n\n", ""))
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 1)
+        self.assertIn("error: Algebra/groups/group-basics/backlog.md: it holds Ext.backlog back, which the Lean index does "
+                      "not resolve: fix the held marker", err)
+
+    def test_a_write_with_nothing_changed_writes_nothing(self) -> None:
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, "Nothing to write." in out, report.get("written")), (0, True, None))
+
+    def test_documentation_alone_is_checked_without_reading_the_lean(self) -> None:
+        self.write("README.md", "Documentation.\n")
+        with patch.object(wiki, "generate", side_effect=AssertionError("read the Lean")):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "none"))
+
+    def test_hand_edits_and_rewritten_ids_are_not_the_syncs(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md"
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes write it otherwise than the sync"]))
+        page.write_text("# Fresh\n\nA new result.\n")
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace("af_" + "0" * 23 + "2", "af_" + "e" * 24))
+        self.assertEqual(self.run_sync("--check")[3]["differences"],
+                         ["blueprint/links/Algebra.jsonl: the changes write it otherwise than the sync"])
+        links.write_text(links.read_text().replace("af_" + "e" * 24, "af_" + "0" * 23 + "2"))
+        (self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md").unlink()
+        self.assertEqual(self.run_sync("--check")[3]["differences"],
+                         ["blueprint/roadmap/Algebra/groups/group-basics/lagrange.md: the changes delete it"])
+
+    def test_graph_files_the_sync_never_writes_are_not_its(self) -> None:
+        # Each graph file outside the pages, the links and the baseline makes the wiki changes not the sync's, with
+        # or without a Lean change.
+        for path in ("scripts/taxonomy.json", "scripts/card-moves.jsonl", "scripts/mathgraph-map.jsonl",
+                     "blueprint/atlas.json"):
+            target = self.root / path
+            kept = target.read_text() if target.is_file() else None
+            target.write_text((kept or "") + "\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "other", [
+                f"{path}: the sync writes nothing when no Lean changes"]), path)
+            self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+                f"{path}: the sync never writes it"]), path)
+            self.groups()
+            if kept is None:
+                target.unlink()
+            else:
+                target.write_text(kept)
+
+    def commit(self, message: str) -> str:
+        self.git("add", "-A")
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", message)
+        return self.git("rev-parse", "HEAD")
+
+    RINGS = ("namespace Ext.Rings\n\n/-- Rings have units. -/\ntheorem units : True := trivial\n\n/-- Fields are rings. -/\n"
+             "theorem fields : True := trivial\n\nend Ext.Rings\n")
+
+    def test_a_folder_its_parent_cannot_list_keeps_the_check_red(self) -> None:
+        # The parent page has a code fence, so the sync lists nothing on it: the new folder is an error until an
+        # editor lists it, on every run and in the check, whose wiki changes are then not the sync's alone.
+        self.write("blueprint/roadmap/Algebra/README.md",
+                   "# Algebra\n\nOperations.\n\n```\nnot a list\n```\n\n- [Groups](groups/README.md)\n")
+        self.base = self.commit("a parent page with a code fence")
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 1)
+        self.assertIn("Algebra/not-yet-classified is listed on no folder page", err)
+        for flags in ((), ("--check",)):
+            status, out, err, report = self.run_sync(*flags)
+            self.assertEqual((status, report["missing"]), (1, []), flags)
+            self.assertEqual(report["errors"], ["Algebra/not-yet-classified, a folder the changes add, is listed on no "
+                                                "folder page: list it on Algebra/README.md"])
+        self.assertEqual((report["in_step"], report["wiki_changes"]), (False, "other"))
+        self.assertIn("listed on no folder page", report["differences"][0])
+
+    def test_a_row_whose_page_is_missing_is_not_a_page(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        (self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md").unlink()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["missing"]), (1, False, []))
+        self.assertEqual(report["errors"], ["blueprint/roadmap/Algebra/groups/group-basics/fresh.md, which the row of "
+                                            "Ext.fresh names, is not a page: restore it, or remove the row and run the "
+                                            "sync again"])
+
+    def test_a_link_or_an_executable_bit_is_not_the_syncs(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md"
+        page.chmod(0o755)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes write it otherwise than the sync"]))
+        page.chmod(0o644)
+        elsewhere = self.root / "fresh.md"
+        page.rename(elsewhere)
+        page.symlink_to(elsewhere)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (1, "other"))
+        self.assertIn("blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the sync writes no link or other kind of "
+                      "file", report["differences"])
+
+    def test_the_check_replays_what_the_writer_does_and_no_more(self) -> None:
+        # A Lean change that needs nothing writes nothing, the baseline included, so a hand reformat of the baseline
+        # is not the sync's.
+        state = self.root / "scripts/wiki-sync.json"
+        canonical = state.read_text()
+        state.write_text(json.dumps(json.loads(canonical), indent=2) + "\n")
+        self.base = self.commit("an indented baseline")
+        self.write("MathlibExt/Algebra/Groups.lean", self.GROUPS.format(lagrange=self.LAGRANGE, more="") + "-- note\n")
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, "Nothing to write." in out), (0, True))
+        state.write_text(canonical)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "other"))
+        self.assertEqual(report["differences"], ["scripts/wiki-sync.json: the changes write it otherwise than the sync"])
+
+    def test_a_baseline_the_base_lacks_is_made(self) -> None:
+        self.git("rm", "-q", "scripts/wiki-sync.json")
+        self.base = self.commit("no baseline yet")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(json.loads((self.root / "scripts/wiki-sync.json").read_text()),
+                         {"docstrings": {"Ext.fresh": sync.digest("A new result.")}})
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"))
+
+    def test_the_baseline_follows_each_transition_the_changes_make(self) -> None:
+        # An undeprecated declaration with no entry gets one with its page; a declaration the changes delete loses
+        # the entry its unlinked page kept, though the base had it undocumented; and a docstring edit names its page
+        # for a reader even once its digest is written.
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text().replace("theorem backlog", "@[deprecated lagrange]\ntheorem backlog")
+                          .replace("end Ext", "theorem undocumented : True := trivial\n\nend Ext"))
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/undocumented.md", "# Undocumented\n\nKept.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        row = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/undocumented.md"}],
+               "id": "af_" + "c" * 24, "object": [{"location": {"declaration": "Ext.undocumented"}}]}
+        links.write_text(links.read_text() + json.dumps(row) + "\n")
+        state = self.root / "scripts/wiki-sync.json"
+        digests = json.loads(state.read_text())["docstrings"]
+        digests.pop("Ext.backlog")
+        digests["Ext.undocumented"] = sync.digest("A docstring it lost.")
+        state.write_text(json.dumps({"docstrings": dict(sorted(digests.items()))}, indent=0) + "\n")
+        self.base = self.commit("an undocumented page, a deprecated declaration")
+        groups.write_text(self.GROUPS.format(lagrange="The order of a subgroup divides the group's.", more=""))
+        links.write_text(links.read_text().replace(', "object": [{"location": {"declaration": "Ext.undocumented"}}]', ""))
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        self.assertEqual(report["new"], {"Ext.backlog": "MathlibExt/Algebra/Groups.lean"})
+        self.assertEqual(report["digests"], {"Ext.backlog": sync.digest("A result that has no page yet."),
+                                             "Ext.lagrange": sync.digest("The order of a subgroup divides the group's."),
+                                             "Ext.undocumented": None})
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["digests"]), (0, {}))
+        self.assertEqual(report["changed"], ["Ext.lagrange (Algebra/groups/group-basics/lagrange.md)"])
+
+    def test_a_new_folder_joins_its_neighbours_through_generate_wikis_parts(self) -> None:
+        # generate_wiki splits the field by its 21 topics without pages, so it lists the subfield under a part; the
+        # wiki's subfield is flat, and a new topic still goes ahead of the one it lists after it, not at the end.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["subjects"]["Algebra"]["fields"][0]["subfields"] = [
+            {"slug": "middle", "title": "Middle", "description": "Middle."}]
+        for number in range(21):
+            taxonomy["placements"][f"MathlibExt/Algebra/Single{number:02d}"] = {"to": "Algebra/groups",
+                                                                               "title": f"Single {number:02d}"}
+            self.write(f"MathlibExt/Algebra/Single{number:02d}.lean",
+                       f"namespace Ext.Single{number:02d}\n\n/-- A result. -/\ntheorem one : True := trivial\n\nend "
+                       f"Ext.Single{number:02d}\n")
+        for name in ("Zulu", "Beta"):
+            taxonomy["placements"][f"MathlibExt/Algebra/{name}"] = {"to": "Algebra/groups/middle", "title": name}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        zulu = ("namespace Ext.Zulu\n\n/-- One result. -/\ntheorem one : True := trivial\n\n/-- Another result. -/\n"
+                "theorem two : True := trivial\n\nend Ext.Zulu\n")
+        self.write("MathlibExt/Algebra/Zulu.lean", zulu)
+        self.write("blueprint/roadmap/Algebra/groups/README.md", "# Groups\n\nGroups.\n\n- [Middle](middle/README.md)\n"
+                   "- [Group basics](group-basics/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/middle/README.md", "# Middle\n\nMiddle.\n\n- [Zulu](zulu/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/middle/zulu/README.md", "# Zulu\n\n- [One](one.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/middle/zulu/one.md", "# One\n\nOne result.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        rows = [{"subject": [{"type": "generic", "uri": f"../roadmap/Algebra/groups/middle/{page}"}],
+                 "id": f"af_{number:024x}"} for number, page in enumerate(("README.md", "zulu/README.md", "zulu/one.md"), 90)]
+        rows[2]["object"] = [{"location": {"declaration": "Ext.Zulu.one"}}]
+        links.write_text(links.read_text() + "".join(json.dumps(row) + "\n" for row in rows))
+        self.base = self.commit("a flat subfield of a field generate_wiki splits")
+        self.write("MathlibExt/Algebra/Beta.lean", zulu.replace("Zulu", "Beta"))
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        self.assertEqual((self.root / "blueprint/roadmap/Algebra/groups/middle/README.md").read_text(),
+                         "# Middle\n\nMiddle.\n\n- [Beta](beta/README.md)\n- [Zulu](zulu/README.md)\n")
+        self.assertFalse(any("part-" in path for path in report["written"]), report["written"])
+
+    def test_a_new_subject_the_roadmap_cannot_list_keeps_the_check_red(self) -> None:
+        # The walk up from a page reaches the roadmap's own page: a new subject listed nowhere is an error.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["regions"]["Foundations"] = ["Logic"]
+        taxonomy["subjects"]["Logic"] = {"title": "Logic", "description": "Proofs.", "fields": [
+            {"slug": "basics", "title": "Basics", "description": "Basics.", "subfields": []}]}
+        taxonomy["placements"]["MathlibExt/Logic/Basics"] = {"to": "Logic/basics", "title": "Basics"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        self.write("blueprint/roadmap/README.md", self.PAGES["README.md"] + "\n```\nnot a list\n```\n")
+        self.base = self.commit("a roadmap page with a code fence")
+        self.write("MathlibExt/Logic/Basics.lean", "namespace Ext.Logic\n\n/-- A proof. -/\ntheorem proof : True := "
+                   "trivial\n\n/-- Another. -/\ntheorem other : True := trivial\n\nend Ext.Logic\n")
+        self.assertEqual(self.run_sync()[0], 1)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(report["errors"], ["Logic, a folder the changes add, is listed on no folder page: list it on "
+                                            "README.md"])
+
+    def test_a_new_folder_without_its_row_or_behind_a_link_is_not_in_step(self) -> None:
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        self.assertEqual(self.run_sync()[0], 0)
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        kept = links.read_text()
+        links.write_text("".join(line for line in kept.splitlines(keepends=True) if "rings/README.md" not in line))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(report["errors"], ["Algebra/not-yet-classified/rings/README.md, the page of a folder the "
+                                            "changes add, has no annotation row: restore its row"])
+        links.write_text(kept)
+        folder = self.root / "blueprint/roadmap/Algebra/not-yet-classified/rings"
+        folder.rename(self.root / "rings")
+        folder.symlink_to(self.root / "rings")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "blueprint/roadmap/Algebra/not-yet-classified/rings is a link: the sync reads and writes through none; put "
+            "what it links to in its place"]))
+        # A link stops the writer, which then writes nothing.
+        before = {path: path.read_bytes() for path in (self.root / "blueprint").rglob("*") if path.is_file()}
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, "The run wrote nothing" in err), (1, True))
+        self.assertEqual({path: path.read_bytes() for path in (self.root / "blueprint").rglob("*") if path.is_file()},
+                         before)
+
+    def test_a_folder_page_written_in_place_keeps_its_mode(self) -> None:
+        (self.root / "blueprint/roadmap/Algebra/groups/group-basics/README.md").chmod(0o755)
+        self.base = self.commit("an executable folder page")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"), report["differences"])
+
+    def test_the_check_reads_the_base_rows_once_whatever_the_number_of_rows(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        counted = []
+        # The base's Lean is read in this process, as where the platform cannot fork.
+        real = sync.numbered_rows
+
+        def numbered_rows():
+            counted.append(1)
+            return real()
+
+        def in_background(function, *args):
+            value = function(*args)
+            return lambda: value
+
+        with patch.object(sync, "numbered_rows", numbered_rows), patch.object(sync, "in_background", in_background):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"))
+        # The base's rows for its view, the working tree's for the plan and for the ids, and the base's once for the
+        # ids and once for its plan: five, with more rows than that.
+        self.assertGreater(len(sync.numbered_rows()), 5)
+        self.assertEqual(len(counted), 5)
+
+    def test_a_part_copy_the_changes_leave_stale_is_refreshed(self) -> None:
+        # A new folder goes into the last part of a split field; the copy of that part on the field's page must list it,
+        # and the writer refreshes that copy even when nothing else is left to write.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["placements"]["MathlibExt/Algebra/Rings"] = {"to": "Algebra/groups", "title": "Rings"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        field = self.write("blueprint/roadmap/Algebra/groups/README.md",
+                           "# Groups\n\nGroups.\n\n- [Group basics](group-basics/README.md)\n\n"
+                           "## [Part 1](part-01/README.md)\n\n- [Cosets](part-01/cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/README.md",
+                   "# Groups, part 1\n\n- [Cosets](cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/cosets/README.md", "# Cosets\n\nCosets.\n")
+        self.base = self.commit("a field split into parts")
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        copy = "- [Rings](part-01/rings/README.md)\n"
+        self.assertIn(copy, field.read_text())
+        field.write_text(field.read_text().replace(copy, ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["parts"], report["errors"], report["missing"],
+                          report["digests"]), (1, False, ["Algebra/groups/part-01/README.md"], [], [], {}))
+        self.assertIn(f"python3 scripts/sync_wiki.py declarations --base {self.base}", out)
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, "Nothing to write." in out), (0, False))
+        self.assertIn(copy, field.read_text())
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+
+    def test_a_part_copy_the_sync_cannot_refresh_is_an_error(self) -> None:
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["placements"]["MathlibExt/Algebra/Rings"] = {"to": "Algebra/groups", "title": "Rings"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        # A code fence makes the field's page one the sync does not refresh.
+        field = self.write("blueprint/roadmap/Algebra/groups/README.md",
+                           "# Groups\n\nGroups.\n\n```\ncode\n```\n\n- [Group basics](group-basics/README.md)\n\n"
+                           "## [Part 1](part-01/README.md)\n\n- [Cosets](part-01/cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/README.md",
+                   "# Groups, part 1\n\n- [Cosets](cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/cosets/README.md", "# Cosets\n\nCosets.\n")
+        self.base = self.commit("a field split into parts, with a code fence")
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 1)
+        self.assertIn("error: the copy of Algebra/groups/part-01's list on its parent's page could not be refreshed",
+                      err)
+        self.assertNotIn("part-01/rings/README.md", field.read_text())
+        # What the failed write leaves is not the sync's output, though nothing else changed.
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["parts"], report["wiki_changes"]),
+                         (1, False, ["Algebra/groups/part-01/README.md"], "other"))
+        self.assertIn("the copy of Algebra/groups/part-01's list on its parent's page could not be refreshed",
+                      report["differences"][0])
+        cosets = "- [Cosets](part-01/cosets/README.md)\n"
+        field.write_text(field.read_text().replace(cosets, cosets + "- [Rings](part-01/rings/README.md)\n"))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["parts"], report["wiki_changes"]), (0, True, [], "other"))
+
+    def test_a_page_written_again_is_listed_once(self) -> None:
+        # The repair a missing page's error advises: remove its row, and the sync writes the page again, keeping the
+        # folder page's entry for it.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        (self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md").unlink()
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text("".join(line for line in links.read_text().splitlines(keepends=True)
+                                 if "fresh.md" not in line))
+        self.assertEqual(self.run_sync()[0], 0)
+        folder_page = (self.root / "blueprint/roadmap/Algebra/groups/group-basics/README.md").read_text()
+        self.assertEqual(folder_page.count("(fresh.md)"), 1, folder_page)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+
+    def test_a_temporary_folder_reached_through_a_link(self) -> None:
+        real = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, real, True)
+        alias = self.root.parent / f"{self.root.name}-alias"
+        alias.symlink_to(real)
+        self.addCleanup(alias.unlink)
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        with patch.object(tempfile, "tempdir", str(alias)):
+            self.assertEqual(self.run_sync()[0], 0)
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"), err)
+
+    def split_field(self, fence: str = "") -> Path:
+        """Make the base's field a split one: its part-01 holds the module Cosets's page of Ext.Cosets.one, which the
+        field's page copies; returns the field's page."""
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        for name in ("Rings", "Cosets"):
+            taxonomy["placements"][f"MathlibExt/Algebra/{name}"] = {"to": "Algebra/groups", "title": name}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        field = self.write("blueprint/roadmap/Algebra/groups/README.md",
+                           f"# Groups\n\nGroups.\n\n{fence}- [Group basics](group-basics/README.md)\n\n"
+                           "## [Part 1](part-01/README.md)\n\n- [One](part-01/one.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/README.md", "# Groups, part 1\n\n- [One](one.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/one.md", "# One\n\nOne coset.\n")
+        self.write("MathlibExt/Algebra/Cosets.lean", "namespace Ext.Cosets\n\n/-- One coset. -/\ntheorem one : True := "
+                   "trivial\n\nend Ext.Cosets\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        rows = [{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/part-01/README.md"}],
+                 "id": "af_" + "d" * 24},
+                {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/part-01/one.md"}],
+                 "id": "af_" + "e" * 24, "object": [{"location": {"declaration": "Ext.Cosets.one"}}]}]
+        links.write_text(links.read_text() + "".join(json.dumps(row) + "\n" for row in rows))
+        state = self.root / "scripts/wiki-sync.json"
+        digests = json.loads(state.read_text())["docstrings"]
+        digests["Ext.Cosets.one"] = sync.digest("One coset.")
+        state.write_text(json.dumps({"docstrings": dict(sorted(digests.items()))}, indent=0) + "\n")
+        self.base = self.commit("a field split into parts")
+        return field
+
+    def test_a_page_written_again_in_a_part_refreshes_the_parts_copy(self) -> None:
+        field = self.split_field()
+        cosets = self.root / "MathlibExt/Algebra/Cosets.lean"
+        two = "/-- Two cosets. -/\ntheorem two : True := trivial\n\nend Ext"
+        cosets.write_text(cosets.read_text().replace("end Ext", two))
+        self.assertEqual(self.run_sync()[0], 0)
+        copy = "- [Two](part-01/two.md)\n"
+        self.assertIn(copy, field.read_text())
+        # The page, its row and the field's copy of it go; the part's page still lists it.
+        (self.root / "blueprint/roadmap/Algebra/groups/part-01/two.md").unlink()
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text("".join(line for line in links.read_text().splitlines(keepends=True) if "two.md" not in line))
+        field.write_text(field.read_text().replace(copy, ""))
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertIn(copy, field.read_text())
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(self.tree(), before)
+
+    def test_a_row_outside_the_roadmap_places_no_page_there(self) -> None:
+        # A row names a page of the module outside the roadmap, a row Autoform leaves out: the run writes nothing, as
+        # the whole run does, and so nothing outside the wiki; the pull request that adds such a row is stopped.
+        self.write("outside/one.md", "# One\n\nOne coset.\n")
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["placements"]["MathlibExt/Algebra/Cosets"] = {"to": "Algebra/groups", "title": "Cosets"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        self.write("MathlibExt/Algebra/Cosets.lean", "namespace Ext.Cosets\n\n/-- One coset. -/\ntheorem one : True := "
+                   "trivial\n\nend Ext.Cosets\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../../outside/one.md"}], "id": "af_" + "f" * 24,
+            "object": [{"location": {"declaration": "Ext.Cosets.one"}}]}) + "\n")
+        self.base = self.commit("a row outside the roadmap")
+        cosets = self.root / "MathlibExt/Algebra/Cosets.lean"
+        two = "/-- Two cosets. -/\ntheorem two : True := trivial\n\nend Ext"
+        cosets.write_text(cosets.read_text().replace("end Ext", two))
+        before = self.tree()
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, "is one Autoform leaves out" in err, report.get("written", [])), (1, True, []))
+        self.assertEqual(self.tree(), before)
+        # The same row added by the pull request stops it before it writes anything.
+        links.write_text("".join(line for line in links.read_text().splitlines(keepends=True) if "outside" not in line))
+        self.base = self.commit("no row outside the roadmap")
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../../outside/one.md"}], "id": "af_" + "f" * 24,
+            "object": [{"location": {"declaration": "Ext.Cosets.one"}}]}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(report["errors"], [f"the row af_{'f' * 24} is one Autoform cannot read: a row of Algebra.jsonl "
+                                            "about ../../outside/one.md is one Autoform leaves out: its subject names no "
+                                            "page below roadmap/; a row names its page whole; fix it"])
+
+    def test_a_page_whose_declaration_loses_its_docstring_keeps_the_bases_digest(self) -> None:
+        # The digest the base reviewed stays, whatever the pull request does to its entry; none is made up when the
+        # base had none.
+        state = self.root / "scripts/wiki-sync.json"
+        reviewed = sync.digest(self.LAGRANGE)
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text().replace(f"/-- {self.LAGRANGE} -/\n", ""))
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(json.loads(state.read_text())["docstrings"]["Ext.lagrange"], reviewed)
+        for entry in (None, sync.digest("Something else.")):
+            digests = json.loads(state.read_text())["docstrings"]
+            if entry is None:
+                digests.pop("Ext.lagrange")
+            else:
+                digests["Ext.lagrange"] = entry
+            state.write_text(json.dumps({"docstrings": digests}, indent=0) + "\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"], report["digests"]), (1, False, {"Ext.lagrange": reviewed}),
+                             entry)
+            self.assertEqual(self.run_sync()[0], 0)
+            self.assertEqual(json.loads(state.read_text())["docstrings"]["Ext.lagrange"], reviewed)
+            # The baseline is the base's again, as are the wiki's other files.
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "none"))
+        # A base without the entry: nothing to keep.
+        digests = json.loads(state.read_text())["docstrings"]
+        digests.pop("Ext.lagrange")
+        state.write_text(json.dumps({"docstrings": digests}, indent=0) + "\n")
+        groups.write_text(self.GROUPS.format(lagrange=self.LAGRANGE, more=""))
+        self.base = self.commit("no entry for lagrange")
+        groups.write_text(groups.read_text().replace(f"/-- {self.LAGRANGE} -/\n", ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["digests"]), (0, {}))
+
+    def test_a_row_credits_its_declaration_without_the_folders_defaults(self) -> None:
+        # Without defaults to complete the shorthand, the run writes the Lean end whole, so the row credits the
+        # declaration it was written for, the check passes and a second write changes nothing.
+        self.git("rm", "-q", "blueprint/links/_defaults.json")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace('"object": [{"location": {"declaration": "Ext.lagrange"}}]',
+                                                   '"object": [{"type": "lean", "uri": "../..", "location": '
+                                                   '{"declaration": "Ext.lagrange"}}]'))
+        self.base = self.commit("explicit Lean ends, no defaults")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        row = next(json.loads(line) for line in links.read_text().splitlines() if "fresh.md" in line)
+        self.assertEqual((row["object"], sync.lean_name(row)),
+                         ([{"type": "lean", "uri": "../..", "location": {"declaration": "Ext.fresh"}}], "Ext.fresh"))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(self.tree(), before)
+
+    def test_a_row_the_build_refuses_hides_no_other_problem(self) -> None:
+        # A flag that is not a Boolean, on an unrelated row the base already had, leaves the held marker the changes
+        # make stale as visible as it would be without it.
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/odd.md", "# Odd\n\nOdd.\n")
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/held.md", "# Held\n\nHeld.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/odd.md"}],
+            "id": "af_" + "a" * 24, "extensions": {"org.autoform": {"mathlib": "yes"}}}) + "\n" + json.dumps({
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/held.md"}],
+            "id": "af_" + "b" * 24, "extensions": {sync.OWN: {"held": {"declaration": "Ext.stillHeld",
+                                                                       "reason": "Its statement is wrong."}}}}) + "\n")
+        self.groups(more="theorem stillHeld : True := trivial\n\n")
+        self.base = self.commit("an unreadable flag and a held marker")
+        self.groups()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False), report["errors"])
+        self.assertTrue(any("Ext.stillHeld" in row for row in report["errors"]), report["errors"])
+        self.assertFalse(any("mathlib" in row for row in report["errors"]), report["errors"])
+
+    def test_rows_are_read_as_autoform_reads_them(self) -> None:
+        # A row whose page its subject's defaults give, a string holding U+2028, records separated by carriage
+        # returns, and a refused row with no subject the base already had: the run orders, keeps and hints rows by the
+        # page Autoform reads, splits records as Autoform does, and keeps every other byte.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        lines = links.read_text().splitlines()
+        lines[0] = json.dumps({"subject": [{"type": "generic"}], "id": json.loads(lines[0])["id"],
+                               "note": "two\u2028lines"}, ensure_ascii=False)
+        self.write("blueprint/links/_defaults.json", json.dumps({
+            **sync.DEFAULTS, "subject": {"type": "generic", "uri": "../roadmap/Algebra/README.md"}}) + "\n")
+        links.write_text("\r".join(lines) + "\r" + json.dumps({"subject": [], "id": "af_" + "c" * 24}) + "\r")
+        self.base = self.commit("rows as Autoform reads them")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"], report["errors"]), (1, ["Ext.fresh"], []))
+        kept = links.read_bytes()
+        status, out, err, report = self.run_sync()
+        # The refused row the base had stops the write, which writes nothing.
+        self.assertEqual((status, "the run wrote nothing" in err, links.read_bytes()), (1, True, kept))
+        links.write_bytes(kept.replace(b'\r{"subject": [], "id": "af_' + b"c" * 24 + b'"}', b""))
+        self.git("add", "blueprint/links/Algebra.jsonl")
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "no refused row")
+        self.base = self.git("rev-parse", "HEAD")
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        text = links.read_bytes().decode()
+        self.assertIn("two\u2028lines", text)
+        self.assertEqual([line for line in sync.records(text)[0] if "fresh.md" not in line],
+                         sync.records(kept.decode().replace('\r{"subject": [], "id": "af_' + "c" * 24 + '"}', ""))[0])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+
+    def test_a_problem_the_base_had_is_not_the_changes(self) -> None:
+        # An annotation file Autoform reads and the sync does not, already on the base, is reported the same way on
+        # both sides, though the base's copy sits in a temporary folder.
+        self.write("blueprint/links/Extra.ndjson", "")
+        self.base = self.commit("a links file Autoform reads and the sync does not")
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["errors"], report["wiki_changes"]), (0, True, [], "other"))
+
+
+    def test_a_row_turns_off_a_mathlib_flag_its_defaults_set(self) -> None:
+        # Defaults that flag every row for Mathlib, which the base's rows turn off: the run's new rows turn it off too,
+        # so they credit what they were written for, and the check and a second write agree.
+        self.write("blueprint/links/_defaults.json", json.dumps({**sync.DEFAULTS, "extensions": {
+            "org.autoform": {"mathlib": True}}}) + "\n")
+        for path in ("blueprint/links/Algebra.jsonl", "blueprint/links/roadmap.jsonl"):
+            links = self.root / path
+            rows = [json.loads(line) for line in links.read_text().splitlines()]
+            for row in rows:
+                row.setdefault("extensions", {}).setdefault("org.autoform", {})["mathlib"] = False
+            links.write_text("".join(json.dumps(row) + "\n" for row in rows))
+        self.base = self.commit("defaults that flag rows for Mathlib")
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        self.assertEqual(self.run_sync()[0], 0)
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        new = [json.loads(line) for line in links.read_text().splitlines() if "not-yet-classified" in line]
+        self.assertEqual(len(new), 4)
+        self.assertTrue(all(row["extensions"]["org.autoform"]["mathlib"] is False for row in new))
+        self.assertEqual(sorted(sync.page_owner(row)[1] or "" for row in new), ["", "", "Ext.Rings.fields", "Ext.Rings.units"])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(self.tree(), before)
+
+    def test_a_second_row_with_the_same_problem_is_the_changes(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({"subject": [], "id": "af_" + "c" * 24}) + "\n")
+        self.base = self.commit("a refused row")
+        links.write_text(links.read_text() + json.dumps({"subject": [], "id": "af_" + "d" * 24}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(len(report["errors"]), 1, report["errors"])
+
+    def test_a_page_key_has_forward_slashes_on_every_platform(self) -> None:
+        # Where page_name gives the platform's separators, ids are still hinted and found by one key.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        real = sync.page_name
+        with patch.object(sync.os, "sep", "\\"), \
+                patch.object(sync, "page_name", lambda row: real(row).replace("/", "\\")):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"), report["differences"])
+
+
+    def test_a_row_the_changes_break_is_theirs_though_they_fix_another(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/b.md", "# B\n\nB.\n")
+        b = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/b.md"}], "id": "af_" + "b" * 24}
+        a = {"subject": [], "id": "af_" + "a" * 24}
+        links.write_text(links.read_text() + json.dumps(a) + "\n" + json.dumps(b) + "\n")
+        self.base = self.commit("a broken row and a sound one")
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/a.md", "# A\n\nA.\n")
+        fixed = {**a, "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/a.md"}]}
+        links.write_text(links.read_text().replace(json.dumps(a), json.dumps(fixed)).replace(json.dumps(b),
+                                                                                          json.dumps({**b, "subject": []})))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual([row for row in report["errors"] if "af_" + "b" * 24 in row],
+                         [f"the row af_{'b' * 24} is one Autoform cannot read: a row of Algebra.jsonl about ? is one "
+                          f"Autoform leaves out: {sync.read_subject({**b, 'subject': []})[1]}; a row names its page whole; "
+                          "fix it"])
+        self.assertFalse(any("af_" + "a" * 24 in row for row in report["errors"]), report["errors"])
+
+    def test_a_folder_row_clears_a_declaration_its_defaults_name_only_when_one_is_made(self) -> None:
+        # Defaults that name a declaration, which the base's folder rows clear: a docstring edit writes its digest,
+        # with no folder row to check, and a new folder's row clears the declaration too.
+        self.write("blueprint/links/_defaults.json", json.dumps({"object": {**sync.DEFAULTS["object"],
+                                                                            "location": {"declaration": "Ext.lagrange"}}})
+                   + "\n")
+        for path in ("blueprint/links/Algebra.jsonl", "blueprint/links/roadmap.jsonl"):
+            links = self.root / path
+            rows = [json.loads(line) for line in links.read_text().splitlines()]
+            for row in rows:
+                row.setdefault("object", [])
+            links.write_text("".join(json.dumps(row) + "\n" for row in rows))
+        self.base = self.commit("defaults that name a declaration")
+        self.groups(lagrange="The order of a subgroup divides the group's.")
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        self.assertEqual(report["written"], ["scripts/wiki-sync.json"])
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        self.assertEqual(self.run_sync()[0], 0)
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        folders = [json.loads(line) for line in links.read_text().splitlines() if "not-yet-classified" in line
+                   and "README.md" in line]
+        self.assertEqual([(row.get("object"), sync.page_owner(row)) for row in folders], [([], ("none", None, None))] * 2)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+
+
+    def test_a_broken_row_still_counts_among_its_pages_rows(self) -> None:
+        # The base's row of a page has a flag that is not a Boolean; a second row of that page, which the changes add,
+        # is a new problem, though the inherited one is not.
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/planned.md", "# Planned\n\nPlanned.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        row = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/planned.md"}],
+               "id": "af_" + "a" * 24, "extensions": {"org.autoform": {"mathlib": "yes"}}}
+        links.write_text(links.read_text() + json.dumps(row) + "\n")
+        self.base = self.commit("a row with a flag that is not a Boolean")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        links.write_text(links.read_text() + json.dumps({"subject": row["subject"], "id": "af_" + "b" * 24}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(report["errors"], ["Algebra/groups/group-basics/planned.md has a row too many, which Autoform "
+                                            "reads together with its others; a page has one row; fix it"])
+
+    def test_taking_a_row_from_a_page_with_too_many_is_no_new_problem(self) -> None:
+        # A page with three rows on the base: taking one away leaves fewer too many, which is no problem of the
+        # changes; adding a fourth is one.
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/planned.md", "# Planned\n\nPlanned.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        subject = [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/planned.md"}]
+        rows = [json.dumps({"subject": subject, "id": f"af_{letter * 24}"}) for letter in "abcd"]
+        links.write_text(links.read_text() + "".join(row + "\n" for row in rows[:3]))
+        self.base = self.commit("a page with three rows")
+        links.write_text(links.read_text().replace(rows[2] + "\n", ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        links.write_text(links.read_text() + rows[2] + "\n" + rows[3] + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "Algebra/groups/group-basics/planned.md has a row too many, which Autoform reads together with its others; "
+            "a page has one row; fix it"]))
+
+
+    def test_a_declarations_pages_are_counted_once_whatever_credits_them(self) -> None:
+        # Three pages stand for Ext.lagrange on the base, one by the module and name an earlier sync wrote: taking one
+        # away is no new problem; making that row an explicit link and adding a fourth page is one.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        folder = "blueprint/roadmap/Algebra/groups/group-basics"
+        explicit = {"location": {"declaration": "Ext.lagrange"}}
+        rows = {name: {"subject": [{"type": "generic", "uri": f"../roadmap/Algebra/groups/group-basics/{name}.md"}],
+                       "id": f"af_{letter * 24}"} for name, letter in (("p2", "a"), ("p3", "b"), ("p4", "c"))}
+        for name in rows:
+            self.write(f"{folder}/{name}.md", f"# {name}\n\nThe same result.\n")
+        base = [{**rows["p2"], "object": [explicit]},
+                {**rows["p3"], "extensions": {sync.OWN: {"module": "MathlibExt.Algebra.Groups", "name": "lagrange"}}}]
+        links.write_text(links.read_text() + "".join(json.dumps(row) + "\n" for row in base))
+        self.base = self.commit("three pages for one declaration")
+        kept = links.read_text()
+        links.write_text(kept.replace(json.dumps(base[0]) + "\n", ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        links.write_text(kept.replace(json.dumps(base[1]), json.dumps({**rows["p3"], "object": [explicit]}))
+                         + json.dumps({**rows["p4"], "object": [explicit]}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "the declaration Ext.lagrange of this project has a page too many; a declaration has one page; fix it"]))
+
+
+    def test_a_row_by_module_and_name_whose_declaration_goes_is_stale(self) -> None:
+        # A row an earlier sync wrote with a module and a name links the declaration they resolve to: removing it
+        # leaves the row stale, which stops the run until the row is relinked or the link removed.
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/extra.md", "# Extra\n\nExtra.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/extra.md"}],
+            "id": "af_" + "e" * 24, "extensions": {sync.OWN: {"module": "MathlibExt.Algebra.Groups",
+                                                               "name": "extra"}}}) + "\n")
+        self.groups(more="theorem extra : True := trivial\n\n")
+        self.base = self.commit("a row by module and name")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        self.groups()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(len(report["errors"]), 1, report["errors"])
+        self.assertIn("names extra in MathlibExt.Algebra.Groups, by the module and name an earlier sync wrote, which no "
+                      "longer name one declaration of the Lean", report["errors"][0])
+        # A second declaration of that name in the module makes the pair name two: the same problem.
+        self.groups(more="theorem extra : True := trivial\n\nnamespace Other\n\ntheorem extra : True := trivial\n\n"
+                         "end Other\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, len(report["errors"])), (1, 1), report["errors"])
+        self.assertIn("which no longer name one declaration of the Lean", report["errors"][0])
+
+    def test_a_row_crediting_mathlib_keeps_the_module_and_name_it_once_had(self) -> None:
+        # A row the links folder's defaults credit to Mathlib, which still carries the module and name an earlier sync
+        # wrote: its owner is Mathlib's declaration, whatever becomes of the old one, so removing that one leaves no
+        # stale link (the problems the defaults give other rows are the base's).
+        self.write("blueprint/links/_defaults.json", json.dumps({
+            "object": {"type": "lean", "uri": "https://github.com/leanprover-community/mathlib4",
+                       "location": {"declaration": "Nat.add_comm", "module": "Mathlib.Algebra.Group.Nat"}},
+            "extensions": {"org.autoform": {"mathlib": True}}}) + "\n")
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/extra.md", "# Extra\n\nExtra.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        row = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/extra.md"}],
+               "id": "af_" + "e" * 24, "extensions": {sync.OWN: {"module": "MathlibExt.Algebra.Groups", "name": "extra"}}}
+        links.write_text(links.read_text() + json.dumps(row) + "\n")
+        self.groups(more="theorem extra : True := trivial\n\n")
+        self.base = self.commit("a Mathlib-credited row with an old module and name")
+        self.assertEqual((sync.page_owner(row)[0], sync.legacy_pair(row)), ("mathlib", ("MathlibExt.Algebra.Groups",
+                                                                                         "extra")))
+        self.groups()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        # Its module and name are never read, even when they name nothing.
+        links.write_text(links.read_text().replace('"module": "MathlibExt.Algebra.Groups"', '"module": null'))
+        with patch.object(sync, "legacy_lean_name", side_effect=AssertionError("read the module and name")):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (0, True))
+
+    def test_a_row_the_run_cannot_settle_stops_it_before_it_writes(self) -> None:
+        # Every row the run may add is checked before anything is written: one that would not credit its declaration
+        # leaves the tree as it was, the baseline included.
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        before = self.tree()
+        real = sync.settled
+        with patch.object(sync, "settled", lambda annotation, lean: lean != "Ext.Rings.units" and real(annotation, lean)):
+            status, out, err, report = self.run_sync()
+        self.assertEqual((status, report.get("written")), (1, []))
+        self.assertIn("no row the sync can write credits Ext.Rings.units to this project; fix it and run again (the run "
+                      "wrote nothing)", err)
+        self.assertEqual(self.tree(), before)
+
+
+    def test_a_link_to_a_declaration_the_row_does_not_credit_goes_stale_too(self) -> None:
+        # A row stating lagrange and using helper: removing helper leaves its link stale, though the row's credit
+        # still holds.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace(
+            '"object": [{"location": {"declaration": "Ext.lagrange"}}]',
+            '"object": [{"location": {"declaration": "Ext.lagrange"}, "role": "states"}, '
+            '{"location": {"declaration": "Ext.helper"}, "role": "uses"}]'))
+        self.groups(more="theorem helper : True := trivial\n\n")
+        self.base = self.commit("a row that uses a second declaration")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        self.groups()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], len(report["errors"])), (1, False, 1), report["errors"])
+        self.assertIn("links Ext.helper, which the row names but does not credit, and the Lean no longer has it: point "
+                      "that end at the declaration's successor or remove the end, keeping the row's article id and what "
+                      "it credits", report["errors"][0])
+
+    def test_a_row_by_module_and_name_that_also_uses_a_declaration_is_checked_for_both(self) -> None:
+        # A row whose defaults make it use helper and that credits extra by the module and name an earlier sync wrote:
+        # removing either is the changes' problem, and removing both, two.
+        self.write("blueprint/links/_defaults.json", json.dumps({"object": {
+            **sync.DEFAULTS["object"], "location": {"declaration": "Ext.helper"}, "role": "uses"}}) + "\n")
+        roadmap = self.root / "blueprint/links/roadmap.jsonl"
+        roadmap.write_text("".join(json.dumps({**json.loads(line), "object": []}) + "\n"
+                                   for line in roadmap.read_text().splitlines()))
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        rows = [json.loads(line) for line in links.read_text().splitlines()]
+        for row in rows:
+            row.setdefault("object", [])
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/extra.md", "# Extra\n\nExtra.\n")
+        rows.append({"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/extra.md"}],
+                     "id": "af_" + "e" * 24, "extensions": {sync.OWN: {"module": "MathlibExt.Algebra.Groups",
+                                                                        "name": "extra"}}})
+        links.write_text("".join(json.dumps(row) + "\n" for row in rows))
+        both = "theorem helper : True := trivial\n\ntheorem extra : True := trivial\n\n"
+        self.groups(more=both)
+        self.base = self.commit("a row that uses helper and credits extra by module and name")
+        self.assertEqual(self.run_sync("--check")[3]["errors"], [])
+        for more, expected in ((both.replace("theorem extra : True := trivial\n\n", ""), ["extra in"]),
+                               (both.replace("theorem helper : True := trivial\n\n", ""), ["Ext.helper"]),
+                               ("", ["Ext.helper", "extra in"])):
+            self.groups(more=more)
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, len(report["errors"])), (1, len(expected)), report["errors"])
+            for row, name in zip(sorted(report["errors"], key=lambda row: "extra in" in row), expected):
+                self.assertIn(name, row)
+
+
+    def test_a_stale_link_the_base_had_stays_the_bases_when_the_row_gains_a_credit(self) -> None:
+        # The base's row links only a declaration the Lean lacks; the changes add the declaration it states, leaving
+        # that end as it was: no new problem.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace(
+            '"object": [{"location": {"declaration": "Ext.lagrange"}}]',
+            '"object": [{"location": {"declaration": "Ext.alreadyGone"}}]'))
+        self.base = self.commit("a stale link")
+        links.write_text(links.read_text().replace(
+            '"object": [{"location": {"declaration": "Ext.alreadyGone"}}]',
+            '"object": [{"location": {"declaration": "Ext.alreadyGone"}}, {"location": {"declaration": "Ext.lagrange"}, '
+            '"role": "states"}]'))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+
+
+    def test_a_link_in_the_wiki_stops_the_run_before_it_reads_anything(self) -> None:
+        outside = self.root.parent / f"{self.root.name}-outside.jsonl"
+        outside.write_text("")
+        self.addCleanup(outside.unlink)
+        (self.root / "blueprint/links/Other.jsonl").symlink_to(outside)
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        for flags in ((), ("--check",)):
+            with patch.object(sync, "numbered_rows", side_effect=AssertionError("read the links")), \
+                    patch.object(sync, "read_annotations", side_effect=AssertionError("read the links")):
+                status, out, err, report = self.run_sync(*flags)
+            self.assertEqual((status, report["in_step"], report["errors"]), (1, False, [
+                "blueprint/links/Other.jsonl is a link: the sync reads and writes through none; put what it links to "
+                "in its place"]), flags)
+
+    def test_the_page_of_an_own_declaration_held_back_must_be_a_page(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/fresh.md"}],
+            "id": "af_" + "f" * 24, "extensions": {sync.OWN: {"held": {"declaration": "Ext.fresh",
+                                                                       "reason": "Its statement is wrong."}}}}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["held"], report["missing"]), (1, False, ["Ext.fresh"], []))
+        self.assertEqual(report["errors"], ["blueprint/roadmap/Algebra/groups/group-basics/fresh.md, which the row "
+                                            "holding Ext.fresh back names, is not a page: restore it there, keeping the "
+                                            "row, its article id and its held marker"])
+
+    def test_an_entry_to_drop_is_dropped_whatever_its_value(self) -> None:
+        # The changes remove backlog, whose entry the baseline must lose: an entry left as null is still there.
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text().replace("/-- A result that has no page yet. -/\ntheorem backlog : True := "
+                                                     "trivial\n\n", ""))
+        state = self.root / "scripts/wiki-sync.json"
+        digests = json.loads(state.read_text())["docstrings"]
+        digests["Ext.backlog"] = None
+        state.write_text(json.dumps({"docstrings": digests}, indent=0) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["digests"]), (1, {"Ext.backlog": None}))
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertNotIn("Ext.backlog", json.loads(state.read_text())["docstrings"])
+
+
+    def test_a_link_among_the_files_the_run_reads_or_the_changes_touch_stops_it(self) -> None:
+        # The page map and the Lean the changes add are read too: a link there stops the run before anything is read.
+        outside = self.root.parent / f"{self.root.name}-outside"
+        outside.write_text("")
+        self.addCleanup(outside.unlink)
+        for link in ("blueprint/pages.json", "MathlibExt/Algebra/Linked.lean"):
+            (self.root / link).symlink_to(outside)
+            with patch.object(sync, "numbered_rows", side_effect=AssertionError("read the links")), \
+                    patch.object(wiki, "generate", side_effect=AssertionError("read the Lean")):
+                status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["errors"]), (1, [
+                f"{link} is a link: the sync reads and writes through none; put what it links to in its place"]), link)
+            (self.root / link).unlink()
+
+    def test_a_refusal_reports_the_changes_as_they_are(self) -> None:
+        # A link the base already had stops a Lean-only change, which has no wiki changes and one Lean file.
+        outside = self.root.parent / f"{self.root.name}-outside"
+        outside.write_text("")
+        self.addCleanup(outside.unlink)
+        (self.root / "blueprint/sources").mkdir(parents=True)
+        (self.root / "blueprint/sources/data.json").symlink_to(outside)
+        self.base = self.commit("a link in the wiki")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"], report["wiki_changes"], report["differences"],
+                          report["counts"]["lean files"]), (1, [
+            "blueprint/sources/data.json is a link: the sync reads and writes through none; put what it links to in its "
+            "place"], "none", [], 1))
+
+
+    def test_a_linked_site_configuration_stops_a_write_that_renders(self) -> None:
+        # The renderer reads the site configuration, which the changes leave as it is: a link there stops the run too.
+        site = self.root.parent / f"{self.root.name}-mkdocs.yml"
+        site.symlink_to(sync.SITE)
+        self.addCleanup(site.unlink)
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        with patch.object(sync, "SITE", site), patch.object(sync, "published", side_effect=AssertionError("rendered")):
+            status, out, err, report = self.run_sync()
+        self.assertEqual((status, len(report["errors"])), (1, 1), report["errors"])
+        self.assertIn("is a link: the sync reads and writes through none", report["errors"][0])
+
+    def test_a_link_the_sync_never_reads_leaves_a_documentation_change_alone(self) -> None:
+        self.write("docs/guide.md", "A guide.\n")
+        (self.root / "docs/guide-alias.md").symlink_to("guide.md")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"], report["errors"]), (0, True, "none", []))
+
+
+    def test_a_link_in_a_lean_library_stops_the_run_as_the_working_tree_has_it(self) -> None:
+        # A folder of a library the pages are generated from, linked: refused, staged or not; once the link is gone
+        # from the working tree, staged or not, the run goes on.
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (elsewhere / "Linked.lean").write_text("theorem linked : True := trivial\n")
+        linked = self.root / "MathlibExt/Linked"
+        linked.symlink_to(elsewhere)
+        self.base = self.commit("a linked folder of Lean")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "MathlibExt/Linked is a link: the sync reads and writes through none; put what it links to in its place"]))
+        linked.unlink()
+        linked.mkdir()
+        (linked / "Linked.lean").write_text("theorem linked : True := trivial\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+
+
+    def test_a_file_name_that_is_not_utf8_is_read_as_the_file_system_names_it(self) -> None:
+        (self.root / "docs").mkdir()
+        with open(os.path.join(os.fsencode(self.root), b"docs", b"caf\xe9.md"), "w") as handle:
+            handle.write("Bytes.\n")
+        self.base = self.commit("a file name that is not UTF-8")
+        self.write("docs/guide.md", "A guide.\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "none"))
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"]), (1, ["Ext.fresh"]))
+
+
+    def test_a_link_in_a_library_the_generator_never_reads_leaves_a_change_alone(self) -> None:
+        self.write("MathlibExt/Algebra/guide.md", "A guide.\n")
+        (self.root / "MathlibExt/Algebra/guide-alias.md").symlink_to("guide.md")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["errors"]), (0, True, []))
+
+    def test_a_changed_graph_file_whose_name_is_not_utf8_gives_a_report(self) -> None:
+        name = os.path.join(os.fsencode(self.root), b"blueprint", b"roadmap", b"Algebra", b"caf\xe9.md")
+        with open(name, "w") as handle:
+            handle.write("# Bytes\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"))
+        # The report is UTF-8 JSON, the name's bytes escaped, and reads back as the file system names it.
+        self.assertIn(os.fsdecode(b"blueprint/roadmap/Algebra/caf\xe9.md"), " ".join(report["differences"]))
+
+
+    def test_a_submodule_in_the_wiki_is_not_the_syncs(self) -> None:
+        # A submodule the changes add under the roadmap beside what the sync writes, whether or not the working tree
+        # has its folder: the sync writes none.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        self.git("update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},blueprint/roadmap/Algebra/sub")
+        for folder in (False, True):
+            if folder:
+                (self.root / "blueprint/roadmap/Algebra/sub").mkdir()
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual(report["wiki_changes"], "other", (folder, report))
+            self.assertIn("blueprint/roadmap/Algebra/sub: the sync writes no link or other kind of file",
+                          report["differences"], folder)
+
+
+    def test_a_page_staged_and_then_removed_is_still_the_changes(self) -> None:
+        # The index holds a page written by hand that the working tree no longer has, and the Lean changes only a
+        # comment: the page is the changes', not the sync's.
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text() + "-- A comment.\n")
+        page = self.root / "blueprint/roadmap/Algebra/hand.md"
+        page.write_text("# By hand\n")
+        self.git("add", "--", "blueprint/roadmap/Algebra/hand.md")
+        page.unlink()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), (
+            "other", ["blueprint/roadmap/Algebra/hand.md: " + INDEX_DIFFERS]))
+
+    def test_what_the_index_changes_is_compared_whatever_the_working_tree_has(self) -> None:
+        # A hand edit staged and then undone in the working tree, and a page the index deletes that the working tree
+        # keeps: a commit takes the index's, so neither is the sync's.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md"
+        generated = page.read_bytes()
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        self.git("add", "--", str(page))
+        page.write_bytes(generated)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: " + INDEX_DIFFERS]))
+        self.git("reset", "-q", "--", str(page))
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
+        self.git("rm", "-q", "--cached", "--", "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md: " + INDEX_DIFFERS]))
+        self.git("reset", "-q", "--", "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md")
+        # The sync's output committed, the deletion of its page staged while the file stays: a commit takes the
+        # deletion. And the sync's output staged with fresh ids of its own, another run's in the working tree: the
+        # two differ, though each is the sync's.
+        self.base = self.git("rev-parse", "HEAD")
+        self.commit("the sync's output")
+        self.git("rm", "-q", "--cached", "--", str(page))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: " + INDEX_DIFFERS]))
+        self.git("reset", "-q", "--", str(page))
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
+
+
+    def test_lean_staged_otherwise_than_the_working_tree_stops_the_run(self) -> None:
+        # The index holds one declaration and the working tree another: the run reads the working tree's, which a
+        # commit may not take, so it stops until the two agree.
+        self.groups(more="/-- Only in the index. -/\ntheorem indexOnly : True := trivial\n\n")
+        self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
+        self.groups(more="/-- Only in the working tree. -/\ntheorem workOnly : True := trivial\n\n")
+        for flags in ((), ("--check",)):
+            status, out, err, report = self.run_sync(*flags)
+            self.assertEqual((status, report["in_step"], report["errors"]), (1, False, [
+                "MathlibExt/Algebra/Groups.lean: " + INDEX_DIFFERS]), flags)
+        self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
+        self.assertEqual(self.run_sync("--check")[3]["missing"], ["Ext.workOnly"])
+
+    def test_a_working_tree_like_the_base_has_no_wiki_changes(self) -> None:
+        # A prose edit committed on the branch, then undone in the working tree without staging: the changes, the
+        # working tree's, have none.
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        kept = page.read_bytes()
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        self.commit("a prose edit")
+        page.write_bytes(kept)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "none", []))
+
+
+    def test_a_link_stops_the_run_before_git_or_it_compares_what_is_staged(self) -> None:
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (self.root / "MathlibExt/Linked").symlink_to(elsewhere)
+        self.groups(more="/-- Staged. -/\ntheorem staged : True := trivial\n\n")
+        self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
+        with patch.object(sync, "disagreeing", side_effect=AssertionError("compared what is staged")):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "MathlibExt/Linked is a link: the sync reads and writes through none; put what it links to in its place"]))
+
+    def test_line_ends_git_normalises_are_no_disagreement(self) -> None:
+        # Git stores the Lean with line feeds and checks it out with carriage returns: staged, the two agree.
+        self.write(".gitattributes", "*.lean text eol=crlf\n")
+        self.base = self.commit("line ends")
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text() + "-- A comment.\n")
+        self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
+        groups.write_bytes(groups.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+        self.assertEqual(self.git("diff", "--name-only"), "")
+        status, out, err, report = self.run_sync("--check")
+        self.assertFalse([row for row in report["errors"] if INDEX_DIFFERS in row], report["errors"])
+
+    def test_a_staged_reversion_to_the_base_has_no_wiki_changes(self) -> None:
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        kept = page.read_bytes()
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        self.commit("a prose edit")
+        page.write_bytes(kept)
+        self.git("add", "--", str(page))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "none", []))
+
+
+    def test_a_committed_submodule_without_its_folder_is_not_the_syncs(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        self.git("add", "-A")
+        self.git("update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},blueprint/roadmap/Algebra/sub")
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "the sync's output and a submodule")
+        self.assertFalse((self.root / "blueprint/roadmap/Algebra/sub").exists())
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual(report["wiki_changes"], "other", report)
+        self.assertIn("blueprint/roadmap/Algebra/sub: the sync writes no link or other kind of file",
+                      report["differences"])
+
+    def test_an_executable_bit_staged_where_git_reads_none_from_the_working_tree(self) -> None:
+        # With core.filemode off, the index's executable bit is the file's: staged on a page, it is not the sync's.
+        self.git("config", "core.filemode", "false")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        self.git("add", "-A")
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
+        self.git("update-index", "--chmod=+x", "--", "blueprint/roadmap/Algebra/groups/group-basics/fresh.md")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes write it otherwise than the sync"]))
+
+    def test_a_refusal_counts_a_wiki_file_only_the_index_adds(self) -> None:
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (self.root / "MathlibExt/Linked").symlink_to(elsewhere)
+        page = self.root / "blueprint/roadmap/Algebra/hand.md"
+        page.write_text("# By hand\n")
+        self.git("add", "--", "blueprint/roadmap/Algebra/hand.md")
+        page.unlink()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (1, "other"))
+
+
+    def test_a_submodule_git_is_told_to_ignore_is_still_not_the_syncs(self) -> None:
+        self.git("config", "diff.ignoreSubmodules", "all")
+        self.test_a_committed_submodule_without_its_folder_is_not_the_syncs()
+
+    def test_the_executable_bit_is_the_owners_as_git_reads_it(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md"
+        page.chmod(0o654)
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
+        page.chmod(0o744)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes write it otherwise than the sync"]))
+
+    def test_a_refusal_counts_no_wiki_change_a_commit_made_and_the_working_tree_undid(self) -> None:
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        kept = page.read_bytes()
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        self.commit("a prose edit")
+        page.write_bytes(kept)
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (self.root / "MathlibExt/Linked").symlink_to(elsewhere)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (1, "none"))
+
+
+    def test_a_line_that_is_no_json_object_is_a_row_autoform_cannot_read(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        for line in ("not json", "[1, 2]"):
+            kept = links.read_text()
+            links.write_text(kept + line + "\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"]), (1, False), line)
+            number = len(kept.splitlines()) + 1
+            self.assertEqual(report["errors"], [f"blueprint/links/Algebra.jsonl:{number} is a line that is no JSON "
+                                                f"object: {line}: make it a row, or remove it"])
+            links.write_text(kept)
+
+    def test_a_refusal_prints_both_verdicts(self) -> None:
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (self.root / "MathlibExt/Linked").symlink_to(elsewhere)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual(status, 1)
+        self.assertIn("In step: no\nWiki changes since the base: none\n", out)
+
+
+    def test_a_line_that_is_not_utf8_is_no_row(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_bytes(links.read_bytes() + b'{"id": "caf\xe9"}\n')
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], len(report["errors"])), (1, False, 1), report["errors"])
+        self.assertIn("is a line that is no JSON object", report["errors"][0])
+
+    def test_a_base_row_the_writer_cannot_read_stops_the_replay_not_the_check(self) -> None:
+        # The base has a line that is no row, which the changes remove while adding a declaration: the working tree's
+        # verdict stands, and the replay on the base's wiki, which the writer cannot read, makes the changes not the
+        # sync's.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        kept = links.read_text()
+        for line in ("not JSON", "[]"):
+            links.write_text(kept + line + "\n")
+            self.base = self.commit(f"a line that is no row: {line}")
+            links.write_text(kept)
+            self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+            self.assertEqual(self.run_sync()[0], 0)
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"), line)
+            self.assertTrue(report["differences"][0].startswith("the sync stops on the base's wiki: "
+                                                                 "blueprint/links/Algebra.jsonl:"), report["differences"])
+            self.git("checkout", "-q", "--", ".")
+            self.git("clean", "-qfd")
+
+
+    def test_a_refresh_inside_nested_parts_leaves_the_outer_copy_as_it_was(self) -> None:
+        # The outer copy of part-01 misses Old, which part-01 lists: drift the base had. A folder added inside part-02
+        # refreshes part-02's copy on part-01's page, whose entries stay the same, so the outer page is left as it is.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["placements"]["MathlibExt/Algebra/Rings"] = {"to": "Algebra/groups", "title": "Rings"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        outer = self.write("blueprint/roadmap/Algebra/groups/README.md",
+                           "# Groups\n\nGroups.\n\n- [Group basics](group-basics/README.md)\n\n"
+                           "## [Part 1](part-01/README.md)\n\n"
+                           "- [Cosets](part-01/cosets/README.md)\n- [Part 2](part-01/part-02/README.md)\n")
+        inner = self.write("blueprint/roadmap/Algebra/groups/part-01/README.md",
+                           "# Groups, part 1\n\n- [Cosets](cosets/README.md)\n- [Old](old/README.md)\n\n"
+                           "## [Part 2](part-02/README.md)\n\n- [Fields](part-02/fields/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/part-02/README.md",
+                   "# Groups, part 2\n\n- [Fields](fields/README.md)\n")
+        for folder in ("cosets", "old", "part-02/fields"):
+            self.write(f"blueprint/roadmap/Algebra/groups/part-01/{folder}/README.md", f"# {folder}\n\nText.\n")
+        self.base = self.commit("nested parts, the outer copy missing Old")
+        kept = outer.read_bytes()
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, (out, err))
+        changed = self.git("status", "--porcelain")
+        self.assertEqual(outer.read_bytes(), kept, changed)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"), report)
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(self.tree(), before)
+
+    def test_rows_lean_facts_wrote_are_found_whatever_ends_their_lines(self) -> None:
+        # A links file whose lines end with bare carriage returns: a row carrying `status` stops the run all the same.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        rows = links.read_text().splitlines()
+        row = json.loads(rows[-1])
+        row["status"] = "stated"
+        links.write_bytes("\r".join(rows[:-1] + [json.dumps(row)]).encode() + b"\r")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertTrue([error for error in report["errors"] if "carries `kind` or `status`" in error], report["errors"])
+
+
+
+INDEX_DIFFERS = sync.INDEX_DIFFERS
 
 
 class BuildPath(Vault):

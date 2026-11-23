@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
+public import MathlibExt.NumberTheory.GeneralizedMarkovCongruence
 public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
 
@@ -87,25 +88,6 @@ public theorem HasUniqueMaxGenMarkovTriple.isGenMarkovNumber {k b : ℕ}
     (h : HasUniqueMaxGenMarkovTriple k b) : IsGenMarkovNumber k b := by
   obtain ⟨a, c, h, -⟩ := h
   exact ⟨a, c, h⟩
-
-/-- **Number of solutions of $x^2 + kx + 1 \equiv 0 \pmod b$.** For natural numbers $k$ and
-$b$, this is the number of integers $x$ with $0 \le x < b$ such that $b$ divides
-$x^2 + kx + 1$. For $b = 0$ it is $0$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 1.5. -/
-public def genMarkovCongruenceCount (k b : ℕ) : ℕ :=
-  ((range b).filter fun x => b ∣ x ^ 2 + k * x + 1).card
-
-/-- **The congruence $x^2 + 1 \equiv 0 \pmod 5$ has two solutions.** Exactly two integers $x$
-with $0 \le x < 5$ satisfy $x^2 + 1 \equiv 0 \pmod 5$.
-
-They are $x = 2$ and $x = 3$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 1.2. -/
-public theorem genMarkovCongruenceCount_zero_five : genMarkovCongruenceCount 0 5 = 2 := by
-  decide
 
 /-- **Uniqueness criterion via the congruence $x^2 + kx + 1 \equiv 0 \pmod{b}$.** Let $k$ be a
 natural number and let $b$ be a $k$-generalized Markov number with $b \ne 1$ and $b \ne k + 2$.
@@ -205,15 +187,6 @@ public theorem_wanted genSecondMarkov_vieta (k : ℕ) {a b c : ℤ}
     (let a' := b * c - a - (k : ℤ) ^ 2 - 2 * k;
       b ^ 2 + a' ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (b + a' + c) + 2 * (k : ℤ) ^ 3 +
         3 * (k : ℤ) ^ 2 = b * a' * c)
-
-/-- **At most two solutions of $x^2 + kx + 1 \equiv 0$ modulo a prime.** For every prime $p$
-and every $k \in \mathbb{N}$, at most two integers $x$ with $0 \le x < p$ satisfy
-$x^2 + kx + 1 \equiv 0 \pmod p$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 4.9. -/
-public theorem_wanted genMarkovCongruenceCount_prime_le_two {p : ℕ} (hp : p.Prime) (k : ℕ) :
-    genMarkovCongruenceCount k p ≤ 2
 
 /-- **At most two solutions of $x^2 + kx + 1 \equiv 0$ modulo an odd prime power.** Let $p$
 be an odd prime, let $m \ge 2$ and let $k \in \mathbb{N}$ with $k^2 - 4 \not\equiv 0 \pmod p$.
