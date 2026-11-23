@@ -250,10 +250,11 @@ private lemma padicVal_fib_five (m : ℕ) (hm : 1 ≤ m) :
     rintro rfl
     exact hR5 (dvd_zero 5)
   have h5R : 5 * R ≠ 0 := mul_ne_zero (by norm_num) hR0
-  have h1 : padicValNat 5 (5 * R) = 1 := by
-    rw [padicValNat.mul (by norm_num) hR0, padicValNat_self,
-      padicValNat.eq_zero_of_not_dvd hR5, add_zero]
-  rw [hR_eq, padicValNat.mul hFm h5R, h1]
+  have h1 : multiplicity 5 (5 * R) = 1 := by
+    rw [Nat.multiplicity_mul (by norm_num) hR0, Nat.Prime.multiplicity_self,
+      multiplicity_eq_zero_of_not_dvd hR5, add_zero]
+  simp only [Nat.padicValNat_def]
+  rw [hR_eq, Nat.multiplicity_mul hFm h5R, h1]
 
 /-- **The $5$-adic valuation of Fibonacci numbers.** Writing $F_n$ for the $n$-th Fibonacci number
 and $v_5$ for the $5$-adic valuation, $v_5(F_n) = v_5(n)$ for every integer $n \ge 1$.
@@ -275,10 +276,11 @@ theorem lengyel_fibonacci_five_adic
   · obtain ⟨m, rfl⟩ := h5
     have hm : 1 ≤ m := by omega
     have hmlt : m < 5 * m := by omega
-    rw [padicVal_fib_five m hm, ih m hmlt hm,
-      padicValNat_base_mul (show (1 : ℕ) < 5 by norm_num) (show m ≠ 0 by omega)]
+    rw [padicVal_fib_five m hm, ih m hmlt hm, Nat.padicValNat_def, Nat.padicValNat_def,
+      multiplicity_base_mul (show (1 : ℕ) < 5 by norm_num) (show m ≠ 0 by omega)]
   · have hfib : ¬ 5 ∣ Nat.fib n := mt (five_dvd_fib_iff n).mp h5
-    rw [padicValNat.eq_zero_of_not_dvd hfib, padicValNat.eq_zero_of_not_dvd h5]
+    rw [Nat.padicValNat_def, Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd hfib,
+      multiplicity_eq_zero_of_not_dvd h5]
 
 end
 
