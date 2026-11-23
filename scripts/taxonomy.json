@@ -11284,6 +11284,7 @@
   "MathlibExt/NumberTheory/GeneralizedFibonacciPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Generalized Fibonacci polynomials"},
   "MathlibExt/NumberTheory/GeneralizedFrobeniusNumber": {"to": "NumberTheory/numerical-semigroups", "title": "Generalized Frobenius numbers"},
   "MathlibExt/NumberTheory/GeneralizedFussCatalanNumbersFMNK": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Fuss–Catalan numbers"},
+  "MathlibExt/NumberTheory/GeneralizedHarmonicGamma": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Generalized harmonic numbers and the Gamma function"},
   "MathlibExt/NumberTheory/GeneralizedLucas": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Lucas numbers"},
   "MathlibExt/NumberTheory/GeneralizedLucasnomialFussCatalan": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Lucasnomial Fuss–Catalan numbers"},
   "MathlibExt/NumberTheory/GeneralizedLucasnomialFussCatalanNumber": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Lucasnomial Fuss–Catalan numbers"},
