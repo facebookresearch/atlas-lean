@@ -10119,6 +10119,7 @@
   "MathlibExt/Combinatorics/Enumerative/StirlingAscPochhammer": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the first kind"},
   "MathlibExt/Combinatorics/Enumerative/StirlingBellPolynomialConnection": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Laguerre–Stirling–Bell connection pair"},
   "MathlibExt/Combinatorics/Enumerative/StirlingFirstAddition": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the first kind"},
+  "MathlibExt/Combinatorics/Enumerative/StirlingFirstHigherColumns": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Lee's identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/StirlingMatrices": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling matrices"},
   "MathlibExt/Combinatorics/Enumerative/StirlingPermutation": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Stirling permutations"},
   "MathlibExt/Combinatorics/Enumerative/StirlingSecondAddition": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the second kind"},
