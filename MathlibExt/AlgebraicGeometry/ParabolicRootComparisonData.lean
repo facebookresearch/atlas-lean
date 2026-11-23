@@ -63,10 +63,15 @@ structure Data where
     restriction weightRestriction
   phiReindex : PhiReindexNormalization I D j G R localData localStacks restriction weightRestriction
     phi baseLanding baseSquare
-  targetMonoidal : MonoidalRealization D j G parabolicTensor lineLaws parabolicUnit
 
+/-- The comparison result includes the monoidal structure of the parabolic category: one with
+the fixed tensor and unit objects and tensor on arrows, for which `Phi` is strong monoidal
+with the fixed comparison maps. Its unitors and associator are then determined by those of
+the source; a monoidal structure with only the tensor fixed is not enough, since rescaling its
+unitors keeps every other datum. -/
 def Comparison (E : Data I D j G R) : Type 1 :=
-  BorneVistoliComparison I D j G R E.sourceTensor E.localData E.phi E.structural
-    E.parabolicTensor E.lineLaws E.parabolicUnit E.tensorBilinear E.unitCocones E.unit E.targetMonoidal
+  Σ M : MonoidalRealization D j G E.parabolicTensor E.lineLaws E.parabolicUnit,
+    BorneVistoliComparison I D j G R E.sourceTensor E.localData E.phi E.structural
+      E.parabolicTensor E.lineLaws E.parabolicUnit E.tensorBilinear E.unitCocones E.unit M
 
 end MathlibExt.AlgebraicGeometry.ParabolicRootComparisonData

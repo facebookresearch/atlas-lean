@@ -47,7 +47,8 @@ variable {X : Scheme.{0}}
   (K : ∀ U : X.Etale, LineFunctorLaws (G.chart U)) (UO : UnitModel G j K)
 
 /-- Monoidal structure is source integration on the actual category;
-its tensor and unit are fixed independently by their native universal properties. -/
+its tensor and unit are fixed independently by their native universal properties. The
+unitors and associator are not fixed here: a strong monoidal comparison determines them. -/
 structure MonoidalRealization where
   monoidal : MonoidalCategory (Parabolic G j)
   unit_eq : letI := monoidal; (𝟙_ (Parabolic G j)) = UO.object

@@ -46,7 +46,8 @@ public def_wanted normalizedParabolicRootData
     Data I D J.map G R
 
 /-- Canonical native monoidal Phi is an equivalence of the actual
-abelian categories, with the already fixed unit and tensor maps. -/
+abelian categories, with the already fixed unit and tensor maps, for a monoidal structure on
+the parabolic category with the fixed tensor and unit (part of the result). -/
 public def_wanted borneVistoliComparison
     (I : NativeDFImages.{0}) {A B : DeligneFaltingsSheaves.MonoidSheaf X}
     (D : Structure A) (hD : IsDeligneFaltings D)
