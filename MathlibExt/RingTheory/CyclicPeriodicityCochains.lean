@@ -109,8 +109,8 @@ variable (R : Type*) (A : Type u) (M : Type*) [Semiring R] [NonUnitalNonAssocSem
 /-- Connes' unaveraged cochain periodicity operator `S₀ : Cⁿ → Cⁿ⁺²`, sending an `n`-cochain `φ` to
 `(a₀, …, aₙ₊₂) ↦ ∑_{j = 0}^n ∑_{r ≤ j} (-1)^(j - r) φ(dᵣ(d_{j+1}(a₀, …, aₙ₊₂)))`. -/
 def cochainPeriodicity (n : ℕ) :
-    MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M →ₗ[R]
-      MultilinearMap R (fun _ : Fin (n + 3) ↦ A) M :=
+    MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M →ₗ[R]
+      MultilinearMap (RingHom.id R) (fun _ : Fin (n + 3) ↦ A) M :=
   ∑ j : Fin (n + 1), ∑ r ∈ Finset.Iic j,
     (-1 : ℤ) ^ ((j : ℕ) - r) •
       (hochschildCoface R A M j.succ.castSucc ∘ₗ hochschildCoface R A M r.castSucc)
@@ -119,7 +119,7 @@ variable {R A M} {n : ℕ}
 
 /-- Pointwise formula for `cochainPeriodicity`. -/
 @[simp]
-theorem cochainPeriodicity_apply (φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M)
+theorem cochainPeriodicity_apply (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M)
     (a : Fin (n + 3) → A) :
     cochainPeriodicity R A M n φ a =
       ∑ j : Fin (n + 1), ∑ r ∈ Finset.Iic j,
@@ -131,7 +131,7 @@ theorem cochainPeriodicity_apply (φ : MultilinearMap R (fun _ : Fin (n + 1) ↦
 `cochainPeriodicity`. -/
 theorem cochainPeriodicity_compLinearMap {B : Type u} [NonUnitalNonAssocSemiring B] [Module R B]
     [IsScalarTower R B B] [SMulCommClass R B B] (f : A →ₙₐ[R] B)
-    (φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ B) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ B) M) :
     cochainPeriodicity R A M n (φ.compLinearMap fun _ ↦ (f : A →ₗ[R] B)) =
       (cochainPeriodicity R B M n φ).compLinearMap fun _ ↦ (f : A →ₗ[R] B) := by
   ext a
@@ -144,7 +144,7 @@ theorem cochainPeriodicity_compLinearMap {B : Type u} [NonUnitalNonAssocSemiring
 /-- Applying a linear map to the values of a cochain commutes with `cochainPeriodicity`. -/
 theorem compMultilinearMap_cochainPeriodicity {N : Type*} [AddCommGroup N] [Module R N]
     [SMulCommClass R R N] (n : ℕ) (g : M →ₗ[R] N)
-    (φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M) :
     g.compMultilinearMap (cochainPeriodicity R A M n φ) =
       cochainPeriodicity R A N n (g.compMultilinearMap φ) := by
   ext a
@@ -153,7 +153,7 @@ theorem compMultilinearMap_cochainPeriodicity {N : Type*} [AddCommGroup N] [Modu
 /-- Evaluating `cochainPeriodicity` on a constant tuple with idempotent entry multiplies the value
 by `n / 2 + 1`. -/
 theorem cochainPeriodicity_apply_const_of_isIdempotentElem
-    (φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M)
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M)
     {e : A} (he : IsIdempotentElem e) :
     cochainPeriodicity R A M n φ (fun _ ↦ e) = (n / 2 + 1 : ℕ) • φ (fun _ ↦ e) := by
   rw [cochainPeriodicity_apply]
@@ -294,22 +294,22 @@ variable {R : Type*} {A : Type u} {M : Type*} [Semiring R] [NonUnitalSemiring A]
 /-- Auxiliary cochain operator `-∑_{s = 0}^{n+1} s (-1)ˢ δₛ` whose Hochschild coboundary gives
 `cochainPeriodicity` on Hochschild cocycles. -/
 private def cupOneSelf (n : ℕ) :
-    MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M →ₗ[R]
-      MultilinearMap R (fun _ : Fin (n + 2) ↦ A) M :=
+    MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M →ₗ[R]
+      MultilinearMap (RingHom.id R) (fun _ : Fin (n + 2) ↦ A) M :=
   -∑ s : Fin (n + 2), (s : ℤ) • (-1 : ℤ) ^ (s : ℕ) • hochschildCoface R A M s
 
 /-- Auxiliary cochain operator `∑_{r = 0}^n (n + 1 - r) (-1)ʳ δᵣ` measuring the coboundary defect
 in `hochschildCoboundary_cupOneSelf_add`. -/
 private def cupOneLeft (n : ℕ) :
-    MultilinearMap R (fun _ : Fin (n + 2) ↦ A) M →ₗ[R]
-      MultilinearMap R (fun _ : Fin (n + 3) ↦ A) M :=
+    MultilinearMap (RingHom.id R) (fun _ : Fin (n + 2) ↦ A) M →ₗ[R]
+      MultilinearMap (RingHom.id R) (fun _ : Fin (n + 3) ↦ A) M :=
   ∑ r : Fin (n + 1), ((n + 1 : ℤ) - r) • (-1 : ℤ) ^ (r : ℕ) •
     hochschildCoface R A M r.castSucc.castSucc
 
 /-- Pure simplicial decomposition of `cochainPeriodicity`: for any cochain `φ`,
 `b (cupOneSelf φ) + cupOneLeft (b φ) = S₀ φ`. -/
 private theorem hochschildCoboundary_cupOneSelf_add
-    (φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M) :
     hochschildCoboundary R A M (n + 1) (cupOneSelf n φ) +
         cupOneLeft n (hochschildCoboundary R A M n φ) =
       cochainPeriodicity R A M n φ := by
@@ -369,7 +369,7 @@ variable {R : Type*} {A : Type u} {M : Type*} [CommRing R] [NonUnitalSemiring A]
 /-- Iterating `λ` on the bar coboundary of a cyclic cochain `φ` shifts the missing coface down:
 `λᵏ (b' φ) = b φ - (-1)^(n + 1 - k) δ_{n + 1 - k} φ` for `k ≤ n + 1`. -/
 private theorem cyclicOperator_pow_barCoboundary_of_mem_cyclicCochains
-    {φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M}
+    {φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M}
     (hφ : φ ∈ cyclicCochains R A M n)
     {k : ℕ} (hk : k ≤ n + 1) :
     (cyclicOperator R A M (n + 1) ^ k) (barCoboundary R A M n φ) =
@@ -400,12 +400,12 @@ private theorem cyclicOperator_pow_barCoboundary_of_mem_cyclicCochains
 
 /-- On a cyclic `n`-cochain `φ`, `H' (b' φ) = ((n + 1)(n + 2) / 2) • b φ + cupOneSelf φ`. -/
 private theorem cyclicRowHomotopySum_barCoboundary_of_mem_cyclicCochains
-    {φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M}
+    {φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M}
     (hφ : φ ∈ cyclicCochains R A M n) :
     cyclicRowHomotopySum R A M (n + 1) (barCoboundary R A M n φ) =
       ((n + 1) * (n + 2) / 2 : ℕ) • hochschildCoboundary R A M n φ + cupOneSelf n φ := by
   rw [cyclicRowHomotopySum_def, LinearMap.sum_apply]
-  set T : ℕ → MultilinearMap R (fun _ : Fin (n + 2) ↦ A) M := fun k ↦
+  set T : ℕ → MultilinearMap (RingHom.id R) (fun _ : Fin (n + 2) ↦ A) M := fun k ↦
     if hk : k < n + 2 then (-1 : ℤ) ^ (n + 1 - k) • hochschildCoface R A M ⟨n + 1 - k, by omega⟩ φ
     else 0
   have hj (j : ℕ) (hj : j ∈ Finset.range (n + 2)) :
@@ -447,7 +447,7 @@ private theorem cyclicRowHomotopySum_barCoboundary_of_mem_cyclicCochains
 
 /-- On any cyclic `n`-cochain `φ`, `b (H' (b' φ)) + cupOneLeft (b φ) = S₀ φ`. -/
 private theorem hochschildCoboundary_cyclicRowHomotopySum_barCoboundary_add
-    {φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M}
+    {φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M}
     (hφ : φ ∈ cyclicCochains R A M n) :
     hochschildCoboundary R A M (n + 1)
         (cyclicRowHomotopySum R A M (n + 1) (barCoboundary R A M n φ)) +
@@ -512,7 +512,7 @@ def cyclicCocyclesPeriodicity (n : ℕ) :
 @[simp]
 theorem coe_cyclicCocyclesPeriodicity_apply (φ : cyclicCocycles R A M n) :
     ((cyclicCocyclesPeriodicity R A M n φ : cyclicCochains R A M (n + 2)) :
-      MultilinearMap R (fun _ : Fin (n + 3) ↦ A) M) =
+      MultilinearMap (RingHom.id R) (fun _ : Fin (n + 3) ↦ A) M) =
       cochainPeriodicity R A M n φ.1.1 :=
   (rfl)
 
@@ -565,7 +565,7 @@ def connesS [Invertible (n + 3 : R)] :
 /-- Underlying cochain of `connesS`. -/
 @[simp]
 theorem coe_connesS_apply [Invertible (n + 3 : R)] (ψ : cyclicCochains R A M n) :
-    (connesS R A M n ψ : MultilinearMap R (fun _ : Fin (n + 3) ↦ A) M) =
+    (connesS R A M n ψ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 3) ↦ A) M) =
       ⅟(n + 3 : R) • cyclicNorm R A M (n + 2) (cochainPeriodicity R A M n ψ) :=
   (rfl)
 

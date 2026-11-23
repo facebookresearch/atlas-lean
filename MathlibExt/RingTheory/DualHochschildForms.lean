@@ -47,12 +47,12 @@ abbrev Forms (n : ℕ) := ⋀[A]^n (KaehlerDifferential k A)
 
 /-- The alternating product of actual Kähler differentials. -/
 def differentialWedge (n : ℕ) :
-    MultilinearMap k (fun _ : Fin n ↦ A) (Forms k A n) :=
+    MultilinearMap (RingHom.id k) (fun _ : Fin n ↦ A) (Forms k A n) :=
   ((exteriorPower.ιMulti A n).toMultilinearMap.restrictScalars k).compLinearMap
     (fun _ ↦ (KaehlerDifferential.D k A).toLinearMap)
 
 /-- The actual multilinear form a0 da1∧…∧dan, with the zeroth coordinate retained. -/
-def formGenerator (n : ℕ) : MultilinearMap k (fun _ : Fin (n + 1) ↦ A) (Forms k A n) :=
+def formGenerator (n : ℕ) : MultilinearMap (RingHom.id k) (fun _ : Fin (n + 1) ↦ A) (Forms k A n) :=
   LinearMap.uncurryLeft
     { toFun := fun a ↦ a • differentialWedge k A n
       map_add' a b := add_smul a b _
@@ -70,7 +70,7 @@ def formGenerator (n : ℕ) : MultilinearMap k (fun _ : Fin (n + 1) ↦ A) (Form
 
 /-- The actual k-linear normalized HKR cochain map before imposing cocycle closure. -/
 def hkrCochain (n : ℕ) : (Forms k A n →ₗ[k] k) →ₗ[k]
-    MultilinearMap k (fun _ : Fin (n + 1) ↦ A) k where
+    MultilinearMap (RingHom.id k) (fun _ : Fin (n + 1) ↦ A) k where
   toFun ψ := ((n.factorial : k)⁻¹) • ψ.compMultilinearMap (formGenerator k A n)
   map_add' ψ χ := by
     apply MultilinearMap.ext

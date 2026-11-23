@@ -117,7 +117,7 @@ variable {R A M : Type*} [CommRing R] [Semiring A] [Module R A]
 
 /-- The lift `φ + s (1 - λ) φ` of a Hochschild `(m + 1)`-cochain `φ` to a total cochain of degree
 `m + 1`, with `φ` in column zero and `s (1 - λ) φ` in column one. -/
-private def cyclicTotalLift {m : ℕ} (φ : MultilinearMap R (fun _ : Fin (m + 1 + 1) ↦
+private def cyclicTotalLift {m : ℕ} (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 1 + 1) ↦
     A) M) :
     cyclicTotalCochains R A M (m + 1) :=
   ⟨Pi.single (m + 1) φ +
@@ -128,21 +128,21 @@ private def cyclicTotalLift {m : ℕ} (φ : MultilinearMap R (fun _ : Fin (m + 1
 omit [IsScalarTower R A A] [SMulCommClass R A A] in
 /-- The column-zero component of the lift of `φ` is `φ`. -/
 private theorem cyclicTotalLift_apply_column_zero {m : ℕ}
-    (φ : MultilinearMap R (fun _ : Fin (m + 1 + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 1 + 1) ↦ A) M) :
     (cyclicTotalLift φ).1 (m + 1) = φ := by
   simp [cyclicTotalLift]
 
 omit [IsScalarTower R A A] [SMulCommClass R A A] in
 /-- The column-one component of the lift of `φ` is `s (1 - λ) φ`. -/
 private theorem cyclicTotalLift_apply_column_one {m : ℕ}
-    (φ : MultilinearMap R (fun _ : Fin (m + 1 + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 1 + 1) ↦ A) M) :
     (cyclicTotalLift φ).1 m = barContraction R A M m ((1 - cyclicOperator R A M (m + 1)) φ) := by
   simp [cyclicTotalLift]
 
 /-- **The total differential of the lift.** For a Hochschild cocycle `φ`, the total differential
 of `φ + s (1 - λ) φ` is `N s (1 - λ) φ = B φ` in row `m`, column two. -/
 private theorem coe_cyclicTotalDifferential_cyclicTotalLift {m : ℕ}
-    {φ : MultilinearMap R (fun _ : Fin (m + 1 + 1) ↦ A) M}
+    {φ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 1 + 1) ↦ A) M}
     (hφ : hochschildCoboundary R A M (m + 1) φ = 0) :
     (cyclicTotalDifferential R A M (m + 1) (cyclicTotalLift φ)).1 =
       Pi.single m (connesB R A M m φ) := by

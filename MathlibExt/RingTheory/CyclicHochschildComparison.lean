@@ -89,7 +89,7 @@ variable {R : Type*} {A : Type u} {M : Type*} [Semiring R] [NonUnitalSemiring A]
 /-- A cyclic cocycle is a Hochschild cocycle. -/
 theorem mem_hochschildCocycles_of_mem_cyclicCocycles {n : ℕ} {φ : cyclicCochains R A M n}
     (hφ : φ ∈ cyclicCocycles R A M n) :
-    (φ : MultilinearMap R (fun _ : Fin (n + 1) ↦ A) M) ∈ hochschildCocycles R A M n :=
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 1) ↦ A) M) ∈ hochschildCocycles R A M n :=
   mem_hochschildCocycles_iff.2 ((mem_cyclicCocycles_iff R A M).1 hφ)
 
 end Cocycles
@@ -131,7 +131,7 @@ variable {R : Type*} {A : Type u} {M : Type*} [Semiring R] [Semiring A] [Module 
   [SMulCommClass R R M]
 
 /-- Connes' operator `B` sends a Hochschild `(n + 1)`-cocycle to a cyclic `n`-cocycle. -/
-theorem connesB_mem_cyclicCocycles {n : ℕ} {φ : MultilinearMap R (fun _ : Fin (n + 2)
+theorem connesB_mem_cyclicCocycles {n : ℕ} {φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 2)
     ↦ A) M}
     (hφ : φ ∈ hochschildCocycles R A M (n + 1)) :
     (⟨connesB R A M n φ, connesB_mem_cyclicCochains φ⟩ : cyclicCochains R A M n) ∈
@@ -142,7 +142,7 @@ theorem connesB_mem_cyclicCocycles {n : ℕ} {φ : MultilinearMap R (fun _ : Fin
 
 /-- Connes' operator `B` sends a Hochschild `(n + 1)`-coboundary to a cyclic `n`-coboundary. -/
 theorem connesB_mem_cyclicCoboundaries {n : ℕ}
-    {φ : MultilinearMap R (fun _ : Fin (n + 2) ↦ A) M}
+    {φ : MultilinearMap (RingHom.id R) (fun _ : Fin (n + 2) ↦ A) M}
     (hφ : φ ∈ hochschildCoboundaries R A M (n + 1)) :
     (⟨connesB R A M n φ, connesB_mem_cyclicCochains φ⟩ : cyclicCochains R A M n) ∈
       cyclicCoboundaries R A M n := by

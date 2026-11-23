@@ -106,7 +106,7 @@ variable (R A M : Type*) [CommSemiring R] [AddCommMonoid A] [Module R A] [AddCom
 /-- The horizontal differential of the cyclic bicomplex out of column `p` in row `q`: `1 - λ`
 out of an even column and the cyclic norm `N` out of an odd column. -/
 def cyclicBicomplexHorizontal (p q : ℕ) :
-    Module.End R (MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M) :=
+    Module.End R (MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M) :=
   if Even p then 1 - cyclicOperator R A M q else cyclicNorm R A M q
 
 variable {R A M} {p q : ℕ}
@@ -143,7 +143,7 @@ theorem cyclicBicomplexHorizontal_succ_mul_cyclicBicomplexHorizontal :
 /-- Two consecutive horizontal differentials compose to zero, on elements. -/
 @[simp]
 theorem cyclicBicomplexHorizontal_cyclicBicomplexHorizontal
-    (φ : MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M) :
     cyclicBicomplexHorizontal R A M (p + 1) q (cyclicBicomplexHorizontal R A M p q φ) = 0 := by
   rw [← Module.End.mul_apply, cyclicBicomplexHorizontal_succ_mul_cyclicBicomplexHorizontal,
     LinearMap.zero_apply]
@@ -172,8 +172,8 @@ variable (R A M : Type*) [CommSemiring R] [NonUnitalNonAssocSemiring A] [Module 
 Hochschild coboundary `b` in an even column and minus the bar coboundary, `-b'`, in an odd
 column. -/
 def cyclicBicomplexVertical (p q : ℕ) :
-    MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M →ₗ[R]
-      MultilinearMap R (fun _ : Fin (q + 2) ↦ A) M :=
+    MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M →ₗ[R]
+      MultilinearMap (RingHom.id R) (fun _ : Fin (q + 2) ↦ A) M :=
   if Even p then hochschildCoboundary R A M q else -barCoboundary R A M q
 
 variable {R A M} {p q : ℕ}
@@ -213,7 +213,7 @@ theorem cyclicBicomplexVertical_comp_cyclicBicomplexHorizontal :
 
 /-- Adjacent squares of the cyclic bicomplex anticommute, on elements. -/
 theorem cyclicBicomplexVertical_cyclicBicomplexHorizontal
-    (φ : MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M) :
     cyclicBicomplexVertical R A M (p + 1) q (cyclicBicomplexHorizontal R A M p q φ) =
       -cyclicBicomplexHorizontal R A M p (q + 1) (cyclicBicomplexVertical R A M p q φ) :=
   LinearMap.congr_fun (cyclicBicomplexVertical_comp_cyclicBicomplexHorizontal R A M p q) φ
@@ -228,7 +228,7 @@ variable {R A M : Type*} [CommSemiring R] [NonUnitalSemiring A] [Module R A]
 /-- Two consecutive vertical differentials compose to zero: `b ∘ b = 0` and `b' ∘ b' = 0`. -/
 @[simp]
 theorem cyclicBicomplexVertical_cyclicBicomplexVertical
-    (φ : MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M) :
     cyclicBicomplexVertical R A M p (q + 1) (cyclicBicomplexVertical R A M p q φ) = 0 := by
   rcases Nat.even_or_odd p with hp | hp
   · simp [hp]
@@ -253,7 +253,7 @@ variable (R A M : Type*) [CommSemiring R] [AddCommMonoid A] [Module R A] [AddCom
 families `(x_q)_q` of `M`-valued `q`-cochains with `x_q = 0` for `q > m`. The component `x_q` lies
 in column `m - q`. -/
 def cyclicTotalCochains (m : ℕ) :
-    Submodule R (∀ q : ℕ, MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M) :=
+    Submodule R (∀ q : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M) :=
   Submodule.pi {q | m < q} fun _ ↦ ⊥
 
 variable {R A M}
@@ -261,20 +261,20 @@ variable {R A M}
 /-- A family of cochains lies in total degree `m` exactly when it vanishes above row `m`. -/
 @[simp]
 theorem mem_cyclicTotalCochains_iff {m : ℕ}
-    {x : ∀ q : ℕ, MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M} :
+    {x : ∀ q : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M} :
     x ∈ cyclicTotalCochains R A M m ↔ ∀ q, m < q → x q = 0 := by
   simp [cyclicTotalCochains, Submodule.mem_pi]
 
 /-- A total cochain of degree `m` vanishes in every row `q > m`. -/
 @[simp]
 theorem coe_cyclicTotalCochains_apply_of_lt {m q : ℕ} (x : cyclicTotalCochains R A M m)
-    (hq : m < q) : (x : ∀ q : ℕ, MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M) q = 0 :=
+    (hq : m < q) : (x : ∀ q : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M) q = 0 :=
   mem_cyclicTotalCochains_iff.1 x.2 q hq
 
 /-- A cochain placed in row `k ≤ m` is a total cochain of degree `m`. -/
 theorem single_mem_cyclicTotalCochains {m k : ℕ} (hk : k ≤ m)
-    (φ : MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M) :
-    (Pi.single k φ : ∀ q : ℕ, MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M) ∈
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M) :
+    (Pi.single k φ : ∀ q : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M) ∈
       cyclicTotalCochains R A M m := by
   rw [mem_cyclicTotalCochains_iff]
   intro q hq
@@ -287,9 +287,9 @@ theorem cyclicTotalCochains_mono : Monotone (cyclicTotalCochains R A M) := fun m
 
 /-- A total cochain of degree `m` vanishing below row `m` is concentrated in column zero. -/
 private theorem eq_single_of_forall_lt {m : ℕ}
-    {x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M}
+    {x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M}
     (hx : x ∈ cyclicTotalCochains R A M m) (hlt : ∀ q < m, x q = 0) :
-    x = (Pi.single m (x m) : ∀ q : ℕ, MultilinearMap R (fun _ : Fin (q + 1) ↦ A)
+    x = (Pi.single m (x m) : ∀ q : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A)
         M) := by
   funext q
   rcases lt_trichotomy q m with hq | rfl | hq
@@ -313,7 +313,7 @@ def cyclicCochainsToTotal (m : ℕ) : cyclicCochains R A M m →ₗ[R] cyclicTot
 /-- A cyclic cochain is included as the family concentrated in row `m`, column zero. -/
 @[simp]
 theorem coe_cyclicCochainsToTotal_apply {m : ℕ} (φ : cyclicCochains R A M m) :
-    (cyclicCochainsToTotal R A M m φ : ∀ q : ℕ, MultilinearMap R (fun _ : Fin (q + 1)
+    (cyclicCochainsToTotal R A M m φ : ∀ q : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1)
         ↦ A) M) =
       Pi.single m φ.1 :=
   (rfl)
@@ -336,8 +336,8 @@ variable (R A M) in
 horizontal differential out of column `m`, and row `q + 1` receives the vertical differential of
 the component in row `q` and the horizontal differential of the component in row `q + 1`. -/
 private def cyclicTotalDifferentialComponent (m : ℕ) :
-    ∀ q : ℕ, (∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M) →ₗ[R]
-      MultilinearMap R (fun _ : Fin (q + 1) ↦ A) M
+    ∀ q : ℕ, (∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M) →ₗ[R]
+      MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A) M
   | 0 => cyclicBicomplexHorizontal R A M m 0 ∘ₗ LinearMap.proj 0
   | q + 1 => cyclicBicomplexVertical R A M (m - q) q ∘ₗ LinearMap.proj q +
       cyclicBicomplexHorizontal R A M (m - (q + 1)) (q + 1) ∘ₗ LinearMap.proj (q + 1)
@@ -346,17 +346,17 @@ variable (R A M) in
 /-- The total differential on all families of cochains, with the components of degree `m` placed
 in the columns `m - q`. -/
 private def cyclicTotalDifferentialAux (m : ℕ) :
-    (∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M) →ₗ[R]
-      ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M :=
+    (∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M) →ₗ[R]
+      ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M :=
   LinearMap.pi (cyclicTotalDifferentialComponent R A M m)
 
 private theorem cyclicTotalDifferentialAux_apply_zero (m : ℕ)
-    (x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M) :
+    (x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M) :
     cyclicTotalDifferentialAux R A M m x 0 = cyclicBicomplexHorizontal R A M m 0 (x 0) :=
   (rfl)
 
 private theorem cyclicTotalDifferentialAux_apply_succ (m q : ℕ)
-    (x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M) :
+    (x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M) :
     cyclicTotalDifferentialAux R A M m x (q + 1) =
       cyclicBicomplexVertical R A M (m - q) q (x q) +
         cyclicBicomplexHorizontal R A M (m - (q + 1)) (q + 1) (x (q + 1)) :=
@@ -365,7 +365,7 @@ private theorem cyclicTotalDifferentialAux_apply_succ (m q : ℕ)
 /-- If a family vanishes below row `k`, its total differential in row `k` is the horizontal
 differential of its component in row `k`. -/
 private theorem cyclicTotalDifferentialAux_apply_of_forall_lt (m k : ℕ)
-    (x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M) (hx : ∀ q < k, x q =
+    (x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M) (hx : ∀ q < k, x q =
         0) :
     cyclicTotalDifferentialAux R A M m x k = cyclicBicomplexHorizontal R A M (m - k) k (x k) := by
   cases k with
@@ -374,7 +374,7 @@ private theorem cyclicTotalDifferentialAux_apply_of_forall_lt (m k : ℕ)
 
 /-- The total differential of a cochain placed in row `k` vanishes below row `k`. -/
 private theorem cyclicTotalDifferentialAux_single_apply_of_lt (m : ℕ) {k q : ℕ} (hq : q < k)
-    (φ : MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M) :
     cyclicTotalDifferentialAux R A M m (Pi.single k φ) q = 0 := by
   cases q with
   | zero => rw [cyclicTotalDifferentialAux_apply_zero, Pi.single_eq_of_ne hq.ne, map_zero]
@@ -384,7 +384,7 @@ private theorem cyclicTotalDifferentialAux_single_apply_of_lt (m : ℕ) {k q : �
 
 /-- The total differential maps total degree `m` to total degree `m + 1`. -/
 private theorem cyclicTotalDifferentialAux_mem {m : ℕ}
-    {x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M}
+    {x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M}
     (hx : x ∈ cyclicTotalCochains R A M m) :
     cyclicTotalDifferentialAux R A M m x ∈ cyclicTotalCochains R A M (m + 1) := by
   rw [mem_cyclicTotalCochains_iff] at hx ⊢
@@ -422,7 +422,7 @@ theorem cyclicTotalDifferential_apply_succ {m : ℕ} (x : cyclicTotalCochains R 
 /-- The total differential of a cochain `φ` in column zero of row `m` has the components
 `(1 - λ) φ` in row `m` and `b φ` in row `m + 1`. -/
 private theorem cyclicTotalDifferentialAux_single_self (m : ℕ)
-    (φ : MultilinearMap R (fun _ : Fin (m + 1) ↦ A) M) :
+    (φ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 1) ↦ A) M) :
     cyclicTotalDifferentialAux R A M m (Pi.single m φ) m = (1 - cyclicOperator R A M m) φ ∧
       cyclicTotalDifferentialAux R A M m (Pi.single m φ) (m + 1) =
         hochschildCoboundary R A M m φ := by
@@ -457,7 +457,7 @@ omit [IsScalarTower R A A] [SMulCommClass R A A] in
 /-- In row `q + 1` of a total cochain `x` of degree `m`, the horizontal differential out of the
 column `m - (q + 1)` of `x (q + 1)`, followed by the one out of the column `m - q`, vanishes. -/
 private theorem cyclicBicomplexHorizontal_cyclicBicomplexHorizontal_of_mem {m : ℕ}
-    {x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M}
+    {x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M}
     (hx : x ∈ cyclicTotalCochains R A M m) (q : ℕ) :
     cyclicBicomplexHorizontal R A M (m - q) (q + 1)
       (cyclicBicomplexHorizontal R A M (m - (q + 1)) (q + 1) (x (q + 1))) = 0 := by
@@ -469,7 +469,7 @@ private theorem cyclicBicomplexHorizontal_cyclicBicomplexHorizontal_of_mem {m : 
 /-- In row `q + 1` of a total cochain `x` of degree `m`, the square leaving `x (q + 1)` in the
 column `m - (q + 1)` anticommutes. -/
 private theorem cyclicBicomplexVertical_cyclicBicomplexHorizontal_of_mem {m : ℕ}
-    {x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M}
+    {x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M}
     (hx : x ∈ cyclicTotalCochains R A M m) (q : ℕ) :
     cyclicBicomplexVertical R A M (m - q) (q + 1)
         (cyclicBicomplexHorizontal R A M (m - (q + 1)) (q + 1) (x (q + 1))) =
@@ -490,7 +490,7 @@ variable {R A M : Type*} [CommSemiring R] [NonUnitalSemiring A] [Module R A]
 
 /-- The total differential squares to zero on total cochains of degree `m`. -/
 private theorem cyclicTotalDifferentialAux_cyclicTotalDifferentialAux {m : ℕ}
-    {x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M}
+    {x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M}
     (hx : x ∈ cyclicTotalCochains R A M m) :
     cyclicTotalDifferentialAux R A M (m + 1) (cyclicTotalDifferentialAux R A M m x) = 0 := by
   funext q
@@ -537,10 +537,10 @@ row `k ≤ m`, and let `y` be a total cochain of degree `m` whose total differen
 in the rows `q < k`. If `k + 1` is invertible, adding a suitable cochain in row `k` to `y` makes
 them agree in the rows `q ≤ k`, by exactness of row `k` away from column zero. -/
 private theorem exists_forall_lt_succ_eq_cyclicTotalDifferentialAux {m k : ℕ} (hk : k ≤ m)
-    (hR : IsUnit ((k : R) + 1)) {x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦
+    (hR : IsUnit ((k : R) + 1)) {x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦
         A) M}
     (hdx : cyclicTotalDifferentialAux R A M (m + 1) x k = 0)
-    {y : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M}
+    {y : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M}
     (hy : y ∈ cyclicTotalCochains R A M m)
     (hxy : ∀ q < k, x q = cyclicTotalDifferentialAux R A M m y q) :
     ∃ y' ∈ cyclicTotalCochains R A M m,
@@ -570,12 +570,12 @@ total differential vanishes below row `m + 1`. If `q + 1` is invertible for `q �
 the sum of a cochain in column zero and the total differential of a total cochain of degree `m`. -/
 private theorem exists_eq_single_add_cyclicTotalDifferentialAux {m : ℕ}
     (hR : ∀ q ≤ m, IsUnit ((q : R) + 1))
-    {x : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M}
+    {x : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M}
     (hx : x ∈ cyclicTotalCochains R A M (m + 1))
     (hdx : ∀ q ≤ m, cyclicTotalDifferentialAux R A M (m + 1) x q = 0) :
-    ∃ y ∈ cyclicTotalCochains R A M m, ∃ φ : MultilinearMap R (fun _ : Fin (m + 2) ↦
+    ∃ y ∈ cyclicTotalCochains R A M m, ∃ φ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 2) ↦
         A) M,
-      x = (Pi.single (m + 1) φ : ∀ q : ℕ, MultilinearMap R (fun _ : Fin (q + 1) ↦ A)
+      x = (Pi.single (m + 1) φ : ∀ q : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1) ↦ A)
           M) +
         cyclicTotalDifferentialAux R A M m y := by
   -- Kill the components in the rows `q < k`, by induction on `k`, using exactness of the rows
@@ -599,13 +599,13 @@ zero of row `m + 1`, and `q + 1` is invertible for `q < m`, then `φ` is the Hoc
 coboundary of a cyclic cochain. -/
 private theorem exists_hochschildCoboundary_eq_of_cyclicTotalDifferentialAux_eq_single {m : ℕ}
     (hR : ∀ q < m, IsUnit ((q : R) + 1))
-    {y : ∀ k : ℕ, MultilinearMap R (fun _ : Fin (k + 1) ↦ A) M}
-    (hy : y ∈ cyclicTotalCochains R A M m) {φ : MultilinearMap R (fun _ : Fin (m + 2)
+    {y : ∀ k : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (k + 1) ↦ A) M}
+    (hy : y ∈ cyclicTotalCochains R A M m) {φ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 2)
         ↦ A) M}
     (hyφ : cyclicTotalDifferentialAux R A M m y = Pi.single (m + 1) φ) :
     ∃ ψ ∈ cyclicCochains R A M m, hochschildCoboundary R A M m ψ = φ := by
   -- Replace `y` by a cochain `Pi.single m ψ` in column zero with the same differential.
-  obtain ⟨ψ, hψ⟩ : ∃ ψ : MultilinearMap R (fun _ : Fin (m + 1) ↦ A) M,
+  obtain ⟨ψ, hψ⟩ : ∃ ψ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 1) ↦ A) M,
       cyclicTotalDifferentialAux R A M m (Pi.single m ψ) = Pi.single (m + 1) φ := by
     cases m with
     | zero =>

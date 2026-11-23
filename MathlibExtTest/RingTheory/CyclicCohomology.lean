@@ -30,11 +30,11 @@ namespace MathlibExtTest.RingTheory.CyclicCohomology
 open TauCeti
 
 /-- The multiplication `(a₀, a₁) ↦ a₀ a₁` as a `ℚ`-valued 1-cochain of `ℚ`. -/
-abbrev mul₁ : MultilinearMap ℚ (fun _ : Fin 2 ↦ ℚ) ℚ :=
+abbrev mul₁ : MultilinearMap (RingHom.id ℚ) (fun _ : Fin 2 ↦ ℚ) ℚ :=
   MultilinearMap.mkPiAlgebra ℚ (Fin 2) ℚ
 
 /-- The identity `a₀ ↦ a₀` as a `ℚ`-valued 0-cochain of `ℚ`. -/
-abbrev id₀ : MultilinearMap ℚ (fun _ : Fin 1 ↦ ℚ) ℚ :=
+abbrev id₀ : MultilinearMap (RingHom.id ℚ) (fun _ : Fin 1 ↦ ℚ) ℚ :=
   MultilinearMap.mkPiAlgebra ℚ (Fin 1) ℚ
 
 theorem mul₁_apply (a : Fin 2 → ℚ) : mul₁ a = a 0 * a 1 := by
@@ -89,7 +89,7 @@ example : connesB ℚ ℚ ℚ 0 ∘ₗ connesB ℚ ℚ ℚ 1 = 0 :=
   connesB_comp_connesB ℚ ℚ ℚ 0
 
 /-- Connes' operator lands in cyclic cochains and kills cyclic cochains. -/
-example (φ : MultilinearMap ℚ (fun _ : Fin 2 ↦ ℚ) ℚ) :
+example (φ : MultilinearMap (RingHom.id ℚ) (fun _ : Fin 2 ↦ ℚ) ℚ) :
     connesB ℚ ℚ ℚ 0 φ ∈ cyclicCochains ℚ ℚ ℚ 0 :=
   connesB_mem_cyclicCochains φ
 

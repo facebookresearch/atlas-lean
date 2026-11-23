@@ -124,7 +124,7 @@ def cyclicTotalPeriodicity (m : ℕ) :
 /-- The periodicity map does not change the family of cochains. -/
 @[simp]
 theorem coe_cyclicTotalPeriodicity_apply {m : ℕ} (x : cyclicTotalCochains R A M m) :
-    (cyclicTotalPeriodicity R A M m x : ∀ q : ℕ, MultilinearMap R (fun _ : Fin (q + 1)
+    (cyclicTotalPeriodicity R A M m x : ∀ q : ℕ, MultilinearMap (RingHom.id R) (fun _ : Fin (q + 1)
         ↦ A) M) =
       x :=
   (rfl)
@@ -155,7 +155,7 @@ variable (R A M) in
 /-- The projection of a total cochain of degree `m` onto its component in column zero, the
 Hochschild `m`-cochain in row `m`. -/
 def cyclicTotalToHochschild (m : ℕ) :
-    cyclicTotalCochains R A M m →ₗ[R] MultilinearMap R (fun _ : Fin (m + 1) ↦ A) M :=
+    cyclicTotalCochains R A M m →ₗ[R] MultilinearMap (RingHom.id R) (fun _ : Fin (m + 1) ↦ A) M :=
   LinearMap.proj m ∘ₗ (cyclicTotalCochains R A M m).subtype
 
 /-- The projection onto column zero takes the component in row `m`. -/
@@ -277,7 +277,7 @@ the sum of the image under the periodicity map of a total cochain of degree `m` 
 coboundary. -/
 private theorem exists_eq_cyclicTotalPeriodicity_add_cyclicTotalDifferential {m : ℕ}
     (x : cyclicTotalCochains R A M (m + 2)) (hx : cyclicTotalDifferential R A M (m + 2) x = 0)
-    (χ : MultilinearMap R (fun _ : Fin (m + 2) ↦ A) M)
+    (χ : MultilinearMap (RingHom.id R) (fun _ : Fin (m + 2) ↦ A) M)
     (hχ : hochschildCoboundary R A M (m + 1) χ = x.1 (m + 2)) :
     ∃ w b, x.1 =
       (cyclicTotalPeriodicity R A M m w).1 + (cyclicTotalDifferential R A M (m + 1) b).1 := by
