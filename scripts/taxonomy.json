@@ -9866,7 +9866,7 @@
   "Domains/Biology/PopulationGenetics/Admixture/F3TargetPositivity": {"to": "Biology/population-structure", "title": "Negative f3 as a test of admixture"},
   "Domains/Biology/PopulationGenetics/Admixture/F4Ratio": {"to": "Biology/population-structure", "title": "Bias of the f4-ratio estimator"},
   "Domains/Biology/PopulationGenetics/Admixture/FourPoint": {"to": "Biology/population-structure", "title": "Tree-shaped admixture graphs and the four-point condition"},
-  "Domains/Biology/PopulationGenetics/Admixture/GaussianProjection": {"to": "Biology/population-structure", "title": "Chi-square law of Gaussian projection residuals"},
+  "Domains/Biology/PopulationGenetics/Admixture/GaussianProjection": {"to": "Probability/linear-models-multivariate", "title": "Chi-square law of Gaussian projection residuals"},
   "Domains/Biology/PopulationGenetics/Admixture/GaussianSurrogate": {"to": "Biology/population-structure", "title": "Gaussian surrogate of the drift model"},
   "Domains/Biology/PopulationGenetics/Admixture/GeneralGraph": {"to": "Biology/population-structure", "title": "Cuts in admixture graphs"},
   "Domains/Biology/PopulationGenetics/Admixture/Geometry": {"to": "Biology/population-structure", "title": "Inner-product geometry and realizability of f-statistics"},

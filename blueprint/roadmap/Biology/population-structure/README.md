@@ -15,7 +15,6 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Fitting admixture graphs by least squares](fitting-admixture-graphs-by-least-squares/README.md)
 - [Outgroup f3 and admixed branches](outgroup-f3-and-admixed-branches/README.md)
 - [Bias of the f4-ratio estimator](bias-of-the-f4-ratio-estimator/README.md)
-- [Chi-square law of Gaussian projection residuals](chi-square-law-of-gaussian-projection-residuals/README.md)
 - [Cuts in admixture graphs](cuts-in-admixture-graphs/README.md)
 - [Estimating admixture proportions from f4 statistics](estimating-admixture-proportions-from-f4-statist/README.md)
 - [Gaussian surrogate of the drift model](gaussian-surrogate-of-the-drift-model/README.md)
@@ -25,3 +24,7 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Negative f3 as a test of admixture](negative-f3-as-a-test-of-admixture/README.md)
 - [Rank of the f4 matrix of left and right populations](rank-of-the-f4-matrix-of-left-and-right-populati/README.md)
 - [Tree-shaped admixture graphs and the four-point condition](tree-shaped-admixture-graphs-and-the-four-point/README.md)
+
+## Related topics
+
+- [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
