@@ -167,6 +167,31 @@ public def permutipleGraphEdges {k : ℕ} (d : Fin (k + 1) → ℕ) (σ : Equiv.
     Finset (ℕ × ℕ) :=
   Finset.univ.image fun j => (d j, d (σ j))
 
+/-- **Conjugate rearrangements have the same graph.** Let $d_0, \dots, d_k$ be natural numbers
+and let $\pi_1, \pi_2, \tau_1, \tau_2$ be permutations of $\{0, \dots, k\}$ with
+$\pi_1 \tau_1 \pi_1^{-1} = \pi_2 \tau_2 \pi_2^{-1}$. Then the graph of the digits
+$d_{\pi_1(0)}, \dots, d_{\pi_1(k)}$ with digit permutation $\tau_1$ and the graph of the digits
+$d_{\pi_2(0)}, \dots, d_{\pi_2(k)}$ with digit permutation $\tau_2$ have the same edge set:
+$$\{(d_{\pi_1(j)}, d_{\pi_1(\tau_1(j))}) : 0 \le j \le k\} =
+\{(d_{\pi_2(j)}, d_{\pi_2(\tau_2(j))}) : 0 \le j \le k\}.$$
+
+The source assumes, for a base $b$ and a multiplier $n$ with $1 < n < b$, that
+$(d_{\pi_1(k)}, \dots, d_{\pi_1(0)})_b$ is an $(n, b, \tau_1)$-permutiple and that
+$(d_{\pi_2(k)}, \dots, d_{\pi_2(0)})_b$ is an $(n, b, \tau_2)$-permutiple, together with a base
+permutiple $(d_k, \dots, d_0)_b$; these hypotheses are not needed.
+
+Source: B. V. Holt, *Finding Permutiples of a Known Base and Multiplier*, INTEGERS 25
+(2025), Article A13, Theorem 4 (`integers-2025-A13-thm-4`). -/
+public theorem permutipleGraphEdges_eq_of_conj {k : ℕ} (d : Fin (k + 1) → ℕ)
+    (π₁ π₂ τ₁ τ₂ : Equiv.Perm (Fin (k + 1))) (hconj : π₁ * τ₁ * π₁⁻¹ = π₂ * τ₂ * π₂⁻¹) :
+    permutipleGraphEdges (d ∘ π₁) τ₁ = permutipleGraphEdges (d ∘ π₂) τ₂ := by
+  have reindex (π τ : Equiv.Perm (Fin (k + 1))) :
+      permutipleGraphEdges (d ∘ π) τ = permutipleGraphEdges d (π * τ * π⁻¹) := by
+    unfold permutipleGraphEdges
+    conv_rhs => rw [← Finset.image_univ_equiv π, Finset.image_image]
+    simp [Function.comp_def, Equiv.Perm.mul_apply]
+  rw [reindex π₁ τ₁, reindex π₂ τ₂, hconj]
+
 /-- **Graph of the permutiple 87912.** Let $(d_0, d_1, d_2, d_3, d_4) = (2, 1, 9, 7, 8)$ be
 the decimal digits of $87912$, from the units digit up, and let $\sigma$ be the reversal
 $\sigma(j) = 4 - j$ of $\{0, \dots, 4\}$. The edge set

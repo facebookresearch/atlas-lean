@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.SuperFibocatalan
 
-/-! # Boundary and sign checks for the Fibonacci product identity -/
+/-! # Boundary and sign checks for the Fibonacci and Lucas polynomial product identities -/
 
 open MathlibExt.NumberTheory.SuperFibocatalanWanted
 
@@ -22,3 +22,18 @@ example : (Nat.fib 6 : ℤ) * Nat.fib 5 - (Nat.fib 8 : ℤ) * Nat.fib 3 = -2 :=
 
 example : (Nat.fib 8 : ℤ) * Nat.fib 6 - (Nat.fib 10 : ℤ) * Nat.fib 4 = 3 :=
   fib_mul_sub_mul 4
+
+open MvPolynomial
+
+example : lucasPoly 0 * lucasPoly 2 - lucasPoly 2 * lucasPoly 0 = 0 := by
+  simpa only [lucasPoly, mul_zero] using lucasPoly_mul_sub_mul 0
+
+example : lucasPoly 2 * lucasPoly 3 - lucasPoly 4 * lucasPoly 1 = -(X 0 * X 1) := by
+  calc
+    _ = _ := lucasPoly_mul_sub_mul 1
+    _ = _ := by simp [lucasPoly]
+
+example : lucasPoly 4 * lucasPoly 4 - lucasPoly 6 * lucasPoly 2 = X 0 ^ 2 * X 1 ^ 2 := by
+  calc
+    _ = _ := lucasPoly_mul_sub_mul 2
+    _ = _ := by simp [lucasPoly, pow_two, mul_comm, mul_assoc]

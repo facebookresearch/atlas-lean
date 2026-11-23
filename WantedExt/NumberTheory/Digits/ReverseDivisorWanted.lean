@@ -38,6 +38,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Set.Finite.Basic
+public import MathlibExt.NumberTheory.Digits.ReverseDivisibility
 public import MathlibExt.NumberTheory.Digits.ReverseDivisor
 
 set_option autoImplicit false
@@ -151,17 +152,6 @@ Proposition 4. -/
 theorem_wanted not_hasPropertyPStar_of_isReverseDivisor (n : ℕ)
     (h : IsReverseDivisor n) :
     ¬ HasPropertyPStar n
-
-/-- **In base $B$, divisors of $B^2 - 1$ divide reversals of their multiples.** Let $B \ge 2$ be
-a natural number and let $n$ be a natural number dividing $B^2 - 1$. Then $n$ divides the
-base-$B$ reversal of every multiple of $n$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Proposition 5. -/
-theorem_wanted dvd_reverseDigits_of_dvd (B n : ℕ) (hB : 2 ≤ B)
-    (hn : n ∣ B ^ 2 - 1) (m : ℕ) (hm : n ∣ m) :
-    n ∣ Nat.reverseDigits B m
 
 /-- **Infinitely many multiples with divisible reversal.** Let $n$ be a natural number not
 divisible by $10$, and suppose that $n$ divides the decimal reversal of $k_0 n$ for some natural
