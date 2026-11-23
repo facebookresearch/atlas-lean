@@ -19,10 +19,11 @@ open scoped BigOperators
 
 namespace legendreSym
 
-/-- A linear Legendre-symbol sum over a complete residue system vanishes when
-the slope is nonzero modulo the odd prime `p`.
+/-- **Linear Legendre-symbol sums vanish.** Let $p$ be an odd prime and let $b$ and $c$ be
+integers with $p \nmid b$. Then the Legendre symbols $\left(\frac{b\ell + c}{p}\right)$ for
+$\ell = 0, 1, \dots, p - 1$ sum to $0$.
 
-This is the first corollary of Theorem `thm1` in Ram Krishna Pandey and
+Source: This is the first corollary of Theorem `thm1` in Ram Krishna Pandey and
 Anshumaan Parashar, *On Certain Sums with Quadratic Expressions Involving the
 Legendre Symbol*, Journal of Integer Sequences 21 (2018), Article 18.4.7,
 lines 190–193,

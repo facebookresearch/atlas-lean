@@ -79,7 +79,11 @@ private theorem signBit_mul {a b : ℝ} (ha : a ≠ 0) (hb : b ≠ 0) :
 /-- `ofAdd 0` is the identity of `Multiplicative (ZMod 2)`. -/
 private theorem ofAdd_zero_eq_one : Multiplicative.ofAdd (0 : ZMod 2) = 1 := rfl
 
-/-- Sign of a unit at a real place, valued in `Multiplicative (ZMod 2)`. -/
+/-- **Sign of a unit at a real place.** For a real place $w$ of a number field $K$, let
+$\sigma_w \colon K \to \mathbb{R}$ be the corresponding real embedding. The sign at $w$ is the
+group homomorphism from $K^\times$ to $\mathbb{Z}/2\mathbb{Z}$, written multiplicatively, that
+sends $x$ to the class of $0$ (the identity) if $\sigma_w(x) > 0$ and to the class of $1$
+otherwise. -/
 noncomputable def signAtRealPlace (w : RealPlace K) :
     Kˣ →* Multiplicative (ZMod 2) where
   toFun x :=
@@ -108,7 +112,10 @@ noncomputable def signAtRealPlace (w : RealPlace K) :
             (signBit (InfinitePlace.embedding_of_isReal w.property (y : K)))
     rw [Units.val_mul, map_mul, signBit_mul hx hy, ofAdd_add]
 
-/-- The sign at a real place is trivial iff the real embedding is positive. -/
+/-- **Trivial sign at a real place means positivity.** Let $w$ be a real place of a number field
+$K$ with real embedding $\sigma_w \colon K \to \mathbb{R}$. For every $x \in K^\times$, the sign of
+$x$ at $w$, an element of $\mathbb{Z}/2\mathbb{Z}$ written multiplicatively, is the identity if
+and only if $\sigma_w(x) > 0$. -/
 @[simp] theorem signAtRealPlace_apply_eq_one_iff (w : RealPlace K) (x : Kˣ) :
     signAtRealPlace w x = 1 ↔
       0 < InfinitePlace.embedding_of_isReal w.property (x : K) := by
@@ -127,7 +134,12 @@ noncomputable def signAtRealPlace (w : RealPlace K) :
         (signBit (InfinitePlace.embedding_of_isReal w.property (x : K))) = 1
     rw [signBit_of_pos hpos, ofAdd_zero_eq_one]
 
-/-- Joint sign of a ray element at the infinite places of the modulus. -/
+/-- **Infinite sign map of a modulus.** Let $m$ be a modulus of a number field $K$ and let
+$m_\infty$ be its finite set of real places. The infinite sign map of $m$ is the group
+homomorphism from the ray elements of $m$ to the group of functions
+$m_\infty \to \mathbb{Z}/2\mathbb{Z}$, with $\mathbb{Z}/2\mathbb{Z}$ written multiplicatively and
+the pointwise product, that sends $x$ to the function whose value at $w \in m_\infty$ is the
+sign of $x$ at the real place $w$. -/
 noncomputable def infiniteSignMap (m : Modulus K) :
     rayElements m →* (m.infinitePart → Multiplicative (ZMod 2)) where
   toFun x := fun w => signAtRealPlace (w : RealPlace K) (x : Kˣ)
@@ -143,13 +155,20 @@ noncomputable def infiniteSignMap (m : Modulus K) :
     rw [show ((x * y : rayElements m) : Kˣ) = (x : Kˣ) * (y : Kˣ) from rfl,
       map_mul]
 
-/-- Pointwise evaluation of the joint sign map. -/
+/-- **Coordinates of the infinite sign map.** Let $m$ be a modulus of a number field $K$ with
+finite set of real places $m_\infty$. For every ray element $x$ of $m$ and every $w \in m_\infty$,
+the value at $w$ of the infinite sign map of $m$ applied to $x$ is the sign of $x$ at the real
+place $w$. -/
 @[simp] theorem infiniteSignMap_apply (m : Modulus K) (x : rayElements m)
     (w : m.infinitePart) :
     infiniteSignMap m x w = signAtRealPlace (w : RealPlace K) (x : Kˣ) :=
   rfl
 
-/-- The joint sign map is trivial iff the element is positive at infinity. -/
+/-- **Trivial infinite sign means positivity at the modulus.** Let $m$ be a modulus of a number
+field $K$ with finite set of real places $m_\infty$, and for a real place $w$ let $\sigma_w$ be
+the corresponding real embedding of $K$. For every ray element $x$ of $m$, the infinite sign map
+of $m$ sends $x$ to the identity if and only if $x$ is positive at the infinite part of $m$,
+that is, $\sigma_w(x) > 0$ for every $w \in m_\infty$. -/
 @[simp] theorem infiniteSignMap_eq_one_iff (m : Modulus K) (x : rayElements m) :
     infiniteSignMap m x = 1 ↔ PositiveAtInfinitePart m (x : Kˣ) := by
   constructor
@@ -162,11 +181,18 @@ noncomputable def infiniteSignMap (m : Modulus K) :
     rw [Pi.one_apply, infiniteSignMap_apply]
     exact (signAtRealPlace_apply_eq_one_iff _ _).mpr (h (w : RealPlace K) w.property)
 
-/-- Ray elements positive at all infinite places of the modulus. -/
+/-- **Ray elements positive at the infinite part.** Let $m$ be a modulus of a number field $K$
+with finite set of real places $m_\infty$, and for a real place $w$ let $\sigma_w$ be the real
+embedding of $K$ at $w$. The positive ray elements of $m$ form the subgroup of the ray elements
+of $m$ defined as the kernel of the infinite sign map of $m$; equivalently, they are the ray
+elements $x$ with $\sigma_w(x) > 0$ for every $w \in m_\infty$. -/
 def positiveRayElements (m : Modulus K) : Subgroup (rayElements m) :=
   (infiniteSignMap m).ker
 
-/-- Membership in `positiveRayElements` is positivity at infinity. -/
+/-- **Membership in the positive ray elements.** Let $m$ be a modulus of a number field $K$ with
+finite set of real places $m_\infty$, and for a real place $w$ let $\sigma_w$ be the real embedding
+of $K$ at $w$. A ray element $x$ of $m$ is a positive ray element of $m$ if and only if $x$ is
+positive at the infinite part of $m$, that is, $\sigma_w(x) > 0$ for every $w \in m_\infty$. -/
 @[simp] theorem mem_positiveRayElements_iff (m : Modulus K) (x : rayElements m) :
     x ∈ positiveRayElements m ↔ PositiveAtInfinitePart m (x : Kˣ) := by
   unfold positiveRayElements

@@ -1,0 +1,78 @@
+name: Binary64 conformance
+
+on:
+  pull_request:
+    paths:
+      - "scripts/float_conformance/**"
+      - ".github/workflows/float-conformance.yml"
+      - "lean-toolchain"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/float_conformance/**"
+      - ".github/workflows/float-conformance.yml"
+      - "lean-toolchain"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  conformance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      CFLAGS: "-DNDEBUG"
+      EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Verify and record the exact source commit
+        run: |
+          python3 scripts/float_conformance/evidence.py head \
+            --out "${RUNNER_TEMP}/float-ci" --expected "$EXPECTED_SHA"
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gcc gdb binutils libmpfr-dev libgmp-dev
+      - name: Install pinned Lean tooling
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          "$HOME/.elan/bin/elan" toolchain install "$(cat lean-toolchain)"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Compare the full corpus and test failure exits
+        run: |
+          python3 scripts/float_conformance/evidence.py ci \
+            --out "${RUNNER_TEMP}/float-ci"
+      - name: Select diagnostic evidence, including failed runs
+        if: ${{ always() }}
+        run: |
+          python3 scripts/float_conformance/evidence.py package \
+            --root "${RUNNER_TEMP}/float-ci" --out "${RUNNER_TEMP}/float-evidence"
+      - name: Retain diagnostic evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: float-conformance-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/float-evidence/
+          if-no-files-found: error
+          retention-days: 14
+          overwrite: false

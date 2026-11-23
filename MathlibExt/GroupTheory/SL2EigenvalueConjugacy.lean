@@ -42,14 +42,18 @@ namespace SL2
 
 variable {F : Type*} [Field F]
 
-/-- A matrix `M` in `SL₂(F)` has eigenvalues `s` and `s⁻¹` if its
-characteristic polynomial is `(X - s)(X - s⁻¹)`. -/
+/-- **Elements of $\mathrm{SL}_2(F)$ with eigenvalues $s$ and $s^{-1}$.** Let $F$ be a field and
+let $s \in F$. A matrix $M \in \mathrm{SL}_2(F)$ has eigenvalues $s$ and $s^{-1}$ if its
+characteristic polynomial is $(X - s)(X - s^{-1})$. -/
 def HasEigenvalues (M : Matrix.SpecialLinearGroup (Fin 2) F) (s : F) : Prop :=
   (↑M : Matrix (Fin 2) (Fin 2) F).charpoly =
     (Polynomial.X - Polynomial.C s) * (Polynomial.X - Polynomial.C s⁻¹)
 
-/-- Conjugacy to `Matrix.SpecialLinearGroup.diag2` is equivalent to the source
-statement about a matrix conjugator. -/
+/-- **Conjugacy to $\operatorname{diag}(s, s^{-1})$ in terms of a conjugator.** Let $F$ be a field,
+let $s \in F$ with $s \ne 0$, and let $M \in \mathrm{SL}_2(F)$. Then $M$ is conjugate in
+$\mathrm{SL}_2(F)$ to the diagonal matrix $\operatorname{diag}(s, s^{-1})$ if and only if there is
+$P \in \mathrm{SL}_2(F)$ such that the matrix $P M P^{-1}$ equals
+$\operatorname{diag}(s, s^{-1})$. -/
 theorem isConj_diag2_iff (M : Matrix.SpecialLinearGroup (Fin 2) F)
     (s : F) (hs0 : s ≠ 0) :
     IsConj M (Matrix.SpecialLinearGroup.diag2 s hs0) ↔
@@ -71,10 +75,15 @@ theorem isConj_diag2_iff (M : Matrix.SpecialLinearGroup (Fin 2) F)
     refine ⟨P, ?_⟩
     exact Subtype.ext (hP.trans hdiag.symm)
 
-/-- A normal subgroup of `SL₂(F)` containing one matrix conjugate to
-`diag(s, s⁻¹)` contains every matrix conjugate to `diag(s, s⁻¹)`: the two
-matrices are conjugate to each other, via the diagonal matrix, and a normal
-subgroup is closed under conjugation. -/
+/-- **Conjugates of $\operatorname{diag}(s, s^{-1})$ lie in the same normal subgroups of
+$\mathrm{SL}_2(F)$.** Let $F$ be a field, let $N$ be a normal subgroup of $\mathrm{SL}_2(F)$, and
+let $s \in F$. Suppose $N$ contains a matrix $B$ for which some $P \in \mathrm{SL}_2(F)$ makes the
+matrix $P B P^{-1}$ equal to the diagonal matrix $\operatorname{diag}(s, s^{-1})$. Then $N$
+contains every $Q \in \mathrm{SL}_2(F)$ for which some $P \in \mathrm{SL}_2(F)$ makes $P Q P^{-1}$
+equal to $\operatorname{diag}(s, s^{-1})$.
+
+The two matrices are conjugate to each other, via the diagonal matrix, and a normal subgroup is
+closed under conjugation. -/
 theorem normal_subgroup_contains_all_conj_to_diag
     (N : Subgroup (Matrix.SpecialLinearGroup (Fin 2) F))
     (hN : N.Normal) (s : F)
@@ -99,11 +108,15 @@ theorem normal_subgroup_contains_all_conj_to_diag
 
 open Polynomial Module.End in
 set_option maxHeartbeats 8000000 in
-/-- A matrix in `SL₂(F)` whose eigenvalues are `s` and `s⁻¹`, with `s ≠ s⁻¹`,
-is conjugate in `SL₂(F)` to `diag(s, s⁻¹)`. The proof builds the conjugating
-matrix from eigenvectors for `s` and `s⁻¹`: distinct eigenvalues give
-linearly independent eigenvectors, so the matrix of eigenvectors has
-nonzero determinant, and rescaling its first column makes the determinant `1`. -/
+/-- **Distinct eigenvalues give conjugacy to $\operatorname{diag}(s, s^{-1})$ in
+$\mathrm{SL}_2(F)$.** Let $F$ be a field and let $s \in F$ with $s \ne s^{-1}$ and $s \ne 0$. If
+$M \in \mathrm{SL}_2(F)$ has eigenvalues $s$ and $s^{-1}$, that is, characteristic polynomial
+$(X - s)(X - s^{-1})$, then $M$ is conjugate in $\mathrm{SL}_2(F)$ to the diagonal matrix
+$\operatorname{diag}(s, s^{-1})$.
+
+The proof builds the conjugating matrix from eigenvectors for $s$ and $s^{-1}$: distinct
+eigenvalues give linearly independent eigenvectors, so the matrix of eigenvectors has nonzero
+determinant, and rescaling its first column makes the determinant $1$. -/
 theorem eigenvalues_implies_isConj_diag2 (s : F) (hs : s ≠ s⁻¹)
     (M : Matrix.SpecialLinearGroup (Fin 2) F) (hM : HasEigenvalues M s)
     (hs0 : s ≠ 0) : IsConj M (Matrix.SpecialLinearGroup.diag2 s hs0) := by
@@ -186,7 +199,11 @@ theorem eigenvalues_implies_isConj_diag2 (s : F) (hs : s ≠ s⁻¹)
     _ = 1 * Matrix.diagonal ![s, s⁻¹] := by rw [hQinv_mul]
     _ = Matrix.diagonal ![s, s⁻¹] := by rw [Matrix.one_mul]
 
-/-- The source diagonalization theorem with the original scalar hypothesis. -/
+/-- **Diagonalizing elements of $\mathrm{SL}_2(F)$ with distinct eigenvalues.** Let $F$ be a field,
+let $s \in F$ with $s \ne s^{-1}$, and let $M \in \mathrm{SL}_2(F)$ have eigenvalues $s$ and
+$s^{-1}$, that is, characteristic polynomial $(X - s)(X - s^{-1})$. Then there is
+$P \in \mathrm{SL}_2(F)$ such that the matrix $P M P^{-1}$ equals the diagonal matrix
+$\operatorname{diag}(s, s^{-1})$. -/
 theorem eigenvalues_implies_conj_to_diag (s : F) (hs : s ≠ s⁻¹)
     (M : Matrix.SpecialLinearGroup (Fin 2) F) (hM : HasEigenvalues M s) :
     ∃ P : Matrix.SpecialLinearGroup (Fin 2) F,
@@ -196,8 +213,10 @@ theorem eigenvalues_implies_conj_to_diag (s : F) (hs : s ≠ s⁻¹)
   exact (isConj_diag2_iff M s hs0).mp
     (eigenvalues_implies_isConj_diag2 s hs M hM hs0)
 
-/-- A normal subgroup of `SL₂(F)` containing one matrix with eigenvalues `s`
-and `s⁻¹`, with `s ≠ s⁻¹`, contains every matrix with those eigenvalues. -/
+/-- **Matrices with the same distinct eigenvalues lie in the same normal subgroups of
+$\mathrm{SL}_2(F)$.** Let $F$ be a field, let $N$ be a normal subgroup of $\mathrm{SL}_2(F)$, and
+let $s \in F$ with $s \ne s^{-1}$. If $N$ contains a matrix with eigenvalues $s$ and $s^{-1}$, then
+$N$ contains every matrix in $\mathrm{SL}_2(F)$ with eigenvalues $s$ and $s^{-1}$. -/
 theorem normal_contains_all_with_eigenvalues
     (N : Subgroup (Matrix.SpecialLinearGroup (Fin 2) F))
     (hN : N.Normal) (s : F) (hs : s ≠ s⁻¹)
