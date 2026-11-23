@@ -1,0 +1,3 @@
+# Pupko's traceback
+
+For a tree $t$ and a state $s$ of its root, the traceback is the [labeling](../felsenstein-s-pruning-algorithm/labeling.md) defined recursively: a leaf carries no data; at an internal node with weights $P, Q$ and children $l, r$, the left child gets $a = \operatorname{argmax}_{a'} P(s, a') M(l, a')$ together with the traceback of $l$ from $a$, and the right child gets $b = \operatorname{argmax}_{b'} Q(s, b') M(r, b')$ together with the traceback of $r$ from $b$, where $M$ is the [max-product recursion](max-prune.md) and $\operatorname{argmax}$ the [maximizing state](argmax-state.md).

@@ -68,4 +68,19 @@ example : ∃ (Symbol : Type) (_ : Inhabited Symbol) (_ : Fintype Symbol) (ι : 
       ∀ w : List Bool, tm.OutputsWithinTime (w.map ι) [ι (Path.pathDec w)] (p.eval w.length) :=
   P_subset_singleTapeP Path.pathDec_mem_P
 
+/-- An upstream polynomial-time function over a finite alphabet that answers `L` on encoded inputs
+puts `L` in `SingleTapeP`. -/
+example (L : DecisionProblem) {Symbol : Type} [Inhabited Symbol] [Fintype Symbol]
+    (ι : Bool → Symbol) (hι : Function.Injective ι) {f : List Symbol → List Symbol}
+    (hf : SingleTapeTM.PolyTimeComputable f) (hfL : ∀ w, f (w.map ι) = [ι (L w)]) :
+    L ∈ SingleTapeP :=
+  mem_singleTapeP_of_polyTimeComputable L ι hι hf hfL
+
+/-- On the bit alphabet itself (`ι = id`), an upstream polynomial-time function returning the
+one-bit answer decides `L` in polynomial time. -/
+example (L : DecisionProblem) {f : List Bool → List Bool}
+    (hf : SingleTapeTM.PolyTimeComputable f) (hfL : ∀ w, f w = [L w]) :
+    L ∈ SingleTapeP :=
+  mem_singleTapeP_of_polyTimeComputable L id Function.injective_id hf (by simpa using hfL)
+
 end CSLibExtTest.Computability.Machines.Turing.SingleTape.PolyTime

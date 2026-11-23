@@ -52,7 +52,10 @@ theorem sin_sq_groverAngle {α : Type*} [Fintype α]
   rw [sin_groverAngle marked hMarked, div_pow, Real.sq_sqrt hm,
     Real.sq_sqrt hn]
 
-/-- Standard integer choice `⌊π / (4θ)⌋` for known marked count. -/
+/-- **Standard Grover iteration count.** Let $M$ be a set of marked elements of a finite search
+space of size $N$, and let $\theta = \arcsin \sqrt{|M| / N}$ be its Grover angle. The standard
+iteration count is $\lfloor \pi / (4\theta) \rfloor$, the largest natural number at most
+$\pi / (4\theta)$; it is $0$ when $\theta = 0$, that is, when no element is marked. -/
 noncomputable def floorIterations {α : Type*} [Fintype α]
     (marked : Finset α) : ℕ :=
   ⌊Real.pi / (4 * groverAngle marked)⌋₊
@@ -127,8 +130,10 @@ theorem floorIterations_le_sqrt_ratio {α : Type*} [Fintype α]
       rw [sin_groverAngle marked hMarked, Real.sqrt_div hnpos.le]
       field_simp
 
-/-- If exactly one quarter of the search space is marked, one Grover iteration
-succeeds with probability one. -/
+/-- **One Grover iteration suffices when a quarter is marked.** Let $M$ be a nonempty set of
+marked elements of a finite search space of size $N$ with $4|M| = N$. Starting from the uniform
+amplitude vector, one Grover iteration produces an amplitude vector whose marked probability
+is $1$. -/
 theorem one_step_success_of_four_mul_card_eq {α : Type*} [Fintype α]
     [DecidableEq α] (marked : Finset α) (hMarked : marked.Nonempty)
     (hquarter : 4 * marked.card = Fintype.card α) :

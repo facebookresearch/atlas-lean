@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.SturmSeparation` — sturm_separation (manifest `manifests/problems/sturm_separation.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.SturmSeparation` —
+sturm_separation (manifest `manifests/problems/sturm_separation.toml`, rev 1, submitter Kim
+Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.SturmSeparationWanted` namespace. Mathematical
-statements are unchanged. Source: C. Sturm, Mémoire sur les équations différentielles linéaires du second ordre, 1836.
+and placed the declarations in the `MathlibExt.Analysis.SturmSeparationWanted` namespace.
+Mathematical
+statements are unchanged. Source: C. Sturm, Mémoire sur les équations différentielles linéaires
+du second ordre, 1836.
 -/
 module
 
@@ -66,7 +70,16 @@ interval `J` containing `[a, b]` of the linear homogeneous ODE `y'' + p y' + q y
 with `p, q` continuous on `J`, and their Wronskian is nonzero at some point of `J`. If
 `a < b ∈ J` are consecutive zeros of `y₁` (i.e. `y₁ a = y₁ b = 0` and `y₁ x ≠ 0` on
 `(a, b)`), then `y₂` has exactly one zero in `(a, b)`. -/
-/-- Source: C. Sturm, Mémoire sur les équations différentielles linéaires du second ordre, 1836. Via leanprover/lean-eval@38361be, problem `sturm_separation`. -/
+/-- **Sturm separation theorem.** Let $p, q, y_1, y_2 : \mathbb{R} \to \mathbb{R}$ and $a < b$,
+and let $J \subseteq \mathbb{R}$ be an open connected set (an open interval, possibly unbounded)
+containing $[a, b]$. Suppose that $p$ and $q$ are continuous on $J$, and that $y_1$ and $y_2$
+are twice differentiable at every point of $J$ and solve $y'' + p(x)\, y' + q(x)\, y = 0$ at
+every $x \in J$. Suppose further that the Wronskian $y_1 y_2' - y_2 y_1'$ is nonzero at some
+point of $J$. If $y_1(a) = y_1(b) = 0$ and $y_1(x) \ne 0$ for every $x \in (a, b)$, then $y_2$
+has exactly one zero in the open interval $(a, b)$.
+
+Source: C. Sturm, Mémoire sur les équations différentielles linéaires du second ordre, 1836.
+Via leanprover/lean-eval@38361be, problem `sturm_separation`. -/
 public theorem_wanted sturm_separation
     (p q y₁ y₂ : ℝ → ℝ) (a b : ℝ) (hab : a < b)
     (J : Set ℝ) (hJ_open : IsOpen J) (hJ_conn : IsPreconnected J)

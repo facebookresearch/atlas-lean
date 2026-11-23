@@ -63,8 +63,13 @@ private theorem divisor_ball_eq_divisor_closedBall
     · rw [(MeromorphicOn.divisor f (Metric.ball c R)).apply_eq_zero_of_notMem hz,
         (MeromorphicOn.divisor f (Metric.closedBall c R)).apply_eq_zero_of_notMem hzU]
 
-/-- `argumentPrinciple_closedBall` without the hypothesis `hint`: the circle integrability of
-`logDeriv f` follows from the other hypotheses. -/
+/-- **Argument principle on a closed disc.** Let $c \in \mathbb{C}$, $R > 0$, and let
+$f : \mathbb{C} \to \mathbb{C}$ be meromorphic on the closed disc $|z - c| \le R$ with finite order
+at every point of that disc (so $f$ vanishes identically near no point). Suppose the order of $f$
+is zero at every point of the circle $|z - c| = R$. Then the integral of $f'/f$ over the circle
+$|z - c| = R$, traversed once counterclockwise, equals $2\pi i$ times the sum of the orders of $f$
+at the points of the open disc $|z - c| < R$ (zeros counted positively and poles negatively, with
+multiplicity). -/
 theorem argumentPrinciple_closedBall_general
     {c : ℂ} {R : ℝ} (hR : 0 < R)
     {f : ℂ → ℂ}
@@ -267,9 +272,14 @@ theorem argumentPrinciple_closedBall_general
 
 set_option linter.unusedVariables false in
 /--
-Argument principle on a closed disc: if `f : ℂ → ℂ` is meromorphic on `closedBall c R` with no zeros
-or poles on the boundary `sphere c R`, then the contour integral of `f'/f` equals `2πi` times the
-divisor sum (zeros minus poles with multiplicity) inside `ball c R`.
+**Argument principle on a closed disc, with an integrability hypothesis.** Let $c \in \mathbb{C}$,
+$R > 0$, and let $f : \mathbb{C} \to \mathbb{C}$ be meromorphic on the closed disc $|z - c| \le R$
+with finite order at every point of that disc. Suppose the order of $f$ is zero at every point of
+the circle $|z - c| = R$ and $f'/f$ is integrable on that circle. Then the integral of $f'/f$ over
+the circle, traversed once counterclockwise, equals $2\pi i$ times the sum of the orders of $f$ at
+the points of the open disc $|z - c| < R$ (zeros counted positively and poles negatively, with
+multiplicity).
+
 Source: L. V. Ahlfors, Complex Analysis, 3rd ed., §5.2.
 It follows from `argumentPrinciple_closedBall_general`; the hypothesis `hint` is unused and keeps
 the source's shape.
