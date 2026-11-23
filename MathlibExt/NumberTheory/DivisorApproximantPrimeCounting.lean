@@ -12,12 +12,15 @@ import Mathlib.Algebra.Field.GeomSum
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Divisors
+public import Mathlib.NumberTheory.PrimeCounting
 
 /-!
-# Exponential approximation of the divisor count and divisor sum
+# Exponential approximations of divisor functions and prime counting
 
 The exponential weights equal one on the divisors. The total contribution of the
-nondivisors is bounded by a geometric sum with ratio $e^{-n}$.
+nondivisors is bounded by a geometric sum with ratio $e^{-n}$. For prime counting from
+the exact divisor count, only composites contribute to the error, which is bounded by
+the geometric tail starting at four.
 -/
 
 namespace MetaMathlibExt
@@ -114,5 +117,62 @@ public theorem divisorSumApprox_sub_lt (A : ℕ → ℕ → ℝ)
       simpa only [mul_one_div] using
         mul_lt_mul_of_pos_left (sum_abs_exp_sub_indicator_lt A hA n hn)
           (show 0 < (n : ℝ) by exact_mod_cast (show 0 < n from hn))
+
+/-- **Prime counting from the exact divisor count.** For every natural number $n \ge 2$,
+$$\sum_{m=2}^{n} e^{-m(\tau(m) - 2)} - \pi(n) < \frac{1}{e^3(e - 1)},$$
+where $\tau(m)$ is the number of positive divisors of $m$ and $\pi(n)$ is the number of primes at
+most $n$.
+
+Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 3 (`integers-2026-A46-lem-3`). -/
+public theorem primeCountingApprox_sub_lt (n : ℕ) (hn : 2 ≤ n) :
+    ∑ m ∈ Icc 2 n, Real.exp (-(m * ((m.divisors.card : ℝ) - 2))) - Nat.primeCounting n <
+      1 / (Real.exp 3 * (Real.exp 1 - 1)) := by
+  let w (m : ℕ) := Real.exp (-(m * ((m.divisors.card : ℝ) - 2)))
+  have hprimes : ∑ m ∈ n.primesLE, w m = Nat.primeCounting n := by
+    calc
+      _ = ∑ _m ∈ n.primesLE, (1 : ℝ) := by
+        apply sum_congr rfl
+        intro m hm
+        have hp := Nat.prime_of_mem_primesLE hm
+        simp [w, hp.divisors, hp.ne_one.symm]
+      _ = _ := by simp
+  let composites := {m ∈ Icc 2 n | ¬ m.Prime}
+  have hsub : composites ⊆ Ico 4 (n + 2) := by
+    intro m hm
+    obtain ⟨hm, hp⟩ := mem_filter.mp hm
+    obtain ⟨hm₂, hmn⟩ := mem_Icc.mp hm
+    have h₂ : m ≠ 2 := fun h => hp (h ▸ Nat.prime_two)
+    have h₃ : m ≠ 3 := fun h => hp (h ▸ Nat.prime_three)
+    exact mem_Ico.mpr ⟨by omega, by omega⟩
+  have hr : Real.exp (-1) < 1 := Real.exp_lt_one_iff.mpr (by norm_num)
+  change (∑ m ∈ Icc 2 n, w m) - Nat.primeCounting n < _
+  calc
+    _ = ∑ m ∈ composites, w m := by
+      rw [← sum_filter_add_sum_filter_not (Icc 2 n) Nat.Prime w,
+        ← Nat.primesLE_eq_filter_Icc_two, hprimes, add_sub_cancel_left]
+    _ ≤ ∑ m ∈ composites, Real.exp (-1) ^ m := by
+      apply sum_le_sum
+      intro m hm
+      obtain ⟨hm, hp⟩ := mem_filter.mp hm
+      have hm₂ := (mem_Icc.mp hm).1
+      obtain ⟨d, hd, hd₁, hdm⟩ := Nat.exists_dvd_of_not_prime hm₂ hp
+      have hm₀ : m ≠ 0 := by omega
+      have hcard : 3 ≤ m.divisors.card :=
+        two_lt_card_iff.mpr ⟨d, 1, m, Nat.mem_divisors.mpr ⟨hd, hm₀⟩,
+          Nat.one_mem_divisors.mpr hm₀, Nat.mem_divisors_self m hm₀, hd₁, hdm, by omega⟩
+      rw [← Real.exp_nat_mul]
+      apply Real.exp_le_exp.mpr
+      have h : (3 : ℝ) ≤ m.divisors.card := by exact_mod_cast hcard
+      nlinarith only [mul_nonneg (Nat.cast_nonneg (α := ℝ) m) (sub_nonneg.mpr h)]
+    _ ≤ ∑ m ∈ Ico 4 (n + 2), Real.exp (-1) ^ m :=
+      sum_le_sum_of_subset_of_nonneg hsub (fun _ _ _ => by positivity)
+    _ < Real.exp (-1) ^ 4 / (1 - Real.exp (-1)) := by
+      rw [geom_sum_Ico' hr.ne (by omega)]
+      exact div_lt_div_of_pos_right (sub_lt_self _ (by positivity)) (sub_pos.mpr hr)
+    _ = _ := by
+      rw [Real.exp_neg, show Real.exp 3 = Real.exp 1 ^ 3 by
+        simpa using Real.exp_nat_mul 1 3]
+      field_simp
 
 end MetaMathlibExt

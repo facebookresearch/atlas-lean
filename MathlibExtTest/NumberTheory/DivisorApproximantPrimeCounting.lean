@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.DivisorApproximantPrimeCounting
 
-/-! # A concrete weight for the exponential divisor estimates -/
+/-! # Concrete cases of the divisor and prime-counting estimates -/
 
 namespace MetaMathlibExt
 
@@ -46,6 +46,17 @@ example : 2 * Real.exp (-6) < 3 / (Real.exp 3 - 1) := by
     rw [show 3 * Real.pi / 2 = Real.pi / 2 + Real.pi by ring, Real.sin_add_pi, Real.sin_pi_div_two]
   have hsin₃ : Real.sin (3 * Real.pi) = 0 := Real.sin_nat_mul_pi 3
   norm_num [hIcc, hdiv, hsin, hsin₃, Real.sin_pi] at h
+  linarith only [h]
+
+-- At the first composite, the two prime terms cancel and the error is exactly exp (-4).
+example : Real.exp (-4) < 1 / (Real.exp 3 * (Real.exp 1 - 1)) := by
+  have h := primeCountingApprox_sub_lt 4 (by decide)
+  have hIcc : Icc 2 (4 : ℕ) = {2, 3, 4} := by decide
+  have h₂ : (2 : ℕ).divisors.card = 2 := by decide
+  have h₃ : (3 : ℕ).divisors.card = 2 := by decide
+  have h₄ : (4 : ℕ).divisors.card = 3 := by decide
+  have hπ : Nat.primeCounting 4 = 2 := by decide
+  norm_num [hIcc, h₂, h₃, h₄, hπ] at h ⊢
   linarith only [h]
 
 end MetaMathlibExt
