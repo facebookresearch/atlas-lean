@@ -122,6 +122,41 @@ public theorem choose_add_powerSeries_mul_one_sub_pow (r : ℕ) :
     rw [add_comm]
   rw [h, ← mul_pow, PowerSeries.mk_one_mul_one_sub_eq_one, one_pow]
 
+/-- **Generating function of the hyper-Leonardo numbers.** For every natural number $r$, the
+formal power series $\sum_{n \ge 0} \mathrm{Le}^{(r)}_n t^n$ of the hyper-Leonardo numbers of
+order $r$ satisfies
+$\left(\sum_{n \ge 0} \mathrm{Le}^{(r)}_n t^n\right)(1-2t+t^3)(1-t)^r = 1-t+t^2$ in
+$\mathbb{Z}[[t]]$, that is,
+$\sum_{n \ge 0} \mathrm{Le}^{(r)}_n t^n = \frac{1-t+t^2}{(1-2t+t^3)(1-t)^r}$.
+
+Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
+Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Theorem 1, Equation (10)
+(`integers-2026-A48-thm-1`). -/
+theorem hyperLeonardo_generatingFunction (r : ℕ) :
+    PowerSeries.mk (fun n => hyperLeonardo r n) * ((1 - 2 * X + X ^ 3) * (1 - X) ^ r) =
+      1 - X + X ^ 2 := by
+  let F (r : ℕ) := PowerSeries.mk (hyperLeonardo r)
+  change F r * _ = _
+  induction r with
+  | zero =>
+    rw [pow_zero, mul_one, two_mul, mul_add, mul_sub, mul_add, mul_one]
+    apply PowerSeries.ext
+    rintro (_ | _ | _ | n)
+    -- From degree three on, the coefficient is the difference of two consecutive recurrences.
+    all_goals simp [F, coeff_mul_X_pow', coeff_X, hyperLeonardo_zero, genLeonardo]
+    omega
+  | succ r ih =>
+    have step : F (r + 1) * (1 - X) = F r := by
+      rw [mul_sub, mul_one]
+      apply PowerSeries.ext
+      intro n
+      cases n with
+      | zero => simp [F, hyperLeonardo_succ]
+      | succ n =>
+        simp only [map_sub, coeff_succ_mul_X, F, coeff_mk, hyperLeonardo_succ]
+        rw [Finset.sum_range_succ, add_sub_cancel_left]
+    rw [pow_succ' _ r, mul_left_comm _ (1 - X : ℤ⟦X⟧), ← mul_assoc, step, ih]
+
 /-- **Generating functions of the hyper-Leonardo numbers of orders one and two.** In the ring
 $\mathbb{Z}[[t]]$ of formal power series, the hyper-Leonardo numbers $Le^{(r)}_n$ satisfy
 $\left(\sum_{n \ge 0} Le^{(1)}_n t^n\right)(1 - 2t + t^3)(1 - t) = 1 - t + t^2$ and
@@ -138,28 +173,7 @@ theorem hyperLeonardo_one_two_generatingFunction :
         1 - X + X ^ 2 ∧
       PowerSeries.mk (fun n => hyperLeonardo 2 n) * ((1 - 2 * X + X ^ 3) * (1 - X) ^ 2) =
         1 - X + X ^ 2 := by
-  let F (r : ℕ) := PowerSeries.mk (hyperLeonardo r)
-  have step (r : ℕ) : F (r + 1) * (1 - X) = F r := by
-    rw [mul_sub, mul_one]
-    apply PowerSeries.ext
-    intro n
-    cases n with
-    | zero => simp [F, hyperLeonardo_succ]
-    | succ n =>
-      simp only [map_sub, coeff_succ_mul_X, F, coeff_mk, hyperLeonardo_succ]
-      rw [Finset.sum_range_succ, add_sub_cancel_left]
-  have base : F 0 * (1 - 2 * X + X ^ 3) = 1 - X + X ^ 2 := by
-    rw [two_mul, mul_add, mul_sub, mul_add, mul_one]
-    apply PowerSeries.ext
-    rintro (_ | _ | _ | n)
-    -- From degree three on, the coefficient is the difference of two consecutive recurrences.
-    all_goals simp [F, coeff_mul_X_pow', coeff_X, hyperLeonardo_zero, genLeonardo]
-    omega
-  constructor
-  · change F 1 * _ = _
-    rwa [mul_comm _ (1 - X), ← mul_assoc, step 0]
-  · change F 2 * _ = _
-    rwa [mul_comm _ ((1 - X) ^ 2), ← mul_assoc, pow_two, ← mul_assoc, step 1, step 0]
+  exact ⟨by simpa using hyperLeonardo_generatingFunction 1, hyperLeonardo_generatingFunction 2⟩
 
 end
 
