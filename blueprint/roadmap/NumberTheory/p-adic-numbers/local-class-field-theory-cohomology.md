@@ -26,8 +26,10 @@ III.
    II.3.11); for $r = -2$ this is an isomorphism $G^{\mathrm{ab}} \to K^\times / \mathrm{Nm}_{L/K}(L^\times)$
    (Milne, Theorem III.3.1), whose inverse $\mathrm{rec}_{L/K}$ is the local Artin map of $L/K$. For $L/K$
    abelian, every $\chi \in \mathrm{Hom}(G, \mathbb{Q}/\mathbb{Z})$ and every $a \in K^\times$,
-   $$\chi(\mathrm{rec}_{L/K}(a)) = \mathrm{inv}_K(a \cup \delta\chi),$$
-   where $\delta \colon H^1(G, \mathbb{Q}/\mathbb{Z}) \to H^2(G, \mathbb{Z})$ is the connecting map of
+
+    $$\chi(\mathrm{rec}_{L/K}(a)) = \mathrm{inv}_K(a \cup \delta\chi),$$
+
+    where $\delta \colon H^1(G, \mathbb{Q}/\mathbb{Z}) \to H^2(G, \mathbb{Z})$ is the connecting map of
    $0 \to \mathbb{Z} \to \mathbb{Q} \to \mathbb{Q}/\mathbb{Z} \to 0$ and $a \cup \delta\chi \in H^2(G, L^\times)$
    (Milne, Proposition III.3.6, which refers to Serre for the proof). The formula also holds for
    $\mathbb{C}/\mathbb{R}$, with $\mathrm{rec}_{\mathbb{C}/\mathbb{R}} \colon \mathbb{R}^\times / \mathbb{R}_{>0} \to \mathrm{Gal}(\mathbb{C}/\mathbb{R})$
@@ -43,6 +45,7 @@ III.
    $\mathrm{rec}_{L/K}(a) = \mathrm{Frob}^{\mathrm{ord}_K(a)}$ (Milne, Lemma III.3.7; also Proposition
    III.1.9). So these maps define a homomorphism $K^\times \to \mathrm{Gal}(K^{\mathrm{ab}}/K)$ with the two
    properties of the local Artin map (Milne, Theorem III.3.4).
+
 4. **The local existence theorem.** For $K$ non-archimedean, every open subgroup of finite index in
    $K^\times$ is a norm group $\mathrm{Nm}_{L/K}(L^\times)$ of a finite abelian extension, so
    $L \mapsto \mathrm{Nm}_{L/K}(L^\times)$ is an inclusion-reversing bijection between the finite abelian
