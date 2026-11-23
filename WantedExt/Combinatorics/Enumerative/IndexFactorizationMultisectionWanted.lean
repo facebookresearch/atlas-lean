@@ -13,7 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
-public import MathlibExt.Analysis.Series.BaseAdicMultiples
+public import MathlibExt.Analysis.Series.ThreeAdicMultiples
 public import MathlibExt.Analysis.SpecialFunctions.LambertSeries
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
@@ -73,20 +73,6 @@ public theorem_wanted tsum_threeAdic_parametric_multisection (q : ℂ) (b : ℕ 
     ∑' x : ℕ × ℕ, (q ^ x.1 * (b ((3 * x.2 + 2) * 3 ^ x.1) + b ((3 * x.2 + 1) * 3 ^ x.1))
         - q ^ x.1 * (q - 1) * b ((3 * x.2 + 3) * 3 ^ x.1))
       = ∑' m : ℕ, b (m + 1)
-
-/-- **Regrouping the multiples of 3 by their 3-adic factorization.** Let $(b_m)_{m \ge 1}$ be a
-sequence of complex numbers such that the family $(b_{3m})_{m \ge 1}$ is summable. Then
-$$\sum_{j \ge 1,\, n \ge 1} \bigl( b_{(3n-1) 3^j} + b_{(3n-2) 3^j} \bigr) =
-\sum_{m \ge 1} b_{3m},$$
-where the sum on the left is an unconditional sum over the pairs $(j, n)$.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Corollary 6, deduced identity in sum form (`jis-2024-24.5.5-cor-6`). -/
-public theorem_wanted tsum_threeAdic_multiples_regroup (b : ℕ → ℂ)
-    (hb : Summable fun m : ℕ => b (3 * (m + 1))) :
-    ∑' x : ℕ × ℕ, (b ((3 * x.2 + 2) * 3 ^ (x.1 + 1)) + b ((3 * x.2 + 1) * 3 ^ (x.1 + 1)))
-      = ∑' m : ℕ, b (3 * (m + 1))
 
 /-- **Parametric base-B multisection of a series.** Let $B \ge 2$ be a natural number, let $q$
 be a complex number and let $(c_m)_{m \ge 1}$ be a sequence of complex numbers. Suppose that the

@@ -9722,6 +9722,7 @@
   "MathlibExt/Analysis/Series/SquareSummableComplexInequality": {"to": "Analysis/inequalities", "title": "Inequality for square-summable complex sequences"},
   "MathlibExt/Analysis/Series/StolzCesaro": {"to": "Analysis/sequences-and-series/convergence", "title": "Stolz–Cesàro theorem"},
   "MathlibExt/Analysis/Series/Tauberian": {"to": "Analysis/sequences-and-series/summability", "title": "Tauberian theorems for power series"},
+  "MathlibExt/Analysis/Series/ThreeAdicMultiples": {"to": "Analysis/sequences-and-series", "title": "Multisection of series by index factorization"},
   "MathlibExt/Analysis/SineIntegral": {"to": "Analysis/special-functions/elementary-transcendental-functions", "title": "Sine integral"},
   "MathlibExt/Analysis/SpecialFunctions/AndrewsJacobiTripleProduct": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Jacobi triple product"},
   "MathlibExt/Analysis/SpecialFunctions/ArcsinCentralBinomialReciprocal": {"to": "Analysis/sequences-and-series/trigonometric-and-harmonic-series", "title": "Arcsine series and central binomial sums"},
