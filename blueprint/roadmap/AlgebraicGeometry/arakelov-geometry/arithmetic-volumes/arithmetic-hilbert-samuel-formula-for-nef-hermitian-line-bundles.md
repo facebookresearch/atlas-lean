@@ -2,8 +2,10 @@
 
 Let $X$ be a projective arithmetic variety of dimension $d + 1$ in the sense of Moriwaki, and let
 $\bar L$ and $\bar N$ be hermitian line bundles on $X$. If $\bar L$ is nef, then
+
 $$\log \#\{ s \in H^0(X, mL + N) : \lVert s \rVert_{\sup} \le 1 \} = \frac{(\bar L^{d+1})}{(d +
 1)!} \, m^{d+1} + o(m^{d+1}) \qquad (m \to \infty).$$
+
 In particular $\widehat{\mathrm{vol}}(\bar L) = (\bar L^{d+1})$, so $(\bar L^{d+1}) \ge 0$ since the
 volume is nonnegative, and $\bar L$ is big if and only if $(\bar L^{d+1}) > 0$.
 

@@ -42,8 +42,10 @@ with $\lVert f s \rVert = |f| \, \lVert s \rVert$ for holomorphic $f$, and stric
 smooth where $s$ does not vanish; no invariance under complex conjugation is required, so
 Chambert-Loir's group $\widehat{\mathrm{Pic}}(X)$ is not literally the group of Gillet and Soulé.
 With these conventions the sequence
+
 $$\Gamma(X, \mathcal{O}_X^\times) \to C^\infty(X(\mathbb{C}), \mathbb{R}) \to
 \widehat{\mathrm{Pic}}(X) \to \mathrm{Pic}(X) \to 0$$
+
 is exact, where the first map is $f \mapsto \log|f|$, the second sends $\varphi$ to $\mathcal{O}_X$
 with the metric for which $\log \lVert 1 \rVert^{-1} = \varphi$, and the third forgets the metric.
 The current $-\log \lVert 1 \rVert^2$ for this metric is $2\varphi$; it is a Green current in Gillet
@@ -58,11 +60,15 @@ s \rVert_{\sup} = \sup_{x \in X(\mathbb{C})} \lVert s(x) \rVert$. When $X(\mathb
 complex manifold with a volume form $\Omega$, the $L^2$ norm is $\lVert s \rVert_{L^2} = \bigl(
 \int_{X(\mathbb{C})} \lVert s \rVert^2 \, \Omega \bigr)^{1/2}$. The lattice invariants used below
 are
+
 $$\hat h^0(\bar L) = \log \#\{ s \in H^0(X, L) : \lVert s \rVert_{\sup} \le 1 \}$$
+
 and, when $H^0(X, L)$ is torsion-free,
+
 $$\chi_{\sup}(\bar L) = \log \frac{\operatorname{vol}(B_{\sup})}
 {\operatorname{vol}\bigl(H^0(X, L)_\mathbb{R} / H^0(X, L)\bigr)}, \qquad
 B_{\sup} = \{ s \in H^0(X, L)_\mathbb{R} : \lVert s \rVert_{\sup} < 1 \},$$
+
 which does not depend on the choice of Haar measure on $H^0(X, L)_\mathbb{R}$. Moriwaki writes $\hat
 h^0(H^0(X, L), \lVert \cdot \rVert_{\sup})$ for the first number; Yuan's $h^0(\bar L)$ is the
 logarithm of the number of sections with $\lVert s \rVert_{\sup} < 1$ instead.
@@ -93,9 +99,9 @@ places.
 
 - H. Gillet and C. Soulé, "Arithmetic intersection theory", Publ. Math. IHÉS 72 (1990), 93–174,
   <http://www.numdam.org/item/PMIHES_1990__72__93_0/>: 1.1.6 (ii) (the normalization of $d^c$, p.
-  100), Definition 3.1.1, Examples 3.1.2 and 3.1.3 (arithmetic rings, pp. 124–125), Definition 3.2.1
-  (arithmetic varieties, $X_\infty$, $F_\infty$, $A^{p,p}(X_\mathbb{R})$ and
-  $\mathcal{D}^{p,p}(X_\mathbb{R})$, p. 125), 3.4.2 ($\widehat{\mathrm{Pic}}(X)$, p. 131).
+  100), Definition 3.1.1, Examples 3.1.2 and §3.1.3 (arithmetic rings and their morphisms, pp.
+  124–125), Definition 3.2.1 (arithmetic varieties, $X_\infty$, $F_\infty$, $A^{p,p}(X_\mathbb{R})$
+  and $\mathcal{D}^{p,p}(X_\mathbb{R})$, p. 125), 3.4.2 ($\widehat{\mathrm{Pic}}(X)$, p. 131).
 - H. Gillet and C. Soulé, "An arithmetic Riemann–Roch theorem", Invent. Math. 110 (1992), 473–543,
   <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0110>: introduction (p. 473), §2.1 (good
   arithmetic rings and quasi-projective arithmetic varieties, p. 484) and 2.4.2 (p. 495), hermitian

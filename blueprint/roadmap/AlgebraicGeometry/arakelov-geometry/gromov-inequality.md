@@ -6,6 +6,7 @@ $m_1, \dots, m_l \ge 0$ give $m_1 H_1 + \dots + m_l H_l = H_1^{\otimes m_1} \oti
 H_l^{\otimes m_l}$ the tensor product metric, with pointwise norm $|\cdot|$. There is a constant $C$,
 depending only on $M$, $\Omega$ and $\bar H_1, \dots, \bar H_l$, such that for every real number
 $p > 0$, all integers $m_1, \dots, m_l \ge 0$ and every $s \in H^0(M, m_1 H_1 + \dots + m_l H_l)$,
+
 $$\max_{x \in M} |s|^p(x) \le C \lceil p \rceil^{2n} (m_1 + \dots + m_l + 1)^{2n} \int_M |s|^p \,
 \Omega.$$
 

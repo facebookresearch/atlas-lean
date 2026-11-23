@@ -12,8 +12,10 @@ additively. Assume:
 
 Then there are positive constants $a_0$, $C$ and $C'$, depending only on $X$, $\bar L$ and $\bar A$,
 such that for all integers $a \ge b \ge c \ge 0$ with $a \ge a_0$
+
 $$\hat h^0\bigl( a \bar L + (b - c) \bar A \bigr) \le \hat h^0\bigl( a \bar L - c \bar A \bigr) +
 C b a^{D-1} + C' a^{D-1} \log a,$$
+
 where $\hat h^0(\bar M) = \log \#\{ t \in H^0(X, M) : \lVert t \rVert_{\sup} \le 1 \}$; the same
 holds, with other constants, for the $L^2$ norms defined by the volume form $\Omega(\bar L + \bar
 A)$ of Moriwaki's Conventions and terminology 5. For $D = 1$ Moriwaki proves the analogous estimate,

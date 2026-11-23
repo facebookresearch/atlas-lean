@@ -7,8 +7,10 @@ subvariety of dimension $k$, and $\bar L_1, \dots, \bar L_k$ holomorphic line bu
 smooth hermitian metrics, smooth in the sense of local ambient extensions. Then the form $c_1(\bar
 L_1) \wedge \dots \wedge c_1(\bar L_k)$ restricted to the regular locus $Z_{\mathrm{reg}}$ is
 integrable, and
+
 $$\int_{Z_{\mathrm{reg}}} c_1(\bar L_1) \wedge \dots \wedge c_1(\bar L_k) = \deg\bigl( c_1(L_1) \cdots
 c_1(L_k) \mid Z \bigr),$$
+
 the intersection number of the line bundles on $Z$.
 
 Applied to $V = X(\mathbb{C})$ for a projective flat scheme $X$ over $\mathbb{Z}$ (a proper one need

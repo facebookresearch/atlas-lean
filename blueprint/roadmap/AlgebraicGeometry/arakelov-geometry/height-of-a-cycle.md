@@ -3,7 +3,9 @@
 Let $X$ be a proper flat scheme over $\mathbb{Z}$ and $\bar L$ a hermitian line bundle on $X$. For
 an integer $p \ge 0$ and a cycle $Z \in Z_p(X)$ of dimension $p$, the dimension being that of a
 subscheme of $X$, the height of $Z$ with respect to $\bar L$ is the real number
+
 $$h_{\bar L}(Z) = \widehat{\deg}\bigl( \hat c_1(\bar L)^p \mid Z \bigr),$$
+
 the arithmetic degree of $Z$ with respect to $p$ copies of $\bar L$, given by Chambert-Loir's
 characterization of arithmetic degrees of cycles. Bost, Gillet and Soulé define the same number by
 formula (3.1.1) for a regular projective arithmetic variety $X$ over $\mathcal{O}_K$, pairing the
@@ -32,9 +34,11 @@ $\mathbb{Z}$ with a hermitian line bundle $\bar{\mathcal{L}}$. For a closed inte
 of $X$ of dimension $d$, with Zariski closure $\mathcal{Z}$ in $\mathcal{X}$, of dimension $d + 1$,
 put $\deg_L(Z) = \deg(c_1(L)^d \mid Z)$; when $\deg_L(Z) \ne 0$, which holds for every $Z$ when $L$
 is ample, the normalized height is
+
 $$h^{\mathrm{norm}}_{\bar{\mathcal{L}}}(Z) =
 \frac{\widehat{\deg}\bigl( \hat c_1(\bar{\mathcal{L}})^{d+1} \mid \mathcal{Z} \bigr)}
 {(d + 1) \deg_L(Z)} = \frac{h_{\bar{\mathcal{L}}}(\mathcal{Z})}{(d + 1) \deg_L(Z)}.$$
+
 Chambert-Loir writes $h_{\bar{\mathcal{L}}}(Z)$ for this normalized height, a different
 normalization of the unnormalized height $h_{\bar{\mathcal{L}}}(\mathcal{Z})$; Bost, Gillet and
 Soulé use yet another normalization, dividing by the degree $[K' : \mathbb{Q}]$ of a field of
@@ -45,8 +49,9 @@ finite morphism of proper flat schemes over $\mathbb{Z}$, $L$ is ample, and $Z$ 
 subscheme of $\mathcal{X}'_\mathbb{Q}$ with $\dim f(Z) = \dim Z$, then $\deg_{f^*L}(Z) > 0$ and
 $h^{\mathrm{norm}}_{f^* \bar{\mathcal{L}}}(Z) = h^{\mathrm{norm}}_{\bar{\mathcal{L}}}(f(Z))$: by the
 projection formula above and its analogue for geometric degrees, $f_*(c_1(f^* L)^d \cap [Z]) =
-c_1(L)^d \cap f_*[Z]$ for proper $f$ (Stacks Project, Tag 02SU), numerator and denominator are both
-multiplied by $[\kappa(Z) : \kappa(f(Z))]$.
+c_1(L)^d \cap f_*[Z]$ for proper $f$ (Stacks Project, Tag 02SU; the
+[projection formula for intersection numbers](../birational-geometry/intersection-numbers-of-nef-line-bundles.md),
+item 5), numerator and denominator are both multiplied by $[\kappa(Z) : \kappa(f(Z))]$.
 
 *Projective space.* On $\mathbb{P}^N_\mathbb{Z}$, give $\mathcal{O}(1)$ the Fubini–Study metric: if
 $s_f$ is the section defined by a homogeneous linear form $f$ in $T_0, \dots, T_N$ and $x = [x_0 :
@@ -65,6 +70,10 @@ contribution is $\frac12 \log 2$, not $0$.
 - [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for the arithmetic degrees $\widehat{\deg}(\hat c_1(\bar L)^p \mid Z)$
 - [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
 
+## Proof depends on
+
+- [Intersection numbers and Riemann–Roch for nef line bundles](../birational-geometry/intersection-numbers-of-nef-line-bundles.md),
+  for the projection formula 5 for geometric degrees
 ## Sources
 
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.

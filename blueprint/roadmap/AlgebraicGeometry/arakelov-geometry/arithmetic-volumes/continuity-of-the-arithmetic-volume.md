@@ -3,8 +3,10 @@
 Let $X$ be a projective arithmetic variety in the sense of Moriwaki and let $\bar L$ and $\bar A$ be
 hermitian $\mathbb{Q}$-line bundles on $X$, that is, elements of $\widehat{\mathrm{Pic}}(X) \otimes
 \mathbb{Q}$. Then
+
 $$\lim_{\varepsilon \in \mathbb{Q},\ \varepsilon \to 0} \widehat{\mathrm{vol}}(\bar L +
 \varepsilon \bar A) = \widehat{\mathrm{vol}}(\bar L).$$
+
 More generally, for hermitian $\mathbb{Q}$-line bundles $\bar A_1, \dots, \bar A_n$ on $X$,
 $\widehat{\mathrm{vol}}(\bar L + \varepsilon_1 \bar A_1 + \dots + \varepsilon_n \bar A_n) \to
 \widehat{\mathrm{vol}}(\bar L)$ as the rational numbers $\varepsilon_1, \dots, \varepsilon_n$ tend
@@ -21,8 +23,10 @@ doing so by Lemma 3.6 when $\dim X \ge 2$.
 (Theorem 3.4; when $\dim X = 1$, Proposition 3.5, over the normalization, an integral domain finite
 and flat over $\mathbb{Z}$, after passing to tensor powers to make the modules free) gives constants
 $C$, $D$ and $a_0$, depending only on $X$, $\bar L$ and $\bar A$, with
+
 $$\hat h^0\bigl( a\bar L + (b - c)\bar A \bigr) \le \hat h^0\bigl( a\bar L - c\bar A \bigr) + C b
 a^{\dim X - 1} + D a^{\dim X - 1} \log a$$
+
 for all integers $a \ge b \ge c \ge 0$ with $a \ge a_0$, where $\hat h^0$ is the logarithm of the
 number of sections of sup norm at most $1$. Taking $(a, b, c) = (pm, m, 0)$ and $(pm, m, m)$ and
 letting $m \to \infty$ gives a constant $C'$ with $\widehat{\mathrm{vol}}(\bar L) \le

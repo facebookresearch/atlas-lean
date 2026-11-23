@@ -6,7 +6,9 @@ $L_\mathbb{Q}$ is nef on $X_\mathbb{Q}$. Say that $L$ has *moderate growth of po
 cohomologies* if there are a generic resolution of
 singularities $\mu \colon Y \to X$ and an ample invertible sheaf $A$ on $Y$ such that for every
 integer $n \ge 1$ there is an integer $m_0$ with
+
 $$\log \# H^{2i}\bigl( Y, m(n \mu^* L + A) \bigr) = o(m^{d+1}) \qquad (m \ge m_0,\ i > 0);$$
+
 these groups are finite for $i > 0$ and large $m$, and the estimate is required for each $n$ and all
 $i > 0$.
 

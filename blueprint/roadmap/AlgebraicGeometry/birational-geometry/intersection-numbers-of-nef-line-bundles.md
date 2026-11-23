@@ -32,19 +32,25 @@ integral proper curve in $X$ is nonnegative.
    \mathbb{Z}[t]$, $s/t^\tau \in \mathbb{Z}[t^{-1}]$ gives $V_\tau = \langle 1, t, \dots, t^\tau
    \rangle$, of dimension $\tau + 1$. The span is needed: the elements of $V_\tau$, such as $1/2$,
    need not be integral.
-
-The $m^n$ coefficient in 3 is $(L^n)/n!$, which may vanish; it is the coefficient of $m^n$, not
-necessarily the leading coefficient. For a coherent sheaf $\mathcal{F} \ne 0$ with support of
-dimension $e$, $\chi(X, \mathcal{F} \otimes L^{\otimes m})$ is a polynomial of degree at most $e$
-whose $m^e$ coefficient is $\sum_Z \operatorname{length}(\mathcal{F}_{\eta_Z}) (L^e \cdot Z)/e!$,
-over the $e$-dimensional integral components $Z$ of the support, with generic points $\eta_Z$: for
-$X = \mathbb{P}^2$, $L = \mathcal{O}(1)$ and $\mathcal{F}$ the structure sheaf of a line, $\chi = m +
-1$. Item 4 differs from 3 in the spaces it counts, which are $\mathbb{Q}$-spans of groups of
-elements of a fixed field defined by integrality after a chart trivialization, not the global
-sections of a power of one line bundle on the generic fibre, and in its conclusion, a limit with no
-error term. Over an algebraically closed field of characteristic zero and for smooth $X$, item 2 is
-Esnault and Viehweg's Lemma 5.8 a), and for compact Kähler manifolds an analytic form of 2 and 3,
-with a weaker asymptotic, is stated with the [volume of a line bundle](volume-of-a-line-bundle.md).
+5. (Projection formula, over any field.) If $f \colon X' \to X$ is a proper morphism of projective
+   schemes over a field, $L_1, \dots, L_e$ are line bundles on $X$ and $Z \subset X'$ is an integral
+   closed subscheme of dimension $e$, then $(f^* L_1 \cdots f^* L_e \cdot Z) = [\kappa(Z) :
+   \kappa(f(Z))]\, (L_1 \cdots L_e \cdot f(Z))$ if $\dim f(Z) = e$, and $0$ otherwise.
+Item 5 follows from $f_*(c_1(f^* L) \cap \alpha) = c_1(L) \cap f_* \alpha$ for proper $f$ and every
+cycle $\alpha$ (Stacks Project, Tag 02SU), applied to each factor, and the preservation of degrees
+of zero-cycles by proper push-forward. The $m^n$ coefficient in 3 is $(L^n)/n!$, which may vanish;
+it is the coefficient of $m^n$, not necessarily the leading coefficient. For a coherent sheaf
+$\mathcal{F} \ne 0$ with support of dimension $e$, $\chi(X, \mathcal{F} \otimes L^{\otimes m})$ is a
+polynomial of degree at most $e$ whose $m^e$ coefficient is $\sum_Z
+\operatorname{length}(\mathcal{F}_{\eta_Z}) (L^e \cdot Z)/e!$, over the $e$-dimensional integral
+components $Z$ of the support, with generic points $\eta_Z$: for $X = \mathbb{P}^2$, $L =
+\mathcal{O}(1)$ and $\mathcal{F}$ the structure sheaf of a line, $\chi = m + 1$. Item 4 differs from
+3 in the spaces it counts, which are $\mathbb{Q}$-spans of groups of elements of a fixed field
+defined by integrality after a chart trivialization, not the global sections of a power of one line
+bundle on the generic fibre, and in its conclusion, a limit with no error term. Over an
+algebraically closed field of characteristic zero and for smooth $X$, item 2 is Esnault and
+Viehweg's Lemma 5.8 a), and for compact Kähler manifolds an analytic form of 2 and 3, with a weaker
+asymptotic, is stated with the [volume of a line bundle](volume-of-a-line-bundle.md).
 
 A good expansion has pages for: 1, by the ampleness of $A \otimes L_i^{\otimes r}$ for an ample $A$,
 every nef $L_i$ and $r \ge 0$ (Keeler, Proposition 2.13), the positivity of intersection numbers of
@@ -93,8 +99,8 @@ untwisted powers of one line bundle over an algebraically closed field.
   (version 1): Theorem 1.5, p. 3, with its proof, p. 13; §§2.5–2.6; Lemmas 4.1–4.2 and Proposition
   4.3, pp. 7–10.
 - The Stacks Project, <https://stacks.math.columbia.edu>: Tags 0BEM, 0BEN, 0BEP (numerical
-  polynomials and intersection numbers of coherent sheaves), 0BER (multilinearity) and 0BEV
-  (positivity for ample line bundles).
+  polynomials and intersection numbers of coherent sheaves), 0BER (multilinearity), 0BEV (positivity
+  for ample line bundles) and 02SU (projection formula for first Chern classes).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
   states 1–3 in this form as `GlobalTheory.Published.NefNumerics` (the conjunction of

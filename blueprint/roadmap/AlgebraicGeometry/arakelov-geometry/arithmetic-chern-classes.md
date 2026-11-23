@@ -47,20 +47,26 @@ A good expansion has pages for:
   rational values, and its properties 1–7 (Inventiones, Theorem 4 and its proof, pp. 495–499),
   together with the arithmetic Todd class $\widehat{\mathrm{Td}}(\bar E)$ of the Remarks on pp.
   498–499, an operator in the singular case;
-- the arithmetic Chern character with supports $\widehat{\mathrm{ch}}{}_P^X(E_\bullet)$ of a bounded
-  complex of hermitian vector bundles on a regular scheme $P$ containing $X$, acyclic off $X$ and
-  resolving a given coherent sheaf on the generic fibre, which depends on the metric of the normal
-  bundle (Inventiones, §3.1, Definition 6, p. 510, and Corollary 3, pp. 510–511), and the comparison
+- the arithmetic Chern character with supports $\widehat{\mathrm{ch}}{}_P^X(E_\bullet)$: over a good
+  arithmetic ring, for a closed immersion $i \colon X \to P$ into an integral arithmetic variety and
+  a chosen metric on the normal bundle $N_{X(\mathbb{C})/P(\mathbb{C})}$, the class of a bounded
+  complex $E_\bullet$ of hermitian vector bundles on $P$, acyclic off $X$, whose restriction to
+  $P_F$ resolves the direct image of a metrized vector bundle on $X_F$; it depends on both metrics
+  (Inventiones, §3.1, Definition 6, p. 510), and for regular $P$ a resolution of $i_* \mathcal{F}$
+  exists and the class does not depend on its choice (Corollary 3, pp. 510–511); with the comparison
   Lemma 21 (p. 512);
-- the homological Riemann–Roch class $\tau(\mathcal{F})$ of a hermitian coherent sheaf, built from
-  it: $\tau_P(\mathcal{F}) = \widehat{\mathrm{ch}}{}_P^X(\mathcal{F}) \cdot_i
+- the homological Riemann–Roch class $\tau(\mathcal{F}) \in \widehat{CH}_*(X)_\mathbb{Q}$ of a
+  hermitian coherent sheaf, built from it for a closed immersion $i$ into a regular irreducible
+  arithmetic variety $P$: $\tau_P(\mathcal{F}) = \widehat{\mathrm{ch}}{}_P^X(\mathcal{F}) \cdot_i
   \widehat{\mathrm{Td}}(P) + a(\mathrm{ch}(\mathcal{F}_\mathbb{C}) \widetilde{\mathrm{Td}}(X/P))$,
   with a Todd factor and a secondary term, which depends on the metric on $TX(\mathbb{C})$ but
   neither on the auxiliary metrics (Lemma 25) nor on the embedding (Theorem 5), and equals
   $\widehat{\mathrm{ch}} \cdot \widehat{\mathrm{Td}}(X)$ when $X$ is regular (§3.2, Definition 7, p.
-  516, Theorem 6 (i), (iii), p. 521); the two classes are different even for $P = X$, where the Todd
-  factor need not be trivial. The class $\tau$ is used in the coherent-sheaf form of the arithmetic
-  Riemann–Roch theorem;
+  516, Theorem 6 (i), (iii), p. 521); the two classes are not in general the same, even for $P = X$,
+  where the Todd factor need not be trivial (for $\mathcal{O}$ on $\operatorname{Spec} \mathbb{Z}$
+  they agree). The class $\tau$ is used in the coherent-sheaf form of the arithmetic Riemann–Roch
+  theorem, for the sheaf; the symbol $\tau$ that Gillet and Soulé apply there to the graded
+  determinant of cohomology is not this class of its underlying line bundle;
 - the arithmetic Todd class $\widehat{\mathrm{Td}}(f)$ of a local complete intersection morphism $f
   \colon X \to Y$ of arithmetic varieties, smooth on the generic fibre, with a hermitian metric on
   $Tf_\mathbb{C}$: for a factorization $f = g \circ i$ through $P = Y \times \mathbb{P}^N$ with $i$

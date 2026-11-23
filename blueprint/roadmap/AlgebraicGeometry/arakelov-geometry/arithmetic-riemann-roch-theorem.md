@@ -9,6 +9,7 @@ extend to a Kähler metric on $X(\mathbb{C})$), and let $\bar E$ be a hermitian 
 Let $\lambda(E) = \det Rf_* E$ be the determinant of cohomology, a line bundle on $Y$ whose fibre at
 $y \in Y(\mathbb{C})$ is $\bigotimes_{q \ge 0} \det H^q(X_y, E)^{(-1)^q}$, and let $h_Q$ be its
 Quillen metric. Then in $\widehat{CH}^1(Y)_\mathbb{Q}$
+
 $$\hat c_1(\lambda(E), h_Q) = f_*\Bigl( \widehat{\mathrm{ch}}(\bar E) \, \widehat{\mathrm{Td}}(f) -
 a\bigl( \mathrm{ch}(E_\mathbb{C}) \, \mathrm{Td}(Tf_\mathbb{C}) \, R(Tf_\mathbb{C}) \bigr)
 \Bigr)^{(1)}.$$
@@ -16,17 +17,17 @@ a\bigl( \mathrm{ch}(E_\mathbb{C}) \, \mathrm{Td}(Tf_\mathbb{C}) \, R(Tf_\mathbb{
 The terms are the following.
 
 - The Quillen metric: on a fibre $X_y$, of complex dimension $d$, let $\omega_0$ be the Kähler form
-  of the metric, given in local coordinates by $\omega_0 = \sum_{\alpha, \beta} \frac{i}{2\pi}
-  h(\partial/\partial z_\alpha, \partial/\partial z_\beta) \, dz_\alpha \wedge d\bar z_\beta$, and
-  give the spaces $A^{0,q}(X_y, E)$ of $E$-valued forms of type $(0, q)$ the scalar product $\langle
-  s, t \rangle = \int_{X_y} \langle s(x), t(x) \rangle \, \omega_0^d / d!$. Hodge theory identifies
-  $H^q(X_y, E)$ with the kernel of the Laplacian $\Delta_q = \bar\partial \bar\partial^* +
-  \bar\partial^* \bar\partial$, which induces the $L^2$ metric $h_{L^2}$ on $\lambda(E)_y$. The zeta
-  function $\zeta_q(s) = \operatorname{Tr}(\Delta_q^{-s} \mid (\ker \Delta_q)^\perp)$ converges for
-  $\operatorname{Re} s > d$ and extends meromorphically to $\mathbb{C}$, regular at $0$; the
-  Ray–Singer analytic torsion is $T(X_y, E) = \sum_{q \ge 0} (-1)^{q+1} q \, \zeta_q'(0)$, and $h_Q
-  = h_{L^2} \exp(T(X_y, E))$. Bismut, Gillet and Soulé showed that $h_Q$ is smooth on
-  $\lambda(E)_\mathbb{C}$.
+  of the chosen metric $h_f$ on $Tf_\mathbb{C}$ (not the metric of $\bar E$), given in local
+  coordinates by $\omega_0 = \sum_{\alpha, \beta} \frac{i}{2\pi} h_f(\partial/\partial z_\alpha,
+  \partial/\partial z_\beta) \, dz_\alpha \wedge d\bar z_\beta$, and give the spaces $A^{0,q}(X_y,
+  E)$ of $E$-valued forms of type $(0, q)$ the scalar product $\langle s, t \rangle = \int_{X_y}
+  \langle s(x), t(x) \rangle \, \omega_0^d / d!$. Hodge theory identifies $H^q(X_y, E)$ with the
+  kernel of the Laplacian $\Delta_q = \bar\partial \bar\partial^* + \bar\partial^* \bar\partial$,
+  which induces the $L^2$ metric $h_{L^2}$ on $\lambda(E)_y$. The zeta function $\zeta_q(s) =
+  \operatorname{Tr}(\Delta_q^{-s} \mid (\ker \Delta_q)^\perp)$ converges for $\operatorname{Re} s >
+  d$ and extends meromorphically to $\mathbb{C}$, regular at $0$; the Ray–Singer analytic torsion is
+  $T(X_y, E) = \sum_{q \ge 0} (-1)^{q+1} q \, \zeta_q'(0)$, and $h_Q = h_{L^2} \exp(T(X_y, E))$.
+  Bismut, Gillet and Soulé showed that $h_Q$ is smooth on $\lambda(E)_\mathbb{C}$.
 - $\hat c_1(\lambda(E), h_Q) \in \widehat{CH}^1(Y)$ is the class of the hermitian line bundle
   $(\lambda(E), h_Q)$, $\widehat{\mathrm{ch}}(\bar E) \in \widehat{CH}^*(X)_\mathbb{Q}$ is the
   arithmetic Chern character, and $\widehat{\mathrm{Td}}(f) \in \widehat{CH}^*(X)_\mathbb{Q}$ is the
@@ -38,18 +39,21 @@ The terms are the following.
   Todd class in the real cohomology $H^*(X(\mathbb{C}), \mathbb{R})$, and $R$ is the additive
   characteristic class with values in real cohomology that is contravariant, additive on exact
   sequences, and given on a holomorphic line bundle $L$ by
-  $$R(L) = \sum_{m \text{ odd},\, m \ge 1} \Bigl( 2\zeta'(-m) + \Bigl( 1 + \frac12 + \dots +
-  \frac1m \Bigr) \zeta(-m) \Bigr) \frac{c_1(L)^m}{m!},$$
-with $\zeta$ the Riemann zeta function.
+
+    $$R(L) = \sum_{m \text{ odd},\, m \ge 1} \Bigl( 2\zeta'(-m) + \Bigl( 1 + \frac12 + \dots +
+    \frac1m \Bigr) \zeta(-m) \Bigr) \frac{c_1(L)^m}{m!},$$
+
+  with $\zeta$ the Riemann zeta function.
 - The product $\mathrm{ch}(E_\mathbb{C}) \mathrm{Td}(Tf_\mathbb{C}) R(Tf_\mathbb{C})$ is represented
   by characteristic forms; its real component of type $(j, j)$, of the parity required by
   $F_\infty$, is mapped by the map $a$ of the arithmetic Chow groups to
   $\widehat{CH}^{j+1}(X)_\mathbb{Q}$, changing the form by an exact form not changing the class. For
   $f$ of relative dimension $d$, the push-forward maps $\widehat{CH}^k(X)_\mathbb{Q}$ to
   $\widehat{CH}^{k-d}(Y)_\mathbb{Q}$, and $\alpha^{(1)}$ is the component of degree one of the
-  pushed-forward class; the class before push-forward lies in $\widehat{CH}^{d+1}(X)_\mathbb{Q}$,
-  and for the correction term comes from forms of type $(d, d)$. The term $R$ is applied once, to
-  $Tf_\mathbb{C}$, and is subtracted.
+  pushed-forward class. The class in parentheses has components of several degrees (its degree-zero
+  part is $\operatorname{rk} E$); only its component in $\widehat{CH}^{d+1}(X)_\mathbb{Q}$
+  contributes, and for the correction term this is the image under $a$ of its forms of type $(d,
+  d)$. The term $R$ is applied once, to $Tf_\mathbb{C}$, and is subtracted.
 
 This is formula (13) of Gillet and Soulé's Theorem 7, stated for every arithmetic ring, as an
 identity in $\widehat{CH}^1(Y)_\mathbb{Q}$ only. The same theorem contains two further forms, for a
@@ -62,20 +66,32 @@ good arithmetic ring, that is, one that is equicodimensional and Jacobson.
   1$, which equals $\hat c_1(\lambda(E), h_Q) \cap \alpha$.
 - Formula (11): $Y$ regular, $X$ not necessarily regular, $\bar{\mathcal{F}}$ a hermitian coherent
   sheaf on $X$, locally free on the generic fibre with a smooth metric invariant under conjugation
-  on the resulting vector bundle, and metrics also on $TX(\mathbb{C})$ and $TY(\mathbb{C})$. The
-  left-hand side is $\tau(\lambda(\mathcal{F}), h_Q)^{(1)}$, the degree-one component of the class
-  $\tau$ of the Quillen-metrized determinant line, and the right-hand side uses the homological
-  Riemann–Roch class $\tau(\mathcal{F})$ of Gillet and Soulé's Definition 7: for an embedding $i
-  \colon X \hookrightarrow P$ into a regular scheme it is $\widehat{\mathrm{ch}}{}_P^X(\mathcal{F})
-  \cdot_i \widehat{\mathrm{Td}}(P) + a(\mathrm{ch}(\mathcal{F}_\mathbb{C})
-  \widetilde{\mathrm{Td}}(X/P))$, built from the arithmetic Chern character with supports
-  $\widehat{\mathrm{ch}}{}_P^X$ of a resolution on $P$ acyclic off $X$ (Definition 6), with a Todd
-  factor and a secondary term, so that it depends on the metric on $TX(\mathbb{C})$ but not on $P$
-  (Lemma 25, Theorem 5); together with the secondary class of the exact sequence $0 \to
-  Tf_\mathbb{C} \to TX(\mathbb{C}) \to f^* TY(\mathbb{C}) \to 0$ and the same correction by $R$. For
-  $Y = \operatorname{Spec} \mathbb{Z}$ it gives formulas (14)–(15): the arithmetic Euler
+  on the resulting vector bundle, and metrics also on $TX(\mathbb{C})$ and $TY(\mathbb{C})$. Its
+  right-hand side is $f_*\bigl( \tau(\mathcal{F}) + a(\mathrm{ch}(\mathcal{F}_\mathbb{C})
+  \widetilde{\mathrm{Td}}(f)) - a(\mathrm{ch}(\mathcal{F}_\mathbb{C}) \mathrm{Td}(Tf_\mathbb{C})
+  R(Tf_\mathbb{C})) \bigr)^{(1)}$, with the homological Riemann–Roch class $\tau(\mathcal{F})$ of
+  Gillet and Soulé's Definition 7, defined through an embedding of $X$ into a regular arithmetic
+  variety from the arithmetic Chern character with supports, a Todd factor and a secondary term
+  (Definitions 6–7, Lemma 25, Theorem 5), and with $\widetilde{\mathrm{Td}}(f)$ the secondary class
+  of the exact sequence $0 \to Tf_\mathbb{C} \to TX(\mathbb{C}) \to f^* TY(\mathbb{C}) \to 0$,
+  distinct from the secondary term already contained in $\tau(\mathcal{F})$. Gillet and Soulé write
+  its left-hand side $\tau(\lambda(\mathcal{F}), h_Q)^{(1)}$, the determinant of cohomology being a
+  **graded** line (§4.1.2, p. 523; for Knudsen and Mumford the determinant of a vector bundle $E$ is
+  the pair $(\Lambda^{\max} E, \operatorname{rk} E)$). This page does not identify that symbol with
+  Definition 7 applied to the underlying ungraded line, for which the identity would fail: for $f =
+  \mathrm{id}$ on $Y = \mathbb{P}^1_\mathbb{Z}$, $\mathcal{F} = \mathcal{O}^2$ and identical trivial
+  metrics, the relative tangent bundle is zero and the tangent sequence splits isometrically, but on
+  $\mathbb{P}^1_\mathbb{Q}$, forgetting the metrics, the underlying line $\mathcal{O}$ gives
+  $\mathrm{Td}_1(Y) = H$ while $\tau(\mathcal{F})^{(1)}$ gives $2H$, with $H = c_1(\mathcal{O}(1))$;
+  an expression sensitive to the rank, of the shape $\hat c_1(\lambda, h_Q) + \operatorname{rk}(Rf_*
+  \mathcal{F})\, \widehat{\mathrm{Td}}{}_1(Y)$, would be needed, and none is sourced here. The
+  explicit coherent formula stated here is the specialisation to $Y = \operatorname{Spec}
+  \mathbb{Z}$, (14)–(15), where $\mathrm{Td}_1(Y) = 0$, with $TX(\mathbb{C}) = Tf_\mathbb{C}$
+  carrying the same Kähler metric as in the construction of $h_Q$: the arithmetic Euler
   characteristic
-  $$\chi_Q(\bar{\mathcal{F}}) = \sum_q (-1)^q \bigl( \log \# H^q(X, \mathcal{F})_{\mathrm{tors}} - \log \operatorname{covol}_{L^2}\bigl( H^q(X, \mathcal{F}) / H^q(X, \mathcal{F})_{\mathrm{tors}} \bigr) \bigr) - \frac{T(X(\mathbb{C}), \mathcal{F}_\mathbb{C})}{2},$$
+
+    $$\chi_Q(\bar{\mathcal{F}}) = \sum_q (-1)^q \bigl( \log \# H^q(X, \mathcal{F})_{\mathrm{tors}} - \log \operatorname{covol}_{L^2}\bigl( H^q(X, \mathcal{F}) / H^q(X, \mathcal{F})_{\mathrm{tors}} \bigr) \bigr) - \frac{T(X(\mathbb{C}), \mathcal{F}_\mathbb{C})}{2},$$
+
   the covolume being that of the lattice in the real cohomology fixed by complex conjugation, with
   one correction by half the analytic torsion $T$ of the convention above, equals $\bigl[ f_*\bigl(
   \tau(\mathcal{F}) - a(\mathrm{ch}(\mathcal{F}_\mathbb{C}) \mathrm{Td}(Tf_\mathbb{C})

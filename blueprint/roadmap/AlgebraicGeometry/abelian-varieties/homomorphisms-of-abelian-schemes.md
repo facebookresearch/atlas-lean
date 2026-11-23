@@ -17,7 +17,9 @@ For $S$ connected and noetherian the first statement follows from the [rigidity
 lemma](rigidity-lemma.md). Since the group law is not yet known to be commutative, write it
 multiplicatively and consider the morphism over $A$, with $A \times_S A$ viewed over $A$ through the
 second projection,
+
 $$A \times_S A \to B \times_S A, \qquad (x, y) \mapsto \bigl(\alpha(xy)\, \alpha(y)^{-1} \alpha(x)^{-1},\ y\bigr).$$
+
 The scheme $A$ is connected, and the fibres of the second projection are the fibres of $A$, which
 satisfy the hypothesis of the rigidity lemma. Over the zero section $y = e_A$ the morphism sends
 $(x, e_A)$ to $(e_B, e_A)$, so by the rigidity lemma it factors through a morphism

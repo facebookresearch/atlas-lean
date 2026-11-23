@@ -5,8 +5,10 @@ smooth hermitian metric $\lVert \cdot \rVert$ and first Chern form $c_1(\bar L)$
 section of $L$ not identically zero on any connected component of $X$, with divisor
 $\operatorname{div}(s) = \sum_j m_j Z_j$. Let $\varphi$ be a smooth real function and $\omega$ a smooth
 closed real form of type $(n - 1, n - 1)$ on $X$. With $d^c = \frac{i}{4\pi}(\bar\partial - \partial)$,
+
 $$\int_X \log \lVert s \rVert^2 \, dd^c \varphi \wedge \omega = \sum_j m_j \int_{Z_j} \varphi \, \omega
 - \int_X \varphi \, c_1(\bar L) \wedge \omega,$$
+
 where $\int_{Z_j}$ is the integral over the regular locus of $Z_j$; the integrand on the left is
 integrable because $\log \lVert s \rVert^2$ is locally integrable.
 

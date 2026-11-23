@@ -5,14 +5,16 @@ that $X$ is regular, separated and of finite Krull dimension, and that its gener
 quasi-projective. Then:
 
 1. For all integers $p, q \ge 0$ there is a pairing
-   $$\widehat{CH}^p(X) \otimes \widehat{CH}^q(X) \to \widehat{CH}^{p+q}(X)_\mathbb{Q}, \qquad
-   \alpha \otimes \beta \mapsto \alpha\beta,$$
-uniquely determined by the following condition: if $Y$ and $Z$ are integral subschemes of $X$ of
-codimensions $p, q \ge 1$ that intersect properly on $X_F$, $g_Y$ and $g_Z$ are Green currents for
-$Y$ and $Z$, and $\alpha$ and $\beta$ are the classes of $([Y], g_Y)$ and $([Z], g_Z)$, then
-$\alpha\beta$ is the class of $([Y] \cdot [Z], g_Y * g_Z)$. A class of degree $0$ is a cycle of
-codimension $0$, that is, an integral combination of components of $X$, with Green current $0$, and
-it multiplies componentwise; for connected $X$ the class $(X, 0)$ is the unit.
+
+    $$\widehat{CH}^p(X) \otimes \widehat{CH}^q(X) \to \widehat{CH}^{p+q}(X)_\mathbb{Q}, \qquad
+    \alpha \otimes \beta \mapsto \alpha\beta,$$
+
+   uniquely determined by the following condition: if $Y$ and $Z$ are integral subschemes of $X$ of
+   codimensions $p, q \ge 1$ that intersect properly on $X_F$, $g_Y$ and $g_Z$ are Green currents
+   for $Y$ and $Z$, and $\alpha$ and $\beta$ are the classes of $([Y], g_Y)$ and $([Z], g_Z)$, then
+   $\alpha\beta$ is the class of $([Y] \cdot [Z], g_Y * g_Z)$. A class of degree $0$ is a cycle of
+   codimension $0$, that is, an integral combination of components of $X$, with Green current $0$,
+   and it multiplies componentwise; for connected $X$ the class $(X, 0)$ is the unit.
 2. After tensoring with $\mathbb{Q}$, this product makes $\widehat{CH}^*(X)_\mathbb{Q}$ a
    commutative and associative ring with unit, and $\zeta$ and $\omega$ are ring homomorphisms on
    the rationalized groups.
@@ -59,8 +61,10 @@ in $Y_\infty$ since $Y$ and $Z$ intersect properly, choose a resolution of singu
 Z_j \to Z_j$, projective and birational, let $\psi_j \colon \widetilde Z_j \to X_\infty$ be its
 composite with the inclusion, and set $g_Y \wedge \delta_{Z_j} = \psi_{j*}[\psi_j^* \eta_Y]$, which
 does not depend on the resolution. Then
+
 $$g_Y * g_Z = g_Y \wedge \delta_Z + \omega_Y \wedge g_Z \in
 \widetilde{\mathcal{D}}^{p+q-1,p+q-1}(X_\mathbb{R}),$$
+
 whose class depends only on the classes $g_Y$ and $g_Z$, and $dd^c(g_Y * g_Z) + \delta_{[Y] \cdot
 [Z]} = \omega_Y \wedge \omega_Z$ on $X_\infty$; these are the properties of the star product of
 [Green forms of logarithmic type](green-forms-of-logarithmic-type.md).

@@ -55,9 +55,11 @@ expansion has pages for:
 - Gillet and Soulé's computation of the analytic torsion of the trivial bundle on projective spaces
   with the Fubini–Study metric, which proves the arithmetic Riemann–Roch formula for the trivial
   bundle on $\mathbb{P}^N_\mathbb{Z}$ (Topology, Theorem 2.1.1 and Remarks 2.1.2);
-- the asymptotics of Bismut and Vasserot of the analytic torsion of $\mathcal{F} \otimes L^{\otimes
-  n}$ for a positive hermitian line bundle $L$ as $n \to \infty$ (Theorem 8) and the variation of
-  the $L^2$ metrics (Theorem 10), used in the proof of Gillet and Soulé's Theorem 8.
+- the asymptotics of Bismut and Vasserot of the analytic torsion of $F \otimes L^{\otimes n}$, for a
+  holomorphic hermitian vector bundle $F$ on a compact complex manifold (in the application,
+  $\mathcal{F}_\mathbb{C}$ or its pull-back) and a positive hermitian line bundle $L$, as $n \to
+  \infty$ (Theorem 8) and the variation of the $L^2$ metrics (Theorem 10), used in the proof of
+  Gillet and Soulé's Theorem 8.
 
 ## Depends on
 

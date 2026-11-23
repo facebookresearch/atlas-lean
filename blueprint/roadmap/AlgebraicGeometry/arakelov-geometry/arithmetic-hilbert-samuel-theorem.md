@@ -3,8 +3,10 @@
 Let $X$ be an arithmetic variety of dimension $d + 1$ in the sense of Zhang (an integral scheme,
 projective and flat over $\mathbb{Z}$), and let $\bar L$ and $\bar E$ be hermitian line bundles on
 $X$. If $L_\mathbb{Q}$ is ample and $\bar L$ is relatively semipositive, then
+
 $$\chi_{\sup}\bigl( \bar E \otimes \bar L^{\otimes N} \bigr) = \frac{(\bar L^{d+1})}{(d + 1)!} \,
 N^{d+1} + o(N^{d+1}) \qquad (N \to \infty),$$
+
 where $\chi_{\sup}$ is the logarithm of the volume of the unit ball of the sup norm on $H^0(X, E
 \otimes L^{\otimes N}) \otimes \mathbb{R}$ divided by the covolume of the lattice $H^0(X, E \otimes
 L^{\otimes N})$, and $(\bar L^{d+1})$ is the arithmetic self-intersection number of $\bar L$,
@@ -17,18 +19,21 @@ a metric of positive curvature, invariant under complex conjugation, and choose 
 $X(\mathbb{C})$ invariant under complex conjugation, which defines $L^2$ norms. Let $\Lambda_n$ be
 the image of $H^0(X, L^{\otimes n})$ in the real subspace $H^0(X(\mathbb{C}), L_\mathbb{C}^{\otimes
 n})^+$ fixed by complex conjugation, that is, $H^0(X, L^{\otimes n})$ modulo torsion. Then
+
 $$-\log \operatorname{covol}_{L^2}(\Lambda_n) = \frac{(\bar L^{d+1})}{(d + 1)!} \, n^{d+1} +
 O(n^d \log n).$$
+
 This is the case $E = L$, $\mathcal{F} = \mathcal{O}_X$ of their Theorem 8, an expansion for
 symmetric powers of an ample hermitian vector bundle with metric positive in the sense of Griffiths,
 equipped with the quotient metrics, twisted by a hermitian coherent sheaf. Their proof applies the
 arithmetic Riemann–Roch theorem in its form for hermitian coherent sheaves over $\operatorname{Spec}
-\mathbb{Z}$ to the bundles $\pi^* \mathcal{F} \otimes \mathcal{O}_{\mathbb{P}(E)}(n)$ on the
-projective bundle $\pi \colon \mathbb{P}(E) \to X$, with the structure map $\mathbb{P}(E) \to
-\operatorname{Spec} \mathbb{Z}$ ((36)–(38)); only a weak form of it is needed, the curvature of the
-Quillen metric together with algebraic Riemann–Roch. It also uses the asymptotics of the analytic
-torsion of high powers of a positive line bundle and the variation of the $L^2$ metrics
-(Bismut–Vasserot, Theorems 8 and 10).
+\mathbb{Z}$ to the hermitian coherent sheaves $\pi^* \mathcal{F} \otimes
+\mathcal{O}_{\mathbb{P}(E)}(n)$, locally free on the generic fibre, on the projective bundle $\pi
+\colon \mathbb{P}(E) \to X$, with the structure map $\mathbb{P}(E) \to \operatorname{Spec}
+\mathbb{Z}$ ((36)–(38)); only a weak form of it is needed, the curvature of the Quillen metric
+together with algebraic Riemann–Roch. It also uses the asymptotics of the analytic torsion of high
+powers of a positive line bundle and the variation of the $L^2$ metrics (Bismut–Vasserot, Theorems 8
+and 10).
 
 Abbes and Bouche gave a direct proof. Let $K$ be a number field, $X \to \operatorname{Spec}
 \mathcal{O}_K$ projective and flat with smooth generic fibre of dimension $r \ge 1$, and $L$ an
@@ -39,29 +44,38 @@ and $C_n$ the unit ball of the norm $\lVert x \rVert_2 = \sup_\sigma \lVert x_\s
 \rVert_{2,\sigma}$, where $\lVert \cdot \rVert_{2,\sigma}$ is the $L^2$ norm at the place $\sigma$
 for the volume form of the normalized curvature form, of total mass $1$; thus $C_n$ is a product of
 placewise $L^2$ balls. Then both
+
 $$\frac{(r + 1)!}{n^{r+1}} \Bigl( -\log \operatorname{covol} H^0(X, L^{\otimes n}) + \log
 \operatorname{vol}(B_n) \Bigr) \quad \text{and} \quad \frac{(r + 1)!}{n^{r+1}} \Bigl( -\log
 \operatorname{covol} H^0(X, L^{\otimes n}) + \log \operatorname{vol}(C_n) \Bigr)$$
+
 converge, as $n \to \infty$, to the same limit $(L)^{r+1}$, which coincides with the arithmetic
 self-intersection number of Gillet and Soulé. Their proof is an induction on the dimension through
 the exact sequence of multiplication by a section of $L$, with an estimate of how far the volumes
 are from being additive on that sequence. Zhang removes the smoothness of the generic fibre with a
 generic resolution of singularities: he compares sup and $L^2$ norms by Gromov's inequality (1.5),
-bounds the norms of a set of sections of maximal rank, bounded independent sections spanning the
-rational space obtained from integral multiples of finitely many generators (Lemma 1.6, p. 190), and
-compares the covolumes of lattices of different ranks by Minkowski's theorem on successive minima,
-in a sandwich between models on a generic resolution (Zhang, (1.5)–(1.8)).
+bounds the norms of a set of sections of maximal rank, independent sections spanning the rational
+space obtained from integral multiples of finitely many generators, each of norm at most
+$c^{\max(n_1, n_2)}$ in $\Gamma(f_{1*} L_1^{\otimes n_1} \otimes f_{2*} L_2^{\otimes n_2} \otimes
+M)$, for projective morphisms $f_i \colon X_i \to X$, hermitian line bundles $L_i$ on $X_i$ with
+$L_{i,\mathbb{Q}}$ ample and $M$ on $X$, and a constant $c$ independent of $n_1, n_2 \ge 0$ (Lemma
+1.6, p. 190), and compares the covolumes of lattices of different ranks by Minkowski's theorem on
+successive minima, in a sandwich between models on a generic resolution (Zhang, (1.5)–(1.8)).
 
 *Small sections.* For a free $\mathbb{Z}$-module $M$ of rank $m$ with a norm on $M \otimes
 \mathbb{R}$, Minkowski's theorem gives
+
 $$\log \#\{ x \in M : \lVert x \rVert < 1 \} \ge \log \frac{\operatorname{vol}\{ x \in M \otimes
 \mathbb{R} : \lVert x \rVert < 1 \}}{\operatorname{covol}(M)} - m \log 2;$$
+
 Moriwaki's version for the closed unit ball has the error $-m \log 6$. Applied to $H^0(X, L^{\otimes
 N})$ with the sup norm, whose rank is $\dim H^0(X_\mathbb{Q}, L_\mathbb{Q}^{\otimes N}) = O(N^d)$,
 this gives $\log \#\{ s \in H^0(X, L^{\otimes N}) : \lVert s \rVert_{\sup} \le 1 \} \ge
 \chi_{\sup}(\bar L^{\otimes N}) + O(N^d)$; so, under the hypotheses of the theorem,
+
 $$\log \#\{ s \in H^0(X, L^{\otimes N}) : \lVert s \rVert_{\sup} \le 1 \} \ge
 \frac{(\bar L^{d+1})}{(d + 1)!} \, N^{d+1} + o(N^{d+1}).$$
+
 In particular, if $(\bar L^{d+1}) > 0$, then $H^0(X, L^{\otimes N})$ contains nonzero sections of
 sup norm less than $1$ for all large $N$; for smooth generic fibre and positive curvature, Abbes and
 Bouche's Corollaire states the existence of nonzero sections of sup norm at most $1$ and deduces it

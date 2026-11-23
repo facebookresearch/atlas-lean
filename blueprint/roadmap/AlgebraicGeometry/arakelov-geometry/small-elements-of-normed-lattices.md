@@ -6,9 +6,11 @@ estimates from the geometry of numbers that are not yet broken down.
 A normed finitely generated $\mathbb{Z}$-module $(M, \lVert \cdot \rVert)$ is a finitely generated
 $\mathbb{Z}$-module $M$ with a norm on $M_\mathbb{R} = M \otimes_\mathbb{Z} \mathbb{R}$. Put $B(M,
 \lVert \cdot \rVert) = \{ x \in M_\mathbb{R} : \lVert x \rVert \le 1 \}$,
+
 $$\hat h^0(M, \lVert \cdot \rVert) = \log \#\{ x \in M : \lVert x \rVert \le 1 \}, \qquad
 \hat\chi(M, \lVert \cdot \rVert) = \log \frac{\operatorname{vol}(B(M, \lVert \cdot \rVert))}
 {\operatorname{vol}(M_\mathbb{R} / (M / M_{\mathrm{tor}}))} + \log \# M_{\mathrm{tor}},$$
+
 where $\lVert x \rVert$ means the norm of the image of $x$ in $M_\mathbb{R}$, and $\hat h^1(M,
 \lVert \cdot \rVert) = \hat h^0(M^\vee, \lVert \cdot \rVert^\vee)$ for the dual module $M^\vee =
 \operatorname{Hom}_\mathbb{Z}(M, \mathbb{Z})$ with the dual norm $\lVert \varphi \rVert^\vee = \sup

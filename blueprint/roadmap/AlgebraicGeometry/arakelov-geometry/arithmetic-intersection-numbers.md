@@ -3,9 +3,11 @@
 Let $X$ be an arithmetic variety over an arithmetic ring $(A, \Sigma, F_\infty)$ with smooth
 quasi-projective generic fibre, and assume that $X$ is regular and irreducible. The arithmetic Chow
 group $\widehat{CH}^1(X)$ sits in an exact sequence
+
 $$\Gamma(X, \mathcal{O}_X)^\times \xrightarrow{\ \rho\ } C^\infty(X_\infty, \mathbb{R})^{F_\infty}
 \xrightarrow{\ a\ } \widehat{CH}^1(X) \xrightarrow{\ \zeta\ } CH^1(X) \to 0, \qquad
 \rho(u) = -\log |u|^2,$$
+
 where $C^\infty(X_\infty, \mathbb{R})^{F_\infty}$ is the space of real smooth functions on
 $X_\infty$ invariant under $F_\infty$: a function is killed by $a$ exactly when it is $-\log |u|^2$
 for a global unit $u$, whose arithmetic divisor is $(0, -\log |u|^2)$. When $\Gamma(X,
@@ -23,10 +25,12 @@ For $X = \operatorname{Spec} A$ the sequence reads $A^\times \to (\bigoplus_{\si
 0$, and $CH^1(\operatorname{Spec} A)$ is the ideal class group when $A$ is a Dedekind domain. For
 the ring of integers $\mathcal{O}_K$ of a number field $K$, with $\Sigma$ the set of all embeddings,
 the arithmetic degree is the homomorphism
+
 $$\widehat{\deg} \colon \widehat{CH}^1(\operatorname{Spec} \mathcal{O}_K) \to \mathbb{R}, \qquad
 \Bigl( \sum_i n_i [\mathfrak{p}_i], (g_\sigma)_{\sigma \in \Sigma} \Bigr) \mapsto
 \sum_i n_i \log \#(\mathcal{O}_K / \mathfrak{p}_i) + \frac{1}{2} \sum_{\sigma \in \Sigma}
 g_\sigma,$$
+
 without division by $[K : \mathbb{Q}]$. It vanishes on **principal** arithmetic divisors
 $\widehat{\operatorname{div}}(f)$: for $K = \mathbb{Q}$ and $f = 2$, $\log 2 + \frac12 (-\log 4) =
 0$; it does not vanish on all arithmetic divisors, the class of $([2], 0)$ having degree $\log 2$.
@@ -39,8 +43,10 @@ restriction $X_F \to S_F$ is smooth, and let $d = \dim X - \dim S$. The push-for
 (\pi_* Z, \pi_* g)$ of cycles and currents defines a homomorphism $\pi_* \colon \widehat{CH}^p(X)
 \to \widehat{CH}^{p-d}(S)$. If moreover $X$ and $S$ are regular and $p + q = d + 1$, composing the
 intersection product with $\pi_*$ gives a pairing
+
 $$\langle \cdot, \cdot \rangle \colon \widehat{CH}^p(X) \otimes \widehat{CH}^q(X) \to
 \widehat{CH}^1(S)_\mathbb{Q}, \qquad \langle \alpha, \beta \rangle = \pi_*(\alpha\beta),$$
+
 and there is a bi-additive pairing $\widehat{CH}^p(X) \times \widehat{CH}^q(X) \to
 \widehat{CH}^1(S)$ that induces it; this integral lift is a separate theorem, not the push-forward
 of an integral product. When $X$ is a regular arithmetic variety projective over $\mathbb{Z}$ of
@@ -49,8 +55,10 @@ real-valued pairing for $p + q = d + 1$. For hermitian line bundles $\bar L_1, \
 on such an $X$, the product $\hat c_1(\bar L_1) \cdots \hat c_1(\bar L_{d+1})$ lies in
 $\widehat{CH}^{d+1}(X)$, products with classes of codimension one being defined without
 denominators, and their arithmetic intersection number is
+
 $$(\bar L_1 \cdots \bar L_{d+1}) = \widehat{\deg}\, \pi_*\bigl( \hat c_1(\bar L_1) \cdots
 \hat c_1(\bar L_{d+1}) \bigr), \qquad \pi \colon X \to \operatorname{Spec} \mathbb{Z},$$
+
 written $(\bar L^{d+1})$ when all the $\bar L_i$ equal $\bar L$.
 
 **Chambert-Loir's characterization.** Let $X$ be a proper flat scheme over $\mathbb{Z}$, with
@@ -61,31 +69,36 @@ linear maps $\widehat{\deg}(\hat c_1(\bar L_1) \cdots \hat c_1(\bar L_k) \mid \c
 point $z$, and such that for every integral closed subscheme $Z$ of dimension $k \ge 1$, every
 integer $m \ne 0$ and every regular meromorphic section $s$ of $L_k^{\otimes m}|_Z$, that is, a
 section over a dense open subscheme of $Z$ that is not zero there,
+
 $$m \, \widehat{\deg}\bigl( \hat c_1(\bar L_1) \cdots \hat c_1(\bar L_k) \mid Z \bigr) =
 \widehat{\deg}\bigl( \hat c_1(\bar L_1) \cdots \hat c_1(\bar L_{k-1}) \mid \operatorname{div}(s)
 \bigr) + \int_{Z(\mathbb{C})} \log \lVert s \rVert^{-1} \, c_1(\bar L_1) \cdots c_1(\bar L_{k-1}),$$
+
 with the metric of $\bar L_k^{\otimes m}$ on $s$. For each $k$ the map is multilinear and symmetric
 in the $k$ entries $\bar L_1, \dots, \bar L_k$ and depends only on their classes in
 $\widehat{\mathrm{Pic}}(X)$. The following hold.
 
 1. *Comparison.* If $X$ is regular and projective, the setting of Gillet and Soulé's number, and the
    metrics are invariant under complex conjugation, $\widehat{\deg}(\hat c_1(\bar L_1) \cdots \hat
-   c_1(\bar L_n) \mid X)$ is the number of Gillet and Soulé defined above. Products of classes $\hat
-   c_1(\bar L)$ can already be defined when only $X_\mathbb{Q}$ is regular, and Bost, Gillet and
-   Soulé define the corresponding numbers when the generic fibre is regular, through the action of
-   first Chern classes on arithmetic Chow groups graded by dimension.
+   c_1(\bar L_n) \mid X)$ is the number of Gillet and Soulé defined above. Still with invariant
+   metrics on a projective arithmetic model (more generally a model of Bost, Gillet and Soulé, with
+   proper cycle support), regularity of the generic fibre suffices: Bost, Gillet and Soulé then
+   define the corresponding numbers through the action of first Chern classes on arithmetic Chow
+   groups graded by dimension.
 2. *Change of metric.* If $\bar L_k' = (L_k, e^{-u} \lVert \cdot \rVert)$ for a real smooth function
    $u$ on $X(\mathbb{C})$, applying the recursion to the same section $s$ gives
-   $$\widehat{\deg}\bigl( \hat c_1(\bar L_1) \cdots \hat c_1(\bar L_{k-1}) \hat c_1(\bar L_k') \mid Z
-   \bigr) = \widehat{\deg}\bigl( \hat c_1(\bar L_1) \cdots \hat c_1(\bar L_k) \mid Z \bigr) +
-   \int_{Z(\mathbb{C})} u \, c_1(\bar L_1) \cdots c_1(\bar L_{k-1}),$$
-and by symmetry the same holds in each entry. For a constant $u = t$ the integral is $t
-\deg(c_1(L_1) \cdots c_1(L_{k-1}) \mid Z_\mathbb{Q})$ by the
-[comparison of geometric degrees with integrals of Chern forms](geometric-degrees-as-integrals-of-chern-forms.md);
-in particular, replacing the metric of $\bar L$ by $e^{-t} \lVert \cdot \rVert$ adds $(d + 1) t
-\deg(L_\mathbb{Q}^d)$ to $(\bar L^{d+1})$ on $X$ of dimension $d + 1$. In Gillet and Soulé's
-normalization, with the Green function $-\log \lVert s \rVert^2$, this rescaling changes the Green
-function by $2t$.
+
+    $$\widehat{\deg}\bigl( \hat c_1(\bar L_1) \cdots \hat c_1(\bar L_{k-1}) \hat c_1(\bar L_k') \mid Z
+    \bigr) = \widehat{\deg}\bigl( \hat c_1(\bar L_1) \cdots \hat c_1(\bar L_k) \mid Z \bigr) +
+    \int_{Z(\mathbb{C})} u \, c_1(\bar L_1) \cdots c_1(\bar L_{k-1}),$$
+
+   and by symmetry the same holds in each entry. For a constant $u = t$ the integral is $t
+   \deg(c_1(L_1) \cdots c_1(L_{k-1}) \mid Z_\mathbb{Q})$ by the
+   [comparison of geometric degrees with integrals of Chern forms](geometric-degrees-as-integrals-of-chern-forms.md);
+   in particular, replacing the metric of $\bar L$ by $e^{-t} \lVert \cdot \rVert$ adds $(d + 1) t
+   \deg(L_\mathbb{Q}^d)$ to $(\bar L^{d+1})$ on $X$ of dimension $d + 1$. In Gillet and Soulé's
+   normalization, with the Green function $-\log \lVert s \rVert^2$, this rescaling changes the
+   Green function by $2t$.
 3. *Projection formula.* Let $f \colon X' \to X$ be either a generically finite morphism of proper
    flat schemes over $\mathbb{Z}$, with metrics in Chambert-Loir's sense (Chambert-Loir, Proposition
    (2.9)), or a morphism of projective arithmetic varieties over $\mathcal{O}_K$ with regular
@@ -102,10 +115,12 @@ function by $2t$.
    c_1(f^* \bar L_1) \cdots \hat c_1(f^* \bar L_k) \mid Z')$.
 
 For an arithmetic variety $X$ of dimension $d + 1$ in the sense of Zhang, Moriwaki and Yuan
-(integral, projective and flat over $\mathbb{Z}$), whose generic fibre may be singular, Yuan and
-Zhang define $(\bar L_1 \cdots \bar L_{d+1})$ as $(\mu^* \bar L_1 \cdots \mu^* \bar L_{d+1})$ for a
-generic resolution of singularities $\mu \colon X' \to X$; it does not depend on the choice of
-$\mu$, because two generic resolutions are dominated by a third and the projection formula applies.
+(integral, projective and flat over $\mathbb{Z}$), whose generic fibre may be singular, Zhang
+defines the self-intersection $(\bar L^{d+1})$ as $(\mu^* \bar L)^{d+1}$ for a generic resolution of
+singularities $\mu \colon X' \to X$ (§1.2, p. 189), and Yuan the mixed numbers $(\bar L_1 \cdots
+\bar L_{d+1})$ as $(\mu^* \bar L_1 \cdots \mu^* \bar L_{d+1})$ (§2.1, p. 8); it does not depend on
+the choice of $\mu$, because two generic resolutions are dominated by a third and the projection
+formula applies.
 
 ## Depends on
 
