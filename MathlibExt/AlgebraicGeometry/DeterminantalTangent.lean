@@ -34,7 +34,18 @@ variable {k : Type*} [Field k] {m n : ℕ}
 /-- A generic minor, indexed by actual row and column selections. -/
 def minorPolynomial (r : ℕ) (rows : Fin (r + 1) ↪ Fin m)
     (cols : Fin (r + 1) ↪ Fin n) : MvPolynomial (Fin m × Fin n) k :=
-  Matrix.det (fun i j : Fin (r + 1) ↦ MvPolynomial.X (rows i, cols j))
+  Matrix.det (Matrix.of fun i j : Fin (r + 1) ↦ MvPolynomial.X (rows i, cols j))
+
+/-- Evaluating a generic minor at a matrix gives the corresponding minor of that matrix. -/
+@[simp]
+theorem eval_minorPolynomial (r : ℕ) (rows : Fin (r + 1) ↪ Fin m) (cols : Fin (r + 1) ↪ Fin n)
+    (A : Matrix (Fin m) (Fin n) k) :
+    MvPolynomial.eval (fun ij ↦ A ij.1 ij.2) (minorPolynomial r rows cols) =
+      (A.submatrix rows cols).det := by
+  rw [minorPolynomial, RingHom.map_det]
+  congr 1
+  ext i j
+  simp
 
 /-- Equations of the generic scheme of matrices with rank at most `r`. -/
 def minorIdeal (r : ℕ) : Ideal (MvPolynomial (Fin m × Fin n) k) :=

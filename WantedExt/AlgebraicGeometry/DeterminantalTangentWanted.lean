@@ -18,6 +18,8 @@ the tangent matrix sends `ker A` into `im A`. This identifies the normal
 directions and gives the expected tangent dimension over any field.
 
 References:
+* Harris, *Algebraic Geometry: A First Course*, Example 14.16 (tangent spaces
+  to determinantal varieties).
 * Bruns–Vetter, *Determinantal Rings*, Chapter 2,
   https://doi.org/10.1007/BFb0080378.
 * Covered minor-polynomial identities: TauCetiProject/TauCeti at
