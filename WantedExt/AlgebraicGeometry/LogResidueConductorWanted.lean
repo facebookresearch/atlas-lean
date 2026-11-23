@@ -28,10 +28,8 @@ open MathlibExt.AlgebraicGeometry.LogPairs
 
 def_wanted normalizedResidueComparison
     {k : Type} [Field k] [CharZero k] {n : ℕ}
-    (P : LogPair k (n+1)) (m : ℕ) (hm : 0 < m) (A : CartierLine P.variety)
+    (P : LogPair k (n+1)) (m : ℕ) (A : CartierLine P.variety)
     (S : NormalVariety k n) (C : CanonicalData S) (i : S.X ⟶ P.variety.X)
-    [IsFinite i.left] (p : PrimePoint P.variety)
-    (himage : i.left (genericPoint S.X.left) = p.val) (hboundary : P.boundary p = 1)
     (R : CartierRationalization A) (F : ResidueChart P m A S C i R) :
     ResidueComparison F
 

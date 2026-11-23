@@ -31,7 +31,7 @@ def_wanted limitingMultiplierImage
     {k : Type} [Field k] [CharZero k] {n : ℕ}
     (V : NormalVariety k n) (C : CanonicalData V)
     [∀ p : PrimePoint V, IsDiscreteValuationRing (LocalRing V p.val)]
-    (I : V.X.left.IdealSheafData) (m : ℕ) (hm : 0 < m) (c : ℝ) (hc : 0 ≤ c)
+    (I : V.X.left.IdealSheafData) (m : ℕ+) (c : ℝ) (hc : 0 ≤ c)
     (R : ResolvedMultiplierModel V C I m) :
     CandidateImage V C R.model I m c R.naturalSupport R.idealSupport
 
