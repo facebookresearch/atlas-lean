@@ -117,7 +117,7 @@ private lemma twoGroupDesign_gram (m n : ℕ) :
     (twoGroupDesign m n)ᵀ * twoGroupDesign m n = !![(m : ℝ), 0; 0, (n : ℝ)] := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [twoGroupDesign, Matrix.mul_apply, Fintype.sum_sum_type]
+    simp [twoGroupDesign, Matrix.mul_apply, Fintype.sum_sum_type, -Matrix.transpose_of]
 
 private lemma twoGroupDesign_isUnit_gram {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     IsUnit ((twoGroupDesign m n)ᵀ * twoGroupDesign m n) := by
@@ -139,7 +139,7 @@ private lemma olsEstimator_twoGroupDesign {m n : ℕ} (hm : m ≠ 0) (hn : n ≠
   ext j
   fin_cases j <;>
     simp [twoGroupDesign, mulVec, dotProduct, Matrix.mul_apply, Fintype.sum_sum_type,
-      Fin.sum_univ_two, Finset.mul_sum, div_eq_inv_mul]
+      Fin.sum_univ_two, Finset.mul_sum, div_eq_inv_mul, -Matrix.transpose_of]
 
 private lemma contrastVariance_twoGroupDesign {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     contrastVariance (twoGroupDesign m n) ![1, -1] = 1 / m + 1 / n := by

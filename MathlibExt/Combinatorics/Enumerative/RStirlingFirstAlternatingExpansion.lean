@@ -183,10 +183,9 @@ Source: A. Z. Broder, "The r-Stirling numbers", Stanford Computer Science Report
 journal version: Discrete Mathematics 49 (1984), 241-259,
 DOI 10.1016/0012-365X(84)90161-4. -/
 noncomputable def rStirlingFirst (n m r : ℕ) : ℕ :=
-  Polynomial.coeff
-    ((Polynomial.X : Polynomial ℕ) ^ r *
+  ((Polynomial.X : Polynomial ℕ) ^ r *
       Finset.prod (Finset.Ico r n)
-        (fun k => (Polynomial.X : Polynomial ℕ) + Polynomial.C k)) m
+        (fun k => (Polynomial.X : Polynomial ℕ) + Polynomial.C k)).coeff m
 
 /-- **Initial row of the r-Stirling numbers of the first kind.** For all natural numbers $m$ and
 $r$, the unsigned $r$-Stirling number of the first kind $[r, m]_r$ equals $1$ if $m = r$ and $0$
