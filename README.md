@@ -10,7 +10,9 @@
 </p>
 
 > [!NOTE]
-> **ATLAS V2 is live.** The original release is preserved in [`v1/`](v1/).
+> **ATLAS V2 is live.** Explore the interactive graph at
+> [facebookresearch.github.io/atlas-lean](https://facebookresearch.github.io/atlas-lean/).
+> The original release is preserved in [`v1/`](v1/).
 
 ## About ATLAS
 
