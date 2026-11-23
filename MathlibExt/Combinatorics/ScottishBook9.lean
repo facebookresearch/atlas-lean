@@ -8,16 +8,18 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
-public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Set.Lattice.Bounded
-public import Mathlib.Data.Set.Lattice.Disjoint
-public import Mathlib.Data.Set.Lattice.Image
 public import Mathlib.Data.Set.Lattice.Indexed
-public import Mathlib.Data.Set.Lattice.Order
+import Mathlib.Data.Fin.Tuple.Basic
+import Mathlib.Data.Fintype.EquivFin
 
-@[expose] public section
+/-!
+# Scottish Book Problem 9
+
+A family of sets of size at most `n` has a common element if every `n + 1` members do.
+-/
+
+public section
 
 namespace MathlibExt.Combinatorics.ScottishBook9Wanted
 
@@ -40,10 +42,24 @@ by Ulam in the Scottish Book typescript; see also the 2026 survey "90+ years
 of the Scottish Book" (arXiv:2603.27867), which records that Ulam solved
 Problem 9.
 -/
-theorem_wanted finiteSetsCommonElement :
+theorem finiteSetsCommonElement :
     ∀ (n : ℕ) {α : Type} [Nonempty α] (ι : Type) (E : ι → Finset α),
       (∀ i, (E i).card ≤ n) →
       (∀ s : Fin (n + 1) → ι, (⋂ i, (E (s i) : Set α)).Nonempty) →
-      (⋂ i, (E i : Set α)).Nonempty
+      (⋂ i, (E i : Set α)).Nonempty := by
+  classical
+  intro n α _ ι E hcard hinter
+  simp only [Set.nonempty_def, Set.mem_iInter, Finset.mem_coe] at hinter ⊢
+  by_contra! h
+  -- Each point has an index witnessing its absence.
+  choose miss hmiss using h
+  let base := miss (Classical.ofNonempty : α)
+  -- Reserve one of the last n slots for each element of the base set.
+  let slot := (E base).equivFin.toEmbedding.trans (Fin.castLEEmb (hcard base))
+  let rest := Function.extend slot (fun x : E base ↦ miss x) (fun _ ↦ base)
+  obtain ⟨x, hx⟩ := hinter (Fin.cons base rest)
+  have hxBase : x ∈ E base := by simpa using hx 0
+  -- The slot reserved for x selects a set that omits x.
+  exact hmiss x (by simpa [rest, slot.injective.extend_apply] using hx (slot ⟨x, hxBase⟩).succ)
 
 end MathlibExt.Combinatorics.ScottishBook9Wanted
