@@ -1,0 +1,3 @@
+# Bernoulli probability that edges $F$ are all open is $p^{|F|}$
+
+Let $G$ be a finite simple graph, $0 < p < 1$, and $F$ a set of edges of $G$. Then the total mass, under the [random-cluster probability](../../random-cluster-measures-on-finite-graphs/fk-prob.md) $\phi_{G,p,1}$ at $q = 1$, which gives $\omega$ the mass $p^{o(\omega)}(1 - p)^{c(\omega)}/2^{u}$, where $o(\omega)$ and $c(\omega)$ count the open and closed edges of $G$ and $u$ is the number of unordered pairs of vertices (loops included) that are not edges of $G$ (so the states of edges are independent Bernoulli($p$) and the other pairs are independent fair bits), of the configurations in which every edge of $F$ is open equals $p^{|F|}$.

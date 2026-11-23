@@ -656,18 +656,6 @@ private theorem Presid_eval (n : ℕ) (s : ℂ) :
     Polynomial.eval_finsetSum, Polynomial.eval_finsetSum, Polynomial.eval_X,
     Polynomial.eval_C, Finset.sum_congr rfl eQ, Finset.sum_congr rfl eR]
 
-private theorem poly_sum_natDegree_le (s : Finset ℕ) (f : ℕ → Polynomial ℂ) (b : ℕ)
-    (h : ∀ i ∈ s, (f i).natDegree ≤ b) : (∑ i ∈ s, f i).natDegree ≤ b := by
-  revert h
-  refine Finset.induction_on s ?_ ?_
-  · intro h
-    simp
-  · intro a t hat ih h
-    rw [Finset.sum_insert hat]
-    have h1 := h _ (Finset.mem_insert_self a t)
-    have h2 := ih (fun i hi => h i (Finset.mem_insert_of_mem hi))
-    exact le_trans (Polynomial.natDegree_add_le _ _) (max_le h1 h2)
-
 private theorem qdeg (n j : ℕ) : (Qpoly n j).natDegree ≤ j := by
   unfold Qpoly
   have h1 : (Polynomial.C (((-1 : ℂ) ^ (j - 1)) / (j : ℂ))
@@ -773,9 +761,9 @@ private theorem Presid_natDegree_le (n : ℕ) (_hn : 1 ≤ n) : (Presid n).natDe
       exact le_trans h (Nat.add_le_add_left (rdeg n k) 1)
     omega
   have hS1 : (∑ j ∈ Finset.Icc 1 n, Qpoly n j).natDegree ≤ n :=
-    poly_sum_natDegree_le _ _ _ hQ
+    Polynomial.natDegree_sum_le_of_forall_le _ _ hQ
   have hS2 : (∑ k ∈ Finset.Icc 1 n, Polynomial.X * Rpoly n k).natDegree ≤ n :=
-    poly_sum_natDegree_le _ _ _ hR
+    Polynomial.natDegree_sum_le_of_forall_le _ _ hR
   have eP : Presid n
       = (∑ j ∈ Finset.Icc 1 n, Qpoly n j)
         + (∑ k ∈ Finset.Icc 1 n, Polynomial.X * Rpoly n k)
@@ -919,11 +907,15 @@ private theorem resid_eq (n : ℕ) (hn : 1 ≤ n) (s : ℂ) :
   linear_combination heval
 
 /--
-Alternating binomial transform of the second-order harmonic numbers
-`H_k^{(2)} = ∑_{j=1}^k 1/j^2`: the closed form in `H_n^{(2)}` and `H_n` plus a
-residual single sum. The generalized binomial coefficients `C(s+n,k)` and
-`C(s+n-1,n)` are rendered as falling-factorial products over factorials, and
-`hs` encodes the source condition `s ∈ ℂ ∖ ℤ⁻`.
+**Alternating binomial transform of second-order harmonic numbers.** For a natural number
+$m$ let $H_m = \sum_{j=1}^{m} 1/j$ and $H_m^{(2)} = \sum_{j=1}^{m} 1/j^2$, and for
+$z \in \mathbb{C}$ and a natural number $r$ let $\binom{z}{r} = z(z-1)\cdots(z-r+1)/r!$, the
+empty product for $r = 0$ being $1$. Let $s \in \mathbb{C}$ with $s \ne -m$ for every positive
+integer $m$, and let $n \ge 1$. Then
+$$\sum_{k=1}^{n} (-1)^k \binom{s+n}{k} H_k^{(2)} =
+(-1)^n \binom{s+n-1}{n} H_n^{(2)} -
+\frac{1}{s+n} \Bigl(H_n -
+s \sum_{k=1}^{n} \frac{(-1)^k \binom{s+k-1}{k-1}}{k^2 \binom{n}{k}}\Bigr).$$
 
 Source: Necdet Batır, "Finite Binomial Sum Identities with Harmonic Numbers,"
 Journal of Integer Sequences 24 (2021), Article 21.4.3, Proposition 6 (label

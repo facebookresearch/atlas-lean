@@ -111,7 +111,15 @@ private theorem ZMod.eq_mul_p_of_castHom_eq_zero {p : ℕ} [NeZero (p ^ 2)]
   obtain ⟨t, ht⟩ := hdvd
   exact ⟨(((t : ℕ)) : ZMod (p ^ 2)), by rw [hH2, ht, Nat.cast_mul]⟩
 
-/-- Block harmonic sum vanishing modulo `p ^ 2` for primes `p ≥ 5`.
+/-- **Carlitz's block harmonic congruence.** Let $p \ge 5$ be a prime and let $k \in \mathbb{N}$.
+Then in $\mathbb{Z}/p^2\mathbb{Z}$
+$$\sum_{r=1}^{p-1} (kp + r)^{-1} = 0.$$
+
+Each $kp + r$ with $1 \le r \le p - 1$ is prime to $p$, so these inverses are genuine inverses
+modulo $p^2$.
+
+Cited original: L. Carlitz, "A note on Wolstenholme's theorem", American
+Mathematical Monthly 61 (1954), 174–176.
 
 Source: Jerry Metzger and Thomas Richards, "A Prisoner Problem Variation",
 `https://cs.uwaterloo.ca/journals/JIS/VOL18/Metzger/metz1.tex`, lines 657–662
@@ -120,14 +128,6 @@ Source: Jerry Metzger and Thomas Richards, "A Prisoner Problem Variation",
 exact source-span SHA-256
 `0aa191b703844e65e7e2fd1c181532b3409c2720e7317d93f130d66c66f34d0f`;
 concept `jis_dep_8bfbdf778d8b84efc2cbaafc`).
-
-Cited original: L. Carlitz, "A note on Wolstenholme's theorem", American
-Mathematical Monthly 61 (1954), 174–176.
-
-Here `k : ℕ` follows the source application; the sum runs over `r = 1, …, p - 1`
-via `Finset.Ico 1 p`; under the hypotheses all denominators are units modulo
-`p ^ 2`.
-Proves `Wanted` entry `ZMod.carlitz_sum_inv_block_Ico_eq_zero_of_five_le`.
 -/
 theorem ZMod.carlitz_sum_inv_block_Ico_eq_zero_of_five_le
     (p k : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p) :

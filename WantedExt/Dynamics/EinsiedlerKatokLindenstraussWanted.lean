@@ -30,12 +30,14 @@ into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Dynamics.EinsiedlerKatokLindenstraussWanted` namespace. Mathematical
-statements are unchanged. Source:
+statements are unchanged. The local `distToNearestInt` helper was later replaced by the identical
+shared definition `MetaMathlibExt.distToNearestInt` (`|x - round x|`). Source:
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.NumberTheory.DiophantineApproximation.DistToNearestInt
 
 @[expose] public section
 
@@ -74,10 +76,14 @@ Katok and Lindenstrauss proved this conjecture under the additional hypothesis t
 
 namespace Dynamics.EinsiedlerKatokLindenstrauss
 
-/-- The distance from a real number to the nearest integer. -/
-noncomputable def distToNearestInt (x : ℝ) : ℝ := |x - round x|
+open MetaMathlibExt (distToNearestInt)
 
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `einsiedler_katok_lindenstrauss`. -/
+/-- **Einsiedler–Katok–Lindenstrauss theorem.** For a real number $x$, write $\lVert x \rVert$
+for the distance from $x$ to the nearest integer. The set of pairs $(\alpha, \beta)$ of real
+numbers with $\liminf_{n \to \infty} n \cdot \lVert n\alpha \rVert \cdot \lVert n\beta \rVert > 0$,
+the lower limit taken over natural numbers $n$, has Hausdorff dimension $0$ in $\mathbb{R}^2$.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `einsiedler_katok_lindenstrauss`. -/
 public theorem_wanted einsiedler_katok_lindenstrauss :
     dimH {(α, β) : ℝ × ℝ | Filter.atTop.liminf
       (fun n : ℕ ↦ n * distToNearestInt (n * α) * distToNearestInt (n * β)) > 0} = 0

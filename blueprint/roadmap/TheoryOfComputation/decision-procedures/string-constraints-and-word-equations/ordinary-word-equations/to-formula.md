@@ -1,0 +1,4 @@
+# Word equation as a string-constraint formula
+
+Let $\alpha$ be an alphabet of constants and $V$ a set of variables, disjoint from $\alpha$. A pattern is a finite word over $\alpha \cup V$, and for a substitution $\sigma : V \to \alpha^*$ the evaluation $\sigma(w)$ of a pattern $w$ is the word over $\alpha$ obtained by replacing each variable $x$ in $w$ by $\sigma(x)$. String terms are built from constant words and variables by concatenation (and by applying letter-to-word substitutions), and the embedding of a pattern $c_1 \cdots c_k$ is the term $c_1 \cdot (c_2 \cdot (\cdots (c_k \cdot \varepsilon)))$ in which each constant letter $a$ becomes the constant word $a$, each variable stays a variable, and the empty pattern becomes the constant empty word $\varepsilon$. The string-constraint formula of a word equation $L = R$ (a pair of patterns) is the formula
+consisting of the single atom asserting equality of the embeddings of $L$ and $R$.
