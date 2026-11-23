@@ -10209,6 +10209,7 @@
   "MathlibExt/Combinatorics/Graph/MycielskiTheorem": {"to": "GraphTheory/graph-coloring", "title": "Mycielski's theorem"},
   "MathlibExt/Combinatorics/Graph/RobbinsTheorem": {"to": "GraphTheory/directed-graphs", "title": "Robbins' theorem"},
   "MathlibExt/Combinatorics/HarperIsoperimetric": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Harper's isoperimetric inequality"},
+  "MathlibExt/Combinatorics/HindmanFiniteSums": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Pairwise sum theorem"},
   "MathlibExt/Combinatorics/HowardPotentialPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Potential polynomials"},
   "MathlibExt/Combinatorics/InfiniteWord/CloitreSequence": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Cloitre's self-describing sequence"},
   "MathlibExt/Combinatorics/InfiniteWord/CrochemoreSquarefreeCriterion": {"to": "Combinatorics/combinatorics-on-words/repetitions-in-words", "title": "Square-free words"},
