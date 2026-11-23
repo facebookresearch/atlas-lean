@@ -48,6 +48,33 @@ Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases
 public theorem fareyStaircase_one (x : ℝ) : fareyStaircase 1 x = ⌊x⌋ := by
   simp [fareyStaircase]
 
+/-- **Recursion between consecutive Farey staircases.** Let $n \ge 2$ be a natural number and $x$
+a real number, write $A_m$ for the Farey staircase of order $m$, and let
+$D_n(x) = A_n(x) - A_{n-1}(x)$. Then
+$D_n(x) = \frac{1}{n} \left( \lfloor nx \rfloor / n - A_{n-1}(x) \right)$ and
+$D_n(x) = \frac{1}{n-1} \left( \lfloor nx \rfloor / n - A_n(x) \right)$.
+
+Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
+(2024), Article A37, Proposition 7 (`integers-2024-A37-prop-7`). -/
+public theorem fareyStaircase_sub_eq {n : ℕ} (hn : 2 ≤ n) (x : ℝ) :
+    fareyStaircase n x - fareyStaircase (n - 1) x =
+        (n : ℝ)⁻¹ * (⌊(n : ℝ) * x⌋ / n - fareyStaircase (n - 1) x) ∧
+      fareyStaircase n x - fareyStaircase (n - 1) x =
+        ((n : ℝ) - 1)⁻¹ * (⌊(n : ℝ) * x⌋ / n - fareyStaircase n x) := by
+  have hn₁ : 1 ≤ n := by omega
+  have hn₀ : (n : ℝ) ≠ 0 := by positivity
+  have hn' : (2 : ℝ) ≤ n := by exact_mod_cast hn
+  have hpred : (n : ℝ) - 1 ≠ 0 := by linarith
+  have hsum : n * fareyStaircase n x =
+      ((n : ℝ) - 1) * fareyStaircase (n - 1) x + ⌊(n : ℝ) * x⌋ / n := by
+    simp only [fareyStaircase, Nat.cast_sub hn₁, Nat.cast_one, ← mul_assoc,
+      mul_inv_cancel₀ hn₀, mul_inv_cancel₀ hpred, one_mul]
+    simpa only [Nat.sub_add_cancel hn₁] using
+      Finset.sum_Icc_succ_top (a := 1) (b := n - 1) (by omega)
+        (fun k => (⌊(k : ℝ) * x⌋ : ℝ) / k)
+  rw [eq_inv_mul_iff_mul_eq₀ hn₀, eq_inv_mul_iff_mul_eq₀ hpred]
+  constructor <;> linear_combination hsum
+
 /-- **Zoomed Farey staircase.** For a natural number $n$ and a real number $x$, the zoomed Farey
 staircase of order $n$ is $B_0(x) = 0$ for $n = 0$ and $B_n(x) = n A_n(x/n)$ for $n \ge 1$, where
 $A_n$ is the Farey staircase of order $n$. For $n \ge 1$ this equals
