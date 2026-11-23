@@ -11205,6 +11205,7 @@
   "MathlibExt/NumberTheory/Bernoulli/BernoulliSecondKind": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Bernoulli numbers of the second kind"},
   "MathlibExt/NumberTheory/Bernoulli/BernoulliSecondKindAsymptotic": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Bernoulli numbers of the second kind"},
   "MathlibExt/NumberTheory/Bernoulli/CarlitzIdentity": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Identities for Bernoulli numbers"},
+  "MathlibExt/NumberTheory/Bernoulli/DerivativeDenominator": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Denominators of Bernoulli polynomials"},
   "MathlibExt/NumberTheory/Bernoulli/EulerBernoulliConvolution": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Identities for Bernoulli numbers"},
   "MathlibExt/NumberTheory/Bernoulli/FaulhaberBernoulliPolynomialSummation": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Faulhaber's formula"},
   "MathlibExt/NumberTheory/Bernoulli/GesselIdentity": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Identities for Bernoulli numbers"},
