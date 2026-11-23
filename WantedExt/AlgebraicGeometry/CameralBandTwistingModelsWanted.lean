@@ -55,18 +55,18 @@ def_wanted nativeTwistingQuotientCoherence (G : Over (Spec (.of ℂ))) [GrpObj G
     (X : Over (Spec (.of ℂ))) (C : Cover F X) (O : BandTorsorOperations F C)
     (T : TwistingGeometry F I B J C) : QuotientCoherence F I B J C O T
 
-proof_wanted nativeH1GroupLaws (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeH1GroupLaws (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (X : Over (Spec (.of ℂ))) (C : Cover F X) (O : BandTorsorOperations F C) : H1GroupLaws F C O
 
-proof_wanted nativeTwistingClassCoherence (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeTwistingClassCoherence (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (I : IncidenceAction F) (B : BorelGeometry F) (J : CentralizerGroup F)
     (X : Over (Spec (.of ℂ))) (C : Cover F X) (O : BandTorsorOperations F C)
     (T : TwistingGeometry F I B J C) (A : QuotientCoherence F I B J C O T) :
     TwistingCoherence F I B J C O T
 
-proof_wanted nativeH1SimplyTransitive (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeH1SimplyTransitive (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (_hred : ReductiveGroupHypotheses.IsLinearlyReductive G)
     (I : IncidenceAction F) (B : BorelGeometry F) (J : CentralizerGroup F)

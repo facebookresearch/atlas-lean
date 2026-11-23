@@ -46,12 +46,12 @@ def_wanted nativeLocalBandRestriction (G : Over (Spec (.of ℂ))) [GrpObj G]
     (I : IncidenceAction F) (X : Over (Spec (.of ℂ))) (C : Cover F X)
     (M : MarkedFamilies F I C) : LocalBandRestriction F I C M
 
-proof_wanted nativeLocalBandRestrictionLaws (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeLocalBandRestrictionLaws (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (I : IncidenceAction F) (X : Over (Spec (.of ℂ))) (C : Cover F X)
     (M : MarkedFamilies F I C) (L : LocalBandRestriction F I C M) : BandRestrictionLaws F I C M L
 
-proof_wanted nativeLocalAutomorphismRestriction (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeLocalAutomorphismRestriction (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (I : IncidenceAction F) (X : Over (Spec (.of ℂ))) (C : Cover F X)
     (M : MarkedFamilies F I C) (B : BorelGeometry F) (J : CentralizerGroup F)
@@ -67,7 +67,7 @@ def_wanted nativeBandedIsomTorsor (G : Over (Spec (.of ℂ))) [GrpObj G]
     (H H' : CameralBorelAbelianizationCore.Marked F I (M.cover U).cover) :
     BandedIsomTorsor F I C M B J L A U H H'
 
-proof_wanted nativeAutomorphismBijection (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeAutomorphismBijection (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (I : IncidenceAction F) (X : Over (Spec (.of ℂ))) (C : Cover F X)
     (M : MarkedFamilies F I C) (B : BorelGeometry F) (J : CentralizerGroup F)
@@ -75,7 +75,7 @@ proof_wanted nativeAutomorphismBijection (G : Over (Spec (.of ℂ))) [GrpObj G]
     (H : CameralBorelAbelianizationCore.Marked F I (M.cover U).cover) :
     Function.Bijective (A.source U H).arrow
 
-proof_wanted nativeLocalGerbe (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeLocalGerbe (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (_hred : ReductiveGroupHypotheses.IsLinearlyReductive G)
     (I : IncidenceAction F) (X : Over (Spec (.of ℂ))) (C : Cover F X)

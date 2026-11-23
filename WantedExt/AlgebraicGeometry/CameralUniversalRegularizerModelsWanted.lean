@@ -47,12 +47,12 @@ def_wanted nativeOriginalCoverComparison (G : Over (Spec (.of ℂ))) [GrpObj G]
     (H : Marked F I C) (P : OriginalActionComparison F I U H) :
     OriginalCoverComparison F I U H P
 
-proof_wanted nativeUniversalCartanOpen (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeUniversalCartanOpen (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (_hred : ReductiveGroupHypotheses.IsLinearlyReductive G) (Z : CartanPoint F) :
     CartanOpen F Z
 
-proof_wanted nativeUniversalCartanDense (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeUniversalCartanDense (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (_hred : ReductiveGroupHypotheses.IsLinearlyReductive G) (Z : CartanPoint F) :
     DenseRange (cartanOrbit F Z).left

@@ -48,7 +48,7 @@ def_wanted nativeTransportedNormalizerLift (G : Over (Spec (.of ℂ))) [GrpObj G
     (i j : Fin F.roots.count) (hij : K.permutations.index w i = j) (c : U ⟶ torusScheme ℂ 1) :
     TransportedNormalizerLift F K U n w hn i j hij c
 
-proof_wanted rootNormalizerSquare (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted rootNormalizerSquare (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     [FrameTheory 2] [GL2MatrixTheory] [SL2MatrixTheory] (K : RootNormalizerGeometry G tori F)
     (i : Fin F.roots.count) (U : Over (Spec (.of ℂ))) (c : U ⟶ torusScheme ℂ 1) :

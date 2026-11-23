@@ -44,7 +44,7 @@ def_wanted nativeCartanWeylAction (G : Over (Spec (.of ℂ))) [GrpObj G]
     (K : TwistLine X)
     (S : SectionSpace X (cartanKModule F X K)) : CartanWeylAction F X K S
 
-proof_wanted nativeValueWeylEquivariant (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeValueWeylEquivariant (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori) (I : IncidenceAction F)
     (X : Over (Spec (.of ℂ))) (K : TwistLine X) (H : RegularizedBundle F X K)
     (D : CoverDescent F I H.regularizer) (Q : CartanDescent F I H D)

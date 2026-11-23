@@ -28,7 +28,7 @@ open CameralFoundationPackages ExpansionParameterModels
 open CameralCoverDescentModels CameralMarkedRegularizers CameralRamificationReindexing
 attribute [local instance] CameralRegularizedHiggsModels.centralizerGroupAction
 
-proof_wanted nativeMarkedIsGroupoid (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeMarkedIsGroupoid (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori) (I : IncidenceAction F)
     (X : Over (Spec (.of ℂ))) (C : Cover F X) : IsGroupoid (Object F I C)
 

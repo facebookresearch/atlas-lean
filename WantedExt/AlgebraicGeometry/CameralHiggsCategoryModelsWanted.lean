@@ -31,7 +31,7 @@ open CoherentCurveLinearSeries
 
 attribute [local instance] centralizerGroupAction
 
-proof_wanted nativeHiggsCategoryCoherence (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeHiggsCategoryCoherence (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (X : Over (Spec (.of ℂ))) (K : TwistLine X) : CategoryCoherence F (X := X) (K := K)
 

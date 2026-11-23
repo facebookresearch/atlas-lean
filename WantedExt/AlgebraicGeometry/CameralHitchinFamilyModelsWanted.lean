@@ -42,7 +42,7 @@ def_wanted nativeHitchinStacks (G : Over (Spec (.of ℂ))) [GrpObj G]
     (I : IncidenceAction F) (X : Over (Spec (.of ℂ))) (K : TwistLine X)
     (_hproper : IsProper X.hom) (P : Parameters F K) : HitchinStacks F I K P
 
-proof_wanted nativeFibreArrowCoherence (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted nativeFibreArrowCoherence (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori) (I : IncidenceAction F)
     (X : Over (Spec (.of ℂ))) (K : TwistLine X)
     (S : SectionSpace X (cartanKModule F X K)) (W : CartanWeylAction F X K S)

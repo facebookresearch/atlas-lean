@@ -30,7 +30,7 @@ open CameralSimpleRootTrivializations CameralNormalizerShifts CameralLiftedNorma
 open CameralAdmissibleTorusBundles ExpansionParameterModels GeneralLinearFrameSchemes
 open RankTwoMatrixGroupModels
 
-proof_wanted admissibleIsGroupoid (G : Over (Spec (.of ℂ))) [GrpObj G]
+theorem_wanted admissibleIsGroupoid (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     [FrameTheory 2] [GL2MatrixTheory] [SL2MatrixTheory] (K : RootNormalizerGeometry G tori F)
     (D : RootTorsorInputs F K) (R : CanonicalRamificationFamily F K D)

@@ -57,11 +57,11 @@ def_wanted nativeSourceAbelianization (_hred : ReductiveGroupHypotheses.IsLinear
 
 variable (S : SourceConstruction F K D R A Q E T I B V U W)
 
-proof_wanted nativeBorelFunctorEquivalence (_hred : ReductiveGroupHypotheses.IsLinearlyReductive G)
+theorem_wanted nativeBorelFunctorEquivalence (_hred : ReductiveGroupHypotheses.IsLinearlyReductive G)
     (X : Over (Spec (.of ℂ))) (C : Cover F X) :
     (borelFunctor F K D R A Q E T I B V U W S C).IsEquivalence
 
-proof_wanted nativeRegularizedValueFibreEquivalence
+theorem_wanted nativeRegularizedValueFibreEquivalence
     (_hred : ReductiveGroupHypotheses.IsLinearlyReductive G)
     (X : Over (Spec (.of ℂ))) (L : TwistLine X)
     (Space : SectionSpace X (cartanKModule F X L)) (Action : CartanWeylAction F X L Space)
