@@ -48,13 +48,13 @@ theorem goesWrong_stuckToy : Behavior.goesWrong ([] : List Unit) ∈ Beh stuckTo
   have hs : stuckToy.Stuck () := (OpSem.stuck_iff stuckToy).mpr ⟨hnf, ht⟩
   exact (goesWrong_mem_iff stuckToy).mpr ⟨(), Cslib.LTS.MTr.refl, hs⟩
 
-/-- The looping toy diverges with the constant trace. -/
-theorem diverges_loopToy :
-    Behavior.diverges (Cslib.ωSequence.const ()) ∈ Beh loopToy () := by
+/-- The looping toy reacts with the constant trace. -/
+theorem reacts_loopToy :
+    Behavior.reacts (Cslib.ωSequence.const ()) ∈ Beh loopToy () := by
   have h0 : (Cslib.ωSequence.const ()) 0 = () := rfl
   have he : loopToy.lts.OmegaExecution (Cslib.ωSequence.const ()) (Cslib.ωSequence.const ()) :=
     fun i => trivial
-  exact (diverges_mem_iff loopToy).mpr ⟨Cslib.ωSequence.const (), h0, he⟩
+  exact (reacts_mem_iff loopToy).mpr ⟨Cslib.ωSequence.const (), h0, he⟩
 
 /-- Preservation in form (2) is reflexive on `IMP`. -/
 theorem preserves2_refl_imp (c : Cslib.IMP.Config) :

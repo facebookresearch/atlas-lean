@@ -14,10 +14,11 @@ public import CSLibExt.Languages.OperationalSemantics
 Program behaviors and homogeneous semantic preservation after Leroy's
 "Formal verification of a realistic compiler" (§2.1), over the operational-semantics anchor.
 A behavior is observational: termination or going wrong after a finite label trace, or
-divergence with an infinite label trace. Final and stuck configurations stay existential in
+reaction with an infinite label trace. Final and stuck configurations stay existential in
 `Beh`; every anchor label counts as an observable event, and results are observed only as labels.
-Excluded: silent (finite reactive trace) divergence and any tau companion (the anchor has no
-tau), cross-language preservation with a label map, and any soundness claim about a compiler.
+Excluded: Leroy's silent divergence (a finite observable trace followed by silent infinite
+execution) and any tau companion (the anchor has no tau), cross-language preservation with a label
+map, and any soundness claim about a compiler.
 -/
 
 @[expose] public section
@@ -30,10 +31,10 @@ namespace Cslib.Languages.ProgramBehaviors
 
 open Cslib.Languages.OperationalSemantics
 
-/-- Observable program behaviors over label traces: termination, divergence, or going wrong. -/
+/-- Observable program behaviors over label traces: termination, reaction, or going wrong. -/
 inductive Behavior (Label : Type v) where
   | terminates (trace : List Label)
-  | diverges (trace : Cslib.ωSequence Label)
+  | reacts (trace : Cslib.ωSequence Label)
   | goesWrong (trace : List Label)
 
 /-- The behavior set of a configuration; final and stuck configurations stay existential. -/
@@ -41,7 +42,7 @@ def Beh {Config : Type u} {Label : Type v} (S : OpSem Config Label) (c : Config)
     Set (Behavior Label) :=
   fun b => match b with
     | .terminates μs => ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Final c'
-    | .diverges μs => ∃ ss : Cslib.ωSequence Config, ss 0 = c ∧ S.lts.OmegaExecution ss μs
+    | .reacts μs => ∃ ss : Cslib.ωSequence Config, ss 0 = c ∧ S.lts.OmegaExecution ss μs
     | .goesWrong μs => ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Stuck c'
 
 /-- Termination membership unfolds to a multistep reaching some final configuration. -/
@@ -50,10 +51,10 @@ theorem terminates_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config 
     Behavior.terminates μs ∈ Beh S c ↔ ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Final c' := by
   exact Iff.rfl
 
-/-- Divergence membership unfolds to an infinite omega execution. -/
-theorem diverges_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
+/-- Reaction membership unfolds to an infinite omega execution. -/
+theorem reacts_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
     {c : Config} {μs : Cslib.ωSequence Label} :
-    Behavior.diverges μs ∈ Beh S c ↔
+    Behavior.reacts μs ∈ Beh S c ↔
       ∃ ss : Cslib.ωSequence Config, ss 0 = c ∧ S.lts.OmegaExecution ss μs := by
   exact Iff.rfl
 
@@ -63,10 +64,13 @@ theorem goesWrong_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config L
     Behavior.goesWrong μs ∈ Beh S c ↔ ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Stuck c' := by
   exact Iff.rfl
 
-/-- Every configuration terminates, goes wrong, or diverges. -/
-theorem trichotomy {Config : Type u} {Label : Type v} (S : OpSem Config Label) (c : Config) :
+/-- Every configuration terminates, goes wrong, or reacts. The three cases are exhaustive but
+not exclusive: a nondeterministic configuration can exhibit more than one. -/
+theorem terminates_or_goesWrong_or_reacts {Config : Type u} {Label : Type v}
+    (S : OpSem Config Label) (c : Config) :
     (∃ (μs : List Label) (c' : Config), S.lts.MTr c μs c' ∧ S.Final c') ∨
-    (∃ (μs : List Label) (c' : Config), S.lts.MTr c μs c' ∧ S.Stuck c') ∨ S.Diverges c := by
+    (∃ (μs : List Label) (c' : Config), S.lts.MTr c μs c' ∧ S.Stuck c') ∨
+    ∃ μs : Cslib.ωSequence Label, Behavior.reacts μs ∈ Beh S c := by
   by_cases hterm : ∃ (μs : List Label) (c' : Config), S.lts.MTr c μs c' ∧ S.Final c'
   · exact Or.inl hterm
   · by_cases hwrong : ∃ (μs : List Label) (c' : Config), S.lts.MTr c μs c' ∧ S.Stuck c'
@@ -100,7 +104,10 @@ theorem trichotomy {Config : Type u} {Label : Type v} (S : OpSem Config Label) (
           seq 0 = ⟨c, hbase⟩ ∧ ∀ n, seq (n + 1) = Classical.choose (hsucc (seq n)) :=
         ⟨Nat.rec (motive := fun _ => {x // S.Steps c x}) ⟨c, hbase⟩
           (fun _ x => Classical.choose (hsucc x)), rfl, fun n => rfl⟩
-      refine Or.inr (Or.inr ((OpSem.diverges_iff S).mpr ⟨fun n => (seq n).1, ?_, ?_⟩))
+      suffices hdiv : S.Diverges c by
+        obtain ⟨ss, μs, h0, hexec⟩ := hdiv
+        exact Or.inr (Or.inr ⟨μs, (reacts_mem_iff S).mpr ⟨ss, h0, hexec⟩⟩)
+      refine (OpSem.diverges_iff S).mpr ⟨fun n => (seq n).1, ?_, ?_⟩
       · change (seq 0).1 = c
         rw [hseq0]
       · change ∀ i, S.Step (seq i).1 (seq (i + 1)).1
@@ -111,13 +118,13 @@ theorem trichotomy {Config : Type u} {Label : Type v} (S : OpSem Config Label) (
 /-- Every configuration has at least one behavior. -/
 theorem exists_behavior {Config : Type u} {Label : Type v} (S : OpSem Config Label) (c : Config) :
     (Beh S c).Nonempty := by
-  obtain hterm | hwrong | hdiv := trichotomy S c
+  obtain hterm | hwrong | hreact := terminates_or_goesWrong_or_reacts S c
   · obtain ⟨μs, c', hmtr, hfin⟩ := hterm
     exact ⟨Behavior.terminates μs, (terminates_mem_iff S).mpr ⟨c', hmtr, hfin⟩⟩
   · obtain ⟨μs, c', hmtr, hstuck⟩ := hwrong
     exact ⟨Behavior.goesWrong μs, (goesWrong_mem_iff S).mpr ⟨c', hmtr, hstuck⟩⟩
-  · obtain ⟨ss, μs, h0, hexec⟩ := hdiv
-    exact ⟨Behavior.diverges μs, (diverges_mem_iff S).mpr ⟨ss, h0, hexec⟩⟩
+  · obtain ⟨μs, hmem⟩ := hreact
+    exact ⟨Behavior.reacts μs, hmem⟩
 
 /-- Leroy form (1): source and target share exactly the same behaviors. -/
 def Preserves1 {Config : Type u} {Label : Type v} (S T : OpSem Config Label) (src tgt : Config) :
@@ -228,8 +235,8 @@ theorem preserves2_nondet_to_det :
   | terminates μs =>
     obtain ⟨c', hm, hf⟩ := (terminates_mem_iff detToy).mp hb
     exact (terminates_mem_iff nondetToy).mpr ⟨c', hMTr hm, hf⟩
-  | diverges μs =>
-    obtain ⟨ss, _, hexec⟩ := (diverges_mem_iff detToy).mp hb
+  | reacts μs =>
+    obtain ⟨ss, _, hexec⟩ := (reacts_mem_iff detToy).mp hb
     obtain ⟨_, _, h1⟩ := hexec 0
     obtain ⟨h2, _, _⟩ := hexec 1
     have hcontra : NondetToyCfg.b1 = NondetToyCfg.a := h1.symm.trans h2
