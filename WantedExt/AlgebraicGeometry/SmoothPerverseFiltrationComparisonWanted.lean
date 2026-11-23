@@ -27,9 +27,9 @@ part of the requested data.
 
 The shift is essential: on the smooth base a local system shifted by `m`
 is perverse. No multiplicativity theorem for a singular map is assumed.
-The perverse t-structure is the characterized `PerverseSheafTheory Y`, whose
-existence is requested in `WantedExt/AlgebraicGeometry/PerverseSheavesWanted.lean`;
-the class is a subsingleton, so the request does not depend on the instance.
+The perverse t-structure is the characterized `PerverseSheafTheory Y`, taken
+as an instance argument; the class is a subsingleton, so the request does not
+depend on the instance.
 
 References: de Cataldo–Migliorini, *The decomposition theorem, perverse
 sheaves and the topology of algebraic maps*, §§1.6–1.7,
