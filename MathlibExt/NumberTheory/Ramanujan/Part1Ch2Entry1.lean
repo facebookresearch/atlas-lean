@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.CharP.Defs
@@ -40,8 +40,12 @@ private lemma icc_one_eq_range (n : ℕ) (h : ℕ → ℝ) :
   congr 1
   omega
 
-/-- `ramanujan_part1_ch2_entry1` without the hypothesis `0 < n`; the statement also holds at `n =
-  0`. -/
+/-- **Ramanujan's identity for $\sum_{k=1}^{n} 1/(n+k)$, including $n = 0$.** For every natural
+number $n$,
+$$\sum_{k=1}^{n} \frac{1}{n+k} = \frac{n}{2n+1} + \sum_{k=1}^{n} \frac{1}{(2k)^3 - 2k}.$$
+
+This is Ramanujan's Entry 1 of Chapter 2 without the hypothesis $n \ge 1$; at $n = 0$ both sides
+are $0$. -/
 theorem ramanujan_part1_ch2_entry1_general (n : ℕ) :
     ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((n : ℝ) + (k : ℝ)) =
       (n : ℝ) / (2 * (n : ℝ) + 1) + ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) /
@@ -131,10 +135,14 @@ theorem ramanujan_part1_ch2_entry1_general (n : ℕ) :
   exact aux n
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Ramanujan's identity for $\sum_{k=1}^{n} 1/(n+k)$.** For every positive integer $n$,
+$$\sum_{k=1}^{n} \frac{1}{n+k} = \frac{n}{2n+1} + \sum_{k=1}^{n} \frac{1}{(2k)^3 - 2k}.$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     1, formula (1.1), printed p. 25 / PDF p. 35.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry1`.
 -/
+@[nolint unusedArguments]
 theorem ramanujan_part1_ch2_entry1 (n : ℕ) (hn : 0 < n) :
     ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((n : ℝ) + (k : ℝ)) =
       (n : ℝ) / (2 * (n : ℝ) + 1) + ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) /

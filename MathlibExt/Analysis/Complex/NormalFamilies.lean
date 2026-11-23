@@ -26,18 +26,26 @@ open Set Filter Topology
 
 namespace MathlibExt.Analysis.Complex.NormalFamilies
 
-/-- Local uniform boundedness of `F` on `U`: every `x ∈ U` has neighbourhood `V ⊆ U`
-and `C ≥ 0` with `‖F n y‖ ≤ C` for all `n` and `y ∈ V`. -/
+/-- **Locally uniformly bounded sequence of functions.** Let $U \subseteq \mathbb{C}$ and let
+$(F_n)_{n \in \mathbb{N}}$ be a sequence of functions $\mathbb{C} \to \mathbb{C}$. The sequence is
+locally uniformly bounded on $U$ when every $x \in U$ has an open neighbourhood $V \subseteq U$
+and a real $C \ge 0$ such that $|F_n(y)| \le C$ for all $n \in \mathbb{N}$ and all $y \in V$. -/
 def IsLocallyUniformlyBoundedOn (U : Set ℂ) (F : ℕ → ℂ → ℂ) : Prop :=
   ∀ x ∈ U, ∃ V, IsOpen V ∧ x ∈ V ∧ V ⊆ U ∧ ∃ C : ℝ, 0 ≤ C ∧ ∀ n, ∀ y ∈ V, ‖F n y‖ ≤ C
 
-/-- A family bounded by `C` on an open set is locally uniformly bounded there. -/
+/-- **A uniformly bounded sequence on an open set is locally uniformly bounded.** Let
+$U \subseteq \mathbb{C}$ be open, let $(F_n)_{n \in \mathbb{N}}$ be a sequence of functions
+$\mathbb{C} \to \mathbb{C}$ and let $C \ge 0$ be real. If $|F_n(y)| \le C$ for all
+$n \in \mathbb{N}$ and all $y \in U$, then $(F_n)$ is locally uniformly bounded on $U$. -/
 theorem isLocallyUniformlyBoundedOn_of_forall_norm_le {U : Set ℂ} (hU : IsOpen U)
     {F : ℕ → ℂ → ℂ} {C : ℝ} (hC : 0 ≤ C) (hF : ∀ n, ∀ y ∈ U, ‖F n y‖ ≤ C) :
     IsLocallyUniformlyBoundedOn U F :=
   fun _ hx => ⟨U, hU, hx, subset_rfl, C, hC, hF⟩
 
-/-- A locally uniformly bounded family is uniformly bounded on each compact subset. -/
+/-- **Locally uniformly bounded sequences are uniformly bounded on compact subsets.** Let
+$(F_n)_{n \in \mathbb{N}}$ be a sequence of functions $\mathbb{C} \to \mathbb{C}$ that is locally
+uniformly bounded on $U \subseteq \mathbb{C}$. Then for every compact set $K \subseteq U$ there is
+a real $C \ge 0$ with $|F_n(y)| \le C$ for all $n \in \mathbb{N}$ and all $y \in K$. -/
 theorem IsLocallyUniformlyBoundedOn.exists_bound_of_isCompact {U : Set ℂ} {F : ℕ → ℂ → ℂ}
     (hB : IsLocallyUniformlyBoundedOn U F)
     {K : Set ℂ} (hKU : K ⊆ U) (hKc : IsCompact K) :
@@ -228,8 +236,13 @@ private lemma disc_subseq {U : Set ℂ} {F : ℕ → ℂ → ℂ}
     _ < ε := hm'
 
 /--
-Let `U` be open and `F : ℕ → ℂ → ℂ` holomorphic on `U` and locally uniformly bounded on `U`. Then
-some strictly monotone subsequence converges locally uniformly on `U` to holomorphic `f`. Source:
+**Montel's theorem.** Let $U \subseteq \mathbb{C}$ be open and let $(F_n)_{n \in \mathbb{N}}$ be a
+sequence of functions $\mathbb{C} \to \mathbb{C}$, each holomorphic on $U$, that is locally
+uniformly bounded on $U$. Then there are a strictly increasing map
+$\varphi : \mathbb{N} \to \mathbb{N}$ and a function $f : \mathbb{C} \to \mathbb{C}$, holomorphic
+on $U$, such that $F_{\varphi(n)} \to f$ locally uniformly on $U$ as $n \to \infty$.
+
+Source:
 Montel's theorem on normal families, P. Montel 1912/1927; see Ahlfors, Functions of One Complex
 Variable II; Lean is locally uniformly bounded holomorphic family with strictly monotone
 subsequence locally uniform convergent to holomorphic limit, open U form.
@@ -387,27 +400,6 @@ theorem montel
     intro x hx
     exact absurd hx (Set.notMem_empty x)
 
-/-- From `∀ N, ∃ n ≥ N, P n`, extract a strictly monotone subsequence
-along which `P` always holds. -/
-private lemma strictMono_subseq_of_forall_exists {P : ℕ → Prop}
-    (h : ∀ N, ∃ n, N ≤ n ∧ P n) :
-    ∃ φ : ℕ → ℕ, StrictMono φ ∧ ∀ n, P (φ n) := by
-  choose ψ hψ using h
-  let φ : ℕ → ℕ := fun n => Nat.rec (motive := fun _ => ℕ) (ψ 0) (fun _ ih => ψ (ih + 1)) n
-  have hφ0 : φ 0 = ψ 0 := rfl
-  have hφS : ∀ n, φ (n + 1) = ψ (φ n + 1) := fun n => rfl
-  have hP : ∀ n, P (φ n) := by
-    intro n
-    induction n with
-    | zero => rw [hφ0]; exact (hψ 0).2
-    | succ n ih => rw [hφS]; exact (hψ _).2
-  have hlt : ∀ n, φ n < φ (n + 1) := by
-    intro n
-    rw [hφS]
-    have h1 := (hψ (φ n + 1)).1
-    linarith
-  exact ⟨φ, strictMono_nat_of_lt_succ hlt, hP⟩
-
 /-- Two holomorphic functions agreeing on `S` (which accumulates in `U`)
 agree on all of the preconnected open set `U`. -/
 private lemma eqOn_of_agree_on_S
@@ -422,9 +414,14 @@ private lemma eqOn_of_agree_on_S
   exact hfreq.mono (fun y hy => hff' y hy)
 
 /--
-Let `U` be open preconnected, `F` holomorphic on `U` and locally uniformly bounded, and `S ⊆ U`
-accumulate at some `x₀ ∈ U`. If `Fₙ → g` pointwise on `S`, then `F` converges locally uniformly on
-`U` to holomorphic `f` extending `g` on `S`. Source: Vitali convergence theorem, G. Vitali 1903;
+**Vitali's convergence theorem.** Let $U \subseteq \mathbb{C}$ be open and preconnected, and let
+$(F_n)_{n \in \mathbb{N}}$ be a sequence of functions $\mathbb{C} \to \mathbb{C}$, each holomorphic
+on $U$, that is locally uniformly bounded on $U$. Let $S \subseteq U$ have an accumulation point
+$x_0 \in U$, and let $g : \mathbb{C} \to \mathbb{C}$ satisfy $F_n(z) \to g(z)$ as $n \to \infty$
+for every $z \in S$. Then there is a function $f : \mathbb{C} \to \mathbb{C}$, holomorphic on $U$,
+with $f(z) = g(z)$ for all $z \in S$, such that $F_n \to f$ locally uniformly on $U$.
+
+Source: Vitali convergence theorem, G. Vitali 1903;
 see Hille, Analytic Function Theory Vol II and Conway II; Lean is open preconnected U locally
 uniformly bounded with AccPt accumulation and pointwise limit on S extends to locally uniform
 holomorphic convergence, Montel-related strengthening.
@@ -459,12 +456,7 @@ theorem vitali
       push Not at hc
       exact hnot hc
     obtain ⟨ε, hε, hfreq⟩ := hbad
-    have hN : ∀ N, ∃ n, N ≤ n ∧ ∃ x ∈ K, ε ≤ dist (f₀ x) (F n x) := by
-      intro N
-      obtain ⟨b, hb, hbx⟩ := Filter.frequently_atTop.mp hfreq N
-      obtain ⟨x, hxk, hdist⟩ := hbx
-      exact ⟨b, hb, x, hxk, hdist⟩
-    obtain ⟨φ₁, hφ₁, hP⟩ := strictMono_subseq_of_forall_exists hN
+    obtain ⟨φ₁, hφ₁, hP⟩ := Filter.extraction_of_frequently_atTop hfreq
     choose x hx using hP
     have hH : ∀ n, DifferentiableOn ℂ ((fun k => F (φ₁ k)) n) U := fun n => hF (φ₁ n)
     have hHB : IsLocallyUniformlyBoundedOn U (fun k => F (φ₁ k)) := by

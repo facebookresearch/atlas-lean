@@ -165,15 +165,18 @@ private theorem szem_exists_dense_translate {k M n : ℕ} {δ : ℝ}
   exact Finset.exists_le_of_sum_le ⟨0, Finset.mem_range.mpr hn⟩ hsum
 
 /--
-For every `k ≥ 1` and `δ > 0` there is `N` such that every `n ≥ N` and every `A ⊆ Finset.range n`
-with `δ * (n : ℝ) ≤ (A.card : ℝ)` contains `a, d` with `0 < d` and `a + i * d ∈ A` for all `i <
-k`. Source: E. Szemerédi, Acta Arith. 27 (1975); Lean states finitary density form equivalent to
-infinitary positive upper density k-AP existence.
+**Szemerédi's theorem.** For every natural number $k \ge 1$ and every real number $\delta > 0$
+there is a natural number $N$ such that for every $n \ge N$, every set
+$A \subseteq \{0, 1, \dots, n - 1\}$ with $\delta n \le |A|$ contains an arithmetic progression
+of length $k$: there are natural numbers $a$ and $d > 0$ with $a + i d \in A$ for all $i < k$.
 
 Proves `Wanted` entry `szemeredi`.
 
 Proof: We derive the result from the density Hales–Jewett theorem by averaging coordinate-sum
 translates and mapping combinatorial lines to arithmetic progressions.
+
+Source: E. Szemerédi, Acta Arith. 27 (1975); Lean states finitary density form equivalent to
+infinitary positive upper density k-AP existence.
 -/
 public theorem szemeredi :
     ∀ k : ℕ, 0 < k → ∀ δ : ℝ, 0 < δ → ∃ N : ℕ, ∀ n : ℕ, N ≤ n →

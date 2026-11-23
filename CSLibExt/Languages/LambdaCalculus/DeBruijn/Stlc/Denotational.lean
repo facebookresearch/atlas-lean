@@ -47,7 +47,10 @@ variable {I : Base → Type v}
 
 namespace Ty
 
-/-- Interpret base types by `I` and function types as Lean function spaces. -/
+/-- **Denotation of simple types.** Given an interpretation $I$ assigning a type $I(b)$ to each
+base type $b$, the denotation $[\![A]\!]_I$ of a simple type $A$ is defined by recursion on $A$:
+a base type $b$ denotes $I(b)$, and a function type $A \Rightarrow B$ denotes the type of all
+functions from $[\![A]\!]_I$ to $[\![B]\!]_I$. -/
 def denote (I : Base → Type v) : Ty Base → Type v
   | .base b => I b
   | .arr A B => denote I A → denote I B
@@ -59,13 +62,19 @@ def denote (I : Base → Type v) : Ty Base → Type v
 
 end Ty
 
-/-- A semantic environment assigns an element to every typed variable. -/
+/-- **Semantic environments for the denotational semantics of STLC.** Given an interpretation $I$
+assigning a type to each base type and a typing context $\Gamma$ (a list of simple types), an
+environment for $\Gamma$ assigns to every variable $x$ of $\Gamma$, of any simple type $A$, an
+element of the denotation $[\![A]\!]_I$. -/
 abbrev Env (I : Base → Type v) (Γ : List (Ty Base)) :=
   ∀ {A}, Var Γ A → Ty.denote I A
 
 namespace Env
 
-/-- Extend an environment with a value for the newest variable. -/
+/-- **Extending a semantic environment in STLC.** Given an interpretation $I$ of the base types, a
+value $a$ in the denotation of a type $A$ and an environment $\eta$ for a context $\Gamma$, the
+extended environment for the context $A :: \Gamma$ sends the newest variable to $a$ and the
+successor $\mathrm{succ}\,x$ of each variable $x$ of $\Gamma$ to $\eta(x)$. -/
 def cons (a : Ty.denote I A) (η : Env I Γ) : Env I (A :: Γ)
   | _, .zero => a
   | _, .succ x => η x
@@ -75,14 +84,23 @@ def cons (a : Ty.denote I A) (η : Env I Γ) : Env I (A :: Γ)
 @[simp] theorem cons_succ (a : Ty.denote I A) (η : Env I Γ) (x : Var Γ B) :
     cons a η (.succ x) = η x := rfl
 
-/-- Precompose an environment with a renaming. -/
+/-- **Renaming an environment.** Given a renaming $\rho$ from context $\Gamma$ to context
+$\Delta$ (a type-preserving map from the variables of $\Gamma$ to those of $\Delta$) and an
+environment $\eta$ for $\Delta$, the renamed environment for $\Gamma$ sends each variable $x$ of
+$\Gamma$ to $\eta(\rho(x))$; that is, it is the composite $\eta \circ \rho$. -/
 def rename (ρ : Ren Γ Δ) (η : Env I Δ) : Env I Γ := fun x ↦ η (ρ x)
 
 end Env
 
 namespace Tm
 
-/-- Interpret a well-typed term in a semantic environment. -/
+/-- **Denotation of an STLC term.** Given an interpretation $I$ of the base types, the denotation of
+a well-typed term $t$ of type $A$ in context $\Gamma$ in an environment $\eta$ for $\Gamma$ is the
+element of the denotation of $A$ defined by recursion on $t$: a variable $x$ denotes $\eta(x)$, an
+application $f\,a$ denotes the denotation of $f$ applied to the denotation of $a$ (both in
+$\eta$), and an abstraction $\lambda.\,b$ denotes the function sending each value $a$ of
+its argument type to the denotation of the body $b$ in $\eta$ extended by $a$ for the newest
+variable. -/
 def denote (I : Base → Type v) : {Γ : List (Ty Base)} → {A : Ty Base} →
     Tm Γ A → Env I Γ → Ty.denote I A
   | _, _, .var x, η => η x
@@ -98,7 +116,11 @@ def denote (I : Base → Type v) : {Γ : List (Ty Base)} → {A : Ty Base} →
 @[simp] theorem denote_lam (I : Base → Type v) (body : Tm (A :: Γ) B) (η : Env I Γ) :
     denote I (.lam body) η = fun a ↦ denote I body (Env.cons a η) := rfl
 
-/-- Denotation commutes with variable renaming. -/
+/-- **Renaming lemma for STLC denotation.** For every interpretation $I$ of the base types, every
+type-preserving renaming $\rho$ from context $\Gamma$ to context $\Delta$, every term $t$ in
+context $\Gamma$ and every environment $\eta$ for $\Delta$, the denotation in $\eta$ of the term
+obtained by renaming the variables of $t$ along $\rho$ equals the denotation of $t$ in the
+environment that sends each variable $x$ of $\Gamma$ to $\eta(\rho(x))$. -/
 theorem denote_rename (I : Base → Type v) (ρ : Ren Γ Δ) (t : Tm Γ A) (η : Env I Δ) :
     denote I (rename ρ t) η = denote I t (Env.rename ρ η) := by
   induction t generalizing Δ with
@@ -112,7 +134,11 @@ theorem denote_rename (I : Base → Type v) (ρ : Ren Γ Δ) (t : Tm Γ A) (η :
       funext C x
       cases x <;> rfl
 
-/-- Weakening a term does not change its denotation in an extended environment. -/
+/-- **Weakening preserves STLC denotation.** For every interpretation $I$ of the base types, every
+term $t$ of type $A$ in context $\Gamma$, every type $B$, every value $a$ in the denotation of $B$
+and every environment $\eta$ for $\Gamma$, the weakening of $t$ to the context $B :: \Gamma$ has,
+in the environment that extends $\eta$ by $a$ for the newest variable, the same denotation as $t$
+in $\eta$. -/
 theorem denote_weaken (I : Base → Type v) (t : Tm Γ A) (a : Ty.denote I B) (η : Env I Γ) :
     denote I (weaken (B := B) t) (Env.cons a η) = denote I t η := by
   rw [weaken, denote_rename]
@@ -120,11 +146,19 @@ theorem denote_weaken (I : Base → Type v) (t : Tm Γ A) (a : Ty.denote I B) (�
   funext C x
   rfl
 
-/-- Interpret every image of a syntactic substitution in an environment. -/
+/-- **Denotation of an STLC substitution.** Given an interpretation $I$ of the base types, a
+type-preserving substitution $\sigma$ mapping each variable of a context $\Gamma$ to a term in a
+context $\Delta$, and an environment $\eta$ for $\Delta$, this is the environment for $\Gamma$
+that sends each variable $x$ to the denotation of $\sigma(x)$ in $\eta$. -/
 def denoteSub (I : Base → Type v) (σ : Sub Γ Δ) (η : Env I Δ) : Env I Γ :=
   fun x ↦ denote I (σ x) η
 
-/-- Denotation commutes with simultaneous substitution. -/
+/-- **Substitution lemma for STLC denotation.** For every interpretation $I$ of the base types,
+every type-preserving substitution $\sigma$ mapping each variable of a context $\Gamma$ to a term
+in a context $\Delta$, every term $t$ in context $\Gamma$ and every environment $\eta$ for
+$\Delta$, the denotation in $\eta$ of $t$ with $\sigma$ applied simultaneously to its variables
+equals the denotation of $t$ in the environment that sends each variable $x$ of $\Gamma$ to the
+denotation of $\sigma(x)$ in $\eta$. -/
 theorem denote_subst (I : Base → Type v) (σ : Sub Γ Δ) (t : Tm Γ A) (η : Env I Δ) :
     denote I (subst σ t) η = denote I t (denoteSub I σ η) := by
   induction t generalizing Δ with
@@ -140,7 +174,11 @@ theorem denote_subst (I : Base → Type v) (σ : Sub Γ Δ) (t : Tm Γ A) (η : 
       | zero => rfl
       | succ x => exact denote_weaken I (σ x) a η
 
-/-- Instantiation is interpreted by extending the semantic environment. -/
+/-- **Denotation of an instantiated STLC body.** For every interpretation $I$ of the base types,
+every term $b$ of type $B$ in context $A :: \Gamma$, every term $a$ of type $A$ in context $\Gamma$
+and every environment $\eta$ for $\Gamma$, the denotation in $\eta$ of $b$ with its newest variable
+replaced by $a$ equals the denotation of $b$ in the environment that extends $\eta$ by the
+denotation of $a$ in $\eta$ for the newest variable. -/
 theorem denote_instantiate (I : Base → Type v) (body : Tm (A :: Γ) B) (a : Tm Γ A)
     (η : Env I Γ) :
     denote I (instantiate body a) η = denote I body (Env.cons (denote I a η) η) := by
@@ -153,7 +191,9 @@ end Tm
 
 namespace Step
 
-/-- One operational reduction preserves denotation. -/
+/-- **One reduction step preserves STLC denotation.** For every interpretation $I$ of the base
+types, if a term $t$ reduces to $t'$ in one step of call-by-value reduction, then $t$ and $t'$
+have the same denotation in every environment $\eta$ for their context. -/
 theorem denote_eq (I : Base → Type v) {t t' : Tm Γ A} (h : Step t t') (η : Env I Γ) :
     Tm.denote I t η = Tm.denote I t' η := by
   induction h with
@@ -169,7 +209,9 @@ end Step
 
 namespace Steps
 
-/-- Multi-step operational evaluation preserves denotation. -/
+/-- **Multi-step reduction preserves STLC denotation.** For every interpretation $I$ of the base
+types, if a term $t$ reduces to $t'$ in zero or more steps of call-by-value reduction, then $t$
+and $t'$ have the same denotation in every environment $\eta$ for their context. -/
 theorem denote_eq (I : Base → Type v) {t t' : Tm Γ A} (h : Steps t t') (η : Env I Γ) :
     Tm.denote I t η = Tm.denote I t' η := by
   induction h with
@@ -180,7 +222,9 @@ end Steps
 
 namespace Eval
 
-/-- Big-step evaluation preserves denotation. -/
+/-- **Big-step evaluation preserves STLC denotation.** For every interpretation $I$ of the base
+types, if a term $t$ evaluates to $v$ under call-by-value big-step evaluation, then $t$ and $v$
+have the same denotation in every environment $\eta$ for their context. -/
 theorem denote_eq (I : Base → Type v) {t value : Tm Γ A} (h : Eval t value)
     (η : Env I Γ) : Tm.denote I t η = Tm.denote I value η :=
   h.to_steps.denote_eq I η
