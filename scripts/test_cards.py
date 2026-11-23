@@ -1233,6 +1233,17 @@ class Check(Vault):
         self.card(f"{self.g}/p", 3, 30, ["p-main"], kind="concept")
         self.assertEqual(self.errors(), [])
 
+    def test_a_planned_main_statement_with_a_kind_matches_the_card_kind(self) -> None:
+        # A planned main that counts as a statement not yet in Lean has the kind lean-facts gave it, which has to fit
+        # the card as a credited main's kind does.
+        self.leaf(f"{self.g}/p/p-main.md", 30, facts=None, row={"kind": "def"})
+        self.card(f"{self.g}/p", 3, 30, ["p-main"], kind="result")
+        self.leaf(f"{self.g}/q/q-main.md", 31, facts=None, row={"kind": "theorem"})
+        self.card(f"{self.g}/q", 4, 31, ["q-main"], kind="result")
+        errors = self.errors()
+        self.assert_found("a result card's main statement Algebra/groups/p/p-main is a `def`", errors)
+        self.assertFalse([error for error in errors if "q-main" in error], errors)
+
     def test_supports_point_outside_the_card(self) -> None:
         self.card(f"{self.g}/a", 1, 10, ["a-main", "a-lemma"], supports=[af(11), af(20), af(99)])
         errors = self.errors()

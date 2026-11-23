@@ -768,7 +768,9 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
                     what = "states a proposition" if found["proposition"] else "does not state a proposition"
                     errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is "
                                   f"Mathlib's {declaration(own)}, which {what}")
-            elif authored == "atlas" and kind is not None:
+            elif kind is not None:
+                # A credited main's kind, or the one lean-facts gives a main with no Lean link that counts as a
+                # statement not yet in Lean (held, or recording its kind), fits the card.
                 allowed = CONCEPT_KINDS if record["kind"] == "concept" else RESULT_KINDS
                 if kind not in allowed:
                     errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is a `{kind}`")
