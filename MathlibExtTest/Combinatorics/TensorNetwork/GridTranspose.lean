@@ -25,10 +25,9 @@ private def rectangularKernel
   1 + ω.2.1.val + ω.2.2.val
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 private theorem rectangularGridValue :
     gridValue {9} {0, 1} rectangularTensor rectangularKernel = 17280 := by
-  decide
+  decide +kernel
 
 set_option maxRecDepth 100000 in
 set_option maxHeartbeats 1000000 in
@@ -60,10 +59,9 @@ private example :
   decide
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 private theorem orientedGridValue :
     gridValue {0, 1} {0} orientedTensor (fun _ => orientedKernel) = 1050 := by
-  decide
+  decide +kernel
 
 private example :
     gridValue {0, 1} {0} orientedTensor.transpose
@@ -72,11 +70,10 @@ private example :
   exact orientedGridValue
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 private example :
     gridValue {0, 1} {0} orientedTensor.transpose
       (fun _ x y u v => orientedKernel x y u v) = 630 := by
-  decide
+  decide +kernel
 
 private def zeroTensor {J : Type*} : Instance J Nat := fun _ _ => 0
 
