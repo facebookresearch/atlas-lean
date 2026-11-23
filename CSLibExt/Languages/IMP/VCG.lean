@@ -39,7 +39,12 @@ proofs share.
 
 namespace Cslib.IMP
 
-/-- Commands whose while loops carry an invariant. -/
+/-- **Annotated commands.** An annotated command is built like an IMP command, from skip,
+assignments $x := a$ of an arithmetic expression $a$ to a variable $x$ (a natural number),
+sequential composition $C_1;\,C_2$ and conditionals
+$\mathrm{if}\ b\ \mathrm{then}\ C_1\ \mathrm{else}\ C_2$ on a boolean expression $b$, except that
+every while loop $\{I\}\ \mathrm{while}\ b\ \mathrm{do}\ C$ also carries an assertion $I$, its
+invariant. -/
 inductive ACmd where
   | skip
   | assign (name : Nat) (value : AExp)
@@ -49,7 +54,11 @@ inductive ACmd where
 
 namespace ACmd
 
-/-- Erase the annotations. -/
+/-- **Erasing annotations.** The IMP command $\mathrm{strip}(C)$ underlying an annotated command
+$C$ is obtained by deleting the invariant of every while loop: skip, assignments, sequential
+composition and conditionals are kept with their parts stripped, and
+$\{I\}\ \mathrm{while}\ b\ \mathrm{do}\ C'$ becomes
+$\mathrm{while}\ b\ \mathrm{do}\ \mathrm{strip}(C')$. -/
 def strip : ACmd → Cmd
   | .skip => .skip
   | .assign name value => .assign name value
@@ -57,8 +66,15 @@ def strip : ACmd → Cmd
   | .ite guard thenBranch elseBranch => .ite guard thenBranch.strip elseBranch.strip
   | .while _ guard body => .while guard body.strip
 
-/-- The precondition computed backwards from a postcondition; a loop's
-precondition is its invariant. -/
+/-- **Precondition of an annotated command.** For an annotated command $C$ and an assertion $Q$
+(the postcondition), the precondition $\mathrm{pre}(C, Q)$ is the assertion computed backwards
+as follows: $\mathrm{pre}(\mathrm{skip}, Q) = Q$; $\mathrm{pre}(x := a, Q)$ holds in a state $s$
+iff $Q$ holds in the state obtained from $s$ by giving $x$ the value of $a$ in $s$;
+$\mathrm{pre}(C_1;\,C_2, Q) = \mathrm{pre}(C_1, \mathrm{pre}(C_2, Q))$; the precondition of
+$\mathrm{if}\ b\ \mathrm{then}\ C_1\ \mathrm{else}\ C_2$ for $Q$ holds in a state $s$ iff
+$\mathrm{pre}(C_1, Q)$ holds in $s$ when $b$ is true in $s$, and $\mathrm{pre}(C_2, Q)$ holds in
+$s$ when $b$ is false in $s$; and the precondition of a loop
+$\{I\}\ \mathrm{while}\ b\ \mathrm{do}\ C$ is its invariant $I$, whatever $Q$ is. -/
 def pre : ACmd → Assertion → Assertion
   | .skip, post => post
   | .assign name value, post => post.subst name value
@@ -68,9 +84,17 @@ def pre : ACmd → Assertion → Assertion
       else elseBranch.pre post state
   | .while invariant _ _, _ => invariant
 
-/-- The verification condition: for every loop, the invariant and the guard
-imply the precondition of the body for the invariant, and the invariant and
-the negated guard imply the postcondition. -/
+/-- **Verification condition of an annotated command.** For an annotated command $C$ and an
+assertion $Q$ (the postcondition), the verification condition $\mathrm{vc}(C, Q)$ is the
+proposition defined as follows, where $\mathrm{pre}$ is the precondition of an annotated
+command: $\mathrm{vc}(\mathrm{skip}, Q)$ and $\mathrm{vc}(x := a, Q)$ are true;
+$\mathrm{vc}(C_1;\,C_2, Q)$ holds iff $\mathrm{vc}(C_1, \mathrm{pre}(C_2, Q))$ and
+$\mathrm{vc}(C_2, Q)$ hold; the verification condition of
+$\mathrm{if}\ b\ \mathrm{then}\ C_1\ \mathrm{else}\ C_2$ for $Q$ holds iff $\mathrm{vc}(C_1, Q)$
+and $\mathrm{vc}(C_2, Q)$ hold; and for a loop $\{I\}\ \mathrm{while}\ b\ \mathrm{do}\ C'$, the
+verification condition for $Q$ holds iff every state satisfying $I$ in which $b$ is true
+satisfies $\mathrm{pre}(C', I)$, every state satisfying $I$ in which $b$ is false satisfies
+$Q$, and $\mathrm{vc}(C', I)$ holds. -/
 def vc : ACmd → Assertion → Prop
   | .skip, _ => True
   | .assign _ _, _ => True
@@ -81,7 +105,12 @@ def vc : ACmd → Assertion → Prop
       (∀ state, invariant state → guard.eval state = false → post state) ∧
       body.vc invariant
 
-/-- Soundness: a true verification condition yields a derivable triple. -/
+/-- **Soundness of verification conditions.** For an annotated command $C$ and an assertion $Q$,
+write $\mathrm{pre}(C, Q)$ and $\mathrm{vc}(C, Q)$ for the precondition and the verification
+condition of $C$ for the postcondition $Q$, and $\mathrm{strip}(C)$ for the IMP command obtained
+from $C$ by erasing its loop invariants. For every such $C$ and $Q$, if $\mathrm{vc}(C, Q)$
+holds, then the Hoare triple $\{\mathrm{pre}(C, Q)\}\ \mathrm{strip}(C)\ \{Q\}$ is derivable in
+the partial-correctness Hoare logic. -/
 theorem vc_sound : ∀ (C : ACmd) (post : Assertion), C.vc post →
     Derivable (C.pre post) C.strip post
   | .skip, post, _ => .skip post
@@ -105,13 +134,20 @@ theorem vc_sound : ∀ (C : ACmd) (post : Assertion), C.vc post →
       · intro state ⟨hinv, hguard⟩
         exact hexit state hinv hguard
 
-/-- Soundness for validity. -/
+/-- **Verification conditions yield valid Hoare triples.** Let $C$ be an annotated command, let
+$\mathrm{strip}(C)$ be the IMP command obtained from $C$ by erasing its loop invariants, and let
+$P$, $Q$ be assertions. If the verification condition $\mathrm{vc}(C, Q)$ holds and $P$ entails
+the precondition $\mathrm{pre}(C, Q)$, then the partial-correctness Hoare triple
+$\{P\}\ \mathrm{strip}(C)\ \{Q\}$ is valid. -/
 theorem vc_valid {C : ACmd} {pre' post : Assertion} (hvc : C.vc post)
     (hpre : pre'.Entails (C.pre post)) : Valid pre' C.strip post :=
   (Derivable.strengthen hpre (vc_sound C post hvc)).sound
 
-/-- Monotonicity: weakening the postcondition weakens the precondition and
-preserves the verification condition. -/
+/-- **Weakening the postcondition of an annotated command.** Let $C$ be an annotated command and
+$Q$, $Q'$ assertions such that $Q$ entails $Q'$, and write $\mathrm{pre}(C, Q)$ and
+$\mathrm{vc}(C, Q)$ for the precondition and the verification condition of $C$ for the
+postcondition $Q$. If $\mathrm{vc}(C, Q)$ holds, then $\mathrm{pre}(C, Q)$ entails
+$\mathrm{pre}(C, Q')$ and $\mathrm{vc}(C, Q')$ holds. -/
 theorem pre_entails_vc : ∀ (C : ACmd) {post post' : Assertion}, post.Entails post' →
     C.vc post → (C.pre post).Entails (C.pre post') ∧ C.vc post'
   | .skip, _, _, h, _ => ⟨h, trivial⟩
@@ -132,8 +168,11 @@ theorem pre_entails_vc : ∀ (C : ACmd) {post post' : Assertion}, post.Entails p
   | .while _ _ _, _, _, h, ⟨hbody, hexit, hvc⟩ =>
       ⟨Assertion.entails_refl _, hbody, fun state hinv hguard => h (hexit state hinv hguard), hvc⟩
 
-/-- Completeness: every derivable triple has an annotation whose verification
-condition holds and whose precondition follows from the triple's. -/
+/-- **Completeness of verification conditions for derivable triples.** Let $c$ be an IMP command
+and $P$, $Q$ assertions such that the Hoare triple $\{P\}\ c\ \{Q\}$ is derivable in the
+partial-correctness Hoare logic. Then there is an annotated command $C$ such that erasing its
+loop invariants gives $c$, that is $\mathrm{strip}(C) = c$, the verification condition
+$\mathrm{vc}(C, Q)$ holds, and $P$ entails the precondition $\mathrm{pre}(C, Q)$. -/
 theorem vc_complete {pre' post : Assertion} {command : Cmd}
     (h : Derivable pre' command post) :
     ∃ C : ACmd, C.strip = command ∧ C.vc post ∧ pre'.Entails (C.pre post) := by
@@ -165,7 +204,13 @@ theorem vc_complete {pre' post : Assertion} {command : Cmd}
       obtain ⟨hmono, hvc'⟩ := pre_entails_vc C hpost hvc
       exact ⟨C, hs, hvc', (hpre.trans hpre').trans hmono⟩
 
-/-- Completeness for validity, by relative completeness of the Hoare logic. -/
+/-- **Completeness of verification conditions for valid triples.** Let $c$ be an IMP command and
+$P$, $Q$ assertions such that the partial-correctness Hoare triple $\{P\}\ c\ \{Q\}$ is valid.
+Then there is an annotated command $C$ such that erasing its loop invariants gives $c$, that is
+$\mathrm{strip}(C) = c$, the verification condition $\mathrm{vc}(C, Q)$ holds, and $P$ entails
+the precondition $\mathrm{pre}(C, Q)$.
+
+The proof goes through relative completeness of the Hoare logic. -/
 theorem vc_complete_of_valid {pre' post : Assertion} {command : Cmd}
     (h : Valid pre' command post) :
     ∃ C : ACmd, C.strip = command ∧ C.vc post ∧ pre'.Entails (C.pre post) :=

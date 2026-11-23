@@ -1,0 +1,17 @@
+# Partial derivatives of multivariate power series
+
+- [Iterated partial derivative of a multivariate power series](iterated-pderiv.md)
+- [Iterated partial derivatives along concatenated lists compose](iterated-pderiv-append.md)
+- [Formal partial derivatives commute](pderiv-pderiv.md)
+- [A partial derivative commutes with iterated partial derivatives](pderiv-iterated-pderiv.md)
+- [Variable multiplicities of a list as a sum of singleton multi-indices](to-finsupp-coe-list-eq-sum.md)
+- [Factorial-weighted coefficient of an iterated partial derivative](factorial-smul-coeff-iterated-pderiv.md)
+- [Factorial times a coefficient is a constant term of an iterated derivative](factorial-smul-coeff-eq-constant-coeff-i.md)
+- [Rational factorial-weighted coefficient of an iterated derivative](factorial-smul-coeff-iterated-pderiv-rat.md)
+- [Rational factorial coefficient as a constant term of an iterated derivative](factorial-smul-coeff-eq-constant-coeff-i-2.md)
+- [Formal linear form in multivariate power series](linear-form.md)
+- [Coefficient formula for a formal linear form](coeff-linear-form.md)
+- [Coefficient of a single variable in a formal linear form](coeff-linear-form-single.md)
+- [A formal linear form has zero constant coefficient](constant-coeff-linear-form.md)
+- [Partial derivative of a formal linear form](pderiv-linear-form.md)
+- [Coefficient ring maps commute with formal linear forms](map-linear-form.md)

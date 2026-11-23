@@ -62,8 +62,9 @@ namespace Cslib.Logic.PL
 
 namespace CNFClause
 
-/-- The resolvent of `C` and `D` on the variable `x`: the literals of `C` other than
-`(x, true)` followed by the literals of `D` other than `(x, false)`. -/
+/-- **Resolvent of two clauses.** Let $x$ be a variable and $C$, $D$ clauses. The resolvent of $C$
+and $D$ on $x$ is the clause consisting of the literals of $C$ other than $(x, \mathrm{true})$,
+in order, followed by the literals of $D$ other than $(x, \mathrm{false})$, in order. -/
 def resolvent (x : Nat) (C D : CNFClause) : CNFClause :=
   C.filter (· ≠ (x, true)) ++ D.filter (· ≠ (x, false))
 
@@ -73,8 +74,8 @@ theorem mem_resolvent {x : Nat} {C D : CNFClause} {literal : Nat × Bool} :
       (literal ∈ C ∧ literal ≠ (x, true)) ∨ (literal ∈ D ∧ literal ≠ (x, false)) := by
   simp [resolvent]
 
-/-- **Resolution rule soundness**: an assignment satisfying both premises satisfies the
-resolvent. -/
+/-- **Resolution rule soundness.** Let $x$ be a variable and $C$, $D$ clauses. Every assignment
+that satisfies both $C$ and $D$ satisfies the resolvent of $C$ and $D$ on $x$. -/
 theorem satisfies_resolvent {assignment : Nat → Bool} {x : Nat} {C D : CNFClause}
     (hC : C.Satisfies assignment) (hD : D.Satisfies assignment) :
     (resolvent x C D).Satisfies assignment := by
@@ -93,7 +94,11 @@ end CNFClause
 
 namespace CNF
 
-/-- `C` is derivable from the clauses of `φ` by resolution. -/
+/-- **Resolution derivability.** Given a CNF formula $\varphi$, the clauses derivable from
+$\varphi$ by resolution form the smallest set $S$ of clauses that contains every clause of
+$\varphi$ and, for every variable $x$ and all clauses $C, D \in S$ such that $C$ contains the
+literal $(x, \mathrm{true})$ and $D$ contains the literal $(x, \mathrm{false})$, contains the
+resolvent of $C$ and $D$ on $x$. -/
 inductive ResolutionDerivable (φ : CNF) : CNFClause → Prop
   /-- Every clause of the formula is derivable. -/
   | ax {C : CNFClause} : C ∈ φ → ResolutionDerivable φ C
@@ -104,15 +109,16 @@ inductive ResolutionDerivable (φ : CNF) : CNFClause → Prop
 
 /-! ### Soundness -/
 
-/-- **Soundness**: every clause derived by resolution holds under every assignment
-satisfying the formula. -/
+/-- **Soundness of resolution.** Let $\varphi$ be a CNF formula. Every clause derivable by
+resolution from $\varphi$ is satisfied by every assignment that satisfies $\varphi$. -/
 theorem ResolutionDerivable.satisfies {φ : CNF} {C : CNFClause} {assignment : Nat → Bool}
     (h : φ.ResolutionDerivable C) (hφ : φ.Satisfies assignment) : C.Satisfies assignment := by
   induction h with
   | ax hC => exact hφ _ hC
   | resolve x _ _ _ _ ihC ihD => exact CNFClause.satisfies_resolvent ihC ihD
 
-/-- A formula with a resolution refutation is unsatisfiable. -/
+/-- **Refutable formulas are unsatisfiable.** If the empty clause is derivable by resolution
+from a CNF formula $\varphi$, then $\varphi$ is not satisfiable. -/
 theorem not_cnfSat_of_resolutionDerivable_nil {φ : CNF} (h : φ.ResolutionDerivable []) :
     ¬ CNFSat φ := by
   rw [cnfSat_iff_exists_satisfies]
@@ -121,8 +127,9 @@ theorem not_cnfSat_of_resolutionDerivable_nil {φ : CNF} (h : φ.ResolutionDeriv
 
 /-! ### Completeness -/
 
-/-- The clauses of a restricted formula are the restrictions of the clauses not
-containing the literal. -/
+/-- **Clauses of a restricted formula.** Let $\varphi$ be a CNF formula and $\ell$ a literal. A
+clause $C$ belongs to the restriction of $\varphi$ by $\ell$ if and only if there is a clause $C_0$
+of $\varphi$ that does not contain $\ell$ such that $C$ is the restriction of $C_0$ by $\ell$. -/
 theorem mem_restrict_iff {literal : Nat × Bool} {φ : CNF} {C : CNFClause} :
     C ∈ φ.restrict literal ↔ ∃ C₀ ∈ φ, literal ∉ C₀ ∧ C = C₀.restrict literal := by
   induction φ with
@@ -150,8 +157,10 @@ theorem mem_restrict_iff {literal : Nat × Bool} {φ : CNF} {C : CNFClause} :
         · exact Or.inl rfl
         · exact Or.inr ⟨C₀, hC₀, hnot, rfl⟩
 
-/-- **Lifting lemma**: a clause derived from `φ` restricted by `(x, b)` lifts to a clause
-derived from `φ` whose literals are among the original ones and `(x, !b)`. -/
+/-- **Lifting lemma.** Let $\varphi$ be a CNF formula, $x$ a variable and $b$ a Boolean value. If a
+clause $D$ is derivable by resolution from the restriction of $\varphi$ by the literal $(x, b)$,
+then some clause $D_0$ is derivable by resolution from $\varphi$ such that every literal of $D_0$
+is either a literal of $D$ or the complementary literal $(x, \lnot b)$. -/
 theorem ResolutionDerivable.lift_restrict {φ : CNF} {x : Nat} {b : Bool} {D : CNFClause}
     (h : (φ.restrict (x, b)).ResolutionDerivable D) :
     ∃ D₀, φ.ResolutionDerivable D₀ ∧ ∀ l ∈ D₀, l ∈ D ∨ l = (x, !b) := by
@@ -183,7 +192,9 @@ theorem ResolutionDerivable.lift_restrict {φ : CNF} {x : Nat} {b : Bool} {D : C
       have hne : l ≠ (y, true) := fun h ↦ hy₁ (h ▸ hl)
       exact (hsub₁ l hl).imp_left fun hD ↦ CNFClause.mem_resolvent.mpr (Or.inl ⟨hD, hne⟩)
 
-/-- A formula without variables is satisfiable unless it contains the empty clause. -/
+/-- **Unsatisfiable formulas without variables contain the empty clause.** If a CNF formula
+$\varphi$ has no variables and is not satisfiable, then the empty clause is one of the clauses
+of $\varphi$. -/
 theorem nil_mem_of_vars_eq_empty {φ : CNF} (hvars : φ.vars = ∅) (hφ : ¬ CNFSat φ) :
     [] ∈ φ := by
   by_contra hnil

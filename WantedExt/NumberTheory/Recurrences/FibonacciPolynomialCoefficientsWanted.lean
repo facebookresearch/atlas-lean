@@ -11,6 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.Recurrences.FibonacciLinearCoefficients
+public import MathlibExt.NumberTheory.Recurrences.FibonacciPolynomialCoefficients
 
 /-!
 # Integer sequences `P(n) F_n + Q(n) F_{n-1}` with rational polynomial coefficients
@@ -28,42 +30,26 @@ coefficients.
 The coefficient formulas (2.10) and (2.15) survive in the extracted text with their
 numerators only; the denominators used here are the unique ones for which the
 displayed numerators solve the paper's initial-value systems (2.8) and (2.13), and
-they reproduce the paper's worked examples. In Theorem 3.1 the extracted formulas
-for `c` and `d` contradict the paper's own example; the stated reading is the one
-that the example and the initial-value system support (see the source audit table).
+they reproduce the paper's worked examples.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The rational sequence `w_n = (a n + b) F_n + (c n + d) F_{n-1}` is an integer
-sequence if and only if `d` is an integer and
-`a = (-z₁ - 3 z₂ + 2 z₃) / 5`, `b = (6 z₁ + 3 z₂ - 2 z₃) / 5`,
-`c = (-2 z₁ + 4 z₂ - z₃) / 5` for some integers `z₁, z₂, z₃` (then `z₁ = w₁`,
-`z₂ = w₂ - d`, `z₃ = w₃ - d`). Here `F_{n-1}` is written as `F_{n+1} - F_n`.
+/-- **Integer sequences with quadratic Fibonacci coefficients.** Let $F_n$ be the $n$-th Fibonacci
+number and put $F_{-1} = 1$, so that $F_{n-1} = F_{n+1} - F_n$ for every $n \ge 0$. For rational
+numbers $a, b, c, d, e, f$, the number
+$w_n = (an^2 + bn + c)F_n + (dn^2 + en + f)F_{n-1}$ is an integer for every natural number $n$
+if and only if $f$ is an integer and there are integers $z_1, \dots, z_5$ with
+$a = (-z_1 + 3z_2 + z_3 - 3z_4 + z_5)/10$,
+$b = (-5z_1 - 75z_2 + 15z_3 + 45z_4 - 17z_5)/50$,
+$c = (30z_1 + 30z_2 - 10z_3 - 15z_4 + 6z_5)/25$,
+$d = (3z_1 - 4z_2 - 3z_3 + 4z_4 - z_5)/10$ and
+$e = (-45z_1 + 80z_2 + 15z_3 - 40z_4 + 11z_5)/50$.
 
-Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
-*On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
-Theorem 2.1 (`fq-2024-szakacs06212024rev-thm-2.1`). -/
-public theorem_wanted fib_linear_coeff_isInt_iff (a b c d : ℚ) :
-    (∀ n : ℕ, ∃ k : ℤ, (k : ℚ) =
-      (a * n + b) * Nat.fib n + (c * n + d) * ((Nat.fib (n + 1) : ℚ) - Nat.fib n)) ↔
-    (∃ k : ℤ, (k : ℚ) = d) ∧ ∃ z₁ z₂ z₃ : ℤ,
-      a = ((-z₁ - 3 * z₂ + 2 * z₃ : ℤ) : ℚ) / 5 ∧
-      b = ((6 * z₁ + 3 * z₂ - 2 * z₃ : ℤ) : ℚ) / 5 ∧
-      c = ((-2 * z₁ + 4 * z₂ - z₃ : ℤ) : ℚ) / 5
-
-/-- The rational sequence `w_n = (a n² + b n + c) F_n + (d n² + e n + f) F_{n-1}` is
-an integer sequence if and only if `f` is an integer and, for some integers
-`z₁, …, z₅` (then `z₁ = w₁`, `z₂ = w₂ - f`, `z₃ = w₃ - f`, `z₄ = w₄ - 2f`,
-`z₅ = w₅ - 3f`), the coefficients are given by formula (2.10):
-`a = (-z₁ + 3z₂ + z₃ - 3z₄ + z₅) / 10`,
-`b = (-5z₁ - 75z₂ + 15z₃ + 45z₄ - 17z₅) / 50`,
-`c = (30z₁ + 30z₂ - 10z₃ - 15z₄ + 6z₅) / 25`,
-`d = (3z₁ - 4z₂ - 3z₃ + 4z₄ - z₅) / 10`,
-`e = (-45z₁ + 80z₂ + 15z₃ - 40z₄ + 11z₅) / 50`.
-Here `F_{n-1}` is written as `F_{n+1} - F_n`.
+The integers $z_i$ are then determined by the sequence: $z_1 = w_1$, $z_2 = w_2 - f$,
+$z_3 = w_3 - f$, $z_4 = w_4 - 2f$ and $z_5 = w_5 - 3f$.
 
 Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
 *On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
@@ -79,13 +65,16 @@ public theorem_wanted fib_quadratic_coeff_isInt_iff (a b c d e f : ℚ) :
       d = ((3 * z₁ - 4 * z₂ - 3 * z₃ + 4 * z₄ - z₅ : ℤ) : ℚ) / 10 ∧
       e = ((-45 * z₁ + 80 * z₂ + 15 * z₃ - 40 * z₄ + 11 * z₅ : ℤ) : ℚ) / 50
 
-/-- The rational sequence `w_n = (a n² + b n + c) F_n + (d n + e) F_{n-1}` is an
-integer sequence if and only if `e` is an integer and, for some integers
-`z₁, …, z₄` (then `z₁ = w₁`, `z₂ = w₂ - e`, `z₃ = w₃ - e`, `z₄ = w₄ - 2e`), the
-coefficients are given by formula (2.15):
-`a = (2z₁ - z₂ - 2z₃ + z₄) / 10`, `b = (-56z₁ - 7z₂ + 66z₃ - 23z₄) / 50`,
-`c = (48z₁ + 6z₂ - 28z₃ + 9z₄) / 25`, `d = (-6z₁ + 18z₂ - 9z₃ + 2z₄) / 25`.
-Here `F_{n-1}` is written as `F_{n+1} - F_n`.
+/-- **Integer sequences with quadratic and linear Fibonacci coefficients.** Let $F_n$ be the
+$n$-th Fibonacci number and put $F_{-1} = 1$, so that $F_{n-1} = F_{n+1} - F_n$ for every
+$n \ge 0$. For rational numbers $a, b, c, d, e$, the number
+$w_n = (an^2 + bn + c)F_n + (dn + e)F_{n-1}$ is an integer for every natural number $n$ if and
+only if $e$ is an integer and there are integers $z_1, z_2, z_3, z_4$ with
+$a = (2z_1 - z_2 - 2z_3 + z_4)/10$, $b = (-56z_1 - 7z_2 + 66z_3 - 23z_4)/50$,
+$c = (48z_1 + 6z_2 - 28z_3 + 9z_4)/25$ and $d = (-6z_1 + 18z_2 - 9z_3 + 2z_4)/25$.
+
+The integers $z_i$ are then determined by the sequence: $z_1 = w_1$, $z_2 = w_2 - e$,
+$z_3 = w_3 - e$ and $z_4 = w_4 - 2e$.
 
 Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
 *On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
@@ -99,34 +88,6 @@ public theorem_wanted fib_quadratic_linear_coeff_isInt_iff (a b c d e : ℚ) :
       b = ((-56 * z₁ - 7 * z₂ + 66 * z₃ - 23 * z₄ : ℤ) : ℚ) / 50 ∧
       c = ((48 * z₁ + 6 * z₂ - 28 * z₃ + 9 * z₄ : ℤ) : ℚ) / 25 ∧
       d = ((-6 * z₁ + 18 * z₂ - 9 * z₃ + 2 * z₄ : ℤ) : ℚ) / 25
-
-/-- The rational sequence `w_n = (a n + b) F_n + (c n + d) F_{n-1} + e + f (-1)^n` is
-an integer sequence if and only if there are integers `w₀, …, w₅` (its initial
-values) with
-`a = (3w₀ + 2w₁ - 7w₂ - w₃ + 4w₄ - w₅) / 5`,
-`b = (-3w₀ - 2w₁ - 3w₂ + 6w₃ + 6w₄ - 4w₅) / 5`,
-`c = (-4w₀ - w₁ + 11w₂ - 2w₃ - 7w₄ + 3w₅) / 5`,
-`d = -2w₁ + w₂ + 2w₃ - w₄`,
-`e = (w₀ + 3w₁ + w₂ - 3w₃ - w₄ + w₅) / 2`,
-`f = (w₀ + w₁ - 3w₂ - w₃ + 3w₄ - w₅) / 2`.
-The extracted text prints `-3w₅` in `c` and `2w₁` in `d`; those versions contradict
-the paper's example `w = (0, 1, 2, 6, 12, 26)`, `c = 3/5`, `d = 0`. Here `F_{n-1}`
-is written as `F_{n+1} - F_n`.
-
-Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
-*On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
-Theorem 3.1 (`fq-2024-szakacs06212024rev-thm-3.1`). -/
-public theorem_wanted fib_linear_coeff_add_alternating_isInt_iff (a b c d e f : ℚ) :
-    (∀ n : ℕ, ∃ k : ℤ, (k : ℚ) =
-      (a * n + b) * Nat.fib n + (c * n + d) * ((Nat.fib (n + 1) : ℚ) - Nat.fib n) +
-        e + f * (-1) ^ n) ↔
-    ∃ w₀ w₁ w₂ w₃ w₄ w₅ : ℤ,
-      a = ((3 * w₀ + 2 * w₁ - 7 * w₂ - w₃ + 4 * w₄ - w₅ : ℤ) : ℚ) / 5 ∧
-      b = ((-3 * w₀ - 2 * w₁ - 3 * w₂ + 6 * w₃ + 6 * w₄ - 4 * w₅ : ℤ) : ℚ) / 5 ∧
-      c = ((-4 * w₀ - w₁ + 11 * w₂ - 2 * w₃ - 7 * w₄ + 3 * w₅ : ℤ) : ℚ) / 5 ∧
-      d = ((-2 * w₁ + w₂ + 2 * w₃ - w₄ : ℤ) : ℚ) ∧
-      e = ((w₀ + 3 * w₁ + w₂ - 3 * w₃ - w₄ + w₅ : ℤ) : ℚ) / 2 ∧
-      f = ((w₀ + w₁ - 3 * w₂ - w₃ + 3 * w₄ - w₅ : ℤ) : ℚ) / 2
 
 end
 

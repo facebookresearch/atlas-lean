@@ -16,17 +16,23 @@ namespace Complex
 
 noncomputable section
 
-/-- The positive radial majorant formed from the norms of the Taylor coefficients at radius
-`|r|`. -/
+/-- **Radial majorant.** For a function $f : \mathbb{C} \to \mathbb{C}$ with Taylor coefficients
+$a_n = f^{(n)}(0) / n!$ at the origin and a real number $r$, the radial majorant of $f$ at $r$ is
+$M_f(r) = \sum_{n \ge 0} |a_n| \, |r|^n$, the sum of the radial Taylor terms at radius $|r|$.
+By convention $M_f(r) = 0$ when this series diverges. -/
 def wimanMajorant (f : ℂ → ℂ) (r : ℝ) : ℝ :=
   ∑' n, wimanTerm f r n
 
-/-- Every normalized radial Taylor term is nonnegative. -/
+/-- **Radial Taylor terms are nonnegative.** For every function $f : \mathbb{C} \to \mathbb{C}$
+with Taylor coefficients $a_n = f^{(n)}(0) / n!$ at the origin, every real $r$ and every
+$n \in \mathbb{N}$, we have $0 \le |a_n| \, |r|^n$. -/
 theorem wimanTerm_nonneg (f : ℂ → ℂ) (r : ℝ) (n : ℕ) :
     0 ≤ wimanTerm f r n := by
   exact mul_nonneg (norm_nonneg _) (pow_nonneg (abs_nonneg r) _)
 
-/-- The radial Taylor terms of an entire function are absolutely summable. -/
+/-- **Summability of the radial Taylor terms.** Let $f$ be an entire function with Taylor
+coefficients $a_n = f^{(n)}(0) / n!$ at the origin. For every real $r$, the series
+$\sum_{n \ge 0} |a_n| \, |r|^n$ converges. -/
 theorem summable_wimanTerm
     (f : ℂ → ℂ) (hf : Differentiable ℂ f) (r : ℝ) :
     Summable (wimanTerm f r) := by
@@ -55,7 +61,10 @@ theorem wimanMajorant_nonneg (f : ℂ → ℂ) (r : ℝ) :
     0 ≤ wimanMajorant f r := by
   exact tsum_nonneg fun n => wimanTerm_nonneg f r n
 
-/-- Each Taylor term is bounded by the radial majorant. -/
+/-- **Each radial Taylor term is at most the radial majorant.** Let $f$ be an entire function with
+Taylor coefficients $a_n = f^{(n)}(0) / n!$ at the origin, and let
+$M_f(r) = \sum_{k \ge 0} |a_k| \, |r|^k$ be its radial majorant. For every real $r$ and every
+$n \in \mathbb{N}$, $|a_n| \, |r|^n \le M_f(r)$. -/
 theorem wimanTerm_le_wimanMajorant
     (f : ℂ → ℂ) (hf : Differentiable ℂ f) (r : ℝ) (n : ℕ) :
     wimanTerm f r n ≤ wimanMajorant f r := by
