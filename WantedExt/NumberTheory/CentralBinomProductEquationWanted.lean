@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.CentralBinomProductEquationOne
 public import MathlibExt.NumberTheory.CentralBinomProductEquationSmall
+public import MathlibExt.NumberTheory.CentralBinomProductEquationSubOne
 
 /-!
 # Solvability of `C(2k, k) = C(2a, a) C(x + 2b, b)`
@@ -61,16 +62,6 @@ INTEGERS 26 (2026), Article A26, Lemma 1 (`integers-2026-A26-lem-1`). -/
 public theorem_wanted centralBinom_add_eq_centralBinom_mul_choose_iff_of_le_ten (x a b : ℕ)
     (hx : 0 < x) (ha : 0 < a) (hb : 0 < b) (hk : a + b ≤ 10) :
     (a + b).centralBinom = a.centralBinom * (x + 2 * b).choose b ↔ x = 1 ∧ a = 1
-
-/-- **Central binomial products in the case $x = a - 1$.** Let $a$ and $b$ be natural numbers
-with $4 < 2a \le a + b$. Then $\binom{2(a+b)}{a+b} \ne \binom{2a}{a}\binom{a+2b-1}{b}$, so the
-equation $\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{x+2b}{b}$ has no solution with $x = a - 1$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Lemma 2 (`integers-2026-A26-lem-2`). -/
-public theorem_wanted centralBinom_add_ne_centralBinom_mul_choose_sub_one (a b : ℕ)
-    (ha : 4 < 2 * a) (hab : 2 * a ≤ a + b) :
-    (a + b).centralBinom ≠ a.centralBinom * (a + 2 * b - 1).choose b
 
 /-- **Central binomial products in the case $x = a - 2$.** Let $a$ and $b$ be natural numbers
 with $4 < 2a \le a + b$. Then $\binom{2(a+b)}{a+b} \ne \binom{2a}{a}\binom{a+2b-2}{b}$, so the

@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Fermat
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.NumberTheory.GeneralizedFermatGCD
+public import MathlibExt.NumberTheory.GeneralizedFermatWieferich
 public import MathlibExt.NumberTheory.WieferichPrime
 public import MathlibExt.NumberTheory.WieferichOrder
 
@@ -144,20 +145,6 @@ public theorem_wanted sq_dvd_pow_pow_add_one_wieferich {a b n p : ℕ} (ha : 2 �
         a ^ (p - 1) ≡ 1 [MOD p ^ 2] ∧ orderOf (a : ZMod p) ∣ 2 * b ^ n) ∧
       (a ^ (p - 1) ≡ 1 [MOD p ^ 2] → orderOf (a : ZMod p) = 2 * b ^ n →
         p ^ 2 ∣ a ^ b ^ n + 1)
-
-/-- **Squared prime factors of $a^{2^n} + 1$.** Let $p$ be an odd prime, let $a$ be a natural
-number not divisible by $p$, and let $n$ be a natural number. Then $p^2$ divides $a^{2^n} + 1$ if
-and only if $a^{p-1} \equiv 1 \pmod{p^2}$ (that is, $p$ is a Wieferich prime to base $a$) and the
-multiplicative order of $a$ modulo $p$ is $2^{n+1}$.
-
-The congruence $a^{p-1} \equiv 1 \pmod{p^2}$ is the source's equation (8) defining $p \in W(a)$.
-The source assumes $a \ge 2$; for $a = 1$ both sides are false.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Theorem 5 (`integers-2026-A77-thm-5`). -/
-public theorem_wanted sq_dvd_pow_two_pow_add_one_iff_wieferich {a n p : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (hpa : ¬ p ∣ a) :
-    p ^ 2 ∣ a ^ 2 ^ n + 1 ↔ a ^ (p - 1) ≡ 1 [MOD p ^ 2] ∧ orderOf (a : ZMod p) = 2 ^ (n + 1)
 
 /-- **Divisibility of later generalized Fermat numbers.** For natural numbers $a$, $b$ and $m$
 write $F_m(a, b) = a^{b^m} + 1$. Let $a, b, D \ge 2$ and $n$ be natural numbers such that $D$

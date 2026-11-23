@@ -5,3 +5,5 @@ Foundations of point-set topology: open and closed sets, closure and interior, n
 - [Sequences in a compact set have convergent subsequences](tendsto-subseq.md)
 - [A point lies in the closure of a subset of a topological space iff every open set containing the point meets the subset](closure-neighbourhood-characterization.md)
 - [Continuous map between topological spaces](continuous-map.md)
+- [Topological space](topological-space.md)
+- [Homeomorphism](homeomorphism.md)
