@@ -6,17 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 /-
-Portions adapted from AxiomMath/Stacks revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b (Apache 2.0):
-StacksFrontier/Algebra/Category/ModuleCat/DiscreteTopology.lean,
-StacksFrontier/Homology/Injectives/Module/ContinuousGroupModules.lean,
-StacksFrontier/AlgebraicGeometry/EtaleCohomology/GroupCohomology/Continuous.lean,
-and StacksFrontier/AlgebraicGeometry/ContinuousCohomology/Basic.lean.
-The source files carry no individual copyright or author notice.
-Modification: retain the exact discrete continuous module category and
-invariants; expose its Mathlib injective-resolution derived realization.
-The comparison with the source's rightDerivedPlus realization is a separate
-normalized source-integration request.
+Portions of this file are adapted from:
+
+`StacksFrontier/Algebra/Category/ModuleCat/DiscreteTopology.lean`,
+`StacksFrontier/Homology/Injectives/Module/ContinuousGroupModules.lean`,
+`StacksFrontier/AlgebraicGeometry/EtaleCohomology/GroupCohomology/Continuous.lean`,
+`StacksFrontier/AlgebraicGeometry/ContinuousCohomology/Basic.lean`
+(AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source files carry no individual
+copyright or author notice.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+
+Modifications: the discrete continuous module category and its invariants are kept, and its
+Mathlib injective-resolution derived realization is exposed; the comparison with the source's
+`rightDerivedPlus` realization is a separate source-integration request.
 -/
 module
 

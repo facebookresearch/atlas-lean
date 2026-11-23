@@ -6,14 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 /-
-Portions of this file are adapted from TauCeti/NumberTheory/ClassFieldTheory/
-Brauer/Basic.lean and RepresentationTheory/Homological/ContCohomology/
-CohomologyComparison.lean at 62bbc0596dc3539d488232e4e924a338548ea0a9.
+Portions of this file are adapted from:
+
+`TauCeti/NumberTheory/ClassFieldTheory/Brauer/Basic.lean` and
+`TauCeti/RepresentationTheory/Homological/ContCohomology/CohomologyComparison.lean`
+(TauCeti, revision `62bbc0596dc3539d488232e4e924a338548ea0a9`):
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Released under Apache 2.0; authors: The Tau Ceti contributors.
-Modification: construct the same units action directly by restriction of
-algebraic-closure automorphisms to the separable closure. Use Mathlib's
-homogeneous cocycles, so no second quotient or coefficient model is introduced.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Tau Ceti contributors.
+
+Modifications: the same units action is constructed directly by restriction of
+algebraic-closure automorphisms to the separable closure, and Mathlib's homogeneous cocycles
+are used, so that no second quotient or coefficient model is introduced.
 -/
 module
 

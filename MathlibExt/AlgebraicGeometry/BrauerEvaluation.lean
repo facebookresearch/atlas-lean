@@ -6,13 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 /-
-The units presheaf is adapted from AxiomMath/Stacks,
-StacksFrontier/AlgebraicGeometry/EtaleCohomology/MultiplicativeSheaf.lean
-at c496df0d9beea9deaeabcea8492605f9a0a2313b (Apache 2.0).
-The source file has no individual copyright or author notice.
-Modification: use the associated sheaf on Mathlib's big etale site and its
-native cohomology presheaf. The big/small field comparison is recorded in
-the interoperability requests, not silently identified.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/EtaleCohomology/MultiplicativeSheaf.lean`
+(AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source files carry no individual
+copyright or author notice.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+
+Modifications: the associated sheaf on Mathlib's big étale site and its native cohomology
+presheaf are used; the big/small field comparison is recorded in the interoperability
+requests, not silently identified.
 -/
 module
 

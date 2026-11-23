@@ -112,6 +112,16 @@ public def_wanted source_unramified_layer (K : Type) [Field K] [ValuativeRel K]
     [TopologicalSpace K] [IsNonarchimedeanLocalField K]
     (n : BrauerArithmeticCompletion.Modulus) : UnramifiedLayerData K n.val
 
+/-- Construct the primitive cocycle of a Frobenius layer: an actual continuous two-cocycle whose
+inhomogeneous values are the carry values `primitiveValue`, so that the normalization in
+`NormalizedLocalInvariant` applies to an actual class of every layer. -/
+public def_wanted source_primitive_cocycle (K : Type) [Field K] [ValuativeRel K]
+    [TopologicalSpace K] [IsNonarchimedeanLocalField K]
+    (E : IntermediateField K (SeparableClosure K)) [FiniteDimensional K E] [IsGalois K E]
+    [ValuativeRel E] [TopologicalSpace E] [IsNonarchimedeanLocalField E]
+    [ValuativeExtension K E] (F : FrobeniusLayer K E) (π : Kˣ) :
+    {c : TwoCocycles K // ∀ g h, inhomogeneousValue K c g h = primitiveValue K E F π g h}
+
 /-- Port the local invariant with arithmetic Frobenius primitive-cocycle normalization. -/
 public def_wanted source_local_invariant (K : Type) [Field K] [ValuativeRel K]
     [TopologicalSpace K] [IsNonarchimedeanLocalField K] : NormalizedLocalInvariant K
@@ -279,6 +289,15 @@ private def check_source_corestriction (K L : Type) [Field K] [Field L]
     [Algebra K L] [FiniteDimensional K L] (σ : L →ₐ[K] SeparableClosure K)
     (P : FiniteFieldPair K L σ) : DefWanted (NormalizedCorestriction K L σ P) :=
   source_corestriction K L σ P
+
+private def check_source_primitive_cocycle (K : Type) [Field K] [ValuativeRel K]
+    [TopologicalSpace K] [IsNonarchimedeanLocalField K]
+    (E : IntermediateField K (SeparableClosure K)) [FiniteDimensional K E] [IsGalois K E]
+    [ValuativeRel E] [TopologicalSpace E] [IsNonarchimedeanLocalField E]
+    [ValuativeExtension K E] (F : FrobeniusLayer K E) (π : Kˣ) :
+    DefWanted {c : TwoCocycles K //
+      ∀ g h, inhomogeneousValue K c g h = primitiveValue K E F π g h} :=
+  source_primitive_cocycle K E F π
 
 private def check_source_local_invariant (K : Type) [Field K] [ValuativeRel K]
     [TopologicalSpace K] [IsNonarchimedeanLocalField K] :

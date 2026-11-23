@@ -6,15 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 /-
-The normalization follows TauCeti/NumberTheory/ClassFieldTheory/Brauer/
-Invariant.lean at
-62bbc0596dc3539d488232e4e924a338548ea0a9.
+Portions of this file are adapted from:
+
+`TauCeti/NumberTheory/ClassFieldTheory/Brauer/Invariant.lean`
+(TauCeti, revision `62bbc0596dc3539d488232e4e924a338548ea0a9`):
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Apache 2.0; authors: The Tau Ceti contributors.
-Modification: specify the arithmetic Frobenius and the primitive cyclic
-cocycle using native field, valuation-ring, residue-field and cocycle objects.
-Construction of the comparison to the proved Tau invariant is deferred
-explicitly; it is not a claim of missing local class field theory.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Tau Ceti contributors.
+
+Modifications: the arithmetic Frobenius and the primitive cyclic cocycle are specified on
+native field, valuation-ring, residue-field and cocycle objects; the comparison with the
+proved TauCeti invariant is an explicit construction request, not a claim that local class
+field theory is missing.
 -/
 module
 

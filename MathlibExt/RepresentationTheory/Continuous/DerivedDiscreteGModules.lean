@@ -6,14 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 /-
-The definition of the higher derived functor is ported from AxiomMath/Stacks,
-StacksFrontier/Algebra/Homology/DerivedCategory/RightDerivedFunctorInjective/
-Exactness.lean, lines 373--392, at
-c496df0d9beea9deaeabcea8492605f9a0a2313b (Apache 2.0).
-The source file has no individual copyright or author notice.
-Modification: specialize the exact source composition to the discrete
-continuous integer-module invariants functor. Retain its standard derived
-category model as used by the source's GroupCohomology/Continuous.lean.
+Portions of this file are adapted from:
+
+`StacksFrontier/Algebra/Homology/DerivedCategory/RightDerivedFunctorInjective/Exactness.lean` (lines 373–392)
+(AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source files carry no individual
+copyright or author notice.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+
+Modifications: the source composition is specialised to the discrete continuous integer-module
+invariants functor, keeping the standard derived-category model used by the source's
+`GroupCohomology/Continuous.lean`.
 -/
 module
 

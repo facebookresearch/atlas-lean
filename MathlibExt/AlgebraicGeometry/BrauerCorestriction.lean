@@ -6,14 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 /-
-Portions adapted from TauCeti/GroupTheory/TransversalWord.lean and
-TauCeti/RepresentationTheory/Homological/ContCohomology/Corestriction/Basic.lean
-at 62bbc0596dc3539d488232e4e924a338548ea0a9.
+Portions of this file are adapted from:
+
+`TauCeti/GroupTheory/TransversalWord.lean`
+(TauCeti, revision `62bbc0596dc3539d488232e4e924a338548ea0a9`):
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Apache 2.0; authors: The Tau Ceti contributors.
-Modification: retain the exact left-coset/transversal formula, then specify
-the native field corestriction by its values on actual two-cocycle classes.
-No abstract transfer or arbitrary evaluation map is assumed.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Claude.
+
+`TauCeti/RepresentationTheory/Homological/ContCohomology/Corestriction/Basic.lean`
+(TauCeti, revision `62bbc0596dc3539d488232e4e924a338548ea0a9`):
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Tau Ceti contributors.
+
+Modifications: the left-coset transversal formula is kept, and the field corestriction is
+specified by its values on actual two-cocycle classes; no abstract transfer or evaluation map
+is assumed.
 -/
 module
 
