@@ -35,9 +35,20 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The coefficient of `X ^ k` in `(1 + X + X ^ 2) ^ n`. -/
+/-- **Trinomial coefficient.** For natural numbers $n$ and $k$, the trinomial coefficient in row
+$n$ and column $k$ is the coefficient of $X^k$ in the polynomial $(1 + X + X^2)^n$. -/
 noncomputable def trinomialCoefficient (n k : ℕ) : ℕ :=
   ((1 + Polynomial.X + Polynomial.X ^ 2 : Polynomial ℕ) ^ n).coeff k
+
+/-- The trinomial coefficient `T(0, 0)` is `1`. -/
+theorem trinomialCoefficient_zero_zero : trinomialCoefficient 0 0 = 1 := by
+  simp [trinomialCoefficient]
+
+/-- The trinomial coefficient `T(1, 1)` is `1`. -/
+theorem trinomialCoefficient_one_one : trinomialCoefficient 1 1 = 1 := by
+  unfold trinomialCoefficient
+  simp [pow_one, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X,
+    Polynomial.coeff_X_pow]
 
 /-- Sun's generalized central trinomial coefficient
 `T_n(b, c) = [xⁿ] (x² + b x + c)ⁿ`.

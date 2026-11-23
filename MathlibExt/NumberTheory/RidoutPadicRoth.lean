@@ -713,31 +713,27 @@ private theorem ridout_padic_roth_small (ξ : ℝ) (hξ : IsAlgebraic ℚ ξ)
   · exact Or.inl ⟨hr, hden⟩
   · exact Or.inr (hLarge ⟨hr, Nat.lt_of_not_ge hden⟩)
 
-/-- Ridout's p-adic extension of Roth's theorem: for an irrational algebraic real `ξ`,
-`ε > 0`, and a finite set of primes `S`, only finitely many rationals
-satisfy `(∏ ℓ ∈ S, |p|_ℓ * |q|_ℓ) * |ξ - p / q| < 1 / H ^ (2 + ε)`,
-where `H = max |p| q` is the canonical rational height.
-The source prints the right side as `1 / q ^ (2 + ε)` for reduced fractions
-`p / q` with `q > 0`; since this file quantifies over all `r : ℚ` (including
-integers and large numerators with small denominators), the denominator alone
-does not control the height (e.g. `r = 2 ^ k` has `r.den = 1`), so the
-statement uses `H = max r.num.natAbs r.den` in place of the printed `q`.
-Denominator-only bounds are false over all of `ℚ`: with `2 ∈ S`,
-`r = 2 ^ k` gives LHS `= 1 - √2 / 2 ^ k < 1 =` RHS for every `k ≥ 1`,
-so the standard projective height is required for finiteness.
-p-adic normalization: `|ℓ|_ℓ = ℓ⁻¹`, formalized by `padicNorm`.
-Rational solutions `p / q` are canonical reduced rationals via `r.num`
-and `r.den`.
+/-- **Ridout's $p$-adic extension of Roth's theorem.** Let $\xi$ be an irrational real algebraic
+number, let $\varepsilon > 0$, and let $S$ be a finite set of primes. For a rational number $r$,
+write $r = p/q$ in lowest terms with $p \in \mathbb{Z}$ and $q \ge 1$, and let
+$H(r) = \max(|p|, q)$ be its height. For a prime $\ell$, let $|\cdot|_\ell$ be the $\ell$-adic
+absolute value on $\mathbb{Q}$, normalized by $|\ell|_\ell = \ell^{-1}$. Then only finitely many
+rationals $r = p/q$ satisfy
+$$\Bigl(\prod_{\ell \in S} |p|_\ell |q|_\ell\Bigr) |\xi - r| < \frac{1}{H(r)^{2 + \varepsilon}}.$$
+
+The source prints the right side as $1/q^{2 + \varepsilon}$. Over all rationals that bound fails:
+with $2 \in S$ and $\xi = \sqrt{2}$, every $r = 2^k$ with $k \ge 1$ gives left side
+$1 - \sqrt{2}/2^k < 1$, so the height $H(r)$ is used instead.
+
+Proof: The proof follows Roth's auxiliary-polynomial and index route, with the
+S-adic integrality step supplied by valuation divisibility and a finite pigeonhole.
+
+Proves `Wanted` entry `ridout_padic_roth`.
 
 Source: Boris Adamczewski, "The Many Faces of the Kempner Number",
 Journal of Integer Sequences 16 (2013), Article 13.2.15, `thmRi`
 environment, lines 736–746, attributed there to Ridout,
 <https://cs.uwaterloo.ca/journals/JIS/VOL16/Adamczewski/adam6.tex>.
-
-Proves `Wanted` entry `ridout_padic_roth`.
-
-Proof: The proof follows Roth's auxiliary-polynomial and index route, with the
-S-adic integrality step supplied by valuation divisibility and a finite pigeonhole.
 -/
 theorem ridout_padic_roth (ξ : ℝ) (hξ : IsAlgebraic ℚ ξ) (hξi : Irrational ξ)
     (ε : ℝ) (hε : 0 < ε)

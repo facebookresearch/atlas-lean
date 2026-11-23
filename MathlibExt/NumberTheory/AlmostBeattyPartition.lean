@@ -26,62 +26,87 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The natural-valued Beatty term with slope `1 / α`, obtained from Mathlib's
-integer-valued `beattySeq`.
-Frozen source statements: `jis_3a6643107cb0f496a9559012`,
+/-- **Beatty term.** For a positive integer $n$ and a real number $\alpha$, the Beatty term
+$b_n(\alpha)$ is the natural number $\max(\lfloor n/\alpha \rfloor, 0)$: the $n$-th term
+$\lfloor n \cdot (1/\alpha) \rfloor$ of the Beatty sequence of slope $1/\alpha$, truncated at
+$0$. Division by zero is read as $0$, so $b_n(0) = 0$.
+
+Source: frozen source statements `jis_3a6643107cb0f496a9559012`,
 `jis_74d8835ba8df562bb5834fef`, `jis_8d72c1833a8a5da5a1a319c0`,
 `jis_9c431d0d610f8a075ea0cb13`, `jis_aac0e146b36de598ccb32fd6`,
 `jis_c2877cfd93d3493ab5d68e84`, and `jis_ec4d65fd2ab77c1aec768d61`. -/
 public noncomputable def beattyTerm (n : { n : ℕ // 0 < n }) (α : ℝ) : ℕ :=
   (beattySeq (1 / α) (n.val : ℤ)).toNat
 
-/-- The natural-valued wrapper agrees with the usual floor formula. -/
+/-- **Beatty term as a natural-number floor.** For every positive integer $n$ and every real
+number $\alpha$, the Beatty term $b_n(\alpha)$ equals the natural-number floor of $n/\alpha$:
+the largest natural number $m$ with $m \le n/\alpha$ when $n/\alpha \ge 0$, and $0$ when
+$n/\alpha < 0$. Division by zero is read as $0$, so $n/0 = 0$. -/
 public theorem beattyTerm_eq_floor (n : { n : ℕ // 0 < n }) (α : ℝ) :
     beattyTerm n α = Nat.floor ((n.val : ℝ) / α) := by
   simp [beattyTerm, beattySeq, div_eq_mul_inv, Int.floor_toNat]
 
-/-- Almost-Beatty predicate for concept `jis_sem_329070e9cea40082f4048ff4`:
-a strictly increasing sequence of positive integers within a uniform natural
-bound of the Beatty term.
-Frozen source statements: `jis_3a6643107cb0f496a9559012`,
-`jis_74d8835ba8df562bb5834fef`, `jis_8d72c1833a8a5da5a1a319c0`,
-`jis_9c431d0d610f8a075ea0cb13`, `jis_aac0e146b36de598ccb32fd6`,
-`jis_c2877cfd93d3493ab5d68e84`, and `jis_ec4d65fd2ab77c1aec768d61`. -/
+/-- **Almost Beatty sequence.** Let $\alpha$ be a real number. A sequence $(s_n)_{n \ge 1}$ of
+natural numbers indexed by the positive integers is an almost Beatty sequence for $\alpha$ when
+$0 < \alpha < 1$, the sequence is strictly increasing, $s_n > 0$ for every $n \ge 1$, and
+there is a natural number $B$ with $|s_n - b_n(\alpha)| \le B$ for every $n \ge 1$, where
+$b_n(\alpha)$ is the Beatty term, equal to $\lfloor n/\alpha \rfloor$ once $\alpha > 0$.
+
+Source: concept `jis_sem_329070e9cea40082f4048ff4`; frozen source statements
+`jis_3a6643107cb0f496a9559012`, `jis_74d8835ba8df562bb5834fef`,
+`jis_8d72c1833a8a5da5a1a319c0`, `jis_9c431d0d610f8a075ea0cb13`,
+`jis_aac0e146b36de598ccb32fd6`, `jis_c2877cfd93d3493ab5d68e84`, and
+`jis_ec4d65fd2ab77c1aec768d61`. -/
 public def IsAlmostBeattySequence (s : { n : ℕ // 0 < n } → ℕ) (α : ℝ) : Prop :=
   0 < α ∧ α < 1 ∧ StrictMono s ∧
     (∀ n, 0 < s n) ∧
       ∃ B : ℕ, ∀ n, ((s n : ℤ) - (beattyTerm n α : ℤ)).natAbs ≤ B
 
-/-- Three-way partition predicate for concept `jis_sem_329070e9cea40082f4048ff4`:
-pairwise disjoint ranges together with exact coverage of the positive naturals.
-Frozen source statements: `jis_3a6643107cb0f496a9559012`,
-`jis_74d8835ba8df562bb5834fef`, `jis_8d72c1833a8a5da5a1a319c0`,
-`jis_9c431d0d610f8a075ea0cb13`, `jis_aac0e146b36de598ccb32fd6`,
-`jis_c2877cfd93d3493ab5d68e84`, and `jis_ec4d65fd2ab77c1aec768d61`. -/
+/-- **Three-way partition of the positive integers.** Three sequences $s_1, s_2, s_3$ of natural
+numbers indexed by the positive integers partition the positive integers when their ranges are
+pairwise disjoint, that is, $s_i(m) \ne s_j(n)$ for all $i \ne j$ and all positive integers $m$
+and $n$, and the union of their ranges is exactly the set of positive integers: a natural
+number $k$ is a value of some $s_i$ if and only if $k > 0$.
+
+Source: concept `jis_sem_329070e9cea40082f4048ff4`; frozen source statements
+`jis_3a6643107cb0f496a9559012`, `jis_74d8835ba8df562bb5834fef`,
+`jis_8d72c1833a8a5da5a1a319c0`, `jis_9c431d0d610f8a075ea0cb13`,
+`jis_aac0e146b36de598ccb32fd6`, `jis_c2877cfd93d3493ab5d68e84`, and
+`jis_ec4d65fd2ab77c1aec768d61`. -/
 public def IsPositiveNatThreeWayPartition (s1 s2 s3 : { n : ℕ // 0 < n } → ℕ) : Prop :=
   (∀ m n, s1 m ≠ s2 n) ∧
     (∀ m n, s1 m ≠ s3 n) ∧
       (∀ m n, s2 m ≠ s3 n) ∧
         ∀ k : ℕ, (∃ n, s1 n = k ∨ s2 n = k ∨ s3 n = k) ↔ 0 < k
 
-/-- Almost-Beatty partition for concept `jis_sem_329070e9cea40082f4048ff4`:
-three almost-Beatty sequences whose ranges partition the positive naturals.
-Frozen source statements: `jis_3a6643107cb0f496a9559012`,
-`jis_74d8835ba8df562bb5834fef`, `jis_8d72c1833a8a5da5a1a319c0`,
-`jis_9c431d0d610f8a075ea0cb13`, `jis_aac0e146b36de598ccb32fd6`,
-`jis_c2877cfd93d3493ab5d68e84`, and `jis_ec4d65fd2ab77c1aec768d61`. -/
+/-- **Almost Beatty partition.** Given real numbers $\alpha_1, \alpha_2, \alpha_3$, three
+sequences $s_1, s_2, s_3$ of natural numbers indexed by the positive integers form an almost
+Beatty partition when, for each $i$, the sequence $s_i$ is an almost Beatty sequence for
+$\alpha_i$, and the three sequences form a three-way partition of the positive integers: their
+ranges are pairwise disjoint and their union is the set of positive integers.
+
+Source: concept `jis_sem_329070e9cea40082f4048ff4`; frozen source statements
+`jis_3a6643107cb0f496a9559012`, `jis_74d8835ba8df562bb5834fef`,
+`jis_8d72c1833a8a5da5a1a319c0`, `jis_9c431d0d610f8a075ea0cb13`,
+`jis_aac0e146b36de598ccb32fd6`, `jis_c2877cfd93d3493ab5d68e84`, and
+`jis_ec4d65fd2ab77c1aec768d61`. -/
 public def IsAlmostBeattyPartition (s1 s2 s3 : { n : ℕ // 0 < n } → ℕ) (α1 α2 α3 : ℝ) : Prop :=
   IsAlmostBeattySequence s1 α1 ∧
     IsAlmostBeattySequence s2 α2 ∧
       IsAlmostBeattySequence s3 α3 ∧ IsPositiveNatThreeWayPartition s1 s2 s3
 
-/-- The exact Beatty sequence for concept `jis_sem_329070e9cea40082f4048ff4`
-is almost Beatty with bound zero: strict monotonicity and positivity are
-derived from `0 < α < 1`.
-Frozen source statements: `jis_3a6643107cb0f496a9559012`,
-`jis_74d8835ba8df562bb5834fef`, `jis_8d72c1833a8a5da5a1a319c0`,
-`jis_9c431d0d610f8a075ea0cb13`, `jis_aac0e146b36de598ccb32fd6`,
-`jis_c2877cfd93d3493ab5d68e84`, and `jis_ec4d65fd2ab77c1aec768d61`. -/
+/-- **Beatty sequences are almost Beatty.** For every real number $\alpha$ with
+$0 < \alpha < 1$, the sequence of Beatty terms $n \mapsto b_n(\alpha) = \lfloor n/\alpha \rfloor$,
+indexed by the positive integers $n$, is an almost Beatty sequence for $\alpha$.
+
+The proof takes the bound $B = 0$ and derives strict monotonicity and positivity from
+$0 < \alpha < 1$.
+
+Source: concept `jis_sem_329070e9cea40082f4048ff4`; frozen source statements
+`jis_3a6643107cb0f496a9559012`, `jis_74d8835ba8df562bb5834fef`,
+`jis_8d72c1833a8a5da5a1a319c0`, `jis_9c431d0d610f8a075ea0cb13`,
+`jis_aac0e146b36de598ccb32fd6`, `jis_c2877cfd93d3493ab5d68e84`, and
+`jis_ec4d65fd2ab77c1aec768d61`. -/
 public theorem beattyTerm_isAlmostBeattySequence (α : ℝ) (hα0 : 0 < α) (hα1 : α < 1) :
     IsAlmostBeattySequence (fun n => beattyTerm n α) α := by
   have h1div : (1 : ℝ) < 1 / α := by

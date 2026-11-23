@@ -47,7 +47,7 @@ $(\tfrac12, \tfrac12)$ are not isomorphic.
 
 ## Related topics
 
-- Shannon entropy and Kullback–Leibler divergence:
+- [Shannon entropy and Kullback–Leibler divergence](../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/README.md):
   the entropy of a partition is the Shannon entropy of the law of its atoms, and $h_\mu(T, \xi)$ is the
   entropy rate of the symbolic process it defines.
 - [Entropy, dimension and Lyapunov exponents](../../smooth-dynamics/entropy-dimension-and-lyapunov-exponents/README.md):

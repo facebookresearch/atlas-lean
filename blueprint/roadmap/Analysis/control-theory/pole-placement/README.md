@@ -14,4 +14,4 @@ Coron proves the single-input case through the controller (companion) form of $(
 
 - [Controllability of linear systems](../controllability-of-linear-systems/README.md): the Kalman rank condition is the hypothesis of pole placement.
 - [Lyapunov's indirect method](../../ordinary-differential-equations/lyapunov-s-indirect-method/README.md): a matrix with all eigenvalues in the open left half-plane generates an exponentially stable flow, and stability of the linearisation gives local stability of a nonlinear equilibrium.
-- Linear quadratic regulator: the other classical way to compute a stabilising linear feedback, by optimising a quadratic cost through the Riccati equation.
+- [Linear quadratic regulator](../../../ComputerScience/machine-learning/reinforcement-learning/linear-quadratic-regulator/README.md): the other classical way to compute a stabilising linear feedback, by optimising a quadratic cost through the Riccati equation.

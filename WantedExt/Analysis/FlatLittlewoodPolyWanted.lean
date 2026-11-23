@@ -55,15 +55,18 @@ namespace FlatLittlewoodPoly
 
 open scoped Polynomial
 
-/-- A polynomial is a Littlewood polynomial if all its coefficients are either `-1` or `1`. -/
+/-- **Littlewood polynomials.** A polynomial $P$ over a ring $F$, of degree $n$ (with the zero
+polynomial taken to have degree $0$), is a Littlewood polynomial if each of its coefficients of
+$X^0, X^1, \ldots, X^n$ is $1$ or $-1$. -/
 def IsLittlewoodPolynomial {F : Type*} [Ring F] (P : F[X]) : Prop :=
   ∀ i ≤ P.natDegree, P.coeff i = 1 ∨ P.coeff i = -1
 
 /--
-Statement of Theorem 1.1:
+**Flat Littlewood polynomials exist.** There exist real constants $\Delta > \delta > 0$ such
+that for every natural number $n \ge 2$ there is a Littlewood polynomial $P$ with complex
+coefficients and of degree $n$ such that $\delta \sqrt{n} \le |P(z)| \le \Delta \sqrt{n}$ for all
+$z \in \mathbb{C}$ with $|z| = 1$.
 
-There exist constants `∆ > δ > 0` such that, for all `n ≥ 2`, there exists a Littlewood
-polynomial `P(z)` of degree `n` with `δ√n ≤ |P (z)| ≤ ∆√n` for all `z ∈ ℂ` with `|z| = 1`.
 Source: P. Balister, B. Bollobás, R. Morris, J. Sahasrabudhe, and M. Tiba, `Flat Littlewood polynomials exist`, Annals of Math, 192 (3) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-3-FlatLittlewoodPoly.lean Via leanprover/lean-eval@38361be, problem `annals_flat_littlewood_poly`.
 -/
 public theorem_wanted theorem_1_1 :

@@ -36,11 +36,13 @@ open Submodule
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] [IsRCLikeNormedField 𝕜]
 variable {E : Type*} [SeminormedAddCommGroup E] [NormedSpace 𝕜 E]
 
-/-- **One-step Hahn–Banach extension.** Let `M ⊆ E` be a subspace and
-`f : M →L[𝕜] 𝕜` a bounded linear functional with `‖f m‖ ≤ C ‖m‖` for all
-`m ∈ M`. If `x₀ ∉ M`, then there exists a bounded linear functional `g` on
-the strictly larger subspace `M'' = M ⊔ 𝕜 ∙ x₀` extending `f` and
-satisfying the same bound `‖g v‖ ≤ C ‖v‖` for all `v ∈ M''`. -/
+/-- **One-step Hahn–Banach extension.** Let $E$ be a seminormed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $M$ be a subspace of $E$, let $C \ge 0$ be a real
+number, and let $f \colon M \to \mathbb{K}$ be a continuous linear functional with
+$\|f(m)\| \le C\|m\|$ for all $m \in M$. If $x_0 \in E$ does not lie in $M$, then $M$ is strictly
+contained in $M' = M + \mathbb{K} x_0$, and there is a continuous linear functional
+$g \colon M' \to \mathbb{K}$ that agrees with $f$ on $M$ and satisfies $\|g(v)\| \le C\|v\|$ for all
+$v \in M'$. -/
 theorem hahn_banach_one_step_extension_bound
     (M : Subspace 𝕜 E) (f : ↥M →L[𝕜] 𝕜) (C : ℝ) (hC : 0 ≤ C)
     (hf_bound : ∀ m : M, ‖f m‖ ≤ C * ‖(m : E)‖)

@@ -12,7 +12,7 @@ that is, $R(3,t) \ge c(1 - o(1))\, t^2/\log t$ with $c = 1/162 = 1/(2 \cdot 9^2)
 
 ## Background
 
-- Second moment method for counts of events and Lovász local lemma, general form: the basic probabilistic existence tools that the semi-random method refines.
+- [Second moment method for counts of events](../../../Combinatorics/probabilistic-combinatorics/first-and-second-moment-methods/measure-real-forall-not-mem-le.md) and [Lovász local lemma, general form](../../../Combinatorics/probabilistic-combinatorics/lovasz-local-lemma-general-finite.md): the basic probabilistic existence tools that the semi-random method refines.
 
 ## Sources
 

@@ -26,6 +26,7 @@ The weighted Laplacian $L = B \operatorname{diag}(w) B^{\mathsf T}$ of a finite 
 - [Raising weights raises every Laplacian eigenvalue](eigenvalues-laplacian-mono.md)
 - [Algebraic connectivity is monotone in the weights](algebraic-connectivity-mono.md)
 - [Hall's spectral drawing is optimal](sum-eigenvalues-le-sum-quadratic-form.md)
+- [With positive weights, the graph of positive arcs is the underlying graph](positive-arc-graph-eq-of-pos.md)
 
 ## Related topics
 
@@ -36,6 +37,6 @@ The weighted Laplacian $L = B \operatorname{diag}(w) B^{\mathsf T}$ of a finite 
 - [Effective resistance and electrical networks](../effective-resistance-and-electrical-networks/README.md): the Laplacian as the operator of a resistor network: potentials, energy and effective conductance.
 - [Spectral sparsification](../../part-02/spectral-sparsification/README.md): approximating a Laplacian in the Loewner order by one with few edges.
 - [Expander graphs](../../../graph-families-and-operations/expander-graphs/README.md): Cheeger's inequality relates the spectral gap $\lambda_2$ to edge expansion.
-- Unsupervised learning and matrix factorization: spectral clustering embeds the vertices with the bottom Laplacian eigenvectors and then clusters them.
+- [Unsupervised learning and matrix factorization](../../../../ComputerScience/machine-learning/unsupervised-learning/README.md): spectral clustering embeds the vertices with the bottom Laplacian eigenvectors and then clusters them.
 - [Gaussian graphical models](../../../../Probability/linear-models-multivariate/gaussian-graphical-models/README.md): the Leroux conditional autoregressive precision matrix $\rho L + (1 - \rho) I$ is built from a weighted graph Laplacian, with the same quadratic form.
 - [Conductance and Cheeger's inequality](../../part-02/conductance-and-cheeger-s-inequality/README.md): weighted degrees, conductance and both directions of Cheeger's inequality.

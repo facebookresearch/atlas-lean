@@ -82,6 +82,8 @@ commuting with a change of units does not certify a formula: the empirically wro
 commutes as well. Dimensional consistency is not empirical correctness, and no such claim is
 made.
 
+The body-to-inertial frame and sign dictionary is in `PhyslibExt.Units.EngineeringFrames`.
+
 ## ii. Key results
 
 - `forceDim_exponent`, `powerDim_exponent`, `massFlowDim_exponent`, `molarFlowDim_exponent`,

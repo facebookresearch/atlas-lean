@@ -139,18 +139,21 @@ private def dual_prodEquiv (α β : Type*) [AddCommGroup α] [AddCommGroup β] :
     ext x <;> rfl
 
 /--
-A finite abelian group is (non-canonically) isomorphic to its dual group.
+**A finite abelian group is isomorphic to its dual group.** Every finite abelian group $A$ is
+isomorphic to its dual group, the group of characters of $A$ under pointwise multiplication,
+where a character of $A$ is a map $\chi : A \to \mathbb{C}$ with $\chi(0) = 1$ and
+$\chi(a + a') = \chi(a)\chi(a')$ for all $a, a' \in A$.
+
+Proof: Use the structure theorem to write $A$ as a direct sum of finite cyclic groups,
+identify each cyclic group $\mathbb{Z}/n\mathbb{Z}$ with its dual group, and transport
+characters along the decomposition. This is the proof of Conrad's Theorem 3.13: the cyclic
+case, then products of cyclic groups.
+
+Proves `Wanted` entry `finite_abelian_dual_iso`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "dual groups"; K. Conrad, Characters of finite abelian groups,
 https://kconrad.math.uconn.edu/blurbs/grouptheory/charthy.pdf, Theorem 3.13.
-
-Proves `Wanted` entry `finite_abelian_dual_iso`.
-
-Proof: Use the finite abelian structure theorem, apply `AddChar.zmodAddEquiv`
-coordinatewise on the cyclic factors, and transport characters along the
-decomposition. This is the proof of Conrad's Theorem 3.13: the cyclic case,
-then products of cyclic groups.
 -/
 public theorem finite_abelian_dual_iso (α : Type*) [AddCommGroup α]
     [Finite α] : Nonempty (α ≃+ AddChar α ℂ) := by
@@ -163,18 +166,22 @@ public theorem finite_abelian_dual_iso (α : Type*) [AddCommGroup α]
     dual_precomp e⟩
 
 /--
-The dual of a product is the product of the duals.
+**Characters of a product of abelian groups.** For all abelian groups $A$ and $B$, the group of
+characters of $A \times B$ is isomorphic to the product of the character groups of $A$ and $B$.
+Here a character of $A$ is a map $\chi : A \to \mathbb{C}$ with $\chi(0) = 1$ and
+$\chi(a + a') = \chi(a)\chi(a')$ for all $a, a' \in A$, and the characters of $A$ form a group
+under pointwise multiplication.
+
+Proof: Restrict a character along the two coordinate inclusions, with inverse
+$(\chi_1, \chi_2) \mapsto ((x, y) \mapsto \chi_1(x)\chi_2(y))$. Conrad's Lemma 3.12 uses the
+same restriction map for finite groups and concludes by counting; the explicit
+inverse removes the finiteness assumption.
+
+Proves `Wanted` entry `dual_prod`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "dual groups"; K. Conrad, Characters of finite abelian groups,
 https://kconrad.math.uconn.edu/blurbs/grouptheory/charthy.pdf, Lemma 3.12.
-
-Proves `Wanted` entry `dual_prod`.
-
-Proof: Restrict a character along the two coordinate inclusions, with inverse
-`(χ₁, χ₂) ↦ fun (x, y) ↦ χ₁ x * χ₂ y`. Conrad's Lemma 3.12 uses the same
-restriction map for finite groups and concludes by counting; the explicit
-inverse removes the finiteness assumption.
 -/
 public theorem dual_prod (α β : Type*) [AddCommGroup α] [AddCommGroup β] :
     Nonempty (AddChar (α × β) ℂ ≃+ (AddChar α ℂ × AddChar β ℂ)) := by

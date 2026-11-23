@@ -11,5 +11,5 @@ $(R + \varphi \varphi^\top) P' = I$ directly from $R P = I$, using $\varphi^\top
 
 ## Background
 
-- Sherman–Morrison applied to the candidate marker:
+- [Sherman–Morrison applied to the candidate marker](../../../Biology/statistical-genetics/proximal-contamination-in-mixed-model-associatio/inv-add-smul-vec-mul-vec-mul-vec.md):
   the same rank-one inverse update, applied to a vector, in mixed-model association.

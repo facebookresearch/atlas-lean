@@ -11,7 +11,7 @@
 
 ## Related topics
 
-- Matching in general graphs:
+- [Matching in general graphs](../../polynomial-time-problems/matching-in-general-graphs/README.md):
   deciding whether a perfect matching exists is in polynomial time, while counting the perfect
   matchings of a bipartite graph is the 0-1 permanent.
 - [Canonical paths and multicommodity flow](../../../Probability/markov-chains/canonical-paths-and-multicommodity-flow/README.md): the canonical-path and multicommodity-flow bounds on the mixing of reversible chains, the technique behind the Markov chain analyses for approximating the permanent.
