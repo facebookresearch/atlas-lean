@@ -226,7 +226,7 @@ private theorem eq_prfDensity_of_forward_of_ne_zero {θ σ : ℝ} (hθ : θ ≠ 
       (by ring)
   have hkim := eq_kimuraFixation_of_generator_eq_zero (σ := σ) (u := u)
     (fun y hy => ((hcont (1 - y) ⟨sub_nonneg.2 hy.2, by linarith [hy.1]⟩).comp
-      ((continuous_const.sub continuous_id).continuousWithinAt) (fun z hz =>
+      ((continuous_const.sub continuous_id).continuousWithinAt) (fun z (hz : z ∈ Icc (0 : ℝ) 1) =>
         ⟨sub_nonneg.2 hz.2, by linarith [hz.1]⟩)).div_const θ)
     (fun y hy => (hd1 y hy).differentiableAt.differentiableWithinAt)
     (fun y hy => ((hd2 y hy).differentiableAt.congr_of_eventuallyEq

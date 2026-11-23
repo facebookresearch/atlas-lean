@@ -29,9 +29,9 @@ of a sum over ordered adjacent pairs of a finite region. For `J = 1` and the reg
 the two agree.
 
 The Gibbs weights `exp (-β H)` of `StatMech.Ising` then form the finite canonical ensemble with
-energy `hamiltonian G h` and counting measure on configurations: at a temperature `T`, the partition
-function `isingZ G T.β h` is Physlib's `mathematicalPartitionFunction` and `isingProb G T.β h` is
-Physlib's `probability`.
+energy `hamiltonian G h` and counting measure on configurations: at a temperature `T` and Boltzmann
+constant `kB`, the partition function `isingZ G (T.β kB) h` is Physlib's
+`mathematicalPartitionFunction` and `isingProb G (T.β kB) h` is Physlib's `probability`.
 
 Finally, the nearest-neighbour graph `hypercubicLattice d` on `ℤ^d` is isomorphic to the bond graph
 of Physlib's hypercubic crystal `CondensedMatter.Crystal.hypercubicGraph d`.
@@ -138,17 +138,19 @@ instance (h : ℝ) : (canonicalEnsemble G h).IsFinite where
   dof_eq_zero := rfl
   phase_space_unit_eq_one := rfl
 
-/-- The Ising partition function at inverse temperature `T.β` is Physlib's mathematical partition
-function of `canonicalEnsemble G h` at temperature `T`. -/
-lemma isingZ_eq_mathematicalPartitionFunction (h : ℝ) (T : Temperature) :
-    isingZ G T.β h = (canonicalEnsemble G h).mathematicalPartitionFunction T := by
+/-- For every Boltzmann constant `kB`, the Ising partition function at inverse temperature
+`T.β kB` is Physlib's mathematical partition function of `canonicalEnsemble G h` at temperature
+`T`. -/
+lemma isingZ_eq_mathematicalPartitionFunction (h : ℝ) (kB : BoltzmannConstant) (T : Temperature) :
+    isingZ G (T.β kB) h = (canonicalEnsemble G h).mathematicalPartitionFunction kB T := by
   rw [CanonicalEnsemble.mathematicalPartitionFunction_of_fintype]
   rfl
 
-/-- The Ising Gibbs probability at inverse temperature `T.β` is Physlib's canonical probability of
-`canonicalEnsemble G h` at temperature `T`. -/
-lemma isingProb_eq_probability (h : ℝ) (T : Temperature) (s : ConfigSpace V) :
-    isingProb G T.β h s = (canonicalEnsemble G h).probability T s := by
+/-- For every Boltzmann constant `kB`, the Ising Gibbs probability at inverse temperature
+`T.β kB` is Physlib's canonical probability of `canonicalEnsemble G h` at temperature `T`. -/
+lemma isingProb_eq_probability (h : ℝ) (kB : BoltzmannConstant) (T : Temperature)
+    (s : ConfigSpace V) :
+    isingProb G (T.β kB) h s = (canonicalEnsemble G h).probability kB T s := by
   rw [CanonicalEnsemble.probability, ← isingZ_eq_mathematicalPartitionFunction]
   rfl
 
