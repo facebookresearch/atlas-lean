@@ -26,3 +26,7 @@ See [Henderson's mixed-model equations](../../../Probability/linear-models-multi
 - [Marginal association estimate of a marker](marginal-effect.md)
 - [The mean of the marginal estimates](integral-marginal-effect.md)
 - [The raw residual-product second moment of the marginal estimates](integral-marginal-effect-sub-mul.md)
+
+## Related topics
+
+- [Random-intercept models and the design effect](../../../Probability/linear-models-multivariate/random-intercept-models-and-the-design-effect/README.md): random-intercept and crossed random-intercept designs of a linear mixed model, the intraclass correlation and the design effect.

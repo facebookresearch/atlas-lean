@@ -8,7 +8,7 @@ $\sigma(a, b) = s_{ab}$ for the
 [pair score](../sequence-alignment/two-sequence-karlin-altschul-statistics/pair-score.md) of a letter
 pair $(a, b) \in A \times A$. Then there is exactly one $\lambda > 0$ with
 $\sum_{(a, b) \in A \times A} \pi(a, b)\, e^{\lambda \sigma(a, b)} = 1$, where the left side is the
-[moment generating function](../sequence-alignment/maximal-segment-score-of-a-random-sequence/score-mgf.md)
+[moment generating function](../../../Probability/random-walks/maximal-segment-score-of-a-random-sequence/score-mgf.md)
 of the pair score under the pair law, that is $E\, e^{\lambda s_{XY}}$ for independent letters $X$
 and $Y$ of law $p$. This sum over pairs equals the iterated sum $\Phi(\lambda)$.
 

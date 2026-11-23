@@ -37,7 +37,6 @@ compatibility class.
 - [Quantitative genetics](quantitative-genetics/README.md)
 - [Statistical genetics](statistical-genetics/README.md)
 - [Cancer genomics](cancer-genomics/README.md)
-- [Omics data analysis](omics-data-analysis/README.md)
 - [Bioinformatics](bioinformatics/README.md)
 - [Systems biology](systems-biology/README.md)
 - [Population and evolutionary dynamics](population-dynamics/README.md)

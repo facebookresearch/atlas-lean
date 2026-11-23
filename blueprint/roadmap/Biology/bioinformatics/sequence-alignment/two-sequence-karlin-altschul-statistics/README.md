@@ -86,12 +86,7 @@
 - [Periodic lattice correction of the exponential tail](lattice-corr.md)
 - [The lattice correction is periodic with period h](lattice-corr-add.md)
 - [Above a threshold means at least the next lattice point](lt-iff-lattice-above-le.md)
-- [A sum of lattice values is a lattice value](exists-int-sum-eq-mul.md)
-- [The maximal segment score of a lattice-valued list is a lattice value](exists-int-max-seg-score-eq-mul.md)
-- [For lattice scores the tail weight is constant on open lattice cells](score-prob-lt-max-seg-score-eq-of-lattic.md)
 - [For lattice scores, exceeding t means reaching the next lattice point](score-prob-lt-max-seg-score-eq.md)
-- [With lattice scores, the one-sequence tail forces K = 0](eq-zero-of-lattice.md)
-- [Lattice scores have no one-sequence tail with K ≠ 0](not-one-sequence-tail-of-lattice.md)
 
 ## Gumbel approximation for lattice scores
 
@@ -99,3 +94,8 @@
 - [The expected number of exceeding diagonals, lattice case](tendsto-sum-exceed-prob-sub-lattice.md)
 - [Gumbel approximation with periodic correction for lattice scores](tendsto-two-prob-max-align-score-le-sub.md)
 - [Two-sequence lattice bounds on the maximal alignment score](eventually-lattice-bounds.md)
+
+## Related topics
+
+- [Maximal segment score of a random sequence](../../../../Probability/random-walks/maximal-segment-score-of-a-random-sequence/README.md): the maximal segment score of one i.i.d. score sequence, its ladder decomposition and Cramér root; for lattice-valued scores the one-sequence tail hypothesis holds only with K = 0.
+- [Gumbel limit of the maximal segment score](../../../../Probability/random-walks/gumbel-limit-of-the-maximal-segment-score/README.md): the Gumbel limit of the maximal segment score of one score sequence for nonlattice scores, and liminf and limsup bounds for lattice scores.

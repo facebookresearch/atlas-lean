@@ -89,3 +89,7 @@ carriers and singular relationship matrices.
 - [Additive relationship matrix of a pedigree](pedigree-relationship.md)
 - [A pedigree's additive relationship matrix is positive semidefinite](pos-semidef-pedigree-relationship.md)
 - [With residual noise the pedigree null covariance is positive definite](pos-def-null-cov-pedigree-relationship.md)
+
+## Related topics
+
+- [Score, Wald and likelihood-ratio tests](../../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/README.md): the burden test and SKAT-O as kernel score statistics `(P y)ᵀ K (P y)` with chi-square mixture laws, and SKAT-O p-values by Davies' formula.

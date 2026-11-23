@@ -11,4 +11,4 @@ at `t_N` tend to `0`: `Δ_k → 0` for every `k`. Then for every `ε > 0`, event
 `exp(-K e^{-θ x}) - ε ≤ P(M_{m_N, n_N} ≤ t_N) ≤ exp(-K e^{-θ (x + h)}) + ε`, where `M_{m,n}` is
 the [maximal ungapped alignment score](max-align-score.md) of the two words. This is the
 two-sequence analogue of the
-[lattice bounds for one sequence](../gumbel-limit-of-the-maximal-segment-score/eventually-bounds.md).
+[lattice bounds for one sequence](../../../../Probability/random-walks/gumbel-limit-of-the-maximal-segment-score/eventually-bounds.md).

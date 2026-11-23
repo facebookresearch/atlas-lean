@@ -8,6 +8,7 @@ Descents, peaks, major index, left-to-right maxima, fixed points and derangement
 - [Minimal permutations with given descents](minimal-permutations-with-given-descents/README.md)
 - [Permutation Wordle](permutation-wordle/README.md)
 - [Smallest cycle of a random permutation](smallest-cycle-of-a-random-permutation/README.md)
+- [Sorting by reversals](sorting-by-reversals/README.md)
 - [Stirling permutations](stirling-permutations/README.md)
 - [Flattened Stirling permutations](flattened-stirling-permutations/README.md)
 - [A sum rule for derangements](sum-mul-num-derangements-eq-floor.md)
