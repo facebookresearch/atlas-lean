@@ -30,3 +30,12 @@ example :
        extendedContinuant id (-4) 0, extendedContinuant id (-5) 1] =
       !![1, 1; 2, 3] :=
   (extendedContinuant_westbound_matrix_prod id 2 (by decide)).symm.trans (by decide)
+
+-- Reflecting order 2 crosses to the backward branch and shifts the start four places.
+example (x : ℤ → ℤ) (h : ℤ) :
+    extendedContinuant x 2 h = -extendedContinuant x (-6) (h + 4) := by
+  simpa [add_assoc] using extendedContinuant_neg_order x h (-2)
+
+-- Reflecting order -7 gives the forward continuant on the terms 3, 4, 5, 6.
+example : extendedContinuant id (-7) 8 = 421 :=
+  (extendedContinuant_neg_order id 8 7).trans (by decide)
