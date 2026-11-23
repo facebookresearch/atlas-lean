@@ -6,10 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+`MathlibExt.Combinatorics.WythoffPass`, which this module imports, now holds the sets `B` and `C`
+(`wythoffPassSetB`, `wythoffPassSetC`), their nine-element count
+(`wythoffPassSetB_card_wythoffPassSetC_card`) and the proof of Lemma 3
+(`wythoffPass_moves_meet_setB_iff_setC`).
+-/
+
 module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Real.GoldenRatio
+public import MathlibExt.Combinatorics.WythoffPass
 
 namespace MetaMathlibExt
 
@@ -75,24 +83,6 @@ INTEGERS 25 (2025), Article G4, Section 4 (the set `A`, Definition 12). -/
 def wythoffPassSetA : Finset (ℕ × ℕ) :=
   {(0, 0), (1, 2), (2, 1), (3, 5), (4, 7), (5, 3), (7, 4)}
 
-/-- **The set $B$.** $B$ is the finite set of pairs of natural numbers
-$B = \{(0, 0), (1, 3), (3, 1), (2, 5), (5, 2), (4, 8), (8, 4), (6, 7), (7, 6)\}$. These are the
-positions $(x, y, 1)$ of the set $B$ in the source, with the third coordinate dropped.
-
-Source: Ryohei Miyadera, Hikaru Manabe, and Masanori Fukui, *Wythoff's Game with a Pass*,
-INTEGERS 25 (2025), Article G4, Section 4 (the set `B`). -/
-def wythoffPassSetB : Finset (ℕ × ℕ) :=
-  {(0, 0), (1, 3), (3, 1), (2, 5), (5, 2), (4, 8), (8, 4), (6, 7), (7, 6)}
-
-/-- **The set $C$.** $C$ is the finite set of pairs of natural numbers
-$C = \{(0, 1), (1, 0), (2, 2), (3, 6), (6, 3), (4, 8), (8, 4), (5, 7), (7, 5)\}$. These are the
-positions $(x, y, 1)$ of the set $C$ in the source, with the third coordinate dropped.
-
-Source: Ryohei Miyadera, Hikaru Manabe, and Masanori Fukui, *Wythoff's Game with a Pass*,
-INTEGERS 25 (2025), Article G4, Section 4 (the set `C`). -/
-def wythoffPassSetC : Finset (ℕ × ℕ) :=
-  {(0, 1), (1, 0), (2, 2), (3, 6), (6, 3), (4, 8), (8, 4), (5, 7), (7, 5)}
-
 /-- **Mex recursion for the Grundy numbers of Wythoff's game with an extra move.** In both
 variants (strict: the pass of Wythoff's game with a pass; non-strict: a pile of one stone), the
 Grundy number of a position $(x, y, p)$ with $x, y \in \mathbb{N}$ and $p \in \{0, 1\}$ is the
@@ -154,17 +144,6 @@ theorem wythoffPlusStoneGrundy_zero_zero_true : wythoffPlusStoneGrundy 0 0 true 
   have := hm.2.2.2 rfl (Or.inl rfl)
   rw [h0] at this
   omega
-
-/-- **The sets $B$ and $C$ have nine elements each.** The sets
-$B = \{(0, 0), (1, 3), (3, 1), (2, 5), (5, 2), (4, 8), (8, 4), (6, 7), (7, 6)\}$ and
-$C = \{(0, 1), (1, 0), (2, 2), (3, 6), (6, 3), (4, 8), (8, 4), (5, 7), (7, 5)\}$ of pairs of
-natural numbers each have exactly $9$ elements.
-
-Source: Ryohei Miyadera, Hikaru Manabe, and Masanori Fukui, *Wythoff's Game with a Pass*,
-INTEGERS 25 (2025), Article G4, Section 4. -/
-theorem wythoffPassSetB_card_wythoffPassSetC_card :
-    wythoffPassSetB.card = 9 ∧ wythoffPassSetC.card = 9 := by
-  decide
 
 /-- **The set $A$ has seven elements.** The set
 $A = \{(0, 0), (1, 2), (2, 1), (3, 5), (4, 7), (5, 3), (7, 4)\}$ of pairs of natural numbers has
@@ -252,25 +231,6 @@ public theorem_wanted wythoffPass_moves_meet_setB_setC (x y : ℕ) (hxy : 9 ≤ 
     (y + 5 ≤ x ∨ x + 5 ≤ y →
       (∀ t, 1 ≤ t → t ≤ x → t ≤ y → (x - t, y - t) ∉ wythoffPassSetB) ∧
         (∀ t, 1 ≤ t → t ≤ x → t ≤ y → (x - t, y - t) ∉ wythoffPassSetC))
-
-/-- **Moves from a large position meet $B$ exactly when they meet $C$.** Let
-$B = \{(0, 0), (1, 3), (3, 1), (2, 5), (5, 2), (4, 8), (8, 4), (6, 7), (7, 6)\}$ and
-$C = \{(0, 1), (1, 0), (2, 2), (3, 6), (6, 3), (4, 8), (8, 4), (5, 7), (7, 5)\}$. Let $x, y$ be
-natural numbers with $x \ge 9$ or $y \ge 9$. Then some pair $(u, y)$ with $u < x$ lies in $B$ if
-and only if some such pair lies in $C$; some pair $(x, v)$ with $v < y$ lies in $B$ if and only
-if some such pair lies in $C$; and some pair $(x - t, y - t)$ with $1 \le t \le \min(x, y)$ lies
-in $B$ if and only if some such pair lies in $C$.
-
-In the source these pairs are the horizontal, vertical and diagonal moves from the position
-$(x, y, 1)$ of Wythoff's game with a pass, with the third coordinate dropped.
-
-Source: Ryohei Miyadera, Hikaru Manabe, and Masanori Fukui, *Wythoff's Game with a Pass*,
-INTEGERS 25 (2025), Article G4, Lemma 3 (`integers-2025-G4-lem-3`). -/
-public theorem_wanted wythoffPass_moves_meet_setB_iff_setC (x y : ℕ) (hxy : 9 ≤ x ∨ 9 ≤ y) :
-    ((∃ u < x, (u, y) ∈ wythoffPassSetB) ↔ ∃ u < x, (u, y) ∈ wythoffPassSetC) ∧
-    ((∃ v < y, (x, v) ∈ wythoffPassSetB) ↔ ∃ v < y, (x, v) ∈ wythoffPassSetC) ∧
-    ((∃ t, 1 ≤ t ∧ t ≤ x ∧ t ≤ y ∧ (x - t, y - t) ∈ wythoffPassSetB) ↔
-      ∃ t, 1 ≤ t ∧ t ≤ x ∧ t ≤ y ∧ (x - t, y - t) ∈ wythoffPassSetC)
 
 /-- **Pass versus a pile of one stone in Wythoff's game.** Let $\mathcal{G}_1(x, y, p)$ be the
 Grundy numbers of Wythoff's game with a pass, where $p = 1$ means the pass is still available,
