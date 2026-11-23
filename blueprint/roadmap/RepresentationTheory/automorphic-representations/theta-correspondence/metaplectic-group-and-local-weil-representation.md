@@ -35,7 +35,9 @@ $S$ if $F$ is non-archimedean and the unitary model if $F$ is archimedean.
    algebra of $\mathrm{U}(n)$. Since $\tfrac12(z_i \partial_j + \partial_j z_i) = z_i \partial_j + \tfrac12 \delta_{ij}$, the group
    $\tilde{\mathrm U}(n)$ acts on the polynomials of each degree through genuine representations: the natural
    action twisted by a square root of $\det$, so that a lift of the rotation by $2\pi$ in a coordinate circle
-   acts by $-1$.
+   acts by $-1$. These formulas are for the Fock model attached to $\psi(t) = e^{2\pi i t}$; replacing $\psi$ by
+   $\psi^{-1}$ conjugates the representation and reverses the signs of the weights of $\tilde{\mathrm U}(n)$, and the
+   types are again genuine.
 
 ## Depends on
 

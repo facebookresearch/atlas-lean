@@ -12,9 +12,10 @@ splitting characters $(\chi_V, \chi_W)$, and Jacquet functors and parabolic indu
 
 - **Kudla's filtration** (non-archimedean). For an isotropic subspace $X_a \subset W_n$ of dimension $a$
   with stabilizer $Q(X_a)$ and Levi factor $\mathrm{GL}(X_a) \times \mathrm{U}(W_{n-2a})$, the Jacquet module
-  $R_{Q(X_a)}(\omega_{W_n, V_m})$ has an equivariant filtration $R_0 \supset R_1 \supset \dots \supset R_a \supset 0$, with
+  $R_{Q(X_a)}(\omega_{W_n, V_m})$ has an equivariant filtration $R_0 \supset R_1 \supset \dots \supset R_a \supset R_{a+1} = 0$, with
   $R_k / R_{k+1} = 0$ for $k > \min(a, q)$. For $k \le \min(a, q)$, choose an isotropic subspace $Y_k \subset V_m$ of
-  dimension $k$ with $V_m = Y_k + V_{m-2k} + Y_k^*$, write $X_a = X_{a-k} + X'_k$; then $R_k / R_{k+1}$ is induced
+  dimension $k$ with $V_m = Y_k + V_{m-2k} + Y_k^*$, write $X_a = X_{a-k} + X'_k$ and $X_k = X_a / X_{a-k} \cong X'_k$; then
+  $R_k / R_{k+1}$ is induced
   from $Q(X_{a-k}, X_a) \times \mathrm{U}(W_{n-2a}) \times P(Y_k)$, with $Q(X_{a-k}, X_a)$ the stabilizer of
   $X_{a-k}$ in $\mathrm{GL}(X_a)$ and $P(Y_k)$ the stabilizer of $Y_k$ in $\mathrm{U}(V_m)$, of
   $\chi_V \lvert \det_{X_{a-k}} \rvert^{\lambda_{a-k}} \otimes C^\infty_c(\mathrm{Isom}_{E,c}(X_k, Y_k)) \otimes \omega_{W_{n-2a}, V_{m-2k}}$,

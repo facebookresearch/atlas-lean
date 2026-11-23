@@ -29,7 +29,9 @@ be the maximal semisimple quotient of $\Theta(\pi)$.
 4. **Split case** (Mínguez). For $m, n \ge 1$ and the type II dual pair $(\mathrm{GL}_n(F), \mathrm{GL}_m(F))$ in
    $\mathrm{Sp}_{2nm}(F)$, acting on $\mathcal{S}(\mathrm{M}_{n \times m}(F))$ by the normalized matrix action, which the same
    construction gives when $E = F \times F$ (the local situation of a global unitary dual pair at a place of
-   $F$ that splits in $E$): if $\pi$ occurs as a quotient of the Weil representation, then $\theta(\pi)$ is
+   $F$ that splits in $E$, with the identifications of the
+   [split case](weil-representation-of-unitary-dual-pairs.md), where one factor is identified with
+   $\mathrm{GL}_n(F)$ through the contragredient): if $\pi$ occurs as a quotient of the Weil representation, then $\theta(\pi)$ is
    irreducible, and $\dim \mathrm{Hom}(\omega, \pi \otimes \pi') \le 1$ for irreducible $\pi$, $\pi'$. The
    assertion that every $\pi$ occurs needs $n \le m$ and is not claimed here.
 
@@ -49,7 +51,8 @@ construction of the Weil representation applies.
 - [Parabolic induction and Jacquet functors](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for the standard Frobenius reciprocity and the exactness of Jacquet functors
 - [The Bernstein–Zelevinsky geometric lemma](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/bernstein-zelevinsky-geometric-lemma.md), for the Jacquet modules of induced representations used by Gan and Takeda (Lemma 5.2, proved in their appendix with Tadić's formulas)
 - [Cuspidal representations and Jacquet's embedding theorem](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for the supercuspidal representations of general linear groups whose induced representations Gan and Takeda study in their Lemma 5.2
-- [Zelevinsky's classification of the irreducible representations of GLₙ](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/zelevinsky-classification.md), for the irreducibility and genericity of the products $1 \times \dots \times 1$ of trivial characters used in the boundary case (Gan–Takeda §5, citing Zelevinsky's Theorem 9.7)
+- [Zelevinsky's classification of the irreducible representations of GLₙ](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/zelevinsky-classification.md), for the irreducibility of the products $1 \times \dots \times 1$ of trivial characters used in the boundary case (Gan–Takeda §5, citing Zelevinsky's Theorem 9.7 (a))
+- [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/whittaker-models-for-gl-n.md), for the genericity of these products (repeated singleton segments are not linked), which Gan and Takeda use through a non-zero Whittaker functional in §5
 
 ## Sources
 
@@ -75,5 +78,5 @@ construction of the Weil representation applies.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
   states specialized results (matrix Weil data, the isotypic-kernel characterization, finite length and
-  uniqueness of a maximal quotient) as `GlobalTheory.Published.HoweDualityUnitary` and, for the split case
+  uniqueness of the irreducible quotient when it is non-zero) as `GlobalTheory.Published.HoweDualityUnitary` and, for the split case
   with positive ranks, `GlobalTheory.Published.MinguezThetaGL`.

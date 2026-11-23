@@ -11,13 +11,15 @@ Fix $\psi$ and Hecke characters $(\chi_U, \chi_V)$ as for the
 $\omega = \omega_{\psi, \chi_U, \chi_V}$ act on $\mathcal{S}(X)(\mathbb{A})$ ($m, n \ge 1$; $r = 0$ is allowed, and then the
 condition on lower lifts below is empty), and let $\pi$ be a cuspidal
 automorphic representation of $\mathrm{U}(U)(\mathbb{A})$ whose [global theta lifts](global-theta-lifts.md)
-$\Theta_{n,j}(\pi)$ to the smaller spaces $V_j$, $j < r$, of the Witt tower of $V$ vanish, so that
-$\Theta_{n,r}(\pi)$ consists of cusp forms on $\mathrm{U}(V)(\mathbb{A})$. Let $W_n = U \oplus U^-$ be the
+$\Theta_{n,j}(\pi)$ to the smaller spaces $V_j$, $j < r$, of the Witt tower of $V$ vanish, so that the functions in
+$\Theta_{n,r}(\pi)$ are cuspidal in the sense that their constant terms along proper parabolic subgroups vanish. Let $W_n = U \oplus U^-$ be the
 doubled space and $\iota \colon \mathrm{U}(U) \times \mathrm{U}(U) \to \mathrm{U}(W_n)$ the natural map. For
 $\varphi_1, \varphi_2 \in \mathcal{S}(X)(\mathbb{A})$ such that the Schwartz function
 $\delta(\varphi_1 \otimes \overline{\varphi_2})$ on $(Y_n^* \otimes_E V)(\mathbb{A})$ given by the doubling isomorphism
 $\delta$ corresponds to a polynomial in the Fock model at every archimedean place (for instance, $\varphi_1$ and
-$\varphi_2$ finite under the maximal compact subgroups at the archimedean places), let $f^{(s)}$ be its
+$\varphi_2$ polynomial vectors in the Fock models, that is, finite under the maximal compact subgroup of the ambient
+real symplectic groups; finiteness under the maximal compact subgroups of the two members of the dual pair is
+not enough), let $f^{(s)}$ be its
 [Siegel–Weil section](siegel-weil-formula-convergent-range.md) in $I_n(s, \chi_V)$, so that
 the [Siegel Eisenstein series](siegel-eisenstein-series-on-unitary-groups.md) $E(s, f)$ is holomorphic at
 $s_{m,n} = \tfrac{m - n}{2}$. Then for all cusp forms $f_1, f_2 \in \pi$

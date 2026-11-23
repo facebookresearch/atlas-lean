@@ -46,8 +46,9 @@ For unitary dual pairs, $G = \mathrm{U}(p, q)$ and $G' = \mathrm{U}(r, s)$ in $\
 
 ## Proof depends on
 
-- [Duality for compact dual pairs and the (GLₙ, GLₘ)-duality](howe-duality-for-compact-dual-pairs.md), for the structure (3.9) of the Fock space under a compact member of a dual pair, which Howe applies to the maximal compact subgroups and to the auxiliary pairs of products of unitary groups in §§3–5 to prove item 1
+- [Duality for compact dual pairs in the Fock model](howe-duality-for-compact-dual-pairs.md), for the structure (3.9) of the Fock space under a compact member of a dual pair, which Howe applies to the maximal compact subgroups and to the auxiliary pairs of products of unitary groups in §§3–5 to prove item 1
 - [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for the passage from item 1 to items 2 and 3 (Howe's Lemma 2.2): starting from a class that occurs as a smooth quotient, the image of $\mathcal{P}$ is dense and its $\tilde K$-isotypic components are finite-dimensional, so its $\tilde K$-finite vectors are an algebraic quotient of $\mathcal{P}$; the argument does not show that every algebraic quotient occurs smoothly
+- [Classical invariant theory and harmonics](classical-invariant-theory-and-harmonics.md), for the correspondence of the centres of the enveloping algebras of the two members (Howe, Remarks, §5 (a)), which makes the lift quasi-simple, and Harish-Chandra's theorem that a finitely generated quasi-simple $(\mathfrak{g}', \tilde K')$-module is admissible, the two steps by which Howe (Transcending, p. 547) obtains the admissibility of the algebraic lift in item 1
 
 ## Sources
 

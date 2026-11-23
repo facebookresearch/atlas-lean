@@ -16,7 +16,10 @@ $$\langle\langle v_1 \otimes w_1, v_2 \otimes w_2 \rangle\rangle = \tfrac12 \mat
 is well defined, $F$-bilinear, alternating and non-degenerate. If $m, n \ge 1$, $\mathrm{U}(V)$ and
 $\mathrm{U}(W)$ embed in $\mathrm{Sp}(\mathbb{W})$ as a reductive dual pair: each group is the centralizer of the
 other. If $E = F \times F$, then $V = V_0 \times V_0^\vee$ and $W = W_0 \times W_0^\vee$ for $F$-vector spaces
-$V_0$, $W_0$ of dimensions $m$, $n$, and the pair is $(\mathrm{GL}(V_0), \mathrm{GL}(W_0)) \cong (\mathrm{GL}_m(F), \mathrm{GL}_n(F))$.
+$V_0$, $W_0$ of dimensions $m$, $n$, the groups $\mathrm{U}(V)$ and $\mathrm{U}(W)$ are identified with $\mathrm{GL}(V_0)$ and
+$\mathrm{GL}(W_0)$ through their actions on the first components, and $\mathbb{W} = (V_0 \otimes_F W_0) \times (V_0^\vee \otimes_F W_0^\vee)$,
+with $\mathrm{GL}(V_0) \times \mathrm{GL}(W_0)$ acting on $V_0 \otimes_F W_0 = \mathrm{Hom}_F(W_0^\vee, V_0)$ by $T \mapsto g\, T\, {}^t h$ and on the
+second component by the contragredient action. Fix a non-trivial continuous unitary character $\psi$ of $F$.
 
 1. **Splittings.** Let $\chi_V$ and $\chi_W$ be unitary characters of $E^\times$ with
    $\chi_V|_{F^\times} = \varepsilon_{E/F}^{m}$ and $\chi_W|_{F^\times} = \varepsilon_{E/F}^{n}$ (splitting characters).
@@ -30,8 +33,12 @@ $V_0$, $W_0$ of dimensions $m$, $n$, and the pair is $(\mathrm{GL}(V_0), \mathrm
    If $\mu$ is a character of $E^\times$ trivial on $F^\times$, replacing $\chi_V$ by $\mu\chi_V$
    multiplies $\tilde\iota_{V, \chi_V}$ by $\mu' \circ \det$, where $\mu'(x / \bar x) = \mu(x)$ (by Hilbert's theorem
    90, $x \mapsto x/\bar x$ maps $E^\times$ onto the norm-one elements). If $E = F \times F$, the Weil
-   representation is, up to twists by characters of $\det$, the natural action of
-   $\mathrm{GL}(V_0) \times \mathrm{GL}(W_0)$ on the Schwartz–Bruhat functions on $\mathrm{Hom}_F(W_0, V_0)$.
+   representation is realized on the Schwartz–Bruhat functions on the Lagrangian $V_0 \otimes_F W_0 = \mathrm{Hom}_F(W_0^\vee, V_0)$,
+   where, up to twists by characters of $\det$, $(g, h)$ acts by $\varphi(T) \mapsto \varphi(g^{-1}\, T\, {}^t h^{-1})$ (on $m \times n$
+   matrices, in bases); the matrix model $\varphi(x) \mapsto \varphi(g^{-1} x\, h')$ of Mínguez
+   is obtained by identifying $\mathrm{GL}(W_0)$ with $\mathrm{GL}_n(F)$ through the contragredient, $h' = {}^t h^{-1}$. (The model on
+   $\mathrm{Hom}_F(W_0, V_0)$ with $T \mapsto g T h^{-1}$ would be wrong: the element $(a, a^{-1})$, $a \in F^\times$, acts trivially on
+   $\mathbb{W}$ but would dilate $\mathrm{Hom}_F(W_0, V_0)$ by $a^2$.)
 2. **Siegel parabolic.** If $n = 2k$ and $W$ is split, with $W = Y \oplus Y^*$ for maximal isotropic
    subspaces of dimension $k$, and $\chi_W$ is trivial (allowed, since $\varepsilon_{E/F}^{2k} = 1$),
    then $\omega_{\psi, \chi}$ is realized on $\mathcal{S}(Y^* \otimes_E V)$ with $h \in \mathrm{U}(V)$
@@ -55,14 +62,17 @@ Hermitian space of dimension $m \ge 1$ over $E$, and fix
 $\chi_U, \chi_V$ of $\mathbb{A}_E^\times / E^\times$ with $\chi_U|_{\mathbb{A}_F^\times} = \chi_E^{n}$ and
 $\chi_V|_{\mathbb{A}_F^\times} = \chi_E^{m}$.
 
-3. **Global Weil representation.** For almost all places the local splittings attached to
-   $(\psi_v, \chi_{U,v}, \chi_{V,v})$ fix the characteristic function of a self-dual lattice, and the
-   restricted tensor product of the local Weil representations, at all places including the split ones, is a
-   representation $\omega_{\psi, \chi_U, \chi_V}$ of $\mathrm{U}(U)(\mathbb{A}_F) \times \mathrm{U}(V)(\mathbb{A}_F)$ on
-   $\mathcal{S}(X)(\mathbb{A})$ for an $F$-rational polarization $\mathrm{Res}_{E/F}(U \otimes_E V) = X \oplus Y$. It
-   factors through the $\mathbb{C}^1$-extension of the
-   [global metaplectic group](global-weil-representation-and-theta-functions.md), compatibly with its
-   splitting over the rational points, with automorphic realization
+3. **Global Weil representation.** For an $F$-rational polarization $\mathrm{Res}_{E/F}(U \otimes_E V) = X \oplus Y$ and
+   almost all places $v$ (those where $E$, $\psi_v$, $\chi_{U,v}$ and $\chi_{V,v}$ are unramified and $U$, $V$ have
+   self-dual lattices $L_U$, $L_V$ at $v$), the images under the local splittings of the hyperspecial subgroups
+   $K_{U,v}$ and $K_{V,v}$ stabilizing $L_U$ and $L_V$ fix the characteristic function $\varphi_v^\circ$ of the lattice
+   $(L_U \otimes L_V) \cap X(F_v)$ (the whole local groups do not: an element of a Levi factor with a uniformizer
+   entry carries it to a multiple of the characteristic function of another lattice). The restricted tensor
+   product of the local Weil representations with respect to the $\varphi_v^\circ$, at all places including the split
+   ones, is a representation $\omega_{\psi, \chi_U, \chi_V}$ of $\mathrm{U}(U)(\mathbb{A}_F) \times \mathrm{U}(V)(\mathbb{A}_F)$ on
+   $\mathcal{S}(X)(\mathbb{A})$: the pullback of the Weil representation of the $\mathbb{C}^1$-extension of the
+   [global metaplectic group](global-weil-representation-and-theta-functions.md) along the product of the local
+   splittings, which agrees on the rational points with its splitting over $\mathrm{Sp}(F)$, with automorphic realization
    $\theta(\varphi)(g, h) = \sum_{x \in X(F)} \omega_{\psi, \chi_U, \chi_V}(g, h)\varphi(x)$. For a split
    skew-Hermitian space $W_n = Y_n \oplus Y_n^*$ of dimension $2n$ in place of $U$, the Weil representation
    of $\mathrm{U}(W_n)(\mathbb{A}_F) \times \mathrm{U}(V)(\mathbb{A}_F)$ attached to $(\psi, \chi_V)$ is realized on
@@ -99,8 +109,15 @@ $\chi_V|_{\mathbb{A}_F^\times} = \chi_E^{m}$.
   1): §2.2 (étale quadratic algebras, the symplectic form $\mathrm{Tr}(\langle -, - \rangle_V \otimes \langle -, - \rangle_W)$ and
   the dual pair), §2.5 (Kudla's splittings by splitting characters, change of characters through
   $E^1 \to E^\times/F^\times$), §2.13 (the split case: $\mathrm{GL}_m \times \mathrm{GL}_n$ acting, up to twists by
-  characters, on $\mathcal{S}(\mathrm{M}_{m \times n}(F))$, after A. Mínguez). Gan's form has no factor $\tfrac12$,
-  which rescales $\psi$.
+  characters, on $\mathcal{S}(\mathrm{M}_{m \times n}(F))$, after A. Mínguez), §§3.2–3.3 (the global Weil representation
+  as a restricted tensor product with respect to the vectors fixed by the hyperspecial subgroups). Gan's form
+  has no factor $\tfrac12$: his character $\psi_{\mathrm{Gan}}$ corresponds to $t \mapsto \psi(t/2)$ here.
+- A. Mínguez, "Correspondance de Howe explicite : paires duales de type II", Ann. Sci. Éc. Norm. Supér. (4)
+  41 (2008), 717–741: §§1.1–1.2 and (1.4) with its footnote (the matrix model of the type II pair and its
+  conventions).
+- Y. Liu, "Theta correspondence for almost unramified representations of unitary groups",
+  arXiv:2105.14223 (version 1): Definition 3.1 and Lemma 3.2 (the characteristic function of the self-dual
+  lattice is fixed by the hyperspecial subgroups).
 - M. Harris, S. S. Kudla and W. J. Sweet, "Theta dichotomy for unitary groups", J. Amer. Math. Soc. 9
   (1996), 941–1004, <https://doi.org/10.1090/S0894-0347-96-00198-1>: introduction, (0.1)–(0.3)
   (the symplectic form, for non-archimedean $F$, and the splittings), §1, (1.4)–(1.8) (the splitting $\tilde\iota_{V, \chi_V}$

@@ -41,8 +41,9 @@ $X(\mathcal{O}_v)$ for a fixed $\mathcal{O}_F$-structure.
 Weil deduces the invariance in item 3, in the $\mathbb{C}^1$-extension (his Théorème 6), from a generalized
 Poisson formula (his Théorème 4 of Chapter I), which reduces to the Poisson summation formula over
 $X(F) \subset X(\mathbb{A})$ for the Weyl element exchanging $X$ and $Y$; he proves separately (§45) that the
-rational lift lies in the twofold cover, from the product formula for the local Weil indices, which is
-equivalent to quadratic reciprocity.
+rational lift lies in the twofold cover, from the product formula for the local Weil indices of rational
+quadratic forms (his §30, Proposition 5), from which Hilbert reciprocity follows and which Weil describes as
+formally stronger than it.
 
 ## Depends on
 
@@ -52,8 +53,9 @@ equivalent to quadratic reciprocity.
 ## Proof depends on
 
 - [Metaplectic group and the local Weil representation](metaplectic-group-and-local-weil-representation.md), for the local splittings over the stabilizers of maximal isotropic subspaces and the local formulas of the Schrödinger models
-- [Poisson summation formula for adeles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-poisson-summation.md), for the invariance of the theta distribution under the Weyl element, which acts by a Fourier transform; for vector-valued test functions it is applied coordinatewise on tensors and extended by continuity
-- [Explicit formulas for the Weil representation](explicit-formulas-for-the-weil-representation.md), for the local Weil indices and their product formula, through which the rational lift lies in the twofold cover (item 2), and for the global compatibility of the splittings of dual pairs used in item 4
+- [Poisson summation formula for adeles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-poisson-summation.md), for the invariance of the theta distribution under the Weyl element, which acts by a Fourier transform: the formula, stated for the standard character $\psi_{\mathrm{std}}$ and scalar functions on $\mathbb{A}$, is applied coordinatewise to Schwartz functions on the vector space $X(\mathbb{A})$, on finite sums of products and then by continuity; for $\psi(x) = \psi_{\mathrm{std}}(ax)$ with $a \in F^\times$ the self-dual measure is unchanged since $\prod_v \lvert a \rvert_v = 1$, and the dual lattice $F$ is replaced by $a^{-1}F = F$
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the description of every non-trivial character of $\mathbb{A}/F$ as $x \mapsto \psi_{\mathrm{std}}(ax)$ with $a \in F^\times$
+- [Explicit formulas for the Weil representation](explicit-formulas-for-the-weil-representation.md), for the local Weil indices and the product formula for the Weil indices of rational quadratic forms (Weil, §30, Proposition 5), through which the rational lift lies in the twofold cover (item 2), and for the global compatibility of the splittings of unitary dual pairs used in item 4 for those pairs
 
 ## Sources
 

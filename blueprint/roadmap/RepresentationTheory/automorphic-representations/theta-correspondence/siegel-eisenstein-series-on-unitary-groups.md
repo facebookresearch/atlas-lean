@@ -45,7 +45,7 @@ a product of Hecke $L$-functions.
 
 ## Proof depends on
 
-- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the convergence of Eisenstein series in a cone, their meromorphic continuation, their constant terms along the Siegel parabolic subgroup and the fact that their values are automorphic forms (item 1)
+- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the convergence of Eisenstein series in a cone, their meromorphic continuation and their constant terms along the Siegel parabolic subgroup (item 1); the inducing data $\chi \circ \det$ on $\mathrm{GL}_n$, $n > 1$, are not cuspidal, so the automorphy of the values away from the poles is taken from the specific statements of Yamana and of Gan–Qiu–Takeda for Siegel Eisenstein series, not from the automorphy clause for cuspidal data
 - [Fourier coefficients and poles of Siegel Eisenstein series](fourier-coefficients-and-poles-of-siegel-eisenstein-series.md), for the normalized intertwining operators, the non-singular Fourier coefficients, the induction on the rank through the line parabolic subgroup and the functional equation, through which Kudla–Rallis and Tan bound the poles (item 2)
 - [Meromorphic continuation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for the Hecke $L$-functions that normalize the intertwining operators and the series
 - [Jacquet modules of the Weil representation and degenerate principal series](jacquet-modules-of-the-weil-representation.md), for the structure of the local degenerate principal series $I_n(s, \chi_v)$ used to exclude singular leading coefficients
@@ -57,8 +57,8 @@ a product of Hecke $L$-functions.
   $\operatorname{Re} s > \delta n / 2$ and meromorphic continuation, for holomorphic sections), and the notation
   section (the realization of $I(s, \chi)$ by the functions with
   $f(m(a)n(b)g) = \chi(\nu(a))\alpha_E(\nu(a))^{s + n'/2} f(g)$), in the case $D = E$. Yamana's Theorem 1, which
-  states the pole list for $\operatorname{Re} s > -\tfrac12$ for the series as written, is not used: it is Tan's theorem
-  for the normalized series.
+  states a pole list for $\operatorname{Re} s > -\tfrac12$ for the series as written, is not used; Tan's theorem, which Yamana
+  cites for it, concerns the normalized series and does not prove that statement word for word.
 - M. P. Young, "Explicit calculations with Eisenstein series", arXiv:1710.03624 (version 2): §4.1 and
   Proposition 4.1 (the constant term of the classical Eisenstein series and its normalization), for the
   example above.

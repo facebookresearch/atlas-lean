@@ -6,26 +6,34 @@ extension, $U$ a skew-Hermitian space of dimension $n \ge 1$ over $E$, $W_n = U 
 $\iota \colon \mathrm{U}(U) \times \mathrm{U}(U) \to \mathrm{U}(W_n)$ the natural map, $\chi$ a Hecke character of
 $\mathbb{A}_E^\times / E^\times$ with $\chi(\bar x) = \chi(x)^{-1}$, and $\pi$ a cuspidal automorphic representation of
 $\mathrm{U}(U)(\mathbb{A})$, with the Petersson pairing linear in its first variable. Fix the ordering of the two
-places of $E$ above each split place of $F$, Tamagawa measures, and local pairings and measures whose products
-are the global ones.
+places of $E$ above each split place of $F$, a non-trivial character $\psi = \otimes_v \psi_v$ of $\mathbb{A}_F/F$ (extended to $E_v$
+through the trace), Tamagawa measures, and local pairings and measures whose products are the global ones.
 
 - **Global zeta integral.** For a holomorphic section $\Phi$ of $I_n(s, \chi)$ and $f_1, f_2 \in \pi$,
   $Z(s, \Phi, f_1, f_2) = \int_{[\mathrm{U}(U)] \times [\mathrm{U}(U)]} E(s, \Phi)(\iota(g_1, g_2))\, \overline{f_1(g_1)}\, f_2(g_2)\, \chi^{-1}(\det g_2)\, dg_1\, dg_2$,
   with the [Siegel Eisenstein series](siegel-eisenstein-series-on-unitary-groups.md) $E(s, \Phi)$; it
-  converges where the series does and extends to a meromorphic function of $s$.
+  converges absolutely in the half-plane of absolute convergence of the series and extends to a meromorphic
+  function of $s$.
 - **Basic identity and Euler product.** For $\operatorname{Re} s$ large, the double cosets
   $Q(F) \backslash \mathrm{U}(W_n)(F) / \iota(\mathrm{U}(U) \times \mathrm{U}(U))(F)$ contribute only through the open orbit, the
   others vanishing by cuspidality, and the integral unfolds to
   $\int_{\mathrm{U}(U)(\mathbb{A})} \Phi_s(\iota(g, 1))\, \overline{\langle \pi(g) f_1, f_2 \rangle}\, dg$. For factorizable data this is
   the product of the local integrals
   $Z_v(s, \Phi_v, f_{1,v}, f_{2,v}) = \int_{\mathrm{U}(U)(F_v)} \Phi_v(\iota(g_v, 1))\, \overline{\langle \pi_v(g_v) f_{1,v}, f_{2,v} \rangle}\, dg_v$,
-  whose integrand is a matrix coefficient of the contragredient $\pi_v^\vee$.
+  in which the coefficient $\overline{\langle \pi_v(g_v) f_{1,v}, f_{2,v} \rangle}$ is a matrix coefficient of the contragredient $\pi_v^\vee$.
+  Accordingly, at every place (finite, archimedean, ramified or not) this page writes
+  $L(s, \pi_v \times \chi_v) := L_{\mathrm{LR}}(s, \pi_v^\vee \times \chi_v)$, and similarly for the normalized $\gamma$- and $\varepsilon$-factors with
+  respect to $\psi_v$, where $L_{\mathrm{LR}}$, $\gamma_{\mathrm{LR}}$, $\varepsilon_{\mathrm{LR}}$ are the factors of Lapid and Rallis in the convention of the
+  ordinary coefficient $\langle \pi_v(g) f_{1,v}, f_{2,v} \rangle$ (that of Yamana and of Harris–Kudla–Sweet); these are the factors used in
+  $Z_v^*$, $Z^*$ and the global product below.
 - **Local theory.** At a finite place, for good sections, the local integrals are rational in $q_v^{-s}$
   and span a fractional ideal of $\mathbb{C}[q_v^{s}, q_v^{-s}]$; the local factors $L(s, \pi_v \times \chi_v)$ and
-  $\varepsilon(s, \pi_v \times \chi_v, \psi_v)$ of Lapid and Rallis are defined from the normalized $\gamma$-factor of the
-  local functional equation, and Yamana's theorem identifies $L(s + \tfrac12, \cdot)$ with the generator of
-  that ideal. The normalized integrals $Z_v^* = Z_v / L(s + \tfrac12, \cdot)$ are entire, and for each $s_1$ with
-  $\operatorname{Re} s_1 \ge 0$ there are a standard section and vectors with $Z_v^*(s_1) \ne 0$.
+  $\varepsilon(s, \pi_v \times \chi_v, \psi_v)$ (in the convention just fixed) are defined from the normalized $\gamma$-factor of the
+  local functional equation, and Yamana's theorem identifies $L(s + \tfrac12, \pi_v \times \chi_v)$ with the generator of
+  that ideal. At an archimedean place the factors are those of Lapid and Rallis, defined through the
+  Langlands parameter, in the same convention. The normalized integrals
+  $Z_v^* = Z_v / L(s + \tfrac12, \pi_v \times \chi_v)$ are entire, and for each $s_1$ with $\operatorname{Re} s_1 \ge 0$ there are a standard
+  section and vectors with $Z_v^*(s_1) \ne 0$.
 - **Unramified computation and orientation.** At a finite place where all data are unramified, with
   $\mathrm{vol}(K_v) = 1$, the normalized spherical section ($\Phi^\circ_v(1) = 1$) and spherical vectors with
   $\langle f_{1,v}, f_{2,v} \rangle = 1$: $Z_v = L_v / d_v(s, \chi_v)$ with
