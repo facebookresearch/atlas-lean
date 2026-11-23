@@ -9939,6 +9939,7 @@
   "MathlibExt/Combinatorics/Enumerative/BellTuranIdentity": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Log-convexity of Bell numbers"},
   "MathlibExt/Combinatorics/Enumerative/BinaryMatrixRotationOrbitCount": {"to": "Combinatorics/designs-latin-squares", "title": "Binary matrices up to rotation"},
   "MathlibExt/Combinatorics/Enumerative/BinomialDoubleSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Binomial sums with Fibonacci evaluations"},
+  "MathlibExt/Combinatorics/Enumerative/BinomialInversion": {"to": "Combinatorics/stirling-bell-eulerian/bernoulli-euler-genocchi", "title": "Carlitz q-Bernoulli polynomials"},
   "MathlibExt/Combinatorics/Enumerative/BinomialTMotzkinPaths": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Binomial Motzkin paths"},
   "MathlibExt/Combinatorics/Enumerative/BinomialTransformExponentialGeneratingFunction": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Binomial transforms"},
   "MathlibExt/Combinatorics/Enumerative/BrentOsbornBinomialAbsoluteMoment": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Binomial sums involving absolute values"},
