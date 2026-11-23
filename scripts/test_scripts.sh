@@ -293,13 +293,23 @@ cat >"$FAKE_BIN/lake" <<'SH'
 printf '%s\n' "$*" >>"$FAKE_LAKE_LOG"
 if [[ "${1:-}" == "env" && "${2:-}" == "lean" ]]; then
   cp "${@: -1}" "$FAKE_LEAN_INPUT"
+elif [[ "${1:-}" == "env" && $# -gt 1 ]]; then
+  # Any other command runs in the workspace environment, whose Lean is the fake one.
+  shift
+  LEAN="$FAKE_BIN/fake-lean" exec "$@"
 fi
 printf '%s\n' "${FAKE_LAKE_OUTPUT:-Build completed successfully.}"
 exit "${FAKE_LAKE_STATUS:-0}"
 SH
-chmod +x "$FAKE_BIN/lake"
+cat >"$FAKE_BIN/fake-lean" <<'SH'
+#!/usr/bin/env bash
+printf 'lean %s\n' "$*" >>"$FAKE_LAKE_LOG"
+cp "${@: -1}" "$FAKE_LEAN_INPUT"
+exit "${FAKE_LAKE_STATUS:-0}"
+SH
+chmod +x "$FAKE_BIN/lake" "$FAKE_BIN/fake-lean"
 FAKE_LEAN_INPUT="$TMP_ROOT/lean-input.lean"
-export FAKE_LAKE_LOG FAKE_LEAN_INPUT
+export FAKE_BIN FAKE_LAKE_LOG FAKE_LEAN_INPUT
 
 if ! PATH="$FAKE_BIN:$PATH" "$REPO_ROOT/scripts/check_diagnostics.sh" \
   >"$TMP_ROOT/output.log" 2>&1; then
