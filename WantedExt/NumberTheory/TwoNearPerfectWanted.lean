@@ -24,6 +24,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.TwoNearPerfectEquationSeven
 public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
 
 namespace MetaMathlibExt
@@ -91,17 +92,6 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 public theorem_wanted dvd_of_two_near_perfect_eq_six {b k p : ℕ} (hp : Odd p)
     (h : ((2 : ℤ) ^ (k + 1) - 1) * (p ^ 2 + p + 1) = 2 ^ (k + 1) * p ^ 2 + 2 ^ b * p + 1) :
     (p : ℤ) ∣ 2 ^ k - 1 ∧ (p + 1 : ℤ) ∣ 2 ^ b - 2
-
-/-- **No odd solutions of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p + 1$ for
-$2 \le b \le k - 1$.** Let $b$ and $k$ be natural numbers with $2 \le b$ and $b + 1 \le k$, and
-let $p$ be an odd natural number. Then $(2^{k+1} - 1)(p^2 + p + 1) \ne 2^{k+1} p^2 + 2^b p + 1$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 4
-(`integers-2024-A61-lem-4`). -/
-public theorem_wanted not_two_near_perfect_eq_seven {b k p : ℕ} (hp : Odd p) (hb : 2 ≤ b)
-    (hbk : b + 1 ≤ k) :
-    ((2 : ℤ) ^ (k + 1) - 1) * (p ^ 2 + p + 1) ≠ 2 ^ (k + 1) * p ^ 2 + 2 ^ b * p + 1
 
 /-- **Sum and parity of the omitted divisors of a $2$-near perfect $2^k p^2$.** Let $p$ be an odd
 prime, let $k$ be a natural number, and let $d_1 \ne d_2$ be divisors of $n = 2^k p^2$ with

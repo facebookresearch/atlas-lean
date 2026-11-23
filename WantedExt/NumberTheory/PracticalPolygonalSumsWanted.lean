@@ -76,18 +76,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 5
 public theorem_wanted sq_sub_one_div_eight_eq_triangular (x : ℕ) (hx : Odd x) :
     ∃ k : ℕ, (x ^ 2 - 1) / 8 = Nat.polygonalNumber 3 k
 
-/-- **Sums of two polygonal numbers modulo an odd prime.** For a natural number $s > 3$ and a
-natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For
-every odd prime $p$ and every natural number $n > 0$ there are natural numbers $x, y > 0$ with
-$P_s(x) + P_s(y) \equiv n \pmod{p}$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 6
-(arXiv Lemma 4.1; `jis-2024-24.5.1-lem-6`). -/
-public theorem_wanted exists_polygonal_add_polygonal_modEq_prime (p n s : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) (hn : 0 < n) (hs : 3 < s) :
-    ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ Nat.polygonalNumber s x + Nat.polygonalNumber s y ≡ n [MOD p]
-
 /-- **Parity of sums of two polygonal numbers.** For a natural number $s > 3$ and a natural
 number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For every
 natural number $n > 0$ there are natural numbers $x, y > 0$ such that
