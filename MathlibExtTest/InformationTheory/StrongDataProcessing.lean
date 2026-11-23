@@ -19,11 +19,14 @@ public import MathlibExt.InformationTheory.StrongDataProcessing
   for point-mass inputs at divergence `∞` (the right-hand side is `0 · ∞ = 0`).
 * Since `η_TV ≤ 1`, the inequality implies the data-processing inequality for KL divergence.
 * The identity kernel on `Bool` has coefficient `1`, and the inequality is an equality for it.
+* The binary symmetric channel with crossover probability `p` has coefficient `|1 - 2p|`; for
+  `p = 1/4` the inequality contracts the divergence by the factor `1/2`.
 * Along a composition of two kernels, the coefficients multiply.
 -/
 
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.TotalVariationDistance MathlibExt.InformationTheory.DobrushinContraction
+open MathlibExt.InformationTheory.MeasurePinsker
 open MathlibExt.InformationTheory.StrongDataProcessingWanted
 
 namespace MathlibExtTest.InformationTheory.StrongDataProcessing
@@ -71,6 +74,72 @@ example (μ ν : Measure Bool) [IsProbabilityMeasure μ] [IsProbabilityMeasure �
     have h := totalVariationDist_le_dobrushinCoeff (Kernel.id : Kernel Bool Bool) true false
     simpa [Kernel.id_apply, totalVariationDist_dirac] using h
   rw [h1, ENNReal.ofReal_one, one_mul, Measure.id_comp, Measure.id_comp]
+
+/-- The binary symmetric channel with crossover probability `p ∈ [0, 1]`: it keeps the input bit
+with probability `1 - p` and flips it with probability `p`. -/
+private noncomputable def bsc (p : unitInterval) : Kernel Bool Bool where
+  toFun b := ENNReal.ofReal (1 - p) • Measure.dirac b + ENNReal.ofReal p • Measure.dirac (!b)
+  measurable' := measurable_of_countable _
+
+private instance (p : unitInterval) : IsMarkovKernel (bsc p) :=
+  ⟨fun b => ⟨by simp [bsc, ← ENNReal.ofReal_add (sub_nonneg.2 p.2.2) p.2.1]⟩⟩
+
+/-- The mass that `bsc p` gives to a set `s` from the input `b`. -/
+private lemma bsc_apply_toReal (p : unitInterval) (b : Bool) (s : Set Bool) :
+    (bsc p b s).toReal = (1 - p) * s.indicator 1 b + p * s.indicator 1 (!b) := by
+  have h0 : (0 : ℝ) ≤ 1 - p := sub_nonneg.2 p.2.2
+  by_cases h1 : b ∈ s <;> by_cases h2 : (!b) ∈ s <;>
+    simp [bsc, h1, h2, ← ENNReal.ofReal_add h0 p.2.1, ENNReal.toReal_ofReal h0, p.2.1]
+
+/-- The two rows of `bsc p` are at total variation `|1 - 2p|`, attained on the event `{true}`. -/
+private lemma totalVariationDist_bsc (p : unitInterval) :
+    totalVariationDist (bsc p true) (bsc p false) = |1 - 2 * (p : ℝ)| := by
+  refine le_antisymm (ciSup_le fun s => ?_) ?_
+  · change |(bsc p true s.1).toReal - (bsc p false s.1).toReal| ≤ _
+    rw [bsc_apply_toReal, bsc_apply_toReal]
+    by_cases h1 : true ∈ s.1 <;> by_cases h2 : false ∈ s.1 <;> simp [h1, h2]
+    · exact le_of_eq (by ring_nf)
+    · rw [abs_sub_comm]
+      exact le_of_eq (by ring_nf)
+  · have h := abs_sub_le_totalVariationDist (μ := bsc p true) (ν := bsc p false)
+      (measurableSet_singleton true)
+    rw [measureReal_def, measureReal_def, bsc_apply_toReal, bsc_apply_toReal] at h
+    convert h using 2
+    simp
+    ring
+
+/-- The Dobrushin coefficient of `bsc p` is `|1 - 2p|`. -/
+private lemma dobrushinCoeff_bsc (p : unitInterval) :
+    dobrushinCoeff (bsc p) = |1 - 2 * (p : ℝ)| := by
+  refine le_antisymm (Real.iSup_le (fun x => Real.iSup_le (fun x' => ?_) (abs_nonneg _))
+    (abs_nonneg _)) (totalVariationDist_bsc p ▸ totalVariationDist_le_dobrushinCoeff _ true false)
+  cases x <;> cases x'
+  · rw [totalVariationDist_self]
+    exact abs_nonneg _
+  · rw [totalVariationDist_comm, totalVariationDist_bsc]
+  · rw [totalVariationDist_bsc]
+  · rw [totalVariationDist_self]
+    exact abs_nonneg _
+
+/-- The binary symmetric channel contracts KL divergence by the factor `|1 - 2p|`. -/
+example (p : unitInterval) (μ ν : Measure Bool) [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] :
+    _root_.InformationTheory.klDiv (bsc p ∘ₘ μ) (bsc p ∘ₘ ν) ≤
+      ENNReal.ofReal |1 - 2 * (p : ℝ)| * _root_.InformationTheory.klDiv μ ν :=
+  dobrushinCoeff_bsc p ▸ klDiv_comp_le_dobrushinCoeff_mul (bsc p) μ ν
+
+/-- With crossover probability `1/4` the coefficient is `1/2`, strictly between `0` and `1`. -/
+example : dobrushinCoeff (bsc ⟨1 / 4, by norm_num, by norm_num⟩) = 1 / 2 := by
+  rw [dobrushinCoeff_bsc]
+  norm_num
+
+/-- So this channel halves the KL divergence of any two input laws, at least. -/
+example (μ ν : Measure Bool) [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] :
+    _root_.InformationTheory.klDiv (bsc ⟨1 / 4, by norm_num, by norm_num⟩ ∘ₘ μ)
+        (bsc ⟨1 / 4, by norm_num, by norm_num⟩ ∘ₘ ν) ≤
+      ENNReal.ofReal (1 / 2) * _root_.InformationTheory.klDiv μ ν := by
+  have h := klDiv_comp_le_dobrushinCoeff_mul (bsc ⟨1 / 4, by norm_num, by norm_num⟩) μ ν
+  rwa [dobrushinCoeff_bsc, show |1 - 2 * (1 / 4 : ℝ)| = 1 / 2 by norm_num] at h
 
 /-- Along a composition `κ₂ ∘ κ₁` of Markov kernels between finite alphabets, the divergence
 contracts by the product `η_TV(κ₂) η_TV(κ₁)`. -/

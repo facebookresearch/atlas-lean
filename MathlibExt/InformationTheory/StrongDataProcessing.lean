@@ -28,8 +28,11 @@ unless `η_TV(κ) = 0`; in that case all rows of `κ` coincide and the left-hand
 
 ## Proof outline
 
-The proof follows the route through hockey-stick divergences of Cohen, Kemperman and Zbăganu,
-as outlined by Polyanskiy and Wu.
+The proof follows the route through hockey-stick divergences of Cohen, Iwasa, Rautu, Ruskai,
+Seneta and Zbăganu. They prove the inequality for strictly positive probability vectors and
+row-allowable stochastic matrices (their Theorem 3.1) by reducing a convex function to affine
+functions and the functions `|x - c|` (their Lemma 3.3). Polyanskiy and Wu sketch the same route
+for their Theorem 33.6(a). The statement here allows zero probabilities and any Markov kernel.
 
 1. *Integral representation.* Taylor's formula with integral remainder for
    `klFun t = t log t + 1 - t`, whose second derivative is `1 / t` and which vanishes with its
@@ -51,11 +54,19 @@ as outlined by Polyanskiy and Wu.
 * `klDiv_comp_le_dobrushinCoeff_mul`: `D(κ ∘ₘ μ ‖ κ ∘ₘ ν) ≤ η_TV(κ) · D(μ ‖ ν)` for a Markov
   kernel `κ` between finite alphabets with measurable singletons.
 
+## Implementation notes
+
+The theorem keeps the full name it had in the former wanted module, so its namespace still reads
+`StrongDataProcessingWanted`.
+
 ## References
 
 * Y. Polyanskiy and Y. Wu, *Information Theory: From Coding to Learning*, Cambridge University
-  Press, 2025, Theorem 33.6(a) (`η_f ≤ η_TV` for every `f`, proved through the `E_γ`
-  divergences).
+  Press, 2025, Theorem 33.6(a) (`η_f ≤ η_TV` for every `f`; its proof sketch goes through the
+  `E_γ` divergences).
+* J. E. Cohen, Y. Iwasa, G. Rautu, M. B. Ruskai, E. Seneta and G. Zbăganu, Relative entropy under
+  mappings by stochastic matrices, *Linear Algebra Appl.* 179 (1993), 211-235, Theorem 3.1 and
+  Lemma 3.3.
 * J. E. Cohen, J. H. B. Kemperman and G. Zbăganu, *Comparisons of Stochastic Matrices with
   Applications in Information Theory, Statistics, Economics and Population Sciences*,
   Birkhäuser, 1998.
