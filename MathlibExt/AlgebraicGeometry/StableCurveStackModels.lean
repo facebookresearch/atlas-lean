@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies
-public import MathlibExt.AlgebraicGeometry.StackChowGroups
+public import MathlibExt.AlgebraicGeometry.StackCycleRelations
 
 /-!
 # Actual stable marked-curve stack models
@@ -37,7 +37,7 @@ namespace MathlibExt.AlgebraicGeometry.StableCurveStackModels
 
 open CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace
 open _root_.AlgebraicGeometry
-open StackCycleGeometry StackCycleRelations StackFibreModels
+open StackCycleGeometry StackCycleRelations
 open MarkedCurveStabilization
 
 variable {k : Type} [Field k]

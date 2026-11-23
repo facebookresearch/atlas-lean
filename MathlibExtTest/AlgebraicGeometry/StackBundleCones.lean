@@ -104,13 +104,18 @@ variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B]
   {P : Algebra.Extension.{0} A B}
 
 /-- Scaling by `2` doubles every degree-one coordinate: a point with value `1` is sent to a point
-with value `2`, never to the quadratic value `4`. -/
+with value `2`, so the quadratic value `4` is rejected. -/
 example [Algebra B ℚ] (a b : IntrinsicConePoint P ℚ) (h : IsScaledConePoint P (2 : ℚ) a b)
     (x : P.ker) (hx : a.map (MathlibExt.AlgebraicGeometry.AffineConeAtlas.normalDegreeOne P x) = 1) :
-    b.map (MathlibExt.AlgebraicGeometry.AffineConeAtlas.normalDegreeOne P x) = 2 := by
-  rw [h x, hx, mul_one]
+    b.map (MathlibExt.AlgebraicGeometry.AffineConeAtlas.normalDegreeOne P x) ≠ 4 := by
+  rw [h x, hx]; norm_num
 
-example : (2 : ℚ) ≠ 4 := by norm_num
+/-- A nonzero constant translation is not the identity scaling. -/
+example {D : Type} [CommRing D] [Algebra B D] (a b : IntrinsicConePoint P D)
+    (h : IsScaledConePoint P (1 : D) a b) (x : P.ker) (c : D) (hc : c ≠ 0) :
+    b.map (MathlibExt.AlgebraicGeometry.AffineConeAtlas.normalDegreeOne P x) ≠
+      a.map (MathlibExt.AlgebraicGeometry.AffineConeAtlas.normalDegreeOne P x) + c := by
+  rw [h x, one_mul]; intro hb; exact hc (by simpa using hb)
 
 /-- A zero cone point takes no nonzero value on degree-one coordinates (so a nonzero constant
 translation of the zero point is not a zero point). -/
@@ -123,24 +128,67 @@ end ConicalValues
 
 section ConeArrows
 
-variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B]
-  (P : Algebra.Extension.{0} A B) (D : IntrinsicConeDiagram P)
+open MathlibExt.AlgebraicGeometry.AffineConeAtlas
 
-/-- A scaled arrow fixes its source coefficient: the target scalar `s` is sent to the source
-scalar `r` by the arrow's coefficient map (in this direction), and the arrow tangents scale by
-`r` in the source coefficient algebra. -/
-example {R T : CommAlgCat.{0} B} (r : R) (s : T) {a a' : IntrinsicConePoint P R}
-    {b b' : IntrinsicConePoint P T} (h : coneObject P D R a ⟶ coneObject P D T b)
-    (h' : coneObject P D R a' ⟶ coneObject P D T b') (H : IsScaledConeArrow P D r s h h') :
-    h.unop.base.hom s = r ∧ ∀ x, (show R from coneArrowTangent P D h' x) =
-      r * (show R from coneArrowTangent P D h x) :=
-  ⟨H.2.1, H.2.2⟩
+variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B] (P : Algebra.Extension.{0} A B)
 
-/-- Both arrows of a scaled pair have the same coefficient map. -/
-example {R T : CommAlgCat.{0} B} (r : R) (s : T) {a a' : IntrinsicConePoint P R}
-    {b b' : IntrinsicConePoint P T} (h : coneObject P D R a ⟶ coneObject P D T b)
-    (h' : coneObject P D R a' ⟶ coneObject P D T b') (H : IsScaledConeArrow P D r s h h') :
-    h'.unop.base = h.unop.base := H.1
+/-- The canonical cone diagram: coefficient change by postcomposition. -/
+def canonicalConeDiagram : IntrinsicConeDiagram P where
+  functor :=
+    { obj C := Cat.of (IntrinsicConePoint P C)
+      map h := (coneCoefficientFunctor P h.hom).toCatHom
+      map_id _ := rfl
+      map_comp _ _ := rfl }
+  object_eq _ := rfl
+  map_eq h := by simp
+
+variable {P}
+
+/-- The coefficient-changing arrow of the canonical diagram with coefficient map `φ : T ⟶ R` and
+tangent `t` (valued in the source coefficients `R`). -/
+def coneArrow {R T : CommAlgCat.{0} B} (φ : T ⟶ R) (a : IntrinsicConePoint P R)
+    (b : IntrinsicConePoint P T) (t : P.CotangentSpace →ₗ[B] R)
+    (ht : ∀ x, a.map (normalCotangent P x) =
+      φ.hom (b.map (normalCotangent P x)) + t (P.cotangentComplex x)) :
+    coneObject P (canonicalConeDiagram P) R a ⟶ coneObject P (canonicalConeDiagram P) T b :=
+  Quiver.Hom.op ⟨φ, ⟨t, ht⟩⟩
+
+/-- The tangent reader returns the arrow's own tangent (not, for example, zero). -/
+example {R T : CommAlgCat.{0} B} (φ : T ⟶ R) (a : IntrinsicConePoint P R)
+    (b : IntrinsicConePoint P T) (t : P.CotangentSpace →ₗ[B] R)
+    (ht : ∀ x, a.map (normalCotangent P x) =
+      φ.hom (b.map (normalCotangent P x)) + t (P.cotangentComplex x)) (v : P.CotangentSpace) :
+    coneArrowTangent P (canonicalConeDiagram P) (coneArrow φ a b t ht) v = t v := rfl
+
+/-- An arrow and its `r`-scaled counterpart (tangent `r • t`, same coefficient map sending `s` to
+`r`) form a scaled pair. -/
+example {R T : CommAlgCat.{0} B} (φ : T ⟶ R) (r : R) (s : T) (hs : φ.hom s = r)
+    (a a' : IntrinsicConePoint P R) (b b' : IntrinsicConePoint P T) (t : P.CotangentSpace →ₗ[B] R)
+    (ht : ∀ x, a.map (normalCotangent P x) =
+      φ.hom (b.map (normalCotangent P x)) + t (P.cotangentComplex x))
+    (ht' : ∀ x, a'.map (normalCotangent P x) =
+      φ.hom (b'.map (normalCotangent P x)) + (r • t) (P.cotangentComplex x)) :
+    IsScaledConeArrow P (canonicalConeDiagram P) r s (coneArrow φ a b t ht)
+      (coneArrow φ a' b' (r • t) ht') :=
+  ⟨rfl, hs, fun _ ↦ rfl⟩
+
+/-- An arrow with a nonzero tangent value is not its own `r`-scaling for `r ≠ 1` over a domain:
+the predicate really reads the tangents. -/
+example {R T : CommAlgCat.{0} B} [IsDomain R] (φ : T ⟶ R) (r : R) (hr : r ≠ 1) (s : T)
+    (a : IntrinsicConePoint P R) (b : IntrinsicConePoint P T) (t : P.CotangentSpace →ₗ[B] R)
+    (ht : ∀ x, a.map (normalCotangent P x) =
+      φ.hom (b.map (normalCotangent P x)) + t (P.cotangentComplex x))
+    (v : P.CotangentSpace) (hv : t v ≠ 0) :
+    ¬ IsScaledConeArrow P (canonicalConeDiagram P) r s (coneArrow φ a b t ht)
+      (coneArrow φ a b t ht) := by
+  rintro ⟨-, -, H⟩
+  have h1 : (1 - r) * t v = 0 := by
+    have := H v
+    change t v = r * t v at this
+    rw [sub_mul, one_mul, ← this, sub_self]
+  rcases mul_eq_zero.mp h1 with h | h
+  · exact hr (sub_eq_zero.mp h).symm
+  · exact hv h
 
 end ConeArrows
 
@@ -149,6 +197,21 @@ section VirtualPullbacks
 open StackChowGroups StackVirtualPullbacks StackCycleGeometry StackCycleRelations
 
 variable {S : Scheme.{0}} {scope : Stack S → Prop}
+
+/-- The relative virtual pullback lands in degree `-1 - rank` from degree `-1`. -/
+example {D : CycleConstructionData S scope} {K : KreschPresentation D} {F G : Stack S}
+    {hF : scope F} {hG : scope G} {f : StackHom F G} {E : VectorBundleStack F}
+    {star : ConditionStar f E} (R : RelativeVirtualPullbackData D K hF hG f E star)
+    (T : TestFamily (scope := scope) f) (a : RationalChowGroup D K T.target T.targetScope (-1)) :
+    RationalChowGroup D K T.square.apex T.sourceScope (-1 - E.virtualRank) :=
+  relativeVirtualPullback R T (-1) a
+
+/-- The refined Gysin map of a Gysin square lands in degree `-1 - c` from degree `-1`. -/
+example {D : CycleConstructionData S scope} {K : KreschPresentation D} {F G : Stack S}
+    {f : StackHom F G} {P Q : TestFamily (scope := scope) f} {p : TestPasting P Q} {c : ℕ}
+    (N : GysinSquareData D K p c) (a : RationalChowGroup D K P.target P.targetScope (-1)) :
+    RationalChowGroup D K Q.target Q.targetScope (-1 - c) :=
+  N.targetMap (-1) a
 
 /-- The relative virtual pullback shifts the signed degree by the virtual rank, also in negative
 degree, and is additive. -/
@@ -181,8 +244,21 @@ example {F G : Stack S} {f : StackHom F G} {P Q : TestFamily (scope := scope) f}
 /-- The total-space map of a bundle-stack pullback is linear: on each affine point it induces an
 equivalence of the quotient groupoids of the two-term presentations. -/
 example {T X : Stack S} {p : StackHom T X} {E : VectorBundleStack X} (P : BundleStackPullback p E)
-    (a : StackAffineModules.AffinePoint T) : ((P.linearMap.linear a).functor).IsEquivalence :=
+    (a : StackAffineModules.AffinePoint T) :
+    ((P.linearMap.diagramMap.linear a).functor).IsEquivalence :=
   P.linearMap.equivalence a
+
+/-- Descent: on every restriction arrow, the comparison cell of a linear diagram map has zero
+translation at a zero object (a shear, whose correction on a base arrow is a nonzero constant even
+at the zero object, is excluded). -/
+example {T X : Stack S} {n m : ℤ} {M : LinearBundleDiagram T n} {N : LinearBundleDiagram X m}
+    {p : StackHom T X} (Φ : LinearDiagramMap M N p) {a b : StackAffineModules.AffinePoint T}
+    (f : a ⟶ b) (q : M.pseudofunctor.obj (.mk (Opposite.op b)))
+    (hq : ((eqToHom (M.objects b)).toFunctor.obj q).value = 0) :
+    ((eqToHom (N.objects ((StackVectorBundles.affineMap p).obj a))).toFunctor.map
+      ((Φ.trans.naturality f.op.toLoc).hom.toNatTrans.app q)).translation = 0 := by
+  obtain ⟨h, hh⟩ := Φ.naturalityLinear f
+  rw [hh q, hq, map_zero]
 
 end VirtualPullbacks
 

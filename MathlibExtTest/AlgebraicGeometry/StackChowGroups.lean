@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.AlgebraicGeometry.StackChowGroups
+import MathlibExt.AlgebraicGeometry.GeometricChowOperators
 
 noncomputable section
 
@@ -82,5 +83,20 @@ example {X : Stack S} {F E : VectorBundle X} (f : BundleMap F E)
       F.overBase.hom.app b ≫ f.overBase.pointInv b ≫
         E.overBase.inv.app ((affineMap f.total).obj b) :=
   f.based b
+
+/-- Two component-transition providers for the same restricted data have the same push, so the
+stage colimit does not depend on the provider. -/
+example {scope : Stack S → Prop} {D : StackCycleRelations.CycleConstructionData S scope}
+    {B : BundleTransitions D} {R : RestrictedBundleSystem D} {I : RestrictedComparison D B R}
+    {P : RestrictedProjectiveSystem D B R} (C C' : ComponentTransitions D B R I P) (Y : Stack S)
+    (A A' : ProjectiveStage (scope := scope) Y) (g : ProjectiveArrow A A') (d : ℤ)
+    (z : BundleChowGroup D B A.source A.inScope d) :
+    C.push Y A A' g d z = C'.push Y A A' g d z := by
+  rw [C.push_eq_of_iota C' Y A A' g d]
+
+/-- The flat pullback of Chow groups is only available for flat maps of pure relative dimension. -/
+example (X Y : MathlibExt.AlgebraicGeometry.GeometricChow.ComplexScheme) [IsNoetherian X.left] [IsNoetherian Y.left]
+    (f : Y ⟶ X) (r : ℕ) (D : MathlibExt.AlgebraicGeometry.GeometricChowOperators.FlatCycleDescent
+      X Y f r) : Flat f.left := D.flat
 
 end StackChowGroupsTest

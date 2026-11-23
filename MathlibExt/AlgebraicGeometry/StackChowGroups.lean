@@ -306,10 +306,26 @@ structure ComponentTransitions (D : CycleConstructionData S scope) (B : BundleTr
     (β : RestrictedBundleChowGroup D B R A.inScope A'.inScope g.map d),
     push Y A A' g d (I.iota A.source A'.source A.inScope A'.inScope g.map d β) =
       P.push A.source A'.source A.inScope A'.inScope g.map g.projective d β
+  /-- Every bundle class on `A` is restricted along the component inclusion (pad a bundle stage
+  by a trivial bundle on the other components), so `normalized` determines `push` on all classes
+  and the colimit does not depend on the provider. -/
+  restricted_surjective : ∀ (Y : Stack S) (A A' : ProjectiveStage (scope := scope) Y)
+    (g : ProjectiveArrow A A') (d : ℤ),
+    Function.Surjective (I.iota A.source A'.source A.inScope A'.inScope g.map d)
   descends : ∀ (Y : Stack S) (A A' : ProjectiveStage (scope := scope) Y)
     (g : ProjectiveArrow A A') (d : ℤ) (z : BundleChowGroup D B A.source A.inScope d),
     z ∈ projectiveRelations D B R I P A.inScope A.map d →
       push Y A A' g d z ∈ projectiveRelations D B R I P A'.inScope A'.map d
+
+/-- The component push is determined by the restricted projective pushes. -/
+theorem ComponentTransitions.push_eq_of_iota {D : CycleConstructionData S scope}
+    {B : BundleTransitions D} {R : RestrictedBundleSystem D} {I : RestrictedComparison D B R}
+    {P : RestrictedProjectiveSystem D B R} (C C' : ComponentTransitions D B R I P) (Y : Stack S)
+    (A A' : ProjectiveStage (scope := scope) Y) (g : ProjectiveArrow A A') (d : ℤ) :
+    C.push Y A A' g d = C'.push Y A A' g d := by
+  refine AddMonoidHom.ext fun z ↦ ?_
+  obtain ⟨β, rfl⟩ := C.restricted_surjective Y A A' g d z
+  rw [C.normalized, C'.normalized]
 
 structure KreschPresentation (D : CycleConstructionData S scope) where
   bundle : BundleTransitions D
