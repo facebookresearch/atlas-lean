@@ -12,15 +12,22 @@ public import MathlibExt.AlgebraicGeometry.GlobalZeroSectionRecipe
 public import MathlibExt.AlgebraicGeometry.FiniteTorusBorelApproximationModels
 
 /-!
-# Actual zero-section Euler classes in finite Borel approximations
+# Zero-section Euler classes in finite Borel approximations, relative to an orientation
 
-The ordinary Euler class is the actual proper zero-section push of
-the smooth fundamental class, followed by the inverse of the actual
-bundle-projection cohomology map. The equivariant class uses the
-native finite-approximation comparison. The associated module is
-identified with the original pulled equivariant module; its descent
-equation fixes the torus action, including character twists.
-No independent Euler class or cohomological push operator is supplied.
+The Euler class is the actual proper zero-section push of the smooth
+fundamental class, followed by the inverse of the actual bundle-projection
+cohomology map. Fundamental classes and Poincaré duality are taken from one
+shared `OrientationData`: a dualizing representation with smooth purity for
+every smooth complex variety, compatible with isomorphisms. Two orientation
+data differ on each space by a locally constant unit, so the Euler classes are
+determined up to such units; they are the usual complex Euler classes exactly
+when the datum is the complex orientation, which is not encoded here. The
+rank-zero Euler class is `1` for every datum
+(`ZeroEulerGeometry.euler_eq_unitClass`). The equivariant class uses the native
+finite-approximation comparison. The associated module is identified with the
+original pulled equivariant module; its descent equation fixes the torus
+action, including character twists. No independent Euler class or
+cohomological push operator is supplied.
 -/
 
 set_option autoImplicit false
@@ -43,18 +50,33 @@ def cohomologyCast {Z : TopCat.{0}} {i j : ℤ} (h : i=j) :
   cases h
   exact LinearMap.id
 
-/-- Native zero-section geometry and its actual compact-support duality. -/
-structure ZeroEulerGeometry (X : SchemeData) (E : X.scheme.left.Modules) (r : ℕ) where
+/-- Orientation data: a dualizing representation with smooth purity for every smooth complex
+variety, compatible with isomorphisms (the actual compact pullback along an isomorphism carries
+one top trace to the other). Fundamental classes and Poincaré duality, hence the Euler classes
+below, are relative to it. The complex orientation is one such datum; it is not encoded here. -/
+structure OrientationData where
+  /-- The dualizing representation of a smooth variety of dimension `d`. -/
+  duality : ∀ (Y : Over base) (d : ℕ) [SmoothOfRelativeDimension d Y.hom],
+    DualizingComplex ℂ (space Y)
+  /-- Its smooth purity. -/
+  purity : ∀ (Y : Over base) (d : ℕ) [SmoothOfRelativeDimension d Y.hom],
+    (duality Y d).obj ≅ (coefficientUnit ℂ (space Y))⟦(2*d : ℤ)⟧
+  /-- Isomorphisms preserve the induced top compact-support traces. -/
+  isomorphism : ∀ {Y Y' : Over base} (f : Y ⟶ Y') [IsIso f] (d : ℕ)
+    [SmoothOfRelativeDimension d Y.hom] [SmoothOfRelativeDimension d Y'.hom]
+    (P : ProperPullback ℂ (spaceMap f)),
+    compactPullback ℂ P (2*d) ≫ topTrace ℂ (space Y) (duality Y d) d (purity Y d) =
+      topTrace ℂ (space Y') (duality Y' d) d (purity Y' d)
+
+/-- Native zero-section geometry. Its compact-support duality and purity on the base and on the
+total space are those of the given orientation datum, not independent choices. -/
+structure ZeroEulerGeometry (O : OrientationData) (X : SchemeData) (E : X.scheme.left.Modules)
+    (r : ℕ) where
   bundle : GlobalZeroSectionRecipe.VectorBundleModel X.scheme E r
   dimension : ℕ
   [baseSmooth : SmoothOfRelativeDimension dimension X.scheme.hom]
   [totalSmooth : SmoothOfRelativeDimension (dimension+r) bundle.total.hom]
   [closed : IsClosedImmersion (GlobalZeroSectionRecipe.zeroSection bundle).left]
-  baseDuality : DualizingComplex ℂ (space X.scheme)
-  totalDuality : DualizingComplex ℂ (space bundle.total)
-  basePurity : baseDuality.obj ≅ (coefficientUnit ℂ (space X.scheme))⟦(2*dimension : ℤ)⟧
-  totalPurity : totalDuality.obj ≅
-    (coefficientUnit ℂ (space bundle.total))⟦(2*(dimension+r) : ℤ)⟧
   zeroPullback : ProperPullback ℂ (spaceMap (GlobalZeroSectionRecipe.zeroSection bundle))
   homotopy : ∀ n : ℤ, Function.Bijective
     (cohomologyPullback ℂ (spaceMap bundle.projection) n)
@@ -62,9 +84,32 @@ structure ZeroEulerGeometry (X : SchemeData) (E : X.scheme.left.Modules) (r : �
 attribute [instance] ZeroEulerGeometry.baseSmooth ZeroEulerGeometry.totalSmooth
   ZeroEulerGeometry.closed
 
-/-- The zero-section class is computed from native proper push and the same smooth purity. -/
-def ZeroEulerGeometry.zeroClass {X : SchemeData} {E : X.scheme.left.Modules} {r : ℕ}
-    (G : ZeroEulerGeometry X E r) : CoefficientBettiModels.Cohomology ℂ (space G.bundle.total) (2*r)
+section ZeroEuler
+
+variable {O : OrientationData} {X : SchemeData} {E : X.scheme.left.Modules} {r : ℕ}
+
+/-- The base duality is the orientation datum's. -/
+abbrev ZeroEulerGeometry.baseDuality (G : ZeroEulerGeometry O X E r) :
+    DualizingComplex ℂ (space X.scheme) :=
+  O.duality X.scheme G.dimension
+
+/-- The total-space duality is the orientation datum's. -/
+abbrev ZeroEulerGeometry.totalDuality (G : ZeroEulerGeometry O X E r) :
+    DualizingComplex ℂ (space G.bundle.total) :=
+  O.duality G.bundle.total (G.dimension+r)
+
+/-- The base purity is the orientation datum's. -/
+abbrev ZeroEulerGeometry.basePurity (G : ZeroEulerGeometry O X E r) :
+    G.baseDuality.obj ≅ (coefficientUnit ℂ (space X.scheme))⟦(2*G.dimension : ℤ)⟧ :=
+  O.purity X.scheme G.dimension
+
+/-- The total-space purity is the orientation datum's. -/
+abbrev ZeroEulerGeometry.totalPurity (G : ZeroEulerGeometry O X E r) :
+    G.totalDuality.obj ≅ (coefficientUnit ℂ (space G.bundle.total))⟦(2*(G.dimension+r : ℕ) : ℤ)⟧ :=
+  O.purity G.bundle.total (G.dimension+r)
+
+/-- The zero-section class is computed from native proper push and the datum's smooth purity. -/
+def ZeroEulerGeometry.zeroClass (G : ZeroEulerGeometry O X E r) : CoefficientBettiModels.Cohomology ℂ (space G.bundle.total) (2*r)
       :=
   cohomologyCast (show (2*(G.dimension+r) : ℤ)-(2*G.dimension : ℤ) = (2*r : ℤ) by omega)
     ((purityHomologyEquiv ℂ (space G.bundle.total) G.totalDuality (G.dimension+r)
@@ -72,11 +117,13 @@ def ZeroEulerGeometry.zeroClass {X : SchemeData} {E : X.scheme.left.Modules} {r 
       (borelMoorePushforward ℂ G.zeroPullback G.baseDuality G.totalDuality (2*G.dimension)
         (fundamentalClass ℂ (space X.scheme) G.baseDuality G.dimension G.basePurity)))
 
-/-- The Euler class is the inverse actual bundle pullback of that zero-section class. -/
-def ZeroEulerGeometry.euler {X : SchemeData} {E : X.scheme.left.Modules} {r : ℕ}
-    (G : ZeroEulerGeometry X E r) : CoefficientBettiModels.Cohomology ℂ (space X.scheme) (2*r) :=
+/-- The Euler class, relative to the orientation datum, is the inverse actual bundle pullback of
+that zero-section class. -/
+def ZeroEulerGeometry.euler (G : ZeroEulerGeometry O X E r) : CoefficientBettiModels.Cohomology ℂ (space X.scheme) (2*r) :=
   (LinearEquiv.ofBijective (cohomologyPullback ℂ (spaceMap G.bundle.projection) (2*r))
     (G.homotopy (2*r))).symm G.zeroClass
+
+end ZeroEuler
 
 /-- The pulled bundle comparison is the actual action/projection square of its original map. -/
 def pulledLinearComparison {T Y Z : Over base} [GrpObj T] [ModObj T Y] [ModObj T Z]
@@ -115,16 +162,17 @@ structure AssociatedModule where
     invariantPullbackComparison P.quotient.projection P.quotient.invariant module ≫
       (Scheme.Modules.pullback (snd T (MixedTotal M X m)).left).map comparison.hom
 
-/-- The finite-stage Euler geometry is for that exact descended original module. -/
-structure EquivariantEulerGeometry (r : ℕ) where
+/-- The finite-stage Euler geometry is for that exact descended original module, oriented by
+the given datum. -/
+structure EquivariantEulerGeometry (O : OrientationData) (r : ℕ) where
   associated : AssociatedModule M X AX m A P L
-  zero : ZeroEulerGeometry P.quotient.quotient associated.module r
+  zero : ZeroEulerGeometry O P.quotient.quotient associated.module r
   stableRange : (2*r : ℤ) < 2*m+1
 
 /-- The class is transported by the actual finite Borel comparison, with no Borel properness
-  assumption. -/
-def EquivariantEulerGeometry.euler {r : ℕ}
-    (G : EquivariantEulerGeometry M X AX m A P L r) :
+  assumption. It is relative to the orientation datum. -/
+def EquivariantEulerGeometry.euler {O : OrientationData} {r : ℕ}
+    (G : EquivariantEulerGeometry M X AX m A P L O r) :
     letI := AX.action
     letI := AX.continuous
     BorelCohomologyModels.H (Fin M.rank → ℂˣ) (space X.scheme) (2*r) := by

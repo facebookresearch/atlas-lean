@@ -13,10 +13,13 @@ public import MathlibExt.AlgebraicGeometry.TorusBorelEulerModels
 # Character-normalized native Borel polynomial actions
 
 Coordinate classes are actual zero-section Euler classes of the
-character line at the scheme point, transported by the native finite
-Borel and point-projection comparisons. Each polynomial generator
-acts by the corresponding actual Borel cup on every cohomology class.
-The endomorphism algebra is not assumed commutative.
+character line at the scheme point, relative to the coefficient system's
+one orientation datum, transported by the native finite Borel and
+point-projection comparisons. They are the usual generators of equivariant
+cohomology of a point exactly when that datum is the complex orientation;
+otherwise each is a unit multiple of it. Each polynomial generator acts by
+the corresponding actual Borel cup on every cohomology class. The
+endomorphism algebra is not assumed commutative.
 -/
 
 set_option autoImplicit false
@@ -61,8 +64,9 @@ def gradedUnit (X : Over base) [ModObj T X] (A : AnalyticTorusAction M X) : H M 
   letI := A.continuous
   exact homogeneous M X A 0 (unitClass ℂ (borel (Fin M.rank → ℂˣ) (space X)))
 
-/-- The generator line has its original Laurent character and inverse fibre transport. -/
-structure CoordinateLineSource (j : Fin M.rank) where
+/-- The generator line has its original Laurent character and inverse fibre transport; its
+Euler geometry is oriented by the given datum. -/
+structure CoordinateLineSource (O : OrientationData) (j : Fin M.rank) where
   character : Character T
   coordinate : character.map.left.appTop (gmUnit : Γ(Gm.left, ⊤)) =
     (coordinateUnit M j : Γ(T.left, ⊤))
@@ -81,10 +85,11 @@ structure CoordinateLineSource (j : Fin M.rank) where
   [stageAction : ModObj T (MixedTotal M pointData 1)]
   stageAnalytic : AnalyticTorusAction M (MixedTotal M pointData 1)
   stage : MixedStage M pointData point 1 stageAnalytic
-  geometry : EquivariantEulerGeometry M pointData point 1 stageAnalytic stage linearization 1
+  geometry : EquivariantEulerGeometry M pointData point 1 stageAnalytic stage linearization O 1
 
 /-- A coefficient is that prescribed native character Euler, under the actual point comparison. -/
-def CoordinateLineSource.coefficient {j : Fin M.rank} (S : CoordinateLineSource M j) :
+def CoordinateLineSource.coefficient {O : OrientationData} {j : Fin M.rank}
+    (S : CoordinateLineSource M O j) :
     BorelCohomologyModels.CoefficientH (Fin M.rank → ℂˣ) 2 := by
   letI := S.point.action
   letI := S.point.continuous
@@ -96,9 +101,12 @@ def CoordinateLineSource.coefficient {j : Fin M.rank} (S : CoordinateLineSource 
       (EquivariantEulerGeometry.euler M pointData S.point 1 S.stageAnalytic S.stage
         S.linearization S.geometry)
 
-/-- Every generator comes from the actual corresponding coordinate-character line. -/
+/-- Every generator comes from the actual corresponding coordinate-character line, all oriented
+by one shared datum. -/
 structure CoefficientCoordinates where
-  line : ∀ j : Fin M.rank, CoordinateLineSource M j
+  /-- The one orientation datum used for every Euler class of this coefficient system. -/
+  orientation : OrientationData
+  line : ∀ j : Fin M.rank, CoordinateLineSource M orientation j
 
 variable (P : CoefficientCoordinates M) (X : Over base) [ModObj T X]
   (A : AnalyticTorusAction M X)

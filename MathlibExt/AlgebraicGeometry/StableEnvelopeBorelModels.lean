@@ -15,9 +15,12 @@ public import MathlibExt.AlgebraicGeometry.StableEnvelopeNormalModels
 Every component action is the original ambient torus action. The
 negative bundle is the computed chamber eigensum, with its actual
 inclusion into the pulled ambient tangent. Its Euler class is the
-native zero-section finite-Borel class. The leading-character equation
-fixes its complex orientation relative to the actual coefficient
-characters; polarization then supplies its uniquely specified sign.
+native zero-section finite-Borel class relative to the coefficient system's
+orientation datum (the same datum orients the coordinate classes). The
+leading-character equation ties its leading term to the coefficient
+characters; polarization then supplies its sign. For the complex
+orientation these are the usual equivariant Euler classes; for another
+datum each is a unit multiple of the usual one.
 -/
 
 set_option autoImplicit false
@@ -66,7 +69,7 @@ structure ComponentBorelData where
   stageAnalytic : AnalyticTorusAction MT (MixedTotal MT F m)
   stage : MixedStage MT F analytic m stageAnalytic
   euler : EquivariantEulerGeometry MT F analytic m stageAnalytic stage negative
-    (negativeRank R C L)
+    Coefficients.orientation (negativeRank R C L)
   leading :
     let a := homogeneous MT F.scheme analytic (2*negativeRank R C L)
       (EquivariantEulerGeometry.euler MT F analytic m stageAnalytic stage negative euler)
@@ -92,7 +95,8 @@ def ambientRestriction :
   letI := B.analytic.continuous
   exact BorelCohomologyModels.gradedRestriction (spaceMap i) B.topology
 
-/-- This is the native Euler class of the actual negative normal bundle. -/
+/-- This is the Euler class of the actual negative normal bundle, relative to the coefficient
+system's orientation datum. -/
 def negativeClass : ComponentH MA MT S P X TX AX F i hi N R C L Coefficients B := by
   letI := B.action
   letI := B.analytic.action
@@ -101,7 +105,7 @@ def negativeClass : ComponentH MA MT S P X TX AX F i hi N R C L Coefficients B :
   exact homogeneous MT F.scheme B.analytic (2*negativeRank R C L)
     (EquivariantEulerGeometry.euler MT F B.analytic B.m B.stageAnalytic B.stage B.negative B.euler)
 
-/-- Cup by the native Euler class uses the actual Yoneda product in every degree. -/
+/-- Cup by that Euler class uses the actual Yoneda product in every degree. -/
 def negativeEulerCup : Module.End ℂ
     (ComponentH MA MT S P X TX AX F i hi N R C L Coefficients B) := by
   letI := B.action
