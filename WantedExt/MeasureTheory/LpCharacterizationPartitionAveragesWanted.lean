@@ -45,23 +45,31 @@ namespace MathlibExt.MeasureTheory.LpCharacterizationPartitionAveragesWanted
 
 noncomputable section
 
-/-- `t` is a partition `0 = t 0 < t 1 < ⋯ < t n = 1` of `[0, 1]`. -/
+/-- **Partitions of the unit interval.** For a natural number $n$, real numbers
+$t_0, t_1, \dots, t_n$ form a partition of $[0, 1]$ when $0 = t_0 < t_1 < \dots < t_n = 1$. -/
 def IsPartition01 {n : ℕ} (t : Fin (n + 1) → ℝ) : Prop :=
   t 0 = 0 ∧ t (Fin.last n) = 1 ∧ StrictMono t
 
-/-- `∑ i, (b - a) * ((b - a)⁻¹ * ∫ x in [a, b], |f x|) ^ p` over the consecutive nodes `a = t i`, `b
-= t (i + 1)` of the partition `t`. -/
+/-- **Partition average sum.** For a function $f : \mathbb{R} \to \mathbb{R}$, a real number $p$
+and real numbers $t_0, t_1, \dots, t_n$, the partition average sum is
+$$\sum_{i=0}^{n-1} (t_{i+1} - t_i)
+\left(\frac{1}{t_{i+1} - t_i} \int_{[t_i, t_{i+1}]} |f(x)|\,dx\right)^p,$$
+where the integrals are Lebesgue integrals over the closed intervals $[t_i, t_{i+1}]$ (empty when
+$t_{i+1} < t_i$), the integral of a function that is not integrable there counts as $0$, $1/0 = 0$,
+and $0^p$ is taken to be $1$ when $p = 0$ and $0$ when $p \ne 0$. -/
 def partitionAverageSum (f : ℝ → ℝ) (p : ℝ) {n : ℕ} (t : Fin (n + 1) → ℝ) : ℝ :=
   ∑ i : Fin n,
     let a := t i.castSucc
     let b := t i.succ
     (b - a) * Real.rpow ((1 / (b - a)) * ∫ x in Set.Icc a b, |f x|) p
 
-/-- Let $f \in L^1([0, 1])$ and let $1 < p < \infty$. Prove that $f \in L^p([0, 1])$ if and only if
-\[
-\sup_{\{I_j\}} \sum_j |I_j| \left(\frac{1}{|I_j|}\int_{I_j} |f|\right)^p < \infty,
-\]
-where the supremum is taken over all finite partitions of $[0, 1]$ into intervals $\{I_j\}$.
+/-- **$L^p$ on $[0,1]$ via averages over partitions.** Let $f : \mathbb{R} \to \mathbb{R}$ be in
+$L^1([0, 1])$ and let $p > 1$ be a real number. Then $f \in L^p([0, 1])$ if and only if there is
+a real number $C$ such that
+$$\sum_{i=0}^{n-1} (t_{i+1} - t_i)
+\left(\frac{1}{t_{i+1} - t_i} \int_{t_i}^{t_{i+1}} |f(x)|\,dx\right)^p \le C$$
+for every partition $0 = t_0 < t_1 < \dots < t_n = 1$ of $[0, 1]$. Here $L^1([0, 1])$ and
+$L^p([0, 1])$ are taken with respect to Lebesgue measure restricted to $[0, 1]$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Measure and integration;
 Classical measure theory), `benchmark/level2/ma_proofbench_l2_02.lean` at

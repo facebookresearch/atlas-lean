@@ -34,19 +34,29 @@ additional comments. Decimal bounds are exact rationals rounding the
 catalogue's displayed digits in the safe direction.
 -/
 
-/-- Source: Lehmer (1933), the Mahler measure of Lehmer's polynomial is
+/-- **Mahler measure of Lehmer's polynomial.** The Mahler measure of Lehmer's polynomial is at most
+$1176281/1000000 = 1.176281$.
+
+Source: Lehmer (1933), the Mahler measure of Lehmer's polynomial is
 `1.176280818...`, hence at most `1.176281`. No root-location computation
 for the degree-ten example is formalized here. -/
 theorem_wanted intMahlerMeasure_lehmerPolynomial_le :
     intMahlerMeasure lehmerPolynomial ≤ 1176281 / 1000000
 
-/-- Source: Lehmer (1933), catalogue upper bound `C₄₀ₐ ≤ 1.176280...`
+/-- **Lehmer's upper bound for Lehmer's constant.** Lehmer's constant is at most
+$1176281/1000000 = 1.176281$.
+
+Source: Lehmer (1933), catalogue upper bound `C₄₀ₐ ≤ 1.176280...`
 from the Mahler measure of Lehmer's polynomial, rounded up at the sixth
 decimal place. -/
 theorem_wanted lehmer1933UpperBound_wanted :
     lehmerConstant ≤ 1176281 / 1000000
 
-/-- Source: Smyth (1971), as quoted in the catalogue: a nonreciprocal
+/-- **Smyth's theorem for nonreciprocal polynomials.** Let $f \in \mathbb{Z}[X]$ be an integer
+polynomial that is not reciprocal and whose constant term $f(0)$ is nonzero. Then the Mahler
+measure of $f$ is at least the Mahler measure of Smyth's polynomial $X^3 - X - 1$.
+
+Source: Smyth (1971), as quoted in the catalogue: a nonreciprocal
 integer polynomial with nonzero constant term has Mahler measure at
 least that of `X^3 - X - 1` (the plastic number `1.324717...`). -/
 theorem_wanted smyth1971Nonreciprocal_wanted (f : Polynomial ℤ)

@@ -75,7 +75,9 @@ theorem le_hpR (m i l : ℕ) : m ≤ hpR m i l := by
 
 /-! ### Arcs -/
 
-/-- The out-neighbours of a top are its row ends. -/
+/-- **Out-neighbours of a top.** Let $\varphi$ be a CNF formula with $m$ clauses. In Sipser's
+HAMPATH graph for $\varphi$, every arc out of the top $t_i$ of diamond $i$ ends at one of the two
+ends $r_{i,0}$ and $r_{i,3m}$ of the row of diamond $i$. -/
 theorem hpT_arc {φ : CNF} {i v : ℕ} (h : (hpT φ.length i, v) ∈ hamEdges φ) :
     v = hpR φ.length i 0 ∨ v = hpR φ.length i (3 * φ.length) := by
   obtain ⟨i', -, hc⟩ := hamEdges_cases h
@@ -88,8 +90,12 @@ theorem hpT_arc {φ : CNF} {i v : ℕ} (h : (hpT φ.length i, v) ∈ hamEdges φ
     simp only [hpR, hpT_succ] at hc
     rcases hc with hc | hc | ⟨l', hl', hc⟩ | ⟨j, hj, hc⟩ <;> omega
 
-/-- An arc from a row vertex of diamond `i` to clause `j` is a detour of a literal of the
-variable of diamond `i` in clause `j`: positive from `3 j + 1`, negative from `3 j + 2`. -/
+/-- **Arcs from a row into a clause vertex.** Let $\varphi$ be a CNF formula with $m$ clauses
+$C_0, \dots, C_{m-1}$, and let $x_i$ be the $i$-th of its distinct variables (variable $0$ if
+$\varphi$ has at most $i$ distinct variables). In Sipser's HAMPATH graph for $\varphi$, clause $j$
+is vertex $j$, and $r_{i,l}$ denotes vertex $l$ of the row of diamond $i$. If $l \le 3m$, $j < m$
+and $(r_{i,l}, j)$ is an arc of the graph, then either $l = 3j + 1$ and the literal $x_i$ occurs
+in $C_j$, or $l = 3j + 2$ and the literal $\neg x_i$ occurs in $C_j$. -/
 theorem hpR_arc_clause {φ : CNF} {i l j : ℕ} (hl : l ≤ 3 * φ.length) (hj : j < φ.length)
     (h : (hpR φ.length i l, j) ∈ hamEdges φ) :
     (l = 3 * j + 1 ∧ ((hamVars φ).getD i 0, true) ∈ φ.getD j []) ∨
@@ -122,8 +128,11 @@ theorem row_mem_hamEdges {φ : CNF} {i l : ℕ} (hi : i < (hamVars φ).length)
 
 /-! ### Rows read from either end -/
 
-/-- Row vertex `l` of diamond `i`, counted from the left end (`b = true`) or from the right end
-(`b = false`). -/
+/-- **Row vertices counted from either end.** For $m$ clauses, let $r_{i,l} = m + i(3m + 2) + 1 + l$
+be vertex $l$ of the row of diamond $i$. For a Boolean $b$ and a natural number $l$, this is
+$r_{i,l}$ if $b$ is true and $r_{i,3m - l}$ if $b$ is false, where $3m - l$ is truncated
+subtraction ($0$ when $l > 3m$). For $l \le 3m$ it is vertex $l$ of the row counted from the left
+end ($b$ true) or from the right end ($b$ false). -/
 def hpRo (m i : ℕ) (b : Bool) (l : ℕ) : ℕ := hpR m i (if b then l else 3 * m - l)
 
 theorem hpRo_inj {m i l l' : ℕ} {b : Bool} (hl : l ≤ 3 * m) (hl' : l' ≤ 3 * m)
@@ -142,7 +151,13 @@ theorem hpRo_lt_hpT_succ {m i l : ℕ} {b : Bool} (hl : l ≤ 3 * m) :
     hpRo m i b l < hpT m (i + 1) :=
   hpR_lt_hpT_succ (by split <;> omega)
 
-/-- The non-clause out-neighbours of a row vertex, read from either end. -/
+/-- **Out-neighbours of a row vertex outside the clause vertices.** Let $\varphi$ be a CNF formula
+with $m$ clauses. In Sipser's HAMPATH graph for $\varphi$, clause $j$ is vertex $j < m$, the top of
+diamond $i$ is $t_i = m + i(3m + 2)$ (and $t_{i+1}$ is its bottom), and $\rho_b(i, l)$ denotes
+vertex $l$ of the row of diamond $i$ counted from the left end if $b$ is true and from the right
+end if $b$ is false. Let $l \le 3m$ and $v \ge m$. If $(\rho_b(i, l), v)$ is an arc of the graph,
+then $l < 3m$ and $v = \rho_b(i, l + 1)$, or $l > 0$ and $v = \rho_b(i, l - 1)$, or
+$l \in \{0, 3m\}$ and $v = t_{i+1}$. -/
 theorem hpRo_arc {φ : CNF} {i l v : ℕ} {b : Bool} (hl : l ≤ 3 * φ.length)
     (hv : φ.length ≤ v) (h : (hpRo φ.length i b l, v) ∈ hamEdges φ) :
     (l < 3 * φ.length ∧ v = hpRo φ.length i b (l + 1)) ∨
@@ -161,7 +176,13 @@ theorem hpRo_arc {φ : CNF} {i l v : ℕ} {b : Bool} (hl : l ≤ 3 * φ.length)
     · exact .inr (.inr h1)
     · omega
 
-/-- The non-clause in-neighbours of a row vertex, read from either end. -/
+/-- **In-neighbours of a row vertex outside the clause vertices.** Let $\varphi$ be a CNF formula
+with $m$ clauses. In Sipser's HAMPATH graph for $\varphi$, clause $j$ is vertex $j < m$, the top of
+diamond $i$ is $t_i = m + i(3m + 2)$, and $\rho_b(i, l)$ denotes vertex $l$ of the row of diamond
+$i$ counted from the left end if $b$ is true and from the right end if $b$ is false. Let
+$l \le 3m$ and $u \ge m$. If $(u, \rho_b(i, l))$ is an arc of the graph, then $l > 0$ and
+$u = \rho_b(i, l - 1)$, or $l < 3m$ and $u = \rho_b(i, l + 1)$, or $l \in \{0, 3m\}$ and
+$u = t_i$. -/
 theorem arc_hpRo {φ : CNF} {i l u : ℕ} {b : Bool} (hl : l ≤ 3 * φ.length)
     (hu : φ.length ≤ u) (h : (u, hpRo φ.length i b l) ∈ hamEdges φ) :
     (0 < l ∧ u = hpRo φ.length i b (l - 1)) ∨
@@ -304,7 +325,10 @@ end Lists
 
 /-! ### Contracting the detours -/
 
-/-- The non-clause vertices of `p` in order: `p` without the clause vertices `j < φ.length`. -/
+/-- **Deleting the clause vertices from a path.** For a CNF formula $\varphi$ with $m$ clauses
+(the clause vertices of Sipser's HAMPATH graph are $0, \dots, m - 1$) and a list $p$ of natural
+numbers, the list obtained from $p$ by deleting every entry $v < m$, keeping the other entries in
+their order. -/
 def dropClauses (φ : CNF) (p : List ℕ) : List ℕ := p.filter fun v => decide (φ.length ≤ v)
 
 section Contract
@@ -360,7 +384,10 @@ theorem isChain_dropClauses (hd : DetoursNormal φ p) :
     simpa [← hx] using le_hpT _ _
 
 omit h in
-/-- A detour `a, j, c` of `p` becomes the step `a, c` of `dropClauses φ p`. -/
+/-- **Contracting a clause detour.** Let $\varphi$ be a CNF formula with $m$ clauses, let $p$ be
+a list of natural numbers, and let $q$ be the list obtained from $p$ by deleting every entry less
+than $m$. If $a, j, c$ occur consecutively in $p$ with $j < m$, $a \ge m$ and $c \ge m$, then
+$a$ is immediately followed by $c$ in $q$. -/
 theorem infix_dropClauses {a j c : ℕ} (hp : [a, j, c] <:+: p) (hj : j < φ.length)
     (ha : φ.length ≤ a) (hc : φ.length ≤ c) : [a, c] <:+: dropClauses φ p := by
   obtain ⟨s, t, rfl⟩ := hp
@@ -378,7 +405,14 @@ theorem hpRo_mem_dropClauses {i l : ℕ} {b : Bool} (hi : i < (hamVars φ).lengt
 
 /-! ### Each row is run from end to end -/
 
-/-- A step of `dropClauses φ p` is an arc between non-clause vertices. -/
+/-- **Consecutive vertices of the contracted path are joined by arcs.** Let $\varphi$ be a CNF
+formula with $m$ clauses and $k$ distinct variables. In Sipser's HAMPATH graph for $\varphi$, clause
+$j$ is vertex $j < m$, the top of diamond $i$ is $t_i = m + i(3m + 2)$, and vertex $l \le 3m$ of
+its row is $r_{i,l} = t_i + 1 + l$. Let $p$ be a Hamiltonian path of this graph (on the vertices
+$0, \dots, t_k$) from $t_0$ to $t_k$ whose detours are normal: for every $j < m$ there is $i < k$
+such that $j$ sits in $p$ immediately between $r_{i,3j+1}$ and $r_{i,3j+2}$, in either order. Let
+$p'$ be $p$ with the clause vertices deleted. If $v$ comes right after $u$ in $p'$, then
+$(u, v)$ is an arc of the graph, $u \ge m$ and $v \ge m$. -/
 theorem arc_of_infix_dropClauses {u v : ℕ} (hd : DetoursNormal φ p)
     (huv : [u, v] <:+: dropClauses φ p) :
     (u, v) ∈ hamEdges φ ∧ φ.length ≤ u ∧ φ.length ≤ v :=
@@ -386,13 +420,26 @@ theorem arc_of_infix_dropClauses {u v : ℕ} (hd : DetoursNormal φ p)
     ((mem_dropClauses h).1 (huv.subset (by simp))).1,
     ((mem_dropClauses h).1 (huv.subset (by simp))).1⟩
 
-/-- Every vertex of `dropClauses φ p` but the last top has a successor there. -/
+/-- **Every vertex of the contracted path except its end has a successor.** Let $\varphi$ be a CNF
+formula with $m$ clauses and $k$ distinct variables. In Sipser's HAMPATH graph for $\varphi$, clause
+$j$ is vertex $j < m$ and the top of diamond $i$ is $t_i = m + i(3m + 2)$. Let $p$ be a
+Hamiltonian path of this graph (on the vertices $0, \dots, t_k$) from $t_0$ to $t_k$, and let $p'$
+be $p$ with the clause vertices deleted. Then every vertex $v \ne t_k$ of $p'$ is immediately
+followed in $p'$ by some vertex $w$. -/
 theorem exists_infix_dropClauses {v : ℕ} (hv : v ∈ dropClauses φ p)
     (hk : v ≠ hpT φ.length (hamVars φ).length) : ∃ w, [v, w] <:+: dropClauses φ p :=
   exists_pair_infix_right hv (by rw [getLast?_dropClauses h]; simpa using Ne.symm hk)
 
-/-- Entering row `i` at one end and leaving at once for the next top strands the rest of the
-row: its first vertex in `dropClauses φ p` would need an arc from outside the row. -/
+/-- **Entering a row and leaving it at once is impossible.** Let $\varphi$ be a CNF formula with
+$m > 0$ clauses and $n$ distinct variables. For $k \le n$ let $t_k = m + k(3m + 2)$ be the top
+of diamond $k$, and for $k < n$ let row $k$ consist of the vertices $t_k + 1 + l$ with
+$0 \le l \le 3m$; its left end is $t_k + 1$ and its right end is $t_k + 1 + 3m$. Let $p$ be a
+Hamiltonian path from $t_0$ to $t_n$ in Sipser's digraph for $\varphi$ on the vertices
+$0, \dots, t_n$ whose clause detours are normal: every clause vertex $j < m$ occurs in $p$
+immediately between the vertices $t_k + 3j + 2$ and $t_k + 3j + 3$ of some row $k < n$, in
+either order. Let $q$ be $p$ with the clause vertices $0, \dots, m - 1$ deleted. Then for every
+$i < n$ and each end $e$ of row $i$, it is not the case that in $q$ the top $t_i$ is immediately
+followed by $e$ and $e$ is immediately followed by $t_{i+1}$. -/
 theorem no_shortcut {i : ℕ} {b : Bool} (hi : i < (hamVars φ).length) (hm : 0 < φ.length)
     (hd : DetoursNormal φ p)
     (h1 : [hpT φ.length i, hpRo φ.length i b 0] <:+: dropClauses φ p)
@@ -415,7 +462,18 @@ theorem no_shortcut {i : ℕ} {b : Bool} (hi : i < (hamVars φ).length) (hm : 0 
     have := hpRo_inj le_rfl (Nat.zero_le _) (pair_infix_right_unique hnd hws h1)
     omega
 
-/-- Once top `hpT m i` is followed by the end `b` of row `i`, the row is run to its other end. -/
+/-- **A row entered at one end is run to the other end.** Let $\varphi$ be a CNF formula with
+$m$ clauses and $n$ distinct variables. For $k \le n$ let $t_k = m + k(3m + 2)$ be the top of
+diamond $k$, and for $k < n$ let row $k$ consist of the vertices $t_k + 1 + l$ with
+$0 \le l \le 3m$; its left end is $t_k + 1$ and its right end is $t_k + 1 + 3m$. Let $p$ be a
+Hamiltonian path from $t_0$ to $t_n$ in Sipser's digraph for $\varphi$ on the vertices
+$0, \dots, t_n$ whose clause detours are normal: every clause vertex $j < m$ occurs in $p$
+immediately between the vertices $t_k + 3j + 2$ and $t_k + 3j + 3$ of some row $k < n$, in
+either order. Let $q$ be $p$ with the clause vertices $0, \dots, m - 1$ deleted. Let $i < n$,
+let $e$ be an end of row $i$, and for $0 \le l \le 3m$ let $r_l$ be the $l$-th vertex of row $i$
+counted from $e$, that is $r_l = t_i + 1 + l$ if $e$ is the left end and $r_l = t_i + 1 + 3m - l$
+if $e$ is the right end. If the top $t_i$ is immediately followed by $r_0$ in $q$, then for every
+$l < 3m$ the vertex $r_l$ is immediately followed by $r_{l+1}$ in $q$. -/
 theorem row_run {i : ℕ} {b : Bool} (hi : i < (hamVars φ).length) (hd : DetoursNormal φ p)
     (h0 : [hpT φ.length i, hpRo φ.length i b 0] <:+: dropClauses φ p) :
     ∀ l < 3 * φ.length,
@@ -443,7 +501,14 @@ theorem row_run {i : ℕ} {b : Bool} (hi : i < (hamVars φ).length) (hd : Detour
     · exact (not_pair_infix_swap hnd ih hw).elim
     · omega
 
-/-- Every top but the last is followed by one end of its row. -/
+/-- **Every top but the last is followed by an end of its row.** Let $\varphi$ be a CNF formula
+with $m$ clauses and $k$ distinct variables. In Sipser's HAMPATH graph for $\varphi$, clause $j$ is
+vertex $j < m$, the top of diamond $i$ is $t_i = m + i(3m + 2)$, and vertex $l \le 3m$ of its row
+is $r_{i,l} = t_i + 1 + l$. Let $p$ be a Hamiltonian path of this graph (on the vertices
+$0, \dots, t_k$) from $t_0$ to $t_k$ whose detours are normal: for every $j < m$ there is $i < k$
+such that $j$ sits in $p$ immediately between $r_{i,3j+1}$ and $r_{i,3j+2}$, in either order. Let
+$p'$ be $p$ with the clause vertices deleted. Then for every $i < k$, the top $t_i$ is
+immediately followed in $p'$ by $r_{i,0}$ or by $r_{i,3m}$. -/
 theorem exists_top_succ {i : ℕ} (hi : i < (hamVars φ).length) (hd : DetoursNormal φ p) :
     ∃ b, [hpT φ.length i, hpRo φ.length i b 0] <:+: dropClauses φ p := by
   obtain ⟨w, hw⟩ := exists_infix_dropClauses h (hpT_mem_dropClauses h hi.le)
@@ -456,14 +521,24 @@ end Contract
 
 /-! ### The assignment -/
 
+/-- **Positions in the list of distinct variables.** Let $\varphi$ be a CNF formula, let
+$v_0, \dots, v_{k-1}$ be the list of distinct variables of $\varphi$, and let $i < k$. Then the
+first position at which $v_i$ occurs in this list is $i$. -/
 theorem idxOf_getD_hamVars {φ : CNF} {i : ℕ} (hi : i < (hamVars φ).length) :
     (hamVars φ).idxOf ((hamVars φ).getD i 0) = i := by
   rw [List.getD_eq_getElem _ _ hi]
   exact List.Nodup.idxOf_getElem (List.nodup_dedup _) i hi
 
-/-- SAT ≤ HAMPATH, backward direction for paths with normal detours: a Hamiltonian path of
-Sipser's graph whose clause detours are normal yields a satisfying assignment (variable `i` is
-true iff row `i` is run left to right). -/
+/-- **Backward direction of SAT ≤ HAMPATH for paths with normal detours.** Let $\varphi$ be a CNF
+formula with $m$ clauses and $k$ distinct variables. In Sipser's HAMPATH graph for $\varphi$, clause
+$j$ is vertex $j < m$, the top of diamond $i$ is $t_i = m + i(3m + 2)$, and vertex $l \le 3m$ of
+its row is $r_{i,l} = t_i + 1 + l$. If $p$ is a Hamiltonian path of this graph (on the vertices
+$0, \dots, t_k$) from $t_0$ to $t_k$ whose detours are normal, that is, for every $j < m$ there is
+$i < k$ such that $j$ sits in $p$ immediately between $r_{i,3j+1}$ and $r_{i,3j+2}$, in either
+order, then $\varphi$ is satisfiable.
+
+The satisfying assignment makes the variable of diamond $i$ true iff row $i$ is traversed from
+left to right. -/
 theorem cnfSat_of_isHamPath {φ : CNF} {p : List ℕ}
     (h : IsHamPath (hpT φ.length (hamVars φ).length + 1) (hamEdges φ)
       (hpT φ.length 0) (hpT φ.length (hamVars φ).length) p)

@@ -35,8 +35,11 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Classical in
-/-- Campbell and Cohen, Lemma 1: `A(x) ~ cc(x) ~ x e^{-γ} / log log log x` as `x → ∞`, where
-`A(x)` counts cyclic numbers `≤ x` and `cc(x)` counts composite cyclic numbers `≤ x`.
+/-- **Asymptotic count of cyclic and composite cyclic numbers.** For real $x$, let $A(x)$ be the
+number of cyclic numbers $m$ with $1 \le m \le x$, and let $cc(x)$ be the number of composite
+cyclic numbers $m \le x$, that is, cyclic numbers $m > 1$ that are not prime. Then, as
+$x \to \infty$, $A(x) \sim cc(x)$ and $cc(x) \sim x e^{-\gamma} / \log \log \log x$, where
+$\gamma$ is the Euler–Mascheroni constant.
 
 Source: John M. Campbell and Joel E. Cohen, *Cyclic Numbers and Gaps*, INTEGERS 25 (2025),
 Article A23, Lemma 1 (`integers-2025-A23-lem-1`). -/
@@ -49,10 +52,14 @@ public theorem_wanted cyclicCount_isEquivalent_compositeCyclicCount :
         Real.log (Real.log (Real.log x)))
 
 open Classical in
-/-- Campbell and Cohen, Theorem 1, regular variation: the counting functions `A(x)` of cyclic
-numbers, `π(x) = pc(x)` of (prime cyclic numbers =) primes, and `cc(x)` of composite cyclic
-numbers are regularly varying with index `1`, i.e. `F(λx)/F(x) → λ` as `x → ∞` for every
-`λ > 0`.
+/-- **The cyclic counting functions vary regularly with index one.** For real $x$, let $A(x)$ be
+the number of cyclic numbers $m$ with $1 \le m \le x$, let $\pi(x)$ be the number of primes
+$p \le x$, and let $cc(x)$ be the number of composite cyclic numbers $m \le x$, that is, cyclic
+numbers $m > 1$ that are not prime. Then for every real $\lambda > 0$, each of
+$A(\lambda x) / A(x)$, $\pi(\lambda x) / \pi(x)$ and $cc(\lambda x) / cc(x)$ tends to $\lambda$
+as $x \to \infty$.
+
+Every prime is cyclic, so $\pi(x)$ is also the number of prime cyclic numbers $\le x$.
 
 Source: John M. Campbell and Joel E. Cohen, *Cyclic Numbers and Gaps*, INTEGERS 25 (2025),
 Article A23, Theorem 1 (`integers-2025-A23-thm-1`). -/
@@ -66,8 +73,12 @@ public theorem_wanted cyclicCountingFunctions_regularlyVarying_index_one :
       Tendsto (fun x => piFun (lam * x) / piFun x) atTop (𝓝 lam) ∧
       Tendsto (fun x => cc (lam * x) / cc x) atTop (𝓝 lam)
 
-/-- Campbell and Cohen, Theorem 1, display (5) (Taylor's law): `v(c,n) / m(c,n)^b` tends to
-`∞` if `b < 2`, to `1/3` if `b = 2`, and to `0` if `b > 2`.
+/-- **Taylor's law for cyclic numbers.** Let $c_1 < c_2 < \cdots$ be the cyclic numbers in
+increasing order, so $c_1 = 1$. For $n \ge 1$ let $m(c,n) = \frac{1}{n} \sum_{i=1}^{n} c_i$ be
+the mean of $c_1, \dots, c_n$, and for $n \ge 2$ let
+$v(c,n) = \frac{1}{n-1} \sum_{i=1}^{n} (c_i - m(c,n))^2$ be their variance. Then for every real
+$b$, as $n \to \infty$, $v(c,n) / m(c,n)^b$ tends to $\infty$ if $b < 2$, to $1/3$ if $b = 2$,
+and to $0$ if $b > 2$.
 
 Source: John M. Campbell and Joel E. Cohen, *Cyclic Numbers and Gaps*, INTEGERS 25 (2025),
 Article A23, Theorem 1 (`integers-2025-A23-thm-1`). -/
@@ -80,8 +91,11 @@ public theorem_wanted cyclicNumbers_variance_div_mean_rpow_tendsto :
       (b = 2 → Tendsto (fun n => var n / mean n ^ b) atTop (𝓝 (1 / 3))) ∧
       (2 < b → Tendsto (fun n => var n / mean n ^ b) atTop (𝓝 0))
 
-/-- Campbell and Cohen, Theorem 1, mean and variance: `m(c,n) ~ c_n / 2` and
-`v(c,n) ~ c_n^2 / 12` as `n → ∞`.
+/-- **Mean and variance of the cyclic numbers.** Let $c_1 < c_2 < \cdots$ be the cyclic numbers
+in increasing order, so $c_1 = 1$. For $n \ge 1$ let $m(c,n) = \frac{1}{n} \sum_{i=1}^{n} c_i$ be
+the mean of $c_1, \dots, c_n$, and for $n \ge 2$ let
+$v(c,n) = \frac{1}{n-1} \sum_{i=1}^{n} (c_i - m(c,n))^2$ be their variance. Then, as
+$n \to \infty$, $m(c,n) \sim c_n / 2$ and $v(c,n) \sim c_n^2 / 12$.
 
 Source: John M. Campbell and Joel E. Cohen, *Cyclic Numbers and Gaps*, INTEGERS 25 (2025),
 Article A23, Theorem 1 (`integers-2025-A23-thm-1`). -/
@@ -92,8 +106,13 @@ public theorem_wanted cyclicNumbers_mean_variance_isEquivalent :
     IsEquivalent atTop mean (fun n => c n / 2) ∧
       IsEquivalent atTop var (fun n => c n ^ 2 / 12)
 
-/-- Campbell and Cohen, Theorem 1, relation between moments: for `j ≥ 1` and every `k`,
-`μ'(c,n,k) ~ (j+1)^{k/j} / (k+1) · μ'(c,n,j)^{k/j}` as `n → ∞`.
+/-- **Relation between the moments of the cyclic numbers.** Let $c_1 < c_2 < \cdots$ be the
+cyclic numbers in increasing order, so $c_1 = 1$, and for $n \ge 1$ and a natural number $k$ let
+$\mu'(c,n,k) = \frac{1}{n} \sum_{i=1}^{n} c_i^k$ be the $k$-th moment of $c_1, \dots, c_n$. Then
+for all natural numbers $j \ge 1$ and $k$, as $n \to \infty$,
+$$
+\mu'(c,n,k) \sim \frac{(j+1)^{k/j}}{k+1} \, \mu'(c,n,j)^{k/j}.
+$$
 
 Source: John M. Campbell and Joel E. Cohen, *Cyclic Numbers and Gaps*, INTEGERS 25 (2025),
 Article A23, Theorem 1 (`integers-2025-A23-thm-1`). -/
@@ -103,8 +122,13 @@ public theorem_wanted cyclicNumbers_moment_isEquivalent_moment_rpow (j k : ℕ) 
     IsEquivalent atTop (fun n => μ n k)
       (fun n => ((j : ℝ) + 1) ^ ((k : ℝ) / j) / (k + 1) * μ n j ^ ((k : ℝ) / j))
 
-/-- Campbell and Cohen, Theorem 1, generalized Taylor's law: for every `k`,
-`μ'(c,n,k) ~ 2^k / (1+k) · m(c,n)^k` as `n → ∞`.
+/-- **Generalized Taylor's law for cyclic numbers.** Let $c_1 < c_2 < \cdots$ be the cyclic
+numbers in increasing order, so $c_1 = 1$. For $n \ge 1$ and a natural number $k$ let
+$\mu'(c,n,k) = \frac{1}{n} \sum_{i=1}^{n} c_i^k$ be the $k$-th moment of $c_1, \dots, c_n$, and
+let $m(c,n) = \mu'(c,n,1)$ be their mean. Then for every natural number $k$, as $n \to \infty$,
+$$
+\mu'(c,n,k) \sim \frac{2^k}{1+k} \, m(c,n)^k.
+$$
 
 Source: John M. Campbell and Joel E. Cohen, *Cyclic Numbers and Gaps*, INTEGERS 25 (2025),
 Article A23, Theorem 1 (`integers-2025-A23-thm-1`). -/
@@ -114,9 +138,10 @@ public theorem_wanted cyclicNumbers_moment_isEquivalent_mean_pow (k : ℕ) :
     IsEquivalent atTop (fun n : ℕ => (∑ i ∈ Finset.Icc 1 n, c i ^ k) / n)
       (fun n => (2 : ℝ) ^ k / (1 + k) * mean n ^ k)
 
-/-- Campbell and Cohen, Theorem 2: under the Riemann hypothesis, the gaps
-`d_n = c_{n+1} - c_n` between consecutive cyclic numbers satisfy `d_n = o(√p_n log p_n)`,
-where `p_n` is the `n`-th prime.
+/-- **Gaps between cyclic numbers under the Riemann hypothesis.** Assume the Riemann hypothesis.
+Let $c_1 < c_2 < \cdots$ be the cyclic numbers in increasing order and $p_1 < p_2 < \cdots$ the
+primes in increasing order. Then the gaps $d_n = c_{n+1} - c_n$ between consecutive cyclic
+numbers satisfy $d_n = o(\sqrt{p_n} \log p_n)$ as $n \to \infty$.
 
 Source: John M. Campbell and Joel E. Cohen, *Cyclic Numbers and Gaps*, INTEGERS 25 (2025),
 Article A23, Theorem 2 (`integers-2025-A23-thm-2`). -/
