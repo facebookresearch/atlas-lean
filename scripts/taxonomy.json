@@ -9987,6 +9987,7 @@
   "MathlibExt/Combinatorics/Additive/SidonComplementProgression": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets meeting every infinite progression"},
   "MathlibExt/Combinatorics/Additive/SidonIdeal": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon ideal"},
   "MathlibExt/Combinatorics/Additive/SingerDifferenceSet": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Singer difference sets"},
+  "MathlibExt/Combinatorics/Additive/SquareWeightedZeroSum": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/Combinatorics/Additive/SumsetsMinimumDistinctTerms": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sumsets with at least r distinct terms"},
   "MathlibExt/Combinatorics/Additive/SymmetricBasis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Rohrbach's symmetric basis theorem"},
   "MathlibExt/Combinatorics/Additive/Szemeredi": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Szemerédi's theorem"},
