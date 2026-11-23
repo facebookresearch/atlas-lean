@@ -10,9 +10,13 @@ to help:
 
 - **Formalize a result.** Take a statement to write in Lean or to prove
   ([Picking a task](#picking-a-task)) and open a pull request.
-- **Check a page.** A page should state what its source states, and its Lean
-  declaration the same. Lean checks proofs, not whether a statement means what
-  was intended, so this takes readers. When a page gets it wrong,
+- **Check a page.** Compare it with its source and, when it links a Lean
+  declaration, with that declaration too: Lean checks proofs, not whether a
+  statement means what was intended, so this takes readers. A page with no
+  Lean link is checked against its source alone; its declaration may not exist
+  yet, or may be held back until a known problem is fixed
+  ([Writing pages](docs/BLUEPRINT.md#writing-pages)). Search the open issues,
+  then
   [report a page problem](https://github.com/facebookresearch/atlas-lean/issues/new?template=page-problem.yml);
   [Mathematical faithfulness](REVIEWING.md#mathematical-faithfulness) lists
   what to compare. The pull request that fixes it says `Closes #…`.
@@ -20,13 +24,17 @@ to help:
   [`source-review`](https://github.com/facebookresearch/atlas-lean/labels/source-review)
   issue names a source and the folders to start from: add the source's central
   definitions and results that the graph lacks, check the existing pages
-  against it, and propose the changes as pull requests.
+  against it, and propose the changes as pull requests. Where the issue and the
+  [graph rules](docs/BLUEPRINT.md#graph-rules) differ, follow the rules and say
+  so in the pull request.
 - **Propose a target.** To ask for results the site lacks,
   [propose a target](https://github.com/facebookresearch/atlas-lean/issues/new?template=target.yml):
   give a source for each result and say what has to be on the site for the
-  issue to close. Roadmaps for whole areas carry the
+  issue to close. For whole areas, see the roadmaps labelled
   [`community-roadmap`](https://github.com/facebookresearch/atlas-lean/labels/community-roadmap)
-  label.
+  (contributed by collaborators) and
+  [`tauceti-roadmap`](https://github.com/facebookresearch/atlas-lean/labels/tauceti-roadmap)
+  (to bring in from Tau Ceti).
 - **Improve the tools and the agent skills.** Pull requests to `scripts/`, the
   workflows, [`AGENTS.md`](AGENTS.md) and the skills in `.agents/skills/`
   follow the steps below. A maintainer approves a change to `.github/`,
@@ -373,9 +381,9 @@ Complete your CLA here: <https://code.facebook.com/cla>
 
 ## Issues
 We use GitHub issues to track public bugs and the work listed under
-[Ways to help](#ways-to-help); the issue forms cover page problems and
-targets. Please ensure your description is clear and has sufficient
-instructions to be able to reproduce the issue.
+[Ways to help](#ways-to-help). For a page problem or a target, use its issue
+form. For a bug, please ensure your description is clear and has sufficient
+instructions to be able to reproduce it.
 
 Meta has a [bounty program](https://bugbounty.meta.com/) for the safe
 disclosure of security bugs. In those cases, please go through the process
@@ -384,9 +392,11 @@ outlined on that page and do not file a public issue.
 ## Coding Style
 Lean code follows the
 [Mathlib style guide](https://leanprover-community.github.io/contribute/style.html).
-`lakefile.toml` turns Mathlib's standard linters on for the five production
-libraries and off for the four test libraries. `PhyslibExt` also follows
-Physlib's conventions ([Library roles](REVIEWING.md#library-roles)).
+`lakefile.toml` turns on Mathlib's standard linter set
+(`linter.mathlibStandardSet`) for the five production libraries, minus the
+linters it turns off by name, and turns the set off for the four test
+libraries. `PhyslibExt` also follows Physlib's conventions
+([Library roles](REVIEWING.md#library-roles)).
 
 ## Copyright headers
 Every Lean file starts with the Meta header:

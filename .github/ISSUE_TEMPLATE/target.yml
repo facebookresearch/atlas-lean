@@ -7,15 +7,18 @@ body:
     attributes:
       value: >-
         Search the site first: a result may already be a page, from Mathlib or
-        from this repository. For a whole area, see the
-        [community roadmaps](https://github.com/facebookresearch/atlas-lean/labels/community-roadmap).
+        from this repository. For a whole area, look first at the issues
+        labelled
+        [community-roadmap](https://github.com/facebookresearch/atlas-lean/labels/community-roadmap)
+        and
+        [tauceti-roadmap](https://github.com/facebookresearch/atlas-lean/labels/tauceti-roadmap).
   - type: textarea
     id: results
     attributes:
       label: Results
       description: >-
-        Each result you want, with its source: the book or paper, its edition
-        or version, and the theorem number.
+        For each result, give the book or paper, its edition or version, and a
+        precise location such as a theorem number, section or page.
     validations:
       required: true
   - type: textarea

@@ -7,8 +7,9 @@ body:
     attributes:
       value: >-
         Lean checks proofs, not whether a statement means what was intended.
+        A page with no Lean link is checked against its source alone.
         [Mathematical faithfulness](https://github.com/facebookresearch/atlas-lean/blob/main/REVIEWING.md#mathematical-faithfulness)
-        lists what to compare.
+        lists what to compare. Search the open issues first.
   - type: input
     id: page
     attributes:
@@ -21,7 +22,7 @@ body:
     attributes:
       label: Problem
       options:
-        - The page and its Lean declaration state different things
+        - The page and its linked Lean declaration state different things
         - The statement does not match its source
         - The Lean statement is false, vacuous or tautological
         - A citation, a dependency or the prose is wrong
