@@ -8,12 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Convex.Basic
-public import Mathlib.Analysis.Normed.Module.Basic
-public import Mathlib.Analysis.Normed.Operator.Basic
-public import Mathlib.Topology.Defs.Basic
-public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+public import Mathlib.Analysis.LocallyConvex.Separation
+
+/-!
+# Separation of convex bodies at positive distance
+
+`convexBodiesSeparatedByHyperplane` gives a nonzero continuous linear functional that
+separates two convex bodies at positive distance in a real Banach space.
+-/
 
 @[expose] public section
 
@@ -34,7 +36,7 @@ separation holds even for non-disjoint bodies with no common interior
 points. The positive-distance case follows from standard Hahn–Banach
 separation.
 -/
-theorem_wanted convexBodiesSeparatedByHyperplane :
+theorem convexBodiesSeparatedByHyperplane :
     ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
       (A B : Set E),
       Convex ℝ A → IsClosed A → (interior A).Nonempty →
@@ -43,6 +45,10 @@ theorem_wanted convexBodiesSeparatedByHyperplane :
       (∃ R : ℝ, ∀ b ∈ B, ‖b‖ ≤ R) →
       (∃ ε : ℝ, 0 < ε ∧ ∀ a ∈ A, ∀ b ∈ B, ε ≤ dist a b) →
       ∃ (F : E →L[ℝ] ℝ) (c : ℝ), F ≠ 0 ∧
-        (∀ a ∈ A, F a ≤ c) ∧ (∀ b ∈ B, c ≤ F b)
+        (∀ a ∈ A, F a ≤ c) ∧ (∀ b ∈ B, c ≤ F b) := by
+  intro E _ _ _ A B hA _ hAi _ hB _ hBi _ ⟨ε, hε, hdist⟩
+  apply geometric_hahn_banach_of_nonempty_interior hA hB _ hAi (hBi.mono interior_subset)
+  refine Set.disjoint_left.mpr fun x hxA hxB => hε.not_ge ?_
+  simpa using hdist x (interior_subset hxA) x hxB
 
 end MathlibExt.Analysis.FunctionalAnalysis.ScottishBook64Wanted

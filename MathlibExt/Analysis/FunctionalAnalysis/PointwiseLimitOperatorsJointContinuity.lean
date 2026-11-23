@@ -1,5 +1,18 @@
 /-
-# Pointwise-convergent operators: T_n x_n → T x when x_n → x
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_68.lean` (openbmb/ma-proofbench,
+commit 31bab4c78fd1b0c464e767d62e9202163d1e9029), for the theorem statement and its description.
+Authors: L. Pu et al. (MA-ProofBench)
+Licensed under the MIT License.
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +33,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_68.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_68 … := by sorry` into the Batteries `theorem_wanted`
-`tendsto_apply_of_tendsto_pointwise_of_tendsto`; moved the informal problem statement docstring
-onto it and placed the declarations in namespace
-`MathlibExt.Analysis.FunctionalAnalysis.PointwiseLimitOperatorsJointContinuityWanted`; replaced
-`import Mathlib` by `public import Mathlib` under the module system.
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.Normed.Operator.BanachSteinhaus
 
-@[expose] public section
+/-!
+# Evaluation of pointwise convergent operators along convergent sequences
+
+If bounded linear operators on a real Banach space converge pointwise to `T` and `xₙ → x`,
+then `Tₙ xₙ → T x`.
+-/
 
 open Topology Filter
 
@@ -52,12 +58,21 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Operator theory
 of linear operators), `benchmark/level1/ma_proofbench_l1_68.lean` at
 openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted tendsto_apply_of_tendsto_pointwise_of_tendsto {E F : Type*}
+public theorem tendsto_apply_of_tendsto_pointwise_of_tendsto {E F : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
     (Tn : ℕ → E →L[ℝ] F) (T : E → F)
     (hT : ∀ x : E, Tendsto (fun n => Tn n x) atTop (𝓝 (T x))) :
     ∀ (xseq : ℕ → E) (x : E), Tendsto xseq atTop (𝓝 x) →
-      Tendsto (fun n => Tn n (xseq n)) atTop (𝓝 (T x))
+      Tendsto (fun n => Tn n (xseq n)) atTop (𝓝 (T x)) := by
+  obtain ⟨C, hC⟩ := banach_steinhaus (g := Tn) fun y => by
+    obtain ⟨M, hM⟩ := (hT y).norm.bddAbove_range
+    exact ⟨M, fun n => hM (Set.mem_range_self n)⟩
+  intro xseq x hx
+  apply (hT x).congr_dist
+  refine squeeze_zero (g := fun n => C * dist x (xseq n)) (fun _ => dist_nonneg) (fun n => ?_) ?_
+  · exact ((Tn n).dist_le_opNorm x (xseq n)).trans
+      (mul_le_mul_of_nonneg_right (hC n) dist_nonneg)
+  · simpa using ((tendsto_const_nhds (x := x)).dist hx).const_mul C
 
 end MathlibExt.Analysis.FunctionalAnalysis.PointwiseLimitOperatorsJointContinuityWanted
