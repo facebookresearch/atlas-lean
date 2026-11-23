@@ -1,5 +1,18 @@
 /-
-# Weakly bounded families of Hilbert-space operators are bounded
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level2/ma_proofbench_l2_60.lean` (openbmb/ma-proofbench,
+commit 31bab4c78fd1b0c464e767d62e9202163d1e9029): the theorem statement.
+Authors: L. Pu et al. (MA-ProofBench).
+Licensed under the MIT License:
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +33,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level2/ma_proofbench_l2_60.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l2_60 … := by sorry` into the Batteries `theorem_wanted`
-`exists_bound_opNorm_of_forall_inner_bounded`; moved the informal problem statement docstring
-onto it and placed the declarations in namespace
-`MathlibExt.Analysis.OperatorTheory.WeaklyBoundedOperatorFamilyBoundedWanted`; replaced `import
-Mathlib` by `public import Mathlib` under the module system.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+import Mathlib.Analysis.Normed.Operator.BanachSteinhaus
 
-@[expose] public section
+/-!
+# Weakly bounded sets of operators are bounded
+
+For each fixed `f`, apply Banach–Steinhaus to the functionals `g ↦ ⟪A f, g⟫` on the codomain.
+Their norms are `‖A f‖`, so a second application on the domain bounds the operator norms `‖A‖`.
+-/
+
+public section
 
 namespace MathlibExt.Analysis.OperatorTheory.WeaklyBoundedOperatorFamilyBoundedWanted
 
@@ -52,12 +62,20 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theor
 theory of linear operators), `benchmark/level2/ma_proofbench_l2_60.lean` at
 openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted exists_bound_opNorm_of_forall_inner_bounded (𝕜 : Type*) [RCLike 𝕜]
+theorem exists_bound_opNorm_of_forall_inner_bounded (𝕜 : Type*) [RCLike 𝕜]
     (H K : Type*) [NormedAddCommGroup H] [NormedAddCommGroup K]
     [InnerProductSpace 𝕜 H] [InnerProductSpace 𝕜 K]
     [CompleteSpace H] [CompleteSpace K]
     (Q : Set (H →L[𝕜] K))
     (hQ : ∀ f : H, ∀ g : K, ∃ α : ℝ, ∀ A : H →L[𝕜] K, A ∈ Q → ‖inner 𝕜 (A f) g‖ ≤ α) :
-    ∃ M : ℝ, ∀ A : H →L[𝕜] K, A ∈ Q → ‖A‖ ≤ M
+    ∃ M : ℝ, ∀ A : H →L[𝕜] K, A ∈ Q → ‖A‖ ≤ M := by
+  have hpoint (f : H) : ∃ C : ℝ, ∀ A : Q, ‖A.val f‖ ≤ C := by
+    have hcoeff (g : K) : ∃ C : ℝ, ∀ A : Q, ‖innerSL 𝕜 (A.val f) g‖ ≤ C := by
+      obtain ⟨C, hC⟩ := hQ f g
+      exact ⟨C, fun A ↦ hC A A.property⟩
+    simpa only [innerSL_apply_norm] using
+      (banach_steinhaus (g := fun A : Q ↦ innerSL 𝕜 (A.val f)) hcoeff)
+  obtain ⟨M, hM⟩ := banach_steinhaus (g := fun A : Q ↦ A.val) hpoint
+  exact ⟨M, fun A hA ↦ hM ⟨A, hA⟩⟩
 
 end MathlibExt.Analysis.OperatorTheory.WeaklyBoundedOperatorFamilyBoundedWanted

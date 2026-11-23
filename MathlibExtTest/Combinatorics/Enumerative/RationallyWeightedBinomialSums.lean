@@ -49,4 +49,15 @@ example (n : ℕ) :
   push_cast at h
   exact_mod_cast h
 
+-- The inverse-square sum is empty at zero.
+example : ∑ k ∈ Finset.Icc 1 0, (-1 : ℚ) ^ (k - 1) * (0 : ℕ).choose k / (k : ℚ) ^ 2 = 0 := by
+  rw [sum_neg_one_pow_choose_div_sq_eq_sum_harmonic]
+  simp
+
+-- At two the first negative term contributes, giving 2 - 1/4 = 7/4.
+example : ∑ k ∈ Finset.Icc 1 2, (-1 : ℚ) ^ (k - 1) * (2 : ℕ).choose k / (k : ℚ) ^ 2 = 7 / 4 := by
+  rw [sum_neg_one_pow_choose_div_sq_eq_sum_harmonic]
+  rw [show Finset.Icc 1 2 = {1, 2} from by decide]
+  norm_num [harmonic, Finset.sum_range_succ]
+
 end MathlibExtTest.RationallyWeightedBinomialSums
