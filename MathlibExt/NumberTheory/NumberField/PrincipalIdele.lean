@@ -79,7 +79,9 @@ private theorem eq_one_of_forall_infinitePlace_norm_sub_one_lt_one
     have hw := h w
     rw [← map_one (algebraMap K w.Completion), ← map_sub] at hw
     have hco : algebraMap K w.Completion ((k : K) - 1) =
-        (↑((WithAbs.equiv w.1).symm ((k : K) - 1)) : w.Completion) := rfl
+        (↑((WithAbs.equiv w.1).symm ((k : K) - 1)) : w.Completion) := by
+      rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+        Algebra.algebraMap_self_apply, WithAbs.equiv_symm_apply]
     rw [hco, NumberField.InfinitePlace.Completion.norm_coe] at hw
     simpa using hw
   have hk0 : k - 1 = 0 := by

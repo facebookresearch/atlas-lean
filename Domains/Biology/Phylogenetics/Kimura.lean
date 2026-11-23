@@ -113,10 +113,10 @@ noncomputable def k80EigenbasisUnit : (Matrix (Fin 4) (Fin 4) ℝ)ˣ where
   inv := !![1/4, 1/4, 1/4, 1/4; 1/4, -1/4, 1/4, -1/4; 1/2, 0, -1/2, 0; 0, 1/2, 0, -1/2]
   val_inv := by
     ext i j
-    fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, mul_apply, Fin.sum_univ_four]
+    fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, Matrix.mul_apply, Fin.sum_univ_four]
   inv_val := by
     ext i j
-    fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, mul_apply, Fin.sum_univ_four]
+    fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, Matrix.mul_apply, Fin.sum_univ_four]
 
 /-- Diagonalization of `t • k80Rate κ`. -/
 theorem smul_k80Rate_eq (κ t : ℝ) :
@@ -126,7 +126,7 @@ theorem smul_k80Rate_eq (κ t : ℝ) :
         (↑k80EigenbasisUnit⁻¹ : Matrix (Fin 4) (Fin 4) ℝ) := by
   ext i j
   simp only [k80EigenbasisUnit, Units.inv_mk, Units.val_mk, Matrix.smul_apply, k80Rate_apply,
-    mul_apply, Fin.sum_univ_four]
+    Matrix.mul_apply, Fin.sum_univ_four]
   fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis] <;> ring
 
 /-- The **Kimura two-parameter transition matrix** in terms of the composite parameters
@@ -155,7 +155,7 @@ theorem ctmcTransition_k80Rate (κ t : ℝ) :
   ext i j
   rw [ctmcTransition, smul_k80Rate_eq, Matrix.exp_units_conj, Matrix.exp_diagonal]
   simp only [kimuraProb, of_apply, h1, h2, k80EigenbasisUnit, Units.inv_mk, Units.val_mk,
-    mul_apply, Fin.sum_univ_four, Pi.exp_def]
+    Matrix.mul_apply, Fin.sum_univ_four, Pi.exp_def]
   fin_cases i <;> fin_cases j <;> norm_num [k80Eigenbasis, ← Real.exp_eq_exp_ℝ] <;> ring
 
 /-- Each row of the Kimura transition matrix sums to `1`, for all real `a`, `b`. -/

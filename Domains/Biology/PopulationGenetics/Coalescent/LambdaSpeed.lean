@@ -328,7 +328,8 @@ theorem greyCondition_iff (Λ : Measure I) [IsFiniteMeasure Λ] :
     rcases le_or_gt a b with hab | hab
     · exact hi.mono_set (Ioi_subset_Ioi hab)
     · have hc : IntegrableOn (fun q => (psi Λ q)⁻¹) (Icc b a) :=
-        ((continuousOn_inv_psi Λ hΛ).mono (fun q hq => lt_of_lt_of_le hb hq.1)).integrableOn_Icc
+        ((continuousOn_inv_psi Λ hΛ).mono
+          (fun q (hq : q ∈ Icc b a) => lt_of_lt_of_le hb hq.1)).integrableOn_Icc
       refine (hc.union hi).mono_set (fun q hq => ?_)
       rcases le_or_gt q a with h | h
       · exact Or.inl ⟨le_of_lt hq, h⟩

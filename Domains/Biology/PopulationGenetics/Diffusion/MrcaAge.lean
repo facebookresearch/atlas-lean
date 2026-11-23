@@ -1037,7 +1037,8 @@ private theorem aux1PosAux_le {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     rw [Real.norm_of_nonneg (by positivity)]
     gcongr
   have hmvt := (convex_Icc (0 : ℝ) x).norm_image_sub_le_of_norm_hasDerivWithin_le
-    (fun t ht => (hasDerivAt_aux1PosAux (ne_of_lt (ht.2.trans_lt hx.2))).hasDerivWithinAt)
+    (fun t (ht : t ∈ Icc (0 : ℝ) x) =>
+      (hasDerivAt_aux1PosAux (ne_of_lt (ht.2.trans_lt hx.2))).hasDerivWithinAt)
     hbound ⟨le_rfl, hx.1.le⟩ ⟨hx.1.le, le_rfl⟩
   have hφ0 : (0 : ℝ) * (2 - 0) / (2 * (1 - 0)) + log (1 - (0 : ℝ)) = 0 := by
     simp
