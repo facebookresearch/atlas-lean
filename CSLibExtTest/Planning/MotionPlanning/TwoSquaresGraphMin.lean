@@ -33,6 +33,19 @@ example : 3 + Real.sqrt 5 ≤ polyLen [.s, .A, .s, .D, .P, .t] :=
 
 example : ¬ IsWalk [.s, .C, .t] := fun h => not_adj_s_C h.2.2.1
 
+example : VisAdj (coord .s) (coord .s) := by
+  simp only [coord]
+  exact VisAdj.refl VisibilityInstance.s_mem_G
+
+example : IsWalk [.s, .s, .D, .P, .t] := by
+  refine ⟨rfl, rfl, ?_, adj_s_D, adj_D_P, adj_P_t, trivial⟩
+  simp only [coord]
+  exact VisAdj.refl VisibilityInstance.s_mem_G
+
+example : polyLen [.s, .s, .D, .P, .t] = 3 + Real.sqrt 5 := by
+  simp only [polyLen, dist_self, dist_sD, dist_DP, dist_Pt]
+  ring
+
 #print axioms min_eq
 #print axioms adj_s_D
 #print axioms adj_D_P

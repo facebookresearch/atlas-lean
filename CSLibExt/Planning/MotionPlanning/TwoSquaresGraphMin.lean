@@ -47,6 +47,12 @@ Lower-bound method: a uniform potential `H` plus per-step bonuses for leaving
 
 Imports: narrow `Mathlib` modules plus the configuration-space and
 two-squares providers.
+
+Visibility adjacency is intentionally reflexive on `G`: since
+`segment ℝ a a = {a}`, `VisAdj a a` holds whenever `a ∈ G`, so `IsWalk`
+admits stuttering vertices.  A stutter step contributes `dist a a = 0`, so
+admitting stutters does not change the least walk length, and the attaining
+walk `[s, D, P, t]` is stutter-free.
 -/
 
 namespace Cslib.Planning.MotionPlanning.TwoSquaresGraph
@@ -119,6 +125,18 @@ noncomputable def polyLen : List Vtx → ℝ
   | [] => 0
   | [_] => 0
   | a :: b :: rest => dist (coord a) (coord b) + polyLen (b :: rest)
+
+/-- A stuttering step contributes zero length. -/
+theorem polyLen_stutter (a : Vtx) (l : List Vtx) : polyLen (a :: a :: l) = polyLen (a :: l) := by
+  cases l <;> simp [polyLen, dist_self]
+
+
+
+/-- Visibility adjacency is reflexive on `G`: the degenerate segment is a singleton. -/
+theorem VisAdj.refl {a : plane} (ha : a ∈ G) : VisAdj a a := by
+  unfold VisAdj
+  rw [segment_same]
+  exact Set.singleton_subset_iff.mpr ha
 
 /-- Consecutive-vertex adjacency along a list. -/
 def ChainAdj : List Vtx → Prop
@@ -356,15 +374,6 @@ private lemma openUnion_sub_interior : open1 ∪ open2 ⊆ interior (O1 ∪ O2) 
 
 -- Square-root facts and edge distances.
 
-private lemma sqrt5_eq : Real.sqrt 5 / 2 = Real.sqrt (5 / 4) := by
-  have hsq : (Real.sqrt 5 / 2) ^ 2 = 5 / 4 := by
-    rw [div_pow, Real.sq_sqrt (by norm_num)]
-    norm_num
-  have hnn : (0:ℝ) ≤ Real.sqrt 5 / 2 :=
-    div_nonneg (Real.sqrt_nonneg _) (by norm_num)
-  have hss := Real.sqrt_sq hnn
-  rw [← hss, hsq]
-
 private lemma h2s5 : (2:ℝ) ≤ Real.sqrt 5 := by
   have h4 : Real.sqrt 4 ≤ Real.sqrt 5 := Real.sqrt_le_sqrt (by norm_num)
   have h42 : Real.sqrt 4 = 2 := by
@@ -378,52 +387,24 @@ private lemma c_nonneg : 0 ≤ c := by
   linarith [h2s5]
 
 private lemma dist_sA : dist (coord .s) (coord .A) = Real.sqrt 5 / 2 := by
-  have h2 : ‖coord .s - coord .A‖ ^ 2 = 5 / 4 := by
-    simp only [coord, s, cBotL, EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two,
-      sub_c0, sub_c1, s0, s1, cBotL0, cBotL1]
-    norm_num
-  have hnn : (0:ℝ) ≤ ‖coord .s - coord .A‖ := norm_nonneg _
-  have hss := Real.sqrt_sq hnn
-  rw [dist_eq_norm, ← hss, h2, ← sqrt5_eq]
+  simp only [coord]
+  exact dist_s_botL
 
 theorem dist_sD : dist (coord .s) (coord .D) = Real.sqrt 5 / 2 := by
-  have h2 : ‖coord .s - coord .D‖ ^ 2 = 5 / 4 := by
-    simp only [coord, s, cTopL, EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two,
-      sub_c0, sub_c1, s0, s1, cTopL0, cTopL1]
-    norm_num
-  have hnn : (0:ℝ) ≤ ‖coord .s - coord .D‖ := norm_nonneg _
-  have hss := Real.sqrt_sq hnn
-  rw [dist_eq_norm, ← hss, h2, ← sqrt5_eq]
+  simp only [coord]
+  exact dist_s_topL
 
 private lemma dist_Ft : dist (coord .F) (coord .t) = Real.sqrt 5 / 2 := by
-  have h2 : ‖coord .F - coord .t‖ ^ 2 = 5 / 4 := by
-    simp only [coord, cBotR, t, EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two,
-      sub_c0, sub_c1, cBotR0, cBotR1, t0, t1]
-    norm_num
-  have hnn : (0:ℝ) ≤ ‖coord .F - coord .t‖ := norm_nonneg _
-  have hss := Real.sqrt_sq hnn
-  rw [dist_eq_norm, ← hss, h2, ← sqrt5_eq]
+  simp only [coord]
+  exact dist_botR_t
 
 theorem dist_Pt : dist (coord .P) (coord .t) = Real.sqrt 5 / 2 := by
-  have h2 : ‖coord .P - coord .t‖ ^ 2 = 5 / 4 := by
-    simp only [coord, cTopR, t, EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two,
-      sub_c0, sub_c1, cTopR0, cTopR1, t0, t1]
-    norm_num
-  have hnn : (0:ℝ) ≤ ‖coord .P - coord .t‖ := norm_nonneg _
-  have hss := Real.sqrt_sq hnn
-  rw [dist_eq_norm, ← hss, h2, ← sqrt5_eq]
+  simp only [coord]
+  exact dist_topR_t
 
 theorem dist_DP : dist (coord .D) (coord .P) = 3 := by
-  have h2 : ‖coord .D - coord .P‖ ^ 2 = 9 := by
-    simp only [coord, cTopL, cTopR, EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two,
-      sub_c0, sub_c1, cTopL0, cTopL1, cTopR0, cTopR1]
-    norm_num
-  have hnn : (0:ℝ) ≤ ‖coord .D - coord .P‖ := norm_nonneg _
-  have hss := Real.sqrt_sq hnn
-  have h93 : Real.sqrt 9 = 3 := by
-    rw [show (9:ℝ) = 3 ^ 2 by norm_num]
-    exact Real.sqrt_sq (by norm_num)
-  rw [dist_eq_norm, ← hss, h2, h93]
+  simp only [coord]
+  exact dist_top_mid
 
 -- Potential values.
 
@@ -450,7 +431,7 @@ private lemma HP : H .P = Real.sqrt 5 / 2 := by
   simp only [H, coord, cTopR, PiLp.toLp_apply, Matrix.cons_val_zero]
   ring
 
--- Norm bridges: x-displacement bound and single-coordinate distances.
+-- Norm bridge: x-displacement bound.
 
 private lemma abs_le_dist (p q : plane) : |p 0 - q 0| ≤ dist p q := by
   have h2 : ‖p - q‖ ^ 2 = (p 0 - q 0) ^ 2 + (p 1 - q 1) ^ 2 := by
@@ -461,318 +442,27 @@ private lemma abs_le_dist (p q : plane) : |p 0 - q 0| ≤ dist p q := by
     _ = ‖p - q‖ := Real.sqrt_sq (norm_nonneg _)
     _ = dist p q := (dist_eq_norm _ _).symm
 
-private lemma dist_single0 (p : plane) (c' : ℝ) :
-    dist (WithLp.toLp 2 ![c', p 1]) p = |c' - p 0| := by
-  have h2 : ‖WithLp.toLp 2 ![c', p 1] - p‖ ^ 2 = (c' - p 0) ^ 2 := by
-    simp only [EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two, sub_c0, sub_c1,
-      PiLp.toLp_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.tail_cons]
-    ring
-  have hnn : (0:ℝ) ≤ ‖WithLp.toLp 2 ![c', p 1] - p‖ := norm_nonneg _
-  rw [dist_eq_norm, ← Real.sqrt_sq hnn, h2, Real.sqrt_sq_eq_abs]
-
-private lemma dist_single1 (p : plane) (c' : ℝ) :
-    dist (WithLp.toLp 2 ![p 0, c']) p = |c' - p 1| := by
-  have h2 : ‖WithLp.toLp 2 ![p 0, c'] - p‖ ^ 2 = (c' - p 1) ^ 2 := by
-    simp only [EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two, sub_c0, sub_c1,
-      PiLp.toLp_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.tail_cons]
-    ring
-  have hnn : (0:ℝ) ≤ ‖WithLp.toLp 2 ![p 0, c'] - p‖ := norm_nonneg _
-  rw [dist_eq_norm, ← Real.sqrt_sq hnn, h2, Real.sqrt_sq_eq_abs]
-
--- The interior of the union is contained in the open squares: boundary points
--- of the closed squares are not interior points.
-
-private lemma interior_sub_openUnion : interior (O1 ∪ O2) ⊆ open1 ∪ open2 := by
-  intro p hp
-  have hnhds : O1 ∪ O2 ∈ nhds p :=
-    Filter.mem_of_superset (IsOpen.mem_nhds isOpen_interior hp) interior_subset
-  rw [Metric.mem_nhds_iff] at hnhds
-  obtain ⟨ε, hε, hball⟩ := hnhds
-  set δ : ℝ := min (ε / 2) (1 / 2) with hδdef
-  have hδpos : 0 < δ := by
-    rw [hδdef]
-    exact lt_min_iff.mpr ⟨by linarith, by norm_num⟩
-  have hδlt : δ < ε := by
-    rw [hδdef]
-    exact lt_of_le_of_lt (min_le_left _ _) (by linarith)
-  have hδle : δ ≤ 1 / 2 := by
-    rw [hδdef]
-    exact min_le_right _ _
-  have hmem : p ∈ O1 ∪ O2 := interior_subset hp
-  rcases hmem with hp1 | hp2
-  · have hp1' : (0:ℝ) ≤ p 0 ∧ p 0 ≤ 1 ∧ (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hp1
-    obtain ⟨h00, h01, h10, h11⟩ := hp1'
-    by_cases hopen : (0 < p 0 ∧ p 0 < 1 ∧ 0 < p 1 ∧ p 1 < 1)
-    · have h1 : p ∈ open1 := hopen
-      exact Or.inl h1
-    · simp only [not_and_or, not_lt] at hopen
-      rcases hopen with h | h | h | h
-      · -- `p 0 = 0`: step left, outside both squares.
-        have hp0 : p 0 = 0 := le_antisymm h h00
-        have hqball : WithLp.toLp 2 ![p 0 - δ, p 1] ∈ Metric.ball p ε := by
-          rw [Metric.mem_ball, dist_single0, show p 0 - δ - p 0 = -δ by ring,
-            abs_neg, abs_of_nonneg (le_of_lt hδpos)]
-          exact hδlt
-        have hqout : WithLp.toLp 2 ![p 0 - δ, p 1] ∉ O1 ∪ O2 := by
-          intro hcon
-          rcases hcon with hcon | hcon
-          · simp only [O1, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (0:ℝ) ≤ p 0 - δ ∧ p 0 - δ ≤ 1 ∧
-                (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hcon
-            rw [hp0] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-          · simp only [O2, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (2:ℝ) ≤ p 0 - δ ∧ p 0 - δ ≤ 3 ∧
-                (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hcon
-            rw [hp0] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-        exact absurd (hball hqball) hqout
-      · -- `p 0 = 1`: step right into the gap `(1, 2)`.
-        have hp0 : p 0 = 1 := le_antisymm h01 h
-        have hqball : WithLp.toLp 2 ![p 0 + δ, p 1] ∈ Metric.ball p ε := by
-          rw [Metric.mem_ball, dist_single0, show p 0 + δ - p 0 = δ by ring,
-            abs_of_nonneg (le_of_lt hδpos)]
-          exact hδlt
-        have hqout : WithLp.toLp 2 ![p 0 + δ, p 1] ∉ O1 ∪ O2 := by
-          intro hcon
-          rcases hcon with hcon | hcon
-          · simp only [O1, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (0:ℝ) ≤ p 0 + δ ∧ p 0 + δ ≤ 1 ∧
-                (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hcon
-            rw [hp0] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-          · simp only [O2, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (2:ℝ) ≤ p 0 + δ ∧ p 0 + δ ≤ 3 ∧
-                (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hcon
-            rw [hp0] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-        exact absurd (hball hqball) hqout
-      · -- `p 1 = 0`: step down, outside both squares.
-        have hp1 : p 1 = 0 := le_antisymm h h10
-        have hqball : WithLp.toLp 2 ![p 0, p 1 - δ] ∈ Metric.ball p ε := by
-          rw [Metric.mem_ball, dist_single1, show p 1 - δ - p 1 = -δ by ring,
-            abs_neg, abs_of_nonneg (le_of_lt hδpos)]
-          exact hδlt
-        have hqout : WithLp.toLp 2 ![p 0, p 1 - δ] ∉ O1 ∪ O2 := by
-          intro hcon
-          rcases hcon with hcon | hcon
-          · simp only [O1, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (0:ℝ) ≤ p 0 ∧ p 0 ≤ 1 ∧
-                (0:ℝ) ≤ p 1 - δ ∧ p 1 - δ ≤ 1 := hcon
-            rw [hp1] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-          · simp only [O2, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (2:ℝ) ≤ p 0 ∧ p 0 ≤ 3 ∧
-                (0:ℝ) ≤ p 1 - δ ∧ p 1 - δ ≤ 1 := hcon
-            rw [hp1] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-        exact absurd (hball hqball) hqout
-      · -- `p 1 = 1`: step up, outside both squares.
-        have hp1 : p 1 = 1 := le_antisymm h11 h
-        have hqball : WithLp.toLp 2 ![p 0, p 1 + δ] ∈ Metric.ball p ε := by
-          rw [Metric.mem_ball, dist_single1, show p 1 + δ - p 1 = δ by ring,
-            abs_of_nonneg (le_of_lt hδpos)]
-          exact hδlt
-        have hqout : WithLp.toLp 2 ![p 0, p 1 + δ] ∉ O1 ∪ O2 := by
-          intro hcon
-          rcases hcon with hcon | hcon
-          · simp only [O1, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (0:ℝ) ≤ p 0 ∧ p 0 ≤ 1 ∧
-                (0:ℝ) ≤ p 1 + δ ∧ p 1 + δ ≤ 1 := hcon
-            rw [hp1] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-          · simp only [O2, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (2:ℝ) ≤ p 0 ∧ p 0 ≤ 3 ∧
-                (0:ℝ) ≤ p 1 + δ ∧ p 1 + δ ≤ 1 := hcon
-            rw [hp1] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-        exact absurd (hball hqball) hqout
-  · have hp2' : (2:ℝ) ≤ p 0 ∧ p 0 ≤ 3 ∧ (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hp2
-    obtain ⟨g00, g01, g10, g11⟩ := hp2'
-    by_cases hopen : (2 < p 0 ∧ p 0 < 3 ∧ 0 < p 1 ∧ p 1 < 1)
-    · have h2 : p ∈ open2 := hopen
-      exact Or.inr h2
-    · simp only [not_and_or, not_lt] at hopen
-      rcases hopen with h | h | h | h
-      · -- `p 0 = 2`: step left into the gap `(1, 2)`.
-        have hp0 : p 0 = 2 := le_antisymm h g00
-        have hqball : WithLp.toLp 2 ![p 0 - δ, p 1] ∈ Metric.ball p ε := by
-          rw [Metric.mem_ball, dist_single0, show p 0 - δ - p 0 = -δ by ring,
-            abs_neg, abs_of_nonneg (le_of_lt hδpos)]
-          exact hδlt
-        have hqout : WithLp.toLp 2 ![p 0 - δ, p 1] ∉ O1 ∪ O2 := by
-          intro hcon
-          rcases hcon with hcon | hcon
-          · simp only [O1, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (0:ℝ) ≤ p 0 - δ ∧ p 0 - δ ≤ 1 ∧
-                (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hcon
-            rw [hp0] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-          · simp only [O2, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (2:ℝ) ≤ p 0 - δ ∧ p 0 - δ ≤ 3 ∧
-                (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hcon
-            rw [hp0] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-        exact absurd (hball hqball) hqout
-      · -- `p 0 = 3`: step right, outside both squares.
-        have hp0 : p 0 = 3 := le_antisymm g01 h
-        have hqball : WithLp.toLp 2 ![p 0 + δ, p 1] ∈ Metric.ball p ε := by
-          rw [Metric.mem_ball, dist_single0, show p 0 + δ - p 0 = δ by ring,
-            abs_of_nonneg (le_of_lt hδpos)]
-          exact hδlt
-        have hqout : WithLp.toLp 2 ![p 0 + δ, p 1] ∉ O1 ∪ O2 := by
-          intro hcon
-          rcases hcon with hcon | hcon
-          · simp only [O1, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (0:ℝ) ≤ p 0 + δ ∧ p 0 + δ ≤ 1 ∧
-                (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hcon
-            rw [hp0] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-          · simp only [O2, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (2:ℝ) ≤ p 0 + δ ∧ p 0 + δ ≤ 3 ∧
-                (0:ℝ) ≤ p 1 ∧ p 1 ≤ 1 := hcon
-            rw [hp0] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-        exact absurd (hball hqball) hqout
-      · -- `p 1 = 0`: step down, outside both squares.
-        have hp1 : p 1 = 0 := le_antisymm h g10
-        have hqball : WithLp.toLp 2 ![p 0, p 1 - δ] ∈ Metric.ball p ε := by
-          rw [Metric.mem_ball, dist_single1, show p 1 - δ - p 1 = -δ by ring,
-            abs_neg, abs_of_nonneg (le_of_lt hδpos)]
-          exact hδlt
-        have hqout : WithLp.toLp 2 ![p 0, p 1 - δ] ∉ O1 ∪ O2 := by
-          intro hcon
-          rcases hcon with hcon | hcon
-          · simp only [O1, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (0:ℝ) ≤ p 0 ∧ p 0 ≤ 1 ∧
-                (0:ℝ) ≤ p 1 - δ ∧ p 1 - δ ≤ 1 := hcon
-            rw [hp1] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-          · simp only [O2, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (2:ℝ) ≤ p 0 ∧ p 0 ≤ 3 ∧
-                (0:ℝ) ≤ p 1 - δ ∧ p 1 - δ ≤ 1 := hcon
-            rw [hp1] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-        exact absurd (hball hqball) hqout
-      · -- `p 1 = 1`: step up, outside both squares.
-        have hp1 : p 1 = 1 := le_antisymm g11 h
-        have hqball : WithLp.toLp 2 ![p 0, p 1 + δ] ∈ Metric.ball p ε := by
-          rw [Metric.mem_ball, dist_single1, show p 1 + δ - p 1 = δ by ring,
-            abs_of_nonneg (le_of_lt hδpos)]
-          exact hδlt
-        have hqout : WithLp.toLp 2 ![p 0, p 1 + δ] ∉ O1 ∪ O2 := by
-          intro hcon
-          rcases hcon with hcon | hcon
-          · simp only [O1, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (0:ℝ) ≤ p 0 ∧ p 0 ≤ 1 ∧
-                (0:ℝ) ≤ p 1 + δ ∧ p 1 + δ ≤ 1 := hcon
-            rw [hp1] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-          · simp only [O2, PiLp.toLp_apply, Matrix.cons_val_zero,
-              Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons] at hcon
-            have hc : (2:ℝ) ≤ p 0 ∧ p 0 ≤ 3 ∧
-                (0:ℝ) ≤ p 1 + δ ∧ p 1 + δ ≤ 1 := hcon
-            rw [hp1] at hc
-            obtain ⟨h1, h2, h3, h4⟩ := hc
-            linarith
-        exact absurd (hball hqball) hqout
-
--- Points outside both open squares lie in `G`.
-private lemma G_of_not_open (p : plane) (h : ¬ ((0 < p 0 ∧ p 0 < 1 ∧ 0 < p 1 ∧ p 1 < 1) ∨
-    (2 < p 0 ∧ p 0 < 3 ∧ 0 < p 1 ∧ p 1 < 1))) : p ∈ G := by
-  show p ∉ interior (O1 ∪ O2)
-  intro hp
-  have hsub := interior_sub_openUnion hp
-  rcases hsub with h1 | h2
-  · have h1' : 0 < p 0 ∧ p 0 < 1 ∧ 0 < p 1 ∧ p 1 < 1 := h1
-    exact h (Or.inl h1')
-  · have h2' : 2 < p 0 ∧ p 0 < 3 ∧ 0 < p 1 ∧ p 1 < 1 := h2
-    exact h (Or.inr h2')
-
 -- Positive adjacency facts (spot checks + upper-bound walk edges).
+
 theorem adj_s_D : VisAdj (coord .s) (coord .D) := by
   unfold VisAdj
   simp only [coord]
-  intro p hp
-  rw [segment_eq_image] at hp
-  obtain ⟨t, ht, rfl⟩ := hp
-  apply G_of_not_open
-  simp only [seg_c0, seg_c1, s0, s1, cTopL0, cTopL1]
-  have ht' : (0:ℝ) ≤ t ∧ t ≤ 1 := ht
-  obtain ⟨ht0, ht1⟩ := ht'
-  intro h
-  rcases h with (⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩) <;> linarith
+  exact seg_top_left
 
 theorem adj_s_A : VisAdj (coord .s) (coord .A) := by
   unfold VisAdj
   simp only [coord]
-  intro p hp
-  rw [segment_eq_image] at hp
-  obtain ⟨t, ht, rfl⟩ := hp
-  apply G_of_not_open
-  simp only [seg_c0, seg_c1, s0, s1, cBotL0, cBotL1]
-  have ht' : (0:ℝ) ≤ t ∧ t ≤ 1 := ht
-  obtain ⟨ht0, ht1⟩ := ht'
-  intro h
-  rcases h with (⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩) <;> linarith
+  exact seg_bot_left
 
 theorem adj_D_P : VisAdj (coord .D) (coord .P) := by
   unfold VisAdj
   simp only [coord]
-  intro p hp
-  rw [segment_eq_image] at hp
-  obtain ⟨t, ht, rfl⟩ := hp
-  apply G_of_not_open
-  simp only [seg_c0, seg_c1, cTopL0, cTopL1, cTopR0, cTopR1]
-  have ht' : (0:ℝ) ≤ t ∧ t ≤ 1 := ht
-  obtain ⟨ht0, ht1⟩ := ht'
-  intro h
-  rcases h with (⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩) <;> linarith
+  exact top_middle_visible
 
 theorem adj_P_t : VisAdj (coord .P) (coord .t) := by
   unfold VisAdj
   simp only [coord]
-  intro p hp
-  rw [segment_eq_image] at hp
-  obtain ⟨t, ht, rfl⟩ := hp
-  apply G_of_not_open
-  simp only [seg_c0, seg_c1, cTopR0, cTopR1, t0, t1]
-  have ht' : (0:ℝ) ≤ t ∧ t ≤ 1 := ht
-  obtain ⟨ht0, ht1⟩ := ht'
-  intro h
-  rcases h with (⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩) <;> linarith
+  exact seg_top_right
 
 -- Non-adjacency facts, each witnessed by an interior point on the segment.
 
