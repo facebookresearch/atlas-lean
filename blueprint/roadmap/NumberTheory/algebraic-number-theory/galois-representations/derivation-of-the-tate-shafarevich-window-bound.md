@@ -50,10 +50,10 @@ The published results that the argument consumes are:
 A good expansion has pages for the intermediate statements of the argument, in order, each with the
 inputs above that it uses; pages for the inputs not yet in the vault, among them the theorem of
 Ferrero and Washington, the $\ell$-adic Galois characters attached to algebraic Hecke characters,
-Brauer's induction theorem in degree zero and Chevalley's theorem on congruence units; and, once the
-node on Galois cohomology is broken down, links to its pages for the results on Galois cohomology
-above only, with the definitions of Tate–Shafarevich groups, twists and restricted Galois groups
-linked from the window bound.
+Brauer's induction theorem in degree zero and Chevalley's theorem on congruence units. The results
+on Galois cohomology above are linked below to the pages of their own expansion, and the definitions
+of Tate–Shafarevich groups, Tate twists and Galois groups with restricted ramification are linked
+from the window bound.
 
 ## Depends on
 
@@ -61,10 +61,34 @@ linked from the window bound.
 
 ## Proof depends on
 
-- [Smooth representations of p-adic GLₙ and the local Langlands correspondence](../../../RepresentationTheory/reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands.md), for the results on representations of $p$-adic $\mathrm{GL}_n$ listed above
-- [Automorphic representations of GLₙ and unitary groups](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups.md), for the results on automorphic forms on $\mathrm{GL}_n$ listed above, base change and the cuspidal spectrum among them
-- [Global Artin reciprocity](../adeles-class-field-theory/global-artin-reciprocity.md)
-- [Galois cohomology and p-adic Hodge theory](../../galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the results on Galois cohomology listed above (the Poitou–Tate sequence and the duality of Tate–Shafarevich groups at finite level, global and local finiteness, the global and local Euler characteristic formulas, local Tate duality, the orthogonality of unramified classes, the Greenberg–Wiles formula, and the rational Bloch–Kato dimension formula and orthogonality) and Berger's theorem
+- [Finite length of parabolically induced representations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/finite-length-of-induced-representations.md), for the finiteness theorem of Bernstein and Zelevinsky
+- [The Bernstein–Zelevinsky geometric lemma](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/bernstein-zelevinsky-geometric-lemma.md)
+- [Zelevinsky's classification of the irreducible representations of GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/zelevinsky-classification.md), for the classification with the polynomial structure of the Grothendieck ring and the irreducibility of products of segments no two of which are linked, products with totally disjoint cuspidal supports among them
+- [Essentially square-integrable representations of GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/essentially-square-integrable-representations-of-gl-n.md), for the essentially square-integrable representations as those attached to segments
+- [Tempered and unitary representations of GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/tempered-and-unitary-representations-of-gl-n.md), for Bernstein's irreducibility of products of unitary representations and the tempered representations as products of square-integrable ones
+- [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/whittaker-models-for-gl-n.md), for the generic representations as products over pairwise unlinked segments
+- [Langlands classification for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/langlands-classification-for-gl-n.md), with its standard modules
+- [Local converse theorem for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/local-converse-theorem-for-gl-n.md)
+- [Depth under parabolic induction and Jacquet functors](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/depth-under-parabolic-induction-and-jacquet-functors.md), for the depth zero of representations whose cuspidal supports have depth zero
+- [Harish-Chandra's finiteness theorem for automorphic forms](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/harish-chandra-finiteness-theorem.md), for the finiteness of spaces of automorphic forms
+- [Jacquet–Shalika classification of automorphic representations of GLₙ](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/jacquet-shalika-classification.md), for the classification of Jacquet and Shalika and its rigidity
+- [Discreteness of the cuspidal spectrum](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/discreteness-of-the-cuspidal-spectrum.md), for the description of the cuspidal spectrum, which gives the boundedness of cusp forms from which, with the rigidity, the input of Gelfand and Kazhdan is derived
+- [Base change and automorphic induction for GLₙ](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/base-change-and-automorphic-induction-for-gl-n.md), for base change to isobaric representations
+- [Algebraic automorphic representations and Clozel's purity lemma](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/algebraic-automorphic-representations-and-clozel-purity.md), for Clozel's results on cohomological representations
+- [Global reciprocity law](../adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the global Artin map
+- [Poitou–Tate exact sequence](galois-cohomology-of-number-fields/poitou-tate-exact-sequence.md), at finite level, with the lifting of local $2$-cocycles that a count derives from it
+- [Poitou–Tate duality](galois-cohomology-of-number-fields/poitou-tate-duality.md), for the duality of Tate–Shafarevich groups at finite level, for $\ell$ odd or a totally imaginary field
+- [Finiteness and cohomological dimension of Galois groups with restricted ramification](galois-cohomology-of-number-fields/finiteness-and-cohomological-dimension-of-g-s.md), for global finiteness
+- [Global Euler characteristic formula](galois-cohomology-of-number-fields/global-euler-characteristic-formula.md), over $\mathbb{Q}$ and totally real fields, for odd $\ell$
+- [Wiles's formula for Selmer groups](galois-cohomology-of-number-fields/greenberg-wiles-formula.md), over totally real fields, for odd $\ell$
+- [Cohomological dimension and finiteness for p-adic fields](galois-cohomology-of-local-fields/cohomological-dimension-of-p-adic-fields.md), for local finiteness, also over finite extensions of $\mathbb{Q}_\ell$
+- [Local Tate duality](galois-cohomology-of-local-fields/local-tate-duality.md), also over finite extensions of $\mathbb{Q}_\ell$
+- [Galois cohomology of Tate twists over a p-adic field](galois-cohomology-of-local-fields/cohomology-of-tate-twists-over-p-adic-fields.md), for the duality between $H^2(\mathbb{Z}_\ell(e + 1))$ and $H^0(\mathbb{Q}_\ell/\mathbb{Z}_\ell(-e))$ at the places above $\ell$, in the passage to the coefficients $\mathbb{Q}_\ell/\mathbb{Z}_\ell$
+- [Local Euler characteristic formula](galois-cohomology-of-local-fields/local-euler-characteristic-formula.md)
+- [Unramified classes under local duality](galois-cohomology-of-local-fields/unramified-classes-under-local-duality.md), for the orthogonality of unramified classes
+- [Bloch–Kato dimension formula](p-adic-hodge-theory/bloch-kato-dimension-formula.md), for representations with rational coefficients
+- [Bloch–Kato orthogonality](p-adic-hodge-theory/bloch-kato-orthogonality.md), for representations with rational coefficients
+- [p-adic monodromy theorem](p-adic-hodge-theory/p-adic-monodromy-theorem.md), for Berger's theorem that de Rham representations are potentially semistable
 
 ## Sources
 

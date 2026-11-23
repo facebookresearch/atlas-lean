@@ -38,12 +38,15 @@ of Siegel Eisenstein series in the doubling method.
 
 ## Depends on
 
-- [Theta correspondence for unitary dual pairs](theta-correspondence-for-unitary-dual-pairs.md), for unitary dual pairs, Weil representations, theta functions and theta integrals
+- [Splitting characters and the Weil representation of unitary dual pairs](theta-correspondence/weil-representation-of-unitary-dual-pairs.md), for unitary dual pairs and their Weil representations
+- [Global Weil representation and theta functions](theta-correspondence/global-weil-representation-and-theta-functions.md), for theta functions
+- [Weil's convergence criterion for theta integrals](theta-correspondence/weil-convergence-criterion.md), for theta integrals
 - [Meromorphic continuation of Hecke L-functions](../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for the partial Hecke $L$-values in the explicit factor
 
 ## Proof depends on
 
-- [Theta correspondence for unitary dual pairs](theta-correspondence-for-unitary-dual-pairs.md), for the Siegel–Weil formula and the Siegel Eisenstein series of the doubling method
+- [Siegel–Weil formula for unitary groups in Weil's convergent range](theta-correspondence/siegel-weil-formula-convergent-range.md)
+- [Siegel Eisenstein series on unitary groups](theta-correspondence/siegel-eisenstein-series-on-unitary-groups.md), for the Siegel Eisenstein series of the doubling method
 
 ## Sources
 

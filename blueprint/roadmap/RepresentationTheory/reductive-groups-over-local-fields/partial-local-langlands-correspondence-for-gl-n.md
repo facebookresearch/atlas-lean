@@ -49,14 +49,25 @@ Langlands classification.
 
 ## Depends on
 
-- [Smooth representations of p-adic GLₙ and the local Langlands correspondence](smooth-representations-of-p-adic-gl-n-and-local-langlands.md), for irreducible smooth representations, cuspidal supports, segments, the Langlands classification and depth
-- [Galois cohomology and p-adic Hodge theory](../../NumberTheory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for Weil groups and Weil–Deligne representations
+- [Smooth and admissible representations of p-adic groups](representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for irreducible smooth representations
+- [Cuspidal representations and Jacquet's embedding theorem](representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for cuspidal supports
+- [Zelevinsky's classification of the irreducible representations of GLₙ](representations-of-p-adic-gl-n/zelevinsky-classification.md), for segments
+- [Langlands classification for GLₙ](representations-of-p-adic-gl-n/langlands-classification-for-gl-n.md)
+- [Depth and unrefined minimal K-types](representations-of-p-adic-reductive-groups/depth-and-unrefined-minimal-k-types.md), for depth
+- [Weil group of a p-adic field](../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md), for Weil groups
+- [Weil–Deligne representations](../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-deligne-representations.md)
 - [Green's parametrization of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_q)$](../../GroupTheory/characters-of-finite-groups/green-cuspidal-characters-of-gl-n.md), for the case of a prime field, in the type law
 
 ## Proof depends on
 
-- [Smooth representations of p-adic GLₙ and the local Langlands correspondence](smooth-representations-of-p-adic-gl-n-and-local-langlands.md), for a partial local Langlands correspondence constructed from cuspidal parameters and extended through the Langlands classification
-- [Global Artin reciprocity](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/global-artin-reciprocity.md), for the global Artin map and its uniqueness, from which the local map $a \colon W_{E_v} \to E_v^\times$ is constructed as a surjective homomorphism, continuous on inertia and compatible with the global Artin map on the decomposition group; this local map, defined on the Weil group, is not the pointwise reciprocal of the global Artin map, which is defined on idèle classes
+- [Cuspidal representations and Jacquet's embedding theorem](representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for the cuspidal supports and the admissibility of the irreducible representations of the correspondence constructed from cuspidal parameters
+- [Finite length of parabolically induced representations](representations-of-p-adic-reductive-groups/finite-length-of-induced-representations.md), for the finite length of the products of representations of the groups $\mathrm{GL}_n$ that the correspondence uses
+- [Zelevinsky's classification of the irreducible representations of GLₙ](representations-of-p-adic-gl-n/zelevinsky-classification.md), for the segments and the polynomial structure of the Grothendieck ring that the correspondence uses
+- [Langlands classification for GLₙ](representations-of-p-adic-gl-n/langlands-classification-for-gl-n.md), for the extension of the correspondence from cuspidal representations to all irreducible representations through multisets of segments, with the uniqueness of the multiset, the contragredients and the composition factor $L(a + b)$ of $L(a) \times L(b)$
+- [Uniqueness of cuspidal support](representations-of-p-adic-reductive-groups/uniqueness-of-cuspidal-support.md), for the uniqueness of the cuspidal support of an irreducible representation of $\mathrm{GL}_n$, by which the correspondence compares the supports it uses
+- [Depth under parabolic induction and Jacquet functors](representations-of-p-adic-reductive-groups/depth-under-parabolic-induction-and-jacquet-functors.md), for the depth of the members of a cuspidal support (Moy–Prasad), by which every member of the support of a representation of $\mathrm{GL}_n$ with nonzero vectors fixed by the principal congruence subgroup has such vectors too, used for the depth-zero representations of the correspondence
+- [Global reciprocity law](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the global Artin map and its uniqueness, from which the local map $a \colon W_{E_v} \to E_v^\times$ is constructed as a surjective homomorphism, continuous on inertia and compatible with the global Artin map on the decomposition group; this local map, defined on the Weil group, is not the pointwise reciprocal of the global Artin map, which is defined on idèle classes
+- [The global Artin map on the Galois group of the maximal abelian extension](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reciprocity-law/artin-map-on-the-maximal-abelian-extension.md), for the surjectivity, openness and kernel of the global Artin map and its behaviour on the inertia and decomposition groups, which that construction uses
 
 ## Sources
 

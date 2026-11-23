@@ -34,7 +34,7 @@ $L(1, \chi) \ne 0$. On $\operatorname{Re} s > 0$ it continues meromorphically, w
 zeros of the $L(s, \chi_i)$ and of the $L(\bar s, \chi_i)$, whose residues are positive at real points.
 
 The proof runs Landau's argument on the windows instead of applying Landau's theorem on
-[Dirichlet integrals with non-negative integrands](analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-integrals.md),
+[Dirichlet integrals with non-negative integrands](../../zeta-l-functions/dirichlet-l-functions/analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-integrals.md),
 whose hypothesis is a sign condition for all large arguments. Let
 $a_k(z) = (-1)^k \Phi^{(k)}(z)/k!$, which for $\operatorname{Re} z > 2$ is
 $\frac{1}{k!} \int_0^\infty G(e^u)\, u^k e^{-zu}\, du$. For a suitable $\sigma > 2$, every $\eta > 0$,
@@ -63,13 +63,17 @@ $\operatorname{Re} s \ge 1$ are excluded by the non-vanishing of the $L$-functio
 the trivial character modulo $1$ is the non-vanishing of $\zeta(s)$, $s \ne 1$, on
 $\operatorname{Re} s \ge 1$.
 
+## Depends on
+
+- [Von Mangoldt function](../../arithmetic-functions/multiplicative-functions/von-mangoldt-function.md), for the function $\Lambda$ in the weighted Chebyshev functions $\psi^\sharp$
+
 ## Proof depends on
 
-- [Meromorphic continuation of Hecke L-functions](hecke-l-function-meromorphic-continuation.md), for its case of the finite-order Hecke characters of $\mathbb{Q}$: the $L$-functions of nonprincipal Dirichlet characters, which differ from those of their primitive characters by finitely many Euler factors, are entire, and the Riemann zeta function has a simple pole at $s = 1$ and no other pole
-- [Non-vanishing of Hecke L-functions on the line Re s = 1](hecke-l-function-nonvanishing-on-re-one.md), for the same case, for nonprincipal characters only: $L(s, \chi) \ne 0$ for $\operatorname{Re} s \ge 1$, in particular $L(1, \chi) \ne 0$, when $\chi$ is a nonprincipal Dirichlet character, since the finitely many Euler factors that separate $\chi$ from its primitive character do not vanish there
-- [Nonvanishing of the Riemann zeta function times $s - 1$ on $\operatorname{Re} s \ge 1$](../../distribution-of-primes/prime-number-theorem/prime-number-theorem/riemann-zeta-ne-zero-of-one-le-re.md), for the trivial character modulo $1$, which the page on Hecke $L$-functions excludes as the norm power $|\cdot|^0$
-- [Laurent expansion of $\zeta$ at $s = 1$](../riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), for its constant term: $\zeta(s) - 1/(s - 1)$ tends to the zeroth Stieltjes constant $c_0$ as $s \to 1$
-- [Stieltjes constants exist, and the zeroth is Euler's constant](../riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md), for $c_0 = \gamma$, so that the constant term of $\zeta$ at $s = 1$ is Euler's constant
+- [Meromorphic continuation of Hecke L-functions](../../zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for its case of the finite-order Hecke characters of $\mathbb{Q}$: the $L$-functions of nonprincipal Dirichlet characters, which differ from those of their primitive characters by finitely many Euler factors, are entire, and the Riemann zeta function has a simple pole at $s = 1$ and no other pole
+- [Non-vanishing of Hecke L-functions on the line Re s = 1](../../zeta-l-functions/dirichlet-l-functions/hecke-l-function-nonvanishing-on-re-one.md), for the same case, for nonprincipal characters only: $L(s, \chi) \ne 0$ for $\operatorname{Re} s \ge 1$, in particular $L(1, \chi) \ne 0$, when $\chi$ is a nonprincipal Dirichlet character, since the finitely many Euler factors that separate $\chi$ from its primitive character do not vanish there
+- [Nonvanishing of the Riemann zeta function times $s - 1$ on $\operatorname{Re} s \ge 1$](../prime-number-theorem/prime-number-theorem/riemann-zeta-ne-zero-of-one-le-re.md), for the trivial character modulo $1$, which the page on Hecke $L$-functions excludes as the norm power $|\cdot|^0$
+- [Laurent expansion of $\zeta$ at $s = 1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), for its constant term: $\zeta(s) - 1/(s - 1)$ tends to the zeroth Stieltjes constant $c_0$ as $s \to 1$
+- [Stieltjes constants exist, and the zeroth is Euler's constant](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md), for $c_0 = \gamma$, so that the constant term of $\zeta$ at $s = 1$ is Euler's constant
 
 ## Sources
 

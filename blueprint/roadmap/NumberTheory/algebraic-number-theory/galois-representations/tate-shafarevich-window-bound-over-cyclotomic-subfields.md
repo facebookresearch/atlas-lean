@@ -55,11 +55,13 @@ Tate–Shafarevich groups of the Tate twists $\mathbb{Q}_\ell/\mathbb{Z}_\ell(-k
 $1 \le k < \lfloor x^{401} \rfloor$, of every model of the fields $K(\psi, m(x), q, d)$, uniformly for
 the scales $x$ of a window $[Y, Y^2]$ with $Y \in [X^{1/J}, \sqrt{X}]$, so that
 $[Y, Y^2] \subset [X^{1/J}, X]$, for every large $X$. It is the input from Galois cohomology of the
-[window bounds for weighted Chebyshev sums of cyclic families of characters](../../zeta-l-functions/dirichlet-l-functions/chebyshev-window-bounds-for-cyclic-character-families.md).
+[window bounds for weighted Chebyshev sums of cyclic families of characters](../../distribution-of-primes/primes-in-progressions/chebyshev-window-bounds-for-cyclic-character-families.md).
 
 ## Depends on
 
-- [Galois cohomology and p-adic Hodge theory](../../galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the cohomology of profinite groups by continuous cochains and the Galois groups $G_{E,S}$ of the maximal extensions unramified outside $S$
+- [Galois groups with restricted ramification and their modules](galois-cohomology-of-number-fields/galois-groups-with-restricted-ramification.md), for the Galois groups $G_{E,S}$ of the maximal extensions unramified outside $S$, their discrete modules and their cohomology
+- [Tate–Shafarevich groups of Galois modules](galois-cohomology-of-number-fields/tate-shafarevich-groups.md), for Tate–Shafarevich groups; the groups $\text{Ш}^1_\ell(E, n)$ above impose local conditions at the places above $\ell$ only, and are those groups for the totally imaginary fields of the statement
+- [Cyclotomic character and Tate twists](cyclotomic-character-and-tate-twists.md), for the twists $\mathbb{Q}_\ell/\mathbb{Z}_\ell(n)$
 
 ## Proof depends on
 

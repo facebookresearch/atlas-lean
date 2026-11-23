@@ -23,8 +23,6 @@ Dirichlet characters, conductors, primitive and quadratic characters, Dirichlet 
 - [Generalized Riemann hypothesis for Dirichlet L-functions, half-plane form](grh-dirichlet-half-plane.md)
 - [Generalized Riemann hypothesis for Dirichlet L-functions, critical-strip form](grh-dirichlet-critical-strip.md)
 - [Primitive Dirichlet L-functions have no zero of real part greater than 1/2](primitive-dirichlet-l-functions-zero-free-half-plane.md)
-- [Zero-free half-planes from one-sided bounds for weighted Chebyshev sums on windows](zero-free-half-planes-from-chebyshev-bounds-on-windows.md)
-- [Window bounds for weighted Chebyshev sums of cyclic families of characters](chebyshev-window-bounds-for-cyclic-character-families.md)
 - [Classical zero-free region for Dirichlet L-functions of a fixed modulus](dirichlet-l-function-zero-free-region-fixed-modulus.md)
 - [Siegel's theorem](siegel-theorem.md)
 - [Deuring–Heilbronn repulsion of zeros by an exceptional zero](deuring-heilbronn-repulsion.md)

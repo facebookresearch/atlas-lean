@@ -1,7 +1,7 @@
 # Window bounds for weighted Chebyshev sums of cyclic families of characters
 
 This node is still to be broken down. It covers the bound that the
-[zero-free half-plane for primitive Dirichlet L-functions](primitive-dirichlet-l-functions-zero-free-half-plane.md)
+[zero-free half-plane for primitive Dirichlet L-functions](../../zeta-l-functions/dirichlet-l-functions/primitive-dirichlet-l-functions-zero-free-half-plane.md)
 feeds into the
 [criterion on windows](zero-free-half-planes-from-chebyshev-bounds-on-windows.md), and its derivation
 from [Green's description of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_p)$](../../../GroupTheory/characters-of-finite-groups/green-cuspidal-characters-of-gl-n.md),
@@ -65,6 +65,11 @@ from [Behrend's lemma](../../../Combinatorics/additive-combinatorics/progression
 that some sphere centred at the origin contains many of the lattice points of a cube. On the route
 through Green's description the same construction is only present in a bundle of conditions, whose
 consumer on that route projects another of its components.
+
+## Depends on
+
+- [Zero-free half-planes from one-sided bounds for weighted Chebyshev sums on windows](zero-free-half-planes-from-chebyshev-bounds-on-windows.md), for the weighted Chebyshev functions $G_\chi$
+- [Existence and uniqueness of the primitive character inducing a Dirichlet character](../../zeta-l-functions/dirichlet-l-functions/conductors-and-primitive-dirichlet-characters/primitive-character-is-primitive-and-uni.md), for the primitive characters that induce the powers of $\psi$, which make up $K_\psi$
 
 ## Proof depends on
 

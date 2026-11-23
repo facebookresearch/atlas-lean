@@ -58,8 +58,16 @@ varieties they involve.
 ## Depends on
 
 - [Partial local Langlands correspondence for GLₙ over completions of number fields](../../../RepresentationTheory/reductive-groups-over-local-fields/partial-local-langlands-correspondence-for-gl-n.md), whose laws the local–global compatibility above refers to
-- [Automorphic representations of GLₙ and unitary groups](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups.md), for cuspidal automorphic representations of $\mathrm{GL}_a(\mathbb{A}_E)$, their local components and their infinitesimal characters
-- [Galois cohomology and p-adic Hodge theory](../../galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for Weil–Deligne representations and the crystalline, de Rham and potentially semistable representations
+- [Automorphic forms, cusp forms and automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md), for cuspidal automorphic representations of $\mathrm{GL}_a(\mathbb{A}_E)$
+- [Tensor product theorem for automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for their local components
+- [Algebraic automorphic representations and Clozel's purity lemma](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/algebraic-automorphic-representations-and-clozel-purity.md), for regular algebraic representations and their infinitesimal characters
+- [Weil–Deligne representations](weil-deligne-representations/weil-deligne-representations.md), for Weil–Deligne representations and their monodromy
+- [Weil–Deligne representation of an ℓ-adic representation](weil-deligne-representations/weil-deligne-representation-of-an-l-adic-representation.md), for the Weil–Deligne representations of $r$ at the places away from $\ell$
+- [Crystalline representations](p-adic-hodge-theory/crystalline-representations.md)
+- [de Rham representations](p-adic-hodge-theory/de-rham-representations.md)
+- [Semistable and potentially semistable representations](p-adic-hodge-theory/semistable-representations.md)
+- [Hodge–Tate representations](p-adic-hodge-theory/hodge-tate-representations.md), for the Hodge–Tate weights
+- [Weil–Deligne representation of a de Rham representation](p-adic-hodge-theory/weil-deligne-representation-of-a-de-rham-representation.md), for the Weil–Deligne representations that $p$-adic Hodge theory attaches to $r$ at the places above $\ell$
 
 ## Sources
 
