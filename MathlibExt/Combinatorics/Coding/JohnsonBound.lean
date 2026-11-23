@@ -38,6 +38,12 @@ noncomputable def johnsonRadius (q : ℕ) (δ : ℝ) : ℝ :=
 
 variable {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
 
+/-- **Integer q-ary Johnson bound.** Let `S` be a set of words of length `n` over an
+alphabet of size at least `2`, with pairwise Hamming distance at least `d`, all lying in the
+radius-`e` Hamming ball around `y`, and satisfying `q * e ≤ (q - 1) * n`. Then the Johnson
+gap factor times `S.card` is at most `(q - 1) * n * d`. This is the integer double-counting
+core (Guruswami, Rudra and Sudan, *Essential Coding Theory*, draft of August 26, 2025,
+Theorem 7.3.1; Guruswami and Sudan, "Extensions to the Johnson bound", 2001, Theorem 1). -/
 theorem qary_johnson_bound (S : Finset (Fin n → α)) (y : Fin n → α) {d e : ℕ}
     (hq : 2 ≤ Fintype.card α)
     (hqe : Fintype.card α * e ≤ (Fintype.card α - 1) * n)
@@ -498,6 +504,9 @@ theorem qary_johnson_bound (S : Finset (Fin n → α)) (y : Fin n → α) {d e :
             ((S.card : ℤ) * ((n : ℤ) - d) + d) :=
       le_of_mul_le_mul_left hcancel hMpos
     linarith [hdiv]
+/-- **Cardinality form of the q-ary Johnson bound.** Under the hypotheses of
+`qary_johnson_bound`, together with the strict integer Johnson inequality `hJ`, conclude
+`S.card ≤ (q - 1) * n * d`, where `q` is the alphabet size. -/
 theorem card_le_of_qary_johnson (S : Finset (Fin n → α)) (y : Fin n → α) {d e : ℕ}
     (hq : 2 ≤ Fintype.card α)
     (hqe : Fintype.card α * e ≤ (Fintype.card α - 1) * n)
@@ -541,6 +550,10 @@ theorem card_le_of_qary_johnson (S : Finset (Fin n → α)) (y : Fin n → α) {
       ((Fintype.card α : ℤ) - 1) * n * ((n : ℤ) - d) := by omega
   omega
 
+/-- **List decodability from the integer Johnson conditions.** A code of length `n` and
+minimum distance at least `d` over an alphabet of size `q ≥ 2` is list decodable at radius
+`e` with list bound `q * d * n`, provided `q * e ≤ (q - 1) * n` and the strict integer
+Johnson inequality `hJ` holds. -/
 theorem isListDecodable_of_qary_johnson (C : Finset (Fin n → α)) {d e : ℕ}
     (hq : 2 ≤ Fintype.card α)
     (hqe : Fintype.card α * e ≤ (Fintype.card α - 1) * n)
@@ -564,6 +577,9 @@ theorem isListDecodable_of_qary_johnson (C : Finset (Fin n → α)) {d e : ℕ}
   ext c
   simp [Finset.mem_inter, Finset.mem_filter, Hamming.mem_ball, hammingDist_comm, and_comm]
 
+/-- **Real-radius to integer-conditions bridge.** If `e` is strictly below the unnormalized
+Johnson radius `J_q(d / n) * n`, then both `q * e < (q - 1) * n` and the strict integer
+Johnson inequality used by the q-ary bound hold. -/
 theorem qary_johnson_conditions_of_lt_johnsonRadius {q n d e : ℕ} (hq : 2 ≤ q)
     (he : (e : ℝ) < johnsonRadius q ((d : ℝ) / n) * n) :
     q * e < (q - 1) * n ∧
@@ -696,6 +712,8 @@ theorem qary_johnson_conditions_of_lt_johnsonRadius {q n d e : ℕ} (hq : 2 ≤ 
       exact_mod_cast h2R
     exact ⟨hpart1, hpart2⟩
 
+/-- **List decodability below the Johnson radius.** If `e` is strictly below
+`J_q(d / n) * n`, the code is list decodable at radius `e` with list bound `q * d * n`. -/
 theorem isListDecodable_of_lt_johnsonRadius (C : Finset (Fin n → α)) {d e : ℕ}
     (hq : 2 ≤ Fintype.card α)
     (hdist : ∀ c₁ ∈ C, ∀ c₂ ∈ C, c₁ ≠ c₂ → d ≤ hammingDist c₁ c₂)
@@ -704,6 +722,9 @@ theorem isListDecodable_of_lt_johnsonRadius (C : Finset (Fin n → α)) {d e : �
   obtain ⟨hlt, hJ⟩ := qary_johnson_conditions_of_lt_johnsonRadius hq he
   exact isListDecodable_of_qary_johnson C hq (le_of_lt hlt) hdist hJ
 
+/-- **Floored real-radius form.** For every nonnegative relative radius `ρ` strictly below
+`J_q(d / n)`, the code is list decodable at the integer radius `⌊ρ * n⌋₊` with list bound
+`q * d * n`. -/
 theorem isListDecodable_floor_of_lt_johnsonRadius (C : Finset (Fin n → α)) {d : ℕ} {ρ : ℝ}
     (hq : 2 ≤ Fintype.card α)
     (hdist : ∀ c₁ ∈ C, ∀ c₂ ∈ C, c₁ ≠ c₂ → d ≤ hammingDist c₁ c₂)
@@ -726,6 +747,8 @@ theorem isListDecodable_floor_of_lt_johnsonRadius (C : Finset (Fin n → α)) {d
       lt_of_le_of_lt hfle hlt
     exact isListDecodable_of_lt_johnsonRadius C hq hdist he
 
+/-- **Ball-intersection cardinality below the Johnson radius.** If `e` is strictly below
+`J_q(d / n) * n`, every radius-`e` Hamming ball contains at most `q * d * n` codewords. -/
 theorem card_inter_ball_le_of_lt_johnsonRadius (C : Finset (Fin n → α)) (y : Fin n → α)
     {d e : ℕ} (hq : 2 ≤ Fintype.card α)
     (hdist : ∀ c₁ ∈ C, ∀ c₂ ∈ C, c₁ ≠ c₂ → d ≤ hammingDist c₁ c₂)
@@ -793,6 +816,8 @@ private theorem choose_three_gt (n : ℕ) (hn : 7 ≤ n) : 4 * n < n.choose 3 :=
     have hcc : (n + 1).choose 3 = n.choose 2 + n.choose 3 := Nat.choose_succ_succ n 2
     omega
 
+/-- **Minimum distance of a constant-weight binary code.** Any two distinct binary words of
+the same Hamming weight have even, positive Hamming distance, hence distance at least `2`. -/
 theorem two_le_hammingDist_weightCode {n w : ℕ} :
     ∀ c₁ ∈ weightCode n w, ∀ c₂ ∈ weightCode n w, c₁ ≠ c₂ → 2 ≤ hammingDist c₁ c₂ := by
   intro c₁ hc₁ c₂ hc₂ hne
@@ -834,6 +859,9 @@ theorem two_le_hammingDist_weightCode {n w : ℕ} :
   obtain ⟨r, hr⟩ := heven
   omega
 
+/-- **Binary radius bound at relative distance `2 / n`.** The unnormalized Johnson radius
+`J_2(2 / n) * n` is strictly less than `3` for every length `n`; this is the nonvacuity
+input for the weight-three example. -/
 theorem johnsonRadius_two_lt_three (n : ℕ) :
     johnsonRadius 2 ((2 : ℝ) / n) * n < 3 := by
   by_cases hn5 : n ≤ 5
@@ -884,6 +912,10 @@ theorem johnsonRadius_two_lt_three (n : ℕ) :
           · linarith [hn6]
       _ = 3 := by field_simp; ring
 
+/-- **Nonvacuity beyond the binary Johnson radius.** For `7 ≤ n`, all `n.choose 3`
+weight-three binary words lie in the radius-`3` ball around zero, and their number exceeds
+`2 * 2 * n`; hence this constant-weight code is not list decodable at radius `3` with that
+list bound. -/
 theorem not_isListDecodable_weightCode_three {n : ℕ} (hn : 7 ≤ n) :
     ¬ IsListDecodable (weightCode n 3) 3 (2 * 2 * n) := by
   intro hcon

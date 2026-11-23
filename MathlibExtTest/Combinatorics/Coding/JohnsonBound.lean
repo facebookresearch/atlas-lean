@@ -95,6 +95,70 @@ theorem johnsonRadius_two_example : (5 : ℝ) < johnsonRadius 2 ((8 : ℝ) / 20)
     norm_num
   linarith [hsqrt]
 
+/-- The real Johnson radius at `q = 2`, `δ = 1`: the square-root argument is `-1`. -/
+theorem rep3_johnsonRadius_value : johnsonRadius 2 ((3 : ℝ) / 3) = 1 / 2 := by
+  have e1 : (1 : ℝ) - 1 / ((2 : ℕ) : ℝ) = 1 / 2 := by norm_num
+  have earg : (1 : ℝ) - ((2 : ℕ) : ℝ) * ((3 : ℝ) / 3) / (((2 : ℕ) : ℝ) - 1) = -1 := by
+    norm_num
+  have hsqrt : Real.sqrt (-1 : ℝ) = 0 := Real.sqrt_eq_zero_of_nonpos (by norm_num)
+  have hrfl : johnsonRadius 2 ((3 : ℝ) / 3) =
+      (1 - 1 / ((2 : ℕ) : ℝ)) *
+        (1 - Real.sqrt (1 - ((2 : ℕ) : ℝ) * ((3 : ℝ) / 3) / (((2 : ℕ) : ℝ) - 1))) := rfl
+  rw [hrfl, e1, earg, hsqrt]
+  norm_num
+
+/-- Radius `1` is below the Johnson radius at `q = 2`, `n = 3`, `d = 3`. -/
+theorem rep3_one_lt_johnsonRadius_mul :
+    (1 : ℝ) < johnsonRadius 2 ((3 : ℝ) / 3) * 3 := by
+  rw [rep3_johnsonRadius_value]
+  norm_num
+
+/-- The integer Johnson conditions at `q = 2`, `n = 3`, `d = 3`, `e = 1`,
+through the real-radius bridge. -/
+theorem rep3_johnson_conditions :
+    2 * 1 < (2 - 1) * 3 ∧
+      ((2 : ℤ) - 1) * 3 * ((3 : ℤ) - 3) <
+        ((2 : ℤ) - 1) * ((3 : ℤ) - 1) ^ 2 + (1 : ℤ) ^ 2 := by
+  have he : ((1 : ℕ) : ℝ) <
+      johnsonRadius 2 (((3 : ℕ) : ℝ) / ((3 : ℕ) : ℝ)) * ((3 : ℕ) : ℝ) := by
+    simpa using rep3_one_lt_johnsonRadius_mul
+  exact qary_johnson_conditions_of_lt_johnsonRadius (q := 2) (n := 3) (d := 3) (e := 1)
+    (by norm_num) he
+
+/-- Binary instance of the bound on the repetition code, through the real-radius bridge. -/
+theorem rep3_list_decodable_of_real_radius : IsListDecodable rep3 1 (2 * 3 * 3) := by
+  have hcard : Fintype.card Bool = 2 := Fintype.card_bool
+  have hq : 2 ≤ Fintype.card Bool := by omega
+  have he : ((1 : ℕ) : ℝ) < johnsonRadius (Fintype.card Bool) (((3 : ℕ) : ℝ) /
+      ((3 : ℕ) : ℝ)) * ((3 : ℕ) : ℝ) := by
+    rw [hcard]
+    simpa using rep3_one_lt_johnsonRadius_mul
+  have h := isListDecodable_of_lt_johnsonRadius (C := rep3) (d := 3) (e := 1)
+    hq rep3_dist he
+  rw [hcard] at h
+  exact h
+
+/-- Binary instance on the repetition code, through the floor-radius bridge at `ρ = 1 / 3`. -/
+theorem rep3_list_decodable_of_floor_radius : IsListDecodable rep3 1 (2 * 3 * 3) := by
+  have hcard : Fintype.card Bool = 2 := Fintype.card_bool
+  have hq : 2 ≤ Fintype.card Bool := by omega
+  have hρ0 : (0 : ℝ) ≤ 1 / 3 := by norm_num
+  have hρ : (1 / 3 : ℝ) <
+      johnsonRadius (Fintype.card Bool) (((3 : ℕ) : ℝ) / ((3 : ℕ) : ℝ)) := by
+    rw [hcard]
+    have hj : johnsonRadius 2 (((3 : ℕ) : ℝ) / ((3 : ℕ) : ℝ)) = 1 / 2 := by
+      simpa using rep3_johnsonRadius_value
+    rw [hj]
+    norm_num
+  have h := isListDecodable_floor_of_lt_johnsonRadius (C := rep3) (d := 3) (ρ := 1 / 3)
+    hq rep3_dist hρ0 hρ
+  rw [hcard] at h
+  have hfloor : Nat.floor ((1 / 3 : ℝ) * ((3 : ℕ) : ℝ)) = 1 := by
+    rw [show (1 / 3 : ℝ) * ((3 : ℕ) : ℝ) = 1 by norm_num]
+    exact Nat.floor_one
+  rw [hfloor] at h
+  exact h
+
 /-- There are `35` binary words of length `7` and weight `3`. -/
 theorem weightCode_three_card_seven : (weightCode 7 3).card = 35 := by
   decide
