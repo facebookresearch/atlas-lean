@@ -6,14 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# A non-squarefree base-two pseudoprime beyond `10 ^ 13`
--/
 module
 
 public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.NumberTheory.FermatPsp
-public import Batteries.Util.ProofWanted
+import Mathlib.Tactic.ReduceModChar
+
+/-!
+# A non-squarefree base-two pseudoprime beyond `10 ^ 13`
+
+The theorem `conjecture_holds` verifies the Fermat congruence and a square divisor for the
+witness 10063351640161.
+-/
 
 @[expose] public section
 
@@ -45,6 +49,13 @@ OEIS A158358 gives the witness $n = 10063351640161 = 73 \cdot 257 \cdot 449 \cdo
 Source: OEIS A158358, nonsquarefree Poulet numbers, https://oeis.org/A158358. Moved from
 `OpenConjectures/NumberTheory/NonSquarefreeBaseTwoPseudoprime`.
 -/
-public theorem_wanted conjecture_holds : conjecture
+theorem conjecture_holds : conjecture := by
+  have hnsq : ¬ Squarefree (10063351640161 : ℕ) := by
+    intro h
+    have hunit := h 1093 (by decide)
+    norm_num [Nat.isUnit_iff] at hunit
+  refine ⟨10063351640161, ⟨?_, fun hp => hnsq hp.prime.squarefree, by decide⟩, hnsq, by decide⟩
+  apply (Nat.probablePrime_iff_zmod_one _ (by decide)).2
+  reduce_mod_char
 
 end MathlibExt.NumberTheory.NonSquarefreeBaseTwoPseudoprimeWanted
