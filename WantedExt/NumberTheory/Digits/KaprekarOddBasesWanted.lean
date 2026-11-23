@@ -15,7 +15,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Order.Lattice.Nat
-public import MathlibExt.NumberTheory.Digits.KaprekarProjectiveDoubling
+public import MathlibExt.NumberTheory.Digits.KaprekarProjectiveOrderTotient
 
 /-!
 # Four-digit Kaprekar dynamics in odd bases (Chen, Ono, Schwartz, Thakur)
@@ -38,8 +38,8 @@ is already proved as `MetaMathlibExt.four_digit_kaprekar_structural_classificati
 
 The projective order of `2` (`MetaMathlibExt.projectiveOrderTwo`), with its characterization and
 sample values, and the bound on the cycle lengths of doubling on pairs of projective classes are
-proved in `MathlibExt/NumberTheory/Digits/KaprekarProjectiveDoubling.lean`, which this module
-imports publicly.
+proved in `MathlibExt/NumberTheory/Digits/KaprekarProjectiveDoubling.lean`. The bound by half
+the totient is proved in `MathlibExt/NumberTheory/Digits/KaprekarProjectiveOrderTotient.lean`.
 -/
 
 namespace MetaMathlibExt
@@ -105,17 +105,6 @@ display (2) and the proof of Corollary 27. -/
 public theorem kaprekarFourDigitStates_card_examples :
     (kaprekarFourDigitStates 3).card = 5 ∧ (kaprekarFourDigitStates 7).card = 27 := by
   decide
-
-/-- **Projective order of 2 is at most half the totient.** For every odd natural number $B > 3$,
-the projective order of $2$ modulo $B$ satisfies $\lambda(B) \le \lfloor \varphi(B)/2 \rfloor$,
-where $\varphi$ is Euler's totient function.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7, Lemma 21
-(quoting Kay and Downes-Ward, Theorem 2) (`jis-2026-26.4.7-lem-21`). -/
-public theorem_wanted projectiveOrderTwo_le_totient_div_two (B : ℕ) (hB : Odd B)
-    (hB3 : 3 < B) :
-    projectiveOrderTwo B ≤ B.totient / 2
 
 /-- **Long Kaprekar cycles force a prime base.** Let $B > 3$ be odd, let $K_B$ be the four-digit
 Kaprekar map and $X_B$ its state space. Every point of $X_B$ that is periodic for $K_B$ has
