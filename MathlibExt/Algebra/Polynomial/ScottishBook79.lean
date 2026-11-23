@@ -8,12 +8,20 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.Algebra.MvPolynomial.Eval
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+
+/-!
+# A nonlinear polynomial automorphism of the real plane
+
+The quadratic shear fixes the first coordinate, so subtracting its square from the second
+coordinate inverts the map. Its restriction to the horizontal axis is a parabola.
+-/
 
 @[expose] public section
 
@@ -41,6 +49,7 @@ def ScottishBookProblem79Claim : Prop :=
       ∀ (x : Fin 2 → ℝ) (i : Fin 2),
         MvPolynomial.eval x (P i) = ∑ j, a i j * x j + c i
 
+open MvPolynomial in
 /--
 **Mazur–Orlicz Problem 79 has a negative answer.** The claim of Problem 79 of the Scottish Book
 for the plane is false: there is a polynomial map $P$ of $\mathbb{R}^2$ to itself with a
@@ -57,6 +66,19 @@ obvious polynomial inverses, but are not affine when some `φ` is
 nonlinear. For the plane, `y₁ = x₁`, `y₂ = x₂ + x₁²` already refutes
 affineness.
 -/
-theorem_wanted mazurOrlicz79_refuted : ¬ ScottishBookProblem79Claim
+theorem mazurOrlicz79_refuted : ¬ ScottishBookProblem79Claim := by
+  intro claim
+  let P : Fin 2 → MvPolynomial (Fin 2) ℝ := ![X 0, X 1 + X 0 ^ 2]
+  let Q : Fin 2 → MvPolynomial (Fin 2) ℝ := ![X 0, X 1 - X 0 ^ 2]
+  obtain ⟨a, c, _, ha⟩ := claim P Q (by
+    intro x
+    funext i
+    fin_cases i <;> simp [P, Q]) (by
+    intro y
+    funext i
+    fin_cases i <;> simp [P, Q])
+  have axis (t : ℝ) : t ^ 2 = a 1 0 * t + c 1 := by
+    simpa [P, Fin.sum_univ_two] using ha ![t, 0] 1
+  linarith [axis (-1), axis 0, axis 1]
 
 end MathlibExt.Algebra.Polynomial.ScottishBook79Wanted

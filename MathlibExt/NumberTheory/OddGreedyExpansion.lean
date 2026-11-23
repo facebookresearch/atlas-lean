@@ -33,7 +33,11 @@ and let $d_1, \dots, d_m$ be odd natural numbers. If integers $a$ and $b$ with $
 $a/b = \sum_{i=1}^{m} 1/d_i$, then $a$ is even.
 
 See Joel Louwsma and Joseph Martino, *Rational numbers with odd greedy expansion of fixed length*,
-[Proposition 2.1](https://arxiv.org/html/2309.07280). -/
+[Proposition 2.1](https://arxiv.org/html/2309.07280).
+
+Source: Joel Louwsma and Joseph Martino, "Rational
+Numbers with Two-Term Odd Greedy Expansion",
+Proposition 1. -/
 theorem even_num_of_even_sum_unit_fractions
     (m : ℕ) (hm : Even m) (d : Fin m → ℕ)
     (hd : ∀ i, Odd (d i)) (a b : ℤ) (hb : b ≠ 0)
