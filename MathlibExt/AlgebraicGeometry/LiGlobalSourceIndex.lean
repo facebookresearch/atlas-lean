@@ -147,4 +147,3 @@ abbrev memberSourceRing (C : SourcePoint O P D R S a B) (z : SimplexCategory)
   (LiFamilySourceDescent.localChart C z t).source
 
 end MathlibExt.AlgebraicGeometry.LiGlobalSourceIndex
-

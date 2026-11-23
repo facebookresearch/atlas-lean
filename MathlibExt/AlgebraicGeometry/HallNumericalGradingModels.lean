@@ -95,18 +95,23 @@ def geometricModule {T : Over (Spec (.of ℂ))} (F : HallExactSequenceFamilies.F
     (StablePairFamilies.total X (geometricParameter Ω)).Modules :=
   (Scheme.Modules.pullback (productMap X p)).obj F.module
 
-/-- The native Euler difference over the actual geometric coefficient field. -/
-def geometricEuler (Ω : Type) [Field Ω] [Algebra ℂ Ω]
+/-- The two-term difference `dim H⁰ - dim H¹` over the geometric coefficient field, computed for
+any module. It is the Euler characteristic only when the cohomology is finite-dimensional and
+vanishes in degrees at least two, e.g. for coherent sheaves supported in dimension at most one on
+the proper threefold (the sheaves of the Hall category, `FamilyClass`). -/
+def twoTermEuler (Ω : Type) [Field Ω] [Algebra ℂ Ω]
     (F : (StablePairFamilies.total X (geometricParameter Ω)).Modules) : ℤ :=
   (Module.finrank Ω (cohomology (projection X (geometricParameter Ω)) F 0) : ℤ) -
     Module.finrank Ω (cohomology (projection X (geometricParameter Ω)) F 1)
 
-def geometricCurveProfile (Ω : Type) [Field Ω] [Algebra ℂ Ω]
+/-- The two-term curve profile `L ↦ twoTermEuler (F ⊗ L) - twoTermEuler F`; the curve class of `F`
+under the hypotheses of `twoTermEuler`. -/
+def twoTermCurveProfile (Ω : Type) [Field Ω] [Algebra ℂ Ω]
     (F : (StablePairFamilies.total X (geometricParameter Ω)).Modules) : LineBundle X.left → ℤ :=
-  fun L => geometricEuler X Ω
+  fun L => twoTermEuler X Ω
     (AlgebraicLineBundleFamilies.moduleTensor (StablePairFamilies.total X (geometricParameter Ω)) F
       ((Scheme.Modules.pullback (pullback.fst X.hom (geometricParameter Ω).hom)).obj L.val)) -
-    geometricEuler X Ω F
+    twoTermEuler X Ω F
 
 variable {X}
 
@@ -114,8 +119,8 @@ variable {X}
 def FamilyClass {HX : Threefold X} {N : NumericalData X HX} (α : Delta N)
     {T : Over (Spec (.of ℂ))} (F : HallExactSequenceFamilies.Family X T) : Prop :=
   ∀ (Ω : Type) [Field Ω] [IsAlgClosed Ω] [Algebra ℂ Ω] (p : geometricParameter Ω ⟶ T),
-    (geometricCurveProfile X Ω (geometricModule X F Ω p),
-      geometricEuler X Ω (geometricModule X F Ω p)) = (α.val.1.val,α.val.2)
+    (twoTermCurveProfile X Ω (geometricModule X F Ω p),
+      twoTermEuler X Ω (geometricModule X F Ω p)) = (α.val.1.val,α.val.2)
 
 /-- The component is a genuine open/closed full family cut of the actual moduli stack. -/
 structure NumericalComponent {HX : Threefold X} (N : NumericalData X HX)

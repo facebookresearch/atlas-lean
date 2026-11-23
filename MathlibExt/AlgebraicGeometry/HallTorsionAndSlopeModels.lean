@@ -78,31 +78,33 @@ def cutGenerator {H : HallStacks X}
 def fullGenerator (H : HallStacks X) : InfiniteHallStackFunctions.Generator H.moduli :=
   ⟨H.families.carrier,Pseudofunctor.StrongTrans.id H.moduli.toPseudofunctor⟩
 
-def moduleSlope (L : LineBundle X.left) (Ω : Type) [Field Ω] [Algebra ℂ Ω]
+/-- The two-term slope `twoTermEuler F / twoTermCurveProfile F L` (`⊤` when the profile vanishes);
+it is the slope of `F` for coherent sheaves of support dimension at most one and ample `L`. -/
+def twoTermSlope (L : LineBundle X.left) (Ω : Type) [Field Ω] [Algebra ℂ Ω]
     (F : (StablePairFamilies.total X (geometricParameter Ω)).Modules) : WithTop ℝ := by
   classical
-  let r := geometricCurveProfile X Ω F L
-  exact if r=0 then ⊤ else ((geometricEuler X Ω F : ℝ)/(r : ℝ) : ℝ)
+  let r := twoTermCurveProfile X Ω F L
+  exact if r=0 then ⊤ else ((twoTermEuler X Ω F : ℝ)/(r : ℝ) : ℝ)
 
 def UpperSlopes (L : LineBundle X.left) (Ω : Type) [Field Ω] [Algebra ℂ Ω]
     (F : (StablePairFamilies.total X (geometricParameter Ω)).Modules) (u : ℝ) : Prop :=
   ∀ A : Subobject F,
     StablePairFamilies.coherent (A : (StablePairFamilies.total X (geometricParameter Ω)).Modules) →
     ¬IsZero (A : (StablePairFamilies.total X (geometricParameter Ω)).Modules) →
-    moduleSlope L Ω (A : (StablePairFamilies.total X (geometricParameter Ω)).Modules) ≤ (u : WithTop ℝ)
+    twoTermSlope L Ω (A : (StablePairFamilies.total X (geometricParameter Ω)).Modules) ≤ (u : WithTop ℝ)
 
 def StrictUpperSlopes (L : LineBundle X.left) (Ω : Type) [Field Ω] [Algebra ℂ Ω]
     (F : (StablePairFamilies.total X (geometricParameter Ω)).Modules) (u : ℝ) : Prop :=
   ∀ A : Subobject F,
     StablePairFamilies.coherent (A : (StablePairFamilies.total X (geometricParameter Ω)).Modules) →
     ¬IsZero (A : (StablePairFamilies.total X (geometricParameter Ω)).Modules) →
-    moduleSlope L Ω (A : (StablePairFamilies.total X (geometricParameter Ω)).Modules) < (u : WithTop ℝ)
+    twoTermSlope L Ω (A : (StablePairFamilies.total X (geometricParameter Ω)).Modules) < (u : WithTop ℝ)
 
 def LowerSlopes (L : LineBundle X.left) (Ω : Type) [Field Ω] [Algebra ℂ Ω]
     (F : (StablePairFamilies.total X (geometricParameter Ω)).Modules) (l : ℝ) : Prop :=
   ∀ Q : (StablePairFamilies.total X (geometricParameter Ω)).Modules,
     StablePairFamilies.coherent Q → ∀ q : F ⟶ Q, Epi q → ¬IsZero Q →
-      (l : WithTop ℝ) ≤ moduleSlope L Ω Q
+      (l : WithTop ℝ) ≤ twoTermSlope L Ω Q
 
 def SlopeWindow (L : LineBundle X.left) {T : Over base}
     (F : HallExactSequenceFamilies.Family X T) (l u : ℝ) : Prop :=

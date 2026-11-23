@@ -88,4 +88,3 @@ instance : (functor R).Additive where
   map_add := by intros; ext X x; rfl
 
 end MathlibExt.Algebra.Category.ModuleCat.ModulePresheafUniverseLift
-

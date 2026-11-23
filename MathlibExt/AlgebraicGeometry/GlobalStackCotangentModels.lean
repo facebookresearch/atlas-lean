@@ -155,4 +155,3 @@ structure Normalization (f : StackHom X Y) where
 attribute [instance] Normalization.quasi
 
 end MathlibExt.AlgebraicGeometry.GlobalStackCotangentModels
-

@@ -138,4 +138,3 @@ def sourceIso (A : Assembly O P D R S a B) :
     (assemblyMap O P D R S a B A.kan A.native.complex A.replacement A.map))
 
 end MathlibExt.AlgebraicGeometry.LiGlobalSourceAssemblyModels
-
