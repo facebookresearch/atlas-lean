@@ -11078,6 +11078,7 @@
   "MathlibExt/NumberTheory/CarlitzBlockHarmonic": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/CarmichaelNumber": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Carmichael numbers"},
   "MathlibExt/NumberTheory/CentralBinomProductEquationSmall": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
+  "MathlibExt/NumberTheory/ChoosePowMulModEq": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/ChurchBicknellFibonacciConvolution": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Binomial sums of Fibonacci and Lucas numbers"},
   "MathlibExt/NumberTheory/CipollaPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Fermat pseudoprimes"},
   "MathlibExt/NumberTheory/ClassicalLte": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Lifting the exponent lemma"},
