@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
+public import MathlibExt.Algebra.RealSubfieldCoefficients
 
 /-!
 # Actual perverse realizations with a real coefficient subfield
@@ -36,20 +37,11 @@ namespace MathlibExt.AlgebraicGeometry.RealCoefficientPerverseSheaves
 
 open _root_.CategoryTheory _root_.CategoryTheory.Limits TopologicalSpace
 open _root_.AlgebraicGeometry PerverseSheaves ComplexAnalytification Opposite
+open MathlibExt.Algebra.RealSubfieldCoefficients
 
 attribute [local instance] HasDerivedCategory.standard
 
 variable (A : Subfield ℝ)
-
-def complexEmbedding : A →+* ℂ := Complex.ofRealHom.comp A.subtype
-
-@[simp] theorem complexEmbedding_apply (a : A) : complexEmbedding A a = (a : ℝ) := rfl
-
-@[simp] theorem complexEmbedding_star (a : A) : star (complexEmbedding A a) =
-    complexEmbedding A a := by simp
-
-/-- `ℂ` as an algebra over the coefficient subfield, through `complexEmbedding`. -/
-abbrev complexAlgebra : Algebra A ℂ := (complexEmbedding A).toAlgebra
 
 attribute [local instance] complexAlgebra
 

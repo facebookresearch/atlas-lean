@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves
 public import MathlibExt.AlgebraicGeometry.DifferentialOperatorScalars
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Free
+public import MathlibExt.AlgebraicGeometry.LocalFinitePresentation
 public import Mathlib.CategoryTheory.Subobject.Lattice
 public import Mathlib.CategoryTheory.Limits.Shapes.Kernels
 
@@ -25,10 +26,11 @@ every point, every section of `F_p` is locally a combination
 `∑ⱼ Pⱼ · sⱼ` with `ord Pⱼ + deg sⱼ ≤ p`, that is, the map from the shifted
 free module onto `F_p` is an epimorphism of sheaves.
 
-Local finite presentation is the universal cokernel of two actual finite
-free sheaves. These definitions do not declare a named holonomic predicate
-or assume a Riemann--Hilbert conclusion. Characteristic-symbol support is
-additional data built from these actual filtration quotients.
+Local finite presentation (`LocalFinitePresentation.LocallyFinitelyPresented`)
+is the universal cokernel of two actual finite free sheaves. These definitions
+do not declare a named holonomic predicate or assume a Riemann--Hilbert
+conclusion. Characteristic-symbol support is additional data built from these
+actual filtration quotients.
 -/
 
 @[expose] public noncomputable section
@@ -38,6 +40,7 @@ namespace MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
 open CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace
 open DifferentialOperatorSheaves DifferentialOperatorScalars
 open MathlibExt.RingTheory.GeometricDifferentialOperators
+open MathlibExt.AlgebraicGeometry.LocalFinitePresentation (LocallyFinitelyPresented)
 open scoped Manifold ContDiff BigOperators
 
 variable (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
@@ -83,17 +86,6 @@ variable [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
   [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective
     AddCommGrpCat.{0}]
-
-/-- Local presentations use actual free sheaves and their universal cokernel. -/
-def LocallyFinitelyPresented (R : Sheaf (Opens.grothendieckTopology M) RingCat.{0})
-    (N : SheafOfModules.{0} R) : Prop :=
-  ∀ x : M, ∃ U : Opens M, x ∈ U ∧
-    ∃ (p q : ℕ)
-      (f : SheafOfModules.free (R := R.over U) (Fin p) ⟶
-        SheafOfModules.free (R := R.over U) (Fin q))
-      (pi : SheafOfModules.free (R := R.over U) (Fin q) ⟶ N.over U)
-      (h : f ≫ pi = 0),
-      Nonempty (IsColimit (CokernelCofork.ofπ pi h))
 
 /-- A good filtration of a left differential module by coherent `O`-submodules. -/
 structure GoodFiltration where

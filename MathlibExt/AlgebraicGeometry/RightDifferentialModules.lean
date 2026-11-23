@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.DifferentialOperatorScalars
-public import MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
+public import MathlibExt.AlgebraicGeometry.LocalFinitePresentation
+public import Mathlib.CategoryTheory.Subobject.Lattice
 public import Mathlib.Algebra.Ring.Opposite
 public import Mathlib.Algebra.Category.ModuleCat.Stalk
 
@@ -132,7 +133,7 @@ structure GoodFiltration where
   boundedBelow : ∀ x : M, ∃ U : Opens M, x ∈ U ∧ ∃ p : ℤ,
     ∀ q < p, ∀ (V : Opens M), V ≤ U → ∀ s : object.val.obj (op V),
       InFiltration k M O object term q V s → s = 0
-  locallyPresented : ∀ p, GeometricDModuleFiltrations.LocallyFinitelyPresented M
+  locallyPresented : ∀ p, LocalFinitePresentation.LocallyFinitelyPresented M
     (coefficientSheaf k M O) (Subobject.underlying.obj (term p))
   exhaustive : ∀ (U : Opens M) (s : object.val.obj (op U)) (x : U),
     ∃ (V : Opens M) (hV : V ≤ U), x.val ∈ V ∧ ∃ p : ℤ,

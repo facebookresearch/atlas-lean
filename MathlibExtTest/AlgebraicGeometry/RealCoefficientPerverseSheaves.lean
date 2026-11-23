@@ -23,7 +23,7 @@ extension, hence exact. The right action reverses products of operators.
 
 open CategoryTheory CategoryTheory.Limits TopologicalSpace
 open MathlibExt.AlgebraicGeometry
-open RealCoefficientPerverseSheaves
+open RealCoefficientPerverseSheaves MathlibExt.Algebra.RealSubfieldCoefficients
 
 namespace MathlibExtTest.AlgebraicGeometry.RealCoefficientPerverseSheaves
 

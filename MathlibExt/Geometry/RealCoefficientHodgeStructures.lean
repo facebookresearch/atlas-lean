@@ -17,10 +17,10 @@ of the reals and retain normalized conjugation and both actual filtrations.
 -/
 module
 
-public import MathlibExt.AlgebraicGeometry.RealCoefficientPerverseSheaves
+public import MathlibExt.Algebra.RealSubfieldCoefficients
+public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import MathlibExt.Geometry.RationalHodgeStructures
 public import Mathlib.LinearAlgebra.Quotient.Basic
-public import Mathlib.Analysis.Complex.Order
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 /-!
@@ -44,7 +44,7 @@ set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
 namespace MathlibExt.Geometry.RealCoefficientHodgeStructures
 
 open _root_.CategoryTheory
-open MathlibExt.AlgebraicGeometry.RealCoefficientPerverseSheaves
+open MathlibExt.Algebra.RealSubfieldCoefficients
 open scoped ChangeOfRings
 
 variable (A : Subfield ℝ) (V : ModuleCat.{0} A)
