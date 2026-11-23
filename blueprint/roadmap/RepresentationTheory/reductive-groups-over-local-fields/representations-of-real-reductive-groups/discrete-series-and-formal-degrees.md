@@ -22,12 +22,18 @@ $\xi', \eta'$ of $\pi'$,
 $$\int_G \langle \pi(g)\xi, \eta \rangle \, \overline{\langle \pi'(g)\xi', \eta' \rangle} \, dg =
 \begin{cases} 0 & \text{if } \pi \not\cong \pi', \\ d_\pi^{-1} \langle \xi, \xi' \rangle \overline{\langle \eta, \eta' \rangle} & \text{if } \pi = \pi', \end{cases}$$
 with a constant $d_\pi > 0$, the formal degree, depending on the Haar measure (inner products are
-linear in the first variable). An irreducible
-unitary representation is square-integrable in this sense as soon as one matrix coefficient
-$g \mapsto \langle v, \pi(g)v \rangle$ with $v \ne 0$ is square-integrable. When the centre $Z$
-of $G$ is compact, as for $\mathrm{U}(p, q)$, integration over $G$ and over $G/Z$ differ only by
-the normalization of Haar measures, so the two descriptions of square-integrability and of the
-formal degree agree.
+linear in the first variable). Here $\pi = \pi'$ means the same representation on the same space;
+if $\pi'$ is only equivalent to $\pi$, through a unitary intertwiner $T$ from the space of $\pi$ to
+that of $\pi'$, the second case applies after replacing $\xi'$ and $\eta'$ by $T^{-1}\xi'$ and
+$T^{-1}\eta'$. An irreducible unitary representation is square-integrable in this sense as soon as
+one matrix coefficient $g \mapsto \langle v, \pi(g)v \rangle$ with $v \ne 0$ is square-integrable.
+
+When the centre $Z$ of $G$ is compact, as for $\mathrm{U}(p, q)$, give $Z$ the Haar measure of total
+mass one and $G/Z$ the quotient measure. A function on $G$ invariant under $Z$, such as the absolute
+square $\lvert \langle \pi(g)v, w \rangle \rvert^2$ of a matrix coefficient of a representation with a
+unitary central character, then has the same integral over $G$ and over $G/Z$; so for such groups
+the two definitions of square-integrability and of the formal degree agree. The relations for
+two different representations, whose integrands need not be invariant under $Z$, are taken over $G$.
 
 ## Depends on
 

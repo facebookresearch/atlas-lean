@@ -34,7 +34,7 @@ Wedhorn takes this as the definition of supercuspidal representations.
 ## Proof depends on
 
 - [Parabolic induction and Jacquet functors](parabolic-induction-and-jacquet-functors.md), for exactness, Frobenius reciprocity and the finite generation and admissibility of Jacquet modules
-- [Jacquet modules and the asymptotics of matrix coefficients](asymptotics-of-matrix-coefficients.md), for Jacquet's lemmas, which give the equivalence with compactly supported matrix coefficients, and for the compactly supported matrix coefficients through which cuspidal representations split off as direct summands (item 3)
+- [Jacquet modules and the asymptotics of matrix coefficients](asymptotics-of-matrix-coefficients.md), for Jacquet's lemmas, which give the equivalence with compactly supported matrix coefficients, and for the compactly supported matrix coefficients through which the quasicuspidal part of a smooth representation splits off as a direct summand (item 3; a cuspidal constituent need not split off, only occur as a subrepresentation and a quotient)
 
 ## Sources
 

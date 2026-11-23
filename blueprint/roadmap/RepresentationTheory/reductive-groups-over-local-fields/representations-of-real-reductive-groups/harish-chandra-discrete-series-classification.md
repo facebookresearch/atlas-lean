@@ -67,6 +67,9 @@ series of $\mathrm{U}(p, q)$ is parametrized by the $\lambda \in \mathbb{R}^n$ w
 distinct entries and $\lambda_a - \tfrac{n-1}{2} \in \mathbb{Z}$, modulo
 $\mathfrak{S}_p \times \mathfrak{S}_q$, and item 3 holds for $\pi_\lambda$ with $K = \mathrm{U}(p) \times
 \mathrm{U}(q)$, the $K$-types of $\chi \boxtimes \pi_0$ being those of $\pi_0$ extended by $\chi$.
+This description is for $n > 0$. For $n = 0$ the group $\mathrm{U}(0, 0)$ is trivial: its only
+irreducible representation, the trivial one, is square-integrable, corresponds to the empty
+parameter $\lambda \in \mathbb{R}^0$, and its only $K$-type has the empty highest weight.
 
 ## Depends on
 

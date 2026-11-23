@@ -50,7 +50,7 @@ positive characteristic and is not part of this statement.
 - [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for supercuspidal representations
 - [Essentially square-integrable representations of GLₙ](essentially-square-integrable-representations-of-gl-n.md)
 - [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil group, Frobenius-semisimple Weil–Deligne representations and their tensor products, determinants and contragredients
-- [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the local Artin map $\mathrm{rec}_F$ of a finite extension of $\mathbb{Q}_p$; $\mathrm{Art}_F$ is its inverse, read on the Weil group, so that uniformizers correspond to geometric Frobenius elements
+- [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the local Artin map $\mathrm{rec}_F$ of a finite extension of $\mathbb{Q}_p$; $\mathrm{Art}_F$ is $x \mapsto \mathrm{rec}_F(x)^{-1}$, pointwise inversion (not the inverse map), read in the Weil group, so that uniformizers correspond to geometric Frobenius elements
 - [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md)
 
 ## Proof depends on

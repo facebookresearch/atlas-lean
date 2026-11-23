@@ -33,6 +33,16 @@ $(\pi, V)$ is a scalar. Hence $Z$ acts on $V$ through a character $\omega_\pi$, 
 character** of $\pi$: $\pi(z) = \omega_\pi(z)\,\mathrm{id}_V$ for $z \in Z$; for
 $G = \mathrm{GL}_n(F)$, $Z = F^\times$ and $\omega_\pi$ is a character of $F^\times$.
 
+**Distribution characters.** Fix a Haar measure $dg$ on $G$, let $H(G)$ be the space of locally
+constant compactly supported functions on $G$, and for a smooth representation $(\pi, V)$ and
+$f \in H(G)$ let $\pi(f)v = \int_G f(g)\pi(g)v \, dg$. If $\pi$ is admissible, every $\pi(f)$ has finite
+rank, and the **distribution character** of $\pi$ is the linear form
+$\mathrm{ch}_\pi(f) = \operatorname{trace} \pi(f)$ on $H(G)$. It is additive in short exact sequences of
+admissible representations. The distribution characters of pairwise inequivalent irreducible
+admissible representations are linearly independent, and two admissible representations of finite
+length have the same irreducible composition factors, with multiplicities, if and only if they have
+the same distribution character.
+
 ## Sources
 
 - I. N. Bernstein and A. V. Zelevinsky, "Induced representations of reductive p-adic groups. I",
@@ -52,4 +62,6 @@ $G = \mathrm{GL}_n(F)$, $Z = F^\times$ and $\omega_\pi$ is a character of $F^\ti
   <http://www.numdam.org/item?id=ASENS_1986_4_19_3_335_0>: §1.2 (unitarizable representations).
 - W. Casselman, *Introduction to the theory of admissible representations of p-adic reductive
   groups*, notes, draft of 1 May 1995, <https://personal.math.ubc.ca/~cass/research/pdf/p-adic-book.pdf>:
-  §2.1 (smooth, admissible, irreducible and finitely generated representations).
+  §2.1 (smooth, admissible, irreducible and finitely generated representations), §2.3
+  (distribution characters, Proposition 2.3.1 on linear independence, Corollaries 2.3.2 and 2.3.3,
+  with additivity in exact sequences in the proof of 2.3.3).

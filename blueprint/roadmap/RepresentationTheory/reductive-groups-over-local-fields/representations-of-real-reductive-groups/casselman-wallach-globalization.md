@@ -41,7 +41,7 @@ and a discontinuous one has no continuous extension.
 
 - [Characters, principal series and the Langlands classification for real reductive groups](principal-series-of-real-reductive-groups.md), for Casselman's embedding into principal series, Wallach's automatic continuity theorem, analytic families of principal series and the Langlands classification
 - [Discrete series representations and formal degrees](discrete-series-and-formal-degrees.md), for the case of square-integrable Harish-Chandra modules, to which the proof reduces
-- [Dixmier–Malliavin theorem](dixmier-malliavin-theorem.md), for the factorization of smooth vectors
+- [Dixmier–Malliavin theorem](dixmier-malliavin-theorem.md), for the factorization of smooth vectors (item 2)
 
 ## Sources
 

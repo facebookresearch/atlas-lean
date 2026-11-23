@@ -6,7 +6,9 @@ the statements on [Harish-Chandra modules](harish-chandra-modules.md), the
 [Casselman–Wallach globalization theorem](casselman-wallach-globalization.md), the
 [classification of the discrete series](harish-chandra-discrete-series-classification.md) and
 [Blattner's formula](blattner-formula.md) use, for $G$ the group of real points of a
-Zariski-connected reductive algebraic group over $\mathbb{R}$ with maximal compact subgroup $K$.
+Zariski-connected reductive algebraic group over $\mathbb{R}$ with maximal compact subgroup $K$,
+and, for the results that Atiyah and Schmid use in the theory of the discrete series, for every
+connected semisimple Lie group with finite centre, linear or not.
 
 - **Characters.** The distribution character $f \mapsto \operatorname{trace} \pi(f)$ of an
   irreducible unitary representation, or more generally of an admissible representation of finite
@@ -28,9 +30,10 @@ Zariski-connected reductive algebraic group over $\mathbb{R}$ with maximal compa
 - **The Langlands classification** of irreducible Harish-Chandra modules by essentially tempered
   representations of Levi subgroups, with the reduction of tempered to square-integrable
   representations.
-- **The Atiyah–Schmid construction** of the discrete series through the $L^2$-index theory of
-  Dirac operators on $G/K$, and Zuckerman's tensoring with finite-dimensional representations,
-  with which Atiyah and Schmid prove Harish-Chandra's theorem and the lowest $K$-type theorem.
+- **The Atiyah–Schmid construction** of the discrete series of a connected semisimple Lie group
+  with finite centre, not necessarily linear, through the $L^2$-index theory of Dirac operators
+  on $G/K$, and Zuckerman's tensoring with finite-dimensional representations, with which Atiyah
+  and Schmid prove Harish-Chandra's theorem and the lowest $K$-type theorem.
 
 A good expansion has definition pages for distribution characters, invariant eigendistributions
 and principal series, and statement pages for the regularity theorem, the matching conditions, the

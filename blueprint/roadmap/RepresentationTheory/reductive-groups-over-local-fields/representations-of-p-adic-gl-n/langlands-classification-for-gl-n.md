@@ -39,7 +39,7 @@ exponents.
 - [Zelevinsky's classification of the irreducible representations of GLₙ](zelevinsky-classification.md), for the irreducibility criterion for products of the $\langle \Delta_i \rangle^t$ and the rearrangement argument of its proof
 - [Essentially square-integrable representations of GLₙ](essentially-square-integrable-representations-of-gl-n.md), for the bijection $\Delta \mapsto \langle \Delta \rangle^t$ onto the essentially square-integrable representations
 - [Jacquet modules and the asymptotics of matrix coefficients](../representations-of-p-adic-reductive-groups/asymptotics-of-matrix-coefficients.md), for Langlands's quotient theorem for p-adic groups
-- [Smooth and admissible representations of p-adic groups](../representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for contragredients and the characters of admissible representations, through which Tadić obtains the composition factor of item 4 as a limit of irreducible representations
+- [Smooth and admissible representations of p-adic groups](../representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for contragredients, and for the distribution characters $f \mapsto \operatorname{trace} \pi(f)$ of admissible representations and their determination of composition factors, through which Tadić obtains the composition factor of item 4 as a limit of characters of irreducible representations (proof of Proposition A.4, pp. 373–374)
 
 ## Sources
 
@@ -52,8 +52,9 @@ exponents.
   "a version of Langlands classification", presented by F. Rodier), §§5.3–5.4 (the form with
   essentially square-integrable representations and the exponents $e(\delta)$), §1.15 (the
   segments $\tilde\Delta$ and multisets $\tilde a$), Proposition 5.6 (iii) ($L(a)^\sim = L(\tilde a)$),
-  and Appendix, Proposition A.4 (i) ("$L(a + b)$ is a composition factor of $L(a) \times L(b)$")
-  with Remark A.5 (multiplicity one).
+  and Appendix, Proposition A.4 (i) ("$L(a + b)$ is a composition factor of $L(a) \times L(b)$"),
+  proved on pp. 373–374 through the distribution characters $\mathrm{ch}_\pi(f)$, with Remark A.5
+  (multiplicity one).
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
   arXiv:math/0011210 (version 2): Theorem (2.2.9) (2)–(3) (with $Q(\Delta) = \langle \Delta \rangle^t$),
   (2.2.10) (existence of the ordering), (2.2.12) ($Q(\Delta_1, \dots, \Delta_r)^\vee =

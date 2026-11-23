@@ -58,7 +58,7 @@ follows there, since its printed factors do not depend on the product index.
 - [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](whittaker-models-for-gl-n.md), for generic representations and Whittaker models
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the extension of the factors to all irreducible pairs
 - [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Galois side ($F$ of characteristic zero): the Weil group and Weil–Deligne representations
-- [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the Galois side ($F$ of characteristic zero): the local Artin map, whose inverse restricted to the Weil group makes characters of $F^\times$ characters of $W_F$
+- [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the Galois side ($F$ of characteristic zero): the local Artin map $\mathrm{rec}_F$, composed with pointwise inversion, $x \mapsto \mathrm{rec}_F(x)^{-1}$, and read in the Weil group, which makes characters of $F^\times$ characters of $W_F$
 
 ## Sources
 
