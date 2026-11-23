@@ -74,15 +74,6 @@ public theorem_wanted lip_restrict_injective {U V : Set ℤ} (hU : U.Infinite) (
     {f g : V → ℤ} (hf : f ∈ lipSubring V) (hg : g ∈ lipSubring V)
     (h : f ∘ Set.inclusion hUV = g ∘ Set.inclusion hUV) : f = g
 
-/-- **Locally integer polynomial functions on an infinite set form a domain.** For every infinite
-$U \subseteq \mathbb{Z}$, the ring $\mathrm{LIP}(U)$ of locally integer polynomial functions
-$U \to \mathbb{Z}$ is an integral domain.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
-public theorem_wanted lipSubring_isDomain {U : Set ℤ} (hU : U.Infinite) :
-    IsDomain (lipSubring U)
-
 /-- **Units of $\mathrm{LIP}(U)$.** For every infinite set $U \subseteq \mathbb{Z}$, the only
 units of the ring $\mathrm{LIP}(U)$ of locally integer polynomial functions on $U$ are the
 constant functions $1$ and $-1$.
