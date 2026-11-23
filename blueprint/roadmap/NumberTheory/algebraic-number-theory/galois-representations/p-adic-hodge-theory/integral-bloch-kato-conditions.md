@@ -25,14 +25,16 @@ $H^1_e(K, T)$ and $H^1_g(K, A')$ are the exact annihilators of each other, and s
 $H^1_e(K, A')$, and $H^1_f(K, T)$ and $H^1_f(K, A')$.
 
 Flach uses a finite-level form of the $f$/$f$ case in one situation: for an elliptic curve $E$ over $\mathbb{Q}$, the
-symmetric square $V = \mathrm{Sym}^2 H^1_{\mathrm{et}}(E_{\bar{\mathbb{Q}}}, \mathbb{Q}_p)$ with Galois-stable lattice $T$ and
-$A = V/T$, the twists $T(2)$ and $A(1)$, and the primes $r$. There, for $n \ge 1$, the inverse image of the divisible
-condition under the inclusion $i(n) \colon A(1)[p^n] \hookrightarrow A(1)$ and the image of the lattice condition under
-the projection $\mathrm{pr}(n) \colon T(2) \to T(2)/p^n$ are orthogonal complements under the local Tate duality pairing
-of $H^1(\mathbb{Q}_r, A(1)[p^n])$ with $H^1(\mathbb{Q}_r, T(2)/p^n)$, which Flach derives as a formal consequence of
-Bloch–Kato's Proposition 3.8. Finite-level forms for other lattices would follow from the theorem above by the
-same functoriality along the inclusions of the $\ell^n$-torsion and the reductions modulo $\ell^n$, not from Flach's
-case; they are not stated on this page.
+symmetric square $V = \mathrm{Sym}^2 H^1_{\mathrm{et}}(E_{\bar{\mathbb{Q}}}, \mathbb{Q}_p)$ with its natural lattice
+$T = \mathrm{Sym}^2 H^1_{\mathrm{et}}(E_{\bar{\mathbb{Q}}}, \mathbb{Z}_p)$ and $A = V/T$, the twists $T(2)$ and $A(1)$, and the primes
+$r$, where he identifies the Kummer dual of the twist $V(1)$ with $V(2)$. There, for $n \ge 1$, the inverse image of
+the divisible condition under the inclusion $i(n) \colon A(1)[p^n] \hookrightarrow A(1)$ and the image of the lattice
+condition under the projection $\mathrm{pr}(n) \colon T(2) \to T(2)/p^n$ are orthogonal complements under the local Tate
+duality pairing of $H^1(\mathbb{Q}_r, A(1)[p^n])$ with $H^1(\mathbb{Q}_r, T(2)/p^n)$, which Flach derives as a formal
+consequence of Bloch–Kato's Proposition 3.8. For an arbitrary $G_K$-stable lattice $T$, the theorem above pairs $T$
+with the divisible quotient $A' = V^*(1)/T^*(1)$ of its **dual** lattice; finite-level forms for such lattices would
+follow from it by the same functoriality along the inclusions of the $\ell^n$-torsion and the reductions modulo
+$\ell^n$, not from Flach's case, and they are not stated on this page.
 
 ## Depends on
 
@@ -59,8 +61,9 @@ case; they are not stated on this page.
   other. The same statement holds with $e$ replaced by $g$ and $g$ by $e$ and also when $e$ and $g$ are both replaced
   by $f$"; "The assertion for $T$ follows easily from that for $V$"), pp. 354–359.
 - M. Flach, "A finiteness theorem for the symmetric square of an elliptic curve", Invent. Math. 109 (1992),
-  307–327, <https://gdz.sub.uni-goettingen.de/download/pdf/PPN356556735_0109/LOG_0022.pdf>: §1, pp. 309–311 (the
-  definitions of $H^1_f(\mathbb{Q}_r, V)$ and $H^1_f(\mathbb{Q}_r, T) = i_*^{-1}(H^1_f(\mathbb{Q}_r, V))$ as in Bloch–Kato, and in
+  307–327, <https://gdz.sub.uni-goettingen.de/download/pdf/PPN356556735_0109/LOG_0022.pdf>: p. 308 (the natural
+  Galois-invariant lattice $T = \mathrm{Sym}^2 H^1(E, \mathbb{Z}_p)$ and $A = V/T$), §1, pp. 309–311 (on p. 310 the Kummer dual
+  $V(1)$ with its orthogonal lattice, and "the Kummer dual of $V(1)$ can be identified with $V(2)$"; the definitions of $H^1_f(\mathbb{Q}_r, V)$ and $H^1_f(\mathbb{Q}_r, T) = i_*^{-1}(H^1_f(\mathbb{Q}_r, V))$ as in Bloch–Kato, and in
   the proof of Proposition 1.1 the orthogonal complements $i(n)_*^{-1} \mathrm{pr}_* H^1_f(\mathbb{Q}_r, V(1))$ and
   $\mathrm{pr}(n)_* H^1_f(\mathbb{Q}_r, T(2))$ under Tate local duality, the $f$/$f$ case for the symmetric-square twists,
   "a formal consequence of" Bloch–Kato's Proposition 3.8).

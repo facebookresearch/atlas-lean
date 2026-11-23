@@ -42,11 +42,12 @@ A good expansion has pages for:
    $P$-torsion modules, which is also that of every open subgroup ((3.4.4) and the remark after (3.4.1)), Serre's
    criterion relating $\operatorname{scd}_p G$ to $D_P$ ((3.4.5)), and the duality theorem for finite modules when
    $D_i(\mathbb{Z}/p\mathbb{Z}) = 0$ for $p \in P$ and $i < n$ ((3.4.6)); and duality relative to a class formation,
-   through the Tate–Nakayama theorem (Milne, *Arithmetic Duality Theorems*, Theorem I.0.2, Theorem I.1.3,
+   including the duality theorem for a level-compact formation module with divisible universal norm groups (NSW
+   (3.1.11)), through the Tate–Nakayama theorem (Milne, *Arithmetic Duality Theorems*, Theorem I.0.2, Theorem I.1.3,
    Theorem I.1.8);
 8. Tate cohomology $\hat H^n$ of profinite groups and its vanishing properties for groups whose order is divisible
    by $\ell^\infty$ (NSW I §9, (1.9.13), (1.9.15)); and the composition series with factors $\mathbb{Z}/p\mathbb{Z}$ of a
-   module killed by $p$ over a finite $p$-group (NSW (1.6.13)).
+   **finite** module killed by $p$ over a finite $p$-group (NSW (1.6.13)).
 
 ## Proof depends on
 

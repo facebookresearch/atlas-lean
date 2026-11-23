@@ -31,12 +31,15 @@ A good expansion has pages for:
    - for a Galois extension $K/F$ unramified outside $S$ with group $G$ and a finitely generated $\mathbb{Z}$-free
      $G$-module $A$, cup product gives $\hat H^i(G, \operatorname{Hom}(A, C_S(K))) \cong \hat H^{2-i}(G, A)^\vee$ for all
      $i \in \mathbb{Z}$ (8.4.1);
-   - the norm-one $S$-idèle classes $C_S^0$ form a level-compact formation module, and
+   - the norm-one $S$-idèle classes $C_S^0$ form a level-compact formation module whose universal norm group
+     $N_{F_S/K} C_S^0$ is divisible for every finite subextension $K$ (8.4.2)(i), and
      $\hat H^i(G_S, \operatorname{Hom}(A, C_S^0)) \cong \hat H^i(G_S, \operatorname{Hom}(A, C_S))$ for every finitely generated $A$
-     (8.4.2);
-   - for a discrete $G_S$-module $A$ finitely generated as an abelian group, cup product gives topological
-     isomorphisms $\hat H^i(G_S, \operatorname{Hom}(A, C_S^0)) \cong \hat H^{2-i}(G_S, A)^\vee$ for all $i \le 0$, and for
-     all $i \in \mathbb{Z}$ only when $A$ is $\mathbb{Z}$-free (8.4.4); with the topologies of (8.4.5);
+     (8.4.2)(ii);
+   - the abstract duality theorem for a level-compact formation module whose universal norm groups are divisible
+     (NSW (3.1.11)(i)), applied to $(G_S, C_S^0)$ with both properties of (8.4.2)(i): for a discrete $G_S$-module $A$
+     finitely generated as an abelian group, cup product gives topological isomorphisms
+     $\hat H^i(G_S, \operatorname{Hom}(A, C_S^0)) \cong \hat H^{2-i}(G_S, A)^\vee$ for all $i \le 0$, and for all
+     $i \in \mathbb{Z}$ if $A$ is $\mathbb{Z}$-free (8.4.4); with the topologies of (8.4.5);
 4. the local cohomology of global modules: the topologies on the local and global groups, the isomorphisms
    $\Xi^i \colon P^i(G_S, A) \cong P^{2-i}(G_S, A')^\vee$ for finite $A$ (NSW (8.5.2), which rests on the
    unramified subgroups being exact annihilators), and the Shapiro maps $\mathrm{sh}^i$ (NSW (8.5.1)–(8.5.5));
@@ -54,14 +57,16 @@ A good expansion has pages for:
 - [Local Tate duality](../galois-cohomology-of-local-fields/local-tate-duality.md), for the local duality in items 4 and 5
 - [Unramified classes under local duality](../galois-cohomology-of-local-fields/unramified-classes-under-local-duality.md), for the exact annihilators behind (8.5.2) in item 4
 - [Tate duality for the real numbers](../galois-cohomology-of-local-fields/tate-duality-for-the-real-numbers.md), for the archimedean places in items 3 and 4
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Tate–Nakayama theorem and duality relative to a class formation, which give the duality of item 3 for $\mathbb{Z}$-free modules; the statement for general finitely generated modules is limited to the degrees $i \le 0$
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Tate–Nakayama theorem and the duality theorem (3.1.11)(i) for a level-compact formation module with divisible universal norm groups, which give the duality of item 3 in the degrees $i \le 0$ for every finitely generated $A$, and in all degrees if $A$ is $\mathbb{Z}$-free
 
 ## Sources
 
 - J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., electronic edition,
   version 2.3 (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: Chapter VIII, §3 (8.3.4)–(8.3.13)
-  (the principal ideal theorem in the proof of (8.3.6), p. 456), §4 (8.4.1)–(8.4.5) ((8.4.4): "for all $i \le 0$. This
-  assertion holds for all $i \in \mathbb{Z}$ if $A$ is assumed to be $\mathbb{Z}$-free"), §5 (8.5.1)–(8.5.5), §6 (8.6.3)–(8.6.6) (the principal ideal theorem in the proof of (8.6.4),
+  (the principal ideal theorem in the proof of (8.3.6), p. 456), §4 (8.4.1)–(8.4.5) ((8.4.2)(i): "a level-compact formation module with
+  divisible universal norm group"; (8.4.4), obtained by "applying the duality theorem (3.1.11)(i)": "for all
+  $i \le 0$. This assertion holds for all $i \in \mathbb{Z}$ if $A$ is assumed to be $\mathbb{Z}$-free"), Chapter III, §1,
+  (3.1.11) Duality Theorem (i), §5 (8.5.1)–(8.5.5), §6 (8.6.3)–(8.6.6) (the principal ideal theorem in the proof of (8.6.4),
   p. 482), §7 (8.7.1)–(8.7.3).
 - J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:
   Chapter I, §4, Lemma 4.1 to Lemma 4.9.
