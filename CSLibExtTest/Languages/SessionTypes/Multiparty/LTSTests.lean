@@ -200,7 +200,18 @@ theorem choice_congr_third_party_sender :
     (GlobalType.Branches.Step.cons GlobalType.Step.msg
       (GlobalType.Branches.Step.cons GlobalType.Step.msg
         GlobalType.Branches.Step.nil))
-    (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+
+/-- An empty choice has no global step: neither a branch selection nor the
+choice congruence rule applies. -/
+theorem empty_choice_no_step :
+    ¬ ∃ (ℓ : GlobalType.Label TestPeer TestSort TestLabel)
+        (G' : GlobalType TestPeer TestSort TestLabel),
+      GlobalType.Step (.choice .peerA .peerB .nil) ℓ G' := by
+  rintro ⟨ℓ, G', h⟩
+  cases h with
+  | choice hmem => exact absurd hmem List.not_mem_nil
+  | choiceCongr _ hne _ _ _ _ => exact hne rfl
 
 /-- A one-message well-formed type steps to the well-formed end type. -/
 theorem wellFormed_step_msg_end :

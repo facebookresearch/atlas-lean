@@ -84,7 +84,7 @@ def GlobalType.Label.receiverAction {P S L : Type} :
 mutual
 /-- Synchronous steps of finite global types, specializing [GR1]-[GR4].
 In the two congruence rules, neither participant of the outer prefix may
-occur in the moving label. -/
+occur in the moving label. Choice congruence also requires a nonempty branch list. -/
 inductive GlobalType.Step {P S L : Type} :
     GlobalType P S L → GlobalType.Label P S L → GlobalType P S L → Prop where
   | msg {sender receiver : P} {payload : S} {next : GlobalType P S L} :
@@ -106,6 +106,7 @@ inductive GlobalType.Step {P S L : Type} :
       {branches branches' : GlobalType.Branches P S L}
       {label : GlobalType.Label P S L} :
       GlobalType.Branches.Step branches label branches' →
+      branches ≠ .nil →
       sender ≠ label.sender → sender ≠ label.receiver →
       receiver ≠ label.sender → receiver ≠ label.receiver →
       GlobalType.Step (.choice sender receiver branches) label
@@ -204,11 +205,10 @@ theorem LocalType.Branches.braceEq_refl {P S L : Type} [DecidableEq P]
         Bool.and_self])
     branches
 
-/-- Brace equality is symmetric on well-formed local types. -/
+/-- Brace equality is symmetric on local types. -/
 theorem LocalType.braceEq_symm {P S L : Type} [DecidableEq P]
     [DecidableEq S] [DecidableEq L] {t u : LocalType P S L} :
-    t.WellFormed → u.WellFormed → t.braceEq u = true →
-      u.braceEq t = true := by
+    t.braceEq u = true → u.braceEq t = true := by
   have hins : ∀ (bs : LocalType.Branches P S L) (l : L) (h' h : LocalType P S L)
       (tl : LocalType.Branches P S L), bs.lookup l = some h' → h'.braceEq h = true →
         (bs.eraseLabel l).braceEq tl = true → bs.braceEq (.cons l h tl) = true := by
@@ -301,14 +301,13 @@ theorem LocalType.braceEq_symm {P S L : Type} [DecidableEq P]
         · simp only [LocalType.Branches.braceEq, hlk, Bool.and_eq_true] at hbs
           exact hins bs' l h' h tl hlk (ih_h h' hbs.1) (ih_tl _ hbs.2))
       t
-  exact fun _ _ h => key t u h
+  exact key t u
 
-/-- Brace equality is symmetric on well-formed local branch lists. -/
+/-- Brace equality is symmetric on local branch lists. -/
 theorem LocalType.Branches.braceEq_symm {P S L : Type} [DecidableEq P]
     [DecidableEq S] [DecidableEq L]
     {branches branches' : LocalType.Branches P S L} :
-    branches.WellFormed → branches'.WellFormed →
-      branches.braceEq branches' = true →
+    branches.braceEq branches' = true →
       branches'.braceEq branches = true := by
   have hins : ∀ (bs : LocalType.Branches P S L) (l : L) (h' h : LocalType P S L)
       (tl : LocalType.Branches P S L), bs.lookup l = some h' → h'.braceEq h = true →
@@ -404,13 +403,12 @@ theorem LocalType.Branches.braceEq_symm {P S L : Type} [DecidableEq P]
         · simp only [LocalType.Branches.braceEq, hlk, Bool.and_eq_true] at hbs
           exact hins bs' l h' h tl hlk (ih_h h' hbs.1) (ih_tl _ hbs.2))
       bs
-  exact fun _ _ h => key branches branches' h
+  exact key branches branches'
 
-/-- Brace equality is transitive on well-formed local types. -/
+/-- Brace equality is transitive on local types. -/
 theorem LocalType.braceEq_trans {P S L : Type} [DecidableEq P]
     [DecidableEq S] [DecidableEq L] {t u v : LocalType P S L} :
-    t.WellFormed → u.WellFormed → v.WellFormed →
-      t.braceEq u = true → u.braceEq v = true →
+    t.braceEq u = true → u.braceEq v = true →
       t.braceEq v = true := by
   have hlk_ne : ∀ (bs : LocalType.Branches P S L) (a b : L), a ≠ b →
       (bs.eraseLabel b).lookup a = bs.lookup a := by
@@ -608,14 +606,13 @@ theorem LocalType.braceEq_trans {P S L : Type} [DecidableEq P]
           simp only [LocalType.Branches.braceEq, hlk'', Bool.and_eq_true]
           exact ⟨ih_h h' h'' h1.1 hh'', ih_tl _ _ h1.2 her⟩)
       t
-  exact fun _ _ _ h1 h2 => key t u v h1 h2
+  exact key t u v
 
-/-- Brace equality is transitive on well-formed local branch lists. -/
+/-- Brace equality is transitive on local branch lists. -/
 theorem LocalType.Branches.braceEq_trans {P S L : Type} [DecidableEq P]
     [DecidableEq S] [DecidableEq L]
     {branches branches' branches'' : LocalType.Branches P S L} :
-    branches.WellFormed → branches'.WellFormed → branches''.WellFormed →
-      branches.braceEq branches' = true →
+    branches.braceEq branches' = true →
       branches'.braceEq branches'' = true →
       branches.braceEq branches'' = true := by
   have hlk_ne : ∀ (bs : LocalType.Branches P S L) (a b : L), a ≠ b →
@@ -815,7 +812,7 @@ theorem LocalType.Branches.braceEq_trans {P S L : Type} [DecidableEq P]
           simp only [LocalType.Branches.braceEq, hlk'', Bool.and_eq_true]
           exact ⟨ih_h h' h'' h1.1 hh'', ih_tl _ _ h1.2 her⟩)
       bs
-  exact fun _ _ _ h1 h2 => key branches branches' branches'' h1 h2
+  exact key branches branches' branches''
 
 /-- A defined projection of a label-well-formed global type is a
 well-formed local type. -/
@@ -1006,11 +1003,19 @@ theorem GlobalType.WellFormed.project_isSome {P S L : Type}
   · rw [GlobalType.project_of_not_mem_participants hG.1 hp]
     rfl
 
-/-- Well-formedness is preserved by global steps. -/
-theorem GlobalType.WellFormed.step {P S L : Type} [DecidableEq P]
-    [DecidableEq S] [DecidableEq L] {G G' : GlobalType P S L}
-    {label : GlobalType.Label P S L} :
-    G.WellFormed → G.Step label G' → G'.WellFormed := by
+/-- Shared invariant of a global step from a well-formed type: the target is
+label-well-formed, the label has distinct principals, and every peer's
+projections are related by the matching local step or brace equality. -/
+private theorem GlobalType.step_key {P S L : Type} [DecidableEq P]
+    [DecidableEq S] [DecidableEq L] :
+    ∀ G : GlobalType P S L, ∀ (ℓ : GlobalType.Label P S L) (G' : GlobalType P S L),
+      G.Step ℓ G' → G.WellFormed →
+        G'.LabelsWellFormed ∧ ℓ.sender ≠ ℓ.receiver ∧
+        ∀ peer : P, ∃ t t' : LocalType P S L,
+          G.project peer = some t ∧ G'.project peer = some t' ∧
+          (peer = ℓ.sender → LocalType.Step t ℓ.senderAction t') ∧
+          (peer = ℓ.receiver → LocalType.Step t ℓ.receiverAction t') ∧
+          (peer ≠ ℓ.sender → peer ≠ ℓ.receiver → t.braceEq t' = true) := by
   have hLW1 : ∀ (bs : GlobalType.Branches P S L), bs.LabelsWellFormed →
       ∀ (l : L) (G : GlobalType P S L), (l, G) ∈ bs.entries → G.LabelsWellFormed := by
     intro bs
@@ -1412,7 +1417,7 @@ theorem GlobalType.WellFormed.step {P S L : Type} [DecidableEq P]
               exact ⟨T, t', by simp only [GlobalType.project, hps, hpr, ↓reduceIte, hT], ht',
                 fun h => absurd h hps, fun h => absurd h hpr,
                 fun _ _ => hpair T (List.mem_cons.2 (Or.inl rfl)) t' ht''2⟩
-        | @choiceCongr _ _ _ bs' _ hbs' hs1 hs2 hr1 hr2 =>
+        | @choiceCongr _ _ _ bs' _ hbs' _ hs1 hs2 hr1 hr2 =>
           have hall : ∀ e ∈ bs.entries, e.2.WellFormed := fun e he => hent e.1 e.2 he
           obtain ⟨hLW', hlab, hsr', hper⟩ := ih ℓ bs' hbs' hbLW hall
           have hne' : bs' ≠ .nil := by
@@ -1464,9 +1469,9 @@ theorem GlobalType.WellFormed.step {P S L : Type} [DecidableEq P]
                   · by_cases h2 : peer = ℓ.receiver
                     · exact hcompat x y x' y' _ hqx.1 hqy.1 (hpair x hx y hy)
                         (hqx.2.2.2.1 h2) (hqy.2.2.2.1 h2)
-                    · exact LocalType.braceEq_trans hqx.2.1 hqy.1 hqy.2.1
-                        (LocalType.braceEq_trans hqx.2.1 hqx.1 hqy.1
-                          (LocalType.braceEq_symm hqx.1 hqx.2.1 (hqx.2.2.2.2 h1 h2))
+                    · exact LocalType.braceEq_trans
+                        (LocalType.braceEq_trans
+                          (LocalType.braceEq_symm (hqx.2.2.2.2 h1 h2))
                           (hpair x hx y hy))
                         (hqy.2.2.2.2 h1 h2)
                 exact ⟨T, T', by simp only [GlobalType.project, hps, hpr, ↓reduceIte, hT],
@@ -1527,8 +1532,15 @@ theorem GlobalType.WellFormed.step {P S L : Type} [DecidableEq P]
                     List.Forall₂.cons ⟨GlobalType.project_wellFormed hhLW hh1,
                       GlobalType.project_wellFormed hhLW' ht', hS, hR, hB⟩ hF⟩)
       G
+  exact key
+
+/-- Well-formedness is preserved by global steps. -/
+theorem GlobalType.WellFormed.step {P S L : Type} [DecidableEq P]
+    [DecidableEq S] [DecidableEq L] {G G' : GlobalType P S L}
+    {label : GlobalType.Label P S L} :
+    G.WellFormed → G.Step label G' → G'.WellFormed := by
   intro hw hs
-  obtain ⟨hLW', _, hper⟩ := key G label G' hs hw
+  obtain ⟨hLW', _, hper⟩ := GlobalType.step_key G label G' hs hw
   refine ⟨hLW', fun peer _ => ?_⟩
   obtain ⟨_, t', _, ht', _⟩ := hper peer
   simp only [ht', Option.isSome_some]
@@ -1547,523 +1559,7 @@ theorem GlobalType.project_step_sound {P S L : Type} [DecidableEq P]
       (peer = label.receiver → LocalType.Step t label.receiverAction t') ∧
       (peer ≠ label.sender → peer ≠ label.receiver →
         t.braceEq t' = true) := by
-  have hLW1 : ∀ (bs : GlobalType.Branches P S L), bs.LabelsWellFormed →
-      ∀ (l : L) (G : GlobalType P S L), (l, G) ∈ bs.entries → G.LabelsWellFormed := by
-    intro bs
-    exact GlobalType.Branches.rec (motive_1 := fun _ => True)
-      (motive_2 := fun bs => bs.LabelsWellFormed →
-        ∀ (l : L) (G : GlobalType P S L), (l, G) ∈ bs.entries → G.LabelsWellFormed)
-      trivial (fun _ _ _ _ _ => trivial) (fun _ _ _ _ => trivial)
-      (fun _ l G hm => absurd hm List.not_mem_nil)
-      (fun label head tail _ ih_t hwf l G hm => by
-        cases hwf with
-        | cons _ hh ht =>
-          rcases List.mem_cons.1 hm with he | hm
-          · rw [Prod.mk.injEq] at he
-            rw [he.2]
-            exact hh
-          · exact ih_t ht l G hm)
-      bs
-  have hPB : ∀ (bs : GlobalType.Branches P S L) (p : P) (lbs : LocalType.Branches P S L),
-      bs.projectBranches p = some lbs → ∀ (l : L) (G : GlobalType P S L),
-        (l, G) ∈ bs.entries → ∃ t, G.project p = some t ∧ (l, t) ∈ lbs.entries := by
-    intro bs
-    exact GlobalType.Branches.rec (motive_1 := fun _ => True)
-      (motive_2 := fun bs => ∀ (p : P) (lbs : LocalType.Branches P S L),
-        bs.projectBranches p = some lbs → ∀ (l : L) (G : GlobalType P S L),
-          (l, G) ∈ bs.entries → ∃ t, G.project p = some t ∧ (l, t) ∈ lbs.entries)
-      trivial (fun _ _ _ _ _ => trivial) (fun _ _ _ _ => trivial)
-      (fun _ _ _ l G hm => absurd hm List.not_mem_nil)
-      (fun label head tail _ ih_t p lbs h l G hm => by
-        rcases hh : head.project p with _ | hp
-        · simp only [GlobalType.Branches.projectBranches, hh, reduceCtorEq] at h
-        · rcases ht : tail.projectBranches p with _ | tp
-          · simp only [GlobalType.Branches.projectBranches, hh, ht, reduceCtorEq] at h
-          · simp only [GlobalType.Branches.projectBranches, hh, ht, Option.some.injEq] at h
-            subst h
-            rcases List.mem_cons.1 hm with he | hm
-            · rw [Prod.mk.injEq] at he
-              obtain ⟨rfl, rfl⟩ := he
-              exact ⟨hp, hh, List.mem_cons.2 (Or.inl rfl)⟩
-            · obtain ⟨t, ht1, ht2⟩ := ih_t p tp ht l G hm
-              exact ⟨t, ht1, List.mem_cons.2 (Or.inr ht2)⟩)
-      bs
-  have hPL : ∀ (bs : GlobalType.Branches P S L) (p : P) (ts : List (LocalType P S L)),
-      bs.projectList p = some ts → ∀ (l : L) (G : GlobalType P S L),
-        (l, G) ∈ bs.entries → ∃ t, G.project p = some t ∧ t ∈ ts := by
-    intro bs
-    exact GlobalType.Branches.rec (motive_1 := fun _ => True)
-      (motive_2 := fun bs => ∀ (p : P) (ts : List (LocalType P S L)),
-        bs.projectList p = some ts → ∀ (l : L) (G : GlobalType P S L),
-          (l, G) ∈ bs.entries → ∃ t, G.project p = some t ∧ t ∈ ts)
-      trivial (fun _ _ _ _ _ => trivial) (fun _ _ _ _ => trivial)
-      (fun _ _ _ l G hm => absurd hm List.not_mem_nil)
-      (fun label head tail _ ih_t p ts h l G hm => by
-        rcases hh : head.project p with _ | hp
-        · simp only [GlobalType.Branches.projectList, hh, reduceCtorEq] at h
-        · rcases ht : tail.projectList p with _ | tp
-          · simp only [GlobalType.Branches.projectList, hh, ht, reduceCtorEq] at h
-          · simp only [GlobalType.Branches.projectList, hh, ht, Option.some.injEq] at h
-            subst h
-            rcases List.mem_cons.1 hm with he | hm
-            · rw [Prod.mk.injEq] at he
-              obtain ⟨rfl, rfl⟩ := he
-              exact ⟨hp, hh, List.mem_cons.2 (Or.inl rfl)⟩
-            · obtain ⟨t, ht1, ht2⟩ := ih_t p tp ht l G hm
-              exact ⟨t, ht1, List.mem_cons.2 (Or.inr ht2)⟩)
-      bs
-  have hTP : ∀ (bs : GlobalType.Branches P S L) (p : P) (T : LocalType P S L),
-      bs.projectThirdParty p = some T → ∃ rest, bs.projectList p = some (T :: rest) ∧
-        ∀ x ∈ T :: rest, ∀ y ∈ T :: rest, x.braceEq y = true := by
-    intro bs p T h
-    cases bs with
-    | nil => simp only [GlobalType.Branches.projectThirdParty, reduceCtorEq] at h
-    | cons label head tail =>
-      rcases hh : head.project p with _ | hp
-      · simp only [GlobalType.Branches.projectThirdParty, hh, reduceCtorEq] at h
-      · rcases hl : tail.projectList p with _ | rest
-        · simp only [GlobalType.Branches.projectThirdParty, hh, hl, reduceCtorEq] at h
-        · simp only [GlobalType.Branches.projectThirdParty, hh, hl] at h
-          split_ifs at h with hall
-          simp only [Option.some.injEq] at h
-          subst h
-          refine ⟨rest, by simp only [GlobalType.Branches.projectList, hh, hl], ?_⟩
-          intro x hx y hy
-          exact List.all_eq_true.mp (List.all_eq_true.mp hall x hx) y hy
-  have hTPmk : ∀ (bs : GlobalType.Branches P S L) (p : P) (T : LocalType P S L)
-      (rest : List (LocalType P S L)), bs.projectList p = some (T :: rest) →
-        (∀ x ∈ T :: rest, ∀ y ∈ T :: rest, x.braceEq y = true) →
-        bs.projectThirdParty p = some T := by
-    intro bs p T rest h hpair
-    cases bs with
-    | nil =>
-      simp only [GlobalType.Branches.projectList, Option.some.injEq, reduceCtorEq] at h
-    | cons label head tail =>
-      rcases hh : head.project p with _ | hp
-      · simp only [GlobalType.Branches.projectList, hh, reduceCtorEq] at h
-      · rcases hl : tail.projectList p with _ | tp
-        · simp only [GlobalType.Branches.projectList, hh, hl, reduceCtorEq] at h
-        · simp only [GlobalType.Branches.projectList, hh, hl, Option.some.injEq,
-            List.cons.injEq] at h
-          obtain ⟨rfl, rfl⟩ := h
-          have hall : ((hp :: tp).all fun t => (hp :: tp).all (LocalType.braceEq t)) = true :=
-            List.all_eq_true.mpr fun x hx => List.all_eq_true.mpr fun y hy => hpair x hx y hy
-          simp only [GlobalType.Branches.projectThirdParty, hh, hl, hall, ↓reduceIte]
-  have hF2 : ∀ {Q : LocalType P S L → LocalType P S L → Prop}
-      (xs ys : List (LocalType P S L)), List.Forall₂ Q xs ys →
-        ∀ y ∈ ys, ∃ x ∈ xs, Q x y := by
-    intro Q xs ys h
-    induction h with
-    | nil => intro y hy; exact absurd hy List.not_mem_nil
-    | @cons a b l₁ l₂ hq _ ih =>
-      intro y hy
-      rcases List.mem_cons.1 hy with rfl | hy
-      · exact ⟨a, List.mem_cons.2 (Or.inl rfl), hq⟩
-      · obtain ⟨x, hx, hqx⟩ := ih y hy
-        exact ⟨x, List.mem_cons.2 (Or.inr hx), hqx⟩
-  have hnodup : ∀ bs : LocalType.Branches P S L, bs.WellFormed → bs.labels.Nodup := by
-    intro bs
-    exact LocalType.Branches.rec (motive_1 := fun _ => True)
-      (motive_2 := fun bs => bs.WellFormed → bs.labels.Nodup)
-      trivial (fun _ _ _ _ => trivial) (fun _ _ _ _ => trivial)
-      (fun _ _ _ => trivial) (fun _ _ _ => trivial)
-      (fun _ => List.nodup_nil)
-      (fun l h tl _ ih hwf => by
-        cases hwf with
-        | cons hf _ ht =>
-          simp only [LocalType.Branches.labels, LocalType.Branches.entries, List.map_cons,
-            List.nodup_cons]
-          exact ⟨hf, ih ht⟩)
-      bs
-  have hlkmem : ∀ bs : LocalType.Branches P S L, bs.labels.Nodup →
-      ∀ (l : L) (t : LocalType P S L), (l, t) ∈ bs.entries → bs.lookup l = some t := by
-    intro bs
-    exact LocalType.Branches.rec (motive_1 := fun _ => True)
-      (motive_2 := fun bs => bs.labels.Nodup →
-        ∀ (l : L) (t : LocalType P S L), (l, t) ∈ bs.entries → bs.lookup l = some t)
-      trivial (fun _ _ _ _ => trivial) (fun _ _ _ _ => trivial)
-      (fun _ _ _ => trivial) (fun _ _ _ => trivial)
-      (fun _ l t hm => absurd hm List.not_mem_nil)
-      (fun l₀ h₀ tl _ ih hnd l t hm => by
-        simp only [LocalType.Branches.labels, LocalType.Branches.entries, List.map_cons,
-          List.nodup_cons] at hnd
-        rcases List.mem_cons.1 hm with he | hm
-        · rw [Prod.mk.injEq] at he
-          obtain ⟨rfl, rfl⟩ := he
-          simp only [LocalType.Branches.lookup, ↓reduceIte]
-        · have hne : ¬ l = l₀ := fun he => hnd.1 (he ▸ List.mem_map_of_mem (f := Prod.fst) hm)
-          simp only [LocalType.Branches.lookup, hne, ↓reduceIte]
-          exact ih hnd.2 l t hm)
-      bs
-  have hlk_ne : ∀ (bs : LocalType.Branches P S L) (a b : L), a ≠ b →
-      (bs.eraseLabel b).lookup a = bs.lookup a := by
-    intro bs
-    exact LocalType.Branches.rec (motive_1 := fun _ => True)
-      (motive_2 := fun bs => ∀ (a b : L), a ≠ b →
-        (bs.eraseLabel b).lookup a = bs.lookup a)
-      trivial (fun _ _ _ _ => trivial) (fun _ _ _ _ => trivial)
-      (fun _ _ _ => trivial) (fun _ _ _ => trivial)
-      (fun _ _ _ => rfl)
-      (fun l₀ h₀ bs₀ _ ih a b hab => by
-        by_cases hb : b = l₀
-        · subst hb
-          simp only [LocalType.Branches.eraseLabel, ↓reduceIte, LocalType.Branches.lookup, hab]
-        · simp only [LocalType.Branches.eraseLabel, hb, ↓reduceIte, LocalType.Branches.lookup,
-            ih a b hab])
-      bs
-  have hlktr : ∀ (bs bs' : LocalType.Branches P S L) (l : L) (h : LocalType P S L),
-      bs.braceEq bs' = true → bs.lookup l = some h →
-        ∃ h', bs'.lookup l = some h' ∧ h.braceEq h' = true := by
-    intro bs
-    exact LocalType.Branches.rec (motive_1 := fun _ => True)
-      (motive_2 := fun bs => ∀ (bs' : LocalType.Branches P S L) (l : L)
-        (h : LocalType P S L), bs.braceEq bs' = true → bs.lookup l = some h →
-          ∃ h', bs'.lookup l = some h' ∧ h.braceEq h' = true)
-      trivial (fun _ _ _ _ => trivial) (fun _ _ _ _ => trivial)
-      (fun _ _ _ => trivial) (fun _ _ _ => trivial)
-      (fun _ _ _ _ hlk => by
-        simp only [LocalType.Branches.lookup, reduceCtorEq] at hlk)
-      (fun l₀ h₀ bs₀ _ ih bs' l h hb hlk => by
-        rcases hk : bs'.lookup l₀ with _ | h₀'
-        · simp only [LocalType.Branches.braceEq, hk, Bool.false_eq_true] at hb
-        · simp only [LocalType.Branches.braceEq, hk, Bool.and_eq_true] at hb
-          by_cases hl : l = l₀
-          · subst hl
-            simp only [LocalType.Branches.lookup, ↓reduceIte, Option.some.injEq] at hlk
-            subst hlk
-            exact ⟨h₀', hk, hb.1⟩
-          · simp only [LocalType.Branches.lookup, hl, ↓reduceIte] at hlk
-            obtain ⟨h', hl', hh'⟩ := ih (bs'.eraseLabel l₀) l h hb.2 hlk
-            rw [hlk_ne bs' l l₀ hl] at hl'
-            exact ⟨h', hl', hh'⟩)
-      bs
-  have hcompat : ∀ (x y x' y' : LocalType P S L) (a : LocalType.Action P S L),
-      x.WellFormed → y.WellFormed → x.braceEq y = true →
-        LocalType.Step x a x' → LocalType.Step y a y' → x'.braceEq y' = true := by
-    intro x y x' y' a hwx hwy hb hx hy
-    cases hx with
-    | send =>
-      cases hy
-      simp only [LocalType.braceEq, beq_self_eq_true, Bool.true_and] at hb
-      exact hb
-    | recv =>
-      cases hy
-      simp only [LocalType.braceEq, beq_self_eq_true, Bool.true_and] at hb
-      exact hb
-    | @select p xbs l _ hmx =>
-      cases hy with
-      | @select _ ybs _ _ hmy =>
-        simp only [LocalType.braceEq, beq_self_eq_true, Bool.true_and] at hb
-        cases hwx with
-        | select hxw =>
-          cases hwy with
-          | select hyw =>
-            have hxl := hlkmem xbs (hnodup xbs hxw) l x' hmx
-            have hyl := hlkmem ybs (hnodup ybs hyw) l y' hmy
-            obtain ⟨y'', hy'', hxy⟩ := hlktr xbs ybs l x' hb hxl
-            rw [hyl, Option.some.injEq] at hy''
-            rw [hy'']
-            exact hxy
-    | @branch p xbs l _ hmx =>
-      cases hy with
-      | @branch _ ybs _ _ hmy =>
-        simp only [LocalType.braceEq, beq_self_eq_true, Bool.true_and] at hb
-        cases hwx with
-        | branch hxw =>
-          cases hwy with
-          | branch hyw =>
-            have hxl := hlkmem xbs (hnodup xbs hxw) l x' hmx
-            have hyl := hlkmem ybs (hnodup ybs hyw) l y' hmy
-            obtain ⟨y'', hy'', hxy⟩ := hlktr xbs ybs l x' hb hxl
-            rw [hyl, Option.some.injEq] at hy''
-            rw [hy'']
-            exact hxy
-  have hSRmsg : ∀ (s r : P) (pl : S) (next : GlobalType P S L),
-      (GlobalType.msg s r pl next).WellFormed → s ≠ r := by
-    intro s r pl next hw heq
-    have hx := GlobalType.WellFormed.project_isSome hw s
-    subst heq
-    simp only [GlobalType.project, ↓reduceIte, Option.isSome_none, Bool.false_eq_true] at hx
-  have hSRchoice : ∀ (s r : P) (bs : GlobalType.Branches P S L),
-      (GlobalType.choice s r bs).WellFormed → s ≠ r := by
-    intro s r bs hw heq
-    have hx := GlobalType.WellFormed.project_isSome hw s
-    subst heq
-    simp only [GlobalType.project, ↓reduceIte, Option.isSome_none, Bool.false_eq_true] at hx
-  have hWFmsg : ∀ (s r : P) (pl : S) (next : GlobalType P S L),
-      (GlobalType.msg s r pl next).WellFormed → next.WellFormed := by
-    intro s r pl next hw
-    refine ⟨?_, fun p _ => ?_⟩
-    · cases hw.1 with
-      | msg hn => exact hn
-    · have hx := GlobalType.WellFormed.project_isSome hw p
-      simp only [GlobalType.project] at hx
-      split_ifs at hx with h1 h2 h3
-      · simp only [Option.isSome_none, Bool.false_eq_true] at hx
-      · simp only [Option.isSome_map] at hx
-        exact hx
-      · simp only [Option.isSome_map] at hx
-        exact hx
-      · exact hx
-  have hWFchoice : ∀ (s r : P) (bs : GlobalType.Branches P S L),
-      (GlobalType.choice s r bs).WellFormed →
-        ∀ (l : L) (G : GlobalType P S L), (l, G) ∈ bs.entries → G.WellFormed := by
-    intro s r bs hw l G hm
-    refine ⟨?_, fun p _ => ?_⟩
-    · cases hw.1 with
-      | choice _ hb => exact hLW1 bs hb l G hm
-    · have hx := GlobalType.WellFormed.project_isSome hw p
-      simp only [GlobalType.project] at hx
-      split_ifs at hx with h1 h2 h3
-      · simp only [Option.isSome_none, Bool.false_eq_true] at hx
-      · simp only [Option.isSome_map] at hx
-        obtain ⟨lbs, hlbs⟩ := Option.isSome_iff_exists.mp hx
-        obtain ⟨t, ht, _⟩ := hPB bs p lbs hlbs l G hm
-        simp only [ht, Option.isSome_some]
-      · simp only [Option.isSome_map] at hx
-        obtain ⟨lbs, hlbs⟩ := Option.isSome_iff_exists.mp hx
-        obtain ⟨t, ht, _⟩ := hPB bs p lbs hlbs l G hm
-        simp only [ht, Option.isSome_some]
-      · obtain ⟨T, hT⟩ := Option.isSome_iff_exists.mp hx
-        obtain ⟨rest, hpl, _⟩ := hTP bs p T hT
-        obtain ⟨t, ht, _⟩ := hPL bs p _ hpl l G hm
-        simp only [ht, Option.isSome_some]
-  have key : ∀ G : GlobalType P S L, ∀ (ℓ : GlobalType.Label P S L) (G' : GlobalType P S L),
-      G.Step ℓ G' → G.WellFormed →
-        G'.LabelsWellFormed ∧ ℓ.sender ≠ ℓ.receiver ∧
-        ∀ peer : P, ∃ t t' : LocalType P S L,
-          G.project peer = some t ∧ G'.project peer = some t' ∧
-          (peer = ℓ.sender → LocalType.Step t ℓ.senderAction t') ∧
-          (peer = ℓ.receiver → LocalType.Step t ℓ.receiverAction t') ∧
-          (peer ≠ ℓ.sender → peer ≠ ℓ.receiver → t.braceEq t' = true) := by
-    intro G
-    exact GlobalType.rec
-      (motive_1 := fun G => ∀ (ℓ : GlobalType.Label P S L) (G' : GlobalType P S L),
-        G.Step ℓ G' → G.WellFormed →
-          G'.LabelsWellFormed ∧ ℓ.sender ≠ ℓ.receiver ∧
-          ∀ peer : P, ∃ t t' : LocalType P S L,
-            G.project peer = some t ∧ G'.project peer = some t' ∧
-            (peer = ℓ.sender → LocalType.Step t ℓ.senderAction t') ∧
-            (peer = ℓ.receiver → LocalType.Step t ℓ.receiverAction t') ∧
-            (peer ≠ ℓ.sender → peer ≠ ℓ.receiver → t.braceEq t' = true))
-      (motive_2 := fun bs => ∀ (ℓ : GlobalType.Label P S L) (bs' : GlobalType.Branches P S L),
-        GlobalType.Branches.Step bs ℓ bs' → bs.LabelsWellFormed →
-          (∀ e ∈ bs.entries, e.2.WellFormed) →
-          bs'.LabelsWellFormed ∧ bs'.labels = bs.labels ∧
-          (bs ≠ .nil → ℓ.sender ≠ ℓ.receiver) ∧
-          ∀ peer : P,
-            (peer ≠ ℓ.sender → peer ≠ ℓ.receiver → ∀ lbs : LocalType.Branches P S L,
-              bs.projectBranches peer = some lbs →
-                ∃ lbs', bs'.projectBranches peer = some lbs' ∧ lbs.braceEq lbs' = true) ∧
-            (∀ ts : List (LocalType P S L), bs.projectList peer = some ts →
-              ∃ ts', bs'.projectList peer = some ts' ∧
-                List.Forall₂ (fun t t' => t.WellFormed ∧ t'.WellFormed ∧
-                  (peer = ℓ.sender → LocalType.Step t ℓ.senderAction t') ∧
-                  (peer = ℓ.receiver → LocalType.Step t ℓ.receiverAction t') ∧
-                  (peer ≠ ℓ.sender → peer ≠ ℓ.receiver → t.braceEq t' = true)) ts ts'))
-      (fun ℓ G' hs _ => by cases hs)
-      (fun s r pl next ih ℓ G' hs hw => by
-        have hsr := hSRmsg s r pl next hw
-        have hwn := hWFmsg s r pl next hw
-        cases hs with
-        | msg =>
-          refine ⟨hwn.1, hsr, fun peer => ?_⟩
-          obtain ⟨tn, htn⟩ :=
-            Option.isSome_iff_exists.mp (GlobalType.WellFormed.project_isSome hwn peer)
-          by_cases hps : peer = s
-          · subst hps
-            exact ⟨.send r pl tn, tn,
-              by simp only [GlobalType.project, ↓reduceIte, hsr, htn, Option.map_some], htn,
-              fun _ => LocalType.Step.send, fun h => absurd h hsr, fun h => absurd rfl h⟩
-          · by_cases hpr : peer = r
-            · subst hpr
-              exact ⟨.recv s pl tn, tn,
-                by simp only [GlobalType.project, hps, ↓reduceIte, htn, Option.map_some], htn,
-                fun h => absurd h hps, fun _ => LocalType.Step.recv, fun _ h => absurd rfl h⟩
-            · exact ⟨tn, tn, by simp only [GlobalType.project, hps, hpr, ↓reduceIte, htn], htn,
-                fun h => absurd h hps, fun h => absurd h hpr,
-                fun _ _ => LocalType.braceEq_refl tn⟩
-        | msgCongr hnext hs1 hs2 hr1 hr2 =>
-          obtain ⟨hLW', hsr', hper⟩ := ih ℓ _ hnext hwn
-          refine ⟨GlobalType.LabelsWellFormed.msg hLW', hsr', fun peer => ?_⟩
-          obtain ⟨tn, tn', htn, htn', hS, hR, hB⟩ := hper peer
-          by_cases hps : peer = s
-          · subst hps
-            refine ⟨.send r pl tn, .send r pl tn',
-              by simp only [GlobalType.project, ↓reduceIte, hsr, htn, Option.map_some],
-              by simp only [GlobalType.project, ↓reduceIte, hsr, htn', Option.map_some],
-              fun h => absurd h hs1, fun h => absurd h hs2, fun _ _ => ?_⟩
-            simp only [LocalType.braceEq, beq_self_eq_true, Bool.true_and]
-            exact hB hs1 hs2
-          · by_cases hpr : peer = r
-            · subst hpr
-              refine ⟨.recv s pl tn, .recv s pl tn',
-                by simp only [GlobalType.project, hps, ↓reduceIte, htn, Option.map_some],
-                by simp only [GlobalType.project, hps, ↓reduceIte, htn', Option.map_some],
-                fun h => absurd h hr1, fun h => absurd h hr2, fun _ _ => ?_⟩
-              simp only [LocalType.braceEq, beq_self_eq_true, Bool.true_and]
-              exact hB hr1 hr2
-            · exact ⟨tn, tn', by simp only [GlobalType.project, hps, hpr, ↓reduceIte, htn],
-                by simp only [GlobalType.project, hps, hpr, ↓reduceIte, htn'], hS, hR, hB⟩)
-      (fun s r bs ih ℓ G' hs hw => by
-        have hsr := hSRchoice s r bs hw
-        have hent := hWFchoice s r bs hw
-        obtain ⟨hne, hbLW⟩ : bs ≠ .nil ∧ bs.LabelsWellFormed := by
-          cases hw.1 with
-          | choice hne hb => exact ⟨hne, hb⟩
-        cases hs with
-        | @choice _ _ _ l _ hmem =>
-          have hG' := hent l G' hmem
-          refine ⟨hG'.1, hsr, fun peer => ?_⟩
-          obtain ⟨t', ht'⟩ :=
-            Option.isSome_iff_exists.mp (GlobalType.WellFormed.project_isSome hG' peer)
-          have hx := GlobalType.WellFormed.project_isSome hw peer
-          by_cases hps : peer = s
-          · subst hps
-            simp only [GlobalType.project, ↓reduceIte, hsr, Option.isSome_map] at hx
-            obtain ⟨lbs, hlbs⟩ := Option.isSome_iff_exists.mp hx
-            obtain ⟨t'', ht''1, ht''2⟩ := hPB bs _ lbs hlbs l G' hmem
-            rw [ht', Option.some.injEq] at ht''1
-            subst ht''1
-            exact ⟨.select r lbs, t',
-              by simp only [GlobalType.project, ↓reduceIte, hsr, hlbs, Option.map_some], ht',
-              fun _ => LocalType.Step.select ht''2, fun h => absurd h hsr, fun h => absurd rfl h⟩
-          · by_cases hpr : peer = r
-            · subst hpr
-              simp only [GlobalType.project, hps, ↓reduceIte, Option.isSome_map] at hx
-              obtain ⟨lbs, hlbs⟩ := Option.isSome_iff_exists.mp hx
-              obtain ⟨t'', ht''1, ht''2⟩ := hPB bs _ lbs hlbs l G' hmem
-              rw [ht', Option.some.injEq] at ht''1
-              subst ht''1
-              exact ⟨.branch s lbs, t',
-                by simp only [GlobalType.project, hps, ↓reduceIte, hlbs, Option.map_some], ht',
-                fun h => absurd h hps, fun _ => LocalType.Step.branch ht''2,
-                fun _ h => absurd rfl h⟩
-            · simp only [GlobalType.project, hps, hpr, ↓reduceIte] at hx
-              obtain ⟨T, hT⟩ := Option.isSome_iff_exists.mp hx
-              obtain ⟨rest, hpl, hpair⟩ := hTP bs peer T hT
-              obtain ⟨t'', ht''1, ht''2⟩ := hPL bs peer _ hpl l G' hmem
-              rw [ht', Option.some.injEq] at ht''1
-              subst ht''1
-              exact ⟨T, t', by simp only [GlobalType.project, hps, hpr, ↓reduceIte, hT], ht',
-                fun h => absurd h hps, fun h => absurd h hpr,
-                fun _ _ => hpair T (List.mem_cons.2 (Or.inl rfl)) t' ht''2⟩
-        | @choiceCongr _ _ _ bs' _ hbs' hs1 hs2 hr1 hr2 =>
-          have hall : ∀ e ∈ bs.entries, e.2.WellFormed := fun e he => hent e.1 e.2 he
-          obtain ⟨hLW', hlab, hsr', hper⟩ := ih ℓ bs' hbs' hbLW hall
-          have hne' : bs' ≠ .nil := by
-            intro h
-            subst h
-            cases bs with
-            | nil => exact hne rfl
-            | cons l hd tl =>
-              simp only [GlobalType.Branches.labels, GlobalType.Branches.entries, List.map_cons,
-                List.map_nil, reduceCtorEq] at hlab
-          refine ⟨GlobalType.LabelsWellFormed.choice hne' hLW', hsr' hne, fun peer => ?_⟩
-          have hx := GlobalType.WellFormed.project_isSome hw peer
-          by_cases hps : peer = s
-          · subst hps
-            simp only [GlobalType.project, ↓reduceIte, hsr, Option.isSome_map] at hx
-            obtain ⟨lbs, hlbs⟩ := Option.isSome_iff_exists.mp hx
-            obtain ⟨lbs', hlbs', hbe⟩ := (hper _).1 hs1 hs2 lbs hlbs
-            refine ⟨.select r lbs, .select r lbs',
-              by simp only [GlobalType.project, ↓reduceIte, hsr, hlbs, Option.map_some],
-              by simp only [GlobalType.project, ↓reduceIte, hsr, hlbs', Option.map_some],
-              fun h => absurd h hs1, fun h => absurd h hs2, fun _ _ => ?_⟩
-            simp only [LocalType.braceEq, beq_self_eq_true, Bool.true_and]
-            exact hbe
-          · by_cases hpr : peer = r
-            · subst hpr
-              simp only [GlobalType.project, hps, ↓reduceIte, Option.isSome_map] at hx
-              obtain ⟨lbs, hlbs⟩ := Option.isSome_iff_exists.mp hx
-              obtain ⟨lbs', hlbs', hbe⟩ := (hper _).1 hr1 hr2 lbs hlbs
-              refine ⟨.branch s lbs, .branch s lbs',
-                by simp only [GlobalType.project, hps, ↓reduceIte, hlbs, Option.map_some],
-                by simp only [GlobalType.project, hps, ↓reduceIte, hlbs', Option.map_some],
-                fun h => absurd h hr1, fun h => absurd h hr2, fun _ _ => ?_⟩
-              simp only [LocalType.braceEq, beq_self_eq_true, Bool.true_and]
-              exact hbe
-            · simp only [GlobalType.project, hps, hpr, ↓reduceIte] at hx
-              obtain ⟨T, hT⟩ := Option.isSome_iff_exists.mp hx
-              obtain ⟨rest, hpl, hpair⟩ := hTP bs peer T hT
-              obtain ⟨ts', hpl', hF⟩ := (hper peer).2 (T :: rest) hpl
-              have hF2' := hF2 _ _ hF
-              cases hF with
-              | @cons _ T' _ rest' hq _ =>
-                have hpair' : ∀ x ∈ T' :: rest', ∀ y ∈ T' :: rest', x.braceEq y = true := by
-                  intro x' hx' y' hy'
-                  obtain ⟨x, hx, hqx⟩ := hF2' x' hx'
-                  obtain ⟨y, hy, hqy⟩ := hF2' y' hy'
-                  by_cases h1 : peer = ℓ.sender
-                  · exact hcompat x y x' y' _ hqx.1 hqy.1 (hpair x hx y hy)
-                      (hqx.2.2.1 h1) (hqy.2.2.1 h1)
-                  · by_cases h2 : peer = ℓ.receiver
-                    · exact hcompat x y x' y' _ hqx.1 hqy.1 (hpair x hx y hy)
-                        (hqx.2.2.2.1 h2) (hqy.2.2.2.1 h2)
-                    · exact LocalType.braceEq_trans hqx.2.1 hqy.1 hqy.2.1
-                        (LocalType.braceEq_trans hqx.2.1 hqx.1 hqy.1
-                          (LocalType.braceEq_symm hqx.1 hqx.2.1 (hqx.2.2.2.2 h1 h2))
-                          (hpair x hx y hy))
-                        (hqy.2.2.2.2 h1 h2)
-                exact ⟨T, T', by simp only [GlobalType.project, hps, hpr, ↓reduceIte, hT],
-                  by simp only [GlobalType.project, hps, hpr, ↓reduceIte,
-                    hTPmk bs' peer T' rest' hpl' hpair'],
-                  hq.2.2.1, hq.2.2.2.1, hq.2.2.2.2⟩)
-      (fun ℓ bs' hs _ _ => by
-        cases hs
-        refine ⟨GlobalType.Branches.LabelsWellFormed.nil, rfl, fun h => absurd rfl h,
-          fun peer => ⟨fun _ _ lbs h => ?_, fun ts h => ?_⟩⟩
-        · simp only [GlobalType.Branches.projectBranches, Option.some.injEq] at h
-          subst h
-          exact ⟨.nil, rfl, rfl⟩
-        · simp only [GlobalType.Branches.projectList, Option.some.injEq] at h
-          subst h
-          exact ⟨[], rfl, List.Forall₂.nil⟩)
-      (fun label head tail ih_h ih_t ℓ bs' hs hLW hall => by
-        cases hs with
-        | @cons _ _ h' _ tl' _ hh ht =>
-          cases hLW with
-          | cons hfresh hhLW htLW =>
-            have hhw : head.WellFormed := hall (label, head) (List.mem_cons.2 (Or.inl rfl))
-            have htall : ∀ e ∈ tail.entries, e.2.WellFormed :=
-              fun e he => hall e (List.mem_cons.2 (Or.inr he))
-            obtain ⟨hhLW', hsr, hhper⟩ := ih_h ℓ h' hh hhw
-            obtain ⟨htLW', htlab, _, htper⟩ := ih_t ℓ tl' ht htLW htall
-            refine ⟨GlobalType.Branches.LabelsWellFormed.cons (by rwa [htlab]) hhLW' htLW',
-              ?_, fun _ => hsr, fun peer => ⟨fun hps hpr lbs hl => ?_, fun ts hl => ?_⟩⟩
-            · simp only [GlobalType.Branches.labels, GlobalType.Branches.entries,
-                List.map_cons] at htlab ⊢
-              rw [htlab]
-            · rcases hh1 : head.project peer with _ | hp
-              · simp only [GlobalType.Branches.projectBranches, hh1, reduceCtorEq] at hl
-              · rcases ht1 : tail.projectBranches peer with _ | tp
-                · simp only [GlobalType.Branches.projectBranches, hh1, ht1, reduceCtorEq] at hl
-                · simp only [GlobalType.Branches.projectBranches, hh1, ht1,
-                    Option.some.injEq] at hl
-                  subst hl
-                  obtain ⟨t, t', ht0, ht', _, _, hB⟩ := hhper peer
-                  rw [hh1, Option.some.injEq] at ht0
-                  subst ht0
-                  obtain ⟨tp', htp', hB'⟩ := (htper peer).1 hps hpr tp ht1
-                  refine ⟨.cons label t' tp',
-                    by simp only [GlobalType.Branches.projectBranches, ht', htp'], ?_⟩
-                  simp only [LocalType.Branches.braceEq, LocalType.Branches.lookup,
-                    LocalType.Branches.eraseLabel, ↓reduceIte, hB hps hpr, hB', Bool.and_self]
-            · rcases hh1 : head.project peer with _ | hp
-              · simp only [GlobalType.Branches.projectList, hh1, reduceCtorEq] at hl
-              · rcases ht1 : tail.projectList peer with _ | tp
-                · simp only [GlobalType.Branches.projectList, hh1, ht1, reduceCtorEq] at hl
-                · simp only [GlobalType.Branches.projectList, hh1, ht1, Option.some.injEq] at hl
-                  subst hl
-                  obtain ⟨t, t', ht0, ht', hS, hR, hB⟩ := hhper peer
-                  rw [hh1, Option.some.injEq] at ht0
-                  subst ht0
-                  obtain ⟨tp', htp', hF⟩ := (htper peer).2 tp ht1
-                  exact ⟨t' :: tp', by simp only [GlobalType.Branches.projectList, ht', htp'],
-                    List.Forall₂.cons ⟨GlobalType.project_wellFormed hhLW hh1,
-                      GlobalType.project_wellFormed hhLW' ht', hS, hR, hB⟩ hF⟩)
-      G
-  obtain ⟨_, hne, hcl⟩ := key G label G' hstep hG
+  obtain ⟨_, hne, hcl⟩ := GlobalType.step_key G label G' hstep hG
   exact ⟨hne, hcl⟩
 
 end Cslib.SessionTypes
