@@ -49,4 +49,3 @@ public theorem_wanted kahlerCone_connectedComponent
     connectedComponentIn (positiveSet n M) (eta.cohomologyClass n M) = kahlerCone n M
 
 end WantedExt.AlgebraicGeometry.AnalyticCyclePairingsWanted
-

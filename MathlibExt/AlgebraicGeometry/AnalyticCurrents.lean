@@ -37,7 +37,7 @@ namespace MathlibExt.AlgebraicGeometry.AnalyticCurrents
 open KahlerClassGeometry ManifoldDifferentialForms CoordinateFormIntegrals AnalyticCyclePairings
 open scoped Manifold ContDiff BigOperators
 
-variable (n : ℕ) (M : Type) [TopologicalSpace M] [CompactSpace M]
+variable (n : ℕ) (M : Type) [TopologicalSpace M]
   [ChartedSpace (Coordinates n) M]
   [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
   [ExteriorTheory ℝ (Coordinates n) M]
@@ -51,7 +51,7 @@ def derivativeSeminorm (p : ℕ) (a : M) (K : Set (Coordinates n)) (m : ℕ)
 
 /-- The finite-seminorm bound is the concrete distribution continuity
 condition; on a compact manifold every smooth form is a test form. -/
-def IsDistribution (p : ℕ) (T : Forms n M p →ₗ[ℝ] ℝ) : Prop :=
+def IsDistribution [CompactSpace M] (p : ℕ) (T : Forms n M p →ₗ[ℝ] ℝ) : Prop :=
   ∃ (r : ℕ) (a : Fin r → M) (K : Fin r → Set (Coordinates n))
     (m : ℕ) (C : ℝ), 0 ≤ C ∧
     (∀ i, IsCompact (K i) ∧ K i ⊆ chartDomain ℝ (Coordinates n) M ⊤ (a i)) ∧
@@ -59,10 +59,12 @@ def IsDistribution (p : ℕ) (T : Forms n M p →ₗ[ℝ] ℝ) : Prop :=
 
 /-- A current of degree `p` on a compact complex manifold of complex dimension
 `n`: a bounded linear functional on smooth forms of complementary degree. -/
-structure Current (p : ℕ) where
+structure Current [CompactSpace M] (p : ℕ) where
   functional : Forms n M (n * 2 - p) →ₗ[ℝ] ℝ
   bounded : IsDistribution n M (n * 2 - p) functional
   degree_le : p ≤ n * 2
+
+variable [CompactSpace M]
 
 /-- The distributional differential `dT(β) = (-1)^(p+1) T(dβ)`. -/
 def differentialFunctional {p : ℕ} (T : Current n M p) (h : p + 1 ≤ n * 2) :
@@ -128,4 +130,3 @@ def Represents [CurrentDifferentialTheory n M] (h : 0 < n) (T : Current n M 2)
       (differential n M S (by omega)).functional beta
 
 end MathlibExt.AlgebraicGeometry.AnalyticCurrents
-

@@ -34,6 +34,8 @@ open scoped Manifold ContDiff
 
 variable (n : ℕ) (M : Type) [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
 
+/-- Locally, in the chart at each point, `Y` is the common zero set of finitely
+many holomorphic functions. -/
 def IsAnalyticSet (Y : Set M) : Prop :=
   ∀ x : M, ∃ (U : Opens M), x ∈ U ∧
     (U : Set M) ⊆ (extChartAt 𝓘(ℂ, Coordinates n) x).source ∧
@@ -41,6 +43,9 @@ def IsAnalyticSet (Y : Set M) : Prop :=
       (∀ i, ContDiffOn ℂ ∞ (f i) ((extChartAt 𝓘(ℂ, Coordinates n) x) '' (U : Set M))) ∧
       Y ∩ (U : Set M) = {z | z ∈ U ∧ ∀ i, f i (extChartAt 𝓘(ℂ, Coordinates n) x z) = 0}
 
+/-- `Y` is nonempty and not covered by two analytic sets unless one of them
+already contains it. This is irreducibility relative to analytic sets; it does
+not ask `Y` itself to be analytic, which `ResolvedCycle` requires separately. -/
 def IrreducibleAnalytic (Y : Set M) : Prop :=
   Y.Nonempty ∧ ∀ A B : Set M,
     IsAnalyticSet n M A → IsAnalyticSet n M B → Y ⊆ A ∪ B → Y ⊆ A ∨ Y ⊆ B
@@ -127,4 +132,3 @@ def numericallyPositive (a : H2 n M) : Prop :=
 def positiveSet : Set (H2 n M) := {a | numericallyPositive n M a}
 
 end MathlibExt.AlgebraicGeometry.AnalyticCyclePairings
-

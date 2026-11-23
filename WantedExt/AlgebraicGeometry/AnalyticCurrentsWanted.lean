@@ -58,4 +58,3 @@ public theorem_wanted nef_positiveVolume_kahlerCurrent
       ∃ epsilon : ℝ, 0 < epsilon ∧ Dominates n M R A hn T eta.form.val epsilon
 
 end WantedExt.AlgebraicGeometry.AnalyticCurrentsWanted
-

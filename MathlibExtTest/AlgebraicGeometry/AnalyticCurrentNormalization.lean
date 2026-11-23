@@ -47,3 +47,13 @@ example (n : ℕ) (M : Type) [TopologicalSpace M] [CompactSpace M]
         (d ℝ (Coordinates n) M (n * 2 - 1) beta)) := by
   simp [differentialFunctional]
 
+/-- On a compact manifold, currents are defined. -/
+example (M : Type) [TopologicalSpace M] [CompactSpace M] [ChartedSpace (Coordinates 1) M] :
+    Type :=
+  Current 1 M 0
+
+/-- Currents are only defined on compact manifolds: `ℂ` is not one. -/
+example : True := by
+  fail_if_success
+    have : Type := Current 1 (Coordinates 1) 0
+  trivial
