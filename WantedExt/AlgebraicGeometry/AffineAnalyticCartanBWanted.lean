@@ -42,8 +42,7 @@ attribute [local instance] HasDerivedCategory.standard
 affine complex-point space. Its two classes specify charts and evaluation. -/
 public def_wanted smoothAffineAnalyticRealization
     (X : ComplexScheme) (d : ℕ)
-    [IsAffine X.left] [SmoothOfRelativeDimension d X.hom]
-    [LocallyOfFiniteType X.hom] :
+    [IsAffine X.left] [SmoothOfRelativeDimension d X.hom] :
     Σ a : AnalyticManifold X d, @RegularFunctions X d a
 
 /-- Cartan B for the actual holomorphic coefficient sheaf on this affine
@@ -51,7 +50,6 @@ analytification, including modules that need not be algebraizations. -/
 public theorem_wanted positive_cohomology_subsingleton
     (X : ComplexScheme) (d : ℕ)
     [IsAffine X.left] [SmoothOfRelativeDimension d X.hom]
-    [LocallyOfFiniteType X.hom]
     [AnalyticManifold X d] [RegularFunctions X d]
     (M : AnalyticModules X d) [SheafOfModules.IsFinitePresentation M]
     (n : ℕ) (hn : 0 < n) :
