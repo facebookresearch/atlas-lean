@@ -32,101 +32,11 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
-public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.KJacobsthal
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-
-/-- **Lucas parameters of the k-Jacobsthal numbers.** For a natural number $k$, the Lucas-sequence
-parameters $(P, Q) = (k, -2)$. The Lucas sequences $J_{k,n} = U_n(k, -2)$ and
-$j_{k,n} = V_n(k, -2)$ with these parameters are the $k$-Jacobsthal numbers ($J_{k,0} = 0$,
-$J_{k,1} = 1$) and the $k$-Jacobsthal–Lucas numbers ($j_{k,0} = 2$, $j_{k,1} = k$); both satisfy
-$x_{n+2} = k x_{n+1} + 2 x_n$.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Section 1, recurrences (1) and (2). -/
-def kJacobsthalParams (k : ℕ) : LucasSequenceParams where
-  p := k
-  q := -2
-  q_ne_zero := by decide
-
-/-- **The second k-Jacobsthal number.** For every natural number $k$, the $k$-Jacobsthal number
-$J_{k,2} = U_2(k, -2)$ equals $k$.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-proof of Theorem 2. -/
-theorem lucasU_kJacobsthalParams_two (k : ℕ) : lucasU (kJacobsthalParams k) 2 = k := by
-  simp [lucasU, kJacobsthalParams]
-
-/-- **The $k$-Jacobsthal-Lucas number $j_{k,2}$.** For every natural number $k$, the
-$k$-Jacobsthal-Lucas numbers $j_{k,n} = V_n(k, -2)$, the Lucas sequence $V$ with parameters
-$(P, Q) = (k, -2)$, satisfy $j_{k,2} = k^2 + 4$.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-proof of Theorem 2. -/
-theorem lucasV_kJacobsthalParams_two (k : ℕ) :
-    lucasV (kJacobsthalParams k) 2 = (k : ℤ) ^ 2 + 4 := by
-  simp [lucasV, kJacobsthalParams]
-  ring
-
-/-- **Companion $k$-Jacobsthal numbers.** For a natural number $k$ and integers $a, b$, the
-companion $k$-Jacobsthal numbers $\mathcal{J}_{k,n}(a, b)$, $n \in \mathbb{N}$, are the integers
-defined by $\mathcal{J}_{k,0}(a, b) = a$, $\mathcal{J}_{k,1}(a, b) = b$ and
-$\mathcal{J}_{k,n+2}(a, b) = k\,\mathcal{J}_{k,n+1}(a, b) + 2\,\mathcal{J}_{k,n}(a, b)$.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Section 4. -/
-def companionKJacobsthal (k : ℕ) (a b : ℤ) : ℕ → ℤ
-  | 0 => a
-  | 1 => b
-  | n + 2 => k * companionKJacobsthal k a b (n + 1) + 2 * companionKJacobsthal k a b n
-
-/-- **Recurrence of the companion $k$-Jacobsthal numbers.** For every natural number $k$, all
-integers $a, b$ and every natural number $n$, the companion $k$-Jacobsthal numbers satisfy
-$\mathcal{J}_{k,n+2}(a, b) = k\,\mathcal{J}_{k,n+1}(a, b) + 2\,\mathcal{J}_{k,n}(a, b)$.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Section 4. -/
-theorem companionKJacobsthal_add_two (k : ℕ) (a b : ℤ) (n : ℕ) :
-    companionKJacobsthal k a b (n + 2) =
-      k * companionKJacobsthal k a b (n + 1) + 2 * companionKJacobsthal k a b n :=
-  rfl
-
-/-- **The second companion $k$-Jacobsthal number.** For every natural number $k$ and all integers
-$a, b$, the companion $k$-Jacobsthal numbers satisfy $\mathcal{J}_{k,2}(a, b) = bk + 2a$.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Section 4, list of the first companion numbers. -/
-theorem companionKJacobsthal_two (k : ℕ) (a b : ℤ) :
-    companionKJacobsthal k a b 2 = b * k + 2 * a := by
-  simp [companionKJacobsthal]
-  ring
-
-/-- **The $k$-Jacobsthal numbers as companion numbers.** For a natural number $k$, let
-$\mathcal{J}_{k,n}(a, b)$ denote the companion $k$-Jacobsthal numbers and $J_{k,n} = U_n(k, -2)$
-the $k$-Jacobsthal numbers, the Lucas sequence with parameters $(k, -2)$. Then for every natural
-number $n$, $\mathcal{J}_{k,n}(0, 1) = J_{k,n}$: the companion numbers with initial values $0$ and
-$1$ are the $k$-Jacobsthal numbers.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Section 4, special cases of the companion numbers. -/
-theorem companionKJacobsthal_zero_one (k n : ℕ) :
-    companionKJacobsthal k 0 1 n = lucasU (kJacobsthalParams k) n := by
-  induction n using Nat.twoStepInduction with
-  | zero => rfl
-  | one => rfl
-  | more n ih1 ih2 =>
-      rw [companionKJacobsthal_add_two, ih1, ih2, lucasU_add_two]
-      simp [kJacobsthalParams]
 
 /-- `J[k, n]` is the real cast of `J_{k,n} = lucasU (kJacobsthalParams k) n`. -/
 local notation "J[" k ", " n "]" => (lucasU (kJacobsthalParams k) n : ℝ)
@@ -324,19 +234,6 @@ public theorem_wanted jacobsthalLucas_mul_add_eq_integral (ℓ n r : ℕ) :
       1 / 2 ^ (n + 1) * ∫ x in (-1 : ℝ)..1,
         (9 * n * J[1, ℓ] * J[1, r] + jL[1, ℓ] * jL[1, r] +
             3 * (n + 1) * J[1, ℓ] * jL[1, r] * x) * (jL[1, ℓ] + 3 * J[1, ℓ] * x) ^ ((n : ℤ) - 1)
-
-/-- **Ratio of consecutive $k$-Jacobsthal numbers.** For every positive integer $k$, the
-$k$-Jacobsthal numbers $J_{k,n} = U_n(k, -2)$, the Lucas sequence $U$ with parameters
-$(P, Q) = (k, -2)$, satisfy $J_{k,n+1}/J_{k,n} \to (k + \sqrt{k^2 + 8})/2$ as $n \to \infty$,
-the quotients taken in $\mathbb{R}$.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Theorem 8 (`integers-2025-A74-thm-8`). -/
-public theorem_wanted tendsto_lucasU_kJacobsthal_ratio (k : ℕ) (hk : 0 < k) :
-    Filter.Tendsto
-      (fun n : ℕ => (lucasU (kJacobsthalParams k) (n + 1) : ℝ) / lucasU (kJacobsthalParams k) n)
-      Filter.atTop (nhds ((k + Δ[k]) / 2))
 
 /-- **Companion $k$-Jacobsthal numbers via Lucas sequences.** For a natural number $k$ and
 integers $a, b$, let $\mathcal{J}_{k,n}(a, b)$ be the companion $k$-Jacobsthal numbers, and let
