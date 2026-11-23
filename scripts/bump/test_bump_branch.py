@@ -371,11 +371,14 @@ class GitTest(unittest.TestCase):
 
     def write(
         self, files: dict[str, str], rows: list[dict] | None = None, message: str = "edit", *,
-        schema_version: int = 1,
+        schema_version: int = 1, upstream_pin: str = "a" * 40,
     ) -> None:
         files = files.copy()
         if rows is not None:
-            data = json.loads(manifest(rows, schema_version=schema_version))
+            data = json.loads(manifest(
+                rows, schema_version=schema_version,
+                upstream={"commit": upstream_pin, "repository": fms.UPSTREAM_REPOSITORY},
+            ))
             documents = fms.manifest_documents(Path(bb.MANIFEST), data)
             files.update({path.as_posix(): text for path, text in documents.items()})
         for path, text in files.items():
@@ -658,6 +661,87 @@ class GitTest(unittest.TestCase):
         self.assertEqual(self.git("rev-parse", "HEAD").stdout, original_head)
         self.assertEqual(self.git("rev-parse", "MERGE_HEAD").stdout,
                          self.git("rev-parse", "main").stdout)
+
+    def test_staged_merge_validates_inherited_row_contents(self) -> None:
+        for mixed, repinned in ((False, False), (True, False), (True, True)):
+            with self.subTest(mixed=mixed, repinned=repinned):
+                self.tearDown()
+                self.setUp()
+                self.check_inherited_row_contents(mixed=mixed, repinned=repinned)
+
+    def check_inherited_row_contents(self, *, mixed: bool, repinned: bool) -> None:
+        shared, active, retired = (f"MathlibExt/Algebra/{name}.lean" for name in "ABC")
+        main_pin, bump_pin = "a" * 40, ("b" if repinned else "a") * 40
+        sharded = fms.SHARDED_SCHEMA_VERSION
+        base_schema = fms.SCHEMA_VERSION if mixed else sharded
+        main_row = diverged(shared, "def a := 1\n", "Record A on main.")
+        bump_row = {**main_row, "upstream_sha256": "a" * 64} if repinned else main_row
+        active_row = {**diverged(active, "def b := 2\n", "Record B on the bump."),
+                      "upstream_commit": "d" * 40}
+        retired_text = "theorem c : True := by trivial\n"
+        retired_source = {**diverged(retired, retired_text, "Record C on the bump."),
+                          "upstream_commit": "e" * 40}
+        tombstone = fms.retired_row(retired_source, retired, retired_text)
+        self.write({shared: "def a := 1\n"}, [main_row], "base", schema_version=base_schema)
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({active: "def b := 2\n"}, [bump_row, active_row, tombstone], "bump",
+                   schema_version=base_schema, upstream_pin=bump_pin)
+        self.git("checkout", "-q", "main")
+        if mixed:
+            self.write({}, [main_row], "main", schema_version=sharded)
+        else:
+            self.git("commit", "--allow-empty", "-q", "-m", "main")
+        self.git("checkout", "-q", "bump")
+        self.git("merge", "--no-ff", "--no-commit", "main", check=False)
+        original_head = self.git("rev-parse", "HEAD").stdout
+        shard = fms.shard_path(Path(bb.MANIFEST), shared)
+
+        def stage(rows: list[dict], pin: str = bump_pin) -> None:
+            data = json.loads(manifest(
+                rows, schema_version=sharded,
+                upstream={"repository": fms.UPSTREAM_REPOSITORY, "commit": pin},
+            ))
+            for path, text in fms.manifest_documents(Path(bb.MANIFEST), data).items():
+                target = self.repo / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(text)
+                self.git("add", "--", str(path))
+
+        def reject(rows: list[dict], path: str, diagnostic: str, pin: str = bump_pin) -> None:
+            stage(rows, pin)
+            staged = self.git("write-tree").stdout
+            physical = (self.repo / shard).read_bytes()
+            checked = self.tool("resolve-manifest", "--check-only")
+            self.assertEqual(checked.returncode, 2, checked.stdout + checked.stderr)
+            self.assertIn(path, checked.stderr)
+            self.assertIn(diagnostic, checked.stderr)
+            self.assertEqual(self.git("write-tree").stdout, staged)
+            self.assertEqual((self.repo / shard).read_bytes(), physical)
+            self.assertEqual(self.git("rev-parse", "HEAD").stdout, original_head)
+
+        for field, changed in (("published_sha256", "9" * 64), ("upstream_sha256", "9" * 64),
+                               ("upstream_commit", "9" * 40), ("line_fingerprint", ["9" * 12])):
+            with self.subTest(field=field):
+                reject([bump_row, active_row, {**tombstone, field: changed}], retired, "retired")
+        for field, changed in (("upstream_sha256", "9" * 64), ("upstream_commit", "9" * 40)):
+            with self.subTest(field=field):
+                reject([bump_row, {**active_row, field: changed}, tombstone], active, field)
+        if repinned:
+            reject([main_row, active_row, tombstone], shared, "upstream_sha256")
+            reject([main_row, active_row, {**tombstone, "published_sha256": "9" * 64}],
+                   retired, "retired", main_pin)
+            reject([main_row, {**active_row, "rationale": "Rewrite across pins."}, tombstone],
+                   active, "pin", main_pin)
+            stage([main_row, active_row, tombstone], main_pin)
+            checked = self.tool("resolve-manifest", "--check-only")
+            self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
+
+        # A real same-pin transition is allowed, not just exact provenance snapshots.
+        updated_active = {**active_row, "rationale": "Clarify the local divergence."}
+        stage([bump_row, updated_active, tombstone])
+        checked = self.tool("resolve-manifest", "--check-only")
+        self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, original_head)
 
     def test_lean_conflict_is_left_to_the_user(self):
         d = "MathlibExt/D.lean"

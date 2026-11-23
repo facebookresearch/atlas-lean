@@ -692,25 +692,49 @@ def merge_provenance_file(path: str) -> tuple[str, dict[str, int], list[str]]:
         raise Stop(f"{path}: {error}; resolve and stage it by hand") from error
 
 
-def provenance_paths(manifest: dict | None, revision: str) -> set[str]:
-    paths: set[str] = set()
+def provenance_rows(manifest: dict | None, revision: str) -> dict[str, dict]:
+    rows: dict[str, dict] = {}
     if manifest is None:
-        return paths
+        return rows
     for row in manifest["rows"]:
         path = row.get("path") if isinstance(row, dict) else None
         if not isinstance(path, str) or not path:
             raise Stop(f"provenance at {revision} has an invalid row path")
-        if path in paths:
+        if path in rows:
             raise Stop(f"provenance at {revision} has duplicate row path {path}")
-        paths.add(path)
-    return paths
+        rows[path] = row
+    return rows
+
+
+def inherited_row_problems(
+    path: str, before: dict, row: dict, revision: str, *, same_pin: bool, bound_at_pin: bool,
+) -> list[str]:
+    if row == before:
+        return []
+    short = revision[:12]
+    if before.get("disposition") == "retired":
+        return [f"{path}: inherited retired row from {short} must be kept exactly"]
+    if not same_pin:
+        # A shared row already recorded at the selected pin is checked against that parent.
+        # For a row known only at a different pin there is no new binding to validate.
+        if bound_at_pin:
+            return []
+        return [f"{path}: keep the row from {short} unchanged across an upstream pin change"]
+    problems = fms.row_transition_problems(path, before, row, short)
+    if not problems and row.get("disposition") == "retired":
+        previous = show(f"{revision}:{path}")
+        if previous is None or row != fms.retired_row(before, path, previous):
+            problems.append(f"{path}: retirement does not match the record and file at {short}")
+    return problems
 
 
 def check_parent_rows(tree: str, bump: str, main: str) -> None:
     merged = provenance_at(tree)
     parents = [(revision, provenance_at(revision)) for revision in (bump, main)]
-    required = set().union(*(provenance_paths(manifest, rev) for rev, manifest in parents))
-    missing = required - provenance_paths(merged, tree)
+    parent_rows = [(rev, provenance_rows(manifest, rev)) for rev, manifest in parents]
+    staged_rows = provenance_rows(merged, tree)
+    required = set().union(*(rows for _, rows in parent_rows))
+    missing = required - staged_rows.keys()
     if missing:
         listed = "\n".join(f"  {path}" for path in sorted(missing))
         raise Stop(
@@ -723,10 +747,27 @@ def check_parent_rows(tree: str, bump: str, main: str) -> None:
     if any(manifest is not None and manifest["schema_version"] == sharded
            for _, manifest in parents) and (merged is None or merged["schema_version"] != sharded):
         raise Stop("the staged merge must keep sharded provenance; nothing was committed")
+    if merged is None:
+        return
+    pin = merged["upstream"]["commit"]
+    pins = {rev: manifest["upstream"]["commit"] for rev, manifest in parents if manifest}
+    if pins and pin not in pins.values():
+        raise Stop("the staged merge introduces a new upstream pin; sync it separately")
+    bound_paths = set().union(*(rows for rev, rows in parent_rows if pins.get(rev) == pin))
+    problems = []
+    for revision, rows in parent_rows:
+        for path, before in sorted(rows.items()):
+            problems.extend(inherited_row_problems(
+                path, before, staged_rows[path], revision,
+                same_pin=pins[revision] == pin, bound_at_pin=path in bound_paths,
+            ))
+    if problems:
+        listed = "\n".join(f"  {problem}" for problem in problems)
+        raise Stop(f"the staged merge changes inherited provenance; no commit was made:\n{listed}")
 
 
 def check_candidate() -> None:
-    """Require both parents' rows and run the canonical checker against main on the staged tree."""
+    """Check inherited records from both parents and run the canonical checker against main."""
     if unmerged_paths():
         raise Stop("the merge has unresolved conflicts; resolve and stage them first")
     if git("diff", "--quiet", check=False).returncode != 0:
