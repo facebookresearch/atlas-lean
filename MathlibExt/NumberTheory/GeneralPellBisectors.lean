@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Order.Ring.Abs
+public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Algebra.Group.Int.Even
 import Mathlib.Data.Int.ModEq
@@ -28,6 +29,10 @@ Squaring the equality of distances to two lines gives an equation for their bise
 Squares are `0` or `1` modulo `4`, so for `d ≡ 1 (mod 4)` the value
 `x² - d y²` is `0`, `1`, or `3` modulo `4`, and so is its negation.
 Modulo `8`, squares are `0`, `1`, or `4`. If `x² ≡ 5 y² (mod 8)`, both squares are even.
+
+Multiplying `x + y √d` by a solution `a + b √d` of `a² - d b² = -1` negates the value of
+`x² - d y²` and keeps the first coordinate coprime to `d` times the second, so strictly primitive
+solutions of `x² - d y² = z` give strictly primitive solutions of `x² - d y² = -z`.
 -/
 
 @[expose] public section
@@ -129,5 +134,27 @@ theorem even_of_abs_sq_sub_mul_sq_zero_mod_eight (d z : ℤ) (hd : d % 8 = 5)
   have hx := Int.sq_emod_eight x
   have hy := Int.sq_emod_eight y
   omega
+
+-- The hypotheses `1 < d`, `Squarefree d` and `z ≠ 0` from the source are not needed.
+set_option linter.unusedVariables false in
+/-- **Negating the value of a strictly primitive solution.** Let $d > 1$ be a square-free integer
+such that $x^2 - d y^2 = -1$ has an integral solution, and let $z \ne 0$ be an integer. If
+$x^2 - d y^2 = z$ has an integral solution with $x$ and $d y$ coprime, then so does
+$x^2 - d y^2 = -z$.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 4
+(`integers-2024-A111-prop-4`). -/
+theorem strictlyPrimitive_neg (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (z : ℤ)
+    (hz : z ≠ 0) (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1)
+    (h : ∃ x y : ℤ, IsCoprime x (d * y) ∧ x ^ 2 - d * y ^ 2 = z) :
+    ∃ x y : ℤ, IsCoprime x (d * y) ∧ x ^ 2 - d * y ^ 2 = -z := by
+  obtain ⟨a, b, hab⟩ := hneg
+  obtain ⟨x, y, ⟨u, v, huv⟩, rfl⟩ := h
+  -- Take `(x + y √d) (a + b √d)`. Since `a² - d b² = -1`, the Bézout identity
+  -- `u x + v (d y) = 1` turns into one for the new first coordinate and `d` times the second.
+  refine ⟨x * a + d * y * b, x * b + y * a, ⟨-u * a + v * d * b, u * b - v * a, ?_⟩, ?_⟩
+  · linear_combination (-(a ^ 2 - d * b ^ 2)) * huv - hab
+  · linear_combination (x ^ 2 - d * y ^ 2) * hab
 
 end MetaMathlibExt
