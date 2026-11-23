@@ -25,6 +25,7 @@ public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import Mathlib.RingTheory.Ideal.Defs
 public import Mathlib.RepresentationTheory.Basic
+public import Mathlib.RepresentationTheory.Invariants
 public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -36,8 +37,11 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 The local group is the actual valuation decomposition subgroup of
 Gal(L/K). Its lower filtration fixes the actual ring of integers modulo
-powers of its maximal ideal. Conductors use actual invariant subspaces,
-with weights #G_i/#G_0; the Swan sum omits i=0.
+powers of its maximal ideal. Conductors use Mathlib's invariant subspaces
+`Representation.invariants` of the restricted representations, with weights
+#G_i/#G_0; the Swan sum omits i=0. The conductor API assumes that `L/K` is
+finite, so the decomposition group and its lower groups are finite and the
+weights are ratios of positive integers.
 
 A bound N is supplied with the actual proposition G_N=1. Existing public
 ramification theory produces such bounds; no new existence goal is made
@@ -101,40 +105,62 @@ section Conductors
 variable (ell : ℕ) [Fact ell.Prime] (V : Type w) [AddCommGroup V] [Module ℚ_[ell] V]
   [Module.Finite ℚ_[ell] V] (ρ : Representation ℚ_[ell] (DecompositionGroup K L) V)
 
-/-- The actual subspace fixed by the displayed ramification subgroup. -/
-def invariantSubspace (H : Subgroup (DecompositionGroup K L)) : Submodule ℚ_[ell] V where
-  carrier := {v | ∀ σ ∈ H, ρ σ v = v}
-  zero_mem' σ _ := map_zero _
-  add_mem' hv hw σ hσ := by rw [map_add, hv σ hσ, hw σ hσ]
-  smul_mem' a v hv σ hσ := by rw [map_smul, hv σ hσ]
+/-- Codimension of the subspace fixed by the displayed ramification subgroup, using
+Mathlib's invariants of the restricted representation. -/
+def invariantCodimension (H : Subgroup (DecompositionGroup K L)) : ℕ :=
+  Module.finrank ℚ_[ell] V -
+    Module.finrank ℚ_[ell] (Representation.invariants (ρ.comp H.subtype))
 
 omit [Module.Finite ℚ_[ell] V] in
-theorem invariantSubspace_bot : invariantSubspace K L ell V ρ ⊥ = ⊤ := by
-  ext v
-  simp [invariantSubspace]
+theorem invariantCodimension_bot : invariantCodimension K L ell V ρ ⊥ = 0 := by
+  have : Representation.invariants (ρ.comp (⊥ : Subgroup (DecompositionGroup K L)).subtype) =
+      ⊤ := by
+    ext v
+    simp only [Representation.mem_invariants, Submodule.mem_top, iff_true]
+    rintro ⟨σ, hσ⟩
+    rw [Subgroup.mem_bot] at hσ
+    subst hσ
+    simp
+  rw [invariantCodimension, this, finrank_top, Nat.sub_self]
 
-/-- Codimension of the actual invariant subspace. -/
-def invariantCodimension (H : Subgroup (DecompositionGroup K L)) : ℕ :=
-  Module.finrank ℚ_[ell] V - Module.finrank ℚ_[ell] (invariantSubspace K L ell V ρ H)
-
-/-- The lower-numbering contribution with denominator #G_0. -/
-def conductorSummand (i : ℕ) : ℚ :=
+/-- The lower-numbering contribution with denominator #G_0. Since `L/K` is finite, the lower
+groups are finite and nonempty, so `#G_i/#G_0` is a ratio of positive integers. -/
+def conductorSummand [FiniteDimensional K L] (i : ℕ) : ℚ :=
   (Nat.card (lowerGroup K L i) : ℚ) / (Nat.card (lowerGroup K L 0) : ℚ) *
     invariantCodimension K L ell V ρ (lowerGroup K L i)
 
 /-- Artin conductor, including the inertia contribution at i=0. -/
-def artinConductor (N : ℕ) : ℚ := ∑ i ∈ Finset.range N, conductorSummand K L ell V ρ i
+def artinConductor [FiniteDimensional K L] (N : ℕ) : ℚ :=
+  ∑ i ∈ Finset.range N, conductorSummand K L ell V ρ i
 
 /-- Swan conductor, omitting the inertia term i=0. -/
-def swanConductor (N : ℕ) : ℚ :=
+def swanConductor [FiniteDimensional K L] (N : ℕ) : ℚ :=
   ∑ i ∈ Finset.range N, if i = 0 then 0 else conductorSummand K L ell V ρ i
+
+variable [FiniteDimensional K L]
+
+omit [Module.Finite ℚ_[ell] V] in
+/-- The `i = 0` summand has weight `#G_0/#G_0 = 1`: it is the codimension of the inertia
+invariants. -/
+theorem conductorSummand_zero :
+    conductorSummand K L ell V ρ 0 = invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
+  have : (Nat.card (lowerGroup K L 0) : ℚ) ≠ 0 := by exact_mod_cast Nat.card_pos.ne'
+  simp [conductorSummand, this]
 
 omit [Module.Finite ℚ_[ell] V] in
 theorem conductorSummand_eq_zero_of_bound (N : ℕ) (hN : lowerGroup K L N = ⊥)
     (i : ℕ) (hi : N ≤ i) : conductorSummand K L ell V ρ i = 0 := by
-  unfold conductorSummand invariantCodimension
-  rw [lowerGroup_eq_bot_of_bound K L N hN i hi, invariantSubspace_bot]
+  unfold conductorSummand
+  rw [lowerGroup_eq_bot_of_bound K L N hN i hi, invariantCodimension_bot]
   simp
+
+omit [Module.Finite ℚ_[ell] V] in
+/-- The Artin sum is the Swan sum plus the codimension of the inertia invariants. -/
+theorem artinConductor_eq_swanConductor_add (N : ℕ) (hN : 0 < N) :
+    artinConductor K L ell V ρ N = swanConductor K L ell V ρ N +
+      invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
+  obtain ⟨M, rfl⟩ : ∃ M, N = M + 1 := ⟨N - 1, by omega⟩
+  simp [artinConductor, swanConductor, Finset.sum_range_succ', conductorSummand_zero]
 
 omit [Module.Finite ℚ_[ell] V] in
 /-- Once actual ramification vanishes, extending the Artin sum changes nothing. -/
