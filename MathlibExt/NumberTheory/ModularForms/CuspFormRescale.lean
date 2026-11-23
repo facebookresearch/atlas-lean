@@ -108,7 +108,7 @@ private theorem mdifferentiable_comp_smul {d : ℕ} (hd : d ≠ 0) {F : ℍ → 
   convert h using 1
   funext τ
   rw [Pi.smul_apply, ModularForm.slash_heckeDiagMatrix_apply 0 hd, smul_eq_mul,
-    zero_sub, zpow_neg_one, ← mul_assoc, mul_inv_cancel₀ hd', one_mul]
+    zero_sub, _root_.zpow_neg_one, ← mul_assoc, mul_inv_cancel₀ hd', one_mul]
 
 private theorem isBoundedAtImInfty_comp_smul {d : ℕ} (hd : d ≠ 0) {F : ℍ → ℂ}
     (hbdd : IsBoundedAtImInfty F) :

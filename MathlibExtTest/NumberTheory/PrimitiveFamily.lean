@@ -96,7 +96,7 @@ theorem normalizePolynomial (P : ℤ[X]) (hP : P ≠ 0)
     (.ofCoeff (.ofSupportFinite g (P.support.finite_toSet.subset hs)))
   have hQ (j : ℕ) : Q.coeff j = g j := rfl
   refine ⟨n, Q, Polynomial.ext (fun j => ?_), ?_⟩
-  · simpa only [coeff_smul, hQ, Pi.smul_apply] using congrFun hg j
+  · simpa only [AddMonoidAlgebra.coeff_smul_apply, hQ, Pi.smul_apply] using congrFun hg j
   · intro hzero
     apply hi
     apply (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp

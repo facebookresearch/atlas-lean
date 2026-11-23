@@ -173,7 +173,7 @@ private theorem eventually_gt_of_hasDerivAt {f : ℝ → ℝ} {f' x : ℝ} (hf :
     (hpos : 0 < f') : ∀ᶠ y in 𝓝[>] x, f x < f y := by
   have hs : ∀ᶠ y in 𝓝[>] x, 0 < slope f x y :=
     ((hasDerivAt_iff_tendsto_slope.1 hf).mono_left
-      (nhdsWithin_mono _ fun y (hy : x < y) => hy.ne')).eventually (lt_mem_nhds hpos)
+      (nhdsWithin_mono (s := Ioi x) _ fun y (hy : x < y) => hy.ne')).eventually (lt_mem_nhds hpos)
   filter_upwards [hs, self_mem_nhdsWithin] with y hy (hxy : x < y)
   rw [slope_def_field, div_pos_iff_of_pos_right (sub_pos.2 hxy)] at hy
   linarith

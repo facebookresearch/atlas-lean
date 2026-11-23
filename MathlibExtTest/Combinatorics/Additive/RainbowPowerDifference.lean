@@ -93,4 +93,37 @@ example (c : ZMod 0 → Fin 3) (i : ℕ) (hi : 0 < i) :
   simpa using
     exists_coprime_same_colors_of_coprime_dist 0 c i (i + 1) hi (by omega) (by simp)
 
+/-- For `p = 7` and `k = 2`, every divisor of `p - 1 = 6` coprime to `k` is at most `3`, so `3` is
+the largest such divisor. -/
+private theorem le_three_of_dvd_six_of_coprime_two (s : ℕ) (hs : s ∣ 7 - 1)
+    (hcop : Nat.Coprime s 2) : s ≤ 3 :=
+  (by decide : ∀ s < 7, s ∣ 7 - 1 → Nat.Coprime s 2 → s ≤ 3) s
+    (Nat.lt_succ_of_le (Nat.le_of_dvd (by decide) hs)) hs hcop
+
+-- Test section: for `p = 7` and `k = 2`, the vertex `2` lies on the cycle `2 → 4 → 2` of
+-- `x ↦ x ^ 2`, so its order divides `t = 3`.
+example : orderOf (2 : ZMod 7) ∣ 3 :=
+  (isCycleVertex_powMap_iff_orderOf_dvd 7 2 (by decide) 3 (by decide) (by decide)
+    le_three_of_dvd_six_of_coprime_two 2 (by decide)).1 ⟨2, by norm_num, by decide⟩
+
+-- The vertex `3` has order `6`, which does not divide `3`, so no iterate `3 ^ 2 ^ m` with `m ≥ 1`
+-- returns to `3` (the path is `3 → 2 → 4 → 2 → ⋯`).
+example : ¬ ∃ m : ℕ, 1 ≤ m ∧ (3 : ZMod 7) ^ 2 ^ m = 3 := by
+  rw [isCycleVertex_powMap_iff_orderOf_dvd 7 2 (by decide) 3 (by decide) (by decide)
+    le_three_of_dvd_six_of_coprime_two 3 (by decide), orderOf_dvd_iff_pow_eq_one]
+  decide
+
+-- For `k = 1` every element is fixed and `t = p - 1`, which recovers `orderOf a ∣ p - 1`.
+example (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) (a : ZMod p) (ha : a ≠ 0) : orderOf a ∣ p - 1 :=
+  (isCycleVertex_powMap_iff_orderOf_dvd p 1 hp (p - 1) dvd_rfl (Nat.coprime_one_right _)
+    (fun s hs _ => Nat.le_of_dvd (by have := (Fact.out : p.Prime).two_le; omega) hs) a ha).1
+    ⟨1, le_rfl, by simp⟩
+
+-- For `k = 0` the only divisor coprime to `k` is `t = 1`, so `1` is the only nonzero cycle vertex.
+example (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) (a : ZMod p) (ha : a ≠ 0)
+    (h : ∃ m : ℕ, 1 ≤ m ∧ a ^ (0 ^ m) = a) : a = 1 :=
+  orderOf_eq_one_iff.1 <| Nat.dvd_one.1 <|
+    (isCycleVertex_powMap_iff_orderOf_dvd p 0 hp 1 (one_dvd _) (Nat.coprime_one_left _)
+      (fun s _ hs => ((Nat.coprime_zero_right s).1 hs).le) a ha).1 h
+
 end MathlibExtTest.RainbowPowerDifference
