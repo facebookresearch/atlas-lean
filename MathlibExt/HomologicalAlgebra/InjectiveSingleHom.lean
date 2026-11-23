@@ -7,15 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b:
-* StacksFrontier/Algebra/Homology/DerivedCategory/HomToInjectiveSingle.lean;
-* StacksFrontier/Algebra/Homology/DerivedCategory/ProjectiveCorepresents.lean;
-* StacksFrontier/Algebra/Homology/DerivedCategory/InjectiveRepresents.lean.
-These sources are licensed under Apache 2.0 and carry no individual
-author or copyright notice. Modification notice: isolate the existing
-completed proofs and scalar comparison in the MathlibExt namespace and
-use the pinned Mathlib API.
+Portions of this file are adapted from:
+
+`StacksFrontier/Algebra/Homology/DerivedCategory/HomToInjectiveSingle.lean`,
+`StacksFrontier/Algebra/Homology/DerivedCategory/ProjectiveCorepresents.lean` and
+`StacksFrontier/Algebra/Homology/DerivedCategory/InjectiveRepresents.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks,
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no individual author or copyright notice.
+Modification notice: isolated the completed proofs and the scalar comparison in
+the MathlibExt namespace and used the pinned Mathlib API.
 -/
 
 module

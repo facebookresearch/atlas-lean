@@ -7,14 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b:
-* StacksFrontier/Homology/DerivedIndexing/Basic.lean;
-* StacksFrontier/Homology/DerivedIndexing/Extend.lean.
-Those sources are licensed under Apache 2.0 and carry no individual
-author/copyright notice. Modification notice: retain the actual
-injective-resolution comparison as a standalone object-level helper,
-using the homotopy presentation of Mathlib's current bounded-below
+Portions of this file are adapted from:
+
+`StacksFrontier/Homology/DerivedIndexing/Basic.lean` and
+`StacksFrontier/Homology/DerivedIndexing/Extend.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks,
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no individual author or copyright notice.
+Modification notice: kept the injective-resolution comparison as a standalone
+object-level helper, using the homotopy presentation of Mathlib's bounded-below
 derived unit.
 -/
 
