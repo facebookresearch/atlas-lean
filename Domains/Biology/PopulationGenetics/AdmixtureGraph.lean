@@ -581,14 +581,16 @@ theorem f3_admixture_of_len_eq_zero {M : DriftModel μ G.Edge V} (hM : M.weight 
   rw [G.f3_admixture hM hX hAB, hA, hB, show G.prop X B = 1 - G.prop X A by linarith]
   ring
 
-/-- Tree check on a tree-shaped admixture graph: `Σ X Y` is the drift length of the edges shared
-by the root-to-`X` and root-to-`Y` lineages. -/
+/-- Tree check on a tree-shaped admixture graph, in a drift model with the graph's lineage
+weights: `Σ X Y` is the drift length of the edges shared by the root-to-`X` and root-to-`Y`
+lineages. -/
 theorem rootSecondMoment_eq_sum_inter_of_isTree (hG : G.IsTree) {M : DriftModel μ G.Edge V}
     (hM : M.weight = G.weight) (X Y : V) :
     M.rootSecondMoment X Y = ∑ e ∈ M.lineage X ∩ M.lineage Y, M.len e :=
   M.rootSecondMoment_eq_sum_inter (G.hasBinaryLoadings_of_isTree hG hM) X Y
 
-/-- The admixture `f3` formula with `α = prop X A` and `β = 1 - α`:
+/-- The admixture `f3` formula at a node `X` with parents `A ≠ B`, in a drift model with the
+graph's lineage weights, with `α = prop X A` and `β = 1 - α`:
 `f3 X A B = α² ℓ_{XA} + (1 - α)² ℓ_{XB} - α (1 - α) f2 A B`. -/
 theorem f3_admixture_one_sub {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
     {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) :
@@ -598,25 +600,27 @@ theorem f3_admixture_one_sub {M : DriftModel μ G.Edge V} (hM : M.weight = G.wei
         G.prop X A * (1 - G.prop X A) * f2 μ M.freq A B := by
   rw [G.f3_admixture hM hX hAB, G.prop_eq_one_sub_of_parents_eq_pair hX hAB]
 
-/-- Endpoint `α = 1`: `X` descends from `A` only, and `f3 X A B` is the drift length of the edge
-`(X, A)`; no admixture signal. -/
+/-- Endpoint `α = prop X A = 1` at a node `X` with parents `A ≠ B`, in a drift model with the
+graph's lineage weights: `X` descends from `A` only, and `f3 X A B` is the drift length of the
+edge `(X, A)`; no admixture signal. -/
 theorem f3_admixture_of_prop_eq_one {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
     {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) (h1 : G.prop X A = 1) :
     f3 μ M.freq X A B = M.len ⟨(X, A), by simp [hX]⟩ := by
   rw [G.f3_admixture_one_sub hM hX hAB, h1]
   ring
 
-/-- Endpoint `α = 0`: `X` descends from `B` only, and `f3 X A B` is the drift length of the edge
-`(X, B)`; no admixture signal. -/
+/-- Endpoint `α = prop X A = 0` at a node `X` with parents `A ≠ B`, in a drift model with the
+graph's lineage weights: `X` descends from `B` only, and `f3 X A B` is the drift length of the
+edge `(X, B)`; no admixture signal. -/
 theorem f3_admixture_of_prop_eq_zero {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
     {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) (h0 : G.prop X A = 0) :
     f3 μ M.freq X A B = M.len ⟨(X, B), by simp [hX]⟩ := by
   rw [G.f3_admixture_one_sub hM hX hAB, h0]
   ring
 
-/-- Private drift after admixture, graph level: if `Y` has the single parent `X` and `A`, `B` are
-parents of `X`, the drift on the edge `(Y, X)` adds its length to `f3`:
-`f3 Y A B = f3 X A B + ℓ_{YX}`. -/
+/-- Private drift after admixture, graph level: in a drift model with the graph's lineage weights,
+if `Y` has the single parent `X` and `A`, `B` are parents of `X` (not necessarily distinct), the
+drift on the edge `(Y, X)` adds its length to `f3`: `f3 Y A B = f3 X A B + ℓ_{YX}`. -/
 theorem f3_of_parents_eq_singleton {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
     {Y X A B : V} (hY : G.parents Y = {X}) (hA : A ∈ G.parents X) (hB : B ∈ G.parents X) :
     f3 μ M.freq Y A B = f3 μ M.freq X A B + M.len ⟨(Y, X), by simp [hY]⟩ := by
@@ -652,8 +656,9 @@ theorem f3_of_parents_eq_singleton {M : DriftModel μ G.Edge V} (hM : M.weight =
   simp_rw [key, Finset.sum_add_distrib]
   simp
 
-/-- The record's combined statement: admixture at `X` (parents `A ≠ B`, `α = prop X A`),
-followed by private drift on the edge `(Y, X)`. -/
+/-- Admixture at `X` (parents `A ≠ B`, `α = prop X A`) followed by private drift on the edge
+`(Y, X)`, where `X` is the single parent of `Y`, in a drift model with the graph's lineage weights:
+`f3 Y A B = α² ℓ_{XA} + (1 - α)² ℓ_{XB} - α (1 - α) f2 A B + ℓ_{YX}`. -/
 theorem f3_admixture_of_parents_eq_singleton {M : DriftModel μ G.Edge V}
     (hM : M.weight = G.weight) {Y X A B : V} (hY : G.parents Y = {X})
     (hX : G.parents X = {A, B}) (hAB : A ≠ B) :

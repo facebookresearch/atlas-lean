@@ -55,7 +55,9 @@ namespace MathlibExt.Biology.PopulationGenetics.Classical.FisherGeometric
 variable {n : ℕ}
 
 /-- The random direction obtained from a Gaussian vector `G` by normalization
-(the Gaussian representation of a uniform direction on the unit sphere). -/
+(the Gaussian representation of a uniform direction on the unit sphere). For
+`G = 0` the convention `0⁻¹ = 0` makes it `0`, an event of probability `0`
+under the standard Gaussian law when `n ≥ 1`. -/
 noncomputable def gaussDirection (G : EuclideanSpace ℝ (Fin n)) :
     EuclideanSpace ℝ (Fin n) :=
   ‖G‖⁻¹ • G

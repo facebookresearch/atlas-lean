@@ -83,7 +83,8 @@ namespace MathlibExt.Biology.PopulationGenetics.Coalescent
 
 /-! ### Positivity of Tajima's constants -/
 
-/-- `Var(π - S / a₁) = c₁ θ + c₂ θ²` is positive for `n ≥ 4` and `θ > 0`. -/
+/-- `c₁ θ + c₂ θ²` (under the neutral model, `Var(π - S / a₁)`) is positive for `n ≥ 4` and
+`θ > 0`. -/
 theorem tajimaVariance_pos {n : ℕ} (hn : 4 ≤ n) {θ : ℝ} (hθ : 0 < θ) :
     0 < tajimaC1 n * θ + tajimaC2 n * θ ^ 2 := by
   have := tajimaC1_pos hn
@@ -97,9 +98,10 @@ section Mean
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-- **The mean of Tajima's `D`**: with `N = π - S / a₁` and `R = 1 / √(e₁ S + e₂ S (S - 1))`,
-`E[D] = Cov(N, R) + E[N] E[R]` whenever `N` and `R` are square integrable. In particular
-`E[D] = 0` iff `Cov(N, R) = -E[N] E[R]`; under the neutral model `E[N] = 0`, so `E[D]` is the
-covariance of the numerator with the reciprocal denominator. -/
+`E[D] = Cov(N, R) + E[N] E[R]` under a probability measure, whenever `N` and `R` are square
+integrable; with `x / 0 = 0` and `√x = 0` for `x ≤ 0`, `S / a₁ = 0` for `n ≤ 1` (where
+`a₁ = 0`), and `R = 0` and `D = 0` wherever `e₁ S + e₂ S (S - 1) ≤ 0`. Under the neutral model
+`E[N] = 0`, so `E[D]` is the covariance of the numerator with the reciprocal denominator. -/
 theorem integral_tajimaD_eq [IsProbabilityMeasure μ] {n : ℕ} {π S : Ω → ℝ}
     (hN : MemLp (fun ω => π ω - S ω / tajimaA1 n) 2 μ)
     (hR : MemLp (fun ω => (Real.sqrt (tajimaE1 n * S ω + tajimaE2 n * (S ω * (S ω - 1))))⁻¹)
@@ -127,8 +129,9 @@ theorem inv_sqrt_tajimaVarEstimator_le {n : ℕ} (hn : 4 ≤ n) {S : ℝ} (hS : 
       mul_nonneg he2.le (mul_nonneg (by linarith) (by linarith))
     nlinarith
 
-/-- On integer-valued data and for `n ≥ 4`, the reciprocal denominator of `D` lies in every
-`Lᵖ` of a finite measure. -/
+/-- For `n ≥ 4` and almost everywhere measurable `S` with `S = 0` or `S ≥ 1` almost
+everywhere, the reciprocal denominator of `D`, which is `0` where `S = 0` (by `1 / 0 = 0`),
+lies in every `Lᵖ` of a finite measure. -/
 theorem memLp_inv_sqrt_tajimaVarEstimator [IsFiniteMeasure μ] {n : ℕ} (hn : 4 ≤ n)
     {S : Ω → ℝ} (hSm : AEMeasurable S μ) (hS : ∀ᵐ ω ∂μ, S ω = 0 ∨ 1 ≤ S ω)
     (p : ENNReal) :
@@ -142,8 +145,9 @@ namespace KingmanTimes
 
 /-- **The mean of Tajima's `D` under the neutral model** is the covariance of the numerator
 `N = π - S / a₁` with the reciprocal denominator `1 / √(e₁ S + e₂ S (S - 1))`, for `n ≥ 4` genes
-and integer-valued `S`, under the hypotheses of `KingmanTimes.integral_tajimaNumerator` (which
-gives `E[N] = 0`). Whether this covariance vanishes is a property of the joint law of `(π, S)`,
+and `S = 0` or `S ≥ 1` almost surely, under the hypotheses of
+`KingmanTimes.integral_tajimaNumerator` (which gives `E[N] = 0`) with `S` and each `D s` square
+integrable. Whether this covariance vanishes is a property of the joint law of `(π, S)`,
 not of the first two moments of `N`; see `exists_integral_tajimaD_ne`.
 
 Under the neutral model `S = 0` has positive probability, and there `D` takes Lean's junk value
@@ -260,16 +264,18 @@ theorem hasFDerivAt_div_sqrt {x₀ y₀ : ℝ} (hy : 0 < y₀) :
     field_simp
     ring
 
-/-- At a point with zero numerator, `(x, y) ↦ x / √y` has derivative `dx / √y₀`: to first order
-the fluctuation of the denominator does not affect the studentized statistic. -/
+/-- At a point `(0, y₀)` with zero numerator and `y₀ > 0`, `(x, y) ↦ x / √y` has derivative
+`dx / √y₀`: to first order the fluctuation of the denominator does not affect the studentized
+statistic. -/
 theorem hasFDerivAt_div_sqrt_zero {y₀ : ℝ} (hy : 0 < y₀) :
     HasFDerivAt (fun p : ℝ × ℝ => p.1 / Real.sqrt p.2)
       ((Real.sqrt y₀)⁻¹ • ContinuousLinearMap.fst ℝ ℝ ℝ) (0, y₀) := by
   simpa using hasFDerivAt_div_sqrt (x₀ := 0) hy
 
-/-- **Delta-method variance of a studentized statistic**: the linearization
+/-- **Delta-method variance of a studentized statistic**: for every measure, the linearization
 `(√v)⁻¹ (N - 0) + 0 · (V - v)` of `N / √V` at `(0, v)`, `v > 0` (`hasFDerivAt_div_sqrt_zero`), has
-variance `Var N / v`. -/
+variance `Var N / v`. Here `Var X = ∫ (X - ∫ X dμ)² dμ`, with `∫ X dμ = 0` for a non-integrable
+`X` and `Var X` read as `0` when the outer integral is infinite. -/
 theorem variance_linearization_div_sqrt {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
     (N V : Ω → ℝ) {v : ℝ} (hv : 0 < v) :
     Var[fun ω => ((Real.sqrt v)⁻¹ • ContinuousLinearMap.fst ℝ ℝ ℝ) (N ω, V ω - v); μ] =
@@ -336,9 +342,10 @@ end KingmanTimes
 
 /-! ### Asymptotic normality: sufficient conditions, and non-Gaussianity at fixed `n` -/
 
-/-- **Conditions for asymptotic normality of Tajima's `D`.** Along a filter `l` (an asymptotic
-regime, e.g. a growing number of independent loci), let the `k`-th data set have `n k` genes,
-pairwise-difference mean `π k` and `S k` segregating sites, and let `r k > 0` be scalings. If
+/-- **Conditions for asymptotic normality of Tajima's `D`.** Along a countably generated filter
+`l` (an asymptotic regime, e.g. a growing number of independent loci), let the `k`-th data set
+have `n k` genes, pairwise-difference mean `π k` and `S k` segregating sites, all on one
+probability space (each `S k` almost everywhere measurable), and let `r k > 0` be scalings. If
 
 * the scaled numerator satisfies a central limit theorem,
   `r k (π k - S k / a₁) →ᵈ N(0, σ²)`, and
@@ -412,7 +419,7 @@ theorem abs_tajimaD_le {n : ℕ} (hn : 4 ≤ n) {π S β : ℝ} (hS : 1 ≤ S)
       ≤ β * S / (Real.sqrt c * S) := div_le_div₀ ((abs_nonneg _).trans hN) hN hcS hsq
     _ = β / Real.sqrt c := mul_div_mul_right _ _ (by linarith)
 
-/-- **`D` is not Gaussian for a fixed sample size**: for `n ≥ 4` genes, integer-valued `S` and
+/-- **`D` is not Gaussian for a fixed sample size**: for `n ≥ 4` genes, `S = 0` or `S ≥ 1` and
 `|π - S / a₁| ≤ β S` almost surely, `D` is almost surely bounded (`abs_tajimaD_le`; at `S = 0`
 it takes the junk value `0`), so its law is not `N(m, v)` for any `v ≠ 0`. This is a statement
 about one fixed sample; it does not by itself rule out a Gaussian limit in distribution of a

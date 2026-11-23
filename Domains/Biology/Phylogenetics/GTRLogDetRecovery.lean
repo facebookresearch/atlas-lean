@@ -124,17 +124,23 @@ noncomputable def baseFreq (F : Matrix ι ι ℝ) (i : ι) : ℝ :=
   (∑ j, F i j + ∑ j, F j i) / 2
 
 /-- The **normalized divergence matrix** `D⁻¹ Fₛ D⁻¹`, with `Fₛ = (F + Fᵀ) / 2` and
-`D = diagonal (√ baseFreq F)`. It is symmetric for every `F`. -/
+`D = diagonal (√ baseFreq F)`. It is symmetric for every `F`. With `√x = 0` for `x ≤ 0` and
+`x / 0 = 0`, the entries of row and column `i` are `0` when `baseFreq F i ≤ 0`; the intended
+domain is `baseFreq F i > 0` for every `i`. -/
 noncomputable def normDivergence (F : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => (F i j + F j i) / 2 / (√(baseFreq F i) * √(baseFreq F j))
 
 /-- The **log-det generator** `D⁻¹ log (normDivergence F) D`, where `log` is the real logarithm
-of the continuous functional calculus. At the true divergence matrix it equals `t • Q`. -/
+of the continuous functional calculus, which applies `log` to the eigenvalues with `log 0 = 0`
+and `log x = log |x|`; the entry `(i, j)` is `0` when `baseFreq F i ≤ 0` or `baseFreq F j ≤ 0`.
+At the true divergence matrix it equals `t • Q`. -/
 noncomputable def logGenerator (F : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => cfc Real.log (normDivergence F) i j * √(baseFreq F j) / √(baseFreq F i)
 
 /-- The **log-det distance** `-tr log (normDivergence F)`. When `normDivergence F` is positive
-definite this is `-log det (normDivergence F)` (`logDetDistance_eq_neg_log_det`). -/
+definite this is `-log det (normDivergence F)` (`logDetDistance_eq_neg_log_det`). In general
+it is `-∑ log λ` over the eigenvalues `λ` of `normDivergence F`, with `log 0 = 0` and
+`log x = log |x|`. -/
 noncomputable def logDetDistance (F : Matrix ι ι ℝ) : ℝ :=
   -(cfc Real.log (normDivergence F)).trace
 
@@ -249,8 +255,8 @@ theorem baseFreq_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
   rw [baseFreq, hrow, hcol]
   ring
 
-/-- At the true divergence matrix, the normalized divergence matrix is the exponential of the
-symmetric matrix `D (t • Q) D⁻¹`. -/
+/-- At the true divergence matrix (`π > 0`, `s` symmetric and `≥ 0` off the diagonal),
+the normalized divergence matrix is the exponential of the symmetric matrix `D (t • Q) D⁻¹`. -/
 theorem normDivergence_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     normDivergence (diagonal π * ctmcTransition (gtrRate π s) t) =
@@ -290,7 +296,8 @@ private theorem isSelfAdjoint_conj (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i
   rw [IsSelfAdjoint, star_eq_conjTranspose, conjTranspose_eq_transpose_of_trivial]
   exact h
 
-/-- The real logarithm of the normalized divergence matrix at the true divergence matrix. -/
+/-- The real logarithm of the normalized divergence matrix at the true divergence matrix
+(`π > 0`, `s` symmetric and `≥ 0` off the diagonal). -/
 theorem cfc_log_normDivergence_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     cfc Real.log (normDivergence (diagonal π * ctmcTransition (gtrRate π s) t)) =
@@ -300,7 +307,8 @@ theorem cfc_log_normDivergence_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i
   exact CFC.log_exp _ (isSelfAdjoint_conj hπ hsymm t)
 
 /-- **Exact recovery of the scaled generator**: at the true divergence matrix
-`Π exp (t • Q)`, the log-det generator is `t • Q`. -/
+`Π exp (t • Q)` (`π > 0`, `s` symmetric and `≥ 0` off the diagonal), the log-det generator is
+`t • Q`. -/
 theorem logGenerator_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     logGenerator (diagonal π * ctmcTransition (gtrRate π s) t) = t • gtrRate π s := by
@@ -312,9 +320,10 @@ theorem logGenerator_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i
   have hj := (Real.sqrt_pos.2 (hπ j)).ne'
   field_simp
 
-/-- **Exact recovery of the log-det distance**: at the true divergence matrix it is
-`-t * tr Q`, the trace-normalized branch length. This is not the expected number of
-substitutions per site, which under the stationary frequencies is `-t * ∑ i, π i * Q i i`. -/
+/-- **Exact recovery of the log-det distance**: at the true divergence matrix
+(`π > 0`, `s` symmetric and `≥ 0` off the diagonal) it is `-t * tr Q`, the trace-normalized branch
+length. This is not the expected number of substitutions per site, which under the stationary
+frequencies is `-t * ∑ i, π i * Q i i`. -/
 theorem logDetDistance_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     logDetDistance (diagonal π * ctmcTransition (gtrRate π s) t) = -t * (gtrRate π s).trace := by
@@ -326,7 +335,9 @@ theorem logDetDistance_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j
   field_simp
 
 /-- **Exact recovery of the GTR rate matrix up to scale**: at the true divergence matrix
-`Π exp (t • Q)` with `t ≠ 0`, the log-det rate estimate is `Q / (-tr Q)`. -/
+`Π exp (t • Q)` (`π > 0`, `s` symmetric and `≥ 0` off the diagonal) with `t ≠ 0`, the
+log-det rate estimate is `Q / (-tr Q)`. When `s` vanishes off the diagonal, `Q = 0` and both
+sides are `0` (`0⁻¹ = 0`). -/
 theorem rateEstimate_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) {t : ℝ} (ht : t ≠ 0) :
     rateEstimate (diagonal π * ctmcTransition (gtrRate π s) t) =
@@ -335,7 +346,9 @@ theorem rateEstimate_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i
     neg_mul, ← mul_neg, mul_inv, mul_comm t⁻¹, mul_assoc, inv_mul_cancel₀ ht, mul_one]
 
 /-- **Recovery of the exchangeabilities up to scale**: off the diagonal,
-`s i j / (-tr Q) = rateEstimate F i j / baseFreq F j` at the true divergence matrix. -/
+`s i j / (-tr Q) = rateEstimate F i j / baseFreq F j` at the true divergence matrix
+(`π > 0`, `s` symmetric and `≥ 0` off the diagonal) with `t ≠ 0`. When `s` vanishes off the
+diagonal, `Q = 0` and both sides are `0` (`0⁻¹ = 0`). -/
 theorem exchangeability_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) {t : ℝ} (ht : t ≠ 0) {i j : ι} (hij : i ≠ j) :
     rateEstimate (diagonal π * ctmcTransition (gtrRate π s) t) i j /
@@ -422,8 +435,9 @@ theorem continuousAt_rateEstimate {F₀ : Matrix ι ι ℝ} (hb : ∀ i, 0 < bas
 
 variable {π : ι → ℝ} {s : Matrix ι ι ℝ}
 
-/-- At the true divergence matrix, the normalized divergence matrix has positive spectrum: it is
-the exponential of a symmetric matrix. -/
+/-- At the true divergence matrix (`π > 0`, `s` symmetric and `≥ 0` off the diagonal),
+the normalized divergence matrix has positive spectrum: it is the exponential of a symmetric
+matrix. -/
 theorem spectrum_normDivergence_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     spectrum ℝ (normDivergence (diagonal π * ctmcTransition (gtrRate π s) t)) ⊆ Set.Ioi 0 := by
@@ -442,7 +456,8 @@ theorem logDetDistance_gtr_ne_zero [Nontrivial ι] (hπ : ∀ i, 0 < π i)
   rw [logDetDistance_gtr hπ hsymm (fun i j h => (hs i j h).le) t]
   exact mul_ne_zero (neg_ne_zero.2 ht) (trace_gtrRate_neg hπ hs).ne
 
-/-- **The log-det rate estimate is continuous at the true divergence matrix.** -/
+/-- **The log-det rate estimate is continuous at the true divergence matrix**, for `π > 0`,
+symmetric `s` positive off the diagonal, `t ≠ 0` and at least two states. -/
 theorem continuousAt_rateEstimate_gtr [Nontrivial ι] (hπ : ∀ i, 0 < π i)
     (hsymm : ∀ i j, s i j = s j i) (hs : ∀ i j, i ≠ j → 0 < s i j) {t : ℝ} (ht : t ≠ 0) :
     ContinuousAt rateEstimate (diagonal π * ctmcTransition (gtrRate π s) t) := by
@@ -452,7 +467,8 @@ theorem continuousAt_rateEstimate_gtr [Nontrivial ι] (hπ : ∀ i, 0 < π i)
   rw [baseFreq_gtr hπ hsymm hs' t]
   exact hπ i
 
-/-- **The log-det distance is continuous at the true divergence matrix.** -/
+/-- **The log-det distance is continuous at the true divergence matrix**
+(`π > 0`, `s` symmetric and `≥ 0` off the diagonal). -/
 theorem continuousAt_logDetDistance_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     ContinuousAt logDetDistance (diagonal π * ctmcTransition (gtrRate π s) t) := by
@@ -461,7 +477,8 @@ theorem continuousAt_logDetDistance_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j
   exact hπ i
 
 /-- **Recovery consistency**: for any divergence estimate `F̂` converging to the true divergence
-matrix `Π exp (t • Q)` (with `t ≠ 0`, `s > 0` off the diagonal, at least two states), the
+matrix `Π exp (t • Q)` (with `π > 0`, symmetric `s`, `t ≠ 0`, `s > 0` off the diagonal, at
+least two states), the
 log-det rate estimate converges to `Q / (-tr Q)` and the log-det distance to `-t * tr Q`. -/
 theorem tendsto_rateEstimate_gtr [Nontrivial ι] (hπ : ∀ i, 0 < π i)
     (hsymm : ∀ i j, s i j = s j i) (hs : ∀ i j, i ≠ j → 0 < s i j) {t : ℝ} (ht : t ≠ 0)
@@ -487,7 +504,8 @@ open Function
 variable {π : ι → ℝ} {s : Matrix ι ι ℝ} [MeasurableSpace ι] [MeasurableSingletonClass ι]
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsFiniteMeasure P]
 
-/-- The **empirical divergence matrix** of the first `n` aligned site pairs, as a matrix. -/
+/-- The **empirical divergence matrix** of the first `n` aligned site pairs, as a matrix. At
+`n = 0` it is the zero matrix (`0⁻¹ = 0`). -/
 noncomputable def empiricalDivergence (X : ℕ → Ω → ι × ι) (n : ℕ) (ω : Ω) : Matrix ι ι ℝ :=
   Matrix.of fun i j => GTRInference.empiricalFreq X n ω (i, j)
 
@@ -499,8 +517,9 @@ theorem continuous_reshape :
 
 /-- **Recovery consistency from data (almost surely).** Let the aligned site pairs
 `X i : Ω → ι × ι` be measurable, pairwise independent and identically distributed with the GTR
-divergence law `P (X 0 = (i, j)) = π i * P(t) i j` (`t > 0`, `s > 0` off the diagonal, at least
-two states; for `t < 0` this law has negative entries). Then almost surely the log-det rate
+divergence law `P (X 0 = (i, j)) = π i * P(t) i j` under a finite measure `P` (`π > 0`,
+symmetric `s`, `t > 0`, `s > 0` off the diagonal, at least two states; for `t < 0` this law has
+negative entries). Then almost surely the log-det rate
 estimate of the empirical divergence matrix converges to `Q / (-tr Q)` and its log-det distance
 to `-t * tr Q`. -/
 theorem ae_tendsto_rateEstimate_empirical [Nontrivial ι] (hπ : ∀ i, 0 < π i)

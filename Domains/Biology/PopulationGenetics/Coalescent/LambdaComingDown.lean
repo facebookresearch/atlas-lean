@@ -51,7 +51,7 @@ variable (Λ : Measure I) [IsFiniteMeasure Λ]
 /-- The **block-count drift** `γ_b = ∑_{k=2}^b (k - 1) C(b, k) λ_{b,k}` of the Λ-coalescent: a
 `k`-merger among `b` blocks lowers the block count by `k - 1` and happens at rate
 `C(b, k) λ_{b,k}`, so `γ_b` is the rate at which the number of blocks is expected to decrease
-from `b` blocks (Schweinsberg 2000). -/
+from `b` blocks (Schweinsberg 2000). For `b < 2` the sum is empty and `γ_b = 0`. -/
 def blockDrift (b : ℕ) : ℝ :=
   ∑ k ∈ Icc 2 b, ((k : ℝ) - 1) * (b.choose k : ℝ) * mergerRate Λ b k
 
@@ -72,7 +72,8 @@ private theorem sum_range_sub_one_mul (x : ℝ) (b : ℕ) :
   rw [e, h1, h2]
 
 /-- The drift kernel `D_b(x) = ∑_{k=2}^b (k - 1) C(b, k) x ^ (k - 2) (1 - x) ^ (b - k)`, so that
-`γ_b = ∫ D_b dΛ`. -/
+`γ_b = ∫ D_b dΛ`. Powers are natural-number powers, so `0 ^ 0 = 1`. For `b < 2` the sum is
+empty and `D_b = 0`. -/
 def driftKernel (b : ℕ) (x : ℝ) : ℝ :=
   ∑ k ∈ Icc 2 b, ((k : ℝ) - 1) * (b.choose k : ℝ) * (x ^ (k - 2) * (1 - x) ^ (b - k))
 

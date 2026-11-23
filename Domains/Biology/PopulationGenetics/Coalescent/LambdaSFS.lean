@@ -86,14 +86,17 @@ namespace MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaSFS
 
 /-! ### Merging a set of blocks -/
 
-/-- `eraseIdxs K l k`: the entries of `l` whose positions, counted from `k`, are not in `K`. -/
+/-- `eraseIdxs K l k`: the entries of `l` whose positions, counted from `k`, are not in `K`.
+Elements of `K` below `k` or beyond the end of `l` remove nothing. -/
 def eraseIdxs (K : Finset ℕ) : List ℕ → ℕ → List ℕ
   | [], _ => []
   | a :: l, k => if k ∈ K then eraseIdxs K l (k + 1) else a :: eraseIdxs K l (k + 1)
 
 /-- Merge the blocks of the block-size list `b` at the positions in `K`: remove them and append
-one block of their total size. For a pair `K = {i, j}` this is
-`SiteFrequencySpectrum.mergeBlocks b i j` (`mergeSet_pair`). -/
+one block of their total size. A position beyond the end of `b` removes nothing and counts as
+`0`; for `K = ∅` a block of size `0` is appended. For a pair `K = {i, j}` this is
+`SiteFrequencySpectrum.mergeBlocks b i j` (`mergeSet_pair`). The intended use is a set `K` of at
+least two positions of `b`; in the jump chain smaller sets have probability `0`. -/
 def mergeSet (b : List ℕ) (K : Finset ℕ) : List ℕ :=
   eraseIdxs K b 0 ++ [∑ m ∈ K, b.getD m 0]
 
@@ -174,22 +177,25 @@ def jumpStep (g : List ℕ → ℝ) (b : List ℕ) : ℝ :=
     mergerRate Λ b.length K.card / totalMergerRate Λ b.length * g (mergeSet b K)
 
 /-- The number of blocks of size `i` in `b` times the mean holding time `1 / λ_b` of `b`: the
-expected length, accumulated while the chain sits in `b`, of branches subtending `i` copies. -/
+expected length, accumulated while the chain sits in `b`, of branches subtending `i` copies.
+With the convention `x / 0 = 0` it is `0` when `λ_b = 0`. -/
 def holdingCount (i : ℕ) (b : List ℕ) : ℝ :=
   (b.count i : ℝ) / totalMergerRate Λ b.length
 
 /-- The **expected total length of branches subtending exactly `i` sample copies**, for the
 Λ-coalescent started from the block sizes `b`: the expected occupation sum
 `∑_j E [holdingCount Λ i (X_j)]` over the jump chain `X`. For `Λ ≠ 0`, jumps after the first
-`b.length` contribute nothing (`expectedLength_eq_sum`). For `Λ = 0` nothing ever merges, the
-true length is infinite, and the definition returns the junk value `0`. -/
+`b.length` contribute nothing (`expectedLength_eq_sum`). For `Λ = 0` nothing ever merges, so
+from at least two blocks, one of size `i`, the true length is infinite; the definition returns
+the junk value `0`. -/
 def expectedLength (i : ℕ) (b : List ℕ) : ℝ :=
   ∑ j ∈ range b.length, (jumpStep Λ)^[j] (holdingCount Λ i) b
 
 /-- The **expected site frequency spectrum** `E ξ_i = (θ / 2) E L_i` of a sample of `n` gene
 copies under the Λ-coalescent, with neutral infinite-sites mutation at rate `θ / 2` per
 lineage: the expected number of segregating sites whose derived allele is carried by exactly
-`i` copies. -/
+`i` copies. For `Λ = 0` and for `n ≤ 1` it is `0`, as `expectedLength` is (by `x / 0 = 0`);
+the intended domain is `Λ ≠ 0`, `n ≥ 2`. -/
 def expectedSFS (θ : ℝ) (n i : ℕ) : ℝ :=
   θ / 2 * expectedLength Λ i (List.replicate n 1)
 
@@ -224,9 +230,10 @@ theorem jumpStep_of_ne_zero {g : List ℕ → ℝ} {b : List ℕ}
       mergerRate Λ b.length K.card / totalMergerRate Λ b.length * g (mergeSet b K) := by
   rw [jumpStep, ite_eq_right h]
 
-/-- **The block-counting projection.** On a statistic of the number of blocks alone, the jump
-chain moves from `b` to `b + 1 - k` blocks with probability `(b.choose k) λ_{b,k} / λ_b`: the
-jump chain of the block-counting process `LambdaCoalescent.blockCountingGenerator`. -/
+/-- **The block-counting projection.** When `λ_b ≠ 0`, on a statistic of the number of blocks
+alone, the jump chain moves from `b` to `b + 1 - k` blocks with probability
+`(b.choose k) λ_{b,k} / λ_b`: the jump chain of the block-counting process
+`LambdaCoalescent.blockCountingGenerator`. -/
 theorem jumpStep_comp_length (h : ℕ → ℝ) {b : List ℕ}
     (hb : totalMergerRate Λ b.length ≠ 0) :
     jumpStep Λ (fun s => h s.length) b = ∑ k ∈ Icc 2 b.length,
@@ -266,8 +273,8 @@ theorem iterate_jumpStep_of_eq_zero (g : List ℕ → ℝ) {b : List ℕ}
   | zero => rfl
   | succ j ih => rw [Function.iterate_succ_apply', jumpStep_of_eq_zero Λ h, ih]
 
-/-- A statistic vanishing on absorbed states (fewer than two blocks) has expectation `0` after
-`b.length` jumps from `b`: each jump removes at least one block. -/
+/-- For `Λ ≠ 0`, a statistic vanishing on absorbed states (fewer than two blocks) has
+expectation `0` after `b.length` jumps from `b`: each jump removes at least one block. -/
 theorem iterate_jumpStep_eq_zero (hΛ : Λ ≠ 0) {g : List ℕ → ℝ}
     (hg : ∀ s : List ℕ, s.length < 2 → g s = 0) :
     ∀ (j : ℕ) (b : List ℕ), b.length ≤ j → (jumpStep Λ)^[j] g b = 0 := by
@@ -297,20 +304,20 @@ theorem expectedLength_of_length_lt_two (i : ℕ) {b : List ℕ} (hb : b.length 
   rw [iterate_jumpStep_of_eq_zero Λ _ (totalMergerRate_of_lt_two Λ hb),
     holdingCount_of_lt_two Λ i hb]
 
-/-- `expectedLength` is the whole occupation sum: jumps from the `b.length`-th on add nothing.
--/
+/-- For `Λ ≠ 0`, `expectedLength` is the whole occupation sum: jumps from the `b.length`-th on
+add nothing. -/
 theorem expectedLength_eq_sum (hΛ : Λ ≠ 0) (i : ℕ) {b : List ℕ} {N : ℕ} (hN : b.length ≤ N) :
     expectedLength Λ i b = ∑ j ∈ range N, (jumpStep Λ)^[j] (holdingCount Λ i) b := by
   rw [expectedLength, ← sum_range_add_sum_Ico _ hN,
     sum_eq_zero (s := Ico _ _) fun j hj => iterate_jumpStep_eq_zero Λ hΛ
       (fun s hs => holdingCount_of_lt_two Λ i hs) j b (mem_Ico.1 hj).1, add_zero]
 
-/-- **First-step decomposition of the expected branch lengths**: while `b` has at least two
-blocks, the expected length of branches subtending `i` copies is the length accumulated in `b`,
-`#{blocks of size i} / λ_b`, plus the average over the first merger `K` (probability
-`λ_{b,|K|} / λ_b`) of the expected length after it. This follows from the occupation-sum
-definition; its block-count counterpart is the first-jump recursion (8) of Birkner, Blath &
-Eldon (2013). -/
+/-- **First-step decomposition of the expected branch lengths**: for `Λ ≠ 0`, while `b` has at
+least two blocks, the expected length of branches subtending `i` copies is the length
+accumulated in `b`, `#{blocks of size i} / λ_b`, plus the average over the first merger `K`
+(probability `λ_{b,|K|} / λ_b`) of the expected length after it. This follows from the
+occupation-sum definition; its block-count counterpart is the first-jump recursion (8) of
+Birkner, Blath & Eldon (2013). -/
 theorem expectedLength_eq (hΛ : Λ ≠ 0) (i : ℕ) {b : List ℕ} (hb : 2 ≤ b.length) :
     expectedLength Λ i b = (b.count i : ℝ) / totalMergerRate Λ b.length +
       ∑ K ∈ (range b.length).powerset, mergerRate Λ b.length K.card /
@@ -439,7 +446,8 @@ private lemma iterate_joinStep_mul_length (c : List ℕ → ℝ) (h : ℕ → �
       show b.length - 1 - j = b.length - (j + 1) by omega]
 
 /-- **Kingman's coalescent** (`Λ = δ₀`): the expected length of branches subtending `i` of `n`
-copies is `2 / i` (Fu 1995), recovered from `SiteFrequencySpectrum`'s random-joining law. -/
+copies is `2 / i` for `1 ≤ i < n` (Fu 1995), recovered from `SiteFrequencySpectrum`'s
+random-joining law. -/
 theorem expectedLength_dirac_zero {n i : ℕ} (hi : 1 ≤ i) (hin : i < n) :
     expectedLength (Measure.dirac 0) i (List.replicate n 1) = 2 / i := by
   have hcls : ∀ s : List ℕ, s.length < 2 →
@@ -473,7 +481,8 @@ theorem expectedLength_dirac_zero {n i : ℕ} (hi : 1 ≤ i) (hin : i < n) :
   · intro k hk; rw [mem_Icc] at hk
     rw [show m + 1 - (m + 1 - k) = k by omega, mul_comm]
 
-/-- **Fu's expected site frequency spectrum** `E ξ_i = θ / i` for Kingman's coalescent. -/
+/-- **Fu's expected site frequency spectrum** `E ξ_i = θ / i` for Kingman's coalescent, for
+`1 ≤ i < n`. -/
 theorem expectedSFS_dirac_zero (θ : ℝ) {n i : ℕ} (hi : 1 ≤ i) (hin : i < n) :
     expectedSFS (Measure.dirac 0) θ n i = θ / i := by
   rw [expectedSFS, expectedLength_dirac_zero hi hin]
@@ -497,8 +506,8 @@ theorem totalMergerRate_dirac_one {b : ℕ} (hb : 2 ≤ b) :
   rw [Nat.choose_self, mergerRate_of_le _ hb le_rfl, integral_dirac]
   simp
 
-/-- **The star coalescent** (`Λ = δ₁`): all `n` lineages merge at once, after an exponential
-time of mean `1`, so every branch subtends one copy: `E L_1 = n` and `E L_i = 0` for
+/-- **The star coalescent** (`Λ = δ₁`): for `n ≥ 2`, all `n` lineages merge at once, after an
+exponential time of mean `1`, so every branch subtends one copy: `E L_1 = n` and `E L_i = 0` for
 `i ≠ 1`. -/
 theorem expectedLength_dirac_one {n : ℕ} (hn : 2 ≤ n) (i : ℕ) :
     expectedLength (Measure.dirac 1) i (List.replicate n 1) = if i = 1 then (n : ℝ) else 0 := by
@@ -523,7 +532,7 @@ theorem expectedLength_dirac_one {n : ℕ} (hn : 2 ≤ n) (i : ℕ) :
       rw [iterate_jumpStep_of_eq_zero _ _ (totalMergerRate_of_lt_two _ hlen),
         holdingCount_of_lt_two _ i hlen, mul_zero]
 
-/-- For the star coalescent `E ξ_1 = n θ / 2` and `E ξ_i = 0` for `i ≠ 1`. -/
+/-- For the star coalescent and `n ≥ 2`, `E ξ_1 = n θ / 2` and `E ξ_i = 0` for `i ≠ 1`. -/
 theorem expectedSFS_dirac_one (θ : ℝ) {n : ℕ} (hn : 2 ≤ n) (i : ℕ) :
     expectedSFS (Measure.dirac 1) θ n i = if i = 1 then θ / 2 * n else 0 := by
   rw [expectedSFS, expectedLength_dirac_one hn]

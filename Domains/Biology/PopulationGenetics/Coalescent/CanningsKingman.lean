@@ -122,12 +122,14 @@ variable {N : ℕ} (W : CanningsModel N)
 
 /-- The `m`-th factorial moment `E[(ν)_m] = E[ν (ν - 1) ⋯ (ν - m + 1)]` of the offspring number
 of a parent, averaged over the parents (by exchangeability every parent has the same law,
-`factorialMoment_eq`). -/
+`factorialMoment_eq`). For `N = 0` there is no parent, the sum is empty and the value is `0`. -/
 noncomputable def factorialMoment (m : ℕ) : ℝ :=
   (N : ℝ)⁻¹ * ∑ j, W.expect fun f => ((offspring f j).descFactorial m : ℝ)
 
-/-- The **pair-coalescence probability** `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)`: the probability that
-two distinct children have the same parent (`expect_pair`). -/
+/-- The **pair-coalescence probability** `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)`: for `N ≥ 2`, the
+probability that two distinct children have the same parent (`expect_pair`). For `N ≤ 1` its
+value is `0`, since then the factorial moment `E[ν₁ (ν₁ - 1)]` is `0` (at `N = 1` the
+denominator is `0` too, and `0 / 0 = 0`). -/
 noncomputable def pairCoalescence : ℝ := W.factorialMoment 2 / ((N : ℝ) - 1)
 
 /-- Every parent has the same offspring factorial moments. -/
@@ -255,9 +257,9 @@ theorem expect_pair {a b : Fin N} (hab : a ≠ b) :
   apply mul_left_cancel₀ hN0
   linear_combination h
 
-/-- The pair-coalescence probability `c_N` is the shared model's coalescence probability
-`coalProb` (two sampled lineages have the same parent), so the time scale of this file is the one
-of `CanningsLambda`. -/
+/-- For `N ≥ 2`, the pair-coalescence probability `c_N` is the shared model's coalescence
+probability `coalProb` (two sampled lineages have the same parent), so the time scale of this file
+is the one of `CanningsLambda`. -/
 theorem coalProb_eq_pairCoalescence (hN : 2 ≤ N) : W.coalProb = W.pairCoalescence := by
   rw [← W.expect_pair (a := Fin.castLE hN 0) (b := Fin.castLE hN 1)
     (fun h => by simpa using congrArg Fin.val h), coalProb, mergeProb, sampleProb_of_le _ _ hN]
@@ -278,13 +280,15 @@ noncomputable def pairCount (f : Fin N → Fin N) : ℝ :=
 noncomputable def tripleCount (f : Fin N → Fin N) : ℝ :=
   ∑ j, ((offspring f j).descFactorial 3 : ℝ)
 
-/-- The probability `N E[(ν₁)_3] / (N)_3` that three distinct children have a common parent
-(`expect_triple`). -/
+/-- For `N ≥ 3`, the probability `N E[(ν₁)_3] / (N)_3` that three distinct children have a common
+parent (`expect_triple`). For `N ≤ 2`, `(N)_3 = 0` and the value is `0` by the convention
+`x / 0 = 0`. -/
 noncomputable def tripleCoalescence : ℝ :=
   N * W.factorialMoment 3 / (N.descFactorial 3 : ℝ)
 
-/-- An upper bound `E[pairCount²] / (N)_4` for the probability that two disjoint pairs of
-children each have a common parent (`expect_double_le`). -/
+/-- For `N ≥ 4`, an upper bound `E[pairCount²] / (N)_4` for the probability that two disjoint
+pairs of children each have a common parent (`expect_double_le`). For `N ≤ 3`, `(N)_4 = 0` and
+the value is `0` by the convention `x / 0 = 0`. -/
 noncomputable def doubleBound : ℝ :=
   W.expect (fun f => pairCount f ^ 2) / (N.descFactorial 4 : ℝ)
 
@@ -412,7 +416,8 @@ theorem expect_double_le {g : Fin 4 → Fin N} (hg : Function.Injective g) :
   rw [h]
   exact W.expect_mono fun f => sum_injective_double_le f
 
-/-- `doubleBound ≤ c_N (2 √r N⁴ + N³) / (N)_4` where `r = E[(ν₁)_3] / (N² c_N)`. -/
+/-- For `N ≥ 4` and `c_N > 0`, `doubleBound ≤ c_N (2 √r N⁴ + N³) / (N)_4` where
+`r = E[(ν₁)_3] / (N² c_N)`. -/
 theorem doubleBound_le (hN : 4 ≤ N) (hc : 0 < W.pairCoalescence) :
     W.doubleBound ≤ W.pairCoalescence *
       (2 * √(W.factorialMoment 3 / ((N : ℝ) ^ 2 * W.pairCoalescence)) * (N : ℝ) ^ 4 +
@@ -477,9 +482,9 @@ open Cannings
 
 /-- **The Möhle–Sagitov conditions** for a sequence of Cannings models `W N` (population size
 `N`) to have Kingman's coalescent as genealogical limit (Möhle 2000; Möhle–Sagitov 2001):
-the pair-coalescence probability `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)` is positive and tends to `0`
-(so `⌊t / c_N⌋` generations is a nondegenerate time scale), and triple mergers are negligible
-on that time scale, `E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`. -/
+the pair-coalescence probability `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)` is positive for all large `N`
+and tends to `0` (so `⌊t / c_N⌋` generations is a nondegenerate time scale), and triple mergers
+are negligible on that time scale, `E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`. -/
 structure MohleSagitov (W : ∀ N, CanningsModel N) : Prop where
   pairCoalescence_pos : ∀ᶠ N in atTop, 0 < (W N).pairCoalescence
   tendsto_pairCoalescence : Tendsto (fun N => (W N).pairCoalescence) atTop (𝓝 0)
@@ -694,7 +699,7 @@ theorem blockIndex_surjective (ξ : SamplePartition n) : Function.Surjective (bl
   exact Subtype.ext (ξ.part_eq_of_mem (ξ.parts.equivFin.symm k).2 hi)
 
 open scoped Classical in
-/-- **One generation of the ancestral process.** The `b = #ξ.parts` ancestral lineages of the
+/-- **One generation of the ancestral process.** The `b = #ξ.parts ≤ N` ancestral lineages of the
 sample, one per block of `ξ`, sit at the distinct children `0, …, b - 1` (any `b` distinct
 children have the same joint law, `CanningsModel.descFactorial_mul_expect`); under the parent
 map `f`, two blocks merge iff their lineages pick the same parent. -/
@@ -741,7 +746,9 @@ theorem not_isMerge_self (ξ : SamplePartition n) : ¬IsMerge ξ ξ := fun hM =>
   have := hM.2
   omega
 
-/-- The pair of lineages that must coalesce for one generation to produce a given merger. -/
+/-- The pair of lineages that must coalesce for one generation to produce a given merger: if some
+parent map takes `ξ` to its merger `η` in one generation, there are lineages `k < l` that pick the
+same parent under every parent map taking `ξ` to `η`. -/
 theorem exists_pair_of_isMerge {η : SamplePartition n} (hM : IsMerge ξ η) {f₀ : Fin N → Fin N}
     (hf₀ : step ξ h f₀ = η) :
     ∃ k l : Fin #ξ.parts, k < l ∧
@@ -768,8 +775,8 @@ end Step
 
 /-- The one-generation transition matrix of the ancestral process of a sample of `n` genes in
 the Cannings model `W`, on the partitions of the sample: the probability that the blocks of `ξ`
-merge into `η`. (When the sample has more blocks than the population, which does not occur for
-`n ≤ N`, the matrix is set to the identity.) -/
+merge into `η`. (The row of a partition `ξ` with more blocks than the population, which occurs
+only for `n > N`, is set to the row of the identity matrix.) -/
 noncomputable def ancestralMatrix (W : CanningsModel N) (n : ℕ) :
     Matrix (SamplePartition n) (SamplePartition n) ℝ :=
   Matrix.of fun ξ η =>
@@ -784,7 +791,7 @@ theorem ancestralMatrix_nonneg (W : CanningsModel N) (ξ η : SamplePartition n)
   · norm_num
   · norm_num
 
-/-- The ancestral matrix is row-stochastic. -/
+/-- Every row of the ancestral matrix sums to `1`. -/
 theorem sum_ancestralMatrix (W : CanningsModel N) (ξ : SamplePartition n) :
     ∑ η, ancestralMatrix W n ξ η = 1 := by
   simp only [ancestralMatrix, Matrix.of_apply]
@@ -904,7 +911,8 @@ theorem expect_two_pairs_le {b : ℕ} {e : Fin b → Fin N} (he : Function.Injec
       (hne hp.ne) (hne h1) (hne h2) (hne h3) (hne h4) (hne hq.ne)
     linarith
 
-/-- Expected number of coalescing pairs among `b` lineages: `(b.choose 2) c_N`. -/
+/-- Expected number of coalescing pairs among `b ≤ N` lineages at the children `0, …, b - 1`:
+`(b.choose 2) c_N`. -/
 theorem expect_collCount {b : ℕ} (h : b ≤ N) :
     W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ)) =
       #(lineagePairs b) * W.pairCoalescence := by
@@ -915,7 +923,7 @@ theorem expect_collCount {b : ℕ} (h : b ≤ N) :
   exact W.expect_pair fun h' => hp.ne (Fin.castLE_injective h h')
 
 /-- `E[k² - k] ≤ #pairs (#pairs - 1) (P(triple) + doubleBound)`, `k` the number of coalescing
-pairs. -/
+pairs among `b ≤ N` lineages at the children `0, …, b - 1`. -/
 theorem expect_collCount_sq_le {b : ℕ} (h : b ≤ N) :
     W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ) ^ 2 - collCount (f ∘ Fin.castLE h)) ≤
       #(lineagePairs b) * (#(lineagePairs b) - 1) *
@@ -958,7 +966,8 @@ section Entries
 
 variable (W : CanningsModel N) {ξ : SamplePartition n} (h : #ξ.parts ≤ N)
 
-/-- The probability that one generation takes the partition `ξ` to `η`. -/
+/-- The probability that one generation takes the partition `ξ`, with at most `N` blocks, to
+`η`. -/
 noncomputable def stepProb (η : SamplePartition n) : ℝ :=
   W.expect fun f => if step ξ h f = η then 1 else 0
 
@@ -1011,7 +1020,8 @@ theorem sum_stepProb_isMerge_ge :
   rw [W.expect_sub, h1] at hpw
   linarith
 
-/-- A one-generation merger of two given blocks has probability at most `c_N`. -/
+/-- Given `c_N ≥ 0` (true for every Cannings model), a one-generation merger of two given blocks
+has probability at most `c_N`. -/
 theorem stepProb_le_of_isMerge (hc : 0 ≤ W.pairCoalescence) {η : SamplePartition n}
     (hM : IsMerge ξ η) : stepProb W h η ≤ W.pairCoalescence := by
   by_cases hex : ∃ f₀, step ξ h f₀ = η
@@ -1061,8 +1071,8 @@ theorem sum_stepProb_isMerge_le : ∑ η with IsMerge ξ η, stepProb W h η ≤
   exact mem_erase.2 ⟨fun he => not_isMerge_self ξ (he ▸ hη), mem_univ η⟩
 
 open scoped Classical in
-/-- A one-generation merger has probability at least `c_N - #pairs (#pairs - 1) (P(triple) +
-doubleBound)`. -/
+/-- Given `c_N ≥ 0` (true for every Cannings model), a one-generation merger has probability at
+least `c_N - #pairs (#pairs - 1) (P(triple) + doubleBound)`. -/
 theorem stepProb_ge_of_isMerge (hc : 0 ≤ W.pairCoalescence) {η : SamplePartition n}
     (hM : IsMerge ξ η) :
     W.pairCoalescence - #(lineagePairs #ξ.parts) * (#(lineagePairs #ξ.parts) - 1) *
@@ -1167,7 +1177,8 @@ theorem MohleSagitov.tendsto_generator {W : ∀ N, CanningsModel N} (hW : MohleS
       exact div_le_div_of_nonneg_right
         (stepProb_le_of_not_isMerge (W N) _ hM (Ne.symm hξη)) hc.le
 
-/-- `⌊x / c⌋ c → x` as `c → 0⁺`. -/
+/-- For `x ≥ 0`, `⌊x / c⌋ c → x` as `c → 0⁺`, where `⌊·⌋` rounds down to a natural number
+(`0` on negative numbers). -/
 theorem tendsto_floor_div_mul {c : ℕ → ℝ} (hc0 : ∀ᶠ N in atTop, 0 < c N)
     (hc : Tendsto c atTop (𝓝 0)) {x : ℝ} (hx : 0 ≤ x) :
     Tendsto (fun N => (⌊x / c N⌋₊ : ℝ) * c N) atTop (𝓝 x) := by
@@ -1204,8 +1215,8 @@ theorem MohleSagitov.tendsto_ancestralMatrix_pow {W : ∀ N, CanningsModel N}
   filter_upwards [hW.pairCoalescence_pos] with N hcN
   rw [smul_smul, mul_inv_cancel₀ hcN.ne', one_smul, add_sub_cancel]
 
-/-- From the sample in singletons: after `⌊t / c_N⌋` generations the ancestral partition has
-the law `timeLaw n t` of Kingman's `n`-coalescent at time `t` in the limit. -/
+/-- From the sample in singletons: for `t ≥ 0`, after `⌊t / c_N⌋` generations the ancestral
+partition has the law `timeLaw n t` of Kingman's `n`-coalescent at time `t` in the limit. -/
 theorem MohleSagitov.tendsto_ancestralMatrix_pow_bot {W : ∀ N, CanningsModel N}
     (hW : MohleSagitov W) (n : ℕ) {t : ℝ} (ht : 0 ≤ t) (π : SamplePartition n) :
     Tendsto (fun N => (ancestralMatrix (W N) n ^ ⌊t / (W N).pairCoalescence⌋₊) ⊥ π) atTop
@@ -1217,7 +1228,9 @@ theorem MohleSagitov.tendsto_ancestralMatrix_pow_bot {W : ∀ N, CanningsModel N
 /-- The finite-dimensional distribution of a Markov chain with transition matrix `P`, started
 from `x₀` at time `0` and observed at the times `m 0 ≤ m 1 ≤ ⋯ ≤ m k`: the probability of being
 at `x i` at time `m i` for every `i`. By the Markov property it is the time-`m 0` law
-`(P ^ m 0) x₀ (x 0)` times the transition probabilities between consecutive observations. -/
+`(P ^ m 0) x₀ (x 0)` times the transition probabilities between consecutive observations. The
+formula is defined for every real matrix `P` and all times `m i`; the exponent `m (i + 1) - m i`
+is truncated at `0`, so a step with `m (i + 1) < m i` contributes the entry of the identity. -/
 noncomputable def chainFDD {S : Type*} [Fintype S] [DecidableEq S] (P : Matrix S S ℝ) (x₀ : S)
     {k : ℕ} (m : Fin (k + 1) → ℕ) (x : Fin (k + 1) → S) : ℝ :=
   (P ^ m 0) x₀ (x 0) * ∏ i : Fin k, (P ^ (m i.succ - m i.castSucc)) (x i.castSucc) (x i.succ)
@@ -1225,7 +1238,8 @@ noncomputable def chainFDD {S : Type*} [Fintype S] [DecidableEq S] (P : Matrix S
 /-- The finite-dimensional distribution of Kingman's `n`-coalescent, started from singletons at
 time `0` and observed at the times `t 0 ≤ t 1 ≤ ⋯ ≤ t k`: the time-`t 0` law
 `timeLaw n (t 0) (x 0) = exp (t 0 • Q) ⊥ (x 0)` times the transition probabilities
-`exp ((t (i + 1) - t i) • Q) (x i) (x (i + 1))`. -/
+`exp ((t (i + 1) - t i) • Q) (x i) (x (i + 1))`. The formula is defined for all real times
+`t i`; this reading needs `0 ≤ t 0 ≤ ⋯ ≤ t k`. -/
 noncomputable def kingmanFDD (n : ℕ) {k : ℕ} (t : Fin (k + 1) → ℝ)
     (x : Fin (k + 1) → SamplePartition n) : ℝ :=
   timeLaw n (t 0) (x 0) * ∏ i : Fin k,

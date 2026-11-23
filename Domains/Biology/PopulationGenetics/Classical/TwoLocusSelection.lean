@@ -114,8 +114,9 @@ theorem recombine_select_of_mul {r : ℝ} {x w : Bool × Bool → ℝ}
     (MathlibExt.Biology.PopulationGenetics.Selection.select x w)
     p q a b hx hw (fun _ => rfl) g
 
-/-- Under the same hypotheses, the haplotype frequencies after selection and
-recombination have zero linkage disequilibrium. -/
+/-- If the haplotype frequencies are in linkage equilibrium (`x g = p g.1 * q g.2`) and the
+fitnesses are multiplicative across loci (`w g = a g.1 * b g.2`), then for every `r` the haplotype
+frequencies after selection and recombination have zero linkage disequilibrium. -/
 theorem linkageDiseq_recombine_select_of_mul {r : ℝ}
     {x w : Bool × Bool → ℝ} {p q a b : Bool → ℝ}
     (hx : ∀ g, x g = p g.1 * q g.2) (hw : ∀ g, w g = a g.1 * b g.2) :

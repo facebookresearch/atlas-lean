@@ -110,7 +110,8 @@ def blockCountingGenerator [IsFiniteMeasure Λ] (n : ℕ) :
 
 variable [IsFiniteMeasure Λ]
 
-/-- On valid indices Pitman's rate is the mixed moment of orders `k - 2` and `b - k`. -/
+/-- For `2 ≤ k ≤ b` (the valid indices), Pitman's rate is the mixed moment of orders `k - 2` and
+`b - k`. -/
 theorem mergerRate_eq_unitIntervalMoment {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
     mergerRate Λ b k = unitIntervalMoment Λ (k - 2) (b - k) := ite_eq_left ⟨hk, hkb⟩
 

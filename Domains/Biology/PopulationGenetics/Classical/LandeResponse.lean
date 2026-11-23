@@ -62,7 +62,9 @@ variable {ι Ω : Type*} [Fintype ι] [DecidableEq ι] {mΩ : MeasurableSpace Ω
 /-- The shift of the mean of a trait vector `X` caused by fitness weights `W (Z ω)` on the phenotype
 `Z`, measured from the pre-selection mean: `𝔼[W(Z) X] / 𝔼[W(Z)] - 𝔼[X]`. With `X = Z` it is the
 selection differential `S`; with `X = A` (breeding values) and faithful additive transmission it
-is the response `Δz̄`. If `𝔼[W(Z)] = 0` it is a junk value (excluded by the theorems). -/
+is the response `Δz̄`. The expectations are integrals against the measure `P`. With the
+convention `x / 0 = 0` the shift is `-𝔼[X]` when `𝔼[W(Z)] = 0` (excluded by the theorems), and
+the integral of a non-integrable function is `0`. -/
 noncomputable def selectedShift (W : (ι → ℝ) → ℝ) (Z X : Ω → ι → ℝ) (P : Measure Ω) : ι → ℝ :=
   fun i => (∫ ω, W (Z ω) * X ω i ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, X ω i ∂P
 
@@ -226,10 +228,10 @@ theorem breeding_response_univariate_of_var {A Z : Ω → ℝ} {Va Vp : ℝ} {W 
 
 
 open MathlibExt.Biology.StatisticalGenetics.SelectionGradient in
-/-- **Cross-covariance gradient form** `Δz̄ = G ∇_μ log w̄(μ)` for bounded measurable
-fitness: if moreover the law of `Z` is `N(μ, P)`, then with Atlas's mean fitness
-`meanFitnessMV W P` (as a function of the trait mean), the response is the cross-covariance
-`G` applied to the gradient of its logarithm at `μ`. -/
+/-- **Cross-covariance gradient form** `Δz̄ = G ∇_μ log w̄(μ)` for bounded, measurable and
+nonnegative fitness with positive mean fitness at `μ`: if moreover the law of `Z` is `N(μ, P)`,
+then with Atlas's mean fitness `meanFitnessMV W P` (as a function of the trait mean), the
+response is the cross-covariance `G` applied to the gradient of its logarithm at `μ`. -/
 theorem selectedShift_breeding_eq_gradient {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ}
     {W : EuclideanSpace ℝ ι → ℝ} {μ : EuclideanSpace ℝ ι}
     (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P)

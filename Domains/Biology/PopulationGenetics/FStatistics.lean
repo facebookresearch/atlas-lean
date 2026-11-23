@@ -387,7 +387,8 @@ theorem f4_ratio {A O X Y B C : P} {α : ℝ}
     f4 μ M.freq A O X C / f4 μ M.freq A O B C = α := by
   rw [M.f4_admixture_right h, hYB, mul_div_assoc, div_self hB, mul_one]
 
-/-- The root-relative second moment `Σ X Y = 𝔼[(p X - root) * (p Y - root)]`. -/
+/-- The root-relative second moment `Σ X Y = 𝔼[(p X - root) * (p Y - root)]`, the integral
+against the model's measure `μ` (an expectation when `μ` is a probability measure). -/
 noncomputable def rootSecondMoment (X Y : P) : ℝ :=
   ∫ ω, (M.freq X ω - M.root ω) * (M.freq Y ω - M.root ω) ∂μ
 

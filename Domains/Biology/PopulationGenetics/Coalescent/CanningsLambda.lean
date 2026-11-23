@@ -327,9 +327,11 @@ open Finset CanningsLambda
 variable {N : ℕ} (M : CanningsModel N)
 
 /-- The alternating sum `∑_{m=0}^{b-k} (b-k choose m) (-1)^m q_{k+m}` of the merger probabilities
-`q_j = mergeProb j`: by inclusion–exclusion, the probability that `k` given lineages among `b`
-share a parent that none of the other `b - k` lineages has (`sampleProb_inclusionExclusion`).
-Divided by `c_N` it converges to Pitman's rate `λ_{b,k} = ∫ x^(k-2) (1-x)^(b-k) Λ(dx)`. -/
+`q_j = mergeProb j` (for `k > b` it is `q_k`, by truncated subtraction): for `1 ≤ k ≤ b ≤ N`,
+by inclusion–exclusion, the probability that `k` given lineages among `b` share a parent that
+none of the other `b - k` lineages has (`sampleProb_inclusionExclusion`). Under the
+Möhle–Sagitov conditions and for `2 ≤ k ≤ b`, divided by `c_N` it converges to Pitman's rate
+`λ_{b,k} = ∫ x^(k-2) (1-x)^(b-k) Λ(dx)`. -/
 def altMergeSum (b k : ℕ) : ℝ :=
   ∑ m ∈ range (b - k + 1), ((b - k).choose m : ℝ) * ((-1) ^ m * M.mergeProb (k + m))
 
@@ -526,10 +528,11 @@ private def embFiberEquiv (f : Fin N → Fin N) (k : ℕ) (p : Fin N) :
   left_inv _ := Subtype.ext (Function.Embedding.ext fun _ => rfl)
   right_inv _ := Function.Embedding.ext fun _ => rfl
 
-/-- **Merger probabilities are offspring factorial moments**:
+/-- **Merger probabilities are offspring factorial moments**: for `k ≥ 1`,
 `q_k (N)_k = E[∑_i (ν_i)_k]`, where `(x)_k` is the falling factorial. Under exchangeability in
-the parents the right side is `N E[(ν_1)_k]`, so `q_k = N E[(ν_1)_k] / (N)_k` and in particular
-`c_N = E[ν_1 (ν_1 - 1)] / (N - 1)` (Möhle–Sagitov 2001, §2). -/
+the parents the right side is `N E[(ν_1)_k]` (for `N ≥ 1`), so `q_k = N E[(ν_1)_k] / (N)_k` for
+`1 ≤ k ≤ N` and in particular `c_N = E[ν_1 (ν_1 - 1)] / (N - 1)` for `N ≥ 2`
+(Möhle–Sagitov 2001, §2). -/
 theorem mergeProb_mul_descFactorial {k : ℕ} (hk : 1 ≤ k) :
     M.mergeProb k * N.descFactorial k =
       ∑ f, (M.law f).toReal * ∑ i, ((offspring f i).descFactorial k : ℝ) := by
@@ -586,7 +589,7 @@ theorem lineageProb_zero {b : ℕ} (hb : 1 ≤ b) : M.lineageProb b 0 = 0 := by
   unfold sampleProb
   split_ifs <;> simp
 
-/-- The rows of the lineage-count transition matrix sum to `1`. -/
+/-- The rows `b ≤ n` of the lineage-count transition matrix sum to `1` when `b ≤ N`. -/
 theorem sum_lineageProb {n b : ℕ} (hbn : b ≤ n) (hbN : b ≤ N) :
     ∑ a : Fin (n + 1), M.lineageProb b a = 1 := by
   simp_rw [lineageProb, M.sampleProb_of_le _ hbN]
@@ -624,7 +627,8 @@ section Limit
 variable (M : (N : ℕ) → CanningsModel N) (Λ : Measure I) [IsFiniteMeasure Λ]
 
 /-- The **Möhle–Sagitov conditions for a Λ-coalescent limit** of a sequence of Cannings models
-(`M N` has population size `N`), with Λ a finite measure on `[0, 1]`:
+(`M N` has population size `N`), with Λ a measure on `[0, 1]` (the conditions force it to be a
+probability measure):
 
 * the coalescence probability `c_N` is eventually positive and tends to `0`;
 * for every `k ≥ 2`, the probability `q_k` that `k` lineages merge in one generation satisfies
@@ -646,8 +650,9 @@ structure MohleSagitovLambda : Prop where
 /-- The **heavy-tail condition**: a triple merger is not negligible against a pair merger,
 `q_3 / c_N → φ_3 > 0`; in offspring terms `E[(ν_1)_3] / (N ^ 2 c_N) → φ_3 > 0`, i.e. the offspring
 law puts enough mass on families of size of order `N`. Under the Möhle–Sagitov conditions this
-says exactly that Λ is not Kingman's `δ₀` (`heavyTailed_iff`); its failure (`φ_3 = 0`) is
-Möhle's condition for the Kingman limit. -/
+says exactly that Λ is not Kingman's `δ₀` (`heavyTailed_iff`), and its failure means
+`q_3 / c_N → 0`, Möhle's condition for the Kingman limit. The ratio is `0` where `c_N = 0`
+(`x / 0 = 0`), so a positive limit forces `c_N > 0` for all large `N`. -/
 def HeavyTailed : Prop :=
   ∃ φ, 0 < φ ∧ Tendsto (fun N => (M N).mergeProb 3 / (M N).coalProb) atTop (𝓝 φ)
 
@@ -687,9 +692,9 @@ private lemma tendsto_altMergeSum_div (h : MohleSagitovLambda M Λ) {b k : ℕ} 
   refine this.congr fun N => ?_
   ring
 
-/-- **The one-generation limit.** For `a < b`, the probability that `b` lineages have `a`
-parents, divided by `c_N`, tends to the Λ-coalescent jump rate
-`(b choose k) λ_{b,k}` with `k = b + 1 - a`. -/
+/-- **The one-generation limit.** Under the Möhle–Sagitov conditions, for `a < b`, the
+probability that `b` lineages have `a` parents, divided by `c_N`, tends to the Λ-coalescent
+jump rate `(b choose k) λ_{b,k}` with `k = b + 1 - a`. -/
 theorem tendsto_lineageProb_div (h : MohleSagitovLambda M Λ) {b a : ℕ} (ha : a < b) :
     Tendsto (fun N => (M N).lineageProb b a / (M N).coalProb) atTop
       (𝓝 ((b.choose (b + 1 - a) : ℝ) * LambdaCoalescent.mergerRate Λ b (b + 1 - a))) := by
@@ -717,9 +722,9 @@ theorem tendsto_lineageProb_div (h : MohleSagitovLambda M Λ) {b a : ℕ} (ha : 
   refine hTE.congr fun N => ?_
   ring
 
-/-- **Generator convergence.** `c_N⁻¹ • (Π_N - 1)` converges entrywise to the generator of the
-Λ-coalescent's block-counting process, where `Π_N` is the one-generation transition matrix of
-the ancestral lineage count. -/
+/-- **Generator convergence.** Under the Möhle–Sagitov conditions, `c_N⁻¹ • (Π_N - 1)`
+converges entrywise to the generator of the Λ-coalescent's block-counting process, where `Π_N`
+is the one-generation transition matrix of the ancestral lineage count. -/
 theorem tendsto_smul_lineageMatrix_sub_one (h : MohleSagitovLambda M Λ) (n : ℕ) :
     Tendsto (fun N => (M N).coalProb⁻¹ • ((M N).lineageMatrix n - 1)) atTop
       (𝓝 (LambdaCoalescent.blockCountingGenerator Λ n)) := by
@@ -825,8 +830,8 @@ private lemma mergerRate_three_three :
   rw [LambdaCoalescent.mergerRate_of_le _ (by norm_num) le_rfl]
   simp
 
-/-- The heavy-tail condition is the positivity of the limiting triple-merger rate
-`λ_{3,3} = ∫ x Λ(dx)`. -/
+/-- Under the Möhle–Sagitov conditions, the heavy-tail condition is the positivity of the
+limiting triple-merger rate `λ_{3,3} = ∫ x Λ(dx)`. -/
 theorem heavyTailed_iff_mergerRate_pos (h : MohleSagitovLambda M Λ) :
     HeavyTailed M ↔ 0 < LambdaCoalescent.mergerRate Λ 3 3 := by
   rw [mergerRate_three_three]
@@ -883,8 +888,9 @@ theorem blockCountingGenerator_dirac_zero (n : ℕ) :
       simp [h1, h2, h3, h4, show (j : ℕ) ≠ i by omega]
   · simp [h1, h2, show (j : ℕ) + 1 ≠ i by omega, show (j : ℕ) ≠ i by omega]
 
-/-- **In the heavy-tailed case the limit is not Kingman's coalescent**: the limit generator has
-a positive rate of triple mergers (three lineages to one), which Kingman's generator lacks. -/
+/-- **In the heavy-tailed case the limit is not Kingman's coalescent**: under the
+Möhle–Sagitov conditions and for `n ≥ 3`, the limit generator has a positive rate of triple
+mergers (three lineages to one), which Kingman's generator lacks. -/
 theorem blockCountingGenerator_ne_kingman (h : MohleSagitovLambda M Λ) (hH : HeavyTailed M)
     {n : ℕ} (hn : 3 ≤ n) :
     LambdaCoalescent.blockCountingGenerator Λ n ≠

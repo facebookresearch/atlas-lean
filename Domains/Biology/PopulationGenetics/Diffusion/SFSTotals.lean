@@ -70,7 +70,7 @@ private theorem sum_two_mul_sub_Ico (n : ℕ) (hn : 2 ≤ n) :
   ring
 
 /-- Expected total number of segregating sites (Watterson's formula, with the
-sum explicit): in the neutral infinite-sites model, the sum of
+sum explicit; an expected count for `θ ≥ 0`): in the neutral infinite-sites model, the sum of
 `expectedSFS θ 0 n i` over the segregating classes `1 ≤ i < n` equals `θ`
 times the harmonic sum over those classes. The monomorphic class `i = n` is
 excluded, matching `expectedSFS_neutral`. The class `i = 0` is also excluded:
@@ -93,7 +93,8 @@ theorem sum_expectedSFS_neutral (θ : ℝ) (n : ℕ) :
 /-- Expected pairwise diversity from the neutral spectrum: each segregating
 class `i` contributes its expected site count weighted by the probability
 that two distinct sampled gene copies differ at a site of that class; the
-total is the neutral expected pairwise diversity `θ`. -/
+total, for `n ≥ 2`, is the neutral expected pairwise diversity `θ` (an expectation for
+`θ ≥ 0`). -/
 theorem sum_pairwiseDiversity_expectedSFS_neutral (θ : ℝ) (n : ℕ) (hn : 2 ≤ n) :
     ∑ i ∈ Finset.Ico 1 n,
         (2 * (i : ℝ) * ((n : ℝ) - (i : ℝ)) / ((n : ℝ) * ((n : ℝ) - 1)))

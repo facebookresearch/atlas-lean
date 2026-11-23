@@ -43,9 +43,11 @@ open Set MeasureTheory
 
 /-- Interior-normalized scale function: the integral of the scale density from
 `c` to `p`. Unlike `scaleFunction` (normalized by `S 0 = 0`), the base point
-`c` is arbitrary. The definition imposes no hypotheses; under `IsRegularDiffusion`
-(or suitable integrability of `scaleDensity b a` on the relevant intervals), the
-two differ by the constant `scaleFunction b a c`; see `scaleFunctionFrom_eq_sub`. -/
+`c` is arbitrary. The integral is oriented (`∫ y in c..p = -∫ y in p..c`) and is `0` when the
+scale density is not integrable between `c` and `p`. The definition imposes no hypotheses; under
+`IsRegularDiffusion` (or suitable integrability of `scaleDensity b a` on the relevant
+intervals), the two differ by the constant `scaleFunction b a c`; see
+`scaleFunctionFrom_eq_sub`. -/
 public noncomputable def scaleFunctionFrom (b a : ℝ → ℝ) (c p : ℝ) : ℝ :=
   ∫ y in c..p, scaleDensity b a y
 
@@ -84,6 +86,7 @@ public theorem fixationProb_eq_ratio_scaleFunctionFrom (b a : ℝ → ℝ)
 
 /-- The Green kernel rewritten with differences of the interior-normalized
 scale function: shifting the scale normalization leaves the kernel unchanged.
+As in `greenFunction`, division by `0` gives `0` (the denominator vanishes where `a x = 0`).
 An analytic identity only; not an occupation-density claim. -/
 public theorem greenFunction_eq_scaleFunctionFrom (b a : ℝ → ℝ)
     (h : IsRegularDiffusion b a) (c p x : ℝ) (hc : c ∈ Icc (0 : ℝ) 1)

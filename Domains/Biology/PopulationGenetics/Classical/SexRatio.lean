@@ -42,14 +42,16 @@ open Set
 namespace MathlibExt.Biology.PopulationGenetics.Classical.SexRatio
 
 /-- Shaw–Mohler invasion fitness (up to the factor `1/4`) of a mutant with son fraction `x` in a
-population with son fraction `y`. -/
+population with son fraction `y`. It is defined for all real `x`, `y`: by the convention
+`a / 0 = 0`, `W x 0 = 1 - x` and `W x 1 = x`; the intended domain is `0 < y < 1`. -/
 noncomputable def W (x y : ℝ) : ℝ := x / y + (1 - x) / (1 - y)
 
 /-- Neutrality at `1/2`: every mutant has the same fitness when the population ratio is `1/2`. -/
 theorem W_half_right (x : ℝ) : W x (1 / 2) = 2 := by
   unfold W; ring
 
-/-- Fitness advantage of a mutant over the resident. -/
+/-- Fitness advantage of a mutant over the resident, for `0 < y < 1`:
+`W x y - W y y = (x - y) (1 - 2 y) / (y (1 - y))`. -/
 theorem W_sub_W_self {x y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) :
     W x y - W y y = (x - y) * (1 - 2 * y) / (y * (1 - y)) := by
   have h1 : (1 - y) ≠ 0 := by linarith
@@ -57,7 +59,8 @@ theorem W_sub_W_self {x y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) :
   field_simp
   ring
 
-/-- Selection gradient: `∂W/∂x (x, y) = 1/y - 1/(1-y)`, independent of `x`. -/
+/-- Selection gradient: `∂W/∂x (x, y) = 1/y - 1/(1-y)`, independent of `x`, for all real `x`, `y`
+(at `y = 0` and `y = 1` by the convention `a / 0 = 0`). -/
 theorem hasDerivAt_W_left (x y : ℝ) : HasDerivAt (fun x => W x y) (1 / y - 1 / (1 - y)) x := by
   have h : HasDerivAt (fun x => x / y + (1 - x) / (1 - y)) (1 / y + (0 - 1) / (1 - y)) x :=
     ((hasDerivAt_id' x).div_const y).add
@@ -66,7 +69,8 @@ theorem hasDerivAt_W_left (x y : ℝ) : HasDerivAt (fun x => W x y) (1 / y - 1 /
   convert h using 1
   ring
 
-/-- Convergence stability: the gradient is positive below `1/2` and negative above. -/
+/-- Convergence stability: the gradient is positive for `0 < y < 1/2` (`gradient_neg` gives the
+negative sign for `1/2 < y < 1`). -/
 theorem gradient_pos {y : ℝ} (hy0 : 0 < y) (hy : y < 1 / 2) : 0 < 1 / y - 1 / (1 - y) := by
   rw [sub_pos]
   exact one_div_lt_one_div_of_lt hy0 (by linarith)
@@ -130,21 +134,24 @@ theorem forall_W_le_iff {y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) :
 
 /-- Fitness of a parent investing a fraction `r'` of its resources in sons, sons costing `cs`
 and daughters `cd`, in a population investing `r`: sons and daughters counted relative to the
-population. -/
+population. By the convention `a / 0 = 0` the first term is `0` when `cs = 0` or `r = 0`, and the
+second when `cd = 0` or `r = 1`; the intended domain is `cs, cd > 0` and `0 < r < 1`. -/
 noncomputable def Wcost (cs cd r' r : ℝ) : ℝ :=
   (r' / cs) / (r / cs) + ((1 - r') / cd) / ((1 - r) / cd)
 
-/-- The son fraction among offspring produced by investing a fraction `r` in sons. -/
+/-- The son fraction among offspring produced by investing a fraction `r` in sons. It is defined
+for all real arguments, with the convention `a / 0 = 0`; the intended domain is `cs, cd > 0` and
+`0 ≤ r ≤ 1`, where the denominator is positive. -/
 noncomputable def sonFraction (cs cd r : ℝ) : ℝ := (r / cs) / (r / cs + (1 - r) / cd)
 
-/-- With costs, the Shaw–Mohler fitness in investment fractions is `W`, so the stable
-investment is `1/2` by `forall_W_le_iff`. -/
+/-- With nonzero costs `cs` and `cd`, the Shaw–Mohler fitness in investment fractions is `W`, so
+the stable investment is `1/2` by `forall_W_le_iff`. -/
 theorem Wcost_eq (cs cd r' r : ℝ) (hcs : cs ≠ 0) (hcd : cd ≠ 0) : Wcost cs cd r' r = W r' r := by
   unfold Wcost W
   rw [div_div_div_cancel_right₀ hcs, div_div_div_cancel_right₀ hcd]
 
-/-- Equal investment `r = 1/2` gives the son fraction `cd / (cs + cd)`: the ratio is biased
-towards the cheaper sex. -/
+/-- For positive costs, equal investment `r = 1/2` gives the son fraction `cd / (cs + cd)`: the
+ratio is biased towards the cheaper sex. -/
 theorem sonFraction_half {cs cd : ℝ} (hcs : 0 < cs) (hcd : 0 < cd) :
     sonFraction cs cd (1 / 2) = cd / (cs + cd) := by
   unfold sonFraction

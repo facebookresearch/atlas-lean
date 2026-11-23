@@ -118,9 +118,9 @@ namespace MathlibExt.Biology.PopulationGenetics.FStatistics
 
 open MeasureTheory
 
-/-- Bias factor for the f4-ratio estimator in the drift model: without the
-f4-equality hypothesis of `f4_ratio`, the ratio is `α` times
-`f4(A, O; Y, C) / f4(A, O; B, C)`. -/
+/-- Bias factor for the f4-ratio estimator in the drift model: if `X = α Y + (1 - α) C` in
+lineage weights and `f4(A, O; B, C) ≠ 0`, then, without the f4-equality hypothesis of
+`f4_ratio`, the ratio is `α` times `f4(A, O; Y, C) / f4(A, O; B, C)`. -/
 theorem DriftModel.f4_ratio_eq_mul_div {Ω P E : Type*} {m : MeasurableSpace Ω}
     {μ : Measure Ω} [Fintype E] (M : DriftModel μ E P)
     {A O X Y B C : P} {α : ℝ}
@@ -131,8 +131,9 @@ theorem DriftModel.f4_ratio_eq_mul_div {Ω P E : Type*} {m : MeasurableSpace Ω}
   MathlibExt.Biology.PopulationGenetics.Admixture.ratio_eq_mul_div_of_eq_mul
     (M.f4_admixture_right h) hB
 
-/-- The f4 ratio recovers `α` exactly when `α = 0` or the f4-equality
-condition `f4(A, O; Y, C) = f4(A, O; B, C)` required by `f4_ratio` holds.
+/-- If `X = α Y + (1 - α) C` in lineage weights and `f4(A, O; B, C) ≠ 0`, the f4 ratio
+recovers `α` exactly when `α = 0` or the f4-equality condition
+`f4(A, O; Y, C) = f4(A, O; B, C)` required by `f4_ratio` holds.
 This characterizes the scalar equality, not a phylogenetic sister
 relationship, for which the drift model has no predicate. -/
 theorem DriftModel.f4_ratio_eq_iff {Ω P E : Type*} {m : MeasurableSpace Ω}

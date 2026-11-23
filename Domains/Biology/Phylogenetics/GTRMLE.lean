@@ -136,7 +136,8 @@ variable {Θ σ : Type*}
 /-- The **log-likelihood criterion** of the model `law` at frequencies `f`:
 `∑ a, f a * log (law θ a)`. At the empirical frequencies of a sample it is the average
 log-likelihood of the sample (`logLik_empiricalFreq`); at the true law `law θ₀` it is the
-expected log-likelihood. -/
+expected log-likelihood. It is defined for all real values of `law`, with `log 0 = 0` and
+`log x = log |x|` for `x < 0`; the intended domain is `law θ a > 0`. -/
 noncomputable def logLik [Fintype σ] (law : Θ → σ → ℝ) (f : σ → ℝ) (θ : Θ) : ℝ :=
   ∑ a, f a * Real.log (law θ a)
 
@@ -148,7 +149,8 @@ def IsMLE [Fintype σ] {Ω : Type*} (law : Θ → σ → ℝ) (freq : ℕ → Ω
   ∀ n ω θ, logLik law (freq n ω) θ ≤ logLik law (freq n ω) (est n ω)
 
 /-- **The criterion at the empirical frequencies is the average log-likelihood** of the first
-`n` columns: `logLik law (empiricalFreq X n ω) θ = n⁻¹ * ∑ i < n, log (law θ (X i ω))`. -/
+`n` columns: `logLik law (empiricalFreq X n ω) θ = n⁻¹ * ∑ i < n, log (law θ (X i ω))`. At
+`n = 0` both sides are `0` (`0⁻¹ = 0`). -/
 theorem logLik_empiricalFreq [Fintype σ] [DecidableEq σ] {Ω : Type*} (law : Θ → σ → ℝ)
     (X : ℕ → Ω → σ) (n : ℕ) (ω : Ω) (θ : Θ) :
     logLik law (empiricalFreq X n ω) θ =
@@ -213,7 +215,8 @@ theorem exists_pos_add_le_of_identified [CompactSpace Θ] {M : Θ → ℝ} (hM :
 
 /-- **One step of Wald's argument**: if the maximum of `M` is separated by `δ` outside the
 `ε`-neighbourhood of `E`, the criterion `Mn` is uniformly within `δ / 2` of `M`, and `θh` does at
-least as well as `θ₀` for `Mn`, then `θh` is within `ε` of `E`. -/
+least as well as `θ₀` for `Mn`, then `θh` is within `ε` of `E`. This holds for any set `E`
+(`infDist θ ∅ = 0`) and any real `ε`, `δ`. -/
 theorem infDist_lt_of_forall_abs_sub_lt {M Mn : Θ → ℝ} {θ₀ θh : Θ} {E : Set Θ} {ε δ : ℝ}
     (hsep : ∀ θ, ε ≤ infDist θ E → M θ + δ ≤ M θ₀) (hunif : ∀ θ, |Mn θ - M θ| < δ / 2)
     (hmax : Mn θ₀ ≤ Mn θh) : infDist θh E < ε := by
@@ -275,8 +278,8 @@ theorem logLik_lt_logLik_self {law : Θ → σ → ℝ} (hpos : ∀ θ a, 0 < la
   simp only [logLik]
   linarith
 
-/-- **Information inequality**: the expected log-likelihood under `law θ₀` is maximized at
-`θ₀`. -/
+/-- **Information inequality**: for a positive normalized model, the expected log-likelihood
+under `law θ₀` is maximized at `θ₀`. -/
 theorem logLik_le_logLik_self {law : Θ → σ → ℝ} (hpos : ∀ θ a, 0 < law θ a)
     (hsum : ∀ θ, ∑ a, law θ a = 1) (θ₀ θ : Θ) :
     logLik law (law θ₀) θ ≤ logLik law (law θ₀) θ₀ := by
@@ -284,8 +287,9 @@ theorem logLik_le_logLik_self {law : Θ → σ → ℝ} (hpos : ∀ θ a, 0 < la
   · exact le_of_eq (by simp only [logLik, h])
   · exact (logLik_lt_logLik_self hpos hsum h).le
 
-/-- **Identification of the likelihood criterion**: if `law` identifies `θ₀` up to `E`, then
-every maximizer of the expected log-likelihood `logLik law (law θ₀)` lies in `E`. -/
+/-- **Identification of the likelihood criterion**: for a positive normalized model, if `law`
+identifies `θ₀` up to `E`, then every maximizer of the expected log-likelihood
+`logLik law (law θ₀)` lies in `E`. -/
 theorem mem_of_logLik_self_le {law : Θ → σ → ℝ} (hpos : ∀ θ a, 0 < law θ a)
     (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ} {E : Set Θ} (hId : ∀ θ, law θ = law θ₀ → θ ∈ E)
     (θ : Θ) (hθ : logLik law (law θ₀) θ₀ ≤ logLik law (law θ₀) θ) : θ ∈ E := by
@@ -302,7 +306,8 @@ variable [TopologicalSpace Θ] [CompactSpace Θ] [Fintype σ]
 
 /-- **The criterion is Lipschitz in the frequencies, uniformly in `θ`**: for a continuous
 positive model on a compact space there is `C ≥ 0` with
-`|logLik law f θ - logLik law g θ| ≤ C * dist f g` for all `f`, `g`, `θ`. -/
+`|logLik law f θ - logLik law g θ| ≤ C * dist f g` for all `f`, `g`, `θ`, where `dist` is the
+sup distance on `σ → ℝ` (`0` when `σ` is empty). -/
 theorem exists_abs_logLik_sub_logLik_le {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) :
     ∃ C, 0 ≤ C ∧ ∀ f g θ, |logLik law f θ - logLik law g θ| ≤ C * dist f g := by
@@ -343,9 +348,11 @@ theorem tendstoUniformly_logLik {law : Θ → σ → ℝ} (hlaw : Continuous law
 variable [DecidableEq σ] [MeasurableSpace σ] [MeasurableSingletonClass σ] {Ω : Type*}
   [MeasurableSpace Ω] {P : Measure Ω}
 
-/-- **Uniform law of large numbers for the log-likelihood**: under the sampling law, the
-average log-likelihood `logLik law (empiricalFreq X n ω)` converges to the expected
-log-likelihood `logLik law (law θ₀)` uniformly in `θ`, for almost every `ω`. -/
+/-- **Uniform law of large numbers for the log-likelihood**: for a continuous positive model on
+a compact space, under the sampling law (measurable, pairwise independent, identically
+distributed columns with `P (X 0 = a) = law θ₀ a` under a finite measure `P`), the average
+log-likelihood `logLik law (empiricalFreq X n ω)` converges to the expected log-likelihood
+`logLik law (law θ₀)` uniformly in `θ`, for almost every `ω`. -/
 theorem ae_tendstoUniformly_logLik_empiricalFreq [IsFiniteMeasure P] {law : Θ → σ → ℝ}
     (hlaw : Continuous law) (hpos : ∀ θ a, 0 < law θ a) {θ₀ : Θ} {X : ℕ → Ω → σ}
     (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
@@ -364,7 +371,8 @@ section Consistency
 
 variable [MetricSpace Θ] [CompactSpace Θ] [Fintype σ]
 
-/-- **Deterministic consistency**: along any sequence of frequencies converging to `law θ₀`,
+/-- **Deterministic consistency**: for a continuous, positive, normalized model on a compact
+space that identifies `θ₀` up to `E`, along any sequence of frequencies converging to `law θ₀`,
 maximizers of the log-likelihood criterion approach the identified class `E`. -/
 theorem tendsto_infDist_of_tendsto_freq {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ} {E : Set Θ}
@@ -374,7 +382,8 @@ theorem tendsto_infDist_of_tendsto_freq {law : Θ → σ → ℝ} (hlaw : Contin
   tendsto_infDist_of_tendstoUniformly (continuous_logLik hlaw hpos _)
     (mem_of_logLik_self_le hpos hsum hId) (tendstoUniformly_logLik hlaw hpos hf) hest
 
-/-- **Quantitative separation for the MLE**: for every `ε > 0` there is `η > 0` such that any
+/-- **Quantitative separation for the MLE**: for a continuous, positive, normalized model on a
+compact space that identifies `θ₀` up to `E`, for every `ε > 0` there is `η > 0` such that any
 maximizer of `logLik law f` with `dist f (law θ₀) < η` lies within `ε` of `E`. -/
 theorem exists_pos_infDist_lt_of_dist_lt {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ} {E : Set Θ}
@@ -393,9 +402,11 @@ theorem exists_pos_infDist_lt_of_dist_lt {law : Θ → σ → ℝ} (hlaw : Conti
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 
-/-- **Consistency in probability from convergent frequencies**: if `law` identifies `θ₀` up to
-`E` and the frequency estimates converge in probability to `law θ₀`, then every
-maximum-likelihood estimator satisfies `infDist (est n) E → 0` in probability. -/
+/-- **Consistency in probability from convergent frequencies**: for a continuous, positive,
+normalized model on a compact space and any measure `P`, if `law` identifies `θ₀` up to `E` and
+the frequency estimates converge in `P`-measure to `law θ₀`, then every maximum-likelihood
+estimator satisfies `infDist (est n) E → 0` in `P`-measure (in probability when `P` is a
+probability measure; `P` of a non-measurable set is its outer measure). -/
 theorem tendstoInMeasure_infDist_mle_of_tendstoInMeasure {law : Θ → σ → ℝ}
     (hlaw : Continuous law) (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1)
     {θ₀ : Θ} {E : Set Θ} (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {freq : ℕ → Ω → σ → ℝ}
@@ -418,9 +429,9 @@ variable [DecidableEq σ] [MeasurableSpace σ] [MeasurableSingletonClass σ] [Is
 Chang's Lemma 5.1 from point identification to identification up to a class `E`
 (Newey–McFadden, Theorem 2.5, finite-pattern case). Let `Θ` be compact, `law` continuous,
 positive and normalized, and `θ₀` identified up to the class `E` (`hId`, the T66 input). If the
-alignment columns are pairwise independent and identically distributed with
-`P (X 0 = a) = law θ₀ a`, every MLE `est` satisfies `infDist (est n ω) E → 0` for almost
-every `ω`. -/
+alignment columns are measurable, pairwise independent and identically distributed under a
+finite measure `P`, with `P (X 0 = a) = law θ₀ a`, every MLE `est` satisfies
+`infDist (est n ω) E → 0` for almost every `ω`. -/
 theorem ae_tendsto_infDist_mle {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ} {E : Set Θ}
     (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {X : ℕ → Ω → σ} (hX : ∀ i, Measurable (X i))
@@ -433,7 +444,7 @@ theorem ae_tendsto_infDist_mle {law : Θ → σ → ℝ} (hlaw : Continuous law)
 
 /-- **Consistency in probability of the GTR maximum-likelihood estimator**, up to the permitted
 symmetries, under the hypotheses of `ae_tendsto_infDist_mle`. The estimator need not be
-measurable. -/
+measurable: `P` of a non-measurable set is its outer measure. -/
 theorem tendstoInMeasure_infDist_mle {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ} {E : Set Θ}
     (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {X : ℕ → Ω → σ} (hX : ∀ i, Measurable (X i))
@@ -444,7 +455,8 @@ theorem tendstoInMeasure_infDist_mle {law : Θ → σ → ℝ} (hlaw : Continuou
   tendstoInMeasure_infDist_mle_of_tendstoInMeasure hlaw hpos hsum hId hest
     (tendstoInMeasure_empiricalFreq hX hindep hident hsample)
 
-/-- The GTR MLE consistency theorem (in probability) for the chosen estimator `mle`. -/
+/-- The GTR MLE consistency theorem (in probability) for the chosen estimator `mle`, on a
+nonempty `Θ`. -/
 theorem tendstoInMeasure_infDist_mleEstimator [Nonempty Θ] {law : Θ → σ → ℝ}
     (hlaw : Continuous law) (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1)
     {θ₀ : Θ} {E : Set Θ} (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {X : ℕ → Ω → σ}
@@ -455,9 +467,9 @@ theorem tendstoInMeasure_infDist_mleEstimator [Nonempty Θ] {law : Θ → σ →
       fun _ => 0 :=
   tendstoInMeasure_infDist_mle hlaw hpos hsum hId hX hindep hident hsample (isMLE_mle hlaw hpos _)
 
-/-- **Full identifiability, almost surely**: if `law` is injective at `θ₀`, every MLE converges
-to `θ₀` almost surely. This is the direct analogue of Chang's Lemma 5.1, under the positivity
-hypothesis `hpos`. -/
+/-- **Full identifiability, almost surely**: under the hypotheses of `ae_tendsto_infDist_mle`
+with `E = {θ₀}`, if `law` is injective at `θ₀`, every MLE converges to `θ₀` almost surely. This
+is the direct analogue of Chang's Lemma 5.1, under the positivity hypothesis `hpos`. -/
 theorem ae_tendsto_mle_of_injective {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ}
     (hId : ∀ θ, law θ = law θ₀ → θ = θ₀) {X : ℕ → Ω → σ} (hX : ∀ i, Measurable (X i))
@@ -470,8 +482,9 @@ theorem ae_tendsto_mle_of_injective {law : Θ → σ → ℝ} (hlaw : Continuous
   rw [tendsto_iff_dist_tendsto_zero]
   simpa [infDist_singleton] using hω
 
-/-- **Full identifiability, in probability**: if `law` is injective at `θ₀`, every MLE
-converges to `θ₀` in probability. -/
+/-- **Full identifiability, in probability**: under the hypotheses of `ae_tendsto_infDist_mle`
+with `E = {θ₀}`, if `law` is injective at `θ₀`, every MLE converges to `θ₀` in `P`-measure
+(`P` of a non-measurable set is its outer measure). -/
 theorem tendstoInMeasure_mle_of_injective {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ}
     (hId : ∀ θ, law θ = law θ₀ → θ = θ₀) {X : ℕ → Ω → σ} (hX : ∀ i, Measurable (X i))
@@ -520,14 +533,15 @@ theorem gtrLaw_eq_iff_mem_gtrClass (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht 
   exact ⟨fun h => funext fun i => funext fun j => congrFun h (i, j),
     fun h => funext fun a => by simp only [gtrLaw, h]⟩
 
-/-- **`hId` for the GTR pair-site model**, from T66: every parameter with the law of `θ₀` lies
-in the identified class `gtrClass π s t θ₀`. This is the hypothesis `hId` of the generic
-consistency theorems, discharged by `GTRIdentifiability.gtrPairLaw_eq_iff`. -/
+/-- **`hId` for the GTR pair-site model**, from T66: on the GTR domain with positive branch
+lengths, every parameter with the law of `θ₀` lies in the identified class `gtrClass π s t θ₀`.
+This is the hypothesis `hId` of the generic consistency theorems, discharged by
+`GTRIdentifiability.gtrPairLaw_eq_iff`. -/
 theorem mem_gtrClass_of_gtrLaw_eq (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
     (θ₀ : Θ) : ∀ θ, gtrLaw π s t θ = gtrLaw π s t θ₀ → θ ∈ gtrClass π s t θ₀ :=
   fun θ => (gtrLaw_eq_iff_mem_gtrClass hp ht θ₀ θ).1
 
-/-- The GTR pair-site law is positive for positive branch lengths. -/
+/-- On the GTR domain, the GTR pair-site law is positive for positive branch lengths. -/
 theorem gtrLaw_pos (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) (θ : Θ)
     (a : ι × ι) : 0 < gtrLaw π s t θ a :=
   mul_pos ((hp θ).pos a.1) ((isRateMatrix_gtrRate (fun k => ((hp θ).pos k).le)
@@ -537,12 +551,13 @@ theorem gtrLaw_pos (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t 
         exact mul_pos ((hp θ).offDiag_pos i j h) ((hp θ).pos j))
       (ht θ) a.1 a.2)
 
-/-- The GTR pair-site law is normalized. -/
+/-- On the GTR domain, the GTR pair-site law is normalized, for every real branch length. -/
 theorem sum_gtrLaw (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (θ : Θ) : ∑ a, gtrLaw π s t θ a = 1 := by
   rw [Fintype.sum_prod_type]
   exact sum_sum_gtrPairLaw (hp θ) (t θ)
 
-/-- `mem_of_logLik_self_le` for the GTR pair-site model, with `hId` from T66. -/
+/-- `mem_of_logLik_self_le` for the GTR pair-site model on the GTR domain with positive branch
+lengths, with `hId` from T66. -/
 theorem mem_gtrClass_of_logLik_self_le (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
     {θ₀ : Θ} (θ : Θ)
     (hθ : logLik (gtrLaw π s t) (gtrLaw π s t θ₀) θ₀ ≤
@@ -552,7 +567,9 @@ theorem mem_gtrClass_of_logLik_self_le (hp : ∀ θ, IsGTRParam (π θ) (s θ)) 
 
 variable [MetricSpace Θ] [CompactSpace Θ]
 
-/-- `tendsto_infDist_of_tendsto_freq` for the GTR pair-site model, with `hId` from T66. -/
+/-- `tendsto_infDist_of_tendsto_freq` for the GTR pair-site model
+(every `(π θ, s θ)` in the GTR domain, `t θ > 0`,
+continuous `gtrLaw π s t`), with `hId` from T66. -/
 theorem tendsto_infDist_gtrClass_of_tendsto_freq (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {f : ℕ → ι × ι → ℝ}
     (hf : Tendsto f atTop (𝓝 (gtrLaw π s t θ₀))) {est : ℕ → Θ}
@@ -561,7 +578,9 @@ theorem tendsto_infDist_gtrClass_of_tendsto_freq (hlaw : Continuous (gtrLaw π s
   tendsto_infDist_of_tendsto_freq hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
     (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hf hest
 
-/-- `exists_pos_infDist_lt_of_dist_lt` for the GTR pair-site model, with `hId` from T66. -/
+/-- `exists_pos_infDist_lt_of_dist_lt` for the GTR pair-site model
+(every `(π θ, s θ)` in the GTR domain, `t θ > 0`,
+continuous `gtrLaw π s t`), with `hId` from T66. -/
 theorem exists_pos_infDist_gtrClass_lt_of_dist_lt (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {ε : ℝ} (hε : 0 < ε) :
     ∃ η > 0, ∀ (f : ι × ι → ℝ) (θh : Θ), dist f (gtrLaw π s t θ₀) < η →
@@ -572,8 +591,9 @@ theorem exists_pos_infDist_gtrClass_lt_of_dist_lt (hlaw : Continuous (gtrLaw π 
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 
-/-- `tendstoInMeasure_infDist_mle_of_tendstoInMeasure` for the GTR pair-site model, with `hId`
-from T66. -/
+/-- `tendstoInMeasure_infDist_mle_of_tendstoInMeasure` for the GTR pair-site model
+(every `(π θ, s θ)` in the GTR domain, `t θ > 0`,
+continuous `gtrLaw π s t`) and any measure `P`, with `hId` from T66. -/
 theorem tendstoInMeasure_infDist_gtrClass_mle_of_tendstoInMeasure
     (hlaw : Continuous (gtrLaw π s t)) (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
     {θ₀ : Θ} {freq : ℕ → Ω → ι × ι → ℝ} {est : ℕ → Ω → Θ} (hest : IsMLE (gtrLaw π s t) freq est)
@@ -586,7 +606,9 @@ variable [MeasurableSpace (ι × ι)] [MeasurableSingletonClass (ι × ι)] [IsF
 
 /-- **Almost-sure consistency of the GTR pair-site MLE**: `ae_tendsto_infDist_mle` with `hId`
 from T66 (`mem_gtrClass_of_gtrLaw_eq`) and with positivity and normalization discharged. Every
-MLE approaches the identified class `gtrClass π s t θ₀` almost surely. -/
+MLE approaches the identified class `gtrClass π s t θ₀` almost surely. The model hypotheses are
+(every `(π θ, s θ)` in the GTR domain, `t θ > 0`,
+continuous `gtrLaw π s t`). -/
 theorem ae_tendsto_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {X : ℕ → Ω → ι × ι}
     (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
@@ -598,7 +620,8 @@ theorem ae_tendsto_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t))
     (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hX hindep hident hsample hest
 
 /-- **Consistency in probability of the GTR pair-site MLE**: `tendstoInMeasure_infDist_mle`
-with `hId` from T66. -/
+with `hId` from T66, for the model (every `(π θ, s θ)` in the GTR domain, `t θ > 0`,
+continuous `gtrLaw π s t`). -/
 theorem tendstoInMeasure_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {X : ℕ → Ω → ι × ι}
     (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
@@ -609,7 +632,9 @@ theorem tendstoInMeasure_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t)
   tendstoInMeasure_infDist_mle hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
     (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hX hindep hident hsample hest
 
-/-- `tendstoInMeasure_infDist_mleEstimator` for the GTR pair-site model, with `hId` from T66. -/
+/-- `tendstoInMeasure_infDist_mleEstimator` for the GTR pair-site model on a nonempty `Θ`
+(every `(π θ, s θ)` in the GTR domain, `t θ > 0`,
+continuous `gtrLaw π s t`), with `hId` from T66. -/
 theorem tendstoInMeasure_infDist_gtrClass_mleEstimator [Nonempty Θ]
     (hlaw : Continuous (gtrLaw π s t)) (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
     {θ₀ : Θ} {X : ℕ → Ω → ι × ι} (hX : ∀ i, Measurable (X i))
@@ -624,7 +649,9 @@ theorem tendstoInMeasure_infDist_gtrClass_mleEstimator [Nonempty Θ]
 /-- **Point consistency of the GTR pair-site MLE, almost surely**: if the parametrization
 separates the T66 invariants at `θ₀` (`gtrClass π s t θ₀ ⊆ {θ₀}`, e.g. a known branch length
 and injective `(π, s)` off the diagonal), every MLE converges to `θ₀` almost surely.
-`ae_tendsto_mle_of_injective` with its `hId` from T66. -/
+`ae_tendsto_mle_of_injective` with its `hId` from T66, for the model
+(every `(π θ, s θ)` in the GTR domain, `t θ > 0`,
+continuous `gtrLaw π s t`). -/
 theorem ae_tendsto_mle_of_gtrClass_subset_singleton (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ}
     (hsep : gtrClass π s t θ₀ ⊆ {θ₀}) {X : ℕ → Ω → ι × ι} (hX : ∀ i, Measurable (X i))
@@ -636,7 +663,9 @@ theorem ae_tendsto_mle_of_gtrClass_subset_singleton (hlaw : Continuous (gtrLaw �
     (fun θ h => hsep (mem_gtrClass_of_gtrLaw_eq hp ht θ₀ θ h)) hX hindep hident hsample hest
 
 /-- **Point consistency of the GTR pair-site MLE, in probability**:
-`tendstoInMeasure_mle_of_injective` with its `hId` from T66. -/
+`tendstoInMeasure_mle_of_injective` with its `hId` from T66, for the model
+(every `(π θ, s θ)` in the GTR domain, `t θ > 0`,
+continuous `gtrLaw π s t`) with `gtrClass π s t θ₀ ⊆ {θ₀}`. -/
 theorem tendstoInMeasure_mle_of_gtrClass_subset_singleton (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ}
     (hsep : gtrClass π s t θ₀ ⊆ {θ₀}) {X : ℕ → Ω → ι × ι} (hX : ∀ i, Measurable (X i))

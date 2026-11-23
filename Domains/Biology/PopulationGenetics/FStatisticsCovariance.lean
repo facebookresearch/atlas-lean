@@ -104,8 +104,8 @@ theorem centredCov_comm (X Y : P) : centredCov μ p X Y = centredCov μ p Y X :=
   congr 1 with ω
   ring
 
-/-- Each row of the centred leaf covariance sums to zero: centring across populations makes
-`∑ Y, K X Y = 𝔼[(p X - p̄) * ∑ Y, (p Y - p̄)] = 0`. -/
+/-- For square-integrable frequencies, each row of the centred leaf covariance sums to zero:
+centring across populations makes `∑ Y, K X Y = 𝔼[(p X - p̄) * ∑ Y, (p Y - p̄)] = 0`. -/
 theorem sum_centredCov_eq_zero (hp : ∀ X, MemLp (p X) 2 μ) (X : P) :
     ∑ Y, centredCov μ p X Y = 0 := by
   have : Nonempty P := ⟨X⟩
@@ -259,7 +259,9 @@ end Pair
 variable {Ω Ω' : Type*} {m : MeasurableSpace Ω} {m' : MeasurableSpace Ω'} {μ : Measure Ω}
   {μ' : Measure Ω'}
 
-/-- The star tree and the admixture model have the same `f3` at every triple of populations. -/
+/-- The star tree (weights `starWeight`, lengths `starLen α a b c`) and the admixture model
+(weights `admixWeight α`, lengths `![a, b, c]`) have the same `f3` at every triple of
+populations. -/
 theorem f3_star_eq_f3_admix {α a b c : ℝ} {M : DriftModel μ (Fin 3) (Fin 3)}
     {M' : DriftModel μ' (Fin 3) (Fin 3)} (hw : M.weight = starWeight)
     (hl : M.len = starLen α a b c) (hw' : M'.weight = admixWeight α) (hl' : M'.len = ![a, b, c])

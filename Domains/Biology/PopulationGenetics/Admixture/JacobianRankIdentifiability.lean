@@ -72,10 +72,10 @@ three-population admixture graph, as an explicit polynomial map. -/
 def threePopF2 (p : Fin 5 → ℝ) : Fin 3 → ℝ :=
   ![p 2 + p 3, (1 - p 0) ^ 2 * (p 2 + p 3) + p 4, (p 0) ^ 2 * (p 2 + p 3) + p 4]
 
-/-- The polynomial map is the `f2` vector of the drift model with weights
-`threePopWeights α` and edge lengths `(s, a, b, c)`; such a model
-exists for nonnegative lengths by the drift-model realization of arbitrary
-weights and nonnegative lengths already on main. -/
+/-- The polynomial map is the `f2` vector of every drift model on the counting measure of
+`Fin 4` with weights `threePopWeights α` and edge lengths `(s, a, b, c)`. Such a model
+exists for all nonnegative lengths: take the increment of edge `e` equal to `√ℓ_e` at the
+point `e` and `0` elsewhere. -/
 theorem threePopF2_eq_f2 {α s a b c : ℝ}
     (M : DriftModel (Measure.count : Measure (Fin 4)) (Fin 4) (Fin 3))
     (hw : M.weight = threePopWeights α) (hl : M.len = ![s, a, b, c]) :

@@ -52,13 +52,16 @@ namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
 variable {b a : ℝ → ℝ}
 
-/-- Speed density `m(x) = 2 / (a(x) ψ(x))` for scale density `ψ = scaleDensity b a`. -/
+/-- Speed density `m(x) = 2 / (a(x) ψ(x))` for scale density `ψ = scaleDensity b a`. With
+`x / 0 = 0`, `m(x) = 0` where `a(x) = 0` (`ψ` is positive everywhere). The intended domain is
+`x ∈ (0, 1)` for a regular diffusion, where `a > 0`. -/
 noncomputable def speedDensity (b a : ℝ → ℝ) (x : ℝ) : ℝ :=
   2 / (a x * scaleDensity b a x)
 
 /-- Speed measure on the state space `(0, 1)`: Lebesgue measure restricted
-to `(0, 1)` with density `speedDensity b a`. Coefficient values outside
-`(0, 1)` do not affect it. -/
+to `(0, 1)` with density `speedDensity b a`, negative values of the density counting as `0`
+(the density is `max (m x) 0`). Coefficient values outside `(0, 1)` do not affect it. It need
+not be finite. -/
 noncomputable def speedMeasure (b a : ℝ → ℝ) : Measure ℝ :=
   (volume.restrict (Ioo 0 1)).withDensity (fun x => ENNReal.ofReal (speedDensity b a x))
 
@@ -67,7 +70,8 @@ theorem speedDensity_pos_of_isRegular (h : IsRegularDiffusion b a) {x : ℝ}
     (hx : x ∈ Ioo (0 : ℝ) 1) : 0 < speedDensity b a x :=
   div_pos two_pos (mul_pos (h.pos x hx) (scaleDensity_pos b a x))
 
-/-- Canonical form step: for any positive `ψ` with `ψ' = -(2b/a) ψ` at `x`,
+/-- Canonical form step: for any `ψ` with `ψ x ≠ 0` and `ψ' = -(2b/a) ψ` at `x`, where
+`a x ≠ 0`, and any `f` whose `f' = deriv f` is differentiable at `x`,
 `L f (x) = (a(x) ψ(x) / 2) (f' / ψ)' (x)`. -/
 theorem diffusionGenerator_eq_of_hasDerivAt {ψ f : ℝ → ℝ} {x : ℝ}
     (ha : a x ≠ 0) (hψ0 : ψ x ≠ 0)
@@ -106,19 +110,27 @@ theorem speedDensity_neutral (x : ℝ) :
   rw [speedDensity, hψ, mul_one]
 
 /-- Mutation scale density with the normalization `ψ(x) = x^{-θ₁} (1-x)^{-θ₂}`
-(real powers), finite and positive on `(0, 1)` for every real `θ₁, θ₂`. -/
+(real powers), finite and positive on `(0, 1)` for every real `θ₁, θ₂`.
+With real powers, `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t cos (π t)`
+for `s < 0`; the intended domain is `0 < x < 1`. -/
 noncomputable def mutationScaleDensity (θ₁ θ₂ x : ℝ) : ℝ :=
   x ^ (-θ₁) * (1 - x) ^ (-θ₂)
 
-/-- Mutation speed density `2 x^{θ₁-1} (1-x)^{θ₂-1}` (real powers). -/
+/-- Mutation speed density `2 x^{θ₁-1} (1-x)^{θ₂-1}` (real powers).
+With real powers, `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t cos (π t)`
+for `s < 0`; the intended domain is `0 < x < 1`. -/
 noncomputable def mutationSpeedDensity (θ₁ θ₂ x : ℝ) : ℝ :=
   2 * x ^ (θ₁ - 1) * (1 - x) ^ (θ₂ - 1)
 
-/-- Selection–mutation scale density `e^{-2αx} x^{-θ₁} (1-x)^{-θ₂}`. -/
+/-- Selection–mutation scale density `e^{-2αx} x^{-θ₁} (1-x)^{-θ₂}`.
+With real powers, `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t cos (π t)`
+for `s < 0`; the intended domain is `0 < x < 1`. -/
 noncomputable def selectionMutationScaleDensity (α θ₁ θ₂ x : ℝ) : ℝ :=
   Real.exp (-2 * α * x) * mutationScaleDensity θ₁ θ₂ x
 
-/-- Selection–mutation speed density `e^{2αx} · 2 x^{θ₁-1} (1-x)^{θ₂-1}`. -/
+/-- Selection–mutation speed density `e^{2αx} · 2 x^{θ₁-1} (1-x)^{θ₂-1}`.
+With real powers, `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t cos (π t)`
+for `s < 0`; the intended domain is `0 < x < 1`. -/
 noncomputable def selectionMutationSpeedDensity (α θ₁ θ₂ x : ℝ) : ℝ :=
   Real.exp (2 * α * x) * mutationSpeedDensity θ₁ θ₂ x
 

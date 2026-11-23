@@ -62,12 +62,16 @@ The clause `Λ ≠ 0` excludes the junk case `ψ ≡ 0`, where `ψ⁻¹ = 0` wou
 def GreyCondition (Λ : Measure I) [IsFiniteMeasure Λ] : Prop :=
   Λ ≠ 0 ∧ ∃ a, 0 < a ∧ IntegrableOn (fun q => (psi Λ q)⁻¹) (Ioi a)
 
-/-- `u(t) = ∫_t^∞ dq / ψ(q)` (BBL eq. (7)). -/
+/-- `u(t) = ∫_t^∞ dq / ψ(q)` (BBL eq. (7)), with `1 / ψ(q)` read as `0` where `ψ(q) = 0`;
+the integral is `0` when `1 / ψ` is not integrable on `(t, ∞)`. Hence `u ≡ 0` when Grey's
+condition fails (for `Λ = 0` because the integrand is `0`), and `u(t) = 0` for `t ≤ 0` when
+`Λ ≠ 0`, since `1 / ψ(q) ≥ 2 / (Λ[0,1] q²)` for `q > 0`. -/
 def psiTail (Λ : Measure I) [IsFiniteMeasure Λ] (t : ℝ) : ℝ :=
   ∫ q in Ioi t, (psi Λ q)⁻¹
 
 /-- **The speed of coming down from infinity** `v(t) = inf {s > 0 : ∫_s^∞ dq / ψ(q) < t}`
-(BBL eq. (8)). -/
+(BBL eq. (8)). The infimum of the empty set is `0`; as `u ≥ 0`, `v(t) = 0` for `t ≤ 0`. When
+Grey's condition fails, `u ≡ 0`, so `v ≡ 0`. -/
 def speed (Λ : Measure I) [IsFiniteMeasure Λ] (t : ℝ) : ℝ :=
   sInf {s | 0 < s ∧ psiTail Λ s < t}
 
@@ -275,7 +279,7 @@ theorem monotoneOn_psi (Λ : Measure I) [IsFiniteMeasure Λ] : MonotoneOn (psi �
   exact integral_mono (integrable_psiKernel Λ q₁) (integrable_psiKernel Λ q₂)
     (fun x => psiKernel_mono hq₁ h12 x.2.1)
 
-/-- `ψ(q) ≤ Λ[0,1] q² / 2` (BBL eq. (12)). -/
+/-- `ψ(q) ≤ Λ[0,1] q² / 2` for `q ≥ 0` (BBL eq. (12)). -/
 theorem psi_le (Λ : Measure I) [IsFiniteMeasure Λ] {q : ℝ} (hq : 0 ≤ q) : psi Λ q ≤ Λ.real univ * (q ^ 2 / 2) := by
   calc psi Λ q ≤ ∫ _ : I, q ^ 2 / 2 ∂Λ :=
         integral_mono (integrable_psiKernel Λ q) (integrable_const _)
@@ -328,7 +332,7 @@ private lemma integrableOn_inv_psi (Λ : Measure I) [IsFiniteMeasure Λ] (hG : G
     {t : ℝ} (ht : 0 < t) : IntegrableOn (fun q => (psi Λ q)⁻¹) (Ioi t) :=
   ((greyCondition_iff Λ).1 hG).2 t ht
 
-/-- `u(t) ∈ (0, ∞)` for `t > 0` (BBL eq. (7)). -/
+/-- Under Grey's condition, `u(t) ∈ (0, ∞)` for `t > 0` (BBL eq. (7)). -/
 theorem psiTail_pos (Λ : Measure I) [IsFiniteMeasure Λ] (hG : GreyCondition Λ) {t : ℝ} (ht : 0 < t) :
     IntegrableOn (fun q => (psi Λ q)⁻¹) (Ioi t) ∧ 0 < psiTail Λ t := by
   have hi := integrableOn_inv_psi Λ hG ht
@@ -449,7 +453,7 @@ private lemma exists_psiTail_eq (Λ : Measure I) [IsFiniteMeasure Λ] (hG : Grey
   obtain ⟨s₀, hs₀, hs₀t⟩ := intermediate_value_Icc' hab.le hcont ⟨hbt.le, hat.le⟩
   exact ⟨s₀, lt_of_lt_of_le ha' hs₀.1, hs₀t⟩
 
-/-- `v` inverts `u`: `u (v t) = t`. -/
+/-- Under Grey's condition `v` inverts `u`: for `t > 0`, `v t > 0` and `u (v t) = t`. -/
 theorem psiTail_speed (Λ : Measure I) [IsFiniteMeasure Λ] (hG : GreyCondition Λ) {t : ℝ} (ht : 0 < t) :
     0 < speed Λ t ∧ psiTail Λ (speed Λ t) = t := by
   obtain ⟨s₀, hs₀, rfl⟩ := exists_psiTail_eq Λ hG ht
@@ -479,7 +483,7 @@ private lemma two_div_le_speed_aux (Λ : Measure I) [IsFiniteMeasure Λ] (hG : G
   rw [div_le_iff₀ (mul_pos hL ht)]
   nlinarith
 
-/-- `v(t) → ∞` as `t → 0+`. -/
+/-- Under Grey's condition, `v(t) → ∞` as `t → 0+`. -/
 theorem tendsto_speed_zero (Λ : Measure I) [IsFiniteMeasure Λ] (hG : GreyCondition Λ) :
     Tendsto (speed Λ) (𝓝[>] 0) atTop := by
   refine tendsto_atTop_mono' _ ?_ (tendsto_two_div (real_univ_pos Λ hG.1))
@@ -497,7 +501,8 @@ theorem tendsto_speed_atTop (Λ : Measure I) [IsFiniteMeasure Λ] (hG : GreyCond
     have h := strictAntiOn_speed Λ hG hua (hua.trans ht) ht
     rwa [speed_psiTail Λ hG ha] at h
 
-/-- Kingman is extremal: `u(s) ≥ 2 / (Λ[0,1] s)` and `v(t) ≥ 2 / (Λ[0,1] t)` (BBL eq. (13)). -/
+/-- Kingman is extremal: under Grey's condition, `u(s) ≥ 2 / (Λ[0,1] s)` for `s > 0`
+(BBL eq. (13)); `two_div_le_speed` gives `v(t) ≥ 2 / (Λ[0,1] t)`. -/
 theorem two_div_le_psiTail (Λ : Measure I) [IsFiniteMeasure Λ] (hG : GreyCondition Λ) {s : ℝ} (hs : 0 < s) :
     2 / (Λ.real univ * s) ≤ psiTail Λ s := by
   exact two_div_le_psiTail_aux Λ hG hs

@@ -44,7 +44,8 @@ variable {X : Type} [Fintype X] [DecidableEq X]
 def quartets : Finset (Finset X) := Finset.univ.powersetCard 4
 
 /-- The three resolutions `A | q \ A` of a four-taxon set `q`, each recorded as the pair
-`{A, q \ A}` of its sides. -/
+`{A, q \ A}` of its sides. For any `q` it is the family of the pairs `{A, q \ A}` with `A ⊆ q`
+and `#A = 2`. -/
 def resolutions (q : Finset X) : Finset (Finset (Finset X)) :=
   (q.powersetCard 2).image fun A => {A, q \ A}
 
@@ -367,7 +368,8 @@ theorem induces_iff_of_quartetScore_eq {f : Finset X → Finset (Finset X) → �
   exact (local_le hS T hq).2 (hall q hq)
 
 /-- Displaying the quartet `xy|zw` (taxa `x, y` separated from `z, w`) is inducing the
-resolution `{{x, y}, {z, w}}` of `{x, y, z, w}`. -/
+resolution `{{x, y}, {z, w}}` of `{x, y, z, w}`, for `x` and `y` both distinct from `z` and
+`w`. -/
 theorem displaysQuartet_iff_induces (T : UnrootedBinaryTree X) {x y z w : X}
     (hxz : x ≠ z) (hxw : x ≠ w) (hyz : y ≠ z) (hyw : y ≠ w) :
     DisplaysQuartet T x y z w ↔ Induces T {x, y, z, w} {{x, y}, {z, w}} := by
@@ -442,8 +444,8 @@ private theorem displaysQuartet_iff_of_not_distinct (T : UnrootedBinaryTree X) {
         Finset.mem_erase.2 ⟨hxa, Finset.mem_univ x⟩, Finset.mem_erase.2 ⟨hya, Finset.mem_univ y⟩,
         Finset.notMem_erase z _, Finset.notMem_erase z _⟩
 
-/-- **An unrooted binary tree is determined by its induced quartet trees**: two trees inducing
-the same resolution on every four-taxon set are isomorphic. -/
+/-- **An unrooted binary tree is determined by its induced quartet trees**: on a nonempty taxon
+set, two trees inducing the same resolution on every four-taxon set are isomorphic. -/
 theorem iso_of_induces_iff [Nonempty X] {S T : UnrootedBinaryTree X}
     (hind : ∀ q ∈ quartets, ∀ ρ ∈ resolutions q, (Induces T q ρ ↔ Induces S q ρ)) :
     T.Iso S := by
@@ -478,16 +480,17 @@ theorem iso_of_induces_iff [Nonempty X] {S T : UnrootedBinaryTree X}
     exact hind _ hq _ hρ
   · rw [displaysQuartet_iff_of_not_distinct T hd, displaysQuartet_iff_of_not_distinct S hd]
 
-/-- **Equal total support forces the species topology**: under strict plurality, a binary tree
-whose total quartet support equals that of the species tree is isomorphic to it. -/
+/-- **Equal total support forces the species topology**: on a nonempty taxon set, under strict
+plurality, a binary tree whose total quartet support equals that of the species tree is
+isomorphic to it. -/
 theorem iso_of_quartetScore_eq [Nonempty X] {f : Finset X → Finset (Finset X) → ℝ}
     {S T : UnrootedBinaryTree X} (hS : IsStrictPlurality f S)
     (h : quartetScore f T = quartetScore f S) : T.Iso S :=
   iso_of_induces_iff (induces_iff_of_quartetScore_eq hS h)
 
-/-- **Strict-plurality support maximization**: under strict plurality
-on every four-taxon set, the species tree is the unique maximizer of total quartet support among
-unrooted binary trees, up to isomorphism; any other topology has strictly smaller support. -/
+/-- **Strict-plurality support maximization**: on a nonempty taxon set, under strict plurality
+on every four-taxon set, every unrooted binary tree that is not isomorphic to the species tree has
+strictly smaller total quartet support. -/
 theorem quartetScore_lt_of_not_iso [Nonempty X] {f : Finset X → Finset (Finset X) → ℝ}
     {S T : UnrootedBinaryTree X} (hS : IsStrictPlurality f S) (hT : ¬ T.Iso S) :
     quartetScore f T < quartetScore f S :=

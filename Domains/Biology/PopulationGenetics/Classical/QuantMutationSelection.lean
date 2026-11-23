@@ -51,7 +51,7 @@ namespace MathlibExt.Biology.PopulationGenetics.Classical.QuantMutationSelection
 
 /-- Parameters of the haploid continuum-of-alleles model: Gaussian stabilizing selection of
 width `Vs`, mutation probability `mu`, Gaussian mutational effects of standard deviation
-`gamma`. -/
+`gamma`, with `Vs > 0`, `0 < mu < 1` and `gamma > 0`. -/
 structure Params where
   Vs : ℝ
   mu : ℝ
@@ -80,14 +80,16 @@ noncomputable def mutationLaw : Measure ℝ := gaussianReal 0 P.mutVar
 instance isProbabilityMeasure_mutationLaw : IsProbabilityMeasure P.mutationLaw := by
   unfold mutationLaw; infer_instance
 
-/-- Selection: `ν_w = w ν / ∫ w dν`. -/
+/-- Selection: `ν_w = w ν / ∫ w dν`. It is the zero measure when `w` is not `ν`-integrable or
+`ν = 0`. -/
 noncomputable def select (ν : Measure ℝ) : Measure ℝ := ν.tilted P.logFitness
 
 /-- Mutation: `(1 - μ) ρ + μ (ρ ∗ N(0, γ²))`. -/
 noncomputable def mutate (ρ : Measure ℝ) : Measure ℝ :=
   ENNReal.ofReal (1 - P.mu) • ρ + ENNReal.ofReal P.mu • (ρ ∗ P.mutationLaw)
 
-/-- One generation, selection then mutation: `T ν = (1-μ) ν_w + μ (ν_w ∗ N(0, γ²))`. -/
+/-- One generation, selection then mutation: `T ν = (1-μ) ν_w + μ (ν_w ∗ N(0, γ²))`, where
+`ν_w` is the zero measure when `w` is not `ν`-integrable or `ν = 0`. -/
 noncomputable def step (ν : Measure ℝ) : Measure ℝ := P.mutate (P.select ν)
 
 theorem fitness_eq (x : ℝ) : P.fitness x = Real.exp (-x ^ 2 / (2 * P.Vs)) := rfl

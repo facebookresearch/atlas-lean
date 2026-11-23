@@ -270,8 +270,8 @@ theorem recombine_bool (r : ℝ) (y : Bool × Bool → ℝ) :
     recombine r y =
       MathlibExt.Biology.PopulationGenetics.Linkage.recombine r y := rfl
 
-/-- In the biallelic case, the pairwise disequilibrium for `(true, true)` is
-Atlas's `Linkage.linkageDiseq`. -/
+/-- For frequencies with `∑ g, x g = 1`, in the biallelic case the pairwise
+disequilibrium for `(true, true)` is Atlas's `Linkage.linkageDiseq`. -/
 theorem linkageDiseq_bool {x : Bool × Bool → ℝ} (hx : ∑ g, x g = 1) :
     linkageDiseq x true true =
       MathlibExt.Biology.PopulationGenetics.Linkage.linkageDiseq x :=
@@ -296,15 +296,15 @@ theorem linkageDiseq_recombine {ι κ : Type*} [Fintype ι] [Fintype κ]
     linkageDiseq (recombine r x) i j = (1 - r) * linkageDiseq x i j :=
   linkageDiseq_recombine_of_eq r (recombine r) (fun _ _ => rfl) x hx i j
 
-/-- For each second-locus allele, the disequilibria sum to zero over the
-first-locus alleles. -/
+/-- For frequencies with `∑ g, x g = 1` and each second-locus allele, the
+disequilibria sum to zero over the first-locus alleles. -/
 theorem sum_linkageDiseq_fst {ι κ : Type*} [Fintype ι] [Fintype κ]
     (x : ι × κ → ℝ) (hx : ∑ g, x g = 1) (j : κ) :
     ∑ i, linkageDiseq x i j = 0 :=
   sum_linkageDiseq_fst_unfolded x hx j
 
-/-- For each first-locus allele, the disequilibria sum to zero over the
-second-locus alleles. -/
+/-- For frequencies with `∑ g, x g = 1` and each first-locus allele, the
+disequilibria sum to zero over the second-locus alleles. -/
 theorem sum_linkageDiseq_snd {ι κ : Type*} [Fintype ι] [Fintype κ]
     (x : ι × κ → ℝ) (hx : ∑ g, x g = 1) (i : ι) :
     ∑ j, linkageDiseq x i j = 0 :=

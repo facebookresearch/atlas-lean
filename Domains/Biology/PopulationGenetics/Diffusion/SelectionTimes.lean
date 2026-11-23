@@ -58,7 +58,8 @@ namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 /-- The mean absorption time (loss or fixation) of the mutation-free Wright–Fisher diffusion
 with genic selection `σ = 2Ns`, from initial frequency `p`, in units of `2N` generations:
 `T_σ(p) = ∫₀¹ Ψ_σ(p, x) dx`, the Green representation (`selectionGreen`). Only the analytic
-function is defined; the diffusion process is not. -/
+function is defined; the diffusion process is not. The reading is for `p ∈ [0, 1]`; for `p < 0`
+or `p > 1` the integrand is not integrable and the interval integral is `0`. -/
 noncomputable def selectionMeanAbsorptionTime (σ p : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..1, selectionGreen σ p x
 
@@ -173,7 +174,8 @@ theorem selectionMeanAbsorptionTime_neg_one_sub (σ p : ℝ) :
   simp only [sub_self, sub_zero, selectionGreen_neg_one_sub] at h
   exact h.symm
 
-/-- **No selection:** `T_0(p)` is the Kimura–Ohta time `-2 (p log p + (1 - p) log (1 - p))`. -/
+/-- **No selection:** for `p ∈ [0, 1]`, `T_0(p)` is the Kimura–Ohta time
+`-2 (p log p + (1 - p) log (1 - p))`. -/
 theorem selectionMeanAbsorptionTime_zero {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     selectionMeanAbsorptionTime 0 p = meanAbsorptionTime p := by
   unfold selectionMeanAbsorptionTime

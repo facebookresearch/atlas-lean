@@ -44,7 +44,9 @@ namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
 /-- The backward generator of the Wright–Fisher diffusion with genic selection and two-way
 mutation:
-`(L f)(x) = x (1 - x) / 2 · f''(x) + (α x (1 - x) + (θ₁ (1 - x) - θ₂ x) / 2) · f'(x)`. -/
+`(L f)(x) = x (1 - x) / 2 · f''(x) + (α x (1 - x) + (θ₁ (1 - x) - θ₂ x) / 2) · f'(x)`,
+a derivative that does not exist being `0` (`deriv`). The intended domain is `x ∈ [0, 1]`,
+`θ₁, θ₂ ≥ 0` and twice differentiable `f`. -/
 noncomputable def selectionMutationGenerator (α θ₁ θ₂ : ℝ) (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   x * (1 - x) / 2 * deriv (deriv f) x +
     (α * x * (1 - x) + (θ₁ * (1 - x) - θ₂ * x) / 2) * deriv f x

@@ -164,9 +164,10 @@ private theorem integral_comp_map {Ω : Type*} {mΩ : MeasurableSpace Ω} {β : 
 
 /-! ### Conditional expectations from conditional laws -/
 
-/-- **Conditional expectation from a conditional law, on an event.** If, restricted to every
-`A ∈ 𝒢`, the law of `V` under `μ` restricted to `S` is the law of the `𝒢`-measurable `W` pushed
-through `κ`, then `μ[1_S F (V) | 𝒢] = 1_S ∫ F dκ(W)` for every bounded measurable `F`. -/
+/-- **Conditional expectation from a conditional law, on an event.** Let `μ` be a finite
+measure, `κ` a Markov kernel and `S ∈ 𝒢`. If, restricted to every `A ∈ 𝒢`, the law of `V` under
+`μ` restricted to `S` is the law of the `𝒢`-measurable `W` pushed through `κ`, then
+`μ[1_S F (V) | 𝒢] = 1_S ∫ F dκ(W)` for every bounded measurable `F`. -/
 theorem condExp_indicator_ae_eq_of_map_restrict {Ω : Type*} {𝒢 mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} [IsFiniteMeasure μ] {β : Type*} [MeasurableSpace β] (h𝒢 : 𝒢 ≤ mΩ)
     {κ : Kernel I β} [IsMarkovKernel κ] {V : Ω → β} {W : Ω → I} (hV : Measurable V)
@@ -217,8 +218,8 @@ variable {𝒢 : Filtration ℝ≥0 mΩ} {Y : ℝ≥0 → Ω → I}
 theorem measurable' (hY : IsNeutralMarkovFamily μ 𝒢 Y) (u : ℝ≥0) : Measurable (Y u) :=
   (hY.measurable u).mono (𝒢.le u) le_rfl
 
-/-- **Kernel form of the Markov property.** For `u ≤ v` and `A ∈ 𝒢 u`, the law of `Y v` on `A`
-is the law of `Y u` on `A` pushed through `neutralKernel (v - u)`. -/
+/-- **Kernel form of the Markov property.** Under a finite measure, for `u ≤ v` and `A ∈ 𝒢 u`,
+the law of `Y v` on `A` is the law of `Y u` on `A` pushed through `neutralKernel (v - u)`. -/
 theorem map_restrict_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y)
     {u v : ℝ≥0} (huv : u ≤ v) {A : Set Ω} (hA : MeasurableSet[𝒢 u] A) :
     (μ.restrict A).map (Y v) = neutralKernel (v - u) ∘ₘ (μ.restrict A).map (Y u) := by
@@ -234,16 +235,17 @@ theorem map_restrict_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ
   simp only [hK]
   exact h
 
-/-- The kernel form of the Markov property for nonnegative measurable test functions. -/
+/-- The kernel form of the Markov property for nonnegative measurable test functions, under a
+finite measure. -/
 theorem lintegral_step [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y) {u v : ℝ≥0}
     (huv : u ≤ v) {A : Set Ω} (hA : MeasurableSet[𝒢 u] A) {f : I → ℝ≥0∞} (hf : Measurable f) :
     ∫⁻ ω in A, f (Y v ω) ∂μ = ∫⁻ ω in A, ∫⁻ y, f y ∂neutralKernel (v - u) (Y u ω) ∂μ := by
   rw [← lintegral_map hf (hY.measurable' v), hY.map_restrict_eq_comp huv hA,
     lintegral_comp_map _ (hY.measurable' u) hf]
 
-/-- **Joint law with the past.** For `u ≤ v`, a `𝒢 u`-measurable `Z` with `Y u = φ ∘ Z` and
-`A ∈ 𝒢 u`, the joint law of `(Z, Y v)` on `A` is the law of `Z` on `A` composed with one kernel
-step from `φ`. -/
+/-- **Joint law with the past.** Under a finite measure, for `u ≤ v`, a `𝒢 u`-measurable `Z`
+with `Y u = φ ∘ Z` and `A ∈ 𝒢 u`, the joint law of `(Z, Y v)` on `A` is the law of `Z` on `A`
+composed with one kernel step from `φ`. -/
 theorem map_restrict_prod_eq_compProd [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y)
     {β : Type*} [MeasurableSpace β] {u v : ℝ≥0} (huv : u ≤ v) {Z : Ω → β}
     (hZ : Measurable[𝒢 u] Z) {φ : β → I} (hφ : Measurable φ) (hZφ : ∀ ω, φ (Z ω) = Y u ω)
@@ -366,9 +368,9 @@ private theorem lintegral_finite_succ [IsFiniteMeasure μ] (hY : IsNeutralMarkov
     exact (lintegral_map hH hZ').trans
       (lintegral_finite_succ hY n τ hτm s (fun i => hs _) A hA H hH)
 
-/-- **Multi-time law of a Markov family.** For times `t₁ ≤ … ≤ tₙ` after `s` and `A ∈ 𝒢 s`, the
-joint law of `(Y t₁, …, Y tₙ)` on `A` is the law of `Y s` on `A` pushed through the ordered
-finite-dimensional kernel `finiteChainKernel neutralKernel s t`. -/
+/-- **Multi-time law of a Markov family.** Under a finite measure, for times `t₁ ≤ … ≤ tₙ` after
+`s` and `A ∈ 𝒢 s`, the joint law of `(Y t₁, …, Y tₙ)` on `A` is the law of `Y s` on `A` pushed
+through the ordered finite-dimensional kernel `finiteChainKernel neutralKernel s t`. -/
 theorem map_restrict_finite_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y)
     {n : ℕ} {t : Fin n → ℝ≥0} (ht : Monotone t) {s : ℝ≥0} (hs : ∀ i, s ≤ t i) {A : Set Ω}
     (hA : MeasurableSet[𝒢 s] A) :
@@ -385,8 +387,9 @@ theorem map_restrict_finite_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFa
     exact congrArg F (Subsingleton.elim _ _)
   | succ n => exact lintegral_finite_succ hY n t ht s hs A hA F hF
 
-/-- **Path law of a Markov family.** For `A ∈ 𝒢 0`, the law of the path `(Y u)_{u ≥ 0}` on `A`
-is the law of `Y 0` on `A` pushed through the path-measure kernel `wfPathKernel`. -/
+/-- **Path law of a Markov family.** Under a finite measure, for `A ∈ 𝒢 0`, the law of the path
+`(Y u)_{u ≥ 0}` on `A` is the law of `Y 0` on `A` pushed through the path-measure kernel
+`wfPathKernel`. -/
 theorem map_restrict_path_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y)
     {A : Set Ω} (hA : MeasurableSet[𝒢 0] A) :
     (μ.restrict A).map (fun ω u => Y u ω) = wfPathKernel ∘ₘ (μ.restrict A).map (Y 0) := by

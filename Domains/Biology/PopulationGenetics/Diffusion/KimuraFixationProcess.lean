@@ -734,7 +734,9 @@ private theorem integrable_comp [IsFiniteMeasure μ] (hX : IsWrightFisherSolutio
   exact Integrable.of_bound (hf.measurable.comp (hX.measurable t)).aestronglyMeasurable B
     (ae_of_all _ fun ω => hB _ (hX.1 t ω))
 
-/-- **Dynkin's formula at a fixed time.** -/
+/-- **Dynkin's formula at a fixed time.** For a finite measure `μ`, a solution `X` and a `C²`
+function `f`, the time integral `∫₀ᵗ generator σ f (X s) ds` is `μ`-integrable and its
+`μ`-integral is `∫ f (X t) dμ - ∫ f (X 0) dμ`. -/
 theorem integral_generator [IsFiniteMeasure μ] (hX : IsWrightFisherSolution σ ℱ μ X)
     {f : ℝ → ℝ} (hf : ContDiff ℝ 2 f) (t : ℝ≥0) :
     Integrable (fun ω => ∫ s in (0 : ℝ)..(t : ℝ), generator σ f (X (Real.toNNReal s) ω)) μ ∧

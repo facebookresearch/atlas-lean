@@ -496,8 +496,11 @@ end Unit
 
 /-- The three-population admixture weights and lengths realizing a symmetric
 zero-diagonal conditionally negative semidefinite matrix in which `D 0 1` is at least
-the other two off-diagonal entries. For a general symmetric zero-diagonal matrix,
-relabel the populations so that the largest off-diagonal entry is in the `0 1`
+the other two off-diagonal entries: some `0 ≤ α ≤ 1` and `a, b, c ≥ 0` with `a + b = D 0 1`
+give `D X Y = ∑ e, (admixWeight α X e - admixWeight α Y e) ^ 2 * ![a, b, c] e`, with
+`1 - α = (D 0 1 + D 0 2 - D 1 2) / (2 * D 0 1)` and `c = D 0 2 - (1 - α) ^ 2 * D 0 1` when
+`D 0 1 > 0`. For a general symmetric zero-diagonal conditionally negative semidefinite
+matrix, relabel the populations so that the largest off-diagonal entry is in the `0 1`
 position before applying this theorem. -/
 theorem exists_admix_three {D : Fin 3 → Fin 3 → ℝ} (hsymm : ∀ i j, D i j = D j i)
     (hdiag : ∀ i, D i i = 0) (hcnd : IsCondNegSemidef D) (h02 : D 0 2 ≤ D 0 1)
