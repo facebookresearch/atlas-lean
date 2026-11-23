@@ -135,12 +135,12 @@ theorem Nat.two_pow_mul_odd_inj {s t a b : ℕ} (ha : Odd a) (hb : Odd b) :
   refine ⟨fun h => ?_, fun ⟨hst, hab⟩ => hst ▸ hab ▸ rfl⟩
   have hst : s = t := by
     have : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-    have := congrArg (padicValNat 2) h
-    rwa [padicValNat.mul (pow_ne_zero _ two_ne_zero) ha.pos.ne',
-      padicValNat.mul (pow_ne_zero _ two_ne_zero) hb.pos.ne',
-      padicValNat.prime_pow, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd ha.not_two_dvd_nat,
-      padicValNat.eq_zero_of_not_dvd hb.not_two_dvd_nat, add_zero,
+    have := congrArg (multiplicity 2) h
+    rwa [Nat.multiplicity_mul (pow_ne_zero _ two_ne_zero) ha.pos.ne',
+      Nat.multiplicity_mul (pow_ne_zero _ two_ne_zero) hb.pos.ne',
+      Nat.multiplicity_prime_pow, Nat.multiplicity_prime_pow,
+      multiplicity_eq_zero_of_not_dvd ha.not_two_dvd_nat,
+      multiplicity_eq_zero_of_not_dvd hb.not_two_dvd_nat, add_zero,
       add_zero] at this
   subst hst
   exact ⟨rfl, Nat.eq_of_mul_eq_mul_left (by positivity) h⟩
