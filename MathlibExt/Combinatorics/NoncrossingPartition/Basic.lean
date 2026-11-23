@@ -30,18 +30,22 @@ open Finpartition Finset
 
 namespace NoncrossingPartition
 
-/-- Set partitions of `Fin n` as `Finpartition` of `Finset.univ`. -/
+/-- **Set partition.** A set partition of $\{0, \dots, n-1\}$ is a finite collection of nonempty,
+pairwise disjoint subsets of $\{0, \dots, n-1\}$, called blocks, whose union is
+$\{0, \dots, n-1\}$. -/
 abbrev SetPartition (n : ℕ) :=
   Finpartition (Finset.univ : Finset (Fin n))
 
-/-- `P` has a crossing: there are `a < b < c < d` with `a,c` in one block,
-`b,d` in another distinct block.  Blocks are compared via `P.part`. -/
+/-- **Crossing in a set partition.** A set partition $P$ of $\{0, \dots, n-1\}$ has a crossing
+if there are $a < b < c < d$ in $\{0, \dots, n-1\}$ such that $a$ and $c$ lie in the same block
+of $P$, $b$ and $d$ lie in the same block of $P$, and these two blocks are different. -/
 def HasCrossing {n : ℕ} (P : SetPartition n) : Prop :=
   ∃ a b c d : Fin n,
     a < b ∧ b < c ∧ c < d ∧
       P.part a = P.part c ∧ P.part b = P.part d ∧ P.part a ≠ P.part b
 
-/-- A partition of `Fin n` is noncrossing iff it has no crossing. -/
+/-- **Noncrossing set partition.** A set partition of $\{0, \dots, n-1\}$ is noncrossing if it
+has no crossing. -/
 def IsNoncrossing {n : ℕ} (P : SetPartition n) : Prop :=
   ¬ HasCrossing P
 
@@ -55,7 +59,8 @@ instance {n : ℕ} (P : SetPartition n) : Decidable (IsNoncrossing P) := by
 
 end NoncrossingPartition
 
-/-- Noncrossing partitions of `Fin n`. -/
+/-- **Noncrossing partition.** A noncrossing partition of $\{0, \dots, n-1\}$ is a set partition
+of $\{0, \dots, n-1\}$ that is noncrossing. -/
 def NoncrossingPartition (n : ℕ) :=
   { P : NoncrossingPartition.SetPartition n // NoncrossingPartition.IsNoncrossing P }
 
@@ -70,7 +75,9 @@ instance (n : ℕ) : Fintype (_root_.NoncrossingPartition n) :=
 instance (n : ℕ) : PartialOrder (_root_.NoncrossingPartition n) :=
   PartialOrder.lift (fun P => P.val) Subtype.coe_injective
 
-/-- Block accessor for noncrossing partitions. -/
+/-- **Block of a noncrossing partition.** For a noncrossing partition $P$ of
+$\{0, \dots, n-1\}$ and a point $a \in \{0, \dots, n-1\}$, the block of $P$ at $a$ is the block
+of the underlying set partition that contains $a$. -/
 def block {n : ℕ} (P : _root_.NoncrossingPartition n) (a : Fin n) : Finset (Fin n) :=
   P.val.part a
 
@@ -101,7 +108,8 @@ theorem ext {n : ℕ} {P Q : _root_.NoncrossingPartition n}
     (h : P.val = Q.val) : P = Q :=
   Subtype.ext h
 
-/-- Every partition of `Fin n` is noncrossing when `n ≤ 3`. -/
+/-- **Partitions of at most three points are noncrossing.** For every $n \le 3$, every set
+partition of $\{0, \dots, n-1\}$ is noncrossing. -/
 theorem isNoncrossing_of_le_three {n : ℕ} (hn : n ≤ 3) (P : SetPartition n) :
     IsNoncrossing P := by
   intro hcross

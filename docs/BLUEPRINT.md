@@ -191,10 +191,9 @@ so one such row stops the task list. `sync_wiki.py declarations` gives each row
 it adds an `id`, and `sync_wiki.py ids` gives one to every row that has none,
 such as a row written by hand; the wiki tests fail on a row without one.
 
-Blueprint Pages' `build the wiki` job runs `autoform check blueprint`, which
-fails on cycles, dangling dependency targets and missing declarations. The job
-is advisory, so a reviewer skips those only once it has passed on the PR's
-head commit, and otherwise reports them. Nothing runs `autoform audit` in CI;
+CI's required `check the graph` job runs `autoform check blueprint` on the
+committed graph, which fails on cycles, dangling dependency targets and missing
+declarations. Nothing runs `autoform audit` in CI;
 authors may run `autoform audit blueprint --lean-root .`, and reviewers still
 check what it reports, such as overfull folders (`overfull-container`) and two
 pages for one declaration (`duplicate-lean-target`). `autoform work` lists the
