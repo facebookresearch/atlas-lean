@@ -11233,6 +11233,7 @@
   "MathlibExt/NumberTheory/DivisorCountBound": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/DivisorCountParity": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Parity of divisor counts"},
   "MathlibExt/NumberTheory/DoldSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
+  "MathlibExt/NumberTheory/DowkerHalfSum": {"to": "NumberTheory/exponential-sums", "title": "Watson's cosecant and cosine sums"},
   "MathlibExt/NumberTheory/DucciSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Ducci sequences"},
   "MathlibExt/NumberTheory/EKGSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "EKG sequence"},
   "MathlibExt/NumberTheory/EgyptianFraction": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Egyptian fraction underapproximations"},
