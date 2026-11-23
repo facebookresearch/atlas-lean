@@ -189,7 +189,7 @@ theorem ctmcTransition_mulVec_one {Q : Matrix ι ι ℝ} (hQ : Q *ᵥ 1 = 0) (t 
   have hQJ : Q * J = 0 := by
     ext i j
     have := congrFun hQ i
-    simpa [J, mul_apply, mulVec, dotProduct] using this
+    simpa [J, Matrix.mul_apply, mulVec, dotProduct] using this
   have hd (u : ℝ) := HasDerivAt.mul_const (hasDerivAt_exp_smul_const Q u) J
   simp only [mul_assoc, hQJ, mul_zero] at hd
   have hc := is_const_of_deriv_eq_zero (fun u => (hd u).differentiableAt)
@@ -197,7 +197,7 @@ theorem ctmcTransition_mulVec_one {Q : Matrix ι ι ℝ} (hQ : Q *ᵥ 1 = 0) (t 
   simp only [zero_smul, exp_zero, one_mul] at hc
   ext i
   have := congrFun (congrFun hc i) i
-  simp only [J, mul_apply, of_apply, mul_one] at this
+  simp only [J, Matrix.mul_apply, of_apply, mul_one] at this
   simp only [ctmcTransition, mulVec, dotProduct, Pi.one_apply, mul_one]
   exact this
 

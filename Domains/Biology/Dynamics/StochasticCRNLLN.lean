@@ -366,7 +366,7 @@ theorem deviation_le_of_tube (h : IsChainPath C y X) (hN : 0 < N)
     refine continuous_abs.comp_aestronglyMeasurable (AEStronglyMeasurable.sub ?_ ?_)
     · exact ((measurable_from_nat.comp (h.measurable_coord i)).div_const _).aestronglyMeasurable
     · exact ((continuous_apply i).comp_continuousOn
-        (hxc.mono fun s hs => hs.1)).aestronglyMeasurable measurableSet_Icc
+        (hxc.mono (t := Icc 0 t₁) fun s hs => hs.1)).aestronglyMeasurable measurableSet_Icc
   have hbd : ∀ s ∈ Icc 0 t₁, ‖deviation N X x s‖ ≤ max δ (deviation N X x t₁) := by
     intro s hs
     rw [Real.norm_eq_abs, abs_of_nonneg (deviation_nonneg _ _ _ _)]

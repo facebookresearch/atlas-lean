@@ -24,7 +24,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Logics.Propositional.NaturalDeductionCompleteness
 
-open Cslib.Logic Cslib.Logic.PL Proposition Theory InferenceSystem
+open Cslib.Logic Cslib.Logic.LegacyPL Proposition Theory InferenceSystem
 
 /-- Two ordinary atoms plus a separate falsum atom `⊥`. -/
 inductive At where

@@ -22,17 +22,17 @@ public import CSLibExt.Logics.Propositional.CNF.Restriction
 
 namespace Cslib.CookLevin
 
-export Cslib.Logic.PL (CNFClause CNF CNFSat cnfSat_iff_exists_satisfies)
+export Cslib.Logic.LegacyPL (CNFClause CNF CNFSat cnfSat_iff_exists_satisfies)
 
 namespace CNFLiteral
 
-export Cslib.Logic.PL.CNFLiteral (Satisfies satisfies_def)
+export Cslib.Logic.LegacyPL.CNFLiteral (Satisfies satisfies_def)
 
 end CNFLiteral
 
 namespace CNFClause
 
-export Cslib.Logic.PL.CNFClause (Satisfies satisfies_def satisfies_nil
+export Cslib.Logic.LegacyPL.CNFClause (Satisfies satisfies_def satisfies_nil
   satisfies_cons vars mem_vars restrict mem_restrict vars_restrict_subset
   fst_not_mem_vars_restrict satisfies_restrict_iff)
 
@@ -40,7 +40,7 @@ end CNFClause
 
 namespace CNF
 
-export Cslib.Logic.PL.CNF (Satisfies satisfies_def satisfies_nil
+export Cslib.Logic.LegacyPL.CNF (Satisfies satisfies_def satisfies_nil
   satisfies_cons vars vars_nil vars_cons mem_vars restrict restrict_nil
   restrict_cons vars_restrict_subset not_mem_vars_restrict
   vars_restrict_ssubset card_vars_restrict_lt satisfies_restrict_iff
