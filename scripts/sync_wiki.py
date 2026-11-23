@@ -2757,8 +2757,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
 
 def refresh_part_lists(touched: set[Path], report: dict[str, list[str]], written: set[Path]) -> None:
     """Refresh the part lists that copy a folder page in *touched*, a page of a part ("part-N/README.md"): on its
-    parent's page, the copy of that part alone (see with_part_lists), and so on up while a refresh changes a page that
-    is itself a part's. What it cannot refresh, or replaces, goes into *report* as on a whole run, and every page it
+    parent's page, the copy of that part alone (see with_part_lists), and so on up while a refresh changes the entries
+    of a page that is itself a part's (see part_entries). What it cannot refresh, or replaces, goes into *report* as on a whole run, and every page it
     writes into *written*."""
     pending: dict[Path, set[str]] = defaultdict(set)
 
@@ -2778,7 +2778,10 @@ def refresh_part_lists(touched: set[Path], report: dict[str, list[str]], written
         if text != copied:
             write_page(readme, copied, newline)
             written.add(readme)
-            copied_by_parent(readme)
+            # Its parent copies its entries, an inner part's copy being one entry for the part: only a change to them
+            # makes the parent's copy stale, so that a refresh repairs nothing the changes did not touch.
+            if part_entries(copied) != part_entries(text):
+                copied_by_parent(readme)
 
 
 def refresh_catalog(generated: dict[Path, str]) -> None:

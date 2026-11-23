@@ -4543,6 +4543,36 @@ class ScopedRun(unittest.TestCase):
             self.git("clean", "-qfd")
 
 
+    def test_a_refresh_inside_nested_parts_leaves_the_outer_copy_as_it_was(self) -> None:
+        # The outer copy of part-01 misses Old, which part-01 lists: drift the base had. A folder added inside part-02
+        # refreshes part-02's copy on part-01's page, whose entries stay the same, so the outer page is left as it is.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["placements"]["MathlibExt/Algebra/Rings"] = {"to": "Algebra/groups", "title": "Rings"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        outer = self.write("blueprint/roadmap/Algebra/groups/README.md",
+                           "# Groups\n\nGroups.\n\n- [Group basics](group-basics/README.md)\n\n"
+                           "## [Part 1](part-01/README.md)\n\n"
+                           "- [Cosets](part-01/cosets/README.md)\n- [Part 2](part-01/part-02/README.md)\n")
+        inner = self.write("blueprint/roadmap/Algebra/groups/part-01/README.md",
+                           "# Groups, part 1\n\n- [Cosets](cosets/README.md)\n- [Old](old/README.md)\n\n"
+                           "## [Part 2](part-02/README.md)\n\n- [Fields](part-02/fields/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/part-02/README.md",
+                   "# Groups, part 2\n\n- [Fields](fields/README.md)\n")
+        for folder in ("cosets", "old", "part-02/fields"):
+            self.write(f"blueprint/roadmap/Algebra/groups/part-01/{folder}/README.md", f"# {folder}\n\nText.\n")
+        self.base = self.commit("nested parts, the outer copy missing Old")
+        kept = outer.read_bytes()
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, (out, err))
+        changed = self.git("status", "--porcelain")
+        self.assertEqual(outer.read_bytes(), kept, changed)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"), report)
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(self.tree(), before)
+
 
 INDEX_DIFFERS = sync.INDEX_DIFFERS
 
