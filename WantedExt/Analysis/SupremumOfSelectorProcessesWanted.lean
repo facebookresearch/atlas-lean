@@ -114,28 +114,35 @@ open MeasureTheory ProbabilityTheory Measure unitInterval Finset
 
 open scoped NNReal ENNReal
 
-/-- Definition of a binomial random subset of `X` with parameter `p`. -/
+/-- **Binomial random subset.** For a type $X$ and $p \in [0, 1]$, the binomial random subset
+distribution on $X$ with parameter $p$ is the probability measure on the subsets of $X$ under
+which each element of $X$ belongs to the random subset independently with probability $p$. A
+random subset with this law is denoted $X_p$. -/
 noncomputable def binomialSetDistribution (X : Type*) (p : I) : Measure (Set X) :=
   setBernoulli Set.univ p
 
 open Classical in
-/-- Definition of a collection of sets being `p-small`. -/
+/-- **$p$-small families of sets.** Let $X$ be a finite type and $p \in [0, 1]$. A family
+$\mathcal{F}$ of subsets of $X$ is $p$-small when there is a family $\mathcal{G}$ of subsets of
+$X$ such that every member of $\mathcal{F}$ contains some member of $\mathcal{G}$ and
+$\sum_{S \in \mathcal{G}} p^{|S|} \le 1/2$. -/
 def IsSmall {X : Type*} [Fintype X] (p : I) (𝓕 : Set (Set X)) : Prop :=
   ∃ 𝓖 : Set (Set X), 𝓕 ⊆ ⋃ s ∈ 𝓖, {t | s ⊆ t} ∧ (∑ s ∈ 𝓖, (p : ℝ) ^ s.ncard ≤ 2⁻¹)
 
 open Classical in
 /--
-Statement of Theorem 1.2:
+**Park–Pham theorem on selector processes (Talagrand's selector process conjecture).** There is
+a real number $L > 0$ with the following property. Let $0 < p < 1$, let $X$ be a finite type,
+let $\Lambda$ be a set of functions from $X$ to $[0, \infty)$, and let $X_p$ be a binomial random
+subset of $X$ with parameter $p$. Write
+$E = \mathbb{E}\bigl[\sup_{f \in \Lambda} \sum_{i \in X_p} f(i)\bigr]$, computed in
+$[0, \infty]$. If $0 < E < \infty$, then the family of subsets $s \subseteq X$ with
+$\sup_{f \in \Lambda} \sum_{i \in s} f(i) \ge L E$ is $p$-small.
 
-There exists `L > 0` such that for any `0 < p < 1`, finite type `X`, and set `Λ` of functions from
-`X` to `ℝ≥0` such that `0 < 𝔼[sup_{f ∈ Λ} ∑ i ∈ Xp, f i] < ∞`, the collection of sets
+The hypothesis $0 < E < \infty$ is not stated explicitly in the paper's theorem, but it is used
+in the last step of the proof, which derives a contradiction from an inequality $E \ge c E$
+with a constant $c > 1$.
 
-`{s ⊆ X | sup_{f ∈ Λ} ∑ i ∈ s, f i ≥ L * 𝔼[sup_{f ∈ Λ} ∑ i ∈ Xp, f i]}`
-
-is `p-small`, where `Xp` is a binomial random subset of `X` with parameter `p`.
-
-Note: The assumption `0 < 𝔼[sup_{f ∈ Λ} ∑ i ∈ Xp, f i] < ∞` is not explicitly stated in the theorem
-but used in the last step of the proof where `𝔼 ≥ (L/L') * 𝔼` is a contradiction for `L > L'`.
 Source: J. Park and H. T. Pham, `On a conjecture of Talagrand on selector processes and a consequence on positive empirical processes`, Annals of Math, 199 (3) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-199-3-SupremumOfSelectorProcesses.lean Via leanprover/lean-eval@38361be, problem `annals_supremum_of_selector_processes`.
 -/
 public theorem_wanted theorem_1_2 : ∃ L : ℝ≥0, 0 < L ∧ ∀ (p : I), 0 < p → p < 1 →
@@ -145,34 +152,31 @@ public theorem_wanted theorem_1_2 : ∃ L : ℝ≥0, 0 < L ∧ ∀ (p : I), 0 < 
     IsSmall p {s : Set X | ⨆ f ∈ Λ, ∑ i ∈ s, (f i : ℝ≥0∞) ≥
         L * 𝔼⁻[⨆ f ∈ Λ, ∑ i ∈ Xp, (f i : ℝ≥0∞); Xp ∼ binomialSetDistribution X p]}
 
-/-- Given a sequence of `𝕋`-valued random variables `Y_1, …, Y_N` and a function `f : 𝕋 → ℝ≥0`,
-define the random variable
+/-- **Empirical averages.** Given random variables $Y_1, \dots, Y_N$ on $\Omega$ with values in
+$\mathbb{T}$ and a function $f : \mathbb{T} \to [0, \infty)$, $Z_N(f)$ is the random variable
+$Z_N(f)(\omega) = \frac{1}{N} \sum_{i=1}^{N} f(Y_i(\omega))$, which is $0$ when $N = 0$.
 
-`Z N Y f := N⁻¹ ∑ i ∈ {1,…,N}, f(Yᵢ)`
-
-When the sequence `Y_1, …, Y_N` is i.i.d, we call `Z N Y f` an empirical process.
--/
+When $Y_1, \dots, Y_N$ are i.i.d., $Z_N(f)$ is called an empirical process. -/
 noncomputable def Z {Ω 𝕋 : Type*} (N : ℕ) (Y : Fin N → Ω → 𝕋) (f : 𝕋 → ℝ≥0) (ω : Ω) : ℝ≥0 :=
   (N : ℝ≥0)⁻¹ * ∑ i : Fin N, f (Y i ω)
 
 open Classical in
 /--
-Statement of Theorem 1.3:
+**Park–Pham theorem on positive empirical processes.** There is a real number $L > 0$ with the
+following property. Let $N > 0$, let $\mathbb{T}$ be a Polish space with its Borel
+$\sigma$-algebra and a probability measure $\nu$, and let $Y_1, \dots, Y_N$ be independent random
+variables on a measure space $(\Omega, P)$ with values in $\mathbb{T}$, each with law $\nu$. For
+$f : \mathbb{T} \to [0, \infty)$ let $Z_f = \frac{1}{N} \sum_{i=1}^{N} f(Y_i)$. Let
+$\mathcal{F}$ be a finite set of measurable functions from $\mathbb{T}$ to $[0, \infty)$ that are
+essentially bounded with respect to $\nu$, and write
+$E = \mathbb{E}\bigl[\sup_{f \in \mathcal{F}} Z_f\bigr]$, computed in $[0, \infty]$. If
+$0 < E < \infty$, then there is a finite collection $\mathcal{C}$ of pairs $(g, t)$, where
+$g : \mathbb{T} \to [0, \infty)$ is measurable and $t > 0$ is real, such that every $\omega$
+with $\sup_{f \in \mathcal{F}} Z_f(\omega) \ge L E$ satisfies $Z_g(\omega) \ge t$ for some
+$(g, t) \in \mathcal{C}$, and $\sum_{(g, t) \in \mathcal{C}} P(Z_g \ge t) \le 1/2$.
 
-There exists `L > 0` such that for any `N > 0`, i.i.d random variables `Y_1, …, Y_N` distributed
-according to a Borel probability measure `ν` on a Polish space `𝕋`, if `𝓕` is a finite set of
-non-negative functions in `L∞(𝕋)` and `0 < 𝔼[sup_{f ∈ 𝓕} Z Y f] < ∞` then there exists a finite
-collection `𝓒` of pairs `(g, t)` where `g : 𝕋 → ℝ≥0`, `t > 0` such that
-
-`{sup_{f ∈ 𝓕} Z N Y f ≥ L * 𝔼[sup_{f ∈ 𝓕} Z N Y f] } ⊆ ⋃ (g,t) ∈ 𝓒, {t ≤ Z N Y g}`
-
-and
-
-`∑ (g,t) ∈ 𝓒, P(t ≤ Z N Y g) ≤ 2⁻¹`.
-
-Note: The requirement that the collection `𝓒` be finite is not explicitly stated in the paper.
-However, `𝓒` must at least be assumed to be countable in order for the sum to make sense,
-and the collections `𝓒` produced by the proof are indeed finite.
+The paper does not state explicitly that $\mathcal{C}$ is finite. It must at least be countable
+for the sum to make sense, and the collections produced by the proof are finite.
 
 Source: J. Park and H. T. Pham, `On a conjecture of Talagrand on selector processes and a consequence on positive empirical processes`, Annals of Math, 199 (3) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-199-3-SupremumOfSelectorProcesses.lean Via leanprover/lean-eval@38361be, problem `annals_supremum_of_selector_processes`.
 -/

@@ -35,27 +35,30 @@ Apache-2.0 licensed `ramanujanSum` declaration in
 
 namespace MetaMathlibExt
 
-/-- The Ramanujan sum of modulus `n` at `t`, expressed through the standard additive
-character on `ZMod n`.
-
-The assumption `[NeZero n]` expresses the usual requirement that the natural-number
-modulus be positive. -/
+/-- **Ramanujan sum.** For a positive integer $n$ and an integer $t$, the Ramanujan sum of modulus
+$n$ at $t$ is the complex number
+$$c_n(t) = \sum_{a \in (\mathbb{Z}/n\mathbb{Z})^\times} e^{2\pi i a t / n},$$
+the sum over the units $a$ modulo $n$ of the standard additive character of $\mathbb{Z}/n\mathbb{Z}$
+evaluated at $a t$. -/
 noncomputable def ramanujanSum (n : ℕ) [NeZero n] (t : ℤ) : ℂ :=
   ∑ a : (ZMod n)ˣ, ZMod.stdAddChar ((a : ZMod n) * (t : ZMod n))
 
-/-- The Ramanujan sum at zero is Euler's totient function. -/
+/-- **Ramanujan sum at zero.** For every positive integer $n$, the Ramanujan sum $c_n(0)$ equals
+Euler's totient $\varphi(n)$. -/
 @[simp]
 theorem ramanujanSum_zero (n : ℕ) [NeZero n] :
     ramanujanSum n 0 = Nat.totient n := by
   simp [ramanujanSum, ZMod.card_units_eq_totient]
 
-/-- Every Ramanujan sum of modulus one equals one. -/
+/-- **Ramanujan sums of modulus one.** For every integer $t$, the Ramanujan sum $c_1(t)$ equals
+$1$. -/
 @[simp]
 theorem ramanujanSum_modulus_one (t : ℤ) : ramanujanSum 1 t = 1 := by
   have ht : (t : ZMod 1) = 0 := Subsingleton.elim _ _
   simp [ramanujanSum, ht]
 
-/-- A Ramanujan sum is periodic in its integer argument with period the modulus. -/
+/-- **Periodicity of Ramanujan sums.** For every positive integer $n$ and all integers $t$ and $k$,
+the Ramanujan sum $c_n$ of modulus $n$ satisfies $c_n(t + kn) = c_n(t)$. -/
 @[simp]
 theorem ramanujanSum_add_mul_modulus (n : ℕ) [NeZero n] (t k : ℤ) :
     ramanujanSum n (t + k * n) = ramanujanSum n t := by

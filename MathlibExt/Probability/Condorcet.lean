@@ -282,18 +282,6 @@ private lemma true_inter_false {Ω : Type*} (X : ℕ → Ω → Bool) (j : ℕ) 
   rw [h1] at h2
   simp at h2
 
-private lemma sdiff_erase_eq {s t : Finset ℕ} {j : ℕ} :
-    (s.erase j) \ t = (s \ t).erase j := by
-  ext x
-  simp [Finset.mem_erase, Finset.mem_sdiff]
-  tauto
-
-private lemma insert_sdiff_eq {s t : Finset ℕ} {j : ℕ} :
-    s \ insert j t = (s \ t).erase j := by
-  ext x
-  simp [Finset.mem_erase, Finset.mem_sdiff]
-  tauto
-
 private lemma pat_split {Ω : Type*} (X : ℕ → Ω → Bool) (s t : Finset ℕ) (j : ℕ)
     (hjmem : j ∈ s \ t) :
     let E_mid := (t.inf fun i => {ω : Ω | X i ω = true}) ∩
@@ -306,9 +294,9 @@ private lemma pat_split {Ω : Type*} (X : ℕ → Ω → Bool) (s t : Finset ℕ
   have hjs : j ∈ s := (Finset.mem_sdiff.mp hjmem).1
   have hjt : j ∉ t := (Finset.mem_sdiff.mp hjmem).2
   have hsdiff : s \ t = insert j ((s \ t).erase j) := (Finset.insert_erase hjmem).symm
-  have hmid_eq : (s.erase j) \ t = (s \ t).erase j := sdiff_erase_eq
+  have hmid_eq : (s.erase j) \ t = (s \ t).erase j := Finset.erase_sdiff_comm s t j
   have hE2sdiff : s \ insert j t = (s.erase j) \ t := by
-    rw [insert_sdiff_eq, hmid_eq]
+    rw [Finset.sdiff_insert, hmid_eq]
   have hinf_false : ((s \ t).inf fun i => {ω : Ω | X i ω = false})
       = {ω : Ω | X j ω = false} ∩ (((s.erase j) \ t).inf fun i => {ω : Ω | X i ω = false}) := by
     conv_lhs => rw [hsdiff, ← hmid_eq]
@@ -415,14 +403,14 @@ private lemma pattern_aux {Ω : Type*} [MeasurableSpace Ω]
         exact absurd hx hjt
       · exact hsub hx
     have hcard_mid : ((s.erase j) \ t).card = k := by
-      have h1 : (s.erase j) \ t = (s \ t).erase j := sdiff_erase_eq
+      have h1 : (s.erase j) \ t = (s \ t).erase j := Finset.erase_sdiff_comm s t j
       rw [h1]
       have h2 := Finset.card_erase_add_one hjmem
       omega
     have hsub_ins : insert j t ⊆ s := by
       apply Finset.insert_subset hjs hsub
     have hcard_ins : (s \ insert j t).card = k := by
-      have h1 : s \ insert j t = (s \ t).erase j := insert_sdiff_eq
+      have h1 : s \ insert j t = (s \ t).erase j := Finset.sdiff_insert s t j
       rw [h1]
       have h2 := Finset.card_erase_add_one hjmem
       omega
@@ -814,10 +802,16 @@ private lemma measSet_maj {Ω : Type*} [MeasurableSpace Ω]
   exact (Finset.finite_toSet _).measurableSet_biUnion
     (fun t _ => measSet_filter_eq X hmeas _ t)
 
-/-- Condorcet's jury theorem (statement ID `condorcet-s1`): n independent voters
-each correct with probability `p > 1/2`, with votes modeled as Bernoulli trials;
-the majority vote, via a `Finset.card` threshold, is correct with probability
-tending to 1 as `n → ∞` and exceeding `p` for every odd `n > 1`.
+/-- **Condorcet's jury theorem.** Let $\mu$ be a probability measure on a measurable space
+$\Omega$, let $X_0, X_1, \dots$ be measurable maps from $\Omega$ to $\{\text{true}, \text{false}\}$
+(the votes, true meaning a correct vote), and let $p$ be a number with $1/2 < p < 1$. Suppose that
+each vote is correct with probability $p$, that is $\mu(X_i = \text{true}) = p$ for every $i$, and
+that the events $\{X_i = \text{true}\}$ are independent: for every nonempty finite set $s$ of
+indices, $\mu\bigl(\bigcap_{i \in s} \{X_i = \text{true}\}\bigr) = \prod_{i \in s}
+\mu(X_i = \text{true})$. For $n \in \mathbb{N}$ let $M_n$ be the event that more than
+$\lfloor n/2 \rfloor$ of the first $n$ votes $X_0, \dots, X_{n-1}$ are correct. Then
+$\mu(M_n) \to 1$ as $n \to \infty$, and $\mu(M_n) > p$ for every odd $n > 1$.
+
 Source: https://en.wikipedia.org/wiki/Condorcet%27s_jury_theorem.
 Proves `Wanted` entry `condorcet_jury_theorem`.
 -/
@@ -1025,8 +1019,14 @@ theorem condorcet_jury_theorem {Ω : Type*} [MeasurableSpace Ω]
       ne_top_of_lt (MeasureTheory.measure_lt_top _ _)
     exact (ENNReal.toReal_lt_toReal hp_top hfin).mp hgt
 
-/-- `condorcet_jury_theorem` with the votes' independence stated as
-`ProbabilityTheory.iIndepFun`. -/
+/-- **Condorcet's jury theorem for mutually independent votes.** Let $\mu$ be a probability measure
+on a measurable space $\Omega$, let $X_0, X_1, \dots$ be measurable maps from $\Omega$ to
+$\{\text{true}, \text{false}\}$ (the votes, true meaning a correct vote) that are mutually
+independent random variables under $\mu$, and let $p$ be a number with $1/2 < p < 1$. Suppose that
+each vote is correct with probability $p$, that is $\mu(X_i = \text{true}) = p$ for every $i$. For
+$n \in \mathbb{N}$ let $M_n$ be the event that more than $\lfloor n/2 \rfloor$ of the first $n$
+votes $X_0, \dots, X_{n-1}$ are correct. Then $\mu(M_n) \to 1$ as $n \to \infty$, and
+$\mu(M_n) > p$ for every odd $n > 1$. -/
 theorem condorcet_jury_theorem_of_iIndepFun {Ω : Type*} [MeasurableSpace Ω]
     {μ : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure μ]
     (X : ℕ → Ω → Bool) (p : ENNReal) (hp : 1 / 2 < p) (hp2 : p < 1)

@@ -1802,19 +1802,6 @@ private lemma zetaEStar_cons_eq_zetaRS (e : ℕ) (t : List ℕ) :
 
 /-! ## Step 5d: rotation bookkeeping and `B` finiteness -/
 
-private lemma kl_len (l : ℕ) (k : Fin l → ℕ) : (List.ofFn k).length = l :=
-  List.length_ofFn
-
-private lemma kl_sum_eq (l : ℕ) (k : Fin l → ℕ) :
-    (List.ofFn k).sum = ∑ j, k j := by
-  have hlen : (List.ofFn k).length = l := List.length_ofFn
-  have h1 : (List.ofFn k).take l = List.ofFn k :=
-    List.take_of_length_le (by omega)
-  rw [← h1, List.sum_take_ofFn]
-  have hfil : (Finset.univ.filter (fun j : Fin l => j.val < l)) = Finset.univ :=
-    Finset.filter_true_of_mem (fun j _ => j.2)
-  rw [hfil]
-
 private lemma rot_len (l : ℕ) (k : Fin l → ℕ) (j : Fin l) :
     ((List.ofFn k).rotate j.val).length = l := by
   rw [List.length_rotate, List.length_ofFn]
@@ -1822,13 +1809,6 @@ private lemma rot_len (l : ℕ) (k : Fin l → ℕ) (j : Fin l) :
 private lemma rot_sum (l : ℕ) (k : Fin l → ℕ) (j : Fin l) :
     ((List.ofFn k).rotate j.val).sum = (List.ofFn k).sum :=
   (List.rotate_perm _ _).sum_eq
-
-/-- Indexing into a list tail. -/
-private lemma tail_getElem (l : List ℕ) (m : ℕ) (h1 : m < l.tail.length)
-    (h2 : m + 1 < l.length) : l.tail[m]'h1 = l[m + 1]'h2 := by
-  cases l with
-  | nil => simp at h1
-  | cons a t => rfl
 
 /-- Split off leading 1's (star version of the strict decomposition). -/
 private lemma decomp_leading_onesS (l : List ℕ) :
@@ -2058,7 +2038,7 @@ private lemma ofFn_entries_eq (l : ℕ) (hl : 0 < l) (k : Fin l → ℕ)
             = ((List.ofFn k).rotate j.val)[m + 1]'(by
               rw [hrot]
               omega) := by
-          exact tail_getElem _ m hm_lt (by rw [hrot]; omega)
+          exact List.getElem_tail hm_lt
         rw [hrot_mem]
         have hrot_get : ((List.ofFn k).rotate j.val)[m + 1]'(by
               rw [hrot]
@@ -2074,13 +2054,24 @@ private lemma ofFn_entries_eq (l : ℕ) (hl : 0 < l) (k : Fin l → ℕ)
 end StarCyclic
 
 /--
-Cyclic sum formula for multiple zeta-star values.
+**Cyclic sum formula for multiple zeta-star values.** Let $l \ge 1$ and let $k_0, \dots, k_{l-1}$
+be positive integers, not all equal to $1$, with subscripts read modulo $l$, and put
+$K = k_0 + \cdots + k_{l-1}$. Write $\zeta^\star$ for the multiple zeta-star value and $\zeta$ for
+the strict multiple zeta value. Suppose that for each $0 \le j \le l - 1$ and each natural number
+$i$ an index $\mathbf{c}_{j,i}$ is given that is admissible or empty, and that for
+$1 \le i \le k_j - 1$ its entries are $(k_j - i + 1, k_{j+1}, \dots, k_{j+l-1}, i)$, the run
+$k_{j+1}, \dots, k_{j+l-1}$ being empty when $l = 1$. Let $\mathbf{t}$ be an index, admissible
+or empty, whose only entry is $K + 1$. Then
+$$
+\sum_{j=0}^{l-1} \sum_{i=1}^{k_j - 1} \zeta^\star(\mathbf{c}_{j,i}) = K \, \zeta(\mathbf{t}).
+$$
+
+Proves `Wanted` entry `cyclic_sum_formula_multiple_zeta_star_values`.
+
 Source: S. Saito, T. Tanaka, and N. Wakabayashi, "Combinatorial Remarks on the Cyclic
 Sum Formula for Multiple Zeta Values", Journal of Integer Sequences 14 (2011),
 Article 11.2.4, Theorem `thm:CSF_MZSVs`, line 869,
 <https://cs.uwaterloo.ca/journals/JIS/VOL14/Saito/saito22.tex>.
-
-Proves `Wanted` entry `cyclic_sum_formula_multiple_zeta_star_values`.
 -/
 theorem cyclic_sum_formula_multiple_zeta_star_values
     (l : ℕ) (hl : 0 < l)
@@ -2101,8 +2092,8 @@ theorem cyclic_sum_formula_multiple_zeta_star_values
       MultipleZeta.starValue (cyclicIndex j i) (hcyclicAdmissible j i) =
       ((∑ j : Fin l, k j : ℕ) : ℝ) *
         MultipleZeta.strictValue totalIndex htotalAdmissible := by
-  have hlen : (List.ofFn k).length = l := StarCyclic.kl_len l k
-  have hsum_nat : (List.ofFn k).sum = ∑ j, k j := StarCyclic.kl_sum_eq l k
+  have hlen : (List.ofFn k).length = l := List.length_ofFn
+  have hsum_nat : (List.ofFn k).sum = ∑ j, k j := List.sum_ofFn
   have hpos : ∀ x ∈ List.ofFn k, 1 ≤ x := by
     intro x hx
     obtain ⟨j, rfl⟩ := List.mem_ofFn.mp hx

@@ -31,40 +31,63 @@ universe u
 
 namespace Cslib.Algorithms.Lean.Stack
 
-/-- Add a new top element, charging one successful PUSH event. -/
+/-- **Stack push.** Stacks over a type $\alpha$ are lists of elements of $\alpha$, with the first
+element as the top. Pushing $v \in \alpha$ onto a stack $s$ returns the stack with top $v$
+followed by the elements of $s$, at cost $1$ (one successful push event). -/
 def push {α : Type u} (stack : List α) (value : α) : TimeM Nat (List α) := do
   TimeM.tick 1
   pure (value :: stack)
 
-/-- Return the removed element and remaining stack, or explicit underflow. -/
+/-- **Stack pop.** Stacks over a type $\alpha$ are lists of elements of $\alpha$, with the first
+element as the top. Popping the empty stack returns underflow (no value) at cost $0$. Popping a
+stack with top $v$ and remaining stack $t$ returns the pair $(v, t)$ at cost $1$ (one successful
+pop event). -/
 def pop {α : Type u} : List α → TimeM Nat (Option (α × List α))
   | [] => pure none
   | value :: tail => do
     TimeM.tick 1
     pure (some (value, tail))
 
-/-- Observe the top without changing the input stack, or explicit underflow. -/
+/-- **Stack top.** Stacks over a type $\alpha$ are lists of elements of $\alpha$, with the first
+element as the top. Reading the top of the empty stack returns underflow (no value) at cost $0$.
+Reading the top of a stack with top $v$ returns $v$ at cost $1$ (one successful top event); the
+stack itself is not returned or changed. -/
 def top {α : Type u} : List α → TimeM Nat (Option α)
   | [] => pure none
   | value :: _ => do
     TimeM.tick 1
     pure (some value)
 
-/-- POP refinement and cost do not require an inhabitant of the element type. -/
+/-- **Result and cost of stack pop.** Let $s$ be a stack over a type $\alpha$ (a list of elements
+of $\alpha$ whose first element is the top). If $s$ is empty, popping $s$ returns underflow (no
+value) at cost $0$. If $s$ has top $h$ and remaining stack $t$, popping $s$ returns the pair
+$(h, t)$ at cost $1$.
+
+This holds for every type $\alpha$; no element of $\alpha$ is assumed to exist. -/
 theorem pop_eq {α : Type u} (stack : List α) :
     pop stack = (match stack with
       | [] => ⟨none, 0⟩
       | head :: tail => ⟨some (head, tail), 1⟩) := by
   cases stack <;> rfl
 
-/-- TOP refinement and cost do not require an inhabitant of the element type. -/
+/-- **Result and cost of reading the stack top.** Let $s$ be a stack over a type $\alpha$ (a list
+of elements of $\alpha$ whose first element is the top). If $s$ is empty, reading the top of $s$
+returns underflow (no value) at cost $0$. If $s$ has top $h$, reading the top of $s$ returns $h$
+at cost $1$.
+
+This holds for every type $\alpha$; no element of $\alpha$ is assumed to exist. -/
 theorem top_eq {α : Type u} (stack : List α) :
     top stack = (match stack with
       | [] => ⟨none, 0⟩
       | head :: _ => ⟨some head, 1⟩) := by
   cases stack <;> rfl
 
-/-- Exact list refinement and selected-event costs, including underflow. -/
+/-- **Result and cost of the stack operations.** Let $\alpha$ be a type, let $s$ be a stack over
+$\alpha$ (a list of elements of $\alpha$ whose first element is the top) and let $v \in \alpha$.
+Pushing $v$ onto $s$ returns the stack with top $v$ followed by the elements of $s$, at cost $1$.
+Popping $s$ returns underflow (no value) at cost $0$ if $s$ is empty, and returns the pair
+$(h, t)$ at cost $1$ if $s$ has top $h$ and remaining stack $t$. Reading the top of $s$ returns
+underflow (no value) at cost $0$ if $s$ is empty, and returns $h$ at cost $1$ if $s$ has top $h$. -/
 theorem operations_spec {α : Type u} (stack : List α) (value : α) :
     push stack value = ⟨value :: stack, 1⟩ ∧
     pop stack = (match stack with
