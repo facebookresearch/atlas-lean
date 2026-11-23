@@ -110,7 +110,10 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 - **One page per result.** Search the vault and pinned Mathlib before adding a
   page, and link an existing one instead of restating it. Pages for documented
   declarations come from `sync_wiki.py declarations`, then may be edited; a
-  hand-written second page splits the node in two.
+  hand-written second page splits the node in two. When Lean states the same
+  result more than once, the page credits one declaration and its row lists the
+  others under `duplicates`, which get no page and whose uses count as uses of
+  the page ([Maintaining articles](#maintaining-articles)).
 - **Prose is timeless.** Don't describe the library's state ("the Lean proof",
   "not formalized yet"): it goes stale as the Lean changes, and the site shows
   status already.
@@ -130,7 +133,8 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   status, so a folder still to expand does not look finished.
 - **An expansion replaces the node** with pages beside it that together cover
   its mathematics at a sensible granularity, deletes the node's page and
-  annotation (its `id` is never reused), and repoints every link to it. A new
+  annotation (its `id` is never reused) and records its retirement in the move
+  ledger, and repoints every link to it. A new
   page that is still high-level is a new marked node. Follow
   [Expanding a node](#expanding-a-node), which says when a new page may
   become a wanted statement.
@@ -175,7 +179,9 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   edge is derived from the statements, with witnesses, which keeps the card
   map honest about what uses what.
 - **A move that retires an address goes into `scripts/card-moves.jsonl`,**
-  and a page gets an `id` before it moves. `scripts/cards.py check` must pass.
+  and a page gets an `id` before it moves; so does the retirement of a card or
+  of a statement page, with what replaces it. `scripts/cards.py check` must
+  pass.
 - **A planned page may record its counterparts,** the Mathlib or ATLAS
   declarations that state its result or a close form, with how each compares
   ([cards.md](cards.md#counterparts)). Each is verified clause by clause against
@@ -251,10 +257,14 @@ record it in `scripts/card-moves.jsonl` instead ([Cards](#cards)).
 
 1. Add the new pages beside the node and list them on the folder page. Move
    the node's prose and sources to the folder page or the new pages.
-2. Delete the node's page and annotation. Repoint every link to it, under
-   `## Depends on`, `## Proof depends on` or `## Informally uses`, to the new
-   pages that link actually needs. `autoform check` fails on a link left under
-   the first two but only warns under `## Informally uses`.
+2. Delete the node's page and annotation, and append the retirement row to
+   `scripts/card-moves.jsonl`, `{"statement": "<its id>", "page": "<its
+   path>", "replaced_by": "<the id of the new page or folder page a reader
+   should go to>"}` ([cards.md](cards.md#move-ledger)), so that its address
+   keeps leading somewhere and its id is never reused. Repoint every link to
+   it, under `## Depends on`, `## Proof depends on` or `## Informally uses`, to
+   the new pages that link actually needs. `autoform check` fails on a link
+   left under the first two but only warns under `## Informally uses`.
 3. Give each new page the node's prerequisites it still needs; order among new
    planned pages goes in their own `## Depends on`.
 4. Make a low-level page a `theorem_wanted` or `def_wanted` statement, with a
@@ -524,6 +534,34 @@ that another row credits. Relink the page once every listed issue
 is fixed and the declaration states what the page does: restore its `object`
 and remove `held`.
 
+When Lean states a page's result in several declarations, the page credits one
+of them, and its row lists the others under `org.atlas-wiki`, as `"duplicates":
+["<Lean name>", ...]`. A duplicate is no credit: the row still credits one
+declaration. `declarations` gives a duplicate no page and lists it as a
+duplicate. The extraction counts another page's use of a duplicate as a use of
+the page's declaration, so that page depends on the page. To the declaration
+itself, its duplicate is part of it. The page depends on what the duplicate
+uses, as for an undocumented declaration, and never on itself. Where the
+declaration names the duplicate itself, it also names what the duplicate names,
+a Mathlib-credited declaration included. The row's own `object` credits a
+declaration of this project, and the end that credits it names it itself: one
+the links folder's defaults fill in counts for none, and so does one only a
+reference names. An unlinked, planned, held or Mathlib-credited row lists none.
+Each name is given once, and holds no control character, as no Lean name does.
+It is not the row's own declaration, and no other row links it, holds it back or
+lists it. `declarations` reports any
+other list as an error and then writes nothing; a pull request's run stops only
+on a list its changes break, as for a held marker. The extraction also writes
+nothing when a page stands for a duplicate, when two private declarations share
+the name of a duplicate or of the page's declaration, or when its dump lacks
+either of them while the Lean sources still declare it, whatever became of the
+other. A Lean change that deletes or renames a duplicate, or the page's
+declaration, fails no build: the extraction warns, naming both, and a use of the
+duplicate then counts for no page. `declarations` and `lean-facts` list such a
+stale entry for an editor. A pull request's run stops on one its changes add or
+change, such as a duplicate listed on a row whose declaration the Lean no longer
+has. Drop the entry, or relink the page, keeping the row's article id.
+
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept
 as unlinked mathematical articles during rendering until an editor resolves
@@ -604,17 +642,21 @@ definition's body and an inductive type's constructors count as its
 statement): one it reaches only through other constants gives the page no edge
 to it. `extract_v2_lean_dependencies.py --registry` writes that registry beside
 an unchanged `build/lean-dependencies.json`, with the digest of the credited
-names, of the dump and of that extraction, and Mathlib's revision. `lean-facts`
-and the cards take the registry only beside the extraction it was written with;
-like that extraction, it holds only for the dump and the checkout it was made
-from, which they cannot check, so the wiki job makes all three in one run. Before
+names, of the rows' `duplicates` lists, of the dump and of that extraction,
+Mathlib's revision, and a format of its own. `lean-facts` and the cards take the
+registry only beside the extraction it was written with, and only for their
+checkout's credited names and `duplicates` lists: a `duplicates` edit can change
+the bridges and leave the extraction as it was. Like that extraction, it holds
+only for the dump and the checkout it was made from, which they cannot check
+otherwise, so the wiki job makes all three in one run. Before
 it writes either file, the extractor
 refuses a dump that is not in the current format, was made at another Mathlib,
 is not one whole stream (its header first, its footer last, rows between), has a
 row unlike those the dump writes, or does not answer exactly the listed names.
 `lean-facts --registry` checks that the registry is
-well formed, was made from the checkout's credited names at its Mathlib, that
-its found and missing names split them, that each of its edges joins a
+well formed, in the current format, and was made from the checkout's credited
+names and `duplicates` lists at its Mathlib, that
+its found and missing names split those names, that each of its edges joins a
 declaration a page credits to one it found and none is both kept and left out,
 and that a module a row names is the declaration's, before it writes anything;
 with or without the registry, it also stops when the extraction has no row for a
