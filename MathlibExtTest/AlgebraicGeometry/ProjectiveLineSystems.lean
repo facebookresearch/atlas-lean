@@ -32,8 +32,9 @@ example (X : Over (Spec (.of k))) : IsProjectiveVariety X ↔ ProjectiveSpace.Is
 example (n : ℕ) : IsProjectiveVariety (ProjectiveSpace.projectiveSpace k n) :=
   ⟨n + 1, 𝟙 _, show IsClosedImmersion (𝟙 _) from inferInstance, (Category.id_comp _).symm⟩
 
--- Ampleness is Serre's criterion over Mathlib's finitely presented sheaves of modules.
-example {X : Scheme.{u}} (L : LineBundle X) :
+-- On a Noetherian scheme, ampleness is Serre's criterion over Mathlib's finitely presented
+-- sheaves of modules.
+example {X : Scheme.{u}} [IsNoetherian X] (L : LineBundle X) :
     IsAmpleLine L ↔ ∀ F : X.Modules, SheafOfModules.IsFinitePresentation (R := X.ringCatSheaf) F →
       ∃ N : ℕ, ∀ m ≥ N, GloballyGenerated (moduleTensor X F (power L.val m)) :=
   Iff.rfl
