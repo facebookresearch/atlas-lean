@@ -26,7 +26,7 @@ The fuel used by `dpll` is the number of distinct variables in the input.
 
 namespace Cslib.Algorithms.SAT.DPLL
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- **First unit literal.** For a CNF formula $\varphi$, read as a list of clauses, this returns
 the literal $\ell$ of the first clause of $\varphi$ that consists of the single literal $\ell$,
