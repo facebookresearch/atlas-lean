@@ -242,14 +242,98 @@ class BlueprintWorkflowTests(unittest.TestCase):
                         self.assertEqual(len(calls), 1)
                         self.assertTrue(calls[0].endswith(command))
 
-    def test_the_build_cache_is_restored_from_ci_and_never_saved(self):
+    def test_ci_builds_are_restored_and_only_the_mathlib_dump_is_saved_outside_pull_requests(self):
+        # CI's keys and paths, so that both workflows read the entries CI saves from main (ci.yml): the build of the
+        # commit a pull request is tested against, else main's newest, and the package builds, which only change with
+        # the pins. They are restored after `lake exe cache get` clones the packages.
+        names = [step.get("name") for step in self.steps]
+        pins = "${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}"
         restore = self.step("Restore local build")
         self.assertIn("actions/cache/restore@", restore["uses"])
-        self.assertIn("lake-build-", restore["with"]["restore-keys"])
-        for job in self.workflow["jobs"].values():
-            for step in job["steps"]:
-                uses = step.get("uses", "")
-                self.assertFalse(uses.startswith(("actions/cache@", "actions/cache/save@")), uses)
+        self.assertEqual(restore["with"]["path"], ".lake/build")
+        self.assertEqual(restore["with"]["key"], f"lake-build-{pins}-${{{{ steps.base.outputs.sha }}}}")
+        self.assertEqual(restore["with"]["restore-keys"].strip(), f"lake-build-{pins}-")
+        packages = self.step("Restore the package builds")
+        self.assertIn("actions/cache/restore@", packages["uses"])
+        self.assertEqual(packages["with"]["path"].splitlines(),
+                         [".lake/packages/cslib/.lake/build", ".lake/packages/Physlib/.lake/build"])
+        self.assertEqual(packages["with"]["key"], f"lake-deps-{pins}")
+        self.assertNotIn("restore-keys", packages["with"])
+        self.assertLess(names.index("Fetch Mathlib cache"), names.index("Restore the package builds"))
+        self.assertLess(names.index("Find the base build"), names.index("Restore local build"))
+        # A restore that fails part-way keeps what it extracted and reports no key: Lake must not trust it.
+        removal = self.step("Remove a failed restore")
+        self.assertEqual(removal["env"], {
+            "PACKAGE_BUILDS": "${{ steps.package-builds.outputs.cache-matched-key }}",
+            "LOCAL_BUILD": "${{ steps.build-cache.outputs.cache-matched-key }}",
+        })
+        self.assertEqual(packages["id"], "package-builds")
+        self.assertEqual(restore["id"], "build-cache")
+        self.assertEqual(names.index("Remove a failed restore"), names.index("Restore local build") + 1)
+        self.assertLess(names.index("Restore the package builds"), names.index("Remove a failed restore"))
+        self.assertLess(names.index("Remove a failed restore"), names.index("Build memory-heavy modules one at a time"))
+        builds = (".lake/packages/cslib/.lake/build", ".lake/packages/Physlib/.lake/build", ".lake/build")
+        for matched, kept in ((("", ""), ()), (("lake-deps-k", ""), builds[:2]), (("", "lake-build-k"), builds[2:]),
+                              (("lake-deps-k", "lake-build-k"), builds)):
+            with tempfile.TemporaryDirectory() as directory:
+                for build in builds:
+                    (Path(directory) / build / "lib").mkdir(parents=True)
+                subprocess.run(["bash", "-c", removal["run"]], cwd=directory, check=True,
+                               env={**os.environ, "PACKAGE_BUILDS": matched[0], "LOCAL_BUILD": matched[1]})
+                self.assertEqual([b for b in builds if (Path(directory) / b / "lib").is_dir()], list(kept), matched)
+        # A pull request's checkout is a merge commit whose first parent is the commit it is tested against; other
+        # runs look for their own commit.
+        with tempfile.TemporaryDirectory() as directory:
+            def git(*args):
+                return subprocess.run(["git", "-C", directory, "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                                      check=True, capture_output=True, text=True).stdout.strip()
+
+            git("init", "-q")
+            git("commit", "-q", "--allow-empty", "-m", "base")
+            base = git("rev-parse", "HEAD")
+            git("checkout", "-q", "-b", "topic")
+            git("commit", "-q", "--allow-empty", "-m", "change")
+            git("checkout", "-q", base)
+            git("merge", "-q", "--no-ff", "-m", "merge", "topic")
+            merge = git("rev-parse", "HEAD")
+            # The checkout is a depth-one clone, where `HEAD^1` does not resolve.
+            clone = Path(directory) / "clone"
+            subprocess.run(["git", "clone", "-q", "--depth", "1", f"file://{directory}", str(clone)], check=True)
+            for event, expected in (("pull_request", base), ("schedule", merge), ("workflow_dispatch", merge)):
+                output = Path(directory) / f"{event}.out"
+                subprocess.run(["bash", "-c", self.step("Find the base build")["run"]], cwd=clone, check=True,
+                               env={**os.environ, "GITHUB_EVENT_NAME": event, "GITHUB_SHA": merge,
+                                    "GITHUB_OUTPUT": str(output)})
+                self.assertEqual(output.read_text(), f"sha={expected}\n", event)
+        # The Mathlib dump and the graph built from it depend only on the pins and the scripts that make them. Runs
+        # other than pull requests save them once per key; a restored graph skips the Lean setup, the dump and the
+        # graph. No other cache is saved here.
+        mathlib = {step.get("name"): step for step in self.workflow["jobs"]["mathlib"]["steps"]}
+        cached = mathlib["Restore the Mathlib graph"]
+        self.assertIn("actions/cache/restore@", cached["uses"])
+        self.assertEqual(cached["with"]["key"], "mathlib-graph-${{ runner.os }}-${{ hashFiles('lean-toolchain', "
+                         "'lake-manifest.json', 'scripts/dump_mathlib_dependencies.lean', "
+                         "'scripts/extract_mathlib_graph.py', 'scripts/extract_v2_lean_dependencies.py') }}")
+        self.assertNotIn("restore-keys", cached["with"])
+        self.assertEqual(cached["with"]["path"].splitlines(), [
+            f"mathlib-graph/{name}" for name in ("mathlib-dump.jsonl.gz", "mathlib-dump-meta.json", "nodes.jsonl.gz",
+                                                 "edges.jsonl.gz", "graph-meta.json")])
+        order = list(mathlib)
+        miss = "steps.mathlib-graph.outputs.cache-hit != 'true'"
+        for name in ("Free disk space for Lean caches", "Add swap for the Mathlib dump", "Install elan v4.2.4",
+                     "Fetch Mathlib cache", "Dump the Mathlib declarations", "Build the Mathlib graph"):
+            self.assertEqual(mathlib[name]["if"], miss, name)
+            self.assertLess(order.index("Restore the Mathlib graph"), order.index(name), name)
+        self.assertIn("extract_mathlib_graph.py graph", mathlib["Build the Mathlib graph"]["run"])
+        save = mathlib["Save the Mathlib graph"]
+        self.assertEqual(save["if"], f"{miss} && github.event_name != 'pull_request'")
+        self.assertEqual(save["with"], {"path": cached["with"]["path"],
+                                        "key": "${{ steps.mathlib-graph.outputs.cache-primary-key }}"})
+        self.assertEqual(order.index("Save the Mathlib graph"), order.index("Build the Mathlib graph") + 1)
+        self.assertEqual(order.index("Build the Mathlib graph"), order.index("Dump the Mathlib declarations") + 1)
+        saves = [step for job in self.workflow["jobs"].values() for step in job["steps"]
+                 if step.get("uses", "").startswith(("actions/cache@", "actions/cache/save@"))]
+        self.assertEqual(saves, [save])
 
     def test_deployment_is_opt_in_and_never_runs_on_pr_or_merge_group(self):
         jobs = self.workflow["jobs"]

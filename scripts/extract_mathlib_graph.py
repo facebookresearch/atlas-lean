@@ -787,7 +787,9 @@ def command_stats(args: argparse.Namespace) -> int:
         "most_used_in_statements": top(indegree["statement"]),
         "seconds": {"graph": graph_meta["seconds"]},
     }
-    for meta_file in sorted(out.glob("*dump-meta.json")):
+    # The v2 dump's meta first: its ATLAS commit is the layer's. The Mathlib dump depends only on the pins, and the
+    # workflow may restore it from a cache made at another commit.
+    for meta_file in sorted(out.glob("*dump-meta.json"), reverse=True):
         meta = json.loads(meta_file.read_text(encoding="utf-8"))
         stats.setdefault("versions", {key: meta.get(key) for key in ("lean_version", "mathlib_rev", "atlas_commit")})
         stats["seconds"][meta_file.name.removesuffix("-meta.json")] = meta["dump"]["seconds"]

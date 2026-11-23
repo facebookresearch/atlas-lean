@@ -14,12 +14,14 @@ public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.Combinatorics.Enumerative.PellLucasNumber
+public import MathlibExt.NumberTheory.KPellLucasCloseToPowerOfTwo
 
 /-!
 # `k`-Pell–Lucas numbers close to a power of 2
 
 Statements from Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers
-Close to a Power of 2*, INTEGERS 25 (2025), Article A67.
+Close to a Power of 2*, INTEGERS 25 (2025), Article A67. Lemma 6 is proved in
+`MathlibExt.NumberTheory.KPellLucasCloseToPowerOfTwo`.
 
 The `k`-generalized Pell–Lucas sequence starts with `k - 2` zeros followed by `Q_0 = Q_1 = 2`,
 and `Q_n = 2 Q_{n-1} + Q_{n-2} + ⋯ + Q_{n-k}` for `n ≥ 2`; here it is `kPellLucas k n` for
@@ -189,19 +191,6 @@ public theorem_wanted lt_abs_sub_div_of_max_partialQuotient (τ : ℝ) (hτ : Ir
     (hxM : (x : ℝ) < M) :
     1 / (((Finset.range (N + 1)).sup' Finset.nonempty_range_add_one a + 2) * (x : ℝ) ^ 2) <
       |τ - y / x|
-
-/-- **Linear bounds for the logarithm and the exponential near zero (Lemma 6).** Let $a$ and $x$
-be real numbers with $0 < a < 1$ and $0 < |x| < a$. Then
-$|\log(1 + x)| < \frac{-\log(1 - a)}{a} |x|$ and $|x| < \frac{a}{1 - e^{-a}} |e^x - 1|$.
-
-The case $x = 0$, where both strict inequalities read $0 < 0$, is excluded.
-
-Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
-a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 6 (`integers-2025-A67-lem-6`). -/
-public theorem_wanted abs_log_one_add_lt_and_abs_lt_exp_sub_one (a x : ℝ) (ha₀ : 0 < a)
-    (ha₁ : a < 1) (hx : |x| < a) (hx₀ : x ≠ 0) :
-    |Real.log (1 + x)| < -Real.log (1 - a) / a * |x| ∧
-      |x| < a / (1 - Real.exp (-a)) * |Real.exp x - 1|
 
 /-- **Lemma 7.** If `ℓ ≥ 1`, `T > (4ℓ²)^ℓ` and `T > x / (log x)^ℓ`, then
 `x < 2^ℓ T (log T)^ℓ`; stated for `x > 1`, where `(log x)^ℓ` is a real power of a positive
