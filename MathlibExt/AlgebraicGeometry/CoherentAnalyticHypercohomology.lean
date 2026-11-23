@@ -42,10 +42,6 @@ variable (X : ComplexScheme) (d : ℕ) [AnalyticManifold X d]
 instance pullback_isLeftAdjoint : (pullback X d).IsLeftAdjoint :=
   (pullbackPushforwardAdjunction X d).isLeftAdjoint
 
-/-- The actual pullback preserves colimits by its defining adjunction. -/
-instance pullback_preservesFiniteColimits :
-    PreservesFiniteColimits (pullback X d) := by infer_instance
-
 /-- The canonical identification of the pulled-back structure module. -/
 def pullbackUnitIso :
     (pullback X d).obj (SheafOfModules.unit X.left.ringCatSheaf) ≅
