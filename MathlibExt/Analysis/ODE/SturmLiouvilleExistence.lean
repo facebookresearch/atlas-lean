@@ -353,18 +353,19 @@ private theorem eq_zero_of_homogeneous {Vext : ℝ → ℝ} (hV : ∀ t, 0 ≤ V
     · exact hp0 t ⟨h0, h1.le⟩
 
 
-/-- **Existence for the Sturm–Liouville Dirichlet problem on `[0, 1]`.**
-Given a continuous nonnegative potential `V` and a continuous right-hand side
-`f`, there is a `C²` function `u` on `[0, 1]` with `-u'' + V u = f` and
-`u 0 = u 1 = 0`.
+/-- **Existence for the Sturm–Liouville Dirichlet problem on the closed unit interval.** Let $V$
+and $f$ be continuous real functions on $[0, 1]$ with $V \ge 0$. Then there is a function
+$u \colon \mathbb{R} \to \mathbb{R}$ that is $C^2$ on $[0, 1]$, satisfies
+$-u''(x) + V(x)\,u(x) = f(x)$ for every $x \in [0, 1]$, with the second derivative taken within
+$[0, 1]$, and has $u(0) = u(1) = 0$.
 
-This is `SpectralTheory.sturm_liouville_existence` in the v1 formalization,
-whose formalization is left unproved there. The proof here is by the shooting
-method: solve the inhomogeneous system with initial data `(0, 0)` and the
-homogeneous system with initial data `(0, 1)`, show the homogeneous solution
-`w` satisfies `w 1 ≠ 0` by the energy argument `eq_zero_of_homogeneous`, and
-choose `a = -u₀ 1 / w 1` so that the affine combination `u₀ + a • w`, identified
-by ODE uniqueness with the solution having initial data `(0, a)`, vanishes at `1`. -/
+The proof is by the shooting method: let $u_0$ solve the equation with $u_0(0) = u_0'(0) = 0$,
+and let $w$ solve the homogeneous equation $-w'' + V w = 0$ with $w(0) = 0$ and $w'(0) = 1$. An
+energy argument using $V \ge 0$ shows $w(1) \ne 0$, and $u = u_0 + a w$ with
+$a = -u_0(1)/w(1)$ is the required solution.
+
+Source: `SpectralTheory.sturm_liouville_existence` in the v1 formalization, whose formalization
+is left unproved there; the proof here is original. -/
 theorem sturm_liouville_existence
     (V : C(Set.Icc (0 : ℝ) 1, ℝ)) (hV : ∀ x : Set.Icc (0 : ℝ) 1, 0 ≤ V x)
     (f : C(Set.Icc (0 : ℝ) 1, ℝ)) :

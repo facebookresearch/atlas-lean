@@ -62,7 +62,13 @@ private def timedScan [BEq α] (pattern : List α) :
       let remaining ← timedScan pattern suffixes (offset + 1)
       pure (if matched then offset :: remaining else remaining)
 
-/-- All matching zero-based shifts, charging one unit for each executed symbol comparison. -/
+/-- **Naive string matcher.** Let $p = p_0 \cdots p_{m-1}$ be a pattern and
+$t = t_0 \cdots t_{n-1}$ a text over an alphabet with a Boolean equality test. If $m \le n$, the
+naive matcher handles the shifts $s = 0, 1, \dots, n - m$ in turn: it compares $p_i$ with
+$t_{s+i}$ for $i = 0, 1, \dots$ until a comparison fails or all $m$ symbols are compared, and it
+reports $s$ if no comparison failed. It returns the reported shifts in the order found, with cost
+the total number of symbol comparisons executed, failed comparisons included. If $m > n$, it
+reports no shift at cost $0$. -/
 public def naiveMatches [BEq α] (pattern text : List α) : TimeM Nat (List Nat) :=
   if pattern.length ≤ text.length then
     timedScan pattern (text.tails.take (text.length - pattern.length + 1)) 0
@@ -139,7 +145,11 @@ private lemma candidate_length_le (pattern text suffix : List α)
   simp only [List.length_drop]
   omega
 
-/-- Erasing cost gives the canonical index filter on the candidate suffixes. -/
+/-- **Output of naive matching.** Let $p$ be a pattern of length $m$ and $t$ a text of length
+$n$. If $m \le n$, the list of shifts reported by the naive matcher on $p$ and $t$ is the
+increasing list of all $s \in \{0, \dots, n - m\}$ such that $p$ is a prefix of the suffix of
+$t$ starting at the zero-based position $s$, with symbols compared by the Boolean equality of the
+alphabet. If $m > n$, the list is empty. -/
 theorem naiveMatches_ret [BEq α] (pattern text : List α) :
     (naiveMatches pattern text).ret =
       if pattern.length ≤ text.length then
@@ -149,7 +159,13 @@ theorem naiveMatches_ret [BEq α] (pattern text : List α) :
   · simp [naiveMatches, hlen, timedScan_ret]
   · simp [naiveMatches, hlen]
 
-/-- An offset is reported exactly when the pattern matches there, including empty patterns. -/
+/-- **Correctness of naive string matching.** Let $\alpha$ be a type whose Boolean equality
+agrees with equality, and write $|t|$ for the length of a list $t$. For every pattern $p$ and
+text $t$ over $\alpha$ and every natural number $s$, the naive matcher run on $p$ and $t$
+reports the shift $s$ if and only if $p$ matches $t$ at $s$, that is, $s \le |t|$ and $p$ is a
+prefix of the suffix of $t$ obtained by dropping its first $s$ symbols.
+
+In particular, the empty pattern is reported at every shift $s \le |t|$. -/
 theorem mem_naiveMatches_iff [BEq α] [LawfulBEq α] (pattern text : List α) (offset : Nat) :
     offset ∈ (naiveMatches pattern text).ret ↔
       Cslib.Algorithms.Lean.StringMatching.MatchAt pattern text offset := by
@@ -177,7 +193,9 @@ theorem mem_naiveMatches_iff [BEq α] [LawfulBEq α] (pattern text : List α) (o
     simp only [List.length_drop] at hprefixLength
     omega
 
-/-- Reported offsets are strictly increasing, so each occurrence is reported only once. -/
+/-- **Naive matching reports shifts in increasing order.** For every pattern $p$ and text $t$,
+the list of shifts reported by the naive matcher on $p$ and $t$ is strictly increasing; in
+particular, no shift is reported twice. -/
 theorem naiveMatches_pairwise [BEq α] (pattern text : List α) :
     (naiveMatches pattern text).ret.Pairwise (· < ·) := by
   rw [naiveMatches_ret]
@@ -185,7 +203,13 @@ theorem naiveMatches_pairwise [BEq α] (pattern text : List α) :
   · exact List.pairwise_findIdxs
   · exact List.Pairwise.nil
 
-/-- The exact sum of left-to-right comparison counts at every candidate alignment. -/
+/-- **Exact comparison count of naive matching.** Let $p = p_0 \cdots p_{m-1}$ be a pattern and
+$t = t_0 \cdots t_{n-1}$ a text. If $m \le n$, the number of symbol comparisons performed by the
+naive matcher on $p$ and $t$ is
+$$\sum_{s=0}^{n-m} \min(m, k_s + 1),$$
+where $k_s$ is the least $i < m$ such that $p_i$ and $t_{s+i}$ are unequal under the Boolean
+equality of the alphabet, and $k_s = m$ if there is no such $i$. If $m > n$, the naive matcher
+performs no comparisons. -/
 theorem naiveMatches_time_eq [BEq α] (pattern text : List α) :
     (naiveMatches pattern text).time =
       if pattern.length ≤ text.length then
@@ -201,7 +225,9 @@ theorem naiveMatches_time_eq [BEq α] (pattern text : List α) :
     exact timedPrefix_time_eq pattern suffix (candidate_length_le pattern text suffix hlen hsuffix)
   · simp [naiveMatches, hlen]
 
-/-- At most `m` comparisons per alignment, and no comparisons when the pattern is too long. -/
+/-- **Upper bound on the comparisons of naive matching.** For a pattern of length $m$ and a text
+of length $n$, the naive matcher performs at most $(n - m + 1) \cdot m$ symbol comparisons if
+$m \le n$, and no comparisons if $m > n$. -/
 theorem naiveMatches_time_le [BEq α] (pattern text : List α) :
     (naiveMatches pattern text).time ≤
       if pattern.length ≤ text.length then
@@ -257,7 +283,11 @@ private lemma candidate_replicate [BEq α] [ReflBEq α] (x : α) (m n : Nat) (hl
   simp only [List.length_replicate] at hoffset
   exact timedPrefix_replicate x m (n - offset) (by omega)
 
-/-- On repeated-symbol inputs every possible alignment is reported, including overlaps. -/
+/-- **Naive matching on a repeated symbol reports every shift.** Let $\alpha$ be a type whose
+Boolean equality is reflexive, let $x \in \alpha$, and let $m \le n$ be natural numbers. On the
+pattern consisting of $m$ copies of $x$ and the text consisting of $n$ copies of $x$, the naive
+matcher reports exactly the shifts $0, 1, \dots, n - m$ in increasing order, so all overlapping
+occurrences are reported. -/
 theorem naiveMatches_ret_replicate [BEq α] [ReflBEq α] (x : α) (m n : Nat) (hlen : m ≤ n) :
     (naiveMatches (List.replicate m x) (List.replicate n x)).ret = List.range (n - m + 1) := by
   rw [naiveMatches_ret]
@@ -269,7 +299,10 @@ theorem naiveMatches_ret_replicate [BEq α] [ReflBEq α] (x : α) (m n : Nat) (h
     rw [← timedPrefix_ret]
     exact congrArg TimeM.ret (candidate_replicate x m n hlen suffix hsuffix)
 
-/-- Repeated-symbol inputs attain the comparison upper bound exactly. -/
+/-- **Comparison count of naive matching on a repeated symbol.** Let $\alpha$ be a type whose
+Boolean equality is reflexive, let $x \in \alpha$, and let $m \le n$ be natural numbers. On the
+pattern consisting of $m$ copies of $x$ and the text consisting of $n$ copies of $x$, the naive
+matcher performs exactly $(n - m + 1) \cdot m$ symbol comparisons. -/
 theorem naiveMatches_time_replicate [BEq α] [ReflBEq α] (x : α) (m n : Nat) (hlen : m ≤ n) :
     (naiveMatches (List.replicate m x) (List.replicate n x)).time = (n - m + 1) * m := by
   have hlen' : (List.replicate m x).length ≤ (List.replicate n x).length := by simpa using hlen
@@ -283,7 +316,9 @@ theorem naiveMatches_time_replicate [BEq α] [ReflBEq α] (x : α) (m n : Nat) (
       exact congrArg TimeM.time (candidate_replicate x m n hlen suffix hsuffix))
   simpa using hsum
 
-/-- The empty pattern matches every text boundary without any symbol comparisons. -/
+/-- **Naive matching with the empty pattern.** For every text $t$ of length $n$, the naive
+matcher run on the empty pattern and $t$ reports exactly the shifts $0, 1, \dots, n$ in
+increasing order and performs no symbol comparisons. -/
 @[simp]
 theorem naiveMatches_nil_pattern [BEq α] (text : List α) :
     naiveMatches [] text = ⟨List.range (text.length + 1), 0⟩ := by
@@ -297,7 +332,9 @@ theorem naiveMatches_nil_pattern [BEq α] (text : List α) :
   · rw [naiveMatches_time_eq]
     simp
 
-/-- A pattern longer than the text has no candidates and performs no symbol comparisons. -/
+/-- **Naive matching with a pattern longer than the text.** If the pattern $p$ is longer than
+the text $t$, then the naive matcher run on $p$ and $t$ reports no shifts and performs no symbol
+comparisons. -/
 @[simp]
 theorem naiveMatches_of_length_lt [BEq α] (pattern text : List α)
     (hlen : text.length < pattern.length) : naiveMatches pattern text = pure [] := by
