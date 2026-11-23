@@ -40,10 +40,10 @@ inductive Behavior (Label : Type v) where
 /-- The behavior set of a configuration; final and stuck configurations stay existential. -/
 def Beh {Config : Type u} {Label : Type v} (S : OpSem Config Label) (c : Config) :
     Set (Behavior Label) :=
-  fun b => match b with
+  {b | match b with
     | .terminates μs => ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Final c'
     | .reacts μs => ∃ ss : Cslib.ωSequence Config, ss 0 = c ∧ S.lts.OmegaExecution ss μs
-    | .goesWrong μs => ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Stuck c'
+    | .goesWrong μs => ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Stuck c'}
 
 /-- Termination membership unfolds to a multistep reaching some final configuration. -/
 theorem terminates_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
