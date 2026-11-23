@@ -26,6 +26,11 @@ UNLINKED, KEPT = "af_0000000000000000000000a1", "af_0000000000000000000000a2"
 CHECKOUT_PROBLEM = sync.checkout_problem
 
 
+def duplicates_digest() -> str:
+    """The digest of the vault's duplicates lists, as a registry made for its rows records it."""
+    return extract.aliases_digest(sync.listed_duplicates(sync.read_annotations())[0])
+
+
 def paired(registry: object, dependency_file: Path) -> object:
     """A registry as the extractor writes it beside *dependency_file*: with that extraction's digest."""
     if isinstance(registry, dict) and isinstance(registry.get("inputs"), dict):
@@ -269,7 +274,7 @@ class LeanFacts(Vault):
                     "missing": ["M.gone"], "project": [], "mutual": []}
         registry["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
                               "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 3,
-                              "format": sync.REGISTRY_FORMAT}
+                              "aliases_sha256": duplicates_digest(), "format": sync.REGISTRY_FORMAT}
         self.assertEqual(sync.registry_problems(registry, sync.read_annotations()), [])
         counts, unlinked = sync.apply_lean_facts(index, dependencies, registry)
         self.assertEqual(counts, {"articles": 1, "unresolved": 1, "edges": 3, "mathlib": 2})
@@ -316,7 +321,7 @@ class LeanFacts(Vault):
                           {"Ext.atlas": {"statement": [], "proof": ["M.mediated"]}}))
         registry["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
                               "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 3,
-                              "format": sync.REGISTRY_FORMAT}
+                              "aliases_sha256": duplicates_digest(), "format": sync.REGISTRY_FORMAT}
         self.assertEqual(sync.registry_problems(registry, sync.read_annotations()), [])
         (wiki.ROOT / "Ext").mkdir(parents=True, exist_ok=True)
         (wiki.ROOT / "Ext" / "A.lean").write_text("theorem atlas : True := trivial\n")
@@ -347,7 +352,8 @@ class LeanFacts(Vault):
         good = extract.registry(rows, {"Ext.atlas"}, {f"M.{name}": credited(f"M.{name}", "theorem", [], [])
                                                       for name in targets})
         good["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
-                          "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 3, "format": sync.REGISTRY_FORMAT}
+                          "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 3,
+                          "aliases_sha256": duplicates_digest(), "format": sync.REGISTRY_FORMAT}
         self.assertEqual(good["left_out"], {"Ext.atlas": {"statement": [], "proof": ["M.mediated"]}})
         kept = good["bridges"]["Ext.atlas"]
         cases = {
@@ -416,7 +422,7 @@ class LeanFacts(Vault):
                                     {"M.r": credited("M.r", "theorem", [], [])})
         registry["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
                               "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 1,
-                              "format": sync.REGISTRY_FORMAT}
+                              "aliases_sha256": duplicates_digest(), "format": sync.REGISTRY_FORMAT}
         self.assertEqual((registry["bridges"], registry["left_out"]),
                          ({}, {"Ext.T": {"statement": ["M.r"], "proof": []}}))
         older = {**registry, "bridges": {"Ext.T": {"statement": ["M.r"], "proof": []}}, "left_out": {},
@@ -447,6 +453,70 @@ class LeanFacts(Vault):
         code, err, _ = run(registry)
         self.assertEqual(code, 0, err)
         self.assertEqual(page.read_text(), "# T\n\nA theorem.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+
+    def test_a_registry_made_for_other_duplicates_lists_writes_nothing(self) -> None:
+        # Ext.T's proof uses the hidden theorem Ext.h, which names M.r itself. Once T's row lists Ext.h as a duplicate,
+        # Ext.h is part of Ext.T and M.r a proof bridge, while the extraction stays as it was. A registry made before
+        # that edit, one that records no duplicates lists, and one of the earlier format, which recorded none, are
+        # refused before anything is written; the registry made for the edited rows gives the page the bridge.
+        from scripts.test_extract_v2_lean_dependencies import credited, row, with_mathlib
+
+        page = self.page("Algebra/t.md", "# T\n\nA theorem.\n")
+        self.page("Algebra/m.md", "# M\n\nA Mathlib theorem.\n")
+        mathlib = self.about("Algebra/m.md", extensions={"org.autoform": {"mathlib": True}}, object=[
+            {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.r", "module": "Mathlib.T"}}])
+        theorem = self.about("Algebra/t.md", object=[{"location": {"declaration": "Ext.T"}}])
+        self.annotate([theorem, mathlib])
+        rows = {"Ext.T": with_mathlib(row("Ext.T", "theorem", [], ["Ext.h"]), [], []),
+                "Ext.h": with_mathlib(row("Ext.h", "theorem", [], []), [], ["M.r"], direct=["M.r"])}
+
+        def made(aliases: dict[str, str]) -> dict:
+            registry = extract.registry(rows, {"Ext.T"}, {"M.r": credited("M.r", "theorem", [], [])}, aliases)
+            registry["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
+                                  "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 1,
+                                  "aliases_sha256": extract.aliases_digest(aliases), "format": sync.REGISTRY_FORMAT}
+            return registry
+
+        before, after = made({}), made({"Ext.h": "Ext.T"})
+        self.assertEqual(((before["bridges"], before["left_out"]), (after["bridges"], after["left_out"])),
+                         (({}, {"Ext.T": {"statement": [], "proof": ["M.r"]}}),
+                          ({"Ext.T": {"statement": [], "proof": ["M.r"]}}, {})))
+        self.assertEqual(sync.registry_problems(before, sync.read_annotations()), [])
+        self.annotate([{**theorem, "extensions": {sync.OWN: {"duplicates": ["Ext.h"]}}}, mathlib])
+        (wiki.ROOT / "Ext.lean").write_text("theorem T : True := trivial\ntheorem h : True := trivial\n")
+        index = SimpleNamespace(declarations={name: SimpleNamespace(keyword="theorem", path=Path("Ext.lean"), line=1)
+                                              for name in ("Ext.T", "Ext.h")})
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: index)
+        reader = sync.reader()
+        dependency_file, registry_file = self.tmp / "lean-dependencies.json", self.tmp / "mathlib-registry.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {
+            "Ext.T": {"module": "Ext", "statement": [], "proof": []}}}))
+
+        def run(given: dict) -> tuple[int, str, bool]:
+            registry_file.write_text(json.dumps(paired(given, dependency_file)))
+            files = lambda: {path: path.read_bytes() for path in sorted([*wiki.ROADMAP.rglob("*"),
+                                                                          *sync.LINKS.iterdir()]) if path.is_file()}
+            unchanged = files()
+            with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean, annotations=reader),
+                                            "autoform_cli.lean": lean, "autoform_cli.annotations": reader}), \
+                    patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+                code = sync.main(["lean-facts", str(dependency_file), "--registry", str(registry_file)])
+            return code, err.getvalue(), files() == unchanged
+
+        unrecorded = {**after, "inputs": {key: value for key, value in after["inputs"].items()
+                                          if key != "aliases_sha256"}}
+        for given, message in (
+                (before, "error: the registry was made for other duplicates lists than the checkout's (its "
+                         "`inputs.aliases_sha256` differs), so its bridges may not be the checkout's"),
+                (unrecorded, "error: the registry does not record the duplicates lists it was made for"),
+                ({**after, "inputs": {**after["inputs"], "format": 5}}, "error: the registry's format is 5, not 6")):
+            with self.subTest(message=message):
+                code, err, unchanged = run(given)
+                self.assertEqual((code, unchanged), (1, True), err)
+                self.assertIn(message, err)
+        code, err, _ = run(after)
+        self.assertEqual(code, 0, err)
+        self.assertIn("## Proof depends on\n\n- [M](m.md)\n", page.read_text())
 
     def test_an_extraction_without_a_live_credited_declaration_writes_nothing(self) -> None:
         # Ext.main's page was added after the extraction was made: its statement depends on Ext.blocked, but the
@@ -561,7 +631,8 @@ class LeanFacts(Vault):
         (wiki.ROOT / "Ext" / "T.lean").write_text("theorem t : True := trivial\n")
         registry = {"left_out": {}, "bridges": {}, "mathlib": {}, "missing": [], "project": [], "mutual": [],
                     "inputs": {"names_sha256": hashlib.sha256(b"").hexdigest(), "dump_sha256": "d" * 64,
-                               "mathlib_rev": None, "requested": 0, "format": sync.REGISTRY_FORMAT}}
+                               "mathlib_rev": None, "requested": 0,
+                               "aliases_sha256": duplicates_digest(), "format": sync.REGISTRY_FORMAT}}
         self.assertEqual(sync.registry_problems(registry, sync.read_annotations()), [])
         counts, unlinked = sync.apply_lean_facts(index, {"Ext.t": {"module": "Ext.T", "statement": [], "proof": []}},
                                                  registry)
@@ -582,7 +653,7 @@ class LeanFacts(Vault):
         digest = sync.names_digest(sync.credited_mathlib(files)[0])
         good = {"left_out": {}, "bridges": {}, "mutual": [], "project": [], "missing": ["M.b"],
                 "inputs": {"names_sha256": digest, "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 2,
-                           "format": sync.REGISTRY_FORMAT},
+                           "aliases_sha256": duplicates_digest(), "format": sync.REGISTRY_FORMAT},
                 "mathlib": {"M.a": {"module": "Mathlib.Wrong", "kind": "def", "proposition": False, "statement": [], "proof": []}}}
         self.assertEqual(sync.registry_problems(good, files), [])
         cases = {
@@ -597,6 +668,11 @@ class LeanFacts(Vault):
                        "Algebra/a.md names the module Mathlib.Wrong for M.a, which is in Mathlib.Right"),
             "shape": ({"mathlib": {}}, "not one extract_v2_lean_dependencies.py --registry writes"),
             "format": ({**good, "inputs": {**good["inputs"], "format": None}}, "the registry's format is None"),
+            "duplicates": ({**good, "inputs": {**good["inputs"], "aliases_sha256": "0" * 64}},
+                           "the registry was made for other duplicates lists than the checkout's"),
+            "no duplicates digest": (
+                {**good, "inputs": {key: value for key, value in good["inputs"].items() if key != "aliases_sha256"}},
+                "the registry does not record the duplicates lists it was made for"),
             # A malformed edge list is refused before anything is written.
             "edges": ({**good, "bridges": {"Ext.a": {"statement": "M.a", "proof": []}}},
                       "the registry's bridges entry for Ext.a is malformed"),
@@ -1157,7 +1233,8 @@ class LeanFacts(Vault):
         registry = {"left_out": {}, "bridges": {}, "mutual": [], "project": [], "missing": [], "unplaced": [],
                     "mathlib": {"M.t": {"module": "Mathlib.Right", "kind": "theorem", "proposition": False, "statement": [], "proof": []}},
                     "inputs": {"names_sha256": sync.names_digest(credited), "dump_sha256": "d" * 64,
-                               "mathlib_rev": None, "requested": 1, "format": sync.REGISTRY_FORMAT}}
+                               "mathlib_rev": None, "requested": 1,
+                               "aliases_sha256": duplicates_digest(), "format": sync.REGISTRY_FORMAT}}
         self.assertEqual(sync.registry_problems(registry, files), [])
         shutil.rmtree(self.tmp / ".lake")
         self.assertEqual(sync.names_text(credited), "M.t\n")
@@ -5231,7 +5308,8 @@ class BuildPath(Vault):
         dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {}}))
         registry = {"bridges": {}, "left_out": {}, "mathlib": {}, "missing": [], "project": [],
                     "inputs": {"names_sha256": hashlib.sha256(b"").hexdigest(), "dump_sha256": "d" * 64,
-                               "mathlib_rev": sync.mathlib_revision(), "requested": 0, "format": sync.REGISTRY_FORMAT}}
+                               "mathlib_rev": sync.mathlib_revision(), "requested": 0,
+                               "aliases_sha256": duplicates_digest(), "format": sync.REGISTRY_FORMAT}}
         for extraction, code in (("e" * 64, 1), (hashlib.sha256(dependency_file.read_bytes()).hexdigest(), 0)):
             with self.subTest(code=code):
                 registry_file.write_text(json.dumps({**registry, "inputs": {**registry["inputs"],

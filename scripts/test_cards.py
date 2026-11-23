@@ -363,6 +363,40 @@ class Origins(Vault):
                                         str(given)])
                 self.assertEqual((status, output.exists()), (1, False))
 
+    def test_a_registry_made_for_other_duplicates_lists_fails_the_check(self) -> None:
+        # The registry was made before a-main's row listed Ext.a_twin as a duplicate, an edit that can change its
+        # bridges and leave the extraction as it was: the strict check refuses it (sync_wiki.registry_problems, as
+        # lean-facts does), and rollup leaves no card data. A registry made for the rows as they are passes.
+        g = "Algebra/groups"
+        self.mathlib_page(f"{g}/m/m-main.md", 30, "Mathlib.thing")
+        self.leaf(f"{g}/a/a-main.md", 10, statement=(f"{g}/m/m-main.md",))
+        for folder, number, main in (("a", 1, 10), ("m", 3, 30)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        self.write()
+        self.ledger_file()
+        bridges = {"Ext.a_main": {"statement": ["Mathlib.thing"], "proof": []}}
+        mathlib = {"Mathlib.thing": {"statement": [], "proof": []}}
+        stale = self.registry(bridges, mathlib)
+        self.assertEqual(cards.check(dependencies=self.extraction(), registry=stale)[0], [])
+        row = next(row for row in self.rows if row["subject"][0]["uri"].endswith("/a/a-main.md"))
+        row["extensions"] = {"org.atlas-wiki": {"duplicates": ["Ext.a_twin"]}}
+        self.write()
+        message = "the registry was made for other duplicates lists than the checkout's"
+        self.assertTrue(any(message in error
+                            for error in cards.check(dependencies=self.extraction(), registry=stale)[0]))
+        dependencies, given = self.tmp / "lean-dependencies.json", self.tmp / "registry.json"
+        dependencies.write_text(json.dumps(self.extraction()))
+        digest = hashlib.sha256(dependencies.read_bytes()).hexdigest()
+        given.write_text(json.dumps({**stale, "inputs": {**stale["inputs"], "extraction_sha256": digest}}))
+        output = self.tmp / "build" / "cards.json"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text("{}")
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as errors:
+            status = cards.run(["rollup", str(output), "--dependencies", str(dependencies), "--registry", str(given)])
+        self.assertEqual((status, output.exists()), (1, False))
+        self.assertIn(message, errors.getvalue())
+        self.assertEqual(cards.check(dependencies=self.extraction(), registry=self.registry(bridges, mathlib))[0], [])
+
     def test_a_registry_given_is_checked_whatever_it_holds(self) -> None:
         # `--registry` naming a file that holds JSON null, a list or no JSON at all, or a registry whose tables are of
         # another type, is no run without a registry, even where no edge reaches Mathlib: check and rollup refuse it
@@ -553,13 +587,15 @@ class Origins(Vault):
     def registry(self, bridges: dict, mathlib: dict, missing: tuple[str, ...] = (), kind: str = "theorem",
                  proposition: bool = True) -> dict:
         """A registry as extract_v2_lean_dependencies.py writes it for the vault's committed rows."""
-        credited, _ = cards.sync.credited_mathlib({cards.sync.LINKS: list(cards.read_annotations().values())})
+        files = {cards.sync.LINKS: list(cards.read_annotations().values())}
+        credited, _ = cards.sync.credited_mathlib(files)
         digest = hashlib.sha256(cards.sync.names_text(credited).encode("utf-8")).hexdigest()
+        aliases = cards.sync.extract.aliases_digest(cards.sync.listed_duplicates(files)[0])
         return {"bridges": bridges, "left_out": {}, "mutual": [], "missing": list(missing), "project": [],
                 "mathlib": {name: {"module": "Mathlib.X", "kind": kind, "proposition": proposition, **entry}
                             for name, entry in mathlib.items()},
                 "inputs": {"names_sha256": digest, "requested": len(credited), "dump_sha256": "d" * 64,
-                           "mathlib_rev": None, "format": cards.sync.REGISTRY_FORMAT}}
+                           "mathlib_rev": None, "aliases_sha256": aliases, "format": cards.sync.REGISTRY_FORMAT}}
 
     def mathlib_cards(self) -> str:
         g = "Algebra/groups"

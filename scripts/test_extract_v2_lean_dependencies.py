@@ -1023,10 +1023,30 @@ class BridgeConvention(unittest.TestCase):
                     _, found = run_registry(rows, ["C"], duplicates={"c": "C", "d": "C"})
                 self.assertEqual((found["bridges"], found["left_out"]), (bridges, left_out))
 
+    def test_the_registry_records_the_duplicates_lists_it_was_made_for(self) -> None:
+        # C's proof uses the hidden theorem h, which names M itself. Listed as C's duplicate, h is part of C, and M
+        # becomes a proof bridge, while the extraction stays byte for byte the same, its digest with it. The registry
+        # records the lists it was made for, as the rows give them (sync_wiki.listed_duplicates), in a format of its
+        # own, so that a consumer can refuse it after a `duplicates` edit (sync_wiki.registry_problems).
+        rows = [with_mathlib(row("C", "theorem", [], ["h"]), [], []),
+                with_mathlib(row("h", "theorem", [], []), [], ["M"], direct=["M"]), credited("M", "theorem", [], [])]
+        with redirect_stdout(io.StringIO()):
+            unlisted, before = run_registry(rows, ["C"])
+            listed, after = run_registry(rows, ["C"], duplicates={"h": "C"})
+        self.assertEqual(unlisted, listed)
+        self.assertEqual(before["inputs"]["extraction_sha256"], after["inputs"]["extraction_sha256"])
+        self.assertEqual(((before["bridges"], before["left_out"]), (after["bridges"], after["left_out"])),
+                         (({}, {"C": {"statement": [], "proof": ["M"]}}),
+                          ({"C": {"statement": [], "proof": ["M"]}}, {})))
+        self.assertEqual((before["inputs"]["aliases_sha256"], after["inputs"]["aliases_sha256"]),
+                         (hashlib.sha256(b"").hexdigest(), hashlib.sha256(b"h\tC\n").hexdigest()))
+        self.assertEqual((before["inputs"]["format"], extract.REGISTRY_FORMAT), (6, 6))
+        self.assertNotEqual(extract.REGISTRY_FORMAT, extract.DUMP_FORMAT["format"])
+
     def test_a_duplicate_whose_article_is_gone_gives_no_bridge(self) -> None:
         # The Lean deleted C, whose row lists c as a duplicate; c's type names M.space and its proof M.fubini. A uses
-        # only c: the way stops there, so A neither bridges to them nor leaves them out, and the registry's inputs say
-        # c counted for no page.
+        # only c: the way stops there, so A neither bridges to them nor leaves them out. The registry's inputs record
+        # the list the rows give, whatever the Lean has.
         rows = [with_mathlib(row("c", "theorem", [], []), ["M.space"], ["M.fubini"], direct=["M.fubini"],
                              type_direct=["M.space"]),
                 with_mathlib(row("A", "theorem", ["c"], ["c"]), [], []),
@@ -1035,7 +1055,7 @@ class BridgeConvention(unittest.TestCase):
             output, found = run_registry(rows, ["C", "A"], duplicates={"c": "C"}, declared={"c", "A"})
         self.assertEqual(output["articles"]["A"], {"module": "MathlibExt.T", "statement": [], "proof": []})
         self.assertEqual((found["bridges"], found["left_out"]), ({}, {}))
-        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b"c\t\n").hexdigest())
+        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b"c\tC\n").hexdigest())
         # Unlisted, c is a hidden theorem: A reaches through it what its proof names.
         with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
             _, found = run_registry(rows, ["C", "A"])

@@ -162,7 +162,8 @@ strict check below passed. Identical inputs give identical bytes.
   follows uses through declarations of the project and of Mathlib that no page credits, by the rule the
   extraction applies to the project's own constants, but a bridge comes only from what a statement or a
   proof names itself: one that reaches a Mathlib-credited page only through other declarations gives no
-  bridge. The check also requires that the registry was made from the committed rows' credited names, that
+  bridge. The check also requires that the registry was made from the committed rows' credited names and
+  `duplicates` lists, that
   its edges join declarations pages credit to ones it found, none both kept and left out, and that it finds
   exactly the declarations the build's pages credit to Mathlib,
   one page each, each page keeping the declaration its committed row credits; a Mathlib main heads a result

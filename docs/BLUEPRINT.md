@@ -596,17 +596,21 @@ definition's body and an inductive type's constructors count as its
 statement): one it reaches only through other constants gives the page no edge
 to it. `extract_v2_lean_dependencies.py --registry` writes that registry beside
 an unchanged `build/lean-dependencies.json`, with the digest of the credited
-names, of the dump and of that extraction, and Mathlib's revision. `lean-facts`
-and the cards take the registry only beside the extraction it was written with;
-like that extraction, it holds only for the dump and the checkout it was made
-from, which they cannot check, so the wiki job makes all three in one run. Before
+names, of the rows' `duplicates` lists, of the dump and of that extraction,
+Mathlib's revision, and a format of its own. `lean-facts` and the cards take the
+registry only beside the extraction it was written with, and only for their
+checkout's credited names and `duplicates` lists: a `duplicates` edit can change
+the bridges and leave the extraction as it was. Like that extraction, it holds
+only for the dump and the checkout it was made from, which they cannot check
+otherwise, so the wiki job makes all three in one run. Before
 it writes either file, the extractor
 refuses a dump that is not in the current format, was made at another Mathlib,
 is not one whole stream (its header first, its footer last, rows between), has a
 row unlike those the dump writes, or does not answer exactly the listed names.
 `lean-facts --registry` checks that the registry is
-well formed, was made from the checkout's credited names at its Mathlib, that
-its found and missing names split them, that each of its edges joins a
+well formed, in the current format, and was made from the checkout's credited
+names and `duplicates` lists at its Mathlib, that
+its found and missing names split those names, that each of its edges joins a
 declaration a page credits to one it found and none is both kept and left out,
 and that a module a row names is the declaration's, before it writes anything;
 with or without the registry, it also stops when the extraction has no row for a

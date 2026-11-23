@@ -502,8 +502,8 @@ def flag_of(annotation: dict, read: dict | None) -> bool:
     return flag is True
 
 
-# The registry format this checkout reads (extract_v2_lean_dependencies.DUMP_FORMAT["format"]).
-REGISTRY_FORMAT = 5
+# The registry format this checkout reads, the one extract_v2_lean_dependencies.py writes, apart from the dump's.
+REGISTRY_FORMAT = extract.REGISTRY_FORMAT
 
 
 class CreditError(ValueError):
@@ -833,9 +833,11 @@ def registry_edge_problems(registry: dict, owners: set[str]) -> list[str]:
 
 def registry_problems(registry: object, files: dict[Path, list[dict]], owners: set[str] | None = None) -> list[str]:
     """Why a registry cannot speak for the checkout's Mathlib credit, before anything is written: its shape and
-    format, the list of credited names it was made from (by digest), found and missing names that do not split exactly
-    that list, edges no consumer may act on (registry_edge_problems, from the declarations pages credit: *owners*,
-    or those their Lean links name), a module a row names that is not the declaration's, or an ambiguous credit."""
+    format, the list of credited names and the duplicates lists it was made from (by digest: a `duplicates` edit can
+    change the bridges and leave the extraction beside it as it was), found and missing names that do not split
+    exactly that list, edges no consumer may act on (registry_edge_problems, from the declarations pages credit:
+    *owners*, or those their Lean links name), a module a row names that is not the declaration's, or an ambiguous
+    credit."""
     credited, problems = credited_mathlib(files)
     if problems:
         return problems
@@ -846,6 +848,15 @@ def registry_problems(registry: object, files: dict[Path, list[dict]], owners: s
     if inputs.get("names_sha256") != names_digest(credited):
         return ["the registry was made for another list of credited Mathlib names than the checkout's; make the "
                 "dump and the registry from `sync_wiki.py mathlib-names` of this checkout"]
+    aliases, problems = listed_duplicates(files)
+    if problems:
+        return problems
+    if not isinstance(inputs.get("aliases_sha256"), str):
+        return ["the registry does not record the duplicates lists it was made for (`inputs.aliases_sha256`); make it "
+                "again with extract_v2_lean_dependencies.py"]
+    if inputs["aliases_sha256"] != extract.aliases_digest(aliases):
+        return ["the registry was made for other duplicates lists than the checkout's (its `inputs.aliases_sha256` "
+                "differs), so its bridges may not be the checkout's: make the extraction and the registry again"]
     if not (isinstance(inputs.get("dump_sha256"), str) and re.fullmatch(r"[0-9a-f]{64}", inputs["dump_sha256"])):
         return ["the registry does not name the dump it was made from (`inputs.dump_sha256`)"]
     if inputs.get("mathlib_rev") != mathlib_revision():
@@ -2497,6 +2508,20 @@ def duplicate_markers(keyed: list) -> tuple[dict[str, Path], list[tuple[tuple, s
                       f"{at(later)}: it lists {name} as a duplicate, as {at(earlier)} does")
                      for place, later in enumerate(rows) for earlier in rows[:place]]
     return listed, sorted(problems, key=lambda problem: problem[1])
+
+
+def listed_duplicates(files: dict[Path, list[dict]]) -> tuple[dict[str, str], list[str]]:
+    """The declarations the rows of *files* list as duplicates (duplicate_names), each with the declaration its row
+    credits, read without the Lean index; else none, and the problems of the lists (duplicate_markers). The extraction
+    counts them so (extract_v2_lean_dependencies.article_aliases), and a registry records their digest
+    (registry_problems): a row an earlier sync wrote with only a module and a name has no `object`, so a list on it is
+    refused, and each list's article is its row's key."""
+    keyed = [(annotation_key(row), row) for rows in files.values() for row in rows]
+    problems = [text for _key, text in duplicate_markers(keyed)[1]]
+    if problems:
+        return {}, problems
+    assert all(key for key, row in keyed if duplicate_names(row))
+    return {name: key for key, row in keyed for name in duplicate_names(row)}, []
 
 
 def stale_duplicates(keyed: list, index) -> list[str]:

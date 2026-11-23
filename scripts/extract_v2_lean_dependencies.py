@@ -46,8 +46,9 @@ module, its kind and the credited declarations it reaches by those rules,
 through its proof as through its statement (Mathlib edges); the names the dump
 did not find in a Mathlib module (`missing`), among them those that are v2
 constants (`project`); and what it was made from (`inputs`: the digest of NAMES,
-of the dump and of the duplicates with their articles, and Mathlib's revision in
-lake-manifest.json). Every project row of the dump must carry its lists of
+of the dump and of the duplicates the rows list with their articles, and
+Mathlib's revision in lake-manifest.json), in a format of its own
+(REGISTRY_FORMAT). Every project row of the dump must carry its lists of
 credited declarations, nested as the dump writes them; the dump's rows for
 credited names never replace the project's rows, and every name of NAMES must
 have exactly one: otherwise nothing is written. OUTPUT.json is the same with or
@@ -79,6 +80,10 @@ STATEMENT_VALUE = frozenset({"def", "inductive"})
 
 
 DUMP_FORMAT = {"dump": "atlas-v2-dependencies", "format": 5, "closure": "statement-and-all-uses"}
+# The format of the registry --registry writes, apart from the dump's: since 6, it records the duplicates lists it was
+# made for (`inputs.aliases_sha256`), as its bridges depend on them while the extraction beside it may not, and every
+# consumer checks them against its checkout's rows (sync_wiki.registry_problems).
+REGISTRY_FORMAT = 6
 # The lists of credited declarations every project row of such a dump carries; a definition's or an inductive
 # type's row carries `mathlib_state` too. Each `_direct` list holds the names its expressions name themselves, and is
 # part of the list that reaches through other constants from the same expressions; what an expression reaches through
@@ -428,27 +433,24 @@ def article_manifest() -> set[str]:
 def article_aliases() -> dict[str, str]:
     """The declarations the wiki's rows list as duplicates (`sync_wiki.duplicate_names`), each with the declaration
     its row credits: the same result stated again, with no page of its own, so that a use of one is a use of that
-    article. A list `sync_wiki.duplicate_markers` refuses without the Lean index raises ValueError, as no use may be
-    counted for an article it does not state. The rows are read without the index: a row an earlier sync wrote with
-    only a module and a name has no `object`, so a list on it is refused, and the declaration it stands for, which
-    only the index gives, is among article_manifest's names, which resolve_aliases checks the aliases against; whether
-    the Lean has each name is for the dump, and the Lean sources, to say."""
+    article. The rows are read as the registry's consumers read them (`sync_wiki.listed_duplicates`), and a list
+    `sync_wiki.duplicate_markers` refuses without the Lean index raises ValueError, as no use may be counted for an
+    article it does not state. The rows are read without the index: a row an earlier sync wrote with only a module
+    and a name has no `object`, so a list on it is refused, and the declaration it stands for, which only the index
+    gives, is among article_manifest's names, which resolve_aliases checks the aliases against; whether the Lean has
+    each name is for the dump, and the Lean sources, to say."""
 
     if __package__:
         from . import sync_wiki
     else:
         import sync_wiki
 
-    keyed = [(sync_wiki.annotation_key(row), row) for links in sorted((BLUEPRINT / "links").glob("*.jsonl"))
-             for row in sync_wiki.read_rows(links.read_text(encoding="utf-8"))]
-    problems = [text for _key, text in sync_wiki.duplicate_markers(keyed)[1]]
+    aliases, problems = sync_wiki.listed_duplicates({links: sync_wiki.read_rows(links.read_text(encoding="utf-8"))
+                                                     for links in sorted((BLUEPRINT / "links").glob("*.jsonl"))})
     if problems:
         raise ValueError(f"{len(problems)} duplicates lists to fix, so no article manifest: "
                          + "; ".join(problems[:20]))
-    # Only a row whose own Lean link credits a declaration of this project lists duplicates (duplicate_markers refuses
-    # any other, a module-and-name row among them), so each list's article is its row's key.
-    assert all(key for key, row in keyed if sync_wiki.duplicate_names(row))
-    return {name: key for key, row in keyed for name in sync_wiki.duplicate_names(row)}
+    return aliases
 
 
 def private_collisions(rows: dict[str, dict], names: set[str]) -> dict[str, list[str]]:
@@ -513,10 +515,12 @@ def resolve_aliases(listed: dict[str, str], manifest: set[str], rows: dict[str, 
     return alias, problems, warnings
 
 
-def aliases_digest(aliases: dict[str, str | None]) -> str:
-    """The digest of the duplicates and their articles (see resolve_aliases), sorted, one `name<TAB>article` a line,
-    with no article for one whose article is gone: what makes the edges of the pages that use a duplicate."""
-    return hashlib.sha256("".join(f"{name}\t{article or ''}\n"
+def aliases_digest(aliases: dict[str, str]) -> str:
+    """The digest of the duplicates the rows list, each with its article (article_aliases), sorted, one
+    `name<TAB>article` a line: the lists a registry records it was made for, which a consumer computes again from its
+    checkout's rows (sync_wiki.registry_problems). A `duplicates` edit can change the bridges and leave the extraction
+    as it was, so its digest cannot show it."""
+    return hashlib.sha256("".join(f"{name}\t{article}\n"
                                   for name, article in sorted(aliases.items())).encode("utf-8")).hexdigest()
 
 
@@ -977,9 +981,9 @@ def main() -> int:
     if registry_output is not None:
         found = registry(rows, articles, registered, alias)
         found["inputs"] = {"names_sha256": names_digest(read_names(names_file)),
-                           "dump_sha256": file_digest(Path(args[0])), "aliases_sha256": aliases_digest(alias),
+                           "dump_sha256": file_digest(Path(args[0])), "aliases_sha256": aliases_digest(listed),
                            "mathlib_rev": mathlib_revision(),
-                           "requested": len(registered), "format": DUMP_FORMAT["format"],
+                           "requested": len(registered), "format": REGISTRY_FORMAT,
                            "extraction_sha256": hashlib.sha256(outputs[output].encode("utf-8")).hexdigest()}
         outputs[registry_output] = json.dumps(found, ensure_ascii=False, sort_keys=True) + "\n"
     # Both made, then both written: a failure above leaves neither, and so does one while writing.
