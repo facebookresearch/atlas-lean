@@ -35,4 +35,14 @@ example : ∑ j ∈ Finset.range 8, fibStep 3 j * (fibStep 4 (7 - j) - fibStep 5
   rw [sum_trib_mul_sub_eq 7 (by decide)]
   decide
 
+-- At the lower bound the term three places back is the initial zero.
+example : 5 * ∑ j ∈ Finset.range 4, fibStep 6 j * fibStep 2 (3 - j) = 10 := by
+  rw [five_mul_sum_fibStep6_mul_fib 3 (by decide)]
+  decide
+
+-- At index nine the convolution first uses the six-step value at index eight with nonzero weight.
+example : 5 * ∑ j ∈ Finset.range 10, fibStep 6 j * fibStep 2 (9 - j) = 1105 := by
+  rw [five_mul_sum_fibStep6_mul_fib 9 (by decide)]
+  decide
+
 end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted
