@@ -51,7 +51,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Basic
 public import Mathlib.Data.Set.Finite.Basic
-public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
+public import MathlibExt.NumberTheory.JosephusFixedSuccCases
 
 set_option autoImplicit false
 
@@ -84,29 +84,6 @@ theorem_wanted josephus_succ_eq_sub (k n ℓ : ℕ) (hk : 2 ≤ k)
       MetaMathlibExt.josephus k n + k ≤ (ℓ + 1) * (n + 1)) :
     MetaMathlibExt.josephus k (n + 1) =
       MetaMathlibExt.josephus k n + k - ℓ * (n + 1)
-
-/-- **The Josephus function just after a fixed point.** Let $k \ge 2$ and $n_p \ge 1$ be natural
-numbers with $J_k(n_p) = n_p$, where $J_k$ is the Josephus function. Then $J_k(n_p + 1)$ is
-determined as follows: (i) if $k \le n_p + 1$, then $J_k(n_p + 1) = k - 1$; (ii) if
-$k = \ell(n_p + 1) + 1$ for some natural number $\ell \ge 1$, then $J_k(n_p + 1) = n_p + 1$;
-(iii) if $k = \ell(n_p + 1) + k_1$ for some natural numbers $\ell \ge 1$ and $k_1$ with
-$2 \le k_1 \le n_p$, then $J_k(n_p + 1) = k_1 - 1$; (iv) if $k = (\ell + 1)(n_p + 1)$ for some
-natural number $\ell \ge 1$, then $J_k(n_p + 1) = n_p$.
-
-Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
-"Analytical Study and Efficient Evaluation of the
-Josephus Function", Proposition 4. -/
-theorem_wanted josephus_fixed_succ_cases (k np : ℕ)
-    (hk : 2 ≤ k) (hnp : 1 ≤ np)
-    (hfix : MetaMathlibExt.josephus k np = np) :
-    (k ≤ np + 1 → MetaMathlibExt.josephus k (np + 1) = k - 1) ∧
-    (∀ ℓ : ℕ, 1 ≤ ℓ → k = ℓ * (np + 1) + 1 →
-      MetaMathlibExt.josephus k (np + 1) = np + 1) ∧
-    (∀ ℓ k1 : ℕ, 1 ≤ ℓ → 2 ≤ k1 → k1 ≤ np →
-      k = ℓ * (np + 1) + k1 →
-        MetaMathlibExt.josephus k (np + 1) = k1 - 1) ∧
-    (∀ ℓ : ℕ, 1 ≤ ℓ → k = (ℓ + 1) * (np + 1) →
-      MetaMathlibExt.josephus k (np + 1) = np)
 
 /-- **Josephus fixed points detected by the next value.** Let $k \ge 2$ and $n_p$ be natural
 numbers with $n_p \ge k - 1$, and let $J_k$ be the Josephus function. Then $J_k(n_p) = n_p$ if
