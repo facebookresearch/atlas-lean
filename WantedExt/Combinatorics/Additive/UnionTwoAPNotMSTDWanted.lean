@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.NumberTheory.Real.Irrational
 public import MathlibExt.Combinatorics.Additive.CoprimeDenominatorProgressions
+public import MathlibExt.Combinatorics.Additive.HalfIntegerProgressions
 
 /-!
 # The union of two arithmetic progressions is not an MSTD set
@@ -424,18 +425,6 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_of_one_lt_gcd (n m : ℕ)
     (hl : 1 < Nat.gcd q₁ q₂) (hx : x = s₁ + (p₁ : ℝ) / q₁) (hd : d = s₂ + (p₂ : ℝ) / q₂)
     (hx₁ : x < (n : ℝ) - 1) (hdn : (n : ℝ) - 1 < d) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
-
-/-- **No integer points for a half-integer start and an odd denominator.** Let $s_1, s_2, p_2, q_2$
-be natural numbers with $q_2$ odd, and let $x = s_1 + 1/2$ and $d = s_2 + p_2/q_2$. Then
-$x + id$ is not a nonnegative integer for any natural number $i$.
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 22
-(`integers-2026-A58-lem-22`). -/
-public theorem_wanted add_mul_not_mem_nat_of_half (x d : ℝ) (s₁ s₂ p₂ q₂ : ℕ)
-    (hq₂ : Nat.Coprime 2 q₂)
-    (hx : x = s₁ + 1 / 2) (hd : d = s₂ + (p₂ : ℝ) / q₂) (i : ℕ) :
-    x + i * d ∉ Set.range ((↑) : ℕ → ℝ)
 
 /-- **Interval plus progression with half-integer start and odd-denominator step is not MSTD.**
 Let $I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
