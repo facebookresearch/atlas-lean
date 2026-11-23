@@ -100,7 +100,7 @@ def b (n : ℕ) : ℕ :=
 
 lemma b_growth (n : ℕ) : 3 * b n < b (n + 1) := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     rcases n with _ | _ | _ | n
     · norm_num
     · norm_num
@@ -190,7 +190,7 @@ lemma e_shape (k : ℕ) :
       (2 ≤ k → e (k - 2) < e k) ∧
       (4 ≤ k → 2 * e (k - 2) < e k + e (k - 4)) := by
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     rcases k with _ | _ | _ | _ | _ | _ | n
     · norm_num [e, err, b]
     · norm_num [e, err, b]
@@ -224,7 +224,7 @@ lemma e_pos_and_bound (k : ℕ) :
   constructor
   · exact (e_shape k).1
   · induction k using Nat.strong_induction_on with
-    | h k ih =>
+    | ind k ih =>
       rcases k with _ | _ | _ | _ | _ | _ | n
       · norm_num [e, err, b]
       · norm_num [e, err, b]
@@ -368,7 +368,7 @@ lemma b_satisfies_nonlinear (n : ℕ) :
 
 lemma a_eq_b (n : ℕ) : a n = b n := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     rcases n with _ | _ | n
     · rfl
     · rfl

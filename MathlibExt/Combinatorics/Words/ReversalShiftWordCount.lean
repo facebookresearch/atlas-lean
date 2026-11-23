@@ -1168,10 +1168,10 @@ lemma count_subsetBits (N : ℕ) (s : Finset (Fin N)) :
     (subsetBits N s).count true = s.card := by
   let f : Fin N → Bool := fun i => decide (i ∈ s)
   let v : List.Vector Bool N := List.Vector.ofFn f
-  have h := Fin.card_filter_univ_eq_vector_get_eq_count true v
+  have h := List.Vector.count_toList true v
   have hv : v.toList = subsetBits N s := by simp [v, subsetBits, f]
   rw [hv] at h
-  rw [← h]
+  rw [h]
   congr 1
   ext i
   simp [v, f]
@@ -1201,7 +1201,7 @@ lemma image_subsetBits_powersetCard (m : ℕ) :
     let v : List.Vector Bool (2 * m + 1) := ⟨b, hb.1⟩
     let s : Finset (Fin (2 * m + 1)) := {i | v.get i = true}
     have hscard : s.card = m := by
-      rw [Fin.card_filter_univ_eq_vector_get_eq_count true v]
+      rw [← List.Vector.count_toList true v]
       exact hb.2
     refine ⟨s, ?_, ?_⟩
     · rw [Finset.mem_coe, Finset.mem_powersetCard]
@@ -2128,7 +2128,7 @@ lemma image_subsetBits_powersetCard_general (N K : ℕ) :
     let v : List.Vector Bool N := ⟨b, hb.1⟩
     let u : Finset (Fin N) := {i | v.get i = true}
     have hucard : u.card = K := by
-      rw [Fin.card_filter_univ_eq_vector_get_eq_count true v]
+      rw [← List.Vector.count_toList true v]
       exact hb.2
     refine ⟨u, ?_, ?_⟩
     · rw [Finset.mem_coe, Finset.mem_powersetCard]
@@ -2440,7 +2440,8 @@ lemma ncard_badPairs (j : ℕ) :
         qt.2 ∈ WeightBits (2 * (j - r) - 3) (j - r) ∧ 3 ≤ j - r})
     (fun r => ((prefixBits_finite_early r).prod
       ((List.finite_length_eq Bool (2 * (j - r) - 3)).subset
-        (fun t ht => ht.1))).subset (fun qt h => ⟨h.1, h.2.1⟩))
+        (fun t (ht : t ∈ WeightBits (2 * (j - r) - 3) (j - r)) => ht.1))).subset
+          (fun qt h => ⟨h.1, h.2.1⟩))
     (badPairs_disjoint j)
   rw [hu, finsum_eq_sum_of_fintype]
   apply Finset.sum_congr rfl
@@ -2633,7 +2634,7 @@ lemma coeff_suffixSeries_mul_catalan_pow (k r : ℕ) :
         (suffixSeries * PowerSeries.catalanSeries ^ r) =
       (2 * k + r - 1).choose k := by
   induction k using Nat.strong_induction_on generalizing r with
-  | h k ih =>
+  | ind k ih =>
     induction r with
     | zero => simp [suffixSeries]
     | succ r hr =>
@@ -3506,7 +3507,7 @@ lemma coordForest_of_form_aux {root : EdgeCoord} {w : List EdgeCoord}
     (hw : CoordForestForm root w) : CoordForest root w := by
   generalize hn : w.length = n
   induction n using Nat.strong_induction_on generalizing root w with
-  | h n ih =>
+  | ind n ih =>
     by_cases hnil : w = []
     · subst w
       exact CoordForest.nil
@@ -3687,7 +3688,7 @@ lemma CoordForest.of_forestForm {root : EdgeCoord} {w : List EdgeCoord}
     (hw : CoordForestForm root w) : CoordForest root w := by
   generalize hn : w.length = n
   induction n using Nat.strong_induction_on generalizing w with
-  | h n ih =>
+  | ind n ih =>
     by_cases hne : w = []
     · subst w
       exact CoordForest.nil

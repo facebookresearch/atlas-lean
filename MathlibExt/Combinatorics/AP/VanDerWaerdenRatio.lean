@@ -445,7 +445,7 @@ lemma exists_distinct_prime_sum_aux (N : ℕ) :
     ∃ S : Finset ℕ, (∀ p ∈ S, Nat.Prime p) ∧
       (S.sum (fun p => p) = N ∨ S.sum (fun p => p) + 1 = N) := by
   induction N using Nat.strong_induction_on with
-  | h N ih =>
+  | ind N ih =>
     by_cases hN : N < 2
     · have hcases : N = 0 ∨ N = 1 := by omega
       rcases hcases with rfl | rfl
@@ -658,7 +658,7 @@ lemma recurrenceOfMonic_charPoly {R : Type*} [CommRing R] {P : Polynomial R}
   simp only [recurrenceOfMonic, Polynomial.coeff_sub, Polynomial.coeff_monomial,
     Polynomial.coeff_X_pow]
   rw [polynomial_coeff_finset_sum]
-  simp only [Polynomial.coeff_monomial]
+  simp only [Polynomial.coeff_monomial, Finsupp.single_apply]
   -- Replace the `Fintype (Fin (recurrenceOfMonic P).order)` instance coming from
   -- `LinearRecurrence.charPoly` by the canonical `Fintype (Fin P.natDegree)` one, which the
   -- rewrites below match against. The two are definitionally equal.
@@ -797,9 +797,10 @@ lemma combinedDifference_solution (S : Finset ℕ) (a d : ℕ) :
 lemma solution_eq_zero_of_initial {R : Type*} [CommSemiring R]
     (E : LinearRecurrence R) (u : ℕ → R) (hu : E.IsSolution u)
     (hzero : ∀ i < E.order, u i = 0) : u = 0 := by
-  apply (E.sol_eq_of_eq_init u 0 hu (show E.IsSolution (0 : ℕ → R) from E.solSpace.zero_mem)).mpr
+  apply (E.eq_iff_eqOn_range_order u 0 hu
+    (show E.IsSolution (0 : ℕ → R) from E.solSpace.zero_mem)).mpr
   intro i hi
-  have hil : i < E.order := by simpa using hi
+  have hil : i < E.order := Finset.mem_range.mp hi
   simpa using hzero i hil
 
 noncomputable def binaryMSequence (p : ℕ) (n : ℕ) : ZMod 2 :=
