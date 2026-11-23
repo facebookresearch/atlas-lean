@@ -24,20 +24,31 @@ minimum of the `p`-adic valuations of its nonzero coefficients.
 The definition follows Itamar Nir, arXiv:2608.00668v1, line 419.
 -/
 
-/-- The minimum `p`-adic valuation of the nonzero coefficients of `f`. -/
+/-- **The $p$-adic valuation of an integer polynomial.** Let $p$ be a prime and let
+$f \in \mathbb{Z}[X]$ be a nonzero polynomial, with $a_n$ the coefficient of $X^n$ in $f$. Writing
+$v_p(a)$ for the $p$-adic valuation of an integer $a$, the $p$-adic valuation of $f$ is the
+natural number $v_p(f) = \min \{ v_p(a_n) : a_n \neq 0 \}$. -/
 @[nolint unusedArguments]
 def padicValuation (p : ℕ) (_hp : Nat.Prime p) (f : Polynomial ℤ) (hf : f ≠ 0) : ℕ :=
   (f.support.image (fun n => padicValInt p (f.coeff n))).min'
     ((support_nonempty.mpr hf).image fun n => padicValInt p (f.coeff n))
 
-/-- The polynomial valuation is at most the valuation of every nonzero coefficient. -/
+/-- **The valuation of a polynomial is at most that of each nonzero coefficient.** Let $p$ be a
+prime, write $v_p(a)$ for the $p$-adic valuation of an integer $a$, let $f \in \mathbb{Z}[X]$ be a
+nonzero polynomial with $a_n$ the coefficient of $X^n$ in $f$, and let
+$v_p(f) = \min \{ v_p(a_n) : a_n \neq 0 \}$ be its $p$-adic valuation. If $a_n \neq 0$, then
+$v_p(f) \le v_p(a_n)$. -/
 theorem padicValuation_le_coeff {p : ℕ} {hp : Nat.Prime p} {f : Polynomial ℤ} {hf : f ≠ 0}
     {n : ℕ} (hn : n ∈ f.support) :
     padicValuation p hp f hf ≤ padicValInt p (f.coeff n) := by
   unfold padicValuation
   exact Finset.min'_le _ _ (Finset.mem_image_of_mem (fun n => padicValInt p (f.coeff n)) hn)
 
-/-- Every common lower bound of the coefficient valuations bounds the polynomial valuation. -/
+/-- **Lower bounds for the valuation of a polynomial.** Let $p$ be a prime, write $v_p(a)$ for
+the $p$-adic valuation of an integer $a$, let $f \in \mathbb{Z}[X]$ be a nonzero polynomial with
+$a_n$ the coefficient of $X^n$ in $f$, and let $v_p(f) = \min \{ v_p(a_n) : a_n \neq 0 \}$ be its
+$p$-adic valuation. If $k$ is a natural number with $k \le v_p(a_n)$ for every $n$ with
+$a_n \neq 0$, then $k \le v_p(f)$. -/
 theorem le_padicValuation {p : ℕ} {hp : Nat.Prime p} {f : Polynomial ℤ} {hf : f ≠ 0}
     {k : ℕ} (hk : ∀ n ∈ f.support, k ≤ padicValInt p (f.coeff n)) :
     k ≤ padicValuation p hp f hf := by
@@ -48,7 +59,10 @@ theorem le_padicValuation {p : ℕ} {hp : Nat.Prime p} {f : Polynomial ℤ} {hf 
   obtain ⟨n, hn, rfl⟩ := hy
   exact hk n hn
 
-/-- The polynomial valuation of a nonzero constant is its integer valuation. -/
+/-- **The valuation of a nonzero constant polynomial.** Let $p$ be a prime and let $a$ be a
+nonzero integer. The $p$-adic valuation of the constant polynomial $a \in \mathbb{Z}[X]$, the
+minimum of the $p$-adic valuations of its nonzero coefficients, equals the $p$-adic valuation
+$v_p(a)$ of the integer $a$. -/
 @[simp]
 theorem padicValuation_C (p : ℕ) (hp : Nat.Prime p) (a : ℤ) (ha : a ≠ 0) :
     padicValuation p hp (C a) (C_ne_zero.mpr ha) = padicValInt p a := by

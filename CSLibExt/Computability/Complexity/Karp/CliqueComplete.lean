@@ -44,7 +44,11 @@ open Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
 instance KGMap.instFintypeΓ (k : KGMap.K) : Fintype (KGMap.Γ k) := by
   cases k <;> infer_instance
 
-/-- `KGMap` in mode `m` as a host component. -/
+/-- **The CLIQUE-to-INDEPENDENT-SET and INDEPENDENT-SET-to-VERTEX-COVER map as a host
+component.** For a mode $m$, standing for the reduction from CLIQUE to INDEPENDENT-SET or the one
+from INDEPENDENT-SET to VERTEX-COVER, this is the host component whose stacks (listed as
+$X, O, A, B, D, Y$), stack alphabets, labels and program are those of the Turing machine that
+computes the reduction of mode $m$. -/
 abbrev kgMapComp (m : KGMap.Mode) : Host.Comp where
   K := KGMap.K
   Γ := KGMap.Γ
@@ -64,10 +68,16 @@ theorem isPolyTime_kgMap (m : KGMap.Mode) : IsPolyTime m.f :=
       · simp [Polynomial.eval_mul, Polynomial.eval_add]
       · rw [h]; simp [Equiv.refl_symm]
 
-/-- **CLIQUE ≤ INDEPENDENT-SET is polynomial-time**. -/
+/-- **CLIQUE ≤ INDEPENDENT-SET is polynomial-time.** The map on bit strings that sends
+$1^k 0 1^n 0 b$, for natural numbers $k$ and $n$ and a bit string $b$, to $1^k 0 1^n 0 \bar b$,
+where $\bar b$ is $b$ with every bit complemented, and sends every string not of this form to the
+string $100$, is computable in polynomial time. -/
 theorem isPolyTime_flipKG : IsPolyTime flipKG := isPolyTime_kgMap .flip
 
-/-- **INDEPENDENT-SET ≤ VERTEX-COVER is polynomial-time**. -/
+/-- **INDEPENDENT-SET ≤ VERTEX-COVER is polynomial-time.** The map on bit strings that sends
+$1^k 0 1^n 0 b$, for natural numbers $k \le n$ and a bit string $b$, to $1^{n-k} 0 1^n 0 b$, and
+sends every other string (including $1^k 0 1^n 0 b$ with $k > n$) to the string $100$, is
+computable in polynomial time. -/
 theorem isPolyTime_isToVc : IsPolyTime isToVc := isPolyTime_kgMap .vc
 
 theorem cliqueDec_polyManyOneRed_indSetDec : PolyManyOneRed cliqueDec indSetDec :=
@@ -79,7 +89,13 @@ theorem indSetDec_polyManyOneRed_vertexCoverDec : PolyManyOneRed indSetDec verte
 instance EmitClique.instFintypeΓ (k : EmitClique.K) : Fintype (EmitClique.Γ k) := by
   cases k <;> infer_instance
 
-/-- The CLIQUE emitter as an `Emitter`. -/
+/-- **The CLIQUE emitter.** The emitter given by the CLIQUE emitter machine, run from its start
+label to its exit label, with token stack $T$ and output stack $O$. Its output on a CNF formula
+$\varphi$ is Karp's CLIQUE instance of $\varphi$, its output on undecodable input is the string
+$100$, and its step bound on $m$ tokens is $8(m + 1)^3$. Let $\varphi$ be a CNF formula with $m$
+tokens. Started with the tokens of $\varphi$ on $T$, last token on top, and all other stacks
+empty, the machine reaches its exit label within $8(m + 1)^3$ steps, with Karp's CLIQUE instance
+of $\varphi$ on $O$, first bit on top. -/
 abbrev emitClique : Emitter where
   K := EmitClique.K
   Γ := EmitClique.Γ
@@ -106,7 +122,12 @@ theorem out_emitClique (x : List Bool) : TokThen.out emitClique x = reduceClique
   unfold TokThen.out reduceClique
   cases decodeCNF x <;> rfl
 
-/-- **SAT ≤ CLIQUE is polynomial-time**. -/
+/-- **SAT ≤ CLIQUE is polynomial-time.** Let $f$ be the map on bit strings that sends the
+binary code of a CNF formula $\varphi$ to the encoding of Karp's CLIQUE instance $(k, G)$ of
+$\varphi$, and sends every string that is not the code of a CNF formula to the string $100$.
+Here $G$ has one vertex per literal occurrence in $\varphi$, two occurrences are adjacent when
+they lie in different clauses and are not complementary, and $k$ is the number of clauses of
+$\varphi$. Then $f$ is computable in polynomial time. -/
 theorem isPolyTime_reduceClique : IsPolyTime reduceClique := by
   have h := TokThen.isPolyTime_out emitClique [.T, .O, .A, .B, .D, .E, .X, .C, .N] (by decide)
     (fun k => by cases k <;> decide)
@@ -117,21 +138,31 @@ theorem isPolyTime_reduceClique : IsPolyTime reduceClique := by
 theorem satDec_polyManyOneRed_cliqueDec : PolyManyOneRed satDec cliqueDec :=
   ⟨reduceClique, isPolyTime_reduceClique, satDec_eq_cliqueDec_reduceClique⟩
 
-/-- **CLIQUE is NP-hard**. -/
+/-- **CLIQUE is NP-hard.** Every decision problem $L$ in NP has a polynomial-time many-one
+reduction to CLIQUE: a polynomial-time computable map $f$ on bit strings such that, for every
+bit string $x$, $L$ accepts $x$ exactly when CLIQUE accepts $f(x)$. -/
 theorem cliqueDec_npHard : ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L cliqueDec :=
   npHard_of_polyManyOneRed Cslib.Complexity.CookLevin.Hardness.satDec_npHard
     satDec_polyManyOneRed_cliqueDec
 
-/-- **INDEPENDENT-SET is NP-hard**. -/
+/-- **INDEPENDENT-SET is NP-hard.** Every decision problem $L$ in NP has a polynomial-time
+many-one reduction to INDEPENDENT-SET: a polynomial-time computable map $f$ on bit strings such
+that, for every bit string $x$, $L$ accepts $x$ exactly when INDEPENDENT-SET accepts $f(x)$. -/
 theorem indSetDec_npHard : ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L indSetDec :=
   npHard_of_polyManyOneRed cliqueDec_npHard cliqueDec_polyManyOneRed_indSetDec
 
-/-- **VERTEX-COVER (exact size `k`) is NP-hard**. -/
+/-- **VERTEX-COVER (exact size `k`) is NP-hard.** Every decision problem in NP reduces by a
+polynomial-time many-one reduction to the decision problem VERTEX-COVER, which accepts exactly
+the valid encodings of a number $k$ and a graph $G$ such that $G$ has a vertex cover of exactly
+$k$ vertices. -/
 theorem vertexCoverDec_npHard :
     ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L vertexCoverDec :=
   npHard_of_polyManyOneRed indSetDec_npHard indSetDec_polyManyOneRed_vertexCoverDec
 
-/-- `KGVerify` in mode `m` as a host component. -/
+/-- **The CLIQUE, INDEPENDENT-SET and VERTEX-COVER verifier as a host component.** For a mode $m$
+(clique, independent set or vertex cover), this is the host component whose stacks are
+$X, W, C, N, V, T$, each over the symbol alphabet of the SAT verifier, and whose labels and
+program are those of the verifier machine of mode $m$. -/
 abbrev kgVerifyComp (m : KGVerify.Mode) : Host.Comp where
   K := KGVerify.K
   Γ := fun _ => SatVerifier.Sym
@@ -154,7 +185,10 @@ theorem isPolyTime_kgCheck (m : KGVerify.Mode) :
         (w.map SatVerifier.Sym.bit)) (by simp) (by simp) (fun k hX hW => by simp [hX, hW])
       exact ⟨v', S', r.mono (le_of_eq (by simp))⟩
 
-/-- An `NP` membership from a verifier with witnesses no longer than the input. -/
+/-- **NP membership from the CLIQUE, INDEPENDENT-SET and VERTEX-COVER verifier.** Let $L$ be a
+decision problem, let $m$ be a mode (clique, independent set or vertex cover), and let $V_m$ be
+the verifier of mode $m$. If for every bit string $x$, $L$ accepts $x$ exactly when there is a
+bit string $w$ with $|w| \le |x|$ such that $V_m$ accepts $(x, w)$, then $L$ is in NP. -/
 theorem mem_NP_of_kgCheck {L : DecisionProblem} (m : KGVerify.Mode)
     (h : ∀ x, L x = true ↔ ∃ w, w.length ≤ x.length ∧ KGVerify.kgCheck m x w = true) : L ∈ NP :=
   ⟨Polynomial.X, fun q => KGVerify.kgCheck m q.1 q.2, isPolyTime_kgCheck m,
@@ -166,21 +200,28 @@ theorem cliqueDec_mem_NP : cliqueDec ∈ NP := mem_NP_of_kgCheck .clique KGVerif
 /-- **INDEPENDENT-SET is in NP**. -/
 theorem indSetDec_mem_NP : indSetDec ∈ NP := mem_NP_of_kgCheck .indep KGVerify.indSetDec_iff
 
-/-- **VERTEX-COVER (exact size `k`) is in NP**. -/
+/-- **VERTEX-COVER (exact size `k`) is in NP.** The decision problem VERTEX-COVER, which accepts
+exactly the valid encodings of a number $k$ and a graph $G$ such that $G$ has a vertex cover of
+exactly $k$ vertices, is in NP. -/
 theorem vertexCoverDec_mem_NP : vertexCoverDec ∈ NP :=
   mem_NP_of_kgCheck .cover KGVerify.vertexCoverDec_iff
 
-/-- **CLIQUE is NP-complete**. -/
+/-- **CLIQUE is NP-complete.** CLIQUE lies in NP, and every decision problem in NP has a
+polynomial-time many-one reduction to CLIQUE. -/
 theorem cliqueDec_npComplete :
     cliqueDec ∈ NP ∧ ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L cliqueDec :=
   ⟨cliqueDec_mem_NP, cliqueDec_npHard⟩
 
-/-- **INDEPENDENT-SET is NP-complete**. -/
+/-- **INDEPENDENT-SET is NP-complete.** INDEPENDENT-SET lies in NP, and every decision problem
+in NP has a polynomial-time many-one reduction to INDEPENDENT-SET. -/
 theorem indSetDec_npComplete :
     indSetDec ∈ NP ∧ ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L indSetDec :=
   ⟨indSetDec_mem_NP, indSetDec_npHard⟩
 
-/-- **VERTEX-COVER (exact size `k`) is NP-complete**. -/
+/-- **VERTEX-COVER (exact size `k`) is NP-complete.** The decision problem VERTEX-COVER, which
+accepts exactly the valid encodings of a number $k$ and a graph $G$ such that $G$ has a vertex
+cover of exactly $k$ vertices, is in NP, and every decision problem in NP reduces to it by a
+polynomial-time many-one reduction. -/
 theorem vertexCoverDec_npComplete :
     vertexCoverDec ∈ NP ∧ ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L vertexCoverDec :=
   ⟨vertexCoverDec_mem_NP, vertexCoverDec_npHard⟩

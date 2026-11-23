@@ -65,11 +65,15 @@ open MeasureTheory
 
 namespace Nat.Primes
 
-/-- Shifted continuation `g1(s) = g(s+1)` for `Phi - 1/(z-1)`. -/
+/-- **The shifted log-Dirichlet continuation.** Let $\Phi(s) = \sum_p \log p / p^s$, the sum over
+primes, and let $g$ be the canonical continuation of $\Phi(s) - 1/(s - 1)$ to
+$\operatorname{Re} s > 1/2$. For $s \in \mathbb{C}$, the shifted continuation is
+$g_1(s) = g(s + 1)$. -/
 noncomputable def shiftedLogDirichletContinuation (s : ℂ) : ℂ :=
   logDirichletContinuation (s + 1)
 
-/-- The shifted witness is meromorphic for -(1 / 2) < re s. -/
+/-- **Meromorphy of the shifted continuation.** The shifted continuation $g_1$ is meromorphic at
+every point $s \in \mathbb{C}$ with $\operatorname{Re} s > -1/2$. -/
 theorem shiftedLogDirichletContinuation_meromorphic :
     MeromorphicOn shiftedLogDirichletContinuation
       {s | -(1 : ℝ) / 2 < s.re} := by
@@ -92,7 +96,9 @@ theorem shiftedLogDirichletContinuation_meromorphic :
     (meromorphicAt_comp_iff_of_deriv_ne_zero hAnalytic hDeriv).mpr hBase
   exact hComp
 
-/-- The shifted witness is analytic where 0 ≤ re s. -/
+/-- **Holomorphy of the shifted continuation on the closed half-plane.** The shifted
+continuation $g_1$ is complex analytic at every point $s \in \mathbb{C}$ with
+$\operatorname{Re} s \ge 0$. -/
 theorem shiftedLogDirichletContinuation_analyticOn :
     AnalyticOnNhd ℂ shiftedLogDirichletContinuation
       {s | 0 ≤ s.re} := by
@@ -109,7 +115,10 @@ theorem shiftedLogDirichletContinuation_analyticOn :
   have hComp := hBase.comp hAnalytic hMaps
   exact hComp
 
-/-- The shifted witness agrees with the series where 0 < re s. -/
+/-- **The shifted continuation agrees with the shifted series.** Let
+$\Phi(s) = \sum_p \log p / p^s$ be the prime logarithmic Dirichlet series and $g_1$ the shifted
+continuation. For every $s \in \mathbb{C}$ with $\operatorname{Re} s > 0$,
+$g_1(s) = \Phi(s + 1) - 1/s$. -/
 theorem shiftedLogDirichletContinuation_agree :
     Set.EqOn shiftedLogDirichletContinuation
       (fun s => logDirichletSeries (s + 1) - 1 / s)
@@ -134,15 +143,22 @@ end Nat.Primes
 
 namespace Chebyshev
 
-/-- Normalized error `H(t) = theta(exp t) * exp(-t) - 1`. -/
+/-- **The normalized Chebyshev error.** For real $t$, let $H(t) = \theta(e^t) e^{-t} - 1$, where
+$\theta(x) = \sum_{p \le x} \log p$ is the Chebyshev function, the sum running over primes
+$p \le x$. -/
 noncomputable def normalizedThetaError (t : ℝ) : ℝ :=
   theta (Real.exp t) * Real.exp (-t) - 1
 
-/-- Single continuation `(g1(s) - 1) / (s + 1)` of `L H`. -/
+/-- **The normalized-error continuation.** Let $\Phi(s) = \sum_p \log p / p^s$, the sum over
+primes, let $g$ be the canonical continuation of $\Phi(s) - 1/(s - 1)$, and let
+$g_1(s) = g(s + 1)$ be the shifted continuation. For $s \in \mathbb{C}$, the normalized-error
+continuation is $F(s) = (g_1(s) - 1)/(s + 1)$, with $F(-1) = 0$ since division by zero gives $0$.
+-/
 noncomputable def normalizedThetaErrorContinuation (s : ℂ) : ℂ :=
   (Nat.Primes.shiftedLogDirichletContinuation s - 1) / (s + 1)
 
-/-- Meromorphicity of the normalized-error continuation. -/
+/-- **Meromorphy of the normalized-error continuation.** The normalized-error continuation $F$
+is meromorphic at every point $s \in \mathbb{C}$ with $\operatorname{Re} s > -1/2$. -/
 theorem normalizedThetaErrorContinuation_meromorphic :
     MeromorphicOn normalizedThetaErrorContinuation
       {s | -(1 : ℝ) / 2 < s.re} := by
@@ -157,7 +173,9 @@ theorem normalizedThetaErrorContinuation_meromorphic :
   have hDiv := hSub.div hDen
   exact hDiv
 
-/-- Analyticity of the normalized-error continuation on 0 ≤ re s. -/
+/-- **Holomorphy of the normalized-error continuation on the closed half-plane.** The
+normalized-error continuation $F$ is complex analytic at every point $s \in \mathbb{C}$ with
+$\operatorname{Re} s \ge 0$. -/
 theorem normalizedThetaErrorContinuation_analyticOn :
     AnalyticOnNhd ℂ normalizedThetaErrorContinuation
       {s | 0 ≤ s.re} := by
@@ -179,7 +197,12 @@ theorem normalizedThetaErrorContinuation_analyticOn :
   have hDiv := hSub.div hDen hNe
   exact hDiv
 
-/-- Genuine HasLaplace for the complexified normalized error. -/
+/-- **Laplace transform of the normalized Chebyshev error.** Let
+$\theta(x) = \sum_{p \le x} \log p$ be the Chebyshev function (the sum over primes $p \le x$),
+let $H(t) = \theta(e^t) e^{-t} - 1$ for real $t$ be the normalized Chebyshev error, viewed as a
+complex-valued function, and let $F$ be the normalized-error continuation. For every
+$s \in \mathbb{C}$ with $\operatorname{Re} s > 0$, the function $t \mapsto e^{-st} H(t)$ is
+integrable on $(0, \infty)$ and $\int_{(0, \infty)} e^{-st} H(t)\,dt = F(s)$. -/
 theorem hasLaplace_normalizedThetaError (s : ℂ) (hs : 0 < s.re) :
     HasLaplace (fun t : ℝ => (normalizedThetaError t : ℂ)) s
       (normalizedThetaErrorContinuation s) := by

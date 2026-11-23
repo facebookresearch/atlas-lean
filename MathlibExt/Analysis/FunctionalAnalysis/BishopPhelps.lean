@@ -666,12 +666,16 @@ private theorem bishop_phelps_real_dense
     exact hfg_bound
 
 /--
-For a Banach space over `ℝ` or `ℂ`, the set of norm-attaining functionals is norm-dense in the
-strong dual `StrongDual 𝕜 E`. Source: E. Bishop and R. R. Phelps, Bull. Amer. Math. Soc. 67 (1961)
-97-98 and Pacific J. Math. 1961; Bollobas quantitative version; Lean states `RCLike` Banach case
-as density of attaining functionals.
+**Bishop–Phelps theorem.** Let $E$ be a Banach space over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$, with dual space $E^*$. The functionals that attain their norm on the closed unit
+ball, that is, the $f \in E^*$ such that $|f(x)| = \|f\|$ for some $x \in E$ with
+$\|x\| \le 1$, form a dense subset of $E^*$ in the norm topology.
 
 Proves `Wanted` entry `bishop_phelps`.
+
+Source: E. Bishop and R. R. Phelps, Bull. Amer. Math. Soc. 67 (1961)
+97-98 and Pacific J. Math. 1961; Bollobas quantitative version; Lean states `RCLike` Banach case
+as density of attaining functionals.
 -/
 theorem bishop_phelps
     {𝕜 : Type*} [RCLike 𝕜]
