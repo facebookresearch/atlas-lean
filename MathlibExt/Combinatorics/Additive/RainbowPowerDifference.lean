@@ -9,10 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.ZMod.Basic
+import Mathlib.Algebra.Order.Interval.Finset.Basic
 import Mathlib.Tactic.Ring
 
 /-!
-# Dominant colors on power-step strings modulo a prime
+# Dominant colors in rainbow-free colorings for `x - y = z ^ k`
 
 Let `c : ZMod p → Fin 3` be rainbow-free for `x - y = z ^ k`: no solution has `c x`, `c y`, `c z`
 pairwise distinct. For `a i : ZMod p` and `ℓ : ℕ`, the `aᵏ`-string at `i` of length `ℓ` is
@@ -30,6 +31,8 @@ that `c` is surjective, that `a ≠ 0` and that `p` is prime, which the statemen
 * `MetaMathlibExt.color_dominant_powStrings_of_rainbowFree_zmod`: in an exact rainbow-free
   3-coloring of `ℤ/pℤ` for `x - y = z ^ k`, every bichromatic `aᵏ`-string with `a ≠ 0` contains
   the color `c a`.
+* `MetaMathlibExt.color_one_dominant_of_rainbowFree_powDiff`: every bichromatic interval of
+  positive integers contains the color of one.
 -/
 
 public section
@@ -86,6 +89,35 @@ theorem color_dominant_powStrings_of_rainbowFree_zmod (p k : ℕ) [Fact p.Prime]
     ring
   by_contra hmem
   refine hrf _ _ a hsol ⟨Ne.symm hne, fun h => hmem ?_, fun h => hmem ?_⟩
+  · exact Finset.mem_image.2 ⟨t, Finset.mem_range.2 (by omega), h⟩
+  · exact Finset.mem_image.2 ⟨t + 1, Finset.mem_range.2 ht, h⟩
+
+-- The statement retains the exactness hypothesis of the source.
+set_option linter.unusedVariables false in
+open color_dominant_powStrings_of_rainbowFree_zmod in
+/-- **The color of one dominates bichromatic strings.** Let $r$ and $k$ be natural numbers and let
+$c$ be a coloring of the positive integers with $r$ colors that uses every color on some positive
+integer and is rainbow-free for $x - y = z^k$: no positive integers $x, y, z$ with $x = y + z^k$
+have $c(x), c(y), c(z)$ pairwise distinct. Then for every positive integer $i$ and every natural
+number $\ell$, if $c$ takes exactly two colors on $i, i + 1, \dots, i + \ell - 1$, one of these
+integers has the color $c(1)$.
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 1
+(`integers-2024-A105-lem-1`). -/
+theorem color_one_dominant_of_rainbowFree_powDiff (r k : ℕ) (c : ℕ → Fin r)
+    (hc : ∀ j : Fin r, ∃ i : ℕ, 0 < i ∧ c i = j)
+    (hrf : ∀ x y z : ℕ, 0 < x → 0 < y → 0 < z → x = y + z ^ k →
+      ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
+    (i ℓ : ℕ) (hi : 0 < i) (hbi : ((Finset.Ico i (i + ℓ)).image c).card = 2) :
+    c 1 ∈ (Finset.Ico i (i + ℓ)).image c := by
+  have hIco : (Finset.range ℓ).image (i + ·) = Finset.Ico i (i + ℓ) := by
+    simpa only [Nat.Ico_zero_eq_range, Nat.add_zero] using Finset.image_add_left_Ico 0 ℓ i
+  rw [← hIco, Finset.image_image] at hbi ⊢
+  obtain ⟨t, ht, hne⟩ := exists_succ_ne_of_one_lt_card_image (c ∘ (i + ·)) ℓ (by omega)
+  by_contra hmem
+  refine hrf (i + (t + 1)) (i + t) 1 (by omega) (by omega) Nat.one_pos
+    (by simp [Nat.add_assoc]) ⟨hne.symm, fun h => hmem ?_, fun h => hmem ?_⟩
   · exact Finset.mem_image.2 ⟨t, Finset.mem_range.2 (by omega), h⟩
   · exact Finset.mem_image.2 ⟨t + 1, Finset.mem_range.2 ht, h⟩
 
