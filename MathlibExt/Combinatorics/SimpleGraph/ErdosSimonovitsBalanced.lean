@@ -7,33 +7,35 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Erdös Problem 1077
+Portions of this file are adapted from:
+
+`FormalConjectures/ErdosProblems/1077.lean` (Formal Conjectures), for the claim and its negation.
+Copyright The Formal Conjectures Authors.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Formal Conjectures Authors
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Subgraph
-public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Filter.AtTopBot.Basic
-public import Mathlib.Order.Filter.Basic
 public import MathlibExt.Combinatorics.SimpleGraph.Balanced
+import Mathlib.Combinatorics.SimpleGraph.Bipartite
+
+/-!
+# The Erdős–Simonovits balanced subgraph claim
+
+`mainPositive_refuted` disproves the proposed vertex bound by concentrating the edges of a
+complete bipartite graph on a small fraction of the vertices.
+-/
 
 @[expose] public section
 
 open Filter
 
 namespace MathlibExt.GraphTheory.ErdosProblem1077Wanted
-
-/-! Source record `FC-ErdosProblem1077`, ported from FormalConjectures
-`ErdosProblems/1077.lean` (`theorem erdos_1077`) and checked against
-erdosproblems.com/1077. The historical positive Erdős–Simonovits
-proposition is preserved as `mainPositive` (disproved); its negation is the
-unregistered companion `disprovedMain`. `SimpleGraph.IsBalanced` is
-MathlibExt's. Status: resolved false (formalized in Lean). -/
 
 open Classical in
 /-- **Erdős–Simonovits balanced subgraph claim.** For all reals $\varepsilon$ and $\alpha$ with
@@ -63,6 +65,25 @@ degree is at most $D$ times its minimum degree), $m > n^{1-\alpha}$, and $H$ has
 $\varepsilon m^{1+\alpha}$ edges. -/
 def disprovedMain : Prop := ¬ mainPositive
 
+open Classical in
+private lemma verts_subset_support_of_balanced {V : Type*} [Fintype V] {G : SimpleGraph V}
+    (H : G.Subgraph) {D : ℝ} (hbal : H.coe.IsBalanced D) (he : 0 < H.edgeSet.ncard) :
+    H.verts ⊆ G.support := by
+  classical
+  have hmin : H.coe.minDegree ≠ 0 := by
+    intro hzero
+    have hbot : H.coe = ⊥ := by simpa [SimpleGraph.IsBalanced, hzero] using hbal
+    rw [← H.image_coe_edgeSet_coe, hbot] at he
+    simp at he
+  intro v hv
+  let u : H.verts := ⟨v, hv⟩
+  have : Nonempty H.verts := ⟨u⟩
+  have hall : H.coe.support = Set.univ := by
+    by_contra h
+    exact hmin (SimpleGraph.minDegree_eq_zero_iff_support_ne.mpr h)
+  obtain ⟨w, huw⟩ := H.coe.mem_support.mp (hall ▸ Set.mem_univ u)
+  exact (H.coe_adj_sub u w huw).mem_support_left
+
 /--
 **The Erdős–Simonovits balanced subgraph claim is false.** It is not the case that for all reals
 $\varepsilon$ and $\alpha$ with $0 < \varepsilon < 1$ and $0 < \alpha < 1$, for all sufficiently
@@ -81,6 +102,47 @@ dfe2d78128b493c572cf525b1b8edf4897fb7664,
 https://github.com/plby/lean-proofs/blob/dfe2d78128b493c572cf525b1b8edf4897fb7664/src/latest/ErdosProblems/Erdos1077.lean#L265.
 Moved from `OpenConjectures/GraphTheory/ErdosProblem1077`.
 -/
-public theorem_wanted mainPositive_refuted : ¬ mainPositive
+theorem mainPositive_refuted : ¬ mainPositive := by
+  classical
+  intro claim
+  obtain ⟨D, hD⟩ := (claim (1 / 2) (by norm_num) (by norm_num)
+    (1 / 6) (by norm_num) (by norm_num)).exists
+  obtain ⟨N, hN⟩ := eventually_atTop.1 hD
+  let t := N + 2
+  have ht : 2 ≤ t := Nat.le_add_left 2 N
+  have ht₁ : 1 ≤ t := by omega
+  have hparts : t ^ 4 + t ^ 4 ≤ t ^ 5 := by
+    rw [pow_succ t 4, ← two_mul, mul_comm (t ^ 4)]
+    exact Nat.mul_le_mul_right _ ht
+  -- The two parts of size t⁴ carry all the edges.
+  let A := Fin (t ^ 4)
+  obtain ⟨f⟩ : Nonempty ((A ⊕ A) ↪ Fin (t ^ 6)) :=
+    Function.Embedding.nonempty_of_card_le (by
+      simpa [A] using hparts.trans (pow_le_pow_right' ht₁ (by decide : 5 ≤ 6)))
+  let K := completeBipartiteGraph A A
+  let G := K.map f
+  have hcard : G.edgeSet.ncard = t ^ 8 := by
+    rw [SimpleGraph.edgeSet_map, Set.ncard_image_of_injective _ f.sym2Map.injective,
+      Set.ncard_def, SimpleGraph.encard_edgeSet_completeBipartiteGraph]
+    simp [A, ← pow_add]
+  have hdense : ((t ^ 6 : ℕ) : ℝ) ^ (1 + 1 / 6 : ℝ) < G.edgeSet.ncard := by
+    rw [hcard, Nat.cast_pow, ← Real.rpow_natCast_mul (Nat.cast_nonneg t)]
+    norm_num
+    exact_mod_cast pow_lt_pow_right₀ (by omega : 1 < t) (by decide : 7 < 8)
+  have hN' : N ≤ t ^ 6 := (Nat.le_add_right N 2).trans (le_self_pow₀ ht₁ (by decide))
+  obtain ⟨H, hbal, hlarge, hedges⟩ := hN _ hN' G hdense
+  have hpos : 0 < H.edgeSet.ncard := by
+    have h : (0 : ℝ) < H.edgeSet.ncard := lt_of_le_of_lt (by positivity) hedges
+    exact_mod_cast h
+  have hbound : H.verts.ncard ≤ t ^ 5 := calc
+    H.verts.ncard ≤ G.support.ncard :=
+      Set.ncard_le_ncard (verts_subset_support_of_balanced H hbal hpos)
+    _ ≤ t ^ 4 + t ^ 4 := by
+      rw [SimpleGraph.support_map, Set.ncard_image_of_injective _ f.injective]
+      simpa [A, Nat.card_sum] using K.support.ncard_le_card
+    _ ≤ t ^ 5 := hparts
+  rw [Nat.cast_pow, ← Real.rpow_natCast_mul (Nat.cast_nonneg t)] at hlarge
+  norm_num at hlarge
+  exact (not_lt_of_ge hbound) (by exact_mod_cast hlarge)
 
 end MathlibExt.GraphTheory.ErdosProblem1077Wanted
