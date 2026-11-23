@@ -8,40 +8,197 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Group.Int.Defs
-public import Mathlib.Algebra.Group.Nat.Defs
-import Mathlib.Algebra.Ring.Parity
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Algebra.Order.Floor.Ring
+public import Mathlib.Algebra.Ring.Parity
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 
 /-!
-# Ideal period words and their block counts
+# Intervals of N-expansions with many gaps
 
 Jaap de Jonge's *Intervals of N-Expansions with Many Gaps* (INTEGERS 26 (2026), Article A75)
-defines in Definition 7 the ideal period words `d_n`: finite lists of blocks of partial quotients,
-each block being `a = 2, 1, 1` or `b = 2, 2`. This file holds their definition, two computed
-values and Lemma 8, which counts the blocks of each kind. The paper's other statements are in
+studies the N-expansion map `T_α(x) = N/x - d_α(x)` on the interval `[α, α + 1]`, whose digit
+`d_α(x) = ⌊N/x - α⌋` is lowered by one at `x = α` when `N/α - α` is an integer. This file holds
+the map and its digit with three basic properties, the fact that orbits with the same digits
+alternate in order, and the ideal period words `d_n` of Definition 7: finite lists of blocks of
+partial quotients, each block being `a = 2, 1, 1` or `b = 2, 2`, with two computed values and
+Lemma 8, which counts the blocks of each kind. The paper's other statements are in
 `WantedExt.Dynamics.NExpansionGapsWanted`.
 
 ## Main declarations
 
+* `MetaMathlibExt.nExpansionDigit` and `MetaMathlibExt.nExpansionMap`: the digit `d_α` and the
+  N-expansion map `T_α`.
+* `MetaMathlibExt.nExpansion_orbit_gt_iff_odd`: for `N > 0` and `0 < α < α'`, if the orbits of
+  `α` under `T_α` and of `α'` under `T_α'` have the same digits up to step `m`, then their points
+  of index `m` are in reverse order exactly when `m` is odd; likewise for the orbits of `α + 1`
+  and `α' + 1`.
 * `MetaMathlibExt.idealPeriodWord`: the ideal period word `d_n`, a list of blocks.
 * `MetaMathlibExt.idealPeriodWord_count_blocks` (Lemma 8): for `n ≥ 1`, `d_n` has `2^(n-1)`
   blocks `2, 2`, and its number `c_n` of blocks `2, 1, 1` satisfies `3 c_n = 2^n - (-1)^n`.
 
 ## Proof outline
 
-Write lists of blocks as in Definition 7. From `n = 4` on, `d_n = [j, abb]` for some list `j`
-when `n` is even, and `d_n = [j, ab, ab]` when `n` is odd. In the first case the recursion gives
-`d_(n+1) = [j, abb, j, ab, ab]`, in the second `d_(n+1) = [j, ab, ab, j, abb]`, so the pattern
-carries over to `n + 1`. In both cases the number of blocks `2, 2` doubles, and the number of
-blocks `2, 1, 1` goes from `c_n` to `2 c_n + (-1)^n`, the recursion of `(2^n - (-1)^n) / 3`.
-The words `d_1`, `d_2`, `d_3` and `d_4` are checked by computation.
+Orbits with the same digits: the digit of `x` is at most `⌊N/x - α⌋ ≤ N/x - α`, so every value of
+`T_α` is at least `α`, and for `α > 0` the orbits of positive points stay positive. If the orbits
+of `x < x'` have the same digit `d` at step `j`, their next points are `N/x_j - d` and
+`N/x'_j - d`. Since `y ↦ N/y` is strictly decreasing on `(0, ∞)` for `N > 0`, each step reverses
+the order of the two points.
+
+Block counts: write lists of blocks as in Definition 7. From `n = 4` on, `d_n = [j, abb]` for
+some list `j` when `n` is even, and `d_n = [j, ab, ab]` when `n` is odd. In the first case the
+recursion gives `d_(n+1) = [j, abb, j, ab, ab]`, in the second `d_(n+1) = [j, ab, ab, j, abb]`, so
+the pattern carries over to `n + 1`. In both cases the number of blocks `2, 2` doubles, and the
+number of blocks `2, 1, 1` goes from `c_n` to `2 c_n + (-1)^n`, the recursion of
+`(2^n - (-1)^n) / 3`. The words `d_1`, `d_2`, `d_3` and `d_4` are checked by computation.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
+
+open scoped Classical in
+/-- **Digit of the N-expansion map.** Let $N$ be a natural number and $\alpha$ a real number, and
+write $I_\alpha = [\alpha, \alpha + 1]$. The digit of a real number $x$ is
+$d(x) = \lfloor N/x - \alpha \rfloor$, except that when $N/\alpha - \alpha$ is an integer, the
+digit of $\alpha$ itself is $d(\alpha) = N/\alpha - \alpha - 1$.
+
+With this choice the $N$-expansion map $T_\alpha(x) = N/x - d(x)$ sends $\alpha$ to $\alpha + 1$
+in the integer case, every other point of $I_\alpha$ lands in $[\alpha, \alpha + 1)$, and no
+cylinder is a single point.
+
+Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
+A75, Definition 1. -/
+public noncomputable def nExpansionDigit (N : ℕ) (α x : ℝ) : ℤ :=
+  if x = α ∧ ∃ k : ℤ, (N : ℝ) / α - α = k then ⌊(N : ℝ) / x - α⌋ - 1 else ⌊(N : ℝ) / x - α⌋
+
+/-- **The $N$-expansion map.** For a natural number $N$ and a real number $\alpha$, the
+$N$-expansion map is $T_\alpha(x) = N/x - d_\alpha(x)$ for real $x$, where $d_\alpha(x)$ is the
+$N$-expansion digit: $d_\alpha(x) = \lfloor N/x - \alpha \rfloor$, except that
+$d_\alpha(\alpha) = \lfloor N/\alpha - \alpha \rfloor - 1$ when $N/\alpha - \alpha$ is an integer.
+The map is meant to act on the interval $I_\alpha = [\alpha, \alpha + 1]$, but it is defined for
+every real $x$, with the convention $N/0 = 0$.
+
+Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
+A75, Definition 1. -/
+public noncomputable def nExpansionMap (N : ℕ) (α x : ℝ) : ℝ :=
+  (N : ℝ) / x - nExpansionDigit N α x
+
+/-- **The digit away from the left endpoint.** Let $N$ be a natural number and let $\alpha$ and
+$x$ be real numbers with $x \ne \alpha$. Then the digit of $x$ for the $N$-expansion map on
+$[\alpha, \alpha + 1]$ is $\lfloor N/x - \alpha \rfloor$.
+
+Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
+A75, Definition 1. -/
+public theorem nExpansionDigit_of_ne {N : ℕ} {α x : ℝ} (hx : x ≠ α) :
+    nExpansionDigit N α x = ⌊(N : ℝ) / x - α⌋ := by
+  simp [nExpansionDigit, hx]
+
+/-- **The N-expansion map away from the left endpoint.** Let $N$ be a natural number and let
+$\alpha$ and $x$ be real numbers with $x \ne \alpha$. Then the $N$-expansion map $T_\alpha$
+satisfies $\alpha \le T_\alpha(x) < \alpha + 1$.
+
+Indeed $T_\alpha(x) = \alpha + \{N/x - \alpha\}$, where $\{\cdot\}$ denotes the fractional part.
+
+Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
+A75, Definition 1. -/
+public theorem nExpansionMap_mem_Ico_of_ne {N : ℕ} {α x : ℝ} (hx : x ≠ α) :
+    nExpansionMap N α x ∈ Set.Ico α (α + 1) := by
+  have h : nExpansionMap N α x = α + Int.fract ((N : ℝ) / x - α) := by
+    rw [nExpansionMap, nExpansionDigit_of_ne hx, Int.fract]
+    ring
+  rw [h]
+  exact ⟨le_add_of_nonneg_right (Int.fract_nonneg _),
+    by linarith [Int.fract_lt_one ((N : ℝ) / x - α)]⟩
+
+/-- **The left endpoint goes to the right endpoint when $N/\alpha - \alpha$ is an integer.** Let
+$N$ be a natural number and $\alpha$ a real number such that $N/\alpha - \alpha$ is an integer,
+with the convention $N/0 = 0$. Then the $N$-expansion map $T_\alpha$ satisfies
+$T_\alpha(\alpha) = \alpha + 1$.
+
+Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
+A75, Definition 1. -/
+public theorem nExpansionMap_self_of_int {N : ℕ} {α : ℝ} {k : ℤ} (hk : (N : ℝ) / α - α = k) :
+    nExpansionMap N α α = α + 1 := by
+  have hd : nExpansionDigit N α α = k - 1 := by
+    simp [nExpansionDigit, hk]
+  rw [nExpansionMap, hd]
+  push_cast
+  linarith
+
+/-- The digit of `x` is at most `⌊N/x - α⌋`, so the N-expansion map never takes a value below
+`α`. -/
+private theorem le_nExpansionMap (N : ℕ) (α x : ℝ) : α ≤ nExpansionMap N α x := by
+  have hd : nExpansionDigit N α x ≤ ⌊(N : ℝ) / x - α⌋ := by
+    unfold nExpansionDigit
+    split_ifs <;> omega
+  have h : (nExpansionDigit N α x : ℝ) ≤ (N : ℝ) / x - α :=
+    (Int.cast_le.mpr hd).trans (Int.floor_le _)
+  rw [nExpansionMap]
+  linarith
+
+/-- For `α > 0`, the orbit of a positive point under the N-expansion map stays positive. -/
+private theorem nExpansionMap_iterate_pos {N : ℕ} {α x : ℝ} (hα : 0 < α) (hx : 0 < x) (j : ℕ) :
+    0 < (nExpansionMap N α)^[j] x := by
+  cases j with
+  | zero => exact hx
+  | succ j =>
+    rw [Function.iterate_succ_apply']
+    exact hα.trans_le (le_nExpansionMap N α _)
+
+/-- Let `N > 0`, `α, α' > 0` and `0 < x < x'`. If the orbits of `x` under `T_α` and of `x'` under
+`T_α'` have the same digits at the steps `j < m`, then at step `m` the orbit of `x'` is below the
+orbit of `x` exactly when `m` is odd, and above it exactly when `m` is even. -/
+private theorem nExpansionMap_iterate_lt_iff {N : ℕ} (hN : 0 < N) {α α' x x' : ℝ} (hα : 0 < α)
+    (hα' : 0 < α') (hx : 0 < x) (hxx' : x < x') (m : ℕ)
+    (hd : ∀ j < m, nExpansionDigit N α ((nExpansionMap N α)^[j] x) =
+      nExpansionDigit N α' ((nExpansionMap N α')^[j] x')) :
+    ((nExpansionMap N α')^[m] x' < (nExpansionMap N α)^[m] x ↔ Odd m) ∧
+      ((nExpansionMap N α)^[m] x < (nExpansionMap N α')^[m] x' ↔ Even m) := by
+  induction m with
+  | zero => simpa using ⟨hxx'.le, hxx'⟩
+  | succ m ih =>
+    obtain ⟨ih₁, ih₂⟩ := ih fun j hj => hd j (by omega)
+    have hy := nExpansionMap_iterate_pos (N := N) hα hx m
+    have hy' := nExpansionMap_iterate_pos (N := N) hα' (hx.trans hxx') m
+    have hN' : (0 : ℝ) < N := by exact_mod_cast hN
+    -- Both orbits subtract the same digit, and `y ↦ N / y` reverses the order of positive reals.
+    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', nExpansionMap,
+      nExpansionMap, hd m (by omega), sub_lt_sub_iff_right, sub_lt_sub_iff_right,
+      div_lt_div_iff_of_pos_left hN' hy hy', div_lt_div_iff_of_pos_left hN' hy' hy, ih₁, ih₂,
+      Nat.odd_add_one, Nat.even_add_one, Nat.not_odd_iff_even, Nat.not_even_iff_odd]
+    exact ⟨Iff.rfl, Iff.rfl⟩
+
+/-- **Orbits with the same digits alternate in order.** Let $N$ be a positive integer and let
+$0 < \alpha < \alpha'$ be real numbers. Write $T_\alpha$ for the $N$-expansion map and $d_\alpha$
+for the $N$-expansion digit with parameter $\alpha$, and let $m$ be a natural number. If the
+orbits $\alpha_j = T_\alpha^j(\alpha)$ and $\alpha'_j = T_{\alpha'}^j(\alpha')$ satisfy
+$d_\alpha(\alpha_j) = d_{\alpha'}(\alpha'_j)$ for all $j \in \{0, \dots, m\}$, then
+$\alpha'_m < \alpha_m$ if and only if $m$ is odd. Likewise, if the orbits
+$\beta_j = T_\alpha^j(\alpha + 1)$ and $\beta'_j = T_{\alpha'}^j(\alpha' + 1)$ satisfy
+$d_\alpha(\beta_j) = d_{\alpha'}(\beta'_j)$ for all $j \in \{0, \dots, m\}$, then
+$\beta'_m < \beta_m$ if and only if $m$ is odd.
+
+The paper assumes $\alpha$ and $\alpha'$ in Phase I (so in particular $\alpha' \le \sqrt N - 1$);
+for $N > 0$ neither assumption is needed (the orbits stay in $[\alpha, \alpha + 1]$ and
+$[\alpha', \alpha' + 1]$, where $x \mapsto N/x$ is strictly decreasing), so both are replaced by
+$N > 0$. For $N = 0$ the claim fails ($\alpha = 1/5$, $\alpha' = 3/10$, $m = 1$).
+
+Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
+A75, Lemma 2 (`integers-2026-A75-lem-2`). -/
+public theorem nExpansion_orbit_gt_iff_odd {N : ℕ} (hN : 0 < N) {α α' : ℝ} (hα : 0 < α)
+    (hαα' : α < α') (m : ℕ) :
+    ((∀ j ≤ m, nExpansionDigit N α ((nExpansionMap N α)^[j] α) =
+        nExpansionDigit N α' ((nExpansionMap N α')^[j] α')) →
+      ((nExpansionMap N α')^[m] α' < (nExpansionMap N α)^[m] α ↔ Odd m)) ∧
+    ((∀ j ≤ m, nExpansionDigit N α ((nExpansionMap N α)^[j] (α + 1)) =
+        nExpansionDigit N α' ((nExpansionMap N α')^[j] (α' + 1))) →
+      ((nExpansionMap N α')^[m] (α' + 1) < (nExpansionMap N α)^[m] (α + 1) ↔ Odd m)) := by
+  have hα' : 0 < α' := hα.trans hαα'
+  exact ⟨fun hd => (nExpansionMap_iterate_lt_iff hN hα hα' hα hαα' m fun j hj => hd j hj.le).1,
+    fun hd => (nExpansionMap_iterate_lt_iff hN hα hα' (by linarith) (by linarith) m
+      fun j hj => hd j hj.le).1⟩
 
 /-- **Ideal period words.** For $n \ge 1$, the ideal period word $d_n$ is a finite list of blocks
 of partial quotients, each block being $a = 2, 1, 1$ or $b = 2, 2$. Writing lists of blocks by

@@ -9,15 +9,18 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.ArithmeticDerivative
 public import MathlibExt.NumberTheory.Collatz
 import Mathlib.Tactic.NormNum.Prime
 
 /-!
-# The accelerated Collatz map and compatible semiprimes
+# The arithmetic derivative, the accelerated Collatz map and compatible semiprimes
 
-For compatible semiprimes, the equations for the sums and products of the prime factors
-determine their residues modulo three up to the order of each pair. The factors of the first
-semiprime have opposite odd residues modulo four.
+Every positive solution `n` of the arithmetic differential equation `D(C(n)) = C(D(n))` is odd,
+where `D` is the arithmetic derivative and `C` the accelerated Collatz map. For compatible
+semiprimes, the equations for the sums and products of the prime factors determine their
+residues modulo three up to the order of each pair. The factors of the first semiprime have
+opposite odd residues modulo four.
 -/
 
 namespace MetaMathlibExt
@@ -50,6 +53,30 @@ Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1
 theorem collatzAccelerated_of_even {n : ℕ} (hn : n % 2 = 0) :
     collatzAccelerated n = Nat.collatzStep n := by
   simp [collatzAccelerated, Nat.collatzStep, hn]
+
+/-- **Positive solutions of the Collatz arithmetic differential equation are odd.** Let $D$ be
+the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$ with
+$D(C(n)) = C(D(n))$ is odd.
+
+Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
+Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
+Proposition 2 (`jis-2025-25.1.8-prop-2`). -/
+theorem odd_of_arithmeticDerivative_collatz_comm (n : ℕ) (hn : 0 < n)
+    (h : arithmeticDerivative (collatzAccelerated n) =
+      collatzAccelerated (arithmeticDerivative n)) :
+    Odd n := by
+  obtain ⟨m, rfl | rfl⟩ := Nat.even_or_odd' n
+  · -- For `n = 2m`, `C(n) = m` and the Leibniz rule gives `D(n) = m + 2 D(m)`, so the equation
+    -- reads `D(m) = C(m + 2 D(m))`. If `m` is even, this says `D(m) = m / 2 + D(m)`, so `m = 0`;
+    -- if `m` is odd, the right side `(3m + 6 D(m) + 1) / 2` exceeds `D(m)`.
+    exfalso
+    have hC : collatzAccelerated (2 * m) = m := by
+      unfold collatzAccelerated
+      split_ifs <;> omega
+    rw [hC, arithmeticDerivative_mul, arithmeticDerivative_prime Nat.prime_two, one_mul] at h
+    unfold collatzAccelerated at h
+    split_ifs at h <;> omega
+  · exact odd_two_mul_add_one m
 
 /-- **Compatible semiprimes.** Natural numbers $p, q, r, s$ form a compatible semiprime pair,
 and the semiprimes $pq$ and $rs$ are called compatible, when $p, q, r, s$ are primes with
