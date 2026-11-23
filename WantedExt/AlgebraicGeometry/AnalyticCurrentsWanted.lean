@@ -51,7 +51,7 @@ public theorem_wanted nef_positiveVolume_kahlerCurrent
 
 /-- The distributional differential of a current is again a current: the
 exterior derivative is continuous for the chart seminorms. -/
-public instance_wanted currentDifferentialTheory (n : ℕ) (M : Type) [TopologicalSpace M]
+public theorem_wanted currentDifferentialTheory (n : ℕ) (M : Type) [TopologicalSpace M]
     [CompactSpace M] [ChartedSpace (Coordinates n) M]
     [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
     [ExteriorTheory ℝ (Coordinates n) M] :
