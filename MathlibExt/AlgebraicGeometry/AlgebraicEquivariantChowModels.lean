@@ -24,7 +24,9 @@ zero-section push followed by inverse vector-bundle pullback.
 
 Reference: Graber--Pandharipande alg-geom/9708001v2, Sections1--3;
 Kresch math/9810166v1, quotient-stack/equivariant comparison.
-All construction and descent proofs are separate Wanted requests.
+The quotient-stack and character inputs (`EquivariantSource`, `CharacterChernData`) are taken as
+data here; the requests in this layer cover the operations on them, not their construction from a
+scheme with a torus action.
 -/
 
 set_option autoImplicit false

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.AlgebraicGeometry.AlgebraicMovingEulerModels
+import MathlibExt.AlgebraicGeometry.EquivariantDualBundleSourceModels
 import Mathlib.Algebra.TrivSqZeroExt.Basic
 
 /-!
@@ -65,5 +66,52 @@ example (F : SchemeData) (E : List (DualMovingSummand F)) :
 character: a cotangent character of weight `-1` contributes `+t`. -/
 example (F : SchemeData) (E : DualMovingSummand F) :
     dualEuler F E = weightedEuler F E.chern (-E.integer.weight) := rfl
+
+section DualBundleSections
+
+open _root_.CategoryTheory _root_.CategoryTheory.Limits
+open _root_.CategoryTheory.MonoidalCategory _root_.CategoryTheory.CartesianMonoidalCategory
+open _root_.CategoryTheory.MonObj
+open MathlibExt.AlgebraicGeometry.EquivariantDualBundleSourceModels
+open MathlibExt.AlgebraicGeometry.AlgebraicWeightBundleModels
+open MathlibExt.AlgebraicGeometry.LinearizedLineBundles
+open MathlibExt.AlgebraicGeometry.GlobalPOTVirtualClass
+open MathlibExt.AlgebraicGeometry.AlgebraicEquivariantChowModels
+open MathlibExt.AlgebraicGeometry.EquivariantCharacterLineModels
+open AlgebraicGeometry.StackCycleGeometry AlgebraicGeometry.StackAffineModules
+open AlgebraicGeometry.StackVectorBundles
+
+/-- The inverse virtual Euler class is `e(E^{-1}_mov) / e(E^0_mov)`: the Euler class of the moving
+part of the negative (obstruction) term times the inverse Euler class of the moving part of the
+degree-zero (tangent) term, not the reverse. -/
+example {X : Over base} [ModObj Gm X]
+    {P : DerivedTwoTermObstructionModels.EquivariantObstructionTerms X} (F : SchemeData)
+    {i : F.scheme ⟶ X} {hi : TorusFixedSchemeModels.FixedPoint Gm X i}
+    {W : DerivedTwoTermObstructionModels.FixedTerms P i hi} (N : VirtualNormalData F P W) (d : ℕ) :
+    inverseVirtualEuler F N d =
+      movingEuler F (decompositionSummands F N.negative) *
+        inverseMovingEuler F (decompositionSummands F N.zero) d := rfl
+
+
+/-- Regression for the prescribed base arrow: the section lift of a quotient dual bundle uses the
+arrow `a ⟶ M.map b` given by the comparison counit and `overBase` for its base, and that arrow's
+torsor map followed by the fibre comparison of `M` for its torsor isomorphism. -/
+example {X : Over base} [ModObj Gm X] {E : X.left.Modules} (L : Linearization Gm X E) {r : ℕ}
+    (B : DualBundleModel X E r) [ModObj Gm B.total]
+    (hp : γ[Gm,B.total] ≫ B.projection = (Gm ◁ B.projection) ≫ γ[Gm,X])
+    (Q : EquivariantSource X) (R : EquivariantSource B.total) (M : EquivariantMap R Q B.projection hp)
+    (P : QuotientDualBundle L B hp Q R M) (a : AffinePoint Q.quotient.stack)
+    (s : P.module.val.presheaf.obj (Opposite.op a)) :
+    let e := Opposite.op ((sectionPresheaf P.module.val).elementsMk (Opposite.op a) s)
+    let b := P.comparison.inverse.obj e
+    let φ : a ⟶ (affineMap M.map).obj b :=
+      ((sectionForget P.module.val).mapIso (P.comparison.counitIso.app e)).inv ≫
+        (P.overBase.app b).hom
+    (P.sectionNormalization a s).baseIso.hom = φ.hom.base ∧
+      (P.sectionNormalization a s).torsorIso.hom =
+        torsorMap Q φ ≫ ((M.fibre b.obj.base).hom.app b.obj.fiber).iso.hom :=
+  P.sectionArrow a s
+
+end DualBundleSections
 
 end MathlibExtTest.AlgebraicGeometry.EquivariantVirtualLocalization

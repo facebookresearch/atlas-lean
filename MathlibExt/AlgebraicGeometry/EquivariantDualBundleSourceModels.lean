@@ -120,6 +120,18 @@ structure QuotientDualBundle where
     SectionLiftData L B Q R
       (comparison.inverse.obj (op ((sectionPresheaf module.val).elementsMk (op a) s)))
       (forms.forms a s)
+  /-- The section lift uses the specified arrow `a ⟶ M.map b` (the comparison counit followed by
+  `overBase`) for its base, and the torsor map of that arrow followed by the fibre comparison of
+  `M` for its torsor isomorphism, rather than independently chosen isomorphisms (which could hide
+  a nonlinear gauge on the fibre). -/
+  sectionArrow : ∀ (a : AffinePoint Q.quotient.stack) (s : module.val.presheaf.obj (op a)),
+    let e := op ((sectionPresheaf module.val).elementsMk (op a) s)
+    let b := comparison.inverse.obj e
+    let φ : a ⟶ (affineMap M.map).obj b :=
+      ((sectionForget module.val).mapIso (comparison.counitIso.app e)).inv ≫ (overBase.app b).hom
+    (sectionNormalization a s).baseIso.hom = φ.hom.base ∧
+      (sectionNormalization a s).torsorIso.hom =
+        torsorMap Q φ ≫ ((M.fibre b.obj.base).hom.app b.obj.fiber).iso.hom
 
 /-- The native stack bundle reuses the literal original quotient total space. -/
 @[implicit_reducible] def QuotientDualBundle.native

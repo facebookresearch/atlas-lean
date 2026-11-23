@@ -20,8 +20,13 @@ summands. Every summand uses the actual closed component map, its native
 projective Chow push and the prescribed polynomial localization.
 
 The source theorem retains the smooth equivariant closed ambient embedding.
-Existence of the normalized geometry and the localization equality are
-genuine separate construction/proof requests.
+It is a conditional comparison: `localizationFormula` is stated for a supplied `LocalizationData`
+package, and the localization equality is requested for every such package. Assembling the package
+from a scheme with a torus action, a POT and a smooth equivariant embedding (the quotient source
+and character, the fixed Chow comparison data, and the polynomial compatibility of each component
+push) is out of scope here; the separate requests cover only the individual pieces named in
+`VirtualLocalizationSourcesWanted` (the ordinary and equivariant virtual geometry from given
+sources, the rational Chow comparison, the fixed-Chow isomorphism and the moving Euler inverse).
 -/
 
 set_option autoImplicit false
@@ -95,7 +100,8 @@ def localizedTerm (P : FixedLocalizationData E Q D K C F i hi) : LocalizedChow Q
     (fixedChowComparison F D K P.chow
       (inverseVirtualEuler F P.normal P.dimensionBound (P.ordinary.formalClass P.rational)))
 
-/-- The full problem has the actual fixed components, original cone, and ambient embedding. -/
+/-- The full problem has the actual fixed components, original cone, and ambient embedding.
+These inputs are supplied, not constructed here (see the module docstring). -/
 structure LocalizationData (X : SchemeData) [ModObj Gm X.scheme]
     (E : EquivariantPOT X.scheme) (D : CycleConstructionData base (FiniteTypeArtin ℂ))
     (K : KreschPresentation D) where

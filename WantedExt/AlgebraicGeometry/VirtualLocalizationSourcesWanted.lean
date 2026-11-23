@@ -93,7 +93,9 @@ def_wanted actual_fixed_source_inclusion (X : Over base) [ModObj Gm X]
     (hi : FixedPoint Gm X i) (W : FixedTerms E.terms i hi)
     (B : FixedBundleData E.terms i hi W) : FixedSourceData E.terms i hi W B
 
-/-- The fixed map uses the same chosen original model in the compatible full diagram. -/
+/-- The fixed map uses the same chosen original model in the compatible full diagram: its fixed
+cotangent model and square map are the diagram's own (`Diagram.fixed j`, `Diagram.square j`, after
+transport along `_original`). -/
 def_wanted source_compatible_fixed_obstruction (X : SchemeData) [ModObj Gm X.scheme]
     (E : EquivariantPOT X.scheme) (S : FixedSchemeModel Gm X.scheme)
     (Z : FixedComponents Gm X.scheme S) (Diagram : CotangentDiagram X.scheme S Z)
@@ -102,8 +104,9 @@ def_wanted source_compatible_fixed_obstruction (X : SchemeData) [ModObj Gm X.sch
       j)))
     (B : FixedBundleData E.terms ((Z.component j).toAmbient Gm X.scheme)
       (componentFixed (Z.component j)) W) :
-    FixedObstructionData E.terms ((Z.component j).toAmbient Gm X.scheme)
-      (componentFixed (Z.component j)) W B
+    {P : FixedObstructionData E.terms ((Z.component j).toAmbient Gm X.scheme)
+        (componentFixed (Z.component j)) W B //
+      P.cotangent = Diagram.fixed j ∧ HEq P.differential (Diagram.square j)}
 
 /-- The fixed homology and amplitude claims concern the already computed induced phi. -/
 theorem_wanted induced_fixed_pot_properties (X : SchemeData) [ModObj Gm X.scheme]
@@ -141,7 +144,9 @@ def_wanted actual_equivariant_virtual_geometry (X : SchemeData) [ModObj Gm X.sch
     (O : OrdinaryVirtualGeometry X E.terms.obstruction) :
     EquivariantVirtualGeometry X E Q D K O
 
-/-- The source theorem uses the actual smooth equivariant ambient closed embedding in P. -/
+/-- The source theorem uses the actual smooth equivariant ambient closed embedding in P. This is
+the conditional comparison for a supplied `LocalizationData` package; constructing that package from
+the geometric source data is not requested here. -/
 theorem_wanted virtual_localization (X : SchemeData) [ModObj Gm X.scheme]
     (E : EquivariantPOT X.scheme)
     (D : CycleConstructionData base (FiniteTypeArtin ℂ)) (K : KreschPresentation D)
