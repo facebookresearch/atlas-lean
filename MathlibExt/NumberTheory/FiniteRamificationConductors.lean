@@ -44,13 +44,14 @@ finite, so the decomposition group and its lower groups are finite and the
 weights are ratios of positive integers.
 
 The conductors take a certified bound: an index N with the actual proposition
-G_N=1, beyond which every summand vanishes. Existing public ramification theory
-produces such bounds; no new existence goal is made here. The completed
-independence theorems show that the conductors do not depend on the bound; the
-raw partial sums over i < N for an arbitrary N are named separately.
-The remaining integrality theorem concerns arbitrary finite-dimensional
-rational adic representations, beyond the covered one-dimensional
-abelian Artin-conductor formula.
+G_N=1, beyond which every summand vanishes. For a finite extension of
+nonarchimedean local fields such a bound exists (the lower filtration
+terminates); that existence is a separate wanted statement, not proved here.
+The completed independence theorems show that the conductors do not depend on
+the bound; the raw partial sums over i < N for an arbitrary N are named
+separately. The remaining integrality theorem concerns arbitrary
+finite-dimensional rational adic representations, beyond the covered
+one-dimensional abelian Artin-conductor formula.
 
 Reference: Serre, Corps Locaux, Chapter IV, §1 and Chapter VI, §2.
 -/

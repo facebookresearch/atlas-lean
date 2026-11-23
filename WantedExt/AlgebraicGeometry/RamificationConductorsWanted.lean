@@ -22,10 +22,12 @@ https://doi.org/10.1007/978-1-4757-5673-9.
 
 The local fields, valuation ring, decomposition group, lower groups,
 representation and invariant subspaces are actual Mathlib objects.
-The only supplied bound is the actual equation G_N=1. Its existence and
-generic lower/upper/Hasse--Arf theory are existing public toolbox; the
-completed sum-independence laws do not ask for them again.
-The request is arbitrary finite-dimensional Q_ell representation
+The conductors are computed from a certified bound N with G_N=1. The
+existence of such a bound, i.e. the termination of the lower filtration of a
+finite Galois extension of nonarchimedean local fields (Serre, Corps Locaux,
+Chapter IV, §1), is requested first; the completed bound-independence laws
+then make the conductors intrinsic.
+The integrality request is arbitrary finite-dimensional Q_ell representation
 integrality, beyond the verified one-dimensional abelian formula. It needs no
 condition relating ell to the residue characteristic: the Artin conductor of a
 representation over any field of characteristic zero is the inner product of
@@ -39,8 +41,19 @@ open MathlibExt.NumberTheory.FiniteRamificationConductors
 
 universe u v w
 
-/-- Serre's higher-rank conductor integrality, with the actual finite
-ramification support and the standard omission of i=0 in the Swan term. -/
+/-- The lower ramification filtration of a finite Galois extension of
+nonarchimedean local fields terminates: some `G_N` is trivial. -/
+public theorem_wanted exists_lowerGroup_eq_bot
+    (K : Type u) [Field K] [ValuativeRel K] [TopologicalSpace K]
+    [IsNonarchimedeanLocalField K]
+    (L : Type v) [Field L] [ValuativeRel L] [TopologicalSpace L]
+    [IsNonarchimedeanLocalField L] [Algebra K L] [ValuativeExtension K L]
+    [Module.Finite K L] [IsGalois K L] :
+    ∃ N : ℕ, lowerGroup K L N = ⊥
+
+/-- Serre's higher-rank conductor integrality, for the conductors computed from
+any certified ramification bound (one exists by `exists_lowerGroup_eq_bot`), with
+the standard omission of i=0 in the Swan term. -/
 public theorem_wanted finiteImage_artin_swan_integral
     (K : Type u) [Field K] [ValuativeRel K] [TopologicalSpace K]
     [IsNonarchimedeanLocalField K]
