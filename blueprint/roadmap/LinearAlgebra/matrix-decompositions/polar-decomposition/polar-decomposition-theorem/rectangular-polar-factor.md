@@ -48,14 +48,16 @@ closest semi-orthogonal matrix to $M$; that description is exact only when $M$ h
 $r = k$. When $r < k$, $P(G)$ is not semi-orthogonal, and the nearest semi-orthogonal matrices,
 treated in this section, are not unique.
 
-## Informally uses
+## Depends on
 
-- [Real singular value decomposition](../../singular-value-decomposition/singular-value-decomposition-theorem/real-singular-value-decomposition.md):
-  mathematical prerequisite, the full decomposition from which the thin and compact decompositions,
-  and with them $P(G)$, are read off.
-- [Polar decomposition of invertible real matrices](polar-decomposition-gl-real.md): mathematical
-  prerequisite for item 4 only, whose identification of $P(G)$ with the orthogonal factor uses the
-  uniqueness of that decomposition.
+- [Real singular value decomposition](../../singular-value-decomposition/singular-value-decomposition-theorem/real-singular-value-decomposition.md)
+- [Pseudoinverse of a linear map](../../pseudoinverse/moore-penrose-pseudoinverse.md)
+- [Positive elements are the squares of positive elements](../../../../Analysis/operator-algebras/powers-and-square-roots-of-positive-operators/nonneg-iff-exists-nonneg-and-eq-mul-self.md)
+- [Positive square roots are unique](../../../../Analysis/operator-algebras/powers-and-square-roots-of-positive-operators/mul-self-eq-mul-self-iff.md)
+
+## Proof depends on
+
+- [Polar decomposition of invertible real matrices](polar-decomposition-gl-real.md)
 
 ## Sources
 

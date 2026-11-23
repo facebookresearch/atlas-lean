@@ -12,8 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
-public import Mathlib.LinearAlgebra.Matrix.Trace
+public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
 
 namespace MetaMathlibExt
 
@@ -222,26 +221,6 @@ public theorem_wanted genSecondMarkov_vieta (k : ℕ) {a b c : ℤ}
     (let a' := b * c - a - (k : ℤ) ^ 2 - 2 * k;
       b ^ 2 + a' ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (b + a' + c) + 2 * (k : ℤ) ^ 3 +
         3 * (k : ℤ) ^ 2 = b * a' * c)
-
-/-- **Trace identities in $\mathrm{SL}(2, \mathbb{Z})$.** For all $A, B \in \mathrm{SL}(2,
-\mathbb{Z})$ we have $\operatorname{tr} A = \operatorname{tr} A^{-1}$,
-$\operatorname{tr}(AB) = \operatorname{tr} A \cdot \operatorname{tr} B -
-\operatorname{tr}(AB^{-1})$, and $A^2 = (\operatorname{tr} A) A - I$, where $I$ is the
-identity matrix.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.6 (citing Aigner, Lemma 4.2). -/
-public theorem_wanted specialLinearGroup_two_trace_identities
-    (A B : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-    Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) =
-        Matrix.trace ((A⁻¹ : Matrix.SpecialLinearGroup (Fin 2) ℤ) : Matrix (Fin 2) (Fin 2) ℤ) ∧
-      Matrix.trace ((A * B : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-          Matrix (Fin 2) (Fin 2) ℤ) =
-        Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) * Matrix.trace (B : Matrix (Fin 2) (Fin 2) ℤ) -
-          Matrix.trace ((A * B⁻¹ : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-            Matrix (Fin 2) (Fin 2) ℤ) ∧
-      (A : Matrix (Fin 2) (Fin 2) ℤ) ^ 2 =
-        Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) • (A : Matrix (Fin 2) (Fin 2) ℤ) - 1
 
 /-- **At most two solutions of $x^2 + kx + 1 \equiv 0$ modulo a prime.** For every prime $p$
 and every $k \in \mathbb{N}$, at most two integers $x$ with $0 \le x < p$ satisfy
