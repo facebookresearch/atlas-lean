@@ -15,7 +15,8 @@ public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Data.Fintype.Perm
 import Mathlib.Topology.Algebra.Polynomial
 import Mathlib.Topology.Order.IntermediateValue
-import Mathlib
+import Mathlib.Algebra.MvPolynomial.CommRing
+import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 
 /-!
 # Symmetrization and the approximate degree of parity
@@ -26,7 +27,6 @@ Minsky-Papert symmetrization on the Boolean cube and the approximate degree of p
 @[expose] public section
 
 open scoped BigOperators
-open Polynomial
 namespace BooleanCube
 
 set_option autoImplicit false
@@ -40,35 +40,7 @@ def parityFunction {n : ℕ} (x : BoolCube n) : Bool := decide (Odd (hammingWeig
 /-- q = (1/N!) Σ_π p ∘ π (de Wolf 11.2) -/
 noncomputable def symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ) : MvPolynomial (Fin n) ℝ := ((n.factorial : ℝ)⁻¹) • ∑ σ : Equiv.Perm (Fin n), MvPolynomial.rename σ p
 
-/-- Evaluation distributes over finite sums. -/
-private theorem eval_finset_sum {ι : Type*} {n : ℕ} (s : Finset ι)
-    (f : ι → MvPolynomial (Fin n) ℝ) (v : Fin n → ℝ) :
-    MvPolynomial.eval v (s.sum f) = s.sum fun σ => MvPolynomial.eval v (f σ) := by
-  classical
-  induction s using Finset.induction with
-  | empty =>
-    simp only [Finset.sum_empty]
-    have h : MvPolynomial.eval v ((0 : MvPolynomial (Fin n) ℝ) + 0)
-        = MvPolynomial.eval v 0 + MvPolynomial.eval v 0 := by
-      rw [MvPolynomial.eval_add]
-    rw [add_zero] at h
-    exact add_eq_left.mp h.symm
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, MvPolynomial.eval_add, ih]
 
-/-- Evaluation of a scalar multiple. -/
-private theorem eval_smul_real {n : ℕ} (c : ℝ) (q : MvPolynomial (Fin n) ℝ)
-    (v : Fin n → ℝ) :
-    MvPolynomial.eval v (c • q) = c * MvPolynomial.eval v q := by
-  first
-    | rw [MvPolynomial.eval_smul, smul_eq_mul]
-    | rw [MvPolynomial.smul_eq_C_mul, MvPolynomial.eval_mul, MvPolynomial.eval_C]
-    | rw [← MvPolynomial.C_mul', MvPolynomial.eval_mul, MvPolynomial.eval_C]
-    | rw [← MvPolynomial.C_mul, MvPolynomial.eval_mul, MvPolynomial.eval_C]
-    | rw [Algebra.smul_def, MvPolynomial.algebraMap_eq_apply, MvPolynomial.eval_mul,
-        MvPolynomial.eval_C]
-    | rw [Algebra.smul_def, MvPolynomial.algebraMap_eq, MvPolynomial.eval_mul,
-        MvPolynomial.eval_C]
 
 /-- symmetrization averages p over permuted inputs (0/1 evaluation convention of merged eval_multilinearExtension) -/
 theorem eval_symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ) (x : BoolCube n) : MvPolynomial.eval (fun i => if x i then (1 : ℝ) else 0) (symmetrize p) = (n.factorial : ℝ)⁻¹ * ∑ σ : Equiv.Perm (Fin n), MvPolynomial.eval (fun i => if x (σ i) then (1 : ℝ) else 0) p := by
@@ -79,38 +51,11 @@ theorem eval_symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ) (x : BoolCube n
     rw [MvPolynomial.eval_rename]
     rfl
   unfold symmetrize
-  rw [eval_smul_real, eval_finset_sum]
+  rw [MvPolynomial.smul_eval, MvPolynomial.eval_sum]
   congr 1
   exact Finset.sum_congr rfl (fun σ _ => hterm σ)
 
-/-- Renaming variables does not increase total degree. -/
-private theorem rename_totalDegree_le {n : ℕ} (σ : Equiv.Perm (Fin n))
-    (p : MvPolynomial (Fin n) ℝ) :
-    (MvPolynomial.rename σ p).totalDegree ≤ p.totalDegree := by
-  first
-    | exact MvPolynomial.totalDegree_rename_le
-    | exact MvPolynomial.totalDegree_rename_le σ p
-    | exact MvPolynomial.totalDegree_rename_le _ _
-    | exact le_of_eq (MvPolynomial.totalDegree_rename σ p)
-    | exact le_of_eq (MvPolynomial.totalDegree_rename _ _)
 
-/-- The total degree of a sum is bounded by a uniform bound on the summands. -/
-private theorem totalDegree_sum_le {ι : Type*} {n : ℕ} (s : Finset ι)
-    (g : ι → MvPolynomial (Fin n) ℝ) (B : ℕ) :
-    (∀ i ∈ s, (g i).totalDegree ≤ B) → (s.sum g).totalDegree ≤ B := by
-  classical
-  induction s using Finset.induction with
-  | empty =>
-    intro hg
-    simp only [Finset.sum_empty]
-    rw [MvPolynomial.totalDegree_zero]
-    exact Nat.zero_le _
-  | insert a s ha ih =>
-    intro hg
-    rw [Finset.sum_insert ha]
-    refine le_trans (MvPolynomial.totalDegree_add _ _) ?_
-    exact max_le (hg _ (Finset.mem_insert_self a s))
-      (ih (fun i hi => hg i (Finset.mem_insert_of_mem hi)))
 
 /-- deg q ≤ deg p -/
 theorem totalDegree_symmetrize_le {n : ℕ} (p : MvPolynomial (Fin n) ℝ) : (symmetrize p).totalDegree ≤ p.totalDegree := by
@@ -140,25 +85,12 @@ theorem totalDegree_symmetrize_le {n : ℕ} (p : MvPolynomial (Fin n) ℝ) : (sy
                   | exact MvPolynomial.totalDegree_C
               omega
   have hsum : (Finset.univ.sum (fun σ : Equiv.Perm (Fin n) => MvPolynomial.rename σ p)).totalDegree ≤ p.totalDegree := by
-    apply totalDegree_sum_le
+    apply MvPolynomial.totalDegree_finsetSum_le
     intro σ _
-    exact rename_totalDegree_le σ p
+    exact MvPolynomial.totalDegree_rename_le σ p
   unfold symmetrize
   exact le_trans (hsmul _ _) hsum
 
-/-- Univariate evaluation distributes over finite sums. -/
-private theorem eval_poly_sum {ι : Type*} (s : Finset ι) (g : ι → Polynomial ℝ)
-    (x : ℝ) : (s.sum g).eval x = s.sum fun i => (g i).eval x := by
-  classical
-  induction s using Finset.induction with
-  | empty =>
-    simp only [Finset.sum_empty]
-    have h : ((0 : Polynomial ℝ) + 0).eval x = (0 : Polynomial ℝ).eval x + (0 : Polynomial ℝ).eval x := by
-      rw [Polynomial.eval_add]
-    rw [add_zero] at h
-    exact add_eq_left.mp h.symm
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, Polynomial.eval_add, ih]
 
 /-- Univariate contribution of one monomial to the symmetrized polynomial. -/
 private noncomputable def monoPoly {n : ℕ} (c : ℝ) (t : ℕ) : Polynomial ℝ :=
@@ -183,53 +115,6 @@ private theorem natDegree_monoPoly_le {n : ℕ} (c : ℝ) (t : ℕ) :
       | simp
   omega
 
-/-- The descending Pochhammer polynomial evaluated at a natural number is the
-descending factorial. -/
-private theorem descPochhammer_eval_cast (t w : ℕ) :
-    (descPochhammer ℝ t).eval (w : ℝ) = (Nat.descFactorial w t : ℝ) := by
-  have hpr : (descPochhammer ℝ t).eval (w : ℝ)
-      = ∏ i ∈ Finset.range t, ((w : ℝ) - (i : ℝ)) := by
-    first
-      | exact descPochhammer_eval_eq_prod_range
-      | exact Polynomial.descPochhammer_eval_eq_prod_range
-      | rw [descPochhammer_eval_eq_prod_range]
-      | rw [Polynomial.descPochhammer_eval_eq_prod_range]
-  rw [hpr]
-  by_cases hle : t ≤ w
-  · have hprod : Nat.descFactorial w t = ∏ i ∈ Finset.range t, (w - i) := by
-      first
-        | exact Nat.descFactorial_eq_prod_range w t
-        | exact Nat.descFactorial_eq_prod_range _ _
-        | rw [Nat.descFactorial_eq_prod_range]
-        | simp [Nat.descFactorial_eq_prod_range]
-    rw [hprod]
-    have hcast : ((∏ i ∈ Finset.range t, (w - i) : ℕ) : ℝ)
-        = ∏ i ∈ Finset.range t, (((w - i : ℕ)) : ℝ) := by
-      first
-        | exact Nat.cast_prod _ _
-        | exact map_prod _ _ _
-        | simp
-        | rw [Nat.cast_prod]
-    rw [hcast]
-    apply Finset.prod_congr rfl
-    intro i hi
-    have hi2 : i < t := Finset.mem_range.mp hi
-    have hiw : i ≤ w := le_trans (Nat.le_of_lt hi2) hle
-    first
-      | exact Nat.cast_sub hiw
-      | exact Nat.cast_sub _ _ hiw
-      | rw [Nat.cast_sub hiw]
-      | simp [Nat.cast_sub hiw]
-  · push_neg at hle
-    have hmem : w ∈ Finset.range t := Finset.mem_range.mpr hle
-    have hL : ∏ i ∈ Finset.range t, ((w : ℝ) - (i : ℝ)) = 0 :=
-      Finset.prod_eq_zero hmem (sub_self (w : ℝ))
-    have hR : Nat.descFactorial w t = 0 := by
-      have hC : w.choose t = 0 := Nat.choose_eq_zero_of_lt hle
-      have hD := Nat.descFactorial_eq_factorial_mul_choose w t
-      rw [hC] at hD
-      simpa using hD
-    rw [hL, hR, Nat.cast_zero]
 
 /-- Evaluation of the univariate contribution of one monomial. -/
 private theorem eval_monoPoly {n : ℕ} (c : ℝ) (t w : ℕ) :
@@ -238,39 +123,9 @@ private theorem eval_monoPoly {n : ℕ} (c : ℝ) (t w : ℕ) :
         * (Nat.descFactorial w t : ℝ) := by
   unfold monoPoly
   first
-    | (rw [Polynomial.eval_mul, Polynomial.eval_C, descPochhammer_eval_cast]; rfl)
-    | simp only [Polynomial.eval_mul, Polynomial.eval_C, descPochhammer_eval_cast]
+    | (rw [Polynomial.eval_mul, Polynomial.eval_C, descPochhammer_eval_eq_descFactorial]; rfl)
+    | simp only [Polynomial.eval_mul, Polynomial.eval_C, descPochhammer_eval_eq_descFactorial]
 
-/-- Bijections between two finsets of the same cardinality are counted by the factorial. -/
-private theorem card_equiv_finsets {n : ℕ} (A B : Finset (Fin n)) (t : ℕ)
-    (hA : A.card = t) (hB : B.card = t) :
-    Fintype.card (A ≃ B) = t.factorial := by
-  have eA : A ≃ Fin t := by
-    first
-      | exact (Finset.equivFin A).trans (finCongr hA)
-      | exact Finset.equivFinOfCardEq A hA
-  have eB : B ≃ Fin t := by
-    first
-      | exact (Finset.equivFin B).trans (finCongr hB)
-      | exact Finset.equivFinOfCardEq B hB
-  have hΦ : Fintype.card (A ≃ B) = Fintype.card (Fin t ≃ Fin t) := by
-    first
-      | exact Fintype.card_congr (Equiv.equivCongr eA eB)
-      | exact Fintype.card_congr
-          { toFun := fun e => eA.symm.trans (e.trans eB)
-            invFun := fun τ => eA.trans (τ.trans eB.symm)
-            left_inv := fun e => by ext x; simp [Equiv.trans_apply]
-            right_inv := fun τ => by ext x; simp [Equiv.trans_apply] }
-  have hP : Fintype.card (Equiv.Perm (Fin t)) = t.factorial := by
-    have h : Fintype.card (Equiv.Perm (Fin t)) = (Fintype.card (Fin t)).factorial :=
-      Fintype.card_perm
-    rw [Fintype.card_fin] at h
-    exact h
-  rw [hΦ]
-  first
-    | exact hP
-    | exact ((Fintype.card_congr (Equiv.refl _)) :
-        Fintype.card (Fin t ≃ Fin t) = Fintype.card (Equiv.Perm (Fin t))).trans hP
 
 /-- Gluing two bijections into a permutation, forward map. -/
 private noncomputable def glueFun {n : ℕ} {T U : Finset (Fin n)} (e₁ : T ≃ U)
@@ -483,8 +338,11 @@ private theorem fiber_card {n : ℕ} (T U : Finset (Fin n)) (t : ℕ)
       = t.factorial * (n - t).factorial := by
   have hΦ := Fintype.card_congr (fiberEquiv T U)
   rw [Fintype.card_prod] at hΦ
-  have h1 : Fintype.card (T ≃ U) = t.factorial :=
-    card_equiv_finsets T U t hT hU
+  have h1 : Fintype.card (T ≃ U) = t.factorial := by
+    have e : T ≃ U := Finset.equivOfCardEq (hT.trans hU.symm)
+    have h := Fintype.card_equiv e
+    rw [Fintype.card_coe, hT] at h
+    exact h
   have hTc : (Tᶜ).card = n - t := by
     have hfin : Fintype.card (Fin n) = n := Fintype.card_fin n
     first
@@ -497,8 +355,11 @@ private theorem fiber_card {n : ℕ} (T U : Finset (Fin n)) (t : ℕ)
       | (have hcc := Finset.card_compl U; omega)
       | (have hcc : (Uᶜ).card = Fintype.card (Fin n) - U.card := Finset.card_compl; omega)
       | (have hcc := Finset.card_compl_add_card U; omega)
-  have h2 : Fintype.card (↥(Tᶜ) ≃ ↥(Uᶜ)) = (n - t).factorial :=
-    card_equiv_finsets (Tᶜ) (Uᶜ) (n - t) hTc hUc
+  have h2 : Fintype.card (↥(Tᶜ) ≃ ↥(Uᶜ)) = (n - t).factorial := by
+    have e : ↥(Tᶜ) ≃ ↥(Uᶜ) := Finset.equivOfCardEq (hTc.trans hUc.symm)
+    have h := Fintype.card_equiv e
+    rw [Fintype.card_coe, hTc] at h
+    exact h
   rw [h1, h2] at hΦ
   exact hΦ
 
@@ -601,37 +462,6 @@ private theorem count_perms_image_subset {n : ℕ} (T S : Finset (Fin n)) :
     | (simp [nsmul_eq_mul]; ring)
     | ring
 
-/-- Evaluation distributes over finite products. -/
-private theorem eval_finset_prod {n : ℕ} (s : Finset (Fin n))
-    (f : Fin n → MvPolynomial (Fin n) ℝ) (v : Fin n → ℝ) :
-    MvPolynomial.eval v (s.prod f) = s.prod fun i => MvPolynomial.eval v (f i) := by
-  induction s using Finset.induction with
-  | empty =>
-    simp only [Finset.prod_empty]
-    first
-      | exact MvPolynomial.eval_one
-      | exact MvPolynomial.eval_one _ _
-      | (show MvPolynomial.eval v (MvPolynomial.C 1) = 1; exact MvPolynomial.eval_C _ _)
-      | simp
-  | insert a s ha ih =>
-    rw [Finset.prod_insert ha, Finset.prod_insert ha, MvPolynomial.eval_mul, ih]
-
-/-- Evaluation of a monomial. -/
-private theorem eval_monomial_real {n : ℕ} (s : Fin n →₀ ℕ) (a : ℝ)
-    (v : Fin n → ℝ) :
-    MvPolynomial.eval v (MvPolynomial.monomial s a)
-      = a * s.prod (fun i k => v i ^ k) := by
-  first
-    | exact MvPolynomial.eval_monomial
-    | rw [MvPolynomial.eval_monomial]
-    | simp [MvPolynomial.eval_monomial]
-    | (show MvPolynomial.eval₂ (RingHom.id ℝ) v (MvPolynomial.monomial s a)
-          = a * s.prod (fun i k => v i ^ k);
-        rw [MvPolynomial.eval₂_monomial]; simp)
-    | (unfold Finsupp.prod;
-        simp [MvPolynomial.monomial_eq, MvPolynomial.eval_mul, MvPolynomial.eval_C,
-          eval_finset_prod, MvPolynomial.eval_pow, MvPolynomial.eval_X])
-
 /-- Powers of `0/1` values collapse. -/
 private theorem pow_bit {n : ℕ} (x : BoolCube n) (σ : Equiv.Perm (Fin n))
     (i : Fin n) (k : ℕ) (hk : k ≠ 0) :
@@ -646,24 +476,6 @@ private theorem pow_bit {n : ℕ} (x : BoolCube n) (σ : Equiv.Perm (Fin n))
       | (cases k with
         | zero => exact absurd rfl hk
         | succ m => show (0:ℝ)^(m+1) = 0; rw [pow_succ, mul_zero])
-
-/-- A `0/1` product detects whether all inputs are `true`. -/
-private theorem prod_bit_eq_true {n : ℕ} (x : BoolCube n)
-    (σ : Equiv.Perm (Fin n)) (T : Finset (Fin n)) :
-    (∏ i ∈ T, (if x (σ i) then (1 : ℝ) else 0))
-      = (if ∀ i ∈ T, x (σ i) = true then 1 else 0) := by
-  by_cases h : ∀ i ∈ T, x (σ i) = true
-  · rw [if_pos h]
-    apply Finset.prod_eq_one
-    intro i hi
-    rw [if_pos (h i hi)]
-  · rw [if_neg h]
-    push_neg at h
-    obtain ⟨i, hiT, hne⟩ := h
-    have hi0 : (if x (σ i) then (1 : ℝ) else 0) = 0 := if_neg hne
-    first
-      | exact Finset.prod_eq_zero hiT hi0
-      | exact Finset.prod_eq_zero hi0 hiT
 
 /-- A symmetrized monomial is a falling factorial in the weight. -/
 private theorem eval_symmetrize_monomial {n : ℕ} (s : Fin n →₀ ℕ) (a : ℝ)
@@ -680,7 +492,7 @@ private theorem eval_symmetrize_monomial {n : ℕ} (s : Fin n →₀ ℕ) (a : �
     have heval : MvPolynomial.eval (fun i => if x (σ i) then (1 : ℝ) else 0)
           (MvPolynomial.monomial s a)
         = a * s.prod (fun i k => (if x (σ i) then (1 : ℝ) else 0) ^ k) :=
-      eval_monomial_real s a _
+      MvPolynomial.eval_monomial
     have hsub : s.support ⊆ s.support := by
       first
         | exact Finset.Subset.rfl
@@ -702,7 +514,7 @@ private theorem eval_symmetrize_monomial {n : ℕ} (s : Fin n →₀ ℕ) (a : �
       intro i hi
       have hne : s i ≠ 0 := Finsupp.mem_support_iff.mp hi
       exact pow_bit x σ i (s i) hne
-    have hif := prod_bit_eq_true x σ s.support
+    have hif := Finset.prod_boole (M₀ := ℝ) (s := s.support) (p := fun i => x (σ i) = true)
     have hcond : (∀ i ∈ s.support, x (σ i) = true)
         ↔ (s.support.image ⇑σ ⊆ S) := by
       constructor
@@ -762,31 +574,11 @@ private theorem card_support_le_sum {n : ℕ} (s : Fin n →₀ ℕ) :
       | simp
   omega
 
-/-- The natural degree of a sum is bounded by a uniform bound on the summands. -/
-private theorem natDegree_sum_le {ι : Type*} (s : Finset ι)
-    (g : ι → Polynomial ℝ) (B : ℕ) :
-    (∀ i ∈ s, (g i).natDegree ≤ B) → (s.sum g).natDegree ≤ B := by
-  classical
-  induction s using Finset.induction with
-  | empty =>
-    intro hg
-    simp only [Finset.sum_empty]
-    first
-      | (rw [Polynomial.natDegree_zero]; exact Nat.zero_le _)
-      | simp [Polynomial.natDegree_zero]
-      | simp
-  | insert a s ha ih =>
-    intro hg
-    rw [Finset.sum_insert ha]
-    refine le_trans (Polynomial.natDegree_add_le _ _) ?_
-    exact max_le (hg _ (Finset.mem_insert_self _ _))
-      (ih (fun i hi => hg i (Finset.mem_insert_of_mem hi)))
-
 /-- Minsky-Papert symmetrization: q(x) = r(|x|) with deg r ≤ deg p (de Wolf fn. 4: r(z) = Σ_i a_i C(z, i)) -/
 theorem exists_polynomial_eval_symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ) : ∃ r : Polynomial ℝ, r.natDegree ≤ p.totalDegree ∧ ∀ x : BoolCube n, MvPolynomial.eval (fun i => if x i then (1 : ℝ) else 0) (symmetrize p) = r.eval (hammingWeight x : ℝ) := by
   refine ⟨p.support.sum
     (fun s => monoPoly (n := n) (p.coeff s) s.support.card), ?_, ?_⟩
-  · apply natDegree_sum_le
+  · apply Polynomial.natDegree_sum_le_of_forall_le
     intro s hs
     refine le_trans (natDegree_monoPoly_le _ _) ?_
     have h1 : s.support.card ≤ s.sum (fun _ k => k) := card_support_le_sum s
@@ -809,10 +601,10 @@ theorem exists_polynomial_eval_symmetrize {n : ℕ} (p : MvPolynomial (Fin n) �
             (MvPolynomial.monomial s (p.coeff s)) := by
       intro σ
       conv_lhs => rw [hdecomp]
-      exact eval_finset_sum _ _ _
+      exact MvPolynomial.eval_sum _ _ _
     rw [eval_symmetrize]
     simp only [heval_sum]
-    rw [Finset.sum_comm, Finset.mul_sum, eval_poly_sum]
+    rw [Finset.sum_comm, Finset.mul_sum, Polynomial.eval_finsetSum]
     apply Finset.sum_congr rfl
     intro s hs
     have hsym : (n.factorial : ℝ)⁻¹
@@ -869,19 +661,6 @@ private theorem parity_comp_perm {n : ℕ} (x : BoolCube n)
   unfold parityFunction
   rw [weight_comp_perm]
 
-/-- Triangle inequality for finite sums. -/
-private theorem abs_sum_le {ι : Type*} (s : Finset ι) (f : ι → ℝ) :
-    |s.sum f| ≤ s.sum fun i => |f i| := by
-  classical
-  induction s using Finset.induction with
-  | empty =>
-    simp only [Finset.sum_empty]
-    rw [abs_zero]
-  | insert _ _ ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha]
-    refine le_trans (abs_add_le _ _) ?_
-    exact add_le_add (le_refl _) ih
-
 /-- Symmetrization preserves approximation of parity. -/
 private theorem approx_symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ)
     (hp : ∀ x : BoolCube n, |MvPolynomial.eval (fun i => if x i then (1 : ℝ) else 0) p
@@ -931,7 +710,7 @@ private theorem approx_symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ)
       ≤ ∑ σ : Equiv.Perm (Fin n), |(MvPolynomial.eval
         (fun i => if x (σ i) then (1 : ℝ) else 0) p
           - (if parityFunction x then (1 : ℝ) else 0))| :=
-    abs_sum_le _ _
+    Finset.abs_sum_le_sum_abs _ _
   have hle2 : (∑ σ : Equiv.Perm (Fin n), |(MvPolynomial.eval
         (fun i => if x (σ i) then (1 : ℝ) else 0) p
           - (if parityFunction x then (1 : ℝ) else 0))|)
@@ -1239,50 +1018,16 @@ theorem le_totalDegree_of_approx_parityFunction {n : ℕ} (p : MvPolynomial (Fin
 private theorem totalDegree_prod_le_card {n : ℕ} (s : Finset (Fin n))
     (g : Fin n → MvPolynomial (Fin n) ℝ) :
     (∀ i ∈ s, (g i).totalDegree ≤ 1) → (s.prod g).totalDegree ≤ s.card := by
-  classical
-  induction s using Finset.induction with
-  | empty =>
-    intro hg
-    simp only [Finset.prod_empty, Finset.card_empty]
-    first
-      | exact MvPolynomial.totalDegree_C 1
-      | exact le_of_eq MvPolynomial.totalDegree_one
-      | exact MvPolynomial.totalDegree_one
-  | insert a s ha ih =>
-    intro hg
-    rw [Finset.prod_insert ha, Finset.card_insert_of_notMem ha]
-    refine le_trans (MvPolynomial.totalDegree_mul _ _) ?_
-    have h1 := hg _ (Finset.mem_insert_self _ _)
-    have h2 := ih (fun i hi => hg i (Finset.mem_insert_of_mem hi))
-    have h2' : (∏ x ∈ s, g x).totalDegree ≤ s.card := h2
-    omega
-
-/-- A variable has total degree at most one. -/
-private theorem totalDegree_X_le_one {n : ℕ} (i : Fin n) :
-    (MvPolynomial.X i : MvPolynomial (Fin n) ℝ).totalDegree ≤ 1 := by
-  first
-    | rw [MvPolynomial.totalDegree_X]
-    | exact le_of_eq MvPolynomial.totalDegree_X
-    | exact MvPolynomial.totalDegree_X
-    | exact MvPolynomial.totalDegree_X_le _
-    | exact MvPolynomial.totalDegree_X_le
-    | simp
-
-/-- Subtraction bound for total degree. -/
-private theorem totalDegree_sub_le {n : ℕ} (a b : MvPolynomial (Fin n) ℝ) :
-    (a - b).totalDegree ≤ max a.totalDegree b.totalDegree := by
-  first
-    | exact MvPolynomial.totalDegree_sub
-    | exact MvPolynomial.totalDegree_sub a b
-    | exact MvPolynomial.totalDegree_sub _ _
-    | exact MvPolynomial.totalDegree_sub_le
-    | exact MvPolynomial.totalDegree_sub_le a b
-    | exact MvPolynomial.totalDegree_sub_le _ _
+  intro hg
+  refine le_trans (MvPolynomial.totalDegree_finsetProd s g) ?_
+  refine le_trans (Finset.sum_le_card_nsmul s _ 1 hg) ?_
+  simp
 
 /-- `1 - X i` has total degree at most one. -/
 private theorem totalDegree_one_sub_X_le_one {n : ℕ} (i : Fin n) :
     (1 - MvPolynomial.X i : MvPolynomial (Fin n) ℝ).totalDegree ≤ 1 := by
-  have hX := totalDegree_X_le_one i
+  have hX : (MvPolynomial.X i : MvPolynomial (Fin n) ℝ).totalDegree ≤ 1 :=
+    le_of_eq (MvPolynomial.totalDegree_X _)
   have h1 : (1 : MvPolynomial (Fin n) ℝ).totalDegree ≤ 0 := by
     first
       | exact MvPolynomial.totalDegree_C 1
@@ -1290,7 +1035,7 @@ private theorem totalDegree_one_sub_X_le_one {n : ℕ} (i : Fin n) :
       | exact MvPolynomial.totalDegree_C
       | exact le_of_eq MvPolynomial.totalDegree_one
       | exact MvPolynomial.totalDegree_one
-  have h := totalDegree_sub_le (1 : MvPolynomial (Fin n) ℝ) (MvPolynomial.X i)
+  have h := MvPolynomial.totalDegree_sub (1 : MvPolynomial (Fin n) ℝ) (MvPolynomial.X i)
   omega
 
 /-- Each cube basis polynomial has total degree at most `n`. -/
@@ -1302,7 +1047,7 @@ private theorem totalDegree_cubeBasis_le {n : ℕ} (x : BoolCube n) :
     intro i
     by_cases h : x i = true
     · simp only [if_pos h]
-      exact totalDegree_X_le_one i
+      exact le_of_eq (MvPolynomial.totalDegree_X _)
     · simp only [if_neg h]
       exact totalDegree_one_sub_X_le_one i
   simp only [cubeBasis]
@@ -1325,7 +1070,7 @@ private theorem totalDegree_multilinearExtension_parity_le (n : ℕ) :
     have hb := totalDegree_cubeBasis_le x
     omega
   simp only [multilinearExtension]
-  refine le_trans (totalDegree_sum_le Finset.univ _ n ?_) (le_refl n)
+  refine le_trans (MvPolynomial.totalDegree_finsetSum_le ?_) (le_refl n)
   intro x _
   exact hterm x
 

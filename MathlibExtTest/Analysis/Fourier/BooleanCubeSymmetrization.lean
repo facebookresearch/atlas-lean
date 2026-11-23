@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Fourier.BooleanCubeSymmetrization
-public import Mathlib.Algebra.MvPolynomial.CommRing
-public import Mathlib.Algebra.MvPolynomial.NoZeroDivisors
+import Mathlib.Algebra.MvPolynomial.CommRing
+import Mathlib.Algebra.MvPolynomial.NoZeroDivisors
 
 /-!
 # Tests: Symmetrization and the approximate degree of parity
