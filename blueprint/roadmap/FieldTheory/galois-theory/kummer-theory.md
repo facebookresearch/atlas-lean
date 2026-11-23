@@ -19,12 +19,22 @@ $\sigma \mapsto \sigma(\alpha)/\alpha$ is an isomorphism
 $(F^\times \cap E^{\times n}) / F^{\times n} \to \mathrm{Hom}(G, \mu_n)$, where $\mu_n$ is the group of
 $n$-th roots of unity in $F$.
 
+Milne obtains this isomorphism from the cohomology sequence of
+$1 \to \mu_n \to E^\times \xrightarrow{x \mapsto x^n} E^{\times n} \to 1$, which ends with
+$H^1(G, E^\times) = 0$, the multiplicative form of Hilbert's Theorem 90 for the finite Galois extension
+$E/F$ (Milne, *Fields and Galois Theory*, Theorem 5.23), and deduces the bijection from it by comparing
+the degrees $[E : F]$ with the indices $(B : F^{\times n})$.
+
 ## Sources
 
 - J. S. Milne, *Fields and Galois Theory*, version 5.10 (2022),
   <https://www.jmilne.org/math/CourseNotes/FT.pdf>, Chapter 5, "Kummer theory": Theorem 5.30 (the
   statement, for "abelian extensions of exponent $n$", which includes the trivial extension
-  corresponding to $B = F^{\times n}$) and the isomorphism before it.
+  corresponding to $B = F^{\times n}$) and the isomorphism before it; Theorem 5.23 (Hilbert's Theorem 90 in
+  Noether's form, $H^1(G, E^\times) = 0$).
 - J. S. Milne, *Class Field Theory*, version 4.03 (2020),
   <https://www.jmilne.org/math/CourseNotes/CFT.pdf>, Appendix to Chapter VII, Theorem A.3 (the
   correspondence with the finite subgroups of $K^\times / K^{\times n}$).
+- The mathlib Community, *mathlib4* at revision 56a005855ea17e0b0958f73ec801ae140b0a1679, for the
+  multiplicative Hilbert's Theorem 90: `groupCohomology.H1ofAutOnUnitsUnique`,
+  https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/RepresentationTheory/Homological/GroupCohomology/Hilbert90.lean#L107-L108.

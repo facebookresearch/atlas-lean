@@ -8,7 +8,7 @@ $\mathrm{Nm}_{L/K} \colon C_L \to C_K$ induced by the idèle norm.
 Milne's proof. Choose a finite set $S$ of places of $K$ containing the infinite places and the places
 above $p$, and large enough that $\mathbb{I}_K = K^\times \mathbb{I}_{K,S}$ with
 $\mathbb{I}_{K,S} = \prod_{v \in S} K_v^\times \times \prod_{v \notin S} \mathcal{O}_v^\times$ (possible as
-the class group is finite), and also, given $V$, such that the preimage $U$ of $V$ in $\mathbb{I}_K$
+the class group is finite, by [Minkowski's bound](../../number-fields-embeddings/minkowski-bound.md)), and also, given $V$, such that the preimage $U$ of $V$ in $\mathbb{I}_K$
 contains $\prod_{v \notin S} \mathcal{O}_v^\times$. Let $s = |S|$, let $L = K[U(S)^{1/p}]$ be the
 [Kummer extension of the S-units](../cohomology-of-idele-classes/kummer-extension-of-s-units.md), of degree
 $p^s$ and unramified outside $S$, and let
@@ -48,6 +48,7 @@ equality $K^\times \cap E = U(S)^p$ that the conclusion also needs is his Propos
 - [Subgroups containing a norm group are norm groups](overgroups-of-norm-groups.md)
 - [S-units that are local n-th powers are global n-th powers](../cohomology-of-idele-classes/local-powers-are-global-powers.md), for $n = p$ and $T = \emptyset$
 - [Dirichlet's S-unit theorem](../../discriminants-ramification/s-unit-theorem.md), for $(U(S) : U(S)^p) = p^s$
+- [Minkowski's bound: every ideal class of a number field contains an integral ideal of small norm](../../number-fields-embeddings/minkowski-bound.md), for the finiteness of the class group of $K$, in the choice of $S$
 - [Local class field theory: the local Artin map](../../../p-adic-numbers/local-class-field-theory.md), for $K_v^{\times p} \subseteq \mathrm{Nm}_{L_w/K_v}(L_w^\times)$
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the norm of units in unramified extensions (its item 1)
 - [Index of the n-th powers in a local field of characteristic zero](../../../p-adic-numbers/index-of-n-th-powers.md), for $(K_v^\times : K_v^{\times p})$

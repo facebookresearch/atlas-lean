@@ -16,7 +16,8 @@ on $C_L$ through its action on the idèles ($\sigma a$ has component $\sigma(a_w
 
 Part 1 comes from the cohomology sequence of $1 \to L^\times \to \mathbb{I}_L \to C_L \to 1$: the
 invariants of $L^\times$ and of $\mathbb{I}_L$ are $K^\times$ and the image of $\mathbb{I}_K$, and
-$H^1(G, L^\times) = 0$ by Hilbert's Theorem 90. Part 3 follows from the snake lemma applied to the
+$H^1(G, L^\times) = 0$ by the multiplicative form of Hilbert's Theorem 90 for the finite Galois extension
+$L/K$ (Noether's form; Milne, Proposition II.1.22). Part 3 follows from the snake lemma applied to the
 norm maps between the sequences $1 \to L^\times \to \mathbb{I}_L \to C_L \to 1$ and
 $1 \to K^\times \to \mathbb{I}_K \to C_K \to 1$.
 
@@ -31,10 +32,15 @@ $1 \to K^\times \to \mathbb{I}_K \to C_K \to 1$.
 ## Sources
 
 - J. S. Milne, *Class Field Theory*, version 4.03 (2020),
-  <https://www.jmilne.org/math/CourseNotes/CFT.pdf>: Lemma VII.4.1 (part 1) and its proof; Section VII.2,
+  <https://www.jmilne.org/math/CourseNotes/CFT.pdf>: Lemma VII.4.1 (part 1) and its proof, with
+  Proposition II.1.22 (Hilbert's Theorem 90); Section VII.2,
   "The norm map on idèles" (the norm $x \mapsto \prod_\sigma \sigma x$ on $\mathbb{I}_L$, the induced norm
   on $C_L$ and part 3); the first line of the proof of Lemma VII.5.2
   ($\mathbb{I}_K / K^\times \mathrm{Nm}_{L/K}(\mathbb{I}_L) \cong C_K / \mathrm{Nm}_{L/K}(C_L) = \hat H^0_T(G, C_L)$).
+- The mathlib Community, *mathlib4* at revision 56a005855ea17e0b0958f73ec801ae140b0a1679, for the
+  multiplicative Hilbert's Theorem 90, $H^1(\mathrm{Gal}(L/K), L^\times) = 0$:
+  `groupCohomology.H1ofAutOnUnitsUnique`,
+  https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/RepresentationTheory/Homological/GroupCohomology/Hilbert90.lean#L107-L108.
 - A. V. Sutherland, *Number Theory I* (MIT 18.785, Fall 2021), Lecture 28,
   <https://math.mit.edu/classes/18.785/2021fa/LectureNotes28.pdf>: Definition 28.1 (the idèle norm)
   and the induced norm on idèle class groups.

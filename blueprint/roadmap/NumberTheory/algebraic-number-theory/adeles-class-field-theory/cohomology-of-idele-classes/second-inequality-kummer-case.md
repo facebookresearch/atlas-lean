@@ -10,7 +10,8 @@ Milne's proof. By [Kummer theory](../../../../FieldTheory/galois-theory/kummer-t
 $L = K[a_1^{1/p}, \dots, a_r^{1/p}]$ for some $a_i \in K^\times$. Choose a finite set $S$ of places of $K$
 containing the infinite places, the places above $p$ and the places where some $a_i$ is not a unit, and
 large enough that $\mathbb{I}_K = K^\times \prod_{v \in S} K_v^\times \prod_{v \notin S} \mathcal{O}_v^\times$
-(possible because the class group of $K$ is finite), and let $s = |S|$. The
+(possible because the class group of $K$ is finite, by [Minkowski's bound](../../number-fields-embeddings/minkowski-bound.md)), and let
+$s = |S|$. The
 [Kummer extension of the S-units](kummer-extension-of-s-units.md) $M = K[U(S)^{1/p}]$ contains $L$, has
 degree $p^s$ and is unramified outside $S$; write $[M : L] = p^t$, so $r + t = s$. Next comes a finite set
 $T$ of places of $K$, disjoint from $S$, at which $L_w = K_v$ and whose Frobenius elements in $M/K$ form a
@@ -53,6 +54,7 @@ $\prod_{v \in T} \mathcal{O}_v^\times / \mathcal{O}_v^{\times p}$, and then
 - [Index of the n-th powers in a local field of characteristic zero](../../../p-adic-numbers/index-of-n-th-powers.md), for $(K_v^\times : K_v^{\times p})$ at the places of $S$ and $(\mathcal{O}_v^\times : \mathcal{O}_v^{\times p})$ at the places of $T$
 - [Product formula for principal ideles](../adeles-and-ideles/adelic-norm-principal-embedding.md), for $\prod_v |p|_v = 1$
 - [Dirichlet's S-unit theorem](../../discriminants-ramification/s-unit-theorem.md), for $U(S \cup T)$
+- [Minkowski's bound: every ideal class of a number field contains an integral ideal of small norm](../../number-fields-embeddings/minkowski-bound.md), for the finiteness of the class group of $K$, in the choice of $S$
 
 ## Sources
 
