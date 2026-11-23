@@ -65,7 +65,7 @@ structure SplitSpectralCover {k : Type u} [Field k]
   inverseTensor : Nonempty
     (moduleTensor C.left L inverseLine ≅ structureModule C.left)
   S : Over (Spec (.of k))
-  [proper : IsProper S.hom]
+  [properCurve : IsProperCurve S.hom]
   [smoothCurve : SmoothOfRelativeDimension 1 S.hom]
   [irreducible : GeometricallyIrreducible S.hom]
   q : S ⟶ C
@@ -75,6 +75,8 @@ structure SplitSpectralCover {k : Type u} [Field k]
     ((Scheme.Modules.pushforward q.left).obj (structureModule S.left) ≅
       ∐ fun i : Fin n ↦ power inverseLine i.val)
 
+attribute [instance] SplitSpectralCover.properCurve
+
 /-- The spectral transform uses the actual finite direct-image functor. -/
 abbrev spectralPushforward {k : Type u} [Field k]
     {C : Over (Spec (.of k))} {L : C.left.Modules} {n : ℕ}
@@ -82,15 +84,13 @@ abbrev spectralPushforward {k : Type u} [Field k]
   (Scheme.Modules.pushforward P.q.left).obj M
 
 variable {k : Type u} [Field k] {C : Over (Spec (.of k))}
-  {L : C.left.Modules} {n : ℕ}
+  {L : C.left.Modules} {n : ℕ} [IsProperCurve C.hom]
 
 /-- Source-covered geometric toolkit data on the actual current carriers.
 The mapped unit is fixed by the chosen injective resolution. Neither
 spectral genus, rank nor degree is assumed by any field. -/
 structure SpectralCohomologyInputs (P : SplitSpectralCover C L n) where
   tensor : CurveTensorEulerInputs C.hom
-  constantsBase : HasFieldGlobalSections C.hom
-  constantsCover : HasFieldGlobalSections P.S.hom
   structureResolution : MappedResolutionConditions (Scheme.Modules.pushforward P.q.left)
     (injectiveResolution (structureModule P.S.left))
 
@@ -105,10 +105,12 @@ structure SpectralLineInputs (P : SplitSpectralCover C L n) (M : P.S.left.Module
     FiniteLineChart P.q.left (fun i : Fin n ↦ power P.inverseLine i.val) M x
 
 theorem inverse_degree (P : SplitSpectralCover C L n) (I : SpectralCohomologyInputs P) :
-    degree C.hom P.inverseLine = -degree C.hom L := by
+    degree C.hom P.inverseLine P.inverseIsLine = -degree C.hom L P.line := by
   have hT := tensor_degree C.hom I.tensor L P.inverseLine P.line P.inverseIsLine
   have hI := degree_eq_of_iso C.hom P.inverseTensor.some
-  rw [degree_structure] at hI
+    (I.tensor.tensor_line L P.inverseLine P.line P.inverseIsLine)
+    (isLineBundle_structureModule C.left)
+  rw [degree_structureModule] at hI
   linarith
 
 /-- Euler characteristic of the spectral structure sheaf, proved by the
@@ -116,30 +118,32 @@ canonical cohomology comparison, the actual split algebra and the generic
 covered tensor-degree law. -/
 theorem spectralStructureEuler (P : SplitSpectralCover C L n)
     (I : SpectralCohomologyInputs P) :
-    euler01 P.S.hom (structureModule P.S.left) =
-      (n : ℤ) * euler01 C.hom (structureModule C.left) -
-        (∑ i : Fin n, (i.val : ℤ)) * degree C.hom L := by
-  have hp := euler01_pushforward P.q.left C.hom (structureModule P.S.left) I.structureResolution
+    finrankEuler01 P.S.hom (structureModule P.S.left) =
+      (n : ℤ) * finrankEuler01 C.hom (structureModule C.left) -
+        (∑ i : Fin n, (i.val : ℤ)) * degree C.hom L P.line := by
+  have hp := finrankEuler01_pushforward P.q.left C.hom (structureModule P.S.left)
+    I.structureResolution
   rw [P.q.w] at hp
   let A : Fin n → C.left.Modules := fun i ↦ power P.inverseLine i.val
   have hA : ∀ i, IsLineBundle (A i) := fun i ↦
     power_isLine C.hom I.tensor P.inverseLine P.inverseIsLine i.val
   calc
-    euler01 P.S.hom (structureModule P.S.left) =
-        euler01 C.hom ((Scheme.Modules.pushforward P.q.left).obj
+    finrankEuler01 P.S.hom (structureModule P.S.left) =
+        finrankEuler01 C.hom ((Scheme.Modules.pushforward P.q.left).obj
           (structureModule P.S.left)) := hp.symm
-    _ = euler01 C.hom (∐ A) := euler01_eq_of_iso C.hom P.algebraSplitting.some
-    _ = ∑ i, euler01 C.hom (A i) :=
-      euler01_coproduct C.hom A
+    _ = finrankEuler01 C.hom (∐ A) := finrankEuler01_eq_of_iso C.hom P.algebraSplitting.some
+    _ = ∑ i, finrankEuler01 C.hom (A i) :=
+      finrankEuler01_coproduct C.hom A
         (fun i ↦ I.tensor.finite (A i) (hA i) 0 (by omega))
         (fun i ↦ I.tensor.finite (A i) (hA i) 1 (by omega))
-    _ = ∑ i : Fin n, (euler01 C.hom (structureModule C.left) - i.val * degree C.hom L) := by
+    _ = ∑ i : Fin n,
+          (finrankEuler01 C.hom (structureModule C.left) - i.val * degree C.hom L P.line) := by
       apply Finset.sum_congr rfl
       intro i hi
       have hpow := degree_power C.hom I.tensor P.inverseLine P.inverseIsLine i.val
       rw [inverse_degree P I] at hpow
-      have he := degree_eq_euler01_sub C.hom (A i)
-      change degree C.hom (A i) = (i.val : ℤ) * -degree C.hom L at hpow
+      have he := degree_eq_finrankEuler01_sub C.hom (A i) (hA i)
+      change degree C.hom (A i) (hA i) = (i.val : ℤ) * -degree C.hom L P.line at hpow
       linarith
     _ = _ := by
       simp only [Finset.sum_sub_distrib, Finset.sum_mul, Finset.sum_const,
@@ -160,16 +164,15 @@ Its hypotheses expose covered primitive comparisons on actual objects;
 they do not assume this genus equation. -/
 theorem spectralGenus [IsAlgClosed k] [CharZero k] [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
-    (P : SplitSpectralCover C L n) (_hn : 0 < n)
+    [HasConstantGlobalSections C.hom] (P : SplitSpectralCover C L n)
+    [HasConstantGlobalSections P.S.hom] (_hn : 0 < n)
     (I : SpectralCohomologyInputs P) :
     2 * ((genus P.S.hom : ℤ) - 1) =
       2 * (n : ℤ) * ((genus C.hom : ℤ) - 1) +
-        (n : ℤ) * ((n : ℤ) - 1) * degree C.hom L := by
-  have := I.constantsBase
-  have := I.constantsCover
+        (n : ℤ) * ((n : ℤ) - 1) * degree C.hom L P.line := by
   have he := spectralStructureEuler P I
-  rw [euler01_structure C.hom, euler01_structure P.S.hom] at he
-  have hs := congrArg (fun z : ℤ ↦ z * degree C.hom L) (twice_sum_fin_indices n)
+  rw [finrankEuler01_structure C.hom, finrankEuler01_structure P.S.hom] at he
+  have hs := congrArg (fun z : ℤ ↦ z * degree C.hom L P.line) (twice_sum_fin_indices n)
   nlinarith
 
 /-- Rank n is assembled from actual finite-open line trivializations and
@@ -183,15 +186,15 @@ theorem spectralPushforwardRank (P : SplitSpectralCover C L n) (M : P.S.left.Mod
 degree carrier through the canonical affine cohomology comparison. -/
 theorem spectralPushforwardDegree (P : SplitSpectralCover C L n)
     (I : SpectralCohomologyInputs P) (M : P.S.left.Modules) (J : SpectralLineInputs P M) :
-    2 * bundleDegree C.hom (spectralPushforward P M) n =
-      2 * degree P.S.hom M - (n : ℤ) * ((n : ℤ) - 1) * degree C.hom L := by
-  have hm := euler01_pushforward P.q.left C.hom M J.resolution
+    2 * bundleDegree C.hom (spectralPushforward P M) n (spectralPushforwardRank P M J) =
+      2 * degree P.S.hom M J.line - (n : ℤ) * ((n : ℤ) - 1) * degree C.hom L P.line := by
+  have hm := finrankEuler01_pushforward P.q.left C.hom M J.resolution
   rw [P.q.w] at hm
   have ho := spectralStructureEuler P I
-  have hd := degree_eq_euler01_sub P.S.hom M
-  rw [bundleDegree_eq_euler01_sub]
-  change euler01 C.hom (spectralPushforward P M) = euler01 P.S.hom M at hm
-  have hs := congrArg (fun z : ℤ ↦ z * degree C.hom L) (twice_sum_fin_indices n)
+  have hd := degree_eq_finrankEuler01_sub P.S.hom M J.line
+  rw [bundleDegree_eq_finrankEuler01_sub]
+  change finrankEuler01 C.hom (spectralPushforward P M) = finrankEuler01 P.S.hom M at hm
+  have hs := congrArg (fun z : ℤ ↦ z * degree C.hom L P.line) (twice_sum_fin_indices n)
   nlinarith
 
 theorem spectralPushforwardRankDegree [IsAlgClosed k] [CharZero k] [IsProper C.hom]
@@ -199,8 +202,8 @@ theorem spectralPushforwardRankDegree [IsAlgClosed k] [CharZero k] [IsProper C.h
     (P : SplitSpectralCover C L n) (_hn : 0 < n)
     (I : SpectralCohomologyInputs P) (M : P.S.left.Modules) (J : SpectralLineInputs P M) :
     IsVectorBundle (spectralPushforward P M) n ∧
-      2 * bundleDegree C.hom (spectralPushforward P M) n =
-        2 * degree P.S.hom M - (n : ℤ) * ((n : ℤ) - 1) * degree C.hom L :=
+      2 * bundleDegree C.hom (spectralPushforward P M) n (spectralPushforwardRank P M J) =
+        2 * degree P.S.hom M J.line - (n : ℤ) * ((n : ℤ) - 1) * degree C.hom L P.line :=
   ⟨spectralPushforwardRank P M J, spectralPushforwardDegree P I M J⟩
 
 end MathlibExt.AlgebraicGeometry.SpectralCurveNumerics
