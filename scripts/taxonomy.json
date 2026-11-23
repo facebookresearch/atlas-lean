@@ -11118,6 +11118,7 @@
   "MathlibExt/NumberTheory/GeneralizedLucas": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Lucas numbers"},
   "MathlibExt/NumberTheory/GeneralizedLucasnomialFussCatalan": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Lucasnomial Fuss–Catalan numbers"},
   "MathlibExt/NumberTheory/GeneralizedLucasnomialFussCatalanNumber": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Lucasnomial Fuss–Catalan numbers"},
+  "MathlibExt/NumberTheory/GeneralizedPadovanPerrinModel": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
   "MathlibExt/NumberTheory/GeneralizedSylvester": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Sylvester's sequence"},
   "MathlibExt/NumberTheory/GeneralizedTribonacci": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
   "MathlibExt/NumberTheory/GenocchiBernoulli": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Genocchi numbers"},
