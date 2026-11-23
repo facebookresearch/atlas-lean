@@ -20,12 +20,17 @@ of denominators.  In the Tetranacci boundary term the sign is
 `Q₀ + Q₋₃`, as forced by the paper's telescoping calculation; the
 extracted statement's displayed minus sign is not correct for
 arbitrary initial conditions.
+
+Proved in `MathlibExt.NumberTheory.Recurrences.TribonacciSumOfSquares`,
+which this module imports: the sum of squares of a Tribonacci
+sequence (`four_mul_sum_tribonacci_sq`).
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.Recurrences.TribonacciSumOfSquares
 
 set_option autoImplicit false
 
@@ -46,22 +51,6 @@ theorem_wanted four_mul_sum_tribonacci_mul_sub_two
     (n : ℕ) :
     4 * (∑ k ∈ Finset.Icc 1 n, T k * T ((k : ℤ) - 2)) =
       (T ((n : ℤ) + 1) - T ((n : ℤ) - 1)) ^ 2 -
-        (T 1 - T (-1)) ^ 2
-
-/-- **Sum of squares of a Tribonacci sequence.** Let $T \colon \mathbb{Z} \to \mathbb{Z}$ satisfy
-$T(m+3) = T(m+2) + T(m+1) + T(m)$ for every integer $m$. Then for every natural number $n$,
-$$4 \sum_{k=1}^{n} T(k)^2 = 4\,T(n)\,T(n+1) - 4\,T(0)\,T(1) -
-\bigl(T(n+1) - T(n-1)\bigr)^2 + \bigl(T(1) - T(-1)\bigr)^2.$$
-
-Source: Karol Gryszka, "A Simple Proof of the Formula for the Sum
-of Tribonacci and Tetranacci Numbers Squared", Theorem 1. -/
-theorem_wanted four_mul_sum_tribonacci_sq
-    (T : ℤ → ℤ)
-    (hT : ∀ n : ℤ, T (n + 3) = T (n + 2) + T (n + 1) + T n)
-    (n : ℕ) :
-    4 * (∑ k ∈ Finset.Icc 1 n, (T k) ^ 2) =
-      4 * T n * T ((n : ℤ) + 1) - 4 * T 0 * T 1 -
-        (T ((n : ℤ) + 1) - T ((n : ℤ) - 1)) ^ 2 +
         (T 1 - T (-1)) ^ 2
 
 /-- **Sum of products of Tetranacci terms two and three apart.** Let
