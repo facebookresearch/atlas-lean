@@ -7,18 +7,22 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Definitions are adapted from AxiomMath/TauCeti at
-62bbc0596dc3539d488232e4e924a338548ea0a9:
-`TauCeti/Geometry/Hodge/Conjugation.lean`, `Structure.lean`,
-`Mixed/Basic.lean` and `Mixed/Bigrading.lean`.
-Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Authors: The Tau Ceti contributors.
-Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
+Portions of this file are adapted from:
 
-Modification notice: specialized the arithmetic carrier to rational vector
-spaces, retained an actual complex base-change map and its conjugation, and
-used the source's proved bigrading characterization as the mixed definition.
-No geometric realization or category-existence theorem is assumed here.
+`TauCeti/Geometry/Hodge/Conjugation.lean`, `TauCeti/Geometry/Hodge/Structure.lean`,
+`TauCeti/Geometry/Hodge/Mixed/Basic.lean` and
+`TauCeti/Geometry/Hodge/Mixed/Bigrading.lean` in
+https://github.com/TauCetiProject/TauCeti
+at commit 62bbc0596dc3539d488232e4e924a338548ea0a9:
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Tau Ceti contributors
+
+Modification notice: specialized the arithmetic carrier to finite-dimensional
+rational vector spaces, retained an actual complex base-change map and its
+conjugation, and used the source's proved bigrading characterization as the
+mixed definition. No geometric realization or category-existence theorem is
+assumed here.
 -/
 module
 
@@ -30,16 +34,16 @@ public import Mathlib.RingTheory.TensorProduct.IsBaseChangeHom
 /-!
 # Rational pure and mixed Hodge data
 
-The complex carrier is a genuine base change of the fixed rational vector
-space. Conjugation fixes its rational image. Mixed purity is expressed by
-the exact opposed-bigrading characterization proved in the public TauCeti
-source, including recovery of both filtrations and conjugation modulo lower
-weight. A bare existence of an unrelated Hodge structure on graded pieces
-would lose that link.
+The rational carrier is a finite-dimensional rational vector space, and the
+complex carrier is a genuine base change of it. Conjugation fixes its rational
+image. Mixed purity is expressed by the opposed-bigrading characterization
+proved in the TauCeti source, including recovery of both filtrations and
+conjugation modulo lower weight. A bare existence of an unrelated Hodge
+structure on graded pieces would lose that link.
 
 These are completed definitions; the geometry producing them is requested
-separately. Sources: Deligne, *Théorie de Hodge II*, §§1.2 and 2.3;
-Peters–Steenbrink, *Mixed Hodge Structures*, Chapter 3.
+separately. Sources: P. Deligne, *Théorie de Hodge II*, §§1.2 and 2.3;
+C. Peters and J. Steenbrink, *Mixed Hodge Structures*, Chapter 3.
 -/
 
 @[expose] public noncomputable section
@@ -48,14 +52,23 @@ namespace MathlibExt.Geometry.RationalHodgeStructures
 
 open CategoryTheory
 
-/-- A genuine complexification of the given rational vector space with the
-rationally induced conjugation. -/
+/-- A genuine complexification of the given finite-dimensional rational vector
+space with the rationally induced conjugation. Rational Hodge structures live on
+finite-dimensional rational vector spaces. -/
 structure RationalComplexification (V : ModuleCat.{0} ℚ) where
+  /-- The rational carrier is finite-dimensional. -/
+  [finiteDimensional : FiniteDimensional ℚ V]
+  /-- The complex vector space. -/
   complexSpace : ModuleCat.{0} ℂ
+  /-- The comparison map from the rational carrier. -/
   comparisonMap : V →ₗ[ℤ] complexSpace
+  /-- It exhibits the complex space as the base change of the rational one. -/
   baseChange : IsBaseChange ℂ comparisonMap
+  /-- The complex conjugation. -/
   conjugation : complexSpace ≃ₛₗ[starRingEnd ℂ] complexSpace
+  /-- Conjugation is an involution. -/
   involutive : Function.Involutive conjugation
+  /-- Conjugation fixes the rational image. -/
   rational_fixed : ∀ v, conjugation (comparisonMap v) = comparisonMap v
 
 /-- Complexification of a rational subspace through the fixed comparison map. -/

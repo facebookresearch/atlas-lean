@@ -1,0 +1,3 @@
+# Induced wiring lies below the inner boundary clique
+
+Let $d, n \in \mathbb{N}$, let $\Lambda_m = \{-m, \dots, m\}^d$ carry its nearest-neighbour edges (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$ (the outer configuration). Every edge of the [induced wiring](induced-wiring.md) $W_\psi$ on $\Lambda_n$ (distinct vertices of $\Lambda_n$ joined by a path in the outer graph $O_\psi$) joins two vertices of $\partial\Lambda_n$, that is, the induced wiring is a subgraph of the clique on $\partial\Lambda_n$, where $\partial\Lambda_m$ is the vertex boundary of $\Lambda_m$ (the sites of $\Lambda_m$ not in $\Lambda_{m-1}$, with $m - 1$ truncated at $0$).
