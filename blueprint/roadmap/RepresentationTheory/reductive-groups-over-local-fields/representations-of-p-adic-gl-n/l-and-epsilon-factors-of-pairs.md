@@ -47,9 +47,9 @@ the extension to all irreducible pairs, for the conductor, for Tate's local fact
 Langlands–Deligne local constants, for the factors of Weil–Deligne representations, and for the
 representations $\mathrm{Sp}(m)$ with the decomposition into indecomposables $\rho_0 \otimes
 \mathrm{Sp}(m)$ and the factors of their tensor products, each citing the sources below with
-locators. The pages of the Galois side belong beside the Weil–Deligne
-representations of
-[Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md).
+locators. The pages of the Galois side belong beside
+[the Weil group of a p-adic field](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md) and
+[Weil–Deligne representations](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-deligne-representations.md).
 The recursion in Wedhorn's (2.5.2) (3) should be checked against Kudla's survey, which Wedhorn
 follows there, since its printed factors do not depend on the product index.
 
@@ -57,7 +57,8 @@ follows there, since its printed factors do not depend on the product index.
 
 - [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](whittaker-models-for-gl-n.md), for generic representations and Whittaker models
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the extension of the factors to all irreducible pairs
-- [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Galois side ($F$ of characteristic zero): the Weil group and Weil–Deligne representations
+- [Weil group of a p-adic field](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md), for the Galois side ($F$ of characteristic zero): the Weil group
+- [Weil–Deligne representations](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-deligne-representations.md), for the Galois side ($F$ of characteristic zero): Weil–Deligne representations
 - [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the Galois side ($F$ of characteristic zero): the local Artin map $\mathrm{rec}_F$, composed with pointwise inversion, $x \mapsto \mathrm{rec}_F(x)^{-1}$, and read in the Weil group, which makes characters of $F^\times$ characters of $W_F$
 
 ## Sources

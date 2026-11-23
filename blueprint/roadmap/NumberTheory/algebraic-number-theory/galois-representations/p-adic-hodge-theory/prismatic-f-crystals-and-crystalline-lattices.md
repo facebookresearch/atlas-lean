@@ -1,0 +1,37 @@
+# Prismatic F-crystals and lattices in crystalline representations
+
+Let $K$ be a complete discretely valued field of mixed characteristic $(0, p)$ with perfect residue field, for
+instance a finite extension of $\mathbb{Q}_p$, with ring of integers $\mathcal{O}_K$. A **prismatic $F$-crystal** (of
+vector bundles) on $\operatorname{Spf}(\mathcal{O}_K)$ is a pair $(\mathcal{E}, \varphi_{\mathcal{E}})$ of a vector bundle
+$\mathcal{E}$ on the absolute prismatic site $(\operatorname{Spf}(\mathcal{O}_K)_\Delta, \mathcal{O}_\Delta)$ and an isomorphism
+$\varphi_{\mathcal{E}} \colon (\varphi^* \mathcal{E})[1/I_\Delta] \cong \mathcal{E}[1/I_\Delta]$. The étale realization
+functor gives an equivalence of categories
+
+$$T_{\mathcal{O}_K} \colon \operatorname{Vect}^{\varphi}(\operatorname{Spf}(\mathcal{O}_K)_\Delta, \mathcal{O}_\Delta) \xrightarrow{\ \sim\ }
+\operatorname{Rep}^{\mathrm{crys}}_{\mathbb{Z}_p}(G_K)$$
+
+onto the category of finite free $\mathbb{Z}_p$-modules $T$ with a continuous action of $G_K$ such that $T[1/p]$ is
+a crystalline representation; in particular every $G_K$-stable lattice in a crystalline representation comes
+from a prismatic $F$-crystal, unique up to unique isomorphism, and morphisms of lattices correspond to morphisms
+of $F$-crystals.
+
+## Depends on
+
+- [Prisms and prismatic cohomology](prisms-and-prismatic-cohomology.md), for the absolute prismatic site, $\mathcal{O}_\Delta$, $I_\Delta$, $\varphi$ and the étale realization (its item 4)
+- [Crystalline representations](crystalline-representations.md)
+
+## Proof depends on
+
+- [Prisms and prismatic cohomology](prisms-and-prismatic-cohomology.md), for the quasi-syntomic descent along $\operatorname{Spf}(\mathcal{O}_C) \to \operatorname{Spf}(\mathcal{O}_K)$, Breuil–Kisin modules and Kedlaya's slope filtrations (its item 4)
+- [Weakly admissible implies admissible](colmez-fontaine-theorem.md), for the filtered $\varphi$-modules of crystalline representations that the construction lifts
+
+## Sources
+
+- B. Bhatt and P. Scholze, "Prismatic F-crystals and crystalline Galois representations", Cambridge J. Math.
+  11 (2023), 507–562, arXiv:2106.14735 (version 2): Abstract, Definition 1.1 (= Definition 4.1), Theorem 1.2
+  (= Theorem 5.6) and the outline of its proof in §1.1.
+- Provenance: L. Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
+  uses the essential surjectivity and full faithfulness, for lattices in crystalline representations and for
+  their lattices of coefficients, as `GlobalTheory.Published.BhattScholzeIntegral` and
+  `GlobalTheory.Published.BhattScholzeCrystallineLattices`.
