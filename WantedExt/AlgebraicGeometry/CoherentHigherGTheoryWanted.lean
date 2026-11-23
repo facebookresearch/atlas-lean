@@ -15,7 +15,8 @@ public import MathlibExt.AlgebraicGeometry.CoherentGTheory
 # Localization and Zariski descent for the actual coherent S-construction
 
 The spaces and all maps in these requests are geometric realizations of
-actual short-exact coherent flags. Support means that the actual sheaf
+actual short-exact flags of finitely presented sheaves, which are the coherent
+sheaves on the Noetherian schemes of the requests. Support means that the actual sheaf
 restriction is zero; it is not a supported-vector-bundle subcategory.
 The fibre and pullback are subspaces of continuous paths with the displayed
 endpoints, and the comparison maps are normalized by their projections.
@@ -43,21 +44,22 @@ open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.CoherentGTheory
 
 /-- Restriction of `𝒪_X`-modules to an open subscheme is additive and exact, and it
-sends coherent sheaves to coherent sheaves. -/
-public instance_wanted restrictionCoherent (X : Scheme.{0}) (U : X.Opens) :
-    RestrictionCoherent X U
+sends finitely presented sheaves to finitely presented sheaves. -/
+public instance_wanted restrictionFinitePresentation (X : Scheme.{0}) (U : X.Opens) :
+    RestrictionFinitePresentation X U
 
-/-- The same exactness and coherence preservation for restriction along an open immersion. -/
-public instance_wanted openRestrictionCoherent {X U : Scheme.{0}} (i : U ⟶ X)
-    [IsOpenImmersion i] : OpenRestrictionCoherent i
+/-- The same exactness and finite-presentation preservation for restriction along an open
+immersion. -/
+public instance_wanted openRestrictionFinitePresentation {X U : Scheme.{0}} (i : U ⟶ X)
+    [IsOpenImmersion i] : OpenRestrictionFinitePresentation i
 
 /-- The actual supported coherent space is the homotopy fibre of restriction,
 with its projection equal up to homotopy to the actual inclusion. -/
 public theorem_wanted localization (X : Scheme.{0}) [IsNoetherian X]
     (U : X.Opens) :
     ∃ e : ContinuousMap.HomotopyEquiv (supportedSpace X U)
-        (homotopyFiber (restriction X U) (gBase U)),
-      Nonempty ((fiberProjection (restriction X U) (gBase U)).comp e.toFun |>.Homotopy
+        (homotopyFiber (restriction X U) (fpBase U)),
+      Nonempty ((fiberProjection (restriction X U) (fpBase U)).comp e.toFun |>.Homotopy
         (supportedInclusion X U).hom)
 
 /-- An actual two-open covering square realizes as a homotopy pullback,
