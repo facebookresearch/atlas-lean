@@ -19,7 +19,8 @@ commit it was computed from. You don't need to build the repository to pick
 one, and people and agents follow the same steps:
 
 1. Take a task from `tasks.json`. `python3 scripts/next_task.py` prints the
-   next ones; `--json` prints them for agents.
+   next ones; `--json` prints them for agents. It prints the statements to
+   write first, then the tasks by [priority](#which-areas-come-first).
 2. Skip a task that an open pull request names, by its article id (`af_…`) or
    its Lean declaration, in its title, body or branch. `next_task.py` skips
    those, including those an older pull request names, in its title, branch or
@@ -28,6 +29,24 @@ one, and people and agents follow the same steps:
 3. Open a draft pull request early, with the task's article id in its body, so
    that others see the task is taken. Mark it ready for review when it is done,
    or close it if you stop.
+
+### Which areas come first
+
+[`blueprint/priorities.json`](blueprint/priorities.json) weighs the areas of
+the graph so that ATLAS and [Tau Ceti](https://github.com/TauCetiProject/TauCetiRoadmap)
+complement each other: 2 for an area ATLAS takes first, where Tau Ceti has
+few or no roadmaps (applications, computer science, discrete mathematics,
+probability), 1 as usual, and 0.5 for one it leaves for later, as Tau Ceti's
+roadmaps already cover it. A weight belongs to a subject (`Combinatorics`) or
+a field (`NumberTheory/zeta-l-functions`) of `scripts/taxonomy.json`, named as
+its folder under `blueprint/roadmap/`, which starts the node ids of the tasks
+under it; a field's weight overrides its subject's, and `default` gives the
+others theirs.
+`next_task.py` lists the statements to write first, then the proofs; within
+each, the free tasks of higher weight come first, and those of equal weight in
+`tasks.json`'s order. `--priorities` reads another file, or a URL.
+Tools that pick tasks their own way can call its `load_priorities` and
+`priority`. The weights change by pull request, like the code.
 
 ## Pull Requests
 We actively welcome your pull requests.
@@ -38,6 +57,72 @@ We actively welcome your pull requests.
 4. Ensure the test suite passes.
 5. Make sure your code lints.
 6. If you haven't already, complete the Contributor License Agreement ("CLA").
+
+### Claim the work you start
+
+Many people and agents open pull requests here at once. Claim a substantial
+piece of work before you start it, so that others can steer around it:
+
+- **Open a draft pull request** when you start, as
+  [Picking a task](#picking-a-task) says. Its title names the topic, and its
+  description names each ready task it takes by article id, on a line
+  `Tasks: af_…`. It claims them until it is closed: mark it ready for review
+  when it is done, or close it if you stop. If a draft that names a task you
+  want has had no push for a week, ask on it whether its author goes on.
+- **Or open an issue** whose title starts with `[Claim]` and that names the
+  area, the modules or the task ids you are taking, for work that spans several
+  pull requests. It is a claim while it is open and has been updated in the
+  last 30 days: comment on it to renew it, and close it to release it. Link it
+  from each pull request that continues it.
+
+Look for an open pull request and an active `[Claim]` issue that cover the work
+before you start; `next_task.py` skips the tasks that open pull requests name,
+but does not read issues. When two claims cover the same task, the one that has
+been active longer without a break keeps it; a pull request that continues an
+active `[Claim]` issue counts from the issue. A claim only saves duplicated
+work: it reserves nothing else, and anyone may still review, fix or improve
+merged code.
+
+To update a branch that someone else may also push to, such as another
+contributor's pull request, push a fast-forward of the tip you fetched. If you
+must rewrite it, use
+`git push --force-with-lease=<branch>:<tip you fetched> <remote> HEAD:<branch>`,
+which refuses the rewrite if the branch no longer points at the tip you
+fetched.
+
+### Say how a pull request touches the graph
+
+Each pull request description has one `Graph:` line, which ties its Lean to
+the [graph](docs/BLUEPRINT.md#graph-rules). It lists the article ids (`af_…`)
+of the pages the pull request proves, fixes or extends, such as the ready tasks
+it takes, and adds `new` when it adds declarations that get pages under
+[Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
+`Graph: none` only when the pull request changes nothing the graph shows.
+
+- **A new declaration gets its page in the same pull request.** Run the sync
+  scoped to the pull request ([Maintaining
+  articles](docs/BLUEPRINT.md#maintaining-articles)) and commit what it writes.
+  For a pull request that targets `main`, from a clone whose `origin` is this
+  repository:
+
+  ```sh
+  python scripts/sync_wiki.py declarations --base "$(git merge-base origin/main HEAD)"
+  ```
+
+  A pull request that targets another branch uses its merge base with that
+  branch. The sync writes only what the pull request's own declarations need,
+  and the `graph sync` check reports a pull request that is not in step, with
+  the command to run. When the sync cannot find a new module's subject, or puts
+  it in the wrong place, also place the module in `scripts/taxonomy.json`.
+- **A renamed or removed declaration keeps its pages.** In the same pull
+  request, point each link to it at its successor, keeping every article id. A
+  link that is only a reference may instead be removed: the page keeps its own
+  declaration. When a page's own declaration goes with no successor, remove its
+  link and keep the page as a planned page
+  ([Writing pages](docs/BLUEPRINT.md#writing-pages)). Update or remove a `held`
+  marker that names it in the same way.
+
+These are graph changes; [Graph PRs](#graph-prs) says what they need.
 
 ### Public references
 
@@ -213,15 +298,23 @@ is advisory CI, not a standalone merge barrier.
 ### Graph PRs
 
 A graph PR changes the ATLAS wiki; its content follows the
-[graph rules](docs/BLUEPRINT.md#graph-rules).
+[graph rules](docs/BLUEPRINT.md#graph-rules). When a pull request's only wiki
+changes are what `scripts/sync_wiki.py declarations` writes for its own
+declarations, as the `graph sync` check reports, it needs no issue for them,
+and they need no code owner's approval unless GitHub requires one; Codex still
+reviews them. Any other code-owned file the pull request changes, the sync's
+own code included, still needs a code owner's approval. Any other wiki change,
+a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
-  `Part of #…`). GitHub shows at most 3,000 files in one diff.
+  `Part of #…`); a pull request whose only wiki changes are the sync's, as
+  above, need not name one. GitHub shows at most 3,000 files in one diff.
 - **An expansion changes no Lean outside `WantedExt`,** so its reviewer need
   not also review proofs.
 - **Leave what the tools own alone** ([What the tools
   own](docs/BLUEPRINT.md#what-the-tools-own)).
-- **A code owner approves it** (`.github/CODEOWNERS`) **and Codex reviews it:**
+- **A code owner approves it** (`.github/CODEOWNERS`), except the wiki files
+  the sync writes, as above, **and Codex reviews it:**
   automatically for the repository's owners, members and collaborators and for
   forks on `codex.yml`'s trusted list; on any other fork PR a maintainer
   comments `@codex` for an advisory review. Agents produce graph changes faster
@@ -315,9 +408,12 @@ Codex change request can cancel the PR's CI run while it is still queued or
 running; if `build` is cancelled, CI must pass before the PR can be queued. A
 completed build is unaffected. `public-references` is configured to run on PRs
 and merge groups, but stays advisory until the workflow governance described
-under [Public references](#public-references) is in place. Blueprint Pages,
-Check workflows and Binary64 conformance are path-filtered on PRs, and Blueprint
-Pages also builds `main` once a day.
+under [Public references](#public-references) is in place. `graph sync` is
+configured to run on every PR and merge group, without filters, and reports
+whether the PR's wiki is in step with its Lean
+([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)).
+Blueprint Pages, Check workflows and Binary64 conformance are path-filtered on
+PRs, and Blueprint Pages also builds `main` once a day.
 
 ## Lean and Mathlib bumps
 

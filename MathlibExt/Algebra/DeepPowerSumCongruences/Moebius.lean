@@ -46,7 +46,7 @@ public theorem sum_moebius_divisors_not_dvd_prime {p : ℕ} (hp : p.Prime) {n : 
     · intro h
       rw [← h]
       exact Nat.ordCompl_self_pow hp
-  rw [hdiv, ← coe_mul_zeta_apply, moebius_mul_coe_zeta, one_apply]
+  rw [hdiv, ← coe_mul_zeta_apply, moebius_mul_coe_zeta, ArithmeticFunction.one_apply]
   simp only [hpower]
 
 end MetaMathlibExt

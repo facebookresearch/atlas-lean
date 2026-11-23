@@ -203,7 +203,7 @@ noncomputable def studentTPivot {Ω : Type*} (X : ℕ → Ω → ℝ) (μ : ℝ)
 /-- The interval `[x̄ₙ - q sₙ / √n, x̄ₙ + q sₙ / √n]` computed from the first `n` observations.
 With `q = t_{n-1, 1-α/2}` it is the usual Student-t interval for the mean. It is a set computed
 from data and carries no coverage claim. -/
-def studentTInterval {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (q : ℝ) (ω : Ω) : Set ℝ :=
+noncomputable def studentTInterval {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (q : ℝ) (ω : Ω) : Set ℝ :=
   Icc (FiniteProbability.sampleMean (fun i : Fin n => X i ω) - q * sampleStdDev X n ω / √n)
     (FiniteProbability.sampleMean (fun i : Fin n => X i ω) + q * sampleStdDev X n ω / √n)
 
@@ -405,7 +405,7 @@ lemma weibullSurvival_eq_weibullMeasure_real_Ioi {k lam x : ℝ} (hk : 0 < k) (h
       isProbabilityMeasure_weibullMeasure hk hlam
     have hIic : (weibullMeasure k lam).real (Iic x) = 0 := by
       rw [measureReal_def,
-        measure_mono_null (fun y hy => hy.trans hx'.le) (weibullMeasure_Iic_zero k lam),
+        measure_mono_null (Iic_subset_Iic.2 hx'.le) (weibullMeasure_Iic_zero k lam),
         ENNReal.toReal_zero]
     have hunion : (weibullMeasure k lam).real univ =
         (weibullMeasure k lam).real (Iic x) + (weibullMeasure k lam).real (Ioi x) := by
