@@ -58,15 +58,14 @@ structure StableGITTarget where
   stable : W.left.Opens
   stable_complement : ∀ x : W.left, x ∈ stable ↔ x ∉ Set.range (unstableInclusion L)
   stable_nonempty : Nonempty stable
-  irrelevant_unit : (HomogeneousIdeal.irrelevant (invariantGrading G W L)).toIdeal.map
-    (gitEvaluation G W L stable) = ⊤
+  irrelevant_covers : IrrelevantCovers (invariantGrading G W L) (gitEvaluation G W L stable)
   [stable_smooth : Smooth (stable.ι ≫ W.hom)]
   [proper : IsProper (gitAffineProjection G W L)]
   torsor : Torsor G
     (Over.mk (gitAffineProjection G W L ≫ Spec.map (CommRingCat.ofHom baseScalars)))
   total : torsor.total ≅ Over.mk (stable.ι ≫ W.hom)
   projection_normalized : torsor.projection.left =
-    total.hom.left ≫ gitOrbitMap G W L stable irrelevant_unit
+    total.hom.left ≫ gitOrbitMap G W L stable irrelevant_covers
   equivariant : γ[G,torsor.total] ≫
       (total.hom ≫ Over.homMk stable.ι (by rfl)) =
     (G ◁ (total.hom ≫ Over.homMk stable.ι (by rfl))) ≫ γ[G,W]
@@ -103,9 +102,13 @@ def nonbaseCurveMap :
     nonbaseOver F B U ⟶ Over.mk (F.curve.π ≫ T.hom) :=
   Over.homMk (nonbaseOpen F B U).ι (by simp [nonbaseOver])
 
-/-- A prestable quasimap has finite base support, contained in the smooth
-curve locus and disjoint from all actual markings. -/
-def IsPrestable : Prop :=
+/-- A prestable quasimap on an individual complex curve has finite base support,
+contained in the smooth curve locus and disjoint from all actual markings
+(Ciocan-Fontanine–Kim–Maulik, Definitions 3.1.1–3.1.2). For a family these
+conditions are imposed on every geometric fibre, not on the total space, so the
+predicate is stated for an individual curve. -/
+def IsPrestable (F : Family G W n g (Over.mk (𝟙 (Spec (.of ℂ))))) (B : AssociatedFamily F)
+    (U : AssociatedUnstable L F.quotient B) : Prop :=
   (Set.range (basepointInclusion L U)).Finite ∧
     (∀ x ∈ Set.range (basepointInclusion L U), (F.curve.π.stalkMap x).hom.FormallySmooth) ∧
       ∀ i : Fin n, Disjoint (Set.range (F.curve.marking i))
@@ -152,7 +155,8 @@ def thetaDegreeDefect
   D.originalBeta.beta (lineClass G W L.line) - D.regularBeta.beta (lineClass G W L.line)
 
 /-- Total length sums the source-normalized rational lengths over the actual base support. -/
-def totalBasepointLength (h : IsPrestable F B U)
+def totalBasepointLength (F : Family G W n g (Over.mk (𝟙 (Spec (.of ℂ)))))
+    (B : AssociatedFamily F) (U : AssociatedUnstable L F.quotient B) (h : IsPrestable F B U)
     (D : ∀ x : F.curve.X, BasepointLength G W F.quotient L x) : ℚ :=
   ∑ x ∈ h.1.toFinset, (D x).value
 

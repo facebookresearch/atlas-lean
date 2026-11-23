@@ -97,14 +97,21 @@ def evaluate (M : Representation Q d k) (f : CoordinateRing Q d k) : k :=
   MvPolynomial.eval (fun x ↦ M x.1 x.2.1 x.2.2) f
 
 /-- Polynomial semi-invariance is a global law for every actual base
-change and every actual representation, not an assumption only on one orbit. -/
-def IsSemiInvariant (θ : Q.Vertex → ℤ) (m : ℕ) (f : CoordinateRing Q d k) : Prop :=
+change and every actual representation, not an assumption only on one orbit.
+It is tested on rational points, so the field is infinite: there a polynomial
+identity is determined by its values. Over a finite field the test degenerates
+(every determinant character into `𝔽₂ˣ` is trivial, so the constant `1` would be
+semi-invariant for every weight). -/
+def IsSemiInvariant [Infinite k] (θ : Q.Vertex → ℤ) (m : ℕ) (f : CoordinateRing Q d k) :
+    Prop :=
   ∀ (g : BaseChangeGroup Q d k) (M : Representation Q d k),
     evaluate Q d k (baseChange Q d k g M) f =
       (determinantCharacter Q d k θ g : k) ^ m * evaluate Q d k M f
 
-/-- The actual semi-invariant nonvanishing definition of character semistability. -/
-def CharacterSemistable (θ : Q.Vertex → ℤ) (M : Representation Q d k) : Prop :=
+/-- The actual semi-invariant nonvanishing definition of character
+semistability, over an infinite field. -/
+def CharacterSemistable [Infinite k] (θ : Q.Vertex → ℤ) (M : Representation Q d k) :
+    Prop :=
   ∃ m : ℕ, 0 < m ∧ ∃ f : CoordinateRing Q d k,
     IsSemiInvariant Q d k θ m f ∧ evaluate Q d k M f ≠ 0
 

@@ -43,7 +43,10 @@ open LinearizedLineBundles LineBundleTaskContracts CoherentCurveLinearSeries
 universe u
 variable {S : Scheme.{u}} (G W : Over S) [GrpObj G] [ModObj G W]
 
-/-- A character polarization, with every ordinary power's coefficient normalization fixed. -/
+/-- A linearized trivial line, with every ordinary power's coefficient
+normalization fixed. The linearization is arbitrary: the character polarization
+of Ciocan-Fontanine–Kim–Maulik §2.2 is the case where the action in the fixed
+trivialization is induced by one character of `G`. -/
 structure CharacterPolarization where
   line : LinearizedLineBundle G W
   trivial : structureModule W.left ≅ line.module

@@ -58,6 +58,19 @@ def_wanted nativeIndividualDegrees
     (F : Family G W n g (Over.mk (𝟙 (Spec (.of ℂ))))) :
     Σ D : InducedDegrees G W F.quotient, DegreeFunctional D
 
+/-- The unstable locus descends along the associated-bundle quotient: the
+`G`-invariant closed subscheme `P × W^us` of `P × W` is the pullback of a closed
+subscheme of the associated bundle (fppf descent of closed subschemes). -/
+def_wanted nativeAssociatedUnstable {T : Over (Spec (.of ℂ))}
+    (P : QuotientObject G W T) (B : AssociatedBundle G W P) : AssociatedUnstable L P B
+
+/-- Off its base locus a quasimap lands in the stable locus, so its torsor and
+equivariant map descend to an actual map to the stable quotient
+(Ciocan-Fontanine–Kim–Maulik, before Lemma 7.1.2). -/
+def_wanted nativeOffBaseMap {T : Over (Spec (.of ℂ))} (F : Family G W n g T)
+    (B : AssociatedFamily F) (U : AssociatedUnstable L F.quotient B)
+    (Q : StableGITTarget G W L) : OffBaseMap F B U Q
+
 def_wanted nativeIndividualRegularization
     (F : Family G W n g (Over.mk (𝟙 (Spec (.of ℂ)))))
     (B : AssociatedFamily F) (U : AssociatedUnstable L F.quotient B)

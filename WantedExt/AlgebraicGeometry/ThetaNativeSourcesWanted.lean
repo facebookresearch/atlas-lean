@@ -23,6 +23,15 @@ cells are fixed by the public result types.
 No Θ-reductivity, S-completeness or good-moduli-space theorem is assumed
 as a source constructor. Those lifting predicates remain independent.
 
+The standard contracting action on `𝔸¹` and the weight `(1, -1)` action on
+`st = π` that these charts take as instances are themselves requested, over
+every base ring, as `contractingAction` and `oppositeWeightAction` in
+`WantedExt.AlgebraicGeometry.ThetaQuotientSourcesWanted`, next to their classes.
+
+The open source of an arbitrary open `V` is the full substack of points whose
+whole orbit lands in `V`; it is an open substack when `V` is `G`-invariant, as
+for the Θ and ST punctures.
+
 References: Alper–Halpern-Leistner–Heinloth, arXiv:1812.01128v5,
 §2.3 and §3.5. Generic fppf torsor/quotient integration is completed
 AxiomMath/Stacks source at c496df0d9beea9deaeabcea8492605f9a0a2313b.

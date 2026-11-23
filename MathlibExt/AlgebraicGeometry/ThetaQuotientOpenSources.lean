@@ -49,7 +49,9 @@ abbrev OpenPoints (V : W.left.Opens) (T : Over (Spec (.of R))) :=
   (landsIn (G := G) V T).FullSubcategory
 
 /-- A native open-source adapter is fixed on all objects and fibre arrows
-by the whole full-inclusion functor into the original quotient source. -/
+by the whole full-inclusion functor into the original quotient source. For an
+arbitrary open `V` this is the full substack of points whose whole orbit lands
+in `V`; it is an open substack when `V` is `G`-invariant. -/
 structure OpenSource (Q : QuotientSource R (G := G) (W := W)) (V : W.left.Opens) where
   stack : RelativeStack (Spec (.of R))
   inclusion : stack.toPseudofunctor ⟶ Q.stack.toPseudofunctor

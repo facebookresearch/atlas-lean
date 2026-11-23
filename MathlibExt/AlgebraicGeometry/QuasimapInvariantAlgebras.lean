@@ -96,10 +96,75 @@ def gitEvaluation [InvariantAlgebraModel G W L] (U : W.left.Opens) :
     InvariantAlgebra G W L →+* Γ(U, ⊤) :=
   U.ι.appTop.hom.comp (DirectSum.coeRingHom (invariantPiece G W L))
 
-/-- The canonical stable-locus map uses the native Proj chart gluing construction. -/
+section ProjCover
+
+variable {σ : Type*} {A : Type u} [CommRing A] [SetLike σ A] [AddSubgroupClass σ A]
+  (𝒜 : ℕ → σ) [GradedRing 𝒜] {X : Scheme.{u}} (f : A →+* Γ(X, ⊤))
+
+/-- The basic opens of the images of the positive-degree homogeneous elements
+cover `X`: the irrelevant ideal generates the unit ideal sheaf. Generating the
+unit ideal of `Γ(X, ⊤)` implies this but is strictly stronger: for the scalar
+action on `𝔸² ∖ {0}`, whose global section ring is `ℂ[x, y]`, the coordinates
+cover but generate a proper ideal. -/
+def IrrelevantCovers : Prop :=
+  ⨆ ir : Σ' i r, 0 < i ∧ r ∈ 𝒜 i, X.basicOpen (f ir.2.1) = ⊤
+
+/-- The open cover of `X` by the basic opens of positive-degree homogeneous elements. -/
+def irrelevantOpenCover (h : IrrelevantCovers 𝒜 f) : X.OpenCover :=
+  X.openCoverOfIsOpenCover (fun ir : Σ' i r, 0 < i ∧ r ∈ 𝒜 i ↦ X.basicOpen (f ir.2.1)) h
+
+set_option backward.isDefEq.respectTransparency.types false in
+set_option backward.defeqAttrib.useBackward true in
+/-- The map to `Proj` glued from Mathlib's chart maps `D(f r) ⟶ D₊(r)`. This is
+the construction of `Proj.fromOfGlobalSections`, which uses its global hypothesis
+only to produce this cover. -/
+def fromOfIrrelevantCover (h : IrrelevantCovers 𝒜 f) : X ⟶ Proj 𝒜 := by
+  refine (irrelevantOpenCover 𝒜 f h).glueMorphisms
+    (fun ri ↦ Proj.toBasicOpenOfGlobalSections 𝒜 f rfl ri.2.2.1 ri.2.2.2 ≫ Scheme.Opens.ι _) ?_
+  rintro x y
+  let e : pullback ((irrelevantOpenCover 𝒜 f h).f x)
+      ((irrelevantOpenCover 𝒜 f h).f y) ≅ (X.basicOpen (f (x.snd.fst * y.snd.fst))) :=
+    (isPullback_opens_inf _ _).isoPullback.symm ≪≫ X.isoOfEq (by simp)
+  rw [← cancel_epi e.inv]
+  trans Proj.toBasicOpenOfGlobalSections 𝒜 f rfl (Nat.add_pos_left x.2.2.1 y.1)
+    (SetLike.mul_mem_graded x.2.2.2 y.2.2.2) ≫ (Scheme.Opens.ι _)
+  · simpa [e, irrelevantOpenCover, Scheme.isoOfEq_inv] using
+      Proj.homOfLE_toBasicOpenOfGlobalSections_ι _ _ rfl rfl y.2.2.2
+  · simpa [e, irrelevantOpenCover, Scheme.isoOfEq_inv] using
+      (Proj.homOfLE_toBasicOpenOfGlobalSections_ι _ _ (mul_comm _ _) (add_comm _ _)
+        x.2.2.2).symm
+
+/-- Generating the unit ideal of the global sections implies the local condition. -/
+theorem irrelevantCovers_of_map_eq_top
+    (hf : (HomogeneousIdeal.irrelevant 𝒜).toIdeal.map f = ⊤) : IrrelevantCovers 𝒜 f := by
+  classical
+  have H : Ideal.span (Set.range fun x : Σ' i r, 0 < i ∧ r ∈ 𝒜 i ↦ x.2.1) =
+      (HomogeneousIdeal.irrelevant 𝒜).toIdeal := by
+    apply le_antisymm
+    · rw [Ideal.span_le, Set.range_subset_iff]
+      rintro ⟨i, r, hi0, hri⟩
+      simp [-ZeroMemClass.coe_eq_zero, DirectSum.decompose_of_mem_ne 𝒜 hri hi0.ne']
+    · intro x hx
+      rw [← DirectSum.sum_support_decompose 𝒜 x]
+      refine Ideal.sum_mem _ fun c hc ↦ ?_
+      have : c ≠ 0 := by contrapose hc; simpa [hc] using hx
+      exact Ideal.subset_span ⟨⟨c, _, this.bot_lt, by simp⟩, rfl⟩
+  unfold IrrelevantCovers
+  ext1
+  apply compl_injective
+  simp only [TopologicalSpace.Opens.coe_iSup, Set.compl_iUnion, ← Scheme.zeroLocus_singleton,
+    ← Scheme.zeroLocus_iUnion, Set.iUnion_singleton_eq_range, TopologicalSpace.Opens.coe_top,
+    Set.compl_univ]
+  rw [← Scheme.zeroLocus_span, Set.range_comp', ← Ideal.map_span, H, hf]
+  simp
+
+end ProjCover
+
+/-- The canonical stable-locus map, glued from the native Proj charts over the
+basic opens of the positive-degree invariants, which cover the stable open. -/
 def gitOrbitMap [InvariantAlgebraModel G W L] (U : W.left.Opens)
-    (h : (HomogeneousIdeal.irrelevant (invariantGrading G W L)).toIdeal.map
-      (gitEvaluation G W L U) = ⊤) : U.toScheme ⟶ gitScheme G W L :=
-  Proj.fromOfGlobalSections (invariantGrading G W L) (gitEvaluation G W L U) h
+    (h : IrrelevantCovers (invariantGrading G W L) (gitEvaluation G W L U)) :
+    U.toScheme ⟶ gitScheme G W L :=
+  fromOfIrrelevantCover (invariantGrading G W L) (gitEvaluation G W L U) h
 
 end MathlibExt.AlgebraicGeometry.QuasimapInvariantAlgebras
