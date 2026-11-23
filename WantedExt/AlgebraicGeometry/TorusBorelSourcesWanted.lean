@@ -71,7 +71,7 @@ def_wanted actual_residual_torus_geometry (A T : Over base) [GrpObj A] [GrpObj T
     (_fixed : (S.inclusion ▷ F.scheme) ≫ γ[T,F.scheme] = snd A F.scheme) :
     ResidualGeometry MA MT S P F AF
 
-proof_wanted actual_degree_splitting_independence (A T : Over base) [GrpObj A] [GrpObj T]
+theorem_wanted actual_degree_splitting_independence (A T : Over base) [GrpObj A] [GrpObj T]
     (MA : TorusModel A) (MT : TorusModel T) (S : Subtorus A T)
     (F : SchemeData) [ModObj T F.scheme] (AF : AnalyticTorusAction MT F.scheme)
     (P Q : TorusSplitting S) (RP : ResidualGeometry MA MT S P F AF)

@@ -67,21 +67,21 @@ variable (Ch : ∀ j : Fin Z.count, ComponentChamber C L (N.componentRoots j))
 def_wanted actual_stable_envelope_geometry :
     StableEnvelopeGeometry MA MT S P X Source F Z N C L Ch
 
-proof_wanted actual_fixed_borel_decomposition
+theorem_wanted actual_fixed_borel_decomposition
     (G : StableEnvelopeGeometry MA MT S P X Source F Z N C L Ch) :
     Function.Bijective (componentRestrictions MA MT S P X Source F Z N C L Ch G)
 
-proof_wanted actual_attraction_order_antisymmetric
+theorem_wanted actual_attraction_order_antisymmetric
     (G : StableEnvelopeGeometry MA MT S P X Source F Z N C L Ch) (j k : Fin Z.count)
     (_forward : precedes A X.scheme L.map G.attracting Z j k)
     (_backward : precedes A X.scheme L.map G.attracting Z k j) : j=k
 
-proof_wanted actual_full_attracting_closed
+theorem_wanted actual_full_attracting_closed
     (G : StableEnvelopeGeometry MA MT S P X Source F Z N C L Ch) (j : Fin Z.count) :
     IsClosed (fullAttracting A X.scheme L.map G.attracting Z j)
 
 /-- The strict degree condition is only on gamma in actual quotient-torus cohomology. -/
-proof_wanted stable_envelope_exists_unique
+theorem_wanted stable_envelope_exists_unique
     (D : StableEnvelopeData MA MT S P X Source F Z N C L Ch) :
     ∃! stab : FixedH MA MT S P X Source F Z N C L Ch D.geometry →ₗ[ℂ]
       AmbientH MA MT S X Source,
