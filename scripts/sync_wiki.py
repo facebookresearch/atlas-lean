@@ -2885,27 +2885,27 @@ INDEX_DIFFERS = ("the index holds it otherwise than the working tree, and a comm
 
 
 def disagreeing(paths: set[str]) -> dict[str, str]:
-    """Of *paths*, those the index holds otherwise than the working tree, each with what is wrong: anything but a file
-    in the index, a submodule among them, is not the sync's; any other difference, bytes, executable bit or a file
-    only one of them has, leaves a commit free to take either."""
-    entries = {}
-    if paths:
-        for record in git("ls-files", "-s", "-z", "--", *sorted(paths)).split(b"\0"):
-            if record:
-                meta, raw = record.split(b"\t", 1)
-                mode, name = meta.decode("ascii").split(" ")[:2]
-                entries[os.fsdecode(raw)] = (mode, name)
+    """Of *paths*, those the index holds otherwise than the working tree, as Git compares them (with the line ends it
+    normalises), each with what is wrong: anything but a file in the index, a submodule among them, is not the sync's;
+    a difference, or a deletion staged while the working tree keeps the file, leaves a commit free to take either. Git
+    reads the files; this reads none."""
+    if not paths:
+        return {}
+    ordered = sorted(paths)
+    literal = [f":(literal){path}" for path in ordered]
+    modes = {}
+    for record in git("ls-files", "-s", "-z", "--", *literal).split(b"\0"):
+        if record:
+            meta, raw = record.split(b"\t", 1)
+            modes[os.fsdecode(raw)] = meta.decode("ascii").split(" ")[0]
+    unstaged = {os.fsdecode(path) for path in git("diff", "--name-only", "--no-renames", "-z", "--", *literal).split(
+        b"\0") if path}
     found = {}
-    for path in sorted(paths):
-        mode, name = entries.get(path, ("100644", None))
-        if mode not in ("100644", "100755"):
+    for path in ordered:
+        mode = modes.get(path)
+        if mode is not None and mode not in ("100644", "100755"):
             found[path] = "the sync writes no link or other kind of file"
-            continue
-        file = wiki.ROOT / path
-        held = None if name is None else (git("cat-file", "blob", name), mode != "100755")
-        actual = (None if file.is_symlink() or not file.is_file()
-                  else (file.read_bytes(), not file.stat().st_mode & 0o111))
-        if held != actual:
+        elif path in unstaged or (mode is None and os.path.lexists(wiki.ROOT / path)):
             found[path] = INDEX_DIFFERS
     return found
 
@@ -3480,9 +3480,6 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
                 continue
             if expected != actual:
                 differences.append(f"{path}: " + compared(expected, actual, mine in written))
-        listed = {row.split(": ", 1)[0] for row in differences}
-        differences += [f"{path}: {what}" for path, what in disagreeing({
-            path for path in staged_paths() if graph_file(path)}).items() if path not in listed or what == INDEX_DIFFERS]
     return ("other", differences) if differences else ("sync", [])
 
 
@@ -3518,19 +3515,28 @@ def run_scoped(argv: list[str]) -> int:
         base = git("rev-parse", "--verify", "--end-of-options", f"{options.base}^{{commit}}").decode().strip()
         paths = changed_paths(base)
         restaged = staged_paths()
-        # The Lean the run reads is the working tree's: staged otherwise, a commit may take a Lean the run did not.
-        unsettled = disagreeing({path for path in restaged if lean_source(path)})
     except GitError as error:
         print(f"error: {error}", file=sys.stderr)
         print(f"error: the base must be a commit this clone has; fetch it first, as with `git fetch {UPSTREAM} main`",
               file=sys.stderr)
         return 2
     lean = frozenset(path for path in paths if lean_source(path))
-    graph = sorted({path for path in paths if graph_file(path)} | {path for path in restaged if graph_file(path)})
+    graph = sorted(path for path in paths if graph_file(path))
     fix = f"python3 scripts/sync_wiki.py declarations --base {base}"
-    # A link among the files the run reads, or the changes' own, stops it before it reads any of them: one could lead
-    # anywhere, to a file that has no end among others. So does Lean staged otherwise than the working tree has it.
-    linked = links_in_wiki(paths)
+    # A link among the files the run reads, or the changes' own, staged ones included, stops it before it reads any of
+    # them: one could lead anywhere, to a file that has no end among others.
+    linked = links_in_wiki(sorted(set(paths) | restaged))
+    disagree: dict[str, str] = {}
+    if not linked:
+        # The changes are the working tree's. Where the index holds a file the run reads otherwise, staged by hand, a
+        # commit may take the index's: Lean so staged stops the run, and a wiki file so staged is not the sync's.
+        try:
+            disagree = disagreeing({path for path in restaged if lean_source(path) or graph_file(path)})
+        except GitError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 2
+        graph = sorted(set(graph) | {path for path in disagree if graph_file(path)})
+    unsettled = {path: what for path, what in disagree.items() if lean_source(path)}
     if linked or unsettled:
         errors = [f"{path} is a link: the sync reads and writes through none; put what it links to in its place"
                   for path in linked] + [f"{path}: {what}" for path, what in unsettled.items()]
@@ -3600,9 +3606,13 @@ def run_scoped(argv: list[str]) -> int:
         if not graph:
             changes, differences = "none", []
         elif not lean:
-            changes, differences = "other", [f"{path}: the sync writes nothing when no Lean changes" for path in graph]
+            changes, differences = "other", [f"{path}: {disagree.get(path, 'the sync writes nothing when no Lean changes')}"
+                                             for path in graph]
         else:
             changes, differences = sync_output(base, graph, lambda: scoped_plan(old, head, index, targets, lean), apply)
+            differences += [f"{path}: {what}" for path, what in disagree.items()
+                            if graph_file(path) and f"{path}: {what}" not in differences]
+            changes = "other" if differences else changes
         in_step = plan.in_step()
         report.update({"in_step": in_step, "wiki_changes": changes, "differences": differences})
         # The verdicts first, then what they rest on.

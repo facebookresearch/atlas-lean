@@ -4393,6 +4393,41 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "none", []))
 
 
+    def test_a_link_stops_the_run_before_git_or_it_compares_what_is_staged(self) -> None:
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (self.root / "MathlibExt/Linked").symlink_to(elsewhere)
+        self.groups(more="/-- Staged. -/\ntheorem staged : True := trivial\n\n")
+        self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
+        with patch.object(sync, "disagreeing", side_effect=AssertionError("compared what is staged")):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "MathlibExt/Linked is a link: the sync reads and writes through none; put what it links to in its place"]))
+
+    def test_line_ends_git_normalises_are_no_disagreement(self) -> None:
+        # Git stores the Lean with line feeds and checks it out with carriage returns: staged, the two agree.
+        self.write(".gitattributes", "*.lean text eol=crlf\n")
+        self.base = self.commit("line ends")
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text() + "-- A comment.\n")
+        self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
+        groups.write_bytes(groups.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+        self.assertEqual(self.git("diff", "--name-only"), "")
+        status, out, err, report = self.run_sync("--check")
+        self.assertFalse([row for row in report["errors"] if INDEX_DIFFERS in row], report["errors"])
+
+    def test_a_staged_reversion_to_the_base_has_no_wiki_changes(self) -> None:
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        kept = page.read_bytes()
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        self.commit("a prose edit")
+        page.write_bytes(kept)
+        self.git("add", "--", str(page))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "none", []))
+
+
 
 INDEX_DIFFERS = sync.INDEX_DIFFERS
 
