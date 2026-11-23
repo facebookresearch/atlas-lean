@@ -40,10 +40,12 @@ namespace MetaMathlibExt
 
 open Polynomial
 
-/-- Unit ball of the spectral norm: under the essential base-unit-ball hypothesis
-`hA` (the closed unit ball of `K` is exactly the integral closure of `A` in `K`),
-the closed unit ball of the spectral norm on `L` is exactly the integral closure
-of `A` in `L`. -/
+/-- **Spectral-norm unit ball is the integral closure.** Let $A$ be an integral domain, $K$ a
+complete nontrivially normed field whose norm is ultrametric, and $L$ a field extension of $K$ of
+finite degree, where $K$ and $L$ are $A$-algebras and the algebra maps $A \to K \to L$ compose to
+$A \to L$. Suppose that for every $y \in K$, $\|y\| \le 1$ if and only if $y$ is integral over
+$A$. Then for every $x \in L$, the spectral norm of $x$ over $K$ is at most $1$ if and only if
+$x$ is integral over $A$. -/
 public theorem spectralNorm_le_one_iff_isIntegral
     {A K L : Type*} [CommRing A] [IsDomain A]
     [NontriviallyNormedField K] [Field L]
@@ -95,8 +97,15 @@ public theorem spectralNorm_le_one_iff_isIntegral
     have h := (spectralValue_le_one_iff hmonic).mpr hcoeff
     simpa [spectralNorm] using h
 
-/-- Integral-closure corollary: under the same essential base-unit-ball hypothesis,
-the spectral-norm unit ball is the image of any integral closure `B` of `A` in `L`. -/
+/-- **Spectral-norm unit ball as the image of an integral closure.** Let $A$ be an integral domain,
+$K$ a complete nontrivially normed field whose norm is ultrametric, and $L$ a field extension of
+$K$ of finite degree, where $K$ and $L$ are $A$-algebras and the algebra maps $A \to K \to L$
+compose to $A \to L$. Let $B$ be an integral domain that is an $A$-algebra with an algebra map
+$B \to L$ such that $A \to B \to L$ composes to $A \to L$, and suppose $B$ is an integral closure
+of $A$ in $L$: the map $B \to L$ is injective and its image is the set of elements of $L$ integral
+over $A$. Suppose that for every $y \in K$, $\|y\| \le 1$ if and only if $y$ is integral over $A$.
+Then for every $x \in L$, the spectral norm of $x$ over $K$ is at most $1$ if and only if $x$ is
+the image of some element of $B$. -/
 public theorem spectralNorm_le_one_iff_exists_integralClosure
     {A K L B : Type*} [CommRing A] [IsDomain A]
     [NontriviallyNormedField K] [Field L]

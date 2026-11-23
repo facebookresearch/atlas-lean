@@ -37,14 +37,22 @@ namespace Combinatorics.Line
 
 variable {α ι ι' : Type*}
 
-/-- Reindex the coordinates of a combinatorial line along an equivalence. -/
+/-- **Reindexing a combinatorial line.** A combinatorial line $l$ in $\alpha^\iota$ assigns to each
+coordinate $i \in \iota$ either a fixed value in $\alpha$ or the free variable, with at least one
+free coordinate. Given a bijection $e : \iota \to \iota'$, the reindexing of $l$ along $e$ is the
+combinatorial line in $\alpha^{\iota'}$ that assigns to each coordinate $j \in \iota'$ what $l$
+assigns to the coordinate $e^{-1}(j)$. -/
 public def reindex (l : Line α ι) (e : ι ≃ ι') : Line α ι' where
   idxFun i := l.idxFun (e.symm i)
   proper := by
     obtain ⟨i, hi⟩ := l.proper
     exact ⟨e i, by simpa⟩
 
-/-- Reindexing a line reindexes each of its points. -/
+/-- **Points of a reindexed line.** Let $l$ be a combinatorial line in $\alpha^\iota$, let
+$e : \iota \to \iota'$ be a bijection, and for $a \in \alpha$ write $l(a) \in \alpha^\iota$ for the
+point of $l$ whose free coordinates equal $a$. Then for every $a \in \alpha$ and every
+$j \in \iota'$, the $j$-th coordinate of the point at $a$ of the reindexing of $l$ along $e$ equals
+the $e^{-1}(j)$-th coordinate of $l(a)$. -/
 @[simp]
 public theorem reindex_apply (l : Line α ι) (e : ι ≃ ι') (a : α) (i : ι') :
     l.reindex e a i = l a (e.symm i) := by
@@ -56,7 +64,13 @@ namespace Combinatorics.Subspace
 
 variable {η η' α ι ι' : Type*}
 
-/-- Compose a combinatorial subspace with a combinatorial subspace inside it. -/
+/-- **Composition of combinatorial subspaces.** A combinatorial subspace $V$ of $\alpha^\iota$ with
+parameter set $\eta$ assigns to each coordinate $i \in \iota$ either a fixed value in $\alpha$ or a
+parameter in $\eta$, with every parameter assigned to some coordinate. Let $V$ be such a subspace
+and let $W$ be a combinatorial subspace of $\alpha^\eta$ with parameter set $\eta'$. The composite
+$V \circ W$ is the combinatorial subspace of $\alpha^\iota$ with parameter set $\eta'$ that assigns
+to a coordinate $i$ the fixed value $a$ if $V$ assigns $a$ to $i$, and assigns to $i$ what $W$
+assigns to the coordinate $e \in \eta$ if $V$ assigns the parameter $e$ to $i$. -/
 public def comp (V : Subspace η α ι) (W : Subspace η' α η) : Subspace η' α ι where
   idxFun i := (V.idxFun i).elim Sum.inl W.idxFun
   proper e := by
@@ -64,14 +78,22 @@ public def comp (V : Subspace η α ι) (W : Subspace η' α η) : Subspace η' 
     obtain ⟨i, hi⟩ := V.proper j
     exact ⟨i, by simp [hi, hj]⟩
 
-/-- Evaluating a composite subspace is function composition. -/
+/-- **Evaluating a composite subspace.** Let $V$ be a combinatorial subspace of $\alpha^\iota$ with
+parameter set $\eta$ and let $W$ be a combinatorial subspace of $\alpha^\eta$ with parameter set
+$\eta'$; view each subspace as its map from parameter values to points. Then for every
+$x \in \alpha^{\eta'}$, the composite $V \circ W$ sends $x$ to $V(W(x))$. -/
 @[simp]
 public theorem comp_apply (V : Subspace η α ι) (W : Subspace η' α η) (x : η' → α) :
     V.comp W x = V (W x) := by
   ext i
   cases hi : V.idxFun i <;> simp [comp, Subspace.coe_apply, hi]
 
-/-- Transport a combinatorial line through a combinatorial subspace. -/
+/-- **Image of a combinatorial line in a combinatorial subspace.** Let $V$ be a combinatorial
+subspace of $\alpha^\iota$ with parameter set $\eta$ and let $l$ be a combinatorial line in
+$\alpha^\eta$. The image $V_* l$ is the combinatorial line in $\alpha^\iota$ that has the fixed
+value $a$ at each coordinate $i$ to which $V$ assigns the fixed value $a$, and has at each
+coordinate $i$ to which $V$ assigns a parameter $e \in \eta$ what $l$ has at the coordinate $e$
+(the free variable or a fixed value). -/
 public def compLine (V : Subspace η α ι) (l : Combinatorics.Line α η) :
     Combinatorics.Line α ι where
   idxFun i := (V.idxFun i).elim some l.idxFun
@@ -80,14 +102,23 @@ public def compLine (V : Subspace η α ι) (l : Combinatorics.Line α η) :
     obtain ⟨i, hi⟩ := V.proper e
     exact ⟨i, by simp [hi, he]⟩
 
-/-- A transported line consists of the corresponding points of the ambient subspace. -/
+/-- **Points of the image of a line.** Let $V$ be a combinatorial subspace of $\alpha^\iota$ with
+parameter set $\eta$, viewed as its map $x \mapsto V(x)$ from parameter values to points, and let
+$l$ be a combinatorial line in $\alpha^\eta$, with $l(a)$ the point of $l$ whose free coordinates
+equal $a$. Then for every $a \in \alpha$, the point at $a$ of the image line $V_* l$ is
+$V(l(a))$. -/
 @[simp]
 public theorem compLine_apply (V : Subspace η α ι) (l : Combinatorics.Line α η) (a : α) :
     V.compLine l a = V (l a) := by
   ext i
   cases hi : V.idxFun i <;> simp [compLine, Subspace.coe_apply, Combinatorics.Line.coe_apply, hi]
 
-/-- Reindexing the ambient coordinates commutes with transporting a line. -/
+/-- **Reindexing commutes with images of lines.** Let $V$ be a combinatorial subspace of
+$\alpha^\iota$ with parameter set $\eta$, let $e : \iota \to \iota'$ be a bijection, and let $l$ be
+a combinatorial line in $\alpha^\eta$. Let $V^e$ be the combinatorial subspace of $\alpha^{\iota'}$
+with parameter set $\eta$ that assigns to each coordinate $j \in \iota'$ what $V$ assigns to the
+coordinate $e^{-1}(j)$. Then the image of $l$ under $V^e$ is the reindexing along $e$ of the image
+of $l$ under $V$. -/
 @[simp]
 public theorem reindex_compLine (V : Subspace η α ι) (e : ι ≃ ι')
     (l : Combinatorics.Line α η) :
@@ -97,7 +128,11 @@ public theorem reindex_compLine (V : Subspace η α ι) (e : ι ≃ ι')
   cases hi : V.idxFun (e.symm i) <;>
     simp [compLine, Combinatorics.Line.reindex, Subspace.reindex, hi]
 
-/-- Transporting a line through a composite subspace is associative. -/
+/-- **Images of lines under composite subspaces.** Let $V$ be a combinatorial subspace of
+$\alpha^\iota$ with parameter set $\eta$, let $W$ be a combinatorial subspace of $\alpha^\eta$ with
+parameter set $\eta'$, and let $l$ be a combinatorial line in $\alpha^{\eta'}$. Then the image of
+$l$ under the composite $V \circ W$ equals the image under $V$ of the image of $l$ under $W$, that
+is, $(V \circ W)_* l = V_*(W_* l)$. -/
 @[simp]
 public theorem comp_compLine (V : Subspace η α ι) (W : Subspace η' α η)
     (l : Combinatorics.Line α η') :
@@ -755,8 +790,12 @@ private theorem dhjGR_fin (α κ : Type) [Finite α] [Nonempty α] [Finite κ]
 universe u v
 
 /--
-The Graham–Rothschild theorem for combinatorial lines: every finite coloring of the lines of a
-sufficiently high-dimensional finite cube is constant on all lines of an `m`-dimensional subspace.
+**Graham–Rothschild theorem for combinatorial lines.** Let $\alpha$ be a finite nonempty alphabet,
+let $\kappa$ be a finite nonempty set of colors and let $m$ be a natural number. Then there is a
+natural number $N$ such that for every coloring $C$ of the combinatorial lines in $\alpha^N$ with
+colors in $\kappa$ there are a combinatorial subspace $V$ of $\alpha^N$ with parameter set
+$\{0, \dots, m - 1\}$ and a color $z \in \kappa$ such that for every combinatorial line $l$ in
+$\alpha^m$, the image $V_* l$ of $l$ in $V$ satisfies $C(V_* l) = z$.
 -/
 public theorem _root_.Combinatorics.Subspace.exists_lines_mono_in_high_dimension_fin
     (α : Type u) (κ : Type v) [Finite α] [Nonempty α] [Finite κ] [Nonempty κ] (m : ℕ) :
@@ -4172,12 +4211,6 @@ private def dhjWordEquiv {I I' α : Type*} (e : I ≃ I') :
     (I → α) ≃ (I' → α) :=
   Equiv.arrowCongr e (Equiv.refl α)
 
-private theorem dhj_mem_map_equiv {X Y : Type*} (e : X ≃ Y)
-    (A : Finset X) (y : Y) :
-    y ∈ A.map e.toEmbedding ↔ e.symm y ∈ A := by
-  classical
-  simp
-
 private theorem dhjWordEquiv_replaceLast {k : ℕ} {I I' : Type*}
     (i : Fin k) (e : I ≃ I') (w : I → Fin (k + 1)) :
     dhjWordEquiv e (dhjReplaceLast i w) =
@@ -4189,7 +4222,7 @@ private theorem dhjInsensitive.map_wordEquiv {k : ℕ} {I I' : Type*}
     (hD : dhjInsensitive i D) :
     dhjInsensitive i (D.map (dhjWordEquiv e).toEmbedding) := by
   intro w
-  rw [dhj_mem_map_equiv, dhj_mem_map_equiv]
+  rw [Finset.mem_map_equiv, Finset.mem_map_equiv]
   change (dhjWordEquiv e).symm w ∈ D ↔
     dhjReplaceLast i ((dhjWordEquiv e).symm w) ∈ D
   exact hD ((dhjWordEquiv e).symm w)
@@ -4209,7 +4242,7 @@ private theorem dhjSubspacePoints_reindex {d k : ℕ} {I I' : Type*}
         (V.reindex (Equiv.refl (Fin d)) (Equiv.refl (Fin (k + 1))) e) := by
   classical
   ext w
-  rw [dhj_mem_map_equiv, dhj_mem_subspacePoints, dhj_mem_subspacePoints]
+  rw [Finset.mem_map_equiv, dhj_mem_subspacePoints, dhj_mem_subspacePoints]
   constructor
   · rintro ⟨z, hz⟩
     refine ⟨z, ?_⟩
@@ -4268,7 +4301,7 @@ private theorem dhj_exists_tiling_insensitive_fin {k d : ℕ} {β : ℝ}
     exact hD.map_wordEquiv i e.symm D
   have hDblockEq : Dblock = Dflat.map b.symm.toEmbedding := by
     ext u
-    rw [dhj_mem_map_equiv, dhj_mem_map_equiv, dhj_mem_map_equiv]
+    rw [Finset.mem_map_equiv, Finset.mem_map_equiv, Finset.mem_map_equiv]
     rfl
   have hDblock : dhjBlockInsensitive i Dblock := by
     rw [hDblockEq]
@@ -4282,29 +4315,29 @@ private theorem dhj_exists_tiling_insensitive_fin {k d : ℕ} {β : ℝ}
       have hxb : b.symm x ∈ Cblock := by
         simpa [Cflat, dhjFlatSet] using hx
       have hxbD := hCsub hxb
-      rw [hDblockEq, dhj_mem_map_equiv] at hxbD
+      rw [hDblockEq, Finset.mem_map_equiv] at hxbD
       simpa using hxbD
     intro x hx
     have hxflat : w.symm x ∈ Cflat := by
       simpa [C] using hx
     have hxDflat := hflatSub hxflat
     dsimp only [Dflat] at hxDflat
-    rw [dhj_mem_map_equiv] at hxDflat
+    rw [Finset.mem_map_equiv] at hxDflat
     simpa using hxDflat
   · dsimp only [C]
     exact hCtile.map_wordEquiv e
   · have hres : D \ C = (Dblock \ Cblock).map f.toEmbedding := by
       have hDmap : Dblock.map f.toEmbedding = D := by
         ext x
-        rw [dhj_mem_map_equiv, dhj_mem_map_equiv]
+        rw [Finset.mem_map_equiv, Finset.mem_map_equiv]
         simp
       have hCmap : Cblock.map f.toEmbedding = C := by
         ext x
-        rw [dhj_mem_map_equiv]
+        rw [Finset.mem_map_equiv]
         change f.symm x ∈ Cblock ↔ x ∈ Cflat.map w.toEmbedding
-        rw [dhj_mem_map_equiv]
+        rw [Finset.mem_map_equiv]
         change f.symm x ∈ Cblock ↔ w.symm x ∈ Cblock.map b.toEmbedding
-        rw [dhj_mem_map_equiv]
+        rw [Finset.mem_map_equiv]
         rfl
       rw [Finset.map_sdiff, hDmap, hCmap]
     rw [hres, dhjDensity_map_equiv]
@@ -4750,7 +4783,7 @@ private theorem dhj_exists_subspace_density_ge {k d m : ℕ} (hdm : d ≤ m)
     ext z
     rw [dhj_mem_pullback]
     simp only [dhjSection, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [dhj_mem_map_equiv]
+    rw [Finset.mem_map_equiv]
     have heq : w (V z) = dhjConcat x z := by
       calc
         w (V z) = U z := by
@@ -4999,9 +5032,9 @@ private theorem dhj_dichotomy_fin {k : ℕ} (hk : 2 ≤ k)
     intro a
     have ha := hl a
     change l a ∈ Ablock.map b.toEmbedding at ha
-    rw [dhj_mem_map_equiv] at ha
+    rw [Finset.mem_map_equiv] at ha
     dsimp only [Ablock] at ha
-    rw [dhj_mem_map_equiv] at ha
+    rw [Finset.mem_map_equiv] at ha
     have heq : l.reindex e a = w (l a) := by
       funext q
       change l.reindex e a q = l a (e.symm q)
@@ -5017,9 +5050,9 @@ private theorem dhj_dichotomy_fin {k : ℕ} (hk : 2 ≤ k)
         (Ablock.map b.toEmbedding) := by
       ext z
       simp only [dhj_mem_pullback]
-      rw [dhj_mem_map_equiv]
+      rw [Finset.mem_map_equiv]
       dsimp only [Ablock]
-      rw [dhj_mem_map_equiv]
+      rw [Finset.mem_map_equiv]
       change V' z ∈ A ↔ f (b.symm (V z)) ∈ A
       have hVapply : V' z = w (V z) := dhjSubspace_reindex_apply V e z
       rw [hVapply]
@@ -5112,17 +5145,21 @@ private theorem dhjThreshold_all (k : ℕ) (hk : 2 ≤ k) (δ : ℝ) (hδ : 0 < 
   convert h using 1
   omega
 
-/--
-For every `k ≥ 2` and `δ > 0` there is `N` such that every `A : Finset (Fin N → Fin k)` with `δ *
-((k : ℝ) ^ N) ≤ (A.card : ℝ)` contains a combinatorial line `l : Combinatorics.Line (Fin k) (Fin
-N)` with `l a ∈ A` for all `a`. Source: H. Furstenberg and Y. Katznelson, J. Anal. Math. 57 (1991)
-and Hales-Jewett, Trans. AMS 106 (1963); Lean states finitary density form over `Fin N → Fin k`
-with coloring version as corollary.
+/-- **Density Hales–Jewett theorem.** Write $[k] = \{0, 1, \dots, k - 1\}$. A combinatorial line
+in $[k]^N$ is given by a nonempty set of free coordinates and a fixed value in $[k]$ at every other
+coordinate; its $k$ points are obtained by giving all free coordinates a common value $a \in [k]$.
+For every natural number $k \ge 2$ and every real $\delta > 0$ there is a natural number $N$ such
+that every set $A \subseteq [k]^N$ with $\delta k^N \le |A|$ contains all $k$ points of some
+combinatorial line in $[k]^N$.
 
 Proves `Wanted` entry `density_hales_jewett`.
 
 Proof: We follow the density-increment route of Dodos–Kanellopoulos–Tyros, with the binary
-case supplied by Sperner's theorem and the required Graham–Rothschild line theorem proved above.
+case supplied by Sperner's theorem and the Graham–Rothschild theorem for lines.
+
+Source: H. Furstenberg and Y. Katznelson, J. Anal. Math. 57 (1991)
+and Hales-Jewett, Trans. AMS 106 (1963); Lean states finitary density form over `Fin N → Fin k`
+with coloring version as corollary.
 -/
 public theorem density_hales_jewett :
     ∀ k : ℕ, 2 ≤ k → ∀ δ : ℝ, 0 < δ → ∃ N : ℕ,

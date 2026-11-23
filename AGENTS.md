@@ -1,0 +1,10 @@
+# Agent guidance for ATLAS
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and [REVIEWING.md](REVIEWING.md) before making a PR. [README.md](README.md) maps the libraries. [Graph rules](docs/BLUEPRINT.md#graph-rules) are the source of truth for changes to the blueprint; the same document covers setup and verification.
+
+| Skill | Use it for |
+| --- | --- |
+| [atlas-graph-pr](.agents/skills/atlas-graph-pr/SKILL.md) | Expanding a planned node, editing or moving graph pages, or changing annotations or links |
+| [atlas-solve-issue](.agents/skills/atlas-solve-issue/SKILL.md) | Picking up an issue, coordinating work, and preparing a PR for review |
+
+Read the relevant file directly if your agent does not discover repository skills. If a source-review issue conflicts with the graph rules, follow the rules and call out the discrepancy in the PR.

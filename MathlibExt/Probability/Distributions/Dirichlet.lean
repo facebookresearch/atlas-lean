@@ -50,7 +50,10 @@ open scoped ENNReal
 
 namespace ProbabilityTheory
 
-/-- The **Beta integral** `∫₀¹ t^(a-1) (1-t)^(b-1) dt = B(a, b)`. -/
+/-- **The Beta integral.** For real numbers $a > 0$ and $b > 0$, the integral over the open
+interval $(0, 1)$, taken as a Lebesgue integral with values in $[0, \infty]$, is
+$$\int_0^1 t^{a-1} (1 - t)^{b-1} \, dt = B(a, b),$$
+where $B(a, b) = \Gamma(a) \Gamma(b) / \Gamma(a + b)$ is the Beta function. -/
 theorem lintegral_Ioo_rpow_mul_rpow {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     ∫⁻ t in Ioo (0 : ℝ) 1, ENNReal.ofReal (t ^ (a - 1) * (1 - t) ^ (b - 1)) =
       ENNReal.ofReal (beta a b) := by
@@ -68,16 +71,25 @@ theorem lintegral_Ioo_rpow_mul_rpow {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
   congr 1
   field_simp
 
-/-- The unnormalized **Dirichlet density** with parameters `α : Fin (n + 1) → ℝ`, written in the
-first `n` coordinates `x` of a probability vector `(x, 1 - ∑ x)`:
-`∏ xᵢ^(αᵢ-1) · (1 - ∑ x)^(αₙ-1)` on the open corner simplex `{x > 0, ∑ x < 1}`, and `0` off it. -/
+/-- **Unnormalized Dirichlet density.** For parameters
+$\alpha = (\alpha_0, \dots, \alpha_n) \in \mathbb{R}^{n+1}$, the unnormalized Dirichlet density is
+the function $D_\alpha \colon \mathbb{R}^n \to [0, \infty]$ defined by
+$$D_\alpha(x) = \Bigl(\prod_{i=0}^{n-1} x_i^{\alpha_i - 1}\Bigr)
+\Bigl(1 - \sum_{i=0}^{n-1} x_i\Bigr)^{\alpha_n - 1}$$
+when $x$ lies in the open corner simplex, that is $x_i > 0$ for every $i$ and
+$\sum_{i=0}^{n-1} x_i < 1$, and by $D_\alpha(x) = 0$ otherwise.
+
+Here $x$ stands for the first $n$ coordinates of the probability vector
+$(x_0, \dots, x_{n-1}, 1 - \sum_{i=0}^{n-1} x_i)$. -/
 noncomputable def dirichletDensity {n : ℕ} (α : Fin (n + 1) → ℝ) (x : Fin n → ℝ) : ℝ≥0∞ :=
   if (∀ i, 0 < x i) ∧ ∑ i, x i < 1 then
     ENNReal.ofReal ((∏ i, x i ^ (α (Fin.castSucc i) - 1)) * (1 - ∑ i, x i) ^ (α (Fin.last n) - 1))
   else 0
 
-/-- The normalizing constant `∏ Γ(αᵢ) / Γ(∑ α)` of the Dirichlet distribution (the multivariate
-Beta function). -/
+/-- **Multivariate Beta function.** For real parameters
+$\alpha = (\alpha_0, \dots, \alpha_{n-1})$, the multivariate Beta function is
+$$B(\alpha) = \frac{\prod_{i=0}^{n-1} \Gamma(\alpha_i)}{\Gamma(\sum_{i=0}^{n-1} \alpha_i)}.$$
+It is the normalizing constant of the Dirichlet distribution. -/
 noncomputable def multiBeta {n : ℕ} (α : Fin n → ℝ) : ℝ :=
   (∏ i, Gamma (α i)) / Gamma (∑ i, α i)
 
@@ -110,7 +122,14 @@ theorem multiBeta_succ {n : ℕ} (α : Fin (n + 2) → ℝ) (hα : ∀ i, 0 < α
   conv_rhs => rw [Fin.prod_univ_succ, Fin.sum_univ_succ]
   field_simp
 
-/-- The Dirichlet integral in dimension `0`: one coordinate, density `1`. -/
+/-- **The Dirichlet integral for a single parameter.** Let $\alpha = (\alpha_0) \in \mathbb{R}^1$
+with $\alpha_0 > 0$, let $D_\alpha$ be the unnormalized Dirichlet density with parameters
+$\alpha$, a function on $\mathbb{R}^0$, and let $B(\alpha)$ be the multivariate Beta function.
+Then $\int_{\mathbb{R}^0} D_\alpha(x) \, dx = B(\alpha)$, the integral being taken with respect to
+Lebesgue measure.
+
+Both sides equal $1$: $\mathbb{R}^0$ is a single point of measure $1$, $D_\alpha$ equals $1$ there,
+and $B(\alpha) = \Gamma(\alpha_0) / \Gamma(\alpha_0)$. -/
 theorem lintegral_dirichletDensity_zero {α : Fin 1 → ℝ} (hα : ∀ i, 0 < α i) :
     ∫⁻ x, dirichletDensity α x = ENNReal.ofReal (multiBeta α) := by
   have hd : ∀ x : Fin 0 → ℝ, dirichletDensity α x = 1 := fun x ↦ by
@@ -121,7 +140,11 @@ theorem lintegral_dirichletDensity_zero {α : Fin 1 → ℝ} (hα : ∀ i, 0 < �
   rw [volume_pi, Measure.pi_of_empty]
   simp
 
-/-- Fubini over the first coordinate of `Fin (n + 1) → ℝ`. -/
+/-- **Tonelli's theorem for the first coordinate.** Let $G \colon \mathbb{R}^{n+1} \to [0, \infty]$
+be measurable. Then
+$$\int_{\mathbb{R}^{n+1}} G(x) \, dx = \int_{\mathbb{R}} \int_{\mathbb{R}^n} G(t, y) \, dy \, dt$$
+where $(t, y) \in \mathbb{R}^{n+1}$ denotes the vector with first coordinate $t$ followed by the
+coordinates of $y$, and all integrals are taken with respect to Lebesgue measure. -/
 theorem lintegral_fin_succ {n : ℕ} {G : (Fin (n + 1) → ℝ) → ℝ≥0∞} (hG : Measurable G) :
     ∫⁻ x, G x = ∫⁻ t, ∫⁻ y, G (Fin.cons t y) := by
   have h := (volume_preserving_piFinSuccAbove (fun _ : Fin (n + 1) ↦ ℝ) 0).symm
@@ -129,7 +152,10 @@ theorem lintegral_fin_succ {n : ℕ} {G : (Fin (n + 1) → ℝ) → ℝ≥0∞} 
   simp only [MeasurableEquiv.piFinSuccAbove_symm_apply, Fin.insertNthEquiv_zero]
   rfl
 
-/-- Rescaling the integration variable of a function on `Fin n → ℝ` by `c > 0`. -/
+/-- **Scaling the variable of a Lebesgue integral.** Let $F \colon \mathbb{R}^n \to [0, \infty]$ be
+measurable and let $c > 0$ be a real number. Then
+$$\int_{\mathbb{R}^n} F(y) \, dy = c^n \int_{\mathbb{R}^n} F(c u) \, du$$
+where both integrals are taken with respect to Lebesgue measure. -/
 theorem lintegral_comp_smul_fin {n : ℕ} {F : (Fin n → ℝ) → ℝ≥0∞} (hF : Measurable F) {c : ℝ}
     (hc : 0 < c) : ∫⁻ y, F y = ENNReal.ofReal (c ^ n) * ∫⁻ u, F (c • u) := by
   have hmap := Measure.map_addHaar_smul (volume : Measure (Fin n → ℝ)) hc.ne'
@@ -137,8 +163,15 @@ theorem lintegral_comp_smul_fin {n : ℕ} {F : (Fin n → ℝ) → ℝ≥0∞} (
     ← mul_assoc, Module.finrank_fin_fun, ← ENNReal.ofReal_mul (by positivity),
     abs_of_pos (by positivity), mul_inv_cancel₀ (by positivity), ENNReal.ofReal_one, one_mul]
 
-/-- The Dirichlet density with the first coordinate `t` fixed and the others rescaled by `1 - t`
-is a Dirichlet density in the remaining coordinates. -/
+/-- **Splitting off the first coordinate of the Dirichlet density.** Let
+$\alpha = (\alpha_0, \dots, \alpha_{n+1}) \in \mathbb{R}^{n+2}$, write $D_\alpha$ for the
+unnormalized Dirichlet density with parameters $\alpha$ (a function on $\mathbb{R}^{n+1}$), and let
+$\alpha' = (\alpha_1, \dots, \alpha_{n+1}) \in \mathbb{R}^{n+1}$. For every real $t$ with
+$0 < t < 1$ and every $u \in \mathbb{R}^n$,
+$$D_\alpha(t, (1 - t) u) = t^{\alpha_0 - 1} (1 - t)^{\alpha_1 + \dots + \alpha_{n+1} - 1 - n}
+D_{\alpha'}(u)$$
+where $(t, (1 - t) u) \in \mathbb{R}^{n+1}$ is the vector with first coordinate $t$ followed by the
+coordinates of $(1 - t) u$. -/
 theorem dirichletDensity_cons_smul {n : ℕ} (α : Fin (n + 2) → ℝ) {t : ℝ} (ht0 : 0 < t)
     (ht1 : t < 1) (u : Fin n → ℝ) :
     dirichletDensity α (Fin.cons t ((1 - t) • u)) =
@@ -197,8 +230,15 @@ theorem dirichletDensity_cons_eq_zero {n : ℕ} (α : Fin (n + 2) → ℝ) {t : 
     Finset.sum_nonneg fun j _ ↦ (hpos j.succ).le
   linarith
 
-/-- **The Dirichlet integral**: `∫ ∏ xᵢ^(αᵢ-1) (1 - ∑ x)^(αₙ-1) dx = ∏ Γ(αᵢ) / Γ(∑ α)` over the
-corner simplex, for positive parameters. -/
+/-- **The Dirichlet integral.** Let $\alpha = (\alpha_0, \dots, \alpha_n) \in \mathbb{R}^{n+1}$ with
+$\alpha_i > 0$ for every $i$, and let
+$\Delta = \{x \in \mathbb{R}^n : x_i > 0 \text{ for all } i \text{ and } \sum_{i=0}^{n-1} x_i < 1\}$
+be the open corner simplex. Then
+$$\int_{\Delta} \Bigl(\prod_{i=0}^{n-1} x_i^{\alpha_i - 1}\Bigr)
+\Bigl(1 - \sum_{i=0}^{n-1} x_i\Bigr)^{\alpha_n - 1} dx =
+\frac{\prod_{i=0}^{n} \Gamma(\alpha_i)}{\Gamma\bigl(\sum_{i=0}^{n} \alpha_i\bigr)},$$
+where $dx$ is Lebesgue measure. Equivalently, the integral of the unnormalized Dirichlet density
+$D_\alpha$ over $\mathbb{R}^n$ equals the multivariate Beta function $B(\alpha)$. -/
 theorem lintegral_dirichletDensity {n : ℕ} {α : Fin (n + 1) → ℝ} (hα : ∀ i, 0 < α i) :
     ∫⁻ x, dirichletDensity α x = ENNReal.ofReal (multiBeta α) := by
   induction n with
@@ -240,7 +280,10 @@ theorem lintegral_dirichletDensity {n : ℕ} {α : Fin (n + 1) → ℝ} (hα : �
 
 /-! ### The Dirichlet distribution -/
 
-/-- Completing the first `n` coordinates to a vector `(x, 1 - ∑ x)` summing to `1`. -/
+/-- **Simplex completion.** For $x = (x_0, \dots, x_{n-1}) \in \mathbb{R}^n$, the simplex
+completion of $x$ is the vector
+$(x_0, \dots, x_{n-1}, 1 - \sum_{i=0}^{n-1} x_i) \in \mathbb{R}^{n+1}$, whose coordinates sum
+to $1$. -/
 def simplexCompletion {n : ℕ} (x : Fin n → ℝ) : Fin (n + 1) → ℝ :=
   Fin.snoc x (1 - ∑ i, x i)
 
@@ -255,9 +298,17 @@ theorem measurable_simplexCompletion (n : ℕ) : Measurable (simplexCompletion (
 theorem sum_simplexCompletion {n : ℕ} (x : Fin n → ℝ) : ∑ i, simplexCompletion x i = 1 := by
   simp [simplexCompletion, Fin.sum_univ_castSucc]
 
-/-- The **Dirichlet distribution** `Dir(α)` on probability vectors in `Fin (n + 1) → ℝ`: the
-normalized density `∏ θᵢ^(αᵢ-1) / B(α)` in the first `n` coordinates, with the last coordinate
-`1 - ∑` of the others. -/
+/-- **Dirichlet distribution.** Let $\alpha = (\alpha_0, \dots, \alpha_n) \in \mathbb{R}^{n+1}$, let
+$D_\alpha$ be the unnormalized Dirichlet density on $\mathbb{R}^n$ with parameters $\alpha$, and let
+$B(\alpha) = \prod_{i=0}^{n} \Gamma(\alpha_i) / \Gamma(\sum_{i=0}^{n} \alpha_i)$ be the
+multivariate Beta function. The Dirichlet distribution $\mathrm{Dir}(\alpha)$ is the measure on
+$\mathbb{R}^{n+1}$ obtained by pushing forward the measure on $\mathbb{R}^n$ with density
+$D_\alpha(x) / B(\alpha)$ with respect to Lebesgue measure along the map
+$x \mapsto (x_0, \dots, x_{n-1}, 1 - \sum_{i=0}^{n-1} x_i)$.
+
+The quotient is taken in $[0, \infty]$, with a nonpositive $B(\alpha)$ read as $0$; this matters
+only when some $\alpha_i \le 0$. For positive parameters $\mathrm{Dir}(\alpha)$ is a probability
+measure concentrated on vectors with positive entries summing to $1$. -/
 noncomputable def dirichletMeasure {n : ℕ} (α : Fin (n + 1) → ℝ) : Measure (Fin (n + 1) → ℝ) :=
   ((volume : Measure (Fin n → ℝ)).withDensity fun x ↦
     dirichletDensity α x / ENNReal.ofReal (multiBeta α)).map simplexCompletion
@@ -282,7 +333,10 @@ theorem isProbabilityMeasure_dirichletMeasure {n : ℕ} {α : Fin (n + 1) → �
   simp only [mul_one, lintegral_dirichletDensity hα]
   exact ENNReal.div_self (by simp [multiBeta_pos hα (Nat.succ_ne_zero n)]) ENNReal.ofReal_ne_top
 
-/-- A `Dir(α)`-random vector is almost surely a probability vector with positive entries. -/
+/-- **The Dirichlet distribution is concentrated on the open simplex.** For every $n$ and every
+parameter vector $\alpha \in \mathbb{R}^{n+1}$, almost every $\theta \in \mathbb{R}^{n+1}$ with
+respect to the Dirichlet distribution $\mathrm{Dir}(\alpha)$ is a probability vector with positive
+entries: $\theta_i > 0$ for every $i$ and $\sum_{i=0}^{n} \theta_i = 1$. -/
 theorem ae_dirichletMeasure {n : ℕ} (α : Fin (n + 1) → ℝ) :
     ∀ᵐ θ ∂dirichletMeasure α, (∀ i, 0 < θ i) ∧ ∑ i, θ i = 1 := by
   rw [dirichletMeasure, ae_map_iff (measurable_simplexCompletion n).aemeasurable]
@@ -305,8 +359,15 @@ theorem ae_dirichletMeasure {n : ℕ} (α : Fin (n + 1) → ℝ) :
         measurable_const
     exact h1.inter h2
 
-/-- Multiplying the Dirichlet density by the likelihood `∏ θᵢ^kᵢ` of counts `k` adds the counts to
-the parameters. -/
+/-- **Multiplying the Dirichlet density by a multinomial likelihood.** Let
+$\alpha = (\alpha_0, \dots, \alpha_n) \in \mathbb{R}^{n+1}$ and let $k = (k_0, \dots, k_n)$ be
+natural numbers; write $D_\beta$ for the unnormalized Dirichlet density with parameters $\beta$.
+For every $x \in \mathbb{R}^n$, let $\theta = (x_0, \dots, x_{n-1}, 1 - \sum_{i=0}^{n-1} x_i)$ be
+its completion to a vector summing to $1$, and write $\theta_i^+ = \max(\theta_i, 0)$. Then
+$$D_\alpha(x) \prod_{i=0}^{n} (\theta_i^+)^{k_i} = D_{\alpha + k}(x).$$
+
+Both sides vanish unless $x$ lies in the open corner simplex, where every $\theta_i$ is positive and
+$\theta_i^+ = \theta_i$. -/
 theorem dirichletDensity_mul_prod_pow {n : ℕ} (α : Fin (n + 1) → ℝ) (k : Fin (n + 1) → ℕ)
     (x : Fin n → ℝ) :
     dirichletDensity α x * ∏ i, ENNReal.ofReal (simplexCompletion x i) ^ k i =
@@ -344,8 +405,13 @@ theorem measurable_prod_ofReal_pow {n : ℕ} (k : Fin (n + 1) → ℕ) :
   Finset.measurable_prod _ fun i _ ↦
     (ENNReal.measurable_ofReal.comp (measurable_pi_apply i)).pow_const _
 
-/-- **Dirichlet–multinomial conjugacy**, density form: weighting `Dir(α)` by the likelihood
-`∏ θᵢ^kᵢ` of counts `k` gives `B(α + k) / B(α)` times `Dir(α + k)`. -/
+/-- **Dirichlet–multinomial conjugacy.** Let $\alpha = (\alpha_0, \dots, \alpha_n)$ have positive
+real entries and let $k = (k_0, \dots, k_n)$ be natural numbers (counts). The measure with density
+$\theta \mapsto \prod_{i=0}^{n} \max(\theta_i, 0)^{k_i}$ with respect to the Dirichlet distribution
+$\mathrm{Dir}(\alpha)$, that is, $\mathrm{Dir}(\alpha)$ weighted by the likelihood of the counts
+$k$, equals
+$$\frac{B(\alpha + k)}{B(\alpha)} \, \mathrm{Dir}(\alpha + k),$$
+where $B$ is the multivariate Beta function and $\alpha + k$ is taken entrywise. -/
 theorem withDensity_prod_pow_dirichletMeasure {n : ℕ} {α : Fin (n + 1) → ℝ} (hα : ∀ i, 0 < α i)
     (k : Fin (n + 1) → ℕ) :
     (dirichletMeasure α).withDensity (fun θ ↦ ∏ i, ENNReal.ofReal (θ i) ^ k i) =
@@ -376,7 +442,14 @@ theorem withDensity_prod_pow_dirichletMeasure {n : ℕ} {α : Fin (n + 1) → �
         rw [ENNReal.inv_mul_cancel hb0 ENNReal.ofReal_ne_top, mul_one]
     _ = b * (ENNReal.ofReal (multiBeta α))⁻¹ * (I * b⁻¹) := by ring
 
-/-- The **mean of the Dirichlet distribution**: `E[θᵢ] = αᵢ / ∑ α`. -/
+/-- **Mean of the Dirichlet distribution.** Let
+$\alpha = (\alpha_0, \dots, \alpha_n) \in \mathbb{R}^{n+1}$ with $\alpha_j > 0$ for every $j$. For
+every $i$, the $i$-th coordinate of a random vector $\theta$ with the Dirichlet distribution
+$\mathrm{Dir}(\alpha)$ has mean
+$$\mathbb{E}[\theta_i] = \frac{\alpha_i}{\sum_{j=0}^{n} \alpha_j}.$$
+
+Formally the left side is the integral of $\max(\theta_i, 0)$ with respect to
+$\mathrm{Dir}(\alpha)$; this is the mean of $\theta_i$ because $\theta_i > 0$ almost surely. -/
 theorem lintegral_dirichletMeasure_apply {n : ℕ} {α : Fin (n + 1) → ℝ} (hα : ∀ i, 0 < α i)
     (i : Fin (n + 1)) :
     ∫⁻ θ, ENNReal.ofReal (θ i) ∂dirichletMeasure α = ENNReal.ofReal (α i / ∑ j, α j) := by
