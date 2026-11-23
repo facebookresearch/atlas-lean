@@ -41,7 +41,8 @@ and contraction equations. No values outside the prescribed genus/marking
 graph domain are present.
 
 Source: Kass--Pagani, The stability space of compactified universal
-Jacobians, Definitions 3.1--3.2 and Corollary 3.6.
+Jacobians, Sections 2.1--2.2 (graphs, isomorphisms, contractions),
+Definitions 3.1--3.2 and Corollary 3.6.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.UniversalCurveStability
@@ -81,7 +82,9 @@ structure GraphIso {g n : ℕ} (G H : StableGraph g n) where
   genus : ∀ v, H.genus (vertex v) = G.genus v
   marking : ∀ i, H.marking i = vertex (G.marking i)
 
-/-- A genuine contraction of selected edges, with connected fibers and genus update. -/
+/-- A genuine contraction of selected edges, with connected fibers and genus update.
+Kass--Pagani contract one edge at a time; contracting a set of edges is a composite of such
+contractions followed by an isomorphism, and contracting no edge is an isomorphism. -/
 structure GraphContraction {g n : ℕ} (G H : StableGraph g n) where
   selected : Finset (Fin G.edges)
   vertex : Fin G.vertices → Fin H.vertices
@@ -100,7 +103,8 @@ structure GraphContraction {g n : ℕ} (G H : StableGraph g n) where
       (∑ v, if vertex v = w then G.genus v else 0) +
         (selected.filter fun e ↦ vertex (G.endpoint e 0) = w).card + 1
 
-/-- Universal stability, on the exact stable-graph domain. -/
+/-- Universal stability, on the exact stable-graph domain, with rational weights. Kass--Pagani
+allow real weights; all defining conditions are linear equations with integer coefficients. -/
 structure UniversalStability (g n : ℕ) (d : ℚ) where
   weight : ∀ G : StableGraph g n, Fin G.vertices → ℚ
   total : ∀ G, (∑ v, weight G v) = d
