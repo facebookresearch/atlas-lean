@@ -2,11 +2,18 @@
 
 Let $F$ be a non-archimedean local field, $G_n = \mathrm{GL}_n(F)$ with centre $Z_n \cong F^\times$,
 $\nu = \lvert \det \rvert_F$, and use the representations $\langle \Delta \rangle^t$ of
-[Zelevinsky's classification](zelevinsky-classification.md). An admissible representation $\pi$
-of $G_n$ is **essentially square-integrable** (quasi-square-integrable) if, after multiplying by a
-suitable character of $G_n$, all its matrix coefficients become square-integrable on $G_n$ modulo
-$Z_n$; it is **square-integrable** if it has a unitary central character and its matrix
-coefficients $c$ satisfy $\int_{Z_n \backslash G_n} \lvert c \rvert^2 < \infty$.
+[Zelevinsky's classification](zelevinsky-classification.md). Let $\pi$ be an irreducible
+representation of $G_n$; it is admissible and has a central character $\omega_\pi$. It is
+**square-integrable** if $\omega_\pi$ is unitary and its matrix coefficients $c$ satisfy
+$\int_{Z_n \backslash G_n} \lvert c \rvert^2 < \infty$, and **essentially square-integrable** if its
+matrix coefficients are square-integrable on $G_n^0 = \{g \in G_n \mid \lvert \det g \rvert_F = 1\}$.
+Since $\pi$ has a central character, there is a unique positive character $\chi$ of $F^\times$
+such that $\pi\chi$ has a unitary central character, and $\pi$ is essentially square-integrable if
+and only if $\pi\chi$ is square-integrable; so for irreducible representations this is
+Zelevinsky's quasi-square-integrability, square-integrability after a twist by a character. For
+representations without a central character the two notions differ: the representation
+$1 \oplus \nu$ of $G_1$ has bounded matrix coefficients on the compact group $G_1^0$, but no twist
+of it has a unitary central character.
 
 **Theorem (Bernstein).** An irreducible representation of $G_n$ is essentially square-integrable
 if and only if it is isomorphic to $\langle \Delta \rangle^t$ for some segment $\Delta$. It is
@@ -21,6 +28,7 @@ the Steinberg representation.
 
 - [Zelevinsky's classification of the irreducible representations of GLₙ](zelevinsky-classification.md), for segments and the representations $\langle \Delta \rangle^t$
 - [Smooth and admissible representations of p-adic groups](../representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for matrix coefficients, characters and central characters
+- [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for the admissibility of irreducible representations, which gives them central characters
 
 ## Proof depends on
 
@@ -37,10 +45,12 @@ the Steinberg representation.
   Casselman's criterion; "The converse is due to Bernstein and is based on a refinement of results
   of Casselman. The proof is omitted."
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
-  arXiv:math/0011210 (version 2): (2.3.1) and (2.3.3) (essentially square-integrable and
-  square-integrable representations), (2.3.6) (the equivalence with quasi-square-integrability,
-  the theorem, and the condition for square-integrability), (2.2.13) (the Steinberg
-  representation).
+  arXiv:math/0011210 (version 2): (2.3.1) and (2.3.3) (essentially $L^2$ and $L^2$
+  representations, through matrix coefficients on $G^0$, respectively modulo the centre with a
+  unitary central character), (2.3.6) (for representations with a central character, the unique
+  positive twist with unitary central character and the equivalence with Zelevinsky's
+  quasi-square-integrability; the theorem and the condition for square-integrability), (2.2.13)
+  (the Steinberg representation).
 - W. Casselman, *Introduction to the theory of admissible representations of p-adic reductive
   groups*, notes, draft of 1 May 1995, <https://personal.math.ubc.ca/~cass/research/pdf/p-adic-book.pdf>:
   Theorem 4.4.6 (the square-integrability criterion, cited by Zelevinsky from an earlier version

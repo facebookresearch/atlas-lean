@@ -15,13 +15,16 @@ multiplicity.
 2. If $(\pi, V)$ is a continuous admissible representation, then every $K$-finite vector is
    smooth, $V_K$ is stable under $K$ and under the action of the complexified Lie algebra
    $\mathfrak{g}$ of $G$ on smooth vectors, and every $K$-finite linear form on $V_K$ extends
-   uniquely to a continuous $K$-finite linear form on $V$.
+   uniquely to a continuous $K$-finite linear form on $V$. For every continuous representation on
+   a Fréchet space, the smooth $K$-finite vectors are dense; so for admissible $V$, $V_K$ is dense
+   in $V$.
 
 ## Sources
 
 - W. Casselman, "Canonical extensions of Harish-Chandra modules to representations of G", Canad. J.
   Math. 41 (1989), 385–438, <https://doi.org/10.4153/CJM-1989-019-5>: introduction (the class of
-  groups), §1 (smooth and $K$-finite vectors), §2 (condition (H1)), Proposition 2.2 (a)–(b)
+  groups), §1 (smooth and $K$-finite vectors; "The intersection $V^{\mathrm{sm}} \cap V_K$ is dense
+  in V and stable under both g and K"), §2 (condition (H1)), Proposition 2.2 (a)–(b)
   (item 2) and the remark after it ("It is a result of Harish-Chandra that if $\pi$ is irreducible
   and unitary then it satisfies (H1)").
 - J. Bernstein and B. Krötz, "Smooth Fréchet globalizations of Harish-Chandra modules", Israel J.

@@ -20,6 +20,11 @@ $\langle \Delta \rangle^t$ of [Zelevinsky's classification](zelevinsky-classific
    $\delta_1 \times \dots \times \delta_r$ has a unique irreducible quotient $L(\delta_1, \dots, \delta_r)$,
    and this gives a bijection from the finite multisets of irreducible essentially
    square-integrable representations onto the irreducible representations of all the $G_n$.
+4. **Contragredients and sums.** For a segment $\Delta$ let $\tilde\Delta$ be the segment of the
+   contragredients of its members, and for $a = \{\Delta_1, \dots, \Delta_r\}$ let
+   $\tilde a = \{\tilde\Delta_1, \dots, \tilde\Delta_r\}$. Then the contragredient of $L(a)$ is
+   $L(\tilde a)$. For finite multisets $a$ and $b$ of segments, $L(a + b)$ is a composition factor of
+   $L(a) \times L(b)$, of multiplicity one.
 
 It is the case of $\mathrm{GL}_n$ of Langlands's classification by tempered representations and
 exponents.
@@ -34,6 +39,7 @@ exponents.
 - [Zelevinsky's classification of the irreducible representations of GLₙ](zelevinsky-classification.md), for the irreducibility criterion for products of the $\langle \Delta_i \rangle^t$ and the rearrangement argument of its proof
 - [Essentially square-integrable representations of GLₙ](essentially-square-integrable-representations-of-gl-n.md), for the bijection $\Delta \mapsto \langle \Delta \rangle^t$ onto the essentially square-integrable representations
 - [Jacquet modules and the asymptotics of matrix coefficients](../representations-of-p-adic-reductive-groups/asymptotics-of-matrix-coefficients.md), for Langlands's quotient theorem for p-adic groups
+- [Smooth and admissible representations of p-adic groups](../representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for contragredients and the characters of admissible representations, through which Tadić obtains the composition factor of item 4 as a limit of irreducible representations
 
 ## Sources
 
@@ -44,11 +50,15 @@ exponents.
   $\lambda(a)$, independent of the admissible ordering "in the same way like Proposition 6.4 of
   [Zelevinsky], using Theorem 9.7, (a)", its unique irreducible quotient $L(a)$ and the bijection,
   "a version of Langlands classification", presented by F. Rodier), §§5.3–5.4 (the form with
-  essentially square-integrable representations and the exponents $e(\delta)$).
+  essentially square-integrable representations and the exponents $e(\delta)$), §1.15 (the
+  segments $\tilde\Delta$ and multisets $\tilde a$), Proposition 5.6 (iii) ($L(a)^\sim = L(\tilde a)$),
+  and Appendix, Proposition A.4 (i) ("$L(a + b)$ is a composition factor of $L(a) \times L(b)$")
+  with Remark A.5 (multiplicity one).
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
   arXiv:math/0011210 (version 2): Theorem (2.2.9) (2)–(3) (with $Q(\Delta) = \langle \Delta \rangle^t$),
-  (2.2.10) (existence of the ordering) and (2.3.9) (relation with the general Langlands
-  classification).
+  (2.2.10) (existence of the ordering), (2.2.12) ($Q(\Delta_1, \dots, \Delta_r)^\vee =
+  Q(\Delta_1^\vee, \dots, \Delta_r^\vee)$, after Zelevinsky 3.3 and 9.4 and Tadić 1.15 and 5.6) and
+  (2.3.9) (relation with the general Langlands classification).
 - A. V. Zelevinsky, "Induced representations of reductive p-adic groups. II. On irreducible
   representations of GL(n)", Ann. Sci. École Norm. Sup. (4) 13 (1980), 165–210,
   <http://www.numdam.org/item?id=ASENS_1980_4_13_2_165_0>: §9.1 ($\langle \Delta \rangle^t$ is the

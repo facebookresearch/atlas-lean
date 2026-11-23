@@ -15,12 +15,17 @@ any proper parabolic subgroup over $\mathfrak{f}$, as for
 [the finite general linear groups](../../../GroupTheory/characters-of-finite-groups/green-cuspidal-characters-of-gl-n.md).
 
 - An **unrefined minimal K-type** of **depth** $r$ is a pair $(\mathcal{G}_{x,r}, \chi)$ where
-  $x \in \mathcal{B}(\mathbf{G}, k)$, $r \ge 0$ is a real number with
-  $\mathcal{G}_{x,r} \ne \mathcal{G}_{x,r+}$, and $\chi$ is a representation of $\mathcal{G}_{x,r}$
-  trivial on $\mathcal{G}_{x,r+}$ such that: if $r = 0$, $\chi$ is a cuspidal representation of
-  $\mathsf{M}_x(\mathfrak{f})$ inflated to $\mathcal{G}_x$; if $r > 0$, $\chi$ is a nondegenerate
-  character of $\mathcal{G}_{x,r}/\mathcal{G}_{x,r+}$. A representation of $\mathcal{G}$
-  **contains** it if its restriction to $\mathcal{G}_{x,r}$ contains $\chi$.
+  $x \in \mathcal{B}(\mathbf{G}, k)$, $r \ge 0$ is a real number and $\chi$ is a representation of
+  $\mathcal{G}_{x,r}$ trivial on $\mathcal{G}_{x,r+}$ such that: if $r = 0$, $\chi$ is an irreducible
+  cuspidal representation of $\mathsf{M}_x(\mathfrak{f}) = \mathcal{G}_x/\mathcal{G}_{x,0+}$ inflated
+  to $\mathcal{G}_x$; if $r > 0$, then $\mathcal{G}_{x,r} \ne \mathcal{G}_{x,r+}$ and $\chi$ is a
+  nondegenerate character of $\mathcal{G}_{x,r}/\mathcal{G}_{x,r+}$. A representation of
+  $\mathcal{G}$ **contains** it if its restriction to $\mathcal{G}_{x,r}$ contains $\chi$.
+  Moy and Prasad require $\mathcal{G}_{x,r} \ne \mathcal{G}_{x,r+}$ for $r = 0$ as well; that
+  would leave no depth-zero type for the trivial character of $\mathbb{Q}_2^\times$, whose
+  filtration has $\mathcal{G}_{x,0} = \mathbb{Z}_2^\times = 1 + 2\mathbb{Z}_2 = \mathcal{G}_{x,0+}$,
+  although item 2 of the theorem below asserts one, so the condition is imposed here only in
+  positive depth.
 - Two unrefined minimal K-types $(\mathcal{G}_{x,r}, \chi)$ and $(\mathcal{G}_{y,s}, \xi)$ are
   **associates** if $r = s$ and: if $r = 0$, there is $g \in \mathcal{G}$ such that
   $\mathcal{G}_x \cap \mathcal{G}_{gy}$ surjects onto both $\mathsf{M}_x(\mathfrak{f})$ and

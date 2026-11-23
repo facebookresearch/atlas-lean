@@ -9,7 +9,11 @@ the statements on [Harish-Chandra modules](harish-chandra-modules.md), the
 Zariski-connected reductive algebraic group over $\mathbb{R}$ with maximal compact subgroup $K$.
 
 - **Characters.** The distribution character $f \mapsto \operatorname{trace} \pi(f)$ of an
-  irreducible unitary, or more generally admissible, representation; invariant eigendistributions,
+  irreducible unitary representation, or more generally of an admissible representation of finite
+  length on a Hilbert space, whose operators $\pi(f)$, $f \in C_c^\infty(G)$, are of trace class
+  (finite $K$-multiplicities alone do not suffice: on $\mathrm{U}(1)$, the weights $n \ge 1$ with
+  multiplicities $2^n$ and a test function with Fourier coefficients $2^{-n}$ give no trace);
+  invariant eigendistributions,
   Harish-Chandra's regularity theorem (local integrability and analyticity on the regular set),
   the matching conditions between Cartan subgroups, the notion of an invariant eigendistribution
   bounded at infinity, and the Plancherel theorem; the formula for the product of a discrete series
@@ -17,18 +21,22 @@ Zariski-connected reductive algebraic group over $\mathbb{R}$ with maximal compa
   $\mathbf{F}_\lambda$ of the Hermitian symmetric case.
 - **Principal series.** Representations induced from parabolic subgroups, $K$-finite and smooth;
   the $\mathfrak{n}$-homology of Harish-Chandra modules and Casselman's subrepresentation theorem
-  (every Harish-Chandra module embeds in a principal series representation induced from a minimal
-  parabolic subgroup); Wallach's automatic continuity theorem; analytic families of principal
+  (every Harish-Chandra module embeds, as a $(\mathfrak{g}, K)$-module, in the $K$-finite vectors
+  of the representation induced from some finite-dimensional representation of a minimal parabolic
+  subgroup $P_{\min}$); Wallach's automatic continuity theorem; analytic families of principal
   series and their intertwining operators.
 - **The Langlands classification** of irreducible Harish-Chandra modules by essentially tempered
   representations of Levi subgroups, with the reduction of tempered to square-integrable
   representations.
+- **The Atiyah–Schmid construction** of the discrete series through the $L^2$-index theory of
+  Dirac operators on $G/K$, and Zuckerman's tensoring with finite-dimensional representations,
+  with which Atiyah and Schmid prove Harish-Chandra's theorem and the lowest $K$-type theorem.
 
 A good expansion has definition pages for distribution characters, invariant eigendistributions
 and principal series, and statement pages for the regularity theorem, the matching conditions, the
 Plancherel theorem, Casselman's subrepresentation theorem, the automatic continuity theorem, the
-Langlands classification and the character identities used by Hecht and Schmid, each citing the
-sources below with locators.
+Langlands classification, the character identities used by Hecht and Schmid and the steps of the
+Atiyah–Schmid construction, each citing the sources below with locators.
 
 ## Sources
 
@@ -39,13 +47,17 @@ sources below with locators.
   attached to principal series embeddings, with Wallach's results), §9 (analytic families).
 - J. Bernstein and B. Krötz, "Smooth Fréchet globalizations of Harish-Chandra modules", Israel J.
   Math. 199 (2014), 45–111, arXiv:0812.1684 (version 3): §1 (Casselman's subrepresentation
-  theorem), §§8–10 (minimal principal series, deformations and the Langlands classification in the
+  theorem), Theorem 4.4 (Casselman: "For every Harish-Chandra module V there exists a finite
+  dimensional $P_{\min}$-module W and a $(\mathfrak{g}, K)$-embedding $V \to I(W)$"), §§8–10 (minimal principal series, deformations and the Langlands classification in the
   proof of Theorem 10.6).
 - M. F. Atiyah and W. Schmid, "A geometric construction of the discrete series for semisimple Lie
   groups", Invent. Math. 42 (1977), 1–62, <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0042>:
   §1 (the results assumed, (a)–(k): Harish-Chandra characters, the structure of bi-invariant
   differential operators, local integrability), §2 (the Plancherel theorem and characters),
-  §§6–7 (characters bounded at infinity and the matching conditions).
+  Lemma (6.3) (trace class operators $\pi(f)$ for discrete series representations),
+  §§4–5 (the construction by Dirac operators), §§6–7 (characters bounded at infinity and the
+  matching conditions), §8 (Zuckerman's method; pp. 42–43: infinitesimal equivalence, and the
+  characters of admissible representations with a finite composition series).
 - H. Hecht and W. Schmid, "A proof of Blattner's conjecture", Invent. Math. 31 (1975), 129–154,
   <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0031>: §1 (the product formula of characters
   and the dependence on Schmid's Hermitian symmetric paper).

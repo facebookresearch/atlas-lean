@@ -7,8 +7,12 @@ mirabolic subgroup $P_n$ of matrices with last row $(0, \dots, 0, 1)$, which the
 [Whittaker models](whittaker-models-for-gl-n.md) and of Bernstein's irreducibility theorem for
 [unitary representations](tempered-and-unitary-representations-of-gl-n.md) use.
 
-- The functors $I_{U,\theta}$, $i_{U,\theta}$ and $r_{U,\theta}$ attached to a closed subgroup $U$
-  normalized by $M$ and a character $\theta$ of $U$, with their exactness and Frobenius reciprocity.
+- The functors $I_{U,\theta}$, $i_{U,\theta}$ and $r_{U,\theta}$ attached to closed subgroups $M$ and
+  $U$ of an $\ell$-group such that $M$ normalizes $U$, $M \cap U = \{e\}$ and $MU$ is closed, and to
+  a character $\theta$ of $U$ normalized by $M$: the exactness of $I_{U,\theta}$ and $i_{U,\theta}$,
+  the exactness of $r_{U,\theta}$ when $U$ is a limit of compact subgroups (every compact subset of
+  $U$ lies in a compact subgroup), and Frobenius reciprocity, $r_{U,\theta}$ being left adjoint to
+  $I_{U,\theta}$.
 - The functors $\Psi^\pm$ and $\Phi^\pm$ between representations of $P_n$, of $G_{n-1}$ and of
   $P_{n-1}$, their exactness and adjunctions, and the resulting filtration of a representation of
   $P_n$.

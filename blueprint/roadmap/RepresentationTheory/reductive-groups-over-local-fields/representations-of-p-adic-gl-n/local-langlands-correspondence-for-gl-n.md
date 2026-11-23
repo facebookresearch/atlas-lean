@@ -4,13 +4,15 @@ Let $F$ be a finite extension of $\mathbb{Q}_p$ with Weil group $W_F$, and $\psi
 additive character of $F$. For $n \ge 1$ let $\mathcal{A}_n(F)$ be the set of isomorphism classes
 of irreducible admissible (equivalently, irreducible smooth) representations of $\mathrm{GL}_n(F)$
 and $\mathcal{G}_n(F)$ the set of isomorphism classes of $n$-dimensional Frobenius-semisimple
-complex Weil–Deligne representations of $W_F$. Let $\mathrm{Art}_F \colon F^\times \to W_F^{\mathrm{ab}}$
-be the isomorphism of local class field theory normalized so that uniformizers correspond to
-geometric Frobenius elements: in terms of the local Artin map $\mathrm{rec}_F$ of
+complex Weil–Deligne representations of $W_F$. The local Artin map
+$\mathrm{rec}_F \colon F^\times \to \mathrm{Gal}(F^{\mathrm{ab}}/F)$ of
 [local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), under
-which uniformizers act on the maximal unramified extension as the arithmetic Frobenius,
-$\mathrm{Art}_F(x) = \mathrm{rec}_F(x)^{-1}$, with $W_F^{\mathrm{ab}}$ identified with its image in
-$\mathrm{Gal}(F^{\mathrm{ab}}/F)$.
+which uniformizers act on the maximal unramified extension as the arithmetic Frobenius, is
+injective, and the map $W_F^{\mathrm{ab}} \to \mathrm{Gal}(F^{\mathrm{ab}}/F)$ induced by the
+inclusion of the Weil group is injective with the same image. So there is a unique isomorphism of
+topological groups $\mathrm{Art}_F \colon F^\times \to W_F^{\mathrm{ab}}$ whose image in
+$\mathrm{Gal}(F^{\mathrm{ab}}/F)$ is $\mathrm{rec}_F(x)^{-1}$; it sends uniformizers to geometric
+Frobenius elements and $\mathcal{O}_F^\times$ onto the image of the inertia group.
 
 **Theorem.** There is a unique family of bijections
 $\mathrm{rec}_n \colon \mathcal{A}_n(F) \to \mathcal{G}_n(F)$, $n \ge 1$, such that:
@@ -37,9 +39,10 @@ correspondence between supercuspidal representations and irreducible representat
 Uniqueness is due to Henniart, who showed that such a correspondence between supercuspidal
 representations and irreducible representations of $W_F$ is determined by local class field
 theory and $\varepsilon$-factors of pairs, and that the whole family is characterized by local
-class field theory and $L$- and $\varepsilon$-factors of pairs, for any non-archimedean local
-field. For local fields of positive characteristic the correspondence is due to Laumon, Rapoport
-and Stuhler.
+class field theory and $L$- and $\varepsilon$-factors of pairs; Henniart's characterization is
+stated for any non-archimedean local field. For local fields of positive characteristic an
+analogous correspondence, due to Laumon, Rapoport and Stuhler, rests on local class field theory in
+positive characteristic and is not part of this statement.
 
 ## Depends on
 
@@ -47,7 +50,7 @@ and Stuhler.
 - [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for supercuspidal representations
 - [Essentially square-integrable representations of GLₙ](essentially-square-integrable-representations-of-gl-n.md)
 - [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil group, Frobenius-semisimple Weil–Deligne representations and their tensor products, determinants and contragredients
-- [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the local Artin isomorphism, here normalized so that uniformizers correspond to geometric Frobenius elements (the inverse of the normalization there)
+- [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the local Artin map $\mathrm{rec}_F$ of a finite extension of $\mathbb{Q}_p$; $\mathrm{Art}_F$ is its inverse, read on the Weil group, so that uniformizers correspond to geometric Frobenius elements
 - [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md)
 
 ## Proof depends on
@@ -60,8 +63,14 @@ and Stuhler.
 ## Sources
 
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
-  arXiv:math/0011210 (version 2): conventions ($K$ a finite extension of $\mathbb{Q}_p$), (1.1.10)
-  ($\mathrm{Art}_K$ sends uniformizers to geometric Frobenius elements), (1.2.1), Theorem (1.2.2)
+  arXiv:math/0011210 (version 2): conventions ($K$ a finite extension of $\mathbb{Q}_p$), (1.1.5)
+  (the reciprocity homomorphism $\mathrm{Art}_K \colon K^\times \to \mathrm{Gal}(\bar K/K)^{\mathrm{ab}}$,
+  injective with dense image), (1.1.7) (its characterization: uniformizers to geometric Frobenius
+  elements and norm groups to the corresponding Galois groups, which identifies it with
+  $x \mapsto \mathrm{rec}_K(x)^{-1}$), (1.1.8) (the Weil group), (1.1.10) ("the image of
+  $\mathrm{Art}_K$ is $W_K^{\mathrm{ab}}$", an isomorphism of topological groups
+  $K^\times \cong W_K^{\mathrm{ab}}$ that maps $\mathcal{O}_K^\times$ onto $I_K^{\mathrm{ab}}$ and
+  uniformizers to geometric Frobenius elements), (1.2.1), Theorem (1.2.2)
   (the correspondence and its characterizing properties), Theorem (1.2.3) (1)–(2), (3.1.6)–(3.1.8)
   (Weil–Deligne representations), (4.2.2)–(4.2.3) (reduction to supercuspidal representations;
   uniqueness through Henniart's theorem), and the introduction (Harris–Taylor, Henniart;

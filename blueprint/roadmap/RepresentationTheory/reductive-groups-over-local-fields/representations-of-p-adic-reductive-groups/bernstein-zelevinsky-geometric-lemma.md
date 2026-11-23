@@ -26,9 +26,12 @@ $$W^{M,N} = \{ w \in W \mid w(M \cap P_0) \subseteq P_0,\ w^{-1}(N \cap P_0) \su
 For $G = \mathrm{GL}_n(F)$, $W$ is the symmetric group $S_n$ and, for standard Levi subgroups
 attached to ordered partitions $\beta$ and $\gamma$ of $n$, $W^{M,N}$ is the set of permutations
 $w$ with $w(k) < w(l)$ whenever $k < l$ lie in the same block of $\beta$, and
-$w^{-1}(k) < w^{-1}(l)$ whenever $k < l$ lie in the same block of $\gamma$; one may take
-$w_1 = e$, so that $r_{N,G} \circ i_{G,M}(\rho)$ has $i_{N, M \cap N} \circ r_{M \cap N, M}(\rho)$
-as a quotient.
+$w^{-1}(k) < w^{-1}(l)$ whenever $k < l$ lie in the same block of $\gamma$. Any ordering for which
+each union $P_\beta w_1^{-1} P_\gamma \cup \dots \cup P_\beta w_i^{-1} P_\gamma$ ($1 \le i \le k$) is open
+in $G$ will do, where $P_\beta$ and $P_\gamma$ are the block upper triangular parabolic subgroups;
+in particular one may take $w_k = e$, so that the last subquotient
+$\tau_k/\tau_{k-1} \cong i_{N, M \cap N} \circ r_{M \cap N, M}(\rho)$ is a quotient of
+$r_{N,G} \circ i_{G,M}(\rho)$.
 
 ## Depends on
 
@@ -50,8 +53,8 @@ as a quotient.
 - A. V. Zelevinsky, "Induced representations of reductive p-adic groups. II. On irreducible
   representations of GL(n)", Ann. Sci. École Norm. Sup. (4) 13 (1980), 165–210,
   <http://www.numdam.org/item?id=ASENS_1980_4_13_2_165_0>: Theorem 1.2 (the case of
-  $\mathrm{GL}_n$, with the sets $W^{\beta,\gamma}$) and §1.3 with its Corollary (the choice
-  $w_1 = e$).
+  $\mathrm{GL}_n$, with the sets $W^{\beta,\gamma}$) and §1.3 with its Corollary (the openness
+  condition on the orderings and the choice $w_k = e$, p. 171).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
   states a form of this lemma as `GlobalTheory.Published.GeometricLemma`.

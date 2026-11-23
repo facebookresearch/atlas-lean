@@ -24,8 +24,17 @@ annihilated by an ideal of finite codimension in $Z(\mathfrak{g})$.
 3. **Realizability and matrix coefficients.** Every finitely generated Harish-Chandra module is
    the $(\mathfrak{g}, K)$-module of $K$-finite vectors of a continuous representation of $G$. If
    the $K$-finite vectors of a continuous representation $(\pi, V)$ form a Harish-Chandra module,
-   then for $v \in V_K$ and every $K$-finite continuous linear form $\lambda$ on $V$ the matrix
-   coefficient $g \mapsto \lambda(\pi(g)v)$ is real-analytic on $G$.
+   then for $v \in V_K$ and every $K$-finite continuous linear form $\lambda$ on $V$ the scalar
+   matrix coefficient $g \mapsto \lambda(\pi(g)v)$ is real-analytic on $G$. This is a statement
+   about scalar functions; that the orbit map $g \mapsto \pi(g)v$ itself is analytic, that is,
+   that $K$-finite vectors are analytic vectors, is a further theorem of Harish-Chandra that this
+   page does not state.
+4. **Infinitesimal and unitary equivalence** (Harish-Chandra). For $G$ connected semisimple with
+   finite centre, two irreducible unitary representations of $G$ whose $(\mathfrak{g}, K)$-modules
+   of $K$-finite vectors are isomorphic are unitarily equivalent. For $\mathrm{U}(p, q)$, whose
+   connected centre $Z$ acts on an irreducible unitary representation by a character determined
+   by the action of its Lie algebra, this follows from the case of $\mathrm{SU}(p, q)$, since
+   $\mathrm{U}(p, q) = Z \cdot \mathrm{SU}(p, q)$.
 
 ## Depends on
 
@@ -47,7 +56,13 @@ annihilated by an ideal of finite codimension in $Z(\mathfrak{g})$.
 - J. Bernstein and B. Krötz, "Smooth Fréchet globalizations of Harish-Chandra modules", Israel J.
   Math. 199 (2014), 45–111, arXiv:0812.1684 (version 3): §1 (Harish-Chandra modules as finitely
   generated $(\mathfrak{g}, K)$-modules with finite $K$-multiplicities).
+- M. F. Atiyah and W. Schmid, "A geometric construction of the discrete series for semisimple Lie
+  groups", Invent. Math. 42 (1977), 1–62, <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0042>:
+  §8, pp. 42–43 (infinitesimal equivalence; "Among unitary representations, the notions of
+  infinitesimal equivalence and unitary equivalence coincide"), for item 4.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
-  states related results as `GlobalTheory.Published.HarishChandraModules` and
-  `GlobalTheory.Published.GKGlobalisation`.
+  states related results for $\mathrm{U}(p, q)$ as `GlobalTheory.Published.HarishChandraModules`
+  and `GlobalTheory.Published.GKGlobalisation`; the former also contains the analyticity of the
+  orbit maps of $K$-finite vectors of irreducible unitary representations (`KFiniteAnalyticUJ`),
+  which is stronger than the analyticity of the scalar matrix coefficients in item 3.

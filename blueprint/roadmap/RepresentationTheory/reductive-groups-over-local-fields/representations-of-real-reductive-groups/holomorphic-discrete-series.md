@@ -23,9 +23,13 @@ $K^{\mathbb{C}} P_+$ and defines a $G$-homogeneous holomorphic vector bundle ove
 **Theorem (Harish-Chandra).** The space $\mathbf{F}_\lambda$ of holomorphic sections of this bundle
 is a Fréchet space on which $G$ acts continuously by translation. Its $K$-finite vectors are
 isomorphic, as a $K$-module, to $V_\mu \otimes S(\mathfrak{p}_+)$; in particular $V_\mu$ occurs in
-$\mathbf{F}_\lambda$ exactly once, and it lies in every closed $G$-invariant subspace. Those
-$\mathbf{F}_\lambda$ that are, up to infinitesimal equivalence, square-integrable form the
-**holomorphic discrete series**.
+$\mathbf{F}_\lambda$ exactly once, and it lies in every nonzero closed $G$-invariant subspace. If
+moreover $(\lambda, \alpha) > 0$ for every $\alpha \in \Psi$, noncompact roots included, then
+$\mathbf{F}_\lambda$ is infinitesimally equivalent to a discrete series representation. The
+discrete series representations obtained in this way form the **holomorphic discrete series**.
+
+Without the positivity on the noncompact roots, $\mathbf{F}_\lambda$ is still defined, and some of
+these modules are not unitarizable.
 
 ## Depends on
 
@@ -38,10 +42,18 @@ $\mathbf{F}_\lambda$ that are, up to infinitesimal equivalence, square-integrabl
   Math. 30 (1975), 47–144, <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0030>: §3 "The
   'holomorphic discrete series'", (3.1)–(3.9) (the hypotheses on $G$, the ordering $\Psi$, the
   splitting $\mathfrak{p}_\pm$, the embedding of $G/K$ in its compact dual, the module $V_\mu$, the
-  $G$-modules $\mathbf{F}_\lambda$ with their $K$-finite vectors, and "The class of
-  square-integrable representations among these is often referred to, somewhat informally, as the
-  holomorphic discrete series"), after Harish-Chandra, "Representations of semi-simple Lie groups"
-  IV–VI, Amer. J. Math. 77 (1955) and 78 (1956).
+  $G$-modules $\mathbf{F}_\lambda$ with their $K$-finite vectors, the $K$-type $V_\mu$ lying "in every
+  closed, G-invariant subspace", and "Some of the representations are unitary and belong to the
+  discrete series, whereas others cannot be unitarized"), and pp. 72–73, (3.12) ("If λ satisfies
+  (3.12) $(\lambda, \alpha) > 0$ for all $\alpha \in \Psi$, in addition to (3.7), the G-module
+  $\mathbf{F}_\lambda$ belongs to the discrete series [13], up to infinitesimal equivalence, of
+  course"), after Harish-Chandra,
+  "Representations of semi-simple Lie groups" IV–VI, Amer. J. Math. 77 (1955) and 78 (1956).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
-  states a related result as `GlobalTheory.Published.HolomorphicDiscreteSeries`.
+  states a different result for $\mathrm{U}(p, q)$ as `GlobalTheory.Published.HolomorphicDiscreteSeries`:
+  for a discrete series representation whose Harish-Chandra parameter lies in the holomorphic
+  chamber, every $K$-type has highest weight $\mu$ plus a sum of roots of $\mathfrak{p}_+$,
+  $\mathfrak{p}_-$ annihilates the $K$-type $V_\mu$, and the iterated action of $\mathfrak{p}_+$ on
+  that $K$-type spans the $K$-finite vectors. The theorem above constructs the modules
+  $\mathbf{F}_\lambda$ and does not state this lowest-weight description.

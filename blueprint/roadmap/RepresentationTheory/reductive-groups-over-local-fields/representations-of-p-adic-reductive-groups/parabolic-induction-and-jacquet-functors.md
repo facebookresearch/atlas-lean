@@ -35,15 +35,22 @@ $(n_1, \dots, n_r)$ of $n$, with $P$ the block upper triangular matrices.
 5. Both functors carry admissible representations to admissible ones (for $r_{M,G}$ this is a
    theorem of Jacquet), and $r_{M,G}$ carries finitely generated representations to finitely
    generated ones.
+6. **Jacquet's surjectivity theorem.** Let $(\pi, E)$ be an admissible representation of $G$,
+   $\bar U$ the unipotent radical of the parabolic subgroup opposite to $P$ with respect to $M$, and
+   $K_0$ a compact open subgroup of $G$ with an Iwahori factorization
+   $K_0 = (K_0 \cap \bar U)(K_0 \cap M)(K_0 \cap U)$. Then the projection $E \to E_U$ maps the
+   $K_0$-fixed vectors $E^{K_0}$ onto the $(K_0 \cap M)$-fixed vectors $(E_U)^{K_0 \cap M}$. Since
+   such subgroups $K_0$ form a basis of neighbourhoods of the identity, this gives the admissibility
+   of $r_{M,G}(\pi)$ in item 5.
 
 ## Depends on
 
 - [Smooth and admissible representations of p-adic groups](smooth-representations-of-p-adic-groups.md)
-- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for minimal and standard parabolic subgroups, maximal split tori and Levi decompositions
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for minimal and standard parabolic subgroups, maximal split tori, Levi decompositions, opposite parabolic subgroups and compact open subgroups with an Iwahori factorization
 
 ## Proof depends on
 
-- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compactness of $G/P$, the unimodularity of $G$ and the compact open subgroups with an Iwahori factorization used in Jacquet's admissibility theorem
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compactness of $G/P$, the unimodularity of $G$ and the existence of a basis of neighbourhoods of the identity consisting of compact open subgroups with an Iwahori factorization, used in item 6 and in Jacquet's admissibility theorem
 
 ## Sources
 
@@ -58,7 +65,13 @@ $(n_1, \dots, n_r)$ of $n$, with $P$ the block upper triangular matrices.
   groups*, notes, draft of 1 May 1995, <https://personal.math.ubc.ca/~cass/research/pdf/p-adic-book.pdf>:
   §1.5 (modulus character), Theorem 3.3.1 (Jacquet modules of finitely generated, respectively
   admissible, representations; "the original result leading to it is Jacquet's", with a proof due
-  to Borel) and Theorem 3.3.3.
+  to Borel) and Theorem 3.3.3 (item 6: "Let $(\pi, V)$ be an admissible representation of G, $K_0$
+  a compact open subgroup of G with an Iwahori factorization $K_0 = N_0^- M_0 N_0$ with respect to
+  P. Then the canonical projection from $V^{K_0}$ to $V_N^{M_0}$ is surjective").
+- A. Moy and G. Prasad, "Jacquet functors and unrefined minimal K-types", Comment. Math. Helv. 71
+  (1996), 98–121, <https://doi.org/10.5169/seals-53837>: §2.1 and Theorem 2.2 (item 6, "a
+  fundamental theorem of Jacquet and Harish-Chandra", with the consequence that the Jacquet module
+  of an admissible representation is admissible).
 - A. V. Zelevinsky, "Induced representations of reductive p-adic groups. II. On irreducible
   representations of GL(n)", Ann. Sci. École Norm. Sup. (4) 13 (1980), 165–210,
   <http://www.numdam.org/item?id=ASENS_1980_4_13_2_165_0>: §1.1 (the statement for

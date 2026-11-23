@@ -2,14 +2,24 @@
 
 This node is still to be broken down. It covers the proofs of existence of the
 [local Langlands correspondence for GLₙ](local-langlands-correspondence-for-gl-n.md) over a finite
-extension $F$ of $\mathbb{Q}_p$, and the reductions that make existence of maps between
-supercuspidal representations and irreducible representations of the Weil group suffice.
+extension $F$ of $\mathbb{Q}_p$, and the reductions by which it suffices to construct a family of
+maps $\mathrm{rec}_n$ from the supercuspidal representations of $\mathrm{GL}_n(F)$ to the
+irreducible $n$-dimensional representations of $W_F$ that satisfies the five properties of the
+correspondence (compatibility with local class field theory for $n = 1$, with $L$- and
+$\varepsilon$-factors of pairs, with twists, central characters and contragredients) on
+supercuspidal representations.
 
-- **Reductions** (mostly due to Henniart). The extension from supercuspidal representations to
-  all irreducible ones through the Langlands classification and the Weil–Deligne representations
-  $\mathrm{Sp}(m)$; injectivity from the poles of $L$-factors of pairs; surjectivity from the
-  preservation of conductors and Henniart's numerical local Langlands correspondence, which shows
-  that the two sets with given conductor and central character are finite of the same size.
+- **Reductions** (mostly due to Henniart; Wedhorn (4.2.2)–(4.2.5)), for such a family: its
+  extension to all irreducible representations by
+  $\mathrm{rec}(L(\Delta_1, \dots, \Delta_r)) = \bigoplus_i \mathrm{rec}(\pi_i) \otimes \mathrm{Sp}(m_i)$
+  for $\Delta_i = [\pi_i, \nu^{m_i - 1}\pi_i]$, through the Langlands classification and the
+  decomposition of Weil–Deligne representations into indecomposables, the extension satisfying the
+  five properties by the inductive description of the factors of pairs; injectivity on
+  supercuspidal representations from the poles at $s = 0$ of the $L$-factors of pairs; and
+  surjectivity from the preservation of conductors, which follows from that of $\varepsilon$-factors
+  of pairs, and Henniart's numerical local Langlands correspondence, by which the supercuspidal
+  representations and the irreducible representations of $W_F$ with a given conductor and central
+  character form finite sets of the same size.
 - **Harris–Taylor.** The realization of the correspondence in the cohomology of the vanishing
   cycles on the deformation spaces of special formal $p$-divisible $\mathcal{O}_F$-modules
   (Lubin–Tate spaces), through the cohomology of simple Shimura varieties of PEL type and the
@@ -20,10 +30,18 @@ supercuspidal representations and irreducible representations of the Weil group 
   of $p$-divisible groups, through the cohomology of Shimura varieties of unitary groups of
   signature $(1, n-1)$, following Kottwitz.
 
-A good expansion has pages for the reductions, each citing Wedhorn's §4.2 and Henniart's papers
-with locators, and further nodes for the geometric and global inputs of the proofs (Lubin–Tate
-spaces and their vanishing cycles, the Jacquet–Langlands correspondence, the Shimura varieties
-used), placed in their own fields.
+A good expansion has pages for the reductions, each stated for a family of maps on supercuspidal
+representations with the five properties and citing Wedhorn's (4.2.2)–(4.2.5) and Henniart's
+papers with locators, a page for Henniart's numerical local Langlands correspondence, and further
+nodes for the geometric and global inputs of the proofs (Lubin–Tate spaces and their vanishing
+cycles, the Jacquet–Langlands correspondence, the Shimura varieties used), placed in their own
+fields.
+
+## Proof depends on
+
+- [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the extension from supercuspidal to all irreducible representations through the representations $L(\Delta_1, \dots, \Delta_r)$
+- [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md), for the Weil–Deligne representations $\mathrm{Sp}(m)$, the decomposition into indecomposables $\rho_0 \otimes \mathrm{Sp}(m)$, the inductive description of the factors of pairs on both sides, the poles of the $L$-factors of pairs of supercuspidal representations and the conductors
+- [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for supercuspidal representations
 
 ## Sources
 
