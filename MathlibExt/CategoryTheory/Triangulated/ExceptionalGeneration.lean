@@ -11,10 +11,12 @@ Portions of this file are adapted from:
 
 `StacksFrontier/CategoryTheory/Triangulated/ExceptionalCollectionFiniteness.lean`
 (AxiomMath/Stacks at commit c496df0d9beea9deaeabcea8492605f9a0a2313b,
-https://github.com/AxiomMath/Stacks):
+https://github.com/AxiomMath/Stacks). The whole file is copied from that source, which has no
+individual copyright or author notice:
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-Modification notice: the complete standalone proof is moved to MathlibExt without any Stacks
-dependency; original names retained.
+Modification notice: moved to MathlibExt without any Stacks dependency, with the original names;
+`postComp` is an alias of Mathlib's `Linear.rightComp`, and the documentation of `totalDim`,
+of orthogonality and of the hypotheses of the main theorem is corrected.
 -/
 module
 
@@ -30,8 +32,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 Let `k` be a field and let `C` be a `k`-linear pretriangulated category whose shift functors
 are `k`-linear. Let `G₀, …, G_{r-1}` be objects of `C` such that
 
-* each `G_a` is *exceptional*: every endomorphism of `G_a` is a scalar multiple of the
-  identity, and `Hom(G_a, G_a⟦n⟧) = 0` for `n ≠ 0`;
+* every endomorphism of each `G_a` is a scalar multiple of the identity, and
+  `Hom(G_a, G_a⟦n⟧) = 0` for `n ≠ 0` (this holds for exceptional objects);
 * the sequence is *semi-orthogonal*: `Hom(G_b, G_a⟦n⟧) = 0` for `a < b` and every `n`;
 * the sequence *generates* `C`: an object `M` with `Hom(G_a, M⟦n⟧) = 0` for all `a` and `n` is
   zero;
@@ -90,7 +92,7 @@ def homShiftLinearEquiv (A X : C) (n : ℤ) : (A⟦-n⟧ ⟶ X) ≃ₗ[k] (A ⟶
 
 variable {k}
 
-/-- Right orthogonality to all shifts of `A`, with the shift on the source. -/
+/-- `X` is right orthogonal to all shifts of `A`: `Hom(A⟦n⟧, X) = 0` for every `n`. -/
 def Orth (A X : C) : Prop := ∀ n : ℤ, Subsingleton (A⟦n⟧ ⟶ X)
 
 variable (k) in
@@ -130,7 +132,8 @@ lemma finTot_iff (A X : C) : FinTot k A X ↔ HasFiniteTotalHom k A X := by
 omit [HasZeroObject C] [Pretriangulated C] in
 variable (k) in
 include k in
-/-- `A` is right orthogonal to `X` if and only if `Hom(A, X⟦n⟧)` is trivial for every `n`. -/
+/-- `X` is right orthogonal to all shifts of `A` if and only if `Hom(A, X⟦n⟧)` is trivial for
+every `n`. -/
 lemma orth_iff (A X : C) : Orth A X ↔ ∀ n : ℤ, Subsingleton (A ⟶ X⟦n⟧) := by
   refine ⟨fun h n => ?_, fun h n => ?_⟩
   · have := h (-n)
@@ -177,11 +180,10 @@ lemma orth_obj₃ (T : Triangle C) (hT : T ∈ distTriang C) {A : C} (h₂ : Ort
     (h₁ : Orth A (T.obj₁⟦(1 : ℤ)⟧)) : Orth A T.obj₃ := fun n =>
   subsingleton_obj₃ T hT (h₂ n) (h₁ n)
 
-/-- Post-composition with a fixed morphism, as a `k`-linear map. -/
-def postComp {X Y Z : C} (g : Y ⟶ Z) : (X ⟶ Y) →ₗ[k] (X ⟶ Z) where
-  toFun f := f ≫ g
-  map_add' f f' := by simp
-  map_smul' c f := by simp
+/-- Post-composition with a fixed morphism, as a `k`-linear map: Mathlib's
+`Linear.rightComp`. -/
+abbrev postComp {X Y Z : C} (g : Y ⟶ Z) : (X ⟶ Y) →ₗ[k] (X ⟶ Z) :=
+  Linear.rightComp k X g
 
 omit [∀ n : ℤ, (shiftFunctor C n).Linear k] in
 variable (k) in
@@ -213,7 +215,9 @@ lemma finTot_obj₃ (T : Triangle C) (hT : T ∈ distTriang C) {A : C} (h₂ : F
 section Kill
 
 variable (k) in
-/-- `∑_n dim_k Hom(G⟦n⟧, X)`. -/
+/-- The sum `∑ᶠ n, dim_k Hom(G⟦n⟧, X)`. It is the total dimension of the graded `Hom` when
+`FinTot k G X` holds, and it is only used under that hypothesis: otherwise `Module.finrank`
+of an infinite-dimensional piece and the `finsum` of an infinite support are `0`. -/
 def totalDim (G X : C) : ℕ := ∑ᶠ n : ℤ, Module.finrank k (G⟦n⟧ ⟶ X)
 
 omit [HasZeroObject C] [∀ n : ℤ, (shiftFunctor C n).Additive] [Pretriangulated C]
@@ -374,8 +378,8 @@ open ExceptionalAux in
 triangulated subcategory containing the sequence.** Let `k` be a field, `C` a `k`-linear
 pretriangulated category with `k`-linear shifts, and `G₀, …, G_{r-1}` objects of `C` with
 
-* `hexc₀`, `hexc₁`: each `G_a` is exceptional — its endomorphisms are the scalars and
-  `Hom(G_a, G_a⟦n⟧) = 0` for `n ≠ 0`;
+* `hexc₀`, `hexc₁`: every endomorphism of each `G_a` is a scalar multiple of the identity and
+  `Hom(G_a, G_a⟦n⟧) = 0` for `n ≠ 0`; this holds in particular for exceptional objects;
 * `hsemi`: `Hom(G_b, G_a⟦n⟧) = 0` for `a < b` and all `n`;
 * `hfin`: `∑_n dim_k Hom(G_a, G_b⟦n⟧) < ∞` for `a < b`;
 * `hgen`: inside a triangulated subcategory `Q` (closed under isomorphisms) containing every
