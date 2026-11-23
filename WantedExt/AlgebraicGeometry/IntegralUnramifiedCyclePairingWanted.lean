@@ -54,21 +54,20 @@ def_wanted globalIntegralChowPairing
     [AllDerivedSectionsSources] [AllDerivedPushSources]
     {k : Type} [Field k] (l : ℕ) [Fact l.Prime] (invertible : IsUnit (l : k))
     (S : Data l) (X : FieldScheme k) [IsProper X.scheme.hom] [Smooth X.scheme.hom]
-    (P : CycleSupport X) (T : PointTransfers S X) (i : ℤ) (j : ℕ) :
+    (T : PointTransfers S X) (i : ℤ) (j : ℕ) :
     {pairing : S.H X.scheme.left i j →+ (ChowGroup X 0 →+ S.H (Spec (.of k)) i j) //
-      ∀ a c, pairing a (cycleClass X 0 c) = globalCycleSum S X P T i j a c}
+      ∀ a c, pairing a (cycleClass X 0 c) = globalCycleSum S X T i j a c}
 
 def_wanted unramifiedIntegralChowPairing
     [AllSheafificationSources] [AllContinuousSources]
     [AllDerivedSectionsSources] [AllDerivedPushSources]
     {k : Type} [Field k] (l : ℕ) [Fact l.Prime] (invertible : IsUnit (l : k))
     (S : System l) {n : ℕ} (V : NormalVariety k n) [IsProper V.X.hom] [Smooth V.X.hom]
-    (P : CycleSupport (varietyFieldScheme V))
     (T : PointTransfers S.toData (varietyFieldScheme V)) (i : ℤ) (j : ℕ)
     (D : ∀ a : varietyUnramified S V invertible i j, LocalEvaluationData S V invertible i j a) :
     {pairing : varietyUnramified S V invertible i j →+
         (ChowGroup (varietyFieldScheme V) 0 →+ S.toData.H (Spec (.of k)) i j) //
       ∀ a c, pairing a (cycleClass (varietyFieldScheme V) 0 c) =
-        unramifiedCycleSum S V P T invertible i j a (D a) c}
+        unramifiedCycleSum S V T invertible i j a (D a) c}
 
 end MathlibExt.AlgebraicGeometry.IntegralUnramifiedCyclePairing

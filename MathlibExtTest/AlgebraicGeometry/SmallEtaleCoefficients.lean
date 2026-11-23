@@ -28,6 +28,7 @@ open MathlibExt.AlgebraicGeometry.SmallEtaleSignedTateCoefficients
 open MathlibExt.AlgebraicGeometry.GeometricUnramifiedEvaluation
 open MathlibExt.AlgebraicGeometry.IntegralUnramifiedCyclePairing
 open MathlibExt.AlgebraicGeometry.LogPairs
+open _root_.AlgebraicGeometry.BrauerZeroCycles (ZeroPoint cycleCoordinates)
 
 /-- The actual lifted-integer coefficient reduction retains the nonzero Z/2 unit. -/
 example : (scalarReduction 2).hom (1 : Scalar) = (1 : FiniteCoefficient 2) := rfl
@@ -73,14 +74,14 @@ example (k K : Type) [Field k] [Field K] [Algebra k K] (hl : IsUnit (l : k)) (i 
     (hb : IsUnramified S k K hl i j b) : IsUnramified S k K hl i j (a + b) :=
   (unramifiedSubgroup S k K hl i j).add_mem ha hb
 
-/-- A class that does not extend over some discrete-valuation subalgebra is not
+/-- A class that does not extend over some geometric discrete-valuation subalgebra is not
 unramified: the condition is tested at every such subalgebra (`l` being invertible in `k`). -/
 example (k K : Type) [Field k] [Field K] [Algebra k K] (hl : IsUnit (l : k)) (i : ℤ) (j : ℕ)
     (a : S.toData.H (Spec (.of K)) i j) (A : Subalgebra k K) [IsDiscreteValuationRing A]
-    [IsFractionRing A K]
+    [IsFractionRing A K] (hA : IsGeometricDVR A)
     (h : ∀ b : S.toData.H (Spec (.of A)) i j, S.toData.restriction (dvrGenericMap A) i j b ≠ a) :
     ¬ IsUnramified S k K hl i j a :=
-  fun ha => (ha A).elim fun b hb => h b hb
+  fun ha => (ha A hA).elim fun b hb => h b hb
 
 /-- The local evaluation at a point does not depend on the chosen lifts. -/
 example {k : Type} [Field k] {n : ℕ} (V : NormalVariety k n) (hl : IsUnit (l : k)) (i : ℤ)
@@ -96,10 +97,10 @@ variable {l : ℕ} (S : Data l) {k : Type} [Field k]
 
 /-- The cycle sum of a single closed point is the value at that point, weighted by its
 integer coefficient. -/
-example (X : FieldScheme k) (P : CycleSupport X) (i : ℤ) (j : ℕ)
+example (X : FieldScheme k) (i : ℤ) (j : ℕ)
     (v : ZeroPoint X → S.H (Spec (.of k)) i j) (c : CycleGroup X.scheme.left 0) :
-    cycleSum S X P i j v c =
-      (closedCoefficients X P c).sum fun p n ↦ n • v p := by
+    cycleSum S X i j v c =
+      (cycleCoordinates X c).sum fun p n ↦ n • v p := by
   rfl
 
 end Cycles

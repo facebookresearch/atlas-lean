@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.AlgebraicGeometry.SmallEtaleCorestriction
 public import MathlibExt.AlgebraicGeometry.LogPairs
+public import Mathlib.RingTheory.AlgebraicIndependent.Basic
+public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 
 /-!
 # Actual unramified torsion classes and local evaluations
@@ -45,14 +47,23 @@ variable [AllSheafificationSources] [AllContinuousSources]
 abbrev dvrGenericMap {k K : Type} [Field k] [Field K] [Algebra k K] (A : Subalgebra k K) :
     Spec (.of K) ⟶ Spec (.of A) := Spec.algebraMap A K
 
-/-- A class of `K ⊇ k` is unramified if it extends over every discrete-valuation subalgebra
-of `K` containing `k`, through the actual DVR restriction maps. The coefficient prime `l`
-is assumed invertible in `k` (hypothesis `hl`), hence in every such subalgebra: without it
-the condition is not unramifiedness (e.g. Artin--Schreier classes in characteristic `l`). -/
+/-- A discrete-valuation subalgebra `A` of `K ⊇ k` is geometric over `k` if its residue
+field has transcendence degree over `k` one less than that of `K` (Schreieder, §2.3): for a
+function field these are the valuations of prime divisors on normal models. -/
+def IsGeometricDVR {k K : Type} [Field k] [Field K] [Algebra k K] (A : Subalgebra k K)
+    [IsDiscreteValuationRing A] : Prop :=
+  Algebra.trdeg k (IsLocalRing.ResidueField A) + 1 = Algebra.trdeg k K
+
+/-- A class of `K ⊇ k` is unramified if it extends over every geometric discrete-valuation
+subalgebra of `K` containing `k`, through the actual DVR restriction maps (Schreieder,
+§2.3; allowing arbitrary rank-one valuations would change the group outside function
+fields of smooth proper varieties). The coefficient prime `l` is assumed invertible in `k`
+(hypothesis `hl`), hence in every such subalgebra: without it the condition is not
+unramifiedness (e.g. Artin--Schreier classes in characteristic `l`). -/
 def IsUnramified {l : ℕ} (S : System l) (k K : Type) [Field k] [Field K] [Algebra k K]
     (_hl : IsUnit (l : k)) (i : ℤ) (j : ℕ) (a : S.toData.H (Spec (.of K)) i j) : Prop :=
   ∀ (A : Subalgebra k K) [IsDiscreteValuationRing A] [IsFractionRing A K],
-    ∃ b : S.toData.H (Spec (.of A)) i j,
+    IsGeometricDVR A → ∃ b : S.toData.H (Spec (.of A)) i j,
       S.toData.restriction (dvrGenericMap A) i j b = a
 
 /-- The actual subgroup of field classes extending over all geometric DVRs. -/
@@ -61,23 +72,23 @@ def unramifiedSubgroup {l : ℕ} (S : System l) (k K : Type) [Field k] [Field K]
   carrier := {a | IsUnramified S k K hl i j a}
   zero_mem' := by
     change IsUnramified S k K hl i j 0
-    intro A _ _
+    intro A _ _ _
     exact ⟨0, map_zero _⟩
   add_mem' := by
     intro a b ha hb
     change IsUnramified S k K hl i j a at ha
     change IsUnramified S k K hl i j b at hb
     change IsUnramified S k K hl i j (a + b)
-    intro A _ _
-    obtain ⟨a', ha'⟩ := ha A
-    obtain ⟨b', hb'⟩ := hb A
+    intro A _ _ hA
+    obtain ⟨a', ha'⟩ := ha A hA
+    obtain ⟨b', hb'⟩ := hb A hA
     exact ⟨a' + b', by rw [map_add, ha', hb']⟩
   neg_mem' := by
     intro a ha
     change IsUnramified S k K hl i j a at ha
     change IsUnramified S k K hl i j (-a)
-    intro A _ _
-    obtain ⟨a', ha'⟩ := ha A
+    intro A _ _ hA
+    obtain ⟨a', ha'⟩ := ha A hA
     exact ⟨-a', by rw [map_neg, ha']⟩
 
 variable {k : Type} [Field k] {n : ℕ}
