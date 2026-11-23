@@ -39,9 +39,15 @@ that order, gives each variable one root created at its first occurrence, and
 lists the nodes from last to first in the encoding.
 
 Main results: `cnfSat_iff_outProb_pos` (the output probability is positive iff
-the formula is satisfiable), `satDec_eq_bnPosDec_reduceBN` (the reduction is
-correct as a map on bit strings), polynomial size bounds, and Cooper's worked
-example with output probability 5/8.
+the formula is satisfiable), `satDec_eq_bnPosDec_reduceBN` (the bit-string map
+preserves the decision), polynomial size bounds, and Cooper's worked example
+with output probability 5/8.
+
+Scope: this module formalizes Cooper's construction, its semantic correctness
+and output-size bounds only. It proves no polynomial running-time bound for the
+map and does not package a `PolyManyOneRed` instance or an NP-hardness
+corollary; the emission function and its polynomial-time machine are separate
+follow-on work that will consume this construction.
 -/
 
 @[expose] public section
