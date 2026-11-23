@@ -1,0 +1,3 @@
+# First-order transition of the random-cluster model
+
+For $d \in \mathbb{N}$, $0 < p < 1$ and $q > 0$, the pair $(p, q)$ is a first-order transition of the random-cluster model on $\mathbb{Z}^d$ when $\theta^0(p, q) = 0$ and $\theta^1(p, q) > 0$, where $\theta^0$ is the [free percolation probability](fk-theta-free.md) and $\theta^1(p, q)$ is the probability, under the [wired infinite-volume random-cluster measure](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) $\phi^1_{p,q}$ on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures), that the open cluster of the origin is infinite (the [wired percolation probability](../the-critical-point-of-the-random-cluster-model/fk-theta.md)).

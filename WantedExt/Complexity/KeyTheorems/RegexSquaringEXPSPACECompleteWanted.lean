@@ -41,15 +41,27 @@ evaluated on a stack of languages; the question is whether the result is every b
 -/
 
 
-/-- Kleene star of a language of bitstrings. -/
+/-- **Kleene star of a bitstring language.** For a set $S$ of bitstrings, its Kleene star is the
+set of all concatenations $u_1 u_2 \cdots u_k$, for $k \ge 0$, of bitstrings
+$u_1, \dots, u_k \in S$; the empty concatenation ($k = 0$) is the empty bitstring. -/
 def starLang (S : Set (List Bool)) : Set (List Bool) :=
   {w | ∃ l : List (List Bool), w = l.flatten ∧ ∀ u ∈ l, u ∈ S}
 
-/-- Concatenation of two languages of bitstrings. -/
+/-- **Concatenation of bitstring languages.** For sets $S$ and $T$ of bitstrings, their
+concatenation is the set of all bitstrings $uv$ with $u \in S$ and $v \in T$. -/
 def concatLang (S T : Set (List Bool)) : Set (List Bool) :=
   {w | ∃ u v, w = u ++ v ∧ u ∈ S ∧ v ∈ T}
 
-/-- Evaluate a postfix regular-expression token list on a stack of languages. -/
+/-- **Evaluation of postfix regular expressions with squaring.** A list of natural-number tokens
+is evaluated from left to right on a given stack of languages of bitstrings. Token $0$ pushes the
+empty language, token $1$ pushes the language containing only the empty bitstring, and tokens $2$
+and $3$ push the languages containing only the one-letter bitstring false, respectively true.
+Token $4$ pops the top language $S$ and the language $T$ below it and pushes the concatenation
+$TS$; token $5$ pops $S$ and $T$ in the same way and pushes $T \cup S$; token $6$ pops $S$ and
+pushes its Kleene star; token $7$ pops $S$ and pushes its square $SS$. When the tokens run out,
+the evaluation returns the language on the stack if the stack holds exactly one language. It
+fails if the stack holds any other number of languages at the end, if a token is larger than
+$7$, or if an operator token finds too few languages on the stack. -/
 noncomputable def evalPostfix : List ℕ → List (Set (List Bool)) → Option (Set (List Bool))
   | [], [S] => some S
   | [], _ => none
@@ -64,14 +76,25 @@ noncomputable def evalPostfix : List ℕ → List (Set (List Bool)) → Option (
   | _, _ => none
 
 open Classical in
-/-- Universality of a postfix regular expression with squaring. -/
+/-- **Universality of postfix regular expressions with squaring.** This is the decision problem
+that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of
+lists of natural numbers, to a token list whose evaluation as a postfix regular expression with
+squaring, started on the empty stack, succeeds and returns the set of all bitstrings. A bitstring
+that does not decode to a list of natural numbers is rejected. -/
 noncomputable def regexUnivDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode (α := List ℕ) x with
   | some toks => decide (evalPostfix toks [] = some Set.univ)
   | none => false
 
-/-- **Regular expressions with squaring: universality is EXPSPACE-complete.** Source: A. R.
+/-- **Regular expressions with squaring: universality is EXPSPACE-complete.** The universality
+problem for postfix regular expressions with squaring belongs to $\mathsf{EXPSPACE}$, and every
+decision problem in $\mathsf{EXPSPACE}$ reduces to it by a polynomial-time many-one reduction.
+Here the universality problem accepts a bitstring exactly when it decodes to a list of
+natural-number tokens whose postfix evaluation, started on the empty stack, returns the set of
+all bitstrings.
+
+Source: A. R.
 Meyer and L. J. Stockmeyer, "The equivalence problem for regular expressions with squaring
 requires exponential space", Proceedings of the Thirteenth Annual Symposium on Switching
 and Automata Theory (1972), 125-129. (The exponential-time word problem in Stockmeyer-

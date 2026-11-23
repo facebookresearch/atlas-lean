@@ -426,17 +426,16 @@ private theorem completeStrong {V : Type*} [Finite V] (G : SimpleGraph V)
           · exact absurd hlt' (not_lt.mpr (le_of_lt hlt))
   · intro a b
     exact (monoD (hfull a).2).trans (monoD (hfull b).1)
-/-- Robbins' theorem, standard connected formulation
-(https://en.wikipedia.org/wiki/Robbins%27_theorem): a finite nonempty undirected simple
-graph is 2-edge-connected (connected and bridgeless, with bridgelessness expressed as
-reachability after deleting any single edge) if and only if it admits a strongly connected
-orientation.
+/-- **Robbins' theorem.** Let $G$ be a simple graph on a finite nonempty vertex set $V$. Then $G$
+is connected and, after deleting any single edge of $G$, every vertex is still reachable from
+every vertex (that is, $G$ is 2-edge-connected) if and only if $G$ has a strongly connected
+orientation: a relation $D$ on $V$ such that $D(u, v)$ holds only when $u$ and $v$ are
+adjacent, for every edge $uv$ exactly one of $D(u, v)$ and $D(v, u)$ holds, and every vertex
+$v$ can be reached from every vertex $u$ by a finite, possibly empty, sequence of $D$-steps.
 
-Primary source: H. E. Robbins, "A Theorem on Graphs, with an Application to a Problem
-of Traffic Control," American Mathematical Monthly 46 (1939), 281–283.
-
-`robbins_theorem` is the `G.Preconnected` variant of this statement, which additionally
-holds vacuously for the empty graph.
+Source: H. E. Robbins, "A Theorem on Graphs, with an Application to a Problem
+of Traffic Control," American Mathematical Monthly 46 (1939), 281–283;
+https://en.wikipedia.org/wiki/Robbins%27_theorem
 -/
 theorem robbins_theorem_connected {V : Type*} [Finite V] [Nonempty V] (G : SimpleGraph V) :
     (G.Connected ∧
@@ -514,17 +513,20 @@ theorem robbins_theorem_connected {V : Type*} [Finite V] [Nonempty V] (G : Simpl
         rcases hcon with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
         · exact Or.inr ⟨rfl, rfl⟩
         · exact Or.inl ⟨rfl, rfl⟩
-/-- Robbins' theorem (https://en.wikipedia.org/wiki/Robbins%27_theorem): a finite
-undirected simple graph is 2-edge-connected (preconnected and bridgeless, with
-bridgelessness expressed as reachability after deleting any single edge) if and
-only if it admits a strongly connected orientation.
+/-- **Robbins' theorem, allowing the empty graph.** Let $G$ be a simple graph on a finite,
+possibly empty, vertex set $V$. Then every vertex of $G$ is reachable from every vertex and,
+after deleting any single edge of $G$, every vertex is still reachable from every vertex, if
+and only if $G$ has a strongly connected orientation: a relation $D$ on $V$ such that $D(u, v)$
+holds only when $u$ and $v$ are adjacent, for every edge $uv$ exactly one of $D(u, v)$ and
+$D(v, u)$ holds, and every vertex $v$ can be reached from every vertex $u$ by a finite,
+possibly empty, sequence of $D$-steps.
 
-The connectivity hypothesis is `G.Preconnected` (`∀ u v, G.Reachable u v`), which holds
-vacuously when `V` is empty: both sides of this formulation are true for the empty graph,
-so this extends the standard `G.Connected` formulation to the empty graph (see
-`robbins_theorem_connected`, which assumes `[Nonempty V]`).
+For nonempty $V$ the left-hand condition says that $G$ is 2-edge-connected; for empty $V$ both
+sides hold.
 
 Proves `Wanted` entry `robbins_theorem`.
+
+Source: https://en.wikipedia.org/wiki/Robbins%27_theorem
 -/
 theorem robbins_theorem {V : Type*} [Finite V] (G : SimpleGraph V) :
     ((∀ u v, G.Reachable u v) ∧
