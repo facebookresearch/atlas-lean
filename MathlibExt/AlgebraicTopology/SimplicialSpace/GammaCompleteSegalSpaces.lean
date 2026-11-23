@@ -230,6 +230,3 @@ theorem gammaDiagram_completeSegalSpaces :
 end
 
 end SSet.Rezk
-
-
-set_option pp.explicit true in

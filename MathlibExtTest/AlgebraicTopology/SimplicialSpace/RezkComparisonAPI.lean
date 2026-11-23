@@ -467,8 +467,8 @@ private def forwardArrow :
 
 private theorem forwardArrowNotIso : ¬ IsIso forwardArrow.{u} := by
   intro h
-  let _ : IsIso forwardArrow.{u} := h
-  have impossible : (1 : Fin 2) ≤ 0 := leOfHom (AsSmall.down.map (inv forwardArrow.{u}))
+  obtain ⟨backward, _, _⟩ := h.out
+  have impossible : (1 : Fin 2) ≤ 0 := leOfHom backward.down
   exact (by decide : ¬ ((1 : Fin 2) ≤ 0)) impossible
 
 example : ¬ SSet.KanComplex directedNerve.{u} := by

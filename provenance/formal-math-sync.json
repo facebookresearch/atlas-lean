@@ -39674,8 +39674,8 @@
       "path": "MathlibExt/AlgebraicTopology/SimplicialSpace/GammaCompleteSegalSpaces.lean",
       "backport": "not-needed",
       "disposition": "diverged",
-      "published_sha256": "124c268641bff52c547a240df926928bb41a35d99452e133b87374ae73bcb68a",
-      "rationale": "Remove internal author-only comments from module content. Remove 5 approved standalone axiom-print diagnostics and 1 approved standalone type-check diagnostic from production source. Apart from those exact approved output commands, normalization preserves all raw declaration, import, proof and string-literal tokens; its other changes are recorded comments, documentation and header layout.",
+      "published_sha256": "160a3096a24b0565b8982755b8e5d08bf432c60470745bc4fbc638fef5cd3304",
+      "rationale": "Remove internal author-only comments from module content. Remove 5 approved standalone axiom-print diagnostics and 1 approved standalone type-check diagnostic from production source. Apart from those exact approved output commands, normalization preserves all raw declaration, import, proof and string-literal tokens; its other changes are recorded comments, documentation and header layout. Remove the print-only pp.explicit scope left after deleting its #check command; mathematical declarations are unchanged.",
       "upstream_commit": "efb0b86f464b1cd2243085ad50810fd0ac3c0d07",
       "upstream_sha256": "a2226ab7ca79699d099011b79a04fa162a88478e6096def617e1b5c5bd4abe54"
     },
