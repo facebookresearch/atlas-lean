@@ -11,10 +11,22 @@ module
 import MathlibExt.NumberTheory.SpoofLehmerFactorization
 
 /-!
-# Tests for the Lehmer function
+# Tests for spoof Lehmer factorizations and the Lehmer function
 -/
 
 open MetaMathlibExt
+
+-- A single factor with exponent two satisfies the Lehmer hypotheses for any integer multiplier.
+example (k : ℤ) : IsSpoofLehmer k {(1, 2)} ∧ IsTrivialSpoof {(1, 2)} := by
+  have hL : IsSpoofLehmer k {(1, 2)} := by
+    refine ⟨?_, ?_, Or.inr ?_⟩ <;> simp [IsSpoofFactorization, spoofTotient, spoofEval]
+  exact ⟨hL, isTrivialSpoof_of_isSpoofLehmer_of_one_mem _ ⟨k, hL⟩ (by simp)⟩
+
+-- A base one rules out any second base greater than one.
+example (k : ℤ) (x : ℕ) (hx : 1 < x) : ¬ IsSpoofLehmer k {(x, 1), (1, 1)} := by
+  intro hL
+  have h := isTrivialSpoof_of_isSpoofLehmer_of_one_mem _ ⟨k, hL⟩ (by simp)
+  exact hx.ne' (h (x, 1) (by simp))
 
 -- The upper endpoint is attained in every admissible length.
 example (r : ℕ) : lehmerKappa (List.replicate r 2) = 2 ^ r - 1 := by

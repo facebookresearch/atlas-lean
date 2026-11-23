@@ -16,18 +16,39 @@ public import MathlibExt.AlgebraicGeometry.NumericalCompactifiedJacobians
 @[expose] public noncomputable section
 
 /-!
-# Normalized compactified Poincaré kernels
+# Candidate compactified Poincaré kernels
 
-This interface specifies the line-bundle locus by the actual universal
-curve sheaf, fixes the open Poincaré family through a Picard-zero
-representative, and records its extension, depth, factor flatness, dual
-and two inverse-kernel identities. Derived operators are explicit
-canonically characterized inputs. The identities concern actual coherent
-kernel objects, and assert no equivalence on arbitrary non-QCoh sheaves.
+`PoincareKernelCandidate` collects the data of a normalized Poincaré-type sheaf `P`
+on `J̄ × J̄` for a fine compactified Jacobian `J̄`: its line-bundle locus is
+determined at every geometric point by the universal curve sheaf, `P` is
+given on `J̄ × J` (`J` the line-bundle locus) by the universal family of a
+Picard-zero representative of `J̄` along a classifying map `beta`, it is
+symmetric, invertible on `(J̄ × J) ∪ (J × J̄)`, and it is the pushforward of its
+restriction there.
+
+These conditions do **not** determine `P`: they do not fix which family of line
+bundles on `J̄` corresponds to a line bundle on the curve. For instance, on a
+smooth elliptic curve the constant `beta` with `P = 𝒪` satisfies all of them.
+The canonical Poincaré sheaf is the candidate whose restriction to `J × J̄` is
+Arinkin's determinant-of-cohomology family [Arinkin, (1.1)]
+`P_{(L, F)} = det RΓ(L ⊗ F) ⊗ det RΓ(𝒪_C) ⊗ det RΓ(L)⁻¹ ⊗ det RΓ(F)⁻¹`;
+that normalization needs relative determinants of cohomology and is not
+encoded here. Statements about the Poincaré sheaf should therefore assert the
+existence of a candidate with the properties below, not properties of every
+candidate.
+
+Arinkin's theorems are separate predicates:
+`PoincareKernelCandidate.Properties` (density of the line-bundle locus, the
+autoduality isomorphism `J ≅ Pic⁰(J̄)`, depth and flatness over both factors)
+and `PoincareKernelCandidate.IsAutodual` (the two inverse-kernel identities).
+Derived operators are explicit canonically characterized inputs. The
+identities concern actual coherent kernel objects, and assert no equivalence
+on arbitrary non-QCoh sheaves.
 
 Sources: Arinkin, *Autoduality of compactified Jacobians for curves with
-plane singularities*, Theorems A--C; Melo--Rapagnetta--Viviani, *Fourier--
-Mukai and autoduality for compactified Jacobians II*, §§4--6.
+plane singularities*, (1.1) and Theorems A--C; Melo--Rapagnetta--Viviani,
+*Fourier--Mukai and autoduality for compactified Jacobians II*, §§4--6;
+Esteves--Gagné--Kleiman, *Autoduality of the compactified Jacobian*.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.CompactifiedPoincareKernels
@@ -41,7 +62,7 @@ open _root_.MathlibExt.AlgebraicGeometry.NumericalCompactifiedJacobians
 
 universe u
 
-attribute [local instance] HasDerivedCategory.standard
+attribute [local instance] HasDerivedCategory.standard FineCompactifiedJacobian.proper
 
 /-- The actual ordinary tensor map, via presheaf tensor and sheafification. -/
 def moduleTensorMap {X : Scheme.{u}} {L L' M M' : X.Modules}
@@ -61,17 +82,11 @@ structure SheafDual {X : Scheme.{u}} (P : X.Modules) where
 
 /-- The closed-point maximal Cohen--Macaulay depth condition on affine charts. -/
 def IsClosedPointMCM {X : Scheme.{u}} (P : X.Modules) : Prop :=
-  IsCoherent P ∧ ∀ (U : X.Opens), IsAffineOpen U →
+  IsFiniteTypeQuasicoherent P ∧ ∀ (U : X.Opens), IsAffineOpen U →
     ∀ (p : Ideal Γ(X, U)) (hp : p.IsMaximal),
       letI : p.IsMaximal := hp
       (p.depth (ModuleCat.of Γ(X, U) Γ(P, U)) : WithBot ℕ∞) =
         ringKrullDim (Localization.AtPrime p)
-
-/-- Actual factorization of a parameter point through an open subscheme. -/
-def FactorsThrough {k : Type u} [Field k] (J : Over (Spec (.of k)))
-    (U : J.left.Opens) (x : 𝟙_ (Over (Spec (.of k))) ⟶ J) : Prop :=
-  ∃ y : 𝟙_ (Over (Spec (.of k))) ⟶ Over.mk (U.ι ≫ J.hom),
-    y ≫ Over.homMk U.ι = x
 
 /-- The union where at least one parameter represents a line bundle. -/
 def bigOpen {k : Type u} [Field k] (J : Over (Spec (.of k)))
@@ -93,13 +108,15 @@ def diagonalKernel {k : Type u} [Field k] (J : Over (Spec (.of k))) :
     ((Scheme.Modules.pushforward (pullback.lift (𝟙 J.left) (𝟙 J.left) rfl)).obj
       (structureModule J.left))
 
-variable [FourierMukai.HasDerivedPullbacks.{u}]
-  [FourierMukai.HasDerivedPushforwards.{u}] [FourierMukai.HasDerivedTensors.{u}]
-
-/-- A normalized extension together with the requested inverse-kernel proofs. -/
-structure PoincareKernelModel {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    (q : Polarization C.left) (s : SmoothMarking C)
+/-- Candidate data for the normalized compactified Poincaré sheaf on `J̄ × J̄`:
+its line-bundle locus, an open family classified by a map to Picard zero of
+`J̄`, symmetry and extension from the big open. These data do not single out
+Arinkin's sheaf (see the module docstring); its geometric properties and the
+autoduality identities are the separate predicates `Properties` and
+`IsAutodual`. -/
+structure PoincareKernelCandidate {k : Type u} [Field k] [IsAlgClosed k]
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    [TorsionFreeRestrictions C.left] (q : Polarization C.left) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) where
   /-- The canonical product/fiber-product comparison is pinned on projections. -/
   productComparison : (prod M.J M.J).left ≅ pullback M.J.hom M.J.hom
@@ -107,19 +124,27 @@ structure PoincareKernelModel {k : Type u} [Field k]
     (prod.fst : prod M.J M.J ⟶ M.J).left
   sndComparison : productComparison.hom ≫ pullback.snd M.J.hom M.J.hom =
     (prod.snd : prod M.J M.J ⟶ M.J).left
+  /-- The point of `J̄` parametrizing the structure sheaf of the curve. -/
   origin : 𝟙_ (Over (Spec (.of k))) ⟶ M.J
   originSheaf :
     Nonempty ((Scheme.Modules.pullback (pointSection C M.J origin).left).obj M.F ≅
       structureModule C.left)
+  /-- The line-bundle locus. A geometric point lies in it exactly when the
+  universal sheaf restricted to the curve fibre over that point is
+  invertible; since every point of `J̄` underlies a geometric point, this
+  determines the open set. -/
   lineOpen : M.J.left.Opens
-  lineLocus : ∀ x : 𝟙_ (Over (Spec (.of k))) ⟶ M.J,
-    FactorsThrough M.J lineOpen x ↔
-      IsLineBundle ((Scheme.Modules.pullback (pointSection C M.J x).left).obj M.F)
-  dense : Dense (lineOpen : Set M.J.left)
+  lineLocus : ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (p : Spec (.of Ω) ⟶ M.J.left),
+    p ⁻¹ᵁ lineOpen = ⊤ ↔
+      IsLineBundle ((Scheme.Modules.pullback
+        (pullback.fst (prod.snd : prod C M.J ⟶ M.J).left p)).obj M.F)
+  /-- `H⁰(J̄, 𝒪) = k`, so that `J̄` has a Picard-zero model. -/
+  [constantSections : HasConstantGlobalSections M.J.hom]
   /-- Picard zero of the compactified Jacobian, with its actual universal family. -/
   picard : PicardZeroModel M.J origin
+  /-- The classifying map of the restricted family; `Properties.betaIso`
+  states that it is an isomorphism. -/
   beta : Over.mk (lineOpen.ι ≫ M.J.hom) ⟶ picard.J
-  [betaIso : IsIso beta]
   P : (prod M.J M.J).left.Modules
   normalized : IsNormalized M.J M.J origin P
   symmetric : Nonempty
@@ -135,19 +160,38 @@ structure PoincareKernelModel {k : Type u} [Field k]
   extension : Nonempty
     (P ≅ (Scheme.Modules.pushforward (bigOpen M.J lineOpen).ι).obj
       ((Scheme.Modules.pullback (bigOpen M.J lineOpen).ι).obj P))
-  mcm : IsClosedPointMCM P
-  flatFirst : IsFlatOver (prod.fst : prod M.J M.J ⟶ M.J).left P
-  flatSecond : IsFlatOver (prod.snd : prod M.J M.J ⟶ M.J).left P
+  /-- The internal dual of `P`, fixed by its universal property. -/
   dual : SheafDual P
-  /-- These inverse identities are goals carried by the requested constructor. -/
-  inverseLeft : Nonempty
+
+variable {k : Type u} [Field k] [IsAlgClosed k] {C : Over (Spec (.of k))}
+  [IsProperCurve C.hom] [HasConstantGlobalSections C.hom] [TorsionFreeRestrictions C.left]
+  {q : Polarization C.left} {s : SmoothMarking C} {M : FineCompactifiedJacobian C q s}
+
+/-- Arinkin's geometric properties of the Poincaré sheaf, for a candidate: the
+line-bundle locus is dense and identified with `Pic⁰(J̄)` by `beta`, and `P` is
+maximal Cohen--Macaulay and flat over both factors (Arinkin, Theorem A;
+Esteves--Gagné--Kleiman). Not every candidate has them. -/
+structure PoincareKernelCandidate.Properties (K : PoincareKernelCandidate C q s M) : Prop where
+  dense : Dense (K.lineOpen : Set M.J.left)
+  betaIso : IsIso K.beta
+  mcm : IsClosedPointMCM K.P
+  flatFirst : IsFlatOver (prod.fst : prod M.J M.J ⟶ M.J).left K.P
+  flatSecond : IsFlatOver (prod.snd : prod M.J M.J ⟶ M.J).left K.P
+
+variable [FourierMukai.HasDerivedPullbacks.{u}]
+  [FourierMukai.HasDerivedPushforwards.{u}] [FourierMukai.HasDerivedTensors.{u}]
+
+/-- Fourier--Mukai autoduality of a candidate: `P` and `P^∨[g]` are mutually
+inverse kernels (Arinkin, Theorem C, for the Poincaré sheaf). -/
+def PoincareKernelCandidate.IsAutodual (K : PoincareKernelCandidate C q s M) : Prop :=
+  Nonempty
     (FourierMukai.convolution M.J.hom M.J.hom M.J.hom
-      (kernelOfSheaf M.J productComparison P)
-      ((kernelOfSheaf M.J productComparison dual.dual)⟦(genus C.hom : ℤ)⟧) ≅
-        diagonalKernel M.J)
-  inverseRight : Nonempty
+      (kernelOfSheaf M.J K.productComparison K.P)
+      ((kernelOfSheaf M.J K.productComparison K.dual.dual)⟦(genus C.hom : ℤ)⟧) ≅
+        diagonalKernel M.J) ∧
+  Nonempty
     (FourierMukai.convolution M.J.hom M.J.hom M.J.hom
-      ((kernelOfSheaf M.J productComparison dual.dual)⟦(genus C.hom : ℤ)⟧)
-      (kernelOfSheaf M.J productComparison P) ≅ diagonalKernel M.J)
+      ((kernelOfSheaf M.J K.productComparison K.dual.dual)⟦(genus C.hom : ℤ)⟧)
+      (kernelOfSheaf M.J K.productComparison K.P) ≅ diagonalKernel M.J)
 
 end MathlibExt.AlgebraicGeometry.CompactifiedPoincareKernels
