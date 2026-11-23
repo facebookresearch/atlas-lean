@@ -73,4 +73,3 @@
 - [Closed form maximizes the spectral criterion for positive class means](is-max-on-spectral-log-lik-two-level-rem.md)
 - [Closed form is the unique REML maximizer for positive class means](is-max-on-reml-log-lik-two-level-reml.md)
 - [The closed-form REML estimator is unbiased when both eigenvalues occur](integral-two-level-reml.md)
-
