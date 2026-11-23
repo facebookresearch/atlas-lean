@@ -21,11 +21,15 @@ of radius `e` below the Johnson radius `J_q(d / n)` contains at most
 `q * d * n` codewords (Guruswami, Rudra and Sudan, *Essential Coding Theory*,
 draft of August 26, 2025, Theorem 7.3.1; the general-alphabet form follows
 Guruswami and Sudan, "Extensions to the Johnson bound", 2001, Theorem 1).
-The Lean definition is the displayed formula on its classical domain `2 ≤ q`
-and `q * δ ≤ q - 1`; outside that domain the radicand is clipped at `0`, so
-the radius saturates at `1 - 1 / q`. The radius theorems below are therefore
-statements about this explicitly clipped total function, and on the classical
-domain they are the usual Johnson-radius statements.
+The Lean definition is the displayed total formula, which on its classical
+domain `2 ≤ q`, `0 ≤ δ`, and `q * δ ≤ q - 1` is the usual Johnson radius.
+For `2 ≤ q` and `(q - 1) / q ≤ δ`, the clipped radicand is `0`, so this total
+form saturates at `1 - 1 / q`. For every other input, including `q < 2` or
+`δ < 0`, the displayed total formula still defines the value, with totalized
+division and an unclipped positive radicand when `1 - q * δ / (q - 1)` is
+positive, but it carries no Johnson-radius interpretation there. The radius
+theorems below are therefore statements about this total function, and on the
+classical domain they are the usual Johnson-radius statements.
 The integer form `qary_johnson_bound` is the double-counting core; the
 remaining declarations turn it into list-decodability statements, the real
 Johnson-radius form, and a statement-level nonvacuity family above the radius.
@@ -37,11 +41,16 @@ namespace MathlibExt.Combinatorics.Coding.JohnsonBound
 
 open Finset MathlibExt.Combinatorics.Coding.ListDecoding
 
-/-- This is the total clipped form of the q-ary Johnson radius:
+/-- This is the total form of the q-ary Johnson radius:
 `J_q(δ) = (1 - 1/q)(1 - √(max 0 (1 - qδ/(q - 1))))`.
-On the classical domain `2 ≤ q` and `q * δ ≤ q - 1` this is the usual Johnson
-radius; outside that domain the radicand is clipped at `0`, so the radius
-saturates at `1 - 1 / q`. -/
+On the classical domain `2 ≤ q`, `0 ≤ δ`, and `q * δ ≤ q - 1` this is the usual
+Johnson radius. For `2 ≤ q` and `(q - 1) / q ≤ δ`, the clipped radicand is `0`,
+so this total form saturates at `1 - 1 / q`. For every other input, including
+`q < 2` or `δ < 0`, this same total formula still defines the value, with
+totalized division and an unclipped positive radicand when `1 - qδ/(q - 1)` is
+positive, but it carries no Johnson-radius interpretation there. The radius
+theorems below are statements about this total function, and on the classical
+domain they are the usual statements. -/
 noncomputable def johnsonRadius (q : ℕ) (δ : ℝ) : ℝ :=
   (1 - 1 / (q : ℝ)) * (1 - Real.sqrt (max 0 (1 - q * δ / (q - 1))))
 
