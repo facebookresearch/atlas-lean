@@ -57,7 +57,8 @@ def gammaPushforwardIso :
 def pullbackTildeAdjunction :
     tilde.functor R ⋙ Scheme.Modules.pullback (Spec.map g) ⊣
       moduleSpecΓFunctor (R := S) ⋙ ModuleCat.restrictScalars g.hom :=
-  ((tilde.adjunction (R := R)).comp (Scheme.Modules.pullbackPushforwardAdjunction (Spec.map g))).ofNatIsoRight
+  ((tilde.adjunction (R := R)).comp
+      (Scheme.Modules.pullbackPushforwardAdjunction (Spec.map g))).ofNatIsoRight
     (gammaPushforwardIso g)
 
 /-- The native extension-of-scalars-then-tilde adjunction. -/

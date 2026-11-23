@@ -9,7 +9,6 @@ module
 
 public import MathlibExt.AlgebraicGeometry.LogPairs
 public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
-public import MathlibExt.AlgebraicGeometry.FanoVanishingFiltrations
 
 /-!
 # Actual birational section coordinates

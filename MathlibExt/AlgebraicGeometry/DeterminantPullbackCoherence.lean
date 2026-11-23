@@ -7,14 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Topology/Sheaves/Cohomology/DerivedPullback/
-CompositionOnComplexesAnyModel.lean and CompositionCoherence.lean,
-under Apache License 2.0. Those files list no individual author or copyright.
-Modification: use the existing native scheme-module cochain and total-left-
-derived operators, with their exact cochain counits; retain all identity,
-composition and higher-coherence normalization as completed-source data.
-No duplicate Wanted request is introduced for the generic source producer.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/Topology/Sheaves/Cohomology/DerivedPullback/CompositionOnComplexesAnyModel.lean`
+* `StacksFrontier/Topology/Sheaves/Cohomology/DerivedPullback/CompositionCoherence.lean`
+
+Modifications: the existing native scheme-module cochain and total left derived operators
+are used with their exact cochain counits; the identity, composition and higher-coherence
+normalizations are kept as data.
 -/
 module
 

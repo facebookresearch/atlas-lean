@@ -20,7 +20,7 @@ Native function-field/ord operations are Mathlib at
 
 module
 
-public import Mathlib.AlgebraicGeometry.OrderOfVanishing
+public import Mathlib.AlgebraicGeometry.OrderOfVanishing.DVR
 public import Mathlib.Algebra.Category.ModuleCat.Stalk
 public import Mathlib.RingTheory.Kaehler.Basic
 public import Mathlib.Topology.KrullDimension
@@ -77,6 +77,10 @@ attribute [instance] NormalVariety.integral NormalVariety.noetherian
 
 variable {k : Type u} [Field k] {n : ℕ}
 
+/-- Codimension-one points: in Mathlib's specialization order on a scheme
+(`x ≤ y` when `x` lies in the closure of `y`, so the generic point is the top),
+`Order.coheight x` is the codimension of `x`. This is the convention of
+`AlgebraicGeometry.AlgebraicCycle.IsWeilDivisor` and of `Scheme.ord`. -/
 abbrev PrimePoint (V : NormalVariety k n) := {x : V.X.left // coheight x = 1}
 abbrev IntegerWeil (V : NormalVariety k n) := PrimePoint V →₀ ℤ
 abbrev RealWeil (V : NormalVariety k n) := PrimePoint V →₀ ℝ
@@ -321,11 +325,24 @@ adjoint order, plus one. No discrepancy values are supplied as fields. -/
 def logDiscrepancy {P : LogPair k n} (M : BirationalModel P) (p : PrimePoint M.variety) : ℝ :=
   1 + (canonicalDivisor M.data.canonical p : ℝ) - pulledCombinationCoefficient M P.adjoint p
 
+/-- Kawamata log terminal: every prime divisor on every proper birational
+normal model has positive log discrepancy. The model calculus is part of the
+definition, so every such model carries the comparison data `BirationalData`
+and none is omitted from the quantifier (over fields where the calculus fails,
+for instance when rational top forms are not one-dimensional, the predicate is
+false rather than vacuous). The log discrepancy does not depend on the chosen
+data: frames change by local units, which have order zero. -/
 def IsKlt (P : LogPair k n) : Prop :=
-  ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety, 0 < logDiscrepancy M p
+  HasModelCalculus P ∧
+    ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety, 0 < logDiscrepancy M p
 
+/-- Log canonical: as `IsKlt`, with nonnegative log discrepancies. -/
 def IsLogCanonical (P : LogPair k n) : Prop :=
-  ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety, 0 ≤ logDiscrepancy M p
+  HasModelCalculus P ∧
+    ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety, 0 ≤ logDiscrepancy M p
+
+theorem IsKlt.isLogCanonical {P : LogPair k n} (h : IsKlt P) : IsLogCanonical P :=
+  ⟨h.1, fun M p ↦ (h.2 M p).le⟩
 
 def valuationOnBase {P : LogPair k n} (M : BirationalModel P) (p : PrimePoint M.variety)
     (a : (FunctionField P.variety)ˣ) : ℤ :=
