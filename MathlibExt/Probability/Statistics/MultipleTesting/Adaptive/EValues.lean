@@ -306,7 +306,7 @@ theorem measure_exists_le_ge_le (hE : IsEProcess μ 𝒢 E) (N : ℕ) {c : ℝ} 
   calc μ {ω | ∃ n ≤ N, c ≤ E n ω} ≤ μ {ω | c ≤ stoppedValue E τ ω} := by
         refine measure_mono ?_
         rintro ω ⟨n, hn, h⟩
-        exact stoppedValue_hittingBtwn_mem ⟨n, ⟨Nat.zero_le n, hn⟩, h⟩
+        exact stoppedValue_hittingBtwn_mem (s := Set.Ici c) ⟨n, ⟨Nat.zero_le n, hn⟩, h⟩
     _ ≤ ENNReal.ofReal c⁻¹ := (hE.isEValue_stoppedValue hτ hbdd).measure_ge_le hc
 
 /-- **Ville's inequality for e-processes, time-uniform.** For `c > 0`, the probability that the
