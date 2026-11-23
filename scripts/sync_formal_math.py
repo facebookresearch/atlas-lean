@@ -29,8 +29,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_formal_math_sync import (  # noqa: E402  (the checker owns the header parser)
-    BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, UPSTREAM_REPOSITORY, count_rows, dump_manifest, is_flt, leading_notice,
-    last_committed_text, library_files, retired_row, sha256, split_published, upstream_body,
+    BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, UPSTREAM_REPOSITORY, count_rows, is_flt, leading_notice,
+    last_committed_text, library_files, load, retired_row, shard_directory, sha256, split_published,
+    upstream_body, write_manifest,
 )
 
 ZERO = "0" * 40
@@ -216,7 +217,7 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
     rows.sort(key=lambda row: row["path"])
     toolchain = (atlas / "lean-toolchain").read_text().strip()
     manifest = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": previous.get("schema_version", SCHEMA_VERSION),
         "upstream": {"repository": UPSTREAM_REPOSITORY, "commit": commit},
         "lean_toolchain": toolchain,
         "roots": list(ROOTS),
@@ -271,7 +272,13 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"sync: {a.formal_math} is a shallow clone; classification needs the full first-parent "
                          "history (run `git fetch --unshallow` first)")
     commit = git(a.formal_math, "rev-parse", "--verify", f"{a.commit}^{{commit}}").decode().strip()
-    previous = load_json(manifest_path)
+    if (manifest_path.exists() or manifest_path.is_symlink()
+            or shard_directory(manifest_path).exists() or shard_directory(manifest_path).is_symlink()):
+        previous, problems = load(manifest_path)
+        if problems or previous is None:
+            raise SystemExit("sync: cannot read the existing ledger: " + "; ".join(problems))
+    else:
+        previous = {}
     rationales = load_json(a.rationales)
     if not isinstance(rationales, dict):
         raise SystemExit("sync: --rationales must be a JSON object mapping paths to {rationale, backport}")
@@ -284,11 +291,10 @@ def main(argv: list[str] | None = None) -> int:
         for path in unexplained:
             print(f"  {path}", file=sys.stderr)
         return 1
+    write_manifest(manifest_path, manifest)
     if a.report:
         a.report.write_text(text + "\n", encoding="utf-8")
-    manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(dump_manifest(manifest), encoding="utf-8")
-    print(f"wrote {manifest_path} ({len(manifest['rows'])} rows)")
+    print(f"wrote ledger at {manifest_path} ({len(manifest['rows'])} rows)")
     return 0
 
 

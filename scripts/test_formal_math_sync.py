@@ -155,7 +155,8 @@ class CheckerTest(unittest.TestCase):
         self.assert_clean_then(lambda: write(self.root, c.MANIFEST, "{"), "cannot read manifest")
 
     def test_wrong_schema_version(self) -> None:
-        self.assert_clean_then(lambda: (self.manifest.update(schema_version=2), self.save()), "schema_version is 2")
+        self.assert_clean_then(lambda: (self.manifest.update(schema_version=3), self.save()),
+                               "unsupported schema_version: 3")
 
     def test_upstream_repository_is_formal_math(self) -> None:
         for repository in ("", "someone/else"):
@@ -826,6 +827,114 @@ class BaseGuardTest(unittest.TestCase):
         self.assertIn("cannot resolve --base no-such-ref", out)
 
 
+class ShardedLedgerTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        env = mock.patch.dict(os.environ)
+        env.start()
+        self.addCleanup(env.stop)
+        os.environ.pop("GITHUB_ACTIONS", None)
+        self.root = Path(self.temp.name)
+        self.manifest = self.root / c.MANIFEST
+        self.legacy = make_fixture(self.root)
+        retired = next(row for row in self.legacy["rows"] if row["disposition"] == "retired")
+        retired["line_fingerprint"] = c.line_fingerprint(BODY)
+        retired["published_sha256"] = c.sha256(c.META + BODY)
+        self.manifest.write_text(c.dump_manifest(self.legacy), encoding="utf-8")
+        run_git(self.root, "init", "-q")
+        self.base = self.commit("legacy ledger")
+
+    def commit(self, message: str) -> str:
+        run_git(self.root, "add", "-A")
+        run_git(self.root, "commit", "-qm", message)
+        return run_git(self.root, "rev-parse", "HEAD")
+
+    def convert(self) -> str:
+        self.assertEqual(quiet(c.main, ["--root", str(self.root), "--split-by-domain"])[0], 0)
+        return self.commit("split the ledger")
+
+    def record(self, path: str) -> None:
+        code, output = quiet(c.main, ["--root", str(self.root), "--record-divergence", path,
+                                      "--rationale", "Reviewed Atlas change", "--backport", "pending"])
+        self.assertEqual(code, 0, output)
+
+    def test_conversion_preserves_logical_rows_and_git_history(self) -> None:
+        head = self.convert()
+        expected = {**self.legacy, "schema_version": c.SHARDED_SCHEMA_VERSION}
+        self.assertEqual(c.load(self.manifest), (expected, []))
+        self.assertEqual(c.load_revision(self.root, self.base), (self.legacy, []))
+        self.assertEqual(c.load_revision(self.root, head), (expected, []))
+        self.assertNotIn("rows", json.loads(self.manifest.read_text(encoding="utf-8")))
+        shard = c.shard_directory(self.manifest) / "MathlibExt.json"
+        self.assertEqual(c.shard_path(self.manifest, "MathlibExt/Identical.lean"), shard)
+        self.assertEqual(c.base_problems(self.root, self.manifest, self.base), ([], []))
+        self.assertEqual(quiet(c.main, ["--root", str(self.root), "--split-by-domain"])[0], 0)
+        self.assertEqual(run_git(self.root, "status", "--porcelain"), "")
+
+    def test_disjoint_domain_prs_git_merge_without_shared_changes(self) -> None:
+        sharded = self.convert()
+        first = "MathlibExt/Algebra/Fresh.lean"
+        second = "MathlibExt/Topology/Fresh.lean"
+        run_git(self.root, "switch", "-qc", "algebra")
+        write(self.root, first, FRESH)
+        self.record(first)
+        left = self.commit("record algebra source")
+        run_git(self.root, "switch", "-qc", "topology", sharded)
+        write(self.root, second, FRESH.replace("fresh", "topology"))
+        self.record(second)
+        right = self.commit("record topology source")
+        for revision, lean_path in ((left, first), (right, second)):
+            shard = c.shard_path(Path(c.MANIFEST), lean_path).as_posix()
+            self.assertEqual(set(run_git(self.root, "diff", "--name-only", sharded, revision).splitlines()),
+                             {lean_path, shard})
+        run_git(self.root, "merge", "--no-edit", "algebra")
+        self.assertEqual(c.check(self.root, self.manifest)[0], [])
+        self.assertEqual(c.base_problems(self.root, self.manifest, sharded), ([], []))
+
+    def test_cutover_cannot_drop_retired_rows_or_repin(self) -> None:
+        self.convert()
+        manifest, _ = c.load(self.manifest)
+        self.assertIsNotNone(manifest)
+        tombstones = c.shard_path(self.manifest, "WantedExt/Retired.lean")
+        tombstones.unlink()
+        self.assertIn("preserve every existing row", c.base_problems(self.root, self.manifest, self.base)[0][0])
+        c.write_manifest(self.manifest, manifest)
+        changed = {**manifest, "upstream": {**manifest["upstream"], "commit": "b" * 40}}
+        c.write_manifest(self.manifest, changed)
+        self.assertIn("all shared metadata", c.base_problems(self.root, self.manifest, self.base)[0][0])
+
+    def test_existing_shard_cannot_disappear_or_revert_layout(self) -> None:
+        sharded = self.convert()
+        tombstones = c.shard_path(self.manifest, "WantedExt/Retired.lean")
+        tombstones.unlink()
+        self.assertIn("WantedExt/Retired.lean: row removed", c.base_problems(self.root, self.manifest, sharded)[0][0])
+        for path in c.worktree_shards(self.manifest):
+            path.unlink()
+        c.write_manifest(self.manifest, self.legacy)
+        self.assertIn("cannot return to the monolithic layout", c.base_problems(self.root, self.manifest, sharded)[0][0])
+
+    def test_cross_domain_misplacement_and_symlinks_are_rejected(self) -> None:
+        self.convert()
+        original = c.shard_path(self.manifest, "MathlibExt/Identical.lean")
+        misplaced = c.shard_path(self.manifest, "MathlibExt/Algebra/Ghost.lean")
+        misplaced.parent.mkdir(parents=True)
+        misplaced.write_bytes(original.read_bytes())
+        self.assertIn("row belongs in another shard", c.load(self.manifest)[1][0])
+        misplaced.unlink()
+        misplaced.symlink_to(original)
+        self.assertIn("must not go through a symlink", c.load(self.manifest)[1][0])
+        invalid = self.commit("symlink shard fixture")
+        self.assertIn("expected a regular manifest file", c.load_revision(self.root, invalid)[1][0])
+
+    def test_copy_protection_spans_shards(self) -> None:
+        self.convert()
+        target = self.root / "MathlibExt/Topology/Copied.lean"
+        target.parent.mkdir()
+        target.write_bytes((self.root / "MathlibExt/Identical.lean").read_bytes())
+        self.assertTrue(any("exact copy of tracked" in problem for problem in c.check(self.root, self.manifest)[0]))
+
+
 class SyncTest(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
@@ -867,6 +976,21 @@ class SyncTest(unittest.TestCase):
 
     def rows(self) -> dict[str, dict]:
         return {row["path"]: row for row in json.loads((self.atlas / c.MANIFEST).read_text())["rows"]}
+
+    def test_sync_preserves_sharded_layout_and_defers_failed_writes(self) -> None:
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        path = self.atlas / c.MANIFEST
+        self.assertEqual(quiet(c.main, ["--root", str(self.atlas), "--split-by-domain"])[0], 0)
+        old, problems = c.load(path)
+        self.assertEqual(problems, [])
+        docs = {target: target.read_bytes() for target in c.manifest_documents(path, old)}
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        self.assertEqual({target: target.read_bytes() for target in docs}, docs)
+        write(self.atlas, "MathlibExt/Same.lean", c.META + BODY + "\ndef changed : Nat := 9\n")
+        report_path = self.atlas.parent / "failed-report.md"
+        self.assertEqual(self.sync("--report", str(report_path))[0], 1)
+        self.assertFalse(report_path.exists())
+        self.assertEqual({target: target.read_bytes() for target in docs}, docs)
 
     def test_fails_closed_then_classifies_and_verifies(self) -> None:
         report_path = self.atlas.parent / "report.md"
