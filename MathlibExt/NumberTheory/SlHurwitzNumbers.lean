@@ -48,7 +48,7 @@ private lemma coeff_mem_below_prime (S C : PowerSeries ℚ) (hS : derivative S =
   let A := (Rat.padicValuation ℓ).integer
   change coeff n S ∈ A ∧ coeff n C ∈ A
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero => simp [coeff_zero_eq_constantCoeff_apply, hS0, hC0]
     | succ n =>
@@ -72,7 +72,7 @@ private lemma coeff_mem_below_prime (S C : PowerSeries ℚ) (hS : derivative S =
 private lemma coeff_inv_mem (A : Subring ℚ) (F : PowerSeries ℚ) (hF : constantCoeff F = 1)
     (n : ℕ) (h : ∀ i ≤ n, coeff i F ∈ A) : coeff n F⁻¹ ∈ A := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     rw [coeff_inv, hF]
     split
     · simp

@@ -23,4 +23,13 @@ example : finiteContFrac [7, 2, 0, -1, -1] = 7 ∧
     finiteContFrac [7, 2, -1, 1, 0, 1] = 7 := by
   norm_num [finiteContFrac]
 
+-- With empty prefix and suffix, opposite neighbours merge to zero.
+example (a : ℤ) : finiteContFrac [a, 0, -a] = 0 := by
+  simpa [finiteContFrac_singleton] using finiteContFrac_zero_merge [] [] a (-a)
+
+-- The tail [-1, 1] evaluates to zero inside the continued fraction.
+example : finiteContFrac [2, 3, 0, -1, 1] = 7 / 3 := calc
+  _ = finiteContFrac [2, 2, 1] := finiteContFrac_zero_merge [2] [1] 3 (-1)
+  _ = 7 / 3 := by norm_num [finiteContFrac]
+
 end MetaMathlibExt

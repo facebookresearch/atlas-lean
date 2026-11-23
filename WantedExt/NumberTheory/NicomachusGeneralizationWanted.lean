@@ -38,7 +38,7 @@ the coefficient of `x^{k-1}` in
 `(1 + 502x + x²)/((1 - x)(1 - 398x + x²))`, defined directly as a
 formal power series coefficient over `ℚ` in
 `MathlibExt.NumberTheory.NicomachusGeneralization`, together with
-its closed form.
+its closed form and its recurrence.
 -/
 module
 
@@ -146,19 +146,6 @@ theorem_wanted nicomachusLEven_sub_REven_eq (m : ℕ) (hm : 2 ≤ m)
     (x : ℝ) :
     nicomachusLEven m x - nicomachusREven m x =
       x * nicomachusPEven m x - x ^ 2 + x ^ 3
-
-/-- **Recurrence for the Kim–Stolarsky integers $u_k$.** Let $u_k$ be the coefficient of
-$x^{k-1}$ in the power series expansion of $(1 + 502x + x^2)/((1 - x)(1 - 398x + x^2))$. For every
-integer $k \ge 1$,
-$$u_{k+1} = 252 + 199u_k + 30\sqrt{(3 + 2u_k)(23 + 22u_k)}.$$
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
-Three or More-term Generalization of Nicomachus' Identity", Proposition 1. -/
-theorem_wanted nicomachusU_succ_eq (k : ℕ) (hk : 1 ≤ k) :
-    (nicomachusU (k + 1) : ℝ) =
-      252 + 199 * (nicomachusU k : ℝ) +
-        30 * Real.sqrt ((3 + 2 * (nicomachusU k : ℝ)) *
-          (23 + 22 * (nicomachusU k : ℝ)))
 
 /-- **The convergents $\alpha_k$ in terms of the integers $u_k$.** Let $\alpha_k$ be the
 Kim–Stolarsky convergents, with $\alpha_1 = 1$ and
