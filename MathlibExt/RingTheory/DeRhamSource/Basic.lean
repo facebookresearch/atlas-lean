@@ -8,14 +8,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 /-
-Completed mathematical proof port from AxiomMath/Stacks, commit
-c496df0d9beea9deaeabcea8492605f9a0a2313b, under Apache 2.0.
-Original source: https://github.com/AxiomMath/Stacks/blob/c496df0d9beea9deaeabcea8492605f9a0a2313b/StacksFrontier/RingTheory/DeRham/Basic.lean
-Original license: https://github.com/AxiomMath/Stacks/blob/c496df0d9beea9deaeabcea8492605f9a0a2313b/LICENSE
-Modifications: module paths and outer namespace are adapted for Atlas;
-source-only documentation cross-reference attributes are omitted.
-Original mathematical statements and proof bodies are retained; one
-scalar-associativity rewrite is made explicit for Lean 4.35 inference.
+Portions of this file are adapted from:
+
+`StacksFrontier/RingTheory/DeRham/Basic.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: module paths and outer namespace are adapted for Atlas; source-only documentation
+cross-reference attributes are omitted. Original mathematical statements and proof bodies are
+retained; one scalar-associativity rewrite is made explicit for Lean 4.35 inference.
 -/
 
 public import Mathlib.LinearAlgebra.ExteriorPower.Basic
