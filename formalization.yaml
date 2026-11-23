@@ -39,15 +39,16 @@ project:
   # ATLAS contributors: the primary authors and Co-authored-by people of the
   # non-merge commits that touch the Lean sources of the live libraries,
   # counted once per commit after merging aliases, in decreasing order of
-  # commits (ties alphabetical); the Git history is authoritative. Imported or
-  # adapted work is credited under related_formalizations, in provenance/ and,
-  # where the credit is available, in the files themselves. AI systems are
-  # credited under automation, not here.
+  # commits as counted on 23 November 2026 (ties alphabetical); the Git history
+  # is authoritative. Imported or adapted work is credited under
+  # related_formalizations, in provenance/ and, where the credit is available,
+  # in the files themselves. AI systems are credited under automation, not here.
   authors:
     - "Adam Kiezun"
     - "Vivien Cabannes"
     - "Jack McCarthy"
     - "emd"
+    - "June Kim"
     - "Tsutomu Okano"
     - "George Morris"
     - "Zibo Yang"
@@ -57,7 +58,6 @@ project:
     - "Zhi Han"
     - "Paul-Antoine Bonin"
     - "adamdeinhardt2-spec"
-    - "June Kim"
     - "LUOLINGc325"
   responsible_maintainers:
     - "Vivien Cabannes"
@@ -299,8 +299,8 @@ automation:
         CONTRIBUTING.md describes how people and agents pick tasks from the
         blueprint's list of ready statements.
     - method: "agent"
-      models: ["Claude Opus 5.5"]
-      framework: "Coding agents such as Claude Code and OpenAI Codex"
+      models: ["Claude Opus 5.5", "Muse Spark 1.3"]
+      framework: "Coding agents such as Claude Code, OpenAI Codex and Meta's Muse agents"
       tool_setup: >-
         Contributors direct coding agents for imports, ports, proofs, refactors,
         reviews and wiki work. Codex is the primary Git author of a few commits.
@@ -311,9 +311,11 @@ automation:
     from imports and ports of existing formalizations, chiefly the Formal-Math
     snapshot, and grow through agent-written pull requests. AI agents wrote
     most of the Lean code; the models are not recorded for most commits.
-    Co-authored-by trailers name Claude Opus 5.5 or Codex on some, and the
-    Codex trailers do not name a model. People choose the targets, run the
-    pipelines, review some of the changes and maintain the repository.
+    Co-authored-by trailers name Claude or Codex on some: most Claude trailers
+    name Claude Opus 5.5, and the Codex trailers name no model. File headers
+    and commit messages also credit Meta's Muse agents and the Muse Spark 1.3
+    model. People choose the targets, run the pipelines, review some of the
+    changes and maintain the repository.
 
 fidelity:
   divergences: >-
