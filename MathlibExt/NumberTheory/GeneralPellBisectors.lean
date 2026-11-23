@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Order.Ring.Abs
 public import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Algebra.Group.Int.Even
 import Mathlib.Data.Int.ModEq
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.LinearCombination
 import MathlibExt.NumberTheory.SquareModEight
 
 /-!
@@ -56,6 +58,33 @@ theorem bisector_slope_equation (a b c : ℝ) (hab : |a| ≠ |b|) (hc : c ≠ 0)
   have h := (div_eq_div_iff (by positivity) (by positivity)).mp hbis
   apply_fun (fun x : ℝ ↦ x ^ 2) at h
   simpa (disch := positivity) only [mul_pow, sq_abs, Real.sq_sqrt] using h
+
+/-- **Bisector-equation solutions from two solutions of $x^2 - d y^2 = -1$.** Let $d$ be an integer
+and let $a, a_2, b, b_2$ be rational numbers with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$.
+If $a_2 + b_2 \ne 0$, then $c = (a b_2 + a_2 b) / (a_2 + b_2)$ satisfies
+$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1),$$
+and if $a b_2 + a_2 b \ne 0$, then $c = -(a_2 + b_2) / (a b_2 + a_2 b)$ satisfies it as well.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 1, converse
+for (3) (`integers-2024-A111-thm-1`). -/
+theorem bisector_equation_form_three (d : ℤ) (a a₂ b b₂ : ℚ)
+    (ha : a ^ 2 - d * a₂ ^ 2 = -1) (hb : b ^ 2 - d * b₂ ^ 2 = -1) :
+    (a₂ + b₂ ≠ 0 → let c := (a * b₂ + a₂ * b) / (a₂ + b₂)
+      (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)) ∧
+    (a * b₂ + a₂ * b ≠ 0 → let c := -(a₂ + b₂) / (a * b₂ + a₂ * b)
+      (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)) := by
+  have h : a₂ ^ 2 * (b ^ 2 + 1) = b₂ ^ 2 * (a ^ 2 + 1) := by
+    linear_combination a₂ ^ 2 * hb - b₂ ^ 2 * ha
+  constructor
+  · intro hden
+    dsimp only
+    field_simp [hden]
+    linear_combination (a - b) ^ 2 * h
+  · intro hden
+    dsimp only
+    field_simp [hden]
+    linear_combination -(a - b) ^ 2 * h
 
 /-- If `d ≡ 1 (mod 4)` and `z ≡ 2 (mod 4)`, then `|x² - d y²| = z`
 has no integral solutions.

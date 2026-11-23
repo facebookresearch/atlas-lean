@@ -14,7 +14,7 @@ import Mathlib.MeasureTheory.Measure.Haar.Unique
 
 @[expose] public section
 
-open MeasureTheory MathlibExt.Probability.Statistics.MultipleTesting
+open MeasureTheory MathlibExt.Probability.Statistics.MultipleTesting Pointwise
 
 namespace MathlibExtTest.Probability.Statistics.MultipleTesting.PermutationPValue
 

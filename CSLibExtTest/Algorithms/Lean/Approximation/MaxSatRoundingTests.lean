@@ -12,7 +12,7 @@ public import CSLibExt.Algorithms.Lean.Approximation.MaxSatRounding
 
 @[expose] public section
 
-open Cslib.Logic.PL CSLibExt.Algorithms.Approximation.MaxSat
+open Cslib.Logic.LegacyPL CSLibExt.Algorithms.Approximation.MaxSat
 
 namespace CSLibExtTest.Algorithms.Lean.Approximation.MaxSatRounding
 

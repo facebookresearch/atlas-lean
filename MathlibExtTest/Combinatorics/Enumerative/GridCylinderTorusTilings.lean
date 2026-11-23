@@ -87,6 +87,20 @@ example :
     fixedTilingCount (id : ZMod 2 × ZMod 2 → ZMod 2 × ZMod 2) (Equiv.swap (0 : Fin 2) 1) = 0 := by
   decide +kernel
 
+-- On the 2 × 2 torus the zero shift fixes 16 binary tilings and each other shift fixes four.
+example : torusShiftSum 2 2 id (1 : Equiv.Perm (Fin 2)) = 28 := by
+  decide +kernel
+
+-- On the 2 × 3 torus the two shifts of order six each fix the two constant tilings.
+example : torusShiftSum 2 3 id (1 : Equiv.Perm (Fin 2)) = 84 := by
+  rw [rectangularTorus_identity 2 3 1 (one_pow 1)]
+  decide +kernel
+
+-- On a single row of two cells a tile swap fixes only the two alternating tilings,
+-- both under the nonzero shift.
+example : torusShiftSum 1 2 id (Equiv.swap (0 : Fin 2) 1) = 2 := by
+  decide +kernel
+
 -- For `n = 5` and `a = 2` the coefficient is `(5 + 1) / 2 = 3`, and the unique solution is
 -- `3 * (-1 - 2) = -9 = 1` in `ZMod 5`.
 example : {x : ZMod 5 | x = -1 - x - 2} = {1} := by
