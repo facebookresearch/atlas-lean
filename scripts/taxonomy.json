@@ -11439,6 +11439,7 @@
   "MathlibExt/NumberTheory/LucasPolytopicNumber": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/LucasSequence": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LucasSpecialPrime": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
+  "MathlibExt/NumberTheory/LucasnomialSum": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/MelhamGibonacci": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/ModInverseSwitching": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Modular inverses from the Euclidean algorithm"},
