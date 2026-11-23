@@ -55,8 +55,9 @@ private theorem mul_le_mul_of_le {a b c d : Language T} (hac : a ≤ c)
   obtain ⟨x, hx, y, hy, hxy⟩ := Language.mem_mul.mp hw
   exact Language.mem_mul.mpr ⟨x, hac hx, y, hbd hy, hxy⟩
 
-/-- In a grammar with no empty production output, every nonempty form
-yields only nonempty words. -/
+/-- **No empty words without empty productions.** In a context-free grammar in which no
+production has an empty right-hand side, every nonempty sentential form yields only nonempty
+words. -/
 theorem Yields.ne_nil_of_forall_output_ne_nil {G : ContextFreeGrammar T}
     (hG : ∀ r ∈ G.rules, r.output ≠ []) :
     ∀ {α : List (Symbol T G.NT)} {w : List T}, Yields G α w → α ≠ [] →
@@ -70,7 +71,8 @@ theorem Yields.ne_nil_of_forall_output_ne_nil {G : ContextFreeGrammar T}
     have h1 := ihout (hG _ hr)
     exact fun hw => h1 (List.append_eq_nil_iff.mp hw).1
 
-/-- A nonterminal is nullable when it can derive the empty word. -/
+/-- **Nullable nonterminal.** A nonterminal $A$ of a context-free grammar $g$ is nullable when $g$
+derives the empty word from $A$. -/
 def Nullable (g : ContextFreeGrammar T) (A : g.NT) :
     Prop :=
   [] ∈ languageFrom g A
@@ -83,8 +85,10 @@ theorem yields_of_nullable {A : g.NT}
     (h : Nullable g A) : Yields g [Symbol.nonterminal A] [] :=
   yields_iff_derives.mpr (mem_languageFrom.mp h)
 
-/-- The forms obtained from a sentential form by deleting some
-occurrences of nullable nonterminals. -/
+/-- **Nullable deletions.** For a context-free grammar $g$ and a sentential form $u$, the nullable
+deletions of $u$ are the forms obtained from $u$ by deleting any selection of occurrences of
+nullable nonterminals, possibly none and possibly all, keeping the remaining symbols in order.
+They form a finite set. -/
 noncomputable def nullableDeletions (g : ContextFreeGrammar T) :
     List (Symbol T g.NT) → Finset (List (Symbol T g.NT))
   | [] => {[]}
@@ -112,8 +116,12 @@ theorem mem_nullableDeletions_cons_nonterminal_delete {A : g.NT}
     α₀ ∈ nullableDeletions g (Symbol.nonterminal A :: u) :=
   Finset.mem_union_right _ (by rw [ite_eq_left hA]; exact h)
 
-/-- Deleting nullable nonterminals shrinks interpretations, against any
-assignment giving nullable nonterminals the empty word. -/
+/-- **Deleting nullable nonterminals shrinks the denoted language.** Let $g$ be a context-free
+grammar and $V$ an assignment of a language $V(A)$ to each nonterminal $A$ of $g$ such that the
+empty word belongs to $V(A)$ whenever $A$ is nullable (derives the empty word in $g$). If a
+sentential form $\alpha'$ is obtained from a sentential form $u$ by deleting some occurrences of
+nullable nonterminals, then the language denoted by $\alpha'$ under $V$ is contained in the
+language denoted by $u$ under $V$. -/
 theorem evalForm_le_of_mem_nullableDeletions {V : g.NT → Language T}
     (hV : ∀ A, Nullable g A → [] ∈ V A) :
     ∀ {u α' : List (Symbol T g.NT)}, α' ∈ nullableDeletions g u →
@@ -144,9 +152,12 @@ theorem evalForm_le_of_mem_nullableDeletions {V : g.NT → Language T}
         · rw [ite_eq_right hA] at h
           exact absurd h (Finset.notMem_empty α')
 
-/-- The grammar with `ε`-productions eliminated: from each production,
-all productions obtained by deleting nullable nonterminals from the
-output and discarding the empty output. -/
+/-- **Elimination of $\varepsilon$-productions.** For a context-free grammar $g$, the grammar
+obtained from $g$ by eliminating $\varepsilon$-productions has the same nonterminals and the
+same initial nonterminal as $g$. Its productions are the productions $A \to \alpha'$ such that
+$g$ has a production $A \to \alpha$, the form $\alpha'$ is obtained from $\alpha$ by deleting
+some (possibly no) occurrences of nullable nonterminals (those deriving the empty word in $g$),
+and $\alpha'$ is nonempty. -/
 noncomputable def epsGrammar (g : ContextFreeGrammar T) :
     ContextFreeGrammar T where
   NT := g.NT
@@ -155,7 +166,10 @@ noncomputable def epsGrammar (g : ContextFreeGrammar T) :
     ((nullableDeletions g r.output).filter (· ≠ [])).image
       (fun α => ⟨r.input, α⟩)
 
-/-- The productions of `epsGrammar`, forward direction. -/
+/-- **Productions of the ε-free grammar.** Let $g$ be a context-free grammar with a production
+$A \to u$, and let $\alpha$ be a nonempty form obtained from $u$ by deleting some (possibly no)
+occurrences of nullable nonterminals. Then $A \to \alpha$ is a production of the grammar obtained
+from $g$ by eliminating ε-productions. -/
 theorem mem_epsGrammar_rules {A : g.NT} {u α : List (Symbol T g.NT)}
     (hr : (⟨A, u⟩ : ContextFreeRule T g.NT) ∈ g.rules)
     (hα : α ∈ nullableDeletions g u) (hne : α ≠ []) :
@@ -163,7 +177,11 @@ theorem mem_epsGrammar_rules {A : g.NT} {u α : List (Symbol T g.NT)}
   Finset.mem_biUnion.mpr ⟨⟨A, u⟩, hr,
     Finset.mem_image.mpr ⟨α, Finset.mem_filter.mpr ⟨hα, hne⟩, rfl⟩⟩
 
-/-- The productions of `epsGrammar`, backward direction. -/
+/-- **Productions of the $\varepsilon$-eliminated grammar come from productions of $g$.**
+Let $g$ be a context-free grammar. Every production $A \to \alpha'$ of the grammar obtained
+from $g$ by eliminating $\varepsilon$-productions arises from a production $A \to \alpha$ of $g$
+with the same left-hand side $A$, such that $\alpha'$ is obtained from $\alpha$ by deleting some
+occurrences of nullable nonterminals and $\alpha'$ is nonempty. -/
 theorem cases_of_mem_epsGrammar_rules {r' : ContextFreeRule T g.NT}
     (hr : r' ∈ (epsGrammar g).rules) :
     ∃ r ∈ g.rules, r'.input = r.input ∧ r'.output ∈ nullableDeletions g r.output ∧
@@ -173,13 +191,19 @@ theorem cases_of_mem_epsGrammar_rules {r' : ContextFreeRule T g.NT}
   obtain ⟨hdel, hne⟩ := Finset.mem_filter.mp hα
   exact ⟨r, hrules, rfl, hdel, hne⟩
 
-/-- No production of `epsGrammar` has empty output. -/
+/-- **The $\varepsilon$-eliminated grammar has no empty productions.** For a context-free
+grammar $g$, no production of the grammar obtained from $g$ by eliminating
+$\varepsilon$-productions has empty right-hand side. -/
 theorem epsGrammar_output_ne_nil {r : ContextFreeRule T (epsGrammar g).NT}
     (hr : r ∈ (epsGrammar g).rules) : r.output ≠ [] := by
   obtain ⟨-, -, -, -, hne⟩ := cases_of_mem_epsGrammar_rules hr
   exact hne
 
-/-- Soundness of `epsGrammar` against the canonical valuation. -/
+/-- **Soundness of ε-production elimination.** Let $g$ be a context-free grammar and, for each
+nonterminal $A$, let $L_g(A)$ be the language of words $g$ derives from $A$. Then $L_g$ is a
+valuation of the grammar obtained from $g$ by eliminating ε-productions: for every production
+$A \to \alpha$ of that grammar, the language of $\alpha$ under $L_g$ (the concatenation of the
+languages of its symbols, a terminal $a$ denoting $\{a\}$) is contained in $L_g(A)$. -/
 theorem isValuation_epsGrammar :
     IsValuation (epsGrammar g) (languageFrom g) := by
   intro r' hr'
@@ -189,8 +213,11 @@ theorem isValuation_epsGrammar :
     (evalForm_le_of_mem_nullableDeletions (fun A hA => hA) hdel)
     (isValuation_languageFrom r hr)
 
-/-- Completeness of `epsGrammar`: every yield of `g` is a yield of
-`epsGrammar` from a deletion of the form. -/
+/-- **Completeness of eliminating empty productions.** Let $g$ be a context-free grammar.
+If a sentential form $\alpha$ of $g$ yields a terminal word $w$ in $g$, then some form
+$\alpha'$ obtained from $\alpha$ by deleting some occurrences of nullable nonterminals
+yields $w$ in the grammar obtained from $g$ by eliminating $\varepsilon$-productions, and
+$w$ is empty if $\alpha'$ is empty. -/
 theorem yields_epsGrammar_of_yields :
     ∀ {α : List (Symbol T g.NT)} {w : List T}, Yields g α w →
       ∃ α' ∈ nullableDeletions g α, Yields (epsGrammar g) α' w ∧
@@ -222,7 +249,10 @@ theorem yields_epsGrammar_of_yields :
         Yields.nonterminal (mem_epsGrammar_rules hr hβ hβ0) hYβ hYα,
         fun hcon => (List.cons_ne_nil _ _ hcon).elim⟩
 
-/-- `epsGrammar` generates the original language minus the empty word. -/
+/-- **The $\varepsilon$-eliminated grammar generates the nonempty words of $g$.** For a
+context-free grammar $g$ and every word $w$ over its terminals, $w$ is generated by the grammar
+obtained from $g$ by eliminating $\varepsilon$-productions if and only if $w$ is generated by
+$g$ and $w$ is nonempty. -/
 theorem epsGrammar_language {w : List T} :
     w ∈ (epsGrammar g).language ↔ w ∈ g.language ∧ w ≠ [] := by
   constructor
@@ -256,17 +286,23 @@ theorem epsGrammar_language {w : List T} :
     | inl h => rwa [h] at hY
     | inr h => exact absurd h hα'ne
 
-/-- Reachability by chains of unit productions `A → B`. -/
+/-- **Reachability by unit productions.** Let $g$ be a context-free grammar. A nonterminal
+$A$ of $g$ reaches a nonterminal $B$ by unit productions when there is a chain
+$A = A_0, A_1, \dots, A_n = B$ with $n \ge 0$ such that each $A_{i-1} \to A_i$ is a
+production of $g$. In particular, every nonterminal reaches itself. -/
 def UnitSteps (g : ContextFreeGrammar T) : g.NT → g.NT → Prop :=
   Relation.ReflTransGen
     (fun A B => (⟨A, [Symbol.nonterminal B]⟩ : ContextFreeRule T g.NT) ∈
       g.rules)
 
-/-- A form is a unit output when it consists of a single nonterminal. -/
+/-- **Unit output.** A sentential form is a unit output when it consists of a single
+nonterminal. -/
 def IsUnitOutput {N : Type*} (α : List (Symbol T N)) : Prop :=
   ∃ B, α = [Symbol.nonterminal B]
 
-/-- The nonterminals occurring in a sentential form. -/
+/-- **Nonterminals of a sentential form.** For a sentential form $u$, a finite word of terminal
+and nonterminal symbols, the nonterminals of $u$ form the finite set of all nonterminals that
+occur in $u$. -/
 noncomputable def formNTs {N : Type*} (u : List (Symbol T N)) : Finset N :=
   (u.filterMap fun s => match s with
     | Symbol.terminal _ => none
@@ -285,8 +321,10 @@ theorem mem_formNTs {N : Type*} {A : N} {u : List (Symbol T N)} :
   · intro h
     exact ⟨Symbol.nonterminal A, h, rfl⟩
 
-/-- The finitely many nonterminals mentioned by a grammar: its initial
-nonterminal, all production inputs, and all nonterminals in outputs. -/
+/-- **Set of nonterminals mentioned by a grammar.** The nonterminals mentioned by a context-free
+grammar $g$ form the finite set consisting of the initial nonterminal of $g$, the left-hand side
+of every production of $g$, and every nonterminal occurring in the right-hand side of a
+production of $g$. -/
 noncomputable def grammarNTs (g : ContextFreeGrammar T) : Finset g.NT :=
   insert g.initial
     (g.rules.biUnion fun r => insert r.input (formNTs r.output))
@@ -305,8 +343,11 @@ theorem mem_grammarNTs_of_mem_output {A : g.NT}
   Finset.mem_insert_of_mem (Finset.mem_biUnion.mpr
     ⟨r, hr, Finset.mem_insert_of_mem (mem_formNTs.mpr hA)⟩)
 
-/-- Every starting point of a unit chain ending at a nonterminal with a
-production is mentioned by the grammar. -/
+/-- **Unit chains start at mentioned nonterminals.** Let $g$ be a context-free grammar and let $B$
+be reachable from $A$ by a chain of zero or more unit productions of $g$. If $B$ is the left-hand
+side of some production of $g$, then $A$ is among the nonterminals mentioned by $g$ (its initial
+nonterminal, the left-hand sides of its productions, and the nonterminals in their right-hand
+sides). -/
 theorem mem_grammarNTs_of_unitSteps {A B : g.NT}
     (hsteps : UnitSteps g A B)
     (hB : ∃ α, (⟨B, α⟩ : ContextFreeRule T g.NT) ∈ g.rules) :
@@ -317,9 +358,12 @@ theorem mem_grammarNTs_of_unitSteps {A B : g.NT}
     exact mem_grammarNTs_of_rule_input hα
   | tail _ hstep ih => exact ih ⟨_, hstep⟩
 
-/-- The grammar with unit productions eliminated: every non-unit
-production of a unit-reachable nonterminal is copied to all its
-unit-reachable predecessors. -/
+/-- **Eliminating unit productions.** A unit production is one whose output is a single
+nonterminal. For a context-free grammar $g$, the grammar obtained by eliminating unit
+productions has the same nonterminals and the same start symbol as $g$. Its productions
+are the $A \to \alpha$ such that $A$ is a nonterminal mentioned by $g$ (its start symbol
+or one occurring in a production of $g$), $g$ has a production $B \to \alpha$ that is not
+a unit production, and $A$ reaches $B$ by a chain of zero or more unit productions of $g$. -/
 noncomputable def unitGrammar (g : ContextFreeGrammar T) :
     ContextFreeGrammar T where
   NT := g.NT
@@ -329,7 +373,11 @@ noncomputable def unitGrammar (g : ContextFreeGrammar T) :
       r.input = B ∧ ¬ IsUnitOutput r.output ∧ UnitSteps g A B).image
         (fun r => ⟨A, r.output⟩)
 
-/-- The productions of `unitGrammar`, forward direction. -/
+/-- **Productions of the unit-free grammar.** Let $g$ be a context-free grammar, let $B$ be
+reachable from $A$ by a chain of zero or more unit productions of $g$, and let $B \to \beta$ be a
+production of $g$ whose right-hand side $\beta$ is not a single nonterminal. If $A$ is among the
+nonterminals mentioned by $g$, then $A \to \beta$ is a production of the grammar obtained from
+$g$ by eliminating unit productions. -/
 theorem mem_unitGrammar_rules {A B : g.NT} {r : ContextFreeRule T g.NT}
     (hsteps : UnitSteps g A B) (hr : r ∈ g.rules) (hinput : r.input = B)
     (hunit : ¬ IsUnitOutput r.output) (hA : A ∈ grammarNTs g) :
@@ -339,7 +387,11 @@ theorem mem_unitGrammar_rules {A B : g.NT} {r : ContextFreeRule T g.NT}
       Finset.mem_image.mpr ⟨r,
         Finset.mem_filter.mpr ⟨hr, hinput, hunit, hsteps⟩, rfl⟩⟩⟩
 
-/-- The productions of `unitGrammar`, backward direction. -/
+/-- **Productions of the unit-eliminated grammar come from non-unit productions of $g$.**
+Let $g$ be a context-free grammar. For every production $A \to \beta$ of the grammar obtained
+from $g$ by eliminating unit productions, there are a nonterminal $B$ and a production
+$B \to \beta$ of $g$ such that $\beta$ is not a single nonterminal and $B$ is reachable from $A$
+by a possibly empty chain of unit productions of $g$. -/
 theorem cases_of_mem_unitGrammar_rules {r' : ContextFreeRule T g.NT}
     (hr : r' ∈ (unitGrammar g).rules) :
     ∃ (B : g.NT) (r : ContextFreeRule T g.NT), r ∈ g.rules ∧
@@ -351,22 +403,30 @@ theorem cases_of_mem_unitGrammar_rules {r' : ContextFreeRule T g.NT}
   obtain ⟨hrules, hinput, hunit, hsteps⟩ := Finset.mem_filter.mp hf
   exact ⟨B, r, hrules, hinput, hunit, hsteps, rfl⟩
 
-/-- No production of `unitGrammar` is a unit production. -/
+/-- **Eliminating unit productions leaves no unit production.** For every context-free
+grammar $g$, no production of the grammar obtained from $g$ by eliminating unit
+productions has an output consisting of a single nonterminal. -/
 theorem unitGrammar_not_isUnitOutput {r : ContextFreeRule T g.NT}
     (hr : r ∈ (unitGrammar g).rules) : ¬ IsUnitOutput r.output := by
   obtain ⟨B, r₀, -, -, hunit, -, hout⟩ := cases_of_mem_unitGrammar_rules hr
   rw [hout]
   exact hunit
 
-/-- The productions of `unitGrammar` have outputs of productions of the
-original grammar; in particular empty outputs are not created. -/
+/-- **Eliminating unit productions creates no new outputs.** Let $g$ be a context-free
+grammar. For every production of the grammar obtained from $g$ by eliminating unit
+productions, some production of $g$ has the same output.
+
+In particular, empty outputs are not created. -/
 theorem unitGrammar_output_of_mem {r' : ContextFreeRule T g.NT}
     (hr : r' ∈ (unitGrammar g).rules) :
     ∃ r ∈ g.rules, r.output = r'.output := by
   obtain ⟨-, r, hr, -, -, -, hout⟩ := cases_of_mem_unitGrammar_rules hr
   exact ⟨r, hr, hout.symm⟩
 
-/-- Unit steps shrink the canonical interpreted languages. -/
+/-- **Languages along unit chains.** Let $g$ be a context-free grammar and, for each nonterminal
+$A$, let $L_g(A)$ be the language of words $g$ derives from $A$. If $B$ is reachable from $A$ by
+a chain of zero or more unit productions $A \to A_1 \to \dots \to B$ of $g$, then
+$L_g(B) \subseteq L_g(A)$. -/
 theorem languageFrom_le_of_unitSteps {A B : g.NT}
     (hsteps : UnitSteps g A B) : languageFrom g B ≤ languageFrom g A := by
   induction hsteps with
@@ -376,7 +436,11 @@ theorem languageFrom_le_of_unitSteps {A B : g.NT}
     have h := isValuation_languageFrom _ hstep
     simpa using h
 
-/-- Soundness of `unitGrammar` against the canonical valuation. -/
+/-- **Soundness of unit-production elimination.** Let $g$ be a context-free grammar and, for
+each nonterminal $A$, let $L_g(A)$ be the language of words $g$ derives from $A$. Then $L_g$ is a
+valuation of the grammar obtained from $g$ by eliminating unit productions: for every production
+$A \to \alpha$ of that grammar, the language of $\alpha$ under $L_g$ (the concatenation of the
+languages of its symbols, a terminal $a$ denoting $\{a\}$) is contained in $L_g(A)$. -/
 theorem isValuation_unitGrammar :
     IsValuation (unitGrammar g) (languageFrom g) := by
   intro r' hr'
@@ -447,12 +511,16 @@ private theorem yields_unitGrammar_of_yields_aux :
         mem_unitGrammar_rules hsteps hr rfl hunit hA
       simpa using yields_of_rule hruleA ihout.1
 
-/-- Every yield of `g` is a yield of `unitGrammar`. -/
+/-- **Eliminating unit productions keeps every yield.** Let $g$ be a context-free grammar.
+If a sentential form $\alpha$ of $g$ yields a terminal word $w$ in $g$, then $\alpha$
+yields $w$ in the grammar obtained from $g$ by eliminating unit productions. -/
 theorem yields_unitGrammar_of_yields {α : List (Symbol T g.NT)}
     {w : List T} (h : Yields g α w) : Yields (unitGrammar g) α w :=
   (yields_unitGrammar_of_yields_aux h).1
 
-/-- `unitGrammar` generates exactly the original language. -/
+/-- **Eliminating unit productions preserves the language.** For every context-free
+grammar $g$, the grammar obtained from $g$ by eliminating unit productions generates
+the same language as $g$. -/
 theorem unitGrammar_language : (unitGrammar g).language = g.language := by
   ext w
   constructor
@@ -465,16 +533,19 @@ theorem unitGrammar_language : (unitGrammar g).language = g.language := by
     exact mem_language_iff_yields.mpr
       (yields_unitGrammar_of_yields (mem_language_iff_yields.mp hw))
 
-/-- A grammar is reduced (in the sense used for pumping and normal
-forms) when no production has empty output and no production has a
-single nonterminal as output. This does not assert that every
+/-- **Reduced grammars.** A context-free grammar is reduced when no production has empty
+right-hand side and no production has a single nonterminal as its right-hand side.
+
+This is the sense used for the pumping lemma and normal forms. It does not assert that every
 nonterminal is reachable or productive. -/
 def IsReduced (g : ContextFreeGrammar T) : Prop :=
   (∀ r ∈ g.rules, r.output ≠ []) ∧
     ∀ r ∈ g.rules, ¬ IsUnitOutput r.output
 
-/-- Every grammar has a reduced grammar (no empty output, no unit
-output) generating its language minus the empty word. -/
+/-- **Existence of reduced grammars.** For every context-free grammar $g$ over an alphabet $T$
+there is a context-free grammar $g'$ over $T$ that generates exactly the nonempty words
+generated by $g$, such that no production of $g'$ has empty right-hand side and no production
+of $g'$ has a single nonterminal as its right-hand side. -/
 theorem exists_reduced_grammar (g : ContextFreeGrammar T) :
     ∃ g' : ContextFreeGrammar T,
       (∀ w, w ∈ g'.language ↔ w ∈ g.language ∧ w ≠ []) ∧

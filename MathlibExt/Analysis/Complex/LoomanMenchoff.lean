@@ -1520,16 +1520,19 @@ private theorem looman_exists_continuous_extension {K : Set ℂ} (hK : IsClosed 
 
 set_option maxHeartbeats 1000000 in
 -- The Baire and tagged-partition argument needs a larger elaboration budget.
-/-- Looman–Menchoff theorem: a continuous complex function on a domain whose
-partial derivatives exist everywhere and satisfy the Cauchy–Riemann equations
-is holomorphic (differentiable in the complex sense).
-Source: https://en.wikipedia.org/wiki/Looman%E2%80%93Menchoff_theorem
-(statement id `looman-menchoff-s1`, canonical name "Looman-Menchoff theorem").
-
-Proves `Wanted` entry `looman_menchoff`.
+/-- **Looman–Menchoff theorem.** Let $s \subseteq \mathbb{C}$ be open and let
+$f : \mathbb{C} \to \mathbb{C}$ be continuous on $s$. Write $u = \operatorname{Re} f$ and
+$v = \operatorname{Im} f$ as functions of $z = x + iy$, and suppose that at every $z \in s$ the
+partial derivatives $u_x(z)$, $u_y(z)$, $v_x(z)$, $v_y(z)$ exist and satisfy the Cauchy–Riemann
+equations $u_x(z) = v_y(z)$ and $u_y(z) = -v_x(z)$. Then $f$ is complex differentiable on $s$.
 
 Proof: Baire category gives a square with uniform axis-wise Lipschitz bounds on the
 exceptional set. A Goursat rectangle estimate and Morera's theorem eliminate that set.
+
+Proves `Wanted` entry `looman_menchoff`.
+
+Source: https://en.wikipedia.org/wiki/Looman%E2%80%93Menchoff_theorem
+(statement id `looman-menchoff-s1`, canonical name "Looman-Menchoff theorem").
 -/
 theorem looman_menchoff : ∀ {s : Set ℂ} {f : ℂ → ℂ} {ux uy vx vy : ℂ → ℝ},
     IsOpen s →

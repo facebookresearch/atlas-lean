@@ -1,0 +1,3 @@
+# Whitney cut-cycle duality for a planar lattice subgraph
+
+Let $P$ be a finite graph $G = (V, E)$ with an injective map $\iota : V \to \mathbb{Z}^2$ sending edges to lattice edges. $P$ satisfies Whitney's cut–cycle duality when, for every subgraph $K \le G$, every edge $\{x, y\}$ of $G$ that is not an edge of $K$, and every pair of adjacent unit faces $f_0, g_0$ whose separating primal edge is $\{\iota(x), \iota(y)\}$: $x$ and $y$ are joined by a walk in $K$ if and only if $f_0$ and $g_0$ are not joined by a walk in the face-region graph of $\iota(K)$ with the dual edge $\{f_0, g_0\}$ deleted.
