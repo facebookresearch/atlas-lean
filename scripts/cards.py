@@ -5,6 +5,7 @@
            [--base-ledger FILE --base-links DIR --renames FILE]     validate the cards and the move ledger
     python scripts/cards.py rollup OUTPUT.json --dependencies FILE [--registry FILE]
            [--base-ledger FILE --base-links DIR --renames FILE]     check, then write the derived card data
+    python scripts/cards.py moves OUTPUT.json                        check the move ledger alone, then write its receipt
 
 A card is one idea a reader navigates by: a concept card (a definition that a textbook would give its own
 paragraph) or a result card (a theorem worth naming or citing). It is a folder below blueprint/roadmap/ whose
@@ -40,6 +41,16 @@ with a Python that has Autoform and the site's Markdown extensions installed (se
 The wiki job runs rollup the same way before render, for the card data the site shows (hooks/card_pages.py):
 rollup removes its output first and writes it, whole, only once the check passed, so an error leaves no card data.
 
+moves checks scripts/card-moves.jsonl on its own, with check_moves and no base: against the annotations and the
+roadmap as checked out, with no card or dependency check, so the site's redirects do not wait for the cards. Without
+a base it certifies the present snapshot only; that the ledger only grows, and the moves since the base commit, stay
+the strict check's. A missing ledger is an error, an empty one has no row. It reads each input file once, removes
+its output first, and on success writes, whole, the receipt hooks/card_pages.py keeps the moved addresses with: the
+commit, the sha256 of the ledger's bytes and a digest of the links folder's (links_digest), which bind the receipt to
+the very inputs checked, and the cards, by id, with their folders (`cards_complete` says whether that lists them all:
+a card is listed only with an article id no other article has and a folder the site can serve; a card a retirement
+needs must be listed). It refuses outside a Git checkout.
+
 A planned statement page may record its counterparts under `extensions["org.atlas-wiki"]["counterpart"]`
 (docs/cards.md#counterparts): check verifies their form and their place, a live statement page Autoform reads whose
 own row links no Lean declaration; they are data only, and nothing else here reads them.
@@ -47,8 +58,11 @@ own row links no Lean declaration; they are data only, and nothing else here rea
 
 from __future__ import annotations
 
+import hashlib
 import json
+import os
 import re
+import stat
 import subprocess
 import sys
 from collections import Counter, defaultdict
@@ -68,6 +82,10 @@ else:
 OWN = "org.atlas-wiki"
 AUTOFORM = "org.autoform"
 SCHEMA = "atlas-cards/v1"
+# The receipt of the moves command, which hooks/card_pages.py reads; and the links folder's defaults file (Autoform's
+# annotations._DEFAULTS), which the receipt's digest of the annotations covers.
+MOVES_SCHEMA = "atlas-card-moves/v1"
+LINKS_DEFAULTS = "_defaults.json"
 ARTICLE_ID = re.compile(r"af_[0-9a-f]{24}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
 KINDS = ("concept", "result")
@@ -768,7 +786,9 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
                     what = "states a proposition" if found["proposition"] else "does not state a proposition"
                     errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is "
                                   f"Mathlib's {declaration(own)}, which {what}")
-            elif authored == "atlas" and kind is not None:
+            elif kind is not None:
+                # A credited main's kind, or the one lean-facts gives a main with no Lean link that counts as a
+                # statement not yet in Lean (held, or recording its kind), fits the card.
                 allowed = CONCEPT_KINDS if record["kind"] == "concept" else RESULT_KINDS
                 if kind not in allowed:
                     errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is a `{kind}`")
@@ -982,7 +1002,7 @@ def read_links(folder: Path) -> dict[Path, dict]:
 
 def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: str | None = None,
                 required: bool = False, base_annotations: dict[Path, dict] | None = None,
-                renames: list[tuple[str, str]] | None = None) -> list[str]:
+                renames: list[tuple[str, str]] | None = None, text: str | None = None) -> list[str]:
     """The errors of scripts/card-moves.jsonl. The ledger only grows: given ``base``, the ledger the base commit
     published, its rows must stay, unchanged and first. Each chain is followed to its final live destination: a
     moved page or folder is no longer at its old path; every hop keeps the article id it started with, so an old
@@ -991,22 +1011,24 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
     page's, and what replaces it is one; nothing goes round. An address has one owner: it moves once, as a page or
     as a folder, and no live page or folder of another article takes it. ``required`` (the strict check): the file
     must exist. ``base_annotations``, the base commit's rows, and ``renames``, the roadmap files Git finds renamed
-    since (old and new path below roadmap/): see `history`."""
+    since (old and new path below roadmap/): see `history`. ``text``: the ledger as its caller read it (the moves
+    command reads it once, to check and hash the same bytes), instead of the file."""
     path = moves_file()
     published = [line for line in (base or "").splitlines() if line.strip()]
-    if not path.is_file():
-        if required or published:
-            return [f"{MOVES}: missing; it records every address a card change retired"]
-        return []
+    if text is None:
+        if not path.is_file():
+            if required or published:
+                return [f"{MOVES}: missing; it records every address a card change retired"]
+            return []
+        text = path.read_text()
     errors = []
-    text = path.read_text()
     if base is not None:
         published = [line for line in base.splitlines() if line.strip()]
         if [line for line in text.splitlines() if line.strip()][:len(published)] != published:
             errors.append(f"{MOVES}: a row the base commit published was removed or changed; the ledger only grows")
     chains: dict[str, dict[str, tuple[str, str]]] = {"page": {}, "folder": {}}
     retired: dict[str, tuple[str, str]] = {}
-    card_ids = {card.id for card in cards.values()}
+    card_ids = {card.id for card in cards.values() if isinstance(card.id, str)}
     by_id = {annotation["id"]: page for page, annotation in annotations.items() if isinstance(annotation.get("id"), str)}
     fresh: list[tuple[int, dict]] = []
     seen_rows = 0
@@ -1108,8 +1130,13 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
         if folder in chains["page"] or folder in chains["folder"]:
             errors.append(f"{MOVES}: {folder} is the last address of the retired card {card_id} and moved too; an "
                           "address has one owner")
+        # An address a page or folder page holds is taken, with an id or without: only the card itself, a folder
+        # keeping its id once declassified, or its final replacement may hold it.
         occupant = ids_at.get(folder)
-        if occupant is not None and occupant not in (card_id, finals[card_id]):
+        if occupant is None and ((wiki.ROADMAP / folder / "README.md").is_file()
+                                 or (wiki.ROADMAP / f"{folder}.md").is_file()):
+            errors.append(f"{MOVES}: the retired card {card_id}'s address {folder} is held by an article with no id")
+        elif occupant is not None and occupant not in (card_id, finals[card_id]):
             errors.append(f"{MOVES}: the retired card {card_id}'s address {folder} is held by another article")
     if base_annotations is not None:
         published_rows = [json.loads(line) for line in published]
@@ -1294,7 +1321,7 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
     for old in base:
         here = head_at.get((old.kind, old.address))
         if old.id and here is not None and here.id != old.id and claimed.get(id(here)) is not old:
-            if not (old.id in retired and finals.get(old.id) == here.id):
+            if not (old.id in retired and here.id is not None and finals.get(old.id) == here.id):
                 errors.append(f"{MOVES}: {old.address} was {old.id} and now holds {here.id}; only a retired card's "
                               "replacement takes its address")
     # Every card of the base that is no card any more is retired.
@@ -1661,7 +1688,7 @@ def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, grap
     def bucket(path: str) -> str:
         about = leaf(path)
         for marker, holds in (("stale", about.stale), ("held", about.held), ("not_ready", about.not_ready),
-                              ("page_only", about.credit == "none")):
+                              ("page_only", about.credit == "none" and about.kind is None)):
             if holds:
                 return marker
         return about.state if about.state in STATES else "planned"
@@ -1816,6 +1843,144 @@ def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, grap
     }
 
 
+def links_snapshot() -> dict[str, bytes | None]:
+    """The files of the links folder that the annotations are read from, each read once, by name: every `*.jsonl`
+    file, and the defaults file when there is one, None when it is no regular file, which Autoform cannot use
+    (scripts/sync_wiki.py, links_template). An OSError when a file cannot be read."""
+    folder = links_dir()
+    files: dict[str, bytes | None] = {path.name: path.read_bytes() for path in sorted(folder.glob("*.jsonl"))}
+    defaults = folder / LINKS_DEFAULTS
+    try:
+        found = os.lstat(defaults)
+    except FileNotFoundError:
+        return files
+    except OSError:
+        files[LINKS_DEFAULTS] = None
+        return files
+    files[LINKS_DEFAULTS] = defaults.read_bytes() if stat.S_ISREG(found.st_mode) else None
+    return files
+
+
+def links_digest(files: dict[str, bytes | None]) -> str:
+    """The digest of a links folder as read (links_snapshot), which the moves receipt records and hooks/card_pages.py
+    recomputes from the files: sha256 over each file, in sorted order of name, as its name, a NUL, its length in bytes
+    (`-` for a defaults file that is no regular file), a NUL and its bytes."""
+    digest = hashlib.sha256()
+    for name in sorted(files):
+        data = files[name]
+        digest.update(os.fsencode(name) + b"\0" + (b"-" if data is None else str(len(data)).encode()) + b"\0"
+                      + (data or b""))
+    return digest.hexdigest()
+
+
+def snapshot_annotations(files: dict[str, bytes | None]) -> dict[Path, dict]:
+    """read_annotations, from the bytes of a links folder as read (links_snapshot): each row by the page it is about,
+    merged over the template its defaults file gives (scripts/sync_wiki.py, template_of and merged). A ValueError
+    names a file that is no UTF-8 JSON lines."""
+    if LINKS_DEFAULTS not in files:
+        template: dict | None = {}
+    else:
+        template = None if files[LINKS_DEFAULTS] is None else sync.template_of(files[LINKS_DEFAULTS])
+    rows = {}
+    for name, data in sorted(files.items()):
+        if name == LINKS_DEFAULTS:
+            continue
+        try:
+            annotations = parse_rows(data.decode("utf-8"))
+        except ValueError as error:
+            raise ValueError(f"{links_dir().name}/{name}: {error}") from error
+        for annotation in annotations:
+            if (page := sync.subject_of(sync.merged(annotation, template))[0]) is not None:
+                rows[page] = annotation
+    return rows
+
+
+def ledger_ids(text: str) -> set[str]:
+    """The article ids the ledger's rows name: each page or folder row's `article_id`, and each retirement's `card`
+    and `replaced_by`; a line that is no JSON object names none (check_moves reports it)."""
+    found: set[str] = set()
+    for line in text.splitlines():
+        try:
+            row = json.loads(line) if line.strip() else None
+        except ValueError:
+            continue
+        if isinstance(row, dict):
+            found.update(row[key] for key in ("article_id", "card", "replaced_by") if isinstance(row.get(key), str))
+    return found
+
+
+def final_cards(text: str) -> dict[str, str]:
+    """Each card a retirement row of the ledger ``text`` retires, with the card its replacements end at, as
+    check_moves follows them (which has found that they do, at a live card)."""
+    retired = {}
+    for line in text.splitlines():
+        row = json.loads(line) if line.strip() else None
+        if isinstance(row, dict) and set(row) == {"card", "folder", "replaced_by"}:
+            retired[row["card"]] = row["replaced_by"]
+    finals = {}
+    for card in retired:
+        seen, at = {card}, retired[card]
+        while at in retired and at not in seen:
+            seen.add(at)
+            at = retired[at]
+        finals[card] = at
+    return finals
+
+
+def moves(output: Path) -> int:
+    """The moves command: check the move ledger, from one read of it and of the links folder, and on success write
+    the receipt to ``output`` (see the module's docstring). An id the ledger names that two articles have is an error
+    of its own, which check_moves, reading the last of them, would not see; a malformed or repeated id the ledger does
+    not name only leaves its card out of the receipt's `cards`."""
+    try:
+        ledger = moves_file().read_bytes()
+    except FileNotFoundError:
+        print(f"error: {MOVES}: missing; the moves check certifies a ledger that exists", file=sys.stderr)
+        return 1
+    try:
+        text = ledger.decode("utf-8")
+        files = links_snapshot()
+        annotations = snapshot_annotations(files)
+    except (OSError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    # A row whose extensions are no object holds no card record: card_folders cannot read it.
+    cards = card_folders({page: row for page, row in annotations.items()
+                          if isinstance(row.get("extensions", {}), dict)})
+    holders: dict[str, list[str]] = defaultdict(list)
+    for page, row in annotations.items():
+        if isinstance(row.get("id"), str):
+            holders[row["id"]].append(Path(os.path.relpath(page, wiki.ROADMAP)).as_posix())
+    errors = [f"{MOVES}: {article}, which the ledger names, is the id of {len(holders[article])} articles, "
+              f"{', '.join(sorted(holders[article]))}; an id names one article"
+              for article in sorted(ledger_ids(text)) if len(holders[article]) > 1]
+    errors += check_moves(annotations, cards, text=text)
+    # The cards the receipt can list: a well-formed id no other article has, and a folder the site can serve, by the
+    # predicate hooks/card_pages.py checks the receipt with (valid_address, the same there).
+    listed = {card.id: card.node for card in cards.values()
+              if isinstance(card.id, str) and ARTICLE_ID.fullmatch(card.id) and len(holders[card.id]) == 1
+              and valid_address(card.node)}
+    if not errors:
+        # The live card each retirement ends at is one the hook needs: it must be listed, or no address leads there.
+        nodes = {card.id: card.node for card in cards.values() if isinstance(card.id, str)}
+        errors += [f"{MOVES}: the retired card {card} is replaced by {final}, whose folder {nodes.get(final)} is no "
+                   "address the site serves"
+                   for card, final in sorted(final_cards(text).items()) if final not in listed]
+    commit = source_commit()
+    if commit is None:
+        errors.append(f"{wiki.ROOT} is no Git checkout: the receipt names the commit it checks")
+    for error in errors:
+        print(f"error: {error}", file=sys.stderr)
+    if errors:
+        return 1
+    receipt = {"schema": MOVES_SCHEMA, "commit": commit, "ledger_sha256": hashlib.sha256(ledger).hexdigest(),
+               "annotations_sha256": links_digest(files), "cards": listed, "cards_complete": len(listed) == len(cards)}
+    extract.write_whole({output: json.dumps(receipt, ensure_ascii=False, indent=1, sort_keys=True) + "\n"})
+    rows = sum(1 for line in text.splitlines() if line.strip())
+    print(f"{rows} ledger rows checked; {len(listed)} of {len(cards)} cards listed -> {output}")
+    return 0
+
+
 def option(argv: list[str], name: str) -> tuple[list[str], str | None]:
     """``argv`` without ``name VALUE``, and VALUE (None when absent); a name without a value is a usage error."""
     if name not in argv:
@@ -1827,6 +1992,22 @@ def option(argv: list[str], name: str) -> tuple[list[str], str | None]:
 
 
 def run(argv: list[str]) -> int:
+    if argv[:1] == ["moves"]:
+        if len(argv) != 2 or argv[1].startswith("-"):
+            print(__doc__, file=sys.stderr)
+            return 2
+        output = Path(argv[1])
+        # Refused as rollup refuses its output, before anything is touched; then an earlier receipt never outlives a
+        # failure of this check.
+        files = {"OUTPUT": output, "the move ledger": moves_file(),
+                 **{f"the links file {path.name}": path for path in sorted(links_dir().glob("*.jsonl"))}}
+        if os.path.lexists(links_dir() / LINKS_DEFAULTS):
+            files[f"the links file {LINKS_DEFAULTS}"] = links_dir() / LINKS_DEFAULTS
+        if problem := extract.file_problem(files, ("OUTPUT",), {"blueprint/": wiki.VAULT}):
+            print(f"error: {problem}", file=sys.stderr)
+            return 2
+        output.unlink(missing_ok=True)
+        return moves(output)
     argv, dependency_file = option(argv, "--dependencies")
     argv, base_file = option(argv, "--base-ledger")
     argv, base_links = option(argv, "--base-links")
