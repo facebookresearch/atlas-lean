@@ -57,8 +57,8 @@ preadditive and linear over the ground ring.
 
 * B. Keller, *Deriving DG categories*, Section 1.
 * V. Drinfeld, *DG quotients of DG categories*, Section 2.
-* `MathlibExt.DGSource.Algebra.Homology.AInfinity.Algebra.Cohomology`, the formal template for the quotient
-  construction and descended bilinear operation.
+* `TauCeti.Algebra.Homology.AInfinity.Algebra.Cohomology` (not ported here), the formal template
+  for the quotient construction and descended bilinear operation.
 -/
 
 public section

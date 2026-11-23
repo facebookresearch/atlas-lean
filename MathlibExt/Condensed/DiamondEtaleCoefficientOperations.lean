@@ -169,12 +169,15 @@ structure OperationModel {F G : VSheaf p} (f : F ⟶ G) where
         ((inverseImage p f stable).mapHomologicalComplex (ComplexShape.up ℤ) |>.obj K)
 
 /-- A geometric inclusion retains the actual complete algebraically
-closed field and full plus ring. -/
+closed field and full plus ring: the bundled Huber ring of `original` is itself a field (with its
+own ring operations), algebraically closed for that field structure. -/
 structure IntegralGeometricInclusion where
   maximal : AffineUntilting p
   original : AffineUntilting p
-  [field : Field original.pair.ring]
-  [closed : IsAlgClosed original.pair.ring]
+  /-- The original Huber ring is a field. -/
+  isField : IsField original.pair.ring
+  /-- It is algebraically closed, for the field structure of its own ring operations. -/
+  closed : letI := isField.toField; IsAlgClosed original.pair.ring
   map : maximal ⟶ original
   same_field : Function.Bijective map.original.hom
   maximal_plus : maximal.pair.plus = maximal.pair.powerbounded

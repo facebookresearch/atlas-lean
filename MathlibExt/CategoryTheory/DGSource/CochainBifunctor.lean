@@ -22,7 +22,8 @@ pairwise totalization and its existing maps. When all totalizations exist, this 
 component of Mathlib's totalized bifunctor. The totalized bifunctor preserves zero morphisms.
 
 The identity and composition calculations were previously in
-`MathlibExt.DGSource.Algebra.Homology.Bifunctor.Homotopy`; that module reuses them for homotopy equivalences.
+`TauCeti.Algebra.Homology.Bifunctor.Homotopy` (not ported here); that module reuses them for
+homotopy equivalences.
 All constructions use Joël Riou's Mathlib bifunctor totalization in
 `Mathlib.Algebra.Homology.Bifunctor` and `Mathlib.Algebra.Homology.TotalComplex`.
 -/

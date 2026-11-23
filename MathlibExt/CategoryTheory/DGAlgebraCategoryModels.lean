@@ -37,7 +37,11 @@ universe u v
 
 variable {k : Type u} [CommRing k]
 
-/-- The actual one-object cochain enrichment of a DG algebra. -/
+/-- The actual one-object cochain enrichment of a DG algebra. Composition is the product in the
+native order, `a ≫ b = a * b`. Consequently a DG presheaf on this category (for instance a
+`DGQuasiFunctorModels.RightModule`) satisfies `M (a * b) = M a ∘ M b`: it is a *left* `A`-module.
+Conventional right `A`-modules are presheaves on the category of the opposite DG algebra (with the
+Koszul sign on homogeneous elements). -/
 @[instance_reducible]
 def algebraEnrichment (A : DGAlgebra k) : DGCategory k (PUnit.{u + 1}) where
   Hom _ _ := A.X

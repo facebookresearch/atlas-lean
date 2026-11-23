@@ -52,10 +52,11 @@ def integerEquiv : Integers.{u} ≃+* ℤ := ULift.ringEquiv
 def integerScalars (R : Type u) [CommRing R] : Integers.{u} →+* R :=
   (Int.castRingHom R).comp integerEquiv.toRingHom
 
-/-- Literal scalar restriction of each cochain term and differential. -/
-def integerCochains (R : Type u) [CommRing R] :
+/-- Literal scalar restriction of each cochain term and differential along the integer scalars:
+`SemilinearDGModuleRestrictions.restrictCochains (integerScalars R)`. -/
+abbrev integerCochains (R : Type u) [CommRing R] :
     CochainComplex (ModuleCat.{u} R) ℤ ⥤ CochainComplex (ModuleCat.{u} Integers.{u}) ℤ :=
-  (ModuleCat.restrictScalars (integerScalars R)).mapHomologicalComplex (ComplexShape.up ℤ)
+  SemilinearDGModuleRestrictions.restrictCochains (integerScalars R)
 
 /-- The object type is retained when only its enrichment is restricted. -/
 @[nolint unusedArguments]

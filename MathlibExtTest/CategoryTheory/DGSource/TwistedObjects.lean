@@ -14,8 +14,9 @@ import MathlibExt.CategoryTheory.DGSourceMore.DGTwistedTriangulated
 # Tests for the ported differential graded category library
 
 The cochain complexes of abelian groups form a differential graded category whose differential
-is Mathlib's signed `δ` and whose composition carries the Koszul sign. On a two-term complex
-with a nonzero differential these operations give explicit values, and the graded Leibniz rule
+is Mathlib's signed `δ` and whose composition carries the Koszul sign. On a complex with `ℤ` in
+every degree and exactly one nonzero differential these operations give explicit values, and the
+graded Leibniz rule
 holds for them. The homotopy category of twisted objects over any differential graded category
 carries the instances of the Bondal--Kapranov envelope.
 -/

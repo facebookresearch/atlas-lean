@@ -73,9 +73,16 @@ public def_wanted almostFrobeniusUnit (M : TorsionModel p P π)
 public def_wanted phiEnhancement (M : TorsionModel p P π)
     (F : FrobeniusModel p P π h M) : Enhancement p P π h M F
 
-/-- The actual clopen-idempotent coefficient map on a qualified disconnected chart. -/
-public def_wanted localFpScalars (hP : IsStrictlyTotallyDisconnected p P) :
-    FpScalarModel p P π
+/-- The actual clopen-idempotent coefficient map on a qualified disconnected chart, for a
+pseudouniformizer dividing `p` (without `π ∣ p` no unital map to `A⁺/π` from an `𝔽_p`-algebra
+exists; Mann, Defs. 3.9.10, 3.9.21). -/
+public def_wanted localFpScalars (hdiv : π.element ∣ (p : P.pair.plus))
+    (hP : IsStrictlyTotallyDisconnected p P) : FpScalarModel p P π
+
+/-- The elaborated request keeps the divisibility hypothesis `π ∣ p`. -/
+private def check_localFpScalars (hdiv : π.element ∣ (p : P.pair.plus))
+    (hP : IsStrictlyTotallyDisconnected p P) : DefWanted (FpScalarModel p P π) :=
+  localFpScalars p P π hdiv hP
 
 variable (M : TorsionModel p P π) (F : FrobeniusModel p P π h M)
   (E : Enhancement p P π h M F) (U : UnitInductionModel p P π M)
