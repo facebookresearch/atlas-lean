@@ -37,13 +37,14 @@ example (L : X.Modules) (e : power L 2 ≅ structureModule X) : IsTorsion L :=
 -- semiampleness: both definitions require a positive exponent.
 example (L : X.Modules) : power L 0 = structureModule X := rfl
 
--- On a proper curve the structure sheaf is nef: its degree is zero.
-example (f : X ⟶ Spec (.of k)) [IsProperCurve f] :
+-- On an integral proper curve the structure sheaf is nef: its degree is zero.
+example (f : X ⟶ Spec (.of k)) [IsProperCurve f] [IsIntegral X] :
     IsNefOnCurve f (structureModule X) (isLineBundle_structureModule X) := by
   simp [IsNefOnCurve]
 
 -- Nefness is nonnegativity of the line-bundle degree of `CoherentCurveLinearSeries`.
-example (f : X ⟶ Spec (.of k)) [IsProperCurve f] (L : X.Modules) (hL : IsLineBundle L) :
+example (f : X ⟶ Spec (.of k)) [IsProperCurve f] [IsIntegral X] (L : X.Modules)
+    (hL : IsLineBundle L) :
     IsNefOnCurve f L hL ↔ 0 ≤ degree f L hL := Iff.rfl
 
 -- Bigness asks for linear growth of `h⁰` of the powers, with a positive constant.
