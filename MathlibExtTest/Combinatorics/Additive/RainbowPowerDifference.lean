@@ -60,4 +60,17 @@ example : ¬ ∀ x y z : ZMod 7, x - y = z ^ 2 → ¬ (d₇ x ≠ d₇ y ∧ d�
   revert hmem
   decide
 
+-- Lift the coloring modulo seven to the positive integers. On [2, 7) the color changes only
+-- at the last entry, where 6 has the color of 1.
+example : c₇ 1 ∈ (Finset.Ico 2 7).image (fun n : ℕ => c₇ n) := by
+  apply color_one_dominant_of_rainbowFree_powDiff 3 2 (fun n => c₇ n) _ _ 2 5
+    (by decide) (by decide)
+  · intro j
+    obtain ⟨a, ha⟩ := c₇_surjective j
+    refine ⟨a.val + 7, by omega, ?_⟩
+    simpa only [Nat.cast_add, ZMod.natCast_self, add_zero, ZMod.natCast_zmod_val] using ha
+  · intro x y z _ _ _ h
+    apply c₇_rainbowFree
+    simp [h]
+
 end MathlibExtTest.RainbowPowerDifference

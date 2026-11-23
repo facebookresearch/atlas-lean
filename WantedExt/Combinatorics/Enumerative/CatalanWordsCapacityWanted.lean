@@ -13,9 +13,8 @@ public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.Polynomial.Laurent
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Nat.Choose.Basic
-public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.Combinatorics.Enumerative.CatalanWordsCapacity
 public import MathlibExt.NumberTheory.TrinomialCoefficient
 
 namespace MetaMathlibExt
@@ -38,19 +37,6 @@ public theorem_wanted sum_choose_mul_fib_odd_eq_choose_add_sum (n i : ℕ) (hn :
       (n - 1).choose (i - 2) +
         ∑ j ∈ Finset.Icc i n, ∑ m ∈ Finset.range (n - j + 1),
           (n - m - 2).choose (j - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1))
-
-/-- **A double-sum identity for even-indexed Fibonacci numbers.** Let $F_k$ be the Fibonacci
-numbers, with $F_0 = 0$, $F_1 = 1$ and $F_{k+2} = F_{k+1} + F_k$, and set $F_{-1} = 1$. For every
-natural number $n \ge 1$,
-$$F_{2n} = \sum_{j=1}^{n} \sum_{m=0}^{n-j} \binom{n-m-1}{j-1} F_{2m-1}.$$
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 5 (`integers-2025-A5-lem-5`). -/
-public theorem_wanted fib_two_mul_eq_sum_sum_choose_mul_fib_odd (n : ℕ) (hn : 1 ≤ n) :
-    Nat.fib (2 * n) =
-      ∑ j ∈ Finset.Icc 1 n, ∑ m ∈ Finset.range (n - j + 1),
-        (n - m - 1).choose (j - 1) * (if m = 0 then 1 else Nat.fib (2 * m - 1))
-
 
 open Polynomial LaurentPolynomial
 

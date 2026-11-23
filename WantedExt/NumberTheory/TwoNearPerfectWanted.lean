@@ -24,6 +24,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
 
 namespace MetaMathlibExt
 

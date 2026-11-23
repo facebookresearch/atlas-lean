@@ -15,6 +15,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Logic.Equiv.Fin.Rotate
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.RingTheory.Trace.Basic
+public import MathlibExt.Data.Int.GCD
 
 /-!
 # Necklaces over a group with identity product
@@ -99,15 +100,6 @@ public theorem_wanted sum_div_mul_eq_sum_totient_mul (f g : ℕ → ℚ)
     (hfg : ∀ k, 0 < k → g k = ∑ d ∈ k.divisors, f d) (k : ℕ) (hk : 0 < k) :
     ∑ d ∈ k.divisors, ((k / d : ℕ) : ℚ) * f d =
       ∑ d ∈ k.divisors, (Nat.totient (k / d) : ℚ) * g d
-
-/-- **Divisibility of a product through the gcd.** Let $a, b, c$ be integers with $a$ and $b$ not
-both zero. Then $a$ divides $bc$ if and only if $a / \gcd(a, b)$ divides $c$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 11
-(`jis-2026-26.4.6-lem-11`). -/
-public theorem_wanted int_dvd_mul_iff_div_gcd_dvd (a b c : ℤ) (h : a ≠ 0 ∨ b ≠ 0) :
-    a ∣ b * c ↔ a / (Int.gcd a b : ℤ) ∣ c
 
 /-- **Counting solutions of $x^b = 1$ in a cyclic group.** For natural numbers $a \ge 1$ and
 $b$, the cyclic group of order $a$ has exactly $\gcd(a, b)$ elements $x$ with $x^b = 1$.

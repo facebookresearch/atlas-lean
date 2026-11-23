@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Set.Card
 public import Mathlib.LinearAlgebra.Lagrange
 public import Mathlib.RingTheory.Ideal.Span
+public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
 
 /-!
 # Locally integer polynomial functions
@@ -205,16 +206,6 @@ Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (
 Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
 public theorem_wanted lipSubring_units_eq {U : Set ℤ} (hU : U.Infinite)
     (u : (lipSubring U)ˣ) : u = 1 ∨ u = -1
-
-/-- **Integer polynomials take a large value at a small nonnegative integer.** Let
-$f \in \mathbb{Z}[x]$ have degree $d$. Then there is an integer $x$ with $0 \le x \le d$ such that
-$|f(x)| \ge d!/2^d$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 5 (`integers-2025-A41-lem-5`). -/
-public theorem_wanted exists_factorial_div_two_pow_le_abs_eval (f : ℤ[X]) (d : ℕ)
-    (hf : f.degree = d) :
-    ∃ x ∈ Finset.range (d + 1), (d.factorial : ℚ) / 2 ^ d ≤ |((f.eval (x : ℤ) : ℤ) : ℚ)|
 
 /-- **Exchange formula for interpolation polynomials.** Let $f : \mathbb{Z} \to \mathbb{Z}$, and for
 a finite set $Y \subseteq \mathbb{Z}$ write $f_Y \in \mathbb{Q}[x]$ for the interpolation polynomial

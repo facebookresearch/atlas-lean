@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Fermat
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.NumberTheory.WieferichPrime
+public import MathlibExt.NumberTheory.WieferichOrder
 
 /-!
 # Notes on Jakóbczyk's hypothesis on Fermat numbers

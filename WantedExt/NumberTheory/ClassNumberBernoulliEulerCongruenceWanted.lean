@@ -22,6 +22,7 @@ public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.NumberTheory.JacobiSum.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic
 public import Mathlib.RingTheory.Trace.Defs
+public import MathlibExt.NumberTheory.SlHurwitzNumbers
 
 namespace MetaMathlibExt
 

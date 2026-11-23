@@ -18,6 +18,7 @@ public import Mathlib.RingTheory.DividedPowers.Basic
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.Algebra.DeepPowerSumCongruences
 
 /-!
 # Elementary symmetric functions and deep power-sum congruences
@@ -35,7 +36,8 @@ paper's `e_n(P)` and `polyPowerSum P n` its `p_n(P)`, defined through Newton's i
 finitely many variables (`MvPolynomial σ ℚ`, `σ` finite), which loses nothing for identities
 between them.
 
-Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, is proved in
+Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, and Corollary 24,
+`padicValNat_sum_le_add_padicValNat_multinomial`, are proved in
 `MathlibExt.Algebra.DeepPowerSumCongruences`.
 -/
 
@@ -336,22 +338,6 @@ public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.P
     (s : Finset ι) (r : ι → ℕ) :
     padicValNat p (Nat.multinomial s r) =
       ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
-
-/-- **A valuation bound from Kummer's theorem.** Let $p$ be a prime, let $r_1, \dots, r_k$ be
-natural numbers with sum $m$, and let $j$ be an index with $r_j \ne 0$. Then
-
-$$v_p(m) \le v_p(r_j) + v_p\binom{m}{r_1, \dots, r_k},$$
-
-that is, $v_p(r_j) \ge v_p(m) - v_p\binom{m}{r_1, \dots, r_k}$.
-
-The hypothesis $r_j \ne 0$ is needed because $v_p(0)$ is taken to be $0$: for $(r_1, r_2) = (0, p)$
-the inequality fails at $j = 1$. With the paper's convention $v_p(0) = \infty$ that case is trivial.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 24 (`integers-2024-A46-cor-24`). -/
-public theorem_wanted padicValNat_sum_le_add_padicValNat_multinomial {p : ℕ} [Fact p.Prime]
-    {ι : Type*} (s : Finset ι) (r : ι → ℕ) {j : ι} (hj : j ∈ s) (hr : r j ≠ 0) :
-    padicValNat p (∑ i ∈ s, r i) ≤ padicValNat p (r j) + padicValNat p (Nat.multinomial s r)
 
 /-- **Powers of elements congruent modulo a divided-power ideal.** Let $p$ be a prime, let $A$ be
 a commutative ring in which every natural number not divisible by $p$ is a unit (a
