@@ -16,7 +16,7 @@ This fixture detects replacing the integral ring of definition by Z[1/2]. -/
 
 open MathlibExt.RingTheory.AdicRationalRingModels
 
-private abbrev Definition := definitionAlgebra ℤ {(2 : ℤ)} 2
+private noncomputable abbrev Definition := definitionAlgebra ℤ {(2 : ℤ)} 2
 private abbrev PeriodIdeal : Ideal ℤ := Ideal.span {(2 : ℤ)}
 
 private noncomputable def integralEquiv : ℤ ≃ₐ[ℤ] Definition := by
