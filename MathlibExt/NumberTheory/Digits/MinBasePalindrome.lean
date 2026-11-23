@@ -19,6 +19,7 @@ module
 
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Defs
+public import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.Nat.Digits.Div
 
 /-!
@@ -28,7 +29,8 @@ Let `b ≥ 2`. If the base-`b` digits of a natural number `N` form a palindrome 
 of digits, then `b + 1` divides `N` (`MetaMathlibExt.succ_dvd_of_palindrome_even_length`). The
 base-`b` digits of `N` are Mathlib's little-endian list `Nat.digits b N`, and `N` is a palindrome
 in base `b` when this list is a `List.Palindrome`. For `b = 10` the theorem is Mathlib's
-`Nat.eleven_dvd_of_palindrome`.
+`Nat.eleven_dvd_of_palindrome`. If `N = p ^ n` for a prime `p`, every divisor of `N` is a power
+of `p`, so the base has the form `p ^ x - 1`.
 
 ## Proof outline
 
@@ -79,5 +81,20 @@ theorem succ_dvd_of_palindrome_even_length (N b : ℕ) (hb : 2 ≤ b)
   -- Since `b ≡ -1 [ZMOD b + 1]`, `N` is congruent to that alternating sum modulo `b + 1`.
   rw [Nat.dvd_iff_dvd_ofDigits (b + 1) b (-1) (by simp) N, Nat.ofDigits_neg_one, h0]
   exact dvd_zero _
+
+/-- **Even-length palindromic prime powers have base one less than a power of the prime.** Let
+$p$ be a prime and let $n$ and $b \ge 2$ be natural numbers. If the base-$b$ representation of
+$p^n$ is a palindrome with an even number of digits, then $b = p^x - 1$ for some natural number
+$x$.
+
+Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
+Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 6
+(`integers-2024-A69-thm-6`). -/
+theorem base_eq_prime_pow_sub_one_of_palindrome (p n b : ℕ) (hp : p.Prime)
+    (hb : 2 ≤ b) (hpal : (Nat.digits b (p ^ n)).Palindrome)
+    (he : Even (Nat.digits b (p ^ n)).length) : ∃ x, b = p ^ x - 1 := by
+  have hdvd := succ_dvd_of_palindrome_even_length (p ^ n) b hb hpal he
+  obtain ⟨x, _, hx⟩ := (Nat.dvd_prime_pow hp).mp hdvd
+  exact ⟨x, Nat.eq_sub_of_add_eq hx⟩
 
 end MetaMathlibExt
