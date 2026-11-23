@@ -24,7 +24,8 @@ only, and scoped to those synced files, so a pull request fails only if it touch
   the pin only with the `formal-math-sync` label (pushes and merge groups are maintainer-only). In CI the base is the push's
   `before` commit, the merge group's base, or for a pull request the merge ref's first parent,
   fetched if the checkout is shallow (unreadable fails closed); locally the merge-base with
-  origin/main, else the comparison is skipped with a warning;
+  origin/main (including the incoming parent during a local merge), falling back to HEAD's
+  first parent;
 - files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
 A pull request that changes or deletes a synced or diverged file records that with
@@ -512,7 +513,8 @@ def ci_base(root: Path) -> tuple[str | None, str]:
     return first_parent(root), "first parent of HEAD"
 
 
-def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
+def base_commit(root: Path, base: str | None,
+                merge_head: str | None = None) -> tuple[str | None, str | None]:
     """The commit whose manifest this tree is compared with: (commit, None) or (None, why not)."""
     if git(root, "rev-parse", "--show-toplevel") != str(root.resolve()):
         return None, "not a git checkout"
@@ -526,7 +528,9 @@ def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
         return None, f"cannot read the base commit ({source})"
-    for candidate in (git(root, "merge-base", "HEAD", "origin/main"), first_parent(root)):
+    # With multiple heads, git finds the base of origin/main and their hypothetical merge.
+    heads = ("HEAD", merge_head) if merge_head else ("HEAD",)
+    for candidate in (git(root, "merge-base", "origin/main", *heads), first_parent(root)):
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
     return None, "no origin/main merge-base and no readable parent commit"
@@ -574,13 +578,14 @@ def row_transition_problems(path: str, before: dict | None, row: dict, short: st
     return []
 
 
-def copy_and_rename_status(root: Path, commit: str) -> str | None:
+def copy_and_rename_status(root: Path, commit: str, *, staged: bool) -> str | None:
     """`git diff --name-status -z` of the roots with rename (50%) and near-copy (90%) detection,
     copies searched from every base file, not only modified ones. None if git fails or skips
     detection (too many files for the limit)."""
+    revisions = ("--cached", commit) if staged else (commit, "HEAD")
     try:
         done = subprocess.run(["git", "-C", str(root), "diff", "--no-ext-diff", "-M", "-C90%", "--find-copies-harder",
-                               "-l100000", "--name-status", "-z", commit, "HEAD", "--", *ROOTS],
+                               "-l100000", "--name-status", "-z", *revisions, "--", *ROOTS],
                               capture_output=True, text=True, timeout=600)
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -604,7 +609,10 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
             return [f"manifest: {why}; cannot compare with the base manifest"], []
         return [], [f"skipping the base-manifest comparison: {why}"]
 
-    commit, why = base_commit(root, base)
+    merge_head = None
+    if not os.environ.get("GITHUB_ACTIONS"):
+        merge_head = git(root, "rev-parse", "--verify", "MERGE_HEAD")
+    commit, why = base_commit(root, base, merge_head)
     if commit is None:
         return unreadable(why or "no base commit")
     if symlinked_component(root, manifest_path):
@@ -638,9 +646,10 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
     tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
-    moves = copy_and_rename_status(root, commit)
+    moves = copy_and_rename_status(root, commit, staged=bool(merge_head))
     if moves is None:
-        found, note = unreadable(f"cannot diff base {commit} with HEAD for renames")
+        target = "the index" if merge_head else "HEAD"
+        found, note = unreadable(f"cannot diff base {commit} with {target} for renames")
         problems += found
         warnings = note
     else:

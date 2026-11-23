@@ -1,4 +1,4 @@
-# Eneström–Kakeya theorem
+# Eneström–Kakeya bound for nonnegative nondecreasing coefficients
 
 Let $a_0 + a_1 x + \cdots + a_n x^n$ be a nonzero real
 polynomial of degree $n$ with $0 \le a_0 \le a_1 \le \cdots \le a_n$. Then every complex root $z$

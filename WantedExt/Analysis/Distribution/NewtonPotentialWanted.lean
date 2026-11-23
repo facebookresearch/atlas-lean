@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Distribution.TemperedDistribution
-public import Mathlib.Analysis.InnerProductSpace.Laplacian
+public import MathlibExt.Analysis.Distribution.NewtonPotential
 
 @[expose] public section
 
@@ -33,19 +33,5 @@ public theorem_wanted exists_fundamental_solution_laplacian
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
     (hdim : Module.finrank ℝ E = 3) :
     ∃ N : 𝓢'(E, ℂ), Δ N = TemperedDistribution.delta (0 : E)
-
-/--
-**The Newton potential is harmonic away from the origin.** Let $E$ be a real inner product space
-of dimension $3$, and define $N : E \to \mathbb{R}$ by $N(y) = -1/(4\pi\|y\|)$ for $y \neq 0$ and
-$N(0) = 0$. Then the Laplacian of $N$ vanishes at every point $x \neq 0$ of $E$.
-
-Sources: Mathlib `docs/undergrad.yaml`, section "Distribution calculus" /
-"Applications" / entry "fundamental solution of the Laplacian";
-L. Evans, *Partial Differential Equations*, §2.2.
--/
-public theorem_wanted newton_potential_harmonic
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
-    (hdim : Module.finrank ℝ E = 3) (x : E) (hx : x ≠ 0) :
-    (Δ (fun (y : E) => (-((4 * Real.pi * ‖y‖))⁻¹ : ℝ)) : E → ℝ) x = 0
 
 end MathlibExt.Analysis.Distribution.NewtonPotentialWanted
