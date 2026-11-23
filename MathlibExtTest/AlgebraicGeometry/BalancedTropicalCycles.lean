@@ -773,4 +773,20 @@ example : latticeIndex (kernelLine ![0, 1]) (kernelLine ![2, -1]) = 2 := by
   rw [latticeIndex, hsup, AddSubgroup.index_ker, AddMonoidHom.range_eq_top_of_surjective f hsurj]
   simp
 
+/-- A line meets itself non-transversally: the common lattice has infinite index, recorded as `0`,
+so such a pair contributes nothing to a stable multiplicity. -/
+example : latticeIndex (kernelLine ![0, 1]) (kernelLine ![0, 1]) = 0 := by
+  let g : Lattice 2 →+ ℤ :=
+    { toFun := fun v ↦ v 1
+      map_zero' := rfl
+      map_add' := fun _ _ ↦ rfl }
+  have hker : (kernelLine ![0, 1]).lattice = g.ker := by
+    ext v
+    rw [kernelLine_mem_lattice]
+    simp [g]
+  have hsurj : Function.Surjective g := fun z ↦ ⟨![0, z], by simp [g]⟩
+  rw [latticeIndex, sup_idem, hker, AddSubgroup.index_ker,
+    AddMonoidHom.range_eq_top_of_surjective g hsurj]
+  simp
+
 end MathlibExtTest.BalancedTropicalCycles
