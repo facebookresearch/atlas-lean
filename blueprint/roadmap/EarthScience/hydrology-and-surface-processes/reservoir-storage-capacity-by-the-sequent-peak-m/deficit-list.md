@@ -1,5 +1,5 @@
-# Deficit List
+# Signed deficits of a release and inflow record
 
-The finite list of signed hydrologic deficits `dᵢ = Rᵢ - Qᵢ`
-(required release minus inflow, in one fixed volume unit) over
-the time steps `0, …, n - 1`, in time order.
+For required releases `R` and inflows `Q` over the time steps `0, …, n - 1`, in one fixed volume
+unit, the deficit list is `[d₀, …, d_{n-1}]` with `dᵢ = Rᵢ - Qᵢ`: the signed deficits (required
+release minus inflow) in time order.

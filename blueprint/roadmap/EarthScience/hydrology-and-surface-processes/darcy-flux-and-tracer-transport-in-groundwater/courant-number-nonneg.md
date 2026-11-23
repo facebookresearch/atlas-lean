@@ -1,4 +1,4 @@
-# Courant Number nonneg
+# Courant number is nonnegative for nonnegative step and positive width
 
-The Courant number is nonnegative for a nonnegative time step
-and positive cell width.
+For every Darcy discharge `q` and porosity `n`, a time step `dt ≥ 0` and a cell width `dx > 0`, the
+Courant number `|q / n| * dt / dx` is nonnegative.

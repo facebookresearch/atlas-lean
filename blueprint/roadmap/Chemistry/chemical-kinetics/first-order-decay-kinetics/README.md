@@ -1,5 +1,5 @@
 # First-order decay kinetics
 
-- [First Order decay has Deriv At](first-order-decay-has-deriv-at.md)
-- [First Order decay initial](first-order-decay-initial.md)
-- [First Order decay consumption](first-order-decay-consumption.md)
+- [Exponential decay solves the first-order rate law](first-order-decay-has-deriv-at.md)
+- [First-order decay starts at the initial concentration](first-order-decay-initial.md)
+- [Consumption under first-order decay equals the drop in concentration](first-order-decay-consumption.md)

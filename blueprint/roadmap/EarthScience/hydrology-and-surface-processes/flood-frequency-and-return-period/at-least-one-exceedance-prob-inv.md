@@ -1,9 +1,7 @@
-# At least one exceedance prob inv
+# At least one exceedance in n independent years in terms of T = 1/p
 
-At least one exceedance in `n` years, displayed with the
-reciprocal `T = 1 / p` for an annual exceedance probability
-`p` with `0 < p ≤ 1`; `T` is measured in years. Under the same
-independence and constant-probability assumptions as
-`at_least_one_exceedance_prob`, the probability is
-`1 - (1 - 1 / T) ^ n`. This display defines no return-period
-API.
+Let `μ` be a probability measure and `p` an annual exceedance probability with `0 < p ≤ 1`, and
+let `T = 1 / p`, measured in years. If the no-exceedance events `F i` of the years
+`i = 0, …, n - 1` are measurable and independent under `μ`, and each has probability
+`μ(F i) = 1 - p`, then the probability of an exceedance in at least one of the `n` years is
+`μ(⋃ᵢ (F i)ᶜ) = 1 - (1 - 1 / T) ^ n`.

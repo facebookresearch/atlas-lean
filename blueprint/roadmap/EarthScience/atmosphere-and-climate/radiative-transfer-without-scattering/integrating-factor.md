@@ -1,5 +1,6 @@
-# Integrating factor
+# Integrating-factor identity for absorption-only radiative transfer
 
-Integrating-factor identity for `I' = -kappa*I + j`: with
-`mu(s) = exp(∫ x in 0..s, kappa x)`, the weighted endpoint satisfies
-`mu(L) * I(L) = I0 + ∫ s in 0..L, mu(s) * j(s)`.
+Let the absorption coefficient `κ` and the source `j` be continuous, and let the intensity `I`
+be differentiable at every real `t` with `I'(t) = -κ(t) I(t) + j(t)` and `I(0) = I0`. With the
+integrating factor `μ(s) = exp(∫₀ˢ κ(x) dx)`, for every `L ≥ 0`,
+`μ(L) I(L) = I0 + ∫₀ᴸ μ(s) j(s) ds`.

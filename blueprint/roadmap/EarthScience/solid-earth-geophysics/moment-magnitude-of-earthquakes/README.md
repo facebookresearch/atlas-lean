@@ -1,6 +1,6 @@
 # Moment magnitude of earthquakes
 
-- [Moment Magnitude](moment-magnitude.md)
-- [Moment Magnitude difference](moment-magnitude-difference.md)
-- [Moment Magnitude scaled](moment-magnitude-scaled.md)
-- [Moment Magnitude one](moment-magnitude-one.md)
+- [Moment magnitude of an earthquake](moment-magnitude.md)
+- [Scaling the seismic moment shifts the moment magnitude](moment-magnitude-difference.md)
+- [Moment magnitude of a scaled seismic moment](moment-magnitude-scaled.md)
+- [Moment magnitude at unit moment](moment-magnitude-one.md)

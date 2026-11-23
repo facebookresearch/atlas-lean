@@ -1,3 +1,4 @@
-# Sediment Depth sediment Age
+# Age then depth returns the original depth
 
-Conversely, the sediment of the age found at depth `d` lies at depth `d`.
+With accumulation speed `v > 0`, the sediment at depth `d` has age `d / v`, and the sediment of
+that age lies at depth `d`: `v * (d / v) = d` for every real `d`.

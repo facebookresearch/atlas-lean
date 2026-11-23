@@ -1,6 +1,5 @@
-# Two box energy derivative
+# Energy dissipation identity of the unit two-box model
 
-Anomaly-energy derivative identity: with `a = Ts - 1`, the
-derivative of `E = ((Ts - 1) ^ 2 + (Td - 1) ^ 2) / 2` along the flow,
-`(Ts - 1) * Ts' + (Td - 1) * Td'`, equals
-`-((Ts - 1) ^ 2 + (Ts - Td) ^ 2)`.
+For real numbers `Ts`, `Td`, `Ts'` and `Td'` with `Ts' = 1 - Ts - (Ts - Td)` and
+`Td' = Ts - Td`, the rate of change of the energy `E = ((Ts - 1)² + (Td - 1)²) / 2` along the
+flow, `(Ts - 1) Ts' + (Td - 1) Td'`, equals `-((Ts - 1)² + (Ts - Td)²)`.

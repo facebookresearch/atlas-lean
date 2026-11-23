@@ -1,7 +1,7 @@
 # Static stability of a dry atmosphere
 
-- [Potential temp buoyancy accel](potential-temp-buoyancy-accel.md)
-- [Brunt vaisala sq sign](brunt-vaisala-sq-sign.md)
-- [Buoyancy deriv rewrite](buoyancy-deriv-rewrite.md)
-- [Static-stability oscillator](static-stability-oscillator.md)
-- [Static stability oscillator eq](static-stability-oscillator-eq.md)
+- [Buoyancy acceleration of a displaced dry parcel](potential-temp-buoyancy-accel.md)
+- [Sign of the squared Brunt–Väisälä frequency of a dry atmosphere](brunt-vaisala-sq-sign.md)
+- [Buoyancy law rewritten with the squared buoyancy frequency](buoyancy-deriv-rewrite.md)
+- [Acceleration of a displaced parcel is minus N² times its displacement](static-stability-oscillator.md)
+- [Parcel displacement satisfies the static-stability oscillator equation](static-stability-oscillator-eq.md)

@@ -1,4 +1,5 @@
-# Unstable witness
+# Linear amplifying feedback has the repelling sign
 
-Unstable branch witness: for `F(T) = k*(T - Tstar)` with `k > 0`,
-the product is positive for `T ≠ Tstar` (repelling, not attracting).
+For the linear feedback `F(T) = k (T - T*)` with `k > 0`, every `T ≠ T*` gives
+`(T - T*) F(T) = (T - T*) (k (T - T*)) > 0`: the restoring sign condition fails, and `T*` is
+repelling, not attracting.

@@ -1,59 +1,59 @@
 # Radial flow to wells, well sources and fractional flow
 
-## A. Radial Darcy head profile
+## Radial Darcy head profile
 
-- [Radial Darcy Head](radial-darcy-head.md)
-- [Radial Darcy head sub](radial-darcy-head-sub.md)
-- [Radial Darcy Head solves](radial-darcy-head-solves.md)
+- [Logarithmic radial Darcy head profile](radial-darcy-head.md)
+- [Radial Darcy head difference on an annulus around a well](radial-darcy-head-sub.md)
+- [The logarithmic head profile carries the prescribed discharge](radial-darcy-head-solves.md)
 
-## B. Matching the Thiem profile
+## Matching the Thiem profile
 
-- [Thiem Profile outward discharge](thiem-profile-outward-discharge.md)
-- [Radial Darcy head sub eq thiem](radial-darcy-head-sub-eq-thiem.md)
+- [The Thiem rate is minus the outward discharge](thiem-profile-outward-discharge.md)
+- [The radial Darcy head difference is the Thiem one at the reversed rate](radial-darcy-head-sub-eq-thiem.md)
 
-## C. Rejected inputs
+## Rejected inputs
 
-- [Radial Darcy no head at axis](radial-darcy-no-head-at-axis.md)
-- [Radial Discharge upgradient of neg](radial-discharge-upgradient-of-neg.md)
+- [No head finite at the axis carries a nonzero radial discharge](radial-darcy-no-head-at-axis.md)
+- [A negative transmissivity sends the discharge up the head gradient](radial-discharge-upgradient-of-neg.md)
 
-## D. Cells with wells
+## Cells with wells
 
-- [Well Cell Rate](well-cell-rate.md)
-- [Face Enthalpy Flux](face-enthalpy-flux.md)
-- [Well Energy Rate](well-energy-rate.md)
+- [Cell rate of a finite-volume chain with wells](well-cell-rate.md)
+- [Enthalpy flux through a face](face-enthalpy-flux.md)
+- [Well energy rate of a cell](well-energy-rate.md)
 - [Finite-volume ledger with wells](stock-add-mul-well-cell-rate.md)
 
-## E. Mass and energy ledgers
+## Mass and energy ledgers
 
 - [Production enthalpy from the stored cell state](well-energy-rate-eq-stored.md)
-- [Well and boundary sources in the energy ledger](well-boundary-ledger.md)
+- [Mass and energy ledgers with well and boundary sources](well-boundary-ledger.md)
 
-## F. Fractional flow
+## Fractional flow
 
-- [Frac Flow](frac-flow.md)
-- [Frac Flow Deriv](frac-flow-deriv.md)
-- [Frac Flow Bound](frac-flow-bound.md)
-- [Frac Flow zero one](frac-flow-zero-one.md)
-- [Has Deriv At frac Flow](has-deriv-at-frac-flow.md)
-- [Frac Flow Deriv mem Icc](frac-flow-deriv-mem-icc.md)
-- [Frac Flow sub mem Icc](frac-flow-sub-mem-icc.md)
-- [Monotone On frac Flow](monotone-on-frac-flow.md)
+- [Water fractional flow with quadratic relative permeabilities](frac-flow.md)
+- [Fractional-flow derivative formula](frac-flow-deriv.md)
+- [Bound on the fractional-flow derivative](frac-flow-bound.md)
+- [End values of the fractional flow](frac-flow-zero-one.md)
+- [The fractional flow is differentiable for positive viscosities](has-deriv-at-frac-flow.md)
+- [Fractional-flow slope is nonnegative and bounded on the unit interval](frac-flow-deriv-mem-icc.md)
+- [Lipschitz bound for the fractional flow on the unit interval](frac-flow-sub-mem-icc.md)
+- [The fractional flow is nondecreasing on the unit interval](monotone-on-frac-flow.md)
 
-## G. Normalized saturation and the CFL number
+## Normalized saturation and the CFL number
 
-- [Norm Sat](norm-sat.md)
-- [Cfl Number](cfl-number.md)
-- [Norm Sat mem Icc iff](norm-sat-mem-icc-iff.md)
+- [Normalized water saturation](norm-sat.md)
+- [CFL number of the normalized upwind update](cfl-number.md)
+- [Normalized saturation in the unit interval exactly on the mobile range](norm-sat-mem-icc-iff.md)
 
-## H. The upwind step: monotonicity, interval and balance
+## The upwind step: monotonicity, interval and balance
 
-- [Upwind Update](upwind-update.md)
-- [Upwind Step](upwind-step.md)
-- [Sat Step](sat-step.md)
-- [Monotone scheme](upwind-update-mono.md)
-- [Interval preservation](upwind-step-mem-icc.md)
-- [Rescaling](norm-sat-sat-step.md)
-- [Interval preservation for the saturations](sat-step-mem-icc.md)
-- [Conservative form](upwind-step-eq-discrete-balance.md)
-- [Inlet-minus-outlet balance (normalized)](sum-upwind-step.md)
+- [Local upwind update of a cell](upwind-update.md)
+- [Normalized upwind step on a chain with inflow](upwind-step.md)
+- [Physical upwind step of the water saturations](sat-step.md)
+- [The upwind update is monotone under the CFL condition](upwind-update-mono.md)
+- [The upwind step keeps normalized saturations in the unit interval](upwind-step-mem-icc.md)
+- [The physical saturation step normalizes to the upwind step](norm-sat-sat-step.md)
+- [The saturation step keeps saturations in the mobile range](sat-step-mem-icc.md)
+- [The upwind step in conservative finite-volume form](upwind-step-eq-discrete-balance.md)
+- [Inlet-minus-outlet balance of the normalized saturations](sum-upwind-step.md)
 - [Inlet-minus-outlet water volume balance](sat-step-volume-balance.md)

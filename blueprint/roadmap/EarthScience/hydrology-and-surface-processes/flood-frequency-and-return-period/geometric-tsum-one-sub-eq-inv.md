@@ -1,4 +1,4 @@
-# Geometric tsum one sub eq inv
+# The geometric series with ratio 1 - p sums to 1/p
 
-The geometric series `∑' n, (1 - p) ^ n` equals `1 / p` for `0 < p ≤ 1`: Mathlib's
-`tsum_geometric_of_lt_one` at `r = 1 - p`, with the limit written as `1 / p`.
+For a real number `p` with `0 < p ≤ 1`, the geometric series `∑ (1 - p) ^ n`, summed over
+`n = 0, 1, 2, …`, has sum `1 / p`; its ratio `1 - p` lies in `[0, 1)`.

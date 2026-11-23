@@ -1,6 +1,6 @@
-# Missing ray nullspace
+# A cell crossed by no ray is invisible: a two-by-two example
 
-Missing-ray cell, as a calculation for the displayed matrix
-`!![1, 0; 0, 0]`: its second column is zero (no ray crosses cell 1), so
-the slowness perturbation `![0, 1]` of that cell is invisible, while
-`![1, 0]` is seen.
+For the real ray-length matrix `A` with rows `(1, 0)` and `(0, 0)`, whose second column is zero
+(no ray crosses the second cell), `A (0, 1) = (0, 0)` and `A (1, 0) = (1, 0)`: a slowness
+perturbation of the second cell does not change the travel times, while one of the first cell
+does.

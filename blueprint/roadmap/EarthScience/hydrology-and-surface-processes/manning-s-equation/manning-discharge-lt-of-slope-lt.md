@@ -1,4 +1,5 @@
-# Manning Discharge lt of slope lt
+# Manning discharge strictly increases with slope
 
-For positive roughness, area, and hydraulic radius, Manning discharge
-strictly increases with slope, comparing nonnegative slopes.
+For a roughness `n > 0`, a flow area `A > 0` and a hydraulic radius `R > 0`, and slopes
+`0 ≤ S₁ < S₂`, the Manning discharge `Q(S) = (1 / n) * A * R ^ (2 / 3) * √S` satisfies
+`Q(S₁) < Q(S₂)`.

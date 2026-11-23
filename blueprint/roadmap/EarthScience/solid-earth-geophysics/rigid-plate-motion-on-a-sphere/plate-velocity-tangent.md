@@ -1,4 +1,5 @@
-# Plate velocity tangent
+# Rigid plate velocity is tangent to the sphere
 
-Rigid plate velocity is tangent to the sphere: for angular velocity `ω` and position `r`,
-the velocity `v = ω ⨯₃ r` satisfies `v ⬝ᵥ r = 0`.
+For every angular velocity `ω` and position `r` in `ℝ³`, the rigid plate velocity `v = ω × r` is
+orthogonal to the position: `v · r = (ω × r) · r = 0`, so it is tangent to the sphere through
+`r`.

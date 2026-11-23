@@ -1,4 +1,4 @@
-# Boussinesq density deriv
+# Vertical gradient of a linear density profile
 
-The vertical gradient of the incompressible Boussinesq profile
-`rho(z) = rho0 - beta * z` is `-beta` everywhere.
+For all real `ρ0` and `β`, the incompressible Boussinesq profile `ρ(z) = ρ0 - β z` is
+differentiable at every height `z` with gradient `ρ'(z) = -β`.

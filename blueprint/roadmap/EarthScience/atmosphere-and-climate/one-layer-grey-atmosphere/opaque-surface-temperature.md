@@ -1,5 +1,5 @@
-# Opaque surface temperature
+# An opaque atmosphere gives Ts⁴ = 2 Te⁴
 
-Opaque limit `eps = 1`: the atmosphere balance and the
-top-of-atmosphere balance give `Ts^4 = 2 * Te^4`. This is
-`surface_temperature` at `eps = 1`.
+For `σ > 0` and emissivity `ε = 1`, the atmosphere balance `2 σ Ta⁴ = σ Ts⁴` and the
+top-of-atmosphere balance `σ Te⁴ = (1 - 1) σ Ts⁴ + σ Ta⁴` give `Ts⁴ = 2 Te⁴`. This is the
+surface formula `Ts⁴ = Te⁴ / (1 - ε / 2)` at `ε = 1`.

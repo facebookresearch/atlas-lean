@@ -1,5 +1,5 @@
-# Transmission mul layers
+# Beer–Lambert transmission multiplies across finitely many layers
 
-Beer-Lambert transmission multiplies across layers: with total
-optical depth `τ = ∑ τᵢ`, transmission `exp(-τ)` is the product of the
-per-layer transmissions `exp(-τᵢ)`.
+For `n` layers with optical depths `τ₀, …, τₙ₋₁` (any real numbers), the Beer–Lambert
+transmission `exp(-τ)` of the total optical depth `τ = τ₀ + ⋯ + τₙ₋₁` is the product of the
+layer transmissions: `exp(-∑ᵢ τᵢ) = ∏ᵢ exp(-τᵢ)`.

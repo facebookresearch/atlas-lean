@@ -1,7 +1,6 @@
-# Boussinesq parcel oscillator
+# A displaced Boussinesq parcel obeys the buoyancy oscillator equation
 
-Parcel oscillator: if `v` is the parcel velocity, `zeta' = v` near
-`t` (`hzeta`), and the acceleration `v'` at `t` is the buoyancy
-acceleration from the density contrast (`hbuoy`), then the displacement
-satisfies the oscillator equation `zeta'' t = -(g * beta / rho0) * zeta t`,
-where `zeta''` is the derivative of `deriv zeta`.
+Let `ρ0 ≠ 0`. If the displacement `ζ` is differentiable with `ζ' = v` at every time near `t`,
+and the velocity `v` is differentiable at `t` with the buoyancy acceleration
+`v'(t) = -g (ρ0 - (ρ0 - β ζ(t))) / ρ0`, then `ζ'` is differentiable at `t` with
+`ζ''(t) = -(g β / ρ0) ζ(t)`.

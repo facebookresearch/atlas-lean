@@ -1,8 +1,4 @@
-# Isochron dating
+# A positive isochron slope inverts to a nonnegative age
 
-Invert a positive admissible slope to an age: for decay constant
-`λ > 0` and admissible slope `m > 0`, the age `log (1 + m) / λ` is
-nonnegative and its slope `exp (λ * age) - 1` recovers `m`. This is the
-forward direction of the slope-age inversion (the parent isochron
-theorem proves the reverse direction, from a slope built from samples
-to its age).
+For a decay constant `λ > 0` and a slope `m > 0`, the age `a = log (1 + m) / λ` is nonnegative
+and its isochron slope recovers `m`: `exp (λ * a) - 1 = m`.

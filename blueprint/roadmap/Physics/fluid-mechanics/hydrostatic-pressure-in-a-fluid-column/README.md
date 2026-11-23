@@ -1,13 +1,13 @@
 # Hydrostatic pressure in a fluid column
 
-## A. Height coordinates
+## Height coordinates
 
-- [Hydrostatic pressure](hydrostatic-pressure.md)
+- [Hydrostatic pressure profile in height coordinates](hydrostatic-pressure.md)
 
-## B. Depth coordinates
+## Depth coordinates
 
-- [Hydrostatic pressure depth](hydrostatic-pressure-depth.md)
+- [Hydrostatic pressure profile in depth coordinates](hydrostatic-pressure-depth.md)
 
-## C. Physical regime
+## Physical regime
 
-- [Hydrostatic pressure physical](hydrostatic-pressure-physical.md)
+- [Hydrostatic pressure grows with depth from its positive surface value](hydrostatic-pressure-physical.md)

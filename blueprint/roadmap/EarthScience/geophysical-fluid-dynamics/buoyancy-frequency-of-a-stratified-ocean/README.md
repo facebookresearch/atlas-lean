@@ -1,9 +1,9 @@
 # Buoyancy frequency of a stratified ocean
 
-- [Boussinesq buoyancy accel](boussinesq-buoyancy-accel.md)
-- [Brunt vaisala sq pos](brunt-vaisala-sq-pos.md)
-- [Boussinesq parcel oscillator](boussinesq-parcel-oscillator.md)
-- [Boussinesq density deriv](boussinesq-density-deriv.md)
-- [Neg div mul deriv linear profile](neg-div-mul-deriv-linear-profile.md)
-- [Brunt vaisala sq sign ocean](brunt-vaisala-sq-sign-ocean.md)
-- [Brunt vaisala from gradient](brunt-vaisala-from-gradient.md)
+- [Buoyancy acceleration of a displaced Boussinesq parcel](boussinesq-buoyancy-accel.md)
+- [Stable stratification gives a positive squared buoyancy frequency](brunt-vaisala-sq-pos.md)
+- [A displaced Boussinesq parcel obeys the buoyancy oscillator equation](boussinesq-parcel-oscillator.md)
+- [Vertical gradient of a linear density profile](boussinesq-density-deriv.md)
+- [Algebraic identity for the buoyancy frequency of a linear profile](neg-div-mul-deriv-linear-profile.md)
+- [Sign of the squared buoyancy frequency matches the sign of β](brunt-vaisala-sq-sign-ocean.md)
+- [Buoyancy frequency of a linear profile and its stability signs](brunt-vaisala-from-gradient.md)

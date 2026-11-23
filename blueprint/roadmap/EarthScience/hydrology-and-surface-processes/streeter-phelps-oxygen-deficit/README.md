@@ -1,13 +1,13 @@
 # Streeter–Phelps oxygen deficit
 
-## A. BOD decay
+## BOD decay
 
-- [Bod decay has Deriv At](bod-decay-has-deriv-at.md)
+- [Exponential decay solves the BOD equation](bod-decay-has-deriv-at.md)
 
-## B. Oxygen deficit, unequal rates
+## Oxygen deficit, unequal rates
 
-- [Oxygen deficit has Deriv At](oxygen-deficit-has-deriv-at.md)
+- [The Streeter–Phelps sag curve solves the deficit equation](oxygen-deficit-has-deriv-at.md)
 
-## C. Oxygen deficit, equal rates
+## Oxygen deficit, equal rates
 
-- [Oxygen deficit equal Rate has Deriv At](oxygen-deficit-equal-rate-has-deriv-at.md)
+- [The equal-rate Streeter–Phelps deficit solves the deficit equation](oxygen-deficit-equal-rate-has-deriv-at.md)

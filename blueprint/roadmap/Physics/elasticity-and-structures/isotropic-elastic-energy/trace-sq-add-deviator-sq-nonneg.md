@@ -1,6 +1,6 @@
-# Trace sq add deviator sq nonneg
+# The bulk-plus-deviatoric quadratic form is nonnegative
 
-Algebraic lemma: `(K/2) * (tr ε)^2 + μ * ∑ᵢⱼ (dev εᵢⱼ)^2` with
-`dev εᵢⱼ = εᵢⱼ - (tr ε / 3) * (if i = j then 1 else 0)` is nonnegative for `K, μ ≥ 0`,
-for every `3 × 3` array `ε`. For the elastic energy of a strain, see
-`elastic_energy_nonneg`.
+For every real `3 × 3` array `ε`, symmetric or not, and moduli `K ≥ 0` and `μ ≥ 0`,
+`(K/2) (tr ε)² + μ ∑ᵢⱼ (dev ε)ᵢⱼ² ≥ 0`, where `(dev ε)ᵢⱼ = εᵢⱼ - (tr ε / 3) δᵢⱼ` is the
+deviator. For the small strain of a displacement gradient this is the
+[nonnegativity of the isotropic elastic energy](elastic-energy-nonneg.md).

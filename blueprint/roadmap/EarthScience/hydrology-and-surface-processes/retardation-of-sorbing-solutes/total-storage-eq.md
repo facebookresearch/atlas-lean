@@ -1,3 +1,4 @@
-# Total storage eq
+# Total storage in factored form
 
-Total storage equals `(phi + rho_b * Kd) * c`.
+For all real `phi`, `rho_b`, `Kd` and `c`, the [total storage](total-storage.md)
+`phi * c + rho_b * (Kd * c)` equals `(phi + rho_b * Kd) * c`.

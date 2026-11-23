@@ -1,10 +1,10 @@
-# Footing Resultant Force
+# Resultant force of the Winkler contact pressure
 
-Resultant force per unit out-of-plane length from the affine contact
-pressure `p (x) = ks * (a + b * x)` on `[-B / 2, B / 2]`. Here `ks` is the
-subgrade modulus (pressure/length, F/L³), `a` is uniform settlement (L),
-`b` is small rotation (rad), `x` is the lateral coordinate from the
-footing center (L), and `B` is footing width (L). The force is F/L.
-Physical regime: `B > 0`, `ks > 0`, rigid footing in full Winkler
-contact, integrated without a no-tension cutoff. The identity holds for
-all real inputs as an oriented interval integral.
+For a subgrade modulus `k_s`, a uniform settlement `a`, a small rotation `b` and a footing width
+`B`, all real, the resultant force per unit out-of-plane length of the affine contact pressure
+`p(x) = k_s (a + b x)`, with `x` the lateral coordinate from the footing centre, is the oriented
+integral `F = ∫_{-B/2}^{B/2} k_s (a + b x) dx`. Units: `k_s` is a pressure per length (a force per
+length cubed), `a`, `x` and `B` are lengths, `b` is an angle in radians, and `F` is a force per
+length. The physical regime is `B > 0` and `k_s > 0`, a rigid footing in full Winkler contact,
+integrated without a no-tension cutoff. For `B < 0` the lower bound `-B/2` exceeds the upper bound
+`B/2`, and the oriented integral is minus the integral over `[B/2, -B/2]`.

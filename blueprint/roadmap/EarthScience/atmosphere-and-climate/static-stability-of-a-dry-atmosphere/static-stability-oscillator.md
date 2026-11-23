@@ -1,7 +1,7 @@
-# Static-stability oscillator
+# Acceleration of a displaced parcel is minus N² times its displacement
 
-If the parcel velocity is the time
-derivative of its displacement, `zeta' = v`, and `v` obeys the buoyancy
-law at `t`, then `zeta'' (t) = -N^2 * zeta t` with `N^2 = g * a / theta0`
-(Holton and Hakim, §2.7.3). If the buoyancy law holds at every time, this
-is the oscillator equation `zeta'' + N^2 * zeta = 0`.
+Let `θ0 ≠ 0`. If the displacement `ζ` is differentiable at every time with `ζ' = v`, and the
+velocity `v` is differentiable at `t` with the buoyancy law
+`v'(t) = g (θ0 - (θ0 + a ζ(t))) / θ0`, then `ζ'` is differentiable at `t` with
+`ζ''(t) = -N² ζ(t)`, where `N² = g a / θ0` (Holton and Hakim, §2.7.3). If the buoyancy law
+holds at every time, this is the oscillator equation `ζ'' + N² ζ = 0`.

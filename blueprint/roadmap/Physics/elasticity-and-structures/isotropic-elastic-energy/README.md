@@ -1,12 +1,12 @@
 # Isotropic elastic energy
 
-## A. The quadratic form on arbitrary arrays
+## The quadratic form on arbitrary arrays
 
-- [Trace sq add deviator sq nonneg](trace-sq-add-deviator-sq-nonneg.md)
-- [Trace sq add deviator sq pos](trace-sq-add-deviator-sq-pos.md)
+- [The bulk-plus-deviatoric quadratic form is nonnegative](trace-sq-add-deviator-sq-nonneg.md)
+- [The bulk-plus-deviatoric quadratic form is positive on nonzero arrays](trace-sq-add-deviator-sq-pos.md)
 
-## B. Elastic energy of a small strain
+## Elastic energy of a small strain
 
-- [Elastic energy nonneg](elastic-energy-nonneg.md)
-- [Elastic energy pos](elastic-energy-pos.md)
-- [Elastic energy of skew](elastic-energy-of-skew.md)
+- [The isotropic elastic energy is nonnegative](elastic-energy-nonneg.md)
+- [The isotropic elastic energy of a nonzero small strain is positive](elastic-energy-pos.md)
+- [An infinitesimal rigid rotation stores no elastic energy](elastic-energy-of-skew.md)

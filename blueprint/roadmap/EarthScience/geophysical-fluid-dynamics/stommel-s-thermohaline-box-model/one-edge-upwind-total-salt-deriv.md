@@ -1,9 +1,10 @@
-# One edge upwind total salt deriv
+# Total salt with one upwind edge changes only by forcing
 
-One directed upwind edge between the boxes (generic scalar transport, not the closed
-overturning loop): box 1 loses `q * S1` if `q >= 0` (flow 1 to 2) and gains `-q * S2` if
-`q < 0` (flow 2 to 1), and conversely for box 2. The volume flux `|q|` carried by the edge is
-assumed to return by a salt-free path, so the volumes stay fixed and only this salt flux
-crosses between the boxes; in the closed loop `overturning_total_salt_deriv` the return branch
-carries salt too. External forcing `F1, F2` is kept separate, so the total salt
-`V1 * S1 + V2 * S2` changes only through `F1 + F2`, even when `q` changes sign.
+Two boxes of positive volumes `V1` and `V2` are joined by one directed upwind edge carrying the
+transport `q`: box 1 loses `q S1` to box 2 if `q ≥ 0` and gains `-q S2` from box 2 if `q < 0`,
+and conversely for box 2. If at a time `t` the salinities are differentiable with
+`V1 S1'(t) = -q S1(t) + F1` and `V2 S2'(t) = q S1(t) + F2` when `q ≥ 0`, and with
+`V1 S1'(t) = -q S2(t) + F1` and `V2 S2'(t) = q S2(t) + F2` when `q < 0`, then the total salt
+`V1 S1 + V2 S2` has derivative `F1 + F2` at `t`, whatever the sign of `q`. The volumes stay
+fixed only if the volume flux `|q|` returns by a salt-free path; this is generic upwind scalar
+transport, not the closed overturning loop, whose return branch carries salt too.

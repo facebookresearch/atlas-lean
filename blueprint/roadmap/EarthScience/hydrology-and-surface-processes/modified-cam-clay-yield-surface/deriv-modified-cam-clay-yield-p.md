@@ -1,4 +1,4 @@
-# Deriv modified Cam Clay Yield p
+# Derivative of the Cam-Clay yield function in p
 
-The algebraic partial derivative as a `deriv` value in `p` at
-fixed `M`, `pc` and `q`.
+For all real `M`, `pc`, `q` and `p`, the derivative of `x ↦ q ^ 2 + M ^ 2 * x * (x - pc)` at `p`
+is `M ^ 2 * (2 * p - pc)`.

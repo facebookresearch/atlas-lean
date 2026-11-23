@@ -1,6 +1,7 @@
-# Rankine Active Pressure
+# Rankine active earth pressure at a depth
 
-Rankine active earth pressure at depth `z` for supplied
-active coefficient `Ka` and unit weight `γ`: `Ka * γ * z`, the
-linear pressure law conditional on the hypotheses in the module
-overview.
+For an active earth-pressure coefficient `Ka`, a soil unit weight `γ` and a depth `z` (any real
+numbers), the Rankine active pressure is `Ka * γ * z`. It is the lateral pressure at depth `z` on a
+smooth vertical wall retaining dry, cohesionless, homogeneous backfill with a horizontal,
+unsurcharged surface at the active limit state; cohesion, surcharge, wall friction or inclination
+and other failure states change this law.

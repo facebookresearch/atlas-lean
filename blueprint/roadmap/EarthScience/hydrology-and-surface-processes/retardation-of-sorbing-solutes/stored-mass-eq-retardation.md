@@ -1,4 +1,5 @@
-# Stored Mass eq retardation
+# Stored mass in retardation form
 
-Stored mass in retardation form: for nonzero porosity it is
-`V * phi * R * c`, using the existing retardation factor.
+For nonzero porosity `phi` and all real `V`, `rho_b`, `Kd` and `c`, the
+[stored mass](stored-mass.md) `V * (phi * c + rho_b * (Kd * c))` equals `V * phi * R * c`, where
+`R = 1 + rho_b * Kd / phi` is the [retardation factor](retardation-factor.md).

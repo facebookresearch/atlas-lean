@@ -1,5 +1,6 @@
-# Radial Darcy no head at axis
+# No head finite at the axis carries a nonzero radial discharge
 
-A zero well radius is rejected: for `Tr > 0`, `r1 > 0` and a nonzero discharge `Q`, no head
-continuous on `[0, r1]` satisfies the radial Darcy discharge relation on `(0, r1)`, because
-the logarithmic profile is unbounded at the axis.
+Let `Tr > 0`, `r1 > 0` and `Q ≠ 0`. No head `h` continuous on `[0, r1]`, with derivative `h'(r)`
+at every `0 < r < r1`, has the radial Darcy discharge `-2 * π * r * Tr * h'(r) = Q` at every
+`0 < r < r1`: the logarithmic profile is unbounded at the axis, so a zero well radius is ruled
+out.

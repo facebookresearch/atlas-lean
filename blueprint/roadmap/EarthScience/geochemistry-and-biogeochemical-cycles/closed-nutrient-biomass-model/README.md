@@ -1,4 +1,4 @@
 # Closed nutrient–biomass model
 
-- [Nutrient biomass conservation](nutrient-biomass-conservation.md)
-- [Nutrient biomass zero nutrient](nutrient-biomass-zero-nutrient.md)
+- [The closed nutrient–biomass total has zero derivative](nutrient-biomass-conservation.md)
+- [Nutrient and biomass derivatives at zero nutrient](nutrient-biomass-zero-nutrient.md)

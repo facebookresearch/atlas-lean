@@ -1,4 +1,4 @@
 # Shallow-water potential vorticity
 
-- [Shallow water potential vorticity has Deriv At zero](shallow-water-potential-vorticity-has-de.md)
-- [Shallow water potential vorticity conserved](shallow-water-potential-vorticity-conser.md)
+- [Zero material derivative of shallow-water potential vorticity](shallow-water-potential-vorticity-has-de.md)
+- [Shallow-water potential vorticity is conserved along a trajectory](shallow-water-potential-vorticity-conser.md)

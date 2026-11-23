@@ -1,4 +1,5 @@
-# Catchment volume mm to m
+# Volume of a depth given in millimetres
 
-Depth in millimetres converts to metres by dividing by 1000 before
-area multiplication.
+For a catchment area `A` and a depth `d` in millimetres (real numbers), the volume of the depth
+`d / 1000` in metres is `A * (d / 1000) = A * d / 1000`: the division by `1000` may be done before
+or after the multiplication by the area.

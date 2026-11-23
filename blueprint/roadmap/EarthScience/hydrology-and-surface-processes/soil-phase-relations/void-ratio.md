@@ -1,7 +1,6 @@
-# Void Ratio
+# Void ratio of a soil element
 
-Void ratio of a soil (or other two-phase solid/void) element:
-`e = Vv / Vs`, the void volume `Vv` divided by the solid volume `Vs`, both
-in the same volume unit, so `e` is dimensionless. Physically meaningful
-for `0 < Vs` and `0 ≤ Vv`; outside that range this is the same real
-formula by total division.
+For a soil (or other two-phase solid and void) element with solid volume `Vs` and void volume
+`Vv`, both in the same volume unit, the void ratio is the dimensionless `e = Vv / Vs`. It is
+defined for all real `Vs` and `Vv`: with the convention `x / 0 = 0` it is `0` when `Vs = 0`. The
+intended domain is `Vs > 0` and `Vv ≥ 0`.

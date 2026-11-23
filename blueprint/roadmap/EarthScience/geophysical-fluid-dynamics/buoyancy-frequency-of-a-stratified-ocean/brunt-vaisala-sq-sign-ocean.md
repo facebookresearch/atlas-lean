@@ -1,5 +1,5 @@
-# Brunt vaisala sq sign ocean
+# Sign of the squared buoyancy frequency matches the sign of β
 
-Sign classification of `N^2 = g * beta / rho0` for `g, rho0 > 0`:
-uniform density (`beta = 0`) gives `N^2 = 0`, stable (`beta > 0`) gives
-`N^2 > 0`, unstable (`beta < 0`) gives `N^2 < 0`.
+For `g > 0`, `ρ0 > 0` and every real `β`, the squared Brunt–Väisälä frequency `N² = g β / ρ0`
+is zero if and only if `β = 0` (uniform density), positive if and only if `β > 0` (stable) and
+negative if and only if `β < 0` (unstable).

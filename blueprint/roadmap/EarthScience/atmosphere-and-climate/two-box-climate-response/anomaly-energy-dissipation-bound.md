@@ -1,6 +1,4 @@
-# Anomaly energy dissipation bound
+# Two-box dissipation is at most minus c times the energy
 
-Anomaly-energy dissipation bound (algebraic, pointwise in the state):
-with `c = min (2*lam/(Cs + 2*Cd)) (gam/Cd)`,
-`-lam*xs^2 - gam*(xs-xd)^2 <= -c * (Cs*xs^2 + Cd*xd^2)/2`
-for all `xs, xd`, and `c > 0` when `lam, gam > 0`.
+For `Cs, Cd, λ, γ > 0`, the rate `c = min(2 λ / (Cs + 2 Cd), γ / Cd)` is positive, and for all
+real `xs` and `xd`, `-λ xs² - γ (xs - xd)² ≤ -c (Cs xs² + Cd xd²) / 2`.

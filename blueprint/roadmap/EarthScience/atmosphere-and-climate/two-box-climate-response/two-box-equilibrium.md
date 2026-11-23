@@ -1,4 +1,5 @@
-# Two box equilibrium
+# The two-box equilibrium has both temperatures equal to F/λ
 
-Two-box equilibrium: if `F - lam*Ts - gam*(Ts - Td) = 0` and
-`gam*(Ts - Td) = 0` with `lam, gam > 0`, then `Ts = Td = F/lam`.
+For `λ > 0` and `γ > 0`, if the surface and deep temperatures `Ts` and `Td` satisfy the
+equilibrium equations `F - λ Ts - γ (Ts - Td) = 0` and `γ (Ts - Td) = 0`, then
+`Ts = Td = F / λ`.

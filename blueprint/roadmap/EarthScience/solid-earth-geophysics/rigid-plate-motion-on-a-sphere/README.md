@@ -1,4 +1,4 @@
 # Rigid plate motion on a sphere
 
-- [Plate velocity tangent](plate-velocity-tangent.md)
-- [Plate velocity eq zero at euler pole](plate-velocity-eq-zero-at-euler-pole.md)
+- [Rigid plate velocity is tangent to the sphere](plate-velocity-tangent.md)
+- [Plate velocity vanishes at the Euler pole](plate-velocity-eq-zero-at-euler-pole.md)

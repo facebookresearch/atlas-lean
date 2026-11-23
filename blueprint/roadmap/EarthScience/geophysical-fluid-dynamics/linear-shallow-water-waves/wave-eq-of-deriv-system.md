@@ -1,9 +1,10 @@
-# Wave eq of deriv system
+# Wave equation from the derivative form of the linear system
 
-Algebraic core of `shallow_water_wave_eq`, with the spatial partials written as Lean's
-totalized `deriv`. If, for every `t, x`, `∂ₜη = -H ∂ₓu` and `∂ₜu = -g ∂ₓη` hold as `HasDerivAt`
-statements for the time slices, the mixed-derivative commutation `∂ₜ∂ₓu = ∂ₓ∂ₜu` holds as a
-`HasDerivAt` statement, and the second `x`-derivative of `η` is differentiable, then
-`∂ₜ²η = g * H * ∂ₓ²η` at every `t, x`. Since `deriv` is `0` wherever a slice is not
-differentiable, these hypotheses do not require `η t` or `u t` to be differentiable in `x`, so
-they are not by themselves the shallow-water PDE; `shallow_water_wave_eq` adds that requirement.
+Let `η(t, x)` and `u(t, x)` be real fields and `H`, `g` real. Write `∂ₓ` for the derivative of
+a space slice and `∂ₜ` for that of a time slice, each taken to be `0` where the slice is not
+differentiable. Suppose that at every `(t, x)`: the time slice of `η` is differentiable with
+`∂ₜη = -H ∂ₓu`; the time slice of `u` is differentiable with `∂ₜu = -g ∂ₓη`; the time slice of
+`∂ₓu` is differentiable with derivative `∂ₓ∂ₜu`; and `∂ₓη` is differentiable in `x`. Then
+`∂ₜ∂ₜη = g H ∂ₓ∂ₓη` at every `(t, x)`. Because `∂ₓ` is `0` where a slice is not differentiable,
+these hypotheses do not require `η` or `u` to be differentiable in `x`, so on their own they
+are not the shallow-water equations, which also need those space derivatives.

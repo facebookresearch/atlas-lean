@@ -1,12 +1,12 @@
 # Phase retardation in anisotropic minerals
 
-## A. Phase retardation
+## Phase retardation and its closed form
 
-- [Phase Retardation](phase-retardation.md)
-- [Phase Retardation eq](phase-retardation-eq.md)
+- [Signed phase retardation of a two-mode slab](phase-retardation.md)
+- [Closed form of the phase retardation](phase-retardation-eq.md)
 
-## B. Vanishing retardation and a non-vacuous example
+## Vanishing retardation and a non-vacuous example
 
-- [Phase Retardation zero thickness](phase-retardation-zero-thickness.md)
-- [Phase Retardation equal indices](phase-retardation-equal-indices.md)
-- [Phase Retardation example](phase-retardation-example.md)
+- [Zero thickness gives zero phase retardation](phase-retardation-zero-thickness.md)
+- [Equal indices give zero phase retardation](phase-retardation-equal-indices.md)
+- [Phase retardation π for an index difference of 1/2](phase-retardation-example.md)

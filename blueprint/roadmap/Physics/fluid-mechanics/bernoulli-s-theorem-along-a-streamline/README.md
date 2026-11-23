@@ -1,10 +1,10 @@
 # Bernoulli's theorem along a streamline
 
-## A. Kinetic-energy identity
+## Kinetic-energy identity
 
-- [Kinetic directional deriv](kinetic-directional-deriv.md)
+- [Directional derivative of the kinetic energy along the velocity](kinetic-directional-deriv.md)
 
-## B. Bernoulli along a streamline
+## Bernoulli along a streamline
 
-- [Bernoulli head directional deriv eq zero](bernoulli-head-directional-deriv-eq-zero.md)
-- [Bernoulli along streamline](bernoulli-along-streamline.md)
+- [The Bernoulli head has zero derivative along the velocity](bernoulli-head-directional-deriv-eq-zero.md)
+- [The Bernoulli head is constant along a streamline](bernoulli-along-streamline.md)

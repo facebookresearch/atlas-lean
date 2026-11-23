@@ -1,5 +1,6 @@
-# Geostrophic velocity
+# Off the equator, geostrophic balance determines the velocity
 
-Geostrophic balance `f * khat x u = -grad_h p / rho0`, i.e.
-`f * ux = -py / rho0` and `-f * uy = -px / rho0`, for `f ≠ 0`,
-`rho0 ≠ 0` uniquely gives `u = (-py / (rho0 * f), px / (rho0 * f))`.
+For a Coriolis parameter `f ≠ 0` and a density `ρ0 ≠ 0`, if a horizontal velocity
+`u = (ux, uy)` is in f-plane geostrophic balance `f k̂ × u = -∇ₕp / ρ0` with a pressure
+gradient `(px, py)`, that is `f ux = -py / ρ0` and `-f uy = -px / ρ0`, then
+`ux = -py / (ρ0 f)` and `uy = px / (ρ0 f)`. The axes point east, north and up.

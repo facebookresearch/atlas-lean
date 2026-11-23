@@ -1,4 +1,4 @@
 # Angular momentum in the general circulation
 
-- [Angular momentum zonal wind](angular-momentum-zonal-wind.md)
-- [Angular momentum zonal wind equator](angular-momentum-zonal-wind-equator.md)
+- [Zonal wind of a parcel conserving angular momentum from the equator](angular-momentum-zonal-wind.md)
+- [Conserved equatorial angular momentum gives no wind at the equator](angular-momentum-zonal-wind-equator.md)

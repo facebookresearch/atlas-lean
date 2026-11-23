@@ -1,7 +1,5 @@
-# First Order decay consumption
+# Consumption under first-order decay equals the drop in concentration
 
-The signed integrated balance over `0..t` is `c0 - c(t)`.
-It represents nonnegative consumption when `0 ≤ k`, `0 ≤ c0`, and `0 ≤ t`.
-Proved from `hasDerivAt_amount` at `R = 0` by the fundamental theorem of
-calculus, so it holds for every `t`; for `0 ≤ t` it is also the compartment
-mass balance `amount_add_eliminated` at `R = 0` rewritten by `amount_bolus`.
+For all real `k`, `c₀` and `t`, the profile `c(s) = c₀ exp(-k s)` satisfies
+`∫₀ᵗ k c(s) ds = c₀ - c(t)`, an oriented integral when `t < 0`. For `k ≥ 0`, `c₀ ≥ 0` and `t ≥ 0`
+the left side is the nonnegative amount consumed by the reaction up to time `t`.

@@ -1,4 +1,5 @@
-# Dispersion positive
+# Surface gravity waves have positive squared frequency
 
-The dispersion relation forces a positive `ω²` for `g, k, H > 0`,
-and hence `ω ≠ 0`: with the same surface conditions, `0 < ω ^ 2`.
+For `g, k, H > 0`, a nonzero surface amplitude `a` and a velocity-potential amplitude `b`
+satisfying the kinematic condition `ω a = k tanh(k H) b` and the dynamic condition
+`ω b = g a`, the squared frequency is positive, `ω² > 0`; in particular `ω ≠ 0`.

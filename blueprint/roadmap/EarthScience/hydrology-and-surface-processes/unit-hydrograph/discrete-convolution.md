@@ -1,8 +1,8 @@
-# Discrete Convolution
+# Unit-hydrograph outflow as a discrete convolution
 
-Discrete-convolution outflow at step `k` from rainfall excess `p` and
-unit response `u`. This is `AdditiveCombinatorics.sumConv` under its
-hydrologic name; indices are 0-based where the engineering sources are
-1-based (`p i = P (i+1)`, `u j = U (j+1)`, outflow `q k = Q (k+1)`).
-Nonnegativity of the sequences is not assumed: the identity holds for
-all real sequences.
+For a rainfall-excess sequence `p` and a unit-hydrograph response `u` on the time steps
+`0, 1, 2, …` (any real sequences, not necessarily nonnegative), the outflow at step `k` is the
+discrete convolution `q k = ∑_{i + j = k} p i * u j`, the sum over the pairs of natural numbers
+`(i, j)` with `i + j = k`: the [sum convolution](../../../Combinatorics/additive-combinatorics/additive-bases/additive-representation-functions/sum-conv.md) of `p` and `u`. Steps are counted from `0`,
+where the engineering sources count from `1` (`p i = P (i + 1)`, `u j = U (j + 1)`,
+`q k = Q (k + 1)`).

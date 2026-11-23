@@ -1,6 +1,5 @@
-# Single row ambiguity
+# One retained row gives equal travel times along the null direction
 
-Retaining only row `[1, 1]` cannot distinguish `s` from
-`s + t * [1, -1]`: for every `t`,
-`[1, 1] ⬝ᵥ ([1 / 2, 1 / 4] + t • ![1, -1])
-= [1, 1] ⬝ᵥ [1 / 2, 1 / 4]`.
+For every rational `t`, `(1, 1) · ((1/2, 1/4) + t (1, -1)) = (1, 1) · (1/2, 1/4)`: when only the
+ray with row `(1, 1)` is retained, the slowness models `s = (1/2, 1/4)` and `s + t (1, -1)` give
+the same travel time.

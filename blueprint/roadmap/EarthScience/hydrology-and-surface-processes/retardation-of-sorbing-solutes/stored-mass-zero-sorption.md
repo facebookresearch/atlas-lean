@@ -1,4 +1,4 @@
-# Stored Mass zero sorption
+# Without sorption the stored mass is the dissolved mass
 
-With no sorption (`Kd = 0`), stored mass is just the
-dissolved mass `V * phi * c`.
+For all real `V`, `phi`, `rho_b` and `c`, with no sorption (distribution coefficient `Kd = 0`) the
+[stored mass](stored-mass.md) is the dissolved mass `V * phi * c`.

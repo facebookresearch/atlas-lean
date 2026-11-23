@@ -1,6 +1,7 @@
-# Interval preservation for the saturations
+# The saturation step keeps saturations in the mobile range
 
-With positive viscosities, `ΔS > 0`,
-positive pore volume, `Q ≥ 0`, `dt ≥ 0` and the evaluated CFL bound `ν B ≤ 1` for
-`ν = Q dt / (φ A dx ΔS)`, a step from saturations in `[Swc, 1 - Sor]` with inflow saturation in
-that range stays in `[Swc, 1 - Sor]`.
+For viscosities `μo > 0` and `μw > 0`, `ΔS = 1 - Sor - Swc > 0`, a positive pore volume
+`φ * A * dx > 0`, `Q ≥ 0` and `dt ≥ 0`, let the [CFL number](cfl-number.md)
+`ν = Q * dt / (φ * A * dx * ΔS)` satisfy `ν * B ≤ 1`, where `B = (μo + μw) ^ 2 / (2 * μo * μw)`.
+Then a [physical step](sat-step.md) from saturations in the mobile range `[Swc, 1 - Sor]`, with an
+inflow saturation in that range, gives saturations in `[Swc, 1 - Sor]`.

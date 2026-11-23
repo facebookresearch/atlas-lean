@@ -10,5 +10,5 @@ $\sigma_3 = K_a \sigma_1 - 2 c \sqrt{K_a}$.
 - [Square root of the Rankine active coefficient, cosine over one plus sine](sqrt-rankine-active-coefficient.md)
 - [Square root of the Rankine active coefficient, one minus sine over cosine](sqrt-rankine-active-coefficient-2.md)
 - [The Mohr–Coulomb limit condition gives the Rankine active pressure](rankine-principal-limit-iff.md)
-- [Rankine Active Pressure](rankine-active-pressure.md)
-- [Rankine resultant height](rankine-resultant-height.md)
+- [Rankine active earth pressure at a depth](rankine-active-pressure.md)
+- [The Rankine active thrust acts at one third of the wall height](rankine-resultant-height.md)

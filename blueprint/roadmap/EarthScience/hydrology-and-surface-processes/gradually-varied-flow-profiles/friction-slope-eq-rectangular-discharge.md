@@ -1,7 +1,8 @@
-# Friction Slope eq rectangular Discharge
+# Friction slope as the bed slope scaled by a squared discharge ratio
 
-Bridge to the rectangular discharge: for a downhill bed
-`0 < S0`, the friction slope equals
-`S0 * (Q / rectangularDischarge (sqrt S0 / n) b y) ^ 2`, the bed slope
-scaled by the squared ratio of the carried discharge to the uniform-
-flow discharge at depth `y`.
+For a bed slope `S0 > 0` and all real `n`, `b`, `Q` and `y`, the friction slope
+`S_f(y) = (n * Q / ((b * y) * ((b * y) / (b + 2 * y)) ^ (2 / 3))) ^ 2` equals
+`S0 * (Q / Q_N(y)) ^ 2`, where `Q_N(y) = (√S0 / n) * (b * y) * ((b * y) / (b + 2 * y)) ^ (2 / 3)`
+is the rectangular-channel Manning discharge at bed slope `S0`, the uniform-flow discharge at
+depth `y`. The identity also holds where a denominator vanishes, both sides then being read with
+the convention `x / 0 = 0` (for instance both are `0` when `n = 0`).

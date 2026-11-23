@@ -1,5 +1,6 @@
-# Concentration eq stored Mass div
+# Concentration recovered from the stored mass
 
-The concentration-to-stored-mass conversion is reversible
-when its scalar coefficient is nonzero. A zero coefficient is
-not inverted.
+If the [concentration-to-mass coefficient](stored-mass-coefficient.md) `V * (phi + rho_b * Kd)` is
+nonzero, the concentration `c` is the [stored mass](stored-mass.md)
+`M = V * (phi * c + rho_b * (Kd * c))` divided by that coefficient:
+`c = M / (V * (phi + rho_b * Kd))`.

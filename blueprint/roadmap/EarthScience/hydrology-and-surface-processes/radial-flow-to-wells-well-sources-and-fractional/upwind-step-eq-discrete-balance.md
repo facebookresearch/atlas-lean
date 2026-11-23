@@ -1,5 +1,7 @@
-# Conservative form
+# The upwind step in conservative finite-volume form
 
-The upwind step is the finite-volume step with unit cell width and
-time step `ν` for the face fluxes `f (Matrix.vecCons sIn s j)`: face `j` carries the fractional
-flow of its left (upwind) state, the inflow state at the boundary face `0`.
+For all real arguments, the [upwind step](upwind-step.md) on cells `0, …, n` is the finite-volume
+step of unit cell width and time step `ν` with the face fluxes `F 0 = f(s_in)` and
+`F (j + 1) = f(s j)`: `s i - ν * (f(s i) - f(s (i - 1))) = s i + ν * (-(F (i + 1) - F i))`. Each
+face carries the [fractional flow](frac-flow.md) of its left (upwind) state, the boundary face `0`
+that of the inflow state.

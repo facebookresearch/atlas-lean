@@ -1,16 +1,16 @@
 # Catchment budgets in depth and volume units
 
-## A. Area conversion
+## Area conversion
 
-- [Catchment Volume](catchment-volume.md)
-- [Catchment Volume Flux](catchment-volume-flux.md)
-- [Catchment volume flux time](catchment-volume-flux-time.md)
-- [Catchment volume mm to m](catchment-volume-mm-to-m.md)
+- [Volume of a depth over a catchment](catchment-volume.md)
+- [Volume flux of a depth rate over a catchment](catchment-volume-flux.md)
+- [Volume of a depth rate accumulated over a duration](catchment-volume-flux-time.md)
+- [Volume of a depth given in millimetres](catchment-volume-mm-to-m.md)
 
-## B. Budget closure
+## Budget closure
 
-- [Catchment budget closes](catchment-budget-closes.md)
+- [The catchment water budget closes in volume units](catchment-budget-closes.md)
 
-## C. Time conversion
+## Time conversion
 
-- [Catchment volume daily hourly](catchment-volume-daily-hourly.md)
+- [Daily and hourly depth rates give the same volume](catchment-volume-daily-hourly.md)

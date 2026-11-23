@@ -1,6 +1,6 @@
 # Stommel's thermohaline box model
 
-- [Stommel exchange sign](stommel-exchange-sign.md)
-- [Closed two-box overturning loop](overturning-total-salt-deriv.md)
-- [One edge upwind total salt deriv](one-edge-upwind-total-salt-deriv.md)
-- [Overturning total salt deriv zero q](overturning-total-salt-deriv-zero-q.md)
+- [Sign of the Stommel overturning transport](stommel-exchange-sign.md)
+- [Total salt of the closed overturning loop changes only by forcing](overturning-total-salt-deriv.md)
+- [Total salt with one upwind edge changes only by forcing](one-edge-upwind-total-salt-deriv.md)
+- [Without exchange total salt changes only by forcing](overturning-total-salt-deriv-zero-q.md)

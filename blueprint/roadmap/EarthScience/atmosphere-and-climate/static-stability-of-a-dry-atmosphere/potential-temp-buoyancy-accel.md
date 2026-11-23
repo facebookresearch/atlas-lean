@@ -1,7 +1,6 @@
-# Potential temp buoyancy accel
+# Buoyancy acceleration of a displaced dry parcel
 
-Buoyancy acceleration of a dry parcel displaced by `zeta` in a locally
-linear potential-temperature profile `theta(z) = theta0 + a * z`: the
-parcel keeps `theta0`, the ambient value at `zeta` is `theta0 + a * zeta`,
-so the acceleration is `-(g * a / theta0) * zeta` (Holton and Hakim,
-§2.7.3, under the approximations listed in the module docstring).
+In a locally linear potential-temperature profile `θ(z) = θ0 + a z`, a dry parcel displaced by
+`ζ` keeps its potential temperature `θ0`, while the ambient value at `ζ` is `θ0 + a ζ`. For
+`θ0 ≠ 0` and all real `g`, `a` and `ζ`, its buoyancy acceleration `g (θ0 - (θ0 + a ζ)) / θ0`,
+which divides by the reference value `θ0`, equals `-(g a / θ0) ζ`.

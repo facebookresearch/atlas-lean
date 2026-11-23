@@ -1,3 +1,4 @@
-# Catchment Volume Flux
+# Volume flux of a depth rate over a catchment
 
-Volume flux from area `A` and a depth rate `r` (depth per time): `A * r`.
+For a catchment area `A` and a depth rate `r` (depth per unit time), both real numbers, the volume
+flux is `A * r`.

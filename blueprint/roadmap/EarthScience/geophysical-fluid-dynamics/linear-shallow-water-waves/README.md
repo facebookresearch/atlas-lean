@@ -1,10 +1,10 @@
 # Linear shallow-water waves
 
-## A. Wave equation
+## Wave equation
 
-- [Wave eq of deriv system](wave-eq-of-deriv-system.md)
-- [Shallow water wave eq](shallow-water-wave-eq.md)
+- [Wave equation from the derivative form of the linear system](wave-eq-of-deriv-system.md)
+- [Linear shallow-water equations imply the wave equation](shallow-water-wave-eq.md)
 
-## B. Wave speed
+## Wave speed
 
-- [Shallow water wave speed](shallow-water-wave-speed.md)
+- [The shallow-water wave speed is positive and squares to g H](shallow-water-wave-speed.md)

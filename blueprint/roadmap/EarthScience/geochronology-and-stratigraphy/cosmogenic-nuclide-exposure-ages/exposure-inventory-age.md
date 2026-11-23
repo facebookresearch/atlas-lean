@@ -1,3 +1,5 @@
-# Exposure inventory age
+# The exposure age recovers the exposure time
 
-The inventory followed by the age inverse recovers the time.
+For a production rate `P > 0`, a decay constant `λ > 0` and a time `t ≥ 0`, the exposure age
+`-log (1 - λ * N / P) / λ` of the inventory with no inherited nuclides,
+`N = (P / λ) * (1 - exp (-λ * t))`, is `t`.

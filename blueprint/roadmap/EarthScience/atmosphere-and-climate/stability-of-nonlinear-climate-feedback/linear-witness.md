@@ -1,4 +1,4 @@
-# Linear witness
+# Linear damping feedback has the restoring sign
 
-Linear model witness: for `F(T) = -k*(T - Tstar)` with `k > 0`,
-the sign condition holds for every `T ≠ Tstar`.
+For the linear feedback `F(T) = -k (T - T*)` with `k > 0`, every `T ≠ T*` satisfies the
+restoring sign condition `(T - T*) F(T) < 0`, that is `(T - T*) (-k (T - T*)) < 0`.

@@ -1,6 +1,7 @@
-# Explicit form
+# Explicit solution of the nonscattering transfer equation
 
-Explicit Duhamel form: dividing the integrating-factor identity by
-`mu(L)` and using `∫ x in 0..L, kappa = ∫ x in 0..s + ∫ x in s..L`,
-`I(L) = I0*exp(-∫_0^L kappa) + ∫_0^L j(s)*exp(-∫_s^L kappa) ds`. This is
-the integral solution of Liou (2002), Eq. (1.4.19); see the References.
+Let the absorption coefficient `κ` and the source `j` be continuous, and let the intensity `I`
+be differentiable at every real `t` with `I'(t) = -κ(t) I(t) + j(t)` and `I(0) = I0`. Then for
+every `L ≥ 0`, `I(L) = I0 exp(-∫₀ᴸ κ(x) dx) + ∫₀ᴸ j(s) exp(-∫ₛᴸ κ(x) dx) ds`. This is the
+integral solution of Schwarzschild's equation for a nonscattering medium (Liou 2002,
+Eq. 1.4.19).

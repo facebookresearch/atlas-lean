@@ -1,3 +1,4 @@
-# Consolidation Mode zero left
+# The consolidation mode vanishes at the drained face of zero depth
 
-Drained face value at `z = 0`.
+For all real `u0`, `H`, `cv` and `t`, the [consolidation mode](consolidation-mode.md) is `0` at
+the drained face `z = 0`.

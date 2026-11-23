@@ -1,7 +1,6 @@
-# At least one exceedance prob of no exceedance
+# At least one exceedance from the no-exceedance probability
 
-At-least-one exceedance from a supplied no-exceedance
-probability. If `F i` is the no-exceedance event in year `i`
-and the probability of no exceedance in any of the `n` years
-is `(1 - p) ^ n`, then the probability of an exceedance in at
-least one year is `1 - (1 - p) ^ n`.
+Let `μ` be a probability measure and `F i`, for `i = 0, …, n - 1`, measurable events, the
+no-exceedance events of `n` years. If the probability of no exceedance in any of the years is
+`μ(⋂ᵢ F i) = (1 - p) ^ n` for a real number `p`, then the probability of an exceedance in at least
+one year is `μ(⋃ᵢ (F i)ᶜ) = 1 - (1 - p) ^ n`. No independence is assumed.

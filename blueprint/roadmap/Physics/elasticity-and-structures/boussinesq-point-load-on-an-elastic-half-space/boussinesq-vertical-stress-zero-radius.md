@@ -1,5 +1,5 @@
-# Boussinesq Vertical Stress zero radius
+# The Boussinesq vertical stress on the load axis
 
-On the load axis the vertical stress at depth `z > 0` is
-`3 P / (2 π z²)`; for `P = z = 1` this is the nonzero value
-`3 / (2 π)`.
+For every real load `P` and every depth `z > 0`, the
+[Boussinesq vertical stress](boussinesq-vertical-stress.md) on the load axis `r = 0` is
+`σ_z(0, z) = 3 P / (2 π z²)`.

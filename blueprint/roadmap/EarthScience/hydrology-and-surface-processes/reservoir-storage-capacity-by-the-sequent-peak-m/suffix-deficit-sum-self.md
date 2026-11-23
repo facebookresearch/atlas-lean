@@ -1,3 +1,4 @@
-# Suffix Deficit Sum self
+# The empty window has zero net deficit
 
-The empty suffix has zero deficit.
+For any required releases `R`, inflows `Q` and natural `t`, the
+[net deficit](suffix-deficit-sum.md) over the window of steps `t ≤ k < t`, which is empty, is `0`.

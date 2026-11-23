@@ -1,7 +1,6 @@
-# Local sign
+# A negative derivative near an equilibrium gives the restoring sign
 
-Local sign condition from a negative derivative: if `F(T*) = 0`,
-`F` is differentiable on `(T* - δ, T* + δ)`, and `deriv F < 0` on the
-punctured neighbourhood `(T* - δ, T* + δ) \ {T*}`, then
-`(T - T*) * F(T) < 0` for `T ≠ T*` in it. Proved via the mean value
-theorem, whose intermediate point differs from `T*`.
+Let `δ > 0` and let `T*` be an equilibrium, `F(T*) = 0`. Suppose `F` is differentiable at every
+point of `(T* - δ, T* + δ)` and `F'(T) < 0` at every `T ≠ T*` in that interval (the derivative
+at `T*` itself may vanish, as for `F(T) = -(T - T*)³`). Then `(T - T*) F(T) < 0` for every
+`T ≠ T*` in the interval, by the mean value theorem.

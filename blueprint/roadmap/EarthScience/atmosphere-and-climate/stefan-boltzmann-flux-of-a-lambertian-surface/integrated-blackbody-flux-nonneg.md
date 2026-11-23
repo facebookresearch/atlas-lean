@@ -1,3 +1,3 @@
-# Integrated blackbody flux nonneg
+# Blackbody flux σT⁴ is nonnegative
 
-The integrated blackbody flux is nonnegative for `σ ≥ 0`.
+For `σ ≥ 0` and every real `T`, the blackbody flux `σ T⁴` is nonnegative.

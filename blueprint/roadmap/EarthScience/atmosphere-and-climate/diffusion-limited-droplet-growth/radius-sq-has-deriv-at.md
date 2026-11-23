@@ -1,4 +1,5 @@
-# Radius sq has Deriv At
+# Squared droplet radius has constant derivative 2KS
 
-Diffusion-limited droplet growth: the squared radius has derivative
-`2*K*S` at every `t` with `r0^2 + 2*K*S*t > 0`.
+In the diffusion-limited growth model with initial radius `r0 > 0`, growth coefficient `K ≥ 0`
+and supersaturation `S`, let `r(t) = √(r0² + 2 K S t)`. At every time `t` with
+`r0² + 2 K S t > 0`, the function `r²` is differentiable at `t` with derivative `2 K S`.

@@ -1,5 +1,6 @@
-# Airy root pressure eq signed
+# The Airy root balances column pressures in signed algebra
 
-Signed algebra behind `airy_root_pressure_eq`: the root `r = ρc * h / (ρm - ρc)`
-balances the two pressure expressions for all real `h`, `T`, `D`, including
-negative layer thicknesses that describe no physical column.
+For a crust density `ρc > 0` and a mantle density `ρm > ρc`, the root `r = ρc * h / (ρm - ρc)`
+balances the two column pressures,
+`ρc * (T + h + r) + ρm * (D - T - r) = ρc * T + ρm * (D - T)`, for all real `h`, `T` and `D`,
+including negative layer thicknesses that describe no physical column.

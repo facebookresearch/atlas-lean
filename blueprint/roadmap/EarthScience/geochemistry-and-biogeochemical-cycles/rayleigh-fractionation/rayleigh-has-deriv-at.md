@@ -1,4 +1,4 @@
-# Rayleigh has Deriv At
+# Derivative of the Rayleigh fractionation law
 
-Rayleigh fractionation: for `R(f) = R0 * f^(α-1)` with `f > 0`,
-`dR/df = (α-1) * R / f`. Here `^` is the real power `Real.rpow`.
+For real `R0` and fractionation factor `α`, the Rayleigh law `R(f) = R0 * f ^ (α - 1)` (real
+power) has derivative `dR/df = (α - 1) * R(f) / f` at every remaining fraction `f > 0`.

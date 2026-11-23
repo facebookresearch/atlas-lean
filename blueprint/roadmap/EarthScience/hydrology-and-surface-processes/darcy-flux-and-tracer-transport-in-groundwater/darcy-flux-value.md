@@ -1,5 +1,5 @@
-# Darcy flux value
+# Darcy flux at conductivity 10⁻⁴ m/s and head gradient 0.01
 
-Darcy flux at fixed inputs: `q = -K * dh/dx` with
-`K = 10⁻⁴ m/s` and head gradient `0.01` is `-10⁻⁶ m/s`. All numerals
-are exact rationals.
+Darcy's law `q = -K * dh/dx`, with flow running down the head gradient, gives at the fixed inputs
+`K = 10⁻⁴ m/s` and `dh/dx = 0.01` the Darcy flux `q = -10⁻⁶ m/s`. The computation is exact:
+`-(1/10000) * (1/100) = -1/1000000`.

@@ -1,9 +1,8 @@
-# Hydraulic jump
+# Conjugate depth ratio from the upstream Froude number
 
-Conjugate-depth Froude ratio law. For positive depths `h1`,
-`h2` in a rectangular channel satisfying the hydraulic-jump
-momentum identity `q ^ 2 / g = h1 * h2 * (h1 + h2) / 2` (unit
-discharge `q`, gravity `g > 0`), the depth ratio is the positive
-quadratic root `h2 / h1 = (sqrt (1 + 8 * Fr) - 1) / 2` of the
-upstream squared Froude number `Fr = q ^ 2 / (g * h1 ^ 3)`, and
-the downstream depth is strictly larger exactly when `Fr > 1`.
+Let `g > 0` be the gravitational acceleration, `q` a discharge per unit width, and `h1, h2 > 0`
+depths in a rectangular channel satisfying the hydraulic-jump momentum identity
+`q ^ 2 / g = h1 * h2 * (h1 + h2) / 2`. With the upstream squared Froude number
+`Fr = q ^ 2 / (g * h1 ^ 3)`, the depth ratio is the positive root of `r * (1 + r) / 2 = Fr`:
+`h2 / h1 = (√(1 + 8 * Fr) - 1) / 2`. Moreover the downstream depth is strictly larger exactly when
+the upstream flow is supercritical: `h1 < h2` if and only if `Fr > 1`.

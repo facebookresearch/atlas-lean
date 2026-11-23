@@ -1,10 +1,10 @@
-# Satisfies Biot Rate System
+# Paths solving the finite Biot consolidation rate system
 
-The finite Biot rate system with constant load rate `df`
-and constant source `s`: paths `u, p` are differentiable and
-at every time the rates satisfy the equilibrium rate equation
-`K *ᵥ u' + Q *ᵥ p' = df` and the storage balance
-`-Qᵀ *ᵥ u' + C *ᵥ p' = s - H *ᵥ p`, the dissipative sign
-convention (with `Q = 0`, `C = H = I`, `s = 0` the pressure
-decays: `p' = -p`). Nonsingularity hypotheses are carried by
-the theorems that need them.
+For finite index sets, let `K` be an `n × n` stiffness matrix, `Q` an `n × m` coupling matrix,
+`C` and `H` `m × m` storage-compliance and conductance matrices, `df` a constant load rate and `s`
+a constant source. Displacement and pressure paths `u : ℝ → ℝⁿ` and `p : ℝ → ℝᵐ` satisfy the
+finite Biot rate system when `u` and `p` are differentiable and, at every time `t`, the
+equilibrium rate equation `K u'(t) + Q p'(t) = df` and the storage balance
+`-Qᵀ u'(t) + C p'(t) = s - H p(t)` hold. This is the dissipative sign convention: with `Q = 0`,
+`C = H = I` and `s = 0` the pressure decays, `p' = -p`. No nonsingularity of the matrices is
+assumed.

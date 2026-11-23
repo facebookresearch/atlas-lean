@@ -1,8 +1,9 @@
-# Exponential production decline
+# Exponential and hyperbolic production decline
 
 Exponential decline of the production rate of a well, $q(t) = q_i e^{-D t}$, the cumulative
 production it implies and, for $D > 0$, its asymptote $q_i / D$, with the constant-rate law for zero
-decline.
+decline; then hyperbolic decline, $q(t) = q_i (1 + b D_i t)^{-1/b}$, its cumulative production and,
+for $0 < b < 1$, the bound $q_i / ((1 - b) D_i)$ on it.
 
 - [Production rate under exponential decline](exp-rate.md)
 - [Cumulative production under exponential decline](exp-cumulative.md)
@@ -15,10 +16,10 @@ decline.
 - [Cumulative production is nondecreasing in time](exp-cumulative-mono.md)
 - [Exponential decline with zero decline rate](exp-rate-zero-decline.md)
 - [The derivative of constant-rate cumulative production](const-cumulative-has-deriv-at.md)
-- [Hyperbolic Rate](hyperbolic-rate.md)
-- [Hyperbolic cumulative](hyperbolic-cumulative.md)
-- [Hyperbolic cumulative zero](hyperbolic-cumulative-zero.md)
-- [Cumulative production theorem](hyperbolic-cumulative-has-deriv-at.md)
-- [Hyperbolic cumulative eq alt](hyperbolic-cumulative-eq-alt.md)
-- [Hyperbolic Rate pos](hyperbolic-rate-pos.md)
-- [Hyperbolic cumulative nonneg le](hyperbolic-cumulative-nonneg-le.md)
+- [Production rate under hyperbolic decline](hyperbolic-rate.md)
+- [Cumulative production under hyperbolic decline](hyperbolic-cumulative.md)
+- [Hyperbolic cumulative production starts at zero](hyperbolic-cumulative-zero.md)
+- [The derivative of hyperbolic cumulative production is the rate](hyperbolic-cumulative-has-deriv-at.md)
+- [Hyperbolic cumulative production in terms of the rate](hyperbolic-cumulative-eq-alt.md)
+- [The hyperbolic decline rate stays positive](hyperbolic-rate-pos.md)
+- [Hyperbolic cumulative production lies between zero and its asymptote](hyperbolic-cumulative-nonneg-le.md)

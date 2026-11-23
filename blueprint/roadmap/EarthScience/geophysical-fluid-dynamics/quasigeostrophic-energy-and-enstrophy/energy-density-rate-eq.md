@@ -1,11 +1,8 @@
-# Energy density rate eq
+# Energy-density rate in conservation form
 
-Energy-density rate in conservation form: for a nonzero deformation
-radius `Ld`, with
-`e_t = psi_x * psi_xt + psi_y * psi_yt + psi * psi_t / Ld^2` the time
-derivative of the energy density `0.5 * (|grad psi|^2 + psi^2 / Ld^2)`,
-`div (psi * grad psi_t) = (psi_x * psi_xt + psi * psi_xxt) +
-(psi_y * psi_yt + psi * psi_yyt)`, and
-`q_t = (psi_xxt + psi_yyt) - psi_t / Ld^2` the time derivative of
-`q = Delta psi - psi / Ld^2 + beta * y` (`beta * y` does not depend on
-time), one has `e_t = div (psi * grad psi_t) - psi * q_t`.
+For a deformation radius `Ld ≠ 0` and real values of `ψ` and its partial derivatives `ψ_x`,
+`ψ_y`, `ψ_t`, `ψ_xt`, `ψ_yt`, `ψ_xxt`, `ψ_yyt`, let
+`e_t = ψ_x ψ_xt + ψ_y ψ_yt + ψ ψ_t / Ld²` be the time derivative of the energy density
+`(|∇ψ|² + ψ² / Ld²) / 2`, let `div(ψ ∇ψ_t) = (ψ_x ψ_xt + ψ ψ_xxt) + (ψ_y ψ_yt + ψ ψ_yyt)`, and
+let `q_t = (ψ_xxt + ψ_yyt) - ψ_t / Ld²` be the time derivative of `q = Δψ - ψ / Ld² + β y`,
+whose term `β y` does not depend on time. Then `e_t = div(ψ ∇ψ_t) - ψ q_t`.

@@ -1,6 +1,5 @@
-# Shallow water characteristic speeds nodup iff
+# Characteristic speeds are distinct exactly at positive depth
 
-Distinct speeds exactly at positive depth. For positive gravity and
-nonnegative depth, the two characteristic speeds are distinct (the
-root multiset has no repeated element) if and only if the depth is
-positive; at zero depth both speeds equal `u`.
+For `g > 0` and `h ≥ 0`, the two characteristic speeds of the primitive coefficient matrix,
+with rows `(u, h)` and `(g, u)`, are distinct, that is the roots of its characteristic
+polynomial have no repeated value, if and only if `h > 0`; at `h = 0` both speeds equal `u`.

@@ -1,5 +1,5 @@
-# Van Genuchten water Content mem Ioc
+# The van Genuchten water content lies between residual and saturated
 
-Water-content bounds: for `θr < θs`, on the unsaturated branch `h ≤ 0`
-with `α > 0` and `n > 1`, the volumetric water content
-`θr + (θs - θr) * S_e(h)` lies in `(θr, θs]`.
+For residual and saturated water contents `θr < θs`, `α > 0`, `n > 1` and a head `h ≤ 0`, the
+volumetric water content `θ = θr + (θs - θr) * S_e(h)`, with the
+[van Genuchten effective saturation](van-genuchten-se.md) `S_e`, satisfies `θr < θ ≤ θs`.

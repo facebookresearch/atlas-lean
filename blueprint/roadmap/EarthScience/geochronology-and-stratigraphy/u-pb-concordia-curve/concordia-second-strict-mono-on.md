@@ -1,3 +1,4 @@
-# Concordia second strict Mono On
+# The second concordia coordinate increases strictly with age
 
-The second concordia coordinate is strictly increasing on nonnegative time.
+For a second decay constant `l2 > 0` and any `l1`, the second concordia coordinate
+`exp (l2 * t) - 1` is strictly increasing in the age `t` on `t ≥ 0`.

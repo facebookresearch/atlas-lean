@@ -1,6 +1,5 @@
-# Linear Reservoir Storage le capacity
+# Storage stays within a capacity bounding initial and steady storage
 
-Operating-envelope capacity form: at nonnegative times, if
-both the initial storage and the steady storage are at most
-`Smax`, then the storage remains at most `Smax`. The bound
-`Smax` is a supplied envelope, not a controller.
+Let `k > 0` be the recession coefficient, `I` the inflow, `S0` the initial storage and `Smax` a
+capacity with `S0 ≤ Smax` and `I / k ≤ Smax`. Then at every time `t ≥ 0` the linear-reservoir
+storage satisfies `I / k + (S0 - I / k) * exp (-k * t) ≤ Smax`.

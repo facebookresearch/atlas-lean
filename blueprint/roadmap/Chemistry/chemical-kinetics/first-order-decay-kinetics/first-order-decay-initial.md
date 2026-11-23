@@ -1,4 +1,4 @@
-# First Order decay initial
+# First-order decay starts at the initial concentration
 
-First-order decay starts at `c0`: `amount_zero` at `R = 0`, with the
-amount identified with the exponential by `amount_bolus`.
+For all real `k` and `c₀`, the first-order decay profile `c(t) = c₀ exp(-k t)` takes the value
+`c(0) = c₀ exp(-k · 0) = c₀` at time `0`.

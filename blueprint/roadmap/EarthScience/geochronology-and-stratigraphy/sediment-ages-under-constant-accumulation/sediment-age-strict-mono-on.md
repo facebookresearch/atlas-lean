@@ -1,4 +1,4 @@
-# Sediment age strict Mono On
+# Deeper sediment is older under constant accumulation
 
-Constant accumulation: with accumulation speed `v > 0`, the age is strictly increasing
-in depth `d ≥ 0` (deeper is older).
+With accumulation speed `v > 0`, the age `d / v` is strictly increasing in the depth `d` on
+`d ≥ 0` (deeper is older).

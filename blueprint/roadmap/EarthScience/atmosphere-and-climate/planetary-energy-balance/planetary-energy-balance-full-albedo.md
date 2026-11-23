@@ -1,3 +1,4 @@
-# Planetary Energy Balance full albedo
+# Full albedo gives zero equilibrium temperature
 
-Boundary case `alpha = 1` (zero absorption): the equilibrium is `T = 0`.
+For `σ > 0` and `S ≥ 0`, with albedo `α = 1` (no sunlight absorbed), a temperature `T ≥ 0`
+with `σ T⁴ = (1 - 1) S / 4` is `T = 0`.

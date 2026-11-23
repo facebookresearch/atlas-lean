@@ -1,3 +1,4 @@
-# Poisson exponent identity
+# Exponent identity for Poisson's relation
 
-Exponent identity: with `cv = cp - R` and `γ = cp / cv`, `(γ - 1) / γ = R / cp`.
+For `0 < R < cp`, with `cv = cp - R` and `γ = cp / cv`, the exponents satisfy
+`(γ - 1) / γ = R / cp`.

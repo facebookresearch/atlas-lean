@@ -1,17 +1,16 @@
-# Layered Effective Conductivity
+# Effective conductivity of layers in series
 
-Effective hydraulic conductivity for `n` ordered Darcy layers
-in series: the total thickness divided by the summed layer
-resistances `L i / K i`. Layers are indexed in flow order
-`0, ..., n - 1`. This records the series effective conductivity
-implied by a supplied common steady Darcy flux and continuous
-interface heads satisfying the per-layer drop law below; it does
-not derive Darcy's constitutive law.
+For `n` layers indexed in flow order `i = 0, …, n - 1`, with thicknesses `L i` and hydraulic
+conductivities `K i` (real numbers), the effective hydraulic conductivity of the layers in series
+is the total thickness divided by the summed layer resistances `L i / K i`:
+`K_eff = (∑_{i<n} L i) / (∑_{i<n} L i / K i)`. It is the series conductivity implied by a common
+steady Darcy flux `q` through continuous interface heads with the per-layer drops
+`head i - head (i + 1) = q * (L i / K i)`; Darcy's law itself is assumed, not derived.
 
-The physical effective-conductivity reading is for positive
-layer conductivities, the regime of the theorems below. As a
-raw real quotient the definition is totalized outside that
-regime: with a zero-conductivity layer the displayed value is
-not `0` and has no physical meaning here (an impermeable
-layer in series is outside the domain of this formula, since
-Lean totalizes division by zero).
+It is defined for all real inputs, with the convention `x / 0 = 0`: a layer with `K i = 0`
+contributes `0` to the summed resistance, as if it offered no resistance (an impermeable layer is
+outside the domain of the formula), and `K_eff = 0` when the summed resistance is `0`, in
+particular for `n = 0`. The intended domain is `n ≥ 1` with every `L i > 0` and `K i > 0`.
+
+This is the same formula as the
+[effective conductivity for flow across the layers](series-effective-conductivity.md).

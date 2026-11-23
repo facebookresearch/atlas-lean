@@ -1,5 +1,4 @@
-# Travel times value
+# Travel times of a two-cell synthetic model
 
-Capstone (synthetic seismic inverse problem): with
-`A = [[1, 1], [1, 2]]` and slowness `s = [1 / 2, 1 / 4]`, the travel
-times `A *ᵥ s` are `[3 / 4, 1]`.
+For the ray-length matrix `A` with rows `(1, 1)` and `(1, 2)` (two rays, two cells) and the
+slowness model `s = (1/2, 1/4)`, the travel times are `A s = (3/4, 1)`.

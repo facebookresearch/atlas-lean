@@ -1,5 +1,5 @@
 # Batch melting and trace-element partitioning
 
-- [Batch melting liquid](batch-melting-liquid.md)
-- [Batch melting denominator pos](batch-melting-denominator-pos.md)
-- [Batch melting solid](batch-melting-solid.md)
+- [Melt concentration in batch melting](batch-melting-liquid.md)
+- [The batch-melting denominator is positive for D > 0](batch-melting-denominator-pos.md)
+- [Residual-solid concentration in batch melting](batch-melting-solid.md)

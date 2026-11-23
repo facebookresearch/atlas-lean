@@ -1,6 +1,7 @@
-# Anomaly energy has Deriv At
+# Dissipation identity for the two-box anomaly energy
 
-Anomaly energy: if `xs, xd` satisfy the anomaly ODEs
-`Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)`,
-then `E(t) = (Cs*xs^2 + Cd*xd^2)/2` has derivative
-`-lam*xs^2 - gam*(xs - xd)^2`.
+Let the heat capacities be positive, `Cs > 0` and `Cd > 0`, and let `λ` and `γ` be real. If at
+a time `t` the anomalies `xs` and `xd` are differentiable with
+`Cs xs'(t) = -λ xs(t) - γ (xs(t) - xd(t))` and `Cd xd'(t) = γ (xs(t) - xd(t))`, then the energy
+`E = (Cs xs² + Cd xd²) / 2` is differentiable at `t` with
+`E'(t) = -λ xs(t)² - γ (xs(t) - xd(t))²`.

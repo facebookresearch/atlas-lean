@@ -1,5 +1,4 @@
-# Witness
+# Unit absorption without emission gives exponential attenuation
 
-Witness `kappa = 1, j = 0, I0 = 1`: the explicit form gives
-`I(L) = exp(-L)`. Stated as an integral evaluation plus the
-explicit-form conclusion for a solution with zero source.
+With absorption coefficient `κ = 1` and no source, let the intensity `I` be differentiable at
+every real `t` with `I'(t) = -I(t)` and `I(0) = 1`. Then `I(L) = exp(-L)` for every `L ≥ 0`.

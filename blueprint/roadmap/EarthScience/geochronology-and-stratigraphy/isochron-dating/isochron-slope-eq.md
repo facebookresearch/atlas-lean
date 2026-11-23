@@ -1,5 +1,6 @@
-# Isochron slope eq
+# Isochron slope of two coeval closed samples
 
-Isochron slope: for coeval closed samples with common initial
-daughter/stable ratio `b`, `D_i/S_i = b + (P_i/S_i)*(exp(λ*t)-1)`, the
-slope between two samples with distinct parent ratios is `exp(λ*t)-1`.
+For real `λ`, `t` and `b`, let two samples have distinct parent/stable ratios `x₁ ≠ x₂`
+(`xᵢ = Pᵢ / Sᵢ`) and daughter/stable ratios on the isochron `yᵢ = b + xᵢ * (exp (λ * t) - 1)`,
+as for coeval closed samples with common initial daughter/stable ratio `b`. Then their slope is
+`(y₂ - y₁) / (x₂ - x₁) = exp (λ * t) - 1`.

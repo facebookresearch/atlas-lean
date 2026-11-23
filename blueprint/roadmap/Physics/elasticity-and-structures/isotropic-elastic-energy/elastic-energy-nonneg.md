@@ -1,5 +1,6 @@
-# Elastic energy nonneg
+# The isotropic elastic energy is nonnegative
 
-Isotropic elastic energy is nonnegative: for a displacement gradient `H` with
-small strain `ε = smallStrain H` and moduli `K, μ ≥ 0`, the energy density
-`W = (K/2) * (tr ε)^2 + μ * ∑ᵢⱼ (dev εᵢⱼ)^2` is nonnegative.
+For a real `3 × 3` displacement gradient `H` with small strain `ε = (H + Hᵀ) / 2` and moduli
+`K ≥ 0` and `μ ≥ 0`, the isotropic elastic energy density
+`W = (K/2) (tr ε)² + μ ∑ᵢⱼ (dev ε)ᵢⱼ²`, where `(dev ε)ᵢⱼ = εᵢⱼ - (tr ε / 3) δᵢⱼ`, is
+nonnegative.

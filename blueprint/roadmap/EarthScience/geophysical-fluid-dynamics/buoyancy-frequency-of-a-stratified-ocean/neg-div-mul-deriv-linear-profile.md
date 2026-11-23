@@ -1,8 +1,6 @@
-# Neg div mul deriv linear profile
+# Algebraic identity for the buoyancy frequency of a linear profile
 
-Unrestricted algebraic identity behind the Brunt-Vaisala formula: for all
-real `g, beta, rho0` (with Lean's total division),
-`-(g / rho0) * deriv (fun z => rho0 - beta * z) z = g * beta / rho0`, since the
-profile's gradient is `-beta` by `boussinesq_density_deriv`. It is the squared
-Brunt-Vaisala frequency only in the physical domain `rho0 > 0`; see
-`brunt_vaisala_from_gradient`.
+For all real `g`, `β`, `ρ0` and every height `z`, the profile `ρ(z) = ρ0 - β z` satisfies
+`-(g / ρ0) ρ'(z) = g β / ρ0`, since its gradient is `-β`. With the convention `x / 0 = 0`, both
+sides are `0` when `ρ0 = 0`; the expression is the squared Brunt–Väisälä frequency only in the
+physical domain `ρ0 > 0`.

@@ -1,12 +1,11 @@
-# Energy flux divergence
+# Energy-density rate in the flux form with a non-divergence residual
 
-Energy-density identity in the flux `psi_t * grad psi` form: with
-`e_t = psi_x * psi_xt + psi_y * psi_yt + psi * psi_t / Ld^2` the time
-derivative of the energy density `0.5 * (|grad psi|^2 + psi^2 / Ld^2)`,
-and `div (psi_t * grad psi) = psi_t * (psi_xx + psi_yy) + psi_xt * psi_x +
-psi_yt * psi_y`, one has
-`e_t = div (psi_t * grad psi) - psi_t * ((psi_xx + psi_yy) - psi / Ld^2)`,
-that is `e_t = div - psi_t * q + beta * y * psi_t`. The residual is not a
-divergence, and the channel boundary conditions do not remove
-`beta * y * psi_t`, so this form alone does not give energy conservation;
-`energy_flux_divergence_of_qg` is the conservation identity.
+For a deformation radius `Ld ≠ 0` and real values of `ψ` and its partial derivatives `ψ_x`,
+`ψ_y`, `ψ_t`, `ψ_xt`, `ψ_yt`, `ψ_xx`, `ψ_yy`, let `e_t = ψ_x ψ_xt + ψ_y ψ_yt + ψ ψ_t / Ld²` be
+the time derivative of the energy density `(|∇ψ|² + ψ² / Ld²) / 2` and let
+`div(ψ_t ∇ψ) = ψ_t (ψ_xx + ψ_yy) + ψ_xt ψ_x + ψ_yt ψ_y`. Then
+`e_t = div(ψ_t ∇ψ) - ψ_t ((ψ_xx + ψ_yy) - ψ / Ld²)`, that is
+`e_t = div(ψ_t ∇ψ) - ψ_t q + β y ψ_t` for `q = Δψ - ψ / Ld² + β y`. The residual is not a
+divergence and the channel boundary conditions do not remove `β y ψ_t`, so this form alone
+does not give energy conservation; the conservation identity instead uses
+`e_t = div(ψ ∇ψ_t) - ψ q_t` with the quasigeostrophic equation.

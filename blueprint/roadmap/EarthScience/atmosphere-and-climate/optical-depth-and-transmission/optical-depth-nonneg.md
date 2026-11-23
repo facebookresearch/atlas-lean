@@ -1,4 +1,5 @@
-# Optical depth nonneg
+# Optical depth is nonnegative and vanishes for zero thickness
 
-Boundary cases: zero thickness gives zero optical depth, and
-nonnegative absorption gives nonnegative optical depth.
+For `a ≤ b` and an absorption coefficient `κ` that is integrable on `[a, b]` and nonnegative
+there, the optical depth `τ(a, b) = ∫ₐᵇ κ(x) dx` is nonnegative; and a layer of zero thickness
+has zero optical depth, `τ(a, a) = 0`.

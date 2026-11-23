@@ -1,7 +1,8 @@
-# Ekman pumping sign
+# Hemispheric sign of the Ekman transport divergence
 
-Hemispheric sign of Ekman pumping: with `ρ₀ > 0`, positive wind-stress
-curl gives a positive divergence of the Ekman transport
-`M (x, y) = ekmanTransport ρ₀ f (τ x y)` (upwelling) for `f > 0` (northern
-hemisphere) and a negative divergence (downwelling) for `f < 0` (southern
-hemisphere).
+Let `ρ₀ > 0`, let `τ(x, y) = (τ₀, τ₁, τ₂)` be a wind-stress field and let
+`M(x, y) = (τ₁ / (ρ₀ f), -τ₀ / (ρ₀ f), 0)` be its Ekman transport for a constant Coriolis
+parameter `f`. At a point where `τ₁` is differentiable in `x`, `τ₀` is differentiable in `y`
+and the stress curl is positive, `∂ₓτ₁ - ∂ᵧτ₀ > 0`, the divergence `∂ₓM₀ + ∂ᵧM₁` is positive
+(upwelling) if `f > 0`, as in the northern hemisphere, and negative (downwelling) if `f < 0`,
+as in the southern hemisphere.

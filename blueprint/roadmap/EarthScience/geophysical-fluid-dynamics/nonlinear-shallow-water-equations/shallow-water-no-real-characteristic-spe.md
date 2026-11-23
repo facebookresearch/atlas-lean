@@ -1,6 +1,5 @@
-# Shallow water no real characteristic speeds
+# No real characteristic speeds when gh is negative
 
-No real characteristic speeds when `g * h < 0` (for positive
-gravity, negative depth): the characteristic polynomial of the
-primitive coefficient matrix has no real root, so the system is not
-hyperbolic there.
+If `g h < 0`, for instance for positive gravity and negative depth, the characteristic
+polynomial of the primitive coefficient matrix, with rows `(u, h)` and `(g, u)`, has no real
+root, so the system is not hyperbolic there.

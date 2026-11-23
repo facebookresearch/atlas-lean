@@ -1,6 +1,6 @@
 # Inclination of a dipole field
 
-- [Dipole component ratio](dipole-component-ratio.md)
-- [Dipole tan inclination](dipole-tan-inclination.md)
-- [Dipole equator](dipole-equator.md)
-- [Dipole pole](dipole-pole.md)
+- [The dipole component ratio is twice the tangent of latitude](dipole-component-ratio.md)
+- [The tangent of the dipole inclination is twice that of latitude](dipole-tan-inclination.md)
+- [Dipole field components at the magnetic equator](dipole-equator.md)
+- [Dipole field components at the magnetic pole](dipole-pole.md)

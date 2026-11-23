@@ -1,3 +1,5 @@
-# Rayleigh number pos
+# The Rayleigh number is positive for positive parameters
 
-The Rayleigh number is positive for positive `g, α, ΔT, H, ν, κ`.
+For positive gravity `g`, thermal expansion coefficient `α`, temperature difference `ΔT`, layer
+depth `H`, kinematic viscosity `ν` and thermal diffusivity `κ`, the Rayleigh number
+`g * α * ΔT * H ^ 3 / (ν * κ)` is positive.

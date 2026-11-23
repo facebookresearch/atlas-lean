@@ -1,6 +1,5 @@
-# Shallow water characteristic speeds
+# Characteristic speeds of the shallow-water equations
 
-Characteristic speeds. If `0 ≤ g * h` (in particular for positive
-gravity and depth), the real roots of the characteristic polynomial
-of the primitive coefficient matrix, counted with multiplicity, are
-exactly `u - √(g h)` and `u + √(g h)`.
+If `g h ≥ 0`, as for nonnegative gravity and depth, the real roots of the characteristic
+polynomial of the primitive coefficient matrix, with rows `(u, h)` and `(g, u)`, counted with
+multiplicity, are exactly `u - √(g h)` and `u + √(g h)`.

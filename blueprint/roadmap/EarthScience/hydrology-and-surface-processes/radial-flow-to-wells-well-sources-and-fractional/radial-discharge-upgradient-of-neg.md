@@ -1,5 +1,5 @@
-# Radial Discharge upgradient of neg
+# A negative transmissivity sends the discharge up the head gradient
 
-A negative transmissivity is rejected: for `Tr < 0`, at a radius `r > 0` where the head
-gradient `h'` is nonzero, the discharge `-2 π r Tr h'` has the sign of `h'`, so the water
-would flow toward higher head.
+For a transmissivity `Tr < 0`, a radius `r > 0` and a nonzero head gradient `h'`, the outward
+discharge `-2 * π * r * Tr * h'` has the strict sign of `h'`: `(-2 * π * r * Tr * h') * h' > 0`.
+Water would flow toward higher head, so a negative transmissivity is ruled out.

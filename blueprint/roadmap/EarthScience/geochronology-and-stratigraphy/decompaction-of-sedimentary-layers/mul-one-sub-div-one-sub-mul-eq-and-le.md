@@ -1,8 +1,7 @@
-# Mul one sub div one sub mul eq and le
+# Algebraic identity and bound behind decompaction
 
-Unrestricted algebraic identity and bound behind the decompaction
-relation: for all reals with `0 ≤ h` and `φ ≤ φ0 < 1`,
-`h * (1 - φ) / (1 - φ0)` times `1 - φ0` is `h * (1 - φ)`, and
-`h ≤ h * (1 - φ) / (1 - φ0)`. No porosity range is assumed, so this is
-not a physical statement by itself; for porosities `0 ≤ φ ≤ φ0 < 1` see
-`decompaction_relation`.
+For all reals `h ≥ 0` and `φ ≤ φ0 < 1`, with no lower bound on `φ`,
+`(h * (1 - φ) / (1 - φ0)) * (1 - φ0) = h * (1 - φ)` and `h ≤ h * (1 - φ) / (1 - φ0)`. This is
+not a physical statement by itself; with physical porosities `0 ≤ φ ≤ φ0 < 1` it is the
+decompaction relation: the decompacted thickness conserves the solid volume and is at least the
+present thickness.

@@ -1,5 +1,5 @@
 # Box models with internal transfers
 
-- [Sum transfer net eq zero](sum-transfer-net-eq-zero.md)
-- [Has Deriv At total stock](has-deriv-at-total-stock.md)
-- [Has Deriv At total stock eq zero](has-deriv-at-total-stock-eq-zero.md)
+- [Net internal transfers sum to zero](sum-transfer-net-eq-zero.md)
+- [Only external sources change the total stock](has-deriv-at-total-stock.md)
+- [Without external sources the total stock has zero derivative](has-deriv-at-total-stock-eq-zero.md)

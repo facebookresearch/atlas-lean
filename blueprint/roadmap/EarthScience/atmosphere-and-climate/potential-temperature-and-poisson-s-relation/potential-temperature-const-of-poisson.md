@@ -1,8 +1,6 @@
-# Potential Temperature const of poisson
+# Potential temperature is conserved along a Poisson adiabat
 
-Potential temperature is constant along a reversible ideal-gas
-adiabat: if `T2 = T1 * (p2 / p1) ^ (R / cp)` (Poisson relation in ratio
-form) then `θ2 = θ1` for `θ = T * (p_ref / p) ^ (R / cp)`. The
-physical domain `0 < R`, `0 < cp`, and `0 < T1` excludes the undefined
-`R / 0` case and nonpositive absolute temperature; positivity of `T2`
-then follows from the Poisson relation.
+Let the pressures `p1`, `p2` and the reference pressure `p_ref` be positive, let `R > 0` and
+`cp > 0`, and let `T1 > 0`. If `T2 = T1 (p2 / p1) ^ (R / cp)` (Poisson's relation in ratio
+form, real power), then the potential temperature `θ = T (p_ref / p) ^ (R / cp)` takes the
+same value at both states: `T2 (p_ref / p2) ^ (R / cp) = T1 (p_ref / p1) ^ (R / cp)`.

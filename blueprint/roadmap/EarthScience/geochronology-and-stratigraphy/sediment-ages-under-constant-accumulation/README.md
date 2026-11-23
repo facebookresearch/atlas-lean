@@ -1,10 +1,10 @@
 # Sediment ages under constant accumulation
 
-- [Sediment Age](sediment-age.md)
-- [Sediment Depth](sediment-depth.md)
-- [Sediment Age zero](sediment-age-zero.md)
-- [Sediment Age nonneg](sediment-age-nonneg.md)
-- [Sediment age strict Mono On](sediment-age-strict-mono-on.md)
-- [Sediment depth age inverse](sediment-depth-age-inverse.md)
-- [Sediment Depth sediment Age](sediment-depth-sediment-age.md)
-- [Sediment Age sub](sediment-age-sub.md)
+- [Sediment age under constant accumulation](sediment-age.md)
+- [Sediment depth under constant accumulation](sediment-depth.md)
+- [The present surface has age zero](sediment-age-zero.md)
+- [Buried sediment has nonnegative age](sediment-age-nonneg.md)
+- [Deeper sediment is older under constant accumulation](sediment-age-strict-mono-on.md)
+- [Depth then age returns the original age](sediment-depth-age-inverse.md)
+- [Age then depth returns the original depth](sediment-depth-sediment-age.md)
+- [Age difference between two horizons](sediment-age-sub.md)

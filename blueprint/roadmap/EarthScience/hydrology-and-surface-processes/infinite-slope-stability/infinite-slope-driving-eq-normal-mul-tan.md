@@ -1,3 +1,4 @@
-# Infinite Slope Driving eq normal mul tan
+# Driving stress is the normal stress times the tangent of the slope
 
-On a genuine slope, driving stress is normal stress times `tan beta`.
+For a slope angle `0 < β < π / 2` and all real `γ` and `z`, the driving stress is the normal
+stress times `tan β`: `γ * z * sin β * cos β = (γ * z * cos β ^ 2) * tan β`.

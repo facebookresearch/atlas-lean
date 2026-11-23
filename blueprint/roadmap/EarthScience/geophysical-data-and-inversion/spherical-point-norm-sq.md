@@ -1,5 +1,5 @@
-# Earth coordinates on the sphere
+# A point at latitude φ, longitude λ and radius R has squared norm R²
 
-Spherical coordinates lie on the sphere: for radius `R`, geocentric
-latitude `φ` and longitude `lam`, the squared norm of
-`R * (cos φ cos lam, cos φ sin lam, sin φ)` is `R ^ 2`.
+For all real `R`, `φ` and `λ`, `(R cos φ cos λ)² + (R cos φ sin λ)² + (R sin φ)² = R²`: the
+Cartesian point `R (cos φ cos λ, cos φ sin λ, sin φ)`, with geocentric latitude `φ` and longitude
+`λ` in radians, has squared norm `R²`; for `R > 0` it lies on the sphere of radius `R`.

@@ -1,4 +1,4 @@
-# Shallow water wave speed
+# The shallow-water wave speed is positive and squares to g H
 
-Shallow-water wave speed: for `g, H > 0`, `Real.sqrt (g * H)` is
-positive and its square is `g * H`.
+For `g > 0` and `H > 0`, the shallow-water wave speed `√(g H)` is positive and its square is
+`g H`.

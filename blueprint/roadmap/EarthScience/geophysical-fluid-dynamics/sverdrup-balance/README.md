@@ -1,4 +1,4 @@
 # Sverdrup balance
 
-- [Sverdrup transport](sverdrup-transport.md)
-- [Sverdrup zero curl](sverdrup-zero-curl.md)
+- [Sverdrup balance gives the meridional transport](sverdrup-transport.md)
+- [Zero wind-stress curl gives zero Sverdrup transport](sverdrup-zero-curl.md)

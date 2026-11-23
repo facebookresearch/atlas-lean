@@ -1,6 +1,6 @@
-# Two box total stock deriv
+# Total two-box tracer stock changes only by external fluxes
 
-Two fixed-volume boxes exchanging volume flux `Q` symmetrically,
-`V1 * S1' = Q * (S2 - S1) + F1`, `V2 * S2' = Q * (S1 - S2) + F2`:
-the total tracer stock `V1 * S1 + V2 * S2` changes only through the
-external fluxes `F1 + F2`.
+Two boxes of positive volumes `V1` and `V2` exchange a volume flux `Q` symmetrically, with
+external fluxes `F1` and `F2`. If at a time `t` the tracer concentrations are differentiable
+with `V1 S1'(t) = Q (S2(t) - S1(t)) + F1` and `V2 S2'(t) = Q (S1(t) - S2(t)) + F2`, then the
+total tracer stock `V1 S1 + V2 S2` has derivative `F1 + F2` at `t`.

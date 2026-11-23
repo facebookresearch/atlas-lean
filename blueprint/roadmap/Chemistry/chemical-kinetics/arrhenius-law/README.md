@@ -1,4 +1,4 @@
 # Arrhenius law
 
-- [Arrhenius pos](arrhenius-pos.md)
-- [Arrhenius strict Mono](arrhenius-strict-mono.md)
+- [The Arrhenius rate constant is positive](arrhenius-pos.md)
+- [The Arrhenius rate increases strictly with temperature when Ea > 0](arrhenius-strict-mono.md)

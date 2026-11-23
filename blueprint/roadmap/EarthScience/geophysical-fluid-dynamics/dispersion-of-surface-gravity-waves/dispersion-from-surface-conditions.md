@@ -1,8 +1,6 @@
-# Dispersion from surface conditions
+# Dispersion relation from the linearized free-surface conditions
 
-Finite-depth surface-gravity-wave dispersion from the linearized
-free-surface conditions. For a wave of (nonzero) surface amplitude `a`,
-frequency `ω`, wavenumber `k`, depth `H`, the kinematic condition
-`ω a = k tanh (kH) b` and the dynamic condition `ω b = g a` (with `b` the
-velocity-potential amplitude) eliminate `a, b` and give
-`ω² = g k tanh (kH)`.
+For all real `ω`, `g`, `k` and `H`, a nonzero surface amplitude `a` and a velocity-potential
+amplitude `b`: if the kinematic condition `ω a = k tanh(k H) b` and the dynamic condition
+`ω b = g a` hold, then the finite-depth dispersion relation `ω² = g k tanh(k H)` holds, where
+`ω` is the frequency, `k` the wavenumber and `H` the depth.

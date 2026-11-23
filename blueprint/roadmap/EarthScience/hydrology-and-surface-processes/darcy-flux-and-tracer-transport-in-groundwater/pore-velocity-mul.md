@@ -1,4 +1,4 @@
-# Pore Velocity mul
+# Pore velocity times a nonzero porosity is the Darcy flux
 
-The pore velocity recovers the Darcy discharge when multiplied
-back by a nonzero porosity.
+For a porosity `n ≠ 0` and every Darcy discharge `q`, multiplying the pore velocity back by the
+porosity recovers the discharge: `(q / n) * n = q`.

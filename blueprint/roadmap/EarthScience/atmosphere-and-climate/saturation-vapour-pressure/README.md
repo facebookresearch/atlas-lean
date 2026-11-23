@@ -1,10 +1,10 @@
 # Saturation vapour pressure
 
-## A. Derivative of saturation pressure
+## Derivative of saturation pressure
 
-- [Has Deriv At saturation pressure](has-deriv-at-saturation-pressure.md)
+- [Clausius–Clapeyron derivative of saturation vapour pressure](has-deriv-at-saturation-pressure.md)
 
-## B. Positivity and strict monotonicity
+## Positivity and strict monotonicity
 
-- [Saturation pressure deriv pos](saturation-pressure-deriv-pos.md)
-- [Saturation pressure strict Mono](saturation-pressure-strict-mono.md)
+- [The Clausius–Clapeyron derivative is positive](saturation-pressure-deriv-pos.md)
+- [Saturation vapour pressure strictly increases with temperature](saturation-pressure-strict-mono.md)

@@ -1,4 +1,5 @@
-# Atmosphere temperature
+# Atmosphere layer balance gives Ta⁴ = Ts⁴ / 2
 
-One-layer grey atmosphere: if `eps > 0`, the atmosphere equilibrium
-`2*eps*sigma*Ta^4 = eps*sigma*Ts^4` gives `Ta^4 = Ts^4 / 2`.
+In the one-layer grey atmosphere with Stefan–Boltzmann parameter `σ > 0` and emissivity
+`ε > 0`, if the atmosphere's energy balance `2 ε σ Ta⁴ = ε σ Ts⁴` holds, then
+`Ta⁴ = Ts⁴ / 2`, where `Ta` is the atmosphere temperature and `Ts` the surface temperature.

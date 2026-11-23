@@ -1,4 +1,5 @@
-# Catchment volume flux time
+# Volume of a depth rate accumulated over a duration
 
-Area conversion: a depth flux times a duration gives a depth, and
-area times that depth is the volume.
+For a catchment area `A`, a depth rate `r` and a duration `dt` (any real numbers), the volume of
+the depth `r * dt` equals the volume flux `A * r` times the duration:
+`A * (r * dt) = (A * r) * dt`.

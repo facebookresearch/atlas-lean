@@ -1,4 +1,4 @@
 # Decompaction of sedimentary layers
 
-- [Mul one sub div one sub mul eq and le](mul-one-sub-div-one-sub-mul-eq-and-le.md)
-- [Decompaction relation](decompaction-relation.md)
+- [Algebraic identity and bound behind decompaction](mul-one-sub-div-one-sub-mul-eq-and-le.md)
+- [Decompaction conserves solid volume and thickens the layer](decompaction-relation.md)

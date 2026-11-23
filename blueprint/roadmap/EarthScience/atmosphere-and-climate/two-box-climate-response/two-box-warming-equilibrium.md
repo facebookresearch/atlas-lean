@@ -1,5 +1,5 @@
-# Two box warming equilibrium
+# Unit two-box model is at equilibrium when both temperatures are 1
 
-Capstone (two-box model, `Cs = Cd = lam = γ = F = 1`):
-equilibrium `(Ts, Td) = (1, 1)` annihilates both right-hand sides:
-`1 - 1 - (1 - 1) = 0` and `1 - 1 = 0`.
+In the nondimensional two-box model with `Cs = Cd = λ = γ = F = 1`, whose equations are
+`Ts' = 1 - Ts - (Ts - Td)` and `Td' = Ts - Td`, the state `(Ts, Td) = (1, 1)` makes both
+right-hand sides vanish: `1 - 1 - (1 - 1) = 0` and `1 - 1 = 0`.

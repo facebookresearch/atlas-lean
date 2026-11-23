@@ -1,8 +1,8 @@
 # Stratigraphic hiatus
 
-- [Hiatus Age](hiatus-age.md)
-- [Hiatus age above](hiatus-age-above.md)
-- [Hiatus age at or below](hiatus-age-at-or-below.md)
-- [Hiatus age strict Mono](hiatus-age-strict-mono.md)
-- [Hiatus age jump](hiatus-age-jump.md)
-- [Hiatus age straddle](hiatus-age-straddle.md)
+- [Sediment age across a stratigraphic hiatus](hiatus-age.md)
+- [Above a hiatus the age is the constant-accumulation age](hiatus-age-above.md)
+- [At or below a hiatus the age is offset by the gap](hiatus-age-at-or-below.md)
+- [With a hiatus, age still increases strictly with depth](hiatus-age-strict-mono.md)
+- [At the hiatus depth the age jumps by the gap](hiatus-age-jump.md)
+- [Age difference across a hiatus](hiatus-age-straddle.md)

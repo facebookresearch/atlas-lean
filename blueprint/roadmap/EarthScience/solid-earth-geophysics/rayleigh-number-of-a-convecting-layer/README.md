@@ -1,5 +1,5 @@
 # Rayleigh number of a convecting layer
 
-- [Rayleigh number factorisation](rayleigh-number-factorisation.md)
-- [Rayleigh number pos](rayleigh-number-pos.md)
-- [Rayleigh number zero buoyancy](rayleigh-number-zero-buoyancy.md)
+- [Factorisation of the Rayleigh number](rayleigh-number-factorisation.md)
+- [The Rayleigh number is positive for positive parameters](rayleigh-number-pos.md)
+- [Zero temperature difference gives Rayleigh number zero](rayleigh-number-zero-buoyancy.md)

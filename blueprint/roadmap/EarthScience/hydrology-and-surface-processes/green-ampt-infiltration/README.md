@@ -1,4 +1,4 @@
 # Green–Ampt infiltration
 
-- [Green ampt integrated](green-ampt-integrated.md)
-- [Green ampt no suction](green-ampt-no-suction.md)
+- [Integrated Green–Ampt infiltration law](green-ampt-integrated.md)
+- [Green–Ampt infiltration without suction head is constant-rate](green-ampt-no-suction.md)

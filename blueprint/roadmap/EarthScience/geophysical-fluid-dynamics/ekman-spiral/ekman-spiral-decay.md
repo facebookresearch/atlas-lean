@@ -1,3 +1,4 @@
-# Ekman spiral decay
+# The Ekman spiral decays with depth
 
-Decay at depth: both components tend to `0` as `ζ → ∞`, for `a > 0`.
+For `a > 0`, both Ekman spiral components `u(ζ) = exp(-a ζ) cos(a ζ)` and
+`v(ζ) = -exp(-a ζ) sin(a ζ)` tend to `0` as the depth `ζ` tends to infinity.

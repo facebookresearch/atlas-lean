@@ -1,7 +1,7 @@
 # Flexure of the lithosphere
 
-- [Flexure first deriv](flexure-first-deriv.md)
-- [Flexure second deriv](flexure-second-deriv.md)
-- [Flexure third deriv](flexure-third-deriv.md)
-- [Flexure fourth deriv](flexure-fourth-deriv.md)
-- [Flexure equation](flexure-equation.md)
+- [First derivative of the periodic flexure profile](flexure-first-deriv.md)
+- [Second derivative of the periodic flexure profile](flexure-second-deriv.md)
+- [Third derivative of the periodic flexure profile](flexure-third-deriv.md)
+- [Fourth derivative of the periodic flexure profile](flexure-fourth-deriv.md)
+- [The periodic profile solves the linear flexure equation](flexure-equation.md)

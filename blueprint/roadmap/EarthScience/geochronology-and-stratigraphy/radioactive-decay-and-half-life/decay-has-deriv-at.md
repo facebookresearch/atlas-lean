@@ -1,5 +1,4 @@
-# Decay has Deriv At
+# The exponential decay law solves its rate equation
 
-Radioactive decay: `N(t) = N0 * exp(-λ*t)` solves `N' = -λ*N`. This is the
-bolus case (`R = 0`) of `CompartmentKinetics.hasDerivAt_amount`, via
-`CompartmentKinetics.amount_bolus`; it is not a new exponential-decay derivative.
+Radioactive decay: for every real decay constant `λ` and initial inventory `N0`, the function
+`N(t) = N0 * exp (-λ * t)` has derivative `-λ * N(t)` at every `t`, so it solves `N' = -λ * N`.

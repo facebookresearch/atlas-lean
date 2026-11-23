@@ -1,7 +1,8 @@
-# Well Energy Rate
+# Well energy rate of a cell
 
-Well energy rate of cell `i`: the injection rate `qI i` at the injected specific enthalpy
-`hI i`, minus the production rate `qP i` at the cell's own specific enthalpy
-`specificEnthalpy (ec i) (pc i) (ρc i)`. The signed well mass rate of the cell is `qI i - qP i`,
-and the produced enthalpy leaves at the same production rate `qP i`. The cell densities are
-positive (`_hρc`), as the face densities of `faceEnthalpyFlux`.
+For injection mass rates `qI i` at injected specific enthalpies `hI i`, production mass rates
+`qP i`, and in each cell the specific internal energy `ec i`, the pressure `pc i` and the density
+`ρc i` of the stored fluid, with every cell density positive, the well energy rate of cell `i` is
+`qI i * hI i - qP i * (ec i + pc i / ρc i)`: the produced fluid leaves at the production rate
+`qP i` with the cell's own specific enthalpy. The signed well mass rate of the cell is
+`qI i - qP i`.

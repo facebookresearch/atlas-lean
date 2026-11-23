@@ -1,5 +1,5 @@
-# Arrhenius pos
+# The Arrhenius rate constant is positive
 
-An admissible Arrhenius law `k(T) = A * exp(-(Ea / (R * T)))`, with a typed prefactor
-`A > 0`, a molar activation energy `Ea`, a gas constant `R > 0` and an absolute temperature
-`T > 0`, is positive.
+For a prefactor `A > 0`, a quantity of any dimension, a molar activation energy `Ea` of any sign,
+a gas constant `R > 0` and an absolute temperature `T > 0`, the Arrhenius rate constant
+`k(T) = A exp(-Ea / (R T))` is positive.

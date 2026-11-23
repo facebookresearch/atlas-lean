@@ -1,5 +1,4 @@
-# Geotherm second derivative zero
+# The synthetic linear geotherm has zero second derivative
 
-Zero-production check: the linear profile's second derivative is `0`
-(no internal heat production in the slab). This is the first conjunct of
-`EarthScience.slab_profile_second_deriv` with `L = 100` and `TL = T₀ - 2`.
+Zero-production check: for every real `T₀`, the linear profile `T(z) = T₀ - (2 / 100) * z` has
+second derivative `0` at every point `z` (no internal heat production in the slab).

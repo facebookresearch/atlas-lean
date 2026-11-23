@@ -1,8 +1,8 @@
-# Two box energy bound
+# Exponential energy bound for the unit two-box model
 
-Exponential energy bound: if `Ts, Td` satisfy the two-box ODE at
-every `t` and start at `Ts 0 = Td 0 = 0` (so `E 0 = 1`), then for
-`t ≥ 0`, `E t ≤ exp (-(2 / 3) * t)`, i.e.
-`E t ≤ E 0 * exp (-(2 / 3) * t)`. This is the unit-parameter case of
-`anomaly_energy_exp_bound` with `xs = Ts - 1`, `xd = Td - 1` and
-`c = min (2 / 3) 1 = 2 / 3`.
+Suppose `Ts` and `Td` are differentiable at every time `t`, with
+`Ts'(t) = 1 - Ts(t) - (Ts(t) - Td(t))` and `Td'(t) = Ts(t) - Td(t)`, and start from
+`Ts(0) = Td(0) = 0`, so that the energy `E(t) = ((Ts(t) - 1)² + (Td(t) - 1)²) / 2` has
+`E(0) = 1`. Then `E(t) ≤ exp(-(2/3) t) = E(0) exp(-(2/3) t)` for every `t ≥ 0`. This is the
+exponential anomaly-energy bound with unit parameters, `xs = Ts - 1`, `xd = Td - 1` and
+`c = min(2/3, 1) = 2/3`.

@@ -1,4 +1,4 @@
 # Dissociation of a monoprotic acid
 
-- [Monoprotic acid h unique](monoprotic-acid-h-unique.md)
-- [Monoprotic acid h exists](monoprotic-acid-h-exists.md)
+- [Uniqueness of the positive root of the monoprotic acid equation](monoprotic-acid-h-unique.md)
+- [Existence of a positive root of the monoprotic acid equation](monoprotic-acid-h-exists.md)

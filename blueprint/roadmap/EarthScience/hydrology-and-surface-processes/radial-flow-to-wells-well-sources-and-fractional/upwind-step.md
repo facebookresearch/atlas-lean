@@ -1,5 +1,6 @@
-# Upwind Step
+# Normalized upwind step on a chain with inflow
 
-One normalized upwind step on the chain `s : Fin (n + 1) → ℝ` with inflow state `sIn` at the
-left boundary: cell `i` uses `Matrix.vecCons sIn s i.castSucc`, which is `sIn` for the first cell
-and `s (i - 1)` otherwise.
+On a chain of `n + 1` cells with normalized saturations `s 0, …, s n` and an inflow state `s_in`
+at the left boundary, one normalized upwind step with CFL number `ν` replaces `s i` by the
+[local upwind update](upwind-update.md) `s i - ν * (f(s i) - f(s (i - 1)))`, where `f` is the
+[fractional flow](frac-flow.md) and the upwind state of the first cell, `s (-1)`, is `s_in`.

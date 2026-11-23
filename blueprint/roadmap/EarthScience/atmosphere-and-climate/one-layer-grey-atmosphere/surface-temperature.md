@@ -1,5 +1,6 @@
-# Surface temperature
+# Surface temperature of a one-layer grey atmosphere
 
-One-layer grey atmosphere: surface/atmosphere balances yield
-`Ts^4 = Te^4 / (1 - eps/2)` for `eps ∈ [0,1]`. The top-of-atmosphere
-balance is `sigma*Te^4 = (1-eps)*sigma*Ts^4 + eps*sigma*Ta^4`.
+In the one-layer grey atmosphere with Stefan–Boltzmann parameter `σ > 0` and emissivity
+`0 ≤ ε ≤ 1`, suppose the atmosphere balance `2 ε σ Ta⁴ = ε σ Ts⁴` and the top-of-atmosphere
+balance `σ Te⁴ = (1 - ε) σ Ts⁴ + ε σ Ta⁴` hold, where `Te` is the effective temperature, `Ts`
+the surface temperature and `Ta` the atmosphere temperature. Then `Ts⁴ = Te⁴ / (1 - ε / 2)`.

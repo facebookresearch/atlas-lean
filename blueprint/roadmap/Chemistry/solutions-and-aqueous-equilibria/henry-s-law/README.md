@@ -1,10 +1,10 @@
 # Henry's law
 
-## A. Doubling and zero pressure
+## Doubling and zero pressure
 
-- [Henry doubling](henry-doubling.md)
-- [Henry zero pressure](henry-zero-pressure.md)
+- [Doubling the partial pressure doubles the dissolved concentration](henry-doubling.md)
+- [Zero partial pressure gives zero dissolved concentration](henry-zero-pressure.md)
 
-## B. Convention conversion
+## Convention conversion
 
-- [Henry conversion reciprocal](henry-conversion-reciprocal.md)
+- [The two Henry-constant conventions are reciprocal](henry-conversion-reciprocal.md)

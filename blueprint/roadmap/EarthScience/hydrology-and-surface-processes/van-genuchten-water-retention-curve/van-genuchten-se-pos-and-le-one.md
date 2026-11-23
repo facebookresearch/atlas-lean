@@ -1,7 +1,5 @@
-# Van Genuchten Se pos and le one
+# Range of the van Genuchten effective saturation
 
-Retention saturation range: on the unsaturated branch `h ≤ 0`, with
-`α > 0` and `n > 1`, the van Genuchten effective saturation lies in `(0, 1]`.
-No claim is made for `h > 0`. The hypothesis `hh` records the locked
-unsaturated domain; the formula depends on `h` only through `|h|`, so `hh`
-is a domain hypothesis rather than an algebraic one.
+For `α > 0`, `n > 1` and a head `h ≤ 0` on the unsaturated branch, the
+[van Genuchten effective saturation](van-genuchten-se.md)
+`S_e(h) = (1 + (α |h|) ^ n) ^ (-(1 - 1 / n))` satisfies `0 < S_e(h) ≤ 1`.

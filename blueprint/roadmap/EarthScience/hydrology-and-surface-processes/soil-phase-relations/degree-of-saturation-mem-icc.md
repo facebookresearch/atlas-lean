@@ -1,7 +1,4 @@
-# Degree Of Saturation mem Icc
+# The degree of saturation lies between zero and one
 
-On the physical domain `0 ≤ Vw ≤ Vv` with `0 < Vv`, the degree
-of saturation lies in `[0, 1]`. Outside that domain
-`degreeOfSaturation` is the same totalized quotient, and
-`saturation_mul_voidRatio` is the corresponding algebraic
-identity for arbitrary real `Vw`.
+For a water volume `Vw` and a void volume `Vv` with `0 ≤ Vw ≤ Vv` and `Vv > 0`, the
+[degree of saturation](degree-of-saturation.md) `S = Vw / Vv` satisfies `0 ≤ S ≤ 1`.

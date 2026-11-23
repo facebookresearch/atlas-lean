@@ -1,4 +1,4 @@
 # Spatial interpolation weights
 
-- [Interpolation preserves constant](interpolation-preserves-constant.md)
-- [Interpolation mem range](interpolation-mem-range.md)
+- [Normalized weights preserve a constant field](interpolation-preserves-constant.md)
+- [A convex combination of samples stays within their bounds](interpolation-mem-range.md)

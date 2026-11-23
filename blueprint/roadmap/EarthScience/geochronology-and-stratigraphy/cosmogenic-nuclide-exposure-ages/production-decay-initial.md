@@ -1,5 +1,7 @@
-# Production decay initial
+# The production–decay inventory starts at its inherited value
 
-The production-decay formula equals `N0` at `t = 0`, for every real `P`,
-`λ` and `N0`. For `λ = 0` this is an identity of the formula only (Lean's
-`P/0 = 0`), not of the physical zero-decay solution `N0 + P*t`.
+For every real `P`, `λ` and `N0`, the production–decay formula
+`N(t) = N0 * exp (-λ * t) + (P / λ) * (1 - exp (-λ * t))` takes the value `N(0) = N0`. At
+`λ = 0` the formula, with the convention `x / 0 = 0`, is the constant `N0` rather than the
+zero-decay solution `N0 + P * t`; the value at `t = 0` holds there because both decay factors
+equal `1`.

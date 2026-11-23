@@ -1,4 +1,5 @@
-# Chain Parent
+# Parent inventory in a two-step decay chain
 
-Parent inventory in a two-step chain: `P0 * exp (-l1 * t)`. Physically `l1 > 0`, `P0 ≥ 0`
-and `t ≥ 0`; the formula is defined for all reals.
+The parent inventory in a two-step decay chain, with parent decay rate `l1` and initial parent
+inventory `P0`: `P(t) = P0 * exp (-l1 * t)`. It is defined for all reals; physically `l1 > 0`,
+`P0 ≥ 0` and `t ≥ 0`.

@@ -1,4 +1,6 @@
-# Upwind Update
+# Local upwind update of a cell
 
-Local upwind update of a cell with normalized saturation `a` whose left neighbor (upwind
-state) is `b`: `a - ν (f a - f b)`.
+For viscosities `μo` and `μw`, a CFL number `ν`, a normalized saturation `a` of a cell and the
+normalized saturation `b` of its left (upwind) neighbour (any real numbers), the local upwind
+update is `a - ν * (f(a) - f(b))`, where `f` is the [fractional flow](frac-flow.md) with
+viscosities `μo` and `μw`.

@@ -1,5 +1,6 @@
-# Elastic energy of skew
+# An infinitesimal rigid rotation stores no elastic energy
 
-An infinitesimal rigid rotation stores no elastic energy: a skew displacement
-gradient `W` (`Wᵀ = -W`) has zero small strain, so its energy density vanishes for all
-moduli `K, μ`.
+A skew real `3 × 3` displacement gradient `Ω` (`Ωᵀ = -Ω`), an infinitesimal rigid rotation, has
+zero small strain `ε = (Ω + Ωᵀ) / 2`, so its isotropic elastic energy density
+`(K/2) (tr ε)² + μ ∑ᵢⱼ (dev ε)ᵢⱼ²`, where `(dev ε)ᵢⱼ = εᵢⱼ - (tr ε / 3) δᵢⱼ`, is `0` for all
+real moduli `K` and `μ`.

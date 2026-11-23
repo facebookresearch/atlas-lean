@@ -1,3 +1,4 @@
-# Elastic s wave speed sq
+# Squared S-wave speed of an isotropic elastic solid
 
-S-wave speed squared: `cS ^ 2 = μ / ρ`.
+For a shear modulus `μ ≥ 0` and a density `ρ > 0`, the S-wave speed `cS = √(μ / ρ)` satisfies
+`cS ^ 2 = μ / ρ`.

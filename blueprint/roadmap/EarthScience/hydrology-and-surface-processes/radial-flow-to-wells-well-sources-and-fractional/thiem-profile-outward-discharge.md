@@ -1,5 +1,6 @@
-# Thiem Profile outward discharge
+# The Thiem rate is minus the outward discharge
 
-The Thiem rate is the pumping (extraction) rate: the Thiem profile
-`C + P log r / (2 π Tr)` with rate `P` has radial derivative `P / (2 π Tr r)` at `r > 0`, so
-its outward discharge `-2 π r Tr h'(r)` is `-P`.
+For a transmissivity `Tr > 0`, a rate `P` and a constant `C`, the Thiem profile
+`h(s) = C + P * log s / (2 * π * Tr)` has derivative `h'(r) = P / (2 * π * Tr * r)` at every
+radius `r > 0`, so its outward discharge `-2 * π * r * Tr * h'(r)` is `-P`: the Thiem rate `P` is
+the pumping (extraction) rate.

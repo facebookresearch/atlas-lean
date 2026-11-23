@@ -1,4 +1,5 @@
-# Radius has Deriv At
+# The droplet radius solves the growth equation while positive
 
-Diffusion-limited droplet growth: at a time with `r(t) > 0`,
-`HasDerivAt r (K*S / r(t)) t`, i.e. `r(t) * r'(t) = K*S`.
+In the diffusion-limited growth model with initial radius `r0 > 0`, growth coefficient `K ≥ 0`
+and supersaturation `S`, let `r(t) = √(r0² + 2 K S t)`. At every time `t` with `r(t) > 0`, the
+radius is differentiable at `t` with `r'(t) = K S / r(t)`, that is `r(t) r'(t) = K S`.

@@ -1,3 +1,4 @@
-# Has Deriv At plane Wave time
+# Time derivative of a plane wave
 
-First time derivative of a longitudinal plane wave `cos (k * x - ω * t)`.
+For all real `k`, `ω` and `x`, the plane wave `t ↦ cos (k * x - ω * t)` has derivative
+`ω * sin (k * x - ω * t)` at every time `t`.

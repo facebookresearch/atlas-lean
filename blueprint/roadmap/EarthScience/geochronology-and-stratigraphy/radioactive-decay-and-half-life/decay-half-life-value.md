@@ -1,5 +1,5 @@
-# Decay half Life value
+# Half the initial inventory remains at the half-life
 
-At the half-life `log 2 / λ`, half the initial inventory remains. This is
-`CompartmentKinetics.amount_bolus_add_halfLife` at time zero, via
-`CompartmentKinetics.amount_bolus`.
+For a decay constant `λ > 0` and an initial inventory `N0 > 0`, the decaying inventory
+`N(t) = N0 * exp (-λ * t)` at the half-life `t = log 2 / λ` is half the initial inventory:
+`N0 * exp (-λ * (log 2 / λ)) = N0 / 2`.

@@ -1,4 +1,4 @@
-# Brunt vaisala sq pos
+# Stable stratification gives a positive squared buoyancy frequency
 
-The squared Brunt-Vaisala frequency `N^2 = g * beta / rho0` is
-positive for a stable stratification (`beta > 0`) with `g, rho0 > 0`.
+For `g > 0`, `ρ0 > 0` and a stable stratification `β > 0`, the squared Brunt–Väisälä
+frequency `N² = g β / ρ0` is positive.

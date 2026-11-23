@@ -1,4 +1,4 @@
 # Two-box ocean tracer budgets
 
-- [Two box total stock deriv](two-box-total-stock-deriv.md)
-- [Two box total stock deriv closed](two-box-total-stock-deriv-closed.md)
+- [Total two-box tracer stock changes only by external fluxes](two-box-total-stock-deriv.md)
+- [Closed two-box exchange conserves the total tracer stock](two-box-total-stock-deriv-closed.md)

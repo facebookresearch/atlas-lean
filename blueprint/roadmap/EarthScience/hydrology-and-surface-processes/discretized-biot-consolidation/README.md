@@ -1,16 +1,16 @@
 # Discretized Biot consolidation
 
-## A. Storage matrix and the rate-system predicate
+## Reduced storage matrix
 
-- [Biot Storage](biot-storage.md)
+- [Reduced Biot storage matrix](biot-storage.md)
 
-## B. Transported rate and evolution results
+## Positive definiteness of the storage
 
-- [Biot Storage pos Def](biot-storage-pos-def.md)
+- [Positive definite compliance gives positive definite reduced storage](biot-storage-pos-def.md)
 
-## C. Public evolution results
+## Rate system and its solutions
 
-- [Satisfies Biot Rate System](satisfies-biot-rate-system.md)
-- [Biot pressure rate eq](biot-pressure-rate-eq.md)
-- [Biot exists Unique](biot-exists-unique.md)
-- [Biot source mem range of no dynamics](biot-source-mem-range-of-no-dynamics.md)
+- [Paths solving the finite Biot consolidation rate system](satisfies-biot-rate-system.md)
+- [Reduced pressure-rate equation of the Biot system](biot-pressure-rate-eq.md)
+- [Existence and uniqueness for the nonsingular finite Biot rate system](biot-exists-unique.md)
+- [Without dynamics the Biot source lies in the range of H](biot-source-mem-range-of-no-dynamics.md)

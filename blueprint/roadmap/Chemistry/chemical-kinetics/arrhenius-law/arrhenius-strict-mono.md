@@ -1,5 +1,5 @@
-# Arrhenius strict Mono
+# The Arrhenius rate increases strictly with temperature when Ea > 0
 
-An admissible Arrhenius law is strictly increasing in the absolute temperature: for a
-typed prefactor `A > 0`, a molar activation energy `Ea > 0` and a gas constant `R > 0`, the
-rate `T ↦ A * exp(-(Ea / (R * T)))` is strictly monotone on temperatures `T > 0`.
+For a prefactor `A > 0`, a quantity of any dimension, a molar activation energy `Ea > 0` and a gas
+constant `R > 0`, the Arrhenius rate constant `T ↦ A exp(-Ea / (R T))` is strictly increasing on
+absolute temperatures `T > 0`.

@@ -1,5 +1,4 @@
-# Modified Cam Clay Plastic Volumetric Increment neg of lt
+# The plastic volumetric increment is dilative on the dry side
 
-Dry-side sign: with `M > 0` and a positive multiplier, the
-specified increment is negative (dilative) on the side
-`p < pc / 2` of the critical pressure.
+For `M > 0`, a plastic multiplier `λ > 0` and `p < pc / 2`, the plastic volumetric increment
+`Δε = λ * M ^ 2 * (2 * p - pc)` is negative (dilative).

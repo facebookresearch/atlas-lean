@@ -1,16 +1,16 @@
 # Air–water gas exchange
 
-## A. Total inventory conservation
+## Total inventory conservation
 
-- [Air water total has Deriv At zero](air-water-total-has-deriv-at-zero.md)
-- [Air water total conserved](air-water-total-conserved.md)
+- [The air–water total inventory has zero derivative under exchange](air-water-total-has-deriv-at-zero.md)
+- [The air–water exchange conserves the total inventory](air-water-total-conserved.md)
 
-## B. Disequilibrium equation and closed form
+## Disequilibrium equation and closed form
 
-- [Air water difference ode](air-water-difference-ode.md)
-- [Air water difference eq exp Growth Path](air-water-difference-eq-exp-growth-path.md)
+- [The air–water disequilibrium satisfies a linear first-order equation](air-water-difference-ode.md)
+- [The air–water disequilibrium is an exponential in time](air-water-difference-eq-exp-growth-path.md)
 
-## C. Physical decay
+## Physical decay
 
-- [Air water rate pos](air-water-rate-pos.md)
-- [Air water difference tendsto zero](air-water-difference-tendsto-zero.md)
+- [The air–water relaxation rate is positive for positive parameters](air-water-rate-pos.md)
+- [The air–water disequilibrium tends to zero for positive parameters](air-water-difference-tendsto-zero.md)

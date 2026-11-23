@@ -1,3 +1,4 @@
-# Retardation eq one of rho b eq zero
+# No retardation with a zero bulk density
 
-No solid mass (`rho_b = 0`) gives `R = 1` for positive porosity.
+For a positive porosity `phi` and any distribution coefficient `Kd`, the
+[retardation factor](retardation-factor.md) with no solid mass, `rho_b = 0`, is `R = 1`.

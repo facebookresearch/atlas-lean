@@ -1,13 +1,13 @@
 # Carbonate speciation and alkalinity
 
-## A. Speciation mass closure
+## Speciation mass closure
 
-- [Carbonate species sum](carbonate-species-sum.md)
+- [The three carbonate species sum to the total dissolved carbon](carbonate-species-sum.md)
 
-## B. Alkalinity monotonicity
+## Alkalinity monotonicity
 
-- [Alkalinity strict Anti On](alkalinity-strict-anti-on.md)
+- [Alkalinity is strictly decreasing in the hydrogen-ion concentration](alkalinity-strict-anti-on.md)
 
-## C. Existence and uniqueness of the root
+## Existence and uniqueness of the root
 
-- [Alkalinity unique root](alkalinity-unique-root.md)
+- [The alkalinity equation has exactly one positive root](alkalinity-unique-root.md)

@@ -1,5 +1,4 @@
-# Rossby dispersion iff
+# Solved and product forms of the Rossby dispersion relation agree
 
-The dispersion relation determines `omega` uniquely: for
-`k^2 + l^2 ≠ 0`, `omega = U * k - beta * k / (k^2 + l^2)` iff
-`(omega - U * k) * (k^2 + l^2) = -beta * k`.
+For `k² + l² ≠ 0` and all real `U`, `β` and `ω`, `ω = U k - β k / (k² + l²)` if and only if
+`(ω - U k) (k² + l²) = -β k`; so the product form determines `ω`.

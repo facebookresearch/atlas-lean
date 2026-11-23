@@ -1,3 +1,5 @@
-# Saturation pressure strict Mono
+# Saturation vapour pressure strictly increases with temperature
 
-Saturation pressure is strictly increasing on positive temperatures.
+For `es0 > 0`, `L > 0`, `Rv > 0` and every real `T0`, the saturation vapour pressure
+`es(T) = es0 exp((L / Rv) (1 / T0 - 1 / T))` is strictly increasing on the positive
+temperatures `T > 0`.

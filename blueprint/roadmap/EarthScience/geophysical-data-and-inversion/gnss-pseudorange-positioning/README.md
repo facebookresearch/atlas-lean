@@ -1,4 +1,4 @@
 # GNSS pseudorange positioning
 
-- [Gnss directional derivative](gnss-directional-derivative.md)
-- [Gnss row dot algebraic identity](gnss-row-dot-algebraic-identity.md)
+- [Directional derivative of a GNSS pseudorange](gnss-directional-derivative.md)
+- [Algebraic identity for the GNSS row dotted with a direction](gnss-row-dot-algebraic-identity.md)

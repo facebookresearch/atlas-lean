@@ -1,4 +1,4 @@
 # Parent–daughter conservation with branching
 
-- [Parent daughter branch conservation](parent-daughter-branch-conservation.md)
-- [Parent daughter branch conservation physical](parent-daughter-branch-conservation-phys.md)
+- [Branch-weighted parent–daughter conservation as an identity](parent-daughter-branch-conservation.md)
+- [A closed parent–daughter system conserves its branch-weighted total](parent-daughter-branch-conservation-phys.md)

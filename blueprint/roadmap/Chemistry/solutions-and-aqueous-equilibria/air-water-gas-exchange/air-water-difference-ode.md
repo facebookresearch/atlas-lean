@@ -1,7 +1,9 @@
-# Air water difference ode
+# The air–water disequilibrium satisfies a linear first-order equation
 
-The disequilibrium `d t = H * p t - c t` satisfies the linear equation
-`d' t = -rate * d t` with `rate = k * A * (H * R * T / Vg + 1 / Vw)`.
-The identity holds for all real `k`, `A`, `H`, `R`, `T`; it describes
-relaxation toward equilibrium only when `rate > 0` (see
-`air_water_rate_pos`).
+Let the gas amount `n_g` and the dissolved amount `n_w` of a closed two-compartment system with
+positive volumes `V_g` and `V_w` exchange through the flux `J = k A (H p - c)`, with partial
+pressure `p = n_g R T / V_g` and dissolved concentration `c = n_w / V_w`, for real `R`, `T`, `H`,
+`k` and `A`. At a time `t` where `n_g'(t) = -J(t)` and `n_w'(t) = J(t)`, the disequilibrium
+`d = H p - c` satisfies `d'(t) = -r d(t)`, with rate `r = k A (H R T / V_g + 1 / V_w)`. This
+describes relaxation toward equilibrium only when `r > 0`, as for
+[positive physical parameters](air-water-rate-pos.md).

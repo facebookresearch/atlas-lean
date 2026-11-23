@@ -1,3 +1,4 @@
-# Ideal Gas density
+# Density from the ideal-gas law
 
-Ideal gas law `p = ρ * R * T` with `R, T > 0` gives `ρ = p / (R * T)`.
+For `R > 0` and `T > 0`, the ideal-gas law `p = ρ R T` gives `ρ = p / (R T)`, for every real
+`p` and `ρ`.

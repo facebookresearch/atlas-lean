@@ -1,4 +1,4 @@
 # Dispersion of surface gravity waves
 
-- [Dispersion from surface conditions](dispersion-from-surface-conditions.md)
-- [Dispersion positive](dispersion-positive.md)
+- [Dispersion relation from the linearized free-surface conditions](dispersion-from-surface-conditions.md)
+- [Surface gravity waves have positive squared frequency](dispersion-positive.md)

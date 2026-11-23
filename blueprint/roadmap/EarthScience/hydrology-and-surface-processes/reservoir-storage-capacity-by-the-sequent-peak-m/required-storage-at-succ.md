@@ -1,4 +1,5 @@
-# Required Storage At succ
+# One-step update of the storage deficit
 
-One-step update of required storage: append step `t`'s
-deficit and reflect at zero.
+For required releases `R` and inflows `Q` over `n` time steps and a step `t < n`, the
+[storage deficit](required-storage-at.md) satisfies `K_{t+1} = max 0 (K_t + (R_t - Q_t))`: the
+deficit of step `t` is added and the result is reflected at zero.

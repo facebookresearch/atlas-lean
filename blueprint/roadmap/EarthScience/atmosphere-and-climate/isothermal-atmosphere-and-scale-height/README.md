@@ -1,14 +1,14 @@
 # Isothermal atmosphere and scale height
 
-## A. Exponential pressure profile
+## Exponential pressure profile
 
-- [Isothermal Pressure](isothermal-pressure.md)
-- [Has Deriv At isothermal Pressure](has-deriv-at-isothermal-pressure.md)
-- [Isothermal Pressure zero](isothermal-pressure-zero.md)
-- [Isothermal Pressure pos](isothermal-pressure-pos.md)
-- [Isothermal Pressure strict Anti](isothermal-pressure-strict-anti.md)
-- [Isothermal Pressure scale Height](isothermal-pressure-scale-height.md)
+- [Pressure profile of an isothermal atmosphere](isothermal-pressure.md)
+- [Isothermal profile satisfies hydrostatic balance](has-deriv-at-isothermal-pressure.md)
+- [Isothermal profile takes the surface pressure at height zero](isothermal-pressure-zero.md)
+- [Isothermal pressure is positive for positive surface pressure](isothermal-pressure-pos.md)
+- [Isothermal pressure strictly decreases with height](isothermal-pressure-strict-anti.md)
+- [Pressure at one scale height is the surface pressure divided by e](isothermal-pressure-scale-height.md)
 
-## B. Combined statement
+## Combined statement
 
-- [Isothermal atmospheric pressure](isothermal-atmospheric-pressure.md)
+- [Hydrostatic isothermal atmosphere and its scale height](isothermal-atmospheric-pressure.md)

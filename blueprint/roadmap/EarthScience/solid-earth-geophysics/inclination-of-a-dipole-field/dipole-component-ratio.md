@@ -1,7 +1,7 @@
-# Dipole component ratio
+# The dipole component ratio is twice the tangent of latitude
 
-Signed dipole component ratio: `B_r / B_θ = 2 * tan λ` where
-`λ = π / 2 - θ` is the magnetic latitude, `B_r = 2 * C * cos θ / r ^ 3`,
-`B_θ = C * sin θ / r ^ 3`, for either sign of `C`. Only the axis
-`sin θ = 0` is excluded; at the equator both sides are `0`. This is
-`tan I` only when `B_θ < 0`; see `dipole_tan_inclination`.
+For a dipole moment factor `C ≠ 0` of either sign, a distance `r > 0` and a colatitude `θ` off
+the axis, `sin θ ≠ 0`, the components `B_r = 2 * C * cos θ / r ^ 3` and `B_θ = C * sin θ / r ^ 3`
+have the signed ratio `B_r / B_θ = 2 * tan λ`, where `λ = π / 2 - θ` is the magnetic latitude.
+At the equator both sides are `0`. This ratio is `tan I` only when `B_θ < 0`, that is for
+`C < 0` and `0 < θ < π`.

@@ -1,3 +1,3 @@
-# Catchment Volume
+# Volume of a depth over a catchment
 
-Volume from catchment area `A` and a depth `d`: `A * d`.
+For a catchment area `A` and a depth `d` (real numbers), the volume is `A * d`.

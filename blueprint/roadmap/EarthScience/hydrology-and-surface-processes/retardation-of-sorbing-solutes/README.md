@@ -1,26 +1,26 @@
 # Retardation of sorbing solutes
 
-## A. Definitions
+## Definitions
 
-- [Retardation Factor](retardation-factor.md)
-- [Total Storage](total-storage.md)
-- [Stored Mass](stored-mass.md)
-- [Stored Mass Coefficient](stored-mass-coefficient.md)
+- [Retardation factor of a linearly sorbing solute](retardation-factor.md)
+- [Total solute storage per bulk volume](total-storage.md)
+- [Stored solute mass in a bulk cell](stored-mass.md)
+- [Concentration-to-mass coefficient of a bulk cell](stored-mass-coefficient.md)
 
-## B. Storage identities
+## Storage identities
 
-- [Total storage eq](total-storage-eq.md)
-- [Total storage eq retardation](total-storage-eq-retardation.md)
-- [Stored Mass eq coefficient mul](stored-mass-eq-coefficient-mul.md)
-- [Stored Mass eq retardation](stored-mass-eq-retardation.md)
-- [Concentration eq stored Mass div](concentration-eq-stored-mass-div.md)
-- [Stored Mass zero sorption](stored-mass-zero-sorption.md)
+- [Total storage in factored form](total-storage-eq.md)
+- [Total storage is the retardation factor times the dissolved storage](total-storage-eq-retardation.md)
+- [Stored mass is the cell coefficient times the concentration](stored-mass-eq-coefficient-mul.md)
+- [Stored mass in retardation form](stored-mass-eq-retardation.md)
+- [Concentration recovered from the stored mass](concentration-eq-stored-mass-div.md)
+- [Without sorption the stored mass is the dissolved mass](stored-mass-zero-sorption.md)
 
-## C. No-sorption cases and bounds
+## No-sorption cases and bounds
 
-- [Retardation eq one of Kd eq zero](retardation-eq-one-of-kd-eq-zero.md)
-- [Retardation eq one of rho b eq zero](retardation-eq-one-of-rho-b-eq-zero.md)
-- [One le retardation Factor](one-le-retardation-factor.md)
-- [Retardation Factor pos](retardation-factor-pos.md)
-- [Stored Mass Coefficient pos](stored-mass-coefficient-pos.md)
-- [Stored Mass nonneg](stored-mass-nonneg.md)
+- [No retardation with a zero distribution coefficient](retardation-eq-one-of-kd-eq-zero.md)
+- [No retardation with a zero bulk density](retardation-eq-one-of-rho-b-eq-zero.md)
+- [The retardation factor is at least one](one-le-retardation-factor.md)
+- [The retardation factor is positive](retardation-factor-pos.md)
+- [The concentration-to-mass coefficient is positive](stored-mass-coefficient-pos.md)
+- [Stored mass is nonnegative for a nonnegative concentration](stored-mass-nonneg.md)

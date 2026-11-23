@@ -1,5 +1,4 @@
-# Opaque normalization
+# Normalising the surface formula at full emissivity
 
-Arithmetic normalization only: the right side of `surface_temperature`
-at `eps = 1`, `Te^4 / (1 - 1/2)`, is `2 * Te^4`. It does not use the
-balances; `opaque_surface_temperature` is the model result.
+An arithmetic step only: if `Ts⁴ = Te⁴ / (1 - 1/2)`, which is the grey-atmosphere surface
+formula `Ts⁴ = Te⁴ / (1 - ε / 2)` at `ε = 1`, then `Ts⁴ = 2 Te⁴`. No energy balance is used.

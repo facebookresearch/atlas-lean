@@ -1,8 +1,8 @@
-# Shallow water potential vorticity has Deriv At zero
+# Zero material derivative of shallow-water potential vorticity
 
-Potential vorticity along a parcel trajectory: if at time `t` the depth
-is nonzero and satisfies `h' = -h D` (continuity with divergence `D`), and the
-absolute vorticity satisfies `(ζ + f)' = -(ζ + f) D` (vorticity equation),
-then the potential vorticity `q = (ζ + f) / h` has zero derivative at `t`.
-Here `f` is the constant Coriolis parameter and `D` is the divergence along
-the trajectory; the hypotheses are needed at `t` only.
+Along a parcel trajectory, with constant Coriolis parameter `f`, relative vorticity `ζ`, depth
+`h` and divergence `D` as functions of time: suppose that at a time `t` the depth is nonzero,
+`h(t) ≠ 0`, and satisfies the continuity equation `h'(t) = -h(t) D(t)`, and the absolute
+vorticity satisfies the vorticity equation `(ζ + f)'(t) = -(ζ(t) + f) D(t)`, both functions
+being differentiable at `t`. Then the potential vorticity `q = (ζ + f) / h` is differentiable
+at `t` with `q'(t) = 0`. The hypotheses are needed at `t` only.

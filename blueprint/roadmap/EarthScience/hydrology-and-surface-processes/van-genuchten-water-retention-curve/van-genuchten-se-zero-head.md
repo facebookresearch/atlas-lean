@@ -1,4 +1,4 @@
-# Van Genuchten Se zero head
+# Zero pressure head gives full saturation
 
-Zero head is saturated: at `h = 0`, `S_e = 1` whenever `n > 1`
-(any `α`, since `α * |0| = 0`).
+For `n > 1` and every `α`, the [van Genuchten effective saturation](van-genuchten-se.md) at zero
+head is `S_e(0) = 1`, since `α * |0| = 0`.

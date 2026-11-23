@@ -1,3 +1,4 @@
-# Required Storage At zero
+# No storage deficit before the first step
 
-Empty horizon: no storage is required before any step.
+For any required releases `R` and inflows `Q`, the [storage deficit](required-storage-at.md) after
+zero steps is `K₀ = 0`.

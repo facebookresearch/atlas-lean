@@ -1,5 +1,4 @@
-# Henry doubling
+# Doubling the partial pressure doubles the dissolved concentration
 
-Henry's law doubling: for a Henry constant `H > 0` and a nonnegative
-partial pressure `p ≥ 0`, under `c = H * p`, doubling the gas partial
-pressure doubles the dissolved equilibrium concentration.
+For a Henry constant `H > 0`, a partial pressure `p ≥ 0` and the equilibrium concentration
+`c = H p` of Henry's law, the concentration at twice the pressure is `H (2 p) = 2 c`.

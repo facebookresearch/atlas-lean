@@ -1,4 +1,5 @@
-# Frac Flow zero one
+# End values of the fractional flow
 
-Endpoint values: no water flows at connate water, `f 0 = 0`, and only water flows at
-residual oil, `f 1 = 1`.
+For an oil viscosity `μo > 0` and any water viscosity `μw`, the [fractional flow](frac-flow.md)
+`f(s) = μo * s ^ 2 / (μo * s ^ 2 + μw * (1 - s) ^ 2)` satisfies `f(0) = 0`, no water flowing at
+connate water, and `f(1) = 1`, only water flowing at residual oil.

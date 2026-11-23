@@ -1,6 +1,6 @@
 # Unit hydrograph
 
-- [Discrete Convolution](discrete-convolution.md)
-- [Discrete Convolution sum eq](discrete-convolution-sum-eq.md)
-- [Discrete Convolution volume eq](discrete-convolution-volume-eq.md)
-- [Discrete Convolution eq sum Conv](discrete-convolution-eq-sum-conv.md)
+- [Unit-hydrograph outflow as a discrete convolution](discrete-convolution.md)
+- [Total convolution response is the product of the totals](discrete-convolution-sum-eq.md)
+- [Runoff volume is the catchment area times the rainfall-excess depth](discrete-convolution-volume-eq.md)
+- [The unit-hydrograph outflow is the sum convolution](discrete-convolution-eq-sum-conv.md)

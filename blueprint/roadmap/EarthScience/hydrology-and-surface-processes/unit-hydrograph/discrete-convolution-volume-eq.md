@@ -1,8 +1,7 @@
-# Discrete Convolution volume eq
+# Runoff volume is the catchment area times the rainfall-excess depth
 
-Volume form, with the unit-hydrograph normalization as a hypothesis:
-if `dt * ∑ j, u j = A` (`p`: excess depth per step; `u`: discharge
-per unit depth; `q`: discharge; the unit response integrates to catchment area
-`A` over the time step, i.e. unit depth over the catchment), then the
-runoff volume `dt * ∑ k, q k` equals `A` times the total rainfall-excess
-depth `∑ i, p i`.
+Let the rainfall excess `p` (depth per step) vanish from step `n` on and the unit response `u`
+(discharge per unit depth) from step `m` on, and let the unit response integrate to the catchment
+area `A` over the time step `dt`, `dt * ∑_{j < m} u j = A` (a unit depth over the catchment). Then
+the runoff volume of the [discrete convolution](discrete-convolution.md) `q` is
+`dt * ∑_{k < n + m} q k = A * ∑_{i < n} p i`, the area times the total rainfall-excess depth.

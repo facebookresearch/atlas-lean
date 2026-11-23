@@ -1,4 +1,5 @@
-# Steady le linear Reservoir Storage
+# Storage starting at or above the steady storage stays there
 
-Starting at or above the steady storage `I / k`, the
-profile never falls below that steady storage.
+For a recession coefficient `k > 0`, an inflow `I` and an initial storage `S0 ≥ I / k`, the
+linear-reservoir storage satisfies `I / k ≤ I / k + (S0 - I / k) * exp (-k * t)` at every real
+time `t`.
