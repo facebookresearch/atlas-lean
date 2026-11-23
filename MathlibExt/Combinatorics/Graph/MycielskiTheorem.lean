@@ -152,11 +152,6 @@ private theorem myDesome {V : Type*} {x : Option (V × Bool)} (hx : x ≠ none) 
     obtain ⟨v, i⟩ := p
     exact ⟨v, i, rfl⟩
 
-private theorem completeGraph_adj_iff {α : Type*} {x y : α} :
-    (SimpleGraph.completeGraph α).Adj x y ↔ x ≠ y := by
-  rw [SimpleGraph.completeGraph_eq_top]
-  exact SimpleGraph.top_adj _ _
-
 private def myCopy {V : Type*} (G : SimpleGraph V) : G.Copy (myGraph G) where
   toHom := ⟨fun v => some (v, false), fun h => myAdj_of00 h⟩
   injective' := by
@@ -193,11 +188,11 @@ private theorem myColorable_up {V : Type*} (G : SimpleGraph V) {m : ℕ}
   have hcprop : ∀ {v u : V}, G.Adj v u → c v ≠ c u := by
     intro v u h
     have h2 := c.map_rel' h
-    rwa [completeGraph_adj_iff] at h2
+    rwa [SimpleGraph.top_adj] at h2
   refine ⟨⟨fun x => match x with | some (v, _) => Fin.castSucc (c v) | none => Fin.last m, ?_⟩⟩
   intro x y hxy
   have hxy' : myAdj G x y := hxy
-  rw [completeGraph_adj_iff]
+  rw [SimpleGraph.top_adj]
   simp only [myAdj] at hxy'
   rcases hxy' with ⟨v, u, rfl, rfl, h⟩ | ⟨v, u, rfl, rfl, h⟩ | ⟨v, u, rfl, rfl, h⟩ |
     ⟨v, rfl, rfl⟩ | ⟨v, rfl, rfl⟩
@@ -217,7 +212,7 @@ private theorem myColorable_down {V : Type*} (G : SimpleGraph V) {k : ℕ}
   have hdprop : ∀ {x y : Option (V × Bool)}, myAdj G x y → d x ≠ d y := by
     intro x y h
     have h2 := d.map_rel' h
-    rwa [completeGraph_adj_iff] at h2
+    rwa [SimpleGraph.top_adj] at h2
   have hcard : Fintype.card ↥(Finset.univ.erase (d none)) = k := by
     rw [Fintype.card_coe, Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ,
       Fintype.card_fin, Nat.add_sub_cancel]
@@ -226,7 +221,7 @@ private theorem myColorable_down {V : Type*} (G : SimpleGraph V) {k : ℕ}
   · rw [Finset.mem_erase]
     exact ⟨myRawColor_ne (⇑d) (d none) (fun v => hdprop (myAdj_sh_ad v)) v, Finset.mem_univ _⟩
   · intro u v huv
-    rw [completeGraph_adj_iff]
+    rw [SimpleGraph.top_adj]
     intro hcon
     exact myRawColor_ne_of_adj (⇑d) (d none) hdprop huv (congrArg Subtype.val (e.injective hcon))
 
@@ -399,15 +394,19 @@ private theorem myKey.{u} (n : ℕ) :
     refine ⟨W, hW, H, hfreeH hfree, ?_⟩
     rw [hchiH hne, hchi, Nat.cast_add, Nat.cast_one]
 
-/-- **Mycielski's theorem** (statement ID `mycielski-theorem-s1`; primary source:
-J. Mycielski, "Sur le coloriage des graphes" (1955),
-https://doi.org/10.4064/cm-3-2-161-162). We abstract the explicit Mycielski construction
-to the existence of a larger finite graph `H` containing a copy of `G`. The resulting
-graph is triangle-free whenever `G` is and has chromatic number one larger when the
-chromatic number of `G` is finite. Consequently, there exist triangle-free graphs of
-arbitrarily large chromatic number.
+/-- **Mycielski's theorem.** Write $\chi(G)$ for the chromatic number of a simple graph $G$. For
+every simple graph $G$ on a finite vertex set there is a simple graph $H$ on a finite vertex set
+with strictly more vertices than $G$ that contains a subgraph isomorphic to $G$, such that $H$ is
+triangle-free whenever $G$ is, and such that $\chi(H) = \chi(G) + 1$ whenever $\chi(G)$ is
+finite. Moreover, for every natural number $k$ there is a triangle-free simple graph $H$ on a
+finite vertex set with $\chi(H) \ge k$.
+
+The explicit Mycielski construction is abstracted here to the existence of such a graph $H$.
 
 Proves `Wanted` entry `mycielski_theorem`.
+
+Source: J. Mycielski, "Sur le coloriage des graphes" (1955),
+https://doi.org/10.4064/cm-3-2-161-162 (statement ID `mycielski-theorem-s1`).
 -/
 theorem mycielski_theorem :
     (∀ (V : Type*) [Fintype V] (G : SimpleGraph V),

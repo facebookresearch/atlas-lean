@@ -17,21 +17,17 @@ public import Mathlib.Topology.ContinuousOn
 
 namespace MathlibExt.Analysis.ScottishBook124Wanted
 
-/-- Scottish Book Problem 124, sub-conjecture: if `f` is continuous
-and `f 0 ≠ 0`, then the integral equation `∫_0^x y(t) f(x - t) dt = 0`
-for `0 ≤ x ≤ 1` has only the solution `y = 0`. `y` is read as an
-integrable function on `[0, 1]` (the typescript does not specify a
-function class for `y`; the `L^2` context in the entry motivates the
-integrable reading) and "y ≡ 0" is read as `y = 0` almost everywhere
-with respect to Lebesgue measure restricted to `[0, 1]`. `f` is read
-as continuous on all of `ℝ`; only its values on `[-1, 1]` are used.
-TYPESCRIPT TYPO, CORRECTED (Phase 5): the typescript prints the
-equation as `∫₀¹ y(t) f(x-t) dt = 0`, but the entry's own arguments
-on the same page show the intended upper limit is `x` (Volterra
-form): with upper limit `1` the entry's "known" claims are false
-(`f ≡ 1`, `y(t) = t - 1/2` is a non-zero solution), while with
-upper limit `x` the iterated-integral argument coheres — an
-iterated integral of a solution again satisfies the equation. -/
+/-- **The Volterra-form sub-conjecture of Scottish Book Problem 124.** The statement that for every
+continuous function $f : \mathbb{R} \to \mathbb{R}$ with $f(0) \ne 0$ and every function
+$y : \mathbb{R} \to \mathbb{R}$ that is Lebesgue integrable on $[0, 1]$, if
+$\int_0^x y(t) f(x - t)\,dt = 0$ for every $x \in [0, 1]$, then $y = 0$ almost everywhere on
+$[0, 1]$.
+
+The Scottish Book typescript prints the upper limit of the integral as $1$, but the entry's own
+arguments show that the intended upper limit is $x$ (Volterra form); with upper limit $1$ the
+claim is false, since $f \equiv 1$ and $y(t) = t - 1/2$ give a nonzero solution. The typescript
+does not specify a function class for $y$; integrability on $[0, 1]$ is motivated by the $L^2$
+context of the entry. -/
 def ScottishBookProblem124Claim : Prop :=
   ∀ (f : ℝ → ℝ), Continuous f → f 0 ≠ 0 →
     ∀ (y : ℝ → ℝ),
@@ -40,7 +36,12 @@ def ScottishBookProblem124Claim : Prop :=
       y =ᵐ[MeasureTheory.volume.restrict (Set.Icc (0 : ℝ) 1)] 0
 
 /--
-Marcinkiewicz's Problem 124 sub-conjecture holds (solved-positive).
+**The Volterra-form sub-conjecture of Scottish Book Problem 124 holds.** For every continuous
+function $f : \mathbb{R} \to \mathbb{R}$ with $f(0) \ne 0$ and every function
+$y : \mathbb{R} \to \mathbb{R}$ that is Lebesgue integrable on $[0, 1]$, if
+$\int_0^x y(t) f(x - t)\,dt = 0$ for every $x \in [0, 1]$, then $y = 0$ almost everywhere on
+$[0, 1]$.
+
 Source: Józef Marcinkiewicz, Problem 124 of the Scottish Book;
 typescript PDF p.58, printed p.55.
 TYPESCRIPT TYPO, CORRECTED (Phase 5): the typescript prints the

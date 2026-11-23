@@ -42,9 +42,11 @@ namespace Cslib.Language
 
 variable {T : Type*} {g : ContextFreeGrammar T}
 
-/-- A sentential form yields a terminal word symbol by symbol: the empty
-form yields the empty word, a leading terminal contributes itself, and a
-leading nonterminal first expands through one of its productions. -/
+/-- **Yield of a sentential form.** For a context-free grammar $g$ with terminal alphabet
+$T$, the relation "the sentential form $u$ yields the terminal word $w$" is the smallest
+relation such that: the empty form yields the empty word; if $u$ yields $w$, then for every
+terminal $a$ the form $a u$ yields $a w$; and if $A \to \alpha$ is a production of $g$,
+$\alpha$ yields $w_1$ and $u$ yields $w_2$, then the form $A u$ yields $w_1 w_2$. -/
 inductive Yields (g : ContextFreeGrammar T) : List (Symbol T g.NT) → List T → Prop
   | nil : Yields g [] []
   | terminal (a : T) {u : List (Symbol T g.NT)} {w : List T} (h : Yields g u w) :
@@ -54,7 +56,9 @@ inductive Yields (g : ContextFreeGrammar T) : List (Symbol T g.NT) → List T �
       (hout : Yields g r.output w₁) (hrest : Yields g u w₂) :
       Yields g (Symbol.nonterminal r.input :: u) (w₁ ++ w₂)
 
-/-- Yields over an append of sentential forms concatenates contributions. -/
+/-- **Concatenation of yields.** Let $g$ be a context-free grammar. If the sentential form
+$u$ yields the terminal word $w_1$ and the sentential form $v$ yields the terminal word
+$w_2$, then the concatenated form $u v$ yields $w_1 w_2$. -/
 theorem Yields.append {u v : List (Symbol T g.NT)} {w₁ w₂ : List T}
     (hu : Yields g u w₁) (hv : Yields g v w₂) : Yields g (u ++ v) (w₁ ++ w₂) := by
   induction hu with
@@ -63,8 +67,9 @@ theorem Yields.append {u v : List (Symbol T g.NT)} {w₁ w₂ : List T}
   | nonterminal hr hout _ _ ih =>
     simpa [List.append_assoc] using Yields.nonterminal hr hout ih
 
-/-- A yield over an append of sentential forms splits into yields over the
-two forms. -/
+/-- **Splitting a yield over a concatenation.** Let $g$ be a context-free grammar. If the
+concatenated sentential form $u v$ yields the terminal word $w$, then there are terminal
+words $w_1$ and $w_2$ with $w = w_1 w_2$ such that $u$ yields $w_1$ and $v$ yields $w_2$. -/
 theorem Yields.append_inv {u v : List (Symbol T g.NT)} {w : List T}
     (h : Yields g (u ++ v) w) :
     ∃ w₁ w₂, w = w₁ ++ w₂ ∧ Yields g u w₁ ∧ Yields g v w₂ := by
@@ -84,13 +89,16 @@ theorem Yields.append_inv {u v : List (Symbol T g.NT)} {w : List T}
         exact ⟨_ ++ w₁, w₂, by rw [List.append_assoc],
           Yields.nonterminal hr hout hu, hv⟩
 
-/-- One production, expanded once at the head, gives a yield from its
-left-hand side. -/
+/-- **Yield through one production.** Let $g$ be a context-free grammar and $A \to \alpha$ a
+production of $g$. If $\alpha$ yields the terminal word $w$, then the one-symbol sentential
+form $A$ yields $w$. -/
 theorem yields_of_rule {r : ContextFreeRule T g.NT} (hr : r ∈ g.rules) {w : List T}
     (hout : Yields g r.output w) : Yields g [Symbol.nonterminal r.input] w := by
   simpa using Yields.nonterminal hr hout Yields.nil
 
-/-- Everything a form yields, it derives in Mathlib's sense. -/
+/-- **Yields are derivable.** Let $g$ be a context-free grammar. If the sentential form $u$
+yields the terminal word $w$, then $u$ derives $w$, read as a string of terminal symbols,
+in $g$: that is, $u \Rightarrow^* w$ in zero or more rewriting steps. -/
 theorem derives_of_yields {u : List (Symbol T g.NT)} {w : List T}
     (h : Yields g u w) : g.Derives u (w.map Symbol.terminal) := by
   induction h with
@@ -156,20 +164,29 @@ private theorem isValuation_yieldsFrom : IsValuation g (yieldsFrom g) := by
   intro r hr w hw
   exact yields_of_rule hr (mem_evalForm_yieldsFrom_iff.mp hw)
 
-/-- Everything a form derives as a terminal word, it yields. The proof is
-the valuation argument: yields languages form a valuation. -/
+/-- **Derivable terminal words are yields.** Let $g$ be a context-free grammar. If the
+sentential form $u$ derives the terminal word $w$, read as a string of terminal symbols,
+in $g$, then $u$ yields $w$.
+
+The proof is the valuation argument: the languages yielded by the nonterminals form a
+valuation. -/
 theorem yields_of_derives {u : List (Symbol T g.NT)} {w : List T}
     (h : g.Derives u (w.map Symbol.terminal)) : Yields g u w := by
   have hle := evalForm_le_of_derives (g := g) isValuation_yieldsFrom h
   rw [evalForm_map_terminal] at hle
   exact mem_evalForm_yieldsFrom_iff.mp (hle rfl)
 
-/-- A sentential form yields a word iff it derives that word as terminals. -/
+/-- **Yields coincide with derivations of terminal words.** Let $g$ be a context-free grammar,
+$u$ a sentential form of $g$ and $w$ a word of terminals. Then $u$ yields $w$ in $g$ if and only
+if $u$ derives in $g$, by zero or more rewriting steps, the sentential form consisting of the
+letters of $w$ read as terminals. -/
 theorem yields_iff_derives {u : List (Symbol T g.NT)} {w : List T} :
     Yields g u w ↔ g.Derives u (w.map Symbol.terminal) :=
   ⟨derives_of_yields, yields_of_derives⟩
 
-/-- Membership in a grammar's language, through yields. -/
+/-- **Language membership through yields.** Let $g$ be a context-free grammar with initial
+nonterminal $S$. A terminal word $w$ belongs to the language of $g$ if and only if the
+one-symbol sentential form $S$ yields $w$. -/
 theorem mem_language_iff_yields {w : List T} :
     w ∈ g.language ↔ Yields g [Symbol.nonterminal g.initial] w := by
   rw [ContextFreeGrammar.mem_language_iff, yields_iff_derives]

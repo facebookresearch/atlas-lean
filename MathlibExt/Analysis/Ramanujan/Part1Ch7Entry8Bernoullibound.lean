@@ -49,8 +49,13 @@ def chapter7Entry8ZetaForm (r : ℕ) (x : ℂ) : ℂ :=
         ((r + 1).choose (2 * k) : ℂ) * (k : ℂ) *
           riemannZeta (1 - (2 * k : ℂ)) * x ^ (r + 1 - 2 * k)
 
-/-- The polynomial `(B_{r+1}(x + 1) - B_{r+1}(1)) / (r + 1)`, which extends Berndt's `φ_r` to
-all of `ℂ`; `chapter7Phi_eq_chapter7IntegerPhi` shows it agrees with `chapter7Phi` on `-1 < x < 0`.
+/-- **Bernoulli-polynomial form of Berndt's $\varphi_r$.** For a natural number $r$ and
+$x \in \mathbb{C}$, $P_r(x) = \frac{B_{r+1}(x + 1) - B_{r+1}(1)}{r + 1}$, where $B_{r+1}$ is the
+Bernoulli polynomial of degree $r + 1$.
+
+For positive $r$ this polynomial agrees on $-1 < x < 0$ with Berndt's
+$\varphi_r(x) = \zeta(-r) - \zeta(-r, x + 1)$, where $\zeta$ is the Riemann zeta function and
+$\zeta(s, a)$ the Hurwitz zeta function, and so extends it to all of $\mathbb{C}$.
 -/
 def chapter7IntegerPhi (r : ℕ) (x : ℂ) : ℂ :=
   (chapter7BernoulliPolynomial (r + 1) (x + 1) -
@@ -85,7 +90,17 @@ private theorem eval₂_bernoulli_one_add (r : ℕ) (y : ℂ) :
   rw [hcast, add_comm (1 : ℂ) y] at e
   exact e
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 8.
+/-- **Bernoulli and zeta expansions of $P_r$, and sums of powers.** Let $r$ be a positive integer
+and $P_r(x) = \frac{B_{r+1}(x + 1) - B_{r+1}(1)}{r + 1}$, where $B_{r+1}$ is the Bernoulli
+polynomial of degree $r + 1$. Then for every $x \in \mathbb{C}$,
+$P_r(x) = \frac{1}{r + 1} \sum_{k=0}^{r} \binom{r+1}{k} B_k\, x^{r+1-k} + x^r$, where $B_k$
+are the Bernoulli numbers with $B_1 = -\tfrac12$, and
+$P_r(x) = \frac{x^{r+1}}{r + 1} + \frac{x^r}{2} - \frac{2}{r + 1} Z_r(x)$, where
+$Z_r(x) = \sum_{k=1}^{\lfloor r/2 \rfloor} \binom{r+1}{2k}\, k\, \zeta(1 - 2k)\, x^{r+1-2k}$
+and $\zeta$ is the Riemann zeta function. Moreover $P_r(n) = \sum_{k=1}^{n} k^r$ for every
+natural number $n$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 8.
 Proves `Wanted` entry `ramanujan_part1_ch7_entry8_bernoullibound`.
 -/
 theorem ramanujan_part1_ch7_entry8_bernoullibound
@@ -267,8 +282,11 @@ theorem ramanujan_part1_ch7_entry8_bernoullibound
     linear_combination -htele
   exact ⟨hPart1, hPart2, hPart3⟩
 
-/-- On `-1 < x < 0`, Berndt's `φ_r(x) = ζ(-r) - ζ(-r, x + 1)` for a positive integer `r` equals
-the Bernoulli-polynomial expression `chapter7IntegerPhi r x`, by `hurwitzZeta_neg_nat`. -/
+/-- **Berndt's $\varphi_r$ as a Bernoulli-polynomial difference for positive integer $r$.** Let
+$r$ be a positive integer and $-1 < x < 0$. Then $\varphi_r(x) = \zeta(-r) - \zeta(-r, x + 1)$,
+where $\zeta$ is the Riemann zeta function and $\zeta(s, a)$ the Hurwitz zeta function, equals
+$P_r(x) = \frac{B_{r+1}(x + 1) - B_{r+1}(1)}{r + 1}$, where $B_{r+1}$ is the Bernoulli
+polynomial of degree $r + 1$. -/
 theorem chapter7Phi_eq_chapter7IntegerPhi (r : ℕ) (hr : r ≠ 0) (x : Chapter7PhiArgument) :
     chapter7Phi r x = chapter7IntegerPhi r (x : ℝ) := by
   obtain ⟨x, hx1, hx0⟩ := x
@@ -285,7 +303,16 @@ theorem chapter7Phi_eq_chapter7IntegerPhi (r : ℕ) (hr : r ≠ 0) (x : Chapter7
   field_simp
   ring
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 8, for Berndt's
+/-- **Bernoulli and zeta expansions of Berndt's $\varphi_r$ on $(-1, 0)$.** Let $r$ be a positive
+integer and, for $-1 < x < 0$, let $\varphi_r(x) = \zeta(-r) - \zeta(-r, x + 1)$, where $\zeta$
+is the Riemann zeta function and $\zeta(s, a)$ the Hurwitz zeta function. Then for every
+$-1 < x < 0$,
+$\varphi_r(x) = \frac{1}{r + 1} \sum_{k=0}^{r} \binom{r+1}{k} B_k\, x^{r+1-k} + x^r$, where $B_k$
+are the Bernoulli numbers with $B_1 = -\tfrac12$, and
+$\varphi_r(x) = \frac{x^{r+1}}{r + 1} + \frac{x^r}{2} - \frac{2}{r + 1} Z_r(x)$, where
+$Z_r(x) = \sum_{k=1}^{\lfloor r/2 \rfloor} \binom{r+1}{2k}\, k\, \zeta(1 - 2k)\, x^{r+1-2k}$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 8, for Berndt's
 `φ_r` (`chapter7Phi`) on its domain `-1 < x < 0`. -/
 theorem ramanujan_part1_ch7_entry8_phi (r : ℕ) (hr : 0 < r) (x : Chapter7PhiArgument) :
     chapter7Phi r x = chapter7Entry8BernoulliForm r (x : ℝ) ∧
