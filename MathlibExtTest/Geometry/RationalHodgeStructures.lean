@@ -15,7 +15,8 @@ public import MathlibExt.Geometry.RationalHodgeStructures
 /-!
 # Tests for rational Hodge data
 
-The rational carrier of a complexification is finite-dimensional. Every
+The rational carrier of a complexification is finite-dimensional and its
+comparison map is rational linear for the compatible scalar actions. Every
 complexification carries the weight-zero Hodge structure of type `(0, 0)`
 (`Fᵖ = ⊤` for `p ≤ 0`, `⊥` otherwise), whose opposedness uses that conjugation
 is surjective. The complexification of the zero subspace is zero, and mixed
@@ -31,6 +32,12 @@ namespace MathlibExtTest.Geometry.RationalHodgeStructures
 variable {V : ModuleCat.{0} ℚ} (C : RationalComplexification V)
 
 example : FiniteDimensional ℚ V := C.finiteDimensional
+
+/-- The comparison map is rational linear, and rational scalars act on the
+complex space through `ℚ → ℂ`. -/
+example (q : ℚ) (v : V) :
+    C.comparisonMap (q • v) = (q : ℂ) • C.comparisonMap v := by
+  rw [map_smul, ← algebraMap_smul ℂ q (C.comparisonMap v), eq_ratCast]
 
 /-- Conjugation maps the whole complex space onto itself. -/
 private theorem map_conjugation_top :

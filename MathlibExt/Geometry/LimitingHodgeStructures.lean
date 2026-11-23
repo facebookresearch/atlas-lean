@@ -23,10 +23,12 @@ public import MathlibExt.Geometry.RationalHodgeStructures
 
 The rational sheaf is the sheafification of the actual presheaf of equivariant
 locally constant functions on the exponential cover. Period filtrations are
-holomorphic subbundles in fixed complex coordinates and satisfy the actual
-Griffiths derivative condition. The logarithm and exponential are explicit
-finite endomorphism polynomials. The limiting filtration is fixed by a
-holomorphic extension of the untwisted period filtration at zero.
+holomorphic subbundles in fixed complex coordinates, satisfy the actual
+Griffiths derivative condition, and take the fixed value `⊥` off their domain.
+The logarithm, exponential and monodromy weight filtration are given by
+truncated series and kernel–image sums, which are the actual operations under
+a nilpotency bound. The limiting filtration is fixed by a holomorphic
+extension of the untwisted period filtration at zero.
 
 Convention: equivariant sections satisfy `s(z+1)=T s(z)`; positive-loop
 parallel transport is therefore `T⁻¹`. The period deck operator is `T`, as
@@ -182,49 +184,65 @@ structure PolarizedPeriodVariation (w : ℤ) where
       polarization.rationalForm x y
   deck_filtration : ∀ z, 0 < z.im → ∀ p,
     F (z + 1) p = (F z p).map complexDeck.toLinearMap
+  /-- Off the upper half plane the filtration takes the fixed value `⊥`, so it
+  carries no data there. -/
+  F_outside : ∀ z, z.im ≤ 0 → ∀ p, F z p = ⊥
 
-/-- Finite polynomial logarithm of a specified unipotent rational deck
-operator, with an explicit nilpotency bound. -/
-def rationalLog {w : ℤ} (H : PolarizedPeriodVariation C e w) (b : ℕ) : Module.End ℚ V :=
+/-- The logarithm series of the rational deck operator `T`, truncated below
+degree `b`: `∑_{0 < i < b} (-1)^(i+1) (T - 1)^i / i`. It is the logarithm of `T`
+when `(T - 1)^b = 0`; for smaller `b` it is only a truncation (for instance it
+vanishes for `b ≤ 1`). -/
+def truncatedRationalLog {w : ℤ} (H : PolarizedPeriodVariation C e w) (b : ℕ) :
+    Module.End ℚ V :=
   ∑ i ∈ Finset.range b, if i = 0 then 0 else
     ((-1 : ℚ) ^ (i + 1) / i) • (H.rationalDeck.toLinearMap - 1) ^ i
 
-/-- The same finite logarithm on the actual complexification. -/
-def complexLog {w : ℤ} (H : PolarizedPeriodVariation C e w) (b : ℕ) :
+/-- The same truncated logarithm series of the complex deck operator. -/
+def truncatedComplexLog {w : ℤ} (H : PolarizedPeriodVariation C e w) (b : ℕ) :
     Module.End ℂ C.complexSpace :=
   ∑ i ∈ Finset.range b, if i = 0 then 0 else
     ((-1 : ℂ) ^ (i + 1) / i) • (H.complexDeck.toLinearMap - 1) ^ i
 
-/-- The finite exponential of the nilpotent logarithm. -/
-def nilpotentExp (N : Module.End ℂ C.complexSpace) (b : ℕ) (z : ℂ) :
+/-- The exponential series of `z N`, truncated below degree `b`:
+`∑_{i < b} zⁱ Nⁱ / i!`. It is `exp (z N)` when `N^b = 0`; for `b = 0` it is
+the empty sum `0`. -/
+def truncatedExp (N : Module.End ℂ C.complexSpace) (b : ℕ) (z : ℂ) :
     Module.End ℂ C.complexSpace :=
   ∑ i ∈ Finset.range b, (z ^ i / (i.factorial : ℂ)) • N ^ i
 
-/-- The monodromy filtration centered at `w`, written directly in terms of
-the actual kernels and images of powers of the logarithm. With `N^b=0`,
-this is `Σ_j ker(N^(k-w+j+1)) ∩ im(N^j)`; negative exponents give `ker(1)=0`. -/
-def monodromyWeight (N : Module.End ℚ V) (b : ℕ) (w k : ℤ) : Submodule ℚ V :=
+/-- The kernel–image sum `Σ_{j < b} ker(N^(k-w+j+1)) ∩ im(N^j)`, where a
+negative exponent gives `ker(N⁰) = 0`. When `0 < b` and `N^b = 0` this is the
+monodromy weight filtration of the nilpotent `N` centered at `w`; for `b = 0` it
+is the empty sum `⊥`. -/
+def kernelImageWeight (N : Module.End ℚ V) (b : ℕ) (w k : ℤ) : Submodule ℚ V :=
   ⨆ j : Fin b, LinearMap.ker (N ^ (k - w + (j : ℤ) + 1).toNat) ⊓
     LinearMap.range (N ^ (j : ℕ))
 
-/-- An extension of the actual untwisted filtration to the whole unit disk.
-Its value at zero, rather than an arbitrarily chosen flag, is the limit. -/
+/-- An extension of the actual untwisted filtration to the open unit disk.
+Its value at zero, rather than an arbitrarily chosen flag, is the limit. The
+untwisting uses the truncated logarithm and exponential, which are the actual
+ones under the nilpotency bound `(T - 1)^b = 0`. -/
 structure PeriodExtension {w : ℤ} (H : PolarizedPeriodVariation C e w) (b : ℕ) where
   F : ℂ → ℤ → Submodule ℂ C.complexSpace
   holomorphic : HolomorphicFiltrationOn C e F {t : ℂ | ‖t‖ < 1}
   limit_filtration : Antitone (F 0)
   normalized : ∀ z, 0 < z.im → ∀ p,
     F (Complex.exp (2 * Real.pi * Complex.I * z)) p =
-      (H.F z p).map (nilpotentExp C (complexLog C e H b) b (-z))
+      (H.F z p).map (truncatedExp C (truncatedComplexLog C e H b) b (-z))
+  /-- Off the open unit disk the extension takes the fixed value `⊥`, so it
+  carries no data there. -/
+  F_outside : ∀ t : ℂ, 1 ≤ ‖t‖ → ∀ p, F t p = ⊥
 
-/-- A limiting MHS on the fixed rational carrier, with the exact limit F
-and the exact kernel/image monodromy W. -/
+/-- A limiting MHS on the fixed rational carrier, with the exact limit `F` and
+the kernel–image weight filtration of the truncated logarithm. Under the
+nilpotency bound `(T - 1)^b = 0` with `0 < b`, these are the limiting Hodge
+filtration and the monodromy weight filtration. -/
 structure LimitingHodgeData {w : ℤ} (H : PolarizedPeriodVariation C e w) (b : ℕ)
     (E : PeriodExtension C e H b) where
   mixed : MixedHodgeStructure C
-  weight : ∀ k, mixed.W k = monodromyWeight (rationalLog C e H b) b w k
+  weight : ∀ k, mixed.W k = kernelImageWeight (truncatedRationalLog C e H b) b w k
   hodge : mixed.F = E.F 0
   logarithm_lowers_hodge : ∀ p,
-    (mixed.F p).map (complexLog C e H b) ≤ mixed.F (p - 1)
+    (mixed.F p).map (truncatedComplexLog C e H b) ≤ mixed.F (p - 1)
 
 end MathlibExt.Geometry.LimitingHodgeStructures
