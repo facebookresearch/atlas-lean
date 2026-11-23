@@ -34,4 +34,10 @@ example : coeff 3 (PowerSeries.mk (hyperLeonardo 2) *
   rw [hyperLeonardo_one_two_generatingFunction.2]
   simp [coeff_X]
 
+-- Clearing the denominator kills every coefficient above degree two at every order.
+example (r n : ℕ) : coeff (n + 3) (PowerSeries.mk (hyperLeonardo r) *
+    ((1 - 2 * X + X ^ 3) * (1 - X) ^ r)) = 0 := by
+  rw [hyperLeonardo_generatingFunction]
+  simp [coeff_X]
+
 end MetaMathlibExt
