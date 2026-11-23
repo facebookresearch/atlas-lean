@@ -554,35 +554,6 @@ class BaseGuardTest(unittest.TestCase):
         self.edit_row("MathlibExt/Identical.lean", line_fingerprint=["0" * 12])
         self.assert_fails("forge the fingerprint", "line_fingerprint does not match the file at base")
 
-    def test_retirement_during_local_merge_uses_incoming_main(self) -> None:
-        del os.environ["GITHUB_ACTIONS"]
-        run_git(self.root, "branch", "topic")
-        path = "CSLibExt/Diverged.lean"
-        old_text = (self.root / path).read_text()
-        new_text = old_text + "-- Revised on main.\n"
-        write(self.root, path, new_text)
-        self.edit_row(path, published_sha256=c.sha256(new_text), rationale="revise the file")
-        self.commit("revise the synced file on main")
-        run_git(self.root, "update-ref", "refs/remotes/origin/main", "HEAD")
-        run_git(self.root, "checkout", "topic")
-        run_git(self.root, "merge", "--no-ff", "--no-commit", "main")
-
-        (self.root / path).unlink()
-        self.assertEqual(self.run_check(None, "--retire", path)[0], 0)
-        self.manifest = json.loads((self.root / c.MANIFEST).read_text())
-        code, out = self.run_check()
-        self.assertEqual(code, 0, out)
-
-        self.edit_row(path, published_sha256=c.sha256(old_text),
-                      line_fingerprint=c.line_fingerprint(old_text))
-        code, out = self.run_check()
-        self.assertEqual(code, 1, out)
-        self.assertIn("retiring the row changed published_sha256", out)
-        self.assertIn("line_fingerprint does not match the file at base", out)
-
-        run_git(self.root, "mv", "MathlibExt/Identical.lean", "WantedExt/Renamed.lean")
-        self.assertIn("WantedExt/Renamed.lean: renamed from tracked", self.run_check()[1])
-
     def test_retire_after_committing_the_deletion_keeps_the_fingerprint(self) -> None:
         os.remove(self.root / "MathlibExt/Identical.lean")
         self.commit("delete first")
@@ -595,6 +566,37 @@ class BaseGuardTest(unittest.TestCase):
         self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
         self.commit("delete a synced file")
         self.assertEqual(self.run_check()[0], 0)
+
+    def test_pending_local_merge_checks_retirement_against_incoming_main(self) -> None:
+        del os.environ["GITHUB_ACTIONS"]
+        run_git(self.root, "branch", "topic")
+        path = "CSLibExt/Diverged.lean"
+        before = (self.root / path).read_text()
+        after = before + "-- update published on main\n"
+        write(self.root, path, after)
+        self.edit_row(path, published_sha256=c.sha256(after), rationale="updated on main")
+        self.commit("update the published file")
+        run_git(self.root, "update-ref", "refs/remotes/origin/main", "HEAD")
+        run_git(self.root, "switch", "topic")
+        run_git(self.root, "merge", "--no-commit", "--no-ff", "origin/main")
+
+        (self.root / path).unlink()
+        self.edit_row(path, disposition="retired", rationale=None, backport=None,
+                      line_fingerprint=c.line_fingerprint(after))
+        run_git(self.root, "add", "-u")
+        code, out = self.run_check()
+        self.assertEqual(code, 0, out)
+
+        self.edit_row(path, published_sha256=c.sha256(before),
+                      line_fingerprint=c.line_fingerprint(before))
+        moved = "CSLibExt/Moved.lean"
+        write(self.root, moved, after)
+        run_git(self.root, "add", c.MANIFEST, moved)
+        code, out = self.run_check()
+        self.assertEqual(code, 1, out)
+        self.assertIn("retiring the row changed published_sha256", out)
+        self.assertIn("line_fingerprint does not match the file at base", out)
+        self.assertIn(f"{moved}: renamed from tracked {path}", out)
 
     def test_backport_link_update_passes(self) -> None:
         self.edit_row("CSLibExt/Diverged.lean", backport="https://github.com/fairinternal/formal-math/pull/1")
