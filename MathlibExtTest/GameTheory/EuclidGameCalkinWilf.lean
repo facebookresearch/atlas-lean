@@ -23,3 +23,12 @@ example : euclidPPosition 14 10 = true ∧ euclidPPosition 10 16 = true :=
 -- From the left arch top the move is forced, although the reply need not be.
 example : euclidMoves (14, 10) = {(4, 10)} ∧ euclidMoves (4, 10) = {(4, 6), (4, 2)} := by
   decide
+
+-- At the root both mixed grandchildren are P-positions, so the aunt cannot be one.
+example : euclidPPosition 2 1 ≠ true := by
+  have h := (euclidPPosition_aunt_xor_cousin 1 1 (by decide) (by decide)).1 (by decide)
+  exact fun ha => h.mp ha (by decide)
+
+-- At (4, 2) the female cousin is an N-position, so the uncle is a P-position.
+example : euclidPPosition 4 6 = true :=
+  ((euclidPPosition_aunt_xor_cousin 4 2 (by decide) (by decide)).2.2.1 (by decide)).mpr (by decide)
