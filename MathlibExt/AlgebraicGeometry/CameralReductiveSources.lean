@@ -51,21 +51,23 @@ variable {k : Type} [Field k] {r : ℕ}
 def cartanAt (c : (Fin r → k) →ₗ[k] V) (A : CommAlgCat.{0} k) (v : Fin r → A) :
     LieAt V A := ∑ i, v i ⊗ₜ[k] c (Pi.single i 1)
 
-def adjointAtField (g : affine (CommAlgCat.of k k) ⟶ G) : V ≃ₗ[k] V :=
-  (TensorProduct.lid k V).symm ≪≫ₗ D.adjoint (.of k k) g ≪≫ₗ TensorProduct.lid k V
+/-- The value of the character `χ` at an `A`-point `t` of the torus. -/
+def weightValue (A : CommAlgCat.{0} k) (t : affine A ⟶ torusScheme k r) (χ : Fin r → ℤ) : A :=
+  (Scheme.ΓSpecIso (.of A)).hom.hom
+    ((∏ i, (T.units (affine A) t i) ^ χ i : Γ(Spec (.of A), ⊤)ˣ) : Γ(Spec (.of A), ⊤))
 
-def weightValue (t : affine (CommAlgCat.of k k) ⟶ torusScheme k r)
-    (χ : Fin r → ℤ) : k :=
-  ((Scheme.ΓSpecIso (.of k)).hom.hom
-    ((∏ i, (T.units (affine (.of k k)) t i) ^ χ i : Γ(Spec (.of k), ⊤)ˣ) :
-      Γ(Spec (.of k), ⊤)))
-
+/-- The weight space of `χ`: the torus acts on `1 ⊗ v` through `χ` at every affine test point,
+not only at rational points (over a finite field the rational points of a split torus do not
+detect the weights). -/
 def weightSpace (embedding : torusScheme k r ⟶ G) (χ : Fin r → ℤ) : Submodule k V where
-  carrier := {v | ∀ t : affine (CommAlgCat.of k k) ⟶ torusScheme k r,
-    adjointAtField G V L J D (t ≫ embedding) v = weightValue T t χ • v}
-  zero_mem' t := by simp
-  add_mem' hv hw t := by rw [map_add, hv t, hw t, smul_add]
-  smul_mem' a v hv t := by rw [map_smul, hv t, smul_comm]
+  carrier := {v | ∀ (A : CommAlgCat.{0} k) (t : affine A ⟶ torusScheme k r),
+    D.adjoint A (t ≫ embedding) ((1 : A) ⊗ₜ[k] v) = weightValue T A t χ • ((1 : A) ⊗ₜ[k] v)}
+  zero_mem' A t := by simp
+  add_mem' hv hw A t := by rw [TensorProduct.tmul_add, map_add, hv A t, hw A t, smul_add]
+  smul_mem' a v hv A t := by
+    have h := (D.adjoint A (t ≫ embedding)).toLinearMap.map_smul_of_tower a ((1 : A) ⊗ₜ[k] v)
+    rw [LinearEquiv.coe_coe] at h
+    rw [TensorProduct.tmul_smul, h, hv A t, smul_comm]
 
 structure Source where
   [connected : ConnectedSpace G.left]

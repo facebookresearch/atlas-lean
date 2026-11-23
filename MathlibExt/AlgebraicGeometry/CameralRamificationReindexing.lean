@@ -76,15 +76,25 @@ def dualEvaluation {X : Over (Spec (.of ℂ))} (C : Cover F X) (i : Fin F.roots.
     (eqToIso (sectionData F C i).duality.object_eq).inv ≫
       (sectionData F C i).duality.evaluation.evaluation
 
+/-- A map of cameral covers over a map of bases: a Cartesian square that commutes with the
+Weyl group actions on both covers (Donagi–Gaitsgory, Defs. 2.5–2.6). -/
 structure CameralArrow {X X' : Over (Spec (.of ℂ))} (C : Cover F X) (C' : Cover F X') where
   base : X ⟶ X'
   total : total F C ⟶ total F C'
   projection : total ≫ projection F C' = projection F C ≫ base
   cartesian : IsPullback total.left C.cover.scheme.hom C'.cover.scheme.hom base.left
+  weyl : ∀ w : F.Weyl,
+    (schemeCoverIso C.cover w).hom ≫ total.left = total.left ≫ (schemeCoverIso C'.cover w).hom
 
 def ReflectionCompatible {X X' : Over (Spec (.of ℂ))} {C : Cover F X} {C' : Cover F X'}
     (m : CameralArrow F C C') (i j : Fin F.roots.count) : Prop :=
   (reflection F C i).hom ≫ m.total.left = m.total.left ≫ (reflection F C' j).hom
+
+/-- A map of cameral covers commutes with each simple reflection. -/
+theorem CameralArrow.reflectionCompatible {X X' : Over (Spec (.of ℂ))} {C : Cover F X}
+    {C' : Cover F X'} (m : CameralArrow F C C') (i : Fin F.roots.count) :
+    ReflectionCompatible F m i i :=
+  m.weyl (F.roots.reflection i)
 
 structure RootChartArrow {X X' : Over (Spec (.of ℂ))} {C : Cover F X} {C' : Cover F X'}
     (m : CameralArrow F C C') {i j : Fin F.roots.count}

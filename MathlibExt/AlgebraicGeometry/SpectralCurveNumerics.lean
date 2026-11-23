@@ -204,4 +204,3 @@ theorem spectralPushforwardRankDegree [IsAlgClosed k] [CharZero k] [IsProper C.h
   ⟨spectralPushforwardRank P M J, spectralPushforwardDegree P I M J⟩
 
 end MathlibExt.AlgebraicGeometry.SpectralCurveNumerics
-

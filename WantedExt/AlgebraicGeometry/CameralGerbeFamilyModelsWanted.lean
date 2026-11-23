@@ -75,6 +75,8 @@ theorem_wanted nativeAutomorphismBijection (G : Over (Spec (.of ℂ))) [GrpObj G
     (H : CameralBorelAbelianizationCore.Marked F I (M.cover U).cover) :
     Function.Bijective (A.source U H).arrow
 
+/-- The étale-local part of Donagi–Gaitsgory, Thm. 4.4: marked objects exist étale locally
+and are étale locally isomorphic. -/
 theorem_wanted nativeLocalGerbe (G : Over (Spec (.of ℂ))) [GrpObj G]
     (tori : ∀ n : ℕ, TorusTheory ℂ n) (F : Foundation G tori)
     (_hred : ReductiveGroupHypotheses.IsLinearlyReductive G)

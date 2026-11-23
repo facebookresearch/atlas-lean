@@ -14,8 +14,8 @@ public import MathlibExt.AlgebraicGeometry.QuotientLineDescentModels
 # Actual contracted torsors and normalized families
 
 Bundle objects and arrows reuse the native torsor quotient groupoid.
-Tensor products are actual fppf quotients of P times_X Q by the inverse
-diagonal action, with the actual product action and universal property.
+Tensor products (for commutative group schemes) are actual fppf quotients of
+P times_X Q by the inverse diagonal action, with the actual product action and universal property.
 Base changes are the actual Cartesian torsor pullbacks. Unit and
 composition isomorphisms retain their actual maps to the original
 torsor; maps of bundles retain their actual equivariant arrows.
@@ -47,7 +47,12 @@ variable {G} {X : Over S}
 
 abbrev product (P Q : Bundle G X) := pullback P.torsor.projection Q.torsor.projection
 
+/-- The tensor product of two torsors under a commutative group scheme: the fppf quotient of
+the fibre product by the inverse diagonal action. Commutativity is part of the data: for a
+noncommutative group the inverse diagonal map is not an action and the quotient is not a
+torsor. -/
 structure TensorDiagram (P Q R : Bundle G X) where
+  commutative : IsCommMonObj G
   quotient : product P Q ⟶ R.torsor.total
   projection : quotient ≫ R.torsor.projection =
     pullback.fst P.torsor.projection Q.torsor.projection ≫ P.torsor.projection
@@ -123,6 +128,8 @@ structure TensorOperations where
 
 variable {G} (H : Over S) [GrpObj H] (δ : G ⟶ H) [IsMonHom δ]
 
+/-- Extension of structure group along `δ`: the quotient of `P × H` by
+`g · (p, h) = (g · p, h · δ(g)⁻¹)`, with `H` acting on the left of the second factor. -/
 structure Pushout (P : Bundle G X) (Q : Bundle H X) where
   quotient : P.torsor.total ⊗ H ⟶ Q.torsor.total
   projection : quotient ≫ Q.torsor.projection = fst P.torsor.total H ≫ P.torsor.projection
@@ -130,8 +137,8 @@ structure Pushout (P : Bundle G X) (Q : Bundle H X) where
   first : inverseDiagonal ≫ fst P.torsor.total H =
     (G ◁ fst P.torsor.total H) ≫ γ[G,P.torsor.total]
   second : inverseDiagonal ≫ snd P.torsor.total H =
-    CartesianMonoidalCategory.lift (fst G (P.torsor.total ⊗ H) ≫ δ ≫ ι[H])
-      (snd G (P.torsor.total ⊗ H) ≫ snd P.torsor.total H) ≫ μ[H]
+    CartesianMonoidalCategory.lift (snd G (P.torsor.total ⊗ H) ≫ snd P.torsor.total H)
+      (fst G (P.torsor.total ⊗ H) ≫ δ ≫ ι[H]) ≫ μ[H]
   invariant : inverseDiagonal ≫ quotient = snd G (P.torsor.total ⊗ H) ≫ quotient
   [flat : Flat quotient.left]
   [presentation : LocallyOfFinitePresentation quotient.left]

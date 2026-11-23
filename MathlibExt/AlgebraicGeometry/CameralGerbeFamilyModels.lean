@@ -16,7 +16,7 @@ public import MathlibExt.AlgebraicGeometry.CameralUniversalRawLiftModels
 Restrictions are native torsor and cameral pullbacks, normalized by
 their original total and incidence maps. Unit and composition maps
 preserve those same original maps. Local existence and local
-isomorphism use actual jointly surjective fppf scheme covers.
+isomorphism use actual jointly surjective étale scheme covers.
 Isomorphism torsors represent the actual restricted marked arrows.
 These local conclusions do not assert a global object for an
 arbitrary cameral cover.
@@ -123,21 +123,24 @@ structure MarkedFamilies where
 
 variable (M : MarkedFamilies F I C)
 
-structure FppfCover (U : Over X.left) where
+/-- A jointly surjective family of étale maps to `U`: a covering of the big étale site used by
+Donagi–Gaitsgory, §3. -/
+structure EtaleCover (U : Over X.left) where
   Index : Type
   piece : Index → Over X.left
   map : ∀ i, piece i ⟶ U
-  flat : ∀ i, Flat (map i).left
-  presentation : ∀ i, LocallyOfFinitePresentation (map i).left
+  etale : ∀ i, Etale (map i).left
   covers : ∀ u : U.left, ∃ i, u ∈ Set.range (map i).left
 
-/-- Local existence and local connectedness use genuine fppf test covers. -/
+/-- The two local conditions of a gerbe on the big étale site (Donagi–Gaitsgory, §4.4): objects
+exist étale locally and any two objects are étale locally isomorphic. Effective descent of
+objects and arrows is not part of this statement. -/
 structure LocalGerbe : Prop where
-  objects : ∀ U : Over X.left, ∃ P : FppfCover (X := X) U,
+  objects : ∀ U : Over X.left, ∃ P : EtaleCover (X := X) U,
     ∀ i, Nonempty (CameralBorelAbelianizationCore.Marked F I (M.cover (P.piece i)).cover)
   isomorphisms : ∀ (U : Over X.left)
       (H H' : CameralBorelAbelianizationCore.Marked F I (M.cover U).cover),
-    ∃ P : FppfCover (X := X) U,
+    ∃ P : EtaleCover (X := X) U,
       ∀ i, Nonempty ((M.change (P.map i)).obj H ≅ (M.change (P.map i)).obj H')
 
 @[implicit_reducible] def relativeTest {U V : Over X.left} (f : V ⟶ U) :

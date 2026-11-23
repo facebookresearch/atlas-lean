@@ -81,12 +81,10 @@ structure BorelPlane (A : CommAlgCat.{0} k) where
 def scalarModule (X : Over (Spec (.of k))) (M : ModuleCat.{0} k) : X.left.Modules :=
   (Scheme.Modules.pullback X.hom).obj ((tilde.functor (.of k)).obj M)
 
+/-- The flag scheme, as the scheme representing Borel planes. Its tautological subbundle is
+determined by this functor of points, so it is not recorded separately. -/
 structure FlagScheme where
   scheme : Over (Spec (.of k))
-  universal : scheme.left.Modules
-  rank : CurveVectorBundles.IsVectorBundle universal (Module.finrank k B.subalgebra)
-  inclusion : universal ⟶ scalarModule scheme (.of k V)
-  [mono : Mono inclusion]
   points : ∀ A : CommAlgCat.{0} k, (affine A ⟶ scheme) ≃ BorelPlane B A
   naturality : ∀ {A A' : CommAlgCat.{0} k} (u : A ⟶ A') (f : affine A ⟶ scheme),
     (points A' (affineMap u ≫ f)).plane = Module.Grassmannian.map u.hom (points A f).plane
@@ -138,6 +136,29 @@ def affineModuleSections {X : Over (Spec (.of k))} (M : X.left.Modules)
     ((SheafOfModules.evaluation (Spec (.of A)).ringCatSheaf (.op ⊤)).obj
       ((Scheme.Modules.pullback f.left).obj M))
 
+/-- The global section `m` of the constant module, pulled back to the affine test `f`: the
+section of `M^~` over `Spec k` given by `m`, mapped by the units of pullback along `X.hom`
+and then along `f`. -/
+def constantSection {X : Over (Spec (.of k))} (M : ModuleCat.{0} k) (m : M)
+    (A : CommAlgCat.{0} k) (f : affine A ⟶ X) : affineModuleSections (scalarModule X M) A f :=
+  let s : ((tilde.functor (.of k)).obj M).val.obj (.op ⊤) := (tilde.isoTop (R := .of k) M).hom m
+  (((Scheme.Modules.pullbackPushforwardAdjunction f.left).unit.app
+      (scalarModule X M)).val.app (.op ⊤)).hom
+    ((((Scheme.Modules.pullbackPushforwardAdjunction X.hom).unit.app
+      ((tilde.functor (.of k)).obj M)).val.app (.op ⊤)).hom s)
+
+/-- Pulling back a constant module gives the constant module. -/
+def scalarPullbackIso {Y Y' : Over (Spec (.of k))} (f : Y' ⟶ Y) (M : ModuleCat.{0} k) :
+    (Scheme.Modules.pullback f.left).obj (scalarModule Y M) ≅ scalarModule Y' M :=
+  (Scheme.Modules.pullbackComp f.left Y.hom).app ((tilde.functor (.of k)).obj M) ≪≫
+    (Scheme.Modules.pullbackCongr f.w).app ((tilde.functor (.of k)).obj M)
+
+/-- The centralizer module of the cover inside its constant Lie algebra module. -/
+def centralizerInclusion :
+    centralizerModule C ⟶ scalarModule (overScheme C.cameral.cover) (.of k V) :=
+  (Scheme.Modules.pullback (coverProjection C.cameral.cover).left).map P.inclusion ≫
+    (scalarPullbackIso (coverProjection C.cameral.cover) (.of k V)).hom
+
 structure CartanValueMap where
   quotient : centralizerModule C ⟶
     scalarModule (overScheme C.cameral.cover) (.of k (Fin r → k))
@@ -147,6 +168,18 @@ structure CartanValueMap where
   targetSections : ∀ (A : CommAlgCat.{0} k) (f : affine A ⟶ overScheme C.cameral.cover),
     affineModuleSections (scalarModule (overScheme C.cameral.cover) (.of k (Fin r → k))) A f ≃ₗ[A]
       (Fin r → A)
+  /-- The plane identification is the inclusion into the constant Lie algebra module, read in
+  the coordinates given by constant sections. -/
+  source_ambient : ∀ (A : CommAlgCat.{0} k) (f : affine A ⟶ overScheme C.cameral.cover)
+      (x : affineModuleSections (centralizerModule C) A f) (n : ℕ) (a : Fin n → A) (v : Fin n → V),
+    (((Scheme.Modules.pullback f.left).map (centralizerInclusion C)).val.app (.op ⊤)).hom x =
+        ∑ i, a i • constantSection (.of k V) (v i) A f →
+      ((sourceSections A f x : (C.points A f).val.fst.plane.toSubmodule) : LieAt V A) =
+        ∑ i, a i ⊗ₜ[k] v i
+  /-- The Cartan coordinates are those of the constant sections. -/
+  target_constant : ∀ (A : CommAlgCat.{0} k) (f : affine A ⟶ overScheme C.cameral.cover)
+      (e : Fin r → k),
+    targetSections A f (constantSection (.of k (Fin r → k)) e A f) = fun i => algebraMap k A (e i)
   standardQuotient : ∀ A : CommAlgCat.{0} k, borelAt B A →ₗ[A] (Fin r → A)
   pure : ∀ (A : CommAlgCat.{0} k) (a : A) (b : B.subalgebra) (i : Fin r),
     standardQuotient A
