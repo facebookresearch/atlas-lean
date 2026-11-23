@@ -28,7 +28,10 @@ It has the following properties.
 5. *Bigness.* The following are equivalent: $\widehat{\mathrm{vol}}(\bar L) > 0$; $\bar L$ is big;
    $\liminf_m m^{-(d+1)} \log \#\{ s \in H^0(X, mL) : \lVert s \rVert_{\sup} \le 1 \} > 0$;
    $\liminf_m m^{-(d+1)} \log \#\{ s \in H^0(X, mL) : \lVert s \rVert_{\sup} < 1 \} > 0$. The last
-   condition is Yuan's definition of bigness, so it agrees with Moriwaki's.
+   condition is Yuan's definition of bigness, so it agrees with Moriwaki's. Moreover $\bar L$ is big if
+   and only if for every hermitian line bundle $\bar M$ some $H^0(X, nL + M)$, $n \ge 1$, has a nonzero
+   section of sup norm less than $1$; in particular, for big $\bar L$ and ample $\bar A$ some
+   $k \bar L - \bar A$ is strictly effective.
 6. *Homogeneity.* $\widehat{\mathrm{vol}}(p \bar L) = p^{d+1} \widehat{\mathrm{vol}}(\bar L)$ for
    every integer $p \ge 0$. Hence $\widehat{\mathrm{vol}}$ extends to a function on
    $\widehat{\mathrm{Pic}}(X) \otimes \mathbb{Q}$, homogeneous of degree $d + 1$ for nonnegative
@@ -36,17 +39,20 @@ It has the following properties.
    when $n\bar L$ is represented by $\bar M$; and $\widehat{\mathrm{vol}}(\bar L) \le
    \widehat{\mathrm{vol}}(\bar M)$ when some positive multiples $n\bar L$ and $n\bar M$ are
    represented by hermitian line bundles $\bar L' \le \bar M'$.
+7. *Progressions.* If $\bar L$ is big, then for every hermitian line bundle $\bar N$ and every integer
+   $p \ge 1$ the $\limsup$, and also the $\liminf$, of $m^{-(d+1)} \log \#\{ s \in H^0(X, mL + N) :
+   \lVert s \rVert_{\sup} \le 1 \}$ over all $m$ equal those over the multiples $m = pn$ of $p$.
 
 Moriwaki writes $d$ for the absolute dimension of $X$, here $d + 1$. The estimate for ample
 $\bar L$ in 1 combines the [arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md),
-Moriwaki's Proposition 2.1 on normed $\mathbb{Z}$-modules and
+the estimates for [normed lattices](small-elements-of-normed-lattices.md) and
 [Zhang's ampleness theorem](arithmetic-ampleness-theorem.md), which provides generating sections of
-sup norm less than $1$. The proof of 3 reduces to a finite $\pi$ and a generically smooth $X'$ and
-again uses these two theorems; 4 is deduced from 3, a generic resolution and Moriwaki's estimate of
-the number of small sections (Theorem 3.4, with Lemma 3.6); 5 and 6 follow from 4 and Lemma 4.4.
-Moriwaki's Proposition 2.1 compares, for a normed $\mathbb{Z}$-module, the number of lattice points
-in the unit ball, the same number for the dual norm and the dual lattice, and the covolume; its
-proof rests on Gillet and Soulé's estimates for lattice points in convex symmetric bodies.
+sup norm less than $1$ (Moriwaki, Lemma 3.1). The proof of 3 reduces to a finite $\pi$ and a
+generically smooth $X'$ and again uses these theorems; 4 is deduced from 3, a generic resolution and
+[Moriwaki's estimate for small sections along an ample divisor](moriwaki-fundamental-estimate.md)
+(Theorem 4.3, through Theorem 3.4 and Lemma 3.6); 7 is Lemma 4.4; 5 and 6 follow from 4 and 7. The
+characterization of bigness by small sections of $nL + M$ is Proposition 2.2 of Moriwaki's paper on
+arithmetic height functions.
 
 ## Depends on
 
@@ -56,6 +62,8 @@ proof rests on Gillet and Soulé's estimates for lattice points in convex symmet
 
 ## Proof depends on
 
+- [Small elements of normed lattices](small-elements-of-normed-lattices.md), for Moriwaki's Proposition 2.1, in Lemma 3.1 and in the proofs of 3 and 4
+- [Moriwaki's estimate for small sections along an ample divisor](moriwaki-fundamental-estimate.md), for 4 (Theorem 4.3)
 - [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), for the ample case of 1 (Moriwaki, Lemma 3.1 (1)) and the proof of 3 (Claim 4.2.1)
 - [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), for generating sections of sup norm less than $1$ in Lemma 3.1 (1) and in the proof of 3 (Claim 4.2.1)
 - [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolutions used in the proofs of 3 and 4 (Theorems 4.2 and 4.3)
@@ -71,8 +79,11 @@ proof rests on Gillet and Soulé's estimates for lattice points in convex symmet
   > 0$ if and only if big) and Remark 4.6, pp. 33–34, Proposition 4.7 (homogeneity), p. 34;
   Lemmas 5.1 and 5.2 (extension to $\widehat{\mathrm{Pic}}(X) \otimes \mathbb{Q}$ and
   monotonicity), p. 35.
+- A. Moriwaki, "Arithmetic height functions over finitely generated fields", arXiv:math/9809016
+  (version 2), <https://arxiv.org/abs/math/9809016v2>: Proposition 2.2, p. 7.
 - X. Yuan, "Big line bundles over arithmetic varieties", Invent. Math. 173 (2008), 603–649,
   arXiv:math/0612424 (version 2), <https://arxiv.org/abs/math/0612424v2>: Definition 2.1, p. 10,
   and the Remark on p. 12 (the volume function).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses the homogeneity 6 for positive integers, as `GlobalTheory.Published.VolHomog`.
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) states a related formulation of the homogeneity 6 for positive integers, as
+  `GlobalTheory.Published.VolHomog`.

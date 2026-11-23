@@ -1,10 +1,11 @@
 # Arithmetic Riemann–Roch theorem
 
 Let $A$ be an arithmetic ring with fraction field $F$, and let $f \colon X \to Y$ be a projective
-morphism of regular arithmetic varieties over $A$ whose restriction $X_F \to Y_F$ to the generic
-fibres is smooth. Choose on the relative tangent bundle $Tf_\mathbb{C}$ of $X(\mathbb{C}) \to
-Y(\mathbb{C})$ a hermitian metric, invariant under complex conjugation, whose restriction to every
-fibre $X_y = f^{-1}(y)$, $y \in Y(\mathbb{C})$, is Kähler, and let $\bar E$ be a hermitian vector
+morphism of regular arithmetic varieties, quasi-projective over $A$, whose restriction $X_F \to Y_F$ to
+the generic fibres is smooth. Choose on the relative tangent bundle $Tf_\mathbb{C}$ of $X(\mathbb{C})
+\to Y(\mathbb{C})$ a smooth hermitian metric, invariant under complex conjugation, whose restriction to
+every fibre $X_y = f^{-1}(y)$, $y \in Y(\mathbb{C})$, is Kähler (it need not extend to a Kähler metric
+on $X(\mathbb{C})$), and let $\bar E$ be a hermitian vector
 bundle on $X$. Let $\lambda(E) = \det Rf_* E$ be the determinant of cohomology, a line bundle on $Y$
 whose fibre at $y \in Y(\mathbb{C})$ is $\bigotimes_{q \ge 0} \det H^q(X_y, E)^{(-1)^q}$, and let
 $h_Q$ be its Quillen metric. Then in $\widehat{CH}^1(Y)_\mathbb{Q}$
@@ -40,23 +41,53 @@ The terms are the following.
   $$R(L) = \sum_{m \text{ odd},\, m \ge 1} \Bigl( 2\zeta'(-m) + \Bigl( 1 + \frac12 + \dots +
   \frac1m \Bigr) \zeta(-m) \Bigr) \frac{c_1(L)^m}{m!},$$
   with $\zeta$ the Riemann zeta function.
-- $a$ maps real cohomology classes to $\widehat{CH}^*(X)_\mathbb{Q}$ through the map $a$ of the
-  arithmetic Chow groups, $f_* \colon \widehat{CH}^*(X)_\mathbb{Q} \to \widehat{CH}^*(Y)_\mathbb{Q}$
-  is the push-forward, and $\alpha^{(1)}$ is the component of degree one.
+- The product $\mathrm{ch}(E_\mathbb{C}) \mathrm{Td}(Tf_\mathbb{C}) R(Tf_\mathbb{C})$ is represented
+  by characteristic forms; its real component of type $(j, j)$, of the parity required by $F_\infty$, is
+  mapped by the map $a$ of the arithmetic Chow groups to $\widehat{CH}^{j+1}(X)_\mathbb{Q}$, changing
+  the form by an exact form not changing the class. For $f$ of relative dimension $d$, the push-forward
+  maps $\widehat{CH}^k(X)_\mathbb{Q}$ to $\widehat{CH}^{k-d}(Y)_\mathbb{Q}$, and $\alpha^{(1)}$ is the
+  component of degree one of the pushed-forward class; it comes from $\widehat{CH}^{d+1}(X)$, and for the
+  correction term from forms of type $(d, d)$. The term $R$ is applied once, to $Tf_\mathbb{C}$, and is
+  subtracted.
 
-This is formula (13) of Gillet and Soulé's Theorem 7, which they state for every arithmetic ring.
-The same theorem contains a version for a local complete intersection morphism, smooth on the
-generic fibre, with homological arithmetic Chow groups and a good arithmetic ring (formula (12)),
-and a version for a good arithmetic ring, a regular $Y$ and a hermitian coherent sheaf on $X$
-(formula (11)); for $Y = \operatorname{Spec} \mathbb{Z}$ the latter computes the arithmetic Euler
-characteristic of a hermitian coherent sheaf (4.1.5). Gillet and Soulé had conjectured the formula
-in their paper on the arithmetic Todd genus. Their proof factors $f$ as a closed immersion
-$i \colon X \to \mathbb{P}^N_Y$ followed by the projection $g \colon \mathbb{P}^N_Y \to Y$: for a
-resolution of $i_* E$ by vector bundles with metrics, the difference of the left-hand sides was
-computed by Bismut and Lebeau and the corresponding alternating sum of right-hand sides by Bismut,
-Gillet and Soulé, which reduces the theorem to $g$; for $g$ it reduces to the trivial bundle on
-$\mathbb{P}^N_\mathbb{Z}$, the case proved in the paper on the arithmetic Todd genus (introduction,
-pp. 473–474, and 4.2).
+This is formula (13) of Gillet and Soulé's Theorem 7, stated for every arithmetic ring, as an identity
+in $\widehat{CH}^1(Y)_\mathbb{Q}$ only. The same theorem contains two further forms, for a good
+arithmetic ring, that is, one that is equicodimensional and Jacobson.
+
+- Formula (12): $f$ projective, a local complete intersection morphism, smooth on the generic fibre,
+  $X$ and $Y$ not necessarily regular, $\bar E$ a hermitian vector bundle; for
+  $\alpha \in \widehat{CH}_p(Y)_\mathbb{Q}$, $p \ge 1$, in arithmetic Chow groups graded by dimension,
+  one caps the right-hand side with $f^* \alpha$, pushes forward and takes the component of dimension
+  $p - 1$, which equals $\hat c_1(\lambda(E), h_Q) \cap \alpha$.
+- Formula (11): $Y$ regular, $X$ not necessarily regular, $\bar{\mathcal{F}}$ a hermitian coherent
+  sheaf on $X$, locally free on the generic fibre with a smooth metric invariant under conjugation on the
+  resulting vector bundle, and metrics also on $TX(\mathbb{C})$ and $TY(\mathbb{C})$. The left-hand side
+  is the degree-one component of the arithmetic character of $(\lambda(\mathcal{F}), h_Q)$, and the
+  right-hand side uses the arithmetic character $\tau(\mathcal{F})$ with supports, a homological class
+  constructed from a resolution on an ambient regular scheme, the secondary class of the exact sequence
+  $0 \to Tf_\mathbb{C} \to TX(\mathbb{C}) \to f^* TY(\mathbb{C}) \to 0$, and the same correction by
+  $R$. For $Y = \operatorname{Spec} \mathbb{Z}$ it gives formulas (14)–(15): the arithmetic Euler
+  characteristic of $\bar{\mathcal{F}}$, an alternating sum of logarithms of orders of the torsion of the
+  cohomology groups, of $L^2$ covolumes of their free parts and of half the analytic torsion, equals the
+  arithmetic degree of the corresponding characteristic class; $X$ need not be regular. Gillet and Soulé
+  correct in 4.2.5 an earlier announcement of (11) that omitted terms.
+
+Gillet and Soulé conjectured formula (13) for smooth projective morphisms of regular arithmetic varieties
+in their paper on the arithmetic Todd genus (Conjecture 1.3 there). Their proof factors $f$ as a closed
+immersion $i \colon X \to \mathbb{P}^N_Y$ followed by the projection $g \colon \mathbb{P}^N_Y \to Y$,
+over the common base $Y$. One chooses a Kähler metric on the ambient space and a resolution of $i_* E$ by
+hermitian vector bundles on $\mathbb{P}^N_Y$ whose metrics satisfy Bismut's condition (A) with respect to
+the metrics induced on $X$ and on the normal bundle of $i$. Bismut and Lebeau's immersion formula
+computes, fibre by fibre, the logarithm of the squared Quillen norm of the canonical isomorphism between
+the determinants of cohomology of $E$ and of the resolution. For smooth projective morphisms of regular
+arithmetic varieties, Bismut, Gillet and Soulé's Theorem 4.13 computes the corresponding alternating sum
+of arithmetic characteristic classes after push-forward to the base; Gillet and Soulé extend this argument
+to generically smooth morphisms (4.2.3), and change of metrics on $Tf_\mathbb{C}$ is controlled by the
+anomaly formulas. This reduces the theorem to $g$. For $g$ the defect of the formula is additive, does
+not depend on the metrics, and vanishes on virtual bundles supported in the closed fibres by algebraic
+Riemann–Roch; using the generators $\mathcal{O}(n)$, base change from $\mathbb{P}^N_\mathbb{Z}$ and the
+exact sequences of hyperplanes, it reduces to the trivial bundle on $\mathbb{P}^N_\mathbb{Z}$, the case
+proved in the paper on the arithmetic Todd genus (its Theorem 2.1.1), 4.2.1–4.2.4.
 
 ## Depends on
 
@@ -75,10 +106,22 @@ pp. 473–474, and 4.2).
 
 - H. Gillet and C. Soulé, "An arithmetic Riemann–Roch theorem", Invent. Math. 110 (1992), 473–543,
   <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0110>: introduction, formula (1) and the class
-  $R$ (pp. 473–474); 2.6.2 and Proposition 1 (the arithmetic Todd class $\widehat{\mathrm{Td}}(f)$
-  of a local complete intersection morphism smooth on the generic fibre, pp. 503–504); 4.1.1–4.1.3
-  (Quillen metric, setting, the class $R$, pp. 522–524); Theorem 7 with formulas (11)–(13)
-  (pp. 524–525); 4.1.5 (p. 525); 4.2.5 (p. 533).
+  $R$, pp. 473–474; §2.1 (good arithmetic rings, quasi-projective arithmetic varieties, Chow groups
+  graded by dimension), pp. 484–485; Definition 5, p. 499; 2.6.2 and Proposition 1 (the arithmetic
+  Todd class $\widehat{\mathrm{Td}}(f)$ of a local complete intersection morphism smooth on the generic
+  fibre, pp. 503–504); §3.1, Definition 7, Theorem 5 and Theorem 6 (iii) (the arithmetic character with
+  supports), pp. 509–521; 4.1.1–4.1.3 (Quillen metric, setting, the class $R$), pp. 522–524; Theorem 7
+  with formulas (11)–(13), pp. 524–525; 4.1.5 with (14)–(15), p. 525; the proof 4.2.1–4.2.4,
+  pp. 528–533 (4.2.3, p. 532: comparison with Bismut, Gillet and Soulé's Theorem 4.13 and its extension
+  to generically smooth morphisms); 4.2.5, p. 533.
+- H. Gillet and C. Soulé, "Analytic torsion and the arithmetic Todd genus", with an appendix by
+  D. Zagier, Topology 30 (1991), 21–54: Conjecture 1.3, pp. 25–26; Theorem 1.4 (i), p. 26;
+  Theorem 2.1.1, p. 29.
+- J.-M. Bismut, H. Gillet and C. Soulé, "Complex immersions and Arakelov geometry", in *The
+  Grothendieck Festschrift I*, Birkhäuser, 1990, 249–331: §4 (f), Theorem 4.13, pp. 327–329 (smooth
+  projective maps of regular arithmetic varieties).
+- J.-M. Bismut and G. Lebeau, "Complex immersions and Quillen metrics", Publ. Math. IHÉS 74 (1991),
+  1–298: Theorem 0.1 and (0.5), pp. 1–3, and condition (A).
 - C. Soulé, with D. Abramovich, J.-F. Burnol and J. Kramer, *Lectures on Arakelov Geometry*,
   Cambridge Studies in Advanced Mathematics 33, Cambridge University Press, 1992: chapter "The
   Arithmetic Riemann–Roch–Grothendieck Theorem" (pp. 157–168).

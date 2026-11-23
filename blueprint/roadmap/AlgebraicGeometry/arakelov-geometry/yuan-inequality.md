@@ -29,12 +29,15 @@ Yuan reduces his theorem to the case where $X$ is normal and generically smooth,
 resolution and the comparison of $\chi_{\sup}$ under birational morphisms (Proposition 2.8), to the
 case where $\bar L$ and $\bar M$ have positive curvature, by perturbing with $\varepsilon \bar H$
 for an ample $\bar H$ (Lemma 2.9), and to the case where $\bar M$ has an effective section whose
-divisor has Cartier components, using Moriwaki's arithmetic Bertini theorem. He then follows
+divisor has Cartier components, using Moriwaki's small-section Bertini theorem. He then follows
 Abbes and Bouche's proof of the arithmetic Hilbert–Samuel theorem, comparing $L^2$ volumes along
-the multiplication by that section with the help of distortion functions and Gromov's inequality,
+the multiplication by that section with the help of distortion functions and Gromov's inequality
+(his Theorem 2.10, Propositions 2.13–2.14 and Lemmas 2.15–2.16, with the classical Hilbert–Samuel
+formula on the vertical components of the divisor and the arithmetic one on its horizontal components),
 and concludes with the arithmetic Hilbert–Samuel formula for $\chi_{L^2}(\bar E + N\bar L)$.
-Proposition 2.8 itself uses the arithmetic Hilbert–Samuel formula and the existence of bases of
-small sections for ample hermitian line bundles (Corollary 2.7).
+Proposition 2.8, a comparison of $\chi_{\sup}$ under birational morphisms correct to leading order,
+itself uses the arithmetic Hilbert–Samuel formula and the existence of bases of small sections for
+ample hermitian line bundles (Corollary 2.7).
 
 ## Depends on
 
@@ -45,7 +48,9 @@ small sections for ample hermitian line bundles (Corollary 2.7).
 
 ## Proof depends on
 
-- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), in Yuan's proof (Proposition 2.8 through Corollary 2.7, and the last step of Section 2.5.1), and for the lower bound of the number of small sections by $\chi_{\sup}$ (Moriwaki's Proposition 2.1 (1))
+- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), in Yuan's proof (Proposition 2.8 through Corollary 2.7, and the last step of Section 2.5.1)
+- [Estimates for small sections along an effective divisor](estimates-for-small-sections-along-a-divisor.md), for the Bertini step of Section 2.3.3 and the estimates of Theorem 2.10, Propositions 2.13–2.14 and Lemmas 2.15–2.16
+- [Small elements of normed lattices](small-elements-of-normed-lattices.md), for the lower bound of the number of small sections by $\chi_{\sup}$ (Moriwaki's Proposition 2.1 (1)) in Moriwaki's extension
 - [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), for the bases of small sections in Yuan's Corollary 2.7
 - [Arithmetic volume](arithmetic-volume.md), for the homogeneity used in Moriwaki's extension
 - [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution in Yuan's reduction (Section 2.3.3)

@@ -18,11 +18,14 @@ $\widetilde{A}^{p,p}(X_\mathbb{R}) \to \widetilde{\mathcal{D}}^{p,p}(X_\mathbb{R
 Green current for $Z \in Z^p(X)$ is an element $g \in
 \widetilde{\mathcal{D}}^{p-1,p-1}(X_\mathbb{R})$ such that
 $$dd^c g + \delta_Z = \omega(Z, g)$$
-for a smooth form $\omega(Z, g) \in A^{p,p}(X_\mathbb{R})$. Every cycle has a Green current, and two
-Green currents for the same cycle differ by an element of
-$\widetilde{A}^{p-1,p-1}(X_\mathbb{R})$. The basic example is a divisor: if $s$ is a nonzero
-meromorphic section of a holomorphic line bundle with a smooth hermitian metric on a complex
-manifold, then $\log \lVert s \rVert^2$ is locally integrable and
+for a smooth form $\omega(Z, g) \in A^{p,p}(X_\mathbb{R})$. Every cycle has a Green current: for an
+irreducible cycle of positive codimension one takes the class of a
+[Green form of logarithmic type](green-forms-of-logarithmic-type.md), averaged under $F_\infty$ to
+lie in the real parity subspace, and for $p = 0$ the class $0$, since $\delta_Z$ is then smooth. Two
+Green currents for the same cycle differ by an element of $\widetilde{A}^{p-1,p-1}(X_\mathbb{R})$
+(Gillet–Soulé, Lemma 1.2.4). The basic example is a divisor: if $s$ is a meromorphic section of a
+holomorphic line bundle with a smooth hermitian metric on a complex manifold, not identically zero on
+any connected component, then $\log \lVert s \rVert^2$ is locally integrable and
 $dd^c [\log \lVert s \rVert^2] = \delta_{\operatorname{div}(s)} - \beta$, where $\beta$ is the
 first Chern form of the metric, so that $-\log \lVert s \rVert^2$ is a Green current for
 $\operatorname{div}(s)$.
@@ -30,7 +33,8 @@ $\operatorname{div}(s)$.
 An arithmetic cycle of codimension $p$ is a pair $(Z, g)$ of a cycle $Z \in Z^p(X)$ and a Green
 current $g$ for $Z$; these pairs form a subgroup $\widehat{Z}^p(X)$ of $Z^p(X) \oplus
 \widetilde{\mathcal{D}}^{p-1,p-1}(X_\mathbb{R})$. Let $i \colon W \to X$ be an integral subscheme of
-codimension $p - 1$ and $f \in k(W)^\times$. For a resolution of singularities
+codimension $p - 1$ and $f \in k(W)^\times$. If $W$ does not meet $X_F$, then $W_\infty$ is empty and
+the current $i_*[\log |f|^2]$ below is $0$. Otherwise, for a resolution of singularities
 $\pi \colon \widetilde W_\infty \to W_\infty$ with $\pi$ proper, $f$ restricts to a rational
 function $\tilde f$ on $\widetilde W_\infty$, the function $\log |\tilde f|^2$ is locally integrable,
 and its push-forward $i_*[\log |f|^2] \in \mathcal{D}^{p-1,p-1}(X_\mathbb{R})$ along
@@ -46,37 +50,51 @@ such $W$ and $f$, and $\widehat{CH}^*(X) = \bigoplus_{p \ge 0} \widehat{CH}^p(X)
 These groups come with three maps:
 
 1. $\zeta \colon \widehat{CH}^p(X) \to CH^p(X)$, $(Z, g) \mapsto Z$, well defined because
-   $\zeta(\widehat{\operatorname{div}}(f)) = \operatorname{div}(f)$; it is surjective;
+   $\zeta(\widehat{\operatorname{div}}(f)) = \operatorname{div}(f)$; it is surjective, since every
+   cycle has a Green current;
 2. $a \colon \widetilde{A}^{p-1,p-1}(X_\mathbb{R}) \to \widehat{CH}^p(X)$, $\eta \mapsto (0, \eta)$,
-   whose image is the kernel of $\zeta$;
+   whose image is the kernel of $\zeta$, because two Green currents for the same cycle differ by a
+   smooth form (Gillet–Soulé, first paragraph of the proof of the Theorem after 3.3.5); $a$ need not be
+   injective;
 3. $\omega \colon \widehat{CH}^p(X) \to A^{p,p}(X_\mathbb{R})$, $(Z, g) \mapsto \delta_Z + dd^c g$,
    well defined because $\omega(\widehat{\operatorname{div}}(f)) = 0$.
 
-Bost, Gillet and Soulé take for $g$ the current itself, not its class modulo
-$\operatorname{im} \partial + \operatorname{im} \bar\partial$, and add the pairs
-$(0, \partial u + \bar\partial v)$ to the relations; the quotient is the same group.
+Bost, Gillet and Soulé work over $S = \operatorname{Spec} \mathcal{O}_K$ with arithmetic varieties
+flat and quasi-projective over $S$ with regular generic fibre. On a regular such $X$ they take for $g$
+the current itself, not its class modulo $\operatorname{im} \partial + \operatorname{im}
+\bar\partial$, and add the pairs $(0, \partial u + \bar\partial v)$ to the relations; on their
+common domain the quotient is the same group. When the closed fibres may be singular they use instead
+arithmetic Chow groups graded by dimension, with operational Chern classes (Bost–Gillet–Soulé §2.1.2;
+Gillet–Soulé, *An arithmetic Riemann–Roch theorem*, §2.1, Definition 2, and §2.3.1, Theorem 3).
 
 ## Depends on
 
 - [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
 - [Poincaré–Lelong formula](../birational-geometry/poincare-lelong-formula.md), for $dd^c \, i_*[\log |f|^2] = \delta_{\operatorname{div}(f)}$, which makes $\widehat{\operatorname{div}}(f)$ an arithmetic cycle (Gillet–Soulé 3.3.3), and for the Green current $-\log \lVert s \rVert^2$ of $\operatorname{div}(s)$ (Gillet–Soulé 1.3.1)
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution $\widetilde W_\infty \to W_\infty$ through which $i_* \log |f|^2$ is defined (Gillet–Soulé 3.3.3), and for the Green forms of logarithmic type that give every cycle a Green current (Gillet–Soulé 1.3.1 and Theorem 1.3.5)
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution $\widetilde W_\infty \to W_\infty$ through which $i_* \log |f|^2$ is defined (Gillet–Soulé 3.3.3)
+- [Green forms of logarithmic type and the star product](green-forms-of-logarithmic-type.md), for the existence of Green currents (Gillet–Soulé, Theorem 1.3.5)
 
 ## Sources
 
 - H. Gillet and C. Soulé, "Arithmetic intersection theory", Publ. Math. IHÉS 72 (1990), 93–174,
-  <http://www.numdam.org/item/PMIHES_1990__72__93_0/>: 1.2.3 with its Definition and Lemma 1.2.4
-  (Green currents, pp. 102–103), 1.3.1 with formula (1.3.1.1) (p. 103), Theorem 1.3.5 (Green forms
+  <http://www.numdam.org/item/PMIHES_1990__72__93_0/>: 1.2.2 (i), (ii) (forms and currents modulo
+  $\operatorname{im} \partial + \operatorname{im} \bar\partial$, p. 101), 1.2.3 with its Definition and
+  Lemma 1.2.4 (Green currents, pp. 102–103), 1.3.1 with formula (1.3.1.1) (p. 103), Theorem 1.3.5 (Green forms
   of logarithmic type, p. 106), 3.3.1–3.3.3 and Definition 3.3.4 (cycles, the currents
   $\delta_Y$, arithmetic cycles, $\widehat{\operatorname{div}}(f)$, the groups $\widehat{CH}^p(X)$
   and the maps $\zeta$, $a$, $\omega$, pp. 126–127), the Theorem after 3.3.5, exact sequence (i),
   with the first paragraph of its proof (surjectivity of $\zeta$ and $\ker \zeta = \operatorname{im}
   a$, p. 128).
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms",
-  J. Amer. Math. Soc. 7 (1994), 903–1027,
-  <https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/>: §2.1.1 (arithmetic
-  Chow groups, with the relations $(0, \partial u + \bar\partial v)$ and
-  $(\operatorname{div} f, -\log |f|^2)$).
+  J. Amer. Math. Soc. 7 (1994), 903–1027, archived publisher scan
+  <https://web.archive.org/web/20170815232351id_/https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/S0894-0347-1994-1260106-X.pdf>:
+  §2.1.1, p. 930 (their arithmetic varieties; arithmetic Chow groups of a regular arithmetic variety,
+  with the relations $(0, \partial u + \bar\partial v)$ and $(\operatorname{div} f, -\log |f|^2)$);
+  §2.1.2, pp. 932–933 (Chow groups graded by dimension and operational Chern classes when the closed
+  fibres are singular).
+- H. Gillet and C. Soulé, "An arithmetic Riemann–Roch theorem", Invent. Math. 110 (1992), 473–543,
+  <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0110>: §2.1, Definition 2, p. 485, and §2.3.1,
+  Theorem 3, pp. 489–490 (arithmetic Chow groups graded by dimension).
 - C. Soulé, with D. Abramovich, J.-F. Burnol and J. Kramer, *Lectures on Arakelov Geometry*,
   Cambridge Studies in Advanced Mathematics 33, Cambridge University Press, 1992: chapter
   "Arithmetic Chow Groups" (pp. 54–71).

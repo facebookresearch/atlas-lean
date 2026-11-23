@@ -105,9 +105,18 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/arithmetic-volume.md"}], "id": "af_b315a3844b562f54ea983d4c"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/chow-groups-with-supports.md"}], "id": "af_40c1c8a9fc56062eca281335", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/continuity-of-the-arithmetic-volume.md"}], "id": "af_f4a0aa747fa030a174f56c61"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/estimates-for-small-sections-along-a-divisor.md"}], "id": "af_c4758bc48673df1955c6baff", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/extension-of-small-sections.md"}], "id": "af_a65f88ecbd917255c9d69bae", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/generalized-hodge-index-theorem.md"}], "id": "af_cd92c2b2c69f91dfcb2775b7"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/geometric-degrees-as-integrals-of-chern-forms.md"}], "id": "af_02169e641d26b694e2cfa255", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/green-forms-of-logarithmic-type.md"}], "id": "af_6eb0ee65b93910de77900d52", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/gromov-inequality.md"}], "id": "af_1e601ec615eceb7c040d8eb3"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/height-of-a-cycle.md"}], "id": "af_d42a95ea9d1ab5e910dfae7c"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/heights-of-chow-forms.md"}], "id": "af_d2d191cee3bda5642c94776f", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/moriwaki-fundamental-estimate.md"}], "id": "af_47f07f5a0692e958ab19dbc6"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/positivity-of-hermitian-line-bundles.md"}], "id": "af_6779e77d6211dc4628897af7"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/small-elements-of-normed-lattices.md"}], "id": "af_70f5ff48a6f5e88e9dd2a552", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/small-sections-and-coordinate-lattices.md"}], "id": "af_95d09d090568b3bc235ea625", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arakelov-geometry/yuan-inequality.md"}], "id": "af_dc16fdad8cee1cb16b7ef3b3"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arithmetic-geometry/README.md"}], "id": "af_7418183175a394325484a6b1"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/arithmetic-geometry/faltings-s-theorem/README.md"}], "id": "af_7aaf42766544dd18ccb70515", "extensions": {"org.autoform": {"navigation": "module"}}}

@@ -16,8 +16,10 @@ resolution of singularities and assume $X$ generically smooth; comparing $\bar L
 ample $\bar B$ with $\bar A + \bar B$ ample, by monotonicity of the volume, he may assume $\bar A$
 ample; by homogeneity he may assume that $\bar L$ and $\bar A$ are hermitian line bundles and that
 $\bar A$ satisfies the hypotheses of his Theorem 3.4, a multiple of an ample hermitian line bundle
-doing so by Lemma 3.6. Theorem 3.4 (Proposition 3.5 when $\dim X = 1$) gives constants $C$, $D$
-and $a_0$, depending only on $X$, $\bar L$ and $\bar A$, with
+doing so by Lemma 3.6 when $\dim X \ge 2$. [Moriwaki's estimate for small sections along an ample
+divisor](moriwaki-fundamental-estimate.md) (Theorem 3.4; Proposition 3.5, after a finite
+normalization, when $\dim X = 1$) gives constants $C$, $D$ and $a_0$, depending only on $X$, $\bar L$
+and $\bar A$, with
 $$\hat h^0\bigl( a\bar L + (b - c)\bar A \bigr) \le \hat h^0\bigl( a\bar L - c\bar A \bigr) + C b
 a^{\dim X - 1} + D a^{\dim X - 1} \log a$$
 for all integers $a \ge b \ge c \ge 0$ with $a \ge a_0$, where $\hat h^0$ is the logarithm of the
@@ -26,10 +28,7 @@ letting $m \to \infty$ gives a constant $C'$ with $\widehat{\mathrm{vol}}(\bar L
 \widehat{\mathrm{vol}}(\bar L + \frac1p \bar A) \le \widehat{\mathrm{vol}}(\bar L) + \frac{C'}{p}$
 and $\widehat{\mathrm{vol}}(\bar L - \frac1p \bar A) \le \widehat{\mathrm{vol}}(\bar L) \le
 \widehat{\mathrm{vol}}(\bar L - \frac1p \bar A) + \frac{C'}{p}$ for all $p \ge 1$. The general case
-follows by bounding each $\bar A_i$ between $-\bar B$ and $\bar B$ for one ample $\bar B$. The
-proof of Theorem 3.4 bounds the contribution of a divisor of a section of $\bar A$ to the number of
-small sections, using Gromov's inequality between sup and $L^2$ norms and the upper bounds of
-Moriwaki's Lemma 3.1.
+follows by bounding each $\bar A_i$ between $-\bar B$ and $\bar B$ for one ample $\bar B$.
 
 ## Depends on
 
@@ -37,9 +36,8 @@ Moriwaki's Lemma 3.1.
 
 ## Proof depends on
 
-- [Arithmetic volume](arithmetic-volume.md), for birational invariance (Theorem 4.2), monotonicity and homogeneity (Lemmas 5.1 and 5.2) and the bounds of Lemma 3.1 used in Theorem 3.4
-- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), through Lemma 3.1 (1), on which the bounds of Lemma 3.1 used in Theorem 3.4 rest
-- [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), through Lemma 3.1 (1), as in the previous item
+- [Moriwaki's estimate for small sections along an ample divisor](moriwaki-fundamental-estimate.md), for Theorem 3.4, Proposition 3.5 and Lemma 3.6
+- [Arithmetic volume](arithmetic-volume.md), for birational invariance (Theorem 4.2), monotonicity and homogeneity (Lemmas 5.1 and 5.2)
 - [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution of singularities that reduces the theorem to a generically smooth $X$
 
 ## Sources
