@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
+public import MathlibExt.NumberTheory.InitialRepetitionsC8
 public import MathlibExt.NumberTheory.SquaresModTwoPow
 
 namespace MetaMathlibExt
@@ -143,29 +144,6 @@ public def initialRepetitionsC3 (n : ℕ) : ℕ :=
       (∀ a ∈ p.parts, Even a → p.parts.count a = 1) ∧
       ∀ a ∈ p.parts, Even a → 2 * j < a → 4 * j + 4 ≤ a ∧ 4 ∣ a).card
 
-/-- **The partition function $c_8$.** For $n \ge 0$, $c_8(n)$ is the number of partitions of $n$
-such that either (a) all parts are even and distinct, or (b) for some positive integer $j$, the
-largest odd part is $2j - 1$, every positive odd integer $i \le j$ appears once or twice, every
-odd integer $i$ with $j < i \le 2j - 1$ appears exactly once, all even parts are distinct, and
-every even part greater than $j$ is at least $2j + 2$.
-
-For $j = 1$ the paper's clauses "the largest odd part $2j - 1$ appears once" and "odd integers
-$\le j$ appear once or twice" conflict; the second governs, as in the generating function
-$(q^2;q^2)_\infty \sum_n q^{n^2}/(q;q)_n$ the paper uses (the other reading gives $c_8(2) = 1$,
-contradicting Theorem 11 of the paper since $31$ is not a square).
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Section 3 (definition of `c₈`, from Nyirenda and Mugwangwavari). -/
-public def initialRepetitionsC8 (n : ℕ) : ℕ :=
-  ((Finset.univ : Finset (Nat.Partition n)).filter fun p =>
-    (∀ a ∈ p.parts, Even a ∧ p.parts.count a = 1) ∨
-      ∃ j ∈ Finset.Icc 1 n, 2 * j - 1 ∈ p.parts ∧ (∀ a ∈ p.parts, Odd a → a ≤ 2 * j - 1) ∧
-        (∀ i ∈ Finset.Icc 1 j, Odd i → p.parts.count i = 1 ∨ p.parts.count i = 2) ∧
-        (∀ i ∈ Finset.Ioc j (2 * j - 1), Odd i → p.parts.count i = 1) ∧
-        (∀ a ∈ p.parts, Even a → p.parts.count a = 1) ∧
-        ∀ a ∈ p.parts, Even a → j < a → 2 * j + 2 ≤ a).card
-
 /-- **The initial-repetitions partition function $c_8'$.** For $n \ge 0$, $c_8'(n)$ is the number
 of partitions of $n$ into distinct even parts plus the sum, over $m = 1, \dots, n$, of the number
 of partitions of $n$ in which every even number $2i$ with $1 \le i \le m$ is a part, every even
@@ -199,7 +177,7 @@ public theorem initialRepetitions_values_zero_one :
       initialRepetitionsC8 0 = 1 ∧ initialRepetitionsC8 1 = 1 ∧
       initialRepetitionsC8Prime 0 = 1 ∧ initialRepetitionsC8Prime 1 = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    simp [initialRepetitionsC2, initialRepetitionsC3, initialRepetitionsC8,
+    simp only [initialRepetitionsC2, initialRepetitionsC3, initialRepetitionsC8,
       initialRepetitionsC8Prime, Finset.univ_unique, Finset.filter_singleton]
   all_goals decide
 
@@ -295,17 +273,6 @@ public theorem_wanted andrews_rogersRamanujan_first_dissection (q : ℂ) (hq : �
     ∑' l : ℤ, (q ^ (60 * l ^ 2 + 4 * l) - q ^ (60 * l ^ 2 + 44 * l + 8) +
       q ^ (60 * l ^ 2 + 16 * l + 1) - q ^ (60 * l ^ 2 + 64 * l + 17))
 
-/-- **$c_8(N)$ is even when $15N + 1$ is not a square.** Let $c_8$ be the initial-repetitions
-partition function of Nyirenda and Mugwangwavari. For every integer $N \ge 0$ such that $15N + 1$
-is not a perfect square, $c_8(N)$ is even.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 11 (`integers-2025-A32-thm-11`). -/
-public theorem_wanted initialRepetitionsC8_even_of_not_isSquare (N : ℕ)
-    (hN : ¬ IsSquare (15 * N + 1)) :
-    Even (initialRepetitionsC8 N)
-
 /-- **Andrews' identity for the second Rogers–Ramanujan series.** Let $q$ be a complex number
 with $|q| < 1$, write $(q;q)_j = \prod_{i=1}^{j} (1 - q^i)$ for $j \ge 0$, and let
 $(q^2;q^2)_\infty = \prod_{n=0}^{\infty} (1 - q^{2n+2})$ be the infinite q-Pochhammer symbol. Then
@@ -358,22 +325,6 @@ public theorem_wanted initialRepetitionsC8_two_pow_mul_add_even (k n r : ℕ) (h
       (r < 2 ^ (2 * k + 1) →
         (15 * r : ℤ) ≡ 2 ^ (2 * k) + 2 ^ (2 * k - 2) - 1 [ZMOD 2 ^ (2 * k + 1)] →
         Even (initialRepetitionsC8 (2 ^ (2 * k + 1) * n + r)))
-
-/-- **Parity of $c_8$ on residue classes modulo a prime.** Let $c_8$ be the initial-repetitions
-partition function of Nyirenda and Mugwangwavari. Let $p \ge 7$ be a prime and let $r$ be an
-integer with $1 \le r \le p - 1$ such that $15r + 1$ is not a square modulo $p$. Then
-$c_8(pn + r)$ is even for every integer $n \ge 0$.
-
-Here $x$ is a square modulo $p$ when $x \equiv y^2 \pmod{p}$ for some integer $y$, so multiples
-of $p$ count as squares.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Corollary 2 (`integers-2025-A32-cor-2`). -/
-public theorem_wanted initialRepetitionsC8_prime_mul_add_even (p r n : ℕ) (hp : p.Prime)
-    (hp7 : 7 ≤ p) (hr : r ∈ Finset.Icc 1 (p - 1))
-    (h15 : ¬ IsSquare ((15 * r + 1 : ℕ) : ZMod p)) :
-    Even (initialRepetitionsC8 (p * n + r))
 
 /-- **Parity of $c_8'$ on residue classes modulo powers of $2$.** Let $c_8'$ be the partition
 function that counts partitions with a possibly distinguished part, and let $k \ge 1$, $n \ge 0$
