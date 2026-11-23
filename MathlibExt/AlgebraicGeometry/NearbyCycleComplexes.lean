@@ -7,13 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The functorial resolution specification is adapted from
-AxiomMath/Stacks at c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Homology/Injectives/Spaltenstein/FunctorialResolution.lean,
-licensed under Apache 2.0. That source has no individual author or
-copyright notice. Modification notice: retain the canonical cochain
-functor, natural quasi-isomorphism and K-injectivity as explicit input;
-no generic resolution-existence request is introduced.
+Portions of this file are adapted from:
+
+`StacksFrontier/Homology/Injectives/Spaltenstein/FunctorialResolution.lean`
+(AxiomMath/Stacks, revision c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: the canonical cochain functor, its natural quasi-isomorphism and
+K-injectivity are kept as explicit input; no generic resolution-existence request is
+introduced.
 -/
 
 module
