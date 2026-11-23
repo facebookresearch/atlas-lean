@@ -5,39 +5,40 @@ projective and flat over $\mathbb{Z}$), and let $\bar L$, $\bar M$ and $\bar E$ 
 bundles on $X$, written additively. If $\bar L$ and $\bar M$ are ample in Zhang's sense, then
 $$\chi_{\sup}\bigl( \bar E + N(\bar L - \bar M) \bigr) \ge \frac{(\bar L^{d+1}) - (d + 1)
 (\bar L^d \cdot \bar M)}{(d + 1)!} \, N^{d+1} + o(N^{d+1}) \qquad (N \to \infty),$$
-meaning that the difference of the two sides is bounded below by a function that is
-$o(N^{d+1})$; here $(\bar L^d \cdot \bar M)$ is the arithmetic intersection number of $d$ copies of
-$\bar L$ and one of $\bar M$. In particular $\bar L - \bar M$ is strongly big if
-$(\bar L^{d+1}) > (d + 1)(\bar L^d \cdot \bar M)$.
+meaning that the difference of the two sides is bounded below by a function that is $o(N^{d+1})$;
+here $(\bar L^d \cdot \bar M)$ is the arithmetic intersection number of $d$ copies of $\bar L$ and
+one of $\bar M$. In particular $\bar L - \bar M$ is strongly big if $(\bar L^{d+1}) > (d + 1)(\bar
+L^d \cdot \bar M)$.
 
 Moriwaki extends the consequence for volumes to nef hermitian $\mathbb{Q}$-line bundles: if $X$ is a
 projective arithmetic variety of dimension $d + 1$ and $\bar L$, $\bar M$ are nef hermitian
 $\mathbb{Q}$-line bundles on $X$, then
 $$\widehat{\mathrm{vol}}(\bar L - \bar M) \ge (\bar L^{d+1}) - (d + 1)(\bar L^d \cdot \bar M).$$
 For $\bar L$ and $\bar M$ ample in Moriwaki's sense this follows from Yuan's inequality, since the
-number of small sections is bounded below by $\chi_{\sup}$ up to a term linear in the rank
-(Moriwaki's Proposition 2.1 (1)), and by homogeneity it holds for ample hermitian
-$\mathbb{Q}$-line bundles. For nef $\bar L$ and $\bar M$ and an ample $\bar A$,
-$\bar L + \varepsilon \bar A$ and $\bar M + \varepsilon \bar A$ are ample for rational
-$\varepsilon > 0$ and $\widehat{\mathrm{vol}}(\bar L - \bar M) = \widehat{\mathrm{vol}}((\bar L +
-\varepsilon \bar A) - (\bar M + \varepsilon \bar A))$; the right-hand side of the ample case is a
-polynomial in $\varepsilon$, and letting $\varepsilon \to 0$ gives the inequality. This argument
-does not use the continuity of the volume. Moriwaki writes $d$ for the absolute dimension of $X$,
-here $d + 1$, and Yuan writes $n$.
+logarithm of the number of small sections is bounded below by $\chi_{\sup}$ up to a term linear in
+the rank (Moriwaki's Proposition 2.1 (1)), and by homogeneity it holds for ample hermitian
+$\mathbb{Q}$-line bundles. For nef $\bar L$ and $\bar M$ and an ample $\bar A$, $\bar L +
+\varepsilon \bar A$ and $\bar M + \varepsilon \bar A$ are ample for rational $\varepsilon > 0$ and
+$\widehat{\mathrm{vol}}(\bar L - \bar M) = \widehat{\mathrm{vol}}((\bar L + \varepsilon \bar A) -
+(\bar M + \varepsilon \bar A))$; the right-hand side of the ample case is a polynomial in
+$\varepsilon$, and letting $\varepsilon \to 0$ gives the inequality. This argument does not use the
+continuity of the volume. Moriwaki writes $d$ for the absolute dimension of $X$, here $d + 1$, and
+Yuan writes $n$.
 
 Yuan reduces his theorem to the case where $X$ is normal and generically smooth, using a generic
 resolution and the comparison of $\chi_{\sup}$ under birational morphisms (Proposition 2.8), to the
 case where $\bar L$ and $\bar M$ have positive curvature, by perturbing with $\varepsilon \bar H$
 for an ample $\bar H$ (Lemma 2.9), and to the case where $\bar M$ has an effective section whose
 divisor has Cartier components, using Moriwaki's small-section Bertini theorem. He then follows
-Abbes and Bouche's proof of the arithmetic Hilbert–Samuel theorem, comparing $L^2$ volumes along
-the multiplication by that section with the help of distortion functions and Gromov's inequality
-(his Theorem 2.10, Propositions 2.13–2.14 and Lemmas 2.15–2.16, with the classical Hilbert–Samuel
-formula on the vertical components of the divisor and the arithmetic one on its horizontal components),
-and concludes with the arithmetic Hilbert–Samuel formula for $\chi_{L^2}(\bar E + N\bar L)$.
-Proposition 2.8, a comparison of $\chi_{\sup}$ under birational morphisms correct to leading order,
-itself uses the arithmetic Hilbert–Samuel formula and the existence of bases of small sections for
-ample hermitian line bundles (Corollary 2.7).
+Abbes and Bouche's proof of the arithmetic Hilbert–Samuel theorem, comparing $L^2$ volumes along the
+multiplication by that section with the help of distortion functions and Gromov's inequality (his
+Theorems 2.10–2.11, Propositions 2.12–2.14 and Lemmas 2.15–2.16, with the classical Hilbert–Samuel
+formula on the vertical components of the divisor and the arithmetic one on its horizontal
+components), and concludes with the arithmetic Hilbert–Samuel formula for $\chi_{L^2}(\bar E + N\bar
+L)$. Proposition 2.8, a one-sided comparison of $\chi_{\sup}$ under birational morphisms at leading
+order ($\chi$ downstairs is at least $\chi$ upstairs up to $o(N^n)$), itself uses the arithmetic
+Hilbert–Samuel formula and the existence of bases of small sections for ample hermitian line bundles
+(Corollary 2.7).
 
 ## Depends on
 
