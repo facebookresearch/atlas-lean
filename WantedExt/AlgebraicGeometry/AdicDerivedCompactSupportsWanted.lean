@@ -24,8 +24,7 @@ For sheaves of modules over the continuous coefficient ring `E_X` on small pro-√
   derived inverse image is left adjoint to derived direct image, with the expected units;
 * direct images compose along a refinement of compactifications, compatibly with the pasting of
   base changes; global sections of a direct image are global sections; derived global sections of a
-  derived direct image are the derived functor of the composite (direct image preserves injectives,
-  being right adjoint to an exact functor);
+  derived direct image are the derived functor of the composite (Stacks 0D6E);
 * open base change: for a refinement of compactifications (a Cartesian square of open immersions
   over a proper map), the exchange map `j_{d!} K ‚ü∂ r^* j_{c!} K` is an isomorphism.
 
