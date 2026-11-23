@@ -10,4 +10,4 @@ Let `m_N, n_N → ∞` be sequence lengths with `log n_N / m_N → 0` and `log m
 `∑_d P(M_d > t_N) - K e^{-θ x} φ(t_N) → 0`, where the sum runs over the
 [diagonal offsets](offsets.md) of the `m_N × n_N` grid, `P(M_d > t_N)` is the
 [probability that diagonal `d` exceeds `t_N`](exceed-prob.md) for two independent words with
-letter laws `p` and `q`, and `φ` is the [periodic correction](lattice-corr.md).
+letter laws `p` and `q`, and `φ` is the [lattice correction factor](lattice-corr.md), periodic with period `h`.

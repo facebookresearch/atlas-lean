@@ -88,10 +88,14 @@ integrable; it is a probability for `a, b > 0` and `sⱼ ≥ 0`. -/
 noncomputable def pooledMarginalLik (a b : ℝ) (s : ι → ℝ) (k : ι → ℕ) : ℝ :=
   ∫ r, pooledLik s k r ∂gammaMeasure a b
 
-/-- **Factorization of the pooled likelihood.** For size factors `sⱼ > 0`, the joint likelihood
-of the cell counts is the multinomial mass of the split `k` of `K = ∑ⱼ kⱼ` with cell
-probabilities `sⱼ / S`, `S = ∑ⱼ sⱼ`, which does not depend on the rate, times the `Po(S r)` mass
-of `K`. -/
+/-- **Factorization of the pooled likelihood.** For size factors `sⱼ > 0` and every real `r`, the
+joint likelihood of the cell counts is the multinomial mass of the split `k` of `K = ∑ⱼ kⱼ` with
+weights `sⱼ / S`, `S = ∑ⱼ sⱼ`, which does not depend on the rate, times
+`poissonExposureLik S K r = e^{-S r} (S r)^K / K!`. That factor is the `Po(S r)` mass of `K` when
+`S r ≥ 0` (with at least one cell, when `r ≥ 0`). With at least one cell, `S > 0` and the weights
+`sⱼ / S` are cell probabilities, so the multinomial factor is the probability of the split; with no
+cells, `S = K = 0`, the weights sum to `0`, not `1`, and the multinomial factor is `1`, and the
+identity still holds. -/
 theorem pooledLik_eq_multinomialReal_mul {s : ι → ℝ} (hs : ∀ j, 0 < s j) (k : ι → ℕ) (r : ℝ) :
     pooledLik s k r = multinomialReal (∑ j, k j) (fun j => s j / ∑ i, s i) k *
       poissonExposureLik (∑ j, s j) (∑ j, k j) r := by
@@ -109,8 +113,11 @@ theorem pooledLik_eq_multinomialReal_mul {s : ι → ℝ} (hs : ∀ j, 0 < s j) 
   field_simp
 
 /-- For all real `a, b` and size factors `sⱼ > 0`, the pooled marginal likelihood is the multinomial
-split mass times the one-cell marginal likelihood of the total count `K` at the total exposure
-`S`. -/
+split mass with weights `sⱼ / S` times the one-cell marginal likelihood of the total count `K` at
+the total exposure `S`. With at least one cell, `S > 0` and the weights `sⱼ / S` are cell
+probabilities, so the multinomial factor is the probability of the split; with no cells,
+`S = K = 0`, the weights sum to `0`, not `1`, and the multinomial factor is `1`, and the identity
+still holds. -/
 theorem pooledMarginalLik_eq_multinomialReal_mul (a b : ℝ) {s : ι → ℝ} (hs : ∀ j, 0 < s j)
     (k : ι → ℕ) :
     pooledMarginalLik a b s k = multinomialReal (∑ j, k j) (fun j => s j / ∑ i, s i) k *
@@ -119,7 +126,10 @@ theorem pooledMarginalLik_eq_multinomialReal_mul (a b : ℝ) {s : ι → ℝ} (h
     marginalLik]
 
 /-- For `a, b > 0` and size factors `sⱼ > 0`, the pooled marginal likelihood is the multinomial
-split mass times the negative binomial mass `NB(a, S a / b)` of the total count. -/
+split mass with weights `sⱼ / S` times the negative binomial mass `NB(a, S a / b)` of the total
+count. With at least one cell, `S > 0` and the weights `sⱼ / S` are cell probabilities, so the
+multinomial factor is the probability of the split; with no cells, `S = K = 0`, the weights sum to
+`0`, not `1`, and the multinomial factor is `1`, and the identity still holds. -/
 theorem pooledMarginalLik_eq_negBinomialReal {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ j, 0 < s j) (k : ι → ℕ) :
     pooledMarginalLik a b s k = multinomialReal (∑ j, k j) (fun j => s j / ∑ i, s i) k *

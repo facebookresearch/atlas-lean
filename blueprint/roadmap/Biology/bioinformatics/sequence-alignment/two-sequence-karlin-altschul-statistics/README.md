@@ -81,10 +81,10 @@
 
 ## Lattice-valued scores
 
-- [First lattice point strictly above a threshold](lattice-above.md)
-- [The next lattice point moves by h when the threshold moves by h](lattice-above-add.md)
-- [Periodic lattice correction of the exponential tail](lattice-corr.md)
-- [The lattice correction is periodic with period h](lattice-corr-add.md)
+- [Lattice point one step past a threshold in the direction of the span](lattice-above.md)
+- [Shifting the threshold by h shifts the lattice point by h](lattice-above-add.md)
+- [Lattice correction factor of the exponential tail](lattice-corr.md)
+- [For a nonzero span h the lattice correction has period h](lattice-corr-add.md)
 - [Above a threshold means at least the next lattice point](lt-iff-lattice-above-le.md)
 - [For lattice scores, exceeding t means reaching the next lattice point](score-prob-lt-max-seg-score-eq.md)
 
@@ -97,5 +97,5 @@
 
 ## Related topics
 
-- [Maximal segment score of a random sequence](../../../../Probability/random-walks/maximal-segment-score-of-a-random-sequence/README.md): the maximal segment score of one i.i.d. score sequence, its ladder decomposition and Cramér root; for lattice-valued scores the one-sequence tail hypothesis holds only with K = 0.
-- [Gumbel limit of the maximal segment score](../../../../Probability/random-walks/gumbel-limit-of-the-maximal-segment-score/README.md): the Gumbel limit of the maximal segment score of one score sequence for nonlattice scores, and liminf and limsup bounds for lattice scores.
+- [Maximal segment score of a random sequence](../../../../Probability/random-walks/maximal-segment-score-of-a-random-sequence/README.md): the maximal segment score of one i.i.d. score sequence, its ladder decomposition and Cramér root; for lattice-valued scores and a positive root θ > 0, the one-sequence tail hypothesis holds only with K = 0.
+- [Gumbel limit of the maximal segment score](../../../../Probability/random-walks/gumbel-limit-of-the-maximal-segment-score/README.md): for one score sequence satisfying the Cramér conditions and given a renewal input (a ladder input and the renewal tail of the excursion heights), the Gumbel limit of the maximal segment score for nonlattice scores, and liminf and limsup bounds for lattice scores.

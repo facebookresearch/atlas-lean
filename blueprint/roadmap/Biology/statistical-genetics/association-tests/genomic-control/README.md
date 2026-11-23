@@ -49,4 +49,4 @@
 
 ## Related topics
 
-- [Valid p-values and false discovery proportion](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/README.md): genomic control with the estimated factor λ̂, the mean of the squared scores; the λ̂-corrected statistic is never exactly χ²₁-calibrated, and a nondegenerate one forces a negative covariance between the corrected statistics.
+- [Valid p-values and false discovery proportion](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/README.md): genomic control with the estimated factor λ̂, the mean of the squared scores; the λ̂-corrected statistic is never exactly χ²₁-calibrated, and, when the scores are almost surely not all zero, a nondegenerate one forces a negative covariance between two of the corrected statistics.

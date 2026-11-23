@@ -35,9 +35,9 @@ A family `(T, G)` with set of true nulls `H0 : Finset (Fin m)` (genes with no as
 1. every statistic `T i` is measurable;
 2. every reference tail `G i` is antitone (a larger statistic is more significant);
 3. **per-test validity**: for every null gene `i ∈ H0` and every cutoff `s`, the reference tail
-   dominates the true null tail, `μ {s ≤ T i} ≤ G i s`. For a GC test this is the statement that
-   the inflation factor `λ` removes all of the inflation; when it is too small (or not applied)
-   the condition fails. In practice `λ̂` is estimated from all genes' statistics, so
+   dominates the true null tail, `μ {s ≤ T i} ≤ max (G i s) 0`. For a GC test this is the
+   statement that the inflation factor `λ` removes all of the inflation; when it is too small (or
+   not applied) the condition fails. In practice `λ̂` is estimated from all genes' statistics, so
    `T i = S i / λ̂`; the structure still applies, but calibration of `S i / λ̂` does not follow
    from calibration with the true `λ` and must be assumed for `S i / λ̂` itself.
 
@@ -122,13 +122,14 @@ variable {Ω : Type*} [MeasurableSpace Ω] {m : ℕ}
 
 /-- **Validity from a dominating reference tail.** Let a test reject for large values of a
 statistic `T` and report `G (T ω)`, where `G` is antitone. If `G` dominates the null tail of `T`,
-`μ {s ≤ T} ≤ G s` for every `s` (where `G s < 0`, this asks `μ {s ≤ T} = 0`), then `G ∘ T` is a
-valid p-value: `μ {G ∘ T ≤ t} ≤ t` for `t ∈ [0, 1]`. The measure `μ` need not be a probability
-measure. No measurability or continuity is needed.
+`μ {s ≤ T} ≤ max (G s) 0` for every `s` (so where `G s < 0` it asks `μ {s ≤ T} = 0`), then
+`G ∘ T` is a valid p-value: `μ {G ∘ T ≤ t} ≤ t` for `t ∈ [0, 1]`. The measure `μ` need not be a
+probability measure. No measurability or continuity is needed.
 
 The event `{G (T ω) ≤ t}` is `{T ∈ A}` for the upper set `A = {s | G s ≤ t}`, which is either
 empty, `[a, ∞)`, `(a, ∞)` or `ℝ`; in the last two cases it is an increasing union of events
-`{s_n ≤ T}` with `s_n ∈ A`, and continuity from below finishes.
+`{s_n ≤ T}` with `s_n ∈ A`, each of measure at most `max (G s_n) 0 ≤ t`, and continuity from
+below finishes.
 
 Source: Lehmann–Romano (2005), Lemma 3.3.1, stated there for the exact tail. -/
 theorem isValidPValue_of_tail_le {μ : Measure Ω} {T : Ω → ℝ} {G : ℝ → ℝ} (hG : Antitone G)
@@ -182,8 +183,8 @@ def tailPValue (T : Fin m → Ω → ℝ) (G : Fin m → ℝ → ℝ) : Fin m �
 
 /-- **Tail-calibrated family of association tests** with true nulls `H0`: every statistic is
 measurable, every reference tail is antitone, and for every null gene the reference tail
-dominates the true null tail of its statistic, `μ {s ≤ T i} ≤ G i s` (where `G i s < 0`, this asks
-`μ {s ≤ T i} = 0`). Burden and SKAT-type
+dominates the true null tail of its statistic, `μ {s ≤ T i} ≤ max (G i s) 0` (so where `G i s < 0`
+it asks `μ {s ≤ T i} = 0`). Burden and SKAT-type
 tests with a conservative reference null, and genomic-control tests whose inflation factor
 removes all of the inflation, are of this form. -/
 structure IsTailCalibratedFamily (μ : Measure Ω) (T : Fin m → Ω → ℝ) (G : Fin m → ℝ → ℝ)

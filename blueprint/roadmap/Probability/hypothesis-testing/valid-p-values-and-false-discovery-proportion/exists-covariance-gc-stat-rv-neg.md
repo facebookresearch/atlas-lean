@@ -1,4 +1,4 @@
-# A nondegenerate λ̂-corrected statistic forces a negative covariance
+# Scores a.s. not all zero, Tⱼ nondegenerate: a covariance is negative
 
 Let `P` be a probability measure on a measurable space `Ω` and let the random scores
 `Z_0, …, Z_{m-1}` be measurable and almost surely not all zero. If some [corrected

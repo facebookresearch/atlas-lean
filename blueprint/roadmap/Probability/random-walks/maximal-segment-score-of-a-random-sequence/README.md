@@ -80,4 +80,4 @@
 
 ## Related topics
 
-- [Two-sequence Karlin–Altschul statistics](../../../Biology/bioinformatics/sequence-alignment/two-sequence-karlin-altschul-statistics/README.md): ungapped alignment of two independent i.i.d. sequences, whose scores along each diagonal form an i.i.d. score sequence; the Karlin–Altschul E-value bound, and Gumbel limits given a one-sequence tail.
+- [Two-sequence Karlin–Altschul statistics](../../../Biology/bioinformatics/sequence-alignment/two-sequence-karlin-altschul-statistics/README.md): ungapped alignment of two independent i.i.d. sequences, whose scores along each diagonal form an i.i.d. score sequence; the Karlin–Altschul E-value bound, and Gumbel limits given two kinds of input: a one-sequence tail of the pair score (a marginal input, with a positive Cramér root and length growth) and the vanishing at every order of the cross-diagonal dependence coefficients (a joint input).

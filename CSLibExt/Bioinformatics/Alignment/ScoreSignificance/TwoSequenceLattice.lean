@@ -94,14 +94,14 @@ open Cslib.Bioinformatics.Alignment.ScoreSignificance.TwoSequence
 
 section Lattice
 
-/-- The first point `(⌊t / h⌋ + 1) h` of the lattice `hℤ` strictly above `t`, for `h > 0`, the
-intended domain. With the convention `x / 0 = 0` it is `0` when `h = 0`; for `h < 0` it is a
-point of `hℤ` in `[t + h, t)`. -/
+/-- The lattice point `(⌊t / h⌋ + 1) h` of `t`. For `h > 0`, the intended domain, it is the first
+point of the lattice `hℤ` strictly above `t`; for `h < 0` it is the largest point of `hℤ` strictly
+below `t` (in `[t + h, t)`); with the convention `x / 0 = 0` it is `0` when `h = 0`. -/
 noncomputable def latticeAbove (h t : ℝ) : ℝ := (⌊t / h⌋ + 1) * h
 
-/-- The **periodic correction** `φ(t) = e^{-θ (t⁺ - t)}`, `t⁺ = latticeAbove h t`: the factor
-with `e^{-θ t⁺} = φ(t) e^{-θ t}`. For `h ≠ 0` it equals `e^{-θ h (1 - {t / h})}`; at `h = 0`,
-where `t⁺ = 0`, it is `e^{θ t}`. -/
+/-- The **lattice correction factor** `φ(t) = e^{-θ (t⁺ - t)}`, `t⁺ = latticeAbove h t`: the factor
+with `e^{-θ t⁺} = φ(t) e^{-θ t}`. For `h ≠ 0` it equals `e^{-θ h (1 - {t / h})}` and is
+`h`-periodic; at `h = 0`, where `t⁺ = 0`, it is `e^{θ t}`, not periodic for `θ ≠ 0`. -/
 noncomputable def latticeCorr (θ h t : ℝ) : ℝ := exp (-θ * (latticeAbove h t - t))
 
 variable {h : ℝ}
@@ -120,7 +120,7 @@ theorem latticeAbove_add (hh : h ≠ 0) (t : ℝ) : latticeAbove h (t + h) = lat
   rw [add_div, div_self hh, Int.floor_add_one]
   push_cast; ring
 
-/-- **The correction is `h`-periodic.** -/
+/-- **For `h ≠ 0` the correction is `h`-periodic.** -/
 theorem latticeCorr_add (θ : ℝ) (hh : h ≠ 0) (t : ℝ) :
     latticeCorr θ h (t + h) = latticeCorr θ h t := by
   simp only [latticeCorr]
@@ -186,7 +186,8 @@ theorem scoreProb_lt_maxSegScore_eq {γ : Type*} [Fintype γ] (q f : γ → ℝ)
 end Lattice
 
 /-- **Lattice one-sequence tail input** for the maximal segment score `M_L` of `L` iid scores with
-law `(q, f)` and lattice span `h`: `P(M_L > t) = (K + o(1)) L e^{-θ t⁺}`, `t⁺ = latticeAbove h t`,
+law `(q, f)` and lattice span `h`: `P(M_L > t) = (K + o(1)) L e^{-θ t⁺}`, `t⁺ = latticeAbove h t`
+(for `h > 0`, the next point of `hℤ` above `t`),
 uniformly as `L → ∞` and `L e^{-θ t} → 0` over thresholds `t ≤ η L`. This is `OneSequenceTail`
 with `e^{-θ t}` replaced by `e^{-θ t⁺}` on the right, the form of the lattice case of
 Karlin–Dembo (1992); it is a hypothesis here, not derived. -/

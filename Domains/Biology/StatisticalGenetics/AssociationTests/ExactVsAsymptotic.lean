@@ -295,12 +295,18 @@ theorem isValidPValue_orderedPValue {H : Ω → ℕ} {N nA : ℕ} (_hnA : nA ≤
   exact ENNReal.ofReal_le_ofReal
     (by simpa using sum_filter_orderedPValue_le (leveneProb_nonneg N nA) (g := g) ht.1)
 
-/-- The exact HWE p-value of Wigginton, Cutler and Abecasis: the total Levene probability of the
-heterozygote counts that are no more probable than the observed count `h`. -/
+/-- The exact HWE p-value of Wigginton, Cutler and Abecasis: the sum of the Levene probabilities
+`leveneProb N nA j` of the heterozygote counts `j ≤ nA` that are no more probable than the observed
+count `h`. For `nA ≤ 2 * N`, Levene's law is a probability measure and this is the probability under
+it of a count no more probable than `h`; for `nA > 2 * N` every Levene probability is `0`, there is
+no such law, and the p-value is `0` (for example `N = 0`, `nA = 1`). -/
 noncomputable def hweExactPValue (N nA h : ℕ) : ℝ :=
   orderedPValue (leveneProb N nA) (leveneProb N nA) (nA + 1) h
 
-/-- The one-sided exact p-value for a heterozygote deficit: `P(n_AB ≤ h)` under Levene's law. -/
+/-- The one-sided exact p-value for a heterozygote deficit: the sum of the Levene probabilities
+`leveneProb N nA j` over `j ≤ min h nA`. For `nA ≤ 2 * N`, Levene's law is a probability measure and
+this is `P(n_AB ≤ h)` under it; for `nA > 2 * N` every Levene probability is `0`, there is no such
+law, and the p-value is `0` (for example `N = 0`, `nA = 1`). -/
 noncomputable def hweDeficitPValue (N nA h : ℕ) : ℝ :=
   orderedPValue (leveneProb N nA) (fun j => (j : ℝ)) (nA + 1) h
 

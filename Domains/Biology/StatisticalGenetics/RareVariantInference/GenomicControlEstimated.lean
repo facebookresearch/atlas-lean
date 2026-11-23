@@ -546,7 +546,7 @@ theorem sum_sum_covariance_gcStatRV [IsProbabilityMeasure P] {Z : Fin m → Ω �
     simpa [gcStatRV] using sum_gcStat (fun k => Z k ω) h)]
   simp [variance_eq_integral]
 
-/-- **A nondegenerate λ̂-corrected statistic forces a negative covariance.** For a probability
+/-- **Scores a.s. not all zero, Tⱼ nondegenerate: a covariance is negative.** For a probability
 measure and measurable scores that are almost surely not all zero, if some corrected statistic
 is nondegenerate (`Var(T_j) > 0`), then some pair of distinct genes has strictly negative
 covariance, so pairwise nonnegative covariance is impossible for the mean-`λ̂` family; in

@@ -61,7 +61,7 @@
 
 - [The λ̂-corrected statistics are square integrable](mem-lp-gc-stat-rv.md)
 - [For an a.s. nonzero score vector the covariances sum to zero](sum-sum-covariance-gc-stat-rv.md)
-- [A nondegenerate λ̂-corrected statistic forces a negative covariance](exists-covariance-gc-stat-rv-neg.md)
+- [Scores a.s. not all zero, Tⱼ nondegenerate: a covariance is negative](exists-covariance-gc-stat-rv-neg.md)
 - [Equal pairwise covariances of λ̂-corrected statistics are −v/(m − 1)](covariance-gc-stat-rv-eq-of-forall-eq.md)
 - [With two genes and a nonzero score vector, T₀ + T₁ = 2](gc-stat-two-add.md)
 - [Two-gene λ̂ p-values are not PRDS when T₀ falls on both sides of 1](not-is-prdson-tail-pvalue-gc-stat-rv-two.md)
