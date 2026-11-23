@@ -38,6 +38,8 @@ open ExpandedRelativeFamilies RelativeExpandedMapFamilies
 open StackCycleGeometry StackCycleRelations
 open scoped BigOperators
 
+/-- A relative map type that may have no vertices: `RelativeMapTypeModels.RelativeType` without its
+nonemptiness field, so that the empty type indexes the unit term of the gluing formula. -/
 structure FullType (n r : ℕ) where
   vertices : ℕ
   legs : Fin vertices → ℕ
@@ -279,6 +281,9 @@ section RootGroup
 
 variable {n r : ℕ} (G : FullType n r) {A : Type*} (beta : Fin G.vertices → A)
 
+/-- A permutation of the relative markings is induced by a vertex permutation preserving genera,
+curve classes, the ordinary markings and contact orders. This is
+`RelativeRootEquivalenceGroups.eligible` for possibly empty types. -/
 def eligible (s : Equiv.Perm (Fin r)) : Prop :=
   ∃ v : Equiv.Perm (Fin G.vertices),
     (∀ i, G.genus (v i) = G.genus i) ∧ (∀ i, beta (v i) = beta i) ∧
@@ -286,8 +291,9 @@ def eligible (s : Equiv.Perm (Fin r)) : Prop :=
     (∀ i : Fin r, (G.rootLabels (s i)).1 = v (G.rootLabels i).1) ∧
     (∀ i : Fin r, G.order (s i) = G.order i)
 
+/-- The group of eligible permutations of the relative markings. -/
 def rootGroup : Subgroup (Equiv.Perm (Fin r)) where
-  carrier := eligible G beta
+  carrier := {s | eligible G beta s}
   one_mem' := ⟨1, by simp, by simp, by simp, by simp, by simp⟩
   mul_mem' := by
     rintro s t ⟨v, hg, hb, hl, hr, ho⟩ ⟨w, kg, kb, kl, kr, ko⟩
@@ -310,12 +316,15 @@ def rootGroup : Subgroup (Equiv.Perm (Fin r)) where
 
 variable {n' : ℕ} (H : FullType n' r) {B : Type*} (gamma : Fin H.vertices → B)
 
+/-- Permutations of the relative markings that are eligible for both sides of the gluing. -/
 def equivalenceGroup : Subgroup (Equiv.Perm (Fin r)) := rootGroup G beta ⊓ rootGroup H gamma
 
 instance equivalenceGroupFintype : Fintype (equivalenceGroup G beta H gamma) := Fintype.ofFinite _
 
 def equivalenceOrder : ℕ := Fintype.card (equivalenceGroup G beta H gamma)
 def contactMultiplicity : ℕ := ∏ i : Fin r, G.order i
+/-- The gluing coefficient: the product of the contact orders divided by the order of the
+equivalence group. -/
 def coefficient : ℚ := (contactMultiplicity G : ℚ) / (equivalenceOrder G beta H gamma : ℚ)
 
 theorem equivalenceOrder_pos : 0 < equivalenceOrder G beta H gamma := Fintype.card_pos
