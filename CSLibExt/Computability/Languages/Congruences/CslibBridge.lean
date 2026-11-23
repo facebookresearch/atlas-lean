@@ -20,10 +20,11 @@ public import Cslib.Computability.Languages.SyntacticMonoid
 /-!
 # Syntactic monoids and CSLib's canonical quotient
 
-At universe zero, the extension's syntactic congruence and quotient are the
-ones supplied by CSLib v4.35.0. This module connects their public APIs without
-introducing a third congruence or narrowing the extension's universe-polymorphic
-core. The upstream API in this release fixes the alphabet to `Type`.
+At universe zero, the extension's syntactic congruence is the one supplied by
+CSLib v4.36.0, and its quotient is identified with CSLib's syntactic monoid.
+This module connects their public APIs without introducing a third congruence or
+narrowing the extension's universe-polymorphic core. The upstream API in this
+release fixes the alphabet to `Type`.
 -/
 
 @[expose] public section
@@ -34,14 +35,17 @@ variable {α : Type}
 
 /-- The two-sided context congruence is CSLib's Myhill congruence on the free monoid. -/
 theorem syntacticCon_eq_cslib (L : _root_.Language α) :
-    syntacticCon L = (_root_.Language.MyhillCongruence L).toCon :=
-  rfl
+    syntacticCon L = (_root_.Language.MyhillCongruence L).toCon := by
+  ext x y
+  refine ⟨fun h w z ↦ ?_, fun h u v ↦ ?_⟩
+  · simpa using h (FreeMonoid.ofList w) (FreeMonoid.ofList z)
+  · simpa using h u.toList v.toList
 
-/-- Identify the extension's quotient with CSLib v4.35.0's syntactic monoid.
+/-- Identify the extension's quotient with CSLib v4.36.0's syntactic monoid.
 The equivalence preserves every word class and multiplication. -/
 def SyntacticMonoid.toCslib (L : _root_.Language α) :
     SyntacticMonoid L ≃* _root_.Language.SyntacticMonoid L :=
-  MulEquiv.refl _
+  Con.congr (MulEquiv.refl _) (syntacticCon_eq_cslib L)
 
 /-- The bridge sends each canonical word class to the same upstream word class. -/
 @[simp]

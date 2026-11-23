@@ -23,6 +23,20 @@ example (x : ℕ) : convergentDen (fun _ => x) 1 ≡ x [MOD 2] := by
   simpa [convergentDen_zero] using shifted_convergentDen_parity_of_even 4 (by decide) (by decide)
     (fun _ => x) (fun _ _ _ => rfl)
 
+-- At odd length five the second summand is the empty continuant.
+example (x : ℕ) : x * x + 1 ≡ x + 1 [MOD 2] :=
+  shifted_convergentDen_parity_of_odd 5 (by decide) (by decide) (fun _ => x) (fun _ _ _ => rfl)
+
+-- The internal coefficients 2, 0, 0, 2 give 5 on the left and 1 + 2 on the right.
+example :
+    let a (i : ℕ) := min i (7 - i) % 3
+    let d := convergentDen (fun i => a (i + 1))
+    d 4 = 5 ∧ d 2 + d 1 = 3 ∧ d 4 ≡ d 2 + d 1 [MOD 2] := by
+  intro a d
+  have hsymm (i : ℕ) (_ : 1 ≤ i) (hi : i < 7) : a i = a (7 - i) := by
+    simp only [a, Nat.sub_sub_self hi.le, min_comm]
+  exact ⟨rfl, rfl, shifted_convergentDen_parity_of_odd 7 (by decide) (by decide) a hsymm⟩
+
 -- The internal coefficients are 2, 0, 1, 0, 2. The split after 2, 0 gives 3 + 2.
 example :
     let a (i : ℕ) := min i (8 - i) % 3

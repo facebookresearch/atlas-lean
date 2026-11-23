@@ -401,7 +401,7 @@ private lemma carleman_taylor_bound {E : Type*} [NormedAddCommGroup E]
     iteratedDerivWithin_eq_iteratedDeriv (uniqueDiffOn_Icc (by norm_num))
       (hh.contDiffAt.of_le (by simp)) (by norm_num)
   have hb := taylor_mean_remainder_bound (f := h) (a := 0) (b := 1)
-    (C := C * |y - x| ^ r) (x := 1) (n := r - 1) (by norm_num)
+    (C := C * |y - x| ^ r) (x := 1) (n := r - 1)
     ((hh.of_le (by simp)).contDiffOn) (by norm_num) (fun z hz => ?_)
   · rw [taylor_within_apply] at hb
     simp_rw [hwithin] at hb

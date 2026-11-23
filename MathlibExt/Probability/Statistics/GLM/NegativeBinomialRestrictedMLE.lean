@@ -390,7 +390,7 @@ theorem inv_fromBlocks_zero_zero [DecidableEq κ] {A : Matrix κ κ ℝ} (hA : I
   simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, ← fromBlocks_one]
   congr 1
   ext
-  simp [mul_apply, hd]
+  simp [Matrix.mul_apply, hd]
 
 /-- **The score quadratic form under a block-diagonal information.** For
 `I = [[A, 0], [0, d]]` with `A` invertible and `d ≠ 0`, and `s = (T, U)`,
