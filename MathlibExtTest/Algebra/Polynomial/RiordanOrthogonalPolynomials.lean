@@ -19,7 +19,7 @@ example (d h : PowerSeries ℝ) (L : ℕ → ℕ → ℝ)
       ∀ n k : ℕ, L n k = PowerSeries.coeff n (d * h ^ k)) :
     let IsMonicOrthogonalCoeffArray :=
       ∃ P : ℕ → Polynomial ℝ,
-        (∀ n k : ℕ, Polynomial.coeff (P n) k = L n k) ∧
+        (∀ n k : ℕ, (P n).coeff k = L n k) ∧
         (∀ n : ℕ, (P n).Monic) ∧ Polynomial.IsFormallyOrthogonal P
     IsMonicOrthogonalCoeffArray ↔
       ∃ lam mu r s : ℝ, s ≠ 0 ∧ s + mu ≠ 0 ∧

@@ -69,26 +69,6 @@ public theorem_wanted genLeonardo_sq_sub_sq (k : ℤ) (n : ℕ) (hn : 1 ≤ n) :
       = 4 * genLeonardo k (n - 1) * genLeonardo k (n + 1)
         + 2 * k * genLeonardo k n + k ^ 2
 
-/-- **Shift identity for generalized Leonardo numbers.** Let $k$ be an integer and let $L_{k,n}$
-denote the generalized Leonardo numbers. For all natural numbers $m$, $n$, $t$ with
-$1 \le t \le n$ and $n + 1 \le m + t$,
-$$L_{k,m} L_{k,n} - L_{k,m+t} L_{k,n-t}
-= (-1)^{n-t+1} (L_{k,m+t-n-1} + k)(L_{k,t-1} + k) -
-k\,(L_{k,m} + L_{k,n} - L_{k,m+t} - L_{k,n-t}).$$
-
-The paper also allows $t = 0$, reading $L_{k,-1}$ by extending the sequence to negative indices.
-
-Source: Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci
-Quarterly (2024), Theorem 2.5 (`fq-2024-kuhapatanakul05292024-thm-2.5`). -/
-public theorem_wanted genLeonardo_shift (k : ℤ) (m n t : ℕ)
-    (ht : 1 ≤ t) (htn : t ≤ n) (hmt : n + 1 ≤ m + t) :
-    genLeonardo k m * genLeonardo k n
-        - genLeonardo k (m + t) * genLeonardo k (n - t)
-      = (-1 : ℤ) ^ (n - t + 1)
-          * (genLeonardo k (m + t - n - 1) + k) * (genLeonardo k (t - 1) + k)
-        - k * (genLeonardo k m + genLeonardo k n
-          - genLeonardo k (m + t) - genLeonardo k (n - t))
-
 /-- **Sum-and-difference square identities for generalized Leonardo numbers.** For every
 integer $k$ and all natural numbers $m$, $n$ with $1 \le n < m$, the generalized Leonardo
 numbers $L_{k,n}$ satisfy
