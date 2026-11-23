@@ -1,0 +1,62 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Data.Nat.Choose.Basic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
+
+/-!
+# A weighted binomial sum
+
+The closed form in Cereceda's Lemma 7 telescopes by Pascal's identity and the
+absorption identity for binomial coefficients.
+-/
+
+public section
+
+namespace MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
+
+/-- **Sum of $i \binom{i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
+$$\sum_{i=1}^{n} i \binom{i + k - 1}{2k - 1} = \frac{k(2n + 1)}{2k + 1} \binom{n + k}{2k}.$$
+
+Source: José L. Cereceda, "Sums of Powers of Integers and the
+Sequence A304330", Lemma 7. -/
+theorem sum_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
+    (hn : 1 ≤ n) :
+    (∑ i ∈ Finset.Icc 1 n,
+      (i : ℚ) * (Nat.choose (i + k - 1) (2 * k - 1) : ℚ)) =
+      ((k : ℚ) * (2 * (n : ℚ) + 1) / (2 * (k : ℚ) + 1)) *
+        (Nat.choose (n + k) (2 * k) : ℚ) := by
+  let F (i : ℕ) : ℚ := (k : ℚ) * (2 * i - 1) / (2 * k + 1) *
+    ((i + k - 1).choose (2 * k) : ℚ)
+  have hbot : 2 * k - 1 + 1 = 2 * k := by omega
+  have step (i : ℕ) :
+      (i : ℚ) * ((i + k - 1).choose (2 * k - 1) : ℚ) = F (i + 1) - F i := by
+    have htop : i + k - 1 + 1 = i + k := by omega
+    have pascal := Nat.choose_succ_succ' (i + k - 1) (2 * k - 1)
+    have absorb := Nat.add_one_mul_choose_eq (i + k - 1) (2 * k - 1)
+    rw [htop, hbot] at pascal absorb
+    apply_fun (Nat.cast : ℕ → ℚ) at pascal absorb
+    push_cast at pascal absorb
+    dsimp only [F]
+    rw [show i + 1 + k - 1 = i + k by omega]
+    push_cast
+    field_simp
+    linear_combination absorb - k * (2 * (i : ℚ) - 1) * pascal
+  rw [Finset.sum_congr rfl (fun i _ ↦ step i), Finset.sum_Icc_sub hn]
+  simp [F, show 2 * ((n : ℚ) + 1) - 1 = 2 * n + 1 by ring,
+    Nat.choose_eq_zero_of_lt (show k < 2 * k by omega),
+    show n + 1 + k - 1 = n + k by omega]
+
+end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
