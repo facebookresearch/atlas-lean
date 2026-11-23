@@ -1397,7 +1397,7 @@
 "Chemistry.FiniteEnsembles.heatCapacity_eq_neg_mul_deriv_meanEnergy": "752023a5ea1840fb",
 "Chemistry.FiniteEnsembles.heatCapacity_nonneg": "61d846b56be6a9d0",
 "Chemistry.FiniteEnsembles.heatCapacity_twoLevelEnergy": "e8cf0b3fd69e8bd1",
-"Chemistry.FiniteEnsembles.helmholtzFreeEnergy": "4ec38b9430429648",
+"Chemistry.FiniteEnsembles.helmholtzFreeEnergy": "046324b80ed37747",
 "Chemistry.FiniteEnsembles.helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div": "9ae97fa3a943e2fe",
 "Chemistry.FiniteEnsembles.helmholtzFreeEnergy_eq_meanEnergy_sub_temperature_mul_entropy": "031bfddc8dcb8eda",
 "Chemistry.FiniteEnsembles.helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log": "c0e2820b5240c644",
