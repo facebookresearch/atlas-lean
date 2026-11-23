@@ -7,19 +7,20 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/Frobenius.lean, under Apache 2.0.
-The source has no individual copyright or author header.
-Modifications: remove registry attributes/dependencies, move the namespace,
-and add the prime-field specialization used by geometric F/V maps.
+Portions of this file are adapted from:
 
-The naturality proof is adapted from TauCeti, revision
-62bbc0596dc3539d488232e4e924a338548ea0a9,
-TauCeti/AlgebraicGeometry/Frobenius/Basic.lean.
+`StacksFrontier/AlgebraicGeometry/Frobenius.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: remove registry attributes and dependencies, move the namespace, and add the
+prime-field specialization.
+
+`TauCeti/AlgebraicGeometry/Frobenius/Basic.lean` (TauCeti, revision
+62bbc0596dc3539d488232e4e924a338548ea0a9), for the naturality proof:
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Authors: The Tau Ceti contributors. Released under Apache 2.0.
-Modification: use the ported absolute-Frobenius and restriction APIs.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Tau Ceti contributors
+Modifications: use the absolute-Frobenius and restriction API of this file.
 -/
 module
 
@@ -30,17 +31,18 @@ public import Mathlib.CategoryTheory.Endomorphism
 public import Mathlib.FieldTheory.Finite.Basic
 
 /-!
-# Actual absolute and geometric scheme Frobenius
+# The absolute and geometric Frobenius of a scheme
 
-The endomorphism fixes scheme points and raises actual regular functions
-on every open to the prime power. Vanishing of p on global functions is
-restricted to each open, including the zero-ring case. Over a finite field,
-the appropriate iterate is an actual morphism in the scheme slice.
+For a scheme `X` in characteristic `p` (`p = 0` in `Γ(X, ⊤)`, hence on every open, including the
+empty one, whose ring of sections is zero), the absolute Frobenius `absoluteFrobenius X p` is the
+identity on points and the `p`-th power map on sections. It is natural in `X`. For a scheme over a
+finite field with `q = p ^ f` elements, its `f`-th power is a morphism over the field: the
+geometric Frobenius `geometricFrobenius`.
 
-These constructions and normalizations are complete source ports. They do
-not supply an arbitrary Frobenius on a named cohomology group.
+## References
 
-References: Stacks Project, Tags 03SM and 03SQ.
+* [Stacks Project, Definition 33.36.1 (Tag 03SM)](https://stacks.math.columbia.edu/tag/03SM)
+* [Stacks Project, Definition 64.3.4 (Tag 03SQ)](https://stacks.math.columbia.edu/tag/03SQ)
 -/
 
 @[expose] public noncomputable section
@@ -239,7 +241,7 @@ theorem absoluteFrobenius_appLE_restrict (X : Scheme.{u}) (p : ℕ)
     absoluteFrobenius_app_apply]
   exact map_pow (X.presheaf.map (homOfLE e).op).hom s p
 
-/-- Every actual scheme morphism in characteristic p commutes with Frobenius. -/
+/-- Every morphism of schemes in characteristic `p` commutes with the absolute Frobenius. -/
 theorem absoluteFrobenius_naturality {X Y : Scheme.{u}} (p : ℕ)
     [Fact p.Prime] (hX : IsInCharacteristic X p)
     (hY : IsInCharacteristic Y p) (f : X ⟶ Y) :
@@ -256,19 +258,19 @@ theorem absoluteFrobenius_naturality {X Y : Scheme.{u}} (p : ℕ)
     (congrArg (· ^ p) ?_)
   exact congr(($(f.map_appLE _ _)).hom s).symm
 
-/-- Frobenius over the actual prime field, as a scheme morphism over F_p. -/
+/-- The Frobenius of a scheme over `F_p`, as a morphism over `F_p`. -/
 def primeFieldFrobenius (p : ℕ) [Fact p.Prime]
     (X : Over (Spec (CommRingCat.of (ZMod p)))) : X ⟶ X :=
   geometricFrobenius X p 1 (by simp)
 
-/-- Prime-field Frobenius is the actual absolute Frobenius. -/
+/-- The Frobenius over `F_p` is the absolute Frobenius. -/
 theorem primeFieldFrobenius_left (p : ℕ) [Fact p.Prime]
     (X : Over (Spec (CommRingCat.of (ZMod p)))) :
     (primeFieldFrobenius p X).left =
       absoluteFrobenius X.left p (isInCharacteristic_of_over X) := by
   simp [primeFieldFrobenius]
 
-/-- Prime-field scheme Frobenius is natural on the actual slice category. -/
+/-- The Frobenius over `F_p` is natural in the scheme over `F_p`. -/
 theorem primeFieldFrobenius_naturality (p : ℕ) [Fact p.Prime]
     {X Y : Over (Spec (CommRingCat.of (ZMod p)))} (f : X ⟶ Y) :
     primeFieldFrobenius p X ≫ f = f ≫ primeFieldFrobenius p Y := by
