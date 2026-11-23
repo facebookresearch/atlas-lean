@@ -46,7 +46,11 @@ namespace MetaMathlibExt.TM2Recursive
 
 open Turing
 
-/-- A bundled multi-stack machine (`FinTM2`) halts when started on the input word `l`. -/
+/-- **Halting of a multi-stack machine on an input.** A bundled finite multi-stack Turing
+machine halts on a word $l$ over its input alphabet when its evaluation from the initial
+configuration on $l$ (the main label, the initial internal state, $l$ on the input stack and
+every other stack empty) is defined, that is, its run from that configuration reaches a
+configuration without successor. -/
 def TM2HaltsOn (tm : FinTM2) (l : List (tm.Γ tm.k₀)) : Prop :=
   (StateTransition.eval tm.step (initList tm l)).Dom
 
@@ -69,7 +73,13 @@ theorem reaches_of_iterate_eq_some {a b : σ} :
       rw [hk] at h
       exact (reaches_of_iterate_eq_some hk).tail h
 
-/-- A run that reaches `none` passes through a configuration without a successor. -/
+/-- **A run that stops passes through a configuration without successor.** Let
+$f : \sigma \to \mathrm{Option}\ \sigma$ be a step function and $a \in \sigma$, and write
+$f^{(k)}(a) \in \mathrm{Option}\ \sigma$ for the result of $k$ steps from $a$: the $k$-th
+iterate, applied to $\mathrm{some}\ a$, of the map sending $\mathrm{none}$ to $\mathrm{none}$
+and $\mathrm{some}\ x$ to $f(x)$. If $f^{(k)}(a) = \mathrm{none}$ for some $k$, then there are
+$j \in \mathbb{N}$ and $b \in \sigma$ with $f^{(j)}(a) = \mathrm{some}\ b$ and
+$f(b) = \mathrm{none}$. -/
 theorem exists_iterate_eq_some_of_eq_none {a : σ} :
     ∀ {k : ℕ}, (flip bind f)^[k] (some a) = none →
       ∃ j b, (flip bind f)^[j] (some a) = some b ∧ f b = none
@@ -82,7 +92,13 @@ theorem exists_iterate_eq_some_of_eq_none {a : σ} :
       rw [hk] at h
       exact ⟨k, c, hk, h⟩
 
-/-- A run halts iff some iterate is a configuration without a successor. -/
+/-- **A run halts iff it reaches a configuration without successor.** Let
+$f : \sigma \to \mathrm{Option}\ \sigma$ be a step function and $a \in \sigma$, and write
+$f^{(k)}(a) \in \mathrm{Option}\ \sigma$ for the result of $k$ steps from $a$: the $k$-th
+iterate, applied to $\mathrm{some}\ a$, of the map sending $\mathrm{none}$ to $\mathrm{none}$
+and $\mathrm{some}\ x$ to $f(x)$. The evaluation of $f$ from $a$ (the configuration where the run
+from $a$ stops) is defined if and only if there are $k \in \mathbb{N}$ and $b \in \sigma$ with
+$f^{(k)}(a) = \mathrm{some}\ b$ and $f(b) = \mathrm{none}$. -/
 theorem dom_eval_iff_exists_iterate {a : σ} :
     (StateTransition.eval f a).Dom ↔ ∃ k b, (flip bind f)^[k] (some a) = some b ∧ f b = none := by
   constructor
@@ -98,7 +114,12 @@ theorem iterate_none_eq (m : ℕ) : (flip bind f)^[m] none = none := by
   | zero => rfl
   | succ m ih => rw [Function.iterate_succ_apply]; exact ih
 
-/-- After a configuration without a successor, the run is `none`. -/
+/-- **A run stays stopped after a configuration without successor.** Let
+$f : \sigma \to \mathrm{Option}\ \sigma$ be a step function and $a, b \in \sigma$, and write
+$f^{(k)}(a) \in \mathrm{Option}\ \sigma$ for the result of $k$ steps from $a$: the $k$-th
+iterate, applied to $\mathrm{some}\ a$, of the map sending $\mathrm{none}$ to $\mathrm{none}$
+and $\mathrm{some}\ x$ to $f(x)$. If $f^{(k)}(a) = \mathrm{some}\ b$ and $f(b) = \mathrm{none}$,
+then $f^{(m)}(a) = \mathrm{none}$ for every $m > k$. -/
 theorem iterate_eq_none_of_lt {a b : σ} {k : ℕ} (hk : (flip bind f)^[k] (some a) = some b)
     (hb : f b = none) {m : ℕ} (hm : k < m) : (flip bind f)^[m] (some a) = none := by
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_lt hm
@@ -119,7 +140,11 @@ theorem step_eq_none_iff {tm : FinTM2} (c : tm.Cfg) : tm.step c = none ↔ c.l =
 attribute [local instance] FinTM2.kFin FinTM2.ΛFin FinTM2.σFin FinTM2.Γk₀Fin primcodableArrow
   primcodableΛ primcodableσ
 
-/-- **The halting set of a multi-stack machine (`FinTM2`) is r.e.** -/
+/-- **The halting set of a multi-stack machine is r.e.** For every bundled finite multi-stack
+Turing machine and every identification of its input alphabet with the booleans, the predicate
+on $\mathbb{N}$ that holds at $n$ exactly when the machine halts on the binary digits of $n$
+(least significant first, with $1$ read as true, $0$ as false and no leading zeros, so that $0$
+gives the empty word) is recursively enumerable. -/
 theorem rePred_tm2HaltsOn (tm : FinTM2) (e : tm.Γ tm.k₀ ≃ Bool) :
     REPred fun n ↦ TM2HaltsOn tm ((Computability.encodeNat n).map e.symm) := by
   let initC : ℕ → CodedCfg tm := fun n ↦ (some tm.main, tm.initialState,
@@ -177,8 +202,12 @@ open PartrecToTM2 ToPartrec
 
 variable (c : Code)
 
-/-- The wrapped machine `fwdTM c` halts on `n` iff the code `c` is defined on `[n]`, when `c`
-has singleton outputs on `[n]`. -/
+/-- **The wrapped machine of a code halts exactly where the code is defined.** Let $c$ be a code
+for a partial recursive function on lists of natural numbers and $n \in \mathbb{N}$, and suppose
+that every value of $c$ on the one-element list $[n]$ is itself a one-element list. Then the
+wrapped multi-stack machine of $c$ halts on the binary digits of $n$ (least significant first,
+with $1$ read as true, $0$ as false and no leading zeros, so that $0$ gives the empty word) if
+and only if the evaluation of $c$ at $[n]$ is defined. -/
 theorem tm2HaltsOn_fwdTM_iff (n : ℕ) (hc : ∀ v ∈ c.eval [n], ∃ m, v = [m]) :
     TM2HaltsOn (fwdTM c) ((Computability.encodeNat n).map (Equiv.refl Bool).symm) ↔
       (c.eval [n]).Dom := by
@@ -244,8 +273,12 @@ theorem tm2HaltsOn_fwdTM_iff (n : ℕ) (hc : ∀ v ∈ c.eval [n], ∃ m, v = [m
 
 end Wrapped
 
-/-- **Every r.e. predicate is the halting set of a multi-stack machine (`FinTM2`)** whose stack
-alphabets are all finite. -/
+/-- **Every r.e. predicate is the halting set of a machine with finite alphabets.** For every
+recursively enumerable predicate $p$ on $\mathbb{N}$ there are a bundled finite multi-stack Turing
+machine whose stack alphabets are all finite and an identification of its input alphabet with
+the booleans such that, for every $n \in \mathbb{N}$, $p(n)$ holds if and only if the machine
+halts on the binary digits of $n$ (least significant first, with $1$ read as true, $0$ as false
+and no leading zeros, so that $0$ gives the empty word). -/
 theorem exists_finite_tm2HaltsOn_iff_of_rePred {p : ℕ → Prop} (hp : REPred p) :
     ∃ (tm : FinTM2) (_ : ∀ k, Finite (tm.Γ k)) (e : tm.Γ tm.k₀ ≃ Bool),
       ∀ n, p n ↔ TM2HaltsOn tm ((Computability.encodeNat n).map e.symm) := by
@@ -268,14 +301,24 @@ theorem exists_finite_tm2HaltsOn_iff_of_rePred {p : ℕ → Prop} (hp : REPred p
     obtain ⟨_, -, rfl⟩ := Part.mem_map_iff _ |>.mp hv
     rfl
 
-/-- **Every r.e. predicate is the halting set of a multi-stack machine (`FinTM2`).** -/
+/-- **Every r.e. predicate is the halting set of a multi-stack machine.** For every recursively
+enumerable predicate $p$ on $\mathbb{N}$ there are a bundled finite multi-stack Turing machine
+and an identification of its input alphabet with the booleans such that, for every
+$n \in \mathbb{N}$, $p(n)$ holds if and only if the machine halts on the binary digits of $n$
+(least significant first, with $1$ read as true, $0$ as false and no leading zeros, so that $0$
+gives the empty word). -/
 theorem exists_tm2HaltsOn_iff_of_rePred {p : ℕ → Prop} (hp : REPred p) :
     ∃ (tm : FinTM2) (e : tm.Γ tm.k₀ ≃ Bool),
       ∀ n, p n ↔ TM2HaltsOn tm ((Computability.encodeNat n).map e.symm) :=
   let ⟨tm, _, e, h⟩ := exists_finite_tm2HaltsOn_iff_of_rePred hp
   ⟨tm, e, h⟩
 
-/-- **R.e. equals halting set of a multi-stack machine (`FinTM2`).** -/
+/-- **R.e. predicates are the halting sets of multi-stack machines.** A predicate $p$ on
+$\mathbb{N}$ is recursively enumerable if and only if there are a bundled finite multi-stack
+Turing machine and an identification of its input alphabet with the booleans such that, for
+every $n \in \mathbb{N}$, $p(n)$ holds if and only if the machine halts on the binary digits of
+$n$ (least significant first, with $1$ read as true, $0$ as false and no leading zeros, so that
+$0$ gives the empty word). -/
 theorem rePred_iff_exists_tm2HaltsOn {p : ℕ → Prop} :
     REPred p ↔ ∃ (tm : FinTM2) (e : tm.Γ tm.k₀ ≃ Bool),
       ∀ n, p n ↔ TM2HaltsOn tm ((Computability.encodeNat n).map e.symm) :=

@@ -23,13 +23,17 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.HouseWithTwoRooms` — contractibleSpace_houseWithTwoRooms (manifest `manifests/problems/contractibleSpace_houseWithTwoRooms.toml`, rev 1, submitter Junyan Xu, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.HouseWithTwoRooms` —
+contractibleSpace_houseWithTwoRooms (manifest
+`manifests/problems/contractibleSpace_houseWithTwoRooms.toml`, rev 1, submitter Junyan Xu, status
+archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.HouseWithTwoRoomsWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.Topology.HouseWithTwoRoomsWanted` namespace.
+Mathematical
 statements are unchanged. Source: Allen Hatcher, *Algebraic Topology*.
 -/
 module
@@ -53,7 +57,15 @@ located at the southwest corner.
 
 open Set (Icc Ioo)
 
-/-- Bing's house with two rooms (Hatcher's version) as a subspace of `ℝ × ℝ × ℝ`. -/
+/-- **Bing's house with two rooms.** Bing's house with two rooms, in the version drawn in
+Hatcher's *Algebraic Topology*, is the subset $H$ of $\mathbb{R} \times \mathbb{R} \times
+\mathbb{R}$ consisting of the points of $[0,4] \times [0,3] \times \{0,1,2\}$ that lie in none of
+$(2,3) \times (1,2) \times \{0\}$, $(1,3) \times (1,2) \times \{1\}$ and
+$(1,2) \times (1,2) \times \{2\}$ (three floors with holes), together with the inner walls
+$\{1\} \times [1,2] \times [1,2]$, $\{2\} \times [1,3] \times [0,2]$,
+$\{3\} \times [1,2] \times [0,1]$, $[1,2] \times \{1,2\} \times [1,2]$ and
+$[2,3] \times \{1,2\} \times [0,1]$, and the outer walls $[0,4] \times \{0,3\} \times [0,2]$ and
+$\{0,4\} \times [0,3] \times [0,2]$. -/
 def HouseWithTwoRooms : Set (ℝ × ℝ × ℝ) :=
   (Icc 0 4 ×ˢ Icc 0 3 ×ˢ {0, 1, 2} \
     (Ioo 2 3 ×ˢ Ioo 1 2 ×ˢ {0} ∪ Ioo 1 3 ×ˢ Ioo 1 2 ×ˢ {1} ∪ Ioo 1 2 ×ˢ Ioo 1 2 ×ˢ {2})) ∪
@@ -61,7 +73,11 @@ def HouseWithTwoRooms : Set (ℝ × ℝ × ℝ) :=
     Icc 1 2 ×ˢ {1, 2} ×ˢ Icc 1 2 ∪ Icc 2 3 ×ˢ {1, 2} ×ˢ Icc 0 1) ∪
   (Icc 0 4 ×ˢ {0, 3} ×ˢ Icc 0 2 ∪ {0, 4} ×ˢ Icc 0 3 ×ˢ Icc 0 2)
 
-/-- Source: Allen Hatcher, *Algebraic Topology*. Via leanprover/lean-eval@38361be, problem `contractibleSpace_houseWithTwoRooms`. -/
+/-- **Bing's house with two rooms is contractible.** Bing's house with two rooms, regarded as a
+subspace of $\mathbb{R} \times \mathbb{R} \times \mathbb{R}$, is contractible.
+
+Source: Allen Hatcher, *Algebraic Topology*. Via leanprover/lean-eval@38361be, problem
+`contractibleSpace_houseWithTwoRooms`. -/
 public theorem_wanted contractibleSpace_houseWithTwoRooms : ContractibleSpace HouseWithTwoRooms
 
 end Topology

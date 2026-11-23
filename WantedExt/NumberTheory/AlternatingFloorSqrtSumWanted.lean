@@ -34,8 +34,8 @@ open scoped BigOperators
 
 namespace MathlibExt.NumberTheory.AlternatingFloorSqrtSumWanted
 
-/-- Chamberland and Dilcher's Theorem 1: for odd `n ≥ 1`, the alternating
-sum of `⌊√(jn)⌋` over `1 ≤ j ≤ n` equals `(n + 1) / 2`.
+/-- **An alternating sum of floors of square roots.** For every odd positive integer $n$,
+$\sum_{j=1}^{n} (-1)^{j+1} \lfloor \sqrt{jn} \rfloor = (n+1)/2$.
 
 Source: Marc Chamberland and Karl Dilcher, "An Alternating Sum of the
 Floor Function of Square Roots", Theorem 1 (TeX label `thm:7.1`). -/

@@ -13,6 +13,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 import MathlibExt.Combinatorics.Enumerative.HeilermannWeightedMotzkinDeterminant
 import MathlibExt.Combinatorics.Enumerative.StirlingSecondExplicit
+import MathlibExt.Data.Nat.Choose.HockeyStickConvolution
 import MathlibExt.NumberTheory.HankelTransform
 import Mathlib.Combinatorics.Enumerative.Stirling
 import Mathlib.Data.Nat.Factorial.Basic
@@ -43,81 +44,6 @@ private def euS (x : ℝ) (n k : ℕ) : ℝ :=
 /-- Normalized Eulerian moment triangle fed to the weighted-Motzkin lemma. -/
 private noncomputable def euM (x : ℝ) (n k : ℕ) : ℝ :=
   euS x n k / (Nat.factorial k : ℝ)
-
-/-- Hockey-stick identity. -/
-private theorem hockey_stick (N r : ℕ) :
-    ∑ i ∈ Finset.range (N + 1), i.choose r = (N + 1).choose (r + 1) := by
-  induction N with
-  | zero =>
-    change ∑ i ∈ Finset.range 1, i.choose r = (1 : ℕ).choose (r + 1)
-    rw [Finset.sum_range_one]
-    cases r with
-    | zero => rfl
-    | succ j =>
-      rw [Nat.choose_eq_zero_of_lt (by omega : 0 < j + 1),
-        Nat.choose_eq_zero_of_lt (by omega : 1 < j + 1 + 1)]
-  | succ N ih =>
-    rw [Finset.sum_range_succ, ih, Nat.choose_succ_succ (N + 1) r]
-    ring
-
-/-- Hockey-stick convolution. -/
-private theorem hockey_conv (N r s : ℕ) :
-    ∑ i ∈ Finset.range (N + 1), i.choose r * (N - i).choose s
-      = (N + 1).choose (r + s + 1) := by
-  induction N generalizing s with
-  | zero =>
-    have h1 : (0 : ℕ) + 1 = 1 := rfl
-    rw [h1, Finset.sum_range_one]
-    simp only [Nat.sub_zero]
-    cases r with
-    | zero =>
-      cases s with
-      | zero => simp
-      | succ s =>
-        have e1 : Nat.choose 0 (s + 1) = 0 :=
-          Nat.choose_eq_zero_of_lt (by omega)
-        have e2 : Nat.choose 1 (0 + (s + 1) + 1) = 0 :=
-          Nat.choose_eq_zero_of_lt (by omega)
-        rw [e1, e2, mul_zero]
-    | succ r =>
-      have e1 : Nat.choose 0 (r + 1) = 0 :=
-        Nat.choose_eq_zero_of_lt (by omega)
-      have e2 : Nat.choose 1 (r + 1 + s + 1) = 0 :=
-        Nat.choose_eq_zero_of_lt (by omega)
-      rw [e1, e2, zero_mul]
-  | succ N ih =>
-    cases s with
-    | zero =>
-      simp only [Nat.choose_zero_right, mul_one]
-      simpa using hockey_stick (N + 1) r
-    | succ j =>
-      rw [Finset.sum_range_succ]
-      have hlast : (N + 1 - (N + 1)).choose (j + 1) = 0 := by
-        rw [Nat.sub_self]
-        exact Nat.choose_eq_zero_of_lt (by omega)
-      rw [hlast, mul_zero, add_zero]
-      have hpas : ∀ i ∈ Finset.range (N + 1),
-          (N + 1 - i).choose (j + 1)
-            = (N - i).choose (j + 1) + (N - i).choose j := by
-        intro i hi
-        have hiN : i ≤ N := by
-          have := Finset.mem_range.mp hi
-          omega
-        have hsub : N + 1 - i = (N - i) + 1 := by omega
-        rw [hsub, Nat.choose_succ_succ]
-        ring
-      have hsum : ∑ i ∈ Finset.range (N + 1), i.choose r * (N + 1 - i).choose (j + 1)
-          = ∑ i ∈ Finset.range (N + 1),
-              i.choose r * ((N - i).choose (j + 1) + (N - i).choose j) := by
-        apply Finset.sum_congr rfl
-        intro i hi
-        rw [hpas i hi]
-      rw [hsum]
-      simp only [mul_add, Finset.sum_add_distrib]
-      rw [ih (j + 1), ih j]
-      have e2 : r + (j + 1) + 1 = (r + j + 1) + 1 := by omega
-      rw [e2, Nat.choose_succ_succ (N + 1) (r + j + 1)]
-      ring
 
 private theorem seh_choose_weight (N r : ℕ) :
     (r : ℝ) * (N.choose r : ℝ) + (r + 1 : ℕ) * (N.choose (r + 1) : ℝ) =
@@ -370,7 +296,7 @@ private theorem seh_hockey_shift (q k i : ℕ) (hi : i ≤ q) :
     (∑ s ∈ Finset.range (i + 1),
         (k + s).choose k * (q - s).choose (i - s)) =
       (q + k + 1).choose i := by
-  have h := hockey_conv (q + k) k (q - i)
+  have h := Nat.sum_range_choose_mul_choose_sub (q + k) k (q - i)
   rw [show q + k + 1 = k + (q + 1) by omega, Finset.sum_range_add] at h
   have hzero :
       (∑ u ∈ Finset.range k, u.choose k * (q + k - u).choose (q - i)) = 0 := by
@@ -714,21 +640,23 @@ private theorem seh_beta_product (n : ℕ) (x : ℝ) :
     seh_choose_product_shift]
 
 /--
-Hankel transform of the shifted Eulerian polynomials `P_{n+1}(x)`.
-The determinant of `(P_{i+j+1}(x))` over `Fin (n + 1)` equals
-`(2 * x) ^ Nat.choose (n + 1) 2` times the product over `Finset.range n`
-of `Nat.choose (k + 3) 2 ^ (n - (k + 1))`, where `P` is built from
-the closed-form coefficients `W`.
+**Hankel determinants of the shifted Eulerian polynomials.** Let $n \in \mathbb{N}$ and
+$x \in \mathbb{R}$. For natural numbers $k \le m$ let
+$W_{m,k} = \sum_{i=0}^{m-k} (-1)^i \binom{m+1}{i} (m-k-i)^m$, with $0^0 = 1$, and let
+$P_m(X) = \sum_{k=0}^{m} W_{m,k} X^k$ be the corresponding Eulerian polynomial. Then the
+$(n+1) \times (n+1)$ Hankel determinant of the shifted sequence $P_1(x), P_2(x), \dots$ is
+$$\det\bigl(P_{i+j+1}(x)\bigr)_{0 \le i, j \le n} =
+(2x)^{\binom{n+1}{2}} \prod_{k=0}^{n-1} \binom{k+3}{2}^{n-k-1}.$$
+
+Proves `Wanted` entry `hankel_transform_shifted_eulerian_polynomials`.
+Proof: The closed Eulerian coefficients identify a weighted-Motzkin Stieltjes table with
+Jacobi weights `euAlpha` and `euBeta`; its determinant follows by the Heilermann-Flajolet LDU
+route used by Barry and discussed by Krattenthaler.
+
 Source: Paul Barry, "Eulerian Polynomials as Moments, via Exponential Riordan Arrays,"
 Journal of Integer Sequences 14 (2011), Article 11.9.5, corollary lines 312–315,
 <https://cs.uwaterloo.ca/journals/JIS/VOL14/Barry7/barry172.tex>.
 Eulerian closed form `W_{n,k}` at lines 93–94.
-
-Proves `Wanted` entry `hankel_transform_shifted_eulerian_polynomials`.
-
-Proof: The closed Eulerian coefficients identify a weighted-Motzkin Stieltjes table with
-Jacobi weights `euAlpha` and `euBeta`; its determinant follows by the Heilermann-Flajolet LDU
-route used by Barry and discussed by Krattenthaler.
 -/
 public theorem hankel_transform_shifted_eulerian_polynomials :
   ∀ (n : ℕ) (x : ℝ) (W : ℕ → ℕ → ℝ) (P : ℕ → ℝ → ℝ),

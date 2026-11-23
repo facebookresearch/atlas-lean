@@ -41,12 +41,17 @@ group on two generators by the `d`-th term of its derived series. -/
 abbrev FreeSolubleGroupRankTwo (d : ℕ) : Type :=
   FreeGroup (Fin 2) ⧸ derivedSeries (FreeGroup (Fin 2)) d
 
-/-- `u` is a test element of `G`: every endomorphism of `G` fixing `u` is an automorphism. -/
+/-- **Test element.** An element $u$ of a group $G$ is a test element of $G$ if every endomorphism
+$\varphi$ of $G$ with $\varphi(u) = u$ is bijective, that is, an automorphism of $G$. -/
 def IsTestElement {G : Type*} [Group G] (u : G) : Prop :=
   ∀ φ : G →* G, φ u = u → Function.Bijective φ
 
-/-- Kourovka 14.88 (B. Fine, V. Shpilrain): for every `d > 2` the free soluble group of rank `2` and
-derived length `d` has a test element. -/
+/-- **Kourovka Problem 14.88 (test elements of free soluble groups of rank 2).** The statement that
+for every integer $d > 2$ the free soluble group $F_2 / F_2^{(d)}$ of rank $2$ and derived length
+$d$ has a test element, where $F_2$ is the free group on two generators and $F_2^{(d)}$ is the
+$d$-th term of its derived series.
+
+Kourovka Notebook Problem 14.88 is due to B. Fine and V. Shpilrain. -/
 def freeSolubleRankTwoHasTestElement : Prop :=
   ∀ d : ℕ, 2 < d → ∃ u : FreeSolubleGroupRankTwo d, IsTestElement u
 

@@ -47,6 +47,21 @@ example {P : ℕ → Prop} (h : Cslib.URM.Decidable P) : TM2Decidable P :=
 example {P : ℕ → Prop} (h : Cslib.URM.Recognizable P) : TM2Recognizable P :=
   urmRecognizable_to_tm2Recognizable h
 
+/-- The Church–Turing decidability transfer has exactly the statement of the
+`URMBridge` theorem it is proved from. -/
+example : ∀ {P : ℕ → Prop}, Cslib.URM.Decidable P → TM2Decidable P :=
+  @Cslib.URM.Decidable.tm2Decidable
+
+/-- The Church–Turing recognizability transfer has exactly the statement of the
+`URMBridge` theorem it is proved from. -/
+example : ∀ {P : ℕ → Prop}, Cslib.URM.Recognizable P → TM2Recognizable P :=
+  @Cslib.URM.Recognizable.tm2Recognizable
+
+/-- The canonical URM bridge also computes total functions under the natural-number encoding. -/
+example {f : ℕ → ℕ} (h : Cslib.URM.Computable 1 fun inputs ↦ Part.some (f (inputs 0))) :
+    Nonempty (Turing.TM2Computable Computability.encodeNat Computability.encodeNat f) :=
+  Cslib.URM.Computable.tm2Computable h
+
 /-- A recursive isomorphism gives a 1-equivalence. -/
 example {P Q : ℕ → Prop} (h : RecursiveIsomorphic P Q) : OneOneEquiv P Q :=
   recursiveIsomorphic_to_oneOneEquiv h
@@ -133,6 +148,129 @@ example : counterStep [CounterInstr.inc 0] ⟨5, fun _ => 0⟩ = ⟨5, fun _ => 
 /-- Counter execution: one `inc` step from `[5]` halts with output `6`. -/
 example : 6 ∈ counterEval [CounterInstr.inc 0] [5] :=
   mem_counterEval_of_halted (t := 1) (by rfl) (by rfl)
+
+/-- The counter-machine initial state is upstream `URM.State.init`. -/
+example : CounterState.equivURM (counterInit [3, 4]) = Cslib.URM.State.init [3, 4] :=
+  CounterState.equivURM_counterInit _
+
+/-- Counter states and URM states correspond one to one. -/
+example (s : CounterState) : CounterState.equivURM.symm (CounterState.equivURM s) = s :=
+  CounterState.equivURM.symm_apply_apply s
+
+/-- The counter output register is upstream `URM.Regs.output`. -/
+example : (CounterState.equivURM (counterInit [7])).regs.output = 7 := by
+  rw [CounterState.output_equivURM]; rfl
+
+/-- A counter state with program counter `2` is halted for a two-instruction URM program. -/
+example : (CounterState.equivURM ⟨2, fun _ => 0⟩).isHalted
+    [Cslib.URM.Instr.S 0, Cslib.URM.Instr.S 1] :=
+  CounterState.isHalted_equivURM_iff.2 le_rfl
+
+/-- Counter `inc 0` on input `5` is one URM `S 0` step. -/
+example : Cslib.URM.Step [Cslib.URM.Instr.S 0] (CounterState.equivURM (counterInit [5]))
+    (CounterState.equivURM (counterStep [CounterInstr.inc 0] (counterInit [5]))) :=
+  urmStep_of_counterStep_inc rfl rfl
+
+/-- Counter `jz 0 3` on input `0` is one URM `J 0 1 3` step (register `1` holds `0`). -/
+example : Cslib.URM.Step [Cslib.URM.Instr.J 0 1 3] (CounterState.equivURM (counterInit [0]))
+    (CounterState.equivURM (counterStep [CounterInstr.jz 0 3] (counterInit [0]))) :=
+  urmStep_of_counterStep_jz rfl rfl rfl
+
+/-- Counter `jz 0 3` on input `5` falls through, as URM `J 0 1 3` does. -/
+example : Cslib.URM.Step [Cslib.URM.Instr.J 0 1 3] (CounterState.equivURM (counterInit [5]))
+    (CounterState.equivURM (counterStep [CounterInstr.jz 0 3] (counterInit [5]))) :=
+  urmStep_of_counterStep_jz rfl rfl rfl
+
+/-- Counter `jz 0 9` is one URM `J 0 1 9` step on every input, so the jump (input `0`) and
+the fall-through (positive input) both match URM; register `1` holds `0`. -/
+example (n : ℕ) :
+    Cslib.URM.Step [Cslib.URM.Instr.J 0 1 9] (CounterState.equivURM (counterInit [n]))
+      (CounterState.equivURM (counterStep [CounterInstr.jz 0 9] (counterInit [n]))) :=
+  urmStep_of_counterStep_jz rfl rfl rfl
+
+/-- Counter evaluation results are exactly halted outputs: `inc 0` on `[5]` gives `6`
+after one step. -/
+example : 6 ∈ counterEval [CounterInstr.inc 0] [5] :=
+  mem_counterEval_iff.2 ⟨1, by decide, rfl⟩
+
+/-- Counter evaluation results are exactly halted outputs: `inc 0` on `[5]` never
+outputs `5`. -/
+example : 5 ∉ counterEval [CounterInstr.inc 0] [5] := by
+  rintro h
+  obtain ⟨t, hhalt, hout⟩ := mem_counterEval_iff.1 h
+  cases t with
+  | zero => exact absurd hhalt (by decide)
+  | succ t =>
+    rw [counterExecN_eq_of_halted (t₁ := 1) (by decide) (by omega)] at hout
+    exact absurd hout (by decide)
+
+/-- The empty program halts at once on the empty input, with output `0`. -/
+example : counterEval [] [] = Part.some 0 :=
+  Part.eq_some_iff.2 (mem_counterEval_iff.2 ⟨0, by decide, rfl⟩)
+
+/-- Decrement saturates: `dec 0` on `[0]` halts after one step with output `0`. -/
+example : counterEval [CounterInstr.dec 0] [0] = Part.some 0 :=
+  Part.eq_some_iff.2 (mem_counterEval_iff.2 ⟨1, by decide, rfl⟩)
+
+/-- Decrement of a positive register: `dec 0` on `[3]` halts after one step with output `2`. -/
+example : counterEval [CounterInstr.dec 0] [3] = Part.some 2 :=
+  Part.eq_some_iff.2 (mem_counterEval_iff.2 ⟨1, by decide, rfl⟩)
+
+/-- A zero-test self-loop never halts: `jz 0 0` on the empty input jumps to itself forever,
+so the result is undefined rather than the contents of register `0`. -/
+example : counterEval [CounterInstr.jz 0 0] [] = Part.none := by
+  have hrun : ∀ t, counterExecN [CounterInstr.jz 0 0] t (counterInit []) = counterInit [] := by
+    intro t
+    induction t with
+    | zero => rfl
+    | succ t ih =>
+      have ih' : (counterStep [CounterInstr.jz 0 0])^[t] (counterInit []) = counterInit [] := ih
+      simp only [counterExecN, Function.iterate_succ_apply']
+      rw [ih']
+      rfl
+  apply Part.eq_none_iff.mpr
+  intro y hy
+  obtain ⟨t, hhalt, -⟩ := mem_counterEval_iff.1 hy
+  rw [hrun] at hhalt
+  exact absurd hhalt (by decide)
+
+/-- A counter program that clears register `0` and then increments it, so it outputs
+`1` on every input. Register `1` stays `0` and makes `jz 1 0` an unconditional jump. -/
+def clearThenInc : List CounterInstr :=
+  [CounterInstr.jz 0 3, CounterInstr.dec 0, CounterInstr.jz 1 0, CounterInstr.inc 0]
+
+/-- Bounded execution splits at a step count. -/
+theorem counterExecN_add (prog : List CounterInstr) (a b : ℕ) (s : CounterState) :
+    counterExecN prog (a + b) s = counterExecN prog a (counterExecN prog b s) :=
+  Function.iterate_add_apply _ _ _ _
+
+/-- Three steps of `clearThenInc`'s loop decrement register `0` and return to the
+start, so `3 * m` steps clear a register holding `m`. -/
+theorem clearThenInc_loop (m : ℕ) : ∀ regs : ℕ → ℕ, regs 0 = m → regs 1 = 0 →
+    ∃ regs' : ℕ → ℕ, counterExecN clearThenInc (3 * m) ⟨0, regs⟩ = ⟨0, regs'⟩ ∧
+      regs' 0 = 0 ∧ regs' 1 = 0 := by
+  induction m with
+  | zero => intro regs h0 h1; exact ⟨regs, rfl, h0, h1⟩
+  | succ m ih =>
+    intro regs h0 h1
+    have h3 : counterExecN clearThenInc 3 ⟨0, regs⟩ = ⟨0, Function.update regs 0 m⟩ := by
+      simp [counterExecN, Function.iterate_succ_apply', counterStep, clearThenInc, h0, h1]
+    obtain ⟨regs', he, h0', h1'⟩ := ih (Function.update regs 0 m) (by simp) (by simp [h1])
+    refine ⟨regs', ?_, h0', h1'⟩
+    rw [show 3 * (m + 1) = 3 * m + 3 by omega, counterExecN_add, h3]
+    exact he
+
+/-- `CounterDecidable` is not vacuous: the always-true predicate is counter-machine
+decidable, through the bounded-run characterization. -/
+example : CounterDecidable fun _ ↦ True := by
+  refine counterDecidable_iff.2 ⟨clearThenInc, fun n ↦ ?_⟩
+  obtain ⟨regs', he, h0, h1⟩ := clearThenInc_loop n (counterInit [n]).regs
+    (by simp [counterInit]) (by simp [counterInit])
+  have h : counterExecN clearThenInc (2 + 3 * n) (counterInit [n]) =
+      ⟨4, Function.update regs' 0 1⟩ := by
+    rw [counterExecN_add, show counterInit [n] = ⟨0, (counterInit [n]).regs⟩ from rfl, he]
+    simp [counterExecN, Function.iterate_succ_apply', counterStep, clearThenInc, h0]
+  refine ⟨2 + 3 * n, ?_, ?_⟩ <;> rw [h] <;> simp [clearThenInc]
 
 /-- RAM `imm` resolves to the literal. -/
 example : ramResolve ⟨0, 0, fun _ => 0⟩ (RAMAddr.imm 7) = 7 := rfl
