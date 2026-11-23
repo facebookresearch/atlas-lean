@@ -398,9 +398,9 @@ group before it merges:
 On a PR or merge group, `build` audits the compiled policy of only the modules
 its build rewrote since the build it restored from `main`'s cache, with their
 importers and the audit batches that hold them. Builds of `main` audit every
-module, and when one fails, CI opens an issue, or comments on the open one. A
-build of `main` can cover several merges: a newer push replaces a build of
-`main` that is still waiting to start.
+module of the tree they build, and when the build of a push fails, CI opens an
+issue, or comments on the open one. A newer push replaces a build of `main` that
+is still waiting to start, so one build can cover several merges.
 
 The three workflows that report these five checks are configured for
 `pull_request` and `merge_group`, without branch or path filters. If a PR has a merge conflict, resolve it before expecting

@@ -19,14 +19,17 @@ Run with: python3 -m unittest discover -s scripts -p test_ci_audit_scope.py
 from __future__ import annotations
 
 import ast
+import json
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import textwrap
 import unittest
 from pathlib import Path
 
+import audit_rebuilt_modules as scoped
 from test_merge_queue_checks import block, jobs, value, workflow
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -71,6 +74,24 @@ def repository_files(literal: str, root: Path) -> set[str]:
             if not path.startswith(("/", "..")) and (root / path).is_file()}
 
 
+def joined_path(node: ast.AST) -> str:
+    """`a / "b" / "c"` or `os.path.join(a, "b", "c")` as "b/c": the constant parts
+    of a path built from pieces, or "" when it has none."""
+    parts: list[str] = []
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "join":
+        pieces = node.args
+    else:
+        pieces = []
+        while isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+            pieces.insert(0, node.right)
+            node = node.left
+        pieces.insert(0, node)
+    for piece in pieces:
+        if isinstance(piece, ast.Constant) and isinstance(piece.value, str):
+            parts.append(piece.value.strip("/"))
+    return "/".join(parts)
+
+
 def native_test_inputs(root: Path = ROOT, tests: tuple[str, ...] = NATIVE_TESTS) -> set[str]:
     """Every repository file the native tests name or import, followed through the
     local Python modules and shell scripts they use and the project modules their
@@ -88,6 +109,8 @@ def native_test_inputs(root: Path = ROOT, tests: tuple[str, ...] = NATIVE_TESTS)
             for node in ast.walk(ast.parse(text)):
                 if isinstance(node, ast.Constant) and isinstance(node.value, str):
                     found |= repository_files(node.value, root)
+                elif isinstance(node, (ast.BinOp, ast.Call)):
+                    found |= repository_files(joined_path(node), root)
                 elif isinstance(node, ast.Import):
                     for alias in node.names:
                         found |= repository_files(alias.name.split(".")[0] + ".py", root)
@@ -97,8 +120,11 @@ def native_test_inputs(root: Path = ROOT, tests: tuple[str, ...] = NATIVE_TESTS)
             for name in re.findall(r"scripts/[\w.-]+", text):
                 found |= repository_files(name, root)
         elif path.endswith(".lean") and path.split("/")[0] in LIBRARIES:
-            for module in re.findall(r"^(?:public )?import (?:all )?([\w.]+)", text, re.M):
-                found |= {file for file in repository_files(module, root)
+            # The scoped audit's own reading of imports: any `import X`, comments
+            # and line breaks included.
+            modules = set(scoped.IMPORT.findall(text)) | set(scoped.IMPORT.findall(scoped.uncommented(text)))
+            for module in modules:
+                found |= {file for file in repository_files(module.replace("«", "").replace("»", ""), root)
                           if file.split("/")[0] in LIBRARIES}
         pending.extend(sorted(found - inputs))
     return inputs
@@ -156,13 +182,17 @@ class BuildAuditScope(unittest.TestCase):
                 (root / name).write_text("")
             (root / "scripts/helper.py").write_text('DATA = "data.json"\n')
             (root / "scripts/run.sh").write_text("scripts/list.sh\n")
-            (root / "MathlibExt/A.lean").write_text("module\npublic import MathlibExt.B\n")
+            (root / "MathlibExt/A.lean").write_text("module\npublic import\n  MathlibExt.B -- why\n")
+            (root / "scripts/fixtures").mkdir()
+            (root / "scripts/fixtures/sample.txt").write_text("")
             (root / "scripts/test_x_native.py").write_text(
                 'from helper import DATA\nTEXT = (ROOT / "CONTRIBUTING.md").read_text()\n'
+                'SAMPLE = (ROOT / "scripts" / "fixtures" / "sample.txt").read_text()\n'
                 "RUN = ['scripts/run.sh']\nPAIR = ['MathlibExt.A']\n")
             self.assertEqual(native_test_inputs(root, ("scripts/test_x_native.py",)), {
                 "scripts/test_x_native.py", "scripts/helper.py", "scripts/data.json", "CONTRIBUTING.md",
-                "scripts/run.sh", "scripts/list.sh", "MathlibExt/A.lean", "MathlibExt/B.lean"})
+                "scripts/fixtures/sample.txt", "scripts/run.sh", "scripts/list.sh",
+                "MathlibExt/A.lean", "MathlibExt/B.lean"})
 
     def test_disk_cleanup_runs_unless_60_gib_are_known_to_be_free(self):
         cases = {"echo 62914560": False, "echo 62914559": True, "echo unknown": True, "return 1": True}
@@ -182,21 +212,39 @@ class BuildAuditScope(unittest.TestCase):
         self.assertEqual(value(report, "if", 4), "failure() && github.event_name == 'push'")
         self.assertEqual([line.strip() for line in block(report, "permissions", 4) if line.strip()],
                          ["issues: write"])
+        if shutil.which("jq") is None:
+            self.skipTest("jq runs the report's own filter on the fixture pages")
         script = run_block(steps(report)["Open or update the issue"])
+        title = "CI build fails on main"
+        pull = {"number": 5, "title": title, "pull_request": {"url": "u"}}
+        other = {"number": 7, "title": "Something else"}
+        cases = (  # pages of open issues and pull requests, API status, expected second call
+            ([[pull, other], [{"number": 34, "title": title}, {"number": 56, "title": title}]], "0",
+             "issue comment 34 --body"),
+            ([[pull, other]], "0", f"issue create --title {title}"),
+            ([[{"number": 34, "title": title}]], "1", None),
+        )
         with tempfile.TemporaryDirectory() as directory:
             stub = Path(directory) / "gh"
+            # `gh api --paginate ... --jq EXPR` applies EXPR to each page in turn.
             stub.write_text('#!/usr/bin/env bash\n'
                             'echo "$*" >> "$GH_LOG"\n'
-                            'if [[ "$1" == api ]]; then printf "%b" "$ISSUES"; exit "${API_STATUS:-0}"; fi\n')
+                            'if [[ "$1" == api ]]; then\n'
+                            '  while [[ $# -gt 0 && "$1" != --jq ]]; do shift; done\n'
+                            '  for page in "$PAGES"/*.json; do jq -r "$2" "$page"; done\n'
+                            '  exit "$API_STATUS"\n'
+                            'fi\n')
             stub.chmod(0o755)
-            for issues, status, expected in (("12\\n34\\n", "0", "issue comment 12 --body"),
-                                             ("", "0", "issue create --title CI build fails on main"),
-                                             ("", "1", None)):
-                with self.subTest(issues=issues, status=status):
-                    log = Path(directory) / "log"
+            for index, (pages, status, expected) in enumerate(cases):
+                with self.subTest(case=index):
+                    folder = Path(directory) / f"pages{index}"
+                    folder.mkdir()
+                    for number, page in enumerate(pages):
+                        (folder / f"{number}.json").write_text(json.dumps(page))
+                    log = Path(directory) / f"log{index}"
                     log.write_text("")
                     env = {**os.environ, "PATH": f"{directory}:{os.environ['PATH']}", "GH_LOG": str(log),
-                           "ISSUES": issues, "API_STATUS": status, "GH_REPO": "o/r", "RUN_URL": "u",
+                           "PAGES": str(folder), "API_STATUS": status, "GH_REPO": "o/r", "RUN_URL": "u",
                            "GITHUB_SHA": "0" * 40}
                     result = subprocess.run(["bash", "-c", script], env=env, capture_output=True, text=True)
                     calls = log.read_text().splitlines()
@@ -206,9 +254,8 @@ class BuildAuditScope(unittest.TestCase):
                         self.assertEqual(len(calls), 1, "an API error must not open an issue")
                     else:
                         self.assertEqual(result.returncode, 0, result.stderr)
-                        self.assertEqual(len(calls), 2)
+                        self.assertEqual(len(calls), 2, calls)
                         self.assertTrue(calls[1].startswith(expected), calls[1])
-
 
 if __name__ == "__main__":
     unittest.main()
