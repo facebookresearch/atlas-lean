@@ -11485,6 +11485,7 @@
   "MathlibExt/NumberTheory/PrimeCounting/LaplaceTheta": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Prime number theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/LaplaceThetaContinuation": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Prime number theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/LcmProductIdentity": {"to": "NumberTheory/arithmetic-functions", "title": "Least common multiple of bounded products"},
+  "MathlibExt/NumberTheory/PrimeCounting/MandlRefinements": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Explicit bounds for the nth prime"},
   "MathlibExt/NumberTheory/PrimeCounting/NormalizedThetaError": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Prime number theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/PrimeGapFactorial": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Primes just above factorials and primorials"},
   "MathlibExt/NumberTheory/PrimeCounting/PrimePrimeRatio": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Prime-indexed primes"},
