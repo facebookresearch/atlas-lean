@@ -42,6 +42,8 @@ conjecture or arbitrary spectral-sequence/representation input is assumed.
 
 @[expose] public noncomputable section
 
+set_option backward.isDefEq.respectTransparency false
+
 namespace WantedExt.AlgebraicGeometry.SemistableAdicMonodromy
 
 open _root_.CategoryTheory _root_.AlgebraicGeometry
@@ -114,8 +116,10 @@ public instance_wanted nearbyMiddleHeart
     (d : ℕ) [SmoothOfRelativeDimension d ((SemistableModels.genericFunctor R
       K).obj X).hom]
     [DerivedFunctorTheory ℚ_[ell]]
-    [CoefficientTheory ℚ_[ell]
-      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell)]
+    [IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (specialArrow π T X))]
+    [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
     [InertiaSchemeCompatibility π T X]
     [CoefficientPresentation ell (Residue π T)
       (RapoportZinkContracts.specialModel R K L π T X)]
@@ -137,8 +141,10 @@ public theorem_wanted nearbyInertiaNilpotent
     (d : ℕ) [SmoothOfRelativeDimension d ((SemistableModels.genericFunctor R
       K).obj X).hom]
     [DerivedFunctorTheory ℚ_[ell]]
-    [CoefficientTheory ℚ_[ell]
-      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell)]
+    [IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (specialArrow π T X))]
+    [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
     [InertiaSchemeCompatibility π T X] (σ : Inertia π T) :
     (RapoportZinkContracts.inertiaOperator ell R K L π T X σ - 1) ^ (d + 1) = 0
 
@@ -151,8 +157,10 @@ public theorem_wanted nearbyMonodromyFiltration
     (π : R) (T : GeometricTrait R K L π)
     (X : Over (Spec (.of R))) [IsProper X.hom] (d : ℕ)
     [DerivedFunctorTheory ℚ_[ell]]
-    [CoefficientTheory ℚ_[ell]
-      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell)]
+    [IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (specialArrow π T X))]
+    [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
     [InertiaSchemeCompatibility π T X]
     [CoefficientPresentation ell (Residue π T)
       (RapoportZinkContracts.specialModel R K L π T X)]
@@ -197,8 +205,10 @@ public instance_wanted rapoportZinkTheory
     (d : ℕ) [SmoothOfRelativeDimension d ((SemistableModels.genericFunctor R
       K).obj X).hom]
     [DerivedFunctorTheory ℚ_[ell]]
-    [CoefficientTheory ℚ_[ell]
-      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell)]
+    [IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (specialArrow π T X))]
+    [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+      (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
     [InertiaSchemeCompatibility π T X]
     [CoefficientPresentation ell (Residue π T)
       (RapoportZinkContracts.specialModel R K L π T X)]

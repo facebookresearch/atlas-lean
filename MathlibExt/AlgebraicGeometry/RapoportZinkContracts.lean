@@ -64,7 +64,10 @@ variable (ell : ℕ) [Fact ell.Prime]
   [IsAlgClosure K L] (π : R) (T : GeometricTrait R K L π)
   (X : Over (Spec (.of R))) [IsProper X.hom]
   [DerivedFunctorTheory ℚ_[ell]]
-  [CoefficientTheory ℚ_[ell] (RationalCoefficients.{0} ell)]
+  [IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+    (RationalCoefficients.{0} ell) (specialArrow π T X))]
+  [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
+    (RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
   [InertiaSchemeCompatibility π T X]
 
 /-- The actual special fibre, with its actual residue-field structure. -/

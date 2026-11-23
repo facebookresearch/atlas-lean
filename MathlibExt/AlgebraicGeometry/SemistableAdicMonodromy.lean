@@ -62,7 +62,9 @@ open PadicNeronModels GeometricAdicGaloisOperators AdicLinearFunctoriality
 
 variable (p : ℕ) [Fact p.Prime]
 
-/-- The actual absolute Galois group of Q_p, in characteristic zero. -/
+/-- The absolute Galois group of `ℚ_p`. Mathlib's `PadicAlgCl p` is `AlgebraicClosure ℚ_[p]`, the
+algebraic closure (its completion `ℂ_p` is `PadicComplex p`), so these are the automorphisms of an
+algebraic closure. -/
 abbrev Galois := PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p
 
 /-- The root presentation of the actual maximal unramified field. The
