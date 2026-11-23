@@ -68,7 +68,7 @@ def_wanted nativeBasepointLength
     (h : IsPrestable F B U) (Q : StableGITTarget G W L) (x : F.curve.X) :
     BasepointLength G W F.quotient L x
 
-proof_wanted nativeThetaDegreeDefect
+theorem_wanted nativeThetaDegreeDefect
     (F : Family G W n g (Over.mk (𝟙 (Spec (.of ℂ)))))
     (B : AssociatedFamily F) (U : AssociatedUnstable L F.quotient B)
     (h : IsPrestable F B U) (Q : StableGITTarget G W L) (O : OffBaseMap F B U Q)
@@ -76,7 +76,7 @@ proof_wanted nativeThetaDegreeDefect
     (lengths : ∀ x : F.curve.X, BasepointLength G W F.quotient L x) :
     (thetaDegreeDefect D : ℚ) = totalBasepointLength F B U h lengths
 
-proof_wanted nativeGeneratedIdealLength
+theorem_wanted nativeGeneratedIdealLength
     (F : Family G W n g (Over.mk (𝟙 (Spec (.of ℂ)))))
     (B : AssociatedFamily F) (U : AssociatedUnstable L F.quotient B)
     (h : IsPrestable F B U) (Q : StableGITTarget G W L)

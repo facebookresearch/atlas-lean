@@ -1,19 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 
 /-
-Ported from TauCetiProject/TauCeti, revision
-62bbc0596dc3539d488232e4e924a338548ea0a9:
-TauCeti/RingTheory/Invariant/Basic.lean
-Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Authors: The Tau Ceti contributors. Apache License 2.0.
-Modification notice: retain only the invariant-extension, prime-conjugacy and domain-point
-comparison dependencies needed by the geometric quotient port. No unresolved result is added.
+Modifications (c) 2026 Meta Platforms, Inc. and affiliates:
+ported from `TauCeti/RingTheory/Invariant/Basic.lean` in TauCetiProject/TauCeti at revision
+62bbc0596dc3539d488232e4e924a338548ea0a9. Retain only the invariant-extension,
+prime-conjugacy and domain-point comparison dependencies needed by the geometric quotient
+port. No unresolved result is added.
 -/
 module
 
@@ -168,4 +164,3 @@ theorem exists_comp_eq_of_comp_algebraMap_eq (f₁ f₂ : B →+* K)
   simpa [mul_smul] using congr($hk b)
 
 end TauCeti.Algebra.IsInvariant
-

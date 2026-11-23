@@ -69,7 +69,7 @@ def_wanted nativeStackSourceParameterReindex
     {S : Scheme} (Y X : RelativeStack S) {T V : Over S} (f : V ⟶ T) :
     ParameterReindex Y X f
 
-proof_wanted nativeRelativeStackRestriction
+theorem_wanted nativeRelativeStackRestriction
     {S V : Scheme} (X : RelativeStack S) (b : V ⟶ S) :
     (ThetaSchemeParameters.restriction X b).IsStack (Scheme.fppfTopology.over V)
 
