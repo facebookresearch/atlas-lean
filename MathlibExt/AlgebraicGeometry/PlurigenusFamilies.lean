@@ -92,7 +92,7 @@ abbrev fiberStructure {k : Type u} [Field k]
     fiberScheme f x ⟶ Spec (.of Ω) :=
   pullback.snd f.left x
 
-/-- Restriction of the actual relative canonical line to the fiber. -/
+/-- Restriction of a sheaf `K` on the total space to the fiber. -/
 abbrev fiberCanonical {k : Type u} [Field k]
     {X B : Over (Spec (.of k))} (f : X ⟶ B) (K : X.left.Modules)
     {Ω : Type u} [Field Ω] (x : Spec (.of Ω) ⟶ B.left) : (fiberScheme f x).Modules :=
