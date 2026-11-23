@@ -10766,6 +10766,7 @@
   "MathlibExt/GameTheory/NashExistence": {"to": "GameTheory/noncooperative-games", "title": "Nash's theorem"},
   "MathlibExt/GameTheory/NimSumLastPile": {"to": "GameTheory/combinatorial-games", "title": "Nim"},
   "MathlibExt/GameTheory/NoRegretDynamics": {"to": "GameTheory/noncooperative-games", "title": "No-regret dynamics"},
+  "MathlibExt/GameTheory/PenultsOfTak": {"to": "GameTheory/combinatorial-games", "title": "Impartial placement games"},
   "MathlibExt/GameTheory/PotentialGame": {"to": "GameTheory/noncooperative-games", "title": "Potential games"},
   "MathlibExt/GameTheory/PotentialGames": {"to": "GameTheory/noncooperative-games", "title": "Potential games"},
   "MathlibExt/GameTheory/SelfishRouting": {"to": "GameTheory/noncooperative-games", "title": "Selfish routing and the price of anarchy"},
