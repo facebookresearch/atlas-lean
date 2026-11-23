@@ -83,26 +83,6 @@ public theorem_wanted convergentDen_symm_split (l : ℕ) (a : ℕ → ℕ)
       convergentDen a i * convergentDen a (l - 1 - i) +
         convergentDen a (i - 1) * convergentDen a (l - 2 - i)
 
-/-- **Splitting the shifted continuant of a symmetric sequence.** Let $l$ be a natural number
-and let $a_1, \dots, a_{l-1}$ be natural numbers with $a_i = a_{l-i}$ for $1 \le i \le l - 1$.
-For $j \ge 1$ let $r_j = K(a_2, \dots, a_j)$ be the continuant, given by $r_1 = 1$,
-$r_2 = a_2$ and $r_{j+2} = a_{j+2} r_{j+1} + r_j$. Then for every $i$ with $2 \le i \le l - 3$,
-$$r_{l-2} = r_i \, r_{l-1-i} + r_{i-1} \, r_{l-2-i}.$$
-
-The cases $i \in \{0, 1, l - 2\}$ of the paper, which need $r_0 = 0$ and $r_{-1} = 1$, are
-omitted.
-
-Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
-Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Proposition 3 (ii)
-(`integers-2026-A69-prop-3`). -/
-public theorem_wanted shifted_convergentDen_symm_split (l : ℕ) (a : ℕ → ℕ)
-    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) (i : ℕ) (hi : 2 ≤ i) (hil : i + 3 ≤ l) :
-    convergentDen (fun n => a (n + 1)) (l - 3) =
-      convergentDen (fun n => a (n + 1)) (i - 1) *
-          convergentDen (fun n => a (n + 1)) (l - 2 - i) +
-        convergentDen (fun n => a (n + 1)) (i - 2) *
-          convergentDen (fun n => a (n + 1)) (l - 3 - i)
-
 /-- **Parity of $q_{l-1}$ for a symmetric sequence, even $l$.** Let $l \ge 2$ be even and let
 $a_0, a_1, a_2, \dots$ be natural numbers with convergent denominators $q_0, q_1, q_2, \dots$,
 such that $a_i = a_{l-i}$ for $1 \le i < l$. Then $q_{l-1} \equiv a_{l/2} \, q_{l/2-1} \pmod 2$.

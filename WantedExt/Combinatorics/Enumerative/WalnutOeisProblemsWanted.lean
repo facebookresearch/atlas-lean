@@ -13,7 +13,7 @@ public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Log
 import Mathlib.Data.List.Infix
-public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsum
+public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumPalindrome
 
 /-!
 # Problems from the OEIS settled with Walnut
@@ -292,18 +292,6 @@ Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
 Lemma 3 (`jis-2025-25.3.8-lem-3`). -/
 public theorem_wanted upperWythoffUnsumWord_sum_add_two (j : ℕ) :
     (upperWythoffUnsumWord j).sum + 2 = Nat.fib (j / 2 + 5)
-
-/-- **The gap words are palindromes.** Let $g_k$ be the $k$-th gap between
-consecutive unsums (OEIS A260317), counted from zero, and let $m_0 < m_1 < \cdots$ be the
-markers, the indices $k \ge 10$ with $g_k = 2$, in increasing order. For $i \ge 1$ let $W_i$
-be the word of the gaps $g_k$ with $m_{2i-2} < k < m_{2i-1}$, in increasing order of $k$. Then
-for every $i \ge 1$, the word $W_i$ read backwards is $W_i$ itself.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Lemma 4 (`jis-2025-25.3.8-lem-4`). -/
-public theorem_wanted upperWythoffUnsumPalindrome_reverse {i : ℕ} (hi : 1 ≤ i) :
-    (upperWythoffUnsumPalindrome i).reverse = upperWythoffUnsumPalindrome i
 
 /-- **A word $3V3$ between markers is followed by a word starting with $3V$.** Let $V$ be a
 finite word of natural numbers, and suppose that the $j$-th word between markers of the unsum
