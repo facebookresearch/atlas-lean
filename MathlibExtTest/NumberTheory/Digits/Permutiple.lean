@@ -41,3 +41,20 @@ example : permutipleGraphEdges (k := 4) (![2, 2, 2, 7, 9] ∘ Equiv.swap 0 4) c[
     _ = permutipleGraphEdges d c[0, 1, 2, 3, 4] :=
       permutipleGraphEdges_eq_of_conj d (Equiv.swap 0 4) 1 _ _ (by decide)
     _ = _ := by decide +revert
+
+-- At the units digit of 87912 = 4 * 21978, the outgoing carry is 3.
+example : permutipleCarry 4 10 (k := 4) ![2, 1, 9, 7, 8] Fin.revPerm 1 = 3 := by
+  have h : (10 : ℤ) * permutipleCarry 4 10 (k := 4) ![2, 1, 9, 7, 8] Fin.revPerm 1 - 0 = 30 :=
+    permutipleCarry_relation 4 10 (by decide) _ _ isPermutiple_87912 0
+  omega
+
+-- At the top digit of 1001 = 3 * 0011 in base two, the integer difference is negative.
+example :
+    let c := permutipleCarry 3 2 (k := 3) ![1, 0, 0, 1] (Equiv.swap 1 3)
+    (2 : ℤ) * c 4 - c 3 = -1 := by
+  let d : Fin 4 → ℕ := ![1, 0, 0, 1]
+  let σ : Equiv.Perm (Fin 4) := Equiv.swap 1 3
+  have hp : IsPermutiple 3 2 d σ := by
+    unfold IsPermutiple
+    decide +revert
+  exact permutipleCarry_relation 3 2 (by decide) d σ hp 3
