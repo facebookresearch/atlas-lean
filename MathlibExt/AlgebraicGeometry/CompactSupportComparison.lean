@@ -91,4 +91,3 @@ def derivedHomCompactSupportComparison (Z : TopCat.{0})
   (bmDualHomEquiv Z D (n : ℤ)).trans (compactDualHomEquiv Z n)
 
 end MathlibExt.AlgebraicGeometry.CompactSupportComparison
-

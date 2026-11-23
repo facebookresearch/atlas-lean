@@ -139,4 +139,3 @@ def derivedCohomologyIso (F : C ⥤ D) [F.Additive] (X : C) (n : ℕ) :
     (I.isoRightDerivedObj F n).symm
 
 end MathlibExt.HomologicalAlgebra.RightDerivedCohomology
-

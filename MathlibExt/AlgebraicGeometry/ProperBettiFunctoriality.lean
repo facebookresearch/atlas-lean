@@ -152,6 +152,23 @@ structure ProperPullback {Z W : TopCat.{0}} (f : Z ⟶ W) where
         (sections Z).rightDerivedFunctorPlusUnit.app ((pullback ℚ f).mapCochainComplexPlus.obj K) ≫
         (compactDerived Z).map ((pullback ℚ f).rightDerivedFunctorPlusUnit.app K)
 
+/-- Proper pullback data are unique: the compatibility determines the derived
+map by the universal property of right derived functors, and the normalization
+determines the coefficient comparison. -/
+instance {Z W : TopCat.{0}} (f : Z ⟶ W) : Subsingleton (ProperPullback f) where
+  allEq P Q := by
+    have hmap : P.map = Q.map := by
+      apply Functor.rightDerived_ext _ (sections W).rightDerivedFunctorPlusUnit
+        (CochainComplex.Plus.quasiIso _)
+      exact NatTrans.ext (funext fun K => (P.compatibility K).trans (Q.compatibility K).symm)
+    have hunit : P.unitIso = Q.unitIso :=
+      Iso.ext_inv (P.unit_normalization.trans Q.unit_normalization.symm)
+    cases P
+    cases Q
+    cases hmap
+    cases hunit
+    rfl
+
 /-- The fixed compact-support pullback on shifted rational coefficient complexes. -/
 def compactPullback {Z W : TopCat.{0}} {f : Z ⟶ W} (P : ProperPullback f) (n : ℤ) :
     (derivedSections W).obj ((unitPlus W)⟦n⟧) ⟶

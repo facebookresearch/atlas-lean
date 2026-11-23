@@ -78,6 +78,13 @@ example (Z : TopCat.{0}) (D : DualizingComplex Z) (d : ℕ)
       (DerivedCategory.singleFunctor (ModuleCat.{0} ℚ) 0).obj (ModuleCat.of ℚ ℚ) :=
   topTrace Z D d e
 
+/-- Proper pullback data are unique, so Borel–Moore pushforward does not depend
+on the witness. -/
+example {Z W : TopCat.{0}} {f : Z ⟶ W} (P Q : ProperPullback f) (DZ : DualizingComplex Z)
+    (DW : DualizingComplex W) (n : ℤ) :
+    borelMoorePushforward P DZ DW n = borelMoorePushforward Q DZ DW n := by
+  rw [Subsingleton.elim P Q]
+
 /-- Proper pullback data give Borel–Moore pushforward. -/
 example {Z W : TopCat.{0}} {f : Z ⟶ W} (P : ProperPullback f) (DZ : DualizingComplex Z)
     (DW : DualizingComplex W) (n : ℤ) : BorelMoore Z DZ n →ₗ[ℚ] BorelMoore W DW n :=

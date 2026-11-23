@@ -259,4 +259,3 @@ def homToInjectiveSingleLinearEquiv (R : Type*) [Ring R] [Linear R C]
 end DerivedCategory
 
 end MathlibExt.HomologicalAlgebra.InjectiveSingleHom
-
