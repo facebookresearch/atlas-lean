@@ -2,26 +2,34 @@
 
 Let $S$ be a scheme and $A$, $B$ [abelian schemes](abelian-scheme.md) over $S$.
 
-1. Every homomorphism $f \colon A \to B$ is proper and of finite presentation, and it is flat if it is
-   surjective. If $f$ is fibrewise an isogeny, that is, if its restriction to every fibre is finite and
-   surjective, then its kernel $G = f^{-1}(0_B)$ is a finite flat group scheme over $S$ and the degree
-   of $f$, the rank of $f_* \mathcal{O}_A$, is locally constant on $S$.
-2. If $A$ has relative dimension $g$ and $n \ge 1$, multiplication by $n$, $n_A \colon A \to A$, is
-   flat, surjective and finite, and its kernel $A[n]$ is a finite flat group scheme over $S$ of order
-   $n^{2g}$. Moreover $n_A$, and hence $A[n]$, is étale if and only if $n$ is not divisible by the
-   characteristic of any residue field of $S$.
-3. In particular, if $S$ is the spectrum of a separably closed field $k$ and $n$ is not divisible by the
-   characteristic of $k$, then $A(k)$ has exactly $n^{2g}$ points of order dividing $n$.
+1. Every homomorphism $f \colon A \to B$ is proper and of finite presentation, and it is flat if it
+   is surjective. If $f$ is fibrewise an isogeny, that is, if its restriction to every fibre is
+   finite and surjective, then its kernel $G = f^{-1}(0_B)$ is a finite flat group scheme over $S$
+   and the degree of $f$, the rank of $f_* \mathcal{O}_A$, is locally constant on $S$.
+2. Let $g$ be the relative dimension of $A$, a locally constant function on $S$, and $n \ge 1$.
+   Multiplication by $n$, $n_A \colon A \to A$, is flat, surjective and finite, and its kernel
+   $A[n]$ is a finite locally free group scheme over $S$ of rank $n^{2g}$. Moreover $n_A$, and hence
+   $A[n]$, is étale if and only if $g(s) = 0$ at every point $s$ of $S$ whose residue characteristic
+   divides $n$; when $g$ is a positive constant, this says that $n$ is not divisible by the
+   characteristic of any residue field of $S$. (On the zero-dimensional abelian scheme $A = S$ over
+   $\operatorname{Spec} \mathbb{F}_p$, $p_A$ is the identity, which is étale.)
+3. In particular, if $S$ is the spectrum of a separably closed field $k$ and $n$ is not divisible by
+   the characteristic of $k$, then $A[n]$ is a finite étale group scheme, and $A(k)$ has exactly
+   $n^{2g}$ points of order dividing $n$.
 
-For 1, a surjective homomorphism of group schemes from a flat to a smooth group scheme is flat on the
-fibres, hence flat; the kernel is the inverse image of the zero section, closed because $B$ is
-separated, so proper over $S$, and it is quasi-finite when $f$ is fibrewise an isogeny, hence finite;
-being finite and flat, it has locally constant rank. For 2, $n_A$ is flat because $A$ is flat over $S$
-and $n_A$ is flat on every fibre, by the fibrewise criterion of flatness; it is proper with finite
-fibres, hence finite; and on a fibre over a field it is an isogeny of degree $n^{2g}$, étale exactly when
-the characteristic does not divide $n$ (Milne's Theorem I.7.2, proved with a symmetric very ample line
-bundle $L$, for which $n_A^* L \cong L^{n^2}$, and the equality of degrees of a very ample divisor and
-its pull-back). Then 3 follows, the points of $A[n]$ over $k$ being distinct and $k$-rational.
+For 1, a surjective homomorphism of group schemes from a flat to a smooth group scheme is flat on
+the fibres, hence flat; the kernel is the inverse image of the zero section, closed because $B$ is
+separated, so proper over $S$, and it is quasi-finite when $f$ is fibrewise an isogeny, hence
+finite; being finite and flat, it has locally constant rank. For 2, $n_A$ is flat because $A$ is
+flat over $S$ and $n_A$ is flat on every fibre, by the fibrewise criterion of flatness; it is proper
+with finite fibres, hence finite; and on a fibre over a field it is an isogeny of degree $n^{2g}$
+(Milne's Theorem I.7.2, proved with a symmetric very ample line bundle $L$, for which $n_A^* L \cong
+L^{n^2}$, and the equality of degrees of a very ample divisor and its pull-back). It is étale on a
+fibre $A_s$ exactly when its differential, multiplication by $n$ on the tangent space
+$\operatorname{Lie}(A_s)$ of dimension $g(s)$, is an isomorphism: when $n$ is invertible in $k(s)$
+or $g(s) = 0$. For 3, a finite étale group scheme over a separably closed field is the constant
+group scheme of its $k$-points, so the rank $n^{2g}$ of $A[n]$ is the number of points of order
+dividing $n$; the finite flat statement alone counts the rank, not geometric points.
 
 ## Depends on
 
@@ -47,8 +55,9 @@ its pull-back). Then 3 follows, the points of $A[n]$ over $k$ being distinct and
   proof and Remark 7.3, pp. 32–34.
 - C.-L. Chai and F. Oort, "Moduli of abelian varieties and p-divisible groups: density of Hecke
   orbits, and a conjecture of Grothendieck", lecture notes, arXiv:math/0701479 (version 1): (10.12)
-  (an isogeny is a finite surjective homomorphism, with kernel finite and flat by Mumford's *Geometric
-  Invariant Theory*, Lemma 6.12).
+  (an isogeny is a finite surjective homomorphism, with kernel finite and flat by Mumford's
+  *Geometric Invariant Theory*, Lemma 6.12).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) states 3 for abelian varieties over an algebraically closed field,
-  counting the $n$-torsion points, as `GlobalTheory.Published.AbMulNSt`.
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
+  states 3 for abelian varieties over an algebraically closed field, counting the $n$-torsion
+  points, as `GlobalTheory.Published.AbMulNSt`.

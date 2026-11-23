@@ -3,7 +3,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/abelian-varieties-are-projective.md"}], "id": "af_33b4d50eb8b07f926bdf6972"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/de-rham-cohomology-of-abelian-schemes.md"}], "id": "af_139ac0aac580970287f78119", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/deformations-of-abelian-schemes.md"}], "id": "af_631a3be2583532b0a87e4e6f", "extensions": {"org.autoform": {"not_ready": true}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/dual-abelian-scheme.md"}], "id": "af_90bf25de95174249450aa2c4"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/dual-abelian-scheme.md"}], "id": "af_90bf25de95174249450aa2c4", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md"}], "id": "af_334c375c99e0f4a080b3b09d"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/good-hermitian-metrics-and-chern-numbers.md"}], "id": "af_30b82a7dc4301c35f5c3923c", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/good-reduction-of-cm-abelian-varieties.md"}], "id": "af_c9d7b326521e2af2adad6c91", "extensions": {"org.autoform": {"not_ready": true}}}
@@ -22,7 +22,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/representability-of-picard-functors.md"}], "id": "af_114ebfaf0868992927bbe3ee", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/rigidity-lemma.md"}], "id": "af_79c1031558a731d2870a516d", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/semistable-reduction-theorem.md"}], "id": "af_1397ed8df396aa7f5e038d2a"}
-{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/serre-tate-theorem.md"}], "id": "af_966ef4a2cdce2428de61225a"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/serre-tate-theorem.md"}], "id": "af_966ef4a2cdce2428de61225a", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/theorem-of-the-cube.md"}], "id": "af_61c8ad103b51788590a8b056", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/toroidal-compactifications-of-unitary-shimura-varieties.md"}], "id": "af_16bd9d0fa59bceab11716974", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/abelian-varieties/zarhin-trick-for-abelian-schemes.md"}], "id": "af_4b04a6f8a1c3b4fe83403f14", "extensions": {"org.autoform": {"not_ready": true}}}
