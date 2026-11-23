@@ -12,14 +12,22 @@ public import MathlibExt.AlgebraicGeometry.StableEnvelopeModels
 public import MathlibExt.AlgebraicGeometry.TorusSupportedCorrespondenceModels
 
 /-!
-# The source-normalized cohomological stable-envelope theorem
+# The cohomological stable-envelope theorem, relative to an orientation datum
 
 All requests retain the source smooth symplectic quasiprojective
 geometry, proper map to an affine variety and native equivariant
 formality edge. Chambers and square-root polarizations remain chosen
-parameters. The theorem requests existence and uniqueness of the
-actual cohomology map with native support, signed negative Euler and
-the strict quotient-class A-degree condition.
+parameters. The geometry provider chooses the coefficient system and its
+one orientation datum, which orients every Euler class; existence is not
+requested for an arbitrary table of orientations. The theorem requests
+existence and uniqueness of the actual cohomology map with native
+support, signed negative Euler class relative to that datum, and the
+strict quotient-class A-degree condition. When the datum is the complex
+orientation this is Maulik--Okounkov's stable envelope. For another datum
+the Euler classes are locally constant unit multiples of the usual ones
+and the degree filtration is unchanged, so the requested map is
+Maulik--Okounkov's precomposed with multiplication by those units on the
+source components.
 Reference: Maulik--Okounkov 1211.1287v3, Sections3.1--3.3 and Theorem3.3.4.
 -/
 

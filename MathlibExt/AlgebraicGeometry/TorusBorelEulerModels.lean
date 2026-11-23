@@ -50,6 +50,22 @@ def cohomologyCast {Z : TopCat.{0}} {i j : ℤ} (h : i=j) :
   cases h
   exact LinearMap.id
 
+/-- The degree cast is composition with the identity identification of the shifted units. -/
+theorem cohomologyCast_eq {Z : TopCat.{0}} {i j : ℤ} (h : i = j) (x : Cohomology ℂ Z i) :
+    cohomologyCast h x = x ≫ eqToHom (by rw [h]) := by
+  subst h
+  simp [cohomologyCast]
+
+/-- The purity identification sends the fundamental class to the unit class (in degree `2d - 2d`). -/
+theorem purityHomologyEquiv_fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex ℂ Z)
+    (d : ℕ) (e : D.obj ≅ (coefficientUnit ℂ Z)⟦(2*d : ℤ)⟧) :
+    purityHomologyEquiv ℂ Z D d e (2*d) (fundamentalClass ℂ Z D d e) =
+      cohomologyCast (by omega) (unitClass ℂ Z) := by
+  rw [cohomologyCast_eq]
+  simp only [purityHomologyEquiv, fundamentalClass, unitClass, LinearEquiv.coe_mk,
+    Iso.trans_hom, Functor.mapIso_hom, Iso.app_hom, Iso.symm_hom, Category.assoc]
+  simp [shiftFunctorAdd', eqToHom_app]
+
 /-- Orientation data: a dualizing representation with smooth purity for every smooth complex
 variety, compatible with isomorphisms (the actual compact pullback along an isomorphism carries
 one top trace to the other). Fundamental classes and Poincaré duality, hence the Euler classes
@@ -122,6 +138,28 @@ that zero-section class. -/
 def ZeroEulerGeometry.euler (G : ZeroEulerGeometry O X E r) : CoefficientBettiModels.Cohomology ℂ (space X.scheme) (2*r) :=
   (LinearEquiv.ofBijective (cohomologyPullback ℂ (spaceMap G.bundle.projection) (2*r))
     (G.homotopy (2*r))).symm G.zeroClass
+
+/-- In rank zero, when the zero section is an isomorphism (as for the zero bundle, whose total
+space represents the sections of the zero module), the Euler class is the unit class for every
+orientation datum. -/
+theorem ZeroEulerGeometry.euler_eq_unitClass {O : OrientationData} {X : SchemeData}
+    {E : X.scheme.left.Modules} (G : ZeroEulerGeometry O X E 0)
+    [IsIso (GlobalZeroSectionRecipe.zeroSection G.bundle)] :
+    G.euler = unitClass ℂ (space X.scheme) := by
+  haveI : SmoothOfRelativeDimension G.dimension G.bundle.total.hom := G.totalSmooth
+  have hpush := borelMoorePushforward_fundamentalClass ℂ G.zeroPullback
+    (O.duality X.scheme G.dimension) (O.duality G.bundle.total G.dimension) G.dimension
+    (O.purity X.scheme G.dimension) (O.purity G.bundle.total G.dimension)
+    (O.isomorphism (GlobalZeroSectionRecipe.zeroSection G.bundle) G.dimension G.zeroPullback)
+  have hzero : G.zeroClass = cohomologyPullback ℂ (spaceMap G.bundle.projection) (2*0)
+      (unitClass ℂ (space X.scheme)) := by
+    simp only [ZeroEulerGeometry.zeroClass]
+    erw [hpush, purityHomologyEquiv_fundamentalClass]
+    rw [cohomologyCast_eq, cohomologyCast_eq, Category.assoc, eqToHom_trans]
+    erw [cohomologyPullback_unitClass]
+    simp
+  simp only [ZeroEulerGeometry.euler, hzero]
+  exact (LinearEquiv.ofBijective _ _).symm_apply_apply _
 
 end ZeroEuler
 

@@ -220,4 +220,53 @@ def supportedTrace {R X Z : TopCat.{0}} (p : R ⟶ X) (q : R ⟶ Z)
     borelMoorePushforward k P DR DX (m-n) ∘ₗ
       cap k R DR n m c ∘ₗ CoefficientBettiModels.cohomologyPullback k q n
 
+/-- A shift identity behind the fundamental class: shifting back the purity-defined class
+recovers the inverse purity. -/
+theorem shift_fundamentalClass_aux {C : Type*} [Category C] [HasShift C ℤ] (U V : C) (n : ℤ)
+    (e : V ≅ U⟦n⟧) :
+    ((shiftFunctorZero C ℤ).inv.app U ≫
+        (shiftFunctorAdd' C n (-n) 0 (add_neg_cancel n)).hom.app U ≫ e.inv⟦-n⟧')⟦n⟧' ≫
+      (shiftFunctorCompIsoId C (-n) n (neg_add_cancel n)).hom.app V = e.inv := by
+  have h1 : (shiftFunctorZero C ℤ).inv.app U ≫
+      (shiftFunctorAdd' C n (-n) 0 (add_neg_cancel n)).hom.app U =
+      (shiftFunctorCompIsoId C n (-n) (add_neg_cancel n)).inv.app U := by
+    simp [shiftFunctorCompIsoId]
+  have h2 := (shiftFunctorCompIsoId C (-n) n (neg_add_cancel n)).hom.naturality e.inv
+  simp only [Functor.comp_map, Functor.id_map] at h2
+  rw [← Category.assoc, Functor.map_comp, h1, shift_shiftFunctorCompIsoId_inv_app,
+    Category.assoc, h2, Iso.inv_hom_id_app_assoc]
+
+/-- The shift adjoint of the fundamental class is the inverse purity. -/
+theorem bmAdjoint_fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
+    (e : D.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧) :
+    bmAdjoint k Z D (2*d) (fundamentalClass k Z D d e) =
+      (DerivedCategory.Plus.ι.commShiftIso (2*d : ℤ)).hom.app (unitPlus k Z) ≫ e.inv := by
+  simp only [bmAdjoint, fundamentalClass, LinearMap.coe_mk, AddHom.coe_mk]
+  congr 1
+  exact shift_fundamentalClass_aux _ _ _ e
+
+/-- The fundamental class corresponds, under the dualizing representation, to the top trace
+induced by the same purity. -/
+theorem bmDualHomEquiv_fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
+    (e : D.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧) :
+    bmDualHomEquiv k Z D (2*d) (fundamentalClass k Z D d e) = topTrace k Z D d e := by
+  show (D.representation.app (Opposite.op ((unitPlus k Z)⟦(2*d : ℤ)⟧))).toLinearEquiv
+    (bmAdjoint k Z D (2*d) (fundamentalClass k Z D d e)) = _
+  rw [bmAdjoint_fundamentalClass]
+  rfl
+
+/-- Proper pushforward carries fundamental classes to fundamental classes when the actual compact
+pullback carries the one top trace to the other. -/
+theorem borelMoorePushforward_fundamentalClass {Z W : TopCat.{0}} {f : Z ⟶ W}
+    (P : ProperPullback k f) (DZ : DualizingComplex k Z) (DW : DualizingComplex k W) (d : ℕ)
+    (eZ : DZ.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧)
+    (eW : DW.obj ≅ (coefficientUnit k W)⟦(2*d : ℤ)⟧)
+    (h : compactPullback k P (2*d) ≫ topTrace k Z DZ d eZ = topTrace k W DW d eW) :
+    borelMoorePushforward k P DZ DW (2*d) (fundamentalClass k Z DZ d eZ) =
+      fundamentalClass k W DW d eW := by
+  apply (bmDualHomEquiv k W DW (2*d)).injective
+  simp only [borelMoorePushforward, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
+    LinearEquiv.apply_symm_apply, bmDualHomEquiv_fundamentalClass]
+  exact h
+
 end MathlibExt.AlgebraicGeometry.CoefficientProperDualityModels

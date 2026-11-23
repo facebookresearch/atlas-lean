@@ -116,4 +116,15 @@ def cohomologyPullback {Z W : TopCat.{0}} (f : Z ⟶ W) (n : ℤ) :
   map_add' a b := by simp [Functor.map_add, Preadditive.comp_add, Preadditive.add_comp]
   map_smul' r a := by simp [Functor.map_smul, Linear.comp_smul, Linear.smul_comp]
 
+/-- Pullback preserves the unit class. -/
+theorem cohomologyPullback_unitClass {Z W : TopCat.{0}} (f : Z ⟶ W) :
+    cohomologyPullback k f 0 (unitClass k W) = unitClass k Z := by
+  simp only [cohomologyPullback, unitClass, LinearMap.coe_mk, AddHom.coe_mk]
+  rw [Functor.commShiftIso_zero]
+  simp [Functor.CommShift.isoZero]
+  have hn := (shiftFunctorZero (CoefficientDerived k Z) ℤ).inv.naturality
+    (unitInverseImageIso k f).hom
+  simp only [Functor.id_obj, Functor.id_map] at hn
+  rw [← hn, Iso.inv_hom_id_assoc]
+
 end MathlibExt.AlgebraicGeometry.CoefficientBettiModels

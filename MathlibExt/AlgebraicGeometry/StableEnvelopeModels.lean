@@ -10,13 +10,19 @@ module
 public import MathlibExt.AlgebraicGeometry.StableEnvelopeBorelModels
 
 /-!
-# The cohomological stable-envelope map and its source normalization
+# The cohomological stable-envelope map, normalized relative to an orientation
 
 The map has the actual native Borel cohomology of the full fixed
 scheme as its source. Component insertion in that cohomology is the
 inverse of the computed native component-restriction map. Support
 uses the actual closure-generated full attracting locus. The signed
 Euler and partial-degree operators are the previously computed ones.
+The Euler classes are relative to the orientation datum of the
+geometry's coefficient system: when it is the complex orientation, this
+is Maulik--Okounkov's normalization; for another datum each component's
+signed Euler class is a locally constant unit multiple of the usual one,
+and the map is Maulik--Okounkov's precomposed with multiplication by
+those units on the source components.
 
 The strict A-degree clause tests only quotient-torus classes gamma.
 Linearity over all actual H_T(pt) coefficients supplies the extension.
@@ -129,6 +135,8 @@ def restrictToComponent (j : Fin Z.count) : AmbientH MA MT S X Source →ₗ[ℂ
     (N.normal j) (N.componentRoots j) (Ch j).chamber (Ch j).cocharacter D.geometry.coefficients
     (D.geometry.component j)
 
+/-- Cup with the signed Euler class of the negative normal bundle, relative to the coefficient
+system's orientation datum. -/
 def normalizedEuler (j : Fin Z.count) : Module.End ℂ
     (ComponentH MA MT S P X Source F Z N C L Ch D.geometry j) :=
   signedEulerCup MA MT S P X.scheme D.geometry.tangent Source.analytic (Z.component j).data
