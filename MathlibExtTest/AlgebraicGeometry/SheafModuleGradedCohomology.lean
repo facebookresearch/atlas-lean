@@ -80,4 +80,3 @@ example :
   simp [Adic.underlyingUnitClass]
 
 end UnitComparison
-

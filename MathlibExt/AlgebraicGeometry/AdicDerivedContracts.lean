@@ -32,13 +32,13 @@ bounded-below derived category. Derived inverse image, direct image and global s
 Mathlib's right derived functors (`Functor.rightDerivedFunctorPlus`). Inverse image is exact, so
 its derived unit is an isomorphism (`pullbackDerivedNormalization`).
 
-The classes `DerivedAdjunction`, `DerivedPullbackPasting` and `GlobalSectionsPushforward` record
-the adjunction between derived inverse and direct image, the composition of derived inverse
-images and the comparison of global sections with direct image, each normalized by the
-corresponding underived map on every complex; `DerivedFunctorTheory` bundles them, and
-`CoefficientTheory` asks that the inverse image of the continuous coefficient sheaf be the
-continuous coefficient sheaf. No instances of these classes are provided here: they are
-hypotheses of the constructions that use them.
+The classes `DerivedPullbackPasting`, `DerivedAdjunction` and `GlobalSectionsPushforward` specify
+the composition of derived inverse images, the adjunction between derived inverse and direct
+image, and the comparison of derived global sections with derived direct image, each normalized by
+the corresponding underived map on every complex. The first always holds
+(`derivedPullbackPasting`); the other two are hypotheses of the constructions that use them, and
+their constructions are tracked as `def_wanted` in
+`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted`.
 
 For an open immersion `j` and a closed immersion `i` into the same scheme, the nearby object is
 `i^* Rj_*` of the continuous coefficients, specialization is the map from the coefficients
@@ -75,11 +75,8 @@ abbrev Cochains (X : Scheme) := CochainComplex.Plus (ModuleSheaf R X)
 abbrev Derived (X : Scheme) := DerivedCategory.Plus (ModuleSheaf R X)
 
 /-- Global sections: sections over the terminal object of the small pro-étale site. -/
-def sections (X : Scheme) : ModuleSheaf R X ⥤ ModuleCat.{1} R where
-  obj F := F.obj.obj (op (⊤_ X.ProEt))
-  map a := a.hom.app (op (⊤_ X.ProEt))
-  map_id _F := rfl
-  map_comp _a _b := rfl
+abbrev sections (X : Scheme) : ModuleSheaf R X ⥤ ModuleCat.{1} R :=
+  (sheafSections (ProEt.topology X) (ModuleCat.{1} R)).obj (op (⊤_ X.ProEt))
 
 instance sections_additive (X : Scheme) : (sections R X).Additive where
   map_add := rfl
@@ -182,7 +179,8 @@ instance pullbackDerivedNormalization {Y X : Scheme} (f : Y ⟶ X) :
     infer_instance
 
 /-- An adjunction between derived inverse and direct image along `f` whose unit on every complex
-is the expected one (`normalizedDerivedUnit`). -/
+is the expected one (`normalizedDerivedUnit`). Its construction is tracked as `def_wanted`
+(`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted.derivedAdjunction`). -/
 class DerivedAdjunction {Y X : Scheme} (f : Y ⟶ X) where
   adjunction : derivedPullback R f ⊣ derivedPushforward R f
   unit_normalization : ∀ K : Cochains R X,
@@ -266,7 +264,7 @@ def compositePullbackUnit {X Y Z : Scheme} (f : X ⟶ Y) (g : Y ⟶ Z)
 
 /-- An isomorphism between the composite of derived inverse images along `g` and `f` and the
 derived inverse image along `f ≫ g`, compatible on every complex with the composition of the
-underived inverse images. -/
+underived inverse images. It always exists (`derivedPullbackPasting`). -/
 class DerivedPullbackPasting {X Y Z : Scheme} (f : X ⟶ Y) (g : Y ⟶ Z) where
   comparison : derivedPullback R g ⋙ derivedPullback R f ≅
     derivedPullback R (f ≫ g)
@@ -275,6 +273,48 @@ class DerivedPullbackPasting {X Y Z : Scheme} (f : X ⟶ Y) (g : Y ⟶ Z) where
         comparison.hom.app (DerivedCategory.Plus.Q.obj K) =
       (DerivedCategory.Plus.Q.mapIso (cochainPullbackComp R f g K)).hom ≫
         (pullback R (f ≫ g)).rightDerivedFunctorPlusUnit.app K
+
+/-- Composition of inverse images on bounded-below complexes, as a natural isomorphism. -/
+def cochainPullbackCompIso {X Y Z : Scheme} (f : X ⟶ Y) (g : Y ⟶ Z) :
+    (pullback R g).mapCochainComplexPlus ⋙ (pullback R f).mapCochainComplexPlus ≅
+      (pullback R (f ≫ g)).mapCochainComplexPlus :=
+  NatIso.ofComponents (cochainPullbackComp R f g) (fun {K L} φ => by
+    apply ObjectProperty.hom_ext
+    exact (Functor.mapHomologicalComplexCompIso (pullbackComp R f g) (.up ℤ)).hom.naturality
+      φ.hom)
+
+/-- Derived inverse images compose (Stacks, Tag 0D6D). Inverse images are exact, so their derived
+units are isomorphisms and the comparison descends through the localization from the composition
+of inverse images on complexes. -/
+noncomputable instance derivedPullbackPasting {X Y Z : Scheme} (f : X ⟶ Y) (g : Y ⟶ Z) :
+    DerivedPullbackPasting R f g := by
+  have : IsIso (pullback R f).rightDerivedFunctorPlusUnit := NatIso.isIso_of_isIso_app _
+  have : IsIso (pullback R g).rightDerivedFunctorPlusUnit := NatIso.isIso_of_isIso_app _
+  have : IsIso (pullback R (f ≫ g)).rightDerivedFunctorPlusUnit := NatIso.isIso_of_isIso_app _
+  let uf := asIso (pullback R f).rightDerivedFunctorPlusUnit
+  let ug := asIso (pullback R g).rightDerivedFunctorPlusUnit
+  let ufg := asIso (pullback R (f ≫ g)).rightDerivedFunctorPlusUnit
+  let e : DerivedCategory.Plus.Q ⋙ (derivedPullback R g ⋙ derivedPullback R f) ≅
+      DerivedCategory.Plus.Q ⋙ derivedPullback R (f ≫ g) :=
+    (Functor.associator _ _ _).symm ≪≫ Functor.isoWhiskerRight ug.symm _ ≪≫
+      Functor.associator _ _ _ ≪≫ Functor.isoWhiskerLeft _ uf.symm ≪≫
+      (Functor.associator _ _ _).symm ≪≫
+      Functor.isoWhiskerRight (cochainPullbackCompIso R f g) _ ≪≫ ufg
+  let W := Localization.whiskeringLeftFunctor' DerivedCategory.Plus.Q
+    (CochainComplex.Plus.quasiIso (ModuleSheaf R Z)) (Derived R X)
+  exact
+    { comparison := W.preimageIso e
+      normalized := fun K => by
+        have h : (W.preimageIso e).hom.app (DerivedCategory.Plus.Q.obj K) = e.hom.app K :=
+          NatTrans.congr_app (W.map_preimage e.hom) K
+        rw [h]
+        simp only [e, uf, ug, ufg, compositePullbackUnit, Iso.trans_hom, Iso.symm_hom,
+          NatTrans.comp_app, Functor.isoWhiskerRight_hom, Functor.isoWhiskerLeft_hom,
+          Functor.whiskerRight_app, Functor.whiskerLeft_app, Functor.associator_hom_app,
+          Functor.associator_inv_app, asIso_hom, asIso_inv, Category.id_comp, Category.assoc,
+          Functor.mapIso_hom]
+        rw [← Functor.map_comp_assoc]
+        simp [cochainPullbackCompIso, derivedPullback] }
 
 /-- The comparison of derived inverse images around a commutative square of schemes. -/
 def pullbackSquare {X' X Y' Y : Scheme}
@@ -330,7 +370,9 @@ def cochainSectionsPushforward {Y X : Scheme} (f : Y ⟶ X)
       ℤ)).app K.obj)
 
 /-- An isomorphism between derived global sections of a derived direct image and derived global
-sections, compatible on every complex with the underived comparison `sectionsPushforward`. -/
+sections, compatible on every complex with the underived comparison `sectionsPushforward`. Its
+construction is tracked as `def_wanted`
+(`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted.globalSectionsPushforward`). -/
 class GlobalSectionsPushforward {Y X : Scheme} (f : Y ⟶ X) where
   comparison : derivedPushforward R f ⋙ derivedSections R X ≅
     derivedSections R Y
@@ -358,23 +400,19 @@ def nearbyGlobalComparison {A Y Z : Scheme} (j : Y ⟶ A) (i : Z ⟶ A)
         ((derivedPushforward R j).obj K)) ≫
     (GlobalSectionsPushforward.comparison (R := R) (f := i)).hom.app _
 
-/-- The classes `PullbackDerivedNormalization`, `DerivedAdjunction`, `DerivedPullbackPasting` and
-`GlobalSectionsPushforward` for all morphisms of schemes. -/
+/-- The classes `DerivedAdjunction` and `GlobalSectionsPushforward` for all morphisms of schemes,
+for statements that need them for many morphisms. (`PullbackDerivedNormalization` and
+`DerivedPullbackPasting` always hold.) Their constructions are tracked as `def_wanted` in
+`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted`. -/
 class DerivedFunctorTheory where
-  [pullbackNormalization : ∀ {Y X : Scheme.{0}} (f : Y ⟶ X),
-    PullbackDerivedNormalization R f]
   [adjunctions : ∀ {Y X : Scheme.{0}} (f : Y ⟶ X), DerivedAdjunction R f]
-  [pasting : ∀ {X Y Z : Scheme.{0}} (f : X ⟶ Y) (g : Y ⟶ Z),
-    DerivedPullbackPasting R f g]
   [sectionsComparison : ∀ {Y X : Scheme.{0}} (f : Y ⟶ X),
     GlobalSectionsPushforward R f]
 
 attribute [instance_reducible] DerivedFunctorTheory.adjunctions
-  DerivedFunctorTheory.pasting DerivedFunctorTheory.sectionsComparison
-
-attribute [instance] DerivedFunctorTheory.pullbackNormalization
-  DerivedFunctorTheory.adjunctions DerivedFunctorTheory.pasting
   DerivedFunctorTheory.sectionsComparison
+
+attribute [instance] DerivedFunctorTheory.adjunctions DerivedFunctorTheory.sectionsComparison
 
 variable (M : Type 1) [TopologicalSpace M] [AddCommGroup M] [Module R M]
   [IsTopologicalAddGroup M] [ContinuousConstSMul R M]
@@ -412,19 +450,14 @@ def specialization {A Y Z : Scheme} (j : Y ⟶ A) (i : Z ⟶ A)
     (derivedPullback R i).map
       (pushforwardFromSheaf R j (coefficientPushforward R M j))
 
-/-- The coefficient map `f⁻¹ C(-, M) ⟶ C(-, M)` is an isomorphism for every morphism of schemes. -/
-class CoefficientTheory : Prop where
-  [pullback_isIso : ∀ {Y X : Scheme.{0}} (f : Y ⟶ X),
-    IsIso (coefficientPullback R M f)]
-
-attribute [instance] CoefficientTheory.pullback_isIso
-
-/-- The monodromy action on the nearby object induced by compatible automorphisms `a` of `A`
-and `d` of `Y` fixing `Z`, through the base-change map. -/
+/-- The endomorphism of the nearby object induced, through the base-change map, by endomorphisms
+`a` of `A` and `d` of `Y` compatible with `j` and fixing `Z` (`i ≫ a = i`), when the coefficient
+map along `d` is an isomorphism. For automorphisms this is the action of one element; no action
+law is proved here. The nearby object is `i^* Rj_*` for the given diagram. -/
 def nearbyMonodromy {A Y Z : Scheme} (j : Y ⟶ A) (i : Z ⟶ A)
     (a : A ⟶ A) (d : Y ⟶ Y) (genericSquare : d ≫ j = j ≫ a)
     (specialSquare : i ≫ a = i)
-    [DerivedFunctorTheory R] [CoefficientTheory R M] :
+    [DerivedAdjunction R j] [IsIso (coefficientPullback R M d)] :
     End (nearbyObject R M j i) :=
   End.of
     (((DerivedPullbackPasting.comparison (R := R) (f := i) (g := a)) ≪≫

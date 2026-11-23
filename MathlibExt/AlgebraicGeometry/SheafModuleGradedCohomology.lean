@@ -190,4 +190,3 @@ def coefficientUnitClass [HasExt.{e} (CoefficientSheaf X E)] :
 end Adic
 
 end MathlibExt.AlgebraicGeometry.SheafModuleGradedCohomology
-

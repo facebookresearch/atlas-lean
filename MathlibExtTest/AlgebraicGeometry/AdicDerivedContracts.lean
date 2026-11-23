@@ -78,6 +78,20 @@ example {Y X : Scheme.{0}} (f : Y ⟶ X) (A : ModuleSheaf R X) :
 example {X Y Z : Scheme.{0}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     pullback R g ⋙ pullback R f ≅ pullback R (f ≫ g) := pullbackComp R f g
 
+/-- Derived inverse images compose, compatibly with the composition on complexes. -/
+example {X Y Z : Scheme.{0}} (f : X ⟶ Y) (g : Y ⟶ Z) (K : Cochains R Z) :
+    compositePullbackUnit R f g K ≫
+        (DerivedPullbackPasting.comparison (R := R) (f := f) (g := g)).hom.app
+          (DerivedCategory.Plus.Q.obj K) =
+      (DerivedCategory.Plus.Q.mapIso (cochainPullbackComp R f g K)).hom ≫
+        (pullback R (f ≫ g)).rightDerivedFunctorPlusUnit.app K :=
+  DerivedPullbackPasting.normalized K
+
+/-- Global sections are Mathlib's evaluation at the terminal object. -/
+example (X : Scheme.{0}) :
+    sections R X = (sheafSections (Scheme.ProEt.topology X) (ModuleCat.{1} R)).obj
+      (op (⊤_ X.ProEt)) := rfl
+
 example {Y X : Scheme.{0}} (f : Y ⟶ X) :
     pushforward R f ⋙ sections R X ≅ sections R Y := sectionsPushforward R f
 
