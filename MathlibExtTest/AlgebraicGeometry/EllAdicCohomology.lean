@@ -29,10 +29,6 @@ universe u
 
 variable (ℓ : ℕ) [Fact ℓ.Prime] (X : Scheme.{u}) (n : ℕ)
 
-/-- The discrete topology on `ℤ/m`, as in `EllAdicReductionComparison`. -/
-local instance (m : ℕ) : TopologicalSpace (ZMod m) := ⊥
-local instance (m : ℕ) : DiscreteTopology (ZMod m) := ⟨rfl⟩
-
 example (a : ℤ_[ℓ]) (x : X.EllAdicCohomology ℓ n) : a • x = cohomologyScalar ℓ X n a x := rfl
 
 example (x : X.EllAdicCohomology ℓ n) : (1 : ℤ_[ℓ]) • x = x := one_smul _ x
@@ -49,6 +45,9 @@ example {A B : Type} [TopologicalSpace A] [TopologicalSpace B] [AddCommGroup A] 
 
 /-- The canonical reduction maps are available for every prime. -/
 example : ReductionMaps ℓ := inferInstance
+
+/-- Reduction is continuous for Mathlib's discrete topology on `ℤ/ℓⁿ`. -/
+example (n : ℕ) : Continuous (PadicInt.toZModPow (p := ℓ) n) := continuous_toZModPow ℓ n
 
 example (r : ℕ) (x : ℤ_[ℓ]) :
     (canonicalReductionMaps ℓ).red r x = PadicInt.toZModPow (r + 1) x := rfl

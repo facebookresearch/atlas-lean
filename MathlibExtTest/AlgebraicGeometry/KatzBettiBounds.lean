@@ -20,7 +20,9 @@ noncomputable section
 
 namespace MathlibExtTest.AlgebraicGeometry.KatzBettiBounds
 
-open CategoryTheory _root_.AlgebraicGeometry
+open CategoryTheory CategoryTheory.Limits _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.ContinuousAdicCoefficients
+open MathlibExt.AlgebraicGeometry.ProEtaleCohomologyFunctoriality
 open MathlibExt.AlgebraicGeometry.ContinuousAdicCompactSupports
 open MathlibExt.AlgebraicGeometry.KatzBettiBounds
 
@@ -38,6 +40,19 @@ example : (affineVariety F).left = Spec (.of (affineCoordinateRing F)) := rfl
 /-- Katz's constant `6 · 2^r · (3 + r d)^(N + 1)`, e.g. for two equations of degree two in the
 plane. -/
 example : katzBound 2 2 2 = 6 * 4 * 7 ^ 3 := rfl
+
+/-- With empty boundary, the compact-support kernel leaves the coefficients unchanged; in
+particular it is not the zero functor. -/
+example {Y Z : Scheme.{u}} [IsEmpty Z] (i : Z ⟶ Y) (R : Type) [CommRing R]
+    (F : CoefficientSheaf Y R) : Nonempty ((moduleBoundaryKernel R i).obj F ≅ F) := by
+  let : HasLimits (ModuleCat.{u + 1} R) := ModuleCat.hasLimitsOfSize.{u + 1, u + 1, u + 1, 0}
+  have h : (pullbackAdjunction R i).unit = 0 := by
+    apply NatTrans.ext
+    funext G
+    have hz := (Sheaf.isTerminalOfEqTop (Scheme.ProEt.topology_eq_top_of_isEmpty Z)
+      ((pullback R i).obj G)).isZero
+    exact ((pushforward R i).map_isZero hz).eq_of_tgt _ _
+  exact ⟨(kernelIsoOfEq h ≪≫ kernelZeroIsoSource).app F⟩
 
 example (ell : ℕ) [Fact ell.Prime] {X : Over (Spec (.of k))} (c : ClosedCompactification X)
     (n s : ℕ) (x : integralCompactSupport ell c n) :

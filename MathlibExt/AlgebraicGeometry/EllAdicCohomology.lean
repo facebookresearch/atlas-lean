@@ -55,6 +55,11 @@ equals that coefficient-induced map on every element of the existing group.
 With this explicit parameter, `RationalCohomology` is the tensor product
 `ℚ_[ℓ] ⊗[ℤ_[ℓ]] X.EllAdicCohomology ℓ n`.
 
+This rationalization differs in general from the cohomology of the sheaf `C(-, ℚ_ℓ)`
+(`GeometricAdicGaloisOperators.AdicCohomology`): already in degree zero on infinitely many
+disjoint points, rationalized integral sections have uniformly bounded denominators, while
+`C(-, ℚ_ℓ)` has the section `(ℓ⁻ⁿ)ₙ`. A comparison needs finiteness hypotheses.
+
 ## References
 
 * B. Bhatt and P. Scholze, *The pro-étale topology for schemes* (2015),

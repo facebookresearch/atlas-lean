@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.EllAdicCohomology
+public import Mathlib.Topology.Instances.ZMod
 
 @[expose] public noncomputable section
 
@@ -34,9 +35,6 @@ open EllAdicCohomology
 universe u
 
 variable (ell : ℕ) [Fact ell.Prime]
-
-local instance finiteTopology (m : ℕ) : TopologicalSpace (ZMod m) := ⊥
-local instance finiteDiscrete (m : ℕ) : DiscreteTopology (ZMod m) := ⟨rfl⟩
 
 /-- The reduction maps `ℤ_ℓ → ℤ/ℓ^(r+1)` and `ℤ/ℓ^(r+2) → ℤ/ℓ^(r+1)` as continuous additive maps,
 determined by `red_eq` and `step_eq`. The instance is `canonicalReductionMaps`. -/

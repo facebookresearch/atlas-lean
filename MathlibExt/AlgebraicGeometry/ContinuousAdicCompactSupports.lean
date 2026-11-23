@@ -24,10 +24,12 @@ set_option backward.isDefEq.respectTransparency false
 For a scheme `X` over a field `k` with a compactification `c`: an open immersion `j` of `X` into a
 proper `k`-scheme `Y` whose complement is the image of a closed immersion `i : Z → Y`, the
 compact-support coefficient sheaf of a sheaf `F` on `Y` is the kernel of the unit
-`F → i_* i^* F` on the small pro-étale site. This is `j_! j^* F` when `0 → j_! j^* F → F →
-i_* i^* F → 0` is exact (Stacks 09AH for the étale site). Its cohomology is the compactly
-supported cohomology of `X` with coefficients in `F`. Taking kernels in the functor category makes
-the construction functorial in the coefficients.
+`F → i_* i^* F` on the small pro-étale site. This is `j_! j^* F`: for a quasi-compact open
+immersion `j`, the sequence `0 → j_! j^* F → F → i_* i^* F → 0` of sheaves on the pro-étale
+site is exact (Stacks 09AH), and `j` is quasi-compact here since `Y`, proper over a field, is
+noetherian. Its cohomology is the compactly supported cohomology of `X` with coefficients in
+`F`. Taking kernels in the functor category makes the construction functorial in the
+coefficients.
 
 For continuous coefficients `ℤ_ℓ` and `ℤ/ℓ^(r+1)`, the reductions induce maps of compactly
 supported cohomology, compatible with the transitions; this gives a map to the inverse limit.
@@ -115,9 +117,6 @@ def compactCoefficientMap {k : Type u} [Field k] {X : Over (Spec (.of k))}
     ((coefficientLift c.ambient.left).map (coefficientMap c.ambient.left f))
 
 variable (ell : ℕ) [Fact ell.Prime] [ReductionMaps ell]
-
-local instance finiteTopology (m : ℕ) : TopologicalSpace (ZMod m) := ⊥
-local instance finiteDiscrete (m : ℕ) : DiscreteTopology (ZMod m) := ⟨rfl⟩
 
 variable {k : Type u} [Field k] {X : Over (Spec (.of k))}
   (c : ClosedCompactification X) (n : ℕ)
