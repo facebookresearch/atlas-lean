@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.RingTheory.Binomial
 public import MathlibExt.NumberTheory.HigherOrderHarmonic
+public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
 
 /-!
 # Extensions of Wolstenholme's theorem by binomial coefficients
@@ -591,24 +592,6 @@ public theorem_wanted ringChoose_mul_prime_sub_congr_pow_seven (p k : ℕ) (n : 
           (N - K - 1) * (K - 1) * (2 * K ^ 2 - 2 * K * N + N ^ 2 - 5 * N + 12) / 360 * b 6 2 +
           (N - K - 1) * (N - K - 2) * (K - 1) * (K - 2) / 360 * b 6 3)
     X = 0 ∨ (C n 7 ≠ 0 ∧ 7 + padicValRat p (C n 7) ≤ padicValRat p X)
-
-/-- **$\binom{np}{mp}$ as a quotient of products.** Let $p$ be a prime and let $m$ and $n$ be
-natural numbers with $1 \le m \le n$. Then
-$$\binom{np}{mp} = \frac{\binom{n}{m} \prod_{j=0}^{m-1} \binom{(n-m+j+1)p-1}{p-1}}
-{\prod_{j=0}^{m-1} \binom{(j+1)p-1}{p-1}} = \frac{\prod_{j=0}^{m-1} \binom{(n-m+j+1)p}{p}}
-{\prod_{j=0}^{m-1} \binom{(j+1)p}{p}}.$$
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 6
-(`integers-2026-A32-lem-6`). -/
-public theorem_wanted choose_mul_prime_eq_prod_div_prod (p m n : ℕ) (hp : p.Prime) (hm : 1 ≤ m)
-    (hmn : m ≤ n) :
-    ((n * p).choose (m * p) : ℚ) =
-        (n.choose m : ℚ) * (∏ j ∈ Finset.range m, (((n - m + j + 1) * p - 1).choose (p - 1) : ℚ)) /
-          ∏ j ∈ Finset.range m, (((j + 1) * p - 1).choose (p - 1) : ℚ) ∧
-      ((n * p).choose (m * p) : ℚ) =
-        (∏ j ∈ Finset.range m, (((n - m + j + 1) * p).choose p : ℚ)) /
-          ∏ j ∈ Finset.range m, (((j + 1) * p).choose p : ℚ)
 
 end
 
