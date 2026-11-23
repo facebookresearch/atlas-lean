@@ -32,6 +32,10 @@ noncomputable example {A : Over (genericBase p)} (N : NeronModel p A) (Y : Over 
 -- The generic-fibre functor is the general one.
 example : genericFunctor p = SemistableModels.genericFunctor (PadicInt p) (Padic p) := rfl
 
+-- Integral points are the general ones.
+example (N : Over (trait p)) : IntegralPoint p N = NeronModels.IntegralPoint (PadicInt p) N :=
+  rfl
+
 -- Reduction sends an integral point to a point of the special fibre over `𝔽_p`.
 example (N : Over (trait p)) (q : IntegralPoint p N) :
     (reducePoint p N q).1 ≫ ((specialFunctor p).obj N).hom = 𝟙 _ :=

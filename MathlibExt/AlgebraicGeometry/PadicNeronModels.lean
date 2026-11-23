@@ -19,7 +19,7 @@ A Néron model over `ℤ_p` is the general finite-type Néron model of
 `NeronModels` for `ℤ_p ⊂ ℚ_p`, with its Hom equivalence and extension maps.
 Only the identification of the residue field with `ZMod p`, used to reduce
 integral points to `𝔽_p`-points, is specific to this file. Existence of
-models of abelian varieties remains a Wanted request.
+models of abelian varieties is the general request of `NeronModelsWanted`.
 
 Reference: Bosch–Lütkebohmert–Raynaud, *Néron Models*, §§1.1–1.3.
 https://doi.org/10.1007/978-3-642-51438-8
@@ -65,8 +65,7 @@ abbrev NeronModel (A : Over (genericBase p)) :=
   NeronModels.FiniteTypeNeronModel (PadicInt p) (Padic p) A
 
 /-- Integral scheme-valued points over `ℤ_p`. -/
-abbrev IntegralPoint (N : Over (trait p)) :=
-  {q : trait p ⟶ N.left // q ≫ N.hom = 𝟙 _}
+abbrev IntegralPoint (N : Over (trait p)) := NeronModels.IntegralPoint (PadicInt p) N
 
 /-- Points of the actual special fibre over the residue field. -/
 abbrev SpecialPoint (N : Over (trait p)) :=

@@ -96,4 +96,25 @@ example (G : Over (trait R)) [GrpObj G] [IsCommMonObj G] :
 
 end Models
 
+section BaseChange
+
+variable (R K R' K' : Type) [CommRing R] [Field K] [Algebra R K] [IsFractionRing R K]
+  [CommRing R'] [Field K'] [Algebra R' K'] [IsFractionRing R' K']
+  (φ : trait R' ⟶ trait R) (ψ : Spec (.of K') ⟶ Spec (.of K))
+  (sq : ψ ≫ genericInclusion R K = genericInclusion R' K' ≫ φ)
+  {A : Over (Spec (.of K))}
+
+-- An integral map whose generic restriction is the base-change comparison is the canonical
+-- base-change map.
+example (M : NeronModel R K A) (N : NeronModel R' K' ((Over.pullback ψ).obj A))
+    (q : (Over.pullback φ).obj M.model ⟶ N.model)
+    (hq : (genericFunctor R' K').map q ≫ N.genericIso.hom =
+      (genericBaseChangeIso R K R' K' φ ψ sq M.model).hom ≫
+        (Over.pullback ψ).map M.genericIso.hom) :
+    q = baseChangeMap R K R' K' φ ψ sq M N := by
+  apply (N.homEquiv _).injective
+  exact hq.trans (baseChangeMap_generic R K R' K' φ ψ sq M N).symm
+
+end BaseChange
+
 end MathlibExtTest.AlgebraicGeometry.NeronModels
