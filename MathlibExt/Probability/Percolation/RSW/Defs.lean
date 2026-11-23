@@ -343,6 +343,18 @@ theorem dualHorizontalCrossingEvent_antitone {a b c d : ℤ}
   exact ⟨hfg, le_antisymm (by simpa only [hclosed] using h (sharedPrimalEdge f g))
     (Bool.false_le _)⟩
 
+theorem dualHorizontalCrossingEvent_increasing {a b c d : ℤ}
+    {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : dualConfig ω ≤ dualConfig ω')
+    (hω : ω ∈ dualHorizontalCrossingEvent a b c d) :
+    ω' ∈ dualHorizontalCrossingEvent a b c d := by
+  apply dualHorizontalCrossingEvent_antitone _ hω
+  intro e
+  have he := h (crossEdge e)
+  change (!(ω (crossEdge.symm (crossEdge e)))) ≤
+    (!(ω' (crossEdge.symm (crossEdge e)))) at he
+  rw [Equiv.symm_apply_apply] at he
+  cases hωe : ω e <;> cases hω'e : ω' e <;> simp_all
+
 theorem dualVerticalCrossingEvent_increasing {a b c d : ℤ}
     {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : dualConfig ω ≤ dualConfig ω')
     (hω : ω ∈ dualVerticalCrossingEvent a b c d) :

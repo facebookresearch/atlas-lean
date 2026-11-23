@@ -114,6 +114,11 @@ example (ω : ConfigSpace (Sym2 (Site 2))) (h : ω ∈ dualHorizontalCrossingEve
     (fun _ => false : ConfigSpace (Sym2 (Site 2))) ∈ dualHorizontalCrossingEvent 0 1 0 0 :=
   dualHorizontalCrossingEvent_antitone (fun _ => Bool.false_le _) h
 
+example (ω ω' : ConfigSpace (Sym2 (Site 2))) (h : dualConfig ω ≤ dualConfig ω')
+    (hω : ω ∈ dualHorizontalCrossingEvent 0 1 0 0) :
+    ω' ∈ dualHorizontalCrossingEvent 0 1 0 0 :=
+  dualHorizontalCrossingEvent_increasing h hω
+
 -- Coincident sides permit a length-zero crossing even when all primal edges are open.
 example : (fun _ => true : ConfigSpace (Sym2 (Site 2))) ∈ dualHorizontalCrossingEvent 2 2 1 3 := by
   rw [mem_dualHorizontalCrossingEvent, dualHorizontalCrossing_iff]
