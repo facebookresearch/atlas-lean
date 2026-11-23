@@ -27,12 +27,16 @@ Lambert series `∑_{n ≥ 1}` are written as `∑' n : ℕ` over the shifted in
 sums and products converge on the disk, where the raw product equals the canonical
 `qPochhammerInf`. -/
 
-/-- Lambert series attached to Ramanujan's continued fraction of order sixteen: for `‖q‖ < 1`,
-`∑_{n ≥ 1} n (qⁿ - q⁷ⁿ - q⁹ⁿ + q¹⁵ⁿ)/(1 - q¹⁶ⁿ)
-  = q (q¹⁶; q¹⁶)²_∞ (q⁸; q⁸)²_∞ (q⁶, q¹⁰; q¹⁶)_∞ / (q, q⁷, q⁹, q¹⁵; q¹⁶)²_∞` (62) and
-`∑_{n ≥ 1} n (q³ⁿ - q⁵ⁿ - q¹¹ⁿ + q¹³ⁿ)/(1 - q¹⁶ⁿ)
-  = q³ (q¹⁶; q¹⁶)²_∞ (q⁸; q⁸)²_∞ (q², q¹⁴; q¹⁶)_∞ / (q³, q⁵, q¹¹, q¹³; q¹⁶)²_∞` (63).
-The source's hypothesis `|q| < 1` is `‖q‖ < 1`.
+/-- **Weighted Lambert series for the continued fractions of order sixteen.** Write
+$(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$,
+$(a_1, \dots, a_k; q)_\infty = (a_1; q)_\infty \cdots (a_k; q)_\infty$ and
+$f_k = (q^k; q^k)_\infty$. For every complex number $q$ with $|q| < 1$,
+$$\sum_{n \ge 1} n \frac{q^n - q^{7n} - q^{9n} + q^{15n}}{1 - q^{16n}} =
+\frac{q f_{16}^2 f_8^2 (q^6, q^{10}; q^{16})_\infty}{(q, q^7, q^9, q^{15}; q^{16})_\infty^2}$$
+and
+$$\sum_{n \ge 1} n \frac{q^{3n} - q^{5n} - q^{11n} + q^{13n}}{1 - q^{16n}} =
+\frac{q^3 f_{16}^2 f_8^2 (q^2, q^{14}; q^{16})_\infty}
+{(q^3, q^5, q^{11}, q^{13}; q^{16})_\infty^2}.$$
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
@@ -53,15 +57,18 @@ public theorem_wanted lambert_order_sixteen_weight_n (q : ℂ) (hq : ‖q‖ < 1
         (qPochhammerInfRaw (q ^ 3) (q ^ 16) * qPochhammerInfRaw (q ^ 5) (q ^ 16) *
             qPochhammerInfRaw (q ^ 11) (q ^ 16) * qPochhammerInfRaw (q ^ 13) (q ^ 16)) ^ 2
 
-/-- Lambert series twisted by the Legendre symbol `(n/3)`: for `‖q‖ < 1`,
-`∑_{n ≥ 1} (n/3) (qⁿ - q⁷ⁿ - q⁹ⁿ + q¹⁵ⁿ)/(1 - q¹⁶ⁿ)
-  = q (q⁸; q⁸)²_∞ (q⁴⁸; q⁴⁸)_∞ (q⁶, q¹⁰; q¹⁶)_∞ (q, q⁷, q⁹, q¹⁵; q¹⁶)_∞
-    / ((q¹⁶; q¹⁶)_∞ (q³, q²¹, q²⁷, q⁴⁵; q⁴⁸)_∞)` (64) and
-`∑_{n ≥ 1} (n/3) (q³ⁿ - q⁵ⁿ - q¹¹ⁿ + q¹³ⁿ)/(1 - q¹⁶ⁿ)
-  = q³ (q⁸; q⁸)²_∞ (q⁴⁸; q⁴⁸)_∞ (q², q¹⁴; q¹⁶)_∞ (q³, q⁵, q¹¹, q¹³; q¹⁶)_∞
-    / ((q¹⁶; q¹⁶)_∞ (q⁹, q¹⁵, q³³, q³⁹; q⁴⁸)_∞)` (65).
-The source's `(n/3)` is the Legendre symbol modulo `3`, here `jacobiSym n 3` (equal to the
-Legendre symbol since `3` is prime); the source's `|q| < 1` is `‖q‖ < 1`.
+/-- **Lambert series of order sixteen twisted by the Legendre symbol modulo $3$.** Write
+$(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$,
+$(a_1, \dots, a_k; q)_\infty = (a_1; q)_\infty \cdots (a_k; q)_\infty$ and
+$f_k = (q^k; q^k)_\infty$, and let $\left(\frac{n}{3}\right)$ be the Legendre symbol modulo $3$.
+For every complex number $q$ with $|q| < 1$,
+$$\sum_{n \ge 1} \left(\frac{n}{3}\right) \frac{q^n - q^{7n} - q^{9n} + q^{15n}}{1 - q^{16n}} =
+\frac{q f_8^2 f_{48} (q^6, q^{10}; q^{16})_\infty (q, q^7, q^9, q^{15}; q^{16})_\infty}
+{f_{16} (q^3, q^{21}, q^{27}, q^{45}; q^{48})_\infty}$$
+and
+$$\sum_{n \ge 1} \left(\frac{n}{3}\right) \frac{q^{3n} - q^{5n} - q^{11n} + q^{13n}}{1 - q^{16n}} =
+\frac{q^3 f_8^2 f_{48} (q^2, q^{14}; q^{16})_\infty (q^3, q^5, q^{11}, q^{13}; q^{16})_\infty}
+{f_{16} (q^9, q^{15}, q^{33}, q^{39}; q^{48})_\infty}.$$
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
@@ -88,11 +95,16 @@ public theorem_wanted lambert_order_sixteen_legendre_three (q : ℂ) (hq : ‖q�
           (qPochhammerInfRaw (q ^ 9) (q ^ 48) * qPochhammerInfRaw (q ^ 15) (q ^ 48) *
             qPochhammerInfRaw (q ^ 33) (q ^ 48) * qPochhammerInfRaw (q ^ 39) (q ^ 48)))
 
-/-- Product forms of Ramanujan's theta functions (Lemma 1): for `‖q‖ < 1`, with
-`f_k = (q^k; q^k)_∞`, `ψ(q) = f₂² / f₁`, `f(q) = f₂³ / (f₁ f₄)`, `χ(q) = f₂² / (f₁ f₄)` and
-`χ(-q) = f₁ / f₂`. The functions are the standard ones of Ramanujan's notebooks (Berndt, Part III,
-Chapter 16): `ψ(q) = f(q, q³)`, `f(q) = f(q, -q²)` (so `f(-q) = f₁`) and `χ(q) = (-q; q²)_∞`, with
-`f(a, b)` Ramanujan's general theta function `ramanujanThetaRaw a b`.
+/-- **Product forms of Ramanujan's theta functions $\psi$, $f$ and $\chi$.** Write
+$(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and $f_k = (q^k; q^k)_\infty$, and let
+$f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's general theta
+function. For every complex number $q$ with $|q| < 1$,
+$f(q, q^3) = f_2^2 / f_1$, $f(q, -q^2) = f_2^3 / (f_1 f_4)$, $(-q; q^2)_\infty = f_2^2 / (f_1 f_4)$
+and $(q; q^2)_\infty = f_1 / f_2$.
+
+In Ramanujan's notation (Berndt, Part III, Chapter 16), with $\psi(q) = f(q, q^3)$,
+$f(q) = f(q, -q^2)$ and $\chi(q) = (-q; q^2)_\infty$, these read $\psi(q) = f_2^2 / f_1$,
+$f(q) = f_2^3 / (f_1 f_4)$, $\chi(q) = f_2^2 / (f_1 f_4)$ and $\chi(-q) = f_1 / f_2$.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
@@ -108,11 +120,11 @@ public theorem_wanted ramanujan_psi_f_chi_eq_qPochhammer (q : ℂ) (hq : ‖q‖
           (qPochhammerInfRaw q q * qPochhammerInfRaw (q ^ 4) (q ^ 4)) ∧
       qPochhammerInfRaw q (q ^ 2) = qPochhammerInfRaw q q / qPochhammerInfRaw (q ^ 2) (q ^ 2)
 
-/-- Ramanujan's Entry 30 (i)-(iii) for the general theta function `f(a, b)`, quoted in the record
-of Lemma 1: for complex `a, b` with `‖a b‖ < 1`, `f(a, ab²) f(b, a²b) = f(a, b) ψ(ab)` (8),
-`f(a, b) + f(-a, -b) = 2 f(a³b, ab³)` (9) and, for `a ≠ 0`,
-`f(a, b) - f(-a, -b) = 2a f(b/a, a⁵b³)` (10), where `f(a, b) = ramanujanThetaRaw a b` and
-`ψ(q) = f(q, q³)`.
+/-- **Ramanujan's Entry 30 (i)–(iii) for the general theta function.** Let
+$f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's general theta
+function and $\psi(q) = f(q, q^3)$. For all complex numbers $a$ and $b$ with $|ab| < 1$,
+$f(a, ab^2) f(b, a^2 b) = f(a, b) \psi(ab)$ and $f(a, b) + f(-a, -b) = 2 f(a^3 b, a b^3)$, and if
+moreover $a \ne 0$, then $f(a, b) - f(-a, -b) = 2a f(b/a, a^5 b^3)$.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
@@ -127,18 +139,23 @@ public theorem_wanted ramanujanTheta_entry30 (a b : ℂ) (hab : ‖a * b‖ < 1)
         2 * a * ramanujanThetaRaw (b / a) (a ^ 5 * b ^ 3))
 
 
-/-- Ramanujan's continued fractions of order sixteen in the Lambert series of Theorem 2: for
-`‖q‖ < 1`,
-`∑_{n odd} (q³ⁿ + q⁵ⁿ)/(1 - q¹⁶ⁿ) - ∑_{n odd} (q¹¹ⁿ + q¹³ⁿ)/(1 - q¹⁶ⁿ)
-  = η⁴(32τ)/η²(16τ) · (I₁(q²) + 1/I₁(q²))` (54) and
-`∑_{n odd} (qⁿ + q⁷ⁿ)/(1 - q¹⁶ⁿ) - ∑_{n odd} (q⁹ⁿ + q¹⁵ⁿ)/(1 - q¹⁶ⁿ)
-  = η⁴(32τ)/η²(16τ) · (I₂(q²) + 1/I₂(q²))` (55),
-where `I₁(q) = q^{1/2} (q³, q¹³; q¹⁶)_∞ / (q⁵, q¹¹; q¹⁶)_∞` (1) and
-`I₂(q) = q^{3/2} (q, q¹⁵; q¹⁶)_∞ / (q⁷, q⁹; q¹⁶)_∞` (2), so that
-`I₁(q²) = q (q⁶, q²⁶; q³²)_∞ / (q¹⁰, q²²; q³²)_∞` and `I₂(q²) = q³ (q², q³⁰; q³²)_∞ / (q¹⁴, q¹⁸; q³²)_∞`,
-and, with `q = e^{2πiτ}` and `η(τ) = q^{1/24} (q; q)_∞`,
-`η⁴(32τ)/η²(16τ) = q⁴ (q³²; q³²)⁴_∞ / (q¹⁶; q¹⁶)²_∞`. The odd `n` are `2k + 1`. At `q = 0` both
-sides are `0`.
+/-- **Odd Lambert series for Ramanujan's continued fractions of order sixteen.** Write
+$(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and $(a, b; q)_\infty = (a; q)_\infty (b; q)_\infty$.
+For a complex number $q$ with $|q| < 1$, put
+$S(a, b) = \sum_{k \ge 0} (q^{a(2k+1)} + q^{b(2k+1)}) / (1 - q^{16(2k+1)})$, a sum over the odd
+multiples $n = 2k + 1$, and
+$E = q^4 (q^{32}; q^{32})_\infty^4 / (q^{16}; q^{16})_\infty^2$,
+$I_1 = q (q^6, q^{26}; q^{32})_\infty / (q^{10}, q^{22}; q^{32})_\infty$ and
+$I_2 = q^3 (q^2, q^{30}; q^{32})_\infty / (q^{14}, q^{18}; q^{32})_\infty$. Then
+$S(3, 5) - S(11, 13) = E (I_1 + 1/I_1)$ and $S(1, 7) - S(9, 15) = E (I_2 + 1/I_2)$.
+At $q = 0$, where $I_1 = I_2 = 0$, the quotients $1/I_1$ and $1/I_2$ are read as $0$ and both
+sides of each identity are $0$.
+
+Here $I_1$ and $I_2$ are $I_1(q^2)$ and $I_2(q^2)$ for Ramanujan's continued fractions of order
+sixteen $I_1(q) = q^{1/2} (q^3, q^{13}; q^{16})_\infty / (q^5, q^{11}; q^{16})_\infty$ and
+$I_2(q) = q^{3/2} (q, q^{15}; q^{16})_\infty / (q^7, q^9; q^{16})_\infty$, and $E$ is the eta
+quotient $\eta^4(32\tau) / \eta^2(16\tau)$ for $q = e^{2 \pi i \tau}$, where
+$\eta(\tau) = q^{1/24} (q; q)_\infty$.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
@@ -158,22 +175,29 @@ public theorem_wanted lambert_odd_order_sixteen_eq_continuedFraction (q : ℂ) (
         ∑' k : ℕ, (q ^ (9 * (2 * k + 1)) + q ^ (15 * (2 * k + 1))) /
           (1 - q ^ (16 * (2 * k + 1)))) = E * (I₂ + 1 / I₂)
 
-/-- The Jacobi theta function `θ₁(z | τ) = 2 ∑_{n ≥ 0} (-1)ⁿ q^{(2n+1)²/8} sin((2n+1) z)` with
-`q^{(2n+1)²/8} = exp(πiτ (2n+1)²/4)`, i.e. `q = e^{2πiτ}` (Equation (11)).
+/-- **Raw Jacobi theta function $\theta_1$.** For complex numbers $z$ and $\tau$, the raw Jacobi
+theta function is
+$$\theta_1(z \mid \tau) = 2 \sum_{n=0}^{\infty} (-1)^n e^{\pi i \tau (2n+1)^2/4} \sin((2n+1) z)$$
+when this series is summable, and $0$ otherwise. With $q = e^{2 \pi i \tau}$, the factor
+$e^{\pi i \tau (2n+1)^2/4}$ is $q^{(2n+1)^2/8}$.
+
+The value $0$ for a non-summable series is a convention; it occurs, for example, at $\tau = 0$
+and $z = \pi/2$. The intended object is the Jacobi theta function on the upper half-plane
+$\operatorname{Im} \tau > 0$, where the series converges for every $z$.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
-Article A16, Section 3, Equation (11).
-
-This raw version is Mathlib's total `tsum`; it is `0` when the series diverges (for example at
-`τ = 0`, `z = π/2`). Use `jacobiThetaOneSine`, which requires `0 < Im τ`, unless that fallback is
-intended. -/
+Article A16, Section 3, Equation (11). -/
 noncomputable def jacobiThetaOneSineRaw (z τ : ℂ) : ℂ :=
   2 * ∑' n : ℕ, (-1) ^ n * Complex.exp (Real.pi * Complex.I * τ * (2 * n + 1) ^ 2 / 4) *
     Complex.sin ((2 * n + 1) * z)
 
-/-- The Jacobi theta function `θ₁(z | τ)` of Equation (11), restricted to the upper half-plane
-`0 < Im τ`, where its series converges for every `z`.
+/-- **Jacobi theta function $\theta_1$.** For complex numbers $z$ and $\tau$ with
+$\operatorname{Im} \tau > 0$, the Jacobi theta function is
+$$\theta_1(z \mid \tau) = 2 \sum_{n=0}^{\infty} (-1)^n e^{\pi i \tau (2n+1)^2/4} \sin((2n+1) z).$$
+With $q = e^{2 \pi i \tau}$, the factor $e^{\pi i \tau (2n+1)^2/4}$ is $q^{(2n+1)^2/8}$.
+
+On the upper half-plane $\operatorname{Im} \tau > 0$ the series converges for every $z$.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
@@ -181,7 +205,8 @@ Article A16, Section 3, Equation (11). -/
 noncomputable def jacobiThetaOneSine (z τ : ℂ) (_hτ : 0 < τ.im) : ℂ :=
   jacobiThetaOneSineRaw z τ
 
-/-- `θ₁(0 | τ) = 0`.
+/-- **The Jacobi theta function $\theta_1$ vanishes at $z = 0$.** For every complex number $\tau$
+with $\operatorname{Im} \tau > 0$, the Jacobi theta function satisfies $\theta_1(0 \mid \tau) = 0$.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
@@ -189,7 +214,9 @@ Article A16, Section 3, Equation (11). -/
 theorem jacobiThetaOneSine_zero (τ : ℂ) (hτ : 0 < τ.im) : jacobiThetaOneSine 0 τ hτ = 0 := by
   simp [jacobiThetaOneSine, jacobiThetaOneSineRaw]
 
-/-- `θ₁(z | τ)` is odd in `z`.
+/-- **Oddness of the Jacobi theta function $\theta_1$.** For all complex numbers $z$ and $\tau$
+with $\operatorname{Im} \tau > 0$, the Jacobi theta function satisfies
+$\theta_1(-z \mid \tau) = -\theta_1(z \mid \tau)$.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
@@ -198,16 +225,20 @@ theorem jacobiThetaOneSine_neg (z τ : ℂ) (hτ : 0 < τ.im) :
     jacobiThetaOneSine (-z) τ hτ = -jacobiThetaOneSine z τ hτ := by
   simp [jacobiThetaOneSine, jacobiThetaOneSineRaw, Complex.sin_neg, tsum_neg]
 
-/-- Lemma 2 of Section 5 (the record's Lemma 2): for `Im τ > 0`, `q = e^{2πiτ}` and
-`|Im z| < π Im τ` (where the series converges and the denominators do not vanish),
-`∑_{n ≥ 1} (qⁿ - q⁷ⁿ - q⁹ⁿ + q¹⁵ⁿ)/(1 - q¹⁶ⁿ) sin 2nz
-  = -θ₁'(0|16τ) θ₁(8πτ|16τ) θ₁(6πτ|16τ) θ₁(2z|16τ)
-    / (4 θ₁(z+πτ|16τ) θ₁(z-πτ|16τ) θ₁(z+7πτ|16τ) θ₁(z-7πτ|16τ))` (59) and
-`∑_{n ≥ 1} (q³ⁿ - q⁵ⁿ - q¹¹ⁿ + q¹³ⁿ)/(1 - q¹⁶ⁿ) sin 2nz
-  = -θ₁'(0|16τ) θ₁(2πτ|16τ) θ₁(8πτ|16τ) θ₁(2z|16τ)
-    / (4 θ₁(z+3πτ|16τ) θ₁(z-3πτ|16τ) θ₁(z+5πτ|16τ) θ₁(z-5πτ|16τ))` (60),
-with `θ₁` the paper's series as the convergence-gated `jacobiThetaOneSine` (`Im (16τ) > 0`)
-and `θ₁'` its `z`-derivative.
+/-- **Sine Lambert series of order sixteen as quotients of theta functions.** Let $\tau$ and $z$
+be complex numbers with $\operatorname{Im} \tau > 0$ and
+$|\operatorname{Im} z| < \pi \operatorname{Im} \tau$, let $q = e^{2 \pi i \tau}$, write
+$\theta(w) = \theta_1(w \mid 16\tau)$ for the Jacobi theta function $\theta_1$, and let $\theta'$
+be the derivative of $\theta$. Then
+$$\sum_{n \ge 1} \frac{q^n - q^{7n} - q^{9n} + q^{15n}}{1 - q^{16n}} \sin 2nz =
+\frac{-\theta'(0) \theta(8\pi\tau) \theta(6\pi\tau) \theta(2z)}
+{4 \theta(z + \pi\tau) \theta(z - \pi\tau) \theta(z + 7\pi\tau) \theta(z - 7\pi\tau)}$$
+and
+$$\sum_{n \ge 1} \frac{q^{3n} - q^{5n} - q^{11n} + q^{13n}}{1 - q^{16n}} \sin 2nz =
+\frac{-\theta'(0) \theta(2\pi\tau) \theta(8\pi\tau) \theta(2z)}
+{4 \theta(z + 3\pi\tau) \theta(z - 3\pi\tau) \theta(z + 5\pi\tau) \theta(z - 5\pi\tau)}.$$
+
+Under these hypotheses the series converge and the denominators do not vanish.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),

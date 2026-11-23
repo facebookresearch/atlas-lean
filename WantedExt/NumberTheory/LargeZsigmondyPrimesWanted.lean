@@ -36,8 +36,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A large Zsigmondy prime for `(a, b, n)`: a prime `p` dividing `aⁿ - bⁿ` but no
-`aᵐ - bᵐ` with `1 ≤ m < n`, such that `p² ∣ aⁿ - bⁿ` or `p > n + 1`.
+/-- **Large Zsigmondy prime.** Let $a$, $b$, $n$ and $p$ be natural numbers. Then $p$ is a large
+Zsigmondy prime for $(a, b, n)$ when $p$ is a primitive prime divisor of the term $a^n - b^n$ of
+the integer sequence $(a^m - b^m)_{m \ge 0}$, that is, $n \ge 1$, $p$ is prime, $p$ divides
+$a^n - b^n$ and $p$ divides no $a^m - b^m$ with $1 \le m < n$, and moreover $p^2$ divides
+$a^n - b^n$ or $p > n + 1$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Section 1
 (definition after Theorem 1). -/
@@ -45,8 +48,9 @@ def IsLargeZsigmondyPrime (a b n p : ℕ) : Prop :=
   IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - (b : ℤ) ^ m) n p ∧
     ((p : ℤ) ^ 2 ∣ (a : ℤ) ^ n - (b : ℤ) ^ n ∨ n + 1 < p)
 
-/-- `7` is a large Zsigmondy prime for `(2, 1, 3)`: `7 = 2³ - 1`, `7 ∤ 2 - 1, 2² - 1`, and
-`7 > 3 + 1`.
+/-- **$7$ is a large Zsigmondy prime for $(2, 1, 3)$.** The prime $7$ is a large Zsigmondy prime
+for $(a, b, n) = (2, 1, 3)$: it divides $2^3 - 1 = 7$, divides neither $2^1 - 1$ nor $2^2 - 1$,
+and $7 > 3 + 1$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Section 1
 (definition after Theorem 1). -/
@@ -55,17 +59,22 @@ theorem isLargeZsigmondyPrime_two_one_three_seven : IsLargeZsigmondyPrime 2 1 3 
   intro s hs hs3
   interval_cases s <;> norm_num
 
-/-- For every positive integer `n`, `φ(n) ≥ √n / 2`.
+/-- **Square-root lower bound for Euler's totient.** For every positive integer $n$,
+$\varphi(n) \ge \sqrt{n}/2$, where $\varphi$ is Euler's totient function.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 1
 (quoted from reference [2]). -/
 theorem_wanted sqrt_div_two_le_totient (n : ℕ) (hn : 0 < n) :
     Real.sqrt n / 2 ≤ (Nat.totient n : ℝ)
 
-/-- For a prime `p` and `n = p^β k` with `β, k ≥ 1`, `p ∤ k`:
-`Φ_n(a, b) = Φ_{pk}(a^{p^{β-1}}, b^{p^{β-1}})` and
-`Φ_n(a, b) · Φ_k(a^{p^{β-1}}, b^{p^{β-1}}) = Φ_k(a^{p^β}, b^{p^β})` (the paper's quotient,
-cleared of its denominator), for all integers `a`, `b`.
+/-- **Homogenized cyclotomic values at $p^\beta k$.** Let $p$ be a prime, let $\beta \ge 1$ and
+$k \ge 1$ be integers with $p \nmid k$, and let $a, b$ be integers; write $\Phi_m(a, b)$ for the
+homogenized cyclotomic value. Then
+$\Phi_{p^\beta k}(a, b) = \Phi_{pk}(a^{p^{\beta - 1}}, b^{p^{\beta - 1}})$ and
+$\Phi_{p^\beta k}(a, b) \cdot \Phi_k(a^{p^{\beta - 1}}, b^{p^{\beta - 1}}) =
+\Phi_k(a^{p^\beta}, b^{p^\beta})$.
+
+The paper states the second identity as a quotient; here it is cleared of its denominator.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Corollary 1. -/
 theorem_wanted homogenizedCyclotomic_prime_pow_mul {p β k : ℕ} (hp : p.Prime) (hβ : 0 < β)
@@ -76,14 +85,21 @@ theorem_wanted homogenizedCyclotomic_prime_pow_mul {p β k : ℕ} (hp : p.Prime)
           homogenizedCyclotomic k (a ^ p ^ (β - 1)) (b ^ p ^ (β - 1)) =
         homogenizedCyclotomic k (a ^ p ^ β) (b ^ p ^ β)
 
-/-- `aⁿ - bⁿ = ∏_{d ∣ n} Φ_d(a, b)` for every positive integer `n` and all integers `a`, `b`.
+/-- **Factorization of $a^n - b^n$ into homogenized cyclotomic values.** For every positive
+integer $n$ and all integers $a$ and $b$,
+$$a^n - b^n = \prod_{d \mid n} \Phi_d(a, b),$$
+where the product runs over the positive divisors $d$ of $n$ and $\Phi_d(a, b)$ is the
+homogenized cyclotomic value.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (i)
 (quoted from reference [6]). -/
 theorem_wanted prod_divisors_homogenizedCyclotomic {n : ℕ} (hn : 0 < n) (a b : ℤ) :
     ∏ d ∈ n.divisors, homogenizedCyclotomic d a b = a ^ n - b ^ n
 
-/-- For positive integers `a > b` and `n`, `(a - b)^φ(n) ≤ Φ_n(a, b) ≤ (a + b)^φ(n)`.
+/-- **Bounds for homogenized cyclotomic values.** Let $a > b$ be positive integers and let
+$n \ge 1$. Then the homogenized cyclotomic value $\Phi_n(a, b)$ satisfies
+$(a - b)^{\varphi(n)} \le \Phi_n(a, b) \le (a + b)^{\varphi(n)}$, where $\varphi$ is Euler's
+totient function.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (ii)
 (quoted from reference [6]). -/
@@ -92,9 +108,12 @@ theorem_wanted homogenizedCyclotomic_mem_Icc {a b n : ℕ} (hb : 0 < b) (hba : b
     ((a : ℤ) - b) ^ Nat.totient n ≤ homogenizedCyclotomic n a b ∧
       homogenizedCyclotomic n a b ≤ ((a : ℤ) + b) ^ Nat.totient n
 
-/-- For a prime `p` and a positive integer `n`: `Φ_{pn}(a, b) = Φ_n(aᵖ, bᵖ)` if `p ∣ n`, and
-`Φ_{pn}(a, b) · Φ_n(a, b) = Φ_n(aᵖ, bᵖ)` (the paper's quotient, cleared of its denominator)
-if `p ∤ n`, for all integers `a`, `b`.
+/-- **Homogenized cyclotomic values at $pn$.** Let $p$ be a prime, $n$ a positive integer and
+$a, b$ integers, and write $\Phi_m(a, b)$ for the homogenized cyclotomic value. If $p \mid n$,
+then $\Phi_{pn}(a, b) = \Phi_n(a^p, b^p)$. If $p \nmid n$, then
+$\Phi_{pn}(a, b) \cdot \Phi_n(a, b) = \Phi_n(a^p, b^p)$.
+
+The paper states the case $p \nmid n$ as a quotient; here it is cleared of its denominator.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (iii)
 (quoted from reference [6]). -/
@@ -104,9 +123,12 @@ theorem_wanted homogenizedCyclotomic_prime_mul {p n : ℕ} (hp : p.Prime) (hn : 
       (¬ p ∣ n → homogenizedCyclotomic (p * n) a b * homogenizedCyclotomic n a b =
         homogenizedCyclotomic n (a ^ p) (b ^ p))
 
-/-- Let `a > b` be positive integers, `p` an odd prime dividing neither `a` nor `b`, and `k`
-the least positive integer with `p ∣ aᵏ - bᵏ`. Then for `n ≥ 1`, `v_p(Φ_n(a, b))` is
-`v_p(aᵏ - bᵏ)` if `n = k`, `1` if `n = p^β k` with `β ≥ 1`, and `0` otherwise.
+/-- **$p$-adic valuation of homogenized cyclotomic values at an odd prime.** Let $a > b$ be
+positive integers, let $p$ be an odd prime dividing neither $a$ nor $b$, and let $k$ be the least
+positive integer such that $p$ divides $a^k - b^k$. Write $v_p$ for the $p$-adic valuation and
+$\Phi_n(a, b)$ for the homogenized cyclotomic value. Then for every positive integer $n$:
+$v_p(\Phi_n(a, b)) = v_p(a^k - b^k)$ if $n = k$; $v_p(\Phi_n(a, b)) = 1$ if $n = p^\beta k$ for
+some $\beta \ge 1$; and $v_p(\Phi_n(a, b)) = 0$ otherwise.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (iv)
 (quoted from reference [6]). -/
@@ -120,8 +142,11 @@ theorem_wanted padicValInt_homogenizedCyclotomic_odd {a b n p k : ℕ} (hb : 0 <
       (n ≠ k → (¬ ∃ β, 1 ≤ β ∧ n = p ^ β * k) →
         padicValInt p (homogenizedCyclotomic n a b) = 0)
 
-/-- Let `a > b` be odd positive integers. Then for `n ≥ 1`, `v_2(Φ_n(a, b))` is `v_2(a - b)` if
-`n = 1`, `v_2(a + b)` if `n = 2`, `1` if `n = 2^β` with `β ≥ 2`, and `0` otherwise.
+/-- **$2$-adic valuation of homogenized cyclotomic values.** Let $a > b$ be odd positive
+integers. Write $v_2$ for the $2$-adic valuation and $\Phi_n(a, b)$ for the homogenized
+cyclotomic value. Then for every positive integer $n$: $v_2(\Phi_n(a, b)) = v_2(a - b)$ if
+$n = 1$; $v_2(\Phi_n(a, b)) = v_2(a + b)$ if $n = 2$; $v_2(\Phi_n(a, b)) = 1$ if $n = 2^\beta$
+for some $\beta \ge 2$; and $v_2(\Phi_n(a, b)) = 0$ if $n$ is not a power of $2$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (v)
 (quoted from reference [6]). -/
@@ -132,10 +157,14 @@ theorem_wanted padicValInt_two_homogenizedCyclotomic {a b n : ℕ} (hb : 0 < b) 
       ((∃ β, 2 ≤ β ∧ n = 2 ^ β) → padicValInt 2 (homogenizedCyclotomic n a b) = 1) ∧
       ((¬ ∃ β, n = 2 ^ β) → padicValInt 2 (homogenizedCyclotomic n a b) = 0)
 
-/-- Let `a > b` be coprime positive integers, `n ≥ 2`, `p` a prime divisor of `Φ_n(a, b)`, and
-`k` the least positive integer with `p ∣ aᵏ - bᵏ`. Then (i) `p = 2` and `n = 2^β` with `β ≥ 1`,
-or (ii) `p ≥ 3` and `n = k`, so `p` is a Zsigmondy prime for `(a, b, n)`, or (iii) `p` is the
-greatest prime factor of `n`, `p > 2`, `n = p^β k` with `β ≥ 1`, and `v_p(Φ_n(a, b)) = 1`.
+/-- **Prime divisors of homogenized cyclotomic values.** Let $a > b$ be coprime positive
+integers, let $n \ge 2$, let $\Phi_n(a, b)$ be the homogenized cyclotomic value, let $p$ be a
+prime dividing $\Phi_n(a, b)$, and let $k$ be the least positive integer such that $p$ divides
+$a^k - b^k$. Then one of the following holds: (i) $p = 2$ and $n = 2^\beta$ for some
+$\beta \ge 1$; (ii) $p \ge 3$, $n = k$, and $p$ is a primitive prime divisor of the term
+$a^n - b^n$ of the sequence $(a^m - b^m)_{m \ge 0}$; (iii) $p$ is the greatest prime factor of
+$n$, $p > 2$, $n = p^\beta k$ for some $\beta \ge 1$, and the $p$-adic valuation of
+$\Phi_n(a, b)$ is $1$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 4. -/
 theorem_wanted prime_dvd_homogenizedCyclotomic_cases {a b n p k : ℕ} (hb : 0 < b)
@@ -149,8 +178,10 @@ theorem_wanted prime_dvd_homogenizedCyclotomic_cases {a b n p k : ℕ} (hb : 0 <
       (p ∈ n.primeFactors ∧ (∀ r ∈ n.primeFactors, r ≤ p) ∧ 2 < p ∧
         (∃ β, 1 ≤ β ∧ n = p ^ β * k) ∧ padicValInt p (homogenizedCyclotomic n a b) = 1)
 
-/-- For distinct coprime positive integers `a`, `b` and `n ≥ 2`, every Zsigmondy prime for
-`(a, b, n)` divides `Φ_n(a, b)`.
+/-- **Zsigmondy primes divide the homogenized cyclotomic value.** Let $a$ and $b$ be distinct
+coprime positive integers and let $n \ge 2$. If $p$ is a primitive prime divisor of the term
+$a^n - b^n$ of the integer sequence $(a^m - b^m)_{m \ge 0}$ (a Zsigmondy prime for $(a, b, n)$),
+then $p$ divides the homogenized cyclotomic value $\Phi_n(a, b)$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 5. -/
 theorem_wanted dvd_homogenizedCyclotomic_of_isPrimitivePrimeDivisor {a b n p : ℕ}
@@ -158,8 +189,10 @@ theorem_wanted dvd_homogenizedCyclotomic_of_isPrimitivePrimeDivisor {a b n p : �
     (hp : IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - (b : ℤ) ^ m) n p) :
     (p : ℤ) ∣ homogenizedCyclotomic n a b
 
-/-- For coprime positive integers `a > b` and `n ≥ 2`, a Zsigmondy prime `q` for `(a, b, n)`
-that is not a large Zsigmondy prime satisfies `n = q - 1`.
+/-- **A Zsigmondy prime $q$ that is not large satisfies $n = q - 1$.** Let $a > b$ be coprime
+positive integers and let $n \ge 2$. If $q$ is a primitive prime divisor of the term $a^n - b^n$
+of the integer sequence $(a^m - b^m)_{m \ge 0}$ and $q$ is not a large Zsigmondy prime for
+$(a, b, n)$, then $n = q - 1$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 6. -/
 theorem_wanted eq_sub_one_of_not_isLargeZsigmondyPrime {a b n q : ℕ} (hb : 0 < b)
@@ -168,9 +201,13 @@ theorem_wanted eq_sub_one_of_not_isLargeZsigmondyPrime {a b n q : ℕ} (hb : 0 <
     (hql : ¬ IsLargeZsigmondyPrime a b n q) :
     n = q - 1
 
-/-- For distinct coprime positive integers `a`, `b` and `n ≥ 3`, if `(n + 1) · gpf(n) < Φ_n(a, b)`
-(stated for every prime factor of `n`, equivalently for the greatest one), then there is a
-large Zsigmondy prime for `(a, b, n)`.
+/-- **A size criterion for a large Zsigmondy prime.** Let $a$ and $b$ be distinct coprime
+positive integers and let $n \ge 3$. If $(n + 1) q < \Phi_n(a, b)$ for every prime factor $q$ of
+$n$, where $\Phi_n(a, b)$ is the homogenized cyclotomic value, then there is a large Zsigmondy
+prime for $(a, b, n)$.
+
+Equivalently, the hypothesis asks that $n + 1$ times the greatest prime factor of $n$ be less
+than $\Phi_n(a, b)$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 7. -/
 theorem_wanted exists_isLargeZsigmondyPrime_of_lt {a b n : ℕ} (ha : 0 < a) (hb : 0 < b)
@@ -178,19 +215,21 @@ theorem_wanted exists_isLargeZsigmondyPrime_of_lt {a b n : ℕ} (ha : 0 < a) (hb
     (hlt : ∀ q ∈ n.primeFactors, ((n + 1) * q : ℤ) < homogenizedCyclotomic n a b) :
     ∃ p, IsLargeZsigmondyPrime a b n p
 
-/-- For `n > 1` outside `{2, 4, 6, 10, 12, 18}` and coprime positive integers `a > b`, there is
-a large Zsigmondy prime for `(a, b, n)`.
+/-- **Large Zsigmondy primes for exponents $n > 1$ outside six values.** Let $a > b$ be coprime
+positive integers and let $n > 1$ with $n \notin \{2, 4, 6, 10, 12, 18\}$. Then there is a
+large Zsigmondy prime for $(a, b, n)$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 8. -/
 theorem_wanted exists_isLargeZsigmondyPrime_of_not_mem {a b n : ℕ} (hb : 0 < b) (hba : b < a)
     (hcop : a.Coprime b) (hn : 1 < n) (hn' : n ∉ ({2, 4, 6, 10, 12, 18} : Finset ℕ)) :
     ∃ p, IsLargeZsigmondyPrime a b n p
 
-/-- For coprime positive integers `a > b` and `n > 1`, a large Zsigmondy prime for `(a, b, n)`
-exists if and only if `(a, b, n)` is none of the exceptional cases: `n = 2` with `a + b = 2ˢ`
-or `3 · 2ˢ`; `n = 4` with `(a, b) ∈ {(2, 1), (3, 1)}`; `n = 6` with
-`(a, b) ∈ {(2, 1), (3, 1), (3, 2), (5, 1), (5, 4)}`; `n = 10` with `(a, b) ∈ {(2, 1), (3, 2)}`;
-`n = 12` or `n = 18` with `(a, b) = (2, 1)`.
+/-- **Avcı's classification of large Zsigmondy primes.** Let $a > b$ be coprime positive
+integers and let $n > 1$. There is a large Zsigmondy prime for $(a, b, n)$ if and only if none
+of the following holds: $n = 2$ and $a + b = 2^s$ or $a + b = 3 \cdot 2^s$ for some natural
+number $s$; $n = 4$ and $(a, b) \in \{(2, 1), (3, 1)\}$; $n = 6$ and
+$(a, b) \in \{(2, 1), (3, 1), (3, 2), (5, 1), (5, 4)\}$; $n = 10$ and
+$(a, b) \in \{(2, 1), (3, 2)\}$; $n = 12$ and $(a, b) = (2, 1)$; $n = 18$ and $(a, b) = (2, 1)$.
 
 Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Theorem 1
 (the converse is the classification in the proof of Theorem 1). -/

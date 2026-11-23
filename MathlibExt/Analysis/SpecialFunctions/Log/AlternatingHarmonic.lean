@@ -53,8 +53,8 @@ open scoped Topology
 
 namespace Real
 
-/-- **The alternating harmonic series sums to `log 2`.** The partial sums
-`∑ i ∈ range k, (-1) ^ i / (i + 1)` converge to `Real.log 2`. -/
+/-- **The alternating harmonic series sums to $\log 2$.** The partial sums
+$\sum_{i=0}^{k-1} (-1)^i / (i + 1)$ of real numbers converge to $\log 2$ as $k \to \infty$. -/
 theorem tendsto_sum_alternating_harmonic :
     Filter.Tendsto (fun k => ∑ i ∈ Finset.range k, (-1 : ℝ) ^ i / (↑i + 1)) Filter.atTop
       (𝓝 (Real.log 2)) := by
@@ -141,10 +141,12 @@ theorem tendsto_sum_alternating_harmonic :
   rw [hl] at h
   exact h
 
-/-- **The alternating harmonic series is not absolutely summable.** The
-series of absolute values is (up to the `n + 1` shift) the harmonic series,
-which diverges. In particular the convergence of
-`Real.tendsto_sum_alternating_harmonic` is only conditional. -/
+/-- **The alternating harmonic series is not absolutely summable.** The series of real numbers
+$\sum_{n \ge 0} \left|(-1)^n / (n + 1)\right|$ is not summable.
+
+The series of absolute values is the harmonic series $\sum_{n \ge 0} 1 / (n + 1)$, which
+diverges. In particular the convergence of the alternating harmonic series to $\log 2$ is only
+conditional. -/
 theorem not_summable_abs_alternating_harmonic :
     ¬ Summable (fun n : ℕ => |(-1 : ℝ) ^ n / (↑n + 1)|) := by
   have habs : ∀ n : ℕ, |(-1 : ℝ) ^ n / (↑n + 1)| = (1 : ℝ) / (↑n + 1) := by
