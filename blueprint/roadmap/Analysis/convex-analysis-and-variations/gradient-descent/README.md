@@ -20,6 +20,9 @@
 
 - [Sampling vector](sampling-vector.md)
 - [Weighted finite-sum objective](weighted-finite-sum-objective.md)
+- [Gradient of the weighted finite-sum objective](weighted-finite-sum-gradient.md)
+- [Unbiasedness of the weighted finite-sum value](weighted-finite-sum-value-unbiased.md)
+- [Unbiasedness of the weighted finite-sum gradient](weighted-finite-sum-gradient-unbiased.md)
 - [Expected smoothness at a minimizer](expected-smoothness-at-a-minimizer.md)
 
 ## Strongly convex functions
