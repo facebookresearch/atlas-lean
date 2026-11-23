@@ -350,11 +350,8 @@ lemma P_not_principal : ¬ Submodule.IsPrincipal P := by
 
 lemma alpha_prime : Prime alpha := by
   apply Ideal.prime_of_irreducible_absNorm_span
-  · apply (Algebra.norm_ne_zero_iff (R := ℤ)).mp
-    rw [norm_alpha]
-    norm_num
-  · rw [Ideal.absNorm_span_singleton, norm_alpha]
-    exact (Nat.irreducible_iff_nat_prime _).mpr Nat.prime_five
+  rw [Ideal.absNorm_span_singleton, norm_alpha]
+  exact (Nat.irreducible_iff_nat_prime _).mpr Nat.prime_five
 
 /-- Scaling P by 3 preserves its nontrivial ideal class. -/
 def J : Ideal (𝓞 K) := Ideal.span {3} * P

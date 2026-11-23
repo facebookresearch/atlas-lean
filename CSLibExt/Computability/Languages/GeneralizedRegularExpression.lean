@@ -116,7 +116,7 @@ theorem starHeight_ofReg (e : RegularExpression α) :
 
 /-- **Generalized regular expressions denote regular languages.** -/
 theorem denote_isRegular : ∀ e : GenRegExp α, e.denote.IsRegular
-  | .ofReg _ => IsRegular.regex
+  | .ofReg r => IsRegular.regex r
   | .compl e => IsRegular.compl (denote_isRegular e)
   | .plus e₁ e₂ => IsRegular.add (denote_isRegular e₁) (denote_isRegular e₂)
   | .comp e₁ e₂ => IsRegular.mul (denote_isRegular e₁) (denote_isRegular e₂)

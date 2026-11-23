@@ -42,7 +42,7 @@ QUESTION: is there a truth assignment for `U` that satisfies at least `K` clause
 
 A conjunctive clause is satisfied when all of its literals are true. Variables are
 `u₀, ..., u_{n-1}`; a literal is a pair `(j, b)` that is true when `u_j` has the value `b`
-(the literal format of `Cslib.Logic.PL.CNF`), and the clauses are counted with multiplicity by
+(the literal format of `Cslib.Logic.LegacyPL.CNF`), and the clauses are counted with multiplicity by
 `Minimum3DnfSatisfiability.satisfiedCount`. The family is stated for each fixed `k ≥ 2`. The
 compendium's transformation from MAXIMUM 2-SATISFIABILITY replaces a clause `a ∨ b` by the
 three conjunctions `a ∧ b`, `a ∧ ¬b`, `¬a ∧ b`, exactly one of which holds when `a ∨ b` holds
