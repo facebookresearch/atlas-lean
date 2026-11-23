@@ -98,11 +98,12 @@ jobs:
       - name: Free disk space for Lean caches
         run: |
           set -euo pipefail
-          df -h /
-          free_gb="$(df --output=avail -B1G / | tail -n 1 | tr -d ' ')"
-          if ! [[ "$free_gb" =~ ^[0-9]+$ ]] || (( free_gb < 60 )); then
+          df -h / || true
+          # Unknown free space counts as too little.
+          free_kib="$(df --output=avail -k / | tail -n 1 | tr -d ' ')" || free_kib=""
+          if ! [[ "$free_kib" =~ ^[0-9]+$ ]] || (( free_kib < 60 * 1024 * 1024 )); then
             sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
-            df -h /
+            df -h / || true
           fi
 
       - name: Add swap for cold Lean builds
@@ -170,7 +171,7 @@ jobs:
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
       # A pull request or merge group audits only the modules its build
-      # rewrites, with their importers and their audit batches; pushes to main
+      # rewrites, with their importers and their audit batches; builds of main
       # audit everything. Main's cache holds only builds that passed the audit
       # of their own commit, in full or scoped this way, so the scope needs
       # that commit's audit policy.
@@ -186,34 +187,30 @@ jobs:
             echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
           fi
 
-      # The native tests of the audit tools read only these files and the
-      # runner. Pull requests and pushes to main always run them; a merge group
-      # whose copies match the restored build's commit skips them, since that
-      # commit's checks ran them on the same inputs.
-      - name: Compare the audit tools with the restored build
+      # The native tests of the audit tools read only the files hashed in this
+      # key, and the runner. Pull requests and builds of main always run them,
+      # and a build of main that passes them saves the key in main's cache. A
+      # merge group whose files have a saved key skips them.
+      - name: Look for a build of main that passed the audit tools' tests
         id: audit-tools
-        if: github.event_name == 'merge_group' && steps.local-build-cache.outputs.cache-matched-key != ''
+        if: github.event_name == 'merge_group'
         continue-on-error: true
-        env:
-          RESTORED_KEY: ${{ steps.local-build-cache.outputs.cache-matched-key }}
-        run: |
-          set -euo pipefail
-          git fetch --quiet --no-tags --depth=1 origin "${RESTORED_KEY##*-}"
-          if git diff --quiet FETCH_HEAD HEAD -- \
-            lean-toolchain lakefile.toml lake-manifest.json \
-            scripts/test_declaration_collisions_native.py scripts/check_declaration_collisions.sh \
-            scripts/check_declaration_collisions.lean scripts/list_v2_modules.sh \
-            scripts/test_compiled_audit_native.py scripts/audit_compiled_modules.py \
-            scripts/check_axioms.lean \
-            MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean \
-            MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean \
-            MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean \
-            MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean; then
-            echo "unchanged=true" >> "$GITHUB_OUTPUT"
-          fi
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/audit-tools-tested
+          key: audit-tools-tested-${{ runner.os }}-${{ hashFiles(
+            'lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
+            'scripts/test_declaration_collisions_native.py', 'scripts/check_declaration_collisions.sh',
+            'scripts/check_declaration_collisions.lean', 'scripts/list_v2_modules.sh',
+            'scripts/test_compiled_audit_native.py', 'scripts/audit_compiled_modules.py',
+            'scripts/check_axioms.lean',
+            'MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
+            'MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean',
+            'MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
+            'MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean') }}
 
       - name: Test the declaration collision check
-        if: steps.audit-tools.outputs.unchanged != 'true'
+        if: steps.audit-tools.outputs.cache-hit != 'true'
         run: python3 -m unittest discover -s scripts -p test_declaration_collisions_native.py -v
 
       # Each of these peaks at 13-15 GB when built alone. Lake builds several
@@ -223,8 +220,30 @@ jobs:
       # one fails, the full build is skipped: it would retry that module
       # alongside the others.
       - name: Test initialized compiled-audit isolation
-        if: steps.audit-tools.outputs.unchanged != 'true'
+        if: steps.audit-tools.outputs.cache-hit != 'true'
         run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
+
+      - name: Write the record of the audit tools' tests
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: printf '%s\n' "$GITHUB_SHA" > "$RUNNER_TEMP/audit-tools-tested"
+
+      - name: Save that a build of main passed the audit tools' tests
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/audit-tools-tested
+          key: audit-tools-tested-${{ runner.os }}-${{ hashFiles(
+            'lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
+            'scripts/test_declaration_collisions_native.py', 'scripts/check_declaration_collisions.sh',
+            'scripts/check_declaration_collisions.lean', 'scripts/list_v2_modules.sh',
+            'scripts/test_compiled_audit_native.py', 'scripts/audit_compiled_modules.py',
+            'scripts/check_axioms.lean',
+            'MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
+            'MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean',
+            'MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
+            'MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean') }}
 
       - name: Build memory-heavy modules one at a time
         run: |
@@ -295,8 +314,8 @@ jobs:
           compression-level: 0
 
   # Merge groups audit only what their build changed since the build they
-  # restore; a push to main still audits every module. When that full audit, or
-  # anything else in main's build, fails, say so in one open issue.
+  # restore; a build of main still audits every module. When that full audit,
+  # or anything else in main's build, fails, say so in one open issue.
   report:
     name: report a failed main build
     needs: build
