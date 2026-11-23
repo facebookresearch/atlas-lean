@@ -54,24 +54,35 @@ $e^{-\varphi}$, the curvature condition becoming $i\partial\bar\partial(\varphi 
 theorem by the twisted $L^2$ estimates for $\bar\partial$ on complete Kähler manifolds, applied on
 the complements $X_c \setminus Y$ of $Y$ in the relatively compact sublevel sets $X_c$ of a
 plurisubharmonic exhaustion, which carry complete Kähler metrics, together with an approximation of
-$\psi$ and the local integrability of $(1 + |\psi|)^{-(n+1)} |f|^2 e^{-\psi}$ for $f$ in the ideal
-of $Y$ (§§4–5, Proposition 4.5 (c), Observation 5.1). In the transverse case these local facts are
-computations in polar coordinates normal to $Y$, equivalently on the blow-up of $X$ along $Y$.
+$\psi$ and the local integrability of the damped density $(1 + |\psi|)^{-(n+1)} |\tilde f|^2
+e^{-\psi}$ for a smooth, locally bounded lift $\tilde f$ of the data, which need not vanish on $Y$
+(§5, (5.17₂), with Proposition 4.5 (c) for the previous multiplier ideal); the error term from
+$\bar\partial$ of the cut-off lift is estimated separately, through a factor that vanishes on $Y$
+((5.3)–(5.4)), and Observation 5.1. In the transverse case the first estimate is the finiteness, for
+$n \ge 1$, of $\int_0^{1/e} d\rho / (\rho (1 + |\log \rho|)^{n+1})$ in polar coordinates normal to
+$Y$, equivalently a computation on the blow-up of $X$ along $Y$.
 
 Demailly states the theorem for every quasi-plurisubharmonic $\psi$ with neat analytic singularities
 and log canonical singularities along $Y = V(\mathcal{I}(\psi))$, with the measure on
-$Y_{\mathrm{reg}}$ given by the same shell limit (his (2.4)); on a log resolution he shows that it
+$Y_{\mathrm{reg}}$ given by the same shell limit (his (2.4)), and states that on a log resolution it
 has a smooth positive density at least on a Zariski open subset of $Y_{\mathrm{reg}}$ (Proposition
-4.5 (a)). In that generality the shell limit depends on the extension for some test functions
-supported in $Y_{\mathrm{reg}}$, so the measure has to be constructed on a resolution. Near a
-crossing, in a bidisc with $\psi = \log |zw|^2$ and $Y = \{zw = 0\}$, the zero function on $Y$ has
-the zero extension and one equal near the crossing to $(1 + |\log |zw|^2|)^{-1/2}$ off $Y$ and to
-$0$ on $Y$, whose shell integrals grow like $|t|^{1/2}$. Even for smooth $Y$: in a bidisc with $\psi
-= \log |z|^2 + \log(|z|^2 + |w|^2)$, log canonical with $\mathcal{I}(\psi) = (z)$ and $Y = \{z =
-0\}$, the extension of $0$ by a cut-off times $(1 + |\psi|)^{-1/2}$, set to $0$ on $Y$, has shell
-integrals growing at least like $|t|^{1/2}$ (in the chart $z = wu$ of the blow-up of the origin, the
-shell contains a strip of area of order $|t|$ in the coordinates $-\log |u|^2$ and $-\log |w|^2$);
-the origin is a smaller log canonical centre inside $Y_{\mathrm{reg}}$. A precise general statement,
+4.5 (a)); his proof assumes that a single log canonical place lies over the generic point of the
+component. Without that assumption the density can fail to exist: by Kim's Theorem 1.2 and
+Proposition 4.1, a maximal log canonical centre with at least two log canonical places carries the
+infinite measure, while a unique place gives a smooth positive density on a nonempty Zariski open
+subset. For $\frac12 \operatorname{div}(y (y - x^2)(y - x)(y + x))$ on a bidisc, blowing up the
+origin gives an exceptional divisor of coefficient $1$, and blowing up the common tangent point of
+the remaining components, of coefficients $1, \frac12, \frac12$, gives a second one over the same
+point. In that generality the shell limit depends on the extension for some test functions supported
+in $Y_{\mathrm{reg}}$, so the measure has to be constructed on a resolution. Near a crossing, in a
+bidisc with $\psi = \log |zw|^2$ and $Y = \{zw = 0\}$, the zero function on $Y$ has the zero
+extension and one equal near the crossing to $(1 + |\log |zw|^2|)^{-1/2}$ off $Y$ and to $0$ on $Y$,
+whose shell integrals grow like $|t|^{1/2}$. Even for smooth $Y$: in a bidisc with $\psi = \log
+|z|^2 + \log(|z|^2 + |w|^2)$, log canonical with $\mathcal{I}(\psi) = (z)$ and $Y = \{z = 0\}$, the
+extension of $0$ by a cut-off times $(1 + |\psi|)^{-1/2}$, set to $0$ on $Y$, has shell integrals
+growing at least like $|t|^{1/2}$ (in the chart $z = wu$ of the blow-up of the origin, the shell
+contains a strip of area of order $|t|$ in the coordinates $-\log |u|^2$ and $-\log |w|^2$); the
+origin is a smaller log canonical centre inside $Y_{\mathrm{reg}}$. A precise general statement,
 with the residue measure obtained by push-forward from the log canonical places of a log resolution
 and the role of smaller log canonical centres and of maximal centres with several log canonical
 places (Kim, Theorems 1.2–1.3 and §3.1), is not part of this page.
@@ -88,12 +99,12 @@ places (Kim, Theorems 1.2–1.3 and §3.1), is not part of this page.
 - J.-P. Demailly, "Extension of holomorphic functions defined on non reduced analytic subvarieties"
   (2015): Definitions (2.2)–(2.3), (2.4)–(2.7) and the paragraph after (2.4), pp. 3–4; Theorem (2.8)
   and Remarks (2.9), pp. 4–5; §4 (Proposition 4.5) and the proof of Theorem 2.8 in §5 (Observation
-  5.1, (5.14)–(5.17) for the constant $34$).
+  5.1, (5.3)–(5.4), (5.14)–(5.17) for the constant $34$, and (5.17₂)).
 - D. Kim and H. Seo, "On $L^2$ extension from singular hypersurfaces", arXiv:2104.03554 (version 5):
   Definition 3.1, p. 10, and Lemma 3.5, (3.5), p. 13 (the residue measure of a divisor).
 - D. Kim, "$L^2$ extension of holomorphic functions for log canonical pairs", arXiv:2108.11934
-  (version 3): Theorems 1.2–1.3, pp. 3–4, and §3.1, pp. 12–15 (the residue measure on a log
-  resolution).
+  (version 3): Theorems 1.2–1.3, pp. 3–4, §3.1, pp. 12–15 (the residue measure on a log resolution),
+  and Proposition 4.1 and Remark 4.2, pp. 17–18.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
   uses the case $S = L^{\oplus n}$ of a finite set of points defined by $n \ge 1$ sections of a line

@@ -55,8 +55,8 @@ A good expansion has pages for:
   by a section of a hermitian vector bundle (Lemma (12.9), p. 116), so that (5.1) applies on the
   complement of the polar set of a weight. For an arbitrary analytic subset $Z$, $\Omega \setminus
   Z$ is complete Kähler whenever $\Omega$ is a relatively compact open subset of a Kähler manifold
-  carrying a complete Kähler metric, in particular for the sublevel sets $\Omega = X_c$ of a weakly
-  pseudoconvex $X$ (Demailly 1982, Théorème 1.5 and Remarque 1.6, p. 464);
+  and $\Omega$ itself carries a complete Kähler metric, in particular for the sublevel sets $\Omega
+  = X_c$ of a weakly pseudoconvex $X$ (Demailly 1982, Théorème 1.5 and Remarque 1.6, p. 464);
 - the Serre–Siegel lemma (Demailly (6.13), p. 45, proved from the Schwarz lemma): for a holomorphic
   line bundle $L$ on a compact complex manifold with $\kappa(L) \ge 0$, $h^0(X, mL) =
   O(m^{\kappa(L)})$ for $m \ge 1$ and $\kappa(L)$ is the smallest exponent with this property, while

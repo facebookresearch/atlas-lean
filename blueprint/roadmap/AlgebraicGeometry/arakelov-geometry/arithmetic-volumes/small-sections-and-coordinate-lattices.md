@@ -56,10 +56,10 @@ the remaining bundles, a sheet integral as on the page on the
 That formula, an archimedean identity without vertical terms, is not the recursion; it compares the
 recursions for different sections. The targets hold for every such system. *Relatively semipositive*
 means, here, for an auxiliary ideal $P_0 \subseteq P$ of the polynomial ring, which need not be
-multihomogeneous, prime or reduced: $h_A$ is smooth, and at every point $z$ of the open multicone of
-$X$ the Levi form of $\log h_A$ at $z$ is nonnegative on every vector $w$ with $\sum_j \partial_j
-f(z)\, w_j = 0$ for all $f \in P_0$ (`IsSemipositiveRel`). This is an archimedean condition, not the
-relative semipositivity of
+multihomogeneous, prime or reduced: $h_A$ is smooth at the points with a nonzero coordinate in every
+block, and at every point $z$ of the open multicone of $X$ the Levi form of $\log h_A$ at $z$ is
+nonnegative on every vector $w$ with $\sum_j \partial_j f(z)\, w_j = 0$ for all $f \in P_0$
+(`IsSemipositiveRel`). This is an archimedean condition, not the relative semipositivity of
 [positive hermitian line bundles](../positivity-of-hermitian-line-bundles.md), which also involves
 the degrees on the closed fibres; those are separate hypotheses below.
 

@@ -32,10 +32,10 @@ integral proper curve in $X$ is nonnegative.
    \mathbb{Z}[t]$, $s/t^\tau \in \mathbb{Z}[t^{-1}]$ gives $V_\tau = \langle 1, t, \dots, t^\tau
    \rangle$, of dimension $\tau + 1$. The span is needed: the elements of $V_\tau$, such as $1/2$,
    need not be integral.
-5. (Projection formula, over any field.) If $f \colon X' \to X$ is a proper morphism of projective
-   schemes over a field, $L_1, \dots, L_e$ are line bundles on $X$ and $Z \subset X'$ is an integral
-   closed subscheme of dimension $e$, then $(f^* L_1 \cdots f^* L_e \cdot Z) = [\kappa(Z) :
-   \kappa(f(Z))]\, (L_1 \cdots L_e \cdot f(Z))$ if $\dim f(Z) = e$, and $0$ otherwise.
+5. (Projection formula, over any field.) If $f \colon X' \to X$ is a morphism of proper schemes over
+   a field, $L_1, \dots, L_e$ are line bundles on $X$ and $Z \subset X'$ is an integral closed
+   subscheme of dimension $e$, then $(f^* L_1 \cdots f^* L_e \cdot Z) = [\kappa(Z) : \kappa(f(Z))]\,
+   (L_1 \cdots L_e \cdot f(Z))$ if $\dim f(Z) = e$, and $0$ otherwise.
 Item 5 follows from $f_*(c_1(f^* L) \cap \alpha) = c_1(L) \cap f_* \alpha$ for proper $f$ and every
 cycle $\alpha$ (Stacks Project, Tag 02SU), applied to each factor, and the preservation of degrees
 of zero-cycles by proper push-forward. The $m^n$ coefficient in 3 is $(L^n)/n!$, which may vanish;
@@ -71,10 +71,11 @@ $c \in \Omega$ and one shift $e \in \mathbb{N}^K$, fixed independently of $\tau$
 \subset H^0(X_\mathbb{Q}, \mathcal{O}(\tau a + e))$, hence the finite dimensionality. The Euler
 polynomials of the invertible sheaves $\mathcal{F} = \mathcal{O}$ and $\mathcal{F} = \mathcal{O}(e)$
 twisted by $\mathcal{O}(\tau a)$, with the bounds on their higher cohomology, have the same $\tau^D$
-coefficient $(a^D)/D!$, as $\mathcal{F}$ has rank one at every generic point; they are applied over
-$\mathbb{Q}$ by flat base change from an algebraic closure, over which $X_\mathbb{Q}$ need not stay
-integral. The case $D = 0$ is treated separately. Item 3 alone does not suffice, as it concerns
-untwisted powers of one line bundle over an algebraically closed field.
+coefficient $(a^D)/D!$, as $\mathcal{F}$ has rank one at every generic point; they are applied after
+flat base change from $\mathbb{Q}$ to an algebraic closure, which preserves the dimensions of the
+section spaces, and over which $X_\mathbb{Q}$ need not stay integral. The case $D = 0$ is treated
+separately. Item 3 alone does not suffice, as it concerns untwisted powers of one line bundle over
+an algebraically closed field.
 
 ## Depends on
 

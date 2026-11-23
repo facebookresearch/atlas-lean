@@ -58,9 +58,12 @@ bounds the norms of a set of sections of maximal rank, independent sections span
 space obtained from integral multiples of finitely many generators, each of norm at most
 $c^{\max(n_1, n_2)}$ in $\Gamma(f_{1*} L_1^{\otimes n_1} \otimes f_{2*} L_2^{\otimes n_2} \otimes
 M)$, for projective morphisms $f_i \colon X_i \to X$, hermitian line bundles $L_i$ on $X_i$ with
-$L_{i,\mathbb{Q}}$ ample and $M$ on $X$, and a constant $c$ independent of $n_1, n_2 \ge 0$ (Lemma
-1.6, p. 190), and compares the covolumes of lattices of different ranks by Minkowski's theorem on
-successive minima, in a sandwich between models on a generic resolution (Zhang, (1.5)–(1.8)).
+$L_{i,\mathbb{Q}}$ ample and $M$ on $X$, and a constant $c$ independent of $n_1, n_2$ with
+$\max(n_1, n_2) \ge 1$ (Lemma 1.6, p. 190, which prints the bound for all $n_1, n_2 \ge 0$; at $n_1
+= n_2 = 0$ it would give norm at most $1$, false for $M = \mathcal{O}$ with $\lVert 1 \rVert = 2$,
+whose nonzero integral sections have norm at least $2$), and compares the covolumes of lattices of
+different ranks by Minkowski's theorem on successive minima, in a sandwich between models on a
+generic resolution (Zhang, (1.5)–(1.8)).
 
 *Small sections.* For a free $\mathbb{Z}$-module $M$ of rank $m$ with a norm on $M \otimes
 \mathbb{R}$, Minkowski's theorem gives

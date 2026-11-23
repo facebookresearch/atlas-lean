@@ -41,16 +41,21 @@ e^* \Omega^q_{A^\natural/R}$ for all $q$ (Mazur–Messing, I.2.6.7 and I.4.1.7, 
 Fonseca–Matthes, §2.2 and Remark 2.8, and by Česnavičius, §3.2). For thickenings in which $p$ is
 nilpotent, Chai and Oort's Theorem 2.4 (iii) identifies the de Rham **homology** of an abelian
 scheme lifting $A_0$ with the Grothendieck–Messing crystal of $A_0[p^\infty]$ evaluated on the
-thickening (Messing); the rigidity 4, stated for cohomology, is its dual. Rings in which $p$ is
-nilpotent and $\mathbb{Q}$-algebras do not exhaust the thickenings of 4:
-$\mathbb{Z}[\varepsilon]/(\varepsilon^2) \to \mathbb{Z}$, with the divided powers of its square-zero
-ideal, is in neither case, and such mixed thickenings belong to the pending all-ring target. A good
-expansion has pages for: the Hodge–de Rham spectral sequence of an abelian scheme over a ring and
-its degeneration, with base change; universal vector extensions and the identifications above; the
-crystalline comparison for $p$-nilpotent thickenings, with the duality between homology and
-cohomology; the Gauss–Manin connection and its integration for divided power thickenings of
-$\mathbb{Q}$-algebras; the mixed thickenings, for which no source has been identified; and the
-polarization form of 5 with its isotropy and perfectness.
+thickening (Messing); dualizing gives $H^1$ as the dual of the evaluated Barsotti–Tate crystal. The
+rigidity 4 is stated with the geometric crystalline cohomology of $A_0$ relative to $R$, and
+identifying that with the dual Barsotti–Tate crystal is a separate input, not a clause of Chai and
+Oort's theorem: it needs the comparison of crystalline with de Rham cohomology for a smooth lift
+(Stacks Project, *Crystalline Cohomology*, §§20–21, Tag 07LG) and the compatibility of the resulting
+comparison maps. Rings in which $p$ is nilpotent and $\mathbb{Q}$-algebras do not exhaust the
+thickenings of 4: $\mathbb{Z}[\varepsilon]/(\varepsilon^2) \to \mathbb{Z}$, with the divided powers
+of its square-zero ideal, is in neither case, and such mixed thickenings belong to the pending
+all-ring target. A good expansion has pages for: the Hodge–de Rham spectral sequence of an abelian
+scheme over a ring and its degeneration, with base change; universal vector extensions and the
+identifications above; the crystalline comparison for $p$-nilpotent thickenings, with the duality
+between homology and cohomology and the identification of the dual Barsotti–Tate crystal with the
+geometric crystalline cohomology of $A_0$; the Gauss–Manin connection and its integration for
+divided power thickenings of $\mathbb{Q}$-algebras; the mixed thickenings, for which no source has
+been identified; and the polarization form of 5 with its isotropy and perfectness.
 
 ## Depends on
 
@@ -76,6 +81,8 @@ polarization form of 5 with its isotropy and perfectness.
   orbits, and a conjecture of Grothendieck", lecture notes, arXiv:math/0701479 (version 1): Theorem
   2.4 (iii) (the comparison of the crystal with de Rham **homology** and its Hodge filtration, for
   $p$-nilpotent thickenings).
+- The Stacks Project, <https://stacks.math.columbia.edu>, *Crystalline Cohomology*, §§20–21 (Tag
+  07LG: crystalline cohomology of a smooth lift computed by its de Rham complex).
 - G. van der Geer and B. Moonen, *Abelian Varieties*, book draft, Chapter VII, "Duality",
   <https://www.math.ru.nl/personal/bmoonen/BookAV/DualAV2.pdf>: the Hodge–de Rham spectral sequence
   and Corollary (7.29), pp. 107–108.

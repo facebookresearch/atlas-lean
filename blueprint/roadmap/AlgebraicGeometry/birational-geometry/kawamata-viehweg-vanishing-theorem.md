@@ -33,23 +33,25 @@ $\kappa(\mathcal{L}^N(-\Delta)) = n$ by Lemma 5.8 a), and $\kappa(\mathcal{L}) =
 $\kappa(\mathcal{L}) = n$ and c) is the corresponding case of d). The two Iitaka dimensions differ
 in general: on $\mathbb{P}^1$, with $\mathcal{L} = \mathcal{O}(1)$, $N = 2$ and $\Delta = [0] +
 [\infty]$, $\mathcal{L}^N(-\Delta)$ is trivial, of Iitaka dimension $0$, while $\kappa(\mathcal{L})
-= 1$. Their proof of c), the case where $\mathcal{L}^N(-\Delta)$ is nef and big, is direct (p. 51),
-and the induction on $\kappa(\mathcal{L})$ that gives d) in general (p. 52) is not needed for it. In
-this big case they choose an effective divisor $C$ and $\mu \ge 1$ with $\mathcal{L}^\mu(-C)$ ample
-(Properties 5.4 d)), so that $\mathcal{L}^{N\nu + \mu}(-\nu\Delta - C)$ is ample for every $\nu$
-(Lemma 5.7) and Serre vanishing applies to it; they blow up $X$ so that $\Delta + C$ becomes a
-normal crossing divisor (Claim 5.13 shows that the cohomology of $\mathcal{L}^{-1}$ does not change,
-although the condition $0 < \alpha_j < N$ is not preserved by blowing up), replace $N$ and $\Delta$
-by $N\nu + \mu$ and $\nu\Delta + C$ for large $\nu$, and conclude with Corollary 5.12 a). That
-statement is not reduced to Theorem 5.1 a), their vanishing theorem for restriction maps derived
-from the $E_1$-degeneration of the logarithmic de Rham complexes of cyclic covers, by a blow-up
-alone: they write $\mathcal{L}^{\nu N}(-\nu\Delta) = \mathcal{O}_X(B + B')$, make $\Delta + B + B'$
-a normal crossing divisor, add the zero set $H$ of a general section of a globally generated power
-$(\mathcal{L}^N(-\Delta))^\mu$, so that $\mathcal{L}^{(\nu + \mu)N} = \mathcal{O}_X(H + (\nu +
-\mu)\Delta + B + B')$ with all multiplicities smaller than $(\nu + \mu)N$ for large $\mu$, and only
-then apply Theorem 5.1 a) with $N' = (\nu + \mu)N$ (pp. 51–52). The proof of Claim 5.13 uses that
-the cyclic covers involved have rational singularities, which is shown with desingularizations of
-them.
+= 1$. Their proof (pp. 51–52) reduces c) to the case $\kappa(\mathcal{L}) = n$ of d) and proves that
+case; d) in general then follows by induction on $\dim X$, restricting to a general hyperplane
+section $H$, for which $\kappa(\mathcal{L}|_H) \ge \kappa(\mathcal{L})$ (the Iitaka dimension need
+not drop: the trivial bundle on $\mathbb{P}^2$ restricted to a line keeps $\kappa = 0$). In the case
+$\kappa(\mathcal{L}) = n$ they choose an effective divisor $C$ and $\mu \ge 1$ with
+$\mathcal{L}^\mu(-C)$ ample (Properties 5.4 d)), so that $\mathcal{L}^{N\nu + \mu}(-\nu\Delta - C)$
+is ample for every $\nu$ (Lemma 5.7) and Serre vanishing applies to it; they blow up $X$ so that
+$\Delta + C$ becomes a normal crossing divisor (Claim 5.13 shows that the cohomology of
+$\mathcal{L}^{-1}$ does not change, although the condition $0 < \alpha_j < N$ is not preserved by
+blowing up), replace $N$ and $\Delta$ by $N\nu + \mu$ and $\nu\Delta + C$ for large $\nu$, and
+conclude with Corollary 5.12 a). That statement is not reduced to Theorem 5.1 a), their vanishing
+theorem for restriction maps derived from the $E_1$-degeneration of the logarithmic de Rham
+complexes of cyclic covers, by a blow-up alone: they write $\mathcal{L}^{\nu N}(-\nu\Delta) =
+\mathcal{O}_X(B + B')$, make $\Delta + B + B'$ a normal crossing divisor, add the zero set $H$ of a
+general section of a globally generated power $(\mathcal{L}^N(-\Delta))^\mu$, so that
+$\mathcal{L}^{(\nu + \mu)N} = \mathcal{O}_X(H + (\nu + \mu)\Delta + B + B')$ with all multiplicities
+smaller than $(\nu + \mu)N$ for large $\mu$, and only then apply Theorem 5.1 a) with $N' = (\nu +
+\mu)N$ (pp. 51–52). The proof of Claim 5.13 uses that the cyclic covers involved have rational
+singularities, which is shown with desingularizations of them.
 
 ## Depends on
 
@@ -81,9 +83,9 @@ them.
   short course refers to its §4.3.A and §9.1.C for a proof by covering constructions.
 - H. Esnault and E. Viehweg, *Lectures on Vanishing Theorems*, DMV Seminar 20, Birkhäuser, 1992;
   electronic version on H. Esnault's page, <https://page.mi.fu-berlin.de/esnault/books/esvibuch.pdf>
-  (page numbers of the electronic version): Corollary 5.12 c) and d), pp. 48–49, with its proof, p.
-  51 for c) and p. 52 for the rest of d); Claim 5.13 and its proof, pp. 49–51; Properties 5.4 d), p.
-  44; Lemma 5.8 a), p. 47; Theorem 5.1, pp. 42–43.
+  (page numbers of the electronic version): Corollary 5.12 c) and d), pp. 48–49, with its proof, pp.
+  51–52 (induction on $\dim X$); Claim 5.13 and its proof, pp. 49–51; Properties 5.4 d), p. 44;
+  Lemma 5.8 a), p. 47; Theorem 5.1, pp. 42–43.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
   uses this result in a specialised form, the case $D = 0$ of a nef and big line bundle over an
