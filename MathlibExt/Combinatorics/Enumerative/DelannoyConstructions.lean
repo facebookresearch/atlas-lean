@@ -9,12 +9,101 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Logic.Function.Iterate
 
-/-! # Parity of binomial coefficients and Delannoy arrays -/
+/-! # Generalized Delannoy numbers and parity in Delannoy arrays -/
 
 namespace MetaMathlibExt.DelannoyConstructions
+
+open Finset
+
+/-- **Generalized Delannoy number with upper index.** For natural numbers $k$, $m$ and $n$, the
+generalized Delannoy number $D^k(m, n)$ is the natural number
+
+$$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}.$$
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Section 1 (definition of `D^k(m, n)`). -/
+@[expose] public def genDelannoyUpper (k m n : ℕ) : ℕ :=
+  ∑ j ∈ range (n + 1), (m + n + k - j).choose (n + k) * n.choose j
+
+/-- **Lower generalized Delannoy number.** For natural numbers $k$, $m$ and $n$, the generalized
+Delannoy number $D_k(m, n)$ is
+$$D_k(m, n) = \sum_{j=0}^{n} \binom{m + n - k - j}{n - k} \binom{n}{j},$$
+where each subtraction is truncated at $0$. The definition is intended for $m, n \ge k$, where
+no truncation occurs.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Section 1 (definition of `D_k(m, n)`). -/
+@[expose] public def genDelannoyLower (k m n : ℕ) : ℕ :=
+  ∑ j ∈ range (n + 1), (m + n - k - j).choose (n - k) * n.choose j
+
+/-- **An upper generalized Delannoy number equal to $13$.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. Then $D^0(2, 2) = 13$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Table 1. -/
+public theorem genDelannoyUpper_zero_two_two : genDelannoyUpper 0 2 2 = 13 := by decide
+
+/-- **An upper generalized Delannoy number equal to $44$.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. Then $D^1(3, 2) = 44$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Table 1. -/
+public theorem genDelannoyUpper_one_three_two : genDelannoyUpper 1 3 2 = 44 := by decide
+
+/-- **A value of the lower generalized Delannoy number.** The lower generalized Delannoy number
+$D_1(2, 2)$ equals $8$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Section 1
+(central theorem `D_k(m, n) = 2^k D^k(n - k, m - k)`). -/
+public theorem genDelannoyLower_one_two_two : genDelannoyLower 1 2 2 = 8 := by decide
+
+/-- **The lower and upper generalized Delannoy numbers agree at index zero.** For natural
+numbers $k$, $m$ and $n$, let
+$D_k(m, n) = \sum_{j=0}^{n} \binom{m + n - k - j}{n - k} \binom{n}{j}$ (with subtraction
+truncated at $0$) and
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ be the lower
+and upper generalized Delannoy numbers. Then $D_0(m, n) = D^0(m, n)$ for all natural numbers
+$m$ and $n$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Section 1. -/
+public theorem genDelannoyLower_zero (m n : ℕ) :
+    genDelannoyLower 0 m n = genDelannoyUpper 0 m n := by
+  simp [genDelannoyLower, genDelannoyUpper]
+
+/-- **Horizontal sum identity for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$,
+$D^k(m, n) + D^k(m, n + 1) = 2 D^{k+1}(m, n)$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 3
+(`jis-2024-24.1.8-thm-3`). -/
+public theorem genDelannoyUpper_add_succ_right (k m n : ℕ) :
+    genDelannoyUpper k m n + genDelannoyUpper k m (n + 1) = 2 * genDelannoyUpper (k + 1) m n := by
+  have hsplit : genDelannoyUpper k m (n + 1) = genDelannoyUpper (k + 1) m n +
+      ∑ j ∈ range (n + 1), (m + n + k - j).choose (n + k + 1) * n.choose j := by
+    simpa only [genDelannoyUpper, ← Nat.add_assoc, Nat.add_right_comm _ 1 k,
+      Nat.add_sub_add_right, Nat.cast_id, Nat.mul_comm] using
+      sum_choose_succ_mul (fun j _ ↦ (m + n + k + 1 - j).choose (n + k + 1)) n
+  rw [hsplit, add_left_comm, two_mul]
+  congr 1
+  unfold genDelannoyUpper
+  rw [← sum_add_distrib]
+  refine sum_congr rfl fun j hj ↦ ?_
+  rw [← Nat.add_mul, ← Nat.choose_succ_succ']
+  have hj' := mem_range.mp hj
+  congr 2
+  omega
 
 /-- **Parity of a sum of adjacent binomial coefficients.** For all natural numbers $n$ and $k$
 with $k \ge 1$, $\binom{n}{k} + \binom{n+1}{k} \equiv \binom{n}{k-1} \pmod 2$.
