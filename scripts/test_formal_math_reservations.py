@@ -174,14 +174,72 @@ class ReservationGuardTest(unittest.TestCase):
         code, output = self.run_check()
         self.assertEqual(code, 0, output)
 
-    def test_peer_repro_manual_diverged_promotion_at_wrong_pin_is_rejected(self):
+    def test_identical_promotion_after_later_sync_preserves_original_binding(self):
         self.assertEqual(self.enroll()[0], 0)
         self.manifest["upstream"]["commit"] = "c" * 40
-        code, output = self.publish("diverged", BODY + "\n/-! Mathematical documentation. -/\n")
-        self.assertEqual(code, 1, output)
-        self.assertIn("reservation publication requires its recorded upstream pin", output)
+        self.save()
+        self.commit("sync unrelated sources while retaining the reservation")
+        self.assertEqual(self.run_check()[0], 0)
+        code, output = self.publish()
+        self.assertEqual(code, 0, output)
+        self.assertEqual(self.manifest["upstream"]["commit"], "c" * 40)
         self.assertEqual(self.row()["upstream_commit"], PIN)
         self.assertEqual(self.row()["upstream_sha256"], c.sha256(BODY))
+
+    def test_attributed_promotion_after_later_sync_preserves_original_binding(self):
+        self.assertEqual(self.enroll()[0], 0)
+        self.manifest["upstream"]["commit"] = "c" * 40
+        self.save()
+        self.commit("sync unrelated sources while retaining the reservation")
+        code, output = self.publish("attributed")
+        self.assertEqual(code, 0, output)
+        self.assertEqual(self.row()["upstream_commit"], PIN)
+        self.assertEqual(self.row()["upstream_sha256"], c.sha256(BODY))
+
+    def test_native_divergence_writer_promotes_after_later_sync(self):
+        self.assertEqual(self.enroll()[0], 0)
+        self.manifest["upstream"]["commit"] = "c" * 40
+        self.save()
+        self.commit("sync unrelated sources while retaining the reservation")
+        t.write(self.root, PATH, c.META + "\n" + BODY + "\n/-! Mathematical documentation. -/\n")
+        code, output = self.run_check(None, "--record-divergence", PATH, "--rationale",
+                                      "Document the original reserved API", "--backport", "not-needed")
+        self.assertEqual(code, 0, output)
+        self.manifest = json.loads((self.root / c.MANIFEST).read_text())
+        self.commit("publish an adaptation of the earlier reserved source")
+        code, output = self.run_check()
+        self.assertEqual(code, 0, output)
+        self.assertEqual(self.row()["upstream_commit"], PIN)
+        self.assertEqual(self.row()["upstream_sha256"], c.sha256(BODY))
+
+    def test_later_sync_promotion_cannot_retarget_source_commit(self):
+        self.assertEqual(self.enroll()[0], 0)
+        self.manifest["upstream"]["commit"] = "c" * 40
+        self.save()
+        self.commit("sync unrelated sources while retaining the reservation")
+        self.row()["upstream_commit"] = "c" * 40
+        code, output = self.publish("diverged")
+        self.assertEqual(code, 1, output)
+        self.assertIn("reserved source changed upstream_commit", output)
+
+    def test_later_sync_promotion_cannot_retarget_source_hash(self):
+        self.assertEqual(self.enroll()[0], 0)
+        self.manifest["upstream"]["commit"] = "c" * 40
+        self.save()
+        self.commit("sync unrelated sources while retaining the reservation")
+        self.row()["upstream_sha256"] = "d" * 64
+        code, output = self.publish("diverged")
+        self.assertEqual(code, 1, output)
+        self.assertIn("reserved source changed upstream_sha256", output)
+
+    def test_later_sync_identical_promotion_rejects_wrong_body(self):
+        self.assertEqual(self.enroll()[0], 0)
+        self.manifest["upstream"]["commit"] = "c" * 40
+        self.save()
+        self.commit("sync unrelated sources while retaining the reservation")
+        code, output = self.publish(body=BODY + "def invented : Nat := 99\n")
+        self.assertEqual(code, 1, output)
+        self.assertIn("body after the header does not hash to upstream_sha256", output)
 
     def test_peer_repro_alternate_unregistered_meta_body_copy_is_rejected(self):
         self.assertEqual(self.enroll()[0], 0)
@@ -235,6 +293,127 @@ class ReservationGuardTest(unittest.TestCase):
         self.commit("publish a separately recorded compatibility path")
         code, output = self.run_check()
         self.assertEqual(code, 0, output)
+
+    def test_native_divergence_writer_cannot_hide_an_alternate_reserved_copy(self):
+        self.assertEqual(self.enroll()[0], 0)
+        alias = "MathlibExt/Alternate.lean"
+        t.write(self.root, alias, c.META + "\n" + BODY)
+        code, output = self.run_check(None, "--record-divergence", alias, "--rationale",
+                                      "Record a compatibility copy", "--backport", "not-needed")
+        self.assertEqual(code, 0, output)
+        self.manifest = json.loads((self.root / c.MANIFEST).read_text())
+        alias_row = next(row for row in self.manifest["rows"] if row["path"] == alias)
+        self.assertNotIn("upstream_commit", alias_row)
+        self.assertNotIn("upstream_sha256", alias_row)
+        self.commit("record the alternate copy without its source binding")
+        self.assert_blocked("exact source-body copy of reserved " + PATH)
+
+    def test_copy_guard_rejects_registered_alias_with_wrong_source_commit(self):
+        self.assertEqual(self.enroll()[0], 0)
+        alias = "MathlibExt/Alternate.lean"
+        text = c.META + "\n" + BODY
+        t.write(self.root, alias, text)
+        self.manifest["rows"].append({"path": alias, "disposition": "diverged",
+                                      "published_sha256": c.sha256(text), "upstream_commit": "c" * 40,
+                                      "upstream_sha256": c.sha256(BODY),
+                                      "rationale": "Record a compatibility copy", "backport": "not-needed"})
+        self.save()
+        self.commit("record a different source commit for the alternate copy")
+        self.assert_blocked("exact source-body copy of reserved " + PATH)
+
+    def test_copy_guard_rejects_registered_alias_with_wrong_source_hash(self):
+        self.assertEqual(self.enroll()[0], 0)
+        alias = "MathlibExt/Alternate.lean"
+        text = c.META + "\n" + BODY
+        t.write(self.root, alias, text)
+        self.manifest["rows"].append({"path": alias, "disposition": "diverged",
+                                      "published_sha256": c.sha256(text), "upstream_commit": PIN,
+                                      "upstream_sha256": "d" * 64,
+                                      "rationale": "Record a compatibility copy", "backport": "not-needed"})
+        self.save()
+        self.commit("record a different source hash for the alternate copy")
+        self.assert_blocked("exact source-body copy of reserved " + PATH)
+
+    def test_later_sync_cannot_enroll_an_unbound_copy_of_an_active_reservation(self):
+        self.assertEqual(self.enroll()[0], 0)
+        self.manifest["upstream"]["commit"] = "c" * 40
+        alias = "MathlibExt/Alternate.lean"
+        text = c.META + "\n" + BODY
+        t.write(self.root, alias, text)
+        self.manifest["rows"].append({"path": alias, "disposition": "identical",
+                                      "published_sha256": c.sha256(text), "upstream_sha256": c.sha256(BODY)})
+        self.save()
+        self.commit("claim the reserved body as a new unbound file in the later sync")
+        self.assert_blocked("exact source-body copy of reserved " + PATH)
+
+    def test_equal_reserved_bodies_keep_both_commit_bindings(self):
+        self.assertEqual(self.enroll()[0], 0)
+        later_pin = "c" * 40
+        self.manifest["upstream"]["commit"] = later_pin
+        self.manifest["rows"].append({"path": "MathlibExt/SecondReserved.lean", "disposition": "reserved",
+                                      "upstream_commit": later_pin, "upstream_sha256": c.sha256(BODY)})
+        self.save()
+        self.commit("reserve an equal body from a different source snapshot")
+        self.assertEqual(self.run_check()[0], 0)
+        alias = "MathlibExt/RegisteredAlias.lean"
+        text = c.META + "\n" + BODY
+        t.write(self.root, alias, text)
+        self.manifest["rows"].append({"path": alias, "disposition": "diverged",
+                                      "published_sha256": c.sha256(text), "upstream_commit": PIN,
+                                      "upstream_sha256": c.sha256(BODY),
+                                      "rationale": "Record the original reserved source at a compatibility path",
+                                      "backport": "not-needed"})
+        self.save()
+        self.commit("publish the first source binding despite an equal later body")
+        code, output = self.run_check()
+        self.assertEqual(code, 0, output)
+
+    def test_unrelated_reservation_binding_cannot_exempt_another_source_body(self):
+        self.assertEqual(self.enroll()[0], 0)
+        later_pin = "c" * 40
+        other_body = BODY + "def anotherReservedValue : Nat := 98\n"
+        self.manifest["upstream"]["commit"] = later_pin
+        self.manifest["rows"].append({"path": "MathlibExt/OtherReserved.lean", "disposition": "reserved",
+                                      "upstream_commit": later_pin, "upstream_sha256": c.sha256(other_body)})
+        self.save()
+        self.commit("reserve a different body at the next source snapshot")
+        self.assertEqual(self.run_check()[0], 0)
+        alias = "MathlibExt/Alternate.lean"
+        text = c.META + "\n" + BODY
+        t.write(self.root, alias, text)
+        self.manifest["rows"].append({"path": alias, "disposition": "diverged",
+                                      "published_sha256": c.sha256(text), "upstream_commit": later_pin,
+                                      "upstream_sha256": c.sha256(other_body),
+                                      "rationale": "Record a compatibility copy", "backport": "not-needed"})
+        self.save()
+        self.commit("claim the other reservation's identity for the copied first body")
+        self.assert_blocked("exact source-body copy of reserved " + PATH)
+
+    def test_published_reservation_binding_protects_a_later_registered_copy(self):
+        self.assertEqual(self.enroll()[0], 0)
+        self.assertEqual(self.publish("attributed")[0], 0)
+        alias = "MathlibExt/Alternate.lean"
+        t.write(self.root, alias, c.META + "\n" + BODY)
+        code, output = self.run_check(None, "--record-divergence", alias, "--rationale",
+                                      "Record a compatibility copy", "--backport", "not-needed")
+        self.assertEqual(code, 0, output)
+        self.commit("record an alternate body copy after the reservation was published")
+        self.assert_blocked("exact source-body copy of recorded " + PATH)
+
+    def test_retired_reservation_binding_protects_a_later_registered_copy(self):
+        self.assertEqual(self.enroll()[0], 0)
+        self.assertEqual(self.publish("attributed")[0], 0)
+        (self.root / PATH).unlink()
+        code, output = self.run_check(None, "--retire", PATH)
+        self.assertEqual(code, 0, output)
+        self.commit("retire the published reserved source")
+        alias = "MathlibExt/Alternate.lean"
+        t.write(self.root, alias, c.META + "\n" + BODY)
+        code, output = self.run_check(None, "--record-divergence", alias, "--rationale",
+                                      "Record a compatibility copy", "--backport", "not-needed")
+        self.assertEqual(code, 0, output)
+        self.commit("record an alternate body copy after its origin was retired")
+        self.assert_blocked("exact source-body copy of recorded " + PATH)
 
     def test_copy_guard_leaves_unrelated_new_content_unchanged(self):
         self.assertEqual(self.enroll()[0], 0)

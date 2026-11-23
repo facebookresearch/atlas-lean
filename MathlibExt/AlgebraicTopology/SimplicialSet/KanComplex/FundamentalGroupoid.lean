@@ -3,31 +3,14 @@ Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Full-file copy of
--- `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/FundamentalGroupoid.lean`
--- from PR `leanprover-community/mathlib4#42435` head
--- `e09070f786c9fc0a688e6239d71230b618b045ff`, blob
--- `60c286e3e8d0d60ad118aba7858a5d9711000836`.
--- Import adaptations for pinned Mathlib v4.34.1
--- (`d13f23b723b8a846827a245b89c10fc7d3f11612`): canonical
--- `Mathlib.AlgebraicTopology.Quasicategory.TwoTruncatedQuasicategory`,
--- canonical `Mathlib.AlgebraicTopology.SimplicialSet.KanComplex.MulStruct`, and
--- canonical `Mathlib.AlgebraicTopology.SimplicialSet.KanComplex` (provides
--- `KanComplex X.op`, replacing `MathlibExt.AlgebraicTopology.SimplicialSet.KanComplexCompat`
--- and the direct `Mathlib.AlgebraicTopology.SimplicialSet.Op` import); retained
--- witness-level `MathlibExt.AlgebraicTopology.Quasicategory.TwoTruncatedCompat` for
--- `Edge.assoc`, `assoc'`, `CompStruct.unique`, and `HomotopyCategory₂.desc`
--- family declarations; retained local
--- `MathlibExt.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic`,
--- `MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexCompat`, and
--- `MathlibExt.AlgebraicTopology.SimplicialSet.CompStructCompat`.
--- Deletion / upgrade rule: delete this `MathlibExt` module and replace its imports
--- with the canonical `Mathlib.AlgebraicTopology.SimplicialSet.KanComplex.FundamentalGroupoid`
--- once the pinned Mathlib contains the file and all declarations; regenerate
--- `MathlibExt.lean` in a separate Avocado task and rebuild `MathlibExt`.
--- See `BACKPORTS.md` and `scratches/model-category/BLUEPRINT_1_YEAR.md`.
+-- BACKPORT: Kan edge/groupoid APIs from Mathlib PR #42435,
+-- head `e09070f786c9fc0a688e6239d71230b618b045ff`,
+-- `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/FundamentalGroupoid.lean`,
+-- blob `60c286e3e8d0d60ad118aba7858a5d9711000836`.
+-- Current canonical imports and retained adapters: `BACKPORTS.md`.
 
 public import Mathlib.AlgebraicTopology.Quasicategory.TwoTruncatedQuasicategory
 public import MathlibExt.AlgebraicTopology.Quasicategory.TwoTruncatedCompat
@@ -38,10 +21,16 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexCompat
 public import MathlibExt.AlgebraicTopology.SimplicialSet.CompStructCompat
 
 /-!
-# The fundamental groupoid of a Kan complex
+# Edge representatives in the fundamental groupoid of a Kan complex
 
-...
+Kan fillers construct inverse edges and identify the two-truncated homotopy category with the
+fundamental groupoid. Every fundamental-groupoid morphism is represented by an original edge;
+equality and composition of these representatives are characterized by the corresponding
+homotopy and composition triangles. The chosen inverse structures and their groupoid images
+remain explicit.
 
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section

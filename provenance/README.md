@@ -28,7 +28,7 @@ divergence.
 
 | Disposition | Meaning | Fields |
 | --- | --- | --- |
-| `identical` | Meta header, then the body of the upstream file at `upstream.commit`. With `"header": "upstream"`, the upstream file byte for byte, keeping its own copyright and license header (then `upstream_sha256` hashes the whole file). | `published_sha256`, `upstream_sha256`, optional `header` |
+| `identical` | Meta header, then the body of the upstream file at its recorded `upstream_commit`, or `upstream.commit` when that field is absent. With `"header": "upstream"`, the upstream file byte for byte, keeping its own copyright and license header (then `upstream_sha256` hashes the whole file). | `published_sha256`, `upstream_sha256`, optional `upstream_commit` and `header` |
 | `attributed` | As `identical`, with an attribution notice (one block comment naming provenance or licensing, for example Apache 2.0 Section 4) between the Meta header and the body. | `published_sha256`, `upstream_sha256`, `notice` |
 | `behind` | Header-only copy of an older upstream version of the same path; the next sync brings it current. | `published_sha256`, `upstream_commit` (the commit that introduced that version), `upstream_sha256` (its body), optional `notice` or `header` |
 | `diverged` | Reviewed ATLAS-side difference from upstream, including a file deleted upstream that ATLAS still publishes. | `published_sha256` (the reviewed bytes), `rationale`, `backport` (`pending`, `not-needed`, or the Formal-Math backport PR URL); informational `upstream_sha256`, `upstream_commit` |
@@ -43,19 +43,21 @@ An existing published or retired row cannot become a reservation. A reservation
 cannot be dropped, retargeted, retired as if it had been published, or change its
 source hash or commit, even on a later sync.
 
-With the source pin unchanged, a later PR may promote that existing reservation
-to `identical`, `attributed` or `diverged`. Both recorded source fields remain
-exactly the same. Every promotion requires the recorded source pin, including a
-genuinely adapted publication with a precise reviewed divergence rationale. All
+A later PR may promote that existing reservation to `identical`, `attributed` or
+`diverged`, including after an unrelated later sync changes the global pin. Both
+recorded source fields remain exactly the same: publication uses the reservation's
+original commit and hash. Adapted publication requires a precise reviewed rationale. All
 ordinary published-byte, header/body, attribution and divergence-rationale checks
 still apply. Unreserved new synced rows still require a pin-changing
 sync. Reserving a source does not claim any theorem has been published or tested.
 
-Compared with the base tree, a new unregistered path whose source body exactly
-matches a current or base reservation also fails. The same source and published
-header parsers handle Meta headers, attribution notices and retained legal
-headers. Existing registered paths and already-published baseline paths retain
-their ordinary checks; a reservation does not retroactively enroll them.
+Compared with the base tree, a new path whose parsed body matches an enrolled source
+requires its matching recorded source commit and hash. A new `diverged` row without
+those fields cannot hide a copied body. Source-bound base rows retain this protection
+after publication or retirement, and equal bodies may retain several commit bindings.
+Ordinary header-only enrollment at a real sync remains allowed for nonreserved source
+bodies. The same parsers handle Meta headers, attribution notices and retained legal
+headers. Already-published baseline paths retain their ordinary checks.
 
 ## What preflight enforces
 

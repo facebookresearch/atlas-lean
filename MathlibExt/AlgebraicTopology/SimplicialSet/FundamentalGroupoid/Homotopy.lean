@@ -3,97 +3,28 @@ Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Full-file copy of
--- `Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean`
--- from PR `leanprover-community/mathlib4#42576` at commit
--- `28fbf220a205c47649528c7daacf165f7618caf8`,
+-- BACKPORT: Homotopy/functor comparisons from Mathlib PR #42576,
+-- head `28fbf220a205c47649528c7daacf165f7618caf8`,
+-- `Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean`,
 -- blob `863ff98a547c483d74dac8629e8f11d9d8b3ca3b`.
--- Import adaptation: `Mathlib.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic`
--- → `MathlibExt.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic`;
--- `Mathlib.AlgebraicTopology.SimplicialSet.Homotopy` is kept (pinned on 4.33).
--- Deletion rule: delete this module and replace the `MathlibExt` import with
--- `Mathlib.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Homotopy`
--- once the pinned Mathlib provides the file; see `BACKPORTS.md`.
--- See `BACKPORTS.md` for provenance and upgrade-removal steps.
+-- The canonical core and seven-helper adapter are reused; see `BACKPORTS.md`.
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic
 public import Mathlib.AlgebraicTopology.SimplicialSet.Homotopy
 
 /-!
-# Provenance and upgrade note
+# Homotopies and fundamental-groupoid functor comparison
 
-This file is a temporary local copy of
-`Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean`
-from PR `leanprover-community/mathlib4#42576` at head commit
-`28fbf220a205c47649528c7daacf165f7618caf8` (file blob
-`863ff98a547c483d74dac8629e8f11d9d8b3ca3b`). The copy was prepared for the
-pinned Mathlib `v4.33.0` (`db584cd`) on Lean `4.33`.
+A combinatorial simplicial homotopy gives original endpoint and diagonal edges with their
+composition triangles. These construct a natural isomorphism between the fundamental-groupoid
+functors of the two original simplicial maps. The same comparison is obtained for a homotopy
+expressed as a map from the Cartesian product with the interval.
 
-## Source
-
-* PR: `leanprover-community/mathlib4#42576`
-* PR head: `28fbf220a205c47649528c7daacf165f7618caf8`
-* File: `Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean`
-* Blob: `863ff98a547c483d74dac8629e8f11d9d8b3ca3b`
-* Durable provenance: `BACKPORTS.md`
-
-## Copied surface
-
-Full 121-line upstream file preserving implementation, namespaces, universes,
-attributes, theorem statements, and proof bodies. Upstream declarations include:
-
-* `SSet.Edge.ofSimplicialObjectHomotopy`
-* `SSet.Edge.ofSimplicialObjectHomotopy_edge`
-* `SSet.Edge.diagOfSimplicialObjectHomotopy`
-* `SSet.Edge.diagOfSimplicialObjectHomotopy_edge`
-* `SSet.Edge.diagOfSimplicialObjectHomotopy_edge'`
-* `SSet.Edge.CompStruct.ofSimplicialObjectHomotopy`
-* `SSet.Edge.CompStruct.ofSimplicialObjectHomotopy'`
-* `SSet.congrMapFundamentalGroupoid'`
-* `SSet.congrMapFundamentalGroupoid`
-
-## Adaptations for Lean 4.33 pin
-
-* `Mathlib.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic` →
-  `MathlibExt.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic`
-  (provides the accepted local compatibility layer for the upstream `Basic`
-  file from PR #42587, blob `ee7aba11`, required for `Edge`, `CompStruct`,
-  `mapFundamentalGroupoid`, `homMk`, etc.)
-* `Mathlib.AlgebraicTopology.SimplicialSet.Homotopy` kept as pinned (present
-  in `v4.33.0` / `v4.34.0-rc2`).
-
-No proof bodies, signatures, attributes, or universe parameters were otherwise
-changed. Lean 4.33 required only the single import-path adaptation above.
-
-## Removal rule
-
-Delete this module
-`MathlibExt/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean`
-and replace its `MathlibExt` import with the canonical
-`Mathlib.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Homotopy`
-once the pinned Mathlib contains the file (i.e. PR #42576 is merged).
-After deletion, regenerate roots with `scripts/mk_all.sh --no-build` in a
-separate Avocado task and rebuild `MathlibExt`.
-
--/
-
-/-!
-# Homotopic maps induce isomorphisms functors on the fundamental groupoid
-
-The main definition in this file is `SSet.congrMapFundamentalGroupoid`.
-Given two morphisms of simplicial sets `f : X ⟶ Y` and `g : X ⟶ Y`
-and a homotopy `h : Homotopy f g`, this is an isomorphism between
-the functors `mapFundamentalGroupoid f` and `mapFundamentalGroupoid g`.
-
-## Implementation notes
-
-We first define the variant `SSet.congrMapFundamentalGroupoid'`
-which takes as an input a combinatorial simplicial homotopy
-(as `h : SimplicialObject.Homotopy f g`), and then we deduce the result
-for terms in `SSet.Homotopy f g` which involve a morphism `X ⊗ Δ[1] ⟶ Y`.
-
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section

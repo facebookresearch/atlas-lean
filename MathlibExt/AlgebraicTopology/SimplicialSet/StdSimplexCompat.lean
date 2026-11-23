@@ -3,118 +3,28 @@ Copyright (c) 2021 Kim Morrison. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Extracted from PR leanprover-community/mathlib4#42435 head
--- `e09070f786c9fc0a688e6239d71230b618b045ff`, file
+-- BACKPORT: Remaining standard-simplex helpers from Mathlib PR #42435,
+-- head `e09070f786c9fc0a688e6239d71230b618b045ff`,
 -- `Mathlib/AlgebraicTopology/SimplicialSet/StdSimplex.lean`,
--- blob `01377b85904978d402c830501e4615606021df8c`. Copied surface:
--- `SSet.stdSimplex.objEquiv_symm_δ_apply`,
--- `SSet.stdSimplex.objEquiv_symm_σ_apply`,
--- `SSet.yonedaEquiv_symm_map` (upstream in `SSet`, listed in contract as
--- `stdSimplex.yonedaEquiv_symm_map`),
--- `SSet.stdSimplex.yonedaEquiv_isoOfRepresentableBy_hom`,
--- `SSet.σ_zero_eq_yonedaEquiv_const`,
--- `SSet.Subcomplex.ofSimplexRepresentableBy`,
--- `SSet.Subcomplex.ofSimplexRepresentableBy_id`,
--- `SSet.Subcomplex.yonedaEquiv_isoOfRepresentableBy_ofSimplexRepresentableBy_hom`,
--- `SSet.Subcomplex.isoOfRepresentableBy_ofSimplexRepresentableBy_hom`,
--- `SSet.Edge.δ_zero_yonedaEquiv_symm`,
--- `SSet.Edge.δ_one_yonedaEquiv_symm`,
--- `SSet.Edge.CompStruct.δ_zero_yonedaEquiv_symm`,
--- `SSet.Edge.CompStruct.δ_one_yonedaEquiv_symm`,
--- `SSet.Edge.CompStruct.δ_two_yonedaEquiv_symm`.
--- Adaptations for pinned Mathlib v4.33.0 (`db584cd`): minimal import
--- `Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex` which already provides
--- `stdSimplex.objEquiv`, `yonedaEquiv`, `Subcomplex.toOfSimplex`,
--- `isIso_toOfSimplex_iff`, `isoOfRepresentableBy`, `Edge`, `CompStruct`,
--- `stdSimplex.δ_comp_yonedaEquiv_symm`; proof of
--- `ofSimplexRepresentableBy_id` uses pinned `toOfSimplex`,
--- `yonedaEquiv_toOfSimplex`, `objEquiv_yonedaEquiv_id`, and
--- `yonedaEquiv_symm_app_id` to replace missing
--- `toOfSimplex_app_objEquiv_symm`; lemma `σ_zero_eq_yonedaEquiv_const`
--- uses existing `σ_comp_yonedaEquiv_symm` and `yonedaEquiv_symm_zero`;
--- the five `Edge`/`CompStruct` face lemmas use the pinned
--- `δ_comp_yonedaEquiv_symm`; otherwise proofs preserved verbatim.
--- Removal rule: delete this file and switch any imports to
--- `Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex` once pinned Mathlib
--- contains all fourteen declarations at canonical path; regenerate
--- `MathlibExt.lean` in separate Avocado task; remove corresponding
--- `BACKPORTS.md` row only in that separate task.
+-- blob `01377b85904978d402c830501e4615606021df8c`.
+-- Five face formulas are delegated upstream; see `BACKPORTS.md`.
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
 
 /-!
-# Standard simplex compatibility backport for Lean 4.33
+# Standard-simplex coordinates and representable simplex images
 
-This file backports from PR #42435 head `e09070f786c9fc0a688e6239d71230b618b045ff`,
-file `Mathlib/AlgebraicTopology/SimplicialSet/StdSimplex.lean`,
-blob `01377b85904978d402c830501e4615606021df8c`, upstream author Joël Riou
-(copyright header preserved from upstream source), the fourteen declarations
-required by `ProdStdSimplexOneCompat` and the
-`KanComplex/FundamentalGroupoid` leaf (narrow closure plus five-lemma
-provider extension for horn-face discharge):
+Face and degeneracy coordinates agree with their finite-index maps, and Yoneda transposition
+commutes with simplex operators. A simplex whose Yoneda map is monic generates a representable
+subcomplex, with its identity coordinate and inclusion computed explicitly. The nine retained
+helpers use the pinned standard-simplex API; the five edge and triangle face formulas already
+come from that upstream import.
 
-* `SSet.stdSimplex.objEquiv_symm_δ_apply`
-* `SSet.stdSimplex.objEquiv_symm_σ_apply`
-* `SSet.yonedaEquiv_symm_map` (upstream in `SSet`, contract lists as
-  `stdSimplex.yonedaEquiv_symm_map`)
-* `SSet.stdSimplex.yonedaEquiv_isoOfRepresentableBy_hom`
-* `SSet.σ_zero_eq_yonedaEquiv_const`
-* `SSet.Subcomplex.ofSimplexRepresentableBy`
-* `SSet.Subcomplex.ofSimplexRepresentableBy_id`
-* `SSet.Subcomplex.yonedaEquiv_isoOfRepresentableBy_ofSimplexRepresentableBy_hom`
-* `SSet.Subcomplex.isoOfRepresentableBy_ofSimplexRepresentableBy_hom`
-* `SSet.Edge.δ_zero_yonedaEquiv_symm`
-* `SSet.Edge.δ_one_yonedaEquiv_symm`
-* `SSet.Edge.CompStruct.δ_zero_yonedaEquiv_symm`
-* `SSet.Edge.CompStruct.δ_one_yonedaEquiv_symm`
-* `SSet.Edge.CompStruct.δ_two_yonedaEquiv_symm`
-
-## Source
-
-* PR: leanprover-community/mathlib4#42435
-* PR head: `e09070f786c9fc0a688e6239d71230b618b045ff`
-* File: `Mathlib/AlgebraicTopology/SimplicialSet/StdSimplex.lean`
-* Blob: `01377b85904978d402c830501e4615606021df8c`
-
-## Adaptations for 4.33 pin
-
-* Minimal import `Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex` for
-  all pre-existing declarations (`objEquiv`, `yonedaEquiv`,
-  `toOfSimplex`, `isIso_toOfSimplex_iff`, `isoOfRepresentableBy`,
-  `Edge`, `CompStruct`, `δ_comp_yonedaEquiv_symm`, etc.).
-* `yonedaEquiv_symm_map`: proof `uliftYonedaEquiv_symm_map ..` preserved; API
-  exists on pin via `Mathlib.CategoryTheory.Yoneda`.
-* `σ_zero_eq_yonedaEquiv_const`: proof preserved verbatim using existing
-  `stdSimplex.σ_comp_yonedaEquiv_symm` and `yonedaEquiv_symm_zero` from
-  pinned v4.33.0.
-* `ofSimplexRepresentableBy_id`: original proof used
-  `toOfSimplex_app_objEquiv_symm` which is absent from pinned v4.33.0
-  `StdSimplex.lean`; replaced with robust proof using pinned
-  `toOfSimplex`, `yonedaEquiv_toOfSimplex`, `objEquiv_yonedaEquiv_id`,
-  and `yonedaEquiv_symm_app_id` to unfold `RepresentableBy.homEquiv`
-  and identify `(toOfSimplex x).app _ (objEquiv.symm 𝟙)` with
-  `yonedaEquiv (toOfSimplex x)` via Yoneda evaluation at
-  `yonedaEquiv 𝟙 = objEquiv.symm 𝟙`.
-* `Edge.δ_zero_yonedaEquiv_symm`, `Edge.δ_one_yonedaEquiv_symm`,
-  `Edge.CompStruct.δ_zero_yonedaEquiv_symm`,
-  `Edge.CompStruct.δ_one_yonedaEquiv_symm`,
-  `Edge.CompStruct.δ_two_yonedaEquiv_symm`: proofs preserved verbatim
-  as `by simp [stdSimplex.δ_comp_yonedaEquiv_symm]`; attribute
-  `@[reassoc (attr := simp)]` preserved exactly as upstream.
-* Preserves upstream namespaces (`SSet`, `SSet.stdSimplex`, `SSet.Subcomplex`,
-  `SSet.Edge`, `SSet.Edge.CompStruct`),
-  universes `u`, attributes (`@[simp]`, `@[reassoc (attr := simp)]` where
-  upstream), and mathematical content verbatim where elaborated on 4.33 pin.
-
-## Removal rule
-
-Delete `MathlibExt/AlgebraicTopology/SimplicialSet/StdSimplexCompat.lean` and
-replace any imports of it with `Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex`
-once pinned Mathlib provides the fourteen declarations listed above at canonical
-path. Do not retain local copies colliding with upstream. Regenerate
-`MathlibExt.lean` in separate Avocado task.
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section

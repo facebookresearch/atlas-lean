@@ -3,28 +3,28 @@ Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Seven remaining comparison helpers extracted from
--- `Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Basic.lean`
--- in PR `leanprover-community/mathlib4#42587` at commit
--- `d7757b4d8106b7e199293d833742c1b82dd38a4d`,
+-- BACKPORT: Seven comparison helpers from Mathlib PR #42587,
+-- head `d7757b4d8106b7e199293d833742c1b82dd38a4d`,
+-- `Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Basic.lean`,
 -- blob `ee7aba11d4733c337034ee3d5ad5406ee9bd2ade`.
--- The fundamental-groupoid core is imported from pinned Mathlib.
--- See `BACKPORTS.md` for provenance and upgrade-removal steps.
+-- The upstream fundamental-groupoid core is reused; see `BACKPORTS.md`.
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic
 
 /-!
-# Remaining fundamental-groupoid comparison API
+# Fundamental-groupoid functor and transformation comparisons
 
-Mathlib 4.35 provides the fundamental groupoids and their basic functors.
-The declarations below retain the natural-transformation constructors and
-functor comparison isomorphisms from Mathlib PR #42587 at commit
-`d7757b4d8106b7e199293d833742c1b82dd38a4d`, blob
-`ee7aba11d4733c337034ee3d5ad5406ee9bd2ade`, which remain absent from the pin.
-The original copied helper statements and proofs are preserved over the
-canonical upstream types. See `BACKPORTS.md` for provenance and removal rules.
+Vertex components and naturality on original edges construct natural transformations and natural
+isomorphisms from fundamental groupoids into an arbitrary category. The comparison helpers also
+retain an explicit isomorphism from a two-truncation isomorphism and natural isomorphisms for
+identity, composition and equal simplicial maps. The fundamental groupoids and their basic
+functors are imported from pinned Mathlib.
+
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section

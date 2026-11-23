@@ -594,6 +594,8 @@ def reservation_transition_problems(path: str, before: dict | None, row: dict,
 
     Unlike ordinary sync transitions this runs even when the global pin changes. A reservation
     never replaces a published row, and it never acquires invented publication history.
+    Publication retains its recorded source commit and hash even after an unrelated later sync;
+    the normal file checks verify the publication bytes and any reviewed adaptation.
     """
     disposition = row.get("disposition")
     if before is None:
@@ -616,8 +618,6 @@ def reservation_transition_problems(path: str, before: dict | None, row: dict,
         problems.append(f"{path}: reserved source changed {', '.join(changed)} (base {short})")
     if disposition not in ("identical", "attributed", "diverged"):
         problems.append(f"{path}: a reservation may only become identical, attributed or diverged (base {short})")
-    if disposition in ("identical", "attributed", "diverged") and pin != before.get("upstream_commit"):
-        problems.append(f"{path}: reservation publication requires its recorded upstream pin")
     return problems
 
 
@@ -639,14 +639,24 @@ def reservation_body_hashes(data: bytes) -> set[str]:
     return hashes
 
 
-def reservation_copy_problems(root: Path, old: dict, new: dict, commit: str) -> list[str]:
-    """New unregistered paths cannot disguise an exact copy of an enrolled source body.
+def reservation_copy_problems(root: Path, old: dict, new: dict, commit: str, *,
+                              old_pin: str | None = None, pin: str | None = None) -> list[str]:
+    """New paths need the matching immutable binding for an exact recorded source-body copy.
 
-    Registered current paths and paths already published in the base are left to their existing
-    checks. Include base reservations too, so promoting every row cannot hide an alternate copy.
+    A new diverged row does not enroll its own claimed source identity. Current reservations and
+    source-bound base rows supply the bindings; the latter retain protection after publication
+    or retirement. Already-published base paths retain their ordinary checks.
+    Ordinary header-only enrollment at a real sync remains allowed for nonreserved base bodies.
     """
-    sources = {row["upstream_sha256"]: path for rows in (old, new) for path, row in rows.items()
-               if row.get("disposition") == "reserved" and isinstance(row.get("upstream_sha256"), str)}
+    sources: dict[str, set[tuple[str, str, bool]]] = {}
+    for rows, reservations_only in ((old, False), (new, True)):
+        for path, row in rows.items():
+            if reservations_only and row.get("disposition") != "reserved":
+                continue
+            digest, source_commit = row.get("upstream_sha256"), row.get("upstream_commit")
+            if isinstance(digest, str) and SHA256.fullmatch(digest) \
+                    and isinstance(source_commit, str) and COMMIT.fullmatch(source_commit):
+                sources.setdefault(digest, set()).add((source_commit, path, row.get("disposition") == "reserved"))
     if not sources:
         return []
     listing = git(root, "ls-tree", "-r", "--name-only", commit, "--", *ROOTS)
@@ -655,12 +665,26 @@ def reservation_copy_problems(root: Path, old: dict, new: dict, commit: str) -> 
     baseline_paths = set(listing.splitlines())
     files, _ = library_files(root)
     problems = []
-    for path in sorted(files - set(new) - baseline_paths):
-        source = next((sources[digest] for digest in sorted(reservation_body_hashes((root / path).read_bytes()))
-                       if digest in sources), None)
-        if source:
-            problems.append(f"{path}: exact source-body copy of reserved {source} but has no row; "
-                            "publish at its reserved path or record the copied source provenance")
+    for path in sorted(files - baseline_paths):
+        matches = [(digest, source_commit, source, reserved)
+                   for digest in sorted(reservation_body_hashes((root / path).read_bytes()))
+                   for source_commit, source, reserved in sorted(sources.get(digest, set()))]
+        if not matches:
+            continue
+        row = new.get(path, {})
+        if row.get("disposition") in (*SYNCED, "diverged") and any(
+                row.get("upstream_sha256") == digest and row.get("upstream_commit") == source_commit
+                for digest, source_commit, _, _ in matches):
+            continue
+        if old_pin and pin and old_pin != pin and row.get("disposition") in SYNCED \
+                and row.get("upstream_commit", pin) == pin \
+                and any(row.get("upstream_sha256") == digest for digest, _, _, _ in matches) \
+                and not any(reserved for _, _, _, reserved in matches):
+            continue
+        _, _, source, reserved = matches[0]
+        kind = "reserved" if reserved else "recorded"
+        problems.append(f"{path}: exact source-body copy of {kind} {source} but has no matching source binding; "
+                        "publish at its recorded path or record the copied source commit and hash")
     return problems
 
 
@@ -741,7 +765,7 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
                 for path in sorted(old.keys() - new.keys())]
     for path, row in new.items():
         problems += reservation_transition_problems(path, old.get(path), row, old_pin, pin, short)
-    problems += reservation_copy_problems(root, old, new, commit)
+    problems += reservation_copy_problems(root, old, new, commit, old_pin=old_pin, pin=pin)
     tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
     moves = copy_and_rename_status(root, commit, staged=bool(merge_head))
     if moves is None:

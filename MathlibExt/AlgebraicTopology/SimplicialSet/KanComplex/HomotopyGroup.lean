@@ -3,41 +3,27 @@ Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Full-file backport of
--- `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/HomotopyGroup.lean`
--- from PR leanprover-community/mathlib4#42435 head
--- `e09070f786c9fc0a688e6239d71230b618b045ff`, blob
--- `5b9cec53e396ee80094d6048f61b5b2963180240`.
--- Copied surface: full file — def `SSet.KanComplex.π`, namespace `π` with
--- `mk`, `mk_surjective`, `rec`, `One` instance, `mk_eq_mk_iff`,
--- `mk_eq_one_iff`, `group` sub-namespace (`mul'`, `mulStruct`, `mul`,
--- `mul_eq_of_mulStruct`, `mul_mk_eq_iff`, `mul_assoc`, `one_mul`,
--- `mul_one`, `exists_left_inverse`, `inv`, `inv_mul`), `group'`,
--- `mul_eq_of_mulStruct'`, `mul_mk_eq_iff'`, `group` instance,
--- `mul_mk_eq_iff`, and outer `PtSimplex.MulStruct.mul_eq`.
--- Import adaptations for Lean 4.33 pin `db584cd`: PtSimplexEquiv →
--- PtSimplexEquiv (MathlibExt).
--- Notation adaptation: added `open scoped Simplicial` for `∂Δ[n]` etc.
--- Deletion rule: delete this MathlibExt module and switch imports to
--- Mathlib once pin contains file.
--- See BACKPORTS.md, BLUEPRINT_1_YEAR.md, and shared orchestration policy.
+-- BACKPORT: Homotopy-group construction from Mathlib PR #42435,
+-- head `e09070f786c9fc0a688e6239d71230b618b045ff`,
+-- `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/HomotopyGroup.lean`,
+-- blob `5b9cec53e396ee80094d6048f61b5b2963180240`.
+-- Current canonical imports and retained adapters: `BACKPORTS.md`.
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.KanComplex.PtSimplexEquiv
 
 /-!
 # Homotopy groups of Kan complexes
 
-In this file, we define the homotopy groups `SSet.KanComplex.π n X x`
-of a Kan complex `X` where `n : ℕ` and `x : X _⦋n⦌`. For `n = 0`,
-this is only a type with a `One` element. In the case of
-`SSet.KanComplex.π (n + 1) X x`, we actually get a group structure
-for each `i : Fin (n + 1)` (but they should all coindice), and
-we use `i := Fin.last n` in order to define the group structure instance.
-The multiplication is characterized in terms of `SSet.PtSimplex.MulStruct`
-structured, see the lemma `SSet.KanComplex.π.mul_mk_eq_iff`.
+For an original vertex `x` and each natural-number degree, pointed simplices modulo relative
+homotopy define `SSet.KanComplex.π n X x`. Degree zero has a distinguished element. For a Kan
+complex, every positive degree has a group structure whose multiplication is characterized by
+the original pointed-simplex multiplication witnesses.
 
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section

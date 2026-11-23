@@ -3,99 +3,31 @@ Copyright (c) 2025 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT (partially retired for Mathlib v4.34.1): Extracted from PR
--- leanprover-community/mathlib4#42435 head
--- `e09070f786c9fc0a688e6239d71230b618b045ff`, file
+-- BACKPORT: Filtration/gluing suffix from Mathlib PR #42435,
+-- head `e09070f786c9fc0a688e6239d71230b618b045ff`,
 -- `Mathlib/AlgebraicTopology/SimplicialSet/ProdStdSimplexOne.lean`,
--- blob `b7fe9406e4ca9716a2a74c7895222dc47a2f12d6`. Original 39-declaration
--- nondeprecated coherent filtration/gluing packet (see below). Pinned Mathlib
--- v4.34.1 (`d13f23b723b8a846827a245b89c10fc7d3f11612`) now provides the first
--- 12 declarations at canonical
--- `Mathlib/AlgebraicTopology/SimplicialSet/ProdStdSimplexOne.lean`; local copies
--- removed to avoid environment duplicates when `KanSphereFiller` reaches both
--- providers (notably `SSet.prodStdSimplex₁.intersectionNondeg`).
--- Upstream replacements (pinned Mathlib v4.34.1, statements identical):
--- `SSet.prodStdSimplex₁.nonDegenerateEquiv`,
--- `SSet.prodStdSimplex₁.nonDegenerateEquiv_fst`,
--- `SSet.prodStdSimplex₁.nonDegenerateEquiv_snd`,
--- `SSet.prodStdSimplex₁.filtration`,
--- `SSet.prodStdSimplex₁.ofSimplex_le_filtration`,
--- `SSet.prodStdSimplex₁.filtration_zero`,
--- `SSet.prodStdSimplex₁.filtration_last`,
--- `SSet.prodStdSimplex₁.filtration_monotone`,
--- `SSet.prodStdSimplex₁.intersectionNondeg` (upstream `abbrev`, local was `def`),
--- `SSet.prodStdSimplex₁.codimOneSimplex`,
--- `SSet.prodStdSimplex₁.δ_castSucc_nonDegenerateEquiv`,
--- `SSet.prodStdSimplex₁.δ_succ_nonDegenerateEquiv`.
--- Equivalence audit: names, hypotheses, universes (`u`), attributes, and
--- conclusions match the pinned upstream file. `filtration` differs only by
--- `⨆ i : Set.Iic j` upstream vs `⨆ (i : {i // i ≤ j})` locally (defeq via
--- `Set.mem_Iic`); `intersectionNondeg` differs only by `abbrev` vs `def`;
--- `δ_*_nonDegenerateEquiv` differ only by an extra
--- `backward.isDefEq.respectTransparency false` set-option locally;
--- `filtration_last` differs only by proof shape (`obtain rfl` vs
--- `subst`); all other statements/proofs byte-identical.
--- Retained local surface (27 public + 1 private, absent upstream):
--- `mem_range_objEquiv_nonDegenerateEquiv₀_iff`,
--- `mem_range_objEquiv_nonDegenerateEquiv₁_iff`,
--- private `mem_ofSimplex_prod_iff` (range-inclusion helper via
--- `prodStdSimplex.ofSimplex_le_ofSimplex_iff`),
--- `ofSimplex_codimOneSimplex`,
--- `intersectionNondeg_le_intersectionNondeg`,
--- `intersectionNondeg_le_intersectionNondeg'`,
--- `filtration.bicartSq`, `filtration.ι`, `filtration.ι_ι`,
--- `filtration.isPushout`, `filtration.exists_desc`,
--- `ι`, `ι_def`, `ι_fst`, `ι_snd`, `yonedaEquiv_ι`, `yonedaEquiv_ι₀`,
--- `instMonoι` (Mono instance for `ι`), `hom_ext`, `exists_desc`,
--- `δ_ι_zero`, `δ_ι_last`, `ι_δ_whiskerRight_of_le`, `δ_ι_of_lt`,
--- `ι_δ_whiskerRight_of_gt`, `δ_ι_of_gt`,
--- `δ_succ_castSucc_nonDegenerateEquiv_succ`, `δ_succ_castSucc_ι_succ`.
--- Omitted (as before): three deprecated aliases
--- `prodStdSimplex.nonDegenerateEquiv₁`,
--- `prodStdSimplex.nonDegenerateEquiv₁_fst`,
--- `prodStdSimplex.nonDegenerateEquiv₂_snd` (deprecated since 2026-08-13).
--- Import closure: added canonical
--- `Mathlib.AlgebraicTopology.SimplicialSet.ProdStdSimplexOne` (provides the 12
--- deleted declarations plus transitive `ProdStdSimplex`/`StdSimplexOne`);
--- retained `Mathlib.AlgebraicTopology.SimplicialSet.Nonsingular` for
--- `Nonsingular.mono` in `instMonoι`, and
--- `MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexCompat` for
--- `objEquiv_symm_δ_apply`, `objEquiv_symm_σ_apply`,
--- `ofSimplexRepresentableBy`, `isoOfRepresentableBy_*`,
--- `yonedaEquiv_symm_map` absent upstream; dropped explicit
--- `ProdStdSimplex`/`StdSimplexOne` (transitive via upstream) and `Degenerate`
--- (only `codimOneSimplex` needed `nonDegenerate_of_app_apply`, now upstream).
--- Statements, namespaces (`SSet`, `SSet.prodStdSimplex₁`), universes (`u`),
--- attributes (`@[simp]`, `@[reassoc]`, `@[ext]`, `@[simps]`), and retained proof
--- bodies preserved verbatim; no wrappers, new public API, or instances added.
--- Removal rule: delete this file and switch any imports to
--- `Mathlib.AlgebraicTopology.SimplicialSet.ProdStdSimplexOne` once pinned Mathlib
--- contains the full 39-declaration filtration/gluing surface at canonical path;
--- regenerate `MathlibExt.lean` in separate Avocado task; remove corresponding
--- `BACKPORTS.md` row only in that separate task.
+-- blob `b7fe9406e4ca9716a2a74c7895222dc47a2f12d6`.
+-- Twelve core declarations are delegated upstream; see `BACKPORTS.md`.
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.ProdStdSimplexOne
 public import Mathlib.AlgebraicTopology.SimplicialSet.Nonsingular
 public import MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexCompat
-
 import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 /-!
-# Binary products `Δ[n] ⊗ Δ[1]` — filtration/gluing suffix
+# Filtration and gluing for products with the interval
 
-The enumeration `SSet.prodStdSimplex₁.nonDegenerateEquiv` and its basic
-filtration (`filtration`, `intersectionNondeg`, `codimOneSimplex`, `δ_*`) are
-now canonical in
-`Mathlib.AlgebraicTopology.SimplicialSet.ProdStdSimplexOne`. This file retains
-only the suffix absent upstream: range characterisations, the
-`ofSimplex_codimOneSimplex`/`intersectionNondeg_le_*` gluing inputs, the
-filtration pushout/existence package (`filtration.bicartSq`, `filtration.ι`,
-`filtration.isPushout`, `filtration.exists_desc`), the global inclusions `ι`
-with `hom_ext`/`exists_desc`, and the face/whiskering compatibilities
-(`δ_ι_*`, `ι_δ_whiskerRight_*`, `δ_succ_castSucc_*`).
+The pinned enumeration and filtration of the product of a standard simplex with the interval
+support explicit successive pushouts and maps glued along their full faces. The retained suffix
+gives range and intersection criteria, filtration and global inclusion maps, their universal
+gluing functions, and the face and whiskering equations in every dimension. The twelve basic
+enumeration and filtration declarations are imported from upstream.
 
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section
@@ -151,10 +83,7 @@ lemma mem_range_objEquiv_nonDegenerateEquiv₁_iff (i x : Fin (p + 1)) :
         Fin.predAbove_of_succ_le _ _ (by simpa), Fin.pred_succ]
     · simpa [stdSimplex.objMk₁_apply_eq_one_iff]
 
-/-- Private v4.34.1 replacement for the retired
-`prodStdSimplex.mem_ofSimplex_obj_iff` (absent from pinned
-`Mathlib.AlgebraicTopology.SimplicialSet.ProdStdSimplex`): membership in a
-product ofSimplex is the range inclusion via `objEquiv`. -/
+/-- Product-coordinate membership derived from the upstream simplex-inclusion criterion. -/
 private lemma mem_ofSimplex_prod_iff {n m : ℕ}
     (s : (Δ[p] ⊗ Δ[1] : SSet.{u}) _⦋n⦌) (t : (Δ[p] ⊗ Δ[1] : SSet.{u}) _⦋m⦌) :
     s ∈ (Subcomplex.ofSimplex t).obj _ ↔

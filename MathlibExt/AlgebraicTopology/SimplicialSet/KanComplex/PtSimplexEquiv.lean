@@ -3,40 +3,14 @@ Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Full-file backport of
--- `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/PtSimplexEquiv.lean`
--- from PR leanprover-community/mathlib4#42435 head
--- `e09070f786c9fc0a688e6239d71230b618b045ff`, blob
--- `7ea85363e456723ba4461cb98f3f0e8ac75b8e0f`.
--- Copied surface: 26-declaration nondeprecated packet (Homotopy abbrev,
--- RelStruct symm/trans/succ/ofSucc/relStruct₀, RelStruct₀ refl/symm/trans/
--- relStruct, Homotopy equiv₀/δ_whiskerRight_h_eq_const/
--- δ_ι_h_eq_const_of_gt/δ_ι_h_eq_const_of_lt/src/tgt/src_zero/src_succ/
--- tgt_last/ρ/relStruct₀, SSet.PtSimplex.cases_one/cases_last,
--- RelStruct₀.homotopy, MulStruct.unique/unique'); includes auxiliary
--- `cases_one`/`cases_last`.
--- Historical preparation used Lean 4.33 and Mathlib pin `db584cd`.
--- The retained import/proof adaptations below are checked on Lean 4.35.0
--- and Mathlib `56a005855ea17e0b0958f73ec801ae140b0a1679`:
--- FundamentalGroupoid resolves to the local MathlibExt provider;
--- ProdStdSimplexOne uses ProdStdSimplexOneCompat; MonoidalCompat supplies
--- the retained leftUnitor/rightUnitor lemmas. MulStruct is canonical
--- `Mathlib.AlgebraicTopology.SimplicialSet.KanComplex.MulStruct`, and
--- `Mathlib.CategoryTheory.Monoidal.Closed.FunctorToTypes` is imported.
--- No boundary.hom_ext_tensor* helper declarations are defined/copied.
--- The retained inline boundary proof steps are: ordinary →
--- `apply boundary.hom_ext; intro i`, left tensor →
--- `MonoidalClosed.curry_injective` + `boundary.hom_ext` +
--- `curry_natural_left`, right tensor →
--- `rw [← cancel_epi (β_ _ _).hom]` then left-tensor via
--- `curry_injective`/`boundary.hom_ext`/`prodStdSimplex₁.hom_ext`/
--- `curry_natural_left`, ∂Δ[0] → ext over impossible simplex + simp at
--- membership proof.
--- Deletion rule: delete this MathlibExt module and switch imports to
--- Mathlib once pin contains file.
--- See BACKPORTS.md, BLUEPRINT_1_YEAR.md, and shared orchestration policy.
+-- BACKPORT: Pointed-simplex relation APIs from Mathlib PR #42435,
+-- head `e09070f786c9fc0a688e6239d71230b618b045ff`,
+-- `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/PtSimplexEquiv.lean`,
+-- blob `7ea85363e456723ba4461cb98f3f0e8ac75b8e0f`.
+-- Current canonical imports and retained adapters: `BACKPORTS.md`.
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.KanComplex.MulStruct
 public import MathlibExt.AlgebraicTopology.SimplicialSet.KanComplex.FundamentalGroupoid
@@ -47,7 +21,14 @@ public import Mathlib.CategoryTheory.Monoidal.Closed.FunctorToTypes
 /-!
 # Equivalence relations between pointed simplices
 
+Relative homotopies and simplex-level relation witnesses retain the original pointed simplices
+and their full boundary restrictions. For a Kan complex, the relation witnesses are reflexive,
+symmetric and transitive, convert to and from relative homotopies, and give uniqueness of the
+pointed-simplex multiplication triangles. All dimensions and both endpoint faces remain
+explicit.
 
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section

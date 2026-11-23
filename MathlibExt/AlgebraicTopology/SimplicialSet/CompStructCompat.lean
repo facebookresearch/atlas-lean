@@ -3,69 +3,28 @@ Copyright (c) 2025 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Extracted from PR `leanprover-community/mathlib4#42435` head
--- `e09070f786c9fc0a688e6239d71230b618b045ff`, file
--- `Mathlib/AlgebraicTopology/SimplicialSet/CompStruct.lean`, blob
--- `4d0cc316cfe55c9021a59dca3a16b6bbcf6838bd`.
--- See `BACKPORTS.md` for adaptations and upgrade-removal steps.
+-- BACKPORT: Opposite and truncation-conversion APIs from Mathlib PR #42435,
+-- head `e09070f786c9fc0a688e6239d71230b618b045ff`,
+-- `Mathlib/AlgebraicTopology/SimplicialSet/CompStruct.lean`,
+-- blob `4d0cc316cfe55c9021a59dca3a16b6bbcf6838bd`.
+-- Current-pin comparison and removal conditions: `BACKPORTS.md`.
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.CompStruct
 public import Mathlib.AlgebraicTopology.SimplicialSet.Op
 
 /-!
-# Edge and comp-structure opposite compatibility for Lean 4.33
+# Opposite edges and composition triangles
 
-This file backports the opposite involution API for edges and composition
-structures introduced in PR #42435 which is absent from the pinned Mathlib
-`v4.33.0` (`db584cd`).
+Order reversal exchanges the endpoints of an edge and reverses the two composable sides of its
+triangle. The conversions retain the original edge or simplex, commute with opposite and
+unopposite, and preserve the two-truncation round trips for arbitrary simplicial sets. The base
+edge and triangle types come from the pinned upstream module.
 
-## Source
-
-* PR: leanprover-community/mathlib4#42435
-* PR head: `e09070f786c9fc0a688e6239d71230b618b045ff`
-* File: `Mathlib/AlgebraicTopology/SimplicialSet/CompStruct.lean`
-* Blob: `4d0cc316cfe55c9021a59dca3a16b6bbcf6838bd`
-
-## Ported declarations
-
-Exactly twelve declarations, preserving upstream statements, attributes,
-namespaces, and proof bodies verbatim where they elaborate on the 4.33 pin:
-
-* `SSet.Edge.toTruncated_ofTruncated` (`@[simp]`)
-* `SSet.Edge.ofTruncated_toTruncated` (`@[simp]`)
-* `SSet.Edge.op`
-* `SSet.Edge.op_edge` (`@[simp]`)
-* `SSet.Edge.unop`
-* `SSet.Edge.unop_edge` (`@[simp]`)
-* `SSet.Edge.unop_op` (`@[simp]`)
-* `SSet.Edge.op_unop` (`@[simp]`)
-* `SSet.Edge.CompStruct.op`
-* `SSet.Edge.CompStruct.op_simplex` (`@[simp]`)
-* `SSet.Edge.CompStruct.unop`
-* `SSet.Edge.CompStruct.unop_simplex` (`@[simp]`)
-
-All proofs use only `Edge.mk`, `opObjEquiv`, `opObjEquiv.symm`,
-`δ_opObjEquiv`, `CompStruct.mk`, and `simp`/`rfl` already present on the pin.
-
-## Adaptations for 4.33
-
-* Imports pinned `Mathlib.AlgebraicTopology.SimplicialSet.CompStruct` for the base
-  `Edge`, `CompStruct`, `id`, `mk`, etc., and pinned
-  `Mathlib.AlgebraicTopology.SimplicialSet.Op` for `opObjEquiv`, `op_δ`,
-  `δ_opObjEquiv`, etc.
-* No signature or tactic changes; `δ_opObjEquiv` exists on the 4.33 pin, so
-  `by simp [δ_opObjEquiv]` elaborates unchanged.
-* Universe reduced to `u` only (upstream uses `v u`); declarations only need `u`.
-
-## Removal rule
-
-Delete this module `MathlibExt/AlgebraicTopology/SimplicialSet/CompStructCompat.lean`
-and switch any imports of it to
-`Mathlib.AlgebraicTopology.SimplicialSet.CompStruct`
-once the pinned Mathlib provides all twelve declarations listed above.
-Do not retain local copies that would collide with upstream.
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section

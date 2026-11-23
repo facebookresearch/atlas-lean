@@ -3,89 +3,29 @@ Copyright (c) 2025 Julian Komaromy. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Extracted from PR #42435 head `e09070f786c9fc0a688e6239d71230b618b045ff`,
--- path `Mathlib/AlgebraicTopology/Quasicategory/TwoTruncated.lean`,
+-- BACKPORT: Witness and descent APIs from Mathlib PR #42435, head
+-- `e09070f786c9fc0a688e6239d71230b618b045ff`,
+-- `Mathlib/AlgebraicTopology/Quasicategory/TwoTruncated.lean`,
 -- blob `df6a12d695696a4f38858636c66f28d856a71dd4`.
--- See `BACKPORTS.md` for adaptations and upgrade-removal steps.
+-- Current-pin comparison and removal conditions: `BACKPORTS.md`.
 
 public import Mathlib.AlgebraicTopology.Quasicategory.TwoTruncated
 
 /-!
-# Two-truncated quasicategory compatibility backport for Lean 4.33
+# Edge homotopies and functor descent for two-truncated quasicategories
 
-This file backports witness-level and functor-construction APIs introduced in
-Mathlib PR #42435 which are absent from the pinned Mathlib `v4.33.0` (`db584cd`)
-but required for the simplicial weak-equivalence and fundamental-groupoid constructions.
+Witness-level left and right edge homotopies retain their composition triangles. For a two-
+truncated quasicategory, the horn fillers give associativity, symmetry, transitivity and
+conversion between these witnesses. The homotopy-category descent constructors and morphism-
+equality criteria use the same edge quotient. The pinned upstream module supplies the two-
+truncated objects and Prop-valued homotopy relations; this adapter retains the additional
+witness and descent API.
 
-## Source
-
-* PR: `leanprover-community/mathlib4#42435`
-* PR head: `e09070f786c9fc0a688e6239d71230b618b045ff`
-* Upstream file: `Mathlib/AlgebraicTopology/Quasicategory/TwoTruncated.lean`
-* Blob: `df6a12d695696a4f38858636c66f28d856a71dd4`
-* Pinned Mathlib: `v4.33.0` `db584cd6d46c92f209a44c0f1c829460d327499d` containing
-  `Mathlib/AlgebraicTopology/Quasicategory/TwoTruncated.lean` with only Prop-level
-  `HomotopicL`/`HomotopicR`, `comp_unique`, `comp`, `compStruct`, `HomotopyCategory₂`,
-  `Setoid`, `CategoryStruct`/`Category`, `homMk` etc.
-
-## Ported declarations
-
-This module provides exactly the declarations absent from the pin and required
-downstream, preserving namespaces, universes, attributes, theorem statements,
-and proof semantics verbatim from the PR head where they elaborate on the pin:
-
-* witness-level edge types:
-  `SSet.Truncated.Edge.HomotopyL`, `SSet.Truncated.Edge.HomotopyR`
-* witness-level homotopy witnesses:
-  `SSet.Truncated.Edge.HomotopyL.refl`, `SSet.Truncated.Edge.HomotopyR.refl`,
-  `SSet.Truncated.Edge.HomotopyL.symm`, `SSet.Truncated.Edge.HomotopyR.symm`,
-  `SSet.Truncated.Edge.HomotopyL.trans`, `SSet.Truncated.Edge.HomotopyR.trans`
-* witness-level edge associativity:
-  `SSet.Truncated.Edge.assoc`, `SSet.Truncated.Edge.assoc'`
-* homotopy conversions (left ↔ right):
-  `SSet.Truncated.Edge.HomotopyL.homotopyR`,
-  `SSet.Truncated.Edge.HomotopyR.homotopyL`
-* composition uniqueness at witness level:
-  `SSet.Truncated.Edge.CompStruct.unique`
-* homotopy category functor construction:
-  `SSet.Truncated.HomotopyCategory₂.descMap`,
-  `SSet.Truncated.HomotopyCategory₂.descMap_homMk`,
-  `SSet.Truncated.HomotopyCategory₂.desc`,
-  `SSet.Truncated.HomotopyCategory₂.desc_map_homMk`,
-  `SSet.Truncated.HomotopyCategory₂.functor_ext`
-* homotopy category morphism equality:
-  `SSet.Truncated.HomotopyCategory₂.homMk_eq_iff_homotopicL`,
-  `SSet.Truncated.HomotopyCategory₂.homMk_eq_iff_homotopicR`
-
-Existing pinned declarations are not duplicated:
-`Quasicategory₂`, Prop-level `HomotopicL`/`HomotopicR`, `HomotopicL.refl`/`symm`/`trans`,
-`homotopicL_iff_homotopicR`, `Edge.CompStruct.comp_unique`, `Edge.comp`,
-`Edge.compStruct`, `HomotopyCategory₂` structure, `instSetoidEdge`, `Hom`,
-`CategoryStruct` instance, `mk_surjective`, `homMk`, `homMk_surjective`,
-`homMk_id`, `congr_homotopyCategory₂HomMk`, `homotopyCategory₂_fac`,
-`ofHomotopyCategory₂Fac`, `nonempty_iff`, `Category` instance.
-
-All proofs use only `Quasicategory₂.fill21`, `fill31`, `fill32`, `Edge.id`,
-`Edge.compId`, `idComp`, `idCompId`, `compStruct`, `homotopyCategory₂_fac`,
-`homMk_surjective`, `Quot.lift`, `Quotient.sound`, `Functor.ext`, etc., present on
-the pin. Attributes `@[no_expose]`, `@[implicit_reducible]`, `@[simp]` are retained
-exactly as in upstream.
-
-## Adaptations for 4.33
-
-* Imports the pinned `Mathlib.AlgebraicTopology.Quasicategory.TwoTruncated` rather than
-  re-importing `Basic`/`CompStructTruncated` directly; transitive imports supply
-  `Edge`, `CompStruct`, `Quasicategory₂`.
-* No signature changes. No additional `simp` or `aesop` premises beyond upstream.
-
-## Removal rule
-
-Delete this file `MathlibExt/AlgebraicTopology/Quasicategory/TwoTruncatedCompat.lean`
-and switch any imports of it to `Mathlib.AlgebraicTopology.Quasicategory.TwoTruncated`
-once the pinned Mathlib provides all declarations listed in Ported declarations above.
-Do not retain local copies that would collide with upstream.
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section

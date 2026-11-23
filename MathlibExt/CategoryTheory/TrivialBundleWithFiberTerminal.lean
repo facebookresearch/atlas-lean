@@ -3,27 +3,27 @@ Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 See NOTICE in the repository root for the original Mathlib attribution.
 -/
+
 module
 
--- BACKPORT: Adapted from PR `leanprover-community/mathlib4#41750` head
--- `78cb073b61a059e5450d7763216c398c12d8c89f`, path
+-- BACKPORT: Terminal-base constructors adapted from Mathlib PR #41750,
+-- head `78cb073b61a059e5450d7763216c398c12d8c89f`,
 -- `Mathlib/CategoryTheory/MorphismProperty/TrivialBundles.lean`,
 -- blob `3a9698748c747784c77b34a8d306c6f68bf0a9bd`.
--- See `BACKPORTS.md` for the extracted surface, local adaptations, and removal condition.
+-- The local fixed-fiber record is retained; see `BACKPORTS.md`.
 
 public import MathlibExt.CategoryTheory.TrivialBundleWithFiber
 
 /-!
 # Fixed-fiber trivial bundles over terminal bases
 
-This file supplies the two terminal-base constructions needed by the
-minimal-fibration development. A map to a terminal object is a trivial bundle
-with its source as fiber. Consequently, a pullback along a map which factors
-through a terminal object is a trivial bundle with the canonical fiber over
-that terminal object.
+A map to a terminal object has a product presentation with its original source as fiber. Pulling
+a map back along a base map factored through a terminal object gives a product presentation with
+the canonical fiber over that terminal point. The original factorization, pullback and second
+projection are retained.
 
-No morphism property, gluing result, chart, or model-category structure is
-introduced here.
+The compatibility scope against Mathlib 4.35.0 (`56a005855ea17e0b0958f73ec801ae140b0a1679`) and
+its removal conditions are recorded in `BACKPORTS.md`.
 -/
 
 @[expose] public section
