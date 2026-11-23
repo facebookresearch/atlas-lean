@@ -743,16 +743,22 @@ Kemeny and Dodgson above, Borda can fail to elect the Condorcet winner.
 In the explicit five-voter, three-alternative witness, three voters rank
 `0` above `1` above `2` and two voters rank `1` above `2` above `0`;
 alternative `0` is the Condorcet winner (pairwise margins `3` to `2`),
-but the Borda scores are `6` for `0` and `7` for `1`, so the Borda
-winner set is not `{0}`. (Handbook of Computational Social Choice,
+but the Borda scores are `6` for `0` and `7` for `1`, so `0` is not
+a Borda winner at all. (Handbook of Computational Social Choice,
 Chapter 2: Borda fails the Condorcet criterion.) -/
+theorem exists_isCondorcetWinner_notMem_winners_bordaScore :
+    ∃ (P : Profile (Fin 3) (Fin 5)) (a : Fin 3),
+      IsCondorcetWinner P a ∧ a ∉ winners (fun x => (bordaScore P x : ℤ)) := by
+  exact ⟨bordaWitness, 0, bw_isCondorcetWinner, bw_zero_not_mem_winners⟩
+/-- The Borda winner set in the witness above is not the Condorcet
+winner alone (corollary of non-membership). -/
 theorem exists_isCondorcetWinner_winners_bordaScore_ne :
     ∃ (P : Profile (Fin 3) (Fin 5)) (a : Fin 3),
       IsCondorcetWinner P a ∧
         winners (fun x => (bordaScore P x : ℤ)) ≠ {a} := by
-  refine ⟨bordaWitness, 0, bw_isCondorcetWinner, ?_⟩
-  intro hEq
-  exact bw_zero_not_mem_winners
-    (by rw [hEq]; exact Finset.mem_singleton_self 0)
+  obtain ⟨P, a, hCW, hnot⟩ :=
+    exists_isCondorcetWinner_notMem_winners_bordaScore
+  exact ⟨P, a, hCW,
+    fun h => hnot (by rw [h]; exact Finset.mem_singleton_self a)⟩
 end
 end MathlibExt.GameTheory.SocialChoice
