@@ -345,10 +345,15 @@ private lemma tendsto_eLpNorm_condExp_of_memLp [IsFiniteMeasure μ] {p : ℝ≥0
     _ ≤ (ε / 3 + ε / 3) + ε / 3 := add_le_add (add_le_add hfirst (hN n hn)) hk
     _ = ε := ENNReal.add_thirds ε
 
-/-- **The `L^p` martingale convergence theorem.** If `f` is a martingale
-with uniformly bounded `L^p` norms for some `1 < p < ∞`, then `f`
-converges almost surely to its limit process, and the convergence holds
-in `L^p`. -/
+/-- **The $L^p$ martingale convergence theorem.** Let $(\Omega, \mu)$ be a probability space
+with a filtration $(\mathcal{F}_n)_{n \in \mathbb{N}}$, write
+$\mathcal{F}_\infty = \bigvee_n \mathcal{F}_n$, let $1 < p < \infty$, and let
+$(f_n)_{n \in \mathbb{N}}$ be a real-valued martingale with respect to $(\mathcal{F}_n)$ and $\mu$
+whose $L^p$ norms are uniformly bounded: there is a constant $R \ge 0$ with
+$\|f_n\|_{L^p(\mu)} \le R$ for every $n$. Let $f_\infty$ be the limit process of $(f_n)$, that
+is, a chosen $\mathcal{F}_\infty$-measurable function to which $f_n$ converges almost everywhere
+if such a function exists, and $0$ otherwise. Then $f_n \to f_\infty$ almost surely, and
+$\|f_n - f_\infty\|_{L^p(\mu)} \to 0$ as $n \to \infty$. -/
 theorem Martingale.tendsto_eLpNorm_limitProcess_of_eLpNorm_bdd {p : ℝ≥0∞} {R : ℝ≥0}
     (hp : 1 < p) (hp_top : p ≠ ⊤) (hmart : Martingale f ℱ μ)
     (hbdd : ∀ n, eLpNorm (f n) p μ ≤ R) :

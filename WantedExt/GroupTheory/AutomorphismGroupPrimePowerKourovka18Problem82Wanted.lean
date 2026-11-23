@@ -32,15 +32,23 @@ Patne). UnsolvedMath record UM-00701511 (`KOU-18.82`), dataset ulamai/UnsolvedMa
 `Aut G` is `MulAut G`; `f` does not depend on `p`.
 -/
 
-/-- Kourovka 18.82 (R. M. Patne): there is a function `f : ℕ → ℕ` such that for every prime `p`
-and every finite group `G`, if `p ^ f(n)` divides `|G|` then `p ^ n` divides `|Aut G|`. -/
+/-- **Patne's prime-power divisibility problem (Kourovka 18.82).** The statement that there is a
+function $f : \mathbb{N} \to \mathbb{N}$ such that for every $n \in \mathbb{N}$, every prime $p$ and
+every finite group $G$, if $p^{f(n)}$ divides $|G|$ then $p^n$ divides $|\mathrm{Aut}(G)|$, where
+$\mathrm{Aut}(G)$ is the group of automorphisms of $G$. -/
 def autOrderPrimePowerBound : Prop :=
   ∃ f : ℕ → ℕ, ∀ n p : ℕ, p.Prime → ∀ (G : Type) [Group G] [Finite G],
     p ^ f n ∣ Nat.card G → p ^ n ∣ Nat.card (MulAut G)
 
 /--
-Resolved true: the Kourovka Archive answers 18.82 "Yes, there is": J. A. Green (1956) established it
-with `f` independent of `p`, improving Ledermann-Neumann (1956), whose function depended on `p`.
+**Green's theorem on prime powers dividing the order of the automorphism group (Kourovka 18.82).**
+There is a function $f : \mathbb{N} \to \mathbb{N}$, the same for all primes, such that for every
+$n \in \mathbb{N}$, every prime $p$ and every finite group $G$, if $p^{f(n)}$ divides $|G|$ then
+$p^n$ divides $|\mathrm{Aut}(G)|$, where $\mathrm{Aut}(G)$ is the group of automorphisms of $G$.
+
+Ledermann and Neumann (1956) first proved this with a function depending on $p$; J. A. Green (1956)
+obtained a function independent of $p$.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.82 (R. M.
 Patne); resolution: J. A. Green, Proc. Roy. Soc. London Ser. A 237 (1956), 574-581 (improving W.

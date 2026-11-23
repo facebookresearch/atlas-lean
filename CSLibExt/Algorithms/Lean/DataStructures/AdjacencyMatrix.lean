@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Data.List.Basic
+public import Mathlib.LinearAlgebra.Matrix.Defs
 
 import Mathlib.Data.List.Nodup
 
@@ -25,6 +27,14 @@ The main statements are the pointwise characterizations of insertion and
 deletion (`hasEdge_addEdge`, `hasEdge_eraseEdge`, and their off-pair variants)
 and the agreement of the neighbor list with the edge query
 (`mem_neighbors`). No complexity bounds are proved.
+
+The type is a functional model of the adjacency predicate, not array storage:
+`addEdge` and `eraseEdge` wrap the previous predicate in one more conditional,
+so a query after `k` updates evaluates up to `k` nested tests. The predicate is
+Mathlib's `Matrix (Fin n) (Fin n) Bool`, and `AdjacencyMatrix.equivMatrix` and
+`AdjacencyMatrix.equivDigraph` identify the type with that matrix type and with
+Mathlib's `Digraph (Fin n)`, with `hasEdge` agreeing with the matrix entry and
+with `Digraph.Adj`.
 -/
 
 @[expose] public section
@@ -33,41 +43,57 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean
 
-/-- A finite directed graph on `Fin n` given by its Boolean adjacency predicate. -/
+/-- **Adjacency matrix.** For a natural number $n$, an adjacency matrix on $n$ vertices is a
+directed graph on the vertex set $\{0, \dots, n-1\}$ given by a Boolean-valued function
+$\mathrm{adj}$ on ordered pairs of vertices: $\mathrm{adj}(i, j)$ is true exactly when there is a
+directed edge from $i$ to $j$. -/
 structure AdjacencyMatrix (n : Nat) where
   /-- `adj i j = true` when there is a directed edge from `i` to `j`. -/
   adj : Fin n → Fin n → Bool
 
 namespace AdjacencyMatrix
 
-/-- The graph with no edges. -/
+/-- **Empty adjacency matrix.** For every natural number $n$, the empty adjacency matrix on $n$
+vertices is the directed graph on $\{0, \dots, n-1\}$ with no edges: its adjacency function is
+false on every ordered pair of vertices. -/
 def empty {n : Nat} : AdjacencyMatrix n :=
   ⟨fun _ _ => false⟩
 
 instance {n : Nat} : Inhabited (AdjacencyMatrix n) :=
   ⟨empty⟩
 
-/-- Whether there is a directed edge from `i` to `j`. -/
+/-- **Edge query of an adjacency matrix.** For an adjacency matrix $m$ on the vertex set
+$\{0, \dots, n-1\}$ and vertices $i, j$, the edge query of $m$ at $(i, j)$ is the Boolean value
+that is true exactly when $m$ has a directed edge from $i$ to $j$. -/
 def hasEdge {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) : Bool :=
   m.adj i j
 
-/-- The empty graph has no edges. -/
+/-- **The empty adjacency matrix has no edges.** For every natural number $n$ and all vertices $i$
+and $j$ among the $n$ vertices, the empty adjacency matrix on $n$ vertices has no edge from $i$ to
+$j$. -/
 @[simp]
 theorem hasEdge_empty {n : Nat} (i j : Fin n) :
     (empty : AdjacencyMatrix n).hasEdge i j = false :=
   rfl
 
-/-- Add the single directed edge from `i` to `j`; all other entries are kept. -/
+/-- **Edge insertion in an adjacency matrix.** For an adjacency matrix $m$ on the vertex set
+$\{0, \dots, n-1\}$ and vertices $i$ and $j$, adding the edge from $i$ to $j$ gives the adjacency
+matrix that has an edge from $i$ to $j$ and agrees with $m$ on every other ordered pair of
+vertices. -/
 def addEdge {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) : AdjacencyMatrix n :=
   ⟨fun a b => if a = i ∧ b = j then true else m.adj a b⟩
 
-/-- The added edge is present after insertion. -/
+/-- **An inserted edge is present.** For an adjacency matrix $m$ on $n$ vertices and vertices $i$
+and $j$, the matrix obtained from $m$ by adding the edge from $i$ to $j$ has an edge from $i$ to
+$j$. -/
 @[simp]
 theorem hasEdge_addEdge {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
     (m.addEdge i j).hasEdge i j = true := by
   simp [addEdge, hasEdge]
 
-/-- Insertion does not change any other ordered pair. -/
+/-- **Inserting an edge leaves other pairs unchanged.** For an adjacency matrix $m$ on $n$
+vertices and vertices $i$, $j$, $a$, $b$ with $a \ne i$ or $b \ne j$, the matrix obtained from $m$
+by adding the edge from $i$ to $j$ has an edge from $a$ to $b$ if and only if $m$ does. -/
 theorem hasEdge_addEdge_of_ne {n : Nat} (m : AdjacencyMatrix n) (i j a b : Fin n)
     (h : a ≠ i ∨ b ≠ j) :
     (m.addEdge i j).hasEdge a b = m.hasEdge a b := by
@@ -75,32 +101,44 @@ theorem hasEdge_addEdge_of_ne {n : Nat} (m : AdjacencyMatrix n) (i j a b : Fin n
     h.elim (fun hi => hi hp.1) (fun hj => hj hp.2)
   simp [addEdge, hasEdge, hne]
 
-/-- Insertion adds the new edge to the old edge set and nothing else. -/
+/-- **Edges after inserting an edge.** For an adjacency matrix $m$ on $n$ vertices and vertices
+$i$, $j$, $a$, $b$, the matrix obtained from $m$ by adding the edge from $i$ to $j$ has an edge
+from $a$ to $b$ if and only if $a = i$ and $b = j$, or $m$ has an edge from $a$ to $b$. -/
 theorem hasEdge_addEdge_iff {n : Nat} (m : AdjacencyMatrix n) (i j a b : Fin n) :
     (m.addEdge i j).hasEdge a b = true ↔
       (a = i ∧ b = j) ∨ m.hasEdge a b = true := by
   by_cases h : a = i ∧ b = j <;> simp [addEdge, hasEdge, h]
 
-/-- Remove the single directed edge from `i` to `j`; all other entries are kept. -/
+/-- **Edge deletion in an adjacency matrix.** For an adjacency matrix $m$ on the vertex set
+$\{0, \dots, n-1\}$ and vertices $i$ and $j$, removing the edge from $i$ to $j$ gives the adjacency
+matrix that has no edge from $i$ to $j$ and agrees with $m$ on every other ordered pair of
+vertices. -/
 def eraseEdge {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) : AdjacencyMatrix n :=
   ⟨fun a b => if a = i ∧ b = j then false else m.adj a b⟩
 
-/-- The erased edge is absent after deletion. -/
+/-- **Deleting an edge removes it.** Let $m$ be an adjacency matrix on the vertex set
+$\{0, \dots, n-1\}$ and let $i, j$ be vertices. Then the graph obtained from $m$ by deleting the
+edge from $i$ to $j$ has no edge from $i$ to $j$. -/
 @[simp]
 theorem hasEdge_eraseEdge {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
     (m.eraseEdge i j).hasEdge i j = false := by
   simp [eraseEdge, hasEdge]
 
-/-- Deletion does not change any other ordered pair. -/
+/-- **Deleting an edge leaves the other entries unchanged.** Let $m$ be an adjacency matrix on the
+vertex set $\{0, \dots, n-1\}$ and let $i, j, a, b$ be vertices with $(a, b) \ne (i, j)$, that is,
+$a \ne i$ or $b \ne j$. Then the graph obtained from $m$ by deleting the edge from $i$ to $j$ has
+an edge from $a$ to $b$ if and only if $m$ has an edge from $a$ to $b$. -/
 theorem hasEdge_eraseEdge_of_ne {n : Nat} (m : AdjacencyMatrix n) (i j a b : Fin n)
     (h : a ≠ i ∨ b ≠ j) :
     (m.eraseEdge i j).hasEdge a b = m.hasEdge a b := by
   have hne : ¬(a = i ∧ b = j) := fun hp =>
     h.elim (fun hi => hi hp.1) (fun hj => hj hp.2)
-  show (if a = i ∧ b = j then false else m.adj a b) = m.adj a b
+  change (if a = i ∧ b = j then false else m.adj a b) = m.adj a b
   rw [ite_eq_right hne]
 
-/-- Deletion removes the edge from the old edge set and nothing else. -/
+/-- **Edges after deleting an edge.** For an adjacency matrix $m$ on $n$ vertices and vertices $i$,
+$j$, $a$, $b$, the matrix obtained from $m$ by removing the edge from $i$ to $j$ has an edge from
+$a$ to $b$ if and only if $(a, b) \ne (i, j)$ and $m$ has an edge from $a$ to $b$. -/
 theorem hasEdge_eraseEdge_iff {n : Nat} (m : AdjacencyMatrix n) (i j a b : Fin n) :
     (m.eraseEdge i j).hasEdge a b = true ↔
       ¬(a = i ∧ b = j) ∧ m.hasEdge a b = true := by
@@ -110,7 +148,9 @@ theorem hasEdge_eraseEdge_iff {n : Nat} (m : AdjacencyMatrix n) (i j a b : Fin n
   · rw [hasEdge_eraseEdge_of_ne m i j a b (not_and_or.mp h)]
     simp [h]
 
-/-- Two adjacency matrices with the same edges everywhere are equal. -/
+/-- **Extensionality of adjacency matrices.** Two adjacency matrices $m$ and $m'$ on the same $n$
+vertices are equal if, for all vertices $i$ and $j$, $m$ has an edge from $i$ to $j$ exactly when
+$m'$ does. -/
 @[ext]
 theorem ext {n : Nat} {m m' : AdjacencyMatrix n}
     (h : ∀ i j, m.hasEdge i j = m'.hasEdge i j) : m = m' := by
@@ -122,28 +162,35 @@ theorem ext {n : Nat} {m m' : AdjacencyMatrix n}
       funext i j
       exact h i j
 
-/-- The out-neighbors of `i`, as a list of vertices in increasing order. -/
+/-- **Out-neighbor list.** For an adjacency matrix $m$ on the vertex set $\{0, \dots, n-1\}$ and a
+vertex $i$, the out-neighbor list of $i$ is the list of all vertices $j$ such that $m$ has a
+directed edge from $i$ to $j$, in increasing order. -/
 def neighbors {n : Nat} (m : AdjacencyMatrix n) (i : Fin n) : List (Fin n) :=
   (List.finRange n).filter fun j => m.hasEdge i j
 
-/-- Membership in the neighbor list is the edge query. -/
+/-- **The out-neighbor list matches the edge query.** Let $m$ be an adjacency matrix on the vertex
+set $\{0, \dots, n-1\}$ and let $i, j$ be vertices. Then $j$ belongs to the out-neighbor list of
+$i$ if and only if $m$ has a directed edge from $i$ to $j$. -/
 @[simp]
 theorem mem_neighbors {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
     j ∈ m.neighbors i ↔ m.hasEdge i j = true := by
   simp [neighbors]
 
-/-- The neighbor list has no duplicate vertices. -/
+/-- **Out-neighbor lists have no duplicates.** For an adjacency matrix $m$ on the vertex set
+$\{0, \dots, n-1\}$ and a vertex $i$, no vertex occurs twice in the out-neighbor list of $i$. -/
 theorem neighbors_nodup {n : Nat} (m : AdjacencyMatrix n) (i : Fin n) :
     (m.neighbors i).Nodup :=
   List.Nodup.filter _ (List.nodup_finRange n)
 
-/-- The neighbor list is in strictly increasing order, as documented for
-`neighbors`: earlier neighbors are smaller than later ones. -/
+/-- **Out-neighbor lists are strictly increasing.** For an adjacency matrix $m$ on the vertex set
+$\{0, \dots, n-1\}$ and a vertex $i$, the out-neighbor list of $i$ is strictly increasing: every
+vertex in it is smaller than every vertex that comes after it. -/
 theorem neighbors_pairwise_lt {n : Nat} (m : AdjacencyMatrix n) (i : Fin n) :
     List.Pairwise (· < ·) (m.neighbors i) :=
   (List.pairwise_lt_finRange n).filter _
 
-/-- Every vertex of the empty graph has an empty neighbor list. -/
+/-- **Out-neighbor lists of the empty graph.** In the graph with no edges on the vertex set
+$\{0, \dots, n-1\}$, the out-neighbor list of every vertex $i$ is the empty list. -/
 @[simp]
 theorem neighbors_empty {n : Nat} (i : Fin n) :
     (empty : AdjacencyMatrix n).neighbors i = [] := by
@@ -152,18 +199,26 @@ theorem neighbors_empty {n : Nat} (i : Fin n) :
   have h := (mem_neighbors (empty : AdjacencyMatrix n) i j).mp hj
   simp at h
 
-/-- After insertion, the target vertex is a neighbor of the source. -/
+/-- **Adding an edge makes its target an out-neighbor.** Let $m$ be an adjacency matrix on the
+vertex set $\{0, \dots, n-1\}$ and let $i, j$ be vertices. Then $j$ belongs to the out-neighbor
+list of $i$ in the graph obtained from $m$ by adding the edge from $i$ to $j$. -/
 theorem mem_neighbors_addEdge {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
     j ∈ (m.addEdge i j).neighbors i :=
   (mem_neighbors _ _ _).mpr (hasEdge_addEdge m i j)
 
-/-- After deletion, the target vertex is no longer a neighbor of the source. -/
+/-- **Deleting an edge removes the out-neighbor.** Let $G$ be a directed graph on the vertices
+$0, \dots, n-1$, given by its adjacency matrix, and let $i$ and $j$ be vertices. After the edge
+from $i$ to $j$ is deleted from $G$ (whether or not $G$ had that edge), $j$ is not an
+out-neighbor of $i$. -/
 theorem not_mem_neighbors_eraseEdge {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
     j ∉ (m.eraseEdge i j).neighbors i := by
   rw [mem_neighbors]
   simp
 
-/-- The neighbor list after insertion, characterized by membership. -/
+/-- **Out-neighbors after adding an edge.** Let $m$ be an adjacency matrix on the vertex set
+$\{0, \dots, n-1\}$ and let $i, j, b$ be vertices. Then $b$ belongs to the out-neighbor list of
+$i$ in the graph obtained from $m$ by adding the edge from $i$ to $j$ if and only if $b = j$ or
+$b$ belongs to the out-neighbor list of $i$ in $m$. -/
 theorem mem_neighbors_addEdge_iff {n : Nat} (m : AdjacencyMatrix n)
     (i j b : Fin n) :
     b ∈ (m.addEdge i j).neighbors i ↔ b = j ∨ b ∈ m.neighbors i := by
@@ -176,15 +231,65 @@ theorem mem_neighbors_addEdge_iff {n : Nat} (m : AdjacencyMatrix n)
     · exact Or.inl ⟨rfl, hb⟩
     · exact Or.inr hb
 
-/-- The out-degree of a vertex: the number of its out-neighbors. -/
+/-- **Out-degree.** The out-degree of a vertex $i$ of a directed graph given by an adjacency
+matrix is the number of its out-neighbors, that is, the number of vertices $j$ such that there is
+an edge from $i$ to $j$. -/
 def outDegree {n : Nat} (m : AdjacencyMatrix n) (i : Fin n) : Nat :=
   (m.neighbors i).length
 
-/-- Every vertex of the empty graph has out-degree zero. -/
+/-- **Vertices of the empty graph have out-degree zero.** For every $n$, every vertex of the
+empty directed graph on the vertices $0, \dots, n-1$ has out-degree $0$. -/
 @[simp]
 theorem outDegree_empty {n : Nat} (i : Fin n) :
     (empty : AdjacencyMatrix n).outDegree i = 0 := by
   simp [outDegree]
+
+/-- `AdjacencyMatrix n` is equivalent to Mathlib's Boolean matrices indexed by `Fin n`:
+the matrix entry `(i, j)` is the edge query `hasEdge i j`. -/
+def equivMatrix (n : Nat) : AdjacencyMatrix n ≃ Matrix (Fin n) (Fin n) Bool where
+  toFun m := Matrix.of m.adj
+  invFun M := ⟨M⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- The matrix entry of `equivMatrix n m` at `(i, j)` is the edge query. -/
+@[simp]
+theorem equivMatrix_apply {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
+    equivMatrix n m i j = m.hasEdge i j :=
+  rfl
+
+/-- The graph built from a matrix has an edge from `i` to `j` exactly when the entry is
+`true`. -/
+@[simp]
+theorem hasEdge_equivMatrix_symm {n : Nat} (M : Matrix (Fin n) (Fin n) Bool) (i j : Fin n) :
+    ((equivMatrix n).symm M).hasEdge i j = M i j :=
+  rfl
+
+open Classical in
+/-- `AdjacencyMatrix n` is equivalent to Mathlib's directed graphs on `Fin n`: the edge query
+`hasEdge i j = true` is the adjacency relation. The inverse decides adjacency classically. -/
+noncomputable def equivDigraph (n : Nat) : AdjacencyMatrix n ≃ Digraph (Fin n) where
+  toFun m := ⟨fun i j => m.hasEdge i j = true⟩
+  invFun G := ⟨fun i j => decide (G.Adj i j)⟩
+  left_inv m := by
+    ext i j
+    simp only [hasEdge]
+    by_cases h : m.adj i j = true <;> simp [h]
+  right_inv G := by cases G; simp [hasEdge]
+
+/-- Adjacency in `equivDigraph n m` is the edge query of `m`. -/
+@[simp]
+theorem equivDigraph_adj {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
+    (equivDigraph n m).Adj i j ↔ m.hasEdge i j = true :=
+  Iff.rfl
+
+/-- The graph built from a Mathlib digraph has an edge from `i` to `j` exactly when `i` is
+adjacent to `j`. -/
+@[simp]
+theorem hasEdge_equivDigraph_symm {n : Nat} (G : Digraph (Fin n)) (i j : Fin n) :
+    ((equivDigraph n).symm G).hasEdge i j = true ↔ G.Adj i j := by
+  classical
+  simp [equivDigraph, hasEdge]
 
 end AdjacencyMatrix
 

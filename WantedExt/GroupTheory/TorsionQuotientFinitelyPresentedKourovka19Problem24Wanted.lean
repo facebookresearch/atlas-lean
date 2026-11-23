@@ -31,20 +31,28 @@ Chiodo, R. Vyas). UnsolvedMath record UM-00701572 (`KOU-19.24`), dataset ulamai/
 Finite presentability is Mathlib's `Group.IsFinitelyPresented`; `G : Type`.
 -/
 
-/-- `Tor(G)`: the normal closure of the torsion elements of `G`. -/
+/-- **Torsion closure.** For a group $G$, $\mathrm{Tor}(G)$ is the normal closure in $G$ of the set
+of elements of finite order of $G$. -/
 abbrev torsionClosure (G : Type*) [Group G] : Subgroup G :=
   Subgroup.normalClosure {g : G | IsOfFinOrder g}
 
-/-- Kourovka 19.24 (M. Chiodo, R. Vyas): there is a finitely presented group `G` such that
-`G / Tor(G)` is not finitely presented. -/
+/-- **Kourovka Problem 19.24 (torsion quotients of finitely presented groups).** The statement,
+asked by M. Chiodo and R. Vyas, that there exists a finitely presented group $G$ such that
+$G / \mathrm{Tor}(G)$ is not finitely presented, where $\mathrm{Tor}(G)$ is the normal closure of
+the set of elements of finite order of $G$. -/
 def existsFinitelyPresentedTorsionQuotientNotFinitelyPresented : Prop :=
   ∃ (G : Type) (_ : Group G), Group.IsFinitelyPresented G ∧
     ¬ Group.IsFinitelyPresented (G ⧸ torsionClosure G)
 
 /--
-Resolved true: the Kourovka Archive answers 19.24 "Yes, such groups exist": Leary and Minasyan
-(Constructions 3.1 and 3.2) give a soluble example and a virtually torsion-free example of finitely
-presented groups `G` with `G / Tor(G)` not finitely presented. Source: E. I. Khukhro and V. D.
+**Torsion quotients of finitely presented groups need not be finitely presented.** There exists
+a finitely presented group $G$ such that $G / \mathrm{Tor}(G)$ is not finitely presented, where
+$\mathrm{Tor}(G)$ is the normal closure of the set of elements of finite order of $G$.
+
+The Kourovka Archive answers Problem 19.24 "Yes, such groups exist": Leary and Minasyan
+(Constructions 3.1 and 3.2) give a soluble example and a virtually torsion-free example.
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.24 (M. Chiodo, R. Vyas);
 resolution: I. J. Leary and A. Minasyan, A note on torsion length and torsion subgroups, J. Group

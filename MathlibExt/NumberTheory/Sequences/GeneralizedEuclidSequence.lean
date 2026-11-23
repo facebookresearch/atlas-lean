@@ -2384,12 +2384,6 @@ private theorem chainL_eval_stable (P : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime
     eVal (chainL P hP s) i = eVal (chainL P hP t) i :=
   eVal_prefix _ _ (chainL_prefix_le P hP s t hst) i hs
 
-private theorem prefix_mem {l₁ l₂ : List ℕ} (h : l₁ <+: l₂) (a : ℕ) (hm : a ∈ l₁) :
-    a ∈ l₂ := by
-  have heq := List.prefix_iff_eq_append.mp h
-  rw [← heq]
-  exact List.mem_append.mpr (Or.inl hm)
-
 /-- The final sequence: stabilization of the tower. -/
 private noncomputable def seqA (P : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p) (i : ℕ) : ℕ :=
   eVal (chainL P hP (i + 1)) i
@@ -2509,7 +2503,7 @@ private theorem chainL_qstrict (P : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p) 
     have hcon' := not_le.mp hcon
     have hnotin : sInf {p | p.Prime ∧ p ∉ chainL P hP (s + 1)} ∉ chainL P hP s := by
       intro hin
-      exact hnot (prefix_mem (chainL_step P hP s) _ hin)
+      exact hnot ((chainL_step P hP s).mem hin)
     have hmem2 : sInf {p | p.Prime ∧ p ∉ chainL P hP (s + 1)} ∈
         {p | p.Prime ∧ p ∉ chainL P hP s} :=
       ⟨(chainL_qprop P hP (s + 1)).1, hnotin⟩
@@ -2551,27 +2545,28 @@ private theorem seqA_cover_all (P : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p) 
     rw [h3, ← h1, h2]
 
 /--
-For any finite set `P` of primes there is a generalized Euclid sequence
-with seed `P` (each new term a prime divisor of
-`∏_{i ∈ I} p_i + ∏_{i ∉ I} p_i` for some `I`) containing every prime.
+**Some generalized Euclid sequence contains every prime.** Let $P$ be a finite set of primes
+and let $k$ be the number of elements of $P$. Then there is an injective sequence
+$a_0, a_1, a_2, \dots$ of primes such that $a_0, \dots, a_{k-1}$ are exactly the elements of $P$,
+every prime occurs in the sequence, and for every $n \ge k$ there is a set
+$I \subseteq \{0, \dots, n-1\}$ such that $a_n$ divides
+$$\prod_{i \in I} a_i + \prod_{i \in \{0, \dots, n-1\} \setminus I} a_i.$$
 
-Source: Andrew R. Booker, "A Variant of the Euclid-Mullin Sequence
-Containing Every Prime," Journal of Integer Sequences 19 (2016),
-Article 16.6.4, Theorem (label t:main), lines 132–136,
-https://cs.uwaterloo.ca/journals/JIS/VOL19/Booker/book3.tex
-
-The source's construction: for primes `p_1, …, p_k` and any
-`I ⊆ {1, …, k}`, `N_I = ∏_{i ∈ I} p_i + ∏_{i ∉ I} p_i` is coprime to
-the previous product, so a prime divisor of `N_I` is always new; the
-sequence is zero-indexed here with the first `P.card` terms enumerating
-the seed. This is an existence claim over all choices of `I` and prime
-divisor, unlike the open Euclid–Mullin conjecture about one specific
-sequence.
+This is an existence claim over all choices of $I$ and of the prime divisor, unlike the open
+Euclid–Mullin conjecture about one specific sequence. For distinct primes $p_1, \dots, p_r$ and
+any $J \subseteq \{1, \dots, r\}$, the number
+$\prod_{i \in J} p_i + \prod_{i \in \{1, \dots, r\} \setminus J} p_i$ is coprime to
+$p_1 \cdots p_r$, so a prime divisor of it is always new.
 
 Proves `Wanted` entry `generalized_euclid_sequence_contains_every_prime`.
 
 Proof: Booker's residue-set route, with an elementary squarefree count in place of Rogers'
 density bound and Jacobi-sum character-sum bounds in place of the Hasse and Weil bounds.
+
+Source: Andrew R. Booker, "A Variant of the Euclid-Mullin Sequence
+Containing Every Prime," Journal of Integer Sequences 19 (2016),
+Article 16.6.4, Theorem (label t:main), lines 132–136,
+https://cs.uwaterloo.ca/journals/JIS/VOL19/Booker/book3.tex
 -/
 public theorem generalized_euclid_sequence_contains_every_prime
     (P : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p) :

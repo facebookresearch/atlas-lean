@@ -32,21 +32,29 @@ hypothesis concerns all automorphisms of `G` at once, so this refutation is stro
 `ScottishBook112Wanted` (every class-preserving automorphism is inner).
 -/
 
-/-- Kourovka 16.62 (D. MacHale): if every automorphism of a group `G` maps every conjugacy class of
-`G` onto itself, then every automorphism of `G` is inner. -/
+/-- **Claim of Kourovka Problem 16.62.** For every group $G$: if every automorphism of $G$ sends
+each element $g \in G$ to a conjugate of $g$ (equivalently, maps every conjugacy class of $G$ into
+itself), then every automorphism of $G$ is inner, that is, of the form $x \mapsto h x h^{-1}$ for
+some $h \in G$. -/
 def classPreservingAutomorphismsInner : Prop :=
   ∀ (G : Type) [Group G], (∀ (α : MulAut G) (g : G), IsConj (α g) g) →
     ∀ α : MulAut G, ∃ h : G, α = MulAut.conj h
 
 /--
-Resolved false: the Kourovka Archive answers 16.62 "Not necessarily" (Mann): Heineken constructed
-finite `p`-groups all of whose automorphisms preserve every conjugacy class, and Gaschütz' theorem
-gives these groups outer automorphisms. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
-Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
-Solved Problems, Problem 16.62 (D. MacHale); resolution: H. Heineken, Arch. Math. (Basel) 33
-(1979/80), no. 6, 497-503; A. Mann, letter of 20 April 2006, as recorded in the Kourovka Archive,
-Kourovka Archive, Problem 16.62 (Not necessarily: Heineken's finite p-groups all of whose
-automorphisms preserve all conjugacy classes have outer automorphisms by Gaschütz' theorem).
+**Groups whose automorphisms all preserve conjugacy classes can have outer automorphisms.** The
+claim of Kourovka Problem 16.62 is false: there is a group $G$ such that every automorphism of $G$
+sends each element $g \in G$ to a conjugate of $g$, but some automorphism of $G$ is not inner,
+that is, not of the form $x \mapsto h x h^{-1}$ for any $h \in G$.
+
+Heineken constructed finite $p$-groups all of whose automorphisms preserve every conjugacy class,
+and Gaschütz' theorem gives these groups outer automorphisms.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.62 (D.
+MacHale); resolution: H. Heineken, Arch. Math. (Basel) 33 (1979/80), no. 6, 497-503; A. Mann,
+letter of 20 April 2006, as recorded in the Kourovka Archive, Kourovka Archive, Problem 16.62 (Not
+necessarily: Heineken's finite p-groups all of whose automorphisms preserve all conjugacy classes
+have outer automorphisms by Gaschütz' theorem).
 -/
 public theorem_wanted classPreservingAutomorphismsInner_refuted :
     ¬ classPreservingAutomorphismsInner
