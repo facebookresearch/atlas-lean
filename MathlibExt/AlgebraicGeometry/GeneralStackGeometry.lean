@@ -17,8 +17,8 @@ The source is licensed under Apache 2.0 and has no individual author or
 copyright notice in those files. Modifications: the stacks are the fppf
 stacks in groupoids of `FppfStacks`, isomorphism presheaves are Mathlib's
 `Pseudofunctor.presheafHom`, algebraic spaces are modelled by chosen étale
-presentations, and 2-fibre products of categories are full subcategories of
-Mathlib's comma categories.
+presentations, and 2-fibre products of categories are Mathlib's categorical
+pullbacks.
 -/
 module
 
