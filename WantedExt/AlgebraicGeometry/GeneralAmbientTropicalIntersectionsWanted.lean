@@ -16,7 +16,10 @@ public import MathlibExt.AlgebraicGeometry.GeneralAmbientTropicalIntersections
 Osserman--Payne, 1007.1314v3, Theorems 1.2 and 5.1.1, Corollary 5.1.3.
 The ambient simple point, local properness, lattice displacement and relevant
 minimal-prime components are fixed. Finite-Tor inputs concern only actual local
-modules and their lengths; they do not contain the tropical comparison.
+modules and their lengths; they do not contain the tropical comparison. The weighted comparisons
+take `weightVector t` generic in the intersection facet: every minimal-prime component whose
+tropicalization passes through it contains the whole facet, so no component meeting the facet only
+at a special crossing point is omitted from the relevant components.
 -/
 
 @[expose] public noncomputable section
@@ -46,6 +49,9 @@ theorem_wanted weighted_Tor_comparison
     (B : Presentation K n P.right) (tau : Polyhedron n)
     (_facet : IntersectionFacet Y.cycle A.cycle B.cycle tau)
     (t : Fin n → Kˣ) (_interior : weightVector t ∈ intrinsicInterior ℝ tau.carrier)
+    (_adapted : ∀ Z : P.Component,
+      weightVector t ∈ tropicalizationOver (L := K) (componentIdeal K n P Z) →
+        tau.carrier ⊆ tropicalizationOver (L := K) (componentIdeal K n P Z))
     (S : SimplePoint Y.cycle (weightVector t))
     (_proper : ProperIn Y.cycle A.cycle B.cycle (weightVector t))
     (T : ∀ Z : RelevantComponent K n P tau, P.LocalTor Z.val)
@@ -66,6 +72,9 @@ theorem_wanted CohenMacaulay_multiplicity_comparison
     (B : Presentation K n P.right) (tau : Polyhedron n)
     (_facet : IntersectionFacet Y.cycle A.cycle B.cycle tau)
     (t : Fin n → Kˣ) (_interior : weightVector t ∈ intrinsicInterior ℝ tau.carrier)
+    (_adapted : ∀ Z : P.Component,
+      weightVector t ∈ tropicalizationOver (L := K) (componentIdeal K n P Z) →
+        tau.carrier ⊆ tropicalizationOver (L := K) (componentIdeal K n P Z))
     (S : SimplePoint Y.cycle (weightVector t))
     (_proper : ProperIn Y.cycle A.cycle B.cycle (weightVector t))
     (_CM : ∀ Z : RelevantComponent K n P tau,

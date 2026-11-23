@@ -105,6 +105,11 @@ def toWeightedComplex (d : ℕ) (w : weightGroup C N d) : WeightedComplex n :=
 def Balanced (A : WeightedComplex n) (N : NormalData A.complex) : Prop :=
   A.weight ∈ weightGroup A.complex N A.dimension
 
+/-- A subdivision of a weighted complex: a complex whose cells lie in, and cover, the cells of `A`.
+An empty cell of the subdivision (the intersection of two disjoint cells, for instance after cutting
+the line at two points) may lie under a nonempty cell of `A`. As the empty set has dimension zero,
+an empty cell counts as top-dimensional when `A` has dimension zero; its parent then carries weight
+zero, so that empty cells keep weight zero. -/
 structure Subdivision (A : WeightedComplex n) where
   complex : Complex n
   index : Fin complex.count → Fin A.complex.count
@@ -113,8 +118,8 @@ structure Subdivision (A : WeightedComplex n) where
     ⋃ i : {i // index i = j}, (complex.cell i.val).carrier
   full_dimension : ∀ i, (complex.cell i).dimension = A.dimension →
     (A.complex.cell (index i)).dimension = A.dimension
-  empty_parent : ∀ i, (complex.cell i).carrier = ∅ →
-    (A.complex.cell (index i)).carrier = ∅
+  empty_weight : ∀ i, (complex.cell i).carrier = ∅ →
+    (complex.cell i).dimension = A.dimension → A.weight (index i) = 0
 
 variable {C N} {A B : WeightedComplex n}
 
@@ -127,7 +132,9 @@ def subdivide (S : Subdivision A) : WeightedComplex n := by
         A.weight (S.index i) else 0
       support_dimension := fun i h ↦ by simp [h]
       empty_weight := fun i h ↦ by
-        simp [A.empty_weight _ (S.empty_parent i h)] }
+        split_ifs with hd
+        · exact S.empty_weight i h hd
+        · rfl }
 
 def subdivisionRefinement (S : Subdivision A) : Refinement (subdivide S) A where
   dimension := rfl

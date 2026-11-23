@@ -150,7 +150,11 @@ private def trivialSubdivision : Subdivision lineWeighted where
     simp only [Set.mem_iUnion]
     exact ⟨fun hx ↦ ⟨⟨j, rfl⟩, hx⟩, fun ⟨i, hx⟩ ↦ i.property ▸ hx⟩
   full_dimension _ h := h
-  empty_parent _ h := h
+  empty_weight i h := by
+    exfalso
+    change line.carrier = ∅ at h
+    rw [line_carrier] at h
+    exact Set.univ_nonempty.ne_empty h
 
 example (i : Fin lineComplex.count) : (subdivide trivialSubdivision).weight i = 1 := by
   simp [subdivide, trivialSubdivision, line_dimension' i, lineWeighted]
@@ -492,7 +496,7 @@ private def raySubdivision : Subdivision lineWeighted where
     · exact ⟨⟨(0 : Fin 3), rfl⟩, by simpa [twoRays, rayPos_carrier] using h⟩
     · exact ⟨⟨(1 : Fin 3), rfl⟩, by simpa [twoRays, rayNeg_carrier] using h⟩
   full_dimension _ _ := line_dimension' (0 : Fin 1)
-  empty_parent i h := by
+  empty_weight i h _ := by
     exfalso
     fin_cases i
     · exact Set.nonempty_iff_ne_empty.mp ⟨_, one_mem_rayPos⟩ h
