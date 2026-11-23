@@ -37,4 +37,10 @@ example : (X - C (ε : DualNumber ℚ)).eval 0 ≠ 0 := by
 /-- The given chart function does. -/
 example : (X : (DualNumber ℚ)[X]).eval 0 = 0 := by simp
 
+/-- Why the base component of the marking ghost must be trivial: with base chart `1 ↦ ε`, the
+mixed section with ghost `(1, 1)` has function `ε (x - ε)`, which does vanish on `x = 0`
+although the shifted marking equation `x - ε` does not. -/
+example : (C (ε : DualNumber ℚ) * (X - C ε)).eval 0 = 0 := by
+  rw [eval_mul, eval_C, eval_sub, eval_X, eval_C, zero_sub, mul_neg, eps_mul_eps, neg_zero]
+
 end LogCurveFamiliesTest

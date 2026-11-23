@@ -9,9 +9,6 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.BasicLogCurves
-public import MathlibExt.AlgebraicGeometry.BasicLogGeometricGhosts
-public import MathlibExt.AlgebraicGeometry.BasicLogMapFamilies
-public import MathlibExt.AlgebraicGeometry.LogMapBasicMonoids
 public import Mathlib.Basic.Complex.Basic
 
 /-!
@@ -39,8 +36,6 @@ open MathlibExt.AlgebraicGeometry.EtaleLogSchemes
 open MathlibExt.AlgebraicGeometry.EtaleLogDiagrams
 open MathlibExt.AlgebraicGeometry.GeometricLogGhosts
 open MathlibExt.AlgebraicGeometry.BasicLogCurves
-open MathlibExt.AlgebraicGeometry.BasicLogMapFamilies
-open MathlibExt.AlgebraicGeometry.BasicLogGeometricGhosts
 open MathlibExt.AlgebraicGeometry.MarkedCurveStabilization
 
 /-- The actual stalk map is fixed on every etale log-section generator. -/

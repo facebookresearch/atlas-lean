@@ -88,8 +88,8 @@ structure LogCurve {T : Scheme.{0}} {n g : ℕ} (F : MarkedFamily T n g) where
         (integral.ghostMap Ω x).map ≫ e.hom = pushout.inl _ _
   /-- Along each marked section the curve log structure is the divisorial log structure of that
   section, on the family and not only on geometric fibres: at every geometric point of the
-  section an étale-local log section has characteristic the generator of the marking factor, and
-  its function vanishes on the section itself. Over `ℂ[ε]/(ε²)` the charts `1 ↦ x` and
+  section an étale-local log section has characteristic the pure generator of the marking factor
+  (trivial base component), and its function vanishes on the section itself. Over `ℂ[ε]/(ε²)` the charts `1 ↦ x` and
   `1 ↦ x - ε` have the same geometric ghosts, but only the first vanishes on the section `x = 0`. -/
   markingEquation : ∀ (i : Fin n) (Ω : Type) [Field Ω] [IsAlgClosed Ω]
       (t : Spec (.of Ω) ⟶ T),
@@ -99,6 +99,10 @@ structure LogCurve {T : Scheme.{0}} {n g : ℕ} (F : MarkedFamily T n g) where
         markingMonoid (ghost ⟨T,baseLog⟩ ((t ≫ F.marking i) ≫ F.π))),
       (integral.ghostMap Ω (t ≫ F.marking i)).map ≫ e.hom =
           markingInclusion (ghost ⟨T,baseLog⟩ ((t ≫ F.marking i) ≫ F.π)) ∧
+        (prod.fst : markingMonoid _ ⟶ ghost ⟨T,baseLog⟩ ((t ≫ F.marking i) ≫ F.π)).hom (e.hom
+          (((point (t ≫ F.marking i)).toPresheafFiber U a
+            (characteristic F.X.smallEtaleTopology curveLog).obj).hom
+            ((characteristicMap F.X.smallEtaleTopology curveLog).hom.app (Opposite.op U) m))) = 1 ∧
         (prod.snd : markingMonoid _ ⟶ NatMonoid).hom (e.hom
           (((point (t ≫ F.marking i)).toPresheafFiber U a
             (characteristic F.X.smallEtaleTopology curveLog).obj).hom
