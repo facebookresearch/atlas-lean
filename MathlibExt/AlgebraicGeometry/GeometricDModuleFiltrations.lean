@@ -18,9 +18,12 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Kernels
 
 Filtration terms are O-subobjects of the actual scalar-restricted D-module.
 Order acts through the actual finite-order presheaf and its sheafification
-unit. Exhaustivity is local, as required on noncompact manifolds. Goodness
-requires finitely many shifted local generators for the displayed D action,
-not merely a list of coherent filtration pieces.
+unit. Exhaustivity and the lower bound are local, as required on noncompact
+manifolds. Goodness requires finitely many shifted local generators for the
+displayed D action, not merely a list of coherent filtration pieces: near
+every point, every section of `F_p` is locally a combination
+`∑ⱼ Pⱼ · sⱼ` with `ord Pⱼ + deg sⱼ ≤ p`, that is, the map from the shifted
+free module onto `F_p` is an epimorphism of sheaves.
 
 Local finite presentation is the universal cokernel of two actual finite
 free sheaves. These definitions do not declare a named holonomic predicate
@@ -92,11 +95,14 @@ def LocallyFinitelyPresented (R : Sheaf (Opens.grothendieckTopology M) RingCat.{
       (h : f ≫ pi = 0),
       Nonempty (IsColimit (CokernelCofork.ofπ pi h))
 
+/-- A good filtration of a left differential module by coherent `O`-submodules. -/
 structure GoodFiltration where
   object : DifferentialModule E M
   term : ℤ → Subobject (underlying E M object)
   monotone : Monotone term
-  boundedBelow : ∃ p : ℤ, ∀ q < p, term q = ⊥
+  boundedBelow : ∀ x : M, ∃ U : Opens M, x ∈ U ∧ ∃ p : ℤ,
+    ∀ q < p, ∀ (V : Opens M), V ≤ U → ∀ s : Section E M object V,
+      InFiltration E M object term q V s → s = 0
   locallyPresented : ∀ p, LocallyFinitelyPresented M (coefficientRing E M)
     (Subobject.underlying.obj (term p))
   exhaustive : ∀ (U : Opens M) (s : Section E M object U) (x : U),
@@ -110,10 +116,13 @@ structure GoodFiltration where
     ∃ (r : ℕ) (degree : Fin r → ℤ) (generators : Fin r → Section E M object U),
       (∀ j, InFiltration E M object term (degree j) U (generators j)) ∧
       ∀ (V : Opens M) (hV : V ≤ U) (p : ℤ) (s : Section E M object V),
-        InFiltration E M object term p V s →
-        ∃ (n : Fin r → ℕ) (P : Fin r → finiteOperatorRing ℂ M (coefficients E M) V),
+        InFiltration E M object term p V s → ∀ y ∈ V,
+        ∃ (W : Opens M) (hW : W ≤ V), y ∈ W ∧
+        ∃ (n : Fin r → ℕ) (P : Fin r → finiteOperatorRing ℂ M (coefficients E M) W),
           (∀ j, P j = 0 ∨ (OrderOn E M (P j) (n j) ∧ (n j : ℤ) + degree j ≤ p)) ∧
-            s = ∑ j, act E M object (P j) (restrictSection E M object hV (generators j))
+            restrictSection E M object hW s =
+              ∑ j, act E M object (P j)
+                (restrictSection E M object (hW.trans hV) (generators j))
 
 def filtrationStep (F : GoodFiltration E M) (p : ℤ) :
     Subobject.underlying.obj (F.term (p - 1)) ⟶ Subobject.underlying.obj (F.term p) :=
