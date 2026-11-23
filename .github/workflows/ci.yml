@@ -99,7 +99,8 @@ jobs:
         run: |
           set -euo pipefail
           df -h /
-          if (( $(df --output=avail -B1G / | tail -n 1) < 60 )); then
+          free_gb="$(df --output=avail -B1G / | tail -n 1 | tr -d ' ')"
+          if ! [[ "$free_gb" =~ ^[0-9]+$ ]] || (( free_gb < 60 )); then
             sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
             df -h /
           fi
@@ -314,8 +315,10 @@ jobs:
           set -euo pipefail
           title="CI build fails on main"
           body="The \`build\` job of [this run](${RUN_URL}) failed on ${GITHUB_SHA}. Merge groups audit only the modules their build changed, so this full build of main is where a module that escaped a scoped audit, or a bad cached build, shows up. Close this issue once main builds again."
-          number="$(gh api "repos/${GH_REPO}/issues?state=open&creator=github-actions%5Bbot%5D&per_page=100" \
-            --jq "[.[] | select(.pull_request | not) | select(.title == \"${title}\") | .number][0] // empty")"
+          # The issues API also lists pull requests, so read every page.
+          numbers="$(gh api --paginate "repos/${GH_REPO}/issues?state=open&per_page=100" \
+            --jq ".[] | select(.pull_request | not) | select(.title == \"${title}\") | .number")"
+          number="${numbers%%$'\n'*}"
           if [[ -n "$number" ]]; then
             gh issue comment "$number" --body "$body"
           else

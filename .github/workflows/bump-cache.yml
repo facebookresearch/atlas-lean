@@ -249,7 +249,8 @@ jobs:
         run: |
           set -euo pipefail
           df -h /
-          if (( $(df --output=avail -B1G / | tail -n 1) < 60 )); then
+          free_gb="$(df --output=avail -B1G / | tail -n 1 | tr -d ' ')"
+          if ! [[ "$free_gb" =~ ^[0-9]+$ ]] || (( free_gb < 60 )); then
             sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
             df -h /
           fi
