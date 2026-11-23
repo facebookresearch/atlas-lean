@@ -42,8 +42,30 @@ in its prime-field case, and the partial correspondence uses the reciprocal map 
 [the global reciprocity law](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), with the properties of
 [the global Artin map on the Galois group of the maximal abelian extension](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/artin-map-on-the-maximal-abelian-extension.md).
 The other inputs are the following pages; those that are nodes are themselves still to be broken down:
-[the theta correspondence for unitary dual pairs](../../../RepresentationTheory/automorphic-representations/theta-correspondence-for-unitary-dual-pairs.md),
-[automorphic representations of GLₙ and unitary groups](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups.md),
+[the Stone–von Neumann theorem](../../../RepresentationTheory/automorphic-representations/theta-correspondence/stone-von-neumann-theorem.md),
+[the metaplectic group and the local Weil representation](../../../RepresentationTheory/automorphic-representations/theta-correspondence/metaplectic-group-and-local-weil-representation.md),
+[the global Weil representation and theta functions](../../../RepresentationTheory/automorphic-representations/theta-correspondence/global-weil-representation-and-theta-functions.md),
+[the Weil representation of unitary dual pairs](../../../RepresentationTheory/automorphic-representations/theta-correspondence/weil-representation-of-unitary-dual-pairs.md),
+[the unramified theta correspondence](../../../RepresentationTheory/automorphic-representations/theta-correspondence/unramified-theta-correspondence.md),
+[the duality for compact dual pairs](../../../RepresentationTheory/automorphic-representations/theta-correspondence/howe-duality-for-compact-dual-pairs.md),
+[Howe duality over the reals](../../../RepresentationTheory/automorphic-representations/theta-correspondence/howe-duality-over-the-reals.md),
+[global theta lifts](../../../RepresentationTheory/automorphic-representations/theta-correspondence/global-theta-lifts.md),
+[Weil's convergence criterion for theta integrals](../../../RepresentationTheory/automorphic-representations/theta-correspondence/weil-convergence-criterion.md),
+[Siegel Eisenstein series on unitary groups](../../../RepresentationTheory/automorphic-representations/theta-correspondence/siegel-eisenstein-series-on-unitary-groups.md),
+[the Siegel–Weil formula in Weil's convergent range](../../../RepresentationTheory/automorphic-representations/theta-correspondence/siegel-weil-formula-convergent-range.md),
+[the Rallis inner product formula](../../../RepresentationTheory/automorphic-representations/theta-correspondence/rallis-inner-product-formula.md),
+[the doubling method](../../../RepresentationTheory/automorphic-representations/theta-correspondence/doubling-method.md),
+[automorphic forms and automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md),
+[reduction theory for adelic groups](../../algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md),
+[the rapid decay of cusp forms](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md),
+[Harish-Chandra's finiteness theorem](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/harish-chandra-finiteness-theorem.md),
+[the discreteness of the cuspidal spectrum](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/discreteness-of-the-cuspidal-spectrum.md),
+[the tensor product theorem](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/tensor-product-theorem.md),
+[multiplicity one for GLₙ](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/multiplicity-one-for-gl-n.md),
+[the Jacquet–Shalika classification](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/jacquet-shalika-classification.md),
+[the Jacquet–Shalika bounds](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/jacquet-shalika-bounds.md),
+[algebraic automorphic representations and Clozel's purity lemma](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/algebraic-automorphic-representations-and-clozel-purity.md),
+[the endoscopic classification and base change for unitary groups](../../../RepresentationTheory/automorphic-representations/endoscopic-classification-and-base-change-for-unitary-groups.md),
 [admissible representations of real reductive groups](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-real-reductive-groups/admissible-representations-of-real-reductive-groups.md),
 [Harish-Chandra modules](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md),
 [the continuous extension of (g, K)-maps into smooth Fréchet representations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-real-reductive-groups/extension-of-gk-maps-to-smooth-frechet-representations.md),
@@ -67,8 +89,30 @@ and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-variet
 - [Meromorphic continuation of Hecke L-functions](hecke-l-function-meromorphic-continuation.md), for its case of the finite-order Hecke characters of $\mathbb{Q}$ that correspond to nontrivial primitive Dirichlet characters, whose L-functions are entire
 - [Non-vanishing of Hecke L-functions on the line Re s = 1](hecke-l-function-nonvanishing-on-re-one.md), for the same case
 - [Green's parametrization of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_q)$](../../../GroupTheory/characters-of-finite-groups/green-cuspidal-characters-of-gl-n.md), for the case of a prime field
-- [Theta correspondence for unitary dual pairs](../../../RepresentationTheory/automorphic-representations/theta-correspondence-for-unitary-dual-pairs.md)
-- [Automorphic representations of GLₙ and unitary groups](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups.md)
+- [Stone–von Neumann theorem for Heisenberg groups over local fields](../../../RepresentationTheory/automorphic-representations/theta-correspondence/stone-von-neumann-theorem.md)
+- [Metaplectic group and the local Weil representation](../../../RepresentationTheory/automorphic-representations/theta-correspondence/metaplectic-group-and-local-weil-representation.md)
+- [Global Weil representation and theta functions](../../../RepresentationTheory/automorphic-representations/theta-correspondence/global-weil-representation-and-theta-functions.md)
+- [Splitting characters and the Weil representation of unitary dual pairs](../../../RepresentationTheory/automorphic-representations/theta-correspondence/weil-representation-of-unitary-dual-pairs.md)
+- [Unramified theta correspondence](../../../RepresentationTheory/automorphic-representations/theta-correspondence/unramified-theta-correspondence.md)
+- [Duality for compact dual pairs and the (GLₙ, GLₘ)-duality](../../../RepresentationTheory/automorphic-representations/theta-correspondence/howe-duality-for-compact-dual-pairs.md)
+- [Howe duality for reductive dual pairs in real symplectic groups](../../../RepresentationTheory/automorphic-representations/theta-correspondence/howe-duality-over-the-reals.md)
+- [Global theta lifts of cusp forms](../../../RepresentationTheory/automorphic-representations/theta-correspondence/global-theta-lifts.md)
+- [Weil's convergence criterion for theta integrals](../../../RepresentationTheory/automorphic-representations/theta-correspondence/weil-convergence-criterion.md)
+- [Siegel Eisenstein series on unitary groups](../../../RepresentationTheory/automorphic-representations/theta-correspondence/siegel-eisenstein-series-on-unitary-groups.md)
+- [Siegel–Weil formula for unitary groups in Weil's convergent range](../../../RepresentationTheory/automorphic-representations/theta-correspondence/siegel-weil-formula-convergent-range.md)
+- [Rallis inner product formula in Weil's convergent range](../../../RepresentationTheory/automorphic-representations/theta-correspondence/rallis-inner-product-formula.md)
+- [Doubling method and standard L-functions of unitary groups](../../../RepresentationTheory/automorphic-representations/theta-correspondence/doubling-method.md)
+- [Automorphic forms, cusp forms and automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md)
+- [Siegel sets and reduction theory for adelic groups](../../algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md)
+- [Rapid decay of cusp forms](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md)
+- [Harish-Chandra's finiteness theorem for automorphic forms](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/harish-chandra-finiteness-theorem.md)
+- [Discreteness of the cuspidal spectrum](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/discreteness-of-the-cuspidal-spectrum.md)
+- [Tensor product theorem for automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/tensor-product-theorem.md)
+- [Multiplicity one for GLₙ](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/multiplicity-one-for-gl-n.md)
+- [Jacquet–Shalika classification of automorphic representations of GLₙ](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/jacquet-shalika-classification.md)
+- [Jacquet–Shalika bounds on Satake parameters](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/jacquet-shalika-bounds.md)
+- [Algebraic automorphic representations and Clozel's purity lemma](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/algebraic-automorphic-representations-and-clozel-purity.md)
+- [Endoscopic classification and base change for unitary groups](../../../RepresentationTheory/automorphic-representations/endoscopic-classification-and-base-change-for-unitary-groups.md)
 - [Admissible representations of real reductive groups](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-real-reductive-groups/admissible-representations-of-real-reductive-groups.md), for Harish-Chandra's admissibility theorem for the irreducible unitary representations of the groups $\mathrm{U}(p, q)$, with the smoothness, $\mathfrak{g}$-stability and density of their $K$-finite vectors (not the analyticity of the orbit maps of $K$-finite vectors, which the library's form also asserts)
 - [Harish-Chandra modules](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for the Harish-Chandra modules of the irreducible unitary representations of the groups $\mathrm{U}(p, q)$, the correspondence between their submodules and the closed invariant subspaces, and the coincidence of infinitesimal and unitary equivalence (not the analyticity of the orbit maps of $K$-finite vectors, which the library's form also asserts)
 - [Continuous extension of (g, K)-maps into smooth Fréchet representations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-real-reductive-groups/extension-of-gk-maps-to-smooth-frechet-representations.md), for the extension of $(\mathfrak{g}, K)$-maps from the Harish-Chandra modules of irreducible unitary representations of the groups $\mathrm{U}(p, q)$ to continuous $G$-maps, with closed image, into any smooth Fréchet representation of moderate growth
