@@ -46,6 +46,10 @@ $\mathfrak{p}$ ramifies.
 
 - [Discriminant ideal of a Dedekind extension](../../RingTheory/ramification/different-and-discriminant-ideals/discriminant-ideal.md), for the relative discriminant $\mathfrak{d}_{E/K}$
 
+## Proof depends on
+
+- [Order of the unitary group over a finite field](finite-unitary-group-order.md), only for the identification of the inert coefficient $c_{\mathfrak{p}}$ with $q^{-\dim \overline{H}} \, \# \overline{H}(\mathbb{F}_q)$ for $\overline{H} = \mathrm{U}_m$
+
 ## Sources
 
 - M. Kirschmer, *Definite quadratic and hermitian forms with small class number*, Habilitationsschrift,

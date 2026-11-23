@@ -21,6 +21,10 @@ $a_k(0) = a_{k-1}(0) + (q - 1)(q + 1) a_{k-1}(1) = (q + 1) q^{2k-2} - q \, a_{k-
 $a_k(0) = q^{2k-1} + (-1)^k (q^k - q^{k-1})$, hence $u_k = q^{k-1} (q^k - (-1)^k)$, and the product of the $u_k$ is the
 stated order. (The count is carried out here; Kirschmer's table gives the order.)
 
+## Proof depends on
+
+- [Trace form criterion for étale algebras](../../RingTheory/algebras-and-differentials/tale-algebras-and-the-trace-form/trace-form-nondegenerate-iff-etale.md), for the nondegeneracy of the trace form of the finite separable, hence étale, extension $\mathbb{F}_{q^2}/\mathbb{F}_q$
+
 ## Sources
 
 - M. Kirschmer, *Definite quadratic and hermitian forms with small class number*, Habilitationsschrift,
