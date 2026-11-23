@@ -81,7 +81,7 @@ Article 24.5.7, Section 2.2, definition (4). -/
 public theorem goldenFactorialExponent_mem (n : ℕ) :
     1 ≤ goldenFactorialExponent n ∧
       (n.factorial : ℝ) ≤ goldenRatio ^ goldenFactorialExponent n :=
-  Nat.sInf_mem (exists_goldenRatio_pow_ge_factorial n)
+  Nat.sInf_mem (s := .ofPred _) (exists_goldenRatio_pow_ge_factorial n)
 
 /-- **Minimality of the golden factorial exponent.** Let $\varphi$ be the golden ratio and,
 for a natural number $n$, let $\alpha(n)$ be the least positive integer $m$ with

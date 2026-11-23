@@ -140,7 +140,7 @@ private lemma fisherBlock_X₁ :
     X₁ᵀ * diagonal (fun i => nbFisherWeight 1 ((X₁ *ᵥ 0) i + (0 : Fin 1 → ℝ) i)) * X₁ =
       of fun _ _ => 1 / 2 := by
   ext i j
-  simp [mul_apply, nbFisherWeight, X₁]
+  simp [Matrix.mul_apply, nbFisherWeight, X₁]
   norm_num
 
 /-- **Non-vacuity of the block inverse.** For the intercept-only design at `θ = 1`, `β = 0`, the
@@ -157,7 +157,7 @@ example : (nbJointFisherInfo 1 X₁ 0 0)⁻¹.toBlocks₁₁ = of fun _ _ => 2 :
   refine inv_eq_right_inv ?_
   ext i j
   rw [Subsingleton.elim i j, one_apply_eq]
-  simp [mul_apply]
+  simp [Matrix.mul_apply]
 
 /-! ### The regression: joint score, observed information, consistency -/
 

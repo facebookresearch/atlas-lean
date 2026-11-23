@@ -40,4 +40,3 @@
 - [Column $4$ of the order-$6$ repetend table of $t p^k$ differs from columns $0$ and $5$](repetend-column-four-ne-zero-five.md)
 - [Columns $1$ to $4$ of the order-$6$ repetend table of $t p^k$ are pairwise different](repetend-columns-one-to-four-pairwise-ne.md)
 - [Repetend tables with at most three rows have no matched columns](repetend-columns-ne-of-card-le-three.md)
-- [Tail bound for sums of inverse powers](tsum-inv-pow-succ-lt.md)

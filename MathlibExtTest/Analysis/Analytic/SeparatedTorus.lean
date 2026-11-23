@@ -381,7 +381,7 @@ public theorem threshold_zero
   have ha : ∀ n m k : ℕ, m + k = n → A (N + (m : ℤ), N + (k : ℤ)) = 0 := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro m k hmk
       have hz (i l : ℕ) (hne : i ≠ 0 ∨ l ≠ 0) :
           A (N + (m : ℤ) - i, N + (k : ℤ) - l) = 0 := by
