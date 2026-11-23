@@ -15,9 +15,12 @@ public import Mathlib.GroupTheory.Index
 # Actual integral affine cells and stable tropical multiplicity sums
 
 Each cell is cut out by finitely many integer-normal affine inequalities.
-Its dimension and lattice are computed from its actual affine span. The
-local stable multiplicity is a literal tangent-star displacement/index sum,
-with the supplied integer facet weights. It is not a free intersection map.
+Its dimension and lattice are computed from its actual affine span. A
+weighted complex carries integer weights on the cells of one dimension; it
+is not required to be balanced (balancing, which makes it a tropical cycle,
+is `BalancedTropicalCycles.Balanced`). The local stable multiplicity is a
+literal tangent-star displacement/index sum, with the supplied integer facet
+weights. It is not a free intersection map.
 
 References: Osserman--Payne, *Lifting Tropical Intersections*,
 1007.1314v3, §§2.4--2.7 and Theorem 5.1.1; Fulton--Sturmfels,
@@ -68,7 +71,11 @@ structure Complex (n : ℕ) where
 
 def Complex.support (C : Complex n) : Set (RealSpace n) := ⋃ i, (C.cell i).carrier
 
-structure Cycle (n : ℕ) where
+/-- A pure-dimensional weighted integral polyhedral complex: integer weights on the cells of a
+fixed dimension (cells of other dimensions, and empty cells, carry weight zero). No balancing
+condition is imposed; a tropical cycle is a weighted complex that is balanced along every
+codimension-one face (`MathlibExt.AlgebraicGeometry.BalancedTropicalCycles.Balanced`). -/
+structure WeightedComplex (n : ℕ) where
   complex : Complex n
   dimension : ℕ
   weight : Fin complex.count → ℤ
@@ -76,7 +83,7 @@ structure Cycle (n : ℕ) where
     (complex.cell i).dimension ≠ dimension → weight i = 0
   empty_weight : ∀ i, (complex.cell i).carrier = ∅ → weight i = 0
 
-def Cycle.support (C : Cycle n) : Set (RealSpace n) :=
+def WeightedComplex.support (C : WeightedComplex n) : Set (RealSpace n) :=
   ⋃ i, if C.weight i = 0 then ∅ else (C.complex.cell i).carrier
 
 /-- The actual tangent-star inequalities at a point of the cell. -/
@@ -89,7 +96,7 @@ def starsMeet (P Q : Polyhedron n) (w v : RealSpace n) : Prop :=
 
 def latticeIndex (P Q : Polyhedron n) : ℤ := ((P.lattice ⊔ Q.lattice).index : ℤ)
 
-def GenericDisplacement (A B : Cycle n) (w v : RealSpace n) : Prop :=
+def GenericDisplacement (A B : WeightedComplex n) (w v : RealSpace n) : Prop :=
   ∀ i j,
     w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
     (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
@@ -98,7 +105,7 @@ def GenericDisplacement (A B : Cycle n) (w v : RealSpace n) : Prop :=
       (affineSpan ℝ (B.complex.cell j).carrier).direction
 
 /-- The raw local stable multiplicity with exact lattice-index weights. -/
-def stableMultiplicity (A B : Cycle n) (w v : RealSpace n) : ℤ := by
+def stableMultiplicity (A B : WeightedComplex n) (w v : RealSpace n) : ℤ := by
   classical
   exact ∑ i, ∑ j,
     if w ∈ (A.complex.cell i).carrier ∧ w ∈ (B.complex.cell j).carrier ∧
@@ -109,7 +116,7 @@ def stableMultiplicity (A B : Cycle n) (w v : RealSpace n) : ℤ := by
     else 0
 
 /-- A subdivision is given by actual cell containments and covering unions. -/
-structure Refinement (A B : Cycle n) where
+structure Refinement (A B : WeightedComplex n) where
   dimension : A.dimension = B.dimension
   index : Fin A.complex.count → Fin B.complex.count
   contained : ∀ i, (A.complex.cell i).carrier ⊆ (B.complex.cell (index i)).carrier

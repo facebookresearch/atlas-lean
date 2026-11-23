@@ -46,7 +46,7 @@ def PureDimension (I : Ideal (ValuativeTropicalization.CoordinateRing K n)) (d :
 
 /-- A presentation is tied to the exact initial/support construction. -/
 structure Presentation (I : Ideal (ValuativeTropicalization.CoordinateRing K n)) where
-  cycle : Cycle n
+  cycle : WeightedComplex n
   dimension_le : cycle.dimension ≤ n
   pure : PureDimension K n I cycle.dimension
   support : cycle.support = tropicalizationOver (L := K) I
@@ -65,7 +65,7 @@ structure Presentation (I : Ideal (ValuativeTropicalization.CoordinateRing K n))
 def intersectionDimension (P Q : Polyhedron n) : ℕ :=
   Module.finrank ℝ (affineSpan ℝ (P.carrier ∩ Q.carrier)).direction
 
-def ProperAt (A B : Cycle n) (w : RealSpace n) : Prop :=
+def ProperAt (A B : WeightedComplex n) (w : RealSpace n) : Prop :=
   w ∈ A.support ∩ B.support ∧ n ≤ A.dimension + B.dimension ∧
     ∀ i j, w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
       intersectionDimension n (A.complex.cell i) (B.complex.cell j) ≤
