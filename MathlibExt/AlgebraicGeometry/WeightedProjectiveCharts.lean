@@ -142,8 +142,10 @@ def monomialWeight (i : Fin (n + 1)) (a : OtherCoordinate n i →₀ ℕ) : ℕ 
   a.sum (fun j e ↦ w j.1 * e)
 
 /-- The fixed formula for an integer-character polynomial in a chart:
-`Σ_a c_a x^a x_i^((t-weight(a))/w_i)`. On the relevant character space
-the exponent is an integer, so the division has no truncation ambiguity. -/
+`Σ_a c_a x^a x_i^((t-weight(a))/w_i)`. When `k` has `w_i` distinct `w_i`-th roots of unity
+(for instance `k` algebraically closed of characteristic zero, as in the Wanted chart
+comparison), every monomial of a character-`t` polynomial has `t - weight(a)` divisible by
+`w_i`, so the integer division is exact there. Over other fields `ℤ` division truncates. -/
 def chartValue (i : Fin (n + 1)) (t : ℤ) (p : cyclicPolynomialRing k n i) :
     ordinaryChart k n i :=
   ∑ a ∈ p.support, algebraMap k (ordinaryChart k n i) (p.coeff a) *
