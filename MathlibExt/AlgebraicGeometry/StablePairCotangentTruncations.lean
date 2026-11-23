@@ -33,7 +33,6 @@ set_option backward.isDefEq.respectTransparency false
 namespace MathlibExt.AlgebraicGeometry.StablePairCotangentTruncations
 
 open CategoryTheory CategoryTheory.Limits Opposite AlgebraicTopology Simplicial
-open _root_.AlgebraicGeometry
 open GeometricCotangentComplex
 open scoped TensorProduct
 
