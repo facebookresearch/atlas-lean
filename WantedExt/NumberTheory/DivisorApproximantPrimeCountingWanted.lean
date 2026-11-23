@@ -105,23 +105,6 @@ public theorem_wanted primeCountingApprox_abs_sub_lt (n : ℕ) (hn : 2 ≤ n) :
       Real.exp (-(Real.pi ^ 2 / 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2))
     |∑ k ∈ Icc 2 n, Real.exp (-(k * (τ' k - 2))) - Nat.primeCounting n| < 0.7129749140934
 
-/-- **Exponential approximation of the sum-of-divisors function.** Let $A$ be a real-valued
-function of two natural numbers such that $A(k, n) \sin^2(n\pi/k) \ge 1$ for all natural numbers
-$k, n$ with $1 \le k \le n$ and $k \nmid n$. For a natural number $n \ge 1$ let $\sigma(n)$
-be the sum of the positive divisors of $n$ and
-$$\tilde\sigma(n) = \sum_{k=1}^{n} k\, e^{-nkA(k, n)\sin^2(n\pi/k)}.$$
-Then $\tilde\sigma(n) - \sigma(n) < \frac{n}{e^n - 1}$.
-
-Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 3
-(`integers-2026-A46-thm-3`). -/
-public theorem_wanted divisorSumApprox_sub_lt (A : ℕ → ℕ → ℝ)
-    (hA : ∀ k n, 1 ≤ k → k ≤ n → ¬ k ∣ n →
-      1 ≤ A k n * Real.sin (n * Real.pi / k) ^ 2)
-    (n : ℕ) (hn : 1 ≤ n) :
-    ∑ k ∈ Icc 1 n, k * Real.exp (-(n * k * A k n * Real.sin (n * Real.pi / k) ^ 2)) -
-        ∑ d ∈ n.divisors, (d : ℝ) < n / (Real.exp n - 1)
-
 end
 
 end MetaMathlibExt
