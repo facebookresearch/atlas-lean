@@ -20,15 +20,17 @@ Nicomachus' Identity", *INTEGERS* 26 (2026), Article A98, study the integers `u_
 power series expansion
 `(1 + 502x + x²)/((1 - x)(1 - 398x + x²)) = ∑_{k ≥ 1} u_k x^{k-1} = 1 + 901x + 359101x² + ⋯`.
 This file defines them and proves their closed form
-`u_k = (5(10 - 3√11)^{2k-1} + 5(10 + 3√11)^{2k-1} - 56)/44` for `k ≥ 1`. In the preprint
+`u_k = (5(10 - 3√11)^{2k-1} + 5(10 + 3√11)^{2k-1} - 56)/44` for `k ≥ 1`, and the nonlinear
+recurrence `u_{k+1} = 252 + 199u_k + 30√((3 + 2u_k)(23 + 22u_k))` for `k ≥ 1`. In the preprint
 arXiv:2511.15133v1 of the paper (titled "A Balanced Three-term Generalization of Nicomachus'
-Identity") the closed form is equation (14) of Proposition 6.
+Identity") the closed form and the recurrence are equations (14) and (15) of Proposition 6.
 
 ## Main declarations
 
 * `nicomachusU k`: the coefficient `u_k` of `x^{k-1}`, read as the constant coefficient when
   `k = 0`.
 * `nicomachusU_eq_closedForm`: the closed form of `u_k` for `k ≥ 1`.
+* `nicomachusU_succ_eq`: the recurrence expressing `u_{k+1}` in terms of `u_k` for `k ≥ 1`.
 
 ## Proof
 
@@ -38,6 +40,13 @@ it shows that the coefficients `c_n = u_{n+1}` satisfy `c_0 = 1`, `c_1 = 901`, `
 roots of `t² - 398t + 1`, and `t³ - 399t² + 399t - 1 = (t - 1)(t² - 398t + 1)`, so the closed form
 satisfies the same recurrence and has the same three initial values. The paper argues instead with
 the partial sums of the series, which it computes from the closed form.
+
+As in the paper, the nonlinear recurrence follows from the closed form. Put
+`A = (10 - 3√11)^{2k-1}` and `B = (10 + 3√11)^{2k-1}`, so that `u_k = (5A + 5B - 56)/44`. Since
+`(10 - 3√11)(10 + 3√11) = 1`, `AB = 1`, hence
+`(3 + 2u_k)(23 + 22u_k) = 25((A + B)² - 4)/44 = 25(B - A)²/44`, whose square root is
+`5√11 (B - A)/22` because `0 ≤ A ≤ B`. Passing from `k` to `k + 1` multiplies `A` by
+`(10 - 3√11)² = 199 - 60√11` and `B` by `(10 + 3√11)² = 199 + 60√11`, which gives the recurrence.
 -/
 
 set_option autoImplicit false
@@ -183,5 +192,44 @@ theorem nicomachusU_eq_closedForm (k : ℕ) (hk : 1 ≤ k) :
   rw [show 2 * (n + 1) - 1 = 2 * n + 1 by omega, nicomachusU_add_one_eq_coeff,
     cast_coeff_generatingFunction]
   rfl
+
+/-! ### The recurrence -/
+
+/-- Let `A ≤ B` with `AB = 1` (for instance `A = (10 - 3√11)^n` and `B = (10 + 3√11)^n`), and let
+`u = (5A + 5B - 56)/44`. Then `(3 + 2u)(23 + 22u) = (5√11 (B - A)/22)²`, and multiplying `A` and
+`B` by `(10 - 3√11)²` and `(10 + 3√11)²` turns `u` into `252 + 199u + 30 · 5√11 (B - A)/22`. -/
+private lemma closedForm_recurrence {A B : ℝ} (hAB : A * B = 1) (hle : A ≤ B) :
+    (5 * (A * (10 - 3 * Real.sqrt 11) ^ 2) + 5 * (B * (10 + 3 * Real.sqrt 11) ^ 2) - 56) / 44 =
+      252 + 199 * ((5 * A + 5 * B - 56) / 44) +
+        30 * Real.sqrt ((3 + 2 * ((5 * A + 5 * B - 56) / 44)) *
+          (23 + 22 * ((5 * A + 5 * B - 56) / 44))) := by
+  have hprod : (3 + 2 * ((5 * A + 5 * B - 56) / 44)) * (23 + 22 * ((5 * A + 5 * B - 56) / 44)) =
+      (5 * Real.sqrt 11 * (B - A) / 22) ^ 2 := by
+    linear_combination (25 / 11 : ℝ) * hAB - (25 / 484 : ℝ) * (B - A) ^ 2 * sqrt_eleven_sq
+  have hnonneg : 0 ≤ 5 * Real.sqrt 11 * (B - A) / 22 :=
+    div_nonneg (mul_nonneg (by positivity) (sub_nonneg.2 hle)) (by norm_num)
+  rw [hprod, Real.sqrt_sq hnonneg]
+  linear_combination (45 / 44 : ℝ) * (A + B) * sqrt_eleven_sq
+
+/-- **Recurrence for the Kim–Stolarsky integers $u_k$.** Let $u_k$ be the coefficient of
+$x^{k-1}$ in the power series expansion of $(1 + 502x + x^2)/((1 - x)(1 - 398x + x^2))$. For every
+integer $k \ge 1$,
+$$u_{k+1} = 252 + 199u_k + 30\sqrt{(3 + 2u_k)(23 + 22u_k)}.$$
+
+Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
+Three or More-term Generalization of Nicomachus' Identity", Proposition 1. -/
+theorem nicomachusU_succ_eq (k : ℕ) (hk : 1 ≤ k) :
+    (nicomachusU (k + 1) : ℝ) =
+      252 + 199 * (nicomachusU k : ℝ) +
+        30 * Real.sqrt ((3 + 2 * (nicomachusU k : ℝ)) *
+          (23 + 22 * (nicomachusU k : ℝ))) := by
+  have hmul : (10 - 3 * Real.sqrt 11) * (10 + 3 * Real.sqrt 11) = 1 := by
+    linear_combination (-9 : ℝ) * sqrt_eleven_sq
+  have hnonneg : 0 ≤ 10 - 3 * Real.sqrt 11 := by
+    nlinarith [sqrt_eleven_sq, Real.sqrt_nonneg 11]
+  rw [nicomachusU_eq_closedForm (k + 1) (by omega), nicomachusU_eq_closedForm k hk,
+    show 2 * (k + 1) - 1 = 2 * k - 1 + 2 by omega, pow_add, pow_add]
+  exact closedForm_recurrence (by rw [← mul_pow, hmul, one_pow])
+    (pow_le_pow_left₀ hnonneg (by linarith [Real.sqrt_nonneg 11]) _)
 
 end MathlibExt.NumberTheory.NicomachusGeneralizationWanted

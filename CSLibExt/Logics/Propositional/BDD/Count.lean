@@ -47,7 +47,7 @@ those on which `f` is true.
 
 set_option autoImplicit false
 
-namespace Cslib.Logic.PL.BDD
+namespace Cslib.Logic.LegacyPL.BDD
 
 /-- **Variables below a bound.** For a natural number $m$, a diagram has its variables below $m$
 when every variable tested at a node of the diagram is less than $m$. -/
@@ -174,4 +174,4 @@ theorem satCount_eq_countModels {m : Nat} {t : BDD} (ht : OrderedFrom 0 t) (hm :
   rw [satCount, satCountFrom_eq_countModels m _ 0 rfl ht hm σ, List.range_eq_range']
   simp
 
-end Cslib.Logic.PL.BDD
+end Cslib.Logic.LegacyPL.BDD

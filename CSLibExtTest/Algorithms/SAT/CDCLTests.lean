@@ -24,7 +24,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Algorithms.SAT.CDCL
 
-open Cslib.Logic.PL Cslib.Algorithms.SAT.CDCL
+open Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.CDCL
 
 /-- Boundary check: reachability is reflexive at the initial state of the empty formula. -/
 example : Relation.ReflTransGen (Step []) State.initial State.initial :=
