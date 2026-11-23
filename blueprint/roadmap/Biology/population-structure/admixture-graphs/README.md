@@ -26,6 +26,14 @@
 - [Tree-shaped admixture graph](is-tree.md)
 - [Visit probabilities on a tree are zero or one](visit-eq-zero-or-one.md)
 - [Lineage weights on a tree are zero or one](weight-eq-zero-or-one.md)
+- [Route Prob](route-prob.md)
+- [Route Prob nonneg](route-prob-nonneg.md)
+- [Route Prob eq zero](route-prob-eq-zero.md)
+- [The routing kernel is normalized](sum-route-prob-parents.md)
+- [The routing kernel rows sum to `1`](sum-route-prob.md)
+- [Route Prob root](route-prob-root.md)
+- [Sum route Prob root](sum-route-prob-root.md)
+- [Route Prob zero](route-prob-zero.md)
 
 ## The induced drift model
 
