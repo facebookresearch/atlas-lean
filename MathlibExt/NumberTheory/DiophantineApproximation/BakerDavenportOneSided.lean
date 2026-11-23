@@ -15,9 +15,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- One-sided Baker–Davenport reduction with only the hypotheses the argument uses: if
-`ξ = ‖μq‖ - N‖γq‖` is positive, no `u ≤ N` and `w ≥ log (Aq/ξ) / log B` satisfy
-`0 < uγ - v + μ < A B⁻ʷ`. `bakerDavenport_reduction_oneSided` is the source-shaped form. -/
+/-- **Baker–Davenport reduction for an arbitrary denominator, one-sided form.** For a real number
+$x$ write $\lVert x \rVert = |x - \operatorname{round}(x)|$ for the distance from $x$ to a nearest
+integer. Let $N$ and $q$ be natural numbers with $q > 0$, and let $\gamma$, $\mu$, $A$, $B$ be real
+numbers with $A > 0$ and $B > 1$. Put $\xi = \lVert \mu q \rVert - N \lVert \gamma q \rVert$ and
+suppose that $\xi > 0$. Then there are no natural numbers $u$, $v$, $w$ with $u \le N$,
+$w \ge \log(Aq/\xi) / \log B$ and $0 < u\gamma - v + \mu < A B^{-w}$. -/
 theorem bakerDavenport_reduction_oneSided_general
     (N q : ℕ) (hq : 0 < q)
     (γ A μ B ξ : ℝ)
@@ -117,7 +120,20 @@ theorem bakerDavenport_reduction_oneSided_general
     linarith
 
 set_option linter.unusedVariables false in
-/-- One-sided Baker–Davenport reduction lemma.
+/-- **Baker–Davenport reduction lemma, one-sided form.** For a real number $x$ write
+$\lVert x \rVert = |x - \operatorname{round}(x)|$ for the distance from $x$ to a nearest integer.
+Let $N$ be a positive integer and $\gamma$ an irrational real number, and let $q$ be the
+denominator of the $j$-th convergent of the continued fraction of $\gamma$ for some natural number
+$j$, with $q > 6N$. Let $A$, $B$, $\mu$ be real numbers with $A > 0$ and $B > 1$. Put
+$\xi = \lVert \mu q \rVert - N \lVert \gamma q \rVert$ and suppose that $\xi > 0$. Then there are
+no positive integers $u$, $v$, $w$ with $u \le N$, $w \ge \log(Aq/\xi) / \log B$ and
+$0 < u\gamma - v + \mu < A B^{-w}$.
+
+Of the hypothesis $q > 6N$ only $q > 0$ is used. The hypotheses that $N > 0$, that $\gamma$ is
+irrational and that $q$ is a convergent denominator, and the positivity of $u$, $v$ and $w$, are
+not needed: the statement follows from the version for an arbitrary positive denominator.
+
+Proves `Wanted` entry `bakerDavenport_reduction_oneSided`.
 
 Concept `jis_rank27_baker_davenport_one_sided`, semantic id
 `jis_grounded_3d649f47290c78b9a73677c9`.
@@ -129,15 +145,6 @@ Source-file SHA-256
 `ef293eb1fb3bec15a47898830b7ed2ea8c38ca4c491750d5a197cb16e00125fc`;
 exact-span SHA-256
 `e8df3e4bbefc3b0825b721bcff7f5d918b3006429e63ee4b1d902ffce1f606d7`.
-
-Here `|x - round x|` formalizes distance to the nearest integer, and this
-declaration is the one-sided form from the cited lemma: the final linear form
-`(u : ℝ) * γ - (v : ℝ) + μ` appears with one-sided strict inequalities and no
-absolute-value bars.
-It follows from `bakerDavenport_reduction_oneSided_general`. The hypotheses `hN`, `hγ`
-and `hq`, and the positivity conditions on `u`, `v` and `w`, are unused and keep the source's
-shape; `hqN` only supplies `0 < q`.
-Proves `Wanted` entry `bakerDavenport_reduction_oneSided`.
 -/
 theorem bakerDavenport_reduction_oneSided
     (N : ℕ) (hN : 0 < N)

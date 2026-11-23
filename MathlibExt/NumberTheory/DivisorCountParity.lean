@@ -30,8 +30,10 @@ congruent to the number of divisors modulo `4` (`MulChar.sum_divisors_emod_four_
 
 namespace Finset
 
-/-- An integer-valued sum over a finset carrying a fixed-point-free involution that preserves
-the summand is twice an integer. -/
+/-- **Sums invariant under a fixed-point-free involution are even.** Let $s$ be a finite subset
+of a type $\alpha$, let $f : \alpha \to \alpha$ satisfy $f(a) \in s$, $f(f(a)) = a$ and
+$f(a) \neq a$ for every $a \in s$, and let $g : \alpha \to \mathbb{Z}$ satisfy $g(f(a)) = g(a)$
+for every $a \in s$. Then $\sum_{a \in s} g(a) = 2k$ for some integer $k$. -/
 theorem exists_sum_eq_two_mul_of_involution {α : Type*} {s : Finset α} {f : α → α}
     {g : α → ℤ} (hmap : ∀ a ∈ s, f a ∈ s)
     (hinv : ∀ a ∈ s, f (f a) = a) (hfix : ∀ a ∈ s, f a ≠ a)
@@ -112,7 +114,9 @@ theorem exists_sum_eq_two_mul_of_involution {α : Type*} {s : Finset α} {f : α
       rw [ht]
       exact ⟨0, by simp⟩
 
-/-- A finset carrying a fixed-point-free involution has even cardinality. -/
+/-- **A fixed-point-free involution forces even cardinality.** Let $s$ be a finite subset of a
+type $\alpha$ and let $f : \alpha \to \alpha$ satisfy $f(a) \in s$, $f(f(a)) = a$ and
+$f(a) \neq a$ for every $a \in s$. Then $s$ has an even number of elements. -/
 theorem even_card_of_involution {α : Type*} {s : Finset α} {f : α → α}
     (hmap : ∀ a ∈ s, f a ∈ s) (hinv : ∀ a ∈ s, f (f a) = a)
     (hfix : ∀ a ∈ s, f a ≠ a) : Even s.card := by
@@ -121,8 +125,10 @@ theorem even_card_of_involution {α : Type*} {s : Finset α} {f : α → α}
   rw [Finset.sum_const, nsmul_eq_mul, mul_one] at hk
   exact ⟨k.toNat, by omega⟩
 
-/-- For a sum of even natural numbers, half the sum is congruent mod 2 to the number of
-summands that are `2 mod 4`. -/
+/-- **Half a sum of even numbers modulo 2.** Let $s$ be a finite set of natural numbers and
+let $f : \mathbb{N} \to \mathbb{N}$ be a function such that $f(k)$ is even for every
+$k \in s$. Then the natural number $\frac{1}{2} \sum_{k \in s} f(k)$ is congruent modulo $2$
+to the number of elements $k \in s$ with $f(k) \equiv 2 \pmod 4$. -/
 theorem sum_div_two_mod_two_eq_card_filter (s : Finset ℕ) (f : ℕ → ℕ)
     (heven : ∀ k ∈ s, Even (f k)) :
     ((∑ k ∈ s, f k) / 2) % 2
@@ -151,16 +157,19 @@ end Finset
 
 namespace Nat
 
-/-- `n / d` is a divisor of `n` when `d` is. -/
+/-- **Complementary divisor.** If $n$ is a nonzero natural number and $d$ is a divisor of $n$,
+then $n/d$ is also a divisor of $n$. -/
 theorem div_mem_divisors {n d : ℕ} (hd : d ∈ n.divisors) : n / d ∈ n.divisors :=
   Nat.mem_divisors.mpr
     ⟨Nat.div_dvd_of_dvd (Nat.dvd_of_mem_divisors hd), Nat.ne_zero_of_mem_divisors hd⟩
 
-/-- `d ↦ n / d` is an involution on `Nat.divisors n`. -/
+/-- **The complementary divisor of the complementary divisor.** If $n$ is a nonzero natural
+number and $d$ is a divisor of $n$, then $n/(n/d) = d$. -/
 theorem div_div_self_of_mem_divisors {n d : ℕ} (hd : d ∈ n.divisors) : n / (n / d) = d :=
   Nat.div_div_self (Nat.dvd_of_mem_divisors hd) (Nat.ne_zero_of_mem_divisors hd)
 
-/-- `d ↦ n / d` has no fixed point on the divisors of a nonsquare `n`. -/
+/-- **Complementary divisors of a nonsquare are distinct.** If $n$ is a natural number that is
+not a perfect square and $d$ is a divisor of $n$, then $n/d \neq d$. -/
 theorem div_ne_of_mem_divisors_of_not_isSquare {n d : ℕ} (hd : d ∈ n.divisors)
     (hsq : ¬ IsSquare n) : n / d ≠ d := by
   intro hcon
@@ -169,20 +178,23 @@ theorem div_ne_of_mem_divisors_of_not_isSquare {n d : ℕ} (hd : d ∈ n.divisor
   have hmul := Nat.mul_div_cancel' (Nat.dvd_of_mem_divisors hd)
   rw [← hmul, hcon]
 
-/-- Doubling an odd number doubles its number of divisors. -/
+/-- **Divisor count of twice an odd number.** If $u$ is an odd natural number, then $2u$ has
+exactly twice as many positive divisors as $u$. -/
 theorem card_divisors_two_mul_of_odd {u : ℕ} (hu : Odd u) :
     (2 * u).divisors.card = 2 * u.divisors.card := by
   rw [Nat.Coprime.card_divisors_mul (Nat.coprime_two_left.mpr hu), Nat.prime_two.divisors,
     Finset.card_pair (by norm_num)]
 
-/-- A nonsquare has an even number of divisors. -/
+/-- **A nonsquare has an even number of divisors.** If a natural number $n$ is not a perfect
+square, then $n$ has an even number of positive divisors. -/
 theorem even_card_divisors_of_not_isSquare {n : ℕ} (hsq : ¬ IsSquare n) :
     Even n.divisors.card :=
   Finset.even_card_of_involution (f := fun d => n / d) (fun _ hd => div_mem_divisors hd)
     (fun _ hd => div_div_self_of_mem_divisors hd)
     (fun _ hd => div_ne_of_mem_divisors_of_not_isSquare hd hsq)
 
-/-- A nonzero natural number has an odd number of divisors exactly when it is a square. -/
+/-- **Squares are exactly the numbers with an odd number of divisors.** A nonzero natural number
+$u$ has an odd number of positive divisors if and only if $u$ is a perfect square. -/
 theorem odd_card_divisors_iff_isSquare {u : ℕ} (hu : u ≠ 0) :
     Odd (Nat.divisors u).card ↔ IsSquare u := by
   constructor
@@ -238,7 +250,10 @@ end Nat
 
 namespace ZMod
 
-/-- On odd inputs, `ZMod.χ₄` takes values `±1`. -/
+/-- **The quadratic character mod 4 is ±1 on odd numbers.** Let $\chi_4$ be the nontrivial
+character modulo $4$ with values in $\mathbb{Z}$: $\chi_4(n) = 1$ for $n \equiv 1 \pmod 4$,
+$\chi_4(n) = -1$ for $n \equiv 3 \pmod 4$, and $\chi_4(n) = 0$ for even $n$. For every odd
+natural number $d$, $\chi_4(d) = 1$ or $\chi_4(d) = -1$. -/
 theorem χ₄_nat_eq_one_or_neg_one_of_odd {d : ℕ} (hd : Odd d) :
     ZMod.χ₄ d = 1 ∨ ZMod.χ₄ d = -1 := by
   have h2 : d % 2 ≠ 0 := by
@@ -251,7 +266,11 @@ theorem χ₄_nat_eq_one_or_neg_one_of_odd {d : ℕ} (hd : Odd d) :
   · rw [ite_eq_right h4]
     exact Or.inr rfl
 
-/-- On odd inputs, `ZMod.χ₈'` takes values `±1`. -/
+/-- **The second quadratic character mod 8 is ±1 on odd numbers.** Let $\chi_8'$ be the
+primitive quadratic character modulo $8$ with values in $\mathbb{Z}$ (the character of
+$\mathbb{Q}(\sqrt{-2})$): $\chi_8'(n) = 1$ for $n \equiv 1, 3 \pmod 8$, $\chi_8'(n) = -1$ for
+$n \equiv 5, 7 \pmod 8$, and $\chi_8'(n) = 0$ for even $n$. For every odd natural number $d$,
+$\chi_8'(d) = 1$ or $\chi_8'(d) = -1$. -/
 theorem χ₈'_nat_eq_one_or_neg_one_of_odd {d : ℕ} (hd : Odd d) :
     ZMod.χ₈' d = 1 ∨ ZMod.χ₈' d = -1 := by
   have h2 : d % 2 ≠ 0 := by
@@ -268,8 +287,12 @@ end ZMod
 
 namespace MulChar
 
-/-- For an integer-valued character `χ` that is `±1` on the divisors of a nonsquare `n` and has
-`χ n = 1`, the divisor sum `∑_{d ∣ n} χ d` is congruent to the number of divisors modulo `4`. -/
+/-- **Character divisor sums modulo 4.** Let $N$ be a natural number and let $\chi$ be a
+multiplicative character on $\mathbb{Z}/N\mathbb{Z}$ with values in $\mathbb{Z}$, applied to
+natural numbers through their residues modulo $N$. Let $n$ be a natural number that is not a
+perfect square such that $\chi(n) = 1$ and $\chi(d) \in \{1, -1\}$ for every positive divisor
+$d$ of $n$, and let $\tau(n)$ be the number of positive divisors of $n$. Then
+$\sum_{d \mid n} \chi(d) \equiv \tau(n) \pmod 4$. -/
 theorem sum_divisors_emod_four_eq_card {N : ℕ} (χ : MulChar (ZMod N) ℤ) {n : ℕ}
     (hpm : ∀ d ∈ n.divisors, χ d = 1 ∨ χ d = -1) (hn : χ n = 1) (hsq : ¬ IsSquare n) :
     (∑ d ∈ n.divisors, χ d) % 4 = (n.divisors.card : ℤ) % 4 := by
