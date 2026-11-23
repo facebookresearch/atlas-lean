@@ -57,7 +57,8 @@ def parameterSection (X : SchemeOver k) (a : k) :
         CommRingCat.ofHom (Polynomial.evalRingHom a) = 𝟙 (CommRingCat.of k) := by
       ext z
       simp
-    simp [affineLine, affinePoint, ← Spec.map_comp, h])
+    simp only [Category.id_comp, Category.assoc, affinePoint, affineLine, Over.mk_hom]
+    rw [← Spec.map_comp, h, Spec.map_id, Category.comp_id])
 
 structure FlatFamily (X : SchemeOver k) [LocallyOfFiniteType X.hom] (r : ℕ) where
   Y : Scheme.{0}
