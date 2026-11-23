@@ -37,9 +37,10 @@ public import MathlibExt.LinearAlgebra.ExteriorPowerSemilinear
 Boundary coefficients are finite real Weil cycles on native codimension-one
 scheme points. Canonical coefficients use a nonzero rational top differential,
 actual local/rational bases and Mathlib's order of vanishing. The base field
-of canonical data, hence of log pairs, is perfect: then the codimension-one
-local rings of a normal variety are smooth over it, so their top Kähler forms
-are free of rank one and canonical frames exist at every prime point. Over an
+of canonical data, hence of log pairs, is perfect: then a normal variety is
+smooth at its codimension-one points (their local rings are essentially smooth
+over the field), so the top Kähler forms there are free of rank one and
+canonical frames exist at every prime point. Over an
 imperfect field the module of Kähler differentials of the function field can
 have dimension larger than `n`, and the canonical divisor would have to come
 from the dualizing module; that case is not modelled here. Cartier data
@@ -344,8 +345,7 @@ def logDiscrepancy {P : LogPair k n} (M : BirationalModel P) (p : PrimePoint M.v
 /-- Kawamata log terminal: every prime divisor on every proper birational
 normal model has positive log discrepancy. The model calculus is part of the
 definition, so every such model carries the comparison data `BirationalData`
-and none is omitted from the quantifier (over fields where the calculus fails,
-for instance when rational top forms are not one-dimensional, the predicate is
+and none is omitted from the quantifier (if the calculus fails, the predicate is
 false rather than vacuous). The log discrepancy does not depend on the chosen
 data: frames change by local units, which have order zero. -/
 def IsKlt (P : LogPair k n) : Prop :=
