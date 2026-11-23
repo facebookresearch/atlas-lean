@@ -16,12 +16,12 @@ meta import CSLibExt.AutomatedReasoning.Certificates.LRAT
 /-!
 # LRAT bridge tests
 
-Exercise `Cslib.Logic.PL.CNF.toStd`, `toStd_eval`, and
+Exercise `Cslib.Logic.LegacyPL.CNF.toStd`, `toStd_eval`, and
 `not_cnfSat_of_lrat` on concrete formulas via Boolean
 evaluation guards and theorem consequences.
 -/
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 #guard Std.Sat.CNF.eval (fun _ => true)
   (CNF.toStd ([] : CNF)) = true

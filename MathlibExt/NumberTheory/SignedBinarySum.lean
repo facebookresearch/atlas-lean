@@ -13,6 +13,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Factorization.Basic
 
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.Ring.Int
 import Mathlib.Combinatorics.Colex
 import Mathlib.Tactic.Ring
 
@@ -178,6 +179,54 @@ private theorem iff_exists_bits {m s t : ℕ} {n : ℤ} :
     · simpa only [sum_coefficients m s t _ hA, sum_toFinset_bitIndices_two_pow] using hn
 
 end isSignedPowTwoSum_extend
+
+/-- **Interval and congruence characterization of signed power-of-two sums.** Let $m \ge 1$ and
+$s \le t$ be natural numbers and put $L = t - s + 1$. An integer $n$ can be written as
+$\sum_{j=s}^{t} \lambda_j 2^j$ with every $\lambda_j \in \{-1, m\}$ if and only if
+$-2^s (2^L - 1) \le n \le 2^s m (2^L - 1)$ and $n \equiv -2^s (2^L - 1) \pmod{2^s (m + 1)}$.
+
+Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
+Article 24.7.5, Lemma 7 (`jis-2024-24.7.5-lem-7`): for `0 ≤ s ≤ t` and
+`m ≥ 1`, the integers of the form `∑_{j=s}^{t} λⱼ * 2^j` with
+`λⱼ ∈ {-1, m}` are precisely the integers `n` in the interval
+`[-2^s * (2^{t-s+1} - 1), 2^s * m * (2^{t-s+1} - 1)]` satisfying
+`n ≡ -2^s * (2^{t-s+1} - 1) [ZMOD 2^s * (m + 1)]`. -/
+public theorem isSignedPowTwoSum_iff (m s t : ℕ) (hm : 1 ≤ m)
+    (hst : s ≤ t) (n : ℤ) :
+    IsSignedPowTwoSum m s t n ↔
+      -(2 : ℤ) ^ s * (2 ^ (t - s + 1) - 1) ≤ n ∧
+      n ≤ 2 ^ s * (m : ℤ) * (2 ^ (t - s + 1) - 1) ∧
+      n ≡ -(2 : ℤ) ^ s * (2 ^ (t - s + 1) - 1) [ZMOD 2 ^ s * ((m : ℤ) + 1)] := by
+  let L := t - s + 1
+  let lo := -(2 : ℤ) ^ s * (2 ^ L - 1)
+  let step := (2 : ℤ) ^ s * ((m : ℤ) + 1)
+  have hstep : 0 < step :=
+    mul_pos (pow_pos (by decide) _) (add_pos (Int.natCast_pos.mpr hm) zero_lt_one)
+  have hsum (k : ℤ) :
+      2 ^ s * (((m : ℤ) + 1) * k - (2 ^ L - 1)) = lo + step * k := by
+    dsimp [lo, step]
+    ring
+  have htop : 2 ^ s * (m : ℤ) * (2 ^ L - 1) = lo + step * (2 ^ L - 1) := by
+    dsimp [lo, step]
+    ring
+  rw [isSignedPowTwoSum_extend.iff_exists_bits,
+    show t + 1 - s = L by dsimp [L]; omega]
+  change (∃ k : ℕ, k < 2 ^ L ∧ n = _) ↔
+    lo ≤ n ∧ n ≤ 2 ^ s * (m : ℤ) * (2 ^ L - 1) ∧ n ≡ lo [ZMOD step]
+  simp only [hsum, htop]
+  constructor
+  · rintro ⟨k, hk, rfl⟩
+    have hk' : (k : ℤ) < 2 ^ L := by exact_mod_cast hk
+    refine ⟨le_add_of_nonneg_right (mul_nonneg hstep.le (Int.natCast_nonneg k)), ?_, ?_⟩
+    · exact add_le_add_right (mul_le_mul_of_nonneg_left (by omega) hstep.le) lo
+    · exact (Int.modEq_iff_add_fac.mpr ⟨(k : ℤ), rfl⟩).symm
+  · rintro ⟨hlo, hhi, hmod⟩
+    obtain ⟨k, rfl⟩ := Int.modEq_iff_add_fac.mp hmod.symm
+    have hk0 : 0 ≤ k := by simpa [hstep] using hlo
+    have hk : k ≤ 2 ^ L - 1 :=
+      (mul_le_mul_iff_right₀ hstep).mp (le_of_add_le_add_left hhi)
+    lift k to ℕ using hk0
+    exact ⟨k, by exact_mod_cast (show (k : ℤ) < 2 ^ L by omega), rfl⟩
 
 /-- **Extending a signed power-of-two sum to a longer range.** Let $m \ge 1$, $s$, $t$ and $\alpha$
 be natural numbers, let $\beta = \nu_2(m + 1)$ be the exponent of $2$ in $m + 1$, and suppose that
