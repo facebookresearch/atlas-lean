@@ -15,6 +15,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.LinearAlgebra.Lagrange
 public import Mathlib.RingTheory.Ideal.Span
 public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
+public import MathlibExt.Data.Nat.ProgressionIntersection
 
 /-!
 # Locally integer polynomial functions
@@ -252,22 +253,6 @@ public theorem_wanted natProgression_inter (a₁ a₂ d₁ d₂ : ℕ) (hd₁ : 
     (({x | ∃ n : ℕ, x = a₁ + d₁ * n} ∩ {x | ∃ n : ℕ, x = a₂ + d₂ * n} : Set ℕ).Nonempty →
       ∃ a₃ : ℕ, ({x | ∃ n : ℕ, x = a₁ + d₁ * n} ∩ {x | ∃ n : ℕ, x = a₂ + d₂ * n} : Set ℕ) =
         {x | ∃ n : ℕ, x = a₃ + Nat.lcm d₁ d₂ * n})
-
-/-- **Two intersecting progressions share infinitely many terms with a third.** Let
-$a_1, a_2, d_1, d_2, a, b$ be natural numbers with $d_1, d_2 > 0$, where
-$\mathbb{N} = \{0, 1, 2, \dots\}$, and let $P_i = \{a_i + d_i n : n \in \mathbb{N}\}$ for
-$i = 1, 2$. If $a \in P_1$, $b \in P_2$, $P_1 \cap P_2$ is nonempty and $a \neq b$, then
-$P_1 \cap P_2$ contains infinitely many elements of the progression
-$\{\min(a, b) + |a - b|\, n : n \in \mathbb{N}\}$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 9 (`integers-2025-A41-lem-9`). -/
-public theorem_wanted natProgression_inter_infinite (a₁ a₂ d₁ d₂ a b : ℕ) (hd₁ : 0 < d₁)
-    (hd₂ : 0 < d₂) (ha : ∃ n : ℕ, a = a₁ + d₁ * n) (hb : ∃ n : ℕ, b = a₂ + d₂ * n)
-    (hne : ({x | ∃ n : ℕ, x = a₁ + d₁ * n} ∩ {x | ∃ n : ℕ, x = a₂ + d₂ * n} : Set ℕ).Nonempty)
-    (hab : a ≠ b) :
-    ({x | ∃ n : ℕ, x = a₁ + d₁ * n} ∩ {x | ∃ n : ℕ, x = a₂ + d₂ * n} ∩
-      {x | ∃ n : ℕ, x = min a b + (max a b - min a b) * n} : Set ℕ).Infinite
 
 /-- **Newton series of locally integer polynomial functions.** Let $U \subseteq \mathbb{Z}$, let
 $\mathbb{N} = \{0, 1, 2, \dots\}$, and let $\sigma : \mathbb{N} \to U$ be a bijection. For a
