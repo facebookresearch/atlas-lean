@@ -9,21 +9,55 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.MvPolynomial.PDeriv
+public import Mathlib.Algebra.Polynomial.Derivative
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Nat.Prime.Basic
+import Mathlib.Algebra.Polynomial.Taylor
 import Mathlib.Data.Int.ModEq
+import Mathlib.Data.Nat.Prime.Int
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Ring
 
 /-!
-# Lifts of singular points of bivariate polynomials
+# Polynomial lifts modulo a prime square
 
-A first-order Taylor expansion modulo `p²` shows that all lifts of a singular point have the
-same polynomial value modulo `p²`. See the [authors' preprint](https://arxiv.org/abs/2411.05366).
+A simple root modulo `p` has at most one lift to a root modulo `p²`. For a bivariate
+polynomial, all lifts of a singular point have the same value modulo `p²`.
+See the [authors' preprint](https://arxiv.org/abs/2411.05366).
 -/
 
 namespace MetaMathlibExt
+
+/-- **At most one lift has valuation above one.** Let $p$ be a prime, $g \in \mathbb{Z}[x]$ and
+$r$ an integer with $0 \le r < p$ such that $g(r)$ and $g'(r)$ are not both divisible by $p$.
+Then at most one $k \in \{0, \dots, p - 1\}$ satisfies $p^2 \mid g(r + kp)$.
+
+Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
+Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Proposition 1
+(`integers-2026-A82-prop-1`). -/
+public theorem card_lift_padicVal_gt_one_le_one {p : ℕ} (hp : p.Prime) (g : Polynomial ℤ)
+    {r : ℕ} (hr : r < p)
+    (hroot : ¬ ((p : ℤ) ∣ g.eval (r : ℤ) ∧ (p : ℤ) ∣ (Polynomial.derivative g).eval (r : ℤ))) :
+    ((Finset.range p).filter fun k : ℕ => (p : ℤ) ^ 2 ∣ g.eval ((r : ℤ) + k * p)).card ≤ 1 := by
+  have linear (k : ℕ) (hk : (p : ℤ) ^ 2 ∣ g.eval ((r : ℤ) + k * p)) :
+      (p : ℤ) ^ 2 ∣ g.derivative.eval (r : ℤ) * k * p + g.eval (r : ℤ) := by
+    obtain ⟨c, hc⟩ := g.exists_mul_sq_add_linear_part_eq_eval_add (r : ℤ) ((k : ℤ) * p)
+    rw [← hc, add_assoc, mul_pow, ← mul_assoc c, Int.dvd_add_right (dvd_mul_left _ _)] at hk
+    simpa only [mul_assoc] using hk
+  apply Finset.card_le_one.mpr
+  intro k hk l hl
+  simp only [Finset.mem_filter, Finset.mem_range] at hk hl
+  have h₁ := linear k hk.2
+  have h₂ := linear l hl.2
+  have hval : (p : ℤ) ∣ g.eval (r : ℤ) :=
+    (Int.dvd_add_right (dvd_mul_left _ _)).mp ((dvd_pow_self _ (by decide : 2 ≠ 0)).trans h₁)
+  have hdiff := dvd_sub h₂ h₁
+  rw [add_sub_add_right_eq_sub, ← sub_mul, ← mul_sub, sq] at hdiff
+  have hp₀ : (p : ℤ) ≠ 0 := Int.natCast_ne_zero_iff_pos.mpr (Nat.zero_lt_of_lt hr)
+  have hprod := (Nat.prime_iff_prime_int.mp hp).dvd_or_dvd (Int.dvd_of_mul_dvd_mul_right hp₀ hdiff)
+  have hkl := Nat.modEq_iff_dvd.mpr (hprod.resolve_left fun hd => hroot ⟨hval, hd⟩)
+  exact hkl.eq_of_lt_of_lt hk.1 hl.1
 
 open MvPolynomial
 

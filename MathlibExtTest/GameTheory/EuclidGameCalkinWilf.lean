@@ -33,6 +33,14 @@ example : euclidPPosition 2 1 ≠ true := by
 example : euclidPPosition 4 6 = true :=
   ((euclidPPosition_aunt_xor_cousin 4 2 (by decide) (by decide)).2.2.1 (by decide)).mpr (by decide)
 
+-- The daughter (3, 2) and its niece (4, 3) continue the same branch.
+example : euclidPPosition 4 3 = true :=
+  (euclidPPosition_branch_step 1 2 (by decide) (by decide)).1 (by decide)
+
+-- The nephew implication also applies to pairs with a common factor.
+example : euclidPPosition 6 8 = true :=
+  (euclidPPosition_branch_step 4 2 (by decide) (by decide)).2 (by decide)
+
 -- At level zero the coefficient 3k - 2 in the left branch formula is negative.
 example : euclidPPosition 8 5 = true ∧ euclidPPosition 5 7 = true ∧
     (7 : ℤ) = 3 * 3 + (3 * 0 - 2) * 1 := by
