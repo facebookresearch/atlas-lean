@@ -13,10 +13,12 @@ public import Batteries.Util.ProofWanted
 /-!
 # Recovering the actual F-different from the descended normalized trace
 
-A normalization step toward Schwede arXiv0901.1154v4, Theorem 5.2 and Corollary 6.9
-(the request asks for the multiplier of the given nonzero descended map; the
+A normalization step toward Schwede arXiv0901.1154v4, Theorem 5.2 and Corollary 6.9:
+the request asks for the multiplier of the given nonzero descended map; the
 independence of the resulting divisor and the restriction of test ideals are those
-results' further conclusions, not requested here). The compatible-center quotient trace is fixed by the actual epimorphic
+results' further conclusions, not requested here.
+
+The compatible-center quotient trace is fixed by the actual epimorphic
 base-change mate. The adjoint element is computed, and the target
 multiplier is fixed on every local Cartier section. Canonical references
 are actual dualizing modules; no boundary/different function is assumed.
