@@ -11,6 +11,3 @@ It is defined for all real inputs, with the convention `x / 0 = 0`: a layer with
 contributes `0` to the summed resistance, as if it offered no resistance (an impermeable layer is
 outside the domain of the formula), and `K_eff = 0` when the summed resistance is `0`, in
 particular for `n = 0`. The intended domain is `n ≥ 1` with every `L i > 0` and `K i > 0`.
-
-This is the same formula as the
-[effective conductivity for flow across the layers](series-effective-conductivity.md).

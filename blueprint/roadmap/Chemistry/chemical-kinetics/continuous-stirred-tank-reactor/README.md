@@ -5,7 +5,6 @@ concentration $c_{\mathrm{in}}$, and its perfectly mixed contents react with fir
 constant $k \ge 0$, so that the concentration solves $V c' = Q (c_{\mathrm{in}} - c) - k V c$. The
 explicit solution relaxes exponentially to the steady concentration $Q c_{\mathrm{in}} / (Q + kV)$.
 
-- [Exponential relaxation at rate Q/V + k solves the reactor equation](cstr-has-deriv-at.md)
 - [The reactor equation's right-hand side vanishes at the steady state](cstr-steady-state.md)
 - [Steady concentration of a continuous stirred-tank reactor](steady.md)
 - [Concentration in a continuous stirred-tank reactor](solution.md)
