@@ -134,12 +134,12 @@ def conductorSummand [FiniteDimensional K L] (i : ℕ) : ℚ :=
     invariantCodimension K L ell V ρ (lowerGroup K L i)
 
 /-- The partial Artin sum over the indices `i < N`, including the inertia contribution at
-`i = 0`. It is the Artin conductor only when `G_N = 1` (`artinConductor`). -/
+`i = 0`. When `G_N = 1` it equals the Artin conductor (`artinConductor`). -/
 def partialArtinSum [FiniteDimensional K L] (N : ℕ) : ℚ :=
   ∑ i ∈ Finset.range N, conductorSummand K L ell V ρ i
 
-/-- The partial Swan sum over the indices `0 < i < N`, omitting the inertia term `i = 0`. It is
-the Swan conductor only when `G_N = 1` (`swanConductor`). -/
+/-- The partial Swan sum over the indices `0 < i < N`, omitting the inertia term `i = 0`. When
+`G_N = 1` it equals the Swan conductor (`swanConductor`). -/
 def partialSwanSum [FiniteDimensional K L] (N : ℕ) : ℚ :=
   ∑ i ∈ Finset.range N, if i = 0 then 0 else conductorSummand K L ell V ρ i
 
