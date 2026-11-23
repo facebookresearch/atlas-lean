@@ -34,6 +34,11 @@ Proved in `MathlibExt.NumberTheory.ThreePowAddThirtyfivePow`,
 which this module imports: the case `x = 0`
 (`one_add_pow_eq_sq`) and the case `n = 3`,
 `p = 7` (`three_pow_add_thirtyfive_pow`).
+
+Proved in `MathlibExt.NumberTheory.PowAddPowEqSqModFourOne`,
+which this module imports: the absence of
+solutions when `n ≡ p ≡ 1 (mod 4)`
+(`no_solution_mod_four_one`).
 -/
 module
 
@@ -41,6 +46,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.PowAddPowEqSq
+public import MathlibExt.NumberTheory.PowAddPowEqSqModFourOne
 public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
 
 set_option autoImplicit false
@@ -81,16 +87,6 @@ theorem_wanted opposite_parity (n p x y z : ℕ) (hp : p.Prime)
     (hn : n % 4 = 3) (hp4 : p % 4 = 3)
     (h : n ^ x + (5 * p) ^ y = z ^ 2) :
     x % 2 ≠ y % 2
-
-/-- **No solutions of $n^x + (5p)^y = z^2$ when $n \equiv p \equiv 1 \pmod 4$.** Let $p$ be a
-prime and $n$ a natural number with $n \equiv 1 \pmod 4$ and $p \equiv 1 \pmod 4$. Then there
-are no natural numbers $x$, $y$, $z$ with $n^x + (5p)^y = z^2$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Theorem 2. -/
-theorem_wanted no_solution_mod_four_one (n p : ℕ) (hp : p.Prime)
-    (hn : n % 4 = 1) (hp4 : p % 4 = 1) :
-    ¬ ∃ x y z : ℕ, n ^ x + (5 * p) ^ y = z ^ 2
 
 /-- **Corollary 2** (Moonchaisook et al.): the
 Diophantine equation `(5^n)^x + (4^m p + 1)^y = z^2`

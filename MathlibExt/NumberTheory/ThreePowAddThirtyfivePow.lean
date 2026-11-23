@@ -87,7 +87,10 @@ private lemma exp_eq_one {a p n z : ℕ} (ha : 0 < a) (hp : p.Prime) (hgap : a +
     rw [Nat.succ_mul] at h₁
     omega
 
-/-- The natural solutions of $3^x + 35^y = z^2$ are $(1,0,2)$ and $(0,1,6)$. -/
+/-- The natural solutions of $3^x + 35^y = z^2$ are $(1,0,2)$ and $(0,1,6)$.
+
+Source: Suton Tadee, "On the Diophantine Equation
+`n^x + (5p)^y = z^2`", Corollary 4. -/
 public theorem three_pow_add_thirtyfive_pow (x y z : ℕ) :
     3 ^ x + 35 ^ y = z ^ 2 ↔
       (x = 1 ∧ y = 0 ∧ z = 2) ∨ (x = 0 ∧ y = 1 ∧ z = 6) := by

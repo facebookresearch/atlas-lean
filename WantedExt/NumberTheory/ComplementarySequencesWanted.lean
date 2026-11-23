@@ -16,6 +16,7 @@ public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.NthRoot.Defs
 public import Mathlib.Tactic.IntervalCases
 public import MathlibExt.NumberTheory.AscFactorialBounds
+public import MathlibExt.NumberTheory.ComplementarySequences
 
 /-!
 # Algorithms for complementary sequences (wanted statements)
@@ -34,65 +35,6 @@ Article A95.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The $n$-th non-value of a sequence.** For $f : \mathbb{N} \to \mathbb{N}$ and $n \ge 1$, the
-$n$-th non-value of $f$ is the $n$-th smallest positive integer that is not of the form $f(m)$
-with $m \ge 1$, or $0$ if fewer than $n$ such integers exist. At $n = 0$ it takes the same value
-as at $n = 1$.
-
-In the paper's notation, where $f = f_{\neg P}$ lists the positive integers without a property
-$P$, the $n$-th non-value of $f$ is $f_P(n)$, the $n$-th term of the complementary sequence.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Section 1 (definition of `f_P`). -/
-public noncomputable def nthNonValue (f : ℕ → ℕ) (n : ℕ) : ℕ :=
-  Nat.nth (fun x => 0 < x ∧ ∀ m, 1 ≤ m → f m ≠ x) (n - 1)
-
-/-- **The first non-square.** The smallest positive integer that is not the square of a positive
-integer is $2$; that is, the first non-value of $m \mapsto m^2$ is $2$.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Section 1 (the non-squares). -/
-public theorem nthNonValue_sq_one : nthNonValue (fun m => m ^ 2) 1 = 2 := by
-  classical
-  have h2 : 0 < 2 ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ 2 := by
-    refine ⟨by norm_num, fun m hm h => ?_⟩
-    have : m ≤ 1 := by nlinarith
-    interval_cases m
-    simp at h
-  have hc : Nat.count (fun x => 0 < x ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ x) 2 = 0 := by
-    have h0 : ¬ (0 < 0 ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ 0) := fun h => lt_irrefl 0 h.1
-    have h1 : ¬ (0 < 1 ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ 1) := fun h => h.2 1 le_rfl rfl
-    simp only [Nat.count_succ, Nat.count_zero, h0, h1, ite_false]
-  have := Nat.nth_count (p := fun x => 0 < x ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ x) h2
-  rw [hc] at this
-  simpa [nthNonValue] using this
-
-/-- **The second non-square.** The second smallest positive integer that is not the square of a
-positive integer is $3$; that is, the second non-value of $m \mapsto m^2$ is $3$.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Section 1 (the non-squares). -/
-public theorem nthNonValue_sq_two : nthNonValue (fun m => m ^ 2) 2 = 3 := by
-  classical
-  have h2 : 0 < 2 ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ 2 := by
-    refine ⟨by norm_num, fun m hm h => ?_⟩
-    have : m ≤ 1 := by nlinarith
-    interval_cases m
-    simp at h
-  have h3 : 0 < 3 ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ 3 := by
-    refine ⟨by norm_num, fun m hm h => ?_⟩
-    have : m ≤ 1 := by nlinarith
-    interval_cases m
-    simp at h
-  have hc : Nat.count (fun x => 0 < x ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ x) 3 = 1 := by
-    have h0 : ¬ (0 < 0 ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ 0) := fun h => lt_irrefl 0 h.1
-    have h1 : ¬ (0 < 1 ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ 1) := fun h => h.2 1 le_rfl rfl
-    simp only [Nat.count_succ, Nat.count_zero, h0, h1, ite_false,
-      eq_true h2, ite_true]
-  have := Nat.nth_count (p := fun x => 0 < x ∧ ∀ m, 1 ≤ m → m ^ 2 ≠ x) h3
-  rw [hc] at this
-  simpa [nthNonValue] using this
 
 /-- **Complementary sequences in two Lambek–Moser steps.** Let $f : \mathbb{N} \to \mathbb{N}$
 satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$, let $C(x)$ be the number of
@@ -316,23 +258,6 @@ Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025
 Article A95, Corollary 4, Equation (7). -/
 public theorem_wanted nthNonValue_pyramidal_two_case (k : ℕ) (hk : 3 ≤ k) (hk' : k ≤ 5)
     (n : ℕ) (hn : 1 ≤ n) :
-    let s := Nat.nthRoot 3 (6 * n / (k - 2))
-    nthNonValue (fun j => j * (j + 1) * ((k - 2) * j + 5 - k) / 6) n =
-      if 6 * n ≤ s * (s - 1) * (s * (k - 2) + k + 1) then n + s - 1 else n + s
-
-/-- **Two-case formula for the non-pyramidal numbers when $k \le 8$.** Let $3 \le k \le 8$, and
-for $j \ge 1$ let $P(k, j) = j (j + 1) ((k - 2) j - (k - 5))/6$ be the $k$-gonal pyramidal
-numbers. For every integer $n \ge 1$, put $s = \lfloor \sqrt[3]{6n/(k - 2)} \rfloor$. Then the
-$n$-th positive integer that is not of the form $P(k, j)$ with $j \ge 1$ equals $n + s - 1$ if
-$6n \le s (s - 1) (s (k - 2) + k + 1)$, and $n + s$ otherwise.
-
-This extends Equation (7) of Corollary 4 from $k \le 5$ to $k \le 8$; the paper reports it after
-checking small values of $n$.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, remark after Corollary 4. -/
-public theorem_wanted nthNonValue_pyramidal_two_case_le_eight (k : ℕ) (hk : 3 ≤ k)
-    (hk' : k ≤ 8) (n : ℕ) (hn : 1 ≤ n) :
     let s := Nat.nthRoot 3 (6 * n / (k - 2))
     nthNonValue (fun j => j * (j + 1) * ((k - 2) * j + 5 - k) / 6) n =
       if 6 * n ≤ s * (s - 1) * (s * (k - 2) + k + 1) then n + s - 1 else n + s

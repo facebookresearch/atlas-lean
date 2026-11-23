@@ -19,16 +19,19 @@ extracted statements, so `a265233` is defined over `ℚ`
 by the paper's Theorem 1(2) recurrence together with its
 initial values `a_0 = 1`, `a_1 = 1`, `a_2 = 7`,
 `a_3 = 56`, which determine the sequence. The explicit
-formula of Theorem 1(1), the diagonal coefficient of
-Lemma 3, and both parts of Corollary 2 are then stated
-as properties of this sequence; the paper's Franel
-numbers `f_m = ∑_k C(m, k)^3` are the existing
-`MetaMathlibExt.binomialPowerSeq 3 0 m`, cast to `ℚ`.
-The
+formula of Theorem 1(1) and both parts of Corollary 2
+are then stated as properties of this sequence; the
+paper's Franel numbers `f_m = ∑_k C(m, k)^3` are the
+existing `MetaMathlibExt.binomialPowerSeq 3 0 m`, cast
+to `ℚ`. The
 recurrence and the explicit formula were checked to
 agree for `1 ≤ n ≤ 13` (values `1, 1, 7, 56, 495, 4686,
-…`), and the Lemma 3 coefficient was checked against
-`f_m` for `m ≤ 5`.
+…`).
+
+The paper's lemma that `f_m` is the coefficient of
+`x^m y^m z^m` in `((x + y)(y + z)(z + x))^m` is proved
+in `MathlibExt.NumberTheory.FranelDiagonalCoeff`, which
+this module imports.
 
 Corollary 2(1) is stated analytically on the common
 convergence domain `|x| < 1/12` and
@@ -46,6 +49,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
+public import MathlibExt.NumberTheory.FranelDiagonalCoeff
 
 set_option autoImplicit false
 
@@ -84,22 +88,6 @@ theorem_wanted a265233_eq_sum_franel (n : ℕ) (hn : 1 ≤ n) :
     a265233 n = (1 / 6) * ∑ m ∈ Finset.range (n + 1),
       (Nat.choose n m : ℚ) * 4 ^ (n - m) *
         (MetaMathlibExt.binomialPowerSeq 3 0 m : ℚ)
-
-/-- **Franel numbers as diagonal coefficients.** For every natural number $m$, the coefficient of
-$x^m y^m z^m$ in the polynomial $\bigl((x + y)(y + z)(z + x)\bigr)^m \in \mathbb{Q}[x, y, z]$
-is the Franel number $f_m = \sum_{k=0}^{m} \binom{m}{k}^3$.
-
-Source: Juntao Jin, "An Explicit Formula and a
-Recurrence for OEIS A265233", Lemma 3. -/
-theorem_wanted coeff_pow_eq_franel (m : ℕ) :
-    (((MvPolynomial.X 0 + MvPolynomial.X 1) *
-        (MvPolynomial.X 1 + MvPolynomial.X 2) *
-        (MvPolynomial.X 2 + MvPolynomial.X 0)) ^ m :
-        MvPolynomial (Fin 3) ℚ).coeff
-      (Finsupp.single (0 : Fin 3) m +
-        Finsupp.single (1 : Fin 3) m +
-        Finsupp.single (2 : Fin 3) m)
-      = (MetaMathlibExt.binomialPowerSeq 3 0 m : ℚ)
 
 /-- **Generating function of A265233.** Let $(a_n)_{n \ge 0}$ be the sequence A265233 and let
 ${}_2F_1$ be the Gauss hypergeometric function. For every real number $x$ with $|x| < 1/12$ and
