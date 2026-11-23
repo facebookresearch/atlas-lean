@@ -29,6 +29,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.StirlingFirstHigherColumns
+public import MathlibExt.Combinatorics.Enumerative.StirlingSecondAlternatingRowSum
 
 set_option autoImplicit false
 
@@ -80,20 +81,6 @@ theorem_wanted stirlingSecond_mul_sub_eq_sum_choose_alternating
       ∑ j ∈ Finset.Icc 2 (n - k + 1),
         (Nat.choose n j : ℤ) * (Nat.stirlingSecond (n - j + 1) k : ℤ) *
           (-1 : ℤ) ^ j
-
-/-- **Lee's factorial-weighted alternating row sum of Stirling numbers of the second kind.** Write
-$S(a, j)$ for the Stirling number of the second kind, the number of partitions of an $a$-element
-set into $j$ nonempty blocks. For every natural number $a \ge 1$, the following identity of
-integers holds:
-$$\sum_{j=2}^{a} (-1)^j\, (j-2)!\, S(a, j) = a - 1.$$
-
-Source: Kwankyu Lee, "Some New Identities for Stirling Numbers", Lemma 6
-(TeX label `lem:mjkfwd`). -/
-theorem_wanted sum_stirlingSecond_factorial_alternating
-    {a : ℕ} (ha : 1 ≤ a) :
-    (∑ j ∈ Finset.Icc 2 a,
-      (Nat.stirlingSecond a j : ℤ) * (Nat.factorial (j - 2) : ℤ) *
-        (-1 : ℤ) ^ j) = (a : ℤ) - 1
 
 /-- **Lee's identity for Stirling numbers of the second kind from higher columns.** Write
 $S(n, k)$ for the Stirling number of the second kind, the number of partitions of an $n$-element
