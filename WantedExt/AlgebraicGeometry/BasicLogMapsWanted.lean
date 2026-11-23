@@ -53,14 +53,6 @@ def_wanted basicLogCurve [InverseImageTheory.{0}] (T : Scheme.{0})
     [IsNoetherian T] (c : T ⟶ Spec (.of ℂ)) [LocallyOfFiniteType c] [QuasiCompact c]
     (n g : ℕ) (F : MarkedFamily T n g) : BasicLogCurve F
 
-/-- Canonical comparison from a basic enhancement; input M carries the
-actual original stable log map and its log-curve geometry. The target and
-base log structures are fs and Zariski, as in the source. -/
-def_wanted basicization [InverseImageTheory.{0}] (X S : LogScheme.{0})
-    (hX : X.IsFineSaturated) (hS : S.IsFineSaturated)
-    (hXZariski : HasZariskiFineSaturatedCharts X) (hSZariski : HasZariskiFineSaturatedCharts S)
-    (q : MathlibExt.AlgebraicGeometry.EtaleLogSchemes.Hom X S) [LocallyOfFiniteType q.map] [QuasiCompact q.map]
-    (c : S.scheme ⟶ Spec (.of ℂ)) [LocallyOfFiniteType c] [QuasiCompact c]
-    (n g : ℕ) (T : Scheme.{0}) [IsNoetherian T]
-    (b : T ⟶ S.scheme) [LocallyOfFiniteType b] [QuasiCompact b]
-    (M : StableLogMap q n g T b) : Basicization M
+/-! The basicization of a stable log map is requested once, over every field of characteristic
+zero, by `WantedExt.AlgebraicGeometry.BasicLogGhostNormalizations.geometricBasicization`; its first
+component is the basicization (for `k = ℂ` this is the complex case). -/
