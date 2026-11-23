@@ -43,11 +43,13 @@ public instance_wanted torsionFreeRestrictions
     (hdim : topologicalKrullDim C.left = 1) : TorsionFreeRestrictions C.left
 
 /-- A general polarization of a connected reduced planar curve has a fine
-projective compactified Jacobian with its normalized universal sheaf. -/
+projective compactified Jacobian with its normalized universal sheaf. Such a
+curve has `H⁰(C, 𝒪_C) = k`; this is recorded as `HasConstantGlobalSections`,
+so that the genus is defined. -/
 public def_wanted fineCompactifiedJacobian
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (C : Over (Spec (.of k))) [IsProper C.hom] [IsReduced C.left]
-    [ConnectedSpace C.left] (hdim : topologicalKrullDim C.left = 1)
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [IsReduced C.left]
+    [ConnectedSpace C.left] [HasConstantGlobalSections C.hom]
     [TorsionFreeRestrictions C.left]
     (planar : ∀ x : C.left, IsClosed ({x} : Set C.left) →
       Module.finrank (IsLocalRing.ResidueField (C.left.presheaf.stalk x))

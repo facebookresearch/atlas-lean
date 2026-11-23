@@ -22,9 +22,18 @@ public import MathlibExt.AlgebraicGeometry.PointedPicardFamilies
 
 Coherence, torsion freeness, generic rank one, and relative flatness are
 conditions on actual module sheaves. Subcurves are actual reduced closed
-subschemes whose image is a union of irreducible components. Stability
-uses Euler characteristic of the universal torsion-free quotient of the
-restriction to each proper nonempty subcurve.
+subschemes whose image is a union of irreducible components. On a proper
+curve, stability uses the Euler characteristic `h⁰ - h¹` of the universal
+torsion-free quotient of the restriction to each proper nonempty subcurve,
+itself a proper curve. Coherent cohomology on a proper curve is
+finite-dimensional and vanishes above degree one, so `h⁰ - h¹` with
+`Module.finrank` is the actual Euler characteristic.
+
+Families are tested over an algebraically closed field `k` on parameter
+schemes locally of finite type, at their `k`-points: these are exactly the
+closed points, which are dense in every closed subset, and stability is an
+open condition in flat families of torsion-free rank-one sheaves (Esteves,
+§3), so this is equivalent to testing every geometric fiber.
 
 References: E. Esteves, *Compactifying the relative Jacobian over families
 of reduced curves*; Melo--Rapagnetta--Viviani, *Fine compactified Jacobians
@@ -81,6 +90,12 @@ structure Subcurve (C : Scheme.{u}) where
   components : ∃ S : Finset (Component C),
     Set.range i = ⋃ c ∈ S, c.val
 
+/-- A subcurve of a proper curve is a proper curve. -/
+instance Subcurve.isProperCurve {k : Type u} [Field k] (C : Over (Spec (.of k)))
+    [IsProperCurve C.hom] (Y : Subcurve C.left) : IsProperCurve (Y.i ≫ C.hom) :=
+  haveI := Y.closed
+  { toIsProper := inferInstance, topologicalKrullDim_eq_one := Y.dimension }
+
 /-- The canonical torsion-free quotient is characterized by its universal property. -/
 structure TorsionFreeQuotient {Z : Scheme.{u}} (F : Z.Modules) where
   Q : Z.Modules
@@ -107,14 +122,15 @@ def subcurveWeight {C : Scheme.{u}} (q : Polarization C) (Y : Subcurve C) : ℚ 
   classical
   exact q.sum fun c a ↦ if c.val ⊆ Set.range Y.i then a else 0
 
-/-- Euler characteristic from actual coherent cohomology. -/
+/-- The Euler characteristic `h⁰(F) - h¹(F)` of a sheaf on a proper curve, from actual
+coherent cohomology. -/
 def euler {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) (F : X.Modules) : ℤ :=
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (F : X.Modules) : ℤ :=
   (Module.finrank k (cohomology f F 0) : ℤ) -
     Module.finrank k (cohomology f F 1)
 
-/-- Esteves/MRV semistability, on actual rank-one torsion-free sheaves. -/
-def IsSemistable {k : Type u} [Field k] (C : Over (Spec (.of k)))
+/-- Esteves/MRV semistability on a proper curve, on actual rank-one torsion-free sheaves. -/
+def IsSemistable {k : Type u} [Field k] (C : Over (Spec (.of k))) [IsProperCurve C.hom]
     [TorsionFreeRestrictions C.left] (q : Polarization C.left) (F : C.left.Modules) : Prop :=
   IsCoherent F ∧ IsTorsionFree F ∧ HasGenericRankOne F ∧
     (euler C.hom F : ℚ) = totalWeight q ∧
@@ -123,7 +139,7 @@ def IsSemistable {k : Type u} [Field k] (C : Over (Spec (.of k)))
         (euler (Y.i ≫ C.hom) (TorsionFreeRestrictions.restriction F hF Y).Q : ℚ)
 
 /-- Stability uses the strict subcurve inequalities. -/
-def IsStable {k : Type u} [Field k] (C : Over (Spec (.of k)))
+def IsStable {k : Type u} [Field k] (C : Over (Spec (.of k))) [IsProperCurve C.hom]
     [TorsionFreeRestrictions C.left] (q : Polarization C.left) (F : C.left.Modules) : Prop :=
   IsCoherent F ∧ IsTorsionFree F ∧ HasGenericRankOne F ∧
     (euler C.hom F : ℚ) = totalWeight q ∧
@@ -132,7 +148,7 @@ def IsStable {k : Type u} [Field k] (C : Over (Spec (.of k)))
         (euler (Y.i ≫ C.hom) (TorsionFreeRestrictions.restriction F hF Y).Q : ℚ)
 
 /-- Nondegeneracy compares only semistable sheaves to stable sheaves. -/
-def IsNondegenerate {k : Type u} [Field k] (C : Over (Spec (.of k)))
+def IsNondegenerate {k : Type u} [Field k] (C : Over (Spec (.of k))) [IsProperCurve C.hom]
     [TorsionFreeRestrictions C.left] (q : Polarization C.left) : Prop :=
   ∀ F : C.left.Modules, IsSemistable C q F → IsStable C q F
 
@@ -144,18 +160,23 @@ structure SmoothMarking {k : Type u} [Field k] (C : Over (Spec (.of k))) where
   lift : 𝟙_ (Over (Spec (.of k))) ⟶ Over.mk (U.ι ≫ C.hom)
   factors : lift ≫ Over.homMk U.ι = p
 
-/-- Families over finite-type test schemes, with the actual closed-fiber stability test. -/
-def IsStableFamily {k : Type u} [Field k] (C T : Over (Spec (.of k)))
-    [TorsionFreeRestrictions C.left] (q : Polarization C.left)
+/-- A flat coherent family of stable sheaves over a parameter scheme locally of finite type
+over an algebraically closed field: every closed fiber, that is the fiber at every
+`k`-point, is stable. By openness of stability this is stability of every geometric
+fiber (see the module documentation). -/
+def IsStableFamily {k : Type u} [Field k] [IsAlgClosed k] (C T : Over (Spec (.of k)))
+    [IsProperCurve C.hom] [TorsionFreeRestrictions C.left] (q : Polarization C.left)
     (F : (prod C T).left.Modules) : Prop :=
-  IsCoherent F ∧ IsFlatOver (prod.snd : prod C T ⟶ T).left F ∧
+  LocallyOfFiniteType T.hom ∧ IsCoherent F ∧ IsFlatOver (prod.snd : prod C T ⟶ T).left F ∧
     ∀ x : 𝟙_ (Over (Spec (.of k))) ⟶ T,
       IsStable C q ((Scheme.Modules.pullback (pointSection C T x).left).obj F)
 
-/-- A fine moduli representative with a normalized actual universal sheaf. -/
-structure FineCompactifiedJacobian {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    (q : Polarization C.left) (s : SmoothMarking C) where
+/-- A fine moduli representative with a normalized actual universal sheaf, for a proper
+curve with `H⁰(C, 𝒪_C) = k` over an algebraically closed field. Its dimension is the
+genus. -/
+structure FineCompactifiedJacobian {k : Type u} [Field k] [IsAlgClosed k]
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    [TorsionFreeRestrictions C.left] (q : Polarization C.left) (s : SmoothMarking C) where
   J : Over (Spec (.of k))
   [proper : IsProper J.hom]
   [reduced : IsReduced J.left]
