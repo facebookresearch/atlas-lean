@@ -258,8 +258,11 @@ def recently_merged(repository: str, window: datetime, cutoff: datetime, token: 
 
     A merged pull request stays merged, and each page starts after a cursor that holds the last one's update and id,
     so one that is updated while they are read moves ahead of the cursor and makes no other one skip past it. As it
-    may be missed itself, the first page is read once more at the end: a whole page of new updates, which may hide
-    more, or more pages than this script reads, stop it."""
+    may be missed itself, the first page is read once more at the end. One updated since the first read was updated
+    at or after the newest update that read showed, so the page holds it if the page reaches past that time; as times
+    are to the second, one updated in that very second may come after a page that ends in it, and the script stops
+    then, as it does when it would need more pages than it reads. It assumes that GitHub lists an update as soon as it
+    records it."""
     owner, _, name = repository.partition("/")
     query = ("query($owner: String!, $name: String!, $after: String) { repository(owner: $owner, name: $name) { "
              f'pullRequests(states: [MERGED], baseRefName: "{MAIN}", orderBy: {{field: UPDATED_AT, direction: DESC}}, '
@@ -281,7 +284,7 @@ def recently_merged(repository: str, window: datetime, cutoff: datetime, token: 
         return [(number, updated, when) for number, updated, when, _ in rows], more, cursor
 
     rows, more, cursor = read(None)
-    first = {(number, updated) for number, updated, _ in rows}
+    newest = max((when for _, _, when in rows), default=None)
     pages = 1
     while more and rows and rows[-1][2] >= window:
         if pages == TAIL_PAGES:
@@ -290,8 +293,8 @@ def recently_merged(repository: str, window: datetime, cutoff: datetime, token: 
         rows, more, cursor = read(cursor)
         pages += 1
     if pages > 1:
-        rows, _, _ = read(None)
-        if len(rows) == PER_PAGE and not any((number, updated) in first for number, updated, _ in rows):
+        rows, more, _ = read(None)
+        if more and rows and rows[-1][2] >= newest:
             raise Failure("so many pull requests merged into main were updated while this script read them that it "
                           "may have missed one; run it again")
     return numbers

@@ -177,6 +177,11 @@ def updated(row: dict, when: str) -> dict:
     return {**row, "updated_at": when}
 
 
+def before(seconds: int, at: str = "2026-11-21T09:00:00Z") -> str:
+    """The time *seconds* before *at*, as GitHub writes it."""
+    return (stamp(at) - timedelta(seconds=seconds)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def run(site: Site, *args: str, env: dict | None = None) -> tuple[int, str, str]:
     out, err = io.StringIO(), io.StringIO()
     with mock.patch.object(next_task, "request", site), mock.patch.dict(os.environ, env or {}, clear=True), \
@@ -284,8 +289,7 @@ class Picking(unittest.TestCase):
         # Merged pull requests by their last update: 100 merged before the list's commit and updated later, then one
         # merged since that the search does not show yet, on the second page. The script reads pages until one ends
         # before the last LAG (here long enough to reach back to the list's commit), then the first page again.
-        merged = {300 + n: pull(300 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-21T09:00:00Z")
-                  for n in range(100)}
+        merged = {300 + n: pull(300 + n, merged_at="2026-11-19T00:00:00Z", updated_at=before(n)) for n in range(100)}
         merged[15] = pull(15, body="Ext.p1", merged_at="2026-11-20T19:00:00Z", updated_at="2026-11-20T19:00:00Z")
         merged[16] = pull(16, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-20T11:00:00Z")
         site = Site(open_pages=([],), merged=merged, unindexed={15})
@@ -301,9 +305,8 @@ class Picking(unittest.TestCase):
         self.assertEqual(site.listings, [None])
 
     def test_one_updated_while_the_pages_are_read_makes_none_skip_and_is_read_too(self) -> None:
-        older = {300 + n: pull(300 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-21T09:00:00Z")
-                 for n in range(100)}
-        middle = {400 + n: pull(400 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-21T08:00:00Z")
+        older = {300 + n: pull(300 + n, merged_at="2026-11-19T00:00:00Z", updated_at=before(n)) for n in range(100)}
+        middle = {400 + n: pull(400 + n, merged_at="2026-11-19T00:00:00Z", updated_at=before(3600 + n))
                   for n in range(100)}
         late = pull(15, body="Ext.p1", merged_at="2026-11-21T07:00:00Z", updated_at="2026-11-21T07:00:00Z")
         old = pull(16, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-20T11:00:00Z")
@@ -320,8 +323,8 @@ class Picking(unittest.TestCase):
                 code, out, err = run(site, "--json", env=TOKEN)
             self.assertEqual((code, err), (0, ""), scene)
             self.assertEqual(json.loads(out)["taken_by"], [{"node_id": "Algebra/t1", "pull_requests": [15]}])
-        # A whole first page of new updates when it is read again may hide more, and more pages in the last LAG than
-        # it reads stop it.
+        # A first page that, read again, does not reach past the newest update of the first read may hide one, and
+        # more pages in the last LAG than it reads stop it.
         flood = {600 + n: pull(600 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-19T12:00:00Z")
                  for n in range(100)}
         flooded = {2: lambda merged: merged.update({number: updated(merged[number], "2026-11-21T10:00:00Z")
@@ -336,6 +339,38 @@ class Picking(unittest.TestCase):
                 code, _, err = run(site, "--json", env=TOKEN)
             self.assertEqual(code, 1, message)
             self.assertIn(message, err)
+
+    def test_one_updated_in_the_second_of_the_newest_update_is_not_missed(self) -> None:
+        # The first page's newest two were updated at 09:00:00. Right after it is read, #15, merged two hours ago on a
+        # later page, is updated in that same second: it sorts behind those two, ahead of the cursor.
+        tied = {900 + n: pull(900 + n, merged_at="2026-11-19T00:00:00Z", updated_at=before(0)) for n in range(2)}
+        rest = {300 + n: pull(300 + n, merged_at="2026-11-19T00:00:00Z", updated_at=before(60 + n)) for n in range(98)}
+        middle = {400 + n: pull(400 + n, merged_at="2026-11-19T00:00:00Z", updated_at=before(3600 + n))
+                  for n in range(98)}
+        late = pull(15, body="Ext.p1", merged_at="2026-11-21T07:00:00Z", updated_at="2026-11-21T07:00:00Z")
+        old = pull(16, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-20T11:00:00Z")
+        base = {**tied, **rest, **middle, 15: late, 16: old}
+
+        def owner(merged: dict) -> None:
+            merged[15] = updated(merged[15], before(0))
+
+        def owner_then_others(merged: dict) -> None:
+            owner(merged)
+            merged.update({number: updated(merged[number], "2026-11-21T09:30:00Z") for number in middle})
+
+        # The first page, read again, ends past 09:00:00 and holds #15.
+        site = Site(open_pages=([],), merged=base, unindexed={15}, moves={1: owner})
+        with mock.patch.object(next_task, "LAG", timedelta(days=36500)):
+            code, out, err = run(site, "--json", env=TOKEN)
+        self.assertEqual((code, err), (0, ""))
+        self.assertEqual(json.loads(out)["taken_by"], [{"node_id": "Algebra/t1", "pull_requests": [15]}])
+        # With 98 more updated later, the page read again ends with the two at 09:00:00, and #15 comes after it: the
+        # script cannot tell, and stops.
+        site = Site(open_pages=([],), merged=base, unindexed={15}, moves={1: owner_then_others})
+        with mock.patch.object(next_task, "LAG", timedelta(days=36500)):
+            code, out, err = run(site, "--json", env=TOKEN)
+        self.assertEqual((code, out), (1, ""))
+        self.assertIn("updated while this script read them", err)
 
     def test_merged_pull_requests_need_a_token_and_a_search_it_cannot_trust_stops_it(self) -> None:
         # A token is needed whenever the list records its commit date, to read what was merged since.
