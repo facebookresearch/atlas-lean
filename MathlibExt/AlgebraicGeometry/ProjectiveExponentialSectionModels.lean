@@ -88,7 +88,7 @@ class MeromorphicAlgebraSource : Prop where
 variable [MeromorphicAlgebraSource]
 
 def meromorphicAlgebra (U : Opens ProjectiveLine) : Subalgebra ℂ (affineOpen U → ℂ) where
-  carrier := IsMeromorphicCoefficient U
+  carrier := {f | IsMeromorphicCoefficient U f}
   zero_mem' := MeromorphicAlgebraSource.zero U
   one_mem' := MeromorphicAlgebraSource.one U
   add_mem' := fun {f g} hf hg => MeromorphicAlgebraSource.add U f g hf hg

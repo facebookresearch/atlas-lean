@@ -79,10 +79,29 @@ attribute [instance] CompactSheafSource.hasFiniteProducts CompactSheafSource.has
   CompactSheafSource.hasCokernels CompactSheafSource.indAbelian
 
 /-- The abelian structure of the compact-support sheaves, on their inherited hom-groups. -/
-instance [CompactSheafSource k X] : Abelian (CompactSheaf k X) :=
+instance compactSheafAbelian [CompactSheafSource k X] : Abelian (CompactSheaf k X) :=
   haveI : ∀ {F G : CompactSheaf k X} (f : F ⟶ G), IsIso (Abelian.coimageImageComparison f) :=
     fun f => CompactSheafSource.coimageImage f
   Abelian.ofCoimageImageComparisonIsIso
+
+section TopCatOf
+
+/-! Lean 4.36 does not find the generic instances above at `X := TopCat.of M`: their keys keep the
+carrier of `X`, which the query reduces to `M`. These restate them at `TopCat.of M`. -/
+
+variable (M : Type) [TopologicalSpace M] [CompactSheafSource k (TopCat.of M)]
+
+instance hasFiniteProductsOf : Limits.HasFiniteProducts (CompactSheaf k (TopCat.of M)) :=
+  CompactSheafSource.hasFiniteProducts
+instance hasKernelsOf : Limits.HasKernels (CompactSheaf k (TopCat.of M)) :=
+  CompactSheafSource.hasKernels
+instance hasCokernelsOf : Limits.HasCokernels (CompactSheaf k (TopCat.of M)) :=
+  CompactSheafSource.hasCokernels
+instance indAbelianOf : Abelian (IndSheaf k (TopCat.of M)) := CompactSheafSource.indAbelian
+instance compactSheafAbelianOf : Abelian (CompactSheaf k (TopCat.of M)) :=
+  compactSheafAbelian k (TopCat.of M)
+
+end TopCatOf
 
 /-- Original compact sheaves enter through the native Ind Yoneda embedding. -/
 def compactToInd : CompactSheaf k X ⥤ IndSheaf k X :=

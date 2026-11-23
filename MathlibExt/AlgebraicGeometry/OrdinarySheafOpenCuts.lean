@@ -59,12 +59,15 @@ def CutSection (F : OrdinarySheaf k X) (U V : Opens X) (s : F.presheaf.obj (op V
 /-- The cut sections form an actual coefficient submodule. -/
 def cutSections (F : OrdinarySheaf k X) (U V : Opens X) :
     Submodule k (F.presheaf.obj (op V)) where
-  carrier := CutSection k X F U V
+  carrier := {s | CutSection k X F U V s}
   zero_mem' := by
+    show CutSection k X F U V 0
     intro x hx _
     exact ⟨V, le_refl V, hx, (restrictSection k X F (le_refl V)).map_zero⟩
   add_mem' := by
-    intro s t hs ht x hx hxu
+    intro s t hs ht
+    show CutSection k X F U V (s + t)
+    intro x hx hxu
     obtain ⟨S, hS, hxS, hzS⟩ := hs x hx hxu
     obtain ⟨T, hT, hxT, hzT⟩ := ht x hx hxu
     refine ⟨S ⊓ T, inf_le_left.trans hS, ⟨hxS, hxT⟩, ?_⟩
@@ -76,7 +79,9 @@ def cutSections (F : OrdinarySheaf k X) (U V : Opens X) :
       rw [← restrictSection_comp k X F hT (inf_le_right : S ⊓ T ≤ T), hzT, map_zero]
     rw [hs0, ht0, zero_add]
   smul_mem' := by
-    intro a s hs x hx hxu
+    intro a s hs
+    show CutSection k X F U V (a • s)
+    intro x hx hxu
     obtain ⟨W, hW, hxW, hzW⟩ := hs x hx hxu
     refine ⟨W, hW, hxW, ?_⟩
     rw [LinearMap.map_smul, hzW, smul_zero]

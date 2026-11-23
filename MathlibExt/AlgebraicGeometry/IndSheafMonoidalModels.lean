@@ -51,6 +51,22 @@ class OrdinaryMonoidalSource where
 attribute [instance_reducible, instance] OrdinaryMonoidalSource.monoidal
   OrdinaryMonoidalSource.symmetric
 
+section TopCatOf
+
+/-! Lean 4.36 does not find the generic instances above at `X := TopCat.of M`: their keys keep the
+carrier of `X`, which the query reduces to `M`. These restate them at `TopCat.of M`. -/
+
+variable (M : Type) [TopologicalSpace M]
+  [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} k)]
+  [OrdinaryMonoidalSource k (TopCat.of M)]
+
+instance ordinaryMonoidalOf : MonoidalCategory (OrdinarySheaf k (TopCat.of M)) :=
+  OrdinaryMonoidalSource.monoidal
+instance ordinarySymmetricOf : SymmetricCategory (OrdinarySheaf k (TopCat.of M)) :=
+  OrdinaryMonoidalSource.symmetric
+
+end TopCatOf
+
 def ordinaryUnitSection (U : Opens X) (c : k) :
     (coefficientUnitSheaf k X).presheaf.obj (Opposite.op U) :=
   ((toSheafify (Opens.grothendieckTopology X)

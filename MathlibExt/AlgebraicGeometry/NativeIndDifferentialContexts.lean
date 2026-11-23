@@ -80,6 +80,63 @@ attribute [instance_reducible, instance] IndSpaceSource.ordinaryMonoidal
   IndSpaceSource.indMonoidal IndSpaceSource.betaMonoidal IndSpaceSource.moduleCalculus
   IndSpaceSource.linear
 
+/-- The linear structure at `TopCat.of M`: Lean 4.36 does not find the generic instance there, as
+its key keeps the carrier of `X`, which the query reduces to `M`. -/
+instance IndSpaceSource.linearOf (M : Type) [TopologicalSpace M]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} ℂ)]
+    [CompactSheafSource ℂ (TopCat.of M)] [IndSpaceSource (TopCat.of M)] :
+    Linear ℂ (IndSheaf ℂ (TopCat.of M)) :=
+  IndSpaceSource.linear
+
+/-- The Ind monoidal structure at `TopCat.of M` (see `IndSpaceSource.linearOf`). -/
+instance IndSpaceSource.indMonoidalOf (M : Type) [TopologicalSpace M]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} ℂ)]
+    [CompactSheafSource ℂ (TopCat.of M)] [C : IndSpaceSource (TopCat.of M)] :
+    MonoidalCategory (IndSheaf ℂ (TopCat.of M)) :=
+  IndMonoidalSource.monoidal (T := C.compactTensor) (I := C.indTensor)
+
+/-- The Ind symmetric structure at `TopCat.of M` (see `IndSpaceSource.linearOf`). -/
+instance IndSpaceSource.indSymmetricOf (M : Type) [TopologicalSpace M]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} ℂ)]
+    [CompactSheafSource ℂ (TopCat.of M)] [C : IndSpaceSource (TopCat.of M)] :
+    SymmetricCategory (IndSheaf ℂ (TopCat.of M)) :=
+  IndMonoidalSource.symmetric (T := C.compactTensor) (I := C.indTensor)
+
+/-- The braided structure of `β` at `TopCat.of M` (see `IndSpaceSource.linearOf`). -/
+instance IndSpaceSource.betaBraidedOf (M : Type) [TopologicalSpace M]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} ℂ)]
+    [CompactSheafSource ℂ (TopCat.of M)] [C : IndSpaceSource (TopCat.of M)] :
+    (IndSheafAlphaBetaModels.beta ℂ (TopCat.of M) C.alpha C.beta).Braided :=
+  BetaMonoidalSource.braided (T := C.compactTensor) (I := C.indTensor)
+
+/-- Bimodule abelian structures at `TopCat.of M` (see `IndSpaceSource.linearOf`). -/
+instance IndSpaceSource.bimodAbelianOf (M : Type) [TopologicalSpace M]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} ℂ)]
+    [CompactSheafSource ℂ (TopCat.of M)] [C : IndSpaceSource (TopCat.of M)]
+    (D E : Mon (IndSheaf ℂ (TopCat.of M))) : Abelian (Bimod D E) :=
+  NativeModuleCalculus.abelian (T := C.compactTensor) (I := C.indTensor) D E
+
+/-- Coequalizers of ind-sheaves at `TopCat.of M` (see `IndSpaceSource.linearOf`). -/
+instance IndSpaceSource.coequalizersOf (M : Type) [TopologicalSpace M]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} ℂ)]
+    [CompactSheafSource ℂ (TopCat.of M)] [C : IndSpaceSource (TopCat.of M)] :
+    Limits.HasCoequalizers (IndSheaf ℂ (TopCat.of M)) :=
+  NativeModuleCalculus.coequalizers (T := C.compactTensor) (I := C.indTensor)
+
+/-- Tensoring on the left preserves colimits at `TopCat.of M` (see `IndSpaceSource.linearOf`). -/
+instance IndSpaceSource.leftColimitsOf (M : Type) [TopologicalSpace M]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} ℂ)]
+    [CompactSheafSource ℂ (TopCat.of M)] [C : IndSpaceSource (TopCat.of M)]
+    (K : IndSheaf ℂ (TopCat.of M)) : Limits.PreservesColimitsOfSize.{0, 0} (tensorLeft K) :=
+  NativeModuleCalculus.leftColimits (T := C.compactTensor) (I := C.indTensor) K
+
+/-- Tensoring on the right preserves colimits at `TopCat.of M` (see `IndSpaceSource.linearOf`). -/
+instance IndSpaceSource.rightColimitsOf (M : Type) [TopologicalSpace M]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of M)) (ModuleCat.{0} ℂ)]
+    [CompactSheafSource ℂ (TopCat.of M)] [C : IndSpaceSource (TopCat.of M)]
+    (K : IndSheaf ℂ (TopCat.of M)) : Limits.PreservesColimitsOfSize.{0, 0} (tensorRight K) :=
+  NativeModuleCalculus.rightColimits (T := C.compactTensor) (I := C.indTensor) K
+
 variable [C : IndSpaceSource X]
 
 abbrev coefficientMonoid : Mon (IndSheaf ℂ X) :=
