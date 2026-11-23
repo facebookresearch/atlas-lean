@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.StablePairFamilies
 public import MathlibExt.AlgebraicGeometry.StablePairParameterPullbacks
 public import MathlibExt.AlgebraicGeometry.NumericalCurveCones
+public import MathlibExt.AlgebraicGeometry.LineBundlePullback
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 
 /-!
@@ -180,6 +181,7 @@ def sheafEuler (_HX : Threefold X) (F : CoherentObject X) : ℤ :=
 /-- Integral curve degree profile of an actual proper smooth curve map. -/
 def integralCurveDegrees (C : NumericalCurveCones.Curve X) : LineBundle X.left → ℤ :=
   fun L => degree C.source.hom ((Scheme.Modules.pullback C.map.left).obj L.val)
+    (L.2.pullback C.map.left)
 
 /-- The actual integral numerical curve lattice, with no assigned pairing. -/
 def CurveLattice : AddSubgroup (LineBundle X.left → ℤ) :=

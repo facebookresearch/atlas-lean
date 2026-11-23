@@ -85,7 +85,7 @@ Representations of real groups and the Weil representation are outside this node
 
 ## Depends on
 
-- [Galois cohomology and p-adic Hodge theory](../../NumberTheory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil–Deligne representations on the Galois side of the local Langlands correspondence
+- [Galois cohomology and p-adic Hodge theory](../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil–Deligne representations on the Galois side of the local Langlands correspondence
 
 ## Expansion
 
@@ -107,7 +107,7 @@ each citing the source and locator below.
 5. Iwahori subgroups and the Borel–Casselman theorem.
 6. Whittaker models, uniqueness, and the Gelfand–Kazhdan theorem.
 7. Weil–Deligne representations and their $L$- and $\varepsilon$-factors (the Galois side is
-   described under [Galois representations and p-adic Hodge theory](../../NumberTheory/galois-representations/README.md)),
+   described under [Galois representations and p-adic Hodge theory](../../NumberTheory/algebraic-number-theory/galois-representations/README.md)),
    $L$- and $\varepsilon$-factors of pairs of representations of $G_n \times G_m$, the local converse
    theorems, and the local Langlands correspondence with its characterization.
 

@@ -44,16 +44,21 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits
 open _root_.AlgebraicGeometry
 attribute [local instance] HasDerivedCategory.standard
 
+/-- Integer-indexed cochain complexes of sheaves of modules on `X`. -/
 abbrev Complex (X : Scheme.{0}) := CochainComplex X.Modules ℤ
+/-- The derived category of sheaves of modules on `X`. -/
 abbrev D (X : Scheme.{0}) := DerivedCategory X.Modules
 
+/-- The free sheaf of modules of rank `r`. -/
 abbrev freeModule (X : Scheme.{0}) (r : ℕ) :=
   SheafOfModules.free (R := X.ringCatSheaf) (Fin r)
 
+/-- The two-term complex of a map between free sheaves of modules, in degrees `-1` and `0`. -/
 def twoTerm (X : Scheme.{0}) (rMinus rZero : ℕ)
     (d : freeModule X rMinus ⟶ freeModule X rZero) : Complex X :=
   CochainComplex.mappingCone ((CochainComplex.singleFunctor X.Modules 0).map d)
 
+/-- The restriction of a complex to an open subscheme. -/
 def restriction {X : Scheme.{0}} (U : X.Opens) (E : Complex X) : Complex U.toScheme :=
   ((Scheme.Modules.pullback U.ι).mapHomologicalComplex (ComplexShape.up ℤ)).obj E
 
