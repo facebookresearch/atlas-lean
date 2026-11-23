@@ -22,28 +22,14 @@ auxiliary sums are
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
-public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSums
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSumsWanted
-
-/-- **Kollár's auxiliary sum $C_n$.** For a natural number $n$, $C_n$ is the rational number
-$C_n = \sum_{k=1}^{n} \frac{1}{k \, 2^k}$. -/
-def invPowTwoSum (n : ℕ) : ℚ :=
-  ∑ k ∈ Finset.Icc 1 n, (1 : ℚ) / (k * 2 ^ k)
-
-/-- **Kollár's auxiliary sum $D_n$.** For a natural number $n$, $D_n$ is the rational number
-$D_n = \sum_{k=1}^{n} \frac{\binom{2k}{k}}{2k \cdot 2^{2k}}$. -/
-def centralBinomWeightedSum (n : ℕ) : ℚ :=
-  ∑ k ∈ Finset.Icc 1 n,
-    ((2 * k).choose k : ℚ) / ((2 * k : ℚ) * 2 ^ (2 * k))
 
 /-- **Kollár's recursion for incomplete binomial sums.** Let $(a_k)_{k \ge 0}$ be a sequence of
 real numbers and let $m$ and $N$ be positive integers with $m \le N$. Then
@@ -57,21 +43,6 @@ theorem_wanted sum_range_choose_mul_eq_sum_range_choose_add
     (∑ k ∈ Finset.range (m + 1), (N.choose k : ℝ) * a k) =
       (∑ k ∈ Finset.range m, ((N - 1).choose k : ℝ) * (a k + a (k + 1))) +
         ((N - 1).choose m : ℝ) * a m
-
-/-- **Kollár's recursion for incomplete binomial sums with top index $2n-1$.** Let
-$(a_k)_{k \ge 0}$ be a sequence of real numbers, let $n$ be a positive integer and let $m$ be a
-natural number with $m \le n$. Then
-$$\sum_{k=0}^{m} \binom{2n-1}{k} a_k =
-\sum_{k=0}^{m} \binom{2n-2}{k} (a_k + a_{k+1}) - \binom{2n-2}{m} a_{m+1}.$$
-
-Source: Richard Kollár, "Incomplete Finite Binomial Sums of
-Harmonic Numbers", Corollary 2, equation `Lemma7`. -/
-theorem_wanted sum_range_choose_two_mul_sub_one_mul_eq
-    (a : ℕ → ℝ) (m n : ℕ) (hn : 0 < n) (hmn : m ≤ n) :
-    (∑ k ∈ Finset.range (m + 1), ((2 * n - 1).choose k : ℝ) * a k) =
-      (∑ k ∈ Finset.range (m + 1),
-        ((2 * n - 2).choose k : ℝ) * (a k + a (k + 1))) -
-        ((2 * n - 2).choose m : ℝ) * a (m + 1)
 
 /-- **Kollár's recursion for incomplete binomial sums with top index $2n$.** Let
 $(a_k)_{k \ge 0}$ be a sequence of real numbers and let $m$ and $n$ be positive integers with
