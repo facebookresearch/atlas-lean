@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
-public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRecurrences
+public import MathlibExt.Combinatorics.Enumerative.CarlitzSumDerivAndRecurrence
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
@@ -326,24 +326,6 @@ public theorem_wanted alternatingBinomialPowerSum_small_cases (x y : ℂ) (ℓ m
       alternatingBinomialPowerSum ℓ ℓ x y = (-1) ^ ℓ * (ℓ.factorial : ℂ) * x ^ ℓ ∧
       alternatingBinomialPowerSum 0 m x y = 0 ^ m ∧
       ∑ m ∈ range (ℓ + 1), alternatingBinomialPowerSum ℓ m x y = (y - x) ^ ℓ
-
-/-- **Derivative and recurrence of the shifted alternating binomial power sums.** Let
-$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$ and, for a complex number
-$n$, let $c_{\ell,m}(n) = p_{\ell,m}(1, n + 1)$. For natural numbers $\ell, m \ge 1$ and every
-complex number $n$, the complex derivative of $c_{\ell,m}$ at $n$ is $\ell\, c_{\ell-1,m}(n)$, and
-$c_{\ell,m}(n) = (m + n + 1)\, c_{\ell-1,m}(n) - m\, c_{\ell-1,m-1}(n)$.
-
-The variable $n$ is complex here because the paper differentiates in $n$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Corollary 4, Equation (3.38) (`integers-2024-A70-cor-4`). -/
-public theorem_wanted carlitzSum_deriv_and_recurrence {ℓ m : ℕ} (hℓ : 1 ≤ ℓ) (hm : 1 ≤ m)
-    (n : ℂ) :
-    deriv (fun z => alternatingBinomialPowerSum ℓ m 1 (z + 1)) n =
-        ℓ * alternatingBinomialPowerSum (ℓ - 1) m 1 (n + 1) ∧
-      alternatingBinomialPowerSum ℓ m 1 (n + 1) =
-        (m + n + 1) * alternatingBinomialPowerSum (ℓ - 1) m 1 (n + 1) -
-          m * alternatingBinomialPowerSum (ℓ - 1) (m - 1) 1 (n + 1)
 
 /-- **Sums of $m$th powers via Stirling numbers of the second kind.** For all natural numbers
 $n$ and $m$,
