@@ -24,7 +24,10 @@ namespace Cslib.Algorithms.Lean.TimeM
 
 variable {R : Type u} [CommRing R]
 
-/-- The actual butterfly writes the sum into its lower output position. -/
+/-- **Lower write of a butterfly step.** Let $R$ be a commutative ring, $\omega \in R$, $m$ a
+natural number, $q, r$ vectors over $R$ of length $m$, $w \in R$ a twiddle, $o$ an output vector
+over $R$ of length $2m$, and $k < m$. Then the butterfly step at index $k$ applied to the state
+$(w, o)$ produces an output vector whose entry at index $k$ is $q_k + w r_k$. -/
 theorem fftButterfly_ret_low {m : Nat} (omega : R) (q r : Vector R m)
     (state : R × Vector R (m * 2)) (k : Fin m) :
     (fftButterfly omega q r state k).ret.2[k.val]'(by have h := k.isLt; omega) =
@@ -33,7 +36,10 @@ theorem fftButterfly_ret_low {m : Nat} (omega : R) (q r : Vector R m)
   have hm : m ≠ 0 := by have h := k.isLt; omega
   simp [fftButterfly, hm]
 
-/-- The actual butterfly writes the difference into its upper output position. -/
+/-- **Upper write of a butterfly step.** Let $R$ be a commutative ring, $\omega \in R$, $m$ a
+natural number, $q, r$ vectors over $R$ of length $m$, $w \in R$ a twiddle, $o$ an output vector
+over $R$ of length $2m$, and $k < m$. Then the butterfly step at index $k$ applied to the state
+$(w, o)$ produces an output vector whose entry at index $k + m$ is $q_k - w r_k$. -/
 theorem fftButterfly_ret_high {m : Nat} (omega : R) (q r : Vector R m)
     (state : R × Vector R (m * 2)) (k : Fin m) :
     (fftButterfly omega q r state k).ret.2[k.val + m]'(by have h := k.isLt; omega) =
@@ -41,7 +47,11 @@ theorem fftButterfly_ret_high {m : Nat} (omega : R) (q r : Vector R m)
   rcases state with ⟨w, out⟩
   simp [fftButterfly]
 
-/-- Each actual butterfly preserves all positions outside its two writes. -/
+/-- **A butterfly step leaves other entries unchanged.** Let $R$ be a commutative ring,
+$\omega \in R$, $m$ a natural number, $q, r$ vectors over $R$ of length $m$, $w \in R$ a twiddle,
+$o$ an output vector over $R$ of length $2m$, and $k < m$. Then for every index $i < 2m$ with
+$i \ne k$ and $i \ne k + m$, the butterfly step at index $k$ applied to the state $(w, o)$
+produces an output vector whose entry at index $i$ is $o_i$. -/
 theorem fftButterfly_ret_other {m : Nat} (omega : R) (q r : Vector R m)
     (state : R × Vector R (m * 2)) (k : Fin m) (i : Fin (m * 2))
     (hlo : i.val ≠ k.val) (hhi : i.val ≠ k.val + m) :
@@ -106,7 +116,11 @@ private theorem fftButterflies_prefix_ret {m : Nat} (omega : R) (q r : Vector R 
           · rw [hHigh, hhi]
             simp only [hlt]
 
-/-- The actual loop writes every butterfly pair with its iteratively advanced twiddle. -/
+/-- **Result of the butterfly loop.** Let $R$ be a commutative ring, $\omega \in R$, $m$ a natural
+number, $q = (q_0, \dots, q_{m-1})$ and $r = (r_0, \dots, r_{m-1})$ vectors over $R$, and $o$ a
+vector over $R$ of length $2m$. The butterfly loop with root $\omega$ on $q$ and $r$, started
+from twiddle $1$ and output vector $o$, ends with twiddle $\omega^m$ and an output vector $y$
+such that $y_k = q_k + \omega^k r_k$ and $y_{k+m} = q_k - \omega^k r_k$ for every $k < m$. -/
 theorem fftButterflies_ret {m : Nat} (omega : R) (q r : Vector R m)
     (out : Vector R (m * 2)) :
     (fftButterflies omega q r out).ret.1 = omega ^ m ∧ ∀ k : Fin m,

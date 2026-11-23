@@ -1,0 +1,3 @@
+# The cumulative log-likelihood ratio is adapted
+
+Let $P_0$ and $P_1$ be mutually absolutely continuous probability measures on a measurable space $\mathcal{X}$ ($P_1 \ll P_0$ and $P_0 \ll P_1$), and let the observations $X_1, X_2, \dots$ be the coordinates of $\omega \in \mathcal{X}^{\mathbb{N}}$, $X_{i+1}(\omega) = \omega_i$. Write $L = dP_1/dP_0$ (a real number almost everywhere) and $\Lambda_n = \sum_{i=1}^n \log L(X_i)$. Then each $\Lambda_n$ is measurable with respect to the [observation σ-algebra](observation-filtration.md) $\mathcal{F}_n = \sigma(X_1, \dots, X_n)$, so the SPRT decides after $n$ observations from those observations only (Lai 2001, §2, equation (2.1)).
