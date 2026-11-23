@@ -288,12 +288,14 @@ own code included, still needs a code owner's approval. Any other wiki change,
 a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
-  `Part of #…`). GitHub shows at most 3,000 files in one diff.
+  `Part of #…`); a pull request whose only wiki changes are the sync's, as
+  above, need not name one. GitHub shows at most 3,000 files in one diff.
 - **An expansion changes no Lean outside `WantedExt`,** so its reviewer need
   not also review proofs.
 - **Leave what the tools own alone** ([What the tools
   own](docs/BLUEPRINT.md#what-the-tools-own)).
-- **A code owner approves it** (`.github/CODEOWNERS`) **and Codex reviews it:**
+- **A code owner approves it** (`.github/CODEOWNERS`), except the wiki files
+  the sync writes, as above, **and Codex reviews it:**
   automatically for the repository's owners, members and collaborators and for
   forks on `codex.yml`'s trusted list; on any other fork PR a maintainer
   comments `@codex` for an advisory review. Agents produce graph changes faster
