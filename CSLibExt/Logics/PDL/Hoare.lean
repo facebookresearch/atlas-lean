@@ -111,7 +111,7 @@ theorem test_iff (φ : Formula Atom Label) :
 /-- A one-step invariant holds after every finite number of iterations,
 including zero, via CSLib's canonical closure-preservation theorem. -/
 theorem star (h : Hoare M I a I) : Hoare M I (.star a) I := by
-  have hp : Relation.Preserves (ProgRel M a) I :=
+  have hp : Relation.Preserves (ProgRel M a) (· ∈ I) :=
     fun _ _ hR hI => h hI hR
   have hrtc := Relation.preserves_reflTransGen_iff.mpr hp
   exact fun _ _ hI hR => hrtc hR hI

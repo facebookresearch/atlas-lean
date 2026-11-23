@@ -265,7 +265,7 @@ theorem map_prod_shiftAt {τ : (ℕ → (σ → σ) × ℝ) → ℕ∞} (hτ : I
     have : ∀ᵐ ω ∂μ, τ ω ≠ ⊤ := by
       rw [ae_iff]; simpa using hfin
     filter_upwards [this] with ω hω
-    change (ω ∈ {ω | τ ω ≠ ⊤} ∩ D) = (ω ∈ D)
+    change ω ∈ {ω | τ ω ≠ ⊤} ∩ D ↔ ω ∈ D
     simp [hω]
   refine (Measure.prod_eq fun s t hs ht => ?_).symm
   rw [Measure.map_apply (hG.prodMk (measurable_shiftAt hτm)) (hs.prod ht),

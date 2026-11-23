@@ -220,7 +220,6 @@ private theorem understated_variance_failure : (1 / 16 : ℝ) < variance (fun ω
       filter_upwards [((sample_law 0).ae_iff (by measurability)).2 coin_values] with ω hω
       have herr : |ω 0 - 1 / 2| = (1 / 2 : ℝ) := by
         rcases hω with hω | hω <;> norm_num [hω]
-      apply propext
       change (|ω 0 - 1 / 2| < Real.sqrt (1 / 8)) ↔ False
       rw [herr]
       exact iff_false_intro (not_lt.mpr hr.le)

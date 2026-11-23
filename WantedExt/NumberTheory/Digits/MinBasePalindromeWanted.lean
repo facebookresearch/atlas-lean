@@ -126,17 +126,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
 public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
     (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
 
-/-- **Even-length palindromic powers of 2 have base one less than a power of 2.** Let $n$ and
-$b \ge 2$ be natural numbers. If the base-$b$ representation of $2^n$ is a palindrome with an
-even number of digits, then $b = 2^x - 1$ for some natural number $x$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 2
-(`integers-2024-A69-cor-2`). -/
-public theorem_wanted base_eq_two_pow_sub_one_of_palindrome (n b : ℕ) (hb : 2 ≤ b)
-    (hp : (Nat.digits b (2 ^ n)).Palindrome) (he : Even (Nat.digits b (2 ^ n)).length) :
-    ∃ x, b = 2 ^ x - 1
-
 /-- **Three-digit palindromic powers of two.** Let $n$ be a natural number, let $b \ge 2$ be a
 base, and let $c = 2^n \bmod b$. The base-$b$ representation of $2^n$ is a palindrome with exactly
 three digits if and only if $b^2 + 1 \le 2^n \le b^3 - 1$, $c \ne 0$, and

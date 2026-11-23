@@ -643,7 +643,8 @@ theorem measure_one_ne_one_of_one_lt_mean (hm : 1 < mean ν) : ν {1} ≠ 1 := b
   intro h1
   have hae : ∀ᵐ k : ℕ ∂ν, (k : ℝ≥0∞) = 1 := by
     rw [ae_iff]
-    refine measure_mono_null (fun k (hk : ¬ (k : ℝ≥0∞) = 1) (hk' : k ∈ ({1} : Set ℕ)) => hk ?_)
+    refine measure_mono_null (t := ({1} : Set ℕ)ᶜ)
+      (fun k (hk : ¬ (k : ℝ≥0∞) = 1) (hk' : k ∈ ({1} : Set ℕ)) => hk ?_)
       ((prob_compl_eq_zero_iff (measurableSet_singleton 1)).2 h1)
     rw [Set.mem_singleton_iff.1 hk']
     simp
