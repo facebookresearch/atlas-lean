@@ -39,7 +39,12 @@ product.
 -/
 
 open Classical in
-/-- Undirected `s-t` connectivity as a decision problem over bitstrings. -/
+/-- **Undirected s-t connectivity as a decision problem.** A bitstring $x$ is a yes-instance
+exactly when bitstring decoding of $x$, as a tuple $(n, E, s, t)$ of natural numbers $n$, $s$, $t$
+and a finite list $E$ of pairs of natural numbers, succeeds and returns $(n, E, s, t)$ such that
+$s < n$, $t < n$, and there are pairwise distinct natural numbers $v_0, \dots, v_k$, all less than
+$n$, with $v_0 = s$, $v_k = t$ and, for every $i < k$, $(v_i, v_{i+1}) \in E$ or
+$(v_{i+1}, v_i) \in E$. -/
 noncomputable def ustconDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -54,7 +59,11 @@ noncomputable def ustconDec :
           (path.getD (j + 1) 0, path.getD j 0) ∈ i.2.1))
   | none => false
 
-/-- **Undirected ST-connectivity is in L (Reingold).** Source: O. Reingold, "Undirected
+/-- **Undirected ST-connectivity is in L (Reingold).** The undirected $s$-$t$ connectivity
+decision problem lies in the class $\mathsf{L}$ of decision problems decidable in deterministic
+logarithmic space.
+
+Source: O. Reingold, "Undirected
 connectivity in log-space", Journal of the ACM 55 (2008), 1-24 (STOC 2005). -/
 public theorem_wanted ustcon_in_l :
     ustconDec ∈ LogSpace

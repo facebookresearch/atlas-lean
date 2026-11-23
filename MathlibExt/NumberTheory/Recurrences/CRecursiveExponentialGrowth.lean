@@ -18,9 +18,10 @@ namespace MetaMathlibExt
 
 /-! # Exponential growth bound for C-recursive sequences -/
 
-/-- A solution of a complex linear recurrence is exponentially bounded: there is an
-integer `g ≥ 1` with `‖t n‖ < g ^ (n + 1)` for all `n`.
-`c_recursive_exponential_growth_bound` is the source-shaped form. -/
+/-- **Exponential growth bound for solutions of linear recurrences.** Let $k$ be a natural
+number, let $c_0, \dots, c_{k-1}$ be complex numbers, and let $t : \mathbb{N} \to \mathbb{C}$
+satisfy $t(n+k) = \sum_{i=0}^{k-1} c_i \, t(n+i)$ for all $n \in \mathbb{N}$. Then there is an
+integer $g \ge 1$ such that $|t(n)| < g^{n+1}$ for all $n \in \mathbb{N}$. -/
 theorem exists_norm_lt_pow_of_isSolution (E : LinearRecurrence ℂ) (t : ℕ → ℂ)
     (h : E.IsSolution t) :
     ∃ g : ℤ, 1 ≤ g ∧ ∀ n : ℕ, ‖t n‖ < ((g : ℝ) ^ (n + 1)) := by
@@ -98,19 +99,18 @@ theorem exists_norm_lt_pow_of_isSolution (E : LinearRecurrence ℂ) (t : ℕ →
   exact ⟨g, hg1, fun n => key n n le_rfl⟩
 
 /--
-Every C-recursive complex sequence is exponentially bounded: there is an
-integer `g ≥ 1` with `‖t n‖ < g ^ (n + 1)` for all `n`.
+**Exponential growth bound for C-recursive sequences.** Let $t : \mathbb{N} \to \mathbb{C}$ be
+C-recursive: there are an order $k \ge 1$ and complex numbers $c_0, \dots, c_{k-1}$ with
+$t(n+k) = \sum_{i=0}^{k-1} c_i \, t(n+i)$ for all $n \in \mathbb{N}$. Then there is an integer
+$g \ge 1$ such that $|t(n)| < g^{n+1}$ for all $n \in \mathbb{N}$.
+
+Proves `Wanted` entry `c_recursive_exponential_growth_bound`.
 
 Source: M. Prunescu and J. M. Shunia, "On Modular Representations of
 C-Recursive Integer Sequences," Journal of Integer Sequences 28 (2025),
 Article 25.5.3, Lemma (label LemmaGeneralInequality, quoting Prunescu and
 Sauras-Altuzarra, Lemma 4), lines 166–167,
 https://cs.uwaterloo.ca/journals/JIS/VOL28/Prunescu/prunescu3.tex
-
-The hypothesis unfolds C-recursiveness: some order `k ≥ 1` with
-`t (n + k) = ∑ i, c i * t (n + i.val)` for all `n`. It follows from
-`exists_norm_lt_pow_of_isSolution`; the source's `1 ≤ k` is unused.
-Proves `Wanted` entry `c_recursive_exponential_growth_bound`.
 -/
 theorem c_recursive_exponential_growth_bound
     (t : ℕ → ℂ)
