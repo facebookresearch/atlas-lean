@@ -1,4 +1,6 @@
-# Empirical Freq
+# Empirical site-pattern frequencies
 
-The **empirical site-pattern frequencies** of the first `n` alignment columns `X 0, …,
-X (n - 1)`: the fraction of columns showing pattern `a`. At `n = 0` it is `0`.
+For alignment columns `X 0, X 1, …`, maps from a set `Ω` to a set `σ` of site patterns, the
+empirical site-pattern frequencies of the first `n` columns at `ω` are
+`p̂ₙ(ω)(a) = n⁻¹ · #{i < n : X i ω = a}`, the fraction of `X 0 ω, …, X (n - 1) ω` equal to the
+pattern `a`. With the convention `0⁻¹ = 0` they are all `0` at `n = 0`.

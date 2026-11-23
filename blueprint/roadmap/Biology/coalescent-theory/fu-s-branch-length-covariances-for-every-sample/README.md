@@ -2,46 +2,49 @@
 
 ## Clade weights and the time-weighted block counts of random joining
 
-- [Clade Weight](clade-weight.md)
-- [Clade Stat](clade-stat.md)
-- [Time-weighted future block counts of random joining](sum-inv-choose-two-mul-join-step-iterate.md)
+- [Clade weight of $m$ of $k$ lineages](clade-weight.md)
+- [Clade statistic of a multiset of block sizes](clade-stat.md)
+- [Time-weighted block statistics of random joining as a clade sum](sum-inv-choose-two-mul-join-step-iterate.md)
 
 ## Sums over uniform compositions
 
-- [Splitting a uniform composition along a sub-multiset of its parts](sum-comps-powerset-card.md)
-- [Size Ind](size-ind.md)
-- [The per-level moment of the clade statistic over uniform compositions](sum-comps-count-mul-clade-stat.md)
+- [Splitting compositions along a sub-multiset of their parts](sum-comps-powerset-card.md)
+- [Indicator of a block size](size-ind.md)
+- [Sum over compositions of a part count times the clade statistic](sum-comps-count-mul-clade-stat.md)
 
-## From `fuTopologyCov` to per-level moments
+## From Fu's topology covariance to level moments
 
-- [Level Moment](level-moment.md)
-- [Level Moment eq](level-moment-eq.md)
-- [`fuTopologyCov` through level moments](fu-topology-cov-eq-level-moment.md)
+- [Time-weighted block-count moment at level $k$](level-moment.md)
+- [The level moment as an average over compositions](level-moment-eq.md)
+- [Fu's topology covariance through level moments](fu-topology-cov-eq-level-moment.md)
 
 ## Harmonic sums of binomial ratios
 
-- [Harm](harm.md)
-- [Choose mul choose eq conv](choose-mul-choose-eq-conv.md)
-- [Choose mul choose eq conv'](choose-mul-choose-eq-conv-2.md)
-- [The first harmonic sum](sum-choose-div-choose-mul-inv-choose-two.md)
-- [The second harmonic sum](sum-choose-div-choose-mul-inv-choose-two-2.md)
-- [Sum nested](sum-nested.md)
-- [Sum disjoint](sum-disjoint.md)
+- [Harmonic numbers](harm.md)
+- [Binomial identity relating $C(n-i-1, k-2)$ to $C(n-k, i-1)$](choose-mul-choose-eq-conv.md)
+- [Binomial identity relating $C(j, k-1)$ to $C(n-k, i-1)$ when $i+j=n$](choose-mul-choose-eq-conv-2.md)
+- [Binomial-ratio sum equal to Fu's $\beta_n(i)$](sum-choose-div-choose-mul-inv-choose-two.md)
+- [Binomial-ratio sum for complementary sizes $i + j = n$](sum-choose-div-choose-mul-inv-choose-two-2.md)
+
+## Composition sums for blocks inside and outside a clade
+
+- [Composition sum for a block of size $i$ inside a clade of size $j$](sum-nested.md)
+- [Composition sum for a block of size $i$ outside a clade of size $j$](sum-disjoint.md)
 
 ## The level moments in closed form
 
-- [Coef A](coef-a.md)
-- [Fu Half Cov](fu-half-cov.md)
+- [Coefficient of $\beta_n(i)$ in Fu's half covariance](coef-a.md)
+- [Fu's half covariance in closed form](fu-half-cov.md)
 
 ## Fu's closed form
 
-- [Fu Beta rec](fu-beta-rec.md)
+- [Recurrence for Fu's $\beta_n(i)$](fu-beta-rec.md)
 - [Fu's closed form from the half covariances](fu-half-cov-add-fu-half-cov.md)
 - [Fu's topology identity for every sample size](fu-topology-cov-eq-four-mul-fu-sigma.md)
 
-## Kingman's coalescent: `hσ` and Fu's SFS covariance without hypotheses
+## Kingman's coalescent: Fu's covariances for every sample size
 
-- [`hσ` (Fu 1995)](covariance-sfs-length-eq-four-mul-fu-sig.md)
+- [Fu's branch-length covariances under Kingman's coalescent](covariance-sfs-length-eq-four-mul-fu-sig.md)
 - [Variance of a linear combination of branch lengths](variance-sum-sfs-length-eq-fu-sigma.md)
 - [Fu's covariance of the site frequency spectrum](covariance-count-kingman-eq-fu-sigma.md)
 - [Variance of a linear SFS statistic](variance-sum-kingman-eq-fu-sigma.md)

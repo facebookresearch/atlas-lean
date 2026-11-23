@@ -1,3 +1,4 @@
-# Tendsto nat Cast mul kimura Fixation one div
+# Scaled new-mutant fixation probability tends to the slope constant
 
-(i) `M u_α(1/M) → kimuraSlope α` at fixed `α`.
+For every real $\alpha$, [Kimura's fixation probability](../wright-fisher-diffusion/kimura-fixation.md) and its [slope constant](../wright-fisher-diffusion/kimura-slope.md)
+satisfy $M\, u_\alpha(1/M) \to K_\alpha$ as $M \to \infty$ through the natural numbers.

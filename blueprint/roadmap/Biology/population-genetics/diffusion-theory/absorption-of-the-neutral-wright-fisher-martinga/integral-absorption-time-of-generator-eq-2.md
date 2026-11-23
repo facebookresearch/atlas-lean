@@ -1,9 +1,12 @@
-# Realization reading
+# Occupation integral until absorption for the neutral realization
 
-For every `x : I`, a continuous test function `g` with `C²`
-potential `u` satisfying `generator 0 u = -g` and `u(0) = u(1) = 0`, the stopped
-occupation integral of `g` along the constructed neutral realization `modifiedProcess x`
-is integrable with respect to `rawMeasure x`, and its integral equals `u x`. This is the
-non-vacuity reading, in diffusion time units, of the Maruyama-Kimura forward occupation
-functional `integral_absorptionTime_of_generator_eq_neg` for the realization identified
-by `isWrightFisherSolution_zero_modifiedProcess`.
+For every `x ∈ [0, 1]`, let `X` be the
+[continuous realization](../construction-of-the-neutral-wright-fisher-diffus/modified-process.md) of
+the neutral Wright–Fisher process started at `x`, under the
+[canonical path measure](../construction-of-the-neutral-wright-fisher-diffus/raw-measure.md) `P_x`,
+and `τ` the
+[absorption time](../fixation-and-absorption-in-the-wright-fisher-dif/absorption-time.md) of `X`.
+Let `g` be a continuous real function and `u` a twice continuously differentiable real function with
+`(L_0 u)(y) = -g(y)` for every real `y`, where `L_0` is the neutral
+[backward generator](../wright-fisher-diffusion/generator.md), and `u(0) = u(1) = 0`. Then
+`∫₀^τ g(X_s) ds` is integrable under `P_x` and its expectation is `u(x)`.

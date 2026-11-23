@@ -2,23 +2,23 @@
 
 ## Two-level expectations under random joining
 
-- [Join Pair](join-pair.md)
+- [Expectation of a product at two steps of random joining](join-pair.md)
 - [Two-level Markov property of random joining](exists-finset-random-joining-pair.md)
 
 ## Moments of the block counts and of the holding times
 
-- [Block Count Mean](block-count-mean.md)
-- [Block Count Moment](block-count-moment.md)
-- [Kingman Time Moment](kingman-time-moment.md)
-- [Fu Topology Cov](fu-topology-cov.md)
+- [Expected number of blocks of a given size under random joining](block-count-mean.md)
+- [Joint second moments of block counts under random joining](block-count-moment.md)
+- [Closed-form second moments of the Kingman holding times](kingman-time-moment.md)
+- [Fu's moment sum for the branch-length covariances](fu-topology-cov.md)
 
-## Kingman's coalescent
+## Branch-length covariances under Kingman's coalescent
 
-- [The covariances of the branch-length classes reduce to the topology](covariance-sfs-length-eq-fu-topology-cov.md)
-- [`hσ` from the topology identity](covariance-sfs-length-eq-four-mul-fu-sig.md)
+- [Branch-length covariances equal Fu's moment sum](covariance-sfs-length-eq-fu-topology-cov.md)
+- [Fu's branch-length covariances from the topology identity](covariance-sfs-length-eq-four-mul-fu-sig.md)
 
-## Small samples
+## Samples of size at most four
 
-- [The topology identity for small samples](fu-topology-cov-eq-four-mul-fu-sigma-of.md)
-- [Fu's branch-length covariances for `n ≤ 4`](covariance-sfs-length-eq-four-mul-fu-sig-2.md)
-- [Fu's SFS covariance for `n ≤ 4`](covariance-count-kingman-of-le-four.md)
+- [Fu's topology identity for samples of size at most four](fu-topology-cov-eq-four-mul-fu-sigma-of.md)
+- [Fu's branch-length covariances for samples of size at most four](covariance-sfs-length-eq-four-mul-fu-sig-2.md)
+- [Fu's SFS covariances for samples of size at most four](covariance-count-kingman-of-le-four.md)

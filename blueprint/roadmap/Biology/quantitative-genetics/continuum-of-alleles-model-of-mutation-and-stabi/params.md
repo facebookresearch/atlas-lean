@@ -1,5 +1,5 @@
-# Params
+# Parameters of the continuum-of-alleles model
 
-Parameters of the haploid continuum-of-alleles model: Gaussian stabilizing selection of
-width `Vs`, mutation probability `mu`, Gaussian mutational effects of standard deviation
-`gamma`.
+The parameters of the haploid continuum-of-alleles model: the width `Vₛ > 0` of Gaussian
+stabilizing selection, the mutation probability `μ` with `0 < μ < 1`, and the standard deviation
+`γ > 0` of the Gaussian mutational effects.

@@ -1,10 +1,15 @@
 # Negative f3 as a test of admixture
 
-- [Exists weight ne zero ne one of f3 neg](exists-weight-ne-zero-ne-one-of-f3-neg.md)
-- [F3 admix Weight](f3-admix-weight.md)
-- [Exists admix star f3 nonneg](exists-admix-star-f3-nonneg.md)
-- [Star Len nonneg iff f3 nonneg](star-len-nonneg-iff-f3-nonneg.md)
-- [Sum nonneg of target binary](sum-nonneg-of-target-binary.md)
-- [F3 nonneg of binary target](f3-nonneg-of-binary-target.md)
-- [F3 nonneg of binary weights](f3-nonneg-of-binary-weights.md)
-- [Exists weight ne zero ne one of f3 neg](exists-weight-ne-zero-ne-one-of-f3-neg-2.md)
+## Binary targets and the sign of f3
+
+- [Termwise bound behind nonnegative f3 for a binary target](sum-nonneg-of-target-binary.md)
+- [A target with binary weights has nonnegative f3](f3-nonneg-of-binary-target.md)
+- [On an admixture graph a target with binary weights has nonnegative f3](f3-nonneg-of-binary-weights.md)
+- [A negative f3 forces a non-binary target weight in the drift model](exists-weight-ne-zero-ne-one-of-f3-neg.md)
+- [On an admixture graph a negative f3 forces a non-binary target weight](exists-weight-ne-zero-ne-one-of-f3-neg-2.md)
+
+## Admixture masked by private drift
+
+- [Exact f3 in the three-population admixture model](f3-admix-weight.md)
+- [Matching star-tree lengths are nonnegative exactly when f3 ≥ 0](star-len-nonneg-iff-f3-nonneg.md)
+- [In the drift model a nonnegative f3 does not rule out admixture](exists-admix-star-f3-nonneg.md)

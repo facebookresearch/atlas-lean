@@ -1,5 +1,7 @@
-# Coal Prob eq pair Coalescence
+# The coalescence probability equals the pair-coalescence probability
 
-The pair-coalescence probability `c_N` is the shared model's coalescence probability
-`coalProb` (two sampled lineages have the same parent), so the time scale of this file is the one
-of `CanningsLambda`.
+For a [Cannings model](../cannings-models/cannings-model.md) of population size `N ≥ 2`, the
+[coalescence probability](../cannings-models/coal-prob.md), the probability that the first two
+children have the same parent, equals the [pair-coalescence probability](pair-coalescence.md)
+`c_N = μ_2 / (N - 1)`, where `μ_2 = (1/N) ∑_j E[ν_j (ν_j - 1)]` and `ν_j` is the number of children
+of parent `j`.

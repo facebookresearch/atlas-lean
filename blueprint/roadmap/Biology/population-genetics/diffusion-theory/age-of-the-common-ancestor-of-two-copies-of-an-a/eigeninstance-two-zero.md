@@ -1,7 +1,5 @@
-# Eigen-instance of Theorem 1, `k = 2`, `n = 0`
+# Eigen-instance of Theorem 1 for k = 2 and n = 0
 
-With `w₀ = 1` (Table A1) and
-eigenvalue `λ = 3`, `β(x) = x² (1 - x)` satisfies Appendix Equation A1,
-`(1 - 3x) β(x) = x² (1 - x) / 2 * β''(x)`. The separated solution of Patterson's
-Equation 4 is then `e^{-3t} β(x)`; the general spectral statement needs Jacobi
-polynomial theory absent from Mathlib and is not formalized here.
+For every real number `x`, `β(x) = x² (1 - x)` satisfies `(1 - 3x) β(x) = x² (1 - x) β''(x) / 2`.
+This is the instance `k = 2`, `n = 0` of Patterson's Appendix Equation A1, with `β = x² (1 - x) w₀`
+for the polynomial `w₀ = 1` of his Table A1 and eigenvalue `3`.

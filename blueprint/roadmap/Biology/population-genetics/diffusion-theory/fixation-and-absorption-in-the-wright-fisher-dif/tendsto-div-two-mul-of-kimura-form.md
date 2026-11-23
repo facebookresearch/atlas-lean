@@ -1,6 +1,12 @@
-# Haldane's `2s` in the joint regime
+# Haldane's 2s in the joint regime, closed-form version
 
-Let `u σ x = (1 - e^{-2σx}) / (1 - e^{-2σ})` for
-`σ ≠ 0`. If the per-generation selection coefficients satisfy `s M → 0` and `M * s M → ∞`, then
-the fixation probability of a single new copy among `M` gene copies, with scaled selection
-`α = M * s M`, is `2 * s M * (1 + o(1))`: `u (M * s M) (1 / M) / (2 * s M) → 1`.
+Let $u$ be a real function of two real variables with
+$u(\sigma, x) = (1 - e^{-2\sigma x})/(1 - e^{-2\sigma})$ whenever $\sigma \ne 0$, for instance
+[Kimura's fixation probability](../wright-fisher-diffusion/kimura-fixation.md). Let $(s_M)_{M \in \mathbb{N}}$ be real numbers with
+$s_M \to 0$ and $M s_M \to \infty$. Then
+
+$$\frac{u(M s_M, 1/M)}{2 s_M} \to 1 \quad (M \to \infty).$$
+
+With $M$ gene copies, $1/M$ is the frequency of a single new copy and $M s_M$ the scaled selection
+coefficient: the fixation probability of a new mutant is $2 s_M (1 + o(1))$, Haldane's
+approximation.

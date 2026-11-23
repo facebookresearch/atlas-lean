@@ -1,3 +1,8 @@
-# Fixation Prob dominance zero h
+# Scale-function ratio for a recessive allele
 
-Recessive case (`h = 0`): the scale exponent simplifies to `-2 c x ^ 2`.
+For every real `c` and every `p ∈ [0, 1]`, the
+[scale-function ratio](../selection-duality-and-general-one-dimensional-di/fixation-prob.md) of the diffusion with variance `x (1 - x)` and the
+[drift with dominance](../selection-duality-and-general-one-dimensional-di/dominance-drift.md) at dominance coefficient `h = 0`, that is drift
+`2c x² (1 - x)`, is
+
+`S(p) / S(1) = (∫₀ᵖ e^{-2c x²} dx) / (∫₀¹ e^{-2c x²} dx)`.

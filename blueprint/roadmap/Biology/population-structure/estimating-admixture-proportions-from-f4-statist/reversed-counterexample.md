@@ -1,7 +1,18 @@
-# Counterexample (iii), reversed direction
+# Example: an unadmixed target fits with its own descendant as a source
 
-In the reversed weight table at unit edge lengths
-and `β ≠ 0`, the source `S₁` descends from the unadmixed target (`S₁ = β T + (1 - β) S₀` plus
-private drift, `T` with `0`/`1` weights), yet the target is fitted by the sources `(S₀, S₁)`
-with weight exactly `1 / β` on `S₁`, the qpWave matrix of `(S₀, T, S₁)` has rank exactly one,
-and the target is no mixture of `S₁` and `S₀`.
+Let `β ≠ 0` and let `M` be a [drift model](../patterson-s-f-statistics/drift-model.md) on a measure
+`μ`, with eight edges and six populations, whose lineage weights `w` are the
+[reversed table](reversed-weight.md) with parameter `β` and whose edge lengths are all `1`. Take
+`S₀ = 0`, the target `T = 1`, `S₁ = 2` and the right populations `(R₀, R₁, R₂) = (3, 4, 5)`. Then
+
+- with the sources `(S₀, S₁)`, the only solution of the system of the
+  [source matrix](qp-adm-source-matrix.md) and the [target vector](qp-adm-target-vector.md) of `T`
+  is the weight `1 / β` on `S₁`;
+- the [qpWave matrix](../abba-baba-test-and-f-statistic-estimators/f4-matrix.md) of the left
+  populations `(S₀, T, S₁)` has rank exactly `1`;
+- the source descends from the target: `w S₁ = β w T + (1 - β) w S₀ + u`, where `u` is `1` on
+  edge `3` and `0` on the other edges (drift private to `S₁`);
+- every lineage weight of `T` is `0` or `1`;
+- for no real `γ` is `w T = γ w S₁ + (1 - γ) w S₀`.
+
+For `β = 1/2` the fitted weights are `-1` on `S₀` and `2` on `S₁`.

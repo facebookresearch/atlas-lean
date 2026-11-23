@@ -1,4 +1,5 @@
-# Kingman's coalescent
+# Expected branch lengths of Kingman's coalescent
 
-**Kingman's coalescent** (`Λ = δ₀`): the expected length of branches subtending `i` of `n`
-copies is `2 / i` (Fu 1995), recovered from `SiteFrequencySpectrum`'s random-joining law.
+For Kingman's coalescent, `Λ = δ₀`, started from `n` blocks of size `1`, the
+[expected length](expected-length.md) of branches subtending `i` of the `n` copies is `2 / i` for
+every `1 ≤ i < n` (Fu 1995).

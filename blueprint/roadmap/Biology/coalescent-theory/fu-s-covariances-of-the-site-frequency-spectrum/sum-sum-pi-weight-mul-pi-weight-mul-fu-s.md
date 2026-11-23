@@ -1,6 +1,13 @@
-# Tajima's `b₂` from Fu's closed form
+# Tajima's $b_2$ from Fu's closed form
 
-`∑_{i,j=1}^{n-1} π_i π_j σ_{ij} = b₂ =
-2 (n² + n + 3) / (9 n (n - 1))` with `π_i = i (n - i) / C(n, 2)` (Tajima 1983), so
-`Var(θ_π[L]) = 4 b₂` and `Var θ_π = b₁ θ + b₂ θ²`. The `β_n` part cancels because the weights
-are symmetric under `i ↦ n - i`.
+For a natural number `n ≥ 2`, let `π_i = i (n - i) / C(n, 2)`, the weights of
+[Tajima's estimator](../site-frequency-spectrum-under-variable-populatio/theta-pi.md) `θ_π = ∑_{i=1}^{n-1} π_i ξ_i`. With
+[Fu's covariance matrix](fu-sigma.md) `σ` for the sample size `n`,
+
+`∑_{i=1}^{n-1} ∑_{j=1}^{n-1} π_i π_j σ_{ij} = b_2(n) = 2 (n² + n + 3) / (9 n (n - 1))`,
+
+[Tajima's constant](../segregating-sites-and-pairwise-differences/tajima-b2.md) `b_2` (Tajima 1983). The terms in [Fu's function](fu-beta.md) `β_n` cancel
+because the weights are symmetric under `i ↦ n - i`. For branch lengths with
+`Cov(L_i, L_j) = 4 σ_{ij}` for all `1 ≤ i, j ≤ n - 1`, this gives
+`Var(∑_{i=1}^{n-1} π_i L_i) = 4 b_2(n)` ([branch-length form](variance-theta-pi-sfs-length-of-fu-sigma.md)), and under Kingman's coalescent
+`Var θ_π = b_1(n) θ + b_2(n) θ²` ([variance of `θ_π`](variance-theta-pi-kingman-of-fu-sigma.md)).

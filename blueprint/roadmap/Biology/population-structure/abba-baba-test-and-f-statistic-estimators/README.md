@@ -53,4 +53,4 @@
 
 - [The unpolarized D-statistic numerator vanishes on a tree](integral-sample-expect-abba-eq-baba.md)
 - [qpAdm model equation in the drift model](f4-affine-combination-2.md)
-- [Freq eq sum of weight eq sum](freq-eq-sum-of-weight-eq-sum.md)
+- [Frequencies mix like lineage weights in the drift model](freq-eq-sum-of-weight-eq-sum.md)

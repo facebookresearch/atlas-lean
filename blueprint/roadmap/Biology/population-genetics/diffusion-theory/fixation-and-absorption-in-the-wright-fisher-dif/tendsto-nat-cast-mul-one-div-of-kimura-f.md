@@ -1,7 +1,9 @@
-# New-mutant limit at fixed scaled selection
+# Scaled new-mutant limit at fixed α, closed-form version
 
-Let `u` be Kimura's fixation probability
-`u σ x = (1 - e^{-2σx}) / (1 - e^{-2σ})` for `σ ≠ 0` and `u 0 x = x`, and let `K` be its slope
-constant `K σ = 2σ / (1 - e^{-2σ})` for `σ ≠ 0` and `K 0 = 1`. For every fixed `α`, the scaled
-fixation probability of a single new copy among `M` gene copies converges:
-`M * u α (1 / M) → K α` as `M → ∞`.
+Let $u$ be a real function of two real variables and $K$ a real function with
+$u(\sigma, x) = (1 - e^{-2\sigma x})/(1 - e^{-2\sigma})$ and
+$K(\sigma) = 2\sigma/(1 - e^{-2\sigma})$ for $\sigma \ne 0$, $u(0, x) = x$ for every $x$, and
+$K(0) = 1$; these are [Kimura's fixation probability](../wright-fisher-diffusion/kimura-fixation.md) and its
+[slope constant](../wright-fisher-diffusion/kimura-slope.md). Then for every real $\alpha$, $M\, u(\alpha, 1/M) \to K(\alpha)$ as
+$M \to \infty$ through the natural numbers. With $M$ gene copies, $1/M$ is the frequency of a single
+new copy and $\alpha$ the scaled selection coefficient.

@@ -1,4 +1,5 @@
-# Trace cfc log eq log det
+# Trace of the logarithm of a positive definite matrix
 
-For a symmetric real matrix with positive eigenvalues, the trace of its real logarithm is
-the logarithm of its determinant.
+Let `ι` be a finite set of states. For a symmetric positive definite real `ι × ι` matrix `A`, the
+trace of its real logarithm, which applies `log` to the eigenvalues of `A` in an orthonormal
+eigenbasis, is the logarithm of its determinant: `tr (log A) = log (det A)`.

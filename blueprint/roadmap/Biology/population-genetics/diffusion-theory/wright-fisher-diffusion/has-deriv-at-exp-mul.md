@@ -1,3 +1,4 @@
-# Has Deriv At exp mul
+# Derivative of the exponential of a linear function
 
-`fun y => exp (c * y)` has derivative `exp (c * x) * c` at `x`.
+For all real $c$ and $x$, the function $y \mapsto e^{cy}$ is differentiable at $x$ with derivative
+$e^{cx}\, c$.

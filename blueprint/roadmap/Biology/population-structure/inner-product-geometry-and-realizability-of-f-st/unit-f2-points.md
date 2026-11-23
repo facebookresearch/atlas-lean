@@ -1,3 +1,5 @@
-# Unit F2 Points
+# f2 matrices of single frequency vectors in the unit cube
 
-The `f2` matrices `((x i - x j) ^ 2)_{ij}` of single frequency vectors `x ∈ [0,1]^P`.
+For a set `P` of populations, the set of the matrices `(X, Y) ↦ (x X - x Y) ^ 2` for all frequency
+vectors `x : P → [0, 1]`. Each is the [f2](../patterson-s-f-statistics/f2.md) matrix of frequencies
+that are constant, equal to `x`, on a probability space.

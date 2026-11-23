@@ -1,8 +1,5 @@
-# `C²` polynomial approximation
+# Uniform polynomial approximation of a C² function and its derivatives
 
-A `C²` function on `ℝ` is approximated uniformly on
-`[0, 1]` by a polynomial together with its first and second derivatives.
-
-## Sources
-
-- integrate twice a Weierstrass approximation of `f''` (`exists_polynomial_near_of_continuousOn`); the errors in `f'` and `f` follow from the mean value inequality.
+Let `f : ℝ → ℝ` be twice continuously differentiable and `ε > 0`. Then there is a real polynomial
+`p` with `|p(x) - f(x)| ≤ ε`, `|p'(x) - f'(x)| ≤ ε` and `|p''(x) - f''(x)| ≤ ε` for every
+`x ∈ [0, 1]`.

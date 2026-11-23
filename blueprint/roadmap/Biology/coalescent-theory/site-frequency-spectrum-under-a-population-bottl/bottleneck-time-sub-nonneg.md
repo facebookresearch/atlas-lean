@@ -1,3 +1,4 @@
-# Bottleneck Time sub nonneg
+# The bottleneck time change is nondecreasing
 
-`G` is monotone.
+For real numbers `a`, `d ≥ 0` and `f > 0`, and real numbers `u ≤ v`, the
+[time change](bottleneck-time.md) satisfies `0 ≤ G(v) - G(u)`.

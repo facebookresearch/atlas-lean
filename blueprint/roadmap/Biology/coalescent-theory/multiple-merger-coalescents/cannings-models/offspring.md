@@ -1,3 +1,4 @@
-# Offspring
+# Offspring numbers of a parent map
 
-The number of offspring `ν_i = #{c | f c = i}` of parent `i` under the parent map `f`.
+For a parent map `f` of a population of size `N` and a parent `i`, the number of offspring of
+`i` is `ν_i = #{c : f(c) = i}`, the number of children whose parent is `i`.

@@ -1,5 +1,5 @@
-# Patterson Aux1 one
+# Patterson's first solution equals 1 at x = 1
 
-Patterson's Equation A6: `a₁(1) = 1`. At `x = 1` the Lean computation uses
-`(1 - x) * log (1 - x) = 0 * log 0 = 0`; `tendsto_pattersonAux1_nhdsLT_one` shows
-the value is also the limit from below.
+`a₁(1) = 1` (Patterson's Equation A6), where [`a₁`](patterson-aux1.md) is Patterson's first
+solution: the term `2 (1 - x) log(1 - x) / x` vanishes at `x = 1`, with the convention `log 0 = 0`.
+This value is also the [limit from below](tendsto-patterson-aux1-nhds-lt-one.md).

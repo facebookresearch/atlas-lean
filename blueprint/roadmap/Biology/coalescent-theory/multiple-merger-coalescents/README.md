@@ -1,6 +1,9 @@
 # Cannings models and multiple-merger coalescents
 
-Exchangeable Cannings models of reproduction and the limits of their genealogies: convergence to Kingman's coalescent under the Möhle–Sagitov conditions, Λ-coalescent limits for heavy-tailed offspring, merger rates and the Beta-coalescents, coming down from infinity, and the site frequency spectrum under multiple mergers.
+Exchangeable Cannings models of reproduction and the limits of their genealogies: convergence to
+Kingman's coalescent under the Möhle–Sagitov conditions, Λ-coalescent limits for heavy-tailed
+offspring, merger rates and the Beta-coalescents, coming down from infinity, and the site
+frequency spectrum under multiple mergers.
 
 - [Block-count drift of Λ-coalescents](block-count-drift-of-coalescents/README.md)
 - [Cannings models](cannings-models/README.md)

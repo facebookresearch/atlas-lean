@@ -1,3 +1,4 @@
-# Tajima E2 pos
+# Positivity of Tajima's $e_2$ for at least four genes
 
-`e₂ = c₂ / (a₁² + a₂) > 0` for `n ≥ 4`.
+For every natural number $n \ge 4$, Tajima's constant $e_2 = c_2 / (a_1^2 + a_2)$
+(see [Tajima's D](tajima-d.md)) is positive.

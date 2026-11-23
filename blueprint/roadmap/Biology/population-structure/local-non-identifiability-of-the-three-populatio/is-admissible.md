@@ -1,5 +1,5 @@
-# Is Admissible
+# Admissible parameters of the three-population admixture graph
 
-The admissible parameter set of the three-population graph: admixture
-proportion `α = p 0` in `[0, 1]` and nonnegative edge lengths
-`s, a, b, c = p 1, p 2, p 3, p 4`.
+A parameter point `(α, s, a, b, c) ∈ ℝ^5` of the [polynomial f2 map](three-pop-f2.md) is admissible
+when the admixture proportion satisfies `0 ≤ α ≤ 1` and the edge lengths are nonnegative,
+`s, a, b, c ≥ 0`.

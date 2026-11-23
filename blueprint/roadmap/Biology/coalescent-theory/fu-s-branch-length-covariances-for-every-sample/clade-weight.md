@@ -1,5 +1,7 @@
-# Clade Weight
+# Clade weight of $m$ of $k$ lineages
 
-The weight `2 / (m · C(k, m))` of a set of `m` of `k` blocks (`0` unless `1 ≤ m < k`): the
-expected total time, in units of `E T`, during which a given set of `m` of `k` lineages forms
-exactly one block of Kingman's coalescent (from level `k` down, level `k` included).
+For natural numbers `k` and `m`, the clade weight is `w_k(m) = 2 / (m C(k, m))` if `1 ≤ m < k`, and
+`w_k(m) = 0` otherwise; on `1 ≤ m < k` the denominator is positive. It is the expected total time
+during which a given set of `m` of `k` lineages of Kingman's coalescent forms exactly one block,
+over the levels from `k` lineages down to `2` (level `k` included), when the holding time while `l`
+lineages remain has mean `1 / C(l, 2)`.

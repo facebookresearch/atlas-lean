@@ -1,5 +1,9 @@
 # The GTR rate matrix determines its base frequencies
 
-If `(π, s)` lies in the GTR
-domain, `π'` sums to `1` and `s'` is symmetric, then equal rate matrices force `π = π'`. No
-positivity of `(π', s')` is needed.
+Let `ι` be a finite set of states. Write `Q(π, s)` for the
+[GTR rate matrix](../time-reversible-nucleotide-substitution-models/gtr-rate.md) with base
+frequencies `π` and exchangeabilities `s`: `Q(π, s) i j = s i j · π j` for `i ≠ j` and
+`Q(π, s) i i = -∑_{k ≠ i} s i k · π k`. If `(π, s)` lies in the
+[GTR parameter domain](is-gtrparam.md) (`π i > 0`, `∑_i π i = 1`, `s` symmetric and `s i j > 0` for
+`i ≠ j`), `π'` is a real vector with `∑_i π' i = 1` and `s'` is a symmetric real matrix, then
+`Q(π, s) = Q(π', s')` implies `π = π'`. No positivity of `π'` or `s'` is needed.

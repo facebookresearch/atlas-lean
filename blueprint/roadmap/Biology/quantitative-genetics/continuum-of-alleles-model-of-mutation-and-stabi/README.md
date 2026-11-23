@@ -1,17 +1,17 @@
 # Continuum-of-alleles model of mutation and stabilizing selection
 
-## Quant Mutation Selection
+## Model parameters
 
-- [Params](params.md)
+- [Parameters of the continuum-of-alleles model](params.md)
 
-## Params
+## Fitness, selection, mutation and the generation map
 
-- [Log Fitness](log-fitness.md)
-- [Fitness](fitness.md)
-- [Mut Var](mut-var.md)
-- [Mutation Law](mutation-law.md)
-- [Select](select.md)
-- [Mutate](mutate.md)
-- [Step](step.md)
-- [Pow two mul fitness le](pow-two-mul-fitness-le.md)
-- [Step PM](step-pm.md)
+- [Log-fitness under Gaussian stabilizing selection](log-fitness.md)
+- [Gaussian stabilizing fitness](fitness.md)
+- [Mutational variance](mut-var.md)
+- [Law of a mutational increment](mutation-law.md)
+- [Selection step of the continuum-of-alleles model](select.md)
+- [Mutation step of the continuum-of-alleles model](mutate.md)
+- [One generation of selection followed by mutation](step.md)
+- [Even powers of the trait times its fitness are uniformly bounded](pow-two-mul-fitness-le.md)
+- [One generation as a map on probability measures](step-pm.md)

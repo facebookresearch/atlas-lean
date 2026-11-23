@@ -1,5 +1,5 @@
-# Tree acceptance example
+# The star-tree length-to-f2 map is injective
 
-The star-tree parametrization is globally
-injective, hence its edge lengths are locally (indeed globally) identifiable
-from `f2`.
+The [length-to-f2 map of the three-leaf star tree](star-tree-f2.md),
+`(x, y, z) ↦ (x + y, x + z, y + z)`, is injective on all of `ℝ^3`. So the edge lengths of the star
+tree are identifiable from its f2 values, globally and hence locally.

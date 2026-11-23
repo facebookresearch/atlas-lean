@@ -1,3 +1,5 @@
-# Merger Rate dirac one
+# Only total mergers occur in the star coalescent
 
-With `Λ = δ₁` only total mergers happen: `λ_{b,k} = 0` for `k < b`.
+For the star coalescent, `Λ = δ₁` (the unit mass at `1`), the
+[merger rate](../../coalescents/merger-rate.md) satisfies `λ_{b,k} = 0` whenever `k < b`: only
+the merger of all `b` blocks occurs.

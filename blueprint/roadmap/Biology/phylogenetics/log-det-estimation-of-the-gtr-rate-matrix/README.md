@@ -2,42 +2,42 @@
 
 ## The estimator
 
-- [Base Freq](base-freq.md)
-- [Norm Divergence](norm-divergence.md)
-- [Log Generator](log-generator.md)
-- [Log Det Distance](log-det-distance.md)
-- [Rate Estimate](rate-estimate.md)
+- [Base-frequency estimate of a divergence matrix](base-freq.md)
+- [Normalized divergence matrix](norm-divergence.md)
+- [Log-det generator](log-generator.md)
+- [Log-det distance](log-det-distance.md)
+- [Log-det rate estimate](rate-estimate.md)
 - [Trace normalization of the rate estimate](trace-rate-estimate.md)
 
 ## The log-det distance as a log-determinant
 
-- [Trace cfc log eq log det](trace-cfc-log-eq-log-det.md)
-- [The log-det distance is a log-determinant](log-det-distance-eq-neg-log-det.md)
+- [Trace of the logarithm of a positive definite matrix](trace-cfc-log-eq-log-det.md)
+- [The log-det distance is minus a log-determinant](log-det-distance-eq-neg-log-det.md)
 - [Paralinear form of the log-det distance](log-det-distance-eq-log-det.md)
 
 ## Exact recovery at the true divergence matrix
 
-- [Is Symm conj sqrt](is-symm-conj-sqrt.md)
-- [Norm Divergence gtr](norm-divergence-gtr.md)
-- [Cfc log norm Divergence gtr](cfc-log-norm-divergence-gtr.md)
+- [Square-root conjugation symmetrizes a matrix in detailed balance](is-symm-conj-sqrt.md)
+- [The normalized divergence at the truth is a matrix exponential](norm-divergence-gtr.md)
+- [The matrix logarithm of the true normalized divergence](cfc-log-norm-divergence-gtr.md)
 - [Exact recovery of the scaled generator](log-generator-gtr.md)
 - [Exact recovery of the log-det distance](log-det-distance-gtr.md)
 - [Exact recovery of the GTR rate matrix up to scale](rate-estimate-gtr.md)
 - [Recovery of the exchangeabilities up to scale](exchangeability-gtr.md)
-- [Trace gtr Rate neg](trace-gtr-rate-neg.md)
+- [The GTR rate matrix has negative trace](trace-gtr-rate-neg.md)
 
 ## Continuity of the estimator at the true divergence matrix
 
-- [Continuous At cfc log norm Divergence](continuous-at-cfc-log-norm-divergence.md)
+- [Continuity of the logarithm of the normalized divergence matrix](continuous-at-cfc-log-norm-divergence.md)
 - [Continuity of the log-det rate estimate](continuous-at-rate-estimate.md)
-- [Spectrum norm Divergence gtr](spectrum-norm-divergence-gtr.md)
-- [Log Det Distance gtr ne zero](log-det-distance-gtr-ne-zero.md)
+- [The normalized divergence at the truth has positive eigenvalues](spectrum-norm-divergence-gtr.md)
+- [The log-det distance at the true divergence matrix is nonzero](log-det-distance-gtr-ne-zero.md)
 - [The log-det rate estimate is continuous at the true divergence matrix](continuous-at-rate-estimate-gtr.md)
 - [The log-det distance is continuous at the true divergence matrix](continuous-at-log-det-distance-gtr.md)
-- [Recovery consistency](tendsto-rate-estimate-gtr.md)
+- [Log-det recovery is consistent for any convergent divergence estimate](tendsto-rate-estimate-gtr.md)
 
 ## Consistency from aligned site pairs
 
-- [Empirical Divergence](empirical-divergence.md)
-- [Recovery consistency from data (almost surely)](ae-tendsto-rate-estimate-empirical.md)
-- [Recovery consistency from data (in probability)](tendsto-in-measure-rate-estimate-empiric.md)
+- [Empirical divergence matrix](empirical-divergence.md)
+- [Log-det recovery is consistent almost surely from aligned site pairs](ae-tendsto-rate-estimate-empirical.md)
+- [Log-det recovery is consistent in probability from aligned site pairs](tendsto-in-measure-rate-estimate-empiric.md)

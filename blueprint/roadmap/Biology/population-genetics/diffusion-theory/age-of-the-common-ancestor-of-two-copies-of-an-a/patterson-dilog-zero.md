@@ -1,4 +1,4 @@
-# The value `dilog 0 = π² / 6`
+# Patterson's dilogarithm at 0 equals π²/6
 
-**The value `dilog 0 = π² / 6`** in Patterson's normalization, the
-`Real.li2PowerSeries_one` Basel value.
+`dilog(0) = π² / 6`, where [`dilog`](patterson-dilog.md) is Patterson's dilogarithm: the value is
+the Basel sum `Σ_{k ≥ 1} 1 / k²`.

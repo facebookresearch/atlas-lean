@@ -1,4 +1,4 @@
-# Sum mul allele Count
+# An allele-count configuration accounts for every gene
 
-The configuration of a sample of `n` genes accounts for every gene:
-`∑_{j=1}^n j a_j = n`.
+For every allelic partition `π` of a sample of `n` genes, its
+[allele-count configuration](allele-count.md) `a` satisfies `∑_{j=1}^n j a_j = n`.

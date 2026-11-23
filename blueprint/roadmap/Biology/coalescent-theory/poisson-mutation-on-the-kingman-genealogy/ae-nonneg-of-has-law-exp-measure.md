@@ -1,3 +1,4 @@
-# Ae nonneg of has Law exp Measure
+# An exponential random variable is almost surely nonnegative
 
-An exponentially distributed random variable is a.s. nonnegative.
+Let `μ` be a measure and `r > 0`. If the law of a real random variable `Y` under `μ` is the
+exponential law with rate `r`, then `Y ≥ 0` `μ`-almost everywhere.

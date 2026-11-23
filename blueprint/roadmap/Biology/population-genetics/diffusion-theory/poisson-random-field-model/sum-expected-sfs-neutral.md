@@ -1,11 +1,17 @@
-# Sum expected SFS neutral
+# Expected number of segregating sites in a neutral sample
 
-Expected total number of segregating sites (Watterson's formula, with the
-sum explicit): in the neutral infinite-sites model, the sum of
-`expectedSFS θ 0 n i` over the segregating classes `1 ≤ i < n` equals `θ`
-times the harmonic sum over those classes. The monomorphic class `i = n` is
-excluded, matching `expectedSFS_neutral`. The class `i = 0` is also excluded:
-there the integrand is not integrable and the model has an infinite expected
-number of ancestral-monomorphic sites; separately, Lean assigns its arbitrary
-junk value `0` to a non-integrable real integral, so that Lean value is not an
-expectation result.
+For every real $\theta$ and every natural number $n$, the neutral ($\sigma = 0$)
+[expected site frequency spectrum](expected-sfs.md) summed over the segregating classes
+$1 \le i < n$ is
+
+$$\sum_{i=1}^{n-1} \mathbb{E}\,\xi_i = \theta \sum_{i=1}^{n-1} \frac{1}{i},$$
+
+both sums being empty, hence $0$, when $n \le 1$. For $\theta \ge 0$ this is Watterson's expected
+number of segregating sites in a sample of $n$ gene copies. The sum leaves out the class $i = n$,
+sites at which every sampled copy is derived, which are monomorphic in the sample, and the class
+$i = 0$.
+
+## Sources
+
+- G. A. Watterson, *On the number of segregating sites in genetical models without
+  recombination*, Theoret. Population Biol. 7 (1975), 256–276.

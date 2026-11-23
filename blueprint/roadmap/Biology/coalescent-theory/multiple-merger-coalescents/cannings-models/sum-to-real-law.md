@@ -1,3 +1,4 @@
-# Sum to Real law
+# The probabilities of the parent maps sum to one
 
-The real masses `(law f).toReal` of the law sum to `1`.
+For a [Cannings model](cannings-model.md) of a population of size `N`, the probabilities of the
+`N^N` parent maps, as real numbers, sum to `1`.

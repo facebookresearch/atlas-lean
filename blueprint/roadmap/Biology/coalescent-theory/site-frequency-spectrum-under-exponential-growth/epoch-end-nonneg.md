@@ -1,3 +1,6 @@
-# Epoch End nonneg
+# Nonnegative holding times give nonnegative epoch ends
 
-With nonnegative holding times every `V_k`, `k ≥ 2`, is nonnegative.
+Let `n` be a natural number and let `T_j` (`j ∈ ℕ`) be real numbers with `T_j ≥ 0` for
+`2 ≤ j ≤ n`. Then for every natural number `k ≥ 2` the [epoch end](epoch-end.md) satisfies
+
+`V_k = ∑_{j=k}^{n} T_j ≥ 0`.

@@ -1,3 +1,4 @@
-# Continuous At killed Green diagonal
+# The killed Green's function is continuous across the diagonal
 
-`G_C(·, y)` is continuous across the diagonal `x = y` for `y ∈ (0, 1)`.
+For `0 < y < 1`, the function `x ↦ G_C(x, y)` is continuous at `x = y`, where
+[`G_C`](killed-green.md) is the killed Green's function.

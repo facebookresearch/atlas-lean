@@ -1,5 +1,9 @@
-# Kingman Branch Length
+# Branch lengths of a Kingman genealogy
 
-The branch lengths of a Kingman genealogy with epoch lengths `t`: each of the `k` branches of
-epoch `k` has length `t k` (truncated at `0`, which is a.s. irrelevant for exponential holding
-times).
+For a natural number `n` and real epoch lengths `t_k` (`2 ≤ k ≤ n`), every branch `(k, j)` of
+epoch `k` of the [Kingman genealogy](kingman-branch.md) has length
+
+`ℓ_{(k, j)}(t) = max(t_k, 0)`.
+
+The truncation at `0` does not matter for exponential holding times, which are almost surely
+nonnegative ([nonnegativity of exponential variables](ae-nonneg-of-has-law-exp-measure.md)).

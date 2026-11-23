@@ -1,3 +1,4 @@
-# Mut Var
+# Mutational variance
 
-Mutational variance `γ²`.
+For [model parameters](params.md) with mutational standard deviation `γ`, the mutational variance
+is `γ²`, as a nonnegative real number.

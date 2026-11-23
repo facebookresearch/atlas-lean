@@ -1,3 +1,3 @@
-# Desc Factorial two le
+# Bounding the second falling factorial by the first and the third
 
-`(ν)_2 ≤ a ν + (ν)_3 / a` for `a ≥ 1`.
+For every natural number `ν` and every real `a ≥ 1`, `ν (ν - 1) ≤ a ν + ν (ν - 1) (ν - 2) / a`.

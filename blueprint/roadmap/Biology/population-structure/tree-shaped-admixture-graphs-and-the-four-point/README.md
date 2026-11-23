@@ -1,21 +1,32 @@
 # Tree-shaped admixture graphs and the four-point condition
 
-- [Two mul f4 eq sub](two-mul-f4-eq-sub.md)
-- [F4 eq zero or of four Point Condition](f4-eq-zero-or-of-four-point-condition.md)
-- [F4 split of is Tree Metric](f4-split-of-is-tree-metric.md)
-- [Not is Tree Metric of f4 ne zero](not-is-tree-metric-of-f4-ne-zero.md)
-- [F4 eq zero of pair Sums eq](f4-eq-zero-of-pair-sums-eq.md)
+## Quartet f4 statistics and the four-point condition
+
+- [Twice f4 is a difference of two quartet pair sums of f2](two-mul-f4-eq-sub.md)
+- [Under the four-point condition one f4 of each quartet vanishes](f4-eq-zero-or-of-four-point-condition.md)
+- [f4 of a quartet split as AB and CD when f2 is a tree metric](f4-split-of-is-tree-metric.md)
+- [Three nonzero f4 of a quartet show that f2 is not a tree metric](not-is-tree-metric-of-f4-ne-zero.md)
+- [Equal quartet pair sums make all three f4 vanish](f4-eq-zero-of-pair-sums-eq.md)
+
+## Cuts of an admixture graph
+
 - [Cut lemma for lineage visit probabilities](sum-visit-eq-one-of-is-antichain-of-sepa.md)
-- [Sum visit cut eq one](sum-visit-cut-eq-one.md)
-- [Exists parents eq singleton of is Tree](exists-parents-eq-singleton-of-is-tree.md)
-- [Parents eq singleton of mem of is Tree](parents-eq-singleton-of-mem-of-is-tree.md)
-- [Visit eq visit of parents eq singleton](visit-eq-visit-of-parents-eq-singleton.md)
-- [Visit root left](visit-root-left.md)
-- [Visit eq one iff refl Trans Gen of is Tree](visit-eq-one-iff-refl-trans-gen-of-is-tr.md)
-- [Visit trans of is Tree](visit-trans-of-is-tree.md)
-- [Visit chain of is Tree](visit-chain-of-is-tree.md)
-- [Weight eq visit of is Tree](weight-eq-visit-of-is-tree.md)
-- [Weight laminar of is Tree](weight-laminar-of-is-tree.md)
-- [Quartet compatible of is Tree](quartet-compatible-of-is-tree.md)
-- [Four Point Condition f2 of is Tree](four-point-condition-f2-of-is-tree.md)
-- [Is Tree Metric f2 of is Tree](is-tree-metric-f2-of-is-tree.md)
+- [Visit probabilities across a cut of an admixture graph sum to one](sum-visit-cut-eq-one.md)
+
+## Lineages on a tree-shaped admixture graph
+
+- [In a tree-shaped admixture graph every non-root node has one parent](exists-parents-eq-singleton-of-is-tree.md)
+- [In a tree-shaped admixture graph a parent is the only parent](parents-eq-singleton-of-mem-of-is-tree.md)
+- [A node with a single parent visits other nodes as its parent does](visit-eq-visit-of-parents-eq-singleton.md)
+- [The root's lineage visits no other node](visit-root-left.md)
+- [On a tree a lineage passes through exactly the node and its ancestors](visit-eq-one-iff-refl-trans-gen-of-is-tr.md)
+- [On a tree lineage visits are transitive](visit-trans-of-is-tree.md)
+- [On a tree two nodes on one lineage are comparable](visit-chain-of-is-tree.md)
+- [On a tree an edge weight is the visit probability of its child end](weight-eq-visit-of-is-tree.md)
+- [On a tree edges on a common lineage are traversed by nested sets](weight-laminar-of-is-tree.md)
+
+## Tree-shaped graphs give tree metrics
+
+- [On a tree no quartet is split by edges in two different ways](quartet-compatible-of-is-tree.md)
+- [f2 satisfies the four-point condition on a tree-shaped admixture graph](four-point-condition-f2-of-is-tree.md)
+- [f2 is a tree metric on a tree-shaped admixture graph](is-tree-metric-f2-of-is-tree.md)

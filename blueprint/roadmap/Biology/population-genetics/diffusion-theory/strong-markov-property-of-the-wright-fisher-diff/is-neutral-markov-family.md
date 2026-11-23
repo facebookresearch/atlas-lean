@@ -1,5 +1,8 @@
-# Is Neutral Markov Family
+# Markov family for the neutral Wright–Fisher semigroup
 
-`Y` is a **Markov family for the neutral Wright–Fisher semigroup** with respect to the
-filtration `𝒢` under `μ`: each `Y u` is `𝒢 u`-measurable, and for `u ≤ v`, every `A ∈ 𝒢 u` and
-every continuous `g` on `[0, 1]`, `∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ`.
+Let `μ` be a measure on a measurable space `Ω`, `(𝒢_u)_{u ≥ 0}` a filtration and `Y` a process with
+values in `[0, 1]`. Then `Y` is a Markov family for the
+[neutral Wright–Fisher semigroup](../wright-fisher-semigroup-and-moment-duality/wf-semigroup.md) `T`
+with respect to `(𝒢_u)` under `μ` if each `Y_u` is `𝒢_u`-measurable and, for all times `0 ≤ u ≤ v`,
+every `A ∈ 𝒢_u` and every continuous `g : [0, 1] → ℝ`, `∫_A g(Y_v) dμ = ∫_A (T_{v - u} g)(Y_u) dμ`.
+The results on such families take `μ` finite, so that these integrals of bounded functions exist.

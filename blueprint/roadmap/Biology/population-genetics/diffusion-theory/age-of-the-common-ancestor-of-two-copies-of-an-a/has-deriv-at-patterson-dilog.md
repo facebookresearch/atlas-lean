@@ -1,4 +1,4 @@
-# Has Deriv At patterson Dilog
+# Derivative of Patterson's dilogarithm
 
-The derivative of Patterson's `dilog` on `(0, 1)` is `log x / (1 - x)`, from
-`Real.hasDerivAt_li2PowerSeries` by the chain rule.
+For `0 < x < 1`, Patterson's dilogarithm [`dilog`](patterson-dilog.md) is differentiable at `x` with
+derivative `log x / (1 - x)`.

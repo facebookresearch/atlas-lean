@@ -1,6 +1,14 @@
-# The generator limit
+# Under Möhle–Sagitov, rescaled transitions converge to Kingman's rates
 
-Under the Möhle–Sagitov conditions, the one-generation transition
-matrix of the ancestral partition of a sample of `n` genes satisfies
-`c_N⁻¹ (Π_N - 1) → Q`, the rate matrix of Kingman's `n`-coalescent: each pair of blocks merges at
-rate `1`, and every other change of partition has rate `0`.
+Let the sequence of [Cannings models](../cannings-models/cannings-model.md) `W_N` satisfy the
+[Möhle–Sagitov conditions](mohle-sagitov.md), with
+[pair-coalescence probabilities](pair-coalescence.md) `c_N`, and let `n ∈ ℕ`. Then, entrywise as
+`N → ∞`,
+
+`c_N⁻¹ (Π_N - I) → Q_n`,
+
+where `Π_N` is the [ancestral matrix](ancestral-matrix.md) of a sample of `n` genes under `W_N`, `I`
+is the identity matrix and `Q_n` is the
+[rate matrix](../../partition-valued-kingman-coalescent/partition-rate.md) of Kingman's
+partition-valued coalescent: each pair of blocks merges at rate `1`, a partition with `k` blocks is
+left at total rate `k (k - 1) / 2`, and every other change of partition has rate `0`.

@@ -1,3 +1,9 @@
-# F3 gaussian Surrogate eq
+# f3 of the Gaussian surrogate agrees with every drift model
 
-`f3` agrees with every drift model with the same weights and lengths.
+Let `M` be a [drift model](../patterson-s-f-statistics/drift-model.md) on any measure `μ` (not
+necessarily a probability measure), with finitely many populations and edges, lineage weights `w`
+and drift lengths `ℓ`, which are [nonnegative](../patterson-s-f-statistics/len-nonneg.md). For every
+root mean `m` and all populations `C, A, B`, the [f3 statistic](../patterson-s-f-statistics/f3.md)
+`f3(C; A, B)` of the [coordinate frequencies](coord-freq.md) under the
+[Gaussian surrogate](gaussian-surrogate.md) `N(m 1, W diag(ℓ) Wᵀ)` equals the f3 statistic of the
+[population frequencies](../patterson-s-f-statistics/freq.md) of `M`.

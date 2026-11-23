@@ -1,9 +1,11 @@
-# Ratio eq iff of eq mul
+# Real-number criterion for an unbiased f4 ratio
 
-Exactly when the f4-ratio estimator is unbiased: with `fX = α * fY` and a
-nonzero denominator `fB`, the ratio `fX / fB` equals `α` if and only if `α = 0`
-or the f4-equality condition `fY = fB`
-(`f4(A, O; Y, C) = f4(A, O; B, C)`) required by `f4_ratio` holds. For
-`α ≠ 0` this says exactly that the ratio equals `α` iff that f4 equality
-holds; the disjunct `α = 0` is needed, since then the ratio is `0 = α` for
-every `fY`.
+For real numbers `α`, `fX`, `fY`, `fB` with `fX = α * fY` and `fB ≠ 0`, `fX / fB = α` if and only if
+`α = 0` or `fY = fB`. For `α ≠ 0` the ratio thus equals `α` exactly when `fY = fB`; for `α = 0` it
+is `0 = α` for every `fY`. With `fX = f4(A, O; X, C)`, `fY = f4(A, O; Y, C)` and
+`fB = f4(A, O; B, C)`, where `fX = α * fY` holds when `X` is an `α : 1 - α` mixture of `Y` and `C`
+in lineage weights
+([f4 of an admixed population](../patterson-s-f-statistics/f4-admixture-right.md)), this says when
+the f4-ratio estimator is unbiased: exactly when `α = 0` or the f4 equality
+`f4(A, O; Y, C) = f4(A, O; B, C)` assumed by
+[f4-ratio estimation](../patterson-s-f-statistics/f4-ratio.md) holds.

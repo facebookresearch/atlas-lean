@@ -1,4 +1,6 @@
-# Additive Fitness
+# Additive social fitness
 
-Additive social fitness `α + b y - c z + e`: baseline `α`, benefit `b` per unit of partner
-trait `y`, cost `c` per unit of own trait `z`, residual `e`.
+For real numbers `α`, `b`, `c` and real functions `y`, `z`, `e` on a set of individuals, the
+additive social fitness of individual `i` is `w i = α + b * y i - c * z i + e i`: baseline `α`,
+benefit `b` per unit of the partner's trait `y i`, cost `c` per unit of the individual's own trait
+`z i`, and residual `e i`. No sign is imposed on any of them.

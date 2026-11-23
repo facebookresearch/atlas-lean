@@ -1,44 +1,34 @@
 # Strong Markov property of the Wright–Fisher diffusion with selection
 
-- [Is Feller Family](is-feller-family.md)
+## Feller families and path measures
 
-## The path-measure kernel of a Chapman–Kolmogorov family
-
-- [Path Measure cylinder](path-measure-cylinder.md)
+- [Feller families of kernels on the unit interval](is-feller-family.md)
+- [The neutral Wright–Fisher kernels form a Feller family](is-feller-family-neutral-kernel.md)
+- [The path measure of a cylinder is a finite-dimensional law](path-measure-cylinder.md)
 - [The path measure is measurable in the initial state](measurable-path-measure.md)
-- [Path Kernel](path-kernel.md)
+- [Path-measure kernel of a Chapman–Kolmogorov family](path-kernel.md)
 
 ## Markov families for a kernel family
 
-- [Is Kernel Markov Family](is-kernel-markov-family.md)
+- [Markov family for a kernel family](is-kernel-markov-family.md)
 - [Kernel form of the Markov property](map-restrict-eq-comp.md)
-- [Lintegral step](lintegral-step.md)
+- [Kernel form of the Markov property for nonnegative functions](lintegral-step.md)
 - [Joint law with the past](map-restrict-prod-eq-comp-prod.md)
 - [Multi-time law of a Markov family](map-restrict-finite-eq-comp.md)
 - [Path law of a Markov family](map-restrict-path-eq-comp.md)
 
-## The strong Markov property for continuous test functions
+## The process after a deterministic or a stopping time
 
+- [Filtration after a deterministic time](shift-filtration.md)
+- [The process after a deterministic time is a Markov family](is-kernel-markov-family-shift.md)
 - [Strong Markov property for a Feller kernel family, integrated form](set-integral-stopped-value-add-eq-integr.md)
-
-## The process after a stopping time
-
 - [The process after a stopping time is a Markov family](is-kernel-markov-family-stopped-value-ad.md)
 
-## The process after a deterministic time
+## The selection diffusion
 
-- [Shift Filtration](shift-filtration.md)
-- [The process after a deterministic time is a Markov family](is-kernel-markov-family-shift.md)
-
-## The Wright–Fisher diffusion with selection
-
-- [Is Selection Markov](is-selection-markov.md)
-- [Strong Markov property of the selection diffusion for bounded measurable `g`](cond-exp-indicator-comp-stopped-value-ad.md)
-- [Strong Markov property of the selection diffusion for multi-time functionals](cond-exp-indicator-finite-stopped-value.md)
-- [Strong Markov property of the selection diffusion for whole-path functionals](cond-exp-indicator-path-stopped-value-ad.md)
-- [Markov property of the selection diffusion for whole-path functionals at a deterministic time](cond-exp-path-add.md)
-
-## The neutral case
-
-- [Is Feller Family neutral Kernel](is-feller-family-neutral-kernel.md)
-- [At `σ = 0` the hypotheses hold](is-selection-markov-zero-modified-proces.md)
+- [Selection diffusion that is Markov for a kernel family](is-selection-markov.md)
+- [Path Markov property with selection at a deterministic time](cond-exp-path-add.md)
+- [Strong Markov property with selection for bounded test functions](cond-exp-indicator-comp-stopped-value-ad.md)
+- [Strong Markov property with selection for multi-time functionals](cond-exp-indicator-finite-stopped-value.md)
+- [Strong Markov property with selection for whole-path functionals](cond-exp-indicator-path-stopped-value-ad.md)
+- [The neutral realization satisfies the selection hypotheses at σ = 0](is-selection-markov-zero-modified-proces.md)

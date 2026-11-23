@@ -1,11 +1,16 @@
 # The neutral Wright–Fisher realization solves the martingale problem
 
-The selected
-continuous realization `modifiedProcess x`, with its natural filtration and the path measure
-`rawMeasure x`, solves the neutral Wright–Fisher martingale problem
-`IsWrightFisherSolution 0`: for every `C²` test function `f`,
-`f (X_t) - f (X_0) - ∫₀ᵗ (x (1 - x) / 2 · f'') (X_s) ds` is a martingale.
+For every `x ∈ [0, 1]`, the
+[continuous realization](../construction-of-the-neutral-wright-fisher-diffus/modified-process.md)
+`X` started at `x`, with its [natural filtration](natural-filtration.md) and the
+[canonical path measure](../construction-of-the-neutral-wright-fisher-diffus/raw-measure.md) `P_x`,
+solves the
+[martingale problem for the Wright–Fisher diffusion](../fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md)
+with `σ = 0`: its paths are continuous with values in `[0, 1]`, it is adapted to its natural
+filtration, and for every twice continuously differentiable `f : ℝ → ℝ` the process
+`f(X_t) - f(X_0) - ∫₀ᵗ X_s (1 - X_s) / 2 · f''(X_s) ds` is a martingale under `P_x`.
 
 ## Sources
 
-- Ethier & Kurtz (1986), ch. 4, Prop. 1.7, via `isWrightFisherSolution_zero_of_markov` and the Markov property `condExp_modifiedProcess_eq_wfSemigroup`.
+- S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986),
+  ch. 4, Prop. 1.7.

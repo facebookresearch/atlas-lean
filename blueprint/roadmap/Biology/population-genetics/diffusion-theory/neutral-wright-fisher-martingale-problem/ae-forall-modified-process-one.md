@@ -1,3 +1,7 @@
-# Ae forall modified Process one
+# Started at 1, the realization stays at 1 almost surely
 
-Started at `1`, almost every path of the realization is identically `1`.
+For almost every sample path `ω` under the
+[canonical path measure](../construction-of-the-neutral-wright-fisher-diffus/raw-measure.md) `P_1`,
+the
+[continuous realization](../construction-of-the-neutral-wright-fisher-diffus/modified-process.md)
+`X` started at `1` satisfies `X_t(ω) = 1` for every time `t ≥ 0`.

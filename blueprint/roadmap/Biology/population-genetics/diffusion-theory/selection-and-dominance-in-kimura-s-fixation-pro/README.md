@@ -1,10 +1,15 @@
 # Selection and dominance in Kimura's fixation probability
 
-- [Fixation Prob dominance half](fixation-prob-dominance-half.md)
-- [Fixation Prob dominance zero h](fixation-prob-dominance-zero-h.md)
-- [Fixation Prob dominance one h](fixation-prob-dominance-one-h.md)
-- [Fixation Prob dominance zero c](fixation-prob-dominance-zero-c.md)
-- [Kimura Fixation neg](kimura-fixation-neg.md)
-- [Kimura Fixation lt](kimura-fixation-lt.md)
-- [Strict Mono kimura Fixation in sigma](strict-mono-kimura-fixation-in-sigma.md)
-- [Has Deriv At kimura Fixation sigma zero](has-deriv-at-kimura-fixation-sigma-zero.md)
+## Dominance cases of the scale-function ratio
+
+- [At dominance h = 1/2 the scale-function ratio is Kimura's formula](fixation-prob-dominance-half.md)
+- [Scale-function ratio for a recessive allele](fixation-prob-dominance-zero-h.md)
+- [Scale-function ratio for a dominant allele](fixation-prob-dominance-one-h.md)
+- [Without selection the scale-function ratio is the initial frequency](fixation-prob-dominance-zero-c.md)
+
+## Kimura's fixation probability as a function of σ
+
+- [Allele-relabeling symmetry of Kimura's fixation probability](kimura-fixation-neg.md)
+- [Kimura's fixation probability is below x for σ < 0 and 0 < x < 1](kimura-fixation-lt.md)
+- [Kimura's fixation probability increases strictly in σ for 0 < x < 1](strict-mono-kimura-fixation-in-sigma.md)
+- [Derivative of Kimura's fixation probability in σ at σ = 0](has-deriv-at-kimura-fixation-sigma-zero.md)

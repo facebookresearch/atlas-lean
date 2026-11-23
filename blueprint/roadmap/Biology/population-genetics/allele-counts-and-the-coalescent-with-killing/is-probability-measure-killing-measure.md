@@ -1,3 +1,4 @@
-# Is Probability Measure killing Measure
+# The product of the exponential clocks is a probability measure
 
-`killingMeasure n θ` is a probability measure for `θ > 0`.
+For every sample size `n` and every real `θ > 0`, the
+[product measure of the exponential clocks](killing-measure.md) is a probability measure.

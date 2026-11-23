@@ -1,6 +1,9 @@
-# Is Selection Markov
+# Selection diffusion that is Markov for a kernel family
 
-`X` is a **Wright–Fisher diffusion with scaled selection coefficient `sel` (`σ = 2Ns`),
-Markov for the kernel family `κ`**: it solves the martingale problem
-`IsWrightFisherSolution sel` for the generator `L_σ f = x (1 - x) / 2 · f'' + σ x (1 - x) · f'`,
-and for `s ≤ t` and every continuous `g`, `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)` almost surely.
+Let `σ` be a real number, `κ = (κ_t)_{t ≥ 0}` a family of kernels on `[0, 1]`, `(ℱ_t)_{t ≥ 0}` a
+filtration on a measurable space `Ω` and `μ` a measure on `Ω`. A real process `X` is a Wright–Fisher
+diffusion with scaled selection coefficient `σ = 2Ns`, Markov for `κ`, if it solves the
+[martingale problem for the Wright–Fisher diffusion](../fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md)
+with selection `σ` with respect to `(ℱ_t)` and `μ`, and for all times `0 ≤ s ≤ t` and every
+continuous `g : [0, 1] → ℝ`, `μ[g(X_t) | ℱ_s] = ∫ g(y) κ_{t - s}(X_s, dy)` `μ`-almost everywhere
+(`X` takes values in `[0, 1]`). The kernels are not determined by `σ`: they are part of the data.

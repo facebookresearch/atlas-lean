@@ -1,4 +1,9 @@
-# Pair Coal Time
+# Coalescence time of two sampled genes
 
-The **coalescence time** of the two genes of `s` in a genealogy with epoch lengths `t` and
-history `h`: the total length of the epochs during which they are in different lineages.
+Let `h` be a [ranked labeled history](../ranked-labeled-histories-of-coalescent-trees/ranked-history.md) of `n`
+genes, `s` a set of sampled genes and `t_k`, for `k = 2, …, n`, real numbers, the lengths of the
+epochs (the epoch `k` being the one with `k` lineages). The coalescence time `τ_s` is the sum of
+`t_k` over the epochs `k` during which the genes of `s` are [apart](pair-apart.md), that is,
+apart after the first `n - k` coalescence events. The epoch lengths enter as given, also when
+negative. For a pair `s` of distinct genes and nonnegative epoch lengths, `τ_s` is the time back
+from the sample to the most recent common ancestor of the two genes.

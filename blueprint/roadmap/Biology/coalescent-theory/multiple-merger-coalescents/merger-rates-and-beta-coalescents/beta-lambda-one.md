@@ -1,4 +1,4 @@
-# Beta Lambda one
+# The α = 1 Beta-coalescent measure is the uniform measure
 
-`Beta(1, 1)` is the uniform measure: the `α = 1` Beta-coalescent is the
-Bolthausen–Sznitman coalescent.
+The [Beta(1, 1) measure](beta-lambda.md) on `[0, 1]` is the uniform (Lebesgue) measure: the
+`α = 1` Beta-coalescent is the Bolthausen–Sznitman coalescent.

@@ -1,4 +1,5 @@
-# Prop eq one sub of parents eq pair
+# The two admixture proportions of a two-parent node sum to one
 
-At an admixture node `X` with parents `A ≠ B` the two admixture proportions are
-complementary: `prop X B = 1 - prop X A`.
+In every [admixture graph](admixture-graph.md) with parent sets `pa` and admixture proportions `a`,
+if a node `X` has exactly the two parents `A ≠ B`, `pa(X) = {A, B}`, its admixture proportions are
+complementary: `a(X, B) = 1 - a(X, A)`.

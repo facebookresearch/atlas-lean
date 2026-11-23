@@ -1,3 +1,4 @@
-# Mutation Law
+# Law of a mutational increment
 
-Law of a mutational increment, `N(0, γ²)`.
+For [model parameters](params.md) with mutational standard deviation `γ > 0`, a mutational
+increment has the Gaussian law `N(0, γ²)` on `ℝ`.

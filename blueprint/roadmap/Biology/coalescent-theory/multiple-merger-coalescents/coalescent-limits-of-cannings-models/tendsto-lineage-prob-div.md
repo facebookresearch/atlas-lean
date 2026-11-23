@@ -1,5 +1,9 @@
-# The one-generation limit
+# Under Möhle–Sagitov, rescaled transitions converge to the jump rates
 
-For `a < b`, the probability that `b` lineages have `a`
-parents, divided by `c_N`, tends to the Λ-coalescent jump rate
-`(b choose k) λ_{b,k}` with `k = b + 1 - a`.
+Under the [Möhle–Sagitov conditions](mohle-sagitov-lambda.md) for a sequence of Cannings models
+and a finite measure `Λ` on `[0, 1]`, for all `a < b` the
+[probability](../cannings-models/lineage-prob.md) `P^{(N)}_{b,a}` that `b` lineages have `a`
+parents satisfies `P^{(N)}_{b,a} / c_N → C(b, k) λ_{b,k}` as `N → ∞`, with `c_N` the
+[coalescence probability](../cannings-models/coal-prob.md) of the `N`-th model, `k = b + 1 - a`
+and `λ_{b,k}` the [merger rate](../../coalescents/merger-rate.md) of the Λ-coalescent: the jump
+rate from `b` to `a` blocks.

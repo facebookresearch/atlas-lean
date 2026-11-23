@@ -1,7 +1,10 @@
-# Segregation Berry–Esseen bound for Mendelian draws, explicit variance form
+# Berry–Esseen bound for Mendelian draws, explicit variance form
 
-As in
-`abs_mendelian_segregation_cdf_sub_le`, but with the variance premise replaced by its
-explicit Mendelian value: if `g₁ l, g₂ l ≤ 2` at every locus and
-`∑ l ∈ range M, a l ^ 2 * (g₁ l / 2 * (1 - g₁ l / 2) + g₂ l / 2 * (1 - g₂ l / 2)) = σ ^ 2`,
-then the same bound `336 B³ / (σ³ √M)` holds.
+Let `P` be a probability measure, and let the offspring allele counts `X_l` (`l ∈ ℕ`) be
+measurable and mutually independent (unlinked loci), each `X_l` with the
+[Mendelian offspring law](mendel-law.md) of parents carrying `g₁(l), g₂(l) ≤ 2` focal alleles.
+Write `pᵢ(l) = gᵢ(l) / 2`. If `|a_l| ≤ B / √M` for `l < M`, `σ > 0` and
+`∑_{l < M} a_l² (p₁(l) (1 - p₁(l)) + p₂(l) (1 - p₂(l))) = σ²` (the sum is the variance of the
+[segregation deviation](segregation-deviation.md) `R_M`), then for every real `x`,
+`|P(R_M ≤ x) - Φ(x / σ)| ≤ 336 B³ / (σ³ √M)`, where `Φ` is the standard normal distribution
+function.

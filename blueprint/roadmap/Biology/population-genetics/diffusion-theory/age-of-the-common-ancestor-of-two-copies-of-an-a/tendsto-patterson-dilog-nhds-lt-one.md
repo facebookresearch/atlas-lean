@@ -1,4 +1,3 @@
-# Tendsto patterson Dilog nhds LT one
+# Patterson's dilogarithm tends to 0 at 1 from below
 
-Patterson's `dilog` tends to `0` at `1` from below, by continuity of
-`Real.li2PowerSeries` at `0`.
+`dilog(x) → 0` as `x → 1⁻`, where [`dilog`](patterson-dilog.md) is Patterson's dilogarithm.

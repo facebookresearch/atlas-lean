@@ -1,5 +1,8 @@
-# Is Kernel Markov Family
+# Markov family for a kernel family
 
-`Y` is a **Markov family for the kernel family `κ`** with respect to the filtration `𝒢`
-under `μ`: each `Y u` is `𝒢 u`-measurable, and for `u ≤ v`, every `A ∈ 𝒢 u` and every
-continuous `g` on `[0, 1]`, `∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ`.
+Let `κ = (κ_t)_{t ≥ 0}` be a family of kernels on `[0, 1]`, `μ` a measure on a measurable space `Ω`,
+`(𝒢_u)_{u ≥ 0}` a filtration and `Y` a process with values in `[0, 1]`. Then `Y` is a Markov family
+for `κ` with respect to `(𝒢_u)` under `μ` if each `Y_u` is `𝒢_u`-measurable and, for all times
+`0 ≤ u ≤ v`, every `A ∈ 𝒢_u` and every continuous `g : [0, 1] → ℝ`,
+`∫_A g(Y_v) dμ = ∫_A ∫ g(y) κ_{v - u}(Y_u, dy) dμ`. The results on such families take the `κ_t`
+Markov kernels and `μ` finite, so that these integrals exist.

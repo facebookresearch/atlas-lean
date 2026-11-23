@@ -1,5 +1,6 @@
-# Patterson's Equation A2 for `a₁`
+# Patterson's first solution solves the killed backward equation
 
-**Patterson's Equation A2 for `a₁`**, in generator form: on `(0, 1)`,
-`generator 0 a₁ x = a₁(x) / x` (his `x² (1 - x) / 2 * a₁''(x) = a₁(x)` divided
-by `x`).
+For `0 < x < 1`, `x (1 - x) a₁''(x) / 2 = a₁(x) / x`, where [`a₁`](patterson-aux1.md) is Patterson's
+first solution; that is, `a₁` solves the killed backward equation `L₀ w (x) = w(x) / x` for the
+[neutral generator](../wright-fisher-diffusion/generator.md) `L₀`. Multiplied by `x`, this is
+Patterson's Equation A2, `x² (1 - x) a₁''(x) / 2 = a₁(x)`.

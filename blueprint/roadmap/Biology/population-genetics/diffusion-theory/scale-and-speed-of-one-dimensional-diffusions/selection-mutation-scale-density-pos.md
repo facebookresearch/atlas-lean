@@ -1,3 +1,5 @@
-# Selection Mutation Scale Density pos
+# Scale density with selection and mutation is positive on (0, 1)
 
-The selection–mutation scale density is positive on `(0, 1)` for every real `θ₁, θ₂`.
+For all real `α`, `θ₁`, `θ₂` and every `x ∈ (0, 1)`, the
+[scale density with selection and mutation](selection-mutation-scale-density.md) satisfies
+`ψ(x) = e^(-2αx) x ^ (-θ₁) (1 - x) ^ (-θ₂) > 0`.

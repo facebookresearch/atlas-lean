@@ -1,12 +1,13 @@
-# Patterson's Equation 16 derived from Theorem 4
+# Integral representation of M₁ through the killed Green's function
 
-For `y ∈ (0, 1)`,
-`M₁(y) = y ∫₀¹ G_C(x, y) / x dx`. The integral representation is Patterson's
-(p. 1103); the closed form `meanMrcaNew` is obtained from it by the two
-antiderivatives `hasDerivAt_antideriv_aux1` (below the diagonal) and
-`-C / x - C log x` with `C = 2 a₁(y) / ((1 - y) y)` (above), the reflection
-formula `pattersonDilog_reflection`, and `pattersonDilog_zero`. In the diffusion
-reading, the right side is `∫₀^∞ B(t) dt` for his Equation 15; the weight `y / x`
-is the new-allele frequency density of Theorem 3 (here `neutralGreen`): it equals
-`G_K(ε, x) / G_K(ε, y) = (2ε / x) / (2ε / y)` once `ε < min x y`, and the
-coalescence rate `1 / x` acts through the killing in `G_C`.
+For `0 < y < 1`, `M₁(y) = y ∫₀¹ G_C(x, y) / x dx`, where [`M₁`](mean-mrca-new.md) is Patterson's
+function for a new allele and [`G_C`](killed-green.md) the killed Green's function. This is
+Patterson's integral representation (p. 1103), so his closed form of `M₁` (Equation 16) follows from
+his Theorem 4; the weight `y / x` is the ratio `G(ε, x) / G(ε, y)` of values of the
+[neutral Green's function](../sojourn-times-of-the-wright-fisher-diffusion/neutral-green.md) for
+`0 < ε < min(x, y)`.
+
+## Sources
+
+- N. J. Patterson, *How old is the most recent ancestor of two copies of an allele?*, Genetics 169
+  (2005), 1093–1104.

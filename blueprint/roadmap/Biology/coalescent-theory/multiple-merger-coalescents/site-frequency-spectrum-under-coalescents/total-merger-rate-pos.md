@@ -1,3 +1,4 @@
-# Total Merger Rate pos
+# The total merger rate is positive from two blocks on
 
-For `Λ ≠ 0`, some merger happens at positive rate as soon as there are two blocks.
+For a nonzero finite measure `Λ` on `[0, 1]` and every `b ≥ 2`, the
+[total merger rate](../../coalescents/total-merger-rate.md) is positive: `λ_b > 0`.

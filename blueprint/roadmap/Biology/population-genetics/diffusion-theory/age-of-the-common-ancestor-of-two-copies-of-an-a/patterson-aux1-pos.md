@@ -1,4 +1,3 @@
-# Patterson Aux1 pos
+# Patterson's first solution is positive on (0, 1)
 
-`a₁` is positive on `(0, 1)`, by `pattersonAux1_eq_factor` and
-`aux1PosAux_pos`.
+For `0 < x < 1`, `a₁(x) > 0`, where [`a₁`](patterson-aux1.md) is Patterson's first solution.

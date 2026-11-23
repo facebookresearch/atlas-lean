@@ -1,6 +1,5 @@
-# The one-step computation behind Corollary 4
+# Patterson's Taylor step changes the sign of the unknown-ancestry input
 
-**The one-step computation behind Corollary 4** (Patterson p. 1100): the Taylor
-step sends `f₀(x) = y (1 - y) / (x² (1 - x))`, the input at unknown ancestry, to
-`-f₀`. Iterating gives `fₙ = (-1)ⁿ f₀` in his Corollary 4; the density conclusion
-there needs the killed density `C` and is not stated here.
+For every real number `y` and every `0 < x < 1`, with `f₀(x) = y (1 - y) / (x² (1 - x))`, the
+[Taylor step](patterson-taylor-step.md) `S` satisfies `(S f₀)(x) = -f₀(x)`. In Patterson's Corollary
+4 (p. 1100), `f₀` is the input at unknown ancestry, which he iterates to `fₙ = (-1)ⁿ f₀`.

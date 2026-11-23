@@ -1,3 +1,5 @@
-# Grey Condition iff
+# Grey's condition holds for every cutoff once it holds for one
 
-Grey's condition holds for some `a > 0` iff for every `a > 0` (BBL, after eq. (4)).
+For a finite measure `Λ` on `[0, 1]`, [Grey's condition](grey-condition.md) holds if and only if
+`Λ ≠ 0` and `q ↦ 1 / ψ(q)` is integrable on `(a, ∞)` for every `a > 0`, where `ψ` is the
+[Laplace exponent](psi.md) (Berestycki–Berestycki–Limic, after eq. (4)).

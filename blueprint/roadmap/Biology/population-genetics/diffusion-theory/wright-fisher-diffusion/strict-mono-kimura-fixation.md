@@ -1,3 +1,4 @@
-# Strict Mono kimura Fixation
+# Kimura's fixation probability is strictly increasing
 
-Kimura's fixation probability is strictly increasing in the initial frequency.
+For every real $\sigma$, [Kimura's fixation probability](kimura-fixation.md) $x \mapsto u_\sigma(x)$ is
+strictly increasing on $\mathbb{R}$.

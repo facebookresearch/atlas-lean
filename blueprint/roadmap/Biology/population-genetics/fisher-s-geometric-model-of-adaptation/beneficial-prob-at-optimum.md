@@ -1,4 +1,4 @@
-# Beneficial Prob at optimum
+# No mutation is beneficial at the optimum
 
-Endpoint `z = 0` (phenotype at the optimum): the beneficial probability is `0`
-for every mutation size.
+For a phenotype at the optimum, `a = 0`, the [beneficial probability](beneficial-prob.md) is `0`
+for every real mutation size `r`.

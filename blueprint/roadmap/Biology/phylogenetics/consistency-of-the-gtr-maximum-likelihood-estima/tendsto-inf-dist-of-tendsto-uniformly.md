@@ -1,5 +1,7 @@
 # Wald's argmax theorem
 
-**Wald's argmax theorem** (Newey–McFadden, Theorem 2.1, deterministic core): if criteria
-`Mn n` converge uniformly to a continuous `M` on a compact space whose maximum at `θ₀` is
-identified up to `E`, then any maximizers `est n` of `Mn n` satisfy `infDist (est n) E → 0`.
+Let `Θ` be a compact metric space, `M : Θ → ℝ` continuous, `θ₀ ∈ Θ`, and `E ⊆ Θ` a set containing
+every `θ` with `M θ ≥ M θ₀`. If functions `Mₙ : Θ → ℝ` converge to `M` uniformly on `Θ` and each
+`θ̂ₙ` maximizes `Mₙ` over `Θ`, then `d(θ̂ₙ, E) → 0` as `n → ∞`, where
+`d(θ, E) = inf_{θ' ∈ E} d(θ, θ')`. This is the deterministic core of Newey and McFadden's Theorem
+2.1.

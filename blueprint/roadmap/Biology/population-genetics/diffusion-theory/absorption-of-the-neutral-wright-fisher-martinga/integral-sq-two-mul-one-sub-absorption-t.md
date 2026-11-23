@@ -1,9 +1,13 @@
-# Forward squared-heterozygosity functional
+# Expected integral of squared heterozygosity until absorption
 
-For a solution of the neutral
-Wright-Fisher martingale problem started at frequency `x`, the expected squared
-heterozygosity accumulated until absorption, in diffusion units (multiples of `2N`
-generations), is `(2/3) x(1-x)(1+x-x^2)`. This is a derived corollary of the
-Maruyama-Kimura functional machinery with `K = g`, `g(y) = (2y(1-y))^2` and boundary
-values `0` at both endpoints, in the repository scaling. It is the occupation of the
-squared integrand, not the second moment of the accumulated heterozygosity functional.
+Let `μ` be a probability measure, `(ℱ_t)_{t ≥ 0}` a filtration and `X` a solution of the
+[martingale problem for the Wright–Fisher diffusion](../fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md)
+with `σ = 0` with respect to `(ℱ_t)` and `μ`, with `X_0 = x` `μ`-almost surely, and let `τ` be the
+[absorption time](../fixation-and-absorption-in-the-wright-fisher-dif/absorption-time.md) of `X`.
+Then `∫₀^τ (2 X_s (1 - X_s))² ds` is integrable and
+
+`E[∫₀^τ (2 X_s (1 - X_s))² ds] = (2/3) x (1 - x) (1 + x - x²)`,
+
+where `E` is the expectation under `μ` and time is in units of `2N` generations. This is the
+expected occupation integral of the squared heterozygosity, not the second moment of the accumulated
+heterozygosity.

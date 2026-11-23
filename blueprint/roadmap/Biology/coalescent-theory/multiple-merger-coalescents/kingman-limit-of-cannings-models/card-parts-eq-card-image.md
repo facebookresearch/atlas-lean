@@ -1,3 +1,6 @@
-# Card parts eq card image
+# A partition into level sets has as many blocks as values
 
-A partition whose blocks are the level sets of `u` has `#(range u)` blocks.
+Let `P` be a partition of a finite set `α` and `u : α → β` a map such that, for all `i, j ∈ α`, `j`
+lies in the block of `P` that contains `i` exactly when `u i = u j`; that is, the blocks of `P` are
+the nonempty level sets of `u`. Then the number of blocks of `P` is the number `#u(α)` of values of
+`u`.

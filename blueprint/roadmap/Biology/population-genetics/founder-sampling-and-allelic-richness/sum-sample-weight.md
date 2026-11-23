@@ -1,4 +1,5 @@
-# Sum sample Weight
+# Founder sample weights sum to one when the frequencies do
 
-The sample weights of all ordered founder samples of `k` gene copies
-sum to `1` when the frequencies sum to `1`.
+For real allele frequencies `p` on a finite set `A` of alleles with `∑_a p(a) = 1`, of any sign,
+and every sample size `k`, the [sample weights](sample-weight.md) of all ordered samples sum to
+`1`: `∑_{s ∈ A^k} ∏_{j=1}^k p(s_j) = 1`.

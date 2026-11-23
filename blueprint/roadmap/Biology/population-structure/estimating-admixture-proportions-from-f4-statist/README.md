@@ -1,19 +1,27 @@
 # Estimating admixture proportions from f4 statistics
 
-- [Proxy substitution](qp-adm-eq-of-proxy.md)
-- [Proxy substitution, qpWave form](f4-matrix-eq-of-proxy.md)
-- [Ghost absorption](qp-adm-mul-vec-eq-of-ghost.md)
-- [Reversed direction](qp-adm-fit-of-reversed.md)
-- [Proxy Weight](proxy-weight.md)
-- [Ghost Weight](ghost-weight.md)
-- [Reversed Weight](reversed-weight.md)
-- [Counterexample (i), proxy substitution](proxy-counterexample.md)
-- [Counterexample (ii), ghost absorption](ghost-counterexample.md)
-- [Counterexample (iii), reversed direction](reversed-counterexample.md)
-- [Qp Adm Source Matrix](qp-adm-source-matrix.md)
-- [Qp Adm Target Vector](qp-adm-target-vector.md)
-- [Qp Adm Target Vector eq qp Adm Source Matrix mul Vec](qp-adm-target-vector-eq-qp-adm-source-ma.md)
-- [Qp Adm unique iff rank eq](qp-adm-unique-iff-rank-eq.md)
-- [Exists line of rank ne](exists-line-of-rank-ne.md)
-- [Qp Adm weights eq inv gram mul Vec](qp-adm-weights-eq-inv-gram-mul-vec.md)
-- [Qp Adm weights maximize score S1 one](qp-adm-weights-maximize-score-s1-one.md)
+## The linear system of f4 statistics
+
+- [Source matrix of f4 statistics against the right populations](qp-adm-source-matrix.md)
+- [Target vector of f4 statistics against the right populations](qp-adm-target-vector.md)
+- [Weights of an affine source mixture solve the f4 linear system](qp-adm-target-vector-eq-qp-adm-source-ma.md)
+- [A solution is unique iff the source matrix has full column rank](qp-adm-unique-iff-rank-eq.md)
+- [Without full column rank every solution lies on a line of solutions](exists-line-of-rank-ne.md)
+- [Least-squares formula for the weights under full column rank](qp-adm-weights-eq-inv-gram-mul-vec.md)
+- [An exact solution maximizes the unweighted least-squares score](qp-adm-weights-maximize-score-s1-one.md)
+
+## Fits that do not identify the historical sources
+
+- [Proxy sources give the same f4 system as the sources they match](qp-adm-eq-of-proxy.md)
+- [Proxy left populations give the same f4 matrix as those they match](f4-matrix-eq-of-proxy.md)
+- [A ghost source with contrasts in the sampled span is absorbed exactly](qp-adm-mul-vec-eq-of-ghost.md)
+- [A source descended from the target fits it, with f4 rank at most one](qp-adm-fit-of-reversed.md)
+
+## Explicit examples
+
+- [Lineage-weight table of the proxy-substitution example](proxy-weight.md)
+- [Lineage-weight table of the ghost-source example](ghost-weight.md)
+- [Lineage-weight table of the reversed-direction example](reversed-weight.md)
+- [Example of a proxy that fits although the target is not mixed from it](proxy-counterexample.md)
+- [Example where a ghost source is absorbed with weight twice its share](ghost-counterexample.md)
+- [Example: an unadmixed target fits with its own descendant as a source](reversed-counterexample.md)

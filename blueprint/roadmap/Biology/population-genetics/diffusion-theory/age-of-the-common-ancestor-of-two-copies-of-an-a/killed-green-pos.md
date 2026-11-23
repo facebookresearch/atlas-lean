@@ -1,4 +1,4 @@
-# Killed Green pos
+# The killed Green's function is positive on the open unit square
 
-The killed Green's function is positive on `(0, 1) × (0, 1)`, as a Green's
-function of the killed diffusion must be.
+For `0 < x < 1` and `0 < y < 1`, `G_C(x, y) > 0`, where [`G_C`](killed-green.md) is the killed
+Green's function.

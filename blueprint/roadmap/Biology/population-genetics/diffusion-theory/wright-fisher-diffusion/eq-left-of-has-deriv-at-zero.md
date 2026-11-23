@@ -1,3 +1,4 @@
-# Eq left of has Deriv At zero
+# Continuous with zero derivative inside an interval implies constant
 
-A function continuous on `[a, b]` with zero derivative on `(a, b)` is constant on `[a, b]`.
+Let $a$ and $b$ be real numbers and $f$ a real function that is continuous on $[a, b]$ and has
+derivative $0$ at every point of $(a, b)$. Then $f(x) = f(a)$ for every $x \in [a, b]$.

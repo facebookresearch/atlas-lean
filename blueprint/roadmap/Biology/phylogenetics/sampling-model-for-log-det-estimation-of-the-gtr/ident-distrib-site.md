@@ -1,3 +1,6 @@
-# Sampling hypothesis 2 of T158
+# The site pairs are identically distributed under the sample law
 
-The site pairs are identically distributed.
+Let `ι` be a finite set of states. Give `ι` any σ-algebra. If `(π, s, t)` are
+[sampling parameters](is-sampling-params.md): `π i ≥ 0` for every `i`, `∑_i π i = 1`, `s i j ≥ 0`
+for `i ≠ j` and `t ≥ 0`, then every [site pair](site.md) `ω ↦ ω n` has the same law as the first one
+`ω ↦ ω 0` under the [sample law](sample-law.md) `S`.

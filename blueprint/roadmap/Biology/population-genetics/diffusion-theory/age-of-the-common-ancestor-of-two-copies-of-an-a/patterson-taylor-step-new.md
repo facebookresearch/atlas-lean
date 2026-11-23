@@ -1,6 +1,5 @@
-# The one-step computation behind Corollary 3
+# Patterson's Taylor step annihilates y/x²
 
-**The one-step computation behind Corollary 3** (Patterson p. 1100): Patterson's
-Taylor step (Theorem 7) sends `f₀(x) = y / x²`, the input for a new allele, to `0`.
-Hence every higher Taylor coefficient at `t = 0` vanishes in his Corollary 3; the
-density conclusion there needs the killed density `C` and is not stated here.
+For every real number `y` and every `0 < x < 1`, the [Taylor step](patterson-taylor-step.md) `S`
+sends `f₀(x) = y / x²` to `0`: `(S f₀)(x) = 0`. In Patterson's Corollary 3 (p. 1100), `f₀` is the
+input for a new allele at present frequency `y`.

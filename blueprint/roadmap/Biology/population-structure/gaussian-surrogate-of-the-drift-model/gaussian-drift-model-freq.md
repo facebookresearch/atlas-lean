@@ -1,3 +1,4 @@
-# Gaussian Drift Model freq
+# Frequency of the Gaussian drift model
 
-The Gaussian drift model's frequency is `1 / 2 + ω`.
+In the [Gaussian drift model](gaussian-drift-model.md) with one edge and one population, the
+[frequency](../patterson-s-f-statistics/freq.md) of the population is `1 / 2 + ω` at every `ω ∈ ℝ`.

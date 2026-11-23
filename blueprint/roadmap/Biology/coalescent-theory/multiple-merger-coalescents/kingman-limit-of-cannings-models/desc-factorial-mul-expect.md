@@ -1,5 +1,12 @@
-# Averaging over samples
+# Averaging over samples of distinct children
 
-For an injective `g : Fin m → Fin N` (a sample of `m` distinct
-children), `(N)_m E[F (f ∘ g)] = E[∑_{g' injective} F (f ∘ g')]`: by exchangeability of the
-children, every sample of `m` distinct children has the same law.
+Let `W` be a [Cannings model](../cannings-models/cannings-model.md) of population size `N`, whose
+law is exchangeable in the children, with parent map `f : {0, …, N - 1} → {0, …, N - 1}` and
+expectation `E` under its law. Let `g : {0, …, m - 1} → {0, …, N - 1}` be injective (a sample of `m`
+distinct children) and let `F` be any real function of a tuple of `m` parents. Then
+
+`(N)_m E[F(f ∘ g)] = E[∑_{g'} F(f ∘ g')]`,
+
+where the sum runs over all injective `g' : {0, …, m - 1} → {0, …, N - 1}` and
+`(N)_m = N (N - 1) ⋯ (N - m + 1)` is their number. By exchangeability in the children, the parents
+`f ∘ g'` of every sample of `m` distinct children have the same law.

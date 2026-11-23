@@ -2,10 +2,10 @@
 
 ## The estimator
 
-- [Empirical Freq](empirical-freq.md)
-- [Is Min Dist Estimator](is-min-dist-estimator.md)
-- [Min Dist Estimator](min-dist-estimator.md)
-- [Is Min Dist Estimator min Dist Estimator](is-min-dist-estimator-min-dist-estimator.md)
+- [Empirical site-pattern frequencies](empirical-freq.md)
+- [Minimum-distance estimator](is-min-dist-estimator.md)
+- [Chosen minimum-distance estimator](min-dist-estimator.md)
+- [The chosen minimizer is a minimum-distance estimator](is-min-dist-estimator-min-dist-estimator.md)
 
 ## Well-separated identification
 
@@ -13,18 +13,18 @@
 
 ## Consistency from convergent frequencies
 
-- [Dist law le two mul](dist-law-le-two-mul.md)
-- [Consistency to the fibre](tendsto-in-measure-inf-dist-fiber.md)
-- [Consistency up to the permitted symmetries, from convergent frequencies](tendsto-in-measure-inf-dist-of-tendsto-i.md)
+- [The fitted law lies within twice the frequency error of the true law](dist-law-le-two-mul.md)
+- [Consistency in measure to the fibre of the true law](tendsto-in-measure-inf-dist-fiber.md)
+- [Consistency in measure up to the identified class](tendsto-in-measure-inf-dist-of-tendsto-i.md)
 
 ## The sampling law
 
-- [Measurable empirical Freq](measurable-empirical-freq.md)
-- [Sampling law ⇒ convergence of the empirical frequencies (almost surely)](ae-tendsto-empirical-freq.md)
-- [Sampling law ⇒ convergence of the empirical frequencies in probability](tendsto-in-measure-empirical-freq.md)
+- [Empirical frequencies of measurable columns are measurable](measurable-empirical-freq.md)
+- [Empirical frequencies of independent columns converge almost surely](ae-tendsto-empirical-freq.md)
+- [Empirical frequencies of independent columns converge in probability](tendsto-in-measure-empirical-freq.md)
 
-## The GTR inference corollary
+## Consistency under independent sampling
 
-- [GTR inference corollary](tendsto-in-measure-inf-dist-min-dist.md)
-- [Tendsto In Measure inf Dist min Dist Estimator](tendsto-in-measure-inf-dist-min-dist-est.md)
-- [Full identifiability](tendsto-in-measure-min-dist-of-injective.md)
+- [Minimum-distance estimators are consistent up to the identified class](tendsto-in-measure-inf-dist-min-dist.md)
+- [The chosen minimizer is consistent up to the identified class](tendsto-in-measure-inf-dist-min-dist-est.md)
+- [Under full identifiability the minimum-distance estimates converge](tendsto-in-measure-min-dist-of-injective.md)

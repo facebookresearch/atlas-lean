@@ -1,3 +1,4 @@
-# Bottleneck Rate nonneg
+# The bottleneck intensity is nonnegative at nonnegative times
 
-The intensity is nonnegative on `[0, ∞)`.
+For real numbers `a ≥ 0`, `d ≥ 0`, `f > 0` and `s ≥ 0`, the
+[bottleneck intensity](bottleneck-rate.md) satisfies `R(s) ≥ 0`.

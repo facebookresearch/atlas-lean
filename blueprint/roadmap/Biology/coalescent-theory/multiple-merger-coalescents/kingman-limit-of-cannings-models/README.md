@@ -2,77 +2,77 @@
 
 ## Expectations under a Cannings model
 
-- [Sum offspring](sum-offspring.md)
-- [Factorial Moment](factorial-moment.md)
-- [Pair Coalescence](pair-coalescence.md)
-- [Factorial Moment eq](factorial-moment-eq.md)
+- [The offspring numbers add up to the population size](sum-offspring.md)
+- [Factorial moments of the offspring numbers](factorial-moment.md)
+- [Pair-coalescence probability of a Cannings model](pair-coalescence.md)
+- [Every parent has the same offspring factorial moments](factorial-moment-eq.md)
 
 ## Sampling distinct children
 
-- [Card injective mem](card-injective-mem.md)
-- [Averaging over samples](desc-factorial-mul-expect.md)
-- [Sum injective all Eq](sum-injective-all-eq.md)
+- [Counting injective maps into a finite set](card-injective-mem.md)
+- [Averaging over samples of distinct children](desc-factorial-mul-expect.md)
+- [Counting samples of distinct children with a common parent](sum-injective-all-eq.md)
 - [Coalescence probabilities from factorial moments](desc-factorial-mul-expect-all-eq.md)
-- [The pair-coalescence probability](expect-pair.md)
-- [Coal Prob eq pair Coalescence](coal-prob-eq-pair-coalescence.md)
+- [The probability that two distinct children share a parent](expect-pair.md)
+- [The coalescence probability equals the pair-coalescence probability](coal-prob-eq-pair-coalescence.md)
 
 ## Triple and simultaneous coalescences
 
-- [Pair Count](pair-count.md)
-- [Triple Count](triple-count.md)
-- [Triple Coalescence](triple-coalescence.md)
-- [Double Bound](double-bound.md)
-- [Expect triple](expect-triple.md)
-- [Desc Factorial two le](desc-factorial-two-le.md)
-- [Pair Count le add](pair-count-le-add.md)
-- [Pair Count sq le](pair-count-sq-le.md)
-- [Sum injective double le](sum-injective-double-le.md)
-- [Expect double le](expect-double-le.md)
-- [Double Bound le](double-bound-le.md)
+- [Number of ordered pairs of distinct children with a common parent](pair-count.md)
+- [Number of ordered triples of distinct children with a common parent](triple-count.md)
+- [Triple-coalescence probability of a Cannings model](triple-coalescence.md)
+- [Double-merger bound of a Cannings model](double-bound.md)
+- [The probability that three distinct children share a parent](expect-triple.md)
+- [Bounding the second falling factorial by the first and the third](desc-factorial-two-le.md)
+- [Bounding the pair count by the population size and the triple count](pair-count-le-add.md)
+- [Bounding the squared pair count by the pair and triple counts](pair-count-sq-le.md)
+- [Bound on the number of four-child samples forming two coalescing pairs](sum-injective-double-le.md)
+- [Bound on the probability that two disjoint pairs both coalesce](expect-double-le.md)
+- [Upper bound on the double-merger bound by pair and triple mergers](double-bound-le.md)
 
 ## The Möhle–Sagitov conditions
 
 - [The Möhle–Sagitov conditions](mohle-sagitov.md)
-- [Tendsto pow div desc Factorial](tendsto-pow-div-desc-factorial.md)
-- [Tendsto multiple](tendsto-multiple.md)
+- [The ratio of the k-th power to the k-th falling factorial tends to 1](tendsto-pow-div-desc-factorial.md)
+- [Triple and double mergers are negligible under Möhle–Sagitov](tendsto-multiple.md)
 
-## Partitions: blocks, kernels
+## Partitions of a finite set
 
-- [Parts eq image part](parts-eq-image-part.md)
-- [Eq of mem part iff](eq-of-mem-part-iff.md)
-- [Card parts eq card image](card-parts-eq-card-image.md)
+- [The blocks of a partition are the blocks of its points](parts-eq-image-part.md)
+- [Partitions with the same block relation are equal](eq-of-mem-part-iff.md)
+- [A partition into level sets has as many blocks as values](card-parts-eq-card-image.md)
 
 ## Pairs of lineages
 
-- [Lineage Pairs](lineage-pairs.md)
-- [Coll Count](coll-count.md)
+- [Pairs of lineage labels in increasing order](lineage-pairs.md)
+- [Number of pairs of lineages that pick the same parent](coll-count.md)
 
 ## The ancestral process of a sample
 
-- [Block Index](block-index.md)
+- [Labels of the blocks of a sample partition](block-index.md)
 - [One generation of the ancestral process](step.md)
-- [Exists pair of is Merge](exists-pair-of-is-merge.md)
-- [Ancestral Matrix](ancestral-matrix.md)
-- [Sum ancestral Matrix](sum-ancestral-matrix.md)
+- [A merger forces one pair of lineages to share a parent](exists-pair-of-is-merge.md)
+- [One-generation transition matrix of the ancestral partition](ancestral-matrix.md)
+- [The rows of the ancestral matrix sum to one](sum-ancestral-matrix.md)
 
 ## One-generation transition probabilities
 
-- [Expect le triple](expect-le-triple.md)
-- [Expect le double](expect-le-double.md)
-- [Expect two pairs le](expect-two-pairs-le.md)
-- [Expect coll Count](expect-coll-count.md)
-- [Expect coll Count sq le](expect-coll-count-sq-le.md)
-- [Step Prob](step-prob.md)
-- [Step Prob le of is Merge](step-prob-le-of-is-merge.md)
-- [Step Prob le of not is Merge](step-prob-le-of-not-is-merge.md)
-- [Step Prob ge of is Merge](step-prob-ge-of-is-merge.md)
+- [Bound for events that force three children to share a parent](expect-le-triple.md)
+- [Bound for two coalescing pairs among four given children](expect-le-double.md)
+- [Bound for two different pairs of lineages coalescing together](expect-two-pairs-le.md)
+- [Expected number of coalescing pairs among b lineages](expect-coll-count.md)
+- [Bound on the second factorial moment of the coalescing-pair count](expect-coll-count-sq-le.md)
+- [One-generation transition probability between sample partitions](step-prob.md)
+- [Upper bound on the probability of a merger of two given blocks](step-prob-le-of-is-merge.md)
+- [Bound on one-generation changes other than a merger of two blocks](step-prob-le-of-not-is-merge.md)
+- [Lower bound on the probability of a merger of two given blocks](step-prob-ge-of-is-merge.md)
 
 ## Kingman's limit
 
-- [The generator limit](tendsto-generator.md)
-- [Tendsto floor div mul](tendsto-floor-div-mul.md)
-- [Kingman's limit for Cannings models](tendsto-ancestral-matrix-pow.md)
-- [Tendsto ancestral Matrix pow bot](tendsto-ancestral-matrix-pow-bot.md)
-- [Chain FDD](chain-fdd.md)
-- [Kingman FDD](kingman-fdd.md)
-- [Cannings genealogies converge to Kingman's coalescent](tendsto-chain-fdd.md)
+- [Under Möhle–Sagitov, rescaled transitions converge to Kingman's rates](tendsto-generator.md)
+- [For x ≥ 0, the floor of x/c times c tends to x as c tends to 0⁺](tendsto-floor-div-mul.md)
+- [Under Möhle–Sagitov, transition matrices converge to Kingman's](tendsto-ancestral-matrix-pow.md)
+- [Möhle–Sagitov: from singletons, the law at time t tends to Kingman's](tendsto-ancestral-matrix-pow-bot.md)
+- [Finite-dimensional distributions of a finite Markov chain](chain-fdd.md)
+- [Finite-dimensional distributions of Kingman's coalescent](kingman-fdd.md)
+- [Möhle–Sagitov: genealogies converge to Kingman's in finite dimensions](tendsto-chain-fdd.md)

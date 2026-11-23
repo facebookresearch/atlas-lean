@@ -1,3 +1,4 @@
-# Total Merger Rate dirac one
+# The star coalescent merges at total rate one
 
-With `Λ = δ₁`, all `b ≥ 2` blocks merge at rate `1`.
+For the star coalescent, `Λ = δ₁`, the [total merger rate](../../coalescents/total-merger-rate.md)
+is `λ_b = 1` for every `b ≥ 2`: all `b` blocks merge at rate `1`.

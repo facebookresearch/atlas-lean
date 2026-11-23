@@ -1,6 +1,7 @@
-# Three Pop Weights
+# Lineage weights of the four-edge three-population admixture graph
 
-Lineage weights of the three-population admixture model on four edges
-(shared stem, `A` edge, `B` edge, `C` private edge): populations `A = 0` and
-`B = 1` have binary weights on the stem and their own edge; `C = 2` is the
-`α : 1 - α` mixture of the `A` and `B` lineages followed by private drift.
+For a real number `α`, the lineage weights of the populations `A = 0`, `B = 1`, `C = 2` on four
+edges, the shared stem `0`, the `A` edge `1`, the `B` edge `2` and the private edge `3` of `C`, are
+`w(A) = (1, 1, 0, 0)`, `w(B) = (1, 0, 1, 0)` and `w(C) = (1, α, 1 - α, 1)`. For `0 ≤ α ≤ 1`, `C` is
+the `α : 1 - α` mixture of the `A` and `B` lineages followed by drift on its private edge; the
+definition takes any real `α`.

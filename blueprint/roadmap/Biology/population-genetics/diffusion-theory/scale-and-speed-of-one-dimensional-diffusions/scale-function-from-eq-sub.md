@@ -1,5 +1,5 @@
-# Scale Function From eq sub
+# Changing the base point shifts the scale function by a constant
 
-The interior-normalized scale function equals the difference of the
-`0`-normalized scale function at the endpoints. Stated for `c, p ∈ Icc 0 1`
-under `IsRegularDiffusion`; no probabilistic meaning is claimed.
+Let `b`, `a` define a [regular diffusion](../selection-duality-and-general-one-dimensional-di/is-regular-diffusion.md) on `(0, 1)`. For all `c, p ∈ [0, 1]`, the
+[scale function with base point](scale-function-from.md) `c` and the [scale function](../selection-duality-and-general-one-dimensional-di/scale-function.md) `S`, normalized by
+`S(0) = 0`, satisfy `S_c(p) = S(p) - S(c)`.

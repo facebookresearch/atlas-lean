@@ -1,4 +1,5 @@
-# Inner sub sub neg iff mem ball
+# Strict Thales criterion in a real inner product space
 
-Strict Thales criterion in a real inner product space: `⟪c - a, c - b⟫ < 0` iff `c` lies in
-the open ball with diameter `[a, b]`. Mathlib-only.
+In a real inner product space, for all points `a`, `b`, `c`: `⟪c - a, c - b⟫ < 0` if and only if `c`
+lies in the open ball with centre the midpoint `(a + b) / 2` and radius `‖a - b‖ / 2`, the ball with
+diameter `[a, b]`. For `a = b` the ball is empty, and indeed `⟪c - a, c - a⟫ ≥ 0`.

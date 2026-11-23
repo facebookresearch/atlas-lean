@@ -1,3 +1,7 @@
-# Exists Unique induces
+# The induced quartet tree is well defined
 
-The quartet tree `T|q` is well defined: exactly one resolution of `q` is induced.
+Let `X` be a finite set of taxa. For every
+[unrooted binary phylogenetic tree](../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/unrooted-binary-tree.md)
+`T` on `X` and every four-taxon set `q ⊆ X`, a subset with exactly four elements, exactly one of the
+three [resolutions](resolutions.md) of `q` is induced by `T`: the quartet tree `T|q` is well
+defined.

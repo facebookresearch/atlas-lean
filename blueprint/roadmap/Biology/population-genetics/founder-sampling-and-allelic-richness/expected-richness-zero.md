@@ -1,4 +1,5 @@
-# Expected Richness zero
+# Expected richness of a founder sample of size zero is zero
 
-A founder sample of `0` gene copies retains no allele: the expected
-retained richness at `k = 0` is `0`, for arbitrary frequencies.
+For arbitrary real allele frequencies `p` on a finite set of alleles, the
+[expected richness](expected-richness.md) of a founder sample of `0` gene copies is `0`: a sample of
+`0` copies is empty and retains no allele.

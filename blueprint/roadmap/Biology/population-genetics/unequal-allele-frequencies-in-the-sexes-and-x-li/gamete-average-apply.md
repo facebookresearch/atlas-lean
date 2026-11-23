@@ -1,9 +1,8 @@
-# Averaging the two gamete laws, for arbitrary allele types
+# A gamete of a random-union offspring averages the two parental laws
 
-Let
-`coin : PMF Bool` be a fair coin. Form ordered offspring genotypes from
-independent female and male gamete laws `pf` and `pm`, then transmit one of
-the two coordinates of an ordered genotype using `coin`. For every allele
-`a` in an arbitrary type `A` (no finiteness assumption), the resulting mass
-at `a` is the average `2⁻¹ * pf a + 2⁻¹ * pm a`. This is the PMF-level form
-of the two-sex allele-frequency average.
+Let `p_f` and `p_m` be probability distributions on a set `A` of alleles (no finiteness
+assumption), the allele laws of female and male gametes. Form an ordered offspring genotype from
+a female gamete drawn from `p_f` and an independent male gamete drawn from `p_m`, then transmit
+the maternal or the paternal allele according to a fair coin, independent of the rest. For every
+allele `a`, the transmitted allele is `a` with probability `p_f(a) / 2 + p_m(a) / 2`: the
+allele frequency of the offspring generation is the average of the two parental frequencies.

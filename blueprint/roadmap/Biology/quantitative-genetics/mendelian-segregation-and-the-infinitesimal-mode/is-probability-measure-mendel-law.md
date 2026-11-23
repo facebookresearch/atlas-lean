@@ -1,3 +1,4 @@
-# Is Probability Measure mendel Law
+# The Mendelian offspring law is a probability measure
 
-The Mendelian offspring law is a probability measure when `g₁, g₂ ≤ 2`.
+For parental counts `g₁, g₂ ≤ 2`, the [Mendelian offspring law](mendel-law.md) is a probability
+measure.

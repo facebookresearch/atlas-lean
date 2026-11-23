@@ -1,4 +1,6 @@
-# Ewens Prob eq ewens Config Prob
+# The partition and configuration forms of the Ewens formula agree
 
-The partition-indexed Ewens formula `ewensProb` is the configuration formula evaluated at
-the configuration of the partition.
+For every real `θ` and every allelic partition `π` of `n`, the
+[Ewens sampling formula](../ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md) at `π`
+equals the [configuration form](ewens-config-prob.md) of the formula at the
+[allele-count configuration](allele-count.md) of `π`.

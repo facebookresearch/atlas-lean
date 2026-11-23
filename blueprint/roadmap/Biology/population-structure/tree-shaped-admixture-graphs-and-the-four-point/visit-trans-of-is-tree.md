@@ -1,4 +1,7 @@
-# Visit trans of is Tree
+# On a tree lineage visits are transitive
 
-On a tree `visit · · = 1` is transitive: if the lineage of `X` passes through `c` and the
-lineage of `c` passes through `d`, then the lineage of `X` passes through `d`.
+In an [admixture graph](../admixture-graphs/admixture-graph.md) that is
+[tree-shaped](../admixture-graphs/is-tree.md), if the lineage of `X` passes through `c` and the
+lineage of `c` passes through `d`, that is, `v(X, c) = 1` and `v(c, d) = 1` for the
+[visit probability](../admixture-graphs/visit.md) `v`, then the lineage of `X` passes through `d`:
+`v(X, d) = 1`.

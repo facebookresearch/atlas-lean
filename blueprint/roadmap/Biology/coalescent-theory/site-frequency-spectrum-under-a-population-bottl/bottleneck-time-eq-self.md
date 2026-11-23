@@ -1,3 +1,4 @@
-# Bottleneck Time eq self
+# Without a size change the time change is the identity
 
-The time change is the identity for a constant population (`f = 1` or `d = 0`).
+For real numbers `a`, `d` and `f` with `f = 1` or `d = 0`, the
+[time change](bottleneck-time.md) satisfies `G(u) = u` for every real `u`.

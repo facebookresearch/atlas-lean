@@ -1,12 +1,12 @@
 # Lande's selection gradient
 
-- [Selected Shift](selected-shift.md)
-- [Gaussian cross-covariance response](selected-shift-breeding-eq.md)
+- [Shift of the mean of a trait under selection](selected-shift.md)
+- [Gaussian response to selection, cross-covariance form](selected-shift-breeding-eq.md)
 - [Lande's multivariate response, genetic-covariance form](selected-shift-breeding-eq-genetic-cov.md)
-- [Univariate cross-covariance case](breeding-response-univariate.md)
-- [Breeder's equation](breeding-response-univariate-of-var.md)
-- [Cross-covariance gradient form](selected-shift-breeding-eq-gradient.md)
-- [Lande gradient form, genetic-covariance version](selected-shift-breeding-eq-gradient-gene.md)
+- [Univariate Gaussian response to selection, cross-covariance form](breeding-response-univariate.md)
+- [Breeder's equation for a Gaussian breeding value and phenotype](breeding-response-univariate-of-var.md)
+- [Gaussian response to selection, cross-covariance gradient form](selected-shift-breeding-eq-gradient.md)
+- [Lande's gradient form of the response, genetic-covariance version](selected-shift-breeding-eq-gradient-gene.md)
 - [Stein's lemma in Lande's form](integral-sub-mul-gaussian-real.md)
 - [Mean fitness of a normally distributed trait](mean-fitness.md)
 - [Directional selection differential](selection-differential.md)

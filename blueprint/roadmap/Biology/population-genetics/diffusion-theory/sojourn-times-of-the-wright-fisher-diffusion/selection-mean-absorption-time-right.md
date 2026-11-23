@@ -1,3 +1,4 @@
-# Boundary value at `1`:
+# Mean absorption time under selection vanishes at frequency one
 
-`T_σ(1) = 0`.
+For every real $\sigma$, the [mean absorption time under selection](selection-mean-absorption-time.md) satisfies
+$T_\sigma(1) = 0$.

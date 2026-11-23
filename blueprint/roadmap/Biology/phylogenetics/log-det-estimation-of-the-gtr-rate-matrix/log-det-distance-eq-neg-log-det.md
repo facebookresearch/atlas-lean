@@ -1,4 +1,5 @@
-# The log-det distance is a log-determinant
+# The log-det distance is minus a log-determinant
 
-If `normDivergence F` is positive definite,
-`logDetDistance F = -log det (normDivergence F)`.
+Let `ι` be a finite set of states. If the [normalized divergence matrix](norm-divergence.md) `N(F)`
+of a real `ι × ι` matrix `F` is positive definite, the [log-det distance](log-det-distance.md)
+`Δ(F)` is `Δ(F) = -log (det N(F))`.

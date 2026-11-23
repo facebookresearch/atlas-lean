@@ -1,5 +1,6 @@
-# Visit eq zero of trans Gen
+# A lineage from an ancestor never passes through its descendant
 
-Acyclicity, transitive form: if `Y` is an ancestor of `X`, meaning `Y` is reached from
-`X` by repeatedly passing from a node to one of its parents, then a lineage starting from
-`Y` never passes through the descendant `X`, so `visit Y X = 0`.
+In every [admixture graph](admixture-graph.md), let `Y` be an ancestor of `X`: `Y` is reached from
+`X` in one or more steps, each from a node to one of its parents. Then the
+[visit probability](visit.md) of `X` from `Y` is `v(Y, X) = 0`: a lineage traced from `Y` toward the
+root never passes through its descendant `X`.

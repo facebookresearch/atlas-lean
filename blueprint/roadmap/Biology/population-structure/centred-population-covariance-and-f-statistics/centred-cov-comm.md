@@ -1,3 +1,5 @@
-# Centred Cov comm
+# Symmetry of the centred leaf covariance
 
-The centred leaf covariance is symmetric in the two populations.
+For any measure `μ` and any allele frequencies `p X` of a finite set of populations, the
+[centred leaf covariance](centred-cov.md) is symmetric: `K(X, Y) = K(Y, X)` for all populations `X`,
+`Y`.

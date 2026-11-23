@@ -1,3 +1,4 @@
-# Beneficial Prob zero size
+# A mutation of size zero is never beneficial
 
-Endpoint `r = 0` (no displacement): the beneficial probability is `0`.
+For every phenotype `a ∈ ℝⁿ`, the [beneficial probability](beneficial-prob.md) of a mutation of
+size `r = 0` (no displacement) is `0`.

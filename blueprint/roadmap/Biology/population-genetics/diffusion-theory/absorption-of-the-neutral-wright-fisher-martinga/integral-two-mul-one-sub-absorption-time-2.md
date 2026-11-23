@@ -1,7 +1,9 @@
-# Realization reading
+# Heterozygosity functional of the neutral realization
 
-For every `x : I`, the stopped heterozygosity integral of the
-constructed neutral realization `modifiedProcess x` is integrable with respect to
-`rawMeasure x`, and its integral equals `2x(1-x)`. This is the non-vacuity reading of
-`integral_two_mul_one_sub_absorptionTime` for the realization identified by
-`isWrightFisherSolution_zero_modifiedProcess`.
+For every `x ∈ [0, 1]`, let `X` be the
+[continuous realization](../construction-of-the-neutral-wright-fisher-diffus/modified-process.md) of
+the neutral Wright–Fisher process started at `x`, under the
+[canonical path measure](../construction-of-the-neutral-wright-fisher-diffus/raw-measure.md) `P_x`,
+and `τ` the
+[absorption time](../fixation-and-absorption-in-the-wright-fisher-dif/absorption-time.md) of `X`.
+Then `∫₀^τ 2 X_s (1 - X_s) ds` is integrable under `P_x` and its expectation is `2x (1 - x)`.

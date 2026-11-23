@@ -1,4 +1,7 @@
-# Transition Prop
+# Proportion of transition differences
 
-The proportion of **transition differences** in row `i` of a nucleotide matrix `M`: the
-entry `M i j` for the base `j ≠ i` of the same class (purine/pyrimidine), Kimura's `P`.
+Nucleotides are indexed `0 = A`, `1 = C`, `2 = G`, `3 = T`, so a substitution is a transition
+(`A ↔ G`, `C ↔ T`) exactly when the two indices have the same parity. For a real `4 × 4` matrix `M`
+and a nucleotide `i`, the transition proportion `P(M, i)` is the entry `M i j` for the base `j ≠ i`
+of the same class, purine or pyrimidine (the other index of the same parity): Kimura's `P` in row
+`i`.

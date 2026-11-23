@@ -1,4 +1,5 @@
-# Has FDeriv At div sqrt zero
+# Derivative of the studentizing map at a zero numerator
 
-At a point with zero numerator, `(x, y) ↦ x / √y` has derivative `dx / √y₀`: to first order
-the fluctuation of the denominator does not affect the studentized statistic.
+For `y₀ > 0`, the map `(x, y) ↦ x / √y` on `ℝ²` has derivative `(dx, dy) ↦ dx / √y₀` at
+`(0, y₀)`: to first order the fluctuation of the denominator does not affect the studentized
+statistic.

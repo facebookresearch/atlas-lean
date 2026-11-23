@@ -1,4 +1,8 @@
-# Pair Path
+# Branches separating two sampled genes
 
-The branches **separating** the two genes of `s`: those ancestral to exactly one of them.
-These form the path between the two genes through their most recent common ancestor (MRCA).
+Let `h` be a [ranked labeled history](../ranked-labeled-histories-of-coalescent-trees/ranked-history.md) of `n`
+genes and `s` a set of sampled genes. The branches separating the genes of `s` are the
+[branches](../poisson-mutation-on-the-kingman-genealogy/kingman-branch.md) of the genealogy with exactly
+one gene of `s` [below them](branch-block.md). For a pair `s = {a, b}` of distinct genes these
+are the branches ancestral to exactly one of `a` and `b`; they form the path between the two
+genes through their most recent common ancestor (MRCA).

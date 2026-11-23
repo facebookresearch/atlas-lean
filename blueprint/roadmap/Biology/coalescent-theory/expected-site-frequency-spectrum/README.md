@@ -10,15 +10,15 @@
 
 ## Finite support and marginals of the random-joining law
 
-- [Join Step iterate nil](join-step-iterate-nil.md)
-- [Random Joining cons](random-joining-cons.md)
+- [Iterating the join step keeps the value at the empty list](join-step-iterate-nil.md)
+- [First step of the random-joining law from at least two blocks](random-joining-cons.md)
 - [Random joining has finite support and iterates the join step](exists-finset-random-joining.md)
 
 ## Block counts under random joining
 
-- [Sum block Pairs eq powerset Card](sum-block-pairs-eq-powerset-card.md)
-- [Is Symm](is-symm.md)
-- [Comps](comps.md)
+- [Sums over merged pairs depend only on the multiset of block sizes](sum-block-pairs-eq-powerset-card.md)
+- [Statistics that do not depend on the order of the blocks](is-symm.md)
+- [Compositions of $N$ into $k$ positive parts](comps.md)
 - [Expected number of blocks of size $i$](join-step-iterate-count.md)
 
 ## The expected branch length $2/i$
@@ -27,15 +27,15 @@
 
 ## The expected site frequency spectrum
 
-- [Integral comp random Joining](integral-comp-random-joining.md)
+- [Expectation of a function of a history with the random-joining law](integral-comp-random-joining.md)
 - [Expected site frequency spectrum](integral-sfs.md)
 
 ## Total branch length and the folded site frequency spectrum
 
-- [Sum count Ico eq length](sum-count-ico-eq-length.md)
-- [Sum sum count mul eq sum mul](sum-sum-count-mul-eq-sum-mul.md)
-- [Folded Count](folded-count.md)
-- [Integral folded Count](integral-folded-count.md)
-- [Sum sfs Length eq total Length of invariant](sum-sfs-length-eq-total-length-of-invari.md)
-- [Sum sfs Length ae eq total Length](sum-sfs-length-ae-eq-total-length.md)
-- [Integral folded Count kingman](integral-folded-count-kingman.md)
+- [Sizes below $n$ account for every block when there are at least two](sum-count-ico-eq-length.md)
+- [Block counts by size weighted by $T_k$ sum to $\sum_k k\,T_k$](sum-sum-count-mul-eq-sum-mul.md)
+- [Folded site frequency spectrum](folded-count.md)
+- [Integral of the folded count from unfolded integrals $\theta/j$](integral-folded-count.md)
+- [Frequency-class branch lengths sum to the total branch length](sum-sfs-length-eq-total-length-of-invari.md)
+- [Almost surely the frequency-class lengths sum to the total length](sum-sfs-length-ae-eq-total-length.md)
+- [Expected folded site frequency spectrum under Kingman's coalescent](integral-folded-count-kingman.md)

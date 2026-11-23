@@ -1,10 +1,11 @@
-# Sum ratio eq two mul of split reference
+# Edge-sum f4 ratio with a split reference is twice the proportion
 
-A split-reference f4 ratio that can lie outside `[0, 1]`. Two edges of the same nonzero
-drift length `ℓ`, with lineage weights `wA = (1, 1)`, `wO = wC = (0, 0)`,
-unsampled source `wY = (1, 1)`, sampled reference `wB = (1, 0)` (weight only
-on the first of the two edges carrying `wY`), and admixed target
-`wX = α wY + (1 - α) wC`. In
-the drift-model form `f4(P, Q; R, S) = ∑ e, (wP e - wQ e) * (wR e - wS e) * len e`,
-the ratio `f4(A, O; X, C) / f4(A, O; B, C)` equals `2 * α`, which exceeds `1`
-when `α > 1 / 2`.
+Take two edges with lengths `len = (ℓ, ℓ)`, `ℓ ≠ 0`, weight vectors `wA = wY = (1, 1)`,
+`wO = wC = (0, 0)` and `wB = (1, 0)` on them, and `wX = α wY + (1 - α) wC` for a real `α`. Then
+`N / D = 2 α`, where `N = ∑ e, (wA e - wO e) * (wX e - wC e) * len e` and
+`D = ∑ e, (wA e - wO e) * (wB e - wC e) * len e`. In a
+[drift model](../patterson-s-f-statistics/drift-model.md) these sums are the
+[f4 statistics](../patterson-s-f-statistics/f4-freq.md) `f4(A, O; X, C)` and `f4(A, O; B, C)`, so
+the f4 ratio of a target `X` mixing an unsampled source `Y` with `C`, against a sampled reference
+`B` that carries only the first of the two edges of `Y`, is `2 α`. It exceeds `1` when `α > 1/2`, so
+the ratio can lie outside `[0, 1]`.

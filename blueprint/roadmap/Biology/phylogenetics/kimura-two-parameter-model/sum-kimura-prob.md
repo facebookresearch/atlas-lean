@@ -1,3 +1,4 @@
-# Sum kimura Prob
+# Rows of the Kimura matrix sum to one
 
-Each row of the Kimura transition matrix sums to `1`, for all real `a`, `b`.
+For all real `a` and `b` and every nucleotide `i`, the row `i` of the
+[Kimura matrix](kimura-prob.md) `T(a, b)` sums to one: `∑_j T(a, b) i j = 1`.

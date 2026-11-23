@@ -1,5 +1,5 @@
-# Abs genic Drift sub le
+# Lipschitz bound for the selection–mutation drift on the unit interval
 
-Lipschitz estimate for the genic-selection/two-way-mutation drift
-`σ x (1 - x) + (θ₁ (1 - x) - θ₂ x) / 2` on `[0, 1]`, with constant
-`|σ| + (|θ₁| + |θ₂|) / 2`.
+For all real `σ`, `θ₁`, `θ₂` and all `x, y ∈ [0, 1]`, the drift
+`b(x) = σ x (1 - x) + (θ₁ (1 - x) - θ₂ x) / 2` of the Wright–Fisher diffusion with genic selection
+and two-way mutation satisfies `|b(x) - b(y)| ≤ (|σ| + (|θ₁| + |θ₂|) / 2) |x - y|`.

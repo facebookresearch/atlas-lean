@@ -1,5 +1,6 @@
-# Eigen-instance of Theorem 1, `k = 2`, `n = 2`
+# Eigen-instance of Theorem 1 for k = 2 and n = 2
 
-With `w₂ = 28x² - 35x + 10`
-(Table A1) and eigenvalue `λ = 10`, `β(x) = x² (1 - x) (28x² - 35x + 10)` satisfies
-Equation A1.
+For every real number `x`, `β(x) = x² (1 - x) (28x² - 35x + 10)` satisfies
+`(1 - 10x) β(x) = x² (1 - x) β''(x) / 2`. This is the instance `k = 2`, `n = 2` of Patterson's
+Appendix Equation A1, with `β = x² (1 - x) w₂` for the polynomial `w₂ = 28x² - 35x + 10` of his
+Table A1 and eigenvalue `10`.

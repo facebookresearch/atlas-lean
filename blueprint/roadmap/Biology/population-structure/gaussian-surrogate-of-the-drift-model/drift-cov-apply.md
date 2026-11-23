@@ -1,3 +1,5 @@
-# Drift Cov apply
+# Entries of the drift covariance matrix
 
-Entries of the TreeMix covariance: `Σ X Y = ∑ e, w X e * w Y e * len e`.
+For a finite set of edges, real lineage weights `w X e` and nonnegative edge lengths `ℓ e`, the
+entries of the [drift covariance matrix](drift-cov.md) `Σ = W diag(ℓ) Wᵀ` are
+`Σ X Y = ∑ e, w X e * w Y e * ℓ e` for all populations `X`, `Y`.

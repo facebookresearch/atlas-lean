@@ -2,28 +2,28 @@
 
 ## The allele-count configuration
 
-- [Allele Count](allele-count.md)
-- [Ewens Config Prob](ewens-config-prob.md)
-- [Sum mul allele Count](sum-mul-allele-count.md)
-- [Sum allele Count](sum-allele-count.md)
-- [Ewens Prob eq ewens Config Prob](ewens-prob-eq-ewens-config-prob.md)
-- [The Ewens sampling formula as the law of the allele-count configuration](sum-ewens-prob-allele-count-eq.md)
-- [Sum ewens Prob allele Count eq zero](sum-ewens-prob-allele-count-eq-zero.md)
-- [Expected number of alleles](sum-ewens-prob-mul-sum-allele-count.md)
+- [Allele-count configuration of an allelic partition](allele-count.md)
+- [Ewens sampling formula on allele-count configurations](ewens-config-prob.md)
+- [An allele-count configuration accounts for every gene](sum-mul-allele-count.md)
+- [The number of alleles is the sum of the allele counts](sum-allele-count.md)
+- [The partition and configuration forms of the Ewens formula agree](ewens-prob-eq-ewens-config-prob.md)
+- [Ewens sampling formula as the law of the allele-count configuration](sum-ewens-prob-allele-count-eq.md)
+- [Configurations not totalling the sample size get zero Ewens weight](sum-ewens-prob-allele-count-eq-zero.md)
+- [Expected number of alleles in configuration form](sum-ewens-prob-mul-sum-allele-count.md)
 
 ## The coalescent with killing
 
-- [Killing Coalescent](killing-coalescent.md)
-- [Indep Fun](indep-fun.md)
-- [Num Alleles](num-alleles.md)
-- [Measure Real mutation first](measure-real-mutation-first.md)
+- [Coalescent with killing](killing-coalescent.md)
+- [The two clocks of a level are independent](indep-fun.md)
+- [Number of alleles in the coalescent with killing](num-alleles.md)
+- [Probability that the next event at a level is a mutation](measure-real-mutation-first.md)
 - [Expected number of alleles from the coalescent](integral-num-alleles.md)
-- [Integral num Alleles eq ewens](integral-num-alleles-eq-ewens.md)
+- [Coalescent and Ewens formula give the same expected allele count](integral-num-alleles-eq-ewens.md)
 
 ## A concrete model
 
-- [Killing Rate](killing-rate.md)
-- [Killing Rate pos](killing-rate-pos.md)
-- [Killing Measure](killing-measure.md)
-- [Is Probability Measure killing Measure](is-probability-measure-killing-measure.md)
-- [Of Pi](of-pi.md)
+- [Clock rates of the coalescent with killing](killing-rate.md)
+- [The clock rates are positive for a positive mutation rate](killing-rate-pos.md)
+- [Product measure of independent exponential clocks](killing-measure.md)
+- [The product of the exponential clocks is a probability measure](is-probability-measure-killing-measure.md)
+- [A coalescent with killing on the product of exponential clocks](of-pi.md)

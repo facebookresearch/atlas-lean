@@ -1,3 +1,5 @@
-# Coll Count
+# Number of pairs of lineages that pick the same parent
 
-The number of pairs of lineages `k < l` that pick the same parent under `φ`.
+For `b` lineages that pick the parents `φ(0), …, φ(b - 1)`, given by a map
+`φ : {0, …, b - 1} → {0, …, N - 1}`, the number of [pairs](lineage-pairs.md) `k < l` of lineage
+labels with `φ(k) = φ(l)`.

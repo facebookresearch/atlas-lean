@@ -1,10 +1,8 @@
-# Ratio eq mul div of eq mul
+# Real-number bias factor of the f4 ratio
 
-Bias factor of the f4-ratio estimator, in the real-number form that the
-drift-model glue instantiates with `fX = f4(A, O; X, C)`, `fY = f4(A, O; Y, C)`
-and `fB = f4(A, O; B, C)`: if the numerator is `α` times the statistic of the
-unsampled source `Y` (`fX = α * fY`, the conclusion of
-`DriftModel.f4_admixture_right` for `X = α Y + (1 - α) C`) and the denominator
-`fB` is nonzero, the ratio `fX / fB` is `α` times the factor `fY / fB`. For
-`fB = 0` the ratio is undefined; Lean's value `fX / 0 = 0` is junk and is not
-covered by this statement.
+For real numbers `α`, `fX`, `fY`, `fB` with `fX = α * fY` and `fB ≠ 0`, `fX / fB = α * (fY / fB)`.
+With `fX = f4(A, O; X, C)`, `fY = f4(A, O; Y, C)` and `fB = f4(A, O; B, C)`, where `fX = α * fY`
+holds when `X` is an `α : 1 - α` mixture of `Y` and `C` in lineage weights
+([f4 of an admixed population](../patterson-s-f-statistics/f4-admixture-right.md)), the f4 ratio is
+`α` times the bias factor `fY / fB` of the unsampled source `Y` relative to the sampled reference
+`B`.

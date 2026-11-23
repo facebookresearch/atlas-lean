@@ -1,23 +1,23 @@
 # Identifiability of the GTR model
 
-- [Is GTRParam](is-gtrparam.md)
-- [Gtr Rate apply of ne](gtr-rate-apply-of-ne.md)
-- [Symmetry: the diagonal of `s` is not identified](gtr-rate-congr-off-diag.md)
+- [GTR parameter domain](is-gtrparam.md)
+- [Off-diagonal entries of the GTR rate matrix](gtr-rate-apply-of-ne.md)
+- [The diagonal of the exchangeabilities does not affect the rate matrix](gtr-rate-congr-off-diag.md)
 - [The GTR rate matrix determines its base frequencies](eq-of-gtr-rate-eq.md)
 - [GTR identifiability from the rate matrix](eq-and-off-diag-eq-of-gtr-rate-eq.md)
-- [GTR identifiability, exact form](gtr-rate-eq-iff.md)
+- [GTR identifiability from the rate matrix, exact form](gtr-rate-eq-iff.md)
 
 ## State relabeling
 
-- [Relabeling equivariance](gtr-rate-comp-perm.md)
-- [Comp perm](comp-perm.md)
-- [Identifiability up to relabeling](eq-comp-perm-of-gtr-rate-submatrix-eq.md)
+- [Relabeling equivariance of the GTR rate matrix](gtr-rate-comp-perm.md)
+- [Relabeling the states preserves the GTR domain](comp-perm.md)
+- [GTR identifiability from the rate matrix up to relabeling](eq-comp-perm-of-gtr-rate-submatrix-eq.md)
 
 ## Rate/time scaling
 
-- [Gtr Rate smul](gtr-rate-smul.md)
-- [Smul](smul.md)
-- [Symmetry: rate and time are confounded at a single branch](ctmc-transition-gtr-rate-smul.md)
+- [Scaling the exchangeabilities scales the GTR rate matrix](gtr-rate-smul.md)
+- [Positive rescaling of the exchangeabilities preserves the GTR domain](smul.md)
+- [Rate and time are confounded at a single branch](ctmc-transition-gtr-rate-smul.md)
 
 ## Identifiability from the transition function
 
@@ -26,11 +26,11 @@
 
 ## The pair-site law of one branch
 
-- [Gtr Pair Law](gtr-pair-law.md)
-- [Sum gtr Pair Law right](sum-gtr-pair-law-right.md)
-- [Total mass](sum-sum-gtr-pair-law.md)
-- [Gtr Pair Law nonneg](gtr-pair-law-nonneg.md)
-- [Symmetry: rate and time are confounded in the pair-site law](gtr-pair-law-smul.md)
+- [Pair-site law of a GTR branch](gtr-pair-law.md)
+- [The row marginal of the pair-site law is the base-frequency vector](sum-gtr-pair-law-right.md)
+- [The pair-site law has total mass one for every branch length](sum-sum-gtr-pair-law.md)
+- [The pair-site law is nonnegative for nonnegative branch lengths](gtr-pair-law-nonneg.md)
+- [Rate and time are confounded in the pair-site law](gtr-pair-law-smul.md)
 
 ## Identifiability from a single branch
 
@@ -45,4 +45,4 @@
 
 ## A submodel: K80
 
-- [K80 identifiability](k80-rate-injective.md)
+- [The K80 rate matrix determines the transition/transversion ratio](k80-rate-injective.md)

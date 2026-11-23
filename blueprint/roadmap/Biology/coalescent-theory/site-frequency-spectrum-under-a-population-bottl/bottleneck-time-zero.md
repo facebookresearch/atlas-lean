@@ -1,3 +1,4 @@
-# Bottleneck Time zero
+# The bottleneck time change fixes the present
 
-The present is fixed by the time change: `G(0) = 0` (for a bottleneck in the past).
+For real numbers `a ≥ 0`, `d ≥ 0` and `f > 0`, the [time change](bottleneck-time.md) satisfies
+`G(0) = 0`.

@@ -1,6 +1,7 @@
-# Tendsto killed Green one sub div
+# Boundary ratio of the killed Green's function at frequency 1
 
-The boundary ratio in the integrated form of Patterson's Equation 14:
-`G_C(1 - ε, y) / (2ε) → a₁(y) / ((1 - y) y)` as `ε → 0⁺`, the contribution of an
-allele that was fixed, since `G_C(1 - ε, y) = (2 a₁(y) / ((1 - y) y)) a₂(1 - ε)`
-and `a₂(1 - ε) = ε / (1 - ε)`.
+For `0 < y < 1`, `G_C(1 - ε, y) / (2ε) → a₁(y) / ((1 - y) y)` as `ε → 0⁺`, where
+[`G_C`](killed-green.md) is the killed Green's function and [`a₁`](patterson-aux1.md) Patterson's
+first solution. Patterson's Equation 14, integrated over time, uses this limit as the contribution
+of an allele that was fixed; it follows from `G_C(1 - ε, y) = 2 a₁(y) a₂(1 - ε) / ((1 - y) y)` and
+`a₂(1 - ε) = ε / (1 - ε)`.

@@ -1,5 +1,5 @@
-# Patterson Dilog eq integral
+# Patterson's integral form of the dilogarithm
 
-On `(0, 1)`, Patterson's `dilog`, defined here through `Real.li2PowerSeries`, agrees
-with Patterson's integral definition `∫₁ˣ (log t) / (1 - t) dt`. The proof
-integrates the derivative from `x` to `1` and uses the limit `0` at `1`.
+For `0 < x < 1`, Patterson's dilogarithm [`dilog`](patterson-dilog.md) satisfies
+`dilog(x) = ∫₁ˣ log t / (1 - t) dt`, the oriented integral from `1` to `x`: the series definition
+agrees with Patterson's integral definition.

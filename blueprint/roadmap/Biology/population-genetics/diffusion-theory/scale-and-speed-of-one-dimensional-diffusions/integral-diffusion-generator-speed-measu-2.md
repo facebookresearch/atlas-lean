@@ -1,8 +1,11 @@
-# Weak stationarity against the speed measure (zero-flux case)
+# Weak stationarity against the speed measure, zero-flux case
 
-When both boundary
-fluxes vanish, `∫ L f ∂m = 0`: the case `L0 = L1 = 0` of
-`integral_diffusionGenerator_speedMeasure`. The Beta-mutation weak stationarity
-`integral_mutationGenerator_betaMeasure` is a parallel singular-endpoint result that this
-does not subsume. As above, this is analytic stationarity only, with no process-level,
-reversibility, or finiteness claim.
+Let `b`, `a` define a [regular diffusion](../selection-duality-and-general-one-dimensional-di/is-regular-diffusion.md) on `(0, 1)`, with scale density `ψ` and
+[speed measure](speed-measure.md) `m`, and let `f` be twice continuously differentiable on
+`[0, 1]`. If `f'(y) / ψ(y)` tends to `0` both as `y → 0` from the right and as `y → 1` from the
+left, and `L_{b,a} f`, with `L_{b,a}` the [backward generator](../selection-duality-and-general-one-dimensional-di/diffusion-generator.md), is integrable with respect to `m`, then
+
+`∫ (L_{b,a} f) dm = 0`.
+
+This is the case `L₀ = L₁ = 0` of the
+[boundary-flux form](integral-diffusion-generator-speed-measu.md).

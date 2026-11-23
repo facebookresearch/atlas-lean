@@ -1,4 +1,4 @@
-# Retained Alleles
+# Alleles retained in a founder sample
 
-The set of alleles retained in a founder sample `s`: the image of the
-sample tuple.
+The alleles retained in an ordered founder sample `s = (s_1, …, s_k)` form the set
+`{s_1, …, s_k}` of the alleles drawn, the image of the sample.

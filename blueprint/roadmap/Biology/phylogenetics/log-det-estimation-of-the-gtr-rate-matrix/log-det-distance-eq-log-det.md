@@ -1,7 +1,8 @@
 # Paralinear form of the log-det distance
 
-With positive base-frequency estimates and a
-positive definite normalized divergence matrix, `logDetDistance F` equals the paralinear (LogDet)
-distance `-log det Fₛ + ∑ i, log (baseFreq F i)` of the symmetrized divergence matrix
-`Fₛ = (F + Fᵀ) / 2`, whose two marginals are both `baseFreq F` (Lake 1994; Lockhart et al.
-1994).
+Let `ι` be a finite set of states. Let `F` be a real `ι × ι` matrix whose
+[base-frequency estimates](base-freq.md) `b(F) i = (∑_j F i j + ∑_j F j i) / 2` are all positive and
+whose [normalized divergence matrix](norm-divergence.md) `N(F)` is positive definite. Then the
+[log-det distance](log-det-distance.md) `Δ(F)` is the paralinear (LogDet) distance of the
+symmetrized divergence matrix `F_s = (F + Fᵀ) / 2`, both of whose marginals are `b(F)`:
+`Δ(F) = -log (det F_s) + ∑_i log (b(F) i)` (Lake 1994; Lockhart, Steel, Hendy and Penny 1994).

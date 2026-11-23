@@ -1,3 +1,3 @@
-# Shift Filtration
+# Filtration after a deterministic time
 
-The σ-algebras `ℱ_{s + u}`, `u ≥ 0`, as a filtration.
+For a filtration `(ℱ_t)_{t ≥ 0}` and a time `s ≥ 0`, the filtration `(ℱ_{s + u})_{u ≥ 0}`.

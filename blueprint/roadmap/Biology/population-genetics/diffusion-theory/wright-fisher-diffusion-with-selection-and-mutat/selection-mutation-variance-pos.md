@@ -1,4 +1,4 @@
-# Selection Mutation Variance pos
+# The stationary variance is positive for θ₁, θ₂ > 0
 
-Positivity of the stationary variance for positive mutation parameters:
-the stationary law is non-degenerate.
+For every real `α` and all real `θ₁ > 0` and `θ₂ > 0`, the [stationary variance](selection-mutation-variance.md) is positive:
+`v(α, θ₁, θ₂) > 0`, so the stationary distribution is not concentrated at one point.

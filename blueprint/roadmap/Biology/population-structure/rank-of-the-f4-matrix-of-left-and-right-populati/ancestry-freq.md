@@ -1,6 +1,10 @@
-# Ancestry Freq
+# Admixture-model frequencies of individuals and ancestral populations
 
-Frequencies of the `AdmixtureEM` global-ancestry model over loci:
-individuals have frequency `qf θ i j = ∑ k, Q i k * F k j`, and ancestral
-populations have frequency `F k j`. This is the `Params` specialization of
-`ancestryFreqOf`.
+Let `θ = (Q, F)` be
+[parameters of the admixture model](../admixture-model-and-the-frappe-em-algorithm/params.md) with
+individuals `I`, SNPs `J` and a finite set `K` of ancestral populations, so that `Q i k > 0`,
+`∑ k, Q i k = 1` for every `i`, and `0 < F k j < 1`. The admixture-model frequency family is the
+[global-ancestry family](ancestry-freq-of.md) of `Q` and `F`: individual `i` has frequency
+`∑ k, Q i k * F k j` at SNP `j`, its
+[reference-allele probability](../admixture-model-and-the-frappe-em-algorithm/qf.md), and ancestral
+population `k` has frequency `F k j`.

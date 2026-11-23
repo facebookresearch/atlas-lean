@@ -1,3 +1,4 @@
-# Growth Time zero right
+# The time change fixes time zero
 
-The present is fixed by the time change: `G(0) = 0`.
+For every real number `ρ`, the [time change](growth-time.md) for exponential growth at rate `ρ`
+satisfies `G(0) = 0`: the present is fixed.

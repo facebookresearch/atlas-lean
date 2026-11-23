@@ -1,4 +1,14 @@
-# Kimura Fixation two mul mul
+# Kimura's fixation probability in terms of 4Ns, for nonzero Ns
 
-Source bridge (Kimura 1962, `N_e = N`): with `α = 2Ns`, `u_α(p) = (1 - e^{-4Nsp}) / (1 - e^{-4Ns})`
-whenever `Ns ≠ 0`.
+For real numbers $N$, $s$ and $p$ with $Ns \ne 0$, [Kimura's fixation probability](kimura-fixation.md)
+with scaled selection coefficient $\sigma = 2Ns$ is
+
+$$u_{2Ns}(p) = \frac{1 - e^{-4Nsp}}{1 - e^{-4Ns}}.$$
+
+This is the form given by Kimura (1962) when the effective population size equals the census size
+$N$.
+
+## Sources
+
+- M. Kimura, *On the probability of fixation of mutant genes in a population*, Genetics 47 (1962),
+  713–719.

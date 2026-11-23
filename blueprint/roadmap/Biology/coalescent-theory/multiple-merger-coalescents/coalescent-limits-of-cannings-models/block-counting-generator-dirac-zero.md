@@ -1,4 +1,6 @@
-# Block Counting Generator dirac zero
+# The block-counting generator for Λ = δ₀ is Kingman's
 
-Kingman's coalescent is the boundary case `Λ = δ₀` of the Λ-coalescent: its block-counting
-generator is Kingman's pure-death generator (`k → k - 1` at rate `k choose 2`).
+For every `n`, the [block-counting generator](../../coalescents/block-counting-generator.md) of
+the Λ-coalescent with `Λ = δ₀` on the states `0, …, n` equals
+[Kingman's pure-death generator](../../ancestral-lineage-counting-and-tavar-s-formula/block-counting-generator.md)
+(`k → k - 1` at rate `C(k, 2)`): Kingman's coalescent is the boundary case `Λ = δ₀`.
