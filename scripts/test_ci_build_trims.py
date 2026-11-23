@@ -22,6 +22,7 @@ import ast
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import tempfile
 import textwrap
@@ -213,7 +214,7 @@ class BuildTrims(unittest.TestCase):
                 (root / name).write_text(name)
             subprocess.run(["git", "init", "-q"], cwd=root, check=True)
 
-            def key(image: str | None = "20261116.1") -> str:
+            def key(image: str | None = "20261116.1", failing: str = "") -> str:
                 subprocess.run(["git", "add", "-A"], cwd=root, check=True)
                 output = root / "output"
                 output.write_text("")
@@ -221,12 +222,23 @@ class BuildTrims(unittest.TestCase):
                 env.pop("ImageVersion", None)
                 if image is not None:
                     env["ImageVersion"] = image
-                subprocess.run(["bash", "-c", script], cwd=root, env=env, check=True)
+                if failing:  # a `git` that fails when this condition on its arguments holds
+                    stub = Path(directory) / "bin"
+                    stub.mkdir(exist_ok=True)
+                    (stub / "git").write_text(f'#!/usr/bin/env bash\nif {failing}; then exit 42; fi\n'
+                                              f'exec {shutil.which("git")} "$@"\n')
+                    (stub / "git").chmod(0o755)
+                    env["PATH"] = f"{stub}:{env['PATH']}"
+                result = subprocess.run(["bash", "-c", script], cwd=root, env=env, capture_output=True, text=True)
+                self.assertEqual(result.returncode != 0, bool(failing), result.stderr)
                 return output.read_text()
 
             first = key()
             self.assertTrue(first.startswith("key=audit-tools-tested-Linux-20261116.1-"), first)
             self.assertEqual(key(None), "", "no image version, no fingerprint")
+            for failing in ('[[ "$1 $2" == "ls-files --stage" ]]',  # the index listing fails
+                            '[[ "$1 $2" == "ls-files -z" ]]'):  # the checked-out listing fails
+                self.assertEqual(key(failing=failing), "", failing)
             self.assertNotEqual(key("20261123.1"), first)
             for path in ("scripts/taxonomy.json", "README.md"):  # not inputs
                 (root / path).write_text("changed")

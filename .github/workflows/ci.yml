@@ -208,8 +208,9 @@ jobs:
             MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean
             MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean
           )
+          # Any failure leaves no fingerprint, so the tests run.
           digest="$({
-            git ls-files --stage -z -- "${specs[@]}"
+            git ls-files --stage -z -- "${specs[@]}" || exit 1
             git ls-files -z -- "${specs[@]}" | xargs -0 -r sha256sum --
           } | sha256sum | cut -d ' ' -f 1)"
           echo "key=audit-tools-tested-${RUNNER_OS}-${ImageVersion}-${digest}" >> "$GITHUB_OUTPUT"
