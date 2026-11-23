@@ -19,6 +19,7 @@ public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 public import Mathlib.Data.Real.Sqrt
 public import Mathlib.Tactic.NormNum.RealSqrt
 public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
 public import CSLibExt.Planning.MotionPlanning.ConfigurationSpace
 public import CSLibExt.Planning.MotionPlanning.TwoSquares
 
@@ -1110,5 +1111,96 @@ theorem min_eq :
     obtain ⟨l, hl, rfl⟩ := hw
     exact walk_lower l hl
 
+
+/-- Length of a graph walk, measured by its vertex list. -/
+noncomputable def walkWeight {a b : Vtx} (p : visGraph.Walk a b) : ℝ := polyLen p.support
+
+theorem last?_eq (l : List Vtx) : last? l = l.getLast? := by
+  induction l with
+  | nil => rfl
+  | cons x xs ih =>
+      cases xs with
+      | nil => rfl
+      | cons y ys => exact ih
+
+theorem head?_support {a b : Vtx} (p : visGraph.Walk a b) :
+    p.support.head? = some a := by
+  cases p with
+  | nil => rfl
+  | cons h q => rfl
+
+theorem last?_cons_of_ne_nil (x : Vtx) (l : List Vtx) (h : l ≠ []) :
+    last? (x :: l) = last? l := by
+  cases l with
+  | nil => exact absurd rfl h
+  | cons y ys => rfl
+
+theorem last?_support {a b : Vtx} (p : visGraph.Walk a b) :
+    last? p.support = some b := by
+  induction p with
+  | nil => rfl
+  | @cons u v w h p ih =>
+      have h2 : last? (u :: p.support) = last? p.support :=
+        last?_cons_of_ne_nil u p.support p.support_ne_nil
+      rw [SimpleGraph.Walk.support_cons]
+      exact h2.trans ih
+
+theorem chainAdj_cons_support {v w : Vtx} (p : visGraph.Walk v w) :
+    ∀ {u : Vtx}, visGraph.Adj u v → ChainAdj (u :: p.support) := by
+  induction p with
+  | nil =>
+      intro u hadj
+      exact ⟨hadj, trivial⟩
+  | @cons v' v'' w' h' p' ih =>
+      intro u hadj
+      rw [SimpleGraph.Walk.support_cons]
+      exact ⟨hadj, ih h'⟩
+
+theorem chainAdj_support {a b : Vtx} (p : visGraph.Walk a b) :
+    ChainAdj p.support := by
+  cases p with
+  | nil => trivial
+  | @cons u v w h p' => exact chainAdj_cons_support p' h
+
+theorem isWalk_support (p : visGraph.Walk .s .t) : IsWalk p.support :=
+  ⟨head?_support p, last?_support p, chainAdj_support p⟩
+
+theorem exists_walk_of_chain {a : Vtx} {l : List Vtx} (hhead : l.head? = some a)
+    (hadj : ChainAdj l) {b : Vtx} (hlast : last? l = some b) :
+    ∃ p : visGraph.Walk a b, p.support = l := by
+  induction l generalizing a b with
+  | nil => simp at hhead
+  | cons x xs ih =>
+      cases xs with
+      | nil =>
+          have hax : x = a := by simpa using hhead
+          have hbx : x = b := by simpa [last?] using hlast
+          subst a
+          subst b
+          exact ⟨.nil, SimpleGraph.Walk.support_nil⟩
+      | cons y ys =>
+          have hax : x = a := by simpa using hhead
+          subst a
+          obtain ⟨hxy, hadj'⟩ := hadj
+          have hhead' : (y :: ys).head? = some y := rfl
+          obtain ⟨p', hp'⟩ := ih hhead' hadj' hlast
+          exact ⟨.cons hxy p', by simp [SimpleGraph.Walk.support_cons, hp']⟩
+
+theorem exists_walk_of_isWalk {l : List Vtx} (h : IsWalk l) : ∃ p : visGraph.Walk .s .t, p.support = l := by
+  obtain ⟨hhead, hlast, hadj⟩ := h
+  exact exists_walk_of_chain hhead hadj hlast
+
+/-- The SimpleGraph.Walk form of min_eq. -/
+theorem min_eq_walk : IsLeast {w | ∃ p : visGraph.Walk .s .t, walkWeight p = w} (3 + Real.sqrt 5) := by
+  refine ⟨?_, ?_⟩
+  · obtain ⟨l, hwalk, hlen⟩ := min_eq.1
+    obtain ⟨p, hp⟩ := exists_walk_of_isWalk hwalk
+    exact ⟨p, by simpa only [walkWeight, hp] using hlen⟩
+  · rw [mem_lowerBounds]
+    intro w hw
+    obtain ⟨p, hpw⟩ := hw
+    have hlb : ∀ b ∈ {w | ∃ l, IsWalk l ∧ polyLen l = w}, 3 + Real.sqrt 5 ≤ b :=
+      mem_lowerBounds.mp min_eq.2
+    exact hlb w ⟨p.support, isWalk_support p, hpw⟩
 
 end Cslib.Planning.MotionPlanning.TwoSquaresGraph

@@ -39,9 +39,21 @@ example : ¬ visGraph.Adj .s .s := visGraph.loopless.irrefl _
 example : ¬ IsWalk [.s, .s, .D, .P, .t] :=
   fun h => visGraph.loopless.irrefl _ h.2.2.1
 
+example : ∃ p : visGraph.Walk .s .t, walkWeight p = 3 + Real.sqrt 5 := by
+  have hwalk : IsWalk [.s, .D, .P, .t] :=
+    ⟨rfl, rfl, ⟨by decide, adj_s_D⟩, ⟨by decide, adj_D_P⟩, ⟨by decide, adj_P_t⟩,
+      trivial⟩
+  obtain ⟨p, hp⟩ := exists_walk_of_isWalk hwalk
+  refine ⟨p, ?_⟩
+  show polyLen p.support = _
+  rw [hp]
+  simp only [polyLen, dist_sD, dist_DP, dist_Pt]
+  ring
+
 #print axioms min_eq
 #print axioms adj_s_D
 #print axioms adj_D_P
+#print axioms min_eq_walk
 
 end Cslib.Planning.MotionPlanning.TwoSquaresGraph
 
