@@ -161,4 +161,3 @@ def IsStratifiedAlgebraicIso {n : ℕ} {X : RealVariety n} {r s : ℕ}
   ∃ S : Stratification X, IsAlgebraicIsoFor a S
 
 end MathlibExt.AlgebraicGeometry.RealAlgebraicBundleStrata
-

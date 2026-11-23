@@ -8,8 +8,9 @@ Authors: The Tau Ceti contributors
 Ported from `TauCeti/Analysis/Normed/Operator/IdempotentRange.lean` in TauCetiProject/TauCeti
 (https://github.com/TauCetiProject/TauCeti) at revision
 62bbc0596dc3539d488232e4e924a338548ea0a9; the copyright and license notice above are the
-source's. Modification: imports of the coupled ports point to `MathlibExt`; declarations and
-proofs are unchanged.
+source's. Modification: imports of the coupled ports point to `MathlibExt`, and the description
+of `isLocallyConstant_finrank_range` notes that `finrank` is the rank only in finite dimension;
+declarations and proofs are unchanged.
 -/
 module
 
@@ -36,8 +37,9 @@ No compactness, separation or finite-dimensionality is assumed of the base or th
   continuous there.
 * `TauCeti.eventually_nonempty_continuousLinearEquiv_range`: the ranges of nearby projections in
   a continuous family are isomorphic.
-* `TauCeti.isLocallyConstant_finrank_range`: the rank of a continuous family of projections is
-  locally constant.
+* `TauCeti.isLocallyConstant_finrank_range`: the `finrank` of the ranges of a continuous family
+  of projections is locally constant (it is the rank when the ranges are finite-dimensional;
+  `finrank` is `0` on infinite-dimensional ranges).
 
 ## References
 
@@ -85,7 +87,9 @@ theorem eventually_nonempty_continuousLinearEquiv_range (hp : Continuous p)
     with x (hx : IsUnit (p x * p x₀ + (1 - p x) * (1 - p x₀)))
   exact ⟨ContinuousLinearMap.IsIdempotentElem.rangeEquiv (hidem x₀) (hidem x) hx⟩
 
-/-- **The rank of a continuous family of projections is locally constant.** -/
+/-- **The rank of a continuous family of projections is locally constant**, measured by
+`Module.finrank`: this is the rank when the ranges are finite-dimensional (`finrank` is `0` on an
+infinite-dimensional range; the range equivalences above compare the ranges themselves). -/
 theorem isLocallyConstant_finrank_range (hp : Continuous p)
     (hidem : ∀ x, IsIdempotentElem (p x)) :
     IsLocallyConstant fun x ↦ Module.finrank 𝕜 ((p x).range) :=

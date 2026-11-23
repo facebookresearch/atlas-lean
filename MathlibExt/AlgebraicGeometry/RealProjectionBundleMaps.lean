@@ -129,20 +129,19 @@ def classifyingRegularOn (S : Set (Ambient n)) : Prop :=
 theorem classifyingRegularOn_iff (S : Set (Ambient n)) :
     classifyingRegularOn P S ↔ IsAlgebraicOn P S := Iff.rfl
 
-/-- Actual locally rational maps of embedded real varieties. -/
+/-- Actual locally rational maps of embedded real varieties: a continuous map of real points
+whose coordinates are regular functions on the source locus. Only the values on the source locus
+are data, so two regular maps with the same map of points are equal (`RegularMap.ext`). -/
+@[ext]
 structure RegularMap {a b : ℕ} (X : RealVariety a) (Y : RealVariety b) where
-  function : Ambient a → Ambient b
-  lands : ∀ x ∈ X.locus, function x ∈ Y.locus
-  regular : ∀ i : Fin b, RegularOn X.locus (fun x ↦ function x i)
-  continuous : ContinuousOn function X.locus
-
-def RegularMap.map {a b : ℕ} {X : RealVariety a} {Y : RealVariety b}
-    (f : RegularMap X Y) : X.locus → Y.locus :=
-  fun x ↦ ⟨f.function x.val, f.lands x.val x.property⟩
-
-theorem RegularMap.map_continuous {a b : ℕ} {X : RealVariety a} {Y : RealVariety b}
-    (f : RegularMap X Y) : Continuous f.map :=
-  (continuousOn_iff_continuous_domRestrict.mp f.continuous).subtype_mk _
+  /-- The map of real points. -/
+  map : X.locus → Y.locus
+  /-- Each coordinate is regular on the source locus. `RegularOn` only reads values on the locus,
+  so this is tested on every ambient extension of the coordinate (one exists: zero elsewhere). -/
+  regular : ∀ i : Fin b, ∀ f : Ambient a → ℝ, (∀ x : X.locus, f x.val = (map x).val i) →
+    RegularOn X.locus f
+  /-- The map of real points is continuous for the Euclidean topologies. -/
+  map_continuous : Continuous map
 
 def pullback {m : ℕ} (Y : RealVariety m) (f : Y.locus → X.locus)
     (hf : Continuous f) : ProjectionBundle Y r where
