@@ -37,14 +37,12 @@ open _root_.MathlibExt.AlgebraicGeometry.PointedPicardFamilies
 universe u
 
 /-- Picard zero of a reduced proper connected curve, with its normalized
-universal bundle and all-test-scheme representing property. Such a curve has
-`H⁰(C, 𝒪_C) = k`; this is recorded as `HasConstantGlobalSections`, so that
-the genus is defined. -/
+universal bundle and all-test-scheme representing property. Its dimension is
+`dim H¹(C, 𝒪_C)`, the arithmetic genus (such a curve has `H⁰(C, 𝒪_C) = k`). -/
 public def_wanted generalizedJacobian
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (C : Over (Spec (.of k))) [IsProperCurve C.hom]
     [GeometricallyReduced C.hom] [GeometricallyConnected C.hom]
-    [HasConstantGlobalSections C.hom]
     (p : 𝟙_ (Over (Spec (.of k))) ⟶ C) : PicardZeroModel C p
 
 end WantedExt.AlgebraicGeometry.GeneralizedJacobian
