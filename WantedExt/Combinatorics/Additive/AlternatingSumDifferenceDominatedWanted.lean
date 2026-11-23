@@ -21,28 +21,13 @@ A finite set `A ⊆ ℤ` is MSTD (sum-dominated) when `|A + A| > |A - A|` and MD
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
-public import Mathlib.Data.Int.Interval
+public import MathlibExt.Combinatorics.Additive.IntervalEraseAddSub
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Pointwise
-
-/-- **Sums and differences of an interval with one point removed.** Let $m$ and $r$ be integers
-with $m \ge 4$ and $2 \le r \le m - 3$, and let $B = \{0, 1, \dots, m - 1\} \setminus \{r\}$. Then
-the sumset $B + B = \{b + b' : b, b' \in B\}$ is $\{0, 1, \dots, 2m - 2\}$ and the difference set
-$B - B = \{b - b' : b, b' \in B\}$ is the set of integers from $-(m - 1)$ to $m - 1$.
-
-Source: Yorick Herrmann, Connor Hill, Merlin Phillips, Daniel Flores, Steven J. Miller and
-Steven Senger, *Additional Constructions of Sequences of Alternating Sum and Difference
-Dominated Sets*, INTEGERS 26 (2026), Article A88, Lemma 1 (`integers-2026-A88-lem-1`). -/
-public theorem_wanted interval_erase_add_sub {m r : ℤ} (hm : 4 ≤ m) (hr : 2 ≤ r)
-    (hrm : r ≤ m - 3) :
-    (Finset.Icc 0 (m - 1)).erase r + (Finset.Icc 0 (m - 1)).erase r = Finset.Icc 0 (2 * m - 2) ∧
-      (Finset.Icc 0 (m - 1)).erase r - (Finset.Icc 0 (m - 1)).erase r =
-        Finset.Icc (-(m - 1)) (m - 1)
 
 /-- **Alternating sum- and difference-dominated sets from shifted copies.** For a set $S$ of
 integers write $S + S = \{s + s' : s, s' \in S\}$ and $S - S = \{s - s' : s, s' \in S\}$. Let $A_1$
