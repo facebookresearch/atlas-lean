@@ -14,6 +14,7 @@ public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.Digits.BinomialFormTwoPowBase
+public import MathlibExt.NumberTheory.Digits.DigitsPowAndPowAddOne
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
 
@@ -193,20 +194,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 5
 (`integers-2024-A69-thm-5`). -/
 public theorem_wanted exists_small_base_binomialForm_two_pow (n : ℕ) (hn : 2 ≤ n) :
     ∃ y b : ℕ, y ≤ ⌈Real.sqrt (2 * n)⌉₊ + 1 ∧ 2 ≤ b ∧ b ≤ 2 ^ y - 1 ∧ HasBinomialForm b (2 ^ n)
-
-/-- **Digits of a power of the base and of its successor.** Let $z \ge 2$ and $n$ be natural
-numbers. Then the base-$z$ digits of $z^n$ are a $1$ followed by $n$ zeros, and, if $n \ge 1$,
-the base-$z$ digits of $z^n + 1$ are a $1$, then $n - 1$ zeros, then a $1$.
-
-Part (III) of the source theorem is omitted: as printed ($z^n - 1 = (1, 1, \dots, 1)_z$) it is
-false for $z \ge 3$, for example $3^2 - 1 = 8 = (2, 2)_3$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 7
-(`integers-2024-A69-thm-7`), parts (I) and (II). -/
-public theorem_wanted digits_pow_and_pow_add_one (z n : ℕ) (hz : 2 ≤ z) :
-    Nat.digits z (z ^ n) = List.replicate n 0 ++ [1] ∧
-      (1 ≤ n → Nat.digits z (z ^ n + 1) = [1] ++ List.replicate (n - 1) 0 ++ [1])
 
 /-- **The Nagell–Ljunggren equation in natural numbers (Bugeaud–Mihăilescu).** Let $x, y, n, q$
 be natural numbers with $x \ge 2$, $y \ge 2$, $n \ge 3$ and $q \ge 2$ such that
