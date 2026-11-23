@@ -38,6 +38,14 @@ attribute [local instance] HasDerivedCategory.standard
 def unitClass (Z : TopCat.{0}) : BettiRealization.Cohomology Z 0 :=
   (shiftFunctorZero (RationalDerived Z) ℤ).inv.app (rationalUnit Z)
 
+/-- The powers `hʲ ∈ H^{2j}(Z)` of a degree-two class, by repeated cup
+product with the unit class in degree zero. -/
+def powerClass (Z : TopCat.{0}) (h : BettiRealization.Cohomology Z 2) :
+    (j : ℕ) → BettiRealization.Cohomology Z (2 * j)
+  | 0 => unitClass Z
+  | j + 1 => BettiRealization.cohomologyCast (by omega)
+      (BettiRealization.cup Z h (powerClass Z h j))
+
 /-- A selected smooth purity family: for every smooth complex variety of pure
 dimension `d`, an isomorphism of its dualizing complex with `ℚ[2d]`. Such an
 isomorphism is unique up to an invertible locally constant scalar (a choice of

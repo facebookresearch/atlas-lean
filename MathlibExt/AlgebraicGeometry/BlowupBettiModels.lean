@@ -100,13 +100,6 @@ instance : IsClosedImmersion B.exceptionalMap.left :=
 
 end BlowupModel
 
-/-- The powers `hʲ ∈ H^{2j}(Z)` of a degree-two class, by repeated cup
-product with the unit class in degree zero. -/
-def powerClass (Z : TopCat) (h : Cohomology Z 2) :
-    (j : ℕ) → Cohomology Z (2 * j)
-  | 0 => unitClass Z
-  | j + 1 => cohomologyCast (by omega) (cup Z h (powerClass Z h j))
-
 variable
   (D : ∀ (X : ComplexScheme) [IsComplexVariety X],
     MathlibExt.AlgebraicGeometry.CompactSupportBetti.DualizingComplex (space X))
