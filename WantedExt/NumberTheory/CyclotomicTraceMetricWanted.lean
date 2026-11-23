@@ -38,17 +38,6 @@ open IsCyclotomicExtension
 
 variable {p : ℕ} [NeZero p] {K : Type*} [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 
-/-- **Galois invariance of the trace metric.** Let $p$ be a prime and let $K$ be a $p$-th
-cyclotomic extension of $\mathbb{Q}$. For every $\mathbb{Q}$-algebra automorphism $\sigma$ of $K$
-and all $\alpha, \beta \in K$, the trace distance satisfies
-$d(\sigma \alpha, \sigma \beta) = d(\alpha, \beta)$.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Proposition 1 (`integers-2025-A10-prop-1`). -/
-public theorem_wanted cyclotomicTraceDist_algEquiv (hp : p.Prime)
-    (σ : K ≃ₐ[ℚ] K) (α β : K) :
-    cyclotomicTraceDist p (σ α) (σ β) = cyclotomicTraceDist p α β
-
 /-- **The trace norm is a norm.** Let $p$ be a prime and let $K$ be a $p$-th cyclotomic extension
 of $\mathbb{Q}$, viewed as a $\mathbb{Q}$-vector space. The trace norm $\lVert \cdot \rVert$ on $K$
 is a norm: for all $\alpha, \beta \in K$ and $q \in \mathbb{Q}$, we have

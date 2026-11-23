@@ -43,7 +43,7 @@ correctness proofs, the machines, and NP membership are separate components.
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-- **Vertex pairs in encoding order.** For a natural number $n$, the list of all pairs $(i, j)$ of
 natural numbers with $i < j < n$, ordered by $i$ ascending and, for each $i$, by $j$ descending
