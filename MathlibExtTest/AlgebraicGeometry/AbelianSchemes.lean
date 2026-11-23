@@ -25,6 +25,7 @@ namespace MathlibExtTest.AlgebraicGeometry.AbelianSchemes
 open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory
 open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.AbelianSchemes
+open scoped CategoryTheory.MonObj
 
 def trivial (S : Scheme) : AbelianScheme S where
   model := 𝟙_ (Over S)
@@ -70,11 +71,22 @@ example (m n : ℤ) : A.multiplication m * A.multiplication n =
 example (T : Over S) : zeroSectionAt A T ≫ (prod.snd : prod A.model T ⟶ T) = 𝟙 T :=
   prod.lift_snd _ _
 
--- Pulling a family back along the identity of the parameter scheme uses the identity map.
-example (D : Over S) (P : (prod A.model D).left.Modules) :
-    familyPullback A.model D D P (𝟙 D) =
-      (Scheme.Modules.pullback (prod.map (𝟙 A.model) (𝟙 D)).left).obj P :=
-  rfl
+-- Pulling a family back along the identity of the parameter scheme gives the family back.
+theorem familyPullback_id_iso (A D : Over S) (P : (prod A D).left.Modules) :
+    Nonempty (familyPullback A D D P (𝟙 D) ≅ P) := by
+  unfold familyPullback
+  have h : (prod.map (𝟙 A) (𝟙 D)).left = 𝟙 (prod A D).left := by simp
+  exact ⟨((Scheme.Modules.pullbackCongr h).app P) ≪≫ (Scheme.Modules.pullbackId _).app P⟩
+
+-- The Poincaré family is classified by the identity of the dual.
+example (D : DualAbelianScheme A) :
+    D.classifyingMap D.dual.model D.poincare D.lineBundle D.normalized
+      D.fibrewisePicardZero = 𝟙 D.dual.model :=
+  (D.universal D.dual.model D.poincare D.lineBundle D.normalized
+    D.fibrewisePicardZero).unique (D.classifyingMap_family ..) (familyPullback_id_iso ..)
+
+-- `T`-valued points form a commutative group.
+example (T : Over S) : CommGroup (A.Points T) := inferInstance
 
 end General
 
