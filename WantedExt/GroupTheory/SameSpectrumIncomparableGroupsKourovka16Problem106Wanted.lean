@@ -36,7 +36,7 @@ equivalent since there are finitely many groups of each order. A quotient of a n
 
 /-- **Element-order spectrum of a group.** The spectrum $\pi_e(G)$ of a group $G$ is the set of
 orders of the elements of $G$, where an element of infinite order counts as having order $0$. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- **Subgroup or quotient of a normal subgroup.** For groups $A$ and $B$, the statement that $A$
