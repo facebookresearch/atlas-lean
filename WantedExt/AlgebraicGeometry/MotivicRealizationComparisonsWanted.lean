@@ -93,48 +93,4 @@ theorem_wanted realization_coefficients [PerfectField k]
       (u ≫ (motivicQ A).map (MotivicEilenbergMacLaneModels.coefficientMap B I Q p q a)) =
       ReducedMotivicCohomologyModels.coefficientMap B F X p q a (M.map X p q V u)
 
-private def check_reduced_free (k : Type) [Field k]
-    [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
-    (F : ReducedFreeNisSystem k) (Q : PointedSimplicialModuleFunctor k) :
-    DefWanted (ReducedFreeAdjunction F Q) := reduced_free_adjunction k F Q
-
-private def check_resolution (k : Type) [Field k]
-    [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)] :
-    DefWanted {I : KInjectiveResolutionSystem k // IsTermwiseInjective I} :=
-  termwise_injective_resolution k
-
-private def check_comparison [PerfectField k] :
-    DefWanted (RepresentabilityMap (A := A) B I Q F J) :=
-  localization_comparison B I Q F J
-
-private def check_fibrancy [PerfectField k] (hI : IsTermwiseInjective I)
-    (p q : ℤ) (V : ModuleCat.{1} ℤ) :
-    ProofWanted (IsMotivicFibrant A (K B I Q p q V).right) :=
-  motivic_fibrancy B I Q hI p q V
-
-private def check_representability [PerfectField k]
-    (M : RepresentabilityMap (A := A) B I Q F J)
-    (X : PointedSpaces (k := k)) (p q : ℤ) (V : ModuleCat.{1} ℤ) :
-    ProofWanted (Function.Bijective (M.map X p q V)) :=
-  realization_represents B I Q F J M X p q V
-
-private def check_pullback [PerfectField k]
-    (M : RepresentabilityMap (A := A) B I Q F J)
-    (X Y : PointedSpaces (k := k)) (a : X ⟶ Y) (p q : ℤ)
-    (V : ModuleCat.{1} ℤ)
-    (u : (motivicQ A).obj Y ⟶ (motivicQ A).obj (K B I Q p q V)) :
-    ProofWanted (M.map X p q V ((motivicQ A).map a ≫ u) =
-      ReducedMotivicCohomologyModels.pullback B F a p q V (M.map Y p q V u)) :=
-  realization_pullback B I Q F J M X Y a p q V u
-
-private def check_coefficients [PerfectField k]
-    (M : RepresentabilityMap (A := A) B I Q F J)
-    (X : PointedSpaces (k := k)) (p q : ℤ)
-    (V W : ModuleCat.{1} ℤ) (a : V ⟶ W)
-    (u : (motivicQ A).obj X ⟶ (motivicQ A).obj (K B I Q p q V)) :
-    ProofWanted (M.map X p q W
-      (u ≫ (motivicQ A).map (MotivicEilenbergMacLaneModels.coefficientMap B I Q p q a)) =
-      ReducedMotivicCohomologyModels.coefficientMap B F X p q a (M.map X p q V u)) :=
-  realization_coefficients B I Q F J M X p q V W a u
-
 end WantedExt.AlgebraicGeometry.MotivicRealizationComparisonsWanted

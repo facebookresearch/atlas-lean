@@ -57,17 +57,4 @@ def_wanted coherent_derived_family : DerivedCoefficientFamily Λ S U C
 theorem_wanted constructible_cocartesian (D : DerivedCoefficientFamily Λ S U C) :
     CocartesianFibration (constructibleProjection Λ S U C D)
 
-private def check_frobenius (p : ℕ) (hp : p.Prime) : DefWanted (FrobeniusSource p) :=
-  fp_frobenius p hp
-
-private def check_pseudofunctor : DefWanted (CoefficientPseudofunctorSource Λ S U) :=
-  native_coefficient_pseudofunctor Λ S U
-
-private def check_family : DefWanted (DerivedCoefficientFamily Λ S U C) :=
-  coherent_derived_family Λ S U C
-
-private def check_cocartesian (D : DerivedCoefficientFamily Λ S U C) :
-    ProofWanted (CocartesianFibration (constructibleProjection Λ S U C D)) :=
-  constructible_cocartesian Λ S U C D
-
 end WantedExt.AlgebraicGeometry.CoherentEtalePerfectionSourcesWanted

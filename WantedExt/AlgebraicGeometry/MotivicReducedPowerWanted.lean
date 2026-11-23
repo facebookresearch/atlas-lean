@@ -245,17 +245,4 @@ theorem_wanted B_torusSuspension (j : ℤ) (X : PointedSpaces (k := k)) (p q : �
         (σ.torus X p q u)) =
     σ.torus X (p + pShift ell j + 1) (q + qShift ell j) (bocksteinPower source σ j X p q u)
 
-private def check_canonical_source :
-    DefWanted (CanonicalPowerCoefficientSource (canonical := canonical) (Rep := Rep) (U₀ := U₀)
-      (hRep := hRep) (hSmash := hSmash) (Eprime := Eprime) (point := point)
-      (t := t) (delta := delta) (c := c) hchar) :=
-  canonicalPowerCoefficientSource hchar
-
-private def check_beta_P (j : ℤ) (X : PointedSpaces (k := k)) (p q : ℤ)
-    (betaSource : CoefficientConeSource B (modSequence ell) (q + qShift ell j))
-    (u : ReducedCohomology B F X p q (ModCoefficients ell)) :
-    ProofWanted (bockstein B ell F X (p + pShift ell j) (q + qShift ell j) betaSource
-      (reducedPower source σ j X p q u) = bocksteinPower source σ j X p q u) :=
-  beta_P source σ j X p q betaSource u
-
 end WantedExt.AlgebraicGeometry.MotivicReducedPowerWanted

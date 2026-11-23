@@ -46,17 +46,4 @@ theorem_wanted etale_pullback_exact (X Y : Scheme.{0}) (f : X ⟶ Y)
 def_wanted valuation_excision (V : ValuationRingData) (p : PrimeSpectrum V.ring) :
     ValuationExcision V p
 
-private def check_sheafification (Λ : Type) [Ring Λ] :
-    ProofWanted (∀ X : Scheme.{0}, HasSheafify X.smallEtaleTopology (ModuleCat.{1} Λ)) :=
-  etale_module_sheafification Λ
-
-private def check_pullback (X Y : Scheme.{0}) (f : X ⟶ Y) :
-    DefWanted (EtalePullbackSource Λ f) := etale_pullback_source Λ X Y f
-
-private def check_exact (X Y : Scheme.{0}) (f : X ⟶ Y) (S : EtalePullbackSource Λ f) :
-    ProofWanted (IsExactPullback Λ S) := etale_pullback_exact Λ X Y f S
-
-private def check_excision (V : ValuationRingData) (p : PrimeSpectrum V.ring) :
-    DefWanted (ValuationExcision V p) := valuation_excision V p
-
 end WantedExt.AlgebraicGeometry.GeneralEtaleCoefficientSourcesWanted

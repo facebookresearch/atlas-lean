@@ -64,25 +64,4 @@ variable {k : Type} [Field k]
 def_wanted affine_cycle_product :
     AffineCycleProduct (D := D) (G := G) (P := P) (A := A) (R := R) N Q E M
 
-private def check_sections (k : Type) [Field k]
-    [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
-    (Q : PointedSimplicialModuleFunctor k) : DefWanted (ModuleSectionSystem Q) :=
-  module_sections k Q
-
-private def check_bundle (k : Type) [Field k]
-    [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
-    (X : SmoothScheme k) (M : X.scheme.left.Modules) (d : ℕ)
-    (hM : AlgebraicBundleGeometry.IsBundle M d) : DefWanted (BundleGeometry X M d) :=
-  bundle_geometry k X M d hM
-
-private def check_cofiber (k : Type) [Field k]
-    [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
-    (F : ReducedFreeNisSystem k) (X Y : PointedSpaces (k := k)) (a : X ⟶ Y)
-    (ha : ∀ U, Mono (a.right.app U)) : DefWanted (CofiberChainSource F a) :=
-  reduced_cofiber k F X Y a ha
-
-private def check_affine_product :
-    DefWanted (AffineCycleProduct (D := D) (G := G) (P := P)
-      (A := A) (R := R) N Q E M) := affine_cycle_product N Q E M
-
 end WantedExt.AlgebraicGeometry.MotivicQuotientSourcesWanted

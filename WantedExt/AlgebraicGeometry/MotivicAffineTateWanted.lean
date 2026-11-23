@@ -49,17 +49,6 @@ def_wanted relative_affine_cofiber (k : Type) [Field k]
     (P : SmoothProductSystem k) (A : StandardSchemes P)
     (O : TorusOpenAffine (P := P) (A := A)) : RelativeA1CofiberSource O
 
-private def check_standard_open (k : Type) [Field k]
-    [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
-    (P : SmoothProductSystem k) (A : StandardSchemes P) :
-    DefWanted (TorusOpenAffine (P := P) (A := A)) := standard_torus_open k P A
-
-private def check_relative_cofiber (k : Type) [Field k]
-    [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
-    (P : SmoothProductSystem k) (A : StandardSchemes P)
-    (O : TorusOpenAffine (P := P) (A := A)) : DefWanted (RelativeA1CofiberSource O) :=
-  relative_affine_cofiber k P A O
-
 variable {k : Type} [Field k]
   [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
   {D₀ : CompositionSystem k} {G : GraphSystem k}
@@ -112,28 +101,5 @@ def_wanted canonical_affine_tate_comparison [PerfectField k] :
         (M := M) V K₀ E₀ ∧
       HasRankOneNormalization (N := N) (B := B) (I := I) (Q := Q)
         (F := F) (J := J) (M := M) V T₀ O R₀ C₀ L₀ U₀}
-
-private def check_torus : DefWanted (TorusCycleLinearization (S := S) T F) :=
-  torus_graph_linearization T F
-
-private def check_integer : DefWanted (IntegerCoefficientInclusions (T := T) (N := N) (B := B)) :=
-  integer_coefficient_inclusion T N B
-
-private def check_affine_cycle : DefWanted
-    (AffineThomCycleSections (D₀ := D₀) (G := G) (P := P) (A := A) (R := R)
-      (N := N) (Q := Q) (M := M)) := affine_thom_cycle_sections N Q M
-
-private def check_pointed_product : DefWanted (PointedTateProducts N B I Q F J L F₀ D H M₁ hF) :=
-  pointed_tate_products T F N B I Q J L F₀ D H M₁ hF
-
-private def check_canonical [PerfectField k] : DefWanted
-    {V : AffineTateMapSystem (N := N) (B := B) (I := I) (Q := Q) //
-      IsMotivicComparison (N := N) (B := B) (I := I) (Q := Q) V ∧
-      IsCoefficientNatural (N := N) (B := B) (I := I) (Q := Q) V ∧
-      IsMultiplicative (N := N) (B := B) (I := I) (Q := Q) (F := F) (J := J)
-        (M := M) V K₀ E₀ ∧
-      HasRankOneNormalization (N := N) (B := B) (I := I) (Q := Q)
-        (F := F) (J := J) (M := M) V T₀ O R₀ C₀ L₀ U₀} :=
-  canonical_affine_tate_comparison T F N B I Q J M L F₀ D H M₁ hF K₀ E₀ T₀ O R₀ C₀ L₀ U₀
 
 end WantedExt.AlgebraicGeometry.MotivicAffineTateWanted

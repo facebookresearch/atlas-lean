@@ -40,19 +40,22 @@ open MathlibExt.AlgebraicGeometry
 open PerverseSheaves ComplexAnalytification CompactSupportBetti ProperBettiFunctoriality
 open BettiMotiveRealization
 
+/-- The fibre product of two smooth projective complex varieties is a smooth projective
+complex variety whose relative dimension is the sum of theirs. -/
+public instance_wanted productGeometry (X Y : SmoothObject) : ProductGeometry X Y
+
 /-- Construct the composition and compatibility bridge for this actual Chow
 presentation and the fixed Betti action, including geometric normalization. -/
 public def_wanted correspondenceCalculus
     (D : ∀ (X : ComplexScheme) [IsComplexVariety X], DualizingComplex (space X))
     (P : ∀ {X Y : ComplexScheme} [IsComplexVariety X] [IsComplexVariety Y]
       (f : X ⟶ Y) [IsProper f.left], ProperPullback (spaceMap f))
-    (S : BettiCycleRealization.CycleRealization D P)
-    [∀ (X Y : SmoothObject), ProductGeometry X Y] :
+    (S : BettiCycleRealization.CycleRealization D P) :
     CorrespondenceCalculus D P S
 
 /-- The actual finite tensor/cup/pullback map realizes the Künneth isomorphism
 on pure-dimensional smooth projective complex schemes. -/
-public theorem_wanted kunneth_bijective (X Y : SmoothObject)
-    [ProductGeometry X Y] (n : ℤ) : Function.Bijective (kunnethMap X Y n)
+public theorem_wanted kunneth_bijective (X Y : SmoothObject) (n : ℤ) :
+    Function.Bijective (kunnethMap X Y n)
 
 end WantedExt.AlgebraicGeometry.ChowBettiRealizationWanted

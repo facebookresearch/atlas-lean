@@ -238,18 +238,4 @@ theorem_wanted two_prime_c_square [PerfectField k]
         (cupRing N B K₀ F₀ D S F M₁ hF (ULift.{1} (ZMod ell)) (geometricClassifyingSpace G)
           1 1 (cDegree ell) (primeWeight ell) rhoG c.value)
 
-private def check_native_circle : DefWanted (CircleCycleOrientation (S₀ := S₀) T F) :=
-  nativeCircleOrientation T F
-
-private def check_completed [PerfectField k] (hchar : (ell : k) ≠ 0)
-    (X : PointedSpaces (k := k)) (p q : ℤ) :
-    DefWanted (CompletedBSDecomposition N B I Q F J V T₀ K₀ F₀ D S M₁ hF
-      Eprime point t delta c X p q) :=
-  canonicalCompletedBSExpansion (T := T) (N := N) (B := B) (I := I) (Q := Q)
-    (F := F) (J := J) (Msec := Msec) (V := V) (T₀ := T₀) (K₀ := K₀)
-    (F₀ := F₀) (D := D) (S := S) (M₁ := M₁) (hF := hF)
-    (Kt := Kt) (Et := Et) (O := O) (Raff := Raff) (Caff := Caff) (Lt := Lt) (Zi := Zi)
-    (Eprime := Eprime) (point := point) (t := t) (delta := delta) (c := c)
-    (independentCanonicalAffineSource := canonical) hchar X p q
-
 end WantedExt.AlgebraicGeometry.MotivicCanonicalPowerWanted

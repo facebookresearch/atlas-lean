@@ -109,27 +109,4 @@ theorem_wanted cup_pullback (hF : IsFreeTensorComparison N F D R₁)
       (ReducedMotivicCohomologyModels.pullback B R₁ a p q A₁ u)
       (ReducedMotivicCohomologyModels.pullback B R₁ a r s A₂ v)
 
-private def check_shuffle : DefWanted (EilenbergZilberModel N) :=
-  shuffle_alexander_whitney N
-
-private def check_negative : DefWanted (NegativeTensorComparison N) :=
-  negative_tensor_comparison N
-
-private def check_flat : DefWanted (KFlatResolutionSystem N) := kflat_resolution N
-
-private def check_derived (F : KFlatResolutionSystem N) : DefWanted (DerivedTensorSource N F) :=
-  derived_tensor N F
-
-private def check_shifts (F : KFlatResolutionSystem N) (D : DerivedTensorSource N F) :
-    DefWanted (DerivedTensorShifts N F D) := derived_tensor_shifts N F D
-
-private def check_smash (R₂ : ReducedFreeNisSystem k) :
-    DefWanted (ReducedSmashComultiplication N R₂) := reduced_smash_comultiplication N R₂
-
-private def check_cycle : DefWanted (SingularCycleProduct (S := S) N T J) :=
-  singular_cycle_product N T J
-
-private def check_coefficients : DefWanted (CoefficientMultiplicationSystem N T B M₀ Z V) :=
-  coefficient_cycle_product N T J B M₀ Z V
-
 end WantedExt.AlgebraicGeometry.MotivicProductsWanted
