@@ -69,21 +69,30 @@ structure RationalModel (P : Affine p) where
   embedding : IsOpenEmbedding map.spa
   range : Set.range map.spa = rationalSet p P numerators denominator
 
-/-- Actual finite etaleness of the bounded local ring map. -/
+/-- Actual finite etaleness of a map of Huber pairs (Scholze, *Étale cohomology of diamonds*,
+Def. 6.2(i)): the ring map is finite étale and the target plus ring is the integral closure of the
+image of the source plus ring. Changing only the plus ring is not finite étale. -/
 def IsFiniteEtale {P Q : HuberPair} (f : RingMap P Q) : Prop :=
   letI := f.hom.toAlgebra
-  Module.Finite P.ring Q.ring ∧ Algebra.Etale P.ring Q.ring
+  Module.Finite P.ring Q.ring ∧ Algebra.Etale P.ring Q.ring ∧
+    ∀ s : Q.ring, s ∈ Q.plus ↔ (f.hom.comp P.plus.subtype).IsIntegralElem s
 
-/-- A rationally localized finite-etale chart around the specified point. -/
+/-- An étale chart around the specified point (Scholze, Def. 6.2(ii): locally an open embedding
+followed by a finite étale map): a rational neighbourhood of the point is identified with a
+rational open of a finite étale cover of a rational neighbourhood of its image. -/
 structure EtaleChart {P Q : Affine p} (f : P ⟶ Q) (x : Space p P) where
   source : RationalModel p P
   point : x ∈ Set.range source.map.spa
   target : RationalModel p Q
-  map : RingMap target.affine.toHuberPair source.affine.toHuberPair
-  square : source.map.hom.comp f.hom = map.hom.comp target.map.hom
-  etale : IsFiniteEtale map
+  cover : Affine p
+  coverMap : RingMap target.affine.toHuberPair cover.toHuberPair
+  finite_etale : IsFiniteEtale coverMap
+  opening : RationalModel p cover
+  identification : source.affine ≅ opening.affine
+  square : source.map.hom.comp f.hom =
+    identification.hom.hom.comp (opening.map.hom.comp (coverMap.hom.comp target.map.hom))
 
-/-- Etaleness is local finite-etaleness on these real rational algebras. -/
+/-- Etaleness is local: around every point there is an étale chart. -/
 def IsEtale {P Q : Affine p} (f : P ⟶ Q) : Prop :=
   ∀ x : Space p P, Nonempty (EtaleChart p f x)
 

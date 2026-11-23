@@ -46,14 +46,15 @@ variable (R : Type) [CommRing R] (K : Type) [NormedField K]
 /-- The actual base ideal defining the adic completion. -/
 def parameterIdeal : Ideal R := Ideal.span {π}
 
-/-- A topologically finite-presentation affine formal model, with its
-actual complete ring and actual localized generic affinoid algebra. -/
+/-- A topologically finitely presented affine formal model: the `π`-adic completion of
+`R[X₁, …, Xₙ] / I` for a finitely generated ideal `I`, with its actual complete ring and actual
+localized generic affinoid algebra. -/
 structure AffinoidFormalModel where
   modelRing : Type
   [commRing : CommRing modelRing]
   [modelAlgebra : Algebra R modelRing]
   [complete : IsAdicComplete (parameterIdeal R π) modelRing]
-  finitePresentation : ∃ (n : ℕ) (I : Ideal (MvPolynomial (Fin n) R)),
+  finitePresentation : ∃ (n : ℕ) (I : Ideal (MvPolynomial (Fin n) R)), I.FG ∧
     Nonempty (AdicCompletion ((parameterIdeal R π).map
       (algebraMap R (MvPolynomial (Fin n) R ⧸ I)))
       (MvPolynomial (Fin n) R ⧸ I) ≃ₐ[R] modelRing)
