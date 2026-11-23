@@ -67,18 +67,12 @@ public def_wanted bundle_stack_pullback (k : Type) [Field k]
     (p : StackHom T X) (E : VectorBundleStack X) : BundleStackPullback p E
 
 /-- The global O-linear quotient model, with no global two-term hypothesis
-imposed on arbitrary bundle stacks: the bundle stack of a global quotient, with a linear chart from
-the given quotient whose total-space map is an equivalence over the identity of `X`. -/
+imposed on arbitrary bundle stacks: the bundle stack of a global two-term complex, whose linear
+model is coherently equivalent to the strict diagram of the complex. -/
 public def_wanted bundle_stack_from_quotient (k : Type) [Field k]
     (X : Stack (Spec (.of k))) (hX : FiniteTypeArtin k X)
-    (E F : VectorBundle X) (d : BundleMap E F) (Q : QuotientStackModel d) :
-    Σ' (B : VectorBundleStack X) (q : StackHom Q.total B.total)
-      (sq : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp q B.projection)
-        (Pseudofunctor.StrongTrans.vcomp Q.projection
-          (Pseudofunctor.StrongTrans.id X.toPseudofunctor))),
-      Nonempty (LinearBundleChart B.linear Q (Pseudofunctor.StrongTrans.id X.toPseudofunctor) q sq) ∧
-        (∀ T : Over (Spec (.of k)), (StackCycleGeometry.component q T).IsEquivalence) ∧
-        B.virtualRank = (F.rank : ℤ) - E.rank
+    (E F : VectorBundle X) (d : BundleMap E F) :
+    {B : VectorBundleStack X // IsQuotientOf B d ∧ B.virtualRank = (F.rank : ℤ) - E.rank}
 
 public theorem_wanted bundle_stack_finite_type (k : Type) [Field k]
     (X : Stack (Spec (.of k))) (hX : FiniteTypeArtin k X) (E : VectorBundleStack X) :
@@ -152,14 +146,9 @@ private def check_bundle_stack_pullback (k : Type) [Field k]
 
 private def check_bundle_stack_from_quotient (k : Type) [Field k]
     (X : Stack (Spec (.of k))) (hX : FiniteTypeArtin k X)
-    (E F : VectorBundle X) (d : BundleMap E F) (Q : QuotientStackModel d) :
-    DefWanted (Σ' (B : VectorBundleStack X) (q : StackHom Q.total B.total)
-      (sq : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp q B.projection)
-        (Pseudofunctor.StrongTrans.vcomp Q.projection
-          (Pseudofunctor.StrongTrans.id X.toPseudofunctor))),
-      Nonempty (LinearBundleChart B.linear Q (Pseudofunctor.StrongTrans.id X.toPseudofunctor) q sq) ∧
-        (∀ T : Over (Spec (.of k)), (StackCycleGeometry.component q T).IsEquivalence) ∧
-        B.virtualRank = (F.rank : ℤ) - E.rank) := bundle_stack_from_quotient k X hX E F d Q
+    (E F : VectorBundle X) (d : BundleMap E F) :
+    DefWanted {B : VectorBundleStack X // IsQuotientOf B d ∧ B.virtualRank = (F.rank : ℤ) - E.rank} :=
+  bundle_stack_from_quotient k X hX E F d
 
 private def check_bundle_stack_finite_type (k : Type) [Field k]
     (X : Stack (Spec (.of k))) (hX : FiniteTypeArtin k X) (E : VectorBundleStack X) :

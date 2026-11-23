@@ -68,6 +68,9 @@ structure SpecializationRepresentativeData (D : CycleConstructionData S scope)
   baseChange : ConeBaseChangeData test.fst f test.snd
     (Pseudofunctor.StrongTrans.vcomp Z.val.inclusion
       (Pseudofunctor.StrongTrans.vcomp E.bundle.projection A.map)) cone C
+  /-- The cone base change uses the inverse of the test square's own cell (its square lists the
+  two sides in the opposite order). -/
+  baseChange_commutes : ∀ T : Over S, baseChange.commutes.app T = (test.commutes.app T).symm
   map : StackHom cone.total
     (K.restricted.pullback coneStage.apex A.source stageScope A.inScope coneStage.fst E).bundle.total
   closed : StackFibreModels.IsClosed map
@@ -234,6 +237,9 @@ structure GysinSquareData (D : CycleConstructionData S scope) (K : KreschPresent
   sourceCone : IntrinsicConeModel p.source
   sourceConeScope : scope sourceCone.total
   baseChange : ConeBaseChangeData p.source p.base Q.square.snd P.square.snd sourceCone normal.cone
+  /-- The cone base change uses the inverse of the pasting's own cell (its square lists the two
+  sides in the opposite order). -/
+  baseChange_commutes : ∀ T : Over S, baseChange.commutes.app T = (p.commutes.app T).symm
   sourceEmbedding : ConeEmbedding sourceCone sourceBundle.bundle
   normalizedSource : StackVectorBundles.TwoIso
     (Pseudofunctor.StrongTrans.vcomp sourceEmbedding.map sourceBundle.map)
@@ -258,16 +264,10 @@ def GysinSquareData.sourceMap {D : CycleConstructionData S scope} {K : KreschPre
     (by rw [N.sourceBundle.rank_eq, N.rank_eq]))).comp (virtualPullback N.sourceRecipe d)
 
 /-- `E` is a global quotient of two vector bundles on `F` (Manolache, arXiv:0805.2065v2,
-Theorem 4.1, hypothesis (3)): a linear chart of `E` from a quotient presentation on `F` itself whose
-total-space map is an equivalence on every fibre. -/
+Theorem 4.1, hypothesis (3)): it is the quotient, with coherent linear descent data, of a global
+two-term complex of vector bundles on `F`. -/
 def IsGlobalQuotient {F : Stack S} (E : VectorBundleStack F) : Prop :=
-  ∃ (E₀ E₁ : VectorBundle F) (d : BundleMap E₀ E₁) (Q : QuotientStackModel d)
-    (q : StackHom Q.total E.total)
-    (sq : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp q E.projection)
-      (Pseudofunctor.StrongTrans.vcomp Q.projection
-        (Pseudofunctor.StrongTrans.id F.toPseudofunctor))),
-    Nonempty (LinearBundleChart E.linear Q (Pseudofunctor.StrongTrans.id F.toPseudofunctor) q sq) ∧
-      ∀ T : Over S, (StackCycleGeometry.component q T).IsEquivalence
+  ∃ (E₀ E₁ : VectorBundle F) (d : BundleMap E₀ E₁), IsQuotientOf E d
 
 /-- The bivariant laws of a virtual pullback. The proper Deligne--Mumford pushforward law is only
 asked under `properDMScope` (for virtual pullbacks: `E` is a global quotient, Manolache,
