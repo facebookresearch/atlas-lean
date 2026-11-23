@@ -42,7 +42,29 @@ example {n : ℕ} {Y A B : WeightedComplex n} {w : RealSpace n} (S : SimplePoint
       ambientDirection S ≤ (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
         (affineSpan ℝ (B.complex.cell j).carrier).direction) :
     RelativeGeneric S A B v :=
-  ⟨hv, fun i j hi hj hle ↦ (hle (h i j hi hj)).elim⟩
+  ⟨hv, fun i j _ _ hi hj hle ↦ (hle (h i j hi hj)).elim⟩
+
+/-- Cells outside the weighted supports, such as padding cells of weight zero, never constrain the
+displacement: only cells inside the supports are tested. -/
+example {n : ℕ} {Y A B : WeightedComplex n} {w : RealSpace n} (S : SimplePoint Y w)
+    (v : RealSpace n) (hv : v ∈ ambientDirection S)
+    (h : ∀ i j, (A.complex.cell i).carrier ⊆ A.support → (B.complex.cell j).carrier ⊆ B.support →
+      w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
+      ¬ ambientDirection S ≤ (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
+        (affineSpan ℝ (B.complex.cell j).carrier).direction →
+      v ∉ (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
+        (affineSpan ℝ (B.complex.cell j).carrier).direction) :
+    RelativeGeneric S A B v :=
+  ⟨hv, h⟩
+
+/-- The same holds for the generic displacements of stable products. -/
+example {n : ℕ} {A B : WeightedComplex n} {w v : RealSpace n}
+    (h : ∀ i j, (A.complex.cell i).carrier ⊆ A.support → (B.complex.cell j).carrier ⊆ B.support →
+      w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
+      v ∉ (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
+        (affineSpan ℝ (B.complex.cell j).carrier).direction) :
+    GenericDisplacement A B w v :=
+  fun i j hA hB hi hj _ ↦ h i j hA hB hi hj
 
 /-- A cell of full dimension through `w`, for instance a weight-zero padding half-plane, never
 constrains the displacement. -/

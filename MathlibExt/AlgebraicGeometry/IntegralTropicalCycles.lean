@@ -96,16 +96,22 @@ def starsMeet (P Q : Polyhedron n) (w v : RealSpace n) : Prop :=
 
 def latticeIndex (P Q : Polyhedron n) : ℤ := ((P.lattice ⊔ Q.lattice).index : ℤ)
 
+/-- A displacement `v` is generic at `w` if it avoids the direction sum of every pair of cells of
+the weighted supports through `w` whose directions do not span the whole space. Only cells inside
+the weighted supports (nonzero-weighted facets and their faces) count: a cell of weight zero
+outside the supports does not constrain the displacement, while a face of a weighted facet, such as
+a new vertex of a subdivision, still does. -/
 def GenericDisplacement (A B : WeightedComplex n) (w v : RealSpace n) : Prop :=
-  ∀ i j,
+  ∀ i j, (A.complex.cell i).carrier ⊆ A.support → (B.complex.cell j).carrier ⊆ B.support →
     w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
     (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
       (affineSpan ℝ (B.complex.cell j).carrier).direction ≠ ⊤ →
     v ∉ (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
       (affineSpan ℝ (B.complex.cell j).carrier).direction
 
-/-- `w` is a regular point for the stable multiplicity of `A` and `B`: every cell of `A` and every
-cell of `B` through `w` meet in a set of at least the expected dimension
+/-- `w` is a regular point for the stable multiplicity of `A` and `B`: every cell of the weighted
+support of `A` and every cell of the weighted support of `B` through `w` meet in a set of at least
+the expected dimension
 `A.dimension + B.dimension - n` (stated without natural subtraction). Equivalently, the cell of
 their common refinement having `w` in its relative interior has at least the expected dimension.
 Osserman--Payne (Definition 2.6.1) attach the stable multiplicity to faces of the expected
@@ -113,7 +119,8 @@ dimension; at a lower-dimensional cell of the common refinement, for instance a 
 subdivision, the raw displacement sum `stableMultiplicity` adds up several neighbouring faces and
 depends on the subdivision and on the displacement. -/
 def RegularPoint (A B : WeightedComplex n) (w : RealSpace n) : Prop :=
-  ∀ i j, w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
+  ∀ i j, (A.complex.cell i).carrier ⊆ A.support → (B.complex.cell j).carrier ⊆ B.support →
+    w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
     A.dimension + B.dimension ≤ n + Module.finrank ℝ
       (affineSpan ℝ ((A.complex.cell i).carrier ∩ (B.complex.cell j).carrier)).direction
 

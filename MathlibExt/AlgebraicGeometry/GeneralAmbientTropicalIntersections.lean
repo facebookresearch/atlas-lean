@@ -70,11 +70,13 @@ def ambientLattice : AddSubgroup (Lattice n) := (Y.complex.cell S.facet).lattice
 /-- A displacement `v` inside the ambient direction is generic relative to `A` and `B` at `w`: it
 avoids the direction sum of every pair of cells through `w` that does not contain the ambient
 direction (Osserman--Payne, Theorem 5.1.1, take the generic vector in the ambient facet's
-direction). Pairs whose direction sum contains the ambient direction, for instance with a padding
-cell of full dimension, impose no condition. -/
+direction). Only cells inside the weighted supports count, and pairs whose direction sum contains
+the ambient direction impose no condition, so padding cells of weight zero never constrain the
+displacement. -/
 def RelativeGeneric (A B : WeightedComplex n) (v : RealSpace n) : Prop :=
   v ∈ ambientDirection S ∧
-    ∀ i j, w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
+    ∀ i j, (A.complex.cell i).carrier ⊆ A.support → (B.complex.cell j).carrier ⊆ B.support →
+      w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
       ¬ ambientDirection S ≤ (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
         (affineSpan ℝ (B.complex.cell j).carrier).direction →
       v ∉ (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔

@@ -526,10 +526,30 @@ example (v : RealSpace 1) :
     rayNeg_carrier]
   rfl
 
+/-- The vertex lies in the weighted support of the two rays. -/
+private theorem vertex_subset_support :
+    vertex.carrier ⊆ (subdivide raySubdivision).support := by
+  intro x hx
+  rw [vertex_carrier, Set.mem_singleton_iff] at hx
+  subst hx
+  refine Set.mem_iUnion.mpr ⟨(0 : Fin 3), ?_⟩
+  have hw : (subdivide raySubdivision).weight (0 : Fin 3) = 1 := by
+    simp [subdivide, raySubdivision, twoRays, lineWeighted, rayPos_dimension]
+  simp only [hw, one_ne_zero, ↓reduceIte]
+  change (0 : RealSpace 1) ∈ rayPos.carrier
+  simp [rayPos_carrier]
+
+/-- The line is its own weighted support. -/
+private theorem line_subset_support : line.carrier ⊆ lineWeighted.support := by
+  intro x hx
+  refine Set.mem_iUnion.mpr ⟨(0 : Fin 1), ?_⟩
+  change x ∈ (if (1 : ℤ) = 0 then ∅ else line.carrier)
+  simpa using hx
+
 /-- The vertex is not a regular point. -/
 example : ¬ RegularPoint (subdivide raySubdivision) lineWeighted 0 := by
   intro h
-  have := h (2 : Fin 3) (0 : Fin 1) zero_mem_vertex
+  have := h (2 : Fin 3) (0 : Fin 1) vertex_subset_support line_subset_support zero_mem_vertex
     (by simp [lineWeighted, lineComplex, line_carrier])
   change 1 + 1 ≤ 1 + Module.finrank ℝ (affineSpan ℝ (vertex.carrier ∩ line.carrier)).direction
     at this
@@ -539,7 +559,7 @@ example : ¬ RegularPoint (subdivide raySubdivision) lineWeighted 0 := by
 /-- The point `1` of the ray `x ≥ 0` is a regular point. -/
 private theorem one_regular :
     RegularPoint (subdivide raySubdivision) lineWeighted (fun _ ↦ 1) := by
-  intro i j hi _
+  intro i j _ _ hi _
   fin_cases i
   · change 1 + 1 ≤ 1 + Module.finrank ℝ (affineSpan ℝ (rayPos.carrier ∩ line.carrier)).direction
     rw [line_carrier, Set.inter_univ, rayPos_direction, finrank_top, Module.finrank_fin_fun]
