@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Digits.Defs
 public import MathlibExt.Probability.ProbabilityMassFunction.Uniform
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Topology.UniformSpace.UniformConvergence
+public import MathlibExt.NumberTheory.Digits.DyadicMantissa
 
 namespace MetaMathlibExt
 
@@ -122,21 +123,8 @@ public theorem_wanted qWeighted_trollopeDelange (q : ℝ) (hq : 1 / 2 < |q|) (hq
           ((2 : ℝ) ^ (1 - Int.fract (Real.logb 2 n)) *
             takagiLandsberg (1 / (2 * q)) ((2 : ℝ) ^ (-(1 - Int.fract (Real.logb 2 n))))))
 
-/-- **Girgensohn's lemma.** Let $G$ be a function from the natural numbers to the real numbers, and
-for a positive integer $n$ let $p_n = 2^{\lfloor \log_2 n \rfloor}$, so that $(n - p_n)/p_n$ is a
-dyadic rational in $[0, 1)$. The following are equivalent: (i) for all positive integers $m$ and
-$n$ with $(m - p_m)/p_m = (n - p_n)/p_n$ we have $G(m) = G(n)$, that is, $F((n - p_n)/p_n) = G(n)$
-well-defines a function $F$ of these dyadic rationals; (ii) $G(2n) = G(n)$ for every positive
-integer $n$.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, Lemma 1 (`integers-2026-A61-lem-1`), quoting Girgensohn,
-*Digital Sums and Functional Equations*, Lemma 1. -/
-public theorem_wanted dyadicMantissa_wellDefined_iff_doubling_invariant (G : ℕ → ℝ) :
-    (∀ m n : ℕ, 0 < m → 0 < n →
-        ((m : ℚ) - 2 ^ Nat.log 2 m) / 2 ^ Nat.log 2 m =
-          ((n : ℚ) - 2 ^ Nat.log 2 n) / 2 ^ Nat.log 2 n → G m = G n) ↔
-      ∀ n : ℕ, 0 < n → G (2 * n) = G n
+-- Girgensohn's lemma, `dyadicMantissa_wellDefined_iff_doubling_invariant`, is proved in
+-- `MathlibExt.NumberTheory.Digits.DyadicMantissa`, which this module imports.
 
 /-- **Carry in adding a natural number to a dyadic integer.** Let $\omega$ be a dyadic integer,
 written as its sequence $(\omega_0, \omega_1, \dots)$ of binary digits $\omega_i \in \{0, 1\}$
