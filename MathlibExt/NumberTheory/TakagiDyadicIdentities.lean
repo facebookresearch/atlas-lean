@@ -86,11 +86,12 @@ public theorem dcDNodes_small :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> simp [dcDNodes]
 
 /-- **Level counts of D-nodes.** For natural numbers $n$ and $i$, let $n_i$ be the binary digit
-of $n$ at position $i$ (the coefficient of $2^i$ in the binary expansion of $n$). The level count
+of $n$ at position $i$ (the coefficient of $2^i$ in the binary expansion of $n$). The value
 $\lambda_i(n)$ is $n \bmod 2^i$ if $n_i = 0$, and $2^i - (n \bmod 2^i)$ if $n_i = 1$.
 
-This is the paper's closed form for the number of D-nodes on level $i$ of the
-divide-and-conquer tree on $n$ leaves.
+For $n > 0$ and $i < \lfloor \log_2 n \rfloor$, this formula counts the D-nodes on level $i$ of
+the divide-and-conquer tree on $n$ leaves. Outside this range the same formula applies and can
+give a nonzero value even when the level has no D-nodes.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/
@@ -99,7 +100,8 @@ public def dcLevelDNodes (n i : ℕ) : ℕ :=
 
 /-- **Level count of D-nodes when the binary digit is zero.** Let $n$ and $i$ be natural numbers
 such that the binary digit $n_i$ of $n$ (the coefficient of $2^i$ in the binary expansion of
-$n$) equals $0$. Then the level count of D-nodes is $\lambda_i(n) = n \bmod 2^i$.
+$n$) equals $0$. Then $\lambda_i(n) = n \bmod 2^i$. For $n > 0$ and
+$i < \lfloor \log_2 n \rfloor$, this is the number of D-nodes on level $i$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/
@@ -109,7 +111,8 @@ public theorem dcLevelDNodes_of_digit_eq_zero {n i : ℕ} (h : n / 2 ^ i % 2 = 0
 
 /-- **Level count of D-nodes when the binary digit is one.** Let $n$ and $i$ be natural numbers
 such that the binary digit $n_i$ of $n$ (the coefficient of $2^i$ in the binary expansion of
-$n$) equals $1$. Then the level count of D-nodes is $\lambda_i(n) = 2^i - (n \bmod 2^i)$.
+$n$) equals $1$. Then $\lambda_i(n) = 2^i - (n \bmod 2^i)$. For $n > 0$ and
+$i < \lfloor \log_2 n \rfloor$, this is the number of D-nodes on level $i$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/
@@ -117,8 +120,8 @@ public theorem dcLevelDNodes_of_digit_eq_one {n i : ℕ} (h : n / 2 ^ i % 2 = 1)
     dcLevelDNodes n i = 2 ^ i - n % 2 ^ i := by
   simp [dcLevelDNodes, h]
 
-/-- **Level count of D-nodes on level zero.** For every natural number $n$, the level count of
-D-nodes on level $0$ is $\lambda_0(n) = n \bmod 2$.
+/-- **Level count of D-nodes on level zero.** For every natural number $n$,
+$\lambda_0(n) = n \bmod 2$. For $n \ge 2$, this counts the D-nodes at the root.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/

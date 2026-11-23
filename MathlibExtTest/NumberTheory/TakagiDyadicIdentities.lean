@@ -29,8 +29,8 @@ example : (dcDNodes 8 : ℚ) - dcDNodes 9 = -3 := by
   rw [show (Nat.digits 2 8).sum = 1 by decide, show Nat.log 2 8 = 3 by decide] at h
   linarith only [h]
 
--- The bit at position two changes as the leaf count goes from three to four.
-example : dcLevelDNodes 3 2 = 3 ∧ dcLevelDNodes 4 2 = 4 := by decide
+-- At level two, the count rises and then falls as bit two changes from zero to one at 12 leaves.
+example : dcLevelDNodes 11 2 = 3 ∧ dcLevelDNodes 12 2 = 4 ∧ dcLevelDNodes 13 2 = 3 := by decide
 
 -- With three leaves, the root has unequal subtrees and its sole interior child has equal ones.
 example :
