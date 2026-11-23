@@ -26,23 +26,26 @@ III.
    II.3.11); for $r = -2$ this is an isomorphism $G^{\mathrm{ab}} \to K^\times / \mathrm{Nm}_{L/K}(L^\times)$
    (Milne, Theorem III.3.1), whose inverse $\mathrm{rec}_{L/K}$ is the local Artin map of $L/K$. For $L/K$
    abelian, every $\chi \in \mathrm{Hom}(G, \mathbb{Q}/\mathbb{Z})$ and every $a \in K^\times$,
-   $$\chi(\mathrm{rec}_{L/K}(a)) = \mathrm{inv}_K(a \cup \delta\chi),$$
-   where $\delta \colon H^1(G, \mathbb{Q}/\mathbb{Z}) \to H^2(G, \mathbb{Z})$ is the connecting map of
-   $0 \to \mathbb{Z} \to \mathbb{Q} \to \mathbb{Q}/\mathbb{Z} \to 0$ and $a \cup \delta\chi \in H^2(G, L^\times)$
-   (Milne, Proposition III.3.6, which refers to Serre for the proof). The formula also holds for
-   $\mathbb{C}/\mathbb{R}$, with $\mathrm{rec}_{\mathbb{C}/\mathbb{R}} \colon \mathbb{R}^\times / \mathbb{R}_{>0} \to \mathrm{Gal}(\mathbb{C}/\mathbb{R})$
-   the isomorphism (Milne, 1.6 of Chapter I): for the nontrivial character $\chi$, cup product with
-   $\delta\chi$ is the periodicity isomorphism $\hat H^0(G, \mathbb{C}^\times) \to H^2(G, \mathbb{C}^\times)$
-   (Milne, Remark II.3.5), so $a = -1$ gives the element of order $2$ of $\mathrm{Br}(\mathbb{R})$, of
-   invariant $1/2 = \chi(\mathrm{rec}_{\mathbb{C}/\mathbb{R}}(-1))$, and $a > 0$ gives $0$; for $L = K$, in
-   particular at a complex place, both sides vanish. Since the right side does not change when a character
-   of a quotient $\mathrm{Gal}(E/K)$ is inflated to $G$, the formula makes the maps $\mathrm{rec}_{L/K}$
-   for abelian $L$ compatible with restriction to subextensions (Milne, 3.3, for which Milne's footnote 3
-   says that the argument given there does not appear to be correct and that the statement follows from
-   Proposition III.3.6); and for $L/K$ unramified it gives
-   $\mathrm{rec}_{L/K}(a) = \mathrm{Frob}^{\mathrm{ord}_K(a)}$ (Milne, Lemma III.3.7; also Proposition
-   III.1.9). So these maps define a homomorphism $K^\times \to \mathrm{Gal}(K^{\mathrm{ab}}/K)$ with the two
-   properties of the local Artin map (Milne, Theorem III.3.4).
+
+    $$\chi(\mathrm{rec}_{L/K}(a)) = \mathrm{inv}_K(a \cup \delta\chi),$$
+
+    where $\delta \colon H^1(G, \mathbb{Q}/\mathbb{Z}) \to H^2(G, \mathbb{Z})$ is the connecting map of
+    $0 \to \mathbb{Z} \to \mathbb{Q} \to \mathbb{Q}/\mathbb{Z} \to 0$ and $a \cup \delta\chi \in H^2(G, L^\times)$
+    (Milne, Proposition III.3.6, which refers to Serre for the proof). The formula also holds for
+    $\mathbb{C}/\mathbb{R}$, with $\mathrm{rec}_{\mathbb{C}/\mathbb{R}} \colon \mathbb{R}^\times / \mathbb{R}_{>0} \to \mathrm{Gal}(\mathbb{C}/\mathbb{R})$
+    the isomorphism (Milne, 1.6 of Chapter I): for the nontrivial character $\chi$, cup product with
+    $\delta\chi$ is the periodicity isomorphism $\hat H^0(G, \mathbb{C}^\times) \to H^2(G, \mathbb{C}^\times)$
+    (Milne, Remark II.3.5), so $a = -1$ gives the element of order $2$ of $\mathrm{Br}(\mathbb{R})$, of
+    invariant $1/2 = \chi(\mathrm{rec}_{\mathbb{C}/\mathbb{R}}(-1))$, and $a > 0$ gives $0$; for $L = K$, in
+    particular at a complex place, both sides vanish. Since the right side does not change when a character
+    of a quotient $\mathrm{Gal}(E/K)$ is inflated to $G$, the formula makes the maps $\mathrm{rec}_{L/K}$
+    for abelian $L$ compatible with restriction to subextensions (Milne, 3.3, for which Milne's footnote 3
+    says that the argument given there does not appear to be correct and that the statement follows from
+    Proposition III.3.6); and for $L/K$ unramified it gives
+    $\mathrm{rec}_{L/K}(a) = \mathrm{Frob}^{\mathrm{ord}_K(a)}$ (Milne, Lemma III.3.7; also Proposition
+    III.1.9). So these maps define a homomorphism $K^\times \to \mathrm{Gal}(K^{\mathrm{ab}}/K)$ with the two
+    properties of the local Artin map (Milne, Theorem III.3.4).
+
 4. **The local existence theorem.** For $K$ non-archimedean, every open subgroup of finite index in
    $K^\times$ is a norm group $\mathrm{Nm}_{L/K}(L^\times)$ of a finite abelian extension, so
    $L \mapsto \mathrm{Nm}_{L/K}(L^\times)$ is an inclusion-reversing bijection between the finite abelian
