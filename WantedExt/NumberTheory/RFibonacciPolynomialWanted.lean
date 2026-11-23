@@ -13,6 +13,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
+public import MathlibExt.NumberTheory.NegRFibonacciPolynomial
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
 
 namespace MetaMathlibExt
@@ -714,75 +715,6 @@ public theorem_wanted sum_neg_one_pow_mul_rLucasPolynomial {K : Type*} [Field K]
               (-1) ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
         / (1 + x + (-1) ^ r * y) - 1
 
-/-- **The (-r)-Fibonacci polynomials.** Let $A$ be a commutative ring, $r$ a natural number,
-$x \in A$ and $y$ a unit of $A$. The values $U_n = U^{(-r)}_n(x, y) \in A$ of the
-$(-r)$-Fibonacci polynomials are defined for $n \ge 0$ by $U_0 = 0$, $U_1 = 1$, $U_n = 0$ for
-$2 \le n \le r$, and, when $r \ge 1$, $U_{n+1} = y^{-1} U_{n-r+1} - y^{-1} x U_{n-r}$ for
-$n \ge r$. When $r = 0$, $U_n = 0$ for every $n \ge 2$.
-
-The paper takes $r \ge 2$; the case $r = 0$ only makes the definition total.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 3. -/
-public def negRFibonacci {A : Type*} [CommRing A] (r : ℕ) (x : A) (y : Aˣ) : ℕ → A
-  | 0 => 0
-  | n + 1 =>
-    if n = 0 then 1
-    else if n < r ∨ r = 0 then 0
-    else (↑y⁻¹ : A) * negRFibonacci r x y (n - r + 1) - ↑y⁻¹ * x * negRFibonacci r x y (n - r)
-termination_by n => n
-decreasing_by all_goals omega
-
-/-- **The zeroth (-r)-Fibonacci polynomial.** For every commutative ring $A$, natural number
-$r$, $x \in A$ and unit $y$ of $A$, the $(-r)$-Fibonacci polynomial satisfies
-$U^{(-r)}_0(x, y) = 0$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 3. -/
-public theorem negRFibonacci_zero {A : Type*} [CommRing A] (r : ℕ) (x : A) (y : Aˣ) :
-    negRFibonacci r x y 0 = 0 := by
-  rw [negRFibonacci]
-
-/-- **The first (-r)-Fibonacci polynomial.** For every commutative ring $A$, natural number
-$r$, $x \in A$ and unit $y$ of $A$, the $(-r)$-Fibonacci polynomial satisfies
-$U^{(-r)}_1(x, y) = 1$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 3. -/
-public theorem negRFibonacci_one {A : Type*} [CommRing A] (r : ℕ) (x : A) (y : Aˣ) :
-    negRFibonacci r x y 1 = 1 := by
-  rw [negRFibonacci]
-  simp
-
-/-- **The (-r)-Fibonacci polynomials vanish at indices 2 to r.** Let $A$ be a commutative ring,
-$x \in A$ and $y$ a unit of $A$. For natural numbers $r$ and $n$ with $1 \le n < r$, the
-$(-r)$-Fibonacci polynomial satisfies $U^{(-r)}_{n+1}(x, y) = 0$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 3. -/
-public theorem negRFibonacci_succ_of_lt {A : Type*} [CommRing A] {r n : ℕ} (x : A) (y : Aˣ)
-    (h1 : 1 ≤ n) (h : n < r) : negRFibonacci r x y (n + 1) = 0 := by
-  rw [negRFibonacci]
-  simp [show n ≠ 0 by omega, h]
-
-/-- **Recurrence for the (-r)-Fibonacci polynomials.** Let $A$ be a commutative ring, $x \in A$
-and $y$ a unit of $A$, let $r$ and $n$ be natural numbers with $1 \le r \le n$, and write
-$U_m = U^{(-r)}_m(x, y)$. Then $U_{n+1} = y^{-1} U_{n-r+1} - y^{-1} x U_{n-r}$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 3, Equation (7). -/
-public theorem negRFibonacci_succ_of_le {A : Type*} [CommRing A] {r n : ℕ} (x : A) (y : Aˣ)
-    (hr : 1 ≤ r) (h : r ≤ n) :
-    negRFibonacci r x y (n + 1)
-      = ↑y⁻¹ * negRFibonacci r x y (n - r + 1) - ↑y⁻¹ * x * negRFibonacci r x y (n - r) := by
-  rw [negRFibonacci]
-  simp [show n ≠ 0 by omega, show ¬n < r by omega, show r ≠ 0 by omega]
-
 /-- **Companion sequence of the $(-r)$-Fibonacci polynomials.** Let $A$ be a commutative ring,
 $r$ a natural number, $x \in A$ and $y$ a unit of $A$. The companion sequence
 $V^{(-r)}_n(x, y) \in A$, $n \ge 0$, is defined by $V^{(-r)}_0 = r + 1$ and, if $r \ge 1$, by
@@ -872,20 +804,6 @@ public theorem_wanted negRFibonacci_succ_eq_sum {A : Type*} [CommRing A] {r : �
     negRFibonacci r x y (n + 1)
       = ∑ k ∈ Finset.range (n / r + 1),
           ((k.choose (n - r * k) : ℕ) : A) * (↑y⁻¹ : A) ^ k * (-x) ^ (n - r * k)
-
-/-- **Explicit sum for the (-r)-Fibonacci polynomials, second form.** Let $A$ be a commutative
-ring, $r \ge 2$, $x \in A$ and $y$ a unit of $A$, and write $U_n = U^{(-r)}_n(x, y)$. For every
-$n \ge 0$, $U_{n+1}$ is the sum of $\binom{(n-k)/r}{k} y^{-(n-k)/r} (-x)^k$ over the integers
-$k$ with $0 \le k \le \lfloor n/r \rfloor$ and $r \mid n - k$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 6 (`integers-2025-A38-thm-6`). -/
-public theorem_wanted negRFibonacci_succ_eq_sum' {A : Type*} [CommRing A] {r : ℕ}
-    (hr : 2 ≤ r) (x : A) (y : Aˣ) (n : ℕ) :
-    negRFibonacci r x y (n + 1)
-      = ∑ k ∈ (Finset.range (n / r + 1)).filter (fun k => r ∣ n - k),
-          ((((n - k) / r).choose k : ℕ) : A) * (↑y⁻¹ : A) ^ ((n - k) / r) * (-x) ^ k
 
 /-- **The companion sequence in terms of the $(-r)$-Fibonacci polynomials.** Let $A$ be a
 commutative ring, $r \ge 2$ a natural number, $x \in A$ and $y$ a unit of $A$, and let

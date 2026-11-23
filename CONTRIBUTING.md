@@ -319,6 +319,17 @@ under [Public references](#public-references) is in place. Blueprint Pages,
 Check workflows and Binary64 conformance are path-filtered on PRs, and Blueprint
 Pages also builds `main` once a day.
 
+## Lean and Mathlib bumps
+
+Lean, Mathlib, CSLib and Physlib move together to the next final release that
+all of them have tagged, and `guard` checks the pins. A bump touches many files
+and starts CI from an empty cache, so it follows its own routine, described in
+[docs/BUMPS.md](docs/BUMPS.md): one owner keeps the bump branch close to `main`
+with `scripts/bump/bump_branch.py`, warms CI's cache with `bump-cache.yml` right
+before queueing it, and queues it at the front of the queue at a quiet hour. If
+the queue removes your PR just after a bump, merge `main`, fix the PR on the new
+toolchain, and queue it again.
+
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need
 to do this once to work on any of Meta's open source projects.

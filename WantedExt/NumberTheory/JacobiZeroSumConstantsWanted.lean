@@ -15,6 +15,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Index
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.JacobiKernelLift
+public import MathlibExt.NumberTheory.UnitWeightedZeroSumPrimePower
 
 /-!
 # Zero-sum constants related to the Jacobi symbol: wishlist
@@ -186,20 +187,6 @@ public theorem_wanted weighted_zero_sum_of_image (d n' k : ℕ) (hcop : Nat.Copr
     (hA : A' ⊆ ZMod.castHom (dvd_mul_left n' d) (ZMod n') '' A)
     (h : IsWeightedZeroSum n' k A' (fun i => ZMod.castHom (dvd_mul_left n' d) (ZMod n') (x i))) :
     IsWeightedZeroSum (d * n') k A x
-
-/-- **Unit-weighted zero sums modulo an odd prime power.** Let $p$ be an odd prime, let $r$ and
-$k$ be natural numbers, and let $x_1, \dots, x_k \in \mathbb{Z}/p^r\mathbb{Z}$. Suppose that for
-at least two indices $i$ the least nonnegative representative of $x_i$ is coprime to $p$. Then
-there are units $a_1, \dots, a_k$ of $\mathbb{Z}/p^r\mathbb{Z}$ with
-$a_1 x_1 + \dots + a_k x_k = 0$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Lemma 16
-(`jis-2024-24.1.7-lem-16`). -/
-public theorem_wanted unit_weighted_zero_sum_prime_power (p r k : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) (x : Fin k → ZMod (p ^ r))
-    (h : 2 ≤ (Finset.univ.filter fun i => Nat.Coprime (x i).val p).card) :
-    IsWeightedZeroSum (p ^ r) k (unitSet (p ^ r)) x
 
 /-- **Three-term sums of square-weighted units cover $\mathbb{Z}_{p^r}$.** Let $p \ge 7$ be a
 prime, $r$ a natural number and $n = p^r$; write $\mathbb{Z}_n = \mathbb{Z}/n\mathbb{Z}$ and

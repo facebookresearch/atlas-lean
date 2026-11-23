@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Nat.Choose.Sum
+public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Harmonic.Defs
 import Mathlib.Algebra.BigOperators.Fin
@@ -17,6 +19,7 @@ import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Order.Fin.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
+import MathlibExt.NumberTheory.BinomialFibonacciConvolution
 import MathlibExt.NumberTheory.DilcherFiniteMultipleHarmonic
 
 /-!
@@ -28,6 +31,9 @@ For every natural number `n`, `∑_{k=0}^n binom(n, k) / (k + 1) = (2^{n+1} - 1)
 The alternating binomial sum with inverse-square weights equals the sum of the harmonic
 numbers divided by their indices. This follows from Dilcher's identity at exponent two by
 grouping the weakly increasing pairs by their second entry.
+
+Expanding a power in falling factorials gives a formula for the power-weighted binomial sum
+of Fibonacci numbers at every exponent. The first four powers give explicit closed forms.
 
 ## Proof of Epsteen's identity
 
@@ -111,5 +117,79 @@ public theorem sum_neg_one_pow_choose_div_sq_eq_sum_harmonic (n : ℕ) :
       rw [Fin.sum_univ_eq_sum_range (fun j => harmonic (j + 1) / ↑(j + 1)),
         ← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
       simp [Nat.add_comm]
+
+-- Absorbing one falling-factorial factor lowers the binomial row and shifts the Fibonacci index.
+private theorem sum_descFactorial_mul_choose_mul_fib_add (n i m : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), k.descFactorial i * n.choose k * Nat.fib (k + m) =
+      n.descFactorial i * Nat.fib (2 * n + m - i) := by
+  induction i generalizing n m with
+  | zero => simpa using Nat.sum_range_choose_mul_fib_add n m
+  | succ i ih =>
+    cases n with
+    | zero => simp
+    | succ n =>
+      rw [Finset.sum_range_succ', Nat.zero_descFactorial_succ, zero_mul, zero_mul, add_zero,
+        Nat.succ_descFactorial_succ, mul_assoc,
+        show 2 * (n + 1) + m - (i + 1) = 2 * n + (m + 1) - i by omega,
+        ← ih n (m + 1), Finset.mul_sum]
+      refine Finset.sum_congr rfl fun k _ => ?_
+      rw [Nat.succ_descFactorial_succ, show k + 1 + m = k + (m + 1) by omega]
+      calc
+        _ = ((n + 1).choose (k + 1) * (k + 1)) * k.descFactorial i *
+            Nat.fib (k + (m + 1)) := by ac_rfl
+        _ = _ := by
+          rw [← Nat.add_one_mul_choose_eq]
+          ac_rfl
+
+/-- **Power-weighted binomial sums of Fibonacci numbers.** Let $F_n$ denote the Fibonacci numbers,
+$S(r, i)$ the Stirling numbers of the second kind and $(N)_i = N(N-1) \cdots (N-i+1)$ the falling
+factorial, with $(N)_0 = 1$. For all natural numbers $N$ and $r$,
+$$\sum_{k=0}^{N} k^r \binom{N}{k} F_k = \sum_{i=0}^{r} S(r, i) \, (N)_i \, F_{2N-i},$$
+where the terms with $i > N$ vanish because $(N)_i = 0$.
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.5. -/
+public theorem sum_pow_mul_choose_mul_fib (N r : ℕ) :
+    ∑ k ∈ Finset.range (N + 1), k ^ r * N.choose k * Nat.fib k =
+      ∑ i ∈ Finset.range (r + 1),
+        Nat.stirlingSecond r i * N.descFactorial i * Nat.fib (2 * N - i) := by
+  simp_rw [Nat.pow_eq_sum_stirlingSecond_mul_descFactorial, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simpa only [Finset.mul_sum, mul_assoc, Nat.add_zero] using
+    congrArg (Nat.stirlingSecond r i * ·) (sum_descFactorial_mul_choose_mul_fib_add N i 0)
+
+/-- **Weighted binomial Fibonacci sums for the powers one to four.** Let $F_n$ denote the Fibonacci
+numbers. For every natural number $N$,
+$$\sum_{k=1}^{N} k \binom{N}{k} F_k = N F_{2N-1},$$
+$$\sum_{k=1}^{N} k^2 \binom{N}{k} F_k = N F_{2N-1} + N(N-1) F_{2N-2},$$
+$$\sum_{k=1}^{N} k^3 \binom{N}{k} F_k = N F_{2N-1} + 3N(N-1) F_{2N-2} + N(N-1)(N-2) F_{2N-3},$$
+$$\sum_{k=1}^{N} k^4 \binom{N}{k} F_k = N F_{2N-1} + 7N(N-1) F_{2N-2} +
+6N(N-1)(N-2) F_{2N-3} + N(N-1)(N-2)(N-3) F_{2N-4}.$$
+
+Every term with a negative Fibonacci index has coefficient zero.
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.6. -/
+public theorem sum_pow_mul_choose_mul_fib_small (N : ℕ) :
+    (∑ k ∈ Finset.Icc 1 N, k * N.choose k * Nat.fib k = N * Nat.fib (2 * N - 1)) ∧
+    (∑ k ∈ Finset.Icc 1 N, k ^ 2 * N.choose k * Nat.fib k =
+      N * Nat.fib (2 * N - 1) + N * (N - 1) * Nat.fib (2 * N - 2)) ∧
+    (∑ k ∈ Finset.Icc 1 N, k ^ 3 * N.choose k * Nat.fib k =
+      N * Nat.fib (2 * N - 1) + 3 * N * (N - 1) * Nat.fib (2 * N - 2) +
+        N * (N - 1) * (N - 2) * Nat.fib (2 * N - 3)) ∧
+    ∑ k ∈ Finset.Icc 1 N, k ^ 4 * N.choose k * Nat.fib k =
+      N * Nat.fib (2 * N - 1) + 7 * N * (N - 1) * Nat.fib (2 * N - 2) +
+        6 * N * (N - 1) * (N - 2) * Nat.fib (2 * N - 3) +
+        N * (N - 1) * (N - 2) * (N - 3) * Nat.fib (2 * N - 4) := by
+  have moment := sum_pow_mul_choose_mul_fib N
+  -- Split off the zero-index term before evaluating the four Stirling sums.
+  simp_rw [Finset.range_eq_Ico (N + 1), Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos N)] at moment
+  simp only [Nat.fib_zero, mul_zero, zero_add, Nat.succ_eq_add_one,
+    Finset.Ico_add_one_right_eq_Icc] at moment
+  simpa [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial, mul_assoc, mul_comm,
+    mul_left_comm] using (show _ ∧ _ ∧ _ ∧ _ from ⟨moment 1, moment 2, moment 3, moment 4⟩)
 
 end MetaMathlibExt

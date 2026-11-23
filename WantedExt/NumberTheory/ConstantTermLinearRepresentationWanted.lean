@@ -15,6 +15,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Matrix.Basis
 public import Mathlib.Data.ZMod.Basic
 public import MathlibExt.Data.Set.Density
+public import MathlibExt.NumberTheory.ConstantTermLinearRepresentation
 
 namespace MetaMathlibExt
 
@@ -26,35 +27,6 @@ constant term `ct[f]` is `f.coeff 0`. Kohen's array `a^n_k = coef_{-k}[P^n]` is
 `(P ^ n).coeff (-k)`. The paper's index box `T = [-m, m]^r` is
 `Fintype.piFinset fun _ => Finset.Icc (-m) m`. Definitions follow Kohen's arXiv
 version (arXiv:2503.21988v1, Sections 1, 2 and 5), which matches the journal records. -/
-
-/-- **Cartier operator $\Lambda_k$ on Laurent polynomials.** Let $R$ be a semiring and $f$ a
-Laurent polynomial in $r$ variables with coefficients in $R$. For a natural number $k > 0$,
-$\Lambda_k f$ keeps the terms of $f$ whose exponents are all multiples of $k$ and substitutes
-$x_s^k \mapsto x_s$ for each variable, so that the coefficient of $x^j$ in $\Lambda_k f$ is the
-coefficient of $x^{kj}$ in $f$ for every $j \in \mathbb{Z}^r$. For $k = 0$ it is set to
-$\Lambda_0 f = 0$ (the paper uses only positive $k$).
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Section 2 (definition of `Λ_k`). -/
-public noncomputable def laurentCartier {R : Type*} [Semiring R] {r : ℕ} (k : ℕ)
-    (f : AddMonoidAlgebra R (Fin r → ℤ)) : AddMonoidAlgebra R (Fin r → ℤ) :=
-  if hk : k = 0 then 0 else
-    .ofCoeff (Finsupp.comapDomain (fun j => k • j) f.coeff
-      (fun _ _ _ _ h => smul_right_injective (Fin r → ℤ) hk h))
-
-/-- **Coefficients of Kohen's operator $\Lambda_k$.** Let $R$ be a semiring and let $r$ and
-$k \ne 0$ be natural numbers. For every Laurent polynomial $f$ in $r$ variables with coefficients
-in $R$ and every $j \in \mathbb{Z}^r$, the coefficient of $x^j$ in $\Lambda_k f$ is the
-coefficient of $x^{kj}$ in $f$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Section 2 (definition of `Λ_k`). -/
-public theorem coeff_laurentCartier {R : Type*} [Semiring R] {r k : ℕ} (hk : k ≠ 0)
-    (f : AddMonoidAlgebra R (Fin r → ℤ)) (j : Fin r → ℤ) :
-    (laurentCartier k f).coeff j = f.coeff (k • j) := by
-  simp [laurentCartier, hk]
 
 /-- **Degree of a Laurent polynomial.** Let $R$ be a semiring and let $f$ be a Laurent polynomial
 in $r$ variables $x_1, \dots, x_r$ with coefficients in $R$. Kohen's degree $\deg f$ of $f$ is the
@@ -406,30 +378,6 @@ public theorem_wanted exists_constantTerm_pow_dvd_iff_tilde {r p a ℓ : ℕ} (h
       (AddMonoidAlgebra.mapDomain (fun j => p ^ ℓ • j) Pt).coeff j [ZMOD (p : ℤ) ^ a]) :
     ((∃ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0) ↔ ∃ n₁, (p : ℤ) ∣ (Pt ^ n₁).coeff 0) ∧
       ∀ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0 → (p : ℤ) ∣ (Pt ^ n₀).coeff 0
-
-/-- **Passing from $P$ to $\tilde P$ modulo $p^a$.** Let $p$ be a prime, let $a \ge 1$ and $\ell$
-be natural numbers, and let $P$ and $\tilde P$ be Laurent polynomials in $r$ variables with
-integer coefficients such that $P^{p^{a-1}} \equiv \tilde P(x^{p^\ell}) \pmod{p^a}$
-coefficientwise, where $\tilde P(x^q)$ is obtained from $\tilde P$ by replacing each monomial
-$x^e$ with $x^{qe}$. Write $\operatorname{ct}[F]$ for the constant term of a Laurent polynomial
-$F$ and $\Lambda_q$ for Kohen's operator, which keeps the terms whose exponents are all divisible
-by $q$ and replaces $x^{qj}$ by $x^j$. Then for every Laurent polynomial $Q$ in $r$ variables
-with integer coefficients and all natural numbers $n$ and $k$,
-$\operatorname{ct}[P^{p^{a-1} n + k} Q] \equiv
-\operatorname{ct}[\tilde P^n \Lambda_{p^\ell}(P^k Q)] \pmod{p^a}$.
-
-The statement holds for every natural number $k$; the paper restricts to $k < p^{a-1}$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Proposition 23 (`jis-2026-26.4.2-prop-23`). -/
-public theorem_wanted constantTerm_pow_mul_modEq_tilde {r p a ℓ : ℕ} (hp : p.Prime)
-    (ha : 0 < a) (P Pt : AddMonoidAlgebra ℤ (Fin r → ℤ))
-    (hPt : ∀ j, (P ^ (p ^ (a - 1))).coeff j ≡
-      (AddMonoidAlgebra.mapDomain (fun j => p ^ ℓ • j) Pt).coeff j [ZMOD (p : ℤ) ^ a])
-    (Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (n k : ℕ) :
-    (P ^ (p ^ (a - 1) * n + k) * Q).coeff 0 ≡
-      (Pt ^ n * laurentCartier (p ^ ℓ) (P ^ k * Q)).coeff 0 [ZMOD (p : ℤ) ^ a]
 
 /-- **Rowland–Zeilberger congruence modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
 number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients
