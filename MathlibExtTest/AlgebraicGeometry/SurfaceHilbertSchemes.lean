@@ -13,15 +13,16 @@ public import MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes
 
 universe u
 
 variable {k : Type u} [Field k] {X T : Over (Spec (.of k))}
 
--- Projective space itself is projective, through the identity closed immersion.
-example (n : ℕ) : IsProjective (projectiveSpace k n) :=
-  ⟨n, 𝟙 _, show IsClosedImmersion (𝟙 _) from inferInstance⟩
+-- The re-exported names are the definitions of `ProjectiveSpace`.
+example : @SurfaceHilbertSchemes.projectiveSpace = @ProjectiveSpace.projectiveSpace := rfl
+example : @SurfaceHilbertSchemes.IsProjective = @ProjectiveSpace.IsProjective := rfl
 
 -- The length is the rank at every point: a family of length zero is empty.
 example (Z : PointSubscheme X T 0) : IsEmpty Z.Z := by
@@ -50,3 +51,10 @@ example [Nonempty T.left] {n : ℕ} (Z : PointSubscheme X T n) [IsEmpty Z.Z] :
   obtain ⟨z, -⟩ :=
     (Z.i ≫ (prod.snd : prod X T ⟶ T).left).surjective (Classical.arbitrary T.left)
   exact isEmptyElim z
+
+-- The universal property classifies families over every parameter scheme, with no
+-- finite-type restriction on the test scheme.
+example {n : ℕ} (M : HilbertPointsModel X n) (Z : PointSubscheme X T n) :
+    ∃! f : T ⟶ M.H, ∃ a : Z.Z ⟶ M.universalFamily.Z,
+      IsPullback a Z.i M.universalFamily.i (prod.map (𝟙 X) f).left :=
+  M.universal T Z

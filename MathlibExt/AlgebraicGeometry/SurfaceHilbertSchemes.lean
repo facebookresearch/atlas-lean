@@ -12,8 +12,7 @@ public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 public import Mathlib.AlgebraicGeometry.Morphisms.FlatRank
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Pullbacks
-public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
-public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 
 @[expose] public noncomputable section
 
@@ -26,7 +25,9 @@ flat and locally of finite presentation). Its length is the rank of that
 projection at every point of the parameter scheme, `Scheme.Hom.finrank`,
 so families over parameter schemes without rational points are
 constrained too. The representing property is a cartesian
-universal-family condition, and contains no smoothness conclusion.
+universal-family condition on all parameter schemes, and contains no
+smoothness conclusion. Projective space and projectivity are those of
+`ProjectiveSpace`, re-exported here.
 
 Sources: Stacks Project, Hilbert functor, Tags 0D01 and 0DPA, and finite
 locally free morphisms, Tags 02K9 and 02KA;
@@ -37,21 +38,9 @@ namespace MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes
 
 open CategoryTheory CategoryTheory.Limits _root_.AlgebraicGeometry
 
+export _root_.MathlibExt.AlgebraicGeometry.ProjectiveSpace (projectiveSpace IsProjective)
+
 universe u
-
-/-- The graded projective-spectrum structure morphism. -/
-def gradedProjToSpec {R A : Type u} [CommRing R] [CommRing A] [Algebra R A]
-    (𝒜 : ℕ → Submodule R A) [GradedAlgebra 𝒜] : Proj 𝒜 ⟶ Spec (.of R) :=
-  Proj.toSpecZero 𝒜 ≫ Spec.map (CommRingCat.ofHom (algebraMap R (𝒜 0)))
-
-/-- Actual projective space over the field. -/
-def projectiveSpace (k : Type u) [Field k] (n : ℕ) : Over (Spec (.of k)) :=
-  letI := @MvPolynomial.gradedAlgebra
-  Over.mk (gradedProjToSpec (MvPolynomial.homogeneousSubmodule (Fin (n + 1)) k))
-
-/-- Projectivity is a genuine closed immersion over the field. -/
-def IsProjective {k : Type u} [Field k] (X : Over (Spec (.of k))) : Prop :=
-  ∃ n : ℕ, ∃ i : X ⟶ projectiveSpace k n, IsClosedImmersion i.left
 
 /-- A length-`n` family of closed subschemes of `X` parametrized by `T`: an actual
 closed subscheme of the relative product whose projection to `T` is finite
@@ -82,13 +71,11 @@ structure HilbertPointsModel {k : Type u} [Field k]
   [proper : IsProper H.hom]
   /-- The universal length-`n` family over the representing scheme. -/
   universalFamily : PointSubscheme X H n
-  /-- Every length-`n` family over a finite-type test scheme is the pullback
-  of the universal family along a unique parameter map. -/
-  universal : ∀ (T : Over (Spec (.of k))),
-    LocallyOfFiniteType T.hom → QuasiCompact T.hom →
-      ∀ Z : PointSubscheme X T n,
-        ∃! f : T ⟶ H,
-          ∃ a : Z.Z ⟶ universalFamily.Z,
-            IsPullback a Z.i universalFamily.i (prod.map (𝟙 X) f).left
+  /-- Every length-`n` family, over any parameter scheme, is the pullback of the
+  universal family along a unique parameter map. -/
+  universal : ∀ (T : Over (Spec (.of k))) (Z : PointSubscheme X T n),
+    ∃! f : T ⟶ H,
+      ∃ a : Z.Z ⟶ universalFamily.Z,
+        IsPullback a Z.i universalFamily.i (prod.map (𝟙 X) f).left
 
 end MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes
