@@ -27,7 +27,7 @@ a hypothesis class; its instance is requested in
 
 Reference: J.-P. Demailly and M. Păun, *Numerical characterization of the
 Kähler cone of a compact Kähler manifold*, Ann. of Math. 159 (2004),
-arXiv:math/0105176v2, Theorem 0.4.
+arXiv:math/0105176v2, Theorem 0.4 (Theorem 0.5 of the published version).
 -/
 
 @[expose] public noncomputable section

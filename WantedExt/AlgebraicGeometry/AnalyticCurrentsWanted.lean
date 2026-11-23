@@ -13,7 +13,8 @@ public import MathlibExt.AlgebraicGeometry.AnalyticCurrents
 /-!
 # A nef class of positive volume contains an actual Kähler current
 
-Demailly--Paun, math/0105176v2, Theorem 0.4. Nefness uses closure of the
+Demailly--Paun, math/0105176v2, Theorem 0.4 (Theorem 0.5 of the published
+version, Ann. of Math. 159 (2004)). Nefness uses closure of the
 actual Kähler cone in real de Rham cohomology. Volume, representation,
 closedness, type and domination use the actual forms, distributional
 differential and coordinate integrals. No bigness/current oracle is input.
@@ -29,8 +30,10 @@ open MathlibExt.AlgebraicGeometry
 open KahlerClassGeometry ManifoldDifferentialForms CoordinateFormIntegrals AnalyticCurrents
 open scoped Manifold ContDiff
 
-/-- Demailly--Paun, Theorem 0.4: on a compact Kähler manifold, a nef real
-`(1,1)` class of positive volume contains a Kähler current. -/
+/-- Demailly--Paun, Theorem 0.4 (0.5 in the published version): on a compact
+Kähler manifold, a nef class of positive volume contains a Kähler current. The
+class is given by any closed real representative `alpha`; nef classes are
+`(1,1)` classes, so no pointwise type condition on `alpha` is assumed. -/
 public theorem_wanted nef_positiveVolume_kahlerCurrent
     (n : ℕ) (hn : 0 < n) (M : Type) [TopologicalSpace M] [T2Space M]
     [CompactSpace M] [ConnectedSpace M] [SecondCountableTopology M]
@@ -40,7 +43,6 @@ public theorem_wanted nef_positiveVolume_kahlerCurrent
     [WedgeTheory n M] [CurrentDifferentialTheory n M]
     (R : RealCoordinateMap n) (A : IntegrationAtlas n M) [IntegrationTheory n M R A]
     (eta : KahlerStructure n M) (alpha : ClosedTwoForms n M)
-    (htype : IsTypeOneOne n M alpha.val)
     (hnef : letI := cohomologyTopology n M
       classOfClosedTwoForm ℝ (Coordinates n) M alpha ∈ closure (kahlerCone n M))
     (hvolume : 0 < integral n M R A

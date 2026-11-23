@@ -19,8 +19,7 @@ public import Mathlib.AlgebraicGeometry.Morphisms.OpenImmersion
 The carrier is X(C) with its existing topology. Local analytic rings are
 the actual polynomial holomorphic quotients, with all defining equations
 retained. Open ringed charts and their commutative algebraic squares fix
-the structure sheaf, including singular local models and quotients by
-non-radical ideals.
+the structure sheaf, including singular local models.
 
 The module pullback and its adjunction are constructed from that actual
 ringed map. Coherence, exactness and GAGA are separate dependency contracts

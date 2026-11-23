@@ -12,11 +12,9 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Data.Fin.VecNotation
 
 /-!
-Provider-free interface checks: genuine two-variable holomorphic evaluation
-and an I-relation retained through quotient, sheafification and pullback,
-without a manifold or GAGA provider. For the square-zero ideal `(X²)` this
-checks only that the relation `X² = 0` holds; it does not test that `X`
-survives, that is, that the model is nonreduced.
+Provider-free interface checks: genuine two-variable holomorphic evaluation,
+and the relations of an ideal holding in its model through quotient,
+sheafification and pullback, without a manifold or GAGA provider.
 -/
 
 open MathlibExt.AlgebraicGeometry.PolynomialAnalyticSpaces
@@ -30,7 +28,8 @@ example : polynomialSections 2 ⊤
   rw [polynomialSections_eval]
   norm_num
 
-/-- The relation of the double point `(X²)` holds in its model. -/
+/-- The relation `X² = 0` of the ideal `(X²)` defining the double point holds in
+its model. -/
 example : polynomialMap 1
     (Ideal.span {(MvPolynomial.X (0 : Fin 1)) ^ 2})
     (MvPolynomial.X (0 : Fin 1)) ^ 2 = 0 := by

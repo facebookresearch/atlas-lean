@@ -23,9 +23,7 @@ public import Mathlib.Geometry.RingedSpace.Basic
 
 The local model of Spec(C[x]/I) is the actual zero set of I in C^n,
 with the inverse image of the sheafification of O_hol / I O_hol.
-The quotient is by the ideal I itself, not by its radical, so that nonreduced
-algebraic schemes are modelled; that these models are nonreduced when I is not
-radical is not proved here.
+The quotient is by the ideal I itself, not by its radical.
 Polynomial sections are actual holomorphic functions and are fixed by
 evaluation. These definitions provide local models for general analytic
 realization contracts, without assuming a manifold structure on a singular
