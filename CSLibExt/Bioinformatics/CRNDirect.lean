@@ -14,7 +14,6 @@ public import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.List
-public import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
@@ -45,7 +44,7 @@ structure Reaction (S : Type*) [Fintype S] where
   k_nonneg : 0 ≤ k
 
 /-- Stochastic mass-action combinatorial factor for one species:
-`C(n, m) = descFactorial n m / m!`, the number of ways to choose the `m`
+C(n, m) = descFactorial n m / m!, the number of ways to choose the `m`
 reactant molecules from the `n` present. This equals `Nat.choose n m`. -/
 noncomputable def combFactor (n m : ℕ) : ℝ :=
   (Nat.descFactorial n m : ℝ) / (Nat.factorial m : ℝ)
@@ -123,16 +122,18 @@ theorem totalPropensity_eq_zero_iff {S : Type*} [Fintype S]
     obtain ⟨a, ha, rfl⟩ := hy
     exact h a ha
 
-/-- First reaction whose cumulative propensity exceeds `thresh`, by recursion
-over the list. Total: returns `none` on `[]` or when the threshold is never
-exceeded (in particular when `u2 * a0 ≥ a0`, i.e. `u2 ≥ 1` with `a0 > 0`;
-a negative threshold selects the head reaction). -/
+/-- First reaction whose cumulative propensity reaches `thresh`, by recursion
+over the list (upper-inclusive inverse CDF, Gillespie 1977 direct method):
+selects the first index with `thresh ≤ cumulative` and positive propensity.
+Total: returns `none` on `[]` or when the threshold is never reached (in
+particular when `u2 * a0 > a0`, i.e. `u2 > 1` with `a0 > 0`; a negative
+threshold selects the first positive-propensity reaction). -/
 noncomputable def selectAux {S : Type*} [Fintype S] (rs : List (Reaction S)) (x : S → ℕ)
     (thresh : ℝ) : Option (Reaction S) :=
   match rs with
   | [] => none
   | r :: rest =>
-    if thresh < propensity r x then some r
+    if thresh ≤ propensity r x ∧ 0 < propensity r x then some r
     else selectAux rest x (thresh - propensity r x)
 
 theorem selectAux_nil {S : Type*} [Fintype S] (x : S → ℕ) (thresh : ℝ) :
@@ -141,7 +142,7 @@ theorem selectAux_nil {S : Type*} [Fintype S] (x : S → ℕ) (thresh : ℝ) :
 theorem selectAux_cons {S : Type*} [Fintype S] (r : Reaction S)
     (rest : List (Reaction S)) (x : S → ℕ) (thresh : ℝ) :
     selectAux (r :: rest) x thresh =
-      (if thresh < propensity r x then some r
+      (if thresh ≤ propensity r x ∧ 0 < propensity r x then some r
         else selectAux rest x (thresh - propensity r x)) := rfl
 
 /-- Selection soundness: a selected reaction has positive propensity whenever
@@ -155,23 +156,33 @@ theorem selectAux_some_pos {S : Type*} [Fintype S] (rs : List (Reaction S))
     simp at hsel
   | cons head rest ih =>
     rw [selectAux_cons] at hsel
-    by_cases hcond : thresh < propensity head x
+    by_cases hcond : thresh ≤ propensity head x ∧ 0 < propensity head x
     · rw [ite_eq_left hcond] at hsel
       have h_eq : head = r := Option.some_inj.mp hsel
       subst h_eq
-      exact lt_of_le_of_lt hthresh hcond
+      exact hcond.2
     · rw [ite_eq_right hcond] at hsel
-      have hle : propensity head x ≤ thresh := not_lt.mp hcond
+      have hle : propensity head x ≤ thresh := by
+        by_cases hle' : thresh ≤ propensity head x
+        · have hnpos : ¬ 0 < propensity head x :=
+            fun hpos => hcond ⟨hle', hpos⟩
+          have hzero : propensity head x ≤ 0 := le_of_not_gt hnpos
+          have hnn : 0 ≤ propensity head x := propensity_nonneg head x
+          have heq : propensity head x = 0 := le_antisymm hzero hnn
+          rw [heq]
+          exact hthresh
+        · exact le_of_lt (lt_of_not_ge hle')
       have hthresh' : 0 ≤ thresh - propensity head x :=
         sub_nonneg.mpr hle
       exact ih _ _ hthresh' hsel
 
 /-- Direct-method step as a function of uniforms `u1 u2`: `none` when `a0 = 0`
 (absorbing); otherwise `(τ, r, fire r x)` with `τ = log (1 / u1) / a0` and `r`
-the first reaction whose cumulative propensity exceeds `u2 * a0`.
-Out-of-range `u2`: negative `u2` selects the head reaction (a threshold below
-zero is exceeded immediately); `u2 ≥ 1` yields `none` (a threshold at or above
-the total is never exceeded). -/
+the first reaction whose cumulative propensity reaches `u2 * a0`
+(upper-inclusive).
+Out-of-range `u2`: negative `u2` selects the first positive-propensity reaction
+(a threshold below zero is reached immediately); `u2 > 1` yields `none` (a
+threshold above the total is never reached). -/
 noncomputable def step {S : Type*} [Fintype S] (rs : List (Reaction S)) (x : S → ℕ)
     (u1 u2 : ℝ) : Option (ℝ × Reaction S × (S → ℕ)) :=
   let a0 := totalPropensity rs x

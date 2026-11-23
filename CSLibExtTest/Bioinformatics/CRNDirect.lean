@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Bioinformatics.CRNDirect
 public meta import CSLibExt.Bioinformatics.CRNDirect
+public import Mathlib.Tactic.NormNum
 
 
 namespace Cslib.Bioinformatics.CRN
@@ -63,12 +64,15 @@ theorem birth_step_some :
         fire birthReaction initState) := by
   have ha0 : totalPropensity [birthReaction] initState = 2 := by
     simp [totalPropensity, birth_propensity]
-  have hlt2 : (1 / 2 : ℝ) * 2 < propensity birthReaction initState := by
+  have hle2 : (1 / 2 : ℝ) * 2 ≤ propensity birthReaction initState := by
+    rw [birth_propensity]
+    norm_num
+  have hpos2 : 0 < propensity birthReaction initState := by
     rw [birth_propensity]
     norm_num
   have hsel2 : selectAux [birthReaction] initState ((1 / 2 : ℝ) * 2) =
       some birthReaction := by
-    rw [selectAux_cons, ite_eq_left hlt2]
+    rw [selectAux_cons, ite_eq_left ⟨hle2, hpos2⟩]
   rw [step_eq, ha0, ite_eq_right (by norm_num : (2 : ℝ) ≠ 0), hsel2]
 
 /-- Absorbing example: the empty list never fires. -/
@@ -95,5 +99,33 @@ theorem birth_tau_nonneg : 0 ≤ Real.log (1 / (1 / 2 : ℝ)) / 2 := by
 #print axioms birth_step_some
 #print axioms empty_step_none
 #print axioms birth_tau_nonneg
+
+noncomputable def boundary_r1 : Reaction Unit := ⟨fun _ => 0, fun _ => 0, 1, by norm_num⟩
+noncomputable def boundary_r2 : Reaction Unit := ⟨fun _ => 0, fun _ => 1, 1, by norm_num⟩
+
+theorem boundary_prop1 : propensity boundary_r1 (fun _ => 0) = 1 := by
+  unfold propensity combFactor boundary_r1
+  simp
+
+theorem boundary_prop2 : propensity boundary_r2 (fun _ => 0) = 1 := by
+  unfold propensity combFactor boundary_r2
+  simp
+
+theorem boundary_total : totalPropensity [boundary_r1, boundary_r2] (fun _ => 0) = 2 := by
+  unfold totalPropensity
+  simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
+  rw [boundary_prop1, boundary_prop2]
+  norm_num
+
+theorem selectAux_boundary_first :
+    selectAux [boundary_r1, boundary_r2] (fun _ => 0) 1 = some boundary_r1 := by
+  rw [selectAux_cons, boundary_prop1]
+  norm_num
+
+theorem step_boundary_selects_first (u1 : ℝ) :
+    Option.map (fun t => t.2.1.products ()) (step [boundary_r1, boundary_r2] (fun _ => 0) u1 (1/2)) = some 0 := by
+  have hthresh : (1/2 : ℝ) * 2 = 1 := by norm_num
+  rw [step_eq, boundary_total, hthresh, selectAux_boundary_first]
+  simp [boundary_r1]
 
 end Cslib.Bioinformatics.CRN
