@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GameTheory.BlackwellApproachabilityWanted
+public import MathlibExt.GameTheory.BlackwellApproachabilityAlmostSure
 public import MathlibExt.GameTheory.CorrelatedEquilibrium
 
 @[expose] public section
