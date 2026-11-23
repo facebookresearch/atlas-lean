@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.AlgebraicGeometry.AffineTangent
+import Mathlib.Algebra.Field.ZMod
 
 set_option autoImplicit false
 
@@ -100,15 +101,32 @@ example (p : σ → k) : tangentSet (∅ : Set (σ → k)) p = ⊥ := by
   funext i
   simpa using mem_tangentSet_iff.mp hv (X i) (by simp)
 
--- Off the zero locus, the tangent space of an ideal is smaller than the kernel of the
--- generators' differentials: `X * (X - 1)` lies in `(X)` and has differential `v` at `1`.
-example : (fun _ => (1 : k)) ∉ tangentIdeal (Ideal.span {(X () : MvPolynomial Unit k)})
-    (fun _ => 1) := by
-  intro h
-  have hmem : (X () * (X () - 1) : MvPolynomial Unit k) ∈ Ideal.span {X ()} :=
-    Ideal.mul_mem_right _ _ (Ideal.subset_span rfl)
+-- Off the zero locus, the tangent space of an ideal can be smaller than the kernel of its
+-- generator's differential: `f = X ^ 2 - 1` has `df₀(1) = 0`, but `X * f ∈ (f)` has
+-- `d(X * f)₀(1) = -1`.
+example : differential (X () ^ 2 - 1 : MvPolynomial Unit k) 0 (fun _ => 1) = 0 ∧
+    (fun _ => (1 : k)) ∉ tangentIdeal (Ideal.span {(X () ^ 2 - 1 : MvPolynomial Unit k)}) 0 := by
+  refine ⟨by simp [differential_sub, pow_two, differential_mul], fun h => ?_⟩
+  have hmem : (X () * (X () ^ 2 - 1) : MvPolynomial Unit k) ∈ Ideal.span {X () ^ 2 - 1} :=
+    Ideal.mul_mem_left _ _ (Ideal.subset_span rfl)
   have := mem_tangentIdeal_iff.mp h _ hmem
-  simp [differential_mul, differential_sub] at this
+  simp [differential_mul, differential_sub, pow_two] at this
+
+-- `tangentSet` only sees the `k`-points: over `𝔽₂` the polynomial `X ^ 2 - X` vanishes on the
+-- whole line, so the tangent space of its `𝔽₂`-points is zero, while the line itself, cut out by
+-- the zero ideal, has the full tangent space.
+example : tangentSet (Set.univ : Set (Unit → ZMod 2)) 0 = ⊥ ∧
+    tangentIdeal (⊥ : Ideal (MvPolynomial Unit (ZMod 2))) 0 = ⊤ := by
+  refine ⟨eq_bot_iff.mpr fun v hv => ?_, eq_top_iff.mpr fun v _ => ?_⟩
+  · have hvan : ∀ y : Unit → ZMod 2, eval y (X () ^ 2 - X () : MvPolynomial Unit (ZMod 2)) = 0 :=
+      fun y => by
+        have : ∀ a : ZMod 2, a ^ 2 - a = 0 := by decide
+        simpa using this (y ())
+    have h := mem_tangentSet_iff.mp hv (X () ^ 2 - X ()) fun y _ => hvan y
+    rw [Submodule.mem_bot]
+    funext u
+    simpa [differential_sub, pow_two, differential_mul] using h
+  · exact mem_tangentIdeal_iff.mpr fun f hf => by simp [(Ideal.mem_bot).mp hf]
 
 end Tangent
 

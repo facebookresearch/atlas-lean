@@ -22,8 +22,9 @@ Characteristic zero supplies generic separability; it is not silently
 asserted in arbitrary positive characteristic.
 
 References:
-* Zak, *Tangents and Secants of Algebraic Varieties*, Chapter I, §1.
-* Landsberg, *Tensors: Geometry and Applications*, §5.3.
+* Zak, *Tangents and Secants of Algebraic Varieties*, Chapter II, §1,
+  Proposition 1.10(b) (the projective relative-secant case).
+* Landsberg, *Tensors: Geometry and Applications*, §5.3 (Terracini's lemma).
 * Covered secant-cone source: AxiomMath/Stacks at
   c496df0d9beea9deaeabcea8492605f9a0a2313b,
   `StacksFrontier/AlgebraicGeometry/Variety/Projective/SecantCone.lean`.

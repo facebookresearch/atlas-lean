@@ -21,10 +21,13 @@ For a field `k` and a coordinate type `σ`, point sets of `σ → k` are handled
 * `zariskiClosure S`: the Zariski closure `V(I(S))` of a set of points.
 * `differential f p`: for finite `σ`, the differential `v ↦ ∑ i, (∂f/∂xᵢ)(p) vᵢ` of a polynomial
   `f` at a point `p`.
-* `tangentIdeal I p`: the Zariski tangent space at `p` of the subscheme cut out by the ideal `I`,
-  the common kernel of the differentials at `p` of the elements of `I`.
-* `tangentSet S p`: the tangent space at `p` of the reduced subscheme on `S`, computed from the
-  vanishing ideal `I(S)`.
+* `tangentIdeal I p`: the common kernel of the differentials at `p` of the elements of the ideal
+  `I`. When `p` lies on the zero locus of `I`, this is the Zariski tangent space at `p` of the
+  closed subscheme of affine space cut out by `I`.
+* `tangentSet S p`: `tangentIdeal` of the vanishing ideal `I(S)` of a set of `k`-points, i.e. the
+  tangent space of the reduced closed subscheme defined by `I(S)`, whose `k`-points form
+  `zariskiClosure S`. Over a field that is not algebraically closed, `I(S)` need not be the ideal
+  of a given reduced scheme with these `k`-points.
 * `additionImageClosure X Y`: the Zariski closure of the image `X + Y` of the addition map.
 
 ## Main results
@@ -147,9 +150,10 @@ theorem differential_mul (f g : MvPolynomial σ k) (p : σ → k) :
     LinearMap.smul_apply, smul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun i _ => by ring
 
-/-- The Zariski tangent space at `p` of the subscheme of `σ → k` cut out by `I`: the common kernel
-of the differentials at `p` of all elements of `I`. The point `p` is not required to be a common
-zero of `I`. -/
+/-- The common kernel of the differentials at `p` of all elements of the ideal `I`. When `p` is a
+common zero of `I`, this is the Zariski tangent space at `p` of the closed subscheme of `σ → k`
+cut out by `I`. For `p` off the zero locus it is still defined, but it is not the tangent space of
+that subscheme at a point. -/
 def tangentIdeal (I : Ideal (MvPolynomial σ k)) (p : σ → k) : Submodule k (σ → k) :=
   ⨅ f ∈ I, LinearMap.ker (differential f p)
 
@@ -177,8 +181,11 @@ theorem tangentIdeal_span {s : Set (MvPolynomial σ k)} {p : σ → k}
       LinearMap.smul_apply, hf.1, hf.2]
     simp
 
-/-- The tangent space at `p` of the reduced subscheme on a set `S` of points: the tangent space of
-the vanishing ideal `I(S)`. -/
+/-- The tangent space at `p` of the reduced closed subscheme defined by the vanishing ideal `I(S)`
+of a set `S` of `k`-points; its `k`-points form `zariskiClosure S`. It depends on `S` only through
+`I(S)`, which over a field that is not algebraically closed need not be the ideal of a given
+reduced scheme with these `k`-points: for the `𝔽₂`-points of the affine line, `X ^ 2 - X ∈ I(S)`
+and the tangent space at `0` is zero. -/
 def tangentSet (S : Set (σ → k)) (p : σ → k) : Submodule k (σ → k) :=
   tangentIdeal (vanishingIdeal k S) p
 
