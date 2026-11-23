@@ -7,9 +7,12 @@ $L_{\mathfrak{p}}$ unimodular. Then the local density and the local factor of $L
 
 $$\beta(L_{\mathfrak{p}}) = q^{-m^2} \, \# \mathrm{GL}_m(\mathbb{F}_q) = \prod_{j=1}^{m} (1 - q^{-j}), \qquad \lambda(L_{\mathfrak{p}}) = 1.$$
 
-Indeed $\mathfrak{p}$ has two prime ideals of $\mathcal{O}$ above it, each with ramification index and residue degree $1$, so the
-[base change to the completion](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/the-finite-place-completion-tensor-product/completion-tensor-product-alg-equiv.md) is $E \otimes_K K_{\mathfrak{p}} \cong K_{\mathfrak{p}} \times K_{\mathfrak{p}}$, each factor having
-[degree $e f = 1$](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md) over $K_{\mathfrak{p}}$, and $\mathcal{O}_{\mathfrak{p}} = \mathfrak{o}_{\mathfrak{p}} \times \mathfrak{o}_{\mathfrak{p}}$, with the
+Indeed $\mathcal{O}$ is a finitely generated $\mathfrak{o}$-module, so $\mathcal{O}_{\mathfrak{p}} = \mathcal{O} \otimes_{\mathfrak{o}} \mathfrak{o}_{\mathfrak{p}}$ is
+the $\mathfrak{p}$-adic completion $\varprojlim_N \mathcal{O}/\mathfrak{p}^N \mathcal{O}$, which by the factorization of $\mathfrak{p}\mathcal{O}$ and
+the Chinese remainder theorem is the product of the completions $\widehat{\mathcal{O}}_{\mathfrak{P}}$ over the prime ideals
+$\mathfrak{P}$ of $\mathcal{O}$ above $\mathfrak{p}$. Here there are two of them, each with ramification index and residue degree $1$, so
+each completion $E_{\mathfrak{P}}$ has [degree $e f = 1$](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md) over $K_{\mathfrak{p}}$ and
+$\widehat{\mathcal{O}}_{\mathfrak{P}} = \mathfrak{o}_{\mathfrak{p}}$; thus $\mathcal{O}_{\mathfrak{p}} = \mathfrak{o}_{\mathfrak{p}} \times \mathfrak{o}_{\mathfrak{p}}$, with the
 involution exchanging the factors. So $L_{\mathfrak{p}} = A \oplus A'$ for free $\mathfrak{o}_{\mathfrak{p}}$-modules $A$, $A'$ of rank $m$,
 and $\Phi$ is given by a pairing of $A$ with $A'$, perfect because $L_{\mathfrak{p}}$ is unimodular. An isometry of
 $L_{\mathfrak{p}} \otimes R$ is determined by its restriction to $A \otimes R$, which can be any automorphism, so the set
@@ -31,8 +34,7 @@ Lemma 4.2.9 with $m_0 = m$, where $\lambda(L_{\mathfrak{p}}) = \binom{m}{m}_q = 
 
 ## Proof depends on
 
-- [Base change to a finite completion as a product of completions](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/the-finite-place-completion-tensor-product/completion-tensor-product-alg-equiv.md)
-- [The local degree is the product of ramification index and inertia degree](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md)
+- [The local degree is the product of ramification index and inertia degree](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md), for $\widehat{\mathcal{O}}_{\mathfrak{P}} = \mathfrak{o}_{\mathfrak{p}}$
 
 ## Sources
 

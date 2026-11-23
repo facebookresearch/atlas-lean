@@ -35,7 +35,7 @@ Kirschmer states the mass formula.)
 
 ## Proof depends on
 
-- [Siegel's mass formula for definite Hermitian lattices over a quadratic extension](hermitian-siegel-mass-formula.md), for the finiteness of the genus and the formula in terms of the local factors
+- [Siegel's mass formula for definite Hermitian lattices over a quadratic extension](hermitian-siegel-mass-formula.md), for the finitely many isometry classes in the genus and the formula in terms of the local factors
 - [Local factor of a unimodular Hermitian lattice at a split prime](hermitian-unimodular-local-factor-split.md)
 - [Local factor of a unimodular Hermitian lattice at an inert prime](hermitian-unimodular-local-factor-inert.md)
 - [Unramified primes are those not dividing the discriminant](../../RingTheory/ramification/different-and-discriminant-ideals/is-unramified-in-iff-not-dvd-discriminan.md), for $\mathfrak{d}_{E/K} = (1)$

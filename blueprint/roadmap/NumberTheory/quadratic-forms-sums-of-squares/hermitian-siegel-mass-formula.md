@@ -75,7 +75,7 @@ $q^{-a_{\mathfrak{p}}}$ change the exponent of $N_{K/\mathbb{Q}}(\mathfrak{d}_{E
 - [Only finitely many primes of the base ramify](../../RingTheory/ramification/different-and-discriminant-ideals/finite-ramified-primes-below.md)
 - [Local factor of a unimodular Hermitian lattice at a split prime](hermitian-unimodular-local-factor-split.md)
 - [Local factor of a unimodular Hermitian lattice at an inert prime](hermitian-unimodular-local-factor-inert.md)
-- [Summability of Dedekind zeta terms for σ > 1](../zeta-l-functions/dirichlet-l-functions/dedekind-zeta-function-and-polar-density/summable-height-one-spectrum-abs-norm-rp.md), for the absolute convergence of the product of the local densities
+- [Summability of Dedekind zeta terms for σ > 1](../zeta-l-functions/dirichlet-l-functions/dedekind-zeta-function-and-polar-density/summable-height-one-spectrum-abs-norm-rp.md), for the absolute convergence of the corrected product $\prod_{\mathfrak{p}} (1 - \chi(\mathfrak{p}) N\mathfrak{p}^{-1}) \beta(L_{\mathfrak{p}})^{-1}$
 
 ## Sources
 
@@ -90,4 +90,5 @@ $q^{-a_{\mathfrak{p}}}$ change the exponent of $N_{K/\mathbb{Q}}(\mathfrak{d}_{E
 - W. T. Gan and J.-K. Yu, *Group schemes and local densities*, Duke Math. J. 105 (2000), 497–524,
   <https://bpb-us-w2.wpmucdn.com/blog.nus.edu.sg/dist/3/12891/files/2020/08/duke-local-density.pdf>, Section 10:
   §§10.7–10.8 (the mass in terms of the local densities, whose product converges only conditionally when the group is
-  not semisimple, as for unitary groups) and §10.9 (Tamagawa number $\tau(G) = 2$ for $K = E$).
+  not semisimple, as for unitary groups) and §10.9 (Tamagawa number $\tau(G) = 2$ for the unitary group of a quadratic extension, the case $K = E$ in Gan and Yu's
+  notation of §10.2).

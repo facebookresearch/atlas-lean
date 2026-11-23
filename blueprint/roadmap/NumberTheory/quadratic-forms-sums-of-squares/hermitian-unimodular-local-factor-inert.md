@@ -9,10 +9,15 @@ $$\beta(L_{\mathfrak{p}}) = q^{-m^2} \, \# \mathrm{U}_m(\mathbb{F}_q) = \prod_{j
 
 where $\mathrm{U}_m(\mathbb{F}_q)$ is the unitary group of a nondegenerate Hermitian form in $m$ variables over $\mathbb{F}_{q^2}$.
 
-Indeed $\mathfrak{p}$ has one prime ideal of $\mathcal{O}$ above it, with ramification index $1$ and residue degree $2$, so the
-[base change to the completion](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/the-finite-place-completion-tensor-product/completion-tensor-product-alg-equiv.md) is a field $E_{\mathfrak{p}}$ of [degree $e f = 2$](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md) over $K_{\mathfrak{p}}$, and
-$\mathcal{O}_{\mathfrak{p}}$ is the unramified quadratic extension of $\mathfrak{o}_{\mathfrak{p}}$, with residue field $\mathbb{F}_{q^2}$ and a
-uniformizer $\pi \in \mathfrak{o}_{\mathfrak{p}}$. The lattice $L_{\mathfrak{p}}$ is free with an invertible Hermitian Gram matrix $G$,
+Indeed $\mathcal{O}$ is a finitely generated $\mathfrak{o}$-module, so $\mathcal{O}_{\mathfrak{p}} = \mathcal{O} \otimes_{\mathfrak{o}} \mathfrak{o}_{\mathfrak{p}}$ is
+the $\mathfrak{p}$-adic completion $\varprojlim_N \mathcal{O}/\mathfrak{p}^N \mathcal{O}$, which by the factorization of $\mathfrak{p}\mathcal{O}$ and
+the Chinese remainder theorem is the product of the completions $\widehat{\mathcal{O}}_{\mathfrak{P}}$ over the prime ideals
+$\mathfrak{P}$ of $\mathcal{O}$ above $\mathfrak{p}$. Here there is one, $\mathfrak{P} = \mathfrak{p}\mathcal{O}$, with ramification index $1$ and residue
+degree $2$, so $\mathcal{O}_{\mathfrak{p}} = \widehat{\mathcal{O}}_{\mathfrak{P}}$ is the ring of integers of the completion $E_{\mathfrak{P}}$, of
+[degree $e f = 2$](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md) over $K_{\mathfrak{p}}$, whose maximal ideal has
+[ramification index $1$](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/ramification-index-under-finite-place-completion/ramification-idx-adic-completion-integer.md) and [residue degree $2$](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/inertia-deg-adic-completion-integers-map.md)
+over $\mathfrak{o}_{\mathfrak{p}}$: a uniformizer $\pi \in \mathfrak{o}_{\mathfrak{p}}$ of $K_{\mathfrak{p}}$ is one of $E_{\mathfrak{P}}$, and the residue field
+is $\mathbb{F}_{q^2}$. The lattice $L_{\mathfrak{p}}$ is free with an invertible Hermitian Gram matrix $G$,
 so $H(R) = \{g : g^* G g = G\}$ in the definition of $\beta(L_{\mathfrak{p}})$, and $H(\mathfrak{o}/\mathfrak{p})$ is the unitary group of
 the nondegenerate Hermitian space $L_{\mathfrak{p}} / \pi L_{\mathfrak{p}}$ over $\mathbb{F}_{q^2}$. For $N \ge 1$ every
 $h \in H(\mathfrak{o}/\mathfrak{p}^N)$ lifts, and its lifts to $H(\mathfrak{o}/\mathfrak{p}^{N+1})$ form one coset of a group of order
@@ -35,8 +40,9 @@ Lemma 4.2.9 with $m_0 = m$, where $\lambda(L_{\mathfrak{p}}) = \bigl|\binom{m}{m
 
 ## Proof depends on
 
-- [Base change to a finite completion as a product of completions](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/the-finite-place-completion-tensor-product/completion-tensor-product-alg-equiv.md)
 - [The local degree is the product of ramification index and inertia degree](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/finrank-adic-completion-eq-ramification.md)
+- [Completion preserves the ramification index](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/ramification-index-under-finite-place-completion/ramification-idx-adic-completion-integer.md)
+- [Completion preserves the inertia degree](../algebraic-number-theory/discriminants-ramification/completions-of-number-fields-at-finite-places/inertia-deg-adic-completion-integers-map.md)
 - [Order of the unitary group over a finite field](finite-unitary-group-order.md)
 
 ## Sources
