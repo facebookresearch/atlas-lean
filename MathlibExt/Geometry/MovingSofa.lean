@@ -36,65 +36,108 @@ open scoped ENNReal
 
 namespace MovingSofa
 
-/-- The planar corridor has two perpendicular semi-infinite arms of width one. -/
+/-- **Corridor.** The corridor is the L-shaped set of points $z \in \mathbb{C}$ with
+$\operatorname{Re} z \le 1$ and $0 \le \operatorname{Im} z \le 1$ (the horizontal arm, extending
+to the left) together with the points $z$ with $0 \le \operatorname{Re} z \le 1$ and
+$\operatorname{Im} z \ge 0$ (the vertical arm, extending upward): two perpendicular
+semi-infinite arms of width one. -/
 def corridor : Set ℂ :=
   {z | z.re ≤ 1 ∧ 0 ≤ z.im ∧ z.im ≤ 1} ∪
     {z | 0 ≤ z.re ∧ z.re ≤ 1 ∧ 0 ≤ z.im}
 
-/-- The horizontal entrance is beyond the corner square. -/
+/-- **Entrance of the corridor.** The entrance region of the unit right-angle corridor is
+the closed half-strip
+$\{z \in \mathbb{C} : \operatorname{Re} z \le 0,\ 0 \le \operatorname{Im} z \le 1\}$,
+the part of its horizontal arm to the left of the corner square. -/
 def entrance : Set ℂ := {z | z.re ≤ 0 ∧ 0 ≤ z.im ∧ z.im ≤ 1}
 
-/-- The vertical exit is beyond the corner square. -/
+/-- **Exit of the corridor.** The exit region of the unit right-angle corridor is the closed
+half-strip $\{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ \operatorname{Im} z \ge 1\}$,
+the part of its vertical arm above the corner square. -/
 def exit : Set ℂ := {z | 0 ≤ z.re ∧ z.re ≤ 1 ∧ 1 ≤ z.im}
 
-/-- A motion uses actual continuous unit rotations and planar translations. -/
+/-- **Planar rigid motion.** A motion consists of a continuous map $t \mapsto u_t$ from $[0, 1]$
+to the unit circle $\{u \in \mathbb{C} : |u| = 1\}$ (the rotation) and a continuous map
+$t \mapsto c_t$ from $[0, 1]$ to $\mathbb{C}$ (the translation). -/
 structure Motion where
   /-- The orientation-preserving unit complex rotation at each time. -/
   rotation : C(unitInterval, Circle)
   /-- The planar translation at each time. -/
   translation : C(unitInterval, ℂ)
 
-/-- The physical position of a point under a direct planar rigid motion. -/
+/-- **Position under a rigid motion.** Let $m$ be a motion with rotation $u(t)$ in the unit circle
+and translation $c(t) \in \mathbb{C}$ at each time $t \in [0, 1]$. The position at time $t$ of a
+point $z \in \mathbb{C}$ is $u(t)\,z + c(t)$. -/
 def Motion.position (m : Motion) (t : unitInterval) (z : ℂ) : ℂ :=
   (m.rotation t : ℂ) * z + m.translation t
 
-/-- A continuous path starts before the corner and ends beyond it. -/
+/-- **Passing the corridor.** A set $K \subseteq \mathbb{C}$ can pass the corridor if there are
+continuous maps $u$ from $[0, 1]$ to the unit circle $\{w \in \mathbb{C} : |w| = 1\}$ and $c$
+from $[0, 1]$ to $\mathbb{C}$ such that, writing $K_t = \{u(t) z + c(t) : z \in K\}$ for the
+position of $K$ at time $t$, $K_0$ lies in the entrance arm, $K_1$ lies in the exit arm, and
+$K_t$ lies in the corridor for every $t \in [0, 1]$. -/
 def CanPass (K : Set ℂ) : Prop :=
   ∃ m : Motion,
     m.position 0 '' K ⊆ entrance ∧
     m.position 1 '' K ⊆ exit ∧
     ∀ t : unitInterval, m.position t '' K ⊆ corridor
 
-/-- Admissible shapes are Lebesgue-measurable, connected, and genuinely movable. -/
+/-- **Sofa shapes.** A set $K \subseteq \mathbb{C}$ is a sofa when it is Lebesgue measurable,
+nonempty and connected, and can be moved through the unit right-angle corridor: there is a motion
+(a rotation by a unit complex number and a translation, both varying continuously with time
+$t \in [0, 1]$) that places $K$ inside the corridor's entrance region at time $0$, inside its exit
+region at time $1$, and inside the corridor at every time $t$. -/
 def IsSofa (K : Set ℂ) : Prop :=
   NullMeasurableSet K volume ∧ IsConnected K ∧ CanPass K
 
-/-- Actual Lebesgue areas are optimized in the extended nonnegative reals. -/
+/-- **Optimal sofa area.** Let the corridor be
+$L = \{z \in \mathbb{C} : \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z \le 1\} \cup
+\{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z\}$, with entrance
+$E = \{z \in \mathbb{C} : \operatorname{Re} z \le 0,\ 0 \le \operatorname{Im} z \le 1\}$ and exit
+$X = \{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ 1 \le \operatorname{Im} z\}$. A sofa
+is a nonempty connected Lebesgue-measurable set $K \subseteq \mathbb{C}$ for which there are
+continuous maps $u : [0, 1] \to \{w \in \mathbb{C} : |w| = 1\}$ and $c : [0, 1] \to \mathbb{C}$
+such that, writing $K_t = \{u(t)\,z + c(t) : z \in K\}$, we have $K_0 \subseteq E$,
+$K_1 \subseteq X$ and $K_t \subseteq L$ for every $t \in [0, 1]$. The optimal sofa area is the
+supremum, taken in $[0, \infty]$, of the Lebesgue measures of all sofas.
+
+Because the supremum is taken in $[0, \infty]$, neither its finiteness nor its attainment is
+assumed. -/
 noncomputable def optimalArea : ℝ≥0∞ := ⨆ (K : Set ℂ) (_ : IsSofa K), volume K
 
-/-- A positive-area square, not a supplied area or motion oracle. -/
+/-- **Unit square.** The unit square is the set of complex numbers $z$ with
+$0 \le \operatorname{Re} z \le 1$ and $0 \le \operatorname{Im} z \le 1$, that is, the square
+$[0,1] \times [0,1]$ in the complex plane. -/
 def unitSquare : Set ℂ :=
   Complex.measurableEquivRealProd ⁻¹' (Icc (0 : ℝ) 1 ×ˢ Icc (0 : ℝ) 1)
 
-/-- The square follows a two-segment translation through the corner. -/
+/-- **The square's translation through the corner.** The motion with no rotation that sends a
+point $z$ at time $t \in [0,1]$ to $z + \tau(t)$, where $\tau(t) = 2t - 1$ for $t \le 1/2$ and
+$\tau(t) = (2t - 1)i$ for $t \ge 1/2$: it moves a shape one unit to the right during the first
+half of the time interval and then one unit upward. -/
 noncomputable def squareMotion : Motion where
   rotation := ContinuousMap.const unitInterval 1
   translation :=
     ⟨fun t ↦ ((min (2 * (t : ℝ) - 1) 0 : ℝ) : ℂ) +
       ((max (2 * (t : ℝ) - 1) 0 : ℝ) : ℂ) * Complex.I, by fun_prop⟩
 
-/-- Every motion position preserves the distance between two points. -/
+/-- **Motions preserve distance.** Let $m$ be a motion, $t \in [0, 1]$ a time, and write $m_t(z)$
+for the position of a point $z \in \mathbb{C}$ under $m$ at time $t$. Then
+$|m_t(z) - m_t(w)| = |z - w|$ for all $z, w \in \mathbb{C}$. -/
 theorem motion_preserves_distance (m : Motion) (t : unitInterval) (z w : ℂ) :
     dist (m.position t z) (m.position t w) = dist z w := by
   simp only [Motion.position, dist_eq_norm, add_sub_add_right_eq_sub, ← mul_sub]
   simp
 
-/-- The square is measurable for the canonical planar Borel structure. -/
+/-- **The unit square is Borel measurable.** The unit square $[0,1] \times [0,1]$ is a measurable
+set for the Borel $\sigma$-algebra of the complex plane. -/
 theorem square_measurable : MeasurableSet unitSquare :=
   (measurableSet_Icc.prod measurableSet_Icc).preimage
     Complex.measurableEquivRealProd.measurable
 
-/-- The square is connected, including its nonemptiness. -/
+/-- **The unit square is connected.** The unit square
+$\{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z \le 1\}$ is a
+nonempty connected subset of $\mathbb{C}$. -/
 theorem square_connected : IsConnected unitSquare := by
   have h := (isConnected_Icc (show (0 : ℝ) ≤ 1 by norm_num)).prod
     (isConnected_Icc (show (0 : ℝ) ≤ 1 by norm_num))
@@ -111,7 +154,9 @@ theorem square_connected : IsConnected unitSquare := by
         Complex.measurableEquivRealProd.symm_apply_apply z⟩
   rwa [heq] at hi
 
-/-- Canonical planar Lebesgue measure assigns the square area one. -/
+/-- **The unit square has area one.** The unit square
+$\{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z \le 1\}$ has
+Lebesgue measure $1$. -/
 theorem square_area : volume unitSquare = 1 := by
   rw [unitSquare, Complex.volume_preserving_equiv_real_prod.measure_preimage
     (measurableSet_Icc.prod measurableSet_Icc).nullMeasurableSet]
@@ -119,7 +164,18 @@ theorem square_area : volume unitSquare = 1 := by
   rw [Measure.prod_prod]
   norm_num [Real.volume_Icc]
 
-/-- One actual continuous translation carries the whole square through the corridor. -/
+/-- **The unit square passes the corridor.** Let the corridor be
+$L = \{z \in \mathbb{C} : \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z \le 1\} \cup
+\{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z\}$, with entrance
+$E = \{z \in \mathbb{C} : \operatorname{Re} z \le 0,\ 0 \le \operatorname{Im} z \le 1\}$ and exit
+$X = \{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ 1 \le \operatorname{Im} z\}$. For the
+unit square
+$Q = \{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z \le 1\}$
+there are continuous maps $u : [0, 1] \to \{w \in \mathbb{C} : |w| = 1\}$ and
+$c : [0, 1] \to \mathbb{C}$ such that, writing $Q_t = \{u(t)\,z + c(t) : z \in Q\}$, we have
+$Q_0 \subseteq E$, $Q_1 \subseteq X$ and $Q_t \subseteq L$ for every $t \in [0, 1]$.
+
+A pure translation, first to the right and then upward, suffices. -/
 theorem square_canPass : CanPass unitSquare := by
   refine ⟨squareMotion, ?_, ?_, ?_⟩
   · rintro _ ⟨z, hz, rfl⟩
@@ -151,30 +207,53 @@ theorem square_canPass : CanPass unitSquare := by
         ⟨hre0, hre1, by linarith⟩
       simpa [Motion.position, squareMotion, min_eq_right ht', max_eq_left ht'] using h
 
-/-- The square is an admissible positive-area moving shape. -/
+/-- **The unit square is a sofa.** The unit square $[0,1] \times [0,1]$ in the complex plane is a
+sofa: it is null-measurable for Lebesgue measure, connected, and there are continuous maps
+$u \colon [0,1] \to \{w \in \mathbb{C} : |w| = 1\}$ and $v \colon [0,1] \to \mathbb{C}$ such that
+the motion $z \mapsto u(t) z + v(t)$ carries the square into the entrance
+$\{z : \operatorname{Re} z \le 0,\ 0 \le \operatorname{Im} z \le 1\}$ at $t = 0$, into the exit
+$\{z : 0 \le \operatorname{Re} z \le 1,\ 1 \le \operatorname{Im} z\}$ at $t = 1$, and into the
+unit right-angle corridor
+$\{z : \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z \le 1\} \cup
+\{z : 0 \le \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z\}$ at every time $t \in [0,1]$. -/
 theorem square_isSofa : IsSofa unitSquare :=
   ⟨square_measurable.nullMeasurableSet, square_connected, square_canPass⟩
 
-/-- The actual square witness bounds the global area supremum from below. -/
+/-- **The optimal sofa area is at least one.** The optimal sofa area, that is, the supremum
+in $[0, \infty]$ of the Lebesgue areas of all sofas, is at least $1$.
+
+The unit square, a sofa of area $1$, witnesses the bound. -/
 theorem one_le_optimalArea : 1 ≤ optimalArea := by
   rw [← square_area]
   exact le_iSup_of_le unitSquare (le_iSup_of_le square_isSofa le_rfl)
 
-/-- The mirror-image unit corridor, with the horizontal arm extending to the
-right and the vertical arm occupying `-1 ≤ Re z ≤ 0`. Passing this corridor
-is the opposite turn from `corridor`. -/
+/-- **Mirrored corridor.** The mirrored corridor is the set of points $z \in \mathbb{C}$ with
+$\operatorname{Re} z \ge -1$ and $0 \le \operatorname{Im} z \le 1$ (the horizontal arm,
+extending to the right) together with the points $z$ with $-1 \le \operatorname{Re} z \le 0$
+and $\operatorname{Im} z \ge 0$ (the vertical arm, extending upward). It is the reflection of
+the corridor in the imaginary axis, so passing it requires the opposite turn. -/
 def corridorOther : Set ℂ :=
   {z | -1 ≤ z.re ∧ 0 ≤ z.im ∧ z.im ≤ 1} ∪
     {z | -1 ≤ z.re ∧ z.re ≤ 0 ∧ 0 ≤ z.im}
 
-/-- The entrance arm of the mirrored corridor, beyond its corner square. -/
+/-- **Entrance arm of the mirrored corridor.** The entrance arm of the mirrored corridor is the
+set of points $z \in \mathbb{C}$ with $\operatorname{Re} z \ge 0$ and
+$0 \le \operatorname{Im} z \le 1$: the part of its horizontal arm beyond the corner square
+$-1 \le \operatorname{Re} z \le 0$, $0 \le \operatorname{Im} z \le 1$. -/
 def entranceOther : Set ℂ := {z | 0 ≤ z.re ∧ 0 ≤ z.im ∧ z.im ≤ 1}
 
-/-- The vertical exit of the mirrored corridor, beyond its corner square. -/
+/-- **Exit of the mirrored corridor.** The exit region of the mirrored unit corridor is the
+closed half-strip
+$\{z \in \mathbb{C} : -1 \le \operatorname{Re} z \le 0,\ \operatorname{Im} z \ge 1\}$,
+the part of its vertical arm above its corner square. -/
 def exitOther : Set ℂ := {z | -1 ≤ z.re ∧ z.re ≤ 0 ∧ 1 ≤ z.im}
 
-/-- A continuous rigid motion carries the whole shape through the mirrored
-corridor, making the opposite turn. -/
+/-- **Passing the mirrored corridor.** A set $K \subseteq \mathbb{C}$ can pass the mirrored
+corridor if there are continuous maps $u$ from $[0, 1]$ to the unit circle
+$\{w \in \mathbb{C} : |w| = 1\}$ and $c$ from $[0, 1]$ to $\mathbb{C}$ such that, writing
+$K_t = \{u(t) z + c(t) : z \in K\}$ for the position of $K$ at time $t$, $K_0$ lies in the
+entrance arm of the mirrored corridor, $K_1$ lies in the exit arm of the mirrored corridor, and
+$K_t$ lies in the mirrored corridor for every $t \in [0, 1]$. -/
 def CanPassOther (K : Set ℂ) : Prop :=
   ∃ m : Motion,
     m.position 0 '' K ⊆ entranceOther ∧
@@ -182,47 +261,63 @@ def CanPassOther (K : Set ℂ) : Prop :=
     ∀ t : unitInterval, m.position t '' K ⊆ corridorOther
 
 
-/-- The Z-shaped (S-shaped) unit corridor with corner separation `d`:
-a horizontal entrance arm (`0 ≤ Im z ≤ 1`), a vertical middle channel
-of height `2 + d` (`0 ≤ Im z ≤ 2 + d`), and a horizontal exit arm on
-the opposite side (`1 + d ≤ Im z ≤ 2 + d`). The middle channel is
-bounded: it does not contain the upward ray above the exit arm. For
-`d = 1` the two corner squares are separated by one full corridor
-width. Passing it requires one turn in each direction inside a single
-passage. -/
+/-- **Z-shaped corridor.** For a real number $d$, the Z-shaped corridor with corner separation
+$d$ is the set of points $z \in \mathbb{C}$ lying in at least one of three pieces: the lower
+horizontal arm, where $\operatorname{Re} z \le 1$ and $0 \le \operatorname{Im} z \le 1$; the
+middle channel, where $0 \le \operatorname{Re} z \le 1$ and $0 \le \operatorname{Im} z \le 2 + d$;
+and the upper horizontal arm, where $\operatorname{Re} z \ge 0$ and
+$1 + d \le \operatorname{Im} z \le 2 + d$.
+
+The middle channel is bounded: it does not contain the upward ray above the upper arm. For
+$d = 1$ the two corner squares are separated by one full corridor width. Passing the corridor
+requires one turn in each direction inside a single passage. -/
 def corridorZ (d : ℝ) : Set ℂ :=
   {z | z.re ≤ 1 ∧ 0 ≤ z.im ∧ z.im ≤ 1} ∪
     {z | 0 ≤ z.re ∧ z.re ≤ 1 ∧ 0 ≤ z.im ∧ z.im ≤ 2 + d} ∪
     {z | 0 ≤ z.re ∧ 1 + d ≤ z.im ∧ z.im ≤ 2 + d}
 
-/-- The horizontal entrance arm of the Z corridor, beyond its first corner. -/
+/-- **Entrance arm of the Z corridor.** The entrance region of the Z corridor is the closed
+half-strip $\{z \in \mathbb{C} : \operatorname{Re} z \le 0,\ 0 \le \operatorname{Im} z \le 1\}$,
+the part of its horizontal entrance arm to the left of the middle channel. -/
 def entranceZ : Set ℂ := {z | z.re ≤ 0 ∧ 0 ≤ z.im ∧ z.im ≤ 1}
 
-/-- The horizontal exit arm of the Z corridor with corner separation
-`d`, beyond its second corner. -/
+/-- **Exit arm of the Z corridor.** For a real number $d$ (the corner separation), the exit region
+of the Z corridor with separation $d$ is the closed half-strip
+$\{z \in \mathbb{C} : \operatorname{Re} z \ge 1,\ 1 + d \le \operatorname{Im} z \le 2 + d\}$,
+the part of its horizontal exit arm to the right of the middle channel. -/
 def exitZ (d : ℝ) : Set ℂ := {z | 1 ≤ z.re ∧ 1 + d ≤ z.im ∧ z.im ≤ 2 + d}
 
-/-- A single continuous rigid motion carries the whole shape through
-the Z corridor at the fixed corner separation `d`, turning once in
-each direction. -/
+/-- **Passing the Z corridor at a given separation.** For a real number $d$, a set
+$K \subseteq \mathbb{C}$ can pass the Z corridor with corner separation $d$ if there are
+continuous maps $u$ from $[0, 1]$ to the unit circle $\{w \in \mathbb{C} : |w| = 1\}$ and $c$
+from $[0, 1]$ to $\mathbb{C}$ such that, writing $K_t = \{u(t) z + c(t) : z \in K\}$ for the
+position of $K$ at time $t$, $K_0$ lies in the entrance arm of the Z corridor, $K_1$ lies in the
+exit arm of the Z corridor with corner separation $d$, and $K_t$ lies in the Z corridor with
+corner separation $d$ for every $t \in [0, 1]$.
+
+Such a passage is a single motion that turns once in each direction. -/
 def CanPassZAt (K : Set ℂ) (d : ℝ) : Prop :=
   ∃ m : Motion,
     m.position 0 '' K ⊆ entranceZ ∧
     m.position 1 '' K ⊆ exitZ d ∧
     ∀ t : unitInterval, m.position t '' K ⊆ corridorZ d
 
-/-- The shape passes the Z corridor for all sufficiently large corner
-separations (equivalently, `∀ᶠ d in Filter.atTop, CanPassZAt K d`):
-the source's "sufficiently separated corners". Unlike the mirrored
-corridor, this is not implied by an ordinary passage: time reversal
-plus a rigid motion transports an ordinary passage to the *mirrored*
-corridor, but a Z passage couples both turns in one motion. -/
+/-- **Passing the Z corridor for all large separations.** A set $K \subseteq \mathbb{C}$ can pass
+the Z corridor if there is a real number $D$ such that, for every real $d \ge D$, $K$ can pass
+the Z corridor with corner separation $d$; that is, $K$ passes whenever the corners are
+sufficiently separated.
+
+Unlike the mirrored corridor, this is not implied by an ordinary passage: time reversal plus a
+rigid motion transports an ordinary passage to the mirrored corridor, but a Z passage couples
+both turns in one motion. -/
 def CanPassZ (K : Set ℂ) : Prop :=
   ∃ D : ℝ, ∀ d : ℝ, D ≤ d → CanPassZAt K d
 
-/-- The square follows a three-segment translation through the Z
-corridor at separation `d`: east into the middle channel, north by
-`1 + d`, then east out. -/
+/-- **The square's translation through the Z corridor.** For a real number $d$, the motion with no
+rotation that sends a point $z$ at time $t \in [0,1]$ to $z + \tau(t)$, where $\tau(t) = 3t - 1$ for
+$t \le 1/3$, $\tau(t) = (1 + d)(3t - 1)i$ for $1/3 \le t \le 2/3$, and
+$\tau(t) = (3t - 2) + (1 + d)i$ for $t \ge 2/3$: it translates a shape by $1$, then by $(1 + d)i$,
+then by $1$, each segment taking a third of the time interval. -/
 noncomputable def squareMotionZAt (d : ℝ) : Motion where
   rotation := ContinuousMap.const unitInterval 1
   translation :=
@@ -230,8 +325,8 @@ noncomputable def squareMotionZAt (d : ℝ) : Motion where
       (((1 + d) * min (max (3 * (t : ℝ) - 1) 0) 1 : ℝ) : ℂ) * Complex.I,
       by fun_prop⟩
 
-/-- The unit square passes the Z corridor at any nonnegative
-separation. -/
+/-- **Z-corridor passage of the unit square.** For every real $d \ge 0$, the unit square passes
+the Z corridor with corner separation $d$. -/
 theorem square_canPassZAt (d : ℝ) (hd : 0 ≤ d) : CanPassZAt unitSquare d := by
   refine ⟨squareMotionZAt d, ?_, ?_, ?_⟩
   · rintro _ ⟨z, hz, rfl⟩
@@ -296,33 +391,42 @@ theorem square_canPassZAt (d : ℝ) (hd : 0 ≤ d) : CanPassZAt unitSquare d := 
           ⟨by linarith, by linarith, by linarith⟩
         simpa [Motion.position, squareMotionZAt, hx, hy] using h
 
-/-- The square's Z motion at separation one. -/
+/-- **The square's translation through the Z corridor at separation one.** The square's
+translation through the Z corridor at separation $d = 1$: the motion with no rotation that sends a
+point $z$ at time $t \in [0,1]$ to $z + \tau(t)$, where $\tau(t) = 3t - 1$ for $t \le 1/3$,
+$\tau(t) = 2(3t - 1)i$ for $1/3 \le t \le 2/3$, and $\tau(t) = (3t - 2) + 2i$ for $t \ge 2/3$. -/
 noncomputable def squareMotionZ : Motion := squareMotionZAt 1
 
-/-- The unit square passes the Z corridor at separation one. -/
+/-- **Z-corridor passage of the unit square at separation one.** The unit square passes the Z
+corridor with corner separation $1$. -/
 theorem square_canPassZAt_one : CanPassZAt unitSquare 1 :=
   square_canPassZAt 1 (by norm_num)
 
-/-- The unit square passes the Z corridor for all sufficiently large
-separations. -/
+/-- **Z-corridor passage of the unit square for large separations.** There is a real $D$ such
+that for every $d \ge D$ the unit square passes the Z corridor with corner separation $d$. -/
 theorem square_canPassZ : CanPassZ unitSquare :=
   ⟨0, fun d hd => square_canPassZAt d hd⟩
 
-/-- An ambidextrous sofa is an admissible sofa that can also pass the
-Z corridor in a single passage, turning once in each direction. (Two
-independent passages, one through each mirrored L corridor, would not
-suffice: an ordinary passage transports to the mirrored corridor by time
-reversal plus a rigid motion, so that formulation would collapse to the
-ordinary sofa condition.) -/
+/-- **Ambidextrous sofa shapes.** A set $K \subseteq \mathbb{C}$ is an ambidextrous sofa when it is
+a sofa and there is a real number $D$ such that, for every corner separation $d \ge D$, a single
+motion places $K$ inside the entrance arm of the Z corridor with separation $d$ at time $0$, inside
+its exit arm at time $1$, and inside that corridor at every time; such a passage turns once in
+each direction.
+
+(Two independent passages, one through each mirrored L corridor, would not suffice: an ordinary
+passage transports to the mirrored corridor by time reversal plus a rigid motion, so that
+formulation would collapse to the ordinary sofa condition.) -/
 def IsAmbidextrousSofa (K : Set ℂ) : Prop :=
   IsSofa K ∧ CanPassZ K
 
-/-- Supremal area of an ambidextrous sofa in `ENNReal`. -/
+/-- **Optimal area of ambidextrous sofas.** The ambidextrous optimal area is the supremum, taken
+in $[0, \infty]$, of the Lebesgue areas of all ambidextrous sofas $K \subseteq \mathbb{C}$. -/
 noncomputable def ambidextrousOptimalArea : ℝ≥0∞ :=
   ⨆ (K : Set ℂ) (_ : IsAmbidextrousSofa K), volume K
 
-/-- Every ambidextrous sofa is an ordinary sofa, so its supremal area is at
-most the ordinary moving-sofa supremum. -/
+/-- **The ambidextrous optimal area is at most the optimal area.** The supremum, in $[0, \infty]$,
+of the Lebesgue areas of all ambidextrous sofas is at most the supremum of the Lebesgue areas of
+all sofas. This holds because every ambidextrous sofa is a sofa. -/
 theorem ambidextrousOptimalArea_le_optimalArea :
     ambidextrousOptimalArea ≤ optimalArea := by
   apply iSup_le
@@ -331,15 +435,26 @@ theorem ambidextrousOptimalArea_le_optimalArea :
   intro hK
   exact le_iSup_of_le K (le_iSup_of_le hK.1 le_rfl)
 
-/-- The square follows a two-segment translation through the mirrored corner:
-first left into the vertical arm, then upward. -/
+/-- **The square's translation through the mirrored corner.** The motion with no rotation that
+sends a point $z$ at time $t \in [0,1]$ to $z + \tau(t)$, where $\tau(t) = -2t$ for $t \le 1/2$ and
+$\tau(t) = -1 + (2t - 1)i$ for $t \ge 1/2$: it moves a shape one unit to the left during the first
+half of the time interval and then one unit upward. -/
 noncomputable def squareMotionOther : Motion where
   rotation := ContinuousMap.const unitInterval 1
   translation :=
     ⟨fun t ↦ ((-1 - min (2 * (t : ℝ) - 1) 0 : ℝ) : ℂ) +
       ((max (2 * (t : ℝ) - 1) 0 : ℝ) : ℂ) * Complex.I, by fun_prop⟩
 
-/-- The same unit square passes the mirrored corridor. -/
+/-- **The unit square passes the mirrored corridor.** Let the mirrored corridor be
+$L' = \{z \in \mathbb{C} : -1 \le \operatorname{Re} z,\ 0 \le \operatorname{Im} z \le 1\} \cup
+\{z \in \mathbb{C} : -1 \le \operatorname{Re} z \le 0,\ 0 \le \operatorname{Im} z\}$, with entrance
+$E' = \{z \in \mathbb{C} : 0 \le \operatorname{Re} z,\ 0 \le \operatorname{Im} z \le 1\}$ and exit
+$X' = \{z \in \mathbb{C} : -1 \le \operatorname{Re} z \le 0,\ 1 \le \operatorname{Im} z\}$. For the
+unit square
+$Q = \{z \in \mathbb{C} : 0 \le \operatorname{Re} z \le 1,\ 0 \le \operatorname{Im} z \le 1\}$
+there are continuous maps $u : [0, 1] \to \{w \in \mathbb{C} : |w| = 1\}$ and
+$c : [0, 1] \to \mathbb{C}$ such that, writing $Q_t = \{u(t)\,z + c(t) : z \in Q\}$, we have
+$Q_0 \subseteq E'$, $Q_1 \subseteq X'$ and $Q_t \subseteq L'$ for every $t \in [0, 1]$. -/
 theorem square_canPassOther : CanPassOther unitSquare := by
   refine ⟨squareMotionOther, ?_, ?_, ?_⟩
   · rintro _ ⟨z, hz, rfl⟩
@@ -376,11 +491,15 @@ theorem square_canPassOther : CanPassOther unitSquare := by
       simpa [Motion.position, squareMotionOther, min_eq_right ht',
         max_eq_left ht'] using h
 
-/-- The unit square is an ambidextrous sofa. -/
+/-- **The unit square is an ambidextrous sofa.** The unit square $[0,1] \times [0,1]$ in the
+complex plane is an ambidextrous sofa. -/
 theorem square_isAmbidextrousSofa : IsAmbidextrousSofa unitSquare :=
   ⟨square_isSofa, square_canPassZ⟩
 
-/-- The square witness bounds the ambidextrous supremum from below by one. -/
+/-- **The ambidextrous sofa constant is at least one.** The supremum of the Lebesgue areas of all
+ambidextrous sofas, taken in $[0, \infty]$, is at least $1$.
+
+The unit square $[0, 1] \times [0, 1]$ is an ambidextrous sofa of area $1$. -/
 theorem one_le_ambidextrousOptimalArea : 1 ≤ ambidextrousOptimalArea := by
   rw [← square_area]
   exact le_iSup_of_le unitSquare
