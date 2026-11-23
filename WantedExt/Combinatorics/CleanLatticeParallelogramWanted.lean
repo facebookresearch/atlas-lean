@@ -16,7 +16,7 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-public import MathlibExt.Combinatorics.CleanLatticeParallelogram
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.ConvergentVectors
 
 /-!
 # Clean lattice parallelograms
@@ -169,26 +169,6 @@ Lemma 7 (`integers-2026-A10-lem-7`). -/
 public theorem_wanted partialQuotient_last_ge_two {a n m : ℕ} (ha : 1 ≤ a) (han : a < n)
     (hm : IsLeast {k | (GenContFract.of ((n : ℚ) / a)).TerminatedAt k} m) :
     2 ≤ partialQuotient ((n : ℚ) / a) m
-
-/-- **Lattice points of the parallelogram of two consecutive convergent vectors.** Let
-$1 \le a < n$ be integers, let $n / a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction
-of $n / a$, where $m$ is the least index at which it terminates, and let $v_i$ be its convergent
-vectors. For every integer $i$ with $-2 \le i < m$, the lattice points of the parallelogram
-spanned by $v_i$ and $v_{i+1}$ are exactly $0$, $v_i$, $v_{i+1}$ and $v_i + v_{i+1}$, and every
-point of $\mathbb{Z}^2$ equals $s v_i + t v_{i+1}$ for some integers $s$ and $t$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Theorem 4 (`integers-2026-A10-thm-4`). -/
-public theorem_wanted convergentVec_parallelogram_latticePoints {a n m : ℕ} (ha : 1 ≤ a)
-    (han : a < n) (hm : IsLeast {k | (GenContFract.of ((n : ℚ) / a)).TerminatedAt k} m)
-    {i : ℤ} (hi : -2 ≤ i) (him : i < m) :
-    latticeParallelogram (convergentVec ((n : ℚ) / a) i) (convergentVec ((n : ℚ) / a) (i + 1)) ∩
-        latticePoints =
-      {0, convergentVec ((n : ℚ) / a) i, convergentVec ((n : ℚ) / a) (i + 1),
-        convergentVec ((n : ℚ) / a) i + convergentVec ((n : ℚ) / a) (i + 1)} ∧
-      ∀ p ∈ latticePoints, ∃ s t : ℤ,
-        p = (s : ℝ) • convergentVec ((n : ℚ) / a) i + (t : ℝ) • convergentVec ((n : ℚ) / a) (i + 1)
 
 /-- **Distances of the convergent vectors to the line $y = (n / a) x$.** Let $1 \le a < n$ be
 coprime integers, let $n / a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction of

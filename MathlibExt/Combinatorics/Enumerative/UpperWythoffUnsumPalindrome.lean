@@ -272,10 +272,10 @@ private theorem blocks_spec (n : ℕ) : ∀ w ∈ blocks n, w.reverse = w ∧ 2 
     · exact ih w h
     all_goals simp [enclosed, central_reverse, central_no_two]
 
-private theorem blocks_length (n : ℕ) : n < (blocks n).length := by
+private theorem blocks_length (n : ℕ) : (blocks n).length = 2 * n + 3 := by
   induction n with
   | zero => decide
-  | succ n ih => simp [blocks]; omega
+  | succ n ih => simp [blocks, ih, Nat.mul_add]
 
 -- Enumerate the delimiters of the explicit list of blocks using the same nth operation
 -- as the definition of the markers. The extra 2 at the end closes the last block.
@@ -316,17 +316,21 @@ private theorem read_words {ws : List (List ℕ)} {j a : ℕ}
       exact ih hrest (by simpa [Nat.add_assoc] using hn)
         (fun v hv => hws v (List.mem_cons_of_mem _ hv)) (by simpa using ht)
 
-private theorem word_reverse (j : ℕ) :
-    (upperWythoffUnsumWord j).reverse = upperWythoffUnsumWord j := by
+private theorem _root_.MetaMathlibExt.upperWythoffUnsumPalindrome_tendsto.word_eq_block
+    {n j : ℕ} (hj : j < (blocks n).length) : upperWythoffUnsumWord j = (blocks n)[j] := by
   have h₃ : unsum 2 = 3 := nth_unsum (by decide) (by decide +kernel) (by decide +kernel)
-  have h := reads_trace h₃ (initial_trace j)
+  have h := reads_trace h₃ (initial_trace n)
   unfold initialGaps at h
-  have hblocks : Reads 10 ((blocks j).flatMap (2 :: ·) ++ [2, 3]) := by
+  have hblocks : Reads 10 ((blocks n).flatMap (2 :: ·) ++ [2, 3]) := by
     rw [List.append_assoc] at h
     exact (reads_split h).2
-  have hw := read_words hblocks upperWythoffUnsumMarker_zero_one.1
-    (fun w h => (blocks_spec j w h).2) (blocks_length j)
-  rw [Nat.zero_add] at hw
+  simpa only [Nat.zero_add] using read_words hblocks upperWythoffUnsumMarker_zero_one.1
+    (fun w h => (blocks_spec n w h).2) hj
+
+private theorem word_reverse (j : ℕ) :
+    (upperWythoffUnsumWord j).reverse = upperWythoffUnsumWord j := by
+  have hj : j < (blocks j).length := by rw [blocks_length]; omega
+  have hw := upperWythoffUnsumPalindrome_tendsto.word_eq_block hj
   rw [hw]
   exact (blocks_spec j _ (List.getElem_mem _)).1
 
