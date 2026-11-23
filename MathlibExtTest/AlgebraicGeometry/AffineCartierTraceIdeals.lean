@@ -14,7 +14,8 @@ import Mathlib.FieldTheory.Finite.Basic
 # Tests for Cartier-linear maps, their images and compatible ideals
 
 On `ZMod p` the identity is `p^{-e}`-linear for every `e`, since `a ^ (p ^ e) = a`; its stable
-image and the infimum of its nonzero compatible ideals are the unit ideal. A family containing
+image and the infimum of its nonzero compatible ideals are the unit ideal, which is then the least
+nonzero compatible ideal. A family containing
 the zero map has zero stable image, and on the quotient by a compatible ideal the induced map
 acts on residues by the original map.
 -/
@@ -61,3 +62,12 @@ example (R : Type) [CommRing R] (e : ℕ) (c : CartierTrace R p e) (I : Ideal R)
 example (R : Type) [CommRing R] (e : ℕ) (c : CartierTrace R p e) :
     IsCompatible c ⊥ ∧ IsCompatible c ⊤ :=
   ⟨isCompatible_bot c, isCompatible_top c⟩
+
+/-- A nonzero infimum is the least nonzero compatible ideal; in a field it is the unit ideal. -/
+example : IsLeast {I : Ideal (ZMod p) | I ≠ ⊥ ∧ ∀ e, IsCompatible (idTrace p e) I}
+    (indexedCompatibleIdealInfimum (R := ZMod p) (p := p) id (idTrace p)) := by
+  refine isLeast_indexedCompatibleIdealInfimum id (idTrace p) fun h ↦ ?_
+  have htop : (⊤ : Ideal (ZMod p)) ≤
+      indexedCompatibleIdealInfimum (R := ZMod p) (p := p) id (idTrace p) :=
+    le_sInf fun I hI ↦ ((Ideal.eq_bot_or_top I).resolve_left hI.1).ge
+  exact top_ne_bot (eq_bot_iff.mpr (h ▸ htop))
