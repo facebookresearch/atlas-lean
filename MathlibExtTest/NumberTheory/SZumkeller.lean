@@ -31,3 +31,10 @@ example : ((120 : ℕ).divisors.card : ℚ) / ∑ d ∈ (120 : ℕ).divisors, 1 
     512 / 3 := by
   apply harmonicMeanSq_lt_of_isSZumkeller_mersenne 3 120 (by decide) (by decide)
   exact ⟨{5, 15, 60}, by decide, by decide, by decide, by decide⟩
+
+-- An entire even residue class is excluded by the divisibility condition.
+example (k : ℕ) : ¬ IsSZumkeller (6 * k + 2) := by
+  intro h
+  have he : Even (6 * k + 2) := ⟨3 * k + 1, by omega⟩
+  have := three_dvd_of_isSZumkeller _ h he
+  omega

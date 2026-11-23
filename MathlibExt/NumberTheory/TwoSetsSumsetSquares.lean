@@ -13,7 +13,9 @@ public import Mathlib.Algebra.Ring.Int.Defs
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Rat.Lemmas
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring.Basic
 
 /-!
@@ -21,11 +23,14 @@ import Mathlib.Tactic.Ring.Basic
 
 Ajai Choudhry's integer triples and quadruples and his first three-parameter family of rational
 quadruples have square pairwise sums. The proofs give a square root for each choice of summands.
+His Lemma 1, `exists_int_pairwiseSumsSquares_scale_translate`, scales two rational families with
+square pairwise sums by $k^2$ and shifts them by $-t$ and $+t$: when the results are integers,
+their pairwise sums are squares of integers.
 
 ## References
 
 * Ajai Choudhry, [*Two Sets of Integers Such That All Elements of the Sumset of the Two Sets
-  Are Perfect Squares*](https://arxiv.org/abs/2508.07806), Theorems 1, 3 and 4.
+  Are Perfect Squares*](https://arxiv.org/abs/2508.07806), Lemma 1 and Theorems 1, 3 and 4.
 -/
 
 @[expose] public section
@@ -49,6 +54,37 @@ def IsSemiMagicRoots (e : Fin 3 → Fin 3 → ℤ) : Prop :=
   ∃ S : ℤ,
     (∀ i : Fin 3, ∑ j : Fin 3, (e i j) ^ 2 = S) ∧
       ∀ j : Fin 3, ∑ i : Fin 3, (e i j) ^ 2 = S
+
+/-- **Scaling rational families with square pairwise sums to integers.** Let $a_1, \dots, a_m$
+and $b_1, \dots, b_n$ be rational numbers such that every sum $a_i + b_j$ is the square of a
+rational number, and let $t$ be an integer and $k$ a rational number such that $k^2 a_i - t$ is an
+integer for every $i$ and $k^2 b_j + t$ is an integer for every $j$. Then the integers
+$a_i' = k^2 a_i - t$ and $b_j' = k^2 b_j + t$ are such that every sum $a_i' + b_j'$ is the square
+of an integer.
+
+Source: Ajai Choudhry, "Two Sets of Integers Such That All
+Elements of the Sumset of the Two Sets Are Perfect Squares",
+Lemma 1. -/
+theorem exists_int_pairwiseSumsSquares_scale_translate
+    (m n : ℕ) (a : Fin m → ℚ) (b : Fin n → ℚ)
+    (hab : PairwiseSumsSquares a b)
+    (t : ℤ) (k : ℚ)
+    (ha : ∀ i, ∃ z : ℤ, (z : ℚ) = k ^ 2 * a i - (t : ℚ))
+    (hb : ∀ j, ∃ z : ℤ, (z : ℚ) = k ^ 2 * b j + (t : ℚ)) :
+    ∃ a' : Fin m → ℤ, ∃ b' : Fin n → ℤ,
+      (∀ i, (a' i : ℚ) = k ^ 2 * a i - (t : ℚ)) ∧
+        (∀ j, (b' j : ℚ) = k ^ 2 * b j + (t : ℚ)) ∧
+        PairwiseSumsSquares a' b' := by
+  choose a' ha' using ha
+  choose b' hb' using hb
+  refine ⟨a', b', ha', hb', fun i j ↦ ?_⟩
+  -- The shifts cancel: `a' i + b' j = k ^ 2 * (a i + b j) = (k * r) ^ 2`, and a rational square
+  -- that is an integer is the square of an integer.
+  obtain ⟨r, hr⟩ := hab i j
+  refine Rat.isSquare_intCast_iff.mp ⟨k * r, ?_⟩
+  push_cast
+  rw [ha' i, hb' j]
+  linear_combination k ^ 2 * hr
 
 /-- **Four-parameter triples with square pairwise sums, family (3.3).** For all integers
 $p, q, r, s$, put $a_1 = 4(ps - qr)^2$, $a_2 = 4(ps + qr)^2$, $a_3 = (p^2 - q^2 - r^2 + s^2)^2$
