@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.BottSamelsonFlagSchemes
 public import MathlibExt.AlgebraicGeometry.GeometricChow
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 public import MathlibExt.AlgebraicGeometry.RelativeLefschetz
 public import Mathlib.LinearAlgebra.TensorProduct.Pi
 public import Mathlib.RingTheory.Localization.Away.Basic
@@ -109,7 +110,7 @@ abbrev ProjectiveGrading := MvPolynomial.homogeneousSubmodule (Fin 2) ℂ
 instance projectiveGradedAlgebra : GradedAlgebra ProjectiveGrading := MvPolynomial.gradedAlgebra
 
 def projectiveLine : ComplexScheme :=
-  Over.mk (DeCataldoMiglioriniDecompositionWanted.gradedProjToSpec ProjectiveGrading)
+  Over.mk (ProjectiveSpace.projToSpec ProjectiveGrading)
 
 def chartPolynomial (infinity : Bool) : MvPolynomial (Fin 2) ℂ →+* Polynomial ℂ :=
   MvPolynomial.eval₂Hom (Polynomial.C) (fun i ↦
