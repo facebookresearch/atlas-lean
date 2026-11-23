@@ -29,7 +29,7 @@ namespace MathlibExt.Analysis.Ramanujan.Part1Ch6
 
 namespace Entry6Harmonic
 
-open scoped Nat Real BigOperators Interval Polynomial ContDiff
+open scoped Nat Real BigOperators Interval ContDiff
 open Asymptotics Filter Finset Complex Topology
 
 noncomputable section

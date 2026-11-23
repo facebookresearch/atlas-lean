@@ -366,7 +366,7 @@ theorem transpose_mulVec_eq_gramDiag_mulVec (X : Matrix (Fin n) ι ℝ) (y : Fin
   ext j
   rw [gramDiag, mulVec_diagonal, marginalEstimate]
   rcases eq_or_ne ((Xᵀ * X) j j) 0 with h | h
-  · have hsum : ∑ i, X i j * X i j = 0 := by simpa [mul_apply] using h
+  · have hsum : ∑ i, X i j * X i j = 0 := by simpa [Matrix.mul_apply] using h
     have hcol : ∀ i, X i j = 0 := fun i => by
       have := (Finset.sum_eq_zero_iff_of_nonneg (fun i _ => mul_self_nonneg (X i j))).1 hsum i
         (Finset.mem_univ _)

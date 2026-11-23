@@ -17,7 +17,7 @@ public import CSLibExt.Algorithms.SAT.DPLL.Solver
 # Correctness of the DPLL solver
 
 The main theorem proves that the executable Boolean DPLL procedure accepts
-exactly the satisfiable formulas represented by `Cslib.Logic.PL.CNFSat`.
+exactly the satisfiable formulas represented by `Cslib.Logic.LegacyPL.CNFSat`.
 -/
 
 @[expose] public section
@@ -25,7 +25,7 @@ exactly the satisfiable formulas represented by `Cslib.Logic.PL.CNFSat`.
 
 namespace Cslib.Algorithms.SAT.DPLL
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 theorem firstUnit_eq_some_mem {formula : CNF} {literal : Nat × Bool}
     (hunit : firstUnit formula = some literal) : [literal] ∈ formula := by
