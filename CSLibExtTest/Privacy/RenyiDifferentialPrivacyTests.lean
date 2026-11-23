@@ -66,7 +66,7 @@ theorem test_moment_pure_uniform : renyiMoment P1 Q1 2 = 2 := by
     show ((2 : ℝ) : EReal) = 2 from rfl]
 
 theorem test_div_pure_uniform : renyiDiv P1 Q1 2 = (Real.log 2 : EReal) := by
-  rw [renyiDiv_of_support test_support]
+  rw [renyiDiv_of_support test_support (show (2 : ℝ) ≠ 1 by norm_num)]
   unfold renyiDivReal
   rw [test_momentReal_pure_uniform, EReal.coe_eq_coe_iff]
   norm_num
@@ -90,12 +90,26 @@ theorem test_div_off_support_top : renyiDiv P1 Q0 2 = ⊤ :=
 theorem test_div_off_support_ne_zero : renyiDiv P1 Q0 2 ≠ 0 := by
   simp [test_div_off_support_top]
 
+theorem test_P1_ne_Q1 : P1 ≠ Q1 := by
+  intro h
+  have hP : (P1 true).toReal = 1 := by simp [P1]
+  have hQ := test_uniform_toReal true
+  rw [h] at hP
+  rw [hQ] at hP
+  norm_num at hP
+
+/-- Regression test: at order 1 the divergence is infinite, not 0. -/
+theorem test_div_order_one_top : renyiDiv P1 Q1 1 = ⊤ := by
+  unfold renyiDiv
+  exact ite_eq_right (fun h => h.2 rfl)
+
 theorem test_moment_off_support_top : renyiMoment P1 Q0 2 = ⊤ :=
   renyiMoment_of_not_support test_not_support_off
 
 theorem test_moment_prod :
-    renyiMoment (prodPMF P1 P1) (prodPMF Q1 Q1) 2 = 4 := by
-  rw [renyiMoment_prodPMF, test_moment_pure_uniform,
+    renyiMoment (InformationTheory.prodJoint P1 P1)
+      (InformationTheory.prodJoint Q1 Q1) 2 = 4 := by
+  rw [renyiMoment_prodJoint, test_moment_pure_uniform,
     show (2 : EReal) = ((2 : ℝ) : EReal) from rfl,
     show (4 : EReal) = ((4 : ℝ) : EReal) from rfl,
     ← EReal.coe_mul, EReal.coe_eq_coe_iff]
@@ -154,7 +168,7 @@ theorem test_moment_bind_le :
   exact h
 
 #print axioms renyiMoment_bind_le
-#print axioms renyiDiv_prodPMF
+#print axioms renyiDiv_prodJoint
 #print axioms isApproxDP_of_isRDP
 #print axioms approx_event_of_renyi
 

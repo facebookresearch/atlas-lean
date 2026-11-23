@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
+public import MathlibExt.InformationTheory.MutualInformation
 import Cslib.Probability.PMF
 import Mathlib.Probability.ProbabilityMassFunction.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Monad
@@ -53,9 +54,10 @@ noncomputable def renyiMoment {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ
 noncomputable def renyiDivReal {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : ℝ :=
   (1 / (α - 1)) * Real.log (renyiMomentReal P Q α)
 
-/-- Rényi divergence of order `α`: `⊤` off support, the real formula otherwise. -/
+/-- Rényi divergence of order `α`: `⊤` off support or at `α = 1`, the real
+formula otherwise. -/
 noncomputable def renyiDiv {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : EReal :=
-  if Support P Q then ↑(renyiDivReal P Q α) else ⊤
+  if Support P Q ∧ α ≠ 1 then ↑(renyiDivReal P Q α) else ⊤
 
 /-- On support, `renyiMoment` is the real formula, coerced. -/
 theorem renyiMoment_of_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
@@ -69,17 +71,18 @@ theorem renyiMoment_of_not_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α 
   unfold renyiMoment
   exact ite_eq_right hs
 
-/-- On support, `renyiDiv` is the real formula, coerced. -/
+/-- On support and away from order 1, `renyiDiv` is the real formula, coerced. -/
 theorem renyiDiv_of_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
-    (hs : Support P Q) : renyiDiv P Q α = ↑(renyiDivReal P Q α) := by
+    (hs : Support P Q) (hα : α ≠ 1) :
+    renyiDiv P Q α = ↑(renyiDivReal P Q α) := by
   unfold renyiDiv
-  exact ite_eq_left hs
+  exact ite_eq_left ⟨hs, hα⟩
 
 /-- Off support, `renyiDiv` is infinite. -/
 theorem renyiDiv_of_not_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
     (hs : ¬ Support P Q) : renyiDiv P Q α = ⊤ := by
   unfold renyiDiv
-  exact ite_eq_right hs
+  exact ite_eq_right (fun h => hs h.1)
 
 /-- Rényi DP of order `α` with budget `ε`, for ordered adjacent pairs. -/
 def IsRDP {Database Output : Type*} [Fintype Output] (M : Database → PMF Output)
@@ -87,12 +90,8 @@ def IsRDP {Database Output : Type*} [Fintype Output] (M : Database → PMF Outpu
   0 ≤ ε ∧ 1 < α ∧ ∀ d d', adj d d' →
     Support (M d) (M d') ∧ renyiDiv (M d) (M d') α ≤ (ε : EReal)
 
-/-- Independent product of two distributions. -/
-noncomputable def prodPMF {Ω₁ Ω₂ : Type*} (P1 : PMF Ω₁) (P2 : PMF Ω₂) :
-    PMF (Ω₁ × Ω₂) :=
-  P1.bind fun a => P2.bind fun b => PMF.pure (a, b)
-
-/-- Approximate-DP epsilon obtained from Rényi DP conversion. -/
+/-- Approximate-DP epsilon obtained from Rényi DP conversion; meaningful only
+for `1 < α`. -/
 noncomputable def rdpEps2 (ε δ α : ℝ) : ℝ :=
   ε + Real.log (1 / δ) / (α - 1)
 
@@ -175,7 +174,7 @@ private theorem renyiDivReal_self {Ω : Type*} [Fintype Ω] (P : PMF Ω) {α : �
 
 theorem renyiDiv_self {Ω : Type*} [Fintype Ω] (P : PMF Ω) {α : ℝ}
     (hα : 1 < α) : renyiDiv P P α = 0 := by
-  rw [renyiDiv_of_support (fun w h => h), EReal.coe_eq_zero]
+  rw [renyiDiv_of_support (fun w h => h) (ne_of_gt hα), EReal.coe_eq_zero]
   exact renyiDivReal_self P hα
 
 private theorem one_le_renyiMomentReal {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
@@ -224,7 +223,7 @@ private theorem renyiDivReal_nonneg {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α
 
 theorem nonneg_renyiDiv {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
     (hα : 1 < α) (hs : Support P Q) : 0 ≤ renyiDiv P Q α := by
-  rw [renyiDiv_of_support hs, EReal.coe_nonneg]
+  rw [renyiDiv_of_support hs (ne_of_gt hα), EReal.coe_nonneg]
   exact renyiDivReal_nonneg P Q hα hs
 
 private theorem bind_toReal {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
@@ -394,8 +393,8 @@ theorem renyiDiv_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
     (P Q : PMF Ω) (k : Ω → PMF Ω₂) {α : ℝ} (hα : 1 < α)
     (hs : Support P Q) :
     renyiDiv (P.bind k) (Q.bind k) α ≤ renyiDiv P Q α := by
-  rw [renyiDiv_of_support (support_bind k hs), renyiDiv_of_support hs,
-    EReal.coe_le_coe_iff]
+  rw [renyiDiv_of_support (support_bind k hs) (ne_of_gt hα),
+    renyiDiv_of_support hs (ne_of_gt hα), EReal.coe_le_coe_iff]
   exact renyiDivReal_bind_le P Q k hα hs
 
 theorem isRDP_bind {Database A B : Type*} [Fintype A] [Fintype B]
@@ -406,12 +405,13 @@ theorem isRDP_bind {Database A B : Type*} [Fintype A] [Fintype B]
   obtain ⟨hs, hdiv⟩ := h.2.2 d d' hadj
   refine ⟨support_bind k hs, (renyiDiv_bind_le _ _ k h.2.1 hs).trans hdiv⟩
 
-theorem support_prodPMF {Ω₁ Ω₂ : Type*} (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂)
+theorem support_prodJoint {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+    (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂)
     (hs1 : Support P1 Q1) (hs2 : Support P2 Q2) :
-    Support (prodPMF P1 P2) (prodPMF Q1 Q2) := by
+    Support (InformationTheory.prodJoint P1 P2)
+      (InformationTheory.prodJoint Q1 Q2) := by
   intro ⟨a, b⟩ h
-  unfold prodPMF at h ⊢
-  rw [Cslib.Probability.PMF.bind_pair_apply] at h ⊢
+  rw [InformationTheory.prodJoint_apply] at h ⊢
   have h1 : P1 a ≠ 0 := by
     intro h0
     exact h (by rw [h0, zero_mul])
@@ -451,52 +451,51 @@ private theorem renyiMomentReal_pos {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α
         Finset.single_le_sum hnonneg (Finset.mem_univ w)
     _ = renyiMomentReal P Q α := rfl
 
-private theorem not_support_prodPMF_left {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+private theorem not_support_prodJoint_left {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) (hs : ¬ Support P1 Q1) :
-    ¬ Support (prodPMF P1 P2) (prodPMF Q1 Q2) := by
+    ¬ Support (InformationTheory.prodJoint P1 P2)
+      (InformationTheory.prodJoint Q1 Q2) := by
   obtain ⟨a, haP, haQ⟩ := exists_off_support hs
   obtain ⟨b, hbP⟩ := exists_pos_mass P2
   intro hsup
-  have hP : prodPMF P1 P2 (a, b) ≠ 0 := by
-    unfold prodPMF
-    rw [Cslib.Probability.PMF.bind_pair_apply]
+  have hP : InformationTheory.prodJoint P1 P2 (a, b) ≠ 0 := by
+    rw [InformationTheory.prodJoint_apply]
     exact mul_ne_zero haP hbP
-  have hQ : prodPMF Q1 Q2 (a, b) = 0 := by
-    unfold prodPMF
-    rw [Cslib.Probability.PMF.bind_pair_apply, haQ, zero_mul]
+  have hQ : InformationTheory.prodJoint Q1 Q2 (a, b) = 0 := by
+    rw [InformationTheory.prodJoint_apply, haQ, zero_mul]
   exact hsup (a, b) hP hQ
 
-private theorem not_support_prodPMF_right {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+private theorem not_support_prodJoint_right {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) (hs : ¬ Support P2 Q2) :
-    ¬ Support (prodPMF P1 P2) (prodPMF Q1 Q2) := by
+    ¬ Support (InformationTheory.prodJoint P1 P2)
+      (InformationTheory.prodJoint Q1 Q2) := by
   obtain ⟨b, hbP, hbQ⟩ := exists_off_support hs
   obtain ⟨a, haP⟩ := exists_pos_mass P1
   intro hsup
-  have hP : prodPMF P1 P2 (a, b) ≠ 0 := by
-    unfold prodPMF
-    rw [Cslib.Probability.PMF.bind_pair_apply]
+  have hP : InformationTheory.prodJoint P1 P2 (a, b) ≠ 0 := by
+    rw [InformationTheory.prodJoint_apply]
     exact mul_ne_zero haP hbP
-  have hQ : prodPMF Q1 Q2 (a, b) = 0 := by
-    unfold prodPMF
-    rw [Cslib.Probability.PMF.bind_pair_apply, hbQ, mul_zero]
+  have hQ : InformationTheory.prodJoint Q1 Q2 (a, b) = 0 := by
+    rw [InformationTheory.prodJoint_apply, hbQ, mul_zero]
   exact hsup (a, b) hP hQ
 
-private theorem renyiMomentReal_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+private theorem renyiMomentReal_prodJoint {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) {α : ℝ} :
-    renyiMomentReal (prodPMF P1 P2) (prodPMF Q1 Q2) α
+    renyiMomentReal (InformationTheory.prodJoint P1 P2)
+        (InformationTheory.prodJoint Q1 Q2) α
       = renyiMomentReal P1 Q1 α * renyiMomentReal P2 Q2 α := by
-  unfold renyiMomentReal prodPMF
+  unfold renyiMomentReal
   rw [Fintype.sum_prod_type]
   have hpt : ∀ a b,
-      ((P1.bind fun a' => (P2.bind fun b' => PMF.pure (a', b'))) (a, b)).toReal
+      ((InformationTheory.prodJoint P1 P2) (a, b)).toReal
         = (P1 a).toReal * (P2 b).toReal := by
     intro a b
-    rw [Cslib.Probability.PMF.bind_pair_apply, ENNReal.toReal_mul]
+    rw [InformationTheory.prodJoint_apply, ENNReal.toReal_mul]
   have hqt : ∀ a b,
-      ((Q1.bind fun a' => (Q2.bind fun b' => PMF.pure (a', b'))) (a, b)).toReal
+      ((InformationTheory.prodJoint Q1 Q2) (a, b)).toReal
         = (Q1 a).toReal * (Q2 b).toReal := by
     intro a b
-    rw [Cslib.Probability.PMF.bind_pair_apply, ENNReal.toReal_mul]
+    rw [InformationTheory.prodJoint_apply, ENNReal.toReal_mul]
   simp_rw [hpt, hqt]
   have hterm : ∀ a b,
       ((P1 a).toReal * (P2 b).toReal) ^ α
@@ -509,70 +508,77 @@ private theorem renyiMomentReal_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [F
       mul_div_mul_comm]
   simp_rw [hterm, ← Finset.sum_mul_sum]
 
-theorem renyiMoment_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+theorem renyiMoment_prodJoint {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) {α : ℝ} :
-    renyiMoment (prodPMF P1 P2) (prodPMF Q1 Q2) α
+    renyiMoment (InformationTheory.prodJoint P1 P2)
+        (InformationTheory.prodJoint Q1 Q2) α
       = renyiMoment P1 Q1 α * renyiMoment P2 Q2 α := by
   by_cases hs1 : Support P1 Q1
   · by_cases hs2 : Support P2 Q2
-    · rw [renyiMoment_of_support (support_prodPMF _ _ _ _ hs1 hs2),
+    · rw [renyiMoment_of_support (support_prodJoint _ _ _ _ hs1 hs2),
         renyiMoment_of_support hs1, renyiMoment_of_support hs2,
-        ← EReal.coe_mul, renyiMomentReal_prodPMF]
+        ← EReal.coe_mul, renyiMomentReal_prodJoint]
     · rw [renyiMoment_of_not_support
-          (not_support_prodPMF_right P1 Q1 P2 Q2 hs2),
+          (not_support_prodJoint_right P1 Q1 P2 Q2 hs2),
         renyiMoment_of_support hs1, renyiMoment_of_not_support hs2,
         EReal.coe_mul_top_of_pos (renyiMomentReal_pos _ _ hs1)]
   · by_cases hs2 : Support P2 Q2
     · rw [renyiMoment_of_not_support
-          (not_support_prodPMF_left P1 Q1 P2 Q2 hs1),
+          (not_support_prodJoint_left P1 Q1 P2 Q2 hs1),
         renyiMoment_of_not_support hs1, renyiMoment_of_support hs2,
         EReal.top_mul_coe_of_pos (renyiMomentReal_pos _ _ hs2)]
     · rw [renyiMoment_of_not_support
-          (not_support_prodPMF_left P1 Q1 P2 Q2 hs1),
+          (not_support_prodJoint_left P1 Q1 P2 Q2 hs1),
         renyiMoment_of_not_support hs1, renyiMoment_of_not_support hs2,
         EReal.top_mul_top]
 
-private theorem renyiDivReal_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+private theorem renyiDivReal_prodJoint {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) {α : ℝ} (hα : 1 < α)
     (hs1 : Support P1 Q1) (hs2 : Support P2 Q2) :
-    renyiDivReal (prodPMF P1 P2) (prodPMF Q1 Q2) α
+    renyiDivReal (InformationTheory.prodJoint P1 P2)
+        (InformationTheory.prodJoint Q1 Q2) α
       = renyiDivReal P1 Q1 α + renyiDivReal P2 Q2 α := by
   unfold renyiDivReal
-  rw [renyiMomentReal_prodPMF]
+  rw [renyiMomentReal_prodJoint]
   have h1 : renyiMomentReal P1 Q1 α ≠ 0 :=
     ne_of_gt (lt_of_lt_of_le zero_lt_one (one_le_renyiMomentReal P1 Q1 hα hs1))
   have h2 : renyiMomentReal P2 Q2 α ≠ 0 :=
     ne_of_gt (lt_of_lt_of_le zero_lt_one (one_le_renyiMomentReal P2 Q2 hα hs2))
   rw [Real.log_mul h1 h2, mul_add]
 
-theorem renyiDiv_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+theorem renyiDiv_prodJoint {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) {α : ℝ} (hα : 1 < α)
     (hs1 : Support P1 Q1) (hs2 : Support P2 Q2) :
-    renyiDiv (prodPMF P1 P2) (prodPMF Q1 Q2) α
+    renyiDiv (InformationTheory.prodJoint P1 P2)
+        (InformationTheory.prodJoint Q1 Q2) α
       = renyiDiv P1 Q1 α + renyiDiv P2 Q2 α := by
-  rw [renyiDiv_of_support (support_prodPMF _ _ _ _ hs1 hs2),
-    renyiDiv_of_support hs1, renyiDiv_of_support hs2, ← EReal.coe_add,
+  rw [renyiDiv_of_support (support_prodJoint _ _ _ _ hs1 hs2) (ne_of_gt hα),
+    renyiDiv_of_support hs1 (ne_of_gt hα),
+    renyiDiv_of_support hs2 (ne_of_gt hα), ← EReal.coe_add,
     EReal.coe_eq_coe_iff]
-  exact renyiDivReal_prodPMF _ _ _ _ hα hs1 hs2
+  exact renyiDivReal_prodJoint _ _ _ _ hα hs1 hs2
 
-theorem isRDP_prodPMF {Database A B : Type*} [Fintype A] [Fintype B]
+theorem isRDP_prodJoint {Database A B : Type*} [Fintype A] [Fintype B]
     {M1 : Database → PMF A} {M2 : Database → PMF B}
     {adj : Database → Database → Prop} {α ε1 ε2 : ℝ}
     (h1 : IsRDP M1 adj α ε1) (h2 : IsRDP M2 adj α ε2) :
-    IsRDP (fun d => prodPMF (M1 d) (M2 d)) adj α (ε1 + ε2) := by
+    IsRDP (fun d => InformationTheory.prodJoint (M1 d) (M2 d)) adj α
+      (ε1 + ε2) := by
   have hα := h1.2.1
   refine ⟨add_nonneg h1.1 h2.1, hα, fun d d' hadj => ?_⟩
   obtain ⟨hs1, hdiv1⟩ := h1.2.2 d d' hadj
   obtain ⟨hs2, hdiv2⟩ := h2.2.2 d d' hadj
   have h1R : renyiDivReal (M1 d) (M1 d') α ≤ ε1 := by
-    rw [renyiDiv_of_support hs1] at hdiv1
+    rw [renyiDiv_of_support hs1 (ne_of_gt hα)] at hdiv1
     exact EReal.coe_le_coe_iff.mp hdiv1
   have h2R : renyiDivReal (M2 d) (M2 d') α ≤ ε2 := by
-    rw [renyiDiv_of_support hs2] at hdiv2
+    rw [renyiDiv_of_support hs2 (ne_of_gt hα)] at hdiv2
     exact EReal.coe_le_coe_iff.mp hdiv2
-  refine ⟨support_prodPMF _ _ _ _ hs1 hs2, ?_⟩
-  rw [renyiDiv_prodPMF _ _ _ _ hα hs1 hs2, renyiDiv_of_support hs1,
-    renyiDiv_of_support hs2, ← EReal.coe_add, EReal.coe_le_coe_iff]
+  refine ⟨support_prodJoint _ _ _ _ hs1 hs2, ?_⟩
+  rw [renyiDiv_prodJoint _ _ _ _ hα hs1 hs2,
+    renyiDiv_of_support hs1 (ne_of_gt hα),
+    renyiDiv_of_support hs2 (ne_of_gt hα), ← EReal.coe_add,
+    EReal.coe_le_coe_iff]
   exact add_le_add h1R h2R
 
 private theorem exp_rpow (a b : ℝ) :
@@ -727,7 +733,7 @@ theorem approx_event_of_renyi {Ω : Type*} [Fintype Ω] (P Q : PMF Ω)
   have hH := holder_event_bound P Q hα hs s
   have hdivR : renyiDivReal P Q α ≤ ε := by
     have h := hdiv
-    rw [renyiDiv_of_support hs] at h
+    rw [renyiDiv_of_support hs (ne_of_gt hα)] at h
     exact EReal.coe_le_coe_iff.mp h
   have hM := moment_le_exp_of_renyiDiv P Q hα hs hdivR
   have hQS_nn : 0 ≤ ∑ w ∈ s, (Q w).toReal :=
