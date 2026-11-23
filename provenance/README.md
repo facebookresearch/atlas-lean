@@ -67,12 +67,12 @@ the Python standard library, and fails on:
   and may move the pin; a local run allows it with a warning. In CI the base is the push's `before` commit, the merge
   group's base, or for a pull request the merge ref's first parent, fetched if the checkout is
   shallow; if it cannot be read the check fails. Locally it is
-  the merge-base with `origin/main`. During an uncommitted local merge, Git computes this base
-  using all pending parents, and copy and rename detection checks the merged working tree.
-  If the merge-base is unavailable, the check tries the first parent of `HEAD` and warns if
-  neither can be read. `--base REV` names the base explicitly. The checker looks for the base
-  manifest at every path in `MANIFEST_PATHS`. It accepts a base without a manifest only before
-  the cutover, when the base also lacks `scripts/check_formal_math_sync.py`.
+  the merge-base with `origin/main`. During a local merge, the checker includes the incoming parent
+  in that calculation and checks the index for copies and renames. If the merge-base is unavailable,
+  it uses the first parent of `HEAD`. `--base REV` names the base explicitly.
+  The base manifest is looked up at every path the
+manifest has had (`MANIFEST_PATHS`); a base without one is accepted only before the cutover, that is
+when it also lacks `scripts/check_formal_math_sync.py`.
 
 Files without a row are ATLAS-only and ignored; new upstream files enter at sync time. So the set
 of upstream-derived paths cannot change silently (every row's bytes are checked) or shrink silently

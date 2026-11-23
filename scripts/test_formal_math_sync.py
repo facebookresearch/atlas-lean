@@ -554,37 +554,6 @@ class BaseGuardTest(unittest.TestCase):
         self.edit_row("MathlibExt/Identical.lean", line_fingerprint=["0" * 12])
         self.assert_fails("forge the fingerprint", "line_fingerprint does not match the file at base")
 
-    def test_pending_local_merge_checks_retirements_and_copies_against_main(self) -> None:
-        del os.environ["GITHUB_ACTIONS"]
-        path = "CSLibExt/Diverged.lean"
-        old = (self.root / path).read_text()
-        run_git(self.root, "branch", "topic")
-        updated = old + "def ySquared : Nat := y * y\n"
-        write(self.root, path, updated)
-        self.edit_row(path, published_sha256=c.sha256(updated), rationale="add a square")
-        self.commit("extend the diverged file")
-        run_git(self.root, "update-ref", "refs/remotes/origin/main", "HEAD")
-        run_git(self.root, "checkout", "topic")
-        write(self.root, "README.md", "topic\n")
-        self.commit("edit readme")
-        run_git(self.root, "merge", "--no-commit", "main")
-
-        (self.root / path).unlink()
-        self.edit_row(path, disposition="retired", line_fingerprint=c.line_fingerprint(updated),
-                      rationale=None, backport=None)
-        self.assertEqual(self.run_check()[0], 0)
-
-        self.edit_row(path, published_sha256=c.sha256(old),
-                      line_fingerprint=c.line_fingerprint(old))
-        source = (self.root / "MathlibExt/Identical.lean").read_text()
-        write(self.root, "WantedExt/NearCopy.lean", source.replace("def x7 ", "def y7 "))
-        run_git(self.root, "add", "WantedExt/NearCopy.lean")
-        code, out = self.run_check()
-        self.assertEqual(code, 1, out)
-        self.assertIn("retiring the row changed published_sha256", out)
-        self.assertIn("line_fingerprint does not match the file at base", out)
-        self.assertIn("WantedExt/NearCopy.lean: copied from tracked", out)
-
     def test_retire_after_committing_the_deletion_keeps_the_fingerprint(self) -> None:
         os.remove(self.root / "MathlibExt/Identical.lean")
         self.commit("delete first")
@@ -597,6 +566,37 @@ class BaseGuardTest(unittest.TestCase):
         self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
         self.commit("delete a synced file")
         self.assertEqual(self.run_check()[0], 0)
+
+    def test_pending_local_merge_checks_retirement_against_incoming_main(self) -> None:
+        del os.environ["GITHUB_ACTIONS"]
+        run_git(self.root, "branch", "topic")
+        path = "CSLibExt/Diverged.lean"
+        before = (self.root / path).read_text()
+        after = before + "-- update published on main\n"
+        write(self.root, path, after)
+        self.edit_row(path, published_sha256=c.sha256(after), rationale="updated on main")
+        self.commit("update the published file")
+        run_git(self.root, "update-ref", "refs/remotes/origin/main", "HEAD")
+        run_git(self.root, "switch", "topic")
+        run_git(self.root, "merge", "--no-commit", "--no-ff", "origin/main")
+
+        (self.root / path).unlink()
+        self.edit_row(path, disposition="retired", rationale=None, backport=None,
+                      line_fingerprint=c.line_fingerprint(after))
+        run_git(self.root, "add", "-u")
+        code, out = self.run_check()
+        self.assertEqual(code, 0, out)
+
+        self.edit_row(path, published_sha256=c.sha256(before),
+                      line_fingerprint=c.line_fingerprint(before))
+        moved = "CSLibExt/Moved.lean"
+        write(self.root, moved, after)
+        run_git(self.root, "add", c.MANIFEST, moved)
+        code, out = self.run_check()
+        self.assertEqual(code, 1, out)
+        self.assertIn("retiring the row changed published_sha256", out)
+        self.assertIn("line_fingerprint does not match the file at base", out)
+        self.assertIn(f"{moved}: renamed from tracked {path}", out)
 
     def test_backport_link_update_passes(self) -> None:
         self.edit_row("CSLibExt/Diverged.lean", backport="https://github.com/fairinternal/formal-math/pull/1")
