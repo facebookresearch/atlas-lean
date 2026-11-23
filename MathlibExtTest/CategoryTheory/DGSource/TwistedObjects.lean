@@ -52,7 +52,7 @@ component from degree `0` to itself is multiplication by `2`. -/
 example : ((dgDifferential ℤ (-1) h : Cochain K K 0).v 0 0 (by omega)).hom (1 : ℤ) =
     (2 : ℤ) := by
   rw [dgDifferential_linearHomComplex]
-  simp [δ, h, K, CochainComplex.of.d, differential]
+  simp [δ, h, K, CochainComplex.of.d, differential, Module.End.mul_eq_comp]
 
 /-- Composition of two cochains of degree `-1` carries the Koszul sign `(-1) ^ ((-1) * (-1))`. -/
 example : ((dgComp ℤ h h (by omega : -1 + -1 = -2) : Cochain K K (-2)).v 0 (-2)

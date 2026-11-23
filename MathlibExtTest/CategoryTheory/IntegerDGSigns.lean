@@ -41,7 +41,7 @@ example : (((dgDifferential (C := D) Integers.{1} (-1)
     (show DGHom (C := D) Integers.{1} (-1) K K from h) : Cochain K K 0).v
       0 0 (by omega)).hom (1 : R)) = (2 : R) := by
   rw [integer_differential, dgDifferential_linearHomComplex]
-  simp [δ, h, K, CochainComplex.of.d, differential]
+  simp [δ, h, K, CochainComplex.of.d, differential, Module.End.mul_eq_comp]
 
 example : (((dgComp (C := D) Integers.{1}
     (show DGHom (C := D) Integers.{1} (-1) K K from h)
