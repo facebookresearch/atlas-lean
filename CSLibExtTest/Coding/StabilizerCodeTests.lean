@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Coding.StabilizerCode
-public import Mathlib.LinearAlgebra.LinearIndependent.Basic
+import Mathlib.LinearAlgebra.LinearIndependent.Basic
 
 /-!
 # Tests: Dimension of a stabilizer code

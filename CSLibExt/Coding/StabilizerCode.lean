@@ -10,7 +10,7 @@ module
 
 public import CSLibExt.Coding.QuantumCodeDistance
 public import MathlibExt.Quantum.PauliXZ
-public import Mathlib.LinearAlgebra.Trace
+import Mathlib.LinearAlgebra.Trace
 
 
 /-!
@@ -53,33 +53,6 @@ noncomputable def codeProjector {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (
     Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ :=
   ((stabilizerGroup a b c).card : ℂ)⁻¹ • ∑ s ∈ stabilizerGroup a b c, s
 
-/-- Product of an all-`1` `ofFn` list is `1`. -/
-private theorem ofFn_prod_eq_one {M : Type*} [Monoid M] {r : ℕ} (f : Fin r → M)
-    (h : ∀ j, f j = 1) : (List.ofFn f).prod = 1 := by
-  induction r with
-  | zero => rw [List.ofFn_zero, List.prod_nil]
-  | succ n ih =>
-    simp only [List.ofFn_succ, List.prod_cons]
-    rw [h 0, ih _ (fun i => h i.succ), mul_one]
-
-/-- A product of `ofFn` commutes with `y` when every factor does. -/
-private theorem commute_ofFn_prod_right {M : Type*} [Monoid M] {r : ℕ} (f : Fin r → M)
-    (y : M) (h : ∀ i, Commute (f i) y) : Commute (List.ofFn f).prod y := by
-  induction r with
-  | zero => rw [List.ofFn_zero, List.prod_nil]; exact Commute.one_left y
-  | succ n ih =>
-    simp only [List.ofFn_succ, List.prod_cons]
-    exact Commute.mul_left (h 0) (ih _ (fun i => h i.succ))
-
-/-- Middle swap for commuting middle factors. -/
-private theorem mul_mul_swap_middle {M : Type*} [Monoid M] {a b c d : M}
-    (h : Commute b c) : (a * b) * (c * d) = (a * c) * (b * d) := by
-  calc (a * b) * (c * d) = a * (b * (c * d)) := by rw [mul_assoc]
-    _ = a * ((b * c) * d) := by rw [← mul_assoc b c d]
-    _ = a * ((c * b) * d) := by rw [h.eq]
-    _ = a * (c * (b * d)) := by rw [mul_assoc c]
-    _ = (a * c) * (b * d) := by rw [← mul_assoc a c (b * d)]
-
 /-- Pointwise products of `ofFn` lists multiply. -/
 private theorem ofFn_prod_mul {M : Type*} [Monoid M] {r : ℕ} (f g h : Fin r → M)
     (hp : ∀ j, f j * g j = h j) (hc : ∀ i j, Commute (f i) (g j)) :
@@ -90,12 +63,12 @@ private theorem ofFn_prod_mul {M : Type*} [Monoid M] {r : ℕ} (f g h : Fin r �
   | succ n ih =>
     simp only [List.ofFn_succ, List.prod_cons]
     have hmid : Commute (List.ofFn fun i : Fin n => f i.succ).prod (g 0) :=
-      commute_ofFn_prod_right _ _ (fun i => hc i.succ 0)
+      Commute.list_prod_left _ _ ((List.forall_mem_ofFn_iff).mpr (fun i => hc i.succ 0))
     have hIH : (List.ofFn fun i : Fin n => f i.succ).prod *
           (List.ofFn fun i : Fin n => g i.succ).prod =
           (List.ofFn fun i : Fin n => h i.succ).prod :=
       ih _ _ _ (fun i => hp i.succ) (fun i j => hc i.succ j.succ)
-    rw [mul_mul_swap_middle hmid, hp 0, hIH]
+    rw [Commute.mul_mul_mul_comm hmid _ _, hp 0, hIH]
 
 /-- Subset products multiply by symmetric difference. -/
 theorem groupElem_mul {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
@@ -150,14 +123,6 @@ private theorem pauli_mul {n : ℕ} (a b a' b' : Fin n → ZMod 2) :
 private theorem pauli_zero_zero {n : ℕ} : pauli (0 : Fin n → ZMod 2) 0 = 1 := by
   ext u v
   simp only [pauli, Matrix.of_apply, add_zero, zero_dotProduct, sign_zero, Matrix.one_apply]
-
-/-- A Pauli operator is never `0`. -/
-private theorem pauli_ne_zero {n : ℕ} (a b : Fin n → ZMod 2) : pauli a b ≠ 0 := by
-  intro h
-  have hentry := congrFun (congrFun h a) 0
-  simp only [pauli, Matrix.of_apply, zero_add, eq_self_iff_true, if_true, dotProduct_zero,
-    sign_zero, Pi.zero_apply] at hentry
-  exact one_ne_zero hentry
 
 /-- A Pauli operator is Hermitian up to its square sign. -/
 private theorem pauli_conjTranspose {n : ℕ} (a b : Fin n → ZMod 2) :
@@ -285,29 +250,6 @@ private theorem generator_comm_dots {n r : ℕ} {a b : Fin r → Fin n → ZMod 
     mul_left_cancel₀ hs hentry
   exact sign_inj hsign
 
-/-- A one-hot `ofFn` product picks out its value. -/
-private theorem ofFn_prod_ite_eq {M : Type*} [Monoid M] {r : ℕ} (f : Fin r → M)
-    (a : Fin r) : (List.ofFn fun j => if j = a then f j else 1).prod = f a := by
-  induction r with
-  | zero => exact Fin.elim0 a
-  | succ n ih =>
-    rcases Fin.eq_zero_or_eq_succ a with rfl | ⟨b, rfl⟩
-    · simp only [List.ofFn_succ, List.prod_cons]
-      have hall : (fun i : Fin n => if i.succ = (0 : Fin (n + 1)) then f i.succ else 1)
-          = fun _ => 1 := by
-        funext i
-        rw [ite_eq_right (Fin.succ_ne_zero i)]
-      rw [hall, ofFn_prod_eq_one _ (fun _ => rfl), ite_true, mul_one]
-    · simp only [List.ofFn_succ, List.prod_cons]
-      have hhead : (if (0 : Fin (n + 1)) = b.succ then f 0 else 1) = 1 :=
-        ite_eq_right (Ne.symm (Fin.succ_ne_zero b))
-      have hfun : (fun i : Fin n => if i.succ = b.succ then f i.succ else 1)
-          = (fun i => if i = b then f i.succ else 1) := by
-        funext i
-        simp only [Fin.succ_inj]
-      rw [hhead, hfun]
-      simp only [ih, one_mul]
-
 /-- A generator is the singleton subset product. -/
 private theorem generator_eq_groupElem_singleton {n r : ℕ}
     {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ} (j : Fin r) :
@@ -317,7 +259,34 @@ private theorem generator_eq_groupElem_singleton {n r : ℕ}
       else 1).prod
   rw [show (fun k : Fin r => if k ∈ ({j} : Finset (Fin r)) then generator a b c k else 1)
       = (fun k => if k = j then generator a b c k else 1) from ?_]
-  · exact (ofFn_prod_ite_eq _ j).symm
+  · have onehot : ∀ (M : Type) [Monoid M] (m : ℕ) (g : Fin m → M) (t : Fin m),
+        (List.ofFn fun k => if k = t then g k else 1).prod = g t := by
+      intro M _ m
+      induction m with
+      | zero => intro g t; exact t.elim0
+      | succ m ih =>
+        intro g t
+        rw [List.ofFn_succ, List.prod_cons]
+        rcases Fin.eq_zero_or_eq_succ t with rfl | ⟨t', rfl⟩
+        · rw [ite_eq_left rfl]
+          have htail : (List.ofFn fun i : Fin m =>
+              if i.succ = (0 : Fin (m + 1)) then g i.succ else 1).prod = 1 := by
+            apply List.prod_eq_one
+            intro x hx
+            rw [List.mem_ofFn] at hx
+            obtain ⟨i, hi⟩ := hx
+            rw [ite_eq_right (Fin.succ_ne_zero i)] at hi
+            exact hi.symm
+          rw [htail, mul_one]
+        · have h0 : (0 : Fin (m + 1)) ≠ t'.succ :=
+            fun h => Fin.succ_ne_zero t' h.symm
+          have hfun : (fun i : Fin m => if i.succ = t'.succ then g i.succ else 1)
+              = (fun i : Fin m => if i = t' then g i.succ else 1) := by
+            funext i
+            simp only [Fin.succ_inj]
+          rw [ite_eq_right h0, hfun, one_mul]
+          exact ih _ _
+    exact (onehot _ r (fun k => generator a b c k) j).symm
   · funext k
     simp only [Finset.mem_singleton]
 
@@ -330,7 +299,11 @@ private theorem groupElem_empty {n r : ℕ} (a b : Fin r → Fin n → ZMod 2)
     rw [ite_eq_right (Finset.notMem_empty j)]
   show (List.ofFn _).prod = 1
   rw [hfun]
-  exact ofFn_prod_eq_one _ (fun _ => rfl)
+  apply List.prod_eq_one
+  intro x hx
+  rw [List.mem_ofFn] at hx
+  obtain ⟨i, hi⟩ := hx
+  exact hi.symm
 
 /-- A subset product squares to `1`. -/
 private theorem groupElem_self_mul {n r : ℕ} {a b : Fin r → Fin n → ZMod 2}
@@ -365,14 +338,6 @@ private theorem sum_split_succ {n : ℕ} {M : Type*} [AddCommMonoid M] (F : Fin 
     rw [← hsub]
     exact Finset.sum_congr rfl (fun i hi => if_pos hi)
   rw [hcongr]
-
-/-- A sum of pairs splits into the pair of sums. -/
-private theorem sum_pair_split {n r : ℕ} (a b : Fin r → Fin n → ZMod 2)
-    (S : Finset (Fin r)) :
-    (∑ j ∈ S, (a j, b j)) = ((∑ j ∈ S, a j), (∑ j ∈ S, b j)) := by
-  induction S using Finset.induction with
-  | empty => rw [Finset.sum_empty, Finset.sum_empty, Finset.sum_empty]; rfl
-  | insert i t hit ih => simp only [Finset.sum_insert hit, ih, Prod.mk_add_mk]
 
 /-- A subset product is a nonzero scalar times the summed Pauli. -/
 private theorem groupElem_eq_smul_pauli {n r : ℕ} {a b : Fin r → Fin n → ZMod 2}
@@ -514,7 +479,9 @@ private theorem commute_groupElem_right {n r : ℕ} {a b : Fin r → Fin n → Z
     (T : Finset (Fin r)) (h : ∀ j, Commute (generator a b c j) y) :
     Commute (groupElem a b c T) y := by
   show Commute (List.ofFn fun j => if j ∈ T then generator a b c j else 1).prod y
-  refine commute_ofFn_prod_right _ _ fun j => ?_
+  refine Commute.list_prod_left _ _ fun x hx => ?_
+  rw [List.mem_ofFn] at hx
+  obtain ⟨j, rfl⟩ := hx
   by_cases hj : j ∈ T
   · rw [ite_eq_left hj]
     exact h j
@@ -594,15 +561,6 @@ private theorem sum_mul_mem_stabilizerGroup {n r : ℕ} {a b : Fin r → Fin n �
   · intro t ht
     rfl
 
-/-- A sum of matrices acts as the sum of the actions. -/
-private theorem sum_mulVec_apply {n : ℕ}
-    (G : Finset (Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ))
-    (x : (Fin n → ZMod 2) → ℂ) : (∑ s ∈ G, s) *ᵥ x = ∑ s ∈ G, s *ᵥ x := by
-  induction G using Finset.induction with
-  | empty => rw [Finset.sum_empty, Finset.sum_empty, Matrix.zero_mulVec]
-  | insert a t hat ih =>
-    rw [Finset.sum_insert hat, Finset.sum_insert hat, Matrix.add_mulVec, ih]
-
 /-- A product of factors fixing `x` fixes `x`. -/
 private theorem mulVec_ofFn_prod_fix {n r : ℕ}
     (f : Fin r → Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ)
@@ -614,22 +572,14 @@ private theorem mulVec_ofFn_prod_fix {n r : ℕ}
     simp only [List.ofFn_succ, List.prod_cons]
     rw [← Matrix.mulVec_mulVec, ih _ (fun i => h i.succ), h 0]
 
-/-- Linear combinations of a family of binary vectors. -/
-private noncomputable def sumComb {n r : ℕ} (v : Fin r → (Fin n → ZMod 2)) :
-    (Fin r → ZMod 2) →ₗ[ZMod 2] (Fin n → ZMod 2) where
-  toFun c := ∑ j, c j • v j
-  map_add' c d := by simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib]
-  map_smul' t c := by simp only [Pi.smul_apply, smul_eq_mul, mul_smul, Finset.smul_sum,
-    RingHom.id_apply]
-
 /-- On the kernel of the `X` parts, the `Z` combination is orthogonal to the range. -/
 private theorem orth_sumComb {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k))
-    (u : Fin r → ZMod 2) (hu : sumComb a u = 0) (d : Fin r → ZMod 2) :
-    sumComb b u ⬝ᵥ sumComb a d = 0 := by
+    (u : Fin r → ZMod 2) (hu : Fintype.linearCombination (ZMod 2) a u = 0) (d : Fin r → ZMod 2) :
+    Fintype.linearCombination (ZMod 2) b u ⬝ᵥ Fintype.linearCombination (ZMod 2) a d = 0 := by
   have hcomm' := generator_comm_dots hsq hcomm
-  show (∑ j, u j • b j) ⬝ᵥ (∑ k, d k • a k) = 0
+  simp only [Fintype.linearCombination_apply]
   rw [sum_dotProduct]
   simp only [dotProduct_sum]
   have hterm : ∀ j k : Fin r, (u j • b j) ⬝ᵥ (d k • a k)
@@ -642,8 +592,8 @@ private theorem orth_sumComb {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c :
   apply Finset.sum_eq_zero
   intro k _
   have hinner : (∑ j, d k * (u j * ((b k) ⬝ᵥ (a j))))
-      = d k * ((b k) ⬝ᵥ (sumComb a u)) := by
-    show (∑ j, d k * (u j * ((b k) ⬝ᵥ (a j)))) = d k * ((b k) ⬝ᵥ (∑ j, u j • a j))
+      = d k * ((b k) ⬝ᵥ (Fintype.linearCombination (ZMod 2) a u)) := by
+    rw [Fintype.linearCombination_apply]
     rw [dotProduct_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [dotProduct_smul, smul_eq_mul]
@@ -653,16 +603,16 @@ private theorem orth_sumComb {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c :
 private noncomputable def resB {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k)) :
-    LinearMap.ker (sumComb a) →ₗ[ZMod 2]
-      Cslib.CodingTheory.LinearCode.dual (LinearMap.range (sumComb a)) where
-  toFun z := ⟨sumComb b z.1, by
-    have hz : sumComb a z.1 = 0 := LinearMap.mem_ker.mp z.2
+    LinearMap.ker (Fintype.linearCombination (ZMod 2) a) →ₗ[ZMod 2]
+      Cslib.CodingTheory.LinearCode.dual (LinearMap.range (Fintype.linearCombination (ZMod 2) a)) where
+  toFun z := ⟨Fintype.linearCombination (ZMod 2) b z.1, by
+    have hz : Fintype.linearCombination (ZMod 2) a z.1 = 0 := LinearMap.mem_ker.mp z.2
     rw [Cslib.CodingTheory.LinearCode.mem_dual]
     intro s hs
     obtain ⟨d, rfl⟩ := LinearMap.mem_range.mp hs
     exact orth_sumComb hsq hcomm z.1 hz d⟩
-  map_add' z w := Subtype.ext (map_add (sumComb b) z.1 w.1)
-  map_smul' t z := Subtype.ext (map_smul (sumComb b) t z.1)
+  map_add' z w := Subtype.ext (map_add (Fintype.linearCombination (ZMod 2) b) z.1 w.1)
+  map_smul' t z := Subtype.ext (map_smul (Fintype.linearCombination (ZMod 2) b) t z.1)
 
 /-- A nontrivial Pauli operator is traceless. -/
 private theorem trace_pauli_eq_zero_of_ne {n : ℕ} (A B : Fin n → ZMod 2)
@@ -858,7 +808,7 @@ theorem range_toLin'_codeProjector {n r : ℕ} {a b : Fin r → Fin n → ZMod 2
           exact Matrix.one_mulVec y
       exact mulVec_ofFn_prod_fix (fun j => if j ∈ T then generator a b c j else 1) y hfac
     have hPy : Matrix.toLin' (codeProjector a b c) y = y := by
-      rw [hP, Matrix.toLin'_apply, Matrix.smul_mulVec, sum_mulVec_apply]
+      rw [hP, Matrix.toLin'_apply, Matrix.smul_mulVec, Matrix.sum_mulVec]
       trans ((stabilizerGroup a b c).card : ℂ)⁻¹ • ∑ s ∈ stabilizerGroup a b c, y
       · congr 1
         exact Finset.sum_congr rfl (fun s hs => hsfix s hs)
@@ -876,10 +826,10 @@ theorem le_of_linearIndependent {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {
   classical
   have hinjB : Function.Injective (resB (a := a) (b := b) (c := c) hsq hcomm) := by
     intro z w hzw
-    have hB : sumComb b z.1 = sumComb b w.1 := congrArg Subtype.val hzw
-    have hAsub : sumComb a (z.1 - w.1) = 0 := by
+    have hB : Fintype.linearCombination (ZMod 2) b z.1 = Fintype.linearCombination (ZMod 2) b w.1 := congrArg Subtype.val hzw
+    have hAsub : Fintype.linearCombination (ZMod 2) a (z.1 - w.1) = 0 := by
       rw [map_sub, LinearMap.mem_ker.mp z.2, LinearMap.mem_ker.mp w.2, sub_self]
-    have hBsub : sumComb b (z.1 - w.1) = 0 := by
+    have hBsub : Fintype.linearCombination (ZMod 2) b (z.1 - w.1) = 0 := by
       rw [map_sub, hB, sub_self]
     have hsum0 : ∑ j, (z.1 - w.1) j • (a j, b j) = 0 := by
       have hA' : (∑ j, (z.1 - w.1) j • a j) = 0 := hAsub
@@ -893,17 +843,17 @@ theorem le_of_linearIndependent {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {
     exact Subtype.ext hzw1
   have hfrange : Module.finrank (ZMod 2)
         (LinearMap.range (resB (a := a) (b := b) (c := c) hsq hcomm))
-      = Module.finrank (ZMod 2) (LinearMap.ker (sumComb a)) :=
+      = Module.finrank (ZMod 2) (LinearMap.ker (Fintype.linearCombination (ZMod 2) a)) :=
     LinearMap.finrank_range_of_inj hinjB
-  have hle1 : Module.finrank (ZMod 2) (LinearMap.ker (sumComb a))
+  have hle1 : Module.finrank (ZMod 2) (LinearMap.ker (Fintype.linearCombination (ZMod 2) a))
       ≤ Module.finrank (ZMod 2)
-        (Cslib.CodingTheory.LinearCode.dual (LinearMap.range (sumComb a))) := by
+        (Cslib.CodingTheory.LinearCode.dual (LinearMap.range (Fintype.linearCombination (ZMod 2) a))) := by
     rw [← hfrange]
     exact Submodule.finrank_le _
-  have hrn := LinearMap.finrank_range_add_finrank_ker (sumComb a)
+  have hrn := LinearMap.finrank_range_add_finrank_ker (Fintype.linearCombination (ZMod 2) a)
   rw [Module.finrank_fintype_fun_eq_card, Fintype.card_fin] at hrn
   have hdual := Cslib.CodingTheory.LinearCode.finrank_add_finrank_dual
-    (LinearMap.range (sumComb a))
+    (LinearMap.range (Fintype.linearCombination (ZMod 2) a))
   rw [Fintype.card_fin] at hdual
   omega
 
