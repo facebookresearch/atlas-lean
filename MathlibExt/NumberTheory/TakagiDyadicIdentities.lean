@@ -214,7 +214,7 @@ public theorem hammingWeight_eq_dcDNodes_diff (n : ℕ) (hn : 0 < n) :
     ((Nat.digits 2 n).sum : ℚ) =
       ((dcDNodes n : ℚ) - dcDNodes (n + 1) + Nat.log 2 n) / 2 + 1 := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     obtain rfl | hn₂ : n = 1 ∨ 2 ≤ n := by omega
     · norm_num [dcDNodes]
     set m := n / 2 with hm

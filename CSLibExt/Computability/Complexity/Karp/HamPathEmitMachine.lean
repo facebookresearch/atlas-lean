@@ -45,7 +45,7 @@ every entry of `V`, so it is quadratic in `|toks φ|`.
 
 namespace Cslib.Complexity.Karp.EmitHam
 
-open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.PL
+open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.LegacyPL
   Computability Cslib.Complexity.SatVerifier
 open Cslib.Complexity.SatVerifier.Lookup (isBitBlock_map isBitBlock_rev)
 

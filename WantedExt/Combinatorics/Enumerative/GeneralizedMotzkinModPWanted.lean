@@ -14,6 +14,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Algebra.Group.Subgroup.Lattice
 public import Mathlib.Data.Nat.Digits.Defs
+public import MathlibExt.Combinatorics.Enumerative.GeneralizedMotzkinModP
 public import MathlibExt.Combinatorics.Enumerative.RiordanNumber
 public import MathlibExt.Data.Set.Density
 import Mathlib.Tactic.NormNum
@@ -32,15 +33,6 @@ Source: Nadav Kohen, *Density and Symmetry in the
 Generalized Motzkin Numbers Modulo p*, INTEGERS 26 (2026), Article A22, Definitions. -/
 public noncomputable def trinomialLaurent (a b : ℤ) : LaurentPolynomial ℤ :=
   C a * T (-1) + C b + C a * T 1
-
-/-- **Laurent polynomials of degree at most one.** For integers $\alpha, \beta, \gamma$, this is the
-Laurent polynomial $\alpha x^{-1} + \beta + \gamma x$ with integer coefficients.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
-INTEGERS 26 (2026), Article A22, Lemma 1. The degree-one hypotheses of Lemma 1 are imposed on the
-coefficients in the statements that use this polynomial. -/
-public noncomputable def linearLaurent (α β γ : ℤ) : LaurentPolynomial ℤ :=
-  C α * T (-1) + C β + C γ * T 1
 
 /-- **Generalized central trinomial coefficients.** For integers $a, b$ and a natural number $n$,
 the generalized central trinomial coefficient $T_n^{(a/b)}$ is the constant term of the Laurent
@@ -321,33 +313,6 @@ public theorem_wanted constantTermLinearCombination_digit_decomposition
         a (m + 1) *
           (∑ i ∈ Finset.Icc (p - n₀) h, c i * a (i - (p - n₀))))
       [ZMOD p]
-
-/-- **Digit formula for shifted sums of constant terms, small last digit.** Let $\alpha$, $\beta$,
-$\gamma$ be integers with $\alpha \ne 0$ or $\gamma \ne 0$, and let $a_r$ be the constant term of
-$(\alpha x^{-1} + \beta + \gamma x)^r$. Let $c_0, c_1, c_2, \dots$ be integers, let $h$ be a natural
-number, and put $b_r = \sum_{i=0}^{h} c_i a_{r+i}$. Let $p$ be a prime with $h < p$, and let $q$,
-$m$, $k$, $n_0$ be natural numbers with $m < p$, $m \ne p - 1$, $n_0 < p$ and $n_0 < p - h$. If
-$n = ((qp + m)p^k + p^k - 1)p + n_0$, that is, $n$ is obtained from $q$ by appending the base-$p$
-digits $m$, then $k$ digits $p - 1$, then $n_0$, then
-$$
-b_n \equiv a_q \, a_m \, a_{p-1}^k \sum_{i=0}^{h} c_i a_{n_0+i} \pmod p
-\quad \text{and} \quad
-b_n \equiv a_{(n - n_0)/p} \, b_{n_0} \pmod p.
-$$
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*, INTEGERS 26
-(2026), Article A22, Lemma 1. -/
-public theorem_wanted constantTermLinearCombination_small_last_digit
-    (α β γ : ℤ) (hdegree : α ≠ 0 ∨ γ ≠ 0) (c : ℕ → ℤ)
-    (h p q m k n₀ n : ℕ) (hp : p.Prime) (hph : h < p)
-    (hm : m < p) (hn₀ : n₀ < p) (hmne : m ≠ p - 1)
-    (hnsmall : n₀ < p - h)
-    (hn : n = ((q * p + m) * p ^ k + (p ^ k - 1)) * p + n₀) :
-    let a := fun r : ℕ => (linearLaurent α β γ ^ r).coeff 0
-    let b := fun r : ℕ => ∑ i ∈ Finset.range (h + 1), c i * a (r + i)
-    (b n ≡ a q * a m * a (p - 1) ^ k *
-        (∑ i ∈ Finset.range (h + 1), c i * a (n₀ + i)) [ZMOD p]) ∧
-      (b n ≡ a ((n - n₀) / p) * b n₀ [ZMOD p])
 
 /-- **Density one for zeros of shifted combinations of central trinomial coefficients.** Let
 $\alpha$ and $\beta$ be integers with $\alpha \neq 0$, and write $a_r$ for the generalized central
