@@ -104,7 +104,8 @@ def restriction {U V : Opens M} (h : V ≤ U) :
 /-- The presheaf of holomorphic functions on a complex manifold: functions that
 are holomorphic in every chart. The holomorphic atlas makes this the structure
 sheaf of the complex manifold. -/
-def coefficientPresheaf [IsManifold 𝓘(ℂ, E) ∞ M] : (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} ℂ where
+def coefficientPresheaf [IsManifold 𝓘(ℂ, E) ∞ M] :
+    (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} ℂ where
   obj U := CommAlgCat.of ℂ (holomorphicAlgebra E M U.unop)
   map f := CommAlgCat.ofHom (restriction E M f.unop.le)
   map_id U := by ext f x; rfl
