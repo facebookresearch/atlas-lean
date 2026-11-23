@@ -16,6 +16,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
 public import Mathlib.NumberTheory.MulChar.Basic
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Moebius
+public import MathlibExt.NumberTheory.FunctionField.MonicCount
 
 /-!
 # Dirichlet convolutions over `𝔽_q[T]`
@@ -158,17 +159,6 @@ public theorem_wanted monic_sum_moebius_mul_natDegree_div_norm {F : Type*} [Fiel
           (1 - 1 / (Fintype.card F : ℝ) ^ P.natDegree)) *
         ∑ᶠ P ∈ {P : F[X] | P.Monic ∧ Irreducible P ∧ P ∣ f},
           (P.natDegree : ℝ) / (1 - (Fintype.card F : ℝ) ^ P.natDegree)
-
-/-- **Number of monic polynomials of bounded degree.** Let $F$ be a finite field with $q$
-elements and let $N$ be a natural number. The number of monic polynomials in $F[T]$ of degree at
-most $N$ is $(q^{N+1} - 1)/(q - 1)$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 4
-(`integers-2026-A80-prop-4`), case `h = 1`, `m = 1`. -/
-public theorem_wanted monic_count_natDegree_le {F : Type*} [Field F] [Fintype F] (N : ℕ) :
-    (Nat.card {f : F[X] // f.Monic ∧ f.natDegree ≤ N} : ℚ) =
-      ((Fintype.card F : ℚ) ^ (N + 1) - 1) / (Fintype.card F - 1)
 
 /-- **Summatory divisor function for monic polynomials over a finite field.** Let $F$ be a finite
 field with $q$ elements. For monic $f \in F[T]$, the Dirichlet convolution $(1 * 1)(f)$ of the

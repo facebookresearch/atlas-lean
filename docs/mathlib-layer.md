@@ -8,7 +8,7 @@ articles to the Mathlib nodes they use, and each node's topic in
 compiled constants and `scripts/extract_mathlib_graph.py` builds the files
 below. The workflow's `build the Mathlib layer` job uploads them as the
 `mathlib-graph` artifact, with this page as `SCHEMA.md`, except the two dumps:
-the v2 one is the wiki job's `v2-mathlib-dump` artifact and the Mathlib one
+the v2 one is that job's `v2-mathlib-dump` artifact and the Mathlib one
 depends only on the pinned Mathlib. Like the v2 dependency dump, they are build outputs and are
 never committed. `docs/BLUEPRINT.md` gives the commands, and
 `docs/mathlib-pages.md` describes the pages built from the layer.

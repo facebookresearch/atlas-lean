@@ -30,16 +30,21 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The number `d(m; a₁, …, a_k)` of representations of an integer `m` as `x₁a₁ + ⋯ + x_ka_k` with
-`xᵢ ∈ ℕ`, as an extended natural number: it is `0` for `m < 0`, finite when every generator is
-positive, and `⊤` when the representation set is infinite.
+/-- **Number of representations by a vector of generators.** For natural numbers
+$a_1, \dots, a_k$ and an integer $m$, the representation count $d(m; a_1, \dots, a_k)$ is the
+number of tuples $(x_1, \dots, x_k)$ of natural numbers with $x_1 a_1 + \dots + x_k a_k = m$,
+counted as an extended natural number, so that it is $\infty$ when there are infinitely many such
+tuples.
+
+It is $0$ for $m < 0$, and finite when every $a_i$ is positive.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Introduction (definition of `d(n; a₁, …, a_k)`). -/
 noncomputable def frobeniusRepCount {k : ℕ} (a : Fin k → ℕ) (m : ℤ) : ℕ∞ :=
   {x : Fin k → ℕ | ∑ i, (x i : ℤ) * a i = m}.encard
 
-/-- A negative integer has no representation.
+/-- **Negative integers have no representations.** For all natural numbers $a_1, \dots, a_k$ and
+every integer $m < 0$, the representation count $d(m; a_1, \dots, a_k)$ is $0$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Introduction (definition of `d(n; a₁, …, a_k)`). -/
@@ -52,7 +57,9 @@ theorem frobeniusRepCount_eq_zero_of_neg {k : ℕ} (a : Fin k → ℕ) {m : ℤ}
   rw [hx] at this
   omega
 
-/-- With positive generators every integer has finitely many representations.
+/-- **Finitely many representations for positive generators.** If $a_1, \dots, a_k$ are positive
+natural numbers, then for every integer $m$ the representation count $d(m; a_1, \dots, a_k)$ is
+finite.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Introduction (definition of `d(n; a₁, …, a_k)`). -/
@@ -70,15 +77,19 @@ theorem frobeniusRepCount_ne_top {k : ℕ} {a : Fin k → ℕ} (ha : ∀ i, 0 < 
   show x j ≤ m.toNat
   omega
 
-/-- `g` is the generalized Frobenius number `g(a; s) = max {m ∈ ℤ | d(m; a) ≤ s}`: `g` has at most
-`s` representations and every larger integer has more than `s`.
+/-- **Generalized Frobenius number.** For natural numbers $a_1, \dots, a_k$ and $s$, write
+$d(m; a)$ for the number of representations of an integer $m$ by $a = (a_1, \dots, a_k)$. An
+integer $g$ is the generalized Frobenius number $g(a; s) = \max \{m \in \mathbb{Z} \mid
+d(m; a) \le s\}$ when $d(g; a) \le s$ and $d(m; a) > s$ for every integer $m > g$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Introduction (definition of `g(A; s)`). -/
 def IsGenFrobeniusNumber {k : ℕ} (a : Fin k → ℕ) (s : ℕ) (g : ℤ) : Prop :=
   frobeniusRepCount a g ≤ s ∧ ∀ m : ℤ, g < m → (s : ℕ∞) < frobeniusRepCount a m
 
-/-- The generalized Frobenius number is unique.
+/-- **Uniqueness of the generalized Frobenius number.** For natural numbers $a_1, \dots, a_k$ and
+$s$, if the integers $g$ and $g'$ are both the generalized Frobenius number $g(a_1, \dots, a_k; s)$,
+then $g = g'$.
 
 Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
 Numbers*, INTEGERS 26 (2026), Article A63, Introduction (definition of `g(A; s)` as a maximum). -/

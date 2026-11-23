@@ -30,3 +30,4 @@ Throw $N$ balls independently into the cells of $\iota$, each landing in cell $i
 - [Covariance of the multinomial distribution](sum-covariance-multinomial-real.md): basic property: the covariance matrix
 - [Poisson conditioning](cond-measure-real-eq-multinomial-real.md): characterisation: independent Poisson counts given their total
 - [Poisson conditioning, two cells](cond-measure-real-eq-binomial.md): two-cell special case
+- [Binomial law of a Poisson count given the total](has-law-cond-binomial.md): the two-cell case, stated as a conditional law

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.SanfordCoupledRecurrence
 
 /-!
 # Rogers dilogarithm series of Hoorfar--Qi, Bridgeman, and Sanford
@@ -95,28 +96,6 @@ public theorem_wanted rogersDilog_pell_negative_series {n : ℕ} (hn : ¬ IsSqua
           ∑' k : ℕ, L ((a : ℝ) ^ 2 / (A (2 * (k + 1) + 1) : ℝ) ^ 2) ∧
       ((∃ a' b' : ℤ, a = a' ∧ b = b') →
         ∀ k, (∃ m : ℤ, B (2 * k) = a * m) ∧ ∃ m : ℤ, A (2 * k + 1) = a * m)
-
-/-- **Sanford's coupled recurrence.** Let $a, b$ be real numbers in $(0, 1)$ with $a \ne b$, and
-for every natural number $m$ put
-$$
-x_m = \frac{a(a - b)(1 - b)^m}{a(1 - b)^{m+1} - b(1 - a)^{m+1}}, \qquad
-y_m = \frac{b(a - b)(1 - a)^m}{a(1 - b)^{m+1} - b(1 - a)^{m+1}}.
-$$
-Then for every natural number $n$,
-$$
-x_{n+1} = \frac{x_n(1 - y_n)}{1 - x_n y_n} \quad\text{and}\quad
-y_{n+1} = \frac{y_n(1 - x_n)}{1 - x_n y_n}.
-$$
-
-Source: Chance Sanford, *A Dilogarithm Series and a Generalization of a Theorem of Bridgeman*,
-INTEGERS 25 (2025), Article A52, Lemma 1 (`integers-2025-A52-lem-1`). -/
-public theorem_wanted sanford_coupled_recurrence {a b : ℝ} (ha₀ : 0 < a) (ha₁ : a < 1)
-    (hb₀ : 0 < b) (hb₁ : b < 1) (hab : a ≠ b) (n : ℕ) :
-    let x : ℕ → ℝ := fun m =>
-      a * (a - b) * (1 - b) ^ m / (a * (1 - b) ^ (m + 1) - b * (1 - a) ^ (m + 1))
-    let y : ℕ → ℝ := fun m =>
-      b * (a - b) * (1 - a) ^ m / (a * (1 - b) ^ (m + 1) - b * (1 - a) ^ (m + 1))
-    x (n + 1) = x n * (1 - y n) / (1 - x n * y n) ∧ y (n + 1) = y n * (1 - x n) / (1 - x n * y n)
 
 /-- **Sanford's dilogarithm series identity.** Write $L(x) = \sum_{m \ge 1} x^m/m^2 +
 \frac{1}{2} \log x \log(1 - x)$ for the Rogers dilogarithm on $[0, 1]$ (with $\log 0 = 0$). For
