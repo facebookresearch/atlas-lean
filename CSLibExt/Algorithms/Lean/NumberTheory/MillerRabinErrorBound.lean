@@ -661,19 +661,19 @@ private theorem pow_modEq_of_modEq {p k x y : ℕ} (hp : p.Prime) (hp2 : p ≠ 2
   have : Fact p.Prime := ⟨hp⟩
   have hodd : Odd p := hp.odd_of_ne_two hp2
   have hy : ¬ p ∣ y := fun h => hx ((Nat.ModEq.dvd_iff hxy (dvd_refl p)).2 h)
-  -- the larger of the two plays `x` in `padicValNat.pow_sub_pow`
+  -- the larger of the two plays `x` in `Nat.multiplicity_pow_sub_pow`
   have key : ∀ a b : ℕ, b < a → ¬ p ∣ a → a ≡ b [MOD p] →
       b ^ p ^ (k - 1) ≡ a ^ p ^ (k - 1) [MOD p ^ k] := by
     intro a b hba ha hab
     have hdvd : p ∣ a - b := (Nat.modEq_iff_dvd' hba.le).1 hab.symm
     have hN : p ^ (k - 1) ≠ 0 := pow_ne_zero _ hp.ne_zero
-    have hv := padicValNat.pow_sub_pow (p := p) hodd hba hdvd ha hN
-    rw [padicValNat.prime_pow] at hv
-    have h1 : 1 ≤ padicValNat p (a - b) := one_le_padicValNat_of_dvd (by omega) hdvd
+    have hv := Nat.multiplicity_pow_sub_pow (p := p) hodd hba hdvd ha hN
+    rw [Nat.multiplicity_prime_pow] at hv
+    have h1 : 1 ≤ multiplicity p (a - b) := one_le_multiplicity_of_dvd (by omega) hdvd
     have hne : a ^ p ^ (k - 1) - b ^ p ^ (k - 1) ≠ 0 :=
       Nat.sub_ne_zero_of_lt (Nat.pow_lt_pow_left hba hN)
     refine (Nat.modEq_iff_dvd' (Nat.pow_le_pow_left hba.le _)).2 ?_
-    exact (pow_dvd_pow p (by omega)).trans pow_padicValNat_dvd
+    exact (pow_dvd_pow p (by omega)).trans (pow_multiplicity_dvd _ _)
   rcases lt_trichotomy x y with h | rfl | h
   · exact key y x h hy hxy.symm
   · rfl

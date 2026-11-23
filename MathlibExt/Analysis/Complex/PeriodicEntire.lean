@@ -274,7 +274,8 @@ private lemma norm_sin_pi_lower_bound (z : ℂ) (him : 1 ≤ |z.im|) :
 private lemma strip_box_compact :
     IsCompact {z : ℂ | 0 ≤ z.re ∧ z.re ≤ 1 ∧ |z.im| ≤ 1} := by
   apply Metric.isCompact_of_isClosed_isBounded
-  · refine (isClosed_le continuous_const Complex.continuous_re).inter ?_
+  · rw [Set.ofPred_and, Set.ofPred_and]
+    refine (isClosed_le continuous_const Complex.continuous_re).inter ?_
     exact (isClosed_le Complex.continuous_re continuous_const).inter
       (isClosed_le (continuous_abs.comp Complex.continuous_im) continuous_const)
   · rw [Metric.isBounded_iff_subset_closedBall (0 : ℂ)]

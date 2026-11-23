@@ -106,7 +106,7 @@ public theorem series_lt_primeCounting_of_lt_primeCounting (n : ℕ) (hn : 1 ≤
         ring
   have hv (k : ℕ) : k ≤ n → 0 ≤ v k := by
     induction k using Nat.strong_induction_on with
-    | h k ih =>
+    | ind k ih =>
       intro hk
       apply nonneg_of_mul_nonneg_right (a := a 0 * Real.log x) _ (mul_pos ha₀ hlog)
       cases k with
