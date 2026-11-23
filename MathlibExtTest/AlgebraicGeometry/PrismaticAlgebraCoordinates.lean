@@ -18,6 +18,8 @@ open MathlibExt.AlgebraicGeometry.PrismaticCosimplicialAlgebras
 open MathlibExt.AlgebraicGeometry.PrismaticAlgebraBaseChange
 open scoped Simplicial TensorProduct
 
+namespace MathlibExtTest.PrismaticAlgebraCoordinates
+
 /-- Symbolic Frobenius-coordinate map before (p,I)-completion. -/
 def squareCoordinate : Polynomial ℤ →+* Polynomial ℤ :=
   Polynomial.eval₂RingHom Polynomial.C (Polynomial.X ^ 2)
@@ -55,3 +57,5 @@ example : (-1 : ℤ) ^ (((-1 : ℤ) * 3).natAbs) = -1 := by norm_num
 #print axioms MathlibExt.AlgebraicGeometry.PrismaticCosimplicialAlgebras.cupRing_naturality
 #print axioms MathlibExt.AlgebraicGeometry.PrismaticAlgebraBaseChange.AlgebraMap.completed_unit
 #print axioms MathlibExt.AlgebraicGeometry.PrismaticAlgebraHypermodels.Hypermodel.completedCup_unit
+
+end MathlibExtTest.PrismaticAlgebraCoordinates

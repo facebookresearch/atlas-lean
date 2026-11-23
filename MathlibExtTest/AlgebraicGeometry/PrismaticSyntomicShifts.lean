@@ -20,7 +20,7 @@ open MathlibExt.AlgebraicGeometry.PrismaticNygaardModels
 open MathlibExt.AlgebraicGeometry.PrismaticDividedFrobenius
 open MathlibExt.AlgebraicGeometry.CrystallinePrismaticSite
 
-instance : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+namespace MathlibExtTest.PrismaticSyntomicShifts
 
 abbrev A := PadicInt 2
 
@@ -99,3 +99,5 @@ example : ¬ IsZero ((localSyntomic 2 A (2 : A) regularTwo 0).X 1) := by
 
 #print axioms MathlibExt.AlgebraicGeometry.PrismaticDividedFrobenius.dividedLinear
 #print axioms MathlibExt.AlgebraicGeometry.PrismaticPeriodFrames.Generator.vector
+
+end MathlibExtTest.PrismaticSyntomicShifts
