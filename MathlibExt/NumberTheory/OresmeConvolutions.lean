@@ -13,6 +13,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.JacobsthalLucasNumber
+public import MathlibExt.NumberTheory.LucasSequence
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -21,8 +22,9 @@ import Mathlib.Tactic.Ring
 
 Cauchy convolutions `∑_{k=0}^n a_k O_{n-k}` of the Oresme numbers `O_n = n/2^n` with
 second-order sequences, and congruences read off from them, following M. R. Bacon and
-C. K. Cook. The Oresme numbers are written inline as `n / 2^n` over `ℚ`, and the
-Jacobsthal–Lucas numbers `j_0 = 2, j_1 = 1` are `jacobsthalLucasNumber`.
+C. K. Cook. The Oresme numbers are written inline as `n / 2^n` over `ℚ`, the Lucas numbers
+`L_0 = 2, L_1 = 1` are `lucasNumber`, and the Jacobsthal–Lucas numbers `j_0 = 2, j_1 = 1` are
+`jacobsthalLucasNumber`.
 -/
 
 namespace MetaMathlibExt
@@ -82,6 +84,40 @@ public theorem two_pow_pred_mul_fib_modEq_five (n : ℕ) :
             ring
       _ ≡ 4 * (n + 1) + 2 * (n + 2) [MOD 5] := (ih₀.mul_left 4).add (ih₁.mul_left 2)
       _ ≡ n + 3 [MOD 5] := by unfold Nat.ModEq; omega
+
+/-- **Lucas–Oresme convolution.** Let $L_m$ denote the Lucas numbers and let $O_m = m/2^m$
+denote the Oresme numbers. For every natural number $n$,
+$\sum_{k=0}^{n} L_k O_{n-k} = \frac{2}{5} L_{n+1} - \frac{2}{5 \cdot 2^n}$.
+
+Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
+Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
+Article cookbacon061124, Proposition 4.3 (`fq-2024-cookbacon061124-prop-4.3`). -/
+public theorem lucasNumber_oresme_convolution (n : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), (lucasNumber k : ℚ) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
+      2 / 5 * (lucasNumber (n + 1) : ℚ) - 2 / (5 * 2 ^ n) := by
+  let O (m : ℕ) : ℚ := m / 2 ^ m
+  let S (m : ℕ) := ∑ k ∈ Finset.range (m + 1), (lucasNumber k : ℚ) * O (m - k)
+  -- Peeling off the term `L₀ O_{m+1} = 2 O_{m+1}` shifts the Lucas index.
+  have shift (m : ℕ) :
+      S (m + 1) =
+        ∑ k ∈ Finset.range (m + 1), (lucasNumber (k + 1) : ℚ) * O (m - k) + 2 * O (m + 1) := by
+    dsimp only [S]
+    rw [Finset.sum_range_succ']
+    simp [lucasNumber]
+  -- The convolution satisfies the Lucas recurrence up to the term `2 O_{m+2} - O_{m+1}`.
+  have step (m : ℕ) : S (m + 2) = S (m + 1) + S m + (2 * O (m + 2) - O (m + 1)) := by
+    rw [shift (m + 1), Finset.sum_range_succ', shift m]
+    simp [S, lucasNumber, add_mul, Finset.sum_add_distrib]
+    ring
+  change S n = _
+  induction n using Nat.twoStepInduction with
+  | zero => norm_num [S, O, lucasNumber]
+  | one => norm_num [S, O, Finset.sum_range_succ, lucasNumber]
+  | more n ih₀ ih₁ =>
+    rw [step, ih₀, ih₁]
+    simp only [O, lucasNumber, Nat.cast_add, Nat.cast_ofNat, Nat.cast_one, pow_succ]
+    field_simp
+    ring
 
 /-- **Jacobsthal–Lucas–Oresme convolution.** Let $j_m$ denote the Jacobsthal–Lucas numbers and
 let $O_m = m/2^m$ denote the Oresme numbers. For every natural number $n$,

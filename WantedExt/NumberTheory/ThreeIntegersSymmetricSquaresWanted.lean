@@ -45,7 +45,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Even
-public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquares
 
 set_option autoImplicit false
 
@@ -69,11 +69,6 @@ def HasSquareElementarySymmetricFunctionsℚ (a b c : ℚ) : Prop :=
     IsSquare (a * b + b * c + c * a) ∧
     IsSquare (a * b * c)
 
-/-- **Sums of two rational squares.** A rational number $q$ is a sum of two squares when
-$q = x^2 + y^2$ for some rational numbers $x$ and $y$. -/
-def IsSumTwoSquaresℚ (q : ℚ) : Prop :=
-  ∃ x y : ℚ, q = x ^ 2 + y ^ 2
-
 /-- **Sums of two integer squares.** An integer $z$ is a sum of two squares when $z = x^2 + y^2$
 for some integers $x$ and $y$. -/
 def IsSumTwoSquaresℤ (z : ℤ) : Prop :=
@@ -83,17 +78,6 @@ def IsSumTwoSquaresℤ (z : ℤ) : Prop :=
 when $z = x^2 + y^2$ for some nonzero integers $x$ and $y$. -/
 def IsSumTwoNonzeroSquaresℤ (z : ℤ) : Prop :=
   ∃ x y : ℤ, x ≠ 0 ∧ y ≠ 0 ∧ z = x ^ 2 + y ^ 2
-
-/-- **Quotients of sums of two rational squares.** If $\alpha$ and $\beta$ are nonzero rational
-numbers that are each a sum of two squares of rational numbers, then $\alpha / \beta$ is also a
-sum of two squares of rational numbers.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Lemma 1. -/
-theorem_wanted sum_two_squares_div_sum_two_squaresℚ
-    {α β : ℚ} (hα : α ≠ 0) (hβ : β ≠ 0)
-    (hα₂ : IsSumTwoSquaresℚ α) (hβ₂ : IsSumTwoSquaresℚ β) :
-    IsSumTwoSquaresℚ (α / β)
 
 /-- **Pairwise products preserve square symmetric functions.** If $a$, $b$, $c$ are integers
 such that each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer, then the

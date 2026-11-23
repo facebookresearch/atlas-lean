@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Additive.ConsecutiveOrthogonal
 public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
+public import MathlibExt.Combinatorics.Additive.DavenportModuleProd
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
@@ -95,21 +97,6 @@ public theorem_wanted davenport_prod_ring_ge {R R' M N : Type*} [Ring R] [Ring R
         ∑ i ∈ I, ((a i).1 • (x i).1, (a i).2 • (x i).2) = 0} d) :
     dA + dB - 1 ≤ d
 
-/-- **Weighted Davenport constant of a product of modules.** Let $R$ be a ring and
-$A \subseteq R$. For an $R$-module $P$, let $D_A(P)$ be the least positive integer $k$, if one
-exists, such that every sequence $x_1, \dots, x_k$ in $P$ has a nonempty set of indices $I$ and
-weights $a_i \in A$ for $i \in I$ with $\sum_{i \in I} a_i x_i = 0$. If $M$ and $N$ are
-$R$-modules for which $D_A(M)$, $D_A(N)$ and $D_A(M \times N)$ all exist, then
-$D_A(M \times N) \ge D_A(M) + D_A(N) - 1$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 2.2 (`integers-2024-A38-thm-2-2`). -/
-public theorem_wanted davenport_prod_ge {R M N : Type*} [Ring R] [AddCommGroup M] [Module R M]
-    [AddCommGroup N] [Module R N] (A : Set R) {dM dN d : ℕ}
-    (hM : IsLeast (davenportSet R M A) dM) (hN : IsLeast (davenportSet R N A) dN)
-    (h : IsLeast (davenportSet R (M × N) A) d) :
-    dM + dN - 1 ≤ d
-
 /-- **Consecutive weighted zero-sum constant of a product with product weights.** Let $R$ and
 $R'$ be rings, $M$ an $R$-module, $N$ an $R'$-module, $A \subseteq R$ and $B \subseteq R'$. Let
 $C_A(M)$ be the least positive integer $k$, if one exists, such that every sequence
@@ -145,19 +132,6 @@ public theorem_wanted consecutive_prod_ge {R M N : Type*} [Ring R] [AddCommGroup
     (hM : IsLeast (consecutiveSet R M A) cM) (hN : IsLeast (consecutiveSet R N A) cN)
     (h : IsLeast (consecutiveSet R (M × N) A) c) :
     cM * cN ≤ c
-
-/-- **A block of consecutive coordinates orthogonal to $a$ vectors of $\mathbb{Z}_2^m$.** Let
-$\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$, let $2^a \le m$ and let
-$v_1, \dots, v_a \in \mathbb{Z}_2^m$, with coordinates indexed by $\{0, \dots, m - 1\}$. Then there
-are indices $s \le t$ in $\{0, \dots, m - 1\}$ such that $\sum_{j = s}^{t} (v_i)_j = 0$ in
-$\mathbb{Z}_2$ for every $i$; that is, the nonzero vector whose ones occupy exactly the positions
-$s, \dots, t$ is orthogonal to every $v_i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 3.2 (`integers-2024-A38-lem-3-2`). -/
-public theorem_wanted exists_consecutive_orthogonal {a m : ℕ} (hm : 2 ^ a ≤ m)
-    (v : Fin a → Fin m → ZMod 2) :
-    ∃ s t : Fin m, s ≤ t ∧ ∀ i, ∑ j ∈ Finset.Icc s t, v i j = 0
 
 /-- **A block of consecutive integers meeting $a$ given sets evenly.** Let $2^a \le m$ and let
 $X_1, \dots, X_a$ be finite sets of natural numbers. Then there are integers $s, t$ with
