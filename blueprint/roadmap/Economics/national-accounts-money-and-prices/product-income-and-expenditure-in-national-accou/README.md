@@ -1,8 +1,6 @@
 # Product, income and expenditure in national accounts
 
-- [Total of transactions grouped by seller](total-by-seller.md)
-- [Total of transactions grouped by income recipient](total-by-factor.md)
-- [Total of transactions grouped by buyer](total-by-buyer.md)
+- [Total of transactions grouped by buyer, seller or recipient](total-by-buyer.md)
 - [Grouping one amount by seller, recipient or buyer gives one total](total-by-seller-eq-total-by-factor-eq-to.md)
 - [GDP by the production approach](gdp-production.md)
 - [GDP by the income approach](gdp-income.md)

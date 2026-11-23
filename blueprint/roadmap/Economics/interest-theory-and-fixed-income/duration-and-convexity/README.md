@@ -5,5 +5,4 @@
 - [Convexity beats the tangent-line duration approximation](present-value-discount-factor-ge-tangent.md)
 - [Macaulay duration of a cash-flow stream](macaulay-duration.md)
 - [Modified duration of a cash-flow stream](modified-duration.md)
-- [Derivative of present value in the yield (restated)](has-deriv-at-cash-flow-price.md)
 - [Price derivative is minus modified duration times price](deriv-cash-flow-price-eq-neg-modified-du.md)

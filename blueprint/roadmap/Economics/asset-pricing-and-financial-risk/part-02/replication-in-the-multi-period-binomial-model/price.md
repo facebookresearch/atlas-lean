@@ -5,7 +5,3 @@ stock price at the node reached by a finite history of moves (listed most recent
 defined recursively: it is `S₀` for the empty history, and one further up move multiplies it by
 `u`, one further down move by `d`. A history of `n` moves with `k` up moves thus leads to the
 price `S₀ * u^k * d^(n - k)`.
-
-This is the same function as
-[Stock price at a node of the binomial tree](../no-early-exercise-of-american-calls/stock-price.md).
-Here it is defined by recursion on the history; the linked page gives it in closed form.
