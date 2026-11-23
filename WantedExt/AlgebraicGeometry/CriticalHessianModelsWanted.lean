@@ -14,11 +14,13 @@ public import Batteries.Util.ProofWanted
 # Native critical Hessian and sheaf-dual construction requests
 
 The normal module is the actual dual-derivative cokernel. Its form is
-fixed by the actual half-Hessian on all affine coordinate frames. The
-generic sheaf-Hom adapter is distinct from the paper's Hessian producer.
-No canonical-line or transition-gluing conclusion is an input.
+fixed at every point of the critical scheme by the half-Hessian on
+Hessian-orthogonal vectors, which determines it on the reduction (the form on
+the nonreduced critical scheme is not constrained here). The generic sheaf-Hom
+adapter is distinct from the paper's Hessian producer. No canonical-line or
+transition-gluing conclusion is an input.
 
-Reference: Joyce, arXiv:1304.4508v3, Proposition 2.25.
+Reference: Joyce, arXiv:1304.4508v3, Propositions 2.23 and 2.25.
 -/
 
 set_option autoImplicit false
