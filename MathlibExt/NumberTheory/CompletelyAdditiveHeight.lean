@@ -16,6 +16,7 @@ public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Data.Nat.Prime.Factorial
 import Mathlib.Data.Nat.Choose.Factorization
+import MathlibExt.NumberTheory.PrimeGapLiminf
 
 /-!
 # Completely additive heights and the ordinary partition profile
@@ -85,6 +86,24 @@ and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 2 (notation `pᵢ
 public theorem nthPrimeOne_one_two_three :
     nthPrimeOne 1 = 2 ∧ nthPrimeOne 2 = 3 ∧ nthPrimeOne 3 = 5 :=
   ⟨Nat.nth_prime_zero_eq_two, Nat.nth_prime_one_eq_three, Nat.nth_prime_two_eq_five⟩
+
+/-- **The $k$-th prime exceeds $2k$ for $k \ge 6$.** For every natural number $k \ge 6$, the
+$k$-th prime $p_k$, indexed from one so that $p_1 = 2$, satisfies $p_k > 2k$.
+
+Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
+and Inverse Growth*, INTEGERS 26 (2026), Article A116, Lemma 2 (`integers-2026-A116-lem-2`). -/
+public theorem two_mul_lt_nthPrimeOne {k : ℕ} (hk : 6 ≤ k) : 2 * k < nthPrimeOne k := by
+  unfold nthPrimeOne
+  induction k, hk using Nat.le_induction with
+  | base =>
+    exact (Nat.count_le_iff_le_nth Nat.infinite_setOfPred_prime).mp
+      (by decide : Nat.count Nat.Prime 13 ≤ 5)
+  | succ k hk ih =>
+    have hgap := MathlibExt.NumberTheory.two_le_primeGap (k - 1) (by omega)
+    unfold primeGap at hgap
+    rw [Nat.sub_add_cancel (by omega : 1 ≤ k)] at hgap
+    change 2 * (k + 1) < Nat.nth Nat.Prime k
+    omega
 
 /-- **Completely additive function with prescribed prime values.** Given a function
 $v : \mathbb{N} \to \mathbb{N}$, this is the function $\mathbb{N} \to \mathbb{N}$ that sends each
