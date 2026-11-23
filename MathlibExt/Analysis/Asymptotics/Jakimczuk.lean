@@ -27,7 +27,10 @@ $a_i \sim b_i$ as $i \to \infty$ and $\sum_{i=1}^{n} b_i \to +\infty$ as $n \to 
 $$\sum_{i=1}^{n} a_i \sim \sum_{i=1}^{n} b_i \qquad (n \to \infty).$$
 
 The ATLAS wiki attributes this formulation to Rusen Li, *Sums over Primes II*,
-Journal of Integer Sequences 27 (2024), Article 24.4.1. -/
+Journal of Integer Sequences 27 (2024), Article 24.4.1.
+
+Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
+Article 24.4.1, Lemma 7 (`jis-2024-24.4.1-lem-7`). -/
 public theorem sum_isEquivalent_of_isEquivalent (a b : ℕ → ℝ)
     (ha : ∀ i, 1 ≤ i → 0 < a i) (hb : ∀ i, 1 ≤ i → 0 < b i) (hab : a ~[atTop] b)
     (hdiv : Tendsto (fun n => ∑ i ∈ Icc 1 n, b i) atTop atTop) :
