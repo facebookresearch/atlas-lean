@@ -24,7 +24,13 @@ variable {A K V : Type*} [CommRing A] [Field K] [Algebra A K]
   [IsFractionRing A K] [AddCommGroup V] [Module A V] [Module K V]
   [IsScalarTower A K V]
 
-/-- If `M` spans `V` over the fraction field, its subtype is a localized module map. -/
+/-- **A spanning submodule localizes to the whole space.** Let $A$ be a commutative ring with
+fraction field $K$, let $V$ be a $K$-vector space, viewed as an $A$-module through $A \to K$, and
+let $M$ be an $A$-submodule of $V$ that spans $V$ over $K$. Then $V$, together with the inclusion
+$M \hookrightarrow V$, is the localization of the $A$-module $M$ at the non-zero-divisors of $A$.
+
+Concretely, every non-zero-divisor $s$ of $A$ acts bijectively on $V$, and every $v \in V$
+satisfies $s v \in M$ for some non-zero-divisor $s$ of $A$. -/
 theorem Submodule.isLocalizedModule_subtype_of_span_eq_top (M : Submodule A V)
     (hspan : Submodule.span K (M : Set V) = ⊤) :
     IsLocalizedModule (A⁰) M.subtype where
@@ -68,7 +74,12 @@ theorem Submodule.isLocalizedModule_subtype_of_span_eq_top (M : Submodule A V)
       rfl
   exists_of_eq h := ⟨1, by simpa [Submonoid.smul_def] using h⟩
 
-/-- The pairing map from the dual submodule onto the module dual is surjective. -/
+/-- **Surjectivity of the dual pairing.** Let $A$ be an integral domain with fraction field $K$,
+let $V$ be a finite-dimensional $K$-vector space, viewed as an $A$-module through $A \subseteq K$,
+let $B$ be a nondegenerate bilinear form on $V$, and let $M$ be an $A$-submodule of $V$ that
+spans $V$ over $K$. Then the map from
+$M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$ to $\operatorname{Hom}_A(M, A)$
+sending $x$ to the functional $y \mapsto B(x, y)$ is surjective. -/
 theorem LinearMap.BilinForm.dualSubmoduleToDual_surjective [IsDomain A]
     [FiniteDimensional K V]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
@@ -93,7 +104,12 @@ theorem LinearMap.BilinForm.dualSubmoduleToDual_surjective [IsDomain A]
   change algebraMap A K (B.dualSubmodulePairing ⟨x, hmem⟩ y) = algebraMap A K (f y)
   rw [LinearMap.BilinForm.dualSubmodulePairing_spec, key y]
 
-/-- The pairing map from the dual submodule to the module dual is bijective. -/
+/-- **Bijectivity of the dual pairing.** Let $A$ be an integral domain with fraction field $K$,
+let $V$ be a finite-dimensional $K$-vector space, viewed as an $A$-module through $A \subseteq K$,
+let $B$ be a nondegenerate bilinear form on $V$, and let $M$ be an $A$-submodule of $V$ that
+spans $V$ over $K$. Then the map from
+$M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$ to $\operatorname{Hom}_A(M, A)$
+sending $x$ to the functional $y \mapsto B(x, y)$ is bijective. -/
 theorem LinearMap.BilinForm.dualSubmoduleToDual_bijective [IsDomain A]
     [FiniteDimensional K V]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
@@ -102,7 +118,12 @@ theorem LinearMap.BilinForm.dualSubmoduleToDual_bijective [IsDomain A]
   ⟨B.dualSubmoduleToDual_injective hB M hspan,
     B.dualSubmoduleToDual_surjective hB M hspan⟩
 
-/-- The dual submodule of a lattice is finitely generated. -/
+/-- **The dual of a lattice is finitely generated.** Let $A$ be a Noetherian integral domain with
+fraction field $K$, let $V$ be a $K$-vector space, viewed as an $A$-module through
+$A \subseteq K$, and let $B$ be a nondegenerate bilinear form on $V$. Let $M$ be a finitely
+generated $A$-submodule of $V$ that spans $V$ over $K$. Then the dual submodule
+$M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$ is a finitely generated
+$A$-submodule of $V$. -/
 theorem LinearMap.BilinForm.dualSubmodule_fg [IsDomain A] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
     [Module.Finite A M]
@@ -112,7 +133,11 @@ theorem LinearMap.BilinForm.dualSubmodule_fg [IsDomain A] [IsNoetherianRing A]
   exact Module.Finite.of_injective (B.dualSubmoduleToDual M)
     (B.dualSubmoduleToDual_injective hB M hspan)
 
-/-- The dual submodule spans the whole space over the fraction field. -/
+/-- **The dual of a finitely generated submodule spans.** Let $A$ be a commutative ring with
+fraction field $K$, let $V$ be a $K$-vector space, viewed as an $A$-module through $A \to K$, and
+let $B$ be a bilinear form on $V$. If $M$ is a finitely generated $A$-submodule of $V$, then its
+dual submodule $M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$ spans $V$ over
+$K$. -/
 theorem LinearMap.BilinForm.dualSubmodule_span_eq_top
     (B : LinearMap.BilinForm K V) (M : Submodule A V) (hfg : M.FG) :
     Submodule.span K (B.dualSubmodule M : Set V) = ⊤ := by
@@ -141,14 +166,24 @@ theorem LinearMap.BilinForm.dualSubmodule_span_eq_top
   rw [hx]
   exact Submodule.smul_mem _ _ hspanmem
 
-/-- The dual submodule of a lattice is a lattice. -/
+/-- **The dual of a lattice is a lattice.** Let $A$ be a Noetherian integral domain with fraction
+field $K$, let $V$ be a $K$-vector space, viewed as an $A$-module through $A \subseteq K$, and let
+$B$ be a nondegenerate bilinear form on $V$. If $M$ is an $A$-lattice in $V$, that is, a finitely
+generated $A$-submodule that spans $V$ over $K$, then so is its dual submodule
+$M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$. -/
 theorem LinearMap.BilinForm.dualSubmodule_isLattice [IsDomain A] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
     [Submodule.IsLattice K M] : Submodule.IsLattice K (B.dualSubmodule M) where
   fg := B.dualSubmodule_fg hB M IsLattice.span_eq_top
   span_eq_top := B.dualSubmodule_span_eq_top M IsLattice.fg
 
-/-- Combined endpoint: the dual submodule is a lattice and dual map is bijective. -/
+/-- **The dual lattice and the dual module.** Let $A$ be a Noetherian integral domain with
+fraction field $K$, let $V$ be a finite-dimensional $K$-vector space, viewed as an $A$-module
+through $A \subseteq K$, and let $B$ be a nondegenerate bilinear form on $V$. Let $M$ be an
+$A$-lattice in $V$, that is, a finitely generated $A$-submodule that spans $V$ over $K$, and let
+$M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$. Then $M^\vee$ is an $A$-lattice
+in $V$, and the map $M^\vee \to \operatorname{Hom}_A(M, A)$ sending $x$ to the functional
+$y \mapsto B(x, y)$ is bijective. -/
 theorem LinearMap.BilinForm.dualSubmodule_isLattice_and_dualSubmoduleToDual_bijective
     [IsDomain A] [FiniteDimensional K V] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
@@ -158,7 +193,13 @@ theorem LinearMap.BilinForm.dualSubmodule_isLattice_and_dualSubmoduleToDual_bije
   ⟨B.dualSubmodule_isLattice hB M,
     B.dualSubmoduleToDual_bijective hB M IsLattice.span_eq_top⟩
 
-/-- The canonical equivalence induced by the bilinear pairing. -/
+/-- **The dual submodule is the dual module.** Let $A$ be an integral domain with fraction field
+$K$, let $V$ be a finite-dimensional $K$-vector space, viewed as an $A$-module through
+$A \subseteq K$, let $B$ be a nondegenerate bilinear form on $V$, and let $M$ be an $A$-submodule
+of $V$ that spans $V$ over $K$. Write
+$M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$. This is the isomorphism of
+$A$-modules $M^\vee \cong \operatorname{Hom}_A(M, A)$ that sends $x$ to the functional
+$y \mapsto B(x, y)$. -/
 noncomputable def LinearMap.BilinForm.dualSubmoduleLinearEquiv
     [IsDomain A] [FiniteDimensional K V]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)

@@ -12,13 +12,10 @@ Author: Nam Trang
 module
 
 public import MathlibExt.SetTheory.Cardinal.Characteristics
-public import Mathlib.Order.Filter.AtTopBot.Defs
-public import Mathlib.SetTheory.Cardinal.Aleph
-public import Mathlib.SetTheory.Cardinal.Order
 
 @[expose] public section
 
-open Cardinal Ordinal Set Order
+open Cardinal Set Order
 
 namespace MathlibExtTest.SetTheory.Cardinal.Characteristics
 
