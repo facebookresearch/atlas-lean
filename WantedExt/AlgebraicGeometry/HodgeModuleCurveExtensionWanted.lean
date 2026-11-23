@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Algebra.Homology.QuasiIso
+public import Mathlib.Algebra.Homology.Single
+public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import MathlibExt.AlgebraicGeometry.HodgeModuleCurveExtension
 
 /-!
@@ -77,11 +80,11 @@ public def_wanted minimal_extension_ic_deRham
     (H : PolarizedPeriodVariation C e w) (b : ℕ) (hb : 0 < b)
     (hT : (H.rationalDeck.toLinearMap - 1) ^ b = 0) :
     {η : (HomologicalComplex.single _ (ComplexShape.up ℕ) 0).obj
-        (ModuleCat.of ℂ (LinearMap.ker (complexLog C e H b))) ⟶
+        (ModuleCat.of ℂ (LinearMap.ker (truncatedComplexLog C e H b))) ⟶
           minimalDeRhamComplex C e H b //
-      QuasiIso η ∧ ∀ v : LinearMap.ker (complexLog C e H b), ∀ i : Fin r,
+      QuasiIso η ∧ ∀ v : LinearMap.ker (truncatedComplexLog C e H b), ∀ i : Fin r,
         (((HomologicalComplex.singleObjXSelf (ComplexShape.up ℕ) 0
-          (ModuleCat.of ℂ (LinearMap.ker (complexLog C e H b)))).inv ≫ η.f 0) v).1 i =
+          (ModuleCat.of ℂ (LinearMap.ker (truncatedComplexLog C e H b)))).inv ≫ η.f 0) v).1 i =
             algebraMap ℂ LocalMeromorphicSeries (e v.1 i)}
 
 end WantedExt.AlgebraicGeometry.HodgeModuleCurveExtensionWanted

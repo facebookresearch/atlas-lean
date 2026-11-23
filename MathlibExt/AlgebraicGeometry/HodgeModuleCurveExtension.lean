@@ -77,13 +77,18 @@ variable {V : ModuleCat.{0} ℚ} (C : RationalComplexification V) {r : ℕ}
   (e : C.complexSpace ≃ₗ[ℂ] EuclideanSpace ℂ (Fin r)) {w : ℤ}
   (H : PolarizedPeriodVariation C e w) (b : ℕ)
 
-/-- The actual logarithmic residue matrix, in the fixed period coordinates. -/
+/-- The logarithmic residue matrix `log T / 2πi` in the fixed period
+coordinates, with the logarithm series of the monodromy `T` truncated below
+degree `b`. It is the residue when `(T - 1)^b = 0`, as the WantedExt requests
+assume; for smaller `b` it is only a truncated candidate (for `b ≤ 1` it
+vanishes). -/
 def residueMatrix : Matrix (Fin r) (Fin r) ℂ := fun i j ↦
-  (e (complexLog C e H b (e.symm (EuclideanSpace.single j 1))) i) /
+  (e (truncatedComplexLog C e H b (e.symm (EuclideanSpace.single j 1))) i) /
     (2 * Real.pi * Complex.I)
 
 /-- The formal connection is the actual Laurent derivative plus the
-actual logarithmic residue divided by the actual coordinate `t`. -/
+residue matrix divided by the actual coordinate `t`; it is Deligne's
+logarithmic connection when `(T - 1)^b = 0`. -/
 def formalConnection : Module.End ℂ (Fin r → LocalMeromorphicSeries) where
   toFun := fun v i ↦ LaurentSeries.derivative ℂ (v i) +
     (algebraMap LocalPowerSeries LocalMeromorphicSeries PowerSeries.X)⁻¹ *
@@ -106,7 +111,8 @@ def formalConnection : Module.End ℂ (Fin r → LocalMeromorphicSeries) where
 
 /-- The least actual `ℂ[[t]]` submodule containing the Deligne lattice and
 stable under the fixed connection. This is its generated minimal
-differential module, with no free module carrier supplied. -/
+differential module, with no free module carrier supplied; it is the minimal
+extension when `(T - 1)^b = 0`. -/
 def minimalModule : Submodule LocalPowerSeries (Fin r → LocalMeromorphicSeries) :=
   sInf {P | deligneLattice r ≤ P ∧
     ∀ v, v ∈ P → formalConnection C e H b v ∈ P}
