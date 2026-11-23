@@ -29,7 +29,7 @@ example : Prop := D.WellFormed
 
 example : Prop := D.IsNice
 
-example (Λ : ℂ → ℂ) : Prop := LDatum.BoundedOnStrips Λ
+example (Λ : ℂ → ℂ) : Prop := Complex.BoundedOnStrips Λ
 
 -- Boundary: the empty bad factor is one, and empty bad data is bad data.
 example (s : ℂ) : LDatum.badFactor 0 s = 1 :=

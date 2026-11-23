@@ -26,7 +26,7 @@ example
     (f₁ f₂ : C × ℝ → ℂ) (hf₁ : Continuous f₁) (hf₂ : Continuous f₂) (c : ℝ)
     (Λ : (C →* ℂˣ) → ℂ → ℂ)
     (hΛ : ∀ χ : C →* ℂˣ, Continuous χ → Differentiable ℂ (Λ χ))
-    (hb : ∀ χ : C →* ℂˣ, Continuous χ → LDatum.BoundedOnStrips (Λ χ))
+    (hb : ∀ χ : C →* ℂˣ, Continuous χ → Complex.BoundedOnStrips (Λ χ))
     (h₁ : ∀ χ : C →* ℂˣ, Continuous χ → ∀ s : ℂ, c < s.re →
       Integrable
         (fun p : C × ℝ => f₁ p * ((χ p.1 : ℂˣ) : ℂ) *
@@ -49,7 +49,7 @@ example
     (f₁ f₂ : C × ℝ → ℂ) (hf₁ : Continuous f₁) (hf₂ : Continuous f₂)
     (Λ : (C →* ℂˣ) → ℂ → ℂ)
     (hΛ : ∀ χ : C →* ℂˣ, Continuous χ → Differentiable ℂ (Λ χ))
-    (hb : ∀ χ : C →* ℂˣ, Continuous χ → LDatum.BoundedOnStrips (Λ χ))
+    (hb : ∀ χ : C →* ℂˣ, Continuous χ → Complex.BoundedOnStrips (Λ χ))
     (h : ∀ χ : C →* ℂˣ, Continuous χ → ∃ c : ℝ,
       (∀ s : ℂ, c < s.re →
         Integrable
@@ -74,7 +74,7 @@ example
     (f₁ f₂ : C × ℝ → ℂ) (hf₁ : Continuous f₁) (hf₂ : Continuous f₂) (c : ℝ)
     (Λ : (C →* ℂˣ) → ℂ → ℂ)
     (hΛ : ∀ χ : C →* ℂˣ, Continuous χ → Differentiable ℂ (Λ χ))
-    (hb : ∀ χ : C →* ℂˣ, Continuous χ → LDatum.BoundedOnStrips (Λ χ))
+    (hb : ∀ χ : C →* ℂˣ, Continuous χ → Complex.BoundedOnStrips (Λ χ))
     (h₁ : ∀ χ : C →* ℂˣ, Continuous χ → ∀ s : ℂ, c < s.re →
       Integrable
         (fun p : C × ℝ => f₁ p * ((χ p.1 : ℂˣ) : ℂ) *

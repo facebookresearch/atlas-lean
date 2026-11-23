@@ -22,7 +22,7 @@ namespace LanglandsTunnell.Converse.MellinUniqueness
 example
     (g₁ g₂ : ℝ → ℂ) (hg₁ : Continuous g₁) (hg₂ : Continuous g₂)
     (c : ℝ) (Λ : ℂ → ℂ) (hΛ : Differentiable ℂ Λ)
-    (hb : LDatum.BoundedOnStrips Λ)
+    (hb : Complex.BoundedOnStrips Λ)
     (h₁ : ∀ s : ℂ, c < s.re →
       Integrable (fun t : ℝ => g₁ t * Complex.exp (s * (t : ℂ))) ∧
         ∫ t : ℝ, g₁ t * Complex.exp (s * (t : ℂ)) = Λ s)

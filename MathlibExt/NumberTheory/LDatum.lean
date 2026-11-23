@@ -29,6 +29,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+public import MathlibExt.Analysis.Complex.BoundedOnStrips
 
 @[expose] public section
 
@@ -87,7 +88,8 @@ def archFactorDual (s : ℂ) : ℂ :=
 def badFactor (bad : Multiset (ℕ × ℂ[X])) (s : ℂ) : ℂ :=
   (bad.map fun x => x.2.eval ((x.1 : ℂ) ^ (-s))).prod
 
-/-- Bad data has local factors at primes at least two, with constant term one. -/
+/-- Bad data is a multiset of local factors, each indexed by a natural number at least two
+and with constant term one. -/
 def IsBadData (bad : Multiset (ℕ × ℂ[X])) : Prop :=
   ∀ x ∈ bad, 2 ≤ x.1 ∧ x.2.coeff 0 = 1
 
@@ -107,10 +109,6 @@ def Converges : Prop :=
     Summable (fun i => ‖(D.euler i).eval ((D.norm i : ℂ) ^ (-s)) - 1‖) ∧
     Summable (fun i => ‖(D.dual i).eval ((D.norm i : ℂ) ^ (-s)) - 1‖) ∧
     D.LFun s ≠ 0 ∧ D.LFunDual s ≠ 0
-
-/-- A function is bounded on every vertical strip. -/
-def BoundedOnStrips (Λ : ℂ → ℂ) : Prop :=
-  ∀ a b : ℝ, ∃ C : ℝ, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → ‖Λ s‖ ≤ C
 
 /-- An L-datum is nice when it is well formed and convergent and has
 the recorded functional equation. -/

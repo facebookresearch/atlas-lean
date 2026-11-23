@@ -31,10 +31,13 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.NumberTheory.LDatum
+public import MathlibExt.Analysis.Complex.BoundedOnStrips
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
+import Mathlib.Analysis.Calculus.ParametricIntegral
+import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.Fourier.Inversion
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
@@ -44,7 +47,7 @@ import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 noncomputable section
 
 open MeasureTheory
-open LanglandsTunnell Complex Filter Set
+open Complex Filter Set
 open scoped Real Topology FourierTransform ContDiff
 
 namespace LanglandsTunnell.Converse.MellinUniqueness
@@ -319,7 +322,7 @@ private theorem luqShift (H : ℂ → ℂ) (hH : Differentiable ℂ H) (σ₁ σ
 a differentiable function bounded on strips, are equal. -/
 theorem eq_of_laplace_eq_of_boundedOnStrips
     (g₁ g₂ : ℝ → ℂ) (hg₁ : Continuous g₁) (hg₂ : Continuous g₂)
-    (c : ℝ) (Λ : ℂ → ℂ) (hΛ : Differentiable ℂ Λ) (hb : LDatum.BoundedOnStrips Λ)
+    (c : ℝ) (Λ : ℂ → ℂ) (hΛ : Differentiable ℂ Λ) (hb : Complex.BoundedOnStrips Λ)
     (h₁ : ∀ s : ℂ, c < s.re →
       Integrable (fun t : ℝ => g₁ t * Complex.exp (s * (t : ℂ))) ∧ ∫ t : ℝ, g₁ t * Complex.exp (s *
         (t : ℂ)) = Λ s)

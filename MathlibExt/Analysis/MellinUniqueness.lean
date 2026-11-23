@@ -36,12 +36,16 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.NumberTheory.LDatum
+public import MathlibExt.Analysis.Complex.BoundedOnStrips
 public import MathlibExt.Analysis.LaplaceUniqueness
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.Basic
 public import Mathlib.MeasureTheory.Measure.Prod
 
+import Mathlib.MeasureTheory.Function.LocallyIntegrable
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+import Mathlib.MeasureTheory.Integral.Bochner.Set
+import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Topology.ContinuousMap.StoneWeierstrass
 
 @[expose] public section
@@ -211,7 +215,7 @@ theorem eq_of_forall_continuous_char_laplace_eq
     (f₁ f₂ : C × ℝ → ℂ) (hf₁ : Continuous f₁) (hf₂ : Continuous f₂) (c : ℝ)
     (Λ : (C →* ℂˣ) → ℂ → ℂ)
     (hΛ : ∀ χ : C →* ℂˣ, Continuous χ → Differentiable ℂ (Λ χ))
-    (hb : ∀ χ : C →* ℂˣ, Continuous χ → LDatum.BoundedOnStrips (Λ χ))
+    (hb : ∀ χ : C →* ℂˣ, Continuous χ → Complex.BoundedOnStrips (Λ χ))
     (h₁ : ∀ χ : C →* ℂˣ, Continuous χ → ∀ s : ℂ, c < s.re →
       Integrable (fun p : C × ℝ => f₁ p * ((χ p.1 : ℂˣ) : ℂ) * Complex.exp (s * (p.2 : ℂ))) (μ.prod
         volume) ∧
@@ -259,7 +263,7 @@ theorem eq_of_forall_continuous_char_exists_laplace_eq
     (f₁ f₂ : C × ℝ → ℂ) (hf₁ : Continuous f₁) (hf₂ : Continuous f₂)
     (Λ : (C →* ℂˣ) → ℂ → ℂ)
     (hΛ : ∀ χ : C →* ℂˣ, Continuous χ → Differentiable ℂ (Λ χ))
-    (hb : ∀ χ : C →* ℂˣ, Continuous χ → LDatum.BoundedOnStrips (Λ χ))
+    (hb : ∀ χ : C →* ℂˣ, Continuous χ → Complex.BoundedOnStrips (Λ χ))
     (h : ∀ χ : C →* ℂˣ, Continuous χ → ∃ c : ℝ,
       (∀ s : ℂ, c < s.re →
         Integrable (fun p : C × ℝ => f₁ p * ((χ p.1 : ℂˣ) : ℂ) * Complex.exp (s * (p.2 : ℂ)))
