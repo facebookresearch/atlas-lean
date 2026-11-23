@@ -39,25 +39,32 @@ fails.
 
 open MathlibExt.GroupTheory.WordProblemSolvableShared
 
-/-- The (two-sided) orders of `G`: linear orders (as relations) invariant under left and right
-multiplication. -/
+/-- **Bi-invariant linear orders on a group.** For a group $G$, the bi-invariant orders of $G$ are
+the linear orders $\le$ on $G$ (reflexive, antisymmetric, transitive and total relations) that are
+invariant under left and right multiplication: for all $a, b, c \in G$, $a \le b$ implies
+$ca \le cb$ and $ac \le bc$. -/
 def biOrders (G : Type*) [Group G] : Set (G → G → Prop) :=
   {r | IsLinearOrder G r ∧ ∀ a b c : G, r a b → r (c * a) (c * b) ∧ r (a * c) (b * c)}
 
-/-- Kourovka 17.29 (V. V. Bludov, A. M. W. Glass): there is a finitely presented orderable group
-with insoluble word problem. -/
+/-- **Kourovka Problem 17.29 (V. V. Bludov, A. M. W. Glass).** The statement that there is a
+finitely presented group $G$ that admits a bi-invariant linear order and has a finite generating
+family $g_1, \dots, g_k$ for which the word problem is insoluble: no algorithm decides, given a word
+in the $g_i$ and their inverses, whether it equals $1$ in $G$. -/
 def finitelyPresentedOrderableInsolubleWordProblem : Prop :=
   ∃ (G : Type) (_ : Group G), Group.IsFinitelyPresented G ∧ (biOrders G).Nonempty ∧
     ∃ (k : ℕ) (gens : Fin k → G), Subgroup.closure (Set.range gens) = ⊤ ∧
       ¬ WordProblemSolvable (FreeGroup.lift gens)
 
 /--
-Resolved true: the Kourovka Archive records for 17.29 "Such a group is constructed", citing Bludov
-and Glass (2012): there is a finitely presented orderable group with insoluble word problem. Source:
-E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
-21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.29 (V. V. Bludov, A.
-M. W. Glass); resolution: V. V. Bludov and A. M. W. Glass, Bull. London Math. Soc. 44 (2012), 85-98,
-Kourovka Archive, Problem 17.29 (Such a group is constructed).
+**Bludov–Glass: a finitely presented orderable group with insoluble word problem.** There is a
+finitely presented group $G$ that admits a bi-invariant linear order and has a finite generating
+family $g_1, \dots, g_k$ for which the word problem is insoluble: no algorithm decides, given a word
+in the $g_i$ and their inverses, whether it equals $1$ in $G$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.29 (V. V.
+Bludov, A. M. W. Glass); resolution: V. V. Bludov and A. M. W. Glass, Bull. London Math. Soc. 44
+(2012), 85-98, Kourovka Archive, Problem 17.29 (Such a group is constructed).
 -/
 public theorem_wanted finitelyPresentedOrderableInsolubleWordProblem_holds :
     finitelyPresentedOrderableInsolubleWordProblem

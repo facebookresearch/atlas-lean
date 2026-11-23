@@ -373,9 +373,15 @@ private theorem card_primeFibers_le (M : ℕ) :
             (Nat.zero_le _)
     _ = Module.finrank ℚ K * (M - 1) := by rw [smul_eq_mul, mul_comm]
 
-/-- Discrete strengthening of ATLAS `NumberTheoryI:295`, Lemma 14.21: an
-integer threshold, valid also at `M = 0` and `M = 1`. This is a derived
-generalization, not the source's literal positive-real statement. -/
+/-- **Bound on the number of ideals of bounded norm, integer threshold.** Let $K$ be a number
+field of degree $n = [K : \mathbb{Q}]$ with ring of integers $\mathcal{O}_K$, let $M$ be a natural
+number, and let $k$ be the largest natural number with $2^k \le M$, with $k = 0$ if $M = 0$.
+Then the number of nonzero ideals $I$ of $\mathcal{O}_K$ whose absolute norm
+$N(I) = |\mathcal{O}_K / I|$ satisfies $N(I) \le M$ is at most $(nM)^k$.
+
+Source: ATLAS `NumberTheoryI:295`, *Number Theory I*, Section 14.5, Lemma 14.21; this is a
+discrete strengthening with an integer threshold, valid also at $M = 0$ and $M = 1$, not the
+source's literal positive-real statement. -/
 theorem card_nonzero_absNorm_le (M : ℕ) :
     Nat.card {I : Ideal (𝓞 K) // I ≠ ⊥ ∧ Ideal.absNorm I ≤ M} ≤
       (Module.finrank ℚ K * M) ^ Nat.log 2 M := by
@@ -416,9 +422,14 @@ theorem card_nonzero_absNorm_le (M : ℕ) :
                 rw [Nat.mul_add, Nat.mul_one]
             _ = Module.finrank ℚ K * M := by rw [Nat.sub_add_cancel hM1]
 
-/-- Derived real-threshold floor bridge: the same bound with `⌊M⌋₊` in place of `M`.
-For `M < 1` the subtype is empty since every nonzero ideal has norm at
-least `1`; for `1 ≤ M` the real and integer subtypes coincide. -/
+/-- **Bound on the number of ideals of bounded norm, floor form.** Let $K$ be a number field of
+degree $n = [K : \mathbb{Q}]$ with ring of integers $\mathcal{O}_K$, let $M$ be any real number,
+and let $m = \max(0, \lfloor M \rfloor)$. Let $k$ be the largest natural number with
+$2^k \le m$, and $k = 0$ if $m = 0$. Then the number of nonzero ideals $I$ of $\mathcal{O}_K$
+whose absolute norm $N(I) = |\mathcal{O}_K / I|$ satisfies $N(I) \le M$ is at most $(nm)^k$.
+
+For $M < 1$ there are no such ideals, since every nonzero ideal has norm at least $1$; for
+$M \ge 1$ the condition $N(I) \le M$ is equivalent to $N(I) \le m$. -/
 theorem card_nonzero_absNorm_le_real (M : ℝ) :
     Nat.card {I : Ideal (𝓞 K) // I ≠ ⊥ ∧ (Ideal.absNorm I : ℝ) ≤ M} ≤
       (Module.finrank ℚ K * ⌊M⌋₊) ^ Nat.log 2 ⌊M⌋₊ := by
@@ -449,11 +460,14 @@ theorem card_nonzero_absNorm_le_real (M : ℝ) :
     rw [Nat.card_eq_fintype_card, Fintype.card_eq_zero]
     exact Nat.zero_le _
 
-/-- Exact formalization of ATLAS `NumberTheoryI:295`, *Number Theory I*,
-Section 14.5, Lemma 14.21: the positive-real threshold, real exponentiation,
-and `log₂` exponent are represented by `hM`, `Real.rpow`, and `Real.logb 2 M`,
-respectively. The proof derives this literal source endpoint from the stronger
-integer/floor variants above. -/
+/-- **Bound on the number of ideals of bounded norm.** Let $K$ be a number field of degree
+$n = [K : \mathbb{Q}]$ with ring of integers $\mathcal{O}_K$, and let $M > 0$ be a real number.
+The number of nonzero ideals $I$ of $\mathcal{O}_K$ whose absolute norm
+$N(I) = |\mathcal{O}_K / I|$ satisfies $N(I) \le M$ is at most $(nM)^{\log_2 M}$, where the
+exponent $\log_2 M$ is a real number.
+
+Source: ATLAS `NumberTheoryI:295`, *Number Theory I*, Section 14.5, Lemma 14.21. The proof
+derives this bound from the integer-threshold and floor variants. -/
 theorem card_nonzero_absNorm_le_real_rpow (M : ℝ) (hM : 0 < M) :
     (Nat.card {I : Ideal (𝓞 K) //
       I ≠ ⊥ ∧ (Ideal.absNorm I : ℝ) ≤ M} : ℝ) ≤

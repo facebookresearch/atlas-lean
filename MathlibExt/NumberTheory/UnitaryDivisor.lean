@@ -23,7 +23,9 @@ members of sets of natural numbers.
 
 namespace Nat
 
-/-- The unitary divisors of `n`: divisors coprime to their complementary divisors. -/
+/-- **Unitary divisors.** For a natural number $n$, the unitary divisors of $n$ are the divisors
+$d$ of $n$ that are coprime to the complementary divisor $n/d$, that is, with $\gcd(d, n/d) = 1$.
+For $n = 0$ there are no unitary divisors. -/
 def unitaryDivisors (n : ℕ) : Finset ℕ :=
   n.divisors.filter fun d => d.Coprime (n / d)
 
@@ -43,7 +45,8 @@ theorem coprime_div_of_mem_unitaryDivisors {n d : ℕ} (h : d ∈ unitaryDivisor
     d.Coprime (n / d) :=
   (mem_unitaryDivisors.mp h).2.2
 
-/-- The sum of the unitary divisors of `n`, conventionally denoted `σ⋆(n)`. -/
+/-- **Sum of unitary divisors.** For a natural number $n$, $\sigma^*(n)$ denotes the sum of the
+unitary divisors of $n$. -/
 def sigmaStar (n : ℕ) : ℕ :=
   ∑ d ∈ unitaryDivisors n, d
 
@@ -59,8 +62,9 @@ end Nat
 
 namespace Set
 
-/-- A member `n` of `S ⊆ ℕ` is primitive under divisibility when no proper
-divisor of `n` also belongs to `S`. -/
+/-- **Elements primitive under divisibility.** Let $S$ be a set of natural numbers. A natural
+number $n$ is primitive in $S$ under divisibility when $n \in S$ and no proper divisor of $n$,
+that is, no divisor $d$ of $n$ with $d < n$, belongs to $S$. -/
 def IsPrimitiveByDivisibility (S : Set ℕ) (n : ℕ) : Prop :=
   n ∈ S ∧ Disjoint (n.properDivisors : Set ℕ) S
 

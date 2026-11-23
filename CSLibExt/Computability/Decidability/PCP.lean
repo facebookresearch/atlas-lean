@@ -61,28 +61,39 @@ namespace Cslib.Decidability.Post
 
 variable {α : Type*}
 
-/-- A domino: a top word and a bottom word. -/
+/-- **Domino (Post correspondence problem).** A domino over an alphabet $\alpha$ is a pair
+$(t, b)$ of words over $\alpha$: its top word $t$ and its bottom word $b$. -/
 abbrev Domino (α : Type*) := List α × List α
 
-/-- The concatenated top words of a sequence of dominoes. -/
+/-- **Top word of a sequence of dominoes.** For a sequence of dominoes
+$(t_1, b_1), \ldots, (t_n, b_n)$, its top word is the concatenation $t_1 t_2 \cdots t_n$ of their
+top words; the empty sequence has the empty top word. -/
 def top (s : List (Domino α)) : List α := s.flatMap Prod.fst
 
-/-- The concatenated bottom words of a sequence of dominoes. -/
+/-- **Bottom word of a domino sequence.** For a sequence $s = d_1, \dots, d_k$ of dominoes, the
+bottom word of $s$ is the concatenation $b_1 b_2 \cdots b_k$, where $b_i$ is the bottom word of
+$d_i$. -/
 def bottom (s : List (Domino α)) : List α := s.flatMap Prod.snd
 
-/-- A **PCP solution** of `P`: a nonempty sequence of dominoes of `P` whose tops and bottoms
-concatenate to the same word. -/
+/-- **PCP solution.** Let $P$ be a finite list of dominoes. A solution of $P$ is a nonempty
+sequence $d_1, \dots, d_k$ of dominoes, each occurring in $P$ (repetitions allowed), such that the
+concatenation of the top words of $d_1, \dots, d_k$ equals the concatenation of their bottom
+words. -/
 def IsSolution (P : List (Domino α)) (s : List (Domino α)) : Prop :=
   s ≠ [] ∧ (∀ d ∈ s, d ∈ P) ∧ top s = bottom s
 
-/-- `P` has a PCP solution. -/
+/-- **The Post correspondence problem.** A list $P$ of dominoes is a solvable instance of the
+Post correspondence problem when it has a PCP solution: a nonempty sequence of dominoes from $P$,
+repetitions allowed, whose top words and bottom words concatenate to the same word. -/
 def PCP (P : List (Domino α)) : Prop := ∃ s, IsSolution P s
 
-/-- `P` has an **MPCP solution**: a PCP solution that starts with the first domino of `P`. -/
+/-- **The modified Post correspondence problem.** A list $P$ of dominoes has an MPCP solution
+when $P$ is nonempty and some PCP solution of $P$ starts with the first domino of $P$. -/
 def MPCP (P : List (Domino α)) : Prop :=
   ∃ d₀ s, P.head? = some d₀ ∧ IsSolution P (d₀ :: s)
 
-/-- Every domino has a nonempty top and a nonempty bottom. -/
+/-- **Instances with nonempty words.** A list $P$ of dominoes has nonempty words when every
+domino of $P$ has a nonempty top word and a nonempty bottom word. -/
 def NonemptyWords (P : List (Domino α)) : Prop := ∀ d ∈ P, d.1 ≠ [] ∧ d.2 ≠ []
 
 theorem top_append (s s' : List (Domino α)) : top (s ++ s') = top s ++ top s' :=
@@ -104,27 +115,41 @@ theorem bottom_append (s s' : List (Domino α)) : bottom (s ++ s') = bottom s ++
 
 /-! ### The extended alphabet -/
 
-/-- The alphabet of `toPCP P`: the letters of `α` (`some (some a)`), the star `⋆`
-(`some none`) and the end marker `◇` (`none`). An `Option (Option α)` keeps it
-`Primcodable` whenever `α` is. -/
+/-- **The extended alphabet of the MPCP-to-PCP reduction.** For an alphabet $\alpha$, the extended
+alphabet consists of the letters of $\alpha$ together with two new symbols: the star $\star$ and
+the end marker $\diamond$.
+
+It is represented so that it has a primitive recursive encoding whenever $\alpha$ has one. -/
 abbrev Sym (α : Type*) := Option (Option α)
 
-/-- The letter `a` of `α`. -/
+/-- **The alphabet inside the extended alphabet.** Each letter $a$ of the alphabet $\alpha$ is
+regarded as a symbol of the extended alphabet of the MPCP-to-PCP reduction, which consists of the
+letters of $\alpha$, the star $\star$ and the end marker $\diamond$. -/
 abbrev letter (a : α) : Sym α := some (some a)
 
-/-- The star `⋆`. -/
+/-- **The star symbol.** The star $\star$ is the new symbol of the extended alphabet that is
+neither a letter of $\alpha$ nor the end marker $\diamond$. -/
 abbrev star : Sym α := some none
 
-/-- The end marker `◇`. -/
+/-- **End marker.** The end marker $\diamond$ is the symbol of the extended alphabet of the
+MPCP-to-PCP reduction that is neither a letter of $\alpha$ nor the star $\star$. -/
 abbrev endMark : Sym α := none
 
-/-- `⋆u`: a star before every letter. -/
+/-- **A star before every letter.** Let $\star$ be the star of the extended alphabet. For a word
+$u = a_1 a_2 \cdots a_n$ over $\alpha$, the word $\star u$ over the extended alphabet is
+$\star a_1 \star a_2 \cdots \star a_n$, obtained by putting a star before every letter of $u$; the
+empty word gives the empty word. -/
 def starBefore (u : List α) : List (Sym α) := u.flatMap fun a ↦ [star, letter a]
 
-/-- `u⋆`: a star after every letter. -/
+/-- **A star after every letter.** Let $\star$ be the star of the extended alphabet. For a word
+$u = a_1 a_2 \cdots a_n$ over $\alpha$, the word $u\star$ over the extended alphabet is
+$a_1 \star a_2 \star \cdots a_n \star$, obtained by putting a star after every letter of $u$; the
+empty word gives the empty word. -/
 def starAfter (u : List α) : List (Sym α) := u.flatMap fun a ↦ [letter a, star]
 
-/-- Forget the stars and end markers. -/
+/-- **Erasing stars and end markers.** For a word $w$ over the extended alphabet of the
+MPCP-to-PCP reduction, this is the word over $\alpha$ obtained from $w$ by deleting every star
+$\star$ and every end marker $\diamond$, keeping the letters of $\alpha$ in their order. -/
 def letters (w : List (Sym α)) : List α := w.filterMap fun x ↦ x.bind id
 
 @[simp] theorem letters_append (w w' : List (Sym α)) :
@@ -149,21 +174,40 @@ theorem starBefore_append_star (u : List α) :
 
 /-! ### The reduction -/
 
-/-- The image `(⋆t, b⋆)` of a domino `(t, b)`. -/
+/-- **Starred image of a domino.** For a word $u$ over $\alpha$, write $\star u$ for the word over
+the extended alphabet obtained by putting a star $\star$ before every letter of $u$, and $u\star$
+for the word obtained by putting a star after every letter. A domino $(t, b)$ over $\alpha$ is sent
+to the domino $(\star t, b\star)$ over the extended alphabet. -/
 def mapDomino (d : Domino α) : Domino (Sym α) := (starBefore d.1, starAfter d.2)
 
-/-- The start domino `(⋆t₀, ⋆b₀⋆)`. -/
+/-- **The start domino of the MPCP-to-PCP reduction.** For a domino $(t, b)$ over an alphabet
+$\alpha$, its start domino is the domino $(\star t, \star b \star)$ over the extended alphabet,
+where $\star t$ puts the star $\star$ before every letter of $t$ and $b \star$ puts a star after
+every letter of $b$, so that the bottom word gets one extra star in front. -/
 def startDomino (d : Domino α) : Domino (Sym α) := (starBefore d.1, star :: starAfter d.2)
 
-/-- The end domino `(⋆◇, ◇)`. -/
+/-- **End domino of the MPCP-to-PCP reduction.** Over the alphabet $\alpha$ extended with the
+star $\star$ and the end marker $\diamond$, the end domino is $(\star\diamond, \diamond)$: its top
+word is $\star$ followed by $\diamond$, and its bottom word is $\diamond$. -/
 def endDomino : Domino (Sym α) := ([star, endMark], [endMark])
 
-/-- **The reduction from MPCP to PCP.** -/
+/-- **The reduction from MPCP to PCP.** Write $\star$ for the star and $\diamond$ for the end
+marker of the extended alphabet; for a word $u$ over $\alpha$, $\star u$ puts a star before every
+letter of $u$ and $u \star$ puts a star after every letter of $u$. The empty list of dominoes is
+sent to the empty list. A list $P = [d_0, d_1, \ldots, d_n]$ of dominoes over $\alpha$, with
+$d_0 = (t_0, b_0)$, is sent to the following list of dominoes over the extended alphabet: first
+the start domino $(\star t_0, \star b_0 \star)$, then the domino $(\star t, b \star)$ for each
+domino $(t, b)$ of $P$ in order (including $d_0$), and last the end domino
+$(\star \diamond, \diamond)$, whose top word is a star followed by the end marker. -/
 def toPCP : List (Domino α) → List (Domino (Sym α))
   | [] => []
   | d₀ :: P => startDomino d₀ :: ((d₀ :: P).map mapDomino ++ [endDomino])
 
-/-- Read a domino of `toPCP P` back as a domino over `α`. -/
+/-- **Erasing the markers from a domino.** For a domino $(t, b)$ over the extended alphabet, its
+unmapping is the domino over $\alpha$ obtained by deleting every star $\star$ and every end marker
+$\diamond$ from both $t$ and $b$, keeping the letters of $\alpha$ in order.
+
+It reads a domino of the reduced PCP instance back as a domino over $\alpha$. -/
 def unmap (d : Domino (Sym α)) : Domino α := (letters d.1, letters d.2)
 
 @[simp] theorem unmap_mapDomino (d : Domino α) : unmap (mapDomino d) = d :=
@@ -224,7 +268,9 @@ theorem mem_toPCP {d₀ : Domino α} {P : List (Domino α)} {d : Domino (Sym α)
 
 /-! ### Correctness -/
 
-/-- An MPCP solution of `P` gives a PCP solution of `toPCP P`. -/
+/-- **An MPCP solution gives a PCP solution of the reduced instance.** If a list $P$ of dominoes
+has an MPCP solution, then the image of $P$ under the reduction from MPCP to PCP has a PCP
+solution. -/
 theorem pcp_toPCP_of_mpcp {P : List (Domino α)} (h : MPCP P) : PCP (toPCP P) := by
   obtain ⟨d₀, s, hd₀, -, hmem, heq⟩ := h
   cases P with
@@ -268,7 +314,10 @@ private theorem head_ne_of_ne_start {d₀ : Domino α} {P : List (Domino α)}
     · simp [mapDomino, hu, starAfter]
   · exact ⟨star, endMark, by simp, ⟨[endMark], rfl⟩, ⟨[], rfl⟩⟩
 
-/-- A PCP solution of `toPCP P` gives an MPCP solution of `P`, when `P` has nonempty words. -/
+/-- **On instances with nonempty words, a PCP solution of the reduced instance gives an MPCP
+solution.** Let $P$ be a list of dominoes in which every domino has a nonempty top and a nonempty
+bottom. If the image of $P$ under the reduction from MPCP to PCP has a PCP solution, then $P$ has
+an MPCP solution. -/
 theorem mpcp_of_pcp_toPCP {P : List (Domino α)} (hP : NonemptyWords P) (h : PCP (toPCP P)) :
     MPCP P := by
   obtain ⟨s', hne, hmem, heq⟩ := h
@@ -301,21 +350,27 @@ theorem mpcp_of_pcp_toPCP {P : List (Domino α)} (hP : NonemptyWords P) (h : PCP
       simp only [List.map_cons, unmap_startDomino, top_cons, bottom_cons] at h'
       simpa only [top_cons, bottom_cons, top_filter_keep, bottom_filter_keep] using h'
 
-/-- **MPCP reduces to PCP** on instances with nonempty words. -/
+/-- **MPCP reduces to PCP on instances with nonempty words.** Let $P$ be a list of dominoes over
+an alphabet $\alpha$ in which every domino has a nonempty top and a nonempty bottom. Then $P$ has
+an MPCP solution if and only if the image of $P$ under the reduction from MPCP to PCP, an
+instance over $\alpha$ extended with a star and an end marker, has a PCP solution. -/
 theorem mpcp_iff_pcp_toPCP {P : List (Domino α)} (hP : NonemptyWords P) :
     MPCP P ↔ PCP (toPCP P) :=
   ⟨pcp_toPCP_of_mpcp, mpcp_of_pcp_toPCP hP⟩
 
 /-! ### The many-one reduction -/
 
-/-- Every domino has a nonempty top and bottom, as a Boolean test. -/
+/-- **Boolean test for nonempty words.** For a list $P$ of dominoes, this Boolean test returns
+true exactly when every domino of $P$ has a nonempty top and a nonempty bottom. -/
 def nonemptyWordsB (P : List (Domino α)) : Bool := P.all fun d ↦ !d.1.isEmpty && !d.2.isEmpty
 
 theorem nonemptyWordsB_iff {P : List (Domino α)} : nonemptyWordsB P = true ↔ NonemptyWords P := by
   simp [nonemptyWordsB, NonemptyWords]
 
-/-- The total reduction: `toPCP` on instances with nonempty words, and the unsolvable empty
-instance otherwise. -/
+/-- **The total reduction from MPCP to PCP.** For a list $P$ of dominoes, the total reduction
+sends $P$ to its image under the reduction from MPCP to PCP when every domino of $P$ has a
+nonempty top and a nonempty bottom, and to the empty instance, which has no PCP solution,
+otherwise. -/
 def reduce (P : List (Domino α)) : List (Domino (Sym α)) :=
   cond (nonemptyWordsB P) (toPCP P) []
 
@@ -360,7 +415,9 @@ theorem primrec_toPCP : Primrec (toPCP (α := α)) := by
   exact (Primrec.list_casesOn Primrec.id (Primrec.const []) hcons).of_eq fun P ↦ by
     cases P <;> rfl
 
-/-- The nonempty-words test is primitive recursive. -/
+/-- **The nonempty-words test is primitive recursive.** For an alphabet $\alpha$ with a
+primitive recursive coding, the Boolean test of whether every domino of a list over $\alpha$ has
+a nonempty top and a nonempty bottom is a primitive recursive function of the list. -/
 theorem primrec_nonemptyWordsB : Primrec (nonemptyWordsB (α := α)) := by
   have hE : ∀ {β : Type _} [Primcodable β], Primrec fun l : List β ↦ l.isEmpty := fun {β} _ ↦
     (Primrec.list_casesOn Primrec.id (Primrec.const true)
@@ -381,7 +438,12 @@ theorem primrec_reduce : Primrec (reduce (α := α)) := by
   have hb := primrec_nonemptyWordsB (α := α)
   exact Primrec.cond hb primrec_toPCP (Primrec.const [])
 
-/-- **MPCP many-one reduces to PCP**, on instances whose dominoes have nonempty words. -/
+/-- **MPCP many-one reduces to PCP.** Let $\alpha$ be an alphabet with a primitive recursive
+coding, and let $\alpha'$ be $\alpha$ extended with two new symbols, the star and the end marker.
+There is a computable function $f$ from finite lists of dominoes over $\alpha$ to finite lists of
+dominoes over $\alpha'$ such that, for every list $P$ of dominoes over $\alpha$, $f(P)$ has a PCP
+solution if and only if both every domino of $P$ has a nonempty top word and a nonempty bottom
+word, and $P$ has an MPCP solution. -/
 theorem manyOneReducible_mpcp_pcp :
     ManyOneReducible (fun P : List (Domino α) ↦ NonemptyWords P ∧ MPCP P)
       (PCP (α := Sym α)) :=
@@ -395,7 +457,10 @@ section Recognizable
 
 variable [Primcodable α]
 
-/-- The solution check, as a Boolean. -/
+/-- **Boolean check for PCP solutions.** Let $\alpha$ be an alphabet with a primitive recursive
+coding and decidable equality, and let $P$ and $s$ be lists of dominoes over $\alpha$. The Boolean
+solution check of $s$ for $P$ is true exactly when $s$ is nonempty, every domino of $s$ occurs in
+$P$, and the top word of $s$ equals the bottom word of $s$, and it is false otherwise. -/
 def isSolutionB [DecidableEq α] (P s : List (Domino α)) : Bool :=
   !s.isEmpty && s.all (fun d ↦ decide (d ∈ P)) && decide (top s = bottom s)
 
@@ -431,7 +496,11 @@ theorem primrec₂_isSolutionB [DecidableEq α] : Primrec₂ (isSolutionB (α :=
   exact Primrec.and.comp (Primrec.and.comp (Primrec.not.comp (primrec_isEmpty.comp Primrec.snd))
     hall) (Primrec.eq.comp (htop.comp Primrec.snd) (hbot.comp Primrec.snd)).decide
 
-/-- **PCP is recursively enumerable**: search all candidate sequences. -/
+/-- **PCP is recursively enumerable.** For an alphabet $\alpha$ with a primitive recursive
+coding, the set of lists of dominoes over $\alpha$ that have a PCP solution is recursively
+enumerable.
+
+The proof searches all candidate sequences. -/
 theorem rePred_pcp : REPred (PCP (α := α)) := by
   classical
   let q : List (Domino α) → ℕ → Bool := fun P k ↦
@@ -453,7 +522,9 @@ theorem rePred_pcp : REPred (PCP (α := α)) := by
   · rintro ⟨s, hs⟩
     exact ⟨Encodable.encode s, by simp [q, Encodable.encodek, isSolutionB_iff.mpr hs]⟩
 
-/-- PCP is recognizable by a multi-stack machine. -/
+/-- **PCP is Turing-recognizable.** For every alphabet $\alpha$ with a primitive recursive
+encoding, there is a multi-stack Turing machine that, started on the binary encoding of a list
+$P$ of dominoes over $\alpha$, halts exactly when $P$ has a PCP solution. -/
 theorem tm2Recognizable_pcp : TM2Recognizable (PCP (α := α)) :=
   tm2Recognizable_iff_rePred.mpr rePred_pcp
 

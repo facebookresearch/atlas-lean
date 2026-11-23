@@ -1,0 +1,3 @@
+# $\theta^0 \ne \theta^1$ at a first-order transition
+
+Let $d \in \mathbb{N}$, $0 < p < 1$ and $q > 0$. If $(p, q)$ is a [first-order transition](is-first-order-transition.md) on $\mathbb{Z}^d$, then $\theta^0(p, q) \ne \theta^1(p, q)$, where $\theta^0$ is the [free percolation probability](fk-theta-free.md) and $\theta^1(p, q)$ is the probability, under the [wired infinite-volume random-cluster measure](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) $\phi^1_{p,q}$ on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures), that the open cluster of the origin is infinite (the [wired percolation probability](../the-critical-point-of-the-random-cluster-model/fk-theta.md)).

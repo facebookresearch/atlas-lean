@@ -49,9 +49,11 @@ namespace Cslib.Complexity.Karp.EmitSS
 open Turing Function MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Complexity.SatVerifier
   Computability MetaMathlibExt.BitstringEncoding
 
-/-- Stacks: input `X`, output `O`; `A` holds `k` (`H` halves it); `N` holds `n`, `M` the pair
-count; `C` counts the pair bits; `S1`, `S2` are scratch; `Y`, `Z` hold the pair bits; `T` the
-target's bits; `L`, `R`, `Rt` the vertex marks. -/
+/-- **Stacks of the SUBSET-SUM reduction machine.** The machine has fifteen stacks: the input $X$
+and the output $O$; $A$, which holds the cover size $k$, and $H$, used to halve it; $N$, which
+holds the number $n$ of vertices, and $M$, the pair count; $C$, which counts the pair bits; the
+scratch stacks $S_1$ and $S_2$; $Y$ and $Z$, which hold the pair bits; $T$, which holds the
+target's bits; and $L$, $R$ and $R_t$, which hold the vertex marks. -/
 inductive K | X | O | A | H | N | M | C | S1 | S2 | Y | Z | T | L | R | Rt
   deriving DecidableEq
 
@@ -60,14 +62,23 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .O, .A, .H, .N, .M, .C, .S1, .S2, .Y, .Z, .T, .L, .R, .Rt], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Stack alphabets: the output stack holds `Bool`s, every other stack `Sym`s. -/
+/-- **Stack alphabets of the subset-sum emitter.** In the VERTEX-COVER to SUBSET-SUM machine the
+output stack $\mathsf{O}$ holds Booleans, and every other stack holds token symbols. -/
 @[reducible] def Γ : K → Type
   | .O => Bool
   | _ => Sym
 
-/-- Labels: parsing (`rdK`, `rdN`, `mv`), pair count and comparison (`tri*`, `cmp`, `rc`,
-`rcB`), edge numbers (`eg*`), vertex numbers (`vinit`, `vtx`, `pr`, `rend`, `rmv`, `vend`, `vchk`,
-`rs`), binary conversion of `k` (`hv*`), the target (`tem0`, `tsk`, `tem`); `bad` writes `noSS`. -/
+/-- **Labels of the subset-sum emitter.** The control labels of the subset-sum emitter machine
+are: $\mathrm{rdK}$, $\mathrm{rdN}$ and $\mathrm{mv}$ (parsing the two unary numbers $k$ and $n$
+that open the input, and moving the pair bits); $\mathrm{tri}$, $\mathrm{triC}$,
+$\mathrm{triC2}$, $\mathrm{cmp}$ and, for every ordering $o$, the labels $\mathrm{rc}(o)$ and
+$\mathrm{rcB}(o)$ (counting the pairs and comparing that count with the number of pair bits);
+$\mathrm{eg}$, $\mathrm{egX}$, $\mathrm{egR}$, $\mathrm{egR2}$ and $\mathrm{egY}$ (the edge
+numbers); $\mathrm{vinit}$, $\mathrm{vtx}$, $\mathrm{pr}$, $\mathrm{rend}$, $\mathrm{rmv}$,
+$\mathrm{vend}$, $\mathrm{vchk}$ and $\mathrm{rs}$ (the vertex numbers); $\mathrm{hv}$,
+$\mathrm{hv0}$, $\mathrm{hv1}$ and $\mathrm{hvB}$ (the binary digits of $k$); $\mathrm{tem0}$,
+$\mathrm{tsk}$ and $\mathrm{tem}$ (writing the target); $\mathrm{bad}$, which writes the fixed
+no-instance; and the halting label $\mathrm{done}$. -/
 inductive Lab
   | rdK | rdN | mv | tri | triC | triC2 | cmp | rc (o : Ordering) | rcB (o : Ordering)
   | eg | egX | egR | egR2 | egY | vinit | vtx | pr | rend | rmv | vend | vchk | rs
@@ -83,30 +94,106 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
     rcases x with _ | _ | _ | _ | _ | _ | _ | o | o <;> try decide
     all_goals cases o <;> decide
 
-/-- The unit symbol of the counters. -/
+/-- **Counter unit of the subset-sum emitter.** The unit symbol of the counters of the
+VERTEX-COVER to SUBSET-SUM machine is the token symbol $\mathrm{cl}$; a counter with value $n$
+holds exactly $n$ copies of it. -/
 abbrev U : Sym := .cl
 
-/-- Is the popped symbol the input bit `true`? -/
+/-- **Test for the input bit true (SUBSET-SUM reduction machine).** On the result of a pop, which
+is either a symbol or nothing (when the stack was empty), the test returns true exactly when the
+result is the input-bit symbol $\mathrm{bit}(\mathrm{true})$, and false otherwise. -/
 def isT : Option Sym → Bool
   | some (.bit true) => true
   | _ => false
 
-/-- Is the popped symbol the mark or pair bit `val true`? -/
+/-- **Test for the value symbol true (SUBSET-SUM reduction machine).** On the result of a pop,
+which is either a symbol or nothing (when the stack was empty), the test returns true exactly when
+the result is the value symbol $\mathrm{val}(\mathrm{true})$, which this machine uses for a pair
+bit or vertex mark that is true, and false otherwise. -/
 def isV : Option Sym → Bool
   | some (.val true) => true
   | _ => false
 
-/-- Read a symbol as a pair bit or vertex mark. -/
+/-- **Reading a pair bit or vertex mark.** The partial map from token symbols to bits that
+sends the symbol $\mathrm{val}(b)$ to $b$ and gives no value on every other symbol. -/
 def valOf : Sym → Option Bool
   | .val b => some b
   | _ => none
 
-/-- After the count comparison: equal counts go on, others write `noSS`. -/
+/-- **Branch after the count comparison (SUBSET-SUM reduction machine).** The label the machine
+takes after comparing the pair-bit count with the pair count: the result "equal" leads to the
+label $\mathrm{eg}$, which starts the edge-number phase, and the results "less than" and
+"greater than" lead to the failure label $\mathrm{bad}$, which writes the fixed no-instance of
+SUBSET-SUM. -/
 def cmpOut : Ordering → Lab
   | .eq => .eg
   | _ => .bad
 
-/-- The machine. -/
+/-- **The subset-sum emitter machine.** A multi-stack machine with the labels of the subset-sum
+emitter as control labels, a Boolean internal state, and the stacks of the emitter: the output
+stack $O$ holds bits, every other stack holds symbols. Stacks are read top first, $U$ is the
+counter unit, and to prepend a list to $O$ is to push it so that it reads top first. The labels
+act as follows.
+
+$\mathrm{rdK}$: if $X$ is empty, go to $\mathrm{bad}$; otherwise pop $X$, and if the popped
+symbol is $\mathrm{bit}(\mathrm{true})$ push $U$ on $A$ and repeat, else go to $\mathrm{rdN}$.
+$\mathrm{rdN}$: the same, except that each $\mathrm{bit}(\mathrm{true})$ pushes $U$ on $N$ and
+$\mathrm{val}(\mathrm{false})$ on $L$, and the other case goes to $\mathrm{mv}$. $\mathrm{mv}$: if
+$X$ is empty, go to $\mathrm{tri}$; otherwise pop $X$, let $s$ say whether the popped symbol is
+$\mathrm{bit}(\mathrm{true})$, push $\mathrm{val}(s)$ on $Y$, then $\mathrm{bit}(\mathrm{false})$
+and $\mathrm{bit}(s)$ on $T$, then $U$ on $C$, and repeat.
+
+$\mathrm{tri}$: pop $N$; if it was empty go to $\mathrm{cmp}$, else go to $\mathrm{triC}$, which
+pops $N$ until it is empty, pushing $U$ on $M$ and on $S_1$ for each popped symbol, and then to
+$\mathrm{triC2}$, which pops $S_1$ until it is empty, pushing $U$ on $N$ for each, and returns to
+$\mathrm{tri}$. $\mathrm{cmp}$: pop $C$ and $M$ together, pushing $U$ on $S_1$ for each symbol
+popped from $C$ and on $S_2$ for each symbol popped from $M$, until one of them was empty; go to
+$\mathrm{rc}(o)$ where $o$ is $<$, $=$ or $>$ according as only $C$, both, or only $M$ was empty.
+$\mathrm{rc}(o)$ pops $S_1$ until empty, pushing $U$ on $C$ for each, then $\mathrm{rcB}(o)$ pops
+$S_2$ until empty, pushing $U$ on $M$ for each, then goes to $\mathrm{eg}$ if $o$ is $=$ and to
+$\mathrm{bad}$ otherwise.
+
+$\mathrm{eg}$: if $Y$ is empty, go to $\mathrm{egY}$; otherwise pop $Y$, let $s$ say whether the
+popped symbol is $\mathrm{val}(\mathrm{true})$, push $\mathrm{val}(s)$ on $Z$, pop $C$ and $M$,
+and if $s$ is true prepend $(\mathrm{true}, \mathrm{true}, \mathrm{false})$ to $O$ and go to
+$\mathrm{egX}$, else prepend $(\mathrm{false})$ to $O$ and repeat. $\mathrm{egX}$ pops $C$ until
+it is empty, prepending $(\mathrm{true}, \mathrm{false}, \mathrm{true}, \mathrm{false})$ to $O$
+for each popped symbol; then $\mathrm{egR}$ pops $M$ until empty, pushing $U$ on $C$ and on $S_1$
+for each, and $\mathrm{egR2}$ pops $S_1$ until empty, pushing $U$ on $M$ for each, and returns to
+$\mathrm{eg}$. $\mathrm{egY}$: while the top of $Z$ is some $\mathrm{val}(b)$, pop it and push
+$\mathrm{val}(b)$ on $Y$; then go to $\mathrm{vinit}$.
+
+$\mathrm{vinit}$: pop $L$; if a symbol was popped, push $\mathrm{val}(\mathrm{true})$ on $L$ and
+go to $\mathrm{vtx}$, else go to $\mathrm{hv}$. $\mathrm{vtx}$: prepend
+$(\mathrm{true}, \mathrm{true}, \mathrm{false})$ to $O$ and go to $\mathrm{pr}$. $\mathrm{pr}$: if
+$R$ is empty, go to $\mathrm{rend}$; otherwise pop $R$, let $m$ be true exactly when the popped
+symbol is $\mathrm{val}(\mathrm{true})$ and push $\mathrm{val}(m)$ on $\mathrm{Rt}$, let $a$ be
+true exactly when the top of $L$ is $\mathrm{val}(\mathrm{true})$, pop $Y$, let $b$ be true
+exactly when a $\mathrm{val}(\mathrm{true})$ was popped and push $\mathrm{val}(b)$ on $Z$,
+prepend $(\mathrm{true}, b \wedge (m \vee a), \mathrm{true}, \mathrm{false})$ to $O$, and repeat.
+$\mathrm{rend}$: while the top of $\mathrm{Rt}$ is some $\mathrm{val}(b)$, pop it and push
+$\mathrm{val}(b)$ on $R$; then go to $\mathrm{rmv}$. $\mathrm{rmv}$: pop $L$, push
+$\mathrm{val}(t)$ on $R$ where $t$ is true exactly when a $\mathrm{val}(\mathrm{true})$ was
+popped, and go to $\mathrm{vend}$ if $L$ is now empty, else to $\mathrm{pr}$. $\mathrm{vend}$:
+while the top of $Z$ is some $\mathrm{val}(b)$, pop it and push $\mathrm{val}(b)$ on $Y$; then
+go to $\mathrm{vchk}$. $\mathrm{vchk}$: go to $\mathrm{hv}$ if the top of $R$ is
+$\mathrm{val}(\mathrm{true})$, else to $\mathrm{rs}$. $\mathrm{rs}$: if $R$ is empty, go to
+$\mathrm{vtx}$; otherwise pop $R$; if the popped symbol is $\mathrm{val}(\mathrm{true})$, pop $L$
+and push $\mathrm{val}(\mathrm{true})$ and then $\mathrm{val}(\mathrm{false})$ on $L$, else push
+$\mathrm{val}(\mathrm{false})$ on $L$; repeat.
+
+$\mathrm{hv}$: go to $\mathrm{tem0}$ if $A$ is empty, else to $\mathrm{hv0}$. $\mathrm{hv0}$: pop
+$A$; if it was empty, push $\mathrm{bit}(\mathrm{false})$ on $T$ and go to $\mathrm{hvB}$, else go
+to $\mathrm{hv1}$. $\mathrm{hv1}$: pop $A$; if it was empty, push $\mathrm{bit}(\mathrm{true})$
+on $T$ and go to $\mathrm{hvB}$, else push $U$ on $H$ and go to $\mathrm{hv0}$. $\mathrm{hvB}$
+pops $H$ until it is empty, pushing $U$ on $A$ for each, and returns to $\mathrm{hv}$.
+$\mathrm{tem0}$: prepend $(\mathrm{false})$ to $O$ and go to $\mathrm{tsk}$. $\mathrm{tsk}$: if
+$T$ is empty, go to $\mathrm{done}$; otherwise pop $T$, and if the popped symbol is
+$\mathrm{bit}(\mathrm{true})$ prepend $(\mathrm{true}, \mathrm{true})$ to $O$ and go to
+$\mathrm{tem}$, else repeat. $\mathrm{tem}$: if $T$ is empty, go to $\mathrm{done}$; otherwise pop
+$T$, let $s$ say whether the popped symbol is $\mathrm{bit}(\mathrm{true})$, prepend
+$(\mathrm{true}, s)$ to $O$, and repeat. $\mathrm{bad}$: prepend the encoding of the subset-sum
+instance with no numbers and target $1$ to $O$ and go to $\mathrm{done}$. $\mathrm{done}$: halt. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .rdK => .peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .bad) <|
       .pop .X (fun _ o => isT o) <| .branch id
@@ -177,11 +264,14 @@ def prog : Lab → TM2.Stmt Γ Lab Bool
   | .bad => emitR .O noSS .done
   | .done => .halt
 
-/-- The start label. -/
+/-- **Start label of the subset-sum emitter.** The VERTEX-COVER to SUBSET-SUM machine starts at
+the label $\mathsf{rdK}$, which begins parsing the input by reading its leading unary number. -/
 def start : Lab := .rdK
 
 /-! ### One-step lemmas -/
 
+/-- **Testing a popped input bit.** For every bit $b$, the test for the input bit true of the
+SUBSET-SUM reduction machine, applied to the popped symbol $\mathrm{bit}(b)$, returns $b$. -/
 @[simp] theorem isT_bit (b : Bool) : isT (some (.bit b)) = b := by cases b <;> rfl
 
 @[simp] theorem isV_val (b : Bool) : isV (some (.val b)) = b := by cases b <;> rfl
@@ -341,7 +431,14 @@ end Steps
 
 section Loops
 
-/-- Reading `k`: each `true` adds a unit to `A`; the closing `false` moves on to `n`. -/
+/-- **Subset-sum emitter: reading the unary k.** Let $k$ and $i$ be natural numbers, $v$ a Boolean
+state, $r = (r_1, \dots, r_m)$ a list of bits and $S$ stack contents such that stack $X$ holds,
+top first, $k$ copies of $\mathrm{bit}(\mathrm{true})$, then $\mathrm{bit}(\mathrm{false})$, then
+$\mathrm{bit}(r_1), \dots, \mathrm{bit}(r_m)$, and stack $A$ holds exactly $i$ copies of the
+counter unit $U$. Then $k + 1$ steps of the subset-sum emitter machine lead from label
+$\mathrm{rdK}$ with state $v$ and stacks $S$ to label $\mathrm{rdN}$ with some state and some
+stacks $S'$ such that $S'(X)$ is $\mathrm{bit}(r_1), \dots, \mathrm{bit}(r_m)$, $S'(A)$ holds
+exactly $i + k$ copies of $U$, and every stack other than $X$ and $A$ is unchanged. -/
 theorem rdK_some (k : ℕ) : ∀ (i : ℕ) (v : Bool) (St : ∀ k, List (Γ k)) (r : List Bool),
     St .X = (List.replicate k true ++ false :: r).map Sym.bit → St .A = cnt U i →
     ∃ v' S', Run prog (k + 1) ⟨some .rdK, v, St⟩ ⟨some .rdN, v', S'⟩ ∧
@@ -363,7 +460,13 @@ theorem rdK_some (k : ℕ) : ∀ (i : ℕ) (v : Bool) (St : ∀ k, List (Γ k)) 
       rw [hS' j h1 h2]
       simp [update_of_ne h1, update_of_ne h2]
 
-/-- A unary `k` that never ends: `bad` within `|r| + 1` steps. -/
+/-- **Subset-sum emitter: unterminated unary prefix at rdK.** Let $r = (r_1, \dots, r_m)$ be a
+list of bits on which reading a unary length prefix fails (equivalently, no $r_i$ is
+$\mathrm{false}$). Then for every Boolean state $v$ and all stack contents $S$ whose stack $X$
+holds $\mathrm{bit}(r_1), \dots, \mathrm{bit}(r_m)$, top first, $m + 1$ steps of the subset-sum
+emitter machine lead from label $\mathrm{rdK}$ with state $v$ and stacks $S$ to label
+$\mathrm{bad}$ with some state and some stacks that agree with $S$ on every stack other than $X$
+and $A$. -/
 theorem rdK_none : ∀ (r : List Bool), readUnaryLength r = none →
     ∀ (v : Bool) (St : ∀ k, List (Γ k)), St .X = r.map Sym.bit →
       ∃ v' S', Run prog (r.length + 1) ⟨some .rdK, v, St⟩ ⟨some .bad, v', S'⟩ ∧
@@ -379,7 +482,16 @@ theorem rdK_none : ∀ (r : List Bool), readUnaryLength r = none →
       rw [hS' j h1 h2]
       simp [update_of_ne h1, update_of_ne h2]
 
-/-- Reading `n`: each `true` adds a unit to `N` and an unmarked vertex to `L`. -/
+/-- **Subset-sum emitter: reading the unary n.** Let $n$ and $i$ be natural numbers, $v$ a Boolean
+state, $r = (r_1, \dots, r_m)$ a list of bits and $S$ stack contents such that stack $X$ holds,
+top first, $n$ copies of $\mathrm{bit}(\mathrm{true})$, then $\mathrm{bit}(\mathrm{false})$, then
+$\mathrm{bit}(r_1), \dots, \mathrm{bit}(r_m)$, stack $N$ holds exactly $i$ copies of the counter
+unit $U$, and stack $L$ holds exactly $i$ copies of $\mathrm{val}(\mathrm{false})$. Then $n + 1$
+steps of the subset-sum emitter machine lead from label $\mathrm{rdN}$ with state $v$ and stacks
+$S$ to label $\mathrm{mv}$ with some state and some stacks $S'$ such that $S'(X)$ is
+$\mathrm{bit}(r_1), \dots, \mathrm{bit}(r_m)$, $S'(N)$ holds exactly $i + n$ copies of $U$,
+$S'(L)$ holds exactly $i + n$ copies of $\mathrm{val}(\mathrm{false})$, and every stack other than
+$X$, $N$ and $L$ is unchanged. -/
 theorem rdN_some (n : ℕ) : ∀ (i : ℕ) (v : Bool) (St : ∀ k, List (Γ k)) (r : List Bool),
     St .X = (List.replicate n true ++ false :: r).map Sym.bit → St .N = cnt U i →
     St .L = cnt (.val false) i →
@@ -405,7 +517,13 @@ theorem rdN_some (n : ℕ) : ∀ (i : ℕ) (v : Bool) (St : ∀ k, List (Γ k)) 
       rw [hS' j h1 h2 h3]
       simp [update_of_ne h1, update_of_ne h2, update_of_ne h3]
 
-/-- A unary `n` that never ends: `bad` within `|r| + 1` steps. -/
+/-- **Subset-sum emitter: unterminated unary prefix at rdN.** Let $r = (r_1, \dots, r_m)$ be a
+list of bits on which reading a unary length prefix fails (equivalently, no $r_i$ is
+$\mathrm{false}$). Then for every Boolean state $v$ and all stack contents $S$ whose stack $X$
+holds $\mathrm{bit}(r_1), \dots, \mathrm{bit}(r_m)$, top first, $m + 1$ steps of the subset-sum
+emitter machine lead from label $\mathrm{rdN}$ with state $v$ and stacks $S$ to label
+$\mathrm{bad}$ with some state and some stacks that agree with $S$ on every stack other than $X$,
+$N$ and $L$. -/
 theorem rdN_none : ∀ (r : List Bool), readUnaryLength r = none →
     ∀ (v : Bool) (St : ∀ k, List (Γ k)), St .X = r.map Sym.bit →
       ∃ v' S', Run prog (r.length + 1) ⟨some .rdN, v, St⟩ ⟨some .bad, v', S'⟩ ∧
@@ -422,8 +540,15 @@ theorem rdN_none : ∀ (r : List Bool), readUnaryLength r = none →
       rw [hS' j h1 h2 h3]
       simp [update_of_ne h1, update_of_ne h2, update_of_ne h3]
 
-/-- Moving the pair bits: onto `Y` (reversed), their target digits onto `T`, their count onto
-`C`. -/
+/-- **Subset-sum emitter: moving the pair bits.** Let $r = (b_1, \dots, b_m)$ be a list of bits,
+$v$ a Boolean state, $c$ a natural number and $S$ stack contents such that stack $X$ holds
+$\mathrm{bit}(b_1), \dots, \mathrm{bit}(b_m)$, top first, and stack $C$ holds exactly $c$ copies of
+the counter unit $U$. Then $m + 1$ steps of the subset-sum emitter machine lead from label
+$\mathrm{mv}$ with state $v$ and stacks $S$ to label $\mathrm{tri}$ with some state and some
+stacks $S'$ such that: $S'(Y)$ is $S(Y)$ after pushing $\mathrm{val}(b_1), \dots,
+\mathrm{val}(b_m)$ in turn; $S'(T)$ is $S(T)$ after pushing, for $i = 1, \dots, m$ in turn,
+$\mathrm{bit}(\mathrm{false})$ and then $\mathrm{bit}(b_i)$; $S'(C)$ holds exactly $c + m$ copies
+of $U$; and every stack other than $X$, $Y$, $T$ and $C$ is unchanged. -/
 theorem mv_run (r : List Bool) : ∀ (v : Bool) (St : ∀ k, List (Γ k)) (c : ℕ),
     St .X = r.map Sym.bit → St .C = cnt U c →
     ∃ v' S', Run prog (r.length + 1) ⟨some .mv, v, St⟩ ⟨some .tri, v', S'⟩ ∧
@@ -446,7 +571,13 @@ theorem mv_run (r : List Bool) : ∀ (v : Bool) (St : ∀ k, List (Γ k)) (c : �
       rw [hS' j h1 h2 h3 h4]
       simp [update_of_ne h1, update_of_ne h2, update_of_ne h3, update_of_ne h4]
 
-/-- The pair count: `M` gains `tri n` units while `N` is used up, in `(n + 1)²` steps. -/
+/-- **Run of the pair-counting loop of the subset-sum emitter.** Let $n, p \in \mathbb{N}$ and
+let $T_n = 0 + 1 + \dots + (n - 1)$. Start the VERTEX-COVER to SUBSET-SUM machine at label
+$\mathsf{tri}$ with any state bit and with stacks $S$ in which the counter stacks $\mathsf{N}$ and
+$\mathsf{M}$ hold exactly $n$ and $p$ unit symbols and the scratch stack $\mathsf{S1}$ is empty.
+Then after exactly $(n + 1)^2$ steps the machine is at label $\mathsf{cmp}$ with some state bit
+and stacks $S'$ in which $\mathsf{M}$ holds exactly $p + T_n$ unit symbols and every stack other
+than $\mathsf{N}$ and $\mathsf{M}$ is as in $S$. -/
 theorem tri_run (n : ℕ) : ∀ (p : ℕ) (v : Bool) (St : ∀ k, List (Γ k)),
     St .N = cnt U n → St .M = cnt U p → St .S1 = [] →
     ∃ v' S', Run prog ((n + 1) ^ 2) ⟨some .tri, v, St⟩ ⟨some .cmp, v', S'⟩ ∧
@@ -469,8 +600,19 @@ theorem tri_run (n : ℕ) : ∀ (p : ℕ) (v : Bool) (St : ∀ k, List (Γ k)),
       rw [hS' j h1 h2]
       simp [update_of_ne h1, update_of_ne h2]
 
-/-- The edge numbers: from the last pair down, pop each pair bit onto `Z` and write the edge
-number, using `C = M = q` for pair `q` (`xferE` writes the `2q` low zero digits). -/
+/-- **Edge-number phase (SUBSET-SUM reduction machine).** Let $d$ be a list of bits (in the
+machine, the pair bits listed from the last pair down), $v$ a value of the machine's Boolean flag
+and $S$ an assignment of contents to the stacks, and write $\mathrm{val}(d)$ for the list of the
+symbols $\mathrm{val}(b)$ for the entries $b$ of $d$, in order. Suppose stack $Y$ holds
+$\mathrm{val}(d)$ (first element on top), stacks $C$ and $M$ each hold $|d|$ copies of the unit
+symbol, and stack $S_1$ is empty. Then, starting at label $\mathrm{eg}$ with flag $v$ and stacks
+$S$, the machine reaches label $\mathrm{egY}$ in at most $|d|(3|d| + 4) + 1$ steps, with some
+flag $v'$ and stacks $S'$ such that $S'(Y)$ is empty, $S'(Z)$ is the reverse of
+$\mathrm{val}(d)$ followed by $S(Z)$, $S'(O)$ is the edge-number output of $d$ followed by
+$S(O)$, and every stack other than $Y$, $Z$, $O$, $C$, $M$ holds the same contents as in $S$.
+
+For each pair $q$ the machine pops its bit onto $Z$ and writes its edge number, using
+$C = M = q$. -/
 theorem eg_run : ∀ (ds : List Bool) (v : Bool) (St : ∀ k, List (Γ k)),
     St .Y = ds.map Sym.val → St .C = cnt U ds.length → St .M = cnt U ds.length → St .S1 = [] →
     ∃ v' S', RunLe prog (ds.length * (3 * ds.length + 4) + 1) ⟨some .eg, v, St⟩
@@ -517,8 +659,19 @@ theorem eg_run : ∀ (ds : List Bool) (v : Bool) (St : ∀ k, List (Γ k)),
           rw [hS' j h1 h2 h3 h4 h5]
           simp [hS₂, hS₁, h1, h2, h3, h4, h5]
 
-/-- One row of the pair walk: for each mark `mj` on `R` (the columns), pop a pair bit `b`
-from `Y` onto `Z` and write the digit `b && (mj || a)`, `a` being the row vertex's mark. -/
+/-- **Subset-sum emitter: one row of the pair walk.** Stacks are listed top first. Let $a$ be a
+bit, $\ell$ a list of symbols, $(m_1, \dots, m_p)$ and $(b_1, \dots, b_p)$ two lists of bits of
+the same length $p$, $y$ a list of symbols, $v$ a Boolean state and $S$ stack contents such that
+$S(R)$ is $\mathrm{val}(m_1), \dots, \mathrm{val}(m_p)$, $S(L)$ is $\mathrm{val}(a)$ followed by
+$\ell$, and $S(Y)$ is $\mathrm{val}(b_1), \dots, \mathrm{val}(b_p)$ followed by $y$. For a bit $t$
+let $\mathrm{blk}(t)$ be the list $(\mathrm{true}, t, \mathrm{true}, \mathrm{false})$, and put
+$d_i = b_i \wedge (m_i \vee a)$. Then $p + 1$ steps of the subset-sum emitter machine lead from
+label $\mathrm{pr}$ with state $v$ and stacks $S$ to label $\mathrm{rend}$ with some state and
+some stacks $S'$ such that: $S'(R)$ is empty; $S'(\mathrm{Rt})$ is
+$\mathrm{val}(m_p), \dots, \mathrm{val}(m_1)$ followed by $S(\mathrm{Rt})$; $S'(Y) = y$; $S'(Z)$
+is $\mathrm{val}(b_p), \dots, \mathrm{val}(b_1)$ followed by $S(Z)$; $S'(O)$ is the concatenation
+$\mathrm{blk}(d_p) \cdots \mathrm{blk}(d_1)$ followed by $S(O)$; and every stack other than $R$,
+$\mathrm{Rt}$, $Y$, $Z$ and $O$ is unchanged. -/
 theorem pr_run (a : Bool) (l : List Sym) : ∀ (rs bs : List Bool) (v : Bool)
     (St : ∀ k, List (Γ k)) (yr : List Sym), rs.length = bs.length →
     St .R = rs.map Sym.val → St .L = .val a :: l → St .Y = bs.map Sym.val ++ yr →
@@ -544,8 +697,22 @@ theorem pr_run (a : Bool) (l : List Sym) : ∀ (rs bs : List Bool) (v : Bool)
       rw [hS' j h1 h2 h3 h4 h5]
       simp [h1, h2, h3, h4, h5]
 
-/-- The pair walk: rows from the vertex marks on `L` (top first), columns on `R`; after each row
-`rend` restores `R` from `Rt` and `rmv` moves the row vertex onto `R`. -/
+/-- **Run of the subset-sum emitter's pair walk.** Let $L_m \ne []$, $r_m$ and $w$ be lists of
+booleans, and for a list $\ell$ of booleans write $\bar\ell$ for the list of mark symbols
+$\mathrm{val}(x)$, $x \in \ell$. Let $(a_1, c_1), \dots, (a_m, c_m)$ be the mark pairs
+$\mathrm{walkM}(L_m, r_m)$, and suppose $w = (b_1, \dots, b_m)$ has the same length $m$. Start the
+emitter machine at label $\mathrm{pr}$ with any internal state $v$ and stacks $S$ such that
+$S_L = \bar L_m$, $S_R = \bar r_m$, $S_{Rt}$ is empty and $S_Y = \bar w \mathbin{+\!\!+} y$ for a
+list of symbols $y$. Then after exactly $2m + 3|L_m|$ steps the machine is at label
+$\mathrm{vend}$, with some internal state $v'$ and stacks $S'$ such that $S'_L$ and $S'_{Rt}$ are
+empty, $S'_R = \overline{\mathrm{rev}(L_m) \mathbin{+\!\!+} r_m}$, $S'_Y = y$,
+$S'_Z = \mathrm{rev}(\bar w) \mathbin{+\!\!+} S_Z$ and $S'_O = \mathrm{blk}(t_m) \mathbin{+\!\!+}
+\cdots \mathbin{+\!\!+} \mathrm{blk}(t_1) \mathbin{+\!\!+} S_O$,
+where $t_i = b_i \wedge (c_i \vee a_i)$ and $\mathrm{blk}(t) = [\mathrm{true}, t, \mathrm{true},
+\mathrm{false}]$; every stack other than $L$, $R$, $Rt$, $Y$, $Z$ and $O$ is unchanged.
+
+The rows of the walk come from the vertex marks on $L$ (top first) and the columns from the marks
+on $R$; after each row the column marks are restored from $Rt$ and the row mark moves onto $R$. -/
 theorem walk_run : ∀ (Lm rm wb : List Bool) (v : Bool) (St : ∀ k, List (Γ k)) (yr : List Sym),
     Lm ≠ [] → wb.length = (walkM Lm rm).length → St .L = Lm.map Sym.val →
     St .R = rm.map Sym.val → St .Rt = [] → St .Y = wb.map Sym.val ++ yr →
@@ -613,7 +780,20 @@ theorem walk_run : ∀ (Lm rm wb : List Bool) (v : Bool) (St : ∀ k, List (Γ k
             rw [hS' j h1 h2 h3 h4 h5 h6, update_of_ne h2, update_of_ne h1, hS₂ j h3 h2,
               hS₁ j h2 h3 h4 h5 h6]
 
-/-- One vertex number: write its top digit, walk all pairs, then restore `Y` from `Z`. -/
+/-- **Subset-sum emitter: one vertex number.** Stacks are listed top first. Let $n$ be a natural
+number, $p_0, \dots, p_{P-1}$ the pairs $(i, j)$ with $i < j < n$ in encoding order (rows $i$
+ascending, within a row $j$ descending), $(\beta_0, \dots, \beta_{P-1})$ a list of $P$ pair bits
+and $w < n$ a vertex. Let $N_w = 4^P + \sum_q 4^q$, the sum over the $q < P$ such that $\beta_q$
+is true and $w$ is an endpoint of $p_q$, and let $m_u$ be true if $u = w$ and false otherwise.
+Let $v$ be a Boolean state and $S$ stack contents such that $S(L)$ is
+$\mathrm{val}(m_{n-1}), \dots, \mathrm{val}(m_0)$, $S(Y)$ is
+$\mathrm{val}(\beta_{P-1}), \dots, \mathrm{val}(\beta_0)$, and $S(R)$, $S(\mathrm{Rt})$ and $S(Z)$
+are empty. Then $3P + 3n + 2$ steps of the subset-sum emitter machine lead from label
+$\mathrm{vtx}$ with state $v$ and stacks $S$ to label $\mathrm{vchk}$ with some state and some
+stacks $S'$ such that: $S'(L)$, $S'(\mathrm{Rt})$ and $S'(Z)$ are empty; $S'(R)$ is
+$\mathrm{val}(m_0), \dots, \mathrm{val}(m_{n-1})$; $S'(Y) = S(Y)$; $S'(O)$ is the self-delimiting
+encoding of the binary representation of $N_w$ (least significant bit first) followed by $S(O)$;
+and every stack other than $L$, $R$, $\mathrm{Rt}$, $Y$, $Z$ and $O$ is unchanged. -/
 theorem round_run (n : ℕ) (bits : List Bool) (hb : bits.length = (pairs n).length) (w : ℕ)
     (hw : w < n) (v : Bool) (St : ∀ k, List (Γ k)) (hL : St .L = (mkL n w).map Sym.val)
     (hR : St .R = []) (hRt : St .Rt = []) (hY : St .Y = bits.reverse.map Sym.val)
@@ -649,7 +829,15 @@ theorem replicate_append_cons {α : Type} (a : ℕ) (x : α) (l : List α) :
   | zero => rfl
   | succ a ih => simp [List.replicate_succ, ih]
 
-/-- Unmarked vertices on `R` move onto `L`. -/
+/-- **Subset-sum emitter: moving unmarked vertices back to L.** Let $c$ be a natural number,
+$\rho = (\rho_1, \dots, \rho_k)$ a list of bits, $v$ a Boolean state and $S$ stack contents whose
+stack $R$ holds, top first, $c$ copies of $\mathrm{val}(\mathrm{false})$ followed by
+$\mathrm{val}(\rho_1), \dots, \mathrm{val}(\rho_k)$. Then $c$ steps of the subset-sum emitter
+machine lead from label $\mathrm{rs}$ with state $v$ and stacks $S$ back to label $\mathrm{rs}$
+with some state and some stacks $S'$ such that $S'(R)$ is
+$\mathrm{val}(\rho_1), \dots, \mathrm{val}(\rho_k)$, $S'(L)$ is $c$ copies of
+$\mathrm{val}(\mathrm{false})$ followed by $S(L)$, and every stack other than $R$ and $L$ is
+unchanged. -/
 theorem rsF_run (c : ℕ) : ∀ (v : Bool) (St : ∀ k, List (Γ k)) (rest : List Bool),
     St .R = (List.replicate c false ++ rest).map Sym.val →
     ∃ v' S', Run prog c ⟨some .rs, v, St⟩ ⟨some .rs, v', S'⟩ ∧ S' .R = rest.map Sym.val ∧
@@ -666,8 +854,15 @@ theorem rsF_run (c : ℕ) : ∀ (v : Bool) (St : ∀ k, List (Γ k)) (rest : Lis
       · rw [hL']; simp [List.replicate_succ']
       · rw [hS' j h1 h2]; simp [h1, h2]
 
-/-- Moving the marks back from `R` to `L`, the mark moves from vertex `w + 1` to `w`: when the
-marked vertex is popped, the vertex below it on `L` takes the mark. -/
+/-- **Run of the mark-return loop of the subset-sum emitter.** Let $n, w \in \mathbb{N}$ with
+$w + 1 < n$. Start the VERTEX-COVER to SUBSET-SUM machine at label $\mathsf{rs}$ with any state
+bit and with stacks $S$ in which stack $\mathsf{L}$ is empty and stack $\mathsf{R}$ holds, top
+first, the symbols $\mathrm{val}(b_0), \dots, \mathrm{val}(b_{n-1})$, where $b_i$ is true exactly
+when $i = w + 1$. Then after exactly $n + 1$ steps the machine is at label $\mathsf{vtx}$ with
+some state bit and stacks $S'$ in which $\mathsf{R}$ is empty, $\mathsf{L}$ holds, top first, the
+symbols $\mathrm{val}(c_{n-1}), \dots, \mathrm{val}(c_0)$, where $c_i$ is true exactly when
+$i = w$, and every stack other than $\mathsf{R}$ and $\mathsf{L}$ is as in $S$. So the vertex
+mark moves from vertex $w + 1$ to vertex $w$. -/
 theorem rs_run (n w : ℕ) (hw : w + 1 < n) (v : Bool) (St : ∀ k, List (Γ k))
     (hR : St .R = ((List.range n).map (· == w + 1)).map Sym.val) (hL : St .L = []) :
     ∃ v' S', Run prog (n + 1) ⟨some .rs, v, St⟩ ⟨some .vtx, v', S'⟩ ∧
@@ -687,7 +882,23 @@ theorem rs_run (n w : ℕ) (hw : w + 1 < n) (v : Bool) (St : ∀ k, List (Γ k))
     simp [List.replicate_succ, replicate_append_cons]
   · rw [hS₃ j h1 h2]; simp [h1, h2, hS₁ j h1 h2]
 
-/-- The vertex numbers, from vertex `w` down to `0`. -/
+/-- **Run of the vertex-number phase of the subset-sum emitter.** Let $n \in \mathbb{N}$, let
+$p_0, \dots, p_{P-1}$ be the vertex pairs $(i, j)$ with $i < j < n$, listed with $i$ ascending
+and, for each $i$, with $j$ descending, let $\beta_0, \dots, \beta_{P-1}$ be bits, and let
+$w < n$. For a vertex $u$ let $a_u$ be $4^P$ plus the sum of $4^q$ over the indices $q < P$ such
+that $\beta_q$ is true and $p_q$ contains $u$. Start the VERTEX-COVER to SUBSET-SUM machine at
+label $\mathsf{vtx}$ with any state bit and with stacks $S$ in which stack $\mathsf{L}$ holds, top
+first, the symbols $\mathrm{val}(c_{n-1}), \dots, \mathrm{val}(c_0)$, where $c_i$ is true exactly
+when $i = w$, the stacks $\mathsf{R}$, $\mathsf{Rt}$ and $\mathsf{Z}$ are empty, and stack
+$\mathsf{Y}$ holds, top first, the symbols
+$\mathrm{val}(\beta_{P-1}), \dots, \mathrm{val}(\beta_0)$. Then within at most
+$(w + 1)(3P + 4n + 4)$ steps the machine reaches label $\mathsf{hv}$ with some state bit and
+stacks $S'$ in which the output stack $\mathsf{O}$ holds, top first, the self-delimiting binary
+encodings of $a_0, a_1, \dots, a_w$ followed by the contents of $\mathsf{O}$ in $S$, and every
+stack other than $\mathsf{L}$, $\mathsf{R}$, $\mathsf{Rt}$, $\mathsf{Y}$, $\mathsf{Z}$ and
+$\mathsf{O}$ is as in $S$. Here the binary encoding lists the bits least significant first, and
+the self-delimiting encoding replaces each bit $b$ by $\mathrm{true}, b$ and appends
+$\mathrm{false}$. -/
 theorem vtx_run (n : ℕ) (bits : List Bool) (hb : bits.length = (pairs n).length) (w : ℕ) :
     w < n → ∀ (v : Bool) (St : ∀ k, List (Γ k)), St .L = (mkL n w).map Sym.val → St .R = [] →
     St .Rt = [] → St .Y = bits.reverse.map Sym.val → St .Z = [] →
@@ -722,7 +933,14 @@ theorem vtx_run (n : ℕ) (bits : List Bool) (hb : bits.length = (pairs n).lengt
         simp
       · rw [hS₄ j h1 h2 h3 h4 h5 h6, hS₃ j h2 h1, hS₁ j h1 h2 h3 h4 h5 h6]
 
-/-- One halving: `A = 2c + r` is drained, `c` units go to `H`, the bit `r` onto `T`. -/
+/-- **One halving step of the binary conversion (SUBSET-SUM reduction machine).** Let $c$ and $p$
+be natural numbers, $r$ a bit (read as $0$ or $1$ in arithmetic), $v$ a value of the machine's
+Boolean flag and $S$ an assignment of contents to the stacks. Suppose stack $A$ holds $2c + r$
+copies of the unit symbol and stack $H$ holds $p$ copies. Then, starting at label $\mathrm{hv0}$
+with flag $v$ and stacks $S$, the machine reaches label $\mathrm{hvB}$ in exactly $2c + r + 1$
+steps, with some flag $v'$ and stacks $S'$ such that $S'(A)$ is empty, $S'(H)$ holds $p + c$
+copies of the unit symbol, $S'(T)$ is the input-bit symbol $\mathrm{bit}(r)$ on top of $S(T)$,
+and every stack other than $A$, $H$, $T$ holds the same contents as in $S$. -/
 theorem hv0_run : ∀ (c : ℕ) (r : Bool) (p : ℕ) (v : Bool) (St : ∀ k, List (Γ k)),
     St .A = cnt U (2 * c + r.toNat) → St .H = cnt U p →
     ∃ v' S', Run prog (2 * c + r.toNat + 1) ⟨some .hv0, v, St⟩ ⟨some .hvB, v', S'⟩ ∧
@@ -748,8 +966,16 @@ theorem hv0_run : ∀ (c : ℕ) (r : Bool) (p : ℕ) (v : Bool) (St : ∀ k, Lis
         by simp [hT'], fun j h1 h2 h3 => ?_⟩
       rw [hS' j h1 h2 h3]; simp [h1, h2]
 
-/-- Binary conversion: from `A = k`, push the bits of `encodeNat k` onto `T`, least significant
-first. -/
+/-- **Binary conversion (SUBSET-SUM reduction machine).** Let $k$ be a natural number, $v$ a value
+of the machine's Boolean flag and $S$ an assignment of contents to the stacks, and list the binary
+digits of $k$ least significant first, without leading zeros (so there are none for $k = 0$).
+Suppose stack $A$ holds $k$ copies of the unit symbol and stack $H$ is empty. Then, starting at
+label $\mathrm{hv}$ with flag $v$ and stacks $S$, the machine reaches label $\mathrm{tem0}$ in at
+most $6k + 1$ steps, with some flag $v'$ and stacks $S'$ such that $S'(T)$ is the reverse of the
+list of input-bit symbols $\mathrm{bit}(b)$ for these binary digits $b$ of $k$, followed by
+$S(T)$, and every stack other than $A$, $H$, $T$ holds the same contents as in $S$.
+
+The machine thus pushes the binary digits of $k$ onto $T$ least significant first. -/
 theorem hv_run (k : ℕ) : ∀ (v : Bool) (St : ∀ k, List (Γ k)), St .A = cnt U k → St .H = [] →
     ∃ v' S', RunLe prog (6 * k + 1) ⟨some .hv, v, St⟩ ⟨some .tem0, v', S'⟩ ∧
       S' .T = ((encodeNat k).map Sym.bit).reverse ++ St .T ∧
@@ -779,7 +1005,14 @@ theorem hv_run (k : ℕ) : ∀ (v : Bool) (St : ∀ k, List (Γ k)), St .A = cnt
         simp
       · rw [hS₄ j h1 h2 h3, addU_single_ne _ _ _ h1, update_of_ne h2, hS₂ j h1 h2 h3]
 
-/-- Writing the remaining target bits: each `b` gives `b, true`. -/
+/-- **Run of the target-bit loop of the subset-sum emitter.** Let $l = (b_1, \dots, b_m)$ be a
+list of bits. Start the VERTEX-COVER to SUBSET-SUM machine at label $\mathsf{tem}$ with any state
+bit and with stacks $S$ in which stack $\mathsf{T}$ holds exactly the bit symbols of
+$b_1, \dots, b_m$, top first. Then after exactly $m + 1$ steps the machine is at label
+$\mathsf{done}$ with some state bit and stacks $S'$ in which the output stack $\mathsf{O}$ holds,
+top first, $\mathrm{true}, b_m, \mathrm{true}, b_{m-1}, \dots, \mathrm{true}, b_1$ followed by the
+contents of $\mathsf{O}$ in $S$, and every stack other than $\mathsf{T}$ and $\mathsf{O}$ is as in
+$S$. That is, each popped bit $b$ is written as $b$ and then $\mathrm{true}$. -/
 theorem tem_run : ∀ (l : List Bool) (v : Bool) (St : ∀ k, List (Γ k)), St .T = l.map Sym.bit →
     ∃ v' S', Run prog (l.length + 1) ⟨some .tem, v, St⟩ ⟨some .done, v', S'⟩ ∧
       S' .O = l.reverse.flatMap (fun b => [true, b]) ++ St .O ∧
@@ -793,8 +1026,15 @@ theorem tem_run : ∀ (l : List Bool) (v : Bool) (St : ∀ k, List (Γ k)), St .
         fun j h1 h2 => ?_⟩
       rw [hS' j h1 h2]; simp [h1, h2]
 
-/-- The target: skip the leading zero bits on `T` (most significant first), then write the rest
-delimited (the closing `false` is already on `O`). -/
+/-- **Run of the target-output phase of the subset-sum emitter.** Let $l$ be a list of bits, let
+$l'$ be $l$ with its leading $\mathrm{false}$ bits removed, and let $o$ be a list of bits. Start
+the VERTEX-COVER to SUBSET-SUM machine at label $\mathsf{tsk}$ with any state bit and with stacks
+$S$ in which stack $\mathsf{T}$ holds exactly the bit symbols of $l$, first bit on top, and the
+output stack $\mathsf{O}$ holds $\mathrm{false}$ followed by $o$. Then after exactly $|l| + 1$
+steps the machine is at label $\mathsf{done}$ with some state bit and stacks $S'$ in which
+$\mathsf{O}$ holds the self-delimiting encoding of the reverse of $l'$ followed by $o$, and every
+stack other than $\mathsf{T}$ and $\mathsf{O}$ is as in $S$. Here the self-delimiting encoding of
+a list replaces each bit $b$ by $\mathrm{true}, b$ and appends $\mathrm{false}$. -/
 theorem tsk_run : ∀ (l : List Bool) (v : Bool) (St : ∀ k, List (Γ k)) (o : List Bool),
     St .T = l.map Sym.bit → St .O = false :: o →
     ∃ v' S', Run prog (l.length + 1) ⟨some .tsk, v, St⟩ ⟨some .done, v', S'⟩ ∧
@@ -825,8 +1065,12 @@ theorem cmpOut_ne {m n : ℕ} (h : m ≠ n) : cmpOut (compare m n) = .bad := by
   · rw [Nat.compare_eq_lt.2 h]; rfl
   · rw [Nat.compare_eq_gt.2 h]; rfl
 
-/-- **The component.** From `start` with `x` on `X` (as `Sym.bit`s) and the other stacks empty,
-`prog` reaches `done` within `40 · (|x| + 1)⁴` steps with `reduceSS x` on `O`, top first. -/
+/-- **Run of the VERTEX-COVER to SUBSET-SUM machine.** Let $x$ be a bit string. Start the
+VERTEX-COVER to SUBSET-SUM machine at its start label with any state bit and with stacks in
+which the input stack $\mathsf{X}$ holds the bit symbols of $x$, first bit on top, and every other
+stack is empty. Then within at most $40(|x| + 1)^4$ steps the machine reaches the label
+$\mathsf{done}$ with some state bit and stacks in which the output stack $\mathsf{O}$ holds,
+top first, the image of $x$ under the bit-string reduction from VERTEX-COVER to SUBSET-SUM. -/
 theorem run (x : List Bool) (v : Bool) (St : ∀ k, List (Γ k))
     (hX : St .X = x.map Sym.bit) (h0 : ∀ k, k ≠ .X → St k = []) :
     ∃ v' S', RunLe prog (40 * (x.length + 1) ^ 4) ⟨some start, v, St⟩ ⟨some .done, v', S'⟩ ∧
