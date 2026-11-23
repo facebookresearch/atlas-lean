@@ -15,8 +15,7 @@ public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 # Closure, preservation and coefficients for constructible complexes
 
 The requests use actual sheaves, kernels/cokernels, algebraic stratifications
-and derived functors. The perverse t-structure is requested separately, in
-`WantedExt/AlgebraicGeometry/PerverseSheavesWanted.lean`.
+and derived functors. The perverse t-structure is not requested here.
 Sources: Dimca, *Sheaves in Topology*, Chapters 2–4; de Cataldo–Migliorini,
 https://arxiv.org/abs/0712.0349, §1.5.
 -/
@@ -58,6 +57,18 @@ public theorem_wanted scalarExtension_localSystem (k l : Type) [Field k] [Field 
 public instance_wanted constructible_isTriangulated (k : Type) [Field k]
     (X : ComplexScheme) [IsComplexVariety X] :
     (ConstructibleComplexes.boundedConstructible k X).IsTriangulated
+
+/-- The constant sheaf of a complex variety, placed in any single degree, is
+bounded constructible: a complex variety has a finite partition into smooth
+locally closed subvarieties, on which the constant sheaf restricts to a
+constant sheaf. -/
+public theorem_wanted constructible_constantSheaf (k : Type) [Field k]
+    (X : ComplexScheme) [IsComplexVariety X] (n : ℤ) :
+    ConstructibleComplexes.boundedConstructible k X
+      (DerivedCategory.Plus.ι.obj
+        ((DerivedCategory.Plus.singleFunctor (CoefficientSheaf k (space X)) n).obj
+          ((constantSheaf (Opens.grothendieckTopology (space X)) (ModuleCat.{0} k)).obj
+            (ModuleCat.of k k))))
 
 /-- Algebraic inverse image preserves bounded constructibility. -/
 public theorem_wanted constructible_pullback (k : Type) [Field k]

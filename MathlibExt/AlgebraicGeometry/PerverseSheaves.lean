@@ -48,9 +48,9 @@ stalk and costalk dimension conditions.
   constructible rational complexes, characterized by its support and
   cosupport conditions. The conditions determine it, so any two instances are
   equal (`PerverseSheafTheory.instSubsingleton`). Its existence on every
-  complex variety (Beilinson–Bernstein–Deligne) is requested by
-  `WantedExt.AlgebraicGeometry.PerverseSheavesWanted.perverseSheafTheory`;
-  this module only uses the interface, through `[PerverseSheafTheory X]`.
+  complex variety (Beilinson–Bernstein–Deligne) is not proved or requested in
+  this module, which provides no instance: the constructions below assume it,
+  through `[PerverseSheafTheory X]`.
 
 Given that characterized theory, `PerverseSheaf` is its heart and
 `perverseCohomology` is computed using Mathlib's truncations.
@@ -282,8 +282,8 @@ variety, characterized by its support and cosupport conditions: `K` is in
 `ᵖD^{≤ m}` iff `dim supp Hʲ(K) ≤ m - j` for all `j`, and in `ᵖD^{≥ m}` iff
 `dim {x | Hʲ(iₓ^! K) ≠ 0} ≤ j - m` for all `j`. These conditions determine the
 t-structure (`PerverseSheafTheory.instSubsingleton`). Its existence on every
-complex variety is requested by
-`WantedExt.AlgebraicGeometry.PerverseSheavesWanted.perverseSheafTheory`.
+complex variety is the theorem of Beilinson–Bernstein–Deligne; no instance is
+provided here.
 Source: de Cataldo–Migliorini (2005), §§3.3, 3.6; (2009), §2.3, (14), (15). -/
 class PerverseSheafTheory (X : ComplexScheme) [IsComplexVariety X] where
   /-- Closure of bounded constructible complexes under shifts and triangles. -/
