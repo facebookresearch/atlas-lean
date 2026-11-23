@@ -9,11 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
-public import MathlibExt.RingTheory.PowerSeries.BinomialProduct
+public import MathlibExt.RingTheory.Polynomial.PairwiseSumResultant
+public import MathlibExt.RingTheory.PowerSeries.BinomialProductGeometric
 
 /-!
 # Binomial convolutions for rational power series
@@ -61,22 +61,6 @@ public theorem_wanted exists_orthogonal_of_orthogonal_over_extension {F G : Type
     [Field G] [Algebra F G] {n : ℕ} (S : Set (Fin n → F)) (t : Fin n → G) (ht : t ≠ 0)
     (horth : ∀ s ∈ S, ∑ i, algebraMap F G (s i) * t i = 0) :
     ∃ u : Fin n → F, u ≠ 0 ∧ ∀ s ∈ S, ∑ i, s i * u i = 0
-
-/-- **Binomial product of shifted powers of geometric series.** For every field $K$ of
-characteristic $0$, all $j, k \in \mathbb{N}$ and all $\alpha, \beta \in K$,
-
-$$\frac{x^j}{(1 - \alpha x)^{j+1}} \odot \frac{x^k}{(1 - \beta x)^{k+1}} =
-\binom{j + k}{j} \frac{x^{j+k}}{(1 - (\alpha + \beta) x)^{j+k+1}},$$
-
-where $\odot$ is the binomial product.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Lemma 4 (`jis-2024-24.1.3-lem-4`). -/
-public theorem_wanted binomialProduct_X_pow_mul_inv_pow {K : Type*} [Field K] [CharZero K]
-    (j k : ℕ) (α β : K) :
-    binomialProduct (X ^ j * ((1 - C α * X)⁻¹) ^ (j + 1))
-        (X ^ k * ((1 - C β * X)⁻¹) ^ (k + 1)) =
-      ((j + k).choose j : PowerSeries K) * X ^ (j + k) * ((1 - C (α + β) * X)⁻¹) ^ (j + k + 1)
 
 /-- **Binomial product with a geometric series.** For every field $K$ of characteristic $0$, every
 power series $A(x)$ over $K$ and every $\beta \in K$,
@@ -153,30 +137,6 @@ public theorem_wanted binomialProduct_X_pow {K : Type*} [Field K] [CharZero K] (
     (A : PowerSeries K) :
     binomialProduct (X ^ m) A =
       C ((m.factorial : K)⁻¹) * X ^ m * (⇑(PowerSeries.derivative (R := K)))^[m] (X ^ m * A)
-
-/-- **Resultant identity for pairwise sums.** Let $K$ be a field of characteristic $0$, let
-$m, n \ge 0$ be integers, and let $\alpha_1, \dots, \alpha_m$ and $\beta_1, \dots, \beta_n$ be
-elements of $K$. Regard $f(y) = \prod_{i=1}^{m} (1 - y - \alpha_i x)$ and
-$g(y) = \prod_{j=1}^{n} (y - \beta_j x)$ as polynomials in $y$ with coefficients in $K[x]$,
-and let $\operatorname{Res}_{m,n}(f, g)$ be the determinant of their Sylvester matrix formed with
-the formal degrees $m$ and $n$. Then in $K[x]$
-
-$$
-\prod_{i=1}^{m} \prod_{j=1}^{n} \bigl(1 - (\alpha_i + \beta_j)x\bigr)
-= (-1)^{mn} \operatorname{Res}_{m,n}(f, g).
-$$
-
-With $U(x) = \prod_{i=1}^{m} (1 - \alpha_i x)$ and $V(x) = \prod_{j=1}^{n} (1 - \beta_j x)$, these
-are $f(y) = (1 - y)^m U(x / (1 - y))$ and $g(y) = y^n V(x / y)$, the form used in the source.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 10 (`jis-2024-24.1.3-thm-10`). -/
-public theorem_wanted prod_one_sub_add_eq_resultant {K : Type*} [Field K] [CharZero K] (m n : ℕ)
-    (α : Fin m → K) (β : Fin n → K) :
-    ∏ i, ∏ j, (1 - Polynomial.C (α i + β j) * Polynomial.X) =
-      (-1) ^ (m * n) * Polynomial.resultant
-        (∏ i, (1 - Polynomial.X - Polynomial.C (Polynomial.C (α i) * Polynomial.X)))
-        (∏ j, (Polynomial.X - Polynomial.C (Polynomial.C (β j) * Polynomial.X))) m n
 
 /-- **Binomial square of the Lucas generating function.** Let $K$ be a field of characteristic
 $0$, let $a, b \in K$, and let $g(x) = \sum_{n \ge 0} G_n x^n$ be a power series over $K$ with

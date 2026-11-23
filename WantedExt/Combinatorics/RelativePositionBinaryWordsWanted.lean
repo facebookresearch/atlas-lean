@@ -21,6 +21,8 @@ public import Mathlib.Topology.Instances.EReal.Lemmas
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
 public import MathlibExt.Combinatorics.Words.EquilibriousWord
+public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
+public import MathlibExt.Combinatorics.Words.PisaEigenvector
 
 /-!
 # Relative position in binary words (Coons–Ramsey–Strungaru)
@@ -733,31 +735,6 @@ public theorem_wanted golden_eigenvector_iff (M : Matrix (Fin 2) (Fin 2) ℤ) :
         (M.map (Int.cast : ℤ → ℝ)).charpoly =
           (X - C ((n : ℝ) + m * Real.goldenRatio)) * (X - C ((n : ℝ) + m * Real.goldenConj))
 
-/-- **Integer matrices with a Pisa eigenvector.** Let $j, m \ge 1$ be integers, let
-$\tau_{j,m} = (j + \sqrt{j^2 + 4m})/2$, and let $M$ be a $2 \times 2$ integer matrix.
-(a) If $j^2 + 4m$ is not a perfect square, then $(\tau_{j,m}, 1)^T$ is a right eigenvector of $M$
-over $\mathbb{R}$ if and only if $M$ has rows $(t + sj, ms)$ and $(s, t)$ for some integers $s, t$.
-(b) If $j^2 + 4m = r^2$ with $r$ a natural number, then $(\tau_{j,m}, 1)^T$ is a right
-eigenvector of $M$ over $\mathbb{R}$ if and only if $M$ has rows $(s, t)$ and $(u, v)$ with
-$u(j+r)^2 + 2(v-s)(j+r) - 4t = 0$.
-
-In (b) $r$ is the nonnegative root, as the paper's proof uses $\tau_{j,m} = (j + r)/2$. For the
-negative root the printed statement fails: for $j = 1$, $m = 2$, $r = -3$, the matrix $M$ with
-rows $(0, 0)$ and $(1, 1)$ satisfies $u(j+r)^2 + 2(v-s)(j+r) - 4t = 4 - 4 - 0 = 0$, but
-$\tau_{1,2} = 2$ and $M (2, 1)^T = (0, 3)^T$ is not a multiple of $(2, 1)^T$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 63
-(`jis-2025-25.1.5-thm-63`). -/
-public theorem_wanted pisa_eigenvector_iff (j m : ℕ) (hj : 1 ≤ j) (hm : 1 ≤ m)
-    (M : Matrix (Fin 2) (Fin 2) ℤ) :
-    let τ : ℝ := (j + Real.sqrt (j ^ 2 + 4 * m)) / 2
-    let IsEig := ∃ c : ℝ, (M.map (Int.cast : ℤ → ℝ)).mulVec ![τ, 1] = c • ![τ, 1]
-    ((¬ IsSquare (j ^ 2 + 4 * m)) → (IsEig ↔ ∃ s t : ℤ, M = !![t + s * j, m * s; s, t])) ∧
-      ∀ r : ℕ, j ^ 2 + 4 * m = r ^ 2 →
-        (IsEig ↔ ∃ s t u v : ℤ,
-          u * (j + r) ^ 2 + 2 * (v - s) * (j + r) - 4 * t = 0 ∧ M = !![s, t; u, v])
-
 open Polynomial in
 /-- **Integer matrices with a metallic-mean eigenvector.** Let $k \ge 1$ be an integer, let
 $\tau_k = (k + \sqrt{k^2 + 4})/2$ and $\tau_k' = (k - \sqrt{k^2 + 4})/2$, and let $M$ be a
@@ -929,24 +906,6 @@ public theorem_wanted letterPosition_diff_isomorphic_iff_fibonacci {w : ℕ → 
         letterPosition w true (n + 1) - letterPosition w true n = σa (w (n - 1)) ∧
           letterPosition w false (n + 1) - letterPosition w false n = σb (w (n - 1))) ↔
       w = (fun i => !fibInf i) ∨ w = fibInf
-
-/-- **Fibonacci and iccanobiF iterates of a.** Let $\varrho_F$ be the Fibonacci substitution
-$a \mapsto ab$, $b \mapsto a$ and let $\varrho_F'$ be the iccanobiF substitution $a \mapsto ba$,
-$b \mapsto a$, acting on finite words over the letters $a$ and $b$; thus $\varrho_F^m(a)$ is the
-finite Fibonacci word $f_m$ with each $0$ written as $a$ and each $1$ as $b$. Then for every
-$n \ge 1$, $ab\,\varrho_F^{2n}(a) = (\varrho_F')^{2n}(a)\,ba$ and
-$ba\,\varrho_F^{2n-1}(a) = (\varrho_F')^{2n-1}(a)\,ab$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 51
-(`jis-2025-25.1.5-prop-51`). -/
-public theorem_wanted fibonacci_iccanobiF_conjugate_a (n : ℕ) (hn : 1 ≤ n) :
-    [true, false] ++ (fibWord (2 * n)).map (!·) =
-        (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 *
-        n] [true] ++ [false, true] ∧
-      [false, true] ++ (fibWord (2 * n - 1)).map (!·) =
-        (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 * n -
-            1] [true] ++ [true, false]
 
 /-- **Conjugacy of the Fibonacci and iccanobiF iterates of $b$.** Let $\varrho_F'$ be the
 iccanobiF substitution $a \mapsto ba$, $b \mapsto a$, extended to finite words by concatenation,

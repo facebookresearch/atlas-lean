@@ -30,6 +30,7 @@ scale, summarizes their homology by [persistence modules and barcodes](algebraic
 and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero-dimensional part is
 [single-linkage hierarchical clustering](../ComputerScience/machine-learning/unsupervised-learning/single-linkage-hierarchical-clustering/README.md).
 
+- [Topological spaces and continuous maps](topological-spaces/README.md)
 - [General topology](general-topology/README.md)
 - [Descriptive set theory](descriptive-set-theory/README.md)
 - [Continuum theory and infinite-dimensional topology](continua-infinite-dimensional/README.md)
@@ -38,3 +39,5 @@ and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero
 - [Algebraic topology](algebraic-topology/README.md)
 - [Manifolds and geometric topology](manifolds-geometric-topology/README.md)
 - [Knot theory](knot-theory/README.md)
+- [Compactness and compactifications](compactness/README.md)
+- [Simplicial homotopy theory](simplicial-homotopy-theory/README.md)

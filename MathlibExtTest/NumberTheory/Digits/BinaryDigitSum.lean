@@ -10,9 +10,17 @@ module
 
 import MathlibExt.NumberTheory.Digits.BinaryDigitSum
 
-/-! # Tests for binary digit sums below a power of two -/
+/-! # Tests for binary digit sums -/
 
 open Finset MetaMathlibExt
+
+-- The lower summand can have an empty digit list, including at exponent zero.
+example (k : ℕ) : (Nat.digits 2 (2 ^ k)).sum = 1 := by
+  simpa using hammingWeight_two_pow_add k 0 (Nat.two_pow_pos k)
+
+-- All three lower bits are set just below the strict upper bound.
+example : (Nat.digits 2 15).sum = 4 :=
+  hammingWeight_two_pow_add 3 7 (by decide)
 
 -- At exponent zero the range contains just zero, whose digit list is empty.
 example : ∑ i ∈ range 1, (Nat.digits 2 i).sum = 0 := by

@@ -230,37 +230,6 @@ public theorem_wanted delannoyArray_rows_parity (R : ℕ → ℕ → ℤ)
     (R m 0 ≡ R (m + 1) 0 [ZMOD 2] → ∀ i, R m i ≡ R (m + 1) i [ZMOD 2]) ∧
       (¬ R m 0 ≡ R (m + 1) 0 [ZMOD 2] → ∀ i, ¬ R m i ≡ R (m + 1) i [ZMOD 2])
 
-/-- **Rows of iterated horizontal sums of a Delannoy array agree mod 2.** Let $R(m, n)$, for
-$m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all
-$m, n$. For an array $S$ let $(HS)(m, n) = S(m, n) + S(m, n+1)$, and write $R^i = H^i R$ for the
-$i$-fold horizontal sum. Then for every $i \ge 1$ and all $m, m', n \in \mathbb{N}$,
-$R^i(m, n) \equiv R^i(m', n) \pmod 2$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Corollary 14
-(`jis-2024-24.1.8-cor-14`). -/
-public theorem_wanted delannoyArray_horizontalSum_rows_modEq (R : ℕ → ℕ → ℤ)
-    (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (i : ℕ) (hi : 1 ≤ i)
-    (m m' n : ℕ) :
-    (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[i] R m n ≡
-      (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[i] R m' n [ZMOD 2]
-
-/-- **Parity of iterated horizontal sums of a Delannoy array with binomial seeds.** Let $R(m, n)$,
-for $m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for
-all $m, n$. For an array $S$ let $(HS)(m, n) = S(m, n) + S(m, n+1)$, and write $R^i = H^i R$ for
-the $i$-fold horizontal sum, so $R^0 = R$. Let $k \in \mathbb{N}$ and suppose
-$R(0, n) = \binom{k+n}{k}$ for all $n$; the values $R(m, 0)$ for $m \ge 1$ are arbitrary. Then
-every entry of $R^{k+1}$ is even, and for every $j \le k$ some entry of $R^j$ is odd.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Lemma 16
-(`jis-2024-24.1.8-lem-16`). -/
-public theorem_wanted delannoyArray_binomial_seeds_parity (R : ℕ → ℕ → ℤ)
-    (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (k : ℕ)
-    (hseed : ∀ n, R 0 n = (k + n).choose k) :
-    (∀ m n, (2 : ℤ) ∣ (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[k + 1] R m n) ∧
-      ∀ j ≤ k, ∃ m n, ¬ (2 : ℤ) ∣ (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[j] R m n
-
 /-- **First horizontal sums of a Delannoy array with binomial seeds.** Let $R(m, n)$, for
 $m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all
 $m, n$. Let $k \ge 1$ and suppose $R(0, n) = \binom{k+n}{k}$ for all $n$. Then for all $m$ and

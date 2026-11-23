@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
+public import MathlibExt.Analysis.Series.ThreeAdicMultiples
 public import MathlibExt.Analysis.SpecialFunctions.LambertSeries
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
@@ -73,20 +74,6 @@ public theorem_wanted tsum_threeAdic_parametric_multisection (q : ℂ) (b : ℕ 
         - q ^ x.1 * (q - 1) * b ((3 * x.2 + 3) * 3 ^ x.1))
       = ∑' m : ℕ, b (m + 1)
 
-/-- **Regrouping the multiples of 3 by their 3-adic factorization.** Let $(b_m)_{m \ge 1}$ be a
-sequence of complex numbers such that the family $(b_{3m})_{m \ge 1}$ is summable. Then
-$$\sum_{j \ge 1,\, n \ge 1} \bigl( b_{(3n-1) 3^j} + b_{(3n-2) 3^j} \bigr) =
-\sum_{m \ge 1} b_{3m},$$
-where the sum on the left is an unconditional sum over the pairs $(j, n)$.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Corollary 6, deduced identity in sum form (`jis-2024-24.5.5-cor-6`). -/
-public theorem_wanted tsum_threeAdic_multiples_regroup (b : ℕ → ℂ)
-    (hb : Summable fun m : ℕ => b (3 * (m + 1))) :
-    ∑' x : ℕ × ℕ, (b ((3 * x.2 + 2) * 3 ^ (x.1 + 1)) + b ((3 * x.2 + 1) * 3 ^ (x.1 + 1)))
-      = ∑' m : ℕ, b (3 * (m + 1))
-
 /-- **Parametric base-B multisection of a series.** Let $B \ge 2$ be a natural number, let $q$
 be a complex number and let $(c_m)_{m \ge 1}$ be a sequence of complex numbers. Suppose that the
 family $q^j c_{(Bn-k) B^j}$ indexed by the triples $(j, n, k)$ with $j \ge 0$, $n \ge 1$ and
@@ -106,20 +93,6 @@ public theorem_wanted tsum_baseAdic_parametric_multisection (B : ℕ) (hB : 2 �
     ∑' x : ℕ × ℕ, (q ^ x.1 * ∑ i : Fin (B - 1), c ((B * (x.2 + 1) - (i + 1)) * B ^ x.1)
         - q ^ x.1 * (q - 1) * c (B * (x.2 + 1) * B ^ x.1))
       = ∑' m : ℕ, c (m + 1)
-
-/-- **Regrouping the multiples of B by their B-adic factorization.** Let $B \ge 2$ be a natural
-number and let $(c_m)_{m \ge 1}$ be a sequence of complex numbers such that the family
-$(c_{Bm})_{m \ge 1}$ is summable. Then
-$$\sum_{j \ge 1,\, n \ge 1} \sum_{k=1}^{B-1} c_{(Bn-k) B^j} = \sum_{m \ge 1} c_{Bm},$$
-where the outer sum on the left is an unconditional sum over the pairs $(j, n)$.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 7, deduced identity in sum form (`jis-2024-24.5.5-prop-7`). -/
-public theorem_wanted tsum_baseAdic_multiples_regroup (B : ℕ) (hB : 2 ≤ B) (c : ℕ → ℂ)
-    (hc : Summable fun m : ℕ => c (B * (m + 1))) :
-    ∑' x : ℕ × ℕ, ∑ i : Fin (B - 1), c ((B * (x.2 + 1) - (i + 1)) * B ^ (x.1 + 1))
-      = ∑' m : ℕ, c (B * (m + 1))
 
 /-- **Weighted base-B multisection of a series.** Let $B \ge 2$ be a natural number, let
 $\varphi, \chi : \mathbb{N} \to \mathbb{C}$ be weights and let $(c_m)_{m \ge 1}$ be a sequence

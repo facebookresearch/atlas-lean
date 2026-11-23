@@ -9,13 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Group.Indicator
-public import Mathlib.Algebra.Group.Even
-public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Data.Nat.DyadicBlock
+public import MathlibExt.GameTheory.ChocolateBarNSProperty
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
 
@@ -38,36 +36,6 @@ a position of Grundy number `0` (Theorem 1 (i), the classical Sprague-Grundy the
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **NS property.** A function $h : \mathbb{N} \to \mathbb{N}$ has the *NS property* if it is
-monotone (weakly increasing) and, for all $z, z' \in \mathbb{N}$ and every natural number
-$i \ge 1$, $\lfloor z / 2^i \rfloor = \lfloor z' / 2^i \rfloor$ implies
-$\lfloor h(z) / 2^{i-1} \rfloor = \lfloor h(z') / 2^{i-1} \rfloor$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Definition 11 (text of arXiv:2207.09134v1, NS property in Section 2). -/
-public def HasNSProperty (h : ℕ → ℕ) : Prop :=
-  Monotone h ∧ ∀ z z' i : ℕ, 0 < i → z / 2 ^ i = z' / 2 ^ i →
-    h z / 2 ^ (i - 1) = h z' / 2 ^ (i - 1)
-
-/-- **Constant functions have the NS property.** For every natural number $c$, the constant
-function $\mathbb{N} \to \mathbb{N}$ with value $c$ has the NS property.
-
-Source: characteristic lemma for the NS property of Miyadera, Manabe and Singh,
-INTEGERS 25 (2025), Article G3, Definition 11. -/
-public theorem hasNSProperty_const (c : ℕ) : HasNSProperty fun _ ↦ c :=
-  ⟨monotone_const, fun _ _ _ _ _ ↦ rfl⟩
-
-/-- **The identity function lacks the NS property.** The identity function on the natural
-numbers does not have the NS property: $\lfloor 0/2 \rfloor = \lfloor 1/2 \rfloor$, but
-$0 \ne 1$.
-
-Source: characteristic lemma for the NS property of Miyadera, Manabe and Singh,
-INTEGERS 25 (2025), Article G3, Definition 11. -/
-public theorem not_hasNSProperty_id : ¬ HasNSProperty id := fun h ↦ by
-  have := h.2 0 1 1 Nat.one_pos rfl
-  simp at this
 
 /-- **Constant extension preserves the NS property.** Let $z \in \mathbb{N}$ and let
 $h : \mathbb{N} \to \mathbb{N}$ satisfy $h(a) \le h(b)$ whenever $a \le b \le z$, and
@@ -184,31 +152,6 @@ Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
 Article G3, Lemma 7 (`integers-2025-G3-lem-7`). -/
 public theorem_wanted hasNSProperty_div_two_pow {m : ℕ} (hm : 0 < m) :
     HasNSProperty fun x ↦ x / 2 ^ m
-
-/-- **Dyadic splitting of two numbers with different quotients.** Let $z, z', i$ be natural
-numbers with $\lfloor z / 2^i \rfloor < \lfloor z' / 2^i \rfloor$. Then there are natural numbers
-$c$, $s$ and $t$ with $s \ge i$, $t < 2^s$, $z = c \cdot 2^{s+1} + t$ and
-$c \cdot 2^{s+1} + 2^s \le z'$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 8 (b) (`integers-2025-G3-lem-8`). -/
-public theorem_wanted exists_split_of_div_two_pow_lt {z z' i : ℕ}
-    (h : z / 2 ^ i < z' / 2 ^ i) :
-    ∃ c s t : ℕ, i ≤ s ∧ t < 2 ^ s ∧ z = c * 2 ^ (s + 1) + t ∧
-      c * 2 ^ (s + 1) + 2 ^ s ≤ z'
-
-/-- **Indicator functions with the NS property.** Let $f : \mathbb{N} \to \mathbb{N}$ be monotone,
-with $f(x) \le 1$ for all $x$ and $f(x) = 1$ for some $x$. Then $f$ has the NS property if and
-only if there is an even $m \in \mathbb{N}$ such that $f$ is the indicator function of
-$\{n \in \mathbb{N} : n \ge m\}$, that is, $f(n) = 1$ for $n \ge m$ and $f(n) = 0$ for $n < m$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 9 (`integers-2025-G3-lem-9`). -/
-public theorem_wanted indicator_Ici_even_iff_hasNSProperty {f : ℕ → ℕ} (hf : Monotone f)
-    (hle : ∀ x, f x ≤ 1) (hone : ∃ x, f x = 1) :
-    (∃ m, Even m ∧ f = (Set.Ici m).indicator 1) ↔ HasNSProperty f
 
 /-- **Grundy number of a chocolate bar.** Let $f_1, \dots, f_s : \mathbb{N} \to \mathbb{N}$. For
 coordinates $x = (x_1, \dots, x_s) \in \mathbb{N}^s$ and a width $z \in \mathbb{N}$, the position

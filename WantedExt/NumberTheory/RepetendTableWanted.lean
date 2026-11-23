@@ -19,7 +19,9 @@ public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.RepetendTable
+public import MathlibExt.NumberTheory.RepetendTable.BaseShift
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
+public import MathlibExt.NumberTheory.RepetendTable.InversePairs
 
 /-!
 # Repetend tables
@@ -31,25 +33,19 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `MetaMathlibExt.long_division_remainder_expansion` is proved in
 `MathlibExt.NumberTheory.RepetendTable`.
 
+`MetaMathlibExt.digit_add_mul_modulus_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.BaseShift`.
+
 `MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
+
+`MetaMathlibExt.even_card_small_bases_orderOf` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InversePairs`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Raising the base by multiples of $n$ shifts repetend digits linearly.** Let $m$ and $j$ be
-natural numbers, $n \ge 1$ and $b \ge 2$. For a base $B$ write
-$d_j(B) = \lfloor m B^{j+1} / n \rfloor \bmod B$ for the $j$-th base-$B$ digit of $m/n$. Then
-there is a natural number $c < n$ such that $d_j(b + tn) = d_j(b) + tc$ for every natural number
-$t$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 3 (`integers-2025-A26-cor-3`). -/
-public theorem_wanted digit_add_mul_modulus_eq (m n b j : ℕ) (hn : 0 < n) (hb : 2 ≤ b) :
-    ∃ c < n, ∀ t : ℕ,
-      m * (b + t * n) ^ (j + 1) / n % (b + t * n) = m * b ^ (j + 1) / n % b + t * c
 
 /-- **The number of units of order $L$ is a multiple of $\varphi(L)$.** For natural numbers
 $n \ge 1$ and $L$, the number $E(L, n)$ of elements of order $L$ in the unit group
@@ -170,15 +166,6 @@ public theorem_wanted long_division_remainders_erase_one_eq_small_bases (n L b m
     (hm : m = 1 ∨ (m ∈ Finset.Icc 2 (n - 1) ∧ orderOf (m : ZMod n) = L)) :
     ((Finset.range L).image fun j => m * b ^ j % n).erase 1 =
       (Finset.Icc 2 (n - 1)).filter fun a : ℕ => orderOf (a : ZMod n) = L
-
-/-- **Small bases of order greater than two come in pairs.** For every natural number $n$ and
-every $L > 2$, the number of integers $b$ with $1 \le b < n$ and $\gcd(b, n) = 1$ whose
-multiplicative order modulo $n$ is $L$ is even.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 3 (`integers-2025-A26-lem-2`). -/
-public theorem_wanted even_card_small_bases_orderOf (n L : ℕ) (hL : 2 < L) :
-    Even ((Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L).card
 
 /-- **Repetend digits are symmetric under inverse indices.** Let $n, b, x, j, j'$ be natural
 numbers and $L \ge 1$, and suppose $b$ has multiplicative order $L$ modulo $n$. For $y, c \ge 0$

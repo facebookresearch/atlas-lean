@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Analysis.SpecialFunctions.Log.GuzmanSanchezLuca
+public import MathlibExt.Combinatorics.Enumerative.PellLucasNumber
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 
 /-!
@@ -22,8 +23,10 @@ are in `WantedExt.NumberTheory.KPellLucasCloseToPowerOfTwoWanted`.
 
 * `abs_log_one_add_lt_and_abs_lt_exp_sub_one` (Lemma 6): if `0 < a < 1` and `0 < |x| < a`, then
   `|log (1 + x)| < (-log (1 - a) / a) |x|` and `|x| < (a / (1 - e^{-a})) |eˣ - 1|`.
+* `lt_two_rpow_mul_mul_log_rpow_of_one_lt` (Lemma 7) applies the Guzmán Sánchez–Luca bound
+  to `x > 1`.
 
-## Proof
+## Proof of Lemma 6
 
 Both constants exceed `1`, because `log (1 - a) < -a` and `1 - a < e^{-a}`. For `x > 0` the
 bounds follow from `log (1 + x) < x` and `x < eˣ - 1`. For `x < 0` put `t = -x / a`, so that
@@ -35,6 +38,78 @@ concavity of `log` on `(0, ∞)` gives `t log (1 - a) < log (1 + x)`, and the st
 namespace MetaMathlibExt
 
 @[expose] public section
+
+/-- **$k$-generalized Pell–Lucas numbers.** For natural numbers $k$ and $n$, the $k$-generalized
+Pell–Lucas number $Q^{(k)}_n$ is the natural number defined by $Q^{(k)}_0 = Q^{(k)}_1 = 2$ and
+
+$$Q^{(k)}_{n+2} = 2 Q^{(k)}_{n+1} + \sum_{j} Q^{(k)}_{n-j},$$
+
+where $j$ runs over the integers with $0 \le j \le n$ and $j \le k - 2$. For $k \ge 2$ and
+$n \ge k - 2$ this reads $Q^{(k)}_{n+2} = 2 Q^{(k)}_{n+1} + Q^{(k)}_n + \cdots + Q^{(k)}_{n+2-k}$;
+for smaller $n$ the terms of negative index (the $k - 2$ initial zeros of the sequence) are
+dropped, and for $k \le 1$ the sum is empty.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Introduction. -/
+def kPellLucas (k : ℕ) : ℕ → ℕ
+  | 0 => 2
+  | 1 => 2
+  | n + 2 =>
+    2 * kPellLucas k (n + 1) + ∑ j ∈ Finset.range (min (k - 1) (n + 1)), kPellLucas k (n - j)
+decreasing_by all_goals omega
+
+/-- **Initial value of the generalized Pell–Lucas numbers.** For every natural number $k$, the
+$k$-generalized Pell–Lucas number $Q^{(k)}_0$ equals $2$.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Introduction. -/
+theorem kPellLucas_zero (k : ℕ) : kPellLucas k 0 = 2 := by
+  rw [kPellLucas]
+
+/-- **The $k$-Pell–Lucas number of index one.** For every natural number $k$, the $k$-Pell–Lucas
+number $Q^{(k)}_1$ equals $2$.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Introduction. -/
+theorem kPellLucas_one (k : ℕ) : kPellLucas k 1 = 2 := by
+  rw [kPellLucas]
+
+/-- **Recurrence for the $k$-Pell–Lucas numbers.** Let $Q^{(k)}_n$ denote the $k$-generalized
+Pell–Lucas numbers. For all natural numbers $k$ and $n$ with $k \le n + 2$,
+$Q^{(k)}_{n+2} = 2 Q^{(k)}_{n+1} + \sum_{j=0}^{k-2} Q^{(k)}_{n-j}$, where the sum is empty when
+$k < 2$. So once all $k - 1$ earlier terms have nonnegative index, the full recurrence holds.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Introduction. -/
+theorem kPellLucas_add_two (k n : ℕ) (hn : k - 2 ≤ n) :
+    kPellLucas k (n + 2) =
+      2 * kPellLucas k (n + 1) + ∑ j ∈ Finset.range (k - 1), kPellLucas k (n - j) := by
+  rw [kPellLucas, min_eq_left (by omega)]
+
+/-- **The $2$-generalized Pell–Lucas numbers are the Pell–Lucas numbers.** For every natural number
+$n$, the $2$-generalized Pell–Lucas number $Q^{(2)}_n$ equals the $n$th Pell–Lucas number $Q_n$;
+this is the sequence $2, 2, 6, 14, 34, \ldots$.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Introduction. -/
+theorem kPellLucas_two : kPellLucas 2 = pellLucas := by
+  funext n
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    match n with
+    | 0 => rw [kPellLucas]; rfl
+    | 1 => rw [kPellLucas]; rfl
+    | n + 2 =>
+      rw [kPellLucas, pellLucas_add_two, ih (n + 1) (by omega), ← ih n (by omega)]
+      simp
+
+/-- **Two values of the $3$-generalized Pell–Lucas numbers.** The $3$-generalized Pell–Lucas
+numbers $Q^{(3)}_n$ satisfy $Q^{(3)}_3 = 16$ and $Q^{(3)}_6 = 260$.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Theorem 1. -/
+theorem kPellLucas_three_small : kPellLucas 3 3 = 16 ∧ kPellLucas 3 6 = 260 := by
+  constructor <;> simp [kPellLucas, Finset.sum_range_succ]
 
 /-- **Linear bounds for the logarithm and the exponential near zero (Lemma 6).** Let $a$ and $x$
 be real numbers with $0 < a < 1$ and $0 < |x| < a$. Then
@@ -100,6 +175,19 @@ theorem abs_log_one_add_lt_and_abs_lt_exp_sub_one (a x : ℝ) (ha₀ : 0 < a)
       calc x < Real.exp x - 1 := by linarith
         _ < a / (1 - Real.exp (-a)) * (Real.exp x - 1) :=
             lt_mul_of_one_lt_left (by linarith) hk
+
+set_option linter.unusedVariables false in
+/-- **Lemma 7.** If `ℓ ≥ 1`, `T > (4ℓ²)^ℓ` and `T > x / (log x)^ℓ`, then
+`x < 2^ℓ T (log T)^ℓ`; stated for `x > 1`, where `(log x)^ℓ` is a real power of a positive
+number.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 7 (`integers-2025-A67-lem-7`). -/
+public theorem lt_two_rpow_mul_mul_log_rpow_of_one_lt (ℓ T x : ℝ)
+    (hℓ : 1 ≤ ℓ) (hx : 1 < x)
+    (hT : (4 * ℓ ^ 2) ^ ℓ < T) (hTx : x / Real.log x ^ ℓ < T) :
+    x < 2 ^ ℓ * T * Real.log T ^ ℓ :=
+  lt_two_rpow_mul_mul_log_rpow hℓ hT hTx
 
 end
 
