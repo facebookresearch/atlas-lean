@@ -41,10 +41,13 @@ namespace MathlibExt.NumberTheory.BreuschWanted.Internal
 open Nat Finset
 
 -- M(t) = (6t)! / ((3t)! (2t)! t !), the multinomial for the 3.4 primorial bound.
-/-- Multinomial `(6 * t)! / ((3 * t)! * (2 * t)! * t!)`. -/
+/-- **The multinomial coefficient $M(t)$ for the 3.4 primorial bound.** For a natural number
+$t$, $M(t) = \frac{(6t)!}{(3t)!\,(2t)!\,t!}$, defined as the quotient of $(6t)!$ by
+$(3t)!\,(2t)!\,t!$ in natural-number division. -/
 def M34 (t : ℕ) : ℕ := (6*t)! / ((3*t)! * (2*t)! * t !)
 
-/-- The multinomial denominator divides `(6 * t)!`. -/
+/-- **Factorial divisibility behind the multinomial coefficient.** For every natural number $t$,
+the product $(3t)!\,(2t)!\,t!$ divides $(6t)!$. -/
 lemma M34_dvd (t : ℕ) : (3*t)! * (2*t)! * t ! ∣ (6*t)! := by
   have h1 : (3*t)! * (2*t)! ∣ (5*t)! := by
     have := Nat.factorial_mul_factorial_dvd_factorial_add (3*t) (2*t)
@@ -56,18 +59,23 @@ lemma M34_dvd (t : ℕ) : (3*t)! * (2*t)! * t ! ∣ (6*t)! := by
     _ ∣ (5*t)! * t ! := Nat.mul_dvd_mul_right h1 _
     _ ∣ (6*t)! := h2
 
-/-- `M34 t` is positive. -/
+/-- **Positivity of the multinomial coefficient $M(t)$.** Let $M(t)$ be the natural-number
+quotient of $(6t)!$ by $(3t)!\,(2t)!\,t!$. For every natural number $t$, $M(t) > 0$. -/
 lemma M34_pos (t : ℕ) : 0 < M34 t := by
   unfold M34
   exact Nat.div_pos (Nat.le_of_dvd (Nat.factorial_pos _) (M34_dvd t)) (by positivity)
 
-/-- Clearing the denominator of `M34 t`. -/
+/-- **Cleared-denominator identity for the multinomial coefficient $M(t)$.** Let $M(t)$ be the
+natural-number quotient of $(6t)!$ by $(3t)!\,(2t)!\,t!$. For every natural number $t$,
+$M(t) \cdot \big((3t)!\,(2t)!\,t!\big) = (6t)!$. -/
 lemma M34_eq_mul (t : ℕ) : M34 t * ((3*t)! * (2*t)! * t !) = (6*t)! := by
   unfold M34
   exact Nat.div_mul_cancel (M34_dvd t)
 
 -- C(6t,3t) * C(3t,t) = M(t).
-/-- `M34` as a product of binomial coefficients. -/
+/-- **The multinomial coefficient $M(t)$ as a product of binomial coefficients.** Let
+$M(t) = \frac{(6t)!}{(3t)!\,(2t)!\,t!}$. For every natural number $t$,
+$M(t) = \binom{6t}{3t} \binom{3t}{t}$. -/
 lemma M34_eq_choose_mul (t : ℕ) : M34 t = Nat.choose (6*t) (3*t) * Nat.choose (3*t) t := by
   have hX : 0 < (3*t)! * (2*t)! * t ! := by positivity
   apply Nat.mul_right_cancel hX
@@ -90,7 +98,8 @@ lemma M34_eq_choose_mul (t : ℕ) : M34 t = Nat.choose (6*t) (3*t) * Nat.choose 
   rw [this]; exact e1.symm
 
 -- Central binomial ≤ half of 2^{2m}.
-/-- Central binomial coefficient bounded by half a power of two. -/
+/-- **Half-power bound for the central binomial coefficient.** For every natural number
+$m \ge 1$, $\binom{2m}{m} \le 2^{2m-1}$. -/
 lemma choose_middle_half {m : ℕ} (hm : 1 ≤ m) : Nat.choose (2*m) m ≤ 2^(2*m-1) := by
   have pascal : Nat.choose (2*m) m
       = Nat.choose (2*m-1) (m-1) + Nat.choose (2*m-1) m := by
@@ -119,7 +128,8 @@ lemma choose_middle_half {m : ℕ} (hm : 1 ≤ m) : Nat.choose (2*m) m ≤ 2^(2*
   omega
 
 -- (3t)!/(t !)^3 ≤ 3^{3t}, in multiplicative form.
-/-- Multinomial bound `(3 * t)! ≤ 3 ^ (3 * t) * (t!) ^ 3`. -/
+/-- **Multinomial bound for $(3t)!$.** For every natural number $t$,
+$(3t)! \le 3^{3t} (t!)^3$. -/
 lemma multinomial3_le (t : ℕ) : (3*t)! ≤ 3^(3*t) * (t !)^3 := by
   induction t with
   | zero => norm_num
@@ -146,7 +156,8 @@ lemma multinomial3_le (t : ℕ) : (3*t)! ≤ 3^(3*t) * (t !)^3 := by
       _ = 27 * 3^(3*t) * ((t+1)^3 * (t !)^3) := by ring
 
 -- C(3t,t)*C(2t,t)*(t !)^3 = (3t)!.
-/-- Binomial-factor identity for `(3 * t)!`. -/
+/-- **Binomial factorization of the factorial of a multiple of three.** For every natural
+number $t$, $\binom{3t}{t} \binom{2t}{t} (t!)^3 = (3t)!$. -/
 lemma choose3_mul_choose2 (t : ℕ) :
     Nat.choose (3*t) t * Nat.choose (2*t) t * (t !)^3 = (3*t)! := by
   have e1 : Nat.choose (3*t) t * (t ! * ((3*t) - t)!) = (3*t)! := by
@@ -166,7 +177,8 @@ lemma choose3_mul_choose2 (t : ℕ) :
     _ = (3*t)! := e1
 
 -- 4^t ≤ (2t+1) * C(2t,t).
-/-- `4 ^ t ≤ (2 * t + 1) * C(2 * t, t)`. -/
+/-- **Four-power lower bound for the central binomial coefficient.** For every natural number
+$t$, $4^t \le (2t+1)\binom{2t}{t}$. -/
 lemma four_pow_le (t : ℕ) : 4^t ≤ (2*t+1) * Nat.choose (2*t) t := by
   have hsum : (2:ℕ)^(2*t) = ∑ k ∈ Finset.range (2*t+1), Nat.choose (2*t) k :=
     (Nat.sum_range_choose (2*t)).symm
@@ -183,7 +195,9 @@ lemma four_pow_le (t : ℕ) : 4^t ≤ (2*t+1) * Nat.choose (2*t) t := by
   omega
 
 -- Key: 2*M(t) ≤ 432^t * (2t+1).
-/-- Key estimate `2 * M34 t ≤ 432 ^ t * (2 * t + 1)`. -/
+/-- **Key estimate for the multinomial coefficient $M(t)$.** Let
+$M(t) = \frac{(6t)!}{(3t)!\,(2t)!\,t!}$. For every natural number $t \ge 1$,
+$2\,M(t) \le 432^t \, (2t + 1)$. -/
 lemma M34_key (t : ℕ) (ht : 1 ≤ t) : 2 * M34 t ≤ 432^t * (2*t+1) := by
   have hC : 0 < Nat.choose (2*t) t := Nat.choose_pos (by omega)
   have h1 : 2 * Nat.choose (6*t) (3*t) ≤ 2^(6*t) := by
@@ -218,12 +232,19 @@ lemma M34_key (t : ℕ) (ht : 1 ≤ t) : 2 * M34 t ≤ 432^t * (2*t+1) := by
   exact le_of_mul_le_mul_right hmain hC
 
 set_option exponentiation.threshold 300000 in
-/-- Threshold inequality at `t = 230`, by direct computation. -/
+/-- **Base case of the threshold inequality.** The inequality
+$10^{1145} \cdot 432^{230} \cdot 461 \le 2 \cdot 34^{1145}$ holds; this is the inequality
+$10^{5t-5} \cdot 432^{t} \cdot (2t+1) \le 2 \cdot 34^{5t-5}$ at $t = 230$.
+
+Checked by direct computation. -/
 lemma P34_base : 10^(5*230-5) * 432^230 * (2*230+1) ≤ 2 * 34^(5*230-5) := by
   decide
 
 -- Threshold inequality, induction step.
-/-- Induction step for the threshold inequality. -/
+/-- **Induction step of the threshold inequality.** Let $t \ge 230$ be a natural number. If
+$10^{5t-5} \cdot 432^{t} \cdot (2t+1) \le 2 \cdot 34^{5t-5}$, then
+$10^{5t} \cdot 432^{t+1} \cdot (2t+3) \le 2 \cdot 34^{5t}$, which is the same inequality with
+$t+1$ in place of $t$. -/
 lemma P34_step (t : ℕ) (ht : 230 ≤ t)
     (ih : 10 ^ (5 * t - 5) * 432 ^ t * (2 * t + 1) ≤ 2 * 34 ^ (5 * t - 5)) :
     10 ^ (5 * (t + 1) - 5) * 432 ^ (t + 1) * (2 * (t + 1) + 1) ≤ 2 * 34 ^ (5 * (t + 1) - 5) := by
@@ -244,14 +265,17 @@ lemma P34_step (t : ℕ) (ht : 230 ≤ t)
   rw [eL, eR]
   exact Nat.mul_le_mul ih hkey'
 
-/-- Threshold inequality for all `t ≥ 230`. -/
+/-- **Threshold inequality for the multinomial bound.** For every natural number $t \ge 230$,
+$10^{5t-5} \cdot 432^{t} \cdot (2t+1) \le 2 \cdot 34^{5t-5}$. -/
 lemma P34 (t : ℕ) (ht : 230 ≤ t) :
     10^(5*t-5) * 432^t * (2*t+1) ≤ 2 * 34^(5*t-5) := by
   induction t, ht using Nat.le_induction with
   | base => exact P34_base
   | succ t h ih => exact P34_step t h ih
 
-/-- `M34` bounded by `3.4 ^ (5 * t - 5)` in integer form for `t ≥ 230`. -/
+/-- **Power bound for the multinomial coefficient $M(t)$, large $t$.** Let
+$M(t) = \frac{(6t)!}{(3t)!\,(2t)!\,t!}$. For every natural number $t \ge 230$,
+$10^{5t-5} \cdot M(t) \le 34^{5t-5}$, that is, $M(t) \le 3.4^{5t-5}$. -/
 lemma M34_bound_large (t : ℕ) (ht : 230 ≤ t) : 10^(5*t-5) * M34 t ≤ 34^(5*t-5) := by
   have h1 : 1 ≤ t := by omega
   have hkey := M34_key t h1
@@ -268,12 +292,18 @@ set_option exponentiation.threshold 2048 in
 set_option maxRecDepth 16384 in
 set_option maxHeartbeats 3200000 in
 -- Direct evaluation covers the finite gap below the analytic threshold.
-/-- `M34` bound for `23 ≤ t < 230`. -/
+/-- **Power bound for the multinomial coefficient $M(t)$, small $t$.** Let
+$M(t) = \frac{(6t)!}{(3t)!\,(2t)!\,t!}$. For every natural number $k < 207$, writing
+$t = 23 + k$ (so $23 \le t < 230$), we have $10^{5t-5} \cdot M(t) \le 34^{5t-5}$.
+
+The finitely many cases are checked by direct computation. -/
 lemma M34_bound_small : ∀ k < 207,
     10 ^ (5 * (23 + k) - 5) * M34 (23 + k) ≤ 34 ^ (5 * (23 + k) - 5) := by
   decide
 
-/-- `M34` bounded by `3.4 ^ (5 * t - 5)` in integer form for `t ≥ 23`. -/
+/-- **Power bound for the multinomial coefficient $M(t)$.** Let
+$M(t) = \frac{(6t)!}{(3t)!\,(2t)!\,t!}$. For every natural number $t \ge 23$,
+$10^{5t-5} \cdot M(t) \le 34^{5t-5}$, that is, $M(t) \le 3.4^{5t-5}$. -/
 lemma M34_bound (t : ℕ) (ht : 23 ≤ t) : 10^(5*t-5) * M34 t ≤ 34^(5*t-5) := by
   by_cases ht230 : 230 ≤ t
   · exact M34_bound_large t ht230
@@ -281,7 +311,9 @@ lemma M34_bound (t : ℕ) (ht : 23 ≤ t) : 10^(5*t-5) * M34 t ≤ 34^(5*t-5) :=
     exact M34_bound_small k (by omega)
 
 -- Sum of floors ≤ floor of sum (three terms).
-/-- Sum of three floors bounded by the floor of the sum. -/
+/-- **Superadditivity of floor division for three terms.** For natural numbers $a, b, c$ and
+$q > 0$, $\lfloor a/q \rfloor + \lfloor b/q \rfloor + \lfloor c/q \rfloor \le
+\lfloor (a+b+c)/q \rfloor$. -/
 lemma div_add_div_add_div_le (a b c q : ℕ) (hq : 0 < q) :
     a / q + b / q + c / q ≤ (a + b + c) / q := by
   rw [Nat.le_div_iff_mul_le hq]
@@ -293,7 +325,9 @@ lemma div_add_div_add_div_le (a b c q : ℕ) (hq : 0 < q) :
     _ ≤ a + b + c := by omega
 
 -- j=1 Legendre term ≥ 1 on (t, 6t]: five ranges.
-/-- First Legendre range for the `j = 1` term. -/
+/-- **Floor-difference bound on the range 3t < p ≤ 6t.** Let $t \ge 1$ and $p$ be natural
+numbers with $3t < p \le 6t$. Then
+$\lfloor 6t/p \rfloor - \lfloor 3t/p \rfloor - \lfloor 2t/p \rfloor \ge 1$. -/
 lemma vp_term_case1 (t p : ℕ) (_ht : 1 ≤ t) (hlo : 3 * t < p) (hhi : p ≤ 6 * t) :
     1 ≤ 6 * t / p - 3 * t / p - 2 * t / p := by
   have h6 : 6 * t / p = 1 := Nat.div_eq_of_lt_le (by omega) (by omega)
@@ -301,7 +335,9 @@ lemma vp_term_case1 (t p : ℕ) (_ht : 1 ≤ t) (hlo : 3 * t < p) (hhi : p ≤ 6
   have h2 : 2 * t / p = 0 := Nat.div_eq_of_lt_le (by omega) (by omega)
   omega
 
-/-- Second Legendre range for the `j = 1` term. -/
+/-- **Floor-difference bound on the range 2t < p ≤ 3t.** Let $t \ge 1$ and $p$ be natural
+numbers with $2t < p \le 3t$. Then
+$\lfloor 6t/p \rfloor - \lfloor 3t/p \rfloor - \lfloor 2t/p \rfloor \ge 1$. -/
 lemma vp_term_case2 (t p : ℕ) (_ht : 1 ≤ t) (hlo : 2 * t < p) (hhi : p ≤ 3 * t) :
     1 ≤ 6 * t / p - 3 * t / p - 2 * t / p := by
   have h6 : 6 * t / p = 2 := Nat.div_eq_of_lt_le (by omega) (by omega)
@@ -309,7 +345,9 @@ lemma vp_term_case2 (t p : ℕ) (_ht : 1 ≤ t) (hlo : 2 * t < p) (hhi : p ≤ 3
   have h2 : 2 * t / p = 0 := Nat.div_eq_of_lt_le (by omega) (by omega)
   omega
 
-/-- Third Legendre range for the `j = 1` term. -/
+/-- **Floor-difference bound on the range 3t/2 < p ≤ 2t.** Let $t \ge 1$ and $p$ be natural
+numbers with $3t < 2p$ and $p \le 2t$. Then
+$\lfloor 6t/p \rfloor - \lfloor 3t/p \rfloor - \lfloor 2t/p \rfloor \ge 1$. -/
 lemma vp_term_case3 (t p : ℕ) (_ht : 1 ≤ t) (hlo : 3 * t < 2 * p) (hhi : p ≤ 2 * t) :
     1 ≤ 6 * t / p - 3 * t / p - 2 * t / p := by
   have h6 : 6 * t / p = 3 := Nat.div_eq_of_lt_le (by omega) (by omega)
@@ -317,7 +355,9 @@ lemma vp_term_case3 (t p : ℕ) (_ht : 1 ≤ t) (hlo : 3 * t < 2 * p) (hhi : p �
   have h2 : 2 * t / p = 1 := Nat.div_eq_of_lt_le (by omega) (by omega)
   omega
 
-/-- Fourth Legendre range for the `j = 1` term. -/
+/-- **Floor-difference bound on the range 6t/5 < p ≤ 3t/2.** Let $t \ge 1$ and $p$ be natural
+numbers with $6t < 5p$ and $2p \le 3t$. Then
+$\lfloor 6t/p \rfloor - \lfloor 3t/p \rfloor - \lfloor 2t/p \rfloor \ge 1$. -/
 lemma vp_term_case4 (t p : ℕ) (ht : 1 ≤ t) (hlo : 6 * t < 5 * p) (hhi : 2 * p ≤ 3 * t) :
     1 ≤ 6 * t / p - 3 * t / p - 2 * t / p := by
   have h6 : 6 * t / p = 4 := Nat.div_eq_of_lt_le (by omega) (by omega)
@@ -325,7 +365,9 @@ lemma vp_term_case4 (t p : ℕ) (ht : 1 ≤ t) (hlo : 6 * t < 5 * p) (hhi : 2 * 
   have h2 : 2 * t / p = 1 := Nat.div_eq_of_lt_le (by omega) (by omega)
   omega
 
-/-- Fifth Legendre range for the `j = 1` term. -/
+/-- **Floor-difference bound on the range t < p ≤ 6t/5.** Let $t \ge 1$ and $p$ be natural
+numbers with $t < p$ and $5p \le 6t$. Then
+$\lfloor 6t/p \rfloor - \lfloor 3t/p \rfloor - \lfloor 2t/p \rfloor \ge 1$. -/
 lemma vp_term_case5 (t p : ℕ) (_ht : 1 ≤ t) (hlo : t < p) (hhi : 5 * p ≤ 6 * t) :
     1 ≤ 6 * t / p - 3 * t / p - 2 * t / p := by
   have h6 : 6 * t / p = 5 := Nat.div_eq_of_lt_le (by omega) (by omega)
@@ -333,7 +375,12 @@ lemma vp_term_case5 (t p : ℕ) (_ht : 1 ≤ t) (hlo : t < p) (hhi : 5 * p ≤ 6
   have h2 : 2 * t / p = 1 := Nat.div_eq_of_lt_le (by omega) (by omega)
   omega
 
-/-- The `j = 1` Legendre term is at least `1` on `(t, 6 * t]`. -/
+/-- **Floor-difference bound on the range t < p ≤ 6t.** Let $t \ge 1$ and $p$ be natural
+numbers with $t < p \le 6t$. Then
+$\lfloor 6t/p \rfloor - \lfloor 3t/p \rfloor - \lfloor 2t/p \rfloor \ge 1$.
+
+This is the $j = 1$ term of Legendre's formula for the exponent of $p$ in
+$(6t)!/((3t)!\,(2t)!\,t!)$; on this range $\lfloor t/p \rfloor = 0$. -/
 lemma vp_term1 (t p : ℕ) (ht : 1 ≤ t) (hlo : t < p) (hhi : p ≤ 6 * t) :
     1 ≤ 6 * t / p - 3 * t / p - 2 * t / p := by
   by_cases h1 : 3 * t < p
@@ -347,7 +394,9 @@ lemma vp_term1 (t p : ℕ) (ht : 1 ≤ t) (hlo : t < p) (hhi : p ≤ 6 * t) :
         · exact vp_term_case5 t p ht hlo (by omega)
 
 -- Every prime in (t, 6t] divides M(t).
-/-- Every prime in `(t, 6 * t]` divides `M34 t`. -/
+/-- **Primes in $(t, 6t]$ occur in $M(t)$.** For every natural number $t \ge 1$ and every prime $p$
+with $t < p \le 6t$, the exponent of $p$ in the prime factorization of the multinomial coefficient
+$M(t) = (6t)!/((3t)!\,(2t)!\,t!)$ is at least $1$. -/
 lemma vp_M34 (t : ℕ) (ht : 1 ≤ t) (p : ℕ) (hp : p.Prime)
     (hlo : t < p) (hhi : p ≤ 6 * t) : 1 ≤ (M34 t).factorization p := by
   set B : ℕ := Nat.log p (6 * t) + 2 with hB
@@ -435,7 +484,10 @@ lemma vp_M34 (t : ℕ) (ht : 1 ≤ t) (p : ℕ) (hp : p.Prime)
   exact_mod_cast hfin
 
 -- Θ(m) ≤ Θ(t) * M(t) for t = (m+5)/6.
-/-- Primorial splitting at `(m + 5) / 6` via `M34`. -/
+/-- **Splitting the primorial with a multinomial coefficient.** For a natural number $n$ let
+$n\#$ be the primorial, the product of the primes $p \le n$, and let
+$M(t) = \frac{(6t)!}{(3t)!\,(2t)!\,t!}$. For every natural number $m \ge 1$, with
+$t = \lfloor (m+5)/6 \rfloor$, we have $m\# \le t\# \cdot M(t)$. -/
 lemma theta_le_M34 (m : ℕ) (hm : 1 ≤ m) :
     primorial m ≤ primorial ((m+5)/6) * M34 ((m+5)/6) := by
   set t : ℕ := (m+5)/6 with ht
@@ -464,7 +516,13 @@ lemma theta_le_M34 (m : ℕ) (hm : 1 ≤ m) :
     Nat.le_of_dvd (M34_pos t) hdvd
   exact mul_le_mul_of_nonneg_left hle (Nat.zero_le _)
 
-/-- Primorial base cases below `133`, reduced to checked interval endpoints. -/
+/-- **Primorial bound $3.4^m$ below $133$.** For a natural number $n$ let $n\#$ be the
+primorial, the product of the primes $p \le n$. For every natural number $m < 133$,
+$10^m \cdot m\# \le 34^m$.
+
+Proved by covering $0 \le m \le 132$ with finitely many intervals $[a, b]$ and checking
+$10^a \cdot b\# \le 34^a$ for each; this gives the bound on $[a, b]$ because $n\#$ is
+nondecreasing in $n$ and $10 \le 34$. -/
 lemma theta34_base : ∀ m : ℕ, m < 133 → 10^m * primorial m ≤ 34^m := by
   intro m hm
   by_cases h1 : m ≤ 1
@@ -486,7 +544,8 @@ lemma theta34_base : ∀ m : ℕ, m < 133 → 10^m * primorial m ≤ 34^m := by
   exact theta34_of_interval (by omega) (by omega) theta34_at_132
 
 -- Θ(m) ≤ 3.4^m for all m, in integer form.
-/-- Integer primorial bound `10 ^ m * primorial m ≤ 34 ^ m`. -/
+/-- **Primorial bound by powers of 3.4, integer form.** For every natural number $m$, the
+primorial $m\#$ (the product of all primes $p \le m$) satisfies $10^m \cdot m\# \le 34^m$. -/
 lemma theta34_nat (m : ℕ) : 10^m * primorial m ≤ 34^m := by
   induction m using Nat.strong_induction_on with
   | h m ih =>
@@ -527,7 +586,9 @@ lemma theta34_nat (m : ℕ) : 10^m * primorial m ≤ 34^m := by
         _ = 34^m := by rw [← pow_add, show t + (m - t) = m by omega]
 
 -- Θ(x) ≤ 3.4^x for real x ≥ 0.
-/-- Real primorial bound `primorial ⌊x⌋₊ ≤ 3.4 ^ x`. -/
+/-- **Primorial bound by powers of 3.4, real form.** For every real number $x \ge 0$, the
+primorial of $\lfloor x \rfloor$ (the product of all primes $p \le \lfloor x \rfloor$) is at
+most $3.4^x$, where $3.4^x$ is the real power. -/
 lemma theta34_real {x : ℝ} (hx : 0 ≤ x) :
     (primorial ⌊x⌋₊ : ℝ) ≤ (3.4 : ℝ)^x := by
   have hnat := theta34_nat ⌊x⌋₊
@@ -545,20 +606,24 @@ lemma theta34_real {x : ℝ} (hx : 0 ≤ x) :
     _ = (3.4:ℝ)^(((⌊x⌋₊ : ℕ):ℝ)) := (Real.rpow_natCast _ _).symm
     _ ≤ (3.4:ℝ)^x := Real.rpow_le_rpow_of_exponent_le (by norm_num) hle
 
-/-- Logarithm upper bound from an exponential lower bound. -/
+/-- **Bounding a logarithm above by the exponential.** Let $a$ and $r$ be real numbers with
+$a > 0$. If $a < e^r$, then $\log a < r$, where $\log$ is the natural logarithm. -/
 lemma log_lt_of_exp_gt {a r : ℝ} (ha : 0 < a) (h : a < Real.exp r) :
     Real.log a < r := by
   have h2 := (Real.log_lt_log_iff ha (Real.exp_pos r)).mpr h
   rwa [Real.log_exp] at h2
 
-/-- Logarithm lower bound from an exponential upper bound. -/
+/-- **Logarithm lower bound from an exponential bound.** For real numbers $a > 0$ and $r$, if
+$e^r < a$ then $r < \log a$, where $\log$ is the natural logarithm. -/
 lemma log_gt_of_exp_lt {a r : ℝ} (ha : 0 < a) (h : Real.exp r < a) :
     r < Real.log a := by
   have h2 := (Real.log_lt_log_iff (Real.exp_pos r) ha).mpr h
   rwa [Real.log_exp] at h2
 
 -- If a^n < c^m with c < e, then a < e^{m/n}.
-/-- Exponential lower bound from a power comparison below `e`. -/
+/-- **Exponential lower bound from a power comparison.** Let $a$ and $c$ be nonnegative real
+numbers and let $n$ and $m$ be positive integers. If $c < e$ and $a^n < c^m$, then
+$a < e^{m/n}$, where $m/n$ is real division. -/
 lemma lt_exp_of_pow_lt {a c : ℝ} {n m : ℕ} (ha : 0 ≤ a) (hn : n ≠ 0) (hm : m ≠ 0)
     (hc : c < Real.exp 1) (hc0 : 0 ≤ c) (h : a ^ n < c ^ m) :
     a < Real.exp ((m : ℝ) / n) := by
@@ -579,7 +644,9 @@ lemma lt_exp_of_pow_lt {a c : ℝ} {n m : ℕ} (ha : 0 ≤ a) (hn : n ≠ 0) (hm
   exact (pow_lt_pow_iff_left₀ ha (le_of_lt (Real.exp_pos _)) hn).mp h1
 
 -- If c^m < a^n with e < c, then e^{m/n} < a.
-/-- Exponential upper bound from a power comparison above `e`. -/
+/-- **Power comparison above e bounds an exponential.** Let $e$ be Euler's number, let $a$
+and $c$ be real numbers and let $m, n$ be nonzero natural numbers, with $a \ge 0$,
+$e^{m/n} \ge 0$ and $c > e$. If $c^m < a^n$, then $e^{m/n} < a$. -/
 lemma exp_lt_of_pow_lt {a c : ℝ} {n m : ℕ} (ha : 0 ≤ a) (hn : n ≠ 0) (hm : m ≠ 0)
     (hc : Real.exp 1 < c) (ha0 : 0 ≤ Real.exp ((m : ℝ) / n)) (h : c ^ m < a ^ n) :
     Real.exp ((m : ℝ) / n) < a := by
@@ -599,7 +666,7 @@ lemma exp_lt_of_pow_lt {a c : ℝ} {n m : ℕ} (ha : 0 ≤ a) (hn : n ≠ 0) (hm
     linarith
   exact (pow_lt_pow_iff_left₀ ha0 ha hn).mp h1
 
-/-- Certified bound `0.6931 < log 2`. -/
+/-- **Lower bound for log 2.** The natural logarithm of $2$ satisfies $0.6931 < \log 2$. -/
 lemma log2_gt : (0.6931 : ℝ) < Real.log 2 := by
   have hnat : 27182818286 ^ 6931 < 2 ^ 10000 * 10 ^ 69310 := by
     set_option exponentiation.threshold 300000 in
@@ -618,7 +685,7 @@ lemma log2_gt : (0.6931 : ℝ) < Real.log 2 := by
   rw [heq] at h
   exact log_gt_of_exp_lt (by norm_num) h
 
-/-- Certified bound `1.6094 < log 5`. -/
+/-- **Lower bound for log 5.** The natural logarithm of $5$ satisfies $1.6094 < \log 5$. -/
 lemma log5_gt : (1.6094 : ℝ) < Real.log 5 := by
   have hnat : 27182818286 ^ 16094 < 5 ^ 10000 * 10 ^ 160940 := by
     set_option exponentiation.threshold 300000 in
@@ -637,7 +704,7 @@ lemma log5_gt : (1.6094 : ℝ) < Real.log 5 := by
   rw [heq] at h
   exact log_gt_of_exp_lt (by norm_num) h
 
-/-- Certified bound `log 3 < 1.0987`. -/
+/-- **Upper bound for log 3.** The natural logarithm of $3$ satisfies $\log 3 < 1.0987$. -/
 lemma log3_lt : Real.log 3 < (1.0987 : ℝ) := by
   have hnat : 3 ^ 10000 * 10 ^ 109870 < 27182818283 ^ 10987 := by
     set_option exponentiation.threshold 300000 in
@@ -656,7 +723,7 @@ lemma log3_lt : Real.log 3 < (1.0987 : ℝ) := by
   rw [heq] at h
   exact log_lt_of_exp_gt (by norm_num) h
 
-/-- Certified bound `log 17 < 2.8333`. -/
+/-- **Upper bound for log 17.** The natural logarithm of $17$ satisfies $\log 17 < 2.8333$. -/
 lemma log17_lt : Real.log 17 < (2.8333 : ℝ) := by
   have hnat : 17 ^ 10000 * 10 ^ 283330 < 27182818283 ^ 28333 := by
     set_option exponentiation.threshold 300000 in
@@ -675,28 +742,33 @@ lemma log17_lt : Real.log 17 < (2.8333 : ℝ) := by
   rw [heq] at h
   exact log_lt_of_exp_gt (by norm_num) h
 
-/-- `log 10 = log 2 + log 5`. -/
+/-- **Logarithm of 10.** The natural logarithm satisfies $\log 10 = \log 2 + \log 5$. -/
 lemma log10_eq : Real.log (10 : ℝ) = Real.log 2 + Real.log 5 := by
   rw [show (10 : ℝ) = 2 * 5 by norm_num,
     Real.log_mul (by norm_num) (by norm_num)]
 
-/-- `log 9 = 2 * log 3`. -/
+/-- **Logarithm of 9.** The natural logarithm satisfies $\log 9 = 2 \log 3$. -/
 lemma log9_eq : Real.log (9 : ℝ) = 2 * Real.log 3 := by
   rw [show (9 : ℝ) = (3 : ℝ) ^ 2 by norm_num, Real.log_pow]
   norm_num
 
-/-- `log (34 / 10) = log 17 - log 5`. -/
+/-- **Logarithm of 3.4.** The natural logarithm satisfies $\log(34/10) = \log 17 - \log 5$. -/
 lemma log34div10_eq : Real.log (34 / 10 : ℝ) = Real.log 17 - Real.log 5 := by
   rw [show (34 / 10 : ℝ) = 17 / 5 by norm_num,
     Real.log_div (by norm_num) (by norm_num)]
 
 -- c9 as a single reduced rational (verified by norm_num below).
-/-- The constant `18900 / 279 + 18900 / 657 + 18900 / 963` in lowest terms. -/
+/-- **Evaluation of a three-term rational sum.** In the real numbers,
+$\frac{18900}{279} + \frac{18900}{657} + \frac{18900}{963} = \frac{28121100}{242141}$.
+
+The right-hand side is the sum written in lowest terms. -/
 lemma c9_eq : (18900 / 279 + 18900 / 657 + 18900 / 963 : ℝ) = 28121100 / 242141 := by
   norm_num
 
 -- Verified margin: the gap LHS - RHS exceeds 13 (true gap ≈ 13.79).
-/-- Verified margin: the main-term gap exceeds `13`. -/
+/-- **Numerical margin of the main term.** With $\log$ the natural logarithm,
+$48\,(10 \log 10 - 9 \log 9) -
+\left(\frac{18900}{279} + \frac{18900}{657} + \frac{18900}{963}\right) \log \frac{34}{10} > 13$. -/
 theorem T03c_eqmain_margin : 48 * (10 * Real.log 10 - 9 * Real.log 9) -
     (18900 / 279 + 18900 / 657 + 18900 / 963 : ℝ) * Real.log (34 / 10) > 13 := by
   rw [log10_eq, log9_eq, log34div10_eq, c9_eq]
@@ -707,11 +779,15 @@ theorem T03c_eqmain_margin : 48 * (10 * Real.log 10 - 9 * Real.log 9) -
   linarith
 
 set_option maxRecDepth 16384 in
-/-- Prime-counting bound `3 * π(m) ≤ m` below `156`, by computation. -/
+/-- **Prime-counting bound $\pi(m) \le m/3$ for $36 \le m < 156$.** Let $\pi(m)$ denote the
+number of primes $p \le m$. For every natural number $m$ with $36 \le m < 156$, $3\pi(m) \le m$.
+
+Checked by computation. -/
 lemma pi_third_small : ∀ m : ℕ, 36 ≤ m → m < 156 → 3 * Nat.primeCounting m ≤ m := by
   decide
 
-/-- Prime-counting bound `3 * π(m) ≤ m` from `156` on. -/
+/-- **Prime-counting bound $\pi(m) \le m/3$ from $156$ on.** Let $\pi(m)$ denote the number of
+primes $p \le m$. For every natural number $m \ge 156$, $3\pi(m) \le m$. -/
 lemma pi_third_large (m : ℕ) (hm : 156 ≤ m) : 3 * Nat.primeCounting m ≤ m := by
   have h30 : (30 : ℕ) ≠ 0 := by norm_num
   have hle : (30 : ℕ) ≤ 36 := by norm_num
@@ -725,14 +801,16 @@ lemma pi_third_large (m : ℕ) (hm : 156 ≤ m) : 3 * Nat.primeCounting m ≤ m 
   have hmod := Nat.mod_lt (m - 36) (by norm_num : 0 < 30)
   omega
 
-/-- Prime-counting bound `3 * π(m) ≤ m` for `m ≥ 36`. -/
+/-- **Prime-counting bound $\pi(m) \le m/3$ for natural $m \ge 36$.** Let $\pi(m)$ denote the
+number of primes $p \le m$. For every natural number $m \ge 36$, $3\pi(m) \le m$. -/
 lemma pi_third_nat (m : ℕ) (hm36 : 36 ≤ m) : 3 * Nat.primeCounting m ≤ m := by
   by_cases hm : 156 ≤ m
   · exact pi_third_large m hm
   · push Not at hm
     exact pi_third_small m hm36 hm
 
-/-- Real prime-counting bound `π(⌊x⌋₊) ≤ x / 3`. -/
+/-- **Prime-counting bound $\pi(x) \le x/3$ for real $x \ge 36$.** Let $\pi(n)$ denote the
+number of primes $p \le n$. For every real number $x \ge 36$, $\pi(\lfloor x \rfloor) \le x/3$. -/
 theorem pi_third {x : ℝ} (hx : 36 ≤ x) : (Nat.primeCounting ⌊x⌋₊ : ℝ) ≤ x / 3 := by
   have hx0 : (0 : ℝ) ≤ x := by linarith
   have hfloor : ((⌊x⌋₊ : ℕ) : ℝ) ≤ x := Nat.floor_le hx0
@@ -744,7 +822,7 @@ theorem pi_third {x : ℝ} (hx : 36 ≤ x) : (Nat.primeCounting ⌊x⌋₊ : ℝ
   linarith
 
 -- Certified bound `log 10 < 2.4` via `10 ^ 5 < 2.7182818283 ^ 12`.
-/-- Certified bound `log 10 < 2.4`. -/
+/-- **Upper bound for log 10.** The natural logarithm of $10$ satisfies $\log 10 < 2.4$. -/
 lemma log10_lt : Real.log 10 < (2.4 : ℝ) := by
   have hnat : (10:ℕ)^125 < 27182818283^12 := by decide
   have hcore : (10:ℝ)^5 < (2.7182818283:ℝ)^12 := by
@@ -764,7 +842,9 @@ lemma log10_lt : Real.log 10 < (2.4 : ℝ) := by
 
 -- log x / √x is strictly decaying past e^2: for t > 1, the claim reduces to
 -- log t < log a * (√t - 1), which follows from log a > 2 and log √t < √t - 1.
-/-- `log / √` is strictly decaying past `e ^ 2`. -/
+/-- **Strict decay of log over square root beyond e squared.** Let $a$ and $t$ be real numbers
+with $a > 0$, $t > 1$ and $\log a > 2$, where $\log$ is the natural logarithm. Then
+$\frac{\log(at)}{\sqrt{at}} < \frac{\log a}{\sqrt{a}}$. -/
 lemma log_div_sqrt_decay {a t : ℝ} (ha : 0 < a) (ht : 1 < t)
     (hla : 2 < Real.log a) :
     Real.log (a*t) / Real.sqrt (a*t) < Real.log a / Real.sqrt a := by
@@ -801,7 +881,8 @@ lemma log_div_sqrt_decay {a t : ℝ} (ha : 0 < a) (ht : 1 < t)
     _ = Real.log a * (Real.sqrt a * Real.sqrt t) := by ring
 
 -- Main log-vs-sqrt bound.
-/-- Logarithm bound `log x ≤ 0.006 * √x` above `10 ^ 7`. -/
+/-- **Logarithm bounded by a multiple of the square root.** For every real number $x \ge 10^7$,
+$\log x \le 0.006\sqrt{x}$, where $\log$ is the natural logarithm. -/
 lemma log_le_sqrt06 (x : ℝ) (hx : (10 ^ 7 : ℝ) ≤ x) :
     Real.log x ≤ 0.006 * Real.sqrt x := by
   have hlog10 : (2.3025 : ℝ) < Real.log 10 := by
@@ -849,7 +930,9 @@ lemma log_le_sqrt06 (x : ℝ) (hx : (10 ^ 7 : ℝ) ≤ x) :
   linarith [hM, hle]
 
 -- The gap is positive for n ≥ 4762.
-/-- The per-`n` margin dominates all error terms for `n ≥ 4762`. -/
+/-- **Positivity of the gap in Breusch's prime interval argument.** For every natural number
+$n \ge 4762$, $13n - 16 - 48\log(2100n) - \sqrt{2100n}\,\log(2100n) > 0$, where $\log$ is the
+natural logarithm. -/
 lemma gap_pos (n : ℕ) (hn : 4762 ≤ n) :
     (13:ℝ)*n - 16 - 48*Real.log ((2100:ℝ)*n)
       - Real.sqrt ((2100:ℝ)*n)*Real.log ((2100:ℝ)*n) > 0 := by

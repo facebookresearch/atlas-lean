@@ -51,27 +51,42 @@ set_option autoImplicit false
 
 namespace OnPropertyT
 
-/-- For a group `G` with a finite symmetric generating set `S`, the Laplacian element is
-the element `|S| - ∑_{s ∈ S} s` of `ℝG`, as defined in Equation (1) of the paper. -/
+/-- **Laplacian of a finite subset of a group.** For a group $G$ and a finite subset
+$S \subseteq G$, the Laplacian of $S$ is the element $\Delta_S = |S| - \sum_{s \in S} s$ of the
+real group ring $\mathbb{R}G$, where $|S|$ is the number of elements of $S$, taken as $|S|$ times
+the identity element of $\mathbb{R}G$. When $S$ is a symmetric generating set of $G$, this is the
+Laplacian of Equation (1) in the paper of Kaluba, Kielak and Nowak on property (T) for
+$\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n(\mathbb{Z})$. -/
 noncomputable def Laplacian {G : Type*} [Group G] (S : Finset G) : MonoidAlgebra ℝ G :=
   Nat.card S - ∑ s ∈ S, MonoidAlgebra.of ℝ G s
 
-/-- Conjugation on `ℝG` is defined by inversion. This is an explicit
-involution rather than a global `Star (MonoidAlgebra ℝ G)` instance, which
-would override the coefficientwise `Finsupp` star for all downstream users. -/
+/-- **Involution of the real group ring.** For a group $G$, the involution of the real group ring
+$\mathbb{R}G$ is the $\mathbb{R}$-linear map $\mathbb{R}G \to \mathbb{R}G$ that sends
+$\sum_{g \in G} a_g g$ to $\sum_{g \in G} a_g g^{-1}$, that is, the linear extension of inversion
+on $G$. -/
 noncomputable def groupRingInvolution {G : Type*} [Group G] (x : MonoidAlgebra ℝ G) :
     MonoidAlgebra ℝ G :=
   MonoidAlgebra.mapDomain (· ⁻¹) x
 
-/-- Kazhdan's Property (T), as defined in Equation (2) of the paper. -/
+/-- **Property (T).** Let $G$ be a group. For a finite subset $S \subseteq G$, write
+$\Delta_S = |S| - \sum_{s \in S} s$ for the Laplacian of $S$ in the real group ring $\mathbb{R}G$,
+and write $\xi \mapsto \xi^{\star}$ for the involution of $\mathbb{R}G$ that extends inversion on
+$G$ linearly. The group $G$ has Kazhdan's property (T) when there exist a finite subset
+$S \subseteq G$ with $S^{-1} = S$ that generates $G$, a real number $\lambda > 0$, and a finite set
+$\Xi$ of elements of $\mathbb{R}G$ such that
+$\Delta_S^2 - \lambda \Delta_S = \sum_{\xi \in \Xi} \xi^{\star} \xi$.
+
+This is Ozawa's characterization of property (T) for finitely generated groups, used as the
+definition in Equation (2) of Kaluba, Kielak and Nowak. -/
 def PropertyT (G : Type*) [Group G] : Prop :=
   ∃ S : Finset G, (S : Set G)⁻¹ = S ∧ Subgroup.closure (S : Set G) = ⊤ ∧ ∃ Λ : ℝ, Λ > 0 ∧
     ∃ ξ : Finset (MonoidAlgebra ℝ G), Laplacian S ^ 2 - Λ • Laplacian S = ∑ ξi ∈ ξ, groupRingInvolution ξi * ξi
 
 /--
-Statement of Theorem 1:
+**Property (T) for automorphism groups of free groups of rank at least 6.** For every natural
+number $n \ge 6$, the automorphism group $\operatorname{Aut}(F_n)$ of the free group $F_n$ on $n$
+generators has property (T).
 
-`Aut(F_n)` has property (T) for all `n ≥ 6`.
 Source: M. Kaluba, D. Kielak, and P. W. Nowak, `On property (T) for Aut(F_n) and SL_n(Z)`, Annals of Math, 193 (2) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-193-2-OnPropertyT.lean Via leanprover/lean-eval@38361be, problem `annals_on_property_t`.
 -/
 public theorem_wanted theorem_1 (n : ℕ) (hn : n ≥ 6) : PropertyT (MulAut (FreeGroup (Fin n)))

@@ -1,0 +1,5 @@
+# Harris–FKG inequality for an increasing and a decreasing event
+
+Let $E$ be a finite set and $\varphi : E \times \{0,1\} \to \mathbb{R}$ a product probability weight ($\varphi_x(b) \ge 0$, $\varphi_x(0) + \varphi_x(1) = 1$), with $P_\varphi(S) = \sum_{\omega \in S} \prod_x \varphi_x(\omega(x))$. If $A \subseteq \{0,1\}^E$ is increasing and $B \subseteq \{0,1\}^E$ is decreasing, they are negatively correlated:
+
+$$P_\varphi(A \cap B) \le P_\varphi(A)\, P_\varphi(B).$$

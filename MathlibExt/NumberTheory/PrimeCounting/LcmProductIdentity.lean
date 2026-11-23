@@ -16,27 +16,13 @@ import Mathlib.RingTheory.UniqueFactorizationDomain.Finsupp
 
 namespace MetaMathlibExt
 
-private lemma div_add_le (x y d : ℕ) : x / d + y / d ≤ (x + y) / d := by
-  rcases Nat.eq_zero_or_pos d with rfl | hd
-  · simp
-  · have hx := Nat.div_add_mod x d
-    have hy := Nat.div_add_mod y d
-    have h : x + y = (x % d + y % d) + (d * (x / d) + d * (y / d)) := by omega
-    have e : d * (x / d) + d * (y / d) = (x / d + y / d) * d := by ring
-    have hdiv' : ((x % d + y % d) + (d * (x / d) + d * (y / d))) / d
-        = (x % d + y % d) / d + (x / d + y / d) := by
-      rw [e]
-      exact Nat.add_mul_div_right _ _ hd
-    rw [h, hdiv']
-    exact Nat.le_add_left _ _
-
 private lemma sum_div_le {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℕ) (d : ℕ) :
     ∑ i ∈ s, f i / d ≤ (∑ i ∈ s, f i) / d := by
   refine Finset.induction_on s ?_ ?_
   · simp
   · intro a t hat iht
     rw [Finset.sum_insert hat, Finset.sum_insert hat]
-    exact le_trans (Nat.add_le_add_left iht _) (div_add_le _ _ _)
+    exact le_trans (Nat.add_le_add_left iht _) Nat.div_add_div_le_add_div
 
 private lemma bernoulli_nat {a : ℕ} (ha : 1 ≤ a) (v : ℕ) : 1 + v * (a - 1) ≤ a ^ v := by
   induction v with
@@ -187,19 +173,17 @@ private lemma witness_mem (n q : ℕ) (hqp : Nat.Prime q) (hmem : q ∈ Nat.prim
 -/
 
 /--
-The LCM product identity: `∏_p p^⌊n/(p-1)⌋` equals the lcm of all products
-`i_1 * ... * i_n` of positive integers with sum at most `2 * n`.
+**The LCM product identity.** For every natural number $n$, the product of
+$p^{\lfloor n/(p-1) \rfloor}$ over the primes $p \le n + 1$ equals the least common multiple of all
+products $i_1 i_2 \cdots i_n$ of $n$ positive integers with $i_1 + \cdots + i_n \le 2n$.
+
+Since $\lfloor n/(p-1) \rfloor = 0$ for $p > n + 1$, the left side is the product of
+$p^{\lfloor n/(p-1) \rfloor}$ over all primes $p$.
 
 Source: Abdelmalek Bedhouche and Bakir Farhi, "On Some Products Taken over
 Prime Numbers," Journal of Integer Sequences 26 (2023), Article 23.1.5,
 Corollary (label coll2), lines 335–340,
 https://cs.uwaterloo.ca/journals/JIS/VOL26/Farhi/farhi32.tex
-
-The source's product ranges over all primes, but `⌊n/(p-1)⌋ = 0` for
-`p > n + 1`, so `Nat.primesBelow (n + 2)` captures every nontrivial factor.
-The tuple ranges over `Fin (2 * n + 1)` with the `1 ≤` filter selecting the
-positive entries; verified at `n = 0, 1, 2, 3` against directly computed lcms.
-Proves `Wanted` entry `lcm_product_identity`.
 -/
 theorem lcm_product_identity
     (n : ℕ) :
