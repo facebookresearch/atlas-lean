@@ -44,12 +44,12 @@ attribute [local instance] HasDerivedCategory.standard
 
 universe u
 
-/-- The actual ideal module of a closed immersion. -/
-abbrev idealModule {X Y : Scheme.{u}} (i : X ⟶ Y) : Y.Modules :=
+/-- The actual ideal sheaf `I` of a closed immersion: the kernel of `𝒪_Y ⟶ i_* 𝒪_X`. -/
+abbrev idealModule {X Y : Scheme.{u}} (i : X ⟶ Y) [IsClosedImmersion i] : Y.Modules :=
   kernel (SheafOfModules.unitToPushforwardObjUnit i.toRingCatSheafHom)
 
-/-- The actual conormal I/I², computed as i*I. -/
-abbrev conormalModule {X Y : Scheme.{u}} (i : X ⟶ Y) : X.Modules :=
+/-- The actual conormal sheaf `I/I²` of a closed immersion, computed as `i* I`. -/
+abbrev conormalModule {X Y : Scheme.{u}} (i : X ⟶ Y) [IsClosedImmersion i] : X.Modules :=
   (Scheme.Modules.pullback i).obj (idealModule i)
 
 /-- A literal first infinitesimal neighborhood, with the stalk ideals pinned to I². -/
@@ -69,7 +69,7 @@ structure FirstNeighborhood {X Y : Scheme.{u}} (i : X ⟶ Y) where
       RingHom.ker (i.stalkMap x).hom ^ 2
 
 /-- Actual extension of the conormal bundle over that first neighborhood. -/
-structure ConormalExtension {X Y : Scheme.{u}} (i : X ⟶ Y) (r : ℕ) where
+structure ConormalExtension {X Y : Scheme.{u}} (i : X ⟶ Y) [IsClosedImmersion i] (r : ℕ) where
   neighborhood : FirstNeighborhood i
   bundle : neighborhood.thickening.Modules
   locallyFree : IsVectorBundle bundle r
@@ -77,8 +77,9 @@ structure ConormalExtension {X Y : Scheme.{u}} (i : X ⟶ Y) (r : ℕ) where
 
 variable [HasDerivedPullbacks.{u}] [HasDerivedPushforwards.{u}]
 
-/-- The actual derived self-intersection structure module. -/
-def selfIntersection {X Y : Scheme.{u}} (i : X ⟶ Y) : D X :=
+/-- The actual derived self-intersection structure module `Li^* Ri_* 𝒪_X` of a closed
+immersion. -/
+def selfIntersection {X Y : Scheme.{u}} (i : X ⟶ Y) [IsClosedImmersion i] : D X :=
   (derivedPullback i).obj ((derivedPushforward i).obj
     ((DerivedCategory.singleFunctor X.Modules 0).obj (structureModule X)))
 
