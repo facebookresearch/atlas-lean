@@ -120,7 +120,6 @@ public instance_wanted nearbyMiddleHeart
       (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (specialArrow π T X))]
     [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
       (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
-    [InertiaSchemeCompatibility π T X]
     [CoefficientPresentation ell (Residue π T)
       (RapoportZinkContracts.specialModel R K L π T X)]
     [PerverseTheory ell (Residue π T) (RapoportZinkContracts.specialModel R
@@ -145,7 +144,7 @@ public theorem_wanted nearbyInertiaNilpotent
       (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (specialArrow π T X))]
     [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
       (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
-    [InertiaSchemeCompatibility π T X] (σ : Inertia π T) :
+    (σ : Inertia π T) :
     (RapoportZinkContracts.inertiaOperator ell R K L π T X σ - 1) ^ (d + 1) = 0
 
 /-- Deligne's laws for the fixed kernel-image filtration of actual nearby N. -/
@@ -161,7 +160,6 @@ public theorem_wanted nearbyMonodromyFiltration
       (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (specialArrow π T X))]
     [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
       (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
-    [InertiaSchemeCompatibility π T X]
     [CoefficientPresentation ell (Residue π T)
       (RapoportZinkContracts.specialModel R K L π T X)]
     [PerverseTheory ell (Residue π T) (RapoportZinkContracts.specialModel R
@@ -209,7 +207,6 @@ public instance_wanted rapoportZinkTheory
       (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (specialArrow π T X))]
     [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
       (GeometricAdicGaloisOperators.RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
-    [InertiaSchemeCompatibility π T X]
     [CoefficientPresentation ell (Residue π T)
       (RapoportZinkContracts.specialModel R K L π T X)]
     [PerverseTheory ell (Residue π T) (RapoportZinkContracts.specialModel R

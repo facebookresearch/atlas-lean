@@ -222,13 +222,87 @@ def genericGalois (σ : Galois K L) : GenericFibre (L := L) X ⟶
       rw [h]
       exact pullback.condition)
 
-/-- Proof-only adapter facts about these fixed actual scheme actions.
-Both maps are already defined by the normalization/field automorphisms. -/
+/-- The Galois actions on the generic fibre and on the normalized model are compatible with the
+generic arrow, and inertia acts trivially on the special fibre. These always hold
+(`inertiaSchemeCompatibility`). -/
 class InertiaSchemeCompatibility : Prop where
   genericSquare : ∀ σ : Inertia π T,
     genericGalois (K := K) X σ.1.1 ≫ genericArrow X =
       genericArrow X ≫ normalGalois (K := K) X σ.1.1
   specialSquare : ∀ σ : Inertia π T,
     specialArrow π T X ≫ normalGalois (K := K) X σ.1.1 = specialArrow π T X
+
+omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] [IsAlgClosure K L] in
+@[reassoc (attr := simp)]
+theorem normalGalois_fst (σ : Galois K L) :
+    normalGalois (K := K) X σ ≫ pullback.fst X.hom (normalizationMap (R := R) (L := L)) =
+      pullback.fst X.hom (normalizationMap (R := R) (L := L)) :=
+  pullback.lift_fst _ _ _
+
+omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] [IsAlgClosure K L] in
+@[reassoc (attr := simp)]
+theorem normalGalois_snd (σ : Galois K L) :
+    normalGalois (K := K) X σ ≫ pullback.snd X.hom (normalizationMap (R := R) (L := L)) =
+      pullback.snd X.hom (normalizationMap (R := R) (L := L)) ≫
+        Spec.map (CommRingCat.ofHom (normalAction (R := R) σ).toRingHom) :=
+  pullback.lift_snd _ _ _
+
+omit [IsDomain R] [IsDiscreteValuationRing R] in
+@[reassoc (attr := simp)]
+theorem genericArrow_fst :
+    genericArrow (L := L) X ≫ pullback.fst X.hom (normalizationMap (R := R) (L := L)) =
+      pullback.fst _ _ :=
+  pullback.lift_fst _ _ _
+
+omit [IsDomain R] [IsDiscreteValuationRing R] in
+@[reassoc (attr := simp)]
+theorem genericArrow_snd :
+    genericArrow (L := L) X ≫ pullback.snd X.hom (normalizationMap (R := R) (L := L)) =
+      pullback.snd _ _ ≫ genericIntoNormal (R := R) (L := L) :=
+  pullback.lift_snd _ _ _
+
+omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] [IsAlgClosure K L] in
+@[reassoc (attr := simp)]
+theorem genericGalois_fst (σ : Galois K L) :
+    genericGalois (K := K) X σ ≫ pullback.fst X.hom (genericBaseMap (R := R) (L := L)) =
+      pullback.fst _ _ :=
+  pullback.lift_fst _ _ _
+
+omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] [IsAlgClosure K L] in
+@[reassoc (attr := simp)]
+theorem genericGalois_snd (σ : Galois K L) :
+    genericGalois (K := K) X σ ≫ pullback.snd X.hom (genericBaseMap (R := R) (L := L)) =
+      pullback.snd _ _ ≫ Spec.map (CommRingCat.ofHom σ.toRingHom) :=
+  pullback.lift_snd _ _ _
+
+omit [Algebra R K] [IsFractionRing R K] [IsScalarTower R K L] in
+@[reassoc (attr := simp)]
+theorem specialArrow_fst :
+    specialArrow π T X ≫ pullback.fst X.hom (normalizationMap (R := R) (L := L)) =
+      pullback.fst _ _ :=
+  pullback.lift_fst _ _ _
+
+omit [Algebra R K] [IsFractionRing R K] [IsScalarTower R K L] in
+@[reassoc (attr := simp)]
+theorem specialArrow_snd :
+    specialArrow π T X ≫ pullback.snd X.hom (normalizationMap (R := R) (L := L)) =
+      pullback.snd _ _ ≫ specialIntoNormal π T :=
+  pullback.lift_snd _ _ _
+
+instance inertiaSchemeCompatibility : InertiaSchemeCompatibility π T X where
+  genericSquare σ := by
+    apply pullback.hom_ext
+    · simp
+    · simp only [Category.assoc, genericArrow_snd, genericGalois_snd_assoc, normalGalois_snd,
+        genericArrow_snd_assoc, genericIntoNormal, ← Spec.map_comp]
+      rfl
+  specialSquare σ := by
+    apply pullback.hom_ext
+    · simp
+    · simp only [Category.assoc, normalGalois_snd, specialArrow_snd_assoc, specialArrow_snd,
+        specialIntoNormal, ← Spec.map_comp]
+      congr 2
+      ext a
+      exact Ideal.Quotient.eq.mpr (σ.2 a)
 
 end MathlibExt.AlgebraicGeometry.GeometricSemistableTraits

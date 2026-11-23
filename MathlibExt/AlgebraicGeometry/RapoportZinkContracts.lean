@@ -68,7 +68,6 @@ variable (ell : ℕ) [Fact ell.Prime]
     (RationalCoefficients.{0} ell) (specialArrow π T X))]
   [∀ σ : Galois K L, IsIso (ProEtaleCohomologyFunctoriality.coefficientPullback ℚ_[ell]
     (RationalCoefficients.{0} ell) (genericGalois (K := K) X σ))]
-  [InertiaSchemeCompatibility π T X]
 
 /-- The actual special fibre, with its actual residue-field structure. -/
 abbrev specialModel : Over (Spec (.of (Residue π T))) :=
@@ -95,8 +94,8 @@ def inertiaOperator (σ : Inertia π T) : End (nearby ell R K L π T X) :=
   AdicDerivedContracts.nearbyMonodromy ℚ_[ell] (RationalCoefficients.{0} ell)
     (genericArrow (L := L) X) (specialArrow π T X)
     (normalGalois (K := K) X σ.1.1) (genericGalois (K := K) X σ.1.1)
-    (InertiaSchemeCompatibility.genericSquare (π := π) (T := T) (X := X) σ)
-    (InertiaSchemeCompatibility.specialSquare (π := π) (T := T) (X := X) σ)
+    ((inertiaSchemeCompatibility π T X).genericSquare σ)
+    ((inertiaSchemeCompatibility π T X).specialSquare σ)
 
 /-- The literal logarithm with the geometric nearby nilpotence bound. -/
 def nearbyLog (d : ℕ) (B : TameCoordinate ell R K L π T) :
