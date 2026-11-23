@@ -6,19 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-The projectivity definitions are adapted from
-`WantedExt/AlgebraicGeometry/TopologicalReconstructionWanted.lean` in ATLAS
-at commit 841d5b685836b986f0bb29cd63fd2300f957e849. That file attributes
-`LeanEval.AlgebraicGeometry.TopologicalReconstruction` in leanprover/lean-eval
-at commit 38361be884302c7edce1908c4aef8296eb2cb27e, distributed under the
-Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-
-Modification notice: renamed the graded structure morphism, specialized the
-projectivity predicate to schemes over `ℂ`, and used `n + 1` homogeneous
-coordinates for `ℙⁿ`.
--/
-
 module
 
 public import Mathlib.Algebra.Category.ModuleCat.AB
@@ -28,14 +15,16 @@ public import
   Mathlib.CategoryTheory.Abelian.GrothendieckCategory.EnoughInjectives
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 
 @[expose] public section
 
 /-!
 # Projectivity and normalized rational direct images
 
-Projectivity over `ℂ` is expressed by a closed immersion into some `ℙⁿ_ℂ`
-that respects the structure morphism. The normalized direct image uses
+Projectivity over `ℂ` and projective space `ℙⁿ_ℂ` are those of
+`MathlibExt.AlgebraicGeometry.ProjectiveSpace` over the complex numbers: a
+closed immersion into some `ℙⁿ_ℂ` that respects the structure morphism. The normalized direct image uses
 Mathlib's derived pushforward on the analytic topological spaces of complex
 points: `ℚ_X[n]` places the rational constant sheaf in cohomological degree
 `-n`.
@@ -62,32 +51,19 @@ noncomputable section
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- The structure morphism of the projective spectrum of a graded algebra.
-This is the same projective-over-a-field construction used by
-`WantedExt/AlgebraicGeometry/TopologicalReconstructionWanted.lean`. -/
-def gradedProjToSpec {R A : Type} [CommRing R] [CommRing A] [Algebra R A]
-    (𝒜 : ℕ → Submodule R A) [GradedAlgebra 𝒜] :
-    Proj 𝒜 ⟶ Spec (.of R) :=
-  Proj.toSpecZero 𝒜 ≫ Spec.map (CommRingCat.ofHom (algebraMap ..))
+/-- Projectivity over `ℂ`: a closed immersion over `ℂ` into some projective
+space, `ProjectiveSpace.IsProjective` over the complex numbers. -/
+abbrev IsProjectiveOverC (X : ComplexScheme) : Prop :=
+  ProjectiveSpace.IsProjective X
 
-/-- Projectivity over `ℂ`, expressed by a closed immersion into some `ℙⁿ_ℂ`.
-The equation requires the immersion to respect the structure morphism. -/
-def IsProjectiveOverC (X : ComplexScheme) : Prop :=
-  let := @MvPolynomial.gradedAlgebra
-  ∃ (n : ℕ)
-    (i : X.left ⟶
-      Proj (MvPolynomial.homogeneousSubmodule (Fin (n + 1)) ℂ)),
-    IsClosedImmersion i ∧ X.hom = i ≫ gradedProjToSpec _
-
-/-- Projective space `ℙⁿ_ℂ`, as a scheme over `ℂ`: the projective spectrum of
-the polynomial ring in `n + 1` variables, graded by total degree. -/
+/-- Projective space `ℙⁿ_ℂ`, as a scheme over `ℂ`: `ProjectiveSpace.projectiveSpace`
+over the complex numbers. -/
 abbrev projectiveSpace (n : ℕ) : ComplexScheme :=
-  let := @MvPolynomial.gradedAlgebra
-  Over.mk (gradedProjToSpec (MvPolynomial.homogeneousSubmodule (Fin (n + 1)) ℂ))
+  ProjectiveSpace.projectiveSpace ℂ n
 
 /-- Projective space is projective over `ℂ`, through the identity. -/
 theorem isProjectiveOverC_projectiveSpace (n : ℕ) : IsProjectiveOverC (projectiveSpace n) :=
-  ⟨n, 𝟙 _, inferInstance, (Category.id_comp _).symm⟩
+  ⟨n + 1, 𝟙 _, show IsClosedImmersion (𝟙 _) from inferInstance, (Category.id_comp _).symm⟩
 
 /-- The rational normalized direct image `Rf_* ℚ_X[n]`, with the constant sheaf
 placed in degree `-n`: `ConstructibleComplexes.normalizedDirectImage` at
