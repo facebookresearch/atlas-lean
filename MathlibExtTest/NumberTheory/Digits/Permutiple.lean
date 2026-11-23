@@ -32,3 +32,12 @@ example : (-1 : ℤ) % 2 ≤ 2 := by
     unfold IsPermutiple
     decide +revert
   exact permutiple_basePerm_residue_le 3 2 (by decide) (by decide) d σ 1 σ hp hp 1
+
+-- The repeated edge (2, 2) occurs just once after relabeling the five-cycle.
+example : permutipleGraphEdges (k := 4) (![2, 2, 2, 7, 9] ∘ Equiv.swap 0 4) c[4, 1, 2, 3, 0] =
+    {(2, 2), (2, 7), (7, 9), (9, 2)} := by
+  let d : Fin 5 → ℕ := ![2, 2, 2, 7, 9]
+  calc
+    _ = permutipleGraphEdges d c[0, 1, 2, 3, 4] :=
+      permutipleGraphEdges_eq_of_conj d (Equiv.swap 0 4) 1 _ _ (by decide)
+    _ = _ := by decide +revert
