@@ -79,3 +79,20 @@ example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S) :
 example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S) :
     pr12 f g h ≫ pullback.snd f g = pr23 f g h ≫ pullback.fst g h := by
   simp [pr23]
+
+-- The convolution kernel is the pushforward to `X ×_S Z` of the tensor of the two pulled-back
+-- kernels on the triple product.
+example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S)
+    (K : D (pullback f g)) (K' : D (pullback g h)) :
+    convolution f g h K K' = (derivedPushforward (pr13 f g h)).obj (convolutionTensor f g h K K') :=
+  rfl
+
+-- Given the comparison isomorphisms, the composite of two Fourier–Mukai functors on
+-- quasi-coherent inputs is the Fourier–Mukai functor of the convolution.
+example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S)
+    (K : D (pullback f g)) (K' : D (pullback g h))
+    (e : (quasicoherent X).ι ⋙ fourierMukai f g K ⋙ fourierMukai g h K' ≅
+      (quasicoherent X).ι ⋙ fourierMukai f h (convolution f g h K K')) :
+    ∀ M : QCohDerived X, Nonempty ((fourierMukai g h K').obj ((fourierMukai f g K).obj M.obj) ≅
+      (fourierMukai f h (convolution f g h K K')).obj M.obj) :=
+  fun M ↦ ⟨e.app M⟩
