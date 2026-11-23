@@ -13,9 +13,10 @@ public import Mathlib.Data.Fin.VecNotation
 
 /-!
 Provider-free interface checks: genuine two-variable holomorphic evaluation
-and an I-relation retained through quotient, sheafification and pullback.
-The square-zero ideal tests a nonreduced local model without a manifold or
-GAGA provider.
+and an I-relation retained through quotient, sheafification and pullback,
+without a manifold or GAGA provider. For the square-zero ideal `(X²)` this
+checks only that the relation `X² = 0` holds; it does not test that `X`
+survives, that is, that the model is nonreduced.
 -/
 
 open MathlibExt.AlgebraicGeometry.PolynomialAnalyticSpaces
@@ -29,6 +30,7 @@ example : polynomialSections 2 ⊤
   rw [polynomialSections_eval]
   norm_num
 
+/-- The relation of the double point `(X²)` holds in its model. -/
 example : polynomialMap 1
     (Ideal.span {(MvPolynomial.X (0 : Fin 1)) ^ 2})
     (MvPolynomial.X (0 : Fin 1)) ^ 2 = 0 := by
