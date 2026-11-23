@@ -137,8 +137,10 @@ def riCov (σb2 σe2 : ℝ) (i j : δ × κ) : ℝ :=
 
 /-- The random-intercept model at the level of second moments: the donor and residual variance
 components are nonnegative, every cell value is square integrable, and the cell covariances are
-`riCov σb2 σe2`. The sign conditions exclude exchangeable covariances such as `Y₀ = Z`,
-`Y₁ = -Z` (kernel coefficients `-1`, `2`) that no donor random effect produces. -/
+`riCov σb2 σe2`. The sign conditions exclude exchangeable covariances such as `Y₀ = Z`, `Y₁ = -Z`
+(kernel coefficients `-1`, `2`) that no donor random effect produces. Covariances are taken with
+respect to `μ`, `cov[X, X'; μ] = ∫ (X - ∫ X ∂μ) * (X' - ∫ X' ∂μ) ∂μ`, the usual covariance when `μ`
+is a probability measure. -/
 structure IsRandomIntercept (μ : Measure Ω) (Y : δ × κ → Ω → ℝ) (σb2 σe2 : ℝ) : Prop where
   donorVar_nonneg : 0 ≤ σb2
   residVar_nonneg : 0 ≤ σe2
@@ -151,27 +153,32 @@ section Means
 
 variable [Fintype δ] [Fintype κ]
 
-/-- Cell-level grand mean `Ȳ = (∑ᵢ Yᵢ) / (D m)`. -/
+/-- Cell-level grand mean `Ȳ = (∑ᵢ Yᵢ) / (D m)`; with the convention `x / 0 = 0` it is `0` when
+there is no cell. -/
 noncomputable def cellMean (Y : δ × κ → Ω → ℝ) : Ω → ℝ :=
   fun ω ↦ (∑ i, Y i ω) / (Fintype.card δ * Fintype.card κ)
 
-/-- Pseudobulk value of donor `d`: the mean of its `m` cells. -/
+/-- Pseudobulk value of donor `d`: the mean of its `m` cells (`0` when `m = 0`, by the convention
+`x / 0 = 0`). -/
 noncomputable def pseudobulk (Y : δ × κ → Ω → ℝ) (d : δ) : Ω → ℝ :=
   fun ω ↦ (∑ c, Y (d, c) ω) / Fintype.card κ
 
-/-- Mean of the `D` pseudobulk values. -/
+/-- Mean of the `D` pseudobulk values (`0` when `D = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def pseudobulkMean (Y : δ × κ → Ω → ℝ) : Ω → ℝ :=
   fun ω ↦ (∑ d, pseudobulk Y d ω) / Fintype.card δ
 
-/-- Variance of the cell-level mean under the random-intercept model with `D` donors and `m`
-cells per donor: `σ_b² / D + σ_e² / (D m)`. -/
+/-- Variance of the cell-level mean under the random-intercept model with `D` donors and `m` cells
+per donor: `σ_b² / D + σ_e² / (D m)`, for `D, m ≥ 1`. With the convention `x / 0 = 0` it is `0` when
+`D = 0` and `σ_b² / D` when `m = 0 < D`. -/
 noncomputable def trueVar (σb2 σe2 : ℝ) (D m : ℕ) : ℝ := σb2 / D + σe2 / (D * m)
 
 /-- The variance of the cell-level mean that results from treating the `D m` cells as independent
-replicates of per-cell variance `σ_b² + σ_e²`. -/
+replicates of per-cell variance `σ_b² + σ_e²`: `(σ_b² + σ_e²) / (D m)`, which is `0` when `D m = 0`,
+by the convention `x / 0 = 0`. -/
 noncomputable def naiveVar (σb2 σe2 : ℝ) (D m : ℕ) : ℝ := (σb2 + σe2) / (D * m)
 
-/-- Intraclass correlation `ρ = σ_b² / (σ_b² + σ_e²)`. -/
+/-- Intraclass correlation `ρ = σ_b² / (σ_b² + σ_e²)`; with the convention `x / 0 = 0` it is `0`
+when `σ_b² + σ_e² = 0`. -/
 noncomputable def icc (σb2 σe2 : ℝ) : ℝ := σb2 / (σb2 + σe2)
 
 end Means
@@ -234,7 +241,8 @@ theorem sum_riCov_right (i : δ × κ) :
   rw [Fintype.sum_prod_type, Finset.sum_comm]
   simp
 
-/-- **Variance of the cell-level mean**: `Var[Ȳ] = σ_b² / D + σ_e² / (D m)`. -/
+/-- **Variance of the cell-level mean**: `Var[Ȳ] = σ_b² / D + σ_e² / (D m)` for a finite measure
+`μ`, at least one donor and at least one cell per donor, in the random-intercept model. -/
 theorem variance_cellMean [IsFiniteMeasure μ] [Nonempty δ] [Nonempty κ]
     (h : IsRandomIntercept μ Y σb2 σe2) :
     Var[cellMean Y; μ] = trueVar σb2 σe2 (Fintype.card δ) (Fintype.card κ) := by
@@ -252,7 +260,8 @@ end Cells
 
 /-! ### Naive versus true variance -/
 
-/-- The shortfall of the naive variance: `trueVar - naiveVar = σ_b² (m - 1) / (D m)`. -/
+/-- The shortfall of the naive variance: `trueVar - naiveVar = σ_b² (m - 1) / (D m)`, for `D ≠ 0`
+and `m ≠ 0`. -/
 theorem trueVar_sub_naiveVar (σb2 σe2 : ℝ) {D m : ℕ} (hD : D ≠ 0) (hm : m ≠ 0) :
     trueVar σb2 σe2 D m - naiveVar σb2 σe2 D m = σb2 * (m - 1) / (D * m) := by
   have hD' : (D : ℝ) ≠ 0 := by exact_mod_cast hD
@@ -261,8 +270,9 @@ theorem trueVar_sub_naiveVar (σb2 σe2 : ℝ) {D m : ℕ} (hD : D ≠ 0) (hm : 
   field_simp
   ring
 
-/-- **Pseudoreplication understates the variance**: with a positive donor variance and at least
-two cells per donor, the naive variance is strictly smaller than the true one. -/
+/-- **Pseudoreplication understates the variance**: with a positive donor variance, at least one
+donor and at least two cells per donor (and any real `σ_e²`), the naive variance is strictly smaller
+than the true one. -/
 theorem naiveVar_lt_trueVar {σb2 : ℝ} (σe2 : ℝ) (hb : 0 < σb2) {D m : ℕ} (hD : D ≠ 0)
     (hm : 2 ≤ m) : naiveVar σb2 σe2 D m < trueVar σb2 σe2 D m := by
   have hm0 : m ≠ 0 := by omega
@@ -274,8 +284,8 @@ theorem naiveVar_lt_trueVar {σb2 : ℝ} (σe2 : ℝ) (hb : 0 < σb2) {D m : ℕ
     apply div_pos (mul_pos hb (by linarith)) (by positivity)
   linarith
 
-/-- The naive variance is exact precisely when there is no donor variance or one cell per
-donor. -/
+/-- For `D ≠ 0` and `m ≠ 0`, the naive variance is exact precisely when there is no donor variance
+or one cell per donor. -/
 theorem naiveVar_eq_trueVar_iff (σb2 σe2 : ℝ) {D m : ℕ} (hD : D ≠ 0) (hm : m ≠ 0) :
     naiveVar σb2 σe2 D m = trueVar σb2 σe2 D m ↔ σb2 = 0 ∨ m = 1 := by
   have key := trueVar_sub_naiveVar σb2 σe2 hD hm
@@ -296,8 +306,8 @@ theorem naiveVar_eq_trueVar_iff (σb2 σe2 : ℝ) {D m : ℕ} (hD : D ≠ 0) (hm
       have : σb2 * ((1 : ℕ) - 1 : ℝ) / (D * (1 : ℕ)) = 0 := by simp
       linarith
 
-/-- **Design effect**: `trueVar = (1 + (m - 1) ρ) · naiveVar` with `ρ = icc σ_b² σ_e²`, whenever
-the per-cell variance `σ_b² + σ_e²` is nonzero. -/
+/-- **Design effect**: `trueVar = (1 + (m - 1) ρ) · naiveVar` with `ρ = icc σ_b² σ_e²`, whenever the
+per-cell variance `σ_b² + σ_e²` is nonzero and `D, m ≠ 0`. -/
 theorem trueVar_eq_designEffect_mul_naiveVar {σb2 σe2 : ℝ} (hs : σb2 + σe2 ≠ 0) {D m : ℕ}
     (hD : D ≠ 0) (hm : m ≠ 0) :
     trueVar σb2 σe2 D m = (1 + (m - 1) * icc σb2 σe2) * naiveVar σb2 σe2 D m := by
@@ -315,18 +325,19 @@ variable [Fintype δ] [Fintype κ] [DecidableEq δ] [DecidableEq κ]
 variable {Ω' : Type*} {mΩ' : MeasurableSpace Ω'} {μ' : Measure Ω'} [IsFiniteMeasure μ]
   [IsFiniteMeasure μ']
 
-/-- **The independence model reproduces the naive formula**: a random-intercept model with no
-donor variance and per-cell variance `σ_b² + σ_e²` has cell-mean variance exactly `naiveVar`. -/
+/-- **The independence model reproduces the naive formula**: for a finite measure, at least one
+donor and one cell per donor, a random-intercept model with no donor variance and per-cell variance
+`σ_b² + σ_e²` has cell-mean variance exactly `naiveVar`. -/
 theorem variance_cellMean_eq_naiveVar [Nonempty δ] [Nonempty κ] {Y : δ × κ → Ω → ℝ} {σb2 σe2 : ℝ}
     (h : IsRandomIntercept μ Y 0 (σb2 + σe2)) :
     Var[cellMean Y; μ] = naiveVar σb2 σe2 (Fintype.card δ) (Fintype.card κ) := by
   rw [variance_cellMean h, trueVar, naiveVar, zero_div, zero_add]
 
-/-- **Same per-cell variance, different precision**: two random-intercept models on possibly
-different spaces whose cells have the same variance give the same variance of the cell-level mean
-only if their donor variances agree, as soon as there are two cells per donor. Within the
-random-intercept family the per-cell variance therefore cannot calibrate cell-level inference
-without a model of the donor split. -/
+/-- **Same per-cell variance, different precision**: two random-intercept models under finite
+measures on possibly different spaces, with at least one donor, whose cells have the same variance
+give the same variance of the cell-level mean only if their donor variances agree, as soon as there
+are two cells per donor. Within the random-intercept family the per-cell variance therefore cannot
+calibrate cell-level inference without a model of the donor split. -/
 theorem variance_cellMean_eq_iff [Nonempty δ] (hm : 2 ≤ Fintype.card κ) {Y : δ × κ → Ω → ℝ}
     {Y' : δ × κ → Ω' → ℝ} {σb2 σe2 σb2' σe2' : ℝ} (h : IsRandomIntercept μ Y σb2 σe2)
     (h' : IsRandomIntercept μ' Y' σb2' σe2') (hs : σb2 + σe2 = σb2' + σe2') :
@@ -364,8 +375,9 @@ theorem memLp_pseudobulk [DecidableEq δ] [DecidableEq κ] (h : IsRandomIntercep
   memLp_sum_div (fun c ↦ h.memLp (d, c)) _
 
 omit [Fintype δ] in
-/-- **Pseudobulk values are uncorrelated replicates**: distinct donors' pseudobulk values are
-uncorrelated, and each has variance `σ_b² + σ_e² / m`. -/
+/-- **Pseudobulk values are uncorrelated replicates**: for a finite measure and at least one cell
+per donor, distinct donors' pseudobulk values are uncorrelated, and each has variance
+`σ_b² + σ_e² / m`. -/
 theorem covariance_pseudobulk [DecidableEq δ] [DecidableEq κ] [IsFiniteMeasure μ] [Nonempty κ]
     (h : IsRandomIntercept μ Y σb2 σe2) (d d' : δ) :
     cov[pseudobulk Y d, pseudobulk Y d'; μ]
@@ -389,7 +401,8 @@ theorem variance_pseudobulk [DecidableEq δ] [DecidableEq κ] [IsFiniteMeasure �
   rw [← covariance_self (memLp_pseudobulk h d).aemeasurable, covariance_pseudobulk h]
   simp
 
-/-- In a balanced design the mean of the pseudobulk values is the cell-level mean. -/
+/-- In a balanced design with finitely many donors and at least one cell per donor, the mean of the
+pseudobulk values is the cell-level mean. -/
 theorem pseudobulkMean_eq_cellMean [Nonempty κ] (Y : δ × κ → Ω → ℝ) :
     pseudobulkMean Y = cellMean Y := by
   funext ω
@@ -397,9 +410,9 @@ theorem pseudobulkMean_eq_cellMean [Nonempty κ] (Y : δ × κ → Ω → ℝ) :
   simp only [pseudobulkMean, pseudobulk, cellMean, ← Finset.sum_div, Fintype.sum_prod_type]
   rw [div_div, mul_comm (Fintype.card κ : ℝ)]
 
-/-- **The replicate formula is exact for pseudobulk**: the variance of the mean of the `D`
-pseudobulk values is `Var[pseudobulk] / D`, which equals the true variance of the cell-level
-mean. -/
+/-- **The replicate formula is exact for pseudobulk**: for a finite measure `μ`, at least one donor
+and at least one cell per donor, the variance of the mean of the `D` pseudobulk values is
+`Var[pseudobulk] / D`, which equals the true variance of the cell-level mean. -/
 theorem variance_pseudobulkMean [DecidableEq δ] [DecidableEq κ] [IsFiniteMeasure μ] [Nonempty δ]
     [Nonempty κ] (h : IsRandomIntercept μ Y σb2 σe2) :
     Var[pseudobulkMean Y; μ] = (σb2 + σe2 / Fintype.card κ) / Fintype.card δ ∧
@@ -427,9 +440,10 @@ section Realization
 
 variable [DecidableEq δ] [DecidableEq κ]
 
-/-- **Donor random effect plus residual**: if `Y (d, c) = a + b d + e (d, c)` with pairwise
-uncorrelated donor effects of variance `σ_b² ≥ 0`, pairwise uncorrelated residuals of variance
-`σ_e² ≥ 0`, and `b` uncorrelated with `e`, then `Y` is a random-intercept model. -/
+/-- **Donor random effect plus residual**: on a probability space, if
+`Y (d, c) = a + b d + e (d, c)` with square-integrable `b` and `e`, pairwise uncorrelated donor
+effects of variance `σ_b² ≥ 0`, pairwise uncorrelated residuals of variance `σ_e² ≥ 0`, and `b`
+uncorrelated with `e`, then `Y` is a random-intercept model. -/
 theorem isRandomIntercept_of_decomp [IsProbabilityMeasure μ] {σb2 σe2 : ℝ} (hσb : 0 ≤ σb2)
     (hσe : 0 ≤ σe2) (a : ℝ) {b : δ → Ω → ℝ} {e : δ × κ → Ω → ℝ} (hb : ∀ d, MemLp (b d) 2 μ)
     (he : ∀ i, MemLp (e i) 2 μ)
@@ -468,7 +482,7 @@ instance [Fintype δ] [Fintype κ] : IsProbabilityMeasure (stdGaussianPi δ κ) 
   unfold stdGaussianPi; infer_instance
 
 /-- **Explicit random-intercept model**: `Y (d, c) = √σ_b² Z_d + √σ_e² W_{d c}` with independent
-standard Gaussians `Z_d`, `W_{d c}`. -/
+standard Gaussians `Z_d`, `W_{d c}`, with the convention `√x = 0` for `x < 0`. -/
 noncomputable def riModel (σb2 σe2 : ℝ) : δ × κ → NoiseSpace δ κ → ℝ :=
   fun i ω ↦ 0 + (Real.sqrt σb2 * ω (Sum.inl i.1) + Real.sqrt σe2 * ω (Sum.inr i))
 
@@ -513,10 +527,10 @@ theorem isRandomIntercept_riModel [Fintype δ] [Fintype κ] {σb2 σe2 : ℝ} (h
     rw [covariance_const_mul_left, covariance_const_mul_right, covariance_coord]
     simp
 
-/-- **Pseudoreplication counterexample**: in every balanced design with at least two cells per
-donor and every donor variance `σ_b² > 0`, the explicit Gaussian random-intercept model has
-cell-mean variance `σ_b² / D + σ_e² / (D m)`, strictly above the naive independent-cell value
-`(σ_b² + σ_e²) / (D m)`. -/
+/-- **Pseudoreplication counterexample**: in every balanced design with at least one donor and two
+cells per donor, every donor variance `σ_b² > 0` and every `σ_e² ≥ 0`, the explicit Gaussian
+random-intercept model has cell-mean variance `σ_b² / D + σ_e² / (D m)`, strictly above the naive
+independent-cell value `(σ_b² + σ_e²) / (D m)`. -/
 theorem pseudoreplication_counterexample [Fintype δ] [Fintype κ] [Nonempty δ]
     (hm : 2 ≤ Fintype.card κ) {σb2 σe2 : ℝ} (hb : 0 < σb2) (he : 0 ≤ σe2) :
     IsRandomIntercept (stdGaussianPi δ κ) (riModel σb2 σe2) σb2 σe2 ∧
@@ -604,8 +618,11 @@ theorem not_identifiable_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + 
   exact hb h1.symm
 
 /-- **No unbiased estimator** of `τ` exists under perfect confounding (`batch = a + b · cond`,
-`b ≠ 0`): any estimator `T` of the cell-level data has the same expectation under `(0, 0, 1)` and
-`(a, b, 0)`. -/
+`b ≠ 0`): for every measure `μ` and every noise process (no measurability or integrability is
+assumed), any function `T` of the cell-level data has the same integral `∫ T (obs …) ∂μ` under
+`(0, 0, 1)` and `(a, b, 0)`, so none has integral `τ` for every parameter. The integral is `0` when
+not integrable; for a probability measure and an integrable `T (obs …)` it is the expectation of the
+estimator. -/
 theorem no_unbiased_estimator_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
     (hb : b ≠ 0) (μ : Measure Ω) (U : δ × κ → Ω → ℝ) :
     ¬ ∃ T : (δ × κ → ℝ) → ℝ,
@@ -628,9 +645,9 @@ private lemma integral_obs (hU : ∀ i, Integrable (U i) μ) (hU0 : ∀ i, ∫ �
   rw [integral_add (integrable_const _) (hU i), integral_const, hU0]
   simp
 
-/-- **What the contrast estimates under confounding**: if `batch = a + b · cond`, then with
-mean-zero noise the difference in expected cell values between a donor with `cond = 1` and one
-with `cond = 0` is `τ + b β`. -/
+/-- **What the contrast estimates under confounding**: if `batch = a + b · cond`, then under a
+probability measure, with integrable noise of mean `0`, the difference in expected cell values
+between a donor with `cond = 1` and one with `cond = 0` is `τ + b β`. -/
 theorem contrast_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
     (hU : ∀ i, Integrable (U i) μ) (hU0 : ∀ i, ∫ ω, U i ω ∂μ = 0) {d₀ d₁ : δ} (h₀ : cond d₀ = 0)
     (h₁ : cond d₁ = 1)
@@ -642,12 +659,12 @@ theorem contrast_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond
   simp only [meanFn, h₀, h₁]
   ring
 
-/-- **Identification away from the boundary**: one pair of donors in the same batch whose
-condition indicators differ by one identifies `τ` from the mean-zero-noise expectations. Under
-perfect confounding (`batch = a + b · cond`, `b ≠ 0`) no such pair exists. Such a pair is
-sufficient, not necessary: the batch covariate enters linearly, so for `batch = ![0, 1, 2]` and
-`cond = ![0, 1, 1]` no two donors share a batch, yet `(m₁ - m₀) - (m₂ - m₁) = τ` for the donor
-means `mᵢ`. -/
+/-- **Identification away from the boundary**: one pair of donors in the same batch whose condition
+indicators differ by one identifies `τ` from the expectations, under a probability measure with
+integrable noise of mean `0`. Under perfect confounding (`batch = a + b · cond`, `b ≠ 0`) no such
+pair exists. Such a pair is sufficient, not necessary: the batch covariate enters linearly, so for
+`batch = ![0, 1, 2]` and `cond = ![0, 1, 1]` no two donors share a batch, yet
+`(m₁ - m₀) - (m₂ - m₁) = τ` for the donor means `mᵢ`. -/
 theorem contrast_of_sameBatch (hU : ∀ i, Integrable (U i) μ) (hU0 : ∀ i, ∫ ω, U i ω ∂μ = 0)
     {d₀ d₁ : δ} (hb : batch d₀ = batch d₁) (hc : cond d₁ = cond d₀ + 1) (μ₀ τ β : ℝ)
     (c₀ c₁ : κ) :

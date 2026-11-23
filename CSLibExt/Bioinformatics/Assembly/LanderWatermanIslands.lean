@@ -98,7 +98,8 @@ instance {G N : ℕ} (V : ℕ) (starts : Fin N → Fin G) (p : Fin G) :
   unfold EndsRun; infer_instance
 
 /-- Exactly one read starts at `p`, and every other read starts more than `W` positions after
-`p` and more than `W` positions before it (circularly): a read alone in its apparent island. -/
+`p` and more than `W` positions before it (circularly). With `W = L - T` and the single-piece
+overlap condition `2 * L ≤ G + 1`, this is a read alone in its apparent island. -/
 def IsolatedRead {G N : ℕ} (W : ℕ) (starts : Fin N → Fin G) (p : Fin G) : Prop :=
   (Finset.univ.filter fun j => starts j = p).card = 1 ∧
     ∀ j, starts j ≠ p → W < ((starts j).val + G - p.val) % G ∧ W < (p.val + G - (starts j).val) % G
@@ -109,7 +110,8 @@ instance {G N : ℕ} (W : ℕ) (starts : Fin N → Fin G) (p : Fin G) :
 
 /-- The `m` bases ending at `x` (those `y` with `(x - y) mod G < m`) are covered by no read, and
 the base after `x` is covered by some read: for `0 < m`, `x` is the last base of a maximal gap of
-length at least `m` followed by coverage. -/
+length at least `m` followed by coverage. For `m = 0` only the base after `x` must be covered;
+for `G = 1` no base has a successor at offset `1`, so no base is marked. -/
 def GapAtLeast {G N : ℕ} (L m : ℕ) (starts : Fin N → Fin G) (x : Fin G) : Prop :=
   (∀ y : Fin G, (x.val + G - y.val) % G < m → ∀ j, ¬ Covers G L (starts j) y) ∧
     ∃ y : Fin G, (y.val + G - x.val) % G = 1 ∧ ∃ j, Covers G L (starts j) y
@@ -238,7 +240,9 @@ theorem sum_card_endsRun {G N V : ℕ} (hV : V + 1 ≤ G) :
   simp_rw [card_run_end hV]
   simp
 
-/-- **Expected number of run ends (exact)**: `G ((1 - V / G) ^ N - (1 - (V + 1) / G) ^ N)`. -/
+/-- **Expected number of run ends (exact)**: for `V + 1 ≤ G`, summed over positions, the
+normalized counts of run ends are `G ((1 - V / G) ^ N - (1 - (V + 1) / G) ^ N)`, the expected
+number of run-end positions for independent uniform starts. -/
 theorem expected_endsRun {G N V : ℕ} (hV : V + 1 ≤ G) :
     ∑ p : Fin G, normalizedCount (Finset.univ.filter fun starts : Fin N → Fin G =>
         EndsRun V starts p) =
@@ -367,14 +371,19 @@ private lemma card_isolated {G N W : ℕ} (hW : 2 * W + 1 ≤ G) (p : Fin G) :
   simp [Finset.card_powersetCard]
 
 /-- **Exact count of isolated reads**: for `2 W + 1 ≤ G`, summed over positions, the number of
-start tuples with an isolated read at `p` is `G N (G - 2 W - 1) ^ (N - 1)`. -/
+start tuples with an isolated read at `p` is `G N (G - 2 W - 1) ^ (N - 1)`, where `N - 1` is
+natural subtraction (for `N = 0` the factor `N` makes it `0`). -/
 theorem sum_card_isolatedRead {G N W : ℕ} (hW : 2 * W + 1 ≤ G) :
     ∑ p : Fin G, (Finset.univ.filter fun starts : Fin N → Fin G =>
         IsolatedRead W starts p).card = G * N * (G - (2 * W + 1)) ^ (N - 1) := by
   simp_rw [card_isolated hW]
   simp [Nat.mul_assoc]
 
-/-- **Expected number of single-read islands (exact)**: `N (1 - (2 W + 1) / G) ^ (N - 1)`. -/
+/-- **Expected number of isolated reads (exact)**: for `2 W + 1 ≤ G`, summed over positions,
+the normalized counts of isolated reads are `N (1 - (2 W + 1) / G) ^ (N - 1)`, where `N - 1` is
+natural subtraction (for `N = 0` the factor `N` makes it `0`); for independent uniform starts
+this is the expected number of isolated reads, of single-read islands under the single-piece
+condition with `W = L - T`. -/
 theorem expected_isolatedRead {G N W : ℕ} (hW : 2 * W + 1 ≤ G) :
     ∑ p : Fin G, normalizedCount (Finset.univ.filter fun starts : Fin N → Fin G =>
         IsolatedRead W starts p) =
@@ -455,8 +464,9 @@ private lemma normalized_difference_bounds (x y : ℝ) (hy : 0 ≤ y) (hxy : y <
   · apply (div_le_iff₀ hd).mpr
     convert hb.2 using 1; ring
 
-/-- **Limit of the run-end count under sparsity**: if `N V_N / G_N → a` and `N / G_N → 0`, the
-expected number of run ends divided by `N` tends to `e^{-a}`. -/
+/-- **Expected run ends per read tend to `e^{-a}` under sparsity**: if `V_N + 1 ≤ G_N` for
+every `N`, `N V_N / G_N → a` and `N / G_N → 0`, the expected number of run ends divided by `N`
+tends to `e^{-a}`. -/
 theorem tendsto_expected_endsRun_div (V G : ℕ → ℕ) (hV : ∀ N, V N + 1 ≤ G N) (a : ℝ)
     (ha : Tendsto (fun N : ℕ => (N : ℝ) * V N / G N) atTop (𝓝 a))
     (h0 : Tendsto (fun N : ℕ => (N : ℝ) / G N) atTop (𝓝 0)) :
@@ -507,8 +517,9 @@ theorem tendsto_expected_endsRun_div (V G : ℕ → ℕ) (hV : ∀ N, V N + 1 �
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' hy hx
     (hb.mono fun N h => h.1) (hb.mono fun N h => h.2)
 
-/-- **Limit of the single-read island count under sparsity**: if `N W_N / G_N → a` and
-`N / G_N → 0`, the expected number of isolated reads divided by `N` tends to `e^{-2a}`. -/
+/-- **Expected isolated reads per read tend to `e^{-2a}` under sparsity**: if
+`2 W_N + 1 ≤ G_N` for every `N`, `N W_N / G_N → a` and `N / G_N → 0`, the expected number of
+isolated reads divided by `N` tends to `e^{-2a}`. -/
 theorem tendsto_expected_isolatedRead_div (W G : ℕ → ℕ) (hW : ∀ N, 2 * W N + 1 ≤ G N) (a : ℝ)
     (ha : Tendsto (fun N : ℕ => (N : ℝ) * W N / G N) atTop (𝓝 a))
     (h0 : Tendsto (fun N : ℕ => (N : ℝ) / G N) atTop (𝓝 0)) :
@@ -676,8 +687,10 @@ theorem sum_card_gapAtLeast {G N L m : ℕ} (hL : 0 < L) (hm : 0 < m) (hLm : L +
   simp_rw [card_gap hL hm hLm]
   simp
 
-/-- **Linear genome: starts covering a base**: for `L ≤ G`, the number of starts
-`s ∈ Fin (G - L + 1)` with `s ≤ x < s + L` is `min x (G - L) + 1 - (x + 1 - L)`. -/
+/-- **Number of read starts covering a base of a linear genome**: for `L ≤ G`, the number of
+starts `s ∈ Fin (G - L + 1)` with `s ≤ x < s + L` is `min x (G - L) + 1 - (x + 1 - L)`, where
+`x + 1 - L` is natural subtraction (`0` when `x + 1 < L`); the outer subtraction never
+truncates, and for `L = 0` the count is `0`. -/
 theorem card_linCoveringStarts {G L : ℕ} (hL : L ≤ G) (x : Fin G) :
     (Finset.univ.filter fun s : Fin (G - L + 1) => s.val ≤ x.val ∧ x.val < s.val + L).card =
       min x.val (G - L) + 1 - (x.val + 1 - L) := by
@@ -699,8 +712,9 @@ theorem card_linCoveringStarts {G L : ℕ} (hL : L ≤ G) (x : Fin G) :
         omega
     _ = _ := by simp
 
-/-- **Linear genome, interior bases**: a base with `L - 1 ≤ x` and `x + L ≤ G` is covered by
-exactly `L` starts. -/
+/-- **Interior bases of a linear genome are covered by exactly `L` starts**: a base with
+`L - 1 ≤ x` and `x + L ≤ G` is covered by exactly `L` starts (`L - 1` is natural subtraction;
+for `L = 0` every base qualifies and the count is `0`). -/
 theorem linCoveringStarts_interior {G L : ℕ} (x : Fin G) (h1 : L - 1 ≤ x.val)
     (h2 : x.val + L ≤ G) :
     (Finset.univ.filter fun s : Fin (G - L + 1) => s.val ≤ x.val ∧ x.val < s.val + L).card = L := by
@@ -716,9 +730,10 @@ theorem linCoveringStarts_lt_of_boundary {G L : ℕ} (hL : L ≤ G) (x : Fin G)
   have hx := x.isLt
   omega
 
-/-- **Linear genome, exact uncovered probability**: for `L ≤ G`, with starts uniform on
-`Fin (G - L + 1)`, base `x` is uncovered with probability `(1 - k / (G - L + 1)) ^ N`, where `k`
-is the number of starts covering `x`. -/
+/-- **Exact uncovered probability of a base of a linear genome**: for `L ≤ G`, with independent
+starts uniform on `Fin (G - L + 1)`, base `x` is uncovered with probability
+`(1 - k / (G - L + 1)) ^ N`, where `k = min x (G - L) + 1 - (x + 1 - L)` is the number of
+starts covering `x`. -/
 theorem linUncovered {G L N : ℕ} (hL : L ≤ G) (x : Fin G) :
     normalizedCount (Finset.univ.filter fun starts : Fin N → Fin (G - L + 1) =>
         ∀ j, ¬ ((starts j).val ≤ x.val ∧ x.val < (starts j).val + L)) =

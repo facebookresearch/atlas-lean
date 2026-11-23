@@ -90,13 +90,17 @@ open MeasureTheory ProbabilityTheory Filter Topology
 
 /-- The **Karlin–Altschul p-value** `1 - exp (-K n e^{-θ s})` of a maximal segment score `s` of a
 sequence of length `n`: the Gumbel approximation of `P(Mₙ ≥ s)` with constant `K` and Cramér root
-`θ` (the `λ` of Karlin–Altschul). -/
+`θ` (the `λ` of Karlin–Altschul). It is defined for all real `K`, `θ`, `s`: at most `1`, positive
+for `K > 0` and `n ≥ 1`, `0` when `K = 0` or `n = 0`, negative for `K < 0` and `n ≥ 1`; the
+intended domain is `K > 0`, `θ > 0`, `n ≥ 1`. -/
 noncomputable def gumbelPValue (K θ : ℝ) (n : ℕ) (s : ℝ) : ℝ :=
   1 - Real.exp (-(K * n * Real.exp (-(θ * s))))
 
 /-- The **Gumbel level** `x_α = log (K / (-log (1 - α))) / θ`: the centered threshold at which the
-Gumbel distribution function `exp (-K e^{-θ x})` equals `1 - α`. The p-value `gumbelPValue K θ n s`
-is at most `α` exactly when `s ≥ log n / θ + x_α`. -/
+Gumbel distribution function `exp (-K e^{-θ x})` equals `1 - α`, for `K > 0`, `θ > 0` and
+`0 < α < 1`; then, for `n ≥ 1`, the p-value `gumbelPValue K θ n s` is at most `α` exactly when
+`s ≥ log n / θ + x_α`. It is total, with `log 0 = 0`, `log x = log |x|` and `x / 0 = 0`: for
+example `x_α = 0` when `α = 0`, `α = 1` or `θ = 0`. -/
 noncomputable def gumbelLevel (K θ α : ℝ) : ℝ :=
   Real.log (K / -Real.log (1 - α)) / θ
 
@@ -112,7 +116,8 @@ theorem exp_neg_mul_exp_eq_gumbelCDF (hK : 0 < K) (hθ : 0 < θ) (x : ℝ) :
   rw [gumbelCDF, h, Real.exp_add, Real.exp_log hK]
 
 /-- The Gumbel level `x_α` is `gumbelQuantile` at `1 - α` with location `log K / θ` and scale
-`θ⁻¹`. The identity holds for every `θ`; for `θ > 0` the right side is the `(1 - α)`-quantile of
+`θ⁻¹`. The identity holds for every `θ` (at `θ = 0` both sides are `0`, by `x / 0 = 0` and
+`0⁻¹ = 0`); for `θ > 0` the right side is the `(1 - α)`-quantile of
 the Gumbel law of `exp_neg_mul_exp_eq_gumbelCDF`. -/
 theorem gumbelLevel_eq_gumbelQuantile (hK : 0 < K) (hα0 : 0 < α) (hα1 : α < 1) :
     gumbelLevel K θ α = gumbelQuantile (Real.log K / θ) θ⁻¹ (1 - α) := by
@@ -131,8 +136,8 @@ theorem gumbelPValue_pos (hK : 0 < K) (hn : 0 < n) (s : ℝ) : 0 < gumbelPValue 
 theorem gumbelPValue_le_one (s : ℝ) : gumbelPValue K θ n s ≤ 1 := by
   unfold gumbelPValue; linarith [Real.exp_pos (-(K * n * Real.exp (-(θ * s))))]
 
-/-- **Rejection region.** For `0 < α < 1`, the p-value is at most `α` exactly when the score
-exceeds the Gumbel threshold `log n / θ + x_α`. -/
+/-- **Rejection region.** For `K > 0`, `θ > 0`, `n ≥ 1` and `0 < α < 1`, the p-value is at most
+`α` exactly when the score is at least the Gumbel threshold `log n / θ + x_α`. -/
 theorem gumbelPValue_le_iff (hK : 0 < K) (hθ : 0 < θ) (hn : 0 < n) (hα0 : 0 < α) (hα1 : α < 1)
     (s : ℝ) : gumbelPValue K θ n s ≤ α ↔ Real.log n / θ + gumbelLevel K θ α ≤ s := by
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
@@ -173,7 +178,8 @@ section Calibration
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {M : ℕ → Ω → ℝ}
 
-/-- **Asymptotic validity from the Gumbel lower bound.** If a measurable statistic `Mₙ`
+/-- **Asymptotic validity from the Gumbel lower bound.** Under a probability measure `P`, with
+`K > 0` and `θ > 0`, if a measurable statistic `Mₙ`
 satisfies `liminf P(Mₙ ≤ log n / θ + x) ≥ exp (-K e^{-θ x})` for every `x`, then for every level
 `α ∈ [0, 1]`, `limsup P(gumbelPValue K θ n Mₙ ≤ α) ≤ α`. -/
 theorem eventually_real_gumbelPValue_le_le (hM : ∀ n, Measurable (M n)) (hK : 0 < K)
@@ -215,7 +221,8 @@ theorem eventually_real_gumbelPValue_le_le (hM : ∀ n, Measurable (M n)) (hK : 
         rw [measureReal_compl hmeas, probReal_univ]
     _ ≤ α + ε := by simp only [hG_def] at hδ; linarith
 
-/-- **Exact asymptotic calibration from the Gumbel limit.** If a measurable statistic `Mₙ`
+/-- **Exact asymptotic calibration from the Gumbel limit.** Under a probability measure `P`, with
+`K > 0` and `θ > 0`, if a measurable statistic `Mₙ`
 satisfies `P(Mₙ ≤ log n / θ + x) → exp (-K e^{-θ x})` for every `x`, then for every level
 `α ∈ [0, 1]`, `P(gumbelPValue K θ n Mₙ ≤ α) → α`. -/
 theorem tendsto_real_gumbelPValue_le (hM : ∀ n, Measurable (M n)) (hK : 0 < K) (hθ : 0 < θ)

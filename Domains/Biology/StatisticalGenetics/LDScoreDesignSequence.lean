@@ -223,7 +223,8 @@ theorem integral_model_eps (i : Fin N) :
   rw [integral_const_mul, integral_coord hν, mul_zero]
 
 /-- The statistic of marker `j` without stratification, written out:
-`χ²_j = (∑ i, X i j * y i) ² / N` with `y i = ∑ k, X i k β_k + ε_i`. -/
+`χ²_j = (∑ i, X i j * y i) ² / N` with `y i = ∑ k, X i k β_k + ε_i` (both sides `0` for `N = 0`, by
+`x / 0 = 0`). -/
 theorem chiSqStrat_model (X : Matrix (Fin N) (Fin M) ℝ) (j : Fin M) (ω : ℕ → ℝ) :
     chiSqStrat (model hν h0 h1 N M) X 0 0 j ω =
       (∑ i, X i j * (∑ k, X i k * (√(h2 / M) * ω (2 * k)) +
@@ -292,8 +293,8 @@ variable {N M K G : ℕ} (D : BlockDesign N M K G) {h2 : ℝ} (h0 : 0 ≤ h2) (h
   {lam : ℝ} (hlam : 0 ≤ lam) (hNM : (N : ℝ) ≤ lam * M)
 
 include h0 h1 hlam hNM in
-/-- Pointwise bound on the phenotype: if every coordinate lies in `[-C, C]`, then
-`y i ^ 2 ≤ 2 C² (K² λ + 1)`. -/
+/-- Pointwise bound on the phenotype: for a block design with `h² ∈ [0, 1]`, `λ ≥ 0` and `N ≤ λ M`,
+if every coordinate lies in `[-C, C]`, then `y i ^ 2 ≤ 2 C² (K² λ + 1)`. -/
 theorem pheno_sq_le {ω : ℕ → ℝ} (hω : ∀ s, |ω s| ≤ C) (i : Fin N) :
     (∑ k, D.X i k * (√(h2 / M) * ω (2 * k)) + √(1 - h2) * ω (2 * i + 1)) ^ 2 ≤
       2 * C ^ 2 * (K ^ 2 * lam + 1) := by
@@ -344,8 +345,8 @@ theorem pheno_sq_le {ω : ℕ → ℝ} (hω : ∀ s, |ω s| ≤ C) (i : Fin N) :
     √(1 - h2) * ω (2 * i + 1))]
 
 include h0 h1 hlam hNM in
-/-- **Almost-sure bound on the statistics.** Along a block design with `N ≤ λ M`, on the event
-that every coordinate lies in `[-C, C]`, `0 ≤ χ²_j ≤ chiSqBound K G C λ`. -/
+/-- **Almost-sure bound on the statistics.** Along a block design with `λ ≥ 0` and `N ≤ λ M`, on the
+event that every coordinate lies in `[-C, C]`, `0 ≤ χ²_j ≤ chiSqBound K G C λ`. -/
 theorem chiSqStrat_mem_Icc (hν : IsBoundedUnitLaw ν C) {ω : ℕ → ℝ} (hω : ∀ s, |ω s| ≤ C)
     (j : Fin M) :
     chiSqStrat (model hν h0 h1 N M) D.X 0 0 j ω ∈ Set.Icc 0 (chiSqBound K G C lam) := by
@@ -458,7 +459,7 @@ theorem measurable_chiSqStrat (j : Fin M) :
     (iSup₂_le fun s _ => (measurable_pi_apply s).comap_le) le_rfl
 
 include hlam hNM in
-/-- **The T161 hypotheses hold along a block design.** With `N ≤ λ M`, the statistics
+/-- **The LD-block model holds along a block design.** With `λ ≥ 0` and `N ≤ λ M`, the statistics
 `χ²_j = chiSqStrat` of `model` satisfy the LD-block model with block size at most `K` and
 `Var(χ²_j) ≤ (chiSqBound K G C λ / 2)²`. -/
 noncomputable def ldBlockModel :
@@ -479,8 +480,8 @@ noncomputable def ldBlockModel :
     rwa [sub_zero] at h
 
 include hlam hNM in
-/-- **The T161 variance bound along a block design.** With `N ≤ λ M`,
-`Var(ĥ²) ≤ (M / N)² · K V / S_ℓℓ` for `V = (chiSqBound K G C λ / 2)²`. -/
+/-- **Variance bound for the estimator along a block design.** With `λ ≥ 0` and `N ≤ λ M`,
+`Var(ĥ²) ≤ (M / N)² · K V / S_ℓℓ` for `V = (chiSqBound K G C λ / 2)²`, with `x / 0 = 0`. -/
 theorem variance_olsH2Hat_le :
     Var[fun ω => olsH2Hat N M (ldScore D.X) fun j => chiSqStrat (model hν h0 h1 N M) D.X 0 0 j ω;
       coordMeasure ν] ≤
@@ -517,11 +518,12 @@ theorem tendsto_variance_olsH2Hat :
     hNM hM fun _ _ => rfl
 
 include hκ hNM hNM' hc hspread hM in
-/-- **Consistency of LD-score regression along a sequence of block designs.** On the product
-space, with the effects and noise of `model`, along block designs with `M → ∞` (every
-`M n ≠ 0`), `κ M ≤ N ≤ λ M` (`κ > 0`) and LD-score spread `S_ℓℓ ≥ c M` (`c > 0`), the
-unweighted LD-score regression estimator converges to `h²` in probability. Every hypothesis of
-`tendstoInMeasure_olsH2Hat` is discharged; vanishing variance comes from T161. -/
+/-- **Consistency of LD-score regression along a sequence of block designs.** On the product space,
+with the effects and noise of `model`, along block designs with `M → ∞` (every `M n ≠ 0`),
+`κ M ≤ N ≤ λ M` (`κ > 0`) and LD-score spread `S_ℓℓ ≥ c M` (`c > 0`), the unweighted LD-score
+regression estimator converges to `h²` in probability. Every hypothesis of
+`tendstoInMeasure_olsH2Hat` is discharged; vanishing variance comes from the LD-block model of
+`LDScoreVariance`. -/
 theorem tendstoInMeasure_olsH2Hat_blockDesign (hM0 : ∀ n, M n ≠ 0) :
     TendstoInMeasure (coordMeasure ν) (fun n ω => olsH2Hat (N n) (M n) (ldScore (D n).X)
       fun j => chiSqStrat (model hν h0 h1 (N n) (M n)) (D n).X 0 0 j ω) l fun _ => h2 := by
@@ -591,8 +593,8 @@ theorem isStandardized_replicate (hT : IsStandardized T) (b : ℕ) :
     push_cast
     ring
 
-/-- The LD of the replicated design: markers of the same copy have the template's LD, markers
-of different copies are uncorrelated. -/
+/-- The LD of the replicated design, for `b ≠ 0`: markers of the same copy have the template's LD,
+markers of different copies are uncorrelated. -/
 theorem ldCorr_replicate {b : ℕ} (hb : b ≠ 0) (u u' : Fin b) (a a' : Fin k) :
     ldCorr (replicate T b) (finProdFinEquiv (u, a)) (finProdFinEquiv (u', a')) =
       if u = u' then ldCorr T a a' else 0 := by
@@ -617,7 +619,7 @@ theorem ldCorr_replicate {b : ℕ} (hb : b ≠ 0) (u u' : Fin b) (a a' : Fin k) 
       simp [h]
     · simp [h']
 
-/-- **The LD scores of the replicated design** are those of the template. -/
+/-- **The LD scores of the replicated design** are those of the template, for `b ≠ 0`. -/
 theorem ldScore_replicate {b : ℕ} (hb : b ≠ 0) :
     ldScore (replicate T b) = fun j => ldScore T (finProdFinEquiv.symm j).2 := by
   funext j
@@ -627,7 +629,8 @@ theorem ldScore_replicate {b : ℕ} (hb : b ≠ 0) :
   rw [sum_eq_single u (fun u' _ h => by simp [Ne.symm h]) (by simp)]
   simp [ldScore]
 
-/-- **The LD-score spread of the replicated design** is `b` times that of the template. -/
+/-- **The LD-score spread of the replicated design** is `b` times that of the template, for
+`b ≠ 0`. -/
 theorem sxy_ldScore_replicate {b : ℕ} (hb : b ≠ 0) :
     sxy (ldScore (replicate T b)) (ldScore (replicate T b)) =
       b * sxy (ldScore T) (ldScore T) := by
@@ -683,9 +686,9 @@ variable {ι : Type*} {l : Filter ι} (hν : IsBoundedUnitLaw ν C) {h2 : ℝ} (
   {b : ι → ℕ} (hb0 : ∀ n, b n ≠ 0) (hb : Tendsto b l atTop)
 
 include hT hspread hb0 hb in
-/-- **`Var(ĥ²) → 0` along the replicated designs.** For a standardized template whose LD scores
-are not all equal and numbers of copies `b n → ∞`, the variance of the unweighted LD-score
-regression estimator tends to `0`. -/
+/-- **`Var(ĥ²) → 0` along the replicated designs.** For a standardized template whose LD scores are
+not all equal and numbers of copies `b n → ∞`, each `b n ≠ 0`, the variance of the unweighted
+LD-score regression estimator tends to `0`. -/
 theorem tendsto_variance_olsH2Hat_replicate :
     Tendsto (fun n => Var[fun ω => olsH2Hat (b n * g) (b n * k) (ldScore (replicate T (b n)))
       fun j => chiSqStrat (model hν h0 h1 (b n * g) (b n * k)) (replicate T (b n)) 0 0 j ω;
@@ -704,12 +707,11 @@ theorem tendsto_variance_olsH2Hat_replicate :
     (tendsto_atTop_mono (fun n => Nat.le_mul_of_pos_right (b n) hk) hb)
 
 include hT hspread hb0 hb in
-/-- **Consistency of LD-score regression along the replicated designs.** On the product space,
-for a standardized template block `T` whose LD scores are not all equal and numbers of copies
-`b n → ∞` (each `b n ≠ 0`), the unweighted LD-score regression estimator of the
-`b n g × b n k` replicated design converges in probability to `h²`. Every hypothesis of
-`tendstoInMeasure_olsH2Hat` and of T161 is discharged: `κ = λ = g / k`, `c = S_ℓℓ(T) / k`,
-`K = k`, `G = g`. -/
+/-- **Consistency of LD-score regression along the replicated designs.** On the product space, for a
+standardized template block `T` whose LD scores are not all equal and numbers of copies `b n → ∞`
+(each `b n ≠ 0`), the unweighted LD-score regression estimator of the `b n g × b n k` replicated
+design converges in probability to `h²`. Every hypothesis of `tendstoInMeasure_olsH2Hat` and of the
+LD-block variance limit is discharged: `κ = λ = g / k`, `c = S_ℓℓ(T) / k`, `K = k`, `G = g`. -/
 theorem tendstoInMeasure_olsH2Hat_replicate :
     TendstoInMeasure (coordMeasure ν) (fun n ω => olsH2Hat (b n * g) (b n * k)
       (ldScore (replicate T (b n))) fun j =>

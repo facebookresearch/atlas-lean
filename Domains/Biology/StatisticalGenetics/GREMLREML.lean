@@ -102,16 +102,22 @@ variable {m k r : Type*} [Fintype m] [Fintype k] [Fintype r] [DecidableEq m] [De
 
 /-! ### The GREML covariance and the spectral REML criterion -/
 
-/-- The GREML phenotypic covariance `σ²_g K + σ²_e I` at `θ = (σ²_g, σ²_e)`. -/
+/-- The GREML covariance `σ²_g K + σ²_e I` at `θ = (σ²_g, σ²_e)`, for every real `K` and `θ`. It
+is the phenotypic covariance of the GREML model when it is positive semidefinite, for example for
+`K` symmetric positive semidefinite and `σ²_g, σ²_e ≥ 0`. -/
 noncomputable def gremlCov (K : Matrix m m ℝ) (θ : ℝ × ℝ) : Matrix m m ℝ :=
   θ.1 • K + θ.2 • (1 : Matrix m m ℝ)
 
-/-- The variance `σ²_g d_i + σ²_e` of the `i`-th rotated error contrast at `θ = (σ²_g, σ²_e)`. -/
+/-- `λ_i(θ) = σ²_g d_i + σ²_e` at `θ = (σ²_g, σ²_e)`, for all real values. For a diagonalizing
+orthonormal error contrast `B` and `y ~ N(X β, σ²_g K + σ²_e I)` with a positive semidefinite
+covariance, it is the variance of the `i`-th rotated error contrast `(B y)_i`. -/
 def contrastVar (d : r → ℝ) (θ : ℝ × ℝ) (i : r) : ℝ := θ.1 * d i + θ.2
 
 /-- The spectral form of the GREML restricted log-likelihood, for contrast eigenvalues `d` and
 rotated contrasts `w`:
-`-(r/2) log 2π - (1/2) ∑ log λ_i(θ) - (1/2) ∑ w_i² / λ_i(θ)` with `λ_i(θ) = σ²_g d_i + σ²_e`. -/
+`-(r/2) log 2π - (1/2) ∑ log λ_i(θ) - (1/2) ∑ w_i² / λ_i(θ)` with `λ_i(θ) = σ²_g d_i + σ²_e`.
+It is evaluated at every real `θ` with `log 0 = 0`, `log x = log |x|` and `x / 0 = 0`: an index
+with `λ_i(θ) = 0` contributes `0`. Its reading as a log-likelihood needs every `λ_i(θ) > 0`. -/
 noncomputable def spectralLogLik (d w : r → ℝ) (θ : ℝ × ℝ) : ℝ :=
   -(Fintype.card r / 2 * Real.log (2 * Real.pi)) - (∑ i, Real.log (contrastVar d θ i)) / 2 -
     (∑ i, w i ^ 2 / contrastVar d θ i) / 2
@@ -134,8 +140,8 @@ theorem IsSpectralContrast.isErrorContrast {X : Matrix m k ℝ} {K : Matrix m m 
   card_add_card := hB.card_add_card
 
 omit [Fintype r] in
-/-- The contrast covariance of GREML is diagonal:
-`B (σ²_g K + σ²_e I) Bᵀ = diag (σ²_g d + σ²_e)`. -/
+/-- The contrast covariance of GREML is diagonal: if `B Bᵀ = 1` and `B K Bᵀ = diag d`, then for
+every `θ`, `B (σ²_g K + σ²_e I) Bᵀ = diag (σ²_g d + σ²_e)`. -/
 theorem contrast_gremlCov {K : Matrix m m ℝ} {B : Matrix r m ℝ} {d : r → ℝ}
     (hBB : B * Bᵀ = 1) (hBK : B * K * Bᵀ = diagonal d) (θ : ℝ × ℝ) :
     B * gremlCov K θ * Bᵀ = diagonal (contrastVar d θ) := by
@@ -255,7 +261,8 @@ theorem remlLogLik_eq_spectralLogLik_of_orthogonal {K : Matrix m m ℝ} {A : Mat
   rw [hdet, Real.log_one, sub_zero] at this
   rw [← this, remlLogLik_gremlCov hBB hBK hθ]
 
-/-- The genetic relationship matrix `A = X Xᵀ / M` is positive semidefinite. -/
+/-- The genetic relationship matrix `A = X Xᵀ / M` is positive semidefinite, for every real `X`;
+for `M = 0` it is `0`, by the convention `x / 0 = 0`. -/
 theorem posSemidef_grm {N M : ℕ} (X : Matrix (Fin N) (Fin M) ℝ) :
     (Matrix.of (GREML.grm X)).PosSemidef := by
   have h : Matrix.of (GREML.grm X) = (M : ℝ)⁻¹ • (X * Xᵀ) := by
@@ -268,11 +275,13 @@ theorem posSemidef_grm {N M : ℕ} (X : Matrix (Fin N) (Fin M) ℝ) :
 
 /-! ### The REML score equations -/
 
-/-- The REML score for `σ²_g`: `(1/2) ∑_i d_i (w_i² - λ_i) / λ_i²`. -/
+/-- The REML score for `σ²_g`: `(1/2) ∑_i d_i (w_i² - λ_i) / λ_i²`, with `x / 0 = 0`, so an index
+with `λ_i = 0` contributes `0`. It is a score (a partial derivative) where every `λ_i > 0`. -/
 noncomputable def scoreG (d w : r → ℝ) (θ : ℝ × ℝ) : ℝ :=
   (∑ i, d i * (w i ^ 2 - contrastVar d θ i) / contrastVar d θ i ^ 2) / 2
 
-/-- The REML score for `σ²_e`: `(1/2) ∑_i (w_i² - λ_i) / λ_i²`. -/
+/-- The REML score for `σ²_e`: `(1/2) ∑_i (w_i² - λ_i) / λ_i²`, with `x / 0 = 0`, so an index
+with `λ_i = 0` contributes `0`. It is a score (a partial derivative) where every `λ_i > 0`. -/
 noncomputable def scoreE (d w : r → ℝ) (θ : ℝ × ℝ) : ℝ :=
   (∑ i, (w i ^ 2 - contrastVar d θ i) / contrastVar d θ i ^ 2) / 2
 
@@ -316,7 +325,7 @@ theorem hasDerivAt_spectralLogLik_snd {d : r → ℝ} (w : r → ℝ) {θ : ℝ 
   simpa [scoreE, spectralLogLik] using this
 
 omit [Fintype r] [DecidableEq r] in
-/-- The region where every contrast variance is positive is open. -/
+/-- For finitely many contrasts, the region where every contrast variance is positive is open. -/
 theorem isOpen_posContrastVar [Finite r] (d : r → ℝ) :
     IsOpen {θ : ℝ × ℝ | ∀ i, 0 < contrastVar d θ i} := by
   simp only [Set.ofPred_forall]
@@ -337,9 +346,10 @@ theorem score_eq_zero_of_isLocalMax {d w : r → ℝ} {θ : ℝ × ℝ}
       hmax.comp_continuous (g := fun s => (θ.1, s)) (by fun_prop)
     exact h.hasDerivAt_eq_zero (hasDerivAt_spectralLogLik_snd w hθ)
 
-/-- **REML score equations for GREML.** If `θ` is a local maximizer of the GREML restricted
-log-likelihood `θ ↦ remlLogLik B (σ²_g K + σ²_e I) y` at which every contrast variance is
-positive (an interior REML estimate), then both REML scores vanish at `θ`. -/
+/-- **REML score equations for GREML.** Let `B Bᵀ = 1` and `B K Bᵀ = diag d`. If `θ` is a local
+maximizer of the GREML restricted log-likelihood `θ ↦ remlLogLik B (σ²_g K + σ²_e I) y` at which
+every contrast variance is positive (an interior REML estimate), then both REML scores of
+`w = B y` vanish at `θ`. -/
 theorem score_eq_zero_of_isLocalMax_remlLogLik {K : Matrix m m ℝ} {B : Matrix r m ℝ}
     {d : r → ℝ} (hBB : B * Bᵀ = 1) (hBK : B * K * Bᵀ = diagonal d) {y : m → ℝ} {θ : ℝ × ℝ}
     (hθ : ∀ i, 0 < contrastVar d θ i)
@@ -349,7 +359,8 @@ theorem score_eq_zero_of_isLocalMax_remlLogLik {K : Matrix m m ℝ} {B : Matrix 
   filter_upwards [(isOpen_posContrastVar d).mem_nhds hθ] with φ hφ
   exact remlLogLik_gremlCov hBB hBK hφ y
 
-/-- The REML projection `P = Bᵀ (B V Bᵀ)⁻¹ B` of an error contrast `B` at covariance `V`. -/
+/-- The REML projection `P = Bᵀ (B V Bᵀ)⁻¹ B` of an error contrast `B` at covariance `V`. The
+matrix inverse is total: it is `0` when `B V Bᵀ` is singular, and then `P = 0`. -/
 noncomputable def remlProj (B : Matrix r m ℝ) (V : Matrix m m ℝ) : Matrix m m ℝ :=
   Bᵀ * (B * V * Bᵀ)⁻¹ * B
 
@@ -364,7 +375,8 @@ private theorem remlProj_gremlCov {K : Matrix m m ℝ} {B : Matrix r m ℝ} {d :
     remlProj B (gremlCov K θ) = Bᵀ * diagonal (fun i => (contrastVar d θ i)⁻¹) * B := by
   rw [remlProj, contrast_gremlCov hBB hBK, inv_diagonal_of_ne fun i => (hθ i).ne']
 
-/-- **The scores in GCTA's matrix form**: with `P = remlProj B (σ²_g K + σ²_e I)`,
+/-- **The scores in GCTA's matrix form**: if `B Bᵀ = 1`, `B K Bᵀ = diag d` and every contrast
+variance at `θ` is positive, then with `P = remlProj B (σ²_g K + σ²_e I)`,
 `scoreG = (yᵀ P K P y - tr (P K)) / 2` and `scoreE = (yᵀ P P y - tr P) / 2`. -/
 theorem score_eq_remlProj {K : Matrix m m ℝ} {B : Matrix r m ℝ} {d : r → ℝ}
     (hBB : B * Bᵀ = 1) (hBK : B * K * Bᵀ = diagonal d) {θ : ℝ × ℝ}
@@ -394,9 +406,9 @@ theorem score_eq_remlProj {K : Matrix m m ℝ} {B : Matrix r m ℝ} {d : r → �
     have := (hθ i).ne'
     field_simp
 
-/-- **GCTA's REML equations.** At an interior local maximizer `θ` of the GREML restricted
-log-likelihood, with `P = remlProj B (σ²_g K + σ²_e I)`, `yᵀ P K P y = tr (P K)` and
-`yᵀ P P y = tr P`. -/
+/-- **GCTA's REML equations.** Let `B Bᵀ = 1` and `B K Bᵀ = diag d`. At a local maximizer `θ` of
+the GREML restricted log-likelihood at which every contrast variance is positive, with
+`P = remlProj B (σ²_g K + σ²_e I)`, `yᵀ P K P y = tr (P K)` and `yᵀ P P y = tr P`. -/
 theorem reml_equations_of_isLocalMax {K : Matrix m m ℝ} {B : Matrix r m ℝ} {d : r → ℝ}
     (hBB : B * Bᵀ = 1) (hBK : B * K * Bᵀ = diagonal d) {y : m → ℝ} {θ : ℝ × ℝ}
     (hθ : ∀ i, 0 < contrastVar d θ i)
@@ -431,7 +443,8 @@ private theorem integrable_integral_sq_of_hasLaw_gaussianReal {Z : Ω → ℝ} {
       variance_eq_integral measurable_id.aemeasurable]
     simp [integral_id_gaussianReal]
 
-/-- **Second moments of the rotated contrasts**: if `y ~ N(X β, σ²_g K + σ²_e I)` at `θ₀` with a
+/-- **Second moments of the rotated contrasts**: let `B` be an orthonormal error contrast for `X`
+that diagonalizes `K` with eigenvalues `d`. If `y ~ N(X β, σ²_g K + σ²_e I)` at `θ₀` with a
 positive semidefinite covariance, then `w_i = (B y)_i` is square integrable with
 `𝔼[w_i²] = σ²_{g,0} d_i + σ²_{e,0}`. -/
 theorem integral_sq_contrast {X : Matrix m k ℝ} {K : Matrix m m ℝ} {B : Matrix r m ℝ}
@@ -453,8 +466,10 @@ theorem integral_sq_contrast {X : Matrix m k ℝ} {K : Matrix m m ℝ} {B : Matr
     hB.mul_mul_transpose, diagonal_apply_eq]
 
 set_option linter.unusedVariables false in
-/-- **The REML score for `σ²_g` is unbiased**: at a true parameter `θ₀` with every contrast
-variance positive, where `scoreG` is the derivative of the REML criterion, `𝔼[scoreG] = 0`. -/
+/-- **The REML score for `σ²_g` is unbiased**: let `B` be an orthonormal error contrast for `X`
+that diagonalizes `K` with eigenvalues `d`, and `y ~ N(X β, σ²_g K + σ²_e I)` on a probability
+space at a true parameter `θ₀` with a positive semidefinite covariance and every contrast variance
+positive. Then `𝔼[scoreG] = 0` at `θ₀`. -/
 theorem integral_scoreG [IsProbabilityMeasure μ] {X : Matrix m k ℝ} {K : Matrix m m ℝ}
     {B : Matrix r m ℝ} {d : r → ℝ} (hB : IsSpectralContrast X K B d) {θ₀ : ℝ × ℝ}
     (hV : (gremlCov K θ₀).PosSemidef) (hθ₀ : ∀ i, 0 < contrastVar d θ₀ i) (β : k → ℝ)
@@ -472,8 +487,10 @@ theorem integral_scoreG [IsProbabilityMeasure μ] {X : Matrix m k ℝ} {K : Matr
   simp
 
 set_option linter.unusedVariables false in
-/-- **The REML score for `σ²_e` is unbiased**: at a true parameter `θ₀` with every contrast
-variance positive, where `scoreE` is the derivative of the REML criterion, `𝔼[scoreE] = 0`. -/
+/-- **The REML score for `σ²_e` is unbiased**: let `B` be an orthonormal error contrast for `X`
+that diagonalizes `K` with eigenvalues `d`, and `y ~ N(X β, σ²_g K + σ²_e I)` on a probability
+space at a true parameter `θ₀` with a positive semidefinite covariance and every contrast variance
+positive. Then `𝔼[scoreE] = 0` at `θ₀`. -/
 theorem integral_scoreE [IsProbabilityMeasure μ] {X : Matrix m k ℝ} {K : Matrix m m ℝ}
     {B : Matrix r m ℝ} {d : r → ℝ} (hB : IsSpectralContrast X K B d) {θ₀ : ℝ × ℝ}
     (hV : (gremlCov K θ₀).PosSemidef) (hθ₀ : ∀ i, 0 < contrastVar d θ₀ i) (β : k → ℝ)
@@ -508,13 +525,15 @@ none). -/
 noncomputable def groupMean (d w : r → ℝ) (a : ℝ) : ℝ := groupSS d w a / groupCount d a
 
 /-- The closed-form REML estimate `(σ̂²_g, σ̂²_e)` for a spectrum with the two values `a ≠ b`:
-`σ̂²_g = (m_a - m_b) / (a - b)` and `σ̂²_e = (a m_b - b m_a) / (a - b)`. -/
+`σ̂²_g = (m_a - m_b) / (a - b)` and `σ̂²_e = (a m_b - b m_a) / (a - b)`. It is defined for all
+`a`, `b`: with `x / 0 = 0` it is `(0, 0)` when `a = b`, and an empty class has mean `0`. -/
 noncomputable def twoLevelREML (d w : r → ℝ) (a b : ℝ) : ℝ × ℝ :=
   ((groupMean d w a - groupMean d w b) / (a - b),
     (a * groupMean d w b - b * groupMean d w a) / (a - b))
 
 omit [DecidableEq r] in
-/-- At the closed-form estimate, the contrast variance of each class is its mean of `w_i²`. -/
+/-- For `a ≠ b`, at the closed-form estimate the contrast variance of each class is its mean of
+`w_i²`. -/
 theorem contrastVar_twoLevelREML {d w : r → ℝ} {a b : ℝ} (hab : a ≠ b) (i : r) :
     (d i = a → contrastVar d (twoLevelREML d w a b) i = groupMean d w a) ∧
       (d i = b → contrastVar d (twoLevelREML d w a b) i = groupMean d w b) := by
@@ -688,9 +707,10 @@ private theorem integral_groupMean [IsProbabilityMeasure μ] {X : Matrix m k ℝ
   rw [groupCount] at hn
   field_simp
 
-/-- **The closed-form REML estimator is unbiased**: if `y ~ N(X β, σ²_g K + σ²_e I)` at `θ₀` and
-the spectrum takes the two values `a ≠ b`, each at least once, then
-`𝔼[σ̂²_g] = σ²_{g,0}` and `𝔼[σ̂²_e] = σ²_{e,0}`. -/
+/-- **The closed-form REML estimator is unbiased**: let `B` be an orthonormal error contrast for
+`X` that diagonalizes `K` with eigenvalues `d`. If `y ~ N(X β, σ²_g K + σ²_e I)` at `θ₀` with a
+positive semidefinite covariance, on a probability space, and `a ≠ b` each occur among the `d_i`
+(other values may occur too), then `𝔼[σ̂²_g] = σ²_{g,0}` and `𝔼[σ̂²_e] = σ²_{e,0}`. -/
 theorem integral_twoLevelREML [IsProbabilityMeasure μ] {X : Matrix m k ℝ} {K : Matrix m m ℝ}
     {B : Matrix r m ℝ} {d : r → ℝ} (hB : IsSpectralContrast X K B d) {θ₀ : ℝ × ℝ}
     (hV : (gremlCov K θ₀).PosSemidef) (β : k → ℝ) {y : Ω → EuclideanSpace ℝ m}

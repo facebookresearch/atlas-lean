@@ -173,8 +173,9 @@ theorem clr_eq_clr_iff {x y : PosComposition ι} :
   · rintro ⟨t, ht, rfl⟩
     exact (clr_smul t ht x).symm
 
-/-- Every positive total is attained in every CLR fibre: for any positive composition `x` and any
-`T > 0` there is a composition with the same CLR transform and total `T`. -/
+/-- With at least one part, every positive total is attained in every CLR fibre: for any positive
+composition `x` and any `T > 0` there is a composition with the same CLR transform and total `T`.
+With no parts every total is `0`. -/
 theorem exists_clr_eq_sum_eq [Nonempty ι] (x : PosComposition ι) {T : ℝ} (hT : 0 < T) :
     ∃ y : PosComposition ι, clr y = clr x ∧ ∑ i, y.1 i = T := by
   have hS : 0 < ∑ i, x.1 i := sum_pos (fun i _ => x.2 i) univ_nonempty
@@ -217,8 +218,8 @@ theorem clr_withPseudocount_smul (c : ℝ) (hc : 0 < c) (t : ℝ) (ht : 0 < t) (
   rw [this, clr_smul]
 
 /-- **Scale invariance under a fixed pseudocount.** With the pseudocount `c` fixed and a scale
-factor `t ≠ 1`, rescaling the counts by `t` leaves CLR unchanged if and only if all counts are
-equal. -/
+factor `t > 0` with `t ≠ 1`, rescaling the counts by `t` leaves CLR unchanged if and only if all
+counts are equal. -/
 theorem clr_withPseudocount_smul_eq_iff (c : ℝ) (hc : 0 < c) (t : ℝ) (ht : 0 < t) (ht1 : t ≠ 1)
     (n : ι → ℝ) (hn : ∀ i, 0 ≤ n i) :
     clr (withPseudocount c hc (t • n) (fun i => by simpa using mul_nonneg ht.le (hn i))) =

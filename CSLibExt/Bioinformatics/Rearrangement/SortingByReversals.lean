@@ -44,11 +44,15 @@ false, see `sbreaks_eq_ubreaks_dbl_counterex`).
 
 namespace Cslib.Bioinformatics.Rearrangement.SortingByReversals
 
-/-- Reverse the 0-based inclusive block `i..j` of a list. Meaningful for `i <= j < pi.length`. -/
+/-- Reverse the 0-based inclusive block `i..j` of a list. Meaningful for `i <= j < pi.length`.
+Outside that range the truncated subtraction `j + 1 - i` is `0` when `j < i`, and the result is
+`pi.take i ++ pi.drop (j + 1)`: `pi` itself when `i = j + 1`, with repeated entries when
+`j + 1 < min i pi.length`. For `i ≤ j` and `pi.length ≤ j` the suffix from `i` is reversed. -/
 def revBlock (pi : List Int) (i j : Nat) : List Int :=
   pi.take i ++ (pi.drop i |>.take (j + 1 - i)).reverse ++ pi.drop (j + 1)
 
-/-- Count adjacent gaps in a framed list whose absolute difference is not `1`. -/
+/-- Count the adjacent pairs of a list whose absolute difference is not `1` (`0` for at most one
+entry); `ubreaks` applies it to the list framed by `0` and `n + 1`. -/
 def gapCount : List Int -> Nat
   | [] => 0
   | [_] => 0
@@ -318,7 +322,8 @@ theorem revBlock_valid (n : Nat) (pi : List Int) (i j : Nat) (h : UValid n pi)
     (hij : i ≤ j) (hj : j < pi.length) : UValid n (revBlock pi i j) :=
   List.Perm.trans (revBlock_perm pi i j hij hj) h
 
-/-- Reversals inside a fixed-top extension act on the prefix alone. -/
+/-- Reversals inside the prefix of `X ++ [c]` act on the prefix alone: for `i ≤ j < X.length`,
+`revBlock (X ++ [c]) i j = revBlock X i j ++ [c]` (any `c`). -/
 theorem revBlock_append_singleton (X : List Int) (c : Int) (i j : Nat)
     (hij : i ≤ j) (hj : j < X.length) :
     revBlock (X ++ [c]) i j = revBlock X i j ++ [c] := by
@@ -433,7 +438,7 @@ noncomputable instance decSortableIn (n : Nat) (pi : List Int) :
 /-- Unsigned reversal distance as a genuine minimum (Shamir-Peer sec. 11.2). -/
 noncomputable def udist (n : Nat) (pi : List Int) (h : UValid n pi) : Nat := Nat.find (sortable n pi h)
 
-/-- Consecutive naturals have no gap. -/
+/-- The consecutive integers `n + 1` and `n + 2` have no gap. -/
 theorem isGap_consec (n : Nat) : isGap (Int.ofNat (n + 1)) (Int.ofNat (n + 2)) = 0 := by
   have hd : (Int.ofNat (n + 2) - Int.ofNat (n + 1)).natAbs = 1 := by
     have h1 : Int.ofNat (n + 2) = Int.ofNat n + 2 := by simp
@@ -679,12 +684,15 @@ def SValid (n : Nat) (pi : List Int) : Prop :=
   pi.map Int.natAbs ~ List.Icc 1 n
 
 /-- Doubling one signed element: `+x -> [2x-1, 2x]`, `-x -> [2x, 2x-1]` (`x = |entry|`).
+Meant for the nonzero entries of a signed permutation; the entry `0` falls in the first case,
+`dblOne 0 = [-1, 0]`.
 Cf. the doubled unsigned permutation of Shamir-Peer Lecture 11 signed setting. -/
 def dblOne (x : Int) : List Int :=
   if 0 ≤ x then [2 * (x.natAbs : Int) - 1, 2 * (x.natAbs : Int)]
   else [2 * (x.natAbs : Int), 2 * (x.natAbs : Int) - 1]
 
-/-- The doubled unsigned permutation. -/
+/-- Doubling of a list: the concatenation of the doubled pairs `dblOne` of its entries. For a
+valid signed permutation of `1..n` it is an unsigned permutation of `1..2n` (`dbl_valid`). -/
 def dbl (pi : List Int) : List Int := pi.flatMap dblOne
 
 /-- Directed gap count: adjacent pairs with `b - a != 1`.
@@ -703,12 +711,12 @@ Cf. the signed directed breakpoints of Shamir-Peer Lecture 11 signed setting. -/
 def isDirGap (a b : Int) : Nat :=
   if b - a = 1 then 0 else 1
 
-/-- First element of the doubled pair.
+/-- First element of the doubled pair. Meant for nonzero `x`; `dblFirst 0 = -1`.
 Cf. the doubled unsigned permutation of Shamir-Peer Lecture 11 signed setting. -/
 def dblFirst (x : Int) : Int :=
   if 0 ≤ x then 2 * (x.natAbs : Int) - 1 else 2 * (x.natAbs : Int)
 
-/-- Last element of the doubled pair.
+/-- Last element of the doubled pair. Meant for nonzero `x`; `dblLast 0 = 0`.
 Cf. the doubled unsigned permutation of Shamir-Peer Lecture 11 signed setting. -/
 def dblLast (x : Int) : Int :=
   if 0 ≤ x then 2 * (x.natAbs : Int) else 2 * (x.natAbs : Int) - 1
@@ -931,7 +939,9 @@ theorem natAbs_cast_of_neg (x : Int) (h : x < 0) : ((x.natAbs : Nat) : Int) = -x
   rw [e2] at e1
   exact e1
 
-/-- Between consecutive doubled pairs the absolute gap matches the directed gap.
+/-- Between consecutive doubled pairs the absolute gap matches the directed gap, for entries with
+`1 ≤ p.natAbs`, `1 ≤ q.natAbs` and `p.natAbs ≠ q.natAbs`: `|dblFirst q - dblLast p| = 1` iff
+`q - p = 1`.
 Cf. the signed directed correspondence of Shamir-Peer Lecture 11 signed setting. -/
 theorem between_gap (p q : Int) (hp : 1 ≤ p.natAbs) (hq : 1 ≤ q.natAbs)
     (hne : p.natAbs ≠ q.natAbs) :
@@ -1010,7 +1020,7 @@ theorem between_gap (p q : Int) (hp : 1 ≤ p.natAbs) (hq : 1 ≤ q.natAbs)
         omega
     omega
 
-/-- At the left sentinel the absolute gap matches the directed gap.
+/-- At the left sentinel the absolute gap matches the directed gap, for a nonzero entry `x`.
 Cf. the signed directed correspondence of Shamir-Peer Lecture 11 signed setting. -/
 theorem left_gap (x : Int) (hx : 1 ≤ x.natAbs) :
     isGap 0 (dblFirst x) = isDirGap 0 x := by
@@ -1047,7 +1057,8 @@ theorem left_gap (x : Int) (hx : 1 ≤ x.natAbs) :
         omega
     omega
 
-/-- At the right sentinel the absolute gap matches the directed gap.
+/-- At the right sentinel the absolute gap matches the directed gap, for an entry with
+`x.natAbs ≤ n`.
 Cf. the signed directed correspondence of Shamir-Peer Lecture 11 signed setting. -/
 theorem right_gap (x : Int) (n : Nat) (hxle : x.natAbs ≤ n) :
     isGap (dblLast x) (Int.ofNat (2 * n + 1)) = isDirGap x (Int.ofNat (n + 1)) := by
@@ -1153,7 +1164,9 @@ theorem SValid_imp_nodup (n : Nat) (pi : List Int) (h : SValid n pi) :
   have hiff := List.Perm.nodup_iff h
   exact hiff.mpr hIcc
 
-/-- Tail correspondence from a signed head to a doubled head.
+/-- Tail correspondence from a signed head to a doubled head: if the entries of `x :: xs` have
+pairwise distinct absolute values in `1..n`, the directed gap count of `x :: xs ++ [n + 1]`
+equals the gap count of `dblLast x :: dbl xs ++ [2 * n + 1]`.
 Cf. the signed directed correspondence of Shamir-Peer Lecture 11 signed setting. -/
 theorem aux_correspondence (n : Nat) (x : Int) (xs : List Int)
     (hmem : MemRange n (x :: xs)) (hnodup : ((x :: xs).map Int.natAbs).Nodup) :
@@ -1270,7 +1283,11 @@ theorem sbreaks_eq_ubreaks_dbl_counterex :
     ∃ n pi, sbreaks n pi ≠ ubreaks (2 * n) (dbl pi) := by
   exact ⟨1, [1, 1], by decide⟩
 
-/-- Signed reversal: reverse block i..j and negate its elements. -/
+/-- Signed reversal: reverse the 0-based inclusive block `i..j` and negate its elements.
+Meaningful for `i ≤ j < pi.length`. Outside that range `j + 1 - i` truncates to `0` when
+`j < i`, giving `pi.take i ++ pi.drop (j + 1)` with nothing negated (`pi` itself when
+`i = j + 1`, repeated entries when `j + 1 < min i pi.length`); for `i ≤ j` and
+`pi.length ≤ j` the suffix from `i` is reversed and negated. -/
 def srevBlock (pi : List Int) (i j : Nat) : List Int :=
   pi.take i ++ ((pi.drop i).take (j + 1 - i)).reverse.map (fun x => -x) ++ pi.drop (j + 1)
 
@@ -1284,7 +1301,7 @@ theorem dbl_cons (x : Int) (xs : List Int) : dbl (x :: xs) = dblOne x ++ dbl xs 
 theorem dbl_append (l₁ l₂ : List Int) : dbl (l₁ ++ l₂) = dbl l₁ ++ dbl l₂ := by
   simp [dbl]
 
-/-- Doubling preserves length scaling; cf. Lecture 11 signed setting. -/
+/-- Doubling doubles the length; cf. Lecture 11 signed setting. -/
 theorem dbl_length (pi : List Int) : (dbl pi).length = 2 * pi.length := by
   induction pi with
   | nil => rfl
@@ -1362,7 +1379,9 @@ theorem dbl_reverse_neg (l : List Int) (h : ∀ x ∈ l, x ≠ 0) :
     rw [List.reverse_cons, List.map_append, List.map_singleton, dbl_append, dbl_singleton,
       dbl_cons, List.reverse_append, ih', hneg]
 
-/-- Signed reversal corresponds to unsigned reversal of doubling; cf. Lecture 11 signed setting. -/
+/-- Signed reversal corresponds to unsigned reversal of doubling: for a valid signed permutation
+(nonzero entries) and `i ≤ j < pi.length`, doubling the signed reversal of `i..j` gives the
+reversal of the block `2 * i` to `2 * j + 1` of the doubled list; cf. Lecture 11 signed setting. -/
 theorem dbl_srevBlock (n : Nat) (pi : List Int) (i j : Nat) (h : SValid n pi)
     (hij : i ≤ j) (_hj : j < pi.length) :
     dbl (srevBlock pi i j) = revBlock (dbl pi) (2 * i) (2 * j + 1) := by
@@ -1412,7 +1431,7 @@ theorem srevBlock_length (pi : List Int) (i j : Nat) (hij : i ≤ j)
   rw [Nat.min_eq_left hi, Nat.min_eq_left hmid_le]
   omega
 
-/-- Signed reversals preserve validity; cf. Lecture 11 signed setting. -/
+/-- Signed reversals with `i ≤ j < pi.length` preserve validity; cf. Lecture 11 signed setting. -/
 theorem srevBlock_valid (n : Nat) (pi : List Int) (i j : Nat) (h : SValid n pi)
     (hij : i ≤ j) (hj : j < pi.length) : SValid n (srevBlock pi i j) := by
   unfold SValid at h ⊢
@@ -1447,7 +1466,8 @@ theorem srevBlock_valid (n : Nat) (pi : List Int) (i j : Nat) (h : SValid n pi)
       (List.Perm.refl _)
   exact hperm.trans h
 
-/-- Signed reversal changes breakpoints by at most two; cf. Lecture 11 signed setting. -/
+/-- For a valid signed permutation and `i ≤ j < pi.length`, a signed reversal increases the
+breakpoint count by at most two; cf. Lecture 11 signed setting. -/
 theorem sbreaks_srevBlock_le (n : Nat) (pi : List Int) (i j : Nat) (h : SValid n pi)
     (hij : i ≤ j) (hj : j < pi.length) :
     sbreaks n (srevBlock pi i j) ≤ sbreaks n pi + 2 := by
@@ -1465,7 +1485,8 @@ theorem sbreaks_srevBlock_le (n : Nat) (pi : List Int) (i j : Nat) (h : SValid n
   rw [←hcorr2, ←hcorr] at hub
   exact hub
 
-/-- Signed reversal changes breakpoints by at most two; cf. Lecture 11 signed setting. -/
+/-- For a valid signed permutation and `i ≤ j < pi.length`, a signed reversal decreases the
+breakpoint count by at most two; cf. Lecture 11 signed setting. -/
 theorem sbreaks_le_srevBlock (n : Nat) (pi : List Int) (i j : Nat) (h : SValid n pi)
     (hij : i ≤ j) (hj : j < pi.length) :
     sbreaks n pi ≤ sbreaks n (srevBlock pi i j) + 2 := by
@@ -1718,7 +1739,8 @@ theorem sbreaks_target (n : Nat) : sbreaks n ((List.Icc 1 n).map Int.ofNat) = 0 
     have hsingle : dirGapCount ([Int.ofNat (n + 1 + 1)] : List Int) = 0 := rfl
     rw [h0, hsingle]
 
-/-- Breakpoint lower bound by sortability; cf. Lecture 11 signed setting. -/
+/-- Breakpoint lower bound by sortability, for a valid signed permutation;
+cf. Lecture 11 signed setting. -/
 theorem sbreaks_le_two_mul_of_ssortableIn (k n : Nat) (pi : List Int)
     (h : SSortableIn k n pi) (hv : SValid n pi) : sbreaks n pi ≤ 2 * k := by
   revert hv

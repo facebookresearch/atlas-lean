@@ -122,8 +122,9 @@ variable {Ω : Type*} [MeasurableSpace Ω] {m : ℕ}
 
 /-- **Validity from a dominating reference tail.** Let a test reject for large values of a
 statistic `T` and report `G (T ω)`, where `G` is antitone. If `G` dominates the null tail of `T`,
-`μ {s ≤ T} ≤ G s` for every `s`, then `G ∘ T` is a valid p-value: `μ {G ∘ T ≤ t} ≤ t` for
-`t ∈ [0, 1]`. No measurability or continuity is needed.
+`μ {s ≤ T} ≤ G s` for every `s` (where `G s < 0`, this asks `μ {s ≤ T} = 0`), then `G ∘ T` is a
+valid p-value: `μ {G ∘ T ≤ t} ≤ t` for `t ∈ [0, 1]`. The measure `μ` need not be a probability
+measure. No measurability or continuity is needed.
 
 The event `{G (T ω) ≤ t}` is `{T ∈ A}` for the upper set `A = {s | G s ≤ t}`, which is either
 empty, `[a, ∞)`, `(a, ∞)` or `ℝ`; in the last two cases it is an increasing union of events
@@ -181,7 +182,8 @@ def tailPValue (T : Fin m → Ω → ℝ) (G : Fin m → ℝ → ℝ) : Fin m �
 
 /-- **Tail-calibrated family of association tests** with true nulls `H0`: every statistic is
 measurable, every reference tail is antitone, and for every null gene the reference tail
-dominates the true null tail of its statistic, `μ {s ≤ T i} ≤ G i s`. Burden and SKAT-type
+dominates the true null tail of its statistic, `μ {s ≤ T i} ≤ G i s` (where `G i s < 0`, this asks
+`μ {s ≤ T i} = 0`). Burden and SKAT-type
 tests with a conservative reference null, and genomic-control tests whose inflation factor
 removes all of the inflation, are of this form. -/
 structure IsTailCalibratedFamily (μ : Measure Ω) (T : Fin m → Ω → ℝ) (G : Fin m → ℝ → ℝ)
@@ -228,7 +230,7 @@ variable {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Fin m → Ω → ℝ} 
 tail-calibrated with true nulls `H0` (`IsTailCalibratedFamily`: measurable statistics, antitone
 reference tails, and for every null gene a reference tail dominating the true null tail) and its
 p-values are PRDS on `H0`, then the Benjamini–Hochberg procedure at level `q ∈ [0, 1]` has false
-discovery rate at most `q |H0| / m`.
+discovery rate at most `q |H0| / m` (which is `0` for `m = 0`, by the convention `x / 0 = 0`).
 
 Source: Benjamini & Yekutieli (2001), Theorem 1.2, applied through
 `integral_falseDiscoveryProportion_bhRejections_le_of_isPRDSOn`. -/
@@ -241,14 +243,15 @@ theorem integral_fdp_bhRejections_tailPValue_le (h : IsTailCalibratedFamily μ T
 
 /-- **FDR control for independent tail-calibrated tests.** The special case of
 `integral_fdp_bhRejections_tailPValue_le` in which the gene-level statistics are mutually
-independent. -/
+independent. For `m = 0` the bound is `0` by `x / 0 = 0`. -/
 theorem integral_fdp_bhRejections_tailPValue_le_of_iIndepFun (h : IsTailCalibratedFamily μ T G H0)
     (hindep : iIndepFun T μ) {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => tailPValue T G i ω) ∂μ ≤
       q * H0.card / m :=
   integral_fdp_bhRejections_tailPValue_le h (isPRDSOn_tailPValue_of_iIndepFun h hindep H0) hq₀ hq₁
 
-/-- The bound `q |H0| / m` is at most `q`. -/
+/-- The bound `q |H0| / m` is at most `q`, for `q ≥ 0`; for `m = 0` it is `0`, by the convention
+`x / 0 = 0`. -/
 theorem mul_card_div_le {q : ℝ} (hq₀ : 0 ≤ q) (H0 : Finset (Fin m)) :
     q * H0.card / m ≤ q := by
   rcases Nat.eq_zero_or_pos m with rfl | hm
@@ -259,7 +262,8 @@ theorem mul_card_div_le {q : ℝ} (hq₀ : 0 ≤ q) (H0 : Finset (Fin m)) :
 
 /-- **Markov bound on the false discovery proportion.** Under the hypotheses of
 `integral_fdp_bhRejections_tailPValue_le`, for every `c > 0` the probability that the BH-selected
-gene set has false discovery proportion at least `c` is at most `q |H0| / (m c)`. -/
+gene set has false discovery proportion at least `c` is at most `q |H0| / (m c)` (`0` for `m = 0`,
+by the convention `x / 0 = 0`). -/
 theorem measure_le_fdp_bhRejections_tailPValue_le (h : IsTailCalibratedFamily μ T G H0)
     (hprds : IsPRDSOn μ (tailPValue T G) H0) {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) {c : ℝ}
     (hc : 0 < c) :
@@ -285,7 +289,7 @@ hypotheses of `integral_fdp_bhRejections_tailPValue_le` (tail-calibrated tests w
 p-values), for `q ∈ (0, 1]` and `δ > 0`, the event that the gene set selected by BH at level `q`
 has false discovery proportion below the fixed number `q / δ` has probability at least `1 - δ`.
 The statement is informative only for `q ≤ δ < 1`: for `δ < q` the level exceeds `1`, which the
-FDP never does, and for `δ ≥ 1` the bound `1 - δ` is not positive.
+FDP never does, and for `δ ≥ 1` the bound `1 - δ`, read as `0`, is trivial.
 `measure_le_fdp_bhRejections_tailPValue_le` gives the sharper level `q |H0| / (m δ)` when
 `H0.Nonempty` (which implies `m > 0` and the cutoff is positive, as that lemma requires `c > 0`).
 When `H0 = ∅`, FDP is identically `0` and the strict event `{FDP < 0}` is empty, so no sharper

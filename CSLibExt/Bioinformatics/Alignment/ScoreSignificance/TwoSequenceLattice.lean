@@ -94,11 +94,14 @@ open Cslib.Bioinformatics.Alignment.ScoreSignificance.TwoSequence
 
 section Lattice
 
-/-- The first point `(⌊t / h⌋ + 1) h` of the lattice `hℤ` strictly above `t`. -/
+/-- The first point `(⌊t / h⌋ + 1) h` of the lattice `hℤ` strictly above `t`, for `h > 0`, the
+intended domain. With the convention `x / 0 = 0` it is `0` when `h = 0`; for `h < 0` it is a
+point of `hℤ` in `[t + h, t)`. -/
 noncomputable def latticeAbove (h t : ℝ) : ℝ := (⌊t / h⌋ + 1) * h
 
 /-- The **periodic correction** `φ(t) = e^{-θ (t⁺ - t)}`, `t⁺ = latticeAbove h t`: the factor
-with `e^{-θ t⁺} = φ(t) e^{-θ t}`. It equals `e^{-θ h (1 - {t / h})}`. -/
+with `e^{-θ t⁺} = φ(t) e^{-θ t}`. For `h ≠ 0` it equals `e^{-θ h (1 - {t / h})}`; at `h = 0`,
+where `t⁺ = 0`, it is `e^{θ t}`. -/
 noncomputable def latticeCorr (θ h t : ℝ) : ℝ := exp (-θ * (latticeAbove h t - t))
 
 variable {h : ℝ}

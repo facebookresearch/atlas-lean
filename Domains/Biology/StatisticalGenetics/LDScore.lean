@@ -104,7 +104,7 @@ theorem IsStandardized.ldCorr_self {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStan
   simp only [pow_two] at h
   rw [ldCorr, h, div_self (Nat.cast_ne_zero.mpr hN)]
 
-/-- For a standardized matrix, the LD score of each marker is at least `1`. -/
+/-- For a standardized matrix with `N ≠ 0`, the LD score of each marker is at least `1`. -/
 theorem IsStandardized.one_le_ldScore {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStandardized X)
     (hN : N ≠ 0) (j : Fin M) : 1 ≤ ldScore X j := by
   have h := Finset.single_le_sum (f := fun k => ldCorr X j k ^ 2)

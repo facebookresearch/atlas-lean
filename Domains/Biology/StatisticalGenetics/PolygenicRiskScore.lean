@@ -47,13 +47,14 @@ when the markers are in linkage disequilibrium (LD), extending the uncorrelated-
 ## Main results
 
 * `calibSlope_eq_one_of_orthogonal`, `accuracySq_eq_of_orthogonal`: **calibration criterion.**
-  If the estimation error `β - β̂` is orthogonal in `L²` to every coordinate of `β̂`, the
-  calibration slope is `1` for every target LD matrix, and the accuracy is
-  `C(β̂, β̂) / C(β, β)`.
+  If `β` and `β̂` are square integrable and the estimation error `β - β̂` is orthogonal in `L²` to
+  every coordinate of `β̂`, then for every target LD matrix with `C(β̂, β̂) ≠ 0` the calibration
+  slope is `1` and the squared accuracy is `C(β̂, β̂) / C(β, β)`.
 * `accuracySq_marginal`, `calibSlope_marginal`: **accuracy and calibration of the marginal PRS
-  under LD.** If the target LD equals the training LD (`S = R`), `X` is standardized and
-  `N, M ≠ 0`, then with `L = ∑_j ℓ_j = tr R²` (`ldScoreSum`, the sum of LD scores) and
-  `T = tr R³` (`ldCube`),
+  under LD.** If the target LD equals the training LD (`S = R`), then with
+  `L = ∑_j ℓ_j = tr R²` (`ldScoreSum`, the sum of LD scores) and `T = tr R³` (`ldCube`), the
+  slope formula holds for every genotype matrix and the accuracy formula when `X` is
+  standardized and `N, M ≠ 0`:
   `r² = (h² L / M)² / (h² (h² T / M + (1 - h²) L / N))` and
   `slope = (h² L / M) / (h² T / M + (1 - h²) L / N)`.
 * `accuracySq_marginal_of_orthogonal`: with no LD (orthogonal standardized training columns,
@@ -66,21 +67,21 @@ when the markers are in linkage disequilibrium (LD), extending the uncorrelated-
   scores are not all equal.
 * `calibSlope_blup`, `accuracySq_blup`: **a calibrated score.** The linear shrinkage
   `β̃ = K β̂` with `K = (h² / M) R (𝔼[β̂ β̂ᵀ])⁻¹` (`shrinkMatrix`, `blupScore`, the best linear
-  predictor of `β` from `β̂`) has calibration slope exactly `1` for every target LD matrix,
-  provided `𝔼[β̂ β̂ᵀ]` is invertible.
+  predictor of `β` from `β̂`) has calibration slope exactly `1` for every target LD matrix with
+  `C(β̃, β̃) ≠ 0`, provided `𝔼[β̂ β̂ᵀ]` is invertible.
 
 ## What is not claimed
 
-With perfect LD (two identical columns) `R` and hence `𝔼[β̂ β̂ᵀ]` are singular: `shrinkMatrix`
-is then `0` (Mathlib's inverse of a singular matrix), `blupScore` is `0`, and its "calibration
-slope" is the junk value `0 / 0 = 0`; `calibSlope_blup` does not apply. The LD scores of such a
-design are all equal, so the LD-score regression slope is not identified and
-`accuracySq_marginal_eq_olsH2Hat` does not apply either. The marginal formula itself stays
-defined there; it describes the marginal score, not a joint-effect estimate. Sample-level
-statements (the distribution of the sample `R²` of a PRS, finite-sample bias of the plug-in
-accuracy) are not treated, and the shrinkage of `blupScore` uses the true `h²`. The training
-individuals are unrelated (`𝔼[ε εᵀ] = (1 - h²) I`, as in `LDScore.Model`), so relatedness is
-not modeled and `KinshipIBD` is not used.
+With perfect LD (two identical columns) `R` and hence `𝔼[β̂ β̂ᵀ]` are singular: `shrinkMatrix` is
+then `0` (the inverse of a singular matrix is taken to be `0`), `blupScore` is `0`, and its
+"calibration slope" is the conventional value `0 / 0 = 0`; `calibSlope_blup` does not apply. For a
+design of exactly two identical columns the LD scores are also equal, so the LD-score regression
+slope is not identified and `accuracySq_marginal_eq_olsH2Hat` does not apply either. The marginal
+formula itself stays defined there; it describes the marginal score, not a joint-effect estimate.
+Sample-level statements (the distribution of the sample `R²` of a PRS, finite-sample bias of the
+plug-in accuracy) are not treated, and the shrinkage of `blupScore` uses the true `h²`. The training
+individuals are unrelated (`𝔼[ε εᵀ] = (1 - h²) I`, as in `LDScore.Model`), so relatedness is not
+modeled and `KinshipIBD` is not used.
 
 ## References
 
@@ -128,11 +129,11 @@ section Target
 
 variable {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {M : ℕ}
 
-/-- **Target-population covariances.** If the target genotypes have raw second moments
-`∫ x j x k = S j k` and the target phenotype is `y = xᵀ a + e` with `e` orthogonal to every
-`x k`, then `∫ y · (xᵀ b) = aᵀ S b`. With `e = 0` this is the covariance of the scores `xᵀ a` and
-`xᵀ b` (for a probability measure and mean-zero genotypes): the phenotype and the genetic value
-`xᵀ a` have the same covariance with every score. -/
+/-- **Target-population covariances.** If the target genotypes `x j` and the noise `e` are square
+integrable, the genotypes have raw second moments `∫ x j x k = S j k` and the target phenotype is
+`y = xᵀ a + e` with `e` orthogonal to every `x k`, then `∫ y · (xᵀ b) = aᵀ S b`. With `e = 0` this
+is the covariance of the scores `xᵀ a` and `xᵀ b` (for a probability measure and mean-zero
+genotypes): the phenotype and the genetic value `xᵀ a` have the same covariance with every score. -/
 theorem integral_pheno_mul_score {Ξ : Type*} {mΞ : MeasurableSpace Ξ} {ν : Measure Ξ}
     (x : Fin M → Ξ → ℝ) (e : Ξ → ℝ) (hx : ∀ j, MemLp (x j) 2 ν) (he : MemLp e 2 ν)
     (S : Matrix (Fin M) (Fin M) ℝ) (hxx : ∀ j k, ∫ ξ, x j ξ * x k ξ ∂ν = S j k)
@@ -156,14 +157,16 @@ theorem integral_pheno_mul_score {Ξ : Type*} {mΞ : MeasurableSpace Ξ} {ν : M
   simp only [integral_const_mul, hxx, hex, mul_zero, Finset.sum_const_zero, add_zero]
   exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => by ring
 
-/-- The training expectation `C(a, b) = 𝔼[aᵀ S b] = ∫ ∑ j k, a j S j k b k` of the target-population
-covariance of the scores `xᵀ a` and `xᵀ b` (`integral_pheno_mul_score`), for random effect
-vectors `a`, `b` and target LD matrix `S`. -/
+/-- The training integral `C(a, b) = ∫ aᵀ S b ∂μ = ∫ ∑ j k, a j S j k b k ∂μ` (an expectation when
+`μ` is a probability measure) of the target-population cross moment `aᵀ S b` of the scores `xᵀ a`
+and `xᵀ b` (`integral_pheno_mul_score`), for random effect vectors `a`, `b` and target LD matrix
+`S`. It is `0` when the integrand is not integrable; the integrand is integrable when every `a j`
+and `b k` is square integrable. -/
 noncomputable def quadCov (μ : Measure Ω) (S : Matrix (Fin M) (Fin M) ℝ)
     (a b : Fin M → Ω → ℝ) : ℝ :=
   ∫ ω, ∑ j, ∑ k, a j ω * S j k * b k ω ∂μ
 
-/-- `C(a, b) = ∑ j k, S j k 𝔼[a j b k]`. -/
+/-- For square-integrable `a j` and `b k`, `C(a, b) = ∑ j k, S j k ∫ a j b k ∂μ`. -/
 theorem quadCov_eq (S : Matrix (Fin M) (Fin M) ℝ) (a b : Fin M → Ω → ℝ)
     (ha : ∀ j, MemLp (a j) 2 μ) (hb : ∀ k, MemLp (b k) 2 μ) :
     quadCov μ S a b = ∑ j, ∑ k, S j k * ∫ ω, a j ω * b k ω ∂μ := by
@@ -177,21 +180,22 @@ theorem quadCov_eq (S : Matrix (Fin M) (Fin M) ℝ) (a b : Fin M → Ω → ℝ)
   simp_rw [integral_finsetSum _ fun k _ => hp _ k, integral_const_mul]
 
 /-- The **squared accuracy** of the score `xᵀ β̂` for the genetic value `xᵀ β` in a target
-population with LD matrix `S`, as a ratio of expectations over training:
-`C(β, β̂)² / (C(β, β) C(β̂, β̂))`. -/
+population with LD matrix `S`, as a ratio of integrals over training:
+`C(β, β̂)² / (C(β, β) C(β̂, β̂))`. With `x / 0 = 0` it is `0` when `C(β, β) C(β̂, β̂) = 0`. -/
 noncomputable def accuracySq (μ : Measure Ω) (S : Matrix (Fin M) (Fin M) ℝ)
     (β βh : Fin M → Ω → ℝ) : ℝ :=
   quadCov μ S β βh ^ 2 / (quadCov μ S β β * quadCov μ S βh βh)
 
 /-- The **calibration slope** of the score `xᵀ β̂`: the slope `C(β, β̂) / C(β̂, β̂)` of the
 regression of the target phenotype (equally, of the genetic value) on the score, as a ratio of
-expectations over training. A score is calibrated when it is `1`. -/
+integrals over training. A score is calibrated when it is `1`. With `x / 0 = 0` it is `0` when
+`C(β̂, β̂) = 0`. -/
 noncomputable def calibSlope (μ : Measure Ω) (S : Matrix (Fin M) (Fin M) ℝ)
     (β βh : Fin M → Ω → ℝ) : ℝ :=
   quadCov μ S β βh / quadCov μ S βh βh
 
-/-- If the estimation error `β - β̂` is orthogonal to every coordinate of `β̂`, then
-`C(β, β̂) = C(β̂, β̂)` for every target LD matrix. -/
+/-- For square-integrable `β` and `β̂`: if the estimation error `β - β̂` is orthogonal to every
+coordinate of `β̂`, then `C(β, β̂) = C(β̂, β̂)` for every target LD matrix. -/
 theorem quadCov_eq_of_orthogonal (S : Matrix (Fin M) (Fin M) ℝ) (β βh : Fin M → Ω → ℝ)
     (hβ : ∀ k, MemLp (β k) 2 μ) (hβh : ∀ k, MemLp (βh k) 2 μ)
     (horth : ∀ k l, ∫ ω, (β k ω - βh k ω) * βh l ω ∂μ = 0) :
@@ -206,17 +210,18 @@ theorem quadCov_eq_of_orthogonal (S : Matrix (Fin M) (Fin M) ℝ) (β βh : Fin 
       fun ω => β j ω * βh k ω - βh j ω * βh k ω from funext fun ω => by ring] at h
   rw [show ∫ ω, β j ω * βh k ω ∂μ = ∫ ω, βh j ω * βh k ω ∂μ by linarith]
 
-/-- **Calibration criterion.** If the estimation error `β - β̂` is orthogonal in `L²` to every
-coordinate of `β̂` (as for the best linear predictor of `β` from the data), the calibration slope
-is `1` for every target LD matrix `S` with `C(β̂, β̂) ≠ 0`. -/
+/-- **Calibration criterion.** For square-integrable `β` and `β̂`: if the estimation error `β - β̂`
+is orthogonal in `L²` to every coordinate of `β̂` (as for the best linear predictor of `β` from the
+data), the calibration slope is `1` for every target LD matrix `S` with `C(β̂, β̂) ≠ 0`. -/
 theorem calibSlope_eq_one_of_orthogonal (S : Matrix (Fin M) (Fin M) ℝ) (β βh : Fin M → Ω → ℝ)
     (hβ : ∀ k, MemLp (β k) 2 μ) (hβh : ∀ k, MemLp (βh k) 2 μ)
     (horth : ∀ k l, ∫ ω, (β k ω - βh k ω) * βh l ω ∂μ = 0)
     (hV : quadCov μ S βh βh ≠ 0) : calibSlope μ S β βh = 1 := by
   rw [calibSlope, quadCov_eq_of_orthogonal S β βh hβ hβh horth, div_self hV]
 
-/-- For a calibrated score (orthogonal estimation error) the squared accuracy is the variance
-ratio `C(β̂, β̂) / C(β, β)`. -/
+/-- For square-integrable `β` and `β̂` whose estimation error `β - β̂` is orthogonal to every
+coordinate of `β̂`, and `C(β̂, β̂) ≠ 0`, the squared accuracy is the ratio `C(β̂, β̂) / C(β, β)`
+(with `x / 0 = 0`, both sides are `0` when `C(β, β) = 0`). -/
 theorem accuracySq_eq_of_orthogonal (S : Matrix (Fin M) (Fin M) ℝ) (β βh : Fin M → Ω → ℝ)
     (hβ : ∀ k, MemLp (β k) 2 μ) (hβh : ∀ k, MemLp (βh k) 2 μ)
     (horth : ∀ k l, ∫ ω, (β k ω - βh k ω) * βh l ω ∂μ = 0)
@@ -233,8 +238,8 @@ section Marginal
 
 variable {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {N M : ℕ}
 
-/-- The in-sample LD matrix `R j k = X_jᵀ X_k / N` (`LDScore.ldCorr`; the sample correlation
-matrix for a standardized genotype matrix). -/
+/-- The in-sample LD matrix `R j k = X_jᵀ X_k / N` (`LDScore.ldCorr`; the sample correlation matrix
+for a standardized genotype matrix). It is `0` when `N = 0` (`x / 0 = 0`). -/
 noncomputable def ldMatrix (X : Matrix (Fin N) (Fin M) ℝ) : Matrix (Fin M) (Fin M) ℝ :=
   Matrix.of (ldCorr X)
 
@@ -245,23 +250,32 @@ theorem ldCorr_comm (X : Matrix (Fin N) (Fin M) ℝ) (j k : Fin M) :
     ldCorr X j k = ldCorr X k j := by
   simp only [ldCorr, mul_comm]
 
-/-- The sum of LD scores `L = ∑ j, ℓ j = tr R²`. -/
+/-- The sum of LD scores `L = ∑ j, ℓ j = tr R²` (`R` is symmetric); it is `0` when `N = 0`
+(`x / 0 = 0`). -/
 noncomputable def ldScoreSum (X : Matrix (Fin N) (Fin M) ℝ) : ℝ := ∑ j, ldScore X j
 
-/-- The third LD moment `T = ∑ j l k, R j l R j k R l k = tr R³`. -/
+/-- The third LD moment `T = ∑ j l k, R j l R j k R l k = tr R³` (`R` is symmetric); it is `0` when
+`N = 0` (`x / 0 = 0`). -/
 noncomputable def ldCube (X : Matrix (Fin N) (Fin M) ℝ) : ℝ :=
   ∑ j, ∑ l, ∑ k, ldCorr X j l * ldCorr X j k * ldCorr X l k
 
-/-- The accuracy formula `(h² L / M)² / (h² (h² T / M + (1 - h²) L / N))`. -/
+/-- The accuracy formula `(h² L / M)² / (h² (h² T / M + (1 - h²) L / N))`. With `x / 0 = 0`,
+`h² L / M` and `h² T / M` are `0` when `M = 0`, `(1 - h²) L / N` is `0` when `N = 0`, and the value
+is `0` when the denominator vanishes (for example when `h² = 0`); it is meant for `N, M ≥ 1` and a
+nonzero denominator. -/
 noncomputable def accuracyFormula (N M : ℕ) (h2 L T : ℝ) : ℝ :=
   (h2 / M * L) ^ 2 / (h2 * (h2 / M * T + (1 - h2) / N * L))
 
-/-- The calibration-slope formula `(h² L / M) / (h² T / M + (1 - h²) L / N)`. -/
+/-- The calibration-slope formula `(h² L / M) / (h² T / M + (1 - h²) L / N)`. With `x / 0 = 0`,
+`h² L / M` and `h² T / M` are `0` when `M = 0`, `(1 - h²) L / N` is `0` when `N = 0`, and the value
+is `0` when the denominator vanishes; it is meant for `N, M ≥ 1` and a nonzero denominator. -/
 noncomputable def slopeFormula (N M : ℕ) (h2 L T : ℝ) : ℝ :=
   (h2 / M * L) / (h2 / M * T + (1 - h2) / N * L)
 
-/-- The `L²` covariance matrix of the marginal scores,
-`𝔼[β̂ β̂ᵀ] = (h² / M) R² + ((1 - h²) / N) R`. -/
+/-- The matrix `V = (h² / M) R² + ((1 - h²) / N) R`. In the LD-score model it is the matrix of raw
+second moments `∫ β̂ β̂ᵀ ∂μ` of the marginal scores (`integral_betaHat_mul_betaHat`), their
+covariance matrix for a probability measure and mean-zero scores. It is `0` when `N = 0`
+(`x / 0 = 0`). -/
 noncomputable def scoreCov (N M : ℕ) (h2 : ℝ) (X : Matrix (Fin N) (Fin M) ℝ) :
     Matrix (Fin M) (Fin M) ℝ :=
   (h2 / M) • (ldMatrix X * ldMatrix X) + ((1 - h2) / N) • ldMatrix X
@@ -269,7 +283,7 @@ noncomputable def scoreCov (N M : ℕ) (h2 : ℝ) (X : Matrix (Fin N) (Fin M) �
 variable (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ)
 
 /-- The marginal scores are the LD-smeared effects plus sampling noise:
-`β̂ j = ∑ k, R j k β k + ∑ i, (X i j / N) ε i`. -/
+`β̂ j = ∑ k, R j k β k + ∑ i, (X i j / N) ε i`. Both sides are `0` when `N = 0` (`x / 0 = 0`). -/
 theorem betaHat_eq (j : Fin M) (ω : Ω) :
     D.betaHat X j ω = ∑ k, ldCorr X j k * D.beta k ω + ∑ i, (X i j / N) * D.eps i ω := by
   unfold Model.betaHat Model.pheno ldCorr
@@ -321,7 +335,7 @@ theorem memLp_betaHat (j : Fin M) : MemLp (D.betaHat X j) 2 μ := by
   funext ω
   exact betaHat_eq_fam D X j ω
 
-/-- `𝔼[β k β̂ l] = (h² / M) R l k`. -/
+/-- `∫ β k β̂ l ∂μ = (h² / M) R l k`. -/
 theorem integral_beta_mul_betaHat (k l : Fin M) :
     ∫ ω, D.beta k ω * D.betaHat X l ω ∂μ = D.h2 / M * ldCorr X l k := by
   classical
@@ -329,7 +343,8 @@ theorem integral_beta_mul_betaHat (k l : Fin M) :
   rw [integral_lin_mul_lin (fam D) _ _ (famVar D) (memLp_fam D) (integral_fam_mul D)]
   simp [coef, famVar, mul_comm]
 
-/-- `𝔼[β̂ j β̂ l] = (h² / M) (R²) j l + ((1 - h²) / N) R j l`, the entries of `scoreCov`. -/
+/-- `∫ β̂ j β̂ l ∂μ = (h² / M) (R²) j l + ((1 - h²) / N) R j l`, the entries of `scoreCov` (both
+sides are `0` when `N = 0`). -/
 theorem integral_betaHat_mul_betaHat (j l : Fin M) :
     ∫ ω, D.betaHat X j ω * D.betaHat X l ω ∂μ = scoreCov N M D.h2 X j l := by
   classical
@@ -344,7 +359,7 @@ theorem integral_betaHat_mul_betaHat (j l : Fin M) :
     rw [Finset.sum_div, Finset.mul_sum]
     exact Finset.sum_congr rfl fun i _ => by ring
 
-/-- `C(β, β̂) = (h² / M) L` with target LD `R`. -/
+/-- `C(β, β̂) = (h² / M) L` with target LD `R` (both sides are `0` when `M = 0`). -/
 theorem quadCov_beta_betaHat :
     quadCov μ (ldMatrix X) D.beta (D.betaHat X) = D.h2 / M * ldScoreSum X := by
   rw [quadCov_eq _ _ _ D.memLp_beta (memLp_betaHat D X), ldScoreSum, Finset.mul_sum]
@@ -352,14 +367,14 @@ theorem quadCov_beta_betaHat :
   simp_rw [integral_beta_mul_betaHat, ldMatrix_apply, ldScore, Finset.mul_sum]
   exact Finset.sum_congr rfl fun k _ => by rw [ldCorr_comm X k j]; ring
 
-/-- `C(β, β) = (h² / M) ∑ j, R j j` with target LD `R`. -/
+/-- `C(β, β) = (h² / M) ∑ j, R j j` with target LD `R` (both sides are `0` when `M = 0`). -/
 theorem quadCov_beta_beta :
     quadCov μ (ldMatrix X) D.beta D.beta = D.h2 / M * ∑ j, ldCorr X j j := by
   rw [quadCov_eq _ _ _ D.memLp_beta D.memLp_beta, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   simp [D.integral_beta_mul, mul_comm]
 
-/-- For a standardized genotype matrix and `N, M ≠ 0`, `C(β, β) = h²`. -/
+/-- For a standardized genotype matrix and `N, M ≠ 0`, `C(β, β) = h²` with target LD `R`. -/
 theorem quadCov_beta_beta_of_standardized (hX : IsStandardized X) (hN : N ≠ 0) (hM : M ≠ 0) :
     quadCov μ (ldMatrix X) D.beta D.beta = D.h2 := by
   rw [quadCov_beta_beta]
@@ -367,7 +382,8 @@ theorem quadCov_beta_beta_of_standardized (hX : IsStandardized X) (hN : N ≠ 0)
     nsmul_eq_mul, mul_one]
   field_simp
 
-/-- `C(β̂, β̂) = (h² / M) T + ((1 - h²) / N) L` with target LD `R`. -/
+/-- `C(β̂, β̂) = (h² / M) T + ((1 - h²) / N) L` with target LD `R` (both sides are `0` when `N = 0`
+or `M = 0`). -/
 theorem quadCov_betaHat_betaHat :
     quadCov μ (ldMatrix X) (D.betaHat X) (D.betaHat X) =
       D.h2 / M * ldCube X + (1 - D.h2) / N * ldScoreSum X := by
@@ -391,22 +407,23 @@ theorem quadCov_betaHat_betaHat :
 /-- **Accuracy of the marginal PRS under LD.** If the target LD equals the training LD `R`, the
 genotype matrix is standardized and `N, M ≠ 0`, the squared accuracy of `xᵀ β̂` is
 `(h² L / M)² / (h² (h² T / M + (1 - h²) L / N))` with `L = tr R²` the sum of LD scores and
-`T = tr R³`. -/
+`T = tr R³`. With `x / 0 = 0`, both sides are `0` when `h² = 0`. -/
 theorem accuracySq_marginal (hX : IsStandardized X) (hN : N ≠ 0) (hM : M ≠ 0) :
     accuracySq μ (ldMatrix X) D.beta (D.betaHat X) =
       accuracyFormula N M D.h2 (ldScoreSum X) (ldCube X) := by
   rw [accuracySq, quadCov_beta_betaHat, quadCov_beta_beta_of_standardized D X hX hN hM,
     quadCov_betaHat_betaHat, accuracyFormula]
 
-/-- **Calibration slope of the marginal PRS under LD.** If the target LD equals the training LD
-`R`, the slope of the regression of the phenotype on `xᵀ β̂` is
-`(h² L / M) / (h² T / M + (1 - h²) L / N)`; it is in general not `1`. -/
+/-- **Calibration slope of the marginal PRS under LD.** For every genotype matrix, if the target LD
+equals the training LD `R`, the slope of the regression of the phenotype on `xᵀ β̂` is
+`(h² L / M) / (h² T / M + (1 - h²) L / N)`; it is in general not `1`. With `x / 0 = 0`, both sides
+are `0` when the denominator vanishes (for example when `N = 0` or `M = 0`). -/
 theorem calibSlope_marginal :
     calibSlope μ (ldMatrix X) D.beta (D.betaHat X) =
       slopeFormula N M D.h2 (ldScoreSum X) (ldCube X) := by
   rw [calibSlope, quadCov_beta_betaHat, quadCov_betaHat_betaHat, slopeFormula]
 
-/-- With orthogonal training columns of sum of squares `N` (no LD), `R = I`. -/
+/-- With orthogonal training columns of sum of squares `N ≠ 0` (no LD), `R = I`. -/
 theorem ldCorr_of_orthogonal (hX : HasOrthogonalColumns X) (hN : N ≠ 0) (j k : Fin M) :
     ldCorr X j k = if j = k then 1 else 0 := by
   have hN' : (N : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hN
@@ -415,8 +432,8 @@ theorem ldCorr_of_orthogonal (hX : HasOrthogonalColumns X) (hN : N ≠ 0) (j k :
   · exact div_self hN'
   · exact zero_div _
 
-/-- **No LD.** With orthogonal training columns of sum of squares `N` and `N, M ≠ 0`, the
-marginal PRS has squared accuracy `N h² / (N h² + M (1 - h²))`. -/
+/-- **No LD.** With orthogonal training columns of sum of squares `N` and `N, M ≠ 0`, the marginal
+PRS has squared accuracy `N h² / (N h² + M (1 - h²))` (target LD `R = I`). -/
 theorem accuracySq_marginal_of_orthogonal (hX : HasOrthogonalColumns X) (hN : N ≠ 0)
     (hM : M ≠ 0) :
     accuracySq μ (ldMatrix X) D.beta (D.betaHat X) =
@@ -437,7 +454,9 @@ theorem accuracySq_marginal_of_orthogonal (hX : HasOrthogonalColumns X) (hN : N 
   congr 1
   field_simp
 
-/-- The no-LD accuracy agrees with `GenomicPrediction.PRSModel.accuracySq_ofLDScore`. -/
+/-- With orthogonal training columns of sum of squares `N` and `N, M ≠ 0`, the no-LD accuracy
+(target LD `R`) equals the squared accuracy of `PRSModel.ofLDScore D X hX`, as computed in
+`GenomicPrediction.PRSModel.accuracySq_ofLDScore`. -/
 theorem accuracySq_marginal_eq_ofLDScore (hX : HasOrthogonalColumns X) (hN : N ≠ 0)
     (hM : M ≠ 0) :
     accuracySq μ (ldMatrix X) D.beta (D.betaHat X) = (PRSModel.ofLDScore D X hX).accuracySq := by
@@ -462,11 +481,11 @@ theorem olsH2Hat_integral_chiSq [IsProbabilityMeasure μ] (hX : IsStandardized X
   simp_rw [chiSq_eq_chiSqStrat D X 0]
   exact olsH2Hat_integral_chiSqStrat D X hN hM hX hℓ hβ hε 0 0 (a := 0) fun j => by simp
 
-/-- **The PRS accuracy is identified by LD-score regression.** Under the assumptions of
-`accuracySq_marginal` and `olsH2Hat_integral_chiSq`, the squared accuracy of the marginal PRS is
-the accuracy formula evaluated at the LD-score regression estimate of `h²` computed from the
-expected association statistics: it is a function of summary-level quantities (expected `χ²`,
-LD scores, `tr R³`, `N`, `M`). -/
+/-- **The PRS accuracy is identified by LD-score regression.** For a probability measure, mean-zero
+effects and noise, a standardized genotype matrix whose LD scores are not all equal, `N, M ≠ 0` and
+target LD `R`, the squared accuracy of the marginal PRS is the accuracy formula evaluated at the
+LD-score regression estimate of `h²` computed from the expected association statistics: it is a
+function of summary-level quantities (expected `χ²`, LD scores, `tr R³`, `N`, `M`). -/
 theorem accuracySq_marginal_eq_olsH2Hat [IsProbabilityMeasure μ] (hX : IsStandardized X)
     (hN : N ≠ 0) (hM : M ≠ 0) (hℓ : sxy (ldScore X) (ldScore X) ≠ 0)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) :
@@ -475,7 +494,10 @@ theorem accuracySq_marginal_eq_olsH2Hat [IsProbabilityMeasure μ] (hX : IsStanda
         (ldScoreSum X) (ldCube X) := by
   rw [olsH2Hat_integral_chiSq D X hX hN hM hℓ hβ hε, accuracySq_marginal D X hX hN hM]
 
-/-- The calibration slope is identified by LD-score regression in the same way. -/
+/-- For a probability measure, mean-zero effects and noise, a standardized genotype matrix whose LD
+scores are not all equal, `N, M ≠ 0` and target LD `R`, the calibration slope of the marginal PRS is
+the slope formula evaluated at the LD-score regression estimate of `h²` computed from the expected
+association statistics. -/
 theorem calibSlope_marginal_eq_olsH2Hat [IsProbabilityMeasure μ] (hX : IsStandardized X)
     (hN : N ≠ 0) (hM : M ≠ 0) (hℓ : sxy (ldScore X) (ldScore X) ≠ 0)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) :
@@ -492,16 +514,17 @@ section BLUP
 
 variable {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {N M : ℕ}
 
-/-- The shrinkage matrix `K = (h² / M) R V⁻¹` with `V = scoreCov` the covariance of the marginal
-scores: `K β̂` is the best linear predictor of `β` from `β̂` when `V` is invertible. (When `V` is
-singular, Mathlib's inverse is `0` and so is `K`.) -/
+/-- The shrinkage matrix `K = (h² / M) R V⁻¹` with `V = scoreCov` the second-moment matrix of the
+marginal scores: `K β̂` is the best linear predictor of `β` from `β̂` when `V` is invertible. (The
+inverse of a singular matrix is taken to be `0`, so `K = 0` when `V` is singular.) -/
 noncomputable def shrinkMatrix (N M : ℕ) (h2 : ℝ) (X : Matrix (Fin N) (Fin M) ℝ) :
     Matrix (Fin M) (Fin M) ℝ :=
   ((h2 / M) • ldMatrix X) * (scoreCov N M h2 X)⁻¹
 
 variable (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ)
 
-/-- The shrunk effect estimates `β̃ = K β̂`. -/
+/-- The shrunk effect estimates `β̃ = K β̂`. They are `0` when `V` is singular, since then
+`K = 0`. -/
 noncomputable def blupScore (k : Fin M) (ω : Ω) : ℝ :=
   ∑ n, shrinkMatrix N M D.h2 X k n * D.betaHat X n ω
 
@@ -553,16 +576,17 @@ theorem integral_sub_blupScore_mul_blupScore (hV : IsUnit (scoreCov N M D.h2 X).
   simp_rw [integral_const_mul, integral_sub_blupScore_mul_betaHat D X hV, mul_zero,
     Finset.sum_const_zero]
 
-/-- **The shrunk PRS is calibrated.** If the covariance `V` of the marginal scores is invertible,
-the PRS `xᵀ β̃` built from the shrunk estimates `β̃ = (h² / M) R V⁻¹ β̂` has calibration slope
-exactly `1` in every target population (any target LD matrix `S` with `C(β̃, β̃) ≠ 0`). -/
+/-- **The shrunk PRS is calibrated.** If the second-moment matrix `V` of the marginal scores is
+invertible, the PRS `xᵀ β̃` built from the shrunk estimates `β̃ = (h² / M) R V⁻¹ β̂` has calibration
+slope exactly `1` in every target population (any target LD matrix `S` with `C(β̃, β̃) ≠ 0`). -/
 theorem calibSlope_blup (S : Matrix (Fin M) (Fin M) ℝ) (hV : IsUnit (scoreCov N M D.h2 X).det)
     (hS : quadCov μ S (blupScore D X) (blupScore D X) ≠ 0) :
     calibSlope μ S D.beta (blupScore D X) = 1 :=
   calibSlope_eq_one_of_orthogonal S _ _ D.memLp_beta (memLp_blupScore D X)
     (integral_sub_blupScore_mul_blupScore D X hV) hS
 
-/-- The squared accuracy of the shrunk PRS is the variance ratio `C(β̃, β̃) / C(β, β)`. -/
+/-- If `V` is invertible and `C(β̃, β̃) ≠ 0`, the squared accuracy of the shrunk PRS is the ratio
+`C(β̃, β̃) / C(β, β)` (with `x / 0 = 0`, both sides are `0` when `C(β, β) = 0`). -/
 theorem accuracySq_blup (S : Matrix (Fin M) (Fin M) ℝ) (hV : IsUnit (scoreCov N M D.h2 X).det)
     (hS : quadCov μ S (blupScore D X) (blupScore D X) ≠ 0) :
     accuracySq μ S D.beta (blupScore D X) =

@@ -76,13 +76,15 @@ namespace MathlibExt.Biology.Omics.HierarchicalCountPooled
 
 variable {ι : Type*} [Fintype ι]
 
-/-- The joint likelihood `∏ⱼ e^{-sⱼ r} (sⱼ r)^{kⱼ} / kⱼ!` of conditionally independent cell
-counts `kⱼ ∣ λ = r ~ Po(sⱼ r)` with size factors `sⱼ`. -/
+/-- The joint likelihood `∏ⱼ e^{-sⱼ r} (sⱼ r)^{kⱼ} / kⱼ!` of conditionally independent cell counts
+`kⱼ ∣ λ = r ~ Po(sⱼ r)` with size factors `sⱼ`, defined for all real `sⱼ, r`; it is a probability
+for `sⱼ ≥ 0` and `r ≥ 0`. -/
 noncomputable def pooledLik (s : ι → ℝ) (k : ι → ℕ) (r : ℝ) : ℝ :=
   ∏ j, poissonExposureLik (s j) (k j) r
 
 /-- The joint marginal likelihood of the cell counts under the shared prior `λ ~ Gamma(a, b)`:
-`∫ ∏ⱼ P(kⱼ ∣ r) dGamma(a, b)(r)`. -/
+`∫ ∏ⱼ P(kⱼ ∣ r) dGamma(a, b)(r)`, a Bochner integral that is `0` when the integrand is not
+integrable; it is a probability for `a, b > 0` and `sⱼ ≥ 0`. -/
 noncomputable def pooledMarginalLik (a b : ℝ) (s : ι → ℝ) (k : ι → ℕ) : ℝ :=
   ∫ r, pooledLik s k r ∂gammaMeasure a b
 
@@ -106,8 +108,9 @@ theorem pooledLik_eq_multinomialReal_mul {s : ι → ℝ} (hs : ∀ j, 0 < s j) 
   have hSK : (∑ j, s j) ^ (∑ j, k j) ≠ 0 := pow_ne_zero _ hS.ne'
   field_simp
 
-/-- The pooled marginal likelihood is the multinomial split mass times the one-cell marginal
-likelihood of the total count `K` at the total exposure `S`. -/
+/-- For all real `a, b` and size factors `sⱼ > 0`, the pooled marginal likelihood is the multinomial
+split mass times the one-cell marginal likelihood of the total count `K` at the total exposure
+`S`. -/
 theorem pooledMarginalLik_eq_multinomialReal_mul (a b : ℝ) {s : ι → ℝ} (hs : ∀ j, 0 < s j)
     (k : ι → ℕ) :
     pooledMarginalLik a b s k = multinomialReal (∑ j, k j) (fun j => s j / ∑ i, s i) k *
@@ -115,8 +118,8 @@ theorem pooledMarginalLik_eq_multinomialReal_mul (a b : ℝ) {s : ι → ℝ} (h
   rw [pooledMarginalLik, funext (pooledLik_eq_multinomialReal_mul hs k), integral_const_mul,
     marginalLik]
 
-/-- The pooled marginal likelihood is the multinomial split mass times the negative binomial
-mass `NB(a, S a / b)` of the total count. -/
+/-- For `a, b > 0` and size factors `sⱼ > 0`, the pooled marginal likelihood is the multinomial
+split mass times the negative binomial mass `NB(a, S a / b)` of the total count. -/
 theorem pooledMarginalLik_eq_negBinomialReal {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ j, 0 < s j) (k : ι → ℕ) :
     pooledMarginalLik a b s k = multinomialReal (∑ j, k j) (fun j => s j / ∑ i, s i) k *
@@ -147,7 +150,7 @@ theorem pooledPosterior_eq_gammaPDFReal {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s
     exact posterior_eq_gammaPDFReal ha hb (sum_pos (fun j _ => hs j) univ_nonempty) _ r
   · exact div_pos (hs j) (sum_pos (fun i _ => hs i) ⟨j, mem_univ j⟩)
 
-/-- The pooled posterior `Gamma(a + K, b + S)` has mean
+/-- For `a, b > 0` and size factors `sⱼ ≥ 0`, the pooled posterior `Gamma(a + K, b + S)` has mean
 `posteriorMean a b S K = (a + K) / (b + S)`, the one-cell posterior mean at the pooled count and
 exposure. -/
 theorem integral_id_pooledPosterior {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s : ι → ℝ}
@@ -156,16 +159,17 @@ theorem integral_id_pooledPosterior {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s : �
       posteriorMean a b (∑ j, s j) (∑ j, k j) :=
   integral_id_posterior ha hb (sum_nonneg fun j _ => hs j) _
 
-/-- The pooled posterior `Gamma(a + K, b + S)` has variance `(a + K) / (b + S) ^ 2`. -/
+/-- For `a, b > 0` and size factors `sⱼ ≥ 0`, the pooled posterior `Gamma(a + K, b + S)` has
+variance `(a + K) / (b + S) ^ 2`. -/
 theorem variance_pooledPosterior {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ j, 0 ≤ s j) (k : ι → ℕ) :
     variance id (gammaMeasure (a + (∑ j, k j : ℕ)) (b + ∑ j, s j)) =
       (a + (∑ j, k j : ℕ)) / (b + ∑ j, s j) ^ 2 :=
   variance_posterior ha hb (sum_nonneg fun j _ => hs j) _
 
-/-- **Pooled shrinkage.** With at least one cell, the pooled posterior mean is
-`w · (K / S) + (1 - w) · (a / b)` with `w = S / (b + S)`: the pooled rate estimate `K / S`
-shrunk toward the prior mean. -/
+/-- **Pooled shrinkage.** With at least one cell, size factors `sⱼ > 0`, real `a` and `b > 0`, the
+pooled posterior mean is `w · (K / S) + (1 - w) · (a / b)` with `w = S / (b + S)`: for `a > 0`, the
+pooled rate estimate `K / S` shrunk toward the prior mean. -/
 theorem pooledPosteriorMean_eq_shrinkage [Nonempty ι] {a b : ℝ} (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ j, 0 < s j) (k : ι → ℕ) :
     posteriorMean a b (∑ j, s j) (∑ j, k j) =
@@ -202,11 +206,11 @@ For a valid prior `a, b > 0` these expressions are the mean and variance of the 
 `Gamma(a + K, b + S)` (`integral_id_pooledPosterior`, `variance_pooledPosterior`), and the limits
 are then posterior consistency. -/
 
-/-- **Limit of the posterior-moment expressions, deterministic core.** For arbitrary real `a`
-and `b`, if the pooled exposure `S → ∞` and the pooled rate `K / S → r₀`, the rational
-expression `posteriorMean a b S K = (a + K) / (b + S)` tends to `r₀` and
-`(a + K) / (b + S) ^ 2` tends to `0`. For `a, b > 0` these are the mean and variance of the
-pooled posterior, and the prior washes out. -/
+/-- **Limit of the posterior-moment expressions, deterministic core.** For arbitrary real `a` and
+`b`, if the pooled exposure `S → ∞` and the pooled rate `K / S → r₀`, the rational expression
+`posteriorMean a b S K = (a + K) / (b + S)` tends to `r₀` and `(a + K) / (b + S) ^ 2` tends to `0`.
+For `a, b > 0` and `S ≥ 0` these are the mean and variance of the posterior `Gamma(a + K, b + S)`,
+and the prior washes out. -/
 theorem tendsto_posteriorMean_of_tendsto {α : Type*} {l : Filter α} {a b r₀ : ℝ} {S : α → ℝ}
     {K : α → ℕ} (hS : Tendsto S l atTop) (hK : Tendsto (fun i => (K i : ℝ) / S i) l (𝓝 r₀)) :
     Tendsto (fun i => posteriorMean a b (S i) (K i)) l (𝓝 r₀) ∧

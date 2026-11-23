@@ -60,8 +60,9 @@ open MathlibExt.Biology.StatisticalGenetics.FisherDecomposition
 
 namespace Domains.Biology.StatisticalGenetics.FisherMultilocus
 
-/-- The frequency of the ordered multilocus genotype `g` under Hardy–Weinberg proportions at
-every locus and linkage equilibrium. -/
+/-- The weight `∏ l, p l (g l).1 * p l (g l).2` of the ordered multilocus genotype `g`; when every
+`p l` is a probability vector, it is the frequency of `g` under Hardy–Weinberg proportions at every
+locus and linkage equilibrium. -/
 noncomputable def genoFreq {L : Type*} [Fintype L] {A : L → Type*} (p : ∀ l, A l → ℝ)
     (g : ∀ l, A l × A l) : ℝ :=
   ∏ l, (p l (g l).1 * p l (g l).2)
@@ -71,12 +72,14 @@ noncomputable def totalValue {L : Type*} [Fintype L] {A : L → Type*}
     (G : ∀ l, A l → A l → ℝ) (g : ∀ l, A l × A l) : ℝ :=
   ∑ l, G l (g l).1 (g l).2
 
-/-- The population mean genotypic value over all loci. -/
+/-- The weighted sum `∑ g, genoFreq p g * totalValue G g`; when every `p l` is a probability vector,
+it is the population mean genotypic value over all loci. -/
 noncomputable def multiMean {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] (p : ∀ l, A l → ℝ) (G : ∀ l, A l → A l → ℝ) : ℝ :=
   ∑ g : (∀ l, A l × A l), genoFreq p g * totalValue G g
 
-/-- The genetic variance over all loci. -/
+/-- The weighted sum `∑ g, genoFreq p g * (totalValue G g - multiMean p G) ^ 2`; when every `p l` is
+a probability vector, it is the genetic variance over all loci. -/
 noncomputable def multiGenVar {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] (p : ∀ l, A l → ℝ) (G : ∀ l, A l → A l → ℝ) : ℝ :=
   ∑ g : (∀ l, A l × A l), genoFreq p g * (totalValue G g - multiMean p G) ^ 2
@@ -87,20 +90,26 @@ noncomputable def breedingValue {L : Type*} [Fintype L] {A : L → Type*} [∀ l
     (p : ∀ l, A l → ℝ) (G : ∀ l, A l → A l → ℝ) (g : ∀ l, A l × A l) : ℝ :=
   ∑ l, (avgEffect (p l) (G l) (g l).1 + avgEffect (p l) (G l) (g l).2)
 
-/-- The additive genetic variance over all loci: the variance of the breeding value. -/
+/-- The additive genetic variance over all loci: the weighted sum of squares
+`∑ g, genoFreq p g * breedingValue p G g ^ 2` of the breeding value. When every `p l` is a
+probability vector, the breeding value has mean `0` and this is its variance. -/
 noncomputable def multiAddVar {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] (p : ∀ l, A l → ℝ) (G : ∀ l, A l → A l → ℝ) : ℝ :=
   ∑ g : (∀ l, A l × A l), genoFreq p g * breedingValue p G g ^ 2
 
-/-- The dominance variance over all loci: the variance of the summed dominance deviations. -/
+/-- The dominance variance over all loci: the weighted sum of squares of the summed dominance
+deviations. When every `p l` is a probability vector, they have mean `0` and this is their
+variance. -/
 noncomputable def multiDomVar {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] (p : ∀ l, A l → ℝ) (G : ∀ l, A l → A l → ℝ) : ℝ :=
   ∑ g : (∀ l, A l × A l), genoFreq p g * (∑ l, domDev (p l) (G l) (g l).1 (g l).2) ^ 2
 
-/-- The covariance of a parent and its offspring over unlinked loci. At locus `l` the
-configuration `(i, j, k, b)` is the parent's genotype `(i, j)`, the mate's gene `k` and the
-choice `b` of the transmitted parental gene `cond b i j`, with weight `p i p j p k / 2`;
-configurations at different loci are independent. -/
+/-- The covariance of a parent and its offspring over unlinked loci. At locus `l` the configuration
+`(i, j, k, b)` is the parent's genotype `(i, j)`, the mate's gene `k` and the choice `b` of the
+transmitted parental gene `cond b i j`, with weight `p i p j p k / 2`; configurations at different
+loci are independent, and both genotypic values are centred at `multiMean p G`. For real weights it
+is this weighted sum; when every `p l` is a probability vector, it is the covariance of the
+genotypic values of a parent and its offspring. -/
 noncomputable def covParentOffspringMulti {L : Type*} [Fintype L] [DecidableEq L]
     {A : L → Type*} [∀ l, Fintype (A l)] (p : ∀ l, A l → ℝ) (G : ∀ l, A l → A l → ℝ) : ℝ :=
   ∑ x : (∀ l, A l × A l × A l × Bool),
@@ -111,7 +120,9 @@ noncomputable def covParentOffspringMulti {L : Type*} [Fintype L] [DecidableEq L
 /-- The covariance of half sibs over unlinked loci. At locus `l` the configuration
 `(i, j, k, m, b, b')` is the common parent's genotype `(i, j)`, the genes `k` and `m` from two
 unrelated mates, and the independent choices `b`, `b'` of the parental gene transmitted to each
-offspring, with weight `p i p j p k p m / 4`; loci are independent. -/
+offspring, with weight `p i p j p k p m / 4`; loci are independent, and both genotypic values are
+centred at `multiMean p G`. For real weights it is this weighted sum; when every `p l` is a
+probability vector, it is the covariance of the genotypic values of two half sibs. -/
 noncomputable def covHalfSibsMulti {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] (p : ∀ l, A l → ℝ) (G : ∀ l, A l → A l → ℝ) : ℝ :=
   ∑ x : (∀ l, A l × A l × A l × A l × Bool × Bool),
@@ -120,10 +131,12 @@ noncomputable def covHalfSibsMulti {L : Type*} [Fintype L] [DecidableEq L] {A : 
         (∑ l, G l (cond (x l).2.2.2.2.2 (x l).1 (x l).2.1) (x l).2.2.2.1 - multiMean p G))
 
 /-- The covariance of full sibs over unlinked loci. At locus `l` the configuration
-`((i, j, k, m), (b, b', e, e'))` is the sire's genotype `(i, j)`, the dam's genotype `(k, m)`,
-and the independent transmission choices: the first offspring receives `cond b i j` and
-`cond e k m`, the second `cond b' i j` and `cond e' k m`; the weight is `p i p j p k p m / 16` and
-loci are independent. -/
+`((i, j, k, m), (b, b', e, e'))` is the sire's genotype `(i, j)`, the dam's genotype `(k, m)`, and
+the independent transmission choices: the first offspring receives `cond b i j` and `cond e k m`,
+the second `cond b' i j` and `cond e' k m`; the weight is `p i p j p k p m / 16` and loci are
+independent, and both genotypic values are centred at `multiMean p G`. For real weights it is this
+weighted sum; when every `p l` is a probability vector, it is the covariance of the genotypic values
+of two full sibs. -/
 noncomputable def covFullSibsMulti {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] (p : ∀ l, A l → ℝ) (G : ∀ l, A l → A l → ℝ) : ℝ :=
   ∑ x : (∀ l, (A l × A l × A l × A l) × (Bool × Bool × Bool × Bool)),
@@ -370,7 +383,8 @@ private theorem pair_dom_add {A : Type*} [Fintype A] {p : A → ℝ}
     simp only [← mul_sum, sum_mul_domDev_left hp hG, mul_zero, sum_const_zero]
   simp only [Fintype.sum_prod_type, he, sum_add_distrib, t1, t2, zero_add]
 
-/-- The mean genotypic value is the sum of the one-locus means. -/
+/-- If the allele weights sum to `1` at every locus (`∑ a, p l a = 1`; no sign condition), the mean
+genotypic value is the sum of the one-locus means. -/
 theorem multiMean_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) : multiMean p G = ∑ l, meanValue (p l) (G l) := by
@@ -380,8 +394,9 @@ theorem multiMean_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type
     (fun l x => G l x.1 x.2)]
   simp only [Fintype.sum_prod_type, meanValue]
 
-/-- Every genotypic value decomposes as the mean, plus the breeding value, plus the sum of the
-one-locus dominance deviations. -/
+/-- If the allele weights sum to `1` at every locus (`∑ a, p l a = 1`; no sign condition), every
+genotypic value decomposes as the mean, plus the breeding value, plus the sum of the one-locus
+dominance deviations. -/
 theorem totalValue_eq {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) (g : ∀ l, A l × A l) :
@@ -391,7 +406,8 @@ theorem totalValue_eq {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
   simp only [totalValue, breedingValue, domDev, sum_sub_distrib, sum_add_distrib]
   ring
 
-/-- The genetic variance is the sum of the one-locus genetic variances. -/
+/-- If the allele weights sum to `1` at every locus (`∑ a, p l a = 1`; no sign condition), the
+genetic variance is the sum of the one-locus genetic variances. -/
 theorem multiGenVar_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) : multiGenVar p G = ∑ l, genVar (p l) (G l) := by
@@ -404,7 +420,8 @@ theorem multiGenVar_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Ty
       (fun l x => G l x.1 x.2 - meanValue (p l) (G l))
       (fun l => pair_center (hp l) (G l))
 
-/-- The additive genetic variance is the sum of the one-locus additive variances. -/
+/-- If the allele weights sum to `1` at every locus (`∑ a, p l a = 1`; no sign condition), the
+additive genetic variance is the sum of the one-locus additive variances. -/
 theorem multiAddVar_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) : multiAddVar p G = ∑ l, addVar (p l) (G l) := by
@@ -417,7 +434,8 @@ theorem multiAddVar_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Ty
     (fun l => pair_add_center (hp l) (G l))]
   simp only [← pow_two, pair_add_sq (hp _) (G _)]
 
-/-- The dominance variance is the sum of the one-locus dominance variances. -/
+/-- If the allele weights sum to `1` at every locus (`∑ a, p l a = 1`; no sign condition), the
+dominance variance is the sum of the one-locus dominance variances. -/
 theorem multiDomVar_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) : multiDomVar p G = ∑ l, domVar (p l) (G l) := by
@@ -430,7 +448,8 @@ theorem multiDomVar_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Ty
       (fun l x => domDev (p l) (G l) x.1 x.2)
       (fun l => pair_dom_center (hp l) (G l))
 
-/-- **Fisher's decomposition over independent loci.** `V_G = V_A + V_D`. -/
+/-- **Fisher's decomposition over independent loci.** For allele weights summing to `1` at every
+locus and symmetric genotypic values (`G l i j = G l j i`), `V_G = V_A + V_D`. -/
 theorem multiGenVar_eq_multiAddVar_add_multiDomVar {L : Type*} [Fintype L] [DecidableEq L]
     {A : L → Type*} [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     {G : ∀ l, A l → A l → ℝ} (hG : ∀ l i j, G l i j = G l j i) :
@@ -439,9 +458,10 @@ theorem multiGenVar_eq_multiAddVar_add_multiDomVar {L : Type*} [Fintype L] [Deci
     ← sum_add_distrib]
   exact sum_congr rfl fun l _ => genVar_eq_addVar_add_domVar (hp l) (hG l)
 
-/-- **Least squares over independent loci.** Every fit `c + ∑ l, (a l i_l + a l j_l)` of the
-genotypic value by a function additive over all genes at all loci has mean squared error at least
-`V_D`. -/
+/-- **Least squares over independent loci.** For allele frequencies (`0 ≤ p l a` and
+`∑ a, p l a = 1` at every locus) and symmetric genotypic values, every fit
+`c + ∑ l, (a l i_l + a l j_l)` of the genotypic value by a function additive over all genes at all
+loci has mean squared error at least `V_D`. -/
 theorem multiDomVar_le {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp0 : ∀ l a, 0 ≤ p l a)
     (hp : ∀ l, ∑ a, p l a = 1) {G : ∀ l, A l → A l → ℝ} (hG : ∀ l i j, G l i j = G l j i)
@@ -479,7 +499,8 @@ theorem multiDomVar_le {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
   simp only [sum_add_distrib, ← mul_sum, hDE, hD, mul_zero, add_zero]
   exact le_add_of_nonneg_right hn
 
-/-- The parent–offspring covariance is the sum of the one-locus covariances. -/
+/-- If the allele weights sum to `1` at every locus (`∑ a, p l a = 1`; no sign condition), the
+parent–offspring covariance is the sum of the one-locus covariances. -/
 theorem covParentOffspringMulti_eq_sum {L : Type*} [Fintype L] [DecidableEq L]
     {A : L → Type*} [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) :
@@ -493,7 +514,8 @@ theorem covParentOffspringMulti_eq_sum {L : Type*} [Fintype L] [DecidableEq L]
       (fun l x => G l (cond x.2.2.2 x.1 x.2.1) x.2.2.1 - meanValue (p l) (G l))
       (fun l => parent_center (hp l) (G l))
 
-/-- **Parent and offspring over independent loci (Fisher 1918).** `Cov(P, O) = V_A / 2`. -/
+/-- **Parent and offspring over independent loci (Fisher 1918).** For allele weights summing to `1`
+at every locus and symmetric genotypic values, `Cov(P, O) = V_A / 2`. -/
 theorem covParentOffspringMulti_eq {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     {G : ∀ l, A l → A l → ℝ} (hG : ∀ l i j, G l i j = G l j i) :
@@ -501,7 +523,8 @@ theorem covParentOffspringMulti_eq {L : Type*} [Fintype L] [DecidableEq L] {A : 
   rw [covParentOffspringMulti_eq_sum hp, multiAddVar_eq_sum hp, sum_div]
   exact sum_congr rfl fun l _ => covParentOffspring_eq (hp l) (hG l)
 
-/-- The half-sib covariance is the sum of the one-locus covariances. -/
+/-- If the allele weights sum to `1` at every locus (`∑ a, p l a = 1`; no sign condition), the
+half-sib covariance is the sum of the one-locus covariances. -/
 theorem covHalfSibsMulti_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) :
@@ -515,14 +538,16 @@ theorem covHalfSibsMulti_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L �
       (fun l x => G l (cond x.2.2.2.2.2 x.1 x.2.1) x.2.2.2.1 - meanValue (p l) (G l))
       (fun l => half_center (hp l) (G l))
 
-/-- **Half sibs over independent loci (Fisher 1918).** `Cov(HS) = V_A / 4`. -/
+/-- **Half sibs over independent loci (Fisher 1918).** For allele weights summing to `1` at every
+locus and any real genotypic values, `Cov(HS) = V_A / 4`. -/
 theorem covHalfSibsMulti_eq {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) : covHalfSibsMulti p G = multiAddVar p G / 4 := by
   rw [covHalfSibsMulti_eq_sum hp, multiAddVar_eq_sum hp, sum_div]
   exact sum_congr rfl fun l _ => covHalfSibs_eq (hp l) (G l)
 
-/-- The full-sib covariance is the sum of the one-locus covariances. -/
+/-- If the allele weights sum to `1` at every locus (`∑ a, p l a = 1`; no sign condition), the
+full-sib covariance is the sum of the one-locus covariances. -/
 theorem covFullSibsMulti_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     (G : ∀ l, A l → A l → ℝ) :
@@ -539,7 +564,8 @@ theorem covFullSibsMulti_eq_sum {L : Type*} [Fintype L] [DecidableEq L] {A : L �
         (cond x.2.2.2.2 x.1.2.2.1 x.1.2.2.2) - meanValue (p l) (G l))
       (fun l => full_center (hp l) (G l))
 
-/-- **Full sibs over independent loci (Fisher 1918).** `Cov(FS) = V_A / 2 + V_D / 4`. -/
+/-- **Full sibs over independent loci (Fisher 1918).** For allele weights summing to `1` at every
+locus and symmetric genotypic values, `Cov(FS) = V_A / 2 + V_D / 4`. -/
 theorem covFullSibsMulti_eq {L : Type*} [Fintype L] [DecidableEq L] {A : L → Type*}
     [∀ l, Fintype (A l)] {p : ∀ l, A l → ℝ} (hp : ∀ l, ∑ a, p l a = 1)
     {G : ∀ l, A l → A l → ℝ} (hG : ∀ l i j, G l i j = G l j i) :

@@ -34,8 +34,8 @@ matching quadratic-form variance (`variance_contrast_crossed_response`).
 **One cluster.** With the all-ones design (one cluster of `m` observations) the Gaussian response
 is a random-intercept model with one donor and `m` cells in the sense of
 `Domains.Biology.Omics.Pseudobulk` (`isRandomIntercept_cluster_response`). The row variance,
-the mean variance `σc2 + σw2 / m`, the design-effect form and the gap between true and
-independent-row variance are derived from that file's `variance_cell`, `variance_cellMean`,
+the mean variance `σc2 + σw2 / m` (for `m > 0`), the design-effect form and the gap between true
+and independent-row variance are derived from that file's `variance_cell`, `variance_cellMean`,
 `trueVar_eq_designEffect_mul_naiveVar` and `naiveVar_lt_trueVar`; `le_variance_cluster_mean` adds
 that the shared effect is never averaged away. Several balanced clusters are the general case of
 the Pseudobulk results.
@@ -61,8 +61,8 @@ namespace MathlibExt.Biology.StatisticalGenetics.CrossedRandomEffects
 @[expose] public section
 
 /-- Indicator design `Z = [S | W]` of the crossed random-intercept model:
-observation `(i, j)` loads on participant `i` and on item `j`. This `Z`
-determines the repeated-measures covariance of the marginal law. -/
+observation `(i, j)` loads on participant `i` and on item `j`. Together with `crossedCov` and
+`σe2 • 1` it gives the repeated-measures covariance `Z G Zᵀ + σe2 • 1` of the crossed model. -/
 def crossedDesign (I J : Type*) [DecidableEq I] [DecidableEq J] :
     Matrix (I × J) (I ⊕ J) ℝ :=
   Matrix.of fun k r =>
@@ -70,8 +70,9 @@ def crossedDesign (I J : Type*) [DecidableEq I] [DecidableEq J] :
       (fun j => if k.2 = j then 1 else 0) r
 
 /-- Diagonal random-effects covariance `G` of the crossed model: `σs2` on
-participants, `σw2` on items. With `crossedDesign` and `σe2 • 1` it fixes
-the marginal law of the crossed response. -/
+participants, `σw2` on items, for all real `σs2` and `σw2` (positive semidefinite when both are
+nonnegative, `posSemidef_crossedCov`). With `crossedDesign` and `σe2 • 1` it gives the
+repeated-measures covariance of the crossed model. -/
 def crossedCov (I J : Type*) [DecidableEq I] [DecidableEq J] (σs2 σw2 : ℝ) :
     Matrix (I ⊕ J) (I ⊕ J) ℝ :=
   Matrix.diagonal (Sum.elim (fun _ => σs2) (fun _ => σw2))
@@ -91,8 +92,9 @@ theorem posSemidef_crossedCov (I J : Type*) [DecidableEq I] [DecidableEq J]
       simpa using hw
 
 /-- Specified repeated-measures covariance of the crossed model, algebraically:
-`phenCov` entries count shared participants, shared items and diagonal noise.
-This is the covariance matrix of the marginal law. -/
+`phenCov` entries count shared participants, shared items and diagonal noise. The identity holds
+for all real components; under the Gaussian crossed model with nonnegative components it is the
+covariance matrix of the response (`covariance_crossed_response`). -/
 theorem phenCov_crossed_apply {I J : Type*} [DecidableEq I] [DecidableEq J]
     [Fintype I] [Fintype J] (σs2 σw2 σe2 : ℝ) (k l : I × J) :
     phenCov (crossedDesign I J) (crossedCov I J σs2 σw2) (σe2 • 1) k l =
@@ -104,8 +106,10 @@ theorem phenCov_crossed_apply {I J : Type*} [DecidableEq I] [DecidableEq J]
   rw [Fintype.sum_sum_type]
   simp [Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ]
 
-/-- Induced covariance entries in the Gaussian crossed model: the marginal law
-of the mixed-model response has the specified repeated-measures covariance. -/
+/-- Induced covariance entries in the Gaussian crossed model: with
+`γ ~ N(0, crossedCov I J σs2 σw2)` and `ε ~ N(0, σe2 • 1)` measurable and independent under a
+probability measure, with `σs2, σw2, σe2 ≥ 0`, the response `X β + Z γ + ε` has the specified
+repeated-measures covariance. -/
 theorem covariance_crossed_response {I J : Type*} [DecidableEq I]
     [DecidableEq J] [Fintype I] [Fintype J] {p : Type*} [Fintype p]
     [DecidableEq p] {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
@@ -132,8 +136,10 @@ theorem covariance_crossed_response {I J : Type*} [DecidableEq I]
   rw [phenCov_crossed_apply] at hcov
   exact hcov
 
-/-- Planned-contrast variance in the crossed model: expanding the quadratic
-form of the marginal law gives the double sum over the specified entries. -/
+/-- Planned-contrast variance in the crossed model: with `γ ~ N(0, crossedCov I J σs2 σw2)` and
+`ε ~ N(0, σe2 • 1)` measurable and independent under a probability measure, with
+`σs2, σw2, σe2 ≥ 0`, the variance of `∑ k, c k * Y k` is the double sum of `c k * c l` times the
+specified entries, for every coefficient vector `c` (no zero-sum condition). -/
 theorem variance_contrast_crossed_response {I J : Type*} [DecidableEq I]
     [DecidableEq J] [Fintype I] [Fintype J] {p : Type*} [Fintype p]
     [DecidableEq p] {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
@@ -162,13 +168,13 @@ theorem variance_contrast_crossed_response {I J : Type*} [DecidableEq I]
   ring
 
 /-- All-ones cluster design for one cluster of `m` observations: every row
-loads on the single shared effect. With `σc2 • 1` and `σw2 • 1` it fixes
-the marginal law of the cluster response. -/
+loads on the single shared effect. With `σc2 • 1` and `σw2 • 1` it gives the covariance
+`σc2` everywhere plus `σw2` on the diagonal (`phenCov_cluster_apply`). -/
 def clusterDesign (m : ℕ) : Matrix (Fin m) (Fin 1) ℝ :=
   Matrix.of fun _ _ => 1
 
 /-- Specified cluster covariance entries: `phenCov` of the marginal law is
-`σc2` everywhere plus `σw2` on the diagonal. -/
+`σc2` everywhere plus `σw2` on the diagonal, for all real `σc2` and `σw2`. -/
 theorem phenCov_cluster_apply (m : ℕ) (σc2 σw2 : ℝ) (k l : Fin m) :
     phenCov (clusterDesign m) (σc2 • 1) (σw2 • 1) k l =
       σc2 + (if k = l then σw2 else 0) := by
@@ -177,8 +183,9 @@ theorem phenCov_cluster_apply (m : ℕ) (σc2 σw2 : ℝ) (k l : Fin m) :
 
 /-- **The Gaussian cluster response is a random-intercept model.** Indexing the `m` rows by
 `Fin 1 × Fin m` (one donor, `m` cells), the rows of `Y = X β + 𝟙 γ + ε` satisfy `IsRandomIntercept`
-of `Domains.Biology.Omics.Pseudobulk` with donor variance `σc2` and residual variance `σw2`, so
-that file's second-moment results apply to this response. -/
+of `Domains.Biology.Omics.Pseudobulk` with donor variance `σc2` and residual variance `σw2`, so that
+file's second-moment results apply to this response. The hypotheses: `γ ~ N(0, σc2 • 1)` and
+`ε ~ N(0, σw2 • 1)` measurable and independent under a probability measure, with `σc2, σw2 ≥ 0`. -/
 theorem isRandomIntercept_cluster_response (m : ℕ) {p : Type*} [Fintype p] [DecidableEq p]
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
     (γ : Ω → EuclideanSpace ℝ (Fin 1)) (ε : Ω → EuclideanSpace ℝ (Fin m))
@@ -241,8 +248,9 @@ private theorem variance_cluster_mean_eq_trueVar (m : ℕ) {p : Type*} [Fintype 
   rw [cellMean_cluster] at h
   simpa only [Fintype.card_fin] using h
 
-/-- Row variance in the cluster model: under the marginal law each row has
-variance `σc2 + σw2`. -/
+/-- Row variance in the cluster model: with `γ ~ N(0, σc2 • 1)` and `ε ~ N(0, σw2 • 1)` measurable
+and independent under a probability measure and `σc2, σw2 ≥ 0`, each row has variance
+`σc2 + σw2`. -/
 theorem variance_cluster_row (m : ℕ) {p : Type*} [Fintype p] [DecidableEq p]
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
     (γ : Ω → EuclideanSpace ℝ (Fin 1)) (ε : Ω → EuclideanSpace ℝ (Fin m))
@@ -256,8 +264,9 @@ theorem variance_cluster_row (m : ℕ) {p : Type*} [Fintype p] [DecidableEq p]
   exact variance_cell
     (isRandomIntercept_cluster_response m γ ε hγ hε hind X β σc2 σw2 hc hw hγl hεl) (0, k)
 
-/-- Mean variance in the cluster model: under the marginal law the mean has
-variance `σc2 + σw2 / m`, Kerry and Bland's formula. -/
+/-- Mean variance in the cluster model: with `γ ~ N(0, σc2 • 1)` and `ε ~ N(0, σw2 • 1)` measurable
+and independent under a probability measure, `σc2, σw2 ≥ 0` and `m > 0`, the mean has variance
+`σc2 + σw2 / m`, Kerry and Bland's formula. -/
 theorem variance_cluster_mean (m : ℕ) {p : Type*} [Fintype p] [DecidableEq p]
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
     (γ : Ω → EuclideanSpace ℝ (Fin 1)) (ε : Ω → EuclideanSpace ℝ (Fin m))
@@ -273,9 +282,10 @@ theorem variance_cluster_mean (m : ℕ) {p : Type*} [Fintype p] [DecidableEq p]
     trueVar]
   simp
 
-/-- Design-effect form: under the marginal law the mean variance equals the
-design effect times the independent-row variance. When `σc2 = σw2 = 0` both
-sides vanish. -/
+/-- Design-effect form: with `γ ~ N(0, σc2 • 1)` and `ε ~ N(0, σw2 • 1)` measurable and independent
+under a probability measure, `σc2, σw2 ≥ 0` and `m > 0`, the mean variance equals the design effect
+`1 + (m - 1) ρ`, `ρ = σc2 / (σc2 + σw2)`, times the independent-row variance `Var(Y k) / m`. When
+`σc2 = σw2 = 0`, `ρ = 0 / 0` is `0` and both sides vanish. -/
 theorem variance_cluster_mean_eq_designEffect (m : ℕ) {p : Type*}
     [Fintype p] [DecidableEq p] {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -301,8 +311,10 @@ theorem variance_cluster_mean_eq_designEffect (m : ℕ) {p : Type*}
   · rw [trueVar_eq_designEffect_mul_naiveVar hpos.ne' one_ne_zero hm.ne']
     simp [naiveVar, icc]
 
-/-- True versus independent-row variance: under the marginal law with at
-least two observations and a positive shared effect, they differ. -/
+/-- True versus independent-row variance: with `γ ~ N(0, σc2 • 1)` and `ε ~ N(0, σw2 • 1)`
+measurable and independent under a probability measure, `σc2 > 0`, `σw2 ≥ 0` and at least two
+observations, the independent-row variance `Var(Y k) / m` is strictly smaller than the variance of
+the mean. -/
 theorem variance_cluster_row_div_lt_mean (m : ℕ) {p : Type*}
     [Fintype p] [DecidableEq p] {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -323,8 +335,9 @@ theorem variance_cluster_row_div_lt_mean (m : ℕ) {p : Type*}
       (by omega)]
   simpa [naiveVar] using naiveVar_lt_trueVar σw2 hcpos (one_ne_zero : (1 : ℕ) ≠ 0) hm
 
-/-- The shared effect is never averaged away: under the marginal law the
-mean variance is at least `σc2`; the experimental unit is the cluster. -/
+/-- The shared effect is never averaged away: with `γ ~ N(0, σc2 • 1)` and `ε ~ N(0, σw2 • 1)`
+measurable and independent under a probability measure, `σc2, σw2 ≥ 0` and `m > 0`, the mean
+variance is at least `σc2`; the experimental unit is the cluster. -/
 theorem le_variance_cluster_mean (m : ℕ) {p : Type*} [Fintype p]
     [DecidableEq p] {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
     [IsProbabilityMeasure P] (γ : Ω → EuclideanSpace ℝ (Fin 1))
