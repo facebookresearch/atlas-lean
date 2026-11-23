@@ -41,93 +41,53 @@ namespace Edge
 
 variable {X Y : SSet.{u}} {x₀ x₁ x₂ : X _⦋0⦌}
 
-/-- The morphism in the homotopy category `SSet.hoFunctor.obj X`
-represented by an edge. This is `SSet.HomotopyCategory.homMk`, typed in
-the `Cat`-valued `SSet.hoFunctor`. -/
-def toHoHom (e : Edge x₀ x₁) :
-    (HomotopyCategory.mk x₀ : hoFunctor.obj X) ⟶
-      (HomotopyCategory.mk x₁ : hoFunctor.obj X) :=
-  HomotopyCategory.homMk e
-
-/-- `Edge.toHoHom` is definitionally `SSet.HomotopyCategory.homMk`. -/
-@[simp]
-lemma toHoHom_eq_homMk (e : Edge x₀ x₁) :
-    e.toHoHom = HomotopyCategory.homMk e :=
-  rfl
-
-/-- The identity edge represents the identity morphism of the homotopy
-category. -/
-lemma toHoHom_id (x : X _⦋0⦌) :
-    (Edge.id x).toHoHom =
-      𝟙 (HomotopyCategory.mk x : hoFunctor.obj X) :=
-  HomotopyCategory.homMk_id x
-
-/-- A `CompStruct` witnesses composition of the represented morphisms
-in the homotopy category. -/
-@[reassoc]
-lemma toHoHom_comp {e₀₁ : Edge x₀ x₁} {e₁₂ : Edge x₁ x₂}
-    {e₀₂ : Edge x₀ x₂} (h : Edge.CompStruct e₀₁ e₁₂ e₀₂) :
-    e₀₁.toHoHom ≫ e₁₂.toHoHom = e₀₂.toHoHom :=
-  HomotopyCategory.homMk_comp_homMk h
-
-/-- The morphism represented by a transported edge is the image of the
-represented morphism under `SSet.mapHomotopyCategory`, the functor
-underlying `SSet.hoFunctor.map`. -/
-lemma toHoHom_map (e : Edge x₀ x₁) (f : X ⟶ Y) :
-    (e.map f).toHoHom = (mapHomotopyCategory f).map e.toHoHom :=
-  rfl
-
 /-- An edge is an *equivalence* when the morphism it represents in the
-homotopy category `SSet.hoFunctor.obj X` is an isomorphism. -/
+homotopy category `X.HomotopyCategory` is an isomorphism. -/
 def IsEquivalence (e : Edge x₀ x₁) : Prop :=
-  IsIso e.toHoHom
+  IsIso (HomotopyCategory.homMk e)
 
 /-- An edge is an equivalence if and only if its image in the homotopy
 category is an isomorphism. -/
 lemma isEquivalence_iff (e : Edge x₀ x₁) :
-    e.IsEquivalence ↔ IsIso e.toHoHom :=
+    e.IsEquivalence ↔ IsIso (HomotopyCategory.homMk e) :=
   Iff.rfl
 
-/-- The identity edge represents an isomorphism of the homotopy
-category. -/
-instance (x : X _⦋0⦌) : IsIso (Edge.id x).toHoHom := by
-  rw [toHoHom_id]
-  infer_instance
-
 /-- The identity edge is an equivalence. -/
-theorem isEquivalence_id (x : X _⦋0⦌) : (Edge.id x).IsEquivalence :=
-  inferInstanceAs (IsIso (Edge.id x).toHoHom)
+theorem isEquivalence_id (x : X _⦋0⦌) : (Edge.id x).IsEquivalence := by
+  rw [isEquivalence_iff, HomotopyCategory.homMk_id]
+  infer_instance
 
 /-- Equivalences are preserved by maps of simplicial sets: the image of
 an equivalence edge under `f : X ⟶ Y` is an equivalence edge of `Y`. -/
 theorem IsEquivalence.map {e : Edge x₀ x₁} (h : e.IsEquivalence)
     (f : X ⟶ Y) : (e.map f).IsEquivalence := by
-  rw [isEquivalence_iff, toHoHom_map]
+  rw [isEquivalence_iff, ← mapHomotopyCategory_map_homMk f e]
   exact @Functor.map_isIso _ _ _ _ _ _ _ _
     ((isEquivalence_iff e).mp h)
 
 /-- The isomorphism in the homotopy category determined by inverse
 data `e.InvStruct`. -/
 def InvStruct.toHoIso {e : Edge x₀ x₁} (I : e.InvStruct) :
-    (HomotopyCategory.mk x₀ : hoFunctor.obj X) ≅
-      (HomotopyCategory.mk x₁ : hoFunctor.obj X) where
-  hom := e.toHoHom
-  inv := I.inv.toHoHom
-  hom_inv_id := by rw [toHoHom_comp I.homInvId, toHoHom_id]
-  inv_hom_id := by rw [toHoHom_comp I.invHomId, toHoHom_id]
+    HomotopyCategory.mk x₀ ≅ HomotopyCategory.mk x₁ where
+  hom := HomotopyCategory.homMk e
+  inv := HomotopyCategory.homMk I.inv
+  hom_inv_id := by
+    rw [HomotopyCategory.homMk_comp_homMk I.homInvId, HomotopyCategory.homMk_id]
+  inv_hom_id := by
+    rw [HomotopyCategory.homMk_comp_homMk I.invHomId, HomotopyCategory.homMk_id]
 
 /-- The forward morphism of `InvStruct.toHoIso` is the morphism
 represented by the edge. -/
 @[simp]
 lemma InvStruct.toHoIso_hom {e : Edge x₀ x₁} (I : e.InvStruct) :
-    I.toHoIso.hom = e.toHoHom :=
+    I.toHoIso.hom = HomotopyCategory.homMk e :=
   rfl
 
 /-- The backward morphism of `InvStruct.toHoIso` is the morphism
 represented by the inverse edge. -/
 @[simp]
 lemma InvStruct.toHoIso_inv {e : Edge x₀ x₁} (I : e.InvStruct) :
-    I.toHoIso.inv = I.inv.toHoHom :=
+    I.toHoIso.inv = HomotopyCategory.homMk I.inv :=
   rfl
 
 /-- Inverse data makes an edge an equivalence: the represented
@@ -148,7 +108,7 @@ theorem IsEquivalence.of_compStruct {e₀₁ : Edge x₀ x₁}
     {e₁₂ : Edge x₁ x₂} {e₀₂ : Edge x₀ x₂}
     (h : Edge.CompStruct e₀₁ e₁₂ e₀₂) (h₀₁ : e₀₁.IsEquivalence)
     (h₁₂ : e₁₂.IsEquivalence) : e₀₂.IsEquivalence := by
-  rw [isEquivalence_iff, ← toHoHom_comp h]
+  rw [isEquivalence_iff, ← HomotopyCategory.homMk_comp_homMk h]
   exact IsIso.comp_isIso' ((isEquivalence_iff _).mp h₀₁)
     ((isEquivalence_iff _).mp h₁₂)
 
@@ -216,9 +176,9 @@ private noncomputable def nerveHoFunctorToCat :
 
 /-- The functor `nerveHoFunctorToCat` sends the morphism represented
 by an edge of the nerve to the corresponding morphism of `C`. -/
-private lemma nerveHoFunctorToCat_map_toHoHom
+private lemma nerveHoFunctorToCat_map_homMk
     {x y : (nerve C) _⦋0⦌} (e : (nerve C).Edge x y) :
-    nerveHoFunctorToCat.map e.toHoHom = nerve.homEquiv e := by
+    nerveHoFunctorToCat.map (HomotopyCategory.homMk e) = nerve.homEquiv e := by
   have h := Truncated.HomotopyCategory.lift_map_homMk
     (fun x ↦ nerveEquiv x)
     (fun e ↦ nerve.homEquiv (Edge.ofTruncated e))
@@ -270,7 +230,7 @@ theorem isEquivalence_nerve_iff {x y : (nerve C) _⦋0⦌}
     e.IsEquivalence ↔ IsIso (nerve.homEquiv e) := by
   constructor
   · intro h
-    rw [← nerveHoFunctorToCat_map_toHoHom e]
+    rw [← nerveHoFunctorToCat_map_homMk e]
     exact @Functor.map_isIso _ _ _ _ _ _ _ _
       ((isEquivalence_iff e).mp h)
   · intro h

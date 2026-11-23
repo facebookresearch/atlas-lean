@@ -12,10 +12,10 @@ public import MathlibExt.AlgebraicTopology.Quasicategory.EdgeEquivalence
 /-!
 # Tests for equivalence edges in a simplicial set
 
-Public clients exercise `SSet.Edge.toHoHom`, `SSet.Edge.IsEquivalence`,
-the identity, composition, map-preservation, inverse-structure and
-coherent-isomorphism extension results, and both directions of the
-nerve criterion. Only public declarations are used.
+Public clients exercise `SSet.Edge.IsEquivalence` on Mathlib's
+`SSet.HomotopyCategory.homMk`, together with identity, composition,
+map-preservation, inverse structures, coherent-isomorphism extensions,
+and both directions of the nerve criterion.
 
 The original Formal-Math development is by Tsutomu Okano and Avocado.
 -/
@@ -38,38 +38,13 @@ section Basic
 
 variable {X Y : SSet.{u}} {x₀ x₁ x₂ : X _⦋0⦌}
 
-/-- The morphism represented by an edge lies in `hoFunctor.obj X` and
-agrees with the upstream quotient constructor. -/
-example (e : Edge x₀ x₁) :
-    (e.toHoHom :
-      (HomotopyCategory.mk x₀ : hoFunctor.obj X) ⟶
-        (HomotopyCategory.mk x₁ : hoFunctor.obj X)) =
-      HomotopyCategory.homMk e :=
-  Edge.toHoHom_eq_homMk e
-
-/-- The equivalence predicate unfolds to `IsIso` of `toHoHom`. -/
-example (e : Edge x₀ x₁) : e.IsEquivalence ↔ IsIso e.toHoHom :=
+/-- The equivalence predicate tests the native homotopy-category morphism. -/
+example (e : Edge x₀ x₁) : e.IsEquivalence ↔ IsIso (HomotopyCategory.homMk e) :=
   Edge.isEquivalence_iff e
-
-/-- The identity edge represents the identity morphism. -/
-example (x : X _⦋0⦌) :
-    (Edge.id x).toHoHom = 𝟙 (HomotopyCategory.mk x : hoFunctor.obj X) :=
-  Edge.toHoHom_id x
 
 /-- The identity edge is an equivalence. -/
 example (x : X _⦋0⦌) : (Edge.id x).IsEquivalence :=
   Edge.isEquivalence_id x
-
-/-- A `CompStruct` gives the composition law for `toHoHom`. -/
-example {e₀₁ : Edge x₀ x₁} {e₁₂ : Edge x₁ x₂} {e₀₂ : Edge x₀ x₂}
-    (h : Edge.CompStruct e₀₁ e₁₂ e₀₂) :
-    e₀₁.toHoHom ≫ e₁₂.toHoHom = e₀₂.toHoHom :=
-  Edge.toHoHom_comp h
-
-/-- Transport along a simplicial map is `mapHomotopyCategory`. -/
-example (e : Edge x₀ x₁) (f : X ⟶ Y) :
-    (e.map f).toHoHom = (mapHomotopyCategory f).map e.toHoHom :=
-  Edge.toHoHom_map e f
 
 /-- Equivalences are preserved by simplicial maps. -/
 example {e : Edge x₀ x₁} (h : e.IsEquivalence) (f : X ⟶ Y) :
@@ -83,7 +58,8 @@ example (x : X _⦋0⦌) (f : X ⟶ Y) :
 
 /-- Inverse data gives an isomorphism in the homotopy category. -/
 example {e : Edge x₀ x₁} (I : e.InvStruct) :
-    I.toHoIso.hom = e.toHoHom ∧ I.toHoIso.inv = I.inv.toHoHom :=
+    I.toHoIso.hom = HomotopyCategory.homMk e ∧
+      I.toHoIso.inv = HomotopyCategory.homMk I.inv :=
   ⟨Edge.InvStruct.toHoIso_hom I, Edge.InvStruct.toHoIso_inv I⟩
 
 /-- Inverse data makes an edge an equivalence, in both forms. -/
