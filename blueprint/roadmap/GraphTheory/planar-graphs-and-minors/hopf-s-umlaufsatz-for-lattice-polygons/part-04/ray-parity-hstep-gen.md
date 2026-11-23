@@ -1,0 +1,7 @@
+# Ray parity across a vertical segment counts separating steps
+
+Let $n \ge 1$ and let $d = (d_0, \dots, d_{n-1})$ be a cyclic sequence of directions $d_i \in \mathbb{Z}/4\mathbb{Z}$, indices taken modulo $n$. Direction $k$ is the unit step $s(k)$, with $s(0) = (1, 0)$ (east), $s(1) = (0, 1)$ (north), $s(2) = (-1, 0)$ (west), $s(3) = (0, -1)$ (south), and the walk with step directions $d$ has vertices $p_k = \sum_{0 \le i < k} s(d_i)$ for $k = 0, \dots, n-1$ (so $p_0 = 0$; vertex indices are also taken modulo $n$). For integers $a, b$, the upward ray parity $\pi(a, b) \in \mathbb{Z}/2\mathbb{Z}$ of the cell $[a, a+1] \times [b, b+1]$ is the number, modulo $2$, of indices $k$ with $d_k$ horizontal (east or west), $\min(x(p_k), x(p_{k+1})) = a$ and $y(p_k) > b$. If the walk is closed, $\sum_{i} s(d_i) = 0$, then for all integers $a, b$,
+
+$$\pi(a, b) + \pi(a + 1, b) = |S_{a,b}| \pmod 2,$$
+
+where $S_{a,b}$ is the set of indices $k$ with $d_k$ vertical, $x(p_k) = a + 1$ and $\min(y(p_k), y(p_{k+1})) \le b < \max(y(p_k), y(p_{k+1}))$.

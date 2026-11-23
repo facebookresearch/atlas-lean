@@ -32,8 +32,12 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- A square array of natural numbers is a *magic square* when every row, every column, the
-main diagonal and the anti-diagonal have one common sum.
+/-- **Magic squares.** An $n \times n$ array $M$ of natural numbers, with rows and columns
+indexed by $0, 1, \dots, n - 1$, is a *magic square* when there is a natural number $s$ such
+that every row of $M$ and every column of $M$ sums to $s$, and also $\sum_i M_{i,i} = s$ (the
+main diagonal) and $\sum_i M_{i,n-1-i} = s$ (the anti-diagonal).
+
+No condition is imposed on the entries themselves.
 
 Source: Gek L. Chia and Wai Keong Kok, *Self-Complementary Magic Squares of Singly Even Orders*,
 Journal of Integer Sequences 27 (2024), Article 24.1.4, Section 1. -/
@@ -41,9 +45,13 @@ def IsMagicSquare {n : ℕ} (M : Matrix (Fin n) (Fin n) ℕ) : Prop :=
   ∃ s : ℕ, (∀ i, ∑ j, M i j = s) ∧ (∀ j, ∑ i, M i j = s) ∧ ∑ i, M i i = s ∧
     ∑ i, M i i.rev = s
 
-/-- A *reduced magic square of order `n`* is a magic square whose entries are
-`0, 1, …, n² - 1`, each exactly once (a magic square of order `n` with every entry reduced
-by `1`); "each exactly once" is stated as: entries are below `n²` and pairwise distinct.
+/-- **Reduced magic squares.** An $n \times n$ array $M$ of natural numbers is a *reduced magic
+square of order $n$* when it is a magic square and its entries are $0, 1, \dots, n^2 - 1$, each
+exactly once; equivalently, every entry of $M$ is less than $n^2$ and distinct cells of $M$
+hold distinct entries.
+
+These are the magic squares of order $n$ with entries $1, 2, \dots, n^2$, each exactly once,
+with every entry reduced by $1$.
 
 Source: Gek L. Chia and Wai Keong Kok, *Self-Complementary Magic Squares of Singly Even Orders*,
 Journal of Integer Sequences 27 (2024), Article 24.1.4, Section 3. -/
@@ -51,7 +59,9 @@ def IsReducedMagicSquare {n : ℕ} (M : Matrix (Fin n) (Fin n) ℕ) : Prop :=
   IsMagicSquare M ∧ (∀ i j, M i j < n ^ 2) ∧
     Function.Injective (fun p : Fin n × Fin n => M p.1 p.2)
 
-/-- The reduced Lo Shu square is a reduced magic square of order `3` (magic sum `12`).
+/-- **The reduced Lo Shu square.** The $3 \times 3$ square with rows $(7, 0, 5)$, $(2, 4, 6)$ and
+$(3, 8, 1)$, a form of the Lo Shu square with every entry reduced by $1$, is a reduced magic
+square of order $3$; its magic sum is $12$.
 
 Source: Gek L. Chia and Wai Keong Kok, *Self-Complementary Magic Squares of Singly Even Orders*,
 Journal of Integer Sequences 27 (2024), Article 24.1.4, Section 3 (reduced magic squares). -/
@@ -60,8 +70,10 @@ theorem isReducedMagicSquare_loShu :
   refine ⟨⟨12, ?_, ?_, ?_, ?_⟩, ?_, ?_⟩ <;>
     first | decide | (intro i j; fin_cases i <;> fin_cases j <;> decide)
 
-/-- The square `[[0, 1], [2, 3]]` has all entries `0, …, 3` once but is not magic (row sums
-`1` and `5`).
+/-- **A 2×2 square that is not a reduced magic square.** The $2 \times 2$ square with rows
+$(0, 1)$ and $(2, 3)$ is not a reduced magic square.
+
+Its entries are $0, 1, 2, 3$, each once, but its row sums are $1$ and $5$, so it is not magic.
 
 Source: Gek L. Chia and Wai Keong Kok, *Self-Complementary Magic Squares of Singly Even Orders*,
 Journal of Integer Sequences 27 (2024), Article 24.1.4, Section 3 (reduced magic squares). -/
@@ -73,13 +85,19 @@ theorem not_isReducedMagicSquare_zero_one_two_three :
   simp [Fin.sum_univ_two] at h0 h1
   omega
 
-/-- Theorem 1 (the extended Strachey construction). Let `A₀` be a `(2m+1) × (2m+1)` array with
-entries in `{0, 3}`, each row having exactly `m + 1` zeros and each diagonal exactly `m + 1`
-threes; let `A₁` have entries in `{1, 2}`, each row and each diagonal having exactly `m + 2`
-ones; and let `B₁`, `B₂` be reduced magic squares of order `2m+1`. With `A₂ = 3J - A₁`,
-`A₃ = 3J - A₀`, `A = [[A₀, A₂], [A₃, A₁]]` and `B = [[B₁, B₂], [B₁, B₂]]`, the superposition
-`[A; B]`, read in base `(2m+1)²`, is a reduced magic square of order `2(2m+1)`. At `m = 0` no `A₁`
-satisfies `hA₁row` (a row of length `1` cannot hold `2` ones), so the statement is vacuous there.
+/-- **Extended Strachey construction.** Let $m$ be a natural number, let $q = (2m+1)^2$, and let
+$A_0$, $A_1$, $B_1$, $B_2$ be $(2m+1) \times (2m+1)$ arrays of natural numbers. Suppose that every
+entry of $A_0$ is $0$ or $3$, every row of $A_0$ has exactly $m+1$ zeros, and the main diagonal
+and the anti-diagonal of $A_0$ each have exactly $m+1$ threes; that every entry of $A_1$ is $1$
+or $2$, every row of $A_1$ has exactly $m+2$ ones, and the main diagonal and the anti-diagonal
+of $A_1$ each have exactly $m+2$ ones; and that $B_1$ and $B_2$ are reduced magic squares. Then
+the square of order $2(2m+1)$ made of four $(2m+1) \times (2m+1)$ blocks, whose $(i, j)$ entries
+are $q A_0(i,j) + B_1(i,j)$ in the top left block, $q (3 - A_1(i,j)) + B_2(i,j)$ in the top
+right block, $q (3 - A_0(i,j)) + B_1(i,j)$ in the bottom left block and
+$q A_1(i,j) + B_2(i,j)$ in the bottom right block, is a reduced magic square.
+
+At $m = 0$ no array $A_1$ satisfies the row condition (a row of length $1$ cannot hold two
+ones), so the statement is vacuous there.
 
 Source: Gek L. Chia and Wai Keong Kok, *Self-Complementary Magic Squares of Singly Even Orders*,
 Journal of Integer Sequences 27 (2024), Article 24.1.4, Theorem 1, with Definitions 1-3
@@ -101,15 +119,28 @@ public theorem_wanted isReducedMagicSquare_extendedStrachey (m : ℕ)
           (fun i j => A₁ i j * (2 * m + 1) ^ 2 + B₂ i j)).submatrix
         finSumFinEquiv.symm finSumFinEquiv.symm)
 
-/-- Theorem 2 (self-complementary squares). Let `A₀`, `A₁` satisfy the hypotheses of Theorem 1
-and, in addition, be invariant under the horizontal reflection `ρ` (`A i.rev j = A i j`) with
-middle row `m` symmetric about its central cell. Let `M` be a reduced ro-symmetric magic square
-of order `2m+1` (`M i j + M i.rev j.rev = (2m+1)² - 1`). Let `B₁` be `M` with its bottom `m`
-rows reversed (`π(M₃)`), `B₁*` be `B₁` with its middle row also reversed, and
-`B = [[B₁, π(B₁)], [B₁*, π(B₁*)]]` where `π` reverses every row. Then the superposition
-`[A*; B]` is a reduced magic square of order `n = 2(2m+1)` that is ref-symmetrical:
-`S i j + S i.rev j = n² - 1`, the reduced form of the paper's `a_{i,j} + a_{n+1-i,j} = n² + 1`.
-As in Theorem 1, the statement is vacuous at `m = 0`, where no `A₁` satisfies `hA₁row`.
+/-- **Ref-symmetric squares from the Strachey construction.** Let $m$ be a natural number, let
+$q = (2m+1)^2$, and let $A_0$, $A_1$ and $M$ be $(2m+1) \times (2m+1)$ arrays of natural
+numbers, with rows and columns indexed by $0, 1, \dots, 2m$; write $\bar\imath = 2m - i$ and
+$\bar\jmath = 2m - j$. Suppose that every entry of $A_0$ is $0$ or $3$, every row of $A_0$ has
+exactly $m+1$ zeros, and the main diagonal and the anti-diagonal of $A_0$ each have exactly
+$m+1$ threes; that every entry of $A_1$ is $1$ or $2$, every row of $A_1$ has exactly $m+2$
+ones, and the main diagonal and the anti-diagonal of $A_1$ each have exactly $m+2$ ones; that
+$A_k(\bar\imath, j) = A_k(i, j)$ and $A_k(m, \bar\jmath) = A_k(m, j)$ for $k = 0, 1$ and all
+$i$, $j$; that $M$ is a reduced magic square; and that
+$M(i, j) + M(\bar\imath, \bar\jmath) = q - 1$ for all $i$, $j$. Let $B_1(i, j) = M(i, \bar\jmath)$
+if $i > m$ and $B_1(i, j) = M(i, j)$ otherwise, and let $B_1^*(i, j) = M(i, \bar\jmath)$ if
+$i \ge m$ and $B_1^*(i, j) = M(i, j)$ otherwise. Let $n = 2(2m+1)$ and let $S$ be the square of
+order $n$, with rows and columns indexed by $0, 1, \dots, n-1$, made of four
+$(2m+1) \times (2m+1)$ blocks whose $(i, j)$ entries are $q A_0(i, j) + B_1(i, j)$ in the top
+left block, $q (3 - A_1(i, j)) + B_1(i, \bar\jmath)$ in the top right block,
+$q (3 - A_0(i, j)) + B_1^*(i, j)$ in the bottom left block and
+$q A_1(i, j) + B_1^*(i, \bar\jmath)$ in the bottom right block. Then $S$ is a reduced magic
+square, and $S(i, j) + S(n - 1 - i, j) = n^2 - 1$ for all $i$, $j$.
+
+The last identity is the reduced form of the paper's condition $a_{i,j} + a_{n+1-i,j} = n^2 + 1$.
+As in the extended Strachey construction, the statement is vacuous at $m = 0$, where no array
+$A_1$ satisfies the row condition.
 
 Source: Gek L. Chia and Wai Keong Kok, *Self-Complementary Magic Squares of Singly Even Orders*,
 Journal of Integer Sequences 27 (2024), Article 24.1.4, Theorem 2, with Definitions 4-6

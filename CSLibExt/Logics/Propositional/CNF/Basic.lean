@@ -26,13 +26,17 @@ survive as `export` aliases in the legacy AutomatedReasoning shims and in
 
 namespace Cslib.Logic.PL
 
-/-- A CNF clause: a list of literals `(variable index, polarity)`. -/
+/-- **CNF clause.** A CNF clause is a finite list of literals, each a pair $(x, b)$ of a variable
+index $x \in \mathbb{N}$ and a polarity $b \in \{\mathrm{true}, \mathrm{false}\}$. -/
 abbrev CNFClause := List (Nat × Bool)
 
-/-- A CNF formula: a conjunction of clauses. -/
+/-- **CNF formula.** A CNF formula is a finite list of CNF clauses, read as the conjunction of its
+clauses. -/
 abbrev CNF := List CNFClause
 
-/-- Boolean satisfiability of a CNF formula: some assignment satisfies every clause. -/
+/-- **Satisfiability of a CNF formula.** A CNF formula $\varphi$ is satisfiable when there is an
+assignment $v : \mathbb{N} \to \{\mathrm{true}, \mathrm{false}\}$ such that every clause $C$ of
+$\varphi$ contains a literal $(x, b)$ with $v(x) = b$. -/
 def CNFSat (φ : CNF) : Prop :=
   ∃ v : Nat → Bool, ∀ C ∈ φ, ∃ (x : Nat) (b : Bool), (x, b) ∈ C ∧ v x = b
 

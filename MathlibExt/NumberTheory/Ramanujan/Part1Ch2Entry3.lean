@@ -232,8 +232,13 @@ private lemma window_sum : ∀ n : ℕ,
       rw [← e1, ← e3, ← e2] at keyapp
       linarith
 
-/-- `ramanujan_part1_ch2_entry3` without the hypothesis `0 < n`; the statement also holds at `n =
-  0`. -/
+/-- **Ramanujan's arctangent identity for $\sum_{k=1}^{2n+1} \arctan(1/(n+k))$, $n \ge 0$.**
+For every natural number $n$,
+$$\sum_{k=1}^{2n+1} \arctan \frac{1}{n+k} = \frac{\pi}{4} +
+\sum_{k=1}^{n} \arctan \frac{10k}{(3k^2 + 2)(9k^2 - 1)}.$$
+
+This is Ramanujan's Entry 3 of Chapter 2 without the hypothesis $n \ge 1$; at $n = 0$ both sides
+are $\pi/4$. -/
 theorem ramanujan_part1_ch2_entry3_general (n : ℕ) :
     ∑ k ∈ Finset.Icc 1 (2 * n + 1), Real.arctan (1 / ((↑n + ↑k : ℝ))) =
       Real.pi / 4 + ∑ k ∈ Finset.Icc 1 n,
@@ -242,7 +247,12 @@ theorem ramanujan_part1_ch2_entry3_general (n : ℕ) :
   exact window_sum n
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Ramanujan's arctangent identity for $\sum_{k=1}^{2n+1} \arctan(1/(n+k))$.** For every
+positive integer $n$,
+$$\sum_{k=1}^{2n+1} \arctan \frac{1}{n+k} = \frac{\pi}{4} +
+\sum_{k=1}^{n} \arctan \frac{10k}{(3k^2 + 2)(9k^2 - 1)}.$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     3, formula (3.1), printed p. 27 / PDF p. 37.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry3`.
 -/

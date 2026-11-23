@@ -11,7 +11,7 @@ module
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.NumberTheory.Ramanujan.Part1Ch3Section8Example4Integrable
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.NumberTheory.BernoulliPolynomials
 
 @[expose] public section
@@ -29,9 +29,6 @@ namespace Section8Example4BernoulliIntegral
 
 open Section8Example4Integrable (f f_natCast)
 open Entry9IiGeneralizedbellgeneratingDefining (generalizedBellGenerating)
-
-private lemma neg_one_le_natCast (k : ℕ) : (-1 : ℤ) ≤ k := by
-  omega
 
 private theorem choose_helper (p j : ℕ) (h : j ≤ p) :
     ((p - j : ℕ) : ℚ) * (Nat.choose p j : ℚ)
@@ -873,7 +870,7 @@ private theorem LHS_eq (n : ℕ) (x : ℂ) :
 
 private theorem RHS_eq (m : ℕ) (x : ℂ) :
     (∑ k ∈ Finset.range (m + 1), (↑(Nat.choose m k) : ℂ) * ((((bernoulli (m - k) : ℚ))) : ℂ) *
-        f ⟨↑k, neg_one_le_natCast k⟩ x / (↑(k + 1) : ℂ))
+        f ⟨↑k, Int.neg_ofNat_le_natCast 1 k⟩ x / (↑(k + 1) : ℂ))
     = ∑ a ∈ Finset.range (m + 2), ((∑ k ∈ Finset.range (m + 1),
         (↑(Nat.choose m k) : ℂ) * ((((bernoulli (m - k) : ℚ))) : ℂ) *
         (Nat.stirlingSecond (k + 1) a : ℂ) / (((k : ℂ) + 1))) * x ^ a) := by
@@ -952,7 +949,7 @@ private theorem zero_LHS (x : ℂ) :
 
 private theorem zero_RHS (x : ℂ) :
     (∑ k ∈ Finset.range (0 + 1), (↑(Nat.choose 0 k) : ℂ) * (((bernoulli (0 - k) : ℚ)) : ℂ) *
-        f ⟨↑k, neg_one_le_natCast k⟩ x / (↑(k + 1) : ℂ)) = x := by
+        f ⟨↑k, Int.neg_ofNat_le_natCast 1 k⟩ x / (↑(k + 1) : ℂ)) = x := by
   rw [Finset.sum_range_one]
   simp only [Nat.choose_self, Nat.cast_one, one_mul, Nat.zero_sub,
     zero_add, div_one] at ⊢
@@ -968,7 +965,13 @@ private theorem zero_RHS (x : ℂ) :
     Nat.stirlingSecond_succ_zero, Nat.cast_zero, zero_mul, pow_zero, pow_one]
   simp
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Section 8, Example 4 and its
+/-- **Ramanujan's integral formula with Bernoulli numbers.** Let $f(-1, x) = 1$ and, for natural
+numbers $n$, let $f(n, x) = e^{-x} \sum_{j=0}^{\infty} (j + 1)^n x^{j+1} / j!$ for complex $x$.
+Let $B_n$ be the Bernoulli numbers, with $B_1 = -1/2$. Then for every natural number $m$ and every
+complex number $x$,
+$$\int_0^1 x\, f(m - 1, t x)\, dt = \sum_{k=0}^{m} \binom{m}{k} B_{m-k} \frac{f(k, x)}{k + 1}.$$
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Section 8, Example 4 and its
     correction, printed pp. 51--52 / PDF pp. 61--62.
 Proves `Wanted` entry `ramanujan_part1_ch3_section8_example4_bernoulli_integral`.
 -/

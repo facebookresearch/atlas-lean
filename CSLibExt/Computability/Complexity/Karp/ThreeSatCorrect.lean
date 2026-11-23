@@ -37,7 +37,8 @@ open Cslib.CookLevin Cslib.Logic.PL Cslib.Algorithms.SAT.DPLL
 
 /-! ### Clause lengths -/
 
-/-- Every clause of `chainTail` has at most three literals. -/
+/-- **Chain-tail clauses have at most three literals.** For every clause $C$ and natural number
+$z$, every clause of $\mathrm{chainTail}(C, z)$ has at most three literals. -/
 theorem length_le_three_of_mem_chainTail :
     ∀ {ls : CNFClause} {z : ℕ}, ∀ D ∈ chainTail ls z, D.length ≤ 3
   | [], _, D, h => by simp [chainTail] at h
@@ -50,7 +51,8 @@ theorem length_le_three_of_mem_chainTail :
     · simp
     · exact length_le_three_of_mem_chainTail D h
 
-/-- Every clause of `chain` has at most three literals. -/
+/-- **Chain clauses have at most three literals.** For every clause $C$ and natural number $u$,
+every clause of $\mathrm{chain}(C, u)$ has at most three literals. -/
 theorem length_le_three_of_mem_chain {C : CNFClause} {u : ℕ} :
     ∀ D ∈ chain C u, D.length ≤ 3 := by
   intro D h
@@ -63,7 +65,10 @@ theorem length_le_three_of_mem_chain {C : CNFClause} {u : ℕ} :
     · simp
     · exact length_le_three_of_mem_chainTail D h
 
-/-- Every clause of `to3Aux` has at most three literals. -/
+/-- **Clauses of the auxiliary 3SAT translation have at most three literals.** For every CNF
+formula $\varphi$, every clause of the clause list produced by the auxiliary SAT-to-3SAT
+translation of $\varphi$ (which replaces each clause by its chain of clauses with fresh
+variables) has at most three literals. -/
 theorem length_le_three_of_mem_to3Aux : ∀ {φ : CNF}, ∀ D ∈ (to3Aux φ).2, D.length ≤ 3
   | [], D, h => by simp [to3Aux] at h
   | _ :: _, D, h => by
@@ -72,14 +77,17 @@ theorem length_le_three_of_mem_to3Aux : ∀ {φ : CNF}, ∀ D ∈ (to3Aux φ).2,
     · exact length_le_three_of_mem_chain D h
     · exact length_le_three_of_mem_to3Aux D h
 
-/-- Every clause of the translation has at most three literals. -/
+/-- **The SAT-to-3SAT translation yields clauses of length at most three.** For every CNF formula
+$\varphi$, every clause of the translation $\mathrm{to3}(\varphi)$ has at most three literals. -/
 theorem is3_to3 (φ : CNF) : is3 (to3 φ) = true := by
   simpa [is3, to3] using length_le_three_of_mem_to3Aux (φ := φ)
 
 /-! ### Soundness: an assignment for `to3 φ` gives one for `φ` -/
 
-/-- If an assignment satisfies `chainTail (l :: ls) z` and makes fresh variable `z` true, its
-restriction to even variables satisfies `l :: ls`. -/
+/-- **Soundness of the tail of a chain.** Let $C$ be a nonempty clause and $z$ a natural number. If
+an assignment $v'$ satisfies every clause of $\mathrm{chainTail}(C, z)$ and gives the fresh
+variable $\mathrm{fresh}(z)$ the value true, then the assignment $n \mapsto v'(2n)$ satisfies
+$C$. -/
 theorem chainTail_sound {v' : ℕ → Bool} {ls : CNFClause} :
     ∀ {l : ℕ × Bool} {z : ℕ}, CNF.Satisfies v' (chainTail (l :: ls) z) →
       v' (fresh z) = true → CNFClause.Satisfies (fun n => v' (ren n)) (l :: ls) := by
@@ -103,7 +111,9 @@ theorem chainTail_sound {v' : ℕ → Bool} {ls : CNFClause} :
     · exact CNFClause.satisfies_cons.2 (Or.inr (ih h2 h1))
     · simp at h1
 
-/-- An assignment satisfying `chain C u` satisfies `C` on the even variables. -/
+/-- **Soundness of the chain of one clause.** Let $C$ be a clause and $u$ a natural number. If an
+assignment $v'$ satisfies every clause of $\mathrm{chain}(C, u)$, then the assignment
+$n \mapsto v'(2n)$ satisfies $C$. -/
 theorem chain_sound {v' : ℕ → Bool} {C : CNFClause} {u : ℕ}
     (h : CNF.Satisfies v' (chain C u)) : CNFClause.Satisfies (fun n => v' (ren n)) C := by
   match C, h with
@@ -118,7 +128,10 @@ theorem chain_sound {v' : ℕ → Bool} {C : CNFClause} {u : ℕ}
     · exact CNFClause.satisfies_cons.2 (Or.inr (chainTail_sound h2 h1))
     · simp at h1
 
-/-- An assignment satisfying `to3Aux φ` satisfies `φ` on the even variables. -/
+/-- **Soundness of the auxiliary 3SAT translation.** For every assignment
+$v' : \mathbb{N} \to \mathrm{Bool}$ and every CNF formula $\varphi$, if $v'$ satisfies the
+clause list produced by the auxiliary SAT-to-3SAT translation of $\varphi$, then the assignment
+$n \mapsto v'(2n)$ satisfies $\varphi$. -/
 theorem to3Aux_sound {v' : ℕ → Bool} :
     ∀ {φ : CNF}, CNF.Satisfies v' (to3Aux φ).2 → CNF.Satisfies (fun n => v' (ren n)) φ
   | [], _ => CNF.satisfies_nil _
@@ -128,8 +141,12 @@ theorem to3Aux_sound {v' : ℕ → Bool} :
 
 /-! ### Completeness: an assignment for `φ` extends to one for `to3 φ` -/
 
-/-- An assignment that agrees with `v` on even variables and makes fresh variable `z - j` true
-exactly when `v` satisfies a literal of `(l :: ls).drop j` satisfies `chainTail (l :: ls) z`. -/
+/-- **Completeness of the tail of a chain.** Let $v$ and $v'$ be assignments with $v'(2n) = v(n)$
+for every $n$, let $C$ be a nonempty clause with $m + 1$ literals and let $z$ be a natural
+number. Suppose that for every $j \le m$, $v'$ gives the fresh variable $\mathrm{fresh}(z - j)$
+the value true exactly when $v$ satisfies some literal of the clause obtained from $C$ by
+dropping its first $j$ literals, where $z - j$ is truncated subtraction ($0$ when $j > z$). Then
+$v'$ satisfies every clause of $\mathrm{chainTail}(C, z)$. -/
 theorem chainTail_complete {v v' : ℕ → Bool} (hv : ∀ n, v' (ren n) = v n) {ls : CNFClause} :
     ∀ {l : ℕ × Bool} {z : ℕ},
       (∀ j ≤ ls.length, v' (fresh (z - j)) = clauseSatisfied v ((l :: ls).drop j)) →
@@ -152,8 +169,12 @@ theorem chainTail_complete {v v' : ℕ → Bool} (hv : ∀ n, v' (ren n) = v n) 
       rw [Nat.sub_sub, Nat.add_comm 1 j]
       simpa using h
 
-/-- If `v` satisfies `C`, an assignment that agrees with `v` on even variables and gives the fresh
-variables `[u, u + used C)` their `clauseSatisfied` values satisfies `chain C u`. -/
+/-- **Completeness of the chain of one clause.** Let $v$ and $v'$ be assignments with
+$v'(2n) = v(n)$ for every $n$, let $C$ be a clause and $u$ a natural number, and write
+$k = \mathrm{used}(C)$. Suppose that $v$ satisfies $C$, and that for every $w$ with
+$u \le w < u + k$, $v'$ gives the fresh variable $\mathrm{fresh}(w)$ the value true exactly when
+$v$ satisfies some literal of the clause obtained from $C$ by dropping its first $u + k - w$
+literals. Then $v'$ satisfies every clause of $\mathrm{chain}(C, u)$. -/
 theorem chain_complete {v v' : ℕ → Bool} (hv : ∀ n, v' (ren n) = v n) {C : CNFClause} {u : ℕ}
     (hC : CNFClause.Satisfies v C)
     (hz : ∀ w, u ≤ w → w < u + used C →
@@ -182,17 +203,30 @@ theorem chain_complete {v v' : ℕ → Bool} (hv : ∀ n, v' (ren n) = v n) {C :
       rw [show u + (ls.length + 1) - (u + ls.length - j) = j + 1 by omega] at h
       simpa using h
 
-/-- The value that the assignment built from `v` gives fresh variable number `w` in `to3 φ`: the
-clause `C` whose range `[u, u + used C)` contains `w` is located through `to3Aux`, and `w` is true
-when `v` satisfies a literal of `C` past position `u + used C - w`. -/
+/-- **Values of the fresh variables in the 3SAT translation.** For an assignment
+$v : \mathbb{N} \to \mathrm{Bool}$, a CNF formula $\varphi$ and a natural number $w$, the value
+$f_v(\varphi, w)$ is defined by recursion on $\varphi$. For the empty formula it is false. For a
+formula with first clause $C$ and remaining clauses $\varphi'$, let $N'$ be the next free fresh
+number of the clause-by-clause translation of $\varphi'$, and let $k = \max(|C| - 1, 0)$ be the
+number of fresh variables reserved for $C$. If $w < N'$, then $f_v(\varphi, w)$ is
+$f_v(\varphi', w)$; otherwise $f_v(\varphi, w)$ is true exactly when $v$ satisfies some literal
+of the clause obtained from $C$ by dropping its first $N' + k - w$ literals, where the
+subtraction is truncated at $0$.
+
+The chain of clauses replacing $C$ uses the fresh numbers $N'$ to $N' + k - 1$, so for these $w$
+the value records whether $v$ satisfies one of the last $w - N' + 1$ literals of $C$. -/
 def freshVal (v : ℕ → Bool) : CNF → ℕ → Bool
   | [], _ => false
   | C :: φ, w =>
       if w < (to3Aux φ).1 then freshVal v φ w
       else clauseSatisfied v (C.drop ((to3Aux φ).1 + used C - w))
 
-/-- If `v` satisfies `φ`, an assignment that agrees with `v` on even variables and with
-`freshVal v φ` on fresh variables below `(to3Aux φ).1` satisfies `to3Aux φ`. -/
+/-- **Completeness of the auxiliary 3SAT translation.** Let $v, v' : \mathbb{N} \to \mathrm{Bool}$
+be assignments with $v'(2n) = v(n)$ for every $n$, let $\varphi$ be a CNF formula satisfied by
+$v$, and let $N$ be the next free fresh number of the auxiliary SAT-to-3SAT translation of
+$\varphi$. If for every $w < N$ the assignment $v'$ gives fresh variable number $w$, the variable
+$2^{w+1} + 1$, the fresh-variable value of $w$ built from $v$ and $\varphi$, then $v'$ satisfies
+the clause list produced by the auxiliary translation of $\varphi$. -/
 theorem to3Aux_complete {v v' : ℕ → Bool} (hv : ∀ n, v' (ren n) = v n) :
     ∀ {φ : CNF}, CNF.Satisfies v φ → (∀ w < (to3Aux φ).1, v' (fresh w) = freshVal v φ w) →
       CNF.Satisfies v' (to3Aux φ).2
@@ -206,16 +240,26 @@ theorem to3Aux_complete {v v' : ℕ → Bool} (hv : ∀ n, v' (ren n) = v n) :
     · rw [hw w (by simp only [to3Aux]; omega)]
       simp [freshVal, h]
 
-/-- The assignment for `to3 φ` built from an assignment `v` for `φ`: `v` on even variables,
-`freshVal` on fresh ones (`Nat.log2 (fresh w - 1) - 1 = w`). -/
+/-- **Lifting an assignment to the 3SAT translation.** Given an assignment
+$v : \mathbb{N} \to \mathrm{Bool}$ and a CNF formula $\varphi$, the lifted assignment sends an
+even variable $n$ to $v(n/2)$ and an odd variable $n$ to the fresh-variable value built from $v$
+and $\varphi$ at the number $\lfloor \log_2 (n - 1) \rfloor - 1$, where $\lfloor \log_2 0 \rfloor$
+is taken to be $0$ and subtraction is truncated at $0$. -/
 def lift (v : ℕ → Bool) (φ : CNF) (n : ℕ) : Bool :=
   if n % 2 = 0 then v (n / 2) else freshVal v φ (Nat.log2 (n - 1) - 1)
 
-/-- `lift v φ` agrees with `v` on the renamed variables. -/
+/-- **The lifted assignment on renamed variables.** For every assignment
+$v : \mathbb{N} \to \mathrm{Bool}$, every CNF formula $\varphi$ and every $n \in \mathbb{N}$,
+the assignment lifted from $v$ for the 3SAT translation of $\varphi$ gives the renamed variable
+$2n$ the value $v(n)$. -/
 theorem lift_ren (v : ℕ → Bool) (φ : CNF) (n : ℕ) : lift v φ (ren n) = v n := by
   simp [lift, ren]
 
-/-- `lift v φ` gives fresh variables their `freshVal`. -/
+/-- **The lifted assignment on fresh variables.** For every assignment
+$v : \mathbb{N} \to \mathrm{Bool}$, every CNF formula $\varphi$ and every $w \in \mathbb{N}$,
+the assignment lifted from $v$ for the 3SAT translation of $\varphi$ gives fresh variable number
+$w$, that is variable $2^{w+1} + 1$, the fresh-variable value of $w$ built from $v$ and
+$\varphi$. -/
 theorem lift_fresh (v : ℕ → Bool) (φ : CNF) (w : ℕ) : lift v φ (fresh w) = freshVal v φ w := by
   have h1 : fresh w % 2 = 1 := by
     simp only [fresh, pow_succ]
@@ -224,7 +268,8 @@ theorem lift_fresh (v : ℕ → Bool) (φ : CNF) (w : ℕ) : lift v φ (fresh w)
     simp [fresh]
   simp [lift, h1, h2]
 
-/-- The translation preserves satisfiability. -/
+/-- **The SAT-to-3SAT translation preserves satisfiability.** For every CNF formula $\varphi$, the
+translation $\mathrm{to3}(\varphi)$ is satisfiable if and only if $\varphi$ is satisfiable. -/
 theorem cnfSat_to3_iff (φ : CNF) : CNFSat (to3 φ) ↔ CNFSat φ := by
   rw [cnfSat_iff_exists_satisfies, cnfSat_iff_exists_satisfies]
   constructor
@@ -235,12 +280,15 @@ theorem cnfSat_to3_iff (φ : CNF) : CNFSat (to3 φ) ↔ CNFSat φ := by
 
 /-! ### The reduction on bit strings -/
 
-/-- No formula encodes to the empty string. -/
+/-- **CNF encodings are nonempty.** For every CNF formula $\varphi$, the binary encoding of
+$\varphi$ is not the empty bit string. -/
 theorem encodeCNF_ne_nil (φ : CNF) : encodeCNF φ ≠ [] := by
   simp [encodeCNF]
 
-/-- `reduce3` preserves membership: the correctness condition of SAT ≤ 3SAT. Polynomial time,
-the other half of `Cslib.CookLevin.PolyManyOneRed`, is proved for the machine separately. -/
+/-- **Correctness of the SAT-to-3SAT reduction on bit strings.** For every bit string $x$, SAT
+accepts $x$ (that is, $x$ encodes a satisfiable CNF formula) exactly when 3SAT accepts the image
+of $x$ under the SAT-to-3SAT reduction (that is, the image encodes a satisfiable CNF formula in
+which every clause has at most three literals). -/
 theorem satDec_eq_sat3Dec_reduce3 (x : List Bool) : satDec x = sat3Dec (reduce3 x) := by
   unfold satDec sat3Dec reduce3
   cases h : decodeCNF x with
