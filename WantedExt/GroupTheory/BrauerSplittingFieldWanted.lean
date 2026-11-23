@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.RepresentationTheory.BrauerSplittingField` — brauer_splitting_field (manifest `manifests/problems/brauer_splitting_field.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module
+`LeanEval.RepresentationTheory.BrauerSplittingField` — brauer_splitting_field (manifest
+`manifests/problems/brauer_splitting_field.toml`, rev 1, submitter Kim Morrison, status archived)
+—
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.GroupTheory.BrauerSplittingFieldWanted` namespace. Mathematical
-statements are unchanged. Source: R. Brauer, On the representation of a group of order g in the field of g-th roots of unity, Amer. J. Math. 67 (1945), 461–471.
+and placed the declarations in the `MathlibExt.GroupTheory.BrauerSplittingFieldWanted` namespace.
+Mathematical
+statements are unchanged. Source: R. Brauer, On the representation of a group of order g in the
+field of g-th roots of unity, Amer. J. Math. 67 (1945), 461–471.
 -/
 module
 
@@ -65,7 +70,18 @@ The descent statement here is the deep content (Schur index 1 over
 `ℚ(ζₙ)` for every irreducible complex representation of `G`).
 -/
 
-/-- Source: R. Brauer, On the representation of a group of order g in the field of g-th roots of unity, Amer. J. Math. 67 (1945), 461–471. Via leanprover/lean-eval@38361be, problem `brauer_splitting_field`. -/
+/-- **Brauer's splitting field theorem.** Let $G$ be a finite group of exponent $n$, let
+$K = \mathbb{Q}(\zeta_n)$ be the $n$-th cyclotomic field, and let $\rho$ be a representation of
+$G$ on a finite-dimensional complex vector space $V$. Then there are a ring homomorphism
+$\varphi \colon K \to \mathbb{C}$, a $K$-vector space $W$ with a representation $\sigma$ of $G$
+on $W$, and a $\mathbb{C}$-linear isomorphism $f \colon \mathbb{C} \otimes_K W \to V$, where
+$\mathbb{C}$ is regarded as a $K$-algebra via $\varphi$, such that
+$f((\mathrm{id}_{\mathbb{C}} \otimes \sigma(g))(x)) = \rho(g)(f(x))$ for all $g \in G$ and all
+$x \in \mathbb{C} \otimes_K W$.
+
+Source: R. Brauer, On the representation of a group of order g in the field of g-th roots of
+unity, Amer. J. Math. 67 (1945), 461–471. Via leanprover/lean-eval@38361be, problem
+`brauer_splitting_field`. -/
 public theorem_wanted brauer_splitting_field
     (G : Type) [Group G] [Fintype G]
     (V : Type) [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]

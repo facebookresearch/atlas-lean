@@ -41,8 +41,12 @@ variable {State Label : Type*} (lts : LTS State Label)
 
 variable {lts}
 
-/-- Upstream reachability `CanReach` is transitive: concatenate the two
-witnessing multistep transitions. -/
+/-- **Reachability in a labelled transition system is transitive.** In a labelled transition
+system, say that a state $s$ can reach a state $t$ when there is a finite list of labels along
+which $s$ makes a multistep transition to $t$. If $s$ can reach $m$ and $m$ can reach $t$, then
+$s$ can reach $t$.
+
+The witnessing list of labels is the concatenation of the two given lists. -/
 @[trans]
 theorem CanReach.trans {source middle target : State}
     (hsm : lts.CanReach source middle) (hmt : lts.CanReach middle target) :

@@ -180,8 +180,22 @@ private lemma accumulateBlock_time {α : Type u} [Add α] [Mul α] {n : Nat}
     simp [pow_succ, Prod.add_def]
     omega
 
-/-- Add the product to the saved square accumulator by the eight-call CLRS recursion.
-The two counters charge scalar multiplications and accumulator additions only. -/
+/-- **Recursive matrix multiply-accumulate.** Let $\alpha$ be a type with an addition and a
+multiplication, let $k$ be a natural number and $n = 2^k$, and let $A$, $B$, $C$ be $n \times n$
+matrices over $\alpha$, stored as vectors of rows. The procedure adds the product of $A$ and $B$
+to the accumulator $C$ by the eight-call recursion of CLRS. When $n = 1$, writing $a$, $b$, $c$
+for the single entries of $A$, $B$, $C$, it replaces $c$ by $c + ab$. Otherwise it splits each
+matrix $M$ into four $(n/2) \times (n/2)$ quadrants $M_{11}$ (top left), $M_{12}$ (top right),
+$M_{21}$ (bottom left) and $M_{22}$ (bottom right), and updates, in this order,
+$C_{11} \gets C_{11} + A_{11} B_{11}$, $C_{12} \gets C_{12} + A_{11} B_{12}$,
+$C_{21} \gets C_{21} + A_{21} B_{11}$, $C_{22} \gets C_{22} + A_{21} B_{12}$, then
+$C_{11} \gets C_{11} + A_{12} B_{21}$, $C_{12} \gets C_{12} + A_{12} B_{22}$,
+$C_{21} \gets C_{21} + A_{22} B_{21}$, $C_{22} \gets C_{22} + A_{22} B_{22}$, each by a
+recursive call on the accumulator left by the previous one. It returns the final accumulator
+together with two counters: the number of scalar multiplications and the number of accumulator
+additions.
+
+Only these two operations are charged; calls, indexing and allocation are free. -/
 public def recursiveMatrixAccumulate {α : Type u} [Add α] [Mul α] (k : Nat)
     (A B C : _root_.Vector (_root_.Vector α (2 ^ k)) (2 ^ k)) :
     TimeM (Nat × Nat) (_root_.Vector (_root_.Vector α (2 ^ k)) (2 ^ k)) :=
@@ -189,7 +203,12 @@ public def recursiveMatrixAccumulate {α : Type u} [Add α] [Mul α] (k : Nat)
 
 @[expose] public section
 
-/-- Each actual returned entry is the saved entry plus its canonical finite dot product. -/
+/-- **Entries of the recursive matrix multiply-accumulate.** Let $\alpha$ be an additive
+commutative monoid with a multiplication, let $k$ be a natural number and $n = 2^k$, and let
+$A = (a_{ij})$, $B = (b_{ij})$, $C = (c_{ij})$ be $n \times n$ matrices over $\alpha$, with
+indices running from $0$ to $n - 1$. For all indices $i, j < n$, entry $(i, j)$ of the matrix
+returned by the recursive multiply-accumulate procedure on $A$, $B$, $C$ equals
+$c_{ij} + \sum_{t < n} a_{it} b_{tj}$. -/
 theorem recursiveMatrixAccumulate_apply {α : Type u} [AddCommMonoid α] [Mul α] (k : Nat)
     (A B C : _root_.Vector (_root_.Vector α (2 ^ k)) (2 ^ k)) (i j : Fin (2 ^ k)) :
     ((recursiveMatrixAccumulate k A B C).ret.get i).get j =
@@ -197,7 +216,12 @@ theorem recursiveMatrixAccumulate_apply {α : Type u} [AddCommMonoid α] [Mul α
   have h := accumulateBlock_get A B C k 0 0 0 (by simp) (by simp) (by simp) i j
   simpa [recursiveMatrixAccumulate, inside, blockProduct] using h
 
-/-- The canonical Matrix view of the materialized result is `C + A * B`. -/
+/-- **Correctness of the recursive matrix multiply-accumulate.** Let $\alpha$ be an additive
+commutative monoid with a multiplication, let $k$ be a natural number and $n = 2^k$, and let
+$A = (a_{ij})$, $B = (b_{ij})$, $C$ be $n \times n$ matrices over $\alpha$, with indices running
+from $0$ to $n - 1$. Viewed as a matrix, the result returned by the recursive multiply-accumulate
+procedure on $A$, $B$, $C$ equals $C + AB$, where $AB$ is the matrix product with entries
+$(AB)_{ij} = \sum_{t < n} a_{it} b_{tj}$. -/
 theorem recursiveMatrixAccumulate_ret {α : Type u} [AddCommMonoid α] [Mul α] (k : Nat)
     (A B C : _root_.Vector (_root_.Vector α (2 ^ k)) (2 ^ k)) :
     _root_.Matrix.of (fun i j => ((recursiveMatrixAccumulate k A B C).ret.get i).get j) =
@@ -207,8 +231,13 @@ theorem recursiveMatrixAccumulate_ret {α : Type u} [AddCommMonoid α] [Mul α] 
   ext i j
   exact recursiveMatrixAccumulate_apply k A B C i j
 
-/-- The actual run performs exactly `8 ^ k` scalar multiplications and additions.
-For dimension `2 ^ k` this equals its cube. Calls, indexing and allocation are uncharged. -/
+/-- **Operation count of the recursive matrix multiply-accumulate.** Let $\alpha$ be a type with
+an addition and a multiplication, let $k$ be a natural number and $n = 2^k$, and let $A$, $B$,
+$C$ be $n \times n$ matrices over $\alpha$. The recursive multiply-accumulate procedure on $A$,
+$B$, $C$ performs exactly $8^k$ scalar multiplications and exactly $8^k$ accumulator additions.
+Since $8^k = n^3$, each count is the cube of the dimension.
+
+Calls, indexing and allocation are uncharged. -/
 theorem recursiveMatrixAccumulate_time {α : Type u} [Add α] [Mul α] (k : Nat)
     (A B C : _root_.Vector (_root_.Vector α (2 ^ k)) (2 ^ k)) :
     (recursiveMatrixAccumulate k A B C).time = (8 ^ k, 8 ^ k) :=
