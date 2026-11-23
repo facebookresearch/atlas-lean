@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.OrderOfElement
+public import MathlibExt.NumberTheory.Digits.MersenneTenPowBlockLength
 
 /-!
 # Blocks in the decimal expansion of reciprocals of Mersenne primes (statements)
@@ -21,23 +22,15 @@ periodic (`gcd(10, M) = 1`) with period `L = ord_M(10)` = `orderOf (10 : ZMod M)
 repeating block, read as an `L`-digit integer with leading zeros, is `(10^L - 1)/M`. When
 `p ∣ L` the block is cut into `p` consecutive blocks of `ℓ = L/p` digits; the `k`-th block from
 the left (`1 ≤ k ≤ p`) is `((10^L - 1)/M / 10^{ℓ(p-k)}) % 10^ℓ`.
+
+The congruence `10^ℓ ≡ 2^r (mod M)` for some `1 ≤ r ≤ p - 1` is proved, with the same name,
+statement and docstring, as `ten_pow_blockLength_modEq_two_pow` in
+`MathlibExt.NumberTheory.Digits.MersenneTenPowBlockLength`, which this module imports.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The block-length power of ten is a power of two modulo the Mersenne prime.** Let $p$ be a
-natural number such that $M = 2^p - 1$ is prime, let $L$ be the multiplicative order of $10$ modulo
-$M$ (the period of the decimal expansion of $1/M$), and suppose that $p$ divides $L$. Then there is
-a natural number $r$ with $1 \le r \le p - 1$ such that $10^{L/p} \equiv 2^r \pmod{M}$.
-
-Source: Amitabha Tripathi, *A Note on the Decimal Expansion of Reciprocals of Mersenne Primes*,
-INTEGERS 24 (2024), Article A14, Proposition 1 (`integers-2024-A14-prop-1`). -/
-public theorem_wanted ten_pow_blockLength_modEq_two_pow (p : ℕ) (hM : (2 ^ p - 1).Prime)
-    (hdvd : p ∣ orderOf (10 : ZMod (2 ^ p - 1))) :
-    ∃ r ∈ Finset.Icc 1 (p - 1),
-      10 ^ (orderOf (10 : ZMod (2 ^ p - 1)) / p) ≡ 2 ^ r [MOD 2 ^ p - 1]
 
 /-- **Doubling recurrence for the blocks of $1/(2^p - 1)$.** Let $p$ be a natural number such
 that $M = 2^p - 1$ is prime, let $L$ be the multiplicative order of $10$ modulo $M$ (the period of
