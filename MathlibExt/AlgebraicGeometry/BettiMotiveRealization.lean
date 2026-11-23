@@ -163,9 +163,9 @@ class CorrespondenceCalculus where
         (BettiCycleRealization.pushedFundamentalCycle b Z.dimension)) =
       (rationalEquivalences (product X Z) Z.dimension).mkQ
         (BettiCycleRealization.pushedFundamentalCycle (compositionMap a b) Z.dimension)
-  action_id : ∀ (X : SmoothObject) (n : ℤ), action D P S X X n (diagonalClass X) = LinearMap.id
+  action_id : ∀ (X : SmoothObject) (n : ℤ), action D @P S X X n (diagonalClass X) = LinearMap.id
   action_comp : ∀ (X Y Z : SmoothObject) (n : ℤ) (a : Correspondence X Y) (b : Correspondence Y Z),
-    action D P S X Z n (comp X Y Z a b) = action D P S Y Z n b ∘ₗ action D P S X Y n a
+    action D @P S X Z n (comp X Y Z a b) = action D @P S Y Z n b ∘ₗ action D @P S X Y n a
 
 structure CorrespondenceObject
     (D : ∀ (X : PerverseSheaves.ComplexScheme) [IsComplexVariety X], DualizingComplex (space X))
@@ -174,9 +174,9 @@ structure CorrespondenceObject
     (_S : BettiCycleRealization.CycleRealization D P) where
   data : SmoothObject
 
-variable [C : CorrespondenceCalculus D P S]
+variable [C : CorrespondenceCalculus D @P S]
 
-instance correspondenceCategory : Category.{0} (CorrespondenceObject D P S) where
+instance correspondenceCategory : Category.{0} (CorrespondenceObject D @P S) where
   Hom X Y := Correspondence X.data Y.data
   id X := diagonalClass X.data
   comp a b := C.comp _ _ _ a b
@@ -184,59 +184,59 @@ instance correspondenceCategory : Category.{0} (CorrespondenceObject D P S) wher
   comp_id a := C.comp_id _ _ a
   assoc a b c := C.assoc _ _ _ _ a b c
 
-instance correspondencePreadditive : Preadditive (CorrespondenceObject D P S) where
+instance correspondencePreadditive : Preadditive (CorrespondenceObject D @P S) where
   homGroup X Y := inferInstanceAs (AddCommGroup (Correspondence X.data Y.data))
   add_comp := by
     intro X Y Z a a' b
     exact congrArg (fun f => f b) ((C.comp X.data Y.data Z.data).map_add a a')
   comp_add := by intro X Y Z a b b'; exact (C.comp X.data Y.data Z.data a).map_add b b'
 
-instance correspondenceLinear : Linear ℚ (CorrespondenceObject D P S) where
+instance correspondenceLinear : Linear ℚ (CorrespondenceObject D @P S) where
   homModule X Y := inferInstanceAs (Module ℚ (Correspondence X.data Y.data))
   smul_comp := by
     intro X Y Z r a b
     exact congrArg (fun f => f b) ((C.comp X.data Y.data Z.data).map_smul r a)
   comp_smul := by intro X Y Z a r b; exact (C.comp X.data Y.data Z.data a).map_smul r b
 
-abbrev EffectiveChowMotive := Karoubi (CorrespondenceObject D P S)
+abbrev EffectiveChowMotive := Karoubi (CorrespondenceObject D @P S)
 
-def bettiFunctor (n : ℤ) : CorrespondenceObject D P S ⥤ ModuleCat.{1} ℚ where
+def bettiFunctor (n : ℤ) : CorrespondenceObject D @P S ⥤ ModuleCat.{1} ℚ where
   obj X := ModuleCat.of ℚ (BettiRealization.Cohomology (space X.data.scheme) n)
-  map {X Y} a := ModuleCat.ofHom (action D P S X.data Y.data n a)
+  map {X Y} a := ModuleCat.ofHom (action D @P S X.data Y.data n a)
   map_id X := by ext a; exact congrArg (fun f => f a) (C.action_id X.data n)
   map_comp {X Y Z} a b := by
     ext x
     exact congrArg (fun f => f x) (C.action_comp X.data Y.data Z.data n a b)
 
-theorem projector_idempotent (M : EffectiveChowMotive D P S) (n : ℤ) :
-    action D P S M.X.data M.X.data n M.p ∘ₗ action D P S M.X.data M.X.data n M.p =
-      action D P S M.X.data M.X.data n M.p := by
+theorem projector_idempotent (M : EffectiveChowMotive D @P S) (n : ℤ) :
+    action D @P S M.X.data M.X.data n M.p ∘ₗ action D @P S M.X.data M.X.data n M.p =
+      action D @P S M.X.data M.X.data n M.p := by
   rw [← C.action_comp]
-  exact congrArg (action D P S M.X.data M.X.data n) M.idem
+  exact congrArg (action D @P S M.X.data M.X.data n) M.idem
 
-abbrev ProjectorSpace (M : EffectiveChowMotive D P S) (n : ℤ) :=
-  LinearMap.range (action D P S M.X.data M.X.data n M.p)
+abbrev ProjectorSpace (M : EffectiveChowMotive D @P S) (n : ℤ) :=
+  LinearMap.range (action D @P S M.X.data M.X.data n M.p)
 
-def projectorMap {M N : EffectiveChowMotive D P S} (n : ℤ) (f : M ⟶ N) :
-    ProjectorSpace D P S M n →ₗ[ℚ] ProjectorSpace D P S N n where
-  toFun a := ⟨action D P S M.X.data N.X.data n f.f a.1, by
-    have h : action D P S N.X.data N.X.data n N.p ∘ₗ action D P S M.X.data N.X.data n f.f =
-        action D P S M.X.data N.X.data n f.f :=
+def projectorMap {M N : EffectiveChowMotive D @P S} (n : ℤ) (f : M ⟶ N) :
+    ProjectorSpace D @P S M n →ₗ[ℚ] ProjectorSpace D @P S N n where
+  toFun a := ⟨action D @P S M.X.data N.X.data n f.f a.1, by
+    have h : action D @P S N.X.data N.X.data n N.p ∘ₗ action D @P S M.X.data N.X.data n f.f =
+        action D @P S M.X.data N.X.data n f.f :=
       (C.action_comp M.X.data N.X.data N.X.data n f.f N.p).symm.trans
-        (congrArg (action D P S M.X.data N.X.data n) (Karoubi.comp_p f))
-    exact ⟨action D P S M.X.data N.X.data n f.f a.1, congrArg (fun g => g a.1) h⟩⟩
-  map_add' a b := by ext; exact (action D P S M.X.data N.X.data n f.f).map_add a.1 b.1
-  map_smul' r a := by ext; exact (action D P S M.X.data N.X.data n f.f).map_smul r a.1
+        (congrArg (action D @P S M.X.data N.X.data n) (Karoubi.comp_p f))
+    exact ⟨action D @P S M.X.data N.X.data n f.f a.1, congrArg (fun g => g a.1) h⟩⟩
+  map_add' a b := by ext; exact (action D @P S M.X.data N.X.data n f.f).map_add a.1 b.1
+  map_smul' r a := by ext; exact (action D @P S M.X.data N.X.data n f.f).map_smul r a.1
 
-def motiveBettiFunctor (n : ℤ) : EffectiveChowMotive D P S ⥤ ModuleCat.{1} ℚ where
-  obj M := ModuleCat.of ℚ (ProjectorSpace D P S M n)
-  map f := ModuleCat.ofHom (projectorMap D P S n f)
+def motiveBettiFunctor (n : ℤ) : EffectiveChowMotive D @P S ⥤ ModuleCat.{1} ℚ where
+  obj M := ModuleCat.of ℚ (ProjectorSpace D @P S M n)
+  map f := ModuleCat.ofHom (projectorMap D @P S n f)
   map_id M := by
     ext a
     obtain ⟨x, hx⟩ := a.2
-    change action D P S M.X.data M.X.data n M.p a.1 = a.1
+    change action D @P S M.X.data M.X.data n M.p a.1 = a.1
     rw [← hx]
-    exact congrArg (fun g => g x) (projector_idempotent D P S M n)
+    exact congrArg (fun g => g x) (projector_idempotent D @P S M n)
   map_comp {M N O} f g := by
     ext a
     exact congrArg (fun h => h a.1) (C.action_comp M.X.data N.X.data O.X.data n f.f g.f)
@@ -277,24 +277,24 @@ def kunnethMap (X Y : SmoothObject) (n : ℤ) :
   ∑ i : Fin (2 * X.dimension + 1), kunnethComponent X Y n i
 
 omit C in theorem action_smul (X Y : SmoothObject) (n : ℤ) (a : Correspondence X Y) (r : ℚ) :
-    action D P S X Y n (r • a) = r • action D P S X Y n a := by
+    action D @P S X Y n (r • a) = r • action D @P S X Y n a := by
   ext x
   simp only [action, LinearMap.comp_apply, LinearMap.smul_apply]
   simp [BettiRealization.cupRight, BettiRealization.cup, map_smul, Linear.smul_comp]
 
-instance bettiFunctorLinear (n : ℤ) : (bettiFunctor D P S n).Linear ℚ where
+instance bettiFunctorLinear (n : ℤ) : (bettiFunctor D @P S n).Linear ℚ where
   map_smul {X Y} a r := by
     apply ModuleCat.hom_ext
-    change action D P S X.data Y.data n (r • a) = r • action D P S X.data Y.data n a
-    exact action_smul D P S X.data Y.data n a r
+    change action D @P S X.data Y.data n (r • a) = r • action D @P S X.data Y.data n a
+    exact action_smul D @P S X.data Y.data n a r
 
 
-instance motiveBettiFunctorLinear (n : ℤ) : (motiveBettiFunctor D P S n).Linear ℚ where
+instance motiveBettiFunctorLinear (n : ℤ) : (motiveBettiFunctor D @P S n).Linear ℚ where
   map_smul {M N} f r := by
     ext a
     apply Subtype.ext
-    change action D P S M.X.data N.X.data n (r • f.f) a.1 =
-      r • action D P S M.X.data N.X.data n f.f a.1
-    exact congrArg (fun g => g a.1) (action_smul D P S M.X.data N.X.data n f.f r)
+    change action D @P S M.X.data N.X.data n (r • f.f) a.1 =
+      r • action D @P S M.X.data N.X.data n f.f a.1
+    exact congrArg (fun g => g a.1) (action_smul D @P S M.X.data N.X.data n f.f r)
 
 end MathlibExt.AlgebraicGeometry.BettiMotiveRealization
