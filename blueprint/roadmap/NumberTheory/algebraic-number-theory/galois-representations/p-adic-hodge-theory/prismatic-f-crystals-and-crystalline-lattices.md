@@ -13,7 +13,10 @@ $$T_{\mathcal{O}_K} \colon \operatorname{Vect}^{\varphi}(\operatorname{Spf}(\mat
 onto the category of finite free $\mathbb{Z}_p$-modules $T$ with a continuous action of $G_K$ such that $T[1/p]$ is
 a crystalline representation; in particular every $G_K$-stable lattice in a crystalline representation comes
 from a prismatic $F$-crystal, unique up to unique isomorphism, and morphisms of lattices correspond to morphisms
-of $F$-crystals.
+of $F$-crystals. As the equivalence is $\mathbb{Z}_p$-linear on morphisms, the same holds for lattices with
+coefficients: if $L$ is a finite extension of $\mathbb{Q}_p$ and $T$ is a $G_K$-stable $\mathcal{O}_L$-lattice in a
+crystalline representation on an $L$-vector space, the action of $\mathcal{O}_L$ on $T$ by $G_K$-equivariant
+endomorphisms corresponds to an action of $\mathcal{O}_L$ on the prismatic $F$-crystal of $T$.
 
 ## Depends on
 
@@ -22,8 +25,9 @@ of $F$-crystals.
 
 ## Proof depends on
 
-- [Prisms and prismatic cohomology](prisms-and-prismatic-cohomology.md), for the quasi-syntomic descent along $\operatorname{Spf}(\mathcal{O}_C) \to \operatorname{Spf}(\mathcal{O}_K)$, Breuil–Kisin modules and Kedlaya's slope filtrations (its item 4)
-- [Weakly admissible implies admissible](colmez-fontaine-theorem.md), for the filtered $\varphi$-modules of crystalline representations that the construction lifts
+- [Prisms and prismatic cohomology](prisms-and-prismatic-cohomology.md), for the quasi-syntomic descent along $\operatorname{Spf}(\mathcal{O}_C) \to \operatorname{Spf}(\mathcal{O}_K)$, the construction over $\mathcal{O}_C$ through Kedlaya's slope filtrations, and the Beilinson fibre sequence used for the descent isomorphism (its item 4)
+- [Weakly admissible implies admissible](colmez-fontaine-theorem.md), for Fontaine's theorem that the filtered $\varphi$-module $D_{\mathrm{cris}}(T[1/p])$ of the given crystalline representation is weakly admissible, the input of the proof of essential surjectivity (Bhatt–Scholze 2021, §6.4); that page is stated for the same fields $K$, complete and discretely valued of characteristic $0$ with perfect residue field
+- [p-divisible groups over the ring of integers of C](p-divisible-groups-over-o-c.md), for the vector bundles on the Fargues–Fontaine curve used in §6.4
 
 ## Sources
 

@@ -94,6 +94,7 @@ The other inputs are the following pages; those that are nodes are themselves st
 [Poitou–Tate exact sequence](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/poitou-tate-exact-sequence.md),
 [Global Euler characteristic formula](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/global-euler-characteristic-formula.md),
 [Wiles's formula for Selmer groups](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/greenberg-wiles-formula.md),
+[Crystalline representations](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/crystalline-representations.md),
 [Fundamental exact sequence of p-adic Hodge theory](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/fundamental-exact-sequence.md),
 [p-adic monodromy theorem](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/p-adic-monodromy-theorem.md),
 [Bloch–Kato dimension formula](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/bloch-kato-dimension-formula.md),
@@ -184,13 +185,14 @@ and [Grothendieck's existence theorem](../../../AlgebraicGeometry/abelian-variet
 - [Poitou–Tate exact sequence](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/poitou-tate-exact-sequence.md)
 - [Global Euler characteristic formula](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/global-euler-characteristic-formula.md)
 - [Wiles's formula for Selmer groups](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/greenberg-wiles-formula.md)
-- [Fundamental exact sequence of p-adic Hodge theory](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/fundamental-exact-sequence.md), for the properties of $B_{\mathrm{cris}}$
+- [Crystalline representations](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/crystalline-representations.md), for the injectivity of $B_{\mathrm{cris}} \to B_{\mathrm{dR}}$ and of $K \otimes_{K_0} B_{\mathrm{cris}} \to B_{\mathrm{dR}}$ and the regularity of $B_{\mathrm{cris}}$
+- [Fundamental exact sequence of p-adic Hodge theory](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/fundamental-exact-sequence.md), for $B_e \cap B_{\mathrm{dR}}^+ = \mathbb{Q}_p$, $B_e + B_{\mathrm{dR}}^+ = B_{\mathrm{dR}}$, the injectivity of $\varphi$ on $B_{\mathrm{cris}}$ and the surjectivity of $\varphi - 1$ from $\operatorname{Fil}^0 B_{\mathrm{cris}}$ onto $B_{\mathrm{cris}}$
 - [p-adic monodromy theorem](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/p-adic-monodromy-theorem.md), for Berger's theorem that de Rham representations are potentially semistable
 - [Bloch–Kato dimension formula](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/bloch-kato-dimension-formula.md)
 - [Bloch–Kato orthogonality](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/bloch-kato-orthogonality.md)
 - [Integral Bloch–Kato conditions and their duality](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/integral-bloch-kato-conditions.md)
-- [Prismatic F-crystals and lattices in crystalline representations](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/prismatic-f-crystals-and-crystalline-lattices.md)
-- [Hodge–Tate sequence of a p-divisible group](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/hodge-tate-sequence-of-p-divisible-groups.md), for the bound for a covolume
+- [Prismatic F-crystals and lattices in crystalline representations](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/prismatic-f-crystals-and-crystalline-lattices.md), only for the prismatic $F$-crystals attached to lattices with coefficients in crystalline representations, not for the crystalline comparison for prismatic cohomology
+- [Hodge–Tate sequence of a p-divisible group](../../algebraic-number-theory/galois-representations/p-adic-hodge-theory/hodge-tate-sequence-of-p-divisible-groups.md), only for the integral identification of the kernel of the Hodge–Tate map with the annihilator of the kernel of the dual map, used in the bound for a covolume, whose cokernel bound comes from a separate estimate
 - [Principalization of ideal sheaves in characteristic zero](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/principalization-of-ideal-sheaves.md), for an empty boundary
 - [Principalization relative to a simple normal crossing divisor](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/principalization-relative-to-a-simple-normal-crossing-divisor.md), for an arbitrary simple normal crossing boundary, with an isomorphism off the cosupport of the ideal
 - [Functorial resolution of schemes of finite type in characteristic zero](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/functorial-resolution-of-schemes-of-finite-type.md), for reduced schemes

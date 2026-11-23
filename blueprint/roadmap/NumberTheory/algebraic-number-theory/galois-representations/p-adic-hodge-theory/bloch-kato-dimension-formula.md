@@ -20,10 +20,15 @@ weights in this convention.
 
 - [Fundamental exact sequence of p-adic Hodge theory](fundamental-exact-sequence.md), for the exact sequence $0 \to \mathbb{Q}_p \to B_{\mathrm{cris}} \oplus B_{\mathrm{dR}}^+ \to B_{\mathrm{cris}} \oplus B_{\mathrm{dR}} \to 0$ tensored with $V$
 - [Tate–Sen theorem on the Galois cohomology of C(i)](tate-sen-theorem.md), for the injectivity of $H^1(G_K, B_{\mathrm{dR}}^+ \otimes V) \to H^1(G_K, B_{\mathrm{dR}} \otimes V)$ (Bellaïche, Lemma 2.6)
-- [Galois cohomology of ℓ-adic representations of a p-adic field](../galois-cohomology-of-local-fields/galois-cohomology-of-l-adic-representations.md), for the long exact sequence of continuous cohomology
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the long exact sequences of continuous cohomology of the sequences of period rings tensored with $V$, which exist because their maps have continuous set-theoretic sections (Bloch–Kato, Remarks 1.18; NSW (2.7.2))
 
 ## Sources
 
+- S. Bloch and K. Kato, "L-functions and Tamagawa numbers of motives", in *The Grothendieck Festschrift*, vol. I,
+  Progr. Math. 86, Birkhäuser, 1990, 333–400, <http://math.stanford.edu/~conrad/BSDseminar/refs/BKTamagawa.pdf>:
+  Lemma 3.8.1 and Corollary 3.8.4 (the diagram of exact sequences obtained by tensoring (1.17) with $V$ and taking
+  Galois cohomology, and $\dim_{\mathbb{Q}_p} H^1_f(K, V) = \dim_{\mathbb{Q}_p}(DR(V)/DR(V)^0) + \dim_{\mathbb{Q}_p} H^0(K, V)$), p. 355;
+  Remarks 1.18 (the continuous sections), p. 341.
 - J. Bellaïche, *An introduction to the conjecture of Bloch and Kato*, Clay Mathematics Institute summer
   school, 2009, <http://virtualmath1.stanford.edu/~conrad/BSDseminar/refs/BKintro.pdf>: §2.2.1, Proposition 2.8
   ("Assume that $V$ is de Rham … $\dim_{\mathbb{Q}_p} H^1_f(G_K, V) = \dim_{\mathbb{Q}_p}(D_{\mathrm{dR}}(V)/D^+_{\mathrm{dR}}(V)) +

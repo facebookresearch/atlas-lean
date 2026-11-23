@@ -8,8 +8,12 @@ $$\text{Ш}^i(G_S, A) = \ker\Bigl(H^i(G_S, A) \to \prod_{v \in S} H^i(F_v, A)\Bi
 
 with the restriction maps to decomposition groups $G_v \subseteq G_F$ and, for archimedean $v$ and $i = 0$,
 Tate cohomology $\hat H^0(F_v, A)$. For $A \in \operatorname{Mod}_S(G_S)$ it is the kernel of the
-localization map $\lambda^i \colon H^i(G_S, A) \to P^i(G_S, A)$, and the same definition applies to the dual
-$A'$.
+localization map $\lambda^i \colon H^i(G_S, A) \to P^i(G_S, A)$. For the dual
+$A' = \operatorname{Hom}(A, \mathcal{O}_S^\times)$ of such an $A$, the local groups are those of the dual in the
+local sense, $H^i(F_v, A') = H^i(G_v, \operatorname{Hom}(A, \bar F_v^\times))$, reached by restriction followed by
+the inclusion $A' \hookrightarrow \operatorname{Hom}(A, \bar F_v^\times)$; so
+$\text{Ш}^i(G_S, A') = \ker(\lambda^i \colon H^i(G_S, A') \to P^i(G_S, A'))$. For finite $A$ this agrees with
+the definition above applied to the discrete module $A' = \operatorname{Hom}(A, \mu)$.
 
 For $i \ge 1$ the factor of a complex place $v$ vanishes, since $G_v$ is trivial; so when $F$ is totally
 imaginary, $\text{Ш}^i(G_S, A)$ for $i \ge 1$ is the kernel of localization at the non-archimedean places of

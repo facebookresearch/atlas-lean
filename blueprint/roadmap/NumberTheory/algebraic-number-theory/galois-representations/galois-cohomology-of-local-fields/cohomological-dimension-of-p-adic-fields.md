@@ -18,16 +18,19 @@ maximal unramified extension, $\operatorname{cd}_\ell(G_L) \le 1$.
 
 ## Proof depends on
 
-- [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for $H^1(L, \bar k^\times) = 0$ and the behaviour of the invariant map under restriction, $\operatorname{inv}_L \circ \operatorname{Res} = [L : k] \operatorname{inv}_k$, which give $H^2(L, \bar k^\times)(\ell) = 0$ when $\ell^\infty$ divides $[L : k]$ (its item 2)
+- [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for $H^1(K, \bar k^\times) = 0$ and the behaviour of the invariant map under restriction, $\operatorname{inv}_K \circ \operatorname{Res} = [K : k] \operatorname{inv}_k$, for the finite extensions $K/k$ (its item 2); for an infinite algebraic extension $L/k$ of degree divisible by $\ell^\infty$ these give $H^1(L, \bar k^\times) = 0$ and $H^2(L, \bar k^\times)(\ell) = \varinjlim_K H^2(K, \bar k^\times)(\ell) = 0$ by passage to the direct limit over the finite subextensions $K$ of $L/k$, along restriction maps that multiply the invariant by the degrees
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the criterion for $\operatorname{cd}_\ell \le 1$ of a field in terms of $H^1$ and $H^2$ of the multiplicative group, the Hochschild–Serre spectral sequence, inflation–restriction and Serre's criterion for $\operatorname{scd}$
-- [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^2(k, \mu_\ell) \cong \mathbb{Z}/\ell\mathbb{Z} \ne 0$, which gives $\operatorname{cd}_\ell = 2$, and for the finiteness of $H^i(K, \mu_n)$ over finite extensions $K$
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the commutation of cohomology with direct limits of groups used in that passage
+- [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^2(k, \mu_\ell) \cong \mathbb{Z}/\ell\mathbb{Z} \ne 0$, which gives $\operatorname{cd}_\ell = 2$, and for $H^1(K, \mu_n) \cong K^\times/K^{\times n}$ and $H^2(K, \mu_n) \cong \tfrac1n\mathbb{Z}/\mathbb{Z}$ over finite extensions $K$
+- [Index of the n-th powers in a local field of characteristic zero](../../../p-adic-numbers/index-of-n-th-powers.md), for the finiteness of $K^\times/K^{\times n}$, hence of $H^1(K, \mu_n)$
 
 ## Sources
 
 - J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., electronic edition,
   version 2.3 (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: (7.1.8) Theorem (i), (iii),
   (iv) with its proof (via (6.5.11) and the Hochschild–Serre spectral sequence for the maximal unramified
-  extension), pp. 376–377; (7.2.5) Corollary ($\operatorname{scd}_p(k) = 2$ for every prime $p$, by Serre's
+  extension), pp. 376–377, and the remark before it on p. 376 ($\mathrm{Br}(L)(p) = \varinjlim \mathrm{Br}(L_\alpha)(p) = 0$ over
+  the finite subextensions $L_\alpha$ of an extension $L$ of degree divisible by $p^\infty$); (7.2.5) Corollary ($\operatorname{scd}_p(k) = 2$ for every prime $p$, by Serre's
   criterion (3.4.5)), p. 380. NSW state the theorem for every local field, with $\operatorname{cd}_p = 1$ when
   $p$ is the characteristic.
 - J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:

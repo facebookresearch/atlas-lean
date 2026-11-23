@@ -1,6 +1,6 @@
 # Weakly admissible implies admissible
 
-Let $K$ be a finite extension of $\mathbb{Q}_p$ with maximal absolutely unramified subfield $K_0$. For a
+Let $K$ be a $p$-adic field in the sense of Fontaine–Ouyang, a complete discretely valued field of characteristic $0$ whose residue field is perfect of characteristic $p$ (for instance a finite extension of $\mathbb{Q}_p$), with maximal absolutely unramified subfield $K_0$. For a
 filtered $(\varphi, N)$-module $D$ over $K$ let $V_{\mathrm{st}}(D) = \{ v \in B_{\mathrm{st}} \otimes_{K_0} D :
 \varphi v = v, \ N v = 0, \ 1 \otimes v \in \operatorname{Fil}^0 (K \otimes_{K_0} (B_{\mathrm{st}} \otimes_{K_0} D)) \}$,
 with $\varphi$ and $N$ acting on the tensor product by $\varphi \otimes \varphi$ and $N \otimes 1 + 1 \otimes N$, the
@@ -23,7 +23,7 @@ filtration induced from $B_{\mathrm{dR}} \otimes_K D_K$, and $G_K$ acting on the
 
 ## Proof depends on
 
-- [Structure of the rings of periods](structure-of-the-period-rings.md), for the Dieudonné–Manin classification, the slope filtrations, the fundamental lemma and the principal ideal domain $B_e$ used in the proofs of both parts (its items 3–5)
+- [Structure of the rings of periods](structure-of-the-period-rings.md), for the Dieudonné–Manin classification and the slope filtrations of $\varphi$-modules, the fundamental lemma, the principal ideal domain $B_e$ and the proofs of Chapter 9, §§9.1–9.5 (its items 4–6)
 - [Fundamental exact sequence of p-adic Hodge theory](fundamental-exact-sequence.md)
 - [Tate–Sen theorem on the Galois cohomology of C(i)](tate-sen-theorem.md)
 
@@ -31,7 +31,8 @@ filtration induced from $B_{\mathrm{dR}} \otimes_K D_K$, and $G_K$ acting on the
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),
   archived at <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
-  §8.3.2, Definition 8.52 ($V_{\mathrm{st}}$), Theorem B (1)–(3), Remark 8.53, Proposition B1, Exercise 8.54,
+  the standing assumption from Chapter 4 on that $K$ is a $p$-adic field with perfect residue field (Preface; §1.1,
+  Definition 1.16); §8.3.2, Definition 8.52 ($V_{\mathrm{st}}$), Theorem B (1)–(3), Remark 8.53, Proposition B1, Exercise 8.54,
   Proposition B2 and Remark 8.55 (the first proof of Proposition B2 is by P. Colmez and J.-M. Fontaine,
   "Construction des représentations p-adiques semi-stables", Invent. Math. 140 (2000), 1–43); Chapter 9 (the
   proofs).

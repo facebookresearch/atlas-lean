@@ -1,6 +1,6 @@
 # Tate–Sen theorem on the Galois cohomology of C(i)
 
-Let $K$ be a finite extension of $\mathbb{Q}_p$, $C$ the completion of an algebraic closure $\bar K$, with its
+Let $K$ be a $p$-adic field in the sense of Fontaine–Ouyang, a complete discretely valued field of characteristic $0$ whose residue field is perfect of characteristic $p$ (for instance a finite extension of $\mathbb{Q}_p$), $C$ the completion of an algebraic closure $\bar K$, with its
 continuous action of $G_K$, and $\chi$ the $p$-adic cyclotomic character. For a continuous character
 $\eta \colon G_K \to \mathbb{Z}_p^\times$ let $C(\eta)$ be $C$ with $G_K$ acting by $g \cdot c = \eta(g) g(c)$, and
 $C(i) = C(\chi^i)$. Then

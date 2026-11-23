@@ -19,8 +19,8 @@ maximal extension of $F$ unramified outside $S$.
 
 ## Proof depends on
 
-- [Global duality for Galois groups with restricted ramification](global-duality-for-galois-groups-with-restricted-ramification.md), for the cohomology of the $S$-units and the $p$-divisibility of $\mathcal{O}_S^\times$ (items 1 and 2), and for the global duality theorem with the archimedean computation (item 3)
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Hochschild–Serre spectral sequence and the passage from $p$-Sylow subgroups
+- [Global duality for Galois groups with restricted ramification](global-duality-for-galois-groups-with-restricted-ramification.md), for the cohomology of the $S$-units and the $p$-divisibility of $\mathcal{O}_S^\times$ (items 1 and 2), and for the global duality theorem and the exact sequence $0 \to A' \to I_S(A) \to C_S(A) \to 0$ of level-compact modules (item 3)
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Hochschild–Serre spectral sequence, the passage from $p$-Sylow subgroups, and the Tate cohomology of profinite groups of order divisible by $\ell^\infty$ (NSW (1.9.13), (1.9.15)), used in item 3
 
 ## Sources
 

@@ -8,6 +8,7 @@ $\operatorname{Gal}(\mathbb{C}/\mathbb{R})$, following Neukirch–Schmidt–Wing
 
 - [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md)
 - [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md)
+- [Dualizing module of a p-adic field](dualizing-module-of-a-p-adic-field.md)
 - [Local Tate duality](local-tate-duality.md)
 - [Local Euler characteristic formula](local-euler-characteristic-formula.md)
 - [Unramified classes under local duality](unramified-classes-under-local-duality.md)

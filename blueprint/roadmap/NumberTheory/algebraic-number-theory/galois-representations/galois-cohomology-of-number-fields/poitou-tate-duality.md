@@ -3,7 +3,9 @@
 Let $F$ be a number field, $S \supseteq S_\infty$ a set of places of $F$ (finite or not), $G_S$ the Galois
 group of the maximal extension of $F$ unramified outside $S$, and $A$ a $G_S$-module that is finitely
 generated as an abelian group with torsion of order in $\mathbb{N}(S)$, with dual
-$A' = \operatorname{Hom}(A, \mathcal{O}_S^\times)$. Then $\text{Ш}^1(G_S, A')$ and $\text{Ш}^2(G_S, A)$ are
+$A' = \operatorname{Hom}(A, \mathcal{O}_S^\times)$. Here $\text{Ш}^1(G_S, A')$ is the kernel of the localization
+map of $A'$, whose local components are taken in the local duals
+$H^1(F_v, \operatorname{Hom}(A, \bar F_v^\times))$. Then $\text{Ш}^1(G_S, A')$ and $\text{Ш}^2(G_S, A)$ are
 finite and there is a perfect pairing
 
 $$\text{Ш}^1(G_S, A') \times \text{Ш}^2(G_S, A) \to \mathbb{Q}/\mathbb{Z},$$

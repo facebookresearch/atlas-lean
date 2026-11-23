@@ -2,7 +2,7 @@
 
 This node is still to be broken down. It covers the constructions and structure theorems for Fontaine's rings
 of periods that the proofs of the pages on $p$-adic Hodge theory use, following Fontaine–Ouyang, Chapters 1 and
-4–9. Let $K$ be a finite extension of $\mathbb{Q}_p$ and $C$ the completion of $\bar K$.
+4–9. Let $K$ be a $p$-adic field in the sense of Fontaine–Ouyang, a complete discretely valued field of characteristic $0$ whose residue field is perfect of characteristic $p$ (for instance a finite extension of $\mathbb{Q}_p$) and $C$ the completion of $\bar K$.
 
 A good expansion has pages for:
 
@@ -12,13 +12,19 @@ A good expansion has pages for:
 2. the ring $R$ and its properties, the map $\theta$, the element $t$, the ring $A_{\mathrm{cris}}$ and the
    logarithm on $1 + \mathfrak{m}_R$ (Chapter 5, Definition 5.4, Theorem 5.5; §6.2, Propositions 6.11, 6.19, 6.22;
    §7.1, Definitions 7.1, 7.3, Propositions 7.4–7.8; §7.2, Definition 7.11, Lemma 7.12, Proposition 7.14);
-3. the rings $(B_{\mathrm{cris}}^+)^{\varphi^h = p^d}$, Lubin–Tate elements and the fundamental lemma (§7.3,
-   Definition 7.27, Theorem 7.28; §7.4, Theorem 7.41 and Propositions 7.42–7.46);
-4. the ring $B_e$ as an almost Euclidean, hence principal ideal, domain (Definition 7.50, Proposition 7.51,
-   Theorem 7.53);
-5. the Dieudonné–Manin classification of $\varphi$-modules over $K_0$ and the Harder–Narasimhan filtrations of
-   filtered $(\varphi, N)$-modules (Theorem 8.25, Corollary 8.26, Lemmas 8.28–8.29, Propositions 8.31–8.33), and the
-   proofs of Fontaine's and Colmez–Fontaine's theorems (Chapter 9, §§9.1–9.3).
+3. the exact sequences $0 \to \mathbb{Q}_p(r) \to \operatorname{Fil}^r B_{\mathrm{cris}} \xrightarrow{p^{-r}\varphi - 1} B_{\mathrm{cris}} \to 0$
+   for $r \in \mathbb{Z}$, and their analogues for $B_{\mathrm{cris}}^+$ with $r \ge 0$ (§7.3, Theorem 7.26 (2)–(3));
+4. the Frobenius eigenspaces $P^+_{h,d} = (B_{\mathrm{cris}}^+)^{\varphi^h = p^d}$, which are $\mathbb{Q}_p$-vector spaces and
+   not rings in general ($t \in P^+_{1,1}$, while $t^2 \in P^+_{1,2}$), with $B_e = B_{\mathrm{cris}}^{\varphi = 1}$
+   (Definition 7.27, Theorem 7.28 (1)–(3)), Colmez's fundamental lemma and Lubin–Tate elements (§7.4, Theorem 7.41,
+   Propositions 7.42–7.46), and the ring $B_e$ as an almost Euclidean, hence principal ideal, domain
+   (Definition 7.50, Proposition 7.51, Theorem 7.53);
+5. the Dieudonné–Manin classification of $\varphi$-modules over $K_0$ and the slope filtration of a $\varphi$-module by
+   its Newton slopes, which Fontaine–Ouyang call its Harder–Narasimhan filtration (Theorem 8.25, Corollary 8.26,
+   Proposition 8.27, Lemmas 8.28–8.29, Corollary 8.30, Propositions 8.31–8.33); these concern the underlying
+   $\varphi$-module, not the filtered $(\varphi, N)$-module;
+6. the proofs of Fontaine's and Colmez–Fontaine's theorems (Chapter 9: §9.1, §9.2 with the reduction of Theorem B,
+   §9.3, and §§9.4–9.5, the reduction to $t_H = 0$ and the end of the proof).
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Hodge–Tate representations
 
-Let $K$ be a finite extension of $\mathbb{Q}_p$, $C$ the completion of $\bar K$ and $C(i)$, $i \in \mathbb{Z}$,
+Let $K$ be a $p$-adic field in the sense of Fontaine–Ouyang, a complete discretely valued field of characteristic $0$ whose residue field is perfect of characteristic $p$ (for instance a finite extension of $\mathbb{Q}_p$), $C$ the completion of $\bar K$ and $C(i)$, $i \in \mathbb{Z}$,
 its Tate twists. The **Hodge–Tate ring** is $B_{\mathrm{HT}} = \bigoplus_{i \in \mathbb{Z}} C(i) = C[t, t^{-1}]$,
 graded, where $t$ denotes a basis of $\mathbb{Z}_p(1)$ and $G_K$ acts by $g(c t^i) = g(c) \chi(g)^i t^i$. It is
 $(\mathbb{Q}_p, G_K)$-regular with $B_{\mathrm{HT}}^{G_K} = K$. A $p$-adic representation $V$ of $G_K$ (a
@@ -9,12 +9,14 @@ $B_{\mathrm{HT}}$-admissible, that is, if the graded $K$-vector space
 
 $$D_{\mathrm{HT}}(V) = (B_{\mathrm{HT}} \otimes_{\mathbb{Q}_p} V)^{G_K} = \bigoplus_{i \in \mathbb{Z}} (C(i) \otimes_{\mathbb{Q}_p} V)^{G_K}$$
 
-has dimension $\dim_{\mathbb{Q}_p} V$. Equivalently, $C \otimes_{\mathbb{Q}_p} V \cong \bigoplus_i C(-i)^{h_i}$ for
-integers $h_i \ge 0$; these are the **Hodge–Tate numbers** of $V$ in Fontaine–Ouyang's convention:
-$h_i = \dim_K (C(-i) \otimes V)^{G_K}$, so that $\mathbb{Q}_p(1)$ has $h_1 = 1$.
+has dimension $\dim_{\mathbb{Q}_p} V$. Equivalently, $C \otimes_{\mathbb{Q}_p} V \cong \bigoplus_i C(i)^{h_i}$ for
+integers $h_i \ge 0$, and then $h_i = \dim_K (C(-i) \otimes V)^{G_K}$, since $(C(j - i))^{G_K}$ is $K$ for $j = i$
+and $0$ otherwise; these are the **Hodge–Tate numbers** of $V$ in Fontaine–Ouyang's convention. For
+$V = \mathbb{Q}_p(1)$, $C \otimes V = C(1)$, so $h_1 = 1$.
 
 **Sign conventions.** The literature on Galois representations attached to automorphic representations
-uses the opposite sign. For a de Rham (in particular Hodge–Tate) representation $W$ of $G_K$ on a
+uses the opposite sign. When $K$ is a finite extension of $\mathbb{Q}_p$, for a de Rham (in particular Hodge–Tate)
+representation $W$ of $G_K$ on a
 finite-dimensional $\overline{\mathbb{Q}}_p$-vector space and an embedding $\tau \colon K \to \overline{\mathbb{Q}}_p$,
 the multiset $\mathrm{HT}_\tau(W)$ of **Hodge–Tate weights** contains $i$ with multiplicity
 $\dim_{\overline{\mathbb{Q}}_p} (W \otimes_{\tau, K} C(i))^{G_K}$; so $\mathrm{HT}_\tau(\chi) = \{-1\}$, and the weights

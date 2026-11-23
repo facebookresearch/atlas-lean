@@ -18,7 +18,7 @@ gives a canonical Frobenius descent of crystalline cohomology.
 
 ## Proof depends on
 
-- [Prisms and prismatic cohomology](prisms-and-prismatic-cohomology.md), for the proof through the Hodge–Tate and de Rham comparisons (its item 3)
+- [Prisms and prismatic cohomology](prisms-and-prismatic-cohomology.md), for the proof of Theorem 5.2 from the comparison of divided power envelopes with $\delta$-envelopes (Corollary 2.39; its items 1 and 3); the Hodge–Tate and de Rham comparisons come after it and are not used
 
 ## Sources
 

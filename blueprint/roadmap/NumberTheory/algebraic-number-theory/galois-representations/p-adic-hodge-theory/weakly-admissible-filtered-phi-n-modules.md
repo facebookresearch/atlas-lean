@@ -1,6 +1,6 @@
 # Weakly admissible filtered (φ, N)-modules
 
-Let $K$ be a finite extension of $\mathbb{Q}_p$ with maximal absolutely unramified subfield $K_0$ and absolute
+Let $K$ be a $p$-adic field in the sense of Fontaine–Ouyang, a complete discretely valued field of characteristic $0$ whose residue field is perfect of characteristic $p$ (for instance a finite extension of $\mathbb{Q}_p$), with maximal absolutely unramified subfield $K_0$ and absolute
 Frobenius $\sigma$ of $K_0$. A **$(\varphi, N)$-module** over $K_0$ is a finite-dimensional $K_0$-vector space $D$
 with a bijective $\sigma$-semilinear map $\varphi \colon D \to D$ and a $K_0$-linear map $N \colon D \to D$ with
 $N \varphi = p \varphi N$; such an $N$ is nilpotent. It is **filtered** if $D_K = K \otimes_{K_0} D$ carries a

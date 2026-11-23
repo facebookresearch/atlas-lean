@@ -21,6 +21,7 @@ $\ell = p$. The groups are finite by the finiteness theorem below.
 - [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for the Kummer description of $H^i(K, \mu_\ell)$ over finite Galois extensions $K/k$
 - [Induction from cyclic subgroups in Grothendieck groups of modular representations](../../../../GroupTheory/characters-of-finite-groups/induction-from-cyclic-subgroups.md), which reduces the formula to cyclic Galois groups of order prime to $\ell$
 - [The p-adic exponential on a neighbourhood of zero](../../../p-adic-numbers/p-adic-exponential.md), for the logarithm identifying a group of higher principal units with an ideal of $\mathcal{O}_K$
+- [Normal basis theorem](../../../../FieldTheory/galois-theory/normal-basis-theorem.md), for a normal basis of $K$ over $k$, which gives an open $\mathcal{O}_k[G]$-submodule of $\mathcal{O}_K$ that is free, and through the logarithm an open subgroup of the principal units that is cohomologically trivial (NSW, proof of (7.3.2); Milne, Lemmas I.2.11–2.12)
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Hochschild–Serre spectral sequence and the vanishing of the cohomology of a finite group of order prime to $\ell$ on $\ell$-primary modules
 
 ## Sources

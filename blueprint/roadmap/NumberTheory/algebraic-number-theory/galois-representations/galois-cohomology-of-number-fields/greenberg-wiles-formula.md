@@ -16,7 +16,8 @@ They are finite, and
 $$\frac{\# H^1_{\mathcal{L}}(F, A)}{\# H^1_{\mathcal{L}^D}(F, A')}
 = \frac{\# H^0(F, A)}{\# H^0(F, A')} \prod_v \frac{\# L_v}{\# H^0(F_v, A)},$$
 
-where the product runs over all places of $F$ and almost all of its factors are $1$.
+where the product runs over all places of $F$, almost all of its factors are $1$, and $H^0(F_v, A) = A^{G_v}$
+is the group of invariants also at the archimedean places (not the Tate group $\hat H^0$).
 
 If $S$ is a finite set of places containing the archimedean places, the places above the primes dividing
 $\# A$, the places where $A$ is ramified and those where $L_v$ is not the unramified subgroup, then
@@ -34,7 +35,7 @@ $\mathcal{L}^D$.
 
 - [Poitou–Tate exact sequence](poitou-tate-exact-sequence.md)
 - [Global Euler characteristic formula](global-euler-characteristic-formula.md)
-- [Unramified classes under local duality](../galois-cohomology-of-local-fields/unramified-classes-under-local-duality.md), for $\# H^1(G_v/I_v, A^{I_v}) = \# H^0(F_v, A)$
+- [Unramified classes under local duality](../galois-cohomology-of-local-fields/unramified-classes-under-local-duality.md), for $\# H^1(G_v/I_v, A^{I_v}) = \# H^0(F_v, A)$ at the finite places $v$ (at a complex place it fails: $H^1 = 0$ while $H^0 = A$)
 - [Local Tate duality](../galois-cohomology-of-local-fields/local-tate-duality.md)
 
 ## Sources
@@ -42,7 +43,8 @@ $\mathcal{L}^D$.
 - J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., electronic edition,
   version 2.3 (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: (8.7.8) Definition
   (collections of local conditions, $\mathcal{L}^D$ and the global groups) and the description through $G_S$
-  that follows it, (8.7.9) Theorem (due to A. Wiles) and its proof, pp. 511–513.
+  that follows it, (8.7.9) Theorem (due to A. Wiles) and its proof, pp. 511–513, with the ordinary groups
+  $H^0(k_\mathfrak{p}, A)$ in the formula.
 - H. Darmon, F. Diamond, R. Taylor, "Fermat's Last Theorem", 1995,
   <https://www.math.mcgill.ca/darmon/pub/Articles/Expository/05.DDT/paper.pdf>: Theorem 2.18 (over $\mathbb{Q}$,
   with its proof from the Poitou–Tate sequence and the global Euler characteristic) and Theorem 2.19 (any

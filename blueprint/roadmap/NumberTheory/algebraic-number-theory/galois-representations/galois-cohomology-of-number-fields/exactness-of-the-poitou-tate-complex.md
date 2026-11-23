@@ -1,0 +1,47 @@
+# Exactness of the Poitou–Tate complex
+
+This node is still to be broken down. It covers the steps through which Neukirch–Schmidt–Wingberg prove the
+[Poitou–Tate exact sequence](poitou-tate-exact-sequence.md) and the
+[global Euler characteristic formula](global-euler-characteristic-formula.md) once the finiteness theorems and
+Poitou–Tate duality are known. Let $F$ be a number field, $S \supseteq S_\infty$ a set of places of $F$, $G_S$ the
+Galois group of the maximal extension of $F$ unramified outside $S$, and $A$ a finite $G_S$-module of order in
+$\mathbb{N}(S)$, with $A' = \operatorname{Hom}(A, \mu)$. These steps use
+[finiteness and cohomological dimension of $G_S$](finiteness-and-cohomological-dimension-of-g-s.md) and
+[Poitou–Tate duality](poitou-tate-duality.md), so they are kept apart from the earlier results gathered in the
+node on [global duality for Galois groups with restricted ramification](global-duality-for-galois-groups-with-restricted-ramification.md).
+
+A good expansion has pages for:
+
+1. the properness of the localization map $\lambda^1 \colon H^1(G_S, A) \to P^1(G_S, A)$ for
+   $A \in \operatorname{Mod}_S(G_S)$ (NSW (8.6.11));
+2. the exact sequence $0 \to H^0(G_S, A') \to P^0(G_S, A') \to H^2(G_S, A)^\vee \to \text{Ш}^1(G_S, A') \to 0$ for
+   finite $A$, with its diagram (NSW (8.6.12)), whose proof passes to countable towers of finite extensions by the
+   results of Chapter II, §7, and uses the norm-one $S$-idèle classes $C_S^0$;
+3. the Euler characteristic quotient $\varphi(G_S, A)$ for finite $S$: $\varphi(G_S, A) \cdot \varphi(G_S, A') = 1$ if
+   and only if the Poitou–Tate complex is exact, and $\varphi(G_S, -)$ is multiplicative on short exact sequences
+   (NSW (8.6.13)); the first part uses the product formula and the local Euler characteristic formula, the second
+   the vanishing in degrees at least $3$ of (8.6.10)(ii);
+4. the base cases of the proof of (8.6.10)(i): exactness of the Poitou–Tate complex for $A = \mathbb{Z}/p\mathbb{Z}$ and
+   $A = \mu_p$ with $p \in \mathbb{N}(S)$, where the case $\mu_p$ compares the localization of
+   $H^1(G_S, \mu_p)$ with the reciprocity map of global class field theory, using the divisibility of the group
+   $D_S$ (8.3.13), and the reduction steps that pass from these cases to all finite $A$, using that
+   $C_S(A) = C_S^0(A)$ is level-compact (proof of (8.6.10)(i), Steps 1–5).
+
+## Proof depends on
+
+- [Finiteness and cohomological dimension of Galois groups with restricted ramification](finiteness-and-cohomological-dimension-of-g-s.md), for the finiteness of the groups and the vanishing in degrees at least $3$ used in items 3 and 4
+- [Poitou–Tate duality](poitou-tate-duality.md), used in items 2 and 4
+- [Global duality for Galois groups with restricted ramification](global-duality-for-galois-groups-with-restricted-ramification.md), for the global duality theorem, the maps $\Xi^i$ and the Shapiro maps, and the divisibility of $D_S$
+- [Global reciprocity law](../../adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the reciprocity map in the base case $\mu_p$ of item 4
+- [Product formula for principal ideles](../../adeles-class-field-theory/adeles-and-ideles/adelic-norm-principal-embedding.md), for $\prod_v \lVert \# A \rVert_v = 1$ in item 3
+- [Local Euler characteristic formula](../galois-cohomology-of-local-fields/local-euler-characteristic-formula.md), used in item 3
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cohomology along countable towers in item 2
+
+## Sources
+
+- J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., electronic edition,
+  version 2.3 (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: Chapter VIII, §6, (8.6.11)
+  Proposition, (8.6.12) Lemma, (8.6.13) Lemma with its proof (using (7.3.1), (7.3.5) and (8.6.10)(ii)), and the proof
+  of (8.6.10)(i), Steps 1–5, pp. 491–500.
+- J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:
+  Chapter I, Lemmas 4.12–4.13 and the proof of Theorem 4.10, and §5, the proof of Theorem 5.1.

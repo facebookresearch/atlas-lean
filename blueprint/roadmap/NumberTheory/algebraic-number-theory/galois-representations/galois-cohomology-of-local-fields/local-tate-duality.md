@@ -24,10 +24,10 @@ $H^2(k, \mu_{\ell^r}) \cong \mathbb{Z}/\ell^r\mathbb{Z} \subset \mathbb{Q}/\math
 
 ## Proof depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the abstract duality theorem of a profinite group of strict cohomological dimension $2$ with dualizing module, and for duality relative to a class formation
+- [Dualizing module of a p-adic field](dualizing-module-of-a-p-adic-field.md), for the identification of the dualizing module of $G_k$ with $\mu$, under which the duality takes values in $H^2(k, \mu) \cong \mathbb{Q}/\mathbb{Z}$
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the abstract duality theorem (3.4.6) of a profinite group of strict cohomological dimension $2$ for torsion modules, with its dualizing module and trace map
 - [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for $\operatorname{scd}(G_k) = 2$
-- [Local class field theory: the local Artin map](../../../p-adic-numbers/local-class-field-theory.md), for the surjections $K^\times/K^{\times \ell} \to G_K^{\mathrm{ab}}/\ell$ over the finite extensions $K/k$, which give the vanishing of the dualizing modules $D_0$ and $D_1$
-- [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the class formation $(G_k, \bar k^\times)$ given by the invariant maps (its item 2)
+- [Local class field theory: the local Artin map](../../../p-adic-numbers/local-class-field-theory.md), for the surjections $K^\times/K^{\times \ell} \to G_K^{\mathrm{ab}}/\ell$ over the finite extensions $K/k$, which give $D_1(\mathbb{Z}/\ell\mathbb{Z}) = \varinjlim_K H^1(K, \mathbb{Z}/\ell\mathbb{Z})^* = 0$; and $D_0(\mathbb{Z}/\ell\mathbb{Z}) = 0$ because every finite extension has finite extensions of degree divisible by $\ell$
 
 ## Sources
 
@@ -35,11 +35,11 @@ $H^2(k, \mu_{\ell^r}) \cong \mathbb{Z}/\ell^r\mathbb{Z} \subset \mathbb{Q}/\math
   version 2.3 (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: (7.2.6) Theorem (Tate
   duality: "Let $k$ be a $p$-adic local field. Let $A$ be a finite $G_k$-module and set
   $A' = \operatorname{Hom}(A, \mu)$ … induces for $0 \le i \le 2$ an isomorphism of finite abelian groups
-  $H^i(k, A') \to H^{2-i}(k, A)^*$") and its proof, a special case of the duality theorem (3.4.6) using
-  (7.2.3) and (7.2.5), pp. 380–381; (7.2.9) and (7.2.10) for modules finitely generated as abelian groups.
+  $H^i(k, A') \to H^{2-i}(k, A)^*$") and its proof, a special case of the duality theorem (3.4.6) once the
+  dualizing module is identified with $\mu$ by (7.2.4), using (7.2.3) and (7.2.5), pp. 380–381; (7.2.9) and (7.2.10)
+  for modules finitely generated as abelian groups.
 - J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:
-  Chapter I, Corollary 2.3, deduced from Theorem 1.8 (duality relative to a class formation) and
-  Theorem 2.1.
+  Chapter I, Corollary 2.3 (the statement).
 - H. Darmon, F. Diamond, R. Taylor, "Fermat's Last Theorem", in *Current Developments in Mathematics*,
   1995, <https://www.math.mcgill.ca/darmon/pub/Articles/Expository/05.DDT/paper.pdf>: Theorem 2.17 (a)–(c)
   (a summary of local duality, for the completions of $\mathbb{Q}$).

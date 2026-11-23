@@ -16,6 +16,12 @@ the perfect pairing $H^1(k, A) \times H^1(k, A') \to \mathbb{Q}/\mathbb{Z}$ of l
 subgroups $H^1_{\mathrm{nr}}(k, A)$ and $H^1_{\mathrm{nr}}(k, A')$ are the exact annihilators of each other.
 When $A$ is unramified ($I_k$ acts trivially), so is $A'$, and $H^1_{\mathrm{nr}}(k, A) = H^1(\Gamma, A)$.
 
+More generally, put $H^i_{\mathrm{nr}}(k, A) = \operatorname{im}(H^i(\Gamma, A^{I_k}) \to H^i(k, A))$ for all $i$. If
+$A$ is finite, unramified and of order prime to $p$, then $H^0_{\mathrm{nr}}(k, A) = H^0(k, A)$,
+$H^2_{\mathrm{nr}}(k, A) = H^2_{\mathrm{nr}}(k, A') = 0$ since $\operatorname{cd} \Gamma = 1$, and for $0 \le i \le 2$ the
+groups $H^i_{\mathrm{nr}}(k, A')$ and $H^{2-i}_{\mathrm{nr}}(k, A)$ are exact annihilators of each other under the
+pairing $H^i(k, A') \times H^{2-i}(k, A) \to \mathbb{Q}/\mathbb{Z}$.
+
 ## Depends on
 
 - [Local Tate duality](local-tate-duality.md), for the pairing
@@ -26,6 +32,7 @@ When $A$ is unramified ($I_k$ acts trivially), so is $A'$, and $H^1_{\mathrm{nr}
 - [Local Tate duality](local-tate-duality.md)
 - [Local Euler characteristic formula](local-euler-characteristic-formula.md), for $\# H^1(k, A) = \# H^0(k, A) \cdot \# H^2(k, A)$ when the order of $A$ is prime to $p$, which with duality gives $\# H^1_{\mathrm{nr}}(k, A) \cdot \# H^1_{\mathrm{nr}}(k, A') = \# H^1(k, A)$
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the cohomology of $\hat{\mathbb{Z}}$ (cohomological dimension $1$, and $\# H^0 = \# H^1$ on finite modules), which makes the cup product of two unramified classes vanish, and for the inflation–restriction sequence
+- [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the cohomological triviality of the units of the maximal unramified extension (its item 1), which gives the orthogonality in degrees $0$ and $2$ for unramified $A$ (NSW, proof of (7.2.15), through (7.1.2)(i))
 
 ## Sources
 

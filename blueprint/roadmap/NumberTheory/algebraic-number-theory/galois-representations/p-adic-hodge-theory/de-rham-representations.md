@@ -1,10 +1,16 @@
 # de Rham representations
 
-Let $K$ be a finite extension of $\mathbb{Q}_p$, $C$ the completion of $\bar K$, and
+Let $K$ be a $p$-adic field in the sense of Fontaine–Ouyang, that is, a complete discretely valued field of
+characteristic $0$ whose residue field $k$ is perfect of characteristic $p$ (for instance a finite extension of
+$\mathbb{Q}_p$), let $C$ be the completion of $\bar K$, and let
 $R = \varprojlim_{x \mapsto x^p} \mathcal{O}_{\bar K}/p$, a perfect ring of characteristic $p$, with the surjection
-$\theta \colon W(R)[1/p] \to C$. The ring $B_{\mathrm{dR}}^+$ is the $(\ker \theta)$-adic completion of
-$W(R)[1/p]$; it is a complete discrete valuation ring with residue field $C$ and a continuous action of
-$G_K$. Let $\varepsilon = (1, \zeta_p, \zeta_{p^2}, \dots) \in R$ for a compatible system of primitive
+$\theta \colon W(R)[1/p] \to C$. The ring $B_{\mathrm{dR}}^+ = \varprojlim_n W(R)[1/p]/(\ker \theta)^n$ is the
+$(\ker \theta)$-adic completion of $W(R)[1/p]$; it is a complete discrete valuation ring with residue field $C$, on
+which $G_K$ acts. Two topologies on it must be distinguished: the topology of the discrete valuation, for which
+the residue field $C$ is discrete, and the canonical topology, the inverse limit of the quotient topologies that
+$W(R)[1/p]$ induces on the quotients $W(R)[1/p]/(\ker \theta)^n$, which is weaker and induces on $C$ its $p$-adic
+topology. The action of $G_K$ is continuous for the canonical topology, which is the one used for continuous
+cohomology. Let $\varepsilon = (1, \zeta_p, \zeta_{p^2}, \dots) \in R$ for a compatible system of primitive
 $p^n$-th roots of unity; then $t = \log[\varepsilon]$ is a uniformizer of $B_{\mathrm{dR}}^+$ with
 $g(t) = \chi(g) t$ for $g \in G_K$. The **field of $p$-adic periods** is
 $B_{\mathrm{dR}} = \operatorname{Frac} B_{\mathrm{dR}}^+ = B_{\mathrm{dR}}^+[1/t]$, with the decreasing filtration
@@ -25,8 +31,8 @@ $K$-vector spaces.
 filtration), counted with multiplicity $\dim_K \operatorname{gr}^j D_{\mathrm{dR}}(V)$, are the Hodge–Tate weights
 in the convention of Taylor–Yoshida and Barnet-Lamb–Gee–Geraghty–Taylor, in which the cyclotomic character has
 weight $-1$: $D_{\mathrm{dR}}(\mathbb{Q}_p(1)) = K t^{-1}$ has its jump at $j = -1$. They are the negatives of the
-Hodge–Tate numbers $i$ of Fontaine–Ouyang, for which $\mathbb{Q}_p(1)$ has $h_1 = 1$. For a representation on a
-$\overline{\mathbb{Q}}_p$-vector space $W$ and an embedding $\tau \colon K \to \overline{\mathbb{Q}}_p$, $\mathrm{HT}_\tau(W)$
+Hodge–Tate numbers $i$ of Fontaine–Ouyang, for which $\mathbb{Q}_p(1)$ has $h_1 = 1$. When $K$ is a finite extension
+of $\mathbb{Q}_p$, for a representation on a $\overline{\mathbb{Q}}_p$-vector space $W$ and an embedding $\tau \colon K \to \overline{\mathbb{Q}}_p$, $\mathrm{HT}_\tau(W)$
 contains $j$ with multiplicity $\dim \operatorname{gr}^j (W \otimes_{\tau, K} B_{\mathrm{dR}})^{G_K}$.
 
 ## Depends on
@@ -45,8 +51,10 @@ contains $j$ with multiplicity $\dim \operatorname{gr}^j (W \otimes_{\tau, K} B_
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),
   archived at <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
-  Chapter 5, Definition 5.4 and Theorem 5.5 (the ring $R$); §6.2, Proposition 6.11 ($\theta$ surjective),
-  Definition 6.13 ($B_{\mathrm{dR}}^+$, $B_{\mathrm{dR}}$), Lemma 6.14, Definition 6.15 (the filtration),
+  the standing assumption from Chapter 4 on that $K$ is a $p$-adic field with perfect residue field (Preface; §1.1,
+  Definition 1.16); Chapter 5, Definition 5.4 and Theorem 5.5 (the ring $R$); §6.2, Proposition 6.11 ($\theta$ surjective),
+  Definition 6.13 ($B_{\mathrm{dR}}^+$, $B_{\mathrm{dR}}$), Lemma 6.14, Definition 6.15 (the filtration), Remark 6.16 (the
+  two topologies on $B_{\mathrm{dR}}^+$, the canonical one weaker),
   Proposition 6.22 ($t$), Proposition 6.24 ($\operatorname{gr} B_{\mathrm{dR}} = B_{\mathrm{HT}}$), Proposition 6.26
   ($B_{\mathrm{dR}}^{G_K} = K$); §6.3, Definition 6.27 (de Rham), Lemma 6.28, the exact sequences after
   Definition 6.32, Proposition 6.33 (de Rham implies Hodge–Tate) and Theorem 6.34.

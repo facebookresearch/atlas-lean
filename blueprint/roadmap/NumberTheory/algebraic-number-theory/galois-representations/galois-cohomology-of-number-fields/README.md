@@ -11,6 +11,7 @@ following Neukirch–Schmidt–Wingberg, Chapter VIII, and Milne's *Arithmetic D
 - [Global duality for Galois groups with restricted ramification](global-duality-for-galois-groups-with-restricted-ramification.md)
 - [Finiteness and cohomological dimension of Galois groups with restricted ramification](finiteness-and-cohomological-dimension-of-g-s.md)
 - [Poitou–Tate duality](poitou-tate-duality.md)
+- [Exactness of the Poitou–Tate complex](exactness-of-the-poitou-tate-complex.md)
 - [Poitou–Tate exact sequence](poitou-tate-exact-sequence.md)
 - [Global Euler characteristic formula](global-euler-characteristic-formula.md)
 - [Wiles's formula for Selmer groups](greenberg-wiles-formula.md)
