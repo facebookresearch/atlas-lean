@@ -27,9 +27,9 @@ coefficients" are stated as the existence of such a polynomial
 `MvPolynomial (Fin 2) ℤ`, and rational identities are cleared
 of denominators, as in the paper's proofs.
 
-Of the paper's thirteen numbered statements, eleven are
+Of the paper's thirteen numbered statements, ten are
 formalized below (including the super FiboCatalan half of
-Corollary 5). The Fibonacci identity is imported from
+Corollary 5). The Fibonacci and Lucas polynomial product identities are imported from
 `MathlibExt.NumberTheory.SuperFibocatalan`. One further statement is already covered in
 MathlibExt and is not restated: Corollary 9, via
 `MetaMathlibExt.generalizedFibonacciCatalan_isPosInt` (with
@@ -135,15 +135,6 @@ theorem_wanted fib_mul_factorialQuotient_eq_and_isInt
           (fibonacciFactorial (2 * n) /
             (fibonacciFactorial (n + 2) * fibonacciFactorial n))
 
-/-- **Lucas polynomials in $s$ and $t$.** The Lucas polynomials $\{n\}$, for natural numbers
-$n$, are the polynomials in two variables $s$ and $t$ with integer coefficients defined by
-$\{0\} = 0$, $\{1\} = 1$ and $\{n + 2\} = s\{n + 1\} + t\{n\}$ for every $n \ge 0$. -/
-noncomputable def lucasPoly : ℕ → MvPolynomial (Fin 2) ℤ
-  | 0 => 0
-  | 1 => 1
-  | n + 2 => MvPolynomial.X 0 * lucasPoly (n + 1) +
-      MvPolynomial.X 1 * lucasPoly n
-
 /-- **Lucas factorial.** For a natural number $n$, the Lucas factorial $\{n\}!$ is the product
 $\{n\}! = \{1\}\{2\} \cdots \{n\}$ of the Lucas polynomials $\{i\}$ in $s$ and $t$ for
 $1 \le i \le n$, a polynomial with integer coefficients; in particular $\{0\}! = 1$, the empty
@@ -194,17 +185,6 @@ theorem_wanted exists_nonneg_poly_generalizedLucasCatalan
       p * (lucasFactorial r * lucasFactorial n *
           lucasFactorial (n + r + 1)) =
         lucasFactorial (2 * r + 1) * lucasFactorial (2 * n)
-
-/-- **Cross-product identity for Lucas polynomials.** For every natural number $n$, the Lucas
-polynomials $\{k\}$ in $s$ and $t$ satisfy
-$\{2n\}\{n + 2\} - \{2n + 2\}\{n\} = (-1)^n \{2\} t^n \{n\}$.
-
-Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
-Their Lucas Analogues", Lemma 10. -/
-theorem_wanted lucasPoly_mul_sub_mul (n : ℕ) :
-    lucasPoly (2 * n) * lucasPoly (n + 2) -
-        lucasPoly (2 * n + 2) * lucasPoly n =
-      (-1) ^ n * lucasPoly 2 * MvPolynomial.X 1 ^ n * lucasPoly n
 
 /-- **Lucas analogue of the FiboCatalan identity, cleared of denominators.** Let $\{k\}$ be
 the Lucas polynomials in $s$ and $t$ ($\{0\} = 0$, $\{1\} = 1$, $\{k+2\} = s\{k+1\} + t\{k\}$)
