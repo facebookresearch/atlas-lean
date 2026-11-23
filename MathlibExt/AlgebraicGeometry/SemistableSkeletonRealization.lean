@@ -160,4 +160,3 @@ structure StrongDeformation (R : Reduction C) (P : Retraction C R) where
   fixes : ∀ t p, p ∈ skeleton C R → map (t, p) = p
 
 end MathlibExt.AlgebraicGeometry.SemistableSkeletonRealization
-
