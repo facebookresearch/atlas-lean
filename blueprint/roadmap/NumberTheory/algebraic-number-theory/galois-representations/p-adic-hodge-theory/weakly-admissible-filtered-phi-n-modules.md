@@ -15,6 +15,14 @@ $t_H(D') \le t_N(D')$ for every sub-$K_0$-space $D' \subseteq D$ stable under $\
 filtration on $D'_K$. The weakly admissible filtered $(\varphi, N)$-modules form an abelian category; those with
 $N = 0$ are the weakly admissible filtered $\varphi$-modules.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+This node has no prerequisites.
+
 ## Sources
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),

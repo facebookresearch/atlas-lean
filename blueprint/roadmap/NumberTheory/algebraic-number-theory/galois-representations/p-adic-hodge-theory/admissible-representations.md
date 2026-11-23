@@ -14,6 +14,14 @@ representations form a full subcategory of the representations of $G$ closed und
 direct sums, tensor products and duals, and on it $D_B$ is an exact faithful functor with
 $D_B(V_1 \otimes V_2) \cong D_B(V_1) \otimes_E D_B(V_2)$ and $D_B(V^*) \cong D_B(V)^*$.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+This node has no prerequisites.
+
 ## Sources
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),

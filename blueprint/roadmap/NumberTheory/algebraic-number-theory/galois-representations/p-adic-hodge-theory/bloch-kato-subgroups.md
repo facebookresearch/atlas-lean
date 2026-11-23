@@ -21,6 +21,11 @@ $\ker(H^1(G_K, V) \to H^1(I_K, V))$.
 - [de Rham representations](de-rham-representations.md), for $B_{\mathrm{dR}}$ and $D_{\mathrm{dR}}$
 - [Galois cohomology of ℓ-adic representations of a p-adic field](../galois-cohomology-of-local-fields/galois-cohomology-of-l-adic-representations.md), for continuous cohomology with $p$-adic coefficients
 
+## Proof depends on
+
+- [Admissible representations for a regular ring of periods](admissible-representations.md), for the dimension criterion, which, for crystalline (or de Rham) $V$, makes the exactness of the sequence of $D_{\mathrm{cris}}$ (or $D_{\mathrm{dR}}$) equivalent to $W$ being crystalline (or de Rham)
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the long exact sequence of continuous cohomology of $0 \to B \otimes V \to B \otimes W \to B \to 0$ for $B = B_{\mathrm{cris}}$ or $B_{\mathrm{dR}}$, which has a continuous section since it splits $B$-linearly (its item 5); its connecting map sends $1 \in B^{G_K}$ to the image of the class of the extension
+
 ## Sources
 
 - J. Bellaïche, *An introduction to the conjecture of Bloch and Kato*, Clay Mathematics Institute summer

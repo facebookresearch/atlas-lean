@@ -28,6 +28,10 @@ is nilpotent. Morphisms are linear maps commuting with $r$ and $N$.
 
 - [Weil group of a p-adic field](weil-group-of-a-p-adic-field.md), for $W_K$, $I_K$, the geometric Frobenius and $\mathrm{Art}_K$
 
+## Proof depends on
+
+- [Weil group of a p-adic field](weil-group-of-a-p-adic-field.md), for the exact sequence $1 \to I_K \to W_K \to \mathbb{Z} \to 1$ and $\lvert w \rvert = q^{-m}$ for $w$ above the $m$-th power of the geometric Frobenius: they give the nilpotence of $N$, which maps the generalized $\lambda$-eigenspace of $r(\varphi)$ into the generalized $q^{-1}\lambda$-eigenspace, the Frobenius semisimplification, and, through $W_{K'} = W_K \cap G_{K'}$ and $\lvert w \rvert_{K'} = \lvert w \rvert_K$ for $w \in W_{K'}$, the restriction
+
 ## Sources
 
 - R. Taylor and T. Yoshida, "Compatibility of local and global Langlands correspondences", J. Amer. Math.

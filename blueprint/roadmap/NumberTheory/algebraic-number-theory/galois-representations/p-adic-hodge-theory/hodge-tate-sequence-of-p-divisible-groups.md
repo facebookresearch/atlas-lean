@@ -9,20 +9,27 @@ $\operatorname{Lie} G^\vee \to T^\vee \otimes_{\mathbb{Z}_p} \mathcal{O}_C$; dua
 $\alpha_G \colon T \otimes_{\mathbb{Z}_p} \mathcal{O}_C \to (\operatorname{Lie} G^\vee)^\vee$. Then:
 
 1. after inverting $p$, the sequence
-   $$0 \to \operatorname{Lie} G \otimes_{\mathcal{O}_C} C(1) \xrightarrow{\ \alpha_{G^\vee}^\vee(1)\ } T \otimes_{\mathbb{Z}_p} C \xrightarrow{\ \alpha_G\ } (\operatorname{Lie} G^\vee \otimes_{\mathcal{O}_C} C)^\vee \to 0$$
-   is exact, where $(1)$ is the twist by the Tate module $T_p(\mu) = \varprojlim_n \mu_{p^n}(C)$ of $\mathbb{G}_m$;
-2. integrally, $0 \to (\operatorname{Lie} G)(1) \to T \otimes_{\mathbb{Z}_p} \mathcal{O}_C \to (\operatorname{Lie} G^\vee)^\vee \to 0$
-   is a complex whose cohomology groups are killed by $p^{1/(p-1) + \varepsilon}$ for every $\varepsilon > 0$; in
-   particular the cokernel of $\alpha_G$ is;
+
+    $$0 \to \operatorname{Lie} G \otimes_{\mathcal{O}_C} C(1) \xrightarrow{\ \alpha_{G^\vee}^\vee(1)\ } T \otimes_{\mathbb{Z}_p} C \xrightarrow{\ \alpha_G\ } (\operatorname{Lie} G^\vee \otimes_{\mathcal{O}_C} C)^\vee \to 0$$
+
+    is exact, where $(1)$ is the twist by the Tate module $T_p(\mu) = \varprojlim_n \mu_{p^n}(C)$ of $\mathbb{G}_m$;
+
+2. integrally, the cokernel of $\alpha_G \colon T \otimes_{\mathbb{Z}_p} \mathcal{O}_C \to (\operatorname{Lie} G^\vee)^\vee$ is killed by
+   $p^{1/(p-1) + \varepsilon}$ for every $\varepsilon > 0$; more precisely, the sequence
+   $0 \to (\operatorname{Lie} G)(1) \to T \otimes_{\mathbb{Z}_p} \mathcal{O}_C \to (\operatorname{Lie} G^\vee)^\vee \to 0$, with first map
+   $\alpha_{G^\vee}^\vee(1)$ and second map $\alpha_G$, is a complex whose cohomology groups are killed by
+   $p^{1/(p-1) + \varepsilon}$ for every $\varepsilon > 0$;
 3. **kernel and annihilator.** Let $B \colon (T \otimes_{\mathbb{Z}_p} \mathcal{O}_C) \times (T_p G^\vee \otimes_{\mathbb{Z}_p} \mathcal{O}_C) \to \mathcal{O}_C(1)$
    be the $\mathcal{O}_C$-bilinear extension of the Weil pairing $T \times T_p G^\vee \to T_p(\mu)$ of Cartier duality. Then for
    $x \in T \otimes \mathcal{O}_C$,
-   $$\alpha_G(x) = 0 \iff B(x, y) = 0 \text{ for every } y \in T_p G^\vee \otimes \mathcal{O}_C \text{ with } \alpha_{G^\vee}(y) = 0.$$
-   This identity holds integrally, with no torsion bound, while the cokernel of $\alpha_G$ is controlled only by
-   item 2. It follows from item 1. Under the Weil pairing, $\alpha_{G^\vee}^\vee(1)$ is the transpose of $\alpha_{G^\vee}$, so its
-   image, which is $\ker(\alpha_G \otimes C)$ by exactness, is the annihilator of $\ker(\alpha_{G^\vee} \otimes C)$. Each
-   kernel over $C$ is spanned by the integral kernel, and $(\operatorname{Lie} G^\vee)^\vee$ is torsion-free, so the two
-   integral conditions agree.
+
+    $$\alpha_G(x) = 0 \iff B(x, y) = 0 \text{ for every } y \in T_p G^\vee \otimes \mathcal{O}_C \text{ with } \alpha_{G^\vee}(y) = 0.$$
+
+    This identity holds integrally, with no torsion bound, while the cokernel of $\alpha_G$ is controlled only by
+    item 2. It follows from item 1. Under the Weil pairing, $\alpha_{G^\vee}^\vee(1)$ is the transpose of $\alpha_{G^\vee}$, so its
+    image, which is $\ker(\alpha_G \otimes C)$ by exactness, is the annihilator of $\ker(\alpha_{G^\vee} \otimes C)$. Each
+    kernel over $C$ is spanned by the integral kernel, and $(\operatorname{Lie} G^\vee)^\vee$ is torsion-free, so the two
+    integral conditions agree.
 
 ## Depends on
 
@@ -38,8 +45,10 @@ $\alpha_G \colon T \otimes_{\mathbb{Z}_p} \mathcal{O}_C \to (\operatorname{Lie} 
 - P. Scholze and J. Weinstein, "Moduli of p-divisible groups", Cambridge J. Math. 1 (2013), 145–237,
   arXiv:1211.6357 (version 2): Proposition 5.1.6 (ii)–(iii) (the map $\alpha_G$, its description through Cartier
   duality, and the exact sequence over $C$, with the first map $\alpha_{G^\vee}^\vee(1)$) and its proof ("Part (iii) is
-  taken from [FGL08], Appendix C to Chapter 2"; part (i) through Proposition 5.1.1); Proposition 4.3.6 and Remark 4.3.7 (the integral sequence over a
-  perfectoid affinoid $(T, T^+)$, whose case $(C, \mathcal{O}_C)$ "is exactly [FGL08, Théorème II.1.1]", due to
+  taken from [FGL08], Appendix C to Chapter 2"; part (i) through Proposition 5.1.1); Proposition 4.3.6 and Remark 4.3.7, applied to $(T, T^+) = (C, \mathcal{O}_C)$ in the setting of
+  §4.3 ("The cokernel of $T G(T^+) \otimes_{\mathbb{Z}_p} T^+ \to (\operatorname{Lie} G^\vee)^\vee$ is killed by $p^{1/(p-1)+\epsilon}$ for
+  any $\epsilon > 0$. More precisely, there is a natural sequence [...] whose cohomology groups are killed by
+  $p^{1/(p-1)+\epsilon}$", with first map $\alpha_{G^\vee}^\vee(1)$; the case $(C, \mathcal{O}_C)$ "is exactly [FGL08, Théorème II.1.1]", due to
   L. Fargues, in L. Fargues, A. Genestier, V. Lafforgue, *L'isomorphisme entre les tours de Lubin–Tate et de
   Drinfeld*, Progr. Math. 262, Birkhäuser, 2008).
 - Provenance: L. Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
