@@ -55,22 +55,43 @@ Archive provenance: `wanted317_308_ramanujan_mesh_partition_congruences_c3c0556b
 
 namespace MetaMathlibExt
 
-/-- Smallest positive natural congruent to `a` mod `A` absent from `λ.parts`. -/
+/-- **Mex of a partition in a residue class.** For natural numbers $A$, $a$ and $n$ and a
+partition $\lambda$ of $n$, $\operatorname{mex}_{A,a}(\lambda)$ is the smallest positive integer
+congruent to $a$ modulo $A$ that is not a part of $\lambda$, and $0$ if there is no such integer
+(which happens only when $A = 0$). -/
 noncomputable def partitionMex (A a : ℕ) {n : ℕ} (lam : Nat.Partition n) : ℕ :=
   sInf { m : ℕ | 0 < m ∧ m ≡ a [MOD A] ∧ m ∉ lam.parts }
 
-/-- Number of partitions `λ` of `n` with `partitionMex A a λ ≡ a [MOD 2 * A]`. -/
+/-- **Mex-related partition function of Andrews and Newman.** For natural numbers $A$, $a$ and $n$,
+$p_{A,a}(n)$ is the number of partitions $\lambda$ of $n$ such that
+$\operatorname{mex}_{A,a}(\lambda) \equiv a \pmod{2A}$, where $\operatorname{mex}_{A,a}(\lambda)$
+is the smallest positive integer congruent to $a$ modulo $A$ that is not a part of $\lambda$, and
+$0$ if there is no such integer. -/
 noncomputable def mexPartitionNumber (A a n : ℕ) : ℕ := by
   classical
   exact ((Finset.univ : Finset (Nat.Partition n)).filter
     (fun lam => decide (partitionMex A a lam ≡ a [MOD 2 * A]))).card
 
-/-- Least natural representative of the inverse of 24 modulo `p ^ k`. -/
+/-- **Least inverse of 24 modulo a power.** For natural numbers $p$ and $k$, $\delta_{p,k}$ is the
+least natural number $\delta$ with $24\delta \equiv 1 \pmod{p^k}$, and $0$ if there is no such
+$\delta$, which happens exactly when $p^k$ and $24$ have a common factor greater than $1$. -/
 noncomputable def ramanujanDelta (p k : ℕ) : ℕ :=
   sInf { delta : ℕ | 24 * delta ≡ 1 [MOD p ^ k] }
 
-/-- Source corollary (Barman–Singh, JIS 24 (2021), Art. 21.6.3): six congruences for
-    `p = 5, 7, 11`, with plain and doubled first parameters. -/
+/-- **Ramanujan congruences for mex-related partition functions.** For a positive integer $A$, a
+natural number $a$ and a partition $\lambda$, let $\operatorname{mex}_{A,a}(\lambda)$ be the
+smallest positive integer congruent to $a$ modulo $A$ that is not a part of $\lambda$; let
+$p_{A,a}(N)$ be the number of partitions $\lambda$ of $N$ with
+$\operatorname{mex}_{A,a}(\lambda) \equiv a \pmod{2A}$; and let $\delta_{p,k}$ be the least
+natural number $\delta$ with $24\delta \equiv 1 \pmod{p^k}$. Then for all natural numbers
+$k \ge 1$, $t \ge 1$ and $n$, for each $p \in \{5, 7, 11\}$ and for both $A = p^k t$ and
+$A = 2p^k t$,
+
+$$p_{A,\,p^k t}(p^k n + \delta_{p,k}) \equiv 0 \pmod{p^{e}},$$
+
+where $e = k$ for $p = 5$ and $p = 11$, and $e = \lfloor k/2 \rfloor + 1$ for $p = 7$.
+
+Source: Barman–Singh, JIS 24 (2021), Art. 21.6.3, corollary. -/
 public theorem_wanted ramanujan_mex_partition_congruences
     (k t n : ℕ) (hk : 1 ≤ k) (ht : 1 ≤ t) :
     mexPartitionNumber (5 ^ k * t) (5 ^ k * t) (5 ^ k * n + ramanujanDelta 5 k) ≡

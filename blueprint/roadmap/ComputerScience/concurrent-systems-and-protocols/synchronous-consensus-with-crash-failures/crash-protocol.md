@@ -1,0 +1,5 @@
+# Synchronous protocol with crash failures
+
+A synchronous protocol with crash failures $Q$, for a set $G$ of processes, a set $V$ of inputs, a set $\sigma$ of local states and a set $M$ of messages, consists of maps $\mathrm{init} : G \times V \to \sigma$, $\mathrm{send} : \mathbb{N} \times G \times \sigma \times G \to M$, $\mathrm{recv} : \mathbb{N} \times G \times \sigma \times (M \cup \{\bot\})^G \to \sigma$ and $\mathrm{decide} : G \times \sigma \to V$. Process $i$ starts in state $\mathrm{init}(i, x)$ from its input $x$; in round $r$ process $j$ in state $s$ sends $\mathrm{send}(r, j, s, i)$ to process $i$, and process $i$ in state $s$ moves to $\mathrm{recv}(r, i, s, \mathit{msg})$, where $\mathit{msg}(j)$ is the message it received from $j$, or $\bot$ if it received none; at the end process $i$ in state $s$ decides $\mathrm{decide}(i, s)$.
+
+**Model.** Synchronous lock-step rounds over a complete network of reliable links; a receiver sees, for each sender, either its message or nothing, and knows the sender. Crashes are given separately by a [crash pattern](crash-pattern.md). Protocols are deterministic, with one set of states for all processes.

@@ -1,0 +1,3 @@
+# Outer factor of the weight of a glued configuration
+
+Let $d, n \in \mathbb{N}$, $\Lambda_m = \{-m, \dots, m\}^d$ (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be a configuration of $\Lambda_{n+1}$ (an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$), and let $p, q \in \mathbb{R}$. The outer weight factor is $s^0(\psi) = \pi^{\mathrm{out}}(\psi)\, q^{N^0_{\mathrm{out}}(\psi)}$, the [outer edge factor](../boundary-conditions-induced-on-a-box-by-the-oute/psi-edge-factor.md) (the product over the edges of $\Lambda_{n+1}$ without both endpoints in $\Lambda_n$ of $p$ or $1 - p$ according as the edge is open or closed in $\psi$) times $q$ raised to the [number of avoiding outer components](outside-shift-free.md).
