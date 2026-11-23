@@ -21,20 +21,13 @@ Here that condition is written without division as
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Basic.Complex.Basic
-public import Mathlib.NumberTheory.ArithmeticFunction.Defs
+public import MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditive
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted
-
-/-- **Sums of two positive triangular numbers.** A natural number $n$ is a sum of two positive
-triangular numbers if there are natural numbers $a \ge 1$ and $b \ge 1$ with
-$2n = a(a+1) + b(b+1)$, that is, $n = \frac{a(a+1)}{2} + \frac{b(b+1)}{2}$. -/
-def IsSumTwoPositiveTriangular (n : ℕ) : Prop :=
-  ∃ a b : ℕ, 1 ≤ a ∧ 1 ≤ b ∧ 2 * n = a * (a + 1) + b * (b + 1)
 
 /-- **Park's theorem on multiplicative functions additive on sums of two triangular numbers.**
 Let $f$ be a multiplicative arithmetic function with values in $\mathbb{C}$ (so $f$ is defined on
@@ -64,21 +57,6 @@ theorem_wanted multiplicative_additive_on_sum_two_triangular_eq_id_le_21
       IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
     (hf2 : f 2 ≠ 0) :
     ∀ n : ℕ, n ≤ 21 → f n = (n : ℂ)
-
-/-- **Park's Lemma 3: vanishing from 4 to 21 when the value at 2 is zero and at 3 is not.** Let
-$f$ be a multiplicative arithmetic function with values in $\mathbb{C}$ such that
-$f(a + b) = f(a) + f(b)$ whenever $a$ and $b$ are both sums of two positive triangular numbers.
-If $f(2) = 0$ and $f(3) \neq 0$, then $f(n) = 0$ for every natural number $n$ with
-$4 \le n \le 21$.
-
-Source: Poo-Sung Park, "Multiplicative Functions Additive on the Sums
-of Two Positive Triangular Numbers", Lemma 3. -/
-theorem_wanted multiplicative_additive_on_sum_two_triangular_zero_of_three_ne_zero
-    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
-    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
-      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
-    (hf2 : f 2 = 0) (hf3 : f 3 ≠ 0) :
-    ∀ n : ℕ, 4 ≤ n → n ≤ 21 → f n = 0
 
 /-- **Park's Lemma 4: vanishing from 2 to 21 except at 5.** Let $f$ be a multiplicative
 arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ whenever
