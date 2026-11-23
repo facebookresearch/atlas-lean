@@ -16,9 +16,9 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 On a smooth integral proper curve, semistability of a vector bundle of
 positive rank tests its saturated subbundles of intermediate rank, expressed
 by an actual monomorphism from a vector bundle with a locally free cokernel.
-On such a curve every subsheaf of a vector bundle is locally free and its
-saturation is a subbundle of the same rank and at least the same slope, so
-this is equivalent to testing all subsheaves. (On singular or reducible
+On such a curve every coherent subsheaf of a vector bundle is locally free
+and its saturation is a subbundle of the same rank and at least the same
+slope, so this is equivalent to testing all coherent subsheaves. (On singular or reducible
 curves subbundles of one constant rank do not suffice, so the interface is
 not stated there.) A filtration is a finite chain of actual bundle
 monomorphisms, starting at zero and ending at the specified bundle, whose
