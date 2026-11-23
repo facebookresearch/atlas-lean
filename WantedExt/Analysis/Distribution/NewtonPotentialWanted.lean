@@ -20,8 +20,10 @@ open scoped SchwartzMap
 namespace MathlibExt.Analysis.Distribution.NewtonPotentialWanted
 
 /--
-Fundamental solution of the Laplacian in dimension three: the equation `Δ N = δ₀` is solvable
-in tempered distributions.
+**Fundamental solution of the Laplacian in dimension three.** Let $E$ be a real inner product
+space of dimension $3$. Then there is a complex-valued tempered distribution $N$ on $E$ such that
+$\Delta N = \delta_0$, where $\Delta$ is the Laplacian in the sense of distributions and
+$\delta_0$ is the Dirac delta at the origin.
 
 Sources: Mathlib `docs/undergrad.yaml`, section "Distribution calculus" /
 "Applications" / entry "fundamental solution of the Laplacian";
@@ -33,7 +35,9 @@ public theorem_wanted exists_fundamental_solution_laplacian
     ∃ N : 𝓢'(E, ℂ), Δ N = TemperedDistribution.delta (0 : E)
 
 /--
-The Newton potential `-1/(4π‖y‖)` is harmonic away from the origin in dimension three.
+**The Newton potential is harmonic away from the origin.** Let $E$ be a real inner product space
+of dimension $3$, and define $N : E \to \mathbb{R}$ by $N(y) = -1/(4\pi\|y\|)$ for $y \neq 0$ and
+$N(0) = 0$. Then the Laplacian of $N$ vanishes at every point $x \neq 0$ of $E$.
 
 Sources: Mathlib `docs/undergrad.yaml`, section "Distribution calculus" /
 "Applications" / entry "fundamental solution of the Laplacian";

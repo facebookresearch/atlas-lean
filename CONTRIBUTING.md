@@ -273,8 +273,8 @@ request is pending; `GET .../merge-async/{uuid}` gives a request's result. A
 queue request is not a merge: read the PR's state afterwards to learn whether
 it was queued, merged, or removed from the queue.
 
-The queue builds up to 20 merge groups at once, and consecutive PRs that pass
-land together, up to 20 at a time; GitHub may exceed that by up to half to keep
+The queue builds up to 30 merge groups at once, and consecutive PRs that pass
+land together, up to 30 at a time; GitHub may exceed that by up to half to keep
 a stack together. The queue removes a PR whose required checks fail on its merge
 group, or do not conclude within 6 hours; the PR's timeline says why, and the
 PRs behind it rebuild without it. In a stack of pull requests, the PRs above it

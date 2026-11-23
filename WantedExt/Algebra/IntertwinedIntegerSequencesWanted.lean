@@ -49,10 +49,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The coefficient `a_{n,i}` of the paper: the number of divisors `d` of `n`
-with `(i + √(2n + i²))/2 < d ≤ i + √(2n + i²)`. Over `ℕ` the two inequalities
-are equivalent to `d (d - 2i) ≤ 2n` and `n < 2d (d - i)` (truncated subtraction;
-for `d ≤ i`, resp. `d ≤ 2i`, the truncated forms give the correct truth value).
+/-- **The Kassel–Reutenauer coefficients $a_{n,i}$.** For natural numbers $n$ and $i$, $a_{n,i}$ is
+the number of positive divisors $d$ of $n$ with
+$$\frac{i + \sqrt{2n + i^2}}{2} < d \le i + \sqrt{2n + i^2},$$
+equivalently with $d(d - 2i) \le 2n$ and $n < 2d(d - i)$. For $n = 0$ the set of divisors is
+taken to be empty, so $a_{0,i} = 0$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, display (2.3), quoting
@@ -61,12 +62,21 @@ Hilbert scheme of n points on a two-dimensional torus*. -/
 public def kasselReutenauerCoeff (n i : ℕ) : ℕ :=
   ((Nat.divisors n).filter fun d => d * (d - 2 * i) ≤ 2 * n ∧ n < 2 * d * (d - i)).card
 
-/-- The polynomial `P̄_n(X) = a_{n,0} + ∑_{i=1}^{n-1} a_{n,i} T̄_i(X)` of degree
-`n - 1`, characterized in the paper by `P̄_n(q + q⁻¹) = P_n(q)/q^{n-1}`, where
-`(q - 1)² P_n(q)` counts the ideals of codimension `n` of
-`𝔽_q[x, y, x⁻¹, y⁻¹]`. The ideal-counting definition is not formalized; the
-polynomial is defined by the paper's explicit expansion (2.4) with coefficients
-(2.3). Meaningful for `n ≥ 1` (the value at `n = 0` is `0`).
+/-- **Kassel–Reutenauer polynomial.** For a natural number $n$, the Kassel–Reutenauer polynomial
+$\bar P_n(X) \in \mathbb{Z}[X]$ is defined by
+$$
+\bar P_n(X) = a_{n,0} + \sum_{i=1}^{n-1} a_{n,i} \, \bar T_i(X),
+$$
+where $a_{n,i}$ is the number of divisors $d$ of $n$ with $d(d - 2i) \le 2n$ and
+$n < 2d(d - i)$ (equivalently, $(i + \sqrt{2n + i^2})/2 < d \le i + \sqrt{2n + i^2}$), and
+$\bar T_i$ is the monic Chebyshev polynomial: $\bar T_0 = 2$, $\bar T_1 = X$ and
+$\bar T_{i+2} = X \bar T_{i+1} - \bar T_i$. For $n = 0$ the sum is empty and the set of divisors
+of $0$ is taken to be empty, so $\bar P_0 = 0$.
+
+In the paper, $\bar P_n$ is characterized for $n \ge 1$ by
+$\bar P_n(q + q^{-1}) = P_n(q)/q^{n-1}$, where $(q - 1)^2 P_n(q)$ is the number of ideals of
+codimension $n$ of $\mathbb{F}_q[x, y, x^{-1}, y^{-1}]$; the definition here uses the explicit
+expansion (2.4) of the paper instead.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, (2.1)–(2.4) and Table 2. -/
@@ -74,17 +84,21 @@ public noncomputable def kasselReutenauerPoly (n : ℕ) : ℤ[X] :=
   (kasselReutenauerCoeff n 0 : ℤ[X]) +
     ∑ i ∈ Finset.Icc 1 (n - 1), (kasselReutenauerCoeff n i : ℤ[X]) * Chebyshev.C ℤ i
 
-/-- The polynomial `F_n(X) = 1 + ∑_{k=1}^n T̄_k(X)`, where `T̄_k` is the monic
-Chebyshev polynomial (`Polynomial.Chebyshev.C`); equivalently `F_0 = 1` and
-`F_n = F_{n-1} + T̄_n`.
+/-- **Partial sums of the monic Chebyshev polynomials.** For $n \ge 0$, $F_n(X)$ is the
+polynomial with integer coefficients
+$$F_n(X) = 1 + \sum_{k=1}^{n} \bar T_k(X),$$
+where $\bar T_k \in \mathbb{Z}[X]$ is the monic Chebyshev polynomial of the source, that is, the
+polynomial with $\bar T_k(q + q^{-1}) = q^k + q^{-k}$; equivalently $\bar T_0 = 2$,
+$\bar T_1 = X$ and $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$. Thus $F_0 = 1$ and
+$F_n = F_{n-1} + \bar T_n$ for $n \ge 1$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, (3.6)–(3.7). -/
 public noncomputable def chebyshevCPartialSum (n : ℕ) : ℤ[X] :=
   1 + ∑ k ∈ Finset.Icc 1 n, Chebyshev.C ℤ k
 
-/-- Characteristic values `a_{1,0} = 1`, `a_{2,0} = a_{2,1} = 1`,
-`a_{3,0} = 0`, `a_{3,1} = a_{3,2} = 1`.
+/-- **Small values of the coefficients $a_{n,i}$.** The Kassel–Reutenauer coefficients satisfy
+$a_{1,0} = 1$, $a_{2,0} = a_{2,1} = 1$, $a_{3,0} = 0$ and $a_{3,1} = a_{3,2} = 1$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, (2.3) and Table 2. -/
@@ -94,7 +108,8 @@ public theorem kasselReutenauerCoeff_small :
       kasselReutenauerCoeff 3 1 = 1 ∧ kasselReutenauerCoeff 3 2 = 1 := by
   decide
 
-/-- Characteristic value `P̄_1(X) = 1` (Table 2).
+/-- **The first Kassel–Reutenauer polynomial.** The Kassel–Reutenauer polynomial $\bar P_1$ is the
+constant polynomial $1$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Table 2. -/
@@ -102,7 +117,8 @@ public theorem kasselReutenauerPoly_one : kasselReutenauerPoly 1 = 1 := by
   have h : kasselReutenauerCoeff 1 0 = 1 := by decide
   simp [kasselReutenauerPoly, h]
 
-/-- Characteristic value `P̄_2(X) = X + 1` (Table 2).
+/-- **The Kassel–Reutenauer polynomial $\bar P_2$.** The Kassel–Reutenauer polynomial
+$\bar P_2(X) \in \mathbb{Z}[X]$ equals $X + 1$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Table 2. -/
@@ -111,7 +127,8 @@ public theorem kasselReutenauerPoly_two : kasselReutenauerPoly 2 = X + 1 := by
   have h1 : kasselReutenauerCoeff 2 1 = 1 := by decide
   simp [kasselReutenauerPoly, h0, h1, add_comm]
 
-/-- Characteristic value `P̄_3(X) = X² + X - 2` (Table 2).
+/-- **The third Kassel–Reutenauer polynomial.** The Kassel–Reutenauer polynomial $\bar P_3$ is
+$X^2 + X - 2$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Table 2. -/
@@ -125,14 +142,20 @@ public theorem kasselReutenauerPoly_three : kasselReutenauerPoly 3 = X ^ 2 + X -
   rw [Chebyshev.C_one, Chebyshev.C_two]
   ring
 
-/-- Characteristic value `F_0(X) = 1`.
+/-- **Zeroth partial sum of the Chebyshev polynomials.** Let
+$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+Then $F_0 = 1$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, (3.6). -/
 public theorem chebyshevCPartialSum_zero : chebyshevCPartialSum 0 = 1 := by
   simp [chebyshevCPartialSum]
 
-/-- Defining recurrence `F_{n+1}(X) = F_n(X) + T̄_{n+1}(X)`.
+/-- **Successive partial sums of the Chebyshev polynomials.** Let
+$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+For every natural number $n$, $F_{n+1} = F_n + \bar T_{n+1}$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, (3.6). -/
@@ -140,7 +163,10 @@ public theorem chebyshevCPartialSum_succ (n : ℕ) :
     chebyshevCPartialSum (n + 1) = chebyshevCPartialSum n + Chebyshev.C ℤ (n + 1 : ℕ) := by
   simp only [chebyshevCPartialSum, Finset.sum_Icc_succ_top (Nat.le_add_left 1 n), add_assoc]
 
-/-- Characteristic values `F_1(X) = X + 1` and `F_2(X) = X² + X - 1` (Table 4).
+/-- **First and second partial sums of the Chebyshev polynomials.** Let
+$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+Then $F_1 = X + 1$ and $F_2 = X^2 + X - 1$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Table 4. -/
@@ -156,7 +182,9 @@ public theorem chebyshevCPartialSum_one_two :
   rw [hc]
   ring
 
-/-- Positivity: for every `n ≥ 1` and every integer `N ≥ 2`, `P̄_n(N) > 0`.
+/-- **Positivity of the Kassel–Reutenauer polynomials at integers $N \ge 2$.** For every $n \ge 1$
+and every integer $N \ge 2$, the Kassel–Reutenauer polynomial $\bar P_n$ satisfies
+$\bar P_n(N) > 0$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 2.1
@@ -164,10 +192,15 @@ Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 2.1
 public theorem_wanted kasselReutenauerPoly_eval_pos (n : ℕ) (hn : 1 ≤ n) (N : ℤ) (hN : 2 ≤ N) :
     0 < (kasselReutenauerPoly n).eval N
 
-/-- Multiplicativity at roots of unity of order `1, 2, 3, 4`: if `q ∈ ℂ` is a
-primitive `d`-th root of unity with `d ∈ {1, 2, 3, 4}`, then
-`n ↦ |P_n(q)| = |P̄_n(q + q⁻¹)|` is multiplicative. Here `|P_n(q)|` is written as
-`‖P̄_n(q + q⁻¹)‖`, which equals it since `|q| = 1`.
+/-- **Multiplicativity at roots of unity of order at most 4.** Let $q \in \mathbb{C}$ be a primitive
+$d$-th root of unity with $d \in \{1, 2, 3, 4\}$, and let $\bar P_n$ be the Kassel–Reutenauer
+polynomials. Then for all coprime integers $m, n \ge 1$,
+$$
+|\bar P_{mn}(q + q^{-1})| = |\bar P_m(q + q^{-1})| \, |\bar P_n(q + q^{-1})|.
+$$
+
+Since $|q| = 1$, $|\bar P_n(q + q^{-1})|$ is the absolute value $|P_n(q)|$ of the paper's
+polynomial $P_n(q) = q^{n-1} \bar P_n(q + q^{-1})$, so $n \mapsto |P_n(q)|$ is multiplicative.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 2.2
@@ -178,11 +211,16 @@ public theorem_wanted kasselReutenauerPoly_norm_multiplicative_rootOfUnity (q : 
     ‖aeval (q + q⁻¹) (kasselReutenauerPoly (m * n))‖ =
       ‖aeval (q + q⁻¹) (kasselReutenauerPoly m)‖ * ‖aeval (q + q⁻¹) (kasselReutenauerPoly n)‖
 
-/-- Almost multiplicativity at a primitive sixth root of unity `ω`: for coprime
-positive `m, n`, `|P_m(ω)| |P_n(ω)|` equals `|P_{mn}(ω)|` when
-`(m, n) ≡ (0,1), (1,1), (1,2) (mod 3)`, equals `2 |P_{mn}(ω)|` when
-`(m, n) ≡ (0,2)`, and `4 |P_{mn}(ω)|` when `(m, n) ≡ (2,2)`. As printed, the
-residue pairs are ordered; `|P_n(ω)|` is written as `‖P̄_n(ω + ω⁻¹)‖`.
+/-- **Almost multiplicativity at a primitive sixth root of unity.** Let $\omega \in \mathbb{C}$ be a
+primitive sixth root of unity, and for $n \ge 1$ let $v_n = |\bar P_n(\omega + \omega^{-1})|$,
+where $\bar P_n$ is the Kassel–Reutenauer polynomial. Let $m, n \ge 1$ be coprime. Then
+$v_m v_n = v_{mn}$ if $(m \bmod 3, n \bmod 3)$ is $(0, 1)$, $(1, 1)$ or $(1, 2)$;
+$v_m v_n = 2 v_{mn}$ if $(m \bmod 3, n \bmod 3) = (0, 2)$; and $v_m v_n = 4 v_{mn}$ if
+$(m \bmod 3, n \bmod 3) = (2, 2)$. The residue pairs are ordered: nothing is claimed for the
+swapped pairs.
+
+Since $|\omega| = 1$, $v_n$ is the absolute value $|P_n(\omega)|$ of the paper's polynomial
+$P_n(q) = q^{n-1} \bar P_n(q + q^{-1})$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 2.3
@@ -199,9 +237,11 @@ public theorem_wanted kasselReutenauerPoly_norm_almost_multiplicative_sixth (ω 
         ‖aeval (ω + ω⁻¹) (kasselReutenauerPoly m)‖ * ‖aeval (ω + ω⁻¹) (kasselReutenauerPoly n)‖ =
           4 * ‖aeval (ω + ω⁻¹) (kasselReutenauerPoly (m * n))‖)
 
-/-- For coprime positive `m, n`, `P̄_{mn}(X)² - P̄_m(X)² P̄_n(X)²` is divisible
-by `X (X + 1) (X² - 4)`, and moreover by `X (X + 1) (X² - 4) (X - 1)` when
-`(m, n) ≡ (0,1), (1,1)` or `(1,2) (mod 3)`.
+/-- **Multiplicativity of $\bar P_n^2$ modulo $X (X + 1) (X^2 - 4)$.** Let $\bar P_n$ be the
+Kassel–Reutenauer polynomials. For coprime integers $m, n \ge 1$, the polynomial
+$\bar P_{mn}(X)^2 - \bar P_m(X)^2 \bar P_n(X)^2$ is divisible in $\mathbb{Z}[X]$ by
+$X (X + 1) (X^2 - 4)$; if moreover $(m \bmod 3, n \bmod 3)$ is $(0, 1)$, $(1, 1)$ or $(1, 2)$,
+it is divisible by $X (X + 1) (X^2 - 4) (X - 1)$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 2.4
@@ -214,8 +254,10 @@ public theorem_wanted kasselReutenauerPoly_sq_sub_dvd (m n : ℕ) (hm : 1 ≤ m)
         X * (X + 1) * (X ^ 2 - 4) * (X - 1) ∣
           kasselReutenauerPoly (m * n) ^ 2 - kasselReutenauerPoly m ^ 2 * kasselReutenauerPoly n ^ 2)
 
-/-- For an integer `N`, the function `n ↦ |P̄_n(N)|` (on positive integers) is
-multiplicative if and only if `N ∈ {-2, -1, 0, 2}`.
+/-- **Integers at which $|\bar P_n|$ is multiplicative.** Let $\bar P_n$ be the
+Kassel–Reutenauer polynomial and let $N$ be an integer. Then
+$|\bar P_{mn}(N)| = |\bar P_m(N)|\,|\bar P_n(N)|$ for all coprime positive integers $m$ and $n$
+if and only if $N \in \{-2, -1, 0, 2\}$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 2.5
@@ -226,8 +268,10 @@ public theorem_wanted kasselReutenauerPoly_abs_eval_multiplicative_iff (N : ℤ)
           |(kasselReutenauerPoly m).eval N| * |(kasselReutenauerPoly n).eval N|) ↔
       N = -2 ∨ N = -1 ∨ N = 0 ∨ N = 2
 
-/-- Positivity of the monic Chebyshev polynomials: `T̄_k(x) > 0` for every
-`k ≥ 0` and every real `x ≥ 2`.
+/-- **Positivity of the monic Chebyshev polynomials.** Let $\bar T_k \in \mathbb{R}[X]$ be the
+monic Chebyshev polynomials, given by $\bar T_0 = 2$, $\bar T_1 = X$ and
+$\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$. Then $\bar T_k(x) > 0$ for every natural number $k$
+and every real number $x \ge 2$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.1
@@ -235,8 +279,11 @@ Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.1
 public theorem_wanted chebyshevC_eval_pos_of_two_le (k : ℕ) (x : ℝ) (hx : 2 ≤ x) :
     0 < (Chebyshev.C ℝ k).eval x
 
-/-- Trace formula: `T̄_k(X) = tr(M^k)` for the companion matrix
-`M = !![X, -1; 1, 0]` and all `k ≥ 0`.
+/-- **Trace formula for the monic Chebyshev polynomials.** Let $\bar T_k \in \mathbb{Z}[X]$ be
+the monic Chebyshev polynomials, given by $\bar T_0 = 2$, $\bar T_1 = X$ and
+$\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$, and let $M$ be the $2 \times 2$ matrix over
+$\mathbb{Z}[X]$ with rows $(X, -1)$ and $(1, 0)$. Then $\bar T_k = \operatorname{tr}(M^k)$ for
+every natural number $k$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.2
@@ -244,9 +291,14 @@ Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.2
 public theorem_wanted chebyshevC_eq_trace_pow (k : ℕ) :
     Chebyshev.C ℤ k = Matrix.trace ((!![X, -1; 1, 0] : Matrix (Fin 2) (Fin 2) ℤ[X]) ^ k)
 
-/-- Generating function: `∑_{n ≥ 0} F_n(X) tⁿ = (1 + t)/(1 - X t + t²)`, stated
-as `(1 - X t + t²) · ∑ F_n(X) tⁿ = 1 + t` in `ℤ[X]⟦t⟧` (equivalent, since
-`1 - X t + t²` is a unit there).
+/-- **Generating function of the partial sums of Chebyshev polynomials.** Let
+$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+In the ring $\mathbb{Z}[X][[t]]$ of formal power series in $t$ over $\mathbb{Z}[X]$,
+$$(1 - X t + t^2) \sum_{n \ge 0} F_n t^n = 1 + t.$$
+
+Since $1 - X t + t^2$ is a unit in $\mathbb{Z}[X][[t]]$, this is equivalent to
+$\sum_{n \ge 0} F_n t^n = (1 + t)/(1 - X t + t^2)$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.3
@@ -256,9 +308,12 @@ public theorem_wanted chebyshevCPartialSum_generatingFunction :
         PowerSeries.mk (fun n => chebyshevCPartialSum n) =
       (1 + PowerSeries.X : PowerSeries ℤ[X])
 
-/-- Binomial expansion: for `n ≥ 1`,
-`F_n(X) = ∑_{0 ≤ m ≤ n/2} (-1)^m C(n-m, m) X^{n-2m}
-  + ∑_{0 ≤ m ≤ (n-1)/2} (-1)^m C(n-m-1, m) X^{n-2m-1}`.
+/-- **Binomial expansion of the partial sums of Chebyshev polynomials.** Let
+$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+For every $n \ge 1$,
+$$F_n = \sum_{m=0}^{\lfloor n/2 \rfloor} (-1)^m \binom{n-m}{m} X^{n-2m} +
+\sum_{m=0}^{\lfloor (n-1)/2 \rfloor} (-1)^m \binom{n-m-1}{m} X^{n-2m-1}.$$
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.4
@@ -269,11 +324,15 @@ public theorem_wanted chebyshevCPartialSum_eq_binomial_sum (n : ℕ) (hn : 1 ≤
         ∑ m ∈ Finset.range ((n - 1) / 2 + 1),
           (-1 : ℤ[X]) ^ m * ((n - m - 1).choose m : ℤ[X]) * X ^ (n - 2 * m - 1)
 
-/-- Top coefficients of `F_n`: for `n ≥ 5`,
-`F_n(X) = Xⁿ + X^{n-1} - (n-1) X^{n-2} - (n-2) X^{n-3} + ((n-2)(n-3)/2) X^{n-4}
-  + ((n-3)(n-4)/2) X^{n-5}` plus monomials of degree `≤ n - 6` (stated as: the
-difference has degree `< n - 5`). The fractions are written `C(n-2, 2)` and
-`C(n-3, 2)`.
+/-- **Leading coefficients of the partial sums of Chebyshev polynomials.** Let
+$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+For every $n \ge 5$, the polynomial
+$$F_n - \Big(X^n + X^{n-1} - (n-1) X^{n-2} - (n-2) X^{n-3} + \binom{n-2}{2} X^{n-4} +
+\binom{n-3}{2} X^{n-5}\Big)$$
+is either zero or has degree less than $n - 5$.
+
+Here $\binom{n-2}{2} = (n-2)(n-3)/2$ and $\binom{n-3}{2} = (n-3)(n-4)/2$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 3.5
@@ -284,7 +343,10 @@ public theorem_wanted chebyshevCPartialSum_top_coeffs (n : ℕ) (hn : 5 ≤ n) :
           ((n - 2).choose 2 : ℤ[X]) * X ^ (n - 4) + ((n - 3).choose 2 : ℤ[X]) * X ^ (n - 5))).degree <
       ((n - 5 : ℕ) : WithBot ℕ)
 
-/-- Linear recurrence: `F_{k+1}(X) = X F_k(X) - F_{k-1}(X)` for `k ≥ 1`.
+/-- **Three-term recurrence for the partial sums of Chebyshev polynomials.** Let
+$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+For every $k \ge 1$, $F_{k+1} = X F_k - F_{k-1}$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.6
@@ -292,9 +354,11 @@ Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.6
 public theorem_wanted chebyshevCPartialSum_recurrence (k : ℕ) (hk : 1 ≤ k) :
     chebyshevCPartialSum (k + 1) = X * chebyshevCPartialSum k - chebyshevCPartialSum (k - 1)
 
-/-- Approximation theorem: for `n ≥ 2`, `P̄_n(X) - F_{n-1}(X)` has degree
-`< n/2 - 1`, i.e. every nonzero coefficient sits in a degree `k` with
-`2k + 2 < n`.
+/-- **Approximation of $\bar P_n$ by $F_{n-1}$.** Let $\bar P_n$ be the Kassel–Reutenauer
+polynomials, and for $r \ge 0$ let $F_r(X) = 1 + \sum_{j=1}^{r} \bar T_j(X)$ be the partial sum
+of the monic Chebyshev polynomials $\bar T_j$. For $n \ge 2$, every nonzero coefficient of
+$\bar P_n(X) - F_{n-1}(X)$ sits in a degree $k$ with $2k + 2 < n$; that is, the difference has
+degree less than $n/2 - 1$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Theorem 4.1
@@ -303,11 +367,15 @@ public theorem_wanted kasselReutenauerPoly_sub_chebyshevCPartialSum_coeff (n : �
     (k : ℕ) (hk : (kasselReutenauerPoly n - chebyshevCPartialSum (n - 1)).coeff k ≠ 0) :
     2 * k + 2 < n
 
-/-- Top coefficients of `P̄_n`: for `n ≥ 10`,
-`P̄_n(X) = X^{n-1} + X^{n-2} - (n-2) X^{n-3} - (n-3) X^{n-4}
-  + ((n-3)(n-4)/2) X^{n-5} + ((n-4)(n-5)/2) X^{n-6}` plus monomials of degree
-`≤ n - 7` (stated as: the difference has degree `< n - 6`). The fractions are
-written `C(n-3, 2)` and `C(n-4, 2)`.
+/-- **Top coefficients of the Kassel–Reutenauer polynomials.** For $n \ge 10$, the polynomial
+$$
+\bar P_n(X) - \Bigl(X^{n-1} + X^{n-2} - (n-2) X^{n-3} - (n-3) X^{n-4} +
+\tbinom{n-3}{2} X^{n-5} + \tbinom{n-4}{2} X^{n-6}\Bigr)
+$$
+has degree less than $n - 6$, where $\bar P_n$ is the Kassel–Reutenauer polynomial. That is, up
+to terms of degree at most $n - 7$, $\bar P_n(X)$ equals
+$X^{n-1} + X^{n-2} - (n-2) X^{n-3} - (n-3) X^{n-4} + \frac{(n-3)(n-4)}{2} X^{n-5} +
+\frac{(n-4)(n-5)}{2} X^{n-6}$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 4.2
@@ -319,8 +387,10 @@ public theorem_wanted kasselReutenauerPoly_top_coeffs (n : ℕ) (hn : 10 ≤ n) 
           ((n - 4).choose 2 : ℤ[X]) * X ^ (n - 6))).degree <
       ((n - 6 : ℕ) : WithBot ℕ)
 
-/-- `a_{n,i} = 1` whenever `n/2 - 1 ≤ i ≤ n - 1` (for `n ≥ 1`); the lower bound
-is written `n ≤ 2i + 2`.
+/-- **The top coefficients $a_{n,i}$ equal $1$.** Let $n \ge 1$ and let $i$ be a natural number
+with $n \le 2i + 2$ and $i \le n - 1$; equivalently $n/2 - 1 \le i \le n - 1$, where $n/2$ is
+the rational number, not the integer quotient. Then the Kassel–Reutenauer coefficient $a_{n,i}$
+equals $1$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Lemma 4.3
@@ -328,9 +398,15 @@ Journal of Integer Sequences 29 (2026), Article 26.4.4, Lemma 4.3
 public theorem_wanted kasselReutenauerCoeff_eq_one (n i : ℕ) (hn : 1 ≤ n) (hi : n ≤ 2 * i + 2)
     (hi' : i ≤ n - 1) : kasselReutenauerCoeff n i = 1
 
-/-- Odd-divisor formula: for `n ≥ 1`, with `r_n(d) = n/d - (d+1)/2`,
-`P̄_n(X) = ∑_{d ∣ n, d odd, r_n(d) ≥ 0} F_{r_n(d)}(X)
-  - ∑_{d ∣ n, d odd, r_n(d) < 0} F_{-r_n(d)-1}(X)`.
+/-- **Odd-divisor formula for the Kassel–Reutenauer polynomials.** Let $n \ge 1$, and for each
+odd divisor $d$ of $n$ put $r_n(d) = n/d - (d+1)/2$, an integer. Then the Kassel–Reutenauer
+polynomial $\bar P_n$ satisfies
+$$
+\bar P_n(X) = \sum_{d \mid n,\ d \text{ odd},\ r_n(d) \ge 0} F_{r_n(d)}(X) -
+\sum_{d \mid n,\ d \text{ odd},\ r_n(d) < 0} F_{-r_n(d)-1}(X),
+$$
+where $F_r(X) = 1 + \sum_{k=1}^{r} \bar T_k(X)$ is the partial sum of the monic Chebyshev
+polynomials $\bar T_k$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Theorem 4.4
@@ -342,7 +418,10 @@ public theorem_wanted kasselReutenauerPoly_eq_oddDivisor_sum (n : ℕ) (hn : 1 �
         ∑ d ∈ (Nat.divisors n).filter (fun d => Odd d ∧ ((n / d : ℕ) : ℤ) - ((d + 1) / 2 : ℕ) < 0),
           chebyshevCPartialSum (-(((n / d : ℕ) : ℤ) - ((d + 1) / 2 : ℕ)) - 1).toNat
 
-/-- `P̄_n(X) = F_{n-1}(X)` if and only if `n` is a power of `2` (for `n ≥ 1`).
+/-- **$\bar P_n$ equals $F_{n-1}$ exactly for powers of two.** Let $n \ge 1$, let $\bar P_n$ be the
+Kassel–Reutenauer polynomial, and let $F_{n-1} = 1 + \sum_{k=1}^{n-1} \bar T_k$ be the partial
+sum of the monic Chebyshev polynomials. Then $\bar P_n = F_{n-1}$ if and only if $n = 2^k$ for
+some natural number $k$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 4.5
@@ -350,10 +429,17 @@ Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 4.5
 public theorem_wanted kasselReutenauerPoly_eq_chebyshevCPartialSum_iff (n : ℕ) (hn : 1 ≤ n) :
     kasselReutenauerPoly n = chebyshevCPartialSum (n - 1) ↔ ∃ k : ℕ, n = 2 ^ k
 
-/-- Representation formula for `C_n(q)/q^n` (in `ℤ[T;T⁻¹]`, `q = T 1`):
-`C_n(q)/q^n = ∑ (-1)^h (q^a + q^{-a})` over all `h ≥ 1`, `a ∈ ℤ` with
-`n = h (h + 1 + 2a)/2`; moreover, a solution `(a, h)` is determined by `|a|`.
-Every solution satisfies `h ≤ 2n` and `|a| ≤ n`, so the sum is over a finite box.
+/-- **$C_n(q)/q^n$ as a sum over the solutions of $h(h + 1 + 2a) = 2n$.** Let $n \ge 1$, let
+$\bar P_n$ be the Kassel–Reutenauer polynomial, and write $C_n(q)/q^n$ for the Laurent polynomial
+$(q - 2 + q^{-1})\,\bar P_n(q + q^{-1})$ in $\mathbb{Z}[q, q^{-1}]$. Then
+$$\frac{C_n(q)}{q^n} = \sum_{(h, a)} (-1)^h \left(q^a + q^{-a}\right),$$
+where the sum runs over the pairs of integers $(h, a)$ with $1 \le h \le 2n$, $-n \le a \le n$
+and $h(h + 1 + 2a) = 2n$. Moreover, if $h, h'$ are positive integers and $a, a'$ are
+integers with $h(h + 1 + 2a) = 2n$, $h'(h' + 1 + 2a') = 2n$ and $|a| = |a'|$, then $h = h'$
+and $a = a'$.
+
+Every pair of integers $(h, a)$ with $h \ge 1$ and $h(h + 1 + 2a) = 2n$ satisfies $h \le 2n$
+and $|a| \le n$, so the sum runs over all such pairs.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Lemma 5.2
@@ -368,18 +454,25 @@ public theorem_wanted kasselReutenauer_C_div_pow_eq_sum (n : ℕ) (hn : 1 ≤ n)
     ∀ h h' : ℕ, ∀ a a' : ℤ, 1 ≤ h → 1 ≤ h' → (h : ℤ) * (h + 1 + 2 * a) = 2 * n →
       (h' : ℤ) * (h' + 1 + 2 * a') = 2 * n → |a| = |a'| → h = h' ∧ a = a'
 
-/-- Increasing-sequence and odd-divisor formulas for `C_n(q)/q^n` (in
-`ℤ[T;T⁻¹]`, `q = T 1`), `n ≥ 1`:
+/-- **Increasing-sequence and odd-divisor formulas for $C_n(q)/q^n$.** Let $n \ge 1$, let
+$\bar P_n$ be the Kassel–Reutenauer polynomial, and write $C_n(q)/q^n$ for the Laurent polynomial
+$(q - 2 + q^{-1})\,\bar P_n(q + q^{-1})$ in $\mathbb{Z}[q, q^{-1}]$. For integers $h \ge 1$ and
+$a$ let $IS(a, h) = \{a + 1, \dots, a + h\}$.
 
-(i) `C_n(q)/q^n = ∑ (-1)^h (q^a + q^{-a})` over the increasing sequences
-`IS(a, h) = {a+1, …, a+h}` (`h ≥ 1`) whose elements sum to `n`, and for given
-`|a|` there is a unique such sequence (all such `(h, a)` lie in the box
-`h ≤ 2n`, `|a| ≤ n`);
+(i) We have
+$$\frac{C_n(q)}{q^n} = \sum_{(h, a)} (-1)^h \left(q^a + q^{-a}\right),$$
+where the sum runs over the pairs of integers $(h, a)$ with $1 \le h \le 2n$ and $-n \le a \le n$
+such that the elements of $IS(a, h)$ sum to $n$. Moreover, if $h, h' \ge 1$ and $a, a'$ are
+integers such that the elements of $IS(a, h)$ and those of $IS(a', h')$ both sum to $n$, and
+$|a| = |a'|$, then $h = h'$ and $a = a'$.
 
-(ii) `C_n(q)/q^n = ∑_{d ∣ n, d odd} (q^{n/d - (d-1)/2} + q^{-n/d + (d-1)/2}
-  - q^{n/d - (d+1)/2} - q^{-n/d + (d+1)/2})`, and the exponents `≠ 0` occurring
-in this sum are pairwise distinct (the multiset of nonzero exponents is
-duplicate-free).
+(ii) For an odd divisor $d$ of $n$ put $u_d = n/d - (d - 1)/2$ and $v_d = n/d - (d + 1)/2$. Then
+$$\frac{C_n(q)}{q^n} = \sum_{d \mid n,\ d \text{ odd}} (q^{u_d} + q^{-u_d} - q^{v_d} - q^{-v_d}),$$
+and in the list of the exponents $u_d, -u_d, v_d, -v_d$ over all odd divisors $d$ of $n$, the
+nonzero entries are pairwise distinct.
+
+Every pair $(h, a)$ with $h \ge 1$ such that the elements of $IS(a, h)$ sum to $n$ satisfies
+$h \le 2n$ and $|a| \le n$, so the sum in (i) runs over all such sequences.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Theorem 5.3
@@ -406,9 +499,13 @@ public theorem_wanted kasselReutenauer_C_div_pow_increasingSequences (n : ℕ) (
           ((n / d : ℕ) : ℤ) - ((d + 1) / 2 : ℕ), -((n / d : ℕ) : ℤ) + ((d + 1) / 2 : ℕ)} :
           Multiset ℤ))).filter (· ≠ 0)).Nodup
 
-/-- The sum of the absolute values of the coefficients of `C_n(q)` equals four
-times the number of odd divisors of `n` (`n ≥ 1`). Stated for the Laurent
-polynomial `C_n(q)/q^n`, which has the same coefficients.
+/-- **The absolute coefficient sum of $C_n$ counts odd divisors.** Let $n \ge 1$, let $\bar P_n$ be
+the Kassel–Reutenauer polynomial, and write $C_n(q)/q^n$ for the Laurent polynomial
+$(q - 2 + q^{-1})\,\bar P_n(q + q^{-1})$ in $\mathbb{Z}[q, q^{-1}]$. Then the sum of the absolute
+values of the coefficients of $C_n(q)/q^n$ equals four times the number of odd divisors of $n$.
+
+Multiplying by $q^n$ does not change the coefficients, so this is the source's statement about
+the polynomial $C_n(q)$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 5.4
@@ -419,8 +516,11 @@ public theorem_wanted kasselReutenauer_C_abs_coeff_sum (n : ℕ) (hn : 1 ≤ n) 
           (kasselReutenauerPoly n)).coeff.sum (fun _ c => |c|) =
       4 * (((Nat.divisors n).filter Odd).card : ℤ)
 
-/-- For `r ≥ 0`, `q^{r+1} + q^{-r-1} - q^r - q^{-r} = q⁻¹ (q - 1)² F_r(q + q⁻¹)`
-in `ℤ[T;T⁻¹]` (`q = T 1`).
+/-- **Laurent polynomial identity for the partial sums of Chebyshev polynomials.** Let
+$F_r = 1 + \sum_{k=1}^{r} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+For every natural number $r$, in the ring $\mathbb{Z}[q, q^{-1}]$ of Laurent polynomials,
+$$q^{r+1} + q^{-r-1} - q^r - q^{-r} = q^{-1} (q - 1)^2 F_r(q + q^{-1}).$$
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Lemma 6.1
@@ -432,11 +532,18 @@ public theorem_wanted chebyshevCPartialSum_laurent_identity (r : ℕ) :
         aeval (LaurentPolynomial.T 1 + LaurentPolynomial.T (-1) : LaurentPolynomial ℤ)
           (chebyshevCPartialSum r)
 
-/-- Increasing-sequence formula for `P_n(q)/q^{n-1} = P̄_n(q + q⁻¹)` (in
-`ℤ[T;T⁻¹]`, `q = T 1`), `n ≥ 1`: with `a = r_n(d) = n/d - (d+1)/2`, `h = d`,
-`ǎ = -r_n(d) - 1`, `ȟ = 2n/d` and `IS(a, h) = {a+1, …, a+h}`,
-`P_n(q)/q^{n-1} = ∑_{d ∣ n odd, r_n(d) ≥ 0} ∑_{i ∈ IS(ǎ,ȟ) \ IS(a,h)} q^i
-  - ∑_{d ∣ n odd, r_n(d) < 0} ∑_{i ∈ IS(a,h) \ IS(ǎ,ȟ)} q^i`.
+/-- **Increasing-sequence formula for the Kassel–Reutenauer polynomials.** Let $n \ge 1$ and
+work in the ring $\mathbb{Z}[q, q^{-1}]$ of Laurent polynomials. For integers $a$ and $h$ let
+$IS(a, h) = \{a+1, \dots, a+h\}$. For an odd divisor $d$ of $n$ put $r_n(d) = n/d - (d+1)/2$,
+$A_d = IS(r_n(d), d)$ and $\check A_d = IS(-r_n(d) - 1, 2n/d)$. Then the Kassel–Reutenauer
+polynomial $\bar P_n$ satisfies
+$$
+\bar P_n(q + q^{-1}) = \sum_{d \mid n,\ d \text{ odd},\ r_n(d) \ge 0}\
+\sum_{i \in \check A_d \setminus A_d} q^i -
+\sum_{d \mid n,\ d \text{ odd},\ r_n(d) < 0}\ \sum_{i \in A_d \setminus \check A_d} q^i.
+$$
+
+The left-hand side is the paper's $P_n(q)/q^{n-1}$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
 Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 6.2
@@ -457,15 +564,19 @@ public theorem_wanted kasselReutenauerPoly_laurent_increasingSequences (n : ℕ)
                 (-(((n / d : ℕ) : ℤ) - ((d + 1) / 2 : ℕ)) - 1 + ((2 * n / d : ℕ) : ℤ)),
             LaurentPolynomial.T i
 
-/-- Local zeta function of the Hilbert scheme `H^n` of `n` points on the two-dimensional torus
-over `𝔽_q`, `q = p^k`: for `n ≥ 1`,
-`Z_{H^n/𝔽_q}(t) = ∏_{d ∣ n, d odd} (1 - q^{n+r_n(d)} t)(1 - q^{n-r_n(d)} t) /
-((1 - q^{n+r_n(d)+1} t)(1 - q^{n-r_n(d)-1} t))`, where `r_n(d) = n/d - (d+1)/2`.
-The zeta function is the formal power series `exp (∑_{m ≥ 1} N_m t^m / m)`, where `N_m`, the
-number of `𝔽_{q^m}`-points of `H^n`, is the number of ideals of colength `n` in the Laurent
-polynomial ring `𝔽_{q^m}[x^{±1}, y^{±1}]` (the group algebra of `ℤ × ℤ`), and `𝔽_{q^m}` is
-`GaloisField p (k * m)`. The exponents `n ± r_n(d)`, `n + r_n(d) + 1`, `n - r_n(d) - 1` are
-nonnegative; they are written as integer powers.
+/-- **Zeta function of the Hilbert scheme of points on the two-dimensional torus.** Let $p$ be a
+prime, $k \ge 1$, $q = p^k$ and $n \ge 1$. For $m \ge 1$ let $\mathbb{F}_{q^m}$ be the field with
+$q^m$ elements and let $N_m$ be the number of ideals $I$ of the Laurent polynomial ring
+$\mathbb{F}_{q^m}[x^{\pm 1}, y^{\pm 1}]$ (the group algebra of $\mathbb{Z} \times \mathbb{Z}$)
+such that the quotient by $I$ has dimension $n$ over $\mathbb{F}_{q^m}$; this is the number of
+$\mathbb{F}_{q^m}$-points of the Hilbert scheme $H^n$ of $n$ points on the torus. For an odd
+divisor $d$ of $n$ put $r_n(d) = n/d - (d + 1)/2$, $a_d = n + r_n(d)$ and $b_d = n - r_n(d)$.
+Then the zeta function $Z(t) = \exp\big(\sum_{m \ge 1} N_m t^m / m\big)$, a formal power series
+with rational coefficients, is
+$$Z(t) = \prod_{d} \frac{(1-q^{a_d}t)(1-q^{b_d}t)}{(1-q^{a_d+1}t)(1-q^{b_d-1}t)},$$
+the product running over the odd divisors $d$ of $n$.
+
+The exponents $a_d$, $b_d$, $a_d + 1$ and $b_d - 1$ are nonnegative integers.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*, Journal of
 Integer Sequences 29 (2026), Article 26.4.4, Proposition 5.5 (`jis-2026-26.4.4-prop-25`). -/
