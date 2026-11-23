@@ -128,6 +128,21 @@ example {X : Scheme.{0}} {Ω : Type} [Field Ω] (p : Spec (.of Ω) ⟶ X) :
   rw [Module.length_eq_one]
   rfl
 
+/-- The multiplicity is the length of the fibre's local ring, not a count of lifts: when that
+local ring is not simple as a module over itself (e.g. at an inseparable point), the lift
+has multiplicity different from one. -/
+example {Y X : Scheme.{0}} (f : Y ⟶ X) [IsFinite f] {Ω : Type} [Field Ω]
+    (p : Spec (.of Ω) ⟶ X) (s : Lifts f p)
+    (h : let b := pullback.lift s.val (𝟙 _) (by simpa using s.property)
+      let R := (pullback f p).presheaf.stalk (b default)
+      ¬ IsSimpleModule R R) :
+    fibreMultiplicity f p s ≠ 1 := by
+  intro h1
+  unfold fibreMultiplicity at h1
+  apply h
+  apply Module.length_eq_one_iff.mp
+  simpa using (ENat.toNat_eq_iff (n := 1) (by decide)).mp h1
+
 end Multiplicity
 
 end MathlibExtTest.AlgebraicGeometry.SmallEtaleCoefficients
