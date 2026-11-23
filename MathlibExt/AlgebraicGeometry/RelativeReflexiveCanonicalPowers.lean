@@ -141,8 +141,12 @@ structure ReflexivePowerExtension {X' X : Scheme.{0}} (p : X' ⟶ X)
     (Scheme.Modules.pullback p).map E.map ≫ φ =
       (P.comparison m).hom.app M ≫ powerMap α m ≫ E'.map → φ = map
 
-/-- Kollár's compatibility is tested on actual normalized powers and maps. -/
-def HasKollarCompatibility {X' X Y' Y : Scheme.{0}}
+/-- For one supplied comparison map `α` (not necessarily the canonical base-change
+map) and one square: every reflexive canonical power is flat over `Y`, and every
+induced extension of `α` to the reflexive powers is an isomorphism. This tests the
+supplied `α` only. Kollár's condition is this test for the canonical base-change
+map at every cartesian base change. -/
+def FlatPowersAndIsoAt {X' X Y' Y : Scheme.{0}}
     (p : X' ⟶ X) (f' : X' ⟶ Y') (f : X ⟶ Y)
     (R : ProperReference f) (R' : ProperReference f')
     (n : ℕ) (α : (Scheme.Modules.pullback p).obj (properCanonicalModule R n) ⟶
@@ -219,4 +223,3 @@ def reflexivePowerAcrossOpen {X' X : Scheme.{0}} (p : X' ⟶ X)
     unique := φ.property.2 }
 
 end MathlibExt.AlgebraicGeometry.RelativeReflexiveCanonicalPowers
-

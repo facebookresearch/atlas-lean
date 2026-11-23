@@ -112,4 +112,3 @@ def properBaseChange [HasDerivedPullbacks.{0}] {X' X Y' Y : Scheme.{0}}
   exact β.hom
 
 end MathlibExt.AlgebraicGeometry.QuasicoherentDualityReferences
-

@@ -73,4 +73,3 @@ def leftUnitMap (X : Scheme.{0}) (L : X.Modules) :
     (PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)).counit.app L
 
 end MathlibExt.AlgebraicGeometry.NormalizedModuleTensorMaps
-
