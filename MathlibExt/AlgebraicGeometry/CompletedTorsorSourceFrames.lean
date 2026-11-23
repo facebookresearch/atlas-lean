@@ -45,6 +45,14 @@ variable (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
   (A : Algebraization p E G H Q.space)
   (B : FpqcPreservesTorsors E G (completionBaseMap p E d U Q))
 
+/-- An `eqToHom` of valued spaces identifies the topological section rings. -/
+theorem sectionsHomeomorphic_eqToHom {A B : AnalyticTateAdicModels.ValuedSpace}
+    (h : A = B) : AnalyticTateAdicModels.SectionsHomeomorphic (eqToHom h).val := by
+  subst h
+  intro U _
+  change @IsHomeomorph _ _ (A.sectionTopology U) (A.sectionTopology U) id
+  exact @IsHomeomorph.id _ (A.sectionTopology U)
+
 /-- The actual whole affinoid chart, obtained from the displayed source model equality. -/
 def wholePoleChart : AnalyticDiamondEtaleSites.Chart p Q.space.left where
   pair := Q.pair
@@ -58,6 +66,7 @@ def wholePoleChart : AnalyticDiamondEtaleSites.Chart p Q.space.left where
     change IsIso ((forgetValuations.map (eqToHom Q.model_same.symm)).stalkMap x)
     unfold LocallyRingedSpace.Hom.stalkMap
     infer_instance
+  sections := sectionsHomeomorphic_eqToHom _
 
 instance wholePoleChart_isIso : IsIso (wholePoleChart p E d U Q).map := by
   dsimp [wholePoleChart]
