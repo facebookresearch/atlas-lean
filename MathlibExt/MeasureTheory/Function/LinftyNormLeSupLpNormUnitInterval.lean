@@ -24,8 +24,9 @@ SOFTWARE.
 Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
 commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level2/ma_proofbench_l2_52.lean`
 (MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
+Proving in Mathematical Analysis*, arXiv:2606.13782), distributed under the MIT License above.
+The same formal statement appears in the Hugging Face dataset openbmb/MA-ProofBench.
+Changes made: converted
 `theorem ma_proofbench_l2_52 … := by sorry` into the Batteries `theorem_wanted`
 `eLpNorm_top_le_of_forall_one_le_eLpNorm_le`; moved the informal problem statement docstring
 onto it and placed the declarations in namespace
