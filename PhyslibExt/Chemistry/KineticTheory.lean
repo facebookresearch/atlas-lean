@@ -167,7 +167,10 @@ lemma integral_mbSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
 /-! ## B. Characteristic speeds -/
 
 /-- Mean speed `⟨v⟩ = ∫ v in Ioi 0, v * mbSpeed R T M v` (CH08.2), defined as the integral; its
-closed form is `meanSpeed_eq`. It is new because `mbSpeed` is. -/
+closed form is `meanSpeed_eq`. For `R, T, M > 0` the density is a probability density on `[0, ∞)`
+and this is its mean speed. The integral is defined for all real `R`, `T` and `M`: for `R T = 0` or
+`M / (R T) < 0` the density is `0` by its conventions, so `meanSpeed` is `0`. It is new because
+`mbSpeed` is. -/
 noncomputable def meanSpeed (R T M : ℝ) : ℝ :=
   ∫ v in Set.Ioi (0 : ℝ), v * mbSpeed R T M v
 
