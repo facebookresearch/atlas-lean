@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Field.ZMod
-public import Mathlib.Basic.Complex.Basic
+public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSum
 public import MathlibExt.FieldTheory.Finite.PermutationPolynomial
 
 /-!
@@ -18,7 +18,7 @@ public import MathlibExt.FieldTheory.Finite.PermutationPolynomial
 
 Statements from Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on
 Ordered Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12: the
-monomial and power-sum criteria the paper quotes, its binomial-sum identity, and its two
+monomial and power-sum criteria the paper quotes and its two
 new classes of permutation polynomials over `𝔽_p`. Permutation polynomials use MathlibExt's
 `Polynomial.IsPermutationPolynomial` (bijective evaluation map).
 -/
@@ -56,24 +56,6 @@ public theorem_wanted injective_iff_sum_pow_eq {K : Type*} [Field K] [Fintype K]
     Function.Injective a ↔
       (∀ t : ℕ, t < Fintype.card K - 1 → ∑ i, a i ^ t = 0) ∧
         ∑ i, a i ^ (Fintype.card K - 1) = -1
-
-/-- **Alternating binomial sums of powers.** Let $x, y, k \in \mathbb{C}$ and let $n, m$ be
-positive integers. If $n = m$, then
-
-$$\sum_{i=0}^{n} (-1)^i \binom{n}{i} (kx + iy)^m = (-1)^n y^n n!,$$
-
-and if $m < n$, then $\sum_{i=0}^{n} (-1)^i \binom{n}{i} (kx + iy)^m = 0$.
-
-Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
-Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Theorem 3
-(`integers-2024-A12-thm-3`). -/
-public theorem_wanted sum_neg_one_pow_choose_mul_pow (x y k : ℂ) {n m : ℕ} (hn : 0 < n)
-    (hm : 0 < m) :
-    (n = m → ∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * (n.choose i : ℂ) * (k * x + i * y) ^ m =
-          (-1) ^ n * y ^ n * (n.factorial : ℂ)) ∧
-      (m < n → ∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * (n.choose i : ℂ) * (k * x + i * y) ^ m = 0)
 
 /-- **Shifted power-sum permutation polynomials of a prime field.** Let $p$ be an odd prime and
 let $k, t, a$ be positive integers with $\gcd(a + 1, p - 1) = 1$ and $k \equiv 1 \pmod{p(p-1)}$.
