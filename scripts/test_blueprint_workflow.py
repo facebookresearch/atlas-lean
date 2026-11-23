@@ -617,16 +617,23 @@ elif "/compare/" in path:
         self.assertEqual(jobs["deploy"]["needs"], "wiki")
         self.assertNotIn("permissions", cards)
         self.assertNotIn("continue-on-error", cards)
-        # The card tests do not run in the wiki job. It derives the card data its site shows in one step, after
-        # lean-facts and before render, which can neither fail the job nor hold it past its timeout.
+        # The card tests do not run in the wiki job. It checks the move ledger the site serves and derives the card
+        # data its site shows in two steps, after lean-facts and before render, each of which can neither fail the
+        # job nor hold it past its timeout.
         self.assertFalse(any("test_cards" in step.get("run", "") for step in self.steps))
-        derive = "Derive the card data the site shows"
-        self.assertEqual([step["name"] for step in self.steps if "cards.py" in step.get("run", "")], [derive])
-        self.assertEqual(self.step(derive)["continue-on-error"], "true")
-        self.assertLessEqual(int(self.step(derive)["timeout-minutes"]), 15)
+        moves, derive = "Check the move ledger the site serves", "Derive the card data the site shows"
+        self.assertEqual([step["name"] for step in self.steps if "cards.py" in step.get("run", "")], [moves, derive])
         wiki_names = [step.get("name") for step in self.steps]
-        self.assertLess(wiki_names.index("Add the Lean-owned facts to the articles"), wiki_names.index(derive))
-        self.assertLess(wiki_names.index(derive), wiki_names.index("Render the blueprint"))
+        for name in (moves, derive):
+            self.assertEqual(self.step(name)["continue-on-error"], "true")
+            self.assertLessEqual(int(self.step(name)["timeout-minutes"]), 15)
+            self.assertLess(wiki_names.index("Add the Lean-owned facts to the articles"), wiki_names.index(name))
+            self.assertLess(wiki_names.index(name), wiki_names.index("Render the blueprint"))
+        # The ledger check, independent of the strict card check, removes any earlier receipt before it runs.
+        check_moves = self.step(moves)["run"]
+        self.assertLess(check_moves.index("rm -f build/card-moves.json"),
+                        check_moves.index("python scripts/cards.py moves build/card-moves.json"))
+        self.assertIn('uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"', check_moves)
         checkout = next(step for step in cards["steps"] if step.get("name") == "Check out project")
         self.assertEqual(checkout["with"]["persist-credentials"], "false")
         self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])

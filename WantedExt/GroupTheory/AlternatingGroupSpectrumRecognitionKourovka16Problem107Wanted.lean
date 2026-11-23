@@ -34,7 +34,7 @@ every" means "for all sufficiently large `n`", as the problem states.
 
 /-- **Spectrum of a group.** The spectrum $\pi_e(G)$ of a group $G$ is the set of orders of the
 elements of $G$, where an element of infinite order is assigned order $0$. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- **Kourovka Problem 16.107 on recognition of alternating groups by spectrum.** This proposition

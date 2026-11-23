@@ -25,49 +25,50 @@ example {M : Submodule A V} (hspan : Submodule.span K (M : Set V) = ⊤) :
 
 example [IsDomain A] [FiniteDimensional K V]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    (hM : Submodule.IsLattice K M) (f : Module.Dual A M) :
+    (hM : Submodule.IsFullLattice K M) (f : Module.Dual A M) :
     ∃ x : B.dualSubmodule M, B.dualSubmoduleToDual M x = f := by
   let _ := hM
-  exact B.dualSubmoduleToDual_surjective hB M hM.span_eq_top f
+  exact B.dualSubmoduleToDual_surjective hB M IsFullLattice.span_eq_top f
 
 example [IsDomain A] [FiniteDimensional K V]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    (hM : Submodule.IsLattice K M) :
+    (hM : Submodule.IsFullLattice K M) :
     Function.Bijective (B.dualSubmoduleToDual M) := by
   let _ := hM
-  exact B.dualSubmoduleToDual_bijective hB M hM.span_eq_top
+  exact B.dualSubmoduleToDual_bijective hB M IsFullLattice.span_eq_top
 
 example [IsDomain A] [FiniteDimensional K V] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    (hM : Submodule.IsLattice K M) : Module.Finite A (B.dualSubmodule M) := by
+    (hM : Submodule.IsFullLattice K M) : Module.Finite A (B.dualSubmodule M) := by
   let _ := hM
+  haveI := IsLattice.finite K M
   rw [Module.Finite.iff_fg]
-  exact B.dualSubmodule_fg hB M hM.span_eq_top
+  exact B.dualSubmodule_fg hB M IsFullLattice.span_eq_top
 
-example (M : Submodule A V) (hM : Submodule.IsLattice K M) :
+example (M : Submodule A V) (hM : Submodule.IsFullLattice K M) :
     Submodule.span K ((0 : LinearMap.BilinForm K V).dualSubmodule M : Set V) = ⊤ := by
-  exact LinearMap.BilinForm.dualSubmodule_span_eq_top _ M hM.fg
+  exact LinearMap.BilinForm.dualSubmodule_span_eq_top _ M (IsLattice.fg K M)
 
 example [IsDomain A] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    (hM : Submodule.IsLattice K M) : Module.Finite A (B.dualSubmodule M) := by
+    (hM : Submodule.IsFullLattice K M) : Module.Finite A (B.dualSubmodule M) := by
   let := hM
-  let := B.dualSubmodule_isLattice hB M
-  infer_instance
+  let := B.dualSubmodule_isFullLattice hB M
+  exact IsLattice.finite K _
 
 example [IsDomain A] [FiniteDimensional K V] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    (hM : Submodule.IsLattice K M) :
-    Submodule.IsLattice K (B.dualSubmodule M) ∧
+    (hM : Submodule.IsFullLattice K M) :
+    Submodule.IsFullLattice K (B.dualSubmodule M) ∧
       Function.Bijective (B.dualSubmoduleToDual M) := by
   let := hM
   obtain ⟨hLat, hBij⟩ :=
-    B.dualSubmodule_isLattice_and_dualSubmoduleToDual_bijective hB M
+    B.dualSubmodule_isFullLattice_and_dualSubmoduleToDual_bijective hB M
   exact ⟨hLat, hBij⟩
 
 noncomputable example [IsDomain A] [FiniteDimensional K V]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    (hM : Submodule.IsLattice K M) :
+    (hM : Submodule.IsFullLattice K M) :
     (B.dualSubmodule M) ≃ₗ[A] Module.Dual A M := by
   let := hM
-  exact B.dualSubmoduleLinearEquiv hB M hM.span_eq_top
+  exact B.dualSubmoduleLinearEquiv hB M IsFullLattice.span_eq_top
