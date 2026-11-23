@@ -21,8 +21,8 @@ degenerations. Constants lie in the working field's value group. The working
 field can be a genuine nontrivially valued extension of an originally trivial
 valued field; no change of the existing I3 initial/support primitives occurs.
 
-Proper intersection is tested by the actual affine dimensions of all cell
-intersections through the point. This is the input of Osserman--Payne,
+Proper intersection is tested by the actual affine dimensions of the intersections of the
+nonzero weighted facets through the point. This is the input of Osserman--Payne,
 *Lifting Tropical Intersections*, 1007.1314v3, Theorems 1.1 and 5.1.1.
 The latter's weighted Tor equality is distinct from general scheme
 multiplicity equality, which only holds with its additional CM hypotheses.
@@ -46,7 +46,7 @@ def PureDimension (I : Ideal (ValuativeTropicalization.CoordinateRing K n)) (d :
 
 /-- A presentation is tied to the exact initial/support construction. -/
 structure Presentation (I : Ideal (ValuativeTropicalization.CoordinateRing K n)) where
-  cycle : Cycle n
+  cycle : WeightedComplex n
   dimension_le : cycle.dimension ≤ n
   pure : PureDimension K n I cycle.dimension
   support : cycle.support = tropicalizationOver (L := K) I
@@ -65,9 +65,13 @@ structure Presentation (I : Ideal (ValuativeTropicalization.CoordinateRing K n))
 def intersectionDimension (P Q : Polyhedron n) : ℕ :=
   Module.finrank ℝ (affineSpan ℝ (P.carrier ∩ Q.carrier)).direction
 
-def ProperAt (A B : Cycle n) (w : RealSpace n) : Prop :=
+/-- The supports of `A` and `B` meet properly at `w`: every pair of nonzero weighted facets
+through `w` meets in at most the expected dimension. Cells of weight zero are not part of the
+supports and are ignored, so the condition does not depend on the presentation. -/
+def ProperAt (A B : WeightedComplex n) (w : RealSpace n) : Prop :=
   w ∈ A.support ∩ B.support ∧ n ≤ A.dimension + B.dimension ∧
-    ∀ i j, w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
+    ∀ i j, A.weight i ≠ 0 → B.weight j ≠ 0 →
+      w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
       intersectionDimension n (A.complex.cell i) (B.complex.cell j) ≤
         A.dimension + B.dimension - n
 

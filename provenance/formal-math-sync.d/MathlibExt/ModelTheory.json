@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "MathlibExt/ModelTheory/GroupLanguage.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "da3dadcfc1fcc5034bb41c961303526d35057e85f85c9c31abd7dd5e6cea1c4d", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "37bb8d41bc542a074ca839ca7744058f0ab083fcb5c2ec4ed80f18f880e6dbd7"}
+  ]
+}

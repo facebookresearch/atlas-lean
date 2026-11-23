@@ -9,6 +9,8 @@ module
 
 public import PhyslibExt.EarthScience.Reactors
 
+import Mathlib.Analysis.ODE.ExistUnique
+
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
@@ -37,12 +39,15 @@ divisions by a zero rate.
 - `CSTR.solution_hasDerivAt`: the imported ODE statement for `solution`.
 - `CSTR.solution_zero_flow` and `CSTR.solution_zero_flow_zero_rate`: the
   separated batch and constant branches.
+- `CSTR.eq_solution_of_hasDerivAt`: a supplied solution on `[a, b]` with
+  the explicit solution's initial value at `a` is the explicit solution.
 
 ## iii. Table of contents
 
 - A. Steady state and explicit solution
 - B. Error identity and nonnegativity
 - C. Zero-flow branches
+- D. Initial-value uniqueness
 
 ## iv. References
 
@@ -170,5 +175,59 @@ lemma solution_zero_flow_zero_rate (V cin c0 t : ℝ) :
   unfold solution
   rw [hsteady]
   simp
+
+set_option linter.style.show false in
+/-- **CSTR IVP uniqueness.** Any solution of the linear CSTR equation on
+`[a, b]` with the same value as the explicit solution at the initial time
+`a` equals the explicit solution on the whole interval. One application
+of Mathlib's `ODE_solution_unique_of_mem_Icc_right` with Lipschitz
+constant `Q / V + k`; the explicit side is supplied by
+`solution_hasDerivAt`. -/
+theorem eq_solution_of_hasDerivAt {V Q k cin c0 a b : ℝ} (hV : 0 < V)
+    (hQ : 0 < Q) (hk : 0 ≤ k) {f : ℝ → ℝ}
+    (hf : ContinuousOn f (Set.Icc a b))
+    (hf' : ∀ t ∈ Set.Ico a b,
+      HasDerivWithinAt f ((Q / V) * (cin - f t) - k * f t) (Set.Ici t) t)
+    (hf0 : f a = solution V Q k cin c0 a) :
+    Set.EqOn f (solution V Q k cin c0) (Set.Icc a b) := by
+  have hL_nonneg : 0 ≤ Q / V + k := add_nonneg (div_pos hQ hV).le hk
+  have hv : ∀ t ∈ Set.Ico a b,
+      LipschitzOnWith ⟨Q / V + k, hL_nonneg⟩
+        ((fun _ : ℝ => fun x : ℝ => (Q / V) * (cin - x) - k * x) t)
+        ((fun _ : ℝ => Set.univ) t) := by
+    intro t _
+    apply LipschitzOnWith.of_dist_le_mul
+    intro x _ y _
+    show dist (((fun _ : ℝ => fun x : ℝ => (Q / V) * (cin - x) - k * x) t) x)
+        (((fun _ : ℝ => fun x : ℝ => (Q / V) * (cin - x) - k * x) t) y) ≤ _
+    simp only []
+    rw [Real.dist_eq, Real.dist_eq]
+    have heq : ((Q / V) * (cin - x) - k * x) - ((Q / V) * (cin - y) - k * y)
+        = -(Q / V + k) * (x - y) := by ring
+    rw [heq, abs_mul]
+    have habs : |-(Q / V + k)| = Q / V + k := by
+      rw [abs_neg, abs_of_nonneg hL_nonneg]
+    rw [habs]
+    exact le_rfl
+  have hg : ContinuousOn (solution V Q k cin c0) (Set.Icc a b) :=
+    HasDerivAt.continuousOn (fun t _ => solution_hasDerivAt V Q k cin c0 t hV hQ hk)
+  have hg' : ∀ t ∈ Set.Ico a b,
+      HasDerivWithinAt (solution V Q k cin c0)
+        (((fun _ : ℝ => fun x : ℝ => (Q / V) * (cin - x) - k * x) t)
+          (solution V Q k cin c0 t)) (Set.Ici t) t := by
+    intro t _
+    exact (solution_hasDerivAt V Q k cin c0 t hV hQ hk).hasDerivWithinAt
+  have hf'' : ∀ t ∈ Set.Ico a b,
+      HasDerivWithinAt f
+        (((fun _ : ℝ => fun x : ℝ => (Q / V) * (cin - x) - k * x) t) (f t))
+        (Set.Ici t) t := by
+    intro t ht
+    simpa only [] using hf' t ht
+  have hfs : ∀ t ∈ Set.Ico a b, f t ∈ (fun _ : ℝ => Set.univ) t :=
+    fun t _ => Set.mem_univ _
+  have hgs : ∀ t ∈ Set.Ico a b,
+      solution V Q k cin c0 t ∈ (fun _ : ℝ => Set.univ) t :=
+    fun t _ => Set.mem_univ _
+  exact ODE_solution_unique_of_mem_Icc_right hv hf hf'' hfs hg hg' hgs hf0
 
 end Engineering.Process.CSTR

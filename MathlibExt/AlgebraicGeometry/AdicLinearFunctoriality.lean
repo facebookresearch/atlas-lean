@@ -10,11 +10,11 @@ module
 public import MathlibExt.CategoryTheory.AdjunctionLinear
 public import MathlibExt.AlgebraicGeometry.ProEtaleCohomologyFunctoriality
 
-/-! # Linearity of actual continuous-coefficient cohomology pullback
+/-! # Linearity of the cohomology pullback
 
-Restriction along scheme base change is visibly linear. The actual
-inverse-image adjunction transfers this to pullback, and Mathlib's linear
-Ext maps give the scalar action on the already fixed cohomology operator.
+Direct image (restriction along base change) is `R`-linear; inverse image, its left adjoint, is
+then `R`-linear too, and Mathlib's linear `Ext` maps show that the cohomology pullback
+`cohomologyPullback` is `R`-linear (`cohomologyPullbackLinear`).
 -/
 
 @[expose] public noncomputable section
@@ -36,7 +36,7 @@ instance pullbackLinear {Y X : Scheme} (f : Y ⟶ X) :
     Functor.Linear R (pullback R f) :=
   MathlibExt.CategoryTheory.linear_leftAdjoint R (pullbackAdjunction R f)
 
-/-- The linear Ext construction uses the same inverse image and unit maps. -/
+/-- The cohomology pullback as an `R`-linear map. -/
 def cohomologyPullbackLinear {Y X : Scheme} (f : Y ⟶ X)
     {F : CoefficientSheaf X R} {G : CoefficientSheaf Y R}
     (c : (pullback R f).obj F ⟶ G) (n : ℕ) :
@@ -54,7 +54,7 @@ def cohomologyPullbackLinear {Y X : Scheme} (f : Y ⟶ X)
       (zero_add n)
   exact m₂.comp (m₁.comp m₀)
 
-/-- Its value is the existing normalized actual cohomology pullback. -/
+/-- `cohomologyPullbackLinear` is `cohomologyPullback`. -/
 theorem cohomologyPullbackLinear_apply {Y X : Scheme} (f : Y ⟶ X)
     {F : CoefficientSheaf X R} {G : CoefficientSheaf Y R}
     (c : (pullback R f).obj F ⟶ G) (n : ℕ) (a : Cohomology R X F n) :
