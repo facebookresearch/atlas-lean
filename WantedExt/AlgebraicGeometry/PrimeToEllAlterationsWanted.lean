@@ -22,10 +22,12 @@ Source: Travaux de Gabber sur l'uniformisation locale et la cohomologie étale
 des schémas quasi-excellents, Exposé X, Theorem 2.1, p. 149,
 https://arxiv.org/abs/1207.3648.
 
-This is the proper perfect-field specialization. The source theorem allows
-a finite prime-to-ell field extension; viewing its smooth source over the
-perfect original field gives the displayed smooth proper model, with the
-actual finite generic extension degree still prime to ell.
+This is a corollary of Theorem 2.1 for a perfect field and a proper integral
+pair. It forgets the projectivity of the alteration, the quasi-projectivity
+of its source and the auxiliary finite field extension of degree prime to
+ell: over the perfect original field that extension is separable, so a
+component of the source dominating the target is a smooth proper model over
+the original field, with finite generic degree still prime to ell.
 Existing ordinary alteration consequences, strict crossings predicates
 and generic hypercover/cohomological-descent producers are toolbox.
 -/

@@ -38,23 +38,42 @@ example {X Y : Scheme.{u}} (f : Y ⟶ X) (D : X.IdealSheafData) :
     IsReduced (reducedPullbackBoundary f D).subscheme :=
   Scheme.IdealSheafData.isReduced_subscheme_vanishingIdeal _
 
--- The empty boundary (unit ideal) has strict normal crossings.
-example {k : Type u} [Field k] (X : Over (Spec (.of k))) :
+-- The reduced pullback boundary is Mathlib's radical of the scheme-theoretic pullback.
+example {X Y : Scheme.{u}} (f : Y ⟶ X) (D : X.IdealSheafData) :
+    reducedPullbackBoundary f D = (D.comap f).radical :=
+  reducedPullbackBoundary_eq_radical f D
+
+-- On a locally Noetherian scheme the empty boundary (unit ideal) has strict normal crossings.
+example {k : Type u} [Field k] (X : Over (Spec (.of k))) [IsLocallyNoetherian X.left] :
     IsStrictNormalCrossings X (⊤ : X.left.IdealSheafData) :=
   isStrictNormalCrossings_of_support_eq_bot rfl
 
 -- So does the reduced pullback of an empty boundary.
-example {k : Type u} [Field k] (X Y : Over (Spec (.of k))) (f : Y ⟶ X) :
+example {k : Type u} [Field k] (X Y : Over (Spec (.of k))) [IsLocallyNoetherian Y.left]
+    (f : Y ⟶ X) :
     IsStrictNormalCrossings Y (reducedPullbackBoundary f.left (⊤ : X.left.IdealSheafData)) :=
   isStrictNormalCrossings_of_support_eq_bot (by
     ext y
     rw [reducedPullbackBoundary_support]
     simp)
 
--- A strict normal crossings boundary is reduced and has strict local equations.
+-- A strict normal crossings boundary lives on a locally Noetherian scheme, is reduced and has
+-- strict local equations.
 example {k : Type u} [Field k] (X : Over (Spec (.of k))) (D : X.left.IdealSheafData)
-    (h : IsStrictNormalCrossings X D) : IsReduced D.subscheme ∧ StrictStalkCrossings D :=
-  ⟨h.1, h.2.1⟩
+    (h : IsStrictNormalCrossings X D) :
+    IsLocallyNoetherian X.left ∧ IsReduced D.subscheme ∧ StrictStalkCrossings D :=
+  ⟨h.1, h.2.1, h.2.2.1⟩
+
+-- Its components, and all their finite scheme-theoretic intersections, are smooth.
+example {k : Type u} [Field k] (X : Over (Spec (.of k))) (D : X.left.IdealSheafData)
+    (h : IsStrictNormalCrossings X D) (C C' : irreducibleComponents D.subscheme) :
+    Smooth ((componentIdeal D C).subschemeι ≫ X.hom) ∧
+      Smooth ((componentIdeal D C ⊔ componentIdeal D C').subschemeι ≫ X.hom) := by
+  classical
+  refine ⟨h.smooth_componentIdeal C, ?_⟩
+  have hCC' := h.2.2.2 {C, C'} (Finset.insert_nonempty _ _)
+  rwa [show componentIntersectionIdeal D {C, C'} = componentIdeal D C ⊔ componentIdeal D C' by
+    simp [componentIntersectionIdeal, iSup_or, iSup_sup_eq]] at hCC'
 
 -- At each boundary point the local equation is a product of a nonempty initial segment of a
 -- regular system of parameters of the regular ambient stalk.

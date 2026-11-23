@@ -63,6 +63,7 @@ example {k : Type u} [Field k] {X : Over (Spec (.of k))} [IsIntegral X.left]
 -- alteration for every `ell`.
 example {k : Type u} [Field k] (M : SmoothProperModel k) (ell : ℕ) :
     Nonempty (PrimeToEllAlteration M.variety (⊤ : M.variety.left.IdealSheafData) ell) := by
+  have := LocallyOfFiniteType.isLocallyNoetherian M.variety.hom
   have hgp : (𝟙 M.variety.left : M.variety.left ⟶ M.variety.left)
       (genericPoint M.variety.left) = genericPoint M.variety.left := by simp
   refine ⟨{ source := M

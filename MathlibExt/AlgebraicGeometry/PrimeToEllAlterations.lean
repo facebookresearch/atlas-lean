@@ -43,7 +43,9 @@ def genericFieldMap {X Y : Scheme.{u}} [IsIntegral X] [IsIntegral Y]
     (f : Y ⟶ X) (h : f (genericPoint Y) = genericPoint X) : X.functionField ⟶ Y.functionField :=
   eqToHom (congrArg (fun x : X ↦ X.presheaf.stalk x) h.symm) ≫ f.stalkMap (genericPoint Y)
 
-/-- The degree of the actual generic field extension, with its canonical scalar action. -/
+/-- The degree of the actual generic field extension, with its canonical scalar action, as
+`Module.finrank`: it is `0` when the extension is infinite. `PrimeToEllAlteration.finiteField`
+records finiteness where the degree is used. -/
 def genericDegree {X Y : Scheme.{u}} [IsIntegral X] [IsIntegral Y]
     (f : Y ⟶ X) (h : f (genericPoint Y) = genericPoint X) : ℕ :=
   letI : Algebra X.functionField Y.functionField := (genericFieldMap f h).hom.toAlgebra
