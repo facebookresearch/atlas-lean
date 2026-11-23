@@ -1,0 +1,15 @@
+# Succinct circuit value problem
+
+- [Encoded gates (Succinct Circuit Value)](scvgate.md)
+- [Gate values of an encoded circuit (Succinct Circuit Value)](scv-circuit-eval.md)
+- [Outputs of an encoded circuit (Succinct Circuit Value)](scv-circuit-outputs.md)
+- [Fixed-length binary expansion (Succinct Circuit Value)](scv-bits-of.md)
+- [Number with a given binary expansion (Succinct Circuit Value)](scv-bits-to-num.md)
+- [Gate description in a succinct circuit (Succinct Circuit Value)](succ-desc.md)
+- [Decoded gate description (Succinct Circuit Value)](succ-gate-info.md)
+- [Value of a gate of a succinct circuit (Succinct Circuit Value)](succ-gate-val.md)
+- [Evaluation of a succinct circuit (Succinct Circuit Value)](succ-eval.md)
+- [Well-formed description circuits (Succinct Circuit Value)](succ-desc-well-formed.md)
+- [Well-formed succinct circuit descriptions](succ-well-formed.md)
+- [Succinct Circuit Value](succinct-circuit-value-dec.md)
+- [Succinct Circuit Value is EXP-complete](succinct-circuit-value-exp-complete.md)

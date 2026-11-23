@@ -936,13 +936,6 @@ private lemma ftn_ncard_gaussNormSet_of_prime_three (p N : ℕ) (hp : Nat.Prime 
       exact h2 (Int.natCast_dvd_natCast.mp hdvdZ)
     rw [hempty, Set.ncard_empty]
 
-private lemma ftn_gauss_norm_nonneg (z : GaussianInt) : 0 ≤ z.norm := by
-  have h1 := ftn_norm_pair z.re z.im
-  have hz : (⟨z.re, z.im⟩ : GaussianInt) = z := Zsqrtd.ext_iff.mpr ⟨rfl, rfl⟩
-  rw [hz] at h1
-  rw [h1]
-  exact add_nonneg (mul_self_nonneg _) (mul_self_nonneg _)
-
 private lemma ftn_gauss_norm_dvd {x y : GaussianInt} (h : x ∣ y) :
     x.norm ∣ y.norm := by
   obtain ⟨v, hv⟩ := h
@@ -983,8 +976,8 @@ private lemma ftn_prime_of_norm_prime (z : GaussianInt) (p : ℕ) (hp : Nat.Prim
       have e := congrArg Zsqrtd.norm hxy
       rw [Zsqrtd.norm_mul, hz] at e
       exact e.symm
-    have ha_nn := ftn_gauss_norm_nonneg x
-    have hb_nn := ftn_gauss_norm_nonneg y
+    have ha_nn := GaussianInt.norm_nonneg x
+    have hb_nn := GaussianInt.norm_nonneg y
     have hAB : x.norm.natAbs * y.norm.natAbs = p := by
       have h := congrArg Int.natAbs hnab
       rwa [Int.natAbs_mul, Int.natAbs_natCast] at h
@@ -2761,22 +2754,21 @@ namespace MetaMathlibExt
 -/
 
 /--
-Legendre: `t_4(j) = σ(2*j+1)`, where `t_4(j)` counts ordered writes of `j`
-as a sum of 4 triangular numbers and `σ` is the divisor sum.
+**Legendre's four-triangular-numbers theorem.** For $k \ge 0$ let $T_k = k(k+1)/2$ be the
+$k$-th triangular number. For every natural number $j$, the number of ordered quadruples
+$(k_1, k_2, k_3, k_4)$ of integers with $0 \le k_i \le j$ and
+$T_{k_1} + T_{k_2} + T_{k_3} + T_{k_4} = j$ equals $\sigma(2j+1)$, the sum of the positive
+divisors of $2j+1$.
+
+The bound $k_i \le j$ is automatic, since $T_k \ge k$. Representations using $T_0 = 0$ are
+counted, and quadruples that differ only in the order of their entries are counted separately.
+
+Proves `Wanted` entry `four_triangular_numbers_eq_divisor_sum`.
 
 Source: Hartosh Singh Bal and Gaurav Bhatnagar, "Glaisher's Divisors and
 Infinite Products," Journal of Integer Sequences 27 (2024), Article 24.1.6,
 Proposition [Legendre] (equation nttriangle-b), lines 738–740,
 https://cs.uwaterloo.ca/journals/JIS/VOL27/Bhatnagar/bhat4.tex
-
-The source gives an alternate proof via its triangular recurrence
-(equation triangular) and Melfi's convolution identities, citing further
-proofs in Berndt, Hahn, HOSW, and ORW. The subtype counts ordered
-4-tuples of indices (zeros allowed, so `T_0 = 0` contributes); the right
-side sums `Nat.divisors (2*j+1)`. Verified computationally at `j = 0..8`
-(e.g. `t_4(4) = 13 = σ(9)`).
-
-Proves `Wanted` entry `four_triangular_numbers_eq_divisor_sum`.
 -/
 public theorem four_triangular_numbers_eq_divisor_sum
     (j : ℕ) :

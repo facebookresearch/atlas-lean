@@ -40,9 +40,12 @@ namespace NumberField
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- Proposition 15.9 of ATLAS `NumberTheoryI`: an Arakelov divisor whose
-size exceeds `B_K = (2 / π) ^ s * √|D_K|`, where `s` is the number of
-complex places, has a nonzero section. -/
+/-- **Large Arakelov divisors have a nonzero section.** Let $K$ be a number field with $s$
+complex places and discriminant $d_K$, and let $D$ be an Arakelov divisor on $K$. If the size
+of $D$ is strictly greater than $(2/\pi)^s \sqrt{|d_K|}$, then the section set of $D$ contains
+a nonzero element of $K$.
+
+Source: Proposition 15.9 of ATLAS `NumberTheoryI`. -/
 theorem ArakelovDivisor.exists_ne_zero_mem_sectionSet_of_size_gt
     (D : ArakelovDivisor K)
     (hD : (2 / Real.pi) ^ InfinitePlace.nrComplexPlaces K *

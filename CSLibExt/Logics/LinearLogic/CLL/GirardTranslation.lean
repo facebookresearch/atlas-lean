@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Cslib.Logics.LinearLogic.CLL.Basic
-public import Cslib.Logics.Propositional.NaturalDeduction.Basic
+public import CSLibExt.Logics.Propositional.Legacy.NaturalDeduction.Basic
 public import Mathlib.Algebra.Order.Group.Multiset
 
 @[expose] public section
@@ -25,11 +25,11 @@ logic (CLL) by marking every hypothesis as reusable with `!`:
 * `(A → B)° = !A° ⊸ B°`,
 
 and atoms go to CLL propositions through a map `f`. This file proves that the translation
-**preserves provability** (the forward direction). If `Γ ⊢ A` is derivable in CSLib's natural
-deduction (minimal logic, `Cslib.Logic.PL`) from a theory whose axioms translate to CLL-provable
-propositions, then the CLL sequent `⊢ ?Γ°⫠, A°` is provable (`derivable_of_derivation`). Here
-`?Γ°⫠` is the multiset of the propositions `ʔ(B°⫠)` for `B ∈ Γ`, the one-sided form of
-`!Γ° ⊢ A°`.
+**preserves provability** (the forward direction). If `Γ ⊢ A` is derivable in CSLib v4.35's natural
+deduction (minimal logic, restored in `Cslib.Logic.LegacyPL`) from a theory whose axioms translate
+to CLL-provable propositions, then the CLL sequent `⊢ ?Γ°⫠, A°` is provable
+(`derivable_of_derivation`). Here `?Γ°⫠` is the multiset of the propositions `ʔ(B°⫠)` for `B ∈ Γ`,
+the one-sided form of `!Γ° ⊢ A°`.
 
 * `mpl`: theorems of minimal logic (theory `MPL`) translate to CLL theorems, for any `f`.
 * `ipl`: theorems of intuitionistic logic (theory `IPL`, with `⊥` an atom and ex falso as axioms)
@@ -49,7 +49,9 @@ here: the standard proof uses cut elimination for CLL, which is the open upstrea
 
 namespace Cslib.Logic.CLL
 
-/-- Adding a `?`-proposition does not change whether a sequent is all `?`. -/
+/-- **Adding a why-not proposition keeps a sequent all why-not.** For every CLL proposition $a$
+and every CLL sequent $\Delta$, every proposition of the sequent $?a, \Delta$ has the form $?b$
+for some $b$ if and only if every proposition of $\Delta$ does. -/
 theorem Sequent.allQuest_cons_quest {Atom : Type*} (a : Proposition Atom) (Δ : Sequent Atom) :
     Sequent.allQuest (.quest a ::ₘ Δ) = Sequent.allQuest Δ := by
   simp [Sequent.allQuest]
@@ -58,32 +60,47 @@ end Cslib.Logic.CLL
 
 namespace Cslib.Logic.CLL.Girard
 
-open Cslib.Logic CLL PL PL.Theory InferenceSystem
+open Cslib.Logic CLL LegacyPL LegacyPL.Theory InferenceSystem
 
 universe u v
 
 variable {Atom : Type u} {Atom' : Type v}
 
-/-- **Girard's translation** of a propositional formula into CLL, with atoms translated by `f`. -/
-def translate (f : Atom → CLL.Proposition Atom') : PL.Proposition Atom → CLL.Proposition Atom'
+/-- **Girard's translation.** Given a map $f$ from propositional atoms to CLL propositions, the
+translation $A \mapsto A^\circ$ of propositional formulas into CLL is defined by recursion:
+$a^\circ = f(a)$ for an atom $a$, $(A \wedge B)^\circ = A^\circ \mathbin{\&} B^\circ$,
+$(A \vee B)^\circ = {!A^\circ} \oplus {!B^\circ}$, and $(A \to B)^\circ$ is the multiplicative
+disjunction (par) of $?\big((A^\circ)^\perp\big)$ and $B^\circ$, that is, the linear implication
+${!A^\circ} \multimap B^\circ$. -/
+def translate (f : Atom → CLL.Proposition Atom') : LegacyPL.Proposition Atom → CLL.Proposition Atom'
   | .atom a => f a
   | .and A B => .with (translate f A) (translate f B)
   | .or A B => .oplus (.bang (translate f A)) (.bang (translate f B))
   | .imp A B => .parr (.quest (translate f A)⫠) (translate f B)
 
-/-- The translation of an implication is a linear implication out of `!`. -/
-theorem translate_imp (f : Atom → CLL.Proposition Atom') (A B : PL.Proposition Atom) :
+/-- **Girard's translation of an implication.** For every map $f$ from propositional atoms to CLL
+propositions and all propositional formulas $A$ and $B$, $(A \to B)^\circ = {!A^\circ} \multimap
+B^\circ$, where $C^\circ$ denotes Girard's translation of a formula $C$ with atoms translated by
+$f$ and $\multimap$ is linear implication in CLL. -/
+theorem translate_imp (f : Atom → CLL.Proposition Atom') (A B : LegacyPL.Proposition Atom) :
     translate f (.imp A B) = (.bang (translate f A) ⊸ translate f B) := rfl
 
-/-- The CLL form `ʔ(A°⫠)` of a reusable hypothesis `A`. -/
-def hyp (f : Atom → CLL.Proposition Atom') (A : PL.Proposition Atom) : CLL.Proposition Atom' :=
+/-- **Girard's translation of a reusable hypothesis.** Given a map $f$ from atoms to CLL
+propositions and a propositional formula $A$, this is the CLL proposition $?((A^\circ)^\perp)$,
+where $A^\circ$ is Girard's translation of $A$ with atoms translated by $f$ and $(\cdot)^\perp$
+is linear negation. -/
+def hyp (f : Atom → CLL.Proposition Atom') (A : LegacyPL.Proposition Atom) :
+    CLL.Proposition Atom' :=
   .quest (translate f A)⫠
 
-theorem hyp_def (f : Atom → CLL.Proposition Atom') (A : PL.Proposition Atom) :
+theorem hyp_def (f : Atom → CLL.Proposition Atom') (A : LegacyPL.Proposition Atom) :
     hyp f A = .quest (translate f A)⫠ := rfl
 
-/-- The hypotheses of a context, as a CLL sequent of `?`-propositions. -/
-def hyps (f : Atom → CLL.Proposition Atom') (Γ : Multiset (PL.Proposition Atom)) :
+/-- **Translated hypotheses of a context.** Given a map $f$ from propositional atoms to CLL
+propositions and a multiset $\Gamma$ of propositional formulas, $?\Gamma^{\circ\perp}$ is the CLL
+sequent consisting of the propositions $?\big((A^\circ)^\perp\big)$ for $A \in \Gamma$, counted
+with multiplicity, where $A^\circ$ is Girard's translation of $A$ with atoms translated by $f$. -/
+def hyps (f : Atom → CLL.Proposition Atom') (Γ : Multiset (LegacyPL.Proposition Atom)) :
     CLL.Sequent Atom' :=
   Γ.map (hyp f)
 
@@ -99,16 +116,20 @@ section Structural
 variable (f : Atom → CLL.Proposition Atom')
 
 
-theorem allQuest_hyps (Γ : Multiset (PL.Proposition Atom)) : (hyps f Γ).allQuest := by
+theorem allQuest_hyps (Γ : Multiset (LegacyPL.Proposition Atom)) : (hyps f Γ).allQuest := by
   induction Γ using Multiset.induction_on with
   | empty => simp [hyps, Sequent.allQuest]
   | cons A Γ ih =>
     rw [hyps, Multiset.map_cons, hyp, Sequent.allQuest_cons_quest]
     exact ih
 
-/-- Weakening by a whole `?`-context. -/
+/-- **Weakening by translated hypotheses.** Let $f$ map propositional atoms to CLL propositions.
+If a CLL sequent $\vdash \Delta$ is provable, then for every multiset $\Gamma$ of propositional
+formulas the sequent $\vdash ?\Gamma^{\circ\perp}, \Delta$ is provable, where $?\Gamma^{\circ\perp}$
+is the multiset of the propositions $?\big((A^\circ)^\perp\big)$ for $A \in \Gamma$ and $A^\circ$
+is Girard's translation of $A$ with atoms translated by $f$. -/
 theorem weaken_hyps {Δ : CLL.Sequent Atom'} (p : Derivable Δ)
-    (Γ : Multiset (PL.Proposition Atom)) : Derivable (hyps f Γ + Δ) := by
+    (Γ : Multiset (LegacyPL.Proposition Atom)) : Derivable (hyps f Γ + Δ) := by
   induction Γ using Multiset.induction_on with
   | empty => simpa [hyps] using p
   | cons A Γ ih =>
@@ -116,8 +137,13 @@ theorem weaken_hyps {Δ : CLL.Sequent Atom'} (p : Derivable Δ)
     rw [hyps, Multiset.map_cons, Multiset.cons_add]
     exact ⟨.weaken q⟩
 
-/-- Contraction of a duplicated `?`-context. -/
-theorem contract_hyps {Δ : CLL.Sequent Atom'} (Γ : Multiset (PL.Proposition Atom))
+/-- **Contraction of a translated hypothesis context.** Let $f$ map atoms to CLL propositions,
+let $\Gamma$ be a multiset of propositional formulas, and write $?\Gamma^{\circ\perp}$ for the
+CLL sequent of the propositions $?((B^\circ)^\perp)$, one for each $B \in \Gamma$ counted with
+multiplicity, where $B^\circ$ is Girard's translation of $B$ with atoms translated by $f$. For
+every CLL sequent $\Delta$, if $\vdash ?\Gamma^{\circ\perp}, ?\Gamma^{\circ\perp}, \Delta$ is
+provable in CLL, then so is $\vdash ?\Gamma^{\circ\perp}, \Delta$. -/
+theorem contract_hyps {Δ : CLL.Sequent Atom'} (Γ : Multiset (LegacyPL.Proposition Atom))
     (p : Derivable (hyps f Γ + hyps f Γ + Δ)) : Derivable (hyps f Γ + Δ) := by
   induction Γ using Multiset.induction_on generalizing Δ with
   | empty => simpa [hyps] using p
@@ -127,21 +153,38 @@ theorem contract_hyps {Δ : CLL.Sequent Atom'} (Γ : Multiset (PL.Proposition At
     obtain ⟨r⟩ := ih (Δ := hyp f A ::ₘ Δ) ⟨(Proof.contract q').rwConclusion (by msimp)⟩
     exact ⟨r.rwConclusion (by msimp)⟩
 
-/-- From `⊢ ?Γ, A` derive `⊢ ?Γ, !A` (promotion). -/
-theorem bang_hyps {Γ : Multiset (PL.Proposition Atom)} {a : CLL.Proposition Atom'}
+/-- **Promotion in a translated hypothesis context.** Let $f$ map atoms to CLL propositions, let
+$\Gamma$ be a multiset of propositional formulas, and write $?\Gamma^{\circ\perp}$ for the CLL
+sequent of the propositions $?((B^\circ)^\perp)$, one for each $B \in \Gamma$ counted with
+multiplicity, where $B^\circ$ is Girard's translation of $B$ with atoms translated by $f$. For
+every CLL proposition $a$, if the sequent $\vdash a, ?\Gamma^{\circ\perp}$ is provable in CLL,
+then so is $\vdash !a, ?\Gamma^{\circ\perp}$. -/
+theorem bang_hyps {Γ : Multiset (LegacyPL.Proposition Atom)} {a : CLL.Proposition Atom'}
     (p : Derivable (a ::ₘ hyps f Γ)) : Derivable (.bang a ::ₘ hyps f Γ) :=
   let ⟨q⟩ := p
   ⟨.bang (allQuest_hyps f Γ) q⟩
 
-/-- Cut against a closed proof. -/
-theorem cut_closed {Γ : Multiset (PL.Proposition Atom)} {a c : CLL.Proposition Atom'}
+/-- **Cut of a translated hypothesis context against a closed proof.** Let $f$ map atoms to CLL
+propositions, let $\Gamma$ be a multiset of propositional formulas, and write
+$?\Gamma^{\circ\perp}$ for the CLL sequent of the propositions $?((B^\circ)^\perp)$, one for
+each $B \in \Gamma$ counted with multiplicity, where $B^\circ$ is Girard's translation of $B$
+with atoms translated by $f$. For all CLL propositions $a$ and $c$, if
+$\vdash a, ?\Gamma^{\circ\perp}$ is provable in CLL and there is a CLL proof of
+$\vdash a^\perp, c$, then $\vdash c, ?\Gamma^{\circ\perp}$ is provable in CLL. -/
+theorem cut_closed {Γ : Multiset (LegacyPL.Proposition Atom)} {a c : CLL.Proposition Atom'}
     (p : Derivable (a ::ₘ hyps f Γ)) (q : ⇓(a⫠ ::ₘ ({c} : CLL.Sequent Atom'))) :
     Derivable (c ::ₘ hyps f Γ) :=
   let ⟨p⟩ := p
   ⟨(Proof.cut p q).rwConclusion (by msimp)⟩
 
-/-- Cut against a proof in the same `?`-context, followed by contraction. -/
-theorem cut_hyps {Γ : Multiset (PL.Proposition Atom)} {a c : CLL.Proposition Atom'}
+/-- **Cut within a translated hypothesis context.** Let $f$ map atoms to CLL propositions, let
+$\Gamma$ be a multiset of propositional formulas, and write $?\Gamma^{\circ\perp}$ for the CLL
+sequent of the propositions $?((B^\circ)^\perp)$, one for each $B \in \Gamma$ counted with
+multiplicity, where $B^\circ$ is Girard's translation of $B$ with atoms translated by $f$. For
+all CLL propositions $a$ and $c$, if both $\vdash a, ?\Gamma^{\circ\perp}$ and
+$\vdash a^\perp, c, ?\Gamma^{\circ\perp}$ are provable in CLL, then so is
+$\vdash c, ?\Gamma^{\circ\perp}$. -/
+theorem cut_hyps {Γ : Multiset (LegacyPL.Proposition Atom)} {a c : CLL.Proposition Atom'}
     (p : Derivable (a ::ₘ hyps f Γ)) (q : Derivable (a⫠ ::ₘ c ::ₘ hyps f Γ)) :
     Derivable (c ::ₘ hyps f Γ) := by
   obtain ⟨p⟩ := p
@@ -156,17 +199,30 @@ end Structural
 variable [DecidableEq Atom] (f : Atom → CLL.Proposition Atom')
 
 omit [DecidableEq Atom] in
-/-- A hypothesis in the context: `⊢ ?Γ°⫠, A°` for `A ∈ Γ`. -/
-theorem hyp_mem {Γ : Multiset (PL.Proposition Atom)} {A : PL.Proposition Atom} (h : A ∈ Γ) :
+/-- **Translated hypotheses are provable from their context.** Let $f$ map atoms to CLL
+propositions, let $\Gamma$ be a multiset of propositional formulas, and write
+$?\Gamma^{\circ\perp}$ for the CLL sequent of the propositions $?((B^\circ)^\perp)$, one for
+each $B \in \Gamma$ counted with multiplicity, where $B^\circ$ is Girard's translation of $B$
+with atoms translated by $f$. For every propositional formula $A \in \Gamma$, the sequent
+$\vdash A^\circ, ?\Gamma^{\circ\perp}$ is provable in CLL. -/
+theorem hyp_mem {Γ : Multiset (LegacyPL.Proposition Atom)} {A : LegacyPL.Proposition Atom}
+    (h : A ∈ Γ) :
     Derivable (translate f A ::ₘ hyps f Γ) := by
   obtain ⟨Γ', rfl⟩ := Multiset.exists_cons_of_mem h
   have hax : ⇓(hyp f A ::ₘ ({translate f A} : CLL.Sequent Atom')) := Proof.quest Proof.ax'
   obtain ⟨q⟩ := weaken_hyps f ⟨hax⟩ Γ'
   exact ⟨q.rwConclusion (by msimp)⟩
 
-/-- A context extended by `A`, in the translation: the hypotheses of `insert A Γ` are those of `Γ`
-plus `ʔ(A°⫠)`, up to weakening when `A` was already in `Γ`. -/
-theorem of_insert {Γ : Ctx Atom} {A : PL.Proposition Atom} {c : CLL.Proposition Atom'}
+/-- **Separating a new hypothesis in the translation.** Let $f$ map propositional atoms to CLL
+propositions, let $\Gamma$ be a finite set of propositional formulas, $A$ a propositional formula
+and $c$ a CLL proposition. Write $B^\circ$ for Girard's translation of a formula $B$ with atoms
+translated by $f$, and $?\Delta^{\circ\perp}$ for the multiset of the propositions
+$?\big((B^\circ)^\perp\big)$ for $B \in \Delta$. If the CLL sequent
+$\vdash c, ?(\Gamma \cup \{A\})^{\circ\perp}$ is provable, then so is
+$\vdash ?\big((A^\circ)^\perp\big), c, ?\Gamma^{\circ\perp}$.
+
+When $A \in \Gamma$ the conclusion follows by weakening. -/
+theorem of_insert {Γ : Ctx Atom} {A : LegacyPL.Proposition Atom} {c : CLL.Proposition Atom'}
     (p : Derivable ((c ::ₘ hyps f (insert A Γ).val))) :
     Derivable (hyp f A ::ₘ c ::ₘ hyps f Γ.val) := by
   obtain ⟨p⟩ := p
@@ -176,11 +232,17 @@ theorem of_insert {Γ : Ctx Atom} {A : PL.Proposition Atom} {c : CLL.Proposition
   · rw [Finset.insert_val_of_notMem hA, hyps, Multiset.map_cons] at p
     exact ⟨p.rwConclusion (Multiset.cons_swap _ _ _)⟩
 
-/-- **Girard's translation preserves provability**: if `Γ ⊢ A` has a natural-deduction derivation
-from a theory whose axioms translate to CLL theorems, then `⊢ ?Γ°⫠, A°` is provable in CLL. -/
+/-- **Girard's translation preserves provability.** Let $f$ map atoms to CLL propositions and
+write $B^\circ$ for Girard's translation of a propositional formula $B$ with atoms translated by
+$f$. Let $T$ be a propositional theory such that the one-formula sequent $\vdash B^\circ$ is
+provable in CLL for every $B \in T$. If $\Gamma$ is a finite set of propositional formulas and
+$\Gamma \vdash A$ has a natural-deduction derivation (in minimal propositional logic) using the
+axioms of $T$, then the CLL sequent $\vdash A^\circ, ?\Gamma^{\circ\perp}$ is provable, where
+$?\Gamma^{\circ\perp}$ consists of the propositions $?((B^\circ)^\perp)$, one for each
+$B \in \Gamma$. -/
 theorem derivable_of_derivation {T : Theory Atom}
     (hT : ∀ B ∈ T, Derivable ({translate f B} : CLL.Sequent Atom')) {Γ : Ctx Atom}
-    {A : PL.Proposition Atom} (d : T.Derivation Γ A) :
+    {A : LegacyPL.Proposition Atom} (d : T.Derivation Γ A) :
     Derivable (translate f A ::ₘ hyps f Γ.val) := by
   induction d with
   | @ax Γ A h =>
@@ -217,21 +279,32 @@ theorem derivable_of_derivation {T : Theory Atom}
     simp only [Proposition.dual, Proposition.dual_involution]
     msimp
 
-/-- Theorems of minimal logic translate to CLL theorems. -/
-theorem mpl {A : PL.Proposition Atom} (d : (MPL Atom).Derivation ∅ A) :
+/-- **Theorems of minimal logic translate to CLL theorems.** For every map $f$ from propositional
+atoms to CLL propositions, if a propositional formula $A$ is derivable in natural deduction from
+the empty context with no axioms (minimal logic), then the one-sided CLL sequent $\vdash A^\circ$
+is provable, where $A^\circ$ is Girard's translation of $A$ with atoms translated by $f$. -/
+theorem mpl {A : LegacyPL.Proposition Atom} (d : (MPL Atom).Derivation ∅ A) :
     Derivable ({translate f A} : CLL.Sequent Atom') := by
   obtain ⟨p⟩ := derivable_of_derivation f (fun _ h ↦ absurd h (Set.notMem_empty _)) d
   exact ⟨p.rwConclusion (by simp [hyps])⟩
 
-/-- The atom map sending `⊥` to the additive `0` and every other atom to itself. -/
+/-- **The atom map sending $\bot$ to $0$.** For a type of atoms with a distinguished atom $\bot$
+and decidable equality, this is the map from atoms to CLL propositions that sends $\bot$ to the
+additive unit $0$ and every other atom $a$ to the CLL atom $a$. -/
 def botToZero [Bot Atom] (a : Atom) : CLL.Proposition Atom :=
   if a = ⊥ then .zero else .atom a
 
 theorem botToZero_bot [Bot Atom] : botToZero (⊥ : Atom) = .zero := by simp [botToZero]
 
 omit [DecidableEq Atom] in
-/-- Ex falso `⊥ → B` translates to `ʔ⊤ ⅋ B°` when `⊥ ↦ 0`, which is provable by the `⊤` rule. -/
-theorem efq [Bot Atom] (hf : f ⊥ = .zero) (B : PL.Proposition Atom) :
+/-- **Ex falso translates to a CLL theorem.** Let $f$ map atoms to CLL propositions and send the
+atom $\bot$ to the additive unit $0$. Then for every propositional formula $B$, the one-formula
+CLL sequent $\vdash (\bot \to B)^\circ$ is provable, where $(\cdot)^\circ$ is Girard's
+translation with atoms translated by $f$.
+
+The translation $(\bot \to B)^\circ$ is the par of $?\top$ and $B^\circ$, which is provable by
+the $\top$ rule. -/
+theorem efq [Bot Atom] (hf : f ⊥ = .zero) (B : LegacyPL.Proposition Atom) :
     Derivable ({translate f (.imp ⊥ B)} : CLL.Sequent Atom') := by
   have p : ⇓(Proposition.quest Proposition.top ::ₘ ({translate f B} : CLL.Sequent Atom')) :=
     Proof.quest Proof.top
@@ -240,8 +313,13 @@ theorem efq [Bot Atom] (hf : f ⊥ = .zero) (B : PL.Proposition Atom) :
   rw [hf]
   rfl
 
-/-- **Theorems of intuitionistic logic translate to CLL theorems**, with `⊥` read as `0`. -/
-theorem ipl [Bot Atom] (hf : f ⊥ = .zero) {A : PL.Proposition Atom}
+/-- **Theorems of intuitionistic logic translate to CLL theorems.** Let $f$ map propositional atoms
+to CLL propositions and send the atom $\bot$ to the additive unit $0$. If a propositional formula
+$A$ is derivable in natural deduction from the empty context in intuitionistic propositional
+logic (no axioms other than ex falso $\bot \to B$ for every formula $B$), then the one-sided CLL
+sequent $\vdash A^\circ$ is provable, where $A^\circ$ is Girard's translation of $A$ with atoms
+translated by $f$. -/
+theorem ipl [Bot Atom] (hf : f ⊥ = .zero) {A : LegacyPL.Proposition Atom}
     (d : (IPL Atom).Derivation ∅ A) : Derivable ({translate f A} : CLL.Sequent Atom') := by
   obtain ⟨p⟩ := derivable_of_derivation f (fun C hC ↦ by
     obtain ⟨B, rfl⟩ := hC

@@ -100,12 +100,6 @@ private theorem decodeBlocks_append_block (m : Nat) (R : List Bool) :
     rw [ih]
     rfl
 
-private theorem true_mem_of_getLast?_eq_true (rest : List Bool)
-    (h : rest.getLast? = some true) : true ∈ rest := by
-  obtain ⟨ys, hys⟩ := List.getLast?_eq_some_iff.mp h
-  rw [hys]
-  exact List.mem_append_right ys (by simp)
-
 private theorem encodeNatBlocks_decodeBlocks (l : List Bool)
     (h : l = [] ∨ l.getLast? = some true) :
     encodeNatBlocks (decodeBlocks l) = l := by
@@ -133,7 +127,7 @@ private theorem encodeNatBlocks_decodeBlocks (l : List Bool)
         have hr : (c :: cs) = [] ∨ (c :: cs).getLast? = some true :=
           Or.inr hlast
         have ihr := ih hr
-        have hmem : true ∈ (c :: cs) := true_mem_of_getLast?_eq_true _ hlast
+        have hmem : true ∈ (c :: cs) := List.mem_of_getLast? hlast
         have hne : decodeBlocks (c :: cs) ≠ [] :=
           decodeBlocks_ne_nil_of_mem_true _ hmem
         cases hd : decodeBlocks (c :: cs) with
@@ -269,7 +263,7 @@ private def indexOfHOneWord (w : FreeMonoid Bool) : Index :=
 
 private theorem zWord_indexOfHOneWord (w : FreeMonoid Bool)
     (h : w ∈ wordSubmonoidHOne) : zWord (indexOfHOneWord w) = w := by
-  apply FreeMonoid.toList.injective
+  apply FreeMonoid.ext
   have h1 : FreeMonoid.toList (zWord (indexOfHOneWord w)) =
       encodeNatBlocks ((indexOfHOneWord w).entries) := by
     have h2 := toList_zWordPNat (indexOfHOneWord w).pnatEntries
@@ -401,12 +395,18 @@ namespace MathlibExt.NumberTheory.MultipleZeta.WordAlgebraWanted
 
 open MetaMathlibExt.MultipleZeta
 
-/-- Hoffman monomials, including the empty word, form a rational basis of `H^1`.
+/-- **Hoffman basis of $\mathfrak{H}^1$.** Let $\mathfrak{H} = \mathbb{Q}\langle x, y \rangle$ be
+the free associative $\mathbb{Q}$-algebra on two generators $x$ and $y$, let $\mathfrak{H}^1$ be
+the $\mathbb{Q}$-linear span of the empty word and the words ending in $y$ (a subalgebra), and
+for each positive integer $k$ let $z_k = x^{k-1} y$. The family of monomials
+$z_{k_1} z_{k_2} \cdots z_{k_r}$, indexed by all indices $(k_1, \dots, k_r)$ of positive integers
+including the empty index (whose monomial is the empty word $1$), is a basis of $\mathfrak{H}^1$
+over $\mathbb{Q}$.
+
+Proves `Wanted` entry `hOne_basis`.
 
 Source: M. E. Hoffman, *The Algebra of Multiple Harmonic Series*, J. Algebra 194
 (1997), 477–495, DOI 10.1006/jabr.1997.7127.
-
-Proves `Wanted` entry `hOne_basis`.
 -/
 theorem hOne_basis :
     ∃ b : Module.Basis Index ℚ ↥hOne,

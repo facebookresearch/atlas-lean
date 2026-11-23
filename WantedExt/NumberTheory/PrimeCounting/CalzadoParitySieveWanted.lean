@@ -36,9 +36,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Lemma 1, equation (11): `∑_{x^{1/5} < p ≤ x^{1/2}} 1 / φ(p) → log (5/2)`.
-The paper prints the limit as `0.916…`; the exact value `log (5/2) = 0.91629…`
-is forced by Mertens' theorem.
+/-- **Reciprocal totients of the primes between $x^{1/5}$ and $x^{1/2}$.** As the real number $x$
+tends to infinity, the sum of $1/\varphi(p)$ over the primes $p$ with $x^{1/5} < p \le x^{1/2}$
+tends to $\log(5/2)$, where $\varphi$ is Euler's totient function.
+
+The paper prints the limit as $0.916\ldots$; the exact value $\log(5/2) = 0.91629\ldots$ is
+forced by Mertens' theorem.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Lemma 1
@@ -50,8 +53,10 @@ public theorem_wanted calzado_sum_inv_totient_fifth_to_half_tendsto :
         1 / (Nat.totient p : ℝ))
       atTop (𝓝 (Real.log (5 / 2)))
 
-/-- Lemma 1, equation (12): for fixed `B > 0`,
-`∑_{x^{1/2} (log x)^{-B} < p ≤ x^{1/2}} 1 / φ(p) ≪_B log log x / log x`.
+/-- **Reciprocal totients of the primes just below $x^{1/2}$.** For every real $B > 0$ there is a
+constant $C$ such that for all sufficiently large real $x$, the sum of $1/\varphi(p)$ over the
+primes $p$ with $x^{1/2} (\log x)^{-B} < p \le x^{1/2}$ is at most $C \log\log x / \log x$, where
+$\varphi$ is Euler's totient function.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Lemma 1
@@ -64,11 +69,14 @@ public theorem_wanted calzado_sum_inv_totient_near_sqrt_isBigO (B : ℝ) (hB : 0
         1 / (Nat.totient p : ℝ)
         ≤ C * Real.log (Real.log x) / Real.log x
 
-/-- Lemma 3: if `P` is a set of primes, `0 ≤ ω(p) < p` for `p ∈ P`, and the
-sieve has dimension `k`, i.e. `∑_{t ≤ p < z, p ∈ P} ω(p) log p / p =
-k log (z / t) + O(1)` uniformly for `2 ≤ t ≤ z`, then
-`V(z) = ∏_{p < z, p ∈ P} (1 - ω(p) / p) ≍ (log z)^{-k}` for `z ≥ 2`.
-The constants depend on `ω` and `P`, not only on `k`.
+/-- **Size of the Euler product of a sieve of dimension $k$.** Let $P$ be a set of primes, $k > 0$
+a real number, and $\omega$ a real-valued function on the natural numbers with
+$0 \le \omega(p) < p$ for $p \in P$. Suppose there is a constant $C_0$ with
+$|\sum_{p \in P,\ t \le p < z} \omega(p) \log p / p - k \log(z/t)| \le C_0$ for all real $t$ and
+$z$ with $2 \le t \le z$. Then there are constants $c > 0$ and $C > 0$ such that for every real
+$z \ge 2$, $c / (\log z)^k \le \prod_{p \in P,\ p < z} (1 - \omega(p)/p) \le C / (\log z)^k$.
+
+The constants depend on $\omega$ and $P$, not only on $k$.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Lemma 3
@@ -87,10 +95,12 @@ public theorem_wanted calzado_sieve_euler_product_asymp (P : Set ℕ)
             (1 - ω p / p) ≤ C / Real.log z ^ k
 
 open Classical in
-/-- Lemma 4: for `a` even and nonzero, `A = {n + a : n ≤ x prime}` and
-`z = x^{1/5}`, uniformly for primes `x^{1/5} < ℓ ≤ x^{1/2}`,
-`S(A_ℓ, P, z) ≪ x / (φ(ℓ) (log x)^2)`, for all sufficiently large `x`; the
-constant may depend on `a`.
+/-- **Upper bound for sifted shifted primes divisible by a large prime.** Let $a$ be a nonzero
+even integer. For real $x$ and a prime $\ell$ let $S_\ell(x)$ be the number of primes $n \le x$
+such that $\ell$ divides $n + a$ and no prime $q < x^{1/5}$ divides $n + a$. There is a constant
+$C$ such that for all sufficiently large $x$ and every prime $\ell$ with
+$x^{1/5} < \ell \le x^{1/2}$, $S_\ell(x) \le C x / (\varphi(\ell) (\log x)^2)$, where $\varphi$ is
+Euler's totient function.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Lemma 4
@@ -104,9 +114,10 @@ public theorem_wanted calzado_shifted_primes_sifted_multiple_le (a : ℤ) (ha : 
         ≤ C * x / ((Nat.totient ℓ : ℝ) * Real.log x ^ 2)
 
 open Classical in
-/-- Lemma 6, equation (15): for `a` even and nonzero there are constants
-`0 < C₁ < C₂` with `C₁ x / (log x)^2 < S(A, P, x^{1/5}) < C₂ x / (log x)^2`
-for all sufficiently large `x`, where `A = {n + a : n ≤ x prime}`.
+/-- **Order of magnitude of the sifted shifted primes.** Let $a$ be a nonzero even integer, and
+for real $x$ let $S(x)$ be the number of primes $n \le x$ such that no prime $q < x^{1/5}$ divides
+$n + a$. There are constants $0 < C_1 < C_2$ such that
+$C_1 x / (\log x)^2 < S(x) < C_2 x / (\log x)^2$ for all sufficiently large $x$.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Lemma 6
@@ -123,10 +134,12 @@ public theorem_wanted calzado_shifted_primes_sifted_asymp (a : ℤ) (ha : Even a
               ¬ (q : ℤ) ∣ (n : ℤ) + a)).card : ℝ) < C₂ * x / Real.log x ^ 2
 
 open Classical in
-/-- Lemma 6, equation (16), which is condition (7) of Theorem 1 for
-`A = {n + a : n ≤ x prime}`: for `a` even and nonzero,
-`S(A_ℓ, P, x^{1/5}) ≪ S(A, P, x^{1/5}) / φ(ℓ)` uniformly for primes
-`x^{1/5} < ℓ ≤ x^{1/2}`, for all sufficiently large `x`.
+/-- **Relative bound for sifted shifted primes divisible by a large prime.** Let $a$ be a nonzero
+even integer. For real $x$ let $S(x)$ be the number of primes $n \le x$ such that no prime
+$q < x^{1/5}$ divides $n + a$, and for a prime $\ell$ let $S_\ell(x)$ be the number of those $n$
+for which moreover $\ell$ divides $n + a$. There is a constant $C$ such that for all sufficiently
+large $x$ and every prime $\ell$ with $x^{1/5} < \ell \le x^{1/2}$,
+$S_\ell(x) \le C S(x) / \varphi(\ell)$, where $\varphi$ is Euler's totient function.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Lemma 6
@@ -142,13 +155,17 @@ public theorem_wanted calzado_shifted_primes_sifted_multiple_le_sifted (a : ℤ)
               ¬ (q : ℤ) ∣ (n : ℤ) + a)).card : ℝ) / (Nat.totient ℓ : ℝ)
 
 open Classical in
-/-- Lemma 2 (Selberg's upper bound sieve, quoted from Heath-Brown): let `A` be a finite sequence
-of positive integers, `P` a set of primes, `ω` a non-negative multiplicative function with
-`0 ≤ ω(p) < p` for `p ∈ P`, `X > 0`, and `R_d = #A_d - ω(d) X / d`. If the sieve has dimension
-`κ > 0`, `∑_{t ≤ p < z, p ∈ P} ω(p) log p / p = κ log (z / t) + O(1)` uniformly for `2 ≤ t ≤ z`,
-then `S(A, P, z) ≤ X e^{γκ} Γ(κ + 1) ∏_{p < z, p ∈ P} (1 - ω(p)/p) (1 + O(1 / log z)) +
-∑_{d < z², d ∣ P(z)} 3^{ν(d)} |R_d|`, the implied constant depending only on `κ` and the
-constant `C₀` of the dimension hypothesis.
+/-- **Selberg's upper bound sieve.** For all real numbers $\kappa > 0$ and $C_0$ there is a
+constant $C$ with the following property. Let $P$ be a set of primes, $\omega$ a non-negative
+multiplicative arithmetic function with $\omega(p) < p$ for $p \in P$, $A$ a finite multiset of
+positive integers, and $X > 0$ and $z \ge 2$ real numbers such that
+$|\sum_{p \in P,\ t \le p < z} \omega(p) \log p / p - \kappa \log(z/t)| \le C_0$ for every real
+$t$ with $2 \le t \le z$. Write $P(z) = \prod_{p \in P,\ p < z} p$, let $S$ be the number of
+elements of $A$ coprime to $P(z)$ and $\#A_d$ the number of elements of $A$ divisible by $d$, both
+counted with multiplicity, and let $\nu(d)$ be the number of distinct prime factors of $d$. Then
+$S \le X e^{\gamma\kappa} \Gamma(\kappa + 1) \prod_{p \in P,\ p < z} (1 - \omega(p)/p)
+(1 + C / \log z) + \sum_{d \mid P(z),\ d < z^2} 3^{\nu(d)} |\#A_d - \omega(d) X / d|$,
+where $\gamma$ is the Euler–Mascheroni constant.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Lemma 2 (`integers-2026-A117-lem-2`). -/
@@ -170,15 +187,22 @@ public theorem_wanted calzado_selberg_upper_bound_sieve (κ C₀ : ℝ) (hκ : 0
               |((A.filter (fun n => d ∣ n)).card : ℝ) - ω d / d * X|
 
 open Classical in
-/-- Lemma 5 (the Rosser–Iwaniec linear sieve, quoted from Heath-Brown): with the setting of
-Lemma 2 and the one-dimensional condition
-`∑_{t ≤ ℓ < z, ℓ ∈ P} ω(ℓ) log ℓ / ℓ ≤ log (z / t) + O(1)` uniformly for `2 ≤ t ≤ z`, a level
-`y ≥ z` and `s = log y / log z`,
-`X V(z) (f(s) - C e^{-s} (log y)^{-1/3}) - ∑_{d < y, d ∣ P(z)} |R_d| ≤ S(A, P, z) ≤
-X V(z) (F(s) + C e^{-s} (log y)^{-1/3}) + ∑_{d < y, d ∣ P(z)} |R_d|`, with `C > 0` depending only
-on the constant `C₀` of the condition. `F` and `f` are the continuous functions on `(0, ∞)` with
-`F(s) = 2e^γ / s` (`0 < s ≤ 3`), `f(s) = 0` (`0 < s ≤ 2`), `(s F(s))' = f(s - 1)` (`s > 3`) and
-`(s f(s))' = F(s - 1)` (`s > 2`); in particular `f(s) = 2e^γ log(s - 1) / s` for `2 ≤ s ≤ 4`.
+/-- **Rosser–Iwaniec linear sieve.** Let $\gamma$ be the Euler–Mascheroni constant, $C_0$ a real
+number, and $F, f \colon \mathbb{R} \to \mathbb{R}$ functions continuous on $(0, \infty)$ with
+$F(s) = 2e^{\gamma}/s$ for $0 < s \le 3$ and $f(s) = 0$ for $0 < s \le 2$, such that
+$u \mapsto uF(u)$ has derivative $f(s - 1)$ at every $s > 3$ and $u \mapsto uf(u)$ has derivative
+$F(s - 1)$ at every $s > 2$. Then $f(s) = 2e^{\gamma}\log(s - 1)/s$ for $2 \le s \le 4$, and there
+is a constant $C > 0$ with the following property. Let $P$ be a set of primes, $\omega$ a
+non-negative multiplicative arithmetic function with $\omega(p) < p$ for $p \in P$, $A$ a finite
+multiset of positive integers, and $X > 0$ and $2 \le z \le y$ real numbers such that
+$\sum_{p \in P,\ t \le p < z} \omega(p) \log p / p \le \log(z/t) + C_0$ for every real $t$ with
+$2 \le t \le z$. Write $P(z) = \prod_{p \in P,\ p < z} p$,
+$V(z) = \prod_{p \in P,\ p < z} (1 - \omega(p)/p)$ and $s = \log y / \log z$; let $S$ be the number
+of elements of $A$ coprime to $P(z)$ and $\#A_d$ the number of elements of $A$ divisible by $d$,
+both counted with multiplicity; and let
+$R = \sum_{d \mid P(z),\ d < y} |\#A_d - \omega(d) X / d|$. Then
+$S \le X V(z) (F(s) + C e^{-s} (\log y)^{-1/3}) + R$ and
+$X V(z) (f(s) - C e^{-s} (\log y)^{-1/3}) - R \le S$.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Lemma 5 (`integers-2026-A117-lem-5`). -/
@@ -205,11 +229,15 @@ public theorem_wanted calzado_linear_sieve (F f : ℝ → ℝ)
         X * V * (f s - C * Real.exp (-s) * Real.log y ^ (-(1 : ℝ) / 3)) - R ≤ S
 
 open Classical in
-/-- Theorem 2, inequality (9): for `a` even and nonzero there is `C > 0` such that for every
-`B > 0` and all sufficiently large `x`, the number of primes `n ≤ x` with `n + a` prime is at least
-`C x / (log x)² - ∑_{x^{1/5} < p ≤ x^{1/2} (log x)^{-B}} Δ̄(A_p)`, where
-`Δ̄(A_p) = #{n ≤ x prime : n ≡ -a (mod p), f(n + a)} - #{n ≤ x prime : (n, p) = 1, f(n + a)} / φ(p)`
-and `f(n + a)` says that `n + a` has no prime factor `q < x^{1/5}` (Equation (10)).
+/-- **Lower bound for primes $n$ with $n + a$ prime, up to a sieve error.** Let $a$ be a nonzero
+even integer, and call a prime $n$ admissible at level $x$ if no prime $q < x^{1/5}$ divides
+$n + a$. For a prime $p$ and real $x$ let
+$\bar\Delta_p(x) = \#\{n \le x \text{ admissible} : n \equiv -a \pmod p\} -
+\#\{n \le x \text{ admissible} : \gcd(n, p) = 1\} / \varphi(p)$, where $\varphi$ is Euler's
+totient function. There is $C > 0$ such that for every real $B > 0$ and all sufficiently large
+real $x$, the number of primes $n \le x$ with $n + a > 0$ and $n + a$ prime is at least
+$C x / (\log x)^2 - \sum_p \bar\Delta_p(x)$, the sum running over the primes $p$ with
+$x^{1/5} < p \le x^{1/2} (\log x)^{-B}$.
 
 Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
 Problem*, INTEGERS 26 (2026), Article A117, Theorem 2 (`integers-2026-A117-thm-2`). -/

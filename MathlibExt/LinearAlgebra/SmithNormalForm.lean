@@ -270,11 +270,11 @@ nonzero and satisfy `a i ∣ a (i+1)`, refining `Submodule.exists_smith_normal_f
 
 namespace Submodule
 
-/-- Any submodule `N` of a finite free module `M` over a PID has a Smith normal form: bases
-`bM` of `M` and `bN` of `N` with `bN i = a i • bM i`, nonzero coefficients `a i`, and the
-invariant-factor divisibility chain `a i ∣ a (i+1)`. This refines
-`Submodule.exists_smith_normal_form_of_le`, which gives no divisibility chain.
-`MathlibExt.LinearAlgebra.SmithNormalFormWanted.smithNormalForm` is the source-shaped form. -/
+/-- **Smith normal form with a divisibility chain.** Let $R$ be a principal ideal domain, let $M$
+be a finitely generated free $R$-module and let $N$ be a submodule of $M$. Then there are natural
+numbers $n \le m$, a basis $e_0, \dots, e_{m-1}$ of $M$, a basis $f_0, \dots, f_{n-1}$ of $N$ and
+nonzero elements $a_0, \dots, a_{n-1}$ of $R$ such that $f_i = a_i e_i$ in $M$ for every $i < n$
+and $a_i \mid a_{i+1}$ whenever $i + 1 < n$. -/
 theorem exists_smith_normal_form_dvd_chain
     {R M : Type*} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
     [AddCommGroup M] [Module R M] [Module.Free R M] [Module.Finite R M]
@@ -298,9 +298,12 @@ end Submodule
 namespace MathlibExt.LinearAlgebra.SmithNormalFormWanted
 
 /--
-Any submodule of a finite free module over a PID has a Smith normal form with invariant-factor
-divisibility chain `a i ∣ a (i+1)`, the refinement beyond the existing Mathlib diagonal-basis
-Smith-form API.
+**Smith normal form.** Let $R$ be a principal ideal domain, let $M$ be a finitely generated free
+$R$-module and let $N$ be a submodule of $M$. Then there are natural numbers $n \le m$, a basis
+$e_0, \dots, e_{m-1}$ of $M$, a basis $f_0, \dots, f_{n-1}$ of $N$ and nonzero elements
+$a_0, \dots, a_{n-1}$ of $R$ such that $f_i = a_i e_i$ in $M$ for every $i < n$ and
+$a_i \mid a_{i+1}$ whenever $i + 1 < n$.
+
 Source: H. J. S. Smith, Phil. Trans. R. Soc. Lond. 151 (1861), 293-326, DOI 10.1098/RSTL.1861.0016.
 It is `Submodule.exists_smith_normal_form_dvd_chain`, kept under the source's name.
 Proves `Wanted` entry `smithNormalForm`.

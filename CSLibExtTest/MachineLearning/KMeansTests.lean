@@ -100,8 +100,34 @@ example : cost (fun b : Bool => if b then (1 : ℝ) else 0) (fun b => if b then 
 example : ∃ as cs, as 0 = split ∧ cs 0 = ![0, 10] ∧ IsRun pts as cs :=
   exists_run pts (by decide) split ![0, 10]
 
+/-- The centroid of no points is the zero vector. -/
+example : centroid (fun _ : Fin 4 => (0 : ℝ)) ∅ = 0 :=
+  centroid_empty _
+
+/-- With every point assigned to cluster `0`, the other updated center is `0`. -/
+example : centers (fun _ : Fin 4 => (0 : ℝ)) (fun _ => (0 : Fin 2)) 1 = 0 := by
+  apply centers_eq_zero_of_forall_ne
+  intro i
+  decide
+
+/-- Changing only an unassigned center does not change the cost. -/
+example : cost (fun _ : Fin 4 => (0 : ℝ)) (fun _ => (0 : Fin 2)) ![0, 1] =
+    cost (fun _ : Fin 4 => (0 : ℝ)) (fun _ => (0 : Fin 2)) ![0, 2] := by
+  apply cost_congr_centers
+  intro i
+  rfl
+
 #print axioms IsRun.antitone
 #print axioms cost_lloyd_le
 #print axioms sum_sq_eq
+#print axioms sum_sq_centroid_le
+#print axioms cost_centers_le
+#print axioms cost_nearest_le
+#print axioms exists_nearest
+#print axioms exists_run
+#print axioms centroid_empty
+#print axioms centers_eq_zero_of_forall_ne
+#print axioms cost_congr_centers
+#print axioms cost_eq_sum_clusters
 
 end Cslib.MachineLearning.KMeans

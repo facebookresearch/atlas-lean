@@ -95,38 +95,6 @@ private theorem pow_sum_small (p m : ℕ) (hp : p.Prime) (hm : m < p - 1) :
       exact hsplit
     rw [hA]
     rw [ite_eq_right hm0]
-private theorem powersetCard_succ_insert {α : Type} [DecidableEq α] (a : α) (s : Finset α) (n : ℕ) (h : a ∉ s) :
-    (insert a s).powersetCard (n+1) = s.powersetCard (n+1) ∪ (s.powersetCard n).image (insert a) := by
-  ext t
-  simp only [Finset.mem_powersetCard, Finset.mem_union, Finset.mem_image]
-  constructor
-  · rintro ⟨hsub, hcard⟩
-    by_cases ha : a ∈ t
-    · right
-      refine ⟨t.erase a, ⟨?_, ?_⟩, (Finset.insert_erase ha)⟩
-      · have : t.erase a ⊆ (insert a s).erase a := Finset.erase_subset_erase _ hsub
-        rwa [Finset.erase_insert h] at this
-      · have hcard' : (t.erase a).card = t.card - 1 := Finset.card_erase_of_mem ha
-        omega
-    · left
-      refine ⟨?_, hcard⟩
-      intro x hx
-      have hx' := hsub hx
-      rw [Finset.mem_insert] at hx'
-      rcases hx' with rfl | hm
-      · exact absurd hx ha
-      · exact hm
-  · rintro (⟨hsub, hcard⟩ | ⟨u, ⟨hsubu, hcardu⟩, rfl⟩)
-    · refine ⟨?_, hcard⟩
-      exact Finset.Subset.trans hsub (Finset.subset_insert _ _)
-    · have hau : a ∉ u := fun hm => h (hsubu hm)
-      refine ⟨?_, ?_⟩
-      · intro x hx
-        rw [Finset.mem_insert] at hx
-        rcases hx with hxx | hm
-        · subst hxx; exact Finset.mem_insert_self _ _
-        · exact Finset.mem_insert_of_mem (hsubu hm)
-      · rw [Finset.card_insert_of_notMem hau, hcardu]
 private theorem powersetCard_succ_insert_disjoint {α : Type} [DecidableEq α] (a : α) (s : Finset α) (n : ℕ) (h : a ∉ s) :
     Disjoint (s.powersetCard (n+1)) ((s.powersetCard n).image (insert a)) := by
   rw [Finset.disjoint_left]
@@ -144,7 +112,7 @@ private theorem sum_powersetCard_succ_insert {M : Type} [CommSemiring M] {α : T
     (∑ t ∈ (insert a s).powersetCard (n+1), ∏ i ∈ t, f i) =
     (∑ t ∈ s.powersetCard (n+1), ∏ i ∈ t, f i) +
     f a * (∑ u ∈ s.powersetCard n, ∏ i ∈ u, f i) := by
-  rw [powersetCard_succ_insert a s n h,
+  rw [Finset.powersetCard_succ_insert h n,
     Finset.sum_union (powersetCard_succ_insert_disjoint a s n h)]
   congr 1
   have hinj : ∀ u ∈ s.powersetCard n, ∀ v ∈ s.powersetCard n, insert a u = insert a v → u = v := by
@@ -625,14 +593,17 @@ private theorem inv_mul_choose_identity (p k j : ℕ) (hp : p.Prime) (hj1 : 1 �
   exact mul_right_cancel₀ hne e1
 
 
-/-- Polynomial congruence for multiple harmonic sums (JIS Lemma `Gg`):
-for positive `n` and prime `p` with `p > n + 1`, the `H`-weighted `x^k` sum
-equals the signed sum of `(1 - x)^k / k^n` as polynomials over `ZMod p`.
-Source `https://cs.uwaterloo.ca/journals/JIS/VOL13/Tauraso/tauraso22.tex`,
-semantic concept `jis_sem_1e299eb15a144f108cb2fe31`,
-statement `jis_9e5865a09e42b4fb025d838d`.
+/-- **Mattarei–Tauraso polynomial congruence for multiple harmonic sums.** Let $n \ge 1$ and let
+$p$ be a prime with $p > n + 1$, write $H_r^{(m)}$ for the multiple harmonic sum modulo $p$, and
+write $k^{-1}$ for the inverse of $k$ in $\mathbb{Z}/p\mathbb{Z}$. Then, as polynomials in $x$
+over $\mathbb{Z}/p\mathbb{Z}$,
+$$\sum_{k=1}^{p-1} H_{k-1}^{(n-1)} k^{-1} x^k = (-1)^{n-1} \sum_{k=1}^{p-1} (k^{-1})^n (1 - x)^k.$$
 
 Proves `Wanted` entry `multiple_harmonic_polynomial_congruence`.
+
+Source: `https://cs.uwaterloo.ca/journals/JIS/VOL13/Tauraso/tauraso22.tex`, Lemma `Gg`,
+semantic concept `jis_sem_1e299eb15a144f108cb2fe31`,
+statement `jis_9e5865a09e42b4fb025d838d`.
 -/
 theorem multiple_harmonic_polynomial_congruence (n p : ℕ) (hn : 0 < n)
     (hp : p.Prime) (hpp : n + 1 < p) :
@@ -662,7 +633,7 @@ theorem multiple_harmonic_polynomial_congruence (n p : ℕ) (hn : 0 < n)
       Polynomial.C (multipleHarmonic p (k - 1) m * (((k : ZMod p))⁻¹)) *
         (Polynomial.X : Polynomial (ZMod p)) ^ k) : Polynomial (ZMod p)).coeff j) =
       (if j ∈ Finset.Icc 1 (p - 1) then multipleHarmonic p (j - 1) m * (((j : ZMod p))⁻¹) else 0) := by
-    rw [Polynomial.finset_sum_coeff]
+    rw [Polynomial.finsetSum_coeff]
     have hterm : ∀ k ∈ Finset.Icc 1 (p - 1),
         ((Polynomial.C (multipleHarmonic p (k - 1) m * (((k : ZMod p))⁻¹)) *
           (Polynomial.X : Polynomial (ZMod p)) ^ k).coeff j) =
@@ -679,7 +650,7 @@ theorem multiple_harmonic_polynomial_congruence (n p : ℕ) (hn : 0 < n)
         ((((k : ZMod p))⁻¹) ^ (m + 1)) * ((-1 : ZMod p) ^ j * (((k.choose j : ℕ)) : ZMod p)) := by
     rw [Polynomial.coeff_C_mul]
     congr 1
-    rw [Polynomial.finset_sum_coeff]
+    rw [Polynomial.finsetSum_coeff]
     apply Finset.sum_congr rfl
     intro k _
     rw [Polynomial.coeff_C_mul, coeff_one_sub_X_pow]

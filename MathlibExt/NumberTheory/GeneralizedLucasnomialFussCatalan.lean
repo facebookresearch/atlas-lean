@@ -178,52 +178,8 @@ private lemma rank_aux (P Q : ℤ) (U : ℕ → ℤ)
   · intro hzk
     exact dvd_trans hzdvd (U_dvd P Q U hU0 hU1 hUrec _ _ hz1 hzk)
 
-/-- Successor step for counting multiples. -/
-private lemma div_succ_eq (z M : ℕ) (hz : 1 ≤ z) :
-    (M + 1) / z = M / z + (if z ∣ M + 1 then 1 else 0) := by
-  have hzz : 0 < z := by omega
-  have e3 : (M + 1) / z = (M % z + 1) / z + M / z := by
-    have hmod := Nat.div_add_mod M z
-    have hme : M + 1 = (M % z + 1) + z * (M / z) := by omega
-    rw [hme, Nat.add_mul_div_left _ _ hzz]
-  by_cases h : z ∣ M + 1
-  · rw [ite_eq_left h]
-    have emod1 : (M + 1) % z = 0 := Nat.dvd_iff_mod_eq_zero.mp h
-    have hmod := Nat.div_add_mod M z
-    have hmodz : (M % z + 1) % z = 0 := by
-      have hme : M + 1 = z * (M / z) + (M % z + 1) := by omega
-      rw [hme, add_comm (z * (M / z)) _, Nat.add_mul_mod_self_left] at emod1
-      exact emod1
-    have heq : M % z + 1 = z := by
-      have hdvd : z ∣ M % z + 1 := Nat.dvd_iff_mod_eq_zero.mpr hmodz
-      have hge := Nat.le_of_dvd (by omega) hdvd
-      have hle : M % z + 1 ≤ z := by
-        have hlt := Nat.mod_lt M hzz
-        omega
-      omega
-    rw [e3, heq, Nat.div_self hzz]
-    exact add_comm _ _
-  · rw [ite_eq_right h]
-    have e0 : (M % z + 1) / z = 0 := by
-      apply Nat.div_eq_of_lt
-      by_contra hlt
-      have hlt : z ≤ M % z + 1 := le_of_not_gt hlt
-      have hle : M % z + 1 ≤ z := by
-        have hlt2 := Nat.mod_lt M hzz
-        omega
-      have heq : M % z + 1 = z := by omega
-      have hmod := Nat.div_add_mod M z
-      have hme : M + 1 = z * (M / z + 1) := by
-        have r : z * (M / z + 1) = z * (M / z) + z := by ring
-        omega
-      have hdvd : z ∣ M + 1 := by
-        rw [hme]
-        exact dvd_mul_right z _
-      exact h hdvd
-    rw [e3, e0, zero_add, add_zero]
-
 /-- Number of multiples of `z` in `Icc 1 M`. -/
-private lemma card_filter_dvd_Icc_one (z M : ℕ) (hz : 1 ≤ z) :
+private lemma card_filter_dvd_Icc_one (z M : ℕ) :
     ((Finset.Icc 1 M).filter (fun k => z ∣ k)).card = M / z := by
   induction M with
   | zero =>
@@ -234,7 +190,7 @@ private lemma card_filter_dvd_Icc_one (z M : ℕ) (hz : 1 ≤ z) :
       ext x
       simp only [Finset.mem_insert, Finset.mem_Icc]
       omega
-    rw [hunion, Finset.filter_insert, div_succ_eq z M hz]
+    rw [hunion, Finset.filter_insert, Nat.succ_div (a := M) (b := z)]
     by_cases h : z ∣ M + 1
     · rw [ite_eq_left h, ite_eq_left h]
       have hnem : M + 1 ∉ (Finset.Icc 1 M).filter (fun k => z ∣ k) := by
@@ -245,15 +201,15 @@ private lemma card_filter_dvd_Icc_one (z M : ℕ) (hz : 1 ≤ z) :
     · rw [ite_eq_right h, ite_eq_right h, ih, add_zero]
 
 /-- Sum of divisibility indicators over a range. -/
-private lemma sum_range_dvd_eq (z n : ℕ) (hz : 1 ≤ z) :
+private lemma sum_range_dvd_eq (z n : ℕ) :
     ∑ j ∈ Finset.range n, (if z ∣ j + 1 then (1 : ℕ) else 0) = n / z := by
   induction n with
   | zero => simp
   | succ n ih =>
-    rw [Finset.sum_range_succ, ih, div_succ_eq z n hz]
+    rw [Finset.sum_range_succ, ih, Nat.succ_div (a := n) (b := z)]
 
 /-- Sum of divisibility indicators over an interval. -/
-private lemma sum_Icc_dvd_eq (z s m : ℕ) (hz : 1 ≤ z) :
+private lemma sum_Icc_dvd_eq (z s m : ℕ) :
     ∑ k ∈ Finset.Icc (s + 1) (s + m), (if z ∣ k then (1 : ℕ) else 0)
       = (s + m) / z - s / z := by
   have hunion : Finset.Icc 1 (s + m)
@@ -267,10 +223,10 @@ private lemma sum_Icc_dvd_eq (z s m : ℕ) (hz : 1 ≤ z) :
     intro a ha hb
     rw [Finset.mem_filter, Finset.mem_Icc] at ha hb
     omega
-  have hcard := card_filter_dvd_Icc_one z (s + m) hz
+  have hcard := card_filter_dvd_Icc_one z (s + m)
   rw [hunion, Finset.filter_union,
     Finset.card_union_of_disjoint hdisj_f] at hcard
-  rw [card_filter_dvd_Icc_one z s hz] at hcard
+  rw [card_filter_dvd_Icc_one z s] at hcard
   have hfin : ∑ k ∈ Finset.Icc (s + 1) (s + m), (if z ∣ k then (1 : ℕ) else 0)
       = ((Finset.Icc (s + 1) (s + m)).filter (fun k => z ∣ k)).card := by
     rw [Finset.card_filter]
@@ -350,11 +306,12 @@ private lemma padic_prod (p : ℕ) (hp : p.Prime) (s : Finset ℕ) (f : ℕ → 
     (hf : ∀ x ∈ s, f x ≠ 0) :
     padicValNat p (∏ x ∈ s, f x) = ∑ x ∈ s, padicValNat p (f x) := by
   haveI : Fact p.Prime := ⟨hp⟩
+  simp only [Nat.padicValNat_def]
   induction s using Finset.induction with
   | empty => simp
   | insert a s has ih =>
     rw [Finset.prod_insert has, Finset.sum_insert has,
-      padicValNat.mul (hf _ (Finset.mem_insert_self _ _))
+      Nat.multiplicity_mul (hf _ (Finset.mem_insert_self _ _))
         (Finset.prod_ne_zero_iff.mpr (fun x hx => hf x (Finset.mem_insert_of_mem hx))),
       ih (fun x hx => hf x (Finset.mem_insert_of_mem hx))]
 
@@ -366,12 +323,12 @@ private lemma padic_eq_sum (p m E : ℕ) (hp : p.Prime) (hm : m ≠ 0)
   haveI : Fact p.Prime := ⟨hp⟩
   have hiff : ∀ e : ℕ, (1 ≤ e ∧ p ^ e ∣ m) ↔ e ∈ Finset.Icc 1 (padicValNat p m) := by
     intro e
-    rw [Finset.mem_Icc]
+    rw [Finset.mem_Icc, Nat.padicValNat_def]
     constructor
     · intro ⟨h1, hd⟩
-      exact ⟨h1, (padicValNat_dvd_iff_le hm).mp hd⟩
+      exact ⟨h1, (multiplicity_dvd_iff_le hm).mp hd⟩
     · intro ⟨h1, h2⟩
-      exact ⟨h1, (padicValNat_dvd_iff_le hm).mpr h2⟩
+      exact ⟨h1, (multiplicity_dvd_iff_le hm).mpr h2⟩
   have hsum : ∑ e ∈ Finset.range (E + 1), (if 1 ≤ e ∧ p ^ e ∣ m then (1 : ℕ) else 0)
       = ∑ e ∈ Finset.range (E + 1),
         (if e ∈ Finset.Icc 1 (padicValNat p m) then (1 : ℕ) else 0) := by
@@ -455,13 +412,14 @@ private lemma key_dvd (P Q : ℤ) (U : ℕ → ℤ)
       exact hpmem
     exact Nat.prime_of_mem_primeFactors hmem
   haveI : Fact p.Prime := ⟨hprime⟩
-  rw [Nat.factorization_def _ hprime, Nat.factorization_def _ hprime]
+  rw [Nat.factorization_def _ hprime, Nat.factorization_def _ hprime,
+    Nat.multiplicity_mul hVr (Finset.prod_ne_zero_iff.mpr hCf)]
+  simp only [← Nat.padicValNat_def]
   rw [padic_prod p hprime (Finset.range n) _ hBf,
-    padicValNat.mul hVr (Finset.prod_ne_zero_iff.mpr hCf),
     padic_prod p hprime (Finset.Icc (s + 1) (s + n - 1)) _ hCf]
   have hbound : ∀ m : ℕ, m ≠ 0 → m ≤ B + C → padicValNat p m ≤ B + C := by
     intro m hm0 hmE
-    have h1 : p ^ padicValNat p m ∣ m := pow_padicValNat_dvd
+    have h1 : p ^ padicValNat p m ∣ m := Nat.padicValNat_def ▸ pow_multiplicity_dvd p m
     have h2 : p ^ padicValNat p m ≤ m :=
       Nat.le_of_dvd (Nat.pos_of_ne_zero hm0) h1
     have h3 : padicValNat p m ≤ p ^ padicValNat p m := by
@@ -554,12 +512,12 @@ private lemma key_dvd (P Q : ℤ) (U : ℕ → ℤ)
             fun hcon => hnz ((hchar k (by omega)).mpr hcon)
           rw [ite_eq_right (fun hcon => hk2 hcon.2), ite_eq_right hnz2]
       rw [Finset.sum_congr rfl ind_j, ind_r, Finset.sum_congr rfl ind_k,
-        sum_range_dvd_eq z n hz1]
+        sum_range_dvd_eq z n]
       have hIcc : Finset.Icc (s + 1) (s + n - 1)
           = Finset.Icc (s + 1) (s + (n - 1)) := by
         have hnm : s + (n - 1) = s + n - 1 := by omega
         rw [hnm]
-      rw [hIcc, sum_Icc_dvd_eq z s (n - 1) hz1]
+      rw [hIcc, sum_Icc_dvd_eq z s (n - 1)]
       have hnm : s + (n - 1) = s + n - 1 := by omega
       rw [hnm]
       exact floor_key z s n r a hz1 hn hs
@@ -600,10 +558,12 @@ private lemma natAbs_prod (s : Finset ℕ) (f : ℕ → ℤ) :
   | insert a s has ih =>
     rw [Finset.prod_insert has, Finset.prod_insert has, Int.natAbs_mul, ih]
 
-/-- For a Lucas sequence of the first kind `U` with coprime parameters and no zero terms after
-`U 0`, the generalized Lucasnomial Fuss-Catalan numbers `U_r / U_{(a-1)*n+r} * C(an+r-1,n)_U` are
-integral for all `n ≥ 1`. `generalized_lucasnomial_fuss_catalan_integral` is the source-shaped
-form. -/
+/-- **Integrality of generalized Lucasnomial Fuss–Catalan numbers.** Let $P$ and $Q$ be integers
+with $\gcd(P, Q) = 1$, let $(U_m)_{m \ge 0}$ be the Lucas sequence of the first kind with
+parameters $P$ and $Q$, and suppose $U_m \ne 0$ for every $m \ge 1$. Then for all natural numbers
+$r \ge 1$, $a \ge 2$ and $n \ge 1$, the rational number
+$$\frac{U_r}{U_{(a-1)n+r}} \cdot \frac{\prod_{j=0}^{n-1} U_{an+r-1-j}}{\prod_{j=0}^{n-1} U_{j+1}}$$
+is an integer; its second factor is the Lucasnomial coefficient $\binom{an+r-1}{n}_U$. -/
 theorem generalized_lucasnomial_fuss_catalan_integral_general {P Q : ℤ} {U : ℕ → ℤ}
     (hU : IsLucasSequenceFirstKind P Q U) (hnondeg : ∀ n : ℕ, n ≥ 1 → U n ≠ 0)
     (hreg : Int.gcd P Q = 1) (r a : ℕ) (hr : r ≥ 1) (ha : a ≥ 2) (n : ℕ) (hn : n ≥ 1) :
@@ -707,8 +667,14 @@ theorem generalized_lucasnomial_fuss_catalan_integral_general {P Q : ℤ} {U : �
         * ∏ j ∈ Finset.range n, ((U (j + 1) : ℤ) : ℚ)) := by ring
 
 set_option linter.unusedVariables false in
-/-- The generalized Lucasnomial Fuss-Catalan numbers `U_r / U_{(a-1)*n+r} * C(an+r-1,n)_U` are
-integral for all `n ≥ 1`. Source: Christian Ballot, "Lucasnomial Fuss-Catalan Numbers and Related
+/-- **Generalized Lucasnomial Fuss–Catalan numbers are integers (Ballot).** Let $P$ and $Q$ be
+nonzero integers with $\gcd(P, Q) = 1$, and let $U : \mathbb{N} \to \mathbb{Z}$ satisfy $U_0 = 0$,
+$U_1 = 1$, $U_{m+2} = P U_{m+1} - Q U_m$ for every natural number $m$, and $U_m \ne 0$ for every
+$m \ge 1$. Then for all natural numbers $r \ge 1$, $a \ge 2$ and $n \ge 1$, the rational number
+$$\frac{U_r}{U_{(a-1)n+r}} \cdot \frac{\prod_{j=0}^{n-1} U_{an+r-1-j}}{\prod_{j=0}^{n-1} U_{j+1}}$$
+is an integer; its second factor is the Lucasnomial coefficient $\binom{an+r-1}{n}_U$.
+
+Source: Christian Ballot, "Lucasnomial Fuss-Catalan Numbers and Related
 Divisibility Questions," Journal of Integer Sequences 21 (2018), Article 18.6.5, Theorem `thm:2`,
 lines 553–558, <https://cs.uwaterloo.ca/journals/JIS/VOL21/Ballot/ballot30.tex>. Fundamental Lucas
 sequences, nondegeneracy, and regularity at lines 185–207; Lucasnomial coefficients at lines

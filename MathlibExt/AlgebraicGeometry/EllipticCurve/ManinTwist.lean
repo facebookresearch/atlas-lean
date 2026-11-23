@@ -194,7 +194,7 @@ private lemma intDegree_add_le_of_le {x y : RatFunc F} {m : ℤ}
   · simp [hxy, hm]
   by_cases hy0 : y = 0
   · simpa [hy0] using hx
-  exact (RatFunc.intDegree_add_le hy0 hxy).trans (max_le hx hy)
+  exact (RatFunc.intDegree_add_le hxy).trans (max_le hx hy)
 
 private lemma intDegree_add_sub_le_of_le {x y z : RatFunc F} {m : ℤ}
     (hm : 0 ≤ m) (hx : x.intDegree ≤ m) (hy : y.intDegree ≤ m)
@@ -793,11 +793,6 @@ private lemma minusOneNumerator_eq [Finite F] (hchar : ringChar F ≠ 2)
   simp only [cubic, map_mul, map_ofNat]
   ring
 
-private lemma natDegree_add_le_of_le {p q : F[X]} {n : ℕ}
-    (hp : p.natDegree ≤ n) (hq : q.natDegree ≤ n) :
-    (p + q).natDegree ≤ n :=
-  (Polynomial.natDegree_add_le p q).trans (max_le hp hq)
-
 private lemma minusOneNumerator_natDegree [Finite F]
     (hchar : ringChar F ≠ 2) (W : WeierstrassCurve F)
     (hcard : Nat.card F ≠ 3) :
@@ -812,14 +807,14 @@ private lemma minusOneNumerator_natDegree [Finite F]
             (C W.a₄ * X + C (2 * W.a₆)))))
   have hremainder : remainder.natDegree ≤ 2 * Nat.card F := by
     dsimp only [remainder]
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · rw [Polynomial.natDegree_X_pow]
       omega
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (by omega)
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (by omega)
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · calc
         (C 2 * cubic W ^ ((Nat.card F + 1) / 2)).natDegree ≤
             (cubic W ^ ((Nat.card F + 1) / 2)).natDegree :=
@@ -827,7 +822,7 @@ private lemma minusOneNumerator_natDegree [Finite F]
         _ = (Nat.card F + 1) / 2 * 3 := by
           rw [Polynomial.natDegree_pow, cubic_natDegree]
         _ ≤ 2 * Nat.card F := by omega
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · simpa only [pow_one] using
         (Polynomial.natDegree_C_mul_X_pow_le W.a₄ 1).trans (by omega)
     · rw [Polynomial.natDegree_C]
@@ -983,18 +978,6 @@ private instance squareFiberFinite [Finite F] (W : WeierstrassCurve F)
   unfold squareFiber
   infer_instance
 
-private lemma two_ne_zero_of_ringChar_ne_two (hchar : ringChar F ≠ 2) :
-    (2 : F) ≠ 0 := by
-  let _ : CharP F (ringChar F) := ringChar.charP F
-  intro htwo
-  have hdvd : ringChar F ∣ 2 :=
-    (CharP.cast_eq_zero_iff F (ringChar F) 2).mp htwo
-  rcases (Nat.dvd_prime Nat.prime_two).mp hdvd with hone | htwoChar
-  · have hcast : ((1 : ℕ) : F) = 0 :=
-      (CharP.cast_eq_zero_iff F (ringChar F) 1).mpr (by simp [hone])
-    exact (one_ne_zero : (1 : F) ≠ 0) (by simpa only [Nat.cast_one] using hcast)
-  · exact hchar htwoChar
-
 private lemma squareFiber_natCard_eq_one [Finite F] (W : WeierstrassCurve F)
     (x : F) (hzero : (cubic W).eval x = 0) :
     Nat.card (squareFiber W x) = 1 := by
@@ -1024,7 +1007,7 @@ private lemma squareFiber_natCard_eq_two [Finite F]
     simp
   have hneg : -r ≠ r := by
     intro h
-    have htwo := two_ne_zero_of_ringChar_ne_two (F := F) hchar
+    have htwo := Ring.two_ne_zero hchar
     have hadd : r + r = 0 := by
       calc
         r + r = -r + r := congrArg (fun z : F ↦ z + r) h.symm
@@ -1187,7 +1170,7 @@ private lemma rootMultiplicity_minusOneNumerator_eq_zero [Finite F]
   apply Polynomial.rootMultiplicity_eq_zero
   intro hroot
   have heuler := eval_eulerPolynomial_eq_one hchar W x hzero hsquare
-  have htwo := two_ne_zero_of_ringChar_ne_two (F := F) hchar
+  have htwo := Ring.two_ne_zero hchar
   have hsum : (1 + 1 : F) ≠ 0 := by
     intro h
     apply htwo
@@ -1337,7 +1320,7 @@ private lemma frobeniusPolynomial_splits [Finite F] :
   rw [Polynomial.splits_iff_card_roots]
   unfold frobeniusPolynomial
   rw [Nat.card_eq_fintype_card, FiniteField.roots_X_pow_card_sub_X,
-    FiniteField.X_pow_card_sub_X_natDegree_eq F Fintype.one_lt_card]
+    Polynomial.natDegree_X_pow_sub_X Fintype.one_lt_card]
   simp
 
 private lemma minusOneGCD_natDegree [Fintype F]
@@ -1841,7 +1824,7 @@ private lemma ratFunc_ne_zero_of_num_degree_gt {r : RatFunc F}
 
 private lemma four_ne_zero_of_ringChar_ne_two (hchar : ringChar F ≠ 2) :
     (4 : F) ≠ 0 := by
-  have htwo := two_ne_zero_of_ringChar_ne_two (F := F) hchar
+  have htwo := Ring.two_ne_zero hchar
   intro hfour
   have hmul : (2 : F) * 2 = 0 := by
     calc
@@ -1857,7 +1840,7 @@ private lemma Q_y_ne_negY [Finite F] (hchar : ringChar F ≠ 2)
       (twist W).toAffine.negY (cubicRat W * RatFunc.X) (cubicRat W ^ 2) := by
   simp only [WeierstrassCurve.Affine.negY, twist, zero_mul, sub_zero]
   intro hneg
-  have htwoF := two_ne_zero_of_ringChar_ne_two (F := F) hchar
+  have htwoF := Ring.two_ne_zero hchar
   have htwo : (2 : RatFunc F) ≠ 0 := by
     intro hzero
     apply htwoF
@@ -2289,8 +2272,15 @@ private lemma degreeDataAtThree_of_pointCount_bounds (N : ℕ) (hpos : 1 ≤ N) 
     norm_num at hn
     nlinarith [sq_nonneg (2 * n + a)]
 
-/-- Over the three-element field, the elementary two-points-per-fiber bound supplies Manin degree
-data for every Weierstrass equation. -/
+/-- **Manin degree data over the field with three elements.** Let $F$ be a field with exactly
+three elements, let $W$ be any Weierstrass curve over $F$, and let $N$ be the number of
+nonsingular points of $W$ over $F$, including the point at infinity. Then there is Manin degree
+data for $(3, N)$: a function $d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = 3$, $d(-1) = N$,
+$d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
+$d(n) = d(n + 1) = 0$.
+
+The proof needs only the elementary bounds $1 \le N \le 2 \cdot 3 + 1$; the point at infinity
+gives the lower bound. -/
 public theorem manin_degree_data_of_card_eq_three [Finite F] (hF : Nat.card F = 3)
     (W : WeierstrassCurve F) :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
@@ -2299,8 +2289,13 @@ public theorem manin_degree_data_of_card_eq_three [Finite F] (hF : Nat.card F = 
   simpa only [hF] using degreeDataAtThree_of_pointCount_bounds
     (Nat.card W.toAffine.Point) Nat.card_pos (by omega)
 
-/-- Manin's numerator-degree sequence in odd characteristic has the initial values, recurrence,
-and zero separation needed for the Hasse bound. -/
+/-- **Manin degree data for the odd-characteristic normal form.** Let $F$ be a finite field with
+$q$ elements, let $W$ be a Weierstrass curve $y^2 = x^3 + a_2 x^2 + a_4 x + a_6$ over $F$ (that
+is, $a_1 = a_3 = 0$) with nonzero discriminant, and let $N$ be the number of points of $W$ over
+$F$, including the point at infinity. Then there is Manin degree data for $(q, N)$: a function
+$d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = q$, $d(-1) = N$,
+$d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
+$d(n) = d(n + 1) = 0$. -/
 public theorem manin_degree_data_of_isCharNeTwoNF [Finite F]
     (W : WeierstrassCurve F) [W.IsElliptic] [W.IsCharNeTwoNF] :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
@@ -2314,7 +2309,10 @@ public theorem manin_degree_data_of_isCharNeTwoNF [Finite F]
       recurrence := d_recurrence (ringChar_ne_two W) W
       noAdjacentZeros := noAdjacentZeros (ringChar_ne_two W) W }⟩
 
-/-- Hasse's bound for an elliptic Weierstrass equation in odd-characteristic normal form. -/
+/-- **Hasse bound for the odd-characteristic normal form.** Let $F$ be a finite field with $q$
+elements and let $W$ be a Weierstrass curve $y^2 = x^3 + a_2 x^2 + a_4 x + a_6$ over $F$ (that
+is, $a_1 = a_3 = 0$) with nonzero discriminant. If $N$ is the number of points of $W$ over $F$,
+including the point at infinity, then $(q + 1 - N)^2 \le 4q$. -/
 public theorem hasse_bound_of_isCharNeTwoNF [Finite F]
     (W : WeierstrassCurve F) [W.IsElliptic] [W.IsCharNeTwoNF] :
     (((Nat.card F : ℤ) + 1 - (Nat.card W.toAffine.Point : ℤ)) ^ 2 ≤

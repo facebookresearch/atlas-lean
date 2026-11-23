@@ -28,9 +28,13 @@ section
 namespace MathlibExt.Analysis.Complex.BlochWanted
 
 /--
-There exists universal `B > 0` such that every `f : ℂ → ℂ` holomorphic on `ball (0:ℂ) 1` with
-`deriv f 0 = 1` admits an open connected `V ⊆ ball 0 1` and `w : ℂ` with `Set.InjOn f V` and `f ''
-V = ball w B`. Source: A. Bloch, Les théorèmes de M. Valiron sur les fonctions entières et la
+**Bloch's theorem.** There is a constant $B > 0$ with the following property. Let
+$f : \mathbb{C} \to \mathbb{C}$ be holomorphic on the open unit disc $\mathbb{D} = \{z : |z| < 1\}$
+with $f'(0) = 1$. Then there are an open connected set $V \subseteq \mathbb{D}$ and a point
+$w \in \mathbb{C}$ such that $f$ is injective on $V$ and $f(V)$ is the open disc
+$\{\zeta : |\zeta - w| < B\}$.
+
+Source: A. Bloch, Les théorèmes de M. Valiron sur les fonctions entières et la
 théorie de l'uniformisation, Ann. Fac. Sci. Toulouse 17 (1925), 1–22, DOI 10.5802/afst.335; see
 Ahlfors, Complex Analysis, Univalent Functions; Lean is universal B > 0 exact schlicht disc
 f '' V = ball w B for open connected V, stronger than Landau.
@@ -289,7 +293,7 @@ theorem bloch
   have hinj : Set.InjOn f S := happrox.injOn hside
   let R : (↑L : ℂ →L[ℂ] ℂ).NonlinearRightInverse :=
     { toFun := fun y => y * (↑u⁻¹ : ℂ),
-      nnnorm := NNReal.mk (M⁻¹) (inv_nonneg.mpr hMnn),
+      nnNorm := NNReal.mk (M⁻¹) (inv_nonneg.mpr hMnn),
       bound' := by
         intro y
         simp only [NNReal.coe_mk]
@@ -302,7 +306,7 @@ theorem bloch
         calc (y * (↑u⁻¹ : ℂ)) * deriv f a = y * ((↑u⁻¹ : ℂ) * ↑u) := by
                 rw [mul_assoc, ← huval]
           _ = y := by rw [mul_comm (↑u⁻¹ : ℂ) (↑u : ℂ), hurel, mul_one] }
-  have hRnn : ((R.nnnorm : NNReal) : ℝ) = M⁻¹ := rfl
+  have hRnn : ((R.nnNorm : NNReal) : ℝ) = M⁻¹ := rfl
   set ε : ℝ := ρ / 2 with hεdef
   have hεnn : (0 : ℝ) ≤ ε := by
     rw [hεdef]; linarith
@@ -312,14 +316,14 @@ theorem bloch
     rw [hSdef]
     exact Metric.closedBall_subset_ball hερ
   have hsurj := happrox.surjOn_closedBall_of_nonlinearRightInverse R hεnn hball_sub
-  have hrad : (1 / 128 : ℝ) ≤ ((↑R.nnnorm)⁻¹ - ↑c) * ε := by
+  have hrad : (1 / 128 : ℝ) ≤ ((↑R.nnNorm)⁻¹ - ↑c) * ε := by
     have heq : ((M⁻¹)⁻¹ - M / 2) * ((t / 8) / 2) = (t * M) / 32 := by
       rw [inv_inv]; ring
     rw [hRnn, hcR, hεdef, hρdef, heq]
     linarith
   have himg : Metric.closedBall (f a) (1 / 128) ⊆ f '' S := by
     have hsub : Metric.closedBall (f a) (1 / 128) ⊆
-        Metric.closedBall (f a) (((↑R.nnnorm)⁻¹ - ↑c) * ε) :=
+        Metric.closedBall (f a) (((↑R.nnNorm)⁻¹ - ↑c) * ε) :=
       Metric.closedBall_subset_closedBall hrad
     intro y hy
     obtain ⟨x, hx, hfx⟩ := hsurj (hsub hy)
