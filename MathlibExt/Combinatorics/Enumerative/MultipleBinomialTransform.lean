@@ -14,8 +14,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The `n`-fold binomial transform of an integer sequence, obtained by applying
-`binomialTransform` successively `n` times. The zero-fold transform is the identity.
+/-- **Multiple binomial transform.** The binomial transform sends an integer sequence
+$(a_i)_{i \ge 0}$ to the sequence $(b_n)_{n \ge 0}$ given by
+$b_n = \sum_{i=0}^{n} \binom{n}{i} a_i$. For a natural number $r$, the $r$-fold binomial
+transform of $a$ is obtained by applying the binomial transform $r$ times in succession; the
+$0$-fold transform of $a$ is $a$ itself.
 
 Sources:
 

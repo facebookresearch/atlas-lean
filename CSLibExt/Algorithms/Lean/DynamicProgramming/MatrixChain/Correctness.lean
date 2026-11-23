@@ -61,7 +61,14 @@ private theorem matrixChainOrderRaw_spec {n : Nat} (dimensions : Vector Nat (n +
   · simpa only [first, last] using hOptimal
   · simpa only [hInterval, first] using hTreeInterval
 
-/-- Compute an optimal matrix-chain scalar cost and reconstruct one attaining tree. -/
+/-- **Matrix-chain ordering.** Given $n \ge 1$ and natural numbers $p_0, \dots, p_n$, where matrix
+$i$ of the chain ($0 \le i < n$) has $p_i$ rows and $p_{i+1}$ columns, the algorithm computes,
+bottom-up by interval length, values $m_{i,j}$ for $0 \le i \le j < n$: $m_{i,i} = 0$ and, for
+$i < j$, $m_{i,j}$ is the least value of $m_{i,k} + m_{k+1,j} + p_i p_{k+1} p_{j+1}$ over
+$i \le k < j$, and the first split point $k$ attaining it is recorded. It then rebuilds a
+parenthesization of the whole chain from the recorded split points and returns $m_{0,n-1}$
+together with this parenthesization. One event is charged per evaluated split candidate and one
+per reconstructed tree node. -/
 public def matrixChainOrder {n : Nat}
     (dimensions : Vector Nat (n + 1)) (hn : 0 < n) : TimeM Cost (Result n) :=
   let computation := matrixChainOrderRaw dimensions hn
@@ -88,7 +95,12 @@ private theorem matrixChainOrder_spec {n : Nat} (dimensions : Vector Nat (n + 1)
   apply Option.some_injective _
   exact (Option.some_get _).trans hResult
 
-/-- The returned parenthesization uses every matrix once in order and is dimension-valid. -/
+/-- **Matrix-chain ordering returns a valid parenthesization.** For every $n \ge 1$ and all
+natural numbers $p_0, \dots, p_n$, the parenthesization returned by the matrix-chain ordering
+algorithm on the dimensions $p_0, \dots, p_n$ is valid: its leaves are the matrices
+$0, 1, \dots, n - 1$ in order, each exactly once, and at every multiplication node the column
+count of the left factor equals the row count of the right factor, where matrix $i$ has $p_i$
+rows and $p_{i+1}$ columns. -/
 public theorem matrixChainOrder_parenthesization_valid {n : Nat}
     (dimensions : Vector Nat (n + 1)) (hn : 0 < n) :
     let result := (matrixChainOrder dimensions hn).ret
@@ -106,7 +118,10 @@ public theorem matrixChainOrder_parenthesization_valid {n : Nat}
         List.map_coe_finRange_eq_range.symm
   · exact hInterval.compatible dimensions
 
-/-- The reported optimum is the scalar cost of the returned parenthesization. -/
+/-- **Matrix-chain ordering reports the cost of its parenthesization.** For every $n \ge 1$ and
+all natural numbers $p_0, \dots, p_n$, the scalar-multiplication cost of the parenthesization
+returned by the matrix-chain ordering algorithm on the dimensions $p_0, \dots, p_n$ equals the
+optimal cost it reports. -/
 public theorem matrixChainOrder_cost_eq {n : Nat} (dimensions : Vector Nat (n + 1))
     (hn : 0 < n) :
     let result := (matrixChainOrder dimensions hn).ret
@@ -115,7 +130,10 @@ public theorem matrixChainOrder_cost_eq {n : Nat} (dimensions : Vector Nat (n + 
     matrixChainOrder_spec dimensions hn
   simpa only [hResult] using hCost
 
-/-- Every valid parenthesization costs at least the reported optimum. -/
+/-- **Reported matrix-chain cost is a lower bound.** For every $n \ge 1$, all natural numbers
+$p_0, \dots, p_n$ and every parenthesization $T$ of $n$ matrices that is valid for these
+dimensions, the optimal cost reported by the matrix-chain ordering algorithm on the dimensions
+$p_0, \dots, p_n$ is at most the scalar-multiplication cost of $T$. -/
 public theorem matrixChainOrder_minimal {n : Nat} (dimensions : Vector Nat (n + 1))
     (hn : 0 < n) (tree : Parenthesization n) (hTree : tree.IsValid dimensions) :
     (matrixChainOrder dimensions hn).ret.optimalCost ≤
@@ -176,19 +194,33 @@ private theorem matrixChainOrder_time_fields {n : Nat}
   · simp only [add_reconstructionNodes, hBuildReconstruction, hReconstruct.2, zero_add]
     split <;> simp [hInterval, first, last]
 
-/-- The dynamic program evaluates exactly one candidate for every interval split. -/
+/-- **Split candidates evaluated by matrix-chain ordering.** For every $n \ge 1$ and all natural
+numbers $p_0, \dots, p_n$, the matrix-chain ordering algorithm run on the dimensions
+$p_0, \dots, p_n$ evaluates exactly $\binom{n+1}{3}$ split candidates.
+
+This is the number of triples $i \le k < j < n$, so the dynamic program evaluates one candidate
+for every interval split. -/
 public theorem matrixChainOrder_candidateEvaluations {n : Nat}
     (dimensions : Vector Nat (n + 1)) (hn : 0 < n) :
     (matrixChainOrder dimensions hn).time.candidateEvaluations = Nat.choose (n + 1) 3 :=
   (matrixChainOrder_time_fields dimensions hn).1
 
-/-- Reconstruction emits and charges exactly the nodes of a full binary tree. -/
+/-- **Reconstruction size in matrix-chain ordering.** For every $n \ge 1$ and all natural numbers
+$p_0, \dots, p_n$, the matrix-chain ordering algorithm run on the dimensions $p_0, \dots, p_n$
+charges exactly $2n - 1$ reconstruction events.
+
+This is the number of nodes of a full binary tree with $n$ leaves. -/
 public theorem matrixChainOrder_reconstructionNodes {n : Nat}
     (dimensions : Vector Nat (n + 1)) (hn : 0 < n) :
     (matrixChainOrder dimensions hn).time.reconstructionNodes = 2 * n - 1 :=
   (matrixChainOrder_time_fields dimensions hn).2
 
-/-- The total event count is the split count plus the reconstructed-tree size. -/
+/-- **Exact event count of matrix-chain ordering.** For every $n \ge 1$ and all natural numbers
+$p_0, \dots, p_n$, the total number of events charged by the matrix-chain ordering algorithm run
+on the dimensions $p_0, \dots, p_n$ is $\binom{n+1}{3} + (2n - 1)$.
+
+The first term counts evaluated split candidates and the second the nodes of the reconstructed
+tree. -/
 public theorem matrixChainOrder_time {n : Nat} (dimensions : Vector Nat (n + 1))
     (hn : 0 < n) :
     (matrixChainOrder dimensions hn).time.total =
@@ -196,7 +228,9 @@ public theorem matrixChainOrder_time {n : Nat} (dimensions : Vector Nat (n + 1))
   simp only [Cost.total, matrixChainOrder_candidateEvaluations,
     matrixChainOrder_reconstructionNodes]
 
-/-- The declared event count is bounded above by three times the cube of chain length. -/
+/-- **Cubic bound for matrix-chain ordering.** For every $n \ge 1$ and all natural numbers
+$p_0, \dots, p_n$, the total number of events charged by the matrix-chain ordering algorithm run
+on the dimensions $p_0, \dots, p_n$ is at most $3n^3$. -/
 public theorem matrixChainOrder_time_le_three_mul_cube {n : Nat}
     (dimensions : Vector Nat (n + 1)) (hn : 0 < n) :
     (matrixChainOrder dimensions hn).time.total ≤ 3 * n ^ 3 := by

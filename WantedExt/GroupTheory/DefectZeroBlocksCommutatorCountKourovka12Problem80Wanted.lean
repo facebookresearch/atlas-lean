@@ -41,60 +41,92 @@ and one such class), and both counterexamples of the Archive have `p ∣ |G|`. S
 
 open scoped commutatorElement
 
-/-- The irreducible complex characters of `G` of `p`-defect zero (degree divisible by the full
-power of `p` dividing `|G|`). Each `p`-block of defect zero contains exactly one irreducible
-character, and every such character forms a block of defect zero (Brauer), so these characters
-count the `p`-blocks of defect zero. -/
+/-- **Characters of $p$-defect zero.** For a natural number $p$ and a group $G$, the set of
+characters $\chi \colon G \to \mathbb{C}$ of irreducible finite-dimensional complex representations
+of $G$ whose degree is divisible by $p^a$, where $a$ is the exponent of $p$ in the prime
+factorization of the order $|G|$ (and $a = 0$ when $G$ is infinite or $p$ is not prime).
+
+For a prime $p$ and a finite group $G$, each $p$-block of defect zero contains exactly one
+irreducible character, and every such character forms a block of defect zero (Brauer), so these
+characters count the $p$-blocks of defect zero. -/
 def defectZeroCharacters (p : ℕ) (G : Type) [Group G] : Set (G → ℂ) :=
   {χ | ∃ (V : Type) (_ : AddCommGroup V) (_ : Module ℂ V) (_ : FiniteDimensional ℂ V)
     (ρ : Representation ℂ G V), ρ.IsIrreducible ∧ ρ.character = χ ∧
       p ^ (Nat.card G).factorization p ∣ Module.finrank ℂ V}
 
-/-- The number of solutions `(x, y)` of `[x, y] = g`. -/
+/-- **Number of solutions of a commutator equation.** For an element $g$ of a group $G$, the
+number of pairs $(x, y) \in G \times G$ with $[x, y] = x y x^{-1} y^{-1} = g$, taken to be $0$ when
+there are infinitely many such pairs. -/
 noncomputable def commutatorSolutionCount {G : Type*} [Group G] (g : G) : ℕ :=
   Nat.card {xy : G × G // ⁅xy.1, xy.2⁆ = g}
 
-/-- The conjugacy classes of elements `g` for which the number of solutions of `[x, y] = g` is
-not divisible by `p`. -/
+/-- **Conjugacy classes with commutator count not divisible by $p$.** For a natural number $p$ and
+a group $G$, the set of conjugacy classes of $G$ containing an element $g$ such that the number of
+pairs $(x, y) \in G \times G$ with $[x, y] = x y x^{-1} y^{-1} = g$ (taken to be $0$ when there are
+infinitely many) is not divisible by $p$. -/
 def nondivisibleCommutatorClasses (p : ℕ) (G : Type*) [Group G] : Set (ConjClasses G) :=
   {c | ∃ g : G, ConjClasses.mk g = c ∧ ¬ p ∣ commutatorSolutionCount g}
 
-/-- Kourovka 12.80(a) (K. W. Roggenkamp): for every prime `p` dividing `|G|`, the number of
-`p`-blocks of defect zero of a finite group `G` equals the number of conjugacy classes of elements
-`g` such that the number of solutions of `[x, y] = g` is not divisible by `p`. -/
+/-- **Kourovka Problem 12.80(a): blocks of defect zero and commutator equations.** For every prime
+$p$ and every finite group $G$ whose order is divisible by $p$, the number of irreducible complex
+characters of $G$ of $p$-defect zero equals the number of conjugacy classes of $G$ containing an
+element $g$ for which the number of pairs $(x, y) \in G \times G$ with
+$[x, y] = x y x^{-1} y^{-1} = g$ is not divisible by $p$.
+
+Each $p$-block of defect zero contains exactly one irreducible character, and every irreducible
+character of $p$-defect zero forms such a block (Brauer), so this is K. W. Roggenkamp's question
+whether the number of $p$-blocks of defect zero equals that number of classes. -/
 def defectZeroBlocksEqNondivisibleClasses : Prop :=
   ∀ p : ℕ, p.Prime → ∀ (G : Type) [Group G] [Finite G], p ∣ Nat.card G →
     Nat.card (defectZeroCharacters p G) = Nat.card (nondivisibleCommutatorClasses p G)
 
-/-- Kourovka 12.80(b): the same for finite simple groups `G`. -/
+/-- **Kourovka Problem 12.80(b): the case of simple groups.** For every prime $p$ and every
+finite simple group $G$ whose order is divisible by $p$, the number of irreducible complex
+characters of $G$ of $p$-defect zero equals the number of conjugacy classes of $G$ containing an
+element $g$ for which the number of pairs $(x, y) \in G \times G$ with
+$[x, y] = x y x^{-1} y^{-1} = g$ is not divisible by $p$. -/
 def simpleDefectZeroBlocksEqNondivisibleClasses : Prop :=
   ∀ p : ℕ, p.Prime → ∀ (G : Type) [Group G] [Finite G], IsSimpleGroup G → p ∣ Nat.card G →
     Nat.card (defectZeroCharacters p G) = Nat.card (nondivisibleCommutatorClasses p G)
 
 /--
-Resolved false: the Kourovka Archive answers 12.80(a) No (L. Barker): for `p = 2` and `G = ℤ₃ × S₃`
-there are three 2-blocks of defect zero (the irreducible characters of degree 2) but only one class,
-that of `(1, (123))`, with an odd number of solutions of `[x, y] = g`. Source: E. I. Khukhro and V.
-D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
-arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.80 (K. W. Roggenkamp; S. P.
-Strunkov); resolution: L. Barker, letter of 27 May 1996 (part a); B. Sambale, letter of 5 May 2021
-(part b); as recorded in the Kourovka Archive, Problem 12.80, (a) p = 2, G = ℤ_3 × S_3; (b) p = 2, G
-= A_5: one 2-block of defect zero, three classes ((123), (12345), (13524)) with an odd number of
-solutions of [x, y] = g, https://arxiv.org/abs/1401.0300v49.
+**Kourovka Problem 12.80(a) has a negative answer.** It is not true that for every prime $p$ and
+every finite group $G$ whose order is divisible by $p$, the number of irreducible complex characters
+of $G$ of $p$-defect zero equals the number of conjugacy classes of $G$ containing an element $g$
+for which the number of pairs $(x, y) \in G \times G$ with $[x, y] = x y x^{-1} y^{-1} = g$ is not
+divisible by $p$.
+
+L. Barker's counterexample: for $p = 2$ and $G = \mathbb{Z}_3 \times S_3$ there are three
+irreducible characters of degree $2$, all of $2$-defect zero (so three $2$-blocks of defect zero),
+but only one class, that of $(1, (123))$, with an odd number of solutions of $[x, y] = g$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.80 (K. W.
+Roggenkamp; S. P. Strunkov); resolution: L. Barker, letter of 27 May 1996 (part a); B. Sambale,
+letter of 5 May 2021 (part b); as recorded in the Kourovka Archive, Problem 12.80, (a) p = 2, G =
+ℤ_3 × S_3; (b) p = 2, G = A_5: one 2-block of defect zero, three classes ((123), (12345), (13524))
+with an odd number of solutions of [x, y] = g, https://arxiv.org/abs/1401.0300v49.
 -/
 public theorem_wanted defectZeroBlocksEqNondivisibleClasses_refuted :
     ¬ defectZeroBlocksEqNondivisibleClasses
 
 /--
-Resolved false: the Kourovka Archive answers 12.80(b) "No, not always" (B. Sambale): in `A₅` with `p
-= 2` there is one 2-block of defect zero (the character of degree 4) but three classes, those of
-`(123)`, `(12345)` and `(13524)`, with an odd number of solutions of `[x, y] = g`. Source: E. I.
-Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
-issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.80 (K. W. Roggenkamp; S. P.
-Strunkov); resolution: L. Barker, letter of 27 May 1996 (part a); B. Sambale, letter of 5 May 2021
-(part b); as recorded in the Kourovka Archive, Problem 12.80, (a) p = 2, G = ℤ_3 × S_3; (b) p = 2, G
-= A_5: one 2-block of defect zero, three classes ((123), (12345), (13524)) with an odd number of
-solutions of [x, y] = g, https://arxiv.org/abs/1401.0300v49.
+**Kourovka Problem 12.80(b) has a negative answer.** It is not true that for every prime $p$ and
+every finite simple group $G$ whose order is divisible by $p$, the number of irreducible complex
+characters of $G$ of $p$-defect zero equals the number of conjugacy classes of $G$ containing an
+element $g$ for which the number of pairs $(x, y) \in G \times G$ with
+$[x, y] = x y x^{-1} y^{-1} = g$ is not divisible by $p$.
+
+B. Sambale's counterexample: in $A_5$ with $p = 2$ there is one irreducible character of $2$-defect
+zero (the character of degree $4$, so one $2$-block of defect zero) but three classes, those of
+$(123)$, $(12345)$ and $(13524)$, with an odd number of solutions of $[x, y] = g$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.80 (K. W.
+Roggenkamp; S. P. Strunkov); resolution: L. Barker, letter of 27 May 1996 (part a); B. Sambale,
+letter of 5 May 2021 (part b); as recorded in the Kourovka Archive, Problem 12.80, (a) p = 2, G =
+ℤ_3 × S_3; (b) p = 2, G = A_5: one 2-block of defect zero, three classes ((123), (12345), (13524))
+with an odd number of solutions of [x, y] = g, https://arxiv.org/abs/1401.0300v49.
 -/
 public theorem_wanted simpleDefectZeroBlocksEqNondivisibleClasses_refuted :
     ¬ simpleDefectZeroBlocksEqNondivisibleClasses
