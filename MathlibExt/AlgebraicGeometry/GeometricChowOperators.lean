@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 public import MathlibExt.AlgebraicGeometry.GeometricChow
 public import Mathlib.AlgebraicGeometry.ResidueField
+public import Mathlib.AlgebraicGeometry.Fiber
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.Algebra.Category.ModuleCat.Basic
 public import Mathlib.Algebra.Module.LinearMap.Rat
@@ -92,11 +93,12 @@ variable (X Y : ComplexScheme) [IsNoetherian X.left] [IsNoetherian Y.left]
   (f : Y ⟶ X) (r : ℕ)
 
 /-- Flat pullback of relative dimension `r`: `f` is flat, every irreducible component of every
-fibre has dimension `r`, and the fibre-cycle transform preserves rational equivalence. -/
+actual (scheme-theoretic) fibre `f.left.fiber x` has dimension `r`, and the fibre-cycle transform
+preserves rational equivalence. -/
 structure FlatCycleDescent : Prop where
   flat : Flat f.left
-  pureDimension : ∀ (x : X.left) (Z : Set (pointFiber f.left x)),
-    Z ∈ irreducibleComponents (pointFiber f.left x) → topologicalKrullDim Z = r
+  pureDimension : ∀ (x : X.left) (Z : Set (f.left.fiber x)),
+    Z ∈ irreducibleComponents (f.left.fiber x) → topologicalKrullDim Z = r
   preserves : ∀ d : ℕ, rationalEquivalences X d ≤
     (rationalEquivalences Y (d + r)).comap (flatCyclePullback f.left d r)
 
