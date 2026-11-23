@@ -12,7 +12,7 @@ import MathlibExt.Combinatorics.Enumerative.GeneralizedSchreierPadovan
 import Mathlib.Tactic.Ring
 
 /-!
-# Tests for polynomial recurrences
+# Tests for Schreier counts and polynomial recurrences
 -/
 
 open Polynomial MetaMathlibExt
@@ -32,3 +32,13 @@ example {P : Polynomial ℝ} {a : ℕ → ℝ} (h : SatisfiesPoly P a) : Satisfi
 -- A nonzero constant recurrence already constrains the term of index zero.
 example {a : ℕ → ℝ} (h : SatisfiesPoly 1 a) : a 0 = 0 := by
   simpa using h 0 (by simp)
+
+-- The shift includes maximum zero, where the Schreier family is empty.
+example {p : ℕ} (hp : 1 ≤ p) : maximalSchreierCount p 1 (p + 1) = 0 := by
+  simpa [schreierCount, Finset.filter_singleton] using
+    (schreierCount_eq_maximalSchreierCount_add hp 0).symm
+
+-- At maximum five, both {5} and {4, 5} contribute to the shifted maximal count.
+example : maximalSchreierCount 2 1 8 = 2 := by
+  rw [← schreierCount_eq_maximalSchreierCount_add (p := 2) (by decide) 5]
+  decide +kernel

@@ -19,7 +19,14 @@ import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
-/-! # Weights for bridge crossings of capacity three -/
+/-!
+# Weights for bridge crossings of capacity three
+
+This file defines the weights $y_i$ of the capacity-three lower bound of Thang Pang Ern and
+Gerard Sayson and proves the two inequalities they satisfy: the local inequality
+`bridgeWeight_local_inequality` for forward crossings and the return inequality
+`bridgeWeight_return_inequality` for returns.
+-/
 
 @[expose] public section
 
@@ -108,5 +115,46 @@ theorem bridgeWeight_local_inequality (T : Finset ℕ) (hT : T.Nonempty)
     apply hsmall T (mem_powerset.mpr ?_) hT hT3
     intro i hi
     exact mem_Icc.mpr ⟨hpos' i hi, (hle i hi).trans (by omega)⟩
+
+-- Every weight is nonnegative.
+private theorem bridgeWeight_nonneg (i : ℕ) : 0 ≤ bridgeWeight i := by
+  by_cases hi : 7 ≤ i
+  · rw [bridgeWeight_of_seven_le i hi]
+    have hi' : (7 : ℚ) ≤ i := by exact_mod_cast hi
+    linarith
+  · interval_cases i <;> norm_num [bridgeWeight]
+
+-- Every weight is at least the crossing time minus three, with equality at `3`.
+private theorem sub_three_le_bridgeWeight (i : ℕ) : (i : ℚ) - 3 ≤ bridgeWeight i := by
+  by_cases hi : 7 ≤ i
+  · rw [bridgeWeight_of_seven_le i hi]
+    linarith
+  · interval_cases i <;> norm_num [bridgeWeight]
+
+-- The statement keeps the hypotheses `hR3` (a return carries at most three people) and `hpos`
+-- (the people are numbered from `1`) of the source, which the proof does not use.
+set_option linter.unusedVariables false in
+/-- **Return inequality for the capacity-3 weights.** Let $y_i$ be the weights of the capacity-3
+lower bound. For every nonempty set $R$ of positive integers with $|R| \le 3$,
+$$\frac{9}{2}(|R| - 1) + \max R + \sum_{i \in R} (y_i - i) \ge 0.$$
+
+Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
+and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
+Lemma 16 (`jis-2026-26.5.6-lem-16`). -/
+theorem bridgeWeight_return_inequality (R : Finset ℕ) (hR : R.Nonempty)
+    (hR3 : R.card ≤ 3) (hpos : 0 ∉ R) :
+    0 ≤ 9 / 2 * ((R.card : ℚ) - 1) + ((R.max' hR : ℕ) : ℚ) +
+      ∑ i ∈ R, (bridgeWeight i - (i : ℚ)) := by
+  set m := R.max' hR
+  have hm : m ∈ R := R.max'_mem hR
+  -- Each of the `|R| - 1` other people lowers the sum by at most `3 < 9 / 2`.
+  have hcard : ((R.erase m).card : ℚ) + 1 = R.card := by
+    exact_mod_cast card_erase_add_one hm
+  have hrest : (R.erase m).card • (-3 : ℚ) ≤ ∑ i ∈ R.erase m, (bridgeWeight i - (i : ℚ)) :=
+    card_nsmul_le_sum _ _ _ fun i _ ↦ by linarith [sub_three_le_bridgeWeight i]
+  rw [nsmul_eq_mul] at hrest
+  -- The slowest person `m` contributes `m + (y_m - m) = y_m ≥ 0`.
+  rw [← add_sum_erase R _ hm]
+  linarith [bridgeWeight_nonneg m]
 
 end MetaMathlibExt.BridgeTorchGeneralizations

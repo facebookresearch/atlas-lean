@@ -12,13 +12,15 @@ public import Mathlib.Algebra.Polynomial.Degree.Support
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Polynomial.Degree.Domain
+import Mathlib.Algebra.Order.Interval.Finset.Basic
+import Mathlib.Data.Finset.Preimage
 
 /-!
 # Generalized Schreier sets and Padovan-like sequences
 
 This file defines the Schreier counts and Padovan-like sequences of Chu and Vasseur and records
-their initial values. It also proves that a sequence satisfying a polynomial recurrence satisfies
-the recurrence given by any multiple of that polynomial.
+their initial values. A bijection relates the two counts for `q = 1`. A sequence satisfying a
+polynomial recurrence satisfies the recurrence given by any multiple of that polynomial.
 -/
 
 namespace MetaMathlibExt
@@ -44,6 +46,88 @@ Sets Revisited*, Journal of Integer Sequences 29 (2026), Article 26.2.2, Section
 def maximalSchreierCount (p q n : ℕ) : ℕ :=
   ((Finset.Icc 1 n).powerset.filter fun F =>
     n ∈ F ∧ (∀ x ∈ F, p * F.card ≤ q * x) ∧ ∃ x ∈ F, q * x = p * F.card).card
+
+open Finset in
+/-- **Counting $(p, 1)$-Schreier sets by maximal $(p, 1)$-Schreier sets.** Fix a positive integer
+$p$. For each $m$, let $|S^{p/1}_m|$ be the number of sets $F \subseteq \{1, \dots, m\}$ with
+$m \in F$ and $\min F \ge p |F|$, and let $|M^{p/1}_m|$ be the number of those with
+$\min F = p |F|$. Then $|S^{p/1}_n| = |M^{p/1}_{n+p+1}|$ for every natural number $n$.
+
+The paper states this for $n \ge 1$; at $n = 0$ both sides are $0$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Linear Recurrences of Generalized Schreier
+Sets Revisited*, Journal of Integer Sequences 29 (2026), Article 26.2.2, Theorem 8
+(`jis-2026-26.2.2-thm-8`). -/
+theorem schreierCount_eq_maximalSchreierCount_add {p : ℕ} (hp : 1 ≤ p) (n : ℕ) :
+    schreierCount p 1 n = maximalSchreierCount p 1 (n + p + 1) := by
+  let shift := addRightEmbedding (p + 1)
+  -- Shift every element past the new minimum, then insert that minimum.
+  let extend (F : Finset ℕ) (hF : ∀ x ∈ F, p * F.card ≤ x) :=
+    (F.map shift).cons (p * (F.card + 1)) (by
+      intro h
+      obtain ⟨x, hx, he⟩ := mem_map.mp h
+      change x + (p + 1) = p * (F.card + 1) at he
+      rw [Nat.mul_succ] at he
+      have := hF x hx
+      omega)
+  simp only [schreierCount, maximalSchreierCount, one_mul]
+  refine card_bij (fun F hF => extend F (mem_filter.mp hF).2.2) ?_ ?_ ?_
+  · intro F hF
+    obtain ⟨hsub, hn, hbound⟩ := mem_filter.mp hF
+    replace hsub := mem_powerset.mp hsub
+    simp only [mem_filter, mem_powerset, subset_iff, mem_Icc, extend, card_cons, card_map,
+      mem_cons, mem_map, shift, addRightEmbedding_apply, Nat.mul_succ]
+    refine ⟨?_, Or.inr ⟨n, hn, by omega⟩, ?_, _, Or.inl rfl, rfl⟩
+    · rintro y (rfl | ⟨x, hx, rfl⟩)
+      · have := hbound n hn
+        omega
+      · have := (mem_Icc.mp (hsub hx)).2
+        omega
+    · rintro y (rfl | ⟨x, hx, rfl⟩)
+      · exact le_rfl
+      · have := hbound x hx
+        omega
+  · intro F _ H _ heq
+    apply map_injective shift
+    simpa only [extend, card_cons, card_map, erase_cons] using
+      congrArg (fun G : Finset ℕ => G.erase (p * G.card)) heq
+  · intro G hG
+    obtain ⟨hsub, hmax, hbound, m, hm, rfl⟩ := mem_filter.mp hG
+    replace hsub := mem_powerset.mp hsub
+    -- If the minimum were the maximum, G would be a singleton with minimum p.
+    have hne : n + p + 1 ≠ p * G.card := by
+      intro heq
+      have hsingle : G = {n + p + 1} := eq_singleton_iff_unique_mem.mpr
+        ⟨hmax, fun x hx => le_antisymm (mem_Icc.mp (hsub hx)).2 (heq ▸ hbound x hx)⟩
+      simp [hsingle] at heq
+      omega
+    have htwo : 1 < G.card := one_lt_card.mpr ⟨_, hmax, _, hm, hne⟩
+    have hpmin : p < p * G.card := by
+      simpa using Nat.mul_lt_mul_of_pos_left htwo hp
+    have hrest : G.erase (p * G.card) ⊆ (Icc 1 n).map shift := by
+      simp only [shift, map_add_right_Icc]
+      intro y hy
+      obtain ⟨hne', hy⟩ := mem_erase.mp hy
+      have hmin := (hbound y hy).lt_of_ne (Ne.symm hne')
+      have hmax := (mem_Icc.mp (hsub hy)).2
+      exact mem_Icc.mpr ⟨by omega, by omega⟩
+    obtain ⟨F, hFsub, hmap⟩ := subset_map_iff.mp hrest
+    have hcard : F.card + 1 = G.card := by
+      simpa only [hmap, card_map] using card_erase_add_one hm
+    have hn : n ∈ F := by
+      apply (mem_map' shift).mp
+      rw [← hmap]
+      exact mem_erase.mpr ⟨hne, hmax⟩
+    have hFbound (x) (hx : x ∈ F) : p * F.card ≤ x := by
+      have hx' := mem_map_of_mem shift hx
+      rw [← hmap] at hx'
+      obtain ⟨hne', hx'⟩ := mem_erase.mp hx'
+      have hlt := (hbound _ hx').lt_of_ne (Ne.symm hne')
+      change p * G.card < x + (p + 1) at hlt
+      rw [← hcard, Nat.mul_succ] at hlt
+      omega
+    refine ⟨F, mem_filter.mpr ⟨mem_powerset.mpr hFsub, hn, hFbound⟩, ?_⟩
+    simpa only [extend, cons_eq_insert, hcard, ← hmap] using insert_erase hm
 
 /-- **Padovan-like sequence for Schreier sets.** For natural numbers $p$ and $q$, the sequence
 $a_{p,q,n}$, $n \ge 0$, is defined as follows. If $q \ge 1$ and $n \ge p + q$, then

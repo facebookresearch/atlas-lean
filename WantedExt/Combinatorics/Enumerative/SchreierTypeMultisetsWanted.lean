@@ -24,13 +24,13 @@ The paper's `ℕ` is the positive integers. For positive `s, p, n`:
 * `D_{u,n}` is the set of Schreier sets `F ⊆ G_{u,n}` containing `⌊(un - 1)/(u - 1)⌋`, where
   `G_{u,n}` is the set of the first `n` positive integers not divisible by `u`
   (`schreierAvoidingMultiplesCount`), with `IsSchreier` from
-  `WantedExt/Combinatorics/Enumerative/SchreierTypeSetsWanted.lean`.
+  `MathlibExt/Combinatorics/Enumerative/SchreierTypeSets.lean`.
 -/
 module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
-public import WantedExt.Combinatorics.Enumerative.SchreierTypeSetsWanted
+public import MathlibExt.Combinatorics.Enumerative.SchreierTypeSets
 
 namespace MetaMathlibExt
 
@@ -263,7 +263,8 @@ public theorem_wanted schreierMultisetCount_formula_and_recurrence {s p : ℕ} (
       schreierMultisetCount s p n =
         ∑ k ∈ Finset.Icc 1 ((s * n + 1) / (s * p + 1)), (n - p * k + k - 2).choose (k - 1)) ∧
     ∀ n, s * p + 2 ≤ n →
-      schreierMultisetCount s p n = ∑ i ∈ Finset.range (s + 1), schreierMultisetCount s p (n - 1 - i * p)
+      schreierMultisetCount s p n =
+        ∑ i ∈ Finset.range (s + 1), schreierMultisetCount s p (n - 1 - i * p)
 
 /-- **Closed form and recurrence for colored Schreier multiset counts.** Let $s \ge 1$ and
 $p \ge 1$, and write $|B^{(s)}_{p,n}|$ for the number of colored Schreier-type multisets. For
