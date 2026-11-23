@@ -444,11 +444,6 @@ private lemma E_eq_G : E = G := by
     rw [E_zero, G_zero]
   exact eq_of_fderiv_eq hfE hfG hfeq 0 h0
 
-private lemma integral_one_div_log (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
-    (∫ s in a..b, 1 / s) = Real.log (b / a) := by
-  simp only [one_div]
-  exact integral_inv_of_pos ha hb
-
 private lemma integrable_G :
     MeasureTheory.IntegrableOn (fun s : ℝ => Real.exp (-s) / s) (Set.Ioi 1) := by
   have hexp : MeasureTheory.IntegrableOn (fun s : ℝ => Real.exp (-s)) (Set.Ioi 1) := by
@@ -593,7 +588,7 @@ private lemma E_sub_log_gamma (x : ℝ) (hx : 1 ≤ x) :
           exact hne s hs
       exact hc.intervalIntegrable
   have hlog : (∫ s in (1:ℝ)..x, 1/s) = Real.log x := by
-    have h := integral_one_div_log 1 x (by norm_num) hx0
+    have h := integral_one_div_of_pos one_pos hx0
     rwa [div_one] at h
   have hCg : C0 - Real.eulerMascheroniConstant = L := by
     have h := gamma_eq
@@ -680,10 +675,15 @@ private lemma E_eq_thm (x : ℝ) : E x = Real.exp (-x) *
   unfold E
   rw [S_eq_tsum]
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, Example 4, printed pp.
-    65-66 / PDF pp. 75-76.
+/-- **Asymptotics of the harmonic Poisson series.** Let $H_k = \sum_{j=1}^{k} 1/j$ be the $k$-th
+harmonic number (so $H_0 = 0$) and let $\gamma$ be the Euler–Mascheroni constant. Then, as
+$x \to \infty$,
+$$e^{-x} \sum_{k=0}^{\infty} \frac{x^k H_k}{k!} = \log x + \gamma + O\left(\frac{1}{x}\right).$$
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry10_example4_harmonic_poisson_asymptotic`.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, Example 4, printed pp.
+    65-66 / PDF pp. 75-76.
 -/
 theorem ramanujan_part1_ch3_entry10_example4_harmonic_poisson_asymptotic :
     Asymptotics.IsBigO Filter.atTop (fun x : ℝ => Real.exp (-x) *

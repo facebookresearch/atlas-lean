@@ -86,12 +86,14 @@ namespace WeightBalancedTree
 
 variable {α : Type u}
 
-/-- The number of keys of the empty tree, for `BinaryTree.numNodes`. -/
+/-- **Number of keys of the empty tree.** The empty binary tree has $0$ nodes. -/
 @[simp] public theorem numNodes_empty :
     (BinaryTree.nil : BinaryTree α).numNodes = 0 :=
   rfl
 
-/-- The number of keys of a node, for `BinaryTree.numNodes`. -/
+/-- **Number of keys of a node.** Write $|t|$ for the number of nodes of a binary tree $t$. For
+binary trees $l$ and $r$ and a key $k$, the node with key $k$, left subtree $l$ and right subtree
+$r$ has $|l| + |r| + 1$ nodes. -/
 @[simp] public theorem numNodes_node {left right : BinaryTree α} {key : α} :
     (BinaryTree.node key left right).numNodes =
       left.numNodes + right.numNodes + 1 :=
@@ -101,10 +103,9 @@ variable {α : Type u}
 the empty tree has height `0` and a node has height one more than the
 taller child. -/
 
-/-- The Nievergelt-Reingold weight of a tree: external leaves count, so the
-empty tree has weight `1` and any tree has weight one more than its number
-of keys. The weight of a node is the sum of the weights of its children
-(`weight_node`). -/
+/-- **Weight of a binary tree.** The Nievergelt–Reingold weight $w(t)$ of a binary tree $t$
+is its number of keys plus one. Equivalently, it counts the external leaves: the empty tree
+has weight $1$, and the weight of a node is the sum of the weights of its two children. -/
 public def weight (t : BinaryTree α) : Nat :=
   t.numNodes + 1
 
@@ -116,11 +117,13 @@ public def weight (t : BinaryTree α) : Nat :=
   simp only [weight, numNodes_node]
   omega
 
-/-- The weight-balance invariant `BB[1/4]`: at every node, each child has
-weight at most three quarters of the weight of the node,
-`4 * weight child ≤ 3 * weight node`, written out in key counts as
-`4 * (child.numNodes + 1) ≤ 3 * (left.numNodes + right.numNodes + 2)`.
-See `balanced_node_iff_weight` for the same statement using `weight`. -/
+/-- **Weight-balanced trees.** Write $|t|$ for the number of keys of a binary tree $t$ and
+$w(t) = |t| + 1$ for its weight. A binary tree is weight-balanced, or satisfies the
+invariant $\mathrm{BB}[1/4]$, when it is empty, or when it is a node with left subtree $L$
+and right subtree $R$ such that $L$ and $R$ are weight-balanced,
+$4\,w(L) \le 3(w(L) + w(R))$ and $4\,w(R) \le 3(w(L) + w(R))$. Since the weight of a node
+is $w(L) + w(R)$, this says that each child has weight at most three quarters of the
+weight of the node. -/
 public def Balanced : BinaryTree α → Prop
   | .nil => True
   | .node _ left right =>
@@ -137,12 +140,19 @@ public def Balanced : BinaryTree α → Prop
   Iff.rfl
 
 /--
-Rebuild a node from children that violate the weight invariant by at most
-one inserted key, restoring balance. When the left child is too heavy, a
-single right rotation is performed if the left-right grandchild is at most
-twice as large as the left-left one, and a double left-right rotation
-otherwise; the right-heavy case is symmetric. Children that already satisfy
-the invariant are rebuilt without rotation.
+**Weight-balanced rebalancing.** For binary trees $L$, $R$ and a key $k$, write $|t|$ for
+the number of keys of a tree $t$, $w(t) = |t| + 1$ for its weight, $w = w(L) + w(R)$, and
+$\langle X, x, Y \rangle$ for the node with key $x$, left subtree $X$ and right subtree
+$Y$. The rebalanced node $\mathrm{balance}(L, k, R)$ is defined as follows.
+If $3w < 4\,w(L)$, then $L = \langle A, a, B \rangle$ is a node; if $|B| \le 2|A|$, the
+result is the single rotation $\langle A, a, \langle B, k, R \rangle \rangle$, and
+otherwise $B = \langle B_1, b, B_2 \rangle$ is a node and the result is the double
+rotation $\langle \langle A, a, B_1 \rangle, b, \langle B_2, k, R \rangle \rangle$.
+Otherwise, if $3w < 4\,w(R)$, then $R = \langle C, c, D \rangle$ is a node; if
+$|C| \le 2|D|$, the result is $\langle \langle L, k, C \rangle, c, D \rangle$, and
+otherwise $C = \langle C_1, d, C_2 \rangle$ is a node and the result is
+$\langle \langle L, k, C_1 \rangle, d, \langle C_2, c, D \rangle \rangle$.
+In all remaining cases the result is $\langle L, k, R \rangle$.
 -/
 public def balance (left : BinaryTree α) (key : α) (right : BinaryTree α) : BinaryTree α :=
   if 3 * (left.numNodes + right.numNodes + 2) < 4 * (left.numNodes + 1) then
@@ -171,8 +181,12 @@ public def balance (left : BinaryTree α) (key : α) (right : BinaryTree α) : B
     | .nil => .node key left right
   else .node key left right
 
-/-- Insert a key, leaving an existing equal key unchanged and rebalancing
-every node on the search path. -/
+/-- **Weight-balanced insertion.** For a key $x$ of a linearly ordered type, the insertion
+$\mathrm{insert}(x, t)$ of $x$ into a binary tree $t$ is defined by recursion on $t$. Into the
+empty tree it gives the single node with key $x$. Into the node $N$ with key $k$, left subtree
+$L$ and right subtree $R$ it gives $\mathrm{balance}(\mathrm{insert}(x, L), k, R)$ if $x < k$,
+$\mathrm{balance}(L, k, \mathrm{insert}(x, R))$ if $k < x$, and $N$ itself if $x = k$, where
+$\mathrm{balance}$ is weight-balanced rebalancing. -/
 public def insert [LinearOrder α] (x : α) : BinaryTree α → BinaryTree α
   | .nil => .node x .nil .nil
   | tree@(.node key left right) =>
@@ -180,7 +194,10 @@ public def insert [LinearOrder α] (x : α) : BinaryTree α → BinaryTree α
       else if key < x then balance left key (insert x right)
       else tree
 
-/-- Build a tree by inserting the list from right to left. -/
+/-- **Weight-balanced tree from a list.** The tree built from a list $x_1, \dots, x_n$ of
+elements of a linearly ordered type is obtained from the empty tree by inserting
+$x_n, x_{n-1}, \dots, x_1$ in this order with weight-balanced insertion; the empty list
+gives the empty tree. -/
 public def fromList [LinearOrder α] : List α → BinaryTree α
   | [] => .nil
   | x :: xs => insert x (fromList xs)
@@ -193,8 +210,10 @@ private theorem All_mono {p q : α → Prop} (h : ∀ a, p a → q a) (tree : Bi
       rintro ⟨hLeft, hKey, hRight⟩
       exact ⟨ihLeft hLeft, h key hKey, ihRight hRight⟩
 
-/-- A node whose children are balanced and satisfy the weight inequalities
-is balanced. -/
+/-- **Building a weight-balanced node.** Let $L$ and $R$ be weight-balanced trees and $k$ a
+key, and write $|t|$ for the number of keys of a tree $t$. If
+$4(|L| + 1) \le 3(|L| + |R| + 2)$ and $4(|R| + 1) \le 3(|L| + |R| + 2)$, then the node with
+key $k$, left subtree $L$ and right subtree $R$ is weight-balanced. -/
 public theorem balanced_node {key : α} {left right : BinaryTree α}
     (hLeft : Balanced left) (hRight : Balanced right)
     (hWeightLeft :
@@ -204,10 +223,12 @@ public theorem balanced_node {key : α} {left right : BinaryTree α}
     Balanced (.node key left right) :=
   ⟨hLeft, hRight, hWeightLeft, hWeightRight⟩
 
-/-- The node case of `Balanced`, stated with `weight`: a node is balanced
-exactly when its children are balanced and each child has weight at most
-three quarters of the weight of the node. This is the classical
-`BB[1/4]` invariant. -/
+/-- **Weight form of the balance condition at a node.** Write $|t|$ for the number of keys of
+a tree $t$ and $w(t) = |t| + 1$ for its weight. Let $N$ be the node with key $k$, left subtree
+$L$ and right subtree $R$. Then $N$ is weight-balanced if and only if $L$ and $R$ are
+weight-balanced, $4\,w(L) \le 3\,w(N)$ and $4\,w(R) \le 3\,w(N)$. This is the classical
+$\mathrm{BB}[1/4]$ invariant: each child has weight at most three quarters of the weight of
+the node. -/
 public theorem balanced_node_iff_weight {key : α} {left right : BinaryTree α} :
     Balanced (.node key left right) ↔
       Balanced left ∧ Balanced right ∧
@@ -291,7 +312,9 @@ private theorem balance_right_double {key rightKey rightLeftKey : α}
     show ¬(rightLeftLeft.numNodes + rightLeftRight.numNodes + 1 ≤ 2 * rightRight.numNodes) by
       omega]
 
-/-- Rebalancing does not change the number of keys. -/
+/-- **Weight-balanced rebalancing preserves the number of keys.** Write $|t|$ for the number of
+nodes of a binary tree $t$. For binary trees $l$ and $r$ and a key $k$, the weight-balanced
+rebalancing of $l$, $k$, $r$ has exactly $|l| + |r| + 1$ nodes. -/
 public theorem numNodes_balance {key : α} {left right : BinaryTree α} :
     (balance left key right).numNodes = left.numNodes + right.numNodes + 1 := by
   by_cases hTallLeft : 3 * (left.numNodes + right.numNodes + 2) < 4 * (left.numNodes + 1)
@@ -329,11 +352,14 @@ public theorem numNodes_balance {key : α} {left right : BinaryTree α} :
     · rw [balance_eq_node_of_le (by omega) (by omega)]
       simp only [numNodes_node]
 
-/-- Rebalancing children that violate the weight invariant by at most the
-one-key weight slack
-`4 * (child.numNodes + 1) ≤ 3 * (left.numNodes + right.numNodes + 2) + 1`
-produces a balanced tree. This is the precondition that one insertion
-step maintains. -/
+/-- **Weight-balanced rebalancing restores balance.** Let $L$ and $R$ be weight-balanced trees
+and $k$ a key, and write $|t|$ for the number of keys of a tree $t$. If
+$4(|L| + 1) \le 3(|L| + |R| + 2) + 1$ and $4(|R| + 1) \le 3(|L| + |R| + 2) + 1$, then the
+rebalanced node $\mathrm{balance}(L, k, R)$ is weight-balanced.
+
+These hypotheses are the two inequalities of the weight-balance invariant for the node with
+children $L$ and $R$, each with its right-hand side increased by $1$; this is the precondition that
+one insertion step maintains. -/
 public theorem balanced_balance {key : α} {left right : BinaryTree α}
     (hBalLeft : Balanced left) (hBalRight : Balanced right)
     (hDiffLeft : 4 * (left.numNodes + 1) ≤ 3 * (left.numNodes + right.numNodes + 2) + 1)
@@ -381,7 +407,9 @@ public theorem balanced_balance {key : α} {left right : BinaryTree α}
     · rw [balance_eq_node_of_le (by omega) (by omega)]
       exact balanced_node hBalLeft hBalRight (by omega) (by omega)
 
-/-- Rebalancing preserves structural membership. -/
+/-- **Membership after weight-balanced rebalancing.** For binary trees $l$ and $r$ and a key $k$,
+an element $x$ occurs in the weight-balanced rebalancing of $l$, $k$, $r$ exactly when $x$ occurs
+in $l$, $x = k$, or $x$ occurs in $r$. Membership is structural: $x$ is the key of some node. -/
 public theorem mem_balance {x key : α} {left right : BinaryTree α} :
     x ∈ balance left key right ↔ x ∈ left ∨ x = key ∨ x ∈ right := by
   by_cases hTallLeft : 3 * (left.numNodes + right.numNodes + 2) < 4 * (left.numNodes + 1)
@@ -415,7 +443,10 @@ public theorem mem_balance {x key : α} {left right : BinaryTree α} :
     · rw [balance_eq_node_of_le (by omega) (by omega)]
       simp only [mem_node]
 
-/-- Rebalancing preserves the search-tree ordering invariant. -/
+/-- **Weight-balanced rebalancing preserves ordering.** Let the keys carry a linear order, let $l$
+and $r$ be ordered binary trees (strict binary search trees), and let $k$ be a key such that every
+key of $l$ is less than $k$ and every key of $r$ is greater than $k$. Then the weight-balanced
+rebalancing of $l$, $k$, $r$ is ordered. -/
 public theorem ordered_balance [LinearOrder α] {key : α} {left right : BinaryTree α}
     (hOrdLeft : BinarySearchTree.Ordered left) (hOrdRight : BinarySearchTree.Ordered right)
     (hAllLeft : BinarySearchTree.All (· < key) left) (hAllRight : BinarySearchTree.All (key < ·) right) :
@@ -488,7 +519,9 @@ public theorem ordered_balance [LinearOrder α] {key : α} {left right : BinaryT
     · rw [balance_eq_node_of_le (by omega) (by omega)]
       exact ordered_node hOrdLeft hOrdRight hAllLeft hAllRight
 
-/-- Insertion increases the number of keys by at most one. -/
+/-- **Weight-balanced insertion adds at most one key.** Let the keys carry a linear order. For
+every key $x$ and every binary tree $t$, the tree obtained from $t$ by weight-balanced insertion
+of $x$ has at most one more node than $t$. -/
 public theorem numNodes_insert_le [LinearOrder α] {x : α} {tree : BinaryTree α} :
     (insert x tree).numNodes ≤ tree.numNodes + 1 := by
   induction tree with
@@ -513,7 +546,9 @@ public theorem numNodes_insert_le [LinearOrder α] {x : α} {tree : BinaryTree �
         rw [hEq]
         omega
 
-/-- Insertion never decreases the size. -/
+/-- **Weight-balanced insertion does not decrease the number of keys.** Let the keys
+carry a linear order. For every key $x$ and every binary tree $t$, the number of nodes of $t$ is
+at most the number of nodes of the tree obtained from $t$ by weight-balanced insertion of $x$. -/
 public theorem le_numNodes_insert [LinearOrder α] {x : α} {tree : BinaryTree α} :
     tree.numNodes ≤ (insert x tree).numNodes := by
   induction tree with
@@ -537,7 +572,9 @@ public theorem le_numNodes_insert [LinearOrder α] {x : α} {tree : BinaryTree �
           simp [insert, hXLeft, hXRight]
         rw [hEq]
 
-/-- Insertion preserves the weight-balance invariant. -/
+/-- **Weight-balanced insertion preserves balance.** For every key $x$ of a linearly ordered
+type and every weight-balanced tree $t$, the tree obtained by inserting $x$ into $t$ with
+weight-balanced insertion is weight-balanced. -/
 public theorem balanced_insert [LinearOrder α] {x : α} {tree : BinaryTree α}
     (hBal : Balanced tree) : Balanced (insert x tree) := by
   induction tree with
@@ -573,7 +610,9 @@ public theorem balanced_insert [LinearOrder α] {x : α} {tree : BinaryTree α}
         rw [hEq]
         exact ⟨hBalL, hBalR, hBalA, hBalB⟩
 
-/-- Inserting a key adds exactly that key to structural membership. -/
+/-- **Membership after weight-balanced insertion.** Let the keys carry a linear order. For all
+keys $x$, $y$ and every binary tree $t$, $y$ occurs in the tree obtained from $t$ by
+weight-balanced insertion of $x$ exactly when $y = x$ or $y$ occurs in $t$. -/
 public theorem mem_insert [LinearOrder α] {x y : α} {tree : BinaryTree α} :
     y ∈ insert x tree ↔ y = x ∨ y ∈ tree := by
   induction tree with
@@ -612,7 +651,11 @@ private theorem all_insert [LinearOrder α] {p : α → Prop} {x : α} {tree : B
   · exact hx
   · exact hTree y hy
 
-/-- Insertion preserves the strict search-tree invariant. -/
+/-- **Weight-balanced insertion preserves the search-tree order.** Let the keys be linearly
+ordered. If a binary tree $t$ is ordered as a search tree (at every node, every key of the left
+subtree is strictly smaller and every key of the right subtree strictly larger than the key at
+the node), then the tree obtained from $t$ by weight-balanced insertion of any key $x$ is again
+ordered. -/
 public theorem ordered_insert [LinearOrder α] {x : α} {tree : BinaryTree α}
     (hTree : BinarySearchTree.Ordered tree) : BinarySearchTree.Ordered (insert x tree) := by
   induction tree with
@@ -638,32 +681,43 @@ public theorem ordered_insert [LinearOrder α] {x : α} {tree : BinaryTree α}
         rw [hEq]
         exact ⟨hLeft, hRight, hAllLeft, hAllRight⟩
 
-/-- Trees built by insertion are balanced. -/
+/-- **Weight-balanced trees built by insertion are balanced.** For every list
+$x_1, \dots, x_n$ of elements of a linearly ordered type, the tree obtained from the empty
+tree by inserting $x_n, x_{n-1}, \dots, x_1$ in this order with weight-balanced insertion
+is weight-balanced. -/
 public theorem balanced_fromList [LinearOrder α] {xs : List α} :
     Balanced (fromList xs) := by
   induction xs with
   | nil => trivial
   | cons x xs ih => exact balanced_insert ih
 
-/-- Building a tree by insertion always produces an ordered tree. -/
+/-- **Weight-balanced trees built from a list are ordered.** Let the keys carry a linear order.
+For every list $xs$, the weight-balanced tree built from $xs$ by repeated insertion is ordered,
+that is, a strict binary search tree. -/
 public theorem ordered_fromList [LinearOrder α] {xs : List α} :
     BinarySearchTree.Ordered (fromList xs) := by
   induction xs with
   | nil => trivial
   | cons x xs ih => exact ordered_insert ih
 
-/-- A key is in a tree built from a list exactly when it is in the list. -/
+/-- **Membership in a weight-balanced tree built from a list.** Let the keys carry a linear
+order. For every key $x$ and every list $xs$, $x$ occurs in the weight-balanced tree built from
+$xs$ by repeated insertion exactly when $x$ is an element of $xs$. -/
 public theorem mem_fromList [LinearOrder α] {x : α} {xs : List α} :
     x ∈ fromList xs ↔ x ∈ xs := by
   induction xs with
   | nil => simp [fromList]
   | cons y ys ih => simp [fromList, mem_insert, ih]
 
-/-- The weight of a balanced tree grows at least geometrically in its
-height with ratio `4 / 3`: a balanced tree of height `k + 1` has weight
-at least `(4 / 3) ^ k`, in integer form `4 ^ k ≤ 3 ^ k * weight tree`.
-This is where the weight form of the invariant is used: the taller child
-has weight at most three quarters of the weight of the node. -/
+/-- **Exponential weight lower bound for weight-balanced trees.** Write $w(t)$ for the
+weight of a binary tree $t$ (its number of keys plus one), and measure height so that the empty
+tree has height $0$ and a node has height one more than the taller of its children. If $t$ is
+weight balanced with parameter $1/4$ (at every node, each child has weight at most three
+quarters of the weight of the node) and has height $k + 1$ for a natural number $k$, then
+$w(t) \ge (4/3)^k$; in integer form, $4^k \le 3^k \, w(t)$.
+
+The proof uses the weight form of the invariant: the taller child has weight at most three
+quarters of the weight of the node. -/
 public theorem pow_height_le {tree : BinaryTree α} (hBal : Balanced tree) :
     ∀ k : Nat, BinaryTree.height tree = k + 1 → 4 ^ k ≤ 3 ^ k * weight tree := by
   induction tree with
@@ -708,10 +762,13 @@ public theorem pow_height_le {tree : BinaryTree α} (hBal : Balanced tree) :
               _ = 3 ^ (k + 1) * weight (BinaryTree.node key left right) := by
                 ring
 
-/-- The height of a balanced tree is logarithmic in its number of keys:
-`BinaryTree.height tree ≤ Nat.log2 ((tree.numNodes + 1) ^ 3) + 1`. This is the
-`Nat.log2` form of `pow_height_le`, using `(4 / 3) ^ 3 > 2` to pass from
-base `4 / 3` to base `2`. -/
+/-- **Height of a weight-balanced tree is logarithmic.** Write $|t|$ for the number of keys of a
+binary tree $t$ and $h(t)$ for its height, where the empty tree has height $0$ and a node has
+height one more than the larger height of its two subtrees. If $t$ is weight-balanced, then
+$h(t) \le \lfloor \log_2 ((|t| + 1)^3) \rfloor + 1$.
+
+The proof passes from the exponential weight lower bound in base $4/3$ to base $2$, using
+$(4/3)^3 > 2$. -/
 public theorem height_le_log2 {tree : BinaryTree α} (hBal : Balanced tree) :
     BinaryTree.height tree ≤ Nat.log2 ((tree.numNodes + 1) ^ 3) + 1 := by
   cases tree with
