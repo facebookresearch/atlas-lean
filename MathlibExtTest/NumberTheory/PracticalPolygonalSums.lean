@@ -12,7 +12,7 @@ import MathlibExt.NumberTheory.PracticalPolygonalSums
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for congruences for sums of practical and polygonal numbers -/
+/-! # Tests for sums of practical and polygonal numbers -/
 
 open MetaMathlibExt
 
@@ -51,3 +51,16 @@ example : (∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ^ 2 + y ^ 2 ≡ 0 [MOD 3]) ∧
         (by decide)
   · rintro ⟨x, y, hx, hx', hy, hy', hxy⟩
     interval_cases x <;> interval_cases y <;> norm_num [Nat.ModEq] at hxy
+
+-- The upper endpoint of the classification is practical.
+example : IsPracticalNumber 2 := by
+  refine ⟨by decide, fun m hm hm' ↦ ⟨{m}, ?_, by simp⟩⟩
+  obtain rfl | rfl : m = 1 ∨ m = 2 := by omega
+  · simp
+  · simp
+
+-- The first even integer above 2 divisible by neither 3 nor 4 is 10.
+example : ¬ IsPracticalNumber 10 := by
+  intro h
+  have := isPracticalNumber_eq_one_or_two 10 h (by decide) (by decide)
+  omega

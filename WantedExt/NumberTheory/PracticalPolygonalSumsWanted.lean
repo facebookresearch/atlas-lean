@@ -132,16 +132,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 10
 public theorem_wanted exists_two_polygonal_two_mul_le_mul_sq (s c : ℕ) (hs : 3 < s) :
     ∃ A : ℕ, ∀ x : ℕ, 1 ≤ x → 2 * Nat.polygonalNumber s (2 * c * x) ≤ A * x ^ 2
 
-/-- **Practical numbers divisible by neither 3 nor 4.** If $q$ is a practical number that is
-divisible by neither $3$ nor $4$, then $q = 1$ or $q = 2$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 11
-(arXiv Lemma 4.6; `jis-2024-24.5.1-lem-11`). -/
-public theorem_wanted isPracticalNumber_eq_one_or_two (q : ℕ) (hq : IsPracticalNumber q)
-    (h3 : ¬ 3 ∣ q) (h4 : ¬ 4 ∣ q) :
-    q = 1 ∨ q = 2
-
 /-- **Exceptions to sums of a practical number and polygonal numbers.** (a) Let $s \ge 3$ with
 $s \equiv 0$ or $s \equiv 4 \pmod{12}$. Then there are infinitely many positive integers $n$ that
 cannot be written as $n = q + p_s(m)$ with $q$ a practical number and $m \ge 0$ an integer, where

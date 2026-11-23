@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSum
 
-/-! # Tests for the generating function of the monic Chebyshev partial sums -/
+/-! # Tests for the monic Chebyshev partial sums -/
 
 open MetaMathlibExt Polynomial
 
@@ -29,3 +29,9 @@ example :
     simp
   simpa [h] using congrArg (PowerSeries.map (evalRingHom (0 : ℤ)))
     chebyshevCPartialSum_generatingFunction
+
+-- At the first admissible index the predecessor is the constant polynomial one.
+example : chebyshevCPartialSum 2 = X ^ 2 + X - 1 := by
+  rw [chebyshevCPartialSum_recurrence 1 (by decide), chebyshevCPartialSum_one_two.1,
+    chebyshevCPartialSum_zero]
+  ring
