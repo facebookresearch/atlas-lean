@@ -43,16 +43,17 @@ noncomputable section
 
 /-! ## Wanted constructions -/
 
+/-- The category of rational perverse sheaves, the heart of the middle perverse
+t-structure, is abelian.
+Source: BBD, Théorème 1.3.6; de Cataldo–Migliorini (2005), §3.6. -/
+public instance_wanted perverseSheafAbelianWanted (X : ComplexScheme)
+    [IsComplexVariety X] [PerverseSheafTheory X] : Abelian (PerverseSheaf X)
+
 /-- Construct the rational middle perverse t-structure and the closure
 properties needed for the bounded constructible category.
 Source: de Cataldo–Migliorini (2005), §§3.3, 3.6. -/
 public instance_wanted perverseSheafTheoryWanted (X : ComplexScheme)
     [IsComplexVariety X] : PerverseSheafTheory X
-
-/-- The category of rational perverse sheaves is abelian.
-Source: de Cataldo–Migliorini (2005), §3.6. -/
-public instance_wanted perverseSheafAbelianWanted (X : ComplexScheme)
-    [IsComplexVariety X] : Abelian (PerverseSheaf X)
 
 end
 
