@@ -14,7 +14,7 @@ public import CSLibExt.Algorithms.SAT.DPLL.Correctness
 # Soundness of unit-propagation conflicts
 
 One unit-propagation step picks a unit clause `[l]` and restricts the formula by `l`
-(`Cslib.Logic.PL.CNF.restrict`): clauses containing `l` disappear and the variable of `l`
+(`Cslib.Logic.LegacyPL.CNF.restrict`): clauses containing `l` disappear and the variable of `l`
 is removed from every other clause. `UPConflict φ` states that iterated unit propagation
 from `φ` reaches a formula containing the empty clause. Such a conflict certifies that `φ`
 is unsatisfiable.
@@ -33,7 +33,7 @@ is unsatisfiable.
 
 namespace Cslib.Algorithms.SAT.UnitPropagation
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- Unit-propagation conflict derivation: either the formula already contains the empty
 clause, or it has a unit clause `[l]` and the formula restricted by `l` derives a

@@ -336,7 +336,7 @@ private theorem jordan_exists_chainBasis_of_isNilpotent_aux
       (∀ i, f (b ⟨i, 0⟩) = 0) ∧
         ∀ i (j : Fin (d i)), f (b ⟨i, j.succ⟩) = b ⟨i, j.castSucc⟩ := by
   induction hn : finrank K V using Nat.strong_induction_on generalizing V with
-  | h n ih =>
+  | ind n ih =>
       by_cases hn0 : n = 0
       · have hzero : finrank K V = 0 := hn.trans hn0
         have _ : Subsingleton V := Module.finrank_zero_iff.mp hzero

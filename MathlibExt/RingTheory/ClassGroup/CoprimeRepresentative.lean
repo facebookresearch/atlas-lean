@@ -14,8 +14,11 @@ public import Mathlib.RingTheory.ClassGroup.Basic
 /-!
 # Coprime representatives of ideal classes
 
-Every ideal class in a Dedekind domain has an integral representative coprime to any prescribed
-nonzero ideal.
+A nonzero ideal in a Dedekind domain has a coprime multiplier making it principal, and every ideal
+class has an integral representative coprime to any prescribed nonzero ideal. Mathlib v4.36 also
+proves the second result, as `ClassGroup.exists_mk0_eq_and_isCoprime`; ATLAS's statement and proof,
+which take a nonzero ideal and give a nonzero representative, are kept as
+`MetaMathlibExt.ClassGroup.exists_mk0_eq_and_isCoprime`.
 -/
 
 @[expose] public section
@@ -43,6 +46,8 @@ theorem Ideal.exists_isCoprime_mul_isPrincipal (I a : Ideal A) (hI : I ≠ ⊥)
     exact Ideal.isCoprime_iff_sup_eq.mpr (by rw [sup_comm]; exact h2)
   · rw [← hJ]
     exact ⟨⟨x, rfl⟩⟩
+
+namespace MetaMathlibExt
 
 /-- **Ideal classes have representatives coprime to a given ideal.** Let $A$ be a
 Dedekind domain and let $\mathfrak{a}$ be a nonzero ideal of $A$. Then every class $c$ in the
@@ -78,3 +83,5 @@ theorem ClassGroup.exists_mk0_eq_and_isCoprime (c : ClassGroup A) (a : Ideal A)
       congr 1
     rw [h2, hJ_class] at h1
     exact (eq_of_inv_mul_eq_one h1).symm
+
+end MetaMathlibExt
