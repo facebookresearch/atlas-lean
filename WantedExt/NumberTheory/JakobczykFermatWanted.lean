@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Fermat
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.NumberTheory.GeneralizedFermatGCD
+public import MathlibExt.NumberTheory.GeneralizedFermatPeriod
 public import MathlibExt.NumberTheory.GeneralizedFermatWieferich
 public import MathlibExt.NumberTheory.WieferichPrime
 public import MathlibExt.NumberTheory.WieferichOrder
@@ -161,27 +162,6 @@ public theorem_wanted dvd_pow_pow_add_one_shift {a b D n : ℕ} (ha : 2 ≤ a) (
     (hD : 2 ≤ D) (h : D ∣ a ^ b ^ n + 1) :
     (Odd b → ∀ k, 1 ≤ k → D ∣ a ^ b ^ (n + k) + 1) ∧
       (Even b → 3 ≤ D → ∀ k, 1 ≤ k → ¬ D ∣ a ^ b ^ (n + k) + 1)
-
-/-- **Start of the period of generalized Fermat numbers modulo the square of a prime.** For
-natural numbers $a$, $b$ and $k$ write $F_k(a, b) = a^{b^k} + 1$. Let $a, b \ge 2$, let $p$ be a
-prime, and let $n_0$ be the least natural number with $p^2 \mid F_{n_0}(a, b)$. Say that the
-sequence $(F_k(a, b))_k$ is periodic modulo $p^2$ from index $m$ if there is a $T > 0$ with
-$F_{m+k+T}(a, b) \equiv F_{m+k}(a, b) \pmod{p^2}$ for every $k \ge 0$. If $b$ is odd, then $n_0$
-is the least index from which the sequence is periodic modulo $p^2$; if $b$ is even, this least
-index is $n_0 + 1$.
-
-In the source's terms, $n_0$ is the index of the first term of the period when $b$ is odd, and
-the index of the last term of the pre-period when $b$ is even.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Corollary 2 (`integers-2026-A77-cor-2`). -/
-public theorem_wanted isLeast_periodic_start_pow_pow_add_one_mod_sq {a b p n₀ : ℕ} (ha : 2 ≤ a)
-    (hb : 2 ≤ b) (hp : p.Prime) (hn₀ : p ^ 2 ∣ a ^ b ^ n₀ + 1)
-    (hmin : ∀ n < n₀, ¬ p ^ 2 ∣ a ^ b ^ n + 1) :
-    (Odd b → IsLeast {m : ℕ | ∃ T, 0 < T ∧
-        Function.Periodic (fun k => (a ^ b ^ (m + k) + 1) % p ^ 2) T} n₀) ∧
-      (Even b → IsLeast {m : ℕ | ∃ T, 0 < T ∧
-        Function.Periodic (fun k => (a ^ b ^ (m + k) + 1) % p ^ 2) T} (n₀ + 1))
 
 end
 
