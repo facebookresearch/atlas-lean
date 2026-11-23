@@ -10,30 +10,13 @@ module
 
 public import Mathlib.NumberTheory.Bernoulli
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open scoped BigOperators
-
-private theorem coeff_succ_X_mul (G : PowerSeries ℚ) (m : ℕ) :
-    PowerSeries.coeff (m + 1) (PowerSeries.X * G) = PowerSeries.coeff m G := by
-  rw [PowerSeries.coeff_mul]
-  refine (Finset.sum_eq_single (1, m) ?_ ?_).trans ?_
-  · intro p hp hne
-    have h1 : p.1 ≠ 1 := by
-      intro hcon
-      apply hne
-      simp at hp
-      exact Prod.ext hcon (by omega)
-    simp [PowerSeries.coeff_X, h1]
-  · intro hcon
-    exfalso
-    revert hcon
-    simp [add_comm]
-  · simp [PowerSeries.coeff_X]
 
 private theorem coeff_bernoulli_sq (k : ℕ) :
     PowerSeries.coeff (k + 1) (bernoulliPowerSeries ℚ * bernoulliPowerSeries ℚ) =
@@ -60,7 +43,11 @@ private theorem coeff_bernoulli_sq (k : ℕ) :
   rw [hchoose i hi2]
   field_simp
 
-/-- Euler convolution identity for Bernoulli numbers.
+/-- **Euler's convolution identity for Bernoulli numbers.** Let $B_j$ denote the $j$-th
+Bernoulli number, with $B_1 = -1/2$. For every natural number $n \ge 1$,
+$$\sum_{i=0}^{n} \binom{n}{i} B_i B_{n-i} = -n B_{n-1} - (n-1) B_n.$$
+
+Proves `Wanted` entry `euler_bernoulli_convolution`.
 
 Source: Ken Kamano, "Sums of Products of Bernoulli Numbers, Including
 Poly-Bernoulli Numbers," Journal of Integer Sequences 13 (2010),
@@ -68,18 +55,6 @@ Poly-Bernoulli Numbers," Journal of Integer Sequences 13 (2010),
 Exact source span: lines 98–104; full-file SHA-256
 `79c8704d7903524fdbe7553c7794f6062710b3f2c722eceb2715401659c869d6`;
 span SHA-256 `c6021b742947f7d2dd79387b89f2f146c19cd8310add80520069b7eaf2103fb5`.
-
-Stable concept id: `jis_grounded_d68f7d9a125a7c1b53cb901e`.
-Atomic task id: `jis_rank41_euler_bernoulli_general`.
-
-Uses the source convention `B₁ = -1/2`, matching Mathlib's `bernoulli : ℕ → ℚ`
-from `Mathlib.NumberTheory.Bernoulli`. The finite range `Finset.range (n + 1)`
-represents the inclusive source sum `i = 0, …, n`.
-
-Scope: this file states only the canonical general identity for `n ≥ 1`. It does
-not add the even-index specialization or any `bernoulli'` convention-transformed
-equivalent.
-Proves `Wanted` entry `euler_bernoulli_convolution`.
 -/
 theorem euler_bernoulli_convolution (n : ℕ) (hn : 1 ≤ n) :
     ∑ i ∈ Finset.range (n + 1), (n.choose i : ℚ) * bernoulli i * bernoulli (n - i) =
@@ -103,8 +78,8 @@ theorem euler_bernoulli_convolution (n : ℕ) (hn : 1 ≤ n) :
       + ⇑PowerSeries.derivative (bernoulliPowerSeries ℚ)) * hBE
   have hcoeff := congrArg (PowerSeries.coeff (m + 1)) h2
   simp only [map_add] at hcoeff
-  rw [pow_two, coeff_bernoulli_sq m, coeff_succ_X_mul, coeff_succ_X_mul,
-    PowerSeries.coeff_derivative] at hcoeff
+  rw [pow_two, coeff_bernoulli_sq m, PowerSeries.coeff_succ_X_mul,
+    PowerSeries.coeff_succ_X_mul, PowerSeries.coeff_derivative] at hcoeff
   have hB0 : PowerSeries.coeff m (bernoulliPowerSeries ℚ)
       = bernoulli m / ((Nat.factorial m : ℕ) : ℚ) := by
     simp [bernoulliPowerSeries]

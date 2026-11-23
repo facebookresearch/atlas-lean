@@ -48,11 +48,16 @@ private lemma integrable_val_mul_density {Ω : Type*} [MeasurableSpace Ω] {μ :
     _ = d x := by rw [one_mul, Real.norm_of_nonneg (hd_nonneg x)]
 
 /--
-Dominated Neyman–Pearson lemma (two simple hypotheses), strengthened form.
+**Neyman–Pearson lemma.** Let $\mu$ be a measure on a measurable space $\Omega$, and let
+$p, q : \Omega \to \mathbb{R}$ be measurable, nonnegative and $\mu$-integrable. Let $k \ge 0$ be a
+real number and let $\varphi^\star : \Omega \to [0, 1]$ be measurable with $\varphi^\star(x) = 1$
+whenever $q(x) > k\,p(x)$ and $\varphi^\star(x) = 0$ whenever $q(x) < k\,p(x)$. Then every
+measurable test $\varphi : \Omega \to [0, 1]$ satisfying
+$\int \varphi\, p \, d\mu \le \int \varphi^\star p \, d\mu$ also satisfies
+$\int \varphi\, q \, d\mu \le \int \varphi^\star q \, d\mu$.
 
-For `k ≥ 0`, a test `φ⋆` taking the value `1` where `q > k * p` and `0` where
-`q < k * p` is most powerful among tests with no larger `p`-size. No normalization
-of `p` or `q` and no tie-breaking condition on `{q = k * p}` are assumed.
+No normalization of $p$ or $q$ and no condition on $\varphi^\star$ on the set where $q = k\,p$ are
+assumed.
 
 Source: J. Neyman and E. S. Pearson, "On the problem of the most efficient tests of
 statistical hypotheses", Phil. Trans. R. Soc. Lond. A 231 (1933), 289–337,

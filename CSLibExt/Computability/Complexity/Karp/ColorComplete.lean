@@ -28,7 +28,10 @@ namespace Cslib.Complexity.Karp
 
 open Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
 
-/-- `ColVerify` as a host component. -/
+/-- **The 3-COLOR verifier as a host component.** The component machine whose stacks are the
+seven stacks $X, W, N, P, T, U, V$ of the 3-COLOR verifier machine, listed in that order and each
+over the token alphabet of the SAT verifier, and whose labels and program are those of the
+3-COLOR verifier machine. -/
 abbrev colVerifyComp : Host.Comp where
   K := ColVerify.K
   Γ := fun _ => SatVerifier.Sym
@@ -59,7 +62,12 @@ theorem col3Dec_mem_NP : col3Dec ∈ NP :=
 instance EmitColor.instFintypeΓ (k : EmitColor.K) : Fintype (EmitColor.Γ k) := by
   cases k <;> infer_instance
 
-/-- The 3-COLOR emitter as an `Emitter`. -/
+/-- **The 3-COLOR emitter.** The emitter whose stacks, alphabets, labels, program and start label
+are those of the 3-COLOR emitter machine, which exits at the machine's final label, reads the
+tokens of a CNF formula from stack $T$ and writes its output bits on stack $O$ (both symbol maps
+being the identity), and has step bound $B(n) = 500 (n + 1)^4$ for $n$ tokens. Its output for a
+CNF formula $\varphi$ is the encoded 3-COLOR instance of $\varphi$, and for an undecodable input
+the encoding of the complete graph $K_4$. -/
 abbrev emitColor : Emitter where
   K := EmitColor.K
   Γ := EmitColor.Γ
@@ -86,7 +94,10 @@ theorem out_emitColor (x : List Bool) : TokThen.out emitColor x = reduceCol x :=
   unfold TokThen.out reduceCol
   cases decodeCNF x <;> rfl
 
-/-- **SAT ≤ 3-COLOR is polynomial-time**. -/
+/-- **The SAT-to-3-COLOR reduction is polynomial-time.** The map on bit strings that sends a
+string decoding to a CNF formula $\varphi$ to the encoding of the 3-COLOR instance of $\varphi$,
+and every other string to the encoding of the complete graph $K_4$, is computable in polynomial
+time. -/
 theorem isPolyTime_reduceCol : IsPolyTime reduceCol := by
   have h := TokThen.isPolyTime_out emitColor [.T, .O, .N, .R, .D, .E, .A, .P, .F, .U, .X, .B, .W]
     (by decide) (fun k => by cases k <;> decide)
@@ -97,12 +108,14 @@ theorem isPolyTime_reduceCol : IsPolyTime reduceCol := by
 theorem satDec_polyManyOneRed_col3Dec : PolyManyOneRed satDec col3Dec :=
   ⟨reduceCol, isPolyTime_reduceCol, satDec_eq_col3Dec_reduceCol⟩
 
-/-- **3-COLOR is NP-hard**. -/
+/-- **3-COLOR is NP-hard.** Every decision problem in NP reduces to 3-COLOR by a polynomial-time
+many-one reduction. -/
 theorem col3Dec_npHard : ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L col3Dec :=
   npHard_of_polyManyOneRed Cslib.Complexity.CookLevin.Hardness.satDec_npHard
     satDec_polyManyOneRed_col3Dec
 
-/-- **3-COLOR is NP-complete**. -/
+/-- **3-COLOR is NP-complete.** 3-COLOR is in NP, and every decision problem in NP reduces to
+3-COLOR by a polynomial-time many-one reduction. -/
 theorem col3Dec_npComplete :
     col3Dec ∈ NP ∧ ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L col3Dec :=
   ⟨col3Dec_mem_NP, col3Dec_npHard⟩

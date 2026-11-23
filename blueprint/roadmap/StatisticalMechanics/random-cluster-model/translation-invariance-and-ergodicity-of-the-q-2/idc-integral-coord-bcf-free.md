@@ -1,0 +1,3 @@
+# Free box integral of an edge indicator is the free edge marginal
+
+Let $d, N, m \in \mathbb{N}$ with $N \le m$, $e$ an unordered pair of vertices of $\Lambda_N$, and $0 < p < 1$. Then $\int \mathbf{1}[e \text{ open}]\, d\phi^0_m = \phi_m(e^{(m)} \text{ open})$, where $\phi^0_m$ is the [free box measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-finite-measure.md) on $\Lambda_m = \{-m, \dots, m\}^d$ at $(p, 2)$, $e^{(m)}$ is $e$ viewed in $\Lambda_m$, and $\phi_m(e \text{ open})$ is the [edge marginal](../fkg-inequality-and-monotonicity-of-random-cluste/edge-marg-prob.md) of the random-cluster probability on $\Lambda_m = \{-m, \dots, m\}^d$ at $(p, 2)$.
