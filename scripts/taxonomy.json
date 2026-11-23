@@ -10205,6 +10205,7 @@
   "MathlibExt/Combinatorics/Enumerative/WorpitzkyMultisetIdentity": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Worpitzky's identity"},
   "MathlibExt/Combinatorics/Enumerative/ZagierCyclicPermutationProduct": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Products of cyclic permutations"},
   "MathlibExt/Combinatorics/Enumerative/ZagierNumber": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Zagier numbers"},
+  "MathlibExt/Combinatorics/EuclideanChainLength": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arithmetical structures on graphs"},
   "MathlibExt/Combinatorics/FineNumber": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Fine numbers"},
   "MathlibExt/Combinatorics/FiniteField/SmallBias": {"to": "Combinatorics/boolean-functions", "title": "Parity counts over finite fields"},
   "MathlibExt/Combinatorics/Finpartition/BasicSetPartition": {"to": "Combinatorics/set-partitions", "title": "Basic set partitions"},
