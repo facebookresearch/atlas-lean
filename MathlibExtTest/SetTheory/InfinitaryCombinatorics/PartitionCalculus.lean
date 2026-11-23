@@ -12,7 +12,6 @@ Author: Steven Warner
 module
 
 public import MathlibExt.SetTheory.InfinitaryCombinatorics.PartitionCalculus
-public import Mathlib.Data.Finset.Card
 
 @[expose] public section
 

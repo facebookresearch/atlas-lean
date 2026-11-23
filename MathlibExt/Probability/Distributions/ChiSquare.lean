@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Analytic.IsolatedZeros
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.Probability.Moments.ComplexMGF
 public import MathlibExt.Probability.Distributions.Gamma
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.Moments.Basic
@@ -24,18 +26,43 @@ namespace ProbabilityTheory
 
 noncomputable section
 
-/-- Chi-square law with `p` degrees of freedom, as the gamma law with shape
-`p / 2` and scale `2` (rate `1 / 2` in Mathlib's shape-rate convention). -/
+/-- **Chi-square distribution.** For a natural number $p$, the chi-square law with $p$ degrees of
+freedom is the gamma law on $\mathbb{R}$ with shape $p/2$ and rate $1/2$ (equivalently, scale $2$):
+the measure with density $x \mapsto \frac{(1/2)^{p/2}}{\Gamma(p/2)} x^{p/2 - 1} e^{-x/2}$ for
+$x > 0$ and $0$ for $x < 0$ with respect to Lebesgue measure.
+
+For $p = 0$ the definition is degenerate: $\Gamma(0)$ is taken to be $0$ and division by $0$ gives
+$0$, so the density vanishes and the measure is the zero measure rather than a point mass. -/
 noncomputable def chiSquareMeasure (p : ℕ) : Measure ℝ :=
   gammaMeasure ((p : ℝ) / 2) (1 / 2)
+
+/-- The survival function of a chi-square law: `P(χ²_p > c)`. -/
+noncomputable def chiSquareSurvival (p : ℕ) (c : ℝ) : ℝ≥0∞ :=
+  chiSquareMeasure p (Set.Ioi c)
 
 theorem isProbabilityMeasure_chiSquareMeasure {p : ℕ} (hp : 0 < p) :
     IsProbabilityMeasure (chiSquareMeasure p) :=
   isProbabilityMeasure_gammaMeasure (by positivity) (by norm_num)
 
-/-- MGF of the square of a standard normal variable. Promoted from the private
-Johnson–Lindenstrauss development; the formula holds for all `t` with the
-convention that both sides vanish for `t ≥ 1/2`. -/
+/-- **A chi-square law has no atoms**: `χ²_p {x} = 0` for every `x`, since it has a density
+with respect to Lebesgue measure. In particular `χ²₁` puts no mass at `0`, which is what
+separates it from the degenerate limit `δ₀`. -/
+theorem chiSquareMeasure_singleton (p : ℕ) (x : ℝ) : chiSquareMeasure p {x} = 0 := by
+  rw [chiSquareMeasure, gammaMeasure, withDensity_apply _ (measurableSet_singleton x)]
+  exact setLIntegral_measure_zero _ _ Real.volume_singleton
+
+/-- Chi-square laws are atomless (`chiSquareMeasure_singleton`). -/
+instance instNullSingletonClassChiSquareMeasure (p : ℕ) :
+    NullSingletonClass (chiSquareMeasure p) :=
+  ⟨chiSquareMeasure_singleton p⟩
+
+/-- **Moment generating function of the square of a standard normal.** Let $\gamma$ be the
+standard Gaussian measure on $\mathbb{R}$ (mean $0$, variance $1$). For every real $t$,
+$\int_{\mathbb{R}} e^{t x^2} \, d\gamma(x) = 1/\sqrt{1 - 2t}$.
+
+For $t \ge 1/2$ the integral diverges; the identity still holds there with the conventions that the
+integral of a non-integrable function is $0$, that $\sqrt{s} = 0$ for $s \le 0$ and that $1/0 = 0$,
+which make both sides $0$. -/
 theorem mgf_sq_stdGaussian (t : ℝ) :
     mgf (fun x : ℝ => x ^ 2) (gaussianReal 0 1) t =
       (Real.sqrt (1 - 2 * t))⁻¹ := by
@@ -70,8 +97,9 @@ theorem mgf_sq_stdGaussian (t : ℝ) :
         rw [Real.sqrt_eq_zero_of_nonpos hq, hs]
         simp
 
-/-- Exponential moments of the square of a standard normal exist below `1/2`.
-Promoted from the private Johnson–Lindenstrauss development. -/
+/-- **Exponential moments of the square of a standard normal.** Let $\gamma$ be the standard
+Gaussian measure on $\mathbb{R}$ (mean $0$, variance $1$). For every real $t < 1/2$, the
+function $x \mapsto e^{t x^2}$ is integrable with respect to $\gamma$. -/
 theorem integrable_exp_mul_sq_stdGaussian {t : ℝ} (ht : t < 1 / 2) :
     Integrable (fun x : ℝ => Real.exp (t * x ^ 2)) (gaussianReal 0 1) := by
   rw [gaussianReal_of_var_ne_zero 0 (by norm_num : (1 : NNReal) ≠ 0)]
@@ -86,7 +114,10 @@ theorem integrable_exp_mul_sq_stdGaussian {t : ℝ} (ht : t < 1 / 2) :
   congr 1
   ring_nf
 
-/-- The law of the square pushes exponential integrability forward. -/
+/-- **Exponential moments of the law of the square of a standard normal.** Let $\gamma$ be the
+standard Gaussian measure on $\mathbb{R}$ (mean $0$, variance $1$) and let $\nu$ be its image under
+$x \mapsto x^2$. For every real $t < 1/2$, the function $y \mapsto e^{t y}$ is integrable with
+respect to $\nu$. -/
 theorem Iio_subset_integrableExpSet_map_sq_stdGaussian :
     Iio (1 / 2 : ℝ) ⊆
       integrableExpSet id ((gaussianReal 0 1).map fun x : ℝ => x ^ 2) := by
@@ -118,7 +149,14 @@ theorem Ioo_subset_interior_integrableExpSet_map_sq_stdGaussian {ε : ℝ}
   simp only [mem_Iio]
   linarith
 
-/-- MGF of the pushed-forward square law, via the promoted Gaussian-square MGF. -/
+/-- **Moment generating function of the law of the square of a standard normal.** Let $\gamma$
+be the standard Gaussian measure on $\mathbb{R}$ (mean $0$, variance $1$) and let $\nu$ be its
+image under $x \mapsto x^2$. For every real $t$, $\int_{\mathbb{R}} e^{t y} \, d\nu(y) =
+1/\sqrt{1 - 2t}$.
+
+For $t \ge 1/2$ the integral diverges; the identity still holds there with the conventions that the
+integral of a non-integrable function is $0$, that $\sqrt{s} = 0$ for $s \le 0$ and that $1/0 = 0$,
+which make both sides $0$. -/
 theorem mgf_id_map_sq_stdGaussian (t : ℝ) :
     mgf id ((gaussianReal 0 1).map fun x : ℝ => x ^ 2) t =
       (Real.sqrt (1 - 2 * t))⁻¹ := by
@@ -127,7 +165,11 @@ theorem mgf_id_map_sq_stdGaussian (t : ℝ) :
   rw [h]
   exact mgf_sq_stdGaussian t
 
-/-- The chi-square-one gamma MGF agrees with the Gaussian-square MGF below `1/2`. -/
+/-- **Moment generating function of the gamma law with shape and rate one half.** Let $\mu$ be the
+gamma law on $\mathbb{R}$ with shape $1/2$ and rate $1/2$. For every real $t < 1/2$,
+$\int_{\mathbb{R}} e^{t x} \, d\mu(x) = 1/\sqrt{1 - 2t}$.
+
+This is the moment generating function of the square of a standard normal variable. -/
 theorem mgf_gammaMeasure_half_half_eq_sqrt {t : ℝ} (ht : t < 1 / 2) :
     mgf id (gammaMeasure (1 / 2) (1 / 2)) t =
       (Real.sqrt (1 - 2 * t))⁻¹ := by
@@ -137,7 +179,9 @@ theorem mgf_gammaMeasure_half_half_eq_sqrt {t : ℝ} (ht : t < 1 / 2) :
     field_simp
   rw [hbase, Real.inv_rpow ha.le, ← Real.sqrt_eq_rpow]
 
-/-- MGF of a chi-square law below `1/2`. -/
+/-- **Moment generating function of the chi-square distribution.** Let $p$ be a positive integer
+and let $\chi^2_p$ be the chi-square law with $p$ degrees of freedom. For every real $t < 1/2$,
+$\int_{\mathbb{R}} e^{t x} \, d\chi^2_p(x) = \left(\frac{1/2}{1/2 - t}\right)^{p/2}$. -/
 theorem mgf_chiSquareMeasure_of_lt {p : ℕ} (hp : 0 < p) {t : ℝ}
     (ht : t < 1 / 2) :
     mgf id (chiSquareMeasure p) t
@@ -145,7 +189,9 @@ theorem mgf_chiSquareMeasure_of_lt {p : ℕ} (hp : 0 < p) {t : ℝ}
   unfold chiSquareMeasure
   exact mgf_gammaMeasure_of_lt (by positivity) (by norm_num) ht
 
-/-- Exponential moments of a chi-square law exist below `1/2`. -/
+/-- **Exponential moments of the chi-square distribution.** Let $p$ be a positive integer and let
+$\chi^2_p$ be the chi-square law with $p$ degrees of freedom. For every real $t < 1/2$, the
+function $x \mapsto e^{t x}$ is integrable with respect to $\chi^2_p$. -/
 theorem integrable_exp_mul_chiSquareMeasure {p : ℕ} (hp : 0 < p) {t : ℝ}
     (ht : t < 1 / 2) :
     Integrable (fun x : ℝ => Real.exp (t * x)) (chiSquareMeasure p) := by
@@ -163,6 +209,60 @@ theorem Ioo_subset_interior_integrableExpSet_chiSquareMeasure {p : ℕ}
   unfold chiSquareMeasure
   exact Ioo_subset_interior_integrableExpSet_gammaMeasure (by positivity)
     (by norm_num) hε hε2
+
+/-- **The square of a standard normal variable is chi-square with one degree of freedom**, as
+an identity of measures on `ℝ`. (Moved here from the likelihood-ratio development so that
+both that development and Cochran's theorem reuse one declaration.) -/
+theorem gaussianReal_map_sq :
+    (gaussianReal 0 1).map (fun x : ℝ => x ^ 2) = chiSquareMeasure 1 := by
+  set μ := (gaussianReal 0 1).map (fun x : ℝ => x ^ 2) with hμ
+  have : IsProbabilityMeasure (chiSquareMeasure 1) := isProbabilityMeasure_chiSquareMeasure one_pos
+  set S : Set ℂ := {z | z.re ∈ Set.Ioo (-(1 / 4 : ℝ)) (1 / 4)} with hS
+  have h1 : Set.Ioo (-(1 / 4 : ℝ)) (1 / 4) ⊆ interior (integrableExpSet id μ) :=
+    Ioo_subset_interior_integrableExpSet_map_sq_stdGaussian (by norm_num) (by norm_num)
+  have h2 : Set.Ioo (-(1 / 4 : ℝ)) (1 / 4) ⊆
+      interior (integrableExpSet id (chiSquareMeasure 1)) :=
+    Ioo_subset_interior_integrableExpSet_chiSquareMeasure one_pos (by norm_num) (by norm_num)
+  have hF : AnalyticOnNhd ℂ (complexMGF id μ) S :=
+    analyticOnNhd_complexMGF.mono fun z hz => h1 hz
+  have hG : AnalyticOnNhd ℂ (complexMGF id (chiSquareMeasure 1)) S :=
+    analyticOnNhd_complexMGF.mono fun z hz => h2 hz
+  have hconv : Convex ℝ S := (convex_Ioo _ _).linear_preimage Complex.reLm
+  -- the two complex MGFs agree on the strip, by analytic continuation from the reals
+  have heq : Set.EqOn (complexMGF id μ) (complexMGF id (chiSquareMeasure 1)) S := by
+    refine hF.eqOn_of_preconnected_of_frequently_eq hG hconv.isPreconnected (z₀ := 0)
+      (by simp [hS]) ?_
+    have h_real : ∃ᶠ (x : ℝ) in 𝓝[≠] (0 : ℝ),
+        complexMGF id μ x = complexMGF id (chiSquareMeasure 1) x := by
+      have hev : ∀ᶠ x in 𝓝[≠] (0 : ℝ), x < 1 / 2 :=
+        nhdsWithin_le_nhds (Iio_mem_nhds (by norm_num))
+      refine (hev.mono fun x hx => ?_).frequently
+      rw [complexMGF_ofReal, complexMGF_ofReal, hμ, mgf_id_map_sq_stdGaussian,
+        ← mgf_gammaMeasure_half_half_eq_sqrt hx, chiSquareMeasure]
+      norm_num
+    rw [frequently_iff_seq_forall] at h_real ⊢
+    obtain ⟨xs, hx_tendsto, hx_eq⟩ := h_real
+    refine ⟨fun n => xs n, ?_, fun n => ?_⟩
+    · rw [tendsto_nhdsWithin_iff] at hx_tendsto ⊢
+      constructor
+      · rw [Complex.ofReal_zero.symm, Filter.tendsto_ofReal_iff]
+        exact hx_tendsto.1
+      · simpa using hx_tendsto.2
+    · exact hx_eq n
+  apply Measure.ext_of_charFun
+  funext t
+  rw [← complexMGF_id_mul_I, ← complexMGF_id_mul_I]
+  exact heq (by simp [hS])
+
+/-- A standard normal square exceeds `c` exactly when a `χ²₁` variable does:
+the Gaussian preimage tail is the chi-square survival function. -/
+theorem gaussianReal_sq_preimage_Ioi_eq_chiSquareSurvival (c : ℝ) :
+    gaussianReal 0 1 {x | c < x ^ 2} = chiSquareSurvival 1 c := by
+  have hpre : (fun x : ℝ => x ^ 2) ⁻¹' Set.Ioi c = {x | c < x ^ 2} := by
+    ext x
+    simp
+  rw [chiSquareSurvival, ← gaussianReal_map_sq,
+    Measure.map_apply (by fun_prop) measurableSet_Ioi, hpre]
 
 /-- Chi-square MGFs multiply by adding degrees, below `1/2`. Requires a
 nonempty index set so the summed degree stays positive. -/

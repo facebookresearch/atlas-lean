@@ -79,11 +79,6 @@ open Entry8Bernoullibound (chapter7BernoulliPolynomial chapter7IntegerPhi)
 
 noncomputable section
 
-private lemma chap7_base_ne_zero (j : ℕ) : ((j : ℂ) + 1) ≠ 0 := by
-  have h : (((j + 1 : ℕ)) : ℂ) ≠ 0 := by
-    exact_mod_cast Nat.succ_ne_zero j
-  simpa [Nat.cast_add, Nat.cast_one] using h
-
 private lemma chap7_base_norm (j : ℕ) : ‖((j : ℂ) + 1)‖ = (((j + 1 : ℕ)) : ℝ) := by
   have heq : ((j : ℂ) + 1) = (((j + 1 : ℕ)) : ℂ) := by
     push_cast
@@ -137,7 +132,7 @@ private lemma chap7_factor {x : ℂ} {j : ℕ} (r : ℂ)
     (hw : ‖chap7W x j‖ ≤ 1 / 2) :
     (((j : ℂ) + 1 + x) ^ r) =
       (((j : ℂ) + 1) ^ r) * ((1 + chap7W x j) ^ r) := by
-  have hbase : ((j : ℂ) + 1) ≠ 0 := chap7_base_ne_zero j
+  have hbase : ((j : ℂ) + 1) ≠ 0 := Nat.cast_add_one_ne_zero j
   have h1w : (1 : ℂ) + chap7W x j ≠ 0 := chap7_one_add_w_ne_zero hw
   have hEq : ((j : ℂ) + 1 + x) = ((j : ℂ) + 1) * (1 + chap7W x j) := by
     unfold chap7W
@@ -456,7 +451,7 @@ private lemma chap7g_differentiable (K J : ℕ) (x : ℂ)
     (hJ : ∀ j : ℕ, J ≤ j → ‖chap7W x j‖ ≤ 1 / 2) (n : ℕ) :
     Differentiable ℂ (fun r : ℂ => chap7g K J x n r) := by
   unfold chap7g
-  have hbase : (((n + J : ℕ) : ℂ) + 1) ≠ 0 := chap7_base_ne_zero (n + J)
+  have hbase : (((n + J : ℕ) : ℂ) + 1) ≠ 0 := Nat.cast_add_one_ne_zero (n + J)
   have hw : ‖chap7W x (n + J)‖ ≤ 1 / 2 := hJ (n + J) (Nat.le_add_left J n)
   have h1w : (1 : ℂ) + chap7W x (n + J) ≠ 0 := chap7_one_add_w_ne_zero hw
   apply Differentiable.neg
@@ -729,7 +724,7 @@ private lemma chap7HKR_differentiable (J k : ℕ) :
   unfold chap7H
   apply Differentiable.fun_sum
   intro j _
-  have hbase : (((j : ℕ) : ℂ) + 1) ≠ 0 := chap7_base_ne_zero j
+  have hbase : (((j : ℕ) : ℂ) + 1) ≠ 0 := Nat.cast_add_one_ne_zero j
   have hf : Differentiable ℂ (fun r : ℂ => -(((k : ℕ) : ℂ) - r)) :=
     Differentiable.neg (Differentiable.sub (differentiable_const _) differentiable_id)
   have h := hf.const_cpow (c := (((j : ℕ) : ℂ) + 1)) (Or.inl hbase)
@@ -741,7 +736,7 @@ private def chap7T (x : ℂ) (j : ℕ) (r : ℂ) : ℂ :=
 private lemma chap7T_differentiable (x : ℂ) (hx : chapter7Admissible x) (j : ℕ) :
     Differentiable ℂ (fun r : ℂ => chap7T x j r) := by
   unfold chap7T
-  have h1 : (((j : ℕ) : ℂ) + 1) ≠ 0 := chap7_base_ne_zero j
+  have h1 : (((j : ℕ) : ℂ) + 1) ≠ 0 := Nat.cast_add_one_ne_zero j
   have h2 : (((j : ℕ) : ℂ) + 1 + x) ≠ 0 := hx j
   apply Differentiable.sub
   · exact differentiable_id.const_cpow (Or.inl h1)
@@ -809,7 +804,7 @@ private lemma chap7PhiCont_differentiableOn (m K J : ℕ) (x : ℂ)
 private lemma chap7_cpow_base_w_pow (j : ℕ) (x r : ℂ) (k : ℕ) :
     ((((j : ℕ) : ℂ) + 1) ^ r) * (chap7W x j) ^ k =
       x ^ k * (((((j : ℕ) : ℂ) + 1) ^ (r - (k : ℂ)))) := by
-  have hbase : (((j : ℕ) : ℂ) + 1) ≠ 0 := chap7_base_ne_zero j
+  have hbase : (((j : ℕ) : ℂ) + 1) ≠ 0 := Nat.cast_add_one_ne_zero j
   unfold chap7W
   have hdiv : (x / ((((j : ℕ) : ℂ) + 1))) ^ k =
       x ^ k / ((((j : ℕ) : ℂ) + 1) ^ k) := div_pow x _ k
@@ -1729,9 +1724,17 @@ private lemma chap7_PhiCont_eq_IntegerPhi (m J : ℕ) (x : ℂ) :
     linear_combination (x ^ k * (((_root_.bernoulli' ((m + 1) - k) : ℚ)) : ℂ)) * hchooseC
   rw [hPhi, hInt, hsplit, htop, hsum]
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
+/-- **Entire continuations of the power-difference series agree and take Bernoulli values.**
+Let $f$ and $g$ be complex-valued functions of two complex variables $(r, x)$ such that, for every
+admissible $x$, both $r \mapsto f(r, x)$ and $r \mapsto g(r, x)$ are entire, and for every
+admissible $x$ and every complex $r$ with $\operatorname{Re} r < 0$ the series
+$\sum_{j \ge 0} \bigl((j + 1)^r - (j + 1 + x)^r\bigr)$ (principal powers) has sum $f(r, x)$ and
+also has sum $g(r, x)$. Then $f(r, x) = g(r, x)$ for every admissible $x$ and every complex $r$,
+and for every natural number $m$ and every admissible $x$,
+$f(m, x) = g(m, x) = \bigl(B_{m+1}(x + 1) - B_{m+1}(1)\bigr)/(m + 1)$, where $B_n$ is the $n$-th
+Bernoulli polynomial.
 
-Proves `Wanted` entry `ramanujan_part1_ch7_entry9_zetaeven`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
 -/
 theorem ramanujan_part1_ch7_entry9_zetaeven
     (phi psi : ℂ → ℂ → ℂ)
