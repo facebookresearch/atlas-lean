@@ -174,31 +174,6 @@ public theorem_wanted sum_pow_mul_choose_mul_secondOrder (a b : ℝ) (W : ℕ �
       ∑ i ∈ Finset.range (r + 1),
         (Nat.stirlingSecond r i : ℝ) * N.descFactorial i * a ^ i * W (2 * N - i)
 
-/-- **Weighted binomial Fibonacci sums for the powers one to four.** Let $F_n$ denote the Fibonacci
-numbers. For every natural number $N$,
-$$\sum_{k=1}^{N} k \binom{N}{k} F_k = N F_{2N-1},$$
-$$\sum_{k=1}^{N} k^2 \binom{N}{k} F_k = N F_{2N-1} + N(N-1) F_{2N-2},$$
-$$\sum_{k=1}^{N} k^3 \binom{N}{k} F_k = N F_{2N-1} + 3N(N-1) F_{2N-2} + N(N-1)(N-2) F_{2N-3},$$
-$$\sum_{k=1}^{N} k^4 \binom{N}{k} F_k = N F_{2N-1} + 7N(N-1) F_{2N-2} +
-6N(N-1)(N-2) F_{2N-3} + N(N-1)(N-2)(N-3) F_{2N-4}.$$
-
-Every term with a negative Fibonacci index has coefficient zero.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.6. -/
-public theorem_wanted sum_pow_mul_choose_mul_fib_small (N : ℕ) :
-    (∑ k ∈ Finset.Icc 1 N, k * N.choose k * Nat.fib k = N * Nat.fib (2 * N - 1)) ∧
-    (∑ k ∈ Finset.Icc 1 N, k ^ 2 * N.choose k * Nat.fib k =
-      N * Nat.fib (2 * N - 1) + N * (N - 1) * Nat.fib (2 * N - 2)) ∧
-    (∑ k ∈ Finset.Icc 1 N, k ^ 3 * N.choose k * Nat.fib k =
-      N * Nat.fib (2 * N - 1) + 3 * N * (N - 1) * Nat.fib (2 * N - 2) +
-        N * (N - 1) * (N - 2) * Nat.fib (2 * N - 3)) ∧
-    ∑ k ∈ Finset.Icc 1 N, k ^ 4 * N.choose k * Nat.fib k =
-      N * Nat.fib (2 * N - 1) + 7 * N * (N - 1) * Nat.fib (2 * N - 2) +
-        6 * N * (N - 1) * (N - 2) * Nat.fib (2 * N - 3) +
-        N * (N - 1) * (N - 2) * (N - 3) * Nat.fib (2 * N - 4)
-
 /-- **Polynomially weighted binomial Fibonacci sums.** Let $F_n$ denote the Fibonacci numbers,
 $S(j, i)$ the Stirling numbers of the second kind and $(N)_i = N(N-1)\cdots(N-i+1)$ the falling
 factorial. Let $A_0, A_1, A_2, \dots$ be complex numbers and $N$, $t$ natural numbers, and put

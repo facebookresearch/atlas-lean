@@ -60,4 +60,16 @@ example : ∑ k ∈ Finset.Icc 1 2, (-1 : ℚ) ^ (k - 1) * (2 : ℕ).choose k / 
   rw [show Finset.Icc 1 2 = {1, 2} from by decide]
   norm_num [harmonic, Finset.sum_range_succ]
 
+-- The first-power sum is empty in row zero.
+example : ∑ k ∈ Finset.Icc 1 0, k * (0 : ℕ).choose k * Nat.fib k = 0 :=
+  (sum_pow_mul_choose_mul_fib_small 0).1.trans (by decide)
+
+-- In row one the higher falling factorials vanish, including those with truncated indices.
+example : ∑ k ∈ Finset.Icc 1 1, k ^ 4 * (1 : ℕ).choose k * Nat.fib k = 1 :=
+  (sum_pow_mul_choose_mul_fib_small 1).2.2.2.trans (by decide)
+
+-- Row four is the first where all four terms of the fourth-power formula contribute.
+example : ∑ k ∈ Finset.Icc 1 4, k ^ 4 * (4 : ℕ).choose k * Nat.fib k = 1516 :=
+  (sum_pow_mul_choose_mul_fib_small 4).2.2.2.trans (by decide)
+
 end MathlibExtTest.RationallyWeightedBinomialSums
