@@ -29,6 +29,7 @@ public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 public import Mathlib.Topology.KrullDimension
 public import MathlibExt.AlgebraicGeometry.SchemeModulesEvaluation
+public import MathlibExt.AlgebraicGeometry.SmoothKrullDim
 
 @[expose] public noncomputable section
 
@@ -40,11 +41,11 @@ sheaves of modules, with scalars restricted along the structure morphism
 `X ⟶ Spec k`. They are defined for every scheme over `k`.
 
 The curve invariants are defined only on a proper curve over `k`
-(`IsProperCurve`): a proper scheme of dimension one over `k`. The class also
-records two theorems about such schemes that Mathlib does not yet prove: the
-cohomology of an invertible sheaf is finite-dimensional, and all cohomology
-vanishes above degree one. So `Module.finrank` is the actual dimension of every
-cohomology space used below, and `h⁰ - h¹` is the actual Euler characteristic.
+(`IsProperCurve`): a proper scheme of dimension one over `k`. Every smooth proper
+curve is one. On a proper curve, the cohomology of a coherent sheaf is
+finite-dimensional and all cohomology vanishes above degree one, so
+`Module.finrank` is the actual dimension of every cohomology space used below,
+and `h⁰ - h¹` is the actual Euler characteristic.
 
 * `genus f` is `dim H¹(X, 𝒪_X)` for a proper curve with `H⁰(X, 𝒪_X) = k`
   (Stacks, Tag 0BY7).
@@ -102,29 +103,26 @@ abbrev cohomology {k : Type u} [Field k] {X : Scheme.{u}}
 /-- `f : X ⟶ Spec k` exhibits `X` as a proper curve over `k`: `f` is proper and
 the underlying space of `X` has Krull dimension one.
 
-The fields `finiteDimensional_cohomology` and `isZero_cohomology` are theorems
-about every proper scheme of dimension one over `k`, recorded here because
-Mathlib does not yet prove them: the cohomology of a coherent sheaf on a proper
-scheme over a field is finite-dimensional (Stacks, Tag 02O5), and the
-cohomology of every sheaf on a noetherian space of dimension at most one
-vanishes above degree one (Grothendieck vanishing, Stacks, Tag 02UZ; the
-cohomology of `𝒪_X`-modules is that of their underlying abelian sheaves,
-Hartshorne, *Algebraic Geometry*, III.2.6). -/
+On a proper curve, the cohomology of a coherent sheaf, for instance an invertible
+sheaf, is finite-dimensional (Stacks, Tag 02O5), and the cohomology of every
+sheaf of modules vanishes above degree one (Grothendieck vanishing, Stacks,
+Tag 02UZ, for the noetherian space `X` of dimension one; the cohomology of
+`𝒪_X`-modules is that of their underlying abelian sheaves, Hartshorne,
+*Algebraic Geometry*, III.2.6). These are the facts that make `genus` and
+`degree` below the actual dimension and Euler characteristic. -/
 class IsProperCurve {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) : Prop extends IsProper f where
   /-- The underlying space has Krull dimension one. -/
   topologicalKrullDim_eq_one : topologicalKrullDim X = 1
-  /-- The cohomology of an invertible sheaf is finite-dimensional. -/
-  finiteDimensional_cohomology (L : X.Modules) (hL : IsLineBundle L) (n : ℕ) :
-    FiniteDimensional k (cohomology f L n)
-  /-- Cohomology vanishes above degree one. -/
-  isZero_cohomology (F : X.Modules) {n : ℕ} (hn : 1 < n) : IsZero (cohomology f F n)
 
-/-- The cohomology of the structure sheaf of a proper curve is finite-dimensional. -/
-instance IsProperCurve.finiteDimensional_cohomology_structureModule {k : Type u} [Field k]
-    {X : Scheme.{u}} (f : X ⟶ Spec (.of k)) [IsProperCurve f] (n : ℕ) :
-    FiniteDimensional k (cohomology f (structureModule X) n) :=
-  IsProperCurve.finiteDimensional_cohomology _ (isLineBundle_structureModule X) n
+/-- A nonempty proper scheme that is smooth of relative dimension one over `k` is
+a proper curve. -/
+instance IsProperCurve.of_smoothOfRelativeDimension {k : Type u} [Field k] {X : Scheme.{u}}
+    (f : X ⟶ Spec (.of k)) [IsProper f] [SmoothOfRelativeDimension 1 f] [Nonempty X] :
+    IsProperCurve f where
+  topologicalKrullDim_eq_one :=
+    le_antisymm (SmoothOfRelativeDimension.topologicalKrullDim_le f 1)
+      (by exact_mod_cast SmoothOfRelativeDimension.le_topologicalKrullDim f 1)
 
 /-- The global regular functions on `X` are exactly the constants in `k`:
 `globalScalarMap f` is bijective, that is, `H⁰(X, 𝒪_X) = k`. -/

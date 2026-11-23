@@ -22,8 +22,8 @@ characteristic-zero field, nonnegative Brill--Noether number guarantees a
 linear series. No generic-curve predicate is used. The imported completed
 interface uses actual module-sheaf cohomology.
 
-The curve is a proper curve in the sense of `IsProperCurve`; for a smooth proper
-curve, the finiteness and vanishing fields of that class are theorems. Its genus
+The hypotheses are the standard ones: the curve is a proper curve in the sense
+of `IsProperCurve` because it is smooth of relative dimension one, and its genus
 is defined because an integral proper scheme over an algebraically closed field
 has only constant global functions (`HasConstantGlobalSections.of_isIntegral`).
 
@@ -45,7 +45,7 @@ algebraically closed field of characteristic zero carries a `g^r_d` when the
 Brill--Noether number `ρ(g, r, d)` is nonnegative. -/
 public theorem_wanted brillNoether_nonempty
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (C : Over (Spec (.of k))) [IsIntegral C.left] [IsProperCurve C.hom]
+    (C : Over (Spec (.of k))) [IsIntegral C.left] [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom]
     (d r : ℕ) (hρ : 0 ≤ brillNoetherNumber (genus C.hom) d r) :
     Nonempty (LinearSeries C.hom (d : ℤ) r)

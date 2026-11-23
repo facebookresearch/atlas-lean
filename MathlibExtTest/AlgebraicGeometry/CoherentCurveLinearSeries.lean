@@ -66,26 +66,40 @@ example : HasConstantGlobalSections (𝟙 (Spec (.of k))) where
 -- applies.
 example [IsAlgClosed k] : HasConstantGlobalSections (𝟙 (Spec (.of k))) := inferInstance
 
+-- `Spec k` has dimension zero, so it is not a proper curve.
+example : ¬ IsProperCurve (𝟙 (Spec (.of k))) := fun h ↦ by
+  have := h.topologicalKrullDim_eq_one
+  rw [show topologicalKrullDim (Spec (.of k)) = 0 from
+    (PrimeSpectrum.topologicalKrullDim_eq_ringKrullDim (R := k)).trans
+      (ringKrullDim_eq_zero_of_field k)] at this
+  exact zero_ne_one this
+
 end SpecField
+
+section SmoothCurve
+
+variable {k : Type u} [Field k] {X : Scheme.{u}} (f : X ⟶ Spec (.of k))
+
+-- Every nonempty smooth proper scheme of relative dimension one is a proper curve.
+example [IsProper f] [SmoothOfRelativeDimension 1 f] [Nonempty X] : IsProperCurve f :=
+  inferInstance
+
+-- For a smooth proper integral curve over an algebraically closed field, the genus is defined
+-- from the standard hypotheses alone.
+noncomputable example [IsAlgClosed k] [IsProper f] [SmoothOfRelativeDimension 1 f]
+    [IsIntegral X] : ℕ :=
+  genus f
+
+end SmoothCurve
 
 section ProperCurve
 
 variable {k : Type u} [Field k] {X : Scheme.{u}} (f : X ⟶ Spec (.of k)) [IsProperCurve f]
 
--- A proper curve is proper, one-dimensional, and has finite-dimensional cohomology of
--- invertible sheaves, concentrated in degrees zero and one.
+-- A proper curve is proper and one-dimensional.
 example : IsProper f := inferInstance
 
 example : topologicalKrullDim X = 1 := IsProperCurve.topologicalKrullDim_eq_one (f := f)
-
-example (n : ℕ) : FiniteDimensional k (cohomology f (structureModule X) n) := inferInstance
-
-example (L : X.Modules) (hL : IsLineBundle L) (n : ℕ) :
-    FiniteDimensional k (cohomology f L n) :=
-  IsProperCurve.finiteDimensional_cohomology L hL n
-
-example (F : X.Modules) : IsZero (cohomology f F 2) :=
-  IsProperCurve.isZero_cohomology F (by norm_num)
 
 -- The degree is the Euler-characteristic difference `χ(L) - χ(𝒪_X)`; `𝒪_X` has degree zero.
 example (L : X.Modules) (hL : IsLineBundle L) :
@@ -98,13 +112,10 @@ example (L : X.Modules) (hL : IsLineBundle L) :
 
 example : degree f (structureModule X) (isLineBundle_structureModule X) = 0 := by simp
 
--- The genus is `dim H¹(X, 𝒪_X)`; over an algebraically closed field it is defined for every
--- integral proper curve.
+-- The genus is `dim H¹(X, 𝒪_X)`.
 example [HasConstantGlobalSections f] :
     genus f = Module.finrank k (cohomology f (structureModule X) 1) :=
   rfl
-
-noncomputable example [IsAlgClosed k] [IsIntegral X] : ℕ := genus f
 
 -- A linear series is an invertible sheaf of the given degree with a subspace of sections of
 -- the given dimension.
