@@ -10,11 +10,11 @@ module
 
 public import Mathlib.Algebra.Order.Floor.Semiring
 public import Mathlib.Algebra.Order.Floor.Defs
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Real.Archimedean
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Data.Nat.Log
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
@@ -180,7 +180,7 @@ theorem two_pow_dyadicPrecision_le (K : ℕ) {γ : ℝ} (hγ : 0 < γ) : 2 ^ dya
     omega
   · have hN1' : 1 < N := by omega
     have hpos : 0 < Nat.clog 2 N := Nat.clog_pos (show (1 : ℕ) < 2 by norm_num) hN1'
-    have hpred := Nat.pow_pred_clog_lt_self (show (1 : ℕ) < 2 by norm_num) hN1'
+    have hpred := Nat.pow_pred_clog_lt_self 2 hN1'
     have hsplit : (Nat.clog 2 N).pred + 1 = Nat.clog 2 N := Nat.succ_pred_eq_of_pos hpos
     have hmax : max 1 N = N := max_eq_right (by omega)
     rw [hmax]
