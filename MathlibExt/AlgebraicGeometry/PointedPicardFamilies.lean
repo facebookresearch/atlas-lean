@@ -15,10 +15,11 @@ public import MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 /-!
 # Pointed Picard-zero families
 
-Line bundles are normalized along a specified point of a curve. The
+Line bundles are normalized along a specified point of a proper curve. The
 representative below is characterized on all test schemes by actual
 pullbacks of its universal bundle. The group law is linked to the
-ordinary sheaf tensor, and the identity represents the trivial bundle.
+ordinary sheaf tensor, and the identity represents the trivial bundle. Its
+relative dimension is the genus, so the curve has `H⁰(C, 𝒪_C) = k`.
 
 Reference: Bosch--Lütkebohmert--Raynaud, *Néron Models*, Chapter 9.
 -/
@@ -46,9 +47,12 @@ def IsNormalized {k : Type u} [Field k]
   Nonempty ((Scheme.Modules.pullback (sectionAt C T p).left).obj L ≅
     structureModule T.left)
 
-/-- A Picard-zero representative with its universal family and group laws. -/
+/-- A Picard-zero representative of a pointed proper curve with `H⁰(C, 𝒪_C) = k`,
+with its universal family and group laws. Its relative dimension is the genus
+`dim H¹(C, 𝒪_C)`. -/
 structure PicardZeroModel {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) (p : 𝟙_ (Over (Spec (.of k))) ⟶ C) where
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (p : 𝟙_ (Over (Spec (.of k))) ⟶ C) where
   /-- The representing group scheme. -/
   J : Over (Spec (.of k))
   [group : GrpObj J]
