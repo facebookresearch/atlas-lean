@@ -214,10 +214,6 @@ private lemma prod_fact_cons {m : ℕ} (x : ℕ) (t : Fin m → ℕ) :
   rw [Fin.prod_univ_succ]
   simp [Fin.cons_zero, Fin.cons_succ]
 
-private lemma sum_cons_eq {m : ℕ} (x : ℕ) (t : Fin m → ℕ) :
-    ∑ i : Fin (m + 1), (Fin.cons x t : Fin (m + 1) → ℕ) i = x + ∑ i : Fin m, t i :=
-  Fin.sum_cons x t
-
 private lemma nest_eq_multinomial : ∀ (m : ℕ) (s : Fin m → ℕ) (n : ℕ),
     ∑ i : Fin m, s i ≤ n →
     nestProd n s =
@@ -261,7 +257,7 @@ private lemma nest_eq_multinomial : ∀ (m : ℕ) (s : Fin m → ℕ) (n : ℕ),
     have sumU : ∑ i ∈ (Finset.univ : Finset (Fin (m + 1))),
         ((Fin.cons (n - ∑ i : Fin m, Fin.tail s i) (Fin.tail s) :
           Fin (m + 1) → ℕ)) i = n := by
-      have hh := sum_cons_eq (n - ∑ i : Fin m, Fin.tail s i) (Fin.tail s)
+      have hh := Fin.sum_cons (n - ∑ i : Fin m, Fin.tail s i) (Fin.tail s)
       have hh2 : (∑ i : Fin (m + 1),
           ((Fin.cons (n - ∑ i : Fin m, Fin.tail s i) (Fin.tail s) :
             Fin (m + 1) → ℕ)) i) = n := by
@@ -285,7 +281,7 @@ private lemma nest_eq_multinomial : ∀ (m : ℕ) (s : Fin m → ℕ) (n : ℕ),
       simpa using hh
     have sumV : ∑ i ∈ (Finset.univ : Finset (Fin (m + 2))),
         ((Fin.cons (n - ∑ i : Fin (m + 1), s i) s : Fin (m + 2) → ℕ)) i = n := by
-      have hh := sum_cons_eq (n - ∑ i : Fin (m + 1), s i) s
+      have hh := Fin.sum_cons (n - ∑ i : Fin (m + 1), s i) s
       have hh2 : (∑ i : Fin (m + 2),
           ((Fin.cons (n - ∑ i : Fin (m + 1), s i) s : Fin (m + 2) → ℕ)) i) = n := by
         rw [hh]; omega
@@ -378,12 +374,6 @@ private lemma wgt_eq_succ_sum {m : ℕ} (k : Fin (m + 1) → ℕ) :
   intro j _
   rw [Fin.val_succ]
 
-private lemma ksum_eq {m : ℕ} (k : Fin (m + 1) → ℕ) :
-    ∑ i : Fin (m + 1), k i = k 0 + ∑ j : Fin m, k j.succ := by
-  have h := Fin.sum_univ_succ k
-  have htail : (∑ i : Fin m, k i.succ) = (∑ j : Fin m, k j.succ) := rfl
-  omega
-
 private lemma fwd_pred {m l : ℕ} (k : Fin (m + 1) → ℕ) (hw : wgt m k = l) :
     tgtPred m l (fwd m l k) := by
   unfold tgtPred
@@ -417,8 +407,6 @@ private lemma bwd_sum {n m l : ℕ} (s : tgt m l)
       (n - ∑ j : Fin m, (((s j : Fin (l + 1))) : ℕ)) +
         ∑ j : Fin m, (((s j : Fin (l + 1))) : ℕ) := by
     unfold bwd
-    have hh := sum_cons_eq (n - ∑ j : Fin m, (((s j : Fin (l + 1))) : ℕ))
-      (fun j : Fin m => (((s j : Fin (l + 1))) : ℕ))
     simp
   omega
 
@@ -458,7 +446,7 @@ private lemma roundtrip_bwd_fwd {n m l : ℕ} (k : Fin (m + 1) → ℕ)
       · exact Finset.mem_univ _
     omega
   have htail_sum : ∑ j : Fin m, k j.succ = n - k 0 := by
-    have hks := ksum_eq k
+    have hks := Fin.sum_univ_succ k
     omega
   have hvals_sum : ∑ j : Fin m, (((fwd m l k j : Fin (l + 1))) : ℕ) = n - k 0 := by
     have hcongr : (∑ j : Fin m, (((fwd m l k j : Fin (l + 1))) : ℕ)) =
@@ -523,7 +511,7 @@ private lemma fwd_sum_le {n m l : ℕ} (k : Fin (m + 1) → ℕ)
         exact Nat.zero_le _
       · exact Finset.mem_univ _
     omega
-  have hks := ksum_eq k
+  have hks := Fin.sum_univ_succ k
   have hcongr : tgtValSum m l (fwd m l k) = ∑ j : Fin m, k j.succ := by
     exact fwd_sum_eq k hw
   omega
@@ -623,8 +611,12 @@ private lemma subset_sums (n m l : ℕ) :
     exact tgtTerm_zero n m l s hgt
 
 /--
-Unconditional partition-sum expansion of `Nat.choose (n * m) l`, valid for all
-`n m l : ℕ` including degenerate and out-of-range cases.
+**Partition-sum expansion of $\binom{nm}{l}$, unconditional form.** For all natural numbers $n$,
+$m$ and $l$, let $P$ be the set of tuples $s = (s_1, \dots, s_m)$ of natural numbers with
+$\sum_{j=1}^{m} j\,s_j = l$, and for $s \in P$ write $T_j(s) = s_{j+1} + \dots + s_m$. Then
+$$\binom{nm}{l} = \sum_{s \in P} \prod_{j=1}^{m} \binom{n - T_j(s)}{s_j} \binom{m}{j}^{s_j},$$
+where $n - T_j(s)$ is read as $0$ when $T_j(s) > n$. No positivity or range conditions on $n$,
+$m$ and $l$ are needed.
 -/
 theorem choose_mul_eq_partition_sum_unconditional
     (n m l : ℕ) :
@@ -649,14 +641,19 @@ theorem choose_mul_eq_partition_sum_unconditional
 
 set_option linter.unusedVariables false in
 /--
-Partition-sum expansion of the binomial coefficient `Nat.choose (n * m) l`.
+**Partition-sum expansion of $\binom{nm}{l}$.** Let $n$ and $m$ be positive natural numbers and
+let $l$ be a natural number with $1 \le l \le nm$. Let $P$ be the set of tuples
+$s = (s_1, \dots, s_m)$ of natural numbers with $\sum_{j=1}^{m} j\,s_j = l$, and for $s \in P$
+write $T_j(s) = s_{j+1} + \dots + s_m$. Then
+$$\binom{nm}{l} = \sum_{s \in P} \prod_{j=1}^{m} \binom{n - T_j(s)}{s_j} \binom{m}{j}^{s_j},$$
+where $n - T_j(s)$ is read as $0$ when $T_j(s) > n$.
 
-Jocelyn Quaintance and Harris Kwong, "Permutations and Combinations of Colored Multisets,"
+Proves `Wanted` entry `choose_mul_eq_partition_sum`.
+
+Source: Jocelyn Quaintance and Harris Kwong, "Permutations and Combinations of Colored Multisets,"
 Journal of Integer Sequences 13 (2010), Article 10.2.6,
 Theorem (label thm:1.2), lines 329–336.
 `https://cs.uwaterloo.ca/journals/JIS/VOL13/Kwong/kwong6.tex`
-
-Proves `Wanted` entry `choose_mul_eq_partition_sum`.
 -/
 theorem choose_mul_eq_partition_sum
     (n m l : ℕ) (hn : 0 < n) (hm : 0 < m) (hl : 0 < l)

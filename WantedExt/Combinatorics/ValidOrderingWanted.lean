@@ -21,9 +21,8 @@ such ordering (exhaustive check), contradicting
 Theorem 2; the form stated was verified by exhaustive
 search on hundreds of small sets.
 
-Not stated (see the source audit table): Theorem 1,
-whose size bound is garbled in the extracted statement
-by two-column interleaving.
+Theorem 1's bound `|A| ≤ log p / log log p` is read from
+the journal PDF.
 -/
 module
 
@@ -40,9 +39,10 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.ValidOrderingWanted
 
-/-- **Theorem 2**: every finite subset of `ℤ \ {0}` has
-a valid ordering, i.e., an ordering whose partial sums
-are pairwise distinct.
+/-- **Valid orderings of finite sets of nonzero integers.** Every finite set $A$ of nonzero
+integers has a valid ordering: its elements can be listed as $a_1, \dots, a_m$, each exactly
+once, so that the partial sums $a_1, a_1 + a_2, \dots, a_1 + \cdots + a_m$ are pairwise
+distinct. The empty sum $0$ is not counted among the partial sums.
 
 Source: Noah Kravitz, "Rearranging Small Sets for
 Distinct Partial Sums", Theorem 2. -/
@@ -51,12 +51,13 @@ theorem_wanted exists_distinct_partial_sums_ordering
     ∃ l : List ℤ, List.Perm l A.toList ∧
       ((l.scanl (· + ·) 0).tail).Nodup
 
-/-- **Theorem 3** (Lev's rectification principle, as
-quoted in the paper): for `ℓ ≥ 2`, if `A ⊆ 𝔽_p`
-satisfies `|A| ≤ ⌈log p / log ℓ⌉`, then `A` is
-`ℓ`-Freiman isomorphic to a set of integers. (For
-`ℓ ≤ 1` the logarithmic bound is out of domain, hence
-the hypothesis `2 ≤ ℓ`.)
+/-- **Lev's rectification principle.** Let $\ell \ge 2$ be a natural number, $p$ a prime and
+$A$ a subset of $\mathbb{Z}/p\mathbb{Z}$ with $|A| \le \lceil \log p / \log \ell \rceil$. Then
+there are a finite set $B$ of integers and a map $f \colon \mathbb{Z}/p\mathbb{Z} \to \mathbb{Z}$
+that is a Freiman isomorphism of order $\ell$ from $A$ to $B$: $f$ maps $A$ bijectively onto
+$B$, and for all $a_1, \dots, a_\ell, b_1, \dots, b_\ell \in A$ we have
+$f(a_1) + \cdots + f(a_\ell) = f(b_1) + \cdots + f(b_\ell)$ if and only if
+$a_1 + \cdots + a_\ell = b_1 + \cdots + b_\ell$.
 
 Source: Noah Kravitz, "Rearranging Small Sets for
 Distinct Partial Sums", Theorem 3. -/
@@ -65,5 +66,18 @@ theorem_wanted exists_freimanIso_to_int (ℓ p : ℕ)
     (hA : A.card ≤ ⌈Real.log p / Real.log ℓ⌉₊) :
     ∃ (B : Finset ℤ) (f : ZMod p → ℤ),
       IsAddFreimanIso ℓ (A : Set (ZMod p)) (B : Set ℤ) f
+
+/-- **Theorem 1**: for a prime `p`, every `A ⊆ 𝔽_p \ {0}` with
+`|A| ≤ log p / log log p` has a valid ordering (pairwise distinct
+partial sums `a₁, a₁ + a₂, …`).
+
+Source: Noah Kravitz, "Rearranging Small Sets for
+Distinct Partial Sums", INTEGERS 24 (2024), Article A113,
+Theorem 1. -/
+theorem_wanted exists_distinct_partial_sums_ordering_zmod (p : ℕ) [Fact p.Prime]
+    (A : Finset (ZMod p)) (h0 : 0 ∉ A)
+    (hA : (A.card : ℝ) ≤ Real.log p / Real.log (Real.log p)) :
+    ∃ l : List (ZMod p), List.Perm l A.toList ∧
+      ((l.scanl (· + ·) 0).tail).Nodup
 
 end MathlibExt.Combinatorics.ValidOrderingWanted

@@ -65,7 +65,10 @@ open Relation Computability MetaMathlibExt.TM2Recursive
 
 namespace Cslib.Turing
 
-/-- `StackTape.cons` on underlying lists: a blank pushed onto the empty tape is dropped. -/
+/-- **Pushing a cell onto a coded tape.** For any type $\Sigma$, an element $x$ of
+$\Sigma \cup \{\bot\}$ (with $\bot$ the blank) and a finite list $l$ over $\Sigma \cup \{\bot\}$,
+the push of $x$ onto $l$ is the empty list when $x = \bot$ and $l$ is empty, and otherwise the list
+obtained by prepending $x$ to $l$. -/
 def SingleTapeTM.codedCons {Symbol : Type} :
     Option Symbol → List (Option Symbol) → List (Option Symbol)
   | none, [] => []
@@ -75,15 +78,24 @@ namespace StackTape
 
 variable {Symbol : Type}
 
-/-- The head of a `StackTape` is the head of its underlying list, blank on the empty tape. -/
+/-- **The head of a stack tape is the first entry of its list.** For every one-sided tape $s$ over
+an alphabet $\Sigma$, stored as a finite list of cells in $\Sigma \cup \{\bot\}$ (with $\bot$ the
+blank) that does not end in $\bot$, the symbol at the head of $s$ is the first entry of that list,
+and the blank $\bot$ when the list is empty. -/
 theorem head_eq_headI (s : StackTape Symbol) : s.head = s.toList.headI := by
   obtain ⟨_ | _, _⟩ := s <;> rfl
 
-/-- The underlying list of the tail of a `StackTape` is the tail of its underlying list. -/
+/-- **Tail of a stack tape, on cell lists.** Let $s$ be a stack tape, a one-sided tape stored as
+its list of cells without trailing blanks. Then the cell list of the tail of $s$ is the tail of
+the cell list of $s$, the tail of the empty list being empty. -/
 theorem toList_tail (s : StackTape Symbol) : s.tail.toList = s.toList.tail := by
   obtain ⟨_ | _, _⟩ := s <;> rfl
 
-/-- `StackTape.cons` is `SingleTapeTM.codedCons` on underlying lists. -/
+/-- **Pushing onto a stack tape, on cell lists.** Let $s$ be a stack tape, a one-sided tape stored
+as its list of cells without trailing blanks, and $x$ a cell content, either a symbol or blank.
+Then the cell list of the tape obtained by pushing $x$ onto $s$ is the coded push of $x$ applied to
+the cell list of $s$: $x$ prepended to it, except that pushing a blank onto the empty tape gives
+the empty list. -/
 theorem toList_cons (x : Option Symbol) (s : StackTape Symbol) :
     (cons x s).toList = SingleTapeTM.codedCons x s.toList := by
   obtain ⟨_ | _, _⟩ := s <;> cases x <;> rfl
@@ -94,7 +106,10 @@ namespace SingleTapeTM
 
 variable {Symbol : Type}
 
-/-- `codedCons x` is primitive recursive. -/
+/-- **Pushing a cell onto a coded tape is primitive recursive.** Let $\Sigma$ be a type with a
+primitive recursive coding, and let $x$ be a cell content, either a symbol of $\Sigma$ or blank.
+Then the coded push of $x$, the map on lists of cell contents that prepends $x$ to a list, except
+that it sends the empty list to the empty list when $x$ is blank, is primitive recursive. -/
 theorem primrec_codedCons [Primcodable Symbol] (x : Option Symbol) :
     Primrec (codedCons x) := by
   cases x with
@@ -107,7 +122,10 @@ theorem primrec_codedCons [Primcodable Symbol] (x : Option Symbol) :
     exact (Primrec.list_cons.comp (Primrec.const (some a)) Primrec.id).of_eq fun l ↦ by
       cases l <;> rfl
 
-/-- Binary codes of natural numbers written through `ι : Bool → Symbol` are primitive
+/-- **Binary codes of natural numbers in a tape alphabet are primitive recursive.** Let $\Sigma$ be
+a type with a primitive recursive coding and $\iota$ any map from the Booleans to $\Sigma$. Then
+the map sending $n \in \mathbb{N}$ to the word over $\Sigma$ obtained by applying $\iota$ letterwise
+to the binary code of $n$ (least significant bit first, the empty word for $0$) is primitive
 recursive. -/
 theorem primrec_map_encodeNat [Primcodable Symbol] (ι : Bool → Symbol) :
     Primrec fun n ↦ (encodeNat n).map ι :=
@@ -117,8 +135,9 @@ variable [Inhabited Symbol] [Fintype Symbol] (tm : SingleTapeTM Symbol)
 
 /-! ### Runs through `StateTransition.eval` -/
 
-/-- `tm` halts on `l` iff Mathlib's evaluation of the step function from `initCfg l` is
-defined. -/
+/-- **Halting is termination of the run.** A single-tape machine $M$ halts on an input word $l$ if
+and only if iterating the step function of $M$ from the initial configuration on $l$, until a
+configuration with no successor is reached, terminates. -/
 theorem haltsOn_iff_dom_eval {l : List Symbol} :
     tm.HaltsOn l ↔ (StateTransition.eval tm.step (tm.initCfg l)).Dom := by
   rw [Part.dom_iff_mem]
@@ -127,8 +146,10 @@ theorem haltsOn_iff_dom_eval {l : List Symbol} :
   refine and_congr Iff.rfl ?_
   obtain ⟨_ | q, t⟩ := c <;> simp
 
-/-- `tm` outputs `l'` on `l` iff the evaluation of the step function from `initCfg l` ends at
-`haltCfg l'`. -/
+/-- **Outputs are the ends of runs.** A single-tape machine $M$ outputs the word $l'$ on the input
+word $l$ if and only if iterating the step function of $M$ from the initial configuration on $l$,
+until a configuration with no successor is reached, terminates at the halting configuration for
+$l'$: the halting state, with $l'$ written from the head rightwards and every other cell blank. -/
 theorem outputs_iff_mem_eval {l l' : List Symbol} :
     tm.Outputs l l' ↔ tm.haltCfg l' ∈ StateTransition.eval tm.step (tm.initCfg l) := by
   rw [StateTransition.mem_eval]
@@ -136,17 +157,33 @@ theorem outputs_iff_mem_eval {l l' : List Symbol} :
 
 /-! ### Coded configurations -/
 
-/-- A configuration coded as its state, the symbol under the head, and the underlying lists of
-the tapes to the left and to the right of the head. -/
+/-- **Coded configurations of a single-tape machine.** For a single-tape Turing machine with state
+set $Q$ and tape alphabet $\Sigma$, write $\bot$ for an absent value. A coded configuration is a
+quadruple $(q, h, L, R)$ where $q \in Q \cup \{\bot\}$ is the state ($\bot$ meaning halted),
+$h \in \Sigma \cup \{\bot\}$ is the symbol under the head ($\bot$ being the blank), and $L$ and $R$
+are finite lists over $\Sigma \cup \{\bot\}$, meant as the cells to the left and to the right of
+the head. -/
 abbrev CodedCfg : Type :=
   Option tm.State × Option Symbol × List (Option Symbol) × List (Option Symbol)
 
-/-- The code of a configuration. -/
+/-- **Code of a single-tape configuration.** The code of a configuration of a single-tape machine
+is the quadruple consisting of its state (or the halting state), the symbol under the head (or
+blank), and the lists of cells, without trailing blanks, of the tapes to the left and to the right
+of the head. -/
 def Cfg.toCodedCfg {tm : SingleTapeTM Symbol} (c : tm.Cfg) : tm.CodedCfg :=
   (c.state, c.BiTape.head, c.BiTape.left.toList, c.BiTape.right.toList)
 
-/-- One step on codes, following `step`: in a running state, write, move and change state as
-`tm.tr` says; a halted configuration has no successor. -/
+/-- **One step of a single-tape machine on coded configurations.** Let $M$ be a single-tape Turing
+machine with transition function $\delta$, and write $\bot$ both for the halting state and for the
+blank. For a finite list $l$ of cells, let $\mathrm{hd}(l)$ be the first entry of $l$, the blank
+$\bot$ when $l$ is empty; let $\mathrm{tl}(l)$ be $l$ without its first entry, the empty list when
+$l$ is empty; and for a cell $w$ let $w \cdot l$, the push of $w$ onto $l$, be $l$ when $w = \bot$
+and $l$ is empty, and $w$ prepended to $l$ otherwise. A coded configuration $(\bot, h, L, R)$ in
+the halting state has no successor. For a running state $q$, write $\delta(q, h) = ((w, d), q')$,
+where $w$ is the symbol to write, $d$ is either no move or a direction, and $q'$ is the new state,
+possibly the halting state $\bot$. The successor of $(q, h, L, R)$ is $(q', w, L, R)$ if $d$ is no
+move, $(q', \mathrm{hd}(L), \mathrm{tl}(L), w \cdot R)$ if $d$ is left, and
+$(q', \mathrm{hd}(R), w \cdot L, \mathrm{tl}(R))$ if $d$ is right. -/
 def codedStep : tm.CodedCfg → Option tm.CodedCfg
   | (none, _) => none
   | (some q, h, L, R) =>
@@ -155,7 +192,10 @@ def codedStep : tm.CodedCfg → Option tm.CodedCfg
       | (⟨wr, some .left⟩, q') => (q', L.headI, L.tail, codedCons wr R)
       | (⟨wr, some .right⟩, q') => (q', R.headI, codedCons wr L, R.tail)
 
-/-- The coded step agrees with `step` on codes. -/
+/-- **The coded step commutes with coding.** For every configuration $c$ of a single-tape machine
+$M$, the code of $c$ has no successor under the coded step exactly when $c$ has no successor
+under the step function of $M$, and otherwise the coded step sends the code of $c$ to the code
+of the successor of $c$. -/
 theorem codedStep_toCodedCfg (c : tm.Cfg) :
     tm.codedStep c.toCodedCfg = (tm.step c).map Cfg.toCodedCfg := by
   obtain ⟨_ | q, t⟩ := c
@@ -165,7 +205,11 @@ theorem codedStep_toCodedCfg (c : tm.Cfg) :
         BiTape.optionMove, BiTape.move, BiTape.moveLeft, BiTape.moveRight,
         StackTape.head_eq_headI, StackTape.toList_tail, StackTape.toList_cons]
 
-/-- The coded step is primitive recursive. -/
+/-- **The coded step of a single-tape machine is primitive recursive.** Let $M$ be a single-tape
+Turing machine over a finite alphabet $\Sigma$, and fix primitive recursive codings of $\Sigma$ and
+of the states of $M$. Then the coded step of $M$, which maps a coded configuration to the coded
+configuration after one step of $M$ and has no value when the state is the halting state, is
+primitive recursive. -/
 theorem primrec_codedStep [Primcodable Symbol] [Primcodable tm.State] :
     Primrec tm.codedStep := by
   have hLR : Primrec₂ fun (qh : Option tm.State × Option Symbol)
@@ -188,8 +232,11 @@ theorem primrec_codedStep [Primcodable Symbol] [Primcodable tm.State] :
   exact (hLR.comp (Primrec.pair Primrec.fst (Primrec.fst.comp Primrec.snd))
     (Primrec.snd.comp Primrec.snd)).of_eq fun _ ↦ rfl
 
-/-- The coded step evaluates like the machine: its evaluation from the code of `c` is the code
-of the evaluation of `step` from `c`. -/
+/-- **Running the coded step mirrors running the machine.** For every configuration $c$ of a
+single-tape machine $M$, iterating the coded step from the code of $c$ until a coded
+configuration with no successor is reached terminates exactly when iterating the step function
+of $M$ from $c$ until a configuration with no successor is reached does, and then it ends at the
+code of the configuration where the run of $M$ from $c$ ends. -/
 theorem eval_codedStep (c : tm.Cfg) :
     StateTransition.eval tm.codedStep c.toCodedCfg =
       Cfg.toCodedCfg <$> StateTransition.eval tm.step c := by
@@ -201,15 +248,21 @@ theorem eval_codedStep (c : tm.Cfg) :
 
 /-! ### Runs are partial recursive -/
 
-/-- The code of the initial configuration is primitive recursive in the input word. -/
+/-- **The code of the initial configuration is primitive recursive.** Let $M$ be a single-tape
+Turing machine over a finite alphabet $\Sigma$, and fix primitive recursive codings of $\Sigma$ and
+of the states of $M$. Then the map sending an input word $w$ over $\Sigma$ to the code of the
+initial configuration of $M$ on $w$ is primitive recursive. -/
 theorem primrec_toCodedCfg_initCfg [Primcodable Symbol] [Primcodable tm.State] :
     Primrec fun l : List Symbol ↦ (tm.initCfg l).toCodedCfg :=
   (Primrec.pair (Primrec.const (some tm.q₀)) (Primrec.pair Primrec.list_head? (Primrec.pair
     (Primrec.const []) (Primrec.list_map Primrec.list_tail
       (Primrec.option_some.comp Primrec.snd).to₂)))).of_eq fun l ↦ by cases l <;> rfl
 
-/-- **The final tape of a run is partial recursive in the input word**: the head symbol and the
-cell lists left and right of the head of the configuration where `tm` halts on `l`. -/
+/-- **The final tape of a run is partial recursive in the input word.** Let $M$ be a single-tape
+Turing machine whose finite alphabet $\Sigma$ carries a primitive recursive coding. The partial
+function sending an input word $l$ over $\Sigma$ to the final tape of the run of $M$ on $l$ (the
+symbol under the head, and the lists of cells to the left and to the right of the head), defined
+exactly when $M$ halts on $l$, is partial recursive. -/
 theorem partrec_eval [Primcodable Symbol] :
     Partrec fun l : List Symbol ↦ (StateTransition.eval tm.step (tm.initCfg l)).map
       fun c ↦ (c.BiTape.head, c.BiTape.left.toList, c.BiTape.right.toList) := by
@@ -224,12 +277,17 @@ theorem partrec_eval [Primcodable Symbol] :
   rw [eval_codedStep]
   exact Part.map_map _ _ _
 
-/-- **The halting set of a single-tape machine is r.e.**, on input words. -/
+/-- **The halting set of a single-tape machine is r.e.** Let $M$ be a single-tape Turing machine
+over a finite alphabet $\Sigma$, and fix a primitive recursive coding of $\Sigma$. Then the set of
+input words over $\Sigma$ on which $M$ halts is recursively enumerable. -/
 theorem rePred_haltsOn [Primcodable Symbol] : REPred tm.HaltsOn :=
   (partrec_eval tm).dom_re.of_eq fun l ↦ by rw [Part.map_Dom, haltsOn_iff_dom_eval]
 
-/-- **The halting set of a single-tape machine is r.e.**, on binary codes `encodeNat n` of natural
-numbers written through any `ι : Bool → Symbol`. -/
+/-- **The halting set of a single-tape machine on binary inputs is r.e.** Let $M$ be a single-tape
+Turing machine over a finite alphabet $\Sigma$ and $\iota$ any map from the Booleans to $\Sigma$.
+Then the set of natural numbers $n$ such that $M$ halts on the word obtained by applying $\iota$
+letterwise to the binary code of $n$ (least significant bit first, the empty word for $0$) is
+recursively enumerable. -/
 theorem rePred_haltsOn_encodeNat (ι : Bool → Symbol) :
     REPred fun n : ℕ ↦ tm.HaltsOn ((encodeNat n).map ι) := by
   let _ : Primcodable Symbol := Primcodable.ofEquiv _ (Fintype.equivFin _)

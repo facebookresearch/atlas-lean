@@ -38,31 +38,47 @@ image in `Mₙ`. "Conjugate by an automorphism" means mapped one to the other by
 `Mₙ`.
 -/
 
-/-- The free metabelian group `Mₙ = Fₙ / Fₙ''` of rank `n`. -/
+/-- **Free metabelian group of rank $n$ (Kourovka 19.94).** For a natural number $n$, let $F_n$
+be the free group on $n$ generators. The free metabelian group of rank $n$ is the quotient
+$M_n = F_n / F_n''$ of $F_n$ by its second derived subgroup $F_n'' = [[F_n, F_n], [F_n, F_n]]$. -/
 abbrev FreeMetabelian (n : ℕ) :=
   FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
 
-/-- Words `w₁, w₂ ∈ Fₙ` have the same distribution: for every finite metabelian group `G` and every
-`g ∈ G`, the equations `w₁(a₁, …, aₙ) = g` and `w₂(a₁, …, aₙ) = g` have equally many solutions
-`(a₁, …, aₙ) ∈ Gⁿ`. Since `G` is metabelian this depends only on the images of `w₁, w₂` in `Mₙ`. -/
+/-- **Words with the same distribution.** Let $n$ be a natural number and $F_n$ the free group on
+generators $x_1, \dots, x_n$. Words $w_1, w_2 \in F_n$ have the same distribution when, for every
+finite metabelian group $G$ (that is, $G'' = 1$) and every $g \in G$, the number of tuples
+$(a_1, \dots, a_n) \in G^n$ with $w_1(a_1, \dots, a_n) = g$ equals the number of tuples with
+$w_2(a_1, \dots, a_n) = g$. Here $w(a_1, \dots, a_n)$ is the image of $w$ under the homomorphism
+$F_n \to G$ sending $x_i$ to $a_i$.
+
+Since $G$ is metabelian, this depends only on the images of $w_1, w_2$ in the free metabelian group
+$F_n / F_n''$. -/
 def SameDistribution {n : ℕ} (w₁ w₂ : FreeGroup (Fin n)) : Prop :=
   ∀ (G : Type) [Group G] [Finite G], derivedSeries G 2 = ⊥ → ∀ g : G,
     Nat.card {a : Fin n → G // FreeGroup.lift a w₁ = g} =
       Nat.card {a : Fin n → G // FreeGroup.lift a w₂ = g}
 
-/-- Kourovka 19.94 (E. I. Timoshenko): two elements of the free metabelian group `Mₙ` (images of
-words `w₁, w₂`) have the same distribution if and only if some automorphism of `Mₙ` maps one to the
-other. -/
+/-- **Timoshenko's question on equally distributed elements (Kourovka 19.94).** The statement that
+for every natural number $n$ and all words $w_1, w_2$ in the free group $F_n$ of rank $n$, the
+words $w_1$ and $w_2$ have the same distribution if and only if some automorphism of the free
+metabelian group $M_n = F_n / F_n''$ maps the image of $w_1$ in $M_n$ to the image of $w_2$. -/
 def sameDistributionIffAutomorphic : Prop :=
   ∀ (n : ℕ) (w₁ w₂ : FreeGroup (Fin n)), SameDistribution w₁ w₂ ↔
     ∃ φ : MulAut (FreeMetabelian n), φ (QuotientGroup.mk w₁) = QuotientGroup.mk w₂
 
 /--
-Resolved false: Ionin and Semidetnov (Answer 2.2) give two elements of the free metabelian group of
-rank `2` with the same distribution on every finite metabelian group that no automorphism maps one
-to the other (the converse direction is automatic). The solution was found with the assistance of
-large language models and checked by the authors; the 21st issue of the Kourovka Notebook marks
-19.94 solved ("No, it is not true"). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+**Equally distributed elements need not be automorphic (Kourovka 19.94).** It is not the case
+that for every natural number $n$ and all words $w_1, w_2$ in the free group $F_n$ of rank $n$,
+the words $w_1$ and $w_2$ have the same distribution if and only if some automorphism of the free
+metabelian group $M_n = F_n / F_n''$ maps the image of $w_1$ in $M_n$ to the image of $w_2$.
+
+Ionin and Semidetnov (Answer 2.2) give two elements of the free metabelian group of rank $2$ with
+the same distribution on every finite metabelian group that no automorphism maps one to the other
+(the converse direction is automatic). The solution was found with the assistance of large
+language models and checked by the authors; the 21st issue of the Kourovka Notebook marks 19.94
+solved ("No, it is not true").
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem
 19.94 (E. I. Timoshenko); resolution: V. Ionin and A. Semidetnov, On Some More Problems from the
 Kourovka Notebook, preprint, arXiv:2608.29219 (2026), Section 2, Answer 2.2 with Proposition 2.3 and

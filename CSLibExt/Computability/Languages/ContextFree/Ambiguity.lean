@@ -43,8 +43,14 @@ namespace Cslib.Language
 
 variable {T : Type*}
 
-/-- `LeftDerivation g u w rs`: applying the rules `rs` in order, each to the leftmost nonterminal,
-rewrites the sentential form `u` to the word of terminals `w`. -/
+/-- **Leftmost derivation.** Let $g$ be a context-free grammar, $u$ a sentential form of $g$, $w$ a
+word of terminals and $r_1, \dots, r_n$ a list of rules over the terminals and nonterminals of
+$g$. The list $r_1, \dots, r_n$ is a leftmost derivation of $w$ from $u$ in $g$ when every $r_i$
+is a production of $g$, and, starting from $u$ and for $i = 1, \dots, n$ in turn, the leftmost
+nonterminal of the current sentential form is the left-hand side of $r_i$ and is replaced by the
+right-hand side of $r_i$, and the sentential form reached after these $n$ steps is $w$, read as a
+string of terminals. In particular the empty list is a leftmost derivation of $w$ from $u$
+exactly when $u$ is $w$ read as a string of terminals. -/
 inductive LeftDerivation (g : ContextFreeGrammar T) :
     List (Symbol T g.NT) → List T → List (ContextFreeRule T g.NT) → Prop
   /-- A word of terminals has the empty leftmost derivation. -/
@@ -55,8 +61,8 @@ inductive LeftDerivation (g : ContextFreeGrammar T) :
       r ∈ g.rules → LeftDerivation g (p.map Symbol.terminal ++ r.output ++ v) w rs →
       LeftDerivation g (p.map Symbol.terminal ++ Symbol.nonterminal r.input :: v) w (r :: rs)
 
-/-- A grammar is **ambiguous** if some word has two different leftmost derivations from the start
-symbol. -/
+/-- **Ambiguous grammar.** A context-free grammar $g$ is **ambiguous** if some word of terminals
+$w$ has two leftmost derivations from the start symbol of $g$ that use different lists of rules. -/
 def IsAmbiguous (g : ContextFreeGrammar T) : Prop :=
   ∃ w rs₁ rs₂, rs₁ ≠ rs₂ ∧ LeftDerivation g [Symbol.nonterminal g.initial] w rs₁ ∧
     LeftDerivation g [Symbol.nonterminal g.initial] w rs₂
@@ -65,7 +71,9 @@ namespace LeftDerivation
 
 variable {g : ContextFreeGrammar T}
 
-/-- A leftmost derivation is a derivation. -/
+/-- **Leftmost derivations are derivations.** Let $g$ be a context-free grammar. If a sentential
+form $u$ has a leftmost derivation in $g$ to a word of terminals $w$, then $u$ derives $w$ in $g$
+(by zero or more rewriting steps). -/
 theorem derives {u : List (Symbol T g.NT)} {w : List T} {rs : List (ContextFreeRule T g.NT)}
     (h : LeftDerivation g u w rs) : g.Derives u (w.map Symbol.terminal) := by
   induction h with
@@ -74,12 +82,16 @@ theorem derives {u : List (Symbol T g.NT)} {w : List T} {rs : List (ContextFreeR
     refine ContextFreeGrammar.Produces.trans_derives ⟨r, hr, ?_⟩ ih
     simpa using r.rewrites_of_exists_parts (p.map Symbol.terminal) v
 
-/-- A word with a leftmost derivation from the start symbol is in the language. -/
+/-- **Words with a leftmost derivation lie in the language.** Let $g$ be a context-free grammar.
+If a word of terminals $w$ has a leftmost derivation in $g$ from the start symbol of $g$, then $w$
+belongs to the language of $g$. -/
 theorem mem_language {w : List T} {rs : List (ContextFreeRule T g.NT)}
     (h : LeftDerivation g [Symbol.nonterminal g.initial] w rs) : w ∈ g.language :=
   (ContextFreeGrammar.mem_language_iff g w).mpr h.derives
 
-/-- From a word of terminals, the only leftmost derivation is the empty one. -/
+/-- **Leftmost derivations from a word of terminals are empty.** Let $g$ be a context-free grammar
+and $u$ a word of terminals. If $u$ has a leftmost derivation in $g$ with list of rules $\rho$ to a
+word of terminals $w$, then $\rho$ is the empty list and $w = u$. -/
 theorem eq_of_terminal {u w : List T} {rs : List (ContextFreeRule T g.NT)}
     (h : LeftDerivation g (u.map Symbol.terminal) w rs) : rs = [] ∧ w = u := by
   generalize hs : u.map Symbol.terminal = s at h
