@@ -58,6 +58,8 @@ example : punctureMonodromy 1 3 ≠ 1 := by
 
 section RankZero
 
+/-! Rank zero is excluded; positive rank has the normalized coefficient. -/
+
 open MathlibExt.AlgebraicGeometry.KahlerClassGeometry
 open MathlibExt.AlgebraicGeometry.ManifoldDifferentialForms
 open MathlibExt.AlgebraicGeometry.SmoothHarmonicBundleGeometry
@@ -75,6 +77,18 @@ example (d : ℤ) (A : SmoothConnection B) : ¬ HasNormalizedCentralCurvature P 
 example (d : ℤ) (h : HermitianMetric B) (H : HolomorphicHiggsField B) :
     ¬ IsCentralHarmonicMetric P B d h H :=
   fun h ↦ lt_irrefl 0 h.1
+
+/-- Degree one, rank two: the central curvature scalar is `-πi/∫ω`. -/
+example : centralScalar P 1 2 * (area P : ℂ) = -(Real.pi : ℂ) * Complex.I := by
+  have ha : (area P : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt P.area_positive)
+  simp only [centralScalar, Int.cast_one, Nat.cast_ofNat]
+  field_simp
+
+/-- Degree one, rank two: `(i/2π) tr F` is the positive form `ω/∫ω`. -/
+example (x : M) (u v : Coordinates 1) :
+    (Complex.I / ((2 : ℂ) * (Real.pi : ℂ))) * Matrix.trace (centralCurvatureValue P 1 2 x u v) =
+      ((1 : ℂ) / (area P : ℂ)) * (evaluateTwoForm 1 M P.kahler.form.val x u v : ℂ) := by
+  simpa using central_trace_normalization P 1 2 (by norm_num) x u v
 
 end RankZero
 

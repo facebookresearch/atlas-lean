@@ -73,19 +73,81 @@ structure OrdinaryRingSectionSource where
 
 variable (F : Bimod (betaRing X R) (betaRing X S))
 
-/-- Both local actions are the prescribed monoidal map of the actual inverse image. -/
+/-- The ordinary pullback of a ring's coefficient monoid is identified with the coefficient monoid
+of the pulled ring, on actual sections by the pullback adjunction unit. -/
+structure OrdinaryRingRestriction (T : TopCat.Sheaf RingCat.{0} X) [BetaRingSource X T]
+    [LT : BetaRingSource (TopCat.of U) (pulledRing X U T)]
+    [(TopCat.Sheaf.pullback (ModuleCat.{0} ℂ) (openInclusion X U)).Monoidal] where
+  comparison : (TopCat.Sheaf.pullback (ModuleCat.{0} ℂ) (openInclusion X U)).mapMon.obj
+      (ordinaryRing X T (BetaRingSource.coefficient (X := X) (R := T))
+        (BetaRingSource.monoid (X := X) (R := T))) ≅
+    ordinaryRing (TopCat.of U) (pulledRing X U T) LT.coefficient LT.monoid
+  unitValue : ∀ (V : Opens X) (a : T.obj.obj (op V)),
+    (comparison.hom.hom.hom.app (op ((Opens.map (openInclusion X U)).obj V))).hom
+      ((((TopCat.Sheaf.pullbackPushforwardAdjunction (ModuleCat.{0} ℂ) (openInclusion X U)).unit.app
+        (ringCoefficientSheaf X T (BetaRingSource.coefficient (X := X) (R := T)))).hom.app
+          (op V)).hom a) =
+      (((TopCat.Sheaf.pullbackPushforwardAdjunction RingCat.{0} (openInclusion X U)).unit.app
+        T).hom.app (op V)).hom a
+
+/-- Both local actions are the prescribed monoidal map of the actual inverse image. The local ring
+comparisons are not free data: they are built from a monoidal comparison of `β` with inverse image
+and from the ordinary ring restrictions, which are fixed on actual sections. -/
 structure LocalRestrictedModuleSource (_F : Bimod (betaRing X R) (betaRing X S)) where
   ordinary : OrdinaryIndSource ℂ (TopCat.of U)
   inverse : IndInverseImageSource ℂ (openInclusion X U) ordinary
   [monoidal : (indInverseImage ℂ (openInclusion X U) ordinary inverse).Monoidal]
   mapping : BimoduleMappingSource (indInverseImage ℂ (openInclusion X U) ordinary inverse)
     (betaRing X R) (betaRing X S)
-  leftRing : betaRing (TopCat.of U) (pulledRing X U R) ≅
-    (indInverseImage ℂ (openInclusion X U) ordinary inverse).mapMon.obj (betaRing X R)
-  rightRing : betaRing (TopCat.of U) (pulledRing X U S) ≅
-    (indInverseImage ℂ (openInclusion X U) ordinary inverse).mapMon.obj (betaRing X S)
+  [ordinaryMonoidal : (TopCat.Sheaf.pullback (ModuleCat.{0} ℂ) (openInclusion X U)).Monoidal]
+  natural : IndSheafAlphaBetaModels.beta ℂ X CX.alpha CX.beta ⋙
+      indInverseImage ℂ (openInclusion X U) ordinary inverse ≅
+    TopCat.Sheaf.pullback (ModuleCat.{0} ℂ) (openInclusion X U) ⋙
+      IndSheafAlphaBetaModels.beta ℂ (TopCat.of U) CU.alpha CU.beta
+  [naturalMonoidal : NatTrans.IsMonoidal natural.hom]
+  leftRestriction : OrdinaryRingRestriction X U R
+  rightRestriction : OrdinaryRingRestriction X U S
 
 variable (L : LocalRestrictedModuleSource X U R S F)
+
+/-- The local ring comparison for a ring restricted to `U`, assembled from the monoidal comparison
+of `β` with inverse image and the ordinary ring restriction. -/
+def LocalRestrictedModuleSource.ringComparison (T : TopCat.Sheaf RingCat.{0} X)
+    [BetaRingSource X T] [LT : BetaRingSource (TopCat.of U) (pulledRing X U T)]
+    (Q : letI := L.ordinaryMonoidal; OrdinaryRingRestriction X U T) :
+    letI := L.monoidal
+    betaRing (TopCat.of U) (pulledRing X U T) ≅
+      (indInverseImage ℂ (openInclusion X U) L.ordinary L.inverse).mapMon.obj (betaRing X T) :=
+  letI := L.monoidal
+  letI := L.ordinaryMonoidal
+  letI := L.naturalMonoidal
+  ((Functor.mapMonCompIso (F := IndSheafAlphaBetaModels.beta ℂ X CX.alpha CX.beta)
+      (G := indInverseImage ℂ (openInclusion X U) L.ordinary L.inverse)).symm.app
+        (ordinaryRing X T (BetaRingSource.coefficient (X := X) (R := T))
+          (BetaRingSource.monoid (X := X) (R := T))) ≪≫
+    (Functor.mapMonNatIso L.natural).app
+      (ordinaryRing X T (BetaRingSource.coefficient (X := X) (R := T))
+        (BetaRingSource.monoid (X := X) (R := T))) ≪≫
+    (Functor.mapMonCompIso (F := TopCat.Sheaf.pullback (ModuleCat.{0} ℂ) (openInclusion X U))
+      (G := IndSheafAlphaBetaModels.beta ℂ (TopCat.of U) CU.alpha CU.beta)).app
+        (ordinaryRing X T (BetaRingSource.coefficient (X := X) (R := T))
+          (BetaRingSource.monoid (X := X) (R := T))) ≪≫
+    (IndSheafAlphaBetaModels.beta ℂ (TopCat.of U) CU.alpha CU.beta).mapMon.mapIso
+      Q.comparison).symm
+
+/-- The left local ring comparison. -/
+abbrev LocalRestrictedModuleSource.leftRing :
+    letI := L.monoidal
+    betaRing (TopCat.of U) (pulledRing X U R) ≅
+      (indInverseImage ℂ (openInclusion X U) L.ordinary L.inverse).mapMon.obj (betaRing X R) :=
+  LocalRestrictedModuleSource.ringComparison X U R S F L R L.leftRestriction
+
+/-- The right local ring comparison. -/
+abbrev LocalRestrictedModuleSource.rightRing :
+    letI := L.monoidal
+    betaRing (TopCat.of U) (pulledRing X U S) ≅
+      (indInverseImage ℂ (openInclusion X U) L.ordinary L.inverse).mapMon.obj (betaRing X S) :=
+  LocalRestrictedModuleSource.ringComparison X U R S F L S L.rightRestriction
 
 def restrictedUnderlying : IndSheaf ℂ (TopCat.of U) :=
   letI := L.monoidal

@@ -112,4 +112,8 @@ example (k : Type) [Field k] (X : TopCat.{0}) [CompactSheafSource k X] :
       Preadditive.fullSubcategory (IsCompactSupported k X) :=
   rfl
 
+/-- Ind-sheaf presentations have small (`Type 0`) index categories. -/
+example (k : Type) [Field k] (X : TopCat.{0}) (F : IndSheaf k X) : Type 0 :=
+  (indPresentation k X F).I
+
 end MathlibExtTest.AlgebraicGeometry.CompactSupportIndSheaves
