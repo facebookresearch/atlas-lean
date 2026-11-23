@@ -20,31 +20,19 @@ import MathlibExt.NumberTheory.DirichletCharacter.KroneckerJacobiOdd
 section
 namespace MetaMathlibExt
 
-private theorem coprime_two_iff_odd (n : ℕ) : Nat.Coprime n 2 ↔ Odd n := by
-  constructor
-  · intro h
-    rw [← Nat.not_even_iff_odd]
-    rintro ⟨k, rfl⟩
-    have h2 : 2 ∣ Nat.gcd (k + k) 2 :=
-      Nat.dvd_gcd ⟨k, (two_mul k).symm⟩ dvd_rfl
-    unfold Nat.Coprime at h
-    rw [h] at h2
-    exact absurd h2 (by decide)
-  · exact Odd.coprime_two_right
-
 private theorem coprime_four_iff_odd (n : ℕ) : Nat.Coprime n 4 ↔ Odd n := by
   have h42 : (4 : ℕ) = 2 * 2 := rfl
   rw [h42, Nat.coprime_mul_iff_right]
   constructor
-  · exact fun h => Iff.mp (coprime_two_iff_odd n) h.1
-  · exact fun h => ⟨Iff.mpr (coprime_two_iff_odd n) h, Iff.mpr (coprime_two_iff_odd n) h⟩
+  · exact fun h => Iff.mp Nat.coprime_two_right h.1
+  · exact fun h => ⟨Iff.mpr Nat.coprime_two_right h, Iff.mpr Nat.coprime_two_right h⟩
 
 private theorem coprime_eight_iff_odd (n : ℕ) : Nat.Coprime n 8 ↔ Odd n := by
   have h82 : (8 : ℕ) = 4 * 2 := rfl
   rw [h82, Nat.coprime_mul_iff_right]
   constructor
-  · exact fun h => Iff.mp (coprime_two_iff_odd n) h.2
-  · exact fun h => ⟨Iff.mpr (coprime_four_iff_odd n) h, Iff.mpr (coprime_two_iff_odd n) h⟩
+  · exact fun h => Iff.mp Nat.coprime_two_right h.2
+  · exact fun h => ⟨Iff.mpr (coprime_four_iff_odd n) h, Iff.mpr Nat.coprime_two_right h⟩
 
 private theorem kroneckerSym_pow_two (D : ℤ) (hD : D ≠ -1) (e : ℕ) :
     kroneckerSym D (2 ^ e) = kroneckerAtTwo D ^ e := by
@@ -619,7 +607,10 @@ private theorem caseB2b_final (D k : ℤ) (hDk : D = 8 * k) (hk4 : k % 4 = 3) :
     (fun n => ZMod.χ₈' ((n : ℕ) : ZMod 8)) (kroneckerSym D) hF hEper hEzero hK0
   exact existsUnique_of_kroneckerProps D.natAbs hN0 (kroneckerSym D) h1 hmul hper hzero
 
-/-- Quadratic Dirichlet character attachment from the source contract.
+/-- **Quadratic Dirichlet character of a fundamental discriminant.** Let $D$ be a fundamental
+discriminant. Then there is a unique integer-valued Dirichlet character $\chi$ modulo $|D|$ such
+that $\chi(n \bmod |D|) = \left(\frac{D}{n}\right)$ for every natural number $n$, where
+$\left(\frac{D}{n}\right)$ is the Kronecker symbol.
 
 Source: Joshua Males, Andreas Mono, Larry Rolen, and Ian Wagner,
 *Central L-values of newforms and local polynomials*,
@@ -631,8 +622,6 @@ This is the existence and uniqueness of the integer-valued Dirichlet character
 of level `Int.natAbs D` evaluating as the positive-denominator Kronecker symbol
 `kroneckerSym D` at every natural `n`, assuming `IsFundamentalDiscriminant D`.
 No primitivity or conductor claim belongs to this item.
-
-Proves `Wanted` entry `quadraticDirichletCharacter`.
 -/
 theorem quadraticDirichletCharacter (D : ℤ)
     (hD : IsFundamentalDiscriminant D) :

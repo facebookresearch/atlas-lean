@@ -124,19 +124,23 @@ private theorem sylvesterInertia_card_signs
   simp only [Finset.card_univ] at hp
   omega
 
-/-- Sylvester's law of inertia: congruence preserves the inertia triple
-of a real symmetric matrix (statement `sylvester-inertia-s1`;
-source J. J. Sylvester, *A demonstration of the theorem that every homogeneous quadratic polynomial
-is reducible by real orthogonal substitutions to the form of a sum of positive and negative squares*,
-Philosophical Magazine Ser. 4, 4(23) (1852), 138-142; Hermitian over `ℝ` is symmetric).
+/-- **Sylvester's law of inertia.** Let $A$ and $B$ be real symmetric square matrices with rows
+and columns indexed by a finite set $n$, and suppose $B = P^{\mathsf T} A P$ for some invertible
+real matrix $P$ indexed by $n$. Then $A$ and $B$ have the same number of positive eigenvalues, the
+same number of negative eigenvalues and the same number of zero eigenvalues, each counted with
+multiplicity.
+
+Proof: By the spectral theorem, the quadratic form of each matrix is a weighted sum of squares
+whose weights are its eigenvalues. Congruence gives an equivalence of quadratic forms, and
+invariance of the signature fixes the positive and negative counts; the zero count follows by
+trichotomy.
 
 Proves `Wanted` entry `sylvester_law_of_inertia`.
 
-Proof: The spectral theorem from `Mathlib.Analysis.Matrix.Spectrum` identifies each matrix
-quadratic form with a weighted sum of squares whose weights are its eigenvalues. Congruence gives
-an equivalence of quadratic forms, and signature invariance from
-`Mathlib.LinearAlgebra.QuadraticForm.Signature` fixes the positive and negative counts; the zero
-count follows by trichotomy.
+Source: J. J. Sylvester, *A demonstration of the theorem that every homogeneous quadratic
+polynomial is reducible by real orthogonal substitutions to the form of a sum of positive and
+negative squares*, Philosophical Magazine Ser. 4, 4(23) (1852), 138-142; statement
+`sylvester-inertia-s1`.
 -/
 theorem sylvester_law_of_inertia {n : Type*} [Fintype n] [DecidableEq n]
     {A B : Matrix n n ℝ} (hA : A.IsHermitian) (hB : B.IsHermitian)
