@@ -21,8 +21,9 @@ example : VisAdj (coord .P) (coord .t) := adj_P_t
 example : ¬ VisAdj (coord .s) (coord .t) := not_adj_s_t
 example : ¬ VisAdj (coord .s) (coord .C) := not_adj_s_C
 
-example : polyLen [.s, .D, .P, .t] = 3 + Real.sqrt 5 := by
-  simp only [polyLen, dist_sD, dist_DP, dist_Pt]
+example : PathShortening.polyLen ([.s, .D, .P, .t].map coord) = 3 + Real.sqrt 5 := by
+  simp only [List.map_cons, List.map_nil, PathShortening.polyLen_cons_cons,
+    PathShortening.polyLen_singleton, dist_sD, dist_DP, dist_Pt]
   ring
 
 private def vg {a b : Vtx} (h : VisAdj (coord a) (coord b)) (hne : a ≠ b) :
@@ -35,9 +36,10 @@ def backtrack_walk : visGraph.Walk .s .t :=
         (.cons (vg adj_D_P (by decide))
           (.cons (vg adj_P_t (by decide)) .nil))))
 
-example : walkWeight backtrack_walk = polyLen [.s, .A, .s, .D, .P, .t] := rfl
+example : walkWeight backtrack_walk =
+    PathShortening.polyLen ([.s, .A, .s, .D, .P, .t].map coord) := rfl
 
-example : 3 + Real.sqrt 5 ≤ polyLen [.s, .A, .s, .D, .P, .t] :=
+example : 3 + Real.sqrt 5 ≤ PathShortening.polyLen ([.s, .A, .s, .D, .P, .t].map coord) :=
   min_eq_walk.2 ⟨backtrack_walk, rfl⟩
 
 example : ¬ visGraph.Adj .s .C := fun h => not_adj_s_C h.2
@@ -48,8 +50,9 @@ example : ∃ p : visGraph.Walk .s .t, walkWeight p = 3 + Real.sqrt 5 := by
   refine ⟨.cons (vg adj_s_D (by decide))
     (.cons (vg adj_D_P (by decide))
       (.cons (vg adj_P_t (by decide)) .nil)), ?_⟩
-  show polyLen [.s, .D, .P, .t] = _
-  simp only [polyLen, dist_sD, dist_DP, dist_Pt]
+  show PathShortening.polyLen ([.s, .D, .P, .t].map coord) = _
+  simp only [List.map_cons, List.map_nil, PathShortening.polyLen_cons_cons,
+    PathShortening.polyLen_singleton, dist_sD, dist_DP, dist_Pt]
   ring
 
 #print axioms adj_s_D

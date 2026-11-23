@@ -22,6 +22,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
 public import CSLibExt.Planning.MotionPlanning.ConfigurationSpace
 public import CSLibExt.Planning.MotionPlanning.TwoSquares
+public import CSLibExt.Planning.MotionPlanning.PathShortening
 
 @[expose] public section
 
@@ -123,11 +124,12 @@ private noncomputable def inExtra (a b : Vtx) : ℝ := if b = .t ∧ a ≠ b the
 /-- Total per-step bonus. -/
 private noncomputable def extra (a b : Vtx) : ℝ := outExtra a b + inExtra a b
 
-/-- Length of a vertex list: sum of consecutive distances. -/
-noncomputable def polyLen : List Vtx → ℝ
-  | [] => 0
-  | [_] => 0
-  | a :: b :: rest => dist (coord a) (coord b) + polyLen (b :: rest)
+private noncomputable abbrev polyLen (l : List Vtx) : ℝ :=
+  PathShortening.polyLen (l.map coord)
+
+private lemma polyLen_cons (a b : Vtx) (rest : List Vtx) :
+    polyLen (a :: b :: rest) = dist (coord a) (coord b) + polyLen (b :: rest) :=
+  rfl
 
 /-- Consecutive-vertex adjacency along a list. -/
 private def ChainAdj : List Vtx → Prop
@@ -1066,7 +1068,8 @@ private lemma walk_lower_aux (l : List Vtx) :
     | nil =>
       cases hlast
       cases hhead
-      simp only [polyLen, bonusTotal, sub_self, add_zero]
+      simp only [polyLen, List.map_cons, List.map_nil,
+        PathShortening.polyLen_singleton, bonusTotal, sub_self, add_zero]
       exact le_rfl
     | cons b rest =>
       cases hhead
@@ -1074,7 +1077,7 @@ private lemma walk_lower_aux (l : List Vtx) :
       obtain ⟨hvis, hchain'⟩ := hvis
       have ih' := ih hchain' hlast b rfl
       have hstep := step_le a b hvis.2
-      simp only [polyLen, bonusTotal]
+      simp only [polyLen_cons, bonusTotal]
       linarith [hstep, ih']
 
 private lemma walk_lower (l : List Vtx) (hw : IsWalk l) :
@@ -1097,7 +1100,9 @@ private lemma upper_valid : IsWalk [.s, .D, .P, .t] := by
     trivial⟩
 
 private lemma upper_weight : polyLen [.s, .D, .P, .t] = 3 + Real.sqrt 5 := by
-  simp only [polyLen, dist_sD, dist_DP, dist_Pt]
+  simp only [polyLen, List.map_cons, List.map_nil,
+    PathShortening.polyLen_cons_cons, PathShortening.polyLen_singleton,
+    dist_sD, dist_DP, dist_Pt]
   ring
 
 -- Minimum exists and equals `3 + √5`.
@@ -1113,7 +1118,8 @@ private theorem min_eq :
 
 
 /-- Length of a graph walk, measured by its vertex list. -/
-noncomputable def walkWeight {a b : Vtx} (p : visGraph.Walk a b) : ℝ := polyLen p.support
+noncomputable def walkWeight {a b : Vtx} (p : visGraph.Walk a b) : ℝ :=
+  PathShortening.polyLen (p.support.map coord)
 
 private theorem last?_eq (l : List Vtx) : last? l = l.getLast? := by
   induction l with
