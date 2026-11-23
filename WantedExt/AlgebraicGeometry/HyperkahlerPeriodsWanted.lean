@@ -103,7 +103,8 @@ def_wanted marked_period_point (n : ℕ) (M : Type) [TopologicalSpace M]
     (R : DeRhamResolution n M) (B : RealDeRhamComparison n M R)
     (positive : 0 < n) (Q : BBFForm n M C A R B positive) (J : IntegralRealComparison n M R B)
     (L : Type*) [AddCommGroup L] [Module ℤ L] [Module.Finite ℤ L]
-    (q : LinearMap.BilinForm ℤ L) (m : Marking n M C A R B Q L q) (I : HyperkahlerStructures n M) :
+    (q : LinearMap.BilinForm ℤ L) (m : Marking n M C A R B Q L q)
+    (I : HyperkahlerStructures n M) :
     {p : PeriodPoint L q // p.val.submodule =
       Submodule.span ℂ {markedSymplecticClass n M C A R B J L q m I}}
 
@@ -117,7 +118,8 @@ def_wanted marked_period_map (n : ℕ) (M : Type) [TopologicalSpace M]
     (R : DeRhamResolution n M) (B : RealDeRhamComparison n M R)
     (positive : 0 < n) (Q : BBFForm n M C A R B positive) (J : IntegralRealComparison n M R B)
     (L : Type*) [AddCommGroup L] [Module ℤ L] [Module.Finite ℤ L]
-    (q : LinearMap.BilinForm ℤ L) (m : Marking n M C A R B Q L q) (_I : HyperkahlerStructures n M) :
+    (q : LinearMap.BilinForm ℤ L) (m : Marking n M C A R B Q L q)
+    (_I : HyperkahlerStructures n M) :
     NormalizedPeriodMap n M C A R B Q J L q m
 
 def_wanted quadric_period_atlas (n : ℕ) (M : Type) [TopologicalSpace M]

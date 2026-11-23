@@ -98,7 +98,8 @@ def jetBall (r : ℕ) (a : M) (K : Set (Ambient n)) (I : ComplexStructure n M) (
 instance complexStructureTopology : TopologicalSpace (ComplexStructure n M) :=
   TopologicalSpace.generateFrom {U | ∃ (r : ℕ) (a : M) (K : Set (Ambient n)),
     IsCompact K ∧ K ⊆ (extChartAt 𝓘(ℝ, Ambient n) a).target ∧
-      ∃ (I : ComplexStructure n M) (epsilon : ℝ), 0 < epsilon ∧ U = jetBall n M r a K I epsilon}
+      ∃ (I : ComplexStructure n M) (epsilon : ℝ), 0 < epsilon ∧
+        U = jetBall n M r a K I epsilon}
 
 variable [ExteriorTheory ℝ (Ambient n) M]
 
@@ -142,7 +143,8 @@ structure KahlerWitness (I : ComplexStructure n M) where
   type : ∀ x u v,
     form.val.val ⟨x, by trivial⟩ ![I.operator x u, I.operator x v] =
       form.val.val ⟨x, by trivial⟩ ![u, v]
-  positive : ∀ x (v : Ambient n), v ≠ 0 → 0 < form.val.val ⟨x, by trivial⟩ ![v, I.operator x v]
+  positive : ∀ x (v : Ambient n), v ≠ 0 →
+    0 < form.val.val ⟨x, by trivial⟩ ![v, I.operator x v]
 
 structure HyperkahlerType (I : ComplexStructure n M) where
   kahler : KahlerWitness n M I

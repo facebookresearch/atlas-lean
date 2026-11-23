@@ -66,7 +66,7 @@ def restriction {U V : Opens M} (h : V ≤ U) (p : ℕ) :
       fun z hz ↦ ⟨hz.1, h hz.2⟩
     apply ((alpha.property a).mono hd).congr
     intro z hz
-    simp only [chartForm, dif_pos hz, dif_pos (hd hz), restrictRough]⟩
+    simp only [chartForm, hz, hd hz, dite_true, restrictRough]⟩
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
@@ -79,6 +79,10 @@ def formPresheaf (p : ℕ) : (Opens M)ᵒᵖ ⥤ ModuleCat.{0} ℝ where
 def formSheaf (p : ℕ) : TopCat.Sheaf (ModuleCat.{0} ℝ) (TopCat.of M) :=
   (presheafToSheaf (Opens.grothendieckTopology M) (ModuleCat.{0} ℝ)).obj (formPresheaf n M p)
 
+/-- The laws of the displayed exterior derivative on smooth forms over every
+open set: smoothness, linearity, `d² = 0` and naturality under restriction. A
+hypothesis class; its instances are requested in
+`ManifoldDifferentialFormsWanted`. -/
 class LocalExteriorTheory : Prop where
   smooth : ∀ (U : Opens M) p (alpha : LocalForms n M U p),
     IsSmooth ℝ (Ambient n) M (exteriorDerivative ℝ (Ambient n) M alpha.val)
@@ -176,7 +180,8 @@ def derivedClosedClass (R : DeRhamResolution n M) (alpha : closedForms ℝ (Ambi
 structure DeRhamClassProofs (R : DeRhamResolution n M) : Prop where
   add : ∀ alpha beta, derivedClosedClass n M R (alpha + beta) =
     derivedClosedClass n M R alpha + derivedClosedClass n M R beta
-  smul : ∀ (c : ℝ) alpha, derivedClosedClass n M R (c • alpha) = c • derivedClosedClass n M R alpha
+  smul : ∀ (c : ℝ) alpha,
+    derivedClosedClass n M R (c • alpha) = c • derivedClosedClass n M R alpha
   exact : ∀ alpha : RealForms n M 1,
     derivedClosedClass n M R (dToClosed ℝ (Ambient n) M 1 alpha) = 0
   kernel : ∀ alpha, derivedClosedClass n M R alpha = 0 →

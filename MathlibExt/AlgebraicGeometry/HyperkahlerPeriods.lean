@@ -83,7 +83,8 @@ abbrev BirationalTeich := Quotient (birationalSetoid n M)
 def toBirational (I : HyperkahlerStructures n M) : BirationalTeich n M :=
   Quotient.mk _ (toTeich n M I)
 
-abbrev Component (a : BirationalTeich n M) := {x : BirationalTeich n M // x ∈ connectedComponent a}
+abbrev Component (a : BirationalTeich n M) :=
+  {x : BirationalTeich n M // x ∈ connectedComponent a}
 
 def familyChartOperator (d : ℕ) (U : Opens (Coordinates d))
     (F : U → HyperkahlerStructures n M) (a : M) (pz : Coordinates d × Ambient n) :
@@ -117,7 +118,8 @@ def familyCoordinates {d k : ℕ} {a : BirationalTeich n M}
 def familyChartDomain {d k : ℕ} {a : BirationalTeich n M}
     (C : ChartedSpace (Coordinates d) (Component n M a)) (x : Component n M a)
     (U : Opens (Coordinates k)) (F : SmoothFamily n M k U)
-    (h : ∀ z : U, toBirational n M (F.structures z) ∈ connectedComponent a) : Set (Coordinates k) :=
+    (h : ∀ z : U, toBirational n M (F.structures z) ∈ connectedComponent a) :
+    Set (Coordinates k) :=
   {z | ∃ hz : z ∈ U,
     (⟨toBirational n M (F.structures ⟨z, hz⟩), h ⟨z, hz⟩⟩ : Component n M a) ∈
       (nativeTeichChart n M C x).source}
@@ -170,7 +172,8 @@ def projectiveRatio (p : Fin (Module.finrank ℂ (ComplexLattice L)))
 
 structure QuadricPeriodAtlas where
   charts : ChartedSpace (Coordinates (PeriodDimension L)) (PeriodPoint L q)
-  manifold : letI := charts; IsManifold 𝓘(ℝ, Coordinates (PeriodDimension L)) ∞ (PeriodPoint L q)
+  manifold : letI := charts
+    IsManifold 𝓘(ℝ, Coordinates (PeriodDimension L)) ∞ (PeriodPoint L q)
   pivot : PeriodPoint L q → Fin (Module.finrank ℂ (ComplexLattice L))
   deleted : PeriodPoint L q → Fin (Module.finrank ℂ (ComplexLattice L))
   distinct : ∀ x, pivot x ≠ deleted x
@@ -202,7 +205,8 @@ def NativeTorelliDiffeomorphism (a : BirationalTeich n M)
     (T : SmoothTeichAtlas n M (PeriodDimension L) a) (P : QuadricPeriodAtlas L q) : Type _ := by
   letI := T.charts
   letI := P.charts
-  exact Diffeomorph 𝓘(ℝ, Coordinates (PeriodDimension L)) 𝓘(ℝ, Coordinates (PeriodDimension L))
+  exact Diffeomorph 𝓘(ℝ, Coordinates (PeriodDimension L))
+    𝓘(ℝ, Coordinates (PeriodDimension L))
     (Component n M a) (PeriodPoint L q) ∞
 
 def diffeomorphismValue {a : BirationalTeich n M}
@@ -210,7 +214,8 @@ def diffeomorphismValue {a : BirationalTeich n M}
     (e : NativeTorelliDiffeomorphism n M L q a T P) (x : Component n M a) : PeriodPoint L q := by
   letI := T.charts
   letI := P.charts
-  let e' : Diffeomorph 𝓘(ℝ, Coordinates (PeriodDimension L)) 𝓘(ℝ, Coordinates (PeriodDimension L))
+  let e' : Diffeomorph 𝓘(ℝ, Coordinates (PeriodDimension L))
+    𝓘(ℝ, Coordinates (PeriodDimension L))
       (Component n M a) (PeriodPoint L q) ∞ := e
   exact e' x
 

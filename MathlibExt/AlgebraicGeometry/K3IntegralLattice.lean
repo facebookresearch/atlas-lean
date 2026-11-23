@@ -66,22 +66,27 @@ structure HolomorphicVolume where
   form : holomorphicForms X 2 ⊤ 2
   nonvanishing : ∀ x : ComplexAnalytification.space X, form.1 ⟨x, by trivial⟩ ≠ 0
 
-/-- Bourbaki E8 edges: a chain 0-2-3-4-5-6-7 with vertex1 attached to3. -/
+/-- The edges of the `E₈` Dynkin diagram in Bourbaki's labelling, zero-based:
+the chain `0-2-3-4-5-6-7` with vertex `1` attached to vertex `3`. -/
 def e8Edges : Finset (ℕ × ℕ) := {(0, 2), (2, 3), (1, 3), (3, 4), (4, 5), (5, 6), (6, 7)}
 
+/-- Adjacency in the `E₈` Dynkin diagram. -/
 def e8Adjacent (a b : ℕ) : Prop := (a, b) ∈ e8Edges ∨ (b, a) ∈ e8Edges
 
-/-- Explicit Gram matrix of 3U ⊕ E8(-1) ⊕ E8(-1), with no supplied lattice data. -/
-def gram : Matrix (Fin 22) (Fin 22) ℤ := by
-  classical
-  exact fun i j ↦
-    if i.val < 6 then
-      if j.val < 6 ∧ i.val / 2 = j.val / 2 ∧ i ≠ j then 1 else 0
-    else if j.val < 6 then 0
-    else if (i.val - 6) / 8 = (j.val - 6) / 8 then
-      if (i.val - 6) % 8 = (j.val - 6) % 8 then -2
-      else if e8Adjacent ((i.val - 6) % 8) ((j.val - 6) % 8) then 1 else 0
-    else 0
+instance : DecidableRel e8Adjacent := fun a b ↦
+  inferInstanceAs (Decidable ((a, b) ∈ e8Edges ∨ (b, a) ∈ e8Edges))
+
+/-- Explicit Gram matrix of `3U ⊕ E₈(-1) ⊕ E₈(-1)`, with no supplied lattice
+data: indices `0, …, 5` form three hyperbolic planes, and `6, …, 13` and
+`14, …, 21` form two negative `E₈` Cartan blocks. -/
+def gram : Matrix (Fin 22) (Fin 22) ℤ := fun i j ↦
+  if i.val < 6 then
+    if j.val < 6 ∧ i.val / 2 = j.val / 2 ∧ i ≠ j then 1 else 0
+  else if j.val < 6 then 0
+  else if (i.val - 6) / 8 = (j.val - 6) / 8 then
+    if (i.val - 6) % 8 = (j.val - 6) % 8 then -2
+    else if e8Adjacent ((i.val - 6) % 8) ((j.val - 6) % 8) then 1 else 0
+  else 0
 
 /-- The actual integer bilinear expression of that fixed matrix. -/
 def latticePairing (v w : Fin 22 → ℤ) : ℤ := ∑ i, ∑ j, v i * gram i j * w j
