@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.Recurrences.GelinCesaroAlternatingSum
 public import MathlibExt.NumberTheory.Recurrences.GibonacciDOcagneIdentity
 public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciFactorIdentity
+public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasMultiplier
 
 /-!
 # Fibonacci identities via Fibonacci functions
@@ -627,20 +628,6 @@ public theorem_wanted gibonacci_candido_four_sequence
           (M s * N t + M (s + 1) * N (t + 1) + M (s + 2) * N (t + 2)) +
         (G k * N t + G (k + 1) * N (t + 1) + G (k + 2) * N (t + 2)) *
           (H r * M s + H (r + 1) * M (s + 1) + H (r + 2) * M (s + 2))
-
-/-- **Lucas multiplier identity for gibonacci sequences.** Let $F_m$ be the Fibonacci numbers,
-extended to all integers $m$ by $F_{m+2} = F_{m+1} + F_m$, and let $L_m = F_{m-1} + F_{m+1}$ be
-the Lucas numbers. Let $G : \mathbb{Z} \to \mathbb{R}$ be a gibonacci sequence, that is,
-$G_{j+2} = G_{j+1} + G_j$ for every integer $j$. Then for all integers $r$ and $s$,
-$G_{s+r} + (-1)^r G_{s-r} = L_r G_s$.
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 39
-(`jis-2024-24.6.2-prop-39`). -/
-public theorem_wanted gibonacci_add_neg_one_pow_mul_eq_lucas_mul
-    (L : ℤ → ℝ) (hL : ∀ m : ℤ, L m = Int.fib (m - 1) + Int.fib (m + 1))
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (r s : ℤ) :
-    G (s + r) + (-1 : ℝ) ^ r * G (s - r) = L r * G s
 
 /-- **Two-sequence gibonacci identity with a Fibonacci factor and Lucas-type sums.** Let
 $G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
