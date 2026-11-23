@@ -26,10 +26,22 @@ open Lean
 def main (args : List String) : IO UInt32 := do
   let [listFile] := args
     | IO.eprintln "usage: lean --run check_declaration_collisions.lean MODULE_LIST"; return 2
-  let names := ((← IO.FS.lines listFile).filter (· ≠ "")).map String.toName
-  if names.isEmpty then
+  let lines := (← IO.FS.lines listFile).filter (· ≠ "")
+  if lines.isEmpty then
     IO.eprintln s!"FAIL [declaration collisions]: {listFile} names no module"
     return 2
+  -- Lake names a module after its file path, one component per directory and file.
+  -- Lean tools, the dependency dump among them, read a module name as an identifier;
+  -- a path component that is not an identifier (`A-B`, `«A»`) is read as another
+  -- module, or as none.
+  let fromPath (module : String) : Name := (module.splitOn ".").foldl Name.mkStr .anonymous
+  let misnamed := lines.filter fun module => module.toName != fromPath module
+  unless misnamed.isEmpty do
+    for module in misnamed do
+      IO.eprintln s!"FAIL [declaration collisions]: {module.replace "." "/"}.lean: \
+        every directory and file name of a module must be a Lean identifier; rename it."
+    return 1
+  let names := lines.map String.toName
   initSearchPath (← findSysroot)
   try
     discard <| importModules (names.map fun module => { module, importAll := true }) {}

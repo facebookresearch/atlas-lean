@@ -32,20 +32,26 @@ Shi). UnsolvedMath record UM-00701298 (`KOU-16.107`), dataset ulamai/UnsolvedMat
 every" means "for all sufficiently large `n`", as the problem states.
 -/
 
-/-- The spectrum `π_e(G)`: the set of orders of elements of `G`. -/
+/-- **Spectrum of a group.** The spectrum $\pi_e(G)$ of a group $G$ is the set of orders of the
+elements of $G$, where an element of infinite order is assigned order $0$. -/
 def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
-/-- Kourovka 16.107 (W. J. Shi): for all large `n`, every finite group with the same set of element
-orders as `Aₙ` is isomorphic to `Aₙ`, i.e. `h(π_e(Aₙ)) = 1`. -/
+/-- **Kourovka Problem 16.107 on recognition of alternating groups by spectrum.** This proposition
+asserts that there is a natural number $N$ such that for every $n \ge N$, every finite group $G$
+with the same spectrum (set of element orders) as the alternating group $A_n$ is isomorphic to
+$A_n$. -/
 def alternatingGroupRecognizableBySpectrum : Prop :=
   ∃ N : ℕ, ∀ n : ℕ, N ≤ n → ∀ (G : Type) [Group G] [Finite G],
     elementOrders G = elementOrders (alternatingGroup (Fin n)) →
       Nonempty (G ≃* alternatingGroup (Fin n))
 
 /--
-Resolved true: the Kourovka Archive answers 16.107 "Yes, it is" (Gorshkov): for all large `n`, every
-finite group with the same element orders as `Aₙ` is isomorphic to `Aₙ`. Source: E. I. Khukhro and
+**Large alternating groups are recognizable by spectrum.** There is a natural number $N$ such that
+for every $n \ge N$, every finite group $G$ whose set of element orders equals that of the
+alternating group $A_n$ is isomorphic to $A_n$.
+
+Source: E. I. Khukhro and
 V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.107 (W. J. Shi); resolution: I. B.
 Gorshkov, Recognizability of alternating groups by spectrum, Algebra and Logic 52 (2013), no. 1,

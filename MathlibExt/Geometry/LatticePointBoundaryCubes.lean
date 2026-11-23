@@ -50,7 +50,13 @@ open Set Topology LatticePointCubeSandwich LipschitzImageCubeCount
 
 namespace LatticePointBoundaryCubes
 
-/-- Every outer-but-not-inner cube index meets the frontier chart images. -/
+/-- **Boundary cubes meet the dilated frontier charts.** Let $S \subseteq \mathbb{R}^n$, let
+$f_1, \dots, f_m : [0,1]^d \to \mathbb{R}^n$ be maps whose ranges together cover the frontier of
+$S$, and let $t$ be a real number. For $v \in \mathbb{Z}^n$ write $Q_v$ for the half-open unit
+cube $\prod_i [v_i, v_i + 1)$. If $v$ lies in the outer cube set of $S$ at scale $t$ (some
+$x \in Q_v$ has $x / t \in S$, coordinatewise, with $x / 0 = 0$) but not in the inner cube set
+(not every $x \in Q_v$ has $x / t \in S$), then $v$ lies in the integer cube set of some $f_i$ at
+scale $t$: there is $y \in [0,1]^d$ with $t f_i(y) \in Q_v$. -/
 theorem outer_diff_inner_subset_iUnion_integerCubeSet
     {n d numMaps : ℕ} (S : Set (Fin n → ℝ))
     (maps : Fin numMaps → (↥(unitCube d) → (Fin n → ℝ)))
@@ -135,7 +141,14 @@ theorem outer_diff_inner_subset_iUnion_integerCubeSet
       rw [hjz, hmul]
       exact hzj.2
 
-/-- Cardinality of the outer set bounded by inner plus boundary charts. -/
+/-- **Counting outer cubes by inner cubes and boundary charts.** Let $S \subseteq \mathbb{R}^n$,
+let $f_1, \dots, f_m : [0,1]^d \to \mathbb{R}^n$ be maps whose ranges together cover the frontier
+of $S$, and let $t$ be a real number. Let $O$ and $I$ be the outer and inner cube sets of $S$ at
+scale $t$: the $v \in \mathbb{Z}^n$ for which some, respectively every, point $x$ of the half-open
+unit cube $\prod_i [v_i, v_i + 1)$ has $x / t \in S$ (coordinatewise, with $x / 0 = 0$). Let $C_i$
+be the integer cube set of $f_i$ at scale $t$: the $v$ whose half-open unit cube contains
+$t f_i(y)$ for some $y \in [0,1]^d$. If $O$ and every $C_i$ are finite, then
+$|O| \le |I| + \sum_{i=1}^m |C_i|$. -/
 theorem card_outer_le_card_inner_add_sum
     {n d numMaps : ℕ} (S : Set (Fin n → ℝ))
     (maps : Fin numMaps → (↥(unitCube d) → (Fin n → ℝ)))
