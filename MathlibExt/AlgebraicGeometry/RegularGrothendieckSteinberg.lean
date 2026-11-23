@@ -230,6 +230,13 @@ abbrev spectralLocalSystem : RationalSheaf regularSpace :=
   (TopCat.Sheaf.pushforward (ModuleCat.{0} ℚ) spectralProjection).obj
     (rationalConstantSheaf spectralSpace)
 
+/-- The direct image along the spectral cover is additive. This restates
+`ConstructibleComplexes.pushforward_additive` for this concrete map, where instance
+search does not find the generic instance under Lean v4.36. -/
+instance spectralPushforwardAdditive :
+    (TopCat.Sheaf.pushforward (ModuleCat.{0} ℚ) spectralProjection).Additive :=
+  MathlibExt.AlgebraicGeometry.ConstructibleComplexes.pushforward_additive ℚ _
+
 abbrev spectralDerived : RationalDerived regularSpace :=
   DerivedCategory.Plus.ι.obj
     (((TopCat.Sheaf.pushforward (ModuleCat.{0} ℚ) spectralProjection).rightDerivedFunctorPlus).obj
