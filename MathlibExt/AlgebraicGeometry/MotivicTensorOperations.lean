@@ -57,14 +57,17 @@ def tensorShiftIso (F H : CochainComplex (NisModules (k := k)) ℤ)
     ((shiftFunctorAdd' _ b a (a + b) (by omega)).app
       (cochainTensor N F H)).symm
 
-/-- Tensor and negative-index extension agree on every native summand.
-The normalization rules out changing a shuffle by an arbitrary scalar. -/
-structure NegativeTensorComparison where
-  iso : ∀ F H : ChainComplex (NisModules (k := k)) ℕ,
-    cochainTensor N (F.extend negativeEmbedding) (H.extend negativeEmbedding) ≅
-      (HomologicalComplex.mapBifunctor F H N.functor
-        (ComplexShape.down ℕ)).extend negativeEmbedding
-  summand : ∀ (F H : ChainComplex (NisModules (k := k)) ℕ) (a b : ℕ),
+/-- The summand normalization of a comparison between the tensor of negative-index
+extensions and the negative-index extension of the tensor: on the `(a, b)` summand it is
+the native tensor summand, transported along the extension isomorphisms. It is stated
+once as a definition so that the structure below does not repeat this statement in each
+of its generated declarations. -/
+def IsSummandNormalized
+    (iso : ∀ F H : ChainComplex (NisModules (k := k)) ℕ,
+      cochainTensor N (F.extend negativeEmbedding) (H.extend negativeEmbedding) ≅
+        (HomologicalComplex.mapBifunctor F H N.functor
+          (ComplexShape.down ℕ)).extend negativeEmbedding) : Prop :=
+  ∀ (F H : ChainComplex (NisModules (k := k)) ℕ) (a b : ℕ),
     HomologicalComplex.ιMapBifunctor (F.extend negativeEmbedding)
       (H.extend negativeEmbedding) N.functor (ComplexShape.up ℤ)
       (-(a : ℤ)) (-(b : ℤ)) (-((a + b : ℕ) : ℤ)) (by dsimp; omega) ≫
@@ -77,6 +80,15 @@ structure NegativeTensorComparison where
         (H.extendXIso negativeEmbedding rfl).hom) ≫
       HomologicalComplex.ιMapBifunctor F H N.functor
         (ComplexShape.down ℕ) a b (a + b) rfl
+
+/-- Tensor and negative-index extension agree on every native summand.
+The normalization rules out changing a shuffle by an arbitrary scalar. -/
+structure NegativeTensorComparison where
+  iso : ∀ F H : ChainComplex (NisModules (k := k)) ℕ,
+    cochainTensor N (F.extend negativeEmbedding) (H.extend negativeEmbedding) ≅
+      (HomologicalComplex.mapBifunctor F H N.functor
+        (ComplexShape.down ℕ)).extend negativeEmbedding
+  summand : IsSummandNormalized N iso
 
 variable {D : CompositionSystem k} {G : GraphSystem k}
   [CorrespondenceLaws D G] [CorrespondenceAdditivity D G]
@@ -147,17 +159,18 @@ def coefficientElement (V : ModuleCat.{1} ℤ) (q n : ℤ)
   ((B.termIso V q n).inv.hom.app U)
     (tensorElement N _ _ U x (constantElement V U v))
 
-/-- Coefficient products for arbitrary abelian coefficients and a
-specified bilinear coefficient map, fixed on every pure local tensor. -/
-structure CoefficientMultiplicationSystem {J : TorusConcatenation A}
+/-- The pure-tensor normalization of coefficient multiplication maps: on the tensor of two
+local coefficient elements, the map is Tate multiplication of the local sections tensored
+with the specified bilinear coefficient map. -/
+def IsPureTensorNormalized {J : TorusConcatenation A}
     (M : SingularCycleProduct (S := S) N T J) (Z : EilenbergZilberModel N)
-    (V : NegativeTensorComparison N) where
-  map : ∀ (A₁ A₂ A₃ : ModuleCat.{1} ℤ)
-    (_μ : TensorProduct ℤ A₁ A₂ →ₗ[ℤ] A₃) (q r : ℤ),
-    cochainTensor N ((B.weightFunctor q).obj A₁)
-      ((B.weightFunctor r).obj A₂) ⟶
-      (B.weightFunctor (q + r)).obj A₃
-  pure_tensor : ∀ (A₁ A₂ A₃ : ModuleCat.{1} ℤ)
+    (V : NegativeTensorComparison N)
+    (map : ∀ (A₁ A₂ A₃ : ModuleCat.{1} ℤ)
+      (_μ : TensorProduct ℤ A₁ A₂ →ₗ[ℤ] A₃) (q r : ℤ),
+      cochainTensor N ((B.weightFunctor q).obj A₁)
+        ((B.weightFunctor r).obj A₂) ⟶
+        (B.weightFunctor (q + r)).obj A₃) : Prop :=
+  ∀ (A₁ A₂ A₃ : ModuleCat.{1} ℤ)
     (μ : TensorProduct ℤ A₁ A₂ →ₗ[ℤ] A₃) (q r i j : ℤ)
     (U : (SmoothScheme k)ᵒᵖ)
     (x : ((tateComplex (D := D) (G := G) (P := P) (E := E)
@@ -182,6 +195,18 @@ structure CoefficientMultiplicationSystem {J : TorusConcatenation A}
             (tensorElement N _ _ U x y)))
         (μ (TensorProduct.tmul ℤ a b))
 
+/-- Coefficient products for arbitrary abelian coefficients and a
+specified bilinear coefficient map, fixed on every pure local tensor. -/
+structure CoefficientMultiplicationSystem {J : TorusConcatenation A}
+    (M : SingularCycleProduct (S := S) N T J) (Z : EilenbergZilberModel N)
+    (V : NegativeTensorComparison N) where
+  map : ∀ (A₁ A₂ A₃ : ModuleCat.{1} ℤ)
+    (_μ : TensorProduct ℤ A₁ A₂ →ₗ[ℤ] A₃) (q r : ℤ),
+    cochainTensor N ((B.weightFunctor q).obj A₁)
+      ((B.weightFunctor r).obj A₂) ⟶
+      (B.weightFunctor (q + r)).obj A₃
+  pure_tensor : IsPureTensorNormalized N T B M Z V map
+
 /-- K-flatness is tested on the actual tensor total complex with every
 acyclic Nisnevich module complex. -/
 def IsKFlat (F : CochainComplex (NisModules (k := k)) ℤ) : Prop :=
@@ -200,6 +225,24 @@ structure KFlatResolutionSystem where
 
 attribute [local instance] HasDerivedCategory.standard
 
+/-- Naturality of a realization of the derived tensor product by K-flat tensor complexes:
+it is compatible with the maps induced on both factors by every pair of cochain maps. -/
+def IsRealizationNatural (F : KFlatResolutionSystem N)
+    (functor : DerivedCategory (NisModules (k := k)) ⥤
+      DerivedCategory (NisModules (k := k)) ⥤
+        DerivedCategory (NisModules (k := k)))
+    (realization : ∀ A₁ A₂ : CochainComplex (NisModules (k := k)) ℤ,
+      (functor.obj (DerivedCategory.Q.obj A₁)).obj (DerivedCategory.Q.obj A₂) ≅
+        DerivedCategory.Q.obj (cochainTensor N (F.functor.obj A₁) (F.functor.obj A₂))) : Prop :=
+  ∀ (A₁ A₂ B₁ B₂ : CochainComplex (NisModules (k := k)) ℤ)
+    (a : A₁ ⟶ B₁) (b : A₂ ⟶ B₂),
+    (functor.map (DerivedCategory.Q.map a)).app (DerivedCategory.Q.obj A₂) ≫
+      (functor.obj (DerivedCategory.Q.obj B₁)).map (DerivedCategory.Q.map b) ≫
+      (realization B₁ B₂).hom =
+    (realization A₁ A₂).hom ≫ DerivedCategory.Q.map
+      (HomologicalComplex.mapBifunctorMap (F.functor.map a) (F.functor.map b)
+        N.functor (ComplexShape.up ℤ))
+
 /-- Derived tensor is realized by those actual K-flat tensor complexes,
 and every cochain map is fixed by the replacement functor maps. -/
 structure DerivedTensorSource (F : KFlatResolutionSystem N) where
@@ -209,14 +252,7 @@ structure DerivedTensorSource (F : KFlatResolutionSystem N) where
   realization : ∀ A₁ A₂ : CochainComplex (NisModules (k := k)) ℤ,
     (functor.obj (DerivedCategory.Q.obj A₁)).obj (DerivedCategory.Q.obj A₂) ≅
       DerivedCategory.Q.obj (cochainTensor N (F.functor.obj A₁) (F.functor.obj A₂))
-  naturality : ∀ (A₁ A₂ B₁ B₂ : CochainComplex (NisModules (k := k)) ℤ)
-    (a : A₁ ⟶ B₁) (b : A₂ ⟶ B₂),
-    (functor.map (DerivedCategory.Q.map a)).app (DerivedCategory.Q.obj A₂) ≫
-      (functor.obj (DerivedCategory.Q.obj B₁)).map (DerivedCategory.Q.map b) ≫
-      (realization B₁ B₂).hom =
-    (realization A₁ A₂).hom ≫ DerivedCategory.Q.map
-      (HomologicalComplex.mapBifunctorMap (F.functor.map a) (F.functor.map b)
-        N.functor (ComplexShape.up ℤ))
+  naturality : IsRealizationNatural N F functor realization
 
 /-- The canonical derived-to-ordinary tensor comparison, using the
 specified K-flat augmentation on both factors. -/

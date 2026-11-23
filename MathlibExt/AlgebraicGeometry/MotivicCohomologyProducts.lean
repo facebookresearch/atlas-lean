@@ -90,14 +90,14 @@ def productSimplex (X Y : PointedSpaces (k := k))
       (asIso (prodComparison ((evaluation (SmoothScheme k)ᵒᵖ SSet.{1}).obj U)
         X.right Y.right)).inv)
 
-/-- Reduced-free smash comultiplication is fixed on all product generators,
-including generators on either collapsed basepoint axis. -/
-structure ReducedSmashComultiplication (F : ReducedFreeNisSystem k) where
-  map : ∀ X Y : PointedSpaces (k := k),
-    (reducedSimplicialFunctor F).obj (smash X Y) ⟶
-      simplicialTensor N ((reducedSimplicialFunctor F).obj X)
-        ((reducedSimplicialFunctor F).obj Y)
-  generator : ∀ (X Y : PointedSpaces (k := k)) (n : SimplexCategoryᵒᵖ)
+/-- The generator formula fixing a reduced-free smash comultiplication: the generator of a
+product simplex goes to the tensor of the generators of its two factors. -/
+def IsComultiplicationNormalized (F : ReducedFreeNisSystem k)
+    (map : ∀ X Y : PointedSpaces (k := k),
+      (reducedSimplicialFunctor F).obj (smash X Y) ⟶
+        simplicialTensor N ((reducedSimplicialFunctor F).obj X)
+          ((reducedSimplicialFunctor F).obj Y)) : Prop :=
+  ∀ (X Y : PointedSpaces (k := k)) (n : SimplexCategoryᵒᵖ)
     (U : (SmoothScheme k)ᵒᵖ) (t : ((𝟙_ (Spaces (k := k))).obj U).obj n)
     (x : (X.right.obj U).obj n) (y : (Y.right.obj U).obj n),
     (((map X Y).app n).hom.app U)
@@ -105,6 +105,15 @@ structure ReducedSmashComultiplication (F : ReducedFreeNisSystem k) where
         ((((smashQuotient X Y).app U).app n) (productSimplex X Y n U x y))) =
       tensorElement N _ _ U (reducedGenerator F X n U t x)
         (reducedGenerator F Y n U t y)
+
+/-- Reduced-free smash comultiplication is fixed on all product generators,
+including generators on either collapsed basepoint axis. -/
+structure ReducedSmashComultiplication (F : ReducedFreeNisSystem k) where
+  map : ∀ X Y : PointedSpaces (k := k),
+    (reducedSimplicialFunctor F).obj (smash X Y) ⟶
+      simplicialTensor N ((reducedSimplicialFunctor F).obj X)
+        ((reducedSimplicialFunctor F).obj Y)
+  generator : IsComultiplicationNormalized N F map
 
 /-- The literal reduced source smash chain map: normalized Moore,
 Alexander--Whitney, negative extension and its fixed tensor comparison. -/
@@ -132,13 +141,12 @@ def derivedTensorMap (F : KFlatResolutionSystem N) (D : DerivedTensorSource N F)
     (D.functor.obj X).obj Y ⟶ (D.functor.obj X').obj Y' :=
   (D.functor.map a).app Y ≫ (D.functor.obj X').map b
 
-/-- Shifted derived tensor is normalized by the actual cochain tensor
-shift and both native Q/shift comparison maps, for all complexes. -/
-structure DerivedTensorShifts (F : KFlatResolutionSystem N)
-    (D : DerivedTensorSource N F) where
-  iso : ∀ (X Y : DerivedCategory (NisModules (k := k))) (p r : ℤ),
-    (D.functor.obj (X⟦p⟧)).obj (Y⟦r⟧) ≅ ((D.functor.obj X).obj Y)⟦p + r⟧
-  normalization : ∀ (X Y : CochainComplex (NisModules (k := k)) ℤ) (p r : ℤ),
+/-- The normalization of derived tensor shift isomorphisms by the cochain tensor shift and
+the native `Q`/shift comparison maps. -/
+def IsShiftNormalized (F : KFlatResolutionSystem N) (D : DerivedTensorSource N F)
+    (iso : ∀ (X Y : DerivedCategory (NisModules (k := k))) (p r : ℤ),
+      (D.functor.obj (X⟦p⟧)).obj (Y⟦r⟧) ≅ ((D.functor.obj X).obj Y)⟦p + r⟧) : Prop :=
+  ∀ (X Y : CochainComplex (NisModules (k := k)) ℤ) (p r : ℤ),
     (iso (DerivedCategory.Q.obj X) (DerivedCategory.Q.obj Y) p r).hom ≫
       (tensorComparison N F D X Y)⟦p + r⟧' =
     derivedTensorMap N F D ((DerivedCategory.Q.commShiftIso p).inv.app X)
@@ -146,6 +154,14 @@ structure DerivedTensorShifts (F : KFlatResolutionSystem N)
       tensorComparison N F D (X⟦p⟧) (Y⟦r⟧) ≫
       DerivedCategory.Q.map (tensorShiftIso N X Y p r).hom ≫
       (DerivedCategory.Q.commShiftIso (p + r)).hom.app (cochainTensor N X Y)
+
+/-- Shifted derived tensor is normalized by the actual cochain tensor
+shift and both native Q/shift comparison maps, for all complexes. -/
+structure DerivedTensorShifts (F : KFlatResolutionSystem N)
+    (D : DerivedTensorSource N F) where
+  iso : ∀ (X Y : DerivedCategory (NisModules (k := k))) (p r : ℤ),
+    (D.functor.obj (X⟦p⟧)).obj (Y⟦r⟧) ≅ ((D.functor.obj X).obj Y)⟦p + r⟧
+  normalization : IsShiftNormalized N F D iso
 
 /-- The ordinary tensor comparison on free reduced source complexes is
 the *canonical augmentation map*. Its invertibility is a proof request,

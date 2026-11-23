@@ -230,17 +230,25 @@ def alexanderWhitneyComponent
         (alternatingChains F) (alternatingChains H)
         N.functor (ComplexShape.down ℕ) a.val (n - a.val) n (by dsimp; omega)
 
+/-- The summand formula fixing a shuffle chain map: on the `(a, b)` summand it is the sum
+of the signed shuffle components. -/
+def IsShuffleNormalized
+    (shuffle : ∀ F H : SimplicialObject (NisModules (k := k)),
+      chainTensor N (alternatingChains F) (alternatingChains H) ⟶
+        alternatingChains (simplicialTensor N F H)) : Prop :=
+  ∀ (F H : SimplicialObject (NisModules (k := k))) (a b : ℕ),
+    HomologicalComplex.ιMapBifunctor
+      (alternatingChains F) (alternatingChains H)
+      N.functor (ComplexShape.down ℕ) a b (a + b) rfl ≫
+        (shuffle F H).f (a + b) = shuffleComponent N F H a b
+
 /-- Shuffle and Alexander--Whitney chain maps, fully fixed by their
 native summand formulas. Neither inverse nor quasi-isomorphism is assumed. -/
 structure EilenbergZilberModel where
   shuffle : ∀ F H : SimplicialObject (NisModules (k := k)),
     chainTensor N (alternatingChains F) (alternatingChains H) ⟶
       alternatingChains (simplicialTensor N F H)
-  shuffle_summand : ∀ (F H : SimplicialObject (NisModules (k := k))) (a b : ℕ),
-    HomologicalComplex.ιMapBifunctor
-      (alternatingChains F) (alternatingChains H)
-      N.functor (ComplexShape.down ℕ) a b (a + b) rfl ≫
-        (shuffle F H).f (a + b) = shuffleComponent N F H a b
+  shuffle_summand : IsShuffleNormalized N shuffle
   alexanderWhitney : ∀ F H : SimplicialObject (NisModules (k := k)),
     alternatingChains (simplicialTensor N F H) ⟶
       chainTensor N (alternatingChains F) (alternatingChains H)
@@ -309,6 +317,27 @@ def diagonalCycleProduct (J : TorusConcatenation A) (q r : ℕ)
   composeCycles D (graphCycle G (smoothDiagonal P U))
     (composeCycles D (externalCycles E z w) (graphCycle G (J.iso q r).hom))
 
+/-- The cycle formula fixing a singular multiplication: on the classes of two finite cycles
+it is the class of their external product pulled back along the diagonal and concatenated. -/
+def IsCyclePairingNormalized (J : TorusConcatenation A)
+    (pairing : ∀ q r : ℕ,
+      simplicialTensor N
+        (singularNis (D := D) (G := G) (P := P) (E := E) (C := C)
+          (A := A) (R := R) (S := S) T q)
+        (singularNis (D := D) (G := G) (P := P) (E := E) (C := C)
+          (A := A) (R := R) (S := S) T r) ⟶
+        singularNis (D := D) (G := G) (P := P) (E := E) (C := C)
+          (A := A) (R := R) (S := S) T (q + r)) : Prop :=
+  ∀ (q r : ℕ) (n : SimplexCategoryᵒᵖ) (U : SmoothScheme k)
+    (z : Cycles (P.obj (A.simplex.obj n.unop) U) (A.torus q))
+    (w : Cycles (P.obj (A.simplex.obj n.unop) U) (A.torus r)),
+    (((pairing q r).app n).hom.app (op U))
+      (tensorElement N _ _ (op U) (singularClass T q n U z)
+        (singularClass T r n U w)) =
+      singularClass T (q + r) n U
+        (diagonalCycleProduct (D := D) (G := G) (E := E)
+          J q r (P.obj (A.simplex.obj n.unop) U) z w)
+
 /-- Singular multiplication is fixed on every pair of literal finite
 cycle classes by external product, diagonal pullback and concatenation. -/
 structure SingularCycleProduct (J : TorusConcatenation A) where
@@ -320,15 +349,7 @@ structure SingularCycleProduct (J : TorusConcatenation A) where
         (A := A) (R := R) (S := S) T r) ⟶
       singularNis (D := D) (G := G) (P := P) (E := E) (C := C)
         (A := A) (R := R) (S := S) T (q + r)
-  cycle_pairing : ∀ (q r : ℕ) (n : SimplexCategoryᵒᵖ) (U : SmoothScheme k)
-    (z : Cycles (P.obj (A.simplex.obj n.unop) U) (A.torus q))
-    (w : Cycles (P.obj (A.simplex.obj n.unop) U) (A.torus r)),
-    (((pairing q r).app n).hom.app (op U))
-      (tensorElement N _ _ (op U) (singularClass T q n U z)
-        (singularClass T r n U w)) =
-      singularClass T (q + r) n U
-        (diagonalCycleProduct (D := D) (G := G) (E := E)
-          J q r (P.obj (A.simplex.obj n.unop) U) z w)
+  cycle_pairing : IsCyclePairingNormalized N T J pairing
 
 /-- The unshifted Tate multiplication is precisely shuffle then the
 alternating-face map of the external-cycle singular multiplication. -/
