@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 public import MathlibExt.AlgebraicGeometry.LogPairs
 public import MathlibExt.AlgebraicGeometry.MoriContractionModels
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 public import Mathlib.AlgebraicGeometry.Morphisms.Immersion
 
 /-!
@@ -36,11 +38,11 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 open MathlibExt.AlgebraicGeometry.CurvePositivity
-open MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 open MathlibExt.AlgebraicGeometry.NumericalCurveCones
 open MathlibExt.AlgebraicGeometry.MoriContractionModels
 open MathlibExt.AlgebraicGeometry.RationalResolution
 open MathlibExt.AlgebraicGeometry.LogPairs
+open MathlibExt.AlgebraicGeometry.RelativeProjectivity
 open scoped BigOperators
 
 universe u
@@ -49,7 +51,7 @@ variable {k : Type u} [Field k]
 variable {X S : Over (Spec (.of k))}
 
 def IsQuasiProjectiveBase (S : Over (Spec (.of k))) : Prop :=
-  ∃ m : ℕ, ∃ i : S ⟶ SurfaceHilbertSchemes.projectiveSpace k m, IsImmersion i.left
+  ∃ m : ℕ, ∃ i : S ⟶ ProjectiveSpace.projectiveSpace k m, IsImmersion i.left
 
 /-- Relative N1 is a subspace of the existing actual degree-function space. -/
 def RelativeN1 (q : X ⟶ S) : Submodule ℝ (N1 X) :=
@@ -101,10 +103,10 @@ structure RelativeContraction (P : LogPair k n) (q : P.variety.X ⟶ S) (v : Rel
   [noetherian : IsNoetherian target.left]
   normal : IsNormalIntegral target.left
   toBase : target ⟶ S
-  projectiveBase : IsProjectiveOver toBase
+  projectiveBase : IsHProjectiveOver toBase
   map : P.variety.X ⟶ target
   [proper : IsProper map.left]
-  projective : IsProjectiveOver map
+  projective : IsHProjectiveOver map
   [connected : GeometricallyConnected map.left]
   unit : IsIso (structureUnit map.left)
   over : map ≫ toBase = q
@@ -122,7 +124,7 @@ structure RelativeFlip {P : LogPair k n} {q : P.variety.X ⟶ S} {v : RelativeN1
   qfactorial : IsQFactorial source.variety
   map : source.variety.X ⟶ C.target
   [proper : IsProper map.left]
-  projective : IsProjectiveOver map
+  projective : IsHProjectiveOver map
   unit : IsIso (structureUnit map.left)
   small : IsSmall map.left n
   identification : Scheme.PartialIso P.variety.X.left source.variety.X.left

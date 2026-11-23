@@ -11,6 +11,7 @@ public import MathlibExt.AlgebraicGeometry.BirationalSectionCoordinates
 public import Mathlib.RingTheory.Valuation.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
+public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Order.LiminfLimsup
 
 /-!

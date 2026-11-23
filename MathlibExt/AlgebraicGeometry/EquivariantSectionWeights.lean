@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 public import MathlibExt.AlgebraicGeometry.PolarizedTestConfigurations
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic

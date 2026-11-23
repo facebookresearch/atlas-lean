@@ -9,7 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.LogPairs
 public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
-public import MathlibExt.AlgebraicGeometry.FanoVanishingFiltrations
+public import MathlibExt.AlgebraicGeometry.GenericSectionMaps
 
 /-!
 # Actual birational section coordinates
@@ -42,17 +42,11 @@ variable {k : Type} [Field k] {n : ℕ}
 abbrev SectionSpace (V : NormalVariety k n) (M : V.X.left.Modules) :=
   (sectionsFunctor V.X.hom).obj M
 
-/-- The actual module morphism represented by a global section. -/
-def sectionHom (V : NormalVariety k n) (M : V.X.left.Modules) (s : SectionSpace V M) :
-    structureModule V.X.left ⟶ M := by
-  let t : M.val.obj (op (⊤ : V.X.left.Opens)) := s
-  refine (SheafOfModules.unitHomEquiv M).symm ?_
-  refine PresheafOfModules.sectionsMk
-    (fun U ↦ M.val.map (homOfLE (le_top : U.unop ≤ ⊤)).op t) ?_
-  intro U W f
-  have h : (homOfLE (le_top : U.unop ≤ ⊤)).op ≫ f =
-      (homOfLE (le_top : W.unop ≤ ⊤)).op := Subsingleton.elim _ _
-  rw [← PresheafOfModules.map_comp_apply, h]
+/-- The actual module morphism represented by a global section: the shared
+`GenericSectionMaps.topSectionHom`. -/
+abbrev sectionHom (V : NormalVariety k n) (M : V.X.left.Modules) (s : SectionSpace V M) :
+    structureModule V.X.left ⟶ M :=
+  GenericSectionMaps.topSectionHom V.X.left M s
 
 /-- An actual local frame, not a chosen numerical evaluator. -/
 structure LocalFrame (V : NormalVariety k n) (x : V.X.left) (M : V.X.left.Modules) where
