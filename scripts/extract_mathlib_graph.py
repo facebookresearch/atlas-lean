@@ -45,7 +45,7 @@ import extract_v2_lean_dependencies as v2  # noqa: E402  (the shared collapse se
 ROOT = Path(__file__).resolve().parent.parent
 DUMP_SCRIPT = ROOT / "scripts" / "dump_mathlib_dependencies.lean"
 MATHLIB_PACKAGE = Path(".lake") / "packages" / "mathlib"
-V2_KEEP = "Mathlib,MathlibExt,CSLibExt,PhyslibExt,WantedExt"
+V2_KEEP = "Mathlib,MathlibExt,CSLibExt,PhyslibExt,Domains,WantedExt"
 TAXONOMY = ROOT / "scripts" / "taxonomy.json"
 
 # Modules with no mathematics for the graph: tactics, metaprogramming, linters and test infrastructure, and
@@ -493,7 +493,7 @@ def command_bridge(args: argparse.Namespace) -> int:
     del full
     manifest = v2.article_manifest() if args.articles is None else set(
         line.strip() for line in Path(args.articles).read_text(encoding="utf-8").splitlines() if line.strip())
-    atlas_rows = v2.publish_private_targets(v2.read_dump(Path(args.v2_dump)), manifest)
+    atlas_rows = v2.publish_private_targets(v2.read_dump(Path(args.v2_dump))[0], manifest)
     # A reserved name that both a v2 module and a Mathlib module the v2 module does not import realise on
     # demand (`AddMonoidHom.mk.congr_simp`) is in both dumps: the two are the same generated lemma.
     realised_twice = sorted(atlas_rows.keys() & rows.keys())
@@ -787,7 +787,9 @@ def command_stats(args: argparse.Namespace) -> int:
         "most_used_in_statements": top(indegree["statement"]),
         "seconds": {"graph": graph_meta["seconds"]},
     }
-    for meta_file in sorted(out.glob("*dump-meta.json")):
+    # The v2 dump's meta first: its ATLAS commit is the layer's. The Mathlib dump depends only on the pins, and the
+    # workflow may restore it from a cache made at another commit.
+    for meta_file in sorted(out.glob("*dump-meta.json"), reverse=True):
         meta = json.loads(meta_file.read_text(encoding="utf-8"))
         stats.setdefault("versions", {key: meta.get(key) for key in ("lean_version", "mathlib_rev", "atlas_commit")})
         stats["seconds"][meta_file.name.removesuffix("-meta.json")] = meta["dump"]["seconds"]

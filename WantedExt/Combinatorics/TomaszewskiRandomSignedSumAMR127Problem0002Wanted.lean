@@ -35,17 +35,22 @@ Keller–Klein; the bound is attained by `a = (1/√2, 1/√2)`). For `n = 0` th
 fails, so the statement is about `n ≥ 1`.
 -/
 
-/-- Tomaszewski's conjecture (O'Donnell, Open Problems in Analysis of Boolean Functions, Problem 2):
-for every `a ∈ ℝⁿ` with `‖a‖₂ = 1`, at least half of the `2ⁿ` sign vectors `x ∈ {-1, 1}ⁿ` satisfy
-`|⟨a, x⟩| ≤ 1`. A sign vector is `x : Fin n → Bool`, with `true` read as `1` and `false` as `-1`. -/
+/-- **Tomaszewski's conjecture.** The statement that for every natural number $n$ and every
+vector $a = (a_1, \dots, a_n) \in \mathbb{R}^n$ with $a_1^2 + \dots + a_n^2 = 1$, at least half of
+the $2^n$ sign vectors $x \in \{-1, 1\}^n$ satisfy $|a_1 x_1 + \dots + a_n x_n| \le 1$.
+
+Source: O'Donnell, Open Problems in Analysis of Boolean Functions, Problem 2. A sign vector is a
+map `x : Fin n → Bool`, with `true` read as `1` and `false` as `-1`. -/
 def tomaszewskiConjecture : Prop :=
   ∀ (n : ℕ) (a : Fin n → ℝ), ∑ i, a i ^ 2 = 1 →
     (2 : ℝ) ^ n ≤ 2 * ((Finset.univ.filter fun x : Fin n → Bool =>
       |∑ i, a i * (if x i then (1 : ℝ) else -1)| ≤ 1).card : ℝ)
 
-/--
-Resolved true: Keller and Klein proved Tomaszewski's conjecture: for every `a ∈ ℝⁿ` with `∑ aᵢ² =
-1`, a uniformly random sign vector `x` satisfies `|∑ aᵢ xᵢ| ≤ 1` with probability at least `1/2`.
+/-- **Tomaszewski's conjecture holds.** For every natural number $n$ and every vector
+$a = (a_1, \dots, a_n) \in \mathbb{R}^n$ with $a_1^2 + \dots + a_n^2 = 1$, at least half of the
+$2^n$ sign vectors $x \in \{-1, 1\}^n$ satisfy $|a_1 x_1 + \dots + a_n x_n| \le 1$; equivalently,
+for a uniformly random sign vector $x$ this inequality holds with probability at least $1/2$.
+
 Source: R. O'Donnell, Open Problems in Analysis of Boolean Functions (2012), arXiv:1204.6447,
 Problem 2 (Tomaszewski's Conjecture); resolution: N. Keller and O. Klein, Proof of Tomaszewski's
 conjecture on randomly signed sums, Adv. Math. 407 (2022), 108558, arXiv:2006.16834, main theorem

@@ -59,7 +59,7 @@ assumed).
   nutrient-phytoplankton-zooplankton models in nitrogen units, in which uptake moves
   nitrogen from the nutrient pool to phytoplankton and losses return it, so the balances
   sum to zero and total nitrogen is conserved.
-- `MathlibExt.Biology.Dynamics.MichaelisMenten` (`mmRate`, `mmRate_lt`,
+- `Domains.Biology.Dynamics.MichaelisMenten` (`mmRate`, `mmRate_lt`,
   `mmRate_nonneg_and_le`) for the Michaelis-Menten uptake law and its bounds.
 -/
 

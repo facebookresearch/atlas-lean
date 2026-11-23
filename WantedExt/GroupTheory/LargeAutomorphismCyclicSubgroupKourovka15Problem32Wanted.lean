@@ -33,18 +33,26 @@ not depend on `p` and implies the existential reading. `m - k` is natural subtra
 since `m > k`.
 -/
 
-/-- Kourovka 15.32 (Ya. G. Berkovich), with the threshold `f(k) = 64k + 2` of its resolution: if a
-group `G` of order `pᵐ` with `m ≥ 64k + 2` has an automorphism of order `p^(m-k)`, then `G` has a
-cyclic subgroup of index `pᵏ`. -/
+/-- **Kourovka Problem 15.32: large automorphisms and cyclic subgroups.** For every prime $p$ and
+all natural numbers $k$ and $m$ with $m \ge 64k + 2$, every finite group $G$ of order $p^m$ that
+has an automorphism of order $p^{m-k}$ has a cyclic subgroup of index $p^k$.
+
+Kourovka 15.32 (Ya. G. Berkovich) asks for some threshold $f(k)$ beyond which this holds; the
+threshold $f(k) = 64k + 2$ is the one of its resolution. -/
 def cyclicSubgroupOfIndexFromLargeAutomorphism : Prop :=
   ∀ p k m : ℕ, p.Prime → 64 * k + 2 ≤ m → ∀ (G : Type) [Group G] [Finite G], Nat.card G = p ^ m →
     (∃ φ : MulAut G, orderOf φ = p ^ (m - k)) → ∃ C : Subgroup G, IsCyclic C ∧ C.index = p ^ k
 
 /--
-Resolved true: Jayadevan proved that for every `k ≥ 0`, if `m ≥ 64k + 2` and a group of order `pᵐ`
-has an automorphism of order `p^(m-k)`, then it has a cyclic subgroup of index exactly `pᵏ`; the
-Kourovka Notebook (21st issue) marks 15.32 solved, "Yes, one can take `f(k) = 64k + 2`" (AI solution
-confirmed by A. Caranti). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Large automorphisms of p-groups force cyclic subgroups of given index.** For every prime $p$ and
+all natural numbers $k$ and $m$ with $m \ge 64k + 2$, if a finite group $G$ of order $p^m$ has an
+automorphism of order $p^{m-k}$, then $G$ has a cyclic subgroup of index $p^k$.
+
+Resolved true: Jayadevan proved this with the threshold $f(k) = 64k + 2$; the Kourovka Notebook
+(21st issue) marks 15.32 solved, "Yes, one can take $f(k) = 64k + 2$" (AI solution confirmed by
+A. Caranti).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 15.32 (Ya. G.
 Berkovich); resolution: A. Jayadevan, Large-order automorphisms of finite p-groups force cyclic
 subgroups of prescribed index, preprint, Zenodo record 22910914 (2026), AI-generated solution

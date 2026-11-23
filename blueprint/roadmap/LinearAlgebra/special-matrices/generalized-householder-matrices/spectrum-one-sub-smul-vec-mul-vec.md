@@ -32,7 +32,7 @@ only if" for a single factor, and this page's proofs, are derived here.
 
 ## Background
 
-- [Nonzero eigenvalues of matrix products AB and BA coincide](../../eigenvalues-and-canonical-forms/eigenvalues-of-the-products-ab-and-ba/has-eigenvalue-mul-iff-3.md):
+- [Nonzero eigenvalues of matrix products AB and BA coincide](../../eigenvalues-and-canonical-forms/eigenvalues-of-the-products-ab-and-ba/nonzero-eigenvalues-of-ab-and-ba/has-eigenvalue-mul-iff-3.md):
   background, another route to the nonzero eigenvalue of $v v^{\mathsf{T}}$, which is that of
   $v^{\mathsf{T}} v = 1$; the multiplicities and the norm still need the direct argument above.
 

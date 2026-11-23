@@ -134,22 +134,6 @@ example {s : Nat} (g w : BitVec s) (i : Fin s) :
   rw [AdjoinRoot.powerBasisAux'_repr_apply_to_fun]
   simpa using BitVec.adjoinRootEquiv_coeff g w i
 
-private theorem zeroToPolynomial (s : Nat) : (0#s).toPolynomial = 0 := by
-  ext i
-  simp [BitVec.coeff_toPolynomial]
-
-private theorem one3ToPolynomial : (1#3).toPolynomial = 1 := by
-  ext i
-  rw [BitVec.coeff_toPolynomial, Polynomial.coeff_one]
-  by_cases h0 : i = 0
-  · subst i
-    decide
-  by_cases hi : 3 ≤ i
-  · rw [BitVec.getLsbD_of_ge _ _ hi]
-    simp [h0]
-  have hi' : i = 1 ∨ i = 2 := by omega
-  rcases hi' with h | h <;> subst i <;> decide
-
 private theorem two3ToPolynomial : (2#3).toPolynomial = X := by
   ext i
   rw [BitVec.coeff_toPolynomial, Polynomial.coeff_X]
@@ -185,7 +169,7 @@ private theorem four3ToPolynomial : (4#3).toPolynomial = X ^ 2 := by
 
 private theorem three3ToPolynomial : (3#3).toPolynomial = X + 1 := by
   rw [show (3#3) = (2#3 ^^^ 1#3) by decide, BitVec.toPolynomial_xor,
-    two3ToPolynomial, one3ToPolynomial]
+    two3ToPolynomial, BitVec.toPolynomial_one (by decide : 0 < 3)]
 
 /-- The populated modulus is `X^3 + X + 1`, and its defining root equation reduces to `X + 1`. -/
 example : (3#3).monicModulus = X ^ 3 + X + 1 := by
@@ -239,7 +223,7 @@ example :
 
 /-- Width zero gives the quotient by `1`; both the source and target are singletons. -/
 example : (0#0).monicModulus = 1 := by
-  rw [BitVec.monicModulus, zeroToPolynomial]
+  rw [BitVec.monicModulus, BitVec.toPolynomial_zero]
   simp
 
 example (z : AdjoinRoot (0#0).monicModulus) : z = 0 := by
@@ -267,7 +251,7 @@ example :
 
 example : (3#3).adjoinRootEquiv ((1#3) ^^^ (1#3)) = 0 := by
   rw [show (1#3) ^^^ (1#3) = 0#3 by decide,
-    BitVec.adjoinRootEquiv_apply, zeroToPolynomial, map_zero]
+    BitVec.adjoinRootEquiv_apply, BitVec.toPolynomial_zero, map_zero]
 
 example :
     (3#3).adjoinRootEquiv ((1#3) + (1#3)) ≠
@@ -279,7 +263,7 @@ example :
 /-- The reducible modulus `X^2` has a nonzero nilpotent root, so the codec has no hidden field
 or irreducibility hypothesis. -/
 example : (0#2).monicModulus = X ^ 2 := by
-  rw [BitVec.monicModulus, zeroToPolynomial]
+  rw [BitVec.monicModulus, BitVec.toPolynomial_zero]
   simp
 
 example : AdjoinRoot.root (0#2).monicModulus ^ 2 = 0 := by
@@ -287,11 +271,11 @@ example : AdjoinRoot.root (0#2).monicModulus ^ 2 = 0 := by
     AdjoinRoot.root (0#2).monicModulus ^ 2 =
         (0#2).adjoinRootEquiv (0#2) := BitVec.adjoinRoot_root_pow (0#2)
     _ = 0 := by
-      rw [BitVec.adjoinRootEquiv_apply, zeroToPolynomial, map_zero]
+      rw [BitVec.adjoinRootEquiv_apply, BitVec.toPolynomial_zero, map_zero]
 
 example : AdjoinRoot.root (0#2).monicModulus ≠ 0 := by
   rw [show (0#2).monicModulus = X ^ 2 by
-    rw [BitVec.monicModulus, zeroToPolynomial]
+    rw [BitVec.monicModulus, BitVec.toPolynomial_zero]
     simp]
   rw [← AdjoinRoot.mk_X]
   apply AdjoinRoot.mk_ne_zero_of_degree_lt (Polynomial.monic_X_pow 2)

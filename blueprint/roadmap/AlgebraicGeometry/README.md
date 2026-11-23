@@ -16,6 +16,9 @@ uniform bound of Dimitrov, Gao and Habegger on the rational points of curves of 
 
 - [Schemes and morphisms](schemes-and-morphisms/README.md)
 - [Varieties and projective geometry](varieties-and-projective-geometry/README.md)
+- [Birational geometry and vanishing theorems](birational-geometry/README.md)
 - [Algebraic curves](algebraic-curves/README.md)
 - [Elliptic curves](elliptic-curves/README.md)
+- [Abelian varieties and abelian schemes](abelian-varieties/README.md)
 - [Arithmetic geometry](arithmetic-geometry/README.md)
+- [Arakelov geometry](arakelov-geometry/README.md)

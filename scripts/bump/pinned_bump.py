@@ -47,8 +47,8 @@ Entry points (see .github/workflows/bump-pinned-release.yml and bump-guard.yml):
            compare diff instead (see bump-guard.yml), so a merge group
            holding several PRs cannot hide a pin/guard change from a PR
            other than the first one parsed from the head ref.
-  guard    Run on every PR touching (or renaming) any file, from trusted
-           base code (pull_request_target). Validates a pin-change PR
+  guard    Run on every PR touching (or renaming) any file, from the base
+           checkout (pull_request and merge_group). Validates a pin-change PR
            without building it or running any PR code. Adapted from
            TauCeti's check-bump.sh: the complete lakefile compared after
            normalizing only the configured pinned revs; toolchain matches
@@ -1542,13 +1542,45 @@ def _validate_replacement_literals(entry: dict) -> list[str]:
 
 
 def _written_regions(original: str, current: str) -> list[tuple[int, int]]:
-    """(start, end) spans of `current` that differ from `original`."""
-    matcher = difflib.SequenceMatcher(a=original, b=current, autojunk=False)
-    return [
-        (b_start, b_end)
-        for tag, _, _, b_start, b_end in matcher.get_opcodes()
-        if tag != "equal"
-    ]
+    """(start, end) spans of `current` that differ from `original`.
+
+    Characters are diffed only within changed lines: one
+    character-level SequenceMatcher over a whole file is quadratic in
+    its length, and the simulation calls this for every added rule at
+    every transition, inside its time budget. Rules rewrite version/SHA
+    tokens, which never span lines, so lines stay paired; when the line
+    count changed (the version/SHA postcondition then fails), a
+    line-level diff pairs them instead.
+    """
+    old_lines = original.splitlines(keepends=True)
+    new_lines = current.splitlines(keepends=True)
+    if len(old_lines) == len(new_lines):
+        blocks = [
+            (i, i + 1, i, i + 1)
+            for i, (old, new) in enumerate(zip(old_lines, new_lines))
+            if old != new
+        ]
+    else:
+        line_matcher = difflib.SequenceMatcher(a=old_lines, b=new_lines, autojunk=False)
+        blocks = [
+            (i1, i2, j1, j2)
+            for tag, i1, i2, j1, j2 in line_matcher.get_opcodes()
+            if tag != "equal"
+        ]
+    line_starts = [0]
+    for line in new_lines:
+        line_starts.append(line_starts[-1] + len(line))
+    regions: list[tuple[int, int]] = []
+    for i1, i2, j1, j2 in blocks:
+        matcher = difflib.SequenceMatcher(
+            a="".join(old_lines[i1:i2]), b="".join(new_lines[j1:j2]), autojunk=False
+        )
+        regions.extend(
+            (line_starts[j1] + b_start, line_starts[j1] + b_end)
+            for tag, _, _, b_start, b_end in matcher.get_opcodes()
+            if tag != "equal"
+        )
+    return regions
 
 
 _NORMALIZE_VERSION_RE = re.compile(r"(?<![A-Za-z0-9_])v?\d+\.\d+(?:\.\d+)?")
@@ -1758,7 +1790,7 @@ def _regex_timeout(seconds: float):
 
     Python's backtracking engine has no per-match timeout, so a
     catastrophic pattern (e.g. (a+)+$) would otherwise occupy the
-    trusted pull_request_target runner until the workflow timeout.
+    guard's runner until the workflow timeout.
     The alarm is set only around pure regex simulation (SHAs are
     resolved beforehand, so no network call is interrupted). On
     platforms without setitimer, or outside the main thread, the

@@ -102,7 +102,6 @@ theorem world_kmGrid_eq_zero :
       (fun ω : ℕ → ℕ → ℝ × ℝ => ω 2) ⁻¹'
         Set.pi (({0, 1} : Finset ℕ) : Set ℕ) (fun _ => {a₂}) := by
     filter_upwards [hae] with ω hω
-    apply propext
     simp only [Set.mem_preimage, Set.mem_pi, Finset.coe_insert,
       Finset.coe_singleton, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
       forall_eq]

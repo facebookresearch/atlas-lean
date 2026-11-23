@@ -72,47 +72,61 @@ namespace Submodule
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 
-/-- The **topological annihilator** of a subspace `S` of a normed space:
-the subspace of the continuous dual consisting of the functionals that
-vanish on `S`. -/
+/-- **Topological annihilator.** Let $E$ be a normed space over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$, with continuous dual $E^*$. The topological annihilator of a subspace $S$ of $E$
+is the subspace of $E^*$ consisting of the continuous linear functionals $f$ with $f(x) = 0$
+for all $x \in S$. -/
 def topologicalAnnihilator (S : Submodule 𝕜 E) : Submodule 𝕜 (E →L[𝕜] 𝕜) where
   carrier := { f | ∀ x ∈ S, f x = 0 }
   zero_mem' := fun _ _ => by simp
   add_mem' := fun hf hg x hx => by simp [hf x hx, hg x hx]
   smul_mem' := fun c f hf x hx => by simp [hf x hx]
 
-/-- The **topological coannihilator** of a subspace `Φ` of the continuous
-dual: the subspace of `E` consisting of the vectors killed by every
-functional in `Φ`. -/
+/-- **Topological coannihilator.** Let $E$ be a normed space over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$, with continuous dual $E^*$. The topological coannihilator of a subspace $\Phi$ of
+$E^*$ is the subspace of $E$ consisting of the vectors $x$ with $f(x) = 0$ for all
+$f \in \Phi$. -/
 def topologicalCoannihilator (Φ : Submodule 𝕜 (E →L[𝕜] 𝕜)) : Submodule 𝕜 E where
   carrier := { x | ∀ f ∈ Φ, f x = 0 }
   zero_mem' := fun _ _ => by simp
   add_mem' := fun hx hy f hf => by simp [hx f hf, hy f hf]
   smul_mem' := fun c x hx f hf => by simp [hx f hf]
 
-/-- Membership in the topological annihilator: `f` is in the annihilator
-of `S` exactly when `f` vanishes on `S`. -/
+/-- **Membership in the topological annihilator.** Let $E$ be a normed space over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, let $S$ be a subspace of $E$, and let
+$f : E \to \mathbb{K}$ be a continuous linear functional. Then $f$ lies in the topological
+annihilator of $S$ if and only if $f(x) = 0$ for every $x \in S$. -/
 theorem mem_topologicalAnnihilator {S : Submodule 𝕜 E} {f : E →L[𝕜] 𝕜} :
     f ∈ S.topologicalAnnihilator ↔ ∀ x ∈ S, f x = 0 := Iff.rfl
 
-/-- Membership in the topological coannihilator: `x` is in the
-coannihilator of `Φ` exactly when every functional in `Φ` kills `x`. -/
+/-- **Membership in the topological coannihilator.** Let $E$ be a normed space over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, let $\Phi$ be a subspace of the continuous dual
+of $E$, and let $x \in E$. Then $x$ lies in the topological coannihilator of $\Phi$ if and only if
+$f(x) = 0$ for every $f \in \Phi$. -/
 theorem mem_topologicalCoannihilator {Φ : Submodule 𝕜 (E →L[𝕜] 𝕜)} {x : E} :
     x ∈ Φ.topologicalCoannihilator ↔ ∀ f ∈ Φ, f x = 0 := Iff.rfl
 
-/-- The topological annihilator is antitone in the subspace. -/
+/-- **The topological annihilator reverses inclusion.** Let $E$ be a normed space over
+$\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, and let $S \subseteq T$ be
+subspaces of $E$. Then the topological annihilator of $T$ is contained in the topological
+annihilator of $S$. -/
 theorem topologicalAnnihilator_anti {S T : Submodule 𝕜 E} (h : S ≤ T) :
     T.topologicalAnnihilator ≤ S.topologicalAnnihilator := by
   intro f hf x hx
   exact (mem_topologicalAnnihilator.mp hf) x (h hx)
 
-/-- The topological coannihilator is antitone in the subspace of the dual. -/
+/-- **The topological coannihilator is antitone.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, with continuous dual $E^*$. If $\Phi \subseteq \Psi$
+are subspaces of $E^*$, then the topological coannihilator of $\Psi$ is contained in the
+topological coannihilator of $\Phi$. -/
 theorem topologicalCoannihilator_anti {Φ Ψ : Submodule 𝕜 (E →L[𝕜] 𝕜)} (h : Φ ≤ Ψ) :
     Ψ.topologicalCoannihilator ≤ Φ.topologicalCoannihilator := by
   intro x hx f hf
   exact (mem_topologicalCoannihilator.mp hx) f (h hf)
 
-/-- The annihilator of the zero subspace is the whole dual. -/
+/-- **Topological annihilator of the zero subspace.** Let $E$ be a normed space over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$. The topological annihilator of the zero subspace
+of $E$ is the whole continuous dual of $E$. -/
 @[simp]
 theorem topologicalAnnihilator_bot :
     (⊥ : Submodule 𝕜 E).topologicalAnnihilator = ⊤ := by
@@ -124,8 +138,10 @@ theorem topologicalAnnihilator_bot :
     rw [(Submodule.mem_bot 𝕜).mp hx]
     simp
 
-/-- The annihilator of the whole space is zero: a functional vanishing
-everywhere is zero. -/
+/-- **Topological annihilator of the whole space.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, with continuous dual $E^*$. The topological
+annihilator of $E$, viewed as a subspace of itself, is the zero subspace of $E^*$: a continuous
+linear functional vanishing everywhere on $E$ is zero. -/
 @[simp]
 theorem topologicalAnnihilator_top :
     (⊤ : Submodule 𝕜 E).topologicalAnnihilator = ⊥ := by
@@ -140,7 +156,9 @@ theorem topologicalAnnihilator_top :
     rw [h]
     simp
 
-/-- The coannihilator of the zero subspace of the dual is the whole space. -/
+/-- **Topological coannihilator of the zero subspace.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, with continuous dual $E^*$. The topological
+coannihilator of the zero subspace of $E^*$ is all of $E$. -/
 @[simp]
 theorem topologicalCoannihilator_bot :
     (⊥ : Submodule 𝕜 (E →L[𝕜] 𝕜)).topologicalCoannihilator = ⊤ := by
@@ -152,8 +170,12 @@ theorem topologicalCoannihilator_bot :
     rw [(Submodule.mem_bot 𝕜).mp hf]
     simp
 
-/-- The coannihilator of the whole dual is zero: a vector killed by every
-continuous functional is zero, by the Hahn-Banach norming functional. -/
+/-- **Topological coannihilator of the whole dual.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, with continuous dual $E^*$. The topological
+coannihilator of $E^*$ itself is the zero subspace of $E$: a vector killed by every continuous
+linear functional is zero.
+
+The proof uses the Hahn–Banach norming functional. -/
 theorem topologicalCoannihilator_top :
     (⊤ : Submodule 𝕜 (E →L[𝕜] 𝕜)).topologicalCoannihilator = ⊥ := by
   ext x
@@ -171,7 +193,9 @@ theorem topologicalCoannihilator_top :
     rw [h]
     simp
 
-/-- A subspace is contained in its double annihilator. -/
+/-- **A subspace lies in its double annihilator.** Let $E$ be a normed space over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$. Every subspace $S$ of $E$ is contained in the
+topological coannihilator of the topological annihilator of $S$. -/
 theorem le_topologicalCoannihilator_topologicalAnnihilator (S : Submodule 𝕜 E) :
     S ≤ S.topologicalAnnihilator.topologicalCoannihilator := by
   intro x hx
@@ -179,8 +203,10 @@ theorem le_topologicalCoannihilator_topologicalAnnihilator (S : Submodule 𝕜 E
   intro f hf
   exact (mem_topologicalAnnihilator.mp hf) x hx
 
-/-- The annihilator of a subspace equals the annihilator of its closure:
-a continuous functional vanishing on `S` vanishes on the closure of `S`. -/
+/-- **Topological annihilator of the closure.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. For every subspace $S$ of $E$, the topological
+annihilator of the topological closure $\overline{S}$ equals the topological annihilator of
+$S$: a continuous linear functional vanishing on $S$ vanishes on $\overline{S}$. -/
 theorem topologicalAnnihilator_topologicalClosure (S : Submodule 𝕜 E) :
     S.topologicalClosure.topologicalAnnihilator = S.topologicalAnnihilator := by
   apply le_antisymm
@@ -195,9 +221,10 @@ theorem topologicalAnnihilator_topologicalClosure (S : Submodule 𝕜 E) :
       isClosed_singleton.preimage f.continuous
     exact LinearMap.mem_ker.mp (S.topologicalClosure_minimal hS hfclosed hx)
 
-/-- **Separation.** A point outside the topological closure of `S` is
-separated from `S` by a functional in the annihilator: there is
-`f ∈ S.topologicalAnnihilator` with `f x ≠ 0`. -/
+/-- **Separation.** Let $E$ be a normed space over $\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$
+or $\mathbb{C}$, let $S$ be a subspace of $E$, and let $x \in E$ lie outside the topological
+closure of $S$. Then some continuous linear functional $f$ in the topological annihilator of $S$
+satisfies $f(x) \neq 0$. -/
 theorem exists_mem_topologicalAnnihilator_apply_ne_zero {S : Submodule 𝕜 E} {x : E}
     (hx : x ∉ S.topologicalClosure) :
     ∃ f ∈ S.topologicalAnnihilator, f x ≠ 0 := by
@@ -210,8 +237,10 @@ theorem exists_mem_topologicalAnnihilator_apply_ne_zero {S : Submodule 𝕜 E} {
   rw [hfval]
   exact RCLike.ofReal_ne_zero.mpr hdist.ne'
 
-/-- **Separation, normalized.** A point outside the topological closure of
-`S` is separated by an annihilating functional taking the value `1` there. -/
+/-- **Separation, normalized.** Let $E$ be a normed space over $\mathbb{K}$, where $\mathbb{K}$ is
+$\mathbb{R}$ or $\mathbb{C}$, let $S$ be a subspace of $E$, and let $x \in E$ lie outside the
+topological closure of $S$. Then some continuous linear functional $f$ in the topological
+annihilator of $S$ satisfies $f(x) = 1$. -/
 theorem exists_mem_topologicalAnnihilator_apply_eq_one {S : Submodule 𝕜 E} {x : E}
     (hx : x ∉ S.topologicalClosure) :
     ∃ f ∈ S.topologicalAnnihilator, f x = 1 := by
@@ -219,8 +248,10 @@ theorem exists_mem_topologicalAnnihilator_apply_eq_one {S : Submodule 𝕜 E} {x
   refine ⟨(f x)⁻¹ • f, S.topologicalAnnihilator.smul_mem _ hf, ?_⟩
   rw [smul_apply, smul_eq_mul, inv_mul_cancel₀ hfx]
 
-/-- **Bipolar theorem.** The double topological annihilator of a subspace
-is its topological closure. -/
+/-- **Bipolar theorem.** Let $E$ be a normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$
+and let $S$ be a subspace of $E$. The topological coannihilator of the topological annihilator
+of $S$, that is, the subspace of vectors of $E$ killed by every continuous linear functional
+vanishing on $S$, is the topological closure of $S$. -/
 theorem topologicalAnnihilator_topologicalCoannihilator_eq_topologicalClosure
     (S : Submodule 𝕜 E) :
     S.topologicalAnnihilator.topologicalCoannihilator = S.topologicalClosure := by
@@ -232,7 +263,10 @@ theorem topologicalAnnihilator_topologicalCoannihilator_eq_topologicalClosure
   · rw [← topologicalAnnihilator_topologicalClosure S]
     exact le_topologicalCoannihilator_topologicalAnnihilator _
 
-/-- The annihilator of `S` vanishes exactly when `S` is dense. -/
+/-- **Density criterion via the annihilator.** Let $E$ be a normed space over $\mathbb{K}$, where
+$\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, and let $S$ be a subspace of $E$. The topological
+annihilator of $S$ is the zero subspace of the continuous dual of $E$ if and only if $S$ is dense
+in $E$. -/
 theorem topologicalAnnihilator_eq_bot_iff_dense (S : Submodule 𝕜 E) :
     S.topologicalAnnihilator = ⊥ ↔ Dense (S : Set E) := by
   constructor
@@ -248,8 +282,10 @@ theorem topologicalAnnihilator_eq_bot_iff_dense (S : Submodule 𝕜 E) :
     rw [← topologicalAnnihilator_topologicalClosure S, hcl]
     exact topologicalAnnihilator_top
 
-/-- The annihilator determines the closure: two subspaces have the same
-annihilator exactly when they have the same topological closure. -/
+/-- **The annihilator determines the closure.** Let $E$ be a normed space over $\mathbb{K}$, where
+$\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, and let $S$ and $T$ be subspaces of $E$. Then $S$ and
+$T$ have the same topological annihilator if and only if they have the same topological
+closure. -/
 theorem topologicalAnnihilator_eq_iff_topologicalClosure_eq {S T : Submodule 𝕜 E} :
     S.topologicalAnnihilator = T.topologicalAnnihilator ↔
       S.topologicalClosure = T.topologicalClosure := by
@@ -262,7 +298,10 @@ theorem topologicalAnnihilator_eq_iff_topologicalClosure_eq {S T : Submodule �
     rw [← topologicalAnnihilator_topologicalClosure S,
       ← topologicalAnnihilator_topologicalClosure T, h]
 
-/-- The annihilator of a supremum is the infimum of the annihilators. -/
+/-- **Topological annihilator of a sum of subspaces.** Let $E$ be a normed space over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, and let $S$ and $T$ be subspaces of $E$. The
+topological annihilator of $S + T$ is the intersection of the topological annihilators of $S$
+and $T$. -/
 theorem topologicalAnnihilator_sup (S T : Submodule 𝕜 E) :
     (S ⊔ T).topologicalAnnihilator =
       S.topologicalAnnihilator ⊓ T.topologicalAnnihilator := by
@@ -276,7 +315,10 @@ theorem topologicalAnnihilator_sup (S T : Submodule 𝕜 E) :
     obtain ⟨a, ha, b, hb, rfl⟩ := hx
     simp [map_add, h1 a ha, h2 b hb]
 
-/-- The coannihilator of a supremum is the infimum of the coannihilators. -/
+/-- **Topological coannihilator of a sum of subspaces.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, with continuous dual $E^*$. For subspaces $\Phi$
+and $\Psi$ of $E^*$, the topological coannihilator of their supremum $\Phi + \Psi$ is the
+intersection of the topological coannihilators of $\Phi$ and $\Psi$. -/
 theorem topologicalCoannihilator_sup (Φ Ψ : Submodule 𝕜 (E →L[𝕜] 𝕜)) :
     (Φ ⊔ Ψ).topologicalCoannihilator =
       Φ.topologicalCoannihilator ⊓ Ψ.topologicalCoannihilator := by
