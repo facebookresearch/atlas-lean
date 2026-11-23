@@ -43,10 +43,16 @@ attribute [local instance] HasDerivedCategory.standard
 
 universe u
 
-/-- Coherence is actual quasi-coherence and finite module sections on every affine open. -/
+/-- Coherence (Stacks, Tag 01BV) of a module sheaf: it is quasi-coherent and its
+sections on every affine open `U` form a coherent `Γ(X, U)`-module, finitely
+generated with every finitely generated submodule finitely presented (Stacks,
+Tag 05CU). On a locally noetherian scheme this is quasi-coherence with finitely
+generated sections (Stacks, Tag 01XZ); in general finite generation alone is
+weaker. -/
 def coherentModule {X : Scheme.{u}} (F : X.Modules) : Prop :=
   SheafOfModules.IsQuasicoherent (R := X.ringCatSheaf) F ∧
-    ∀ U : X.Opens, IsAffineOpen U → Module.Finite Γ(X, U) Γ(F, U)
+    ∀ U : X.Opens, IsAffineOpen U → Module.Finite Γ(X, U) Γ(F, U) ∧
+      ∀ N : Submodule Γ(X, U) Γ(F, U), N.FG → Module.FinitePresentation Γ(X, U) N
 
 /-- The actual bounded coherent derived-object property used by the geometric twist. -/
 def boundedCoherent (X : Scheme.{u}) : ObjectProperty (D X) := fun M ↦
