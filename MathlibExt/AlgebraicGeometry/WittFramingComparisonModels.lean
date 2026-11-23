@@ -50,7 +50,7 @@ variable (p : ℕ) [Fact p.Prime] (k : Type) [CommRing k]
 def frameActions (R : PerfectAlgebra p k) : WittFramedTorsors B G p k pi R ⥤
     Action (topology B (integralTest p k B R))
       (groupSheaf B G (integralTest p k B R)) :=
-  isoFibreFst
+  CategoryTheory.Limits.CategoricalPullback.π₁
       (torsorActions B G (integralTest p k B R) ⋙ actionPullback G (localization p k B pi R))
       ((Functor.const (Discrete PUnit.{1})).obj (regularAction B G (rationalTest p k B pi R))) ⋙
     torsorActions B G (integralTest p k B R)
@@ -59,7 +59,7 @@ def frameActions (R : PerfectAlgebra p k) : WittFramedTorsors B G p k pi R ⥤
 def frameTarget (R : PerfectAlgebra p k) : WittFramedTorsors B G p k pi R ⥤
     Action (topology B (rationalTest p k B pi R))
       (groupSheaf B G (rationalTest p k B pi R)) :=
-  isoFibreSnd
+  CategoryTheory.Limits.CategoricalPullback.π₂
       (torsorActions B G (integralTest p k B R) ⋙ actionPullback G (localization p k B pi R))
       ((Functor.const (Discrete PUnit.{1})).obj (regularAction B G (rationalTest p k B pi R))) ⋙
     (Functor.const (Discrete PUnit.{1})).obj (regularAction B G (rationalTest p k B pi R))
@@ -68,7 +68,11 @@ def frameTarget (R : PerfectAlgebra p k) : WittFramedTorsors B G p k pi R ⥤
 def framing (R : PerfectAlgebra p k) :
     frameActions p k B pi G R ⋙ actionPullback G (localization p k B pi R) ≅
       frameTarget p k B pi G R :=
-  isoFibreComparison
+  CategoryTheory.CatCommSq.iso
+    (CategoryTheory.Limits.CategoricalPullback.π₁ (torsorActions B G (integralTest p k B R) ⋙ actionPullback G (localization p k B pi R))
+      ((Functor.const (Discrete PUnit.{1})).obj (regularAction B G (rationalTest p k B pi R))))
+    (CategoryTheory.Limits.CategoricalPullback.π₂ (torsorActions B G (integralTest p k B R) ⋙ actionPullback G (localization p k B pi R))
+      ((Functor.const (Discrete PUnit.{1})).obj (regularAction B G (rationalTest p k B pi R))))
     (torsorActions B G (integralTest p k B R) ⋙ actionPullback G (localization p k B pi R))
     ((Functor.const (Discrete PUnit.{1})).obj (regularAction B G (rationalTest p k B pi R)))
 
@@ -163,11 +167,11 @@ abbrev FramedRestriction {R S : PerfectAlgebra p k} (f : R ⟶ S)
 /-- A loop determines the original left-multiplication punctured frame on every test. -/
 def RepresentsLoop (R : PerfectAlgebra p k) (g : (loops p k B pi G).obj R)
     (P : WittFramedTorsors B G p k pi R) : Prop :=
-  ∃ e : P.obj.left.of.obj ≅ regularAction B G (integralTest p k B R),
+  ∃ e : P.fst.of.obj ≅ regularAction B G (integralTest p k B R),
     ∀ (T : (Site B (rationalTest p k B pi R))ᵒᵖ)
       (x : (groupSets (topology B (rationalTest p k B pi R))
         (groupSheaf B G (rationalTest p k B pi R))).obj.obj T),
-      P.obj.hom.val.hom.app T
+      P.iso.hom.val.hom.app T
         (((actionPullback G (localization p k B pi R)).map e.inv).val.hom.app T x) =
           ULift.up ((T.unop.hom ≫ g) * (show T.unop.left ⟶ G from x.down))
 

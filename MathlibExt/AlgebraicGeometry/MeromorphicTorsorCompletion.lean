@@ -265,9 +265,9 @@ def CompletionComparison.comparison :
 
 /-- The actual native comma lift, followed by its native core. -/
 def globalToLocal : Hecke p E G H P d U ⥤ LocalHecke p E G d U Q :=
-  Core.functorToCore (isoFibreLift (genericActions p E G d U Q)
-    (genericActions p E G d U Q) (completedLeft p E G H P d U Q A B)
-      (completedRight p E G H P d U Q A B) C.comparison)
+  Core.functorToCore ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+    (genericActions p E G d U Q) (genericActions p E G d U Q) (Hecke p E G H P d U)).obj
+    ⟨completedLeft p E G H P d U Q A B, completedRight p E G H P d U Q A B, C.comparison⟩)
 
 omit [Fact p.Prime] in
 /-- The first leg is exactly the computed completion functor. -/
@@ -286,7 +286,7 @@ theorem globalToLocal_right :
 omit [Fact p.Prime] in
 /-- Its actual punctured map is the original source-normalized comparison. -/
 theorem globalToLocal_comparison (M : Hecke p E G H P d U) :
-    ((globalToLocal p E G H P d U Q A B F h C).obj M).of.obj.hom =
+    ((globalToLocal p E G H P d U Q A B F h C).obj M).of.iso.hom =
       C.comparison.hom.app M := rfl
 
 omit [Fact p.Prime] in

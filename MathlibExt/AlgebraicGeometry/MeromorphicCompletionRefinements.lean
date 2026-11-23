@@ -243,11 +243,11 @@ def reindexedComparison :
 
 /-- Actual local Hecke base change, with all arrows and both native completed torsor legs. -/
 def localReindex : LocalHecke p E G d U Q ⥤ LocalHecke p E G d U Q' :=
-  Core.functorToCore (isoFibreLift (genericActions p E G d U Q')
-    (genericActions p E G d U Q')
-    (localLeftLeg p E G d U Q ⋙ torsorReindex p E d U Q Q' r R G V)
-    (localRightLeg p E G d U Q ⋙ torsorReindex p E d U Q Q' r R G V)
-    (reindexedComparison p E d U Q Q' r R G V S))
+  Core.functorToCore ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+    (genericActions p E G d U Q') (genericActions p E G d U Q') (LocalHecke p E G d U Q)).obj
+    ⟨localLeftLeg p E G d U Q ⋙ torsorReindex p E d U Q Q' r R G V,
+      localRightLeg p E G d U Q ⋙ torsorReindex p E d U Q Q' r R G V,
+      reindexedComparison p E d U Q Q' r R G V S⟩)
 
 variable (A : Algebraization p E G H Q.space)
   (B : FpqcPreservesTorsors E G (completionBaseMap p E d U Q))

@@ -146,12 +146,12 @@ abbrev LocalHecke := Core (IsoFibre (genericActions p E G d U Q)
 
 /-- The original left algebraic torsor. -/
 def localLeftLeg : LocalHecke p E G d U Q ⥤ FormalTorsors p E G d U Q :=
-  Core.inclusion _ ⋙ isoFibreFst (genericActions p E G d U Q)
+  Core.inclusion _ ⋙ CategoryTheory.Limits.CategoricalPullback.π₁ (genericActions p E G d U Q)
     (genericActions p E G d U Q)
 
 /-- The original right algebraic torsor. -/
 def localRightLeg : LocalHecke p E G d U Q ⥤ FormalTorsors p E G d U Q :=
-  Core.inclusion _ ⋙ isoFibreSnd (genericActions p E G d U Q)
+  Core.inclusion _ ⋙ CategoryTheory.Limits.CategoricalPullback.π₂ (genericActions p E G d U Q)
     (genericActions p E G d U Q)
 
 /-- The full native punctured comparison, coherent on every local Hecke arrow. -/
@@ -159,7 +159,8 @@ def localComparison : localLeftLeg p E G d U Q ⋙ genericActions p E G d U Q �
     localRightLeg p E G d U Q ⋙ genericActions p E G d U Q :=
   _root_.CategoryTheory.Functor.associator _ _ _ ≪≫
     _root_.CategoryTheory.Functor.isoWhiskerLeft (Core.inclusion _)
-      (isoFibreComparison (genericActions p E G d U Q) (genericActions p E G d U Q)) ≪≫
+      (CategoryTheory.CatCommSq.iso (CategoryTheory.Limits.CategoricalPullback.π₁ (genericActions p E G d U Q) (genericActions p E G d U Q))
+        (CategoryTheory.Limits.CategoricalPullback.π₂ (genericActions p E G d U Q) (genericActions p E G d U Q)) (genericActions p E G d U Q) (genericActions p E G d U Q)) ≪≫
         (_root_.CategoryTheory.Functor.associator _ _ _).symm
 
 end MathlibExt.AlgebraicGeometry.MeromorphicHeckeModels
