@@ -151,20 +151,6 @@ public theorem_wanted stirlingParkSpot_before_second_lucky (n : ℕ) (w : Fin (2
     (hi : 2 ≤ i.val + 1) (hix : i.val + 1 ≤ x - 1) :
     stirlingParkSpot w i = w ⟨0, i.pos⟩ + i.val
 
-/-- **Left-to-right minima of a Stirling permutation sit at odd positions.** Let
-$w = w_1 \cdots w_{2n}$ be a Stirling permutation of order $n$ and let $j \in \{1, \dots, 2n\}$.
-If $w_j < w_i$ for every $i < j$, then $j$ is odd.
-
-In the paper, $j$ is the first car preferring spot $w_j$; the hypothesis $w_j < w_i$ for all
-$i < j$ already implies this, and $w_j \in \{1, \dots, n\}$ holds for every Stirling permutation.
-
-Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
-Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Lemma 3.7 (`jis-2024-24.6.7-lem-27`). -/
-public theorem_wanted stirling_odd_of_lt_all_before (n : ℕ) (w : Fin (2 * n) → ℕ)
-    (hw : IsStirlingPermutation n w) (j : Fin (2 * n)) (hj : ∀ i < j, w j < w i) :
-    Odd (j.val + 1)
-
 /-- **A second lucky car beyond $n$ is odd.** Let $w = w_1 \cdots w_{2n}$ be a Stirling
 permutation of order $n$, read as a parking function of length $2n$, and let $x$ be a lucky car
 of $w$ such that exactly one lucky car of $w$ is smaller than $x$, so that $x$ is the
