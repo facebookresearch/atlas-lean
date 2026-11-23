@@ -463,7 +463,7 @@ private lemma Cpow_coeff : ∀ (p j : ℕ), 0 < j →
     = ((j : ℚ) / ((j + 2 * p : ℕ) : ℚ)) * ((Nat.choose (j + 2 * p) p : ℕ) : ℚ) := by
   intro p
   induction p using Nat.strong_induction_on with
-  | h p ih =>
+  | ind p ih =>
     intro j hj
     rcases Nat.eq_zero_or_pos p with rfl | hp
     · have h1 : PowerSeries.coeff 0 (CatQ ^ j) = 1 := by

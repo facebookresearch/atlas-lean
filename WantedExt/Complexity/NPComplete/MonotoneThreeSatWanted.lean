@@ -44,7 +44,7 @@ reduction from every language in `NP`
 
 /-- **Monotone 3-SAT instances.** A monotone 3-SAT instance is a pair $(n, \varphi)$ of a
 natural number $n$, the number of variables, and a CNF formula $\varphi$. -/
-abbrev MonotoneThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev MonotoneThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- **Well-formed monotone 3-SAT instances.** A monotone 3-SAT instance $(n, \varphi)$ is well
 formed when every clause of the CNF formula $\varphi$ is a list of exactly three literals
@@ -61,7 +61,7 @@ formula $\varphi$. -/
 def MonotoneThreeSatFeasible
     (i : MonotoneThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
 
 open Classical in
 /-- **MONOTONE 3-SAT as a decision problem.** The decision problem MONOTONE 3-SAT accepts a
