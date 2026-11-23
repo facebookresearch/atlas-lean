@@ -10,6 +10,7 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.ConjTranspose
+public import Mathlib.LinearAlgebra.Matrix.Block
 public import Mathlib.Algebra.Order.Star.Rat
 
 @[expose] public section
@@ -37,7 +38,7 @@ namespace SOSCertificate.LDL
 /-- Unit lower-triangular matrices over `ℚ`, indexed by `Fin m`: ones on the
 diagonal and zeros strictly above it. -/
 def IsUnitLowerTriangular {m : ℕ} (L : Matrix (Fin m) (Fin m) ℚ) : Prop :=
-  (∀ i, L i i = 1) ∧ (∀ i j, i < j → L i j = 0)
+  L.IsLowerTriangular ∧ ∀ i, L i i = 1
 
 /-- Soundness of exact rational LDLᵀ certificates: a matrix that factors as
 `L * diagonal d * Lᵀ` with `L` unit lower-triangular and `d` entrywise
@@ -57,16 +58,29 @@ theorem ldl_posSemidef {m : ℕ} (L : Matrix (Fin m) (Fin m) ℚ) (d : Fin m →
   rw [hT]
   exact hD.mul_mul_conjTranspose_same L
 
+/-- Each entry of `L * diagonal d * Lᵀ` is a single sum. -/
+theorem ldl_entry {m : ℕ} (L : Matrix (Fin m) (Fin m) ℚ) (d : Fin m → ℚ)
+    (i j : Fin m) :
+    (L * Matrix.diagonal d * L.transpose) i j = ∑ k, L i k * d k * L j k := by
+  rw [Matrix.mul_apply]
+  simp only [Matrix.mul_diagonal, Matrix.transpose_apply]
+
+instance ldlEntryDecidable {m : ℕ} {Q L : Matrix (Fin m) (Fin m) ℚ}
+    {d : Fin m → ℚ} :
+    Decidable (∀ i j, Q i j = ∑ k, L i k * d k * L j k) :=
+  decidable_of_iff
+    (∀ ij : Fin m × Fin m, Q ij.1 ij.2 = ∑ k, L ij.1 k * d k * L ij.2 k)
+    ⟨fun h i j => h (i, j), fun h ij => h ij.1 ij.2⟩
+
 /-- Executable checker for exact rational LDLᵀ certificates. It decides the
-three certificate conditions: `L` is unit lower-triangular (ones on the
-diagonal; zeros above it, quantified over index pairs), `d` is entrywise
-nonnegative, and the factorization equation
-`Q = L * diagonal d * Lᵀ` holds (matrix equality over a `Fintype` is
-decidable, decided entrywise). -/
+three certificate conditions: `L` is unit lower-triangular (Mathlib's
+`IsLowerTriangular` with ones on the diagonal), `d` is entrywise
+nonnegative, and the factorization equation holds entrywise,
+`Q i j = ∑ k, L i k * d k * L j k` (a single sum per entry, decidable on
+`ℚ` entries). -/
 def checkLDL {m : ℕ} (Q L : Matrix (Fin m) (Fin m) ℚ) (d : Fin m → ℚ) : Bool :=
-  decide (∀ i, L i i = 1) &&
-    (decide (∀ ij : Fin m × Fin m, ij.1 < ij.2 → L ij.1 ij.2 = 0) &&
-      (decide (∀ i, 0 ≤ d i) && decide (Q = L * Matrix.diagonal d * L.transpose)))
+  decide (L.IsLowerTriangular ∧ ∀ i, L i i = 1) &&
+    (decide (∀ i, 0 ≤ d i) && decide (∀ i j, Q i j = ∑ k, L i k * d k * L j k))
 
 /-- The executable checker is sound: whenever it accepts, `Q` is positive
 semidefinite. -/
@@ -74,14 +88,17 @@ theorem checkLDL_sound {m : ℕ} {Q L : Matrix (Fin m) (Fin m) ℚ} {d : Fin m �
     (h : checkLDL Q L d = true) : Q.PosSemidef := by
   unfold checkLDL at h
   simp only [Bool.and_eq_true] at h
-  obtain ⟨hdiag, hupper, hd, hQ⟩ := h
-  have h1 : ∀ i, L i i = 1 := of_decide_eq_true hdiag
-  have h2 : ∀ ij : Fin m × Fin m, ij.1 < ij.2 → L ij.1 ij.2 = 0 :=
-    of_decide_eq_true hupper
-  have h2' : ∀ i j, i < j → L i j = 0 := fun i j hij => h2 (i, j) hij
+  obtain ⟨htri, hd, hE⟩ := h
+  have hL' : L.IsLowerTriangular ∧ ∀ i, L i i = 1 := of_decide_eq_true htri
+  have hL : IsUnitLowerTriangular L := hL'
   have h3 : ∀ i, 0 ≤ d i := of_decide_eq_true hd
-  have h4 : Q = L * Matrix.diagonal d * L.transpose := of_decide_eq_true hQ
-  exact ldl_posSemidef L d ⟨h1, h2'⟩ h3 Q h4
+  have hE' : ∀ i j, Q i j = ∑ k, L i k * d k * L j k := of_decide_eq_true hE
+  have hQ : Q = L * Matrix.diagonal d * L.transpose := by
+    apply Matrix.ext
+    intro i j
+    rw [ldl_entry]
+    exact hE' i j
+  exact ldl_posSemidef L d hL h3 Q hQ
 
 
 end SOSCertificate.LDL

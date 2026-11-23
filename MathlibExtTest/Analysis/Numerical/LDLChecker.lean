@@ -11,6 +11,7 @@ module
 public import MathlibExt.Analysis.Numerical.LDLChecker
 public meta import MathlibExt.Analysis.Numerical.LDLChecker
 public import Mathlib.LinearAlgebra.Matrix.Notation
+public import Mathlib.LinearAlgebra.Matrix.Block
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Algebra.Order.Star.Rat
@@ -68,25 +69,37 @@ theorem factor_2x2 : (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ)
 `L = !![1, 0; 2, 1]` unit lower-triangular and `d = ![3, 5]` nonnegative. -/
 theorem accept_2x2 : checkLDL (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ)
     (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) (![3, 5] : Fin 2 → ℚ) = true := by
-  have e1 : decide (∀ i : Fin 2,
-      (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) i i = 1) = true := by decide
-  have e2 : decide (∀ ij : Fin 2 × Fin 2, ij.1 < ij.2 →
-      (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) ij.1 ij.2 = 0) = true := by
+  have eTri : decide ((!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ).IsLowerTriangular ∧
+      ∀ i : Fin 2, (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) i i = 1) = true := by
     decide
   have e3 : decide (∀ i : Fin 2, (0 : ℚ) ≤ (![3, 5] : Fin 2 → ℚ) i) = true := by
     decide
-  have e4 : decide ((!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ) = (!![1, 0; 2, 1] :
-      Matrix (Fin 2) (Fin 2) ℚ) * Matrix.diagonal (![3, 5] : Fin 2 → ℚ)
-      * (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ).transpose) = true := by
-    cases h : decide ((!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ) = (!![1, 0; 2, 1] :
-      Matrix (Fin 2) (Fin 2) ℚ) * Matrix.diagonal (![3, 5] : Fin 2 → ℚ)
-      * (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ).transpose) with
+  have hEntry : ∀ i j : Fin 2,
+      (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ) i j =
+      ∑ k, (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) i k *
+        (![3, 5] : Fin 2 → ℚ) k *
+        (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) j k := by
+    intro i j
+    have hQij := congrArg
+      (fun M : Matrix (Fin 2) (Fin 2) ℚ => M i j) factor_2x2
+    rw [hQij]
+    exact ldl_entry _ _ i j
+  have eEntry : decide (∀ i j : Fin 2,
+      (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ) i j =
+      ∑ k, (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) i k *
+        (![3, 5] : Fin 2 → ℚ) k *
+        (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) j k) = true := by
+    cases h : decide (∀ i j : Fin 2,
+      (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ) i j =
+      ∑ k, (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) i k *
+        (![3, 5] : Fin 2 → ℚ) k *
+        (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) j k) with
     | true => rfl
-    | false => exact absurd factor_2x2 (of_decide_eq_false h)
+    | false => exact absurd hEntry (of_decide_eq_false h)
   have hEq : checkLDL (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ)
       (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) (![3, 5] : Fin 2 → ℚ)
-      = (true && (true && (true && true))) := by
-    simp only [checkLDL, e1, e2, e3, e4]
+      = (true && (true && true)) := by
+    simp only [checkLDL, eTri, e3, eEntry]
   exact hEq.trans (by decide)
 
 /-- `PosSemidef` for the acceptance case, through the verified checker. -/
@@ -97,12 +110,12 @@ theorem psd_2x2 : (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ).PosSemidef :=
 theorem directly. -/
 theorem psd_2x2_via_main :
     (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ).PosSemidef := by
-  have hL1 : ∀ i : Fin 2,
+  have hLower : (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ).IsLowerTriangular := by
+    decide
+  have hDiag : ∀ i : Fin 2,
       (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) i i = 1 := by decide
-  have hL2 : ∀ ij : Fin 2 × Fin 2, ij.1 < ij.2 →
-      (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) ij.1 ij.2 = 0 := by decide
   have hL : IsUnitLowerTriangular (!![1, 0; 2, 1] : Matrix (Fin 2) (Fin 2) ℚ) :=
-    ⟨hL1, fun i j hij => hL2 (i, j) hij⟩
+    ⟨hLower, hDiag⟩
   have hd : ∀ i : Fin 2, (0 : ℚ) ≤ (![3, 5] : Fin 2 → ℚ) i := by decide
   exact ldl_posSemidef _ _ hL hd _ factor_2x2
 
@@ -117,44 +130,36 @@ matrix `diagonal ![1, -1]`; triangularity and nonnegativity pass but the
 factorization equation fails. -/
 theorem reject_nonpsd : checkLDL (Matrix.diagonal (![1, -1] : Fin 2 → ℚ))
     (1 : Matrix (Fin 2) (Fin 2) ℚ) (![1, 1] : Fin 2 → ℚ) = false := by
-  have hne : ¬ ((Matrix.diagonal (![1, -1] : Fin 2 → ℚ))
-      = (1 : Matrix (Fin 2) (Fin 2) ℚ)
-        * Matrix.diagonal (![1, 1] : Fin 2 → ℚ)
-        * (1 : Matrix (Fin 2) (Fin 2) ℚ).transpose) := by
+  have hne : ¬ (∀ i j : Fin 2, (Matrix.diagonal (![1, -1] : Fin 2 → ℚ)) i j =
+      ∑ k, (1 : Matrix (Fin 2) (Fin 2) ℚ) i k * (![1, 1] : Fin 2 → ℚ) k *
+        (1 : Matrix (Fin 2) (Fin 2) ℚ) j k) := by
     intro hcon
-    have h11 := congrArg (fun M : Matrix (Fin 2) (Fin 2) ℚ => M 1 1) hcon
+    have h11 := hcon 1 1
     have b11 : (Matrix.diagonal (![1, -1] : Fin 2 → ℚ)) 1 1 = -1 := by decide
     have o10 : (1 : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 := by decide
     have o11 : (1 : Matrix (Fin 2) (Fin 2) ℚ) 1 1 = 1 := by decide
-    have f00 : (Matrix.diagonal (![1, 1] : Fin 2 → ℚ)) 0 0 = 1 := by decide
-    have f10 : (Matrix.diagonal (![1, 1] : Fin 2 → ℚ)) 1 0 = 0 := by decide
-    have f01 : (Matrix.diagonal (![1, 1] : Fin 2 → ℚ)) 0 1 = 0 := by decide
-    have f11 : (Matrix.diagonal (![1, 1] : Fin 2 → ℚ)) 1 1 = 1 := by decide
-    have u01 : (1 : Matrix (Fin 2) (Fin 2) ℚ).transpose 0 1 = 0 := by decide
-    have u11 : (1 : Matrix (Fin 2) (Fin 2) ℚ).transpose 1 1 = 1 := by decide
-    simp only [Matrix.mul_apply, Fin.sum_univ_two, b11, o10, o11, f00, f10, f01,
-      f11, u01, u11] at h11
+    have d0 : ((![1, 1] : Fin 2 → ℚ) 0) = 1 := by decide
+    have d1 : ((![1, 1] : Fin 2 → ℚ) 1) = 1 := by decide
+    simp only [Fin.sum_univ_two, b11, o10, o11, d0, d1] at h11
     norm_num at h11
-  have e1 : decide (∀ i : Fin 2, (1 : Matrix (Fin 2) (Fin 2) ℚ) i i = 1)
-      = true := by decide
-  have e2 : decide (∀ ij : Fin 2 × Fin 2, ij.1 < ij.2 →
-      (1 : Matrix (Fin 2) (Fin 2) ℚ) ij.1 ij.2 = 0) = true := by decide
+  have eTri : decide ((1 : Matrix (Fin 2) (Fin 2) ℚ).IsLowerTriangular ∧
+      ∀ i : Fin 2, (1 : Matrix (Fin 2) (Fin 2) ℚ) i i = 1) = true := by decide
   have e3 : decide (∀ i : Fin 2, (0 : ℚ) ≤ (![1, 1] : Fin 2 → ℚ) i) = true := by
     decide
-  have e4 : decide ((Matrix.diagonal (![1, -1] : Fin 2 → ℚ))
-      = (1 : Matrix (Fin 2) (Fin 2) ℚ)
-        * Matrix.diagonal (![1, 1] : Fin 2 → ℚ)
-        * (1 : Matrix (Fin 2) (Fin 2) ℚ).transpose) = false := by
-    cases h : decide ((Matrix.diagonal (![1, -1] : Fin 2 → ℚ))
-      = (1 : Matrix (Fin 2) (Fin 2) ℚ)
-        * Matrix.diagonal (![1, 1] : Fin 2 → ℚ)
-        * (1 : Matrix (Fin 2) (Fin 2) ℚ).transpose) with
+  have eEntry : decide (∀ i j : Fin 2,
+      (Matrix.diagonal (![1, -1] : Fin 2 → ℚ)) i j =
+      ∑ k, (1 : Matrix (Fin 2) (Fin 2) ℚ) i k * (![1, 1] : Fin 2 → ℚ) k *
+        (1 : Matrix (Fin 2) (Fin 2) ℚ) j k) = false := by
+    cases h : decide (∀ i j : Fin 2,
+      (Matrix.diagonal (![1, -1] : Fin 2 → ℚ)) i j =
+      ∑ k, (1 : Matrix (Fin 2) (Fin 2) ℚ) i k * (![1, 1] : Fin 2 → ℚ) k *
+        (1 : Matrix (Fin 2) (Fin 2) ℚ) j k) with
     | true => exact absurd (of_decide_eq_true h) hne
     | false => rfl
   have hEq : checkLDL (Matrix.diagonal (![1, -1] : Fin 2 → ℚ))
       (1 : Matrix (Fin 2) (Fin 2) ℚ) (![1, 1] : Fin 2 → ℚ)
-      = (true && (true && (true && false))) := by
-    simp only [checkLDL, e1, e2, e3, e4]
+      = (true && (true && false)) := by
+    simp only [checkLDL, eTri, e3, eEntry]
   exact hEq.trans (by decide)
 
 /-- Sanity anchor: `diagonal ![1, -1]` is not positive semidefinite. -/
@@ -166,6 +171,13 @@ theorem not_psd_diag : ¬ (Matrix.diagonal (![1, -1] : Fin 2 → ℚ)).PosSemide
   rw [e] at h1
   exact absurd h1 (by decide)
 
+/-- Acceptance case evaluated directly in the kernel: the 2x2 LDL certificate. -/
+example : checkLDL (!![3, 6; 6, 17] : Matrix (Fin 2) (Fin 2) ℚ)
+    !![1, 0; 2, 1] ![3, 5] = true := by decide +kernel
+
+/-- Rejection case evaluated directly in the kernel: negative diagonal entry. -/
+example : checkLDL (Matrix.diagonal (![1, -1] : Fin 2 → ℚ))
+    (1 : Matrix (Fin 2) (Fin 2) ℚ) ![1, -1] = false := by decide +kernel
 #print axioms factor_2x2
 #print axioms accept_2x2
 #print axioms psd_2x2
