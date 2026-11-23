@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Combinatorics.Additive.ModularSchurNumbers
 
-/-! # Tests for modular Schur numbers modulo a prime power -/
+/-! # Tests for modular Schur numbers -/
 
 open MetaMathlibExt
 
@@ -30,3 +30,11 @@ example : ¬ HasSumFreePartitionMod 4 3 3 2 := by
   apply hc (c 2) (fun _ => 2) _ 2 _ (by decide)
   · exact fun _ => ⟨2, by decide, le_rfl, rfl, rfl⟩
   · exact ⟨2, by decide, le_rfl, rfl, rfl⟩
+
+-- At the smallest allowed modulus and color count, 7 is in the exceptional class.
+example : modularSchurNumber 4 2 7 = 1 :=
+  (modularSchurNumber_two_mul 2 7 2 (by decide) (by decide) (by decide) (by decide)).1 (by decide)
+
+-- Arity equal to the modulus allows 1 and 2 to receive distinct colors.
+example : 2 ≤ modularSchurNumber 4 2 4 :=
+  (modularSchurNumber_two_mul 2 4 2 (by decide) (by decide) (by decide) (by decide)).2 (by decide)

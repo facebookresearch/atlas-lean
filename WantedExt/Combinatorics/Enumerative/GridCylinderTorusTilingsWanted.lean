@@ -324,17 +324,8 @@ public theorem_wanted rectangularGrid_r2f_odd {T : Type*} [Fintype T] [Decidable
     fixedTilingCount (cellR2F n m) σ =
       Fintype.card T ^ (n * (m - 1) / 2) * tileFixedCount σ 1 ^ n
 
-/-- **Square-grid tilings fixed by the identity.** Let $n$ be a positive integer, let $T$ be a
-finite set and let $\sigma$ be a permutation of $T$ with $\sigma^1 = 1$. Then the number of maps
-$F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(c) = \sigma(F(c))$ for every cell $c$ is
-$|T|^{n^2}$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
-public theorem_wanted squareGrid_identity {T : Type*} [Fintype T] [DecidableEq T]
-    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
-    fixedTilingCount (id : ZMod n × ZMod n → ZMod n × ZMod n) σ =
-      Fintype.card T ^ (n ^ 2)
+-- The case of the identity, `squareGrid_identity`, is proved in
+-- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`, which this module imports.
 
 /-- **Square-grid tilings fixed by the half-turn for even $n$.** Let $n$ be an even positive
 integer, let $T$ be a finite set and let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$.

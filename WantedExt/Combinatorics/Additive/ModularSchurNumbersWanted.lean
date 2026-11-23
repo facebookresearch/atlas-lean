@@ -54,19 +54,6 @@ public theorem_wanted modularSchurNumber_lt_of_modEq (m k l a : ℕ) (hk : 0 < k
     (ha : 0 < a) (ham : a ≤ m - 1) (hla : l ≡ 1 [MOD m / Nat.gcd a m]) :
     modularSchurNumber m k l < a
 
-/-- **Modular Schur numbers modulo an even number.** Let $k$, $l$ and $n$ be natural numbers with
-$k \ge 2$, $n \ge 2$, $l \ge 1$ and $l \not\equiv 1 \pmod{2n}$, and let $S_{2n}(k, l)$ be the
-generalized Schur number modulo $2n$. If $l \equiv n + 1 \pmod{2n}$, then $S_{2n}(k, l) = 1$;
-otherwise $S_{2n}(k, l) \ge 2$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 4
-(`integers-2025-A62-cor-4`). -/
-public theorem_wanted modularSchurNumber_two_mul (k l n : ℕ) (hk : 2 ≤ k) (hn : 2 ≤ n)
-    (hl : 0 < l) (hl1 : ¬ l ≡ 1 [MOD 2 * n]) :
-    (l ≡ n + 1 [MOD 2 * n] → modularSchurNumber (2 * n) k l = 1) ∧
-      (¬ l ≡ n + 1 [MOD 2 * n] → 2 ≤ modularSchurNumber (2 * n) k l)
-
 /-- **Modular Schur numbers attaining $m - 1$.** Let $l \ge 2$ and $m \ge 2$ be natural numbers
 such that $l \not\equiv 1 \pmod{d}$ for every divisor $d \ne 1$ of $m$, and let $k \ge m - 1$.
 Then the generalized Schur number $S_m(k, l)$, the largest $n$ such that $\{1, \dots, n\}$

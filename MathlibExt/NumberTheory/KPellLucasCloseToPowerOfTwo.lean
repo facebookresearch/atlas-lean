@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Analysis.SpecialFunctions.Log.GuzmanSanchezLuca
 public import MathlibExt.Combinatorics.Enumerative.PellLucasNumber
+import Mathlib.Algebra.Field.GeomSum
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 
 /-!
@@ -25,6 +26,7 @@ are in `WantedExt.NumberTheory.KPellLucasCloseToPowerOfTwoWanted`.
   `|log (1 + x)| < (-log (1 - a) / a) |x|` and `|x| < (a / (1 - e^{-a})) |eˣ - 1|`.
 * `lt_two_rpow_mul_mul_log_rpow_of_one_lt` (Lemma 7) applies the Guzmán Sánchez–Luca bound
   to `x > 1`.
+* `kPellLucas_close_two_pow_exponent_bounds` bounds the exponent of a nearby power of two.
 
 ## Proof of Lemma 6
 
@@ -188,6 +190,81 @@ public theorem lt_two_rpow_mul_mul_log_rpow_of_one_lt (ℓ T x : ℝ)
     (hT : (4 * ℓ ^ 2) ^ ℓ < T) (hTx : x / Real.log x ^ ℓ < T) :
     x < 2 ^ ℓ * T * Real.log T ^ ℓ :=
   lt_two_rpow_mul_mul_log_rpow hℓ hT hTx
+
+-- For r = 2.62, the inequality 2 + 1 / (r - 1) ≤ r makes 2 rⁿ dominate the recurrence
+-- even when the truncated sum is extended to all earlier terms.
+private theorem kPellLucas_close_two_pow_exponent_bounds.growth_bounds (k n : ℕ) :
+    2 ^ n ≤ kPellLucas k n ∧ (kPellLucas k n : ℝ) ≤ 2 * 2.62 ^ n := by
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    match n with
+    | 0 => norm_num [kPellLucas_zero]
+    | 1 => norm_num [kPellLucas_one]
+    | n + 2 =>
+      obtain ⟨hlo, hhi⟩ := ih (n + 1) (by omega)
+      have hsum : ∑ j ∈ Finset.range (min (k - 1) (n + 1)), kPellLucas k (n - j) ≤
+          ∑ j ∈ Finset.range (n + 1), kPellLucas k j := calc
+        _ ≤ ∑ j ∈ Finset.range (n + 1), kPellLucas k (n - j) :=
+          Finset.sum_le_sum_of_subset (Finset.range_mono (min_le_right ..))
+        _ = _ := Finset.sum_range_reflect (kPellLucas k) (n + 1)
+      rw [kPellLucas]
+      constructor
+      · rw [pow_succ]
+        omega
+      · calc
+          _ ≤ 2 * (kPellLucas k (n + 1) : ℝ) +
+              ∑ j ∈ Finset.range (n + 1), (kPellLucas k j : ℝ) := by
+            exact_mod_cast Nat.add_le_add_left hsum _
+          _ ≤ 2 * (2 * 2.62 ^ (n + 1)) + ∑ j ∈ Finset.range (n + 1), 2 * 2.62 ^ j := by
+            gcongr with j hj
+            exact (ih j (Nat.lt_succ_of_lt (Finset.mem_range.mp hj))).2
+          _ ≤ _ := by
+            rw [← Finset.mul_sum, geom_sum_eq (by norm_num : (2.62 : ℝ) ≠ 1),
+              pow_succ (2.62 : ℝ) (n + 1)]
+            norm_num [div_eq_mul_inv]
+            linarith only [pow_nonneg (by norm_num : (0 : ℝ) ≤ 2.62) (n + 1)]
+
+set_option linter.unusedVariables false in
+/-- **Exponent bounds for $k$-Pell–Lucas numbers close to a power of two (Lemma 8).** Let $k$, $n$
+and $m$ be natural numbers with $k \ge 2$, $n \ge 1$, $m \ge 2$ and $n \ge k + 1$, and let
+$Q^{(k)}_n$ be the $n$th $k$-Pell–Lucas number. If $|Q^{(k)}_n - 2^m| < 2^{m/2}$, then
+$0.69n - 1.69 < m < 1.39n + 3.78$.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 8 (`integers-2025-A67-lem-8`). -/
+public theorem kPellLucas_close_two_pow_exponent_bounds (k n m : ℕ) (hk : 2 ≤ k)
+    (hn : 1 ≤ n) (hm : 2 ≤ m) (hkn : k + 1 ≤ n)
+    (hclose : |(kPellLucas k n : ℝ) - 2 ^ m| < (2 : ℝ) ^ ((m : ℝ) / 2)) :
+    (0.69 : ℝ) * n - 1.69 < m ∧ (m : ℝ) < 1.39 * n + 3.78 := by
+  obtain ⟨hlo, hhi⟩ := kPellLucas_close_two_pow_exponent_bounds.growth_bounds k n
+  have hhalf : (2 : ℝ) ^ ((m : ℝ) / 2) ≤ 2 ^ m / 2 := by
+    rw [← Real.rpow_natCast, ← Real.rpow_sub_one (by norm_num : (2 : ℝ) ≠ 0)]
+    apply Real.rpow_le_rpow_of_exponent_le (by norm_num)
+    have hm' : (2 : ℝ) ≤ m := by exact_mod_cast hm
+    linarith
+  obtain ⟨hleft, hright⟩ := abs_lt.mp hclose
+  constructor
+  · have hpow : (2 : ℝ) ^ n < 2 ^ (m + 1) := by
+      rw [pow_succ]
+      linarith [show (2 : ℝ) ^ n ≤ kPellLucas k n by exact_mod_cast hlo,
+        pow_pos (by norm_num : (0 : ℝ) < 2) m]
+    have hnm := (pow_lt_pow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).mp hpow
+    calc
+      (0.69 : ℝ) * n - 1.69 < n := by linarith [show (1 : ℝ) ≤ n by exact_mod_cast hn]
+      _ ≤ m := by exact_mod_cast Nat.le_of_lt_succ hnm
+  · have hbase : (2.62 : ℝ) ≤ 2 ^ (1.39 : ℝ) := by
+      apply le_of_pow_le_pow_left₀ (n := 100) (by decide) (by positivity)
+      rw [← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2)]
+      norm_num
+    have hpow : (2 : ℝ) ^ (m : ℝ) < 2 ^ (1.39 * n + 2 : ℝ) := calc
+      (2 : ℝ) ^ (m : ℝ) < 4 * (2.62 : ℝ) ^ n := by rw [Real.rpow_natCast]; linarith
+      _ ≤ 4 * ((2 : ℝ) ^ (1.39 : ℝ)) ^ n := by gcongr
+      _ = _ := by
+        rw [Real.rpow_add (by norm_num : (0 : ℝ) < 2),
+          Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2)]
+        norm_num [mul_comm]
+    have := (Real.rpow_lt_rpow_left_iff (by norm_num : (1 : ℝ) < 2)).mp hpow
+    linarith
 
 end
 
