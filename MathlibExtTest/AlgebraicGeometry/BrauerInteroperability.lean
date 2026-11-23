@@ -154,6 +154,12 @@ example (K : Type) [Field K] (c : TwoCocycles K) :
       cocycleClass K (restrictCocycle K (ContinuousMonoidHom.id _) (identityPair K) c) :=
   restriction_cocycleClass K _ _ c
 
+-- Restriction along the identity pair keeps the inhomogeneous values (`restrictCocycle_values`).
+example (K : Type) [Field K] (c : TwoCocycles K) (g h : Field.absoluteGaloisGroup K) :
+    inhomogeneousValue K (restrictCocycle K (ContinuousMonoidHom.id _) (identityPair K) c) g h =
+      inhomogeneousValue K c g h :=
+  restrictCocycle_values K _ _ c g h
+
 -- Evaluation at a field point is pullback followed by the field comparison.
 example (K : Type) [Field K] (B : FieldGmComparison K) {X : AlgebraicGeometry.Scheme.{0}}
     (p : AlgebraicGeometry.Spec (.of K) ⟶ X) (a : GmH2 X) :

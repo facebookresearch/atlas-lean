@@ -92,9 +92,12 @@ structure FieldGmComparison where
 /-- The same normalized field family is used at all native residue fields. -/
 abbrev FieldComparisonFamily := ∀ (K : Type) [Field K], FieldGmComparison K
 
-/-- The whole Axiom source factorization is separate from the fixed geometric bridge.
-It preserves literal degree-zero units and agrees with the geometric Čech normalization
-in degree two. No independently chosen derived-cocycle class map is stored. -/
+/-- A factorization of the comparison between étale `Gm` cohomology and continuous cohomology
+through Axiom's derived invariants. Only the composites are normalized: on literal units in degree
+zero, and by the geometric Čech comparison `B` in degree two. The individual legs are not
+canonical: twisting both by an automorphism of the intermediate groups and its inverse gives
+another factorization, so a consumer may use the composites but must not identify either leg with
+the source's comparison map. -/
 structure AxiomFieldFactorization [EnoughInjectives
     (ContinuousGModule.{0, 0} (Field.absoluteGaloisGroup K))]
     (B : FieldGmComparison K) where
@@ -196,6 +199,19 @@ theorem restriction_cocycleClass (P : FieldCoefficientPair L φ) (c : TwoCocycle
       cocycleClass L (restrictCocycle L φ P c) :=
   ConcreteCategory.congr_hom
     (ContinuousCohomology.π_map φ (coefficientMorphism L φ P) 2) c
+
+/-- Restriction of an actual cocycle has the inhomogeneous unit-map formula: its value at
+`(g, h)` is the unit map applied to the value at `(φ g, φ h)`. -/
+theorem restrictCocycle_values (P : FieldCoefficientPair L φ) (c : TwoCocycles K)
+    (g h : Field.absoluteGaloisGroup L) :
+    inhomogeneousValue L (restrictCocycle L φ P c) g h =
+      unitsMap L φ P (inhomogeneousValue K c (φ g) (φ h)) := by
+  have hc := ConcreteCategory.congr_hom
+    (HomologicalComplex.cyclesMap_i
+      (ContinuousCohomology.cochainsMap φ (coefficientMorphism L φ P)) 2) c
+  simp only [inhomogeneousValue, inhomogeneousTwoCocycleValue, restrictCocycle]
+  rw [← map_mul, ← map_one φ]
+  exact congrArg (fun σ => σ.val 1 g (g * h)) hc
 
 end FieldExtension
 

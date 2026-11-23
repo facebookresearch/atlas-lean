@@ -34,7 +34,7 @@ public import Mathlib.Topology.Instances.AddCircle.Defs
 # Separable-closure units and native continuous Brauer classes
 
 The coefficient object is the additive group of actual separable-closure
-units, with discrete topology. The group acting is Mathlib's absolute Galois
+units, with the discrete topology (a scoped instance, active where this namespace is opened). The group acting is Mathlib's absolute Galois
 group, and its action is restriction to that same separable closure. This is
 the coefficient/action dictionary of Tau's `unitsRep`, without importing Tau.
 
@@ -53,10 +53,11 @@ variable (K : Type) [Field K]
 /-- The actual units of the separable closure, written additively. -/
 abbrev SepUnits := Additive (SeparableClosure K)ˣ
 
-/-- The arithmetic coefficient topology is discrete. -/
-instance : TopologicalSpace (SepUnits K) := ⊥
+/-- The arithmetic coefficient topology is discrete. It is scoped: `SepUnits K` unfolds to
+`Additive (SeparableClosure K)ˣ`, which should keep Mathlib's units topology elsewhere. -/
+scoped instance : TopologicalSpace (SepUnits K) := ⊥
 
-instance : DiscreteTopology (SepUnits K) := ⟨rfl⟩
+scoped instance : DiscreteTopology (SepUnits K) := ⟨rfl⟩
 
 /-- An absolute Galois automorphism acts by its actual restriction. -/
 def unitAction (g : Field.absoluteGaloisGroup K) : SepUnits K ≃+ SepUnits K :=

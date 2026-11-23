@@ -68,7 +68,9 @@ public def_wanted source_geometric_cocycle_realization (K : Type) [Field K]
 of every actual two-cocycle, with no independent class map to adjust its sign. -/
 public def_wanted source_field_gm_comparison (K : Type) [Field K] : FieldGmComparison K
 
-/-- Integrate the whole Axiom source factorization through the normalized bridge. -/
+/-- Integrate a factorization of the comparison through Axiom's derived invariants whose composites
+are the normalized comparisons (on units in degree zero, and the geometric bridge in degree two);
+the legs themselves are not canonical. -/
 public def_wanted source_axiom_factorization (K : Type) [Field K]
     [EnoughInjectives (ContinuousGModule.{0, 0} (Field.absoluteGaloisGroup K))]
     (B : FieldGmComparison K) : AxiomFieldFactorization K B
@@ -78,14 +80,6 @@ public def_wanted source_field_coefficient_pair (K L : Type) [Field K] [Field L]
     [Algebra K L] [Algebra (AlgebraicClosure K) (AlgebraicClosure L)]
     [IsScalarTower K (AlgebraicClosure K) (AlgebraicClosure L)] :
     FieldCoefficientPair (K := K) L (Field.absoluteGaloisGroup.mapOfAlgebra K L)
-
-/-- The native restriction has the exact inhomogeneous unit-map formula. -/
-public theorem_wanted restriction_values (K L : Type) [Field K] [Field L] [Algebra K L]
-    (φ : Field.absoluteGaloisGroup L →ₜ* Field.absoluteGaloisGroup K)
-    (P : FieldCoefficientPair (K := K) L φ) (c : TwoCocycles K)
-    (g h : Field.absoluteGaloisGroup L) :
-    inhomogeneousValue L (restrictCocycle L φ P c) g h =
-      unitsMap L φ P (inhomogeneousValue K c (φ g) (φ h))
 
 /-- The geometric field-extension map agrees on every actual two-cocycle class. -/
 public theorem_wanted geometric_restriction_normalized
@@ -272,14 +266,6 @@ private def check_source_field_coefficient_pair (K L : Type) [Field K] [Field L]
     [IsScalarTower K (AlgebraicClosure K) (AlgebraicClosure L)] :
     DefWanted (FieldCoefficientPair (K := K) L (Field.absoluteGaloisGroup.mapOfAlgebra K L)) :=
   source_field_coefficient_pair K L
-
-private def check_restriction_values (K L : Type) [Field K] [Field L] [Algebra K L]
-    (φ : Field.absoluteGaloisGroup L →ₜ* Field.absoluteGaloisGroup K)
-    (P : FieldCoefficientPair (K := K) L φ) (c : TwoCocycles K)
-    (g h : Field.absoluteGaloisGroup L) :
-    ProofWanted (inhomogeneousValue L (restrictCocycle L φ P c) g h =
-      unitsMap L φ P (inhomogeneousValue K c (φ g) (φ h))) :=
-  restriction_values K L φ P c g h
 
 private def check_source_finite_field_pair (K L : Type) [Field K] [Field L]
     [Algebra K L] [FiniteDimensional K L] (σ : L →ₐ[K] SeparableClosure K) :

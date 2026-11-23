@@ -25,12 +25,26 @@ noncomputable section
 
 namespace MathlibExtTest.BrauerCoefficients
 
+/-! ## The discrete coefficient topology is scoped -/
+
+section Unscoped
+
+variable (K : Type) [Field K] [TopologicalSpace (SeparableClosure K)]
+
+-- Without opening `AlgebraicGeometry.BrauerCoefficients`, the bare additive units keep Mathlib's
+-- topology, the units topology, rather than the discrete coefficient topology.
+example : (inferInstance : TopologicalSpace (Additive (SeparableClosure K)ˣ)) =
+    (inferInstance : TopologicalSpace (SeparableClosure K)ˣ) := rfl
+
+end Unscoped
+
 open AlgebraicGeometry.BrauerCoefficients
 
 variable (K : Type) [Field K]
 
 /-! ## Coefficients and action -/
 
+example : (inferInstance : TopologicalSpace (SepUnits K)) = ⊥ := rfl
 example : DiscreteTopology (SepUnits K) := inferInstance
 example : DiscreteTopology (unitsRep K).V := inferInstance
 example : ContinuousSMul (Field.absoluteGaloisGroup K) (unitsRep K).V := inferInstance

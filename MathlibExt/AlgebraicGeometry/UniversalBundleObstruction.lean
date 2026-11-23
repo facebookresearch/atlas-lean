@@ -73,4 +73,3 @@ instance (G : GlobalUniversalStableFamily C r hr d) : QuasiCompact G.M.hom :=
 end GlobalUniversalStableFamily
 
 end MathlibExt.AlgebraicGeometry.UniversalBundleObstruction
-

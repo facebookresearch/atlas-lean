@@ -55,4 +55,3 @@ public theorem_wanted noGlobalUniversalStableFamily
     ¬ Nonempty (GlobalUniversalStableFamily C r hr d)
 
 end WantedExt.AlgebraicGeometry.UniversalBundleObstruction
-
