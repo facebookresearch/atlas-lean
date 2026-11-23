@@ -91,12 +91,18 @@ jobs:
         with:
           persist-credentials: false
 
+      # A cold build of the libraries and their dependencies peaks at about
+      # 40 GB on this disk. Deleting unused SDKs takes one to three minutes, so
+      # do it only when less than 60 GB is free (the runner had 85 GB in
+      # November 2026).
       - name: Free disk space for Lean caches
         run: |
           set -euo pipefail
           df -h /
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
-          df -h /
+          if (( $(df --output=avail -B1G / | tail -n 1) < 60 )); then
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h /
+          fi
 
       - name: Add swap for cold Lean builds
         run: |
@@ -162,11 +168,13 @@ jobs:
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
-      # A pull request audits only the modules its build rewrites; pushes and
-      # merge groups audit everything. The restored build passed the full audit
-      # of its own commit, so the scope needs that commit's audit policy.
+      # A pull request or merge group audits only the modules its build
+      # rewrites, with their importers and their audit batches; pushes to main
+      # audit everything. Main's cache holds only builds that passed the audit
+      # of their own commit, in full or scoped this way, so the scope needs
+      # that commit's audit policy.
       - name: Record the restored build for a scoped audit
-        if: github.event_name == 'pull_request' && steps.local-build-cache.outputs.cache-matched-key != ''
+        if: (github.event_name == 'pull_request' || github.event_name == 'merge_group') && steps.local-build-cache.outputs.cache-matched-key != ''
         continue-on-error: true
         env:
           RESTORED_KEY: ${{ steps.local-build-cache.outputs.cache-matched-key }}
@@ -177,7 +185,34 @@ jobs:
             echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
           fi
 
+      # The native tests of the audit tools read only these files and the
+      # runner. Pull requests and pushes to main always run them; a merge group
+      # whose copies match the restored build's commit skips them, since that
+      # commit's checks ran them on the same inputs.
+      - name: Compare the audit tools with the restored build
+        id: audit-tools
+        if: github.event_name == 'merge_group' && steps.local-build-cache.outputs.cache-matched-key != ''
+        continue-on-error: true
+        env:
+          RESTORED_KEY: ${{ steps.local-build-cache.outputs.cache-matched-key }}
+        run: |
+          set -euo pipefail
+          git fetch --quiet --no-tags --depth=1 origin "${RESTORED_KEY##*-}"
+          if git diff --quiet FETCH_HEAD HEAD -- \
+            lean-toolchain lakefile.toml lake-manifest.json \
+            scripts/test_declaration_collisions_native.py scripts/check_declaration_collisions.sh \
+            scripts/check_declaration_collisions.lean scripts/list_v2_modules.sh \
+            scripts/test_compiled_audit_native.py scripts/audit_compiled_modules.py \
+            scripts/check_axioms.lean \
+            MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean \
+            MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean \
+            MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean \
+            MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean; then
+            echo "unchanged=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Test the declaration collision check
+        if: steps.audit-tools.outputs.unchanged != 'true'
         run: python3 -m unittest discover -s scripts -p test_declaration_collisions_native.py -v
 
       # Each of these peaks at 13-15 GB when built alone. Lake builds several
@@ -187,6 +222,7 @@ jobs:
       # one fails, the full build is skipped: it would retry that module
       # alongside the others.
       - name: Test initialized compiled-audit isolation
+        if: steps.audit-tools.outputs.unchanged != 'true'
         run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
 
       - name: Build memory-heavy modules one at a time
@@ -256,3 +292,32 @@ jobs:
           path: ${{ runner.temp }}/lake-build.tar.zst
           retention-days: 1
           compression-level: 0
+
+  # Merge groups audit only what their build changed since the build they
+  # restore; a push to main still audits every module. When that full audit, or
+  # anything else in main's build, fails, say so in one open issue.
+  report:
+    name: report a failed main build
+    needs: build
+    if: failure() && github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          title="CI build fails on main"
+          body="The \`build\` job of [this run](${RUN_URL}) failed on ${GITHUB_SHA}. Merge groups audit only the modules their build changed, so this full build of main is where a module that escaped a scoped audit, or a bad cached build, shows up. Close this issue once main builds again."
+          number="$(gh api "repos/${GH_REPO}/issues?state=open&creator=github-actions%5Bbot%5D&per_page=100" \
+            --jq "[.[] | select(.pull_request | not) | select(.title == \"${title}\") | .number][0] // empty")"
+          if [[ -n "$number" ]]; then
+            gh issue comment "$number" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi

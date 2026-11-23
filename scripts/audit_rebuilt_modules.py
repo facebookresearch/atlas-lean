@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Audit only the modules that a pull request's build rewrote.
+"""Audit only the modules that a pull request's or merge group's build rewrote.
 
 `record FILE REVISION` runs right after CI restores a build that passed the
-full audit (audit_compiled_modules.py) at REVISION. It records the .olean of
-each module REVISION audited, but only if REVISION has the same
+audit at REVISION: the full audit (audit_compiled_modules.py), or this one
+against a build that passed it in turn. It records the .olean of each module
+REVISION audited, but only if REVISION has the same
 audit_compiled_modules.py, check_axioms.lean and this script. With
 ATLAS_AUDIT_RESTORED=FILE, this script then runs, exactly as the full audit runs
 them, the full audit's batches that hold or import a module whose .olean is

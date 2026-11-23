@@ -395,6 +395,12 @@ group before it merges:
 - `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
   checks a pin change again against the queue's base.
 
+On a PR or merge group, `build` audits the compiled policy of only the modules
+its build rewrote since the build it restored from `main`'s cache, with their
+importers and the audit batches that hold them; each push to `main` audits every
+module, and when that build fails CI opens an issue, or comments on the open
+one.
+
 The three workflows that report these five checks are configured for
 `pull_request` and `merge_group`, without branch or path filters. If a PR has a merge conflict, resolve it before expecting
 its PR checks; a fork PR may also need a maintainer to approve the workflow run.
