@@ -39,10 +39,11 @@ def eligible (s : Equiv.Perm (Fin r)) : Prop :=
     (∀ i : Fin r, G.order (s i) = G.order i)
 
 def rootGroup : Subgroup (Equiv.Perm (Fin r)) where
-  carrier := eligible G beta
-  one_mem' := ⟨1, by simp, by simp, by simp, by simp, by simp⟩
+  carrier := {s | eligible G beta s}
+  one_mem' := show eligible G beta 1 from ⟨1, by simp, by simp, by simp, by simp, by simp⟩
   mul_mem' := by
     rintro s t ⟨v, hg, hb, hl, hr, ho⟩ ⟨w, kg, kb, kl, kr, ko⟩
+    show eligible G beta (s * t)
     refine ⟨v * w, ?_, ?_, ?_, ?_, ?_⟩
     · intro i; exact (hg (w i)).trans (kg i)
     · intro i; exact (hb (w i)).trans (kb i)
@@ -51,6 +52,7 @@ def rootGroup : Subgroup (Equiv.Perm (Fin r)) where
     · intro i; exact (ho (t i)).trans (ko i)
   inv_mem' := by
     rintro s ⟨v, hg, hb, hl, hr, ho⟩
+    show eligible G beta s⁻¹
     refine ⟨v⁻¹, ?_, ?_, ?_, ?_, ?_⟩
     · intro i; simpa using (hg (v⁻¹ i)).symm
     · intro i; simpa using (hb (v⁻¹ i)).symm
