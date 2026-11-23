@@ -160,7 +160,9 @@ theorem height_independent (H : IsAdmissible A X L N F)
   rw [height_smul A X L N F H _ (hc e he) _ (F.basis.ne_zero ()),
     height_smul A X L N F H _ (hc f hf) _ (F.basis.ne_zero ())]
 
-/-- The measured point height is computed from the actual algebraic basis vector. -/
-def pointHeight : ℝ := height A X L N F (F.basis ())
+/-- The measured point height of an admissible metric, computed from the actual algebraic basis
+vector. `height` itself is the raw integral, which Mathlib's Bochner integral sets to zero when
+the log norm is not integrable. -/
+def pointHeight (_H : IsAdmissible A X L N F) : ℝ := height A X L N F (F.basis ())
 
 end MathlibExt.AlgebraicGeometry.MeasuredLinePointHeights

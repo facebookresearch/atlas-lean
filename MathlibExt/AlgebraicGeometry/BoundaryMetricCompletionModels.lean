@@ -26,6 +26,14 @@ literal boundary-null difference relation.
 This defines metric completion, separately from the arithmetic-model
 approximation, nefness and Deligne-pairing producers.
 Reference: Yuan--Zhang, arXiv:2105.13587v9, Sections 2.1--2.2.
+
+This is a fixed-gauge completion: the gauge of the boundary is only required
+to be nonnegative, and the boundary section is only tested on its
+invertibility locus. It is not Yuan--Zhang's boundary completion
+(arXiv:2105.13587v9, Section 2.4), which uses a projective model and an
+effective Cartier boundary divisor with the given support (strictly effective
+in the arithmetic case); results that need that boundary topology are not
+stated in terms of this completion.
 -/
 
 set_option autoImplicit false

@@ -36,11 +36,14 @@ example (H : CompletedAdelicPointHeights.IsAdmissible B m F)
   CompletedAdelicPointHeights.height_smul B m F H 5 (by norm_num) e he
 
 /-- Constant classes retain the original measured height on the same algebraic fibre. -/
-example (N : MetrizedLine A X L) :
+example (N : MetrizedLine A X L)
+    (H : CompletedAdelicPointHeights.IsAdmissible B
+      (MathlibExt.AlgebraicGeometry.AdelicCompletionEvaluations.constantClass B N) F)
+    (H' : MeasuredLinePointHeights.IsAdmissible A X L N F) :
     CompletedAdelicPointHeights.pointHeight B
-      (MathlibExt.AlgebraicGeometry.AdelicCompletionEvaluations.constantClass B N) F =
-        MeasuredLinePointHeights.pointHeight A X L N F :=
-  CompletedAdelicPointHeights.pointHeight_constant B F N
+      (MathlibExt.AlgebraicGeometry.AdelicCompletionEvaluations.constantClass B N) F H =
+        MeasuredLinePointHeights.pointHeight A X L N F H' :=
+  CompletedAdelicPointHeights.pointHeight_constant B F N H H'
 
 /-- A standard archimedean place cannot enter the purely geometric nef model definition. -/
 example {k : Type} [Field k] (ι : k →+* K)

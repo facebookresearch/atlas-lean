@@ -84,16 +84,21 @@ theorem height_independent (H : IsAdmissible B m F)
   rw [height_smul B m F H _ (hc e he) _ (F.basis.ne_zero ()),
     height_smul B m F H _ (hc f hf) _ (F.basis.ne_zero ())]
 
-/-- This height consumes the original Cauchy class, not a separately supplied metric. -/
-def pointHeight : ℝ := height B m F (F.basis ())
+/-- This height consumes the original Cauchy class, not a separately supplied metric, and is
+defined for admissible classes. `height` itself is the raw integral, which is zero by convention
+when the log norm is not integrable. -/
+def pointHeight (_H : IsAdmissible B m F) : ℝ := height B m F (F.basis ())
 
-def adelicPointHeight (m : RationalAdelicModelMetrics.AdelicMetric (L := L) B) : ℝ :=
-  pointHeight B m.val F
+def adelicPointHeight (m : RationalAdelicModelMetrics.AdelicMetric (L := L) B)
+    (H : IsAdmissible B m.val F) : ℝ :=
+  pointHeight B m.val F H
 
 /-- The constant metric embeds with its original point-height normalization. -/
-theorem pointHeight_constant (N : MetrizedLine A X L) :
-    pointHeight B (AdelicCompletionEvaluations.constantClass B N) F =
-      MeasuredLinePointHeights.pointHeight A X L N F := by
+theorem pointHeight_constant (N : MetrizedLine A X L)
+    (H : IsAdmissible B (AdelicCompletionEvaluations.constantClass B N) F)
+    (H' : MeasuredLinePointHeights.IsAdmissible A X L N F) :
+    pointHeight B (AdelicCompletionEvaluations.constantClass B N) F H =
+      MeasuredLinePointHeights.pointHeight A X L N F H' := by
   unfold pointHeight height MeasuredLinePointHeights.pointHeight MeasuredLinePointHeights.height
   congr 1
   apply integral_congr_ae
@@ -109,9 +114,10 @@ structure DominatedApproximation where
   boundary_integrable : Integrable
     (fun v ↦ gauge A X B.toBoundary v (F.point v)) A.measure
 
-/-- The limit statement is about the actual model heights and the computed quotient height. -/
+/-- The limit statement is about the actual model heights and the computed quotient height,
+as integrals of the basis vector's log norms; `D` records their integrability. -/
 def HeightConverges (D : DominatedApproximation B m F) : Prop :=
-  Tendsto (fun n ↦ MeasuredLinePointHeights.pointHeight A X L (D.sequence.model n).metric F)
-    atTop (𝓝 (pointHeight B m F))
+  Tendsto (fun n ↦ MeasuredLinePointHeights.height A X L (D.sequence.model n).metric F (F.basis ()))
+    atTop (𝓝 (height B m F (F.basis ())))
 
 end MathlibExt.AlgebraicGeometry.CompletedAdelicPointHeights

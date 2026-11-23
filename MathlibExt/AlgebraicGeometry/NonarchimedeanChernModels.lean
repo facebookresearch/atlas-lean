@@ -11,32 +11,29 @@ public import MathlibExt.AlgebraicGeometry.DeligneSymbolModels
 public import MathlibExt.AlgebraicGeometry.OpenDeligneSymbolSources
 public import MathlibExt.AlgebraicGeometry.SchemeComponentIntersectionModels
 public import MathlibExt.AlgebraicGeometry.ModelLineMetrics
-public import Mathlib.Topology.ContinuousMap.CompactlySupported
-public import Mathlib.MeasureTheory.Measure.Dirac.Def
-public import Mathlib.MeasureTheory.Measure.Dirac.Basic
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
-# Actual valuation models and compact-test Chern actions
+# Actual valuation models and their model intersections
 
 The special fibre is the native quotient by the norm-less-than-one ideal
 and the native scheme pullback. All reduced components, their original
 local composition lengths and their coherent subset-Euler degrees occur.
 Divisorial points retain the original scalar map, the valuative centre,
-the actual component local ring and a maximal-ideal uniformizer.
-The atomic expression has an explicit discrete valuation hypothesis.
+the actual component local ring and a maximal-ideal uniformizer; they
+require an explicit discrete valuation.
 
-For general complete nonarchimedean fields, the action on a model function
-is instead the logarithmic norm of an actual model Deligne determinant
-generator. Continuous compact tests are uniform limits of those actual
-trivial-line model functions. The compact-test action is a native limit;
-the measure result requires both genuine convergence and normalization on
-EVERY continuous compact test. No atomic formula is asserted for a general
-valuation and no final measure or numerical intersection oracle is an input.
+For general complete nonarchimedean fields, the intersection of a model
+function with model lines is the logarithmic norm of an actual model
+Deligne determinant generator.
 
-Source: Yuan--Zhang, arXiv:2105.13587v9, Appendix A.6.2, pp245--246;
-Sections 3.6.6--3.6.7 and Proposition 4.1.1. Model norm and bounded
-determinant primitives retain their original source and license notices.
+The local Chern measures (compact-test limits of these model intersections)
+are not constructed here: their convergence needs nef approximations, and
+their global counterparts need a model-boundary class finer than the
+placewise one. They are left to a separate development.
+
+Source: Yuan--Zhang, arXiv:2105.13587v9, Appendix A.6.2, pp245--246, and
+Section 3.6.6. Model norm and bounded determinant primitives retain their
+original source and license notices.
 -/
 
 set_option autoImplicit false
@@ -45,23 +42,19 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace MathlibExt.AlgebraicGeometry.NonarchimedeanChernModels
 
-open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory Opposite Filter MeasureTheory
+open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory Opposite
 open _root_.AlgebraicGeometry
 open ValuedLineFibres ModelLineMetrics CoherentCurveLinearSeries
 open DeligneSymbolModels GlobalBoundedDeterminantModels RelativeDeterminantPairings
 open SchemeComponentIntersectionModels ModelIntersectionDegrees
 open GenericSectionMaps
 open OpenDeligneSymbolSources CanonicalKoszulDeterminants
-open scoped Topology CompactlySupported
 
 variable (K : Type) [NormedField K]
   (X : Over (Spec (.of K)))
   (hK : ∀ a b : K, ‖a + b‖ ≤ max ‖a‖ ‖b‖)
 
-instance analyticMeasurable : MeasurableSpace (NonArchPoint K X) := borel _
-instance analyticBorel : BorelSpace (NonArchPoint K X) := ⟨rfl⟩
-
-/-- The atomic illustration requires this actual discrete value group. -/
+/-- An actual discrete value group, with a uniformizer. -/
 structure DiscreteValuation where
   uniformizer : K
   positive : 0 < ‖uniformizer‖
@@ -163,54 +156,11 @@ structure DivisorialPoint (V : ValuationResidue K hK)
   uniformizerNorm : point.val.absoluteValue (fraction localUniformizer) =
     Real.rpow ‖v.uniformizer‖ ((componentLength (S.components.frame C)).toNat : ℝ)⁻¹
 
-/-- The finite signed atomic action, only under the discrete valuation guard. -/
-def atomicAction (V : ValuationResidue K hK) (S : SpecialComponents M V)
-    (v : DiscreteValuation K) (P : ∀ C, DivisorialPoint M V S v C)
-    (f : C_c(NonArchPoint K X,ℝ)) : ℝ := by
-  letI := S.components.finite
-  exact ∑ C : Component (specialFibre M V).left,
-    componentCoefficient S M.denominator C * f (P C).point
-
-/-- Actual positive/negative parts of the guarded atomic formula. -/
-def atomicPositive (V : ValuationResidue K hK) (S : SpecialComponents M V)
-    (v : DiscreteValuation K) (P : ∀ C, DivisorialPoint M V S v C) :
-    Measure (NonArchPoint K X) := by
-  letI := S.components.finite
-  exact ∑ C : Component (specialFibre M V).left,
-    ENNReal.ofReal (componentCoefficient S M.denominator C) • Measure.dirac (P C).point
-
-def atomicNegative (V : ValuationResidue K hK) (S : SpecialComponents M V)
-    (v : DiscreteValuation K) (P : ∀ C, DivisorialPoint M V S v C) :
-    Measure (NonArchPoint K X) := by
-  letI := S.components.finite
-  exact ∑ C : Component (specialFibre M V).left,
-    ENNReal.ofReal (-componentCoefficient S M.denominator C) • Measure.dirac (P C).point
-
 variable [AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}]
   [∀ R : CommRingCat.{0}, BoundedProjectiveDeterminants.ProjectiveSources R]
 
 variable (N : ModelTuple K X hK (d+1)
   (Fin.cons (structureModule X.left) L))
-
-/-- A model test is the actual norm of the unit section of the SAME trivial line. -/
-structure ModelTest where
-  metric : ValuedLineFibres.MetrizedLine K X (structureModule X.left)
-  power : MetrizedFibrePowerModels.PowerFibre K X (structureModule X.left) (N.denominator 0)
-  frames : ModelLineMetrics.Frames (N.model 0)
-  normalized : ∀ (p : NonArchPoint K X) (z : Fibre K X (structureModule X.left) p.val),
-    (ModelLineMetrics.modelNorm (N.model 0) frames p).norm
-        (ValuedLineFibres.evaluateSection K X _
-          (ModelLineMetrics.pullbackModelSection (N.model 0)
-            (frames.frame p).localSection) p.val (frames.frame p).point_mem) = 1 ∧
-      (ModelLineMetrics.modelNorm (N.model 0) frames p).norm (power.map p.val z) =
-        (metric.fibreNorm p.val).norm z ^ (N.denominator 0 : ℕ)
-
-variable {N} in
-/-- Its literal continuous model function on the real analytic point space. -/
-def ModelTest.functionValue (T : ModelTest N) (p : NonArchPoint K X) : ℝ :=
-  -Real.log ((T.metric.fibreNorm p.val).norm
-    (ValuedLineFibres.evaluateSection K X (structureModule X.left) (1 : Γ(X.left,⊤))
-      p.val (by trivial)))
 
 /-- The generic first line has its ACTUAL unit section; all other sections
 are zero. The full Koszul is acyclic because this same first section is a unit. -/
@@ -264,53 +214,5 @@ structure ModelIntersectionSource where
 def modelIntersection (S : ModelIntersectionSource N) : ℝ :=
   -Real.log ‖S.frame.repr S.genericCanonical.value ()‖ /
     ∏ i : Fin (d+1), (N.denominator i : ℝ)
-
-/-- Every compact test has actual model-function approximations and actual model
-determinant intersections. Genuine convergence is required in the result. -/
-structure CompactTestSources (H : ∀ i, ValuedLineFibres.MetrizedLine K X (L i)) where
-  [complete : CompleteSpace K]
-  [proper : IsProper X.hom]
-  [finiteType : LocallyOfFiniteType X.hom]
-  nontrivial : ∃ a : K, 0 < ‖a‖ ∧ ‖a‖ < 1
-  pureDimension : IsPureRelativeDimension X.hom d
-  line : ∀ i, IsLineBundle (L i)
-  tuple : ∀ (f : C_c(NonArchPoint K X,ℝ)) (n : ℕ),
-    ModelTuple K X hK (d+1) (Fin.cons (structureModule X.left) L)
-  test : ∀ f n, ModelTest (tuple f n)
-  intersection : ∀ f n, ModelIntersectionSource (tuple f n)
-  sourceMetric : ∀ f n i, ValuedLineFibres.MetrizedLine K X (L i)
-  sourcePower : ∀ f n i, MetrizedFibrePowerModels.PowerFibre K X (L i)
-    ((tuple f n).denominator i.succ)
-  sourceFrames : ∀ f n (i : Fin d), ModelLineMetrics.Frames ((tuple f n).model i.succ)
-  sourceNormalized : ∀ f n i (p : NonArchPoint K X) (z : Fibre K X (L i) p.val),
-    (ModelLineMetrics.modelNorm ((tuple f n).model i.succ) (sourceFrames f n i) p).norm
-        ((sourcePower f n i).map p.val z) =
-      ((sourceMetric f n i).fibreNorm p.val).norm z ^ ((tuple f n).denominator i.succ : ℕ)
-  metricLimit : ∀ f i (Q : Set (NonArchPoint K X)), IsCompact Q →
-    ∀ ε : ℝ, 0 < ε → ∀ᶠ n in atTop, ∀ p ∈ Q, ∀ z : Fibre K X (L i) p.val, z ≠ 0 →
-      |Real.log (((sourceMetric f n i).fibreNorm p.val).norm z) -
-        Real.log (((H i).fibreNorm p.val).norm z)| < ε
-  approximates : ∀ (f : C_c(NonArchPoint K X,ℝ)) (ε : ℝ), 0 < ε →
-    ∀ᶠ n in atTop, ∀ p : NonArchPoint K X, |(test f n).functionValue p - f p| < ε
-
-variable {H : ∀ i, ValuedLineFibres.MetrizedLine K X (L i)}
-  (S : CompactTestSources (K := K) (X := X) (hK := hK) (d := d) (L := L) H)
-
-def compactAction (f : C_c(NonArchPoint K X,ℝ)) : ℝ :=
-  limUnder atTop (fun n ↦ modelIntersection (S.tuple f n) (S.intersection f n))
-
-/-- A signed finite measure is pinned by ALL the actual compact-test limits. -/
-structure ChernMeasureParts where
-  positivePart : Measure (NonArchPoint K X)
-  negativePart : Measure (NonArchPoint K X)
-  [positiveFinite : IsFiniteMeasure positivePart]
-  [negativeFinite : IsFiniteMeasure negativePart]
-  converges : ∀ f : C_c(NonArchPoint K X,ℝ),
-    Tendsto (fun n ↦ modelIntersection (S.tuple f n) (S.intersection f n))
-      atTop (nhds (compactAction S f))
-  normalized : ∀ f : C_c(NonArchPoint K X,ℝ),
-    (∫ p, f p ∂positivePart) - (∫ p, f p ∂negativePart) = compactAction S f
-
-attribute [instance] ChernMeasureParts.positiveFinite ChernMeasureParts.negativeFinite
 
 end MathlibExt.AlgebraicGeometry.NonarchimedeanChernModels

@@ -26,7 +26,7 @@ variable {K : Type} [Field K] [CharZero K] (A : AdelicField K)
   (H : IsAdmissible A X L N F)
 
 example : height A X L N F ((3 : K) • F.basis ()) =
-    pointHeight A X L N F := by
+    pointHeight A X L N F H := by
   exact height_smul A X L N F H 3 (by norm_num) _ (F.basis.ne_zero ())
 
 #print axioms MathlibExt.AlgebraicGeometry.MeasuredLinePointHeights.completedScalars_norm
