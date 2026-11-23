@@ -81,12 +81,14 @@ theorem rep6_list_decodable : IsListDecodable rep6 3 (3 * 6 * 6) := by
 /-- The real Johnson radius at `n = 20`, `d = 8` exceeds radius `5`. -/
 theorem johnsonRadius_two_example : (5 : ℝ) < johnsonRadius 2 ((8 : ℝ) / 20) * 20 := by
   have e1 : (1 : ℝ) - 1 / ((2 : ℕ) : ℝ) = 1 / 2 := by norm_num
-  have e2 : (1 : ℝ) - ((2 : ℕ) : ℝ) * ((8 : ℝ) / 20) / (((2 : ℕ) : ℝ) - 1) = 1 / 5 := by
+  have e2inner : (1 : ℝ) - ((2 : ℕ) : ℝ) * ((8 : ℝ) / 20) / (((2 : ℕ) : ℝ) - 1) = 1 / 5 := by
     norm_num
+  have e2 : max (0 : ℝ) (1 - ((2 : ℕ) : ℝ) * ((8 : ℝ) / 20) / (((2 : ℕ) : ℝ) - 1)) = 1 / 5 := by
+    rw [e2inner, max_eq_right (show (0 : ℝ) ≤ 1 / 5 by norm_num)]
   have hJ : johnsonRadius 2 ((8 : ℝ) / 20) = (1 / 2) * (1 - Real.sqrt (1 / 5)) := by
     have hrfl : johnsonRadius 2 ((8 : ℝ) / 20) =
         (1 - 1 / ((2 : ℕ) : ℝ)) *
-          (1 - Real.sqrt (1 - ((2 : ℕ) : ℝ) * ((8 : ℝ) / 20) / (((2 : ℕ) : ℝ) - 1))) := rfl
+          (1 - Real.sqrt (max 0 (1 - ((2 : ℕ) : ℝ) * ((8 : ℝ) / 20) / (((2 : ℕ) : ℝ) - 1)))) := rfl
     rw [hrfl, e1, e2]
   rw [hJ]
   have hpos : (0 : ℝ) < 1 / 2 := by norm_num
@@ -95,26 +97,32 @@ theorem johnsonRadius_two_example : (5 : ℝ) < johnsonRadius 2 ((8 : ℝ) / 20)
     norm_num
   linarith [hsqrt]
 
-/-- The real Johnson radius at `q = 2`, `δ = 1`: the square-root argument is `-1`. -/
+/-- The explicitly clipped Johnson-radius extension at `q = 2`, `δ = 1`, outside
+the classical Johnson-radius domain: the unclipped square-root argument is `-1`,
+clipped to `0`. -/
 theorem rep3_johnsonRadius_value : johnsonRadius 2 ((3 : ℝ) / 3) = 1 / 2 := by
   have e1 : (1 : ℝ) - 1 / ((2 : ℕ) : ℝ) = 1 / 2 := by norm_num
   have earg : (1 : ℝ) - ((2 : ℕ) : ℝ) * ((3 : ℝ) / 3) / (((2 : ℕ) : ℝ) - 1) = -1 := by
     norm_num
-  have hsqrt : Real.sqrt (-1 : ℝ) = 0 := Real.sqrt_eq_zero_of_nonpos (by norm_num)
+  have eclip : max (0 : ℝ) (1 - ((2 : ℕ) : ℝ) * ((3 : ℝ) / 3) / (((2 : ℕ) : ℝ) - 1)) = 0 := by
+    rw [earg, max_eq_left (show (-1 : ℝ) ≤ 0 by norm_num)]
+  have hsqrt : Real.sqrt (0 : ℝ) = 0 := Real.sqrt_zero
   have hrfl : johnsonRadius 2 ((3 : ℝ) / 3) =
       (1 - 1 / ((2 : ℕ) : ℝ)) *
-        (1 - Real.sqrt (1 - ((2 : ℕ) : ℝ) * ((3 : ℝ) / 3) / (((2 : ℕ) : ℝ) - 1))) := rfl
-  rw [hrfl, e1, earg, hsqrt]
+        (1 - Real.sqrt (max 0 (1 - ((2 : ℕ) : ℝ) * ((3 : ℝ) / 3) / (((2 : ℕ) : ℝ) - 1)))) := rfl
+  rw [hrfl, e1, eclip, hsqrt]
   norm_num
 
-/-- Radius `1` is below the Johnson radius at `q = 2`, `n = 3`, `d = 3`. -/
+/-- Radius `1` is below the explicitly clipped Johnson-radius extension at `q = 2`,
+`n = 3`, `d = 3` (`δ = 1`), outside the classical Johnson-radius domain. -/
 theorem rep3_one_lt_johnsonRadius_mul :
     (1 : ℝ) < johnsonRadius 2 ((3 : ℝ) / 3) * 3 := by
   rw [rep3_johnsonRadius_value]
   norm_num
 
-/-- The integer Johnson conditions at `q = 2`, `n = 3`, `d = 3`, `e = 1`,
-through the real-radius bridge. -/
+/-- The integer Johnson conditions at `q = 2`, `n = 3`, `d = 3`, `e = 1`, through
+the explicitly clipped extension at `δ = 1`, outside the classical
+Johnson-radius domain. -/
 theorem rep3_johnson_conditions :
     2 * 1 < (2 - 1) * 3 ∧
       ((2 : ℤ) - 1) * 3 * ((3 : ℤ) - 3) <
@@ -125,7 +133,8 @@ theorem rep3_johnson_conditions :
   exact qary_johnson_conditions_of_lt_johnsonRadius (q := 2) (n := 3) (d := 3) (e := 1)
     (by norm_num) he
 
-/-- Binary instance of the bound on the repetition code, through the real-radius bridge. -/
+/-- Binary instance of the bound on the repetition code, through the explicitly
+clipped extension at `δ = 1`, outside the classical Johnson-radius domain. -/
 theorem rep3_list_decodable_of_real_radius : IsListDecodable rep3 1 (2 * 3 * 3) := by
   have hcard : Fintype.card Bool = 2 := Fintype.card_bool
   have hq : 2 ≤ Fintype.card Bool := by omega
@@ -138,7 +147,9 @@ theorem rep3_list_decodable_of_real_radius : IsListDecodable rep3 1 (2 * 3 * 3) 
   rw [hcard] at h
   exact h
 
-/-- Binary instance on the repetition code, through the floor-radius bridge at `ρ = 1 / 3`. -/
+/-- Binary instance on the repetition code, through the floor-radius bridge at
+`ρ = 1 / 3` over the explicitly clipped extension at `δ = 1`, outside the
+classical Johnson-radius domain. -/
 theorem rep3_list_decodable_of_floor_radius : IsListDecodable rep3 1 (2 * 3 * 3) := by
   have hcard : Fintype.card Bool = 2 := Fintype.card_bool
   have hq : 2 ≤ Fintype.card Bool := by omega

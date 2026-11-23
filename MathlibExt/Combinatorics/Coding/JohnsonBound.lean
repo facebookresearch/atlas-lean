@@ -21,6 +21,11 @@ of radius `e` below the Johnson radius `J_q(d / n)` contains at most
 `q * d * n` codewords (Guruswami, Rudra and Sudan, *Essential Coding Theory*,
 draft of August 26, 2025, Theorem 7.3.1; the general-alphabet form follows
 Guruswami and Sudan, "Extensions to the Johnson bound", 2001, Theorem 1).
+The Lean definition is the displayed formula on its classical domain `2 ≤ q`
+and `q * δ ≤ q - 1`; outside that domain the radicand is clipped at `0`, so
+the radius saturates at `1 - 1 / q`. The radius theorems below are therefore
+statements about this explicitly clipped total function, and on the classical
+domain they are the usual Johnson-radius statements.
 The integer form `qary_johnson_bound` is the double-counting core; the
 remaining declarations turn it into list-decodability statements, the real
 Johnson-radius form, and a statement-level nonvacuity family above the radius.
@@ -32,9 +37,13 @@ namespace MathlibExt.Combinatorics.Coding.JohnsonBound
 
 open Finset MathlibExt.Combinatorics.Coding.ListDecoding
 
-/-- The q-ary Johnson radius J_q(δ) = (1 - 1/q)(1 - √(1 - qδ/(q - 1))). -/
+/-- This is the total clipped form of the q-ary Johnson radius:
+`J_q(δ) = (1 - 1/q)(1 - √(max 0 (1 - qδ/(q - 1))))`.
+On the classical domain `2 ≤ q` and `q * δ ≤ q - 1` this is the usual Johnson
+radius; outside that domain the radicand is clipped at `0`, so the radius
+saturates at `1 - 1 / q`. -/
 noncomputable def johnsonRadius (q : ℕ) (δ : ℝ) : ℝ :=
-  (1 - 1 / (q : ℝ)) * (1 - Real.sqrt (1 - q * δ / (q - 1)))
+  (1 - 1 / (q : ℝ)) * (1 - Real.sqrt (max 0 (1 - q * δ / (q - 1))))
 
 variable {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
 
@@ -598,20 +607,20 @@ theorem qary_johnson_conditions_of_lt_johnsonRadius {q n d e : ℕ} (hq : 2 ≤ 
     have h2q : (2 : ℝ) ≤ (q : ℝ) := by exact_mod_cast hq
     have hJ : johnsonRadius q ((d : ℝ) / (n : ℝ)) =
         (1 - 1 / (q : ℝ)) *
-          (1 - Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) := rfl
+          (1 - Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) := rfl
     have hsqrt_nn : (0 : ℝ) ≤
-        Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) :=
+        Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) :=
       Real.sqrt_nonneg _
     have hpart1 : q * e < (q - 1) * n := by
       have h1q : (1 : ℝ) / (q : ℝ) ≤ 1 := by
         rw [div_le_one hq0]
         linarith [h2q]
       have hA : (0 : ℝ) ≤ 1 - 1 / (q : ℝ) := by linarith [h1q]
-      have hB : 1 - Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) ≤ 1 := by
+      have hB : 1 - Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) ≤ 1 := by
         linarith [hsqrt_nn]
       have hN : (0 : ℝ) ≤ (n : ℝ) := le_of_lt hn0
       have hAN : (0 : ℝ) ≤ (1 - 1 / (q : ℝ)) * (n : ℝ) := mul_nonneg hA hN
-      have hB1 : (1 - Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) - 1 ≤ 0 := by
+      have hB1 : (1 - Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) - 1 ≤ 0 := by
         linarith [hB]
       have hle : johnsonRadius q ((d : ℝ) / (n : ℝ)) * (n : ℝ) ≤
           (1 - 1 / (q : ℝ)) * (n : ℝ) := by
@@ -642,54 +651,54 @@ theorem qary_johnson_conditions_of_lt_johnsonRadius {q n d e : ℕ} (hq : 2 ≤ 
     have hfield2 : (q : ℝ) * (johnsonRadius q ((d : ℝ) / (n : ℝ)) * (n : ℝ)) =
         ((q : ℝ) - 1) * (n : ℝ) -
           ((q : ℝ) - 1) * (n : ℝ) *
-            Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) := by
+            Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) := by
       rw [hJ]
       calc (q : ℝ) * (((1 - 1 / (q : ℝ)) *
-              (1 - Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) *
+              (1 - Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))))) *
             (n : ℝ))
             = ((q : ℝ) * (1 - 1 / (q : ℝ))) *
-              ((1 - Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) *
+              ((1 - Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) *
                 (n : ℝ)) := by ring
         _ = ((q : ℝ) - 1) *
-              ((1 - Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) *
+              ((1 - Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) *
                 (n : ℝ)) := by rw [hq1]
         _ = ((q : ℝ) - 1) * (n : ℝ) -
               ((q : ℝ) - 1) * (n : ℝ) *
-                Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) := by ring
+                Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) := by ring
     have hWsV : ((q : ℝ) - 1) * (n : ℝ) *
-          Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) <
+          Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) <
         ((q : ℝ) - 1) * (n : ℝ) - (q : ℝ) * (e : ℝ) := by
       have hmul := mul_lt_mul_of_pos_left he hq0
       linarith [hmul, hfield2]
     have hWsnn : (0 : ℝ) ≤ ((q : ℝ) - 1) * (n : ℝ) *
-        Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) :=
+        Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) :=
       mul_nonneg (le_of_lt hWpos) hsqrt_nn
     have hsqW : ((((q : ℝ) - 1) * (n : ℝ) *
-          Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) ^ 2) <
+          Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) ^ 2) <
         ((((q : ℝ) - 1) * (n : ℝ) - (q : ℝ) * (e : ℝ))) ^ 2 := by
       have hd1 : (0 : ℝ) <
           (((q : ℝ) - 1) * (n : ℝ) - (q : ℝ) * (e : ℝ)) -
             ((q : ℝ) - 1) * (n : ℝ) *
-              Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) := by
+              Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) := by
         linarith [hWsV]
       have hd2 : (0 : ℝ) <
           (((q : ℝ) - 1) * (n : ℝ) - (q : ℝ) * (e : ℝ)) +
             ((q : ℝ) - 1) * (n : ℝ) *
-              Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) := by
+              Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) := by
         linarith [hWsV, hWsnn]
       have hprod := mul_pos hd1 hd2
       linarith [hprod]
     have hsqW' : (((q : ℝ) - 1) * (n : ℝ)) ^ 2 *
-          (Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) ^ 2 <
+          (Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) ^ 2 <
         ((((q : ℝ) - 1) * (n : ℝ) - (q : ℝ) * (e : ℝ))) ^ 2 := by
       linarith [hsqW]
     have hXle : (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) ≤
-        (Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) ^ 2 := by
-      rw [Real.sq_sqrt']
-      exact le_max_left _ _
+        (Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) ^ 2 := by
+      rw [Real.sq_sqrt (le_max_left (0 : ℝ) _)]
+      exact le_max_right _ _
     have hmulX : (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) *
           (((q : ℝ) - 1) * (n : ℝ)) ^ 2 ≤
-        (Real.sqrt (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1))) ^ 2 *
+        (Real.sqrt (max 0 (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)))) ^ 2 *
           (((q : ℝ) - 1) * (n : ℝ)) ^ 2 :=
       mul_le_mul_of_nonneg_right hXle (sq_nonneg _)
     have hXW2V : (1 - (q : ℝ) * ((d : ℝ) / (n : ℝ)) / ((q : ℝ) - 1)) *
@@ -860,13 +869,13 @@ theorem two_le_hammingDist_weightCode {n w : ℕ} :
   omega
 
 /-- **Binary radius bound at relative distance `2 / n`.** The unnormalized Johnson radius
-`J_2(2 / n) * n` is strictly less than `3` for every length `n`; this is the nonvacuity
-input for the weight-three example. -/
+`J_2(2 / n) * n`, the unnormalized clipped Johnson radius, is strictly less than `3`
+for every length `n`; this is the nonvacuity input for the weight-three example. -/
 theorem johnsonRadius_two_lt_three (n : ℕ) :
     johnsonRadius 2 ((2 : ℝ) / n) * n < 3 := by
   by_cases hn5 : n ≤ 5
   · have hs : (0 : ℝ) ≤
-        Real.sqrt (1 - ((2 : ℕ) : ℝ) * ((2 : ℝ) / (n : ℝ)) / (((2 : ℕ) : ℝ) - 1)) :=
+        Real.sqrt (max 0 (1 - ((2 : ℕ) : ℝ) * ((2 : ℝ) / (n : ℝ)) / (((2 : ℕ) : ℝ) - 1))) :=
       Real.sqrt_nonneg _
     have hnn : (0 : ℝ) ≤ (n : ℝ) := by positivity
     have hn5' : (n : ℝ) ≤ 5 := by exact_mod_cast hn5
@@ -892,20 +901,20 @@ theorem johnsonRadius_two_lt_three (n : ℕ) :
       rw [heq]
       linarith [h4]
     have heq2 : (1 : ℝ) - 2 * (2 / (n : ℝ)) / (2 - 1) = 1 - 4 / n := by rw [heq]
-    have hsq : 1 - 6 / (n : ℝ) < Real.sqrt (1 - 2 * (2 / (n : ℝ)) / (2 - 1)) := by
+    have hsq : 1 - 6 / (n : ℝ) < Real.sqrt (max 0 (1 - 2 * (2 / (n : ℝ)) / (2 - 1))) := by
       have hnn : (0 : ℝ) ≤ 1 - 6 / n := by
         have h6 : (6 : ℝ) / n ≤ 1 := by
           rw [div_le_one hn_pos]
           linarith [hn6]
         linarith [h6]
-      rw [Real.lt_sqrt hnn, heq2]
+      rw [max_eq_right hr, Real.lt_sqrt hnn, heq2]
       field_simp
       linarith [hn6]
     have h2 : (1 : ℝ) - 1 / 2 = 1 / 2 := by norm_num
     rw [h2]
-    have h1s : 1 - Real.sqrt (1 - 2 * (2 / (n : ℝ)) / (2 - 1)) < 6 / (n : ℝ) := by
+    have h1s : 1 - Real.sqrt (max 0 (1 - 2 * (2 / (n : ℝ)) / (2 - 1))) < 6 / (n : ℝ) := by
       linarith [hsq]
-    calc (1 / 2 : ℝ) * (1 - Real.sqrt (1 - 2 * (2 / (n : ℝ)) / (2 - 1))) * n
+    calc (1 / 2 : ℝ) * (1 - Real.sqrt (max 0 (1 - 2 * (2 / (n : ℝ)) / (2 - 1)))) * n
         < (1 / 2) * (6 / (n : ℝ)) * n := by
           apply mul_lt_mul_of_pos_right
           · linarith [h1s]
