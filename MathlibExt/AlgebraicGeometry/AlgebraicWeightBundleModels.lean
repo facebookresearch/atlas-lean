@@ -36,9 +36,6 @@ References: Graber–Pandharipande, arXiv:alg-geom/9708001v2,
 set_option backward.isDefEq.respectTransparency false
 @[expose] public noncomputable section
 
-attribute [local instance_reducible] TopCat.Sheaf _root_.CategoryTheory.sheafCompose
-  AlgebraicGeometry.SheafedSpace.sheaf
-
 namespace MathlibExt.AlgebraicGeometry.AlgebraicWeightBundleModels
 
 open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.CategoryTheory.MonoidalCategory

@@ -16,15 +16,20 @@ public import Mathlib.CategoryTheory.Whiskering
 /-!
 # A continuous-group Borel model from literal orbit quotients
 
-Degree n is the quotient of G^(n+1) × Z by the actual diagonal action,
-with its quotient topology. Coordinate reindexing constructs its simplicial
-space. Applying the singular-set functor levelwise, taking the diagonal,
-and geometrically realizing it gives a concrete homotopy-quotient model.
-The continuous topology on G is retained throughout this construction.
+Let a topological group `G` act continuously on a space `Z`. Degree `n` of
+the bar construction is the quotient of `G^(n+1) × Z` by the diagonal
+action, with its quotient topology; coordinate reindexing makes these levels
+a simplicial space. Applying the singular-set functor levelwise, taking the
+diagonal, and geometrically realizing it gives a concrete model of the
+homotopy quotient `EG ×_G Z`. The constructions forming this model require
+the group to be topological and the action to be continuous
+(`[IsTopologicalGroup G] [ContinuousSMul G Z]`), so that they always have
+their homotopy-quotient interpretation; the levels themselves only use the
+orbit relation.
 
 An invariant continuous map constructs the canonical augmentation to the
 quotient. Equivariant maps give actual realization maps. The degree-zero
-orbit space is normalized by the proved homeomorphism [g,x] ↦ g⁻¹x.
+orbit space is normalized by the proved homeomorphism `[g, x] ↦ g⁻¹x`.
 No freely named classifying space or equivariant cohomology carrier is used.
 
 Reference: Segal, *Classifying spaces and spectral sequences*, Publ. Math.
@@ -37,19 +42,28 @@ group construction; it is not identified with this continuous-group model.
 open _root_.CategoryTheory _root_.Opposite
 open scoped Simplicial
 namespace MathlibExt.Topology.ContinuousBorel
-variable (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-variable (Z : TopCat.{0}) [MulAction G Z] [ContinuousSMul G Z]
+variable (G : Type) [Group G] [TopologicalSpace G]
+variable (Z : TopCat.{0}) [MulAction G Z]
+
+/-- The homogeneous coordinates of bar degree `n`: `G^(n+1) × Z`, with the
+diagonal action of `G`. -/
 abbrev Homogeneous (n : ℕ) := (Fin (n + 1) → G) × Z
+
+/-- Bar degree `n`: the orbit space of the diagonal action on `G^(n+1) × Z`,
+with the quotient topology. -/
 abbrev BarLevel (n : ℕ) := Quotient (MulAction.orbitRel G (Homogeneous G Z n))
 
+/-- Reindexing of homogeneous coordinates along a map of vertices. -/
 def reindex {m n : ℕ} (f : Fin (m + 1) → Fin (n + 1)) :
     Homogeneous G Z n → Homogeneous G Z m := fun p => (p.1 ∘ f, p.2)
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [ContinuousSMul G Z] in
+omit [TopologicalSpace G] in
+/-- Reindexing commutes with the diagonal action. -/
 theorem reindex_equivariant {m n : ℕ} (f : Fin (m + 1) → Fin (n + 1))
     (g : G) (p : Homogeneous G Z n) :
     reindex G Z f (g • p) = g • reindex G Z f p := rfl
 
+/-- The induced map of bar levels. -/
 def barMap {m n : ℕ} (f : Fin (m + 1) → Fin (n + 1)) :
     BarLevel G Z n → BarLevel G Z m :=
   Quotient.map (reindex G Z f) (by
@@ -59,8 +73,8 @@ def barMap {m n : ℕ} (f : Fin (m + 1) → Fin (n + 1)) :
     obtain ⟨g, rfl⟩ := MulAction.mem_orbit_iff.mp h
     exact MulAction.mem_orbit_iff.mpr ⟨g, rfl⟩)
 
-
-omit [Group G] [IsTopologicalGroup G] [MulAction G Z] [ContinuousSMul G Z] in
+omit [Group G] [MulAction G Z] in
+/-- Reindexing is continuous. -/
 theorem reindex_continuous {m n : ℕ} (f : Fin (m + 1) → Fin (n + 1)) :
     Continuous (reindex G Z f) := by
   apply Continuous.prodMk
@@ -69,32 +83,40 @@ theorem reindex_continuous {m n : ℕ} (f : Fin (m + 1) → Fin (n + 1)) :
     exact (continuous_apply (f i)).comp continuous_fst
   · exact continuous_snd
 
-omit [IsTopologicalGroup G] [ContinuousSMul G Z] in
+/-- The induced map of bar levels is continuous. -/
 theorem barMap_continuous {m n : ℕ} (f : Fin (m + 1) → Fin (n + 1)) :
     Continuous (barMap G Z f) := by
   exact continuous_coinduced_dom.2
     (continuous_quot_mk.comp (reindex_continuous G Z f))
 
-def bar : SimplicialObject TopCat.{0} where
+/-- The bar construction of a continuous action, as a simplicial space. -/
+def bar [IsTopologicalGroup G] [ContinuousSMul G Z] : SimplicialObject TopCat.{0} where
   obj n := TopCat.of (BarLevel G Z n.unop.len)
   map f := TopCat.ofHom ⟨barMap G Z f.unop.toOrderHom, barMap_continuous G Z _⟩
   map_id n := by ext p; induction p using Quotient.inductionOn; rfl
   map_comp f g := by ext p; induction p using Quotient.inductionOn; rfl
 
-abbrev diagonalSingular : SSet.{0} :=
+/-- The diagonal of the levelwise singular sets of the bar construction. -/
+abbrev diagonalSingular [IsTopologicalGroup G] [ContinuousSMul G Z] : SSet.{0} :=
   Functor.diag SimplexCategoryᵒᵖ ⋙ Functor.uncurry.obj (bar G Z ⋙ TopCat.toSSet)
 
-abbrev borel : TopCat.{0} := SSet.toTop.obj (diagonalSingular G Z)
+/-- The Borel model of the homotopy quotient: the geometric realization of
+`diagonalSingular`. -/
+abbrev borel [IsTopologicalGroup G] [ContinuousSMul G Z] : TopCat.{0} :=
+  SSet.toTop.obj (diagonalSingular G Z)
 
+/-- The diagonal of a simplicial object in simplicial sets. -/
 abbrev diagonalFunctor : (SimplexCategoryᵒᵖ ⥤ SSet.{0}) ⥤ SSet.{0} :=
   Functor.uncurry ⋙ (Functor.whiskeringLeft _ _ _).obj (Functor.diag SimplexCategoryᵒᵖ)
 
+/-- The diagonal of a constant simplicial object is the object itself. -/
 def diagonalConstIso (A : SSet.{0}) :
     diagonalFunctor.obj ((Functor.const SimplexCategoryᵒᵖ).obj A) ≅ A :=
   NatIso.ofComponents (fun _ => Iso.refl _) (by intros; simp [diagonalFunctor])
 
 variable {G Z} {Q : TopCat.{0}}
 
+/-- On bar level `n`, an invariant map induces the map `[g, x] ↦ q x`. -/
 def quotientAugmentation (q : Z ⟶ Q) (hq : ∀ (g : G) (x : Z), q (g • x) = q x)
     (n : ℕ) : BarLevel G Z n → Q :=
   Quotient.lift (fun p => q p.2) (by
@@ -103,24 +125,33 @@ def quotientAugmentation (q : Z ⟶ Q) (hq : ∀ (g : G) (x : Z), q (g • x) = 
     obtain ⟨g, rfl⟩ := MulAction.mem_orbit_iff.mp h
     exact hq g b.2)
 
-def barAugmentation (q : Z ⟶ Q) (hq : ∀ (g : G) (x : Z), q (g • x) = q x) :
+/-- The augmentation of the bar construction to the constant simplicial space
+on the quotient, induced by an invariant map. -/
+def barAugmentation [IsTopologicalGroup G] [ContinuousSMul G Z] (q : Z ⟶ Q)
+    (hq : ∀ (g : G) (x : Z), q (g • x) = q x) :
     bar G Z ⟶ (Functor.const SimplexCategoryᵒᵖ).obj Q where
   app n := TopCat.ofHom ⟨quotientAugmentation q hq n.unop.len,
     continuous_coinduced_dom.2 (q.hom.continuous.comp continuous_snd)⟩
   naturality i j f := by ext p; induction p using Quotient.inductionOn; rfl
 
-def diagonalAugmentation (q : Z ⟶ Q) (hq : ∀ (g : G) (x : Z), q (g • x) = q x) :
+/-- The augmentation on the diagonal singular simplicial set. -/
+def diagonalAugmentation [IsTopologicalGroup G] [ContinuousSMul G Z] (q : Z ⟶ Q)
+    (hq : ∀ (g : G) (x : Z), q (g • x) = q x) :
     diagonalSingular G Z ⟶ TopCat.toSSet.obj Q :=
   diagonalFunctor.map (Functor.whiskerRight (barAugmentation q hq) TopCat.toSSet) ≫
     diagonalFunctor.map (Functor.constComp SimplexCategoryᵒᵖ Q TopCat.toSSet).hom ≫
       (diagonalConstIso (TopCat.toSSet.obj Q)).hom
 
-def borelToQuotient (q : Z ⟶ Q) (hq : ∀ (g : G) (x : Z), q (g • x) = q x) :
+/-- The canonical map from the Borel model to the quotient: the realization
+of the augmentation followed by the counit of the singular-set adjunction. -/
+def borelToQuotient [IsTopologicalGroup G] [ContinuousSMul G Z] (q : Z ⟶ Q)
+    (hq : ∀ (g : G) (x : Z), q (g • x) = q x) :
     borel G Z ⟶ Q :=
   SSet.toTop.map (diagonalAugmentation q hq) ≫ sSetTopAdj.counit.app Q
 
 variable {W : TopCat.{0}} [MulAction G W]
 
+/-- On bar level `n`, an equivariant map induces `[g, x] ↦ [g, f x]`. -/
 def levelEquivariantMap (f : Z ⟶ W) (hf : ∀ (g : G) (x : Z), f (g • x) = g • f x)
     (n : ℕ) : BarLevel G Z n → BarLevel G W n :=
   Quotient.map (fun p => (p.1, f p.2)) (by
@@ -131,21 +162,26 @@ def levelEquivariantMap (f : Z ⟶ W) (hf : ∀ (g : G) (x : Z), f (g • x) = g
     apply MulAction.mem_orbit_iff.mpr
     exact ⟨g, Prod.ext rfl (hf g b.2).symm⟩)
 
-def barEquivariantMap (f : Z ⟶ W) (hf : ∀ (g : G) (x : Z), f (g • x) = g • f x) :
+/-- The map of bar constructions induced by an equivariant map. -/
+def barEquivariantMap [IsTopologicalGroup G] [ContinuousSMul G Z] [ContinuousSMul G W]
+    (f : Z ⟶ W) (hf : ∀ (g : G) (x : Z), f (g • x) = g • f x) :
     bar G Z ⟶ bar G W where
   app n := TopCat.ofHom ⟨levelEquivariantMap f hf n.unop.len,
     continuous_coinduced_dom.2
       (continuous_quot_mk.comp (continuous_fst.prodMk (f.hom.continuous.comp continuous_snd)))⟩
   naturality i j a := by ext p; induction p using Quotient.inductionOn; rfl
 
-def borelMap (f : Z ⟶ W) (hf : ∀ (g : G) (x : Z), f (g • x) = g • f x) :
+/-- The map of Borel models induced by an equivariant map. -/
+def borelMap [IsTopologicalGroup G] [ContinuousSMul G Z] [ContinuousSMul G W]
+    (f : Z ⟶ W) (hf : ∀ (g : G) (x : Z), f (g • x) = g • f x) :
     borel G Z ⟶ borel G W :=
   SSet.toTop.map
     (diagonalFunctor.map (Functor.whiskerRight (barEquivariantMap f hf) TopCat.toSSet))
 
 variable (G Z)
 
-def levelZero : BarLevel G Z 0 ≃ₜ Z where
+/-- Bar level zero is homeomorphic to `Z`, by `[g, x] ↦ g⁻¹ • x`. -/
+def levelZero [IsTopologicalGroup G] [ContinuousSMul G Z] : BarLevel G Z 0 ≃ₜ Z where
   toFun := Quotient.lift (fun p : Homogeneous G Z 0 => (p.1 0)⁻¹ • p.2) (by
     intro a b h
     change a ∈ MulAction.orbit G b at h
