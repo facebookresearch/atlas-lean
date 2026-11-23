@@ -58,8 +58,11 @@ instance instOrderBot [OrderBot β] : OrderBot (α →𝒄 β) where
 
 @[simp] theorem bot_apply [OrderBot β] (a : α) : (⊥ : α →𝒄 β) a = ⊥ := rfl
 
-/-- A map into a continuous function space is continuous if it is continuous
-at each argument. -/
+/-- **Scott continuity into a function space is checked pointwise.** Let $\alpha$, $\beta$,
+$\gamma$ be ω-complete partial orders, and let $g$ be a map from $\alpha$ to the ω-complete
+partial order of Scott-continuous maps $\beta \to \gamma$, ordered pointwise. If for every
+$b \in \beta$ the map $a \mapsto g(a)(b)$ is Scott-continuous, then $g$ is Scott-continuous.
+Here a map is Scott-continuous when it is monotone and preserves suprema of ω-chains. -/
 theorem ωScottContinuous_of_apply {g : α → β →𝒄 γ}
     (h : ∀ b, ωScottContinuous fun a => g a b) : ωScottContinuous g := by
   have hmono : Monotone g := fun a a' haa' b => (h b).monotone haa'
@@ -67,7 +70,11 @@ theorem ωScottContinuous_of_apply {g : α → β →𝒄 γ}
   rw [(h b).map_ωSup, ωSup_def, ωSup_apply]
   apply le_antisymm <;> apply ωSup_le_ωSup_of_le <;> intro i <;> exact ⟨i, le_rfl⟩
 
-/-- Currying of continuous maps out of a product. -/
+/-- **Currying of Scott-continuous maps.** Let $\alpha$, $\beta$, $\gamma$ be ω-complete partial
+orders and let $f : \alpha \times \beta \to \gamma$ be a Scott-continuous map, that is, a map that
+is monotone and preserves suprema of ω-chains. Its currying is the Scott-continuous map from
+$\alpha$ to the ω-complete partial order of Scott-continuous maps $\beta \to \gamma$, ordered
+pointwise, that sends $a$ to the map $b \mapsto f(a, b)$. -/
 def curry (f : α × β →𝒄 γ) : α →𝒄 (β →𝒄 γ) :=
   ofFun (fun a => ofFun (fun b => f (a, b)))
     (ωScottContinuous_of_apply fun b => show ωScottContinuous (fun a => f (a, b)) by fun_prop)
@@ -78,17 +85,30 @@ section Fix
 
 variable {D : Type u} [OmegaCompletePartialOrder D] [OrderBot D]
 
-/-- The least fixed point of a continuous endomap of a pointed ω-CPO: the
-supremum of the Kleene chain `⊥ ≤ f ⊥ ≤ f (f ⊥) ≤ …`. -/
+/-- **Least fixed point of a Scott-continuous map.** Let $D$ be an ω-complete partial order with
+a least element $\bot$, and let $f : D \to D$ be Scott-continuous, that is, monotone and
+preserving suprema of ω-chains. The least fixed point $\operatorname{lfp} f$ of $f$ is the
+supremum of the Kleene chain $\bot \le f(\bot) \le f(f(\bot)) \le \cdots$, whose $n$-th term is
+the $n$-fold iterate $f^n(\bot)$. -/
 def lfp (f : D →𝒄 D) : D := ωSup (fixedPoints.iterateChain f ⊥ bot_le)
 
 theorem lfp_def (f : D →𝒄 D) : lfp f = ωSup (fixedPoints.iterateChain f ⊥ bot_le) := rfl
 
-/-- `lfp f` is a fixed point. -/
+/-- **The least fixed point is a fixed point.** Let $D$ be an ω-complete partial order with a
+least element $\bot$, and let $f : D \to D$ be Scott-continuous, that is, monotone and preserving
+suprema of ω-chains. Then the least fixed point $\operatorname{lfp} f$ of $f$ satisfies
+$f(\operatorname{lfp} f) = \operatorname{lfp} f$. -/
 theorem lfp_eq (f : D →𝒄 D) : f (lfp f) = lfp f :=
   fixedPoints.ωSup_iterate_mem_fixedPoint f ⊥ bot_le
 
-/-- `lfp f` is below every prefixed point, so it is the least fixed point. -/
+/-- **The least fixed point lies below every prefixed point.** Let $D$ be an ω-complete partial
+order with a least element $\bot$, let $f : D \to D$ be Scott-continuous, that is, monotone and
+preserving suprema of ω-chains, and let $\operatorname{lfp} f$ be the supremum of the Kleene
+chain $\bot \le f(\bot) \le f(f(\bot)) \le \cdots$. If $a \in D$ satisfies $f(a) \le a$, then
+$\operatorname{lfp} f \le a$.
+
+Together with $f(\operatorname{lfp} f) = \operatorname{lfp} f$, this makes $\operatorname{lfp} f$
+the least fixed point of $f$. -/
 theorem lfp_le (f : D →𝒄 D) {a : D} (h : f a ≤ a) : lfp f ≤ a :=
   fixedPoints.ωSup_iterate_le_prefixedPoint f ⊥ bot_le h bot_le
 
@@ -98,7 +118,11 @@ theorem lfp_mono : Monotone (lfp : (D →𝒄 D) → D) := by
   calc f (lfp g) ≤ g (lfp g) := hfg _
     _ = lfp g := lfp_eq g
 
-/-- The least-fixed-point operator is itself continuous. -/
+/-- **Scott continuity of the least-fixed-point operator.** Let $D$ be an ω-complete partial
+order with a least element $\bot$. For a Scott-continuous map $f : D \to D$, that is, one that is
+monotone and preserves suprema of ω-chains, let $\operatorname{lfp} f$ be its least fixed point.
+The map $f \mapsto \operatorname{lfp} f$, from the ω-complete partial order of Scott-continuous
+maps $D \to D$, ordered pointwise, to $D$, is Scott-continuous. -/
 theorem lfp_ωScottContinuous : ωScottContinuous (lfp : (D →𝒄 D) → D) := by
   refine ωScottContinuous.of_monotone_map_ωSup ⟨lfp_mono, fun c => le_antisymm ?_ ?_⟩
   · apply lfp_le
@@ -118,7 +142,11 @@ theorem lfp_ωScottContinuous : ωScottContinuous (lfp : (D →𝒄 D) → D) :=
     intro i
     exact lfp_mono (le_ωSup c i)
 
-/-- The least-fixed-point operator as a continuous map. -/
+/-- **The least-fixed-point operator as a Scott-continuous map.** Let $D$ be an ω-complete
+partial order with a least element $\bot$. The least-fixed-point operator, sending a
+Scott-continuous map $f : D \to D$ to its least fixed point $\operatorname{lfp} f$, bundled as a
+Scott-continuous map from the ω-complete partial order of Scott-continuous maps $D \to D$,
+ordered pointwise, to $D$. -/
 def lfpHom : (D →𝒄 D) →𝒄 D := ofFun lfp lfp_ωScottContinuous
 
 @[simp] theorem lfpHom_apply (f : D →𝒄 D) : lfpHom f = lfp f := rfl
