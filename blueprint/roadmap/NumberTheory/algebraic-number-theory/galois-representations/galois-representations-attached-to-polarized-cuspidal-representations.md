@@ -24,7 +24,7 @@ at $v$, and $\rho = \mathrm{rc}(\sigma \otimes |\det|_v^{(1-a)/2})$.
 - At each finite place $v \nmid \ell$ the Weil–Deligne representation $\mathrm{WD}_v$ of $r$ at $v$ is
   compared with $\rho$, for every such $\mathrm{rc}$, by three clauses: the two have the same dimension;
   $\mathrm{WD}_v = \rho$ when $\rho$ has zero monodromy and the commutators of the Weil group act
-  trivially on it; and when $E_v \cong \mathbb{Q}_g$ for a prime $g$ with $g > 16a^2$ or $a = 1$, and $\rho$
+  trivially on it; and when $E_v \cong \mathbb{Q}_g$ for a prime $g$ and moreover $a = 1$ or $g > 16a^2$, and $\rho$
   has zero monodromy, is tamely ramified and every repeated eigenvalue of a generator of tame inertia
   on $\rho$ is an $(Nv - 1)$-th root of unity, $\mathrm{WD}_v$ has zero monodromy and the same
   characteristic polynomials as $\rho$ on the elements of degree $0$ of the Weil group.
