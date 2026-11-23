@@ -68,4 +68,3 @@ theorem_wanted denominatorRootDeligneMumford
     (hD : IsDeligneFaltings D) (j : DenominatorSystem A B)
     (hprime : PrimeToCharacteristics j.map)
     (Y : Scheme.{u}) (b : Y ⟶ X) (R : Model I D j.map b) : R.stack.IsDeligneMumfordStack
-

@@ -63,4 +63,3 @@ def forgetTensorIso (P : TensorLanding X) :
     tensorUncurried X P ⋙ forget X ≅ underlyingTensor X := Iso.refl _
 
 end AlgebraicGeometry.CartesianStackTensorProducts
-
