@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.Analysis.SpecialFunctions.Log.Zelinsky
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
@@ -108,16 +109,6 @@ public theorem_wanted tsum_log_sq_div_sq_sub_one_primes_ge_le
         Real.log (((p : ℕ) : ℝ) ^ 2 / (((p : ℕ) : ℝ) ^ 2 - 1)) ≤
       1 / ((q : ℝ) * Real.log q) * (1 + 2 * Real.log (Real.log q) / Real.log q) +
         4 / (q : ℝ) ^ 3
-
-/-- **Upper bound for $\log(1 + 1/(x-1))$.** For every integer $x \ge 2$,
-$\log(1 + 1/(x-1)) \le 1/x + 25/(32x^2)$, where $\log$ is the natural logarithm.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 8 (`integers-2025-A59-lem-8`). -/
-public theorem_wanted log_one_add_one_div_sub_one_le
-    (x : ℕ) (hx : 2 ≤ x) :
-    Real.log (1 + 1 / ((x : ℝ) - 1)) ≤ 1 / (x : ℝ) + 25 / (32 * (x : ℝ) ^ 2)
 
 /-- **Suryanarayana's bound for $H(n)/h(n)$ with one odd exponent.** For a positive integer
 $n$ write $h(n) = \sigma(n)/n$ for its abundancy index, where $\sigma(n)$ is the sum of the

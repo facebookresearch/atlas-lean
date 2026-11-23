@@ -47,6 +47,27 @@ private theorem iterate_horizontalSum_succ_row (R : ℕ → ℕ → ℤ)
     simp only [Function.iterate_succ_apply', horizontalSum] at hn hn' ⊢
     omega
 
+/-- **Rows of iterated horizontal sums of a Delannoy array agree mod 2.** Let $R(m, n)$, for
+$m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all
+$m, n$. For an array $S$ let $(HS)(m, n) = S(m, n) + S(m, n+1)$, and write $R^i = H^i R$ for the
+$i$-fold horizontal sum. Then for every $i \ge 1$ and all $m, m', n \in \mathbb{N}$,
+$R^i(m, n) \equiv R^i(m', n) \pmod 2$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Corollary 14
+(`jis-2024-24.1.8-cor-14`). -/
+public theorem delannoyArray_horizontalSum_rows_modEq (R : ℕ → ℕ → ℤ)
+    (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (i : ℕ) (hi : 1 ≤ i)
+    (m m' n : ℕ) :
+    (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[i] R m n ≡
+      (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[i] R m' n [ZMOD 2] := by
+  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le' hi
+  have row_zero (a : ℕ) : horizontalSum^[j + 1] R a n ≡ horizontalSum^[j + 1] R 0 n [ZMOD 2] := by
+    induction a with
+    | zero => rfl
+    | succ a ih => rwa [iterate_horizontalSum_succ_row R hR j a n, Int.add_modulus_mul_modEq_iff]
+  exact (row_zero m).trans (row_zero m').symm
+
 private theorem iterate_horizontalSum_seed (R : ℕ → ℕ → ℤ) (k : ℕ)
     (hseed : ∀ n, R 0 n = (k + n).choose k) (j : ℕ) (hj : j ≤ k) (n : ℕ) :
     horizontalSum^[j] R 0 n ≡ ((k + n).choose (k - j) : ℤ) [ZMOD 2] := by

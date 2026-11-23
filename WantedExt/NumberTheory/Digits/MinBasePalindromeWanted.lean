@@ -14,6 +14,7 @@ public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
+public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
 
 /-!
 # Minimum-base palindromic representations of powers of 2
@@ -160,19 +161,6 @@ public theorem_wanted three_digit_palindrome_two_pow_iff (n b : ℕ) (hb : 2 ≤
       b ^ 2 + 1 ≤ 2 ^ n ∧ 2 ^ n ≤ b ^ 3 - 1 ∧ 2 ^ n % b ≠ 0 ∧
         ((2 ^ n / b : ℕ) : ℚ) / b - ((b : ℚ) - 1) / b ≤ ((2 ^ n % b : ℕ) : ℚ) ∧
         ((2 ^ n % b : ℕ) : ℚ) ≤ ((2 ^ n / b : ℕ) : ℚ) / b
-
-/-- **Three-digit binomial forms of powers of two.** Let $n$ and $\alpha \ge 1$ be natural numbers
-and let $b \ge 2$ be a base. The base-$b$ representation of $2^n$ is
-$(\alpha, 2\alpha, \alpha)_b$ if and only if there is a natural number $i$ with $3i + 2 < n$,
-$n \equiv i \pmod 2$, $\alpha = 2^i$ and $b = 2^{(n - i)/2} - 1$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 3
-(`integers-2024-A69-thm-3`). -/
-public theorem_wanted three_digit_binomialForm_two_pow_iff (n b α : ℕ) (hb : 2 ≤ b)
-    (hα : 1 ≤ α) :
-    Nat.digits b (2 ^ n) = [α, 2 * α, α] ↔
-      ∃ i : ℕ, 3 * i + 2 < n ∧ n % 2 = i % 2 ∧ α = 2 ^ i ∧ b = 2 ^ ((n - i) / 2) - 1
 
 /-- **Three-digit representations of powers of two with outer digits one.** Let $n$ be a natural
 number and $b \ge 2$ a base. There is a digit $c \ne 2$ such that the base-$b$ representation of
