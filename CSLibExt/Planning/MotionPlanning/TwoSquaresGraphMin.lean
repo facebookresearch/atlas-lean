@@ -38,7 +38,7 @@ endpoints `s = (-1, 1/2)`, `t = (4, 1/2)`.  The full visibility graph has the
 when the closed segment between them lies in `G`, weighted by Euclidean
 distance.
 
-Main result (`min_eq`): the least `s`-`t` walk weight equals `3 + √5`,
+Main result (`min_eq_walk`): the least `s`-`t` walk weight equals `3 + √5`,
 attained by the top walk `[s, (0,1), (3,1), t]`.
 
 Lower-bound method: a uniform potential `H` plus per-step bonuses for leaving
@@ -1190,7 +1190,7 @@ private theorem exists_walk_of_isWalk {l : List Vtx} (h : IsWalk l) : ∃ p : vi
   obtain ⟨hhead, hlast, hadj⟩ := h
   exact exists_walk_of_chain hhead hadj hlast
 
-/-- The SimpleGraph.Walk form of min_eq. -/
+/-- Least `walkWeight` over `visGraph.Walk .s .t` equals `3 + Real.sqrt 5`. -/
 theorem min_eq_walk : IsLeast {w | ∃ p : visGraph.Walk .s .t, walkWeight p = w} (3 + Real.sqrt 5) := by
   refine ⟨?_, ?_⟩
   · obtain ⟨l, hwalk, hlen⟩ := min_eq.1
