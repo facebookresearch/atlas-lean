@@ -39,7 +39,8 @@ through the trace), Tamagawa measures, and local pairings and measures whose pro
   $\langle f_{1,v}, f_{2,v} \rangle = 1$: $Z_v = L_v / d_v(s, \chi_v)$ with
   $d_v(s, \chi) = \prod_{j=1}^n L_{F_v}(2s + j, \chi|_{F_v^\times}\, \varepsilon_{E_v/F_v}^{n+j})$, where $L_v$ is the standard
   $L$-factor at $s + \tfrac12$ of the base change of $\pi_v^\vee$ twisted by $\chi_v$, equivalently of
-  $\mathrm{BC}(\pi_v) \otimes \chi_v^{-1}$ after exchanging the two places of $E$. Gan, Qiu and Takeda write this
+  $\mathrm{BC}(\pi_v) \otimes \chi_v^{-1}$ after applying the Galois conjugation $c$ of $E_v$ over $F_v$ (a field automorphism when $v$ does not
+  split, the exchange of the two components when it splits). Gan, Qiu and Takeda write this
   factor $L(s + \tfrac12, \pi_v \times \chi_v)$ with the conjugated coefficient above; Harris–Kudla–Sweet and
   Yamana use the ordinary coefficient $\langle \pi_v(g) f_{1,v}, f_{2,v} \rangle$ and the factor of $\mathrm{BC}(\pi_v) \otimes \chi_v$.
   For example, at a split place with $n = 1$, $\pi_v = \alpha$ and $\chi_v = (\beta, \beta^{-1})$ unramified, the
@@ -63,8 +64,10 @@ A good expansion has pages, in this order, for the global zeta integral and its 
 identity (open orbit and vanishing of the other orbits) and the Euler product, the local zeta integrals
 with their rationality and good sections, the local $L$- and $\varepsilon$-factors of Lapid and Rallis and Yamana's gcd
 theorem, the unramified computation with its normalizations and orientation (inert and split places), the
-factorization $Z = L Z^*$, and the $L$-function form of the Rallis inner product formula with all its
-hypotheses, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
+factorization $Z = L Z^*$ for factorizable sections (extended to finite sums of them by linearity), the
+$L$-function form of the Rallis inner product formula with all its hypotheses, and the inputs of its
+refinement: Yamana's theorem relating a pole of $L(s + \tfrac12, \pi \times \chi_V)$ to a non-zero lift to the complementary
+space, the tower property and the local conservation relation, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
 Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact statements.
 
 ## Depends on

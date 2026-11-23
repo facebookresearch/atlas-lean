@@ -10,8 +10,8 @@ local field $F$ of characteristic different from $2$ and a symplectic space $W$ 
   the formula expressing the Weil representation as a genuine representation of the twofold cover in terms
   of this cocycle.
 - **Twofold cover and non-splitting.** The reduction of the $\mathbb{C}^\times$-extension $\mathrm{Mp}(W)$ to a
-  twofold cover, its independence of $\psi$ at a non-archimedean place, and its non-splitting when $F$ is
-  non-archimedean or $F = \mathbb{R}$ and $\dim_F W \ge 2$ (reduced to a symplectic plane); over $F = \mathbb{C}$ the
+  twofold cover, its independence of $\psi$ at a non-archimedean place, and its non-splitting when $\dim_F W \ge 2$ and
+  $F$ is either non-archimedean or $\mathbb{R}$ (reduced to a symplectic plane); over $F = \mathbb{C}$ the
   cocycle is trivial and the extension splits (Rao, Proposition 5.8); the splitting of the
   $\mathbb{C}^\times$-extension over the stabilizer $P_Y$ of a maximal isotropic subspace.
 - **Fock model.** At a real place, the Fock model of the oscillator representation, its
@@ -26,8 +26,11 @@ local field $F$ of characteristic different from $2$ and a symplectic space $W$ 
   and the doubling intertwiner between the Schrödinger models of a polarization and of the doubled
   polarization, with evaluation at zero giving the inner product.
 
-- **Product formula for Weil indices.** For a non-degenerate quadratic form $q$ over a number field, the
-  product over all places of the local Weil indices $\gamma_v(q)$ is $1$ (Weil, §30, Proposition 5), from which
+- **Product formula for Weil indices.** For a non-degenerate quadratic form $q$ over a number field $F$ and a
+  single non-trivial character $\psi = \prod_v \psi_v$ of $\mathbb{A}_F/F$, the local Weil indices $\gamma_{\psi_v}(q_v)$ are almost all $1$ and
+  their product is $1$ (Weil, §§29–30, Proposition 5). The local characters cannot be chosen independently: for
+  $q = x^2$ over $\mathbb{Q}$, replacing only the real component of $\psi$ by its inverse changes the real index from
+  $e^{\pi i/4}$ to $e^{-\pi i/4}$ (Weil, §26), which multiplies the product by $e^{-\pi i/2} \ne 1$. From the product formula
   Hilbert reciprocity follows by taking the norm form of a quaternion algebra (Weil calls reciprocity formally
   weaker); through it the rational points of $\mathrm{Sp}(W)$ lift to the twofold cover of the adelic group (Weil, §45).
 
@@ -39,6 +42,7 @@ precise statement and the sources below.
 ## Depends on
 
 - [Stone–von Neumann theorem for Heisenberg groups over local fields](stone-von-neumann-theorem.md), for the Heisenberg representation whose normalizer defines the Weil representation
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the global additive characters of $\mathbb{A}_F/F$ and their local components, used in the product formula for Weil indices
 
 ## Sources
 
@@ -48,7 +52,8 @@ precise statement and the sources below.
   Proposition 5.8 (the multiplier is trivial over $\mathbb{C}$) and the Appendix (the cocycle and the explicit formulas).
 - A. Weil, "Sur certains groupes d'opérateurs unitaires", Acta Math. 111 (1964), 143–211,
   <https://doi.org/10.1007/BF02391012>: §30, Proposition 5 and the remarks after it (the product formula for
-  Weil indices, Hilbert reciprocity as a formally weaker consequence), §45 (the rational lift in the twofold
+  Weil indices for one global character, Hilbert reciprocity as a formally weaker consequence), §26 (the real
+  indices $e^{\pm \pi i/4}$), §29 (the global character and its local components), §45 (the rational lift in the twofold
   cover).
 - S. S. Kudla, "Notes on the local theta correspondence", lecture notes, European School in Group
   Theory, 1996, <https://www.math.toronto.edu/~skudla/castle.pdf>: §I.4, Theorem 4.5, Corollaries 4.8 and

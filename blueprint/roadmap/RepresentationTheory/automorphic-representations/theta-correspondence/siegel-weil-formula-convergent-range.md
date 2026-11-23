@@ -23,8 +23,10 @@ $$E(s_0, f_\varphi)(g) = \kappa \int_{H(F) \backslash H(\mathbb{A})} \theta(g, h
 
 where $dh$ is the Haar measure for which $H(F) \backslash H(\mathbb{A})$ has volume $1$. In the convergent
 range $m \le n$ forces $r = 0$. The positive dimensions matter: for $F = \mathbb{Q}$, $E = \mathbb{Q}(i)$, $m = 0$ (so $H$ is
-trivial), $n = 1$, $\chi_V = 1$, $\varphi = 1$ and $g = 1$, the series $E(0, f_\varphi)(1)$ is $1$ (the classical
-non-holomorphic Eisenstein series at the corresponding point) and the integral is $1$, without the factor $2$. (For $m = 0$
+trivial), $n = 1$, $\chi_V = 1$, $\varphi = 1$ and $g = 1$, the Siegel–Weil point is $s_0 = -\tfrac12$ and
+$E(-\tfrac12, f_\varphi)(1) = 1$ (the classical non-holomorphic Eisenstein series at the classical parameter
+$u = s + \tfrac12 = 0$; at $s = 0$, that is $u = \tfrac12$, the series vanishes), while the integral is $1$, without the
+factor $2$. (For $m = 0$
 and a general $g$ the integral is $\chi_V(\iota^{-1}(\det g))\, \varphi(0)$, with $\iota(x) = x/x^c$.)
 
 The formula is due to Weil for $m > 2n$, when the Eisenstein series converges absolutely at $s_0$, to
@@ -76,6 +78,9 @@ Ichino for $n < m \le 2n$, to Ichino for $m = n$ (the case $s_0 = 0$), and to Ya
 - A. Weil, "Sur la formule de Siegel dans la théorie des groupes classiques", Acta Math. 113 (1965), 1–87,
   <https://doi.org/10.1007/BF02391774>: §52, Théorème 5 (the case $m > 2n$, including its proof from the
   orbit decomposition and the uniqueness of the invariant measure).
+- M. P. Young, "Explicit calculations with Eisenstein series", arXiv:1710.03624 (version 2): §4.1 and
+  Proposition 4.1 (the constant term and Fourier coefficients of the classical Eisenstein series, which give the
+  values at $u = 0$ and $u = \tfrac12$ used in the example).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
   states forms of this result for CM extensions as `GlobalTheory.Published.WeilSiegelFormulaUnitary`

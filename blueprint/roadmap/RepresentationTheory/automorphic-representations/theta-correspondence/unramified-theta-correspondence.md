@@ -19,7 +19,10 @@ maximal compact subgroups $K$ and $K'$ fixing the vacuum vector $\varphi_0$ of t
   pairs that occur: a representation with $K$-fixed vectors need not have a non-zero theta lift to a
   prescribed smaller space; in the range of the next item, by Liu's Proposition A.5, a spherical
   representation of the larger group lifts only if its Satake parameter lies in the image of the map described
-  there (a necessary condition, not a sufficient one).
+  there. The converse does not follow from Proposition A.5 alone; in the odd-$q$ range of the next item it is
+  supplied at equal ranks by Liu's Corollary A.6 (1) (every spherical representation has a non-zero lift, equal
+  to itself) and, for the padded parameters, by his Theorem 6.2 (2) (the small lift is non-zero and is the
+  spherical constituent with the padded parameter).
 - **Satake parameters** (Rallis; Liu for unitary pairs). For hyperbolic Hermitian and skew-Hermitian
   spaces of dimensions $2r$ and $2s$ over the unramified quadratic field extension, odd $q$, an additive
   character of conductor $\mathcal{O}_F$ and trivial splitting characters, the annihilator of the Weil
@@ -29,10 +32,14 @@ maximal compact subgroups $K$ and $K'$ fixing the vacuum vector $\varphi_0$ of t
   of a corresponding pair is obtained from the one on the smaller group by appending
   $q, q^3, \dots, q^{2(r-s)-1}$, up to the action of the Weyl group (with $\lvert \varpi \rvert_E = q^{-2}$), and $\Phi$ is the identity
   when $r = s$. Other ranks and parities are not covered by this statement.
-- **Split places.** For $E = F \times F$ the pair is a type II pair $(\mathrm{GL}_n(F), \mathrm{GL}_m(F))$, and the
-  unramified correspondence is the case of unramified representations of Mínguez's explicit
-  correspondence (contragredient, together with the parameter of the trivial representation of
-  $\mathrm{GL}_{m-n}(F)$ when $n \le m$).
+- **Split places.** For $E = F \times F$ the pair is a type II pair $(\mathrm{GL}_n(F), \mathrm{GL}_m(F))$. For the untwisted
+  model of the [split case](weil-representation-of-unitary-dual-pairs.md) with Mínguez's normalization, the
+  unramified correspondence is the case of unramified representations of Mínguez's explicit correspondence
+  (contragredient, together with the parameter of the trivial representation of $\mathrm{GL}_{m-n}(F)$ when $n \le m$). If
+  the model is twisted by characters $\alpha \circ \det$ of the group of $\pi$ and $\alpha' \circ \det$ of the other group (as the
+  splitting characters may require), the lift of $\pi$ becomes $\alpha' \otimes \theta(\pi \otimes \alpha^{-1})$, where $\theta$ is the lift for the
+  untwisted model; at equal ranks with a twist $\chi(\det g')$ on one side this is Liu's $\pi^\vee \otimes \chi$ (Corollary
+  A.6 (2)).
 
 A good expansion has pages for the lattice model and the vacuum vector, for the one-sided generation
 theorem in the stated range (and separately, with sources, for other parities and the dyadic case), for
@@ -50,13 +57,14 @@ sources below, with the Satake isomorphism for hyperspecial subgroups as a prere
 - Y. Liu, "Theta correspondence for almost unramified representations of unitary groups",
   arXiv:2105.14223 (version 1): §2, Definition 3.1, Lemma 3.2, Assumption 3.3
   and Proposition 3.4 ("When q is odd, Assumption 3.3 holds"), the one-sided generation of fixed vectors for
-  even hyperbolic spaces over the unramified quadratic extension.
+  even hyperbolic spaces over the unramified quadratic extension; Notations 4.1 and 5.5 and Theorem 6.2 (2)
+  (under Assumption 3.3, the non-zero small lift of the spherical constituent with padded parameter).
 - Y. Liu, "Arithmetic theta lifting and L-derivatives for unitary groups, I", Algebra Number Theory 5
   (2011), no. 7, from p. 849, Appendix, pp. 912–918: the setting (hyperbolic spaces of dimensions $2r$ and $2s$,
   odd residue order, unramified quadratic field, the additive character, trivial splitting characters), the
   explicit homomorphisms of pp. 916–917 ($\log_q X_j \mapsto 2m - 2j + 1$ for the added coordinates), Proposition A.5
-  and Corollary A.6 (the matching of Satake parameters and the cases where a spherical representation has no
-  lift).
+  (the matching of Satake parameters, a necessary condition for a non-zero lift) and Corollary A.6, p. 918
+  ((1) equal-rank non-vanishing; (2) the twisted split case, $\pi^\vee \otimes \chi$).
 - S. S. Kudla, "Notes on the local theta correspondence", lecture notes, European School in Group
   Theory, 1996, <https://www.math.toronto.edu/~skudla/castle.pdf>: §VI.3 ("A basic result of Howe [24],
   [26], is that, in the theta correspondence for unramified dual pairs (G, H), [46], unramified

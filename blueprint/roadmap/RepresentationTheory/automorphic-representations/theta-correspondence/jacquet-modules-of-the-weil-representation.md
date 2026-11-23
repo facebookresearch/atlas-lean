@@ -32,8 +32,8 @@ splitting characters $(\chi_V, \chi_W)$, and Jacquet functors and parabolic indu
   surjection $I(-s_{m,n}) \twoheadrightarrow \Theta(\chi_W)$ onto the lift of the character $\chi_W$ when
   $s_{m,n} \le 0$ (Gan–Ichino), obtained from an intertwining operator; the twisted see-saw identity relating
   $\mathrm{Hom}(\Theta(\chi_W), \pi' \otimes \pi^\vee\chi_V)$ to $\mathrm{Hom}_{\mathrm{U}(V)^\Delta}(\Theta(\pi') \otimes \Theta(\pi)^{\mathrm{MVW}}, \mathbb{C})$;
-  and the invariant distribution theorem (Mœglin–Vignéras–Waldspurger, Lee–Zhu) through which, at an inert
-  place chosen as in Yamana's proof, the residue maps of Siegel Eisenstein series factor through
+  and the invariant distribution theorem (Mœglin–Vignéras–Waldspurger, Lee–Zhu) through which, at a place not
+  split in $E$ chosen as in Yamana's proof (possibly ramified, or real), the residue maps of Siegel Eisenstein series factor through
   $R_n(V)$, together with the archimedean generation result of Ichino used there.
 - **The MVW involution** (non-archimedean). The covariant functor $\pi \mapsto \pi^{\mathrm{MVW}}$ of Mœglin,
   Vignéras and Waldspurger on smooth representations of unitary groups, with $\pi^{\mathrm{MVW}} \cong \pi^\vee$

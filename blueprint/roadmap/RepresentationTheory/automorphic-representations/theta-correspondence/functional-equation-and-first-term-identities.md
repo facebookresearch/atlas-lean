@@ -5,14 +5,21 @@ This node is still to be broken down. It covers the inputs of the proof of the
 dimension $m$ with $0 < m \le n$, where the Siegel–Weil point $s_0 = \tfrac{m-n}{2}$ is $\le 0$. Let $G_n = \mathrm{U}(W_n)$ with
 $W_n$ split of dimension $2n$, $I_n(s, \chi_V)$ the degenerate principal series, $E(s, f)$ the
 [Siegel Eisenstein series](siegel-eisenstein-series-on-unitary-groups.md) of a holomorphic section $f$, and
-$I_V(\varphi)$ the (convergent) theta integral of $V$. The two cases $m < n$ and $m = n$ have different proofs.
+$I_V(\varphi)$ the (convergent) theta integral of $V$, for Schwartz functions $\varphi$ that correspond to polynomials in the
+Fock model at every archimedean place (Yamana's test class, his §1.3), with Siegel–Weil sections $f_\varphi$. The two cases
+$m < n$ and $m = n$ have different proofs.
 
 - **Functional equation and the zero at $s_0$ ($0 < m < n$).** The global intertwining operator
   $M(s) \colon I_n(s, \chi_V) \to I_n(-s, \chi_V)$, meromorphic, with $E(s, f) = E(-s, M(s) f)$; Yamana's scalar functions
   $a(s)$ and $b(s)$ (products of Hecke $L$-functions) and the normalized operator $M^\circ(s) = (b(s)/a(s)) M(s)$, for
-  which $E(s, f) = (a(s)/b(s))\, E(-s, M^\circ(s) f)$. In the unitary case the factor $a(s)/b(s)$ has a simple zero at
-  $s_0$, and for the sections considered $M^\circ(s) f$ is holomorphic at $-s_0$, where the series has at most a simple
-  pole; this is not a statement that the normalized operator vanishes on arbitrary data in $I_n(s_0, \chi_V)$.
+  which $E(s, f(s)) = (a(s)/b(s))\, E(-s, h(-s))$ with $h(-s) = M^\circ(s) f(s)$. In the unitary case the factor $a(s)/b(s)$ has a
+  simple zero at $s_0$. For a standard section $f$ with $f(s_0)$ in the image $\Pi(V)$ of the Siegel–Weil sections of $V$
+  (or of a coherent collection of local spaces), the section $h(t) = M^\circ(-t) f(-t)$ of $I_n(t, \chi_V)$ is holomorphic at
+  $t = -s_0$ (Yamana's Proposition 3.1: $\gamma(t) h(t)$ is holomorphic for an entire $\gamma$ with $\gamma(-s_0) \ne 0$), equivalently
+  $M^\circ(s) f(s)$ is regular at $s = s_0$; and $E(t, h(t))$ has at most a simple pole at $t = -s_0$. Hence
+  $E(s_0, f) = -\gamma \,\mathrm{Res}_{t = -s_0} E(t, h(t))$ for an explicit non-zero constant $\gamma$ (Yamana's (4.1)). This is not a statement
+  that the normalized operator vanishes on arbitrary data in $I_n(s_0, \chi_V)$, nor merely a holomorphy statement for
+  the operator at a positive input.
 - **First-term identity ($0 < m < n$).** Let $V' = V \oplus \mathbb{H}^{n-m}$, of dimension $2n - m$, and $\Pi(V')$ the image of
   its Siegel–Weil sections in $I_n(-s_0, \chi_V)$. For a holomorphic section $f$ with $f(-s_0) \in \Pi(V')$, the operator
   $M^\circ(-s_0)$ maps $\Pi(V')$ onto the image $\Pi(V)$ of the Siegel–Weil sections of $V$ in $I_n(s_0, \chi_V)$; if
@@ -50,7 +57,8 @@ the degenerate principal series used, each with a precise statement and the sour
 
 - S. Yamana, "On the Siegel–Weil formula: the case of singular forms", Compositio Math. 147 (2011),
   1003–1021, <https://doi.org/10.1112/S0010437X11005379>: §1.2 (the meromorphic family and the
-  functional equation), §3 (the normalized intertwining operator), §4, (4.1) (with $a(s)/b(s)$ and its simple zero;
+  functional equation), §1.3 (the test functions corresponding to polynomials in the Fock model), §3, Proposition 3.1
+  (the normalized intertwining operator), §4, (4.1) (with $h(-s) = M^\circ(s) f(s)$, $a(s)/b(s)$ and its simple zero;
   the case $m = n$ excluded), §5, Proposition 5.1, Theorem 5.2 (after Ichino, Jiang–Soudry and Kudla–Rallis;
   $\mathrm{Res}_{t=-s_0} E(t, f) = c_0 I_V(\varphi)$ under $M^\circ(-s_0) f(-s_0) = f_\varphi(s_0)$), Remark 5.3 (iii), Corollary 5.4,
   Proposition 5.8 (i) (the case $m = n$, after A. Ichino, "A regularized Siegel-Weil formula for unitary

@@ -62,12 +62,16 @@ Hermitian space of dimension $m \ge 1$ over $E$, and fix
 $\chi_U, \chi_V$ of $\mathbb{A}_E^\times / E^\times$ with $\chi_U|_{\mathbb{A}_F^\times} = \chi_E^{n}$ and
 $\chi_V|_{\mathbb{A}_F^\times} = \chi_E^{m}$.
 
-3. **Global Weil representation.** For an $F$-rational polarization $\mathrm{Res}_{E/F}(U \otimes_E V) = X \oplus Y$ and
-   almost all places $v$ (those where $E$, $\psi_v$, $\chi_{U,v}$ and $\chi_{V,v}$ are unramified and $U$, $V$ have
-   self-dual lattices $L_U$, $L_V$ at $v$), the images under the local splittings of the hyperspecial subgroups
-   $K_{U,v}$ and $K_{V,v}$ stabilizing $L_U$ and $L_V$ fix the characteristic function $\varphi_v^\circ$ of the lattice
-   $(L_U \otimes L_V) \cap X(F_v)$ (the whole local groups do not: an element of a Levi factor with a uniformizer
-   entry carries it to a multiple of the characteristic function of another lattice). The restricted tensor
+3. **Global Weil representation.** Fix an $F$-rational polarization $\mathrm{Res}_{E/F}(U \otimes_E V) = X \oplus Y$ and
+   lattices $L_U$, $L_V$. At almost all places $v$ — those where $E$, $\psi_v$, $\chi_{U,v}$ and $\chi_{V,v}$ are unramified, $v$ is
+   not dyadic, $L_U$ and $L_V$ are self-dual at $v$, and the tensor lattice splits compatibly with the polarization,
+   $L_U \otimes L_V = ((L_U \otimes L_V) \cap X(F_v)) \oplus ((L_U \otimes L_V) \cap Y(F_v))$ — the images under the local splittings of the
+   hyperspecial subgroups $K_{U,v}$ and $K_{V,v}$ stabilizing $L_U$ and $L_V$ fix the characteristic function $\varphi_v^\circ$ of
+   $(L_U \otimes L_V) \cap X(F_v)$. (Without the compatibility of the polarization with the lattices, the vector fixed by
+   the hyperspecial subgroups is the lattice-model vacuum, which need not be this indicator. The whole local groups
+   need not fix $\varphi_v^\circ$: on a split hyperbolic factor of positive rank, a Levi element with a uniformizer entry
+   carries it to a multiple of the characteristic function of another lattice; for an inert pair of lines both
+   groups are $E_v^1$ and equal their hyperspecial subgroups.) The restricted tensor
    product of the local Weil representations with respect to the $\varphi_v^\circ$, at all places including the split
    ones, is a representation $\omega_{\psi, \chi_U, \chi_V}$ of $\mathrm{U}(U)(\mathbb{A}_F) \times \mathrm{U}(V)(\mathbb{A}_F)$ on
    $\mathcal{S}(X)(\mathbb{A})$: the pullback of the Weil representation of the $\mathbb{C}^1$-extension of the

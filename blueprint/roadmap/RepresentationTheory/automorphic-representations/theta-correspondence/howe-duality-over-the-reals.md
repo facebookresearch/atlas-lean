@@ -16,7 +16,11 @@ are identified with pairs $(\rho, \rho')$ through $\rho \otimes \rho'$, defined 
 On the algebraic side let $\mathcal{P} \subset \mathcal{Y}^\infty$ be the $(\mathfrak{sp}, \tilde{\mathrm U}(N))$-module of
 $\tilde{\mathrm U}(N)$-finite vectors (the polynomials of the Fock model), and $\mathcal{R}(\mathfrak{g}, \tilde K, \omega)$
 the set of isomorphism classes of **irreducible** $(\mathfrak{g}, \tilde K)$-modules isomorphic to a quotient
-$\mathcal{P} / \mathcal{N}$ by a $(\mathfrak{g}, \tilde K)$-submodule.
+$\mathcal{P} / \mathcal{N}$ by a $(\mathfrak{g}, \tilde K)$-submodule. A representation of a possibly disconnected member $E$ (or of
+its Lie algebra and maximal compact subgroup) is **quasisimple** if the subalgebra
+$\mathcal{Z}(\mathfrak{e}_{\mathbb{C}})^{\mathrm{Ad}\, E}$ of the centre of the enveloping algebra fixed by the adjoint action of $E$ (not only of
+its identity component) acts by scalars (Howe, Transcending, p. 536); for connected $E$, such as a unitary group,
+this is the whole centre.
 
 1. **Algebraic Howe duality** (Howe, Theorem 2.1). For $\rho \in \mathcal{R}(\mathfrak{g}, \tilde K, \omega)$ let
    $\mathcal{N}_\rho$ be the intersection of the submodules $\mathcal{N}$ with $\mathcal{P}/\mathcal{N} \cong \rho$. Then
@@ -48,7 +52,7 @@ For unitary dual pairs, $G = \mathrm{U}(p, q)$ and $G' = \mathrm{U}(r, s)$ in $\
 
 - [Duality for compact dual pairs in the Fock model](howe-duality-for-compact-dual-pairs.md), for the structure (3.9) of the Fock space under a compact member of a dual pair, which Howe applies to the maximal compact subgroups and to the auxiliary pairs of products of unitary groups in §§3–5 to prove item 1
 - [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for the passage from item 1 to items 2 and 3 (Howe's Lemma 2.2): starting from a class that occurs as a smooth quotient, the image of $\mathcal{P}$ is dense and its $\tilde K$-isotypic components are finite-dimensional, so its $\tilde K$-finite vectors are an algebraic quotient of $\mathcal{P}$; the argument does not show that every algebraic quotient occurs smoothly
-- [Classical invariant theory and harmonics](classical-invariant-theory-and-harmonics.md), for the correspondence of the centres of the enveloping algebras of the two members (Howe, Remarks, §5 (a)), which makes the lift quasi-simple, and Harish-Chandra's theorem that a finitely generated quasi-simple $(\mathfrak{g}', \tilde K')$-module is admissible, the two steps by which Howe (Transcending, p. 547) obtains the admissibility of the algebraic lift in item 1
+- [Classical invariant theory and harmonics](classical-invariant-theory-and-harmonics.md), for the correspondence of the $\mathrm{Ad}$-invariant centres $\mathcal{Z}(\mathfrak{g})^{\mathrm{Ad}\, \tilde G}$ and $\mathcal{Z}(\mathfrak{g}')^{\mathrm{Ad}\, \tilde G'}$ (Howe, Remarks, §5 (a)): since $\rho$ is irreducible and admissible, $\mathcal{Z}(\mathfrak{g})^{\mathrm{Ad}\, \tilde G}$ acts on it by scalars, so $\mathcal{Z}(\mathfrak{g}')^{\mathrm{Ad}\, \tilde G'}$ acts on $\rho'_1$ by scalars determined by them and $\rho'_1$ is quasisimple; and Harish-Chandra's theorem that a finitely generated quasisimple $(\mathfrak{g}', \tilde K')$-module is admissible; these are the two steps by which Howe (Transcending, p. 547) obtains the admissibility of the algebraic lift in item 1
 
 ## Sources
 

@@ -10,9 +10,12 @@ $W = X \oplus Y$ and a non-trivial character $\psi$ of $F$.
   restriction (for open $H$, compact induction is moreover left adjoint to restriction; for arbitrary closed
   $H$ it is not, as $H = \{0\} \subset G = \mathbb{Q}_p$ shows).
 - **The induced Heisenberg representation.** The character $\psi_Y(y, t) = \psi(t)$ of the abelian subgroup
-  $H(Y) = Y \oplus F$ (trivial on $Y$); the smooth representation of $H(W)$ compactly induced from it, whose
-  functions have compact support modulo $H(Y)$ because of the central character; its realization on the
-  Schwartz–Bruhat functions on $X$; its irreducibility and admissibility. These are the inputs of the smooth
+  $H(Y) = Y \oplus F$ (trivial on $Y$); the smooth representation of $H(W)$ smoothly induced from it, whose
+  functions are shown to have compact support modulo $H(Y)$ because of the central character (in compact
+  induction this support condition is imposed instead); its realization on the Schwartz–Bruhat functions on $X$;
+  its irreducibility and admissibility; and, for an arbitrary smooth irreducible representation of $H(W)$ with
+  central character $\psi$, the construction of a non-zero $H(Y)$-equivariant functional to $\psi_Y$, through which
+  Frobenius reciprocity identifies the representation with the induced one. These are the inputs of the smooth
   existence and uniqueness statements of the Stone–von Neumann theorem, which this node does not restate.
 - **Unitary form.** The Stone–von Neumann–Mackey theorem for Heisenberg groups of locally compact abelian
   groups, for strongly continuous unitary representations on which the circle acts tautologically
