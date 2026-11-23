@@ -86,31 +86,43 @@ its bit length and does not give a deterministic polynomial-time algorithm
 for finding it, so computability of that schedule was unsupported.)
 -/
 
-/-- The multilinear extension of `f` at a field point `x`: the sum over Boolean inputs of
-`f a` times the Lagrange basis product, over an arbitrary field `F`. -/
+/-- **Multilinear extension of a Boolean function.** Identify the booleans true and false with $1$
+and $0$. Let $F$ be a field, $n$ a natural number and $f : \{0,1\}^n \to \{0,1\}$.
+The multilinear extension of $f$ at a point $x = (x_0, \dots, x_{n-1}) \in F^n$ is
+$$\sum_{a \in \{0,1\}^n} f(a) \prod_{i=0}^{n-1} \ell_{a_i}(x_i),$$
+where $f(a) \in \{0, 1\}$ is read in $F$, $\ell_1(t) = t$ and $\ell_0(t) = 1 - t$. -/
 noncomputable def multilinearExt {n : ℕ} {F : Type*} [Field F]
     (f : (Fin n → Bool) → Bool) (x : Fin n → F) : F :=
   ∑ a : Fin n → Bool, (if f a then 1 else 0) *
     ∏ i : Fin n, (if a i then x i else 1 - x i)
 
-/-- The base function of an oracle pair at length `n`, as a function on `n`-bit
-inputs, read off the base oracle `B` (queries are the bitstrings themselves). -/
+/-- **Restriction of an oracle to inputs of length $n$.** For a function $B$ from bitstrings to
+booleans and a natural number $n$, the restriction of $B$ to inputs of length $n$ is the function
+on $\{0,1\}^n$ sending $a = (a_0, \dots, a_{n-1})$ to $B(a_0 a_1 \cdots a_{n-1})$, the value of
+$B$ at the bitstring $a$. -/
 def baseAt (B : List Bool → Bool) (n : ℕ) : (Fin n → Bool) → Bool :=
   fun a => B (List.ofFn a)
 
-/-- Coefficient bitstring of the polynomial `q`, of length `n + 2` (coefficients
-`0 .. n + 1`). -/
+/-- **Coefficient bitstring of a polynomial over $\mathbb{F}_2$.** For a polynomial $q$ over
+$\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$ and a natural number $n$, the coefficient bitstring of $q$
+with parameter $n$ is the bitstring $b_0 b_1 \cdots b_{n+1}$ of length $n + 2$ in which $b_i$ is
+true exactly when the coefficient of $X^i$ in $q$ equals $1$. -/
 def polyBits (q : Polynomial (ZMod 2)) (n : ℕ) : List Bool :=
   (List.range (n + 2)).map (fun i => decide (q.coeff i = 1))
 
-/-- The answer bit of the algebraic extension oracle at field point `pt` (a list of
-`n` field elements, each encoded as a coefficient bitstring of length
-`p.natDegree` relative to the power basis `1, X, …, X ^ (deg - 1)` of
-`AdjoinRoot p`) and coordinate `j : Fin p.natDegree`: the `j`-th power-basis
-coordinate of the multilinear extension of `baseAt B n` at that field point.
-The coordinate is a `Fin`, not a natural reduced modulo the dimension: an
-out-of-range `j` must be rejected by the caller (`IsAlgebraicExtension`
-requires `j < n + 1`), not wrapped around to coordinate `0`. -/
+/-- **Answer bits of the algebraic extension oracle.** Let $n$ be a natural number, let $p$ be a
+monic irreducible polynomial of degree $n + 1$ over $\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$, let
+$F = \mathbb{F}_2[X]/(p)$ with $\alpha$ the class of $X$, let $B$ be a function from bitstrings to
+booleans, and let $\tilde B_n$ be the multilinear extension over $F$ of the restriction of $B$ to
+inputs of length $n$. Given a list $(e_0, e_1, \ldots)$ of bitstrings and an index $j$ with
+$0 \le j \le n$, let $e_{i,k} \in \{0, 1\}$ be the bit of $e_i$ at position $k$, counting from
+$0$, where a missing list entry or a missing bit counts as $0$, and let $x \in F^n$ be the point
+with coordinates $x_i = \sum_{k=0}^{n} e_{i,k} \alpha^k$ for $i < n$. The answer bit is true
+exactly when the coefficient of $\alpha^j$ in $\tilde B_n(x)$, written in the basis
+$1, \alpha, \dots, \alpha^n$ of $F$ over $\mathbb{F}_2$, equals $1$.
+
+The index $j$ ranges over $0, \dots, n$ only: an out-of-range index must be rejected by the
+caller, not reduced modulo $n + 1$. -/
 noncomputable def extAnswer {p : Polynomial (ZMod 2)} [Fact (Irreducible p)] (hp : p.Monic)
     (n : ℕ) (_hdeg : p.natDegree = n + 1) (B : List Bool → Bool)
     (pt : List (List Bool)) (j : Fin p.natDegree) : Bool :=
@@ -121,24 +133,27 @@ noncomputable def extAnswer {p : Polynomial (ZMod 2)} [Fact (Irreducible p)] (hp
           (if (pt.getD i.val []).getD k.val false then (1 : ZMod 2) else 0))))
     j = 1))
 
-/-- An oracle `O` is the algebraic extension of a base oracle `B` if `O`'s answers on
-*every* bitstring are the bits of the multilinear extension of the base function
-`baseAt B n`, over the field `AdjoinRoot (irr n)` for a monic irreducible
-polynomial `irr n` of degree `n + 1` over `ZMod 2` (so the field is
-`GF(2 ^ (n + 1))`). The irreducible polynomial schedule `irr` is
-polynomial-time computable from the unary length parameter: the `IsPolyTime`
-conjunct says the coefficient bitstring `polyBits (irr n) n` is computable in
-time polynomial in `n` (the length of the unary input), so a polynomial-time
-oracle machine can form valid extension queries and can do field arithmetic
-on the power-basis encoding. A query is a bitstring decoding to
-`(unary length, field point, j)`: the length parameter `u` is a bitstring whose
-length is `n`, the field point is a list of `n` field elements each encoded as
-`n + 1` bits, and `j` is a natural number with `j < n + 1`; the answer is bit `j`
-(the `j`-th power-basis coordinate) of the multilinear extension at that field
-point. Every other bitstring (malformed, wrong-length point, wrong-length field
-element encodings, or `j ≥ n + 1`) is answered `false`, so no oracle machine can
-route around the algebraic structure through invalid encodings, and an
-out-of-range `j` does not wrap around to coordinate `0`. -/
+/-- **Algebraic extension oracles.** Let $B$ and $O$ be oracles, that is, functions from
+bitstrings to booleans. Then $O$ is an algebraic extension of $B$ when there are polynomials
+$\pi_0, \pi_1, \pi_2, \ldots$ over $\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$, each $\pi_n$ monic and
+irreducible of degree $n + 1$, with the following two properties, where $F_n$ is the field
+$\mathbb{F}_2[X]/(\pi_n)$, $\alpha_n$ is the class of $X$ in $F_n$, and $\tilde B_n$ is the
+multilinear extension over $F_n$ of the restriction of $B$ to inputs of length $n$. First, the
+map sending a bitstring $u$ to the coefficient bitstring of $\pi_{|u|}$ with parameter $|u|$
+(whose bits say which of the coefficients of $X^0, \dots, X^{|u|+1}$ equal $1$) is
+polynomial-time computable. Second, let $y$ be a bitstring. If $y$ decodes, under the canonical
+bitstring encoding of triples, to a triple $(u, (e_0, \dots, e_{m-1}), j)$ of a bitstring $u$, a
+list of bitstrings and a natural number $j$ such that, writing $n = |u|$, we have $m = n$, every
+$e_i$ has length $n + 1$ and $j \le n$, then $O(y)$ is true exactly when the coefficient of
+$\alpha_n^j$ in $\tilde B_n(x)$, written in the basis $1, \alpha_n, \dots, \alpha_n^n$ of $F_n$
+over $\mathbb{F}_2$, equals $1$. Here $x \in F_n^n$ is the point with coordinates
+$x_i = \sum_{k=0}^{n} e_{i,k} \alpha_n^k$, where $e_{i,k} \in \{0, 1\}$ is the bit of $e_i$ at
+position $k$, counting from $0$. Otherwise, in particular when $y$ does not decode, $O(y)$ is
+false.
+
+Every malformed query is answered false, so an oracle machine cannot route around the algebraic
+structure through invalid encodings, and an out-of-range $j$ does not wrap around to
+coordinate $0$. -/
 def IsAlgebraicExtension (B O : List Bool → Bool) : Prop :=
   ∃ (irr : ℕ → Polynomial (ZMod 2))
     (hspec : ∀ n, (irr n).Monic ∧ (irr n).natDegree = n + 1 ∧ Irreducible (irr n)),
@@ -155,7 +170,13 @@ def IsAlgebraicExtension (B O : List Bool → Bool) : Prop :=
         else false
       | none => false
 
-/-- **Aaronson-Wigderson: the algebrization barrier.** Source: S. Aaronson and A.
+/-- **Aaronson-Wigderson: the algebrization barrier.** Call an oracle a function from bitstrings
+to booleans. There are oracles $B$ and $\tilde B$ such that $\tilde B$ is an algebraic extension
+of $B$ and $\mathsf{P}^B = \mathsf{NP}^{\tilde B}$. There are also oracles $B$ and $\tilde B$ such
+that $\tilde B$ is an algebraic extension of $B$ and $\mathsf{NP}^B$ is not contained in
+$\mathsf{P}^{\tilde B}$.
+
+Source: S. Aaronson and A.
 Wigderson, "Algebrization: A new barrier in complexity theory", Proceedings of the
 Fortieth Annual ACM Symposium on Theory of Computing (STOC 2008), 731-740 (journal
 version in ACM Transactions on Computation Theory 1 (2009)). -/

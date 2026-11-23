@@ -181,11 +181,6 @@ private theorem choose_T_symm (n k l : ℕ) (h : k + l ≤ n) :
     mul_ne_zero hK (mul_ne_zero hL hM0)
   exact mul_right_cancel₀ hZ (by rw [key1, key2])
 
-private theorem succ_cast_ne_zero (i : ℕ) : ((i : ℂ) + 1) ≠ 0 := by
-  have hc : ((i : ℂ) + 1) = ((i + 1 : ℕ) : ℂ) := by push_cast; ring
-  rw [hc]
-  exact_mod_cast Nat.succ_ne_zero i
-
 private theorem T1_helper (n i k : ℕ) (hki : k ≤ i) (hin : i ≤ n) :
     ((((n + 1).choose (i + 1) : ℕ)) : ℂ) * ((((i + 1).choose k : ℕ)) : ℂ)
       = ((((n + 1).choose k : ℕ)) : ℂ) * ((((n + 1 - k).choose (n - i) : ℕ)) : ℂ) := by
@@ -219,7 +214,7 @@ private theorem sigma_at (r : ℂ) (i : ℕ)
   rw [hr1] at h
   have hcast : ((((i + 1 : ℕ))) : ℂ) = (i : ℂ) + 1 := by push_cast; ring
   rw [hcast] at h
-  have hI1 := succ_cast_ne_zero i
+  have hI1 := Nat.cast_add_one_ne_zero (R := ℂ) i
   rw [eq_div_iff hI1]
   linear_combination h
 
@@ -235,7 +230,7 @@ private theorem per_side (r q : ℂ) (hr : r ≠ 0) (n i : ℕ) (hi : i ≤ n)
   have hs := sigma_at r i sigma hsigma
   have hkey := key_expand r hr n i hi
   have hdiv := choose_div_key n i hi
-  have hI1 := succ_cast_ne_zero i
+  have hI1 := Nat.cast_add_one_ne_zero (R := ℂ) i
   have hT : ∀ k ∈ Finset.range (i + 1),
       ((((n + 1).choose (i + 1) : ℕ)) : ℂ) * ((((i + 1).choose k : ℕ)) : ℂ)
         = ((((n + 1).choose k : ℕ)) : ℂ) * ((((n + 1 - k).choose (n - i) : ℕ)) : ℂ) := by
@@ -273,7 +268,7 @@ private theorem double_sum_eq (a b : ℂ) (ha : a ≠ 0) (hb : b ≠ 0) (n : ℕ
       (a ^ ((n : ℤ) - 1 - (i : ℤ)) * b ^ i * sigma (a - 1) i))
     = (∑ i ∈ Finset.range (n + 1), (n.choose i : ℂ) * (bernoulli (n - i) : ℂ) *
       (a ^ i * b ^ ((n : ℤ) - 1 - (i : ℤ)) * sigma (b - 1) i)) := by
-  have hN1 := succ_cast_ne_zero n
+  have hN1 := Nat.cast_add_one_ne_zero (R := ℂ) n
   apply mul_left_cancel₀ hN1
   rw [Finset.mul_sum, Finset.mul_sum]
   have eA : (∑ i ∈ Finset.range (n + 1), ((n : ℂ) + 1) * ((n.choose i : ℂ) *
@@ -368,19 +363,25 @@ private theorem sigma_zero (x : ℂ)
   rw [hE, hB] at h
   rw [h]; ring
 
-/-- Tuenter's power-sum identity for Bernoulli numbers (equation (23) at `c = 0`).
+/-- **Tuenter's power-sum identity for Bernoulli numbers.** Let $a$ and $b$ be nonzero complex
+numbers and let $n \ge 1$ be a natural number with $b^n \ne a^n$. Let $\sigma_x(i) \in \mathbb{C}$,
+for $x \in \mathbb{C}$ and $i \in \mathbb{N}$, satisfy
+$(i+1)\,\sigma_x(i) = B_{i+1}(x+1) - B_{i+1}$ for all $x$ and $i$, where $B_m(t)$ denotes the
+Bernoulli polynomial and $B_m$ the Bernoulli number, with $B_1 = -\tfrac{1}{2}$. Then
+
+$$B_n = \frac{1}{b^n - a^n} \sum_{i=1}^{n} \binom{n}{i} B_{n-i}
+\left( a^{n-1-i} \, b^i \, \sigma_{a-1}(i) - a^i \, b^{n-1-i} \, \sigma_{b-1}(i) \right),$$
+
+where the exponents $n - 1 - i$ are integers, equal to $-1$ when $i = n$.
+
+For a natural number $x$ and $i \ge 1$ the relation gives $\sigma_x(i) = 1^i + 2^i + \dots + x^i$.
+
+Proves `Wanted` entry `tuenter_bernoulli_power_sum_identity`.
 
 Source: Jitender Singh, *On an Arithmetic Convolution*, Journal of Integer
 Sequences 17 (2014), Article 14.6.7, Corollary with equation `eq23`,
 lines 339–344, identified there as Tuenter's identity at `c = 0`, line 348,
 <https://cs.uwaterloo.ca/journals/JIS/VOL17/Singh/singh8.tex>.
-
-At `c = 0` the Bernoulli polynomial `B_0(n)` is the Bernoulli number `Bₙ` and
-the denominator is `b^n - a^n`. The power sums are pinned by
-`(i+1) * σ_x(i) = B_{i+1}(x+1) - B_{i+1}` from line 325. Integer exponents
-are used since `n - 1 - i` can be `-1`, guarded by the nonzero hypotheses.
-
-Proves `Wanted` entry `tuenter_bernoulli_power_sum_identity`.
 -/
 theorem tuenter_bernoulli_power_sum_identity
     (a b : ℂ) (n : ℕ) (hn : 0 < n)

@@ -27,7 +27,9 @@ universe u
 
 variable {α : Type u}
 
-/-- The elements of a queue in FIFO order. -/
+/-- **Contents of a two-list queue.** A queue is stored as a dequeue list and an enqueue list
+whose most recently enqueued element comes first. Its contents are its elements in FIFO
+order: the dequeue list followed by the reverse of the enqueue list. -/
 def contents (q : Std.Queue α) : List α :=
   q.dList ++ q.eList.reverse
 
@@ -35,25 +37,29 @@ def contents (q : Std.Queue α) : List α :=
 theorem contents_empty : contents (Std.Queue.empty : Std.Queue α) = [] := by
   rfl
 
-/-- Converting a queue to an array preserves its FIFO contents. -/
+/-- **Array conversion lists the contents.** For every queue $q$, the array obtained from $q$,
+read as a list, equals the contents of $q$. -/
 @[simp]
 theorem toArray_toList (q : Std.Queue α) : q.toArray.toList = contents q := by
   simp [Std.Queue.toArray, contents]
 
-/-- Enqueueing places one element at the end of the FIFO contents. -/
+/-- **Enqueueing appends to the contents.** For every queue $q$ and value $v$, the contents of
+the queue obtained by enqueueing $v$ onto $q$ are the contents of $q$ followed by $v$. -/
 @[simp]
 theorem contents_enqueue (q : Std.Queue α) (value : α) :
     contents (q.enqueue value) = contents q ++ [value] := by
   simp [Std.Queue.enqueue, contents, List.append_assoc]
 
-/-- A queue reports that it is empty exactly when its FIFO contents are empty. -/
+/-- **The queue emptiness test matches the contents.** For every queue $q$, the emptiness test
+of $q$ returns true if and only if the contents of $q$ are empty. -/
 @[simp]
 theorem isEmpty_eq_true_iff (q : Std.Queue α) :
     q.isEmpty = true ↔ contents q = [] := by
   cases q with
   | mk eList dList => simp [Std.Queue.isEmpty, contents, Bool.and_eq_true, List.isEmpty_iff]
 
-/-- Dequeueing fails exactly when the FIFO contents are empty. -/
+/-- **Dequeueing fails exactly on empty queues.** For every queue $q$, dequeueing $q$ returns
+nothing if and only if the contents of $q$ are empty. -/
 @[simp]
 theorem dequeue?_eq_none_iff (q : Std.Queue α) :
     q.dequeue? = none ↔ contents q = [] := by
@@ -67,7 +73,9 @@ theorem dequeue?_eq_none_iff (q : Std.Queue α) :
           | cons head tail =>
               cases h : tail.reverse <;> simp [Std.Queue.dequeue?, contents, h]
 
-/-- A successful dequeue returns the FIFO head and a queue representing the remaining tail. -/
+/-- **A successful dequeue splits off the first element.** If dequeueing a queue $q$ succeeds
+and returns an element $a$ and a queue $r$, then the contents of $q$ are $a$ followed by the
+contents of $r$. -/
 theorem contents_eq_cons_of_dequeue?_eq_some
     {q : Std.Queue α} {head : α} {rest : Std.Queue α}
     (h : q.dequeue? = some (head, rest)) :
