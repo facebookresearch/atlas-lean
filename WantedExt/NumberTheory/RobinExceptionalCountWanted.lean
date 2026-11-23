@@ -28,8 +28,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The set `{7! < n ≤ x : σ(n) ≥ e^γ n log log n}` of integers above `7! = 5040` up to `x`
-failing Robin's inequality; its cardinality is the paper's counting function `N_R(x)`.
+/-- **Robin exceptional set.** For a real number $x$, the Robin exceptional set up to $x$ is the
+set of natural numbers $n$ with $7! = 5040 < n \le x$ that fail Robin's inequality, that is,
+with $\sigma(n) \ge e^\gamma n \log\log n$, where $\sigma(n)$ is the sum of the divisors of $n$
+and $\gamma$ is the Euler–Mascheroni constant. Its cardinality is the counting function $N_R(x)$.
 
 Source: Florian Luca and Patrick Solé, *On Robin's Inequality*, INTEGERS 25 (2025), Article A8,
 Section 1. -/
@@ -39,7 +41,8 @@ public noncomputable def robinExceptionalSet (x : ℝ) : Finset ℕ := by
     Real.exp Real.eulerMascheroniConstant * n * Real.log (Real.log n) ≤
       (ArithmeticFunction.sigma 1 n : ℝ)
 
-/-- The exceptional set is empty for `x ≤ 7!`, i.e. `N_R(x) = 0` there.
+/-- **The Robin exceptional set is empty up to $7!$.** For every real $x \le 7! = 5040$, the
+Robin exceptional set up to $x$ is empty; that is, its cardinality $N_R(x)$ is $0$.
 
 Source: Florian Luca and Patrick Solé, *On Robin's Inequality*, INTEGERS 25 (2025), Article A8,
 Section 1 (definition of `N_R(x)`). -/
@@ -48,8 +51,9 @@ public theorem robinExceptionalSet_eq_empty_of_le {x : ℝ} (hx : x ≤ 5040) :
   have h : ⌊x⌋₊ ≤ 5040 := Nat.floor_le_of_le (by exact_mod_cast hx)
   simp [robinExceptionalSet, Finset.Ioc_eq_empty_of_le h]
 
-/-- Theorem 1: `N_R(x) = O(x / log log x)`, with `N_R(x)` the cardinality of
-`robinExceptionalSet x`.
+/-- **Failures of Robin's inequality number $O(x/\log\log x)$.** Let $N_R(x)$ be the number of
+elements of the Robin exceptional set up to $x$. Then $N_R(x) = O(x / \log\log x)$ as the real
+number $x$ tends to infinity.
 
 Source: Florian Luca and Patrick Solé, *On Robin's Inequality*, INTEGERS 25 (2025), Article A8,
 Theorem 1 (`integers-2025-A8-thm-1`). -/
@@ -57,8 +61,9 @@ public theorem_wanted card_robinExceptionalSet_isBigO_div_log_log :
     (fun x : ℝ => ((robinExceptionalSet x).card : ℝ)) =O[atTop]
       fun x : ℝ => x / Real.log (Real.log x)
 
-/-- Theorem 2: `N_R(x) = O(x / sqrt (log x))`, with `N_R(x)` the cardinality of
-`robinExceptionalSet x`.
+/-- **Failures of Robin's inequality number $O(x/\sqrt{\log x})$.** Let $N_R(x)$ be the number
+of elements of the Robin exceptional set up to $x$. Then $N_R(x) = O(x / \sqrt{\log x})$ as the
+real number $x$ tends to infinity.
 
 Source: Florian Luca and Patrick Solé, *On Robin's Inequality*, INTEGERS 25 (2025), Article A8,
 Theorem 2 (`integers-2025-A8-thm-2`). -/
@@ -66,8 +71,9 @@ public theorem_wanted card_robinExceptionalSet_isBigO_div_sqrt_log :
     (fun x : ℝ => ((robinExceptionalSet x).card : ℝ)) =O[atTop]
       fun x : ℝ => x / Real.sqrt (Real.log x)
 
-/-- Theorem 3: `N_R(x) = O(x^ε)` for every `ε > 0`, with `N_R(x)` the cardinality of
-`robinExceptionalSet x`.
+/-- **Failures of Robin's inequality number $O(x^\varepsilon)$.** Let $N_R(x)$ be the number of
+elements of the Robin exceptional set up to $x$. For every real $\varepsilon > 0$,
+$N_R(x) = O(x^\varepsilon)$ as the real number $x$ tends to infinity.
 
 Source: Florian Luca and Patrick Solé, *On Robin's Inequality*, INTEGERS 25 (2025), Article A8,
 Theorem 3 (`integers-2025-A8-thm-3`). -/

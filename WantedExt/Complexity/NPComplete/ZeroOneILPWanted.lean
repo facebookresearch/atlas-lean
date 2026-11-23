@@ -43,15 +43,25 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A 0-1 ILP instance: number of variables, coefficient matrix (positive, negative parts),
-right-hand side. -/
+/-- **0-1 integer programming instances.** A 0-1 integer programming instance is a triple
+$(n, A, b)$ consisting of a natural number $n$ (the number of variables), a coefficient matrix
+$A$ given as a list of rows, each row a list of pairs of natural numbers, and a right-hand side
+$b$ given as a list of pairs of natural numbers. A pair $(p, q)$ is read as the integer $p - q$,
+so coefficients and right-hand side entries are stored by positive and negative parts. -/
 abbrev ZeroOneILPInstance := ℕ × List (List (ℕ × ℕ)) × List (ℕ × ℕ)
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed 0-1 integer programming instances.** A 0-1 integer programming instance
+$(n, A, b)$ is well formed when the right-hand side list $b$ has as many entries as there are
+rows of the coefficient matrix $A$, and every row of $A$ has exactly $n$ entries. -/
 def WellFormed (i : ZeroOneILPInstance) : Prop :=
   i.2.1.length = i.2.2.length ∧ ∀ row ∈ i.2.1, row.length = i.1
 
-/-- A binary assignment satisfying all inequalities. -/
+/-- **Feasible 0-1 integer programs.** Let $(n, A, b)$ be a 0-1 integer programming instance whose
+coefficient matrix has the rows $A_0, \dots, A_{m-1}$, with list entries indexed from $0$. For
+$r < m$ and $j < n$, let $a_{rj}$ be the integer $p - q$ if row $A_r$ has a $j$-th entry
+$(p, q)$, and $a_{rj} = 0$ otherwise; let $b_r$ be the integer $p' - q'$ if $b$ has an $r$-th
+entry $(p', q')$, and $b_r = 0$ otherwise. The instance is feasible when there is
+$x \in \{0, 1\}^n$ such that $\sum_{j < n} a_{rj} x_j \le b_r$ in $\mathbb{Z}$ for every $r < m$. -/
 def ZeroOneILPFeasible
     (i : ZeroOneILPInstance) : Prop :=
   ∃ x : List Bool, x.length = i.1 ∧
@@ -63,7 +73,10 @@ def ZeroOneILPFeasible
       (((i.2.2.getD r (0, 0)).1 : ℤ) - ((i.2.2.getD r (0, 0)).2 : ℤ))
 
 open Classical in
-/-- 0-1 INTEGER PROGRAMMING FEASIBILITY as a decision problem over bitstrings. -/
+/-- **0-1 integer programming feasibility as a decision problem.** The decision problem 0-1
+INTEGER PROGRAMMING FEASIBILITY accepts a bitstring $x$ exactly when $x$ decodes, under the
+canonical bitstring encoding, to a 0-1 integer programming instance that is well formed and
+feasible; it rejects every bitstring that does not decode to such an instance. -/
 noncomputable def zeroOneILPDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -71,7 +84,11 @@ noncomputable def zeroOneILPDec :
   | some i => decide (WellFormed i ∧ ZeroOneILPFeasible i)
   | none => false
 
-/-- **0-1 INTEGER PROGRAMMING FEASIBILITY is NP-complete.** Source: M. R. Garey and D. S.
+/-- **0-1 INTEGER PROGRAMMING FEASIBILITY is NP-complete.** The decision problem 0-1 INTEGER
+PROGRAMMING FEASIBILITY belongs to NP, and every decision problem in NP has a polynomial-time
+many-one reduction to it.
+
+Source: M. R. Garey and D. S.
 Johnson, *Computers and Intractability* (1979), 0-1 INTEGER PROGRAMMING; R. M. Karp,
 "Reducibility among combinatorial problems" (1972). -/
 public theorem_wanted zeroOneILP_npComplete :

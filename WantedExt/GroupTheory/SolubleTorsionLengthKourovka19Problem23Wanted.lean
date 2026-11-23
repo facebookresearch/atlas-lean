@@ -37,21 +37,32 @@ which is the preimage of `Tor₁(G / Tor_i(G))`. Torsion length greater than `2`
 is not torsion-free (if `G / Tor₁(G)` were torsion-free, `Tor₂(G) = Tor₁(G)`).
 -/
 
-/-- The torsion series of Chiodo and Vyas: `Tor₀(G) = 1` and `Tor_{i+1}(G)` is the normal closure of
-the elements having a positive power in `Tor_i(G)`. This is the preimage of `Tor₁(G / Tor_i(G))`,
-the normal closure of the torsion elements of `G / Tor_i(G)`, since normal closures commute with
-the quotient map and `Tor_i(G)` lies in that set. -/
+/-- **Torsion series.** For a group $G$, the torsion series of Chiodo and Vyas is the sequence of
+subgroups $\mathrm{Tor}_i(G)$ of $G$ defined by $\mathrm{Tor}_0(G) = 1$, the trivial subgroup,
+and, for each $i$, $\mathrm{Tor}_{i+1}(G)$ is the normal closure in $G$ of the set of elements $g$
+such that $g^n \in \mathrm{Tor}_i(G)$ for some integer $n > 0$.
+
+This is the preimage of $\mathrm{Tor}_1(G / \mathrm{Tor}_i(G))$, the normal closure of the torsion
+elements of $G / \mathrm{Tor}_i(G)$, since normal closures commute with the quotient map and
+$\mathrm{Tor}_i(G)$ lies in that set. -/
 def torsionSeries (G : Type*) [Group G] : ℕ → Subgroup G
   | 0 => ⊥
   | i + 1 => Subgroup.normalClosure {g | ∃ n : ℕ, 0 < n ∧ g ^ n ∈ torsionSeries G i}
 
-/-- `G` has torsion length greater than `2`: `G / Tor₂(G)` is not torsion-free (then
-`G / Tor₁(G)` is not torsion-free either, so neither `1` nor `2` is the torsion length). -/
+/-- **Torsion length greater than two.** A group $G$ has torsion length greater than $2$ when
+$G / \mathrm{Tor}_2(G)$ is not torsion-free, where $\mathrm{Tor}_2(G)$ is the second term of the
+torsion series of $G$: some element $g \in G$ outside $\mathrm{Tor}_2(G)$ has a power $g^n$ with
+$n > 0$ in $\mathrm{Tor}_2(G)$.
+
+Then $G / \mathrm{Tor}_1(G)$ is not torsion-free either, so neither $1$ nor $2$ is the torsion
+length of $G$. -/
 def TorsionLengthGtTwo (G : Type*) [Group G] : Prop :=
   ∃ g : G, g ∉ torsionSeries G 2 ∧ ∃ n : ℕ, 0 < n ∧ g ^ n ∈ torsionSeries G 2
 
-/-- Kourovka 19.23 (M. Chiodo, R. Vyas), in its stronger form: there is a finitely presented
-soluble group of torsion length greater than `2`. -/
+/-- **Kourovka Problem 19.23 (Chiodo–Vyas), finitely presented form.** The statement that there is
+a finitely presented soluble group $G$ of torsion length greater than $2$, that is, such that
+$G / \mathrm{Tor}_2(G)$ is not torsion-free, where $\mathrm{Tor}_2(G)$ is the second term of the
+torsion series of $G$. -/
 def existsFinitelyPresentedSolubleTorsionLengthGtTwo : Prop :=
   ∃ (G : Type) (_ : Group G), Group.IsFinitelyPresented G ∧ Group.IsSolvable G ∧
     TorsionLengthGtTwo G

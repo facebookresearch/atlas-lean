@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Computability.RE
 public import Mathlib.NumberTheory.Dioph
+import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Computability.Primrec.Basic
 import Mathlib.Computability.Primrec.List
 import Mathlib.Data.List.GetD
@@ -767,19 +768,6 @@ private theorem dp_prod_lt (x t : ℕ) (ht : 1 ≤ t) :
             _ ≤ t * (1 + x * t) ^ x := Nat.mul_le_mul_right _ ht
         omega
 
-/-- Pointwise congruence lifts to products. -/
-private theorem dp_modEq_prod (N x : ℕ) (f g : ℕ → ℕ)
-    (h : ∀ j ∈ Finset.range x, f j ≡ g j [MOD N]) :
-    (∏ j ∈ Finset.range x, f j) ≡ (∏ j ∈ Finset.range x, g j) [MOD N] := by
-  induction x with
-  | zero => rfl
-  | succ n ih =>
-    rw [Finset.prod_range_succ, Finset.prod_range_succ]
-    exact Nat.ModEq.mul
-      (ih fun j hj => h j (Finset.mem_range.mpr (lt_of_lt_of_le
-        (Finset.mem_range.mp hj) (Nat.le_succ n))))
-      (h n (Finset.mem_range.mpr (Nat.lt_succ_self n)))
-
 /-- Key congruence for the product trick. -/
 private theorem dp_prod_key (x t q : ℕ)
     (hq : t * q ≡ 1 [MOD dpProdN x t]) :
@@ -798,7 +786,7 @@ private theorem dp_prod_key (x t q : ℕ)
     ring
   rw [hLHS]
   unfold dpProdP
-  apply dp_modEq_prod
+  apply Nat.ModEq.prod
   intro j _
   exact Nat.ModEq.add_right _ hq
 
@@ -2190,13 +2178,17 @@ This file proves the DPRM theorem.
 -/
 
 /--
-A set `S : Set ℕ` is recursively enumerable `REPred (fun n => n ∈ S)` iff it is Diophantine `Dioph
-{v : Unit → ℕ | v () ∈ S}`. Source: M. Davis, H. Putnam, J. Robinson, The decision problem for
+**Davis–Putnam–Robinson–Matiyasevich theorem.** A set $S$ of natural numbers is recursively
+enumerable if and only if it is Diophantine, that is, there is a polynomial $p$ with integer
+coefficients such that $n \in S$ exactly when $p(n, t_1, \dots, t_k) = 0$ for some natural numbers
+$t_1, \dots, t_k$.
+
+Proves `Wanted` entry `dprm_theorem`.
+
+Source: M. Davis, H. Putnam, J. Robinson, The decision problem for
 exponential Diophantine equations, Ann. of Math. 74 (1961); Y. Matiyasevich, Enumerable sets are
 Diophantine, Dokl. Akad. Nauk SSSR 191 (1970) 279–282; textbook in Matiyasevich, Hilbert's Tenth
 Problem
-
-Proves `Wanted` entry `dprm_theorem`.
 -/
 public theorem dprm_theorem
     (S : Set ℕ) : REPred (fun n => n ∈ S) ↔ Dioph {v : Unit → ℕ | v () ∈ S} :=

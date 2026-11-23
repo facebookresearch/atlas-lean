@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Balanced graphs
@@ -24,8 +24,9 @@ namespace SimpleGraph
 
 variable {V : Type*} [Fintype V]
 
-/-- A graph is `D`-balanced if its maximum degree is at most `D` times its
-minimum degree. -/
+/-- **Balanced graph.** Let $G$ be a finite simple graph and $D$ a real number. The graph $G$ is
+$D$-balanced if its maximum degree $\Delta(G)$ is at most $D$ times its minimum degree
+$\delta(G)$, that is, $\Delta(G) \le D \cdot \delta(G)$. -/
 def IsBalanced (G : SimpleGraph V) (D : ℝ) [DecidableRel G.Adj] : Prop :=
   G.maxDegree ≤ D * G.minDegree
 
