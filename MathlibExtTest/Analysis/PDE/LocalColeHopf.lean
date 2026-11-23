@@ -34,7 +34,8 @@ private noncomputable def potential (ν t x : ℝ) : ℝ := -(x + ν) * (t⁻¹)
 
 private theorem smooth :
     ContDiffOn ℝ 3 (Function.uncurry profile) (Ioi 0 ×ˢ (univ : Set ℝ)) :=
-  (contDiffOn_snd.mul (contDiffOn_fst.inv (fun _ hp => ne_of_gt hp.1))).exp
+  (contDiffOn_snd.mul (contDiffOn_fst.inv
+    (fun p (hp : p ∈ Ioi (0 : ℝ) ×ˢ (univ : Set ℝ)) => ne_of_gt hp.1))).exp
 
 private theorem profile_dx (t : ℝ) : deriv (profile t) = fun x => t⁻¹ * profile t x := by
   funext x

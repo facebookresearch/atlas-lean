@@ -89,17 +89,6 @@ public theorem_wanted oddPart_bijOn_upperHalf_oddSet (e : ℕ) (he : 1 ≤ e) :
     Set.BijOn oddPart (↑(dyadicUpperHalf e) : Set ℕ) (↑(oddBelowTwoPow e) : Set ℕ)
 
 /--
-**Product of the odd numbers below $2^e$.** For every natural number $e \ge 3$, the product of the
-odd integers $i$ with $1 \le i < 2^e$ is congruent to $2^e + 1$ modulo $2^{e+1}$.
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Lemma 6.
--/
-public theorem_wanted oddSet_product_congr (e : ℕ) (he : 3 ≤ e) :
-    (2 : ℤ) ^ (e + 1) ∣
-      ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) - ((2 ^ e + 1 : ℕ) : ℤ)
-
-/--
 **Odd parts of consecutive dyadic factorials agree modulo a power of two.** For every natural
 number $e \ge 3$, $\mathrm{od}((2^{e-1})!) \equiv \mathrm{od}((2^e)!) \pmod{2^e}$, where
 $\mathrm{od}(n)$ denotes the odd part of $n$.
