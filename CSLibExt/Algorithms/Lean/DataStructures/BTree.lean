@@ -55,9 +55,11 @@ universe u
 
 namespace Cslib.Algorithms.Lean
 
-/-- A raw B-tree: a leaf stores its keys directly, and an internal node stores a list of
-separator keys together with one more child than keys. No invariant is imposed by the type;
-see `BTree.Valid` and `BTree.Ordered`. -/
+/-- **Raw B-trees.** A raw B-tree with keys in a type $\alpha$ is either a leaf, holding a list
+of keys, or an internal node, holding a list of separator keys and a list of child raw B-trees.
+The type imposes no invariant: that an internal node with $k$ keys has $k + 1$ children, the
+bounds on key counts, the balance of the tree and the ordering of the keys are imposed
+separately by the structural and ordering invariants of B-trees. -/
 public inductive BTree (α : Type u) where
   | leaf (keys : List α) : BTree α
   | node (keys : List α) (children : List (BTree α)) : BTree α
@@ -66,15 +68,16 @@ namespace BTree
 
 variable {α : Type u}
 
-/-- Append the inorder traversal of a tree to an existing suffix in linear
-time: subtrees interleaved with separator keys, accumulated without
-recopying left results. The suffix is built right to left: at an internal
-node the suffix passed to each child already holds everything to its right,
-so `flattenAux child suffix` only prepends that child's keys, and each key
-is copied once (as part of its node's key list at a leaf, or by one `cons`
-for a separator). Children or keys beyond the interleaving pattern of a
-well-formed node are appended in order (see `flatten`), so every key of
-the tree occurs in the result. -/
+/-- **Accumulating flattening of a B-tree.** Given a raw B-tree $T$ and a list $s$, this returns
+the inorder traversal of $T$ followed by $s$. For a leaf it is the leaf's key list followed by
+$s$. For an internal node with separator keys $k_1, \dots, k_m$ and children $c_0, \dots, c_n$
+it is the sequence $c_0, k_1, c_1, k_2, \dots$, in which children and keys alternate starting
+with a child until one of the two lists runs out, then the remaining keys or children in
+order, and finally $s$; each key contributes itself, and each child contributes its own
+accumulating flattening with everything after it as the suffix. In particular every key of
+the tree occurs in the result.
+
+The result is built from right to left, so each key is copied only once. -/
 public def flattenAux : BTree α → List α → List α
   | .leaf keys, suffix => keys ++ suffix
   | .node keys children, suffix => flattenListAux keys children suffix
@@ -87,13 +90,15 @@ where
     | key :: keys, child :: children, suffix =>
         flattenAux child (key :: flattenListAux keys children suffix)
 
-/-- The inorder flattening of a tree: the keys of a leaf in list order, and
-for an internal node the flattenings of the children interleaved with the
-separator keys. Children or keys beyond the interleaving pattern of a
-well-formed node are appended in order, so every key of the tree occurs in
-the flattening: surplus children contribute their flattenings in order and
-surplus keys contribute themselves in order (see `flatten_node_nil_cons`
-and `flatten_node_cons_nil`). Computed in linear time by `flattenAux`. -/
+/-- **Inorder flattening of a B-tree.** The flattening of a raw B-tree is the list of its keys
+defined recursively: for a leaf it is the leaf's key list, and for an internal node with keys
+$k_1, k_2, \dots$ and children $c_1, c_2, \dots$ it is the flattening of $c_1$, then $k_1$, then
+the flattening of $c_2$, then $k_2$, and so on, alternating while both lists last; whatever
+remains of the longer list is then appended in order, each surplus child contributing its
+flattening and each surplus key contributing itself. In particular every key of the tree occurs
+in the flattening.
+
+The flattening is computed in linear time by an accumulator-passing auxiliary function. -/
 public def flatten (tree : BTree α) : List α :=
   flattenAux tree []
 
@@ -165,7 +170,9 @@ private theorem flattenAux_append (t : BTree α) (xs ys : List α) :
     flattenAux t (xs ++ ys) = flattenAux t xs ++ ys :=
   flattenAux_append_aux (sizeOf t) t (Nat.le_refl _) xs ys
 
-/-- `flattenAux` prepends the flattening of its tree to the suffix. -/
+/-- **The accumulating B-tree flattening is correct.** For every raw B-tree $T$ and every list
+$s$, the accumulating flattening of $T$ with suffix $s$ equals the inorder flattening of $T$
+followed by $s$. -/
 public theorem flattenAux_eq (t : BTree α) (suffix : List α) :
     flattenAux t suffix = flatten t ++ suffix := by
   change flattenAux t suffix = flattenAux t [] ++ suffix
@@ -189,9 +196,11 @@ public theorem flattenAux_eq (t : BTree α) (suffix : List α) :
     simp only [flatten, flattenAux]
   rw [h1, h2, flattenAux_eq]
 
-/-- Flattening a node with no separator keys concatenates the flattenings
-of its children in order. This covers nodes with more children than a
-well-formed node would have. -/
+/-- **Flattening a keyless node, one child at a time.** For a raw B-tree $c$ and a list $C$ of
+raw B-trees, the flattening of the node with no keys and child list $c$ followed by $C$ is the
+flattening of $c$ followed by the flattening of the node with no keys and child list $C$.
+
+This covers nodes with more children than a well-formed node would have. -/
 public theorem flatten_node_nil_cons {child : BTree α}
     {children : List (BTree α)} :
     flatten (.node [] (child :: children) : BTree α) =
@@ -204,15 +213,18 @@ public theorem flatten_node_nil_cons {child : BTree α}
     simp only [flatten, flattenAux]
   rw [h1, h2, flattenAux_eq]
 
-/-- Flattening a node with no children returns its separator keys in
-order. This covers nodes with more keys than a well-formed node would
-have. -/
+/-- **Flattening a childless node, one key at a time.** For a key $k$ and a list of keys $K$, the
+flattening of the node with key list $k$ followed by $K$ and no children is $k$ followed by the
+flattening of the node with key list $K$ and no children.
+
+This covers nodes with more keys than a well-formed node would have. -/
 public theorem flatten_node_cons_nil {key : α} {keys : List α} :
     flatten (.node (key :: keys) [] : BTree α) =
       key :: flatten (.node keys []) := by
   simp only [flatten, flattenAux, flattenAux.flattenListAux]
 
-/-- Flattening a node with neither keys nor children is empty. -/
+/-- **Flattening of the empty node.** The flattening of the internal node with no keys and no
+children is the empty list. -/
 public theorem flatten_node_nil_nil :
     flatten (.node [] [] : BTree α) = [] := by
   simp [flatten, flattenAux, flattenAux.flattenListAux]
@@ -271,9 +283,12 @@ private theorem mem_flatten_node {x : α} :
             · exact Or.inl hx
             · exact Or.inr (Or.inr (Or.inr ⟨child', hchild', hx⟩))
 
-/-- Splitting a node's key and child lists at a separator splits its
-flattening at that separator, provided the left lists are in the
-well-formed ratio of one more child than keys. -/
+/-- **Splitting a node's flattening at a separator.** Let $K_1$ and $K_2$ be lists of keys, $m$ a
+key, and $C_1$ and $C_2$ lists of raw B-trees such that $C_1$ has exactly one more element than
+$K_1$. Then the flattening of the node whose key list is $K_1$ followed by $m$ followed by $K_2$
+and whose child list is $C_1$ followed by $C_2$ equals the flattening of the node with keys $K_1$
+and children $C_1$, followed by $m$, followed by the flattening of the node with keys $K_2$ and
+children $C_2$. -/
 public theorem flatten_node_append_cons {median : α} :
     ∀ {keys₁ : List α} {children₁ : List (BTree α)} {keys₂ : List α}
       {children₂ : List (BTree α)},
@@ -356,8 +371,11 @@ private theorem keys_sublist_flatten_node :
           exact ((ih).cons_cons key).trans
             (List.IsSuffix.sublist ⟨flatten child, rfl⟩)
 
-/-- Membership in a tree is membership in its flattening. The structural reading is
-`mem_node`: a key is in a node when it is one of the separators or in one of the children. -/
+/-- **Membership in a B-tree.** A key $x$ belongs to a tree $T$ when $x$ occurs in the inorder
+flattening of $T$.
+
+Structurally, a key belongs to an internal node exactly when it is one of the node's separator
+keys or belongs to one of its children. -/
 public def Mem (x : α) (tree : BTree α) : Prop :=
   x ∈ flatten tree
 
@@ -375,27 +393,32 @@ public theorem mem_node {x : α} {keys : List α} {children : List (BTree α)} :
   show x ∈ flatten (node keys children : BTree α) ↔ _
   exact mem_flatten_node
 
-/-- The ordering invariant of a B-tree: the flattening is strictly increasing. This single
-condition packages sortedness of the keys at each node and the separator bounds between a
-node's keys and the keys stored in its subtrees; see `Ordered.node_keys_pairwise` and
-`Ordered.separator_bounds`. -/
+/-- **Ordered B-tree.** A B-tree over a type with a relation $<$ is ordered when its inorder
+flattening is strictly increasing, that is, each key of the flattening is less than every
+key that comes after it. This single condition packages sortedness of the keys at each node
+and the separator bounds between a node's keys and the keys stored in its subtrees. -/
 public def Ordered [LT α] (tree : BTree α) : Prop :=
   (flatten tree).Pairwise (· < ·)
 
-/-- In an ordered node, the separator keys are strictly increasing. -/
+/-- **The separator keys of an ordered node are sorted.** If an internal node with separator list
+$K$ is ordered, then $K$ is strictly increasing: every key of $K$ is smaller than every key that
+comes after it in $K$. -/
 public theorem Ordered.node_keys_pairwise [LT α] {keys : List α}
     {children : List (BTree α)} (h : Ordered (node keys children : BTree α)) :
     keys.Pairwise (· < ·) := by
   have hpair : (flatten (node keys children : BTree α)).Pairwise (· < ·) := h
   exact hpair.sublist keys_sublist_flatten_node
 
-/-- The separator bounds of an ordered node, in index-free form. If the key list is
-`keys₁ ++ key :: keys₂` and the child list splits as `children₁ ++ children₂` with
-`children₁` holding one more child than `keys₁` has keys (so the last child of `children₁`
-is the subtree immediately left of `key` and the first child of `children₂` the one
-immediately right of it), then every key stored on the left is below `key` and every key
-stored on the right is above `key`. In particular, every key in the `i`-th child lies
-strictly between the `(i-1)`-st and `i`-th separators. -/
+/-- **Separator bounds in an ordered B-tree node.** Let $K_1$ and $K_2$ be lists of keys,
+$k$ a key, and $C_1$ and $C_2$ lists of B-trees such that $C_1$ has exactly one more tree
+than $K_1$ has keys. If the internal node whose key list is $K_1$ followed by $k$ followed
+by $K_2$, and whose child list is $C_1$ followed by $C_2$, is ordered, then every key in the
+flattening of the node with keys $K_1$ and children $C_1$ is less than $k$, and $k$ is less
+than every key in the flattening of the node with keys $K_2$ and children $C_2$.
+
+Here the last tree of $C_1$ is the subtree immediately left of $k$ and the first tree of
+$C_2$ the one immediately right of it; in particular, every key in a child of an ordered
+node lies strictly between the separators adjacent to it. -/
 public theorem Ordered.separator_bounds [LT α] {keys₁ keys₂ : List α}
     {children₁ children₂ : List (BTree α)} {key : α}
     (hlen : children₁.length = keys₁.length + 1)
@@ -408,7 +431,8 @@ public theorem Ordered.separator_bounds [LT α] {keys₁ keys₂ : List α}
   refine ⟨fun x hx => hpair.2.2 x hx key List.mem_cons_self,
     fun x hx => (List.pairwise_cons.mp hpair.2.1).1 x hx⟩
 
-/-- The flattening of an ordered tree has no duplicate keys. -/
+/-- **An ordered B-tree has no duplicate keys.** For a linearly ordered key type, the flattening
+of an ordered raw B-tree has no duplicate entries. -/
 public theorem Ordered.flatten_nodup [LinearOrder α] {tree : BTree α} (h : Ordered tree) :
     (flatten tree).Nodup :=
   List.Pairwise.nodup h
@@ -507,13 +531,16 @@ private theorem orderedInsert_append_of_forall_lt [LinearOrder α] {x : α} :
       simp only [orderedInsert, ite_eq_right (not_lt_of_gt hy), ite_eq_left hy]
       exact congrArg (y :: ·) (ih hys right)
 
-/-- The structural invariant of a B-tree of minimum degree `t`, indexed by the minimum key
-count `mink` required at the top node and by the height `height`. A leaf has height `0`;
-an internal node has height one more than its children, and since every child is required
-to have the same height, all leaves of a valid tree sit at the same depth. Every node has
-at most `2 * t - 1` keys, the top node has at least `mink` keys, every other node has at
-least `t - 1` keys, and an internal node with `k` keys has exactly `k + 1` children.
-Non-root trees are used with `mink = t - 1`; the root invariant is `ValidRoot`. -/
+/-- **Structural invariant of a B-tree.** For a minimum degree $t$ and a minimum key count $m$
+for the top node, the invariant is defined inductively over the height: a leaf with $k$ keys
+satisfies it at height $0$ when $m \le k \le 2t - 1$, and for every natural number $h$, an
+internal node with $k$ keys satisfies it at height $h + 1$ when $m \le k \le 2t - 1$, the
+node has exactly $k + 1$ children, and every child satisfies the invariant with minimum key
+count $t - 1$ at height $h$. Here $2t - 1$ and $t - 1$ are truncated at $0$.
+
+Consequently all leaves of a valid tree sit at the same depth, every node has at most
+$2t - 1$ keys, and every node other than the top one has at least $t - 1$ keys. Non-root
+trees are used with $m = t - 1$; the root of a B-tree satisfies the root invariant instead. -/
 public inductive Valid (t : Nat) : Nat → Nat → BTree α → Prop where
   | leaf {mink : Nat} {keys : List α} (hlo : mink ≤ keys.length)
       (hhi : keys.length ≤ 2 * t - 1) : Valid t mink 0 (.leaf keys)
@@ -523,10 +550,12 @@ public inductive Valid (t : Nat) : Nat → Nat → BTree α → Prop where
       (hchildren : ∀ child ∈ children, Valid t (t - 1) height child) :
       Valid t mink (height + 1) (.node keys children)
 
-/-- The structural invariant at the root of a B-tree of minimum degree `t` and height
-`height`: a root leaf holds at most `2 * t - 1` keys (possibly none, for the empty tree),
-and a root internal node holds between `1` and `2 * t - 1` keys, with every child a
-non-root valid tree of the same height. -/
+/-- **Root invariant of a B-tree.** For a minimum degree $t$ and a height $h$, a tree
+satisfies the root invariant when either $h = 0$ and the tree is a leaf with at most
+$2t - 1$ keys (possibly none, for the empty tree), or $h = h' + 1$ and the tree is an
+internal node with between $1$ and $2t - 1$ keys and exactly one more child than keys,
+every child satisfying the structural invariant for minimum degree $t$, minimum top-node
+key count $t - 1$ and height $h'$. Here $2t - 1$ and $t - 1$ are truncated at $0$. -/
 public inductive ValidRoot (t : Nat) : Nat → BTree α → Prop where
   | leaf {keys : List α} (hhi : keys.length ≤ 2 * t - 1) : ValidRoot t 0 (.leaf keys)
   | node {height : Nat} {keys : List α} {children : List (BTree α)}
@@ -535,17 +564,22 @@ public inductive ValidRoot (t : Nat) : Nat → BTree α → Prop where
       (hchildren : ∀ child ∈ children, Valid t (t - 1) height child) :
       ValidRoot t (height + 1) (.node keys children)
 
-/-- A root-valid tree is valid for a suitable top-level minimum key count. -/
+/-- **Root-valid B-trees are valid.** If a tree satisfies the root invariant for minimum
+degree $t$ at height $h$, then for some natural number $m$ it satisfies the structural
+invariant for minimum degree $t$, minimum top-node key count $m$ and height $h$. -/
 public theorem ValidRoot.valid {t height : Nat} {tree : BTree α}
     (h : ValidRoot t height tree) : ∃ mink, Valid t mink height tree := by
   cases h with
   | leaf hhi => exact ⟨0, Valid.leaf (Nat.zero_le _) hhi⟩
   | node hlo hhi hlen hchildren => exact ⟨1, Valid.node hlo hhi hlen hchildren⟩
 
-/-- Search a tree by comparing the query key against the separators from the root down:
-at each internal node descend into the first child whose following separator exceeds the
-query, report success on equality with a separator, and at a leaf report membership in
-the key list. -/
+/-- **B-tree search.** For a linearly ordered key type, the search for a key $x$ in a raw B-tree
+proceeds as follows. At a leaf, report whether $x$ is in the leaf's key list. At an internal
+node with separators $k_1, \dots, k_m$ and children $c_0, c_1, \dots$, scan the separators in
+order. On reaching $k_i$, report failure if the node has no child $c_{i-1}$; otherwise search
+$c_{i-1}$ if $x < k_i$, report success if $x = k_i$, and move on to the next separator if
+$k_i < x$. If every separator is less than $x$, search the child $c_m$, or report failure if
+the node has no such child. -/
 public def contains [LinearOrder α] (x : α) : BTree α → Bool
   | .leaf keys => decide (x ∈ keys)
   | .node keys children => containsList x keys children
@@ -654,28 +688,42 @@ private theorem contains_spec [LinearOrder α] {t : Nat} {x : α} :
               rw [hcont]
               exact hspec
 
-/-- The result of inserting into a subtree: `.inl` holds a single tree of the same height,
-and `.inr (left, median, right)` holds two trees of the same height produced by splitting a
-full node, together with the median key promoted between them. -/
+/-- **Result of inserting into a B-tree subtree.** An insertion result over a key type $\alpha$
+is either a single tree over $\alpha$, or a triple $(\ell, m, r)$ of two trees $\ell$ and $r$
+over $\alpha$ and a key $m$ of $\alpha$. In insertion, the first form is a subtree that did not
+split, and the second form is an overflowing node split into two trees of the same height, with
+the median key $m$ promoted between them; the type itself does not record heights. -/
 public def InsResult (α : Type u) := BTree α ⊕ (BTree α × α × BTree α)
 
-/-- The flattening of an insertion result, placing a promoted median between the two
-trees it separates. -/
+/-- **Flattening of a B-tree insertion result.** The flattening of an insertion result that is a
+single tree is the flattening of that tree; for a result that splits into a left tree $\ell$, a
+promoted median key $m$ and a right tree $r$, it is the flattening of $\ell$, followed by $m$,
+followed by the flattening of $r$. -/
 public def grownFlatten : InsResult α → List α
   | .inl tree => flatten tree
   | .inr (left, median, right) => flatten left ++ median :: flatten right
 
-/-- Insert into a leaf's key list, splitting the leaf around the median key when the
-inserted list exceeds `2 * t - 1` keys. -/
+/-- **Insertion into a B-tree leaf.** Over a linearly ordered key type, let $t$ be a natural
+number, $x$ a key, $K$ the key list of a leaf, and $K'$ the result of ordered insertion of $x$
+into $K$. If $K'$ has at most $2t - 1$ keys, the insertion result is the single leaf with keys
+$K'$. Otherwise the leaf is split: the result consists of the leaf holding the first $t - 1$ keys
+of $K'$, the next key of $K'$ promoted as the median, and the leaf holding the remaining keys.
+Here subtraction of natural numbers is truncated at $0$. -/
 public def insLeaf [LinearOrder α] (t : Nat) (x : α) (keys : List α) : InsResult α :=
   if (orderedInsert x keys).length ≤ 2 * t - 1 then .inl (.leaf (orderedInsert x keys))
   else match (orderedInsert x keys).drop (t - 1) with
     | [] => .inl (.leaf (orderedInsert x keys))
     | median :: rest => .inr (.leaf ((orderedInsert x keys).take (t - 1)), median, .leaf rest)
 
-/-- Split an overfull internal node around its median separator: the left tree keeps the
-first `t - 1` keys and first `t` children, the median key is promoted, and the right tree
-keeps the remaining keys and children. -/
+/-- **Splitting a B-tree node.** Let $t$ be a minimum degree, $s = t - 1$ (so $s = 0$ when
+$t = 0$), $k_1, \dots, k_m$ a list of keys and $c_1, \dots, c_n$ a list of B-trees. If
+$m > s$, splitting returns the pair of internal nodes formed by the keys $k_1, \dots, k_s$
+with the first $t$ children (all of them if $n < t$) and by the keys $k_{s+2}, \dots, k_m$
+with the children after the first $t$, together with the key $k_{s+1}$ promoted between
+them. If $m \le s$, it returns the single internal node with keys $k_1, \dots, k_m$ and
+children $c_1, \dots, c_n$ unchanged.
+
+On an overfull node with $2t$ keys and $t \ge 1$, the promoted key $k_t$ is the median key. -/
 public def splitNode (t : Nat) (keys : List α) (children : List (BTree α)) : InsResult α :=
   match keys.drop (t - 1) with
   | [] => .inl (.node keys children)
@@ -683,16 +731,25 @@ public def splitNode (t : Nat) (keys : List α) (children : List (BTree α)) : I
       .inr (.node (keys.take (t - 1)) (children.take t), median,
         .node rightKeys (children.drop t))
 
-/-- The smart constructor for internal nodes after insertion below: keep the node when it
-has at most `2 * t - 1` keys, and split it otherwise. -/
+/-- **Rebuilding an internal node after insertion.** For minimum degree $t$, a separator list $K$
+and a child list $C$, the result is the internal node with separators $K$ and children $C$, kept
+as a single tree when $K$ has at most $2t - 1$ keys, and otherwise split by node splitting into
+two nodes and a promoted median key. -/
 public def mkNode (t : Nat) (keys : List α) (children : List (BTree α)) : InsResult α :=
   if keys.length ≤ 2 * t - 1 then .inl (.node keys children) else splitNode t keys children
 
-/-- Split-returning insertion into a subtree. The auxiliary `insList` walks the separator
-and child lists of an internal node from the left, descends into the unique child whose
-separator range contains the key, and rebuilds the lists on the way back, inserting the
-extra child and promoted median when that child split. The rebuilt node is then passed
-through `mkNode`. -/
+/-- **Split-returning insertion into a B-tree subtree.** For minimum degree $t$ and a key $x$,
+insertion of $x$ into a tree returns an insertion result and is defined by recursion. At a leaf
+with key list $K$, it is leaf insertion of $x$ into $K$. At an internal node, the separator list
+and the child list are scanned together from the left. If $x$ is smaller than the current
+separator, or no separator is left but a child is, $x$ is inserted into the current child. If $x$
+is larger than the current separator, the scan moves on to the next separator and child. If $x$
+equals the current separator, or no child is left, the remaining lists are kept unchanged. When
+the child that received $x$ returns a single tree, that tree replaces the child; when it returns
+two trees $\ell$, $r$ with a median $m$, the child is replaced by $\ell$ and $r$ with $m$ inserted
+as a separator between them. The rebuilt separator and child lists are then turned into a node by
+the internal-node rebuilding step: kept as one node if there are at most $2t - 1$ separators, and
+split otherwise. -/
 public def ins [LinearOrder α] (t : Nat) (x : α) : BTree α → InsResult α
   | .leaf keys => insLeaf t x keys
   | .node keys children =>
@@ -1111,48 +1168,61 @@ private theorem ins_spec [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α} :
                           rw [← happ]
                           exact ihflat
 
-/-- Insert a key into a B-tree of minimum degree `t`, growing a new root with a single
-separator exactly when the old root splits. Inserting an already-present key returns a
-tree with the same flattening. -/
+/-- **B-tree insertion.** For minimum degree $t$, the tree obtained by inserting a key $x$ into a
+tree $T$ is computed from the split-returning insertion of $x$ into $T$: if that returns a single
+tree, this tree is the result; if it returns two trees $\ell$ and $r$ with a promoted median key
+$m$, the result is a new root node with the single separator $m$ and the two children $\ell$ and
+$r$.
+
+When $T$ is a B-tree of minimum degree $t$, inserting a key already present in $T$ returns a tree
+with the same flattening. -/
 public def insert [LinearOrder α] (t : Nat) (x : α) (tree : BTree α) : BTree α :=
   match ins t x tree with
   | .inl tree' => tree'
   | .inr (left, median, right) => .node [median] [left, right]
 
-/-- The empty B-tree: a leaf with no keys. -/
+/-- **The empty B-tree.** The empty B-tree is the leaf with no keys. -/
 public def empty : BTree α :=
   .leaf []
 
-/-- A tree is a B-tree of minimum degree `t` when `2 ≤ t` (the CLRS Chapter 18
-minimum-degree requirement), it is ordered, and it is root-valid at some height.
-This is the invariant maintained by `insert` and `fromList`. -/
+/-- **B-trees of a given minimum degree.** A tree $T$ is a B-tree of minimum degree $t$ when
+$t \ge 2$ (the CLRS Chapter 18 minimum-degree requirement), $T$ is ordered, and $T$ is
+root-valid at some height. This is the invariant preserved by insertion and by building a tree
+from a list. -/
 public def IsBTree [LT α] (t : Nat) (tree : BTree α) : Prop :=
   2 ≤ t ∧ Ordered tree ∧ ∃ height, ValidRoot t height tree
 
-/-- The minimum degree of a B-tree is at least `2`. -/
+/-- **The minimum degree of a B-tree is at least two.** If a tree is a B-tree of minimum
+degree $t$, then $t \ge 2$. -/
 public theorem IsBTree.two_le [LT α] {t : Nat} {tree : BTree α}
     (h : IsBTree t tree) : 2 ≤ t :=
   h.1
 
-/-- A B-tree is ordered. -/
+/-- **B-trees are ordered.** If a tree is a B-tree of minimum degree $t$, then it is ordered:
+each key of its inorder flattening is less than every key that comes after it. -/
 public theorem IsBTree.ordered [LT α] {t : Nat} {tree : BTree α}
     (h : IsBTree t tree) : Ordered tree :=
   h.2.1
 
-/-- A B-tree is root-valid at some height. -/
+/-- **B-trees satisfy the root invariant.** If $T$ is a B-tree of minimum degree $t$, then there
+is a height $h$ such that $T$ satisfies the root structural invariant of minimum degree $t$ at
+height $h$. -/
 public theorem IsBTree.exists_validRoot [LT α] {t : Nat} {tree : BTree α}
     (h : IsBTree t tree) : ∃ height, ValidRoot t height tree :=
   h.2.2
 
-/-- The empty tree is a B-tree of every minimum degree `t ≥ 2`. -/
+/-- **The empty tree is a B-tree.** For every key type equipped with a binary relation $<$ and
+every natural number $t \ge 2$, the empty B-tree is a B-tree of minimum degree $t$. -/
 public theorem IsBTree.empty [LT α] {t : Nat} (ht : 2 ≤ t) :
     IsBTree t (empty : BTree α) := by
   refine ⟨ht, ?_, 0, ValidRoot.leaf (by simp)⟩
   show (flatten (BTree.empty : BTree α)).Pairwise (· < ·)
   simp [BTree.empty]
 
-/-- The flattening of an insertion is sorted insertion into the flattening of the
-original tree. -/
+/-- **B-tree insertion as sorted list insertion.** Let $\alpha$ be linearly ordered, let
+$t \ge 2$, and let $T$ be a B-tree of minimum degree $t$ with keys in $\alpha$. For every key
+$x \in \alpha$, the inorder flattening of the tree obtained by inserting $x$ into $T$ with
+minimum degree $t$ equals the sorted insertion of $x$ into the inorder flattening of $T$. -/
 public theorem flatten_insert [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     {tree : BTree α} (h : IsBTree t tree) :
     flatten (insert t x tree) = orderedInsert x (flatten tree) := by
@@ -1172,15 +1242,19 @@ public theorem flatten_insert [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
       rw [hins] at hflat
       exact hflat
 
-/-- Inserting a key adds exactly that key to membership. -/
+/-- **Membership after B-tree insertion.** Let $t \ge 2$ and let $T$ be a B-tree of minimum
+degree $t$ over a linearly ordered key type. For all keys $x$ and $y$, $y$ belongs to the tree
+obtained by inserting $x$ into $T$ if and only if $y = x$ or $y$ belongs to $T$. -/
 public theorem mem_insert [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x y : α}
     {tree : BTree α} (h : IsBTree t tree) :
     y ∈ insert t x tree ↔ y = x ∨ y ∈ tree := by
   show y ∈ flatten (insert t x tree) ↔ y = x ∨ y ∈ flatten tree
   rw [flatten_insert ht h, mem_orderedInsert]
 
-/-- Insertion preserves the B-tree invariant: the result is again ordered and root-valid
-(at the same height, or one taller when the root split). -/
+/-- **Insertion preserves the B-tree invariant.** Let $t \ge 2$ and let the keys come from a
+linearly ordered type. If $T$ is a B-tree of minimum degree $t$, then for every key $x$ the tree
+obtained by inserting $x$ into $T$ is again a B-tree of minimum degree $t$: it is ordered and
+root-valid at some height. -/
 public theorem IsBTree.insert [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     {tree : BTree α} (h : IsBTree t tree) : IsBTree t (BTree.insert t x tree) := by
   obtain ⟨-, hordered, height, hroot⟩ := h
@@ -1245,15 +1319,21 @@ public theorem IsBTree.insert [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
             · exact hboth.1
             · exact hboth.2
 
-/-- Search agrees with membership in a B-tree. -/
+/-- **Correctness of B-tree search.** Let $\alpha$ be linearly ordered and let $T$ be a B-tree
+of minimum degree $t$ with keys in $\alpha$. For every key $x \in \alpha$, the search procedure
+returns true on $x$ and $T$ if and only if $x$ is a member of $T$, that is, $x$ occurs in the
+inorder flattening of $T$. -/
 public theorem contains_eq_true_iff [LinearOrder α] {t : Nat} {x : α} {tree : BTree α}
     (h : IsBTree t tree) : contains x tree = true ↔ x ∈ tree := by
   obtain ⟨-, hordered, height, hroot⟩ := h
   obtain ⟨mink, hvalid⟩ := hroot.valid
   exact contains_spec hvalid hordered
 
-/-- Inserting a present key leaves the flattening length unchanged, and inserting an
-absent key increases it by one. -/
+/-- **Size of a B-tree after insertion.** Let $\alpha$ be linearly ordered, let $t \ge 2$, let
+$T$ be a B-tree of minimum degree $t$ with keys in $\alpha$, and let $x \in \alpha$. Let $T'$ be
+the tree obtained by inserting $x$ into $T$ with minimum degree $t$. If $x$ occurs in the
+inorder flattening of $T$, then the flattening of $T'$ has the same length as that of $T$;
+otherwise it is one longer. -/
 public theorem flatten_length_insert [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     {tree : BTree α} (h : IsBTree t tree) :
     (flatten (insert t x tree)).length =
@@ -1268,19 +1348,28 @@ public theorem flatten_length_insert [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {
   · rw [ite_eq_right hx]
     exact orderedInsert_length_eq_add_one_of_not_mem hx
 
-/-- Build a B-tree by inserting the list from right to left into the empty tree. -/
+/-- **B-tree built from a list.** For a linearly ordered key type and a natural number $t$, the
+tree built from the empty list is the empty tree, and the tree built from a list with head $x$
+and tail $L$ is the result of inserting $x$, with minimum degree $t$, into the tree built from
+$L$. Thus the elements are inserted from right to left. -/
 public def fromList [LinearOrder α] (t : Nat) : List α → BTree α
   | [] => empty
   | x :: xs => insert t x (fromList t xs)
 
-/-- A tree built by insertions from the empty tree is a B-tree. -/
+/-- **Building from a list yields a B-tree.** For a linearly ordered key type, every natural
+number $t \ge 2$ and every list $L$ of keys, the tree obtained by inserting the elements of $L$
+from right to left into the empty tree, each insertion with minimum degree $t$, is a B-tree of
+minimum degree $t$. -/
 public theorem IsBTree.fromList [LinearOrder α] {t : Nat} (ht : 2 ≤ t) (xs : List α) :
     IsBTree t (fromList t xs) := by
   induction xs with
   | nil => exact IsBTree.empty ht
   | cons x xs ih => exact ih.insert ht
 
-/-- A key is in a tree built from a list exactly when it is in the list. -/
+/-- **Membership in a B-tree built from a list.** Let $t \ge 2$ and let $xs$ be a list over a
+linearly ordered key type. A key $x$ belongs to the tree of minimum degree $t$ built from $xs$
+(by inserting the elements of $xs$ into the empty tree, from right to left) if and only if $x$
+is an element of $xs$. -/
 public theorem mem_fromList [LinearOrder α] {t : Nat} (ht : 2 ≤ t) {x : α}
     {xs : List α} : x ∈ fromList t xs ↔ x ∈ xs := by
   induction xs with

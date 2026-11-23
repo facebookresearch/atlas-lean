@@ -19,9 +19,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The least natural number outside a finite set, used to express the paper's mex.
-The witness passed to `Nat.find` is one larger than the maximum of the set with zero
-adjoined; this is an implementation detail and not a mathematical deviation.
+/-- **Minimum excludant of a finite set.** For a finite set $s$ of natural numbers,
+$\operatorname{mex}(s)$ is the least natural number that does not belong to $s$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 2. -/
 public def maximumNimMex (s : Finset ℕ) : ℕ :=
@@ -32,8 +32,10 @@ public def maximumNimMex (s : Finset ℕ) : ℕ :=
     have hle : M + 1 ≤ M := Finset.le_max' (insert 0 s) (M + 1) (by simp [h])
     omega)
 
-/-- The finite mex is `m` exactly when `m` is absent and every smaller natural is
-present. This is the characteristic property of the paper's mex, with no deviation.
+/-- **Characterization of the minimum excludant.** Let $s$ be a finite set of natural numbers and
+$m$ a natural number. Then $\operatorname{mex}(s)$, the least natural number not in $s$, equals $m$
+if and only if $m \notin s$ and every natural number $n < m$ lies in $s$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 2. -/
 public theorem maximumNimMex_eq_iff (s : Finset ℕ) (m : ℕ) :
@@ -42,10 +44,14 @@ public theorem maximumNimMex_eq_iff (s : Finset ℕ) (m : ℕ) :
   rw [Nat.find_eq_iff]
   simp
 
-/-- The Grundy number of a Maximum Nim pile with rule function `f`. For a pile `x`,
-`Finset.Icc 1 (min (f x) x)` is the set of legal removal counts, and the recursive
-values at `x - u` form the finite set whose mex is taken. The `min` makes the function
-total; under the paper's hypotheses and `f 0 = 0` it does not alter legal play.
+/-- **Grundy numbers of Maximum Nim.** For a rule function $f : \mathbb{N} \to \mathbb{N}$, the
+Grundy number $G_f(x)$ of a pile of $x$ stones in Maximum Nim is defined by recursion on $x$ as the
+mex (least natural number not in the set) of $\{G_f(x - u) : 1 \le u \le \min(f(x), x)\}$, the
+Grundy numbers of the positions reachable from $x$ by removing $u$ stones.
+
+Taking $\min(f(x), x)$ makes the definition total; under the source's hypotheses on $f$, which
+include $f(0) = 0$, it does not change the legal moves.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 2. -/
 public def maximumNimGrundy (f : ℕ → ℕ) (x : ℕ) : ℕ :=
@@ -58,9 +64,11 @@ decreasing_by
   simp only [Finset.mem_Icc] at hu
   omega
 
-/-- Unfolding `maximumNimGrundy f x` gives the mex of the Grundy numbers at exactly
-the positions `x - u` for `1 ≤ u ≤ min (f x) x`; `attach` only carries the proof that
-each removal count is legal, so there is no mathematical deviation.
+/-- **Recursive formula for Maximum Nim Grundy numbers.** For every rule function
+$f : \mathbb{N} \to \mathbb{N}$ and every pile size $x \in \mathbb{N}$, the Grundy number $G_f(x)$
+of a pile of $x$ stones in Maximum Nim with rule function $f$ equals the mex (least natural number
+not in the set) of $\{G_f(x - u) : 1 \le u \le \min(f(x), x)\}$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 2. -/
 public theorem maximumNimGrundy_eq (f : ℕ → ℕ) (x : ℕ) :
@@ -133,35 +141,35 @@ private theorem maximumNimGrundy_div_two_five_aux :
       norm_num [maximumNimGrundy_div_two_four_aux, maximumNimGrundy_div_two_three_aux]
   · exact ⟨2, by norm_num, maximumNimGrundy_div_two_three_aux⟩
 
-/-- For the Section 3 rule `f(x) = ⌊x/2⌋`, a pile of five has Grundy number one.
-This is the paper's `k = 2`, `G(5) = 1` check, with natural division representing
-the floor; there is no deviation.
+/-- **Grundy number of a pile of five in halving Maximum Nim.** In Maximum Nim with rule
+function $f(x) = \lfloor x/2 \rfloor$, a pile of $5$ stones has Grundy number $1$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
 public theorem maximumNimGrundy_div_two_five : maximumNimGrundy (· / 2) 5 = 1 := by
   exact maximumNimGrundy_div_two_five_aux
 
-/-- For the Section 3 rule `f(x) = ⌊x/2⌋`, a pile of four has Grundy number two.
-This is the paper's `k = 2`, `G(4) = 2` check, with natural division representing
-the floor; there is no deviation.
+/-- **Grundy number of a pile of four in halving Maximum Nim.** In Maximum Nim with rule
+function $f(x) = \lfloor x/2 \rfloor$, a pile of $4$ stones has Grundy number $2$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
 public theorem maximumNimGrundy_div_two_four : maximumNimGrundy (· / 2) 4 = 2 := by
   exact maximumNimGrundy_div_two_four_aux
 
-/-- For the Section 3 rule `f(x) = ⌊x/2⌋`, a pile of three has Grundy number zero.
-This is the paper's `k = 2`, `G(3) = 0` check, with natural division representing
-the floor; there is no deviation.
+/-- **Grundy number of a pile of three in halving Maximum Nim.** In Maximum Nim with rule
+function $f(x) = \lfloor x/2 \rfloor$, a pile of $3$ stones has Grundy number $0$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
 public theorem maximumNimGrundy_div_two_three : maximumNimGrundy (· / 2) 3 = 0 := by
   exact maximumNimGrundy_div_two_three_aux
 
-/-- Maximum Nim with rule function `f` as an impartial game in the repository's
-Sprague-Grundy API: positions are pile sizes, and from `x` one may move to `x - u` for
-`1 ≤ u ≤ min (f x) x`; the rank is the pile size and the start is the empty pile. The `min`
-is the same totality convention as for `maximumNimGrundy`, and is the only representational
-deviation.
+/-- **The Maximum Nim game.** For a rule function $f : \mathbb{N} \to \mathbb{N}$, the Maximum Nim
+game with rule $f$ is the impartial game whose positions are the pile sizes $x \in \mathbb{N}$, in
+which the moves from $x$ go to $x - u$ for each $u$ with $1 \le u \le \min(f(x), x)$. The rank of
+a position is the pile size itself, and the starting position is the empty pile $0$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 2. -/
 public def maximumNimGame (f : ℕ → ℕ) : SpragueGrundy.ImpartialGame where
@@ -177,10 +185,11 @@ public def maximumNimGame (f : ℕ → ℕ) : SpragueGrundy.ImpartialGame where
     omega
   start := 0
 
-/-- A pile `x` is a P-position of `maximumNimGame f` exactly when no legal successor
-`x - u`, for `1 ≤ u ≤ min (f x) x`, is a P-position. This is the normal-play recursion,
-derived from `SpragueGrundy.isP_iff`; the totalizing `min` is the only representational
-deviation.
+/-- **P-positions of Maximum Nim.** Let $f : \mathbb{N} \to \mathbb{N}$ be a rule function and let
+$x$ be a pile size. The position $x$ of the Maximum Nim game with rule $f$ is a P-position
+if and only if, for every $u$ with $1 \le u \le \min(f(x), x)$, the position $x - u$ is not
+a P-position.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 2. -/
 public theorem maximumNimGame_isP_iff (f : ℕ → ℕ) (x : ℕ) :
@@ -196,30 +205,39 @@ public theorem maximumNimGame_isP_iff (f : ℕ → ℕ) (x : ℕ) :
     obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hq
     exact h u (Finset.mem_Icc.mp hu).1 (Finset.mem_Icc.mp hu).2
 
-/-- The map `h_k(x) = x + ⌊x/(k-1)⌋ + 1`; natural division implements the floor
-on nonnegative integers exactly, so there is no deviation from the paper.
+/-- **The Maximum Nim map $h_k$.** For natural numbers $k$ and $x$, let
+$h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$. The paper takes $k \ge 2$; for $k \le 1$ the definition
+gives $h_k(x) = x + 1$, because $k - 1$ is truncated to $0$ and $\lfloor x/0 \rfloor$ is taken to
+be $0$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Definition 3.1. -/
 public def maximumNimH (k x : ℕ) : ℕ := x + x / (k - 1) + 1
 
-/-- At `k = 3`, Definition 3.1 gives `h_3(0) = 1`; the Lean equality is the direct
-natural-number calculation and has no deviation.
+/-- **The value $h_3(0) = 1$ of the Maximum Nim map.** For the map
+$h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers, we have $h_3(0) = 1$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Definition 3.1. -/
 public theorem maximumNimH_three_zero : maximumNimH 3 0 = 1 := by
   decide
 
-/-- At `k = 3`, Definition 3.1 gives `h_3(2) = 4`; the Lean equality is the direct
-natural-number calculation and has no deviation.
+/-- **The value $h_3(2) = 4$ of the Maximum Nim map.** For the map
+$h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers, we have $h_3(2) = 4$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Definition 3.1. -/
 public theorem maximumNimH_three_two : maximumNimH 3 2 = 4 := by
   decide
 
-/-- A fuel-bounded Josephus simulation on a current circle. The removed zero-based
-index is `(start + k - 1) % circle.length`, and that index is the next starting index;
-the public definition supplies exactly one unit of fuel per initial entry. The default
-zero is unreachable there and only totalizes `getD`, so it is not a paper deviation.
+/-- **Fuel-bounded Josephus simulation.** For natural numbers $k$ and $s$ (the starting
+position), a fuel $f$ and a list $c$ of natural numbers (the current circle), the simulation
+returns the empty list when $f = 0$ or $c$ is empty. Otherwise, with $L$ the length of $c$ and
+$i = (s + k - 1) \bmod L$, where the subtraction is truncated at $0$, it returns the entry of
+$c$ at zero-based position $i$ followed by the result of the simulation with the same $k$,
+starting position $i$ and fuel $f - 1$ on the list obtained from $c$ by deleting the entry at
+position $i$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (Josephus problem). -/
 public def josephusEliminationOrderAux (k start : ℕ) : ℕ → List ℕ → List ℕ
@@ -229,25 +247,36 @@ public def josephusEliminationOrderAux (k start : ℕ) : ℕ → List ℕ → Li
       let i := (start + k - 1) % circle.length
       circle.getD i 0 :: josephusEliminationOrderAux k i fuel (circle.eraseIdx i)
 
-/-- The complete Josephus elimination order on the one-based circle `1, ..., n`,
-with every `k`-th entry removed and the survivor placed last. `List.range' 1 n`
-formalizes that circle and fuel `n` records all `n` eliminations; there is no deviation.
+/-- **Josephus elimination order.** For natural numbers $k$ and $n$, place $1, \dots, n$ in
+order on a circle and repeatedly remove one entry. When $L$ entries remain and the current
+position is $s$ (zero-based, initially $s = 0$), the entry at zero-based position
+$i = (s + k - 1) \bmod L$ is removed, where the subtraction is truncated at $0$, and $i$ becomes
+the current position, so the next count starts at the entry after the removed one. The
+Josephus elimination order with step $k$ on the circle $1, \dots, n$ is the list of all $n$
+entries in the order of their removal.
+
+For $k \ge 1$ this is the classical process that removes every $k$-th remaining entry; the last
+entry of the list is the survivor.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (Josephus problem). -/
 public def josephusEliminationOrder (k n : ℕ) : List ℕ :=
   josephusEliminationOrderAux k 0 n (List.range' 1 n)
 
-/-- For `n = 10` and `k = 3`, the simulator removes
-`3, 6, 9, 2, 7, 1, 8, 5, 10` and records survivor `4` last, exactly as in the paper;
-there is no deviation.
+/-- **Josephus elimination order for ten people and step three.** The Josephus elimination order
+with step $3$ on the circle $1, \dots, 10$ is $3, 6, 9, 2, 7, 1, 8, 5, 10, 4$: the entries are
+removed in the order $3, 6, 9, 2, 7, 1, 8, 5, 10$, and the survivor $4$ comes last.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (Josephus problem example). -/
 public theorem josephusEliminationOrder_three_ten :
     josephusEliminationOrder 3 10 = [3, 6, 9, 2, 7, 1, 8, 5, 10, 4] := by
   decide
 
-/-- For `n = 3` and `k = 2`, the order is `2, 1, 3`, with survivor `3` last;
-this is the check used to relate elimination positions to Grundy values, with no deviation.
+/-- **Josephus elimination order for three people and step two.** The Josephus elimination
+order with step $2$ on the circle $1, 2, 3$ is $2, 1, 3$: the entry $2$ is removed first, then
+the entry $1$, and the survivor $3$ comes last.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (characteristic values). -/
 public theorem josephusEliminationOrder_two_three :
@@ -364,9 +393,9 @@ private theorem josephusEliminationOrderAux_getLast? (k : ℕ) (hk : 1 ≤ k) :
     rw [hsel, List.getElem?_eq_getElem (by rw [hc]; exact Nat.mod_lt _ (by omega))]
     rfl
 
-/-- The Josephus elimination order on `n` people has exactly `n` entries: every person
-is eliminated once, with the survivor recorded last. This holds for every `k`, with no
-deviation.
+/-- **Length of the Josephus elimination order.** For all natural numbers $k$ and $n$, the
+Josephus elimination order with step $k$ on the circle $1, \dots, n$ has exactly $n$ entries.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (Josephus problem). -/
 public theorem josephusEliminationOrder_length (k n : ℕ) :
@@ -374,19 +403,22 @@ public theorem josephusEliminationOrder_length (k n : ℕ) :
   simpa [josephusEliminationOrder] using
     (josephusEliminationOrderAux_length_perm k n 0 (List.range' 1 n) (by simp)).1
 
-/-- The Josephus elimination order on `n` people is a permutation of the circle
-`1, ..., n`, so each person appears exactly once. This holds for every `k`, with no
-deviation.
+/-- **The Josephus elimination order is a permutation of the circle.** For all natural numbers
+$k$ and $n$, the Josephus elimination order with step $k$ on the circle $1, \dots, n$ is a
+permutation of the list $1, 2, \dots, n$; in particular, each of $1, \dots, n$ occurs in it
+exactly once.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (Josephus problem). -/
 public theorem josephusEliminationOrder_perm (k n : ℕ) :
     List.Perm (josephusEliminationOrder k n) (List.range' 1 n) :=
   (josephusEliminationOrderAux_length_perm k n 0 (List.range' 1 n) (by simp)).2
 
-/-- For `k ≥ 1` and `n ≥ 1`, the last entry of the elimination order (the survivor) is
-the one-based Josephus number `josephus k n`, connecting the simulation to the
-recurrence `J(n+1) = ((J(n) + k - 1) mod (n+1)) + 1`. The paper's range `k ≥ 2` is
-relaxed to `k ≥ 1`; there is no other deviation.
+/-- **The survivor is the last entry of the Josephus elimination order.** For natural numbers
+$k \ge 1$ and $n \ge 1$, the Josephus elimination order with step $k$ on the circle
+$1, \dots, n$ is nonempty and its last entry is $J_k(n)$, the value at $n$ of the Josephus
+function for elimination step $k$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Section 3 (Josephus problem). -/
 public theorem josephusEliminationOrder_getLast? (k n : ℕ) (hk : 1 ≤ k) (hn : 1 ≤ n) :
@@ -399,18 +431,22 @@ public theorem josephusEliminationOrder_getLast? (k n : ℕ) (hk : 1 ≤ k) (hn 
   congr 1
   omega
 
-/-- Theorem 1: under `f 0 = 0` and the unit-step monotonicity condition expressed by
-`f (m-1) ≤ f m ≤ f (m-1)+1` for positive `m`, a position has Grundy number zero
-exactly when it is a P-position (previous-player win) of `maximumNimGame f`. There is no deviation.
+/-- **Grundy value zero characterizes P-positions in Maximum Nim.** Let $f : \mathbb{N} \to
+\mathbb{N}$ satisfy $f(0) = 0$ and $f(m-1) \le f(m) \le f(m-1) + 1$ for every $m \ge 1$. Then for
+every pile size $x \in \mathbb{N}$, the Grundy number of $x$ in Maximum Nim with rule function $f$
+is $0$ if and only if $x$ is a P-position (a previous-player win under normal play) of that game.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Theorem 1 (`integers-2024-G5-thm-1`). -/
 public theorem_wanted maximumNimGrundy_eq_zero_iff_isP (f : ℕ → ℕ) (hf0 : f 0 = 0)
     (hf : ∀ m, 1 ≤ m → f (m - 1) ≤ f m ∧ f m ≤ f (m - 1) + 1) (x : ℕ) :
     maximumNimGrundy f x = 0 ↔ SpragueGrundy.IsP (maximumNimGame f) x
 
-/-- Lemma 1(i): for a positive `x`, if an admissible rule function increases from
-`x-1` to `x`, then `G(x) = f(x)`. The hypotheses `hf0` and `hf` formalize the same
-rule-function assumptions as Theorem 1; there is no deviation.
+/-- **Grundy number where the rule function increases.** Let $f : \mathbb{N} \to \mathbb{N}$
+satisfy $f(0) = 0$ and $f(m-1) \le f(m) \le f(m-1) + 1$ for every $m \ge 1$, and let $G$ be the
+Grundy number of Maximum Nim with rule function $f$. If $x \ge 1$ and $f(x-1) < f(x)$, then
+$G(x) = f(x)$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 1(i) (`integers-2024-G5-lem-1`). -/
 public theorem_wanted maximumNimGrundy_eq_rule_of_lt (f : ℕ → ℕ) (hf0 : f 0 = 0)
@@ -418,9 +454,13 @@ public theorem_wanted maximumNimGrundy_eq_rule_of_lt (f : ℕ → ℕ) (hf0 : f 
     (x : ℕ) (hx : 1 ≤ x) (hfx : f (x - 1) < f x) :
     maximumNimGrundy f x = f x
 
-/-- Lemma 1(ii): for positive `x`, if an admissible rule function is unchanged from
-`x-1` to `x`, then `G(x) = G(x-f(x)-1)`. Natural subtraction matches the paper under
-the stated rule-function hypotheses, so there is no deviation.
+/-- **Grundy number where the rule function is flat.** Let $f : \mathbb{N} \to \mathbb{N}$
+satisfy $f(0) = 0$ and $f(m-1) \le f(m) \le f(m-1) + 1$ for every $m \ge 1$, and let $G$ be the
+Grundy number of Maximum Nim with rule function $f$. If $x \ge 1$ and $f(x) = f(x-1)$, then
+$G(x) = G(x - f(x) - 1)$.
+
+Here $x - f(x) - 1 \ge 0$, since the hypotheses give $f(x) = f(x-1) \le x - 1$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 1(ii) (`integers-2024-G5-lem-1`). -/
 public theorem_wanted maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 : f 0 = 0)
@@ -428,44 +468,53 @@ public theorem_wanted maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 :
     (x : ℕ) (hx : 1 ≤ x) (hfx : f x = f (x - 1)) :
     maximumNimGrundy f x = maximumNimGrundy f (x - f x - 1)
 
-/-- Lemma 2: when `k ≥ 2`, positive `x` is not divisible by `k`, subtracting
-`⌊x/k⌋` and one from `x` equals `⌊(k-1)x/k⌋`. Natural division is the indicated
-floor and `¬ k ∣ x` is “not a multiple”; there is no deviation.
+/-- **Floor identity for non-multiples in Maximum Nim.** Let $k \ge 2$ and $x$ be natural numbers
+such that $x$ is not a multiple of $k$. Then
+$x - \lfloor x/k \rfloor - 1 = \lfloor (k-1)x/k \rfloor$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 2 (`integers-2024-G5-lem-2`). -/
 public theorem_wanted maximumNim_sub_div_sub_one_eq (k x : ℕ) (hk : 2 ≤ k)
     (hxk : ¬k ∣ x) :
     x - x / k - 1 = (k - 1) * x / k
 
-/-- Lemma 3(i): for `k ≥ 2`, every positive multiple `x` of `k` has Grundy number
-`x/k` under the rule `f(y)=⌊y/k⌋`. Divisibility formalizes “multiple” and natural
-division the floors; there is no deviation.
+/-- **Maximum Nim Grundy numbers at multiples of the divisor.** Let $k \ge 2$ and let $G$ be
+the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. Every positive
+multiple $x$ of $k$ satisfies $G(x) = x/k$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 3(i) (`integers-2024-G5-lem-3`). -/
 public theorem_wanted maximumNimGrundy_div_eq_of_dvd (k x : ℕ) (hk : 2 ≤ k)
     (hx : 1 ≤ x) (hkx : k ∣ x) :
     maximumNimGrundy (· / k) x = x / k
 
-/-- Lemma 3(ii): for `k ≥ 2`, every positive nonmultiple `x` has the same Grundy
-number as `F(x)=⌊(k-1)x/k⌋`. The expression `(k-1)*x/k` is `F`; there is no deviation.
+/-- **Maximum Nim Grundy numbers at non-multiples of the divisor.** Let $k \ge 2$ and let $G$
+be the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. If $x$ is a
+natural number not divisible by $k$, then $G(x) = G(\lfloor (k-1)x/k \rfloor)$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 3(ii) (`integers-2024-G5-lem-3`). -/
 public theorem_wanted maximumNimGrundy_eq_F_of_not_dvd (k x : ℕ) (hk : 2 ≤ k)
      (hkx : ¬k ∣ x) :
     maximumNimGrundy (· / k) x = maximumNimGrundy (· / k) ((k - 1) * x / k)
 
-/-- Lemma 3(iii): for `k ≥ 2` and each `j` from one through `k`, the position
-`k-j` has Grundy number zero for rule `f(y)=⌊y/k⌋`. The bounded hypotheses encode
-`j=1,...,k`; there is no deviation.
+/-- **Floor-rule Maximum Nim: positions below k have Grundy number zero.** For every natural
+number $k \ge 2$ and every natural number $j$ with $1 \le j \le k$, a pile of $k - j$ stones has
+Grundy number $0$ in Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 3(iii) (`integers-2024-G5-lem-3`). -/
 public theorem_wanted maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
     (hj : 1 ≤ j) (hjk : j ≤ k) :
     maximumNimGrundy (· / k) (k - j) = 0
 
-/-- Lemma 4(i): if positive `n,t,h` satisfy `k = n*t+h`, `h ≤ n`, and `s<t`,
-then for every `1 ≤ i ≤ n`, `n*(k-s)-i` is not divisible by `k`. Naturals already
-encode `s ≥ 0`; there is no deviation.
+/-- **A Maximum Nim non-divisibility lemma for $s < t$.** Let $k, n, t, h, s, i$ be natural
+numbers with $h \ge 1$, $k = nt + h$, $h \le n$ and $s < t$. If $1 \le i \le n$, then $k$ does
+not divide $n(k - s) - i$.
+
+The hypotheses force $n \ge 1$, $s < k$ and $i \le n(k - s)$, so both subtractions are ordinary
+differences of natural numbers.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 4(i) (`integers-2024-G5-lem-4`). -/
 public theorem_wanted maximumNim_not_dvd_mul_sub_of_lt (k n t h s i : ℕ)
@@ -474,9 +523,13 @@ public theorem_wanted maximumNim_not_dvd_mul_sub_of_lt (k n t h s i : ℕ)
     (hi : 1 ≤ i) (hin : i ≤ n) :
     ¬k ∣ n * (k - s) - i
 
-/-- Lemma 4(ii): if positive `n,t,h` satisfy `k = n*t+h` and `h ≤ n`, then for
-`1 ≤ i ≤ n` with `i ≠ h`, `n*(k-t)-i` is not divisible by `k`. The hypotheses map
-the paper's positive-integer clauses directly; there is no deviation.
+/-- **A Maximum Nim non-divisibility lemma for $i \ne h$.** Let $k, n, t, h, i$ be natural numbers
+with $t \ge 1$, $h \ge 1$, $k = nt + h$ and $h \le n$. If $1 \le i \le n$ and $i \ne h$, then $k$
+does not divide $n(k - t) - i$.
+
+The hypotheses force $n \ge 1$, $t \le k$ and $i \le n(k - t)$, so both subtractions are ordinary
+differences of natural numbers.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 4(ii) (`integers-2024-G5-lem-4`). -/
 public theorem_wanted maximumNim_not_dvd_mul_sub_of_ne (k n t h i : ℕ)
@@ -485,10 +538,17 @@ public theorem_wanted maximumNim_not_dvd_mul_sub_of_ne (k n t h i : ℕ)
     (hi : 1 ≤ i) (hin : i ≤ n) (hih : i ≠ h) :
     ¬k ∣ n * (k - t) - i
 
-/-- Lemma 5(i): if positive `n,k,t` and nonnegative `u` satisfy `n=k*t+u` and
-`u ≤ k-1`, then each positive `i ≤ n` not divisible by `k` gives the displayed
-Grundy equality. We use the intended parenthesized right side
-`(n-t)k-(u+i-⌊i/k⌋)`; the extraction's unparenthesized literal reading is false.
+/-- **Floor-rule Maximum Nim: Grundy reduction when $n = kt + u$.** Let $k$, $t$, $u$ and $n$ be
+natural numbers with $k \ge 2$, $t \ge 1$, $u \le k - 1$ and $n = kt + u$. Write $G(x)$ for the
+Grundy number of a pile of $x$ stones in Maximum Nim with rule function
+$f(y) = \lfloor y/k \rfloor$. Then for every natural number $i$ with $1 \le i \le n$ that is not
+divisible by $k$,
+$$G(nk - i) = G\bigl((n - t)k - (u + i - \lfloor i/k \rfloor)\bigr).$$
+
+The hypotheses force $i \le nk$ and $u + i - \lfloor i/k \rfloor \le (n - t)k$, so all
+subtractions are ordinary differences of natural numbers. The right side is read with the
+parentheses shown; read without them, as in the extracted statement, the equality is false.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 5(i) (`integers-2024-G5-lem-5`). -/
 public theorem_wanted maximumNimGrundy_mul_sub_eq_decomposition (k n t u i : ℕ)
@@ -498,9 +558,13 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_decomposition (k n t u i : ℕ
     maximumNimGrundy (· / k) (n * k - i) =
       maximumNimGrundy (· / k) ((n - t) * k - (u + i - i / k))
 
-/-- Lemma 5(ii.1): under `k=n*t+h` for positive `n,t,h` with `h ≤ n`, every
-`1 ≤ i ≤ n` gives `G(nk-i)=G(F(nk-i))=G(n(k-1)-i)`, where `F(x)=(k-1)x/k`.
-The conjunction spells out the paper's two equalities; there is no deviation.
+/-- **Floor-rule Maximum Nim: one-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
+natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
+Grundy number of a pile of $x$ stones in Maximum Nim with rule function
+$f(y) = \lfloor y/k \rfloor$, and let $F(x) = \lfloor (k-1)x/k \rfloor$. Then for every natural
+number $i$ with $1 \le i \le n$,
+$$G(nk - i) = G(F(nk - i)) = G(n(k - 1) - i).$$
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 5(ii.1) (`integers-2024-G5-lem-5`). -/
 public theorem_wanted maximumNimGrundy_mul_sub_eq_F_eq_pred (k n t h i : ℕ)
@@ -511,9 +575,13 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_F_eq_pred (k n t h i : ℕ)
       maximumNimGrundy (· / k) ((k - 1) * (n * k - i) / k) =
         maximumNimGrundy (· / k) (n * (k - 1) - i)
 
-/-- Lemma 5(ii.2): with `k=n*t+h` for positive `n,t,h`, `h ≤ n`, and
-`1 ≤ i ≤ n`, `G(nk-i)` equals `G(F^t(nk-i))`, which equals `G(n(k-t)-i)`.
-`Nat.iterate` is the paper's superscript iteration; there is no deviation.
+/-- **Floor-rule Maximum Nim: t-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
+natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
+Grundy number of a pile of $x$ stones in Maximum Nim with rule function
+$f(y) = \lfloor y/k \rfloor$, let $F(x) = \lfloor (k-1)x/k \rfloor$, and let $F^t$ be the $t$-fold
+iterate of $F$. Then for every natural number $i$ with $1 \le i \le n$,
+$$G(nk - i) = G(F^t(nk - i)) = G(n(k - t) - i).$$
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 5(ii.2) (`integers-2024-G5-lem-5`). -/
 public theorem_wanted maximumNimGrundy_mul_sub_eq_iterate_F (k n t h i : ℕ)
@@ -525,9 +593,13 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_iterate_F (k n t h i : ℕ)
       maximumNimGrundy (· / k) (Nat.iterate F t (n * k - i)) =
         maximumNimGrundy (· / k) (n * (k - t) - i)
 
-/-- Lemma 5(ii.3): with `k=n*t+h` for positive `n,t,h`, `h ≤ n`, and positive
-`i ≤ h-1`, `G(nk-i)` equals `G(F^(t+1)(nk-i))`, which equals
-`G((n-1)k-(n-h+i))`. The hypotheses encode `i ∈ N`; there is no deviation.
+/-- **Floor-rule Maximum Nim: (t+1)-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
+natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
+Grundy number of a pile of $x$ stones in Maximum Nim with rule function
+$f(y) = \lfloor y/k \rfloor$, let $F(x) = \lfloor (k-1)x/k \rfloor$, and let $F^{t+1}$ be the
+$(t+1)$-fold iterate of $F$. Then for every natural number $i$ with $1 \le i \le h - 1$,
+$$G(nk - i) = G(F^{t+1}(nk - i)) = G((n - 1)k - (n - h + i)).$$
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 5(ii.3) (`integers-2024-G5-lem-5`). -/
 public theorem_wanted maximumNimGrundy_mul_sub_eq_succ_iterate_F (k n t h i : ℕ)
@@ -539,36 +611,42 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_succ_iterate_F (k n t h i : �
       maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) =
         maximumNimGrundy (· / k) ((n - 1) * k - (n - h + i))
 
-/-- Lemma 6(i): for `k ≥ 2`, `h_k` is strictly increasing: `x<x'` implies
-`h_k(x)<h_k(x')`. The function is `maximumNimH`; there is no deviation.
+/-- **The Maximum Nim map $h_k$ is strictly increasing.** Let $k \ge 2$ be a natural number and
+let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. For all
+natural numbers $x$ and $x'$ with $x < x'$, we have $h_k(x) < h_k(x')$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 6(i) (`integers-2024-G5-lem-6`). -/
 public theorem_wanted maximumNimH_strictMono (k x x' : ℕ) (hk : 2 ≤ k) (hxx' : x < x') :
     maximumNimH k x < maximumNimH k x'
 
-/-- Lemma 6(ii): for `k ≥ 2`, every `x` satisfies `x < x+1 ≤ h_k(x)`.
-The two inequalities are represented as a conjunction; there is no deviation.
+/-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
+$h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural
+number $x$ satisfies $x < x + 1 \le h_k(x)$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 6(ii) (`integers-2024-G5-lem-6`). -/
 public theorem_wanted maximumNimH_succ_le (k x : ℕ) (hk : 2 ≤ k) :
     x < x + 1 ∧ x + 1 ≤ maximumNimH k x
 
-/-- Lemma 6(iii): for `k ≥ 2`, the iterates `h_k^p(x₀)` tend to infinity as
-`p` tends to infinity. `Filter.Tendsto ... Filter.atTop Filter.atTop` is precisely
-that divergence statement and `Nat.iterate` is superscript iteration; no deviation.
+/-- **Iterates of the Maximum Nim map $h_k$ tend to infinity.** Let $k \ge 2$ be a natural
+number and let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers.
+For every natural number $x_0$, the iterates $h_k^p(x_0)$ tend to infinity as $p \to \infty$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 6(iii) (`integers-2024-G5-lem-6`). -/
 public theorem_wanted maximumNimH_iterate_tendsto_atTop (k x₀ : ℕ) (hk : 2 ≤ k) :
     Filter.Tendsto (fun p => Nat.iterate (maximumNimH k) p x₀)
       Filter.atTop Filter.atTop
 
-/-- Lemma 7: for `k ≥ 2` and the maps `h_k⁻(x) = x + x/(k-1)` and `h_k⁺(x) = x + x/(k-1) + 1`
-of Definition 3.2, (i) `(h_k⁻)^p(x) = (k/(k-1))^p x`, (ii)
-`(h_k⁺)^p(x) = (k/(k-1))^p (x + k - 1) - (k - 1)`, and (iii) `h_k⁻(x) ≤ h_k(x) ≤ h_k⁺(x)` for
-every nonnegative integer `x`.
+/-- **Linear bounds on h_k and their iterates.** Let $k \ge 2$ be a natural number, let
+$h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, and define the real maps
+$h_k^-(x) = x + \frac{x}{k-1}$ and $h_k^+(x) = x + \frac{x}{k-1} + 1$. Writing $g^p$ for the
+$p$-fold iterate of a map $g$, for all natural numbers $p$ and $x$: (i)
+$(h_k^-)^p(x) = \left(\frac{k}{k-1}\right)^p x$, (ii)
+$(h_k^+)^p(x) = \left(\frac{k}{k-1}\right)^p (x + k - 1) - (k - 1)$, and (iii)
+$h_k^-(x) \le h_k(x) \le h_k^+(x)$.
 
-`h_k⁻` and `h_k⁺` are real-valued (their iterates leave the integers), `h_k` is `maximumNimH`
-cast to `ℝ`, and `Nat.iterate` is the functional power; there is no deviation.
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 7 (`integers-2024-G5-lem-7`). -/
 public theorem_wanted maximumNimH_iterate_bounds (k : ℕ) (hk : 2 ≤ k) :
@@ -578,9 +656,12 @@ public theorem_wanted maximumNimH_iterate_bounds (k : ℕ) (hk : 2 ≤ k) :
     (∀ (p x : ℕ), Nat.iterate hPlus p x = ((k : ℝ) / (k - 1)) ^ p * (x + k - 1) - (k - 1)) ∧
     (∀ x : ℕ, hMinus x ≤ maximumNimH k x ∧ (maximumNimH k x : ℝ) ≤ hPlus x)
 
-/-- Theorem 2: for `k ≥ 2` and positive `m ≤ n`, `n-o_n(m)` equals `G(nk-m)`.
-Here `o_n(m)` is formalized exactly as the zero-based `idxOf m` in the full
-Josephus order plus one, including the survivor last; there is no deviation.
+/-- **Josephus elimination positions as Maximum Nim Grundy numbers.** Let $k \ge 2$ and
+$1 \le m \le n$. Write $o_n(m)$ for the position, counting from $1$, at which $m$ appears in the
+Josephus elimination order of the circle $1, \dots, n$ in which every $k$-th person is removed
+and the survivor is listed last, and write $G$ for the Grundy number of Maximum Nim with rule
+function $f(y) = \lfloor y/k \rfloor$. Then $n - o_n(m) = G(nk - m)$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Theorem 2 (`integers-2024-G5-thm-2`). -/
 public theorem_wanted josephus_position_complement_eq_maximumNimGrundy (k n m : ℕ)
@@ -588,9 +669,12 @@ public theorem_wanted josephus_position_complement_eq_maximumNimGrundy (k n m : 
     n - ((josephusEliminationOrder k n).idxOf m + 1) =
       maximumNimGrundy (· / k) (n * k - m)
 
-/-- Theorem 3: for `k ≥ 2` and positive `n`, some positive `p` brackets
-`n(k-1)` strictly above `h_k^(p-1)(0)` and weakly below `h_k^p(0)`, and the
-one-based survivor `josephus k n` is `nk-h_k^p(0)`. There is no deviation.
+/-- **Josephus survivor via iteration from zero.** Let $k \ge 2$ and $n \ge 1$ be natural
+numbers, let $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ for natural numbers $x$, and write
+$h_k^p$ for the $p$-th iterate of $h_k$. Then there is a natural number $p \ge 1$ with
+$h_k^{p-1}(0) < n(k-1) \le h_k^p(0)$ and $J_k(n) = nk - h_k^p(0)$, where $J_k$ is the Josephus
+function for elimination step $k$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Theorem 3 (`integers-2024-G5-thm-3`). -/
 public theorem_wanted josephus_eq_mul_sub_iterate_maximumNimH_zero (k n : ℕ)
@@ -600,10 +684,15 @@ public theorem_wanted josephus_eq_mul_sub_iterate_maximumNimH_zero (k n : ℕ)
       n * (k - 1) ≤ Nat.iterate (maximumNimH k) p 0 ∧
       josephus k n = n * k - Nat.iterate (maximumNimH k) p 0
 
-/-- Corollary 1: for `k ≥ 2` and `n ≥ 2`, a positive `p` brackets `n(k-1)`
-between consecutive iterates starting at `k-1`, and `josephus k n` is the stated
-difference. We require `n ≥ 2`: the printed claim is false at `n=1`, since every
-positive `p` has `h_k^(p-1)(k-1) ≥ k-1 = n(k-1)`.
+/-- **Josephus survivor via the shifted iteration.** Let $k \ge 2$ and $n \ge 2$ be natural
+numbers, let $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ for natural numbers $x$, and write
+$h_k^p$ for the $p$-th iterate of $h_k$. Then there is a natural number $p \ge 1$ with
+$h_k^{p-1}(k-1) < n(k-1) \le h_k^p(k-1)$ and $J_k(n) = nk - h_k^p(k-1)$, where $J_k$ is the
+Josephus function for elimination step $k$.
+
+The hypothesis $n \ge 2$ is needed: for $n = 1$ every $p \ge 1$ has
+$h_k^{p-1}(k-1) \ge k - 1 = n(k-1)$, so no such $p$ exists.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Corollary 1 (`integers-2024-G5-cor-1`). -/
 public theorem_wanted josephus_eq_mul_sub_iterate_maximumNimH_pred (k n : ℕ)
@@ -613,10 +702,13 @@ public theorem_wanted josephus_eq_mul_sub_iterate_maximumNimH_pred (k n : ℕ)
       n * (k - 1) ≤ Nat.iterate (maximumNimH k) p (k - 1) ∧
       josephus k n = n * k - Nat.iterate (maximumNimH k) p (k - 1)
 
-/-- Lemma 8: for positive `n` and `k ≥ 2`, let the real numbers `v` and `w` be
-the two displayed logarithmic quotients. Iterating from `k-1` by the natural floor
-of `w` and natural ceiling of `v` gives the lower and upper bounds on `n(k-1)`.
-`Nat.floor` and `Nat.ceil` encode the indicated integer bounds; there is no deviation.
+/-- **Logarithmic bounds on the iterates of h_k.** Let $k \ge 2$ and $n \ge 1$ be natural numbers,
+let $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, write $h_k^p$ for its $p$-fold
+iterate, and let
+$$v = \frac{\log n}{\log k - \log(k-1)}, \qquad w = \frac{\log(n+1) - \log 2}{\log k - \log(k-1)},$$
+where $\log$ is the natural logarithm. Then
+$$h_k^{\lfloor w \rfloor}(k-1) \le n(k-1) \le h_k^{\lceil v \rceil}(k-1).$$
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Lemma 8 (`integers-2024-G5-lem-8`). -/
 public theorem_wanted maximumNimH_iterate_floor_le_mul_le_iterate_ceil (k n : ℕ)
@@ -626,10 +718,17 @@ public theorem_wanted maximumNimH_iterate_floor_le_mul_le_iterate_ceil (k n : �
     Nat.iterate (maximumNimH k) (Nat.floor w) (k - 1) ≤ n * (k - 1) ∧
       n * (k - 1) ≤ Nat.iterate (maximumNimH k) (Nat.ceil v) (k - 1)
 
-/-- Theorem 4: with the real `v,w` of Lemma 8, for `k ≥ 2` and `n ≥ 2` there is
-a positive natural `p` between `⌊w⌋` and `⌈v⌉` for which `nk-h_k^p(k-1)` is the
-one-based Josephus survivor. We require `n ≥ 2`: at `n=1`, `⌈v⌉=0`, contradicting
-the required `p ≥ 1`.
+/-- **Logarithmic bounds for the Josephus iteration count.** Let $k \ge 2$ and $n \ge 2$ be
+natural numbers, let $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ for natural numbers $x$, write
+$h_k^p$ for the $p$-th iterate of $h_k$, and define the real numbers
+$v = \log n / (\log k - \log(k-1))$ and $w = (\log(n+1) - \log 2) / (\log k - \log(k-1))$,
+where $\log$ is the natural logarithm. Then there is a natural number $p \ge 1$ with
+$\lfloor w \rfloor \le p \le \lceil v \rceil$ and $J_k(n) = nk - h_k^p(k-1)$, where $J_k$ is the
+Josephus function for elimination step $k$.
+
+The hypothesis $n \ge 2$ is needed: for $n = 1$ we have $v = 0$, so $\lceil v \rceil = 0$ and no
+$p \ge 1$ satisfies $p \le \lceil v \rceil$.
+
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Theorem 4 (`integers-2024-G5-thm-4`). -/
 public theorem_wanted josephus_eq_mul_sub_iterate_maximumNimH_between_log_bounds

@@ -1,0 +1,254 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import CSLibExt.Logics.PDL.Hoare
+
+/-!
+# Algebraic PDL verification consumers
+
+A decrement loop has genuine guarded transitions, a bounded invariant,
+a three-step terminating run, and a rejected stronger postcondition.
+Additional probes distinguish false/true tests, nondeterministic choice,
+identity from zero, zero-step iteration and unreachable-state induction.
+-/
+
+open Cslib.PDL
+open Cslib.RelationAlgebra
+
+namespace CSLibExtTest.Logics.PDL.Algebra
+
+private def countdown : Model Nat Unit Unit where
+  rel := fun _ s t => t + 1 = s
+  valuation := fun s _ => 0 < s
+
+private def guard : Formula Unit Unit := .atom ()
+
+private def body : Program Unit Unit := .atomic ()
+
+private def loop : Program Unit Unit := Program.whileDo guard body
+
+/-- Guarded decrement preserves the proper subset `{n | n ≤ 3}`. -/
+private theorem bounded_step :
+    Hoare countdown ({s | s ≤ 3} ∩ {s | Sat countdown guard s})
+      body {s | s ≤ 3} := by
+  intro s t hI hR
+  change t + 1 = s at hR
+  have hs : s ≤ 3 := hI.1
+  rw [← hR] at hs
+  exact (Nat.le_succ t).trans hs
+
+/-- The loop verifies a useful postcondition, not just its invariant. -/
+private theorem countdown_correct :
+    Hoare countdown {s | s ≤ 3} loop {s | s = 0} := by
+  apply Hoare.whileDo_consequence guard (I := {s | s ≤ 3})
+  · exact Set.Subset.rfl
+  · exact bounded_step
+  · intro s hs
+    exact Nat.eq_zero_of_not_pos hs.2
+
+/-- Construct actual terminating runs of every length; the `3` instance
+below traverses three guarded body steps. -/
+private theorem countdown_run (n : Nat) : ProgRel countdown loop n 0 := by
+  refine ⟨0, ?_, rfl, Nat.not_lt_zero _⟩
+  induction n with
+  | zero => exact Relation.ReflTransGen.refl
+  | succ n ih =>
+    exact Relation.ReflTransGen.head
+      ⟨n + 1, ⟨rfl, Nat.zero_lt_succ n⟩, rfl⟩ ih
+
+example : ProgRel countdown loop 3 0 := countdown_run 3
+
+/-- A failed stronger postcondition has an explicit execution witness. -/
+example : ¬ Hoare countdown {s | s = 3} loop {s | s = 1} := by
+  intro h
+  exact (by decide : (0 : Nat) ≠ 1) (h rfl (countdown_run 3))
+
+/-- The same nontrivial loop is verified by a canonical algebraic inequality. -/
+example : testSet {s | s ≤ 3} * loop.toRelation countdown ≤
+    loop.toRelation countdown * testSet {s | s = 0} :=
+  hoare_iff_test_le.mp countdown_correct
+
+example : testSet {s | s ≤ 3} * loop.toRelation countdown =
+    testSet {s | s ≤ 3} * loop.toRelation countdown * testSet {s | s = 0} :=
+  hoare_iff_test_eq.mp countdown_correct
+
+example : testSet {s | s ≤ 3} * loop.toRelation countdown *
+    testSet {s | s = 0}ᶜ = ⊥ :=
+  (test_mul_test_compl_eq_bot_iff _ _ _).mpr
+    (hoare_iff_subset_core.mp countdown_correct)
+
+/-- Verification of a guarded body transports to the loop's exit equation. -/
+example : testSet {s | s ≤ 3} * loop.toRelation countdown =
+    testSet {s | s ≤ 3} * loop.toRelation countdown *
+      testSet ({s | s ≤ 3} ∩ {s | ¬ Sat countdown guard s}) :=
+  test_mul_whileDo_absorption guard (hoare_iff_test_eq.mp bounded_step)
+
+/-- Zero and identity are distinct, and true/false tests have those meanings. -/
+example : testSet (∅ : Set Nat) = ⊥ := testSet_empty
+
+example : testSet (Set.univ : Set Nat) = 1 := testSet_univ
+
+example : (Program.test .bot : Program Unit Unit).toRelation countdown = ⊥ := by
+  apply Set.ext
+  rintro ⟨s, t⟩
+  exact ⟨fun h => h.2, fun h => h.elim⟩
+
+example : (Program.test (.imp .bot .bot) : Program Unit Unit).toRelation
+    countdown = 1 := by
+  apply Set.ext
+  rintro ⟨s, t⟩
+  exact ⟨fun h => h.1, fun h => ⟨h, fun h => h⟩⟩
+
+example : (1 : SquareRelations Nat) ≠ ⊥ := by
+  intro h
+  have hid : (1 : SquareRelations Nat) (0, 0) := rfl
+  rw [h] at hid
+  exact hid
+
+/-- A false test blocks, but its star still has the identity execution. -/
+example : ProgRel countdown (.star (.test .bot)) 3 3 :=
+  Relation.ReflTransGen.refl
+
+example : ¬ ProgRel countdown (.test .bot) 3 3 := fun h => h.2
+
+example : ProgRel countdown loop 0 0 := countdown_run 0
+
+/-- Zero iterations prevent an invalid postcondition for unguarded star. -/
+example : ¬ Hoare countdown {s | s = 3} (.star body) {s | s = 0} := by
+  intro h
+  exact (by decide : (3 : Nat) ≠ 0) (h rfl Relation.ReflTransGen.refl)
+
+/-- Removing initialization permits a false zero-step exit claim. -/
+example : ¬ Hoare countdown {s | s = 4}
+    (Program.whileDo .bot body) {s | s ≤ 3} := by
+  intro h
+  have hrun : ProgRel countdown (Program.whileDo .bot body) 4 4 :=
+    ⟨4, Relation.ReflTransGen.refl, rfl, fun h => h⟩
+  exact (by decide : ¬ (4 : Nat) ≤ 3) (h rfl hrun)
+
+/-- Removing preservation admits a loop that leaves its claimed invariant. -/
+example : ¬ Hoare toggleModel {s | s = true}
+    (Program.whileDo (.atom ()) (.atomic ())) {s | s = true} := by
+  intro h
+  have hrun : ProgRel toggleModel
+      (Program.whileDo (.atom ()) (.atomic ())) true false :=
+    ⟨false, Relation.ReflTransGen.single ⟨true, ⟨rfl, rfl⟩, rfl⟩,
+      rfl, Bool.false_ne_true⟩
+  exact Bool.false_ne_true (h rfl hrun)
+
+/-- Demonic choice cannot silently drop the branch that does not decrement. -/
+example : ¬ Hoare countdown {s | s = 1}
+    (.choice body (.test (.imp .bot .bot))) {s | s = 0} := by
+  intro h
+  exact (by decide : (1 : Nat) ≠ 0) (h rfl (Or.inr ⟨rfl, fun h => h⟩))
+
+private theorem single_decrement (n : Nat) :
+    Hoare countdown {s | s = n + 1} body {s | s = n} := by
+  intro s t hs hR
+  change t + 1 = s at hR
+  subst s
+  exact Nat.succ.inj hR
+
+/-- Sequential Hoare verification composes two real decrement steps. -/
+example : Hoare countdown {s | s = 2} (.seq body body) {s | s = 0} :=
+  (single_decrement 1).seq (single_decrement 0)
+
+/-- Both the decrement and identity branches preserve the bound. -/
+example : Hoare countdown {s | s = 1}
+    (.choice body (.test (.imp .bot .bot))) {s | s ≤ 1} := by
+  apply Hoare.choice_iff.mpr
+  constructor
+  · apply (single_decrement 0).consequence Set.Subset.rfl
+    rintro s rfl
+    decide
+  · apply (Hoare.test_iff _).mpr
+    rintro s ⟨rfl, _⟩
+    exact Nat.le_refl _
+
+/-- Formula assertions use the existing sequence law after the Hoare bridge. -/
+example (M : Model Nat Unit Unit) (φ ψ : Formula Unit Unit)
+    (h : Hoare M {s | Sat M φ s} (.seq body body) {s | Sat M ψ s})
+    (s : Nat) (hφ : Sat M φ s) :
+    Sat M (.box body (.box body ψ)) s :=
+  (sat_box_seq M).mp ((hoare_iff_box φ ψ).mp h s hφ)
+
+private def isolatedBad : Model Nat Unit Unit where
+  rel := fun _ s t => (s = 0 ∧ t = 0) ∨ (s = 1 ∧ t = 2)
+  valuation := fun s _ => s ≠ 2
+
+private theorem isolated_zero :
+    Hoare isolatedBad {s | s = 0} body {s | s = 0} := by
+  rintro s t rfl (⟨_, rfl⟩ | ⟨h, _⟩)
+  · rfl
+  · exact (by decide : (0 : Nat) ≠ 1) h |>.elim
+
+/-- The invariant fails at an unreachable state, so the stronger global
+preservation premise would reject this example. -/
+example : ¬ Hoare isolatedBad {s | Sat isolatedBad guard s} body
+    {s | Sat isolatedBad guard s} := by
+  intro h
+  have hbad : Sat isolatedBad guard 2 :=
+    h (s := 1) (t := 2) (by change (1 : Nat) ≠ 2; decide)
+      (Or.inr ⟨rfl, rfl⟩)
+  exact hbad rfl
+
+/-- Reachable-state PDL induction succeeds despite the bad unreachable edge. -/
+example : Sat isolatedBad (.box (.star body) guard) 0 := by
+  apply sat_box_star_induction
+  · intro t hpath _ u hstep
+    have ht : t = 0 := isolated_zero.star rfl hpath
+    subst t
+    have hu : u = 0 := isolated_zero rfl hstep
+    subst u
+    change (0 : Nat) ≠ 2
+    decide
+  · change (0 : Nat) ≠ 2
+    decide
+
+/-- Test complement excludes off-diagonal pairs, unlike relation complement. -/
+example : (testSet ({0} : Set Nat))ᶜ (1, 0) := by
+  intro h
+  exact Nat.one_ne_zero h.1
+
+example : ¬ testSet ({0} : Set Nat)ᶜ (1, 0) := by
+  intro h
+  exact Nat.one_ne_zero h.1
+
+open scoped Computability
+
+/-- Abstract simulation proves iteration sliding without an invertible
+simulator. -/
+example {K : Type*} [KleeneAlgebra K] (a : K) : a * a∗ ≤ a∗ * a :=
+  Cslib.PDL.Algebra.star_simulation (p := a) (a := a) (b := a) le_rfl
+
+example {K : Type*} [KleeneAlgebra K] (a : K) :
+    (0 : K) * a∗ = (0 : K) * a∗ * 0 :=
+  Cslib.PDL.Algebra.test_star_absorption (by simp) (by simp) (by simp)
+
+example {K : Type*} [KleeneAlgebra K] (a : K) :
+    (1 : K) * a∗ = (1 : K) * a∗ * 1 :=
+  Cslib.PDL.Algebra.test_star_absorption le_rfl (by simp) (by simp)
+
+/-- A valid program admits an invariant certificate in the semantic rule. -/
+example : ∃ I : Set Nat, {s | s ≤ 3} ⊆ I ∧
+    Hoare countdown (I ∩ {s | Sat countdown guard s}) body I ∧
+    I ∩ {s | ¬ Sat countdown guard s} ⊆ {s | s = 0} :=
+  (Hoare.whileDo_iff_exists_invariant guard).mp countdown_correct
+
+/-- No choice of invariant can certify the refuted postcondition. -/
+example : ¬ ∃ I : Set Nat, {s | s = 3} ⊆ I ∧
+    Hoare countdown (I ∩ {s | Sat countdown guard s}) body I ∧
+    I ∩ {s | ¬ Sat countdown guard s} ⊆ {s | s = 1} := by
+  intro hI
+  have hc : Hoare countdown {s | s = 3} loop {s | s = 1} :=
+    (Hoare.whileDo_iff_exists_invariant guard).mpr hI
+  exact (by decide : (0 : Nat) ≠ 1) (hc rfl (countdown_run 3))
+
+end CSLibExtTest.Logics.PDL.Algebra
