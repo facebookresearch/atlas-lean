@@ -50,8 +50,9 @@ public def_wanted lineTensorMetric (F : TensorFibre K X L M)
 /-- The actual algebraic dual is fixed by full module-sheaf evaluation. -/
 public def_wanted lineDual (hL : IsLineBundle L) : DualLine K X L
 
-/-- Native dual fibre functionals agree with actual section-pair evaluation. -/
-public def_wanted lineDualFibre (D : DualLine K X L) : DualFibre K X L D
+/-- Native dual fibre functionals of an invertible sheaf agree with actual
+section-pair evaluation. -/
+public def_wanted lineDualFibre (hL : IsLineBundle L) (D : DualLine K X L) : DualFibre K X L D
 
 /-- Native operator norms give the metric on the same actual dual line. -/
 public def_wanted lineDualMetric (D : DualLine K X L) (F : DualFibre K X L D)

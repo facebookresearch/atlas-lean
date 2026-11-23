@@ -74,12 +74,17 @@ public def_wanted openSources {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ)
     (scope : RelativeScope f n) (L : Fin (n+1) → X.Modules) (U : Y.Opens) : OpenSources f L U
 
 /-- Construct the full canonical regular section, allowing its actual Cartier zeros
-and a finite nonflat final flag. Dense normalization uses the SAME P and native δ. -/
+and a finite nonflat final flag. Dense normalization uses the SAME P and native δ.
+The sections are regular in every order (`allOrders`, with the same sections): the
+dense local generator restricts all orders, and an ordered tuple such as `(1, 0)` is
+not regular in the swapped order on any nonempty open. -/
 public def_wanted regularSection {X Y : Scheme.{0}} (I : DeterminantSources)
     (f : X ⟶ Y) (n : ℕ) (scope : FiniteTorRelativeScope f n) (C : CubicalSources I f n)
     (L : Fin (n+1) → X.Modules)
     (P : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Presentations f L R a)
-    (D : DeligneLine I f n L P) (s : StrongRegularTuple f n L) :
+    (D : DeligneLine I f n L P) (s : StrongRegularTuple f n L)
+    (allOrders : AllOrderRegularTuple f n L)
+    (sameSections : allOrders.sectionValue = s.sectionValue) :
     CanonicalRegularSection I f n L P D s
 
 /-- The full source regular section is independent on the original normal integral base. -/

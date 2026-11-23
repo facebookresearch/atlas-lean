@@ -56,8 +56,10 @@ public def_wanted power (m : AdelicMetric (L := L) B) (r : ℕ)
 /-- The native algebraic dual retains the full sheaf-Hom evaluation universal property. -/
 public def_wanted algebraicDual (hL : IsLineBundle L) : AlgebraicDual (X := X) (L := L)
 
-/-- Completed dual functionals are normalized by actual section-pair evaluation. -/
-public def_wanted allPlaceDual (D : AlgebraicDual (X := X) (L := L)) : AllPlaceDual (A := A) D
+/-- Completed dual functionals of an invertible sheaf are normalized by actual
+section-pair evaluation. -/
+public def_wanted allPlaceDual (hL : IsLineBundle L) (D : AlgebraicDual (X := X) (L := L)) :
+    AllPlaceDual (A := A) D
 
 /-- Dual model norms use the actual functional/value quotient. -/
 public def_wanted dual (m : AdelicMetric (L := L) B) (D : AlgebraicDual (X := X) (L := L))

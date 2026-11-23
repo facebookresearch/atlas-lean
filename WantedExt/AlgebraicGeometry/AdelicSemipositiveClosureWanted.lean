@@ -116,18 +116,23 @@ public def_wanted integrableTensor
     {R : TensorResult B F m n // IsIntegrable G B R.metric}
 
 variable {Y : Over (Spec (.of K))} (f : Y ⟶ X) (C : EffectiveBoundary A Y)
-  (D : BoundaryDominated B f C) (F : AllPlacePullback (A := A) (L := L) f)
+  (F : AllPlacePullback (A := A) (L := L) f)
 
 /-- The normalized scheme pullback preserves strong nefness under boundary domination. -/
-public def_wanted stronglyNefPullback (m : AdelicMetric (L := L) B) (H : IsStronglyNef G B m) :
+public def_wanted stronglyNefPullback (D : BoundaryDominated B f C)
+    (m : AdelicMetric (L := L) B) (H : IsStronglyNef G B m) :
     {R : PullbackResult B f C m F // IsStronglyNef G C R.metric}
 
-/-- The same actual pullback preserves the source auxiliary-line nef property. -/
-public def_wanted nefPullback (m : AdelicMetric (L := L) B) (H : IsNef G B m) :
+/-- The same actual pullback preserves the source auxiliary-line nef property under
+boundary domination. -/
+public def_wanted nefPullback (D : BoundaryDominated B f C)
+    (m : AdelicMetric (L := L) B) (H : IsNef G B m) :
     {R : PullbackResult B f C m F // IsNef G C R.metric}
 
-/-- Actual tensor and dual presentations make integrability stable under scheme pullback. -/
-public def_wanted integrablePullback (m : AdelicMetric (L := L) B) (H : IsIntegrable G B m) :
+/-- Actual tensor and dual presentations make integrability stable under scheme pullback,
+under boundary domination. -/
+public def_wanted integrablePullback (D : BoundaryDominated B f C)
+    (m : AdelicMetric (L := L) B) (H : IsIntegrable G B m) :
     {R : PullbackResult B f C m F // IsIntegrable G C R.metric}
 
 end WantedExt.AlgebraicGeometry.AdelicSemipositiveClosures
