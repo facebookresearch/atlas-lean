@@ -12,6 +12,22 @@ import MathlibExt.Combinatorics.Enumerative.DelannoyConstructions
 
 namespace MetaMathlibExt.DelannoyConstructions
 
+-- On row zero only the initial summand contributes.
+example : genDelannoyUpper 3 0 4 = 1 := by decide
+
+-- In column zero the sum has a single binomial coefficient.
+example (k m : ℕ) : (m + k).choose k + genDelannoyUpper k m 1 =
+    2 * (m + (k + 1)).choose (k + 1) := by
+  simpa [genDelannoyUpper] using genDelannoyUpper_add_succ_right k m 0
+
+-- For a positive upper index, the adjacent entries 33 and 51 sum to twice 42.
+example : genDelannoyUpper 1 2 3 + genDelannoyUpper 1 2 4 = 84 := by
+  rw [genDelannoyUpper_add_succ_right 1 2 3]
+  decide
+
+-- At the lower family's boundary m = n = k, the first binomial factor is always one.
+example : genDelannoyLower 3 3 3 = 8 := by decide
+
 -- At the first positive column, the sum of consecutive natural numbers is odd.
 example (n : ℕ) : n + (n + 1) ≡ 1 [MOD 2] := by
   simpa using choose_add_choose_succ_modEq_two n 1 le_rfl
@@ -25,6 +41,14 @@ private def seededArray (k : ℕ) : ℕ → ℕ → ℤ
   | 0 => fun n => (k + n).choose k
   | m + 1 => Nat.rec (-2) (fun n prev => seededArray k m (n + 1) + prev + seededArray k m n)
 
+-- Before summing, consecutive rows can have opposite parity in column zero.
+example : ¬ seededArray 2 0 0 ≡ seededArray 2 1 0 [ZMOD 2] := by decide
+
+-- After one sum every row is odd in column one, where the top row sums to nine.
+example (m : ℕ) : seededArray 2 m 1 + seededArray 2 m 2 ≡ 1 [ZMOD 2] := by
+  have h := delannoyArray_horizontalSum_rows_modEq (seededArray 2) (fun _ _ => rfl) 1 le_rfl m 0 1
+  exact h.trans (by decide)
+
 -- For k = 0 a single horizontal sum is already even in every row.
 example (m n : ℕ) : (2 : ℤ) ∣ seededArray 0 m n + seededArray 0 m (n + 1) :=
   (delannoyArray_binomial_seeds_parity (seededArray 0) (fun _ _ => rfl) 0 (fun _ => rfl)).1 m n
@@ -32,5 +56,16 @@ example (m n : ℕ) : (2 : ℤ) ∣ seededArray 0 m n + seededArray 0 m (n + 1) 
 -- For k = 2 the first horizontal sum is even at the origin and odd one column later.
 example : let row := seededArray 2 0
     (2 : ℤ) ∣ row 0 + row 1 ∧ ¬ (2 : ℤ) ∣ row 1 + row 2 := by decide
+
+-- At the least admissible seed index, every horizontal sum is odd.
+example (m n : ℕ) : seededArray 1 m n + seededArray 1 m (n + 1) ≡ 1 [ZMOD 2] := by
+  simpa using delannoyArray_binomial_seeds_horizontalSum_modEq (seededArray 1)
+    (fun _ _ => rfl) 1 le_rfl (fun _ => rfl) m n
+
+-- With seed index two, the first horizontal sum in column zero is even in every row.
+example (m : ℕ) : (2 : ℤ) ∣ seededArray 2 m 0 + seededArray 2 m 1 := by
+  have h := delannoyArray_binomial_seeds_horizontalSum_modEq (seededArray 2)
+    (fun _ _ => rfl) 2 (by decide) (fun _ => rfl) m 0
+  exact h.dvd_iff.mpr (by decide)
 
 end MetaMathlibExt.DelannoyConstructions

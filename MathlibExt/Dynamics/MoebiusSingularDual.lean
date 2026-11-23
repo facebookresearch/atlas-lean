@@ -13,7 +13,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# Central equations for natural duals of Moebius maps
+# Singularity of natural duals of Moebius maps
 
 Fritz Schweiger's remark on singular duals of Moebius maps considers four dual branches, the
 Moebius maps
@@ -30,6 +30,8 @@ the endpoint equations `V^#_{βγ}(ξ) = V^#_{βδ}(ξ)` and `V^#_{αδ}(ξ) = V
 * `MetaMathlibExt.moebius_dual_central_equations`: the endpoint equations at `ξ`, with nonzero
   denominators, force `α + αδ + δ = β + γ + βδ`; if moreover `ξ = V^#_{αγ}(η)`, they force a
   second polynomial relation between `α`, `β`, `γ` and `δ`.
+* `MetaMathlibExt.moebius_naturalDual_singular`: when `ξ = V^#_{αγ}(η)`, the two endpoints
+  coincide.
 
 ## Proof outline
 
@@ -42,10 +44,9 @@ relation. For the second, multiply `α (1 + δ) (2 + ξ) = 1 + γ` by `2α + 1 +
 
 ## Implementation notes
 
-The theorem keeps the full name and the statement it had as a wanted theorem in
-`WantedExt.Dynamics.MoebiusSingularDualWanted`, so it lives in the namespace `MetaMathlibExt`.
-The proof uses `β < 1` only through `2 - β ≠ 0` and `γ > -1` only through `1 + γ ≠ 0`. The
-hypotheses `hα` and `hδ` are unused in the proof and retain their names for named arguments.
+Both theorems keep their original names and statements. The proof of the central equations uses
+`β < 1` only through `2 - β ≠ 0` and `γ > -1` only through `1 + γ ≠ 0`. Its unused hypotheses
+`hα` and `hδ` retain their names for named arguments.
 -/
 
 @[expose] public section
@@ -111,5 +112,47 @@ theorem moebius_dual_central_equations (α β γ δ ξ : ℝ) (hα : 0 < α) (h�
     exact div_mul_cancel₀ _ hηden
   linear_combination (2 - β) * (2 * α + 1 + α * η) * hαδ - (2 - β) * α * (1 + δ) * hξη' -
     α * (α * (1 + δ) - (1 + γ)) * hη
+
+/-- **Singularity of natural duals of Moebius maps (algebraic form).** Let
+$\alpha, \beta, \gamma, \delta$ be real numbers with $\alpha > 0$, $\beta < 1$, $\gamma > -1$ and
+$\delta \ge 0$. Define the dual branches
+$V^\#_{\alpha\gamma}(y) = (\gamma - 2\alpha - \alpha y)/(2\alpha + 1 + \alpha y)$,
+$V^\#_{\alpha\delta}(y) = (2\alpha\delta - 1 + \alpha\delta y)/(2\alpha + 1 + \alpha y)$,
+$V^\#_{\beta\gamma}(y) = (2\beta + \gamma - 2 + (\beta + \gamma - 1) y)/
+(3 - 2\beta + (2 - \beta) y)$ and
+$V^\#_{\beta\delta}(y) = (2\delta - 2\beta\delta - 1 + (\delta - \beta\delta - 1) y)/
+(3 - 2\beta + (2 - \beta) y)$, and put $\eta = (-2 + 2\beta + \gamma)/(2 - \beta)$ and
+$\xi = V^\#_{\alpha\gamma}(\eta)$. If $2\alpha + 1 + \alpha\eta \ne 0$,
+$3 - 2\beta + (2 - \beta)\xi \ne 0$, $2\alpha + 1 + \alpha\xi \ne 0$,
+$V^\#_{\beta\gamma}(\xi) = V^\#_{\beta\delta}(\xi)$ and
+$V^\#_{\alpha\delta}(\xi) = V^\#_{\alpha\gamma}(\xi)$, then $\xi = \eta$.
+
+Here $\eta$ is a fixed point of $V^\#_{\beta\gamma}$, and $\xi = \eta$ says that the natural dual
+$[\eta, \xi]$ reduces to a single point.
+
+Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
+Article A17, Theorem 1 (`integers-2024-A17-thm-1`). -/
+theorem moebius_naturalDual_singular (α β γ δ : ℝ) (hα : 0 < α) (hβ : β < 1)
+    (hγ : -1 < γ) (hδ : 0 ≤ δ) :
+    let dualαγ : ℝ → ℝ := fun y => (γ - 2 * α - α * y) / (2 * α + 1 + α * y)
+    let dualαδ : ℝ → ℝ := fun y => (2 * α * δ - 1 + α * δ * y) / (2 * α + 1 + α * y)
+    let dualβγ : ℝ → ℝ := fun y =>
+      (2 * β + γ - 2 + (β + γ - 1) * y) / (3 - 2 * β + (2 - β) * y)
+    let dualβδ : ℝ → ℝ := fun y =>
+      (2 * δ - 2 * β * δ - 1 + (δ - β * δ - 1) * y) / (3 - 2 * β + (2 - β) * y)
+    let η : ℝ := (-2 + 2 * β + γ) / (2 - β)
+    let ξ : ℝ := dualαγ η
+    2 * α + 1 + α * η ≠ 0 → 3 - 2 * β + (2 - β) * ξ ≠ 0 → 2 * α + 1 + α * ξ ≠ 0 →
+      dualβγ ξ = dualβδ ξ → dualαδ ξ = dualαγ ξ → ξ = η := by
+  intro dualαγ dualαδ dualβγ dualβδ η ξ hηden hβden hαden hβeq hαeq
+  have hcentral := (moebius_dual_central_equations α β γ δ ξ hα hβ hγ hδ
+    hβden hαden hβeq hαeq).1
+  -- Subtract the first central equation from the cleared α-branch equation and cancel 1 + δ.
+  have hαξ : α * (1 + ξ) = 1 - β := by
+    apply mul_right_cancel₀ (by linarith : (1 : ℝ) + δ ≠ 0)
+    linear_combination (div_left_inj' hαden).mp hαeq - hcentral
+  have hξ : ξ * (2 * α + 1 + α * η) = γ - 2 * α - α * η := div_mul_cancel₀ _ hηden
+  have hη : η * (2 - β) = -2 + 2 * β + γ := div_mul_cancel₀ _ (by linarith : (2 : ℝ) - β ≠ 0)
+  linear_combination hξ - (2 + η) * hαξ - hη
 
 end MetaMathlibExt

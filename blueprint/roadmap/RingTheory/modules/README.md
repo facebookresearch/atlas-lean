@@ -8,3 +8,5 @@ Projective, free and finitely generated modules over commutative rings and modul
 - [Finite projective modules of fiberwise rank one are invertible](of-projective-of-forall-finrank-eq-one.md)
 - [Kaplansky's theorem on projective modules over local rings](kaplansky-projective-local-free.md)
 - [Quillen–Suslin theorem](quillen-suslin.md)
+- [Support of a module](module-support.md)
+- [Ideal criterion for flatness of a module over a commutative ring](flatness-ideal-criterion.md)

@@ -2534,7 +2534,7 @@ private lemma card_quadraticFiber_le_two {F : Type*} [Field F] (c : F) :
       Nat.card_le_card_of_injective toRoot hinj
     _ = (q.rootSet F).ncard := Nat.card_coe_set_eq _
     _ ≤ q.natDegree := Polynomial.ncard_rootSet_le q F
-    _ = 2 := Polynomial.natDegree_X_pow_sub_C
+    _ = 2 := Polynomial.natDegree_X_pow_sub_C c
 
 private lemma card_le_mul_card_of_fiber_le {A B : Type*} [Finite A] [Finite B]
     (f : A → B) (n : ℕ) (hfiber : ∀ b, Nat.card {a : A // f a = b} ≤ n) :
@@ -3002,13 +3002,13 @@ private lemma dicksonWild_distinct_sylow_inf_eq_bot
       exact (hcomm ⟨a, ha⟩ ⟨b, hb⟩).symm
     · exact Subgroup.centralizer_le_normalizer _
   have hsupP : (P : Subgroup G) ⊔ (Q : Subgroup G) = P := by
-    apply P.is_maximal'
+    apply P.maximal_isPGroup.eq_of_ge
     · exact P.isPGroup'.to_sup_of_normal_right' Q.isPGroup' hPnormQ
     · exact le_sup_left
   have hQP : (Q : Subgroup G) ≤ P := by
     rw [← hsupP]
     exact le_sup_right
-  have hSubgroups : (P : Subgroup G) = Q := Q.is_maximal' P.isPGroup' hQP
+  have hSubgroups : (P : Subgroup G) = Q := Q.maximal_isPGroup.eq_of_ge P.isPGroup' hQP
   exact hPQ (Sylow.ext hSubgroups)
 
 private lemma dicksonWild_card_dvd_of_fixedPointFree_action
@@ -3174,13 +3174,13 @@ private lemma dicksonWild_sylow_eq_of_common_fixedPoint
       exact (hcomm ⟨a, ha⟩ ⟨b, hb⟩).symm
     · exact Subgroup.centralizer_le_normalizer _
   have hsupP : (P : Subgroup G) ⊔ (Q : Subgroup G) = P := by
-    apply P.is_maximal'
+    apply P.maximal_isPGroup.eq_of_ge
     · exact P.isPGroup'.to_sup_of_normal_right' Q.isPGroup' hPnormQ
     · exact le_sup_left
   have hQP : (Q : Subgroup G) ≤ P := by
     rw [← hsupP]
     exact le_sup_right
-  have hSubgroups : (P : Subgroup G) = Q := Q.is_maximal' P.isPGroup' hQP
+  have hSubgroups : (P : Subgroup G) = Q := Q.maximal_isPGroup.eq_of_ge P.isPGroup' hQP
   exact Sylow.ext hSubgroups
 
 private lemma dicksonWild_mem_normalizer_iff_fixedPoint

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.PrimeCounting
 import Mathlib.Algebra.BigOperators.Intervals
@@ -24,6 +25,10 @@ the truncation order. The remaining terms in the product have nonpositive coeffi
 
 The bounds by the auxiliary functions $J$ follow from Abel summation and a two-sided
 estimate for Chebyshev's theta function.
+
+The last branch of the error factor becomes $C u^{15} e^{-2u}$ after the substitution
+$u = \sqrt{\log y / R}$. The ratio of two values is controlled by $1 + t \le e^t$, so the
+function decreases for $u \ge 15/2$.
 -/
 
 namespace MetaMathlibExt
@@ -101,7 +106,7 @@ public theorem series_lt_primeCounting_of_lt_primeCounting (n : ℕ) (hn : 1 ≤
         ring
   have hv (k : ℕ) : k ≤ n → 0 ≤ v k := by
     induction k using Nat.strong_induction_on with
-    | h k ih =>
+    | ind k ih =>
       intro hk
       apply nonneg_of_mul_nonneg_right (a := a 0 * Real.log x) _ (mul_pos ha₀ hlog)
       cases k with
@@ -236,5 +241,82 @@ public theorem primeCounting_mem_Icc_auxJ (k : ℕ) (hk : 0 < k) (η x₁ : ℝ)
   rw [hJ, hJ, ← hπ]
   exact ⟨hmono (hB _) (intervalIntegrable_theta_div hx₁ hx') (fun t ht ↦ (hbounds t ht.1).1),
     hmono (intervalIntegrable_theta_div hx₁ hx') (hB _) (fun t ht ↦ (hbounds t ht.1).2)⟩
+
+namespace axlerThetaErrorFactor_tail_antitone
+
+-- For `15 / 2 ≤ u ≤ v` we have `(v / u) ^ 15 ≤ exp (15 (v - u) / u) ≤ exp (2 (v - u))`.
+private theorem pow_mul_exp_neg_antitone {u v : ℝ} (hu : 15 / 2 ≤ u) (huv : u ≤ v) :
+    v ^ 15 * exp (-2 * v) ≤ u ^ 15 * exp (-2 * u) := by
+  have hu₀ : 0 < u := by linarith
+  have hratio : v / u ≤ exp ((v - u) / u) := by
+    have h := add_one_le_exp ((v - u) / u)
+    rwa [div_add_one hu₀.ne', sub_add_cancel] at h
+  have hpow : (v / u) ^ 15 ≤ exp (2 * (v - u)) := by
+    calc (v / u) ^ 15 ≤ exp ((v - u) / u) ^ 15 :=
+          pow_le_pow_left₀ (div_nonneg (hu₀.le.trans huv) hu₀.le) hratio 15
+      _ = exp (15 * ((v - u) / u)) := by rw [← exp_nat_mul]; norm_num
+      _ ≤ exp (2 * (v - u)) := by
+          refine exp_le_exp.mpr ?_
+          rw [mul_div_assoc', div_le_iff₀ hu₀]
+          nlinarith
+  calc v ^ 15 * exp (-2 * v) = u ^ 15 * (v / u) ^ 15 * exp (-2 * v) := by
+        rw [div_pow]
+        field_simp
+    _ ≤ u ^ 15 * exp (2 * (v - u)) * exp (-2 * v) := by gcongr
+    _ = u ^ 15 * exp (-2 * u) := by
+        rw [mul_assoc, ← exp_add]
+        congr 2
+        ring
+
+-- With `u = √(L / R)` we have `L = R u ^ 2` and `(L / R) ^ (3 / 2) = u ^ 3`.
+private theorem eq_mul_pow_mul_exp {L : ℝ} (hL : 0 ≤ L) :
+    L ^ 6 * (121.0961 * (L / 5.5666305) ^ (3 / 2 : ℝ) * exp (-2 * √(L / 5.5666305))) =
+      121.0961 * 5.5666305 ^ 6 * (√(L / 5.5666305) ^ 15 * exp (-2 * √(L / 5.5666305))) := by
+  have hLR : 0 ≤ L / 5.5666305 := div_nonneg hL (by norm_num)
+  have h32 : (L / 5.5666305) ^ (3 / 2 : ℝ) = √(L / 5.5666305) ^ 3 := by
+    rw [sqrt_eq_rpow, ← rpow_natCast, ← rpow_mul hLR]
+    norm_num
+  have hL' : L = 5.5666305 * √(L / 5.5666305) ^ 2 := by
+    rw [sq_sqrt hLR]
+    field_simp
+  rw [h32]
+  generalize √(L / 5.5666305) = u at hL' ⊢
+  subst hL'
+  ring
+
+end axlerThetaErrorFactor_tail_antitone
+
+open axlerThetaErrorFactor_tail_antitone in
+/-- **The last branch of Axler's error factor is nonincreasing.** Let $R = 5.5666305$ and for
+real $y \ge e^{673}$ let
+$$
+a(y) = \log^6 y \cdot 121.0961 \Big(\frac{\log y}{R}\Big)^{3/2}
+\exp\Big(-2\sqrt{\frac{\log y}{R}}\Big).
+$$
+Then $a(x) \le a(x_1)$ for all reals $x_1$ and $x$ with $e^{673} \le x_1 \le x$.
+
+This is the paper's function $a$ on $y \ge e^{673}$. The paper prints the statement as
+$a_n(x) \le a_n(x_1)$; its proof ($a'(x) < 0$ for $x \ge e^{673}$) and the later use
+$a(t) \le a(x_1)$ show that $a_n$ is a typo for $a$.
+
+Source: Christian Axler, *Effective Estimates for Some Functions Defined over Primes*,
+INTEGERS 24 (2024), Article A34, Lemma 5 (`integers-2024-A34-lem-5`), with the function `a`
+defined at the start of Section 6. -/
+public theorem axlerThetaErrorFactor_tail_antitone (x₁ x : ℝ)
+    (hx₁ : Real.exp 673 ≤ x₁) (hx : x₁ ≤ x) :
+    Real.log x ^ 6 * (121.0961 * (Real.log x / 5.5666305) ^ (3 / 2 : ℝ) *
+        Real.exp (-2 * Real.sqrt (Real.log x / 5.5666305))) ≤
+      Real.log x₁ ^ 6 * (121.0961 * (Real.log x₁ / 5.5666305) ^ (3 / 2 : ℝ) *
+        Real.exp (-2 * Real.sqrt (Real.log x₁ / 5.5666305))) := by
+  have hx₁₀ : 0 < x₁ := (exp_pos 673).trans_le hx₁
+  have hL₁ : 673 ≤ log x₁ := (le_log_iff_exp_le hx₁₀).mpr hx₁
+  have hL : log x₁ ≤ log x := log_le_log hx₁₀ hx
+  rw [eq_mul_pow_mul_exp (by linarith), eq_mul_pow_mul_exp (by linarith)]
+  refine mul_le_mul_of_nonneg_left (pow_mul_exp_neg_antitone ?_ ?_) (by norm_num)
+  · -- `(15 / 2) ^ 2 * R < 314 < 673`.
+    rw [le_sqrt (by norm_num) (div_nonneg (by linarith) (by norm_num)),
+      le_div_iff₀ (by norm_num)]
+    linarith
+  · exact sqrt_le_sqrt (div_le_div_of_nonneg_right hL (by norm_num))
 
 end MetaMathlibExt

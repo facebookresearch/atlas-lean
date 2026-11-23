@@ -51,77 +51,6 @@ public theorem_wanted delannoy_eq_sum_choose_mul_choose_two_pow (m n : ℕ) :
     ordinaryRiordanPascalLikeMatrix (m + n) m 1 =
       ∑ j ∈ range (min m n + 1), (m.choose j : ℤ) * (n.choose j : ℤ) * 2 ^ j
 
-/-- **Generalized Delannoy number with upper index.** For natural numbers $k$, $m$ and $n$, the
-generalized Delannoy number $D^k(m, n)$ is the natural number
-
-$$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}.$$
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Section 1 (definition of `D^k(m, n)`). -/
-public def genDelannoyUpper (k m n : ℕ) : ℕ :=
-  ∑ j ∈ range (n + 1), (m + n + k - j).choose (n + k) * n.choose j
-
-/-- **Lower generalized Delannoy number.** For natural numbers $k$, $m$ and $n$, the generalized
-Delannoy number $D_k(m, n)$ is
-$$D_k(m, n) = \sum_{j=0}^{n} \binom{m + n - k - j}{n - k} \binom{n}{j},$$
-where each subtraction is truncated at $0$. The definition is intended for $m, n \ge k$, where
-no truncation occurs.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Section 1 (definition of `D_k(m, n)`). -/
-public def genDelannoyLower (k m n : ℕ) : ℕ :=
-  ∑ j ∈ range (n + 1), (m + n - k - j).choose (n - k) * n.choose j
-
-/-- **An upper generalized Delannoy number equal to $13$.**
-For natural numbers $k$, $m$ and $n$, write
-$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
-generalized Delannoy numbers. Then $D^0(2, 2) = 13$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Table 1. -/
-public theorem genDelannoyUpper_zero_two_two : genDelannoyUpper 0 2 2 = 13 := by decide
-
-/-- **An upper generalized Delannoy number equal to $44$.**
-For natural numbers $k$, $m$ and $n$, write
-$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
-generalized Delannoy numbers. Then $D^1(3, 2) = 44$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Table 1. -/
-public theorem genDelannoyUpper_one_three_two : genDelannoyUpper 1 3 2 = 44 := by decide
-
-/-- **A value of the lower generalized Delannoy number.** The lower generalized Delannoy number
-$D_1(2, 2)$ equals $8$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Section 1 (central theorem `D_k(m, n) = 2^k D^k(n - k, m - k)`). -/
-public theorem genDelannoyLower_one_two_two : genDelannoyLower 1 2 2 = 8 := by decide
-
-/-- **The lower and upper generalized Delannoy numbers agree at index zero.** For natural
-numbers $k$, $m$ and $n$, let
-$D_k(m, n) = \sum_{j=0}^{n} \binom{m + n - k - j}{n - k} \binom{n}{j}$ (with subtraction
-truncated at $0$) and
-$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ be the lower
-and upper generalized Delannoy numbers. Then $D_0(m, n) = D^0(m, n)$ for all natural numbers
-$m$ and $n$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Section 1. -/
-public theorem genDelannoyLower_zero (m n : ℕ) : genDelannoyLower 0 m n = genDelannoyUpper 0 m n := by
-  simp [genDelannoyLower, genDelannoyUpper]
-
-/-- **Horizontal sum identity for the upper generalized Delannoy numbers.**
-For natural numbers $k$, $m$ and $n$, write
-$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
-generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$,
-$D^k(m, n) + D^k(m, n + 1) = 2 D^{k+1}(m, n)$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Theorem 3
-(`jis-2024-24.1.8-thm-3`). -/
-public theorem_wanted genDelannoyUpper_add_succ_right (k m n : ℕ) :
-    genDelannoyUpper k m n + genDelannoyUpper k m (n + 1) = 2 * genDelannoyUpper (k + 1) m n
-
 /-- **Vertical sum identity for the upper generalized Delannoy numbers.**
 For natural numbers $k$, $m$ and $n$, write
 $D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
@@ -229,34 +158,6 @@ public theorem_wanted delannoyArray_rows_parity (R : ℕ → ℕ → ℤ)
     (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (m : ℕ) :
     (R m 0 ≡ R (m + 1) 0 [ZMOD 2] → ∀ i, R m i ≡ R (m + 1) i [ZMOD 2]) ∧
       (¬ R m 0 ≡ R (m + 1) 0 [ZMOD 2] → ∀ i, ¬ R m i ≡ R (m + 1) i [ZMOD 2])
-
-/-- **Rows of iterated horizontal sums of a Delannoy array agree mod 2.** Let $R(m, n)$, for
-$m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all
-$m, n$. For an array $S$ let $(HS)(m, n) = S(m, n) + S(m, n+1)$, and write $R^i = H^i R$ for the
-$i$-fold horizontal sum. Then for every $i \ge 1$ and all $m, m', n \in \mathbb{N}$,
-$R^i(m, n) \equiv R^i(m', n) \pmod 2$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Corollary 14
-(`jis-2024-24.1.8-cor-14`). -/
-public theorem_wanted delannoyArray_horizontalSum_rows_modEq (R : ℕ → ℕ → ℤ)
-    (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (i : ℕ) (hi : 1 ≤ i)
-    (m m' n : ℕ) :
-    (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[i] R m n ≡
-      (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[i] R m' n [ZMOD 2]
-
-/-- **First horizontal sums of a Delannoy array with binomial seeds.** Let $R(m, n)$, for
-$m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all
-$m, n$. Let $k \ge 1$ and suppose $R(0, n) = \binom{k+n}{k}$ for all $n$. Then for all $m$ and
-$n$, $R(m, n) + R(m, n+1) \equiv \binom{k+n}{k-1} \pmod 2$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Theorem 17
-(`jis-2024-24.1.8-thm-17`). -/
-public theorem_wanted delannoyArray_binomial_seeds_horizontalSum_modEq (R : ℕ → ℕ → ℤ)
-    (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (k : ℕ) (hk : 1 ≤ k)
-    (hseed : ∀ n, R 0 n = (k + n).choose k) (m n : ℕ) :
-    R m n + R m (n + 1) ≡ (k + n).choose (k - 1) [ZMOD 2]
 
 /-- **Powers of two dividing iterated horizontal sums of a Delannoy array.** Let $R(m, n)$, for
 $m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all

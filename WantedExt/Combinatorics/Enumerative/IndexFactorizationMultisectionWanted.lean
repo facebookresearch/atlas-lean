@@ -13,7 +13,8 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
-public import MathlibExt.Analysis.Series.BaseAdicMultiples
+public import MathlibExt.Analysis.Series.ThreeAdicMultiples
+public import MathlibExt.Analysis.Series.TwoAdicNonmultiples
 public import MathlibExt.Analysis.SpecialFunctions.LambertSeries
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
@@ -73,20 +74,6 @@ public theorem_wanted tsum_threeAdic_parametric_multisection (q : ℂ) (b : ℕ 
     ∑' x : ℕ × ℕ, (q ^ x.1 * (b ((3 * x.2 + 2) * 3 ^ x.1) + b ((3 * x.2 + 1) * 3 ^ x.1))
         - q ^ x.1 * (q - 1) * b ((3 * x.2 + 3) * 3 ^ x.1))
       = ∑' m : ℕ, b (m + 1)
-
-/-- **Regrouping the multiples of 3 by their 3-adic factorization.** Let $(b_m)_{m \ge 1}$ be a
-sequence of complex numbers such that the family $(b_{3m})_{m \ge 1}$ is summable. Then
-$$\sum_{j \ge 1,\, n \ge 1} \bigl( b_{(3n-1) 3^j} + b_{(3n-2) 3^j} \bigr) =
-\sum_{m \ge 1} b_{3m},$$
-where the sum on the left is an unconditional sum over the pairs $(j, n)$.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Corollary 6, deduced identity in sum form (`jis-2024-24.5.5-cor-6`). -/
-public theorem_wanted tsum_threeAdic_multiples_regroup (b : ℕ → ℂ)
-    (hb : Summable fun m : ℕ => b (3 * (m + 1))) :
-    ∑' x : ℕ × ℕ, (b ((3 * x.2 + 2) * 3 ^ (x.1 + 1)) + b ((3 * x.2 + 1) * 3 ^ (x.1 + 1)))
-      = ∑' m : ℕ, b (3 * (m + 1))
 
 /-- **Parametric base-B multisection of a series.** Let $B \ge 2$ be a natural number, let $q$
 be a complex number and let $(c_m)_{m \ge 1}$ be a sequence of complex numbers. Suppose that the
@@ -160,20 +147,6 @@ Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
 Corollary 14, first display in sum form (`jis-2024-24.5.5-cor-14`). -/
 public theorem_wanted tsum_twoAdic_high_regroup (J : ℕ) (c : ℕ → ℂ) :
     ∑' x : ℕ × ℕ, c ((2 * x.2 + 1) * 2 ^ (x.1 + J)) = ∑' p : ℕ, c ((p + 1) * 2 ^ J)
-
-/-- **Two-adic regrouping of the non-multiples of a power of two.** For every natural number $J$
-and every sequence $c : \mathbb{N} \to \mathbb{C}$,
-$$\sum_{0 \le j < J,\ n \ge 1} c_{(2n-1) 2^j} = \sum_{p \ge 1,\ 2^J \nmid p} c_p,$$
-where the left side runs over the pairs $(j, n)$ of natural numbers with $j < J$ and $n \ge 1$,
-the right side runs over the positive integers $p$ not divisible by $2^J$, and each side is an
-unconditional sum, taken to be $0$ when its family is not summable.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Corollary 14, second display in sum form (`jis-2024-24.5.5-cor-14`). -/
-public theorem_wanted tsum_twoAdic_low_regroup (J : ℕ) (c : ℕ → ℂ) :
-    ∑' x : Fin J × ℕ, c ((2 * x.2 + 1) * 2 ^ (x.1 : ℕ))
-      = ∑' p : {p : ℕ // 0 < p ∧ ¬ 2 ^ J ∣ p}, c p
 
 /-- **Double 2-adic multisection of a double series.** Let $(b_{p,q})_{p, q \ge 1}$ be a double
 sequence of complex numbers such that each of the four families

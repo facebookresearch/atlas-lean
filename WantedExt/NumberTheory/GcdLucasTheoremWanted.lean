@@ -11,7 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Real.Irrational
+public import MathlibExt.NumberTheory.ChoosePowMulModEq
+public import MathlibExt.NumberTheory.ExistsUniqueRadicalExpansionCoeffs
 public import MathlibExt.NumberTheory.GcdPowAddNegOnePow
+public import MathlibExt.NumberTheory.PrimeDvdChoosePowMulPowMul
 
 /-!
 # Greatest common divisors of radical-expansion coefficients and Lucas's theorem
@@ -29,22 +32,6 @@ lines and are not restated.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Unique integer coordinates of powers of $u + v^{1/N}$.** Let $N$ be a natural number with
-at least two distinct prime divisors, let $u, v$ be coprime positive integers such that
-$x^N - v$ is irreducible over $\mathbb{Q}$, and let $\theta = v^{1/N}$ be the positive real
-$N$-th root of $v$. Then for every natural number $n$ there is exactly one tuple of integers
-$(a_0, \dots, a_{N-1})$ with $(u + \theta)^n = \sum_{i=0}^{N-1} a_i \theta^i$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 3
-(`jis-2025-25.2.2-lem-3`). -/
-public theorem_wanted existsUnique_radical_expansion_coeffs {N u v : ℕ}
-    (hN : ∃ p q : ℕ, p.Prime ∧ q.Prime ∧ p ≠ q ∧ p ∣ N ∧ q ∣ N) (hu : 0 < u) (hv : 0 < v)
-    (huv : u.Coprime v)
-    (hirr : Irreducible (Polynomial.X ^ N - Polynomial.C (v : ℚ))) (n : ℕ) :
-    ∃! a : Fin N → ℤ, ((u : ℝ) + (v : ℝ) ^ (1 / (N : ℝ))) ^ n =
-      ∑ i : Fin N, (a i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ)
 
 /-- **Coprime coefficients of $(u + v^{1/N})^n$ when $N$ has two distinct prime factors.** Let
 $N$ be a natural number with at least two distinct prime divisors, let $u, v$ be coprime positive
@@ -65,26 +52,6 @@ public theorem_wanted gcd_radical_expansion_coeffs_eq_one {N u v : ℕ}
       ∑ i : Fin N, (a n i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ))
     (n : ℕ) (hn : 1 ≤ n) :
     Finset.univ.gcd (a n) = 1
-
-/-- **$p$ divides $\binom{p^r a}{p^s b}$ when $r > s$.** Let $p$ be a prime, let $r > s$ be
-natural numbers, and let $a, b$ be natural numbers not divisible by $p$. Then
-$p \mid \binom{p^r a}{p^s b}$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Corollary 14
-(`jis-2025-25.2.2-cor-14`). -/
-public theorem_wanted prime_dvd_choose_pow_mul_pow_mul {p a b r s : ℕ} (hp : p.Prime)
-    (hrs : s < r) (hpa : ¬p ∣ a) (hpb : ¬p ∣ b) : p ∣ (p ^ r * a).choose (p ^ s * b)
-
-/-- **Binomial coefficients $\binom{p^r a}{p^r b}$ modulo $p$.** Let $p$ be a prime, let $r \ge 1$,
-and let $a, b$ be natural numbers not divisible by $p$. Then
-$\binom{p^r a}{p^r b} \equiv \binom{a}{b} \pmod{p}$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Corollary 15
-(`jis-2025-25.2.2-cor-15`). -/
-public theorem_wanted choose_pow_mul_modEq {p a b r : ℕ} (hp : p.Prime) (hr : 1 ≤ r)
-    (hpa : ¬p ∣ a) (hpb : ¬p ∣ b) : (p ^ r * a).choose (p ^ r * b) ≡ a.choose b [MOD p]
 
 /-- **Gcd of the coefficients of $(u + \sqrt{v})^n$.** Let $u, v$ be coprime positive integers
 with $\sqrt{v}$ irrational, let $a_n, b_n$ (for natural $n$) be integers with

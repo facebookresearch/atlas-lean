@@ -36,7 +36,7 @@ example : sampleCov X 0 0 = 0 ∧ sampleCov X 1 1 = 1 ∧ sampleCov X 0 1 = 0 :=
 example : secondMoment X = !![1, 1; 1, 5 / 3] := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [secondMoment, X, mul_apply, Fin.sum_univ_three] <;> norm_num
+    simp [secondMoment, X, Matrix.mul_apply, Fin.sum_univ_three] <;> norm_num
 
 /-- Bessel's correction instantiated at `n = 3`: `S = (3/2) • (n⁻¹ Xᵀ X - x̄ x̄ᵀ)`. -/
 example : sampleCov X = ((3 : ℝ) / 2) • (secondMoment X - vecMulVec (colMean X) (colMean X)) := by
@@ -50,7 +50,7 @@ example : (sampleCov X).det = 0 ∧ (secondMoment X).det = 2 / 3 := by
   · ext i
     fin_cases i <;> simp [X, mulVec, dotProduct, Fin.sum_univ_two]
   · rw [det_fin_two]
-    simp [secondMoment, X, mul_apply, Fin.sum_univ_three]
+    simp [secondMoment, X, Matrix.mul_apply, Fin.sum_univ_three]
     norm_num
 
 /-- The null direction of `S` is `w = (1, 0)`, along which every sample projects to `1`. -/
@@ -70,7 +70,7 @@ example : secondMoment (X + vecMulVec (fun _ => 1) ![1, 0]) 0 0 = 4 ∧ secondMo
     ext i j
     fin_cases i <;> fin_cases j <;> simp [X] <;> norm_num
   rw [hX]
-  simp [secondMoment, X, mul_apply, Fin.sum_univ_three]
+  simp [secondMoment, X, Matrix.mul_apply, Fin.sum_univ_three]
   norm_num
 
 /-! ### Rank drop: identical samples -/
@@ -86,7 +86,7 @@ example : sampleCov Y = 0 := by
   simp [sampleCov_apply, colMean]
 
 example : secondMoment Y 0 0 = 1 := by
-  simp [secondMoment, Y, mul_apply]
+  simp [secondMoment, Y, Matrix.mul_apply]
 
 /-- Centering `Y` gives the zero matrix. -/
 theorem center_Y : center Y = 0 := by

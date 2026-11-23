@@ -14,8 +14,10 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Log
 public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
 public import MathlibExt.Combinatorics.InfiniteWord.WordFactorComplexity
+public import MathlibExt.Combinatorics.Words.BalancedDyadicNestedEventuallyPeriodic
 public import MathlibExt.Combinatorics.Words.BalancedNestedXor
 public import MathlibExt.Combinatorics.Words.CobhamUniformMorphism
+public import MathlibExt.Combinatorics.Words.MetaAutomaticOne
 public import MathlibExt.Combinatorics.Words.RegularSequence
 
 namespace MetaMathlibExt
@@ -42,29 +44,6 @@ public def thueMorseQuarto : ℕ → Bool
     | 1 => !thueMorseQuarto ((n + 2) / 4)
     | 2 => thueMorseQuarto (2 * ((n + 2) / 4))
     | _ => !thueMorseQuarto (2 * ((n + 2) / 4))
-termination_by n => n
-decreasing_by all_goals omega
-
-/-- **The meta-automatic sequence $\mathcal{M}_1$.** The sequence
-$\mathcal{M}_1 : \mathbb{N} \to \{0, 1\}$ (OEIS A392736) is defined by $\mathcal{M}_1(0) = 0$,
-$\mathcal{M}_1(1) = 1$, the recurrences $\mathcal{M}_1(4n) = \mathcal{M}_1(n)$ and
-$\mathcal{M}_1(4n+1) = 1 - \mathcal{M}_1(n)$ for every $n \ge 1$, and the recurrences
-$\mathcal{M}_1(4n+2) = \mathcal{M}_1(2n + 1 - \mathcal{M}_1(n))$ and
-$\mathcal{M}_1(4n+3) = 1 - \mathcal{M}_1(2n + 1 - \mathcal{M}_1(n))$ for every $n \ge 0$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 3 (definition of `ℳ₁`). -/
-public def metaAutomaticOne : ℕ → Bool
-  | 0 => false
-  | 1 => true
-  | n + 2 =>
-    match (n + 2) % 4 with
-    | 0 => metaAutomaticOne ((n + 2) / 4)
-    | 1 => !metaAutomaticOne ((n + 2) / 4)
-    | 2 => if metaAutomaticOne ((n + 2) / 4) then metaAutomaticOne (2 * ((n + 2) / 4))
-        else metaAutomaticOne (2 * ((n + 2) / 4) + 1)
-    | _ => !(if metaAutomaticOne ((n + 2) / 4) then metaAutomaticOne (2 * ((n + 2) / 4))
-        else metaAutomaticOne (2 * ((n + 2) / 4) + 1))
 termination_by n => n
 decreasing_by all_goals omega
 
@@ -151,35 +130,6 @@ public theorem thueMorseQuarto_rec (n : ℕ) :
   · rw [show 4 * n + 3 = (4 * n + 1) + 2 by omega, thueMorseQuarto]
     simp only [show (4 * n + 1 + 2) % 4 = 3 by omega, show (4 * n + 1 + 2) / 4 = n by omega]
 
-/-- **Recurrences of the meta-automatic sequence $\mathcal{M}_1$.** Reading the values of the
-meta-automatic sequence $\mathcal{M}_1$ as $0$ and $1$, for every $n \ge 1$ we have
-$\mathcal{M}_1(4n) = \mathcal{M}_1(n)$ and $\mathcal{M}_1(4n+1) = 1 - \mathcal{M}_1(n)$, and for
-every $n \in \mathbb{N}$ we have $\mathcal{M}_1(4n+2) = \mathcal{M}_1(2n + 1 - \mathcal{M}_1(n))$
-and $\mathcal{M}_1(4n+3) = 1 - \mathcal{M}_1(2n + 1 - \mathcal{M}_1(n))$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 3, equations (6) and (7). -/
-public theorem metaAutomaticOne_rec (n : ℕ) :
-    (1 ≤ n → metaAutomaticOne (4 * n) = metaAutomaticOne n) ∧
-      (1 ≤ n → metaAutomaticOne (4 * n + 1) = !metaAutomaticOne n) ∧
-      metaAutomaticOne (4 * n + 2) =
-        metaAutomaticOne (2 * n + 1 - (metaAutomaticOne n).toNat) ∧
-      metaAutomaticOne (4 * n + 3) =
-        !metaAutomaticOne (2 * n + 1 - (metaAutomaticOne n).toNat) := by
-  refine ⟨fun hn => ?_, fun hn => ?_, ?_, ?_⟩
-  · obtain ⟨k, hk⟩ : ∃ k, 4 * n = k + 2 := ⟨4 * n - 2, by omega⟩
-    rw [hk, metaAutomaticOne]
-    simp only [show (k + 2) % 4 = 0 by omega, show (k + 2) / 4 = n by omega]
-  · obtain ⟨k, hk⟩ : ∃ k, 4 * n + 1 = k + 2 := ⟨4 * n - 1, by omega⟩
-    rw [hk, metaAutomaticOne]
-    simp only [show (k + 2) % 4 = 1 by omega, show (k + 2) / 4 = n by omega]
-  · rw [show 4 * n + 2 = 4 * n + 2 from rfl, metaAutomaticOne]
-    simp only [show (4 * n + 2) % 4 = 2 by omega, show (4 * n + 2) / 4 = n by omega]
-    cases metaAutomaticOne n <;> simp
-  · rw [show 4 * n + 3 = (4 * n + 1) + 2 by omega, metaAutomaticOne]
-    simp only [show (4 * n + 1 + 2) % 4 = 3 by omega, show (4 * n + 1 + 2) / 4 = n by omega]
-    cases metaAutomaticOne n <;> simp
-
 /-- **Recurrences of $\mathcal{M}_2$.** The meta-automatic sequence $\mathcal{M}_2$, read as
 taking values in $\{0, 1\}$, satisfies $\mathcal{M}_2(4n) = \mathcal{M}_2(2n + \mathcal{M}_2(n))$
 and $\mathcal{M}_2(4n+1) = 1 - \mathcal{M}_2(4n)$ for every $n \ge 1$, and
@@ -258,21 +208,6 @@ public theorem_wanted isKAutomaticSequence_of_digit_recurrence {A : Type} [Finty
         f j (Sum.elim (fun i => U (n + i - a)) (fun p => U (q ^ p.1.1 * n + p.1.2)))) :
     IsKAutomaticSequence q U
 
-/-- **Balanced sequences with a nested doubling recurrence are eventually alternating.** Let
-$a : \mathbb{N} \to \{0, 1\}$ satisfy $a(2n) + a(2n+1) = 1$ for every $n \in \mathbb{N}$.
-(a) If $a(2n) = a(n + a(n))$ for every $n$, then $a(0) = 0$, and $a(2n) = 0$ and
-$a(2n+1) = 1$ for every $n \ge 2$. (b) If $a(2n) = a(n + 1 - a(n))$ for every $n$, then
-$a(0) = 1$, and $a(2n) = 1$ and $a(2n+1) = 0$ for every $n \ge 2$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 6 (`jis-2026-26.4.1-lem-6`). -/
-public theorem_wanted balanced_dyadic_nested_eventually_periodic (a : ℕ → Bool)
-    (ha : ∀ n, (a (2 * n)).toNat + (a (2 * n + 1)).toNat = 1) :
-    ((∀ n, a (2 * n) = a (n + (a n).toNat)) →
-        a 0 = false ∧ ∀ n, 2 ≤ n → a (2 * n) = false ∧ a (2 * n + 1) = true) ∧
-      ((∀ n, a (2 * n) = a (n + 1 - (a n).toNat)) →
-        a 0 = true ∧ ∀ n, 2 ≤ n → a (2 * n) = true ∧ a (2 * n + 1) = false)
-
 /-- **Thue–Morse quarto sequence from the Thue–Morse sequence.** Let $\mathcal{Q}$ be the
 Thue–Morse quarto sequence and $t$ the Thue–Morse sequence, and let $d(0) = 0$ and
 $d(n) = \lfloor \log_2 n \rfloor \bmod 2$ for $n \ge 1$. Then for every $n \ge 0$,
@@ -282,18 +217,6 @@ Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journa
 Integer Sequences 29 (2026), Article 26.4.1, Proposition 8 (`jis-2026-26.4.1-prop-8`). -/
 public theorem_wanted thueMorseQuarto_eq_xor (n : ℕ) :
     thueMorseQuarto n = xor (thueMorse n) (decide (Nat.log 2 n % 2 = 1))
-
-/-- **The meta-automatic sequence $\mathcal{M}_1$ is balanced.** Reading the values of the
-meta-automatic sequence $\mathcal{M}_1$ as $0$ and $1$, we have
-$\mathcal{M}_1(2n) + \mathcal{M}_1(2n+1) = 1$ for every $n \in \mathbb{N}$.
-
-The paper's lemma also asserts that $\mathcal{M}_1$ is well defined; here that is part of the
-definition of $\mathcal{M}_1$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 10 (`jis-2026-26.4.1-lem-10`). -/
-public theorem_wanted metaAutomaticOne_balanced (n : ℕ) :
-    (metaAutomaticOne (2 * n)).toNat + (metaAutomaticOne (2 * n + 1)).toNat = 1
 
 /-- **Joint recurrence for $\mathcal{M}_1$ and its nested companion.** Read the values of the
 meta-automatic sequence $\mathcal{M}_1$ as $0$ and $1$, write $\oplus$ for addition modulo $2$,

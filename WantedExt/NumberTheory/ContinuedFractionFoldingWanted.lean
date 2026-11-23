@@ -9,14 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-import Mathlib.Tactic.NormNum
-public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Algebra.Group.Even
 public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.Combinatorics.InfiniteWord.CloitreSequence
+public import MathlibExt.NumberTheory.ContinuedFractions.Folding
 
 /-!
 # The folding lemma for finite continued fractions
@@ -35,44 +34,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Value of a finite continued fraction.** For a finite list $a_0, a_1, \dots, a_t$ of integers
-(possibly zero or negative), the value $[a_0; a_1, \dots, a_t]$ is the rational number
-$a_0 + 1/(a_1 + 1/(\cdots + 1/a_t))$, computed from the right: the empty list has value $0$, and
-the list $a_0, a_1, \dots, a_t$ has value $a_0 + v^{-1}$, where $v$ is the value of the list
-$a_1, \dots, a_t$. In particular $[a] = a + 0^{-1} = a$; here and at any vanishing intermediate
-denominator, $0^{-1}$ is taken to be $0$.
-
-Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
-Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 (bracket notation). -/
-public def finiteContFrac (l : List ℤ) : ℚ :=
-  l.foldr (fun (a : ℤ) (x : ℚ) => (a : ℚ) + x⁻¹) 0
-
-/-- **Recursion for finite continued fractions.** For every integer $a$ and all integers
-$l_1, \dots, l_n$ with $n \ge 0$, $[a; l_1, \dots, l_n] = a + [l_1; l_2, \dots, l_n]^{-1}$, where
-the empty continued fraction (the case $n = 0$) has value $0$ and $0^{-1}$ is taken to be $0$
-whenever $[l_1; l_2, \dots, l_n] = 0$.
-
-Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
-Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 (bracket notation). -/
-public theorem finiteContFrac_cons (a : ℤ) (l : List ℤ) :
-    finiteContFrac (a :: l) = a + (finiteContFrac l)⁻¹ := rfl
-
-/-- **Continued fraction of length one.** For every integer $a$, the finite continued fraction
-$[a]$ has value $a$.
-
-Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
-Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 (bracket notation). -/
-public theorem finiteContFrac_singleton (a : ℤ) : finiteContFrac [a] = a := by
-  simp [finiteContFrac]
-
-/-- **The continued fraction $[1; 2, 2]$.** The finite continued fraction $[1; 2, 2]$ has value
-$7/5$.
-
-Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
-Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 (bracket notation). -/
-public theorem finiteContFrac_one_two_two : finiteContFrac [1, 2, 2] = 7 / 5 := by
-  norm_num [finiteContFrac]
-
 /-- **Folding lemma for finite continued fractions.** Let $a_0$ be an integer, let $t$ be even
 and let $a_1, \dots, a_t$ be integers with $a_i \ge 1$ for every $i$, and let $q$ be the
 denominator in lowest terms of the value $[a_0; a_1, \dots, a_t]$ of the finite continued
@@ -88,31 +49,6 @@ public theorem_wanted finiteContFrac_add_inv_mul_den_sq (a₀ : ℤ) (a : List �
     (ha : ∀ b ∈ a, 1 ≤ b) (ht : Even a.length) (x : ℕ) (hx : 1 ≤ x) :
     finiteContFrac (a₀ :: a) + 1 / (x * ((finiteContFrac (a₀ :: a)).den : ℚ) ^ 2) =
       finiteContFrac (a₀ :: a ++ (x : ℤ) :: (a.map (fun b => -b)).reverse)
-
-/-- **A zero partial quotient merges its neighbours.** For all integers $a$ and $b$ and all finite
-lists of integers $u_1, \dots, u_m$ and $v_1, \dots, v_n$ ($m, n \ge 0$), the finite continued
-fractions satisfy $[u_1, \dots, u_m, a, 0, b, v_1, \dots, v_n] =
-[u_1, \dots, u_m, a + b, v_1, \dots, v_n]$.
-
-Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
-Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13, equation (`eq:normzero`)
-(`jis-2026-26.3.6-lem-13`). -/
-public theorem_wanted finiteContFrac_zero_merge (l s : List ℤ) (a b : ℤ) :
-    finiteContFrac (l ++ a :: 0 :: b :: s) = finiteContFrac (l ++ (a + b) :: s)
-
-/-- **Normalizing a negated block.** Let $x \ge 0$ be an integer, let $t \ge 2$ and let
-$a_1, \dots, a_t$ be integers with $a_i \ge 1$ for every $i$. Then for every finite list of
-integers $b_1, \dots, b_m$ ($m \ge 0$), the finite continued fractions satisfy
-$[b_1, \dots, b_m, x, -a_t, -a_{t-1}, \dots, -a_1] =
-[b_1, \dots, b_m, x - 1, 1, a_t - 1, a_{t-1}, \dots, a_1]$.
-
-Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
-Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13, equation (`eq:normnegblock`)
-(`jis-2026-26.3.6-lem-13`). -/
-public theorem_wanted finiteContFrac_neg_block (l : List ℤ) (x : ℕ) (a : List ℤ) (aₜ : ℤ)
-    (ha : ∀ b ∈ a, 1 ≤ b) (ha_ne : a ≠ []) (haₜ : 1 ≤ aₜ) :
-    finiteContFrac (l ++ (x : ℤ) :: -aₜ :: (a.map (fun b => -b)).reverse) =
-      finiteContFrac (l ++ ((x : ℤ) - 1) :: 1 :: (aₜ - 1) :: a.reverse)
 
 /-- **Terms of the paperfolding sums.** For a sequence $x = (x_k)_{k \ge 0}$ of natural numbers,
 the real numbers $s_k$ are defined by $s_0 = 1$ and $s_{k+1} = s_k^2 / x_k$, where the quotient is

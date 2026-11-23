@@ -57,19 +57,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.ModInverseSwitchingWanted
 
-/-- **Bézout coefficients are modular inverses.** Let $m$ and $n$ be coprime positive integers,
-and let $x$ and $y$ be integers with $xm + yn = 1$. Then $xm \equiv 1 \pmod{n}$ and
-$yn \equiv 1 \pmod{m}$; that is, $x$ is an inverse of $m$ modulo $n$ and $y$ is an inverse of
-$n$ modulo $m$.
-
-Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
-Sequence of Modular Inverse Switching Formulas", Lemma 1. -/
-theorem_wanted bezout_coeffs_are_inverses
-    (m n : ℕ) (hm : 0 < m) (hn : 0 < n) (hcop : Nat.Coprime m n)
-    (x y : ℤ) (h : x * (m : ℤ) + y * (n : ℤ) = 1) :
-    x * (m : ℤ) ≡ 1 [ZMOD (n : ℤ)] ∧
-      y * (n : ℤ) ≡ 1 [ZMOD (m : ℤ)]
-
 /-- **Least absolute inverses propagate down the Euclidean sequence.** Let $r_0, r_1, \ldots$ be
 natural numbers, $s_0, s_1, \ldots$ integers and $N \ge 1$ such that $(r, s, N)$ is Euclidean
 switching data: $r_0 > r_1 > \cdots > r_{N+1} = 1$ are the successive remainders of the Euclidean
@@ -164,16 +151,5 @@ theorem_wanted abs_eq_halves_iff_eq_two_of_odd_even
     (h0 : Odd (r 0)) (h1 : Even (r 1)) :
     (2 * |s 1| = (r 0 : ℤ) - 1 ∧ 2 * |s 2| = (r 1 : ℤ)) ↔
       r 1 = 2
-
-/-- **First inverses not both extremal, even–odd case.** Let $(r_i)$, $(s_i)$ and $N$ be
-Euclidean switching data with $r_0$ even and $r_1$ odd. Then $2|s_1| < r_0$ or
-$2|s_2| < r_1 - 1$; that is, $|s_1| < r_0/2$ or $|s_2| < (r_1 - 1)/2$.
-
-Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
-Sequence of Modular Inverse Switching Formulas", Lemma 8. -/
-theorem_wanted abs_lt_of_even_odd
-    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
-    (h0 : Even (r 0)) (h1 : Odd (r 1)) :
-    2 * |s 1| < (r 0 : ℤ) ∨ 2 * |s 2| < (r 1 : ℤ) - 1
 
 end MathlibExt.NumberTheory.ModInverseSwitchingWanted

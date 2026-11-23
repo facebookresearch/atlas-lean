@@ -12,11 +12,12 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.GCDMonoid.Nat
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
-public import Mathlib.Data.Finset.Sym
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.Combinatorics.AP.Basic
+public import MathlibExt.Combinatorics.Additive.AtLeastDistinctSumset
 public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumset
+public import MathlibExt.Combinatorics.Additive.SumsetsMinimumDistinctTerms
 
 namespace MetaMathlibExt
 
@@ -33,22 +34,6 @@ Article A12, Section 1 (definition of `h^A`). -/
 theorem restrictedSumset_two_zero_one_two :
     restrictedSumset 2 ({0, 1, 2} : Finset ℤ) = {1, 2, 3} := by
   decide
-
-/-- **Sums with at least $r$ distinct terms.** Let $G$ be an additive commutative monoid, $A$ a
-finite subset of $G$ and $h, r$ natural numbers. The sumset $h^{(\ge r)}A$ is the set of all sums
-of $h$ elements of $A$, repetitions allowed, in which at least $r$ distinct elements occur, that
-is, the elements $\sum_{a \in B} x_a a$ with $B \subseteq A$, $|B| \ge r$, positive integers
-$x_a$ and $\sum_{a \in B} x_a = h$.
-
-For $r = 1$ and $h \ge 1$ it is the $h$-fold sumset $hA$; for $r = h$ it is the restricted
-sumset $h^{\wedge}A$ of sums of $h$ distinct elements of $A$.
-
-Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
-Article A12, Section 1, Definition 1. -/
-def atLeastDistinctSumset {G : Type*} [AddCommMonoid G] [DecidableEq G] (h r : ℕ)
-    (A : Finset G) : Finset G :=
-  ((A.sym h).filter fun s : Sym G h => r ≤ (s : Multiset G).toFinset.card).image
-    fun s : Sym G h => (s : Multiset G).sum
 
 /-- **Example of a sumset with at least two distinct terms.** In the integers, the set of sums of
 three elements of $\{0, 1, 2\}$, repetitions allowed, in which at least two distinct elements
@@ -135,30 +120,6 @@ public theorem_wanted plagne_min_nsmul_card (m k h : ℕ) (hk : 1 ≤ k) (hkm : 
     (hh : 1 ≤ h) :
     sInf ((fun A : Finset (ZMod m) => (h • A).card) '' {A | A.card = k}) =
       sInf ((fun d => (h * ((k + d - 1) / d) - h + 1) * d) '' (m.divisors : Set ℕ))
-
-/-- **Bajnok's lemma on subset sums in $\mathbb{Z}/d\mathbb{Z}$.** Let $d$ and $t$ be natural
-numbers with $1 \le t \le d - 1$. Then every $\ell \in \mathbb{Z}/d\mathbb{Z}$ is the sum of the
-elements of some $t$-element subset $L \subseteq \mathbb{Z}/d\mathbb{Z}$.
-
-Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
-Article A12, Lemma 1 (Bajnok) (`integers-2025-A12-lem-1`). -/
-public theorem_wanted exists_card_eq_sum_eq_zmod (d t : ℕ) (ht : 1 ≤ t) (htd : t ≤ d - 1)
-    (ℓ : ZMod d) :
-    ∃ L : Finset (ZMod d), L.card = t ∧ L.sum id = ℓ
-
-/-- **Decomposition of sums with at least $r$ distinct terms.** Let $G$ be an abelian group, $A$
-a nonempty finite subset of $G$, and $r, h$ natural numbers with $1 \le r \le |A|$ and $r \le h$.
-Write $h^{(\ge r)}A$ for the set of sums of $h$ elements of $A$, repetitions allowed, in which at
-least $r$ distinct elements occur, $(h - r)A$ for the set of sums of $h - r$ elements of $A$,
-repetitions allowed (so $0A = \{0\}$), and $r^{\wedge}A$ for the restricted sumset of sums of
-$r$ distinct elements of $A$. Then $h^{(\ge r)}A = (h - r)A + r^{\wedge}A$.
-
-Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
-Article A12, Lemma 2, equation (5) (`integers-2025-A12-lem-2`). -/
-public theorem_wanted atLeastDistinctSumset_eq_nsmul_add_restrictedSumset {G : Type*}
-    [AddCommGroup G] [DecidableEq G] (A : Finset G) (hA : A.Nonempty) (r h : ℕ) (hr : 1 ≤ r)
-    (hrk : r ≤ A.card) (hrh : r ≤ h) :
-    atLeastDistinctSumset h r A = (h - r) • A + restrictedSumset r A
 
 /-- **Sharp lower bound for sums with at least $r$ distinct terms modulo a prime.** Let $p$ be a
 prime, and for natural numbers $h, r$ and a finite set $A \subseteq \mathbb{Z}/p\mathbb{Z}$ write
