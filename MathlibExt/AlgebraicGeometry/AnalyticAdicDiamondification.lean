@@ -41,13 +41,28 @@ variable (p : ℕ) [Fact p.Prime]
 /-- An actual affinoid model is analytic, by its single identity chart. -/
 def affineObject {P : TatePair p} (M : AffinoidModel p P) : AnalyticAdicSpace p :=
   ⟨M.valued, by
-    refine ⟨PUnit.{2}, fun _ ↦ P, fun _ ↦ M, fun _ ↦ 𝟙 M.valued, ?_, ?_, ?_⟩
+    refine ⟨PUnit.{2}, fun _ ↦ P, fun _ ↦ M, fun _ ↦ 𝟙 M.valued, ?_, ?_, ?_, ?_, ?_⟩
     · intro i
       exact IsOpenEmbedding.id
     · intro i x
       change IsIso ((𝟙 M.valued.space : M.valued.space ⟶ M.valued.space).stalkMap x)
       rw [LocallyRingedSpace.stalkMap_id]
       exact ⟨⟨𝟙 _, Category.id_comp _, Category.id_comp _⟩⟩
+    · intro i U _
+      change @IsHomeomorph _ _ (M.valued.sectionTopology U) (M.valued.sectionTopology U) id
+      exact @IsHomeomorph.id _ (M.valued.sectionTopology U)
+    · intro U
+      apply le_antisymm
+      · exact le_iInf fun V ↦ le_iInf fun h ↦ le_iInf fun _ ↦
+          continuous_iff_le_induced.mp (M.continuous_restrict p h)
+      · refine iInf_le_of_le U (iInf_le_of_le le_rfl (iInf_le_of_le ⟨PUnit.unit, ?_⟩ ?_))
+        · intro x _
+          exact ⟨x, rfl⟩
+        · have hid : ⇑(M.valued.space.presheaf.map (homOfLE (le_refl U)).op).hom = id := by
+            have : (homOfLE (le_refl U)).op = 𝟙 (op U) := Subsingleton.elim _ _
+            rw [this, CategoryTheory.Functor.map_id]
+            rfl
+          rw [hid, @induced_id _ (M.valued.sectionTopology U)]
     · intro x
       exact ⟨PUnit.unit, x, rfl⟩⟩
 

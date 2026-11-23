@@ -56,9 +56,13 @@ instance : Category (TatePair p) where
   comp_id _ := by apply tateMap_ext; ext a; rfl
   assoc _ _ _ := by apply tateMap_ext; ext a; rfl
 
+/-- Finite étale maps of Tate pairs (Scholze, *Étale cohomology of diamonds*, Def. 6.2(i)): the
+ring map is finite étale and the plus ring of the source is the integral closure of the image of
+the plus ring of the target. -/
 def IsFiniteEtale {P Q : TatePair p} (f : P ⟶ Q) : Prop :=
   letI := f.hom.toAlgebra
-  Module.Finite Q.ring P.ring ∧ Algebra.Etale Q.ring P.ring
+  Module.Finite Q.ring P.ring ∧ Algebra.Etale Q.ring P.ring ∧
+    ∀ s : P.ring, s ∈ P.plus ↔ (f.hom.comp Q.plus.subtype).IsIntegralElem s
 
 def CompatiblePoints {I : Type} [SmallCategory I] (D : I ⥤ TatePair p) :=
   {x : ∀ i, (D.obj i).Space |
