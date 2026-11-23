@@ -49,16 +49,18 @@ here pending the following proof dependencies:
   from `StacksFrontier/RingTheory/CohenMacaulay/RegularSequence/DimensionCriterion.lean`
   (Stacks 02JN), with its regular-sequence and depth dimension arguments.
 * Identification of the source's regular-sequence depth with the
-  Ext-based `IsLocalRing.depth` used in the statement below.
+  Ext-based `IsLocalRing.depth` used in the statement below. Mathlib's
+  `Ideal.depth_eq_sSup_length_isRegular` already expresses this depth as the supremum of the
+  lengths of regular sequences in the ideal; what remains is to match the source's definition with
+  that supremum.
 
 The complete principal-ideal tensor injectivity lemma from the source
 argument is ported in `MathlibExt/RingTheory/MiracleFlatness.lean`.
 
-For the universal compactified Jacobian, flatness is already supplied by
-Kass–Pagani, Corollary 4.4. This
-module records the general local criterion. Applying it to a further
-family requires identifying its stalk algebra maps and proving the
-displayed dimension equality for those local rings.
+For universal compactified Jacobians with a nondegenerate stability parameter, flatness is
+supplied by Kass–Pagani, Corollary 4.4. This module records the general local criterion. Applying
+it to a further family requires identifying its stalk algebra maps and proving the displayed
+dimension equality for those local rings.
 
 ## References
 

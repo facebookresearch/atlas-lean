@@ -18,10 +18,9 @@ public import MathlibExt.HomologicalAlgebra.CohomologyRank
 /-!
 # Cohomology rank identities
 
-These three proof requests use the rank and the block differential
-defined in the imported completed module. The equalities are additive in
-natural numbers, and the complexes need only be finite-dimensional in each
-degree.
+These three proof requests use the rank (a cardinal) and the block differential defined in the
+imported module. The equalities are additive, so no subtraction is involved, and the complexes need
+only be finite-dimensional in each degree.
 
 Reference: R. van Dobben de Bruyn, *The equivalence of several conjectures
 on independence of ℓ* (2020), Lemma 6.4 and Corollary 6.5,
@@ -59,7 +58,7 @@ public theorem_wanted homologyMap_rank_block
     [∀ j : ℤ, FiniteDimensional K (B.X j)] (i : ℤ) :
     homRank (HomologicalComplex.homologyMap f i) +
         homRank (A.d i (i + 1)) + homRank (B.d (i - 1) i) =
-      Module.finrank K (LinearMap.range (cohomologyBlockDifferential f i))
+      Module.rank K (LinearMap.range (cohomologyBlockDifferential f i))
 
 /-- Corollary 6.5 with the differential of Mathlib's mapping cone.
 Its sign convention changes no ranks. -/
