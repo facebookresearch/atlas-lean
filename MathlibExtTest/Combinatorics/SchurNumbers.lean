@@ -55,6 +55,13 @@ example : IsLeast {N | schurForces 2 N} 5 := by
   have hinf : sInf {N | schurForces 2 N} = 4 + 1 := by omega
   simpa only [hinf] using isLeast_csInf (Nat.nonempty_of_sInf_eq_succ hinf)
 
+-- For three colours, the least forcing endpoint is one past the Schur number.
+example : IsLeast {N | schurForces 3 N} 14 := by
+  have h := schurNumber_three
+  rw [schurNumber, ite_eq_right (by decide)] at h
+  have hinf : sInf {N | schurForces 3 N} = 13 + 1 := by omega
+  simpa only [hinf] using isLeast_csInf (Nat.nonempty_of_sInf_eq_succ hinf)
+
 -- The lower bound is not a junk value: it says that no `N ≤ 536` forces a monochromatic
 -- solution in six colours, so some colouring of `{1, …, 536}` with six colours has none.
 example {N : ℕ} (hN : N ≤ 536) : ¬ schurForces 6 N := by

@@ -34,9 +34,9 @@ marks as reporting only) into Batteries `theorem_wanted` declarations. The
 trivial value `S(1) = 1` is omitted.
 
 This module imports `MathlibExt.Combinatorics.SchurNumbers`, which proves the
-second Schur number (`schurNumber_two`) and the lower bound for the sixth Schur
-number (`le_schurNumber_six`). The definitions `schurForces` and `schurNumber`
-moved there with the lower bound, with the same names, statements and docstrings.
+second and third Schur numbers and the lower bound for the sixth Schur number.
+The definitions `schurForces` and `schurNumber` moved there with the lower
+bound, with the same names, statements and docstrings.
 -/
 module
 
@@ -46,12 +46,6 @@ public import MathlibExt.Combinatorics.SchurNumbers
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.SchurNumbersWanted
-
-/-- **The third Schur number.** The Schur number $S(3)$ equals $13$.
-
-Source: exhaustive check; OEIS A045652; listed in SqueezeBench
-`SqueezeBench/Problems/Schur/README.md`. -/
-public theorem_wanted schurNumber_three : schurNumber 3 = 13
 
 /-- **The fourth Schur number.** The Schur number $S(4)$ equals $44$.
 
