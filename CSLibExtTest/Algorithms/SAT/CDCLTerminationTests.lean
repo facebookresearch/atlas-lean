@@ -24,7 +24,7 @@ public import CSLibExt.Algorithms.SAT.CDCL.Termination
 
 namespace Cslib.Algorithms.SAT.CDCL.Tests
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- One decide step from the empty state: the potential drops from `1` to `0`. -/
 example : 0 * (1 + 1) + (1 - 1) < 0 * (1 + 1) + (1 - 0) :=

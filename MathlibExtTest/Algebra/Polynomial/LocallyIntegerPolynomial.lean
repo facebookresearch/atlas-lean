@@ -19,7 +19,8 @@ example {U : Set ℤ} (hU : U.Infinite) {f : U → ℤ} (hf : f ∈ lipSubring U
     (a : U) (ha : ∀ x ≠ a, f x = 0) : f a = 0 := by
   have := hU.to_subtype
   have hinf := Set.infinite_univ.sdiff (Set.finite_singleton a)
-  have hz := lip_eq_zero_of_infinite_zeros hf (hinf.mono fun x hx => ha x hx.2)
+  have hz := lip_eq_zero_of_infinite_zeros hf
+    (hinf.mono fun x (hx : x ∈ (Set.univ : Set U) \ {a}) => ha x hx.2)
   exact congrFun hz a
 
 -- A single zero is possible for a nonzero locally integer polynomial function.
