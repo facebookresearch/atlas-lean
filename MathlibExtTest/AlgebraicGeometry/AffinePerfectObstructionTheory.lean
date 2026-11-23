@@ -122,4 +122,74 @@ example (i : Fin 2) (p : (selfResolution k).algebra.obj (op ⦋1⦌)) :
       ((selfResolution k).augmentation.app (op ⦋1⦌)).hom p :=
   augmentation_face _ i p
 
+section Polynomial
+
+variable (k)
+
+/-- The constant simplicial algebra on `k[X]`. -/
+noncomputable abbrev constPoly : SimplicialObject (CommAlgCat.{0} k) :=
+  (SimplicialObject.const (CommAlgCat.{0} k)).obj (CommAlgCat.of k (MvPolynomial (Fin 1) k))
+
+/-- `k[X]` over `k`, resolved by the constant simplicial algebra on itself with the identity
+augmentation. Unlike `selfResolution`, its cotangent complex is nonzero: every term is
+`Ω[k[X]⁄k] ⊗ k[X]`. -/
+noncomputable abbrev polyResolution : PolynomialResolution k (MvPolynomial (Fin 1) k) where
+  algebra := constPoly k
+  augmentation := 𝟙 _
+  polynomial _ := ⟨Fin 1, ⟨AlgEquiv.refl⟩⟩
+  surjective _ := Function.surjective_id
+  augmentation_quasiIso := inferInstance
+
+/-- The simplicial module of base-changed differentials of `polyResolution`. -/
+noncomputable abbrev polyModule :=
+  (CommAlgCat.resolutionCotangentSimplicialModule k (CommAlgCat.of k (MvPolynomial (Fin 1) k))
+    (constPoly k) (𝟙 _)).object
+
+/-- Read through `affineDegreeIso`, the differential from degree `-(n + 1)` to degree `-n` of
+the cotangent complex of a resolution is the alternating sum of the face maps. -/
+theorem affineComplex_d_eq {B : Type} [CommRing B] [Algebra k B]
+    (R : PolynomialResolution k B) (n : ℕ) :
+    (affineComplex R).d (-((n + 1 : ℕ) : ℤ)) (-(n : ℤ)) =
+      (affineDegreeIso R (n + 1)).hom ≫
+        AlternatingFaceMapComplex.objD (CommAlgCat.resolutionCotangentSimplicialModule k
+          (CommAlgCat.of k B) R.algebra R.augmentation).object n ≫
+        (affineDegreeIso R n).inv := by
+  rw [← alternatingFaceMapComplex_obj_d]
+  exact HomologicalComplex.extend_d_eq _ (ComplexShape.embeddingUpIntLE 0) (by simp) (by simp)
+
+/-- A face map sends `1 ⊗ d p` to `1 ⊗ d (δᵢ p)`. -/
+theorem δ_differential {B : CommAlgCat.{0} k} (P : SimplicialObject (CommAlgCat.{0} k))
+    (ε : P ⟶ (SimplicialObject.const (CommAlgCat.{0} k)).obj B) (n : ℕ) (i : Fin (n + 2))
+    (p : P.obj (op ⦋n + 1⦌)) :
+    (CommAlgCat.resolutionCotangentSimplicialModule k B P ε).object.δ i
+        (CommAlgCat.resolutionCotangentTermDifferential k B P ε (op ⦋n + 1⦌) p) =
+      CommAlgCat.resolutionCotangentTermDifferential k B P ε (op ⦋n⦌) (P.δ i p) :=
+  CommAlgCat.resolutionCotangentMap_D k B P ε (SimplexCategory.δ i).op p
+
+/-- The face maps of the constant resolution all agree, as they fix the pure differentials. -/
+theorem poly_δ_eq (n : ℕ) (i j : Fin (n + 2)) : (polyModule k).δ i = (polyModule k).δ j :=
+  CommAlgCat.resolutionCotangentTerm_hom_ext k _ _ _ _ _ _ fun p =>
+    (δ_differential k (constPoly k) (𝟙 _) n i p).trans
+      (δ_differential k (constPoly k) (𝟙 _) n j p).symm
+
+/-- From degree `-1` to degree `0` the differential is `δ₀ - δ₁ = 0`. -/
+example : (affineComplex (polyResolution k)).d (-((0 + 1 : ℕ) : ℤ)) (-((0 : ℕ) : ℤ)) = 0 := by
+  rw [affineComplex_d_eq]
+  have h : AlternatingFaceMapComplex.objD (polyModule k) 0 =
+      (polyModule k).δ 0 - (polyModule k).δ 1 := by
+    simp [AlternatingFaceMapComplex.objD, Fin.sum_univ_two, sub_eq_add_neg]
+  erw [h, poly_δ_eq k 0 0 1, sub_self, Limits.zero_comp, Limits.comp_zero]
+
+/-- From degree `-2` to degree `-1` the differential is `δ₀ - δ₁ + δ₂ = δ₀`. -/
+example : (affineComplex (polyResolution k)).d (-((1 + 1 : ℕ) : ℤ)) (-((1 : ℕ) : ℤ)) =
+    (affineDegreeIso (polyResolution k) 2).hom ≫ (polyModule k).δ 0 ≫
+      (affineDegreeIso (polyResolution k) 1).inv := by
+  rw [affineComplex_d_eq]
+  have h : AlternatingFaceMapComplex.objD (polyModule k) 1 =
+      (polyModule k).δ 0 - (polyModule k).δ 1 + (polyModule k).δ 2 := by
+    simp [AlternatingFaceMapComplex.objD, Fin.sum_univ_three, sub_eq_add_neg]
+  erw [h, poly_δ_eq k 1 2 1, sub_add_cancel]
+
+end Polynomial
+
 end MathlibExtTest.AffinePerfectObstructionTheory
