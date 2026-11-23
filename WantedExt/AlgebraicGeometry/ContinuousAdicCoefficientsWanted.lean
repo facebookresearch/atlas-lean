@@ -50,4 +50,3 @@ public theorem_wanted latticeScalarComparison_isIso
     IsIso (latticeScalarComparison R S V L X)
 
 end WantedExt.AlgebraicGeometry.ContinuousAdicCoefficients
-
