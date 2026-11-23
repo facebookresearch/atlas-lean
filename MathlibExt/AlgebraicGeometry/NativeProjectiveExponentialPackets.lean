@@ -36,7 +36,7 @@ open HolomorphicCotangentModuleModels
 open MathlibExt.CategoryTheory.NativeOppositeBimoduleModels
 open scoped Manifold ContDiff
 
-variable [ProjectiveComplexSource] [MeromorphicAlgebraSource]
+variable [ProjectiveComplexSource]
   [HolomorphicCoefficientSheaves.SheafCondition ProjectiveCoordinates ProjectiveLine]
   [CotangentSectionCalculus (n := 1) (M := ProjectiveLine)]
   [CotangentSheafCondition (n := 1) (M := ProjectiveLine)]

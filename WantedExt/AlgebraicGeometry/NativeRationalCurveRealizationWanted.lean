@@ -31,6 +31,9 @@ variable (S : Finset ℂ)
   [HasSheafify (Opens.grothendieckTopology (puncturedLine S)) (ModuleCat.{0} ℂ)]
   {r : ℕ} (A : Matrix (Fin r) (Fin r) RationalFunctions)
 
+/-- For any analytic connection de Rham data (requested as
+`RegularSingularRiemannHilbertWanted.analytic_connection_deRham_data`; all such data are canonically
+isomorphic), the ordinary curve de Rham complex is the horizontal one. -/
 def_wanted actual_curve_de_rham_horizontal_iso (D : AnalyticConnectionDeRhamData S r A) :
   ordinaryCurveDR S A D ≅ horizontalDR S A
 

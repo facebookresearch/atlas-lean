@@ -35,19 +35,26 @@ public theorem_wanted solutions_local_system (S : Finset ℂ) (r : ℕ)
     (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) :
     IsFiniteRankLocalSystem ℂ (puncturedLine S) (solutionSheaf S A)
 
-/-- The actual solution sheaf resolves the actual analytic connection
-de Rham complex. Its degree-zero comparison sends every solution to the
-same holomorphic vector function. The shift `[1]` gives the curve perverse
-normalization used in the Riemann--Hilbert correspondence. -/
+/-- The analytic connection de Rham data of a rational matrix connection on the punctured line:
+the sheaves of holomorphic vector functions and of holomorphic vector one-forms (trivialized by
+`dz`), with their restrictions, and the connection operator `f ↦ f' - A f`. Any two such data are
+canonically isomorphic, since the structure pins every section and the differential. -/
+public def_wanted analytic_connection_deRham_data (S : Finset ℂ) (r : ℕ)
+    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) :
+  AnalyticConnectionDeRhamData S r A
+
+/-- The actual solution sheaf resolves the analytic connection de Rham complex of the requested
+data `analytic_connection_deRham_data`. Its degree-zero comparison sends every solution to the
+same holomorphic vector function. The shift `[1]` gives the curve perverse normalization used in
+the Riemann--Hilbert correspondence. -/
 public def_wanted analytic_deRham_comparison (S : Finset ℂ) (r : ℕ)
-    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A)
-    (D : AnalyticConnectionDeRhamData S r A) :
+    (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) :
     {η : (HomologicalComplex.single _ (ComplexShape.up ℕ) 0).obj
-        (solutionSheaf S A) ⟶ analyticDeRhamComplex D //
+        (solutionSheaf S A) ⟶ analyticDeRhamComplex (❰analytic_connection_deRham_data❱ S r A hA) //
       QuasiIso η ∧
         ∀ (U : TopologicalSpace.Opens (puncturedLine S)) (v : solutionSections S A U)
           (z : ℂ), z ∈ ambientOpen S U → ∀ i : Fin r,
-          (D.functionSections U
+          ((❰analytic_connection_deRham_data❱ S r A hA).functionSections U
             (((HomologicalComplex.singleObjXSelf (ComplexShape.up ℕ) 0
               (solutionSheaf S A)).inv ≫ η.f 0).hom.app (.op U)
                 ((solutionUnit S A).app (.op U) v))).1 z i = v.1 z i}

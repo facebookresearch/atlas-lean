@@ -60,6 +60,34 @@ def chernWeilValue (C : SmoothConnection B) (j : ℕ) (i : Fin B.count) (x : M)
       ∑ f : Fin j ↪ Fin r, ∑ τ : Equiv.Perm (Fin j), ∑ σ : Equiv.Perm (Fin (2 * j)),
         curvatureMinorValue B C j i x v f τ σ
 
+/-- The signed principal-minor sum of a matrix-valued two-argument form `Ω` evaluated on `2j`
+vectors: the sum over `j`-element ordered index families `f`, permutations `τ` of the family and
+permutations `σ` of the vectors of `sign τ · sign σ · ∏ₘ Ω(v σ(2m), v σ(2m+1))_{f m, f (τ m)}`. -/
+def chernWeilSum {V R : Type*} [CommRing R] (r j : ℕ) (Ω : V → V → Matrix (Fin r) (Fin r) R)
+    (v : Fin (2 * j) → V) : R :=
+  ∑ f : Fin j ↪ Fin r, ∑ τ : Equiv.Perm (Fin j), ∑ σ : Equiv.Perm (Fin (2 * j)),
+    (((Equiv.Perm.sign τ : ℤˣ) : ℤ) : R) * (((Equiv.Perm.sign σ : ℤˣ) : ℤ) : R) *
+      ∏ m : Fin j, Ω (v (σ (pairFirst m))) (v (σ (pairSecond m))) (f m) (f (τ m))
+
+/-- The degree-`j` Chern--Weil polynomial `(i/2π)^j / (2^j j!)` times the signed minor sum. -/
+def chernWeilPolynomial {V : Type*} (r j : ℕ) (Ω : V → V → Matrix (Fin r) (Fin r) ℂ)
+    (v : Fin (2 * j) → V) : ℂ :=
+  (Complex.I / (2 * (Real.pi : ℂ))) ^ j / ((2 : ℂ) ^ j * (Nat.factorial j : ℂ)) *
+    chernWeilSum r j Ω v
+
+omit [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] in
+/-- The Chern--Weil coefficient is the Chern--Weil polynomial of the curvature at the point. -/
+theorem chernWeilValue_eq_chernWeilPolynomial (C : SmoothConnection B) (j : ℕ) (i : Fin B.count)
+    (x : M) (v : Fin (2 * j) → Coordinates n) :
+    chernWeilValue B C j i x v = chernWeilPolynomial r j (curvatureValue B C.value i x) v :=
+  rfl
+
+/-- The signed minor sum commutes with ring homomorphisms applied to the form's entries. -/
+theorem map_chernWeilSum {V R S : Type*} [CommRing R] [CommRing S] (φ : R →+* S) (r j : ℕ)
+    (Ω : V → V → Matrix (Fin r) (Fin r) R) (v : Fin (2 * j) → V) :
+    φ (chernWeilSum r j Ω v) = chernWeilSum r j (fun a b => (Ω a b).map φ) v := by
+  simp [chernWeilSum, map_sum, map_mul, map_prod, map_intCast]
+
 omit [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] in
 /-- A flat actual connection makes every positive-degree principal-minor term zero. -/
 theorem curvatureMinorValue_of_flat (C : SmoothConnection B) (hC : IsFlat B C)

@@ -24,6 +24,19 @@ not supplied as an independent oracle or assumed invertible. The request is
 that this ringed mate is an isomorphism; its compatibility with the canonical
 scalar morphism of Proposition9.5.1 is a separate question, not part of it.
 
+The structural classes assumed below are not free hypotheses: each is supplied
+by a direct request, and the statements are conditional only on those requests.
+`CompactSheafSource` is `IndSheafSourceRequests.actual_compact_sheaf_source`;
+`IndSpaceSource`, `DifferentialBetaSource` and `OppositeDifferentialBetaSource`
+are `actual_ind_space_context`, `actual_differential_beta_ring` and
+`actual_opposite_differential_beta_ring` (NativeAnalyticIndConstructionWanted);
+the cotangent calculus is in HarmonicHolomorphicModulesWanted; and
+`ProjectiveComplexSource`, `ProductComplexSource`, `OrdinaryInverseMonoidalSource`
+and `PulledBetaRingSource` are requested in ProjectiveProductSourceRequests. The
+complex-structure classes pin the standard structures (their coordinate maps
+and projections are holomorphic), so the statements do not depend on the chosen
+instance. The meromorphic coefficient algebra closure is proved.
+
 Source: DK1311.2374v2 Proposition9.5.1, Theorem9.5.3.
 -/
 
@@ -53,7 +66,7 @@ variable [∀ Z : TopCat.{0}, HasSheafify (Opens.grothendieckTopology Z) (Module
   (n : ℕ) (X : Type) [TopologicalSpace X]
   [ChartedSpace (TemperedDistributionSectionModels.ComplexCoordinates n) X]
   [IsManifold 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates n) ∞ X]
-  [ProjectiveComplexSource] [ProductComplexSource n X] [MeromorphicAlgebraSource]
+  [ProjectiveComplexSource] [ProductComplexSource n X]
   [HasSheafify (Opens.grothendieckTopology X) RingCat.{0}]
   [HasSheafify (Opens.grothendieckTopology ProjectiveLine) RingCat.{0}]
   [HasSheafify (Opens.grothendieckTopology (X × ProjectiveLine)) RingCat.{0}]

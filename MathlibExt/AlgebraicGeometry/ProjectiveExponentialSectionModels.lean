@@ -50,7 +50,9 @@ def tauInclusion : ℂ → ProjectiveLine := fun z => ↑z
 def zetaInclusion (z : ℂ) : ProjectiveLine :=
   if z = 0 then OnePoint.infty else ↑z⁻¹
 
-/-- Both prescribed charts qualify the original complex structure. -/
+/-- The standard complex structure of the projective line: both affine coordinates `τ` and
+`ζ = 1/τ` are holomorphic, which determines it. Dependents are conditional on an instance; a
+construction is requested in `WantedExt` (`ProjectiveProductSourceRequests.actual_projective_complex_source`). -/
 class ProjectiveComplexSource where
   [charts : ChartedSpace ProjectiveCoordinates ProjectiveLine]
   [manifold : IsManifold 𝓘(ℂ, ProjectiveCoordinates) ∞ ProjectiveLine]
@@ -76,7 +78,8 @@ def HasFinitePoleAtInfinity (U : Opens ProjectiveLine) (f : affineOpen U → ℂ
 def IsMeromorphicCoefficient (U : Opens ProjectiveLine) (f : affineOpen U → ℂ) : Prop :=
   ContDiffOn ℂ ∞ (totalAffineFunction f) (affineOpen U) ∧ HasFinitePoleAtInfinity U f
 
-/-- Algebra closure concerns only the already fixed analytic/finite-pole condition. -/
+/-- Algebra closure of the analytic/finite-pole condition. It holds (see the instance below), so it
+is not an assumption of any dependent declaration. -/
 class MeromorphicAlgebraSource : Prop where
   zero : ∀ U, IsMeromorphicCoefficient U 0
   one : ∀ U, IsMeromorphicCoefficient U 1
@@ -86,7 +89,86 @@ class MeromorphicAlgebraSource : Prop where
     IsMeromorphicCoefficient U (f * g)
   constants : ∀ U c, IsMeromorphicCoefficient U (fun _ => c)
 
-variable [MeromorphicAlgebraSource]
+/-- A neighbourhood of infinity in an open set containing it reaches every large finite point. -/
+theorem exists_inv_mem_affineOpen {U : Opens ProjectiveLine} (hU : OnePoint.infty ∈ U) :
+    ∃ ε : ℝ, 0 < ε ∧ ∀ z : ℂ, z ≠ 0 → ‖z‖ < ε → z⁻¹ ∈ affineOpen U := by
+  have hK : IsCompact ((OnePoint.some : ℂ → OnePoint ℂ) ⁻¹' (U : Set (OnePoint ℂ)))ᶜ :=
+    ((OnePoint.isOpen_iff_of_mem hU).1 U.isOpen).2
+  obtain ⟨R, hR⟩ := (Metric.isBounded_iff_subset_closedBall (0 : ℂ)).1 hK.isBounded
+  refine ⟨1 / (max R 0 + 1), by positivity, fun z hz hzε => ?_⟩
+  by_contra hmem
+  have hin : z⁻¹ ∈ ((OnePoint.some : ℂ → OnePoint ℂ) ⁻¹' (U : Set (OnePoint ℂ)))ᶜ := hmem
+  have hle : ‖z⁻¹‖ ≤ R := by simpa using hR hin
+  have hpos : 0 < ‖z‖ := norm_pos_iff.2 hz
+  rw [norm_inv] at hle
+  have h1 : ‖z‖ * (max R 0 + 1) < 1 := by
+    rw [lt_div_iff₀ (by positivity)] at hzε
+    linarith
+  have h2 : 1 ≤ ‖z‖ * R := by
+    have := (inv_le_iff_one_le_mul₀' hpos).1 hle
+    linarith
+  nlinarith [le_max_left R 0, le_max_right R 0]
+
+theorem totalAffineFunction_add {U : Opens ProjectiveLine} (f g : affineOpen U → ℂ) :
+    totalAffineFunction (f + g) = totalAffineFunction f + totalAffineFunction g := by
+  funext z
+  by_cases h : z ∈ affineOpen U <;> simp [totalAffineFunction, h]
+
+theorem totalAffineFunction_mul {U : Opens ProjectiveLine} (f g : affineOpen U → ℂ) :
+    totalAffineFunction (f * g) = totalAffineFunction f * totalAffineFunction g := by
+  funext z
+  by_cases h : z ∈ affineOpen U <;> simp [totalAffineFunction, h]
+
+theorem isMeromorphicCoefficient_const (U : Opens ProjectiveLine) (c : ℂ) :
+    IsMeromorphicCoefficient U (fun _ => c) := by
+  refine ⟨(contDiffOn_const (c := c)).congr fun z hz => ?_, fun hU => ?_⟩
+  · have hz' : z ∈ affineOpen U := hz
+    simp [totalAffineFunction, hz']
+  obtain ⟨ε, hε, hinv⟩ := exists_inv_mem_affineOpen hU
+  exact ⟨0, ε, fun _ => c, hε, contDiffOn_const, fun z hz hzε => ⟨hinv z hz hzε, by simp⟩⟩
+
+theorem isMeromorphicCoefficient_add {U : Opens ProjectiveLine} {f g : affineOpen U → ℂ}
+    (hf : IsMeromorphicCoefficient U f) (hg : IsMeromorphicCoefficient U g) :
+    IsMeromorphicCoefficient U (f + g) := by
+  refine ⟨by rw [totalAffineFunction_add]; exact hf.1.add hg.1, fun hU => ?_⟩
+  obtain ⟨N₁, ε₁, g₁, hε₁, hg₁, e₁⟩ := hf.2 hU
+  obtain ⟨N₂, ε₂, g₂, hε₂, hg₂, e₂⟩ := hg.2 hU
+  refine ⟨N₁ + N₂, min ε₁ ε₂, fun z => z ^ N₂ * g₁ z + z ^ N₁ * g₂ z, lt_min hε₁ hε₂, ?_, ?_⟩
+  · exact ((contDiffOn_id.pow N₂).mul (hg₁.mono (Metric.ball_subset_ball (min_le_left _ _)))).add
+      ((contDiffOn_id.pow N₁).mul (hg₂.mono (Metric.ball_subset_ball (min_le_right _ _))))
+  · intro z hz hzε
+    obtain ⟨h₁, k₁⟩ := e₁ z hz (lt_of_lt_of_le hzε (min_le_left _ _))
+    obtain ⟨h₂, k₂⟩ := e₂ z hz (lt_of_lt_of_le hzε (min_le_right _ _))
+    refine ⟨h₁, ?_⟩
+    simp only [Pi.add_apply]
+    rw [← k₁, ← k₂]
+    ring
+
+theorem isMeromorphicCoefficient_mul {U : Opens ProjectiveLine} {f g : affineOpen U → ℂ}
+    (hf : IsMeromorphicCoefficient U f) (hg : IsMeromorphicCoefficient U g) :
+    IsMeromorphicCoefficient U (f * g) := by
+  refine ⟨by rw [totalAffineFunction_mul]; exact hf.1.mul hg.1, fun hU => ?_⟩
+  obtain ⟨N₁, ε₁, g₁, hε₁, hg₁, e₁⟩ := hf.2 hU
+  obtain ⟨N₂, ε₂, g₂, hε₂, hg₂, e₂⟩ := hg.2 hU
+  refine ⟨N₁ + N₂, min ε₁ ε₂, fun z => g₁ z * g₂ z, lt_min hε₁ hε₂, ?_, ?_⟩
+  · exact (hg₁.mono (Metric.ball_subset_ball (min_le_left _ _))).mul
+      (hg₂.mono (Metric.ball_subset_ball (min_le_right _ _)))
+  · intro z hz hzε
+    obtain ⟨h₁, k₁⟩ := e₁ z hz (lt_of_lt_of_le hzε (min_le_left _ _))
+    obtain ⟨h₂, k₂⟩ := e₂ z hz (lt_of_lt_of_le hzε (min_le_right _ _))
+    refine ⟨h₁, ?_⟩
+    simp only [Pi.mul_apply]
+    rw [← k₁, ← k₂]
+    ring
+
+/-- The meromorphic coefficients form a subalgebra: the closure properties are proved above. -/
+instance : MeromorphicAlgebraSource where
+  zero U := isMeromorphicCoefficient_const U 0
+  one U := isMeromorphicCoefficient_const U 1
+  add _ _ _ hf hg := isMeromorphicCoefficient_add hf hg
+  mul _ _ _ hf hg := isMeromorphicCoefficient_mul hf hg
+  constants U c := isMeromorphicCoefficient_const U c
+
 
 def meromorphicAlgebra (U : Opens ProjectiveLine) : Subalgebra ℂ (affineOpen U → ℂ) where
   carrier := {f | IsMeromorphicCoefficient U f}

@@ -52,6 +52,9 @@ def pullbackConstant (c : ℂ) (V : Opens Y) : (pullbackRing f R).obj.obj (op V)
 variable [HasSheafify (Opens.grothendieckTopology Y) (ModuleCat.{0} ℂ)]
   [CompactSheafSource ℂ Y] [IndSpaceSource Y]
 
+/-- The β-ring structure of the pulled-back ring sheaf, whose constants are the pulled-back
+constants. Dependents are conditional on an instance; a construction is requested in `WantedExt`
+(`ProjectiveProductSourceRequests.actual_pulled_beta_ring`). -/
 class PulledBetaRingSource where
   [source : BetaRingSource Y (pullbackRing f R)]
   constants : ∀ (V : Opens Y) (c : ℂ),

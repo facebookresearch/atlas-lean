@@ -55,7 +55,7 @@ variable [∀ Z : TopCat.{0}, HasSheafify (Opens.grothendieckTopology Z) (Module
   (n : ℕ) (X : Type) [TopologicalSpace X]
   [ChartedSpace (TemperedDistributionSectionModels.ComplexCoordinates n) X]
   [IsManifold 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates n) ∞ X]
-  [ProjectiveComplexSource] [ProductComplexSource n X] [MeromorphicAlgebraSource]
+  [ProjectiveComplexSource] [ProductComplexSource n X]
   [HasSheafify (Opens.grothendieckTopology X) RingCat.{0}]
   [HasSheafify (Opens.grothendieckTopology ProjectiveLine) RingCat.{0}]
   [HasSheafify (Opens.grothendieckTopology (X × ProjectiveLine)) RingCat.{0}]

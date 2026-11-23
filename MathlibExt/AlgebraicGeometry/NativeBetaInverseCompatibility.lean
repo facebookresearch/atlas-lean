@@ -43,6 +43,9 @@ variable {X Y : TopCat.{0}} (f : Y ⟶ X)
 
 local instance compatibilityInverseBraided : (originalInverse f I).Braided := I.braided
 
+/-- The ordinary inverse image is braided monoidal for the sheafified tensor products. Dependents
+are conditional on an instance; a construction is requested in `WantedExt`
+(`ProjectiveProductSourceRequests.actual_ordinary_inverse_monoidal`). -/
 class OrdinaryInverseMonoidalSource where
   [braided : (TopCat.Sheaf.pullback (ModuleCat.{0} ℂ) f).Braided]
 

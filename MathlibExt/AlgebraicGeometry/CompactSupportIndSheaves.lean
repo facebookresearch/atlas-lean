@@ -66,7 +66,8 @@ isomorphism; the abelian structure below is built on the inherited preadditive s
 ind-sheaves carry an abelian structure (Kashiwara--Schapira, Categories and Sheaves,
 Theorem 8.6.5(i)); Mathlib constructs it only for small categories and the compact-support sheaves
 are not small, so it is recorded here. A category has at most one additive structure, so this datum
-is determined up to propositional equality. -/
+is determined up to propositional equality. Dependents are conditional on an instance; a
+construction is requested in `WantedExt` (`IndSheafSourceRequests.actual_compact_sheaf_source`). -/
 class CompactSheafSource where
   [hasFiniteProducts : Limits.HasFiniteProducts (CompactSheaf k X)]
   [hasKernels : Limits.HasKernels (CompactSheaf k X)]
