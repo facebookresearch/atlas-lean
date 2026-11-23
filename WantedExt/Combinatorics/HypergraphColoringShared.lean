@@ -22,8 +22,10 @@ public import Mathlib.Data.Finset.Defs
 
 namespace MathlibExt.Combinatorics.HypergraphColoringShared
 
-/-- A hypergraph `H` on `Fin n` (a finite set of edges) is `k`-colorable: some coloring of the
-vertices with `k` colors leaves no edge monochromatic. -/
+/-- **Colorable hypergraph.** A hypergraph $H$ on the vertex set $\{0, \dots, n-1\}$, given as a
+finite set of edges (sets of vertices), is $k$-colorable when some coloring of the vertices with
+$k$ colors leaves no edge monochromatic: every edge of $H$ contains two vertices of different
+colors. -/
 def HypergraphColorable {n : ℕ} (H : Finset (Finset (Fin n))) (k : ℕ) : Prop :=
   ∃ c : Fin n → Fin k, ∀ e ∈ H, ∃ u ∈ e, ∃ v ∈ e, c u ≠ c v
 

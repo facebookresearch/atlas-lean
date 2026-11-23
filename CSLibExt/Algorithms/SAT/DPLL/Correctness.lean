@@ -17,7 +17,7 @@ public import CSLibExt.Algorithms.SAT.DPLL.Solver
 # Correctness of the DPLL solver
 
 The main theorem proves that the executable Boolean DPLL procedure accepts
-exactly the satisfiable formulas represented by `Cslib.Logic.PL.CNFSat`.
+exactly the satisfiable formulas represented by `Cslib.Logic.LegacyPL.CNFSat`.
 -/
 
 @[expose] public section
@@ -25,7 +25,7 @@ exactly the satisfiable formulas represented by `Cslib.Logic.PL.CNFSat`.
 
 namespace Cslib.Algorithms.SAT.DPLL
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 theorem firstUnit_eq_some_mem {formula : CNF} {literal : Nat × Bool}
     (hunit : firstUnit formula = some literal) : [literal] ∈ formula := by
@@ -84,9 +84,9 @@ theorem not_sat_of_mem_empty {formula : CNF} (hempty : [] ∈ formula) :
   have := hsatisfies [] hempty
   simp at this
 
-/-- DPLL is correct whenever its fuel covers every variable still present in
-the formula.  This stronger statement is the induction invariant behind the
-public solver theorem. -/
+/-- **Correctness of DPLL with sufficient fuel.** Let $\varphi$ be a CNF formula and let $n$ be a
+natural number at least the number of distinct variables occurring in $\varphi$. Then DPLL with
+fuel $n$ returns true on $\varphi$ if and only if $\varphi$ is satisfiable. -/
 theorem decideWithFuel_eq_true_iff {fuel : Nat} {formula : CNF}
     (hfuel : formula.vars.card ≤ fuel) :
     decideWithFuel fuel formula = true ↔ CNFSat formula := by
@@ -163,7 +163,8 @@ theorem decideWithFuel_eq_true_iff {fuel : Nat} {formula : CNF}
                   rw [hdecide, Bool.or_eq_true, ih htrue_fuel, ih hfalse_fuel]
                   exact (CNF.sat_iff_restrict_true_or_false formula x).symm
 
-/-- The executable DPLL procedure accepts exactly the satisfiable CNF formulas. -/
+/-- **Correctness of DPLL.** For every CNF formula $\varphi$, the DPLL procedure returns true on
+$\varphi$ if and only if $\varphi$ is satisfiable. -/
 theorem dpll_eq_true_iff {formula : CNF} :
     dpll formula = true ↔ CNFSat formula := by
   apply decideWithFuel_eq_true_iff

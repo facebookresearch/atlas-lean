@@ -471,7 +471,7 @@ private theorem pow_clog_dvd_exponent (p m : ℕ) (hp : p.Prime) (hm : 0 < m) :
       omega
     have hcm : m ≤ p ^ Nat.clog p m := Nat.le_pow_clog hp.one_lt m
     have hpred : p ^ (Nat.clog p m).pred < m :=
-      Nat.pow_pred_clog_lt_self hp.one_lt (by omega)
+      Nat.pow_pred_clog_lt_self p (by omega)
     have hu1 : u ^ (p ^ Nat.clog p m) = 1 := by
       apply Units.ext
       rw [Units.val_pow_eq_pow_val, IsUnit.unit_spec, hpow,
@@ -523,8 +523,16 @@ private theorem pow_clog_dvd_exponent (p m : ℕ) (hp : p.Prime) (hm : 0 < m) :
     rw [← hord, ← e2]
     exact e3
 
-/-- Exponent of `GL(m, 𝔽_p)` as a `p`-power times an lcm, equivalently a
-cyclotomic product.
+/-- **Exponent of the general linear group over a prime field.** Let $p$ be a prime and let
+$m \ge 1$. The exponent of the group $\mathrm{GL}_m(\mathbb{F}_p)$ of invertible $m \times m$
+matrices over $\mathbb{F}_p = \mathbb{Z}/p\mathbb{Z}$ is
+
+$$p^{\lceil \log_p m \rceil} \cdot \operatorname{lcm}(p - 1, p^2 - 1, \dots, p^m - 1),$$
+
+and this number equals $p^{\lceil \log_p m \rceil} \prod_{k=1}^{m} \Phi_k(p)$, where $\Phi_k$
+denotes the $k$-th cyclotomic polynomial.
+
+Proves `Wanted` entry `generalLinearGroup_exponent_eq_lcm_eq_cyclotomicProduct`.
 
 Source: Eugene Karolinsky and Dmytro Seliutin, *Carmichael Numbers for GL(m)*,
 Journal of Integer Sequences 23 (2020), Article 20.10.6,
@@ -534,11 +542,6 @@ theorem to matrices of order n*, Proc. Edinb. Math. Soc. 6 (1939), and
 I. Niven, *Fermat's theorem for matrices*, Duke Math. J. 15 (1948)), lines
 139-144; the lcm/cyclotomic identity is the paper's Proposition, lines
 113-118.
-
-`Nat.clog p m` is `⌈log_p m⌉`; the lcm runs over `p^1 - 1, …, p^m - 1` and
-the product over `Φ_1(p)⋯Φ_m(p)`.
-
-Proves `Wanted` entry `generalLinearGroup_exponent_eq_lcm_eq_cyclotomicProduct`.
 -/
 theorem generalLinearGroup_exponent_eq_lcm_eq_cyclotomicProduct
     (p m : ℕ) (hp : p.Prime) (hm : 0 < m) :

@@ -43,8 +43,9 @@ open TopologicalSpace
 
 namespace MathlibExt.Analysis.OperatorTheory.CompactOperatorKernelNonseparableWanted
 
-/-- Prove that if H is a nonseparable Hilbert space and A is a compact operator on H, then the
-nullspace ker(A) is itself a nonseparable Hilbert space.
+/-- **The kernel of a compact operator on a nonseparable Hilbert space is nonseparable.** Let
+$H$ be a complex Hilbert space that is not separable and let $A : H \to H$ be a compact operator.
+Then the kernel $\ker A$ is not separable.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theory; Special
 classes of linear operators), `benchmark/level2/ma_proofbench_l2_42.lean` at
