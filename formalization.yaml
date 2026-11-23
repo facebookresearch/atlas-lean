@@ -76,10 +76,9 @@ sources:
       ATLAS formalizes established, widely known results. Apart from code
       adapted from other formalizations (see related_formalizations), agents
       write the Lean from their general mathematical knowledge rather than
-      from particular texts. Docstrings and blueprint pages cite where each
-      result was published, for attribution and for checking statements. The
-      entries below are the published sources of the main results listed
-      under status.
+      from particular texts. Docstrings and blueprint pages cite published
+      sources for attribution and for checking statements. The entries below
+      are the published sources of the main results listed under status.
   - title: "Zur Theorie der abstrakten elliptischen Funktionenkörper III. Die Struktur des Meromorphismenrings. Die Riemannsche Vermutung."
     authors: ["Helmut Hasse"]
     id: "https://doi.org/10.1515/crll.1936.175.193"
