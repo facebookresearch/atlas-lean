@@ -30,6 +30,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import MathlibExt.Combinatorics.BridgeTorchWeights
 
 set_option autoImplicit false
 
@@ -40,44 +41,6 @@ namespace BridgeTorchGeneralizations
 @[expose] public section
 
 open Finset
-
-/-- **Weights of the capacity-3 lower bound.** The rational weights $y_i$ are
-$y_1 = y_2 = y_3 = 0$, $y_4 = 2$, $y_5 = 4$, $y_6 = 5$, and $y_i = (4i - 8)/3$ for $i \ge 7$.
-The value $y_0$ is unused and set to $0$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 15. -/
-def bridgeWeight : ℕ → ℚ
-  | 0 | 1 | 2 | 3 => 0
-  | 4 => 2
-  | 5 => 4
-  | 6 => 5
-  | i + 7 => (4 * ((i + 7 : ℕ) : ℚ) - 8) / 3
-
-/-- **First seven weights of the capacity-3 lower bound.** The weights $y_1, \dots, y_7$ of the
-capacity-3 lower bound are $0, 0, 0, 2, 4, 5, 20/3$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 15. -/
-theorem bridgeWeight_small :
-    bridgeWeight 1 = 0 ∧ bridgeWeight 2 = 0 ∧ bridgeWeight 3 = 0 ∧ bridgeWeight 4 = 2 ∧
-      bridgeWeight 5 = 4 ∧ bridgeWeight 6 = 5 ∧ bridgeWeight 7 = 20 / 3 := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, ?_⟩
-  simp only [bridgeWeight]
-  norm_num
-
-/-- **Weights of the capacity-3 lower bound from $7$ on.** For every natural number $i \ge 7$,
-the weight $y_i$ of the capacity-3 lower bound equals $(4i - 8)/3$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 15. -/
-theorem bridgeWeight_of_seven_le (i : ℕ) (hi : 7 ≤ i) :
-    bridgeWeight i = (4 * (i : ℚ) - 8) / 3 := by
-  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le' hi
-  rfl
 
 /-- **Valid crossing sequences from a state of the bridge and torch problem.** Let $c$ be a
 natural number and let $P$ and $L$ be finite sets of natural numbers, the people and the left
@@ -240,18 +203,6 @@ Lemma 2 (`jis-2026-26.5.6-lem-2`). -/
 public theorem_wanted parity_interpolation (f g a : ℕ → ℝ)
     (heven : ∀ m, a (2 * m) = f m) (hodd : ∀ m, a (2 * m + 1) = g m) (n : ℕ) :
     a n = (1 + (-1 : ℝ) ^ n) / 2 * f (n / 2) + (1 - (-1 : ℝ) ^ n) / 2 * g (n / 2)
-
-/-- **Local inequality for the capacity-3 weights.** Let $y_i$ be the weights of the capacity-3
-lower bound. For every nonempty set $T$ of positive integers with $|T| \le 3$,
-$$\sum_{i \in T} y_i + \frac{9}{2}(|T| - 1) \le \max T + \sum_{i \in T} i.$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 15 (`jis-2026-26.5.6-lem-15`). -/
-public theorem_wanted bridgeWeight_local_inequality (T : Finset ℕ) (hT : T.Nonempty)
-    (hT3 : T.card ≤ 3) (hpos : 0 ∉ T) :
-    (∑ i ∈ T, bridgeWeight i) + 9 / 2 * ((T.card : ℚ) - 1) ≤
-      ((T.max' hT : ℕ) : ℚ) + ∑ i ∈ T, (i : ℚ)
 
 /-- **Return inequality for the capacity-3 weights.** Let $y_i$ be the weights of the capacity-3
 lower bound. For every nonempty set $R$ of positive integers with $|R| \le 3$,
@@ -603,7 +554,8 @@ def starRunFrom {n k : ℕ} :
     (Fin n → Option (Fin k)) → (Option (Fin k) → ℕ) → List (List (StarMove n k)) → Bool
   | pos, _, [] => decide (∀ p, (pos p).isSome)
   | pos, tor, step :: σ =>
-      decide (IsStarStep pos tor step) && starRunFrom (starStepPos pos step) (starStepTorch tor step) σ
+      decide (IsStarStep pos tor step) &&
+        starRunFrom (starStepPos pos step) (starStepTorch tor step) σ
 
 /-- **Star schedules.** Consider the star model on the star graph $\mathcal{S}(k)$, which has a
 center and $k$ leaves, with $n$ persons and $t$ torches. A finite list $\sigma$ of parallel steps
