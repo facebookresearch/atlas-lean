@@ -23,25 +23,39 @@ open MathlibExt.AlgebraicGeometry.ComplexTorusTorsors
 
 namespace MathlibExtTest.AlgebraicGeometry.ComplexTorusTorsors
 
-/-- `Gm` carries Mathlib's group-object structure. -/
+/-- `Gm` carries Mathlib's group-object structure, and acts on itself. -/
 example : GrpObj Gm := inferInstance
 
 example : Gm ⊗ Gm ⟶ Gm := MonObj.mul
 
-/-- A torsor's quotient map is invariant on complex points, and its Borel
-augmentation and equivariant restriction maps are available. -/
-example {X Y : ComplexScheme} (A : GmAction X) (q : X ⟶ Y) [TorusTorsor A q] (g : ℂˣ)
-    (x : space X) : spaceMap q (g • x) = spaceMap q x :=
+example : ModObj Gm Gm := ModObj.regular Gm
+
+/-- A torsor's quotient map is invariant on complex points, for the analytic
+action of that torsor. -/
+example {X Y : ComplexScheme} (A : ModObj Gm X) (q : X ⟶ Y) [T : TorusTorsor A q] (g : ℂˣ)
+    (x : space X) :
+    letI := T.mulAction
+    spaceMap q (g • x) = spaceMap q x :=
   quotientInvariant A q g x
 
-example {X Y : ComplexScheme} (A : GmAction X) (q : X ⟶ Y) [TorusTorsor A q] (n : ℤ) :
+/-- Its Borel augmentation induces a map on Betti cohomology. -/
+example {X Y : ComplexScheme} (A : ModObj Gm X) (q : X ⟶ Y) [TorusTorsor A q] (n : ℤ) :
     MathlibExt.AlgebraicGeometry.BettiRealization.Cohomology (space Y) n →ₗ[ℚ]
-      MathlibExt.AlgebraicGeometry.BettiRealization.Cohomology
-        (MathlibExt.Topology.ContinuousBorel.borel ℂˣ (space X)) n :=
+      MathlibExt.AlgebraicGeometry.BettiRealization.Cohomology (torsorBorel A q) n :=
   MathlibExt.AlgebraicGeometry.BettiFunctoriality.cohomologyPullback (borelQuotientMap A q) n
 
-example {X : ComplexScheme} (A : GmAction X) (q : X ⟶ X) [TorusTorsor A q] (n : ℤ) :=
-  equivariantRestriction (𝟙 (space X)) (fun _ _ => rfl) n
+/-- Two torsor structures on the same scheme have their own Borel models and
+augmentations: the analytic action is selected by the torsor, not by the
+underlying space. -/
+example {X Y Y' : ComplexScheme} (A B : ModObj Gm X) (q : X ⟶ Y) (r : X ⟶ Y')
+    [TorusTorsor A q] [TorusTorsor B r] :
+    (torsorBorel A q ⟶ space Y) × (torsorBorel B r ⟶ space Y') :=
+  (borelQuotientMap A q, borelQuotientMap B r)
+
+/-- Equivariant restriction along an equivariant map of spaces with continuous
+actions. -/
+example {Z : TopCat.{0}} [MulAction ℂˣ Z] [ContinuousSMul ℂˣ Z] (n : ℤ) :=
+  equivariantRestriction (𝟙 Z) (fun _ _ => rfl) n
 
 end MathlibExtTest.AlgebraicGeometry.ComplexTorusTorsors
 

@@ -19,8 +19,8 @@ public import MathlibExt.AlgebraicGeometry.PerverseSheaves
 
 The coefficient object is the constant rational sheaf in the actual derived
 category on the analytification topology. Cohomology consists of its shifted
-endomorphisms. The product below is shifted composition, rather than an
-unspecified multiplication on a named cohomology carrier.
+endomorphisms. The product below is shifted composition (`ShiftedHom.comp`),
+rather than an unspecified multiplication on a named cohomology carrier.
 
 The imported analytification retains its AxiomMath/Weil source and license
 notice. These definitions use Mathlib's derived category and linear structure
@@ -45,34 +45,36 @@ instance rationalSheafLinear (Z : TopCat.{0}) : Linear ℚ (RationalSheaf Z) := 
 abbrev rationalUnit (Z : TopCat.{0}) : RationalDerived Z :=
   (DerivedCategory.singleFunctor _ 0).obj (rationalConstantSheaf Z)
 
-/-- Rational Betti cohomology as actual derived morphisms. -/
+/-- Rational cohomology `Hⁿ(Z; ℚ) = Hom(ℚ_Z, ℚ_Z[n])` in the derived category
+of rational sheaves: the cohomology of the constant sheaf. For locally
+contractible spaces, such as the complex points of a variety with their
+analytic topology, it is singular (Betti) cohomology; on general spaces sheaf
+and singular cohomology can differ (already in degree zero on the Cantor
+set). -/
 abbrev Cohomology (Z : TopCat.{0}) (n : ℤ) : Type 1 :=
   rationalUnit Z ⟶ (rationalUnit Z)⟦n⟧
 
 /-! The rational vector space structure on `Cohomology Z n` is Mathlib's
 `Linear.homModule` on morphisms of the `ℚ`-linear derived category. -/
 
-/-- Cup product in the order given by Yoneda composition. -/
+/-- Cup product: the Yoneda product of shifted morphisms, Mathlib's
+`ShiftedHom.comp`, in the order `x` then `y`. -/
 def cup (Z : TopCat.{0}) {i j : ℤ}
     (x : Cohomology Z i) (y : Cohomology Z j) : Cohomology Z (i + j) :=
-  x ≫ (shiftFunctor (RationalDerived Z) i).map y ≫
-    (shiftFunctorAdd' (RationalDerived Z) j i (i + j)
-      (add_comm j i)).inv.app (rationalUnit Z)
+  ShiftedHom.comp x y (add_comm j i)
 
 /-- The product is rational-linear in its first argument. -/
 def cupLeft (Z : TopCat.{0}) {i j : ℤ} (y : Cohomology Z j) :
     Cohomology Z i →ₗ[ℚ] Cohomology Z (i + j) where
   toFun x := cup Z x y
-  map_add' x x' := by simp [cup, Preadditive.add_comp]
-  map_smul' r x := by simp [cup, Linear.smul_comp]
+  map_add' _ _ := ShiftedHom.add_comp _ _ _ _
+  map_smul' _ _ := ShiftedHom.smul_comp _ _ _ _
 
 /-- The product is rational-linear in its second argument. -/
 def cupRight (Z : TopCat.{0}) {i j : ℤ} (x : Cohomology Z i) :
     Cohomology Z j →ₗ[ℚ] Cohomology Z (i + j) where
   toFun y := cup Z x y
-  map_add' y y' := by simp [cup, Functor.map_add, Preadditive.comp_add,
-    Preadditive.add_comp]
-  map_smul' r y := by simp [cup, Functor.map_smul, Linear.comp_smul,
-    Linear.smul_comp]
+  map_add' _ _ := ShiftedHom.comp_add _ _ _ _
+  map_smul' _ _ := ShiftedHom.comp_smul _ _ _ _
 
 end MathlibExt.AlgebraicGeometry.BettiRealization

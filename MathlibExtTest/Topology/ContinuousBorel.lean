@@ -69,8 +69,9 @@ example {W : TopCat.{0}} [MulAction G W] (f : Z ⟶ W)
 
 end
 
-/-- The scaling action of `ℂˣ` on `ℂ` has a Borel model, with its augmentation
-to the one-point quotient and the Borel map of the identity. -/
+/-- The scaling action of `ℂˣ` on `ℂ` (with the two orbits `{0}` and `ℂˣ`) has a
+Borel model, with the augmentation to a point induced by the constant invariant
+map, and the Borel map of the identity. -/
 example : borel ℂˣ (TopCat.of ℂ) ⟶ TopCat.of PUnit :=
   borelToQuotient (TopCat.ofHom ⟨fun _ => PUnit.unit, continuous_const⟩) fun _ _ => rfl
 

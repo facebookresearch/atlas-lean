@@ -67,6 +67,23 @@ example (n : ℤ) (a b : Cohomology W n) :
 
 example (n : ℤ) : cohomologyPullback f n 0 = 0 := map_zero _
 
+/-- Pullback fixes the unit class, and is derived inverse image of shifted
+morphisms conjugated by the unit comparison. -/
+example : cohomologyPullback f 0 (ShiftedHom.mk₀ (0 : ℤ) rfl (𝟙 (rationalUnit W))) =
+    ShiftedHom.mk₀ (0 : ℤ) rfl (𝟙 (rationalUnit Z)) :=
+  cohomologyPullback_mk₀_id f
+
+example (n : ℤ) (a : Cohomology W n) :
+    cohomologyPullback f n a = (unitInverseImageIso f).inv ≫
+      ShiftedHom.map a (derivedPullback ℚ f) ≫
+        (shiftFunctor (RationalDerived Z) n).map (unitInverseImageIso f).hom :=
+  cohomologyPullback_apply f n a
+
+/-- The cup product is the composition of shifted morphisms. -/
+example {i j : ℤ} (x : Cohomology Z i) (y : Cohomology Z j) :
+    cup Z x y = ShiftedHom.comp x y (add_comm j i) :=
+  rfl
+
 /-- Inverse image of the constant sheaf functor is the constant sheaf functor. -/
 example : constantFunctor W ⋙ pullback ℚ f ≅ constantFunctor Z := constantPullbackIso f
 

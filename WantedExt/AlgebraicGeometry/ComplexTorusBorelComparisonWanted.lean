@@ -47,7 +47,7 @@ open MathlibExt.AlgebraicGeometry.BettiFunctoriality
 /-- An actual free algebraic Gm torsor realizes the continuous-torus
 homotopy quotient through its canonical augmentation on rational Betti cohomology. -/
 public theorem_wanted free_torus_quotient_comparison (X Y : ComplexScheme)
-    [IsComplexVariety X] [IsComplexVariety Y] (A : GmAction X) (q : X ⟶ Y)
+    [IsComplexVariety X] [IsComplexVariety Y] (A : CategoryTheory.ModObj Gm X) (q : X ⟶ Y)
     [T : TorusTorsor A q] (n : ℤ) :
     Function.Bijective (cohomologyPullback (borelQuotientMap A q) n)
 
