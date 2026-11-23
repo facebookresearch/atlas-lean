@@ -36,7 +36,6 @@ theorem_wanted exists_minimalResolution {k : Type*} [Field k] {n : ℕ} {M : Typ
     [AddCommGroup M] [Module (PolynomialRing k n) M]
     [Module k M] [IsScalarTower k (PolynomialRing k n) M]
     [Module.Finite (PolynomialRing k n) M]
-   
     (G : Grading (k := k) (n := n) (M := M)) : Nonempty (MinimalResolution G)
 
 /-- The graded Betti table does not depend on the chosen minimal resolution. -/
