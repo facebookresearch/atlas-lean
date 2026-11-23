@@ -115,6 +115,15 @@ noncomputable def extPow (n : ℕ)
   PresheafOfModules.ofPresheaf (extPowAb n F) fun {_ _} _ r _ => Subtype.ext
     (ExteriorAlgebra.mapₛₗ_smul _ _ r _)
 
+/-- Restricting a wedge of sections gives the wedge of their restrictions. -/
+@[simp]
+theorem extPow_map_ιMulti (n : ℕ)
+    (F : PresheafOfModules.{max w a} (O ⋙ forget₂ _ RingCat)) {X Y : Cᵒᵖ} (f : X ⟶ Y)
+    (v : Fin n → F.obj X) :
+    (extPow n F).map f (exteriorPower.ιMulti _ n v) =
+      exteriorPower.ιMulti _ n fun i => F.map f (v i) :=
+  ExteriorAlgebra.powMapₛₗ_ιMulti n _ (F.restrictₛₗ f) v
+
 /-- The sections of `extPow n F` over `X` are the `n`-th
 exterior power of the sections of `F` over `X`. -/
 noncomputable def extPowSections (n : ℕ)

@@ -9,31 +9,28 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.AlgebraicGeometry.Pullbacks
-public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import MathlibExt.AlgebraicGeometry.PrimeFieldDeRham
 
 /-!
-# Deligne–Illusie decomposition on actual prime-field de Rham sheaves
+# The Deligne–Illusie decomposition over `F_p`
 
-The de Rham object is the actual sheafification of the sectionwise
-Kähler/exterior-power complex with its normalized differential. The
-right side consists of its actual differential-form sheaves placed in
-their cohomological degrees. Under `dim X < p` this is the full complex,
-so the truncation appearing in the general theorem is unnecessary.
+Let `X` be a smooth scheme of pure relative dimension `d < p` over `F_p` which lifts to a smooth
+scheme over `W₂(F_p)`. Deligne and Illusie proved that the de Rham complex `F_* Ω^•_{X/F_p}` is
+decomposable: it is isomorphic, in the derived category of `𝒪_X`-modules, to the direct sum of
+its cohomology sheaves `Ω^i_{X/F_p}` (by the Cartier isomorphism) placed in degrees `i`.
 
-The lift is an actual proper smooth scheme over `W₂(F_p)` whose special
-fibre square is cartesian via the zeroth Witt coordinate. Ordinary de Rham
-and Cartier constructions already have public Axiom implementations;
-their existence is not requested again.
+Over `F_p` the Frobenius twist `X'` of `X` is `X` itself and the relative Frobenius is the
+absolute Frobenius, so `F_*` restricts scalars along `a ↦ a^p` (see
+`MathlibExt.AlgebraicGeometry.PrimeFieldDeRham`). The lift is a smooth scheme `Y` over
+`W₂(F_p)` whose special fibre, along the reduction `W₂(F_p) → F_p`, is `X`.
 
-References: P. Deligne–L. Illusie, *Relèvements modulo p² et décomposition
-du complexe de de Rham*, Invent. Math. 89 (1987), 247–270, Théorème 2.1.
-The scope and derived decomposition are also displayed in Achinger–Suh,
-*Some refinements of the Deligne–Illusie theorem*, §1A, p. 465.
-https://msp.org/ant/2023/17-2/ant-v17-n2-p06-p.pdf
-The Axiom HodgeSpreadingOut/CharZero implementation explicitly takes this
-characteristic-p theorem as `hDI`.
+## References
+
+* P. Deligne, L. Illusie, *Relèvements modulo p² et décomposition du complexe de de Rham*,
+  Invent. Math. 89 (1987), 247–270, Théorème 2.1 and Corollaire 2.2.
+* P. Achinger, J. Suh, *Some refinements of the Deligne–Illusie theorem*, Algebra Number Theory 17
+  (2023), §1A, https://msp.org/ant/2023/17-2/ant-v17-n2-p06-p.pdf
 -/
 
 @[expose] public noncomputable section
@@ -45,18 +42,19 @@ open MathlibExt.AlgebraicGeometry.PrimeFieldDeRham
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- The genuine derived de Rham splitting, with actual geometric lift. -/
+/-- **Deligne–Illusie** over `F_p`: if `X` is smooth of pure relative dimension `d < p` over `F_p`
+and lifts to a smooth scheme over `W₂(F_p)`, then `F_* Ω^•_{X/F_p} ≅ ⊕_{i ≤ d} Ω^i_{X/F_p}[-i]` in
+the derived category of `𝒪_X`-modules. -/
 public theorem_wanted deligneIllusie
     (p : ℕ) [Fact p.Prime] (X : PrimeFieldScheme p) (d : ℕ)
-    [IsProper X.hom] [SmoothOfRelativeDimension d X.hom] (hd : d < p)
-    (D : Differential p X)
+    [SmoothOfRelativeDimension d X.hom] (hd : d < p)
     (Y : Over (Spec (CommRingCat.of.{0}
       (TruncatedWittVector p 2 (ZMod p)))))
-    [IsProper Y.hom] [Smooth Y.hom]
+    [Smooth Y.hom]
     (j : X.left ⟶ Y.left)
     (hfibre : IsPullback j X.hom Y.hom
       (Spec.map (CommRingCat.ofHom (wittReduction p)))) :
-    Nonempty (D.derived ≅ ∐ fun i : Fin (d + 1) =>
+    Nonempty ((Differential.deRham p X).derived ≅ ∐ fun i : Fin (d + 1) =>
       (DerivedCategory.singleFunctor X.left.Modules (i : ℤ)).obj
         (forms p X i))
 

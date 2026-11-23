@@ -7,17 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The sectionwise de Rham presentation and the Witt-vector reduction are
-adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b:
+The sectionwise forms and the Witt-vector reduction are adapted from
+AxiomMath/Stacks at c496df0d9beea9deaeabcea8492605f9a0a2313b:
 StacksFrontier/Algebra/Category/ModuleCat/Sheaf/DeRhamSectionwise.lean;
 StacksFrontier/Topology/Sheaves/Modules/DeRhamExistence.lean;
 StacksFrontier/AlgebraicGeometry/DeRham/HodgeSpreadingOut/WittLift.lean.
 Released under Apache 2.0 as described in that repository's LICENSE.
-Modification: use the prime-field constant presheaf and actual scheme
-structure maps, construct sectionwise forms and their sheafifications,
-and retain the canonically normalized differential as explicit covered
-toolbox data. Its global construction is not claimed in this file.
+Modifications: use the prime-field constant presheaf and the scheme
+structure map, construct the sectionwise forms and their sheafifications,
+and construct the de Rham differential from
+`MathlibExt.RingTheory.Kaehler.DeRham`.
 -/
 module
 
@@ -31,20 +30,26 @@ public import Mathlib.RingTheory.WittVector.Truncated
 public import Mathlib.RingTheory.WittVector.Teichmuller
 public import MathlibExt.Algebra.Category.ModuleCat.PresheafExteriorPowers
 public import MathlibExt.AlgebraicGeometry.FrobeniusGeometry
+public import MathlibExt.RingTheory.Kaehler.DeRham
 
 /-!
-# Prime-field de Rham geometry on actual sheaf complexes
+# The de Rham complex of a scheme over `F_p`
 
-The forms are the sheafification of the actual presheaf
-`U ↦ ⋀^i_{𝒪(U)} Ω[𝒪(U)/F_p]`; restrictions are the completed semilinear
-exterior-power maps. Frobenius restricts scalars by `a ↦ a^p`.
-A differential is required to satisfy the de Rham formula on every
-local generator `a₀ da₁ ∧ ⋯ ∧ daᵢ`. Sheafifying its actual complex gives
-the object used in the derived decomposition request.
+For a scheme `X` over `F_p`, the sheaf of `i`-forms `Ω^i_{X/F_p}` (`forms`) is the sheafification
+of the presheaf `U ↦ ⋀^i_{𝒪(U)} Ω[𝒪(U)/F_p]` (`formsPresheaf`), whose restriction maps are the
+semilinear exterior powers of the restriction maps of the Kähler differentials.
 
-The ordinary de Rham differential's existence is already implemented by
-the public Axiom source. Here it is an explicit characterized input,
-not another Wanted construction or an arbitrary replacement complex.
+In characteristic `p` the de Rham differential is linear over `p`-th powers,
+`d (a^p ω) = a^p dω`, so it is a morphism of `𝒪_X`-modules `F_* Ω^i → F_* Ω^{i+1}`, where
+`F_*` restricts scalars along the Frobenius `a ↦ a^p` (`frobeniusForms`). A `Differential` is a
+family of such morphisms squaring to zero and given on local generators by the de Rham formula
+`d (a₀ da₁ ∧ ⋯ ∧ daᵢ) = da₀ ∧ da₁ ∧ ⋯ ∧ daᵢ`; `Differential.deRham` is the de Rham differential,
+constructed sectionwise from `KaehlerDifferential.deRham`. Sheafifying its complex gives the
+de Rham complex `F_* Ω^•_{X/F_p}` (`Differential.complex`) and its object in the derived
+category (`Differential.derived`).
+
+The file also defines the reduction `W₂(F_p) → F_p` to the zeroth Witt coordinate
+(`wittReduction`), used to state liftings to `W₂(F_p)`.
 -/
 
 @[expose] public noncomputable section
@@ -58,15 +63,16 @@ attribute [local instance] HasDerivedCategory.standard
 
 variable (p : ℕ) [Fact p.Prime]
 
+/-- Schemes over `F_p`. -/
 abbrev PrimeFieldScheme := Over (Spec (CommRingCat.of.{0} (ZMod p)))
 
 variable (X : PrimeFieldScheme p)
 
-/-- The actual constant prime-field presheaf. -/
+/-- The constant presheaf of rings `F_p`. -/
 abbrev constants : X.left.Opensᵒᵖ ⥤ CommRingCat :=
   (Functor.const _).obj (CommRingCat.of (ZMod p))
 
-/-- Scalars are mapped by the actual scheme structure map and restriction. -/
+/-- The map `F_p ⟶ 𝒪_X` of presheaves of rings given by the structure morphism. -/
 def scalarMap : constants p X ⟶ X.left.presheaf where
   app U := (Scheme.ΓSpecIso (CommRingCat.of (ZMod p))).inv ≫
     X.hom.appTop ≫ X.left.presheaf.map (homOfLE le_top).op
@@ -76,23 +82,23 @@ def scalarMap : constants p X ⟶ X.left.presheaf where
       ← X.left.presheaf.map_comp]
     rfl
 
-/-- The actual Kähler differential presheaf of this scalar morphism. -/
+/-- The presheaf of Kähler differentials `U ↦ Ω[𝒪(U)/F_p]`. -/
 abbrev differentials :
     PresheafOfModulesOfCommRing X.left.presheaf :=
   PresheafOfModulesOfCommRing.DifferentialsConstruction.relativeDifferentials'
     (scalarMap p X)
 
-/-- Sectionwise exterior powers of the actual Kähler presheaf. -/
+/-- The presheaf `U ↦ ⋀^i_{𝒪(U)} Ω[𝒪(U)/F_p]` of sectionwise exterior powers. -/
 abbrev formsPresheaf (i : ℕ) :
     PresheafOfModulesOfCommRing X.left.presheaf :=
   PresheafOfModules.extPow i (differentials p X)
 
-/-- Actual sheafification of the forms over the scheme's structure sheaf. -/
+/-- The sheaf of `i`-forms `Ω^i_{X/F_p}`: the sheafification of `formsPresheaf`. -/
 def forms (i : ℕ) : X.left.Modules :=
   (PresheafOfModules.sheafification (𝟙 X.left.ringCatSheaf.obj)).obj
     (formsPresheaf p X i)
 
-/-- Frobenius is the fixed local-power map of the ring presheaf. -/
+/-- The Frobenius endomorphism `a ↦ a^p` of the structure presheaf. -/
 def frobeniusScalars : X.left.ringCatSheaf.obj ⟶
     X.left.ringCatSheaf.obj where
   app U := RingCat.ofHom (primePowerEndomorphism (X.left.presheaf.obj U) p
@@ -118,14 +124,14 @@ def frobeniusScalars : X.left.ringCatSheaf.obj ⟶
               (cast_eq_zero_of_isInCharacteristic
                 (isInCharacteristic_of_over X) U.unop) a)).symm)
 
-/-- Frobenius restricts scalars on the actual form presheaf. -/
+/-- The presheaf `F_* (formsPresheaf i)`: scalars restricted along the Frobenius. -/
 abbrev frobeniusForms (i : ℕ) :
     PresheafOfModulesOfCommRing X.left.presheaf :=
   (PresheafOfModules.restrictScalars (frobeniusScalars p X)).obj
     (formsPresheaf p X i)
 
-/-- An exact-wedge generator with the original, untwisted coefficient
-action. Fix this element before reading it in the Frobenius module. -/
+/-- The local generator `a • da₀ ∧ ⋯ ∧ daᵢ₋₁` of `⋀^i Ω(U)` (for the untwisted action of
+`𝒪(U)`). -/
 def generatorForm (i : ℕ) (U : X.left.Opensᵒᵖ)
     (a : X.left.presheaf.obj U) (b : Fin i → X.left.presheaf.obj U) :
     (formsPresheaf p X i).obj U :=
@@ -133,8 +139,10 @@ def generatorForm (i : ℕ) (U : X.left.Opensᵒᵖ)
     (fun j => CommRingCat.KaehlerDifferential.d
       (f := (scalarMap p X).app U) (b j))
 
-/-- Covered ordinary de Rham toolbox data: the actual generator rule pins
-every differential, with its required Frobenius-linear scalar action. -/
+/-- A differential on `F_* Ω^•`: morphisms of presheaves of modules `F_* Ω^i → F_* Ω^{i+1}`
+squaring to zero and given on local generators by the de Rham formula. Since the generators span
+the sections additively, the formula determines the differential; `Differential.deRham` constructs
+it. -/
 structure Differential where
   d : ∀ i : ℕ, frobeniusForms p X i ⟶ frobeniusForms p X (i + 1)
   square : ∀ i, d i ≫ d (i + 1) = 0
@@ -150,24 +158,90 @@ namespace Differential
 
 variable {p X} (D : Differential p X)
 
-/-- The actual nonnegative cochain complex of Frobenius-linear presheaves. -/
+/-- The cochain complex of presheaves `F_* Ω^0 → F_* Ω^1 → ⋯`. -/
 def presheafComplex :
     CochainComplex (PresheafOfModulesOfCommRing X.left.presheaf) ℕ :=
   CochainComplex.of (frobeniusForms p X) D.d D.square
 
-/-- Sheafify that complex and extend by zero into negative degrees. -/
+/-- Its sheafification, extended by zero to negative degrees. -/
 def complex : CochainComplex X.left.Modules ℤ :=
   (((PresheafOfModules.sheafification
       (𝟙 X.left.ringCatSheaf.obj)).mapHomologicalComplex _).obj
         D.presheafComplex).extend ComplexShape.embeddingUpNat
 
-/-- Its actual object in Mathlib's derived category. -/
+/-- Its object in the derived category of `𝒪_X`-modules. -/
 def derived : DerivedCategory X.left.Modules :=
   DerivedCategory.Q.obj D.complex
 
 end Differential
 
-/-- The actual zeroth-coordinate reduction `W₂(F_p) → F_p`. -/
+/-! ### The de Rham differential -/
+
+/-- The de Rham differential `⋀ⁱ Ω(U) → ⋀ⁱ⁺¹ Ω(U)` on the sections over `U`
+(`KaehlerDifferential.deRhamPow`). -/
+def deRhamApp (i : ℕ) (U : X.left.Opensᵒᵖ) :
+    (formsPresheaf p X i).obj U →+ (formsPresheaf p X (i + 1)).obj U :=
+  letI := ((scalarMap p X).app U).hom.toAlgebra
+  KaehlerDifferential.deRhamPow (R := (constants p X).obj U) (A := X.left.presheaf.obj U) i
+
+omit [Fact p.Prime] in
+/-- The de Rham differential is linear over `p`-th powers. -/
+theorem deRhamApp_pow_smul (i : ℕ) (U : X.left.Opensᵒᵖ) (a : X.left.presheaf.obj U)
+    (x : (formsPresheaf p X i).obj U) :
+    deRhamApp p X i U (a ^ p • x) = a ^ p • deRhamApp p X i U x := by
+  let := ((scalarMap p X).app U).hom.toAlgebra
+  exact Subtype.ext (KaehlerDifferential.deRham_pow_smul p
+    (cast_eq_zero_of_isInCharacteristic (isInCharacteristic_of_over X) U.unop) a _)
+
+omit [Fact p.Prime] in
+/-- The de Rham differential commutes with the restriction maps. -/
+theorem deRhamApp_naturality (i : ℕ) {U V : X.left.Opensᵒᵖ} (f : U ⟶ V)
+    (x : (formsPresheaf p X i).obj U) :
+    deRhamApp p X i V ((formsPresheaf p X i).map f x) =
+      (formsPresheaf p X (i + 1)).map f (deRhamApp p X i U x) := by
+  let := ((scalarMap p X).app U).hom.toAlgebra
+  let := ((scalarMap p X).app V).hom.toAlgebra
+  exact Subtype.ext (KaehlerDifferential.mapₛₗ_deRham (R := (constants p X).obj U)
+    (A := X.left.presheaf.obj U) (R' := (constants p X).obj V) (B := X.left.presheaf.obj V)
+    (X.left.presheaf.map f).hom ((differentials p X).restrictₛₗ f)
+    (fun a => PresheafOfModulesOfCommRing.DifferentialsConstruction.relativeDifferentials'_map_d
+      (scalarMap p X) f a) x.1).symm
+
+/-- The de Rham differential as a morphism of the underlying presheaves of abelian groups. -/
+def deRhamPresheafMap (i : ℕ) :
+    (frobeniusForms p X i).presheaf ⟶ (frobeniusForms p X (i + 1)).presheaf where
+  app U := AddCommGrpCat.ofHom (deRhamApp p X i U)
+  naturality U V f := by
+    ext x
+    exact deRhamApp_naturality p X i f x
+
+/-- The de Rham differential `F_* Ω^i → F_* Ω^{i+1}` as a morphism of presheaves of modules: it is
+linear for the Frobenius-twisted module structures since `d (a^p ω) = a^p dω`. -/
+def deRhamMap (i : ℕ) : frobeniusForms p X i ⟶ frobeniusForms p X (i + 1) :=
+  PresheafOfModules.homMk (deRhamPresheafMap p X i) fun U a x => by
+    have h := deRhamApp_pow_smul p X i U a x
+    rw [← primePowerEndomorphism_apply _ p
+      (cast_eq_zero_of_isInCharacteristic (isInCharacteristic_of_over X) U.unop)] at h
+    exact h
+
+theorem deRhamMap_app_apply (i : ℕ) (U : X.left.Opensᵒᵖ) (x : (frobeniusForms p X i).obj U) :
+    (deRhamMap p X i).app U x = deRhamApp p X i U x := rfl
+
+/-- **The de Rham differential** of `F_* Ω^•_{X/F_p}`, constructed sectionwise from
+`KaehlerDifferential.deRham`. -/
+def Differential.deRham : Differential p X where
+  d := deRhamMap p X
+  square i := by
+    ext U x
+    let := ((scalarMap p X).app U).hom.toAlgebra
+    exact Subtype.ext (KaehlerDifferential.deRham_deRham (R := (constants p X).obj U)
+      (A := X.left.presheaf.obj U) x.1)
+  generator i U a b := by
+    let := ((scalarMap p X).app U).hom.toAlgebra
+    exact Subtype.ext (KaehlerDifferential.deRham_smul_ιMulti (R := (constants p X).obj U)
+      (A := X.left.presheaf.obj U) i a b)
+
+/-- The reduction `W₂(F_p) → F_p` to the zeroth Witt coordinate. -/
 def wittReduction : TruncatedWittVector p 2 (ZMod p) →+* ZMod p where
   toFun x := x.coeff 0
   map_zero' := TruncatedWittVector.coeff_zero p 2 (ZMod p) 0
