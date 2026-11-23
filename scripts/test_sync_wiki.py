@@ -4465,6 +4465,35 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["wiki_changes"]), (1, "other"))
 
 
+    def test_a_submodule_git_is_told_to_ignore_is_still_not_the_syncs(self) -> None:
+        self.git("config", "diff.ignoreSubmodules", "all")
+        self.test_a_committed_submodule_without_its_folder_is_not_the_syncs()
+
+    def test_the_executable_bit_is_the_owners_as_git_reads_it(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md"
+        page.chmod(0o654)
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
+        page.chmod(0o744)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes write it otherwise than the sync"]))
+
+    def test_a_refusal_counts_no_wiki_change_a_commit_made_and_the_working_tree_undid(self) -> None:
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        kept = page.read_bytes()
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        self.commit("a prose edit")
+        page.write_bytes(kept)
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (self.root / "MathlibExt/Linked").symlink_to(elsewhere)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (1, "none"))
+
+
 
 INDEX_DIFFERS = sync.INDEX_DIFFERS
 

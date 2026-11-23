@@ -2876,7 +2876,8 @@ def index_entries() -> dict[str, tuple[str, str]]:
 def staged_paths() -> set[str]:
     """The files the index changes from HEAD, staged by hand, by their path from the repository's root: a commit may
     take the index's file rather than the working tree's."""
-    return {os.fsdecode(path) for path in git("diff", "--cached", "--name-only", "--no-renames", "-z", "HEAD",
+    return {os.fsdecode(path) for path in git("diff", "--cached", "--name-only", "--no-renames", "--ignore-submodules=none",
+                                              "-z", "HEAD",
                                               "--").split(b"\0") if path}
 
 
@@ -2898,7 +2899,8 @@ def disagreeing(paths: set[str]) -> dict[str, str]:
         if record:
             meta, raw = record.split(b"\t", 1)
             modes[os.fsdecode(raw)] = meta.decode("ascii").split(" ")[0]
-    unstaged = {os.fsdecode(path) for path in git("diff", "--name-only", "--no-renames", "-z", "--", *literal).split(
+    unstaged = {os.fsdecode(path) for path in git("diff", "--name-only", "--no-renames", "--ignore-submodules=none",
+                                                  "-z", "--", *literal).split(
         b"\0") if path}
     found = {}
     for path in ordered:
@@ -2913,7 +2915,8 @@ def disagreeing(paths: set[str]) -> dict[str, str]:
 def staged_from(base: str) -> dict[str, str]:
     """The files the index changes from commit *base*, by their path from the repository's root, each with the mode
     the index gives it ("000000" for none): read from Git's records alone, no file read."""
-    tokens = git("diff", "--cached", "--raw", "-z", "--no-renames", base, "--").split(b"\0")
+    tokens = git("diff", "--cached", "--raw", "-z", "--no-renames", "--ignore-submodules=none", base,
+                 "--").split(b"\0")
     found = {}
     for meta, raw in zip(tokens[0::2], tokens[1::2]):
         if meta.startswith(b":"):
@@ -2933,7 +2936,7 @@ def filemode() -> bool:
 def changed_paths(base: str) -> list[str]:
     """The files that differ between commit *base* and the working tree, untracked ones included, by their path from
     the repository's root: what a pull request from *base* changes (see staged_paths for the index)."""
-    found = (git("diff", "--name-only", "--no-renames", "-z", base, "--")
+    found = (git("diff", "--name-only", "--no-renames", "--ignore-submodules=none", "-z", base, "--")
              + git("ls-files", "--others", "--exclude-standard", "-z"))
     # Named as the file system names them, whatever their bytes.
     return sorted({os.fsdecode(path) for path in found.split(b"\0") if path})
@@ -3494,7 +3497,8 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
             expected = (mine.read_bytes(), modes.get(path) != "100755") if mine.is_file() else None
             mode, name = staged.get(path, ("100644", None))
             # Executable as Git reads it: from the working tree, or, with core.filemode off, from the index.
-            plain = (not theirs.stat().st_mode & 0o111 if modes_read else mode != "100755") if theirs.is_file() else None
+            plain = ((not theirs.stat().st_mode & stat.S_IXUSR if modes_read else mode != "100755")
+                     if theirs.is_file() else None)
             actual = None if linked or not theirs.is_file() else (theirs.read_bytes(), plain)
             # Anything but a file, in the working tree or the index: a folder, a submodule, a link.
             other = (os.path.lexists(theirs) and not theirs.is_file()) or mode not in ("100644", "100755")
@@ -3571,9 +3575,11 @@ def run_scoped(argv: list[str]) -> int:
     if linked or unsettled:
         errors = [f"{path} is a link: the sync reads and writes through none; put what it links to in its place"
                   for path in linked] + [f"{path}: {what}" for path, what in unsettled.items()]
-        # The wiki changes from Git's records alone: the working tree's, and what the index changes from the base.
+        # The wiki changes from Git's records alone: the working tree's; what the index changes from the base and
+        # was staged by hand, changed from HEAD; and any link or submodule the index changes from the base.
         try:
-            staged_graph = [path for path in staged_from(base) if graph_file(path)]
+            staged_graph = [path for path, mode in staged_from(base).items() if graph_file(path) and (
+                path in restaged or mode not in ("100644", "100755", "000000"))]
         except GitError as error:
             print(f"error: {error}", file=sys.stderr)
             return 2
