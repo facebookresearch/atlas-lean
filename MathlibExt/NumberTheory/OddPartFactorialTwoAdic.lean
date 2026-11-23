@@ -13,6 +13,7 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Data.Nat.Choose.Factorization
+import Mathlib.Data.Nat.Log
 import Mathlib.Tactic.NormNum.NatFactorial
 import Mathlib.Tactic.NormNum.NatLog
 import Mathlib.Tactic.NormNum.Prime
@@ -21,8 +22,9 @@ import Mathlib.Tactic.Ring
 /-!
 # The odd part of dyadic factorials
 
-This file collects the definitions for Davis's study of the odd part of `(2^e)!` and proves
-congruences for odd double factorials and their normalized quotients.
+This file collects the definitions for Davis's study of the odd part of `(2^e)!`. It proves the
+odd-part bijection on the upper dyadic half and congruences for odd double factorials and their
+normalized quotients.
 -/
 
 @[expose] public section
@@ -239,6 +241,49 @@ Sequences 29 (2026), Article 26.3.1, Definition of S_e.
 public theorem mem_oddSet (e i : ℕ) :
     i ∈ oddBelowTwoPow e ↔ 1 ≤ i ∧ i < 2 ^ e ∧ Odd i := by
   simp [oddBelowTwoPow, and_assoc]
+
+/--
+**Odd parts biject the upper dyadic half onto the odd numbers below a power of two.**
+For every natural number $e \ge 1$, the map sending each natural number to its odd part restricts
+to a bijection from $I_e = \{i \in \mathbb{N} : 2^{e-1} < i \le 2^e\}$ onto the set $S_e$ of odd
+natural numbers $i$ with $1 \le i < 2^e$.
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Lemma 5.
+-/
+public theorem oddPart_bijOn_upperHalf_oddSet (e : ℕ) (he : 1 ≤ e) :
+    Set.BijOn oddPart (↑(dyadicUpperHalf e) : Set ℕ) (↑(oddBelowTwoPow e) : Set ℕ) := by
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt he)
+  -- Scale each odd number by the largest power of two that fits below the upper bound.
+  let k (u : ℕ) := Nat.log 2 (2 ^ (d + 1) / u)
+  have scale_mem {u t : ℕ} (hu : 0 < u) (hle : u ≤ 2 ^ (d + 1)) :
+      2 ^ t * u ∈ dyadicUpperHalf (d + 1) ↔ k u = t := by
+    dsimp only [k]
+    rw [mem_dyadicUpperHalf, Nat.log_eq_iff (.inr ⟨Nat.one_lt_two, (Nat.div_pos hle hu).ne'⟩),
+      Nat.le_div_iff_mul_le hu, Nat.div_lt_iff_lt_mul hu, Nat.succ_sub_one, pow_succ, pow_succ,
+      mul_right_comm (2 ^ t) 2 u]
+    omega
+  have maps : Set.MapsTo oddPart (↑(dyadicUpperHalf (d + 1))) (↑(oddBelowTwoPow (d + 1))) := by
+    intro n hn
+    obtain ⟨hlo, hhi⟩ := (mem_dyadicUpperHalf _ _).mp hn
+    have hn0 : n ≠ 0 := ((Nat.zero_le _).trans_lt hlo).ne'
+    have hodd : Odd (oddPart n) := (Nat.coprime_ordCompl Nat.prime_two hn0).odd_of_left
+    refine (mem_oddSet _ _).mpr ⟨Nat.ordCompl_pos 2 hn0, ?_, hodd⟩
+    have hle : oddPart n ≤ 2 ^ (d + 1) := (Nat.ordCompl_le n 2).trans hhi
+    exact hle.lt_of_ne fun h ↦ hodd.not_two_dvd_nat (h.symm ▸ dvd_pow_self 2 d.succ_ne_zero)
+  refine Set.InvOn.bijOn (f' := fun u ↦ 2 ^ k u * u) ⟨?_, ?_⟩ maps ?_
+  · intro n hn
+    obtain ⟨hu, hlt, _⟩ := (mem_oddSet _ _).mp (maps hn)
+    have hfac : 2 ^ n.factorization 2 * oddPart n = n := Nat.ordProj_mul_ordCompl_eq_self n 2
+    have hk := (scale_mem (t := n.factorization 2) hu hlt.le).mp (by rwa [hfac])
+    change 2 ^ k (oddPart n) * oddPart n = n
+    rwa [hk]
+  · intro u hu
+    exact Nat.ordCompl_pow_mul_of_not_dvd (k u) Nat.prime_two
+      ((mem_oddSet _ _).mp hu).2.2.not_two_dvd_nat
+  · intro u hu
+    obtain ⟨hpos, hlt, _⟩ := (mem_oddSet _ _).mp hu
+    exact (scale_mem hpos hlt.le).mpr rfl
 
 /--
 **Integer multiset of a finite set of naturals.** For a finite set $s$ of natural numbers, its
