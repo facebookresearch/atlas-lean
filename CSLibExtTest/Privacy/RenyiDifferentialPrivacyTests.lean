@@ -62,7 +62,8 @@ theorem test_momentReal_pure_uniform : renyiMomentReal P1 Q1 2 = 2 := by
   norm_num [Real.rpow_two, Real.rpow_one]
 
 theorem test_moment_pure_uniform : renyiMoment P1 Q1 2 = 2 := by
-  rw [renyiMoment_of_support test_support, test_momentReal_pure_uniform,
+  rw [renyiMoment_of_support test_support (by norm_num : (1 : ℝ) < 2),
+    test_momentReal_pure_uniform,
     show ((2 : ℝ) : EReal) = 2 from rfl]
 
 theorem test_div_pure_uniform : renyiDiv P1 Q1 2 = (Real.log 2 : EReal) := by
@@ -109,6 +110,14 @@ theorem test_div_order_half_top : renyiDiv P1 Q1 (1/2 : ℝ) = ⊤ :=
 
 theorem test_moment_off_support_top : renyiMoment P1 Q0 2 = ⊤ :=
   renyiMoment_of_not_support test_not_support_off
+
+/-- Regression test: at order 1 the moment is infinite. -/
+theorem test_moment_order_one_top : renyiMoment P1 Q1 1 = ⊤ :=
+  renyiMoment_of_le_one (by norm_num)
+
+/-- Regression test: below order 1 the moment is infinite. -/
+theorem test_moment_order_half_top : renyiMoment P1 Q1 (1/2 : ℝ) = ⊤ :=
+  renyiMoment_of_le_one (by norm_num)
 
 theorem test_moment_prod :
     renyiMoment (InformationTheory.prodJoint P1 P1)

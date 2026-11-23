@@ -46,9 +46,9 @@ def Support {Ω : Type*} (P Q : PMF Ω) : Prop :=
   ∀ w, P w ≠ 0 → Q w ≠ 0
 
 /-- Rényi moment of order `α` between finite distributions `P` and `Q`:
-`⊤` off support, the real formula otherwise. -/
+`⊤` off support or at `α ≤ 1`, the real formula otherwise. -/
 noncomputable def renyiMoment {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : EReal :=
-  if Support P Q then ↑(renyiMomentReal P Q α) else ⊤
+  if Support P Q ∧ 1 < α then ↑(renyiMomentReal P Q α) else ⊤
 
 /-- Real-valued Rényi divergence formula of order `α`, valid under `Support`. -/
 noncomputable def renyiDivReal {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : ℝ :=
@@ -59,17 +59,24 @@ formula otherwise. -/
 noncomputable def renyiDiv {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : EReal :=
   if Support P Q ∧ 1 < α then ↑(renyiDivReal P Q α) else ⊤
 
-/-- On support, `renyiMoment` is the real formula, coerced. -/
+/-- On support and above order 1, `renyiMoment` is the real formula, coerced. -/
 theorem renyiMoment_of_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
-    (hs : Support P Q) : renyiMoment P Q α = ↑(renyiMomentReal P Q α) := by
+    (hs : Support P Q) (hα : 1 < α) :
+    renyiMoment P Q α = ↑(renyiMomentReal P Q α) := by
   unfold renyiMoment
-  exact ite_eq_left hs
+  exact ite_eq_left ⟨hs, hα⟩
 
 /-- Off support, `renyiMoment` is infinite. -/
 theorem renyiMoment_of_not_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
     (hs : ¬ Support P Q) : renyiMoment P Q α = ⊤ := by
   unfold renyiMoment
-  exact ite_eq_right hs
+  exact ite_eq_right (fun h => hs h.1)
+
+/-- At order `α ≤ 1`, `renyiMoment` is infinite. -/
+theorem renyiMoment_of_le_one {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
+    (hα : α ≤ 1) : renyiMoment P Q α = ⊤ := by
+  unfold renyiMoment
+  exact ite_eq_right (fun h => not_lt_of_ge hα h.2)
 
 /-- On support and above order 1, `renyiDiv` is the real formula, coerced. -/
 theorem renyiDiv_of_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
@@ -170,7 +177,7 @@ private theorem renyiMomentReal_self {Ω : Type*} [Fintype Ω] (P : PMF Ω) {α 
 
 theorem renyiMoment_self {Ω : Type*} [Fintype Ω] (P : PMF Ω) {α : ℝ}
     (hα : 1 < α) : renyiMoment P P α = 1 := by
-  rw [renyiMoment_of_support (fun w h => h), renyiMomentReal_self P hα,
+  rw [renyiMoment_of_support (fun w h => h) hα, renyiMomentReal_self P hα,
     EReal.coe_one]
 
 private theorem renyiDivReal_self {Ω : Type*} [Fintype Ω] (P : PMF Ω) {α : ℝ}
@@ -217,7 +224,7 @@ private theorem one_le_renyiMomentReal {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) 
 
 theorem one_le_renyiMoment {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
     (hα : 1 < α) (hs : Support P Q) : 1 ≤ renyiMoment P Q α := by
-  rw [renyiMoment_of_support hs, ← EReal.coe_one, EReal.coe_le_coe_iff]
+  rw [renyiMoment_of_support hs hα, ← EReal.coe_one, EReal.coe_le_coe_iff]
   exact one_le_renyiMomentReal P Q hα hs
 
 private theorem renyiDivReal_nonneg {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
@@ -379,8 +386,8 @@ theorem renyiMoment_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
     (P Q : PMF Ω) (k : Ω → PMF Ω₂) {α : ℝ} (hα : 1 < α)
     (hs : Support P Q) :
     renyiMoment (P.bind k) (Q.bind k) α ≤ renyiMoment P Q α := by
-  rw [renyiMoment_of_support (support_bind k hs), renyiMoment_of_support hs,
-    EReal.coe_le_coe_iff]
+  rw [renyiMoment_of_support (support_bind k hs) hα,
+    renyiMoment_of_support hs hα, EReal.coe_le_coe_iff]
   exact renyiMomentReal_bind_le P Q k hα hs
 
 private theorem renyiDivReal_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
@@ -519,24 +526,28 @@ theorem renyiMoment_prodJoint {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω�
     renyiMoment (InformationTheory.prodJoint P1 P2)
         (InformationTheory.prodJoint Q1 Q2) α
       = renyiMoment P1 Q1 α * renyiMoment P2 Q2 α := by
-  by_cases hs1 : Support P1 Q1
-  · by_cases hs2 : Support P2 Q2
-    · rw [renyiMoment_of_support (support_prodJoint _ _ _ _ hs1 hs2),
-        renyiMoment_of_support hs1, renyiMoment_of_support hs2,
-        ← EReal.coe_mul, renyiMomentReal_prodJoint]
-    · rw [renyiMoment_of_not_support
-          (not_support_prodJoint_right P1 Q1 P2 Q2 hs2),
-        renyiMoment_of_support hs1, renyiMoment_of_not_support hs2,
-        EReal.coe_mul_top_of_pos (renyiMomentReal_pos _ _ hs1)]
-  · by_cases hs2 : Support P2 Q2
-    · rw [renyiMoment_of_not_support
-          (not_support_prodJoint_left P1 Q1 P2 Q2 hs1),
-        renyiMoment_of_not_support hs1, renyiMoment_of_support hs2,
-        EReal.top_mul_coe_of_pos (renyiMomentReal_pos _ _ hs2)]
-    · rw [renyiMoment_of_not_support
-          (not_support_prodJoint_left P1 Q1 P2 Q2 hs1),
-        renyiMoment_of_not_support hs1, renyiMoment_of_not_support hs2,
-        EReal.top_mul_top]
+  by_cases hα : 1 < α
+  · by_cases hs1 : Support P1 Q1
+    · by_cases hs2 : Support P2 Q2
+      · rw [renyiMoment_of_support (support_prodJoint _ _ _ _ hs1 hs2) hα,
+          renyiMoment_of_support hs1 hα, renyiMoment_of_support hs2 hα,
+          ← EReal.coe_mul, renyiMomentReal_prodJoint]
+      · rw [renyiMoment_of_not_support
+            (not_support_prodJoint_right P1 Q1 P2 Q2 hs2),
+          renyiMoment_of_support hs1 hα, renyiMoment_of_not_support hs2,
+          EReal.coe_mul_top_of_pos (renyiMomentReal_pos _ _ hs1)]
+    · by_cases hs2 : Support P2 Q2
+      · rw [renyiMoment_of_not_support
+            (not_support_prodJoint_left P1 Q1 P2 Q2 hs1),
+          renyiMoment_of_not_support hs1, renyiMoment_of_support hs2 hα,
+          EReal.top_mul_coe_of_pos (renyiMomentReal_pos _ _ hs2)]
+      · rw [renyiMoment_of_not_support
+            (not_support_prodJoint_left P1 Q1 P2 Q2 hs1),
+          renyiMoment_of_not_support hs1, renyiMoment_of_not_support hs2,
+          EReal.top_mul_top]
+  · have hle : α ≤ 1 := le_of_not_gt hα
+    rw [renyiMoment_of_le_one hle, renyiMoment_of_le_one hle,
+      renyiMoment_of_le_one hle, EReal.top_mul_top]
 
 private theorem renyiDivReal_prodJoint {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) {α : ℝ} (hα : 1 < α)
