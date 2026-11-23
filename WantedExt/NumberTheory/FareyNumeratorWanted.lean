@@ -45,6 +45,7 @@ public import Mathlib.Data.Rat.Floor
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.Farey
+public import MathlibExt.NumberTheory.FareyNumerator
 
 set_option autoImplicit false
 
@@ -57,31 +58,6 @@ is the number of integers $b$ with $h \le b \le n$ and $\gcd(h, b) = 1$; for $h 
 the number of fractions with numerator $h$ in the Farey sequence of order $n$. -/
 def fareyNumeratorCount (n h : ℕ) : ℕ :=
   ((Finset.Icc h n).filter (fun b => Nat.Coprime h b)).card
-
-/-- **Farey fractions with equal numerators between consecutive unit fractions.** Let $k$, $n$
-and $h$ be natural numbers with $k > 1$, $h \ge 1$ and $n \ge kh - 1$, and let $\varphi$ be Euler's
-totient function. The number of integers $b$ with $1 \le b \le n$, $\gcd(h, b) = 1$ and
-$1/k < h/b \le 1/(k-1)$ is $\varphi(h)$. If moreover $h > 2$, then twice the number of integers
-$b$ with $1 \le b \le n$, $\gcd(h, b) = 1$ and $1/k < h/b < 2/(2k-1)$ is $\varphi(h)$.
-
-Equivalently, the Farey sequence of order $n$ has exactly $\varphi(h)$ fractions with numerator
-$h$ in the interval $(1/k, 1/(k-1)]$, and for $h > 2$ exactly $\varphi(h)/2$ in the interval
-$(1/k, 2/(2k-1))$.
-
-Source: Rogelio Tomás García, "Farey Fractions with
-Equal Numerators and the Rank of Unit Fractions",
-Lemma 1. -/
-theorem_wanted farey_between_count (k n h : ℕ)
-    (hk : 1 < k) (hh : 1 ≤ h) (hn : k * h - 1 ≤ n) :
-    ((Finset.Icc 1 n).filter (fun b => Nat.Coprime h b ∧
-        (1 : ℚ) / k < (h : ℚ) / b ∧
-          (h : ℚ) / b ≤ 1 / ((k : ℚ) - 1))).card =
-        Nat.totient h ∧
-      (2 < h →
-        2 * ((Finset.Icc 1 n).filter (fun b =>
-            Nat.Coprime h b ∧ (1 : ℚ) / k < (h : ℚ) / b ∧
-              (h : ℚ) / b < 2 / (2 * (k : ℚ) - 1))).card =
-          Nat.totient h)
 
 /-- **Formula for the number of Farey fractions with a given numerator.** Let $h$ and $n$ be
 natural numbers with $0 < h < n$, and let $N_n(h)$ be the number of integers $b$ with
