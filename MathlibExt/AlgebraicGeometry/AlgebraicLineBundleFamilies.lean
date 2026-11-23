@@ -21,10 +21,11 @@ public import MathlibExt.AlgebraicGeometry.SchemeModulesTensor
 /-!
 # Algebraic equivalence and line-bundle families
 
-The line bundles below are actual scheme module sheaves. Algebraic
-triviality is witnessed by a line-bundle family over a connected smooth
-curve joining the trivial bundle to the given bundle. The relative
-condition tests every algebraically closed field-valued fiber. Products,
+The line bundles below are actual scheme module sheaves. Over an
+algebraically closed field, algebraic triviality is witnessed by a
+line-bundle family over a connected smooth curve joining the trivial bundle
+to the given bundle. The relative condition tests every algebraically closed
+field-valued fiber. Products,
 fiber inclusions, and pullbacks are Mathlib constructions. The sheaf tensor
 product and tensor powers are those of `SchemeModulesTensor`, re-exported
 here.
@@ -50,8 +51,12 @@ def pointSection {k : Type u} [Field k]
     A ⟶ prod A C :=
   prod.lift (𝟙 A) (toUnit A ≫ p)
 
-/-- Algebraic triviality witnessed by an actual connected smooth curve family. -/
-def IsAlgebraicallyTrivial {k : Type u} [Field k]
+/-- Algebraic triviality over an algebraically closed field, witnessed by an actual
+line-bundle family over a connected smooth curve joining the trivial bundle to `L`
+at two rational points. (Over a field that is not algebraically closed, algebraic
+equivalence allows geometric endpoints, so this predicate is only stated over
+algebraically closed fields; families test it on geometric fibers.) -/
+def IsAlgebraicallyTrivial {k : Type u} [Field k] [IsAlgClosed k]
     (A : Over (Spec (.of k))) (L : A.left.Modules) : Prop :=
   ∃ (C : Over (Spec (.of k))) (_ : IsSeparated C.hom)
     (_ : LocallyOfFiniteType C.hom) (_ : QuasiCompact C.hom)

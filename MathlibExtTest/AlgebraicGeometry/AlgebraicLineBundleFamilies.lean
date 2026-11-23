@@ -51,3 +51,17 @@ example (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSectio
     Nonempty ((Scheme.Modules.pullback (pointSection C J.J η[J.J]).left).obj J.P ≅
       structureModule C.left) :=
   J.identity
+
+-- Normalization along the chosen point of the curve: a family pulled back from the
+-- parameter scheme is normalized exactly when it comes from the trivial bundle.
+example (C T : Over (Spec (.of k))) (p : 𝟙_ (Over (Spec (.of k))) ⟶ C) (Q : T.left.Modules) :
+    IsNormalized C T p ((Scheme.Modules.pullback (prod.snd : prod C T ⟶ T).left).obj Q) ↔
+      Nonempty (Q ≅ structureModule T.left) := by
+  have h : (sectionAt C T p).left ≫ (prod.snd : prod C T ⟶ T).left = 𝟙 T.left := by
+    rw [← Over.comp_left, sectionAt, prod.lift_snd]
+    rfl
+  let e : (Scheme.Modules.pullback (sectionAt C T p).left).obj
+      ((Scheme.Modules.pullback (prod.snd : prod C T ⟶ T).left).obj Q) ≅ Q :=
+    (Scheme.Modules.pullbackComp _ _).app Q ≪≫ (Scheme.Modules.pullbackCongr h).app Q ≪≫
+      (Scheme.Modules.pullbackId _).app Q
+  exact ⟨fun ⟨i⟩ ↦ ⟨e.symm ≪≫ i⟩, fun ⟨i⟩ ↦ ⟨e ≪≫ i⟩⟩
