@@ -120,7 +120,8 @@ def InFiltration (N : RightModule k M O)
 variable [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
   [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
   [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
-  [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
+  [∀ U : Opens M,
+    ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
 
 /-- A good filtration of a right differential module by coherent
 `O`-submodules. -/

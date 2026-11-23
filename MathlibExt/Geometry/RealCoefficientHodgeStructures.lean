@@ -107,7 +107,8 @@ structure PurePolarization (C : Conjugation A V) (w : ℤ) (H : PureHodgeStructu
       0 < Complex.I ^ (p - q) * (-1 : ℂ) ^ (w * (w - 1) / 2) * complexForm v (C.map v)
 
 def PurePolarization.tateForm {C : Conjugation A V} {w : ℤ} {H : PureHodgeStructure A V C w}
-    (P : PurePolarization A V C w H) : complexCarrier A V →ₗ[ℂ] complexCarrier A V →ₗ[ℂ] ℂ :=
+    (P : PurePolarization A V C w H) :
+    complexCarrier A V →ₗ[ℂ] complexCarrier A V →ₗ[ℂ] ℂ :=
   ((2 : ℂ) * (Real.pi : ℂ) * Complex.I) ^ (-w) • P.complexForm
 
 theorem PurePolarization.tateForm_tensor {C : Conjugation A V} {w : ℤ}
