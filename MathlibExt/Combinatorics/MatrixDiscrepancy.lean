@@ -34,26 +34,36 @@ noncomputable section
 
 variable {m n : ℕ}
 
-/-- Both real signs, enumerated by a finite two-element type. -/
+/-- **Signs indexed by two elements.** For $s \in \{0, 1\}$, the associated real sign is $-1$
+if $s = 0$ and $1$ if $s = 1$. -/
 def signValue (s : Fin 2) : ℝ := if s = 0 then -1 else 1
 
 @[simp] theorem abs_signValue (s : Fin 2) : |signValue s| = 1 := by
   unfold signValue
   split_ifs <;> norm_num
 
-/-- The finite sign infimum for a rectangular real matrix. -/
+/-- **Discrepancy of a real matrix.** For a real $m \times n$ matrix $A$, the discrepancy of $A$
+is the infimum, over all sign vectors $x \in \{-1, 1\}^n$, of the maximum norm
+$\|Ax\|_\infty = \max_i |(Ax)_i|$ (which is $0$ when $m = 0$), taken in $[0, \infty]$. -/
 def discrepancy (A : Matrix (Fin m) (Fin n) ℝ) : ENNReal :=
   ⨅ x : Fin n → Fin 2, ENNReal.ofReal ‖A.mulVec (fun j => signValue (x j))‖
 
-/-- Every column lies in the Euclidean unit ball. -/
+/-- **Matrices with columns in the unit ball.** A real $m \times n$ matrix $A$ is column
+admissible when every column of $A$ lies in the closed Euclidean unit ball, that is,
+$\sum_{i=1}^{m} A_{ij}^2 \le 1$ for every column index $j$. -/
 def ColumnAdmissible (A : Matrix (Fin m) (Fin n) ℝ) : Prop :=
   ∀ j, ∑ i, (A i j) ^ 2 ≤ 1
 
-/-- The supremum over all admitted real square matrices, with a value also at zero. -/
+/-- **Komlós constant in a fixed dimension.** For a natural number $n$, this is the supremum of
+the discrepancy of $A$ over all real $n \times n$ matrices $A$ whose columns all have Euclidean
+norm at most $1$, taken in $[0, \infty]$. The definition also applies to $n = 0$. -/
 def dimensionConstant (n : ℕ) : ENNReal :=
   ⨆ A : {A : Matrix (Fin n) (Fin n) ℝ // ColumnAdmissible A}, discrepancy A.1
 
-/-- The extended supremum over positive square dimensions. -/
+/-- **Komlós constant.** The Komlós constant is the supremum, over all integers $n \ge 1$, of the
+Komlós constant in dimension $n$, namely the supremum of the discrepancy of $A$ over all real
+$n \times n$ matrices $A$ whose columns all have Euclidean norm at most $1$. It is taken in
+$[0, \infty]$. -/
 def komlosConstant : ENNReal :=
   ⨆ n : {n : ℕ // 1 ≤ n}, dimensionConstant n.1
 
@@ -61,7 +71,9 @@ theorem discrepancy_le_signing (A : Matrix (Fin m) (Fin n) ℝ) (x : Fin n → F
     discrepancy A ≤ ENNReal.ofReal ‖A.mulVec (fun j => signValue (x j))‖ :=
   iInf_le _ x
 
-/-- The finite sign infimum is an attained minimum, including zero dimensions. -/
+/-- **The discrepancy is attained.** For every real $m \times n$ matrix $A$, including the cases
+$m = 0$ and $n = 0$, there is a sign vector $x \in \{-1, 1\}^n$ such that the discrepancy of $A$
+equals $\|Ax\|_\infty$. -/
 theorem discrepancy_attained (A : Matrix (Fin m) (Fin n) ℝ) :
     ∃ x : Fin n → Fin 2,
       discrepancy A = ENNReal.ofReal ‖A.mulVec (fun j => signValue (x j))‖ := by
@@ -214,7 +226,11 @@ theorem komlosConstant_lt_top_iff_eventual :
         _ ≤ ENNReal.ofReal (N : ℝ) := ENNReal.ofReal_le_ofReal (by exact_mod_cast hnN)
         _ ≤ ENNReal.ofReal (max c (N : ℝ)) := ENNReal.ofReal_le_ofReal (le_max_right _ _)
 
-/-- A uniform discrepancy bound for all finite real vector families. -/
+/-- **Uniform discrepancy bound for vectors in the unit ball.** The statement that there is a real
+constant $C > 0$ such that for all natural numbers $n$ and $d$ and all vectors
+$v_1, \dots, v_n \in \mathbb{R}^d$ of Euclidean norm at most $1$, writing $v_{ij}$ for the
+$j$-th coordinate of $v_i$, there are signs $\varepsilon_1, \dots, \varepsilon_n \in \{-1, 1\}$
+with $\left|\sum_{i=1}^{n} \varepsilon_i v_{ij}\right| \le C$ for every coordinate index $j$. -/
 def UniformRectangularBound : Prop :=
   ∃ C : ℝ, 0 < C ∧
     ∀ (n d : ℕ) (v : Fin n → Fin d → ℝ),

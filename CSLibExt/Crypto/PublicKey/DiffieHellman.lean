@@ -40,7 +40,10 @@ namespace Cslib.Crypto.PublicKey
 
 variable {G : Type*} [Group G] {q : ℕ}
 
-/-- Exponentiation by an exponent in `ZMod q`: `gpow g a = g ^ a.val`. -/
+/-- **Group exponentiation with modular exponents.** Let $G$ be a group, $q$ a natural number,
+$g \in G$ and $a \in \mathbb{Z}/q\mathbb{Z}$. Then $g^a$ is defined as $g^n$, where $n$ is the
+natural-number value of $a$: its representative in $\{0, \dots, q-1\}$ when $q > 0$, and $|a|$
+when $q = 0$ (in which case $\mathbb{Z}/q\mathbb{Z} = \mathbb{Z}$). -/
 def gpow (g : G) (a : ZMod q) : G := g ^ a.val
 
 @[simp]
@@ -58,11 +61,20 @@ theorem gpow_mul {g : G} (hg : g ^ q = 1) (a b : ZMod q) :
 theorem gpow_pow_eq_one {g : G} (hg : g ^ q = 1) (a : ZMod q) : gpow g a ^ q = 1 := by
   rw [gpow, ← pow_mul, mul_comm, pow_mul, hg, one_pow]
 
-/-- **Correctness of Diffie–Hellman key agreement**: `(g ^ b) ^ a = (g ^ a) ^ b`. -/
+/-- **Correctness of Diffie–Hellman key agreement.** Let $G$ be a group, $q$ a natural number and
+$g \in G$. For $x \in G$ and $c \in \mathbb{Z}/q\mathbb{Z}$ write $x^c$ for $x^n$, where $n$ is
+the natural-number value of $c$: its representative in $\{0, \dots, q-1\}$ when $q > 0$, and
+$|c|$ when $q = 0$ (in which case $\mathbb{Z}/q\mathbb{Z} = \mathbb{Z}$). Then
+$(g^b)^a = (g^a)^b$ for all $a, b \in \mathbb{Z}/q\mathbb{Z}$. -/
 theorem dh_agree (g : G) (a b : ZMod q) : gpow (gpow g b) a = gpow (gpow g a) b := by
   simp only [gpow, ← pow_mul, mul_comm]
 
-/-- The shared Diffie–Hellman key is `g ^ (a b)`. -/
+/-- **Value of the Diffie–Hellman shared key.** Let $G$ be a group, $q$ a natural number and
+$g \in G$ with $g^q = 1$. For $x \in G$ and $c \in \mathbb{Z}/q\mathbb{Z}$ write $x^c$ for $x^n$,
+where $n$ is the natural-number value of $c$: its representative in $\{0, \dots, q-1\}$ when
+$q > 0$, and $|c|$ when $q = 0$ (in which case $\mathbb{Z}/q\mathbb{Z} = \mathbb{Z}$). Then
+$(g^b)^a = g^{ab}$ for all $a, b \in \mathbb{Z}/q\mathbb{Z}$, where $ab$ is the product in
+$\mathbb{Z}/q\mathbb{Z}$. -/
 theorem dh_key_eq {g : G} (hg : g ^ q = 1) (a b : ZMod q) :
     gpow (gpow g b) a = gpow g (a * b) := by
   rw [dh_agree, gpow_mul hg]
@@ -71,8 +83,11 @@ section Generator
 
 variable [Fintype G] [NeZero q] {g : G}
 
-/-- If `g` generates `G` and `|G| = q`, then `gpow g` is a bijection `ZMod q ≃ G`; its inverse
-is the discrete logarithm to base `g`. This is Mathlib's `zmodMulEquivOfGenerator`. -/
+/-- **Exponentiation from a generator is a bijection.** Let $G$ be a finite group of order $q$,
+with $q \neq 0$, and let $g \in G$ generate $G$, that is, every element of $G$ is an integer
+power of $g$. Then $a \mapsto g^a$ is a bijection from $\mathbb{Z}/q\mathbb{Z}$ to $G$, where
+$g^a = g^n$ for the representative $n \in \{0, \dots, q-1\}$ of $a$. Its inverse is the
+discrete logarithm to base $g$. -/
 noncomputable def gpowEquiv (hgen : ∀ x : G, x ∈ Subgroup.zpowers g)
     (hcard : Fintype.card G = q) : ZMod q ≃ G :=
   Multiplicative.ofAdd.trans

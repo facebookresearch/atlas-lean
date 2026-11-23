@@ -39,22 +39,34 @@ the rows does not change the permanent); the dataset record's extra word "nonneg
 needed.
 -/
 
-/-- The polynomial `per(A + xJ) ∈ ℝ[x]`, `J` the all-ones matrix: the permanent of the matrix with
-entries `A i j + x`. -/
+/-- **The polynomial $\operatorname{per}(A + xJ)$.** For a real $n \times n$ matrix $A$, this is
+the polynomial $\operatorname{per}(A + xJ) \in \mathbb{R}[x]$, where $J$ is the $n \times n$
+all-ones matrix: the permanent of the $n \times n$ matrix of polynomials whose $(i, j)$ entry is
+$A_{ij} + x$. -/
 noncomputable def permanentAddXJ {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) : Polynomial ℝ :=
   (A.map Polynomial.C + Matrix.of fun _ _ => Polynomial.X).permanent
 
-/-- The Haglund–Ono–Wagner monotone column permanent conjecture (Stanley, Positivity Problems,
-Problem 24): if every column of the real `n × n` matrix `A` is weakly increasing, then
-`per(A + xJ)` has only real zeros. -/
+/-- **The Haglund–Ono–Wagner monotone column permanent conjecture.** This is the statement that
+for every $n \in \mathbb{N}$ and every real $n \times n$ matrix $A$ whose columns are weakly
+increasing ($A_{ij} \le A_{i'j}$ whenever $i \le i'$), every complex root of the polynomial
+$\operatorname{per}(A + xJ) \in \mathbb{R}[x]$ is real, where $J$ is the $n \times n$ all-ones
+matrix. -/
 def monotoneColumnPermanentConjecture : Prop :=
   ∀ (n : ℕ) (A : Matrix (Fin n) (Fin n) ℝ), (∀ i i' j, i ≤ i' → A i j ≤ A i' j) →
     ((permanentAddXJ A).map (algebraMap ℝ ℂ)).IsRealRooted
 
 /--
-Resolved true: Brändén, Haglund, Visontai and Wagner proved the monotone column permanent
-conjecture: for every real `n × n` matrix `A` with weakly monotone columns, `per(A + xJ)` has only
-real zeros (they prove the stronger statement that `per(z_j + a_ij)` is real stable). Source: R. P.
+**Brändén–Haglund–Visontai–Wagner theorem (monotone column permanent conjecture).** For every
+$n \in \mathbb{N}$ and every real $n \times n$ matrix $A$ whose columns are weakly increasing
+($A_{ij} \le A_{i'j}$ whenever $i \le i'$), every complex root of the polynomial
+$\operatorname{per}(A + xJ) \in \mathbb{R}[x]$ is real, where $J$ is the $n \times n$ all-ones
+matrix.
+
+Brändén, Haglund, Visontai and Wagner prove the stronger statement that the multivariate
+polynomial $\operatorname{per}(z_j + A_{ij})$, in one variable $z_j$ for each column $j$, is real
+stable.
+
+Source: R. P.
 Stanley, Positivity Problems and Conjectures in Algebraic Combinatorics (1999), Problem 24
 (Haglund–Ono–Wagner monotone column permanent conjecture); resolution: P. Brändén, J. Haglund, M.
 Visontai and D. G. Wagner, Proof of the monotone column permanent conjecture, in Notions of

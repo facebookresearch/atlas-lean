@@ -20,8 +20,7 @@ its first denominator is the odd greedy choice
 `MetaMathlibExt.IsOddGreedyChoice` (shared with the odd
 greedy expansion termination conjecture). Lemma 2's
 characterization was verified against this definition
-for `n, d < 60`, and Proposition 1 on thousands of
-random examples. Theorem 3 and Corollary 5 were checked
+for `n, d < 60`. Theorem 3 and Corollary 5 were checked
 by brute force against the odd greedy algorithm for
 reduced fractions with numerator at most 30 and
 denominator at most 1500.
@@ -35,6 +34,7 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.OddGreedyChoice
+public import MathlibExt.NumberTheory.OddGreedyExpansion
 
 set_option autoImplicit false
 
@@ -42,24 +42,10 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.OddGreedyExpansionWanted
 
-/-- **Proposition 1**: if a rational number is the sum
-of an even number of unit fractions with odd
-denominators, then every fraction representing it has
-even numerator.
-
-Source: Joel Louwsma and Joseph Martino, "Rational
-Numbers with Two-Term Odd Greedy Expansion",
-Proposition 1. -/
-theorem_wanted even_num_of_even_sum_unit_fractions
-    (m : ℕ) (hm : Even m) (d : Fin m → ℕ)
-    (hd : ∀ i, Odd (d i)) (a b : ℤ) (hb : b ≠ 0)
-    (h : (a : ℚ) / (b : ℚ) = ∑ i, (1 : ℚ) / (d i : ℚ)) :
-    Even a
-
-/-- **Lemma 2**: for positive integers `n, d` and odd
-`x₁`, `x₁` is the first denominator of the odd greedy
-expansion of `n / d` if and only if
-`0 ≤ n * x₁ - d < 2 * n`.
+/-- **Odd greedy choice at a fraction.** Let $n$ and $d$ be positive natural numbers and let $x_1$
+be an odd natural number. Then $x_1$ is the odd greedy choice at $n/d$ (the first denominator of
+the odd greedy expansion of $n/d$) if and only if $d \le n x_1$ and $n x_1 < d + 2n$, that is,
+$0 \le n x_1 - d < 2n$ in the integers.
 
 Source: Joel Louwsma and Joseph Martino, "Rational
 Numbers with Two-Term Odd Greedy Expansion", Lemma 2. -/
