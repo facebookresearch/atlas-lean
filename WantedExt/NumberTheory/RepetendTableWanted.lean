@@ -20,6 +20,7 @@ public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
+public import MathlibExt.NumberTheory.RepetendTable.InversePairs
 
 /-!
 # Repetend tables
@@ -33,6 +34,9 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 
 `MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
+
+`MetaMathlibExt.even_card_small_bases_orderOf` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InversePairs`.
 -/
 
 namespace MetaMathlibExt
@@ -170,15 +174,6 @@ public theorem_wanted long_division_remainders_erase_one_eq_small_bases (n L b m
     (hm : m = 1 ∨ (m ∈ Finset.Icc 2 (n - 1) ∧ orderOf (m : ZMod n) = L)) :
     ((Finset.range L).image fun j => m * b ^ j % n).erase 1 =
       (Finset.Icc 2 (n - 1)).filter fun a : ℕ => orderOf (a : ZMod n) = L
-
-/-- **Small bases of order greater than two come in pairs.** For every natural number $n$ and
-every $L > 2$, the number of integers $b$ with $1 \le b < n$ and $\gcd(b, n) = 1$ whose
-multiplicative order modulo $n$ is $L$ is even.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 3 (`integers-2025-A26-lem-2`). -/
-public theorem_wanted even_card_small_bases_orderOf (n L : ℕ) (hL : 2 < L) :
-    Even ((Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L).card
 
 /-- **Repetend digits are symmetric under inverse indices.** Let $n, b, x, j, j'$ be natural
 numbers and $L \ge 1$, and suppose $b$ has multiplicative order $L$ modulo $n$. For $y, c \ge 0$

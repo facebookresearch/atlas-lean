@@ -159,17 +159,6 @@ theorem_wanted powerSum_odd_eq_sum (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
         (arrayR k m : ℚ) * (1 / (m : ℚ)) *
           (Nat.choose (n + m) (2 * m) : ℚ)
 
-/-- **Sum of $2i \binom{2i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
-$$\sum_{i=1}^{n} 2i \binom{2i + k - 1}{2k - 1} = k \binom{2n + k + 1}{2k + 1}.$$
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Lemma 4. -/
-theorem_wanted sum_two_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) :
-    (∑ i ∈ Finset.Icc 1 n,
-      (2 * i) * Nat.choose (2 * i + k - 1) (2 * k - 1)) =
-      k * Nat.choose (2 * n + k + 1) (2 * k + 1)
-
 /-- **Inversion formula for the arrays $u(k, m)$ and $U(k, m)$ (Butzer et al.).** For natural
 numbers $k$ and $m$, let $u(k, m)$ be the first-kind Jacobi–Stirling number $J(k, m; 0)$, the
 coefficient of $x^m$ in $\prod_{i=0}^{k-1} (x - i^2)$, and let

@@ -17,15 +17,47 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# A weighted binomial sum
+# Weighted binomial sums
 
-The closed form in Cereceda's Lemma 7 telescopes by Pascal's identity and the
+The sums in Cereceda's Lemmas 4 and 7 telescope by Pascal's identity and the
 absorption identity for binomial coefficients.
 -/
 
 public section
 
 namespace MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
+
+/-- **Sum of $2i \binom{2i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
+$$\sum_{i=1}^{n} 2i \binom{2i + k - 1}{2k - 1} = k \binom{2n + k + 1}{2k + 1}.$$
+
+Source: José L. Cereceda, "Sums of Powers of Integers and the
+Sequence A304330", Lemma 4. -/
+theorem sum_two_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
+    (hn : 1 ≤ n) :
+    (∑ i ∈ Finset.Icc 1 n,
+      (2 * i) * Nat.choose (2 * i + k - 1) (2 * k - 1)) =
+      k * Nat.choose (2 * n + k + 1) (2 * k + 1) := by
+  let F (i : ℕ) := k * (2 * i + k + 1).choose (2 * k + 1)
+  have step (i : ℕ) :
+      F i + 2 * (i + 1) * (2 * (i + 1) + k - 1).choose (2 * k - 1) = F (i + 1) := by
+    dsimp only [F]
+    set a := 2 * i + k + 1 with ha
+    have htop : 2 * (i + 1) + k = a + 1 := by omega
+    have hbot : 2 * k - 1 + 1 = 2 * k := by omega
+    have pascal := Nat.choose_succ_succ' a (2 * k - 1)
+    have absorb := Nat.add_one_mul_choose_eq a (2 * k - 1)
+    rw [hbot] at pascal absorb
+    -- Expand the binomial two rows above row a, then use absorption on row a.
+    rw [htop, Nat.add_sub_cancel, Nat.choose_succ_succ' (a + 1) (2 * k),
+      Nat.choose_succ_succ' a (2 * k), pascal]
+    rw [pascal, ← htop] at absorb
+    grind only
+  induction n, hn using Nat.le_induction with
+  | base =>
+    simpa [F, Nat.choose_eq_zero_of_lt (show k + 1 < 2 * k + 1 by omega)] using step 0
+  | succ n hn ih =>
+    rw [Finset.sum_Icc_succ_top (by omega), ih]
+    exact step n
 
 /-- **Sum of $i \binom{i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
 $$\sum_{i=1}^{n} i \binom{i + k - 1}{2k - 1} = \frac{k(2n + 1)}{2k + 1} \binom{n + k}{2k}.$$
