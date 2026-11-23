@@ -1895,6 +1895,22 @@ class Declarations(Vault):
         self.assertEqual(sorted(report["added"]), ["Ext.gone -> Algebra/groups/gone-2.md",
                                                    "Ext.orders -> Algebra/groups/orders-2.md"])
 
+    def test_a_new_page_takes_no_address_a_retired_statement_had(self) -> None:
+        # An expansion retired the statement page Algebra/groups/gone, whose address keeps leading to what replaced it
+        # (docs/cards.md#move-ledger): a new declaration's page takes another name.
+        self.card_beside_a_folder()
+        (wiki.ROOT / "scripts").mkdir(exist_ok=True)
+        (wiki.ROOT / "scripts" / "card-moves.jsonl").write_text(json.dumps(
+            {"statement": "af_000000000000000000000001", "page": "Algebra/groups/gone",
+             "replaced_by": "af_000000000000000000000002"}) + "\n")
+        self.assertEqual(sync.retired_addresses(), {"Algebra/groups/gone"})
+        report = sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."),
+             declaration("Ext.gone", "gone", "Gone lemma", "Another statement.")],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.gone": None}))
+        self.assertEqual(report["added"], ["Ext.gone -> Algebra/groups/gone-2.md"])
+        self.assertFalse((wiki.ROADMAP / "Algebra/groups/gone.md").exists())
+
     def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
         self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
         claim = self.page("Algebra/claim.md", "# Claim\n\nThe source's statement.\n")

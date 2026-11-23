@@ -130,7 +130,8 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   status, so a folder still to expand does not look finished.
 - **An expansion replaces the node** with pages beside it that together cover
   its mathematics at a sensible granularity, deletes the node's page and
-  annotation (its `id` is never reused), and repoints every link to it. A new
+  annotation (its `id` is never reused) and records its retirement in the move
+  ledger, and repoints every link to it. A new
   page that is still high-level is a new marked node. Follow
   [Expanding a node](#expanding-a-node), which says when a new page may
   become a wanted statement.
@@ -175,7 +176,9 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   edge is derived from the statements, with witnesses, which keeps the card
   map honest about what uses what.
 - **A move that retires an address goes into `scripts/card-moves.jsonl`,**
-  and a page gets an `id` before it moves. `scripts/cards.py check` must pass.
+  and a page gets an `id` before it moves; so does the retirement of a card or
+  of a statement page, with what replaces it. `scripts/cards.py check` must
+  pass.
 - **A planned page may record its counterparts,** the Mathlib or ATLAS
   declarations that state its result or a close form, with how each compares
   ([cards.md](cards.md#counterparts)). Each is verified clause by clause against
@@ -251,10 +254,14 @@ record it in `scripts/card-moves.jsonl` instead ([Cards](#cards)).
 
 1. Add the new pages beside the node and list them on the folder page. Move
    the node's prose and sources to the folder page or the new pages.
-2. Delete the node's page and annotation. Repoint every link to it, under
-   `## Depends on`, `## Proof depends on` or `## Informally uses`, to the new
-   pages that link actually needs. `autoform check` fails on a link left under
-   the first two but only warns under `## Informally uses`.
+2. Delete the node's page and annotation, and append the retirement row to
+   `scripts/card-moves.jsonl`, `{"statement": "<its id>", "page": "<its
+   path>", "replaced_by": "<the id of the new page or folder page a reader
+   should go to>"}` ([cards.md](cards.md#move-ledger)), so that its address
+   keeps leading somewhere and its id is never reused. Repoint every link to
+   it, under `## Depends on`, `## Proof depends on` or `## Informally uses`, to
+   the new pages that link actually needs. `autoform check` fails on a link
+   left under the first two but only warns under `## Informally uses`.
 3. Give each new page the node's prerequisites it still needs; order among new
    planned pages goes in their own `## Depends on`.
 4. Make a low-level page a `theorem_wanted` or `def_wanted` statement, with a

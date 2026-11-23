@@ -2275,8 +2275,8 @@ def kept_layout(folder: Path, created: dict[Path, str], flat: bool = False) -> t
 
 def retired_addresses() -> set[str]:
     """Every address the card move ledger (scripts/card-moves.jsonl, docs/cards.md) records as left: a moved page's
-    or folder's old path and a retired card's folder. Each leads to its article through the ledger, so no new page
-    takes it."""
+    or folder's old path, a retired card's folder and a retired statement's page. Each leads to its article, or to
+    what replaced it, through the ledger, so no new page takes it."""
     path = wiki.ROOT / "scripts" / "card-moves.jsonl"
     if not path.is_file():
         return set()
