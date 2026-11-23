@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.RingTheory.Binomial
+public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
 public import WantedExt.NumberTheory.HyperLeonardoWanted
@@ -413,20 +413,6 @@ public theorem_wanted sum_pow_eq_sum_stirlingSecond (n m : ℕ) :
       ∑ k ∈ range (m + 1),
         (-1) ^ (m - k) * (k.factorial : ℤ) * ((n + k).choose (k + 1) : ℤ) *
           (Nat.stirlingSecond m k : ℤ)
-
-/-- **Alternating binomial expansion of a shifted binomial coefficient.** For all natural numbers
-$m$, $n$ and $k$,
-$$\binom{n+m-k-1}{m} = \sum_{j=0}^{k} (-1)^j \binom{k}{j} \binom{n+m-j-1}{m-j},$$
-where, for an integer $x$ and a natural number $i$, $\binom{x}{i} = x(x-1)\cdots(x-i+1)/i!$ is
-the generalized binomial coefficient, and the term $\binom{n+m-j-1}{m-j}$ is taken to be $0$
-when $j > m$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Lemma 1, Equation (4.10) (`integers-2024-A70-lem-1`). -/
-public theorem_wanted ringChoose_sub_eq_sum (m n k : ℕ) :
-    Ring.choose ((n : ℤ) + m - k - 1) m =
-      ∑ j ∈ range (k + 1), (-1) ^ j * (k.choose j : ℤ) *
-        (if j ≤ m then Ring.choose ((n : ℤ) + m - j - 1) (m - j) else 0)
 
 /-- **Power-weighted sums of Fibonacci numbers.** Let $F_k$ denote the Fibonacci numbers and let
 $p_{\ell,m}(x, y) = \sum_{i=0}^{m} (-1)^i \binom{m}{i} (ix + y)^\ell$ be the alternating binomial
