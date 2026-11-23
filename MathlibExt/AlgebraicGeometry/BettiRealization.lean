@@ -57,6 +57,17 @@ abbrev Cohomology (Z : TopCat.{0}) (n : ℤ) : Type 1 :=
 /-! The rational vector space structure on `Cohomology Z n` is Mathlib's
 `Linear.homModule` on morphisms of the `ℚ`-linear derived category. -/
 
+/-- Transport a class along an equality of degrees. -/
+def cohomologyCast {Z : TopCat.{0}} {m n : ℤ} (h : m = n) :
+    Cohomology Z m →ₗ[ℚ] Cohomology Z n := by
+  subst h
+  exact LinearMap.id
+
+@[simp]
+theorem cohomologyCast_rfl {Z : TopCat.{0}} {m : ℤ} (x : Cohomology Z m) :
+    cohomologyCast rfl x = x :=
+  rfl
+
 /-- Cup product: the Yoneda product of shifted morphisms, Mathlib's
 `ShiftedHom.comp`, in the order `x` then `y`. -/
 def cup (Z : TopCat.{0}) {i j : ℤ}

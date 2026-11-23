@@ -32,6 +32,15 @@ variable (Z : TopCat.{0}) {i j : ℤ}
 /-- Betti cohomology is a rational vector space. -/
 example (n : ℤ) : Module ℚ (Cohomology Z n) := inferInstance
 
+/-- Degree casts along equal degrees compose, and the cast along `rfl` is the
+identity. -/
+example {m : ℤ} (x : Cohomology Z m) : cohomologyCast rfl x = x := by simp
+
+example {l m n : ℤ} (h : l = m) (h' : m = n) (x : Cohomology Z l) :
+    cohomologyCast h' (cohomologyCast h x) = cohomologyCast (h.trans h') x := by
+  subst h h'
+  rfl
+
 /-- The cup product vanishes when either factor does. -/
 example (y : Cohomology Z j) : cup Z (0 : Cohomology Z i) y = 0 := by
   simp [cup]
