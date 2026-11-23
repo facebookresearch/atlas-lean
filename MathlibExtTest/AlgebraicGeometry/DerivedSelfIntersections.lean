@@ -39,3 +39,9 @@ example {X : Scheme.{u}} (M : D X)
 -- A first neighborhood of `i` factors `i` through the thickening.
 example {X Y : Scheme.{u}} (i : X ⟶ Y) (N : FirstNeighborhood i) :
     N.reduction ≫ N.inclusion = i := N.factorization
+
+-- A conormal extension restricts to the conormal sheaf, so a closed immersion admitting one
+-- has a conormal sheaf isomorphic to a restriction of a finite locally free sheaf.
+example {X Y : Scheme.{u}} (i : X ⟶ Y) [IsClosedImmersion i] (N : ConormalExtension i) :
+    Nonempty ((Scheme.Modules.pullback N.neighborhood.reduction).obj N.bundle ≅
+      conormalModule i) := ⟨N.restriction⟩

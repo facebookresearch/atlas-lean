@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.FourierMukai
-public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
+public import Mathlib.Algebra.Category.ModuleCat.Sheaf.LocallyFree
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PullbackFree
 public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
@@ -20,8 +20,9 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Separated
 The object is Li* Ri_* O_X for an actual closed immersion. Its conormal
 sheaf is the actual pullback of the kernel O_Y → i_* O_X. A first
 infinitesimal neighborhood is pinned by its actual local ring maps and
-the square of the kernel ideal, and extension means an actual vector
-bundle with an actual reduction isomorphism. The formal target is the
+the square of the kernel ideal, and extension means an actual finite
+locally free sheaf (Mathlib's `IsLocallyFree` and `IsFiniteType`) with an
+actual reduction isomorphism. The formal target is the
 complex of the object's actual cohomology sheaves, with zero differential.
 
 Source: Arinkin--Căldăraru, *When is the self-intersection of a subvariety
@@ -38,7 +39,7 @@ namespace MathlibExt.AlgebraicGeometry.DerivedSelfIntersections
 
 open CategoryTheory CategoryTheory.Limits Opposite
 open _root_.AlgebraicGeometry
-open FourierMukai CoherentCurveLinearSeries CurveVectorBundles
+open FourierMukai
 
 attribute [local instance] HasDerivedCategory.standard
 
@@ -68,20 +69,28 @@ structure FirstNeighborhood {X Y : Scheme.{u}} (i : X ⟶ Y) where
           inclusion.stalkMap (reduction x)).hom) =
       RingHom.ker (i.stalkMap x).hom ^ 2
 
-/-- Actual extension of the conormal bundle over that first neighborhood. -/
-structure ConormalExtension {X Y : Scheme.{u}} (i : X ⟶ Y) [IsClosedImmersion i] (r : ℕ) where
+/-- Actual extension of the conormal sheaf over that first neighborhood: a finite locally
+free sheaf on the thickening whose restriction to `X` is the conormal sheaf. (The conormal
+sheaf is then itself finite locally free.) -/
+structure ConormalExtension {X Y : Scheme.{u}} (i : X ⟶ Y) [IsClosedImmersion i] where
+  /-- The first infinitesimal neighborhood. -/
   neighborhood : FirstNeighborhood i
+  /-- The extending sheaf on the thickening. -/
   bundle : neighborhood.thickening.Modules
-  locallyFree : IsVectorBundle bundle r
+  /-- It is locally free. -/
+  locallyFree : SheafOfModules.IsLocallyFree.{u} (R := neighborhood.thickening.ringCatSheaf) bundle
+  /-- It is of finite type. -/
+  finiteType : SheafOfModules.IsFiniteType.{u} (R := neighborhood.thickening.ringCatSheaf) bundle
+  /-- Its restriction to `X` is the conormal sheaf. -/
   restriction : (Scheme.Modules.pullback neighborhood.reduction).obj bundle ≅ conormalModule i
 
 variable [HasDerivedPullbacks.{u}] [HasDerivedPushforwards.{u}]
 
 /-- The actual derived self-intersection structure module `Li^* Ri_* 𝒪_X` of a closed
-immersion. -/
+immersion (`𝒪_X` is `SheafOfModules.unit X.ringCatSheaf`). -/
 def selfIntersection {X Y : Scheme.{u}} (i : X ⟶ Y) [IsClosedImmersion i] : D X :=
   (derivedPullback i).obj ((derivedPushforward i).obj
-    ((DerivedCategory.singleFunctor X.Modules 0).obj (structureModule X)))
+    ((DerivedCategory.singleFunctor X.Modules 0).obj (SheafOfModules.unit X.ringCatSheaf)))
 
 /-- The actual cohomology sheaves of a derived object, assembled with zero differential. -/
 def formalCohomologyComplex {X : Scheme.{u}} (M : D X) : CochainComplex X.Modules ℤ where

@@ -87,12 +87,58 @@ example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S)
     convolution f g h K K' = (derivedPushforward (pr13 f g h)).obj (convolutionTensor f g h K K') :=
   rfl
 
--- Given the comparison isomorphisms, the composite of two Fourier–Mukai functors on
--- quasi-coherent inputs is the Fourier–Mukai functor of the convolution.
+-- The composition constructor: from the comparison isomorphisms (derived base change,
+-- monoidality of pullback, the two projection formulas, tensor associativity and the
+-- pullback/pushforward composition comparisons) and the three preservation hypotheses, the
+-- composite of two Fourier–Mukai functors on quasi-coherent inputs is the Fourier–Mukai
+-- functor of the convolution kernel.
 example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S)
     (K : D (pullback f g)) (K' : D (pullback g h))
-    (e : (quasicoherent X).ι ⋙ fourierMukai f g K ⋙ fourierMukai g h K' ≅
-      (quasicoherent X).ι ⋙ fourierMukai f h (convolution f g h K K')) :
-    ∀ M : QCohDerived X, Nonempty ((fourierMukai g h K').obj ((fourierMukai f g K).obj M.obj) ≅
+    (hA : ∀ M : QCohDerived X,
+      quasicoherent (pullback f g)
+        ((tensorRightDerived (pullback f g) K).obj
+          ((derivedPullback (pullback.fst f g)).obj M.obj)))
+    (hB : ∀ M : QCohDerived X,
+      quasicoherent (tripleProduct f g h)
+        ((tensorRightDerived (tripleProduct f g h)
+          ((derivedPullback (pr12 f g h)).obj K)).obj
+          ((derivedPullback (pr12 f g h)).obj
+            ((derivedPullback (pullback.fst f g)).obj M.obj))))
+    (hC : ∀ M : QCohDerived X,
+      quasicoherent (pullback f h) ((derivedPullback (pullback.fst f h)).obj M.obj))
+    (baseChange :
+      (quasicoherent (pullback f g)).ι ⋙ derivedPushforward (pullback.snd f g) ⋙
+          derivedPullback (pullback.fst g h) ≅
+        (quasicoherent (pullback f g)).ι ⋙ derivedPullback (pr12 f g h) ⋙
+          derivedPushforward (pr23 f g h))
+    (pullbackTensor :
+      tensorRightDerived (pullback f g) K ⋙ derivedPullback (pr12 f g h) ≅
+        derivedPullback (pr12 f g h) ⋙
+          tensorRightDerived (tripleProduct f g h) ((derivedPullback (pr12 f g h)).obj K))
+    (projection23 :
+      (quasicoherent (tripleProduct f g h)).ι ⋙ derivedPushforward (pr23 f g h) ⋙
+          tensorRightDerived (pullback g h) K' ≅
+        (quasicoherent (tripleProduct f g h)).ι ⋙
+          tensorRightDerived (tripleProduct f g h) ((derivedPullback (pr23 f g h)).obj K') ⋙
+          derivedPushforward (pr23 f g h))
+    (tensorAssociativity :
+      tensorRightDerived (tripleProduct f g h) ((derivedPullback (pr12 f g h)).obj K) ⋙
+          tensorRightDerived (tripleProduct f g h) ((derivedPullback (pr23 f g h)).obj K') ≅
+        tensorRightDerived (tripleProduct f g h) (convolutionTensor f g h K K'))
+    (pullbackComposition :
+      derivedPullback (pullback.fst f g) ⋙ derivedPullback (pr12 f g h) ≅
+        derivedPullback (pullback.fst f h) ⋙ derivedPullback (pr13 f g h))
+    (pushforwardComposition :
+      derivedPushforward (pr23 f g h) ⋙ derivedPushforward (pullback.snd g h) ≅
+        derivedPushforward (pr13 f g h) ⋙ derivedPushforward (pullback.snd f h))
+    (projection13 :
+      (quasicoherent (pullback f h)).ι ⋙ derivedPullback (pr13 f g h) ⋙
+          tensorRightDerived (tripleProduct f g h) (convolutionTensor f g h K K') ⋙
+          derivedPushforward (pr13 f g h) ≅
+        (quasicoherent (pullback f h)).ι ⋙
+          tensorRightDerived (pullback f h) (convolution f g h K K'))
+    (M : QCohDerived X) :
+    Nonempty ((fourierMukai g h K').obj ((fourierMukai f g K).obj M.obj) ≅
       (fourierMukai f h (convolution f g h K K')).obj M.obj) :=
-  fun M ↦ ⟨e.app M⟩
+  ⟨(fourierMukaiCompIsoOfComparisons f g h K K' hA hB hC baseChange pullbackTensor projection23
+    tensorAssociativity pullbackComposition pushforwardComposition projection13).app M⟩

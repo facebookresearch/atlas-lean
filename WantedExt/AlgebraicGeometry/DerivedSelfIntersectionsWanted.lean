@@ -26,7 +26,6 @@ namespace WantedExt.AlgebraicGeometry.DerivedSelfIntersectionsWanted
 open CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.FourierMukai
 open MathlibExt.AlgebraicGeometry.DerivedSelfIntersections
-open MathlibExt.AlgebraicGeometry.CurveVectorBundles
 
 universe u
 
@@ -36,8 +35,7 @@ public theorem_wanted self_intersection_formal
     (k : Type u) [Field k] [CharZero k] [IsAlgClosed k]
     (X Y : Over (Spec (.of k))) [Smooth X.hom] [Smooth Y.hom]
     [QuasiCompact X.hom] [QuasiCompact Y.hom] [IsSeparated X.hom] [IsSeparated Y.hom]
-    (i : X ⟶ Y) [IsClosedImmersion i.left] (r : ℕ)
-    (hN : IsVectorBundle (conormalModule i.left) r) (N : ConormalExtension i.left r) :
+    (i : X ⟶ Y) [IsClosedImmersion i.left] (N : ConormalExtension i.left) :
     IsFormal (selfIntersection i.left)
 
 end WantedExt.AlgebraicGeometry.DerivedSelfIntersectionsWanted
