@@ -22,7 +22,7 @@ tile designs, up to symmetry. A tiling is a map `F` from the cells to `T`. A sym
 cells by a map `φ` and on the designs by a permutation `σ`, and it fixes `F` when
 `F (φ c) = σ (F c)` for every cell `c`; Burnside's lemma turns the numbers of fixed tilings into
 the number of tilings up to symmetry. This file defines the number of fixed tilings and counts
-the tilings of the rectangular grid fixed by the identity.
+the tilings of the rectangular and square grids fixed by the identity.
 
 On the `n × m` cylinder, applying the shift `x ↦ x + a` and then the reflection
 `x ↦ n - 1 - x` sends the column `x` to `-1 - x - a` modulo `n`, so the columns this map fixes
@@ -39,6 +39,8 @@ even modulus with a shift whose representative `a.val` is odd.
 
 * `MetaMathlibExt.rectangularGrid_identity`: when `σ ^ 1 = 1`, all `|T| ^ (n * m)` tilings of
   the `n × m` grid are fixed by the identity map of the cells.
+* `MetaMathlibExt.squareGrid_identity`: when `σ ^ 1 = 1`, all `|T| ^ (n ^ 2)` tilings of the
+  `n × n` grid are fixed by the identity map of the cells.
 * `MetaMathlibExt.reflection_shift_solutions_odd`: for odd `n`, the solutions of
   `x = -1 - x - a` in `ZMod n` form the singleton `{((n + 1) / 2) * (-1 - a)}`.
 * `MetaMathlibExt.reflection_shift_solutions_even_odd`: for even `n` and odd `a.val`, the
@@ -48,7 +50,8 @@ even modulus with a shift whose representative `a.val` is odd.
 ## Implementation notes
 
 The hypothesis `σ ^ 1 = 1` says that `σ = 1`, so the condition `F c = σ (F c)` holds for every
-map `F`, and the fixed tilings are all `|T| ^ (n * m)` maps from the `n * m` cells to `T`.
+map `F`, and the fixed tilings are all `|T| ^ (n * m)` maps from the `n * m` cells to `T`. The
+square grid is the case `m = n`, with `n * n = n ^ 2` cells, as in the paper.
 
 The equation says `2 * x = -1 - a`. For odd `n` the division `(n + 1) / 2` is exact, and the
 residue of its quotient is the inverse of `2` in `ZMod n`, since `2 * ((n + 1) / 2) = n + 1`.
@@ -63,7 +66,8 @@ quotients `-(j + 1)` and `k - (j + 1)`, and both residues solve the equation bec
 
 * Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
   Journal of Integer Sequences 27 (2024), Article 24.6.1; arXiv:2311.13072v2, Theorem 2.1.2
-  (the tilings of the grid fixed by the identity) and Lemma 3.0.1.
+  (the tilings of the grid fixed by the identity), Theorem 2.2.2, Equation (7) (the tilings of
+  the square grid fixed by the identity) and Lemma 3.0.1.
 -/
 
 namespace MetaMathlibExt
@@ -104,6 +108,20 @@ public theorem rectangularGrid_identity {T : Type*} [Fintype T] [DecidableEq T]
   -- The fixed tilings are then all the maps from the `n * m` cells to `T`.
   rw [fixedTilingCount, Fintype.card_congr (Equiv.subtypeUnivEquiv hfixed), Fintype.card_fun,
     Fintype.card_prod, ZMod.card, ZMod.card]
+
+/-- **Square-grid tilings fixed by the identity.** Let $n$ be a positive integer, let $T$ be a
+finite set and let $\sigma$ be a permutation of $T$ with $\sigma^1 = 1$. Then the number of maps
+$F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(c) = \sigma(F(c))$ for every cell $c$ is
+$|T|^{n^2}$.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
+public theorem squareGrid_identity {T : Type*} [Fintype T] [DecidableEq T]
+    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
+    fixedTilingCount (id : ZMod n × ZMod n → ZMod n × ZMod n) σ =
+      Fintype.card T ^ (n ^ 2) := by
+  -- The square grid is the rectangular grid with `m = n`, which has `n * n = n ^ 2` cells.
+  rw [rectangularGrid_identity n n σ hσ, sq]
 
 /-- **Solution of $x = -1-x-a$ modulo odd $n$.** Let $n$ be a positive odd integer and
 $a \in \mathbb{Z}/n$. Then the set of $x \in \mathbb{Z}/n$ with $x = -1-x-a$ is the singleton

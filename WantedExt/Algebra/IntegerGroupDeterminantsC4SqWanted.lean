@@ -12,9 +12,8 @@ import Batteries.Util.ProofWanted
 import Mathlib.RingTheory.Int.Basic
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.LinearAlgebra.Matrix.Circulant
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
+public import MathlibExt.LinearAlgebra.Matrix.CirculantDetFour
 
 /-!
 # Integer group determinants for `C₄ × C₄` (Yamaguchi–Yamaguchi)
@@ -27,9 +26,8 @@ numbers the same statements 2.1, 2.3, 2.11, 2.5–2.10, 3.1–3.2, 4.1–4.7, 5.
 
 Conventions. The cyclic group `C₄` is `Fin 4` under addition, so `C₄²` is
 `Fin 4 × Fin 4`. For an abelian group written additively the group matrix
-`(x_{g h⁻¹})` is represented by `Matrix.circulant x`, whose entry `(g, h)` is `x (h - g)`:
-it is the transpose of the group matrix, so the determinants agree. The paper's
-variable `a_j`, `j = r + 4 s`, is `a (r, s)`. The paper's complex numbers
+`(x_{g h⁻¹})` is represented by `Matrix.circulant x`, whose entry `(g, h)` is `x (g - h)`.
+The paper's variable `a_j`, `j = r + 4 s`, is `a (r, s)`. The paper's complex numbers
 `α_i = d_i + √-1 d_{i+4}`, `β`, `γ` are Gaussian integers, and `β β̄`, `γ γ̄`
 are their norms `Zsqrtd.norm`.
 -/
@@ -59,24 +57,6 @@ C_4^2*, INTEGERS 24 (2024), Article A30, Section 1 (definition of `S(G)`). -/
 public theorem one_mem_integerGroupDeterminants (G : Type*) [AddGroup G] [Fintype G]
     [DecidableEq G] : (1 : ℤ) ∈ integerGroupDeterminants G :=
   ⟨Pi.single 0 1, by simp⟩
-
-/-- **The group determinant of $C_4$.** For a commutative ring $R$ and
-$x = (x_0, x_1, x_2, x_3) \in R^4$, $D_4(x_0, x_1, x_2, x_3)$ is the determinant of the
-$4 \times 4$ circulant matrix whose $(i, j)$ entry is $x_{i - j}$, indices taken mod $4$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (definition of `D_n`). -/
-public def circulantDetFour {R : Type*} [CommRing R] (x : Fin 4 → R) : R :=
-  (circulant x).det
-
-/-- **The 4 × 4 circulant determinant of (1, 0, 0, 0).** Over every commutative ring $R$, the
-$4 \times 4$ circulant determinant satisfies $D_4(1, 0, 0, 0) = 1$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (definition of `D_n`). -/
-public theorem circulantDetFour_single_one {R : Type*} [CommRing R] :
-    circulantDetFour (Pi.single 0 1 : Fin 4 → R) = 1 := by
-  simp [circulantDetFour]
 
 /-- **The sums $b_i$.** For $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ and
 $i \in \mathbb{Z}/4$, $b_i = \bigl(a(i, 0) + a(i, 2)\bigr) + \bigl(a(i, 1) + a(i, 3)\bigr)$. In the
@@ -199,18 +179,6 @@ C_4^2*, INTEGERS 24 (2024), Article A30, Theorem 1 (definition of `A`). -/
 public theorem mem_c4SqExceptionalSet_1625 : (1625 : ℤ) ∈ c4SqExceptionalSet :=
   ⟨1, 1, 1, 2, five_thirteen_mem_primesFiveModEight.1, five_thirteen_mem_primesFiveModEight.1,
     five_thirteen_mem_primesFiveModEight.2, by decide, by norm_num⟩
-
-/-- **Factorization of the 4 × 4 circulant determinant.** For every commutative ring $R$ and all
-$x_0, x_1, x_2, x_3 \in R$, the $4 \times 4$ circulant determinant $D_4$ satisfies
-
-$$D_4(x_0, x_1, x_2, x_3) =
-\bigl((x_0 + x_2)^2 - (x_1 + x_3)^2\bigr)\bigl((x_0 - x_2)^2 + (x_1 - x_3)^2\bigr).$$
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Corollary 1 (`integers-2024-A30-cor-1`). -/
-public theorem_wanted circulantDetFour_eq {R : Type*} [CommRing R] (x₀ x₁ x₂ x₃ : R) :
-    circulantDetFour ![x₀, x₁, x₂, x₃] =
-      ((x₀ + x₂) ^ 2 - (x₁ + x₃) ^ 2) * ((x₀ - x₂) ^ 2 + (x₁ - x₃) ^ 2)
 
 /-- **Factorization of the complex group determinant of $C_4^2$.** For every
 $y \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{C}$,
