@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
+public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
+public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
 
 namespace MetaMathlibExt
 
@@ -184,24 +186,6 @@ public theorem_wanted IsGenMarkovTriple.pairwise_coprime {k a b c : ℕ}
     (h : IsGenMarkovTriple k a b c) :
     Nat.Coprime a b ∧ Nat.Coprime b c ∧ Nat.Coprime a c
 
-/-- **The generalized Markov equation and the generalized second Markov equation.** Let
-$k \in \mathbb{N}$ and let $a, b, c$ be rational numbers. Put $x = (3 + 3k)a - k$,
-$y = (3 + 3k)b - k$ and $z = (3 + 3k)c - k$. Then
-$a^2 + b^2 + c^2 + k(bc + ca + ab) = (3 + 3k)abc$ if and only if
-$x^2 + y^2 + z^2 + (k^2 + 2k)(x + y + z) + 2k^3 + 3k^2 = xyz$. The first equation is the
-$k$-generalized Markov equation $\mathrm{GME}(k)$ and the second the $k$-generalized second
-Markov equation $\mathrm{GSME}(k)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 2.4. -/
-public theorem_wanted genMarkov_iff_genSecondMarkov (k : ℕ) (a b c : ℚ) :
-    a ^ 2 + b ^ 2 + c ^ 2 + k * (b * c + c * a + a * b) = (3 + 3 * k) * a * b * c ↔
-      let x := (3 + 3 * k) * a - k
-      let y := (3 + 3 * k) * b - k
-      let z := (3 + 3 * k) * c - k
-      x ^ 2 + y ^ 2 + z ^ 2 + ((k : ℚ) ^ 2 + 2 * k) * (x + y + z) + 2 * (k : ℚ) ^ 3 +
-          3 * (k : ℚ) ^ 2 = x * y * z
-
 /-- **Vieta jumping for the second generalized Markov equation.** Let $k$ be a natural number
 and let $a, b, c$ be integers with
 
@@ -260,16 +244,6 @@ Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numb
 Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.14. -/
 public theorem_wanted mod_four_eq_two_of_four_dvd_genMarkovNumber {k b : ℕ}
     (hb : IsGenMarkovNumber k b) (h4 : 4 ∣ b) : k % 4 = 2
-
-/-- **Large odd primes do not divide $k^2 - 4$.** Let $p$ be an odd prime and $k$ a natural
-number. If either $k \ge 4$ is even and $p > k/2 + 1$, or $k$ is odd and $p > k + 2$, then $p$
-does not divide $k^2 - 4$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.15. -/
-public theorem_wanted not_dvd_sq_sub_four_of_large_prime {k p : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (h : (4 ≤ k ∧ Even k ∧ k / 2 + 1 < p) ∨ (Odd k ∧ k + 2 < p)) :
-    ¬ (p : ℤ) ∣ (k : ℤ) ^ 2 - 4
 
 /-- **Discriminant condition for prime-power generalized Markov numbers.** Let $p$ be an odd
 prime and $m \ge 2$, and suppose that some $k$-generalized Markov number $b$ equals $p^m$ or

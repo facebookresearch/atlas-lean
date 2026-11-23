@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Rayleigh
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.Beatty.CountIncrement
 public import MathlibExt.NumberTheory.Beatty.FloorFiber
 
 /-! # Decomposition of Beatty and complementary sequences (Polanco)
@@ -184,25 +185,6 @@ public theorem_wanted beatty_floor_fiber_card_eq_add_indicator {α : ℝ} {k : �
     (hirr : Irrational α) (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) :
     ∃ δ : ℝ, 0 < δ ∧ ∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard =
       k + {beattySeq δ m | m > 0}.indicator (1 : ℤ → ℕ) t
-
-/-- **Increments of the $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and
-$\lfloor n\beta\rfloor$.** Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$
-be a real number with $\alpha^{-1} + \beta^{-1} = 1$, let $B$ be the set of the numbers
-$\lfloor k\beta\rfloor$ for positive integers $k$, and for an integer $m$ let $r(m)$ be the number
-of elements of $B$ in the open interval $(\lfloor m\alpha\rfloor, \lfloor m\beta\rfloor)$. Then for
-every positive integer $n$, the difference $r(n + 1) - r(n)$ is $0$ or $1$, and it equals $1$ if
-and only if $\lfloor (n + 1)\alpha\rfloor - \lfloor n\alpha\rfloor = 1$.
-
-By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Lemma 4 (`integers-2025-A104-lem-4`). -/
-public theorem_wanted beatty_card_compl_between_succ_sub {α β : ℝ} (hirr : Irrational α)
-    (hα1 : 1 < α) (hα2 : α < 2) (hαβ : α⁻¹ + β⁻¹ = 1) {n : ℤ} (hn : 0 < n) :
-    let r : ℤ → ℤ := fun m ↦
-      ((Ioo (beattySeq α m) (beattySeq β m) ∩ {beattySeq β k | k > 0}).ncard : ℤ)
-    (r (n + 1) - r n = 0 ∨ r (n + 1) - r n = 1) ∧
-      (r (n + 1) - r n = 1 ↔ beattySeq α (n + 1) - beattySeq α n = 1)
 
 /-- **Increments of the $\alpha$-Beatty counts between $\lfloor n\alpha\rfloor$ and
 $\lfloor n\beta\rfloor$.** Let $\beta$ be an irrational number with $\beta > 2$, let $\alpha$ be a

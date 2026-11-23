@@ -29,6 +29,16 @@ theorem, already covered by
 Proved in `MathlibExt.NumberTheory.PowAddPowEqSq`:
 Lemma 1, case `n = 2`
 (`MetaMathlibExt.two_pow_add_one_eq_sq`).
+
+Proved in `MathlibExt.NumberTheory.ThreePowAddThirtyfivePow`,
+which this module imports: the case `x = 0`
+(`one_add_pow_eq_sq`) and the case `n = 3`,
+`p = 7` (`three_pow_add_thirtyfive_pow`).
+
+Proved in `MathlibExt.NumberTheory.PowAddPowEqSqModFourOne`,
+which this module imports: the absence of
+solutions when `n ≡ p ≡ 1 (mod 4)`
+(`no_solution_mod_four_one`).
 -/
 module
 
@@ -36,6 +46,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.PowAddPowEqSq
+public import MathlibExt.NumberTheory.PowAddPowEqSqModFourOne
 public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
 
 set_option autoImplicit false
@@ -53,15 +64,6 @@ Source: Suton Tadee, "On the Diophantine Equation
 theorem_wanted pow_add_one_eq_sq (n x z : ℕ) (hn : 1 ≤ n)
     (hn2 : n ≠ 2) :
     n ^ x + 1 = z ^ 2 ↔ x = 1 ∧ z ^ 2 = n + 1
-
-/-- **The case $x = 0$ of $n^x + (5p)^y = z^2$.** Let $p$ be a prime with $p \ne 2$. For natural
-numbers $y$ and $z$, $1 + (5p)^y = z^2$ holds if and only if $y = 1$ and $z^2 = 5p + 1$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Corollary 1. -/
-theorem_wanted one_add_pow_eq_sq (p y z : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) :
-    1 + (5 * p) ^ y = z ^ 2 ↔ y = 1 ∧ z ^ 2 = 5 * p + 1
 
 /-- **Evenness of $x$ in $n^x + (5p)^y = z^2$ when $n \equiv 2, 3 \pmod 5$.** Let $p$ be a prime
 and $n$ a natural number with $n \equiv 2 \pmod 5$ or $n \equiv 3 \pmod 5$. If natural numbers
@@ -85,16 +87,6 @@ theorem_wanted opposite_parity (n p x y z : ℕ) (hp : p.Prime)
     (hn : n % 4 = 3) (hp4 : p % 4 = 3)
     (h : n ^ x + (5 * p) ^ y = z ^ 2) :
     x % 2 ≠ y % 2
-
-/-- **No solutions of $n^x + (5p)^y = z^2$ when $n \equiv p \equiv 1 \pmod 4$.** Let $p$ be a
-prime and $n$ a natural number with $n \equiv 1 \pmod 4$ and $p \equiv 1 \pmod 4$. Then there
-are no natural numbers $x$, $y$, $z$ with $n^x + (5p)^y = z^2$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Theorem 2. -/
-theorem_wanted no_solution_mod_four_one (n p : ℕ) (hp : p.Prime)
-    (hn : n % 4 = 1) (hp4 : p % 4 = 1) :
-    ¬ ∃ x y z : ℕ, n ^ x + (5 * p) ^ y = z ^ 2
 
 /-- **Corollary 2** (Moonchaisook et al.): the
 Diophantine equation `(5^n)^x + (4^m p + 1)^y = z^2`

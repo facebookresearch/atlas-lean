@@ -8,21 +8,87 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Log-balancedness of reciprocals
+# Log-concavity and log-balancedness along recurrences
+
+Log-concavity of a positive sequence propagates along a linear recurrence that subtracts
+nonnegative multiples of the earlier terms.
 
 For a positive sequence with successive ratios `x n = z (n + 1) / z n`, the reciprocals
 are log-balanced exactly when `x n` decreases and `(n + 1) * x n` increases.
 -/
 
 namespace MetaMathlibExt
+
+/-- **Log-concavity propagates along a linear recurrence.** Let $k \ge 2$ be an integer, let
+$c_1, \dots, c_k$ be real numbers with $c_j \ge 0$ for $2 \le j \le k$, and let
+$(z_n)_{n \ge 0}$ be a sequence of positive real numbers with
+$$z_n = c_1 z_{n-1} - \sum_{j=2}^{k} c_j z_{n-j} \quad (n \ge k).$$
+If $z_{i-1} z_{i+1} \le z_i^2$ for $1 \le i < k$, then $z_{n-1} z_{n+1} \le z_n^2$ for every
+$n \ge 1$; that is, the whole sequence is log-concave.
+
+The paper assumes that the block $z_0, \dots, z_{k+1}$ is log-concave, which adds the
+inequality for $i = k$, and that $c_1 > 0$. Both follow from the other hypotheses: the
+recurrence at $n = k + 1$ propagates the inequality for $i = k$ from those for $i < k$, and
+the recurrence at $n = k$ forces $c_1 > 0$.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
+Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Lemma 1
+(quoted from the paper's reference [17]) (`integers-2024-A82-lem-1`). -/
+public theorem logConcave_of_linearRecurrence_of_initial_logConcave
+    (k : ℕ) (hk : 2 ≤ k) (c : ℕ → ℝ) (hc : ∀ j, 2 ≤ j → j ≤ k → 0 ≤ c j)
+    (z : ℕ → ℝ) (hpos : ∀ n, 0 < z n)
+    (hrec : ∀ n, k ≤ n →
+      z n = c 1 * z (n - 1) - ∑ j ∈ Finset.Icc 2 k, c j * z (n - j))
+    (hinit : ∀ i, 1 ≤ i → i < k → z (i - 1) * z (i + 1) ≤ z i ^ 2) :
+    ∀ n, 1 ≤ n → z (n - 1) * z (n + 1) ≤ z n ^ 2 := by
+  let x (i : ℕ) := z (i + 1) / z i
+  have step_iff (i : ℕ) :
+      x (i + 1) ≤ x i ↔ z i * z (i + 2) ≤ z (i + 1) ^ 2 := by
+    simp [x, div_le_div_iff₀ (hpos _) (hpos _), pow_two, mul_comm]
+  have ratio_rec (i : ℕ) (hi : k ≤ i) :
+      x (i - 1) = c 1 - ∑ j ∈ Finset.Icc 2 k, c j * (z (i - j) / z (i - 1)) := by
+    dsimp [x]
+    rw [Nat.sub_add_cancel (Nat.le_of_succ_le (hk.trans hi)), hrec i hi, sub_div,
+      mul_div_cancel_right₀ _ (hpos _).ne', Finset.sum_div]
+    simp only [mul_div_assoc]
+  -- Compare the current ratio to every earlier one, including each lag in the recurrence.
+  have ratios (n : ℕ) : ∀ m ≤ n, x n ≤ x m := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      have step : x (n + 1) ≤ x n := by
+        by_cases hn : n + 1 < k
+        · exact (step_iff n).2 (by simpa using hinit (n + 1) (by omega) hn)
+        · have h₀ := ratio_rec (n + 1) (by omega)
+          have h₁ := ratio_rec (n + 1 + 1) (by omega)
+          simp only [Nat.add_sub_cancel] at h₀ h₁
+          rw [h₁, h₀]
+          apply sub_le_sub_left
+          apply Finset.sum_le_sum
+          intro j hj
+          obtain ⟨hj₂, hjk⟩ := Finset.mem_Icc.mp hj
+          apply mul_le_mul_of_nonneg_left _ (hc j hj₂ hjk)
+          apply (div_le_div_iff₀ (hpos n) (hpos (n + 1))).2
+          have h := (div_le_div_iff₀ (hpos n) (hpos (n + 1 - j))).1
+            (ih (n + 1 - j) (by omega))
+          rwa [mul_comm (z (n + 1 - j)), show n + 1 + 1 - j = n + 1 - j + 1 by omega]
+      intro m hm
+      rcases hm.eq_or_lt with rfl | hm
+      · exact le_rfl
+      · exact step.trans (ih m (by omega))
+  rintro (_ | n) hn
+  · omega
+  · exact (step_iff n).1 (ratios (n + 1) n (by omega))
 
 private theorem balanced_iff_ratios (n : ℕ) {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hc : 0 < c) :
