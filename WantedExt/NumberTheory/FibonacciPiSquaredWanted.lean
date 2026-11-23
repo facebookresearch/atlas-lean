@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Data.Nat.Fib.Basic
+public import MathlibExt.NumberTheory.FibonacciPiSquared
 
 /-!
 # Fibonacci numbers and `π²`
@@ -86,39 +86,6 @@ public theorem_wanted pi_sq_eq_fibonacci_central_series :
         (Nat.fib (2 * k + 2) : ℝ) / ((2 * k + 2).factorial : ℝ) ∧
       Real.pi ^ 2 = 250 / (25 - 4 * √5) * ∑' k : ℕ, ((k.factorial ^ 2 : ℕ) : ℝ) *
         (Nat.fib (2 * k + 1) : ℝ) / ((2 * k + 2).factorial : ℝ)
-
-/-- **Fibonacci closed form of the sequence $a_n$.** Let $(a_n)_{n \ge 0}$ be real numbers with
-$a_0 = -8\sqrt{5}/250$, $a_1 = (25 - 4\sqrt{5})/250$ and $a_{n+1} = a_n + a_{n-1}$ for $n \ge 1$,
-and write $F_m$ for the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). Then for every $n \ge 0$,
-
-$$a_{n+1} = \frac{25 - 4\sqrt{5}}{250} F_{n+1} - \frac{8\sqrt{5}}{250} F_n.$$
-
-The paper states $a_n = \frac{25 - 4\sqrt{5}}{250} F_n - \frac{8\sqrt{5}}{250} F_{n-1}$ for all
-$n \ge 0$ with the convention $F_{-1} = 1$; its case $n = 0$ is the initial value $a_0$.
-
-Source: Joseph Tonien, *Fibonacci and Pi Squared*, The Fibonacci Quarterly 62 (2024), no. 1,
-Lemma 2.3 (`fq-2024-tonien10292023-lem-2.3`). -/
-public theorem_wanted fibPiSquared_coeff_eq_fib (a : ℕ → ℝ) (ha0 : a 0 = -(8 * √5) / 250)
-    (ha1 : a 1 = (25 - 4 * √5) / 250) (ha : ∀ n, 1 ≤ n → a (n + 1) = a n + a (n - 1)) (n : ℕ) :
-    a (n + 1) = (25 - 4 * √5) / 250 * Nat.fib (n + 1) - 8 * √5 / 250 * Nat.fib n
-
-/-- **Explicit formula for the polynomials $p_n$.** Let $p_1, p_2, \dots$ be polynomials with
-integer coefficients such that $p_1 = 1$ and, for every $n \ge 1$,
-$p_{n+1}(x) = (2x + 2n + 1)(2x + 2n + 2)\, p_n(x) - (x + 1)^2 p_n(x + 1)$. Then for every
-$n \ge 1$, as polynomials in $x$,
-
-$$p_n(x) = \sum_{j=0}^{n-1} (-1)^j \binom{n-1}{j} \Bigl(\prod_{k=2j+3}^{2n} (2x + k)\Bigr)
-\prod_{t=1}^{j} (x + t)^2.$$
-
-Source: Joseph Tonien, *Fibonacci and Pi Squared*, The Fibonacci Quarterly 62 (2024), no. 1,
-Lemma 2.4 (`fq-2024-tonien10292023-lem-2.4`). -/
-public theorem_wanted fibPiSquared_poly_eq_sum (p : ℕ → ℤ[X]) (hp1 : p 1 = 1)
-    (hp : ∀ n, 1 ≤ n → p (n + 1) = (2 * X + C (2 * n + 1 : ℤ)) * (2 * X + C (2 * n + 2 : ℤ)) *
-      p n - (X + 1) ^ 2 * (p n).comp (X + 1))
-    {n : ℕ} (hn : 1 ≤ n) :
-    p n = ∑ j ∈ Finset.range n, (-1) ^ j * ((n - 1).choose j : ℤ[X]) *
-      (∏ k ∈ Finset.Ico (2 * j + 3) (2 * n + 1), (2 * X + C (k : ℤ))) *
-      ∏ t ∈ Finset.Icc 1 j, (X + C (t : ℤ)) ^ 2
 
 end
 

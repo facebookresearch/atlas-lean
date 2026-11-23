@@ -40,17 +40,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Reflection formula for the order of extended continuants.** Let
-$x : \mathbb{Z} \to \mathbb{Z}$ be an integer sequence and write $K_a(x)_b$ for its extended
-continuant of order $a$ with start index $b$. For all integers $h$ and $n$,
-$$K_{-n}(x)_h = (-1)^{n+1} K_{n-4}(x)_{h-n+2}.$$
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Theorem 1. -/
-public theorem_wanted extendedContinuant_neg_order (x : ℤ → ℤ) (h n : ℤ) :
-    extendedContinuant x (-n) h =
-      ((n + 1).negOnePow : ℤ) * extendedContinuant x (n - 4) (h - n + 2)
-
 /-- **Bennett's continuant identity for nonnegative indices.** Let $x : \mathbb{Z} \to \mathbb{Z}$
 be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
 index $b$. For all nonnegative integers $k$, $\ell$, $m$, $n$,

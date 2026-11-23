@@ -10,9 +10,9 @@ module
 
 public import CSLibExt.Logics.Propositional.CNF.ResolutionSize
 
-namespace Cslib.Logic.PL.CNF.ResolutionSizeTests
+namespace Cslib.Logic.LegacyPL.CNF.ResolutionSizeTests
 
-open Cslib.Logic.PL.CNF
+open Cslib.Logic.LegacyPL.CNF
 
 /-- The two-variable refutation has seven nodes and occurrence width two. -/
 example : exTwoVarDerivation.size = 7 ∧ exTwoVarDerivation.width = 2 :=
@@ -73,4 +73,4 @@ example : ∃ l, DAGDerivation exDagFormula l ∧ [] ∈ l ∧
     l.length ≤ exTreeDerivation.size :=
   TreeDerivation.exists_dag exTreeDerivation
 
-end Cslib.Logic.PL.CNF.ResolutionSizeTests
+end Cslib.Logic.LegacyPL.CNF.ResolutionSizeTests

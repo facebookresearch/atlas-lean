@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.PolygonalNumber
+public import MathlibExt.NumberTheory.PracticalNumber
 import Mathlib.Algebra.Polynomial.Degree.SmallDegree
 import Mathlib.Algebra.Ring.Int.Parity
 import Mathlib.Data.Nat.Choose.Cast
@@ -18,7 +19,7 @@ import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.Tactic.Lift
 import Mathlib.Tactic.LinearCombination
 
-/-! # Congruences for sums of practical and polygonal numbers -/
+/-! # Sums of practical and polygonal numbers -/
 
 namespace MetaMathlibExt
 
@@ -91,5 +92,56 @@ public theorem exists_polygonal_add_polygonal_modEq_prime (p n s : ℕ) (hp : p.
     simp only [Nat.cast_add, hP, ZMod.natCast_zmod_val, ZMod.natCast_self, add_zero]
     rw [← sub_eq_zero]
     simpa [f, sub_eq_add_neg, ← add_assoc] using hxy
+
+/-- **Quadratic upper bound for polygonal numbers.** For a natural number $s > 3$ and a natural
+number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For every natural
+number $c$ there is a natural number $A$ such that $2 P_s(2cx) \le A x^2$ for every natural
+number $x \ge 1$.
+
+The paper states this only for one specific prime $c$, the prime chosen in Lemma 9 (arXiv
+Lemma 4.4), and for real $x$; here $c$ is an arbitrary natural number and $x$ is a natural number.
+
+Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
+Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 10
+(arXiv Lemma 4.5; `jis-2024-24.5.1-lem-10`). -/
+public theorem exists_two_polygonal_two_mul_le_mul_sq (s c : ℕ) (hs : 3 < s) :
+    ∃ A : ℕ, ∀ x : ℕ, 1 ≤ x → 2 * Nat.polygonalNumber s (2 * c * x) ≤ A * x ^ 2 := by
+  refine ⟨(s - 2) * (2 * c) ^ 2, fun x _ ↦ ?_⟩
+  let n := 2 * c * x
+  calc
+    2 * Nat.polygonalNumber s n = (s - 2) * (2 * n.choose 2) + 2 * n := by
+      unfold Nat.polygonalNumber
+      ring
+    _ ≤ (s - 2) * (2 * n.choose 2) + (s - 2) * n :=
+      Nat.add_le_add_left (Nat.mul_le_mul_right n (by omega)) _
+    _ = (s - 2) * Nat.polygonalNumber 4 n := (Nat.mul_add ..).symm
+    _ = (s - 2) * (2 * c) ^ 2 * x ^ 2 := by
+      simp only [Nat.polygonalNumber_four, n, mul_pow, mul_assoc]
+
+/-- **Practical numbers divisible by neither 3 nor 4.** If $q$ is a practical number that is
+divisible by neither $3$ nor $4$, then $q = 1$ or $q = 2$.
+
+Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
+Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 11
+(arXiv Lemma 4.6; `jis-2024-24.5.1-lem-11`). -/
+public theorem isPracticalNumber_eq_one_or_two (q : ℕ) (hq : IsPracticalNumber q)
+    (h3 : ¬ 3 ∣ q) (h4 : ¬ 4 ∣ q) :
+    q = 1 ∨ q = 2 := by
+  obtain ⟨hqpos, hrep⟩ := hq
+  by_cases hq4 : 4 ≤ q
+  · obtain ⟨s, hs, hsum⟩ := hrep 4 (by decide) hq4
+    -- Only 1 and 2 can occur in a sum of distinct divisors equal to 4.
+    have hsub : s ⊆ {1, 2} := by
+      intro d hd
+      have hpos := Nat.pos_of_mem_divisors (hs hd)
+      have hdvd := Nat.dvd_of_mem_divisors (hs hd)
+      have hle : d ≤ 4 := hsum ▸ Finset.single_le_sum (fun i _ ↦ Nat.zero_le i) hd
+      have hd3 : d ≠ 3 := fun e ↦ h3 (e ▸ hdvd)
+      have hd4 : d ≠ 4 := fun e ↦ h4 (e ▸ hdvd)
+      simp only [Finset.mem_insert, Finset.mem_singleton]
+      omega
+    have hle := Finset.sum_le_sum_of_subset (f := fun d : ℕ ↦ d) hsub
+    simp [hsum] at hle
+  · omega
 
 end MetaMathlibExt

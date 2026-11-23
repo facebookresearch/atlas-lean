@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.GameTheory.SpragueGrundy
 
 /-!
@@ -244,6 +245,245 @@ public theorem euclidPPosition_tops_of_arch (m n : ℕ) (hm : 0 < m) (hn : 0 < n
     · rw [euclidMoves, ite_eq_right (by dsimp; omega), ite_eq_right (by dsimp; omega)]
       simp only [Finset.mem_image, Finset.mem_range]
       exact ⟨0, legal n (m + n) hn (by omega), by simp⟩
+
+namespace euclidPPosition_aunt_xor_cousin
+
+private theorem swap (a b : ℕ) : euclidPPosition a b = euclidPPosition b a := by
+  suffices h : ∀ f a b, euclidPPositionAux f a b = euclidPPositionAux f b a by
+    simpa only [euclidPPosition, Nat.add_comm b a] using h (a + b) a b
+  intro f
+  induction f with
+  | zero => intros; rfl
+  | succ f ih =>
+    intro a b
+    simp only [euclidPPositionAux]
+    split_ifs <;> first | rfl | omega | (congr 1; funext k; rw [ih])
+
+-- Subtracting the first copy of b leaves a; each further copy gives another option.
+private theorem add_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
+    euclidPPosition (a + b) b = true ↔
+      ∀ k : ℕ, k * b < a → ¬euclidPPosition (a - k * b) b = true := by
+  rw [euclidPPosition_eq_true_iff, SpragueGrundy.isP_iff euclidGame (a + b, b)]
+  change (∀ q ∈ euclidMoves (a + b, b), ¬SpragueGrundy.IsP euclidGame q) ↔ _
+  rw [euclidMoves, ite_eq_right (by dsimp; omega), ite_eq_right (by dsimp; omega)]
+  simp only [Finset.mem_image, Finset.mem_range, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂, euclidPPosition_eq_true_iff]
+  refine forall_congr' fun k => ?_
+  have bound : k < (a + b - 1) / b ↔ k * b < a := by
+    change k + 1 ≤ (a + b - 1) / b ↔ _
+    rw [Nat.le_div_iff_mul_le hb, Nat.add_one_mul]
+    omega
+  simp only [bound, Nat.add_one_mul, Nat.add_sub_add_right]
+
+-- When a ≤ b, the only option of (a + b, b) is (a, b).
+private theorem forced (a b : ℕ) (ha : 0 < a) (hab : a ≤ b) :
+    euclidPPosition a b = true ↔ ¬euclidPPosition (a + b) b = true := by
+  suffices h : euclidPPosition (a + b) b = true ↔ ¬euclidPPosition a b = true by
+    simp only [h, not_not]
+  rw [add_iff a b ha (by omega)]
+  constructor
+  · intro h
+    simpa using h 0 (by simpa)
+  · intro h k hk
+    cases k with
+    | zero => simpa using h
+    | succ k => rw [Nat.succ_mul] at hk; omega
+
+-- After two additions, the position can move to the intermediate position or any of its options.
+private theorem twice (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
+    ¬euclidPPosition (a + b + b) b = true := by
+  rw [add_iff (a + b) b (by omega) hb]
+  intro h
+  have hparent : ¬euclidPPosition (a + b) b = true := by
+    simpa using h 0 (by simp; omega)
+  apply hparent
+  apply (add_iff a b ha hb).2
+  intro k hk
+  simpa only [Nat.succ_mul, Nat.add_sub_add_right] using
+    h (k + 1) (by rw [Nat.succ_mul]; omega)
+
+end euclidPPosition_aunt_xor_cousin
+
+open euclidPPosition_aunt_xor_cousin in
+/-- **Aunt or cousin of a P-position.** Call a pair $(a, b)$ of natural numbers a P-position when
+the Euclid P-position test returns true at $(a, b)$, and let its son be $s(a, b) = (a, a + b)$ and
+its daughter $d(a, b) = (a + b, b)$, as in the Calkin–Wilf tree. Let $x, y$ be positive integers,
+let $r = (x, y)$, let $q$ be one of the two children $s(r)$ and $d(r)$ of $r$, and let $q'$ be the
+other one. If the daughter $d(q)$ is a P-position, then exactly one of its aunt $q'$ and its male
+cousin $s(q')$ is a P-position. If the son $s(q)$ is a P-position, then exactly one of its uncle
+$q'$ and its female cousin $d(q')$ is a P-position.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 4.3. -/
+public theorem euclidPPosition_aunt_xor_cousin (x y : ℕ) (hx : 0 < x) (hy : 0 < y) :
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let d : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    let P : ℕ × ℕ → Prop := fun p => euclidPPosition p.1 p.2 = true
+    let r := (x, y)
+    (P (d (s r)) → (P (d r) ↔ ¬P (s (d r)))) ∧ (P (d (d r)) → (P (s r) ↔ ¬P (s (s r)))) ∧
+      (P (s (d r)) → (P (s r) ↔ ¬P (d (s r)))) ∧ (P (s (s r)) → (P (d r) ↔ ¬P (d (d r)))) := by
+  dsimp only
+  have left := forced x (x + y) hx (by omega)
+  have right := forced y (x + y) hy (by omega)
+  rw [swap y (x + y), Nat.add_comm y (x + y), swap (x + y + y) (x + y)] at right
+  refine ⟨fun _ => right, fun h => (twice x y hx hy h).elim, fun _ => left, ?_⟩
+  intro h
+  rw [swap, Nat.add_comm x (x + y), Nat.add_comm x y] at h
+  exact (twice y x hy hx h).elim
+
+namespace euclidPPosition_branch_step
+
+open euclidPPosition_aunt_xor_cousin
+
+-- A positive pair with one entry at least twice the other has a winning move.
+private theorem daughter_not_p_of_le (a b : ℕ) (hb : 0 < b) (h : b ≤ a) :
+    ¬euclidPPosition (a + b) b = true := by
+  rcases lt_or_eq_of_le h with hlt | rfl
+  · simpa only [Nat.sub_add_cancel h] using twice (a - b) b (by omega) hb
+  · apply (forced b b hb le_rfl).1
+    unfold euclidPPosition
+    cases b + b <;> simp [euclidPPositionAux]
+
+private theorem niece (x y : ℕ) (hx : 0 < x) (hy : 0 < y)
+    (hd : euclidPPosition (x + y) y = true) :
+    euclidPPosition (x + (x + y)) (x + y) = true := by
+  by_contra hn
+  -- The niece can only move to the son, so the son and daughter would both be P-positions.
+  have hs := (forced x (x + y) hx (by omega)).2 hn
+  rcases le_total x y with h | h
+  · rw [swap x (x + y), Nat.add_comm x y] at hs
+    exact daughter_not_p_of_le y x hx h hs
+  · exact daughter_not_p_of_le x y hy h hd
+
+end euclidPPosition_branch_step
+
+open euclidPPosition_branch_step euclidPPosition_aunt_xor_cousin in
+/-- **Establishing branches: nieces and nephews of P-positions.** Call a pair $(a, b)$ of natural
+numbers a P-position when the Euclid P-position test returns true at $(a, b)$, and read it as the
+vertex $a/b$ of the Calkin–Wilf tree, with son $a/(a+b)$ and daughter $(a+b)/b$. Let $x, y$ be
+positive integers. If the daughter $(x+y)/y$ of $x/y$ is a P-position, then so is its niece
+$(2x+y)/(x+y)$, the daughter of its sibling $x/(x+y)$. If the son $x/(x+y)$ of $x/y$ is a
+P-position, then so is its nephew $(x+y)/(x+2y)$, the son of its sibling $(x+y)/y$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 4.2. -/
+public theorem euclidPPosition_branch_step (x y : ℕ) (hx : 0 < x) (hy : 0 < y) :
+    (euclidPPosition (x + y) y = true → euclidPPosition (2 * x + y) (x + y) = true) ∧
+      (euclidPPosition x (x + y) = true → euclidPPosition (x + y) (x + 2 * y) = true) := by
+  constructor
+  · simpa only [two_mul, Nat.add_assoc] using niece x y hx hy
+  · rw [swap x (x + y), swap (x + y) (x + 2 * y)]
+    simpa only [two_mul, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using niece y x hy hx
+
+namespace fibonacci_arch_tops
+
+-- Each successive Fibonacci pair is the son's daughter of the preceding pair.
+private theorem fib_pair (i : ℕ) :
+    euclidPPosition (Nat.fib (2 * i + 2)) (Nat.fib (2 * i + 1)) = true := by
+  induction i with
+  | zero => exact euclidPPosition_small.1
+  | succ i ih =>
+    have tops := (euclidPPosition_tops_of_arch _ _ (Nat.fib_pos.mpr (by omega))
+      (Nat.fib_pos.mpr (by omega)) ih).1
+    have h₃ : Nat.fib (2 * i + 3) = Nat.fib (2 * i + 1) + Nat.fib (2 * i + 2) :=
+      Nat.fib_add_two (n := 2 * i + 1)
+    have h₄ : Nat.fib (2 * i + 4) = Nat.fib (2 * i + 2) + Nat.fib (2 * i + 3) :=
+      Nat.fib_add_two (n := 2 * i + 2)
+    change euclidPPosition (Nat.fib (2 * i + 4)) (Nat.fib (2 * i + 3)) = true
+    rw [h₄, h₃]
+    convert tops using 2 <;> omega
+
+open euclidPPosition_aunt_xor_cousin in
+-- The only move subtracts the denominator and leaves (a, b + (k+1)a).
+-- Subtracting (k+1)a from the second entry then returns to (a, b).
+private theorem left_branch (a b k : ℕ) (ha : 0 < a) (hb : 0 < b)
+    (hp : euclidPPosition a b = true) :
+    euclidPPosition (a + (b + (k + 1) * a)) (b + (k + 1) * a) = true := by
+  rw [Nat.add_one_mul, ← Nat.add_assoc b]
+  have hle : a ≤ b + k * a + a := by omega
+  by_contra hn
+  have child := (forced a (b + k * a + a) ha hle).2 hn
+  rw [swap, add_iff (b + k * a) a (by omega) ha] at child
+  have reply := child k (by omega)
+  rw [Nat.add_sub_cancel, swap] at reply
+  exact reply hp
+
+end fibonacci_arch_tops
+
+open fibonacci_arch_tops in
+/-- **Fibonacci arch tops.** Index the Fibonacci numbers as in the source, $F_0 = F_1 = 1$ and
+$F_{j+2} = F_{j+1} + F_j$. Write $a/b$ for the position $(a, b)$ of Euclid, and call $a/(a+b)$
+its son and $(a+b)/b$ its daughter. Let $n \ge 1$ and $k \ge 0$ be integers, and let
+$X = (F_{2n+1} + kF_{2n-1})/(F_{2n+1} + (k-1)F_{2n-1})$ and
+$Y = (F_{2n} + kF_{2n-2})/(F_{2n} + (k+1)F_{2n-2})$. Then $X$ is a P-position of Euclid, and so
+are its son's daughter $(3F_{2n+1} + (3k-1)F_{2n-1})/(2F_{2n+1} + (2k-1)F_{2n-1})$ and its
+daughter's son $(2F_{2n+1} + (2k-1)F_{2n-1})/(3F_{2n+1} + (3k-2)F_{2n-1})$. Likewise $Y$ is a
+P-position of Euclid, and so are its son's daughter
+$(3F_{2n} + (3k+1)F_{2n-2})/(2F_{2n} + (2k+1)F_{2n-2})$ and its daughter's son
+$(2F_{2n} + (2k+1)F_{2n-2})/(3F_{2n} + (3k+2)F_{2n-2})$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Corollary 5.3. -/
+public theorem fibonacci_arch_tops (n k : ℕ) (hn : 1 ≤ n) :
+    let F : ℕ → ℕ := fun j => Nat.fib (j + 1)
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    let P : ℕ × ℕ → Prop := fun p => euclidPPosition p.1 p.2 = true
+    let X := (F (2 * n + 1) + k * F (2 * n - 1),
+      F (2 * n + 1) + k * F (2 * n - 1) - F (2 * n - 1))
+    let Y := (F (2 * n) + k * F (2 * n - 2), F (2 * n) + (k + 1) * F (2 * n - 2))
+    (P X ∧ P (t (s X)) ∧ P (s (t X)) ∧
+      ((t (s X)).1 : ℤ) = 3 * F (2 * n + 1) + (3 * k - 1) * F (2 * n - 1) ∧
+      ((t (s X)).2 : ℤ) = 2 * F (2 * n + 1) + (2 * k - 1) * F (2 * n - 1) ∧
+      ((s (t X)).1 : ℤ) = 2 * F (2 * n + 1) + (2 * k - 1) * F (2 * n - 1) ∧
+      ((s (t X)).2 : ℤ) = 3 * F (2 * n + 1) + (3 * k - 2) * F (2 * n - 1)) ∧
+    (P Y ∧ P (t (s Y)) ∧ P (s (t Y)) ∧
+      t (s Y) = (3 * F (2 * n) + (3 * k + 1) * F (2 * n - 2),
+        2 * F (2 * n) + (2 * k + 1) * F (2 * n - 2)) ∧
+      s (t Y) = (2 * F (2 * n) + (2 * k + 1) * F (2 * n - 2),
+        3 * F (2 * n) + (3 * k + 2) * F (2 * n - 2))) := by
+  obtain ⟨i, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  intro F s t P X Y
+  let a := F (2 * (i + 1) - 1)
+  let b := F (2 * (i + 1) - 2)
+  have ha : a = Nat.fib (2 * i + 2) := congrArg Nat.fib (by omega)
+  have hb : b = Nat.fib (2 * i + 1) := congrArg Nat.fib (by omega)
+  have ha₀ : 0 < a := ha ▸ Nat.fib_pos.mpr (by omega)
+  have hb₀ : 0 < b := hb ▸ Nat.fib_pos.mpr (by omega)
+  have hp : euclidPPosition a b = true := ha ▸ hb ▸ fib_pair i
+  have hsum : F (2 * (i + 1)) = a + b := by
+    rw [ha, hb, Nat.add_comm (Nat.fib (2 * i + 2))]
+    exact Nat.fib_add_two (n := 2 * i + 1)
+  have htop : F (2 * (i + 1) + 1) = a + (a + b) := by
+    rw [← hsum, ha]
+    exact Nat.fib_add_two (n := 2 * i + 2)
+  have hX : X = (a + (b + (k + 1) * a), b + (k + 1) * a) := by
+    change (F _ + k * a, F _ + k * a - a) = _
+    rw [htop, Nat.add_one_mul]
+    congr 1 <;> omega
+  have hY : Y = (a + (k + 1) * b, b + (a + (k + 1) * b)) := by
+    change (F _ + k * b, F _ + (k + 1) * b) = _
+    rw [hsum, Nat.add_one_mul]
+    congr 1 <;> omega
+  have pX : P X := by
+    rw [hX]
+    exact left_branch a b k ha₀ hb₀ hp
+  have pY : P Y := by
+    rw [hY]
+    change euclidPPosition _ _ = true
+    rw [euclidPPosition_aunt_xor_cousin.swap]
+    apply left_branch b a k hb₀ ha₀
+    rwa [euclidPPosition_aunt_xor_cousin.swap]
+  have tops (p : ℕ × ℕ) (hm : 0 < p.1) (hn : 0 < p.2) (h : P p) :
+      P (t (s p)) ∧ P (s (t p)) := by
+    simpa only [P, s, t, two_mul, Nat.add_assoc] using
+      euclidPPosition_tops_of_arch p.1 p.2 hm hn h
+  obtain ⟨pXL, pXR⟩ := tops X (by rw [hX]; dsimp; omega) (by rw [hX]; dsimp; omega) pX
+  obtain ⟨pYL, pYR⟩ := tops Y (by rw [hY]; dsimp; omega) (by rw [hY]; dsimp; omega) pY
+  constructor
+  · refine ⟨pX, pXL, pXR, ?_, ?_, ?_, ?_⟩ <;>
+      rw [hX, htop] <;> dsimp only [t, s, a] <;> push_cast <;> ring
+  · refine ⟨pY, pYL, pYR, ?_, ?_⟩ <;> ext <;> dsimp only [t, s, Y] <;> ring
 
 end
 

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.GeneralPellBisectors
+import Mathlib.Tactic.NormNum.RealSqrt
 
 namespace MetaMathlibExt
 
@@ -29,5 +30,25 @@ example : Even (2 : ℤ) ∧ Even (-2 : ℤ) :=
 -- The boundary value z = 0 requires no positivity hypothesis.
 example (x y : ℤ) (h : x ^ 2 = 5 * y ^ 2) : Even x ∧ Even y :=
   even_of_abs_sq_sub_mul_sq_zero_mod_eight 5 0 rfl rfl x y (by rw [h, sub_self, abs_zero])
+
+-- The horizontal line and the line of slope 3/4 have an external bisector of slope -3.
+example : ((0 : ℝ) - (-3)) ^ 2 * ((3 / 4) ^ 2 + 1) =
+    (3 / 4 - (-3)) ^ 2 * (0 ^ 2 + 1) := by
+  apply bisector_slope_equation 0 (3 / 4) (-3) <;> norm_num
+
+-- The Pell solutions (1, 1) and (7, 5) give bisector slopes 2 and -1/2.
+example : ∀ c ∈ ({2, -1 / 2} : Set ℚ),
+    (1 - c) ^ 2 * (7 ^ 2 + 1) = (7 - c) ^ 2 * (1 ^ 2 + 1) := by
+  have h := bisector_equation_form_three 2 1 1 7 5 (by norm_num) (by norm_num)
+  rintro c (rfl | rfl)
+  · have hc : (1 * 5 + 1 * 7 : ℚ) / (1 + 5) = 2 := by norm_num
+    simpa only [hc] using h.1 (by norm_num)
+  · have hc : -(1 + 5 : ℚ) / (1 * 5 + 1 * 7) = -1 / 2 := by norm_num
+    simpa only [hc] using h.2 (by norm_num)
+
+-- Opposite second coordinates make the first denominator zero. The second formula gives 0.
+example : ((1 : ℚ) - 0) ^ 2 * ((-1) ^ 2 + 1) = (-1 - 0) ^ 2 * (1 ^ 2 + 1) := by
+  have h := bisector_equation_form_three 2 1 1 (-1) (-1) (by norm_num) (by norm_num)
+  simpa only [add_neg_cancel, neg_zero, zero_div] using h.2 (by norm_num)
 
 end MetaMathlibExt

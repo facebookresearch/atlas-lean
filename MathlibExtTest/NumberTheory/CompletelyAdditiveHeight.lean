@@ -21,6 +21,25 @@ example (a : ℕ) : profilePartialSum (fun k => if k = 0 then a else 1) 0 = 0 :=
 example : seqHeightIndex (fun _ => 0) 1 = 0 := by
   simp [seqHeightIndex, profilePartialSum]
 
+-- At the first allowed index, the strict lower bound is tight by one.
+example : nthPrimeOne 6 - 2 * 6 = 1 := by
+  have hl := two_mul_lt_nthPrimeOne (k := 6) (by decide)
+  have hu : nthPrimeOne 6 < 14 :=
+    Nat.nth_lt_of_lt_count (by decide : 5 < Nat.count Nat.Prime 14)
+  omega
+
+-- At the prime-square endpoint, 2 divides two terms and 4 contributes once more.
+example {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H) :
+    ∑ m ∈ Finset.Icc 1 4, H m = 3 * H 2 + H 3 := by
+  rw [sum_height_eq_sum_prime_powers hH (by decide),
+    show (Finset.Iic 4).filter Nat.Prime = {2, 3} by decide,
+    Finset.sum_pair (by decide)]
+  rw [show (Finset.Icc 1 4).filter (fun a => 2 ^ a ≤ 4) = {1, 2} by decide,
+    show (Finset.Icc 1 4).filter (fun a => 3 ^ a ≤ 4) = {1} by decide,
+    Finset.sum_pair (by decide), Finset.sum_singleton]
+  simp
+  omega
+
 -- The one-based prime labels used as weights apply to every prime in the sequence.
 example (i : ℕ) : canonicalSeqHeight (fun _ => 1) (nthPrimeOne (i + 1)) = i + 1 := by
   simp only [canonicalSeqHeight, nthPrimeOne, Nat.add_sub_cancel,

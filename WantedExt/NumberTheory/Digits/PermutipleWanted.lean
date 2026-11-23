@@ -28,25 +28,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Carry relation for permutiples.** Let $n$ and $b \ge 2$ be natural numbers, let
-$\sigma$ be a permutation of $\{0, \dots, k\}$, and let $(d_k, \dots, d_0)_b$ be an
-$(n, b, \sigma)$-permutiple, where $(e_k, \dots, e_0)_b$ denotes the base-$b$ numeral
-$\sum_{j=0}^{k} e_j b^j$. Let $c_0, c_1, \dots$ be the carries of the multiplication
-$n \cdot (d_{\sigma(k)}, \dots, d_{\sigma(0)})_b$. Then for every $0 \le j \le k$,
-$$b\, c_{j+1} - c_j = n\, d_{\sigma(j)} - d_j,$$
-with both sides computed in the integers.
-
-Source: B. V. Holt, *A Method for Finding All Permutiples with a Fixed Set of
-Digits from a Single Known Example*, INTEGERS 24 (2024), Article A88, Theorem 1
-(`integers-2024-A88-thm-1`), quoting Holt's earlier paper; restated as Theorem 1
-of Holt, *Finding Permutiples of a Known Base and Multiplier*, INTEGERS 25 (2025),
-Article A13 (`integers-2025-A13-thm-1`). -/
-public theorem_wanted permutipleCarry_relation (n b : ℕ) (hb : 2 ≤ b) {k : ℕ}
-    (d : Fin (k + 1) → ℕ) (σ : Equiv.Perm (Fin (k + 1))) (hp : IsPermutiple n b d σ)
-    (j : Fin (k + 1)) :
-    (b : ℤ) * permutipleCarry n b d σ (j + 1) - permutipleCarry n b d σ j =
-      (n : ℤ) * d (σ j) - d j
-
 /-- **Carry bound for permutiples.** Let $n$ and $b \ge 2$ be natural numbers, let $\sigma$
 be a permutation of $\{0, \dots, k\}$, and let $(d_k, \dots, d_0)_b$ be an
 $(n, b, \sigma)$-permutiple, where $(e_k, \dots, e_0)_b$ denotes the base-$b$ numeral
@@ -62,25 +43,6 @@ Article A13 (`integers-2025-A13-thm-2`). -/
 public theorem_wanted permutipleCarry_le (n b : ℕ) (hb : 2 ≤ b) {k : ℕ} (d : Fin (k + 1) → ℕ)
     (σ : Equiv.Perm (Fin (k + 1))) (hp : IsPermutiple n b d σ) (j : Fin (k + 1)) :
     permutipleCarry n b d σ j ≤ n - 1
-
-/-- **Conjugate rearrangements have the same graph.** Let $d_0, \dots, d_k$ be natural numbers
-and let $\pi_1, \pi_2, \tau_1, \tau_2$ be permutations of $\{0, \dots, k\}$ with
-$\pi_1 \tau_1 \pi_1^{-1} = \pi_2 \tau_2 \pi_2^{-1}$. Then the graph of the digits
-$d_{\pi_1(0)}, \dots, d_{\pi_1(k)}$ with digit permutation $\tau_1$ and the graph of the digits
-$d_{\pi_2(0)}, \dots, d_{\pi_2(k)}$ with digit permutation $\tau_2$ have the same edge set:
-$$\{(d_{\pi_1(j)}, d_{\pi_1(\tau_1(j))}) : 0 \le j \le k\} =
-\{(d_{\pi_2(j)}, d_{\pi_2(\tau_2(j))}) : 0 \le j \le k\}.$$
-
-The source assumes, for a base $b$ and a multiplier $n$ with $1 < n < b$, that
-$(d_{\pi_1(k)}, \dots, d_{\pi_1(0)})_b$ is an $(n, b, \tau_1)$-permutiple and that
-$(d_{\pi_2(k)}, \dots, d_{\pi_2(0)})_b$ is an $(n, b, \tau_2)$-permutiple, together with a base
-permutiple $(d_k, \dots, d_0)_b$; these hypotheses are not needed.
-
-Source: B. V. Holt, *Finding Permutiples of a Known Base and Multiplier*, INTEGERS 25
-(2025), Article A13, Theorem 4 (`integers-2025-A13-thm-4`). -/
-public theorem_wanted permutipleGraphEdges_eq_of_conj {k : ℕ} (d : Fin (k + 1) → ℕ)
-    (π₁ π₂ τ₁ τ₂ : Equiv.Perm (Fin (k + 1))) (hconj : π₁ * τ₁ * π₁⁻¹ = π₂ * τ₂ * π₂⁻¹) :
-    permutipleGraphEdges (d ∘ π₁) τ₁ = permutipleGraphEdges (d ∘ π₂) τ₂
 
 /-- **Every permutiple has a cycle-preserving digit permutation.** Let $n$, $b$ and
 $d_0, \dots, d_k$ be natural numbers and let $\sigma$ be a permutation of $\{0, \dots, k\}$ such

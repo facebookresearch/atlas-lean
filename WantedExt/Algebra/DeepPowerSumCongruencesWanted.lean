@@ -20,6 +20,8 @@ public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Algebra.DeepPowerSumCongruences
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
+public import MathlibExt.Algebra.DeepPowerSumCongruences.Moebius
+public import MathlibExt.Algebra.DeepPowerSumCongruences.PartitionProduct
 
 /-!
 # Elementary symmetric functions and deep power-sum congruences
@@ -329,42 +331,6 @@ public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.P
     (s : Finset ι) (r : ι → ℕ) :
     padicValNat p (Nat.multinomial s r) =
       ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
-
-/-- **Congruence of products over a partition with multiplicities divisible by $p^v$.** Let $p$
-be a prime, $A$ a commutative ring and $\mathfrak{a}$ a divided-power ideal of $A$. Let
-$f, g : \mathbb{N} \to A$ satisfy $f_n - g_n \in \mathfrak{a}$ for every $n \ge 1$. For a
-partition $\lambda = (\lambda_1, \dots, \lambda_k)$ of a natural number $m$, write
-$f_\lambda = f_{\lambda_1} \cdots f_{\lambda_k}$ and
-$g_\lambda = g_{\lambda_1} \cdots g_{\lambda_k}$. If $v$ is a natural number such that every part
-of $\lambda$ occurs a multiple of $p^v$ times, then $f_\lambda - g_\lambda = p^v c$ for some
-$c \in \mathfrak{a}$, that is, $f_\lambda \equiv g_\lambda \bmod p^v \mathfrak{a}$.
-
-The paper takes $v = v_p(\lambda) = \min_i v_p(\lambda_i)$, which is false: for $p = 2$,
-$\lambda = (2)$, $A = \mathbb{Z}_{(2)}$, $\mathfrak{a} = (2)$, $f_n = e_n(X^2 + 2)$ and
-$g_n = e_n(X^2)$, where $e_n(P)$ is the $n$-th elementary symmetric function of the roots of $P$,
-$f_n \equiv g_n \bmod 2$ for all $n$ but $f_2 - g_2 = 2 \notin 4\mathbb{Z}_{(2)}$. The paper's
-proof writes $\lambda = \mu^{p^v}$ in the partition monoid, which uses the multiplicity condition
-stated here. The paper's symmetric functions are abstracted to arbitrary sequences $f, g$, as the
-statement only uses their values.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 26 (`integers-2024-A46-cor-26`). -/
-public theorem_wanted multiset_prod_sub_prod_mem_of_count_dvd {p : ℕ} [Fact p.Prime]
-    {A : Type*} [CommRing A] {I : Ideal A} (hI : IsDividedPowerIdeal I) (f g : ℕ → A)
-    (hfg : ∀ n, 1 ≤ n → f n - g n ∈ I) {n : ℕ} (l : n.Partition) {v : ℕ}
-    (hv : ∀ a ∈ l.parts, p ^ v ∣ l.parts.count a) :
-    ∃ c ∈ I, (l.parts.map f).prod - (l.parts.map g).prod = (p : A) ^ v * c
-
-/-- **Möbius sum over the divisors prime to a given prime.** Let $p$ be a prime, $\mu$ the Möbius
-function and $n \ge 1$. The sum of $\mu(d)$ over the divisors $d$ of $n$ with $p \nmid d$ is $1$ if
-$n$ is a power of $p$ (including $n = 1 = p^0$) and $0$ otherwise.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Lemma 28 (`integers-2024-A46-lem-28`). -/
-public theorem_wanted sum_moebius_divisors_not_dvd_prime {p : ℕ} (hp : p.Prime) {n : ℕ}
-    (hn : n ≠ 0) :
-    ∑ d ∈ n.divisors with ¬ p ∣ d, ArithmeticFunction.moebius d =
-      if p ^ Nat.log p n = n then 1 else 0
 
 /-- **The Artin–Hasse exponential has $p$-integral coefficients.** Let $p$ be a prime and let
 $F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the Artin–Hasse

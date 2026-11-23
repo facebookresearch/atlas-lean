@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Order.Round
-public import MathlibExt.NumberTheory.FloorCeilingSums
+public import MathlibExt.NumberTheory.InclExclLikeSumBounds
+public import MathlibExt.NumberTheory.TverbergSumPeriodic
 
 /-!
 # Inclusion-exclusion-like sums with floor, ceiling and nearest-integer functions (statements)
@@ -86,28 +86,6 @@ public theorem_wanted tverbergSum_eq_inclExclLikeSum {ℓ : ℕ} (F : ℝ → �
       ∀ k : ℤ, tverbergSum F a m k =
         (-1) ^ ℓ * inclExclLikeSum F (Fin.snoc (fun i => (a i : ℝ) / m) ((k : ℝ) / m)) +
           (-1) ^ (ℓ + 1) * inclExclLikeSum F (fun i => (a i : ℝ) / m)
-
-/-- **Periodicity of Tverberg's sum.** Let $\ell \ge 2$ and let $F$ be one of
-$\lfloor \cdot \rfloor$, $\lceil \cdot \rceil$, $r^+(y) = \lfloor y + 1/2 \rfloor$ and
-$r^-(y) = \lceil y - 1/2 \rceil$.
-For integers $a_1, \dots, a_\ell$, a natural number $m$ and an integer $k$, let
-$f(a, m, k) =
-\sum_{U \subseteq \{1, \dots, \ell\}} (-1)^{\ell - |U|} F((k + \sum_{i \in U} a_i)/m)$
-be Tverberg's sum of $F$, with $x/0 = 0$. For every index $i$ and every integer $q$, replacing
-$a_i$ by $a_i + q m$ does not change $f(a, m, k)$, and $f(a, m, k + q m) = f(a, m, k)$.
-
-The hypothesis $\ell \ge 2$ is needed: for $\ell = 1$, $F = \lfloor \cdot \rfloor$ and $m \ge 1$,
-$f((a), m, k) = \lfloor (k + a)/m \rfloor - \lfloor k/m \rfloor$ increases by $q$ when $a$ is
-replaced by $a + q m$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Lemma 3. -/
-public theorem_wanted tverbergSum_periodic {ℓ : ℕ} (hℓ : 2 ≤ ℓ) (F : ℝ → ℤ)
-    (hF : F ∈ ({Int.floor, Int.ceil, round, fun y : ℝ => ⌈y - 1 / 2⌉} : Set (ℝ → ℤ)))
-    (a : Fin ℓ → ℤ) (m : ℕ) (k : ℤ) (i : Fin ℓ) (q : ℤ) :
-    tverbergSum F (Function.update a i (a i + q * m)) m k = tverbergSum F a m k ∧
-      tverbergSum F a m (k + q * m) = tverbergSum F a m k
 
 /-- **Sharp bounds for Tverberg's floor sum.** Let $\ell \ge 2$ and let $F = \lfloor \cdot \rfloor$.
 For integers $a_1, \dots, a_\ell$, a natural number $m$ and an integer $k$, let
@@ -240,40 +218,6 @@ public theorem_wanted inclExclLikeSum_roundDown_extrema {n : ℕ} (hn : 2 ≤ n)
       inclExclLikeSum (fun y : ℝ => ⌈y - 1 / 2⌉) (fun _ : Fin n => (1 / 2 : ℝ)) = -2 ^ (n - 2) ∧
       inclExclLikeSum (fun y : ℝ => ⌈y - 1 / 2⌉) (fun _ : Fin n => 1 / 2 + 1 / (n : ℝ) ^ 2) =
         2 ^ (n - 2)
-
-/-- **Bounds for the four inclusion-exclusion-like sums.** Let $n \ge 2$ and write $g_1$, $g_2$,
-$g_3$, $g_4$ for the inclusion-exclusion-like sums $g^{(F)}$ in $n$ real variables with $F$ the
-floor function $\lfloor y \rfloor$, the ceiling function $\lceil y \rceil$, the nearest-integer
-function $\lfloor y + 1/2 \rfloor$ (ties rounded up) and $\lceil y - 1/2 \rceil$ (ties rounded
-down), respectively. Then for every $x \in \mathbb{R}^n$,
-$-2^{n-2} \le g_1(x) \le 2^{n-2} - 1$, $-2^{n-2} + 1 \le g_2(x) \le 2^{n-2}$,
-$-2^{n-2} \le g_3(x) \le 2^{n-2}$ and $-2^{n-2} \le g_4(x) \le 2^{n-2}$. At the point with all
-coordinates $1/2$, $g_1 = g_4 = -2^{n-2}$ and $g_2 = g_3 = 2^{n-2}$. At the point with all
-coordinates $1/2 - 1/n^2$, $g_1 = 2^{n-2} - 1 = -g_3 - 1$. At the point with all coordinates
-$1/2 + 1/n^2$, $g_2 = -2^{n-2} + 1 = -g_4 + 1$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Corollary 1. -/
-public theorem_wanted inclExclLikeSum_bounds_summary {n : ℕ} (hn : 2 ≤ n) :
-    (∀ x : Fin n → ℝ,
-      (-2 ^ (n - 2) ≤ inclExclLikeSum Int.floor x ∧
-        inclExclLikeSum Int.floor x ≤ 2 ^ (n - 2) - 1) ∧
-      (-2 ^ (n - 2) + 1 ≤ inclExclLikeSum Int.ceil x ∧
-        inclExclLikeSum Int.ceil x ≤ 2 ^ (n - 2)) ∧
-      (-2 ^ (n - 2) ≤ inclExclLikeSum round x ∧ inclExclLikeSum round x ≤ 2 ^ (n - 2)) ∧
-      (-2 ^ (n - 2) ≤ inclExclLikeSum (fun y : ℝ => ⌈y - 1 / 2⌉) x ∧
-        inclExclLikeSum (fun y : ℝ => ⌈y - 1 / 2⌉) x ≤ 2 ^ (n - 2))) ∧
-    (inclExclLikeSum Int.floor (fun _ : Fin n => (1 / 2 : ℝ)) = -2 ^ (n - 2) ∧
-      inclExclLikeSum (fun y : ℝ => ⌈y - 1 / 2⌉) (fun _ : Fin n => (1 / 2 : ℝ)) = -2 ^ (n - 2) ∧
-      inclExclLikeSum Int.ceil (fun _ : Fin n => (1 / 2 : ℝ)) = 2 ^ (n - 2) ∧
-      inclExclLikeSum round (fun _ : Fin n => (1 / 2 : ℝ)) = 2 ^ (n - 2)) ∧
-    (inclExclLikeSum Int.floor (fun _ : Fin n => 1 / 2 - 1 / (n : ℝ) ^ 2) = 2 ^ (n - 2) - 1 ∧
-      inclExclLikeSum Int.floor (fun _ : Fin n => 1 / 2 - 1 / (n : ℝ) ^ 2) =
-        -inclExclLikeSum round (fun _ : Fin n => 1 / 2 - 1 / (n : ℝ) ^ 2) - 1) ∧
-    (inclExclLikeSum Int.ceil (fun _ : Fin n => 1 / 2 + 1 / (n : ℝ) ^ 2) = -2 ^ (n - 2) + 1 ∧
-      inclExclLikeSum Int.ceil (fun _ : Fin n => 1 / 2 + 1 / (n : ℝ) ^ 2) =
-        -inclExclLikeSum (fun y : ℝ => ⌈y - 1 / 2⌉) (fun _ : Fin n => 1 / 2 + 1 / (n : ℝ) ^ 2) + 1)
 
 /-- **Sharp bounds for Tverberg's ceiling sum.** Let $\ell \ge 2$ and let $F = \lceil \cdot \rceil$.
 For integers $a_1, \dots, a_\ell$, a natural number $m$ and an integer $k$, let

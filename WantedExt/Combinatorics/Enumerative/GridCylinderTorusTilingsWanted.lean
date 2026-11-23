@@ -161,23 +161,8 @@ public noncomputable def cylinderShiftSum {T : Type*} [Fintype T] [DecidableEq T
   ∑ a : ZMod n,
     fixedTilingCount (fun c => cellG (c.1 + a, c.2)) σ
 
-/-- **Torus shift sum.** Let $n, m \ge 1$, let $T$ be a finite set of tile designs, let $g$ be a
-map from $\mathbb{Z}/n \times \mathbb{Z}/m$ (the cells of the $n \times m$ torus) to itself and
-let $\sigma$ be a permutation of $T$. For a shift $(a, b) \in \mathbb{Z}/n \times \mathbb{Z}/m$,
-count the tilings $F \colon \mathbb{Z}/n \times \mathbb{Z}/m \to T$ with
-$F(g(x + a, y + b)) = \sigma(F(x, y))$ for every cell $(x, y)$. The torus shift sum is the sum of
-these counts over all $nm$ shifts $(a, b)$.
-
-Shifting the cell first and applying $g$ afterwards follows the right-action convention of the
-source; shifts act trivially on tile designs.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Setting. -/
-public noncomputable def torusShiftSum {T : Type*} [Fintype T] [DecidableEq T]
-    (n m : ℕ) [NeZero n] [NeZero m]
-    (cellG : ZMod n × ZMod m → ZMod n × ZMod m) (σ : Equiv.Perm T) : ℕ :=
-  ∑ a : ZMod n, ∑ b : ZMod m,
-    fixedTilingCount (fun c => cellG (c.1 + a, c.2 + b)) σ
+-- `torusShiftSum` is defined in
+-- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`.
 
 /-- **The reflection f of grid cells is an involution.** For all natural numbers $n$ and $m$ and
 every pair $c = (x, y) \in \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z}$, applying the cell
@@ -324,17 +309,8 @@ public theorem_wanted rectangularGrid_r2f_odd {T : Type*} [Fintype T] [Decidable
     fixedTilingCount (cellR2F n m) σ =
       Fintype.card T ^ (n * (m - 1) / 2) * tileFixedCount σ 1 ^ n
 
-/-- **Square-grid tilings fixed by the identity.** Let $n$ be a positive integer, let $T$ be a
-finite set and let $\sigma$ be a permutation of $T$ with $\sigma^1 = 1$. Then the number of maps
-$F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(c) = \sigma(F(c))$ for every cell $c$ is
-$|T|^{n^2}$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
-public theorem_wanted squareGrid_identity {T : Type*} [Fintype T] [DecidableEq T]
-    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
-    fixedTilingCount (id : ZMod n × ZMod n → ZMod n × ZMod n) σ =
-      Fintype.card T ^ (n ^ 2)
+-- The case of the identity, `squareGrid_identity`, is proved in
+-- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`, which this module imports.
 
 /-- **Square-grid tilings fixed by the half-turn for even $n$.** Let $n$ be an even positive
 integer, let $T$ be a finite set and let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$.
@@ -632,22 +608,8 @@ public theorem_wanted cylinder_r2f_odd {T : Type*} [Fintype T] [DecidableEq T]
         Nat.totient d * Fintype.card T ^ ((n * m - n) / Nat.lcm d 2) *
           tileFixedCount σ d ^ (n / d)
 
-/-- **Torus fixed-tiling sum for the identity.** Let $n$ and $m$ be positive integers, let $T$ be
-a finite set of tiles and let $\sigma$ be a permutation of $T$ with $\sigma^1 = 1$, that is, the
-identity. For $(a, b) \in \mathbb{Z}/n \times \mathbb{Z}/m$ let $N(a, b)$ be the number of tilings
-$F : \mathbb{Z}/n \times \mathbb{Z}/m \to T$ with $F(x + a, y + b) = \sigma(F(x, y))$ for every
-cell $(x, y)$. Then, with $\varphi$ Euler's totient function,
-$$\sum_{a \in \mathbb{Z}/n} \sum_{b \in \mathbb{Z}/m} N(a, b) =
-\sum_{c \mid m} \sum_{d \mid n} \varphi(c) \, \varphi(d) \, |T|^{mn / \operatorname{lcm}(c, d)}.$$
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 34. -/
-public theorem_wanted rectangularTorus_identity {T : Type*} [Fintype T] [DecidableEq T]
-    (n m : ℕ) [NeZero n] [NeZero m] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
-    torusShiftSum n m id σ =
-      ∑ c ∈ m.divisors, ∑ d ∈ n.divisors,
-        Nat.totient c * Nat.totient d *
-          Fintype.card T ^ (m * n / Nat.lcm c d)
+-- `rectangularTorus_identity` is proved in
+-- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`.
 
 /-- **Half-turn fixed points on the rectangular torus, both sides even.** Let $T$ be a finite
 set of tile designs, $\sigma$ a permutation of $T$ with $\sigma^2 = 1$, and $n, m$ positive even

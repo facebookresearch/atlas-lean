@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Ring.NegOnePow
 public import Mathlib.LinearAlgebra.Matrix.Notation
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -172,6 +173,43 @@ public theorem extendedContinuant_neg_three_to_six (x : ℤ → ℤ) (h : ℤ) :
   refine ⟨h3, h4, h5, ?_⟩
   rw [h4, h5] at e4
   linear_combination -e4
+
+/-- **Reflection formula for the order of extended continuants.** Let
+$x : \mathbb{Z} \to \mathbb{Z}$ be an integer sequence and write $K_a(x)_b$ for its extended
+continuant of order $a$ with start index $b$. For all integers $h$ and $n$,
+$$K_{-n}(x)_h = (-1)^{n+1} K_{n-4}(x)_{h-n+2}.$$
+
+Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
+INTEGERS 26 (2026), Article A73, Theorem 1. -/
+public theorem extendedContinuant_neg_order (x : ℤ → ℤ) (h n : ℤ) :
+    extendedContinuant x (-n) h =
+      ((n + 1).negOnePow : ℤ) * extendedContinuant x (n - 4) (h - n + 2) := by
+  -- Index both solutions by the same right endpoint, h - k.
+  let K (b k : ℤ) := extendedContinuant x (h - k - b) b
+  have recurrence (b k : ℤ) : K b (k - 1) = x (h - k + 1) * K b k + K b (k + 1) := by
+    dsimp only [K]
+    convert extendedContinuant_recurrence x (h - (k - 1) - b) b using 1
+    ring_nf
+  let b := h - n + 2
+  let D (k : ℤ) := K h k * K b (k - 1) - K h (k - 1) * K b k
+  have flip (k : ℤ) : D (k + 1) = -D k := by
+    dsimp only [D]
+    rw [add_sub_cancel_right, recurrence h k, recurrence b k]
+    ring
+  -- The sign-corrected determinant is determined by its value at k = 2.
+  let P (k : ℤ) := D k = ((k + 1).negOnePow : ℤ) * K b 2
+  have step (k : ℤ) : P (k + 1) ↔ P k := by
+    simp only [P, flip, Int.negOnePow_succ (k + 1), Units.val_neg, neg_mul, neg_inj]
+  have base : P 2 := by
+    change D 2 = -1 * K b 2
+    simp only [D, K]
+    ring_nf
+    simp [extendedContinuant_neg_two, extendedContinuant_neg_one]
+  have hn : P n := Int.inductionOn' n 2 base (fun k _ => (step k).2)
+    (fun k _ ih => (step (k - 1)).1 (by simpa using ih))
+  dsimp only [P, D, K, b] at hn
+  ring_nf at hn ⊢
+  simpa [extendedContinuant_neg_one, extendedContinuant_neg_two] using hn
 
 /-- **Westbound matrix product of extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be a
 bi-infinite integer sequence, write $K_a(x)_b$ for the extended continuant of order $a$ with start

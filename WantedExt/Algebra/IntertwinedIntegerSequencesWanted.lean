@@ -20,6 +20,8 @@ public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.Algebra.MonoidAlgebra.Defs
+public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSum
+public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSumLaurent
 public import MathlibExt.Algebra.Polynomial.ChebyshevCPositivity
 public import MathlibExt.Algebra.Polynomial.ChebyshevCTrace
 
@@ -88,19 +90,6 @@ public noncomputable def kasselReutenauerPoly (n : ℕ) : ℤ[X] :=
   (kasselReutenauerCoeff n 0 : ℤ[X]) +
     ∑ i ∈ Finset.Icc 1 (n - 1), (kasselReutenauerCoeff n i : ℤ[X]) * Chebyshev.C ℤ i
 
-/-- **Partial sums of the monic Chebyshev polynomials.** For $n \ge 0$, $F_n(X)$ is the
-polynomial with integer coefficients
-$$F_n(X) = 1 + \sum_{k=1}^{n} \bar T_k(X),$$
-where $\bar T_k \in \mathbb{Z}[X]$ is the monic Chebyshev polynomial of the source, that is, the
-polynomial with $\bar T_k(q + q^{-1}) = q^k + q^{-k}$; equivalently $\bar T_0 = 2$,
-$\bar T_1 = X$ and $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$. Thus $F_0 = 1$ and
-$F_n = F_{n-1} + \bar T_n$ for $n \ge 1$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, (3.6)–(3.7). -/
-public noncomputable def chebyshevCPartialSum (n : ℕ) : ℤ[X] :=
-  1 + ∑ k ∈ Finset.Icc 1 n, Chebyshev.C ℤ k
-
 /-- **Small values of the coefficients $a_{n,i}$.** The Kassel–Reutenauer coefficients satisfy
 $a_{1,0} = 1$, $a_{2,0} = a_{2,1} = 1$, $a_{3,0} = 0$ and $a_{3,1} = a_{3,2} = 1$.
 
@@ -144,46 +133,6 @@ public theorem kasselReutenauerPoly_three : kasselReutenauerPoly 3 = X ^ 2 + X -
   rw [kasselReutenauerPoly, hI, Finset.sum_pair (by decide), h0, h1, h2]
   simp only [Nat.cast_ofNat, Nat.cast_one, Nat.cast_zero, one_mul, zero_add]
   rw [Chebyshev.C_one, Chebyshev.C_two]
-  ring
-
-/-- **Zeroth partial sum of the Chebyshev polynomials.** Let
-$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-Then $F_0 = 1$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, (3.6). -/
-public theorem chebyshevCPartialSum_zero : chebyshevCPartialSum 0 = 1 := by
-  simp [chebyshevCPartialSum]
-
-/-- **Successive partial sums of the Chebyshev polynomials.** Let
-$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-For every natural number $n$, $F_{n+1} = F_n + \bar T_{n+1}$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, (3.6). -/
-public theorem chebyshevCPartialSum_succ (n : ℕ) :
-    chebyshevCPartialSum (n + 1) = chebyshevCPartialSum n + Chebyshev.C ℤ (n + 1 : ℕ) := by
-  simp only [chebyshevCPartialSum, Finset.sum_Icc_succ_top (Nat.le_add_left 1 n), add_assoc]
-
-/-- **First and second partial sums of the Chebyshev polynomials.** Let
-$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-Then $F_1 = X + 1$ and $F_2 = X^2 + X - 1$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Table 4. -/
-public theorem chebyshevCPartialSum_one_two :
-    chebyshevCPartialSum 1 = X + 1 ∧ chebyshevCPartialSum 2 = X ^ 2 + X - 1 := by
-  have h1 : chebyshevCPartialSum 1 = X + 1 := by
-    rw [chebyshevCPartialSum_succ, chebyshevCPartialSum_zero]
-    simp [add_comm]
-  refine ⟨h1, ?_⟩
-  rw [chebyshevCPartialSum_succ, h1]
-  have hc : Chebyshev.C ℤ ((1 + 1 : ℕ) : ℤ) = X ^ 2 - 2 := by
-    simpa using Chebyshev.C_two (R := ℤ)
-  rw [hc]
   ring
 
 /-- **Positivity of the Kassel–Reutenauer polynomials at integers $N \ge 2$.** For every $n \ge 1$
@@ -272,23 +221,6 @@ public theorem_wanted kasselReutenauerPoly_abs_eval_multiplicative_iff (N : ℤ)
           |(kasselReutenauerPoly m).eval N| * |(kasselReutenauerPoly n).eval N|) ↔
       N = -2 ∨ N = -1 ∨ N = 0 ∨ N = 2
 
-/-- **Generating function of the partial sums of Chebyshev polynomials.** Let
-$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-In the ring $\mathbb{Z}[X][[t]]$ of formal power series in $t$ over $\mathbb{Z}[X]$,
-$$(1 - X t + t^2) \sum_{n \ge 0} F_n t^n = 1 + t.$$
-
-Since $1 - X t + t^2$ is a unit in $\mathbb{Z}[X][[t]]$, this is equivalent to
-$\sum_{n \ge 0} F_n t^n = (1 + t)/(1 - X t + t^2)$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.3
-(`jis-2026-26.4.4-prop-8`). -/
-public theorem_wanted chebyshevCPartialSum_generatingFunction :
-    (1 - PowerSeries.C X * PowerSeries.X + PowerSeries.X ^ 2) *
-        PowerSeries.mk (fun n => chebyshevCPartialSum n) =
-      (1 + PowerSeries.X : PowerSeries ℤ[X])
-
 /-- **Binomial expansion of the partial sums of Chebyshev polynomials.** Let
 $F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
 polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
@@ -323,17 +255,6 @@ public theorem_wanted chebyshevCPartialSum_top_coeffs (n : ℕ) (hn : 5 ≤ n) :
         (X ^ n + X ^ (n - 1) - ((n - 1 : ℕ) : ℤ[X]) * X ^ (n - 2) - ((n - 2 : ℕ) : ℤ[X]) * X ^ (n - 3) +
           ((n - 2).choose 2 : ℤ[X]) * X ^ (n - 4) + ((n - 3).choose 2 : ℤ[X]) * X ^ (n - 5))).degree <
       ((n - 5 : ℕ) : WithBot ℕ)
-
-/-- **Three-term recurrence for the partial sums of Chebyshev polynomials.** Let
-$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-For every $k \ge 1$, $F_{k+1} = X F_k - F_{k-1}$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.6
-(`jis-2026-26.4.4-prop-11`). -/
-public theorem_wanted chebyshevCPartialSum_recurrence (k : ℕ) (hk : 1 ≤ k) :
-    chebyshevCPartialSum (k + 1) = X * chebyshevCPartialSum k - chebyshevCPartialSum (k - 1)
 
 /-- **Approximation of $\bar P_n$ by $F_{n-1}$.** Let $\bar P_n$ be the Kassel–Reutenauer
 polynomials, and for $r \ge 0$ let $F_r(X) = 1 + \sum_{j=1}^{r} \bar T_j(X)$ be the partial sum
@@ -496,22 +417,6 @@ public theorem_wanted kasselReutenauer_C_abs_coeff_sum (n : ℕ) (hn : 1 ≤ n) 
         aeval (LaurentPolynomial.T 1 + LaurentPolynomial.T (-1) : LaurentPolynomial ℤ)
           (kasselReutenauerPoly n)).coeff.sum (fun _ c => |c|) =
       4 * (((Nat.divisors n).filter Odd).card : ℤ)
-
-/-- **Laurent polynomial identity for the partial sums of Chebyshev polynomials.** Let
-$F_r = 1 + \sum_{k=1}^{r} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-For every natural number $r$, in the ring $\mathbb{Z}[q, q^{-1}]$ of Laurent polynomials,
-$$q^{r+1} + q^{-r-1} - q^r - q^{-r} = q^{-1} (q - 1)^2 F_r(q + q^{-1}).$$
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Lemma 6.1
-(`jis-2026-26.4.4-lem-26`). -/
-public theorem_wanted chebyshevCPartialSum_laurent_identity (r : ℕ) :
-    (LaurentPolynomial.T ((r : ℤ) + 1) + LaurentPolynomial.T (-(r : ℤ) - 1) -
-        LaurentPolynomial.T (r : ℤ) - LaurentPolynomial.T (-(r : ℤ)) : LaurentPolynomial ℤ) =
-      LaurentPolynomial.T (-1) * (LaurentPolynomial.T 1 - 1) ^ 2 *
-        aeval (LaurentPolynomial.T 1 + LaurentPolynomial.T (-1) : LaurentPolynomial ℤ)
-          (chebyshevCPartialSum r)
 
 /-- **Increasing-sequence formula for the Kassel–Reutenauer polynomials.** Let $n \ge 1$ and
 work in the ring $\mathbb{Z}[q, q^{-1}]$ of Laurent polynomials. For integers $a$ and $h$ let

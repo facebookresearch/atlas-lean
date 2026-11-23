@@ -56,6 +56,7 @@ on:
       - "docs/cards.md"
       - "docs/mathgraph-import.md"
       - ".github/workflows/blueprint-pages.yml"
+      - ".github/workflows/graph-sync.yml"
       - ".github/autoform-ref"
       - "lean-toolchain"
       - "lake-manifest.json"
@@ -272,13 +273,29 @@ jobs:
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+      # The move ledger the site serves (docs/cards.md#move-ledger), checked on
+      # its own, independently of the strict card check: the site keeps the
+      # moved addresses only with the receipt this step writes for this commit,
+      # its ledger and its annotations, so a card error never costs a redirect.
+      # It removes any earlier receipt first and writes one only when the
+      # ledger is valid. This step can neither fail this job nor hold it past
+      # its timeout.
+      - name: Check the move ledger the site serves
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          rm -f build/card-moves.json
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            python scripts/cards.py moves build/card-moves.json
+
       # The card data the site shows (docs/cards.md#reading): this checkout's
       # own rollup, from the extraction and the Mathlib registry above, as the
       # `check the cards` job makes it (that job alone also checks the moves
       # against the base commit). It fails closed: an error leaves no card data,
-      # the site then renders exactly as without cards, and that job reports
-      # the error. This step can neither fail this job nor hold it past its
-      # timeout.
+      # the site then shows no card (it still keeps the moved addresses, with
+      # the step above), and that job reports the error. This step can neither
+      # fail this job nor hold it past its timeout.
       - name: Derive the card data the site shows
         continue-on-error: true
         timeout-minutes: 10
@@ -354,40 +371,6 @@ jobs:
 
       - name: Check routes, anchors, and article cards
         run: python scripts/check_blueprint_site.py site-src site
-
-      # GitHub Pages officially supports a site of at most 1 GB, the size of the archive the
-      # Pages upload builds; a larger deployment is not guaranteed to succeed, and its failure
-      # does not name the size. Measure that archive on every build and warn from 900 MB; fail
-      # only a build that would publish more than 1 GB.
-      - name: Check the site against GitHub Pages' size limit
-        env:
-          DEPLOYING: ${{ vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
-        run: |
-          set -euo pipefail
-          # The archive actions/upload-pages-artifact builds from `site`: links dereferenced,
-          # hidden files and .git and .github left out.
-          if ! bytes=$(tar --dereference --hard-dereference --directory site -cf - \
-              --exclude=.git --exclude=.github --exclude='.[^/]*' . | wc -c); then
-            echo "::error title=Site size unknown::Could not archive the built site to measure it."
-            exit 1
-          fi
-          bytes="${bytes//[[:space:]]/}"
-          if ! [[ "$bytes" =~ ^[0-9]+$ ]]; then
-            echo "::error title=Site size unknown::Could not read the size of the built site's archive."
-            exit 1
-          fi
-          mb=$((bytes / 1000000))
-          limit="the 1 GB (1,000,000,000 bytes) GitHub Pages officially supports"
-          echo "The built site's Pages archive is ${bytes} bytes (${mb} MB); GitHub Pages officially supports at most 1,000,000,000 bytes." | tee -a "$GITHUB_STEP_SUMMARY"
-          if [ "$bytes" -gt 1000000000 ]; then
-            if [ "$DEPLOYING" = true ]; then
-              echo "::error title=Site over the Pages limit::The built site's Pages archive is ${bytes} bytes, over ${limit}, so this build does not publish it."
-              exit 1
-            fi
-            echo "::warning title=Site over the Pages limit::The built site's Pages archive is ${bytes} bytes, over ${limit}; a publishing build would stop here."
-          elif [ "$bytes" -ge 900000000 ]; then
-            echo "::warning title=Site near the Pages limit::The built site's Pages archive is ${bytes} bytes, within 100 MB of ${limit}."
-          fi
 
       - name: Keep dependency diagnostics
         if: always()

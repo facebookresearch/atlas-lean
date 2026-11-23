@@ -88,14 +88,70 @@ public theorem isPermutiple_87912 :
   unfold IsPermutiple
   decide
 
+namespace permutipleCarry_relation
+
+/-- Extract a digit from a numeral by dividing by its place value and reducing modulo the base. -/
+private theorem digit_mod {m b : ℕ} (d : Fin m → ℕ) (hd : ∀ i, d i < b) (j : Fin m) :
+    (∑ i, d i * b ^ (i : ℕ)) / b ^ (j : ℕ) % b = d j := by
+  let f (i : Fin m) : Fin b := ⟨d i, hd i⟩
+  exact congrArg Fin.val (congrFun (finFunctionFinEquiv.symm_apply_apply f) j)
+
+end permutipleCarry_relation
+
+/-- **Carry relation for permutiples.** Let $n$ and $b \ge 2$ be natural numbers, let
+$\sigma$ be a permutation of $\{0, \dots, k\}$, and let $(d_k, \dots, d_0)_b$ be an
+$(n, b, \sigma)$-permutiple, where $(e_k, \dots, e_0)_b$ denotes the base-$b$ numeral
+$\sum_{j=0}^{k} e_j b^j$. Let $c_0, c_1, \dots$ be the carries of the multiplication
+$n \cdot (d_{\sigma(k)}, \dots, d_{\sigma(0)})_b$. Then for every $0 \le j \le k$,
+$$b\, c_{j+1} - c_j = n\, d_{\sigma(j)} - d_j,$$
+with both sides computed in the integers.
+
+Source: B. V. Holt, *A Method for Finding All Permutiples with a Fixed Set of
+Digits from a Single Known Example*, INTEGERS 24 (2024), Article A88, Theorem 1
+(`integers-2024-A88-thm-1`), quoting Holt's earlier paper; restated as Theorem 1
+of Holt, *Finding Permutiples of a Known Base and Multiplier*, INTEGERS 25 (2025),
+Article A13 (`integers-2025-A13-thm-1`). -/
+public theorem permutipleCarry_relation (n b : ℕ) (hb : 2 ≤ b) {k : ℕ}
+    (d : Fin (k + 1) → ℕ) (σ : Equiv.Perm (Fin (k + 1))) (hp : IsPermutiple n b d σ)
+    (j : Fin (k + 1)) :
+    (b : ℤ) * permutipleCarry n b d σ (j + 1) - permutipleCarry n b d σ j =
+      (n : ℤ) * d (σ j) - d j := by
+  let a := ∑ i, d (σ i) * b ^ (i : ℕ)
+  let c := permutipleCarry n b d σ
+  have input (i : Fin (k + 1)) : a / b ^ (i : ℕ) % b = d (σ i) :=
+    permutipleCarry_relation.digit_mod (fun l ↦ d (σ l)) (fun l ↦ hp.1 _) i
+  have carry_succ (i : Fin (k + 1)) : c ((i : ℕ) + 1) = (n * d (σ i) + c i) / b := by
+    simp [c, permutipleCarry]
+  -- Split the remaining input into its current column and its higher columns.
+  have split (i : Fin (k + 1)) :
+      n * (a / b ^ (i : ℕ)) + c i =
+        n * d (σ i) + c i + b * (n * (a / b ^ ((i : ℕ) + 1))) := by
+    rw [← input i, pow_succ, ← Nat.div_div_eq_div_mul]
+    conv_lhs => rw [← Nat.mod_add_div (a / b ^ (i : ℕ)) b]
+    ring
+  -- After dropping t columns, the incoming carry accounts for the discarded digits.
+  have quotient (t : ℕ) (ht : t ≤ k + 1) :
+      n * a / b ^ t = n * (a / b ^ t) + c t := by
+    induction t with
+    | zero => simp [c, permutipleCarry]
+    | succ t ih =>
+      have h : t < k + 1 := ht
+      rw [pow_succ, ← Nat.div_div_eq_div_mul, ih (by omega), split ⟨t, h⟩,
+        Nat.add_mul_div_left _ _ (by omega)]
+      rw [← carry_succ ⟨t, h⟩, pow_succ, add_comm]
+  have digit := permutipleCarry_relation.digit_mod d hp.1 j
+  rw [hp.2, quotient _ j.isLt.le, split j, Nat.add_mul_mod_self_left] at digit
+  have col := Nat.mod_add_div (n * d (σ j) + c j) b
+  rw [digit, ← carry_succ j, add_comm (d j)] at col
+  exact sub_eq_sub_iff_add_eq_add.mpr (by exact_mod_cast col)
+
 namespace permutiple_basePerm_residue_le
 
 /-- Dividing a numeral by its place value gives its digit modulo the base. -/
 private theorem digit_modEq {m b : ℕ} (d : Fin m → ℕ) (hd : ∀ i, d i < b) (j : Fin m) :
     (d j : ℤ) ≡ (((∑ i, d i * b ^ (i : ℕ)) / b ^ (j : ℕ) : ℕ) : ℤ) [ZMOD b] := by
-  let f (i : Fin m) : Fin b := ⟨d i, hd i⟩
-  rw [Int.natCast_modEq_iff, Nat.ModEq, Nat.mod_eq_of_lt (hd j)]
-  exact (congrArg Fin.val (congrFun (finFunctionFinEquiv.symm_apply_apply f) j)).symm
+  rw [Int.natCast_modEq_iff, Nat.ModEq, Nat.mod_eq_of_lt (hd j),
+    permutipleCarry_relation.digit_mod d hd j]
 
 end permutiple_basePerm_residue_le
 
@@ -166,6 +222,31 @@ Source: B. V. Holt, *Finding Permutiples of a Known Base and Multiplier*, INTEGE
 public def permutipleGraphEdges {k : ℕ} (d : Fin (k + 1) → ℕ) (σ : Equiv.Perm (Fin (k + 1))) :
     Finset (ℕ × ℕ) :=
   Finset.univ.image fun j => (d j, d (σ j))
+
+/-- **Conjugate rearrangements have the same graph.** Let $d_0, \dots, d_k$ be natural numbers
+and let $\pi_1, \pi_2, \tau_1, \tau_2$ be permutations of $\{0, \dots, k\}$ with
+$\pi_1 \tau_1 \pi_1^{-1} = \pi_2 \tau_2 \pi_2^{-1}$. Then the graph of the digits
+$d_{\pi_1(0)}, \dots, d_{\pi_1(k)}$ with digit permutation $\tau_1$ and the graph of the digits
+$d_{\pi_2(0)}, \dots, d_{\pi_2(k)}$ with digit permutation $\tau_2$ have the same edge set:
+$$\{(d_{\pi_1(j)}, d_{\pi_1(\tau_1(j))}) : 0 \le j \le k\} =
+\{(d_{\pi_2(j)}, d_{\pi_2(\tau_2(j))}) : 0 \le j \le k\}.$$
+
+The source assumes, for a base $b$ and a multiplier $n$ with $1 < n < b$, that
+$(d_{\pi_1(k)}, \dots, d_{\pi_1(0)})_b$ is an $(n, b, \tau_1)$-permutiple and that
+$(d_{\pi_2(k)}, \dots, d_{\pi_2(0)})_b$ is an $(n, b, \tau_2)$-permutiple, together with a base
+permutiple $(d_k, \dots, d_0)_b$; these hypotheses are not needed.
+
+Source: B. V. Holt, *Finding Permutiples of a Known Base and Multiplier*, INTEGERS 25
+(2025), Article A13, Theorem 4 (`integers-2025-A13-thm-4`). -/
+public theorem permutipleGraphEdges_eq_of_conj {k : ℕ} (d : Fin (k + 1) → ℕ)
+    (π₁ π₂ τ₁ τ₂ : Equiv.Perm (Fin (k + 1))) (hconj : π₁ * τ₁ * π₁⁻¹ = π₂ * τ₂ * π₂⁻¹) :
+    permutipleGraphEdges (d ∘ π₁) τ₁ = permutipleGraphEdges (d ∘ π₂) τ₂ := by
+  have reindex (π τ : Equiv.Perm (Fin (k + 1))) :
+      permutipleGraphEdges (d ∘ π) τ = permutipleGraphEdges d (π * τ * π⁻¹) := by
+    unfold permutipleGraphEdges
+    conv_rhs => rw [← Finset.image_univ_equiv π, Finset.image_image]
+    simp [Function.comp_def, Equiv.Perm.mul_apply]
+  rw [reindex π₁ τ₁, reindex π₂ τ₂, hconj]
 
 /-- **Graph of the permutiple 87912.** Let $(d_0, d_1, d_2, d_3, d_4) = (2, 1, 9, 7, 8)$ be
 the decimal digits of $87912$, from the units digit up, and let $\sigma$ be the reversal
