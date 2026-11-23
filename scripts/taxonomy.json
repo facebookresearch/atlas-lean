@@ -11620,6 +11620,7 @@
   "MathlibExt/NumberTheory/RothAuxiliary": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
   "MathlibExt/NumberTheory/RoughNumbers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Rough numbers"},
   "MathlibExt/NumberTheory/SCullenNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Cullen numbers"},
+  "MathlibExt/NumberTheory/SanfordCoupledRecurrence": {"to": "Analysis/special-functions/bernoulli-polylog-clausen", "title": "Dilogarithm identities"},
   "MathlibExt/NumberTheory/SPerfect": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Signed binary representations"},
   "MathlibExt/NumberTheory/Schatunowsky": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Schatunowsky-type theorems"},
   "MathlibExt/NumberTheory/SelbergLambdaSquaredBound": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Selberg sieve"},
