@@ -384,6 +384,7 @@ theorem hasHadamardDerivWithinAt (hP : IsStieltjesProductIntegral τ P Ψ D S C)
     HasHadamardDerivWithinAt P (Ψ θ θ) D {h | Continuous fun t ↦ h t} θ :=
   hP.toIsDuhamelProductIntegral.hasHadamardDerivWithinAt hθ hP.continuous_subset_closure
 
+open scoped Pointwise in
 /-- **Hadamard differentiability of the survival map** `Λ ↦ P(-Λ) = ∏_{(0, t]} (1 - dΛ)` at a
 cumulative hazard `Λ` with `-Λ ∈ D`, on the domain `{A | -A ∈ D}`, with derivative
 `h ↦ -Ψ(-Λ, -Λ) h`, tangentially to `{h | -h ∈ closure S}`. For `S` = step functions this is the
