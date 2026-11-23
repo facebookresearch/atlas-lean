@@ -38,28 +38,15 @@ attribute [local instance] HasDerivedCategory.standard
 def unitClass (Z : TopCat.{0}) : BettiRealization.Cohomology Z 0 :=
   (shiftFunctorZero (RationalDerived Z) ℤ).inv.app (rationalUnit Z)
 
-/-- The powers `hʲ ∈ H^{2j}(Z)` of a degree-two class, by repeated cup
-product with the unit class in degree zero. -/
-def powerClass (Z : TopCat.{0}) (h : BettiRealization.Cohomology Z 2) :
-    (j : ℕ) → BettiRealization.Cohomology Z (2 * j)
-  | 0 => unitClass Z
-  | j + 1 => BettiRealization.cohomologyCast (by omega)
-      (BettiRealization.cup Z h (powerClass Z h j))
-
-/-- A selected smooth purity family: for every smooth complex variety of pure
-dimension `d`, an isomorphism of its dualizing complex with `ℚ[2d]`. Such an
-isomorphism is unique up to an invertible locally constant scalar (a choice of
-orientation). Compatibility with geometric operations is a separate
-mathematical condition, not asserted by this data structure. -/
+/-- A selected smooth purity family. Compatibility with geometric operations
+is a separate mathematical condition, not asserted by this data structure. -/
 structure PureFamily
     (D : ∀ (X : ComplexScheme) [IsComplexVariety X],
       DualizingComplex (ComplexAnalytification.space X)) where
-  /-- The purity isomorphism of each smooth pure-dimensional variety. -/
   iso : ∀ (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [_root_.AlgebraicGeometry.SmoothOfRelativeDimension d X.hom],
     (D X).obj ≅ (rationalUnit (ComplexAnalytification.space X))⟦(2 * d : ℤ)⟧
 
-/-- A purity isomorphism, shifted to Borel–Moore degree `m`. -/
 def purityHomologyIso (Z : TopCat.{0}) (D : DualizingComplex Z) (d : ℕ)
     (e : D.obj ≅ (rationalUnit Z)⟦(2 * d : ℤ)⟧) (m : ℤ) :
     D.obj⟦-m⟧ ≅ (rationalUnit Z)⟦(2 * d : ℤ)-m⟧ :=
@@ -67,7 +54,6 @@ def purityHomologyIso (Z : TopCat.{0}) (D : DualizingComplex Z) (d : ℕ)
     (shiftFunctorAdd' (RationalDerived Z) (2 * d : ℤ) (-m) ((2 * d : ℤ)-m)
       (by omega)).symm.app (rationalUnit Z)
 
-/-- Poincaré duality `H^{BM}_m(Z) ≃ H^{2d - m}(Z)` from a purity isomorphism. -/
 def purityHomologyEquiv (Z : TopCat.{0}) (D : DualizingComplex Z) (d : ℕ)
     (e : D.obj ≅ (rationalUnit Z)⟦(2 * d : ℤ)⟧) (m : ℤ) :
     BorelMoore Z D m ≃ₗ[ℚ] BettiRealization.Cohomology Z ((2 * d : ℤ)-m) where
@@ -78,8 +64,6 @@ def purityHomologyEquiv (Z : TopCat.{0}) (D : DualizingComplex Z) (d : ℕ)
   map_add' a b := by simp [Preadditive.add_comp]
   map_smul' r a := by simp [Linear.smul_comp]
 
-/-- Poincaré duality `H^{BM}_{2d - n}(Z) ≃ Hⁿ(Z)` from a purity isomorphism,
-indexed by the cohomological degree. -/
 def purityCohomologyEquiv (Z : TopCat.{0}) (D : DualizingComplex Z) (d : ℕ)
     (e : D.obj ≅ (rationalUnit Z)⟦(2 * d : ℤ)⟧) (n : ℤ) :
     BorelMoore Z D ((2 * d : ℤ)-n) ≃ₗ[ℚ] BettiRealization.Cohomology Z n := by
@@ -94,9 +78,6 @@ def purityCohomologyEquiv (Z : TopCat.{0}) (D : DualizingComplex Z) (d : ℕ)
           map_add' := by intro x y; simp [Preadditive.add_comp]
           map_smul' := by intro r x; simp [Linear.smul_comp] }
 
-/-- The Gysin map `f_! : Hⁿ(Z) → H^{n + 2(d_W - d_Z)}(W)` of a proper map
-between spaces with purity isomorphisms: proper Borel–Moore pushforward,
-conjugated by Poincaré duality. -/
 def cohomologyPushforward {Z W : TopCat.{0}} {f : Z ⟶ W}
     (P : ProperPullback f) (DZ : DualizingComplex Z) (DW : DualizingComplex W)
     (dZ dW : ℕ) (eZ : DZ.obj ≅ (rationalUnit Z)⟦(2 * dZ : ℤ)⟧)
