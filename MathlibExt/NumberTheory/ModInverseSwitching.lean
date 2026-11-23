@@ -53,6 +53,21 @@ def IsEuclidSwitchSeq (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) : Prop :=
       s (i + 1) * (r (i - 1) : ℤ) + s i * (r i : ℤ) = 1
 
 set_option linter.unusedVariables false in
+/-- **Bézout coefficients are modular inverses.** Let $m$ and $n$ be coprime positive integers,
+and let $x$ and $y$ be integers with $xm + yn = 1$. Then $xm \equiv 1 \pmod{n}$ and
+$yn \equiv 1 \pmod{m}$; that is, $x$ is an inverse of $m$ modulo $n$ and $y$ is an inverse of
+$n$ modulo $m$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Lemma 1. -/
+theorem bezout_coeffs_are_inverses
+    (m n : ℕ) (hm : 0 < m) (hn : 0 < n) (hcop : Nat.Coprime m n)
+    (x y : ℤ) (h : x * (m : ℤ) + y * (n : ℤ) = 1) :
+    x * (m : ℤ) ≡ 1 [ZMOD (n : ℤ)] ∧
+      y * (n : ℤ) ≡ 1 [ZMOD (m : ℤ)] := by
+  simp [← h]
+
+set_option linter.unusedVariables false in
 /-- **Modular inverse switching.** Let $m$ and $n$ be positive integers with $\gcd(m, n) = 1$,
 and let $t$ be an integer with $\gcd(|t|, n) = 1$. Then $m = kn + t$ for some integer $k$ if
 and only if there are integers $x$ and $y$ with $xt \equiv 1 \pmod{n}$, $yn \equiv 1 \pmod{m}$

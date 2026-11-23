@@ -16,6 +16,7 @@ public import Mathlib.Data.Int.Interval
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.NumberTheory.ChooseAddModEqPrime
 
 /-!
 # Regular partition functions and a generalized tau function
@@ -497,20 +498,6 @@ Article A39, Theorem 20 (`integers-2024-A39-thm-20`). -/
 public theorem_wanted card_prime_regular_modEq_generalizedTau_pred (p : ℕ) (hp : p.Prime) (n : ℕ) :
     ((Nat.Partition.restricted (n) (¬ p ∣ ·)).card : ℤ)
         ≡ generalizedTau ((p : ℤ) - 1) (n + 1) [ZMOD p]
-
-/-- **Binomial coefficients $\binom{n+k}{k}$ modulo an odd prime.** Let $l$ be an odd prime, $k$
-an integer with $1 \le k < l$, $n$ a natural number, and $r$ the remainder of $n$ modulo $l$. If
-$r \le l - k - 1$, then $\binom{n+k}{k} \equiv (-1)^r \binom{l-k-1}{r} \pmod l$; otherwise
-$\binom{n+k}{k} \equiv 0 \pmod l$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Lemma 1 (`integers-2024-A39-lem-1`). -/
-public theorem_wanted choose_add_modEq_prime (l : ℕ) (hl : l.Prime) (hodd : Odd l) (k : ℕ)
-    (hk : 1 ≤ k) (hkl : k < l) (n : ℕ) :
-    ((n + k).choose k : ℤ) ≡
-      (if n % l ≤ l - k - 1 then (-1 : ℤ) ^ (n % l) * ((l - k - 1).choose (n % l) : ℤ)
-        else 0) [ZMOD l]
 
 /-- **$\tau_{-k}$ and partition convolutions modulo a prime.** Let $l$ be an odd prime, let $k$ be a
 natural number with $2 \le k < l$, let $n$ be a natural number, and write $p(s)$ for the number of

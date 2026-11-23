@@ -143,24 +143,6 @@ public theorem_wanted ringChoose_mul_prime_sub_one_mul_congr (p : ℕ) (α : ℤ
 
 /-! ### Higher `p`-adic mean value theorem -/
 
-/-- **Coefficient bound for the divided derivatives $D^n/n!$.** Let $p$ be a prime and $B$ a
-normed vector space over $\mathbb{Q}_p$ whose norm is ultrametric. Let $(a_k)_{k \ge 0}$ be a
-sequence in $B$ and $C$ a real number with $\|a_k\| \le C$ for every $k$. Then for all natural
-numbers $n$ and $k$,
-$$\Big\| \binom{k+n}{n} a_{k+n} \Big\| \le C.$$
-
-The vectors $\binom{k+n}{n} a_{k+n}$ are the coefficients of $D^n f / n!$ for
-$f = \sum_k a_k t^k$, so this is the coefficientwise form of the bound $\|D^n / n!\| \le 1$ on
-the Tate algebra $B\{t\}$ with the sup norm.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 1
-(`integers-2026-A32-lem-1`). -/
-public theorem_wanted norm_choose_nsmul_coeff_le {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] [IsUltrametricDist B] (a : ℕ → B) (C : ℝ)
-    (hC : ∀ k, ‖a k‖ ≤ C) (n k : ℕ) :
-    ‖(k + n).choose n • a (k + n)‖ ≤ C
-
 /-- **Higher $p$-adic mean value theorem.** Let $p$ be a prime, let $|\cdot|$ be the $p$-adic
 absolute value on $\mathbb{Q}_p$, and let $B$ be a normed vector space over $\mathbb{Q}_p$ whose
 norm is ultrametric. Let $N$ and $m$ be natural numbers with $1 \le m \le p$, let
