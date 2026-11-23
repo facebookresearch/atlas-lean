@@ -16,7 +16,8 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 # Actual unramified torsion classes and local evaluations
 
 Unramified classes are actual field cohomology classes extending across
-every discrete-valuation subalgebra containing the base field. These
+every geometric discrete-valuation subalgebra (with the given fraction field)
+containing the base field. These
 are images of the fixed native restriction maps, not a freely named
 unramified group. Local lift data live in the actual stalk ring's
 small-étale cohomology and restrict to the given field class.
@@ -47,11 +48,12 @@ variable [AllSheafificationSources] [AllContinuousSources]
 abbrev dvrGenericMap {k K : Type} [Field k] [Field K] [Algebra k K] (A : Subalgebra k K) :
     Spec (.of K) ⟶ Spec (.of A) := Spec.algebraMap A K
 
-/-- A discrete-valuation subalgebra `A` of `K ⊇ k` is geometric over `k` if its residue
-field has transcendence degree over `k` one less than that of `K` (Schreieder, §2.3): for a
-function field these are the valuations of prime divisors on normal models. -/
+/-- A discrete valuation ring `A ⊆ K` of the field `K ⊇ k` (with fraction field `K`) is
+geometric over `k` if its residue field has transcendence degree over `k` one less than
+that of `K` (Schreieder, §2.3): for a finitely generated function field these are the
+valuations of prime divisors on normal models. -/
 def IsGeometricDVR {k K : Type} [Field k] [Field K] [Algebra k K] (A : Subalgebra k K)
-    [IsDiscreteValuationRing A] : Prop :=
+    [IsDiscreteValuationRing A] [IsFractionRing A K] : Prop :=
   Algebra.trdeg k (IsLocalRing.ResidueField A) + 1 = Algebra.trdeg k K
 
 /-- A class of `K ⊇ k` is unramified if it extends over every geometric discrete-valuation
