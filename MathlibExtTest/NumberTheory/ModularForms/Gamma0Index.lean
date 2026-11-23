@@ -1,0 +1,53 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.NumberTheory.ModularForms.Gamma0Index
+
+@[expose] public section
+
+open CongruenceSubgroup
+open scoped MatrixGroups
+
+/-- Consumer with the original binders: the index formula. -/
+theorem exactSource (N : ℕ) [NeZero N] :
+    (CongruenceSubgroup.Gamma0 N).index = ArithmeticFunction.dedekindPsi N :=
+  ModularCurve.Gamma0_index N
+
+/-- Consumer with the original binders: the quotient cardinality formula. -/
+theorem exactSourceCard (N : ℕ) :
+    Nat.card (𝒮ℒ ⧸ (Subgroup.map (Matrix.SpecialLinearGroup.mapGL ℝ)
+      (CongruenceSubgroup.Gamma0 N)).subgroupOf 𝒮ℒ) =
+      (CongruenceSubgroup.Gamma0 N).index :=
+  ModularCurve.card_quotient_gamma0_eq_index N
+
+example : (CongruenceSubgroup.Gamma0 2).index = 3 := by
+  have h := ModularCurve.Gamma0_index 2
+  rw [ArithmeticFunction.dedekindPsi_prime (by decide)] at h
+  exact h
+
+example : (CongruenceSubgroup.Gamma0 1).index = 1 := by
+  have h := ModularCurve.Gamma0_index 1
+  simpa using h
+
+example : Nat.card (ModularCurve.ProjectiveLine (ZMod 6)) = 12 := by
+  have h := ModularCurve.card_projectiveLine_zmod 6 (by decide)
+  have hpsi : ArithmeticFunction.dedekindPsi 6 = 12 := by
+    rw [show (6 : ℕ) = 2 * 3 by norm_num,
+      ArithmeticFunction.isMultiplicative_dedekindPsi.map_mul_of_coprime (by decide),
+      ArithmeticFunction.dedekindPsi_prime (by decide),
+      ArithmeticFunction.dedekindPsi_prime (by decide)]
+    norm_num
+  rw [hpsi] at h
+  exact h
+
+/-- Boundary: without the level, the statement for `N = 0` is not asserted;
+the `NeZero` hypothesis in `Gamma0_index` is essential to the source. -/
+example : ArithmeticFunction.dedekindPsi 0 = 0 :=
+  ArithmeticFunction.dedekindPsi_zero
