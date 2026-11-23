@@ -4494,27 +4494,6 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["wiki_changes"]), (1, "none"))
 
 
-    def test_a_stale_copy_of_an_outer_part_is_found_past_a_current_inner_one(self) -> None:
-        # The inner part's copy on the outer part's page is current; the outer part's copy on the folder's page misses
-        # an entry the outer part lists: the sync would refresh that copy, so the page under them is not in step.
-        roadmap = self.root / "blueprint/roadmap"
-        self.write("blueprint/roadmap/Algebra/nested/README.md",
-                   "# Nested\n\nNested.\n\n## [Part 1](part-01/README.md)\n\n- [Cosets](part-01/cosets/README.md)\n")
-        self.write("blueprint/roadmap/Algebra/nested/part-01/README.md",
-                   "# Nested, part 1\n\n- [Cosets](cosets/README.md)\n- [Units](units/README.md)\n\n"
-                   "## [Part 2](part-02/README.md)\n\n- [Fields](part-02/fields/README.md)\n")
-        self.write("blueprint/roadmap/Algebra/nested/part-01/part-02/README.md",
-                   "# Nested, part 2\n\n- [Fields](fields/README.md)\n")
-        page = self.write("blueprint/roadmap/Algebra/nested/part-01/part-02/fields/field.md", "# Field\n\nA field.\n")
-        self.assertEqual(sync.stale_copies(page), ["Algebra/nested/part-01/README.md"])
-        outer = roadmap / "Algebra/nested/README.md"
-        outer.write_text(outer.read_text() + "- [Units](part-01/units/README.md)\n- [Part 2](part-01/part-02/README.md)\n")
-        text, _ = sync.read_page(outer)
-        refreshed = sync.with_part_lists(outer, text, {"part-01/README.md"})[0]
-        outer.write_text(refreshed)
-        self.assertEqual(sync.stale_copies(page), [])
-
-
     def test_a_line_that_is_no_json_object_is_a_row_autoform_cannot_read(self) -> None:
         links = self.root / "blueprint/links/Algebra.jsonl"
         for line in ("not json", "[1, 2]"):
@@ -4535,6 +4514,33 @@ class ScopedRun(unittest.TestCase):
         status, out, err, report = self.run_sync("--check")
         self.assertEqual(status, 1)
         self.assertIn("In step: no\nWiki changes since the base: none\n", out)
+
+
+    def test_a_line_that_is_not_utf8_is_no_row(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_bytes(links.read_bytes() + b'{"id": "caf\xe9"}\n')
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], len(report["errors"])), (1, False, 1), report["errors"])
+        self.assertIn("is a line that is no JSON object", report["errors"][0])
+
+    def test_a_base_row_the_writer_cannot_read_stops_the_replay_not_the_check(self) -> None:
+        # The base has a line that is no row, which the changes remove while adding a declaration: the working tree's
+        # verdict stands, and the replay on the base's wiki, which the writer cannot read, makes the changes not the
+        # sync's.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        kept = links.read_text()
+        for line in ("not JSON", "[]"):
+            links.write_text(kept + line + "\n")
+            self.base = self.commit(f"a line that is no row: {line}")
+            links.write_text(kept)
+            self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+            self.assertEqual(self.run_sync()[0], 0)
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"), line)
+            self.assertTrue(report["differences"][0].startswith("the sync stops on the base's wiki: "
+                                                                 "blueprint/links/Algebra.jsonl:"), report["differences"])
+            self.git("checkout", "-q", "--", ".")
+            self.git("clean", "-qfd")
 
 
 

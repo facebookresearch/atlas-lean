@@ -3034,13 +3034,17 @@ def numbered_rows() -> list[tuple[Path, int, dict]]:
 
 
 def link_lines() -> list[tuple[Path, int, str]]:
-    """Every nonblank line of the links files, with its file and line (see numbered_rows)."""
+    """Every nonblank line of the links files, with its file and line (see numbered_rows); a byte that is not UTF-8
+    is kept as a lone surrogate, which makes its line no row (see json_object)."""
     return [(path, number, line) for path in sorted(LINKS.glob("*.jsonl"))
-            for number, line in enumerate(records(path.read_text(encoding="utf-8"))[0], 1) if line.strip()]
+            for number, line in enumerate(records(path.read_bytes().decode("utf-8", "surrogateescape"))[0], 1)
+            if line.strip()]
 
 
 def json_object(line: str) -> dict | None:
-    """The JSON object *line* holds, or None when it holds none."""
+    """The JSON object *line* holds, or None when it holds none, or is not UTF-8."""
+    if re.search("[\udc80-\udcff]", line):
+        return None
     try:
         row = json.loads(line)
     except ValueError:
@@ -3378,29 +3382,12 @@ def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path
             what = f"the page of {key}" if folder == page else "a folder the changes add"
             return [f"{folder.relative_to(wiki.ROADMAP)}, {what}, is listed on no folder page: list it on "
                     f"{readme.relative_to(wiki.ROADMAP)}"], stale
-        folder = folder.parent
+        holder = folder.parent
+        if PART.fullmatch(holder.name) and not copied(holder.parent / "README.md", holder.name, entry):
+            stale.append(readme.relative_to(wiki.ROADMAP).as_posix())
+        folder = holder
         if folder == wiki.ROADMAP or not new:
-            return [], stale_copies(page)
-
-
-def stale_copies(page: Path) -> list[str]:
-    """The pages of the parts on the way up from *page* whose copy on their parent's page the sync would refresh (see
-    with_part_lists), by their path in the roadmap: each, however deep, past the folders a pull request adds as well,
-    since the sync refreshes each it is given (see refresh_part_lists)."""
-    found = []
-    for folder in page.parents:
-        if folder == wiki.ROADMAP or not folder.is_relative_to(wiki.ROADMAP):
-            break
-        parent = folder.parent / "README.md"
-        if PART.fullmatch(folder.name) and parent.is_file():
-            text, _ = read_page(parent)
-            refreshed, unrefreshed, _ = with_part_lists(parent, text, {f"{folder.name}/README.md"})
-            # A copy the sync cannot refresh is stale when it misses the entry on the way to the page.
-            child = page.relative_to(folder).parts[0]
-            entry = child if folder / child == page else f"{child}/README.md"
-            if refreshed != text or unrefreshed and not copied(parent, folder.name, entry):
-                found.append((folder / "README.md").relative_to(wiki.ROADMAP).as_posix())
-    return found
+            return [], stale
 
 
 def copied(readme: Path, part: str, entry: str) -> bool:
@@ -3518,6 +3505,8 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         for made in (vault / "roadmap", vault / "links", state.parent):
             made.mkdir(parents=True, exist_ok=True)
         with relocated(vault=vault, state=state):
+            if bad := malformed_rows():
+                return "other", [f"the sync stops on the base's wiki: {row}" for row in bad]
             on_base = {page_key(row) for _, _, row in numbered_rows()}
             ids = {page: article_id for page, article_id in ids.items() if page not in on_base}
             plan = plan_of()
