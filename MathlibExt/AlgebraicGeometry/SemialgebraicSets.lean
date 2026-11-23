@@ -1,19 +1,14 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 
 /-
-Ported from TauCetiProject/TauCeti, revision
+Ported from TauCetiProject/TauCeti (https://github.com/TauCetiProject/TauCeti), revision
 62bbc0596dc3539d488232e4e924a338548ea0a9:
 TauCeti/Geometry/RealAlgebraic/Semialgebraic/Basic.lean.
-Public source: https://github.com/TauCetiProject/TauCeti
-Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Released under Apache 2.0 license as described in that repository's LICENSE.
-Authors: The Tau Ceti contributors.
+The copyright and license notice above are the source's.
 Modification notice: retain the completed intrinsic definition and set API, excluding the
 unneeded permanences-minus-variations lemma; isolate the required sign
 proofs and use no TauCeti package imports. Original namespace/API retained.
@@ -58,9 +53,9 @@ Conversely, every semialgebraic set is described by a condition on the signs of 
 polynomials (`TauCeti.IsSemialgebraic.exists_eq_setOf_sign_eval`), and so membership in it depends
 on only finitely many coordinates (`TauCeti.IsSemialgebraic.exists_finset_mem_iff_of_eqOn`).
 
-The unconditional real CAD/projection implementation is available in the
-quoted public source; it is not copied by this set/graph dependency slice.
-There is no new Wanted request for that completed theorem.
+The source proves closure under projection over the reals by cylindrical algebraic
+decomposition; that proof is not ported here, and the real instance is a wanted statement
+(`WantedExt.AlgebraicGeometry.SemialgebraicTriviality.realSemialgebraicProjections`).
 
 Closure under projection is recorded as the property `TauCeti.HasSemialgebraicProjections R` of the
 ordered ring `R`, with field `TauCeti.HasSemialgebraicProjections.isSemialgebraic_image_tail`.

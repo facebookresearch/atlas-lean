@@ -15,14 +15,15 @@ public import Mathlib.Topology.Algebra.Module.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.Topology.Instances.Matrix
+public import Mathlib.RingTheory.Nullstellensatz
 
 /-!
 # Real algebraic strata and actual embedded vector bundles
 
 The real locus is an actual Zariski locally closed polynomial set. Regular functions are locally
 rational on actual real Zariski basic opens; they are not arbitrary Nash or
-semialgebraic functions. Nonsingularity uses the actual regular local ring
-at every real point of the stratum's Zariski closure. Bundles are images of
+semialgebraic functions. Nonsingularity asks the local ring of the stratum's
+Zariski closure to be regular at every point of the stratum. Bundles are images of
 continuous idempotent matrices, and their isomorphisms are actual continuous
 fibre-linear inverse matrices. Algebraicity is the regularity of the
 Grassmannian/projector entries.
@@ -31,8 +32,8 @@ inverse matrices to be entrywise regular on an actual common refinement.
 
 Source: Kucharz--Kurdyka, 1308.4376v1, Definitions 1.1--1.2 and Theorem 1.5.
 The continuous-projection image bundle and finite-dimensional bundle
-embedding primitives are completed TauCeti source support; CAD, QE and
-semialgebraic projection are not new Wanted goals.
+embedding primitives are completed TauCeti source support; semialgebraic
+projection is not used here.
 -/
 
 @[expose] public noncomputable section
@@ -44,28 +45,25 @@ open scoped Matrix
 
 abbrev Ambient (n : ℕ) := Fin n → ℝ
 
-def zeroSet {n : ℕ} (I : Ideal (MvPolynomial (Fin n) ℝ)) : Set (Ambient n) :=
-  {x | ∀ p ∈ I, eval x p = 0}
-
 /-- An embedded real algebraic variety is an actual locally closed locus. -/
 structure RealVariety (n : ℕ) where
   closedIdeal : Ideal (MvPolynomial (Fin n) ℝ)
   excludedIdeal : Ideal (MvPolynomial (Fin n) ℝ)
 
-def RealVariety.locus {n : ℕ} (X : RealVariety n) :=
-  zeroSet X.closedIdeal \ zeroSet X.excludedIdeal
+/-- The real points of the variety: the zeros of the closed ideal minus those of the excluded
+ideal (Mathlib's `MvPolynomial.zeroLocus`). -/
+def RealVariety.locus {n : ℕ} (X : RealVariety n) : Set (Ambient n) :=
+  zeroLocus ℝ X.closedIdeal \ zeroLocus ℝ X.excludedIdeal
 
-def vanishingIdeal {n : ℕ} (S : Set (Ambient n)) : Ideal (MvPolynomial (Fin n) ℝ) where
-  carrier := {p | ∀ x ∈ S, eval x p = 0}
-  zero_mem' := by simp
-  add_mem' hp hq := by intro x hx; simp [hp x hx, hq x hx]
-  smul_mem' p q hq := by intro x hx; simp [hq x hx, smul_eq_mul]
-
+/-- The coordinate ring of the Zariski closure of `S`: polynomials modulo Mathlib's vanishing
+ideal of `S`. -/
 abbrev CoordinateRing {n : ℕ} (S : Set (Ambient n)) :=
-  MvPolynomial (Fin n) ℝ ⧸ vanishingIdeal S
+  MvPolynomial (Fin n) ℝ ⧸ vanishingIdeal ℝ S
 
+/-- Evaluation of the coordinate ring at a point of `S`. -/
 def pointEvaluation {n : ℕ} {S : Set (Ambient n)} (x : S) : CoordinateRing S →+* ℝ :=
-  Ideal.Quotient.lift (vanishingIdeal S) (eval x.val) (fun _ hp ↦ hp x.val x.property)
+  Ideal.Quotient.lift (vanishingIdeal ℝ S) (eval x.val)
+    (fun p hp ↦ by simpa [coe_aeval_eq_eval] using hp x.val x.property)
 
 instance pointPrime {n : ℕ} {S : Set (Ambient n)} (x : S) :
     (RingHom.ker (pointEvaluation x)).IsPrime :=
@@ -79,7 +77,7 @@ def Nonsingular {n : ℕ} (S : Set (Ambient n)) : Prop :=
 
 def IsZariskiLocallyClosed {n : ℕ} (X : RealVariety n) (S : Set (Ambient n)) : Prop :=
   ∃ I J : Ideal (MvPolynomial (Fin n) ℝ),
-    S = X.locus ∩ (zeroSet I \ zeroSet J)
+    S = X.locus ∩ (zeroLocus ℝ I \ zeroLocus ℝ J)
 
 /-- Local rationality on D(q), with no replacement by a semialgebraic predicate. -/
 def RegularOn {n : ℕ} (S : Set (Ambient n)) (f : Ambient n → ℝ) : Prop :=

@@ -1,22 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Source port: TauCetiProject/TauCeti, revision
-62bbc0596dc3539d488232e4e924a338548ea0a9, Apache 2.0.
-Original copyright, author notices and proof bodies are retained below.
-Modification: import the coupled completed source ports through MathlibExt;
-no mathematical declarations or proofs are changed.
--/
-/-
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: The Tau Ceti contributors
+-/
+
+/-
+Ported from `TauCeti/Topology/VectorBundle/IdempotentRange.lean` in TauCetiProject/TauCeti
+(https://github.com/TauCetiProject/TauCeti) at revision
+62bbc0596dc3539d488232e4e924a338548ea0a9; the copyright and license notice above are the
+source's. Modification: imports of the coupled ports point to `MathlibExt`; declarations and
+proofs are unchanged.
 -/
 module
 

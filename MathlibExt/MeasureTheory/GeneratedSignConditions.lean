@@ -1,20 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 
 /-
-Ported from TauCetiProject/TauCeti, revision
+Ported from TauCetiProject/TauCeti (https://github.com/TauCetiProject/TauCeti), revision
 62bbc0596dc3539d488232e4e924a338548ea0a9:
 TauCeti/MeasureTheory/SetAlgebra.lean, finite sign-condition normal form;
 TauCeti/Data/Set/Lattice.lean, setOf_apply_eq_biUnion_iInter.
-Public source: https://github.com/TauCetiProject/TauCeti
-Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Released under Apache 2.0 license as described in that repository's LICENSE.
-Authors: The Tau Ceti contributors.
+The copyright and license notice above are the source's.
 Modification notice: retain the two complete sign-condition proofs only; use Mathlib imports
 and retain their original namespace and names.
 -/

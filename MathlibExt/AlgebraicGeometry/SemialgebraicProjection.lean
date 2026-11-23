@@ -1,26 +1,23 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 
 /-
-Ported from TauCetiProject/TauCeti at
+Ported from TauCetiProject/TauCeti (https://github.com/TauCetiProject/TauCeti) at revision
 62bbc0596dc3539d488232e4e924a338548ea0a9:
 TauCeti/Geometry/RealAlgebraic/Semialgebraic/QuantifierElimination.lean,
 its complete initial projection section;
 TauCeti/Geometry/RealAlgebraic/Semialgebraic/Image.lean,
 the complete image/composition API.
-Public source: https://github.com/TauCetiProject/TauCeti
-Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Released under Apache 2.0 license as described in that repository's LICENSE.
-Authors: The Tau Ceti contributors.
+The copyright and license notice above are the source's.
 Modification notice: retain the complete geometric projection consequences
 without the first-order formula package; use the isolated MathlibExt
-set/map ports. The already-proved real CAD projection provider is a named
-shared dependency, not a newly requested theorem or an asserted instance.
+set/map ports. Closure under projection stays the hypothesis
+`HasSemialgebraicProjections`; the source's proof of it over the reals (by cylindrical
+algebraic decomposition) is not ported, and the real instance is a wanted statement in
+`WantedExt/AlgebraicGeometry/SemialgebraicTrivialityWanted.lean`.
 -/
 module
 

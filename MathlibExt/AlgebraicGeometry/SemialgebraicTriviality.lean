@@ -22,10 +22,11 @@ they need not be polynomial. The fibres below are actual inverse images,
 and each trivialization is a homeomorphism with semialgebraic graphs in
 both directions, commuting with the given map.
 
-The real projection provider is the already-proved Tarski--Seidenberg
-dependency from Tau's CAD/Existence. It is kept separate from the Hardt
-construction request. Neither a CAD nor a family homeomorphism is assumed
-by the set or map definitions.
+Closure under projection over the reals (Tarski--Seidenberg) is proved in the
+TauCeti source by cylindrical algebraic decomposition but is not ported: the
+lemmas below that need it take `[HasSemialgebraicProjections ℝ]`, and the real
+instance is a separate wanted statement. Neither a CAD nor a family
+homeomorphism is assumed by the set or map definitions.
 
 Sources: R. M. Hardt, *Semi-Algebraic Local-Triviality in Semi-Algebraic
 Mappings*, Amer. J. Math. 102 (1980), 291--302,

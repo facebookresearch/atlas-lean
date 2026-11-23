@@ -13,6 +13,8 @@ import Mathlib.Tactic.Linarith
 open MathlibExt.AlgebraicGeometry.RealAlgebraicBundleStrata
 open MvPolynomial
 
+namespace MathlibExtTest.AlgebraicGeometry.RealBundleFibres
+
 noncomputable def identityProjection {n : ℕ} (X : RealVariety n) (r : ℕ) :
     ProjectionBundle X r where
   projection _ := 1
@@ -25,8 +27,8 @@ example {n : ℕ} (X : RealVariety n) (r : ℕ) (x : X.locus) :
   simp [ProjectionBundle.fiber, identityProjection]
 
 example {n : ℕ} {S : Set (Ambient n)} (x : S) (i : Fin n) :
-    pointEvaluation x (Ideal.Quotient.mk (vanishingIdeal S) (MvPolynomial.X i)) = x.val i := by
-  simp [pointEvaluation]
+    pointEvaluation x (Ideal.Quotient.mk (vanishingIdeal ℝ S) (MvPolynomial.X i)) = x.val i := by
+  exact eval_X (R := ℝ) (f := x.val) i
 
 noncomputable def identityIso {n : ℕ} {X : RealVariety n} {r : ℕ}
     (P : ProjectionBundle X r) : BundleIso P P where
@@ -54,3 +56,4 @@ example :
     have hy : 1 + (y 0) ^ 2 ≠ 0 := by nlinarith [sq_nonneg (y 0)]
     simp [hy]
 
+end MathlibExtTest.AlgebraicGeometry.RealBundleFibres
