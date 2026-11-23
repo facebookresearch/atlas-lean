@@ -257,7 +257,7 @@ theorem smul_jcRateMatrix_eq (μ t : ℝ) :
         (↑jcEigenbasisUnit⁻¹ : Matrix (Fin 4) (Fin 4) ℝ) := by
   ext i j
   simp only [jcRateMatrix, jcEigenbasisUnit, Units.inv_mk, Units.val_mk, Matrix.smul_apply,
-    of_apply, mul_apply, Fin.sum_univ_four]
+    of_apply, Matrix.mul_apply, Fin.sum_univ_four]
   fin_cases i <;> fin_cases j <;> norm_num [jcEigenbasis, jcRate] <;> ring
 
 /-- **The Jukes–Cantor transition matrix is the matrix exponential of the rate matrix**:
@@ -265,7 +265,7 @@ theorem smul_jcRateMatrix_eq (μ t : ℝ) :
 theorem jcProb_eq_exp (μ t : ℝ) (i j : Fin 4) :
     jcProb μ t i j = NormedSpace.exp (t • jcRateMatrix μ) i j := by
   rw [smul_jcRateMatrix_eq, Matrix.exp_units_conj, Matrix.exp_diagonal]
-  simp only [jcEigenbasisUnit, Units.inv_mk, Units.val_mk, mul_apply, Fin.sum_univ_four,
+  simp only [jcEigenbasisUnit, Units.inv_mk, Units.val_mk, Matrix.mul_apply, Fin.sum_univ_four,
     Pi.exp_def]
   fin_cases i <;> fin_cases j <;> norm_num [jcEigenbasis, jcProb, ← Real.exp_eq_exp_ℝ] <;> ring
 
