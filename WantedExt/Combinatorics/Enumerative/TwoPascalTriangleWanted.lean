@@ -16,6 +16,7 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
 public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
+public import MathlibExt.Combinatorics.Enumerative.TrinomialUpperHalf
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 public import MathlibExt.NumberTheory.TrinomialCoefficient
@@ -267,21 +268,6 @@ public theorem_wanted sum_trinomialCoefficient_diagonal_alternating (n : ℕ) (h
     let S := ∑ k ∈ Finset.range (2 * n / 3 + 1),
       (trinomialCoefficient (n - k) k : ℚ) * n / (n - k : ℕ) * (-1) ^ k
     (n % 4 = 1 ∨ n % 4 = 3 → S = 1) ∧ (n % 4 = 2 → S = -1) ∧ (n % 4 = 0 → S = 3)
-
-/-- **Generating sum of the upper half of a trinomial row.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For every natural number $n$
-and every complex number $w$,
-$$\sum_{k=0}^{n} \binom{n}{n-k}_2 w^{n+k} = \frac{(1+w+w^2)^n}{2} + \frac{\binom{n}{n}_2 w^n}{2} +
-\frac{w^2-1}{2} \sum_{k=0}^{n-1} \binom{k}{k}_2 (1+w+w^2)^{n-1-k} w^k.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 40 (`jis-2025-25.3.5-cor-40`). -/
-public theorem_wanted sum_trinomialCoefficient_upper_half (n : ℕ) (w : ℂ) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (n - k) : ℂ) * w ^ (n + k) =
-      (1 + w + w ^ 2) ^ n / 2 + (trinomialCoefficient n n : ℂ) * w ^ n / 2 +
-        (w ^ 2 - 1) / 2 * ∑ k ∈ Finset.range n,
-          (trinomialCoefficient k k : ℂ) * (1 + w + w ^ 2) ^ (n - 1 - k) * w ^ k
-
 
 /-- **Trinomial coefficients along lines from a square-root series.** Write
 $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and

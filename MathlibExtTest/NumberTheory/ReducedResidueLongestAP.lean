@@ -33,3 +33,16 @@ example : longestAPLengthWithDiff (-2) 2 2 = 1 := by
     refine ⟨-1, fun i hi => ?_⟩
     interval_cases i
     decide
+
+-- The smallest odd prime gives the two terms -1 and 1.
+example : absLeastAPLength 6 = 2 :=
+  absLeastAPLength_two_mul_prime (p := 3) (by decide) (by decide)
+
+-- At the excluded prime 2, the same two terms already exceed the proposed bound of 1.
+example : 1 < absLeastAPLength 4 := by
+  change 2 ≤ longestAPLength (-⌈(4 : ℚ) / 2⌉) 4
+  rw [show ⌈(4 : ℚ) / 2⌉ = (2 : ℤ) by norm_num]
+  unfold longestAPLength
+  refine le_csSup ⟨4, fun _ ⟨_, _, hd, h⟩ => apLength_le hd h⟩ ⟨-1, 2, by decide, ?_⟩
+  intro i hi
+  interval_cases i <;> decide

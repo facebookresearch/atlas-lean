@@ -263,7 +263,8 @@ private theorem exists_pos_le_on_annulus {F : (ι → ℝ) → ℝ} {a b : ℝ} 
     ∃ m > 0, ∀ y : ι → ℝ, (∀ i, 0 ≤ y i) ∧ ∑ i, y i = 1 → a ≤ ‖y - p‖ → ‖y - p‖ ≤ b → m ≤ F y := by
   set K := {y : ι → ℝ | (∀ i, 0 ≤ y i) ∧ ∑ i, y i = 1} ∩ {y | a ≤ ‖y - p‖ ∧ ‖y - p‖ ≤ b}
   have hKcl : IsClosed K := by
-    refine IsClosed.inter (IsClosed.inter ?_ ?_) ?_
+    refine IsClosed.inter (IsClosed.inter (s₁ := {y : ι → ℝ | ∀ i, 0 ≤ y i})
+      (s₂ := {y : ι → ℝ | ∑ i, y i = 1}) ?_ ?_) ?_
     · have hset : {y : ι → ℝ | ∀ i, 0 ≤ y i} = ⋂ i, {y : ι → ℝ | 0 ≤ y i} := by
         ext y
         simp
