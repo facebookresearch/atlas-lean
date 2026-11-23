@@ -53,7 +53,7 @@ example {F : CoefficientSheaf X R} {G : CoefficientSheaf Y R} (c : (pullback R f
 
 open CategoryTheory.Abelian in
 /-- In degree zero, the cohomology map sends the class of `a : R ⟶ F` to the class of the
-composite `R ≅ f⁻¹ R ⟶ f⁻¹ F ⟶ G`; in particular it is not the zero map. -/
+composite `R ≅ f⁻¹ R ⟶ f⁻¹ F ⟶ G`; this rules out an identically zero construction. -/
 example {F : CoefficientSheaf X R} {G : CoefficientSheaf Y R} (c : (pullback R f).obj F ⟶ G)
     (a : constantUnit R X ⟶ F) :
     cohomologyPullback R f c 0 (Ext.mk₀ a) =
