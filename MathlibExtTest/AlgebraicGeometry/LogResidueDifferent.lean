@@ -31,7 +31,7 @@ example [Nontrivial R] : ringConductor (C : R →+* R[X]) = ⊥ := by
   have hX := hr X
   rw [Algebra.adjoin_singleton_eq_range_aeval] at hX
   obtain ⟨q, hq⟩ := hX
-  have h1 := congrArg (coeff · 1) hq
+  have h1 := congrArg (fun p : R[X] ↦ p.coeff 1) hq
   simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, aeval_def, eval₂_at_zero,
     RingHom.algebraMap_toAlgebra, coeff_C, coeff_C_mul_X] at h1
   rw [Ideal.mem_bot]
