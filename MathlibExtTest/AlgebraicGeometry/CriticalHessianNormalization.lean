@@ -13,7 +13,10 @@ import Mathlib.Tactic.NormNum
 /-!
 The actual universal-coordinate Hessian of z squared is two. Its normal
 quadratic form is therefore one, including in positive characteristic
-different from two. This catches forgetting the source's half-Hessian.
+different from two: for the stabilization `g = f + z²` with the projection as
+normal-form retraction, `g - f ∘ α = z²`. This catches forgetting the source's
+half-Hessian. For an identity embedding, `g - f ∘ α = g - g` has zero Hessian,
+matching the zero normal quotient, whatever the Hessian of `g` is.
 -/
 
 open Polynomial
@@ -45,3 +48,7 @@ example (coordinate : E.coordinate 0 = (X : k[X])) (two_ne_zero : (2 : k) ≠ 0)
   rw [quadratic_hessian E coordinate]
   simp only [eval_ofNat]
   exact inv_mul_cancel₀ two_ne_zero
+
+/-- Identity embedding: the normal-form function `g - g` has zero Hessian. -/
+example (g : k[X]) : hessian E (g - g) 0 0 = 0 := by
+  simp [hessian]

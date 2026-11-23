@@ -11,6 +11,7 @@ public import MathlibExt.AlgebraicGeometry.AffineCriticalKernelModels
 public import MathlibExt.AlgebraicGeometry.LocalDifferentialPullbacks
 public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
+public import Mathlib.AlgebraicGeometry.Morphisms.Immersion
 public import Mathlib.CategoryTheory.Sites.Abelian
 public import Mathlib.Topology.Sheaves.Functors
 
@@ -104,15 +105,17 @@ structure CriticalChart (X : Over (Spec (.of k))) where
 
 attribute [instance] CriticalChart.smooth CriticalChart.closed
 
-/-- Refinements retain the actual embedding, restriction and function. -/
+/-- Refinements retain the actual embedding, restriction and function. The ambient map
+is a locally closed immersion (Joyce, Definition 2.18), so restrictions of a chart to
+open subcharts are refinements. -/
 structure ChartRefinement {X : Over (Spec (.of k))} (E F : CriticalChart X) where
   domain_le : E.domain ≤ F.domain
   ambientMap : E.ambient ⟶ F.ambient
-  [closed : IsClosedImmersion ambientMap.left]
+  [immersion : IsImmersion ambientMap.left]
   embedding_square : E.inclusion.left ≫ ambientMap.left =
     X.left.homOfLE domain_le ≫ F.inclusion.left
   function_eq : (ambientMap.left.appTop).hom F.function = E.function
 
-attribute [instance] ChartRefinement.closed
+attribute [instance] ChartRefinement.immersion
 
 end MathlibExt.AlgebraicGeometry.CriticalSchemeCharts
