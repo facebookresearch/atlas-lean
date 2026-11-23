@@ -65,15 +65,17 @@ theorem obsLaw_eq_of_eqOn {Ω 𝒳 : Type*} [MeasurableSpace Ω] [MeasurableSpac
     obsLaw μ T X Y₀' Y₁' = obsLaw μ T X Y₀ Y₁ := by
   simp only [obsLaw, obsDatum_eq_of_eqOn X h₁ h₀]
 
-/-- **The identified set of the ATE is all of `ℝ`.** For every measurable, integrable
-potential-outcome model and every `t : ℝ` there is a measurable, integrable model that agrees
+/-- **The identified set of the ATE is all of `ℝ`.** For every measurable covariate,
+every measurable, integrable potential-outcome model and every `t : ℝ` there is a
+measurable, integrable model that agrees
 with it on the received arm (so has the same observed-data law), has unit effect `t` at every
 point, and has ATE `t`. No ignorability, overlap or bounds are assumed; the treated event may
 have probability `0` or `1`. -/
 theorem exists_obsLaw_eq_integral_sub_eq {Ω 𝒳 : Type*} [MeasurableSpace Ω]
     [MeasurableSpace 𝒳] {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Set Ω}
-    (hT : MeasurableSet T) (X : Ω → 𝒳) {Y₀ Y₁ : Ω → ℝ} (hY₀ : Measurable Y₀)
-    (hY₁ : Measurable Y₁) (hY₀i : Integrable Y₀ μ) (hY₁i : Integrable Y₁ μ) (t : ℝ) :
+    (hT : MeasurableSet T) (X : Ω → 𝒳) (_hX : Measurable X) {Y₀ Y₁ : Ω → ℝ}
+    (hY₀ : Measurable Y₀) (hY₁ : Measurable Y₁) (hY₀i : Integrable Y₀ μ)
+    (hY₁i : Integrable Y₁ μ) (t : ℝ) :
     ∃ Y₀' Y₁' : Ω → ℝ, Measurable Y₀' ∧ Measurable Y₁' ∧ Integrable Y₀' μ ∧
       Integrable Y₁' μ ∧ Set.EqOn Y₁' Y₁ T ∧ Set.EqOn Y₀' Y₀ Tᶜ ∧
       (∀ ω, Y₁' ω - Y₀' ω = t) ∧ obsLaw μ T X Y₀' Y₁' = obsLaw μ T X Y₀ Y₁ ∧
@@ -129,37 +131,40 @@ theorem exists_obsLaw_eq_integral_sub_eq {Ω 𝒳 : Type*} [MeasurableSpace Ω]
     rw [hfun, integral_const, probReal_univ, one_smul]
 
 /-- **No functional of the observed law recovers the ATE at any model.** For every
-measurable, integrable model and every `F`, some measurable, integrable model with the same
+measurable covariate, every measurable, integrable model and every `F`, some
+measurable, integrable model with the same
 observed-data law has ATE different from `F` of that law. -/
 theorem exists_obsLaw_eq_integral_sub_ne {Ω 𝒳 : Type*} [MeasurableSpace Ω]
     [MeasurableSpace 𝒳] {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Set Ω}
-    (hT : MeasurableSet T) (X : Ω → 𝒳) {Y₀ Y₁ : Ω → ℝ} (hY₀ : Measurable Y₀)
-    (hY₁ : Measurable Y₁) (hY₀i : Integrable Y₀ μ) (hY₁i : Integrable Y₁ μ)
+    (hT : MeasurableSet T) (X : Ω → 𝒳) (hX : Measurable X) {Y₀ Y₁ : Ω → ℝ}
+    (hY₀ : Measurable Y₀) (hY₁ : Measurable Y₁) (hY₀i : Integrable Y₀ μ)
+    (hY₁i : Integrable Y₁ μ)
     (F : Measure (𝒳 × ℝ × ℝ) → ℝ) :
     ∃ Y₀' Y₁' : Ω → ℝ, Measurable Y₀' ∧ Measurable Y₁' ∧ Integrable Y₀' μ ∧
       Integrable Y₁' μ ∧ obsLaw μ T X Y₀' Y₁' = obsLaw μ T X Y₀ Y₁ ∧
       F (obsLaw μ T X Y₀' Y₁') ≠ ∫ ω, (Y₁' ω - Y₀' ω) ∂μ := by
   obtain ⟨Y₀', Y₁', m0, m1, i0, i1, _, _, _, hobs, hint⟩ :=
-    exists_obsLaw_eq_integral_sub_eq (μ := μ) hT X hY₀ hY₁ hY₀i hY₁i
+    exists_obsLaw_eq_integral_sub_eq (μ := μ) hT X hX hY₀ hY₁ hY₀i hY₁i
       (F (obsLaw μ T X Y₀ Y₁) + 1)
   exact ⟨Y₀', Y₁', m0, m1, i0, i1, hobs, by rw [hobs, hint]; exact (lt_add_one _).ne⟩
 
 /-- **The ATE is not identified without extra assumptions.** For every probability space,
-every measurable treated event `T` and every covariate `X`, the observed-data law does not
+every measurable treated event `T` and every measurable covariate `X`, the
+observed-data law does not
 identify the ATE on the class of measurable, integrable potential-outcome schedules. -/
 theorem not_isIdentifiedBy_obsLaw_integral_sub {Ω 𝒳 : Type*} [MeasurableSpace Ω]
     [MeasurableSpace 𝒳] (μ : Measure Ω) [IsProbabilityMeasure μ] {T : Set Ω}
-    (hT : MeasurableSet T) (X : Ω → 𝒳) :
+    (hT : MeasurableSet T) (X : Ω → 𝒳) (hX : Measurable X) :
     ¬ IsIdentifiedBy
       (fun θ : {θ : (Ω → ℝ) × (Ω → ℝ) //
           Measurable θ.1 ∧ Measurable θ.2 ∧ Integrable θ.1 μ ∧ Integrable θ.2 μ} =>
         obsLaw μ T X θ.1.1 θ.1.2)
       (fun θ => ∫ ω, (θ.1.2 ω - θ.1.1 ω) ∂μ) := by
   obtain ⟨Y₀a, Y₁a, m0a, m1a, i0a, i1a, _, _, _, hobsa, hinta⟩ :=
-    exists_obsLaw_eq_integral_sub_eq (μ := μ) hT X (Y₀ := 0) (Y₁ := 0)
+    exists_obsLaw_eq_integral_sub_eq (μ := μ) hT X hX (Y₀ := 0) (Y₁ := 0)
       measurable_const measurable_const (integrable_const 0) (integrable_const 0) 0
   obtain ⟨Y₀b, Y₁b, m0b, m1b, i0b, i1b, _, _, _, hobsb, hintb⟩ :=
-    exists_obsLaw_eq_integral_sub_eq (μ := μ) hT X (Y₀ := 0) (Y₁ := 0)
+    exists_obsLaw_eq_integral_sub_eq (μ := μ) hT X hX (Y₀ := 0) (Y₁ := 0)
       measurable_const measurable_const (integrable_const 0) (integrable_const 0) 1
   refine not_isIdentifiedBy_of_eq_of_ne (θ := ⟨(Y₀a, Y₁a), m0a, m1a, i0a, i1a⟩)
     (θ' := ⟨(Y₀b, Y₁b), m0b, m1b, i0b, i1b⟩) ?_ ?_
@@ -169,11 +174,13 @@ theorem not_isIdentifiedBy_obsLaw_integral_sub {Ω 𝒳 : Type*} [MeasurableSpac
     rw [hinta, hintb]
     norm_num
 
-/-- **Finite population: the ATE is not identified.** For a nonempty finite population, every
-measure on the units, every treated set and every covariate, the observed-data law does not
+/-- **Finite population: the ATE is not identified.** For a nonempty finite population
+with measurable singletons, every measure on the units, every treated set and every
+covariate, the observed-data law does not
 identify the finite-population ATE `ate y₀ y₁`. -/
 theorem not_isIdentifiedBy_obsLaw_ate {ι 𝒳 : Type*} [Fintype ι] [Nonempty ι]
-    [MeasurableSpace ι] [MeasurableSpace 𝒳] (μ : Measure ι) (T : Set ι) (X : ι → 𝒳) :
+    [MeasurableSpace ι] [MeasurableSingletonClass ι] [MeasurableSpace 𝒳]
+    (μ : Measure ι) (T : Set ι) (X : ι → 𝒳) :
     ¬ IsIdentifiedBy (fun θ : (ι → ℝ) × (ι → ℝ) => obsLaw μ T X θ.1 θ.2)
       (fun θ => ate θ.1 θ.2) := by
   classical

@@ -79,6 +79,7 @@ theorem two_unit_design_not_identified_integral :
         obsLaw fairCoin treated noCov θ.1.1 θ.1.2)
       (fun θ => ∫ ω, (θ.1.2 ω - θ.1.1 ω) ∂fairCoin) :=
   not_isIdentifiedBy_obsLaw_integral_sub fairCoin (measurableSet_singleton true) noCov
+    measurable_const
 
 /-- Identification boundary: the two observationally equivalent models cannot both be
 strongly ignorable, else the upstream identification theorem would equate their ATEs. -/
@@ -136,7 +137,7 @@ theorem allTreated_identified_set (t : ℝ) :
       obsLaw fairCoin Set.univ noCov Y₀' Y₁' = obsLaw fairCoin Set.univ noCov 0 0 ∧
         ∫ ω, (Y₁' ω - Y₀' ω) ∂fairCoin = t := by
   obtain ⟨Y₀', Y₁', -, -, -, -, -, -, -, hobs, hint⟩ :=
-    exists_obsLaw_eq_integral_sub_eq (μ := fairCoin) MeasurableSet.univ noCov
+    exists_obsLaw_eq_integral_sub_eq (μ := fairCoin) MeasurableSet.univ noCov measurable_const
       (Y₀ := 0) (Y₁ := 0) measurable_const measurable_const (integrable_const 0)
       (integrable_const 0) t
   exact ⟨Y₀', Y₁', hobs, hint⟩
@@ -149,7 +150,7 @@ theorem allTreated_ipwATE_ne :
       obsLaw fairCoin Set.univ noCov Y₀' Y₁' = obsLaw fairCoin Set.univ noCov 0 0 ∧
         ipwATE (obsLaw fairCoin Set.univ noCov Y₀' Y₁') ≠ ∫ ω, (Y₁' ω - Y₀' ω) ∂fairCoin := by
   obtain ⟨Y₀', Y₁', -, -, -, -, hobs, hne⟩ :=
-    exists_obsLaw_eq_integral_sub_ne (μ := fairCoin) MeasurableSet.univ noCov
+    exists_obsLaw_eq_integral_sub_ne (μ := fairCoin) MeasurableSet.univ noCov measurable_const
       (Y₀ := 0) (Y₁ := 0) measurable_const measurable_const (integrable_const 0)
       (integrable_const 0) ipwATE
   exact ⟨Y₀', Y₁', hobs, hne⟩
