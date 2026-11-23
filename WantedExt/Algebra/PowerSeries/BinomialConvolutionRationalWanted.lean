@@ -13,7 +13,7 @@ public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.RingTheory.Polynomial.PairwiseSumResultant
-public import MathlibExt.RingTheory.PowerSeries.BinomialProduct
+public import MathlibExt.RingTheory.PowerSeries.BinomialProductGeometric
 
 /-!
 # Binomial convolutions for rational power series
@@ -61,22 +61,6 @@ public theorem_wanted exists_orthogonal_of_orthogonal_over_extension {F G : Type
     [Field G] [Algebra F G] {n : ℕ} (S : Set (Fin n → F)) (t : Fin n → G) (ht : t ≠ 0)
     (horth : ∀ s ∈ S, ∑ i, algebraMap F G (s i) * t i = 0) :
     ∃ u : Fin n → F, u ≠ 0 ∧ ∀ s ∈ S, ∑ i, s i * u i = 0
-
-/-- **Binomial product of shifted powers of geometric series.** For every field $K$ of
-characteristic $0$, all $j, k \in \mathbb{N}$ and all $\alpha, \beta \in K$,
-
-$$\frac{x^j}{(1 - \alpha x)^{j+1}} \odot \frac{x^k}{(1 - \beta x)^{k+1}} =
-\binom{j + k}{j} \frac{x^{j+k}}{(1 - (\alpha + \beta) x)^{j+k+1}},$$
-
-where $\odot$ is the binomial product.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Lemma 4 (`jis-2024-24.1.3-lem-4`). -/
-public theorem_wanted binomialProduct_X_pow_mul_inv_pow {K : Type*} [Field K] [CharZero K]
-    (j k : ℕ) (α β : K) :
-    binomialProduct (X ^ j * ((1 - C α * X)⁻¹) ^ (j + 1))
-        (X ^ k * ((1 - C β * X)⁻¹) ^ (k + 1)) =
-      ((j + k).choose j : PowerSeries K) * X ^ (j + k) * ((1 - C (α + β) * X)⁻¹) ^ (j + k + 1)
 
 /-- **Binomial product with a geometric series.** For every field $K$ of characteristic $0$, every
 power series $A(x)$ over $K$ and every $\beta \in K$,
