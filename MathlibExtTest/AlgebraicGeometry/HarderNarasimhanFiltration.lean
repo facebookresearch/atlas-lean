@@ -46,7 +46,8 @@ theorem slope_congr (f : X ⟶ Spec (.of k)) [IsProperCurve f] {E E' : X.Modules
   simp only [slope, bundleDegree, finrank_cohomology_congr f e]
 
 /-- Semistability is invariant under isomorphism. -/
-theorem isSemistable_of_iso (f : X ⟶ Spec (.of k)) [IsProperCurve f] {E E' : X.Modules}
+theorem isSemistable_of_iso (f : X ⟶ Spec (.of k)) [IsProperCurve f] [SmoothOfRelativeDimension 1 f]
+    [IsIntegral X] {E E' : X.Modules}
     (e : E ≅ E') {r : ℕ} (hE : IsVectorBundle E r) (hE' : IsVectorBundle E' r) (hr : 0 < r)
     (h : IsSemistable f E r hE hr) : IsSemistable f E' r hE' hr := by
   intro s hs hsr F i hi hF hQ
@@ -58,7 +59,9 @@ theorem isSemistable_of_iso (f : X ⟶ Spec (.of k)) [IsProperCurve f] {E E' : X
 exercises the endpoint indexing (`bundle 0 = 0`, `bundle (Fin.last 1) = E`), the rank of
 the only graded piece (`r - 0`, through `cokernel (0 : 0 ⟶ E) ≅ E`), and the vacuous slope
 ordering of a single graded piece. -/
-noncomputable def oneStep (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modules) (r : ℕ)
+noncomputable def oneStep (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f] [IsIntegral X]
+    (E : X.Modules) (r : ℕ)
     (hE : IsVectorBundle E r) (hr : 0 < r) (h : IsSemistable f E r hE hr) :
     Filtration f E r where
   steps := 1
@@ -88,21 +91,25 @@ noncomputable def oneStep (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modu
   slope_decreases := fun i j hij ↦ absurd hij (by rw [Subsingleton.elim i j]; exact lt_irrefl j)
 
 /-- A semistable bundle has a Harder–Narasimhan filtration: the structure is inhabited. -/
-example (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modules) (r : ℕ)
-    (hE : IsVectorBundle E r) (hr : 0 < r) (h : IsSemistable f E r hE hr) :
+example (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f] [IsIntegral X] (E : X.Modules)
+    (r : ℕ) (hE : IsVectorBundle E r) (hr : 0 < r) (h : IsSemistable f E r hE hr) :
     Nonempty (Filtration f E r) :=
   ⟨oneStep f E r hE hr h⟩
 
 -- The one-step filtration has a single graded piece, of the full rank.
-example (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modules) (r : ℕ)
-    (hE : IsVectorBundle E r) (hr : 0 < r) (h : IsSemistable f E r hE hr) :
+example (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f] [IsIntegral X] (E : X.Modules)
+    (r : ℕ) (hE : IsVectorBundle E r) (hr : 0 < r) (h : IsSemistable f E r hE hr) :
     (oneStep f E r hE hr h).steps = 1 ∧
       (oneStep f E r hE hr h).rank (Fin.last _) - (oneStep f E r hE hr h).rank 0 = r :=
   ⟨rfl, by simp [oneStep]⟩
 
 /-- Every Harder–Narasimhan filtration is of a bundle of positive rank: the ranks start at
 `0` and strictly increase up to `r`. -/
-theorem rank_pos (f : X ⟶ Spec (.of k)) [IsProperCurve f] {E : X.Modules} {r : ℕ}
+theorem rank_pos (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f] [IsIntegral X]
+    {E : X.Modules} {r : ℕ}
     (F : Filtration f E r) : 0 < r := by
   have key : ∀ m (hm : m < F.steps), 0 < F.rank ⟨m + 1, Nat.succ_lt_succ hm⟩ := by
     intro m
@@ -122,5 +129,20 @@ theorem rank_pos (f : X ⟶ Spec (.of k)) [IsProperCurve f] {E : X.Modules} {r :
       Fin (F.steps + 1)) = Fin.last F.steps := Fin.ext (by simp only [Fin.val_last]; omega)
   rw [e, F.rank_final] at h
   exact h
+
+/-- The slope of the `j`-th graded piece `Eⱼ₊₁ / Eⱼ` of a filtration. -/
+noncomputable def quotientSlope (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f]
+    [IsIntegral X] {E : X.Modules} {r : ℕ} (F : Filtration f E r) (j : Fin F.steps) : ℚ :=
+  slope f (cokernel (F.inclusion j)) (F.rank j.succ - F.rank j.castSucc)
+    (F.quotientLocallyFree j) (Nat.sub_pos_of_lt (F.rank_increases j))
+
+-- Orientation of the slope condition: in a two-step filtration the second graded piece has
+-- strictly smaller slope than the first (this fails if the inequality is reversed).
+example (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f] [IsIntegral X] {E : X.Modules}
+    {r : ℕ} (F : Filtration f E r) (h2 : F.steps = 2) :
+    quotientSlope f F ⟨1, by omega⟩ < quotientSlope f F ⟨0, by omega⟩ :=
+  F.slope_decreases ⟨0, by omega⟩ ⟨1, by omega⟩ (Fin.mk_lt_mk.2 one_pos)
 
 end HarderNarasimhanFiltrationTest

@@ -8,16 +8,22 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
+public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 
 /-!
 # Slope semistability and Harder–Narasimhan filtrations on curves
 
-On a proper curve, semistability of a vector bundle of positive rank tests
-its saturated subbundles of intermediate rank, expressed by an actual
-monomorphism from a vector bundle with a locally free cokernel. A filtration
-is a finite chain of actual bundle monomorphisms, starting at zero and ending
-at the specified bundle, whose cokernels are vector bundles of positive rank
-that are semistable with strictly decreasing slopes.
+On a smooth integral proper curve, semistability of a vector bundle of
+positive rank tests its saturated subbundles of intermediate rank, expressed
+by an actual monomorphism from a vector bundle with a locally free cokernel.
+On such a curve every subsheaf of a vector bundle is locally free and its
+saturation is a subbundle of the same rank and at least the same slope, so
+this is equivalent to testing all subsheaves. (On singular or reducible
+curves subbundles of one constant rank do not suffice, so the interface is
+not stated there.) A filtration is a finite chain of actual bundle
+monomorphisms, starting at zero and ending at the specified bundle, whose
+cokernels are vector bundles of positive rank that are semistable with
+strictly decreasing slopes.
 
 Reference: Huybrechts–Lehn, *The Geometry of Moduli Spaces of Sheaves*,
 Section 1.3, https://doi.org/10.1017/CBO9780511711985.
@@ -34,23 +40,25 @@ open MathlibExt.AlgebraicGeometry.CurveVectorBundles
 
 universe u
 
-/-- Slope semistability of a vector bundle `E` of positive rank `r` on a proper
-curve: every saturated subbundle of rank `0 < s < r`, that is an actual
-monomorphism `F ⟶ E` from a vector bundle of rank `s` whose cokernel is a
+/-- Slope semistability of a vector bundle `E` of positive rank `r` on a smooth
+integral proper curve: every saturated subbundle of rank `0 < s < r`, that is an
+actual monomorphism `F ⟶ E` from a vector bundle of rank `s` whose cokernel is a
 vector bundle of rank `r - s`, has slope at most the slope of `E`. -/
 def IsSemistable {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modules) (r : ℕ)
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] [SmoothOfRelativeDimension 1 f] [IsIntegral X]
+    (E : X.Modules) (r : ℕ)
     (hE : IsVectorBundle E r) (hr : 0 < r) : Prop :=
   ∀ (s : ℕ) (hs : 0 < s), s < r →
     ∀ (F : X.Modules) (i : F ⟶ E), Mono i → ∀ hF : IsVectorBundle F s,
       IsVectorBundle (cokernel i) (r - s) → slope f F s hF hs ≤ slope f E r hE hr
 
 /-- A Harder–Narasimhan filtration `0 = E₀ ⊂ E₁ ⊂ ⋯ ⊂ Eₙ ≅ E` of a vector bundle
-of rank `r` on a proper curve: actual monomorphisms of vector bundles of strictly
-increasing ranks whose cokernels are semistable vector bundles with strictly
-decreasing slopes. -/
+of rank `r` on a smooth integral proper curve: actual monomorphisms of vector
+bundles of strictly increasing ranks whose cokernels are semistable vector
+bundles with strictly decreasing slopes. -/
 structure Filtration {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modules) (r : ℕ) where
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] [SmoothOfRelativeDimension 1 f] [IsIntegral X]
+    (E : X.Modules) (r : ℕ) where
   /-- The number of steps. -/
   steps : ℕ
   steps_pos : 0 < steps

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
+public import Mathlib.Algebra.Category.ModuleCat.Sheaf.LocallyFree
 
 @[expose] public section
 
@@ -52,6 +53,7 @@ example (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modules) (r : ℕ)
         r * ((Module.finrank k (cohomology f (structureModule X) 0) : ℤ) -
           Module.finrank k (cohomology f (structureModule X) 1)) := rfl
 
--- Global generation is an actual epimorphism from a finite trivial bundle; the identity
--- of a trivial bundle is one.
-example (b : ℕ) : GloballyGenerated (trivialBundle X b) := ⟨b, 𝟙 _, inferInstance⟩
+-- Global generation is the existence of generating global sections, with no finiteness
+-- condition: every free sheaf is globally generated, on any index type.
+example (I : Type u) : GloballyGenerated (SheafOfModules.free (R := X.ringCatSheaf) I) :=
+  ⟨SheafOfModules.free.generatingSections I⟩

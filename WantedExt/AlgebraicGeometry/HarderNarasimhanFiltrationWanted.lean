@@ -9,7 +9,6 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarderNarasimhanFiltration
-public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 
 /-!
@@ -17,8 +16,10 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 
 The requested filtration has actual bundle inclusions and categorical
 cokernels. Its slopes come from actual coherent cohomology, and its
-semistability condition tests saturated subbundles. On a smooth curve this
-is equivalent to testing all coherent subsheaves of intermediate rank.
+semistability condition tests saturated subbundles. On a smooth integral
+curve this is equivalent to testing all coherent subsheaves of intermediate
+rank. Over an algebraically closed field, a smooth integral curve is
+geometrically irreducible.
 
 Reference: Huybrechts–Lehn, *The Geometry of Moduli Spaces of Sheaves*,
 Chapter 1, https://doi.org/10.1017/CBO9780511711985.
@@ -40,8 +41,8 @@ universe u
 
 theorem_wanted exists_harderNarasimhanFiltration
     (k : Type u) [Field k] [IsAlgClosed k]
-    (C : Over (Spec (.of k))) [IsProperCurve C.hom]
-    [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
+    (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
+    [IsIntegral C.left]
     (E : C.left.Modules) (r : ℕ) (hr : 0 < r)
     (hE : IsVectorBundle E r) : Nonempty (Filtration C.hom E r)
 
