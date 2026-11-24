@@ -355,8 +355,9 @@ end Helpers
 
 /-! ### A.2. The transport law -/
 
-/-- Transport law: a vector with time-dependent body components `u` has inertial components
-`R u`, and `d(R u)/dt = R (u' + ω_B × u)`, with `ω_B` the body angular velocity of the motion. -/
+/-- Transport law: at a time where `R` and `u` are differentiable, a vector with time-dependent body
+components `u` has inertial components `R u`, and `d(R u)/dt = R (u' + ω_B × u)`, with `ω_B` the
+body angular velocity of the motion. -/
 lemma deriv_bodyToInertialVec (M : RigidBodyMotion 3) (u : Time → Fin 3 → ℝ) (t : Time)
     (hR : DifferentiableAt ℝ (fun s => (M.orientation s).1) t) (hu : DifferentiableAt ℝ u t) :
     ∂ₜ (fun s => bodyToInertialVec (M.orientation s) (u s)) t =
@@ -379,8 +380,9 @@ lemma deriv_deriv_bodyToInertial (M : RigidBodyMotion 3) (o xB : Time → Fin 3 
           M.bodyAngularVelocity t ⨯₃ (M.bodyAngularVelocity t ⨯₃ xB t)) := by
   exact deriv_deriv_bodyToInertial_aux M o xB hU (contDiffOn_orientation_of_entries M hR) ho hx ht
 
-/-- Constant rate and fixed origin recover the existing constant-rate contract: with
-`ω_B = Ω` on `U` and the origin fixed at `o₀`, the acceleration has body components
+/-- Constant rate and fixed origin recover the existing constant-rate contract: for `R` (entrywise)
+and `x_B` of class `C²` on the open set `U`, with `ω_B = Ω` on `U` and the origin fixed at `o₀`,
+the acceleration has body components
 `a + 2 Ω × v + Ω × (Ω × r)` for `r = x_B`, `v = x_B'`, `a = x_B''`, the right side of
 `EarthScience.rotating_acceleration_decomposition`, with no transport law assumed. -/
 lemma deriv_deriv_bodyToInertial_of_const (M : RigidBodyMotion 3) (o₀ : Fin 3 → ℝ)
@@ -717,8 +719,9 @@ lemma euler_solve_iff {I : Matrix (Fin 3) (Fin 3) ℝ} (hI : I.PosDef) (ω a τB
   · intro h
     rw [h, Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv I hdet, Matrix.one_mulVec, sub_add_cancel]
 
-/-- For a positive-definite inertia tensor about the centre of mass the balance law determines the
-body angular acceleration: at every `t ∈ U`, `dL_COM/dt = τ_I` exactly when
+/-- For `c = 0`, `R` of class `C²` entrywise on the open set `U` and a positive-definite inertia
+tensor about the centre of mass, the balance law determines the body angular acceleration: at
+every `t ∈ U`, `dL_COM/dt = τ_I` exactly when
 `ω_B' = I_B⁻¹ (Rᵀ τ_I - ω_B × (I_B ω_B))`. -/
 lemma deriv_comAngularMomentum_eq_iff_deriv_bodyAngularVelocity (M : RigidBodyMotion 3)
     {U : Set Time} (hU : IsOpen U)
@@ -743,7 +746,8 @@ lemma comAngularMomentum_dotProduct_self (M : RigidBodyMotion 3) (t : Time)
   rw [(comAngularMomentum_eq M t hR hc).2]
   exact bodyToInertialVec_dotProduct (M.orientation t) _ _
 
-/-- Torque-free consequence for the kinetic energy: if `dL_COM/dt = 0` at `t ∈ U`, the rotational
+/-- Torque-free consequence for the kinetic energy: for `c = 0` and `R` of class `C²` entrywise on
+the open set `U`, if `dL_COM/dt = 0` at `t ∈ U`, the rotational
 kinetic energy `ω_B · (I_B ω_B) / 2` (Physlib's `rotationalKineticEnergy` of the body-fixed
 distribution, the rotational part of the total kinetic energy) has derivative zero at `t`. -/
 lemma hasFDerivAt_rotationalKineticEnergy_of_torqueFree (M : RigidBodyMotion 3) {U : Set Time}
@@ -785,7 +789,8 @@ lemma hasFDerivAt_rotationalKineticEnergy_of_torqueFree (M : RigidBodyMotion 3) 
   rw [hL0] at h
   exact h
 
-/-- Torque-free consequence for the angular momentum: if `dL_COM/dt = 0` at `t ∈ U`, the squared
+/-- Torque-free consequence for the angular momentum: for `c = 0` and `R` of class `C²` entrywise
+on the open set `U`, if `dL_COM/dt = 0` at `t ∈ U`, the squared
 Euclidean norm `(I_B ω_B) · (I_B ω_B)` of the body angular momentum has derivative zero at `t`. -/
 lemma hasFDerivAt_angularMomentum_normSq_of_torqueFree (M : RigidBodyMotion 3) {U : Set Time}
     (hU : IsOpen U) (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
@@ -816,8 +821,9 @@ lemma hasFDerivAt_angularMomentum_normSq_of_torqueFree (M : RigidBodyMotion 3) {
   rw [hL0] at hL
   exact hL
 
-/-- Conservation on a preconnected open set of times: torque-free motion keeps the rotational
-kinetic energy and the squared norm `|I_B ω_B|² = |L_COM|²` of the angular momentum constant. -/
+/-- Conservation on a preconnected open set `U` of times on which `R` is `C²` entrywise, for
+`c = 0`: if `dL_COM/dt = 0` on `U`, the rotational kinetic energy and the squared norm
+`|I_B ω_B|² = |L_COM|²` of the angular momentum are constant on `U`. -/
 lemma torqueFree_conserved (M : RigidBodyMotion 3) {U : Set Time} (hU : IsOpen U)
     (hU' : IsPreconnected U) (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
     (hc : M.centerOfMass = 0) (hfree : ∀ s ∈ U, ∂ₜ (comAngularMomentum M) s = 0) {s t : Time}
@@ -862,7 +868,8 @@ noncomputable def fixedAxisMotion (B : RigidBody 3) (ω₀ α : ℝ) : RigidBody
   orientation := fun t => ⟨rotZ (fixedAxisAngle ω₀ α t), rotZ_mem_specialOrthogonalGroup _⟩
 
 /-- The torque port of the fixed-axis motion: the body torque `τ_B = (0, 0, I_zz α)` about the
-centre of mass, which drives the constant angular acceleration `α`. -/
+centre of mass, which, for a body with inertia `diag(I_xx, I_yy, I_zz)` about its centre of mass,
+drives the constant angular acceleration `α`. -/
 noncomputable def fixedAxisTorque (Izz α : ℝ) : Fin 3 → ℝ := ![0, 0, Izz * α]
 
 /-- The angle `θ(t) = ω₀ t + α t² / 2` as a curve on `ℝ` has the rate `ω₀ + α t`. -/
@@ -1029,8 +1036,9 @@ lemma deriv_comAngularMomentum_fixedAxisMotion {B : RigidBody 3} (hc : B.centerO
     ext i
     fin_cases i <;> simp [rotZ, Matrix.mulVec, dotProduct, Fin.sum_univ_three, fixedAxisTorque]
 
-/-- The torque port delivers the shaft power `P = τ ω` about the axis: the rotational kinetic
-energy `T = ω_B · (I_B ω_B) / 2 = I_zz θ'² / 2` is differentiable with rate
+/-- The torque port delivers the shaft power `P = τ ω` about the axis: for `c = 0` and inertia
+`diag(I_xx, I_yy, I_zz)` about it, the rotational kinetic energy
+`T = ω_B · (I_B ω_B) / 2 = I_zz θ'² / 2` is differentiable with rate
 `τ_B · ω_B = I_zz α θ'`, the coordinate of the typed shaft power of the torque `I_zz α` at the
 angular velocity `θ'`. -/
 lemma fixedAxisMotion_power_port {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ixx Iyy Izz : ℝ}
@@ -1077,8 +1085,9 @@ lemma fixedAxisMotion_power_port {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ix
     exact Time.deriv_comp_toRealCLE_of_hasDerivAt _ t _ hγ
   · rw [shaftPower_val, hP, (deriv_fixedAxisAngle ω₀ α t).1]
 
-/-- A nonzero angular acceleration needs a nonzero torque: for `I_zz > 0` and `α ≠ 0` the port
-torque, the body angular acceleration and the rate of change `dL_COM/dt` are nonzero. -/
+/-- A nonzero angular acceleration needs a nonzero torque: for `c = 0`, inertia
+`diag(I_xx, I_yy, I_zz)` about it, `I_zz > 0` and `α ≠ 0` the port torque, the body angular
+acceleration and the rate of change `dL_COM/dt` are nonzero. -/
 lemma fixedAxisMotion_torque_ne_zero {B : RigidBody 3} (hc : B.centerOfMass = 0)
     {Ixx Iyy Izz : ℝ} (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz])
     (hIzz : 0 < Izz) {ω₀ α : ℝ} (hα : α ≠ 0) (t : Time) :
@@ -1095,8 +1104,9 @@ lemma fixedAxisMotion_torque_ne_zero {B : RigidBody 3} (hc : B.centerOfMass = 0)
     rw [h1, h2]
     exact hτ
 
-/-- A sign-flipped torque fails: for `I_zz > 0` and `α ≠ 0`, the constructed motion satisfies
-neither Euler's equations nor the balance law with the torque `-τ_B`. -/
+/-- A sign-flipped torque fails: for `c = 0`, inertia `diag(I_xx, I_yy, I_zz)` about it, `I_zz > 0`
+and `α ≠ 0`, the constructed motion satisfies neither Euler's equations nor the balance law with
+the torque `-τ_B`. -/
 lemma fixedAxisMotion_neg_torque {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ixx Iyy Izz : ℝ}
     (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz]) (hIzz : 0 < Izz)
     {ω₀ α : ℝ} (hα : α ≠ 0) (t : Time) :
@@ -1121,12 +1131,14 @@ lemma fixedAxisMotion_neg_torque {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ix
 /-! ## G. Torque-free axisymmetric precession -/
 
 /-- The precession rate `ν = (I₃ - I_⊥) ω₃ / I_⊥` of torque-free axisymmetric motion with
-transverse principal inertia `I_⊥`, axial principal inertia `I₃` and axial spin `ω₃`. -/
+transverse principal inertia `I_⊥`, axial principal inertia `I₃` and axial spin `ω₃`. With
+`a / 0 = 0` it is `0` when `I_⊥ = 0`; the intended domain is `I_⊥ > 0`. -/
 noncomputable def axisymmetricPrecessionRate (Iperp I₃ ω₃ : ℝ) : ℝ := (I₃ - Iperp) * ω₃ / Iperp
 
 /-- The body angular velocity `ω_B(t) = (A cos (ν t), A sin (ν t), ω₃)` of torque-free
 axisymmetric motion, with transverse amplitude `A`, axial spin `ω₃` and precession rate
-`ν = axisymmetricPrecessionRate I_⊥ I₃ ω₃`. -/
+`ν = axisymmetricPrecessionRate I_⊥ I₃ ω₃`. It solves the torque-free Euler equations for
+`I_⊥ > 0`; no attitude with this angular velocity is constructed. -/
 noncomputable def axisymmetricPrecession (Iperp I₃ A ω₃ : ℝ) (t : Time) : Fin 3 → ℝ :=
   ![A * Real.cos (axisymmetricPrecessionRate Iperp I₃ ω₃ * t.val),
     A * Real.sin (axisymmetricPrecessionRate Iperp I₃ ω₃ * t.val), ω₃]

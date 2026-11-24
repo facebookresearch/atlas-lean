@@ -223,21 +223,6 @@ public theorem_wanted coeff_pow_modEq_sum_gamma_mul_V {r p : ℕ} (hp : p.Prime)
       ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (P ^ k).coeff (p • j - i) * (P ^ n).coeff (-j) [ZMOD p]
 
-/-- **Powers of $\gamma(0)$ modulo $p$ stabilize at a matrix unit.** Let $p$ be a prime, let
-$r, m \ge 0$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$, and let
-$\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p\mathbb{Z}$ whose $(i, j)$ entry is $1$
-if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for every $s' \ge s$,
-$\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other entries are $0$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 11 (`jis-2026-26.4.2-lem-11`). -/
-public theorem_wanted exists_gammaZero_pow_eq_single {p : ℕ} (hp : p.Prime) (r m : ℕ) :
-    ∃ s : ℕ, ∀ s' ≥ s,
-      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
-        if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod p) else 0) ^ s' =
-        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1
-
 /-! ### Section 4: classification mod `p` -/
 
 /-- **Divisibility of constant terms of powers is decided on a bounded prefix.** Let $p$ be a
