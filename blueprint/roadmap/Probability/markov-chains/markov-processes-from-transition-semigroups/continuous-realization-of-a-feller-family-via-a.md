@@ -1,4 +1,4 @@
-# Continuous realization of a Feller family via a moment bound
+# Continuous realization of a Markov family via a moment bound
 
 Let $E=[l,r]$ be a compact real interval and $(K_t)_{t\ge0}$ Markov kernels on $E$ with $K_0(x,\cdot)=\delta_x$ and the Chapman–Kolmogorov equations $K_{s+t}=K_sK_t$. Suppose there are $p>0$, $a>0$ and $C<\infty$ with
 

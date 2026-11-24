@@ -32,7 +32,7 @@
 
 - [Bounded-rate jump Markov process on a compact space by uniformization](bounded-rate-jump-markov-process-on-a-compact-sp.md)
 - [Cadlag Feller process realization on a compact state space](cadlag-feller-process-realization-on-a-compact-s.md)
-- [Continuous realization of a Feller family via a moment bound](continuous-realization-of-a-feller-family-via-a.md)
+- [Continuous realization of a Markov family via a moment bound](continuous-realization-of-a-feller-family-via-a.md)
 - [Hille–Yosida generation theorem](hille-yosida-generation-theorem.md)
 - [Necessity half of Hille-Yosida: generators of contraction semigroups are dissipative](necessity-half-of-hille-yosida-generators-of-con.md)
 - [Semigroup convergence implies finite-dimensional convergence](semigroup-convergence-implies-finite-dimensional.md)
