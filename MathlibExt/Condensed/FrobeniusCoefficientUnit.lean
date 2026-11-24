@@ -72,17 +72,14 @@ abbrev unitRepresentable (U : UnitInductionModel p P π M) :
   ⟨dgRepresentable (TorsionRing p P π) U.val.unit⟩
 
 set_option maxHeartbeats 1200000 in
-/-- Compact Frobenius unit data is locked to the native geometric coefficient map. -/
+/-- Compact Frobenius unit data is locked to the native geometric coefficient map: its arrow is
+normalized against the bundled geometric normalization, using that normalization's derived
+extension and its comparison isomorphism at the coefficient unit. -/
 structure CompactUnit (U : UnitInductionModel p P π M) where
-  source_normalization : IsGeometricallyNormalized p P π F
-  geometry : ShiftedExtensionModel (coefficientFrobenius p P π h)
-    (continuous_coefficientFrobenius p P π h)
+  /-- The geometric Frobenius normalization the arrow is normalized against. -/
+  normalization : GeometricNormalization p P π F
   unitIso : DerivedCategory.Q.obj (torsionComplex p P π M U.val.unit) ≅
     unitObject (TorsionRing p P π)
-  phiIso : (geometry.functor _ _ ⋙ M.analytic.functor).obj
-      (DerivedCategory.Q.obj (torsionComplex p P π M U.val.unit)) ≅
-        DerivedCategory.Q.obj (torsionComplex p P π M
-          (F.compactFunctor.obj (op U.val.unit)).unop)
   analytic_unit : IsIso (M.analytic.unit.app (unitObject (TorsionRing p P π)))
   arrow : DGHom (TorsionRing p P π) 0
     (F.compactFunctor.obj (op U.val.unit)).unop U.val.unit
@@ -91,11 +88,17 @@ structure CompactUnit (U : UnitInductionModel p P π M) where
     (torsionComplex p P π M (F.compactFunctor.obj (op U.val.unit)).unop)
     (torsionComplex p P π M U.val.unit) 0
   realization : (cocycle : Cochain _ _ 0) = M.compact.realization.dgMap 0 arrow
-  normalized : phiIso.hom ≫ DerivedCategory.Q.map cocycle.homOf ≫ unitIso.hom =
-    (geometry.functor _ _ ⋙ M.analytic.functor).map unitIso.hom ≫
-      M.analytic.functor.map (geometricUnitMap p P π h geometry) ≫
+  normalized : (normalization.comparison U.val.unit).hom ≫
+      DerivedCategory.Q.map cocycle.homOf ≫ unitIso.hom =
+    (normalization.extension.functor _ _ ⋙ M.analytic.functor).map unitIso.hom ≫
+      M.analytic.functor.map (geometricUnitMap p P π h normalization.extension) ≫
         inv (M.analytic.unit.app (unitObject (TorsionRing p P π)))
   cofibrant : IsCofibrantModule (unitRepresentable p P π M U)
+
+/-- The model of a compact unit is geometrically normalized. -/
+theorem CompactUnit.source_normalization {U : UnitInductionModel p P π M}
+    (A : CompactUnit p P π h M F U) : IsGeometricallyNormalized p P π F :=
+  ⟨A.normalization⟩
 
 /-- Its cofibrant source is exactly the coefficient representable. -/
 abbrev CompactUnit.source {U : UnitInductionModel p P π M}

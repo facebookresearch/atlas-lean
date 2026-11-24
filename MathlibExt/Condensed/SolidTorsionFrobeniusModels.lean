@@ -171,28 +171,57 @@ structure FrobeniusModel (h : π.element ∣ (p : P.pair.plus)) (M : TorsionMode
       IsAlmostLocal (TorsionRing p P π) (torsionAlmostIdeal p P π M.almost)
         (extension.functor.obj N).obj
 
-/-- Geometric Frobenius normalization uses the fixed native source and all homogeneous classes. -/
+/-- Comparison isomorphisms `e` for the derived extension `E` (followed by analytic reflection)
+on all realized compact objects are compatible with every homogeneous cocycle class. -/
+def IsCompatibleComparison {h : π.element ∣ (p : P.pair.plus)}
+    {M : TorsionModel p P π} (F : FrobeniusModel p P π h M)
+    (E : GeometricTopologicalRestriction.ShiftedExtensionModel (coefficientFrobenius p P π h)
+      (continuous_coefficientFrobenius p P π h))
+    (e : ∀ x : M.compact.objects,
+      (E.functor (coefficientFrobenius p P π h)
+        (continuous_coefficientFrobenius p P π h) ⋙ M.analytic.functor).obj
+          (DerivedCategory.Q.obj (torsionComplex p P π M x)) ≅
+        DerivedCategory.Q.obj (torsionComplex p P π M (F.compactFunctor.obj (op x)).unop)) :
+    Prop :=
+  let G := E.functor (coefficientFrobenius p P π h)
+    (continuous_coefficientFrobenius p P π h) ⋙ M.analytic.functor
+  ∀ (x y : M.compact.objects) (n : ℤ)
+    (a : DGHom (TorsionRing p P π) n x y) (_ha : dgDifferential (TorsionRing p P π) n a = 0)
+    (b : Cocycle (torsionComplex p P π M x) (torsionComplex p P π M y) n)
+    (c : Cocycle (torsionComplex p P π M (F.compactFunctor.obj (op x)).unop)
+      (torsionComplex p P π M (F.compactFunctor.obj (op y)).unop) n),
+    (b : Cochain _ _ n) = M.compact.realization.dgMap n a →
+    (c : Cochain _ _ n) = M.compact.realization.dgMap n
+      (((F.compactFunctor.map (op y) (op x)).f n) a) →
+    G.map (cochainClass b) ≫
+      (shiftedComparison G (torsionComplex p P π M y)
+        (torsionComplex p P π M (F.compactFunctor.obj (op y)).unop) (e y) n).hom =
+      (e x).hom ≫ cochainClass c
+
+/-- A geometric Frobenius normalization of a scalar-Frobenius model: the fixed native derived
+extension (followed by analytic reflection) together with comparison isomorphisms on all realized
+compact objects, compatible with all homogeneous cocycle classes. Data that must agree with the
+normalization (as in `FrobeniusCoefficientUnit.CompactUnit`) should take this structure, not only
+`IsGeometricallyNormalized`. -/
+structure GeometricNormalization {h : π.element ∣ (p : P.pair.plus)}
+    {M : TorsionModel p P π} (F : FrobeniusModel p P π h M) where
+  /-- The native derived extension along the coefficient Frobenius. -/
+  extension : GeometricTopologicalRestriction.ShiftedExtensionModel (coefficientFrobenius p P π h)
+    (continuous_coefficientFrobenius p P π h)
+  /-- The comparison isomorphisms on realized compact objects. -/
+  comparison : ∀ x : M.compact.objects,
+    (extension.functor (coefficientFrobenius p P π h)
+      (continuous_coefficientFrobenius p P π h) ⋙ M.analytic.functor).obj
+        (DerivedCategory.Q.obj (torsionComplex p P π M x)) ≅
+      DerivedCategory.Q.obj (torsionComplex p P π M (F.compactFunctor.obj (op x)).unop)
+  /-- The comparisons are compatible with every homogeneous cocycle class. -/
+  normalized : IsCompatibleComparison p P π F extension comparison
+
+/-- Geometric Frobenius normalization uses the fixed native source and all homogeneous classes:
+some `GeometricNormalization` exists. -/
 def IsGeometricallyNormalized {h : π.element ∣ (p : P.pair.plus)}
     {M : TorsionModel p P π} (F : FrobeniusModel p P π h M) : Prop :=
-  ∃ E : GeometricTopologicalRestriction.ShiftedExtensionModel (coefficientFrobenius p P π h)
-      (continuous_coefficientFrobenius p P π h),
-    let G := E.functor (coefficientFrobenius p P π h)
-      (continuous_coefficientFrobenius p P π h) ⋙ M.analytic.functor
-    ∃ e : ∀ x : M.compact.objects,
-      G.obj (DerivedCategory.Q.obj (torsionComplex p P π M x)) ≅
-        DerivedCategory.Q.obj (torsionComplex p P π M (F.compactFunctor.obj (op x)).unop),
-      ∀ (x y : M.compact.objects) (n : ℤ)
-        (a : DGHom (TorsionRing p P π) n x y) (_ha : dgDifferential (TorsionRing p P π) n a = 0)
-        (b : Cocycle (torsionComplex p P π M x) (torsionComplex p P π M y) n)
-        (c : Cocycle (torsionComplex p P π M (F.compactFunctor.obj (op x)).unop)
-          (torsionComplex p P π M (F.compactFunctor.obj (op y)).unop) n),
-        (b : Cochain _ _ n) = M.compact.realization.dgMap n a →
-        (c : Cochain _ _ n) = M.compact.realization.dgMap n
-          (((F.compactFunctor.map (op y) (op x)).f n) a) →
-        G.map (cochainClass b) ≫
-          (shiftedComparison G (torsionComplex p P π M y)
-            (torsionComplex p P π M (F.compactFunctor.obj (op y)).unop) (e y) n).hom =
-          (e x).hom ≫ cochainClass c
+  Nonempty (GeometricNormalization p P π F)
 
 /-- The actual enhanced Frobenius scalar extension on almost-local modules. -/
 def FrobeniusModel.localExtension {h : π.element ∣ (p : P.pair.plus)}
