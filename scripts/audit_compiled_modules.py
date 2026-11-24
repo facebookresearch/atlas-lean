@@ -332,7 +332,7 @@ class Admission:
                 if self.allows(sample):
                     process = start()
                     pidfd = None
-                    if hasattr(os, 'pidfd_open'):
+                    if hasattr(os, 'pidfd_open') and isinstance(process, subprocess.Popen):
                         try:
                             pidfd = os.pidfd_open(process.pid)
                         except OSError:
@@ -367,12 +367,13 @@ class Admission:
             return
         _, pidfd = self.running[process]
         try:
-            if LIST_ENVIRONMENT and pidfd is not None:
+            if not LIST_ENVIRONMENT:
+                if process.pid > 0:  # never killpg(0) or killpg(-1)
+                    os.killpg(process.pid, signal.SIGKILL)
+            elif pidfd is not None:
                 signal.pidfd_send_signal(pidfd, signal.SIGKILL)
-            elif LIST_ENVIRONMENT:
-                process.kill()
             else:
-                os.killpg(process.pid, signal.SIGKILL)
+                process.kill()
         except OSError:
             pass
 

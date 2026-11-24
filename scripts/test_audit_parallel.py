@@ -27,7 +27,16 @@ import audit_compiled_modules as audit  # noqa: E402
 COLLISION = ('{driver}:1:0: error: import {module} failed, environment already contains '
              "'X.g' from {other}")
 FAKE_LEAN = '/fake/toolchain/bin/lean'
+HOLD_LIMIT = 20  # seconds a fake batch waits for its event before failing the test
 PLENTY = 64 * audit.BATCH_MEMORY
+
+
+def pidfd_supported():
+    try:
+        os.close(os.pidfd_open(os.getpid()))
+        return True
+    except (AttributeError, OSError):
+        return False
 
 
 def listing(environment):
@@ -38,7 +47,7 @@ def listing(environment):
 class FakeProcess:
     """A batch's Lean process: runs the fake batch when its output is read; `kill` ends it."""
 
-    pid = -1  # os.pidfd_open rejects it, so Admission signals through kill()
+    pid = -1  # not a Popen: Admission opens no pidfd and signals it through kill()
     stdout = None
 
     def __init__(self, fake, command):
@@ -120,9 +129,12 @@ class FakeLean:
                 raise KeyboardInterrupt
             for module in batch:
                 if module in self.hold:
+                    deadline = time.monotonic() + HOLD_LIMIT
                     while not self.hold[module].wait(0.01):
                         if killed.is_set():
                             return -9, ''
+                        if time.monotonic() > deadline:  # fail rather than hang
+                            return 99, f'{driver}:1:0: error: {module} was held for {HOLD_LIMIT} s'
             if killed.wait(self.delay):
                 return -9, ''
             for first, second in self.pairs:
@@ -161,6 +173,13 @@ PAIRS = [('L.M003', 'L.M005'), ('L.M011', 'L.M012'), ('L.M016', 'L.M017'), ('L.M
 
 
 class ParallelAuditTests(unittest.TestCase):
+    def setUp(self):
+        # The fakes stand for directly started Lean processes, which are killed through
+        # `kill()`, on every platform. The Lake route is tested where named.
+        listing = mock.patch.object(audit, 'LIST_ENVIRONMENT', True)
+        listing.start()
+        self.addCleanup(listing.stop)
+
     def test_parallel_run_matches_sequential_run(self):
         sequential_fake = FakeLean(PAIRS)
         sequential, sequential_lines = run_audit(MODULES, sequential_fake, batch_size=8, workers=1)
@@ -248,6 +267,8 @@ class ParallelAuditTests(unittest.TestCase):
 
     def test_one_worker_stops_at_an_interrupt(self):
         # SIGINT reaches the coordinating thread while the only batch runs; that batch is killed.
+        previous = signal.signal(signal.SIGINT, signal.default_int_handler)  # even if started ignored
+        self.addCleanup(signal.signal, signal.SIGINT, previous)
         never = threading.Event()
         fake = FakeLean(hold={'L.M000': never},
                         launched=lambda calls: threading.Timer(0.2, os.kill, (os.getpid(), signal.SIGINT)).start())
@@ -341,11 +362,11 @@ class ParallelAuditTests(unittest.TestCase):
             time.sleep(2.5)
             self.assertFalse(marker.exists(), 'Lean kept running after the timeout')
 
-    def test_a_real_batch_is_killed_through_its_pidfd(self):
+    def test_a_real_batch_is_killed_through_its_pidfd_or_kill(self):
         admission = audit.Admission(gated=False)
         process = admission.launch(0, True, lambda: subprocess.Popen(['sleep', '30']))
         pidfd = admission.running[process][1]
-        if hasattr(os, 'pidfd_open'):
+        if pidfd_supported():
             self.assertIsNotNone(pidfd)
         began = time.monotonic()
         admission.cancel()
@@ -378,6 +399,7 @@ class ParallelAuditTests(unittest.TestCase):
                 time.sleep(0.2)
                 admission.cancel()
                 process.wait(5)
+                process.stdout.close()
                 admission.finished(process)
             time.sleep(1.5)
             self.assertFalse(marker.exists(), "the batch's child outlived it")
