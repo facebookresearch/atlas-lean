@@ -20,7 +20,7 @@ Design of Integrated Circuits and Systems 4 (1985), 31-41, doi:10.1109/TCAD.1985
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice

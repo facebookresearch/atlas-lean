@@ -25,6 +25,9 @@ For a union of two sets, we use the longest-sequence coloring described by Oscar
 *On Some Properties of Accessible Sets*. If a coloring bounds the lengths of monochromatic
 diffsequences for one part, refining each point's color by the longest length starting there
 separates the ends of every gap in that part.
+
+If the fractional part of every dilated gap lies in $[\varepsilon, 1 - 1/r]$ with $\varepsilon > 0$,
+coloring by $r$ equal subintervals of $[0,1)$ bounds the length of a monochromatic diffsequence.
 -/
 
 namespace MetaMathlibExt
@@ -157,6 +160,76 @@ public theorem isDDiffSequence_iff (D : Set ℕ) {k : ℕ} (x : Fin k → ℤ) :
     IsDDiffSequence D x ↔ ∀ (i : ℕ) (h : i + 1 < k),
       ∃ d ∈ D, x ⟨i + 1, h⟩ - x ⟨i, by omega⟩ = (d : ℤ) :=
   Iff.rfl
+
+set_option linter.unusedVariables false in
+/-- **Colorings avoiding long diffsequences under fractional-part bounds.** Let $r \ge 1$, let
+$d_0 < d_1 < \cdots$ be a strictly increasing sequence of natural numbers with $d_0 > 0$, and let
+$D = \{d_n : n \ge 0\}$. Suppose there are real numbers $\alpha$ and $\varepsilon > 0$ such that
+for every $n$ the fractional part of $\alpha d_n$ lies in the closed interval
+$[\varepsilon, (r-1)/r]$. Then there is a coloring of the positive integers with $r$ colors that
+has no monochromatic $D$-diffsequence of positive integers of length
+$\lceil 1/(r\varepsilon) \rceil + 1$.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Theorem 12. -/
+public theorem coloring_avoids_diffsequence_of_fractional_bounds
+    (r : ℕ) (hr : 1 ≤ r) (D : Set ℕ) (d : ℕ → ℕ)
+    (hmono : StrictMono d) (hD : D = Set.range d) (hd0 : 0 < d 0)
+    (α ε : ℝ) (hε : 0 < ε)
+    (hfrac : ∀ n : ℕ, Int.fract (α * (d n : ℝ)) ∈
+      Set.Icc ε (((r - 1 : ℕ) : ℝ) / (r : ℝ))) :
+    ∃ c : ℕ+ → Fin r,
+      ¬ ∃ x : Fin (Nat.ceil (((r : ℝ) * ε)⁻¹) + 1) → ℕ+,
+        IsMonochromatic c x ∧
+          IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ)) := by
+  have hr' : 0 < (r : ℝ) := by exact_mod_cast (show 0 < r from hr)
+  let phase (a : ℕ+) := Int.fract (α * (a : ℕ))
+  let c (a : ℕ+) : Fin r := ⟨⌊r * phase a⌋₊, by
+    apply (Nat.floor_lt' (Nat.ne_of_gt hr)).2
+    simpa using mul_lt_mul_of_pos_left (Int.fract_lt_one (α * (a : ℕ))) hr'⟩
+  refine ⟨c, ?_⟩
+  rintro ⟨x, hx, hdiff⟩
+  let k := Nat.ceil (((r : ℝ) * ε)⁻¹)
+  -- Two phases in the same half-open color interval differ by less than its width.
+  have near (i j : Fin (k + 1)) : phase (x i) - phase (x j) < 1 / r := by
+    have heq := congrArg Fin.val (hx i j)
+    have hu : r * phase (x i) < ((c (x i)).val : ℝ) + 1 := Nat.lt_floor_add_one _
+    rw [heq] at hu
+    have hl : ((c (x j)).val : ℝ) ≤ r * phase (x j) :=
+      Nat.floor_le (mul_nonneg hr'.le (Int.fract_nonneg _))
+    apply (lt_div_iff₀ hr').2
+    linarith only [hu, hl]
+  subst D
+  have step (i : Fin k) : phase (x i.castSucc) + ε ≤ phase (x i.succ) := by
+    obtain ⟨_, ⟨n, rfl⟩, hgap⟩ := hdiff i i.succ.isLt
+    have hsum : ((x i.succ : ℕ) : ℝ) = (x i.castSucc : ℕ) + (d n : ℝ) := by
+      change ((x i.succ : ℕ) : ℤ) - (x i.castSucc : ℕ) = d n at hgap
+      exact_mod_cast (sub_eq_iff_eq_add'.mp hgap)
+    have hadd := Int.fract_add_eq_or (α * (x i.castSucc : ℕ)) (α * (d n : ℝ))
+    rw [← mul_add, ← hsum] at hadd
+    rcases hadd with h | h
+    · exact (add_le_add_right (hfrac n).1 _).trans_eq h.symm
+    · -- Wrapping around 1 would move backwards by at least the whole interval width.
+      have hu := (hfrac n).2
+      rw [Nat.cast_sub hr, Nat.cast_one, sub_div, div_self hr'.ne'] at hu
+      have hnear := near i.castSucc i.succ
+      dsimp only [phase] at hnear
+      linarith only [hnear, h, hu]
+  have advance (i : Fin (k + 1)) : phase (x 0) + (i : ℕ) * ε ≤ phase (x i) := by
+    induction i using Fin.induction with
+    | zero => simp
+    | succ i ih =>
+      rw [Fin.val_castSucc] at ih
+      simp only [Fin.val_succ, Nat.cast_add, Nat.cast_one, add_mul, one_mul]
+      linarith only [ih, step i]
+  have hlen : 1 ≤ (k : ℝ) * (r * ε) := by
+    rw [← div_le_iff₀ (mul_pos hr' hε), one_div]
+    exact Nat.le_ceil _
+  have hwidth : 1 / (r : ℝ) ≤ (k : ℝ) * ε :=
+    (div_le_iff₀ hr').2 (by linarith only [hlen])
+  have hlast := advance (Fin.last k)
+  simp only [Fin.val_last] at hlast
+  linarith only [hlast, hwidth, near (Fin.last k) 0]
 
 /-- **$r$-accessibility for colorings of the positive integers.** Let $r$ be a natural number. A set
 $D$ of natural numbers is $r$-accessible when every element of $D$ is positive, $r \ge 1$, and for

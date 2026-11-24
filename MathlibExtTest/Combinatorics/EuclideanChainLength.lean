@@ -68,4 +68,11 @@ example : euclideanChainLength 133 60 = 8 ∧ euclideanChainLength 13 86 = 10 :=
 
 #guard euclideanChainLength 133 60 == 8 && euclideanChainLength 13 86 == 10
 
+-- The quotient is one when the arguments are equal, and four for `(3, 12)`.
+example : euclideanChainLength 6 6 = 2 := by
+  simpa using euclideanChainLength_of_dvd (x := 6) (y := 6) (by decide) (by decide) (by decide)
+
+example : euclideanChainLength 3 12 = 5 := by
+  simpa using euclideanChainLength_of_dvd (x := 3) (y := 12) (by decide) (by decide) (by decide)
+
 end MathlibExtTest.Combinatorics.EuclideanChainLength
