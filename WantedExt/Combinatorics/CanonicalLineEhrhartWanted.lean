@@ -29,33 +29,6 @@ open Filter Polynomial Set
 
 /-! # Ehrhart polynomials with roots on the canonical line -/
 
-/-- **The h-star coefficients of a polynomial.** Let $f$ be a complex polynomial of degree $d$,
-with $d = 0$ for the zero polynomial. For a natural number $i$, the $i$-th $h^*$-coefficient of
-$f$ is
-$$h^*_i(f) = \sum_{j=0}^{i} (-1)^j \binom{d+1}{j} f(i-j),$$
-the coefficient of $t^i$ in the power series $(1-t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of the `h*`-polynomial.
--/
-public def hStarCoeff (f : Polynomial ℂ) (i : ℕ) : ℂ :=
-  ∑ j ∈ Finset.range (i + 1),
-    (-1 : ℂ) ^ j * (Nat.choose (f.natDegree + 1) j : ℂ) * f.eval (i - j : ℂ)
-
-/-- **SNN polynomials.** For a complex polynomial $f$ of degree $d$ and a natural number $i$, let
-$h^*_i(f)$ be the coefficient of $t^i$ in $(1 - t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$. Then $f$ is
-SNN when $f \ne 0$ and its $h^*$-coefficients $h^*_0(f), \dots, h^*_d(f)$ are real and
-nonnegative.
-
-Coefficients beyond the degree, which vanish by the generating-series identity, are not part of
-the condition.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of SNN-polynomial.
--/
-public def IsSNN (f : Polynomial ℂ) : Prop :=
-  f ≠ 0 ∧ ∀ i ≤ f.natDegree, 0 ≤ (hStarCoeff f i).re ∧ (hStarCoeff f i).im = 0
-
 /-- **The basis polynomials $b^d_j$.** For natural numbers $d$ and $j$, $b^d_j$ is the complex
 polynomial $b^d_j = \prod_{i=0}^{d-1} (X + d - j - i)$.
 
@@ -338,15 +311,6 @@ public theorem_wanted pBasis_zero_interlaces_perturbation (d : ℕ) (hd : 0 < d)
     (w : ℝ) (hw : 0 < w) :
     CLInterlaces (pBasis d 0)
       (pBasis (d + 1) 0 + C (w : ℂ) * (2 * X + 1) * pBasis d 0)
-
-/-- **Multiplying by $2X+1$ preserves SNN.** For every complex polynomial $f$, if $f$ is an SNN
-polynomial, then so is $(2X + 1) f$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 6.
--/
-public theorem_wanted two_mul_X_add_one_preserves_snn (f : Polynomial ℂ) (hf : IsSNN f) :
-    IsSNN ((2 * X + 1) * f)
 
 /-- **Fisk's Leibniz rule for interlacing.** Let $f, f_1, g, g_1$ be real polynomials with
 positive leading coefficients, each having only real roots, such that $f$ and $g$ have no common

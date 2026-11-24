@@ -22,7 +22,7 @@ dependencies, is Garey and Johnson's [SR26] MINIMUM CARDINALITY KEY.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Databases.FunctionalDependencies
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
