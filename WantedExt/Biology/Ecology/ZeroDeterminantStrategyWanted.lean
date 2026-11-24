@@ -1,0 +1,144 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# Press–Dyson zero-determinant strategies enforce linear payoff relations
+
+In the iterated two-player game with stage payoffs `S_X = (R, S, T, P)` and `S_Y = (R, T, S, P)`
+over the outcomes `cc, cd, dc, dd` (seen from X), player X uses a memory-one strategy
+`p = (p₁, p₂, p₃, p₄)` (her cooperation probabilities after each outcome) and Y uses
+`q = (q₁, q₂, q₃, q₄)` in his own order (outcomes seen from Y). Outcomes are indexed
+`0 = cc, 1 = cd, 2 = dc, 3 = dd`. With `M(p, q)` the Markov matrix of outcomes and `v` a
+stationary distribution, Press and Dyson show that `v · f = D(p, q, f) / D(p, q, 1)` for every
+`f`, where `D(p, q, f)` is the determinant with columns `(-1 + p₁q₁, p₂q₃, p₃q₂, p₄q₄)`,
+`p̃ = (-1 + p₁, -1 + p₂, p₃, p₄)`, `q̃ = (-1 + q₁, q₃, -1 + q₂, q₄)` and `f`. If X chooses a
+feasible `p` with `p̃ = α S_X + β S_Y + γ 1`, then `α s_X + β s_Y + γ = 0` whatever Y does.
+The hypotheses `p ∈ [0,1]⁴`, `D(p, q, 1) ≠ 0` and stationary play are those the paper needs
+(it notes that not all such strategies are feasible and that singular cases exist).
+
+Sources: W. H. Press and F. J. Dyson, "Iterated Prisoner's Dilemma contains strategies that
+dominate any evolutionary opponent", Proc. Natl. Acad. Sci. USA 109 (2012) 10409–10413,
+"Zero-determinant strategies", eqs. (1)–(7), and "X unilaterally sets Y's score", eqs. (8)–(10).
+-/
+module
+
+public import Batteries.Util.ProofWanted
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.Order.Interval.Set.Basic
+
+@[expose] public section
+
+namespace WantedExt.Biology.Ecology.ZeroDeterminantStrategyWanted
+
+open Matrix Set
+
+/-- Y's cooperation probabilities re-indexed to X's view of the outcome:
+`(q₁, q₃, q₂, q₄)`. -/
+def yView (q : Fin 4 → ℝ) : Fin 4 → ℝ :=
+  ![q 0, q 2, q 1, q 3]
+
+/-- The **Markov matrix** `M(p, q)` of outcomes `cc, cd, dc, dd`: from outcome `s`, X
+cooperates with probability `p s`, Y cooperates with probability `yView q s`, independently;
+X cooperates in outcomes `0, 1` and Y in outcomes `0, 2`. -/
+def markovMatrix (p q : Fin 4 → ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
+  Matrix.of fun s s' =>
+    (if s' = 0 ∨ s' = 1 then p s else 1 - p s) *
+      (if s' = 0 ∨ s' = 2 then yView q s else 1 - yView q s)
+
+/-- `v` is a **stationary distribution** of `M`: `vᵀ M = vᵀ`, `v ≥ 0` and `∑ v = 1`. -/
+def IsStationary (M : Matrix (Fin 4) (Fin 4) ℝ) (v : Fin 4 → ℝ) : Prop :=
+  v ᵥ* M = v ∧ (∀ i, 0 ≤ v i) ∧ ∑ i, v i = 1
+
+/-- X's stage payoffs `S_X = (R, S, T, P)` over `cc, cd, dc, dd`. -/
+def payoffX (R S T P : ℝ) : Fin 4 → ℝ :=
+  ![R, S, T, P]
+
+/-- Y's stage payoffs `S_Y = (R, T, S, P)` over `cc, cd, dc, dd` (seen from X). -/
+def payoffY (R S T P : ℝ) : Fin 4 → ℝ :=
+  ![R, T, S, P]
+
+/-- X's column `p̃ = (-1 + p₁, -1 + p₂, p₃, p₄)`. -/
+def pTilde (p : Fin 4 → ℝ) : Fin 4 → ℝ :=
+  ![-1 + p 0, -1 + p 1, p 2, p 3]
+
+/-- Y's column `q̃ = (-1 + q₁, q₃, -1 + q₂, q₄)`. -/
+def qTilde (q : Fin 4 → ℝ) : Fin 4 → ℝ :=
+  ![-1 + q 0, q 2, -1 + q 1, q 3]
+
+/-- The Press–Dyson determinant `D(p, q, f)`, with columns
+`(-1 + p₁q₁, p₂q₃, p₃q₂, p₄q₄)`, `p̃`, `q̃` and `f`. -/
+def pdDet (p q f : Fin 4 → ℝ) : ℝ :=
+  (Matrix.of fun i j =>
+    ![![-1 + p 0 * q 0, p 1 * q 2, p 2 * q 1, p 3 * q 3] i, pTilde p i, qTilde q i, f i] j).det
+
+/-- `p` is a memory-one strategy: every component lies in `[0, 1]`. -/
+def IsStrategy (p : Fin 4 → ℝ) : Prop :=
+  ∀ i, p i ∈ Icc (0 : ℝ) 1
+
+/-- **Press–Dyson determinant lemma** (Press and Dyson 2012, eqs. (4)–(6)). For memory-one
+strategies `p, q` (components in `[0, 1]`), every stationary distribution `v` of `M(p, q)` with
+`D(p, q, 1) ≠ 0`, and every `f : Fin 4 → ℝ`, `v · f = D(p, q, f) / D(p, q, 1)`.
+
+Source: Press and Dyson (2012), "Zero-determinant strategies", eqs. (4)–(6). -/
+public theorem_wanted dotProduct_eq_div_pdDet {p q : Fin 4 → ℝ} (hp : IsStrategy p)
+    (hq : IsStrategy q) {v : Fin 4 → ℝ} (hv : IsStationary (markovMatrix p q) v)
+    (hD : pdDet p q 1 ≠ 0) (f : Fin 4 → ℝ) : v ⬝ᵥ f = pdDet p q f / pdDet p q 1
+
+/-- **Zero-determinant strategies** (Press and Dyson 2012, eq. (7)). Let `p` be a memory-one
+strategy with `p̃ = α S_X + β S_Y + γ 1` for reals `α, β, γ` and payoffs `R, S, T, P`. Then for
+every memory-one strategy `q` of Y and every stationary distribution `v` of `M(p, q)` with
+`D(p, q, 1) ≠ 0`, the long-run scores `s_X = v · S_X`, `s_Y = v · S_Y` satisfy
+`α s_X + β s_Y + γ = 0`.
+
+Source: Press and Dyson (2012), "Zero-determinant strategies", eq. (7). -/
+public theorem_wanted zeroDeterminant_linear_relation {R S T P α β γ : ℝ} {p : Fin 4 → ℝ}
+    (hp : IsStrategy p)
+    (hzd : pTilde p = fun i => α * payoffX R S T P i + β * payoffY R S T P i + γ)
+    {q : Fin 4 → ℝ} (hq : IsStrategy q) {v : Fin 4 → ℝ}
+    (hv : IsStationary (markovMatrix p q) v) (hD : pdDet p q 1 ≠ 0) :
+    α * (v ⬝ᵥ payoffX R S T P) + β * (v ⬝ᵥ payoffY R S T P) + γ = 0
+
+/-- **X sets Y's score: equalizer strategies** (Press and Dyson 2012, eqs. (8)–(9)). Let
+`R ≠ P`, let `p` be a memory-one strategy with
+`p₂ = (p₁ (T - P) - (1 + p₄)(T - R)) / (R - P)`, `p₃ = ((1 - p₁)(P - S) + p₄ (R - S)) / (R - P)`
+and `(1 - p₁) + p₄ ≠ 0`. Then for every memory-one strategy `q` of Y and every stationary
+distribution `v` of `M(p, q)` with `D(p, q, 1) ≠ 0`,
+`v · S_Y = ((1 - p₁) P + p₄ R) / ((1 - p₁) + p₄)`.
+
+Source: Press and Dyson (2012), "X unilaterally sets Y's score", eqs. (8)–(9). -/
+public theorem_wanted equalizer_score {R S T P : ℝ} (hRP : R ≠ P) {p : Fin 4 → ℝ}
+    (hp : IsStrategy p) (hp2 : p 1 = (p 0 * (T - P) - (1 + p 3) * (T - R)) / (R - P))
+    (hp3 : p 2 = ((1 - p 0) * (P - S) + p 3 * (R - S)) / (R - P))
+    (hden : (1 - p 0) + p 3 ≠ 0) {q : Fin 4 → ℝ} (hq : IsStrategy q) {v : Fin 4 → ℝ}
+    (hv : IsStationary (markovMatrix p q) v) (hD : pdDet p q 1 ≠ 0) :
+    v ⬝ᵥ payoffY R S T P = ((1 - p 0) * P + p 3 * R) / ((1 - p 0) + p 3)
+
+/-- **In the Prisoner's Dilemma X can fix any score of Y in `[P, R]`** (Press and Dyson 2012).
+If `T > R > P > S`, then for every `σ ∈ [P, R]` there is a memory-one strategy `p` such that for
+every memory-one strategy `q` and every stationary distribution `v` of `M(p, q)` with
+`D(p, q, 1) ≠ 0`, `v · S_Y = σ`.
+
+Source: Press and Dyson (2012), "X unilaterally sets Y's score". -/
+public theorem_wanted exists_strategy_fixing_score {R S T P : ℝ} (hTR : R < T) (hRP : P < R)
+    (hPS : S < P) (σ : ℝ) (hσ : σ ∈ Icc P R) :
+    ∃ p : Fin 4 → ℝ, IsStrategy p ∧ ∀ q : Fin 4 → ℝ, IsStrategy q → ∀ v : Fin 4 → ℝ,
+      IsStationary (markovMatrix p q) v → pdDet p q 1 ≠ 0 → v ⬝ᵥ payoffY R S T P = σ
+
+/-- **X cannot fix her own score** (Press and Dyson 2012, eq. (10)). If `T > R > P > S` and a
+memory-one strategy `p` satisfies `p̃ = α S_X + γ 1` for reals `α, γ`, then `α = 0` and `p` is
+the singular strategy `(1, 1, 0, 0)`.
+
+Source: Press and Dyson (2012), "X tries to set her own score", eq. (10). -/
+public theorem_wanted own_score_singular {R S T P α γ : ℝ} (hTR : R < T) (hRP : P < R)
+    (hPS : S < P) {p : Fin 4 → ℝ} (hp : IsStrategy p)
+    (hzd : pTilde p = fun i => α * payoffX R S T P i + γ) :
+    α = 0 ∧ p = ![1, 1, 0, 0]
+
+end WantedExt.Biology.Ecology.ZeroDeterminantStrategyWanted
