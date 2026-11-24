@@ -25,7 +25,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
-public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.LucasNumberGeneratingFunctionValues
 
 namespace MetaMathlibExt
 
@@ -156,23 +156,6 @@ public theorem_wanted lucasGenFun_eval_isInt_iff_of_abs_lt_radius {a b : ℕ} (h
     (∃ n : ℤ, (2 - a * q) / (1 - a * q - b * q ^ 2) = n) ↔
       ∃ i : ℕ, q = (((𝔽[a, b] (2 * i)).eval 1 : ℤ) : ℚ) / (((𝔽[a, b] (2 * i + 1)).eval 1 : ℤ) : ℚ) ∨
         q = (((𝕃[a, b] (2 * i + 1)).eval 1 : ℤ) : ℚ) / (((𝕃[a, b] (2 * i + 2)).eval 1 : ℤ) : ℚ)
-
-/-- **Integer values of the Lucas number generating function in its interval of convergence.**
-Let $F_n$ be the Fibonacci numbers and $L_n$ the Lucas numbers, given by $L_0 = 2$, $L_1 = 1$
-and $L_{n+2} = L_{n+1} + L_n$. For a rational number $q$ with $|q| < 2 / (1 + \sqrt 5)$, the
-number $(2 - q) / (1 - q - q^2)$ is an integer if and only if $q = -1/2$, or
-$q = F_{2i} / F_{2i+1}$ or $q = L_{2i+1} / L_{2i+2}$ for some $i \in \mathbb{N}$.
-
-This is the case $a = b = 1$ of the generating function $(2 - at) / (1 - at - bt^2)$.
-
-Source: Yuji Tsuno, *Polynomial Values with Integer Coefficients for the Generating Functions of
-Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024), Article tsuno05142024, Corollary 1.8
-(`fq-2024-tsuno05142024-cor-1.8`). -/
-public theorem_wanted lucasNumberGenFun_eval_isInt_iff_of_abs_lt_radius {q : ℚ}
-    (hq : |(q : ℝ)| < 2 / (1 + Real.sqrt 5)) :
-    (∃ n : ℤ, (2 - q) / (1 - q - q ^ 2) = n) ↔
-      (∃ i : ℕ, q = (Nat.fib (2 * i) : ℚ) / Nat.fib (2 * i + 1) ∨
-        q = (lucasNumber (2 * i + 1) : ℚ) / lucasNumber (2 * i + 2)) ∨ q = -1 / 2
 
 /-- **Polynomial Pell-type solutions as rescaled Fibonacci–Lucas polynomials.** Let $a$ and $b$ be
 positive integers, and let $F_n(x), L_n(x) \in \mathbb{Z}[x]$ be the polynomials with $F_0 = 0$,

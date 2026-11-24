@@ -103,3 +103,18 @@ example (k : ℕ) :
   (isUlamWord_zeros_two_ones_zeros_iff k (k + 1)).2 (by omega)
 
 end MetaMathlibExt.isUlamWord_zeros_two_ones_zeros_iff
+
+namespace MetaMathlibExt.isUlamWord_zeros_one_zeros_iff
+
+-- The singleton is accepted; of the two endpoint extensions, precisely one is valid for 0010.
+example : IsUlamWord [true] ∧ IsUlamWord [false, false, true, false] := by
+  exact ⟨(isUlamWord_zeros_one_zeros_iff 0 0).2 (by decide),
+    (isUlamWord_zeros_one_zeros_iff 2 1).2 (by decide)⟩
+
+-- Both endpoint cuts of 010 are valid, so it is not an Ulam word.
+example : ¬ IsUlamWord [false, true, false] := by
+  intro h
+  exact (by decide : ¬ Odd ((1 + 1 : ℕ).choose 1))
+    ((isUlamWord_zeros_one_zeros_iff 1 1).1 h)
+
+end MetaMathlibExt.isUlamWord_zeros_one_zeros_iff

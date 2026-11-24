@@ -26,25 +26,14 @@ audit table. Here `σ n` is `∑ d ∈ n.divisors, d`.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.Amicable
+public import MathlibExt.NumberTheory.DivisorSumDensity
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.AmicableWanted
-
-/-- **A fixed positive integer divides the divisor sum of almost every natural number.** For
-a natural number $l$ let $\sigma(l)$ denote the sum of the positive divisors of $l$, with
-$\sigma(0) = 0$. Then for every positive integer $N$, the set of natural numbers $l$ such
-that $N$ does not divide $\sigma(l)$ has natural density $0$.
-
-Source: Stoyan Dimitrov, "Generalizations of Amicable
-Numbers", Lemma 1. -/
-theorem_wanted tendsto_density_not_dvd_sigma (N : ℕ)
-    (hN : 1 ≤ N) :
-    {l : ℕ | ¬ N ∣ ArithmeticFunction.sigma 1 l}.HasDensity 0
 
 /-- **Theorem 4**: if `gcd(a, N_i) = 1` for all `i` and
 `σ(a)/a = (α₁N₁ + ⋯ + α_kN_k)/σ(N_i)` for every `i`, then

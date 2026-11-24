@@ -19,7 +19,8 @@ import Mathlib.Tactic.Linarith
 
 The switching criterion characterizes when a Bézout coefficient for `m` modulo `n`
 is also an inverse of `t` modulo `n`. The two predicates describe least absolute inverses
-and the switching identities along a Euclidean remainder sequence.
+and the switching identities along a Euclidean remainder sequence. Least absolute inverses
+propagate from each remainder to the preceding one.
 -/
 
 @[expose] public section
@@ -98,6 +99,42 @@ theorem exists_eq_mul_add_iff_switching
       _ ≡ (m : ℤ) [ZMOD (n : ℤ)] := by simpa using hxt.mul_right (m : ℤ)
     simpa only [Int.modEq_iff_add_fac, add_comm t, mul_comm (n : ℤ)] using htm
 
+-- The strict lower bound on x gives one unit of slack because x and n are integers.
+private theorem isLeastAbsInverse_succ_imp.switchingBounds {m n x y : ℤ}
+    (hm : 2 ≤ m) (hn : 0 < n) (hswitch : x * m + y * n = 1)
+    (hlo : -n < 2 * x) (hhi : 2 * x ≤ n) :
+    -m < 2 * y ∧ 2 * y ≤ m := by
+  have hm₀ : 0 ≤ m := by omega
+  have hgap : 1 - n ≤ 2 * x := by omega
+  constructor
+  · apply lt_of_mul_lt_mul_right _ hn.le
+    nlinarith only [hswitch, mul_le_mul_of_nonneg_right hhi hm₀]
+  · apply le_of_mul_le_mul_right _ hn
+    nlinarith only [hswitch, hm, mul_le_mul_of_nonneg_right hgap hm₀]
+
+/-- **Least absolute inverses propagate down the Euclidean sequence.** Let $r_0, r_1, \ldots$ be
+natural numbers, $s_0, s_1, \ldots$ integers and $N \ge 1$ such that $(r, s, N)$ is Euclidean
+switching data: $r_0 > r_1 > \cdots > r_{N+1} = 1$ are the successive remainders of the Euclidean
+algorithm, $s_{N+1} = 1$, and $s_{i+1} r_{i-1} + s_i r_i = 1$ for $1 \le i \le N$. If
+$1 \le j \le N$ and $s_{j+1}$ is the least absolute inverse of $r_{j+1}$ modulo $r_j$, then $s_j$
+is the least absolute inverse of $r_j$ modulo $r_{j-1}$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Lemma 3. -/
+theorem isLeastAbsInverse_succ_imp
+    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
+    (j : ℕ) (hj1 : 1 ≤ j) (hj2 : j ≤ N)
+    (h : IsLeastAbsInverse (s (j + 1)) (r (j + 1) : ℤ) (r j)) :
+    IsLeastAbsInverse (s j) (r j : ℤ) (r (j - 1)) := by
+  obtain ⟨_, hpos, hdesc, _, _, _, hswitch⟩ := hseq
+  have hbez := hswitch j hj1 hj2
+  have hn : 0 < r j := hpos j (by omega)
+  have hlt := hdesc (j - 1) (by omega)
+  rw [Nat.sub_add_cancel hj1] at hlt
+  exact ⟨by simp [← hbez],
+    isLeastAbsInverse_succ_imp.switchingBounds (by omega) (by exact_mod_cast hn)
+      hbez h.2.1 h.2.2⟩
+
 -- Propagate the half-open bounds backwards from the final inverse, which is one.
 private theorem switching_bounds {r : ℕ → ℕ} {s : ℕ → ℤ} {N : ℕ}
     (hseq : IsEuclidSwitchSeq r s N) {i : ℕ} (hi : i ≤ N) :
@@ -113,15 +150,9 @@ private theorem switching_bounds {r : ℕ → ℕ} {s : ℕ → ℤ} {N : ℕ}
     obtain ⟨hlo, hhi⟩ := ih
     have h := hbez (i + 1) (by omega) hi
     rw [Nat.add_sub_cancel] at h
-    have hpos' : 0 < (r (i + 1) : ℤ) := by exact_mod_cast hpos (i + 1) (by omega)
+    have hp := hpos (i + 1) (by omega)
     have hr := hdesc i hi.le
-    have hr' : 2 ≤ (r i : ℤ) := by omega
-    have hgap : 1 - (r (i + 1) : ℤ) ≤ 2 * s (i + 1 + 1) := by omega
-    constructor
-    · apply lt_of_mul_lt_mul_right _ hpos'.le
-      nlinarith only [h, mul_le_mul_of_nonneg_right hhi (Int.natCast_nonneg (r i))]
-    · apply le_of_mul_le_mul_right _ hpos'
-      nlinarith only [h, hr', mul_le_mul_of_nonneg_right hgap (Int.natCast_nonneg (r i))]
+    exact isLeastAbsInverse_succ_imp.switchingBounds (by omega) (by exact_mod_cast hp) h hlo hhi
 
 /-- **First inverses not both extremal, even–odd case.** Let $(r_i)$, $(s_i)$ and $N$ be
 Euclidean switching data with $r_0$ even and $r_1$ odd. Then $2|s_1| < r_0$ or

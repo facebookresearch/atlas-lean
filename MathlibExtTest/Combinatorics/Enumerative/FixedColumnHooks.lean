@@ -43,3 +43,45 @@ example : ∀ᶠ k in Filter.atTop, coeff 2 (normalizedSeries 2 2 k) = 2 := by
   linarith
 
 end MetaMathlibExt.columnHook_size_genFun_limit
+
+namespace MetaMathlibExt
+
+private def fixedHookCount (n m : ℕ) (h : ℤ) : ℤ :=
+  ((Finset.univ : Finset n.Partition).filter (fun p =>
+    ((Finset.Icc 1 n).filter (fun r =>
+      IsFixedColumnHook p m r h ∧ partitionRowLen p r = m)).Nonempty)).card
+
+-- The same partition qualifies at different rows for opposite shifts.
+-- For h = 1 the bottom row disappears; for h = -1 the upper row grows.
+private def twoTwos : Nat.Partition 4 := ⟨{2, 2}, by decide, by decide⟩
+
+example : (IsFixedColumnHook twoTwos 2 1 1 ∧ partitionRowLen twoTwos 1 = 2) ∧
+    (IsFixedColumnHook twoTwos 2 2 (-1) ∧ partitionRowLen twoTwos 2 = 2) := by
+  decide
+
+private def fourTwo : Nat.Partition 6 := ⟨{4, 2}, by decide, by decide⟩
+
+-- The image for h = -1 has just enough long parts to restore the hook in row 2.
+example : fourTwo.parts.count 2 = 1 ∧
+    Disjoint (Finset.Icc 3 3) fourTwo.parts.toFinset ∧
+    (fourTwo.parts.filter (4 ≤ ·)).card = 1 := by
+  decide
+
+-- For h = 0 both kinds of row transfer occur, with a unique qualifying row.
+private def threeTwos : Nat.Partition 6 := ⟨{2, 2, 2}, by decide, by decide⟩
+
+example : (Finset.Icc 1 6).filter (fun r =>
+    IsFixedColumnHook threeTwos 2 r 0 ∧ partitionRowLen threeTwos r = 2) = {2} := by
+  decide
+
+-- At weight zero the empty target partition cannot contain the required part.
+example : fixedHookCount 2 2 1 = 0 := by
+  rw [fixedHookCount, card_fixedColumnHook_part_eq_column 2 2 1 (by decide)]
+  decide
+
+-- An empty source and strictly negative target weight take the other branch.
+example : fixedHookCount 0 2 1 = 0 := by
+  rw [fixedHookCount, card_fixedColumnHook_part_eq_column 0 2 1 (by decide)]
+  decide
+
+end MetaMathlibExt
