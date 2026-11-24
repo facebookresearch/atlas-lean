@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Hindman
 /-!
 # Ultrafilters in Ramsey families
 
+The ultrafilters contained in a Ramsey family form a closed set.
 A Ramsey family of sets is invariant under left translation exactly when its ultrafilters
 form a left ideal under the ultrafilter product.
 -/
@@ -61,6 +62,20 @@ Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEG
 theorem betaFamily_nonempty_sets :
     betaFamily {A : Set S | A.Nonempty} = Set.univ :=
   Set.eq_univ_of_forall fun _ _ hA => Ultrafilter.nonempty_of_mem hA
+
+/-- **Ultrafilters inside a Ramsey family form a closed set.** Let $F$ be a family of subsets of a
+set $S$ with the Ramsey property. Then the set $\beta(F)$ of ultrafilters on $S$ all of whose
+members lie in $F$ is closed in the space $\beta S$ of all ultrafilters on $S$.
+
+Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
+25 (2025), Article A4, Theorem 3 (`integers-2025-A4-thm-3`). -/
+theorem isClosed_betaFamily {F : Set (Set S)} (_hF : IsRamseyFamily F) :
+    IsClosed (betaFamily F) := by
+  rw [← isOpen_compl_iff, isOpen_iff_forall_mem_open]
+  intro p hp
+  simp only [Set.mem_compl_iff, mem_betaFamily, not_forall] at hp
+  obtain ⟨A, hAp, hAF⟩ := hp
+  exact ⟨{q | A ∈ q}, fun q hAq hq => hAF (hq A hAq), ultrafilter_isOpen_basic A, hAp⟩
 
 namespace betaFamily_isLeftIdeal_iff
 

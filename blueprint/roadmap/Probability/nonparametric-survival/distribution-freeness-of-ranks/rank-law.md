@@ -4,7 +4,7 @@ For $n \in \mathbb{N}$ and a permutation $\sigma$ of $\{0, \dots, n-1\}$ write $
 
 $$\mathrm{Rank}_n = \frac{1}{\# R_n} \sum_{r \in R_n} \delta_r,$$
 
-the uniform distribution on the finite set $R_n$. Since $R_n$ is nonempty (it contains the rank vector $(1, \dots, n)$ of the identity), $\mathrm{Rank}_n$ is a probability measure for every $n$, including $n = 0$, where it is the point mass at the empty vector.
+the uniform distribution on the finite set $R_n$.
 
 ## Sources
 
