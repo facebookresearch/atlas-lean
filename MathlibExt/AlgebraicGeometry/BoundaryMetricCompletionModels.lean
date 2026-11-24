@@ -55,6 +55,7 @@ structure Boundary where
   [proper : IsProper compactification.hom]
   openMap : X ⟶ compactification
   [openImmersion : IsOpenImmersion openMap.left]
+  dense : DenseRange openMap.left
   line : compactification.left.Modules
   isLine : IsLineBundle line
   sectionMap : structureModule compactification.left ⟶ line

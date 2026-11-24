@@ -63,6 +63,7 @@ structure ArithmeticModel where
   [generic_proper : IsProper compactification.hom]
   openMap : X ⟶ compactification
   [openImmersion : IsOpenImmersion openMap.left]
+  dense : DenseRange openMap.left
   genericMap : compactification.left ⟶ scheme
   genericSquare : IsPullback genericMap compactification.hom structureMap base.generic
   line : scheme.Modules

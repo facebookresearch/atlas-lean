@@ -72,7 +72,7 @@ def verticalDegree {p : ℕ} [Fact p.Prime] (V : Vertical C L p) : ℝ :=
   (CoherentCurveLinearSeries.degree V.structureMap (curveLine C L) V.line : ℝ) * Real.log p
 
 /-- Horizontal curves are finite flat over the actual integer base. -/
-structure Horizontal where
+structure Horizontal : Prop where
   [finite : IsFinite (integerMap C.scheme)]
   [flat : Flat (integerMap C.scheme)]
   [characteristic : CharZero Γ(C.scheme,⊤)]

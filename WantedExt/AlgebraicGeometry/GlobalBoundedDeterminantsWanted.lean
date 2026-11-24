@@ -74,6 +74,18 @@ variable [MathlibExt.AlgebraicGeometry.FourierMukai.HasDerivedPullbacks.{0}]
   [∀ R : CommRingCat.{0}, CategoryTheory.Limits.PreservesFiniteLimits
     (_root_.AlgebraicGeometry.tilde.functor R)]
 
+/-- Derived pullbacks are pseudofunctorial: their identity and composition comparisons,
+normalized by the native cochain counits, satisfy the associativity and unit laws. This
+provides the `Coherence` input of the determinant transitions. -/
+public def_wanted derivedPullbackCoherence :
+    MathlibExt.AlgebraicGeometry.DeterminantPullbackCoherence.Coherence.{0}
+
+/-- Derived pullback along `Spec g` of the affine coefficient functor is derived scalar
+extension, normalized by the native cochain comparison. This provides the
+`DerivedComparison` input of the determinant transitions. -/
+public def_wanted derivedTildeComparison {R S : CommRingCat.{0}} (g : R ⟶ S) :
+    MathlibExt.AlgebraicGeometry.AffineDerivedCoefficientModules.DerivedComparison g
+
 /-- Construct the source-normalized determinant data and its global
 line on this exact derived object. -/
 public def_wanted globalDeterminant {X : Scheme.{0}}
