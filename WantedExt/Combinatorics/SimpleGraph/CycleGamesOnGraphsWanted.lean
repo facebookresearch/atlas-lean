@@ -24,7 +24,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-! ## The Make-A-Cycle and Avoid-A-Cycle games -/
+/-! ## The Make-A-Cycle and Avoid-A-Cycle games
+
+The game predicates, joins, Petersen graph, and lemmas in this file are the
+supporting development for the deferred `theorem_wanted` game-result statements
+below. They stay in `WantedExt` alongside those statements: this module ports
+the formal-math `WantedExt` development of the same name, and keeping the
+supporting API with its statements keeps the formal-math sync manifest exact. -/
 
 section Games
 
