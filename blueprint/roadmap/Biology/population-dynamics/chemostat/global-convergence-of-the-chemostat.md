@@ -1,10 +1,10 @@
 # Global convergence of the chemostat
 
-This node records an open direction for the single-species chemostat with Monod growth, in the setting and notation of
+This node covers the following theorem for the single-species chemostat with Monod growth, in the setting and notation of
 the equilibrium page ($D, y, \mu_m, K_s > 0$ and $S_f > 0$): when $D < D_c$, every solution with $X(0) > 0$ and
 $S(0) \ge 0$ converges to the interior steady state $(X^*, S^*)$. The restriction to the closed quadrant is part of the
-claim; it needs an argument about two-dimensional global dynamics beyond the local results and the invariant region in
-this folder.
+claim. Its proof needs an argument about two-dimensional global dynamics beyond the local results and the invariant region
+in this folder.
 
 ## Depends on
 

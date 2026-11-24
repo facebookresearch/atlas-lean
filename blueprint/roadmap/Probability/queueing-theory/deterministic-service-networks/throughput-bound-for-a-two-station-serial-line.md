@@ -10,7 +10,10 @@ to station $2$ exactly once. Let $D_i(t)$ count completions in $(0,t]$, so $D_i(
 service time in that window. At simultaneous events use the same right-closed window convention at both stations.
 
 If the initial job completes during the window, its remaining service is $(1-\beta_i)s_i\ge(1-\beta_i)/\mu_i$; every later
-completed job consumes at least $1/\mu_i$ service time in the window. If it does not complete, the station has no completions.
+completed job consumes at least $1/\mu_i$ service time in the window. If an initially in-service job does not complete, the
+station, which does not preempt, has no completions. If no job is initially in service, $\beta_i=0$ and every completed job,
+including one started later from the queue or by an arrival, consumes its whole service requirement, at least $1/\mu_i$,
+inside the window.
 Thus $D_i(t) \le \beta_i + \mu_i\,\mathrm{busy}_i(t)$, with $\mathrm{busy}_i(t)\le t$, and
 $D_2(t) \le W_2(0) + D_1(t)$,
 so for $t > 0$
@@ -23,12 +26,6 @@ arbitrarily short with positive probability. Stationary stochastic models of lin
 ## Depends on
 
 ## Proof depends on
-
-## Expansion
-
-Formalize the finite-history model with the initial-service and event conventions stated above and prove the displayed
-bound. The bound and its argument are derived on this page from the stated per-job service assumption; they are not taken
-from a source. No stationary or stochastic throughput claim is made.
 
 ## Sources
 
