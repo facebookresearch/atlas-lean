@@ -43,6 +43,8 @@ multiplication, degree-preserving and differentiation operators.
   gives the admissibility of the algebraic theta lifts in [Howe duality over the reals](howe-duality-over-the-reals.md)
   (Howe, Transcending, p. 547).
 
+## Expansion
+
 A good expansion has pages for the first fundamental theorem for the classical groups listed, for the
 decomposition of the isotypic components, for the theory of harmonics, for the correspondence of
 infinitesimal characters and for Harish-Chandra's admissibility theorem, each with a precise statement and
@@ -50,6 +52,17 @@ locators, together with the passage to compact real forms and to the twofold cov
 model. Howe's general theorems for $\mathcal{A}(U, W) = S(U) \otimes \Lambda(W)$, with an exterior factor and a
 $\mathbb{Z}/2$-graded oscillator algebra (for $U = 0$ and $W = \mathbb{C}$ the module has dimension $2$), are not needed
 and should get their own pages if wanted.
+
+## Depends on
+
+- [Explicit formulas for the Weil representation](explicit-formulas-for-the-weil-representation.md), for the Fock model, on which the members of a dual pair act in the last item
+- [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for $(\mathfrak{g}, K)$-modules in the last item
+- [Weyl algebra of polynomial differential operators](../../../Algebra/associative-algebras/weyl-algebra.md), for the Weyl algebra of polynomial-coefficient differential operators on $U$, for all the items
+
+## Proof depends on
+
+- [Representations of compact groups are semisimple](../../lie-and-topological-representations/representations-of-compact-groups/compact-group-semisimple.md), for the complete reducibility of the finite-dimensional representations of the compact real forms, from which that of the polynomial representations of the complex classical groups follows by taking complex-linear complements and the Zariski density of the compact form (Weyl's unitarian trick), for the isotypic decompositions
+- [(g, K)-modules, the centre of the enveloping algebra and Harish-Chandra's homomorphism](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/g-k-modules-and-harish-chandra-homomorphism.md), for Harish-Chandra's theorem that a finitely generated $(\mathfrak{g}, K)$-module annihilated by an ideal of finite codimension of the centre of $U(\mathfrak{g})$ is admissible, for the admissibility of the algebraic theta lifts
 
 ## Sources
 

@@ -55,3 +55,14 @@ example [IsCyclotomicExtension {3} ℚ K] :
   have hirr := Polynomial.cyclotomic.irreducible_rat (by decide : 0 < 3)
   simpa only [fromZetaAut_spec, map_one] using
     cyclotomicTraceDist_algEquiv Nat.prime_three (fromZetaAut h hirr) (zeta 3 ℚ K) 1
+
+-- Even at conductor two the trace distance separates distinct field elements.
+example [IsCyclotomicExtension {2} ℚ K] (x y : K) : cyclotomicTraceDist 2 x y = 0 ↔ x = y :=
+  ((cyclotomicTraceNorm_isNorm Nat.prime_two).1 (x - y)).trans sub_eq_zero
+
+-- A negative rational scalar of absolute value one half halves the norm.
+example [IsCyclotomicExtension {3} ℚ K] (x : K) :
+    cyclotomicTraceNorm 3 ((-1 / 2 : ℚ) • x) = cyclotomicTraceNorm 3 x / 2 := by
+  rw [(cyclotomicTraceNorm_isNorm Nat.prime_three).2.2]
+  norm_num
+  ring

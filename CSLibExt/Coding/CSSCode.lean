@@ -27,7 +27,7 @@ This file defines `|c_w⟩` as a function `F₂ⁿ → ℂ` and proves the facts
 with the norm `⟨c_w|c_w⟩ = |C₁|`. It also defines the Pauli operators `X^a Z^b` and proves how
 they act on codewords: a phase flip `Z^b` sends `|c_w⟩` to `|c_{w+b}⟩`, and a bit flip `X^a` with
 `a ∈ C₁` multiplies `|c_w⟩` by `(-1)^{a · w}`. That bit and phase errors are corrected by the
-classical codes `C₁` and `C₂^⊥` is recorded in `WantedExt`
+classical codes `C₁` and `C₂^⊥` is proved in `CSLibExt.Coding.CSSCodeCorrection`
 (`Cslib.CodingTheory.CSSWanted.isCorrectable_css`).
 
 ## Source
