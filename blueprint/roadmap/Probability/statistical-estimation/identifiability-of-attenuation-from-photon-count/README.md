@@ -20,7 +20,7 @@ $x \mapsto Ax$ is.
 - [The transmitted rate as a real number is $I_{0,j} e^{-(Ax)_j}$](transmitted-rate-coe.md)
 - [Attenuations with $Ax = Ay$ have the same transmitted rates](transmitted-rate-eq-of-mul-vec-eq.md)
 - [With positive intensities, the transmitted rates agree iff $Ax = Ax'$](photon-rate-agree-iff.md)
-- [Photon-count law: independent Poisson counts at the transmitted rates](photon-law.md)
+- [Photon-count law: the product of Poisson laws at the transmitted rates](photon-law.md)
 - [The photon-count law is the product of the rays' Poisson laws](photon-law-eq.md)
 - [With positive intensities, the photon-count laws agree iff $Ax = Ax'$](photon-law-agree-iff.md)
 - [For positive intensities, the count law is injective on $D$ iff $A$ is](photon-identify-iff.md)

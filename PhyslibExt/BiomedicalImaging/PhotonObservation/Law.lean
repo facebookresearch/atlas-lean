@@ -91,10 +91,9 @@ noncomputable def transmittedRate {ι κ : Type*} [Fintype κ] (I0 : ι → ℝ�
     (x : κ → ℝ) (j : ι) : ℝ≥0 :=
   I0 j * (Real.exp (-(A *ᵥ x) j)).toNNReal
 
-/-- The independent-Poisson photon count law at attenuation `x`. It is a probability measure under
-which the counts are independent and the count of ray `j` is Poisson with mean
-`transmittedRate I0 A x j` (with `0 ^ 0 = 1`); a ray with `I0 j = 0` counts `0` almost surely.
-Independence is an assumption of the model. -/
+/-- The independent-Poisson photon count law at attenuation `x`: the product over rays of the
+Poisson laws with the rates `transmittedRate I0 A x j`. The independence of the counts in
+different rays is an assumption of the model, built into the product. -/
 noncomputable def photonLaw {ι κ : Type*} [Fintype ι] [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
     (x : κ → ℝ) : MeasureTheory.Measure (ι → ℕ) :=
   MeasureTheory.Measure.pi fun j => ProbabilityTheory.poissonMeasure (transmittedRate I0 A x j)

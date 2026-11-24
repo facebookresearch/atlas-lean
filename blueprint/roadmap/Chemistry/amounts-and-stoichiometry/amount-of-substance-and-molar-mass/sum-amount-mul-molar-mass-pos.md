@@ -1,4 +1,4 @@
-# For a positive total and positive molar masses, ∑ nᵢ Mᵢ is positive
+# For nᵢ ≥ 0 with ∑ nᵢ > 0 and Mᵢ > 0, the total mass is positive
 
 A mixture with nonnegative amounts, a positive total amount and positive molar masses has a positive
 total mass `∑ i, n i * M i`. For a

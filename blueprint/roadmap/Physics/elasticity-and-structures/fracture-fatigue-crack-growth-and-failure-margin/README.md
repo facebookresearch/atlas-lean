@@ -68,7 +68,7 @@
 ## Measurable lifetimes and monotone systems
 
 - [Lifetime of measurable continuous monotone damage is measurable](measurable-damage-lifetime.md)
-- [A monotone system is up at $t$ iff its below-threshold set is in $A$](lt-system-lifetime-damage-iff.md)
+- [Continuous nondecreasing damage: monotone system up iff $x(t) \in A$](lt-system-lifetime-damage-iff.md)
 - [System lifetime of measurable continuous monotone damage is measurable](measurable-system-lifetime-damage.md)
 
 ## The saturated crack event path

@@ -4,5 +4,3 @@ For axial rigidity $EA > 0$, cross-section area $A_{cs} > 0$ and all real $L$, $
 [axial stress](axial-stress.md) of the closed-form uniform-load displacement is
 
 $$\sigma(x) = \frac{q (L - 2x)}{2 A_{cs}}.$$
-
-For $L > 0$ this is the stress of the fixed-fixed bar of length $L$ under the uniform load $q$.

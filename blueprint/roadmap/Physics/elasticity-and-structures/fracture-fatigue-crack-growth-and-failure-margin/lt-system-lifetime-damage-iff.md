@@ -1,4 +1,4 @@
-# A monotone system is up at $t$ iff its below-threshold set is in $A$
+# Continuous nondecreasing damage: monotone system up iff $x(t) \in A$
 
 Let $E$ be a finite set of components, each $i \in E$ with damage paths $d_i(\omega, \cdot)$ that
 are continuous and nondecreasing on $[0, \infty)$ for every $\omega$, thresholds $D_i(\omega)$ and

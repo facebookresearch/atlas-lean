@@ -69,7 +69,7 @@
 - [Mole fraction of a component](mole-fraction.md)
 - [Mass fraction of a component](mass-fraction.md)
 - [Mole fractions computed from mass fractions](mole-fraction-of-mass-fraction.md)
-- [For a positive total and positive molar masses, ∑ nᵢ Mᵢ is positive](sum-amount-mul-molar-mass-pos.md)
+- [For nᵢ ≥ 0 with ∑ nᵢ > 0 and Mᵢ > 0, the total mass is positive](sum-amount-mul-molar-mass-pos.md)
 - [Mole fractions are nonnegative](mole-fraction-nonneg.md)
 - [Mole fractions sum to one](sum-mole-fraction.md)
 - [Mass fractions are nonnegative](mass-fraction-nonneg.md)

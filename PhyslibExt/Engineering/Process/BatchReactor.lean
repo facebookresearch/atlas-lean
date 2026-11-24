@@ -89,8 +89,8 @@ lemma firstOrder_consumed_mem_Icc {k c0 t : ℝ} (hk : 0 ≤ k) (hc0 : 0 ≤ c0)
   unfold consumed
   constructor <;> linarith
 
-/-- Amount form at constant volume `V > 0`: the consumed amount
-`V * consumed` lies between `0` and the initial amount `V * c0`. -/
+/-- Amount form at constant volume `V > 0`: for `k ≥ 0`, `c0 ≥ 0` and `t ≥ 0`, the consumed
+amount `V * consumed` lies between `0` and the initial amount `V * c0`. -/
 lemma consumed_amount_mem_Icc {k c0 t V : ℝ} (hk : 0 ≤ k) (hc0 : 0 ≤ c0)
     (ht : 0 ≤ t) (hV : 0 < V) :
     V * consumed k c0 t ∈ Set.Icc 0 (V * c0) := by
