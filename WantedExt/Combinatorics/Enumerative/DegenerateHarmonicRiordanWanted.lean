@@ -59,22 +59,6 @@ public theorem_wanted degenerateHarmonicRank_exp_weighted_sum {lam α : ℝ}
           degenerateHarmonicRank lam α (n + 1) k =
       generalizedDegenerateHarmonic lam α (n + 1) - generalizedDegenerateHarmonic lam α n / α
 
-/-- **Partial sums of degenerate harmonic numbers of rank as a convolution.** Let $\lambda > 0$
-and $\alpha > 0$ be real and let $n$ and $r$ be natural numbers. Write $H_\lambda(k, r, \alpha)$
-for the generalized degenerate harmonic numbers of rank $r$ and $H_{m,\lambda}(\alpha)$ for the
-generalized degenerate harmonic numbers. Then
-$$\sum_{k=0}^{n} H_\lambda(k, r+1, \alpha) =
-\sum_{k=0}^{n} H_{n-k,\lambda}(\alpha) \, H_\lambda(k, r, \alpha).$$
-
-Source: Ömer Duran, Neşe Ömür and Sibel Koparal, *Generalized Degenerate Harmonic Numbers and
-Their Applications with Riordan Arrays*, INTEGERS 24 (2024), Article A41, Theorem 4
-(`integers-2024-A41-thm-4`). -/
-public theorem_wanted degenerateHarmonicRank_succ_partial_sum {lam α : ℝ}
-    (hlam : 0 < lam) (hα : 0 < α) (n r : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), degenerateHarmonicRank lam α k (r + 1) =
-      ∑ k ∈ Finset.range (n + 1),
-        generalizedDegenerateHarmonic lam α (n - k) * degenerateHarmonicRank lam α k r
-
 /-- **Shifted alternating degenerate exponential sum of degenerate harmonic numbers of rank.**
 Let $\lambda > 0$ and $\alpha > 0$ be real and let $n$ be a natural number. Write
 $(1)_{k,\lambda} = 1 \cdot (1 - \lambda) \cdots (1 - (k-1)\lambda)$ for the generalized falling
