@@ -10,9 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
-public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Interval.Finset.Nat
-public import MathlibExt.Combinatorics.Enumerative.LonelyMarriageableSingles
+public import MathlibExt.Combinatorics.Enumerative.LonelyMarriageableSinglesLimits
 
 /-!
 # Lonely singles and marriageable singles partitions (statements)
@@ -100,18 +99,6 @@ Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Propos
 public theorem_wanted lonely_marriageable_strictMono :
     (∀ n, 2 ≤ n → lonelySinglesCount n < lonelySinglesCount (n + 1)) ∧
     ∀ n, 3 ≤ n → marriageableSinglesCount n < marriageableSinglesCount (n + 1)
-
-/-- **The marriageable and lonely singles counts tend to infinity.** Let $M_n$ and $L_n$ be the
-numbers of noncrossing partitions of $\{0, \dots, n-1\}$ that are marriageable singles partitions
-and lonely singles partitions, respectively. Then $M_n \to \infty$ and $L_n \to \infty$ as
-$n \to \infty$.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 21
-(`jis-2025-25.1.1-cor-21`). -/
-public theorem_wanted tendsto_marriageable_lonely_atTop :
-    Filter.Tendsto marriageableSinglesCount Filter.atTop Filter.atTop ∧
-      Filter.Tendsto lonelySinglesCount Filter.atTop Filter.atTop
 
 /-- **Recursive lower bound for marriageable singles partitions.** For every $n \ge 0$,
 $C_n + 3M_n \le M_{n+2}$, where $C_n$ is the number of noncrossing partitions of
