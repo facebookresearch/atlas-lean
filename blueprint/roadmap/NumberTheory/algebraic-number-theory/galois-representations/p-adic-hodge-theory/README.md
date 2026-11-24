@@ -26,6 +26,7 @@ convention on each page that uses them. The main source is Fontaine–Ouyang's b
 - [p-divisible groups over the ring of integers of C](p-divisible-groups-over-o-c.md)
 - [Prisms and prismatic cohomology](prisms-and-prismatic-cohomology.md)
 - [Crystalline comparison for prismatic cohomology](crystalline-comparison-for-prismatic-cohomology.md)
+- [Absolute prismatic site and prismatic F-crystals](absolute-prismatic-site-and-prismatic-f-crystals.md)
 - [Prismatic F-crystals and lattices in crystalline representations](prismatic-f-crystals-and-crystalline-lattices.md)
 - [Structure of the rings of periods](structure-of-the-period-rings.md)
 - [(φ, Γ)-modules and p-adic differential equations](phi-gamma-modules-and-p-adic-differential-equations.md)

@@ -24,17 +24,21 @@ A good expansion has pages for:
    over $\mathcal{O}_C$ and the full faithfulness, up to isogeny, of $G_0 \mapsto \mathcal{E}(G_0)$ with essential image the
    bundles with slopes in $[0, 1]$ (Scholze–Weinstein, Theorem 5.1.4 and Remark 5.1.5, resting on [FF12],
    Theorems 7.15, 7.24 and Proposition 7.17);
-4. the modification of vector bundles attached to a $p$-divisible group $G$ over $\mathcal{O}_C$ with Tate module $T$: the
-   exact sequence $0 \to \mathcal{O}_X \otimes_{\mathbb{Z}_p} T \to \mathcal{E}(G_0) \to i_{\infty *}(\operatorname{Lie} G \otimes C) \to 0$ of
-   coherent sheaves on $X$ (Scholze–Weinstein, Proposition 5.1.6 (i), proved through Proposition 5.1.1 and the case of
-   $\mu_{p^\infty}$), the description of the adjunction morphism at the point $\infty$ by the quasi-logarithm (Proposition
-   5.1.6 (ii)), and the identification of the composite $\mathcal{E}_{G^{\vee\vee}} \to \mathcal{E}_G$ with multiplication by
-   $t = \log([\epsilon]) \in H^0(X, \mathcal{O}_X(1))$ (proof of Proposition 5.1.6, p. 51, by reduction to
-   $T \otimes_{\mathbb{Z}_p} \mathbb{Q}_p/\mathbb{Z}_p$), from which Scholze–Weinstein reprove the exactness of the Hodge–Tate
-   sequence over $C$; and the results of [FGL08], Chapter II, from which Fargues proves its integral form ([FGL08],
-   Théorème II.1.1, the case $(C, \mathcal{O}_C)$ of Scholze–Weinstein, Proposition 4.3.6). The exact sequence over $C$ and
-   its integral form are items 1 and 2 of the [Hodge–Tate sequence of a p-divisible group](hodge-tate-sequence-of-p-divisible-groups.md)
-   and are not part of this node;
+4. the modification of vector bundles attached to a $p$-divisible group $G$ over $\mathcal{O}_C$ with Tate module $T$,
+   writing $\mathcal{E}_H = \mathcal{E}(H_0)$ and $\mathcal{F}_H = \mathcal{O}_X \otimes_{\mathbb{Z}_p} T(H)$ for the bundles attached to a
+   $p$-divisible group $H$ over $\mathcal{O}_C$: the exact sequence
+   $0 \to \mathcal{F}_G \to \mathcal{E}_G \to i_{\infty *}(\operatorname{Lie} G \otimes C) \to 0$ of coherent sheaves on $X$
+   (Scholze–Weinstein, Proposition 5.1.6 (i), proved through Proposition 5.1.1 and the case of $\mu_{p^\infty}$); the
+   adjunction morphism $\mathcal{E}_G \to i_{\infty *} i_\infty^* \mathcal{E}_G$, which induces the quasi-logarithm on global
+   sections (Proposition 5.1.6 (ii)); and, after a trivialisation of $\mathbb{Z}_p(1)$, the identification of the composite
+   $(\mathcal{E}_{G^\vee})^\vee \to (\mathcal{F}_{G^\vee})^\vee \cong \mathcal{F}_G \to \mathcal{E}_G \cong (\mathcal{E}_{G^\vee})^\vee \otimes_{\mathcal{O}_X} \mathcal{O}_X(1)$
+   with multiplication by $t = \log([\epsilon]) \in H^0(X, \mathcal{O}_X(1))$, which vanishes at $\infty$ (proof of
+   Proposition 5.1.6, p. 51, by reduction to $T \otimes_{\mathbb{Z}_p} \mathbb{Q}_p/\mathbb{Z}_p$). From these Scholze–Weinstein
+   reprove the exactness of the Hodge–Tate sequence after inverting $p$, which they take from [FGL08], Chapter II,
+   Appendix C. That exact sequence over $C$ and its integral form ([FGL08], Théorème II.1.1, the case
+   $(C, \mathcal{O}_C)$ of Scholze–Weinstein, Proposition 4.3.6) are items 1 and 2 of the
+   [Hodge–Tate sequence of a p-divisible group](hodge-tate-sequence-of-p-divisible-groups.md) and are not part of this
+   node;
 5. the classification of $p$-divisible groups over $\mathcal{O}_C$ by pairs $(T, W)$ of a finite free $\mathbb{Z}_p$-module $T$ and
    a $C$-subspace $W$ of $T \otimes C(-1)$ (Scholze–Weinstein, Theorem 5.2.1). Its functor sends $G$ to its Tate module and
    $W = \operatorname{Lie} G \otimes C$ embedded by the Hodge–Tate map $\alpha_{G^\vee}^\vee$, so it comes after the Hodge–Tate
