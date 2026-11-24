@@ -13,6 +13,15 @@ import MathlibExt.Combinatorics.Additive.ChuMSTDFamilies
 open MetaMathlibExt
 open scoped Pointwise
 
+-- For k = l = t = 1, T = 3. Take the upper endpoint of each progression and i = 0 in the last.
+example : 16 ∈ chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1 ∧
+    17 ∈ chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1 ∧
+    15 ∈ chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1 ∧
+    3 ∈ chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1 := by
+  have h := chuFamilyKLT_mem_sub (k := 1) (l := 1) (t := 1) (by decide) (by decide) (by decide)
+  have h₄ := h.1 4 (by decide) (by decide)
+  exact ⟨h₄.1, h₄.2, h.2 3 (by decide), h.2 0 (by decide)⟩
+
 -- At the largest allowed indices, both the terminal block and the grid endpoints are needed.
 example : 33 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 ∧
     34 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 ∧
