@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
 public import MathlibExt.NumberTheory.BinomialModTwoRunLength
+public import MathlibExt.NumberTheory.BinomialParitySum
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PadovanSequence
 
@@ -241,21 +242,6 @@ public theorem_wanted runLengthTransform_choose_add_five_mul_two_mul (S : ℕ �
         (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 5 * k).choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform S n
-
-/-- **Binomial parity sums at one less than a power of two.** For all natural numbers $m$ and
-$\ell$, with $n = 2^\ell - 1$, the sum
-$$\sum_{k=0}^{n} \left( \binom{2^m k}{n + k} \binom{n}{k} \bmod 2 \right)$$
-equals $1$ if $m$ divides $\ell$, and $0$ otherwise.
-
-The paper takes $m \ge 2$; the statement holds for every $m$, where $0$ divides $\ell$ only
-when $\ell = 0$.
-
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
-2-Regular Sequences*, INTEGERS 24 (2024), Article A73, Lemma 2. -/
-public theorem_wanted sum_choose_two_pow_mul_mod_two_two_pow_sub_one (m ℓ : ℕ) :
-    ∑ k ∈ Finset.range (2 ^ ℓ - 1 + 1), ((2 ^ m * k).choose (2 ^ ℓ - 1 + k) * (2 ^ ℓ -
-        1).choose k) % 2 =
-      if m ∣ ℓ then 1 else 0
 
 /-- **Binomial parity sums detect run length divisibility.** For all natural numbers $m$ and $n$,
 the sum
