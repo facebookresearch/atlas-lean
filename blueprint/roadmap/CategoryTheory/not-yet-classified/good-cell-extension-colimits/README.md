@@ -1,0 +1,17 @@
+# Good Cell Extension Colimits
+
+- [Old Leg](old-leg.md)
+- [New Leg](new-leg.md)
+- [Old Cocone](old-cocone.md)
+- [Old Desc](old-desc.md)
+- [Old Desc fac](old-desc-fac.md)
+- [Lower Compatibility](lower-compatibility.md)
+- [Desc Square](desc-square.md)
+- [Whole Desc](whole-desc.md)
+- [Whole Desc step](whole-desc-step.md)
+- [Whole Desc cell](whole-desc-cell.md)
+- [New Point hom ext](new-point-hom-ext.md)
+- [Whole Desc new](whole-desc-new.md)
+- [Whole Desc fac](whole-desc-fac.md)
+- [Whole Desc uniq](whole-desc-uniq.md)
+- [Whole Endpoint Is Colimit](whole-endpoint-is-colimit.md)
