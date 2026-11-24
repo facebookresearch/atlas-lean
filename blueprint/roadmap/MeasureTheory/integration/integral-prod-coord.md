@@ -1,4 +1,4 @@
-# Integral of a product of coordinate functions over space
+# Integral of a product of coordinate functions over Euclidean space
 
 For a natural number `d`, a field `𝕜` equal to `ℝ` or `ℂ` and functions `f_0, …, f_{d-1} : ℝ → 𝕜`,
 the integral over the `d`-dimensional Euclidean space, with its volume (Lebesgue) measure, of the

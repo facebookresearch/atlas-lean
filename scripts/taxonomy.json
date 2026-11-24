@@ -15934,7 +15934,7 @@
   "PhyslibExt/Mechanics/TrussEquilibrium": {"to": "Physics/elasticity-and-structures", "title": "Truss equilibrium, load envelopes and load inference"},
   "PhyslibExt/Mechanics/TrussObservationInference": {"to": "Physics/elasticity-and-structures", "title": "Truss equilibrium, load envelopes and load inference"},
   "PhyslibExt/Mechanics/VibroacousticEnergy": {"to": "Physics/waves-and-acoustics", "title": "Energy of coupled structural–acoustic systems"},
-  "PhyslibExt/SpaceAndTime/Space/Integrals/Prod": {"to": "Physics/quantum-mechanics", "title": "Quantum harmonic oscillator"},
+  "PhyslibExt/SpaceAndTime/Space/Integrals/Prod": {"to": "MeasureTheory/integration", "title": "Integrals of products of coordinate functions"},
   "PhyslibExt/SpaceSystems/MissionLedger": {"to": "Physics/classical-mechanics/flight-and-spaceflight", "title": "Mission resource ledgers and burn costs"},
   "PhyslibExt/Units/EngineeringFrames": {"to": "Physics/classical-mechanics/rigid-bodies-and-mechanisms", "title": "Body-fixed and inertial frames"},
   "PhyslibExt/Units/EngineeringLoads": {"to": "Physics/classical-mechanics/rigid-bodies-and-mechanisms", "title": "Statics of force systems"},

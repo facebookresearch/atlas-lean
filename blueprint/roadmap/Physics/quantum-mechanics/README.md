@@ -4,4 +4,3 @@ Nonrelativistic quantum mechanics: states, observables and the Born rule in fini
 
 - [Particle in a box and one-dimensional models](particle-in-a-box-and-one-dimensional-models/README.md)
 - [Postulates of finite-dimensional quantum mechanics](postulates-of-finite-dimensional-quantum-mechani/README.md)
-- [Integral of a product of coordinate functions over space](integral-prod-coord.md)
