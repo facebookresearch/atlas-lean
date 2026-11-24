@@ -8,5 +8,5 @@
 - [Matching variables drop out](conditional-case-prob-add-const.md)
 - [Paired Conditional Log Lik](paired-conditional-log-lik.md)
 - [Conditional MLE for 1:1 matching](paired-conditional-log-lik-max.md)
-- [Paired Unconditional Log Lik](paired-unconditional-log-lik.md)
-- [Unconditional MLE for 1:1 matching](paired-unconditional-log-lik-le.md)
+- [Per Pair Intercept Log Lik](per-pair-intercept-log-lik.md)
+- [The incidental-parameter estimate is biased](per-pair-intercept-log-lik-le.md)

@@ -66,11 +66,12 @@ noncomputable def posteriorMeanScore (P₀ S ℓ : V → ℝ) : ℝ :=
   (∑ v, ℓ v * P₀ v * normalizedScore P₀ S v) / ∑ v, ℓ v * P₀ v
 
 /-- **The linear model has total mass one** (Kong and Cox 1997, model (1)). Let `V` be a finite
-set and `P₀ : V → ℝ` with `∑_v P₀(v) = 1`, and let `S : V → ℝ` be a score. Then for every weight
-`γ` and every `δ`, `∑_v P₀(v) (1 + δ γ Z(v)) = 1`.
+set and `P₀ : V → ℝ` with `∑_v P₀(v) = 1`, and let `S : V → ℝ` be a score with positive null
+variance `σ² > 0`. Then for every weight `γ` and every `δ`, `∑_v P₀(v) (1 + δ γ Z(v)) = 1`.
 
 Source: Kong and Cox (1997), model (1). -/
-public theorem_wanted sum_linearModel (P₀ S : V → ℝ) (hsum : ∑ v, P₀ v = 1) (γ δ : ℝ) :
+public theorem_wanted sum_linearModel (P₀ S : V → ℝ) (hsum : ∑ v, P₀ v = 1)
+    (hvar : 0 < nullVariance P₀ S) (γ δ : ℝ) :
     ∑ v, linearModel P₀ S γ δ v = 1
 
 /-- **Admissible range of `δ`** (Kong and Cox 1997, bound on `δ`). Let `V` be a finite set, let
@@ -100,14 +101,15 @@ public theorem_wanted linearModel_neg_of_gt (P₀ S : V → ℝ) (hP₀ : ∀ v,
     linearModel P₀ S γ δ v₀ < 0
 
 /-- **Exact likelihood under missing data** (Kong and Cox 1997, Appendix A). Let `V` be a finite
-set, `P₀ : V → ℝ` with `∑_v P₀(v) = 1`, `S : V → ℝ` a score, and `ℓ : V → ℝ` the probability of
+set, `P₀ : V → ℝ` with `∑_v P₀(v) = 1`, `S : V → ℝ` a score with positive null variance
+`σ² > 0`, and `ℓ : V → ℝ` the probability of
 the observed marker data given each inheritance vector (it does not depend on `δ`), with
 `L(0) = ∑_v ℓ(v) P₀(v) ≠ 0`. Then for every weight `γ` and every `δ`,
 `L(δ) = L(0) (1 + δ γ Z̄)`, where `Z̄` is the null posterior mean of `Z` given the data.
 
 Source: Kong and Cox (1997), Appendix A. -/
 public theorem_wanted likelihood_eq (P₀ S ℓ : V → ℝ) (hsum : ∑ v, P₀ v = 1)
-    (hL : ∑ v, ℓ v * P₀ v ≠ 0) (γ δ : ℝ) :
+    (hvar : 0 < nullVariance P₀ S) (hL : ∑ v, ℓ v * P₀ v ≠ 0) (γ δ : ℝ) :
     likelihood P₀ S ℓ γ δ =
       likelihood P₀ S ℓ γ 0 * (1 + δ * γ * posteriorMeanScore P₀ S ℓ)
 

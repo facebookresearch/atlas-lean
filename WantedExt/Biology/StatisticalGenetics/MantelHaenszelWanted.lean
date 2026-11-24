@@ -84,11 +84,11 @@ public theorem_wanted correctedChiSquare_eq {A B C D : ℝ} (hN₁ : 0 < A + B) 
         ((A + B) * (C + D) * (A + C) * (B + D))
 
 /-- **`R` is a weighted average of stratum odds ratios** (Mantel and Haenszel 1959, p. 736). For
-`K` strata with real cells, positive totals `T_k` and `B_k C_k > 0` for every `k`, `R` equals
+`K ≥ 1` strata with real cells, positive totals `T_k` and `B_k C_k > 0` for every `k`, `R` equals
 `∑_k w_k (A_k D_k / (B_k C_k)) / ∑_k w_k` with weights `w_k = B_k C_k / T_k`.
 
 Source: Mantel and Haenszel (1959), p. 736. -/
-public theorem_wanted summaryRelativeRisk_eq_weighted {K : ℕ} (A B C D : Fin K → ℝ)
+public theorem_wanted summaryRelativeRisk_eq_weighted {K : ℕ} (hK : 0 < K) (A B C D : Fin K → ℝ)
     (hT : ∀ k, 0 < A k + B k + C k + D k) (hBC : ∀ k, 0 < B k * C k) :
     summaryRelativeRisk A B C D =
       (∑ k, B k * C k / (A k + B k + C k + D k) * (A k * D k / (B k * C k))) /

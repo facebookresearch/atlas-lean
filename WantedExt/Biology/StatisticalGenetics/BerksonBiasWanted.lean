@@ -138,15 +138,18 @@ public theorem_wanted hospitalFrequency_eq_of_rate_zero (p t : ι → ℝ) (t₀
 
 /-- **Single-disease groups with equal selective rates are compared validly** (Berkson 1946). Let
 the diseases have incidences `p_i ∈ (0, 1)` and transmission probabilities `t_i ∈ [0, 1]`, let
-`t₀ ∈ (0, 1]`, and let `c`, `d`, `r` be three distinct diseases with `t_d = t_r`. Then the
-frequency of `c` among admitted persons whose diseases other than `c` are exactly `{d}` equals its
-frequency among admitted persons whose diseases other than `c` are exactly `{r}`.
+`t₀ ∈ (0, 1]`, and let `c`, `d`, `r` be three distinct diseases with `t_d = t_r`. Suppose both
+groups have positive admitted mass: the admitted persons whose diseases other than `c` are
+exactly `{d}`, and those whose diseases other than `c` are exactly `{r}`. Then the frequency of
+`c` among the first group equals its frequency among the second.
 
 Source: Berkson (1946), comment on valid comparisons. -/
 public theorem_wanted hospitalFrequency_eq_of_equal_rates (p t : ι → ℝ) (t₀ : ℝ)
     (hp0 : ∀ i, 0 < p i) (hp1 : ∀ i, p i < 1) (ht0 : ∀ i, 0 ≤ t i) (ht1 : ∀ i, t i ≤ 1)
     (ht₀ : 0 < t₀) (ht₀' : t₀ ≤ 1) (c d r : ι) (hcd : c ≠ d) (hcr : c ≠ r) (hdr : d ≠ r)
-    (heq : t d = t r) :
+    (heq : t d = t r)
+    (hposd : 0 < ∑ S ∈ Finset.univ.filter (fun S => S.erase c = {d}), hospitalMass p t₀ t S)
+    (hposr : 0 < ∑ S ∈ Finset.univ.filter (fun S => S.erase c = {r}), hospitalMass p t₀ t S) :
     hospitalFrequency p t₀ t (fun S => S.erase c = {d}) c =
       hospitalFrequency p t₀ t (fun S => S.erase c = {r}) c
 

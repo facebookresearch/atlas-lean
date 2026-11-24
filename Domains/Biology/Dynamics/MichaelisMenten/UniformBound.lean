@@ -46,8 +46,8 @@ window.
   QSS manifold up to an initial-layer term,
   `|c(t) - q(s(t))| ≤ |c(0) - q(s(0))| e^{-(kb + k₂) t} + e_T² (k₁ s_T + kb) / (K (kb + k₂))`.
 * `IsSolution.abs_substrate_sub_reduced_le` (real time): the substrate tracks the reduced
-  solution run on the slow clock, `|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ s_T + kb)
-  (|c(0) - q(s(0))| / (kb + k₂) + e_T² (k₁ s_T + kb) / (K (kb + k₂)) · t)`.
+  solution run on the slow clock, `|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ s_T + kb)`
+  `(|c(0) - q(s(0))| / (kb + k₂) + e_T² (k₁ s_T + kb) / (K (kb + k₂)) · t)`.
 * `abs_substrate_sub_reduced_le_mul`, `exists_abs_substrate_sub_reduced_le`: for the standard
   data `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε`, on the slow window `τ ∈ [0, T]`
   (**including** `τ = 0`; the substrate has no initial layer),
@@ -55,8 +55,8 @@ window.
   estimate, with an explicit constant; `abs_sub_reduced_le` is its existential form.
 * `abs_rate_sub_mmRate_le`: for the same data, on the slow window `τ ∈ [τ₀, T]`, the
   slow-time product rate `dP/dτ = k₂ c(τ/ε)/ε` obeys
-  `|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ rateErrorBound k₁ kb k₂ s₀ T τ₀ ε
-  = k₂ (e^{-(kb + k₂) τ₀ / ε} + ε (…))`. The initial layer is the term
+  `|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ rateErrorBound k₁ kb k₂ s₀ T τ₀ ε`
+  `= k₂ (e^{-(kb + k₂) τ₀ / ε} + ε (…))`. The initial layer is the term
   `e^{-(kb + k₂) τ₀ / ε}`: it tends to `0` only for `τ₀ > 0` (`tendsto_rateErrorBound`).
 * `abs_rate_sub_mmRate_le_of_prepared`: for prepared data `c(0) = q(s₀)` the initial-layer
   term vanishes and the rate-law error is `≤ preparedRateBound k₁ kb k₂ s₀ T ε`, `O(ε)`
@@ -233,8 +233,8 @@ private lemma complex_mem_Icc (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 <
         mul_pos (by linarith : 0 < kb + k₂) (by linarith : 0 < e 0 + c 0 + δ)]
     exact le_of_forall_pos_le_add key
 
-/-- **Positivity of the substrate**: `s(0) > 0`, `c(0), e(0) ≥ 0` give `s(t) > 0` for
-`t ≥ 0`. -/
+/-- **Positivity of the substrate**: for `k₁, k₂ > 0` and `kb ≥ 0`, `s(0) > 0` and `c(0), e(0) ≥ 0`
+give `s(t) > 0` for `t ≥ 0`. -/
 theorem IsSolution.substrate_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0) {t : ℝ}
     (ht : 0 ≤ t) : 0 < s t := by
@@ -270,21 +270,24 @@ theorem IsSolution.substrate_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 
   have h2 : s t₀ ≤ 0 := hmem.2
   linarith
 
-/-- The complex stays nonnegative. -/
+/-- The complex stays nonnegative: for `k₁, k₂ > 0`, `kb ≥ 0`, `s(0) > 0` and `c(0), e(0) ≥ 0`,
+`c(t) ≥ 0` for `t ≥ 0`. -/
 theorem IsSolution.complex_nonneg (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0) {t : ℝ}
     (ht : 0 ≤ t) : 0 ≤ c t :=
   (complex_mem_Icc h hk₁ hkb hk₂ hc0 he0 (T := t)
     (fun _ hr ↦ (h.substrate_pos hk₁ hkb hk₂ hs0 hc0 he0 hr.1).le) t ⟨ht, le_rfl⟩).1
 
-/-- The complex stays below the total enzyme `e_T = e(0) + c(0)` (equivalently `e ≥ 0`). -/
+/-- The complex stays below the total enzyme: for `k₁, k₂ > 0`, `kb ≥ 0`, `s(0) > 0` and
+`c(0), e(0) ≥ 0`, `c(t) ≤ e_T = e(0) + c(0)` for `t ≥ 0` (equivalently `e(t) ≥ 0`). -/
 theorem IsSolution.complex_le (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0) {t : ℝ}
     (ht : 0 ≤ t) : c t ≤ e 0 + c 0 :=
   (complex_mem_Icc h hk₁ hkb hk₂ hc0 he0 (T := t)
     (fun _ hr ↦ (h.substrate_pos hk₁ hkb hk₂ hs0 hc0 he0 hr.1).le) t ⟨ht, le_rfl⟩).2
 
-/-- The free enzyme stays nonnegative. -/
+/-- The free enzyme stays nonnegative: for `k₁, k₂ > 0`, `kb ≥ 0`, `s(0) > 0` and `c(0), e(0) ≥ 0`,
+`e(t) ≥ 0` for `t ≥ 0`. -/
 theorem IsSolution.enzyme_nonneg (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0) {t : ℝ}
     (ht : 0 ≤ t) : 0 ≤ e t := by
@@ -292,7 +295,8 @@ theorem IsSolution.enzyme_nonneg (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 
   have := h.enzyme_conservation ht
   linarith
 
-/-- The substrate stays below `s_T = s(0) + c(0)`. -/
+/-- The substrate stays below `s_T = s(0) + c(0)`: for `k₁, k₂ > 0`, `kb ≥ 0`, `s(0) > 0` and
+`c(0), e(0) ≥ 0`, `s(t) ≤ s(0) + c(0)` for `t ≥ 0`. -/
 theorem IsSolution.substrate_le (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0) {t : ℝ}
     (ht : 0 ≤ t) : s t ≤ s 0 + c 0 := by
@@ -313,8 +317,8 @@ theorem IsSolution.substrate_le (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0
   have := h.complex_nonneg hk₁ hkb hk₂ hs0 hc0 he0 ht
   linarith
 
-/-- A solution of the reduced equation `S̄' = -mmRate k₂ K S̄` with `S̄(0) > 0` stays
-positive. -/
+/-- For `k₂, K > 0`, a solution of the reduced equation `S̄' = -mmRate k₂ K S̄` on `τ ≥ 0` with
+`S̄(0) > 0` stays positive for `τ ≥ 0`. -/
 theorem reduced_pos {k₂ K : ℝ} (hk₂ : 0 < k₂) (hK : 0 < K) {S : ℝ → ℝ}
     (hS : ∀ τ, 0 ≤ τ → HasDerivAt S (-mmRate k₂ K (S τ)) τ) (hS0 : 0 < S 0) {τ : ℝ}
     (hτ : 0 ≤ τ) : 0 < S τ := by
@@ -328,10 +332,9 @@ theorem reduced_pos {k₂ K : ℝ} (hk₂ : 0 < k₂) (hK : 0 < K) {S : ℝ → 
   have : 0 < S 0 / 2 * exp (-(k₂ / K + 1) * τ) := by positivity
   linarith
 
-/-- **The reduced equation is solvable**: for `K > 0` and `s₀ > 0` there is a positive
-solution of `S̄' = -mmRate k₂ K S̄` on all of `ℝ` with `S̄(0) = s₀`, namely
-`S̄(τ) = Φ⁻¹(Φ(s₀) - k₂ τ)` with `Φ(x) = x + K log x` (the implicit Michaelis–Menten
-integral). -/
+/-- **The reduced equation is solvable**: for `K > 0`, `s₀ > 0` and every real `k₂` there is a
+positive solution of `S̄' = -mmRate k₂ K S̄` on all of `ℝ` with `S̄(0) = s₀`; the proof takes
+`S̄(τ) = Φ⁻¹(Φ(s₀) - k₂ τ)` with `Φ(x) = x + K log x` (the implicit Michaelis–Menten integral). -/
 theorem exists_reduced_solution {k₂ K s₀ : ℝ} (hK : 0 < K) (hs₀ : 0 < s₀) :
     ∃ S : ℝ → ℝ, (∀ τ, HasDerivAt S (-mmRate k₂ K (S τ)) τ) ∧ S 0 = s₀ ∧ ∀ τ, 0 < S τ := by
   set Φ : ℝ → ℝ := fun x ↦ x + K * log x with hΦ
@@ -398,10 +401,10 @@ theorem exists_reduced_solution {k₂ K s₀ : ℝ} (hK : 0 < K) (hs₀ : 0 < s�
 
 /-! ### The QSS slaving estimate (real time) -/
 
-/-- **The complex is slaved to the QSS manifold**, for all `t ≥ 0`, up to an initial-layer
-term decaying at rate `kb + k₂ = k₁ K`:
-`|c(t) - q(s(t))| ≤ |c(0) - q(s(0))| e^{-(kb + k₂) t} + e_T² (k₁ s_T + kb) / K / (kb + k₂)`,
-with `e_T = e(0) + c(0)`, `s_T = s(0) + c(0)`. -/
+/-- **The complex is slaved to the QSS manifold**: for `k₁, k₂ > 0`, `kb ≥ 0`, `s(0) > 0` and
+`c(0), e(0) ≥ 0`, for all `t ≥ 0`, up to an initial-layer term decaying at rate `kb + k₂ = k₁ K`:
+`|c(t) - q(s(t))| ≤ |c(0) - q(s(0))| e^{-(kb + k₂) t} + e_T² (k₁ s_T + kb) / K / (kb + k₂)`, with
+`e_T = e(0) + c(0)`, `s_T = s(0) + c(0)` and `q(x) = e_T x / (K + x)`. -/
 theorem IsSolution.abs_complex_sub_qss_le (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0) {t : ℝ}
     (ht : 0 ≤ t) :
@@ -457,11 +460,12 @@ theorem IsSolution.abs_complex_sub_qss_le (h : IsSolution k₁ kb k₂ s c e p) 
 
 /-! ### The substrate estimate (real time) -/
 
-/-- **The substrate tracks the reduced solution on the slow clock**, for all `t ≥ 0`: with
-`e_T = e(0) + c(0)`, `s_T = s(0) + c(0)` and `S̄` a solution of the reduced equation
-`S̄' = -mmRate k₂ K S̄` with `S̄(0) > 0`,
-`|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ s_T + kb) (|c(0) - q(s(0))| / (kb + k₂) +
-e_T² (k₁ s_T + kb) / K / (kb + k₂) · t)`. -/
+/-- **The substrate tracks the reduced solution on the slow clock**: for `k₁, k₂ > 0`, `kb ≥ 0`,
+`s(0) > 0` and `c(0), e(0) ≥ 0`, for all `t ≥ 0`, with `e_T = e(0) + c(0)`, `s_T = s(0) + c(0)`,
+`q(x) = e_T x / (K + x)` and `S̄` a solution of the reduced equation `S̄' = -mmRate k₂ K S̄` on
+`τ ≥ 0` with `S̄(0) > 0`,
+`|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ s_T + kb) (|c(0) - q(s(0))| / (kb + k₂) +`
+`e_T² (k₁ s_T + kb) / K / (kb + k₂) · t)`. -/
 theorem IsSolution.abs_substrate_sub_reduced_le (h : IsSolution k₁ kb k₂ s c e p)
     (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0)
     (he0 : 0 ≤ e 0) {S : ℝ → ℝ}
@@ -543,14 +547,17 @@ theorem IsSolution.abs_substrate_sub_reduced_le (h : IsSolution k₁ kb k₂ s c
 /-! ### Standard data: the first-order Tikhonov estimate on a slow window -/
 
 /-- The constant of the substrate estimate on the slow window `[0, T]`:
-`(k₁ s₀ + kb) (1 / (kb + k₂) + (k₁ s₀ + kb) / K / (kb + k₂) · T)`. It grows linearly in
-`T`. -/
+`(k₁ s₀ + kb) (1 / (kb + k₂) + (k₁ s₀ + kb) / K / (kb + k₂) · T)`. Quotients by zero are read as
+zero: when `K = 0` (exactly when `k₁ = 0` or `kb + k₂ = 0`) the term in `T` vanishes and the value
+is `(k₁ s₀ + kb) / (kb + k₂)`, which is `0` when `kb + k₂ = 0`. It is affine in `T`, and increasing
+in `T` for `k₁, k₂ > 0`, `kb ≥ 0` and `s₀ > 0`. -/
 noncomputable def substrateErrorConst (k₁ kb k₂ s₀ T : ℝ) : ℝ :=
   (k₁ * s₀ + kb) *
     (1 / (kb + k₂) + (k₁ * s₀ + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) * T)
 
-/-- **Uniform QSSA for the substrate on a slow window, including `τ = 0`.** For the standard
-data `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε > 0`,
+/-- **Uniform QSSA for the substrate on a slow window, including `τ = 0`.** For `k₁, k₂ > 0`,
+`kb ≥ 0`, `s₀ > 0`, a solution `S̄` of the reduced equation on `τ ≥ 0` and the standard data
+`s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε > 0`,
 `|s(τ/ε) - S̄(τ)| ≤ substrateErrorConst k₁ kb k₂ s₀ T · ε` for all `τ ∈ [0, T]`. -/
 theorem abs_substrate_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
     {s₀ T ε : ℝ} (hs₀ : 0 < s₀) (hε : 0 < ε) {S : ℝ → ℝ}
@@ -584,7 +591,8 @@ theorem abs_substrate_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk
         rw [← hKdef]
         field_simp
 
-/-- The first-order Tikhonov estimate as an existence statement: one constant
+/-- The first-order Tikhonov estimate as an existence statement: for `k₁, k₂ > 0`, `kb ≥ 0`,
+`s₀ > 0` and a solution `S̄` of the reduced equation on `τ ≥ 0` with `S̄(0) = s₀`, one constant
 (`substrateErrorConst k₁ kb k₂ s₀ T`) works for every `e₀ > 0`, every solution with data
 `(s₀, 0, e₀)`, and every slow time `τ ∈ [0, T]`. -/
 theorem exists_abs_substrate_sub_reduced_le (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
@@ -617,10 +625,12 @@ theorem abs_sub_reduced_le {k₁ kb k₂ s₀ T : ℝ} (hk₁ : 0 < k₁) (hkb :
 
 /-! ### The Michaelis–Menten rate law -/
 
-/-- **Rate-law error on the slow clock, general data.** With `ε = e_T = e(0) + c(0) > 0`, the
-slow-time product rate `dP/dτ = k₂ c(τ/ε)/ε` differs from the Michaelis–Menten rate
-`mmRate k₂ K (S̄ τ)` by at most an initial-layer term `|c(0) - q(s(0))|/ε · e^{-(kb+k₂) τ/ε}`,
-a slaving term `ε (k₁ s_T + kb)/K/(kb + k₂)`, and the substrate error divided by `K`. -/
+/-- **Rate-law error on the slow clock, general data.** For `k₁, k₂ > 0`, `kb ≥ 0`, `s(0) > 0` and
+`c(0), e(0) ≥ 0`, `ε = e_T = e(0) + c(0) > 0`, a solution `S̄` of the reduced equation on `τ ≥ 0`
+with `S̄(0) > 0` and `τ ≥ 0`, the slow-time product rate `dP/dτ = k₂ c(τ/ε)/ε` differs from the
+Michaelis–Menten rate `mmRate k₂ K (S̄ τ)` by at most an initial-layer term
+`|c(0) - q(s(0))|/ε · e^{-(kb+k₂) τ/ε}`, a slaving term `ε (k₁ s_T + kb)/K/(kb + k₂)`, and the
+substrate error divided by `K`. -/
 theorem IsSolution.abs_rate_sub_mmRate_le (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0)
     (heT : 0 < e 0 + c 0) {S : ℝ → ℝ}
@@ -675,16 +685,20 @@ theorem IsSolution.abs_rate_sub_mmRate_le (h : IsSolution k₁ kb k₂ s c e p) 
         gcongr
 
 /-- The explicit rate-law error bound for standard data on the slow window `[τ₀, T]`:
-`k₂ (e^{-(kb + k₂) τ₀ / ε} + ε ((k₁ s₀ + kb)/K/(kb + k₂) + substrateErrorConst/K))`. The first
-term is the initial layer; it is small only when `τ₀ ≫ ε / (kb + k₂)`. -/
+`k₂ (e^{-(kb + k₂) τ₀ / ε} + ε ((k₁ s₀ + kb)/K/(kb + k₂) + substrateErrorConst/K))`. Quotients by
+zero are read as zero (at `ε = 0` the exponent is `0` and the bound is `k₂`; when `K = 0`, exactly
+when `k₁ = 0` or `kb + k₂ = 0`, the bound is `k₂ e^{-(kb + k₂) τ₀ / ε}`). The first term is the
+initial layer; for `kb + k₂ > 0` and `ε > 0` it is small exactly when `(kb + k₂) τ₀ / ε` is
+large. Meaningful for `k₁, k₂ > 0`, `kb ≥ 0`, `s₀ > 0`, `τ₀ ≥ 0` and `ε > 0`. -/
 noncomputable def rateErrorBound (k₁ kb k₂ s₀ T τ₀ ε : ℝ) : ℝ :=
   k₂ * (exp (-(kb + k₂) * τ₀ / ε) +
     ε * ((k₁ * s₀ + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) +
       substrateErrorConst k₁ kb k₂ s₀ T / michaelisConstant k₁ kb k₂))
 
-/-- **The Michaelis–Menten rate law away from the initial layer.** For the standard data
-`s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε > 0`, on the slow window `τ ∈ [τ₀, T]` with
-`τ₀ ≥ 0`, `|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ rateErrorBound k₁ kb k₂ s₀ T τ₀ ε`. -/
+/-- **The Michaelis–Menten rate law on a slow window.** For `k₁, k₂ > 0`, `kb ≥ 0`,
+`s₀ > 0`, a solution `S̄` of the reduced equation on `τ ≥ 0` and the standard data
+`s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε > 0`, on the slow window `τ ∈ [τ₀, T]` with `τ₀ ≥ 0`,
+`|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ rateErrorBound k₁ kb k₂ s₀ T τ₀ ε`. -/
 theorem abs_rate_sub_mmRate_le (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
     {s₀ T τ₀ ε : ℝ} (hs₀ : 0 < s₀) (hε : 0 < ε) {S : ℝ → ℝ}
     (hS : ∀ τ, 0 ≤ τ → HasDerivAt S (-mmRate k₂ (michaelisConstant k₁ kb k₂) (S τ)) τ)
@@ -719,8 +733,8 @@ theorem abs_rate_sub_mmRate_le (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < 
         gcongr
     _ = _ := by ring
 
-/-- The rate-law bound tends to `0` as `ε → 0⁺` whenever the window excludes the initial
-layer, `τ₀ > 0`. -/
+/-- For `kb ≥ 0` and `k₂ > 0`, the rate-law bound tends to `0` as `ε → 0⁺` whenever the window
+excludes the initial layer, `τ₀ > 0`. -/
 theorem tendsto_rateErrorBound (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) {s₀ T τ₀ : ℝ} (hτ₀ : 0 < τ₀) :
     Tendsto (rateErrorBound k₁ kb k₂ s₀ T τ₀) (𝓝[>] 0) (𝓝 0) := by
   have hc : 0 < (kb + k₂) * τ₀ := by positivity
@@ -741,16 +755,18 @@ theorem tendsto_rateErrorBound (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) {s₀ T τ₀
 /-! ### Prepared data: the bound including `τ = 0` -/
 
 /-- The explicit rate-law error bound for prepared data on `[0, T]`:
-`k₂ ε (k₁ (s₀ + ε) + kb)/K/(kb + k₂) · (1 + (k₁ (s₀ + ε) + kb) T / K)`. -/
+`k₂ ε (k₁ (s₀ + ε) + kb)/K/(kb + k₂) · (1 + (k₁ (s₀ + ε) + kb) T / K)`, with quotients by zero read
+as zero: it is `0` when `K = 0`, exactly when `k₁ = 0` or `kb + k₂ = 0`. Meaningful for
+`k₁, k₂ > 0`, `kb ≥ 0`, `s₀ > 0` and `ε > 0`. -/
 noncomputable def preparedRateBound (k₁ kb k₂ s₀ T ε : ℝ) : ℝ :=
   k₂ * ε * ((k₁ * (s₀ + ε) + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) *
     (1 + (k₁ * (s₀ + ε) + kb) * T / michaelisConstant k₁ kb k₂))
 
-/-- **The rate law including time zero, for prepared data.** If the complex starts on the
-QSS manifold, `c(0) = q(s₀) = ε s₀/(K + s₀)` with total enzyme `e(0) + c(0) = ε > 0`, and
-`s(0) = s₀ = S̄(0)`, then there is no initial layer:
-`|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ preparedRateBound k₁ kb k₂ s₀ T ε` for all
-`τ ∈ [0, T]`. -/
+/-- **The rate law including time zero, for prepared data.** For `k₁, k₂ > 0`, `kb ≥ 0`, `s₀ > 0`
+and a solution `S̄` of the reduced equation on `τ ≥ 0`: if the complex starts on the QSS manifold,
+`c(0) = q(s₀) = ε s₀/(K + s₀)` with total enzyme `e(0) + c(0) = ε > 0`, and `s(0) = s₀ = S̄(0)`,
+then there is no initial layer:
+`|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ preparedRateBound k₁ kb k₂ s₀ T ε` for all `τ ∈ [0, T]`. -/
 theorem abs_rate_sub_mmRate_le_of_prepared (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
     {s₀ T ε : ℝ} (hs₀ : 0 < s₀) (hε : 0 < ε) {S : ℝ → ℝ}
     (hS : ∀ τ, 0 ≤ τ → HasDerivAt S (-mmRate k₂ (michaelisConstant k₁ kb k₂) (S τ)) τ)
@@ -805,8 +821,9 @@ theorem tendsto_preparedRateBound {s₀ T : ℝ} :
 
 /-! ### Limits along families of solutions -/
 
-/-- **Reduced substrate dynamics as a limit.** Along any family of solutions with standard
-data `(s₀, 0, ε)`, `s_ε(τ/ε) → S̄(τ)` as `ε → 0⁺`, for every slow time `τ ≥ 0`. -/
+/-- **Reduced substrate dynamics as a limit.** For `k₁, k₂ > 0`, `kb ≥ 0`, `s₀ > 0` and a solution
+`S̄` of the reduced equation on `τ ≥ 0` with `S̄(0) = s₀`: along any family of solutions with
+standard data `(s₀, 0, ε)`, `s_ε(τ/ε) → S̄(τ)` as `ε → 0⁺`, for every slow time `τ ≥ 0`. -/
 theorem tendsto_substrate_of_family (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) {s₀ : ℝ}
     (hs₀ : 0 < s₀) {S : ℝ → ℝ}
     (hS : ∀ τ, 0 ≤ τ → HasDerivAt S (-mmRate k₂ (michaelisConstant k₁ kb k₂) (S τ)) τ)
@@ -824,10 +841,11 @@ theorem tendsto_substrate_of_family (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ :
   rw [Real.norm_eq_abs]
   exact abs_substrate_sub_reduced_le_mul hk₁ hkb hk₂ hs₀ hε hS hS0 h hs hc he ⟨hτ, le_rfl⟩
 
-/-- **The Michaelis–Menten rate law as a limit.** Along any family of solutions with standard
-data `(s₀, 0, ε)`, the slow-time product rate `k₂ c_ε(τ/ε)/ε` tends to
-`mmRate k₂ K (S̄ τ) = k₂ S̄(τ) / (K + S̄(τ))` as `ε → 0⁺`, for every slow time `τ > 0` (outside
-the initial layer). -/
+/-- **The Michaelis–Menten rate law as a limit.** For `k₁, k₂ > 0`, `kb ≥ 0`, `s₀ > 0` and a
+solution `S̄` of the reduced equation on `τ ≥ 0` with `S̄(0) = s₀`: along any family of solutions
+with standard data `(s₀, 0, ε)`, the slow-time product rate `k₂ c_ε(τ/ε)/ε` tends to
+`mmRate k₂ K (S̄ τ) = k₂ S̄(τ) / (K + S̄(τ))` as `ε → 0⁺`, for every slow time `τ > 0` (outside the
+initial layer). -/
 theorem tendsto_rate_of_family (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) {s₀ : ℝ}
     (hs₀ : 0 < s₀) {S : ℝ → ℝ}
     (hS : ∀ τ, 0 ≤ τ → HasDerivAt S (-mmRate k₂ (michaelisConstant k₁ kb k₂) (S τ)) τ)

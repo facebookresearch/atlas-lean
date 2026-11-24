@@ -18,10 +18,11 @@ likelihood of `n` sets is `∏ exp(β · x_0) / ∑_j exp(β · x_j)`, equivalen
 taking the same value within each set (a matching variable) drops out.
 
 For 1:1 matching on a binary exposure, let `n₁₀` pairs have the case exposed and the control not,
-and `n₀₁` the reverse. The conditional likelihood is maximized at `ψ = exp β = n₁₀ / n₀₁`. The
-unconditional likelihood, with one free intercept per pair, is maximized at
-`ψ = (n₁₀ / n₀₁)²`, which overstates the odds ratio (Breslow and Day 1980, p. 250). Concordant
-pairs carry no information about `β`.
+and `n₀₁` the reverse. The conditional likelihood is maximized at `ψ = exp β = n₁₀ / n₀₁`. By
+contrast, maximizing the likelihood jointly over `β` and a separate intercept for every pair (the
+incidental-parameter likelihood) gives `ψ = (n₁₀ / n₀₁)²`, which overstates the odds ratio; this is
+the bias that conditioning removes (Breslow and Day 1980, p. 250). Concordant pairs carry no
+information about `β`.
 
 Sources: N. E. Breslow and N. E. Day, *Statistical Methods in Cancer Research, Vol. I: The
 Analysis of Case-Control Studies*, IARC Sci. Publ. 32 (1980), ch. 7, pp. 249–253.
@@ -109,26 +110,30 @@ public theorem_wanted pairedConditionalLogLik_max {n₁₀ n₀₁ : ℕ} (h₁�
           pairedConditionalLogLik n₁₀ n₀₁ (Real.log (n₁₀ / n₀₁)) ↔
         β = Real.log (n₁₀ / n₀₁))
 
-/-- The unconditional log-likelihood of the discordant pairs with one intercept per pair: a pair
+/-- The incidental-parameter log-likelihood of the discordant pairs, with a separate nuisance
+intercept for every pair (not a valid estimating likelihood for `β`): a pair
 with the case exposed and the control unexposed contributes
 `log (expit(α + β) (1 - expit α))`, and a pair with the reverse contributes
 `log (expit α (1 - expit(α + β)))`. -/
-noncomputable def pairedUnconditionalLogLik {n₁₀ n₀₁ : ℕ} (α₁₀ : Fin n₁₀ → ℝ)
+noncomputable def perPairInterceptLogLik {n₁₀ n₀₁ : ℕ} (α₁₀ : Fin n₁₀ → ℝ)
     (α₀₁ : Fin n₀₁ → ℝ) (β : ℝ) : ℝ :=
   (∑ i, Real.log (expit (α₁₀ i + β) * (1 - expit (α₁₀ i)))) +
     ∑ i, Real.log (expit (α₀₁ i) * (1 - expit (α₀₁ i + β)))
 
-/-- **Unconditional MLE for 1:1 matching** (Breslow and Day 1980, p. 250). For `n₁₀ > 0` discordant
-pairs with the case exposed and `n₀₁ > 0` with the control exposed, let `β̂ = 2 log (n₁₀ / n₀₁)`,
-so that `e^β̂ = (n₁₀ / n₀₁)²`. Then the unconditional log-likelihood with one free intercept per
-pair is maximized at `β = β̂` with every intercept equal to `-β̂ / 2`: for all intercepts
-`α₁₀, α₀₁` and every `β`, its value is at most the value at that point.
+/-- **The incidental-parameter estimate is biased** (Breslow and Day 1980, p. 250). For `n₁₀ > 0`
+discordant pairs with the case exposed and `n₀₁ > 0` with the control exposed, let
+`β̂ = 2 log (n₁₀ / n₀₁)`, so that `e^β̂ = (n₁₀ / n₀₁)²`. Then the incidental-parameter
+log-likelihood, with a separate intercept for every pair, is maximized at `β = β̂` with every
+intercept equal to `-β̂ / 2`: for all intercepts `α₁₀, α₀₁` and every `β`, its value is at most the
+value at that point. The maximizing odds ratio is the square of the conditional estimate
+`n₁₀ / n₀₁` of `pairedConditionalLogLik_max`, which shows the bias of estimating `β` jointly with
+one nuisance intercept per pair.
 
 Source: Breslow and Day (1980), p. 250. -/
-public theorem_wanted pairedUnconditionalLogLik_le {n₁₀ n₀₁ : ℕ} (h₁₀ : 0 < n₁₀) (h₀₁ : 0 < n₀₁)
+public theorem_wanted perPairInterceptLogLik_le {n₁₀ n₀₁ : ℕ} (h₁₀ : 0 < n₁₀) (h₀₁ : 0 < n₀₁)
     (α₁₀ : Fin n₁₀ → ℝ) (α₀₁ : Fin n₀₁ → ℝ) (β : ℝ) :
-    pairedUnconditionalLogLik α₁₀ α₀₁ β ≤
-      pairedUnconditionalLogLik (fun _ : Fin n₁₀ => -Real.log (n₁₀ / n₀₁))
+    perPairInterceptLogLik α₁₀ α₀₁ β ≤
+      perPairInterceptLogLik (fun _ : Fin n₁₀ => -Real.log (n₁₀ / n₀₁))
         (fun _ : Fin n₀₁ => -Real.log (n₁₀ / n₀₁)) (2 * Real.log (n₁₀ / n₀₁))
 
 end WantedExt.Biology.StatisticalGenetics.ConditionalLogisticMatchedSetsWanted

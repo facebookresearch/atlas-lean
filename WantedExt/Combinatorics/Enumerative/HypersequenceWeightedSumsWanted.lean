@@ -15,6 +15,7 @@ public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSmall
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRecurrences
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumStirling
 public import MathlibExt.Combinatorics.Enumerative.Hypersequence
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceAbelSummation
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
@@ -145,17 +146,6 @@ public theorem_wanted hyperLucas_recurrence (r n : ℕ) :
         ((hypersequence lucasNumber (r + 1) (n + 1) : ℕ) : ℚ) +
           ((hypersequence lucasNumber (r + 1) n : ℕ) : ℚ) +
           ((n + 2 * (r + 1) : ℕ) : ℚ) / (n + 2) * ((n + r + 1).choose r : ℚ)
-
-/-- **Abel summation by parts.** Let $a$ and $b$ be sequences of complex numbers and let
-$a^{(1)}_k = \sum_{i=0}^{k} a_i$ be the first hypersequence (the partial sums) of $a$. Then for
-every natural number $n$,
-$$\sum_{k=0}^{n} a_k b_k = a^{(1)}_n b_{n+1} + \sum_{k=0}^{n} a^{(1)}_k (b_k - b_{k+1}).$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 7 (`integers-2024-A70-thm-7`). -/
-public theorem_wanted sum_mul_eq_hypersequence_one_mul_add_sum (a b : ℕ → ℂ) (n : ℕ) :
-    ∑ k ∈ range (n + 1), a k * b k =
-      hypersequence a 1 n * b (n + 1) + ∑ k ∈ range (n + 1), hypersequence a 1 k * (b k - b (k + 1))
 
 /-- **Recurrence for power-weighted sums of hypersequences.** Let $a$ be a sequence of complex
 numbers, let $a^{(r)}_k$ denote its hypersequence of generation $r$, and for natural numbers
