@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Algebra.Order.Ring.Int
+public import MathlibExt.NumberTheory.PrimePairOneAddTwoPowMulPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowAddPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowSubTwoPowOddMulPowEqSq
 public import MathlibExt.NumberTheory.PrimePairTwoPowEvenMulPowSubPowEqSq
@@ -29,16 +30,6 @@ subtraction are read in `ℤ`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Squares of the form $1 + (2^k(2p - 1))^y$ for prime pairs.** Let $p$ be an odd prime such
-that $2p - 1$ is prime, and let $k \ge 1$ be an integer. Then non-negative integers $y$ and $z$
-satisfy $1 + (2^k(2p - 1))^y = z^2$ if and only if $k = 4$, $p = 3$, $y = 1$ and $z = 9$.
-
-Source: Jing Zhang and Yuan Li, *On the Equation (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for
-Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Lemma 4. -/
-theorem_wanted one_add_two_pow_mul_pow_eq_sq_iff {p k : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (hq : (2 * p - 1).Prime) (hk : 1 ≤ k) (y z : ℕ) :
-    1 + (2 ^ k * (2 * p - 1)) ^ y = z ^ 2 ↔ (k, p, y, z) = (4, 3, 1, 9)
 
 /-- **Terai's conjecture when $c$ is prime and $b \equiv \pm 5 \pmod 8$.** Let $a, b, c$ be
 natural numbers with $a^2 + b^2 = c^2$, $\gcd(a, b, c) = 1$, $b \equiv \pm 5 \pmod 8$ (that is,
