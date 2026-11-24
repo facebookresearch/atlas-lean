@@ -2,15 +2,12 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Set](inter.md)
-- [Linear Simplex](lin-simplex-barycenter.md)
-- [Delta Generated Product](prod-of-locally-compact-left.md)
-- [Compact Generation](u-compactly-generated-space-of-classical.md)
 - [Carrier Lift](carrier-lift/README.md)
 - [Collapsed Axes](collapsed-axes/README.md)
 - [Compactly Generated Product](compactly-generated-product/README.md)
 - [Continuous Linear Equiv](continuous-linear-equiv/README.md)
 - [Coproducts](coproducts/README.md)
+- [Edge Equivalence](edge-equivalence/README.md)
 - [Finite Partial Attachment](finite-partial-attachment/README.md)
 - [Finite Partial Attachment Composition](finite-partial-attachment-composition/README.md)
 - [Finite Partial Attachment Empty](finite-partial-attachment-empty/README.md)
@@ -40,3 +37,7 @@ Topics added since this subject's fields were last revised.
 - [Std Simplex Product Cell Gluing](std-simplex-product-cell-gluing/README.md)
 - [Std Simplex Radial Boundary](std-simplex-radial-boundary/README.md)
 - [Weak Hausdorff Space](weak-hausdorff-space/README.md)
+- [Linear Simplex](lin-simplex-barycenter.md)
+- [Delta Generated Product](prod-of-locally-compact-left.md)
+- [Set](inter.md)
+- [Compact Generation](u-compactly-generated-space-of-classical.md)
