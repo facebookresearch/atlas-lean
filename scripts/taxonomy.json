@@ -10330,6 +10330,7 @@
   "MathlibExt/Combinatorics/Additive/Convolution": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Additive representation functions"},
   "MathlibExt/Combinatorics/Additive/CoprimeDenominatorProgressions": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/DavenportModuleProd": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
+  "MathlibExt/Combinatorics/Additive/DistinctLinkGraph": {"to": "Combinatorics/additive-combinatorics/sum-free-sets", "title": "Sum-free sets in abelian groups"},
   "MathlibExt/Combinatorics/Additive/ErdosHeilbronn": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
   "MathlibExt/Combinatorics/Additive/GDifferenceBases": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Difference bases"},
   "MathlibExt/Combinatorics/Additive/GDifferenceBasisScaling": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Difference bases"},
