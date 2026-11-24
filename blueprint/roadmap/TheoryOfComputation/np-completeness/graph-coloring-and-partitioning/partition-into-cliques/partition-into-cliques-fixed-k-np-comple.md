@@ -1,6 +1,6 @@
-# PARTITION INTO k CLIQUES is NP-complete
+# NP-completeness of partitioning a graph into at most $k$ cliques
 
-For every natural number $k \ge 3$, the decision problem PARTITION INTO $k$ CLIQUES belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+Fix a natural number $k \ge 3$. Given a simple graph on at least $k$ vertices, decide whether its vertices can be partitioned into at most $k$ cliques. The encoded instance must carry the bound $k$; malformed inputs are rejected. For each such fixed $k$, this decision problem belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

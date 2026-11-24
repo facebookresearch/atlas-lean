@@ -1,6 +1,6 @@
-# TOTAL COLORING OF REGULAR BIPARTITE GRAPHS is NP-complete
+# NP-completeness of total coloring nonempty $k$-regular bipartite graphs with $k+1$ colors
 
-For every natural number $k \ge 3$, the decision problem TOTAL COLORING OF REGULAR BIPARTITE GRAPHS belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+Fix a natural number $k \ge 3$. Given a nonempty $k$-regular bipartite graph, decide whether its vertices and edges admit a total coloring from a palette of $k+1$ colors. For each such fixed $k$, this decision problem belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

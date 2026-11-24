@@ -1,6 +1,6 @@
-# GRAPH PARTITIONING WITH UNIT WEIGHTS is NP-complete
+# NP-completeness of unit-weight graph partitioning with a fixed block-size bound
 
-For every natural number $K \ge 3$, the decision problem GRAPH PARTITIONING WITH UNIT WEIGHTS belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+Fix a natural number $K \ge 3$. Given a graph with unit vertex weights and unit edge lengths and a positive cut bound $J$, decide whether its vertices can be partitioned into blocks of at most $K$ vertices with at most $J$ edges joining different blocks. For each such fixed $K$, this decision problem belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 
