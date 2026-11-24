@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
-public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProduct
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductDifference
 
 /-!
 # Theta-function lemmas for the order-eighteen Rogers-Ramanujan-Slater relations

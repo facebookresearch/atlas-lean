@@ -13,22 +13,21 @@ import Mathlib.Tactic.Ring
 
 open MetaMathlibExt
 
--- Equal parameters give a difference of squares with a unit first argument on the right.
-example {q : ℂ} (hq : q ≠ 0) (h : ‖q * q‖ < 1) :
-    ramanujanThetaRaw q q ^ 2 - ramanujanThetaRaw (-q) (-q) ^ 2 =
-      2 * q * ramanujanThetaRaw 1 (q ^ 4) ^ 2 := by
-  have heq := ramanujanTheta_mul_sub_mul_neg (c := q) (d := q) rfl h hq hq
-  rw [div_self hq, show q * q ^ 2 * q = q ^ 4 by ring,
-    show q * q * q ^ 2 = q ^ 4 by ring] at heq
-  simpa only [pow_two, mul_assoc] using heq
+-- With zero common product the odd-parity contribution still survives.
+example (a d : ℂ) (ha : a ≠ 0) :
+    ramanujanThetaRaw a 0 * ramanujanThetaRaw 0 d =
+      ramanujanThetaRaw (a * d) 0 * ramanujanThetaRaw 0 0 +
+        a * ramanujanThetaRaw 0 0 * ramanujanThetaRaw (d / a) 0 := by
+  simpa using ramanujanTheta_mul_of_mul_eq (b := 0) (c := 0) (d := d) ha (by simp) (by simp)
 
--- Opposite parameter pairs make the left-hand products cancel.
-example {q : ℂ} (hq : q ≠ 0) (h : ‖q * q‖ < 1) : ramanujanThetaRaw (-1) (-(q ^ 4)) = 0 := by
-  have heq := ramanujanTheta_mul_sub_mul_neg (a := q) (b := q) (c := -q) (d := -q)
-    (by simp) h (neg_ne_zero.mpr hq) (neg_ne_zero.mpr hq)
-  rw [neg_neg, mul_comm (ramanujanThetaRaw (-q) (-q)), sub_self, div_neg, div_self hq,
-    show q * (-q) ^ 2 * -q = -(q ^ 4) by ring,
-    show q * -q * (-q) ^ 2 = -(q ^ 4) by ring] at heq
-  simpa [hq] using heq.symm
+-- Equal parameters specialize the addition formula to a sum of two squares.
+example {q : ℂ} (hq : q ≠ 0) (h : ‖q‖ < 1) :
+    ramanujanThetaRaw q q ^ 2 =
+      ramanujanThetaRaw (q ^ 2) (q ^ 2) ^ 2 + q * ramanujanThetaRaw 1 (q ^ 4) ^ 2 := by
+  have hqq : ‖q * q‖ < 1 := by
+    rw [← sq, norm_pow]
+    exact pow_lt_one₀ (norm_nonneg _) h two_ne_zero
+  simpa only [← sq, div_self hq, show q ^ 2 * q * q = q ^ 4 by ring, mul_assoc] using
+    ramanujanTheta_mul_of_mul_eq (c := q) (d := q) hq hqq rfl
 
-#print axioms MetaMathlibExt.ramanujanTheta_mul_sub_mul_neg
+#print axioms MetaMathlibExt.ramanujanTheta_mul_of_mul_eq

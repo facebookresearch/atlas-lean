@@ -23,6 +23,7 @@ completion. For the upper bound, follow each partial table to its first missing
 instruction and check the score if that instruction halts. Split on the possible
 continuing instructions. For paths that run for 21 steps without a missing
 instruction, finite automata certify that no missing instruction can ever be reached.
+This also bounds the runtime of every halting three-state machine by 21.
 -/
 
 namespace Cslib.BusyBeaverWanted
@@ -291,25 +292,31 @@ private def start : Stop := ⟨0, 0, blank, 0⟩
 
 private theorem probe_fits {M : Machine 3} {T : Table} (hm : Supports T M)
     (fuel : Nat) {p e : Stop} (hp : Fits M p.time p.state p.head p.tape)
-    (he : probe T fuel p = some e) : Fits M e.time e.state e.head e.tape := by
+    (he : probe T fuel p = some e) :
+    Fits M e.time e.state e.head e.tape ∧ e.time < p.time + fuel := by
   induction fuel generalizing p with
   | zero => contradiction
   | succ n ih =>
     unfold probe at he
     split at he
-    next => cases he; exact hp
+    next =>
+      cases he
+      exact ⟨hp, by omega⟩
     next a ht =>
       obtain ⟨w, d, q⟩ := a
-      exact ih (hp.step (hm _ _ _ _ _ ht)) he
+      obtain ⟨hf, htime⟩ := ih (hp.step (hm _ _ _ _ _ ht)) he
+      change e.time < p.time + 1 + n at htime
+      exact ⟨hf, by omega⟩
 
 /-- Upper bound if a missing instruction halts here, allowing a final write of one. -/
 private def Stop.upper (p : Stop) : Nat :=
   ((Finset.Icc (-((p.time + 1 : ℕ) : ℤ)) ((p.time + 1 : ℕ) : ℤ)).filter
     fun i => i = p.head ∨ p.tape.read (i - p.head) = 1).card
 
-private theorem Stop.score_le {M : Machine 3} {p : Stop}
+private theorem Stop.bounds {M : Machine 3} {p : Stop}
     (hf : Fits M p.time p.state p.head p.tape) {w d}
-    (ha : M p.state p.tape.scan = (w, d, none)) : scoreOf M ≤ p.upper := by
+    (ha : M p.state p.tape.scan = (w, d, none)) :
+    scoreOf M ≤ p.upper ∧ stepsOf M = p.time + 1 := by
   obtain ⟨hs, hh, ht⟩ := hf
   have readHead := ht p.head
   rw [sub_self] at readHead
@@ -326,6 +333,7 @@ private theorem Stop.score_le {M : Machine 3} {p : Stop}
     have h := haltsWithin_mono (haltsWithin_haltTime _ halts)
       (show haltTime M halts ≤ p.time by omega)
     exact (Option.some_ne_none _) (hs.symm.trans h)
+  refine ⟨?_, by simpa only [stepsOf, dite_eq_left halts] using time_eq⟩
   rw [scoreOf, dite_eq_left halts, time_eq, onesAt, run_succ, hstep]
   apply Finset.card_le_card
   intro i hi
@@ -341,7 +349,7 @@ private def extend (T : Table) (p : Stop) (a : Action) : Table :=
   fun q x => if q = p.state ∧ x = p.tape.scan then some a else T q x
 
 private def Bounded (T : Table) : Prop :=
-  ∀ M, Supports T M → scoreOf M ≤ 6
+  ∀ M, Supports T M → scoreOf M ≤ 6 ∧ stepsOf M ≤ 21
 
 private def action (i : Fin 12) : Action :=
   (⟨i / 6, by omega⟩, if i.val / 3 % 2 = 0 then .left else .right, ⟨i % 3, by omega⟩)
@@ -351,11 +359,14 @@ private theorem action_surjective : Function.Surjective action := by decide +ker
 private theorem branch_bound {T : Table} {p : Stop} (he : probe T 21 start = some p)
     (hu : p.upper ≤ 6) (hchild : ∀ i, Bounded (extend T p (action i))) : Bounded T := by
   intro M hm
-  have hf := probe_fits hm 21 (fits_blank M) he
+  obtain ⟨hf, htime⟩ := probe_fits hm 21 (fits_blank M) he
+  change p.time < 21 at htime
   obtain ⟨w, d, next, ht⟩ : ∃ w d q, M p.state p.tape.scan = (w, d, q) :=
     ⟨_, _, _, rfl⟩
   cases next with
-  | none => exact (Stop.score_le hf ht).trans hu
+  | none =>
+    obtain ⟨hs, ht⟩ := Stop.bounds hf ht
+    exact ⟨hs.trans hu, by omega⟩
   | some q' =>
     obtain ⟨i, hi⟩ := action_surjective (w, d, q')
     apply hchild i M
@@ -381,7 +392,7 @@ private theorem full_bound {T : Table} (h : ∀ q x, (T q x).isSome = true) : Bo
       rw [run_succ, step_state_of_some _ hq, hm _ _ _ _ _ ht]
       exact Option.some_ne_none _
   have hn : ¬ Halts M := fun ⟨t, ht⟩ => live t ht
-  simp [scoreOf, hn]
+  simp [scoreOf, stepsOf, hn]
 
 /-- All other instructions are known to continue. -/
 private def LastEntry (T : Table) (p : Stop) : Prop :=
@@ -433,7 +444,7 @@ private theorem check_sound (n : Nat) (T : Table) (a : Advice) (h : check n T a 
     | loop d l r b =>
       have hv : (cert d l r b).Valid T := of_decide_eq_true h
       intro M hm
-      simp [scoreOf, hv.not_halts hm]
+      simp [scoreOf, stepsOf, hv.not_halts hm]
     | last =>
       simp only [check] at h
       split at h
@@ -556,7 +567,9 @@ private theorem refine_bound (T : Table)
     apply branch_bound he (hu p he)
     simpa only [refineTable, he] using h
 
-private theorem upper : busyBeaverOnes 3 ≤ 6 := by
+/-- Every three-state machine scores at most six and takes at most 21 steps if it halts. -/
+public theorem busyBeaverSteps_three_wanted.machine_bounds (M : Machine 3) :
+    scoreOf M ≤ 6 ∧ stepsOf M ≤ 21 := by
   have below : Bounded empty := by
     apply refine_bound
     · intro p hp
@@ -571,9 +584,12 @@ private theorem upper : busyBeaverOnes 3 ≤ 6 := by
       intro p hp
       simpa [hp] using ok i
     exact batch_bound i
+  exact below M (fun _ _ _ _ _ h => nomatch h)
+
+private theorem upper : busyBeaverOnes 3 ≤ 6 := by
   apply Finset.sup_le
   intro M _
-  exact below M (fun _ _ _ _ _ h => nomatch h)
+  exact (busyBeaverSteps_three_wanted.machine_bounds M).1
 
 private def champion : Machine 3
   | 0, 0 => (1, .right, some 1)
