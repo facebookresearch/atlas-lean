@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.SuperFibocatalan
 
-/-! # Boundary and sign checks for the Fibonacci and Lucas polynomial product identities -/
+/-! # Boundary and sign checks for the Fibonacci and Lucas Catalan identities -/
 
 open MathlibExt.NumberTheory.SuperFibocatalanWanted
 
@@ -37,3 +37,17 @@ example : lucasPoly 4 * lucasPoly 4 - lucasPoly 6 * lucasPoly 2 = X 0 ^ 2 * X 1 
   calc
     _ = _ := lucasPoly_mul_sub_mul 2
     _ = _ := by simp [lucasPoly, pow_two, mul_comm, mul_assoc]
+
+example : lucasFactorial 0 = 1 := by
+  simp [lucasFactorial]
+
+example :
+    (lucasPoly 3 * lucasPoly 2 * lucasPoly 3 - lucasPoly 4 * lucasPoly 3 * lucasPoly 1) *
+      lucasFactorial 2 = -(X 0 ^ 2 * X 1 * (X 0 ^ 2 + X 1)) := by
+  have h : Finset.Icc 1 (2 : ℕ) = {1, 2} := by decide
+  calc
+    _ = _ := lucasCatalan_identity_mul_factorial 1
+    _ = _ := by
+      change (-1) ^ 1 * X 1 ^ 1 * lucasPoly 2 * lucasPoly 1 * lucasPoly 3 * lucasFactorial 2 = _
+      simp [lucasFactorial, h, lucasPoly, pow_two]
+      ring
