@@ -21,8 +21,8 @@ $P$. The same three constants work for all $x$. The infimum need not be
 attained, and $f$ need not be convex. The paper's separate Assumption 1 also
 requires a Lipschitz gradient; that is not part of this second-moment condition.
 
-This is a second-moment bound at one query point. The finite-sum notion of
-expected smoothness in Gower et al. instead bounds the squared difference
+This is a second-moment bound at one query point. The expected-smoothness
+inequality in Gower et al., equation (7), instead bounds the squared difference
 between the stochastic gradients at $x$ and at a fixed global minimizer,
 using the same draw for both gradients.
 
