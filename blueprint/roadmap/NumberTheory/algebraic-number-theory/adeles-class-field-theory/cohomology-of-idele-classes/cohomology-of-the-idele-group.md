@@ -12,9 +12,11 @@ $\mathrm{Gal}(L_w/K_v)$, and $L_v = L_w$. Then:
    at every place $w$ above $v$ is injective, with image the invariants $\mathbb{I}_L^G$.
 2. For every $r \in \mathbb{Z}$ the Tate cohomology of $\mathbb{I}_L$ is the direct sum of the local
    Tate cohomology groups,
-   $$\hat H^r(G, \mathbb{I}_L) \cong \bigoplus_{v} \hat H^r(G_v, L_v^\times),$$
-   the sum running over all places $v$ of $K$ (for $r \ge 1$ these are the ordinary cohomology groups).
-   The local groups do not depend, up to canonical isomorphism, on the choice of $w$ above $v$.
+
+    $$\hat H^r(G, \mathbb{I}_L) \cong \bigoplus_{v} \hat H^r(G_v, L_v^\times),$$
+
+    the sum running over all places $v$ of $K$ (for $r \ge 1$ these are the ordinary cohomology groups).
+    The local groups do not depend, up to canonical isomorphism, on the choice of $w$ above $v$.
 
 For $r = 0$, with the idèle norm $\mathrm{Nm}_{L/K} \colon \mathbb{I}_L \to \mathbb{I}_K$,
 $\mathrm{Nm}_{L/K}(b)_v = \prod_{w \mid v} \mathrm{Nm}_{L_w/K_v}(b_w)$, which is the map

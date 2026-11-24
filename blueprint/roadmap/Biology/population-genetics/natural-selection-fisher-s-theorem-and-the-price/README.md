@@ -25,6 +25,11 @@
 
 - [Price equation](price.md)
 
+## The multilevel Price equation
+
+- [Law of total covariance for a nested finite population](cov-eq-between-add-within.md)
+- [Multilevel Price equation](multilevel-price.md)
+
 ## Mean-fitness counterexample
 
 - [An example where the change in mean fitness differs from the additive variance](change-in-mean-fitness-differs-from-additive-variance.md)
