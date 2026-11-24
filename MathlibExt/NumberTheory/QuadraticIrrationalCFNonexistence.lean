@@ -16,8 +16,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Convergent denominators of symmetric continued fractions
 
-A symmetric sequence admits a splitting formula for its shifted continuant at each interior
-index. Splitting at the middle gives parity formulas for both even and odd period lengths.
+A symmetric sequence admits splitting formulas for its continuant and its shifted continuant
+at each interior index. Splitting the shifted continuant at the middle gives its parity.
 -/
 
 namespace MetaMathlibExt
@@ -97,6 +97,49 @@ theorem HasPeriodicCF.floor_eq {x : ℝ} {a₀ : ℕ} {a : ℕ → ℕ} {l c : �
   rw [GenContFract.of_h_eq_floor] at h0
   exact_mod_cast h0
 
+namespace convergentDen_symm_split
+
+-- Moving the cut preserves the sum of products for any solution of the continuant recurrence.
+private theorem split_eq {l : ℕ} (a q : ℕ → ℕ)
+    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i))
+    (hrec : ∀ n, q (n + 2) = a (n + 2) * q (n + 1) + q n)
+    (i j : ℕ) (hij : i + j + 3 = l) :
+    q 1 * q (l - 2) + q 0 * q (l - 3) = q (i + 1) * q (j + 1) + q i * q j := by
+  induction i generalizing j with
+  | zero =>
+    rw [show l - 2 = j + 1 by omega, show l - 3 = j by omega]
+  | succ i ih =>
+    have hmirror : a (i + 2) = a (j + 2) := by
+      simpa only [show l - (i + 2) = j + 2 by omega] using
+        hsymm (i + 2) (by omega) (by omega)
+    rw [ih (j + 1) (by omega), hrec j, hrec i, hmirror]
+    ring
+
+end convergentDen_symm_split
+
+/-- **Splitting the last convergent denominator of a symmetric sequence.** Let $l$ be a
+natural number and let $a_0, a_1, a_2, \dots$ be natural numbers with convergent denominators
+$q_0, q_1, q_2, \dots$, such that $a_i = a_{l-i}$ for $1 \le i < l$. Then for every $i$ with
+$1 \le i \le l - 2$,
+$$q_{l-1} = q_i q_{l-1-i} + q_{i-1} q_{l-2-i}.$$
+
+The case $i = 0$ of the paper, which uses $q_{-1} = 0$, is omitted.
+
+Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
+Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Proposition 3 (i)
+(`integers-2026-A69-prop-3`). -/
+theorem convergentDen_symm_split (l : ℕ) (a : ℕ → ℕ)
+    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) (i : ℕ) (hi : 1 ≤ i) (hil : i + 2 ≤ l) :
+    convergentDen a (l - 1) =
+      convergentDen a i * convergentDen a (l - 1 - i) +
+        convergentDen a (i - 1) * convergentDen a (l - 2 - i) := by
+  have h := convergentDen_symm_split.split_eq a (convergentDen a) hsymm (convergentDen_add_two a)
+    (i - 1) (l - 2 - i) (by omega)
+  rw [show i - 1 + 1 = i by omega, show l - 2 - i + 1 = l - 1 - i by omega] at h
+  rw [← h, convergentDen_one, convergentDen_zero, one_mul, hsymm 1 (by decide) (by omega)]
+  simpa only [show l - 3 + 2 = l - 1 by omega, show l - 3 + 1 = l - 2 by omega] using
+    convergentDen_add_two a (l - 3)
+
 namespace shifted_convergentDen_symm_split
 
 -- Extend the paper's indexing to the initial value r₀ = 0.
@@ -110,20 +153,12 @@ private theorem den_add_two (a : ℕ → ℕ) (n : ℕ) :
   | zero => simp [den, convergentDen]
   | succ n => rfl
 
--- Moving the split one position to the right preserves the sum of products.
 private theorem split {l : ℕ} (a : ℕ → ℕ) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i))
     (i j : ℕ) (hij : i + j + 3 = l) :
     den a (l - 2) = den a (i + 1) * den a (j + 1) + den a i * den a j := by
-  induction i generalizing j with
-  | zero =>
-    rw [show l - 2 = j + 1 by omega]
-    simp [den, convergentDen]
-  | succ i ih =>
-    have hmirror : a (i + 2) = a (j + 2) := by
-      simpa only [show l - (i + 2) = j + 2 by omega] using
-        hsymm (i + 2) (by omega) (by omega)
-    rw [ih (j + 1) (by omega), den_add_two a j, den_add_two a i, hmirror]
-    ring
+  simpa only [show den a 1 = 1 from rfl, show den a 0 = 0 from rfl, one_mul, zero_mul,
+    add_zero] using
+    convergentDen_symm_split.split_eq a (den a) hsymm (den_add_two a) i j hij
 
 end shifted_convergentDen_symm_split
 
