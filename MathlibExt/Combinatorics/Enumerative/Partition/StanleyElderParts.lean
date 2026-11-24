@@ -9,24 +9,76 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
+public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import Mathlib.Topology.Instances.Rat
 import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Tactic.Ring
+import MathlibExt.Combinatorics.Enumerative.Partition.Counting
 
 /-!
-# Parts of n-color partitions
+# Stanley's theorem and parts of n-color partitions
 
-We enumerate partitions in which each size has as many colors as its value and prove
-the generating function for the total number of even-sized parts, counted with multiplicity.
+We prove Stanley's identity for ordinary partitions. We also enumerate partitions in which
+each size has as many colors as its value and prove the generating function for the total
+number of even-sized parts, counted with multiplicity.
 -/
 
 open PowerSeries
 open scoped PowerSeries.WithPiTopology
 
 namespace MetaMathlibExt
+
+open Finset in
+/-- **Stanley's theorem.** For every natural number $n$, the total number of parts equal to $1$,
+counted with multiplicity, over all partitions of $n$ equals the sum, over all partitions
+$\lambda$ of $n$, of the number of distinct parts of $\lambda$.
+
+Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
+INTEGERS 25 (2025), Article A94, Theorem 1 (Stanley's theorem). -/
+public theorem sum_count_one_eq_sum_card_toFinset (n : ℕ) :
+    ∑ p : Nat.Partition n, p.parts.count 1 = ∑ p : Nat.Partition n, p.parts.toFinset.card := by
+  have ones (p : Nat.Partition n) :
+      ((Icc 1 n).filter (· ≤ p.parts.count 1)).card = p.parts.count 1 := by
+    have hcard : p.parts.card ≤ n := by
+      simpa [p.parts_sum] using
+        (Multiset.card_nsmul_le_sum (a := (1 : ℕ)) fun _ hi => p.parts_pos hi)
+    have hcount := (Multiset.count_le_card 1 p.parts).trans hcard
+    have h : (Icc 1 n).filter (· ≤ p.parts.count 1) = Icc 1 (p.parts.count 1) := by
+      ext m
+      simp only [mem_filter, mem_Icc]
+      exact ⟨fun hm => ⟨hm.1.1, hm.2⟩, fun hm => ⟨⟨hm.1, hm.2.trans hcount⟩, hm.2⟩⟩
+    rw [h, Nat.card_Icc, Nat.add_sub_cancel]
+  have distinctParts (p : Nat.Partition n) :
+      (Icc 1 n).filter (· ∈ p.parts) = p.parts.toFinset := by
+    ext m
+    simp only [mem_filter, mem_Icc, Multiset.mem_toFinset]
+    exact ⟨And.right, fun hm => ⟨⟨p.parts_pos hm, p.le_of_mem_parts hm⟩, hm⟩⟩
+  have countBySize (P : Nat.Partition n → ℕ → Prop) [DecidableRel P] :
+      (∑ p : Nat.Partition n, ((Icc 1 n).filter (P p)).card) =
+        ∑ m ∈ Icc 1 n, Fintype.card {p : Nat.Partition n // P p m} := by
+    simp only [Fintype.card_subtype, card_eq_sum_ones, sum_filter]
+    exact sum_comm
+  calc
+    _ = ∑ p : Nat.Partition n, ((Icc 1 n).filter (· ≤ p.parts.count 1)).card := by
+      simp only [ones]
+    _ = ∑ m ∈ Icc 1 n, Fintype.card {p : Nat.Partition n // m ≤ p.parts.count 1} :=
+      countBySize _
+    _ = ∑ m ∈ Icc 1 n, Fintype.card {p : Nat.Partition n // m ∈ p.parts} := by
+      refine sum_congr rfl fun m hm => ?_
+      obtain ⟨hm₁, hmn⟩ := mem_Icc.mp hm
+      -- Remove `m` ones on the left and one part of size `m` on the right.
+      calc
+        _ = Fintype.card (Nat.Partition (n - m)) := by
+          simpa only [mul_one] using
+            (Nat.Partition.card_count_ge (v := 1) (k := m) (by decide)
+              (by simpa only [mul_one] using hmn))
+        _ = _ := (Fintype.card_congr (Nat.Partition.partitionWithPartEquiv hm₁ hmn)).symm
+    _ = ∑ p : Nat.Partition n, ((Icc 1 n).filter (· ∈ p.parts)).card :=
+      (countBySize _).symm
+    _ = _ := by simp only [distinctParts]
 
 @[expose] public section
 

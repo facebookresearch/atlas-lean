@@ -13,6 +13,7 @@ public import Mathlib.Data.Int.Interval
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.Data.Finset.Prod
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Logic.Equiv.Prod
 
 /-!
 # Difference bases and bounded difference multiplicities
@@ -34,6 +35,43 @@ Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INT
 public def subRepCount {G : Type*} [AddCommGroup G] [DecidableEq G] (A : Finset G) (x : G) :
     ℕ :=
   ((A ×ˢ A).filter fun p => p.1 - p.2 = x).card
+
+/-- **Products of difference bases.** Let $G_1, G_2$ be abelian groups, $g_1, g_2 \in \mathbb{N}$,
+and $A_1 \subseteq G_1$, $A_2 \subseteq G_2$ finite sets. If every element of $G_1$ equals $a - a'$
+for at least $g_1$ ordered pairs $(a, a') \in A_1 \times A_1$, and every element of $G_2$ equals
+$a - a'$ for at least $g_2$ ordered pairs $(a, a') \in A_2 \times A_2$, then every element of
+$G_1 \times G_2$ equals $z - z'$ for at least $g_1 g_2$ ordered pairs
+$(z, z') \in (A_1 \times A_2) \times (A_1 \times A_2)$.
+
+Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
+(2025), Article A77, Lemma 5 (`integers-2025-A77-lem-5`). -/
+public theorem subRepCount_prod_ge {G₁ G₂ : Type*} [AddCommGroup G₁] [AddCommGroup G₂]
+    [DecidableEq G₁] [DecidableEq G₂] (g₁ g₂ : ℕ) (A₁ : Finset G₁) (A₂ : Finset G₂)
+    (h₁ : ∀ x, g₁ ≤ subRepCount A₁ x) (h₂ : ∀ x, g₂ ≤ subRepCount A₂ x) :
+    ∀ x : G₁ × G₂, g₁ * g₂ ≤ subRepCount (A₁ ×ˢ A₂) x := by
+  rintro ⟨x₁, x₂⟩
+  let R₁ := (A₁ ×ˢ A₁).filter fun p => p.1 - p.2 = x₁
+  let R₂ := (A₂ ×ˢ A₂).filter fun p => p.1 - p.2 = x₂
+  -- Regroup two coordinate representations into one representation in the product group.
+  let regroup := (Equiv.prodProdProdComm G₁ G₁ G₂ G₂).toEmbedding
+  have hincl : (R₁ ×ˢ R₂).map regroup ⊆
+      ((A₁ ×ˢ A₂) ×ˢ (A₁ ×ˢ A₂)).filter (fun p => p.1 - p.2 = (x₁, x₂)) := by
+    intro p hp
+    obtain ⟨⟨⟨a, a'⟩, ⟨b, b'⟩⟩, hab, rfl⟩ := Finset.mem_map.mp hp
+    obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
+    obtain ⟨hma, hxa⟩ := Finset.mem_filter.mp ha
+    obtain ⟨hmb, hxb⟩ := Finset.mem_filter.mp hb
+    obtain ⟨ha, ha'⟩ := Finset.mem_product.mp hma
+    obtain ⟨hb, hb'⟩ := Finset.mem_product.mp hmb
+    change ((a, b), (a', b')) ∈ _
+    exact Finset.mem_filter.mpr
+      ⟨Finset.mem_product.mpr ⟨Finset.mem_product.mpr ⟨ha, hb⟩,
+        Finset.mem_product.mpr ⟨ha', hb'⟩⟩, Prod.ext hxa hxb⟩
+  calc
+    g₁ * g₂ ≤ subRepCount A₁ x₁ * subRepCount A₂ x₂ := Nat.mul_le_mul (h₁ x₁) (h₂ x₂)
+    _ ≤ _ := by
+      simpa only [Finset.card_map, Finset.card_product, R₁, R₂, subRepCount] using
+        Finset.card_le_card hincl
 
 /-- **The $g$-difference basis number.** For a finite set $A \subseteq \mathbb{Z}$ and
 $x \in \mathbb{Z}$, write $r_{A-A}(x)$ for the number of ordered pairs $(a, a') \in A \times A$
