@@ -53,27 +53,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresWanted
 
-/-- **Integer triples with square elementary symmetric functions.** Integers $a$, $b$ and $c$
-have square elementary symmetric functions when $a + b + c$, $ab + bc + ca$ and $abc$ are each
-the square of an integer. -/
-def HasSquareElementarySymmetricFunctions (a b c : ℤ) : Prop :=
-  IsSquare (a + b + c) ∧
-    IsSquare (a * b + b * c + c * a) ∧
-    IsSquare (a * b * c)
-
-/-- **Rationals with square elementary symmetric functions.** Rational numbers $a$, $b$, $c$
-have square elementary symmetric functions when each of $a + b + c$, $ab + bc + ca$ and $abc$
-is the square of a rational number. -/
-def HasSquareElementarySymmetricFunctionsℚ (a b c : ℚ) : Prop :=
-  IsSquare (a + b + c) ∧
-    IsSquare (a * b + b * c + c * a) ∧
-    IsSquare (a * b * c)
-
-/-- **Sums of two integer squares.** An integer $z$ is a sum of two squares when $z = x^2 + y^2$
-for some integers $x$ and $y$. -/
-def IsSumTwoSquaresℤ (z : ℤ) : Prop :=
-  ∃ x y : ℤ, z = x ^ 2 + y ^ 2
-
 /-- **Sums of two nonzero integer squares.** An integer $z$ is a sum of two nonzero squares
 when $z = x^2 + y^2$ for some nonzero integers $x$ and $y$. -/
 def IsSumTwoNonzeroSquaresℤ (z : ℤ) : Prop :=
@@ -89,31 +68,6 @@ theorem_wanted hasSquareElementarySymmetricFunctions_pairwise_products
     {a b c : ℤ}
     (h : HasSquareElementarySymmetricFunctions a b c) :
     HasSquareElementarySymmetricFunctions (a * b) (b * c) (c * a)
-
-/-- **Rational solutions are sums of two squares and rescale to integer solutions.** Let $a$, $b$,
-$c$ be rational numbers such that $a + b + c$, $ab + bc + ca$ and $abc$ are squares of rational
-numbers. Then each of $a$, $b$ and $c$ is a sum of two squares of rational numbers. Moreover,
-there is a nonzero rational number $k$ such that $A = ka$, $B = kb$ and $C = kc$ are integers,
-$A + B + C$, $AB + BC + CA$ and $ABC$ are squares of integers, and each of $A$, $B$ and $C$ is a
-sum of two squares of integers.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Lemma 3. -/
-theorem_wanted isSumTwoSquaresℚ_of_hasSquareElementarySymmetricFunctionsℚ_and_scaling
-    {a b c : ℚ}
-    (h : HasSquareElementarySymmetricFunctionsℚ a b c) :
-    IsSumTwoSquaresℚ a ∧
-      IsSumTwoSquaresℚ b ∧
-      IsSumTwoSquaresℚ c ∧
-      ∃ (k : ℚ) (A B C : ℤ),
-        k ≠ 0 ∧
-          (A : ℚ) = k * a ∧
-          (B : ℚ) = k * b ∧
-          (C : ℚ) = k * c ∧
-          HasSquareElementarySymmetricFunctions A B C ∧
-          IsSumTwoSquaresℤ A ∧
-          IsSumTwoSquaresℤ B ∧
-          IsSumTwoSquaresℤ C
 
 private abbrev firstShiftedSextic (s t : ℤ) : ℤ :=
   s ^ 6 - s ^ 4 * t ^ 2 - 5 * s ^ 2 * t ^ 4 + t ^ 6
