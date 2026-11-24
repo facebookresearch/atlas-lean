@@ -91,11 +91,10 @@ theorem comp_assoc (φ : A₁ →CP A₂) (ψ : A₂ →CP A₃) (χ : A₃ →C
 
 variable {ι : Type*} [Fintype ι]
 
-/-- Finite sum of completely positive maps is completely positive.
-
-The complete positivity is proved generically from entrywise additivity of
-`CStarMatrix.map` and closure of nonnegativity under finite sums, without
-introducing arbitrary complex scalar closure. -/
+/-- **Finite sums of completely positive maps.** For nonunital complex
+C*-algebras `A` and `B` with compatible star orders, a finite family
+`phi : ι → A →CP B` defines the completely positive map
+`a ↦ ∑ i, phi i a`. The empty family gives the zero map. -/
 noncomputable def sum (φ : ι → A₁ →CP A₂) : A₁ →CP A₂ where
   toLinearMap := ∑ i, (φ i).toLinearMap
   map_cstarMatrix_nonneg' k M hM := by
