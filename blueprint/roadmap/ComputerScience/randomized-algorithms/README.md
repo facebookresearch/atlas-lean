@@ -9,3 +9,4 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Hiring problem](hiring-problem/README.md)
 - [Karger's algorithm](karger-s-algorithm/README.md)
 - [MinHash and Jaccard similarity](minhash-and-jaccard-similarity/README.md)
+- [Maximum load of balls into bins](maximum-load-of-balls-into-bins.md)

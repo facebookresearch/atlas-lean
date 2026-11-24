@@ -10,3 +10,5 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 
 - [Program synthesis](program-synthesis/README.md)
 - [Testing and runtime verification](testing-and-runtime-verification/README.md)
+
+- [Safety verification](safety-verification/README.md)
