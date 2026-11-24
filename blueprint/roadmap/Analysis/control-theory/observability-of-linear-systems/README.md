@@ -5,3 +5,4 @@
 
 - [Observer error convergence and observer pole assignment](observer-error-convergence-and-observer-pole-assignment.md)
 - [Observer-based stabilization: the separation principle](observer-based-stabilization-separation-principle.md)
+- [Vanishing forcing of a stable system, and finite cost under detectability](finite-cost-implies-state-convergence-under-detectability.md)

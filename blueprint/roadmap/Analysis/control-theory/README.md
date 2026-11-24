@@ -10,6 +10,7 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Observability of linear systems](observability-of-linear-systems/README.md)
 - [Realization theory](realization-theory/README.md)
 - [Sampled-data systems](sampled-data-systems/README.md)
+- [Feedback stability and classical design](feedback-stability-and-classical-design/README.md)
 - [Steady-state step response of a stable linear system](dc-gain-of-a-stable-linear-system.md)
 
 ## Single-input single-output linear systems

@@ -5,6 +5,7 @@ For $W > 0$, a square-integrable signal whose spectrum is limited to the band $[
 - [The Fourier transform applied twice reflects](fourier-fourier-apply.md)
 - [A band-limited spectrum is the Fourier series of the samples](fourier-eq-tsum.md)
 - [Nyquist–Shannon sampling theorem (Whittaker–Shannon interpolation formula)](nyquist-shannon-sampling.md)
+- [Sampling theorem for square-integrable band-limited functions](sampling-theorem-for-square-integrable-band-limited-functions.md)
 
 ## Related topics
 
