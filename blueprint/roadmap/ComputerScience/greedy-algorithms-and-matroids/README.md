@@ -6,3 +6,4 @@ Greedy choice and exchange arguments: the matroid greedy algorithm and its chara
 - [Interval scheduling](interval-scheduling/README.md)
 - [Matroid greedy algorithm](matroid-greedy-algorithm/README.md)
 - [Graphic matroid](graphic-matroid/README.md)
+- [Matroid intersection by augmenting paths](matroid-intersection-by-augmenting-paths.md)

@@ -13,3 +13,4 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 - [Vertex cover 2-approximation](vertex-cover-2-approximation/README.md)
 - [Weighted vertex cover by the pricing method](weighted-vertex-cover-by-the-pricing-method/README.md)
 - [Lp based approximation](lp-based-approximation/README.md)
+- [Approximation algorithms and approximation ratios](approximation-algorithms-and-approximation-ratios.md)
