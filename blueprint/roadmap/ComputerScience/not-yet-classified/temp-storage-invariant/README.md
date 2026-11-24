@@ -15,8 +15,3 @@
 - [Cells size eq](cells-size-eq.md)
 - [Key Slot lt physical Slots](key-slot-lt-physical-slots.md)
 - [Value Slot lt physical Slots](value-slot-lt-physical-slots.md)
-
-## CPython Listsort
-
-- [Impossible Inline Keyed255](impossible-inline-keyed255.md)
-- [Impossible Inline Keyed255 not inv](impossible-inline-keyed255-not-inv.md)

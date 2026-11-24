@@ -27,5 +27,3 @@
 - [Merge Getmem grown storage valid](merge-getmem-grown-storage-valid.md)
 - [Merge Getmem storage valid](merge-getmem-storage-valid.md)
 - [Released Temp Storage not live](released-temp-storage-not-live.md)
-- [Fabricated Stale Released Merge State](fabricated-stale-released-merge-state.md)
-- [Fabricated Stale Released Merge State reuses](fabricated-stale-released-merge-state-re.md)

@@ -57,7 +57,8 @@ assertion-failure event. A forced push at depth 64 therefore records 65. The
 separate theorem `stackDepthMax ≤ 61 < MAX_MERGE_PENDING` establishes that no
 admitted execution attempts the write that would exceed CPython's fixed array.
 The first claim is pinned by `forcedPushAtCapacity_records65` at
-`Assembly/AccessTrace.lean:990`; the admitted-execution bound is
+`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/AccessTrace.lean:35`;
+the admitted-execution bound is
 pinned by `listsort_safe` at
 `Assembly/ListSortSafety.lean:25`.
 

@@ -20,7 +20,3 @@
 ## Entry Snapshot Permutation
 
 - [Preserve local](preserve-local.md)
-
-## CPython Listsort
-
-- [Entry Snapshot Permutation rejects wrong keyed payload](entry-snapshot-permutation-rejects-wrong.md)

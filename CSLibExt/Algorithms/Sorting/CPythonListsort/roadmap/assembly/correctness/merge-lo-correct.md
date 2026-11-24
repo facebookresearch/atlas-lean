@@ -21,11 +21,11 @@ order, they are `hcomparator`, which binds the call-state comparator to
 `occurrenceComparator lt`; `hstable`, which states the shared
 `StableOccurrencePermutation` of the concatenated retained key ranges directly
 against `canonical`; and `hsemantic : MergeLoSemanticPre lt call`
-(`Correctness/MergeLoCorrectness.lean:1161`,
-`Correctness/MergeLoCorrectness.lean:1162`, and
-`Correctness/MergeLoCorrectness.lean:1165`, respectively).
+(`Correctness/MergeLoCorrectness.lean:1160`,
+`Correctness/MergeLoCorrectness.lean:1161`, and
+`Correctness/MergeLoCorrectness.lean:1164`, respectively).
 These are premises of the machine-checked public theorem declared at
-`Correctness/MergeLoCorrectness.lean:1149`.
+`Correctness/MergeLoCorrectness.lean:1148`.
 
 `MergeLoSemanticPre` is definitionally an abbreviation of the public shared
 `MergeSemanticPre` (`Correctness/MergeLoInvariant.lean:66`).
@@ -51,14 +51,14 @@ contains the reviewed traced `MergeLoSafetyPost`; exact equality of the whole
 affected key/payload-entry range with `mergeLoTargetEntries`; shared sortedness
 and occurrence stability; `List.Perm` of the complete entries in exactly that
 range; and `SortSlice.EqualOutsideRange` for every surrounding cell. The post
-is defined at `Correctness/MergeLoCorrectness.lean:30`, and the
+is defined at `Correctness/MergeLoCorrectness.lean:29`, and the
 theorem inhabiting that exact post is machine-checked at
-`Correctness/MergeLoCorrectness.lean:1149`.
+`Correctness/MergeLoCorrectness.lean:1148`.
 Definitionally, `mergeLoTargetEntries` is the left-biased whole-entry
 `stableEntryMerge` of the two retained runs
 (`Correctness/MergeLoInvariant.lean:44`). Snapshot preservation
 is exported as a separate proved corollary at
-`Correctness/MergeLoCorrectness.lean:160`.
+`Correctness/MergeLoCorrectness.lean:159`.
 
 The direction-independence claim is also exported rather than left as a review
 observation: `mergeLoTargetEntries_eq_mergeHiTargetEntries` proves that the two
@@ -100,7 +100,7 @@ inhabiting the enclosing post is `mergeAt_correct` at
   `mergeLo?` at `Transcription/MergeLo.lean:831`. Their
   composition with the semantic invariant is covered by the raw theorem
   `mergeLo_raw_correct` at
-  `Correctness/MergeLoCorrectness.lean:1123`.
+  `Correctness/MergeLoCorrectness.lean:1122`.
 - The ordinary loop and its winner counters
   (`sources/listobject-excerpts.md:1039`–`1063`) are transcribed by
   `mergeLoLoop?` at `Transcription/MergeLo.lean:581`. The B,
@@ -109,22 +109,22 @@ inhabiting the enclosing post is `mergeAt_correct` at
   `Transcription/MergeLo.lean:774`, and
   `Transcription/MergeLo.lean:798`; the
   semantic preservation theorem for a complete ordinary step is at
-  `Correctness/MergeLoCorrectness.lean:429`.
+  `Correctness/MergeLoCorrectness.lean:428`.
 - The `gallop_right(..., hint = 0)` / `gallop_left(..., hint = 0)` round and its
   bulk movements (`sources/listobject-excerpts.md:1071`–`1117`) are
   transcribed by `mergeLoGallopRound?` at
   `Transcription/MergeLo.lean:509` and exposed by its public
   equation theorem at `Transcription/MergeLo.lean:675`. The
   complete galloping semantic step is machine-checked at
-  `Correctness/MergeLoCorrectness.lean:585`.
+  `Correctness/MergeLoCorrectness.lean:584`.
 - `Succeed` and `CopyB`
   (`sources/listobject-excerpts.md:1119`–`1130`) are transcribed by
   `mergeLoSucceed?` and `mergeLoCopyB?` at
   `Transcription/MergeLo.lean:483` and
   `Transcription/MergeLo.lean:491`. Their total
   semantic theorems are at
-  `Correctness/MergeLoCorrectness.lean:174` and
-  `Correctness/MergeLoCorrectness.lean:195`.
+  `Correctness/MergeLoCorrectness.lean:173` and
+  `Correctness/MergeLoCorrectness.lean:194`.
   Comparator-error `Fail` is absent from the total-Boolean-comparator model;
   the shared remainder copy remains in `mergeLoSucceed?`.
 
@@ -133,10 +133,10 @@ inhabiting the enclosing post is `mergeAt_correct` at
 - The unconditional raw evaluator result—successful exact whole-entry target
   plus external frame, without a raw-correctness premise—is proved by
   `mergeLo_raw_correct`
-  (`Correctness/MergeLoCorrectness.lean:1123`).
+  (`Correctness/MergeLoCorrectness.lean:1122`).
 - The public theorem exports the actual traced safety result together with
   sortedness, shared stability, whole-entry permutation, and frame
-  (`Correctness/MergeLoCorrectness.lean:1149`).
+  (`Correctness/MergeLoCorrectness.lean:1148`).
 - The forward and backward target wrappers compute the identical mathematical
   result for the same call; the public consistency theorem is
   `mergeLoTargetEntries_eq_mergeHiTargetEntries`
@@ -149,20 +149,20 @@ inhabiting the enclosing post is `mergeAt_correct` at
   fixture retains the left equal occurrence before the right while preserving
   payloads and both outside sentinels
   (`Transcription/MergeLo.lean:798` and
-  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoCorrectness.lean:19`).
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoCorrectness.lean:20`).
 - The min-gallop-one fixture pins the final stable equal-key/payload result
-  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoCorrectness.lean:37`). It does not by
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoCorrectness.lean:38`). It does not by
   itself observably pin entry into galloping mode; gallop semantics are instead
   covered parametrically by the theorem at
-  `Correctness/MergeLoCorrectness.lean:585`.
+  `Correctness/MergeLoCorrectness.lean:584`.
 - The raw inconsistent-comparator `na = 0` hedge is observably exercised with
   a continuation that always fails, while the strict-order correctness proof
   excludes that outcome through the strict gallop bound
-  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/MergeLo.lean:90` and
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/MergeLo.lean:135` and
   `Correctness/MergeLoInvariant.lean:1919`).
 - The concrete fixture's declared temporary allocation satisfies
   `TempStorageInv`
-  (`Correctness/MergeLoCorrectness.lean:1179`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoCorrectness.lean:56`).
 
 ## Depends on
 

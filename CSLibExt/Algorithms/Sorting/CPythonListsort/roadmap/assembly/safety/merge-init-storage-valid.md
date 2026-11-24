@@ -18,10 +18,12 @@ signed 64-bit computation to the sharper source facts needed by consumers:
   `alloced.toNat = 256`.
 
 The supporting regression theorem
-`CPythonListsort.impossibleInlineKeyed255_not_inv` proves that the deliberately
-exhibited state `backing = .inline`, `hasValues = true`, and `alloced = 255`
-violates `TempStorageInv`. This pins the reason for the invariant and prevents
-the inline-capacity clause from being weakened silently.
+`CPythonListsort.impossibleInlineKeyed255_not_inv` at
+`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/TempStorageInvariant.lean:22`
+proves that the deliberately exhibited state `backing = .inline`,
+`hasValues = true`, and `alloced = 255` violates `TempStorageInv`. This pins
+the reason for the invariant and prevents the inline-capacity clause from being
+weakened silently.
 
 ## Depends on
 

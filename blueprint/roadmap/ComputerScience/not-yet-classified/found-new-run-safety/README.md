@@ -19,5 +19,3 @@
 - [Found New Run Loop Traced singleton write](found-new-run-loop-traced-singleton-writ.md)
 - [Found New Run Traced powerloop exhaustion](found-new-run-traced-powerloop-exhaustio.md)
 - [Found New Run Traced singleton access order](found-new-run-traced-singleton-access-or.md)
-- [Found New Run Loop Traced unpowered preceding failure](found-new-run-loop-traced-unpowered-prec.md)
-- [Found New Run Traced unpowered prefix failure](found-new-run-traced-unpowered-prefix-fa.md)

@@ -96,25 +96,4 @@ def mergeForceCollapse? (state : MergeState κ ν) :
     Option (MergeForceCollapseResult κ ν) :=
   mergeForceCollapseLoop? state.pending.size state
 
-private def forceCollapseTieExampleState : MergeState Nat Nat :=
-  { min_gallop := MIN_GALLOP
-    listlen := 3
-    basekeys := 0
-    data := { entries := #[] }
-    a := { cells := #[], backing := .inline, hasValues := false }
-    alloced := 0
-    pending :=
-      #[{ base := 0, len := 1, power := some 1 },
-        { base := 1, len := 1, power := some 2 },
-        { base := 2, len := 1, power := none }]
-    key_compare := fun left right => decide (left < right)
-    mr_current := 0
-    mr_e := 0
-    mr_mask := 0 }
-
-/-- The neighboring-length test is strict: a tie keeps `n = size - 2` and
-therefore chooses the top pair rather than the lower pair. -/
-example : forceCollapseIndex? forceCollapseTieExampleState = some 1 := by
-  decide
-
 end CPythonListsort

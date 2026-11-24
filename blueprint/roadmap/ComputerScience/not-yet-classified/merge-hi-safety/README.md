@@ -47,11 +47,6 @@
 - [Merge Hi Fuel Invariant](merge-hi-fuel-invariant.md)
 - [Set Control](set-control.md)
 
-## Concrete adversarial-comparator hedge fixtures
-
-- [Merge Hi Nb Zero Hedge Regression Cursor invariant](merge-hi-nb-zero-hedge-regression-cursor.md)
-- [Merge Hi Nb Zero Hedge Strict Control Cursor invariant](merge-hi-nb-zero-hedge-strict-control-cu.md)
-
 ## Concrete trace-witness composition
 
 - [Merge Hi Allocated](merge-hi-allocated.md)

@@ -26,4 +26,3 @@
 - [Merge At Traced policy Events eq prepare](merge-at-traced-policy-events-eq-prepare.md)
 - [Merge At Safety Post](merge-at-safety-post.md)
 - [Merge At safe](merge-at-safe.md)
-- [Merge At Traced early Trim records Logical Merge](merge-at-traced-early-trim-records-logic.md)

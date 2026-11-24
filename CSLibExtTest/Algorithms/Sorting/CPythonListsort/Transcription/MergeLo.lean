@@ -12,6 +12,51 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeLo
 
 namespace CPythonListsort
 
+/-! The next regression deliberately uses the non-irreflexive comparator
+`(· ≥ ·)`.  Its continuation always fails, so the successful result is an
+observable witness that the first gallop's `index = na` result took the
+`na = 0` Succeed hedge rather than continuing the round.  A strict-`<` control
+on the identical geometry returns index zero and a different final ordering. -/
+
+def mergeLoNaZeroHedgeRegressionState : MergeState Nat Nat :=
+  { min_gallop := MIN_GALLOP
+    listlen := 3
+    basekeys := 0
+    data :=
+      { entries :=
+          #[{ key := 99, value := some 99 },
+            { key := 98, value := some 98 },
+            { key := 0, value := some 0 }] }
+    a :=
+      { cells :=
+          #[(some { key := 1, value := some 10 }),
+            (some { key := 2, value := some 20 })]
+        backing := .inline
+        hasValues := true }
+    alloced := 2
+    pending := #[]
+    key_compare := fun left right => decide (left ≥ right)
+    mr_current := 0
+    mr_e := 0
+    mr_mask := 0 }
+
+def mergeLoNaZeroHedgeRegressionMachine : MergeLoMachine Nat Nat :=
+  { state := mergeLoNaZeroHedgeRegressionState
+    dest := 0
+    aPos := 0
+    bPos := 2
+    na := 2
+    nb := 1
+    minGallop := MIN_GALLOP }
+
+def mergeLoNaZeroHedgeStrictControlState : MergeState Nat Nat :=
+  { mergeLoNaZeroHedgeRegressionState with
+    key_compare := fun left right => decide (left < right) }
+
+def mergeLoNaZeroHedgeStrictControlMachine : MergeLoMachine Nat Nat :=
+  { mergeLoNaZeroHedgeRegressionMachine with
+    state := mergeLoNaZeroHedgeStrictControlState }
+
 /-! These executable regressions pin the ordinary-mode argument order and
 stable equality branch. -/
 

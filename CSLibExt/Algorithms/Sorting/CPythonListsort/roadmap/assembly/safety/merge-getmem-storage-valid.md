@@ -31,10 +31,11 @@ The formal result exports the exact intermediate `merge_freemem` state on the
 growth path.  Inline backing remains unchanged; live heap backing becomes
 released with an empty payload while `alloced` and values mode remain stale,
 and `TempStorageInv` still holds.  It also frames every non-storage
-`MergeState` field.  A concrete regression exhibits a fabricated released
-state whose stale capacity makes raw `mergeGetmem` report `.reused`; that state
-satisfies `TempStorageInv` but not `TempStorage.Live`, machine-checking why the
-live-input premise is indispensable.
+`MergeState` field. The regression at
+`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/MergeGetmemStorageValid.lean:39`
+exhibits a fabricated released state whose stale capacity makes raw
+`mergeGetmem` report `.reused`; that state satisfies `TempStorageInv` but not
+`TempStorage.Live`, showing why the live-input premise is indispensable.
 
 The allocation inequality is a premise of this function-local theorem, not a
 consequence of `TempStorageInv` or liveness. For valid `merge_at` executions it

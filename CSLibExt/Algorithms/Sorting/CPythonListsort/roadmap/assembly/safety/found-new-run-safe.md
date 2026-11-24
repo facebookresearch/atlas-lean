@@ -61,8 +61,8 @@ Keep the invalid uninitialized-power arm nonvacuous in the model:
 that violates `PoweredPrefix`, reaches the uninitialized preceding-power arm,
 returns `none` after the top and second-last pending reads, and records no
 fuel-exhaustion marker or push. The two theorem pins are at
-`Assembly/FoundNewRunSafety.lean:1370` and
-`Assembly/FoundNewRunSafety.lean:1389`.
+`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/FoundNewRunSafety.lean:64` and
+`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/FoundNewRunSafety.lean:83`.
 
 For lifecycle composition, the public `FoundNewRunSafetyPost` additionally
 exports semantic validity and directional-only classification for every memory

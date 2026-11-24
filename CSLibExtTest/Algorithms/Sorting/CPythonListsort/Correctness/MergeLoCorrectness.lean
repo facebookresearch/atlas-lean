@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoCorrectness
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeLo
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoRegressionKernel
 
 /-! # Fixed-input Listsort regressions -/
 
@@ -47,5 +48,14 @@ private theorem mergeLo_correctness_gallop_tie_regression :
            { key := 4, value := some 40 },
            { key := 5, value := some 50 }]) := by
   exact mergeLo_gallop_stability_regression
+
+/-! ## Executable exact-target regressions -/
+
+/-- The executable fixture's four temporary cells are genuinely covered by
+its declared allocation; they are not phantom storage. -/
+theorem mergeLoCorrectnessRegression_tempStorage :
+    TempStorageInv mergeLoCorrectnessRegressionState.a
+      mergeLoCorrectnessRegressionState.alloced := by
+  exact mergeLoCorrectnessRegression_tempStorage_kernel
 
 end CPythonListsort

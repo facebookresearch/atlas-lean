@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.EntrySnapshotPermutation
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoInvariant
-import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoRegressionKernel
 
 /-!
 # Functional correctness of `merge_lo`
@@ -1171,14 +1170,5 @@ theorem mergeLo_correct
     hsafety
   exact ⟨result, mergeLoCorrectnessPost_of_exactRange horder canonical hsafety
     hsemantic hstable hout.exactRange hout.frame⟩
-
-/-! ## Executable exact-target regressions -/
-
-/-- The executable fixture's four temporary cells are genuinely covered by
-its declared allocation; they are not phantom storage. -/
-theorem mergeLoCorrectnessRegression_tempStorage :
-    TempStorageInv mergeLoCorrectnessRegressionState.a
-      mergeLoCorrectnessRegressionState.alloced := by
-  exact mergeLoCorrectnessRegression_tempStorage_kernel
 
 end CPythonListsort

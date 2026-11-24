@@ -449,10 +449,10 @@
   },
   {
    "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeLoRegressionKernel.lean",
-   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoRegressionKernel.lean",
+   "destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoRegressionKernel.lean",
    "sha256": "96b4382672d7f55c58dee8ebb653f4afe48eae3df229570a23b0cb55bd5381a3",
    "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeLoRegressionKernel.lean",
-   "disposition": "root production source"
+   "disposition": "test fixture and kernel-checked regressions"
   },
   {
    "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeMovementCorrectness.lean",

@@ -25,7 +25,7 @@ erasure and legacy-trace projection theorems at
 the `MergeAtSafetyPost.logicalMerge` field at
 `Assembly/MergeAtSafety.lean:1683-1686`; `mergeAt_safe` proves
 that postcondition at `Assembly/MergeAtSafety.lean:2156`.  The kernel-checked
-early-trim regression at `Assembly/MergeAtSafety.lean:2224`
+early-trim regression at `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/MergeAtSafety.lean:60`
 records that logical event while recording no directional memory event.
 
 Empty and singleton executions are pinned against the actual evaluator by

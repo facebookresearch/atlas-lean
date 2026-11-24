@@ -53,10 +53,10 @@ still be rejected because its unscanned suffix is wrong.
   (`Correctness/ScanRemainder.lean:299`).
 - The wrong-suffix anti-vacuity regression exhibits a state accepted by
   `PendingRunsCorrect` and rejected by `ScanRemainderMatches`
-  (`Correctness/ScanRemainder.lean:461`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/ScanRemainder.lean:57`).
 - The nonzero-base regression has matching visible values and a deliberately
   matching zero-based prefix, but is rejected for the wrong absolute origin
-  (`Correctness/ScanRemainder.lean:510`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/ScanRemainder.lean:106`).
 
 Each item above cites its theorem or executable regression; the two predicate
 locations in the opening section are definitions, not pinning theorems.

@@ -34,5 +34,18 @@ import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeHi
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeLo
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeMemorySafety
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.PowerSortCostRegression
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.AccessTrace
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.FoundNewRunSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeAtSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeGetmemStorageValid
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeHiSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeLoSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.EntrySnapshotPermutation
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Policy.StackPowers
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.FoundNewRun
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.ListSortImpl
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeForceCollapse
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.SortSlice
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.TempStorageInvariant
 
 /-! Regression clients for the CPython listsort model. -/

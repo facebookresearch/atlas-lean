@@ -12,7 +12,3 @@
 
 - [Merge Lo raw correct](merge-lo-raw-correct.md)
 - [Merge Lo correct](merge-lo-correct.md)
-
-## Executable exact-target regressions
-
-- [Merge Lo Correctness Regression temp Storage](merge-lo-correctness-regression-temp-sto.md)

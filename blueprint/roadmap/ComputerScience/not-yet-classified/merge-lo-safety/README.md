@@ -51,11 +51,6 @@
 - [Merge Lo Machine Invariant](merge-lo-machine-invariant.md)
 - [Merge Lo Fuel Invariant](merge-lo-fuel-invariant.md)
 
-## Concrete adversarial-comparator hedge fixtures
-
-- [Merge Lo Na Zero Hedge Regression Machine invariant](merge-lo-na-zero-hedge-regression-machin.md)
-- [Merge Lo Na Zero Hedge Strict Control Machine invariant](merge-lo-na-zero-hedge-strict-control-ma.md)
-
 ## Internal lockstep postconditions
 
 - [Merge Lo Core Post](merge-lo-core-post.md)

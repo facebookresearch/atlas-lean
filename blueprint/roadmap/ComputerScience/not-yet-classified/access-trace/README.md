@@ -72,10 +72,6 @@
 - [Push Formed Run Traced legacy Projection](push-formed-run-traced-legacy-projection.md)
 - [Push Formed Run Traced policy Event](push-formed-run-traced-policy-event.md)
 
-## Executable regressions
+## Stack capacity
 
-- [Forced Push At Capacity records65](forced-push-at-capacity-records65.md)
 - [Push Pending Run Traced at capacity](push-pending-run-traced-at-capacity.md)
-- [Rejected Released Temp Read is observable](rejected-released-temp-read-is-observabl.md)
-- [Rejected Uninitialized Temp Read is observable](rejected-uninitialized-temp-read-is-obse.md)
-- [Local Trace Composition preserves order](local-trace-composition-preserves-order.md)

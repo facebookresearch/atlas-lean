@@ -58,7 +58,6 @@ Topics added since this subject's fields were last revised.
 - [Merge Lo](merge-lo/README.md)
 - [Merge Lo Correctness](merge-lo-correctness/README.md)
 - [Merge Lo Invariant](merge-lo-invariant/README.md)
-- [Merge Lo Regression Kernel](merge-lo-regression-kernel/README.md)
 - [Merge Lo Safety](merge-lo-safety/README.md)
 - [Merge Memcpy Provenance](merge-memcpy-provenance/README.md)
 - [Merge Memory](merge-memory/README.md)

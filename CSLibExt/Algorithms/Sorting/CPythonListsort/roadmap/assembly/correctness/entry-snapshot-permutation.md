@@ -42,7 +42,7 @@ fields exported by the local `binarysort` and `count_run` correctness posts.
   (`Correctness/EntrySnapshotPermutation.lean:163`).
 - The concrete keyed anti-vacuity regression keeps both tagged keys fixed but
   changes one payload and proves that the invariant rejects the result
-  (`Correctness/EntrySnapshotPermutation.lean:190`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/EntrySnapshotPermutation.lean:26`).
 
 These are theorem/regression citations; the declaration at line 21 is only
 the invariant definition.

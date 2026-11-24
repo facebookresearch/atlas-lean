@@ -12,9 +12,9 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.TempStorageInva
 /-!
 # Kernel-checked executable fixture for `merge_lo`
 
-This small module keeps the closed evaluator reduction separate from the large
-semantic proof module.  The exported theorem is reused there as the public
-regression, so no native-code decision procedure enters the trusted proof.
+This module keeps the closed evaluator reduction separate from the larger
+correctness development. The mirrored `MergeLoCorrectness` tests reuse
+these kernel-checked facts without a native-code decision procedure.
 -/
 
 namespace CPythonListsort

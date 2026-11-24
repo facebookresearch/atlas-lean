@@ -15,4 +15,3 @@
 - [Boundary power](boundary-power.md)
 - [Run power of mem prefix](run-power-of-mem-prefix.md)
 - [Virtual boundary powers](virtual-boundary-powers.md)
-- [Fabricated Two Run Stack not powered](fabricated-two-run-stack-not-powered.md)

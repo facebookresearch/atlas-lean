@@ -26,5 +26,3 @@
 - [Scan Remainder Entries Match initial](scan-remainder-entries-match-initial.md)
 - [Scan Remainder Entries Match initial list Sort Input](scan-remainder-entries-match-initial-lis.md)
 - [Scan Remainder Matches initial](scan-remainder-matches-initial.md)
-- [Pending Runs Correct allows wrong suffix but scan Remainder rejects](pending-runs-correct-allows-wrong-suffix.md)
-- [Scan Remainder nonzero base wrong origin rejected](scan-remainder-nonzero-base-wrong-origin.md)
