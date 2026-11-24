@@ -1,0 +1,18 @@
+# General Coefficient Hyperdescent Models
+
+- [Index Inclusion](index-inclusion.md)
+- [Lifted Index Inclusion](lifted-index-inclusion.md)
+- [Augmentation Vertex](augmentation-vertex.md)
+- [Scheme Base Vertex](scheme-base-vertex.md)
+- [Augmented Base](augmented-base.md)
+- [Unaugmented Base](unaugmented-base.md)
+- [Base restriction](base-restriction.md)
+- [Augmentation base](augmentation-base.md)
+- [Hypercover Restriction](hypercover-restriction.md)
+- [Hypercover Comparison Source](hypercover-comparison-source.md)
+- [Hypercover Comparison](hypercover-comparison.md)
+- [Constructible Fibre](constructible-fibre.md)
+- [Amplitude Projection](amplitude-projection.md)
+- [Amplitude Fibre](amplitude-fibre.md)
+- [Constructible Comparison](constructible-comparison.md)
+- [Amplitude Comparison](amplitude-comparison.md)
