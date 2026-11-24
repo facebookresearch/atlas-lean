@@ -12495,7 +12495,7 @@
   "MathlibExt/NumberTheory/Recurrences/GeneralizedBiPeriodicFibonacciPeriod": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Bi-periodic Fibonacci sequences modulo primes"},
   "MathlibExt/NumberTheory/Recurrences/GeneralizedBiPeriodicFibonacciZeroIndices": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Bi-periodic Fibonacci sequences modulo primes"},
   "MathlibExt/NumberTheory/Recurrences/GeneralizedFibonacciIdentities": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Horadam and generalized Fibonacci sequences"},
-  "MathlibExt/NumberTheory/Recurrences/GeneralizedHyperFibonacci": {"to": "LinearAlgebra/special-matrices", "title": "Total positivity"},
+  "MathlibExt/NumberTheory/Recurrences/GeneralizedHyperFibonacci": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Generalized hyper-Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/GeneralizedPellNumbers": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Pell numbers and compositions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciDOcagneIdentity": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciFibonacciFactorIdentity": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
