@@ -8,25 +8,32 @@ import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import subprocess
+import sys
 import tempfile
 import threading
+import time
 
 ROOTS = ('CSLibExt', 'CSLibExtTest', 'MathlibExt', 'MathlibExtTest',
          'PhyslibExt', 'PhyslibExtTest', 'Domains', 'DomainsTest', 'WantedExt')
 BATCH_SIZE = 1024
-# Memory allowed per parallel batch when the worker count is sized. An initial
-# group of 1,024 modules peaks at 5-8 GB resident, nearly all of it mapped .olean
-# pages that parallel batches share; its own memory is 0.2-0.3 GB. 6 GiB keeps
-# the 16 GB standard runner at two batches. ATLAS_AUDIT_WORKERS overrides the
-# count; 1 runs the batches one by one, as before.
+# Memory allowed per parallel batch. An initial group of 1,024 modules peaks at
+# 5-8 GB resident, nearly all of it mapped .olean pages that parallel batches
+# share; its own memory is a few hundred MB. 6 GiB keeps the 16 GB standard
+# runner at two batches. ATLAS_AUDIT_WORKERS overrides the count; 1 runs the
+# batches one by one, as before.
 BATCH_MEMORY = 6 * 2**30
 WORKERS_VARIABLE = 'ATLAS_AUDIT_WORKERS'
-# Prints every variable as NAME=value, each ended by a NUL byte. It links only
-# libc, so Lake's library path cannot break it, and its output, which holds
-# secrets, goes to a private file that no error message quotes.
-ENVIRONMENT_COMMAND = ['env', '-0']
 BATCH_TIMEOUT = 1200  # seconds for one Lean batch, and for Lake to give its environment
+SETTLE_SECONDS = 5  # time for a new batch's memory to show in MemAvailable
+# On Linux, `lake env env -0` lists the workspace environment, and each batch
+# runs its Lean directly. GNU `env` links only libc, so Lake's library path
+# cannot break it, and its output, which holds secrets, goes to a private file
+# that no error message quotes. Elsewhere `env` may lack `-0` or drop variables
+# (macOS strips DYLD_* from protected executables), so each batch runs through
+# `lake env lean`, as before, in its own process group.
+LIST_ENVIRONMENT = sys.platform.startswith('linux')
 COLLISION = re.compile(r"^.*:\d+:\d+: error: import [^\n]* failed, environment already contains[^\n]*$")
 
 
@@ -58,32 +65,32 @@ def inventory(root: Path) -> list[str]:
     return modules
 
 
-def read_kernel_text(path: str | Path) -> str:
-    """A /proc or cgroup file's text; undecodable bytes become surrogates instead of errors."""
-    with open(path, encoding='utf-8', errors='surrogateescape') as handle:
+def read_kernel_bytes(path: str | Path) -> bytes:
+    with open(path, 'rb') as handle:
         return handle.read()
 
 
-def kernel_number(text: str) -> int:
+def kernel_number(text: bytes) -> int:
     """A decimal number as the kernel writes it, in ASCII digits only."""
-    if not re.fullmatch(r'[0-9]+', text.strip(), re.ASCII):
+    text = text.strip()
+    if not re.fullmatch(rb'[0-9]+', text):
         raise ValueError(f'not a kernel number: {text!r}')
     return int(text)
 
 
-def unescape_mount_path(path: str) -> str:
+def unescape_mount_path(path: bytes) -> bytes:
     """Undo the octal escapes (`\040` for a space) of /proc/self/mountinfo paths."""
-    return re.sub(r'\\([0-7]{3})', lambda match: chr(int(match.group(1), 8)), path)
+    return re.sub(rb'\\([0-7]{3})', lambda match: bytes([int(match.group(1), 8) & 0xFF]), path)
 
 
 def cgroup_usage(group: Path) -> int:
     """A cgroup's memory use without its inactive file pages, which the kernel reclaims first."""
-    current = kernel_number(read_kernel_text(group / 'memory.current'))
+    current = kernel_number(read_kernel_bytes(group / 'memory.current'))
     inactive = 0
     try:
-        for line in read_kernel_text(group / 'memory.stat').splitlines():
-            if line.startswith('inactive_file '):
-                inactive = kernel_number(line.split()[1])
+        for line in read_kernel_bytes(group / 'memory.stat').split(b'\n'):
+            if line.startswith(b'inactive_file '):
+                inactive = kernel_number(line.split(b' ')[1])
     except (OSError, ValueError, IndexError):
         inactive = 0
     return max(0, current - inactive)
@@ -98,10 +105,10 @@ def cgroup_limit(group: Path) -> int | None:
     limits = []
     for name in ('memory.max', 'memory.high'):
         try:
-            value = read_kernel_text(group / name).strip()
+            value = read_kernel_bytes(group / name).strip()
         except FileNotFoundError:
             continue
-        if value != 'max':
+        if value != b'max':
             limits.append(kernel_number(value))
     return min(limits) if limits else None
 
@@ -125,41 +132,50 @@ def cgroup_headroom() -> int | None:
     """Memory this process's cgroup v2 and its visible ancestors still allow, if any limits it.
 
     The limit at each level is the tighter of memory.max and memory.high.
-
     /proc/self/cgroup gives the membership relative to the cgroup namespace, and
     /proc/self/mountinfo which part of the hierarchy each cgroup2 mount shows and
-    where; every mount that shows the membership is read, and the tightest
-    limit wins. None when no cgroup limit applies (no procfs, or no cgroup v2
-    membership). 0 when one may apply but cannot be read: a cgroup v1 memory
-    controller, a membership no mount shows, a missing or unreadable cgroup
-    directory or interface file, or a malformed number. A level without
-    memory.max and memory.high has no memory controller and sets no limit.
+    where; both are read as bytes, one record per LF. Every mount that shows
+    the membership is read, and the tightest limit wins. None when no cgroup
+    limit applies (no procfs, or no cgroup v2 membership). 0 when one may apply
+    but cannot be read: a cgroup v1 memory controller, an ambiguous or
+    unresolvable membership, a membership no mount shows, a missing or
+    unreadable cgroup directory or interface file, or a malformed number. A
+    level without memory.max and memory.high has no memory controller and sets
+    no limit.
     """
     try:
         try:
-            lines = read_kernel_text('/proc/self/cgroup').splitlines()
+            listing = read_kernel_bytes('/proc/self/cgroup')
         except FileNotFoundError:
             if not os.path.isdir('/proc/self'):
                 return None  # no procfs (macOS, say): no cgroup to read
             raise
-        fields = [line.split(':', 2) for line in lines]
-        if any(len(field) == 3 and 'memory' in field[1].split(',') for field in fields):
+        fields = [line.split(b':', 2) for line in listing.split(b'\n') if line]
+        if any(len(field) != 3 for field in fields):
+            return 0
+        if any(b'memory' in field[1].split(b',') for field in fields):
             return 0  # a cgroup v1 memory controller, whose limits are not read here
-        unified = [field[2] for field in fields if len(field) == 3 and field[0] == '0' and field[1] == '']
+        unified = [field[2] for field in fields if field[0] == b'0' and field[1] == b'']
         if not unified:
             return None
-        member = unified[0]
+        if len(unified) > 1 or not unified[0].startswith(b'/'):
+            return 0
+        member = unified[0].rstrip(b'/')
+        if any(part in (b'.', b'..') for part in member.split(b'/')):
+            return 0  # outside the namespace's root, which no mount can show
         views = []
-        for line in read_kernel_text('/proc/self/mountinfo').splitlines():
-            entry = line.split()
-            if '-' not in entry:
+        for line in read_kernel_bytes('/proc/self/mountinfo').split(b'\n'):
+            entry = line.split(b' ')
+            if b'-' not in entry:
                 continue
-            separator = entry.index('-')
-            if separator < 5 or len(entry) <= separator + 1 or entry[separator + 1] != 'cgroup2':
+            separator = entry.index(b'-')
+            if separator < 5 or len(entry) <= separator + 1 or entry[separator + 1] != b'cgroup2':
                 continue
-            root, mount = unescape_mount_path(entry[3]).rstrip('/'), Path(unescape_mount_path(entry[4]))
-            if member == root or member.startswith(root + '/'):
-                views.append((mount / member[len(root):].lstrip('/'), mount))
+            root, mount = unescape_mount_path(entry[3]).rstrip(b'/'), unescape_mount_path(entry[4])
+            if member == root or member.startswith(root + b'/'):
+                mount_point = Path(os.fsdecode(mount))
+                relative = os.fsdecode(member[len(root):].lstrip(b'/'))
+                views.append((mount_point / relative if relative else mount_point, mount_point))
         if not views:
             return 0
         headroom = None
@@ -168,7 +184,7 @@ def cgroup_headroom() -> int | None:
             if left is not None:
                 headroom = left if headroom is None else min(headroom, left)
         return headroom
-    except (OSError, ValueError, UnicodeError, IndexError):
+    except (OSError, ValueError, IndexError):
         return 0
 
 
@@ -176,8 +192,8 @@ def available_memory() -> int | None:
     """Bytes new processes can use: MemAvailable, capped by any cgroup limit; None if unknown."""
     try:
         available = None
-        for line in read_kernel_text('/proc/meminfo').splitlines():
-            if line.startswith('MemAvailable:'):
+        for line in read_kernel_bytes('/proc/meminfo').split(b'\n'):
+            if line.startswith(b'MemAvailable:'):
                 available = kernel_number(line.split()[1]) * 1024
                 break
     except (OSError, ValueError, IndexError):
@@ -188,19 +204,25 @@ def available_memory() -> int | None:
     return available if headroom is None else max(0, min(available, headroom))
 
 
+def requested_workers() -> int | None:
+    """The ATLAS_AUDIT_WORKERS count, if set."""
+    value = os.environ.get(WORKERS_VARIABLE, '').strip()
+    if not value:
+        return None
+    if not re.fullmatch(r'[0-9]{1,4}', value, re.ASCII) or int(value) < 1:
+        raise AuditFailure(f'{WORKERS_VARIABLE} must be an integer from 1 to 9999, not {value!r}')
+    return int(value)
+
+
 def worker_count(groups: int) -> int:
     """How many initial groups run at once: ATLAS_AUDIT_WORKERS, else what memory holds.
 
-    Sized once, from the memory available when the audit starts, at BATCH_MEMORY
-    per batch although a batch's own memory is a few hundred MB: that margin is
-    what leaves room for other work on the machine.
+    Sized from the memory available when the audit starts, at BATCH_MEMORY per
+    batch, and at most the usable cores. Admission then rechecks the memory
+    before each batch it adds to running ones.
     """
-    value = os.environ.get(WORKERS_VARIABLE, '').strip()
-    if value:
-        if not re.fullmatch(r'[0-9]{1,4}', value, re.ASCII) or int(value) < 1:
-            raise AuditFailure(f'{WORKERS_VARIABLE} must be an integer from 1 to 9999, not {value!r}')
-        workers = int(value)
-    else:
+    workers = requested_workers()
+    if workers is None:
         available = available_memory()
         workers = 1 if available is None else available // BATCH_MEMORY
         cores = len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count()
@@ -216,7 +238,7 @@ def lean_environment(root: Path) -> tuple[str, dict[str, str]]:
     batch's process is Lean itself, which a timeout or an abort stops.
     """
     with tempfile.TemporaryFile() as capture:
-        result = subprocess.run(['lake', 'env', *ENVIRONMENT_COMMAND], cwd=root, stdout=capture,
+        result = subprocess.run(['lake', 'env', 'env', '-0'], cwd=root, stdout=capture,
                                 stderr=subprocess.PIPE, timeout=BATCH_TIMEOUT)
         if result.returncode != 0:
             message = result.stderr.decode('utf-8', 'replace').rstrip()
@@ -238,84 +260,148 @@ def lean_environment(root: Path) -> tuple[str, dict[str, str]]:
     return lean, environment
 
 
-def launch_lean(command: list[str], root: Path, environment: dict[str, str]) -> subprocess.Popen:
+def prepare_lake(root: Path) -> None:
+    """Load Lake's workspace configuration once, before batches run `lake env lean` at once."""
+    result = subprocess.run(['lake', 'env', 'true'], cwd=root, stdout=subprocess.DEVNULL,
+                            stderr=subprocess.PIPE, timeout=BATCH_TIMEOUT)
+    if result.returncode != 0:
+        message = result.stderr.decode('utf-8', 'replace').rstrip()
+        raise AuditFailure(message or f'lake env exited {result.returncode}')
+
+
+def launch_lean(command: list[str], root: Path, environment: dict[str, str] | None) -> subprocess.Popen:
+    """Start a batch. Through Lake, it gets its own process group, so that stopping it stops Lean."""
     return subprocess.Popen(command, cwd=root, env=environment, stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT, text=True)
-
-
-def stop(process: subprocess.Popen) -> None:
-    try:
-        process.kill()
-    except OSError:
-        pass
+                            stderr=subprocess.STDOUT, text=True, start_new_session=environment is None)
 
 
 class SkippedGroup(AuditFailure):
-    """A group not admitted because an earlier group failed or the audit was cancelled."""
+    """A group not started because an earlier group failed or the audit was cancelled."""
 
 
 class Admission:
-    """Decides when a Lean batch of an initial group starts, and stops batches no longer needed.
+    """Decides when a Lean batch starts, and stops batches no longer needed.
 
-    Groups start in group order. Once a group fails, no batch of a later group
-    starts and the running ones are stopped, while earlier groups keep running,
-    so the first failing group is always found. After a cancellation no batch
-    starts and every running one is stopped. How many batches run at once is
-    the worker pool's size.
+    - Groups start in group order. Once a group fails, no batch of a later
+      group starts and the running ones are stopped, while earlier groups keep
+      running, so the first failing group is always found. After a
+      cancellation no batch starts and every running one is stopped.
+    - Processes start and are stopped under one lock, so a stop never misses
+      a batch that has just started. On Linux they are signalled through a
+      pidfd, which cannot reach a reused process ID.
+    - With `gated`, a batch joins running ones only if a memory sample, taken
+      without the lock, leaves BATCH_MEMORY for each running batch and for it;
+      or leaves BATCH_MEMORY for it and was taken SETTLE_SECONDS after the
+      latest batch started, so that batch's memory shows. An unknown reading
+      adds nothing. A batch always starts when none runs.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, gated: bool) -> None:
         self.condition = threading.Condition()
+        self.gated = gated
         self.next_group = 0
         self.first_failure: int | None = None
         self.cancelled = False
-        self.running: dict[subprocess.Popen, int] = {}
+        self.running: dict[subprocess.Popen, tuple[int, int | None]] = {}  # group, pidfd
+        self.latest_start = float('-inf')
 
     def blocked(self, index: int) -> bool:
         return self.cancelled or (self.first_failure is not None and index > self.first_failure)
 
-    def launch(self, index: int, first: bool, start) -> subprocess.Popen:
-        """Start a batch of group `index` with `start()` once allowed (`first`: the group's first batch).
+    def allows(self, sample: tuple[int | None, float] | None) -> bool:
+        if not self.running or not self.gated:
+            return True
+        if sample is None or sample[0] is None:
+            return False
+        memory, taken = sample
+        if memory >= (len(self.running) + 1) * BATCH_MEMORY:
+            return True
+        return memory >= BATCH_MEMORY and taken - self.latest_start >= SETTLE_SECONDS
 
-        The process starts under the lock, so a failure or a cancellation
-        recorded meanwhile either prevents it or sees it and stops it.
-        """
-        with self.condition:
-            while True:
+    def launch(self, index: int, first: bool, start) -> subprocess.Popen:
+        """Start a batch of group `index` with `start()` once allowed (`first`: the group's first batch)."""
+        sample = None
+        while True:
+            with self.condition:
                 if self.blocked(index):
                     raise SkippedGroup('an audit group was skipped without an earlier failure')
-                if not first or index == self.next_group:
+                if first and index != self.next_group:
+                    sample = None
+                    self.condition.wait(timeout=5)
+                    continue
+                if self.allows(sample):
                     process = start()
-                    self.running[process] = index
+                    pidfd = None
+                    if hasattr(os, 'pidfd_open'):
+                        try:
+                            pidfd = os.pidfd_open(process.pid)
+                        except OSError:
+                            pidfd = None
+                    self.running[process] = (index, pidfd)
+                    self.latest_start = time.monotonic()
                     if first:
                         self.next_group += 1
                     self.condition.notify_all()
                     return process
-                self.condition.wait(timeout=5)
+                if sample is not None:
+                    self.condition.wait(timeout=self.retry_after(sample))
+            sample = (available_memory(), time.monotonic())
+
+    def retry_after(self, sample: tuple[int | None, float]) -> float:
+        """Seconds to wait before sampling again: until the latest batch settles, or one."""
+        if sample[0] is not None and sample[0] >= BATCH_MEMORY:
+            return max(0.01, min(1.0, self.latest_start + SETTLE_SECONDS - time.monotonic()))
+        return 1.0
+
+    def stop(self, process: subprocess.Popen) -> None:
+        with self.condition:
+            self.kill_batch(process)
+
+    def kill_batch(self, process: subprocess.Popen) -> None:
+        """SIGKILL a registered batch that has not been reaped. Call with the lock held.
+
+        A batch started through Lake is killed with its process group, so its
+        Lean dies too; one started directly, through its pidfd where there is one.
+        """
+        if process not in self.running or process.returncode is not None:
+            return
+        _, pidfd = self.running[process]
+        try:
+            if LIST_ENVIRONMENT and pidfd is not None:
+                signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+            elif LIST_ENVIRONMENT:
+                process.kill()
+            else:
+                os.killpg(process.pid, signal.SIGKILL)
+        except OSError:
+            pass
 
     def finished(self, process: subprocess.Popen) -> None:
         with self.condition:
-            self.running.pop(process, None)
+            _, pidfd = self.running.pop(process, (None, None))
+            if pidfd is not None:
+                os.close(pidfd)
+            self.condition.notify_all()
 
     def fail(self, index: int) -> None:
         with self.condition:
             if self.first_failure is None or index < self.first_failure:
                 self.first_failure = index
-            for process, group in list(self.running.items()):
+            for process, (group, _) in list(self.running.items()):
                 if group > self.first_failure:
-                    stop(process)
+                    self.kill_batch(process)
             self.condition.notify_all()
 
     def cancel(self) -> None:
         with self.condition:
             self.cancelled = True
             for process in list(self.running):
-                stop(process)
+                self.kill_batch(process)
             self.condition.notify_all()
 
 
 def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BATCH_SIZE,
-          workers: int | None = None) -> dict:
+          workers: int | None = None, memory_gate: bool | None = None) -> dict:
     """Each assigned module succeeds once, or the whole audit fails.
 
     Normal Lean imports initialize all environment extensions. Only an import
@@ -324,12 +410,13 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
     placed in G groups, and successful groups never share assigned modules.
 
     The initial groups are consecutive `batch_size` slices of `modules`, as in a
-    sequential run. Each batch runs Lean in the environment of `lake env`,
-    resolved once. With more than one worker (`workers`, default `worker_count`)
-    the groups run in parallel, and their results are combined in group order:
-    the checked modules, the counts and the progress lines are those of a
-    sequential run, and the failure reported is the first failing group's. With
-    one worker they run one after another in the calling thread, as before.
+    sequential run. Worker threads run them, `workers` at a time (default
+    `worker_count`), and their results are combined in group order: the
+    checked modules, the counts and the progress lines are those of a
+    sequential run, and the failure reported is the first failing group's.
+    With one worker they run one after another. `memory_gate` (default: when
+    the count was sized from memory) rechecks the memory before a batch joins
+    running ones.
     """
     if not modules or len(set(modules)) != len(modules) or batch_size < 1:
         raise AuditFailure('invalid nonempty, unique audit inventory or batch bound')
@@ -337,9 +424,15 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
         raise AuditFailure('invalid audit worker count')
     initial = [modules[offset:offset + batch_size] for offset in range(0, len(modules), batch_size)]
     initial_groups = len(initial)
+    sized = workers is None and requested_workers() is None
     count = worker_count(initial_groups) if workers is None else min(workers, initial_groups)
-    lean, environment = lean_environment(root)
-    admission = Admission()
+    if LIST_ENVIRONMENT:
+        lean, environment = lean_environment(root)
+    else:
+        lean, environment = None, None
+        if count > 1:
+            prepare_lake(root)
+    admission = Admission(sized if memory_gate is None else memory_gate)
 
     def check(index: int, batch: list[str], tally: dict, first: bool = False) -> None:
         tally['attempts'] += 1
@@ -348,12 +441,15 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
             driver.write(''.join(f'import {module}\n' for module in batch))
             driver.write(checker)
             driver.flush()
-            process = admission.launch(index, first, lambda: launch_lean([lean, driver.name], root, environment))
+            command = [lean, driver.name] if lean else ['lake', 'env', 'lean', driver.name]
+            process = admission.launch(index, first, lambda: launch_lean(command, root, environment))
             try:
                 output, _ = process.communicate(timeout=BATCH_TIMEOUT)
-            except BaseException:  # a timeout, or an interrupt in a sequential run
-                stop(process)
-                process.communicate()
+            except BaseException:  # a timeout: stop the batch, reap it, and leave its pipe undrained
+                admission.stop(process)
+                process.wait()
+                if process.stdout:
+                    process.stdout.close()
                 raise
             finally:
                 admission.finished(process)
@@ -382,31 +478,26 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
 
     checked = []
     attempts = splits = groups = 0
-
-    def combine(tally: dict) -> None:
-        nonlocal attempts, splits, groups
-        checked.extend(tally['checked'])
-        attempts += tally['attempts']
-        splits += tally['splits']
-        groups += tally['groups']
-        print(f'compiled audit: {len(checked)}/{len(modules)} assigned modules checked', flush=True)
-
-    if count == 1:
-        for index, batch in enumerate(initial):
-            combine(run_group(index, batch))
-    else:
-        futures = []
-        with ThreadPoolExecutor(max_workers=count) as pool:
-            try:
-                for index, batch in enumerate(initial):
-                    futures.append(pool.submit(run_group, index, batch))
-                for future in futures:
-                    combine(future.result())
-            except BaseException:
-                admission.cancel()
-                for pending in futures:
-                    pending.cancel()
-                raise
+    # Only worker threads start Lean, under the admission lock, so an interrupt
+    # here, in the coordinating thread, finds each batch either registered, and
+    # stops it, or not started, and prevents it.
+    futures = []
+    with ThreadPoolExecutor(max_workers=count) as pool:
+        try:
+            for index, batch in enumerate(initial):
+                futures.append(pool.submit(run_group, index, batch))
+            for future in futures:
+                tally = future.result()
+                checked.extend(tally['checked'])
+                attempts += tally['attempts']
+                splits += tally['splits']
+                groups += tally['groups']
+                print(f'compiled audit: {len(checked)}/{len(modules)} assigned modules checked', flush=True)
+        except BaseException:
+            admission.cancel()
+            for pending in futures:
+                pending.cancel()
+            raise
     if checked != modules or len(set(checked)) != len(modules):
         raise AuditFailure('successful audit groups differ from the complete assigned inventory')
     return {'modules': len(modules), 'batchSize': batch_size, 'initialGroups': initial_groups,
