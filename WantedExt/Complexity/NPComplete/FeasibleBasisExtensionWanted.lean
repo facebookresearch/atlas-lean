@@ -18,7 +18,7 @@ salesman problem", Mathematical Programming 2 (1972), 296-308, doi:10.1007/BF015
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import MathlibExt.Computability.BinaryNatEncoding

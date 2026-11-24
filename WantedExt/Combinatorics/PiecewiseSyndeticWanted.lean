@@ -25,27 +25,15 @@ large subcubes (Proof 1 of Theorem 2 of the paper).
 
 Here `ℕ` contains `0`, while the paper works in positive integers; translating by
 the all-ones vector identifies the two settings and preserves all notions above.
+
+Proved in `MathlibExt.Combinatorics.PiecewiseSyndetic`, which this module imports:
+the definitions above, Lemma 1 (`exists_subcube_isDenseInCubes_colorClass`) and
+Lemma 2 (`exists_cube_bound_isDenseInCubes`).
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **A color class is dense in a large subcube (Brown, Lemma 2).** Let $r, t \in \mathbb{N}$ and
-let $f : \mathbb{N} \to \mathbb{N}$. There is $A \in \mathbb{N}$ such that for every coloring of
-$\mathbb{N}^t$ with $r$ colors there are natural numbers $d \ge 1$ and $m > f(d)$, a color $j$, and
-a subcube $M$ of side $m$ with $M \subseteq [1, A]^t$ in which the class of color $j$ is
-$d$-dense. Here $[1, A]^t$ is the set of points $x$ with $1 \le x_i \le A$ for every coordinate $i$.
-
-The paper's "(a smallest)" is omitted: it follows from existence. Only the restriction of the
-coloring to $[1, A]^t$ matters.
-
-Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
-(2024), Article A2, Lemma 2 (`integers-2024-A2-lem-2`). -/
-public theorem_wanted exists_cube_bound_isDenseInCubes (r t : ℕ) (f : ℕ → ℕ) :
-    ∃ A : ℕ, ∀ c : (Fin t → ℕ) → Fin r, ∃ d m : ℕ, 1 ≤ d ∧ f d < m ∧ ∃ j : Fin r,
-      ∃ a : Fin t → ℕ, latticeCube a m ⊆ latticeCube (fun _ => 1) A ∧
-        IsDenseInCubes d {x | c x = j} (latticeCube a m)
 
 /-- **Piecewise syndeticity is partition regular.** Let $A \subseteq \mathbb{N}^t$ be piecewise
 syndetic and let $A_1, \dots, A_r \subseteq \mathbb{N}^t$ with $A = A_1 \cup \dots \cup A_r$. Then
