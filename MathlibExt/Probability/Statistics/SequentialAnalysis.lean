@@ -58,8 +58,8 @@ The main proved statement is the closed form of the CUSUM recursion,
 `MathlibExt.Probability.Statistics.WaldInequalities`, and its optimality, the Wald–Wolfowitz
 theorem, in `MathlibExt.Probability.Statistics.WaldWolfowitz`. Shiryaev's Bayesian optimality of
 the Shiryaev rule is proved in `MathlibExt.Probability.Statistics.ShiryaevOptimality`, and the
-optimality of CUSUM under Lorden's criterion is recorded in
-`WantedExt.Probability.Statistics.SequentialAnalysisWanted`.
+optimality of CUSUM under Lorden's criterion, Moustakides' theorem, in
+`MathlibExt.Probability.Statistics.CusumOptimality`.
 
 ## References
 
