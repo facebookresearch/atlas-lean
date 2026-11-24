@@ -16,9 +16,11 @@ public import MathlibExt.AlgebraicGeometry.PDivisiblePointFunctors
 # The original geometric Tate module of a p-divisible scheme tower
 
 The point group is the original filtered group-scheme point diagram.
-Its Tate module is the completed native generic torsion inverse limit;
-the Z_p action and maps are reused from the public source port. No
-second Tate carrier or inverse-limit construction is requested.
+Its Tate module is the repository's root `TateModule` of that group
+(compatible p-power torsion sequences, with its Z_p-module structure);
+the torsion-level projections and induced maps come from the adapted
+source port. No second Tate carrier or inverse-limit construction is
+requested.
 
 The finite geometric levels map to their actual p-power-torsion
 subgroups. This is the domain used by the Cartier/dlog/formal-Lie
@@ -45,7 +47,7 @@ variable (p : ℕ) [Fact p.Prime]
 
 /-- The original generic Tate map, regarded as a native coefficient functor. -/
 def genericTateFunctor : AddCommGrpCat.{0} ⥤ ModuleCat.{0} (PadicInt p) where
-  obj A := ModuleCat.of (PadicInt p) (TateModule p A)
+  obj A := ModuleCat.of (PadicInt p) ↥(_root_.TateModule p A)
   map f := ModuleCat.ofHom (TateModule.mapLinearMap f.hom)
   map_id A := by
     apply ModuleCat.hom_ext
@@ -77,7 +79,7 @@ abbrev TorsionLevel (T : Over S) (n : ℕ) :=
 
 /-- The actual finite projection of the generic source Tate inverse limit. -/
 def projection (T : Over S) (n : ℕ) : GeometricTate p S G T →+ TorsionLevel p S G T n :=
-  TateModule.proj n
+  TateModule.levelProj n
 
 /-- The actual finite-level group-valued point diagram. -/
 def finitePoints (n : ℕ) : (Over S)ᵒᵖ ⥤ AddCommGrpCat.{0} :=

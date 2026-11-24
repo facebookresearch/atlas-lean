@@ -81,7 +81,7 @@ def genericPadicScalars : PadicInt p →+* C.field :=
   (integerInclusion p C).comp (padicIntegerScalars p C)
 
 /-- The genuine Tate twist, from the native p-power-root Tate module of C units. -/
-abbrev TateRootUnits := TateModule p (Additive C.fieldˣ)
+abbrev TateRootUnits := ↥(_root_.TateModule p (Additive C.fieldˣ))
 
 variable (D : CartierDualTower p (integers p C) G)
   (L : LieModel p (integers p C) D.group)

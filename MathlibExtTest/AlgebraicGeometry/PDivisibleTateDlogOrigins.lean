@@ -30,7 +30,7 @@ variable (p : ℕ) [Fact p.Prime] (S : Scheme.{0}) (G : PDivisibleGroup S p)
 example (x : GeometricTate p S G T) (n : ℕ) :
     tateModuleTransition p ((points p S G).obj (op T)) n
       (projection p S G T (n + 1) x) = projection p S G T n x :=
-  TateModule.proj_succ x n
+  TateModule.levelProj_succ x n
 
 example (n : ℕ) (x : (finitePoints p S G n).obj (op T)) :
     ((finiteToTorsion p S G T n x : TorsionLevel p S G T n) :
