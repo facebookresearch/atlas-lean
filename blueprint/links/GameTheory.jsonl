@@ -911,3 +911,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/cooperative-games/nash-bargaining-solution/existence-of-a-nash-product-maximizer.md"}], "id": "af_63a85c5d2b377b80f44e9253", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/cooperative-games/fair-division-of-indivisible-goods/README.md"}], "id": "af_8799891630e8377b195667b3"}
 {"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/cooperative-games/nash-bargaining-solution/README.md"}], "id": "af_7b899f57af12b7b8de1441df"}
+{"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/matching-markets/stable-matching-mechanisms-and-incentives/college-admissions-reduces-to-marriage.md"}], "id": "af_1a2248ecbfdc08d93a2a0153", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
