@@ -43,14 +43,15 @@ namespace UrbanDemand
 
 /-! ## A. Normalized demand rows -/
 
-/-- Singly constrained demand row entry: origin total `O` distributed by
-nonnegative weights `w` over destination set `s`:
-`T i = O * w i / ∑ j in s, w j`. -/
+/-- Singly constrained demand row entry: origin total `O` distributed in proportion to the weights
+`w` over destination set `s`: `T i = O * w i / ∑ j in s, w j`. The definition imposes no sign
+condition on `O` or `w`; the value is `0` when `∑ j in s, w j = 0`. -/
 noncomputable def normalizedDemand {ι : Type*} (O : ℝ) (w : ι → ℝ) (s : Finset ι)
     (i : ι) : ℝ :=
   O * w i / ∑ j ∈ s, w j
 
-/-- Each normalized row entry is nonnegative. -/
+/-- With `O ≥ 0` and nonnegative weights of positive sum on `s`, each normalized row entry at a
+destination of `s` is nonnegative. -/
 theorem normalizedDemand_nonneg {ι : Type*} (O : ℝ) (w : ι → ℝ) (s : Finset ι)
     (hO : 0 ≤ O) (hw : ∀ i : ι, i ∈ s → 0 ≤ w i) (hsum : 0 < ∑ j ∈ s, w j)
     {i : ι} (hi : i ∈ s) :
@@ -58,7 +59,8 @@ theorem normalizedDemand_nonneg {ι : Type*} (O : ℝ) (w : ι → ℝ) (s : Fin
   unfold normalizedDemand
   exact div_nonneg (mul_nonneg hO (hw i hi)) hsum.le
 
-/-- The normalized row has exact total `O`. -/
+/-- With `O ≥ 0` and nonnegative weights of positive sum on `s`, the normalized row has exact total
+`O`. -/
 theorem normalizedDemand_sum {ι : Type*} (O : ℝ) (w : ι → ℝ) (s : Finset ι)
     (hO : 0 ≤ O) (hw : ∀ i : ι, i ∈ s → 0 ≤ w i) (hsum : 0 < ∑ j ∈ s, w j) :
     ∑ i ∈ s, normalizedDemand O w s i = O := by

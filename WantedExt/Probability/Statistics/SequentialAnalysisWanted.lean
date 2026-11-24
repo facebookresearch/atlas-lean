@@ -13,20 +13,20 @@ public import MathlibExt.Probability.Statistics.WaldInequalities
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 
 /-!
-# Wanted: optimality theorems of sequential testing and quickest change detection
+# Wanted: optimality theorems of quickest change detection
 
 Statements about the objects of `MathlibExt.Probability.Statistics.SequentialAnalysis`, for
 i.i.d. observations whose laws `P₀`, `P₁` are mutually absolutely continuous probability
 measures. Every observation process lives on the coordinate space `ℕ → X` with the filtration
-`observationFiltration X` of the first `n` observations; tests and alarms are stopping times for
-it. Expected sample sizes and delays are computed as lower Lebesgue integrals in `ℝ≥0∞`, so no
-integrability hypothesis is hidden.
+`observationFiltration X` of the first `n` observations; alarms are stopping times for it.
+Expected delays and times to false alarm are computed as lower Lebesgue integrals in `ℝ≥0∞`, so
+no integrability hypothesis is hidden. The optimality of the sequential probability ratio test,
+the Wald–Wolfowitz theorem, is proved in `MathlibExt.Probability.Statistics.WaldWolfowitz`.
 
 ## References
 
 * T. L. Lai, *Sequential analysis: some classical problems and new challenges*, Statistica Sinica
-  11 (2001) 303–408, §2 (p. 305) and §3 (p. 316).
-* B. Eisenberg, *Sequential probability ratio test*, Encyclopedia of Mathematics.
+  11 (2001) 303–408, §3 (p. 316).
 * V. V. Veeravalli and T. Banerjee, *Quickest change detection*, arXiv:1210.5552 (revised
   version dated 27 November 2024), Theorem 3.1.
 -/
@@ -39,31 +39,6 @@ open scoped ENNReal
 namespace MeasureTheory
 
 variable {X : Type*} [MeasurableSpace X]
-
-/-- **Wald–Wolfowitz theorem: optimality of the SPRT.** Let `P₀ ≠ P₁` be mutually absolutely
-continuous and consider the SPRT with log-boundaries `a < 0 < b`. Let `(T, D)` be any test: a
-stopping time `T` of the observations with finite expected value under both hypotheses, and a
-rejection region `D` for `P₀` in the stopped `σ`-algebra, whose error probabilities
-`P₀(D)` and `P₁(Dᶜ)` do not exceed those of the SPRT. Then the SPRT has smaller expected sample
-size under both `P₀` and `P₁`. This is the Wald–Wolfowitz theorem (1948) as stated in Lai 2001,
-§2, p. 305, for non-randomised tests; randomised tests are not covered by this statement. -/
-theorem_wanted sprt_wald_wolfowitz {P₀ P₁ : Measure X} [IsProbabilityMeasure P₀]
-    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (hne : P₀ ≠ P₁) {a b : ℝ}
-    (ha : a < 0) (hb : 0 < b) {T : (ℕ → X) → WithTop ℕ}
-    (hT : IsStoppingTime (observationFiltration X) T) {D : Set (ℕ → X)}
-    (hD : MeasurableSet[hT.measurableSpace] D)
-    (hT₀ : ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₀) < ∞)
-    (hT₁ : ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₁) < ∞)
-    (hα : Measure.infinitePi (fun _ : ℕ => P₀) D ≤
-      Measure.infinitePi (fun _ : ℕ => P₀) (sprtAcceptOne P₀ P₁ h₁₀ h₀₁ a b))
-    (hβ : Measure.infinitePi (fun _ : ℕ => P₁) Dᶜ ≤
-      Measure.infinitePi (fun _ : ℕ => P₁) (sprtAcceptZero P₀ P₁ h₁₀ h₀₁ a b)) :
-    ∫⁻ ω, ((show ℕ∞ from sprtTime P₀ P₁ h₁₀ h₀₁ a b ω) : ℝ≥0∞)
-        ∂Measure.infinitePi (fun _ : ℕ => P₀) ≤
-        ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₀) ∧
-      ∫⁻ ω, ((show ℕ∞ from sprtTime P₀ P₁ h₁₀ h₀₁ a b ω) : ℝ≥0∞)
-        ∂Measure.infinitePi (fun _ : ℕ => P₁) ≤
-        ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₁)
 
 /-- **Shiryaev's theorem: Bayesian optimality of the Shiryaev rule.** Let `P₀ ≠ P₁` be mutually
 absolutely continuous with `D(P₁ ‖ P₀) < ∞`, let the change point have the geometric prior

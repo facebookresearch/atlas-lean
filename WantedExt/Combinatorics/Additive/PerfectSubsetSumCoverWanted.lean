@@ -17,7 +17,7 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Span.Defs
 public import Mathlib.Order.Interval.Finset.Fin
-public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCover
+public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverErase
 
 /-!
 # Perfect subset-sum covers of abelian groups of order a power of two
@@ -149,37 +149,6 @@ public theorem_wanted count_elementary_two_three_prod_zmod :
     ∀ n : ℕ, (count ((Fin 3 → ZMod 2) × ZMod (2 ^ n)) : ℚ) =
       (2 : ℚ) ^ (3 * (n : ℤ) - 3) * 2 ^ (n * (n - 1) / 2) *
         (28 * (n : ℚ) ^ 3 + 196 * n ^ 2 + 392 * n + 224)
-
-/-- **Adjoining an element doubles the multiplicity of a perfect cover.** Let $G$ be an abelian
-group and let $s = (s_1, \dots, s_k)$ be a perfect $m$-cover of $G$. For every $g \in G$, the
-family $(g, s_1, \dots, s_k)$ is a perfect $2m$-cover of $G$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 5
-(`jis-2025-25.7.8-lem-5`). -/
-public theorem_wanted isPerfectMCover_cons {G : Type*} [AddCommGroup G] [DecidableEq G]
-    {k m : ℕ} {s : Fin k → G} (hs : IsPerfectMCover m s) (g : G) :
-    IsPerfectMCover (2 * m) (Fin.cons g s : Fin (k + 1) → G)
-
-/-- **Removing one element from a perfect cover.** Let $G$ be a finite abelian group of order $2^n$,
-let $S$ be a perfect cover of $G$, let $z \in S$ and let $S_1 = S \setminus \{z\}$. Then (a) every
-element of $G$ is the sum of at most one subset of $S_1$, and exactly half of the $2^n$ elements
-of $G$ are the sum of a subset of $S_1$; (b) if $g \in G$ is the sum of a subset of $S_1$ and $j$
-is an integer with $j \ge 1$, then $g + 2jz$ is the sum of a subset of $S_1$ and $g + (2j-1)z$ is
-not.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 7
-(`jis-2025-25.7.8-lem-7`). -/
-public theorem_wanted perfectCover_erase_coverCount {G : Type*} [AddCommGroup G]
-    [DecidableEq G] [Fintype G] {n : ℕ} (hG : Fintype.card G = 2 ^ n) {S : Finset G}
-    (hS : IsPerfectCover S) {z : G} (hz : z ∈ S) :
-    ((∀ g : G, coverCount (fun x : S.erase z => (x : G)) g ≤ 1) ∧
-      2 * (Finset.univ.filter fun g : G =>
-        coverCount (fun x : S.erase z => (x : G)) g = 1).card = 2 ^ n) ∧
-    ∀ g : G, 1 ≤ coverCount (fun x : S.erase z => (x : G)) g → ∀ j : ℕ, 1 ≤ j →
-      1 ≤ coverCount (fun x : S.erase z => (x : G)) (g + (2 * j) • z) ∧
-        coverCount (fun x : S.erase z => (x : G)) (g + (2 * j - 1) • z) = 0
 
 /-- **Removing the last element of a perfect $2^j$-cover.** Let $G$ be an abelian group, let
 $s = (x_1, \dots, x_{k+1})$ be a family in $G$ that is a perfect $2^j$-cover of $G$, and let
