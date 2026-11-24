@@ -1,4 +1,3 @@
 # Projected Distinguished Term Identity
 
-Discharge obligation B, a proposition not proved here: the block shuffle at
-the cut `p` contributes the normalization projector on the `(p,q)` summand.
+The projected block shuffle at the distinguished cut is the normalized summand.

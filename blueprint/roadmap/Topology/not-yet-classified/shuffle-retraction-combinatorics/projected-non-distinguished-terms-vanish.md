@@ -1,4 +1,3 @@
 # Projected Non Distinguished Terms Vanish
 
-Discharge obligation A, a proposition not proved here: every
-non-distinguished projected term vanishes.
+Every projected term away from the block shuffle at the distinguished cut vanishes.

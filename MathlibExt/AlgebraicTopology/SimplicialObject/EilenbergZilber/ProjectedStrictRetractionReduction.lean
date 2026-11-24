@@ -36,9 +36,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [MonoidalCategory C]
     ((AlgebraicTopology.alternatingFaceMapComplex C).obj Y)]
 
 /-- A shuffle/Alexander--Whitney term sandwiched between the Dold--Kan
-normalization projectors. That every non-distinguished term vanishes is the
-discharge obligation `ProjectedNonDistinguishedTermsVanish`, which is not proved
-here. -/
+normalization projectors. -/
 noncomputable def projectedShuffleAlexanderWhitneyTerm
     (p q : ℕ) (s : Shuffle p q) (r : Fin (p + q + 1)) :
     X.obj (Opposite.op ⦋p⦌) ⊗ Y.obj (Opposite.op ⦋q⦌) ⟶
@@ -84,33 +82,26 @@ theorem projected_shuffleBidegree_comp_alternatingComponent
   rw [AlgebraicTopology.AlexanderWhitney.alternatingComponent_eq_sum]
   unfold shuffleBidegree projectedShuffleAlexanderWhitneyTerm
   simp only [Preadditive.comp_sum, Preadditive.sum_comp]
-/-- The fixed-bidegree identity, a hypothesis of the projected retraction
-reduction: after the normalization projectors, the shuffle/Alexander--Whitney
-terms of bidegree `(p,q)` sum to the projector on the `(p,q)` summand at the cut
-`p` and to zero at every other cut. It is a proposition; nothing here proves it. -/
-def ProjectedShuffleAlexanderWhitneyBidegreeIdentity (p q : ℕ) : Prop :=
-  let distinguishedCut : Fin (p + q + 1) := ⟨p, by omega⟩
-  ∀ r : Fin (p + q + 1),
-    (∑ s : Shuffle p q,
-      projectedShuffleAlexanderWhitneyTerm X Y p q s r) =
-      if r = distinguishedCut then
-        (HomologicalComplex.ιTensorObj
-            ((AlgebraicTopology.alternatingFaceMapComplex C).obj X)
-            ((AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
-            p q (p + q) rfl ≫
-          (HomologicalComplex.tensorHom
-            (K₁ := (AlgebraicTopology.alternatingFaceMapComplex C).obj X)
-            (K₂ := (AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
-            (L₁ := (AlgebraicTopology.alternatingFaceMapComplex C).obj X)
-            (L₂ := (AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
-            (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj X ⟶ _)
-            (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj Y ⟶ _)).f (p + q))
-      else 0
-
 /-- Cutwise projected identities imply the fixed-bidegree projected identity. -/
 theorem projected_shuffleBidegree_identity_of_cuts
     (p q : ℕ)
-    (hcuts : ProjectedShuffleAlexanderWhitneyBidegreeIdentity X Y p q) :
+    (hcuts : (let distinguishedCut : Fin (p + q + 1) := ⟨p, by omega⟩
+      ∀ r : Fin (p + q + 1),
+        (∑ s : Shuffle p q,
+          projectedShuffleAlexanderWhitneyTerm X Y p q s r) =
+          if r = distinguishedCut then
+            (HomologicalComplex.ιTensorObj
+                ((AlgebraicTopology.alternatingFaceMapComplex C).obj X)
+                ((AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
+                p q (p + q) rfl ≫
+              (HomologicalComplex.tensorHom
+                (K₁ := (AlgebraicTopology.alternatingFaceMapComplex C).obj X)
+                (K₂ := (AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
+                (L₁ := (AlgebraicTopology.alternatingFaceMapComplex C).obj X)
+                (L₂ := (AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
+                (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj X ⟶ _)
+                (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj Y ⟶ _)).f (p + q))
+          else 0)) :
     ((PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj X ⟶ _).f p ⊗ₘ
         (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj Y ⟶ _).f q) ≫
       shuffleBidegree X Y p q ≫
@@ -134,20 +125,33 @@ theorem projected_shuffleBidegree_identity_of_cuts
         (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj X ⟶ _)
         (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj Y ⟶ _)).f (p + q) := by
   rw [projected_shuffleBidegree_comp_alternatingComponent]
-  dsimp [ProjectedShuffleAlexanderWhitneyBidegreeIdentity] at hcuts
+  dsimp only at hcuts
   simp_rw [hcuts]
   rw [Finset.sum_ite_eq']
   simp
 
 set_option backward.isDefEq.respectTransparency false in
-/-- A conditional reduction: if the fixed-bidegree identities hold for all
-`(p,q)`, then the shuffle map followed by the Alexander--Whitney map is the
-identity on the image of the normalization projectors, not on the full
-alternating complex. The identities are hypotheses; this does not prove that the
-composite restricts to the identity. -/
+/-- The cutwise identities in each bidegree give the projector-sandwiched
+shuffle/Alexander--Whitney identity on the alternating complex. -/
 theorem projected_alternatingMap_comp_alexanderWhitney_of_bidegrees
     (hbidegree : ∀ p q,
-      ProjectedShuffleAlexanderWhitneyBidegreeIdentity X Y p q) :
+      (let distinguishedCut : Fin (p + q + 1) := ⟨p, by omega⟩
+        ∀ r : Fin (p + q + 1),
+          (∑ s : Shuffle p q,
+            projectedShuffleAlexanderWhitneyTerm X Y p q s r) =
+            if r = distinguishedCut then
+              (HomologicalComplex.ιTensorObj
+                  ((AlgebraicTopology.alternatingFaceMapComplex C).obj X)
+                  ((AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
+                  p q (p + q) rfl ≫
+                (HomologicalComplex.tensorHom
+                  (K₁ := (AlgebraicTopology.alternatingFaceMapComplex C).obj X)
+                  (K₂ := (AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
+                  (L₁ := (AlgebraicTopology.alternatingFaceMapComplex C).obj X)
+                  (L₂ := (AlgebraicTopology.alternatingFaceMapComplex C).obj Y)
+                  (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj X ⟶ _)
+                  (PInfty : (AlgebraicTopology.alternatingFaceMapComplex C).obj Y ⟶ _)).f (p + q))
+            else 0)) :
     HomologicalComplex.tensorHom
         (K₁ := (AlgebraicTopology.alternatingFaceMapComplex C).obj X)
         (K₂ := (AlgebraicTopology.alternatingFaceMapComplex C).obj Y)

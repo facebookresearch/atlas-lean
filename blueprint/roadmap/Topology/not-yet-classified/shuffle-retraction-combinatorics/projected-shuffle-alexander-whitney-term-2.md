@@ -1,3 +1,4 @@
 # Projected Shuffle Alexander Whitney Term Identity of vanishing
 
-Discharge obligations A and B imply the pointwise term identity.
+Vanishing away from the distinguished pair and the value at that pair
+determine each projected term.
