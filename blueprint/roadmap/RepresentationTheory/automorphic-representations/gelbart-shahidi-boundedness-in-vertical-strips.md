@@ -29,8 +29,7 @@ $r(s, \pi_v, w_0) = \prod_{i=1}^m L(is, \pi_v, r_i) / \big(L(1 + is, \pi_v, r_i)
 ## Expansion
 
 A good expansion has statement pages for the theorem, for the highly ramified twists and for the case of pairs, citing
-the sources below with locators, and compares the first with Gelbart and Shahidi's own Theorem 4.1 after reading their
-paper.
+the sources below with locators.
 
 It also plans this step, which is not complete:
 
@@ -71,5 +70,3 @@ Its proof is that of the sources below, as the Expansion describes.
   Waldspurger), and p. 589 (Tadić's classification of generic unitary representations of $\mathrm{GL}_n$ over a finite place, with
   exponents less than $\tfrac12$, and the reduction to rank-one operators), with Lemma 4.7, p. 586 (Zhang's lemma, for the
   nonvanishing).
-- S. Gelbart and F. Shahidi, "Boundedness of automorphic L-functions in vertical strips", J. Amer. Math. Soc. 14 (2001),
-  79–107, Theorem 4.1, as cited by Cogdell ([2]) and by Shahidi ([15]); not read for this node.
