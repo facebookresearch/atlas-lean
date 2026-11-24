@@ -16,6 +16,7 @@ public import Mathlib.Data.Matrix.Basis
 public import Mathlib.Data.ZMod.Basic
 public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.ConstantTermLinearRepresentation
+public import MathlibExt.NumberTheory.LaurentCartierCongruence
 
 namespace MetaMathlibExt
 
@@ -142,23 +143,6 @@ public theorem isLinearlyRecurrentSeq_const {α : Type*} (c : α) :
   ⟨1, fun _ ℓ hℓ _ _ => ⟨1, one_pos, by omega, fun _ _ => rfl⟩⟩
 
 /-! ### Section 2: the Rowland–Zeilberger congruence and the degree bound -/
-
-/-- **Rowland–Zeilberger congruence.** Let $p$ be a prime and let $P$ and $Q$ be Laurent
-polynomials in $r$ variables with integer coefficients. Write $\operatorname{ct}[F]$ for the
-constant term of a Laurent polynomial $F$ and $\Lambda_p$ for Kohen's operator, which keeps the
-terms whose exponents are all divisible by $p$ and replaces $x^{pj}$ by $x^j$. Then for all
-natural numbers $n$ and $k$,
-$\operatorname{ct}[P^{pn+k} Q] \equiv \operatorname{ct}[P^n \Lambda_p(P^k Q)] \pmod{p}$.
-
-The exponents $n$ and $k$ are natural numbers; the paper writes "integers", but negative powers
-of a general Laurent polynomial are undefined.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 3 (`jis-2026-26.4.2-lem-3`). -/
-public theorem_wanted constantTerm_pow_mul_modEq_laurentCartier {r p : ℕ} (hp : p.Prime)
-    (P Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (n k : ℕ) :
-    (P ^ (p * n + k) * Q).coeff 0 ≡ (P ^ n * laurentCartier p (P ^ k * Q)).coeff 0 [ZMOD p]
 
 /-- **Degree bound for the Rowland–Zeilberger states.** Let $p$ be a prime and let $P$ and $Q$
 be Laurent polynomials in $r$ variables with integer coefficients. Write $\deg F$ for the largest
