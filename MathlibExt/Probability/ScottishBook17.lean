@@ -141,9 +141,11 @@ ball as $1$ and a black ball as $0$, and $p_n$ is the probability of drawing a w
 $n$-th urn. Only pairwise independence is assumed: for uncorrelated variables with uniformly
 bounded variances the strong law of large numbers still holds.
 
-Source:
-S. Ulam, Problem 17 of the Scottish Book. The proof is Kolmogorov's strong
-law of large numbers for independent bounded variables (1933).
+Source: S. Ulam, Problem 17 of the Scottish Book. Rajchman's strong law for pairwise
+uncorrelated variables with uniformly bounded variances gives almost-sure convergence of the
+centered averages. The proof here uses only convergence in measure, by variance additivity and
+Chebyshev's inequality, and an almost-sure subsequence to rule out nonconvergent deterministic
+averages whenever a sample average converges to the proposed limit.
 -/
 theorem urnConversePoisson :
     ∀ (Ω : Type) [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω)
