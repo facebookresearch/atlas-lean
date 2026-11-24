@@ -1,6 +1,7 @@
 # Controller-form realization of a proper rational transfer matrix
 
 Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. Let $G(s) = D + N(s)/d(s)$ be a proper rational $p \times m$ matrix in common-denominator form. Here $D \in \mathbb{K}^{p \times m}$, $d(s) = s^r + d_{r-1} s^{r-1} + \dots + d_1 s + d_0$ is monic of degree $r \ge 1$, and $N(s) = N_0 + N_1 s + \dots + N_{r-1} s^{r-1}$ with $N_i \in \mathbb{K}^{p \times m}$, so $\deg N < r$. Define the block controller form, with $I = I_m$:
+
 $$A = \begin{bmatrix} 0 & I & 0 & \cdots & 0 \\ 0 & 0 & I & \cdots & 0 \\ \vdots & & & \ddots & \vdots \\ 0 & 0 & 0 & \cdots & I \\ -d_0 I & -d_1 I & -d_2 I & \cdots & -d_{r-1} I \end{bmatrix} \in \mathbb{K}^{rm \times rm}, \quad B = \begin{bmatrix} 0 \\ \vdots \\ 0 \\ I \end{bmatrix}, \quad C = \begin{bmatrix} N_0 & N_1 & \cdots & N_{r-1} \end{bmatrix}.$$
 
 1. $\det(sI - A) = d(s)^m$, For $m\ge1$, $sI - A$ is invertible exactly when $d(s) \ne 0$. For $m=0$ the state space is zero dimensional and $sI-A$ is always invertible; the determinant and $d(s)^0$ are both $1$.

@@ -1,7 +1,9 @@
 # Observer error convergence and observer pole assignment
 
 Let $A \in \mathbb{R}^{n \times n}$, $B \in \mathbb{R}^{n \times m}$, $C \in \mathbb{R}^{p \times n}$ and $D \in \mathbb{R}^{p \times m}$, and consider the plant $\dot x = A x + B u$, $y = C x + D u$ in continuous time, or $x(k+1) = A x(k) + B u(k)$, $y(k) = C x(k) + D u(k)$ in discrete time. Let $L \in \mathbb{R}^{n \times p}$ and run the observer
+
 $$\dot z = (A + LC) z + B u - L (y - D u) \qquad \bigl(\text{resp. } z(k+1) = (A + LC) z(k) + B u(k) - L (y(k) - D u(k))\bigr),$$
+
 driven by the same known input $u$ and the measured output $y$, with the same $D$ as the plant.
 
 1. **Error dynamics.** For every initial plant state, every initial observer state and every input, the error $e = z - x$ satisfies $\dot e = (A + LC) e$ (resp. $e(k+1) = (A + LC) e(k)$).

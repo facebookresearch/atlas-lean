@@ -1,7 +1,9 @@
 # The reachable set from zero is the range of the controllability Gramian
 
 Let $A : \mathbb{R} \to \mathbb{R}^{n \times n}$ and $B : \mathbb{R} \to \mathbb{R}^{n \times m}$ be continuous, let $\Phi(t, s)$ be the transition matrix of $\dot x = A(t) x$, let $t_0 < t_1$, and let
+
 $$W(t_0, t_1) = \int_{t_0}^{t_1} \Phi(t_1, s) B(s) B(s)^\top \Phi(t_1, s)^\top \, ds$$
+
 be the controllability Gramian. For a continuous control, use the classical solution. For a square-integrable control (modulo equality almost everywhere), use the unique absolutely continuous solution satisfying $\dot x=A(t)x+B(t)u$ almost everywhere. In either case the state reached at $t_1$ from $x(t_0) = 0$ is $\int_{t_0}^{t_1} \Phi(t_1, s) B(s) u(s)\, ds$.
 
 1. The set of states reachable at time $t_1$ from $0$ at time $t_0$ with continuous controls equals $\operatorname{range} W(t_0, t_1)$. The same set is obtained with square-integrable controls.
