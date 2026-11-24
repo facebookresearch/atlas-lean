@@ -31,6 +31,10 @@ does not require $f$ to be bounded below or $\nabla f$ to be Lipschitz.
 - [Measurable function](../../../../MeasureTheory/measurable-spaces/measurable-spaces-and-measurable-functions/measurable-functions/measurable.md)
 - [Expected value of a random variable](../../../../Probability/foundations/laws-of-random-variables-and-identical-distribut/expectation/expectation-random-variable.md)
 
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
+
 ## Sources
 
 - Ahmed Khaled and Peter Richtárik, [*Better Theory for SGD in the Nonconvex World*](https://arxiv.org/html/2002.03329v3#S1.p2.2),

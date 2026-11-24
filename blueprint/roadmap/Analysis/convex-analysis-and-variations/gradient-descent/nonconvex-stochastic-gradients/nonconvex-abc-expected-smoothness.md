@@ -31,6 +31,10 @@ using the same draw for both gradients.
 - [Pointwise unbiased stochastic gradient oracle](pointwise-unbiased-stochastic-gradient-oracle.md)
 - [Expected value of a random variable](../../../../Probability/foundations/laws-of-random-variables-and-identical-distribut/expectation/expectation-random-variable.md)
 
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
+
 ## Sources
 
 - Ahmed Khaled and Peter Richtárik, [*Better Theory for SGD in the Nonconvex World*](https://arxiv.org/html/2002.03329v3#Thmasm2),
