@@ -21,6 +21,7 @@
 - [Kirchhoff's law](kirchhoff-law.md)
 - [Kirchhoff's law for continuous ΔCp](kirchhoff-of-continuous.md)
 - [Kirchhoff's law with swapped endpoints](kirchhoff-swapped.md)
+- [Formation-enthalpy duty equals sensible heat plus reaction heat](formation-enthalpy-duty-equals-sensible-plus-reaction-heat.md)
 
 ## Calorimetry energy balance
 
