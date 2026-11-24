@@ -1,4 +1,4 @@
-# Periodic C³ polarized fields give a smooth periodic wave solution
+# Periodic C³ polarized vacuum fields give a smooth periodic solution
 
 For free space with permittivity `ε₀ > 0` and permeability `μ₀ > 0` and the free-space speed of
 light `c = 1 / √(ε₀ μ₀)`, and a real `L`: let `E_y, H_z : ℝ² → ℝ` (functions of `(t, x)`) be such

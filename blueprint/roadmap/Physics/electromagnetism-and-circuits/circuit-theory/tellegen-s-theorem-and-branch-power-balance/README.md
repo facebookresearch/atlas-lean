@@ -1,7 +1,6 @@
 # Tellegen's theorem and branch power balance
 
 - [The electrical incidence is the negated graph incidence](electrical-incidence-eq-neg-incidence.md)
-- [Entries of the electrical incidence matrix](electrical-incidence-apply.md)
 - [A loop branch has a zero incidence column](electrical-incidence-loop-eq-zero.md)
 - [Branches with the same endpoints have equal incidence columns](electrical-incidence-eq-of-same-endpoint.md)
 - [A potential-defined branch voltage is tail minus head potential](branch-voltage-eq-tail-sub-head.md)
