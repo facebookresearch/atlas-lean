@@ -5,7 +5,6 @@
 - [Rail clamp of a value between $v_{\min}$ and $v_{\max}$](rail-clamp.md)
 - [Rail-limited feedback map](rail-limited-map.md)
 - [Linear candidate $A v_i / (1 + A\beta)$ for the closed-loop output](linear-candidate.md)
-- [For positive gain and feedback, $1 + A\beta$ is positive](one-add-mul-pos.md)
 - [For ordered rails, the clamp lies in the rail interval](rail-clamp-mem-icc.md)
 - [Values at or below $v_{\min}$ clamp to $v_{\min}$](rail-clamp-eq-vmin-of-le.md)
 - [The clamp leaves values in the rail interval unchanged](rail-clamp-eq-self-of-mem.md)

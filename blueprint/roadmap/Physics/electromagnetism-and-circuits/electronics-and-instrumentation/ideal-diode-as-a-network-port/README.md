@@ -5,7 +5,6 @@
 - [Thermal voltage from the carrier-charge magnitude](thermal-voltage.md)
 - [Thermal voltage is positive for $k_B, T > 0$ and $q \ne 0$](thermal-voltage-pos.md)
 - [Thermal voltage does not depend on the sign of the carrier charge](thermal-voltage-neg-charge.md)
-- [Thermal voltage as the Einstein ratio $D / \mu$ for $\mu, q \ne 0$](einstein-ratio-eq-thermal-voltage.md)
 
 ## Shockley current law
 

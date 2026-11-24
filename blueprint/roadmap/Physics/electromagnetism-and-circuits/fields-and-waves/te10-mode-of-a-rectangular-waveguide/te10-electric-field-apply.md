@@ -5,5 +5,5 @@ Let `a`, `E₀`, `β` be real and `ω ≠ 0`. At every time `t` and point `(x, y
 
 `E(t, x, y, z) = (0, E₀ sin(k_c x) cos(ωt - βz), 0)`,
 
-with the [cutoff wavenumber](cutoff-wavenumber.md) `k_c = π/a`. For `ω = 0` the field is `0`
+with the [cutoff wavenumber](../evanescent-te10-field-below-cutoff/cutoff-wavenumber.md) `k_c = π/a`. For `ω = 0` the field is `0`
 instead.

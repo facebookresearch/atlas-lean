@@ -14,7 +14,6 @@
 
 ## Invalid observations and budget expiry
 
-- [An invalid observation has a resolution time beyond its budget](resolution-exceeds-of-invalid-observatio.md)
 - [The invalid event lies inside the budget-expiry event](invalid-event-subset-resolution-exceeds.md)
 - [An exponential tail bound on budget expiry bounds the invalid event](measure-invalid-event-le-of-tail.md)
 

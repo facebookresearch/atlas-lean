@@ -12,7 +12,6 @@
 - [For ε, μ, ω > 0, positive conductivity gives positive attenuation](attenuation-constant-pos-of-sigma-pos.md)
 - [The propagation constant is α + iβ for all real parameters](propagation-constant-eq.md)
 - [For ε, μ, ω > 0 and σ ≥ 0, γ solves the squared propagation equation](propagation-constant-sq.md)
-- [For ε, μ, ω > 0 and σ ≥ 0, γ² equals −ω²με + iωμσ](propagation-constant-sq-eq.md)
 - [For ε, μ, ω > 0 and σ ≥ 0, γ is the root with α ≥ 0 and β > 0](dispersion-verification.md)
 - [At zero conductivity the attenuation constant is zero](attenuation-constant-zero-sigma.md)
 - [At zero conductivity the phase constant is the lossless wavenumber](phase-constant-zero-sigma.md)

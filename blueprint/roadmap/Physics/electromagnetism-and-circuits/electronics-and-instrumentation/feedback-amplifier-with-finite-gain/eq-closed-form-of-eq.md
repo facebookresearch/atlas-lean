@@ -11,4 +11,4 @@ in which $v_i - \beta v_o$ is the error between the input and the fed-back outpu
 $$v_o = \frac{A\, v_i}{1 + A\beta},$$
 
 where the denominator $1 + A\beta$ is [positive](one-add-mul-pos.md). So for each input the
-equation has at most one solution; the closed form [does solve it](closed-form-satisfies.md).
+equation has at most one solution; the closed form [does solve it](../rail-limited-feedback-amplifier/linear-candidate-satisfies.md).

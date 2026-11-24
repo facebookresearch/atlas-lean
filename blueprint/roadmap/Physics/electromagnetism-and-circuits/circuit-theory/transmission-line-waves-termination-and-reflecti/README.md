@@ -26,7 +26,6 @@
 - [Nonzero forward excitation forces a nonzero load sum](load-sum-ne-zero.md)
 - [Reflection ratio at the load under a denominator guard](load-reflection-ratio.md)
 - [Reflection ratio at the load under nonzero excitation alone](load-reflection-ratio-of-ne-zero.md)
-- [The amplitude ratio is the reflection coefficient of the load](load-reflection-coefficient-eq.md)
 - [A matched load reflects nothing](matched-load-reflection-eq-zero.md)
 - [Zero voltage at the load plane gives backward amplitude −A₊](short-circuit-reflection.md)
 - [A short-circuit load reflects with a sign flip](short-circuit-load-reflection.md)
@@ -37,7 +36,6 @@
 ## Passive loads and the reflection bound
 
 - [Power-balance identity for the reflection coefficient](one-sub-norm-sq-reflection-coefficient.md)
-- [A load is passive iff its reflection ratio has modulus at most one](norm-reflection-le-one-iff.md)
 - [Passivity criterion for the reflection coefficient](norm-reflection-coefficient-le-one-iff.md)
 - [The reflection coefficient has modulus below one iff Re Z_L > 0](norm-reflection-coefficient-lt-one-iff.md)
 - [The reflection coefficient has modulus one iff Re Z_L = 0](norm-reflection-coefficient-eq-one-iff.md)
@@ -53,7 +51,7 @@
 
 ## Resistive and special loads
 
-- [Reflection coefficient of a resistive load](resistive-reflection.md)
+- [Reflection coefficient of a resistive load or a refractive interface](resistive-reflection.md)
 - [A real load has a real reflection coefficient](reflection-coefficient-of-real.md)
 - [The resistive reflection coefficient is at most one in size iff R ≥ 0](abs-resistive-reflection-le-one-iff.md)
 - [Instantaneous reflection at a resistive load](instantaneous-resistive-reflection.md)

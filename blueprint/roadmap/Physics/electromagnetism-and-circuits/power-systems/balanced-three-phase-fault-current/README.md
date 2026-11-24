@@ -30,7 +30,6 @@ $x / 0 = 0$, so $I_f = V_f = 0$ when $Z_{\mathrm{th}} + Z_f = 0$.
 - [For positive bases, the fault current formula holds per unit](fault-current-per-unit.md)
 - [For positive bases, the fault voltage formula holds per unit](fault-voltage-per-unit.md)
 - [For positive bases, the fault laws hold iff they hold per unit](is-thevenin-fault-per-unit-iff.md)
-- [For positive bases, fault current is current base times per-unit value](fault-current-eq-base-mul-per-unit.md)
 - [For positive bases, the fault phase current formula holds per unit](fault-phase-currents-per-unit.md)
 
 ## Bolted faults and degenerate cases

@@ -15,7 +15,6 @@ susceptance is positive, it differs from `f_e` by at most `b_e |θ_{t(e)} - θ_{
 - [DC flow is susceptance times the angle difference across the branch](dc-branch-flow-apply.md)
 - [The DC injection is the weighted Laplacian applied to the angles](dc-injection-eq-weighted-laplacian-mul-v.md)
 - [The weighted Laplacian in terms of the head-positive incidence](weighted-laplacian-eq-incidence-matrix.md)
-- [The DC injections sum to zero](sum-dc-injection-eq-zero.md)
 - [The weighted Laplacian annihilates constant angle vectors](weighted-laplacian-mul-vec-const.md)
 - [Reversing all branches negates the DC flows](dc-branch-flow-reverse.md)
 

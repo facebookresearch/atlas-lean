@@ -26,7 +26,6 @@
 
 ## Normal-incidence interface
 
-- [Normal-incidence amplitude reflection coefficient](fresnel-r.md)
 - [Normal-incidence amplitude transmission coefficient](fresnel-t.md)
 - [For positive indices, R² + (n2 / n1) T² = 1](fresnel-energy.md)
 - [Snell's law as a relation](snell.md)

@@ -2,3 +2,6 @@
 
 For every real `a`, the [TE10 profile](te10-profile.md) `x ↦ sin(k_c x)` is infinitely
 differentiable.
+
+The statement does not involve the frequency: it serves the propagating mode above cutoff and the
+evanescent field below cutoff alike.

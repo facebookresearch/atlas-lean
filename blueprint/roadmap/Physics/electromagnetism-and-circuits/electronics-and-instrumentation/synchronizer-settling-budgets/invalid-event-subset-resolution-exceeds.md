@@ -12,3 +12,8 @@ $|e_i(\omega)| < \min(V_{il} - V_{ol}, V_{oh} - V_{ih})$. Then for every index $
 [budget-expiry event](resolution-exceeds-event.md):
 
 $$\{\omega : x_i(\omega) \text{ is invalid}\} \subseteq \{\omega : b_i < r_i(\omega)\}.$$
+
+Pointwise: for every outcome $\omega$, if $x_i(\omega)$ is an
+[invalid observation](invalid-observation.md), then $b_i < r_i(\omega)$, so an invalid observation
+can occur only after its settling budget has expired. This is the contrapositive of
+[within budget, not invalid](not-invalid-observation-of-le.md).

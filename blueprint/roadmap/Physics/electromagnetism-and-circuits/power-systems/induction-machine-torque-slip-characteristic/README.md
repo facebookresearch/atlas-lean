@@ -15,7 +15,6 @@
 
 - [Torque–slip curve of the induction machine](torque-curve.md)
 - [On the motoring range, the developed torque is the torque curve](developed-torque-eq-torque-curve.md)
-- [On the motoring range, the torque curve is the developed torque](torque-curve-eq-developed-torque.md)
 - [The torque curve vanishes at zero slip](torque-curve-zero.md)
 - [The torque curve is continuous at zero slip](torque-curve-continuous-at-zero.md)
 - [Developed torque at standstill](torque-at-standstill.md)

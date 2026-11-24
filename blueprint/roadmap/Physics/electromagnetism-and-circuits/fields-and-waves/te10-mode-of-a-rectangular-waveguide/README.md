@@ -22,16 +22,11 @@
 
 ## The propagating TE10 mode
 
-- [TE10 cutoff wavenumber of a guide of width a](cutoff-wavenumber.md)
-- [Transverse profile of the TE10 mode](te10-profile.md)
 - [Longitudinal factor of the propagating TE10 mode](te10-mode.md)
 - [Electric field of the TE10 mode](te10-electric-field.md)
 - [Magnetic field of the TE10 mode](te10-magnetic-field.md)
-- [A field frozen at a time, as a function of position](field-at-time.md)
 - [TE10 dispersion relation](te10-dispersion.md)
 - [Propagation constant of the TE10 mode](propagation-constant.md)
-- [The TE10 profile solves the profile equation at the cutoff wavenumber](te10-profile-profile-equation.md)
-- [The TE10 profile is infinitely differentiable](cont-diff-te10-profile.md)
 - [The TE10 longitudinal factor is jointly smooth in t and z](cont-diff-te10-mode.md)
 - [For E₀ ≠ 0 and ω ≠ 0 the mode equation holds exactly under dispersion](te10-mode-mode-equation-iff.md)
 - [Components of the TE10 electric field for ω ≠ 0](te10-electric-field-apply.md)

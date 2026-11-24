@@ -17,7 +17,6 @@
 - [The zero sequence is the normalized DFT at frequency 0](zero-sequence-eq-normalized-dft-zero.md)
 - [The positive sequence is the normalized DFT at frequency 2](positive-sequence-eq-normalized-dft-two.md)
 - [The negative sequence is the normalized DFT at frequency 1](negative-sequence-eq-normalized-dft-one.md)
-- [Sequence components are the normalized DFT at negated frequencies](sequence-vector-eq-normalized-dft-neg.md)
 - [Sequence components are the inverse DFT of the phases](sequence-vector-eq-inv-dft.md)
 - [The phases are the DFT of the sequence components](phase-vector-eq-dft-sequence-vector.md)
 
@@ -30,7 +29,6 @@
 ## Power in sequence coordinates
 
 - [Complex power is three times its sequence-coordinate expression](sum-phase-mul-conj-eq-three-mul-sum-sequ.md)
-- [Power identity as sums over the integers modulo 3](sum-phase-vector-mul-conj-eq.md)
 
 ## Validation cases
 

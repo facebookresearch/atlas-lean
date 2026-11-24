@@ -4,4 +4,4 @@ Let `c₀`, `a`, `β` be real and `E₀ ≠ 0`, `ω ≠ 0`. The [longitudinal fa
 `f(t, z) = -(E₀/ω) sin(ωt - βz)` satisfies the
 [mode equation](../separable-vacuum-maxwell-fields/mode-equation.md) `f_tt = c₀² (f_zz - k_c² f)` at
 every `(t, z)` if and only if the [dispersion relation](te10-dispersion.md) `ω² = c₀² (k_c² + β²)`
-holds, with the [cutoff wavenumber](cutoff-wavenumber.md) `k_c = π/a`.
+holds, with the [cutoff wavenumber](../evanescent-te10-field-below-cutoff/cutoff-wavenumber.md) `k_c = π/a`.
