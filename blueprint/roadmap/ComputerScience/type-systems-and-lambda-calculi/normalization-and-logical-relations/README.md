@@ -8,3 +8,6 @@
 - [Strong normalization of F-omega type constructors](strong-normalization-of-f-omega-type.md)
 - [Howe's theorem: applicative bisimilarity is a congruence](howe-s-theorem-applicative-bisimilarity-is-a.md)
 - [Howe's key lemma](howe-s-key-lemma.md)
+- [Strong normalization of F-omega](strong-normalization-of-f-omega.md)
+- [Step-indexed binary logical relation and contextual approximation](step-indexed-binary-logical-relation-and.md)
+- [Step-indexed unary logical relation for recursive types](step-indexed-unary-logical-relation-for.md)
