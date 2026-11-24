@@ -9,6 +9,8 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Linear systems and fundamental matrices](linear-systems-and-fundamental-matrices/README.md)
 - [One-parameter groups of matrices](one-parameter-groups-of-matrices/README.md)
 - [Picard iteration](picard-iteration/README.md)
+- [Regular sublevel invariance](regular-sublevel-invariance/README.md)
+- [Polynomial regular-sublevel invariance](maps-to-sublevel-of-mk-derivation-nonpos.md)
 - [Sturm–Liouville Dirichlet problem](sturm-liouville-dirichlet-problem/README.md)
 - [Cauchy–Peano existence theorem](cauchy-peano-exists.md)
 - [Comparison principle for the Dirichlet problem on $(0, 1)$](bvp-comparison.md)
