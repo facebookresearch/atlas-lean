@@ -12166,6 +12166,7 @@
   "MathlibExt/NumberTheory/Padics/PontryaginDual": {"to": "NumberTheory/p-adic-numbers", "title": "p-adic Pontryagin duals"},
   "MathlibExt/NumberTheory/Padics/Strassmann": {"to": "NumberTheory/p-adic-numbers", "title": "Strassmann's theorem"},
   "MathlibExt/NumberTheory/PadovanSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Padovan and Perrin sequences"},
+  "MathlibExt/NumberTheory/PalindromesArithmeticProgressions": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromes in arithmetic progressions"},
   "MathlibExt/NumberTheory/PellCassiniIdentity": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
   "MathlibExt/NumberTheory/PellConvergent": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pell's equation"},
   "MathlibExt/NumberTheory/PellEulerSolutions": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
