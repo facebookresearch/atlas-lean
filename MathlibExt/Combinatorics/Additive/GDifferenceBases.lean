@@ -192,7 +192,9 @@ public theorem boundedDiffSetNumber_one (g : ℕ) : boundedDiffSetNumber g 1 = 1
       simp [subRepCount, Finset.filter_singleton, Ne.symm hx]
     omega
 
-/-- The minimum defining the interval difference basis number is attained. -/
+/-- For any natural numbers $g,n$, there is a finite set $A \subseteq \mathbb Z$ of size
+$\eta_g(n)$, the interval difference basis number, such that each integer $1 \le x \le n$
+has at least $g$ representations $x=a-a'$ by ordered pairs $(a,a') \in A \times A$. -/
 public theorem diffBasisNumber_le_succ_mul.exists_min_basis (g n : ℕ) :
     ∃ A : Finset ℤ, A.card = diffBasisNumber g n ∧
       ∀ x ∈ Finset.Icc (1 : ℤ) n, g ≤ subRepCount A x := by

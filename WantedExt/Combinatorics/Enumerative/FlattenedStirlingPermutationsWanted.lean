@@ -32,6 +32,10 @@ order `2`: `W(n+1, k+1) = W(n, k) + (2(k+1) + 1) W(n, k+1)`).
 Proved in `MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns`, which this module
 imports: the number of runs of the word of a type `B` set partition
 (`MetaMathlibExt.wordRunCount_typeBFlattenedWord`).
+
+Proved in `MathlibExt.Combinatorics.Enumerative.DowlingExponentialGeneratingFunction`, which this
+module imports: the exponential generating function of the Dowling numbers
+(`MetaMathlibExt.hasSum_dowling_egf`).
 -/
 
 module
@@ -40,6 +44,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Floor.Semiring
 public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.Combinatorics.Enumerative.Stirling
+public import MathlibExt.Combinatorics.Enumerative.DowlingExponentialGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTwoRuns
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns
 public import MathlibExt.Combinatorics.Enumerative.QRWhitneyNumbers
@@ -140,19 +145,6 @@ public theorem_wanted dowling_eq_sum (n : ℕ) (hn : 1 ≤ n) :
     qrDowlingNumber (QRWhitney.whitneySecond 2 1 1) n =
       ((∑ i ∈ Finset.range (n + 1), n.choose i *
         ∑ k ∈ Finset.range (n - i + 1), 2 ^ (n - i - k) * Nat.stirlingSecond (n - i) k : ℕ) : ℂ)
-
-/-- **Exponential generating function of the Dowling numbers.** For $n \ge 0$ let $D_n$ be the
-$n$-th Dowling number of the group of order $2$, that is, the $(q, r)$-Dowling number
-$D_n = \sum_{k=0}^{n} W_{2,1,1}(n, k)$ built from the $(q, r)$-Whitney numbers of the second
-kind with $m = 2$, $r = 1$, $q = 1$. Then for every complex number $x$ the series
-$\sum_{n \ge 0} D_n x^n / n!$ is summable with sum $\exp\bigl(x + (e^{2x} - 1)/2\bigr)$.
-
-Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
-Permutations*, INTEGERS 24 (2024), Article A104, Corollary 3, generating
-function. -/
-public theorem_wanted hasSum_dowling_egf (x : ℂ) :
-    HasSum (fun n : ℕ => qrDowlingNumber (QRWhitney.whitneySecond 2 1 1) n * x ^ n / n.factorial)
-      (Complex.exp (x + (Complex.exp (2 * x) - 1) / 2))
 
 /-- **The word of a type $B$ set partition is a flattened Stirling permutation.** For every
 natural number $n$ and every type $B$ set partition $P$ of $[-n, n] = \{-n, \dots, n\}$, the word

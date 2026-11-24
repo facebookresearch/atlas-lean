@@ -203,4 +203,42 @@ theorem trib_add_two_sub_three_mul (k : ℕ) (hk : 1 ≤ k) :
     · rw [show 3 * ((k + 1 : ℕ) : ℤ) + 1 = (3 * (k : ℤ) + 1) + 3 by omega]
       exact hstep _ (by omega) ih.2
 
+/-- **Tribonacci partial-sum identity for $t(3k+2)$.** Let $t$ be the tribonacci numbers with
+$t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
+extended by $t(n) = 0$ for $n < 0$. For every natural number $k$,
+$$t(3k+2) = \sum_{i=0}^{k} \bigl(t(3k-3i+1) + t(3k-3i)\bigr).$$
+
+Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
+Two Consecutive Colors in `n`-Color Compositions",
+Theorem 8. -/
+theorem trib_three_mul_add_two (k : ℕ) :
+    trib (3 * (k : ℤ) + 2) =
+      ∑ i ∈ Finset.range (k + 1),
+        (trib (3 * (k : ℤ) + 2 - 3 * (i : ℤ) - 1) +
+          trib (3 * (k : ℤ) + 2 - 3 * (i : ℤ) - 2)) := by
+  let term (j i : ℕ) :=
+    trib (3 * (j : ℤ) + 2 - 3 * (i : ℤ) - 1) +
+      trib (3 * (j : ℤ) + 2 - 3 * (i : ℤ) - 2)
+  change trib (3 * (k : ℤ) + 2) = ∑ i ∈ Finset.range (k + 1), term k i
+  induction k with
+  | zero => norm_num [term, trib, tribNat, Finset.sum_range_one]
+  | succ k ih =>
+    have hrec : trib (3 * ((k + 1 : ℕ) : ℤ) + 2) =
+        trib (3 * ((k + 1 : ℕ) : ℤ) + 2 - 1) +
+          trib (3 * ((k + 1 : ℕ) : ℤ) + 2 - 2) + trib (3 * (k : ℤ) + 2) := by
+      let j := 3 * k + 2
+      rw [trib_eq_tribNat (m := j + 3) (by dsimp [j]; omega),
+        trib_eq_tribNat (m := j + 2) (by dsimp [j]; omega),
+        trib_eq_tribNat (m := j + 1) (by dsimp [j]; omega),
+        trib_eq_tribNat (m := j) (by dsimp [j])]
+      exact tribNat_add_three j
+    have htail (i : ℕ) : term (k + 1) (i + 1) = term k i := by
+      dsimp [term]
+      exact congrArg₂ (· + ·) (congrArg trib (by omega)) (congrArg trib (by omega))
+    rw [Finset.sum_range_succ', show (∑ i ∈ Finset.range (k + 1), term (k + 1) (i + 1)) =
+      ∑ i ∈ Finset.range (k + 1), term k i from Finset.sum_congr rfl (fun i _ => htail i), ← ih]
+    rw [hrec]
+    simp only [term, Nat.cast_zero, mul_zero, sub_zero]
+    ac_rfl
+
 end MathlibExt.Combinatorics.Enumerative.NColorCompositionsWanted
