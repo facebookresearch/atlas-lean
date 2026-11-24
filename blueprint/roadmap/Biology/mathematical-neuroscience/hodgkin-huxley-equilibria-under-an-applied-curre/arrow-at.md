@@ -1,4 +1,4 @@
-# Arrowhead entries of the squid Jacobian along the equilibrium branch
+# Arrowhead entries along the equilibrium branch
 
 For real `V`, write `m = m∞(V)`, `h = h∞(V)` and `n = n∞(V)` for the steady-state gating values
 [`m∞`](../hodgkin-huxley-model/m-inf.md), [`h∞`](../hodgkin-huxley-model/h-inf.md) and
@@ -13,5 +13,5 @@ For real `V`, write `m = m∞(V)`, `h = h∞(V)` and `n = n∞(V)` for the stead
 with the Hodgkin–Huxley rate functions [`α_m`](../hodgkin-huxley-model/alpha-m.md),
 [`β_m`](../hodgkin-huxley-model/beta-m.md), [`α_h`](../hodgkin-huxley-model/alpha-h.md),
 [`β_h`](../hodgkin-huxley-model/beta-h.md), [`α_n`](../hodgkin-huxley-model/alpha-n.md) and
-[`β_n`](../hodgkin-huxley-model/beta-n.md), and `α_m'` the derivative of `α_m`, and so on. They form
-the [arrowhead matrix](mat.md) at `V`.
+[`β_n`](../hodgkin-huxley-model/beta-n.md), and `α_m'` the derivative of `α_m` (taken as `0` at a
+point where it does not exist), and so on. They form the [arrowhead matrix](mat.md) at `V`.
