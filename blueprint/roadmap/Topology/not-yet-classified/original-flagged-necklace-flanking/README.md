@@ -1,0 +1,16 @@
+# Original Flagged Necklace Flanking
+
+- [Joints](joints.md)
+- [Mem joints](mem-joints.md)
+- [Zero joint](zero-joint.md)
+- [Last joint](last-joint.md)
+- [Data](data.md)
+- [Original joint preimage](original-joint-preimage.md)
+- [Necklace Inclusion](necklace-inclusion.md)
+- [Object](object.md)
+- [Object is Flanked](object-is-flanked.md)
+- [Inclusion coefficient Map](inclusion-coefficient-map.md)
+- [Inclusion](inclusion.md)
+- [Inclusion operator](inclusion-operator.md)
+- [Object input](object-input.md)
+- [Object flags](object-flags.md)

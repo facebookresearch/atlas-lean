@@ -1,0 +1,16 @@
+# Original Carrier Disjoint Coproduct
+
+- [Object](object.md)
+- [Inl](inl.md)
+- [Inr](inr.md)
+- [Desc](desc.md)
+- [Inl desc](inl-desc.md)
+- [Inr desc](inr-desc.md)
+- [Desc unique](desc-unique.md)
+- [Cofan](cofan.md)
+- [Is Colimit](is-colimit.md)
+- [Comparison](comparison.md)
+- [Inl comparison](inl-comparison.md)
+- [Inr comparison](inr-comparison.md)
+- [Inl hom](inl-hom.md)
+- [Inr hom](inr-hom.md)

@@ -1,0 +1,15 @@
+# Original Coherent Bead Interval
+
+- [Length](length.md)
+- [Embedding](embedding.md)
+- [Embedding zero](embedding-zero.md)
+- [Embedding last](embedding-last.md)
+- [Operator](operator.md)
+- [Lifted Embedding](lifted-embedding.md)
+- [Coverage](coverage.md)
+- [Whole Hom Iso](whole-hom-iso.md)
+- [Lifted zero](lifted-zero.md)
+- [Lifted last](lifted-last.md)
+- [Hom Iso](hom-iso.md)
+- [Hom Iso hom](hom-iso-hom.md)
+- [Exists original coefficient](exists-original-coefficient.md)

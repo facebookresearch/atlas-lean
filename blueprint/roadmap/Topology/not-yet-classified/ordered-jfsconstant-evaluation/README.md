@@ -1,0 +1,17 @@
+# Ordered JFSConstant Evaluation
+
+- [Zero Tuple](zero-tuple.md)
+- [To Zero](to-zero.md)
+- [Zero Is Terminal](zero-is-terminal.md)
+- [Constant](constant.md)
+- [Evaluation](evaluation.md)
+- [Adjunction](adjunction.md)
+- [Adjunction hom Equiv](adjunction-hom-equiv.md)
+- [Iso](iso.md)
+- [Iso hom](iso-hom.md)
+- [Iso inv projection](iso-inv-projection.md)
+- [Iso source](iso-source.md)
+- [Iso target](iso-target.md)
+- [Nat Iso](nat-iso.md)
+- [Zero Iso](zero-iso.md)
+- [Zero Iso inv projection](zero-iso-inv-projection.md)
