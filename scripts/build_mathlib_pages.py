@@ -105,8 +105,12 @@ def count(n: int, noun: str) -> str:
 
 
 def nav_text(text: str) -> str:
-    """A title as the link text of a SUMMARY.md entry, which literate-nav reads as Markdown."""
-    return re.sub(r"([\\`*_\[\]<>#!|$])", r"\\\1", text)
+    """A title as the link text of a SUMMARY.md entry, which literate-nav reads as Markdown and the theme writes
+    as HTML. The title's own `&`, `<` and `>` become character references, so that none of it reads as markup, and
+    so do its brackets, which Python-Markdown would otherwise take, `]:` say, for a reference definition before it
+    reads a backslash."""
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("[", "&#91;")
+    return re.sub(r"([\\`*_#!|$])", r"\\\1", text.replace("]", "&#93;"))
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -648,13 +652,19 @@ def summary_markdown(plan: Plan) -> str:
 
 
 def render_chrome(plan: Plan, work: Path, mkdocs: list[str]) -> tuple[dict[str, str], list[dict]]:
+    import yaml  # MkDocs' own YAML library, which reads the stubs' front matter
+
     docs, built = work / "docs", work / "site"
     docs.mkdir(parents=True)
     (docs / "index.md").write_text("Home\n", encoding="utf-8")
     for page in plan.pages:
         stub = docs / f"{page.path[: -len('.html')]}.md"
         stub.parent.mkdir(parents=True, exist_ok=True)
-        stub.write_text(f"---\ntitle: {json.dumps(page.title, ensure_ascii=False)}\n---\n\n"
+        # The theme writes the title into the page's head and header as HTML, so its `&`, `<` and `>` go in
+        # escaped; other titles, the ones with an apostrophe say, read as before. YAML writes it, escaping what
+        # YAML cannot hold as such, a control character say, which would leave the front matter unread.
+        front = yaml.safe_dump({"title": html.escape(page.title, quote=False)}, allow_unicode=True, width=2**31)
+        stub.write_text(f"---\n{front}---\n\n"
                         f'<h1 id="_title">{esc(page.title)}</h1>\n\n{SLOT}\n', encoding="utf-8")
     (docs / "SUMMARY.md").write_text(summary_markdown(plan), encoding="utf-8")
     config = work / "mkdocs.yml"

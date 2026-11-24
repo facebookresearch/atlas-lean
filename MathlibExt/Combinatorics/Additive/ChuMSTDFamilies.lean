@@ -262,6 +262,55 @@ public theorem chuFamilyKLT_mem_add {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht 
     · exact add_mem htwo (hpoint i h) (by omega)
     · exact add_mem hlast₂ (hpoint (i - T) (by omega)) (by omega)
 
+-- Keep the original named hypotheses although the prefix argument does not need them.
+set_option linter.unusedVariables false in
+/-- **Block starting points of the Chu family set.** Let $k$, $l$, $t$ be positive integers and
+let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
+$4 + (4k + 4)i + (4kl + 4l + 4)j \in A$ for all integers $i$, $j$ with $0 \le i \le l$ and
+$0 \le j \le t - 1$.
+
+Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
+Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 6 (`integers-2024-A32-lem-6`). -/
+public theorem chuFamilyKLT_mem_block_starts {k l t : ℕ} (hk : 0 < k) (hl : 0 < l)
+    (ht : 0 < t) (i j : ℕ) (hi : i ≤ l) (hj : j < t) :
+    4 + (4 * k + 4) * (i : ℤ) + (4 * k * l + 4 * l + 4) * (j : ℤ) ∈
+      chuFamilyKLT k l t := by
+  let block := [1, 1, 2] ++ (List.replicate l (chuBlock k)).flatten
+  let before := (List.replicate j block).flatten ++ [1, 1, 2] ++
+    (List.replicate i (chuBlock k)).flatten
+  let after := (List.replicate (l - i) (chuBlock k)).flatten ++
+    (List.replicate (t - (j + 1)) block).flatten ++ [1, 1, 2, 1]
+  have hOuter : (List.replicate t block).flatten =
+      (List.replicate j block).flatten ++ block ++
+        (List.replicate (t - (j + 1)) block).flatten := by
+    conv_lhs => rw [show t = j + (1 + (t - (j + 1))) by omega]
+    simp only [List.replicate_add, List.replicate_one, List.flatten_append, List.flatten_cons,
+      List.flatten_nil, List.append_nil, List.append_assoc]
+  have hInner : (List.replicate l (chuBlock k)).flatten =
+      (List.replicate i (chuBlock k)).flatten ++ (List.replicate (l - i) (chuBlock k)).flatten := by
+    conv_lhs => rw [show l = i + (l - i) by omega]
+    rw [List.replicate_add i (l - i), List.flatten_append]
+  have hblock : block = [1, 1, 2] ++ (List.replicate i (chuBlock k)).flatten ++
+      (List.replicate (l - i) (chuBlock k)).flatten := by
+    dsimp only [block]
+    rw [hInner, List.append_assoc]
+  have hgaps : chuFamilyKLT k l t = setOfConsecutiveDifferences 0 (before ++ after) := by
+    change setOfConsecutiveDifferences 0 ((List.replicate t block).flatten ++ [1, 1, 2, 1]) = _
+    rw [hOuter]
+    -- Split only the current block, leaving the complete blocks unchanged.
+    refine (congrArg (fun current => setOfConsecutiveDifferences 0
+      ((List.replicate j block).flatten ++ current ++
+        (List.replicate (t - (j + 1)) block).flatten ++ [1, 1, 2, 1])) hblock).trans ?_
+    simp only [before, after, List.append_assoc]
+  have hsum : 0 + (before.sum : ℤ) =
+      4 + (4 * k + 4) * (i : ℤ) + (4 * k * l + 4 * l + 4) * (j : ℤ) := by
+    simp [before, block, chuBlock_sum, List.sum_flatten, Int.mul_add, Int.add_mul,
+      mul_left_comm, mul_comm]
+    omega
+  rw [hgaps, ← hsum, setOfConsecutiveDifferences_append, Finset.mem_union]
+  right
+  cases after <;> simp [setOfConsecutiveDifferences]
+
 /-- **Two families of runs with the same sums (Proposition 1).** Let $k$, $l$, $t$ be natural
 numbers, let $M^k$ be the block $1, 4, \dots, 4, 3$ with $k$ fours, and let $B$ be the
 concatenation of $l$ copies of $M^k$. For $j \ge 1$ let $R_1(j)$ be the sequence $1, 1$ followed

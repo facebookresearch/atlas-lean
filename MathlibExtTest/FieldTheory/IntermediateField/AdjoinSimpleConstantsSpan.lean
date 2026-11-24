@@ -13,7 +13,7 @@ public import MathlibExt.FieldTheory.IntermediateField.AdjoinSimpleConstantsSpan
 @[expose] public section
 
 -- exactSource consumer: the original binders apply verbatim.
-theorem exactSource {K : Type*} [Field K] [Algebra ℂ K]
+private theorem exactSource {K : Type*} [Field K] [Algebra ℂ K]
     (F : IntermediateField ℚ ℂ) (B S : Set K) (hBS : B ⊆ S) (c : ℂ)
     (hc : IsAlgebraic ↥F c) (y : K)
     (hyS : y ∈ Subfield.closure

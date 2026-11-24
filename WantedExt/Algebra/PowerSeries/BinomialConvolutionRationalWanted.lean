@@ -16,6 +16,7 @@ public import MathlibExt.RingTheory.Polynomial.PairwiseSumResultant
 public import MathlibExt.RingTheory.PowerSeries.BinomialProductGeometric
 public import MathlibExt.RingTheory.PowerSeries.BinomialProductMonomial
 public import MathlibExt.RingTheory.PowerSeries.HadamardProductRational
+public import MathlibExt.RingTheory.PowerSeries.RationalityDescent
 
 /-!
 # Binomial convolutions for rational power series
@@ -37,19 +38,6 @@ namespace MetaMathlibExt
 open PowerSeries
 
 @[expose] public section
-
-/-- **Rationality of power series descends from field extensions.** Let $F$ be a field, let $G$ be
-a field extension of $F$ (a field with an $F$-algebra structure), and let $A$ be a power series
-over $F$. If there are polynomials $p$, $q$ over $G$ with $q \ne 0$ and $A q = p$, where $A$ is
-viewed as a power series over $G$, then there are polynomials $P$, $Q$ over $F$ with $Q \ne 0$ and
-$A Q = P$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 1 (`jis-2024-24.1.3-thm-1`). -/
-public theorem_wanted exists_polynomial_quotient_of_extension {F G : Type*} [Field F] [Field G]
-    [Algebra F G] (A : PowerSeries F) (p q : Polynomial G) (hq : q ≠ 0)
-    (h : PowerSeries.map (algebraMap F G) A * (q : PowerSeries G) = p) :
-    ∃ P Q : Polynomial F, Q ≠ 0 ∧ A * (Q : PowerSeries F) = P
 
 /-- **Binomial products of proper rational series.** Let $K$ be a field of characteristic $0$, let
 $\alpha_1, \dots, \alpha_m, \beta_1, \dots, \beta_n \in K$, not necessarily distinct or nonzero,
