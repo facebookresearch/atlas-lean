@@ -244,6 +244,43 @@ theorem comm_tensor_side_conditions_fail :
       (Proc.emptyChoice (.const 0) : Proc TestAtom).freeNames := by
   decide
 
+/-- A typed tensor-commutation redex outside both `κ⊗` rules: the `⊤`
+continuation holds the cut channel through its context, so neither
+syntactic side condition holds, although derivation-level `κ⊗` would
+push the cut into the `⊤` branch to expose the outer `output`. Recorded
+as the boundary for deadlock-freedom (Theorem 2) work. -/
+theorem top_owned_tensor_redex_typed :
+    HasType
+      ((((∅ : Context TestAtom).insert (.const 2) propA.dual).insert (.const 0) .top).insert
+        (.const 1) (.tensor propA .one))
+      (.cut .bot
+        (.output (PiCalculus.liftName 0 (.const 1)) (.link (.var 0) (.const 2))
+          (.emptyChoice (.const 0)))
+        (.emptyOutput (.var 0))) ∧
+    PiCalculus.Name.var 1 ∉
+      (Proc.link (.var 0) (.const 2) : Proc TestAtom).freeNames ∧
+    PiCalculus.Name.var 0 ∉
+      (Proc.emptyChoice (.const 0) : Proc TestAtom).freeNames := by
+  refine ⟨?_, by decide, by decide⟩
+  have hp : HasType ((Context.lift ((∅ : Context TestAtom).insert (PiCalculus.Name.const 2)
+      propA.dual)).insert (.var 0) propA) (.link (.var 0) (.const 2)) := by
+    convert HasType.ax (w := .var 0) (x := .const 2) (a := propA.dual) (by decide) using 1
+    decide
+  have hq : HasType ((((∅ : Context TestAtom).insert (PiCalculus.Name.var 0) .bot).insert
+      (.const 0) .top).insert (.const 1) .one) (.emptyChoice (.const 0)) := by
+    convert HasType.top (Γ := ((∅ : Context TestAtom).insert (.var 0) .bot).insert (.const 1) .one)
+      (x := .const 0) (by decide) using 1
+    decide
+  have ho := HasType.tensor hp hq (by decide) (by decide) (by decide)
+  have h := HasType.cut (Δ := ∅) (a := .bot)
+    (Γ := (((∅ : Context TestAtom).insert (.const 2) propA.dual).insert (.const 0) .top).insert
+      (.const 1) (.tensor propA .one))
+    (by convert ho using 1; decide)
+    (by convert (HasType.one (Atom := TestAtom) (x := .var 0)) using 1; decide)
+    (Finmap.Disjoint.symm _ _ (Finmap.disjoint_empty _))
+  rw [Finmap.union_empty] at h
+  exact h
+
 /-- A redex guarded by an input prefix does not step: only cuts reduce. -/
 theorem input_guarded_no_step {q : Proc TestAtom} :
     ¬ Step (.input (.const 0) tensorParrRedex) q := by
