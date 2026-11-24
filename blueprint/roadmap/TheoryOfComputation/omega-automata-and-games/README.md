@@ -10,3 +10,4 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Parity automata](parity-automata/README.md)
 - [Parity games](parity-games/README.md)
 - [Rabin and Streett automata](rabin-and-streett-automata/README.md)
+- [Logic and tree automata](logic-and-tree-automata/README.md)

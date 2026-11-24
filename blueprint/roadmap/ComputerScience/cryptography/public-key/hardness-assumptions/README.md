@@ -36,3 +36,7 @@
 ## Trapdoor functions
 
 - [Trapdoor permutations](trapdoor-permutations.md)
+- [Learning with errors](learning-with-errors.md)
+- [Black-box constructions and oracle separations](black-box-constructions-and-oracle-separations.md)
+- [Regev's public-key encryption from learning with errors](regev-s-public-key-encryption-from-learning.md)
+- [No relativizing construction of key agreement from one-way permutations](no-relativizing-construction-of-key-agreement.md)
