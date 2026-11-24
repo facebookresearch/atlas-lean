@@ -8,7 +8,7 @@ where the stage abscissae $x + a_r h$ are assumed to stay in $[x_0, X]$. Let $\b
 
 1. **Stage bound.** For $h \ge 0$ and $y, z \in \mathbb{R}^d$, the stages satisfy $\|k_r(y) - k_r(z)\| \le L(1 + hL\beta)^{r-1}\|y - z\|$.
 2. **Increment bound.** Hence $\|\Phi(x, y; h) - \Phi(x, z; h)\| \le L_\Phi\|y - z\|$ for $0 \le h \le h_0$, with $L_\Phi = L\gamma(1 + h_0L\beta)^{R-1}$.
-3. **Convergence.** If moreover $\sum_r c_r = 1$, the method is consistent, $\Phi(x, y; 0) = f(x, y)$, and its global error tends to $0$ with $h$; if it has order of accuracy $p$, so that the truncation error $T_n = \frac{y(x_{n+1}) - y(x_n)}{h} - \Phi(x_n, y(x_n); h)$ along the exact solution is at most $Kh^p$, then, starting from the exact initial value, the global error is at most $\frac{K}{L_\Phi}\big(e^{L_\Phi(X - x_0)} - 1\big)h^p$, read as $K(X - x_0)h^p$ when $L_\Phi = 0$.
+3. **Convergence.** If moreover $\sum_r c_r = 1$, the method is consistent, $\Phi(x, y; 0) = f(x, y)$, and, for starting values $y_0(h) \to y(x_0)$, its global error tends to $0$ with $h$; if it has order of accuracy $p$, so that the truncation error $T_n = \frac{y(x_{n+1}) - y(x_n)}{h} - \Phi(x_n, y(x_n); h)$ along the exact solution is at most $Kh^p$, then, starting from the exact initial value, the global error is at most $\frac{K}{L_\Phi}\big(e^{L_\Phi(X - x_0)} - 1\big)h^p$, read as $K(X - x_0)h^p$ when $L_\Phi = 0$.
 
 **Proof.** Part 1 is induction on $r$. For $r = 1$ it is the Lipschitz condition. If it holds for all $s < r$, then
 
