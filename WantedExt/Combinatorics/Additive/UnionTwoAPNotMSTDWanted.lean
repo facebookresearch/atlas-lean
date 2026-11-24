@@ -210,17 +210,6 @@ public theorem_wanted not_isMSTDSet_intervalAP_irrational_of_forall_not_nat (n m
     (hnat : ∀ i ≤ m, x + i * d ∉ Set.range ((↑) : ℕ → ℝ)) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **At most one nonnegative integer point on a progression with irrational difference.** Let $x$
-and $d$ be real numbers with $d$ irrational. If $i$ and $j$ are natural numbers such that $x + id$
-and $x + jd$ are both nonnegative integers, then $i = j$.
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 8
-(`integers-2026-A58-lem-8`). -/
-public theorem_wanted eq_of_add_mul_irrational_mem_nat (x d : ℝ) (hirr : Irrational d) (i j : ℕ)
-    (hi : x + i * d ∈ Set.range ((↑) : ℕ → ℝ)) (hj : x + j * d ∈ Set.range ((↑) : ℕ → ℝ)) :
-    i = j
-
 /-- **Interval plus irrational-step progression meeting the naturals is not MSTD.** Let
 $I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
 sets of reals. Let $n \ge 3$ and $m$ be natural numbers, $d$ a positive irrational real number
