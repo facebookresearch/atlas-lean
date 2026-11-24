@@ -161,6 +161,46 @@ public theorem isRAccessible_iff (r : ℕ) (D : Set ℕ) :
           IsMonochromatic c x ∧ IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ)) :=
   Iff.rfl
 
+/-- **Sets containing their own long diffsequences are 2-accessible.** Let $D$ be a set of
+positive integers. If for every $k \ge 1$ there are positive integers $x_1, \dots, x_k$, all in
+$D$, that form a $D$-diffsequence, then $D$ is $2$-accessible.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Corollary 2. -/
+public theorem two_accessible_of_internal_diffsequences (D : Set ℕ)
+    (hD : D ⊆ Set.Ioi 0)
+    (hseq : ∀ k : ℕ, 1 ≤ k → ∃ x : Fin k → ℕ+,
+      (∀ i, (x i : ℕ) ∈ D) ∧
+        IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ))) :
+    IsRAccessible 2 D := by
+  classical
+  refine ⟨hD, by decide, ?_⟩
+  intro c k hk
+  obtain ⟨x, hx, hdiff⟩ := hseq k hk
+  by_cases h : ∀ a : ℕ+, ∃ i, c (a + x i) = c a
+  · -- Follow same-colored steps whose sizes are terms of the internal sequence.
+    choose step hstep using h
+    let walk : ℕ → ℕ+ := Nat.rec 1 (fun _ a => a + x (step a))
+    have hcolor (n : ℕ) : c (walk n) = c 1 := by
+      induction n with
+      | zero => rfl
+      | succ n ih => exact (hstep (walk n)).trans ih
+    refine ⟨fun i => walk i, fun i j => (hcolor i).trans (hcolor j).symm, ?_⟩
+    intro i hi
+    exact ⟨_, hx (step (walk i)), by simp [walk, PNat.add_coe]⟩
+  · -- All terms of this translate have the unique color different from that of its base.
+    push Not at h
+    obtain ⟨a, ha⟩ := h
+    refine ⟨fun i => a + x i, ?_, ?_⟩
+    · intro i j
+      change c (a + x i) = c (a + x j)
+      have hi := ha i
+      have hj := ha j
+      omega
+    · intro i hi
+      obtain ⟨d, hd, heq⟩ := hdiff i hi
+      exact ⟨d, hd, by simpa [PNat.add_coe] using heq⟩
+
 /-- **Accessibility with more colors implies accessibility with fewer.** Let $D$ be a set of
 natural numbers and let $r, s$ be natural numbers with $1 \le r \le s$. If $D$ is
 $s$-accessible, then $D$ is $r$-accessible.

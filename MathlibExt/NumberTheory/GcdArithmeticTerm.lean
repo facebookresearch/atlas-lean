@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.RingTheory.PowerSeries.Inverse
+import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.RingTheory.PowerSeries.Expand
 import Mathlib.RingTheory.PowerSeries.WellKnown
 
@@ -112,6 +113,38 @@ public theorem gcdTermSeq_le_gcdTermSeq_one_one (a b : ℕ) (ha : 1 ≤ a) (hb :
     have hb₁ := (hall (k, 1) (by simp)).2
     simp only [Nat.dvd_one] at ha₁ hb₁
     omega
+
+open gcdTermSeq_le_gcdTermSeq_one_one in
+/-- **The gcd-term sequence is integral and recovers the gcd.** Let $a, b \ge 1$ be natural
+numbers and let $s_{a,b}$ be the gcd-term sequence. Every value $s_{a,b}(n)$ is a natural number,
+and $s_{a,b}(ab) = \gcd(a, b) + 1$.
+
+Source: Mihai Prunescu and Joseph M. Shunia, *Arithmetic-Term Representations for the Greatest
+Common Divisor*, INTEGERS 26 (2026), Article A96, Lemma 4. -/
+public theorem gcdTermSeq_natural_and_eq_gcd_add_one (a b : ℕ) (ha : 1 ≤ a)
+    (hb : 1 ≤ b) :
+    (∀ n, ∃ m : ℕ, gcdTermSeq a b n = m) ∧ gcdTermSeq a b (a * b) = Nat.gcd a b + 1 := by
+  constructor
+  · intro n
+    exact ⟨_, eq_card a b n ha hb⟩
+  rw [eq_card a b (a * b) ha hb]
+  norm_cast
+  -- Since b divides ab, it divides ab - i exactly when it divides i.
+  calc
+    _ = ((Finset.range (a * b + 1)).filter (Nat.lcm a b ∣ ·)).card := by
+      rw [Finset.Nat.antidiagonal_eq_map, Finset.filter_map, Finset.card_map]
+      apply congrArg Finset.card
+      apply Finset.filter_congr
+      intro i hi
+      change (a ∣ i ∧ b ∣ a * b - i) ↔ Nat.lcm a b ∣ i
+      rw [Nat.dvd_sub_iff_right (Nat.le_of_lt_succ (Finset.mem_range.mp hi)) (dvd_mul_left b a),
+        Nat.lcm_dvd_iff]
+    _ = a * b / Nat.lcm a b + 1 := by
+      rw [Nat.range_succ_eq_Icc_zero, ← Finset.Ioc_insert_left (Nat.zero_le (a * b)),
+        Finset.filter_insert, ite_eq_left (dvd_zero _), Finset.card_insert_of_notMem (by simp),
+        Nat.Ioc_filter_dvd_card_eq_div]
+    _ = Nat.gcd a b + 1 := by
+      rw [← Nat.gcd_mul_lcm a b, Nat.mul_div_cancel _ (Nat.lcm_pos ha hb)]
 
 end
 

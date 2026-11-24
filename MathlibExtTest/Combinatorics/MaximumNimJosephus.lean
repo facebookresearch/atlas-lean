@@ -42,4 +42,51 @@ example : 6 - 6 / 3 - 1 ≠ (3 - 1) * 6 / 3 := by decide
 -- so the left side is `1` and the right side is `0`.
 example : ¬0 ∣ 2 ∧ 2 - 2 / 0 - 1 ≠ (0 - 1) * 2 / 0 := by decide
 
+-- Test section: the minimum excludant. `maximumNimMex` is the least natural number outside the
+-- set: the empty set has mex `0`, and `{0, 1, 3}` has mex `2`.
+example : maximumNimMex ∅ = 0 := (maximumNimMex_eq_iff _ _).mpr ⟨by simp, by simp⟩
+
+example : maximumNimMex {0, 1, 3} = 2 := (maximumNimMex_eq_iff _ _).mpr ⟨by decide, by decide⟩
+
+-- Test section: Grundy numbers. For the rule `f(y) = y / 3`, a pile of `2` stones has no move,
+-- so its Grundy number is the mex of the empty set.
+example : maximumNimGrundy (· / 3) 2 = 0 := by
+  rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
+  simp
+
+-- Test section: Grundy numbers at multiples of the divisor. For `k = 3`, the piles `3`, `6` and
+-- `9` have Grundy numbers `1`, `2` and `3`.
+example : maximumNimGrundy (· / 3) 3 = 1 :=
+  maximumNimGrundy_div_eq_of_dvd 3 3 (by decide) (by decide) (by decide)
+
+example : maximumNimGrundy (· / 3) 6 = 2 :=
+  maximumNimGrundy_div_eq_of_dvd 3 6 (by decide) (by decide) (by decide)
+
+example : maximumNimGrundy (· / 3) 9 = 3 :=
+  maximumNimGrundy_div_eq_of_dvd 3 9 (by decide) (by decide) (by decide)
+
+-- For `k = 2` the theorem gives the value `G(4) = 2` that `maximumNimGrundy_div_two_four`
+-- computes from the recursion.
+example : maximumNimGrundy (· / 2) 4 = 2 :=
+  maximumNimGrundy_div_eq_of_dvd 2 4 (by decide) (by decide) (by decide)
+
+example : maximumNimGrundy (· / 2) 4 = 4 / 2 := maximumNimGrundy_div_two_four
+
+-- In multiplicative form: `G(k * m) = m` for every `k ≥ 2` and `m ≥ 1`.
+example (k m : ℕ) (hk : 2 ≤ k) (hm : 1 ≤ m) : maximumNimGrundy (· / k) (k * m) = m := by
+  rw [maximumNimGrundy_div_eq_of_dvd k (k * m) hk (Nat.mul_pos (by omega) hm)
+      (Nat.dvd_mul_right k m), Nat.mul_div_cancel_left m (by omega)]
+
+-- The divisibility hypothesis is needed: `3` is not a multiple of `2`, and for the halving rule
+-- `G(3) = 0`, while `3 / 2 = 1`.
+example : maximumNimGrundy (· / 2) 3 ≠ 3 / 2 := by
+  rw [maximumNimGrundy_div_two_three]
+  decide
+
+-- The hypothesis `1 ≤ x` only excludes the empty pile, where the conclusion holds as well:
+-- `G(0) = 0 = 0 / k` for every `k`.
+example (k : ℕ) : maximumNimGrundy (· / k) 0 = 0 / k := by
+  rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
+  simp
+
 end MathlibExtTest.MaximumNimJosephus

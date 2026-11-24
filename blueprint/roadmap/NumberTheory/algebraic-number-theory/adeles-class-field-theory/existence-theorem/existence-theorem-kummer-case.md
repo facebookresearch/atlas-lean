@@ -21,7 +21,9 @@ $v \notin S$ because $L_w/K_v$ is unramified. So $K^\times E \subseteq K^\times 
 and the second group has index $[L : K] = p^s$ by the
 [global reciprocity law](../reciprocity-law/global-reciprocity-law.md). For the reverse inclusion, since
 $\mathbb{I}_K = K^\times \mathbb{I}_{K,S}$ and $K^\times \cap \mathbb{I}_{K,S} = U(S)$,
+
 $$(\mathbb{I}_K : K^\times E) = (\mathbb{I}_{K,S} : E) \, / \, (U(S) : K^\times \cap E)$$
+
 (Milne's Lemma VII.6.5). Here $(\mathbb{I}_{K,S} : E) = \prod_{v \in S} (K_v^\times : K_v^{\times p}) = p^{2s}$,
 by the [local index of $p$-th powers](../../../p-adic-numbers/index-of-n-th-powers.md) and the
 [product formula](../adeles-and-ideles/adelic-norm-principal-embedding.md) applied to $p$; and

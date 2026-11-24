@@ -26,7 +26,7 @@ Non-instance topologies are threaded explicitly through `Dense`
 and `closure` via `@`.
 
 The paper's closing Theorem 4 (a nonempty set of primes is dense
-in `X` iff it is infinite) is not among the five statements
+in `X` iff it is infinite) is not among the statements
 treated here.
 -/
 module
@@ -34,7 +34,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Topology.Bases
-public import MathlibExt.Topology.MaciasCoprimeTopology
+public import MathlibExt.Topology.MaciasPrimeClosure
 
 set_option autoImplicit false
 
@@ -51,16 +51,6 @@ Infinitude of Prime Numbers", Theorem 1. -/
 theorem_wanted maciasBasis_isTopologicalBasis :
     @TopologicalSpace.IsTopologicalBasis ℕ+ maciasTopology
       maciasBasis
-
-/-- **Closure of a prime in Macías's coprime topology.** If $p$ is a prime number, then the
-closure of $\{p\}$ in the positive integers with Macías's coprime topology is the set of
-positive integers divisible by $p$.
-
-Source: Jhixon Macías, "Another Topological Proof of the
-Infinitude of Prime Numbers", Lemma 1. -/
-theorem_wanted closure_singleton_prime_eq_multiples
-    (p : ℕ+) (hp : Nat.Prime (p : ℕ)) :
-    @closure ℕ+ maciasTopology {p} = {x : ℕ+ | (p : ℕ) ∣ (x : ℕ)}
 
 /-- **Infinitude of the primes as density.** There are infinitely many prime numbers if and only
 if the set of prime numbers is dense in the positive integers with Macías's coprime topology.

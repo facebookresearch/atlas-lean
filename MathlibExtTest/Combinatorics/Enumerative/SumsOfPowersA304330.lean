@@ -36,4 +36,13 @@ example : (∑ i ∈ Finset.Icc 1 (3 : ℕ), (i : ℚ) * (i + 2 - 1).choose 3) =
   rw [sum_mul_choose_eq 2 3 (by decide) (by decide)]
   norm_num [Nat.choose]
 
+-- The first row covered by the theorem has two nonzero entries.
+example : arrayR 2 1 = 1 ∧ arrayR 2 2 = 12 ∧ arrayR 2 3 = 0 := by decide
+
+-- At k = 1 the only summand survives, so the lower bound is sharp.
+example : (∑ m ∈ Finset.Icc 1 (1 : ℕ),
+    (-1 : ℚ) ^ m * ((Nat.factorial (m - 1) : ℚ) ^ 2 / ((2 * m).factorial : ℚ)) *
+      (arrayR 1 m : ℚ)) = -1 / 2 := by
+  norm_num [show arrayR 1 1 = 1 by decide, Nat.factorial]
+
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted

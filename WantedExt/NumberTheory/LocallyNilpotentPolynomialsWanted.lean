@@ -43,19 +43,6 @@ public theorem_wanted locallyNilpotentAt_one_classification :
         {u | ∃ p : ℤ[X], u = -2 * X ^ 2 + 7 * X - 3 + p * (X - 1) * (X - 2) * (X - 3)} ∪
         {X + 1}
 
-/-- **Locally nilpotent but not nilpotent polynomials at $\pm 1$.** The only polynomial
-$u \in \mathbb{Z}[x]$ of positive degree that is locally nilpotent at $1$ but not nilpotent at $1$
-is $x + 1$, and the only polynomial of positive degree that is locally nilpotent at $-1$ but not
-nilpotent at $-1$ is $x - 1$.
-
-Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
-Article A13, Corollary 4.3. -/
-public theorem_wanted locallyNilpotent_not_nilpotentAt_one_neg_one :
-    {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 1 ∅ ∧ ¬ IsNilpotentAt u 1} =
-        {X + 1} ∧
-      {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u (-1) ∅ ∧
-        ¬ IsNilpotentAt u (-1)} = {X - 1}
-
 /-- **Classification of locally nilpotent polynomials at $0$.** A polynomial $u \in \mathbb{Z}[x]$
 of positive degree is locally nilpotent at $0$ if and only if it has one of the following forms:
 $x + b$ with $b \in \mathbb{Z}$, $b \ne 0$; $ax + b$ with $a, b \in \mathbb{Z}$, $b \ne 0$, $a$
