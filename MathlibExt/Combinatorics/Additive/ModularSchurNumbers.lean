@@ -134,6 +134,42 @@ theorem not_isSumFreeMod_singleton_iff (a l m : ℕ) (hl : 0 < l) (hm : 0 < m)
     _ ↔ l ≡ 1 [MOD m / Nat.gcd a m] := (Nat.modEq_iff_dvd' hl).symm.trans Nat.ModEq.comm
   exact ⟨fun hd => by simpa only [hd, Nat.div_one] using criterion, fun _ => criterion⟩
 
+/-- **Elements of a sum-free pair are congruent modulo $p$.** Let $p$ be a prime, let $i$ be a
+positive integer, and let $l$ be a natural number with $l \ge p^i - 1$ and
+$l \not\equiv 1 \pmod{p}$. If $a$ and $b$ are natural numbers such that $\{a, b\}$ is
+$l$-sum-free modulo $p^i$, then $a \equiv b \pmod{p}$.
+
+Since subsets of $l$-sum-free sets are $l$-sum-free, the hypothesis says exactly that $a$ and
+$b$ lie in a common $l$-sum-free set modulo $p^i$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Lemma 2, part 1
+(`integers-2025-A62-lem-2`). -/
+theorem modEq_of_isSumFreeMod_pair (p a b i l : ℕ) (hp : p.Prime) (hi : 0 < i)
+    (hl : p ^ i - 1 ≤ l) (hlp : ¬ l ≡ 1 [MOD p])
+    (hab : IsSumFreeMod (p ^ i) l {(a : ℤ), (b : ℤ)}) : a ≡ b [MOD p] := by
+  wlog hle : a ≤ b generalizing a b
+  · exact (this b a (by simpa [Set.pair_comm] using hab) (by omega)).symm
+  by_contra h
+  rw [Nat.modEq_iff_dvd' hle] at h
+  have hcop := (hp.coprime_iff_not_dvd.mpr h).symm.pow_right i
+  -- Choose the number of copies of a so that the mixed sum is congruent to b.
+  obtain ⟨t, ht, hmod⟩ := Nat.exists_mul_mod_eq_of_coprime ((l - 1) * b) hcop
+    (pow_ne_zero i hp.ne_zero)
+  have hpos : 1 ≤ l := by
+    have := Nat.one_lt_pow hi.ne' hp.one_lt
+    omega
+  have hstep := Int.natCast_modEq_iff.mpr
+    (show (b - a) * t ≡ (l - 1) * b [MOD p ^ i] from hmod)
+  obtain ⟨s, rfl⟩ := Nat.exists_eq_add_of_le (show t ≤ l by omega)
+  refine hab (Fin.append (fun _ : Fin t => (a : ℤ)) (fun _ : Fin s => (b : ℤ))) ?_ b (by simp) ?_
+  · simp [Fin.forall_fin_add]
+  · simp only [Fin.sum_univ_add, Fin.append_left, Fin.append_right, Fin.sum_const, nsmul_eq_mul]
+    apply Int.modEq_iff_dvd.mpr
+    convert hstep.symm.dvd using 1
+    push_cast [Int.ofNat_sub hle, Int.ofNat_sub hpos]
+    ring
+
 namespace modularSchurNumber_two_mul
 
 -- Give each integer its own color, so all summands in its class must equal it.
