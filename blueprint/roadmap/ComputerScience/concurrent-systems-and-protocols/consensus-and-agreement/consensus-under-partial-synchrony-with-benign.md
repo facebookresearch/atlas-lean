@@ -1,6 +1,6 @@
 # Consensus under partial synchrony with benign faults
 
-In Dwork, Lynch and Stockmeyer's basic model, in which processors are synchronous and communication is partially synchronous, consensus with fail-stop or omission faults is solvable for $N \ge 2t + 1$: their first algorithm, which proceeds in phases with a rotating coordinator and locking of values, satisfies agreement, strong unanimity and termination.
+In Dwork, Lynch and Stockmeyer's basic round model, in which processors proceed in synchronous rounds and messages sent in a round may be lost until an unknown global stabilization round after which every message between correct processors is delivered in its round, consensus with fail-stop or omission faults is solvable for $N \ge 2t + 1$: their Algorithm 1, which proceeds in phases with a rotating coordinator and locking of values, satisfies agreement, strong unanimity and termination in that model.
 
 ## Depends on
 

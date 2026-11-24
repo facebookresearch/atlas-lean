@@ -1,6 +1,6 @@
 # Syntax-guided synthesis problems
 
-A syntax-guided synthesis (SyGuS) instance consists of a background first-order theory $T$, a function symbol $f$ with a given type, a context-free grammar $G$ whose language $L(G)$ is a set of terms over the signature of $T$ of the type of $f$, and a specification $\varphi(f, \bar x)$, a formula of $T$ extended with $f$. A *solution* is a term $e \in L(G)$ such that $T \models \forall \bar x.\, \varphi(e, \bar x)$, where $\varphi(e, \bar x)$ is obtained by substituting $e$ for $f$.
+A syntax-guided synthesis (SyGuS) instance consists of a background first-order theory $T$, a function symbol $f$ of arity $k$ with argument sorts $\sigma_1, \dots, \sigma_k$ and result sort $\sigma$, formal parameters $y_1, \dots, y_k$ of those sorts, a context-free grammar $G$ whose language $L(G)$ is a set of terms of sort $\sigma$ over the signature of $T$ and the parameters $\bar y$, and a specification $\varphi(f, \bar x)$, a formula of $T$ extended with $f$. A *solution* is a term $e \in L(G)$ such that $T \models \forall \bar x.\, \varphi(e, \bar x)$, where $\varphi(e, \bar x)$ is obtained by replacing every application $f(t_1, \dots, t_k)$ by the capture-avoiding substitution $e[t_1/y_1, \dots, t_k/y_k]$.
 
 ## Depends on
 
