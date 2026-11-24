@@ -10,7 +10,7 @@ are divided by their total, and when they already sum to $1$ the rate is $\sum_i
 
 For a [valid](is-valid-population.md) standard, with nonnegative sizes and a positive total, the
 directly standardized rate is a weighted average of the rates and lies between the smallest and the
-largest rate ([bounds](directly-standardized-rate-mem-icc.md)); for signed standard sizes it can lie
+largest rate ([bounds](crude-rate-mem-icc.md)); for signed standard sizes it can lie
 outside the range of the rates.
 
 Source: P. Das Gupta, *Standardization and Decomposition of Rates: A User's Manual*, U.S. Bureau of

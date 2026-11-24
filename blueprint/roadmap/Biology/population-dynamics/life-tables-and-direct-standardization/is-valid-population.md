@@ -8,4 +8,4 @@ least one category of positive size. It is the hypothesis of the results that th
 that the [crude rate](crude-rate.md) and the
 [directly standardized rate](directly-standardized-rate.md) lie between the smallest and the largest
 category rate ([crude rate bounds](crude-rate-mem-icc.md),
-[standardized rate bounds](directly-standardized-rate-mem-icc.md)).
+[standardized rate bounds](crude-rate-mem-icc.md)).

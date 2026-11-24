@@ -57,7 +57,6 @@
 - [Phylogenetic network](phylo-network.md)
 - [Inheritance probability of a parent](inherit.md)
 - [Digraph of a phylogenetic network](to-digraph.md)
-- [Parent-to-child digraph of a phylogenetic network](g.md)
 - [The digraph of a phylogenetic network is acyclic](is-acyclic.md)
 - [The in-neighbours in the network digraph are the parents](parents-of-to-digraph.md)
 - [The root has no parent in the network digraph](parents-of-root.md)

@@ -39,6 +39,5 @@ rates into a rate effect and a composition effect.
 
 - [Directly standardized rate of the category rates under a standard](directly-standardized-rate.md)
 - [Directly standardized rate is the crude rate with the standard's sizes](directly-standardized-rate-eq-crude-rate.md)
-- [Rate standardized to a valid standard lies between the extreme rates](directly-standardized-rate-mem-icc.md)
 - [Crude-rate difference as a rate effect plus a composition effect](crude-rate-sub-crude-rate.md)
 - [With common category rates, the crude-rate gap is a composition effect](crude-rate-sub-crude-rate-of-same-rates.md)

@@ -10,5 +10,5 @@ generation `n` in model `k`, `P_k` of the event is its outer measure if it is no
 `𝓛_n` is the
 [law of the `n`-th generation size](../../../Probability/branching-processes/galton-watson-process/law.md)
 of the Galton–Watson process with offspring law `ν`. The limit is
-[at least `1 − q`](one-sub-extinction-prob-le.md), which is
+[at least `1 − q`](law-real-zero-le-extinction-prob.md), which is
 [positive when `R₀ > 1`](one-sub-extinction-prob-pos.md).

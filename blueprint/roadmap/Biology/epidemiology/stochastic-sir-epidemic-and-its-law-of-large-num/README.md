@@ -12,7 +12,6 @@
 
 - [Density of the rate-one exponential law](exp-dens.md)
 - [Competing exponential clocks, joint law](lintegral-competing.md)
-- [A rate-one exponential clock is nonpositive with probability zero](exp-measure-iic-zero.md)
 - [A rate-one exponential clock is almost surely positive](ae-pos-exp-measure.md)
 - [Partial integrals of jointly measurable functions are measurable](measurable-lintegral-of-uncurry.md)
 - [Ties of two exponential clocks are null when one speed is positive](prod-exp-measure-tie.md)
