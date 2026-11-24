@@ -10760,6 +10760,7 @@
   "MathlibExt/Combinatorics/Enumerative/RiordanArrayInverse": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "A- and Z-sequences of Riordan arrays"},
   "MathlibExt/Combinatorics/Enumerative/RiordanArraySum": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/RiordanNumber": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Riordan numbers"},
+  "MathlibExt/Combinatorics/Enumerative/RiordanNumberEvenLogConvex": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Alternating sums of Motzkin numbers"},
   "MathlibExt/Combinatorics/Enumerative/RisingDiagonalSequence": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Binomial interpolated triangles"},
   "MathlibExt/Combinatorics/Enumerative/RisingFactorialAntiderivatives": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Rationally weighted binomial sums"},
   "MathlibExt/Combinatorics/Enumerative/RootedBinaryTreeCount": {"to": "Combinatorics/elementary-enumeration", "title": "Counting binary phylogenetic trees"},
