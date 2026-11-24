@@ -10512,6 +10512,7 @@
   "MathlibExt/Combinatorics/Enumerative/FlattenedStirlingPermutations": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Flattened Stirling permutations"},
   "MathlibExt/Combinatorics/Enumerative/FloorNonMultiples": {"to": "Combinatorics/elementary-enumeration", "title": "Schreier sets"},
   "MathlibExt/Combinatorics/Enumerative/FlattenedStirlingTwoRuns": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Flattened Stirling permutations"},
+  "MathlibExt/Combinatorics/Enumerative/FlattenedStirlingTypeBRuns": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Flattened Stirling permutations"},
   "MathlibExt/Combinatorics/Enumerative/FortunateNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Fortunate numbers"},
   "MathlibExt/Combinatorics/Enumerative/FriedAlternatingBinomialIdentity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Binomial sum parities and cotangent floor sequences"},
   "MathlibExt/Combinatorics/Enumerative/FrischReciprocalBinomial": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Sums of reciprocals of binomial coefficients"},
