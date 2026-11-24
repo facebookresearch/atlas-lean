@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.FormalGroup.CoordinateChange
 open FormalGroup
 
 /-- Source-shaped consumer with the original binders. -/
-theorem exactSource {R : Type*} [CommRing R] (F : FormalGroup R) (u : PowerSeries R)
+private theorem exactSource {R : Type*} [CommRing R] (F : FormalGroup R) (u : PowerSeries R)
     (hu0 : PowerSeries.constantCoeff u = 0) (hu1 : IsUnit (PowerSeries.coeff 1 u)) :
     ∃ F' : FormalGroup R, (∃ ψ : FormalGroup.LawIso F F', ψ.series = u) ∧
       (F.IsComm → F'.IsComm) ∧
@@ -23,7 +23,7 @@ theorem exactSource {R : Type*} [CommRing R] (F : FormalGroup R) (u : PowerSerie
   FormalGroup.exists_lawIso_series_eq_of_isUnit_coeff_one F u hu0 hu1
 
 /-- Higher-universe consumer: the coefficient ring may live in `Type 1`. -/
-theorem exactSourceTypeOne {R : Type 1} [CommRing R] (F : FormalGroup R)
+private theorem exactSourceTypeOne {R : Type 1} [CommRing R] (F : FormalGroup R)
     (u : PowerSeries R) (hu0 : PowerSeries.constantCoeff u = 0)
     (hu1 : IsUnit (PowerSeries.coeff 1 u)) :
     ∃ F' : FormalGroup R, ∃ ψ : FormalGroup.LawIso F F', ψ.series = u :=

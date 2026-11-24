@@ -16,6 +16,7 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.JacobsthalLucasNumber
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PellLucasSequence
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -30,6 +31,32 @@ C. K. Cook. The Oresme numbers are written inline as `n / 2^n` over `ℚ`, the L
 -/
 
 namespace MetaMathlibExt
+
+/-- **Self-convolution of the Oresme numbers.** Let $O_m = m/2^m$ denote the Oresme numbers. For
+every natural number $n$, $\sum_{k=0}^{n} O_k O_{n-k} = \frac{(n+1) n (n-1)}{6 \cdot 2^n}$.
+
+Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
+Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
+Article cookbacon061124, Proposition 2.1 (`fq-2024-cookbacon061124-prop-2.1`). -/
+public theorem oresme_convolution_self (n : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), ((k : ℚ) / 2 ^ k) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
+      ((n : ℚ) + 1) * n * ((n : ℚ) - 1) / (6 * 2 ^ n) := by
+  -- A discrete antiderivative of the numerator k(n-k).
+  let F (k : ℕ) : ℚ := k * ((k : ℚ) - 1) * (3 * n + 1 - 2 * k) / 6
+  calc
+    _ = ∑ k ∈ Finset.range (n + 1), (F (k + 1) - F k) / 2 ^ n := by
+      apply Finset.sum_congr rfl
+      intro k hk
+      have hkn := Nat.le_of_lt_succ (Finset.mem_range.mp hk)
+      rw [div_mul_div_comm, ← pow_add, Nat.add_sub_of_le hkn, Nat.cast_sub hkn]
+      congr 1
+      simp only [F, Nat.cast_add, Nat.cast_one]
+      ring
+    _ = (F (n + 1) - F 0) / 2 ^ n := by rw [← Finset.sum_div, Finset.sum_range_sub]
+    _ = _ := by
+      simp [F]
+      field_simp
+      ring
 
 /-- **Fibonacci–Oresme convolution.** Let $F_m$ denote the Fibonacci numbers, with $F_0 = 0$,
 $F_1 = 1$ and $F_{m+2} = F_{m+1} + F_m$, and let $O_m = m/2^m$ denote the Oresme numbers. For

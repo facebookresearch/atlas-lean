@@ -60,7 +60,7 @@ structure FanoData (X : ComplexVariety) (n : ℕ) where
   integral : IsIntegral X.left
   smooth : SmoothOfRelativeDimension n X.hom
   proper : IsProper X.hom
-  projective : IsProjectiveVariety X
+  projective : ProjectiveSpace.IsProjective X
   geometricallyIrreducible : GeometricallyIrreducible X.hom
   canonical : LineBundle X.left
   canonicalDuality : SerreDualizingLine X.hom canonical.val n
