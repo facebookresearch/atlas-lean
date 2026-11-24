@@ -6,6 +6,7 @@
 - [Negative amplification factor of the θ-rule](amplification-factor-neg-iff.md)
 - [Oscillation of the θ-rule](sign-of-one-lt.md)
 - [Monotonicity of the θ-rule](antitone-of-le-one.md)
+- [Strict monotonicity of the θ-rule](strict-anti-iff-lt-one.md)
 - [Bounded amplification factor of the θ-rule](abs-amplification-factor-le-one-iff.md)
 - [Contracting amplification factor of the θ-rule](abs-amplification-factor-lt-one-iff.md)
 - [Stability of the θ-rule](abs-le-iff.md)
