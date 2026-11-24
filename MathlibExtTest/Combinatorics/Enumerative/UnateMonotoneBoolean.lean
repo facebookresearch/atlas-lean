@@ -28,6 +28,21 @@ example : Nat.card {f : (Fin 2 → Bool) → Bool // Monotone f ∧ boolFunWeigh
   rw [card_monotone_boolFun_weight_symm 2 3 (by decide), Nat.card_eq_fintype_card]
   decide
 
+-- At arity zero, output negation exchanges the two constant functions.
+example : Nat.card {f : (Fin 0 → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = 1} = 1 := by
+  rw [card_unate_boolFun_weight_symm 0 1 (by decide)]
+  unfold IsUnateBoolFun IsBoolFunIncreasingIn IsBoolFunDecreasingIn
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- The function true only at (true, false) gives a weight-three witness by symmetry.
+example : 0 < Nat.card {f : (Fin 2 → Bool) → Bool // IsUnateBoolFun f ∧ boolFunWeight f = 3} := by
+  rw [card_unate_boolFun_weight_symm 2 3 (by decide), Nat.card_pos_iff]
+  refine ⟨⟨⟨fun x => x 0 && !x 1, ?_, ?_⟩⟩, inferInstance⟩
+  · unfold IsUnateBoolFun IsBoolFunIncreasingIn IsBoolFunDecreasingIn
+    decide
+  · decide
+
 example : boolFunWeight (boolFunConcat (fun _ : Fin 1 → Bool => false) (fun x => x 0)) = 1 := by
   decide
 
