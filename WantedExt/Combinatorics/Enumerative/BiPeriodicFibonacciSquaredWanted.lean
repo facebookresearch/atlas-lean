@@ -36,7 +36,9 @@ public import Mathlib.Algebra.Field.Basic
 public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Nat.Fib.Basic
+public import MathlibExt.Combinatorics.Enumerative.FenceTilingSum
 public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredAddition
+public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredWeightedSum
 
 namespace MetaMathlibExt
@@ -133,41 +135,6 @@ theorem biPeriodicFibonacciSq_add_three {K : Type*} [Field K] (a b : K) (n : ℕ
           (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - b / a * biPeriodicFibonacciSq a b n :=
   rfl
 
-/-- **Fence tilings of a board.** Number the half-cells of an $n$-board $0, \dots, 2n - 1$. The
-tilings of the $n$-board by half-squares and $(1/2, 1/2)$-fences are encoded as the sets $F$ of
-fence positions $k < 2n - 2$ (the fence at $k$ has posts on half-cells $k$ and $k + 2$) whose
-posts are pairwise disjoint, that is, $k + 2 \notin F$ for every $k \in F$.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Section 2. -/
-def fenceTilings (n : ℕ) : Finset (Finset ℕ) :=
-  (range (2 * n - 2)).powerset.filter fun F => ∀ k ∈ F, k + 2 ∉ F
-
-/-- **Weight of a fence tiling.** Let $a$, $b$ be elements of a commutative semiring, let $n \ge 0$,
-and let $F$ be a finite set of natural numbers (fence positions; the fence at $k$ has posts on
-half-cells $k$ and $k + 2$). The weight of $F$ on the $n$-board is the product, over the
-half-cells $h \in \{0, \dots, 2n - 1\}$ that neither lie in $F$ nor equal $k + 2$ for some
-$k \in F$, of $a$ if $\lfloor h/2 \rfloor$ is even (a half-square in the odd cell
-$\lfloor h/2 \rfloor + 1$) and of $b$ otherwise (a half-square in an even cell).
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Section 2. -/
-def fenceTilingWeight {R : Type*} [CommSemiring R] (a b : R) (n : ℕ) (F : Finset ℕ) : R :=
-  ∏ h ∈ range (2 * n) \ (F ∪ F.image (· + 2)), if h / 2 % 2 = 0 then a else b
-
-/-- **Weighted count of fence tilings.** Let $a$, $b$ be elements of a commutative semiring and
-$n \ge 0$. The weighted number $S_n$ of tilings of an $n$-board by half-squares and
-$(1/2, 1/2)$-fences is the sum, over all fence tilings $F$ of the $n$-board, of the weight of $F$,
-in which a half-square weighs $a$ in an odd cell and $b$ in an even cell and fences weigh $1$.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Section 2 (before Lemma 2.1). -/
-def fenceTilingSum {R : Type*} [CommSemiring R] (a b : R) (n : ℕ) : R :=
-  ∑ F ∈ fenceTilings n, fenceTilingWeight a b n F
-
 /-- **Weighted fence tilings of the empty board.** For elements $a$ and $b$ of a commutative
 semiring $R$, the weighted number $S_0$ of tilings of the $0$-board by half-squares and
 $(1/2, 1/2)$-fences equals $1$: the only tiling is the empty one.
@@ -256,25 +223,6 @@ theorem noFreeBifenceTilingSum_one {R : Type*} [CommSemiring R] (a b : R) :
   simp [noFreeBifenceTilingSum, fenceTilings, fenceTilingWeight, filter_singleton, prod_range_succ,
     sq]
 
-/-- **Recurrence for weighted fence tilings of even boards.** Let $a$ and $b$ be elements of a
-commutative semiring $R$, and let $S_m$ be the weighted number of tilings of an $m$-board, with
-cells numbered $1, \dots, m$, by half-squares and $(1/2, 1/2)$-fences, a half-square weighing $a$
-in an odd cell and $b$ in an even cell. Then for every even $n \ge 2$,
-$$
-S_n = b^2 S_{n-1} + (2ab+1) S_{n-2} +
-2ab \sum_{j=2}^{n/2} S_{n-2j} + 2b^2 \sum_{j=1}^{n/2-1} S_{n-2j-1}.
-$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Lemma 2.1, (2.1) (`fq-2024-belaggoun01132024-lem-2.1`). -/
-public theorem_wanted fenceTilingSum_even {R : Type*} [CommSemiring R] (a b : R) {n : ℕ}
-    (hn : 2 ≤ n) (he : Even n) :
-    fenceTilingSum a b n =
-      b ^ 2 * fenceTilingSum a b (n - 1) + (2 * a * b + 1) * fenceTilingSum a b (n - 2) +
-        2 * a * b * ∑ j ∈ Icc 2 (n / 2), fenceTilingSum a b (n - 2 * j) +
-        2 * b ^ 2 * ∑ j ∈ Icc 1 (n / 2 - 1), fenceTilingSum a b (n - 2 * j - 1)
-
 /-- **Recurrence for weighted fence tilings of odd boards.** Let $a$ and $b$ be elements of a
 commutative semiring $R$, and let $S_m$ be the weighted number of tilings of an $m$-board, with
 cells numbered $1, \dots, m$, by half-squares and $(1/2, 1/2)$-fences, a half-square weighing $a$
@@ -306,20 +254,6 @@ Theorem 2.2 (`fq-2024-belaggoun01132024-thm-2.2`). -/
 public theorem_wanted fenceTilingSum_eq_biPeriodicFibonacciSq {K : Type*} [Field K] {a b : K}
     (ha : a ≠ 0) (hb : b ≠ 0) (n : ℕ) :
     fenceTilingSum a b n = biPeriodicFibonacciSq a b (n + 1)
-
-/-- **Squared Fibonacci numbers as a double binomial sum.** Let $F_k$ denote the Fibonacci
-numbers ($F_0 = 0$, $F_1 = 1$). For every natural number $n$,
-$$
-F_{n+1}^2 = \sum_{i=0}^{\lfloor 2n/3 \rfloor} \sum_{j=0}^{i} \binom{i}{j} \binom{2n-3i}{j} 2^j.
-$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Corollary 3.3 (`fq-2024-belaggoun01132024-cor-3.3`). -/
-public theorem_wanted fib_succ_sq_eq_sum_choose_mul_choose (n : ℕ) :
-    Nat.fib (n + 1) ^ 2 =
-      ∑ i ∈ range (2 * n / 3 + 1), ∑ j ∈ range (i + 1),
-        i.choose j * (2 * n - 3 * i).choose j * 2 ^ j
 
 /-- **Recurrence for weighted tilings with no free bifence.** Let $a$ and $b$ be nonzero elements
 of a field, and let $R_n$ be the weighted number of tilings of an $n$-board by half-squares and

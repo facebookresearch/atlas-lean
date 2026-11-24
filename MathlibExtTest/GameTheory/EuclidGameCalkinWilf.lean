@@ -52,3 +52,13 @@ example : euclidPPosition 14 11 = true ∧ euclidPPosition 9 11 = true ∧
     euclidPPosition 29 20 = true ∧ euclidPPosition 20 31 = true := by
   obtain ⟨⟨hX, _⟩, hY, hL, hR, _⟩ := fibonacci_arch_tops 2 2 (by decide)
   exact ⟨hX, hY, hL, hR⟩
+
+-- Two daughter steps followed by a son reach P-positions from both (3, 2) and the root.
+example : euclidPPosition 7 9 = true :=
+  (euclidPPosition_self_similar 2 (3, 2) (by decide) (by decide) [true, true, false]).trans
+    (by decide)
+
+-- Three alternating steps from the same vertex end at an N-position.
+example : euclidPPosition 8 13 = false :=
+  (euclidPPosition_self_similar 2 (3, 2) (by decide) (by decide) [false, true, false]).trans
+    (by decide)

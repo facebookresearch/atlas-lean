@@ -39,8 +39,8 @@ compatibility class.
 - [Cancer genomics](cancer-genomics/README.md)
 - [Bioinformatics](bioinformatics/README.md)
 - [Systems biology](systems-biology/README.md)
+- [Pharmacokinetics and pharmacodynamics](pharmacokinetics/README.md)
 - [Population and evolutionary dynamics](population-dynamics/README.md)
 - [Reaction–diffusion and pattern formation](pattern-formation/README.md)
+- [Mathematical neuroscience](mathematical-neuroscience/README.md)
 - [Mathematical epidemiology](epidemiology/README.md)
-
-- [Neuroscience](neuroscience/README.md)
