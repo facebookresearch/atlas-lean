@@ -28,6 +28,7 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Convexity via the tangent-plane inequality](convex-on-iff-forall-le-add-fderiv-withi.md)
 - [Karush–Kuhn–Tucker conditions for inequality constraints](karush-kuhn-tucker-inequality.md)
 - [Finite sums of convex functions are convex](convex-on-finset-sum.md)
+- [Subdifferential calculus](subdifferential-calculus/README.md)
 
 ## Related topics
 
@@ -41,5 +42,3 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Existence of minimizers for quasiconvex elastic energies](existence-of-minimizers-for-quasiconvex-elastic-energies.md)
 
 - [Regularity and singularities of elastic energy minimizers](regularity-and-singularities-of-elastic-minimizers.md)
-
-- [Subdifferential calculus](subdifferential-calculus/README.md)

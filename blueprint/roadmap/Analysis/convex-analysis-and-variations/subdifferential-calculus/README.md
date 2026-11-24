@@ -1,3 +1,5 @@
 # Subdifferential calculus
 
-- [Subdifferentials of convex functions and their calculus](convex-subdifferential.md)
+- [Subdifferential of a convex function](convex-subdifferential.md)
+- [Fermat's rule for convex functions](fermat-s-rule-for-convex-functions.md)
+- [Moreau–Rockafellar sum rule](moreau-rockafellar-sum-rule.md)
