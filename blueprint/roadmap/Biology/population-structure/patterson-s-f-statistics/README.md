@@ -46,9 +46,10 @@
 - [Hudson F_ST need not add along a neutral lineage](f-st-is-not-additive-along-a-path-while-f2-is.md)
 
 ## Ascertainment
-
 - [Ascertainment in an outgroup keeps f3 of an unadmixed target nonnegative](outgroup-ascertained-f3-positivity-patterson-app.md)
 - [Heterozygote ascertainment keeps f3 of an unadmixed target nonnegative](heterozygote-ascertained-f3-positivity-patterson.md)
+- [f-statistics of a sample taken on an ancestral lineage](ancient-samples-as-internal-nodes-ancestor-desce.md)
+- [f-statistics carry no sampling times](f-statistics-carry-no-time-labels-ancient-sample.md)
 
 ## The Wahlund effect
 
@@ -58,3 +59,7 @@
 - [Wahlund identity](wahlund.md)
 - [Wahlund effect](het-sub-le-het-total.md)
 - [Nonnegativity of the fixation index $F_{ST}$](fst-nonneg.md)
+
+## Relatedness estimates under population structure
+
+- [Pooled-frequency GRM bias for independent individuals](grm-bias-for-unrelated-pairs-across-subpopulatio.md)

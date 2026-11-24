@@ -8,3 +8,5 @@
 - [One-step forward equation](map-succ-eq-bind.md)
 
 - [Möhle's lemma on Markov chains with two time scales](mohle-s-separation-of-timescales-lemma-for-finit.md)
+- [Absorption probabilities and mean times of a finite Markov chain](absorption-probabilities-and-mean-absorption-tim.md)
+- [Strong lumpability onto the image of a finite Markov chain](strong-lumpability-of-finite-markov-chains.md)

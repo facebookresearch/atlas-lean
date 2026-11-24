@@ -15,6 +15,7 @@
 - [Linkage disequilibrium after one generation of recombination](linkage-diseq-recombine.md)
 - [Linkage disequilibrium after $t$ generations](linkage-diseq-iterate.md)
 - [Linkage disequilibrium tends to zero](tendsto-linkage-diseq-iterate.md)
+- [Two-locus haplotype frequencies are identified by genotype frequencies](two-locus-haplotype-frequencies-are-identified-b.md)
 
 ## Haldane's map function
 

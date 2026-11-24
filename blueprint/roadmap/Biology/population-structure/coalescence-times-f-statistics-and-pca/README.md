@@ -12,6 +12,7 @@
 - [$f_3$ in terms of expected coalescence times](f3-eq.md)
 - [$f_4$ in terms of expected coalescence times](f4-eq.md)
 - [Four-deme stepping-stone times and their f4 contrast](asymmetric-persistent-structure-gives-nonzero-f4.md)
+- [Populations related by a tree without migration have f4 = 0 for sister pairs](tree-structured-isolation-gives-f4-0-in-coalesce.md)
 
 ## PCA from coalescence times (McVean 2009)
 

@@ -56,3 +56,8 @@
 - [Frequencies mix like lineage weights in the drift model](freq-eq-sum-of-weight-eq-sum.md)
 
 - [Conditioning on an ascertainment event can correlate drift increments](ascertainment-as-conditioning-breaks-the-second.md)
+## Standard errors from blocks of loci
+
+- [Delete-one-block jackknife covariance of a mean](delete-one-block-jackknife-covariance-of-a-vecto.md)
+- [The scaled block jackknife is consistent for independent identically distributed blocks](consistency-of-the-scaled-block-jackknife-covari.md)
+- [Averages with summable autocovariances converge in mean square](consistency-of-mean-genetic-summaries-under-summ.md)
