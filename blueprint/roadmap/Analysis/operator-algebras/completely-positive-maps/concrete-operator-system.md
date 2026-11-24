@@ -6,11 +6,12 @@ For each $n \ge 1$, identify $M_n(B(H))$ with $B(H^n)$, where $H^n = H \oplus \c
 
 ## Expansion
 
-A good expansion of this node links each notion it is built from: bounded linear operators; adjoints of bounded operators; Hilbert spaces; positive operators.
+A good expansion of this node links each notion it is built from: bounded linear operators; Hilbert spaces; positive operators.
 
 ## Depends on
 
 - [Inner product on a finite ℓ² product of inner product spaces](../../hilbert-spaces/hilbert-direct-sum-finite.md)
+- [Adjoint of a bounded operator between Hilbert spaces](../../operator-theory/bounded-operators/hilbert-adjoint-operator.md)
 
 ## Sources
 
