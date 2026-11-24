@@ -19,6 +19,7 @@
 - [Expected total branch length of the coalescent](integral-total-length.md)
 - [Variance of the time to the most recent common ancestor](variance-tmrca.md)
 - [Second moments of the holding times](integral-t-mul-t.md)
+- [Laplace transform of the time to the most recent common ancestor in Kingman's coalescent](tmrca-laplace-transform.md)
 
 ## Watterson's estimator
 
@@ -38,4 +39,3 @@
 - [No-coalescence probability tends to one](tendsto-no-coal-prob-one.md)
 - [Kingman's coalescence rate](tendsto-coalescence-rate.md)
 - [Wright–Fisher coalescence times converge to exponential laws](tendsto-no-coal-prob-pow-floor.md)
-- [Laplace transform of the time to the most recent common ancestor in Kingman's coalescent](tmrca-laplace-transform.md)
