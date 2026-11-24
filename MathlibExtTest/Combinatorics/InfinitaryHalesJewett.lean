@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.InfinitaryHalesJewett
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Finset.Range
 import Mathlib.Data.List.OfFn
 
@@ -65,5 +66,29 @@ example {D : Set (FreeSemigroup Bool)} (hD : IsMulJSet D) :
   refine ⟨w, fun m a => hmem m a (fun i => Finset.mem_univ _), r, t, ht, ?_⟩
   change (List.ofFn fun j : Fin 2 => firstTwo (w (2 * j.val))).flatten = _ at he
   simpa [List.ofFn_succ] using he
+
+-- An empty alphabet has no substitutions, but a positive count is still required.
+-- With every input equal to two, even a single word must have at least two variables.
+example : ∃ w : FreeSemigroup (Empty ⊕ Fin 1), 2 ≤ (w.head :: w.tail).countP Sum.isRight := by
+  have hD : IsMulJSet (∅ : Set (FreeSemigroup Empty)) := fun _ hF => (hF.choose 0).head.elim
+  obtain ⟨w, _, _, hsum⟩ := exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJSet
+    (fun _ => ∅) monotone_const (fun a => a.elim) hD (fun _ => 2) (fun _ => by decide)
+  obtain ⟨H, hH, he⟩ := hsum {0} (Finset.singleton_nonempty _)
+  have he' : ((w 0).head :: (w 0).tail).countP Sum.isRight = H.card * 2 := by simpa using he
+  have := Finset.card_pos.mpr hH
+  exact ⟨w 0, by omega⟩
+
+-- Counts from nonconsecutive levels add to a sum of distinct powers of three.
+example {D : Set (FreeSemigroup Bool)} (hD : IsMulJSet D) :
+    ∃ w : ℕ → FreeSemigroup (Bool ⊕ Fin 1),
+      (∀ m a, FreeSemigroup.map (Sum.elim id fun _ => a) (w m) ∈ D) ∧
+      ∃ H : Finset ℕ, H.Nonempty ∧
+        ((w 0).head :: (w 0).tail).countP Sum.isRight +
+          ((w 2).head :: (w 2).tail).countP Sum.isRight = ∑ j ∈ H, 3 ^ j := by
+  obtain ⟨w, _, hw, hsum⟩ := exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJSet
+    (fun _ => Finset.univ) monotone_const (fun a => ⟨0, Finset.mem_univ a⟩) hD
+    (fun j => 3 ^ j) (fun _ => Nat.pow_pos (by decide))
+  refine ⟨w, fun m a => hw m a (Finset.mem_univ _), ?_⟩
+  simpa using hsum {0, 2} (by simp)
 
 end MetaMathlibExt.InfinitaryHalesJewettTest
