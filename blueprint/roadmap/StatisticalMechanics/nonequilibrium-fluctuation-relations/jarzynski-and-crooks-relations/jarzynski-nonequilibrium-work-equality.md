@@ -6,6 +6,10 @@ $$E\bigl[e^{-\beta W}\bigr] = \frac{Z_1}{Z_0} = e^{-\beta (F_1 - F_0)},$$
 
 independently of the protocol (Jarzynski 1997, Eq. (2a)), by the change of variables $z = \phi(z_0)$.
 
+## Proof depends on
+
+- [Jensen's inequality](../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+
 ## Expansion
 
 1. The model: the phase space, the Hamiltonian family, the canonical law at $\lambda = 0$, the finiteness and positivity of $Z_0$ and $Z_1$, and the time-dependent Hamiltonian flow with its global existence, invertibility and volume preservation as hypotheses.

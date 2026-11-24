@@ -2,6 +2,10 @@
 
 Pellis, Ball and Trapman (2012) define $R_0$ through the branching process that approximates the early epidemic, with individuals placed in generations by their minimal path length from the initial infective in the epidemic graph: $R_0 = \lim_{n\to\infty}\lim_{N\to\infty} E[X_n(N)]^{1/n}$, where $X_n(N)$ is the number of generation-$n$ individuals in a population of size $N$ (Eq. (2.3)). For a multitype approximating process with mean offspring matrix $M$, $R_0$ is the largest eigenvalue of $M$, which by Perron–Frobenius theory is real, positive and strictly dominant, and the process survives with positive probability if and only if $R_0 > 1$ (Section 2.2). If a perfect vaccine is given uniformly at random, the mean matrix becomes $(1 - p_c)M$, where $p_c$ is the fraction of blocked infectious contacts, so the approximating process is critical exactly when $(1 - p_c)R_0 = 1$, that is $p_c = 1 - 1/R_0$. For the households model the source computes $R_0$ as the largest eigenvalue of an explicit matrix built from the mean numbers of within-household infections per generation (Section 3.2, matrix (3.1)), and it notes that $R_0$ and the household reproduction number $R_*$ are both threshold parameters, so $R_0 = 1$ if and only if $R_* = 1$.
 
+## Proof depends on
+
+- [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
+
 ## Expansion
 
 1. The model: households with homogeneous mixing within and global mixing between, the epidemic graph and generations by rank.

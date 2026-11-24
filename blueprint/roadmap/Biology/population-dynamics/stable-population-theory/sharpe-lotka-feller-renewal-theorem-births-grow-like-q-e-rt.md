@@ -8,6 +8,10 @@ so births ultimately grow like $Q e^{rt}$. The exponential solutions $c\,e^{rt}$
 
 The derivation is explicit. Put $B_r(t) = e^{-rt}B(t)$, $G_r(t) = e^{-rt}G(t)$ and $f(a) = e^{-ra}\varphi(a)$. Multiplying the renewal equation by $e^{-rt}$ gives $B_r = G_r + B_r * f$, and $f$ is a probability density with mean $\mu_r$. Hence $B_r(t) = G_r(t) + \int_0^t G_r(t - x)\, u(x)\, dx$ with $u = \sum_{n \ge 1} f^{*n}$ the renewal density of the renewal process with inter-renewal density $f$, and the key renewal theorem for a non-increasing integrable function (as stated in the renewal theory article) gives $\int_0^t G_r(t - x) u(x)\, dx \to \mu_r^{-1}\int_0^\infty G_r$, while $G_r(t) \to 0$ because $G_r$ is non-increasing and integrable.
 
+## Depends on
+
+- [Renewal equation for exponential growth](../../../Biology/epidemiology/euler-lotka-equation-and-the-reproduction-number/renewal-exp-iff.md)
+
 ## Expansion
 
 1. The model: the renewal equation for births with the initial-population term $G$, and existence and uniqueness of its solution bounded on compact sets.

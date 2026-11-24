@@ -7,6 +7,10 @@ Consider a probabilistic linear–nonlinear neuron whose spike probability $f$ d
 
 He gives the corresponding consistency and rate results for spike-triggered covariance under Gaussian stimuli (Theorems 3 and 4) and a consistency result for an information-theoretic kernel estimator under general stimulus laws (Theorem 5).
 
+## Proof depends on
+
+- [The spike-triggered average recovers the filter for spherically symmetric stimuli](spike-triggered-average-is-proportional-to-the-linear-filter-for-radia.md)
+
 ## Expansion
 
 1. The model: the LN model with a low-dimensional filter subspace, the stimulus distribution, and the estimators, with the error measured on the Grassmannian.

@@ -2,6 +2,12 @@
 
 In the neutral ancestral recombination graph for $n$ sampled sequences, the marginal genealogy at any fixed genomic position — obtained by following, backward in time, the lineages carrying ancestral material at that position — is a Kingman coalescent on the $n$ sample copies (Hudson 1983; Griffiths and Marjoram 1997; as stated in Tavaré 2004, Sec. 10): recombination events do not change the number of lineages ancestral at that position, and each pair of them coalesces at rate $1$. Marginal genealogies at two positions are in general dependent, and their dependence decreases with the recombination distance; for two sequences the covariance of the two coalescence times is $(\rho + 18)/(\rho^2 + 13\rho + 18)$, which is Griffiths' (1981) result $F(0, 0, 2; \rho) = 4(\rho + 18)/(\rho^2 + 13\rho + 18)$ for the covariance of the two marginal tree lengths $L = 2T$ (Tavaré 2004, eq. (10.2.9)), with recombination rate $\rho/2$ per doubly ancestral lineage.
 
+## Proof depends on
+
+- [Rate matrix of Kingman's partition-valued coalescent](../../partition-valued-kingman-coalescent/partition-rate.md)
+- [Covariance of coalescence times at two linked loci](../../two-locus-coalescent/two-locus-cov.md)
+- [Covariance of the coalescence times, path form](../../two-locus-coalescent/covariance-coalescence-times.md)
+
 ## Expansion
 
 1. The marginal process at one position: the partition of the sample by ancestral lineages carrying material at that position.

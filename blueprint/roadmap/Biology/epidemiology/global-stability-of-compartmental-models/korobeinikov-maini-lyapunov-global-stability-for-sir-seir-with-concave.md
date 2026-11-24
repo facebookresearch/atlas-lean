@@ -2,6 +2,10 @@
 
 Korobeinikov and Maini (2005) consider incidence rates $f(S, I, N)$ with $f(S, 0, N) = f(0, I, N) = 0$ (2.1), $\partial f/\partial S > 0$ and $\partial f/\partial I > 0$ for $S, I > 0$ (2.2), and concavity in the number of infectives, $\partial^2 f/\partial I^2 \le 0$ (2.3), with $R_0 = \frac{1}{\delta + \mu}\frac{\partial f}{\partial I}$ at the infection-free state (Eq. (3.5)). For incidence of product form $f = h(S)g(I)$ satisfying (2.1)–(2.3), and the normalized SIR model $\dot S = \mu - h(S)g(I) - \mu S$, $\dot I = h(S)g(I) - (\delta + \mu)I$ (and the SEIR model (4.2) with latency rate $\theta$), their Theorem 4.1 states: if $R_0 > 1$ the endemic equilibrium is globally asymptotically stable, and if $R_0 \le 1$ there is no positive equilibrium and the infection-free equilibrium is globally asymptotically stable. The proof uses the Lyapunov function (4.4), $V = S - h(S^*)\int_a^S \frac{d\tau}{h(\tau)} + B\bigl(I - g(I^*)\int_a^I\frac{d\tau}{g(\tau)}\bigr) + C(E - E^*\ln E)$, which reduces to $S - S^*\ln S + B(I - I^*\ln I) + C(E - E^*\ln E)$ for bilinear incidence. For general concave $f$ the source proves the corresponding local statements for the SIRS and SEIRS models (Theorem 3.4 and its SEIRS analogue), and it notes that for convex incidence the positive equilibrium need not be unique.
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 1. The incidence hypotheses (2.1)–(2.3), the product form $h(S)g(I)$, and $R_0$ from the linearization at the infection-free state.

@@ -6,6 +6,10 @@ $$E\bigl[e^{-\Delta s_{\mathrm{tot}}}\bigr] = 1$$
 
 for every driving over a finite time interval (Seifert 2005). Without the support condition the expectation is the mass of the absolutely continuous part and can be smaller: for two states with rate $1$ in each direction, $p_0 = (1, 0)$ and $t = (\ln 2)/2$, one gets $p(\cdot, t) = (3/4, 1/4)$, $\Delta s_m = 0$ and $E[e^{-\Delta s_{\mathrm{tot}}}] = 5/8$.
 
+## Proof depends on
+
+- [Jensen's inequality](../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+
 ## Expansion
 
 1. The model: driven master equations with reversible transition graphs, path probabilities, and the system and medium entropies; the identification of $\Delta s_m$ with heat over temperature under local detailed balance.

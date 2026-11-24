@@ -14,6 +14,10 @@ $$\dot V = -\sum_{i=1}^n a_i(x_i)\, d_i'(x_i)\Bigl[b_i(x_i) - \sum_{k=1}^n c_{ik
 
 which is $\le 0$ as long as every $a_i \ge 0$ and every $d_i$ is monotone nondecreasing; if every $d_i$ is strictly increasing the system can be written in gradient form $\dot x = A(x)\nabla B(x)$ with $B = -V$. With the LaSalle invariance principle, each bounded trajectory converges to the largest invariant set in $\{\dot V = 0\}$, and the paper uses this, together with an analysis of the equilibrium set (which may be infinite but totally disconnected), to prove approach to equilibria for broad classes of such networks under its stated regularity, positivity and boundedness hypotheses (Sections IV–V).
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 1. The model (1), with the regularity of $a_i$, $b_i$, $d_i$ needed for existence of solutions, and the additive and shunting networks of Section I as examples.

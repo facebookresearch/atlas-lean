@@ -6,6 +6,9 @@ $$m_1(\theta, y) = \frac{\sqrt\pi}{\kappa} \int_{(\kappa y - \mu)/(\sigma\sqrt\k
 
 and with an absolute refractory period $T_r \ge 0$ after each spike the mean time to fire is $T_r + m_1(\theta, y)$ and the average firing rate is $\rho = 1/(T_r + m_1(\theta, y))$. This is the first-moment case of Siegert's formula (1951); Kreutz-Delgado (2015) derives it from the general Siegert recursion for the moments of the first-passage time (equation (51) there, with the model in equation (9)).
 
+## Proof depends on
+
+- [The Itô form of the Ornstein–Uhlenbeck solution as a limit of Riemann sums](../../../Probability/stochastic-calculus/it-integral/ae-tendsto-ou-ito-integral-riemann.md)
 
 ## Expansion
 

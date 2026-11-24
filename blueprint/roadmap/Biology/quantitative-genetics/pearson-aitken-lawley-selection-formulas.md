@@ -6,6 +6,9 @@ $$\tilde\mu_y = \mu_y + C_{yx} V_x^{-1}(\tilde\mu_x - \mu_x), \qquad \tilde C_{x
 
 These are the Pearson–Aitken selection formulas (Carey, handout). They follow from the laws of total expectation and total covariance: with $B = C_{yx} V_x^{-1}$ and $\Sigma = \operatorname{Var}(y \mid x) = V_y - B C_{xy}$, selection gives $\tilde C_{yx} = B \tilde V_x$ and $\tilde V_y = \Sigma + B \tilde V_x B^\top$.
 
+## Proof depends on
+
+- [Gaussian conditioning (Schur complement)](../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md)
 
 ## Expansion
 

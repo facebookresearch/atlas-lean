@@ -6,6 +6,10 @@ $$\dot x = x\Bigl(1 - \frac{x}{K}\Bigr) - y\frac{x}{1 + x}, \qquad \dot y = \del
 
 with $K, \gamma, \delta > 0$ and $\alpha = \gamma/\delta < 1$, the prey and predator isoclines meet at the coexistence equilibrium $x_3 = \alpha/(1 - \alpha)$, $y_3 = (1 + x_3)(1 - x_3/K)$, which lies in the open quadrant when $x_3 < K$. The Jacobian there is $\begin{pmatrix} \alpha(1 - (1 + 2x_3)/K) & -\alpha \\ \delta(1 - \alpha)^2 y_3 & 0 \end{pmatrix}$, whose determinant is positive, so the equilibrium is locally asymptotically stable when the trace $\alpha(1 - (1 + 2x_3)/K)$ is negative, that is $K < 1 + 2x_3$, and unstable when $K > 1 + 2x_3$; at $K = 1 + 2x_3$ the system undergoes a Hopf bifurcation (paradox of enrichment article, section Link with Hopf bifurcation). Enriching the prey's carrying capacity beyond this value destabilizes the equilibrium: Rosenzweig's paradox of enrichment. As $K$ increases the model passes from predator extinction (prey-only equilibrium stable), through a stable coexistence equilibrium, to an unstable equilibrium surrounded by a limit cycle whose amplitude grows with $K$ (de Roos, Quantitative Biology, Chapter 11, Figures 11.1–11.2).
 
+## Proof depends on
+
+- [Poincaré–Bendixson theorem](../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
+
 ## Expansion
 
 1. The model, positivity and boundedness of solutions, and the equilibria.

@@ -2,6 +2,10 @@
 
 With relative size $\eta$ and clock $R(t) = \int_0^t \eta(s)^{-1}\, ds$ as in the variable-size coalescent, the coalescence time $T_2$ of two lineages satisfies $P(T_2 > t) = e^{-R(t)}$ for all $t \ge 0$. Consequently: $P(T_2 = \infty) = e^{-R(\infty)}$, which is positive exactly when $R(\infty) < \infty$; on $\{T_2 < \infty\}$, $T_2$ has density $\eta(t)^{-1}e^{-R(t)}$ (for almost every $t$) and hazard rate $1/\eta(t)$; and $E[T_2] = \int_0^\infty e^{-R(t)}\, dt$, finite or infinite (Griffiths and Tavaré 1994; Bhaskar and Song 2014, where the pair coalescence rate is $1/\eta(t)$ and eq. (1) gives the density of the first coalescence).
 
+## Proof depends on
+
+- [Survival-integral form of the first-coalescence quantity $c_m$](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/first-coal-mean-eq-integral.md)
+
 ## Expansion
 
 1. The survival function from the time change of an $\mathrm{Exp}(1)$ variable: $T_2 = R^{-1}(E)$ with $E \sim \mathrm{Exp}(1)$.

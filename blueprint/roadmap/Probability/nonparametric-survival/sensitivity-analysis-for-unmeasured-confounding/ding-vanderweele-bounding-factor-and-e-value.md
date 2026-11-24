@@ -6,6 +6,9 @@ $$\frac{\mathrm{RR}_{\mathrm{obs}}}{\mathrm{RR}_{\mathrm{true}}} \le \mathrm{BF}
 
 so a confounder can explain away the observed risk ratio (bring $\mathrm{RR}_{\mathrm{true}}$ to $1$) only if $\mathrm{BF} \ge \mathrm{RR}_{\mathrm{obs}}$. This implies the Cornfield conditions that both $\mathrm{RR}_{EU}$ and $\mathrm{RR}_{UD}$ exceed $\mathrm{RR}_{\mathrm{obs}}$, and the stronger "high threshold" condition that the larger of the two be at least the common value $e$ at which $\mathrm{BF}(e, e) = \mathrm{RR}_{\mathrm{obs}}$; for example, for $\mathrm{RR}_{\mathrm{obs}} = 3$ the high threshold is $5.45$, and a confounder with $\mathrm{RR}_{EU} = 5.5$ and $\mathrm{RR}_{UD} = 3.1$ has $\mathrm{BF} = 2.24 < 3$ and so cannot explain the effect away. Solving $e^2/(2e - 1) = \mathrm{RR}$ gives $e = \mathrm{RR} + \sqrt{\mathrm{RR}(\mathrm{RR} - 1)}$, the E-value. Since $\mathrm{BF}$ is increasing in each argument and $\mathrm{BF}(x, y) < \min(x, y)$ for $x, y > 1$, having both ratios at least the E-value is sufficient for the bound to permit explaining away but not necessary: observed risks $68/125$ and $36/125$ ($\mathrm{RR}_{\mathrm{obs}} = 17/9$) are explained away by a confounder with $\mathrm{RR}_{EU} = 3$ and $\mathrm{RR}_{UD} = 5$, although the E-value is $(17 + \sqrt{136})/9 \approx 3.18 > 3$.
 
+## Proof depends on
+
+- [Finite-population average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/ate.md)
 
 ## Expansion
 

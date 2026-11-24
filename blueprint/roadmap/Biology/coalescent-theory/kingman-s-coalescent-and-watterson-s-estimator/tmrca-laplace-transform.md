@@ -6,6 +6,10 @@ $$E\bigl[e^{-sT_{\mathrm{MRCA},n}}\bigr] = \prod_{k=2}^n \frac{\binom k2}{\binom
 
 and $E[e^{-sT_{\mathrm{MRCA},n}}] = \infty$ for $s \le -1$, since the smallest rate is $\binom22 = 1$. For every $s > -1$, as $n \to \infty$ these transforms converge to the finite product $\prod_{k \ge 2}\binom k2/(\binom k2 + s)$, which is the Laplace transform of $T_\infty = \sum_{k \ge 2}T_k$ (by monotone convergence, since $T_{\mathrm{MRCA},n} \uparrow T_\infty$).
 
+## Depends on
+
+- [Holding times of Kingman's coalescent](../../../Biology/coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md)
+
 ## Expansion
 
 1. The [holding times](../../../Biology/coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md) and their independence.

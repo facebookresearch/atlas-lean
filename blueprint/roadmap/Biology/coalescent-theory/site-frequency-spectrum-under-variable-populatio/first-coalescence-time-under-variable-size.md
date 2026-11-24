@@ -6,6 +6,11 @@ $$c_m = E[T_{m,m}] = \int_0^\infty \exp\Bigl(-\binom m2 R(t)\Bigr)\, dt$$
 
 (Polanski and Kimmel 2003; Bhaskar and Song 2014, eq. (3), which obtains it by integration by parts when $E[T_{m,m}] < \infty$). This connects the analytic definition of $c_m$ to the genealogical process.
 
+## Proof depends on
+
+- [Expected time to the first coalescence](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/first-coal-mean.md)
+- [Survival-integral form of the first-coalescence quantity $c_m$](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/first-coal-mean-eq-integral.md)
+
 ## Expansion
 
 1. The first-coalescence time of $m$ lineages as $R^{-1}$ of an $\mathrm{Exp}(\binom m2)$ variable.

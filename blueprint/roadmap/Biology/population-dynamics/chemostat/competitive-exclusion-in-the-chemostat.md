@@ -2,6 +2,10 @@
 
 For $N$ species competing for one nutrient in a chemostat with a common removal rate $D > 0$ and input concentration $S_{in} > 0$, $\dot s = D(S_{in} - s) - \sum_{i=1}^N \mu_i(s) x_i$ and $\dot x_i = (\mu_i(s) - D) x_i$ (yields normalized to $1$), assume each growth rate $\mu_i$ is $C^1$, increasing, with $\mu_i(0) = 0$, and let the break-even concentration $\lambda_i$ solve $\mu_i(\lambda_i) = D$ ($\lambda_i = \infty$ if there is no solution). If the species are labelled so that $\lambda_1 < \lambda_2 < \dots < \lambda_N$ and $\lambda_1 < S_{in}$, then every solution with nonnegative initial condition and $x_1(0) > 0$ converges to $(s, x_1, x_2, \dots, x_N) = (\lambda_1, S_{in} - \lambda_1, 0, \dots, 0)$: the species with the lowest break-even concentration excludes the others (Rapaport and Veruete, Proposition 1). Any species with $\lambda_j \ge S_{in}$ dies out whatever the initial condition (their Lemma 1(2)). For Monod growth $\mu_i(s) = m_i s/(a_i + s)$, $\lambda_i = a_i D/(m_i - D)$ when $m_i > D$; this case is the theorem of Hsu, Hubbell and Waltman (1977).
 
+## Depends on
+
+- [Global dynamics of the single-species chemostat](../../../Biology/population-dynamics/chemostat/global-dynamics-of-the-single-species-chemostat.md)
+
 ## Expansion
 
 1. The model, with break-even concentrations as in the [single-species chemostat](../../../Biology/population-dynamics/chemostat/global-dynamics-of-the-single-species-chemostat.md).
