@@ -1,0 +1,3 @@
+# ACHROMATIC NUMBER OF COGRAPHS as a decision problem
+
+The ACHROMATIC NUMBER OF COGRAPHS decision problem accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of instances $(n, E, K)$ of ACHROMATIC NUMBER, to an instance that is well-formed for ACHROMATIC NUMBER OF COGRAPHS and feasible for ACHROMATIC NUMBER: there are a natural number $q \ge K$ and a coloring of the vertices with the colors $0, \dots, q-1$ that is proper, uses every color, and in which every two distinct colors appear at the two ends of some edge. It rejects every bitstring that does not decode to an instance.
