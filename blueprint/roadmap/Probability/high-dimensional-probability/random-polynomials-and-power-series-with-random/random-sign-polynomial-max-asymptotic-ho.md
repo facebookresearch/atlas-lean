@@ -6,3 +6,4 @@ Let $\varepsilon_0, \varepsilon_1, \dots$ be independent uniform random signs. T
 
 - Problem: T. F. Bloom, Erdős Problems, Problem #523, https://www.erdosproblems.com/523 (status PROVED).
 - Resolution: G. Halász, On a result of Salem and Zygmund concerning random polynomials, Studia Sci. Math. Hungar. (1973), 369-377.
+- Earlier result (order of magnitude): R. Salem and A. Zygmund, Some properties of trigonometric series whose terms have random signs, Acta Math. 91 (1954), 245-301, https://doi.org/10.1007/BF02393433.

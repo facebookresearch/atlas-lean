@@ -4,4 +4,6 @@ Let $X_0, X_1, \dots$ be independent, identically distributed, strictly positive
 
 ## Sources
 
-- H. Thorisson, Some Open Probability Problems, Problem 1.1; resolution: J. Angus and Y. Ding, On the ratio of current age to total life for null recurrent renewal processes, Statist. Probab. Lett. (2020), https://www.sciencedirect.com/science/article/pii/S0167715220300481; first found by J. Blanchet, P. Glynn and H. Thorisson, On the limiting ratio of current age to total life for null recurrent renewal processes, arXiv:1503.08374, Angus-Ding, main results and Concluding remarks: if the inter-arrival survival function is regularly varying with exponent -α, 0 ≤ α ≤ 1, and the mean is infinite, then A(t)/C(t) ⇒ U^{1/α} with U uniform (lattice or not), "a definitive answer to the problem posed in Thorisson (2011)"; Blanchet-Glynn-Thorisson, Theorem 1 (non-arithmetic, regularly varying density, α ∈ (0, 1)), https://arxiv.org/abs/1503.08374.
+- Problem: H. Thorisson, Some Open Probability Problems, Problem 1.1.
+- Resolution: J. Blanchet, P. Glynn and H. Thorisson, On the limiting ratio of current age to total life for null recurrent renewal processes, arXiv:1503.08374, https://arxiv.org/abs/1503.08374.
+- Resolution (general regularly varying tails): J. Angus and Y. Ding, On the ratio of current age to total life for null recurrent renewal processes, Statist. Probab. Lett. (2020), https://www.sciencedirect.com/science/article/pii/S0167715220300481.
