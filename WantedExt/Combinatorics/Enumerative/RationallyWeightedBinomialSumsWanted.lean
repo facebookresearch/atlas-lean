@@ -183,22 +183,6 @@ public theorem_wanted sum_poly_mul_choose_mul_secondOrder_pow (a b : ℝ) (U : �
             (-((U 1 - U 0 * α) / (α - β))) ^ (r - l) * N.descFactorial i *
             (α ^ l * β ^ (r - l)) ^ i * (1 + α ^ l * β ^ (r - l) * x) ^ (N - i)
 
-/-- **Binomial sums with rising-factorial denominators.** Write $m^{(i)} = m(m+1)\cdots(m+i-1)$
-for the rising factorial. For all natural numbers $N$ and $s \ge 1$ and every real number $x$,
-
-$$\sum_{k=0}^{N} \binom{N}{k} \frac{x^{k+s}}{(k+1)^{(s)}} =
-\frac{(1+x)^{N+s} - 1}{(N+1)^{(s)}} - \sum_{j=1}^{s-1} \frac{x^j}{j!\,(N+1)^{(s-j)}}.$$
-
-The source writes $\binom{n}{k}$ for $\binom{N}{k}$.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 3.1, equation (3.1). -/
-public theorem_wanted sum_choose_mul_pow_div_ascFactorial (N s : ℕ) (hs : 0 < s) (x : ℝ) :
-    ∑ k ∈ Finset.range (N + 1), (N.choose k : ℝ) * x ^ (k + s) / (k + 1).ascFactorial s =
-      ((1 + x) ^ (N + s) - 1) / (N + 1).ascFactorial s -
-        ∑ j ∈ Finset.Icc 1 (s - 1), x ^ j / (j.factorial * (N + 1).ascFactorial (s - j))
-
 /-- **Binomial sums weighted by $x^k/k^2$.** For every natural number $n$ and every real number
 $x$,
 
