@@ -30,6 +30,36 @@ example (a : Fin 1 → ℕ) (red : Set (Fin 1 → ℕ)) :
   · refine Or.inr ⟨b, hsub, ?_⟩
     simpa [c, Set.compl_def] using hd
 
+-- One bound `A` serves every red/blue coloring of `ℕ^t`: the red set or its complement is
+-- `d`-dense in a subcube of `[1, A]^t` whose side exceeds `f d`.
+example (t : ℕ) (f : ℕ → ℕ) : ∃ A : ℕ, ∀ red : Set (Fin t → ℕ), ∃ d m : ℕ, 1 ≤ d ∧ f d < m ∧
+    ∃ a : Fin t → ℕ, latticeCube a m ⊆ latticeCube (fun _ => 1) A ∧
+      (IsDenseInCubes d red (latticeCube a m) ∨ IsDenseInCubes d redᶜ (latticeCube a m)) := by
+  classical
+  obtain ⟨A, hA⟩ := exists_cube_bound_isDenseInCubes 2 t f
+  refine ⟨A, fun red => ?_⟩
+  obtain ⟨d, m, hd, hm, j, a, hsub, hdense⟩ := hA fun x => if x ∈ red then 0 else 1
+  refine ⟨d, m, hd, hm, a, hsub, ?_⟩
+  rcases j with ⟨_ | _ | j, hj⟩
+  · exact Or.inl (by simpa using hdense)
+  · exact Or.inr (by simpa [Set.compl_def] using hdense)
+  · omega
+
+-- In positive dimension, with at least one color, the subcube really lies in `[1, A]^t`: its
+-- side is at most `A`, so a bound for the constant function `k` exceeds `k`.
+example (r t k : ℕ) (hr : 1 ≤ r) (ht : 1 ≤ t) :
+    ∃ A : ℕ, k < A ∧ ∀ c : (Fin t → ℕ) → Fin r, ∃ d m : ℕ, 1 ≤ d ∧ k < m ∧ ∃ j : Fin r,
+      ∃ a : Fin t → ℕ, latticeCube a m ⊆ latticeCube (fun _ => 1) A ∧
+        IsDenseInCubes d {x | c x = j} (latticeCube a m) := by
+  obtain ⟨A, hA⟩ := exists_cube_bound_isDenseInCubes r t fun _ => k
+  refine ⟨A, ?_, hA⟩
+  obtain ⟨d, m, -, hkm, -, a, hsub, -⟩ := hA fun _ => ⟨0, hr⟩
+  have hnear := mem_latticeCube.mp (hsub (mem_latticeCube.mpr fun i => ⟨le_rfl, by omega⟩))
+    ⟨0, ht⟩
+  have hfar := mem_latticeCube.mp (hsub ((mem_latticeCube (x := fun i => a i + (m - 1))).mpr
+    fun i => ⟨by omega, by omega⟩)) ⟨0, ht⟩
+  omega
+
 -- The empty product contains its unique point for every side length, including zero.
 example (a : Fin 0 → ℕ) (d m : ℕ) : IsDenseInCubes d {a} (latticeCube a m) := by
   intro b _

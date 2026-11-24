@@ -15,7 +15,7 @@ public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.Algebra.Polynomial.PrimeValueConditions
 public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimes
 public import MathlibExt.NumberTheory.LucasSequence
-public import MathlibExt.NumberTheory.TwoPrimeDCarmichael
+public import MathlibExt.NumberTheory.ThreePrimeDCarmichael
 import Mathlib.Tactic.NormNum.LegendreSymbol
 
 namespace MetaMathlibExt
@@ -337,22 +337,6 @@ public theorem_wanted infinite_primary_fiveCarmichael_of_primeKTuples
     (σ : List ℤ) (hσ : ∀ e ∈ σ, e = 1 ∨ e = -1) (hlen : σ.length = 3) :
     {n : ℕ | IsPrimaryDCarmichael 5 n ∧
       n.primeFactorsList.map (fun p => jacobiSym 5 p) = σ}.Infinite
-
-/-- **The $D$-Carmichael numbers of the form $3qr$.** Let $q < r$ be primes with $3 < q$. Then
-$3qr$ is a $D$-Carmichael number for some integer $D$ if and only if $3qr$ is one of $105$,
-$195$, $255$, $399$, $561$ and $2703$. Moreover, for all integers $D$ and $D'$ such that $3qr$
-is both $D$-Carmichael and $D'$-Carmichael, the Jacobi symbols agree at $3$, $q$ and $r$:
-$(D \mid 3) = (D' \mid 3)$, $(D \mid q) = (D' \mid q)$ and $(D \mid r) = (D' \mid r)$.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Theorem 7 (`integers-2026-A102-thm-7`). -/
-public theorem_wanted threeQR_isDCarmichael_iff {q r : ℕ} (hq : q.Prime) (hr : r.Prime)
-    (h3q : 3 < q) (hqr : q < r) :
-    ((∃ D : ℤ, IsDCarmichael D (3 * q * r)) ↔
-      3 * q * r ∈ ({105, 195, 255, 399, 561, 2703} : Finset ℕ)) ∧
-    ∀ D D' : ℤ, IsDCarmichael D (3 * q * r) → IsDCarmichael D' (3 * q * r) →
-      jacobiSym D 3 = jacobiSym D' 3 ∧ jacobiSym D q = jacobiSym D' q ∧
-        jacobiSym D r = jacobiSym D' r
 
 /-- **Primary and secondary $5$-Carmichael numbers from prime quadruples.** Assume the prime
 $k$-tuples conjecture (the paper's Conjecture 1) in the following form: for every finite list

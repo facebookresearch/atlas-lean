@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexCoefficients
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexIDP
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexReflexive
 public import MathlibExt.Geometry.LatticePointEnumerator
@@ -928,38 +929,6 @@ public theorem_wanted almostIDP_exactly_two_height_two (n : ℕ) (hn : 2 ≤ n) 
     Set.ncard {a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)) | 1 < a.1} = 2 ∧
     ∀ a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)), 1 < a.1 → a.1 = 2
 
-/-- **Even geometric factor.** For a natural number $n$, the even geometric factor is the
-polynomial $\sum_{k=0}^{n-1} z^{2k} = 1 + z^2 + \dots + z^{2n-2}$ with integer coefficients;
-for $n = 0$ it is the zero polynomial.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public noncomputable def evenGeometricFactor (n : ℕ) : Polynomial ℤ :=
-  ∑ k ∈ Finset.range n, Polynomial.X ^ (2 * k)
-
-/-- **The quartic $1 + 7z + 14z^2 + 7z^3 + z^4$.** The polynomial $1 + 7z + 14z^2 + 7z^3 + z^4$ with
-integer coefficients, the quartic factor from Theorem 13.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public noncomputable def almostIDPQuartic : Polynomial ℤ :=
-  1 + 7 * Polynomial.X + 14 * Polynomial.X ^ 2 +
-    7 * Polynomial.X ^ 3 + Polynomial.X ^ 4
-
-/-- **Coefficient vector $(1, 7, 15, 14, \dots, 15, 7, 1)$.** For a natural number $n$, the list of
-integers $(1, 7, 15, 14)$, followed by $n - 2$ copies of the pair $(16, 14)$, followed by
-$(15, 7, 1)$. The middle block is empty when $n \le 2$.
-
-It makes exact the ellipsis in the coefficient vector displayed in Theorem 13.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public def almostIDPCoefficientVector (n : ℕ) : List ℤ :=
-  [1, 7, 15, 14] ++ (List.replicate (n - 2) [16, 14]).flatten ++ [15, 7, 1]
-
 /-- **The $h^*$-polynomial of $\Delta_{(1,q(n))}$ factors.** Let $n \ge 2$, let
 $q(n) = (1^{2n-1}, 3n, 10n, 15n)$, that is, $2n - 1$ ones followed by $3n$, $10n$, $15n$, and let
 $\Delta_{(1,q(n))} \subseteq \mathbb{R}^{2n+2}$ be the weighted projective simplex. For $t \ge 0$,
@@ -976,19 +945,6 @@ A60, Theorem 13. -/
 public theorem_wanted almostIDP_hStar_factorization (n : ℕ) (hn : 2 ≤ n) :
     IsHStarPolynomial (weightedSimplex (almostIDPWeights n))
       (evenGeometricFactor n * almostIDPQuartic)
-
-/-- **Coefficients of $(1 + z^2 + \dots + z^{2n-2})(1 + 7z + 14z^2 + 7z^3 + z^4)$.** Let $n \ge 2$.
-The coefficients of $z^0, z^1, \dots, z^{2n+2}$ in the integer polynomial
-$(1 + z^2 + \dots + z^{2n-2})(1 + 7z + 14z^2 + 7z^3 + z^4)$ are, in order, $1, 7, 15, 14$, then
-$n - 2$ repetitions of $16, 14$, then $15, 7, 1$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 13. -/
-public theorem_wanted almostIDP_hStar_coefficients (n : ℕ) (hn : 2 ≤ n) :
-    List.ofFn (fun k : Fin (2 * n + 3) =>
-      (evenGeometricFactor n * almostIDPQuartic).coeff k.val) =
-      almostIDPCoefficientVector n
 
 /-- **Example of support expansion.** Expanding the support values $r = (1, 3)$ with
 multiplicities $x = (2, 1)$, that is, taking $2$ copies of $1$ followed by $1$ copy of $3$,

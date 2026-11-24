@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.MaximumNimJosephus
+import Mathlib.Logic.Function.Iterate
+import Mathlib.Tactic.NormNum
 
 /-! # Tests for `MathlibExt.Combinatorics.MaximumNimJosephus` -/
 
@@ -88,5 +90,29 @@ example : maximumNimGrundy (· / 2) 3 ≠ 3 / 2 := by
 example (k : ℕ) : maximumNimGrundy (· / k) 0 = 0 / k := by
   rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
   simp
+
+-- Zero iterations leave both real maps at the starting position.
+example (x : ℕ) :
+    Nat.iterate (fun y : ℝ => y + y / 2) 0 (x : ℝ) = x ∧
+      Nat.iterate (fun y : ℝ => y + y / 2 + 1) 0 (x : ℝ) = x := by
+  have h := maximumNimH_iterate_bounds (k := 3) (hk := by decide)
+  exact ⟨(h.1 0 x).trans (by simp), (h.2.1 0 x).trans (by simp [add_sub_assoc])⟩
+
+-- At the smallest allowed `k`, the two maps are doubling and doubling plus one.
+example :
+    Nat.iterate (fun y : ℝ => y + y / (2 - 1)) 3 2 = 16 ∧
+      Nat.iterate (fun y : ℝ => y + y / (2 - 1) + 1) 3 2 = 23 := by
+  have h := maximumNimH_iterate_bounds (k := 2) (hk := by decide)
+  exact ⟨(h.1 3 2).trans (by norm_num), (h.2.1 3 2).trans (by norm_num)⟩
+
+-- `8 = 3 * 2 + 2`: the remainder is nonzero, so neither real map equals `h₄(8)`.
+example : 8 % (4 - 1) = 2 ∧ maximumNimH 4 8 = 11 := by decide
+
+example : (32 : ℝ) / 3 ≤ (maximumNimH 4 8 : ℝ) ∧
+    (maximumNimH 4 8 : ℝ) ≤ (35 : ℝ) / 3 := by
+  have h := (maximumNimH_iterate_bounds (k := 4) (hk := by decide)).2.2 8
+  change (8 : ℝ) + 8 / (4 - 1) ≤ (maximumNimH 4 8 : ℝ) ∧
+    (maximumNimH 4 8 : ℝ) ≤ 8 + 8 / (4 - 1) + 1 at h
+  convert h using 2 <;> norm_num
 
 end MathlibExtTest.MaximumNimJosephus
