@@ -9,10 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
-import Mathlib.Analysis.Calculus.Deriv.Add
-import Mathlib.Analysis.Calculus.Deriv.MeanValue
-import Mathlib.Analysis.Calculus.Deriv.Mul
-import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.Taylor
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecificLimits.Basic
 
@@ -214,49 +211,27 @@ theorem IsSolution.tendsto_abs_atTop {θ a Δt : ℝ} {u : ℕ → ℝ} (hu : Is
   refine hlim.congr fun n ↦ ?_
   rw [hu.eq hθ ha hΔt n, abs_mul, abs_pow]
 
-private lemma exp_neg_le {p : ℝ} (hp : 0 ≤ p) : Real.exp (-p) ≤ 1 - p + p ^ 2 / 2 := by
-  have hd : ∀ x : ℝ, HasDerivAt (fun x ↦ Real.exp x * (1 - x + x ^ 2 / 2))
-      (Real.exp x * (x ^ 2 / 2)) x := by
-    intro x
-    have h1 : HasDerivAt (fun x : ℝ ↦ 1 - x + x ^ 2 / 2) (-1 + x) x :=
-      HasDerivAt.congr_deriv (HasDerivAt.add (HasDerivAt.const_sub 1 (hasDerivAt_id' x))
-        (HasDerivAt.div_const (hasDerivAt_pow 2 x) 2)) (by norm_num)
-    convert (Real.hasDerivAt_exp x).mul h1 using 1
-    ring
-  have hmono : Monotone fun x ↦ Real.exp x * (1 - x + x ^ 2 / 2) :=
-    monotone_of_deriv_nonneg (fun x ↦ (hd x).differentiableAt) fun x ↦ by
-      rw [(hd x).deriv]
-      positivity
-  have h := hmono hp
-  simp only [Real.exp_zero, one_mul] at h
-  have hexp : Real.exp (-p) * Real.exp p = 1 := by
-    rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
-  nlinarith [Real.exp_pos (-p)]
-
-private lemma le_exp_neg {p : ℝ} (hp : 0 ≤ p) :
-    1 - p + p ^ 2 / 2 - p ^ 3 / 6 ≤ Real.exp (-p) := by
-  have hd : ∀ x : ℝ, HasDerivAt (fun x ↦ Real.exp x * (1 - x + x ^ 2 / 2 - x ^ 3 / 6))
-      (-(Real.exp x * (x ^ 3 / 6))) x := by
-    intro x
-    have h1 : HasDerivAt (fun x : ℝ ↦ 1 - x + x ^ 2 / 2 - x ^ 3 / 6) (-1 + x - x ^ 2 / 2) x :=
-      HasDerivAt.congr_deriv (HasDerivAt.sub (HasDerivAt.add (HasDerivAt.const_sub 1
-        (hasDerivAt_id' x)) (HasDerivAt.div_const (hasDerivAt_pow 2 x) 2))
-        (HasDerivAt.div_const (hasDerivAt_pow 3 x) 6)) (by norm_num; ring)
-    convert (Real.hasDerivAt_exp x).mul h1 using 1
-    ring
-  have hanti : AntitoneOn (fun x ↦ Real.exp x * (1 - x + x ^ 2 / 2 - x ^ 3 / 6)) (Set.Ici 0) :=
-    antitoneOn_of_deriv_nonpos (convex_Ici 0)
-      (fun x _ ↦ (hd x).continuousAt.continuousWithinAt)
-      (fun x _ ↦ (hd x).differentiableAt.differentiableWithinAt) fun x hx ↦ by
-        rw [interior_Ici] at hx
-        rw [(hd x).deriv, neg_nonpos]
-        have : 0 < x := hx
-        positivity
-  have h := hanti Set.self_mem_Ici hp hp
-  simp only [Real.exp_zero, one_mul] at h
-  have hexp : Real.exp (-p) * Real.exp p = 1 := by
-    rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
-  nlinarith [Real.exp_pos (-p), Real.exp_pos p]
+private lemma exp_neg_quadratic_bounds {p : ℝ} (hp : 0 ≤ p) :
+    1 - p + p ^ 2 / 2 - p ^ 3 / 6 ≤ Real.exp (-p) ∧
+      Real.exp (-p) ≤ 1 - p + p ^ 2 / 2 := by
+  rcases hp.eq_or_lt with rfl | hp
+  · norm_num
+  have hp' : (0 : ℝ) ≠ -p := by linarith
+  have hd (k : ℕ) : iteratedDeriv k Real.exp = Real.exp := by
+    simpa only [one_mul, one_pow] using iteratedDeriv_exp_const_mul k 1
+  have hzero (k : ℕ) : iteratedDerivWithin k Real.exp (Set.uIcc 0 (-p)) 0 = 1 := by
+    rw [iteratedDerivWithin_eq_iteratedDeriv (uniqueDiffOn_uIcc hp')
+      Real.contDiff_exp.contDiffAt Set.left_mem_uIcc, hd, Real.exp_zero]
+  obtain ⟨c, hc, h⟩ := taylor_mean_remainder_lagrange_iteratedDeriv (f := Real.exp)
+    (n := 2) hp' Real.contDiff_exp.contDiffOn
+  rw [Set.uIoo_of_ge (neg_nonpos.mpr hp.le)] at hc
+  rw [taylor_within_apply, hd] at h
+  simp only [hzero, smul_eq_mul, mul_one, Finset.sum_range_succ, Finset.sum_range_zero] at h
+  norm_num [Nat.factorial] at h
+  have hle := Real.exp_le_one_iff.mpr hc.2.le
+  have hpos := Real.exp_pos c
+  have hpow : 0 ≤ p ^ 3 := pow_nonneg hp.le _
+  constructor <;> nlinarith [mul_nonneg hpow hpos.le, mul_nonneg hpow (sub_nonneg.mpr hle)]
 
 private lemma abs_sub_le_of_nonneg {x y c : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (hxc : x ≤ c)
     (hyc : y ≤ c) : |x - y| ≤ c := by
@@ -281,7 +256,7 @@ theorem abs_amplificationFactor_sub_exp_le {θ a Δt : ℝ} (hθ : 0 ≤ θ) (ha
       (mul_le_mul_of_nonneg_right (le_max_left _ _) (by positivity))
   have hy0 : 0 ≤ Real.exp (-p) - (1 - p) := by linarith [Real.one_sub_le_exp_neg p]
   have hy : Real.exp (-p) - (1 - p) ≤ max θ (1 / 2) * p ^ 2 := by
-    have := exp_neg_le hp
+    have := (exp_neg_quadratic_bounds hp).2
     have := mul_le_mul_of_nonneg_right (le_max_right θ (1 / 2)) (sq_nonneg p)
     linarith
   have := abs_sub_le_of_nonneg hx0 hy0 hx hy
@@ -303,9 +278,10 @@ theorem abs_amplificationFactor_half_sub_exp_le {a Δt : ℝ} (ha : 0 ≤ a) (h�
   have hw0 : 0 ≤ p ^ 3 / 4 / (1 + 1 / 2 * p) := by positivity
   have hw : p ^ 3 / 4 / (1 + 1 / 2 * p) ≤ p ^ 3 / 4 :=
     div_le_self (by positivity) (by linarith)
-  have hz0 : 0 ≤ (1 - p + p ^ 2 / 2) - Real.exp (-p) := by linarith [exp_neg_le hp]
+  obtain ⟨hexp_lower, hexp_upper⟩ := exp_neg_quadratic_bounds hp
+  have hz0 : 0 ≤ (1 - p + p ^ 2 / 2) - Real.exp (-p) := sub_nonneg.mpr hexp_upper
   have hz : (1 - p + p ^ 2 / 2) - Real.exp (-p) ≤ p ^ 3 / 4 := by
-    linarith [le_exp_neg hp, pow_nonneg hp 3]
+    linarith only [hexp_lower, pow_nonneg hp 3]
   have := abs_sub_le_of_nonneg hz0 hw0 hz hw
   rwa [← hA, sub_sub_sub_cancel_left] at this
 
