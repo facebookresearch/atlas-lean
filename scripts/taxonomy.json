@@ -10935,6 +10935,7 @@
   "MathlibExt/Combinatorics/Enumerative/ShiftedRiordanArrayRowSums": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Row sums of shifted Riordan arrays"},
   "MathlibExt/Combinatorics/Enumerative/SignedInversionSequenceLength2": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern avoidance in inversion sequences"},
   "MathlibExt/Combinatorics/Enumerative/SignedInversionSequenceLength2ClassC45": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern avoidance in inversion sequences"},
+  "MathlibExt/Combinatorics/Enumerative/SignedLargePartCompositions": {"to": "Combinatorics/integer-compositions", "title": "Even and odd compositions"},
   "MathlibExt/Combinatorics/Enumerative/SignedRobbinsNumber": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Alternating sign matrices and Robbins numbers"},
   "MathlibExt/Combinatorics/Enumerative/SignedStirlingFirst": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the first kind"},
   "MathlibExt/Combinatorics/Enumerative/SmallestCycleMoment": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Smallest cycle of a random permutation"},
