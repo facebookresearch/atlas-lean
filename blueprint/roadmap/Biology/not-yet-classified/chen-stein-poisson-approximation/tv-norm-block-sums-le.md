@@ -1,7 +1,7 @@
 # Finite-dimensional process bound
 
 **Finite-dimensional process bound** (Arratia, Goldstein and Gordon 1989, equation (2)): in
-the dependent Bernoulli setting under a probability measure (countable `I`, measurable
+the dependent Bernoulli setting under a probability measure (nonempty countable `I`, measurable
 `X_α ∈ {0, 1}`, every `p_α > 0`, `λ = ∑ p_α < ∞`, `α ∈ B_α`), for a partition of `I` into
 `d ≥ 1` nonempty parts `I(j) = part⁻¹(j)` with `W_j = ∑_{α ∈ I(j)} X_α` and
 `λ_j = ∑_{α ∈ I(j)} p_α`, the law of `(W_1, …, W_d)` and the law of independent Poisson

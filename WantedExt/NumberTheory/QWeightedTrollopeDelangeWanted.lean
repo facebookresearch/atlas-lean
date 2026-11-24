@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import MathlibExt.Probability.ProbabilityMassFunction.Uniform
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Topology.UniformSpace.UniformConvergence
@@ -25,26 +24,7 @@ open Finset
 -- The definitions `qWeightedDigitSum`, `qWeightedDigitPartialSum` and `takagiLandsberg`, with
 -- their lemmas `qWeightedDigitSum_zero`, `qWeightedDigitSum_of_pos` and `takagiLandsberg_zero`,
 -- moved to `MathlibExt.NumberTheory.Digits.QWeightedTrollopeDelange`, which this module imports.
--- The dyadic values of the normalized fluctuation,
--- `qWeightedDigitPartialSum_dyadic_fluctuation`, are proved there.
-
-/-- **The $q$-weighted Trollope–Delange formula.** Let $q$ be a real number with $|q| > 1/2$ and
-$q \ne 1$, and put $a = 1/(2q)$. For a positive integer $n$, let $k = \lfloor \log_2 n \rfloor$
-and let $u = \log_2 n - k$ be the fractional part of $\log_2 n$. Write
-$F(u) = 2^{1-u}\,\mathcal{T}_a(2^{u-1})$. Then
-$$\frac{S_q(n)}{n} = \frac{q}{2}\left(\frac{1 - q^{k+1}}{1 - q} - q^k F(u)\right),$$
-where $S_q$ is the partial sum of the $q$-weighted binary digit sum and $\mathcal{T}_a$ is the
-Takagi–Landsberg function.
-
-Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
-INTEGERS 26 (2026), Article A61, Theorem 1 (`integers-2026-A61-thm-1`). -/
-public theorem_wanted qWeighted_trollopeDelange (q : ℝ) (hq : 1 / 2 < |q|) (hq1 : q ≠ 1)
-    (n : ℕ) (hn : 0 < n) :
-    qWeightedDigitPartialSum q n / n =
-      q / 2 * ((1 - q ^ (Nat.log 2 n + 1)) / (1 - q) -
-        q ^ Nat.log 2 n *
-          ((2 : ℝ) ^ (1 - Int.fract (Real.logb 2 n)) *
-            takagiLandsberg (1 / (2 * q)) ((2 : ℝ) ^ (-(1 - Int.fract (Real.logb 2 n))))))
+-- The dyadic fluctuation identity and the q-weighted Trollope–Delange formula are proved there.
 
 -- Girgensohn's lemma, `dyadicMantissa_wellDefined_iff_doubling_invariant`, is proved in
 -- `MathlibExt.NumberTheory.Digits.DyadicMantissa`, which this module imports.

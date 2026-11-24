@@ -313,21 +313,6 @@ theorem_wanted sum_neg_one_pow_sub_odd (m n : ℕ)
         ∑ j ∈ Finset.range (n - 2 * m + 1),
           fibStep (2 * m + 1) j * fibStep (2 * m - 1) (n - 2 * m - j)
 
-/-- **Alternating sum of the tribonacci numbers.** Write $T_n$ for the tribonacci numbers (the
-Fibonacci $3$-step numbers $F^{(3)}_n$). For every integer $n \ge 0$,
-$2 \sum_{j=0}^{n} (-1)^j T_j = (-1)^n (T_{n+1} - T_{n-1}) - 1$, where $T_{n-1}$ is read as
-$T_0 = 0$ when $n = 0$.
-
-The source prints this identity with a factor $1/2$; it is stated here multiplied by $2$.
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Corollary 18. -/
-theorem_wanted two_mul_sum_neg_one_pow_trib (n : ℕ) :
-    2 * ∑ j ∈ Finset.range (n + 1),
-        (-1 : ℤ) ^ j * fibStep 3 j =
-      (-1 : ℤ) ^ n * (fibStep 3 (n + 1) - fibStep 3 (n - 1)) - 1
-
 /-- **Convolution of the pentanacci and tribonacci numbers, second closed form.** Write $P_n$ for
 the pentanacci numbers and $T_n$ for the tribonacci numbers (the Fibonacci $m$-step numbers
 $F^{(m)}_n$ with $m = 5$ and $m = 3$). For every integer $n \ge 0$,

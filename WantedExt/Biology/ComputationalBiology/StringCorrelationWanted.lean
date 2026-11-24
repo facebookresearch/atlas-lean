@@ -34,7 +34,7 @@ Sources: A. M. Odlyzko, "Enumeration of strings", in *Combinatorial Algorithms o
 L. J. Guibas and A. M. Odlyzko, "String overlaps, pattern matching, and nontransitive games",
 Journal of Combinatorial Theory, Series A 30 (1981) 183–208, doi:10.1016/0097-3165(81)90005-4;
 and L. J. Guibas and A. M. Odlyzko, "Periods in strings", Journal of Combinatorial Theory,
-Series A 30 (1981) 19–42, doi:10.1016/0097-3165(81)90038-8.
+Series A 30 (1981) 19–42.
 -/
 module
 

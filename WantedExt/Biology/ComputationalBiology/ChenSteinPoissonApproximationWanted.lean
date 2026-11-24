@@ -27,9 +27,9 @@ and follows from the finite-dimensional bound (2) for a partition of `I` into `d
 Lemma 1 bounds the solution of the Stein equation: for `h : ℕ → [0, 1]` and
 `f = S(h - E h(Z))`, `‖Δ f‖ ≤ (1 - e^{-λ})/λ` and `‖f‖ ≤ 1 ∧ 1.4 λ^{-1/2}`.
 
-Here `I` is countable (`W` is a countable sum of indicators, a random element of `ℕ∞` that is
-finite almost surely since `λ < ∞`; its law on `ℕ` is taken through `ENat.toNat`). The
-coefficients `b₁, b₂, b₃, b₃'` are taken in `[0, ∞]`, so infinite sums are allowed, and the
+Here `I` is nonempty and countable (`W` is a countable sum of indicators, a random element of
+`ℕ∞` that is finite almost surely since `λ < ∞`; its law on `ℕ` is taken through `ENat.toNat`).
+The coefficients `b₁, b₂, b₃, b₃'` are taken in `[0, ∞]`, so infinite sums are allowed, and the
 total-variation norms are twice the largest difference over measurable sets. The strict
 inequality of Theorem 1 holds as printed because `b₁ ≥ ∑ p_α² > 0`. Not recorded here: the
 Section 3 examples (Example 5 applies the theorems to the Erdős–Rényi law for sequence matching).
@@ -38,7 +38,7 @@ Sources: R. Arratia, L. Goldstein and L. Gordon, "Two moments suffice for Poisso
 the Chen–Stein method", Annals of Probability 17 (1989) 9–25, doi:10.1214/aop/1176991491,
 pp. 10–11 and 20, Theorems 1 and 2, equation (2) and Lemma 1; A. D. Barbour and G. K. Eagleson,
 "Poisson approximation for some statistics based on exchangeable trials", Advances in Applied
-Probability 15 (1983) 585–600, doi:10.2307/1426620 (appendix, proof of Lemma 1).
+Probability 15 (1983) 585–600 (appendix, proof of Lemma 1).
 -/
 module
 
@@ -108,9 +108,12 @@ end Norms
 
 variable {Ω I : Type*} [MeasurableSpace Ω] [Countable I]
 
-/-- The **dependent Bernoulli setting**: `X_α` takes values in `{0, 1}` and is measurable,
-`p_α = P(X_α = 1) > 0`, `λ = ∑_α p_α` is finite and positive, and `α ∈ B_α`. -/
+/-- The **dependent Bernoulli setting**: the index set `I` is nonempty, `X_α` takes values in
+`{0, 1}` and is measurable, `p_α = P(X_α = 1) > 0`, `λ = ∑_α p_α` is finite (and positive, as `I`
+is nonempty), and `α ∈ B_α`. -/
 structure BernoulliSetting (P : Measure Ω) (X : I → Ω → ℕ) (B : I → Set I) : Prop where
+  /-- The index set is nonempty, so `λ > 0`. -/
+  nonempty : Nonempty I
   /-- Each `X_α` is measurable. -/
   measurable : ∀ a, Measurable (X a)
   /-- Each `X_α` takes values in `{0, 1}`. -/
@@ -163,7 +166,7 @@ noncomputable def b₃' (P : Measure Ω) (X : I → Ω → ℕ) (B : I → Set I
   ∑' a, ∫⁻ ω, ‖P[fun ω => (X a ω : ℝ) - (pr P X a).toReal | outsideSumSigma X B a] ω‖ₑ ∂P
 
 /-- **`b₃' ≤ b₃`** (Arratia, Goldstein and Gordon 1989, p.10): in the dependent Bernoulli setting
-under a probability measure (countable `I`, measurable `X_α ∈ {0, 1}`, every `p_α > 0`,
+under a probability measure (nonempty countable `I`, measurable `X_α ∈ {0, 1}`, every `p_α > 0`,
 `λ = ∑ p_α < ∞`, `α ∈ B_α`), `b₃' ≤ b₃`.
 
 Source: Arratia, Goldstein and Gordon (1989), p.10. -/
@@ -172,9 +175,9 @@ public theorem_wanted b₃'_le_b₃ (P : Measure Ω) [IsProbabilityMeasure P] (X
     b₃' P X B ≤ b₃ P X B
 
 /-- **Poisson approximation for the number of occurrences** (Arratia, Goldstein and Gordon 1989,
-Theorem 1, first part): in the dependent Bernoulli setting under a probability measure (countable
-`I`, measurable `X_α ∈ {0, 1}`, every `p_α > 0`, `λ = ∑ p_α < ∞`, `α ∈ B_α`; then `λ > 0`), with
-`Z` Poisson of mean `λ`,
+Theorem 1, first part): in the dependent Bernoulli setting under a probability measure
+(nonempty countable `I`, measurable `X_α ∈ {0, 1}`, every `p_α > 0`, `λ = ∑ p_α < ∞`,
+`α ∈ B_α`; then `λ > 0`), with `Z` Poisson of mean `λ`,
 `‖L(W) - L(Z)‖ ≤ 2[(b₁ + b₂)(1 - e^{-λ})/λ + b₃'(1 ∧ 1.4 λ^{-1/2})] ≤ 2(b₁ + b₂ + b₃)`.
 
 Source: Arratia, Goldstein and Gordon (1989), Theorem 1. -/
@@ -190,7 +193,7 @@ public theorem_wanted tvNorm_lawW_poisson_le (P : Measure Ω) [IsProbabilityMeas
         2 * (b₁ P X B + b₂ P X B + b₃ P X B)
 
 /-- **Probability of no occurrence** (Arratia, Goldstein and Gordon 1989, Theorem 1, second part):
-in the dependent Bernoulli setting under a probability measure (countable `I`, measurable
+in the dependent Bernoulli setting under a probability measure (nonempty countable `I`, measurable
 `X_α ∈ {0, 1}`, every `p_α > 0`, `λ = ∑ p_α < ∞`, `α ∈ B_α`),
 `|P(W = 0) - e^{-λ}| ≤ (b₁ + b₂ + b₃')(1 - e^{-λ})/λ`, and if `b₁ + b₂ + b₃ < ∞` this is
 `< (1 ∧ λ^{-1})(b₁ + b₂ + b₃)` (strict because `b₁ > 0`).
@@ -207,7 +210,7 @@ public theorem_wanted abs_prob_W_eq_zero_sub_exp_le (P : Measure Ω) [IsProbabil
           ENNReal.ofReal (min 1 (lam P X)⁻¹) * (b₁ P X B + b₂ P X B + b₃ P X B))
 
 /-- **Finite-dimensional process bound** (Arratia, Goldstein and Gordon 1989, equation (2)): in
-the dependent Bernoulli setting under a probability measure (countable `I`, measurable
+the dependent Bernoulli setting under a probability measure (nonempty countable `I`, measurable
 `X_α ∈ {0, 1}`, every `p_α > 0`, `λ = ∑ p_α < ∞`, `α ∈ B_α`), for a partition of `I` into
 `d ≥ 1` nonempty parts `I(j) = part⁻¹(j)` with `W_j = ∑_{α ∈ I(j)} X_α` and
 `λ_j = ∑_{α ∈ I(j)} p_α`, the law of `(W_1, …, W_d)` and the law of independent Poisson
@@ -227,7 +230,7 @@ public theorem_wanted tvNorm_blockSums_le (P : Measure Ω) [IsProbabilityMeasure
         (2 * b₁ P X B + 2 * b₂ P X B + b₃ P X B)
 
 /-- **Poisson process approximation** (Arratia, Goldstein and Gordon 1989, Theorem 2): in the
-dependent Bernoulli setting under a probability measure (countable `I`, measurable
+dependent Bernoulli setting under a probability measure (nonempty countable `I`, measurable
 `X_α ∈ {0, 1}`, every `p_α > 0`, `λ = ∑ p_α < ∞`, `α ∈ B_α`), the law of the process
 `(X_α)_{α ∈ I}` and the law of independent Poisson variables `(Y_α)` of means `p_α` satisfy
 `‖L(X) - L(Y)‖ ≤ 2(2b₁ + 2b₂ + b₃)`.
