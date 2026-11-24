@@ -4,3 +4,6 @@
 - [Exact simulation of the Wright–Fisher diffusion](exact-simulation-of-the-wright-fisher-diffusion.md)
 
 - [Transition density of the multi-allelic Wright–Fisher diffusion with selection](multi-allelic-transition-density-with-selection.md)
+
+- [Finite and entrance transition probabilities for the mutation line-count process](transition-probabilities-q-theta-n-t-of-the-non.md)
+- [Beta-mixture marginals for every mutation Wright-Fisher solution](line-of-descent-mixture-representation-of-the-tr.md)

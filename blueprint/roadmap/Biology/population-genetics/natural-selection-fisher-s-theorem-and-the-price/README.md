@@ -33,3 +33,6 @@
 ## Mean-fitness counterexample
 
 - [An example where the change in mean fitness differs from the additive variance](change-in-mean-fitness-differs-from-additive-variance.md)
+
+- [Successive viability selection stages compose multiplicatively](successive-viability-selection-stages-compose-mu.md)
+- [Logarithmic substitution cost and a reproductive budget in haploid selection](haldane-s-dilemma-and-substitutional-load.md)

@@ -42,3 +42,5 @@
 - [Disequilibria sum to zero over the second-locus alleles](sum-linkage-diseq-snd.md)
 - [Multi-allelic linkage disequilibria after $t$ generations](linkage-diseq-iterate-2.md)
 - [Multi-allelic linkage disequilibria tend to zero](tendsto-linkage-diseq-iterate-2.md)
+
+- [Kosambi's map function](kosambi-map-function.md)

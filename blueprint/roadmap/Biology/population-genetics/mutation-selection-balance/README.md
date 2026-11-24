@@ -39,3 +39,5 @@
 
 - [Mutation–selection balance in a haploid population](haploid-mutation-selection-balance.md)
 - [Mutation–selection balance for a recessive allele](recessive-mutation-selection-balance.md)
+
+- [Mutation as a transition on allele frequencies](mutation-transition-on-allele-frequencies.md)

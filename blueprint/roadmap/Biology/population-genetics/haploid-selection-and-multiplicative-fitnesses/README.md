@@ -9,3 +9,6 @@
 - [Multiplicative selection and recombination create no disequilibrium](linkage-diseq-recombine-select-of-mul.md)
 
 - [Haploid selection and the crossproduct ratio: epistasis generates linkage disequilibrium](epistasis-generates-linkage-disequilibrium.md)
+
+- [Weak haploid selection follows the logistic curve on the time scale 1/s](weak-selection-and-the-logistic-approximation.md)
+- [Local stability of frequency-dependent selection and a mean-fitness counterexample](local-stability-of-frequency-dependent-haploid-s.md)
