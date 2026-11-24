@@ -26,26 +26,28 @@ Reference: D. Cox, *The homogeneous coordinate ring of a toric variety*,
 https://arxiv.org/abs/alg-geom/9210008v3, §2 Theorem 2.1(ii--iii),
 Lemmas 2.2--2.3, pp.5--9. The paper states the analytic quotient version.
 
-The complete finite-fan scheme/gluing and mixed-monomial constructors in
-TauCeti, revision 62bbc0596dc3539d488232e4e924a338548ea0a9,
+The fan, its rays, charts and realization are the shared
+`FiniteToricCoordinates` and `CoxGradedSheaves` data. The complete finite-fan
+scheme/gluing and mixed-monomial constructors in TauCeti, revision
+62bbc0596dc3539d488232e4e924a338548ea0a9,
 Geometry/Toric/Algebraic/Fan/Scheme.lean and
-Geometry/Toric/Analytic/MixedMonomial.lean, are positively covered and are
-reused as the exact chart dictionary. Toric projective-space chart/ratio
-and individual orbit–torus comparisons are covered too. The target is the
-whole all-ray Cox-open quotient-to-chart uniformization, rather than those
-primitive constructions. General toric cohomology/intersection and spherical
-geometry remain residual scope.
+Geometry/Toric/Analytic/MixedMonomial.lean, are positively covered and supply
+that realization. The target is the whole all-ray Cox-open quotient-to-chart
+uniformization, rather than those primitive constructions. General toric
+cohomology/intersection and spherical geometry remain residual scope.
 -/
 
 @[expose] public noncomputable section
 
 namespace WantedExt.AlgebraicGeometry.ToricCoxUniformizationWanted
 
+open MathlibExt.AlgebraicGeometry.FiniteToricCoordinates
+open MathlibExt.AlgebraicGeometry.CoxGradedSheaves
 open MathlibExt.AlgebraicGeometry.ToricCoxCoordinates
 
 /-- Cox's actual analytic geometric quotient, fixed on every eligible chart
 by every dual-lattice monomial and the base complex scalar structure. -/
-public def_wanted coxUniformization {n m : ℕ} (F : FanData n m)
-    (_smoothComplete : SmoothComplete F) (M : ToricModel F) : CoxUniformization F M
+public def_wanted coxUniformization {n : ℕ} {F : FiniteFan n} (R : Rays F)
+    (_smoothComplete : SmoothComplete R) (T : Realization ℂ F) : CoxUniformization R T
 
 end WantedExt.AlgebraicGeometry.ToricCoxUniformizationWanted

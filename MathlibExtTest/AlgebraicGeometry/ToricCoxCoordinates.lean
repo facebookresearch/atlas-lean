@@ -5,46 +5,53 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
-
 module
 
 import MathlibExt.AlgebraicGeometry.ToricCoxCoordinates
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.NormNum
+
+/-!
+# Tests for analytic Cox coordinates
+
+The zero tuple lies outside the Cox open when every cone misses a ray, as for
+the projective line; a tuple with no zero coordinate lies in it; a diagonal
+scalar lies in the Cox group when the ray generators sum to zero, as for the
+rays `1` and `-1`; and the group acts coordinatewise.
+-/
 
 noncomputable section
 
+open MathlibExt.AlgebraicGeometry.FiniteToricCoordinates
+open MathlibExt.AlgebraicGeometry.CoxGradedSheaves
 open MathlibExt.AlgebraicGeometry.ToricCoxCoordinates
 
-private def lineFan : FanData 1 2 where
-  rays := ![fun _ => 1, fun _ => -1]
-  faces := (Finset.univ : Finset (Fin 2)).powerset.filter (fun σ => σ.card ≤ 1)
-  empty_mem := by simp
-  singleton_mem := by intro i; simp
-  downward := by
-    intro σ hσ τ hτ
-    exact Finset.mem_filter.mpr ⟨Finset.mem_powerset.mpr (Finset.subset_univ _),
-      (Finset.card_le_card hτ).trans (Finset.mem_filter.mp hσ).2⟩
+variable {n : ℕ} {F : FiniteFan n} (R : Rays F)
 
-/-- The projective-line Cox open excludes the unstable zero coordinate tuple. -/
-example : (fun _ : Fin 2 => (0 : ℂ)) ∉ coxLocus lineFan := by
+/-- If every cone misses some ray, the zero tuple is excluded. -/
+example (h : ∀ σ ∈ F.cones, ∃ i, ¬rayInCone R σ i) :
+    (fun _ : Fin R.count ↦ (0 : ℂ)) ∉ coxLocus R := by
   rintro ⟨σ, hσ, hz⟩
-  have hcard : σ.card ≤ 1 := (Finset.mem_filter.mp hσ).2
-  have hsub : (Finset.univ : Finset (Fin 2)) ⊆ σ := by
-    intro i hi
-    by_contra h
-    exact hz i h rfl
-  have hlow : 2 ≤ σ.card := by simpa using Finset.card_le_card hsub
-  exact Nat.not_succ_le_self 1 (hlow.trans hcard)
+  obtain ⟨i, hi⟩ := h σ hσ
+  exact hz i hi rfl
 
-/-- A boundary point with one vanishing coordinate is retained. -/
-example : (![1, 0] : Fin 2 → ℂ) ∈ coxLocus lineFan := by
-  refine ⟨{1}, lineFan.singleton_mem 1, ?_⟩
-  intro i hi
-  fin_cases i <;> simp_all
+/-- A tuple with no zero coordinate lies in the Cox open. -/
+example (σ : F.Face) (z : Fin R.count → ℂ) (hz : ∀ i, z i ≠ 0) : z ∈ coxLocus R :=
+  ⟨σ.val, σ.property, fun i _ ↦ hz i⟩
 
-/-- The opposite integral rays give the expected diagonal scalar Cox group. -/
-example (u : ℂˣ) : characterHom lineFan (fun _ : Fin 2 => u) = 1 := by
+theorem prod_zpow_eq_zpow_sum {ι : Type*} (s : Finset ι) (f : ι → ℤ) (u : ℂˣ) :
+    ∏ i ∈ s, u ^ f i = u ^ ∑ i ∈ s, f i := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert a s ha ih => rw [Finset.prod_insert ha, Finset.sum_insert ha, ih, zpow_add]
+
+/-- A diagonal scalar is in the Cox group when the ray generators sum to zero. -/
+example (u : ℂˣ) (h : ∀ j, ∑ i, R.generator i j = 0) :
+    characterHom R (fun _ ↦ u) = 1 := by
   funext j
-  fin_cases j
-  simp [characterHom, lineFan, Fin.prod_univ_two]
+  change ∏ i, u ^ (R.generator i j) = 1
+  rw [prod_zpow_eq_zpow_sum, h j, zpow_zero]
+
+/-- The Cox group acts coordinatewise. -/
+example (g : CoxGroup R) (z : CoxOpen R) (i : Fin R.count) :
+    (g • z).val i = (g.val i : ℂ) * z.val i :=
+  rfl
