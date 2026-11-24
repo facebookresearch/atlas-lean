@@ -18,10 +18,12 @@ second an epi. Restriction along the identity is the identity, restriction along
 the composite of restrictions, and exact functors act on flags by composition. The supported
 sheaves of an open are finitely presented and include the zero sheaf.
 
-The faces of an `S₁` flag are zero, and so is the degenerate `S₁` flag of an `S₀` flag. The map
-of realized spaces induced by an exact functor sends the vertex of a flag to the composite flag;
-in particular the supported inclusion sends a supported flag to itself and restriction to an
-open restricts every term of the flag, so neither is the constant map at the zero flag.
+The faces of an `S₁` flag are zero, and so is the degenerate `S₁` flag of an `S₀` flag. In
+degree one, the map induced by an exact functor applies the functor to the off-diagonal term
+`F(0, 1)` of the `S₁` flags of a simplex: the supported inclusion keeps that term and restriction
+to an open restricts it. These tests pin the realized maps to the actual functors on flags; they
+do not assert that a realized map is homotopically nontrivial (restriction to the empty open is
+not).
 -/
 
 noncomputable section
@@ -89,11 +91,14 @@ example (F : Arrow (Fin 1) ⥤ C) (hF : IsSFlag P 0 F) (σ : Fin 2 →o Fin 1) (
 
 variable {D : Type} [Category D] [Abelian D] (Q : ObjectProperty D)
 
-/-- On vertices, the diagonal map of an exact functor composes the flag with the functor. -/
-theorem mapDiagonal_vertex (G : C ⥤ D) [G.Additive] [PreservesFiniteLimits G]
-    [PreservesFiniteColimits G] (hG : ∀ x, P x → Q (G.obj x)) (A : SLevel P 0) :
-    (nerveEquiv ((mapDiagonal P Q G hG).app (op ⦋0⦌) (nerveEquiv.symm (Core.mk A)))).of.obj =
-      A.obj ⋙ G :=
+/-- In degree one, the diagonal map of an exact functor applies the functor to the off-diagonal
+term `F(0, 1)` of both `S₁` flags of a one-simplex. -/
+theorem mapDiagonal_offDiagonal (G : C ⥤ D) [G.Additive] [PreservesFiniteLimits G]
+    [PreservesFiniteColimits G] (hG : ∀ x, P x → Q (G.obj x)) (a : (diagonal P) _⦋1⦌)
+    (k : Fin 2) :
+    (((mapDiagonal P Q G hG).app (op ⦋1⦌) a).obj k).of.obj.obj
+        (interval (0 : Fin 2) 1 (by decide)) =
+      G.obj ((a.obj k).of.obj.obj (interval (0 : Fin 2) 1 (by decide))) :=
   rfl
 
 /-- The supported inclusion is the realization of the diagonal map of the identity functor. -/
@@ -102,12 +107,13 @@ example (X : Scheme.{0}) (U : X.Opens) :
       (𝟭 X.Modules) (supported_finitelyPresented X U)) :=
   rfl
 
-/-- On vertices it sends a supported flag to the same flag. -/
-example (X : Scheme.{0}) (U : X.Opens) (A : SLevel (supported X U) 0) :
-    (nerveEquiv ((mapDiagonal (supported X U) (finitelyPresented X) (𝟭 X.Modules)
-      (supported_finitelyPresented X U)).app (op ⦋0⦌) (nerveEquiv.symm (Core.mk A)))).of.obj =
-      A.obj :=
-  Functor.comp_id _
+/-- In degree one it keeps the off-diagonal terms of supported `S₁` flags. -/
+example (X : Scheme.{0}) (U : X.Opens) (a : (diagonal (supported X U)) _⦋1⦌) (k : Fin 2) :
+    (((mapDiagonal (supported X U) (finitelyPresented X) (𝟭 X.Modules)
+      (supported_finitelyPresented X U)).app (op ⦋1⦌) a).obj k).of.obj.obj
+        (interval (0 : Fin 2) 1 (by decide)) =
+      (a.obj k).of.obj.obj (interval (0 : Fin 2) 1 (by decide)) :=
+  rfl
 
 /-- Restriction to an open is the realization of the diagonal map of the restriction functor. -/
 example (X : Scheme.{0}) (U : X.Opens) [RestrictionFinitePresentation X U] :
@@ -116,11 +122,13 @@ example (X : Scheme.{0}) (U : X.Opens) [RestrictionFinitePresentation X U] :
       (RestrictionFinitePresentation.preserves (X := X) (U := U))) :=
   rfl
 
-/-- On vertices it restricts every term of the flag to the open. -/
+/-- In degree one it restricts the off-diagonal terms of `S₁` flags to the open. -/
 example (X : Scheme.{0}) (U : X.Opens) [RestrictionFinitePresentation X U]
-    (A : SLevel (finitelyPresented X) 0) :
-    (nerveEquiv ((mapDiagonal (finitelyPresented X) (finitelyPresented U)
+    (a : (diagonal (finitelyPresented X)) _⦋1⦌) (k : Fin 2) :
+    (((mapDiagonal (finitelyPresented X) (finitelyPresented U)
       (Scheme.Modules.restrictFunctor U.ι)
-      (RestrictionFinitePresentation.preserves (X := X) (U := U))).app (op ⦋0⦌)
-      (nerveEquiv.symm (Core.mk A)))).of.obj = A.obj ⋙ Scheme.Modules.restrictFunctor U.ι :=
+      (RestrictionFinitePresentation.preserves (X := X) (U := U))).app (op ⦋1⦌) a).obj
+        k).of.obj.obj (interval (0 : Fin 2) 1 (by decide)) =
+      (Scheme.Modules.restrictFunctor U.ι).obj
+        ((a.obj k).of.obj.obj (interval (0 : Fin 2) 1 (by decide))) :=
   rfl
