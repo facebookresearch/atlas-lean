@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.ArithmeticFunction.CoprimalityIndicatorMultiplicativity
 public import MathlibExt.NumberTheory.ArithmeticFunction.TothPairwiseNonCoprimeTuples
 
 /-!
@@ -77,21 +78,6 @@ public theorem_wanted coprimalityDensity_eq_independent_set_product {k : ℕ}
         ((univ.filter fun S : Finset (Fin k) =>
             S.card = m ∧ ∀ e ∈ E, ¬ (e.1 ∈ S ∧ e.2 ∈ S)).card : ℝ) /
           ((p : ℕ) : ℝ) ^ m * (1 - 1 / ((p : ℕ) : ℝ)) ^ (k - m)
-
-/-- **Multiplicativity of the coprimality indicator.** Let $G$ be a graph on the vertices
-$0, \dots, k-1$ given by an arbitrary set $E$ of ordered pairs of vertices, with coprimality
-indicator $\delta_G$. If $m, n \in \mathbb{N}^k$ satisfy
-$\gcd(m_0 m_1 \cdots m_{k-1}, n_0 n_1 \cdots n_{k-1}) = 1$, then
-$\delta_G(m_0 n_0, \dots, m_{k-1} n_{k-1}) = \delta_G(m)\, \delta_G(n)$.
-
-Source: László Tóth, *On the Asymptotic Density of k-tuples of Positive
-Integers with Pairwise Non-Coprime Components*, Journal of Integer Sequences 27
-(2024), Article 24.8.5, Lemma 4 (`jis-2024-24.8.5-lem-4`). -/
-public theorem_wanted coprimalityIndicator_mul {k : ℕ} (E : Finset (Fin k × Fin k))
-    (m n : Fin k → ℕ)
-    (hmn : Nat.Coprime (∏ i, m i) (∏ i, n i)) :
-    coprimalityIndicator E (fun i => m i * n i) =
-      coprimalityIndicator E m * coprimalityIndicator E n
 
 /-- **Inclusion–exclusion for at least $r$ coprime pairs.** Let $k \ge 2$ and $r \ge 1$, and let
 $n = (n_1, \dots, n_k)$ be a tuple of natural numbers (zero allowed). Let $\beta'_r(n)$ be $1$ if
