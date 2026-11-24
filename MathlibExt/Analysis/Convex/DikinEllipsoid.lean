@@ -27,9 +27,7 @@ import Mathlib.Tactic.Ring
 
 open Set Filter
 open scoped ContDiff Topology
-open MathlibExt.Analysis.Convex.SelfConcordant (IsSelfConcordant)
-
-namespace WantedExt.Analysis.Convex.SelfConcordantWanted
+namespace MathlibExt.Analysis.Convex.SelfConcordant
 
 private theorem exists_uniform_bound_of_self_concordant_second_deriv {w : ℝ → ℝ} {b : ℝ}
     (hb : 0 < b) (hb₁ : b ≤ 1) (h0 : w 0 < 1)
@@ -226,4 +224,4 @@ public theorem mem_of_dikin_lt_one {E : Type*} [NormedAddCommGroup E] [NormedSpa
   obtain ⟨t, ht, hbig'⟩ := (hnear.and hbig).exists
   linarith [hφbound t ht]
 
-end WantedExt.Analysis.Convex.SelfConcordantWanted
+end MathlibExt.Analysis.Convex.SelfConcordant

@@ -28,6 +28,8 @@ open MathlibExt.Analysis.Convex.SelfConcordant
 
 namespace WantedExt.Analysis.Convex.SelfConcordantWanted
 
+export MathlibExt.Analysis.Convex.SelfConcordant (mem_of_dikin_lt_one)
+
 /-- **Bounds on a self-concordant function in the Dikin ellipsoid.** If `F` is self-concordant on
 `Q`, `x ∈ Q` and `r = |h|_x < 1`, then with `ρ(s) = -log (1 - s) - s`,
 `F(x) + DF(x)[h] + ρ(-r) ≤ F(x + h) ≤ F(x) + DF(x)[h] + ρ(r)`.

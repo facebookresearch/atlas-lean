@@ -15,8 +15,8 @@ import Mathlib.Tactic.NormNum
 
 open Filter Set
 open scoped Topology
-open MathlibExt.Analysis.Convex.SelfConcordant (isSelfConcordantBarrier_neg_log)
-open WantedExt.Analysis.Convex.SelfConcordantWanted (mem_of_dikin_lt_one)
+open MathlibExt.Analysis.Convex.SelfConcordant
+  (isSelfConcordantBarrier_neg_log mem_of_dikin_lt_one)
 
 /-- A nonzero step of local length `1/2` for the logarithmic barrier stays on the positive ray. -/
 example : (1 / 2 : ℝ) ∈ Ioi (0 : ℝ) := by
