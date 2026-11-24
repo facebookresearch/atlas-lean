@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PullbackFree
 public import Mathlib.AlgebraicGeometry.Geometrically.Connected
 public import Mathlib.AlgebraicGeometry.Morphisms.Etale
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
@@ -103,10 +104,13 @@ def IsStable {S : Scheme.{u}} {n g : ℕ} (C : MarkedFamily S n g) : Prop :=
     Finite (MarkedAut (fiberCurve C.π p) n
       (fun i ↦ fiberMark C.π (C.marking i) (C.section_eq i) p))
 
-/-- The contraction's structure-sheaf images use actual derived functors. -/
+/-- The contraction's structure-sheaf images use actual derived functors: the canonical map
+`𝒪_Y ⟶ f_* 𝒪_X` induced by `f` is an isomorphism (not merely some abstract isomorphism) and
+`R¹f_* 𝒪_X` vanishes. -/
 def IsGenusPreservingContraction {X Y : Scheme.{u}} (f : X ⟶ Y) : Prop :=
   IsProper f ∧ Function.Surjective f ∧
-    Nonempty (structureModule Y ≅ (Scheme.Modules.pushforward f).obj (structureModule X)) ∧
+    IsIso (SheafOfModules.unitToPushforwardObjUnit f.toRingCatSheafHom :
+      structureModule Y ⟶ (Scheme.Modules.pushforward f).obj (structureModule X)) ∧
     IsZero (((Scheme.Modules.pushforward f).rightDerived 1).obj (structureModule X))
 
 /-- Stabilization after forgetting the last marking and its unique stable model. -/
