@@ -48,21 +48,21 @@ def rightWeylGenerators (F : Type u) [Field F] (n : ℕ) :
   { g | ∃ (i j : Fin n) (hij : i ⋖ j), g = rightWeylPerm (F := F) hij }
 
 -- Left/right action generators: upper range plus Weyl generators.
-def leftActionGenerators (F : Type u) [Field F] (n : ℕ) :
+noncomputable def leftActionGenerators (F : Type u) [Field F] (n : ℕ) :
     Set (Equiv.Perm (X F n)) :=
   Set.range (leftUpperPerm (F := F) (n := n)) ∪ leftWeylGenerators F n
 
-def rightActionGenerators (F : Type u) [Field F] (n : ℕ) :
+noncomputable def rightActionGenerators (F : Type u) [Field F] (n : ℕ) :
     Set (Equiv.Perm (X F n)) :=
   Set.range (rightUpperPerm (F := F) (n := n)) ∪
     rightWeylGenerators F n
 
 -- Generated left/right action subgroups.
-def leftActionSubgroup (F : Type u) [Field F] (n : ℕ) :
+noncomputable def leftActionSubgroup (F : Type u) [Field F] (n : ℕ) :
     Subgroup (Equiv.Perm (X F n)) :=
   Subgroup.closure (leftActionGenerators F n)
 
-def rightActionSubgroup (F : Type u) [Field F] (n : ℕ) :
+noncomputable def rightActionSubgroup (F : Type u) [Field F] (n : ℕ) :
     Subgroup (Equiv.Perm (X F n)) :=
   Subgroup.closure (rightActionGenerators F n)
 
