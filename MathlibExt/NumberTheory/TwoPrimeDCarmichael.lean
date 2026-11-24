@@ -284,7 +284,10 @@ open isDCarmichael_mul_iff
 
 namespace threeQR_isDCarmichael_iff
 
-/-- Reduce the universal Lucas condition at a prime factor to a divisibility of the cofactor. -/
+/-- Let $D$ be an integer and let $m$ and $p$ be natural numbers. If $p$ is prime, $m$ is
+coprime to $p$, and $mp$ is a $D$-Carmichael number, then
+$p - \left(\frac{D}{p}\right)$ divides $m - \left(\frac{D}{m}\right)$ in the integers,
+where $\left(\frac{D}{k}\right)$ denotes the Jacobi symbol. -/
 lemma cofactor_dvd {m p : ℕ} (hp : p.Prime) (hmp : m.Coprime p) {D : ℤ}
     (h : IsDCarmichael D (m * p)) :
     (p : ℤ) - jacobiSym D p ∣ (m : ℤ) - jacobiSym D m := by
@@ -316,8 +319,10 @@ lemma cofactor_dvd {m p : ℕ} (hp : p.Prime) (hmp : m.Coprime p) {D : ℤ}
   · simpa only [hs, mul_one] using he
   · simpa only [hs, mul_neg_one, dvd_neg] using he
 
-/-- If the index is divisible by the prime minus its Jacobi sign, the prime divides
-the corresponding Lucas term. -/
+/-- Let $p$ be an odd prime and $D$ an integer coprime to $p$. Let $(P,Q)$ be integer Lucas
+parameters with $Q \ne 0$, $P^2 - 4Q = D$, and $Q$ coprime to $p$. For every natural number $n$,
+if $p - \left(\frac{D}{p}\right)$ divides $n$, then $p$ divides the Lucas term $U_n(P,Q)$,
+where $\left(\frac{D}{p}\right)$ denotes the Jacobi symbol. -/
 lemma dvd_lucas_of_local_order_dvd {p n : ℕ} (hp : p.Prime) (hp₂ : p ≠ 2)
     {D : ℤ} (hDp : IsCoprime D p) (s : LucasSequenceParams) (hd : s.p ^ 2 - 4 * s.q = D)
     (hQ : IsCoprime s.q p) (hn : ((p : ℤ) - jacobiSym D p).toNat ∣ n) :
