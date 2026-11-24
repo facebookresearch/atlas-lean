@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
+public import MathlibExt.Combinatorics.Enumerative.StirlingSecondGy
 
 /-!
 # Triple products of Stirling numbers and of symmetric polynomials (statements)
@@ -45,18 +46,6 @@ public theorem_wanted stirling_triple_ratio_bounds_choose {n p j : ℕ} (hp : 0 
           Nat.stirlingSecond (n + j) j ∧
       (Nat.stirlingFirst (p + j) j : ℚ) * Nat.stirlingFirst (n + j) (p + j) /
           Nat.stirlingFirst (n + j) j ≤ (n.choose p : ℚ)
-
-/-- **Gy's inequality for Stirling numbers of the second kind.** Let $n$ and $k$ be natural
-numbers with $0 < k \le n$, and write $S(m, i)$ for the Stirling number of the second kind, the
-number of partitions of an $m$-element set into $i$ nonempty blocks. Then
-$(n - 2k)\,S(n + 1, n + 1 - k) < n\,S(n, n - k)$, where the left side is computed in the
-integers, so that $n - 2k$ may be negative.
-
-Source: René Gy, *On Certain Products of Three Stirling Numbers*, INTEGERS 26 (2026),
-Article A108, Lemma 2.1 (`integers-2026-A108-lem-2-1`). -/
-public theorem_wanted mul_stirlingSecond_sub_gt {n k : ℕ} (hk : 0 < k) (hkn : k ≤ n) :
-    ((n : ℤ) - 2 * k) * Nat.stirlingSecond (n + 1) (n + 1 - k) <
-      (n : ℤ) * Nat.stirlingSecond n (n - k)
 
 /-- **Gy's triple-ratio inequalities for log-concave sequences.** Let $n$, $p$ and $j$ be
 positive integers, at least two of which equal $1$, and let $x_1, x_2, \dots$ be positive reals
