@@ -16,7 +16,8 @@ Source: formal-math commit `bd2b030c7d44` (PR #6022).
 module
 
 public import MathlibExt.Combinatorics.Digraph.PathCover
-public import MathlibExt.Combinatorics.Matching.GallaiEdmonds
+public import MathlibExt.Combinatorics.Matching.MaximumMatching
+public import MathlibExt.Combinatorics.Digraph.FiniteDAG
 public import MathlibExt.Combinatorics.Order.Dilworth
 public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
@@ -33,8 +34,8 @@ namespace MathlibExt.Combinatorics.SimpleGraph.PathCoverGeneralWanted
 open MathlibExt.Combinatorics.Digraph.PathCoverWanted (IsPath IsPathCover
   minPathCoverSize minPathCoverSize_le_card
   exists_isPathCover_card_eq_minPathCoverSize minPathCover_eq_maxAntichain
-  IsDAG transClosure transClosure_adj isTransitiveDAG_transClosure
-  IsDAG_transClosure)
+  transClosure transClosure_adj isTransitiveDAG_transClosure
+  isAcyclic_transClosure)
 open MathlibExt.Combinatorics.Order.DilworthWanted (maxAntichainSize
   minChainCoverSize dilworth_decomposition
   exists_isChainCoverFin_card_eq_minChainCoverSize)
@@ -83,7 +84,7 @@ the reachability double cover
 ## Representation
 
 Vertices live in a `Fintype`; arcs are a Mathlib `Digraph`. Acyclicity
-(`IsDAG`) is stated as irreflexivity of the transitive closure
+(`D.IsAcyclic`) is stated as irreflexivity of the transitive closure
 (`Relation.TransGen`), which is exactly the usable form: a matched cycle would
 be a witness against it. Paths, path covers, and `minPathCoverSize` are reused
 from the transitive-DAG development (their definitions never assumed
@@ -96,8 +97,8 @@ its bipartiteness proved (`doubleCover_bipartite`).
 
 variable {V : Type*}
 
--- `IsDAG`, `transClosure`, the closure preservations, and
--- `IsDAG_of_isTransitiveDAG` live in
+-- `D.IsAcyclic`, `transClosure`, the closure preservations, and
+-- `isAcyclic_of_isTransitiveDAG` live in
 -- `MathlibExt.Combinatorics.Digraph.PathCover` (opened above).
 
 /-- The bipartite double cover of a digraph: two copies (`Sum.inl` = left,
@@ -627,7 +628,7 @@ private noncomputable def dagRank (D : Digraph V) [Fintype V] (v : V) : ℕ :=
 /-- The rank strictly decreases along arcs of a DAG: everything reachable
 from the head is reachable from the tail, but not vice versa (else a cycle).
 -/
-private theorem dagRank_lt_of_adj (D : Digraph V) [Fintype V] (hD : IsDAG D)
+private theorem dagRank_lt_of_adj (D : Digraph V) [Fintype V] (hD : D.IsAcyclic)
     {u v : V} (h : D.Adj u v) : dagRank D v < dagRank D u := by
   classical
   have hsub : Finset.univ.filter (fun w => v = w ∨ Relation.TransGen D.Adj v w)
@@ -665,7 +666,7 @@ set_option linter.unusedVariables false in
 /-- Forward matched chain from a vertex, by well-founded recursion on the
 reachability rank (matched successors have strictly smaller rank). -/
 private noncomputable def chainWF (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (s : V) :
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (s : V) :
     List V :=
   match h : nextOf E s with
   | none => [s]
@@ -676,7 +677,7 @@ decreasing_by
 
 /-- The chain starts at its seed. -/
 private theorem chainWF_mem_head (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (s : V) :
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (s : V) :
     s ∈ chainWF E D hD hE s := by
   refine chainWF.induct_unfolding E D hD hE (fun s r => s ∈ r) ?_ ?_ s
   · intro x hnone
@@ -686,7 +687,7 @@ private theorem chainWF_mem_head (E : Finset (V × V)) [Fintype V]
 
 /-- Members of the chain are reachable from the seed. -/
 private theorem chainWF_mem_reach (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (s : V)
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (s : V)
     {u : V} (hmem : u ∈ chainWF E D hD hE s) :
     u = s ∨ Relation.TransGen D.Adj s u := by
   revert hmem
@@ -708,7 +709,7 @@ private theorem chainWF_mem_reach (E : Finset (V × V)) [Fintype V]
 /-- The chain is duplicate-free: a repeat would close a matched directed
 cycle, contradicting acyclicity. -/
 private theorem chainWF_nodup (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (s : V) :
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (s : V) :
     (chainWF E D hD hE s).Nodup := by
   refine chainWF.induct_unfolding E D hD hE (fun s r => r.Nodup) ?_ ?_ s
   · intro x hnone
@@ -724,7 +725,7 @@ private theorem chainWF_nodup (E : Finset (V × V)) [Fintype V]
 
 /-- The head of the chain is its seed. -/
 private theorem chainWF_head (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (s : V) :
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (s : V) :
     (chainWF E D hD hE s).head? = some s := by
   refine chainWF.induct_unfolding E D hD hE
     (fun s r => r.head? = some s) ?_ ?_ s
@@ -735,7 +736,7 @@ private theorem chainWF_head (E : Finset (V × V)) [Fintype V]
 
 /-- The chain has consecutive adjacency. -/
 private theorem chainWF_isChain (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (s : V) :
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (s : V) :
     List.IsChain D.Adj (chainWF E D hD hE s) := by
   refine chainWF.induct_unfolding E D hD hE
     (fun s r => List.IsChain D.Adj r) ?_ ?_ s
@@ -760,7 +761,7 @@ private theorem chainWF_isChain (E : Finset (V × V)) [Fintype V]
 
 /-- The chain is successor-closed: members' matched successors stay inside. -/
 private theorem chainWF_succ_mem (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (s : V)
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (s : V)
     {u v : V} (hmem : u ∈ chainWF E D hD hE s)
     (hsucc : nextOf E u = some v) : v ∈ chainWF E D hD hE s := by
   revert hmem hsucc
@@ -785,7 +786,7 @@ set_option linter.unusedVariables false in
 Terminates since predecessors have strictly larger reachability rank, so
 `card - rank` strictly decreases. -/
 private noncomputable def backRoot (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (v : V) : V :=
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (v : V) : V :=
   match h : prevOf E v with
   | none => v
   | some u => backRoot E D hD hE u
@@ -805,7 +806,7 @@ decreasing_by
 
 /-- The backward root has no matched predecessor: it is a chain start. -/
 private theorem backRoot_prev_none (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (v : V) :
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (v : V) :
     prevOf E (backRoot E D hD hE v) = none := by
   refine backRoot.induct_unfolding E D hD hE
     (fun v r => prevOf E r = none) ?_ ?_ v
@@ -816,7 +817,7 @@ private theorem backRoot_prev_none (E : Finset (V × V)) [Fintype V]
 
 /-- Every vertex lies on the forward chain from its backward root. -/
 private theorem backRoot_mem_chain (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (v : V) :
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (v : V) :
     v ∈ chainWF E D hD hE (backRoot E D hD hE v) := by
   refine backRoot.induct_unfolding E D hD hE
     (fun v r => v ∈ chainWF E D hD hE r) ?_ ?_ v
@@ -827,7 +828,7 @@ private theorem backRoot_mem_chain (E : Finset (V × V)) [Fintype V]
 
 /-- Unfolding equation: no predecessor means fixed point. -/
 private theorem backRoot_of_no_prev (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (v : V)
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (v : V)
     (h : prevOf E v = none) : backRoot E D hD hE v = v := by
   revert h
   refine backRoot.induct_unfolding E D hD hE
@@ -840,7 +841,7 @@ private theorem backRoot_of_no_prev (E : Finset (V × V)) [Fintype V]
 
 /-- Unfolding equation: step through the predecessor. -/
 private theorem backRoot_of_prev (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (v : V)
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (v : V)
     {u : V} (h : prevOf E v = some u) :
     backRoot E D hD hE v = backRoot E D hD hE u := by
   revert h
@@ -856,7 +857,7 @@ private theorem backRoot_of_prev (E : Finset (V × V)) [Fintype V]
 
 /-- The backward root is constant along a forward chain. -/
 private theorem backRoot_const_on_chain (E : Finset (V × V)) [Fintype V]
-    (D : Digraph V) (hD : IsDAG D) (hE : IsMatchingArcs D E) (s : V)
+    (D : Digraph V) (hD : D.IsAcyclic) (hE : IsMatchingArcs D E) (s : V)
     {u : V} (hmem : u ∈ chainWF E D hD hE s) :
     backRoot E D hD hE u = backRoot E D hD hE s := by
   revert hmem
@@ -876,7 +877,7 @@ private theorem backRoot_const_on_chain (E : Finset (V × V)) [Fintype V]
 /-- Every matching yields a path cover with `|V| - (# matched arcs)` paths:
 the forward chains from the unmatched-predecessor starts. -/
 private theorem exists_pathCover_of_matching (D : Digraph V) [Fintype V]
-    (hD : IsDAG D) {E : Finset (V × V)} (hE : IsMatchingArcs D E) :
+    (hD : D.IsAcyclic) {E : Finset (V × V)} (hE : IsMatchingArcs D E) :
     ∃ P, IsPathCover D P ∧ P.card = Fintype.card V - E.card := by
   classical
   set S : Finset V := Finset.univ.filter (fun v => prevOf E v = none) with hS
@@ -982,7 +983,7 @@ into paths (acyclicity ruling out matched cycles). The public form
 `minPathCover_eq_card_sub_ncard_maximum` states this through the standard
 matching API. -/
 private theorem minPathCover_eq_card_sub_maxMatching (D : Digraph V) [Fintype V]
-    (hD : IsDAG D) :
+    (hD : D.IsAcyclic) :
     minPathCoverSize D = Fintype.card V - maxMatchingSize D := by
   classical
   obtain ⟨P, hP, hPcard⟩ := exists_isPathCover_card_eq_minPathCoverSize D
@@ -1002,18 +1003,17 @@ larger than the width. Internal arc-set form; the public corollary
 `width_eq_card_sub_ncard_maximum_transClosure` states this through the
 standard matching API. -/
 private theorem width_eq_card_sub_maxMatching_transClosure (D : Digraph V)
-    [Fintype V] (hD : IsDAG D) :
+    [Fintype V] (hD : D.IsAcyclic) :
     MathlibExt.Combinatorics.Digraph.PathCoverWanted.maxAntichainSize
         (transClosure D) (isTransitiveDAG_transClosure D hD)
       = Fintype.card V - maxMatchingSize (transClosure D) := by
   have hmain := minPathCover_eq_card_sub_maxMatching (transClosure D)
-    (IsDAG_transClosure D hD)
+    (isAcyclic_transClosure D hD)
   have hdil := minPathCover_eq_maxAntichain (transClosure D)
     (isTransitiveDAG_transClosure D hD)
   omega
 
-open MathlibExt.Combinatorics.Matching.GallaiEdmonds (IsMaximumMatching
-  exists_maximum_matching)
+open MathlibExt.Combinatorics.Matching (IsMaximumMatching exists_maximum_matching)
 
 /-! ## Bridge to the standard matching API
 
@@ -1419,7 +1419,7 @@ via the bipartite double cover: the minimum path cover of a finite DAG equals
 the number of vertices minus the edge count of any maximum matching subgraph
 of the bipartite double cover. -/
 theorem minPathCover_eq_card_sub_ncard_maximum (D : Digraph V) [Fintype V]
-    (hD : IsDAG D) {M : (doubleCover D).Subgraph}
+    (hD : D.IsAcyclic) {M : (doubleCover D).Subgraph}
     (hM : IsMaximumMatching (doubleCover D) M) :
     minPathCoverSize D = Fintype.card V - M.edgeSet.ncard := by
   rw [minPathCover_eq_card_sub_maxMatching D hD,
@@ -1432,7 +1432,7 @@ the transitive-DAG development). This is the form in which Dilworth's theorem
 and Kőnig's theorem govern the problem; for general DAGs the path cover
 itself can be larger than the width. -/
 theorem width_eq_card_sub_ncard_maximum_transClosure (D : Digraph V)
-    [Fintype V] (hD : IsDAG D)
+    [Fintype V] (hD : D.IsAcyclic)
     {M : (doubleCover (transClosure D)).Subgraph}
     (hM : IsMaximumMatching (doubleCover (transClosure D)) M) :
     MathlibExt.Combinatorics.Digraph.PathCoverWanted.maxAntichainSize

@@ -24,8 +24,7 @@ namespace MathlibExtTest.Combinatorics.SimpleGraph.PathCoverGeneral
 
 open MathlibExt.Combinatorics.Digraph.PathCoverWanted
 open MathlibExt.Combinatorics.SimpleGraph.PathCoverGeneralWanted
-open MathlibExt.Combinatorics.Matching.GallaiEdmonds (IsMaximumMatching
-  exists_maximum_matching)
+open MathlibExt.Combinatorics.Matching (IsMaximumMatching exists_maximum_matching)
 
 /-- Every edge of a double-cover subgraph is a cross edge over an arc:
 same-side pairs cannot occur since the double cover has no same-side edges. -/
@@ -109,7 +108,7 @@ private theorem bowtie_transGen_lt (a b : Fin 5) :
 
 /-- The bowtie is a DAG: a reachability cycle would strictly decrease the
 vertex number around the cycle. -/
-private theorem bowtie_dag : IsDAG bowtie := by
+private theorem bowtie_dag : bowtie.IsAcyclic := by
   intro x h
   exact lt_irrefl _ (bowtie_transGen_lt x x h)
 
@@ -566,7 +565,7 @@ private theorem chain3_adj_lt (x y : Fin 3) :
   decide
 
 /-- The chain is a DAG. -/
-private theorem chain3_dag : IsDAG chain3 := by
+private theorem chain3_dag : chain3.IsAcyclic := by
   intro x h
   have hlt : ∀ a b : Fin 3,
       Relation.TransGen chain3.Adj a b → a.val < b.val := by
