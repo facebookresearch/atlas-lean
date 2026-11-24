@@ -150,17 +150,6 @@ public theorem_wanted count_elementary_two_three_prod_zmod :
       (2 : ℚ) ^ (3 * (n : ℤ) - 3) * 2 ^ (n * (n - 1) / 2) *
         (28 * (n : ℚ) ^ 3 + 196 * n ^ 2 + 392 * n + 224)
 
-/-- **Adjoining an element doubles the multiplicity of a perfect cover.** Let $G$ be an abelian
-group and let $s = (s_1, \dots, s_k)$ be a perfect $m$-cover of $G$. For every $g \in G$, the
-family $(g, s_1, \dots, s_k)$ is a perfect $2m$-cover of $G$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 5
-(`jis-2025-25.7.8-lem-5`). -/
-public theorem_wanted isPerfectMCover_cons {G : Type*} [AddCommGroup G] [DecidableEq G]
-    {k m : ℕ} {s : Fin k → G} (hs : IsPerfectMCover m s) (g : G) :
-    IsPerfectMCover (2 * m) (Fin.cons g s : Fin (k + 1) → G)
-
 /-- **Removing one element from a perfect cover.** Let $G$ be a finite abelian group of order $2^n$,
 let $S$ be a perfect cover of $G$, let $z \in S$ and let $S_1 = S \setminus \{z\}$. Then (a) every
 element of $G$ is the sum of at most one subset of $S_1$, and exactly half of the $2^n$ elements

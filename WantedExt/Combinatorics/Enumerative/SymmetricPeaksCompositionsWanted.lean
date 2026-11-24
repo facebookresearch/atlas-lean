@@ -16,6 +16,7 @@ public import Mathlib.Probability.Distributions.Geometric
 public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeaksCompositions
+public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction
 
 /-!
 # Heights of symmetric peaks and depths of symmetric valleys over compositions
@@ -40,6 +41,9 @@ The trivariate generating functions of Theorems 1 and 3 are stated coefficientwi
 multivariate power series; Theorem 3 uses the corrected reading recorded in its docstring
 and audit row.
 
+The univariate generating function of `hsp(n)` in Lemma 1, (5) is proved in
+`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction`.
+
 Not stated (see the source audit table): the bivariate part of Lemma 2 (false as
 extracted), Theorem 2(b) (false as extracted) and the variances of Theorem 6 (false as printed in the journal).
 -/
@@ -49,21 +53,6 @@ open MeasureTheory ProbabilityTheory PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Generating function of the total symmetric peak height over compositions.** For
-$n \ge 0$ let $\mathrm{hsp}(n)$ be the sum, over all compositions $c$ of $n$, of the symmetric
-peak height sum of the sequence of parts of $c$. Then in $\mathbb{Z}[[x]]$
-$$
-\left(\sum_{n \ge 0} \mathrm{hsp}(n)\, x^n\right)(1 - 2x)^2 (1 - x^3) = x^4,
-$$
-that is, $\sum_{n \ge 0} \mathrm{hsp}(n)\, x^n = x^4 / ((1 - 2x)^2 (1 - x^3))$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Lemma 1, (5) (`integers-2026-A65-lem-1`). -/
-public theorem_wanted symmetricPeakHeightSum_compositions_genFun :
-    PowerSeries.mk (fun n => ((∑ c : Composition n, symmetricPeakHeightSum c.blocks : ℕ) : ℤ)) *
-        ((1 - 2 * X) ^ 2 * (1 - X ^ 3)) = X ^ 4
 
 /-- **Bivariate generating function of the total symmetric peak height over compositions.**
 For $n, k \ge 0$ let $\mathrm{hsp}(n, k)$ be the sum, over all compositions $c$ of $n$ with
