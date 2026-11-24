@@ -11,7 +11,14 @@ module
 import MathlibExt.NumberTheory.Digits.TrollopeDelange
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for the weighted Trollope–Delange bound -/
+/-! # Tests for the Trollope–Delange bounds -/
+
+open Asymptotics Filter MetaMathlibExt
+
+-- At the smallest admissible base, the asymptotic bound gives a single bound on a real tail.
+example : ∃ C X : ℝ, ∀ x ≥ X, |trollopeDelangeIntegral 2 x| ≤ C := by
+  obtain ⟨C, hC⟩ := (isBigO_one_iff ℝ).mp (trollopeDelangeIntegral_isBigO_one 2 le_rfl)
+  exact ⟨C, eventually_atTop.mp (eventually_map.mp hC)⟩
 
 namespace MetaMathlibExt.digitSum_reciprocal_fluctuation_sum_le
 
