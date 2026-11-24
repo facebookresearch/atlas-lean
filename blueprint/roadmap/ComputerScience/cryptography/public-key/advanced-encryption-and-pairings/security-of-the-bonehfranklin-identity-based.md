@@ -4,7 +4,7 @@ An identity-based encryption scheme consists of algorithms Setup, Extract (deriv
 
 ## Depends on
 
-- [Pairing-based assumptions: BDH and t-SDH](the-t-strong-diffiehellman-assumption.md)
+- [Pairing-based assumptions: BDH and t-SDH](pairing-based-assumptions-bdh-and-t-sdh.md)
 - [The random oracle model](../random-oracle-constructions/the-random-oracle-model.md)
 - [Public-key encryption scheme](../../security-games/generic-security-games/pkescheme.md)
 
