@@ -125,14 +125,19 @@ variable (X : FormalGenericFibreModels.FormalScheme p C)
   (A : GenericAtlas p C X G) (E : GenericEtaleModel p C A)
   [E.functor.IsContinuous (formalEtaleTopology p C X) (analyticEtaleTopology p G)]
   [E.HasDerivedNearby]
-  (R : FormalRestriction p C B X) (Q : QsynExtension p C B D Z T F)
+  (R : FormalRestriction p C B X)
   (RQ : FunctorialKInjective (QsynSheaves p C B))
   (K : TateTower p (analyticEtaleRings p G) (analyticEtaleTopology p G))
 
+/-- The finite syntomic–nearby-cycle equivalences, for a twist tower, Frobenius model and basis
+extension chosen jointly with them: the coordinate normalization does not determine the Frobenius
+(see `PrismaticSyntomicModels.FrobeniusModel`), so the comparison is not requested for every
+model. -/
 public def_wanted finiteSyntomicNearbyEquivalences
     (smooth : ∀ n : ℕ, Smooth (X.structureMap.app n))
     (genericNoetherian : AnalyticProObjectSites.IsLocallyNoetherian p G) :
-    FiniteEquivalences p C B D Z T F X G A E R Q RQ K
+    Σ T : TwistTower p B.ring D Z, Σ F : FrobeniusModel p B.ring D Z T,
+      Σ Q : QsynExtension p C B D Z T F, FiniteEquivalences p C B D Z T F X G A E R Q RQ K
 
 variable (P : FormalProObjectSites.PointRealization p C X) (S : AnalyticProObjectSites.PointRealization p G)
   [(FormalProObjectSites.etaleEmbedding p C X).IsContinuous
@@ -149,9 +154,13 @@ variable (P : FormalProObjectSites.PointRealization p C X) (S : AnalyticProObjec
   (RP : FunctorialKInjective (FormalProObjectSites.Sheaves p C X P))
   (RG : FunctorialKInjective (FormalProObjectSites.GenericProModel.GenericSheaves S))
 
+/-- The integral syntomic–nearby-cycle equivalence, for a twist tower, Frobenius model and basis
+extension chosen jointly with it (as for `finiteSyntomicNearbyEquivalences`). -/
 public theorem_wanted integralSyntomicNearbyEquivalence
     (smooth : ∀ n : ℕ, Smooth (X.structureMap.app n))
     (genericNoetherian : AnalyticProObjectSites.IsLocallyNoetherian p G) :
-    Nonempty (IntegralEquivalences p C B D Z T F X G A E R Q RQ K P S VP VG H RP RG)
+    ∃ (T : TwistTower p B.ring D Z) (F : FrobeniusModel p B.ring D Z T)
+      (Q : QsynExtension p C B D Z T F),
+      Nonempty (IntegralEquivalences p C B D Z T F X G A E R Q RQ K P S VP VG H RP RG)
 
 end WantedExt.AlgebraicGeometry.SyntomicNearbyComparisons

@@ -87,14 +87,20 @@ public theorem_wanted periodFrameIsIso
     (L : ClassicalSeed p P) (G : Generator p P hPerfect) :
     IsIso (frameHom p P hPerfect L G)
 
-/-- Construct compatible finite filtered lines and their actual coordinate-normalized Frobenius. -/
+/-- Construct compatible finite filtered lines and their actual coordinate-normalized Frobenius,
+jointly with the vanishing of the negative syntomic fibres after quasisyntomic cohomology. The
+coordinate normalization does not determine the Frobenius (see `FrobeniusModel`), so this property
+is requested for the model chosen here rather than for every Frobenius model. -/
 public def_wanted bmsTwistFrobeniusModels
     (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
+    [MathlibExt.AlgebraicGeometry.PrismaticNygaardCohomology.HasDerivedSections p A]
     (D : ∀ B : Basis p A, AbsolutePrismaticBasis.InitialLift p (ring p B))
     (Z : ZeroReduction p A D) :
-    Σ T : TwistTower p A D Z, FrobeniusModel p A D Z T
+    Σ T : TwistTower p A D Z,
+      {F : FrobeniusModel p A D Z T // ∀ i : ℤ, i < 0 → IsZero (F.global i)}
 
-/-- These actual syntomic global objects are derived p-complete integer complexes. -/
+/-- These actual syntomic global objects are derived p-complete integer complexes, for every
+Frobenius model (derived completeness is preserved by fibres, whatever the Frobenius). -/
 public theorem_wanted syntomicIsPComplete
     (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
     [MathlibExt.AlgebraicGeometry.PrismaticNygaardCohomology.HasDerivedSections p A]
@@ -102,14 +108,5 @@ public theorem_wanted syntomicIsPComplete
     (Z : ZeroReduction p A D) (T : TwistTower p A D Z)
     (F : FrobeniusModel p A D Z T) (i : ℤ) :
     IsComplete ℤ (Ideal.span {(p : ℤ)}) (F.global i)
-
-/-- The negative signed syntomic fibers vanish after the actual quasisyntomic cohomology. -/
-public theorem_wanted negativeSyntomicVanishing
-    (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
-    [MathlibExt.AlgebraicGeometry.PrismaticNygaardCohomology.HasDerivedSections p A]
-    (D : ∀ B : Basis p A, AbsolutePrismaticBasis.InitialLift p (ring p B))
-    (Z : ZeroReduction p A D) (T : TwistTower p A D Z)
-    (F : FrobeniusModel p A D Z T) (i : ℤ) (hi : i < 0) :
-    IsZero (F.global i)
 
 end WantedExt.AlgebraicGeometry.PrismaticNygaardTwists

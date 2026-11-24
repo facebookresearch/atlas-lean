@@ -140,16 +140,15 @@ def pointComplex (B : ((Basis p A)ᵒᵖ)ᵒᵖ)
     CochainComplex (ModuleCat.{1} ℤ) ℤ :=
   ((evaluate p A B).mapHomologicalComplex (ComplexShape.up ℤ)).obj K
 
-/-- Actual source-coordinate maps, fixed by every finite projection and the real inclusion. They
-are quasi-isomorphisms onto the evaluated Nygaard and twisted complexes, so the normalization of
-`FrobeniusModel` determines the evaluated Frobenius in the derived category. -/
+/-- Actual source-coordinate maps, fixed by every finite projection and the real inclusion. The
+coordinates are the uncompleted initial prism ring and its Nygaard step, whereas the evaluated
+complexes are Nygaard-completed; the maps are therefore not quasi-isomorphisms in general (the
+initial prism of `𝔽_p[x^{1/p^∞}]/(x)` is not Nygaard-complete). -/
 structure Realization (B : ((Basis p A)ᵒᵖ)ᵒᵖ) (F : Context p A D B) (i : ℤ) where
   source : sourceComplex p (D B.unop.unop).lift.prism.ring F.divisor i.toNat ⟶
     pointComplex p A B (T.nygaard i)
   target : targetComplex (D B.unop.unop).lift.prism.ring ⟶
     pointComplex p A B (T.complex i)
-  [source_quasiIso : QuasiIso source]
-  [target_quasiIso : QuasiIso target]
   inclusion :
     source ≫ ((evaluate p A B).mapHomologicalComplex (ComplexShape.up ℤ)).map (T.can i) =
       canSigned p (D B.unop.unop).lift.prism.ring F.divisor i ≫ target
@@ -161,7 +160,5 @@ structure Realization (B : ((Basis p A)ᵒᵖ)ᵒᵖ) (F : Context p A D B) (i :
             (T.projection i n)).f 0
               (target.f 0 (targetGenerator (D B.unop.unop).lift.prism.ring x)))).down) =
         Ideal.Quotient.mk _ x
-
-attribute [instance] Realization.source_quasiIso Realization.target_quasiIso
 
 end MathlibExt.AlgebraicGeometry.PrismaticSyntomicCoordinates
