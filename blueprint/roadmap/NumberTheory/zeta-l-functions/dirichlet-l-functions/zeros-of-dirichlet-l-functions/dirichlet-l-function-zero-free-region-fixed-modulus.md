@@ -26,7 +26,7 @@ zeros in $\operatorname{Re} s > 0$.
 
 ## Proof depends on
 
-- [Classical zero-free region for the Riemann zeta function](../riemann-zeta/zero-free-regions-for-the-riemann-zeta-function/riemann-zeta-ne-zero-of-classical-zero-f.md)
+- [Classical zero-free region for the Riemann zeta function](../../riemann-zeta/zero-free-regions-for-the-riemann-zeta-function/riemann-zeta-ne-zero-of-classical-zero-f.md)
 
 ## Sources
 
