@@ -28,8 +28,8 @@ coefficients" are stated as the existence of such a polynomial
 of denominators, as in the paper's proofs.
 
 Of the paper's thirteen numbered statements, ten are
-formalized below (including the super FiboCatalan half of
-Corollary 5). The Fibonacci and Lucas polynomial product identities are imported from
+available here (including the super FiboCatalan half of
+Corollary 5). The product identities, Lucas factorial and Lucas Catalan identity are imported from
 `MathlibExt.NumberTheory.SuperFibocatalan`. One further statement is already covered in
 MathlibExt and is not restated: Corollary 9, via
 `MetaMathlibExt.generalizedFibonacciCatalan_isPosInt` (with
@@ -135,13 +135,6 @@ theorem_wanted fib_mul_factorialQuotient_eq_and_isInt
           (fibonacciFactorial (2 * n) /
             (fibonacciFactorial (n + 2) * fibonacciFactorial n))
 
-/-- **Lucas factorial.** For a natural number $n$, the Lucas factorial $\{n\}!$ is the product
-$\{n\}! = \{1\}\{2\} \cdots \{n\}$ of the Lucas polynomials $\{i\}$ in $s$ and $t$ for
-$1 \le i \le n$, a polynomial with integer coefficients; in particular $\{0\}! = 1$, the empty
-product. -/
-noncomputable def lucasFactorial (n : ℕ) : MvPolynomial (Fin 2) ℤ :=
-  ∏ i ∈ Finset.Icc 1 n, lucasPoly i
-
 /-- **$k$-divisible Lucas factorial.** For natural numbers $k$ and $n$, the $k$-divisible Lucas
 factorial $\{n : k\}!$ is the product $\{n : k\}! = \{k\}\{2k\} \cdots \{nk\}$ of the Lucas
 polynomials $\{ki\}$ in $s$ and $t$ for $1 \le i \le n$; in particular $\{0 : k\}! = 1$,
@@ -185,28 +178,6 @@ theorem_wanted exists_nonneg_poly_generalizedLucasCatalan
       p * (lucasFactorial r * lucasFactorial n *
           lucasFactorial (n + r + 1)) =
         lucasFactorial (2 * r + 1) * lucasFactorial (2 * n)
-
-/-- **Lucas analogue of the FiboCatalan identity, cleared of denominators.** Let $\{k\}$ be
-the Lucas polynomials in $s$ and $t$ ($\{0\} = 0$, $\{1\} = 1$, $\{k+2\} = s\{k+1\} + t\{k\}$)
-and let $\{k\}! = \{1\}\{2\} \cdots \{k\}$ be the Lucas factorial. For every natural number
-$n$, in $\mathbb{Z}[s, t]$,
-$$(\{2n+1\} \{2n\} \{n+2\} - \{2n+2\} \{2n+1\} \{n\}) \, \{2n\}!
-= (-1)^n t^n \{2\} \{n\} \{2n+1\} \, \{2n\}!.$$
-
-With the Lucas Catalan numbers $C_{\{k\}} = \{2k\}!/(\{k\}! \, \{k+1\}!)$, this is the identity
-$$\{2n+1\} \{2n\} C_{\{n\}} - \{n+1\} \{n\} C_{\{n+1\}}
-= (-1)^n t^n \{2\} \{n\} \{2n+1\} \frac{\{2n\}!}{\{n+2\}! \, \{n\}!}$$
-multiplied through by $\{n+2\}! \, \{n\}!$.
-
-Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
-Their Lucas Analogues", Theorem 11. -/
-theorem_wanted lucasCatalan_identity_mul_factorial (n : ℕ) :
-    (lucasPoly (2 * n + 1) * lucasPoly (2 * n) * lucasPoly (n + 2) -
-        lucasPoly (2 * n + 2) * lucasPoly (2 * n + 1) *
-          lucasPoly n) * lucasFactorial (2 * n) =
-      (-1) ^ n * MvPolynomial.X 1 ^ n * lucasPoly 2 *
-        lucasPoly n * lucasPoly (2 * n + 1) *
-        lucasFactorial (2 * n)
 
 /-- **The Lucas quotient $\{2n+1\} \{2\} \{2n\}!/(\{n+2\}! \, \{n\}!)$ has non-negative
 coefficients.** Let $\{k\}$ be the Lucas polynomials in $s$ and $t$ ($\{0\} = 0$, $\{1\} = 1$,

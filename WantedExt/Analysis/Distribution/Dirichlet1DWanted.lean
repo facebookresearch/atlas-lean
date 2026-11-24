@@ -11,24 +11,11 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import MathlibExt.Analysis.ODE.Dirichlet1D
 
 @[expose] public section
 
 namespace MathlibExt.Analysis.Distribution.Dirichlet1DWanted
-
-/--
-**Existence for the one-dimensional Dirichlet problem.** Let $f : \mathbb{R} \to \mathbb{R}$ be
-continuous on $[0, 1]$. Then there is a twice continuously differentiable function
-$u : \mathbb{R} \to \mathbb{R}$ with $u(0) = u(1) = 0$ and $u''(x) = f(x)$ for every
-$x \in (0, 1)$.
-
-Sources: Mathlib `docs/undergrad.yaml`, section "Topology" / "Hilbert spaces" /
-entry "H^1_0([0,1]) and its application to the one-dimensional Dirichlet problem";
-L. Evans, *Partial Differential Equations*, Ch. 6.
--/
-public theorem_wanted dirichlet_1d_exists {f : ℝ → ℝ} (hf : ContinuousOn f (Set.Icc 0 1)) :
-    ∃ u : ℝ → ℝ, ContDiff ℝ 2 u ∧ u 0 = 0 ∧ u 1 = 0 ∧
-      ∀ x ∈ Set.Ioo 0 1, deriv (deriv u) x = f x
 
 /--
 **Uniqueness for the one-dimensional Dirichlet problem.** Let $f : \mathbb{R} \to \mathbb{R}$ be
