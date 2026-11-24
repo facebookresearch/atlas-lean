@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Divisors
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -47,6 +47,71 @@ Article A115, Section 1 (definition of `D_n(X, Y)`). -/
 public theorem shortIntervalDivisorCount_le_card_divisors (n : ℕ) (X Y : ℝ) :
     shortIntervalDivisorCount n X Y ≤ n.divisors.card :=
   Finset.card_filter_le _ _
+
+-- Preserve the hypotheses of Proposition 4; the construction only needs ε ≤ θ.
+set_option linter.unusedVariables false in
+/-- **Arbitrarily large integers with a divisor in a short window.** Let $\theta$ and $\varepsilon$
+be real numbers with $0 < \theta < 1$ and $0 < \varepsilon < \theta$. Then for every natural
+number $N$ there is a natural number $n \ge N$ with at least one divisor $d$ satisfying
+$n^\theta \le d \le n^\theta + n^{\theta - \varepsilon}$.
+
+This is the nontrivial form of the statement that a constant bounding the number of such divisors
+for all $n \ge 1$ is at least $1$; that weaker statement already follows from $n = 1$.
+
+Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
+Article A115, Proposition 4 (`integers-2026-A115-prop-4`). -/
+public theorem exists_large_shortIntervalDivisorCount_pos {θ ε : ℝ} (hθ₀ : 0 < θ)
+    (hθ₁ : θ < 1) (hε₀ : 0 < ε) (hε : ε < θ) :
+    ∀ N : ℕ, ∃ n ≥ N, 1 ≤ shortIntervalDivisorCount n ((n : ℝ) ^ θ) ((n : ℝ) ^ (θ - ε)) := by
+  intro N
+  let m := max 1 N
+  have hm : 1 ≤ m := le_max_left ..
+  have hm₁ : 1 ≤ (m : ℝ) := by exact_mod_cast hm
+  have hm₀ : 0 ≤ (m : ℝ) := Nat.cast_nonneg m
+  have hsub : 0 < 1 - θ := sub_pos.mpr hθ₁
+  -- Round up the real solution of x = (x * m)^θ.
+  let x := (m : ℝ) ^ (θ / (1 - θ))
+  let d := ⌈x⌉₊
+  let n := d * m
+  have hx : 1 ≤ x := Real.one_le_rpow hm₁ (div_nonneg hθ₀.le hsub.le)
+  have hx₀ : 0 < x := zero_lt_one.trans_le hx
+  have hxd : x ≤ (d : ℝ) := Nat.le_ceil x
+  have hd₁ : 1 ≤ (d : ℝ) := hx.trans hxd
+  have hd : 1 ≤ d := by exact_mod_cast hd₁
+  have hn : m ≤ n := by simpa only [one_mul] using Nat.mul_le_mul_right m hd
+  have hn₁ : 1 ≤ n := hm.trans hn
+  have hn₀ : n ≠ 0 := (zero_lt_one.trans_le hn₁).ne'
+  have hxpow : x ^ (1 - θ) = (m : ℝ) ^ θ := by
+    dsimp only [x]
+    rw [← Real.rpow_mul hm₀, div_mul_cancel₀ _ hsub.ne']
+  have hsum : θ + (1 - θ) = 1 := by ring
+  have hpow : (n : ℝ) ^ θ = (d : ℝ) ^ θ * (m : ℝ) ^ θ := by
+    dsimp only [n]
+    rw [Nat.cast_mul, Real.mul_rpow (Nat.cast_nonneg d) hm₀]
+  have hlo : x ≤ (n : ℝ) ^ θ := by
+    calc
+      x = x ^ θ * (m : ℝ) ^ θ := by
+        rw [← hxpow, ← Real.rpow_add hx₀, hsum, Real.rpow_one]
+      _ ≤ (d : ℝ) ^ θ * (m : ℝ) ^ θ :=
+        mul_le_mul_of_nonneg_right (Real.rpow_le_rpow hx₀.le hxd hθ₀.le)
+          (Real.rpow_nonneg hm₀ _)
+      _ = _ := hpow.symm
+  have hhi : (n : ℝ) ^ θ ≤ (d : ℝ) := by
+    rw [hpow]
+    calc
+      (d : ℝ) ^ θ * (m : ℝ) ^ θ ≤ (d : ℝ) ^ θ * (d : ℝ) ^ (1 - θ) := by
+        rw [← hxpow]
+        exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow hx₀.le hxd hsub.le)
+          (Real.rpow_nonneg (Nat.cast_nonneg d) _)
+      _ = (d : ℝ) := by
+        rw [← Real.rpow_add (zero_lt_one.trans_le hd₁), hsum, Real.rpow_one]
+  have hw : 1 ≤ (n : ℝ) ^ (θ - ε) :=
+    Real.one_le_rpow (by exact_mod_cast hn₁) (sub_nonneg.mpr hε.le)
+  refine ⟨n, (le_max_right 1 N).trans hn, ?_⟩
+  unfold shortIntervalDivisorCount
+  exact Finset.card_pos.mpr ⟨d, Finset.mem_filter.mpr
+    ⟨Nat.mem_divisors.mpr ⟨dvd_mul_right d m, hn₀⟩, hhi,
+      (Nat.ceil_lt_add_one hx₀.le).le.trans (add_le_add hlo hw)⟩⟩
 
 /-- **Letendre's saving exponent.** For real numbers $\theta$ and $\eta$, Letendre's saving
 exponent $\xi(\theta, \eta)$ is defined as follows. If $\eta \le \theta^2$, then
