@@ -17,13 +17,18 @@ Exact flags have zero diagonals; an `S₀` flag is zero everywhere; the subquoti
 second an epi. Restriction along the identity is the identity, restriction along a composite is
 the composite of restrictions, and exact functors act on flags by composition. The supported
 sheaves of an open are finitely presented and include the zero sheaf.
+
+The faces of an `S₁` flag are zero, and so is the degenerate `S₁` flag of an `S₀` flag. The map
+of realized spaces induced by an exact functor sends the vertex of a flag to the composite flag;
+in particular the supported inclusion sends a supported flag to itself and restriction to an
+open restricts every term of the flag, so neither is the constant map at the zero flag.
 -/
 
 noncomputable section
 
-open CategoryTheory Limits AlgebraicGeometry
+open CategoryTheory Limits AlgebraicGeometry Opposite
 open MathlibExt.AlgebraicGeometry.WaldhausenExactFlags MathlibExt.AlgebraicGeometry.CoherentGTheory
-open scoped ZeroObject
+open scoped ZeroObject Simplicial
 
 variable {C : Type} [Category C] [Abelian C] (P : ObjectProperty C)
 
@@ -31,11 +36,6 @@ variable {C : Type} [Category C] [Abelian C] (P : ObjectProperty C)
 example {n : ℕ} (F : Arrow (Fin (n + 1)) ⥤ C) (hF : IsSFlag P n F) (i : Fin (n + 1)) :
     IsZero (F.obj (interval i i le_rfl)) :=
   hF.2.1 i
-
-/-- An `S₀` flag is zero everywhere: its only interval is the diagonal one. -/
-example (F : Arrow (Fin 1) ⥤ C) (hF : IsSFlag P 0 F) (a : Arrow (Fin 1)) : IsZero (F.obj a) :=
-  (hF.2.1 0).of_iso (F.mapIso (Arrow.isoMk (eqToIso (Subsingleton.elim _ _))
-    (eqToIso (Subsingleton.elim _ _)) (Subsingleton.elim _ _)))
 
 /-- The subquotient sequence `F(i, j) → F(i, k) → F(j, k)` of an exact flag is short exact. -/
 example {n : ℕ} (F : Arrow (Fin (n + 1)) ⥤ C) (hF : IsSFlag P n F) {i j k : Fin (n + 1)}
@@ -70,3 +70,57 @@ example (X : Scheme.{0}) (U : X.Opens) (F : X.Modules) (h : supported X U F) :
 /-- The zero sheaf is supported on every open. -/
 example (X : Scheme.{0}) (U : X.Opens) : supported X U 0 :=
   Or.inl (isZero_zero _)
+
+/-- An `S₀` flag is zero everywhere: its only interval is the diagonal one. -/
+theorem sZero_isZero {F : Arrow (Fin 1) ⥤ C} (hF : IsSFlag P 0 F) (a : Arrow (Fin 1)) :
+    IsZero (F.obj a) :=
+  (hF.2.1 0).of_iso (F.mapIso (Arrow.isoMk (eqToIso (Subsingleton.elim _ _))
+    (eqToIso (Subsingleton.elim _ _)) (Subsingleton.elim _ _)))
+
+/-- The faces of an `S₁` flag, its restrictions to a vertex, are zero. -/
+example (F : Arrow (Fin 2) ⥤ C) (hF : IsSFlag P 1 F) (α : Fin 1 →o Fin 2) (a : Arrow (Fin 1)) :
+    IsZero ((restriction α F).obj a) :=
+  sZero_isZero P (restriction_isSFlag P α F hF) a
+
+/-- The degenerate `S₁` flag of an `S₀` flag is zero everywhere. -/
+example (F : Arrow (Fin 1) ⥤ C) (hF : IsSFlag P 0 F) (σ : Fin 2 →o Fin 1) (a : Arrow (Fin 2)) :
+    IsZero ((restriction σ F).obj a) :=
+  sZero_isZero P hF _
+
+variable {D : Type} [Category D] [Abelian D] (Q : ObjectProperty D)
+
+/-- On vertices, the diagonal map of an exact functor composes the flag with the functor. -/
+theorem mapDiagonal_vertex (G : C ⥤ D) [G.Additive] [PreservesFiniteLimits G]
+    [PreservesFiniteColimits G] (hG : ∀ x, P x → Q (G.obj x)) (A : SLevel P 0) :
+    (nerveEquiv ((mapDiagonal P Q G hG).app (op ⦋0⦌) (nerveEquiv.symm (Core.mk A)))).of.obj =
+      A.obj ⋙ G :=
+  rfl
+
+/-- The supported inclusion is the realization of the diagonal map of the identity functor. -/
+example (X : Scheme.{0}) (U : X.Opens) :
+    supportedInclusion X U = SSet.toTop.map (mapDiagonal (supported X U) (finitelyPresented X)
+      (𝟭 X.Modules) (supported_finitelyPresented X U)) :=
+  rfl
+
+/-- On vertices it sends a supported flag to the same flag. -/
+example (X : Scheme.{0}) (U : X.Opens) (A : SLevel (supported X U) 0) :
+    (nerveEquiv ((mapDiagonal (supported X U) (finitelyPresented X) (𝟭 X.Modules)
+      (supported_finitelyPresented X U)).app (op ⦋0⦌) (nerveEquiv.symm (Core.mk A)))).of.obj =
+      A.obj :=
+  Functor.comp_id _
+
+/-- Restriction to an open is the realization of the diagonal map of the restriction functor. -/
+example (X : Scheme.{0}) (U : X.Opens) [RestrictionFinitePresentation X U] :
+    restriction X U = SSet.toTop.map (mapDiagonal (finitelyPresented X) (finitelyPresented U)
+      (Scheme.Modules.restrictFunctor U.ι)
+      (RestrictionFinitePresentation.preserves (X := X) (U := U))) :=
+  rfl
+
+/-- On vertices it restricts every term of the flag to the open. -/
+example (X : Scheme.{0}) (U : X.Opens) [RestrictionFinitePresentation X U]
+    (A : SLevel (finitelyPresented X) 0) :
+    (nerveEquiv ((mapDiagonal (finitelyPresented X) (finitelyPresented U)
+      (Scheme.Modules.restrictFunctor U.ι)
+      (RestrictionFinitePresentation.preserves (X := X) (U := U))).app (op ⦋0⦌)
+      (nerveEquiv.symm (Core.mk A)))).of.obj = A.obj ⋙ Scheme.Modules.restrictFunctor U.ι :=
+  rfl
