@@ -1,3 +1,0 @@
-# Exact envy-freeness can be impossible; Hamilton apportionment has the Alabama paradox
-
-(Indivisibility.) One indivisible good, valued positively by each of two agents, must be given to one of them; then the other agent envies, so no complete allocation is envy-free. (Alabama paradox.) Under Hamilton's largest-remainder apportionment, each state first receives the integer part of its quota (population share times house size) and the remaining seats go to the largest fractional parts. For populations $(6, 6, 2)$, house size $10$ gives quotas $(4.29, 4.29, 1.43)$ and seats $(4, 4, 2)$, while house size $11$ gives quotas $(4.71, 4.71, 1.57)$ and seats $(5, 5, 1)$: the third state loses a seat when the house grows.

@@ -1923,6 +1923,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/graph-invariants-and-labelings/shannon-capacity-of-a-graph/shannon-capacity-of-the-seven-cycle.md"}], "id": "af_c1591e6ba713bd77cb9e7d0b", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/friendship-paradox.md"}], "id": "af_7e0ca8a7a949d5d74153944f", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/structural-balance-of-complete-signed-graphs.md"}], "id": "af_bb3e30896741754f60f1fdec", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/clustering-coefficient-and-betweenness-centrality.md"}], "id": "af_5ed46a940eb1434b179c0923", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/local-clustering-coefficient.md"}], "id": "af_5ed46a940eb1434b179c0923", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/termination-of-threshold-activation-processes.md"}], "id": "af_757b2214c7f2c93c45582b0d", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/README.md"}], "id": "af_16748d1877d3bb734a066253"}
+{"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/betweenness-centrality.md"}], "id": "af_27e2cf25ff02208bb844ceee", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
