@@ -20,11 +20,13 @@ $f = X^2 - X - (m - 1)/4$, if $m \equiv 1 \pmod 4$. The determinants of the trac
 and $m$, so $D = 4m$ if $m \equiv 2, 3 \pmod 4$ and $D = m$ if $m \equiv 1 \pmod 4$; in both cases $D$ is the discriminant
 of $f$ and $D = (\omega - \overline{\omega})^2$.
 
-As $\mathcal{O}_K = \mathbb{Z}[\omega]$, the conductor of $\mathbb{Z}[\omega]$ in $\mathcal{O}_K$ is $\mathcal{O}_K$, so the
+As $\mathcal{O}_K = \mathbb{Z}[\omega]$, the [conductor](../../../RingTheory/dedekind-domains/conductor-ideal/conductor-ideal-top.md) of $\mathbb{Z}[\omega]$ in $\mathcal{O}_K$ is
+$\mathcal{O}_K$, so the
 [Kummer–Dedekind theorem](../discriminants-ramification/kummer-dedekind-theorem.md) applies to every prime $p$: the prime
 ideal factors of $p\mathcal{O}_K$, with their multiplicities, correspond to the monic irreducible factors of $f \bmod p$, with
 theirs. By the [norm of a principal ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm-principal.md),
-$N(p\mathcal{O}_K) = |N_{K/\mathbb{Q}}(p)| = p^2$, and $N(\mathfrak{p}) > 1$ for a prime ideal $\mathfrak{p}$, so the
+$N(p\mathcal{O}_K) = |N_{K/\mathbb{Q}}(p)| = p^2$, and $N(\mathfrak{p}) > 1$ for every prime ideal factor $\mathfrak{p}$ of
+$p\mathcal{O}_K$, whose residue ring is a nonzero quotient of the finite ring $\mathcal{O}_K / p\mathcal{O}_K$, so the
 [multiplicativity of $N$](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md) gives three cases. If $f \bmod p$ is
 irreducible, $p\mathcal{O}_K$ is a prime ideal, of norm $p^2$. If $f \equiv (X - c)^2 \pmod p$, then
 $p\mathcal{O}_K = \mathfrak{p}^2$ with $N(\mathfrak{p}) = p$. If $f \equiv (X - c)(X - c') \pmod p$ with $c \not\equiv c'$, then
@@ -45,11 +47,12 @@ Kronecker symbol at two, which is $0$ for even $D$, $1$ for $D \equiv \pm 1 \pmo
 ## Depends on
 
 - [Kronecker symbol](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/kronecker-sym.md)
-- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the norms of the prime ideals and its multiplicativity
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the norms of the prime ideals (its multiplicativity is a proof input)
 
 ## Proof depends on
 
 - [Integrality via the coefficients of the minimal polynomial](../../../FieldTheory/extensions-and-closure/minimal-polynomials-and-integrality/is-integral-iff-coeff-mem-range.md), for the ring of integers $\mathbb{Z}[\omega]$
+- [Conductor ideal of the whole algebra](../../../RingTheory/dedekind-domains/conductor-ideal/conductor-ideal-top.md), for the conductor of $\mathbb{Z}[\omega] = \mathcal{O}_K$, which makes the Kummer–Dedekind theorem apply to every $p$
 - [Kummer–Dedekind theorem](../discriminants-ramification/kummer-dedekind-theorem.md), for the factorisation of $p\mathcal{O}_K$ from that of $f \bmod p$
 - [The absolute norm of a principal ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm-principal.md), for $N(p\mathcal{O}_K) = p^2$
 - [Unique factorisation of ideals in a Dedekind domain](../../../RingTheory/dedekind-domains/ideal-unique-factorization.md), for conjugation permuting the prime factors of $p\mathcal{O}_K$

@@ -24,7 +24,9 @@ differentiating the series termwise gives $\frac{\partial^2 \zeta}{\partial a^2}
 are holomorphic in $s$ on $\{\operatorname{Re} s > -1, s \neq 1\}$, so the identity holds there by the identity theorem, and
 differentiating it in $s$ at $s = 0$, which commutes with $\partial^2 / \partial a^2$ by
 [Clairaut's theorem](../../../Analysis/real-functions/multivariable-calculus/partial-derivatives-and-symmetry-of-mixed-partia/iterated-partial-deriv-commute.md)
-for the smooth real function $(s, a) \mapsto \zeta(s, a)$, gives $f''(a) = \zeta(2, a) > 0$. So $F(a) = e^{f(a) - f(1)}$ is a
+applied twice, to $\partial \zeta / \partial a$ and then to $\zeta$, for the restriction $(x, a) \mapsto \zeta(x, a)$ to real
+$x$ near $0$ and $a > 0$ (a smooth real function, after a smooth cutoff, whose $x$-derivative is the complex derivative in $s$),
+gives $f''(a) = \zeta(2, a) > 0$. So $F(a) = e^{f(a) - f(1)}$ is a
 positive function on $(0, \infty)$ with $F(1) = 1$, $F(a + 1) = a F(a)$ and $\log F$ convex, and the
 [Bohr–Mollerup theorem](../../../Analysis/special-functions/gamma-function/bohr-mollerup-theorem.md)
 gives $F = \Gamma$, that is, $f(a) = \log \Gamma(a) + f(1)$. To find $f(1)$, note that

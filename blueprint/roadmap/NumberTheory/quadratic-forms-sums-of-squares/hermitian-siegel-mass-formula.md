@@ -53,7 +53,19 @@ Kirschmer credits Theorem 4.2.3 to Siegel for quadratic forms and to Gan and Yu 
 This node is still to be broken down. A good expansion has a page for Siegel's mass formula in local-density form
 (Kirschmer, Theorem 4.2.3, with the Tamagawa number $2$ of the unitary group and the product of the local densities
 read as above); pages for the finiteness of the number of classes in a genus (Theorem 2.4.5) and of the automorphism
-groups (Remark 2.4.4(1)); and a page for the passage to the form above (Proposition 4.2.7(3)).
+groups (Remark 2.4.4(1)); and a page for the passage to the form above (Proposition 4.2.7(3)). That page explains the
+choice of $c_{\mathfrak{p}}$: in the notation of Gan, Hanke and Yu it is the normalising factor
+$q^{-\dim \overline{H}} \, \# \overline{H}(\mathbb{F}_q)$ of their formula (2.11), for the connected reductive quotient $\overline{H}$ of
+the reference group at $\mathfrak{p}$, by the [order of $\mathrm{GL}_m(\mathbb{F}_q)$](../../GroupTheory/linear-groups/card-general-linear-group-finite-field.md) if
+$\mathfrak{p}$ splits ($\overline{H} = \mathrm{GL}_m$), the [order of the finite unitary group](finite-unitary-group-order.md) if
+$\mathfrak{p}$ is inert ($\overline{H} = \mathrm{U}_m$), and the orders of $\mathrm{SO}_m(\mathbb{F}_q)$ for odd $m$ and of
+$\mathrm{Sp}_m(\mathbb{F}_q)$ for even $m$, still to be supplied, if $\mathfrak{p}$ ramifies. A good expansion also extends the
+formula to every lattice $L$, through a rescaling $L^c$ of the form, the module $L$ in $(V, c \Phi)$, by a positive rational
+integer $c$ that makes it integral: the local factors of $L$ are defined as those of $L^c$, which do not depend on $c$
+(Kirschmer, Proposition 4.2.10(3), for $\lambda$: for $c$ of $\mathfrak{p}$-adic valuation $k$, $t_{\mathfrak{p}}$ grows by $2mk$ and
+$\beta(L_{\mathfrak{p}})$ by the factor $q^{k m^2}$, which cancel in $\lambda(L_{\mathfrak{p}})$), while $L^c$ has the same isometry
+classes in its genus and the same automorphism groups as $L$, hence the same mass. The quotient $L^\# / L$ is formed only
+for integral lattices.
 Writing each $\beta(L_{\mathfrak{p}})^{-1}$ through $\lambda(L_{\mathfrak{p}})$, the powers $q^{-t_{\mathfrak{p}} m/2}$ cancel
 $[L^\# : L]_{\mathbb{Z}}^{m/2}$; at a prime $\mathfrak{p}$ unramified in $E$ the factor $c_{\mathfrak{p}}^{-1}$ is the Euler factor of
 $\prod_{i=1}^m L_K(\chi^i, i)$ at $\mathfrak{p}$; and at the ramified primes the factors
@@ -63,7 +75,8 @@ $q^{-a_{\mathfrak{p}}}$ change the exponent of $N_{K/\mathbb{Q}}(\mathfrak{d}_{E
 ## Depends on
 
 - [Mass and local factors of definite Hermitian lattices](hermitian-lattice-mass-and-local-factors.md)
-- [Meromorphic continuation of Hecke L-functions](../zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for the continuation of $\zeta_E$ and $\zeta_K$ (trivial character), which defines $L_K(\chi, 1)$
+- [Meromorphic continuation of Hecke L-functions](../zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for $\zeta_E$ and $\zeta_K$ (trivial character): their Euler products, which give $L_K(\chi^i, s) = \zeta_K(s)$ for even $i$, and their continuation with simple poles at $s = 1$, which defines $L_K(\chi, 1)$
+- [Absolute norm of an ideal](../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N\mathfrak{p}$ and $N_{K/\mathbb{Q}}(\mathfrak{d}_{E/K})$
 
 ## Proof depends on
 
@@ -74,6 +87,8 @@ $q^{-a_{\mathfrak{p}}}$ change the exponent of $N_{K/\mathbb{Q}}(\mathfrak{d}_{E
 - [Local factor of a unimodular Hermitian lattice at a split prime](hermitian-unimodular-local-factor-split.md)
 - [Local factor of a unimodular Hermitian lattice at an inert prime](hermitian-unimodular-local-factor-inert.md)
 - [Summability of Dedekind zeta terms for σ > 1](../zeta-l-functions/dirichlet-l-functions/dedekind-zeta-function-and-polar-density/summable-height-one-spectrum-abs-norm-rp.md), for the absolute convergence of the corrected product $\prod_{\mathfrak{p}} (1 - \chi(\mathfrak{p}) N\mathfrak{p}^{-1}) \beta(L_{\mathfrak{p}})^{-1}$
+- [Order of the general linear group over a finite field](../../GroupTheory/linear-groups/card-general-linear-group-finite-field.md), in the expansion plan, for $c_{\mathfrak{p}}$ at the split primes
+- [Order of the unitary group over a finite field](finite-unitary-group-order.md), in the expansion plan, for $c_{\mathfrak{p}}$ at the inert primes
 
 ## Sources
 
@@ -84,9 +99,15 @@ $q^{-a_{\mathfrak{p}}}$ change the exponent of $N_{K/\mathbb{Q}}(\mathfrak{d}_{E
   Corollary 4.1.5, Table 4.1, Definition 4.2.1 (mass), Theorem 4.2.3 (Siegel's mass formula,
   credited to C. L. Siegel, Ann. of Math. 36 (1935) and 38 (1937), for quadratic forms and to W. T. Gan and
   J.-K. Yu, *Group schemes and local densities*, Duke Math. J. 105 (2000), 497–524, Section 10, in general),
-  Theorem 4.2.4, Lemma 4.2.5, Definition 4.2.6, Proposition 4.2.7(3) and Proposition 4.2.10(2).
+  Theorem 4.2.4, Lemma 4.2.5, Definition 4.2.6, Proposition 4.2.7(3) and Proposition 4.2.10(2) and (3) (with
+  Definition 2.3.3(9), the rescaled lattice $L^c$, the module $L$ in $(V, c \Phi)$).
 - W. T. Gan and J.-K. Yu, *Group schemes and local densities*, Duke Math. J. 105 (2000), 497–524,
   <https://bpb-us-w2.wpmucdn.com/blog.nus.edu.sg/dist/3/12891/files/2020/08/duke-local-density.pdf>, Section 10:
   §§10.7–10.8 (the mass in terms of the local densities, whose product converges only conditionally when the group is
   not semisimple, as for unitary groups) and §10.9 (Tamagawa number $\tau(G) = 2$ for the unitary group of a quadratic extension, the case $K = E$ in Gan and Yu's
   notation of §10.2).
+- W. T. Gan, J. P. Hanke and J.-K. Yu, *On an exact mass formula of Shimura*, Duke Math. J. 107 (2001), 103–133,
+  <https://www.jonhanke.com/Hanke--all_papers__as_of_2015-01-14/exact-mass-shimura-paper.pdf>: formula (2.11), the
+  normalising factor $q^{-\dim \overline{H}^0} \# \overline{H}^0(A/\pi)$ of the connected reductive quotient of the reference
+  model, and §3, Tables 1 and 2, its type $\mathrm{SO}_{2n+1}$ (odd rank) and $\mathrm{Sp}_{2n}$ (even rank) at a ramified
+  place and $\mathrm{U}_m$ at an unramified one.

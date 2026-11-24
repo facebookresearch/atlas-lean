@@ -28,10 +28,10 @@ Summing over the classes gives the expansion of $\zeta_K(s)$ at $s = 1$, and
 for $\operatorname{Re} s > 1$, with $\zeta(s) = \frac{1}{s - 1} + \gamma + O(s - 1)$ (the
 [Laurent expansion of $\zeta$ at $1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), whose constant term is
 [Euler's constant](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md)), shows that
-$L(s, \chi) = \zeta_K(s) / \zeta(s)$ is holomorphic at $s = 1$, as a quotient of two functions with simple poles there
-(the identity holds as one of meromorphic functions on $\mathbb{C}$, by the
-[identity theorem](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md) on the complement of their poles, a connected open set),
-and gives $\zeta_K(s) = \frac{L(1, \chi)}{s - 1} + \gamma L(1, \chi) + L'(1, \chi) + O(s - 1)$. Comparing the residues gives
+$L(s, \chi)$ is holomorphic at $s = 1$: near $1$, the quotient of $(s - 1) \zeta_K(s)$, holomorphic with the residue of
+$\zeta_K$ at $1$ as its value there, by $(s - 1) \zeta(s)$, holomorphic with value $1$, is holomorphic and agrees with the
+Dirichlet series of $L(s, \chi)$ for $\operatorname{Re} s > 1$, so by the [identity theorem](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md), on the
+connected union of a disc around $1$ and that half-plane, it is $L(s, \chi)$. This gives $\zeta_K(s) = \frac{L(1, \chi)}{s - 1} + \gamma L(1, \chi) + L'(1, \chi) + O(s - 1)$. Comparing the residues gives
 Dirichlet's class number formula $L(1, \chi) = 2\pi h / (w \sqrt{|D|})$, and comparing the constant terms gives
 
 $$\frac{L'(1, \chi)}{L(1, \chi)} = \gamma - \log |D| - \frac{1}{h} \sum_c \log\bigl(N(\mathfrak{b}_c) |\eta(\tau_c)|^4\bigr),$$
@@ -51,7 +51,7 @@ which is the identity above, rewritten with $N(\mathfrak{b}_c) = 2 \operatorname
 - [Dedekind zeta function of a quadratic field as $\zeta(s) L(s, \chi_D)$](../../zeta-l-functions/dirichlet-l-functions/dedekind-zeta-quadratic-field-factorization.md)
 - [Laurent expansion of $\zeta$ at $s = 1$](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullirec.md), for its constant term $c_0$
 - [Stieltjes constants exist, and the zeroth is Euler's constant](../../zeta-l-functions/riemann-zeta/stieltjes-constants/ramanujan-part1-ch7-entry13-bernoullipol.md), for $c_0 = \gamma$
-- [Identity theorem for holomorphic maps](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md), for extending $\zeta_K(s) = \zeta(s) L(s, \chi)$ from $\operatorname{Re} s > 1$
+- [Identity theorem for holomorphic maps](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md), for the uniqueness of $L(s, \chi)$ near $s = 1$, on the domain it shares with $\zeta_K(s) / \zeta(s)$
 
 ## Sources
 

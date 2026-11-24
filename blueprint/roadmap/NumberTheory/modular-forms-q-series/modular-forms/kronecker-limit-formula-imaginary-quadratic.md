@@ -37,8 +37,9 @@ irreducible ideals, and these are the nonzero prime ideals, because an ideal of 
 [divides exactly the ideals it contains](../../../RingTheory/dedekind-domains/characterizations-of-dedekind-domains/is-dedekind-domain-iff-contain-is-divide.md);
 so the identity holds for every nonzero ideal, by the
 [multiplicativity of $N$](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), and for a fractional ideal $\mathfrak{a}$ by
-applying it to $d \mathfrak{a} \subseteq \mathcal{O}_K$, with $N(\mathfrak{a}) = N(d \mathfrak{a})/d^2$ as for the
-[partial zeta functions](imaginary-quadratic-partial-zeta-epstein.md). The last relation is
+applying it to $d \mathfrak{a} \subseteq \mathcal{O}_K$ for the least positive integer $d$ with this property, as
+$N(\mathfrak{a}) = N(d \mathfrak{a})/d^2$ for that $d$ (the norm of fractional ideals of the
+[partial zeta functions](imaginary-quadratic-partial-zeta-epstein.md)). The last relation is
 $2 \operatorname{Im} z = N(\mathfrak{b}) \sqrt{|D|}$ for
 $\mathfrak{b} = \omega_2^{-1} \mathfrak{a}_c = \mathbb{Z} + \mathbb{Z} \tau_c$.
 
@@ -50,13 +51,14 @@ classes, where $Z(\tau, s) = \sum_{(m, n) \neq (0, 0)} (\operatorname{Im} \tau)^
 $\mathbb{C}$, regular at $s = 0$, with $Z(\tau, 0) = -1$, and
 $\Lambda(\tau, s) = \pi^{-s} \Gamma(s) Z(\tau, s)$ satisfies $\Lambda(\tau, s) = \Lambda(\tau, 1 - s)$. Near
 $s = 1$, [Kronecker's first limit formula](kronecker-first-limit-formula.md) and
-$\pi^{-s}\Gamma(s) = \pi^{-1}(1 - (\gamma + \log \pi)(s - 1) + \cdots)$, which uses $\Gamma(1) = \int_0^\infty e^{-t} \, dt = 1$ and
+$\pi^{-s}\Gamma(s) = \pi^{-1}(1 - (\gamma + \log \pi)(s - 1) + O((s - 1)^2))$, the Taylor expansion of the function $\Gamma$,
+[analytic](../../../Analysis/special-functions/gamma-function/digamma-and-trigamma-functions/analytic-at-gamma.md) at $1$, with $\Gamma(1) = \int_0^\infty e^{-t} \, dt = 1$ and
 [$\Gamma'(1) = -\gamma$](../../special-numbers/harmonic-numbers/gamma-derivative-at-one.md), give
 $\Lambda(\tau, s) = \frac{1}{s - 1} + 2(\gamma - \log 2 - \log(\sqrt{y} |\eta(\tau)|^2)) - \gamma - \log \pi + O(s - 1)$
 with $y = \operatorname{Im} \tau$; the functional equation turns this into the expansion of $\Lambda(\tau, s)$ at
 $s = 0$, and comparing it with $\pi^{-s} \Gamma(s) = \frac{1}{s} - \gamma - \log \pi + O(s)$, which follows from
-the [recurrence](../../../Analysis/special-functions/gamma-function/gamma-function-recurrence.md) $\Gamma(s) = \Gamma(s + 1)/s$
-with $\Gamma(1) = 1$ and $\Gamma'(1) = -\gamma$, gives
+the [recurrence](../../../Analysis/special-functions/gamma-function/gamma-function-recurrence.md) $\Gamma(s) = \Gamma(s + 1)/s$ for
+$s \neq 0$ and the Taylor expansion $\Gamma(1 + s) = 1 - \gamma s + O(s^2)$, gives
 
 $$\frac{\partial Z}{\partial s}(\tau, 0) = -\log\bigl(4\pi^2 \operatorname{Im}(\tau)\, |\eta(\tau)|^4\bigr).$$
 
@@ -81,6 +83,7 @@ written out here.)
 - [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the multiplicativity of $N$, in Kaneko's form
 - [Recurrence of the gamma function](../../../Analysis/special-functions/gamma-function/gamma-function-recurrence.md), for $\Gamma(s) = \Gamma(s + 1)/s$
 - [The derivative of the gamma function at 1 is minus Euler's constant](../../special-numbers/harmonic-numbers/gamma-derivative-at-one.md), for $\Gamma'(1) = -\gamma$
+- [Analyticity of the Gamma function](../../../Analysis/special-functions/gamma-function/digamma-and-trigamma-functions/analytic-at-gamma.md), for the Taylor expansion of $\Gamma$ at $1$ to second order
 
 ## Sources
 

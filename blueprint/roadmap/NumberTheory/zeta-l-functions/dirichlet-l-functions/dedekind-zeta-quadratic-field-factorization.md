@@ -26,7 +26,7 @@ $(1 - p^{-s})^{-1} (1 - \chi_D(p) p^{-s})^{-1}$ in each case.
 ## Depends on
 
 - [Quadratic Dirichlet character of a fundamental discriminant](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md)
-- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N$ and its multiplicativity
+- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N$ (its multiplicativity is a proof input)
 
 ## Proof depends on
 

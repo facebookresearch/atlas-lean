@@ -32,6 +32,7 @@ Kirschmer states the mass formula.)
 ## Depends on
 
 - [Mass and local factors of definite Hermitian lattices](hermitian-lattice-mass-and-local-factors.md), for the mass of a genus
+- [Absolute norm of an ideal](../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for $N\mathfrak{p}$ in $L_K(\chi^M, M)$
 
 ## Proof depends on
 

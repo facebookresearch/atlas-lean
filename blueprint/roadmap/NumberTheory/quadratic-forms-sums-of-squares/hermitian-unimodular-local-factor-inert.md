@@ -39,6 +39,7 @@ Lemma 4.2.9 with $m_0 = m$, where $\lambda(L_{\mathfrak{p}}) = \bigl|\binom{m}{m
 ## Depends on
 
 - [Mass and local factors of definite Hermitian lattices](hermitian-lattice-mass-and-local-factors.md), for $\beta(L_{\mathfrak{p}})$ and $\lambda(L_{\mathfrak{p}})$
+- [Absolute norm of an ideal](../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the norm $q$ of $\mathfrak{p}$
 
 ## Proof depends on
 
