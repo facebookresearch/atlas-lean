@@ -40,7 +40,6 @@ module
 
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Complex.Liouville
 import Mathlib.Analysis.Normed.Field.Lemmas
 import Mathlib.Analysis.Real.Sqrt
@@ -57,50 +56,12 @@ both roots of a quadratic. Great Picard at infinity and Liouville force this quo
 constant. The cubic identity then bounds the original functions.
 -/
 
-open Set Filter Topology Bornology
+open Set Bornology
 open MathlibExt.Analysis.Complex.GreatPicardWanted
 
 noncomputable section
 
 namespace MathlibExt.Analysis.Complex.EntireFermatCubicConstantWanted
-
-/-- The little Picard consequence of great Picard at infinity. -/
-private theorem entire_omitting_two_constant {f : ℂ → ℂ} (hf : Differentiable ℂ f)
-    {a b : ℂ} (hab : a ≠ b) (ha : ∀ z, f z ≠ a) (hb : ∀ z, f z ≠ b) :
-    ∃ c : ℂ, ∀ z, f z = c := by
-  let H (z : ℂ) := f z⁻¹
-  have hinv : Tendsto (fun z : ℂ => z⁻¹) (cocompact ℂ) (𝓝[≠] 0) := by
-    rw [← Metric.cobounded_eq_cocompact]
-    exact tendsto_inv₀_cobounded'
-  have hhol : ∃ r : ℝ, 0 < r ∧ DifferentiableOn ℂ H (Metric.ball (0 : ℂ) r \ {0}) := by
-    refine ⟨1, zero_lt_one, fun z hz => ?_⟩
-    have hz0 : z ≠ 0 := fun h => hz.2 (Set.mem_singleton_iff.mpr h)
-    have hd : DifferentiableAt ℂ (fun w : ℂ => w⁻¹) z := differentiableAt_id.inv hz0
-    exact ((hf.differentiableAt).comp z hd).differentiableWithinAt
-  have homit (c : ℂ) (hc : ∀ z, f z ≠ c) :
-      ∃ r : ℝ, 0 < r ∧ Set.Finite {z ∈ Metric.ball (0 : ℂ) r \ {0} | H z = c} := by
-    refine ⟨1, zero_lt_one, Set.finite_empty.subset ?_⟩
-    intro z hz
-    exact (hc z⁻¹ hz.2).elim
-  by_cases hlim : ∃ c : ℂ, Tendsto H (𝓝[≠] 0) (𝓝 c)
-  · obtain ⟨c, hc⟩ := hlim
-    have hc' : Tendsto f (cocompact ℂ) (𝓝 c) := by
-      simpa only [Function.comp_def, H, inv_inv] using hc.comp hinv
-    exact ⟨c, fun z => hf.apply_eq_of_tendsto_cocompact z hc'⟩
-  · by_cases hpole : Tendsto (fun z => ‖H z‖) (𝓝[≠] 0) atTop
-    · have hlarge : Tendsto (fun z => ‖f z‖) (cocompact ℂ) atTop := by
-        simpa only [Function.comp_def, H, inv_inv] using hpole.comp hinv
-      have hshift : Tendsto (fun z => ‖f z - a‖) (cocompact ℂ) atTop := by
-        refine tendsto_atTop.2 fun n => (hlarge.eventually_ge_atTop (n + ‖a‖)).mono ?_
-        intro z hz
-        exact (le_sub_iff_add_le.mpr hz).trans (norm_sub_norm_le (f z) a)
-      have hrec : Tendsto (fun z => (f z - a)⁻¹) (cocompact ℂ) (𝓝 0) :=
-        (tendsto_inv₀_cobounded (α := ℂ)).comp (tendsto_norm_atTop_iff_cobounded.mp hshift)
-      have hne (z : ℂ) : f z - a ≠ 0 := sub_ne_zero.mpr (ha z)
-      have hd : Differentiable ℂ (fun z => (f z - a)⁻¹) := (hf.sub_const a).inv hne
-      exact (inv_ne_zero (hne 0) (hd.apply_eq_of_tendsto_cocompact 0 hrec)).elim
-    · have hs : IsEssentialIsolatedSingularityAt H 0 := ⟨hhol, hlim, hpole⟩
-      exact (hab (greatPicard hs (homit a ha) (homit b hb))).elim
 
 private theorem exists_two_quadratic_roots :
     ∃ a b : ℂ, a ≠ b ∧ a ^ 3 + (1 - a) ^ 3 = 0 ∧ b ^ 3 + (1 - b) ^ 3 = 0 := by
@@ -163,7 +124,10 @@ public theorem entire_cube_add_cube_eq_one_const
     have Hz := hC z
     rw [hzc, hc, zero_mul] at Hz
     exact zero_ne_one Hz
-  obtain ⟨c, hc⟩ := entire_omitting_two_constant hd hab (hom a ha) (hom b hb)
+  have hconst : ∃ c : ℂ, ∀ z, h z = c := by
+    by_contra hnc
+    exact hab (littlePicard hd hnc (hom a ha) (hom b hb))
+  obtain ⟨c, hc⟩ := hconst
   have hnonzero : c ^ 3 + (1 - c) ^ 3 ≠ 0 := by
     intro heq
     have Hz := hC 0
