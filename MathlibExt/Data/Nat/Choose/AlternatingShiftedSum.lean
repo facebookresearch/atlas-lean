@@ -19,6 +19,7 @@ namespace MetaMathlibExt
 
 open Finset
 
+set_option linter.unusedVariables false in
 /-- **Alternating sum of shifted binomial coefficients.** Let $\ell$, $n$, $j$ and $s$ be natural
 numbers with $1 \le \ell \le n$, $j \ge 1$ and $\ell j + s \le n$. Then
 $$\sum_{i=0}^{\ell} (-1)^i \binom{\ell}{i} \binom{n-i}{\ell j+s} = \binom{n-\ell}{\ell(j-1)+s}.$$
@@ -30,8 +31,8 @@ $j \ge 1$ the bound $j \le \lfloor (n-s)/\ell \rfloor$ is the condition $\ell j 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
 Article florez11012023, Lemma 4.1 (`fq-2024-florez11012023-lem-4.1`). -/
-public theorem alternating_sum_choose_mul_choose_sub {ℓ n j s : ℕ} (_hℓ : 1 ≤ ℓ)
-    (hℓn : ℓ ≤ n) (hj : 1 ≤ j) (_hjn : ℓ * j + s ≤ n) :
+public theorem alternating_sum_choose_mul_choose_sub {ℓ n j s : ℕ} (hℓ : 1 ≤ ℓ)
+    (hℓn : ℓ ≤ n) (hj : 1 ≤ j) (hjn : ℓ * j + s ≤ n) :
     ∑ i ∈ range (ℓ + 1), (ℓ.choose i : ℤ) * (-1) ^ i * ((n - i).choose (ℓ * j + s) : ℤ) =
       ((n - ℓ).choose (ℓ * (j - 1) + s) : ℤ) := by
   have hindex : ℓ + (ℓ * (j - 1) + s) = ℓ * j + s := by

@@ -387,7 +387,7 @@ private lemma polynomial_comparison {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ}
     omega
   have hf : s * X = 1 - q := by
     have hc : (1 - q).coeff 0 = 0 := by
-      rw [coeff_sub, coeff_one_zero, coeff_zero_eq_eval_zero, hzero, sub_self]
+      rw [coeff_sub, AddMonoidAlgebra.coeff_one_zero, coeff_zero_eq_eval_zero, hzero, sub_self]
     have ht := divX_mul_X_add (1 - q)
     rw [hc, C_0, add_zero] at ht
     exact ht

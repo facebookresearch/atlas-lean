@@ -53,72 +53,14 @@ public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.RascalNumbers
+public import MathlibExt.Combinatorics.Enumerative.RascalWordEnds
+public import MathlibExt.Combinatorics.Enumerative.RascalWords
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
-
-/-- **Number of ascents of a word.** For a finite word
-$w = w_1 w_2 \cdots w_n$ of natural numbers, the number of ascents
-of $w$ is the number of indices $i$ with $1 \le i < n$ and
-$w_i < w_{i+1}$. -/
-def wordAscents : List ℕ → ℕ
-  | [] => 0
-  | [_] => 0
-  | a :: b :: t => (if a < b then 1 else 0) + wordAscents (b :: t)
-
-/-- **Binary words with few ascents.** For natural numbers $j$, $k$ and $n$, $B^{(j)}_k(n)$ is
-the set of words $w$ of length $n$ over the alphabet $\{0, 1\}$ with exactly $k$ ones and at most
-$j$ ascents, an ascent being a position $i$ with $w_i < w_{i+1}$, that is, a $0$ immediately
-followed by a $1$. -/
-def RascalWord (j k n : ℕ) : Type :=
-  { w : List ℕ // w.length = n ∧ (∀ x ∈ w, x = 0 ∨ x = 1) ∧
-      w.count 1 = k ∧ wordAscents w ≤ j }
-
-/-- **Generalized Rascal numbers.** For natural numbers $j$, $k$ and $n$, the generalized Rascal
-number $R^{(j)}_{n,k}$ is the number of binary words of length $n$ with exactly $k$ ones and at
-most $j$ ascents, that is, the number of elements of $B^{(j)}_k(n)$; an ascent is a position at
-which a $0$ is immediately followed by a $1$. -/
-noncomputable def rascalGen (j k n : ℕ) : ℕ :=
-  Nat.card (RascalWord j k n)
-
-/-- **Generalized Rascal numbers at integer indices.** For a natural number $j$ and integers $n$
-and $k$, $R^{(j)}_{n,k}$ is the generalized Rascal number of $n$ and $k$ (the number of binary
-words of length $n$ with exactly $k$ ones and at most $j$ ascents) when $0 \le k \le n$, and $0$
-otherwise. -/
-noncomputable def rascalGenZ (j : ℕ) (n k : ℤ) : ℤ :=
-  if 0 ≤ k ∧ k ≤ n then (rascalGen j k.toNat n.toNat : ℤ) else 0
-
-/-- **Ascent sequences.** A finite sequence $w_1 w_2 \cdots w_n$ of natural numbers is an
-ascent sequence when $w_1 = 0$ (if $n \ge 1$) and
-$w_i \le \operatorname{asc}(w_1 \cdots w_{i-1}) + 1$ for every $1 \le i \le n$, where
-$\operatorname{asc}(v)$ counts the positions $j$ with $v_j < v_{j+1}$. In particular the empty
-sequence is an ascent sequence. -/
-def IsAscentSeq (w : List ℕ) : Prop :=
-  (∀ h : 0 < w.length, w[0]'h = 0) ∧
-    ∀ (i : ℕ) (h : i < w.length), w[i]'h ≤ wordAscents (w.take i) + 1
-
-/-- **Avoiding the patterns 001 and 210.** A finite sequence $w$ of natural numbers avoids
-$001$ and $210$ when it has no subsequence $x, x, y$ with $x < y$ and no subsequence $x, y, z$
-with $x > y > z$. Subsequences need not consist of consecutive entries. -/
-def Avoids001210 (w : List ℕ) : Prop :=
-  ∀ x y z : ℕ, List.Sublist [x, y, z] w →
-    ¬ (x = y ∧ y < z) ∧ ¬ (z < y ∧ y < x)
-
-/-- **Ascent sequences avoiding 001 and 210.** For natural numbers $n$ and $k$, this is the set
-of ascent sequences $w$ of length $n$ that avoid the patterns $001$ and $210$ and have exactly
-$k$ ascents, an ascent of $w$ being a position $i$ with $w_i < w_{i+1}$. -/
-def AscentSeqAvoid (n k : ℕ) : Type :=
-  { w : List ℕ // w.length = n ∧ IsAscentSeq w ∧ Avoids001210 w ∧
-      wordAscents w = k }
-
-/-- **Number of ascent sequences avoiding 001 and 210.** For natural numbers $n$ and $k$, this
-counts the ascent sequences of length $n$ with exactly $k$ ascents that avoid the patterns
-$001$ and $210$. -/
-noncomputable def apkCard (n k : ℕ) : ℕ :=
-  Nat.card (AscentSeqAvoid n k)
 
 /-- **Rascal numbers count binary words with at most one ascent.** For all integers $n$ and $k$,
 $R_{n,k} = b_k(n)$, where $R_{n,k}$ is the Rascal number and $b_k(n)$ is the number of binary
@@ -137,22 +79,6 @@ Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
 Interpretations of Rascal Numbers", Theorem 2. -/
 theorem_wanted rascalZ_symm (n k : ℤ) (h0 : 0 ≤ k) (h1 : k ≤ n) :
     rascalZ n k = rascalZ n (n - k)
-
-/-- **Binary words with a prefix of ones and a suffix of zeros.** Let $n, k, \ell, u$ be natural
-numbers with $\ell \le k$ and $k + u \le n$, and let $B_k(n)$ be the set of binary words $w$ of
-length $n$ with exactly $k$ ones and at most one ascent (a position $i$ with $w_i < w_{i+1}$).
-The number of words in $B_k(n)$ whose first $\ell$ letters are all $1$ and whose last $u$
-letters are all $0$ equals the Rascal number $R_{n-u-\ell, k-\ell}$, where
-$R_{a,b} = b(a-b) + 1$ for $0 \le b \le a$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Lemma 3. -/
-theorem_wanted card_prefixOnes_suffixZeros (n k ℓ u : ℕ)
-    (hℓ : ℓ ≤ k) (hu : k + u ≤ n) :
-    (Nat.card { w : RascalWord 1 k n //
-        (∀ x ∈ w.1.take ℓ, x = 1) ∧
-          (∀ x ∈ w.1.drop (n - u), x = 0) } : ℤ) =
-      rascalZ (n - u - ℓ : ℕ) (k - ℓ : ℕ)
 
 /-- **Fleron's recurrence for Rascal numbers.** For integers $n$ and $k$ with $n \ge 2$ and
 $0 < k < n$, the Rascal numbers $R_{n,k}$ satisfy
@@ -385,19 +311,6 @@ Interpretations of Rascal Numbers", Theorem 20. -/
 theorem_wanted sum_rascalGen_row (j n : ℕ) :
     ∑ k ∈ Finset.range (n + 1), (rascalGen j k n : ℤ) =
       ∑ k ∈ Finset.range (2 * j + 2), (Nat.choose n k : ℤ)
-
-/-- **A power-of-two row sum of generalized Rascal numbers.** Write $R^{(j)}_{n,k}$ for the number
-of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents (positions where a
-$0$ is immediately followed by a $1$). For every natural number $j$,
-$\sum_{k=0}^{4j+3} R^{(j)}_{4j+3,k} = 2^{4j+2}$.
-
-This was Conjecture 7.5 of Gregory et al.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Corollary 21. -/
-theorem_wanted sum_rascalGen_four_mul_add_three (j : ℕ) :
-    ∑ k ∈ Finset.range (4 * j + 4),
-        (rascalGen j k (4 * j + 3) : ℤ) = 2 ^ (4 * j + 2)
 
 /-- **Forward differences of generalized Rascal row sums.** Fix a natural number $j$. For natural
 numbers $n$ and $k$ let $R^{(j)}_{n,k}$ be the number of binary words of length $n$ with exactly

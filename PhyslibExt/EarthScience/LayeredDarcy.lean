@@ -62,10 +62,11 @@ not derive Darcy's constitutive law.
 The physical effective-conductivity reading is for positive
 layer conductivities, the regime of the theorems below. As a
 raw real quotient the definition is totalized outside that
-regime: with a zero-conductivity layer the displayed value is
-not `0` and has no physical meaning here (an impermeable
-layer in series is outside the domain of this formula, since
-Lean totalizes division by zero). -/
+regime: with the convention `x / 0 = 0`, a zero-conductivity
+layer contributes `0` to the summed resistance, so an impermeable
+layer in series is outside the domain of this formula, and the
+value is `0` when the summed resistance is `0` (for example
+`n = 0`). -/
 noncomputable def layeredEffectiveConductivity {n : ℕ}
     (L K : ℕ → ℝ) : ℝ :=
   (∑ i ∈ Finset.range n, L i) / (∑ i ∈ Finset.range n, L i / K i)
@@ -90,7 +91,8 @@ theorem layeredEffectiveConductivity_pos {n : ℕ} (hn : 1 ≤ n)
 
 /-- Flux recovery from interface drop laws (source direction).
 Let `head 0, ..., head n` be continuous interface heads in flow
-order and let `q` be a supplied common steady Darcy flux satisfying
+order of at least one layer with positive thicknesses `L i` and
+conductivities `K i`, and let `q` be a supplied common steady Darcy flux satisfying
 the per-layer drop law `head i - head (i + 1) = q * (L i / K i)`
 for each layer. Then `q` is the total head drop divided by the
 summed series resistance. The per-layer Darcy drop relation is an
@@ -105,6 +107,7 @@ theorem layeredDarcyFlux_of_drops {n : ℕ} (hn : 1 ≤ n)
     (fun i hi => div_pos (hL i hi) (hK i hi)) hdrop
 
 /-- End-head flux formula through the effective conductivity:
+for at least one layer with positive thicknesses and conductivities,
 under the same supplied drop laws, the common flux equals
 `K_eff * (head 0 - head n) / (∑ i, L i)`. -/
 theorem layeredDarcyFlux_eq_eff_mul {n : ℕ} (hn : 1 ≤ n)

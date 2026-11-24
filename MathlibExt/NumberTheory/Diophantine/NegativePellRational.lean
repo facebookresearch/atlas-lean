@@ -75,12 +75,13 @@ theorem negPell_rat_solvable_iff (d : ℕ) (hd : 0 < d) (hsq : Squarefree d) :
     -- `p ≡ 3 (mod 4)` divides the sum of two squares `d C²` to an even power ...
     have heven := Nat.eq_sq_add_sq_iff.mp ⟨A, B, key.symm⟩ p
       (Nat.mem_primeFactors.mpr ⟨hp, dvd_mul_of_dvd_left hpd _, hn⟩) hp4
-    rw [padicValNat.mul hd.ne' (pow_ne_zero 2 hC0), padicValNat.pow C 2] at heven
+    rw [Nat.padicValNat_def, Nat.multiplicity_mul hd.ne' (pow_ne_zero 2 hC0),
+      Nat.multiplicity_pow C 2] at heven
     -- ... but it divides the squarefree `d` exactly once.
-    have h1 : padicValNat p d = 1 := by
+    have h1 : multiplicity p d = 1 := by
       have hle : d.factorization p ≤ 1 := hsq.natFactorization_le_one p
       rw [Nat.factorization_def d hp] at hle
-      have hge : 1 ≤ padicValNat p d := one_le_padicValNat_of_dvd hd.ne' hpd
+      have hge : 1 ≤ multiplicity p d := one_le_multiplicity_of_dvd hd.ne' hpd
       omega
     rw [h1] at heven
     obtain ⟨k, hk⟩ := heven

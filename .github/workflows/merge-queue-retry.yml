@@ -1,0 +1,163 @@
+name: Merge queue retry
+
+# Re-run, once, a merge group's required checks that failed for an
+# infrastructure reason, so that a flaky check does not remove the pull
+# request from the queue and restart every merge group behind it. GitHub
+# removes a failing entry that is not at the front of the queue only once the
+# entries ahead of it merge, so a prompt re-run usually finishes first.
+#
+# Trigger: a merge-group run of a workflow that reports a required check
+# (CI, Source diagnostics, Bump guard) completed as failed, timed out or
+# cancelled. A workflow_run job runs this file from the default branch, and
+# the triage job checks out scripts/queue/retry.py from the same commit
+# (github.sha), with the base repository's token, so it never checks out or
+# runs anything from the merge group: it reads GitHub's API.
+# The `select` job, which has no permissions, validates the triggering run
+# (event, workflow file and name, repository, commit, and the merge group's
+# ref gh-readonly-queue/main/pr-<number>-<40-hex base commit>) before the
+# pull request number is used.
+#
+# The rule, in scripts/queue/retry.py:
+# 1. Current merge group only. The pull request must still be in the queue,
+#    and its entry's head commit is the merge group checked. A run of an older
+#    merge group is never acted on; it only prompts a check of the current one.
+# 2. Required checks only: the check runs on that commit of the checks main's
+#    branch rules require (read live, by name and app, with the grouping
+#    strategy, from every page of the rules), including those that failed
+#    while the rest of their workflow is still running. With more pages of
+#    rules than are read, or one check required from different apps (rulesets
+#    are layered, so all such requirements apply), nothing is decided. Each
+#    check the repository declares required (scripts/test_merge_queue_checks.py)
+#    must be among them, or nothing is decided: classic branch protection, which
+#    this token cannot read, could require it. A check with more than one
+#    check run there is ambiguous, and one that a commit status reports (a
+#    rule may accept one) is not classified: nothing is re-run. A check fails when it completes with a conclusion other than
+#    success, neutral or skipped.
+# 3. Transient, on a short allowlist only: the job failed and its failed
+#    step's own output has one of the exact lines seen when the guard's reads
+#    of GitHub's API failed (a truncated answer, an HTML page, a server error
+#    from the guard's client), or the runner or GitHub reported losing the
+#    job ("received a shutdown signal", "lost communication with the server",
+#    "encountered an internal error") while the step's output, found after
+#    its closed command block, shows no exit of its own; and the step shows
+#    no failure of the tree's own checks (a Lean error, with or without a
+#    location, any line that starts with "error", a FAIL line from the
+#    repository checks or a verdict of the guard's, a failed test).
+#    Everything else is unknown, including a cancelled job without the
+#    runner's report (who cancelled is not visible here), a job that timed
+#    out or that an annotation says ran too long or was cancelled on request,
+#    one with more than one failed step, one whose step output cannot be read
+#    whole, and one whose log cannot be fetched. A missed re-run costs nothing
+#    beyond the queue's own behaviour; a wrong one costs a build. The output
+#    is written by the merge group's code, so a pull request can make its own
+#    failure look transient: it gains at most one re-run of its failed jobs,
+#    which must then pass. Only when every failed required check of the merge
+#    group is transient are the failed jobs of each completed run that holds
+#    one re-run (all of that run's failed jobs), once: on its first attempt
+#    only, never again. A run still in progress is checked again when it
+#    completes.
+# 4. Anything else is left to the queue. For a deterministic failure the job
+#    summary records, without acting, whether the pull request would be
+#    removed early: the grouping is ALLGREEN, it is not at the front, and the
+#    entry ahead of it passed every required check. This workflow never
+#    dequeues, enqueues or comments.
+# Every answer the rule depends on is checked for shape; a missing, malformed
+# or unidentifiable one makes the decision unknown, and nothing is re-run.
+# Before each re-run request, the script reads main's rules again (the same
+# checks required, from the same apps), then the required checks (no new
+# failure, nothing replaced but what its own earlier requests restarted), then
+# the run, then the queue entry last, and stops unless all still match.
+# A failed request is not repeated; the other runs are still tried, and the
+# job then fails. GitHub has no conditional re-run, so if the queue moves in
+# the moment between the last read and a request, a stale group's jobs can
+# still be re-run; that costs a build and changes nothing in the queue.
+#
+# Mode: a dry run, which records its decisions in the job summary and re-runs
+# nothing, unless the repository variable MERGE_QUEUE_RETRY is exactly
+# `active`.
+#
+# Token: the job's GITHUB_TOKEN. Re-running jobs needs `actions: write`; the
+# branch rules, the queue entry, runs, jobs, logs, check runs and commit
+# statuses need read access only. GITHUB_TOKEN cannot read the queue's configuration (GraphQL
+# mergeQueue.configuration), hence the branch rules for the grouping.
+#
+# One triage job at a time per pull request (its concurrency group); each
+# checks the pull request's current merge group, so one that replaces a
+# pending one does its work. This workflow reports no required check:
+# scripts/test_merge_queue_checks.py keeps each required check's name to its
+# one job.
+
+on:
+  workflow_run:
+    workflows: [CI, Source diagnostics, Bump guard]
+    types: [completed]
+    branches: ["gh-readonly-queue/main/pr-*"]
+
+permissions: {}
+
+jobs:
+  select:
+    if: >-
+      github.event.workflow_run.event == 'merge_group' &&
+      contains(fromJSON('["failure", "timed_out", "cancelled"]'), github.event.workflow_run.conclusion)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      pr: ${{ steps.parse.outputs.pr }}
+    steps:
+      - name: Validate the triggering run
+        id: parse
+        env:
+          RUN_EVENT: ${{ github.event.workflow_run.event }}
+          RUN_PATH: ${{ github.event.workflow_run.path }}
+          RUN_NAME: ${{ github.event.workflow_run.name }}
+          RUN_REPOSITORY: ${{ github.event.workflow_run.repository.full_name }}
+          HEAD_REPOSITORY: ${{ github.event.workflow_run.head_repository.full_name }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          set -euo pipefail
+          case "$RUN_PATH:$RUN_NAME" in
+            ".github/workflows/ci.yml:CI" | \
+            ".github/workflows/source-diagnostics.yml:Source diagnostics" | \
+            ".github/workflows/bump-guard.yml:Bump guard") ;;
+            *) echo "Not a required-check workflow; nothing to do."; exit 0 ;;
+          esac
+          if [[ "$RUN_EVENT" != merge_group || "$RUN_REPOSITORY" != "$GITHUB_REPOSITORY" ||
+                "$HEAD_REPOSITORY" != "$GITHUB_REPOSITORY" || ! "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Not a merge-group run of this repository; nothing to do."
+            exit 0
+          fi
+          if [[ ! "$HEAD_BRANCH" =~ ^gh-readonly-queue/main/pr-([1-9][0-9]{0,6})-[0-9a-f]{40}$ ]]; then
+            echo "Not a merge group of main; nothing to do."
+            exit 0
+          fi
+          echo "pr=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+
+  triage:
+    needs: select
+    if: needs.select.outputs.pr != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write
+      checks: read
+      contents: read
+      pull-requests: read
+      statuses: read
+    concurrency:
+      group: merge-queue-retry-${{ needs.select.outputs.pr }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: scripts/queue
+
+      - name: Re-run a transient failure of the current merge group
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ needs.select.outputs.pr }}
+          MERGE_QUEUE_RETRY: ${{ vars.MERGE_QUEUE_RETRY }}
+        run: python3 scripts/queue/retry.py --pr "$PR"

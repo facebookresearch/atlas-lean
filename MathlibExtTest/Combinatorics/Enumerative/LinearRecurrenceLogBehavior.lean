@@ -65,4 +65,20 @@ example (A : ℕ → ℝ) (h0 : A 0 = 1) (h1 : A 1 = 1)
   rw [div_lt_iff₀ (by positivity)]
   linarith
 
+-- At the first admissible index, the neighboring powered terms are 1, 16, and 3375.
+example :
+    let z (m : ℕ) := ((m : ℝ) * a005773Seq m) ^ m
+    z 1 = 1 ∧ z 2 = 16 ∧ z 3 = 3375 ∧ z 2 ^ 2 ≤ z 1 * z 3 := by
+  refine ⟨?_, ?_, ?_, a005773Recurrence_pow_logConvex a005773Seq rfl rfl a005773Seq_rec 2
+    (by decide)⟩ <;> norm_num [a005773Seq]
+
+-- The lower bound n = 2 is sharp for the differences of the weighted terms.
+-- Their first four values are 1, 3, 11, 37, so log-concavity fails at n = 1.
+example :
+    let v (m : ℕ) := (m + 1 : ℕ) * a005773Seq (m + 1) - m * a005773Seq m
+    v 1 ^ 2 < v 0 * v 2 ∧ v 1 * v 3 ≤ v 2 ^ 2 := by
+  refine ⟨?_, (a005773Recurrence_weighted_logConcave a005773Seq rfl rfl a005773Seq_rec 2
+    (by decide)).2.1⟩
+  norm_num [a005773Seq]
+
 end MetaMathlibExt

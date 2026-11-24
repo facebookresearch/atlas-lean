@@ -7,3 +7,5 @@ Partial, strict and total orders, dense linear orders, monotone maps and sequenc
 - [Strict total orders](strict-total-orders/README.md)
 - [Dense linear order without endpoints](is-dense-linear-order-without-endpoints.md)
 - [Equivalence relation](equivalence-relation.md)
+- [Partially ordered set](partial-order.md)
+- [Zorn's lemma](zorns-lemma.md)

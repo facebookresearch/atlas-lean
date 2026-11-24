@@ -17,19 +17,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Backward recurrence for Gibonacci numbers.** Let $x, y$ be integers and let
-$(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$. For every $n \ge 3$,
-$P_{n-1} = P_n - P_{n-2}$ and $P_{n-3} = P_n - 2 P_{n-2}$.
-
-The paper indexes the sequence from $1$ and states these identities for $n \ge 4$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 3
-(`integers-2026-A122-lem-3`). -/
-public theorem_wanted gibonacciNumber_backward (x y : ℤ) (n : ℕ) (hn : 3 ≤ n) :
-    gibonacciNumber x y (n - 1) = gibonacciNumber x y n - gibonacciNumber x y (n - 2) ∧
-    gibonacciNumber x y (n - 3) = gibonacciNumber x y n - 2 * gibonacciNumber x y (n - 2)
-
 /-- **Gibonacci numbers in terms of Fibonacci numbers.** Let $x, y$ be integers, let
 $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, and let $(F_n)_{n \ge 0}$
 be the Fibonacci sequence with $F_0 = 0$ and $F_1 = 1$. For every $n \ge 1$,
@@ -63,23 +50,6 @@ public theorem_wanted exists_generalizedTribonacci_basis :
       w 0 = 0 ∧ w 1 = 0 ∧ w 2 = 1 ∧
       ∀ a b c : ℤ, ∀ n : ℕ,
         generalizedTribonacci a b c n = u n * a + v n * b + w n * c
-
-/-- **Divisibility runs of length one, two and three.** For integers $x, y, a, b, c$, let $(P_n)$
-be the Gibonacci sequence with $P_0 = x$, $P_1 = y$ and $(Q_n)$ the generalized Tribonacci sequence
-with $Q_0 = a$, $Q_1 = b$, $Q_2 = c$, and say $(x, y; a, b, c)$ has a divisibility run of length at
-least $L$ when $P_i \ne 0$ and $P_i \mid Q_i$ for every $i < L$. Then there is a run of length at
-least $1$ if and only if $x \ne 0$ and $x \mid a$; a run of length at least $2$ if and only if
-$x \ne 0$, $x \mid a$, $y \ne 0$ and $y \mid b$; and a run of length at least $3$ if and only if
-$x \ne 0$, $x \mid a$, $y \ne 0$, $y \mid b$, $x + y \ne 0$ and $x + y \mid c$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 3
-(`integers-2026-A122-prop-3`). -/
-public theorem_wanted isDivRunUpTo_small (x y a b c : ℤ) :
-    (IsDivRunUpTo x y a b c 1 ↔ x ≠ 0 ∧ x ∣ a) ∧
-    (IsDivRunUpTo x y a b c 2 ↔ (x ≠ 0 ∧ x ∣ a) ∧ y ≠ 0 ∧ y ∣ b) ∧
-    (IsDivRunUpTo x y a b c 3 ↔
-      (x ≠ 0 ∧ x ∣ a) ∧ (y ≠ 0 ∧ y ∣ b) ∧ x + y ≠ 0 ∧ x + y ∣ c)
 
 /-- **Divisibility by a Gibonacci sequence forces a Tribonacci sequence to vanish.** Let
 $x, y, a, b, c$ be integers, let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and

@@ -16,11 +16,12 @@ import Mathlib.Data.List.GetD
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# Convolutions of consecutive Fibonacci step sequences
+# Convolutions of Fibonacci step sequences
 
 The recurrence for the Fibonacci `m`-step numbers gives the denominator of their generating
 function. Subtracting the identities for consecutive orders expresses both sides of the
-convolution as coefficients of the same product of three generating functions.
+convolution as coefficients of the same product of three generating functions. The six-step
+convolution with the Fibonacci numbers follows by combining the two denominator identities.
 -/
 
 @[expose] public section
@@ -114,6 +115,26 @@ private lemma fibStepGF_sub_succ (m : ℕ) :
   apply X_mul_cancel
   linear_combination fibStepGF (m + 1) * hm - fibStepGF m * hs
 
+/-- **Convolution of the Fibonacci and tribonacci numbers.** Write $F_n$ and $T_n$ for the
+Fibonacci and tribonacci numbers, that is, the Fibonacci $m$-step numbers $F^{(m)}_n$ for
+$m = 2, 3$ ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each later term is the sum of the $m$ terms
+before it, terms at negative indices being $0$). For every natural number $n$,
+$$\sum_{j=0}^{n} F_j T_{n-j} = T_{n+2} - F_{n+2}.$$
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Corollary 2. -/
+theorem sum_fib_mul_trib (n : ℕ) :
+    ∑ j ∈ Finset.range (n + 1), fibStep 2 j * fibStep 3 (n - j) =
+      fibStep 3 (n + 2) - fibStep 2 (n + 2) := by
+  have hg : X ^ 2 * (fibStepGF 2 * fibStepGF 3) = fibStepGF 3 - fibStepGF 2 := by
+    linear_combination fibStepGF_sub_succ 2
+  have hc := congrArg (coeff (n + 2) (R := ℚ)) hg
+  rw [coeff_X_pow_mul] at hc
+  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, map_sub,
+    fibStepGF, coeff_mk] at hc
+  exact_mod_cast hc
+
 private lemma sum_consecutive_mul_sub_eq (m n : ℕ) (hn : 1 ≤ n) :
     ∑ j ∈ Finset.range (n + 1), fibStep m j *
         (fibStep (m + 1) (n - j) - fibStep (m + 2) (n - j)) =
@@ -164,5 +185,44 @@ theorem sum_trib_mul_sub_eq (n : ℕ) (hn : 1 ≤ n) :
       ∑ j ∈ Finset.range n,
         (fibStep 3 j - fibStep 4 j) * fibStep 5 (n - 1 - j) :=
   sum_consecutive_mul_sub_eq 3 n hn
+
+private lemma fibStepGF_six_mul_two :
+    5 * (X ^ 3 * (fibStepGF 6 * fibStepGF 2)) =
+      fibStepGF 6 + X ^ 2 * fibStepGF 6 - X ^ 3 * fibStepGF 6 +
+        3 * (X ^ 4 * fibStepGF 6) + X ^ 6 * fibStepGF 6 -
+        fibStepGF 2 - X ^ 2 * fibStepGF 2 := by
+  have h₂ := fibStepGF_denom 2
+  have h₆ := fibStepGF_denom 6
+  norm_num [Finset.sum_Icc_succ_top] at h₂ h₆
+  apply X_mul_cancel
+  linear_combination
+    (1 + X ^ 2 - X ^ 3 + 3 * X ^ 4 + X ^ 6) * fibStepGF 6 * h₂ -
+    (1 + X ^ 2) * fibStepGF 2 * h₆
+
+/-- **Convolution of the Fibonacci $6$-step numbers with the Fibonacci numbers.** Write
+$s_n = F^{(6)}_n$ for the Fibonacci $6$-step numbers and $F_n = F^{(2)}_n$ for the Fibonacci
+numbers. For every natural number $n \ge 3$,
+$$5 \sum_{j=0}^{n} s_j F_{n-j} =
+s_{n+3} + s_{n+1} - s_n + 3 s_{n-1} + s_{n-3} - F_{n+3} - F_{n+1}.$$
+
+The source prints this identity divided by $5$.
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Theorem 41. -/
+theorem five_mul_sum_fibStep6_mul_fib (n : ℕ)
+    (hn : 3 ≤ n) :
+    5 * ∑ j ∈ Finset.range (n + 1),
+        fibStep 6 j * fibStep 2 (n - j) =
+      fibStep 6 (n + 3) + fibStep 6 (n + 1) - fibStep 6 n +
+        3 * fibStep 6 (n - 1) + fibStep 6 (n - 3) -
+        fibStep 2 (n + 3) - fibStep 2 (n + 1) := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
+  have h := congrArg (coeff (k + 3 + 3) (R := ℚ)) fibStepGF_six_mul_two
+  simp only [map_add, map_sub, coeff_ofNat_mul, coeff_X_pow_mul, coeff_shift] at h
+  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, fibStepGF, coeff_mk] at h
+  apply Int.cast_injective (α := ℚ)
+  push_cast
+  exact h
 
 end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted

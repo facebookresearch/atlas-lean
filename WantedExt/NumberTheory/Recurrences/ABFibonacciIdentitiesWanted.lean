@@ -114,26 +114,6 @@ theorem_wanted sum_neg_b_pow_lucasAB_shift (a b : ℂ) (hb : b ≠ 0)
         fibAB a b (n + m + 1) * lucasAB a b (n + m) +
           (-1) ^ n * b ^ (n + 1) * fibAB a b m * lucasAB a b (m - 1))
 
-/-- **Sums of (a, b)-Fibonacci numbers weighted by powers of -b, via Lucas numbers.** Let $a, b$
-be complex numbers with $\Delta = a^2 + 4b \ne 0$, and let $(F_n)$ and $(L_n)$ be the
-$(a, b)$-Fibonacci and $(a, b)$-Lucas numbers. Then for every integer $n \ge 0$,
-$$\sum_{i=0}^{n} (-b)^{n-i} F_{2i} = \frac{L_{2n+1} + (-1)^{n+1} a b^n}{\Delta}$$
-and
-$$\sum_{i=0}^{n} (-b)^{n-i} F_{2i+1} = \frac{L_{2n+2} + 2 (-1)^n b^{n+1}}{\Delta}.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Theorem 10(a). -/
-theorem_wanted sum_neg_b_pow_fibAB_disc (a b : ℂ)
-    (hΔ : a ^ 2 + 4 * b ≠ 0) (n : ℕ) :
-    (∑ i ∈ Finset.range (n + 1), (-b) ^ (n - i) * fibAB a b (2 * i) =
-      (lucasAB a b (2 * n + 1) + (-1) ^ (n + 1) * a * b ^ n) /
-        (a ^ 2 + 4 * b)) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-b) ^ (n - i) * fibAB a b (2 * i + 1) =
-      (lucasAB a b (2 * n + 2) + (-1) ^ n * 2 * b ^ (n + 1)) /
-        (a ^ 2 + 4 * b))
-
 /-- **Alternating sums of Fibonacci and Lucas numbers.** Let $(F_n)$ and $(L_n)$ be the
 Fibonacci and Lucas numbers, that is, the $(1, 1)$-Fibonacci and $(1, 1)$-Lucas numbers, viewed
 as complex numbers. Then for every integer $n \ge 0$,
@@ -218,20 +198,6 @@ theorem_wanted sum_neg_one_pow_k_lucasAB (k : ℂ) (m n : ℕ)
     ∑ i ∈ Finset.range (n + 1),
         (-1 : ℂ) ^ i * lucasAB k 1 (2 * (i + m)) =
       (-1) ^ n * fibAB k 1 (2 * (n + m) + 1) + fibAB k 1 (2 * m - 1)
-
-/-- **Sums of (a, b)-Fibonacci numbers weighted by powers of c.** Let $a, b, c$ be complex
-numbers with $c \ne 0$ and $c^2 - ac - b \ne 0$, and let $(F_n)$ be the $(a, b)$-Fibonacci
-numbers. Then for every integer $n \ge 1$,
-$$\sum_{i=1}^{n} c^{n-i} F_i = \frac{c^{n+1} - c F_{n+1} - b F_n}{c^2 - ac - b}.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Theorem 12. -/
-theorem_wanted sum_c_pow_fibAB (a b c : ℂ) (hc : c ≠ 0)
-    (hc2 : c ^ 2 - a * c - b ≠ 0) (n : ℕ) (hn : 1 ≤ n) :
-    ∑ i ∈ Finset.Icc 1 n, c ^ (n - i) * fibAB a b i =
-      (c ^ (n + 1) - c * fibAB a b (n + 1) - b * fibAB a b n) /
-        (c ^ 2 - a * c - b)
 
 /-- **A convolution of (a, b)-Lucas and (a, d)-Fibonacci numbers.** Let $a, b, d$ be complex
 numbers with $b \ne d$, and write $L^{a,b}_n$ for the $(a,b)$-Lucas numbers and $F^{a,b}_n$ for

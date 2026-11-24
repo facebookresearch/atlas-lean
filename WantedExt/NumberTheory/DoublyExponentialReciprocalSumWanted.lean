@@ -9,12 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Order.Floor.Ring
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Fib.Basic
-public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSum
 public import MathlibExt.NumberTheory.GeneralizedSylvester
 
 /-!
@@ -33,94 +32,6 @@ open Filter Topology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Pseudo-greedy remainder sequence.** For a real number $r$, the remainder sequence
-$(x_n)_{n \ge 0}$ of the pseudo-greedy expansion of $r$ is defined by $x_0 = r$ and
-$x_{n+1} = x_n - 1/a_n$, where $a_n = \lfloor x_n^{-1} + 1 + 1/2 \rfloor$ is the integer
-nearest to $x_n^{-1} + 1$, with halves rounded up.
-
-Here $0^{-1}$ and $1/0$ are read as $0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Section 2 (definitions of the pseudo-greedy
-expansion and its remainder sequence). -/
-noncomputable def pseudoGreedyRemainder (r : ℝ) : ℕ → ℝ
-  | 0 => r
-  | n + 1 => pseudoGreedyRemainder r n -
-      1 / (⌊(pseudoGreedyRemainder r n)⁻¹ + 1 + 1 / 2⌋ : ℝ)
-
-/-- **Pseudo-greedy expansion.** Let $r$ be a real number with pseudo-greedy remainder sequence
-$(x_n)_{n \ge 0}$. The pseudo-greedy expansion of $r$ is the integer sequence
-$a_n = \lfloor x_n^{-1} + 1 + 1/2 \rfloor$ for $n \ge 0$; that is, $a_n$ is the integer nearest
-to $x_n^{-1} + 1$, with halves rounded up.
-
-Here $0^{-1}$ is read as $0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Section 2 (definition of the pseudo-greedy
-expansion). -/
-noncomputable def pseudoGreedyExpansion (r : ℝ) (n : ℕ) : ℤ :=
-  ⌊(pseudoGreedyRemainder r n)⁻¹ + 1 + 1 / 2⌋
-
-/-- **Gap sequence of the pseudo-greedy expansion.** Let $r$ be a real number, and let $(x_n)$
-be the remainder sequence and $(a_n)$ the pseudo-greedy expansion of $r$. The gap sequence of
-$r$ is the real sequence $\varepsilon_n = x_n^{-1} + 1 - a_n$ for $n \ge 0$.
-
-Here $0^{-1}$ is read as $0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Section 2 (definition of the gap sequence). -/
-noncomputable def pseudoGreedyGap (r : ℝ) (n : ℕ) : ℝ :=
-  (pseudoGreedyRemainder r n)⁻¹ + 1 - pseudoGreedyExpansion r n
-
-/-- **Remainder recursion.** For every real number $r$ and every $n \ge 0$, the remainder
-sequence $(x_n)$ and the pseudo-greedy expansion $(a_n)$ of $r$ satisfy $x_{n+1} = x_n - 1/a_n$.
-
-Here $1/0$ is read as $0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Section 2 (definition of the remainder
-sequence). -/
-theorem pseudoGreedyRemainder_succ (r : ℝ) (n : ℕ) :
-    pseudoGreedyRemainder r (n + 1) =
-      pseudoGreedyRemainder r n - 1 / (pseudoGreedyExpansion r n : ℝ) := rfl
-
-/-- **The pseudo-greedy expansion of 1 starts with 2.** The first term $a_0$ of the
-pseudo-greedy expansion of $1$ equals $2$, the first Sylvester number.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Example 1 (the expansion of `1` is the Sylvester
-sequence). -/
-theorem pseudoGreedyExpansion_one_zero : pseudoGreedyExpansion 1 0 = 2 := by
-  rw [pseudoGreedyExpansion, pseudoGreedyRemainder, Int.floor_eq_iff]
-  norm_num
-
-/-- **Second term of the pseudo-greedy expansion of $1$.** The pseudo-greedy expansion
-$(a_n)_{n \ge 0}$ of $1$ satisfies $a_1 = 3$.
-
-The remainder after the first term $a_0 = 2$ is $1 - 1/2 = 1/2$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Example 1 (the expansion of `1` is the Sylvester
-sequence). -/
-theorem pseudoGreedyExpansion_one_one : pseudoGreedyExpansion 1 1 = 3 := by
-  have h : pseudoGreedyRemainder 1 1 = 1 / 2 := by
-    rw [pseudoGreedyRemainder_succ, pseudoGreedyExpansion_one_zero]
-    simp only [pseudoGreedyRemainder]
-    norm_num
-  rw [pseudoGreedyExpansion, h, Int.floor_eq_iff]
-  norm_num
-
-/-- **The first gap of the expansion of 1 vanishes.** The first term $\varepsilon_0$ of the gap
-sequence of the pseudo-greedy expansion of $1$ is $0$: the first remainder is $x_0 = 1$ and the
-first term of the expansion is $a_0 = 2$, so $\varepsilon_0 = x_0^{-1} + 1 - a_0 = 1 + 1 - 2 = 0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Example 1 (`ε_n = 0` for the expansion of `1`). -/
-theorem pseudoGreedyGap_one_zero : pseudoGreedyGap 1 0 = 0 := by
-  rw [pseudoGreedyGap, pseudoGreedyExpansion_one_zero]
-  simp only [pseudoGreedyRemainder]
-  norm_num
 
 /-- **Recovering a doubly exponential sequence from its reciprocal sum.** Let $\beta \ge 0$ and
 $r$ be real numbers, and let $(a_n)_{n \ge 0}$ be a sequence of positive integers with
@@ -179,26 +90,6 @@ public theorem_wanted countable_not_type2IrrationalitySequence_floor_pow_two_pow
     Set.Countable {α : ℝ | 1 < α ∧ ¬∀ b : ℕ → ℕ, (∀ n, 0 < b n) →
       Tendsto (fun n => (b n : ℝ) / ⌊α ^ 2 ^ (n + 1)⌋₊) atTop (𝓝 1) →
         ∀ q : ℚ, ¬HasSum (fun n => 1 / (b n : ℝ)) q}
-
-/-- **Convergence of the pseudo-greedy expansion.** For every real number $r > 0$, the
-pseudo-greedy expansion $(a_n)_{n \ge 0}$ of $r$ satisfies $\sum_n 1 / a_n = r$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Lemma 1 (`integers-2026-A28-lem-1`). -/
-public theorem_wanted hasSum_one_div_pseudoGreedyExpansion {r : ℝ} (hr : 0 < r) :
-    HasSum (fun n => 1 / (pseudoGreedyExpansion r n : ℝ)) r
-
-/-- **Recursion for the pseudo-greedy expansion.** Let $r > 0$ be a real number, and let
-$(a_n)$ be its pseudo-greedy expansion and $(\varepsilon_n)$ its gap sequence. Then for every
-$n \ge 0$,
-$$a_{n+1} = \frac{a_n^2}{1 - \varepsilon_n} - a_n + (1 - \varepsilon_{n+1}).$$
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Lemma 2 (`integers-2026-A28-lem-2`). -/
-public theorem_wanted pseudoGreedyExpansion_succ_eq {r : ℝ} (hr : 0 < r) (n : ℕ) :
-    (pseudoGreedyExpansion r (n + 1) : ℝ) =
-      1 / (1 - pseudoGreedyGap r n) * (pseudoGreedyExpansion r n : ℝ) ^ 2 -
-        pseudoGreedyExpansion r n + (1 - pseudoGreedyGap r (n + 1))
 
 /-- **A vanishing gap stays zero.** Let $r > 0$ be a real number and let $(\varepsilon_n)$ be
 the gap sequence of its pseudo-greedy expansion. For every $n \ge 0$, if $\varepsilon_n = 0$,

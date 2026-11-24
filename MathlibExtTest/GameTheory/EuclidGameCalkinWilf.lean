@@ -32,3 +32,33 @@ example : euclidPPosition 2 1 ≠ true := by
 -- At (4, 2) the female cousin is an N-position, so the uncle is a P-position.
 example : euclidPPosition 4 6 = true :=
   ((euclidPPosition_aunt_xor_cousin 4 2 (by decide) (by decide)).2.2.1 (by decide)).mpr (by decide)
+
+-- The daughter (3, 2) and its niece (4, 3) continue the same branch.
+example : euclidPPosition 4 3 = true :=
+  (euclidPPosition_branch_step 1 2 (by decide) (by decide)).1 (by decide)
+
+-- The nephew implication also applies to pairs with a common factor.
+example : euclidPPosition 6 8 = true :=
+  (euclidPPosition_branch_step 4 2 (by decide) (by decide)).2 (by decide)
+
+-- At level zero the coefficient 3k - 2 in the left branch formula is negative.
+example : euclidPPosition 8 5 = true ∧ euclidPPosition 5 7 = true ∧
+    (7 : ℤ) = 3 * 3 + (3 * 0 - 2) * 1 := by
+  obtain ⟨⟨_, hL, hR, _, _, _, hden⟩, _⟩ := fibonacci_arch_tops 1 0 (by decide)
+  exact ⟨hL, hR, hden⟩
+
+-- Two levels down the next arch, the two branch positions have different numerators.
+example : euclidPPosition 14 11 = true ∧ euclidPPosition 9 11 = true ∧
+    euclidPPosition 29 20 = true ∧ euclidPPosition 20 31 = true := by
+  obtain ⟨⟨hX, _⟩, hY, hL, hR, _⟩ := fibonacci_arch_tops 2 2 (by decide)
+  exact ⟨hX, hY, hL, hR⟩
+
+-- Two daughter steps followed by a son reach P-positions from both (3, 2) and the root.
+example : euclidPPosition 7 9 = true :=
+  (euclidPPosition_self_similar 2 (3, 2) (by decide) (by decide) [true, true, false]).trans
+    (by decide)
+
+-- Three alternating steps from the same vertex end at an N-position.
+example : euclidPPosition 8 13 = false :=
+  (euclidPPosition_self_similar 2 (3, 2) (by decide) (by decide) [false, true, false]).trans
+    (by decide)
