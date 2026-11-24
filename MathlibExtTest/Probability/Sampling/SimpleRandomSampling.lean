@@ -242,4 +242,40 @@ theorem cluster_variance_ne_srs :
   rw [cluster_variance, srs_variance_clusterY]
   norm_num
 
+section VectorSampling
+
+/-- The first two labels deliberately carry the same vector. -/
+private def vectorOutcomes : Fin 3 → Fin 2 → ℝ := ![![0, 0], ![0, 0], ![3, 6]]
+
+example : (fun r => randExp 2 (sampleMean fun i => vectorOutcomes i r)) = ![1, 2] := by
+  rw [randExp_sampleMean_vec vectorOutcomes (n := 2) (by norm_num) (by simp [Fintype.card_fin])]
+  funext r
+  fin_cases r <;> norm_num [popMean, vectorOutcomes, Fin.sum_univ_three]
+
+/-- The divisor-3 variance is `10`, and sampling two labels gives a correction of `1/4`.
+Using only the largest coordinate's squared deviation would give `2`, not `5/2`. -/
+example :
+    randExp 2 (fun S => ∑ r,
+      (sampleMean (fun i => vectorOutcomes i r) S - popMean (fun i => vectorOutcomes i r)) ^ 2) =
+      5 / 2 := by
+  rw [randExp_sum_sq_sampleMean_sub_popMean vectorOutcomes (n := 2) (by norm_num)
+    (by simp [Fintype.card_fin])]
+  norm_num [popMean, vectorOutcomes, Fin.sum_univ_two, Fin.sum_univ_three]
+
+example :
+    randExp 3 (fun S => ∑ r,
+      (sampleMean (fun i => vectorOutcomes i r) S - popMean (fun i => vectorOutcomes i r)) ^ 2) =
+      0 := by
+  simpa [Fintype.card_fin] using
+    randExp_sum_sq_sampleMean_sub_popMean vectorOutcomes (n := 3) (by norm_num)
+      (by simp [Fintype.card_fin])
+
+example (x : Fin 1 → Fin 2 → ℝ) :
+    randExp 1 (fun S => ∑ r, (sampleMean (fun i => x i r) S - popMean (fun i => x i r)) ^ 2) =
+      0 := by
+  simpa [Fintype.card_fin] using
+    randExp_sum_sq_sampleMean_sub_popMean x (n := 1) (by norm_num) (by simp)
+
+end VectorSampling
+
 end MathlibExtTest.Probability.Sampling
