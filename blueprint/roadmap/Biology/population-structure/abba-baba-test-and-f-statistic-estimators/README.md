@@ -61,3 +61,4 @@
 - [Delete-one-block jackknife covariance of a mean](delete-one-block-jackknife-covariance-of-a-vecto.md)
 - [The scaled block jackknife is consistent for independent identically distributed blocks](consistency-of-the-scaled-block-jackknife-covari.md)
 - [Averages with summable autocovariances converge in mean square](consistency-of-mean-genetic-summaries-under-summ.md)
+- [Consistency, delta variance and weak-denominator behavior of the f4 ratio](statistical-behavior-of-the-f4-ratio-estimate.md)
