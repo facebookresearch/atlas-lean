@@ -16,7 +16,7 @@ Computational Geometry 45 (2011), 425-448, doi:10.1007/s00454-010-9322-8.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Order.SymmDiff

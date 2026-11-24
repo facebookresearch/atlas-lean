@@ -16,6 +16,7 @@ AIM workshop The perfect graph conjecture, problem list, section Even-hole-free 
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 
 @[expose] public section

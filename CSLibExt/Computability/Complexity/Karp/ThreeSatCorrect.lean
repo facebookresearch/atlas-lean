@@ -33,7 +33,7 @@ chain of a clause `C` asserts after its `i`-th literal gets "`v` satisfies one o
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL Cslib.Algorithms.SAT.DPLL
+open Cslib.CookLevin Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.DPLL
 
 /-! ### Clause lengths -/
 

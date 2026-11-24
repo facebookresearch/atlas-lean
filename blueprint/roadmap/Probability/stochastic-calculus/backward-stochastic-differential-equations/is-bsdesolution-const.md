@@ -9,7 +9,7 @@ $g(\cdot, y, 0) \equiv 0$.
 
 ## Background
 
-- [Sublinear expectation](../../foundations/sublinear-expectations-and-model-uncertainty/is-sublinear-expectation.md):
+- [Sublinear expectation](../../foundations/sublinear-expectations-and-model-uncertainty/sublinear-expectations/is-sublinear-expectation.md):
   a g-expectation is a monotone, constant preserving nonlinear expectation; its uncertain models
   are all absolutely continuous with respect to the Wiener measure, a limitation that Peng's
   G-expectation removes (Peng, Section 2, first paragraph).

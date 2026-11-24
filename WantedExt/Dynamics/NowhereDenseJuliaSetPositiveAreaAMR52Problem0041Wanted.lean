@@ -40,7 +40,7 @@ def filledJuliaSet (c : ℂ) : Set ℂ :=
   {z | ∃ R : ℝ, ∀ k : ℕ, ‖(fun w => w ^ 2 + c)^[k] z‖ ≤ R}
 
 /-- The Julia set of `z ↦ z ^ 2 + c`: the boundary of its filled Julia set. -/
-def juliaSet (c : ℂ) : Set ℂ :=
+noncomputable def juliaSet (c : ℂ) : Set ℂ :=
   frontier (filledJuliaSet c)
 
 /-- Lyubich's question (Stony Brook problem list, 1992), with a quadratic witness: some quadratic

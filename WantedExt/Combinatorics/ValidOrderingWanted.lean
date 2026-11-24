@@ -32,6 +32,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Combinatorics.Additive.FreimanHom
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.ZMod.Basic
+public import MathlibExt.Combinatorics.DistinctPartialSumsOrdering
 
 set_option autoImplicit false
 
@@ -39,23 +40,13 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.ValidOrderingWanted
 
-/-- **Theorem 2**: every finite subset of `ℤ \ {0}` has
-a valid ordering, i.e., an ordering whose partial sums
-are pairwise distinct.
-
-Source: Noah Kravitz, "Rearranging Small Sets for
-Distinct Partial Sums", Theorem 2. -/
-theorem_wanted exists_distinct_partial_sums_ordering
-    (A : Finset ℤ) (h0 : 0 ∉ A) :
-    ∃ l : List ℤ, List.Perm l A.toList ∧
-      ((l.scanl (· + ·) 0).tail).Nodup
-
-/-- **Theorem 3** (Lev's rectification principle, as
-quoted in the paper): for `ℓ ≥ 2`, if `A ⊆ 𝔽_p`
-satisfies `|A| ≤ ⌈log p / log ℓ⌉`, then `A` is
-`ℓ`-Freiman isomorphic to a set of integers. (For
-`ℓ ≤ 1` the logarithmic bound is out of domain, hence
-the hypothesis `2 ≤ ℓ`.)
+/-- **Lev's rectification principle.** Let $\ell \ge 2$ be a natural number, $p$ a prime and
+$A$ a subset of $\mathbb{Z}/p\mathbb{Z}$ with $|A| \le \lceil \log p / \log \ell \rceil$. Then
+there are a finite set $B$ of integers and a map $f \colon \mathbb{Z}/p\mathbb{Z} \to \mathbb{Z}$
+that is a Freiman isomorphism of order $\ell$ from $A$ to $B$: $f$ maps $A$ bijectively onto
+$B$, and for all $a_1, \dots, a_\ell, b_1, \dots, b_\ell \in A$ we have
+$f(a_1) + \cdots + f(a_\ell) = f(b_1) + \cdots + f(b_\ell)$ if and only if
+$a_1 + \cdots + a_\ell = b_1 + \cdots + b_\ell$.
 
 Source: Noah Kravitz, "Rearranging Small Sets for
 Distinct Partial Sums", Theorem 3. -/

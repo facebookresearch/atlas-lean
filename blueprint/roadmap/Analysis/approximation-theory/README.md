@@ -2,6 +2,7 @@
 
 Approximation and interpolation of functions: Chebyshev equioscillation, best approximation, the minimax property of Chebyshev polynomials, Chebyshev series and interpolation, Lagrange interpolation, Bernstein polynomials and Voronovskaya, Korovkin, Müntz–Szász, Runge, Kolmogorov superposition, universal approximation, sparse approximation: best $M$-term approximation in an orthonormal basis and greedy pursuits (matching pursuit and orthogonal matching pursuit), and sparse and low-rank recovery by convex relaxation under restricted isometry.
 
+- [Bernstein coefficient bounds on boxes](bernstein-coefficient-bounds-on-boxes/README.md)
 - [Bernstein polynomials](bernstein-polynomials/README.md)
 - [Best approximation in normed spaces](best-approximation-in-normed-spaces/README.md)
 - [Best M-term approximation](best-m-term-approximation/README.md)
@@ -13,6 +14,8 @@ Approximation and interpolation of functions: Chebyshev equioscillation, best ap
 - [Lagrange interpolation](lagrange-interpolation/README.md)
 - [Low-rank matrix recovery](low-rank-matrix-recovery/README.md)
 - [Matching pursuit](matching-pursuit/README.md)
+- [Multivariate Bernstein conversion](multivariate-bernstein-conversion/README.md)
+- [Polynomial approximation with derivatives in several variables](polynomial-approximation-with-derivatives-in-sev/README.md)
 - [Sparse recovery by orthogonal matching pursuit](sparse-recovery-by-orthogonal-matching-pursuit/README.md)
 - [Sparse recovery under the restricted isometry property](sparse-recovery-under-the-restricted-isometry-pr/README.md)
 - [Uniform approximation by partial sums of one power series](uniform-approximation-by-partial-sums-of-one-pow/README.md)

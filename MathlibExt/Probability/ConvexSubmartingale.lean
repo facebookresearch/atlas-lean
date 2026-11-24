@@ -51,9 +51,14 @@ namespace MeasureTheory
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- A convex function of a martingale is a submartingale (Lecture 26/27):
-if `X` is a martingale and `φ` is convex with `φ ∘ Xₙ` integrable for all
-`n`, then `φ ∘ X` is a submartingale. -/
+/-- **Convex functions of martingales are submartingales.** Let $\mu$ be a probability measure,
+let $(\mathcal{F}_n)_{n \in \mathbb{N}}$ be a filtration, and let $(X_n)_{n \in \mathbb{N}}$ be a
+real-valued martingale with respect to $(\mathcal{F}_n)$ and $\mu$. Let
+$\varphi : \mathbb{R} \to \mathbb{R}$ be convex, and suppose $\varphi(X_n)$ is integrable for every
+$n$. Then $(\varphi(X_n))_{n \in \mathbb{N}}$ is a submartingale with respect to $(\mathcal{F}_n)$
+and $\mu$.
+
+Source: Lecture 26/27, martingale observations. -/
 theorem Martingale.submartingale_comp_convex
     [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ}
@@ -77,13 +82,16 @@ theorem Martingale.submartingale_comp_convex
     exact hcomp.le.trans hJensen
   · exact hφ_int
 
-/-- A convex nondecreasing function of a submartingale is a submartingale:
-if `X` is a submartingale, `φ` is convex and nondecreasing, and `φ ∘ Xₙ`
-is integrable for all `n`, then `φ ∘ X` is a submartingale. Monotonicity
-is needed: a convex function of a submartingale need not be a
-submartingale in general (for example `φ = fun x => (x - 4) ^ 2` applied
-to the submartingale with `Xᵢ = 2` and `Xⱼ = 3` a.s., where
-`φ(Xᵢ) = 4 > 1 = φ(Xⱼ)`). -/
+/-- **Convex nondecreasing functions preserve submartingales.** Let $\mu$ be a probability measure,
+let $(\mathcal{F}_n)_{n \in \mathbb{N}}$ be a filtration, and let $(X_n)_{n \in \mathbb{N}}$ be a
+real-valued submartingale with respect to $(\mathcal{F}_n)$ and $\mu$. Let
+$\varphi : \mathbb{R} \to \mathbb{R}$ be convex and nondecreasing, and suppose $\varphi(X_n)$ is
+integrable for every $n$. Then $(\varphi(X_n))_{n \in \mathbb{N}}$ is a submartingale with respect
+to $(\mathcal{F}_n)$ and $\mu$.
+
+Monotonicity is needed: a convex function of a submartingale need not be a submartingale. For
+example, take $\varphi(x) = (x - 4)^2$ and a submartingale with $X_i = 2$ and $X_j = 3$ almost
+surely for some $i < j$; then $\varphi(X_i) = 4 > 1 = \varphi(X_j)$. -/
 theorem Submartingale.comp_convex_of_monotoneOn
     [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ}
@@ -108,9 +116,12 @@ theorem Submartingale.comp_convex_of_monotoneOn
     exact hcomp.trans hJensen
   · exact hφ_int
 
-/-- A concave function of a martingale is a supermartingale: if `X` is a
-martingale and `φ` is concave with `φ ∘ Xₙ` integrable for all `n`, then
-`φ ∘ X` is a supermartingale. -/
+/-- **Concave functions of martingales are supermartingales.** Let $\mu$ be a probability measure,
+let $(\mathcal{F}_n)_{n \in \mathbb{N}}$ be a filtration, and let $(X_n)_{n \in \mathbb{N}}$ be a
+real-valued martingale with respect to $(\mathcal{F}_n)$ and $\mu$. Let
+$\varphi : \mathbb{R} \to \mathbb{R}$ be concave, and suppose $\varphi(X_n)$ is integrable for
+every $n$. Then $(\varphi(X_n))_{n \in \mathbb{N}}$ is a supermartingale with respect to
+$(\mathcal{F}_n)$ and $\mu$. -/
 theorem Martingale.supermartingale_comp_concave
     [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ}

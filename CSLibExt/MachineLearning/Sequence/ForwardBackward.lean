@@ -53,23 +53,43 @@ namespace Cslib.MachineLearning.Sequence.HiddenMarkov
 
 variable {S O R : Type*} [Fintype S] [Semiring R] (h : HMM S O R) (x : ℕ → O)
 
-/-- The backward variables: `backward k t s` is the weight of the observations
-`x (t + 1), …, x (t + k)` given the state `s` at time `t`. -/
+/-- **Backward variables of a hidden Markov model.** Let $h$ be a hidden Markov model with finite
+state set $S$, transition weights $a$ and emission weights $b$ in a semiring $R$, and let
+$x_0, x_1, \dots$ be observations. The backward variables $\beta_k(t, s) \in R$, for
+$k, t \in \mathbb{N}$ and $s \in S$, are defined by $\beta_0(t, s) = 1$ and
+$$\beta_{k+1}(t, s) = \sum_{s' \in S} a(s, s')\, b(s', x_{t+1})\, \beta_k(t + 1, s').$$
+Thus $\beta_k(t, s)$ is the weight of the observations $x_{t+1}, \dots, x_{t+k}$ given the state
+$s$ at time $t$. -/
 def backward : ℕ → ℕ → S → R
   | 0, _, _ => 1
   | k + 1, t, s => ∑ s', h.trans s s' * h.emit s' (x (t + 1)) * backward k (t + 1) s'
 
-/-- The weight of the paths from state `s` at time `t` to state `u` at time `t + k`
-(transitions and emissions at times `t + 1, …, t + k`), built from the end. -/
+/-- **Bridge weights of a hidden Markov model.** Let $h$ be a hidden Markov model with finite state
+set $S$, transition weights $a$ and emission weights $b$ in a semiring $R$, and let
+$x_0, x_1, \dots$ be observations. The bridge weights $B_k(t, s, u) \in R$, for
+$k, t \in \mathbb{N}$ and $s, u \in S$, are defined from the end by $B_0(t, s, u) = 1$ if $s = u$
+and $B_0(t, s, u) = 0$ otherwise, and
+$$B_{k+1}(t, s, u) = \left(\sum_{u' \in S} B_k(t, s, u')\, a(u', u)\right) b(u, x_{t+k+1}).$$
+Thus $B_k(t, s, u)$ is the total weight of the paths from state $s$ at time $t$ to state $u$ at
+time $t + k$, with transitions and emissions at times $t + 1, \dots, t + k$. -/
 def bridge [DecidableEq S] : ℕ → ℕ → S → S → R
   | 0, _, s, u => if s = u then 1 else 0
   | k + 1, t, s, u => (∑ u', bridge k t s u' * h.trans u' u) * h.emit u (x (t + k + 1))
 
-/-- The joint weight of the observations `x 0, …, x (t + k)` and the state `s` at time `t`. -/
+/-- **Joint weight of the observations and a state.** For a hidden Markov model with a finite set
+of states $S$ and weights in a semiring, observations $x_0, x_1, \dots$, times $t, k \in \mathbb{N}$
+and a state $s \in S$, the joint weight of $x_0, \dots, x_{t+k}$ and the state $s$ at time $t$ is
+the sum of the path weights $p_{t+k}(z)$ over all state paths $z = (z_0, \dots, z_{t+k})$ in $S$
+with $z_t = s$, where $p_{t+k}(z)$ is the joint weight of the path $z$ and the observations
+$x_0, \dots, x_{t+k}$. -/
 def stateMarg [DecidableEq S] (t k : ℕ) (s : S) : R :=
   ∑ z : Fin (t + k + 1) → S, if z ⟨t, by omega⟩ = s then pathProb h x (t + k) z else 0
 
-/-- The bridge weights, decomposed from the front: the first transition, then a shorter bridge. -/
+/-- **Front decomposition of the bridge weights.** Let $h$ be a hidden Markov model with finite
+state set $S$, transition weights $a$ and emission weights $b$ in a semiring, let $x_0, x_1, \dots$
+be observations, and write $B_k(t, s, u)$ for the bridge weight of the paths from state $s$ at
+time $t$ to state $u$ at time $t + k$. Then for all $k, t \in \mathbb{N}$ and $s, u \in S$,
+$$B_{k+1}(t, s, u) = \sum_{s' \in S} a(s, s')\, b(s', x_{t+1})\, B_k(t + 1, s', u).$$ -/
 theorem bridge_succ_front [DecidableEq S] : ∀ (k t : ℕ) (s u : S),
     bridge h x (k + 1) t s u =
       ∑ s', h.trans s s' * h.emit s' (x (t + 1)) * bridge h x k (t + 1) s' u
@@ -85,7 +105,11 @@ theorem bridge_succ_front [DecidableEq S] : ∀ (k t : ℕ) (s u : S),
       rw [show t + (k + 1) + 1 = t + 1 + k + 1 by omega]
       simp only [mul_assoc]
 
-/-- Summing the bridges over their end state gives the backward variable. -/
+/-- **Bridge weights sum to the backward variable.** For a hidden Markov model with a finite set
+of states $S$ and weights in a semiring, observations $x_0, x_1, \dots$, all $k, t \in \mathbb{N}$
+and every state $s \in S$, the sum over all states $u \in S$ of the bridge weight from state $s$
+at time $t$ to state $u$ at time $t + k$ equals the backward variable $\beta_{k,t}(s)$, the
+weight of the observations $x_{t+1}, \dots, x_{t+k}$ given the state $s$ at time $t$. -/
 theorem sum_bridge [DecidableEq S] :
     ∀ (k t : ℕ) (s : S), ∑ u, bridge h x k t s u = backward h x k t s
   | 0, t, s => by simp [bridge, backward]
@@ -95,8 +119,13 @@ theorem sum_bridge [DecidableEq S] :
       refine Finset.sum_congr rfl fun s' _ => ?_
       rw [← Finset.mul_sum, sum_bridge k (t + 1) s']
 
-/-- The path sums with fixed states at times `t` and `t + k` factor through the forward variable
-and a bridge. -/
+/-- **Paths through two fixed states.** For a hidden Markov model with a finite set of states $S$
+and weights in a semiring, observations $x_0, x_1, \dots$, all $k, t \in \mathbb{N}$ and states
+$s, u \in S$, the sum of the path weights $p_{t+k}(z)$ over all state paths
+$z = (z_0, \dots, z_{t+k})$ in $S$ with $z_t = s$ and $z_{t+k} = u$ equals
+$\alpha_t(s)\, b_{k,t}(s, u)$. Here $p_{t+k}(z)$ is the joint weight of the path $z$ and the
+observations $x_0, \dots, x_{t+k}$, $\alpha_t(s)$ is the forward variable and $b_{k,t}(s, u)$ is
+the bridge weight from state $s$ at time $t$ to state $u$ at time $t + k$. -/
 theorem sum_pathProb_ite_ite [DecidableEq S] : ∀ (k t : ℕ) (s u : S),
     ∑ z : Fin (t + k + 1) → S,
       (if z ⟨t, by omega⟩ = s ∧ z (Fin.last (t + k)) = u then pathProb h x (t + k) z else 0) =
@@ -145,8 +174,12 @@ theorem sum_pathProb_ite_ite [DecidableEq S] : ∀ (k t : ℕ) (s u : S),
         simp
       · simp [hz]
 
-/-- **Forward-backward**: the joint weight of the observations up to time `t + k` and the state
-`s` at time `t` is `forward t s * backward k t s`. -/
+/-- **Forward-backward identity.** For a hidden Markov model with a finite set of states $S$ and
+weights in a semiring, observations $x_0, x_1, \dots$, times $t, k \in \mathbb{N}$ and a state
+$s \in S$, the joint weight of the observations $x_0, \dots, x_{t+k}$ and the state $s$ at time
+$t$ equals $\alpha_t(s)\,\beta_{k,t}(s)$, the forward variable $\alpha_t(s)$ (the weight of
+$x_0, \dots, x_t$ with the state at time $t$ equal to $s$) times the backward variable
+$\beta_{k,t}(s)$ (the weight of $x_{t+1}, \dots, x_{t+k}$ given the state $s$ at time $t$). -/
 theorem stateMarg_eq [DecidableEq S] (t k : ℕ) (s : S) :
     stateMarg h x t k s = forward h x t s * backward h x k t s := by
   rw [← sum_bridge, Finset.mul_sum,
@@ -157,7 +190,12 @@ theorem stateMarg_eq [DecidableEq S] (t k : ℕ) (s : S) :
   · simp [hz]
   · simp [hz]
 
-/-- The likelihood from the forward and backward variables at any intermediate time. -/
+/-- **The likelihood from the forward and backward variables.** Let $h$ be a hidden Markov model
+with finite state set $S$ and weights in a semiring, and let $x_0, x_1, \dots$ be observations.
+Write $\alpha_t(s)$ for the forward variable (the weight of $x_0, \dots, x_t$ with the state at
+time $t$ equal to $s$) and $\beta_k(t, s)$ for the backward variable. Then for all
+$t, k \in \mathbb{N}$, the likelihood of $x_0, \dots, x_{t+k}$ equals
+$$\sum_{s \in S} \alpha_t(s)\, \beta_k(t, s).$$ -/
 theorem likelihood_eq_sum_forward_mul_backward (t k : ℕ) :
     likelihood h x (t + k) = ∑ s, forward h x t s * backward h x k t s := by
   classical
@@ -171,29 +209,52 @@ section Smoothing
 
 variable {K : Type*} [Semifield K] (g : HMM S O K)
 
-/-- The normalized forward-backward weights `forward t s * backward k t s / likelihood`. For a
-probabilistic HMM (nonnegative weights with stochastic rows, positive likelihood) this is the
-smoothing posterior `P(z t = s | x 0, …, x (t + k))`: `smoothed_eq` writes it as the joint weight of
-the observations and `z t = s` over the likelihood. For general semifield weights it is only this
-ratio. -/
+/-- **Smoothed state weights.** For a hidden Markov model with a finite set of states $S$ and
+weights in a semifield $K$, observations $x_0, x_1, \dots$, times $t, k \in \mathbb{N}$ and a
+state $s \in S$, the smoothed weight of $s$ at time $t$ is
+$$\gamma_{t,k}(s) = \frac{\alpha_t(s)\,\beta_{k,t}(s)}{L_{t+k}},$$
+where $\alpha_t(s)$ is the forward variable, $\beta_{k,t}(s)$ is the backward variable (the weight
+of $x_{t+1}, \dots, x_{t+k}$ given the state $s$ at time $t$) and $L_{t+k}$ is the likelihood of
+$x_0, \dots, x_{t+k}$. Division is that of $K$, so $\gamma_{t,k}(s) = 0$ when $L_{t+k} = 0$.
+
+For nonnegative weights with stochastic rows and a positive likelihood this is the smoothing
+posterior $P(z_t = s \mid x_0, \dots, x_{t+k})$ that the hidden state $z_t$ at time $t$ is $s$; for
+general semifield weights it is only this ratio. -/
 def smoothed (t k : ℕ) (s : S) : K :=
   forward g x t s * backward g x k t s / likelihood g x (t + k)
 
-/-- **Forward-backward smoothing is a joint-to-likelihood ratio**: `smoothed` is the joint weight
-of the observations and `z t = s` divided by the likelihood. When the weights are probabilities
-and the likelihood is positive, this ratio is the conditional state marginal. -/
+/-- **Forward-backward smoothing is a joint-to-likelihood ratio.** Let $g$ be a hidden Markov model
+with finite state set $S$ and weights in a semifield, and let $x_0, x_1, \dots$ be observations.
+For all $t, k \in \mathbb{N}$ and $s \in S$, the smoothing weight
+$\alpha_t(s)\, \beta_k(t, s) / L_{t+k}$, where $\alpha$ and $\beta$ are the forward and backward
+variables and $L_{t+k}$ is the likelihood of $x_0, \dots, x_{t+k}$, equals the joint weight of
+$x_0, \dots, x_{t+k}$ and the state $s$ at time $t$, divided by $L_{t+k}$.
+
+When the weights are probabilities and the likelihood is positive, this ratio is the conditional
+state marginal. -/
 theorem smoothed_eq [DecidableEq S] (t k : ℕ) (s : S) :
     smoothed x g t k s = stateMarg g x t k s / likelihood g x (t + k) := by
   rw [smoothed, stateMarg_eq]
 
-/-- The smoothing weights at each time sum to one when the likelihood is nonzero. -/
+/-- **Smoothed weights sum to one.** For a hidden Markov model with a finite set of states $S$ and
+weights in a semifield, observations $x_0, x_1, \dots$ and times $t, k \in \mathbb{N}$, if the
+likelihood $L_{t+k}$ of $x_0, \dots, x_{t+k}$ is nonzero, then the smoothed weights
+$\gamma_{t,k}(s) = \alpha_t(s)\,\beta_{k,t}(s) / L_{t+k}$, with $\alpha$ the forward and $\beta$
+the backward variables, sum to $1$ over all states $s \in S$. -/
 theorem sum_smoothed (t k : ℕ) (hL : likelihood g x (t + k) ≠ 0) :
     ∑ s, smoothed x g t k s = 1 := by
   simp only [smoothed, div_eq_mul_inv]
   rw [← Finset.sum_mul, ← likelihood_eq_sum_forward_mul_backward, mul_inv_cancel₀ hL]
 
-/-- With nonnegative weights over an ordered field the smoothing weights are nonnegative, so with
-a positive likelihood they form a distribution over states (`sum_smoothed`). -/
+/-- **Smoothing weights are nonnegative.** Let $g$ be a hidden Markov model with finite state set
+$S$ whose initial, transition and emission weights are nonnegative elements of a linearly ordered
+semifield $K$, and let $x_0, x_1, \dots$ be observations. For all $t, k \in \mathbb{N}$ and
+$s \in S$, the smoothing weight $\alpha_t(s)\, \beta_k(t, s) / L_{t+k}$ is nonnegative, where
+$\alpha$ and $\beta$ are the forward and backward variables and $L_{t+k}$ is the likelihood of
+$x_0, \dots, x_{t+k}$.
+
+Since the smoothing weights at each time sum to one when the likelihood is nonzero, with a
+positive likelihood they form a probability distribution over the states. -/
 theorem smoothed_nonneg [LinearOrder K] [IsStrictOrderedRing K]
     (hn : g.Nonneg) (t k : ℕ) (s : S) : 0 ≤ smoothed x g t k s := by
   classical
@@ -211,11 +272,21 @@ section Tabulated
 
 variable {n : ℕ}
 
-/-- One backward step on a table of the next step's values. -/
+/-- **One step of the tabulated backward algorithm.** For a hidden Markov model $g$ with states
+$\{0, \dots, n - 1\}$, transition weights $a$ and emission weights $b$ in a semiring $R$, an
+observation sequence $x_0, x_1, \dots$, a vector $v \in R^n$ and a time $t$, this is the vector in
+$R^n$ whose entry at state $s$ is $\sum_{s'} a(s, s')\, b(s', x_{t+1})\, v_{s'}$. -/
 def backwardStep (g : HMM (Fin n) O R) (v : Vector R n) (t : ℕ) : Vector R n :=
   Vector.ofFn fun s => ∑ s', g.trans s s' * g.emit s' (x (t + 1)) * v[s']
 
-/-- The backward variables, tabulated step by step: `O(n²)` operations per step. -/
+/-- **The tabulated backward algorithm.** For a hidden Markov model $g$ with states
+$\{0, \dots, n - 1\}$, transition weights $a$ and emission weights $b$ in a semiring $R$, and an
+observation sequence $x_0, x_1, \dots$, the tables $\beta^{(k)}_t \in R^n$ for $k, t \in \mathbb{N}$
+are defined by recursion on $k$: $\beta^{(0)}_t$ is the all-ones vector, and $\beta^{(k+1)}_t$ is
+one backward step at time $t$ applied to $\beta^{(k)}_{t+1}$, that is, its entry at state $s$ is
+$\sum_{s'} a(s, s')\, b(s', x_{t+1})\, \beta^{(k)}_{t+1}(s')$.
+
+The entries of $\beta^{(k)}_t$ are the backward variables; each step takes $O(n^2)$ operations. -/
 def backwardTab (g : HMM (Fin n) O R) : ℕ → ℕ → Vector R n
   | 0, _ => Vector.replicate n 1
   | k + 1, t => backwardStep x g (backwardTab g k (t + 1)) t
@@ -225,12 +296,22 @@ theorem backwardTab_get (g : HMM (Fin n) O R) :
   | 0, t, s => by simp [backwardTab, backward]
   | k + 1, t, s => by simp [backwardTab, backwardStep, backward, backwardTab_get g k (t + 1)]
 
-/-- Combine the forward and backward tables into the smoothing weights. -/
+/-- **Smoothing step on tables.** For a semifield $K$, vectors $a, b \in K^n$ and $L \in K$, this is
+the vector in $K^n$ whose entry at $s$ is $a_s b_s / L$.
+
+It combines the forward and backward tables into the smoothing weights. -/
 def smoothStep {K : Type*} [Semifield K] (a b : Vector K n) (L : K) : Vector K n :=
   Vector.ofFn fun s => a[s] * b[s] / L
 
-/-- **Forward-backward smoothing**, tabulated: the smoothing weights `smoothed x g t k s` of all
-states at time `t`, in `O((t + k) n²)` operations. -/
+/-- **Tabulated forward-backward smoothing.** Let $g$ be a hidden Markov model with states
+$\{0, \dots, n - 1\}$ and weights in a semifield $K$, and let $x_0, x_1, \dots$ be observations.
+For $t, k \in \mathbb{N}$, this is the vector in $K^n$ whose entry at state $s$ is
+$\alpha_t(s)\, \beta_k(t, s) / L_{t+k}$, where $\alpha_t$ is the tabulated forward vector at time
+$t$, $\beta_k(t, \cdot)$ is the tabulated backward vector for $k$ steps from time $t$, and $L_{t+k}$
+is the tabulated likelihood of $x_0, \dots, x_{t+k}$.
+
+Its entries are the smoothing weights of all states at time $t$, computed in $O((t + k) n^2)$
+operations. -/
 def smoothedTab {K : Type*} [Semifield K] (g : HMM (Fin n) O K) (t k : ℕ) : Vector K n :=
   smoothStep (forwardTab x g t) (backwardTab x g k t) (likelihoodTab x g (t + k))
 

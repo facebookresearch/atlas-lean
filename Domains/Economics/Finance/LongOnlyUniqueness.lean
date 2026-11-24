@@ -98,8 +98,9 @@ theorem existsUnique_isMinOn_targetSlice_of_pair_pos {ι : Type*} [Fintype ι]
     linarith [hpar, hhom, hQd, heq]
   exact not_lt_of_ge hleu hlt
 
-/-- Positivity specialization: if `Sigma` is positive definite, the
-distinct-pair positivity hypothesis above is satisfied. -/
+/-- Positivity specialization: if `Sigma` is positive definite and the slice is nonempty,
+exactly one point of the slice minimizes `w ⬝ᵥ (Sigma *ᵥ w)` on it (the distinct-pair
+positivity hypothesis above is satisfied). -/
 theorem existsUnique_isMinOn_targetSlice_of_posDef {ι : Type*} [Fintype ι]
     (Sigma : Matrix ι ι ℝ) (μv : ι → ℝ) (m : ℝ)
     (hne : (targetSlice μv m).Nonempty) (hSigma : Sigma.PosDef) :

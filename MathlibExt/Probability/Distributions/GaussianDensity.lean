@@ -47,8 +47,9 @@ open scoped RealInnerProductSpace MatrixOrder
 
 variable {ι : Type*} [Fintype ι]
 
-/-- The standard Gaussian density on `EuclideanSpace ℝ ι`:
-`(2π)^(-n/2) exp (-‖v‖² / 2)`. -/
+/-- **Standard Gaussian density function.** Let $\iota$ be a finite set of size $n$. The standard
+Gaussian density on the Euclidean space $\mathbb{R}^\iota$ is the real-valued function
+$v \mapsto (2\pi)^{-n/2} \exp(-\|v\|^2/2)$. -/
 noncomputable def stdGaussianPDFReal (v : EuclideanSpace ℝ ι) : ℝ :=
   ((√(2 * Real.pi)) ^ Fintype.card ι)⁻¹ * Real.exp (-(‖v‖ ^ 2) / 2)
 
@@ -68,7 +69,9 @@ theorem integrable_stdGaussianPDFReal : Integrable (stdGaussianPDFReal (ι := ι
   norm_cast
   ring_nf
 
-/-- The standard Gaussian density as a measure. -/
+/-- **Standard Gaussian measure via its density.** Let $\iota$ be a finite set of size $n$. This is
+the measure on the Euclidean space $\mathbb{R}^\iota$ with density
+$v \mapsto (2\pi)^{-n/2} \exp(-\|v\|^2/2)$ with respect to Lebesgue measure. -/
 noncomputable def stdGaussianDensityMeasure : Measure (EuclideanSpace ℝ ι) :=
   volume.withDensity fun v => ENNReal.ofReal (stdGaussianPDFReal v)
 
@@ -111,7 +114,9 @@ theorem charFun_stdGaussianDensityMeasure (t : EuclideanSpace ℝ ι) :
   rw [I_sq]
   ring
 
-/-- **The standard Gaussian has density** `(2π)^(-n/2) exp (-‖v‖² / 2)`. -/
+/-- **The standard Gaussian has a density.** Let $\iota$ be a finite set of size $n$. The standard
+Gaussian measure on the Euclidean space $\mathbb{R}^\iota$ has density
+$v \mapsto (2\pi)^{-n/2} \exp(-\|v\|^2/2)$ with respect to Lebesgue measure. -/
 theorem stdGaussian_eq_withDensity :
     stdGaussian (EuclideanSpace ℝ ι) =
       volume.withDensity fun v => ENNReal.ofReal (stdGaussianPDFReal v) := by
@@ -119,7 +124,10 @@ theorem stdGaussian_eq_withDensity :
   refine Measure.ext_of_charFun (funext fun t => ?_)
   rw [charFun_stdGaussian, charFun_stdGaussianDensityMeasure]
 
-/-- Pushing a measure with density through a measurable equivalence. -/
+/-- **Pushforward of a measure with density.** Let $e : \alpha \to \beta$ be a measurable
+equivalence between measurable spaces, $\nu$ a measure on $\alpha$ and $g : \alpha \to [0, \infty]$
+any function. Then the pushforward under $e$ of the measure with density $g$ with respect to $\nu$
+is the measure with density $g \circ e^{-1}$ with respect to the pushforward $e_*\nu$ of $\nu$. -/
 theorem map_withDensity_measurableEquiv {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
     (e : α ≃ᵐ β) (ν : Measure α) {g : α → ENNReal} :
     (ν.withDensity g).map e = (ν.map e).withDensity (g ∘ e.symm) := by
@@ -130,7 +138,10 @@ theorem map_withDensity_measurableEquiv {α β : Type*} [MeasurableSpace α] [Me
 
 variable [DecidableEq ι]
 
-/-- The affine map `x ↦ μ + A x` of an invertible matrix, as a measurable equivalence. -/
+/-- **The affine change of variables as a measurable equivalence.** Let $\iota$ be a finite type,
+$\mu \in \mathbb{R}^\iota$ and $A$ a real $\iota \times \iota$ matrix with nonzero determinant. The
+map $x \mapsto \mu + Ax$ is a measurable equivalence of the Euclidean space $\mathbb{R}^\iota$ with
+itself, with inverse $y \mapsto A^{-1}(y - \mu)$. -/
 noncomputable def affineEquiv (μ : EuclideanSpace ℝ ι) (A : Matrix ι ι ℝ) (hA : IsUnit A.det) :
     EuclideanSpace ℝ ι ≃ᵐ EuclideanSpace ℝ ι where
   toFun x := μ + toEuclideanCLM (𝕜 := ℝ) A x
@@ -158,7 +169,10 @@ theorem det_toEuclideanCLM (A : Matrix ι ι ℝ) :
   rw [coe_toEuclideanCLM_eq_toEuclideanLin, toEuclideanLin_eq_toLin_orthonormal,
     LinearMap.det_toLin]
 
-/-- Lebesgue measure under `x ↦ μ + A x` scales by `|det A|⁻¹`. -/
+/-- **Lebesgue measure under an invertible affine map.** Let $\iota$ be a finite type,
+$\mu \in \mathbb{R}^\iota$ and $A$ a real $\iota \times \iota$ matrix with nonzero determinant. The
+pushforward of Lebesgue measure on the Euclidean space $\mathbb{R}^\iota$ under the measurable
+equivalence $x \mapsto \mu + Ax$ equals $|\det A|^{-1}$ times Lebesgue measure. -/
 theorem map_affineEquiv_volume (μ : EuclideanSpace ℝ ι) (A : Matrix ι ι ℝ) (hA : IsUnit A.det) :
     (volume : Measure (EuclideanSpace ℝ ι)).map (affineEquiv μ A hA) =
       ENNReal.ofReal |(A.det)⁻¹| • volume := by
@@ -178,14 +192,21 @@ theorem map_affineEquiv_volume (μ : EuclideanSpace ℝ ι) (A : Matrix ι ι �
     map_add_left_eq_self]
   exact (measurable_const_add μ).aemeasurable
 
-/-- The multivariate Gaussian density
-`(2π)^(-n/2) det(S)^(-1/2) exp (-(x - μ)ᵀ S⁻¹ (x - μ) / 2)`. -/
+/-- **Multivariate Gaussian density function.** Let $\iota$ be a finite set of size $n$. For
+$\mu, x \in \mathbb{R}^\iota$ and a real $\iota \times \iota$ matrix $S$, this is the real number
+$$\frac{1}{(2\pi)^{n/2}\sqrt{\det S}} \exp\left(-\frac{(x - \mu)^\top S^{-1}(x - \mu)}{2}\right).$$
+
+It is defined for every $S$, with the conventions $\sqrt{t} = 0$ for $t < 0$, $1/0 = 0$ and
+$S^{-1} = 0$ for singular $S$, so its value is $0$ when $\det S \le 0$. -/
 noncomputable def multivariateGaussianPDFReal (μ : EuclideanSpace ℝ ι) (S : Matrix ι ι ℝ)
     (x : EuclideanSpace ℝ ι) : ℝ :=
   ((√(2 * Real.pi)) ^ Fintype.card ι)⁻¹ * (√S.det)⁻¹ *
     Real.exp (-(ofLp (x - μ) ⬝ᵥ S⁻¹ *ᵥ ofLp (x - μ)) / 2)
 
-/-- `‖√S⁻¹ u‖² = uᵀ S⁻¹ u` for positive definite `S`. -/
+/-- **Quadratic form of the inverse square root.** Let $\iota$ be a finite type, $S$ a positive
+definite real $\iota \times \iota$ matrix and $S^{1/2}$ its positive semidefinite square root. Then
+for every $u$ in the Euclidean space $\mathbb{R}^\iota$,
+$\|(S^{1/2})^{-1} u\|^2 = u^\top S^{-1} u$. -/
 theorem norm_sq_sqrt_inv_apply {S : Matrix ι ι ℝ} (hS : S.PosDef) (u : EuclideanSpace ℝ ι) :
     ‖toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S)⁻¹ u‖ ^ 2 = ofLp u ⬝ᵥ S⁻¹ *ᵥ ofLp u := by
   have hinv : (CFC.sqrt S)⁻¹ = CFC.sqrt S⁻¹ := hS.posSemidef.inv_sqrt
@@ -197,9 +218,13 @@ theorem norm_sq_sqrt_inv_apply {S : Matrix ι ι ℝ} (hS : S.PosDef) (u : Eucli
     ← ContinuousLinearMap.comp_apply, ← ContinuousLinearMap.mul_def, ← map_mul, hsq,
     inner_toEuclideanCLM]
 
-/-- **The multivariate Gaussian density**: for positive definite `S`, `multivariateGaussian μ S`
-has density `(2π)^(-n/2) det(S)^(-1/2) exp (-(x - μ)ᵀ S⁻¹ (x - μ) / 2)` with respect to
-Lebesgue measure. -/
+/-- **The multivariate Gaussian density.** Let $\iota$ be a finite set of size $n$, let
+$\mu \in \mathbb{R}^\iota$ and let $S$ be a positive definite real $\iota \times \iota$ matrix. Then
+the multivariate Gaussian measure on the Euclidean space $\mathbb{R}^\iota$ with mean $\mu$ and
+covariance matrix $S$ (the image of the standard Gaussian under $x \mapsto \mu + S^{1/2} x$) has
+density
+$$\frac{1}{(2\pi)^{n/2} \sqrt{\det S}} \exp\left(-\frac{(x - \mu)^\top S^{-1} (x - \mu)}{2}\right)$$
+with respect to Lebesgue measure. -/
 theorem multivariateGaussian_eq_withDensity (μ : EuclideanSpace ℝ ι) {S : Matrix ι ι ℝ}
     (hS : S.PosDef) :
     multivariateGaussian μ S =

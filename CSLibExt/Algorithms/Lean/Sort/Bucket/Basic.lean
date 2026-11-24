@@ -68,7 +68,14 @@ private lemma classifier_lt_generic {R : Type u} [Field R] [LinearOrder R]
       ✓
       return output.push x) output) #[]
 
-/-- Prepend into saved floor buckets, insertion-sort each bucket, then concatenate them. -/
+/-- **Bucket sort.** Let $R$ be a linearly ordered field with a floor function and let
+$x_1, \dots, x_n$ be an array of elements of $R$ that all lie in $[0, 1)$. If $n = 0$, bucket
+sort returns the empty array at zero cost. Otherwise it creates $n$ empty buckets indexed by
+$0, \dots, n - 1$, visits the entries in order and prepends each entry $x$ to bucket
+$\lfloor n x \rfloor$, sorts each bucket with insertion sort, and concatenates the sorted
+buckets in increasing order of index. The cost is $n$ for creating the buckets, plus one per
+entry placed, plus one per bucket sorted together with the comparisons insertion sort makes on
+it, plus one per bucket and one per entry during concatenation. -/
 public def bucketSort {R : Type} [Field R] [LinearOrder R]
     [IsStrictOrderedRing R] [FloorRing R] (xs : Array R)
     (hx : ∀ x ∈ xs.toList, x ∈ Ico (0 : R) 1) : TimeM Nat (Array R) :=
@@ -437,7 +444,11 @@ private lemma bucket_sort_time_actual {R : Type} [Field R] [LinearOrder R]
   rw [place_bucket_time, sorted_bucket_time, flatten_bucket_time, hlength]
   omega
 
-/-- Exact cost of the accepted saved-bucket executor on every valid array. -/
+/-- **Exact cost of bucket sort.** Let $R$ be a linearly ordered field with a floor function
+and let $x_1, \dots, x_n$ be an array of elements of $R$ that all lie in $[0, 1)$. For
+$0 \le i < n$ let $B_i$ be the list of the entries $x_j$ with $\lfloor n x_j \rfloor = i$,
+in decreasing order of $j$, and let $T(B_i)$ be the number of comparisons insertion sort makes
+on $B_i$. Then the cost of bucket sort on this array equals $5n + \sum_{i=0}^{n-1} T(B_i)$. -/
 public theorem bucketSort_time {R : Type} [Field R] [LinearOrder R]
     [IsStrictOrderedRing R] [FloorRing R] (xs : Array R)
     (hx : ∀ x ∈ xs.toList, x ∈ Ico (0 : R) 1) :
@@ -461,7 +472,9 @@ public theorem bucketSort_time {R : Type} [Field R] [LinearOrder R]
     subst xs
     simp [bucketSort]
 
-/-- Every valid array pays the five mandatory saved-bucket phase events per input. -/
+/-- **Linear lower bound on the cost of bucket sort.** Let $R$ be a linearly ordered field with
+a floor function. For every array of $n$ elements of $R$ that all lie in $[0, 1)$, the cost
+of bucket sort on this array is at least $5n$. -/
 public theorem bucketSort_time_lower {R : Type} [Field R] [LinearOrder R]
     [IsStrictOrderedRing R] [FloorRing R] (xs : Array R)
     (hx : ∀ x ∈ xs.toList, x ∈ Ico (0 : R) 1) :
@@ -469,7 +482,11 @@ public theorem bucketSort_time_lower {R : Type} [Field R] [LinearOrder R]
   rw [bucketSort_time]
   exact Nat.le_add_right _ _
 
-/-- Squared actual bucket occupancies bound the cost for arbitrary valid arrays. -/
+/-- **Bound on the cost of bucket sort via squared bucket sizes.** Let $R$ be a linearly
+ordered field with a floor function and let $x_1, \dots, x_n$ be an array of elements of $R$
+that all lie in $[0, 1)$. For $0 \le i < n$ let $c_i$ be the number of indices $j$ with
+$\lfloor n x_j \rfloor = i$. Then the cost of bucket sort on this array is at most
+$5n + \sum_{i=0}^{n-1} c_i^2$. -/
 public theorem bucketSort_time_le_sum_sq {R : Type} [Field R] [LinearOrder R]
     [IsStrictOrderedRing R] [FloorRing R] (xs : Array R)
     (hx : ∀ x ∈ xs.toList, x ∈ Ico (0 : R) 1) :
@@ -488,20 +505,27 @@ public theorem bucketSort_time_le_sum_sq {R : Type} [Field R] [LinearOrder R]
   simpa only [bucket, List.length_reverse, ← List.countP_eq_length_filter, pow_two]
     using ht.trans hs
 
-/-- The empty saved-bucket computation returns the empty array with zero cost. -/
+/-- **Bucket sort on the empty array.** For every linearly ordered field $R$ with a floor
+function, bucket sort applied to the empty array of elements of $R$ returns the empty array
+at zero cost. -/
 public theorem bucketSort_empty {R : Type} [Field R] [LinearOrder R]
     [IsStrictOrderedRing R] [FloorRing R]
     (hx : ∀ x ∈ (#[] : Array R).toList, x ∈ Ico (0 : R) 1) :
     bucketSort #[] hx = (pure #[] : TimeM Nat (Array R)) :=
   empty_computation hx
 
-/-- The saved-bucket computation preserves every input occurrence. -/
+/-- **Bucket sort permutes its input.** Let $R$ be a linearly ordered field with a floor
+function. For every array of elements of $R$ that all lie in $[0, 1)$, the array returned by
+bucket sort is a permutation of the input: every element occurs in the output exactly as many
+times as in the input. -/
 public theorem bucketSort_perm {R : Type} [Field R] [LinearOrder R]
     [IsStrictOrderedRing R] [FloorRing R] (xs : Array R)
     (hx : ∀ x ∈ xs.toList, x ∈ Ico (0 : R) 1) :
     (bucketSort xs hx).ret.toList.Perm xs.toList := bucket_sort_perm xs hx
 
-/-- Sorting the saved buckets yields a globally nondecreasing array. -/
+/-- **Bucket sort sorts.** Let $R$ be a linearly ordered field with a floor function. For every
+array of elements of $R$ that all lie in $[0, 1)$, the array returned by bucket sort is
+nondecreasing: each entry is at most every entry after it. -/
 public theorem bucketSort_sorted {R : Type} [Field R] [LinearOrder R]
     [IsStrictOrderedRing R] [FloorRing R] (xs : Array R)
     (hx : ∀ x ∈ xs.toList, x ∈ Ico (0 : R) 1) :
