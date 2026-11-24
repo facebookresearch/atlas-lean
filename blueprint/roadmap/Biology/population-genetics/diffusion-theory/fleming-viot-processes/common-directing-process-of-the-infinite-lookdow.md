@@ -50,9 +50,9 @@ Empirical total variation is bounded by the mismatched fraction. This proves the
 
 - [Infinite-level lookdown process on a finite type space](infinite-level-lookdown-process-finite-type-spac.md)
 
-## Scope and formalization boundary
+## Scope
 
-This is a finite-type argument. The reverse-martingale, conditional sampling, concentration, common-event and path-space interfaces remain to be formalized. No general-type de Finetti interface is claimed from an existing binary theorem, and no centered-exchangeable-martingale average is assumed to concentrate around zero merely because it is centered. Martingale-problem existence and uniqueness are separate questions. The fixed-time sampling clause is shared with the finite-level theorem; the lookdown overview already includes the path-limit scope.
+This is a finite-type argument. A proof page must still supply the reverse-martingale step, the conditional sampling estimate, the concentration bound, the common null set and the path-space measurability. The statement does not use a de Finetti theorem for general type spaces, and a centered exchangeable martingale average is not assumed to concentrate around zero merely because it is centered. Existence and uniqueness for the martingale problem are separate questions. The fixed-time sampling clause is shared with the finite-level theorem; the lookdown overview covers the path-limit scope.
 
 ## Sources
 

@@ -21,4 +21,4 @@ bottleneck, gives Poisson increments with means $\sum_k \lambda_k |I_k \cap [s, 
 
 ## Sources
 
-- J. F. C. Kingman, *Poisson Processes*, Oxford University Press (1993) (mapping theorem; not opened). The time change is derived above.
+- J. F. C. Kingman, *Poisson Processes*, Oxford University Press (1993) (mapping theorem). The time change is derived above.

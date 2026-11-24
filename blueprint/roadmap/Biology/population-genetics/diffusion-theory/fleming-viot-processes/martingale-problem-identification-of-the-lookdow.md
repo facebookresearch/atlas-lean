@@ -38,9 +38,9 @@ The finite-type operator correspondence identifies $LF_f=\mathcal A F_f$ and sup
 - [A common continuous directing process for the finite-type lookdown](common-directing-process-of-the-infinite-lookdow.md)
 - [Finite-type Fleming–Viot and Wright–Fisher martingale problems](finite-type-fleming-viot-k-allele-wright-fisher.md)
 
-## Scope and formalization boundary
+## Scope
 
-This is existence and generator identification on a finite type space. Uniqueness in law, the function-valued duality argument, and any resulting Markov-family assertion remain separate. The finite-chain martingale, uniform Taylor estimate and limit/monotone-class interfaces remain formalization obligations. The related lookdown overview already states the martingale-problem scope; its broader well-posedness claim is not proved here.
+This is existence and generator identification on a finite type space. Uniqueness in law, the function-valued duality argument, and any resulting Markov-family assertion remain separate. A proof page must still supply the finite-chain martingale, the uniform Taylor estimate and the passage to the limit with a monotone-class argument. The related lookdown overview states the martingale-problem scope; its broader well-posedness claim is not proved here.
 
 ## Sources
 

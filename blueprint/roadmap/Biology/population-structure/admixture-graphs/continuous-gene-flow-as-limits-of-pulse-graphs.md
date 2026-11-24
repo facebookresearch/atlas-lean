@@ -34,11 +34,11 @@ of genealogies, or of all f-statistics.
 
 ## Expansion
 
-The graph satisfies the canonical interface, including at $m=0,1$:
+The graph is an admixture graph in the canonical sense, including at $m=0,1$:
 non-root parent sets have one or two distinct nodes, proportions are
 nonnegative and sum to one. Give $R$ rank zero, $B_k$ rank $2k+1$ and
 $A_k$ rank $2k+2$. Every parent has smaller rank, proving well-foundedness.
-Zero-weight listed parents are permitted by the interface.
+Zero-weight listed parents are permitted by that definition.
 
 First-step recursion gives $\operatorname{visit}(B_k,B_0)=1$ and
 $\operatorname{visit}(A_0,B_0)=0$. Applying it to the **same target**

@@ -22,4 +22,4 @@ process, when $n \ge 2$.
 
 ## Sources
 
-- N. H. Barton, A. M. Etheridge and A. Véber, "A new model for evolution in a spatial continuum", arXiv:0904.0210 (2010), Assumption 2.4 (condition (5)) and the discussion after it (opened; stated there for $d = 2$).
+- N. H. Barton, A. M. Etheridge and A. Véber, "A new model for evolution in a spatial continuum", arXiv:0904.0210 (2010), Assumption 2.4 (condition (5)) and the discussion after it (stated there for $d = 2$).

@@ -20,4 +20,4 @@ So the drift-model hypotheses can fail for ascertained sites, even though f-stat
 
 ## Sources
 
-- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>, sections on ascertainment and Appendix C (opened). The counterexample is computed above in exact arithmetic.
+- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>, sections on ascertainment and Appendix C. The counterexample is computed above in exact arithmetic.

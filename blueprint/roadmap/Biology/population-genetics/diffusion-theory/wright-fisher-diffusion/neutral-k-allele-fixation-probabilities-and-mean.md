@@ -22,4 +22,4 @@ successive hitting times of faces); a sound expansion states that process and th
 
 ## Sources
 
-- M. Kimura and T. Ohta, "The average number of generations until fixation of a mutant gene in a finite population", Genetics 61 (1969), 763–771, <https://doi.org/10.1093/genetics/61.3.763> (two-allele case; not opened). The $K$-allele identity is derived above.
+- M. Kimura and T. Ohta, "The average number of generations until fixation of a mutant gene in a finite population", Genetics 61 (1969), 763–771, <https://doi.org/10.1093/genetics/61.3.763> (two-allele case). The $K$-allele identity is derived above.

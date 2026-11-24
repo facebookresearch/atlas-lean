@@ -25,4 +25,4 @@ separate statement that needs Donsker's invariance principle and the Skorokhod t
 
 ## Sources
 
-- P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley (1999) (not opened). The functional law is derived above.
+- P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley (1999). The functional law is derived above.

@@ -30,4 +30,4 @@ A good expansion adds a page for the pending prerequisite below and links it und
 
 ## Sources
 
-- A. W. van der Vaart, *Asymptotic Statistics*, Cambridge University Press (1998), Lemma 2.8 (Slutsky; not opened).
+- A. W. van der Vaart, *Asymptotic Statistics*, Cambridge University Press (1998), Lemma 2.8 (Slutsky).

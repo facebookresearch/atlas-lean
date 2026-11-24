@@ -24,6 +24,8 @@ $\theta d$. With zero migration it is instead $\theta$ within a deme.
 ## Proof depends on
 
 - [Integrability of a conditionally Poisson count](../poisson-mutation-on-the-kingman-genealogy/integrable-nat-cast-of-has-cond-distrib.md)
+- [Conditional mean of a conditionally Poisson count](../poisson-mutation-on-the-kingman-genealogy/cond-exp-nat-cast-of-has-cond-distrib-po.md)
+- [Integrability of a conditionally Poisson count](../poisson-mutation-on-the-kingman-genealogy/integrable-nat-cast-of-has-cond-distrib.md)
 - [Conditional Poisson mean](../poisson-mutation-on-the-kingman-genealogy/cond-exp-nat-cast-of-has-cond-distrib-po.md)
 
 ## Background
@@ -33,27 +35,20 @@ $\theta d$. With zero migration it is instead $\theta$ within a deme.
 
 ## Expansion
 
-Apply the generic canonical conditional-Poisson results with conditioning
+Apply the conditional-Poisson results, [integrability of a conditionally Poisson count](../poisson-mutation-on-the-kingman-genealogy/integrable-nat-cast-of-has-cond-distrib.md) and [its conditional mean](../poisson-mutation-on-the-kingman-genealogy/cond-exp-nat-cast-of-has-cond-distrib-po.md), with conditioning
 variable $T$ and measurable rate $\rho(t)=\theta t$.
 Integrability of $\rho(T)$ follows from that of $T$; integrating the
 conditional mean proves the identity.
-Those results already live in
-`Domains/Biology/PopulationGenetics/Coalescent/Mutation.lean` as
-`Coalescent.integrable_natCast_of_hasCondDistrib_poisson` and
-`Coalescent.condExp_natCast_of_hasCondDistrib_poisson` within
-`MathlibExt.Biology.PopulationGenetics`.
-Despite their roadmap folder name they do not require Kingman holding
-times. This page is their genealogy application, not a new implementation
-of the conditional-Poisson theorem or a second Kingman result.
+Those results do not require Kingman holding times; this page is their
+genealogy application, not a second conditional-Poisson or Kingman result.
 
-A general marked-population construction instantiating
-`CoalescentFStatistics.CoalescentModel` remains separate.
+A general marked-population construction of the [coalescent model of f-statistics](../../population-structure/coalescence-times-f-statistics-and-pca/coalescent-model.md) is a separate statement.
 The count identity alone supplies neither the population allele-frequency
 fields nor their square integrability, the sampling convention, the
-measure over sites, or the equality of that model's `meanHet` with this
+measure over sites, or the equality of that model's [mean heterozygosity](../../population-structure/coalescence-times-f-statistics-and-pca/mean-het.md) with this
 expected sequence-difference count. These bridges must be constructed
 before claiming its f-statistic assumption has been discharged.
 
 ## Sources
 
-- M. Slatkin, "Inbreeding coefficients and coalescence times", Genetical Research 58 (1991), 167–175, <https://doi.org/10.1017/S0016672300029827> (not opened). The identity is derived above.
+- M. Slatkin, "Inbreeding coefficients and coalescence times", Genetical Research 58 (1991), 167–175, <https://doi.org/10.1017/S0016672300029827>. The identity is derived above.

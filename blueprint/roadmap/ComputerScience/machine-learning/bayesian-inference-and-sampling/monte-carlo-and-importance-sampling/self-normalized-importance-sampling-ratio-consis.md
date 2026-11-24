@@ -84,4 +84,4 @@ bounds.
 
 ## Sources
 
-- S. Agapiou, O. Papaspiliopoulos, D. Sanz-Alonso and A. M. Stuart, "Importance Sampling: Intrinsic Dimension and Computational Cost", *Statistical Science* 32(3) (2017), 405–431, <https://doi.org/10.1214/17-STS611>. Bibliographic metadata checked; primary paper not opened. The consistency and ESS arguments above are derived using the linked canonical results.
+- S. Agapiou, O. Papaspiliopoulos, D. Sanz-Alonso and A. M. Stuart, "Importance Sampling: Intrinsic Dimension and Computational Cost", *Statistical Science* 32(3) (2017), 405–431, <https://doi.org/10.1214/17-STS611>. The consistency and ESS arguments above are derived using the linked canonical results.

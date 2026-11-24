@@ -1,4 +1,4 @@
-# SPD covariance-norm adapter for low-rank approximation
+# Best low-rank approximation in a Kronecker covariance norm
 
 Let $F\in\mathbb R^{n\times r}$, and let $V_1\in\mathbb R^{n\times n}$ and $V_2\in\mathbb R^{r\times r}$ be symmetric positive definite. Write $S_a=V_a^{1/2}$ for their symmetric positive definite square roots, so $S_a$ is invertible and $S_a^2=V_a$. For every $X\in\mathbb R^{n\times r}$, with $\operatorname{vec}$ stacking columns,
 
@@ -16,7 +16,7 @@ Symmetry of the roots and cyclicity of trace give
 
 $$\|S_1^{-1}XS_2^{-1}\|_F^2=\operatorname{tr}(S_1^{-1}XV_2^{-1}X^{\mathsf T}S_1^{-1})=\operatorname{tr}(V_1^{-1}XV_2^{-1}X^{\mathsf T}).$$
 
-The column-stacking identity $\operatorname{vec}(PXQ)=(Q^{\mathsf T}\otimes P)\operatorname{vec}(X)$ gives the quadratic-form equality. The map $G\mapsto S_1^{-1}GS_2^{-1}$ is a rank-preserving bijection, with inverse $H\mapsto S_1HS_2$. Apply the existing whitening prerequisite named below and pull back the truncated minimizer. This adapter discharges the strict-SPD hypotheses and identifies the covariance norm; it does not supply a new arbitrary-invertible whitening theorem.
+The column-stacking identity $\operatorname{vec}(PXQ)=(Q^{\mathsf T}\otimes P)\operatorname{vec}(X)$ gives the quadratic-form equality. The map $G\mapsto S_1^{-1}GS_2^{-1}$ is a rank-preserving bijection, with inverse $H\mapsto S_1HS_2$. Apply the whitened Eckart–Young theorem named in the Expansion and pull back the truncated minimizer. This reduction discharges the strict-SPD hypotheses and identifies the covariance norm; it is not a new whitening theorem for arbitrary invertible factors.
 
 The order $V_2\otimes V_1$ follows from column stacking, not from ordinary commutation of the factors. Even commuting diagonal factors can distinguish the two orders. With $V_1=\operatorname{diag}(9,1)$, $V_2=\operatorname{diag}(4,1)$ and $X=\left(\begin{smallmatrix}0&1\\0&0\end{smallmatrix}\right)$, the correct quadratic form is $1/9$, whereas replacing the covariance by $V_1\otimes V_2$ while retaining the same vectorization gives $1/4$. For differently sized factors, ordinary matrix commutation is not even defined.
 
@@ -32,10 +32,10 @@ Strict positive definiteness and the separable covariance are essential to this 
 
 ## Expansion
 
-- Proof prerequisite: the existing declaration `Matrix.EckartYoungFrobenius.isLeast_frobSq_whitened`, applied with $P=S_1^{-1}$ and $Q=S_2^{-1}$. Its declaration page is separate; no location is assumed here.
-- Formalize the strict-SPD square-root/invertibility and trace/column-vec identities used by this adapter, and instantiate the displayed minimizer and worked application. These interfaces remain open; no additional prerequisite page is silently treated as available.
+- Proof prerequisite: the whitened Eckart–Young theorem: for invertible $P$ and $Q$, the minimum of $\|P(F-G)Q\|_F^2$ over $\operatorname{rank}G\le k$ is the tail sum of squared singular values of $PFQ$, attained by pulling back a truncated singular value decomposition. It is applied with $P=S_1^{-1}$ and $Q=S_2^{-1}$.
+- The existence, symmetry and invertibility of the positive definite square roots, the trace and column-stacking identities, the displayed minimizer and the worked application.
 
 ## Sources
 
-- C. Eckart and G. Young, "The approximation of one matrix by another of lower rank", *Psychometrika* 1 (1936), 211–218, <https://doi.org/10.1007/BF02288367>, for the underlying approximation theorem. The norm and root specialization above is the adapter to that existing result.
-- É. Harney, N. Patterson, D. Reich and J. Wakeley, "Assessing the performance of qpAdm: a statistical tool for studying population admixture", *Genetics* 217 (2021), iyaa045, <https://doi.org/10.1093/genetics/iyaa045>, rank-based motivation only, not a proof of this adapter or a test-calibration claim.
+- C. Eckart and G. Young, "The approximation of one matrix by another of lower rank", *Psychometrika* 1 (1936), 211–218, <https://doi.org/10.1007/BF02288367>, for the underlying approximation theorem. The norm and root specialization above reduces the statement to that theorem.
+- É. Harney, N. Patterson, D. Reich and J. Wakeley, "Assessing the performance of qpAdm: a statistical tool for studying population admixture", *Genetics* 217 (2021), iyaa045, <https://doi.org/10.1093/genetics/iyaa045>, rank-based motivation only, not a proof of this statement or a test-calibration claim.

@@ -17,4 +17,4 @@ shape of the likelihood of a finite sample, which can have several stationary po
 
 ## Sources
 
-- W. G. Hill, "Estimation of linkage disequilibrium in randomly mating populations", Heredity 33 (1974), 229–239, <https://doi.org/10.1038/hdy.1974.89> (two-locus genotype probabilities under random mating; not opened). The identification is derived above.
+- W. G. Hill, "Estimation of linkage disequilibrium in randomly mating populations", Heredity 33 (1974), 229–239, <https://doi.org/10.1038/hdy.1974.89> (two-locus genotype probabilities under random mating). The identification is derived above.

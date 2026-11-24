@@ -22,4 +22,4 @@ using $\int_0^{2\pi} d\omega / (\alpha - \beta \cos\omega) = 2\pi / \sqrt{\alpha
 
 ## Sources
 
-- T. Ohta and M. Kimura, "A model of mutation appropriate to estimate the number of electrophoretically detectable alleles in a finite population", Genetical Research 22 (1973), 201–204, <https://doi.org/10.1017/S0016672300012994> (not opened). The formula is derived above in the coalescent limit; a finite-$N$ recursion is not stated.
+- T. Ohta and M. Kimura, "A model of mutation appropriate to estimate the number of electrophoretically detectable alleles in a finite population", Genetical Research 22 (1973), 201–204, <https://doi.org/10.1017/S0016672300012994>. The formula is derived above in the coalescent limit; a finite-$N$ recursion is not stated.

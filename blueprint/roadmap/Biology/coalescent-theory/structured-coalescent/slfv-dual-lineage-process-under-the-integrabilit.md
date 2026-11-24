@@ -22,4 +22,4 @@ A sound expansion adds a page for the following item and links it under the depe
 
 ## Sources
 
-- N. H. Barton, A. M. Etheridge and A. Véber, "A new model for evolution in a spatial continuum", arXiv:0904.0210 (2010), Section 2, rate (6) (opened).
+- N. H. Barton, A. M. Etheridge and A. Véber, "A new model for evolution in a spatial continuum", arXiv:0904.0210 (2010), Section 2, rate (6).

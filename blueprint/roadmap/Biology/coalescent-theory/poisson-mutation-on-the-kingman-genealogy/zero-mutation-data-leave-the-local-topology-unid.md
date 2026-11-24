@@ -20,4 +20,4 @@ sites can break the symmetry: singletons in unequal numbers per leaf give unequa
 
 ## Sources
 
-- J. F. C. Kingman, "The coalescent", Stochastic Processes and their Applications 13 (1982), 235–248, <https://doi.org/10.1016/0304-4149(82)90011-4> (exchangeability of the ranked topology; bibliographic data checked against Crossref; not opened). The statement is derived above.
+- J. F. C. Kingman, "The coalescent", Stochastic Processes and their Applications 13 (1982), 235–248, <https://doi.org/10.1016/0304-4149(82)90011-4> (exchangeability of the ranked topology). The statement is derived above.

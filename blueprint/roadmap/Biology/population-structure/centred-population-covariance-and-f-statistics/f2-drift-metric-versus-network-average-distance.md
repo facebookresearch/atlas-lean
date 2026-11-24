@@ -25,4 +25,4 @@ which differ by $\gamma(1 - \gamma)(p + q) > 0$ whenever $0 < \gamma < 1$ and $p
 
 ## Sources
 
-- J. Xu and C. Ané, "Identifiability of local and global features of phylogenetic networks from average distances", arXiv:2110.11814, Definition 7 (opened).
+- J. Xu and C. Ané, "Identifiability of local and global features of phylogenetic networks from average distances", arXiv:2110.11814, Definition 7.

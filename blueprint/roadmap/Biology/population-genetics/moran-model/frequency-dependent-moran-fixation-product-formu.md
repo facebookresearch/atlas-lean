@@ -19,4 +19,4 @@ satisfies $x_{i+1} - x_i = \gamma_i (x_i - x_{i-1})$ with $x_0 = 0$, $x_N = 1$.
 
 ## Sources
 
-- M. A. Nowak, A. Sasaki, C. Taylor and D. Fudenberg, "Emergence of cooperation and evolutionary stability in finite populations", Nature 428 (2004), 646–650, <https://doi.org/10.1038/nature02414> (not opened). The formula is derived above.
+- M. A. Nowak, A. Sasaki, C. Taylor and D. Fudenberg, "Emergence of cooperation and evolutionary stability in finite populations", Nature 428 (2004), 646–650, <https://doi.org/10.1038/nature02414>. The formula is derived above.

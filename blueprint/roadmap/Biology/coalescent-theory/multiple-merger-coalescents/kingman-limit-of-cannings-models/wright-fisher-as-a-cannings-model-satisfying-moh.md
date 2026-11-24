@@ -27,11 +27,11 @@ distributions to Kingman's $n$-coalescent. The clock is $N$ generations;
 for a diploid Wright–Fisher population with $2N_d$ gene copies it is
 $2N_d$ generations. No path-space convergence claim is added here.
 
-For $n\le N$, the Cannings lineage-count matrix equals the existing
+For $n\le N$, the Cannings lineage-count matrix equals the
 [Wright–Fisher lineage-count matrix](../../ancestral-lineage-counting-and-tavar-s-formula/wf-lineage-matrix.md).
 In a row with $b\le n$, its entry for $a$ parents is
 $S(b,a)(N)_a/N^b$, where $S(b,a)$ is a Stirling number of the second kind.
-The sample-size gate matters: the Cannings API sets rows $b>N$ to zero,
+The sample-size gate matters: the Cannings coalescence matrix has zero rows for $b>N$,
 whereas the unrestricted occupancy formula need not do so.
 
 ## Depends on
@@ -60,7 +60,7 @@ $(N)_k/N^k$. For $b$ distinct sampled children, a specified partition into
 $a$ parental groups has $(N)_a$ injective assignments of parents and
 each assignment has probability $N^{-b}$; summing over $S(b,a)$ such
 partitions gives the lineage matrix identity. This is an instance of
-the existing occupancy/Cannings definitions, not a second implementation.
+the occupancy and Cannings definitions, not a new model.
 Extend the family at $N=0,1$ by the unique empty/singleton parent-map
 laws; the canonical pair probabilities there are zero, not $1/N$.
 Those finite exceptions do not affect the asymptotic conditions or the
@@ -69,4 +69,4 @@ finite-dimensional convergence theorem with $1/c_N=N$.
 
 ## Sources
 
-- M. Möhle and S. Sagitov, "A classification of coalescent processes for haploid exchangeable population models", Annals of Probability 29 (2001), 1547–1562, <https://doi.org/10.1214/aop/1015345761> (not opened). The moments are computed above.
+- M. Möhle and S. Sagitov, "A classification of coalescent processes for haploid exchangeable population models", Annals of Probability 29 (2001), 1547–1562, <https://doi.org/10.1214/aop/1015345761>. The moments are computed above.

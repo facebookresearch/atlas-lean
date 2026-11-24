@@ -77,4 +77,4 @@ finite-dimensional limit through this exact kernel equality.
 
 ## Sources
 
-- M. Möhle and S. Sagitov, "A classification of coalescent processes for haploid exchangeable population models", Annals of Probability 29 (2001), 1547–1562, <https://doi.org/10.1214/aop/1015345761> (not opened). The moments are computed above.
+- M. Möhle and S. Sagitov, "A classification of coalescent processes for haploid exchangeable population models", Annals of Probability 29 (2001), 1547–1562, <https://doi.org/10.1214/aop/1015345761>. The moments are computed above.

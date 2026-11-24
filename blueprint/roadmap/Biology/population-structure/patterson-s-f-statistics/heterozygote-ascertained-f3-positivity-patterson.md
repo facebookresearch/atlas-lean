@@ -34,4 +34,4 @@ that it does not print. This page records the statement and the reduction, not t
 
 ## Sources
 
-- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>, Appendix C, Theorems 1 and 2 and equations (A1)–(A3) (opened).
+- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>, Appendix C, Theorems 1 and 2 and equations (A1)–(A3).

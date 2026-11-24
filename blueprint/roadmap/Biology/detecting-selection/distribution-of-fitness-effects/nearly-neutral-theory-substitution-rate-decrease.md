@@ -32,4 +32,4 @@ $u$; no atom at a literal infinite negative selection coefficient is needed.
 
 ## Sources
 
-- T. Ohta, "Slightly deleterious mutant substitutions in evolution", Nature 246 (1973), 96–98, <https://doi.org/10.1038/246096a0> (not opened). The monotonicity is derived above.
+- T. Ohta, "Slightly deleterious mutant substitutions in evolution", Nature 246 (1973), 96–98, <https://doi.org/10.1038/246096a0>. The monotonicity is derived above.

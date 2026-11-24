@@ -61,4 +61,4 @@ $p_t$ is a probability transition density. No such result is credited here.
 
 ## Sources
 
-- M. Kimura, *Solution of a process of random genetic drift with a continuous model* (1955), <https://doi.org/10.1073/pnas.41.3.144>, bibliographic attribution only; not used as an opened primary source. Coefficients, convergence and PDEs are derived above from the canonical Gegenbauer polynomials.
+- M. Kimura, *Solution of a process of random genetic drift with a continuous model* (1955), <https://doi.org/10.1073/pnas.41.3.144>, bibliographic attribution only. Coefficients, convergence and PDEs are derived above from the canonical Gegenbauer polynomials.

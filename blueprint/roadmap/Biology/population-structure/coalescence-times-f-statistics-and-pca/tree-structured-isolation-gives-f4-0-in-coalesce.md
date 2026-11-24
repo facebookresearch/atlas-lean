@@ -23,4 +23,4 @@ $\tau_R + 1$, so $f_4(A, B; C, D) = 0$, while the coalescent form gives $f_4(A, 
 
 ## Sources
 
-- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037> (not opened). The equalities are derived above.
+- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>. The equalities are derived above.

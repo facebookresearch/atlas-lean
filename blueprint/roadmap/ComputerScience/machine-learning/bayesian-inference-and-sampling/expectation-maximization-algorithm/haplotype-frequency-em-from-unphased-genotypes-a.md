@@ -75,4 +75,4 @@ phase values $29/1029$ and $36/37$ in the respective basins.
 
 ## Sources
 
-- L. Excoffier and M. Slatkin, "Maximum-likelihood estimation of molecular haplotype frequencies in a diploid population", Molecular Biology and Evolution 12 (1995), 921–927, <https://doi.org/10.1093/oxfordjournals.molbev.a040269> (not opened). The example is computed above.
+- L. Excoffier and M. Slatkin, "Maximum-likelihood estimation of molecular haplotype frequencies in a diploid population", Molecular Biology and Evolution 12 (1995), 921–927, <https://doi.org/10.1093/oxfordjournals.molbev.a040269>. The example is computed above.

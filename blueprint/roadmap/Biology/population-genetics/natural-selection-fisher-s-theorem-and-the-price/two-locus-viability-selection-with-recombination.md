@@ -40,10 +40,9 @@ a neutral special case as a proof prerequisite.
 For a check on life-cycle order, take $x_i=1/4$, $r=1/2$, all viabilities
 one except $w_{11}=2$. Then $D=0$ and this map gives $x_1'=5/17$.
 Recombining the selected gamete marginals instead gives $83/289$, a
-different answer. The canonical haploid product-fitness result in
-`Domains/Biology/PopulationGenetics/Classical/TwoLocusSelection.lean`
-explicitly concerns a different model; it is not a proof of this diploid map.
+different answer. The [haploid product-fitness result](../haploid-selection-and-multiplicative-fitnesses/recombine-select-eq-mul.md) concerns a different model;
+it is not a proof of this diploid map.
 
 ## Sources
 
-- R. C. Lewontin and K. Kojima, "The evolutionary dynamics of complex polymorphisms", Evolution 14 (1960), 458–472, <https://doi.org/10.2307/2405995> (not opened).
+- R. C. Lewontin and K. Kojima, "The evolutionary dynamics of complex polymorphisms", Evolution 14 (1960), 458–472, <https://doi.org/10.2307/2405995>.

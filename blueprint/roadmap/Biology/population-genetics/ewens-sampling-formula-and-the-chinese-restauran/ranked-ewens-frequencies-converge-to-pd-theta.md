@@ -14,9 +14,7 @@ The law of $P$ is GEM$(\theta)$ and $\sum_kP_k=1$ almost surely.
 Writing $p^\downarrow$ for decreasing rearrangement, the ranked vectors
 also converge almost surely in $\ell^1$ to $P^\downarrow$.
 The latter law is PD$(\theta)$, also written PD$(0,\theta)$.
-Here PD is defined as the ranking of GEM, matching the canonical
-`ProbabilityTheory.gemMeasure` and `ProbabilityTheory.pdMeasure` in
-`MathlibExt/Probability/PoissonDirichlet.lean` (whose indexing is zero-based).
+Here PD is defined as the decreasing rearrangement of GEM.
 No equivalence with a gamma-process construction is needed as a premise.
 
 ## Depends on
@@ -43,8 +41,8 @@ Repeat the construction in the residual restaurant. Induction gives
 independent Beta breaks and coordinatewise convergence, simultaneously
 for all coordinates by a countable intersection of probability-one events.
 The residual stick has expectation $(\theta/(1+\theta))^k\to0$,
-so the linked mass-one result applies. These canonical GEM/PD definitions
-and mass-one facts are existing declarations, not new proof targets.
+so the linked mass-one result applies. The GEM and PD laws and the fact
+that GEM weights sum to one almost surely are taken as given.
 
 For any nonnegative mass-one vectors $x_n,x$ with coordinatewise
 convergence, choose a finite prefix whose $x$ tail has mass below
@@ -68,4 +66,3 @@ asserted is convergence in distribution in $\ell^1$.
 ## Sources
 
 - N. Berestycki, *Recent progress in coalescent theory* (2009), <https://arxiv.org/abs/0909.3985>, Definition 1.3 and Theorem 1.5. The independent residual construction, l1 argument and ranking contraction are explicit above.
-- Canonical GEM/PD definitions and mass-one results: `ProbabilityTheory.gemMeasure`, `pdMeasure`, `ae_hasSum_gemMeasure`, `ae_pdMeasure` in `MathlibExt/Probability/PoissonDirichlet.lean`.

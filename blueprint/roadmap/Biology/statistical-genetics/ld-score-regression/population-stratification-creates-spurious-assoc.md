@@ -41,5 +41,5 @@ Zero covariance alone does not assert within-population independence.
 
 ## Sources
 
-- A. L. Price, N. J. Patterson, R. M. Plenge, M. E. Weinblatt, N. A. Shadick and D. Reich, "Principal components analysis corrects for stratification in genome-wide association studies", Nature Genetics 38 (2006), 904–909, <https://doi.org/10.1038/ng1847> (not opened).
-- B. Devlin and K. Roeder, "Genomic control for association studies", Biometrics 55 (1999), 997–1004, <https://doi.org/10.1111/j.0006-341X.1999.00997.x> (not opened). The identity is derived above.
+- A. L. Price, N. J. Patterson, R. M. Plenge, M. E. Weinblatt, N. A. Shadick and D. Reich, "Principal components analysis corrects for stratification in genome-wide association studies", Nature Genetics 38 (2006), 904–909, <https://doi.org/10.1038/ng1847>.
+- B. Devlin and K. Roeder, "Genomic control for association studies", Biometrics 55 (1999), 997–1004, <https://doi.org/10.1111/j.0006-341X.1999.00997.x>. The identity is derived above.

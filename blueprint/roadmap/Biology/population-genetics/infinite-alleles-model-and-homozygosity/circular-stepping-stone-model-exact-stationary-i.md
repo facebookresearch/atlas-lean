@@ -25,4 +25,4 @@ $m > \frac12$: for $D = 7$, $N = 2$, $m = 1$ and $u = 0.2$ the formula gives $\v
 
 ## Sources
 
-- M. Kimura and G. H. Weiss, "The stepping stone model of population structure and the decrease of genetic correlation with distance", Genetics 49 (1964), 561–576, <https://doi.org/10.1093/genetics/49.4.561> (not opened). The recursion and its Fourier solution are derived above and checked against iteration.
+- M. Kimura and G. H. Weiss, "The stepping stone model of population structure and the decrease of genetic correlation with distance", Genetics 49 (1964), 561–576, <https://doi.org/10.1093/genetics/49.4.561>. The recursion and its Fourier solution are derived above and checked against iteration.

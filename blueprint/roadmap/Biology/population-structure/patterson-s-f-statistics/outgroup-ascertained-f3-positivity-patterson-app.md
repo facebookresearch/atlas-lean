@@ -31,4 +31,4 @@ Markov property of drift on the tree the edges below $R$ are conditionally indep
 
 ## Sources
 
-- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>, Appendix C, Theorem 1 and its proof (opened; the main text's pointer to "Appendix D" refers to this theorem).
+- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>, Appendix C, Theorem 1 and its proof (the main text's pointer to "Appendix D" refers to this theorem).

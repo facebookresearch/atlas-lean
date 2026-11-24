@@ -20,4 +20,4 @@ $K$ is the identity, the off-diagonal count is $0$, while $A = S \times S$ count
 
 ## Sources
 
-- J. R. Norris, *Markov Chains*, Cambridge University Press (1997), Sections 2.6 and 2.9 (uniformization of finite chains; not opened). The general construction is derived above.
+- J. R. Norris, *Markov Chains*, Cambridge University Press (1997), Sections 2.6 and 2.9 (uniformization of finite chains). The general construction is derived above.

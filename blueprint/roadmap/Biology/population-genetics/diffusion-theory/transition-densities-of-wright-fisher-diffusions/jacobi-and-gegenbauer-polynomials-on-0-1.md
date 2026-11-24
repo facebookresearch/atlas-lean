@@ -33,19 +33,15 @@ $\int_0^1x(1-x)C_n^{(3/2)}(1-2x)^2\,dx=(n+1)(n+2)/(4(2n+3))$.
 
 ## Expansion
 
-Reuse `Polynomial.shiftedJacobi`, `gegenbauer`, `shiftedJacobi_ode`,
-`integral_shiftedJacobi_mul_shiftedJacobi`,
-`integral_shiftedJacobi_zero_sq`, `integral_shiftedJacobi_sq`,
-`shiftedJacobi_one_one` and `gegenbauer_three_halves_comp` in
-`MathlibExt/Analysis/SpecialFunctions/JacobiPolynomial.lean`.
-These already supply the underlying definitions, ODE, orthogonality,
-norms and specializations. This page specifies their normalization bridge,
-not a second polynomial implementation.
+The underlying facts are the standard ones for shifted Jacobi polynomials
+on $[0,1]$: their differential equation, orthogonality with respect to the
+Beta weight, the norms (including degree zero), the value at one in the
+case $a=b=1$, and the relation to Gegenbauer polynomials of index $3/2$.
+This page fixes the normalization that connects them.
 For $n\ge1$, division of the canonical norm by $B(a,b)$ gives
 $\mathbb E Q_n(Y)^2=n!b_{(n)}/((2n+a+b-1)(a+b)_{(n-1)}a_{(n)})$;
 scaling gives the displayed identities. The ODE is unchanged by scaling.
-No new graph prerequisite is needed to state this explicit definition;
-the exact existing declarations are identified above.
+No graph prerequisite is needed to state this explicit definition.
 
 ## Sources
 

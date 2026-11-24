@@ -39,4 +39,4 @@ the expression; this page makes neither extension implicitly.
 
 ## Sources
 
-- A. Manichaikul, J. C. Mychaleckyj, S. S. Rich, K. Daly, M. Sale and W.-M. Chen, "Robust relationship inference in genome-wide association studies", Bioinformatics 26 (2010), 2867–2873, <https://doi.org/10.1093/bioinformatics/btq559> (not opened). The expectation is derived above.
+- A. Manichaikul, J. C. Mychaleckyj, S. S. Rich, K. Daly, M. Sale and W.-M. Chen, "Robust relationship inference in genome-wide association studies", Bioinformatics 26 (2010), 2867–2873, <https://doi.org/10.1093/bioinformatics/btq559>. The expectation is derived above.

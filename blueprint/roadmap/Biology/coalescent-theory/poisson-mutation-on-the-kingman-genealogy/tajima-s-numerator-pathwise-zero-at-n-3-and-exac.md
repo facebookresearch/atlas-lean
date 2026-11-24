@@ -21,4 +21,4 @@ it needs the law of the ranked topology given the epoch lengths and is a separat
 
 ## Sources
 
-- F. Tajima, "Statistical method for testing the neutral mutation hypothesis by DNA polymorphism", Genetics 123 (1989), 585–595, <https://doi.org/10.1093/genetics/123.3.585> (bibliographic data checked against Crossref; not opened). The identity is derived above.
+- F. Tajima, "Statistical method for testing the neutral mutation hypothesis by DNA polymorphism", Genetics 123 (1989), 585–595, <https://doi.org/10.1093/genetics/123.3.585>. The identity is derived above.

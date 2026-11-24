@@ -10,7 +10,7 @@ All exit rates are finite, the off-diagonal rates are nonnegative and each row o
 
 $$\lim_{t\downarrow0}\frac{\mathbb E_n[f(N_t)]-f(n)}t=b_n\bigl(f(n+1)-f(n)\bigr)+d_n\bigl(f(n-1)-f(n)\bigr)=(A_\sigma f)(n),$$
 
-with the predecessor of zero interpreted as zero. Thus it realizes the existing [ASG generator](asg-generator.md). Its identification with the diffusion on the moment functions is the existing [operator duality](generator-one-sub-pow-eq-asg-generator.md), not a new polynomial identity. When $\sigma>0$ the process is **not stopped at its first visit to one**: another branching occurs there at rate $\sigma$.
+with the predecessor of zero interpreted as zero. Thus it realizes the [ASG generator](asg-generator.md). Its identification with the diffusion on the moment functions is the [operator duality](generator-one-sub-pow-eq-asg-generator.md), not a new polynomial identity. When $\sigma>0$ the process is **not stopped at its first visit to one**: another branching occurs there at rate $\sigma$.
 
 ## Explicit non-explosion proof
 
@@ -42,9 +42,9 @@ Each row of this sum has at most three nonzero terms. The jump-chain constructio
 
 - [Selection duality in operator form](generator-one-sub-pow-eq-asg-generator.md)
 
-## Formalization scope
+## Scope
 
-The concrete jump-process construction, stopped estimate and countable-process interface remain to be formalized. Existing operator and stationary-weight algebra are reused; this page does not re-prove them or construct the full branching graph with labeled ancestral lines.
+A proof page must still supply the construction of the jump process, the stopped estimate and the countable-state chain framework. The operator and stationary-weight identities are the linked statements; the full branching graph with labeled ancestral lines is not constructed here.
 
 ## Sources
 

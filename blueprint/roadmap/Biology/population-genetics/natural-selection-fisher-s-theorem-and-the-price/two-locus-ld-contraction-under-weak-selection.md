@@ -44,4 +44,4 @@ interference results remain separate objectives, not consequences of this bound.
 
 ## Sources
 
-- T. Nagylaki, "The evolution of multilocus systems under weak selection", Genetics 134 (1993), 627–647, <https://doi.org/10.1093/genetics/134.2.627> (not opened). The bound is derived above.
+- T. Nagylaki, "The evolution of multilocus systems under weak selection", Genetics 134 (1993), 627–647, <https://doi.org/10.1093/genetics/134.2.627>. The bound is derived above.

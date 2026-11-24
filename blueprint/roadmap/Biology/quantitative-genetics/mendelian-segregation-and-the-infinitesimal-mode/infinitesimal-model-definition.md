@@ -19,5 +19,5 @@ distribution of offspring only through the mean of the parental values, consiste
 
 ## Sources
 
-- N. H. Barton, A. M. Etheridge and A. Véber, "The infinitesimal model: definition, derivation, and implications", Theoretical Population Biology 118 (2017), 50–73, <https://doi.org/10.1016/j.tpb.2017.06.001> (the model and its derivation; not opened here).
+- N. H. Barton, A. M. Etheridge and A. Véber, "The infinitesimal model: definition, derivation, and implications", Theoretical Population Biology 118 (2017), 50–73, <https://doi.org/10.1016/j.tpb.2017.06.001> (the model and its derivation).
 - N. H. Barton, A. M. Etheridge and A. Véber, "The infinitesimal model with dominance", Genetics 225 (2023), preprint <https://arxiv.org/abs/2211.03515>, Introduction and Remark 3.2 (in the purely additive case the segregation residual has variance $\bigl(1 - \frac{F_{11} + F_{22}}{2}\bigr)\frac{\sigma_A^2}{2}$, with $F_{11}$ and $F_{22}$ the identity of the two genes within each parent, as shown in the 2017 paper).

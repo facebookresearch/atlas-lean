@@ -45,7 +45,7 @@ Multiplying all binary clock rates by $c\ge0$ multiplies the partition generator
 
 ## Residual scope
 
-The general non-shifting $\Lambda$ construction, its finite-rate thinning of impact events, and the rate of each prescribed $k$-block merger remain outside this statement. In particular, the two-lineage rate $\Lambda([0,1])$ for general $\Lambda$, the full $\lambda_{b,k}$ formula, and general-$\Lambda$ projective consistency are not discharged by the pure Kingman case. Infinite-level path construction and measure-valued limits are also excluded. The existing Kingman rate matrix is reused; the new formalization obligation is identifying these graphical genealogies with its CTMC law. The related lookdown overview already includes this genealogical scope.
+The general non-shifting $\Lambda$ construction, its finite-rate thinning of impact events, and the rate of each prescribed $k$-block merger remain outside this statement. In particular, the two-lineage rate $\Lambda([0,1])$ for general $\Lambda$, the full $\lambda_{b,k}$ formula, and general-$\Lambda$ projective consistency are not discharged by the pure Kingman case. Infinite-level path construction and measure-valued limits are also excluded. The remaining obligation is to identify these graphical genealogies with the continuous-time Markov chain law of the Kingman rate matrix. The related lookdown overview covers this genealogical scope.
 
 ## Sources
 

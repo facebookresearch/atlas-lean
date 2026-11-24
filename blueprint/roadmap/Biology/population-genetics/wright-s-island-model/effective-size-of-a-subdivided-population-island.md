@@ -28,4 +28,4 @@ equilibrium, Wright's [island-model equilibrium](island-equilibrium.md), is a se
 
 ## Sources
 
-- M. C. Whitlock and N. H. Barton, "The effective size of a subdivided population", Genetics 146 (1997), 427–441, <https://doi.org/10.1093/genetics/146.1.427> (not opened). The recursion and limit are derived above.
+- M. C. Whitlock and N. H. Barton, "The effective size of a subdivided population", Genetics 146 (1997), 427–441, <https://doi.org/10.1093/genetics/146.1.427>. The recursion and limit are derived above.

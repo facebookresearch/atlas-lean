@@ -16,4 +16,4 @@ uniqueness only: it gives no stability of inversion from approximate values.
 
 ## Sources
 
-- W. Feller, *An Introduction to Probability Theory and Its Applications*, Vol. II, 2nd ed., Wiley (1971), Chapter XIII (not opened). The reduction to moments is derived above.
+- W. Feller, *An Introduction to Probability Theory and Its Applications*, Vol. II, 2nd ed., Wiley (1971), Chapter XIII. The reduction to moments is derived above.

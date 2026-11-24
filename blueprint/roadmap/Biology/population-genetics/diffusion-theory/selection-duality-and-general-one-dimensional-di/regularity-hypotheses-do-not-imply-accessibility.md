@@ -64,4 +64,4 @@ silently depend on an unreviewed general boundary-classification page.
 
 ## Sources
 
-- W. Feller, "The parabolic differential equations and the associated semi-groups of transformations", Annals of Mathematics 55 (1952), 468–519, <https://doi.org/10.2307/1969644> (boundary classification; not opened). The integrals are computed above.
+- W. Feller, "The parabolic differential equations and the associated semi-groups of transformations", Annals of Mathematics 55 (1952), 468–519, <https://doi.org/10.2307/1969644> (boundary classification). The integrals are computed above.

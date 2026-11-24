@@ -83,4 +83,4 @@ process construction and boundary behavior.
 
 ## Sources
 
-- M. Kimura, "Solution of a process of random genetic drift with a continuous model", Proceedings of the National Academy of Sciences USA 41 (1955), 144–150, <https://doi.org/10.1073/pnas.41.3.144> (not opened). The identification is derived above.
+- M. Kimura, "Solution of a process of random genetic drift with a continuous model", Proceedings of the National Academy of Sciences USA 41 (1955), 144–150, <https://doi.org/10.1073/pnas.41.3.144>. The identification is derived above.

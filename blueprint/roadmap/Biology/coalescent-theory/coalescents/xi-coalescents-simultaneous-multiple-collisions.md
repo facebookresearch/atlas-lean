@@ -27,4 +27,4 @@ is [Pitman's merger rate](merger-rate.md) $\lambda_{b, k_1}$; the consistency re
 
 ## Sources
 
-- M. Birkner, J. Blath, M. Möhle, M. Steinrücken and J. Tams, "A modified lookdown construction for the Xi-Fleming-Viot process with mutation and populations with recurrent bottlenecks", arXiv:0808.0412 (2008), Section 1.3, equation (1.1), quoting J. Schweinsberg, "Coalescents with simultaneous multiple collisions", Electronic Journal of Probability 5 (2000), Theorem 2 (the latter not opened). The consistency relation is checked numerically for $b \le 5$.
+- M. Birkner, J. Blath, M. Möhle, M. Steinrücken and J. Tams, "A modified lookdown construction for the Xi-Fleming-Viot process with mutation and populations with recurrent bottlenecks", arXiv:0808.0412 (2008), Section 1.3, equation (1.1), quoting J. Schweinsberg, "Coalescents with simultaneous multiple collisions", Electronic Journal of Probability 5 (2000), Theorem 2. The consistency relation is checked numerically for $b \le 5$.

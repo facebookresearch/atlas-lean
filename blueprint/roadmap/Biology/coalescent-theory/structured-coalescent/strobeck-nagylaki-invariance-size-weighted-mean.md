@@ -59,4 +59,4 @@ demes, the within-deme mean is $c_i$ and between-deme means are infinite.
 
 ## Sources
 
-- C. Strobeck, "Average number of nucleotide differences in a sample from a single subpopulation: a test for population subdivision", Genetics 117 (1987), 149–153, <https://doi.org/10.1093/genetics/117.1.149> (not opened). The identity is derived above and the example solved exactly.
+- C. Strobeck, "Average number of nucleotide differences in a sample from a single subpopulation: a test for population subdivision", Genetics 117 (1987), 149–153, <https://doi.org/10.1093/genetics/117.1.149>. The identity is derived above and the example solved exactly.

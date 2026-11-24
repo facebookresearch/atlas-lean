@@ -29,4 +29,4 @@ pages; the record's route through the three five-taxon shapes and a general exte
 
 ## Sources
 
-- J. H. Degnan and N. A. Rosenberg, "Discordance of species trees with their most likely gene trees", PLoS Genetics 2 (2006), e68, <https://doi.org/10.1371/journal.pgen.0020068>, Proposition 2, Definition 3, Lemmas 4 and 5 (opened, PMC1464820).
+- J. H. Degnan and N. A. Rosenberg, "Discordance of species trees with their most likely gene trees", PLoS Genetics 2 (2006), e68, <https://doi.org/10.1371/journal.pgen.0020068>, Proposition 2, Definition 3, Lemmas 4 and 5.

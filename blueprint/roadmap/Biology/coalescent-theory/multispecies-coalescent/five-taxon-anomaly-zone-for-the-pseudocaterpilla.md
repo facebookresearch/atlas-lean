@@ -21,4 +21,4 @@ has probability less than $\varepsilon + 1/90$ and the balanced topology $(((A, 
 
 ## Sources
 
-- J. H. Degnan and N. A. Rosenberg, "Discordance of species trees with their most likely gene trees", PLoS Genetics 2 (2006), e68, <https://doi.org/10.1371/journal.pgen.0020068>, Lemma 4 and its proof (opened, PMC1464820).
+- J. H. Degnan and N. A. Rosenberg, "Discordance of species trees with their most likely gene trees", PLoS Genetics 2 (2006), e68, <https://doi.org/10.1371/journal.pgen.0020068>, Lemma 4 and its proof.

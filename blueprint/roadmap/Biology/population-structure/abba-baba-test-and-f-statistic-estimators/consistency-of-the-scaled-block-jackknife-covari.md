@@ -20,4 +20,4 @@ not assert consistency for dependent (linked) blocks.
 
 ## Sources
 
-- A. W. van der Vaart, *Asymptotic Statistics*, Cambridge University Press (1998) (not opened). The limit is derived above.
+- A. W. van der Vaart, *Asymptotic Statistics*, Cambridge University Press (1998). The limit is derived above.

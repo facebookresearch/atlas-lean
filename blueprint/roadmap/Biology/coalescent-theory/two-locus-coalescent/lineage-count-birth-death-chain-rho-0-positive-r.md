@@ -20,4 +20,4 @@ As $\rho \to 0$ the three values for two lines tend to $1$, $2$ and $0$.
 
 ## Sources
 
-- R. C. Griffiths, "The two-locus ancestral graph", in *Selected Proceedings of the Sheffield Symposium on Applied Probability*, IMS Lecture Notes 18 (1991), 100–117 (not opened). The stationary law and the two-line values are derived above and checked against a truncated linear system at $\rho = 0.5, 1, 2$.
+- R. C. Griffiths, "The two-locus ancestral graph", in *Selected Proceedings of the Sheffield Symposium on Applied Probability*, IMS Lecture Notes 18 (1991), 100–117. The stationary law and the two-line values are derived above and checked against a truncated linear system at $\rho = 0.5, 1, 2$.

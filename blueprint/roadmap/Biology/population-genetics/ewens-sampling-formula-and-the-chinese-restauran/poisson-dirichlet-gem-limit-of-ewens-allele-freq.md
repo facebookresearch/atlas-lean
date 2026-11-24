@@ -47,11 +47,11 @@ random pick given
 the already ordered GEM sequence, whose first coordinate is fixed once
 that full sequence is known. The finite-exchangeability argument above
 avoids this conditioning ambiguity.
-The convergence theorem is reused rather than repeated as another new
+The convergence theorem is used, not restated as a new
 result. No stationary diffusion or gamma-process representation is
 required to prove this intensity identity.
 
 ## Sources
 
 - N. Berestycki, *Recent progress in coalescent theory* (2009), <https://arxiv.org/abs/0909.3985>, Section 1.3.1, Theorem 1.5, for the CRP/GEM relationship and size-biased order. The intensity identity and integrability qualification are derived above.
-- J. F. C. Kingman, *Random discrete distributions* (1975), <https://doi.org/10.1111/j.2517-6161.1975.tb01024.x>, bibliographic background only; not used as an opened primary source here.
+- J. F. C. Kingman, *Random discrete distributions* (1975), <https://doi.org/10.1111/j.2517-6161.1975.tb01024.x>, bibliographic background only.

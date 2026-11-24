@@ -24,4 +24,4 @@ it is a separate statement. With $Z_0 = 0$ it fails trivially, since extinction 
 
 ## Sources
 
-- K. B. Athreya and P. E. Ney, *Branching Processes*, Springer (1972), Chapter V (not opened). The mean identity is derived above.
+- K. B. Athreya and P. E. Ney, *Branching Processes*, Springer (1972), Chapter V. The mean identity is derived above.

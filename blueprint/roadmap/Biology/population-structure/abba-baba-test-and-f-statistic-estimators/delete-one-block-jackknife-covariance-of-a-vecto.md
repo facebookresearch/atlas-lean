@@ -10,4 +10,4 @@ $z_b$ are equal. This is an algebraic identity; it says nothing about consistenc
 
 ## Sources
 
-- A. W. van der Vaart, *Asymptotic Statistics*, Cambridge University Press (1998) (jackknife; not opened). The identity is derived above.
+- A. W. van der Vaart, *Asymptotic Statistics*, Cambridge University Press (1998) (jackknife). The identity is derived above.

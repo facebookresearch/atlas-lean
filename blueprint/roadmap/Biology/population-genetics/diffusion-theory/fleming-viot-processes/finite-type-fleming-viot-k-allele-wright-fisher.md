@@ -40,15 +40,15 @@ $$\sum_{a\in C_A}\frac\theta2(\nu_a-z_a)=\frac\theta2(\nu'_A-y_A),\qquad \sum_{a
 
 The chain rule therefore gives $L_d(g\circ R)=(L_\ell g)\circ R$. Applying the source martingale identity to $g\circ R$ shows that aggregation maps each parent-independent solution to a solution with target law $\nu'$ and the same $\theta$. This includes merging all types to the constant one-type process. Aggregation is a pushforward, not a bijection of solution laws.
 
-General mutation does not permit arbitrary merging. For $E=\{a,b,c\}$, let $q_{ac}=1$, $q_{bc}=2$, all other off-diagonal rates zero, and choose the diagonals to make row sums zero. After merging $\{a,b\}$, the drift into $c$ is $z_a+2z_b$. The states $(1,0,0)$ and $(0,1,0)$ have the same aggregated state but different drift, one and two. Thus no common aggregate generator valid for all initial states follows from the aggregate masses alone. Strong lumpability requires the rates $\sum_{b\in C_B}q_{ab}$ to be independent of the representative $a$ within each source class. No general-mutation merging theorem is asserted here without that additional interface.
+General mutation does not permit arbitrary merging. For $E=\{a,b,c\}$, let $q_{ac}=1$, $q_{bc}=2$, all other off-diagonal rates zero, and choose the diagonals to make row sums zero. After merging $\{a,b\}$, the drift into $c$ is $z_a+2z_b$. The states $(1,0,0)$ and $(0,1,0)$ have the same aggregated state but different drift, one and two. Thus no common aggregate generator valid for all initial states follows from the aggregate masses alone. Strong lumpability requires the rates $\sum_{b\in C_B}q_{ab}$ to be independent of the representative $a$ within each source class. No merging theorem for general mutation is asserted without that condition.
 
 ## Depends on
 
 - [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
 
-## Scope and formalization boundary
+## Scope
 
-The general-$Q$ generator computation is supported by the stated finite-dimensional provider and the opened source. Parent-independent type merging is the explicit chain-rule derivation above. General-$Q$ aggregation and martingale-problem uniqueness remain separate obligations. Polynomial identities, the $C^2$ approximation interface and solution-law pushforwards remain to be formalized. This algebraic result is a prerequisite for identifying the lookdown limit, not a consequence of an already-identified lookdown process. It does not create a second multi-allele generator theorem.
+The general-$Q$ generator computation follows from the $K$-allele generator on the simplex and the cited source. Parent-independent type merging is the chain-rule derivation above. Aggregation for general $Q$ and uniqueness for the martingale problem are separate statements. A proof page must still supply the polynomial identities, the $C^2$ approximation step and the push-forward of solution laws. This algebraic result is a prerequisite for identifying the lookdown limit, not a consequence of it, and it restates no second multi-allele generator theorem.
 
 ## Sources
 

@@ -58,5 +58,5 @@ an argument for an infinite logarithmic moment.
 ## Sources
 
 - R. Lyons and Y. Peres, *Probability on Trees and Networks*, corrected edition of August 19, 2026, <https://rdlyons.pages.iu.edu/prbtree/book.pdf>, Section 5.1, Kesten--Stigum statement and Corollary 5.7; Section 12.2, equations (12.5)--(12.7) and proof.
-- R. Lyons, R. Pemantle and Y. Peres, "Conceptual proofs of L log L criteria for mean behavior of branching processes", Annals of Probability 23 (1995), 1125--1138, <https://doi.org/10.1214/aop/1176988176> (historical reference; the proof followed here is the opened textbook).
-- H. Kesten and B. P. Stigum, "A limit theorem for multidimensional Galton--Watson processes", Annals of Mathematical Statistics 37 (1966), 1211--1223, <https://doi.org/10.1214/aoms/1177699266> (original reference, not represented as an opened source).
+- R. Lyons, R. Pemantle and Y. Peres, "Conceptual proofs of L log L criteria for mean behavior of branching processes", Annals of Probability 23 (1995), 1125--1138, <https://doi.org/10.1214/aop/1176988176> (historical reference; the proof followed here is the textbook argument).
+- H. Kesten and B. P. Stigum, "A limit theorem for multidimensional Galton--Watson processes", Annals of Mathematical Statistics 37 (1966), 1211--1223, <https://doi.org/10.1214/aoms/1177699266> (original reference).

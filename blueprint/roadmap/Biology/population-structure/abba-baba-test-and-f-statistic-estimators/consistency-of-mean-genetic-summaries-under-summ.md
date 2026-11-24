@@ -12,4 +12,4 @@ from an arbitrary mixing assumption without bounds on the autocovariances.
 
 ## Sources
 
-- P. J. Brockwell and R. A. Davis, *Time Series: Theory and Methods*, 2nd ed., Springer (1991) (not opened). The bound is derived above.
+- P. J. Brockwell and R. A. Davis, *Time Series: Theory and Methods*, 2nd ed., Springer (1991). The bound is derived above.

@@ -18,4 +18,4 @@ not f-equivalent without changing other lengths. For instance, with two further 
 
 ## Sources
 
-- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037> (bibliographic data checked against Crossref; the paper was not opened). The statement is derived above.
+- N. Patterson et al., "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>. The statement is derived above.

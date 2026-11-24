@@ -46,4 +46,4 @@ chain**, not convergence of a finite-mutation population process to it.
 
 ## Sources
 
-- G. Sella and A. E. Hirsh, "The application of statistical physics to evolutionary biology", Proceedings of the National Academy of Sciences USA 102 (2005), 9541–9546, <https://doi.org/10.1073/pnas.0501865102> (not opened). The identity is derived above.
+- G. Sella and A. E. Hirsh, "The application of statistical physics to evolutionary biology", Proceedings of the National Academy of Sciences USA 102 (2005), 9541–9546, <https://doi.org/10.1073/pnas.0501865102>. The identity is derived above.

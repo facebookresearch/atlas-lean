@@ -9,7 +9,7 @@ $$M_t=f(X_t)-f(X_0)-\int_0^t(Qf)(X_u)\,du$$
 
 is an integrable real martingale. This is the martingale problem for
 $Q$ with all real functions on the finite state set as test functions.
-No separate generic martingale-problem interface is needed to interpret
+No separate general definition of martingale problems is needed to interpret
 this explicitly stated property.
 
 ## Depends on

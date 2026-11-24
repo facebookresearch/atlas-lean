@@ -22,4 +22,4 @@ When $\Xi$ is concentrated on $\{\zeta_2 = \zeta_3 = \dots = 0\}$, $Q^\Xi_n$ is 
 
 ## Sources
 
-- M. Birkner, J. Blath, M. Möhle, M. Steinrücken and J. Tams, "A modified lookdown construction for the Xi-Fleming-Viot process with mutation and populations with recurrent bottlenecks", arXiv:0808.0412 (2008), Sections 1.3–1.4 (opened); J. Schweinsberg, "Coalescents with simultaneous multiple collisions", Electronic Journal of Probability 5 (2000) (not opened).
+- M. Birkner, J. Blath, M. Möhle, M. Steinrücken and J. Tams, "A modified lookdown construction for the Xi-Fleming-Viot process with mutation and populations with recurrent bottlenecks", arXiv:0808.0412 (2008), Sections 1.3–1.4; J. Schweinsberg, "Coalescents with simultaneous multiple collisions", Electronic Journal of Probability 5 (2000).

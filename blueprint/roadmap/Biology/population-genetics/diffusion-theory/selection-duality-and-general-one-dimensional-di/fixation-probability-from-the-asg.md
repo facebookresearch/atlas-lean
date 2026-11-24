@@ -4,11 +4,11 @@ Let $\sigma>0$, $x\in[0,1]$, and let $X$ be any [solution of the Wright–Fisher
 
 $$\mathbb P_x(X\text{ is eventually absorbed at }1)=1-\sum_{k\ge1}\pi_k^\sigma(1-x)^k=\frac{1-e^{-2\sigma x}}{1-e^{-2\sigma}}.$$
 
-This is a genealogical derivation of the existing [process fixation formula](../fixation-and-absorption-in-the-wright-fisher-dif/measure-real-fixation.md), not a new closed form for fixation.
+This is a genealogical derivation of the [process fixation formula](../fixation-and-absorption-in-the-wright-fisher-dif/measure-real-fixation.md), not a new closed form for fixation.
 
 ## The process-level limit
 
-The existing [finite absorption theorem](../fixation-and-absorption-in-the-wright-fisher-dif/ae-exists-absorbed.md) says that almost every path is eventually constantly zero or eventually constantly one. These two events partition the probability space up to a null set. Thus
+The [finite absorption theorem](../fixation-and-absorption-in-the-wright-fisher-dif/ae-exists-absorbed.md) says that almost every path is eventually constantly zero or eventually constantly one. These two events partition the probability space up to a null set. Thus
 
 $$1-X_t\longrightarrow\mathbf1_{\{X\text{ eventually absorbed at }0\}}\quad\text{almost surely},$$
 
@@ -22,7 +22,7 @@ By [positive-class convergence](asg-line-count-positive-recurrence-and-convergen
 
 $$\mathbb P_x(\text{loss})=\lim_{t\to\infty}\mathbb E_1[(1-x)^{N_t}]=\sum_{k\ge1}\pi_k^\sigma(1-x)^k.$$
 
-The existing [stationary generating-function identity](has-sum-asg-stationary-mul-one-sub-pow.md) evaluates the sum as $1-u_\sigma(x)$, with $u_\sigma$ given by [Kimura's formula](../wright-fisher-diffusion/kimura-fixation.md). Taking the complement yields the stated fixation probability. The absorption, stationary-series algebra and final formula are reused; the argument connects them through the realized ASG.
+The [stationary generating-function identity](has-sum-asg-stationary-mul-one-sub-pow.md) evaluates the sum as $1-u_\sigma(x)$, with $u_\sigma$ given by [Kimura's formula](../wright-fisher-diffusion/kimura-fixation.md). Taking the complement yields the stated fixation probability. The argument connects absorption, the stationary series and the fixation formula through the realized ASG.
 
 ## Boundary and scaling checks
 
@@ -51,9 +51,9 @@ uniformly for $x\in[0,1]$. The diffusion convention is $L_\sigma f=\tfrac12x(1-x
 
 - [Kimura's fixation probability, process form](../fixation-and-absorption-in-the-wright-fisher-dif/measure-real-fixation.md)
 
-## Formalization scope
+## Scope
 
-The concrete ASG/process-duality and countable-chain convergence interfaces remain formalization obligations. The existing proof of the final fixation formula does not by itself certify this genealogical route, and this page does not claim construction of a full labeled ancestral graph.
+A proof page must still supply the process-level duality with the ancestral selection graph and the convergence theorem for countable-state chains. The fixation formula itself does not establish this genealogical route, and no construction of the full labeled ancestral graph is claimed.
 
 ## Sources
 

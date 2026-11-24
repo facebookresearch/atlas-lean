@@ -15,4 +15,4 @@ normalization keeps branch lengths in expected substitutions per site.
 
 ## Sources
 
-- Z. Yang, "Maximum likelihood phylogenetic estimation from DNA sequences with variable rates over sites: approximate methods", Journal of Molecular Evolution 39 (1994), 306–314, <https://doi.org/10.1007/BF00160154> (bibliographic data checked against Crossref; not opened).
+- Z. Yang, "Maximum likelihood phylogenetic estimation from DNA sequences with variable rates over sites: approximate methods", Journal of Molecular Evolution 39 (1994), 306–314, <https://doi.org/10.1007/BF00160154>.

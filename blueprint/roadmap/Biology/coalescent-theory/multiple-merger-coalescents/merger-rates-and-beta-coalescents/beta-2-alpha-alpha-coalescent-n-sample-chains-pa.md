@@ -23,4 +23,4 @@ For $\alpha = 1$, $\Lambda$ is the uniform measure and the chain is the Bolthaus
 
 ## Sources
 
-- N. Berestycki, "Recent progress in coalescent theory", arXiv:0909.3985 (2009), Theorem 3.1 and Examples 2–3, equations (53), (62), (63) (opened).
+- N. Berestycki, "Recent progress in coalescent theory", arXiv:0909.3985 (2009), Theorem 3.1 and Examples 2–3, equations (53), (62), (63).

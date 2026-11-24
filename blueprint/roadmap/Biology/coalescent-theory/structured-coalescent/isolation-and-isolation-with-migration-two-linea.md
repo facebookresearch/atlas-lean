@@ -68,4 +68,4 @@ this two-lineage result.
 
 ## Sources
 
-- R. R. Hudson, M. Kreitman and M. Aguadé, "A test of neutral molecular evolution based on nucleotide data", Genetics 116 (1987), 153–159, <https://doi.org/10.1093/genetics/116.1.153> (divergence model; not opened). The chain and its pure-isolation law are derived above.
+- R. R. Hudson, M. Kreitman and M. Aguadé, "A test of neutral molecular evolution based on nucleotide data", Genetics 116 (1987), 153–159, <https://doi.org/10.1093/genetics/116.1.153> (divergence model). The chain and its pure-isolation law are derived above.

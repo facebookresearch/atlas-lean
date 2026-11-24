@@ -20,4 +20,4 @@ $-(2a + b + c - 4d)$; for example $(a, b, c, d) = (2, 3, 0, 4)$ has $x^* = \frac
 
 ## Sources
 
-- M. A. Nowak, A. Sasaki, C. Taylor and D. Fudenberg, "Emergence of cooperation and evolutionary stability in finite populations", Nature 428 (2004), 646–650, <https://doi.org/10.1038/nature02414> (not opened). The derivative is computed from the fixation formula, with $\gamma_i(0) = 1$ and $\gamma_i'(0) = g_i - f_i$, and the closed form checked exactly in rational arithmetic on random games.
+- M. A. Nowak, A. Sasaki, C. Taylor and D. Fudenberg, "Emergence of cooperation and evolutionary stability in finite populations", Nature 428 (2004), 646–650, <https://doi.org/10.1038/nature02414>. The derivative is computed from the fixation formula, with $\gamma_i(0) = 1$ and $\gamma_i'(0) = g_i - f_i$, and the closed form checked exactly in rational arithmetic on random games.

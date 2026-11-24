@@ -8,11 +8,11 @@ The expectations may be on different probability spaces; no pathwise coupling of
 
 ## Moment equation
 
-Put $h_n(y)=(1-y)^n$ and $u_n(t)=\mathbb E_\mu[h_n(X_t)]$. These functions satisfy $0\le u_n(t)\le1$. The [fixed-time Dynkin formula](../fixation-and-absorption-in-the-wright-fisher-dif/integral-generator.md) and the existing [operator duality](generator-one-sub-pow-eq-asg-generator.md) give
+Put $h_n(y)=(1-y)^n$ and $u_n(t)=\mathbb E_\mu[h_n(X_t)]$. These functions satisfy $0\le u_n(t)\le1$. The [fixed-time Dynkin formula](../fixation-and-absorption-in-the-wright-fisher-dif/integral-generator.md) and the [operator duality](generator-one-sub-pow-eq-asg-generator.md) give
 
 $$u_n(t)=(1-x)^n+\int_0^t(A_\sigma u(s))(n)\,ds.$$
 
-For each fixed $n$, all polynomial test functions and generator terms are bounded on $[0,1]$. Continuous sample paths and bounded convergence make their expectations continuous in time, justify Fubini, and show that $u_n$ is continuously differentiable with $u'_n=(A_\sigma u)(n)$. This imports the existing generator identity; it does not re-prove that algebra or assume the desired process duality.
+For each fixed $n$, all polynomial test functions and generator terms are bounded on $[0,1]$. Continuous sample paths and bounded convergence make their expectations continuous in time, justify Fubini, and show that $u_n$ is continuously differentiable with $u'_n=(A_\sigma u)(n)$. This uses the generator identity without assuming the process duality.
 
 ## Bounded stopped-duality argument
 
@@ -36,7 +36,7 @@ For each $n\ge1$, the [positive-class convergence of the line count](asg-line-co
 
 $$\lim_{t\to\infty}\mathbb E_\mu[(1-X_t)^n]=\sum_{k\ge1}\pi_k^\sigma(1-x)^k=1-u_\sigma(x).$$
 
-The last equality is the existing [stationary generating-function identity](has-sum-asg-stationary-mul-one-sub-pow.md). For $\sigma=0$, the line count reaches one and the limit is $1-x$. This conclusion excludes $n=0$, whose moment remains one. Its interpretation as loss or fixation additionally uses absorption, as in [fixation from the ASG](fixation-probability-from-the-asg.md).
+The last equality is the [stationary generating-function identity](has-sum-asg-stationary-mul-one-sub-pow.md). For $\sigma=0$, the line count reaches one and the limit is $1-x$. This conclusion excludes $n=0$, whose moment remains one. Its interpretation as loss or fixation additionally uses absorption, as in [fixation from the ASG](fixation-probability-from-the-asg.md).
 
 ## Depends on
 
@@ -55,9 +55,9 @@ The last equality is the existing [stationary generating-function identity](has-
 
 - [Fixation probability from the ancestral selection graph](fixation-probability-from-the-asg.md)
 
-## Formalization scope
+## Scope
 
-The proof uses the realized chain and its finite stopped-Dynkin interface; those adapters and this process-level argument remain to be formalized. The operator identity is existing material. Shared ASG duality and its sampling interpretation are also described by the related ASG page, not an additional independent result supplied here.
+The proof uses the realized chain and Dynkin's formula for it at bounded stopping times. The operator identity is the linked statement. The ASG duality and its sampling interpretation are also described by the related ASG page; this page adds the process-level form.
 
 ## Sources
 

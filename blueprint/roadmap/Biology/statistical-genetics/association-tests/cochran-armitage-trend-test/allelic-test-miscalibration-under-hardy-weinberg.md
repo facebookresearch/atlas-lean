@@ -37,9 +37,7 @@ positive-variance hypotheses, not treated as chi-square limits.
 ## Expansion
 
 The two moments follow by summing the three genotype probabilities.
-The existing theorem `MathlibExt.Biology.StatisticalGenetics.CochranArmitage.tendstoInDistribution_caStat`
-in `Domains/Biology/StatisticalGenetics/AssociationTests/CochranArmitage.lean`
-provides the trend limit; no second trend-test implementation is needed.
+The [trend-test limit](tendsto-in-distribution-ca-stat.md) provides the limit of $T_C$.
 The law of large numbers gives $R/N\to\rho$, $\hat p\to p$ and
 $v_N\to\sigma^2$. Nondegenerate tables therefore have probability
 approaching one. The exact relation
@@ -49,4 +47,4 @@ individuals as dependent; it is the within-individual allele covariance.
 
 ## Sources
 
-- P. D. Sasieni, "From genotypes to genes: doubling the sample size", Biometrics 53 (1997), 1253–1261, <https://doi.org/10.2307/2533494> (the allelic test requires Hardy–Weinberg proportions; not opened). The variance is derived above.
+- P. D. Sasieni, "From genotypes to genes: doubling the sample size", Biometrics 53 (1997), 1253–1261, <https://doi.org/10.2307/2533494> (the allelic test requires Hardy–Weinberg proportions). The variance is derived above.

@@ -39,7 +39,7 @@ For SMC′, removing self-events gives visible-change rate $\rho t(1-a(t))$ and 
 
 ## Expansion
 
-Separate the kernel definitions, nonexplosion, event-kernel detailed balance, semigroup reversibility and visible-change law into their own statements when formalizing. The stationary-law argument above applies to both kernels; no simulation is used in place of SMC′ invariance. These are approximations to recombining genealogies, not a claim that the full ancestral recombination graph is Markovian along the chromosome.
+Separate the kernel definitions, nonexplosion, event-kernel detailed balance, semigroup reversibility and visible-change law into their own statements in a full treatment. The stationary-law argument above applies to both kernels; no simulation is used in place of SMC′ invariance. These are approximations to recombining genealogies, not a claim that the full ancestral recombination graph is Markovian along the chromosome.
 
 ## Proof depends on
 

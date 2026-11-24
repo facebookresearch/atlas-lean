@@ -81,4 +81,4 @@ restriction $B$ is diagonalizable.
 
 ## Sources
 
-- E. Seneta, *Non-negative Matrices and Markov Chains*, 2nd ed., Springer (1981), Chapter 1 (not opened). The proof above is derived from the linked irreducible Perron–Frobenius and primitive stochastic-convergence contracts.
+- E. Seneta, *Non-negative Matrices and Markov Chains*, 2nd ed., Springer (1981), Chapter 1. The proof above is derived from the linked irreducible Perron–Frobenius and primitive stochastic-convergence contracts.

@@ -8,7 +8,7 @@ This is a Poisson distribution of parameter $2\sigma$ conditioned to be positive
 
 ## From balance to semigroup invariance
 
-The existing [normalization](has-sum-asg-stationary.md) and [global balance identity](asg-stationary-global-balance.md) give $\sum_n\pi_n^\sigma=1$ and $\pi^\sigma Q=0$. To justify that the latter is invariance for the realized semigroup, also check summability of the exit rates. With $\lambda=2\sigma$, the Poisson factorial moments give
+The [normalization](has-sum-asg-stationary.md) and [global balance identity](asg-stationary-global-balance.md) give $\sum_n\pi_n^\sigma=1$ and $\pi^\sigma Q=0$. To justify that the latter is invariance for the realized semigroup, also check summability of the exit rates. With $\lambda=2\sigma$, the Poisson factorial moments give
 
 $$\sum_{n\ge1}\pi_n^\sigma n=\frac{\lambda e^\lambda}{e^\lambda-1},\qquad \sum_{n\ge1}\pi_n^\sigma n(n-1)=\frac{\lambda^2e^\lambda}{e^\lambda-1},$$
 
@@ -53,10 +53,10 @@ This is convergence of the stationary laws, distinct from the long-time converge
 
 ## Related
 
-## Formalization scope
+## Scope
 
-The existing stationary-weight algebra is reused. The realized-semigroup invariance adapter, countable-chain recurrence/convergence theorem and skeleton argument remain formalization obligations; this page does not assert that a general countable-chain library interface has been completed.
+The stationary-weight identities are the linked statements. A proof page must still supply invariance of $\pi^\sigma$ for the realized semigroup, the recurrence and convergence theorem for countable-state chains, and the skeleton-chain argument.
 
 ## Sources
 
-- M. Birkner, *Stochastic population models*, 2025/26, <https://www.staff.uni-mainz.de/birkner/SPM2526/StochPopModels_25-26.pdf>, Section 3.4.1, for the ASG rates and duality context. Birkner's parameter satisfies $\sigma_B=2\sigma$ here and both mutation rates are zero. The invariant-law and convergence arguments above explicitly supply the required process-level steps; the existing Poisson-weight identities are reused.
+- M. Birkner, *Stochastic population models*, 2025/26, <https://www.staff.uni-mainz.de/birkner/SPM2526/StochPopModels_25-26.pdf>, Section 3.4.1, for the ASG rates and duality context. Birkner's parameter satisfies $\sigma_B=2\sigma$ here and both mutation rates are zero. The invariant-law and convergence arguments above supply the process-level steps; the Poisson-weight identities are the linked statements.

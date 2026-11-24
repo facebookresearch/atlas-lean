@@ -35,15 +35,15 @@ The map from the old permutation, the ordered pair and the coin to $(p,q,\pi')$ 
 
 The empirical measures agree pathwise in this coupling. The unordered dynamics are invariant under coordinate permutations, so their fixed-time laws are exchangeable. Applying the independent inverse permutation gives the same fixed-time law for the ordered vector. The case $N=1$ is the common mutation process.
 
-For the mixture assertion, start the consistent family with the conditionally iid initial laws. At each fixed time, restriction consistency and exchangeability give consistent exchangeable finite-dimensional laws. Their infinite extension satisfies the finite-alphabet de Finetti theorem, yielding $\nu_t$. A binary de Finetti theorem alone is not the general finite-alphabet interface; that formal adapter must not be silently assumed.
+For the mixture assertion, start the consistent family with the conditionally iid initial laws. At each fixed time, restriction consistency and exchangeability give consistent exchangeable finite-dimensional laws. Their infinite extension satisfies the finite-alphabet de Finetti theorem, yielding $\nu_t$. De Finetti's theorem for binary sequences alone does not give the finite-alphabet case.
 
 ## Related topics
 
 - [Moran model](../../moran-model/README.md)
 
-## Scope and formalization boundary
+## Scope
 
-This is the finite-type, shifting/inserting construction. Etheridge's non-shifting copying convention is a different event map; its Kingman genealogical comparison is treated separately. A fixed-$N$ empirical frequency process is grid-valued with jump paths, not the Wright–Fisher diffusion. No infinite-level path construction, simultaneous-in-time directing law, empirical path convergence, or Fleming–Viot martingale problem is asserted here. The finite-alphabet de Finetti interface and the identification with a formal CTMC path construction remain formalization obligations, not completed Lean results. The related lookdown overview already includes the finite construction and exchangeability scope.
+This is the finite-type, shifting/inserting construction. Etheridge's non-shifting copying convention is a different event map; its Kingman genealogical comparison is treated separately. A fixed-$N$ empirical frequency process is grid-valued with jump paths, not the Wright–Fisher diffusion. No infinite-level path construction, simultaneous-in-time directing law, empirical path convergence, or Fleming–Viot martingale problem is asserted here. A proof page must still supply de Finetti's theorem for a finite alphabet and the identification of the construction with the path of a finite continuous-time Markov chain. The related lookdown overview covers the finite construction and exchangeability scope.
 
 ## Sources
 

@@ -22,4 +22,4 @@ larger when $\varepsilon < 1/19$. The five-taxon tree behaves like the four-taxo
 
 ## Sources
 
-- J. H. Degnan and N. A. Rosenberg, "Discordance of species trees with their most likely gene trees", PLoS Genetics 2 (2006), e68, <https://doi.org/10.1371/journal.pgen.0020068>, Lemma 5, case $n = 5$, and Figure 3a (opened, PMC1464820).
+- J. H. Degnan and N. A. Rosenberg, "Discordance of species trees with their most likely gene trees", PLoS Genetics 2 (2006), e68, <https://doi.org/10.1371/journal.pgen.0020068>, Lemma 5, case $n = 5$, and Figure 3a.

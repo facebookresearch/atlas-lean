@@ -18,4 +18,4 @@ prior; with $\varepsilon_i = 0$, one read of each allele forces $g = 1$.
 
 ## Sources
 
-- H. Li, "A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data", Bioinformatics 27 (2011), 2987–2993, <https://doi.org/10.1093/bioinformatics/btr509> (bibliographic data checked against Crossref; not opened).
+- H. Li, "A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data", Bioinformatics 27 (2011), 2987–2993, <https://doi.org/10.1093/bioinformatics/btr509>.

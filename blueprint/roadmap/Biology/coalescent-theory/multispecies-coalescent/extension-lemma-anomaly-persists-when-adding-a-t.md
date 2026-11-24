@@ -19,4 +19,4 @@ which the anomalous tree is one of the two subtrees below the root.
 
 ## Sources
 
-- J. H. Degnan and N. A. Rosenberg, "Discordance of species trees with their most likely gene trees", PLoS Genetics 2 (2006), e68, <https://doi.org/10.1371/journal.pgen.0020068>, proof of Proposition 2 (opened, PMC1464820).
+- J. H. Degnan and N. A. Rosenberg, "Discordance of species trees with their most likely gene trees", PLoS Genetics 2 (2006), e68, <https://doi.org/10.1371/journal.pgen.0020068>, proof of Proposition 2.

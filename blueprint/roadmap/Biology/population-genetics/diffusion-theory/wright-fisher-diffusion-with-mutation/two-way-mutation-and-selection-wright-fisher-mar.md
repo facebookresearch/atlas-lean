@@ -13,8 +13,8 @@ $f:\mathbb R\to\mathbb R$ of class $C^2$ the process
 
 $$f(X_t)-f(X_0)-\int_0^t L_{\alpha,\theta}f(X_s)\,ds$$
 
-is an $(\mathcal F_t)$-martingale under $\mathbb P$. For the direct interface,
-state membership and continuity for every sample point, as in the existing
+is an $(\mathcal F_t)$-martingale under $\mathbb P$. In this definition,
+state membership and continuity hold for every sample point, as in the
 [selection-only solution notion](../fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md).
 This is a definition, not an assertion that a solution exists or is unique.
 For $\theta_1=\theta_2=0$ it reduces to that solution notion on the same
@@ -37,4 +37,4 @@ expectation differs from its initial value at every $t>0$.
 
 ## Sources
 
-- S. Tavaré, "Line-of-descent and genealogical processes, and their applications in population genetics models", Theoretical Population Biology 26 (1984), 119–164, <https://doi.org/10.1016/0040-5809(84)90027-3>, Section 7.5, equations (7.20) and (7.24), for the two one-way generator conventions. The two-way martingale-problem formulation is stated directly using the linked generator and existing selection-only interface.
+- S. Tavaré, "Line-of-descent and genealogical processes, and their applications in population genetics models", Theoretical Population Biology 26 (1984), 119–164, <https://doi.org/10.1016/0040-5809(84)90027-3>, Section 7.5, equations (7.20) and (7.24), for the two one-way generator conventions. The two-way martingale-problem formulation is stated directly using the linked generator and the selection-only solution notion.

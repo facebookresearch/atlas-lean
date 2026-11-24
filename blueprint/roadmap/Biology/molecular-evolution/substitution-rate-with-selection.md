@@ -52,4 +52,4 @@ No such process-limit result is asserted here.
 
 ## Sources
 
-- M. Kimura, "Evolutionary rate at the molecular level", Nature 217 (1968), 624–626, <https://doi.org/10.1038/217624a0> (not opened). The limit is derived above.
+- M. Kimura, "Evolutionary rate at the molecular level", Nature 217 (1968), 624–626, <https://doi.org/10.1038/217624a0>. The limit is derived above.

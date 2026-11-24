@@ -35,11 +35,10 @@ Recombination preserves each allele marginal. Under equal fitnesses,
 $y=x$, so conditional on the complete past the next $A$ count is
 $\operatorname{Binomial}(M,n_A/M)$, and likewise for $B$.
 The two locus-count processes need not be independent of one another.
-Reuse `Selection.select` and `Linkage.recombine` in
-`MathlibExt.Biology.PopulationGenetics`; the finite sampling kernel is
-built from these primitives, not from the different diploid
+The finite sampling kernel is built from [haploid selection](../../natural-selection-fisher-s-theorem-and-the-price/select.md) and
+[recombination](../../linkage-disequilibrium-and-haldane-s-map-functio/recombine.md), not from the different diploid
 viability-selection/meiosis recursion.
 
 ## Sources
 
-- J. Felsenstein, "The evolutionary advantage of recombination", Genetics 78 (1974), 737–756, <https://doi.org/10.1093/genetics/78.2.737> (not opened).
+- J. Felsenstein, "The evolutionary advantage of recombination", Genetics 78 (1974), 737–756, <https://doi.org/10.1093/genetics/78.2.737>.

@@ -38,4 +38,4 @@ Log-domain evaluation or stronger numerical assumptions are separate concerns.
 
 ## Sources
 
-- L. R. Rabiner, "A tutorial on hidden Markov models and selected applications in speech recognition", Proceedings of the IEEE 77 (1989), 257–286, <https://doi.org/10.1109/5.18626> (scaling; not opened). The identities are derived above.
+- L. R. Rabiner, "A tutorial on hidden Markov models and selected applications in speech recognition", Proceedings of the IEEE 77 (1989), 257–286, <https://doi.org/10.1109/5.18626> (scaling). The identities are derived above.

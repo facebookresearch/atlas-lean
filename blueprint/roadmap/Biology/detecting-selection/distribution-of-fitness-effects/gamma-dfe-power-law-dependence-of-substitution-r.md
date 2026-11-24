@@ -35,13 +35,11 @@ Bose–Einstein integral instead of using it as an unexplained prerequisite.
 The factor $e^{-ry/(4N)}$ increases to one, so monotone convergence
 and $\Gamma(a+1)=a\Gamma(a)$ give the limit.
 
-Reuse the canonical gamma and zeta functions and their integral/series
-APIs, not new definitions: `Real.integral_rpow_mul_exp_neg_mul_Ioi`
-in `Mathlib/Analysis/SpecialFunctions/Gamma/Basic.lean` and
-`zeta_eq_tsum_one_div_nat_add_one_cpow` in
-`Mathlib/NumberTheory/LSeries/RiemannZeta.lean` provide the component
-identities, specialized to the positive real argument $a+1>1$.
+The component identities are the integral representation
+$\int_0^\infty v^{s-1}e^{-mv}\,dv=\Gamma(s)m^{-s}$ for $m>0$ and the series
+$\zeta(s)=\sum_{m\ge1}m^{-s}$, both for real $s=a+1>1$, with the standard gamma
+and zeta functions.
 
 ## Sources
 
-- T. Ohta, "Slightly deleterious mutant substitutions in evolution", Nature 246 (1973), 96–98, <https://doi.org/10.1038/246096a0> (not opened). The limit and its constant are derived above.
+- T. Ohta, "Slightly deleterious mutant substitutions in evolution", Nature 246 (1973), 96–98, <https://doi.org/10.1038/246096a0>. The limit and its constant are derived above.

@@ -20,4 +20,4 @@ for $M \ge 2$. This quantifies the [convergence of Wright–Fisher coalescence t
 
 ## Sources
 
-- R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed., Springer (2008) (pair coalescence in the Wright–Fisher model; not opened). The bounds are derived above and checked numerically for M = 2, …, 200.
+- R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed., Springer (2008) (pair coalescence in the Wright–Fisher model). The bounds are derived above and checked numerically for M = 2, …, 200.

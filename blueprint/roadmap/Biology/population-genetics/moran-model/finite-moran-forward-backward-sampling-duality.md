@@ -104,4 +104,4 @@ sampling function, or assert path-space convergence.
 
 ## Sources
 
-- P. Donnelly, "The transient behaviour of the Moran model in population genetics", *Mathematical Proceedings of the Cambridge Philosophical Society* 95(2) (1984), 349–358, <https://doi.org/10.1017/S0305004100061624>. Bibliographic metadata checked; primary paper not opened. The finite identity, normalization and moment comparison above are derived using the linked canonical contracts.
+- P. Donnelly, "The transient behaviour of the Moran model in population genetics", *Mathematical Proceedings of the Cambridge Philosophical Society* 95(2) (1984), 349–358, <https://doi.org/10.1017/S0305004100061624>. The finite identity, normalization and moment comparison above are derived using the linked canonical contracts.

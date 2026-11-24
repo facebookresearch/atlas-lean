@@ -38,7 +38,7 @@ becomes half the heterozygosity lost.
 For disjoint intervals, the earlier increment is measurable at the
 start of the later interval; the canonical orthogonality theorem makes
 the cross moment zero. Expanding the square of their finite sum proves
-additivity. The generic martingale theorem is reused, not reintroduced
+additivity. The general martingale orthogonality theorem is used, not restated
 as a new probability result. Empty edges have retention factor one;
 $M=1$ gives complete loss of heterozygosity after any positive step.
 

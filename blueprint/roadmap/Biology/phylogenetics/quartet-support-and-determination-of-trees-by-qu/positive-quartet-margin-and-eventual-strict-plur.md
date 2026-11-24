@@ -18,4 +18,4 @@ alternative. At $t_q = 0$ the margin is $0$, which the hypothesis excludes.
 
 ## Sources
 
-- E. S. Allman, J. H. Degnan and J. A. Rhodes, "Identifying the rooted species tree from the distribution of unrooted gene trees under the coalescent", Journal of Mathematical Biology 62 (2011), 833–862, <https://doi.org/10.1007/s00285-010-0355-7> (unrooted quartet probabilities; bibliographic data checked against Crossref; not opened).
+- E. S. Allman, J. H. Degnan and J. A. Rhodes, "Identifying the rooted species tree from the distribution of unrooted gene trees under the coalescent", Journal of Mathematical Biology 62 (2011), 833–862, <https://doi.org/10.1007/s00285-010-0355-7> (unrooted quartet probabilities).

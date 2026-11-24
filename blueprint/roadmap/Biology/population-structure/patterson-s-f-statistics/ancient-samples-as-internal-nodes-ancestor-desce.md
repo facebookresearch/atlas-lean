@@ -26,4 +26,4 @@ $L_X \setminus L_S$ lies on both or neither of the lineages of $Y$ and $Z$, and 
 
 ## Sources
 
-- N. Patterson, P. Moorjani, Y. Luo, S. Mallick, N. Rohland, Y. Zhan, T. Genschoreck, T. Webster and D. Reich, "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037> (bibliographic data checked against Crossref; the paper was not opened). The identities are derived above.
+- N. Patterson, P. Moorjani, Y. Luo, S. Mallick, N. Rohland, Y. Zhan, T. Genschoreck, T. Webster and D. Reich, "Ancient admixture in human history", Genetics 192 (2012), 1065–1093, <https://doi.org/10.1534/genetics.112.145037>. The identities are derived above.

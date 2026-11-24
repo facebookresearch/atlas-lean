@@ -20,9 +20,9 @@ Conditional-iid initial types are exchangeable. For any finite coordinate permut
 
 - [Finite-level lookdown process: consistency, exchangeability and fixed-time sampling](finite-level-lookdown-process-and-projective-con.md)
 
-## Scope and formalization boundary
+## Scope
 
-The clock construction replaces an abstract Kolmogorov extension of finite path laws; it does not assume a pre-existing infinite solution. Countable product noise, measurable path assembly and the path-law sigma-algebra interface remain formalization obligations. The fixed-time exchangeability clause is shared with the finite-prefix theorem and the lookdown overview, not a new general de Finetti result. Directing-measure path regularity is a separate statement. No claim is made for an unspecified measurable or general infinite type space.
+The clock construction replaces an abstract Kolmogorov extension of finite path laws; it does not assume a pre-existing infinite solution. A proof page must still supply the countable product of noise sources, the measurable assembly of paths and the sigma-algebra on path space. The fixed-time exchangeability clause is shared with the finite-prefix theorem and the lookdown overview, not a new general de Finetti result. Directing-measure path regularity is a separate statement. No claim is made for an unspecified measurable or general infinite type space.
 
 ## Sources
 

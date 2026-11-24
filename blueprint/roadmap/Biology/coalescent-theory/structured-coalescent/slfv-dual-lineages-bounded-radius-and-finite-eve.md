@@ -25,4 +25,4 @@ norm of the displacement is not Markov there.
 
 ## Sources
 
-- N. H. Barton, A. M. Etheridge and A. Véber, "A new model for evolution in a spatial continuum", arXiv:0904.0210 (2010), Section 2: Definition 2.2, Notation 2.5, the lineage dynamics and the rates (6)–(7) (opened; stated there for $d = 2$).
+- N. H. Barton, A. M. Etheridge and A. Véber, "A new model for evolution in a spatial continuum", arXiv:0904.0210 (2010), Section 2: Definition 2.2, Notation 2.5, the lineage dynamics and the rates (6)–(7) (stated there for $d = 2$).
