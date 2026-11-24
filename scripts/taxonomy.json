@@ -12093,6 +12093,7 @@
   "MathlibExt/Order/Monotone/Nat": {"to": "Order/ordered-sets", "title": "Monotone sequences"},
   "MathlibExt/Order/OmegaCompletePartialOrder/ContinuousHom": {"to": "Order/fixed-points-domain-theory", "title": "Scott-continuous maps and least fixed points"},
   "MathlibExt/Order/PosetMatrix": {"to": "Combinatorics/partially-ordered-sets", "title": "Poset matrices and quasi-full rooted trees"},
+  "MathlibExt/Order/PosetMatrix/BlockLengths": {"to": "Combinatorics/partially-ordered-sets", "title": "Poset matrices and quasi-full rooted trees"},
   "MathlibExt/Order/PosetMatrix/Connected": {"to": "Combinatorics/partially-ordered-sets", "title": "Poset matrices and quasi-full rooted trees"},
   "MathlibExt/Order/QuasiFullRootedTree": {"to": "Combinatorics/partially-ordered-sets", "title": "Poset matrices and quasi-full rooted trees"},
   "MathlibExt/Order/ScottContinuity/ContinuousLattice": {"to": "Order/fixed-points-domain-theory", "title": "Continuous lattices"},
