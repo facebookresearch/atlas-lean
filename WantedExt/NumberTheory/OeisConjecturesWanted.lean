@@ -33,6 +33,8 @@ paper does not state).
 
 Proved in `MathlibExt.NumberTheory.SizeChooseTwoPow`, which this module imports: Theorem 6
 (`size_choose_two_pow`, the bit length of `Nat.choose (2 ^ n) (2 ^ (n - 1))`).
+Theorem 7 (`floor_sum_cbrt`) is proved in `MathlibExt.NumberTheory.FloorSumCubeRoots`,
+which this module also imports.
 -/
 module
 
@@ -46,6 +48,7 @@ public import Mathlib.Data.Nat.Size
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Words.AvoidZZ1Z
+public import MathlibExt.NumberTheory.FloorSumCubeRoots
 public import MathlibExt.NumberTheory.SizeChooseTwoPow
 
 set_option autoImplicit false
@@ -53,18 +56,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.OeisConjecturesWanted
-
-/-- **Floor of a sum of cube roots.** For every integer $m \ge 1$, the sum
-$S_m = \sum_{i=1}^{10^{3m}} i^{1/3}$ of the real cube roots of $1, 2, \dots, 10^{3m}$ satisfies
-
-$$\lfloor S_m \rfloor = \frac{3 \cdot 10^{4m}}{4} + 5 \cdot 10^{m-1} - 1.$$
-
-Source: Sela Fried, "Proofs of Several Conjectures From
-the OEIS", Theorem 7. -/
-theorem_wanted floor_sum_cbrt (m : ℕ) (hm : 1 ≤ m) :
-    Nat.floor (∑ i ∈ Finset.Icc (1 : ℕ) (10 ^ (3 * m)),
-        (i : ℝ) ^ (1 / 3 : ℝ)) =
-      3 * 10 ^ (4 * m) / 4 + 5 * 10 ^ (m - 1) - 1
 
 /-- `b_{n,k}^{(m)}`: the number of integer points
 `(x_1, …, x_m)` with `max |x_i| ≤ k` and

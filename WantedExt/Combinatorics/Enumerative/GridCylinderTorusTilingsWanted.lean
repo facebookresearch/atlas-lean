@@ -111,22 +111,8 @@ public noncomputable def permOrbits {α : Type*} [Fintype α] [DecidableEq α]
   classical
   exact Finset.univ.image (permOrbit φ)
 
-/-- **Cylinder shift sum.** Let $T$ be a finite set of tile designs, let $n, m \ge 1$, let $g$ be
-a map from the cells $\mathbb{Z}/n \times \mathbb{Z}/m$ to themselves, and let $\sigma$ be a
-permutation of $T$. The cylinder shift sum of $g$ and $\sigma$ is the sum, over all shifts
-$a \in \mathbb{Z}/n$, of the number of tilings $F : \mathbb{Z}/n \times \mathbb{Z}/m \to T$
-with $F(g(x + a, y)) = \sigma(F(x, y))$ for every cell $(x, y)$.
-
-The shift is applied before $g$, following the paper's right-action convention, and $\sigma$
-is the action of $g$ on tile designs.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Setting. -/
-public noncomputable def cylinderShiftSum {T : Type*} [Fintype T] [DecidableEq T]
-    (n m : ℕ) [NeZero n] [NeZero m]
-    (cellG : ZMod n × ZMod m → ZMod n × ZMod m) (σ : Equiv.Perm T) : ℕ :=
-  ∑ a : ZMod n,
-    fixedTilingCount (fun c => cellG (c.1 + a, c.2)) σ
+-- `cylinderShiftSum` and `cylinder_identity` are in
+-- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`, re-exported here.
 
 -- `torusShiftSum` is defined in
 -- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`.
@@ -423,19 +409,6 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
 public theorem_wanted reflection_shift_solutions_even_even (n : ℕ) [NeZero n]
     (a : ZMod n) (hn : Even n) (ha : Even a.val) :
     {x : ZMod n | x = -1 - x - a} = ∅
-
-/-- **Cylinder fixed-tiling count for the identity.** Let $T$ be a finite set of tile designs,
-let $n, m \ge 1$, and let $\sigma$ be a permutation of $T$ with $\sigma^1 = 1$, that is, the
-identity. Then the cylinder shift sum of the identity map of $\mathbb{Z}/n \times \mathbb{Z}/m$
-and $\sigma$ equals $\sum_{d \mid n} \varphi(d)\, |T|^{nm/d}$, where $d$ runs over the positive
-divisors of $n$ and $\varphi$ is Euler's totient function.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 28. -/
-public theorem_wanted cylinder_identity {T : Type*} [Fintype T] [DecidableEq T]
-    (n m : ℕ) [NeZero n] [NeZero m] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
-    cylinderShiftSum n m id σ =
-      ∑ d ∈ n.divisors, Nat.totient d * Fintype.card T ^ (n * m / d)
 
 /-- **Cylinder fixed-tiling count for the half-turn when $m$ is even.** Let $T$ be a finite set of
 tile designs, let $n, m \ge 1$ with $m$ even, and let $\sigma$ be a permutation of $T$ with

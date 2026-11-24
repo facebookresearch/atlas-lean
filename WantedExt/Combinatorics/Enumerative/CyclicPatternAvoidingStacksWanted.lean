@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.CyclicPatternAvoidingStacks
+public import MathlibExt.Combinatorics.Enumerative.ConsecutiveCyclicStackCount
+public import MathlibExt.Combinatorics.Enumerative.CyclicSortingMachineSuperimpose
 
 /-!
 # Cyclic-pattern-avoiding stacks
@@ -69,18 +70,6 @@ Article A15, Theorem 3 (`integers-2026-A15-thm-3`). -/
 public theorem_wanted sortedPermutations_consecutiveCyclicStackSort_123 {n : ℕ} (hn : 4 ≤ n) :
     (sortedPermutations (consecutiveCyclicStackSort [1, 2, 3]) n).card = 0
 
-/-- **Permutations sorted by the consecutive $321$-cyclic stack.** Let $n \ge 2$, let
-$s^{[321]}$ be the stack-sorting map whose stack, read from top to bottom, avoids every rotation
-of $321$ as a consecutive pattern, and let $\mathrm{Sort}_n(s^{[321]})$ be the set of permutations
-of $[n] = \{1, \dots, n\}$ that $s^{[321]}$ maps to the identity $12 \cdots n$. Then
-$|\mathrm{Sort}_n(s^{[321]})| = 2^{n-2}$.
-
-Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
-Article A15, Theorem 4 (`integers-2026-A15-thm-4`). -/
-public theorem_wanted card_sortedPermutations_consecutiveCyclicStackSort_321 {n : ℕ}
-    (hn : 2 ≤ n) :
-    (sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) n).card = 2 ^ (n - 2)
-
 /-- **Reducing before the $123$ cyclic sorting machine does not change the reduced output.** For
 every permutation $\pi$ of $[n] = \{1, \ldots, n\}$, applying the cyclic sorting machine
 $\mathrm{SC}_{[123]}$ to the reduction $\operatorname{red}(\pi)$ and reducing the result gives the
@@ -108,18 +97,6 @@ Article A15, Lemma 2 (`integers-2026-A15-lem-2`). -/
 public theorem_wanted length_reductionSeq_cyclicSortingMachine_123_lt {n : ℕ} (hn : 2 ≤ n)
     {π : List ℕ} (hπ : π.Perm (List.range' 1 n)) :
     (reductionSeq (cyclicSortingMachine [1, 2, 3] π)).length < n
-
-/-- **One pass of $SC_{[321]}$ on superimposed increasing runs.** Let $n \ge 4$ and
-$1 \le m < \lceil (2n-1)/3 \rceil = \lfloor (2n+1)/3 \rfloor$. Then the cyclic avoidance machine
-$SC_{[321]}$ maps the superimposition $\mathrm{si}((1, \dots, m), (m+1, \dots, n))$ to
-$\mathrm{si}((1, \dots, m+1), (m+2, \dots, n))$.
-
-Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
-Article A15, Lemma 3 (`integers-2026-A15-lem-3`). -/
-public theorem_wanted cyclicSortingMachine_321_superimpose {n m : ℕ} (hn : 4 ≤ n) (hm : 1 ≤ m)
-    (hmn : m < (2 * n + 1) / 3) :
-    cyclicSortingMachine [3, 2, 1] (superimpose (List.range' 1 m) (List.range' (m + 1) (n - m))) =
-      superimpose (List.range' 1 (m + 1)) (List.range' (m + 2) (n - m - 1))
 
 /-- **First entry and tail of permutations sorted by the consecutive $321$-cyclic stack.** Let
 $n \ge 2$ and let $\mathrm{Sort}_n(s^{[321]})$ be the set of permutations of
