@@ -13,7 +13,7 @@ $$V' = \tfrac12 V (1 - \kappa h^2) + \tfrac12 V_0 .$$
 
 If each generation again satisfies the two regression hypotheses, with fixed environmental variance $V_E$ and $h_t^2 = V_t / (V_t + V_E)$,
 the map $V \mapsto \frac12 V(1 - \kappa V/(V + V_E)) + \frac12 V_0$ has derivative in $[(1 - \kappa)/2, \frac12]$, so $V_t$ converges geometrically to its
-unique fixed point, below $V_0$ when $\kappa > 0$; with $\kappa = 0$, $V_t = V_0 + 2^{-t}(V_{\mathrm{init}} - V_0)$. Without homoscedasticity the
+unique fixed point, strictly below $V_0$ when $\kappa > 0$ and $V_0 > 0$ (for $V_0 = 0$ the fixed point is $0$); with $\kappa = 0$, $V_t = V_0 + 2^{-t}(V_{\mathrm{init}} - V_0)$. Without homoscedasticity the
 one-generation identity can fail: if $Z = \pm 1$ with probability $\frac12$ each, $A = -\frac12$ when $Z = -1$, and, when $Z = 1$, $A$ takes the values
 $-\frac12, \frac12, \frac32$ with probabilities $\frac14, \frac12, \frac14$, then $\mathbb E[A \mid Z] = Z/2$ is linear, $\operatorname{Cov}(A, Z - A) = 0$, $V = \frac12$ and
 $h^2 = \frac12$, but keeping $Z = 1$ ($\kappa = 1$) leaves $\operatorname{Var}(A \mid Z = 1) = \frac12$, not $V(1 - \kappa h^2) = \frac14$.
