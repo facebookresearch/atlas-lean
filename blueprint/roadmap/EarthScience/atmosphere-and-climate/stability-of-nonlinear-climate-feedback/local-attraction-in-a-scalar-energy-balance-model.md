@@ -17,3 +17,4 @@ Discontinuous albedo needs a piecewise analysis, and bifurcations need further n
 
 ## Sources
 
+- Derived on this page by specializing the linked conditional decay form of Lyapunov's indirect method to a scalar equation, together with the forward-invariance argument stated above; the general theorem's sources are on its page. No further external source is followed.

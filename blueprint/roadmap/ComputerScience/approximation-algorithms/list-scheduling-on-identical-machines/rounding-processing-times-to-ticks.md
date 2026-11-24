@@ -17,3 +17,7 @@ times are outside this result.
 - [Makespan](makespan.md)
 
 ## Proof depends on
+
+## Sources
+
+- Derived on this page from the linked definition of the makespan: the bound follows from $p_j \le \delta \tilde p_j < p_j + \delta$ for each job, summed over each machine. No external source is followed.
