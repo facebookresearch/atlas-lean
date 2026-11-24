@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.Digits.BinomialDigits
 public import MathlibExt.NumberTheory.Digits.BinomialFormTwoPowBase
 public import MathlibExt.NumberTheory.Digits.DigitsPowAndPowAddOne
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
@@ -103,19 +104,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 1
 (`integers-2024-A69-thm-1`), credited to K. Brown. -/
 public theorem_wanted minPalindromicBase_eq_pred (N : ℕ) (hN : 1 ≤ N)
     (h : minPalindromicBase N = N - 1) : N = 3 ∨ N = 4 ∨ N = 6 ∨ (6 < N ∧ N.Prime)
-
-/-- **Digits of a multiple of a power of one more than the base.** Let $\alpha \ge 1$, $k$ and $b$
-be natural numbers with $\alpha\binom{k}{\lceil k/2 \rceil} < b$. Then the base-$b$
-representation of $\alpha(1 + b)^k$ has exactly the $k + 1$ digits
-$\alpha\binom{k}{k}, \alpha\binom{k}{k-1}, \dots, \alpha\binom{k}{0}$, from the most significant
-to the least significant.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 1
-(`integers-2024-A69-lem-1`). -/
-public theorem_wanted digits_mul_one_add_pow (α k b : ℕ) (hα : 1 ≤ α)
-    (h : α * k.choose ((k + 1) / 2) < b) :
-    Nat.digits b (α * (1 + b) ^ k) = (List.range (k + 1)).map fun i => α * k.choose i
 
 /-- **Sufficient condition for a binomial form of a power of 2.** Let $n$, $x$, $k$ and $r$ be
 natural numbers with $k \ge 1$, $n = xk + r$ and $2^r\binom{k}{\lceil k/2 \rceil} < 2^x - 1$.
