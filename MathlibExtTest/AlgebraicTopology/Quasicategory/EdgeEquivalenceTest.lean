@@ -62,13 +62,9 @@ example {e : Edge x₀ x₁} (I : e.InvStruct) :
       I.toHoIso.inv = HomotopyCategory.homMk I.inv :=
   ⟨Edge.InvStruct.toHoIso_hom I, Edge.InvStruct.toHoIso_inv I⟩
 
-/-- Inverse data makes an edge an equivalence, in both forms. -/
+/-- Inverse data makes an edge an equivalence. -/
 example {e : Edge x₀ x₁} (I : e.InvStruct) : e.IsEquivalence :=
   I.isEquivalence
-
-/-- Inverse data makes an edge an equivalence, constructor form. -/
-example {e : Edge x₀ x₁} (I : e.InvStruct) : e.IsEquivalence :=
-  Edge.isEquivalence_of_invStruct I
 
 /-- Composites of equivalences, along a `CompStruct`, are
 equivalences. -/

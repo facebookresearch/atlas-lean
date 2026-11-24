@@ -97,11 +97,6 @@ theorem InvStruct.isEquivalence {e : Edge x₀ x₁} (I : e.InvStruct) :
     e.IsEquivalence :=
   (isEquivalence_iff e).mpr (inferInstanceAs (IsIso I.toHoIso.hom))
 
-/-- Inverse data makes an edge an equivalence. -/
-theorem isEquivalence_of_invStruct {e : Edge x₀ x₁}
-    (I : e.InvStruct) : e.IsEquivalence :=
-  I.isEquivalence
-
 /-- If two composable edges are equivalences and are composed according
 to a `CompStruct`, then their composite edge is an equivalence. -/
 theorem IsEquivalence.of_compStruct {e₀₁ : Edge x₀ x₁}

@@ -1,5 +1,5 @@
 {
   "rows": [
-    {"path": "MathlibExtTest/AlgebraicTopology/Quasicategory/EdgeEquivalenceTest.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "6226523dd10d49cf1dfa54af24d40c94b8eea5a3ad47383e3fdd51b8be3441e2", "rationale": "Check the equivalence and inverse-structure APIs against the native Mathlib homMk, and remove clients of the deleted wrappers. Retain the independent-universe nerve checks and use the explicit inverse witness to rule out the forward Fin 2 edge. Preserve original authorship.", "upstream_commit": "efb0b86f464b1cd2243085ad50810fd0ac3c0d07", "upstream_sha256": "40035832dffabcf10b120e4822083a1a0cf0831a28a5fc67a07880951346886d"}
+    {"path": "MathlibExtTest/AlgebraicTopology/Quasicategory/EdgeEquivalenceTest.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "58aa210be5435f1e6c53e4a31f41b261f5f6fdf014604242ca32e80640bc07e6", "rationale": "Test the native Mathlib homMk and canonical InvStruct.isEquivalence APIs directly, without a redundant client for the removed inverse-data theorem. Retain independent-universe nerve checks, the forward Fin 2 obstruction, and original authorship.", "upstream_commit": "efb0b86f464b1cd2243085ad50810fd0ac3c0d07", "upstream_sha256": "40035832dffabcf10b120e4822083a1a0cf0831a28a5fc67a07880951346886d"}
   ]
 }
