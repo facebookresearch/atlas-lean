@@ -14,6 +14,7 @@ public import Mathlib.Data.EReal.Basic
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.DiophantineApproximation.Basic
 public import Mathlib.Order.LiminfLimsup
+public import MathlibExt.NumberTheory.ContinuedFractions.CommonPrefix
 
 namespace MetaMathlibExt
 
@@ -147,22 +148,6 @@ public theorem_wanted convergent_quality_and_lagrange_limsup (ξ : ℝ) (hξ : I
         (-1 : ℝ) ^ k / (((ξ.convergent (k - 1)).den : ℝ) ^ 2 *
           ((ξ.convergent (k - 1) : ℝ) - ξ)) = cut k) ∧
       nLagrangeApproximability 1 ξ = limsup (fun k => ((cut k : ℝ) : EReal)) atTop
-
-/-- **Real numbers with a common continued fraction prefix are close.** Let $\xi$ and $\xi'$ be
-real numbers with continued fraction expansions $[a_0; a_1, a_2, \dots]$ and
-$[a_0'; a_1', a_2', \dots]$, computed by $\xi_0 = \xi$, $a_i = \lfloor \xi_i \rfloor$ and
-$\xi_{i+1} = 1/(\xi_i - a_i)$, stopping when $\xi_i = a_i$ (so an expansion is finite exactly when
-the number is rational). Let $k \ge 0$ be an integer, and suppose that $a_0 = a_0'$ and that for
-each $1 \le i \le k$ either both expansions have a digit of index $i$ and $a_i = a_i'$, or neither
-has one. Then $|\xi - \xi'| \le 2^{1-k}$.
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Lemma 5 (`integers-2025-A47-lem-5`), quoted from Cusick and Flahive, Lemma 1. -/
-public theorem_wanted abs_sub_le_of_contFrac_prefix_eq (ξ ξ' : ℝ) (k : ℕ)
-    (h0 : (GenContFract.of ξ).h = (GenContFract.of ξ').h)
-    (hk : ∀ i < k, (GenContFract.of ξ).partDens.get? i = (GenContFract.of ξ').partDens.get? i) :
-    |ξ - ξ'| ≤ 2 ^ (1 - (k : ℤ))
 
 /-- **The $n$-approximabilities as maxima over divisors.** Let $n \ge 1$, let $\lambda_n$ and
 $\mu_n$ be the $n$-Lagrange and $n$-Markoff approximabilities, and let $\xi \ne \xi'$ be irrational
