@@ -5,3 +5,5 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [Quasi-categories and inner horn fillers](quasi-category.md)
 - [Simplicial set](simplicial-set.md)
 - [Nerve of a category](nerve-of-category.md)
+- [Colimits of marked simplicial sets](colimits-of-marked-simplicial-sets/README.md)
+- [Marked simplicial sets](marked-simplicial-sets/README.md)

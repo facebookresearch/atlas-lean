@@ -884,6 +884,8 @@
   }
  },
  "placements": {
+  "MathlibExt/AlgebraicTopology/SimplicialSet/Marked/Basic": {"to": "Topology/simplicial-homotopy-theory", "title": "Marked simplicial sets"},
+  "MathlibExt/AlgebraicTopology/SimplicialSet/Marked/Colimits": {"to": "Topology/simplicial-homotopy-theory", "title": "Colimits of marked simplicial sets"},
   "CSLibExt/Algorithms/CCS/AlternatingBit": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Alternating bit protocol"},
   "CSLibExt/Algorithms/CCS/AlternatingBitData": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Alternating bit protocol"},
   "CSLibExt/Algorithms/CCS/FiniteState": {"to": "ComputerScience/process-calculi", "title": "Finite-state CCS agents"},
