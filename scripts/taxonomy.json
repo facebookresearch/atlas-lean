@@ -12978,6 +12978,7 @@
   "MathlibExt/NumberTheory/WesleyFractionalConstant": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
   "MathlibExt/NumberTheory/WieferichOrder": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/WieferichPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Wieferich primes"},
+  "MathlibExt/NumberTheory/WilsonFermatQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/WilsonQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/WilsonQuotientPrimality": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/WilsonQuotients": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
