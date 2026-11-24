@@ -1,4 +1,4 @@
-# Exact linearization of the SIR drift
+# Exact second-order expansion of the SIR drift
 
 For all real $\beta$, $\gamma$ and $p, h \in \mathbb{R}^2$, the [drift](drift.md) is quadratic, so
 

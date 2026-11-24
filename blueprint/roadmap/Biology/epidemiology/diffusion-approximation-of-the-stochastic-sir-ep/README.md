@@ -6,7 +6,7 @@
 - [Jacobian of the SIR drift](jacobian.md)
 - [Transposed Jacobian of the SIR drift](jacobian-t.md)
 - [Infinitesimal covariance of the SIR chain](diffusion-matrix.md)
-- [Exact linearization of the SIR drift](drift-add.md)
+- [Exact second-order expansion of the SIR drift](drift-add.md)
 - [Operator-norm bound for the SIR Jacobian](norm-jacobian-le.md)
 - [Jacobian bound on a ball of radius B](norm-jacobian-le-of-le.md)
 

@@ -461,9 +461,10 @@ theorem exists_perron_left [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 <
     ring
 
 /-- **Uniform weak persistence above the threshold.** Let there be at least one patch, `C`
-irreducible (the colonization graph is strongly connected), `e > 0` and `R₀ > 1`. Every solution
-starting in `[0, 1]^ι` with some patch occupied comes arbitrarily close to occupancy `1 - 1/R₀` at
-arbitrarily late times: `limsup_t max_i p_i(t) ≥ 1 - 1/R₀`. -/
+irreducible (nonnegative, and for all patches `i`, `j`, `i = j` included, a chain
+`i = k₀, …, k_m = j` with `m ≥ 1` and every `C_{k_l k_{l+1}} > 0`), `e > 0` and `R₀ > 1`. Every
+solution starting in `[0, 1]^ι` with some patch occupied has, for every `δ > 0`, a patch with
+occupancy above `1 - 1/R₀ - δ` at arbitrarily late times: `limsup_t max_i p_i(t) ≥ 1 - 1/R₀`. -/
 theorem exists_lt_of_one_lt [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 < e i)
     (hR : 1 < persistenceNumber C e) {p : ℝ → ι → ℝ} (hp : IsSolution C e p)
     (h0 : ∀ i, p 0 i ∈ Icc 0 1) (hpos : ∃ i, 0 < p 0 i) :
@@ -575,8 +576,9 @@ theorem exists_lt_of_one_lt [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 
   have h4 : L T' * (V / L T' + 1) = V + L T' := by field_simp
   linarith [hLV t (hT'0.trans htT)]
 
-/-- **Persistence above the threshold.** For at least one patch, irreducible `C`, `e > 0` and
-`R₀ > 1`, no solution starting in `[0, 1]^ι` with some patch occupied goes extinct. -/
+/-- **No extinction above the threshold.** For at least one patch, irreducible `C`, `e > 0` and
+`R₀ > 1`, no solution starting in `[0, 1]^ι` with some patch occupied tends to the empty landscape
+`p = 0`. -/
 theorem not_tendsto_zero_of_one_lt [Nonempty ι] (hC : C.IsIrreducible) (he : ∀ i, 0 < e i)
     (hR : 1 < persistenceNumber C e) {p : ℝ → ι → ℝ} (hp : IsSolution C e p)
     (h0 : ∀ i, p 0 i ∈ Icc 0 1) (hpos : ∃ i, 0 < p 0 i) : ¬ Tendsto p atTop (𝓝 0) := by

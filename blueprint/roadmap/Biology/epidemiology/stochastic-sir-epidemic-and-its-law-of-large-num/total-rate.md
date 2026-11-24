@@ -1,4 +1,4 @@
-# Total jump rate of a two-channel chain
+# Total rate of a two-channel chain
 
 For a [two-channel chain](two-channel.md) with rates `rate₁, rate₂`, the total rate at a state `x`
 is

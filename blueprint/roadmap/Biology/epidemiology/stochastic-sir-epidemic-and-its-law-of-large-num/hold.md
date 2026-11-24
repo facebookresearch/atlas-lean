@@ -1,4 +1,4 @@
-# Time to the next jump of a two-channel chain
+# Holding time read off the residual clocks of a two-channel chain
 
 For a [two-channel chain](two-channel.md), a state `x` and residual clocks `r = (r₁, r₂)`, any real
 numbers, write `a = rate₁ x` and `b = rate₂ x`. The holding time is

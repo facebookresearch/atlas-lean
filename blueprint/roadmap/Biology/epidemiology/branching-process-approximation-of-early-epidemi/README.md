@@ -24,7 +24,7 @@
 - [Generation sizes have the Galton–Watson law](has-law-bp-size.md)
 - [Extinction of the branching process by generation n](measure-real-bp-size-eq-zero.md)
 - [Extinction probability of the path-space branching process](measure-real-exists-bp-size-eq-zero.md)
-- [Extinction by generation n is likelier for the epidemic](law-real-zero-le-measure-real-epi-size-e.md)
+- [Extinction by generation n is at least as likely for the epidemic as for the branching process](law-real-zero-le-measure-real-epi-size-e.md)
 
 ## Wasted contacts and the approximation bound
 
@@ -47,6 +47,6 @@
 - [An offspring law with mean above 1 is not the point mass at 1](measure-one-ne-one-of-one-lt-mean.md)
 - [When R₀ > 1, major outbreaks have positive probability](one-sub-extinction-prob-pos.md)
 - [Almost-sure eventual extinction with finitely many susceptibles](measure-real-exists-epi-size-eq-zero.md)
-- [When R₀ ≤ 1, only minor outbreaks occur, uniformly in the population](exists-forall-measure-real-epi-size-eq-z.md)
+- [When R₀ ≤ 1 and offspring numbers are not always 1, only minor outbreaks occur, uniformly in the population](exists-forall-measure-real-epi-size-eq-z.md)
 - [Large-population limit of extinction by generation n](tendsto-measure-real-epi-size-eq-zero.md)
 - [Survival in the large-population limit](tendsto-measure-real-epi-size-ne-zero.md)

@@ -1,4 +1,4 @@
-# With β > 0 the Lyapunov function decays exponentially
+# With β > 0 and infectives in both groups, the Lyapunov function decays exponentially
 
 Let $\beta \ge 0$, $\gamma > 0$, $\varepsilon < 1$ and $N > 0$, let $(a, c)$ be an
 [endemic equilibrium](is-endemic-eq.md) at coverage $p$, and let $(S_u, I_u, S_v, I_v)$ be a
@@ -15,5 +15,6 @@ V\bigl(I_u(t), I_v(t)\bigr) \le V\bigl(I_u(0), I_v(0)\bigr)\, e^{-\kappa t}
 \quad \text{for every } t \ge 0.
 $$
 
-One can take $\kappa = \min(\beta, (1 - \varepsilon) \beta)\, m / N$, with
-$m = a\, e^{-(V(0) + a) / a}$ the [persistence bound](persistence.md).
+The rate depends on the solution; the proof takes
+$\kappa = \min(\beta, (1 - \varepsilon) \beta)\, m / N$, with $m = a\, e^{-(V(0) + a) / a}$ the
+[persistence bound](persistence.md) and $V(0) = V(I_u(0), I_v(0))$.

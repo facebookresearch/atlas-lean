@@ -39,7 +39,7 @@ with equality exactly at the equilibrium. The convergence argument is quantitati
 an appeal to LaSalle's principle:
 
 1. `V` is nonincreasing, so `V(t) ≤ V(0)`; since `V ≥ I - I* - I* log (I / I*)`, this keeps
-   `I(t) ≥ m := I* exp (-(V(0) + I*) / I*) > 0` (uniform persistence).
+   `I(t) ≥ m := I* exp (-(V(0) + I*) / I*) > 0` (persistence; `m` depends on `V(0)`).
 2. The elementary bound `x - a - a log (x / a) ≤ (x - a)² / x` gives
    `V ≤ (S - S*)² N / (S I)`, hence `V' ≤ -(β m / N) V`, and `V(t) ≤ V(0) e^{-c t}`.
 3. The bound `(x - a)² ≤ 2 M (x - a - a log (x / a))` for `0 < x, a ≤ M` gives
@@ -80,9 +80,9 @@ open scoped Topology
 
 namespace MathlibExt.Biology.Epidemiology.SIS
 
-/-- The **Goh–Volterra Lyapunov function** of the SIS endemic equilibrium
-`(S*, I*) = (N γ / β, N (1 - γ / β))`:
-`V(S, I) = (S - S* - S* log (S / S*)) + (I - I* - I* log (I / I*))`.
+/-- The **Goh–Volterra Lyapunov function**
+`V(S, I) = (S - S* - S* log (S / S*)) + (I - I* - I* log (I / I*))` with `S* = N γ / β` and
+`I* = N (1 - γ / β)`; for `0 < γ < β` and `N > 0`, `(S*, I*)` is the SIS endemic equilibrium.
 The intended domain is `0 < γ < β`, `N > 0`, `S, I > 0`, where `S*, I* > 0`. Other real inputs
 use `x / 0 = 0`, `log 0 = 0` and `log x = log |x|`; for example `β = 0` gives `S* = 0`, `I* = N`. -/
 noncomputable def lyapunov (β γ N S I : ℝ) : ℝ :=
@@ -295,9 +295,9 @@ variable (h : IsSolution β γ N S I) (hγ : 0 < γ) (hγβ : γ < β) (hN : 0 <
   (hS : S 0 + I 0 = N) (hS0 : 0 < S 0) (hI0 : 0 < I 0)
 include h hγ hγβ hN hS hS0 hI0
 
-/-- **`V` never exceeds its initial value along solutions**: for `0 < γ < β`, `N > 0` and a
-solution with `S(0) + I(0) = N`, `S(0) > 0`, `I(0) > 0`, `V(S(t), I(t)) ≤ V(S(0), I(0))` for
-`t ≥ 0`. -/
+/-- **`V` never exceeds its initial value along solutions from the open segment**: for
+`0 < γ < β`, `N > 0` and a solution with `S(0) + I(0) = N`, `S(0) > 0`, `I(0) > 0`,
+`V(S(t), I(t)) ≤ V(S(0), I(0))` for `t ≥ 0`. -/
 theorem lyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
     lyapunov β γ N (S t) (I t) ≤ lyapunov β γ N (S 0) (I 0) :=
   le_of_hasDerivAt_nonpos (f := fun s => lyapunov β γ N (S s) (I s))
@@ -388,9 +388,10 @@ private theorem sq_sub_le_lyapunov {t : ℝ} (ht : 0 ≤ t) :
   unfold lyapunov
   nlinarith
 
-/-- **Global attractivity via the Lyapunov function.** If `γ > 0` and `R₀ = β / γ > 1`, every
-solution of the SIS model starting in the open segment `{S + I = N, S > 0, I > 0}` of the
-positive orthant converges to the endemic equilibrium `(S*, I*) = (N γ / β, N (1 - γ / β))`. -/
+/-- **For `R₀ > 1`, interior solutions converge to the endemic equilibrium** (via the Lyapunov
+function). If `γ > 0` and `R₀ = β / γ > 1`, every solution of the SIS model starting in the open
+segment `{S + I = N, S > 0, I > 0}` of the positive orthant converges to the endemic equilibrium
+`(S*, I*) = (N γ / β, N (1 - γ / β))`. -/
 theorem tendsto_endemic_of_lyapunov :
     Tendsto (fun t => (S t, I t)) atTop (𝓝 (N * γ / β, N * (1 - γ / β))) := by
   obtain ⟨c, hc, hdec⟩ := h.exists_lyapunov_le_exp hγ hγβ hN hS hS0 hI0
@@ -485,9 +486,9 @@ theorem endemic_lyapunovStable (hγ : 0 < γ) (hR₀ : 1 < β / γ) (hN : 0 < N)
   rw [Prod.dist_eq, Real.dist_eq, Real.dist_eq, max_lt_iff]
   exact ⟨hSt, hIt⟩
 
-/-- **Global asymptotic stability of the SIS endemic equilibrium.** If `γ > 0`,
-`R₀ = β / γ > 1` and `N > 0`, the endemic equilibrium `(S*, I*) = (N γ / β, N (1 - γ / β))` is
-Lyapunov stable and attracts every solution starting in the open segment
+/-- **Global asymptotic stability of the SIS endemic equilibrium on the open segment.** If
+`γ > 0`, `R₀ = β / γ > 1` and `N > 0`, the endemic equilibrium `(S*, I*) = (N γ / β, N (1 - γ / β))`
+is Lyapunov stable and attracts every solution starting in the open segment
 `{S + I = N, S > 0, I > 0}` of the positive orthant; both facts are proved from the
 Goh–Volterra function `lyapunov`. Stability is for the maximum distance of `ℝ × ℝ` and for
 solutions starting in the open segment. -/

@@ -141,7 +141,8 @@ theorem disc_nonneg (hc : 0 ≤ c) (hm : 0 ≤ m) : 0 ≤ disc c e m := by
   have := mul_nonneg hc hm
   nlinarith [sq_nonneg (c - e - m)]
 
-/-- The denominator of `immigrationEq` is positive. -/
+/-- For `e ≥ 0` and `m > 0` (and every real `c`), the denominator of `immigrationEq` is positive.
+At `m = 0` it is `e - c + |c - e|`, which is `0` for `c ≥ e`. -/
 theorem denom_pos (he : 0 ≤ e) (hm : 0 < m) :
     0 < e + m - c + √(disc c e m) := by
   rcases lt_or_ge (c - e - m) 0 with h | h
@@ -158,7 +159,7 @@ theorem denom_pos (he : 0 ≤ e) (hm : 0 < m) :
 theorem immigrationEq_pos (he : 0 ≤ e) (hm : 0 < m) : 0 < immigrationEq c e m :=
   div_pos (by linarith) (denom_pos (c := c) he hm)
 
-/-- **`p̂` is an equilibrium**: `f(p̂) = 0`. -/
+/-- **`p̂` is an equilibrium**: for `c ≥ 0`, `e ≥ 0` and `m > 0`, `f(p̂) = 0`. -/
 theorem balance_immigrationEq (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     balance c e m (immigrationEq c e m) = 0 := by
   have hd := denom_pos (c := c) he hm
@@ -193,12 +194,13 @@ theorem balance_eq_mul_of_eq {q : ℝ} (hq : 0 < q) (h0 : balance c e m q = 0) (
   unfold balance at h0 ⊢
   linear_combination h0
 
-/-- **Factorization**: `f(p) = -(p - p̂) (c p + m / p̂)`. -/
+/-- **Factorization**: for `c ≥ 0`, `e ≥ 0`, `m > 0` and every real `p`,
+`f(p) = -(p - p̂) (c p + m / p̂)`. -/
 theorem balance_eq_mul (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) (p : ℝ) :
     balance c e m p = -(p - immigrationEq c e m) * (c * p + m / immigrationEq c e m) :=
   balance_eq_mul_of_eq (immigrationEq_pos (c := c) he hm) (balance_immigrationEq hc he hm) p
 
-/-- `(1 - p̂) (c + m / p̂) = e`, from `f(1) = -e`. -/
+/-- For `c ≥ 0`, `e ≥ 0` and `m > 0`, `(1 - p̂) (c + m / p̂) = e`, from `f(1) = -e`. -/
 theorem one_sub_immigrationEq_mul (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     (1 - immigrationEq c e m) * (c + m / immigrationEq c e m) = e := by
   have h := balance_eq_mul hc he hm 1
@@ -215,7 +217,8 @@ theorem immigrationEq_le_one (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     mul_neg_of_neg_of_pos (by linarith [not_le.1 hlt]) hk
   linarith
 
-/-- With local extinction (`e > 0`), the landscape is never fully occupied at equilibrium. -/
+/-- For `c ≥ 0` and `m > 0`, with local extinction (`e > 0`) the landscape is never fully occupied
+at equilibrium: `p̂ < 1`. -/
 theorem immigrationEq_lt_one (hc : 0 ≤ c) (he : 0 < e) (hm : 0 < m) :
     immigrationEq c e m < 1 := by
   have h := one_sub_immigrationEq_mul hc he.le hm
@@ -248,7 +251,8 @@ theorem immigrationEq_mem_Ioc (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     immigrationEq c e m ∈ Ioc 0 1 :=
   ⟨immigrationEq_pos (c := c) he hm, immigrationEq_le_one hc he hm⟩
 
-/-- **The equilibrium in `[0, ∞)`**: for `p ≥ 0`, `f(p) = 0 ↔ p = p̂`. -/
+/-- **The equilibrium in `[0, ∞)`**: for `c ≥ 0`, `e ≥ 0`, `m > 0` and `p ≥ 0`,
+`f(p) = 0 ↔ p = p̂`. -/
 theorem balance_eq_zero_iff (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) {p : ℝ} (hp : 0 ≤ p) :
     balance c e m p = 0 ↔ p = immigrationEq c e m := by
   have hk : 0 < c * p + m / immigrationEq c e m :=
@@ -269,7 +273,8 @@ theorem existsUnique_equilibrium (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
   ⟨immigrationEq c e m, ⟨(immigrationEq_pos (c := c) he hm).le, balance_immigrationEq hc he hm⟩,
     fun _ hp => (balance_eq_zero_iff hc he hm hp.1).1 hp.2⟩
 
-/-- For `c > 0`, `p̂` is the quadratic-formula root `(c - e - m + √disc) / (2 c)`. -/
+/-- For `c > 0`, `e ≥ 0` and `m > 0`, `p̂` is the quadratic-formula root
+`(c - e - m + √disc) / (2 c)`. -/
 theorem immigrationEq_eq_quadratic (hc : 0 < c) (he : 0 ≤ e) (hm : 0 < m) :
     immigrationEq c e m = (c - e - m + √(disc c e m)) / (2 * c) := by
   have hd := denom_pos (c := c) he hm
@@ -278,9 +283,10 @@ theorem immigrationEq_eq_quadratic (hc : 0 < c) (he : 0 ≤ e) (hm : 0 < m) :
   rw [immigrationEq, div_eq_div_iff hd.ne' (mul_pos two_pos hc).ne']
   linear_combination -hs
 
-/-- **Vanishing immigration recovers the Levins attractor.** For `c > 0`, as `m ↓ 0` the immigration
-equilibrium tends to `max (1 - e / c) 0`: the persistence equilibrium when `c > e` and extinction
-when `c ≤ e`. This is a limit only: at `m = 0` the formula gives `0` even when `c > e`. -/
+/-- **Vanishing immigration recovers the Levins attractor.** For `c > 0` and `e ≥ 0`, as `m ↓ 0`
+the immigration equilibrium tends to `max (1 - e / c) 0`: the persistence equilibrium when `c > e`
+and extinction when `c ≤ e`. This is a limit only: at `m = 0` the formula gives `0` even when
+`c > e`. -/
 theorem tendsto_immigrationEq_zero (hc : 0 < c) (he : 0 ≤ e) :
     Tendsto (fun m => immigrationEq c e m) (𝓝[>] 0)
       (𝓝 (max (LevinsMetapopulation.persistenceEq c e) 0)) := by
@@ -324,7 +330,7 @@ theorem rate_pos (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) : 0 < rate c e m :=
   add_pos_of_nonneg_of_pos (mul_nonneg hc (immigrationEq_pos (c := c) he hm).le)
     (div_pos hm (immigrationEq_pos (c := c) he hm))
 
-/-- **Linear stability**: `f'(p̂) = -(c p̂ + m / p̂) < 0`. -/
+/-- **Linear stability**: for `c ≥ 0`, `e ≥ 0` and `m > 0`, `f'(p̂) = -(c p̂ + m / p̂) < 0`. -/
 theorem hasDerivAt_balance_immigrationEq (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     HasDerivAt (balance c e m) (-rate c e m) (immigrationEq c e m) := by
   refine (hasDerivAt_balance c e m _).congr_deriv ?_
@@ -389,7 +395,8 @@ theorem isSolution_solution (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) {p₀ : �
   field_simp
   ring
 
-/-- **Global existence** on `[0, ∞)` from every `p₀ ≥ 0` (existence only, not uniqueness). -/
+/-- **Global existence**: for `c ≥ 0`, `e ≥ 0` and `m > 0`, every `p₀ ≥ 0` is the initial value of
+a solution on `[0, ∞)` (existence only, not uniqueness). -/
 theorem exists_isSolution (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) {p₀ : ℝ} (hp₀ : 0 ≤ p₀) :
     ∃ p : ℝ → ℝ, IsSolution c e m p ∧ p 0 = p₀ :=
   ⟨solution c e m p₀, isSolution_solution hc he hm hp₀, solution_zero hc he hm p₀⟩
@@ -432,8 +439,8 @@ theorem nonneg (hp : IsSolution c e m p) (hm : 0 < m) (h0 : 0 ≤ p 0) {t : ℝ}
     (show t ∈ Icc 0 t from ⟨ht, le_rfl⟩)
   simpa using key
 
-/-- **An empty island is colonized at once**: `p(t) > 0` for every `t > 0`, even when
-`p(0) = 0`. -/
+/-- **An empty island is colonized at once**: for `m > 0`, every solution with `p(0) ≥ 0` has
+`p(t) > 0` for every `t > 0`, even when `p(0) = 0`. -/
 theorem pos (hp : IsSolution c e m p) (hm : 0 < m) (h0 : 0 ≤ p 0) {t : ℝ} (ht : 0 < t) :
     0 < p t := by
   refine (hp.nonneg hm h0 ht.le).lt_of_ne fun hpt => ?_
@@ -466,13 +473,15 @@ theorem sub_le_mul_exp_of_eq (hp : IsSolution c e m p) (hc : 0 ≤ c) {q : ℝ} 
   calc p t - q = (p t - q) * exp (L * t) * exp (-(L * t)) := by rw [mul_assoc, hE, mul_one]
     _ ≤ (p 0 - q) * exp (-(L * t)) := mul_le_mul_of_nonneg_right hW (exp_pos _).le
 
-/-- **Upper bound**: `p(t) - p̂ ≤ (p(0) - p̂) e^{-L t}` with `L = c p̂ + m / p̂`. -/
+/-- **Upper bound**: for `c ≥ 0`, `e ≥ 0` and `m > 0`, every solution satisfies
+`p(t) - p̂ ≤ (p(0) - p̂) e^{-L t}` for `t ≥ 0`, with `L = c p̂ + m / p̂`. -/
 theorem sub_le_mul_exp (hp : IsSolution c e m p) (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m)
     {t : ℝ} (ht : 0 ≤ t) :
     p t - immigrationEq c e m ≤ (p 0 - immigrationEq c e m) * exp (-(rate c e m * t)) :=
   hp.sub_le_mul_exp_of_eq hc (immigrationEq_pos (c := c) he hm) (balance_immigrationEq hc he hm) ht
 
-/-- The occupied fraction never exceeds `max (p(0)) p̂`. -/
+/-- For `c ≥ 0`, `e ≥ 0` and `m > 0`, the occupied fraction never exceeds `max (p(0)) p̂`:
+`p(t) ≤ max (p(0)) p̂` for `t ≥ 0`. -/
 theorem le_max (hp : IsSolution c e m p) (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) {t : ℝ}
     (ht : 0 ≤ t) : p t ≤ max (p 0) (immigrationEq c e m) := by
   have h := hp.sub_le_mul_exp hc he hm ht
@@ -495,7 +504,9 @@ theorem mem_Icc (hp : IsSolution c e m p) (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 
 
 /-! ### Exponential stability -/
 
-/-- Exponential decay towards a positive equilibrium `q`, at rate `m / q`, for `p(0) ≥ 0`. -/
+/-- For `c ≥ 0` and `m > 0`, exponential decay towards a positive equilibrium `q`, at rate
+`m / q`: every solution with `p(0) ≥ 0` satisfies `|p(t) - q| ≤ |p(0) - q| e^{-(m / q) t}` for
+`t ≥ 0`. -/
 theorem abs_sub_le_exp_of_eq (hp : IsSolution c e m p) (hc : 0 ≤ c) (hm : 0 < m) {q : ℝ}
     (hq : 0 < q) (h0 : balance c e m q = 0) (hp0 : 0 ≤ p 0) {t : ℝ} (ht : 0 ≤ t) :
     |p t - q| ≤ |p 0 - q| * exp (-(m / q * t)) := by
@@ -530,8 +541,9 @@ theorem abs_sub_le_exp_of_eq (hp : IsSolution c e m p) (hc : 0 ≤ c) (hm : 0 < 
   have := sq_le_sq.1 key
   rwa [abs_mul, abs_of_pos (exp_pos _)] at this
 
-/-- **Exponential stability**: `|p(t) - p̂| ≤ |p(0) - p̂| e^{-(m / p̂) t}` for every solution with
-`p(0) ≥ 0`. Since `p̂ ≤ 1`, the rate `m / p̂` is at least `m`. -/
+/-- **Exponential stability**: for `c ≥ 0`, `e ≥ 0` and `m > 0`, every solution with `p(0) ≥ 0`
+satisfies `|p(t) - p̂| ≤ |p(0) - p̂| e^{-(m / p̂) t}` for `t ≥ 0`. Since `p̂ ≤ 1`, the rate `m / p̂`
+is at least `m`. -/
 theorem abs_sub_le_exp (hp : IsSolution c e m p) (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m)
     (hp0 : 0 ≤ p 0) {t : ℝ} (ht : 0 ≤ t) :
     |p t - immigrationEq c e m| ≤
@@ -539,7 +551,8 @@ theorem abs_sub_le_exp (hp : IsSolution c e m p) (hc : 0 ≤ c) (he : 0 ≤ e) (
   hp.abs_sub_le_exp_of_eq hc hm (immigrationEq_pos (c := c) he hm) (balance_immigrationEq hc he hm)
     hp0 ht
 
-/-- **Convergence**: every solution with `p(0) ≥ 0` tends to `p̂`. -/
+/-- **Convergence**: for `c ≥ 0`, `e ≥ 0` and `m > 0`, every solution with `p(0) ≥ 0` tends
+to `p̂`. -/
 theorem tendsto_immigrationEq (hp : IsSolution c e m p) (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m)
     (hp0 : 0 ≤ p 0) : Tendsto p atTop (𝓝 (immigrationEq c e m)) := by
   have hμ : 0 < m / immigrationEq c e m := div_pos hm (immigrationEq_pos (c := c) he hm)

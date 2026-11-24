@@ -1,4 +1,4 @@
-# Convergent deterministic initial counts converge in probability
+# Deterministic initial counts with convergent scaled values satisfy the initial condition of Kurtz's theorem
 
 Let `P` be a measure on a space `Ω`, let `S_N, E_N, I_N, R_N` be count paths depending on `ω ∈ Ω`,
 and let `s`, `e`, `i`, `r` be real functions. Suppose that for each `N`, almost surely,
@@ -10,4 +10,5 @@ and let `s`, `e`, `i`, `r` be real functions. Suppose that for each `N`, almost 
 
 where `D_N` is the [deviation](deviation.md) of `(S_N, E_N, I_N, R_N) / N` from `(s, e, i, r)`: this
 is the initial-condition hypothesis of [Kurtz's law of large numbers](tendsto-measure-deviation.md).
-The measure `P` need not be a probability measure.
+The measure `P` need not be a probability measure, and the event is not assumed measurable: `P` is
+applied as an outer measure.

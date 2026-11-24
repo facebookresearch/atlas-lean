@@ -54,7 +54,7 @@
 
 ## Phylogenetic networks and their routing kernel
 
-- [Phylogenetic network](phylo-network.md)
+- [Phylogenetic network (routing skeleton)](phylo-network.md)
 - [Inheritance probability of a parent](inherit.md)
 - [Parent-to-child digraph of a phylogenetic network](g.md)
 - [The digraph of a phylogenetic network is acyclic](is-acyclic.md)

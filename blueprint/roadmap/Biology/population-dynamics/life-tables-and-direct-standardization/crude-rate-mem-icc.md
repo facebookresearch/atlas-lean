@@ -7,6 +7,6 @@ $(\sum_i N_i T_i) / \sum_i N_i$ lies in $[a, b]$. The bounds are required for ev
 including categories of size $0$. A valid population has at least one category, so taking for $a$
 and $b$ the smallest and the largest rate shows that the crude rate lies between them.
 
-The same holds for the [directly standardized rate](../../statistical-genetics/mendelian-randomization/weighted-mean.md), the crude rate
-with the composition of a standard population: for a valid standard $S$ and the same rates,
-$(\sum_i S_i T_i) / \sum_i S_i$ lies in $[a, b]$.
+The same holds for the directly standardized rate, the crude rate with the composition of a
+standard population: for a valid standard $S$ and the same rates, $(\sum_i S_i T_i) / \sum_i S_i$
+lies in $[a, b]$.

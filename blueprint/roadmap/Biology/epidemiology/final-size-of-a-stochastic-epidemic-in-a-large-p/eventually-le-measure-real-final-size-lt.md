@@ -1,4 +1,4 @@
-# For all δ, θ > 0, eventually P(F < δN) ≥ q − θ
+# For all δ, θ > 0, P(F < δN) ≥ q − θ eventually as N → ∞
 
 For each $k \in \mathbb{N}$ let the offspring numbers $\xi^{(k)}_{n,i}$ and the contact targets
 $U^{(k)}_j$ form a [final-size epidemic model](is-final-size-epidemic.md) on a probability space

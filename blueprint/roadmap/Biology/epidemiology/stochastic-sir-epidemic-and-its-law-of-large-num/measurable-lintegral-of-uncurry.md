@@ -1,4 +1,4 @@
-# Partial integrals of jointly measurable functions are measurable
+# Partial integrals of jointly measurable functions against an s-finite measure are measurable
 
 Let `α` and `β` be measurable spaces, `ν` an s-finite measure on `β` (a countable sum of finite
 measures, for example a σ-finite measure), and `f(x, y)` a function of `x ∈ α` and `y ∈ β` with

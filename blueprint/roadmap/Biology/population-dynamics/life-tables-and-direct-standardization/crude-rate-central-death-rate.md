@@ -5,5 +5,4 @@ positive exposures $N_i > 0$. The [crude rate](../../statistical-genetics/mendel
 [central death rates](central-death-rate.md) $m_i = D_i / N_i$ is $(\sum_i D_i) / \sum_i N_i$, the
 total deaths over the total exposure. The only hypothesis is the positivity of the exposures, under
 which the central death rates are defined and $m_i N_i = D_i$; the deaths may have any sign. If
-$\iota$ is empty, the total exposure is $0$ and both sides are $0$, by the conventions $0^{-1} = 0$
-in the crude rate and $x / 0 = 0$ on the right.
+$\iota$ is empty, the total exposure is $0$ and both sides are $0$, by the convention $x / 0 = 0$.

@@ -4,8 +4,9 @@ Let $\mu$ be a probability measure on $\Omega$ and $\beta, \gamma \ge 0$, let $(
 [solution of the SIR system](../kermack-mckendrick-sir-model/is-solution.md) with transmission rate
 $\beta$, removal rate $\gamma$ and population size $1$ (in densities), and $x(t) = (s(t), i(t))$.
 Let $X_N(\omega) : \mathbb{R} \to \mathbb{R}^2$ ($N \in \mathbb{N}$, $\omega \in \Omega$) be
-measurable density paths, $U_0 : \Omega \to \mathbb{R}^2$ measurable, $M(\omega)$ paths continuous
-on $[0, T]$ whose values $\omega \mapsto M(\omega)(t)$ are measurable, and, for every $\omega$,
+density paths, each measurable as a function of time, $U_0 : \Omega \to \mathbb{R}^2$ measurable,
+$M(\omega)$ paths continuous on $[0, T]$ whose values $\omega \mapsto M(\omega)(t)$ are
+measurable, and, for every $\omega$,
 $U(\omega)$ the [fluctuation path](is-fluctuation-path.md) driven by $M(\omega)$ from $U_0(\omega)$
 around $x$. Write $U_N = \sqrt N (X_N - x)$ for the [scaled fluctuation](fluctuation.md) and $M_N$
 for the [scaled compensated increment](scaled-martingale.md), with the sup norm
@@ -20,4 +21,5 @@ $N \to \infty$,
 
 If moreover each $\omega \mapsto X_N(\omega)(t)$ is almost everywhere measurable, then for every
 $t \in [0, T]$ the scaled fluctuation $U_N(t)$ converges in distribution to $U(t)$ as
-$N \to \infty$.
+$N \to \infty$. The events in the hypotheses are not assumed measurable, and $\mu$ is applied to
+them as an outer measure.

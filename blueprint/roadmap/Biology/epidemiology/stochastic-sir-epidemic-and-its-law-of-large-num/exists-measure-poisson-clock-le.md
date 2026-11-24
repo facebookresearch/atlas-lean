@@ -1,7 +1,7 @@
 # A $C/N$ bound in the uniform law of large numbers for Poisson clocks
 
 Let $(\Omega, P)$ be a probability space, $B$ real and $\eta > 0$. There is a real constant $C$,
-depending only on $B$ and $\eta$, such that for every unit-rate
+not depending on $Y$ or $N$, such that for every unit-rate
 [Poisson process](../../../Probability/point-processes/poisson-processes/is-poisson-process.md) $Y$ on $(\Omega, P)$ and every natural number $N \ge 1$,
 
 $$P\left(\exists\, a \in [0, B],\ \left|Y(N a)/N - a\right| > \eta\right) \le \max(C/N, 0).$$

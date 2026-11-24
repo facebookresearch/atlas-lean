@@ -944,8 +944,9 @@ theorem tendsto_measure_iSup_deviation (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 
 omit [IsProbabilityMeasure P] in
 /-- Deterministic initial counts: if almost surely `S N 0 = S₀ N`, …, `R N 0 = R₀ N` and
 `S₀ N / N → s 0`, …, `R₀ N / N → r 0`, then the scaled initial state converges to
-`(s 0, e 0, i 0, r 0)` in probability (the hypothesis `hinit` of `tendsto_measure_deviation`).
-Derived from `StochasticCRNLLN.tendsto_measure_deviation_zero_of_initial`. -/
+`(s 0, e 0, i 0, r 0)` in measure (the hypothesis `hinit` of `tendsto_measure_deviation`). `P` need
+not be a probability measure, and the events are not assumed measurable: `P` is applied as an
+outer measure. Derived from `StochasticCRNLLN.tendsto_measure_deviation_zero_of_initial`. -/
 theorem tendsto_measure_deviation_zero_of_initial {S₀ E₀ I₀ R₀ : ℕ → ℕ}
     (hS₀ : ∀ N, ∀ᵐ ω ∂P, S N ω 0 = S₀ N) (hE₀ : ∀ N, ∀ᵐ ω ∂P, E N ω 0 = E₀ N)
     (hI₀ : ∀ N, ∀ᵐ ω ∂P, I N ω 0 = I₀ N) (hR₀ : ∀ N, ∀ᵐ ω ∂P, R N ω 0 = R₀ N)
@@ -972,9 +973,10 @@ theorem tendsto_measure_deviation_zero_of_initial {S₀ E₀ I₀ R₀ : ℕ →
       (X := fun N ω => toPath (S N ω) (E N ω) (I N ω) (R N ω)) (x := odePath s e i r)
       (z₀ := fun N => vec4 (S₀ N) (E₀ N) (I₀ N) (R₀ N)) hX₀ hz₀ hδ
 
-/-- **When `R₀ > 1`, the scaled chain settles near the endemic equilibrium.** Combine Kurtz's
-theorem (with `P`, `Y` and the chains as in `tendsto_measure_deviation`) with the global
-stability of the endemic equilibrium (`SEIRVital.IsSolution.tendsto_endemic`): if `σ > 0`,
+/-- **When `R₀ > 1` and the initial proportions of `S`, `E` and `I` tend to positive limits, the
+scaled chain settles near the endemic equilibrium.** Combine Kurtz's theorem (with `P`, `Y` and
+the chains as in `tendsto_measure_deviation`) with the attractivity of the endemic equilibrium
+from the open positive orthant (`SEIRVital.IsSolution.tendsto_endemic`): if `σ > 0`,
 `γ ≥ 0`, `μ > 0`, `R₀ = β σ / ((μ + σ) (μ + γ)) > 1`, the ODE solution starts with
 `s 0, e 0, i 0 > 0` and the scaled initial state converges to it in probability, then for every
 `ε > 0` there is `t₀` such that at each fixed time `t ≥ t₀`,
@@ -982,7 +984,8 @@ stability of the endemic equilibrium (`SEIRVital.IsSolution.tendsto_endemic`): i
   `P(|S(t)/N - S*| + |E(t)/N - E*| + |I(t)/N - I*| ≥ ε) → 0`  as `N → ∞`,
 
 where `(S*, E*, I*)` is the endemic equilibrium at scale `1`. The limit is `N → ∞` at fixed `t`;
-nothing is claimed uniformly in `t`. -/
+nothing is claimed uniformly in `t`. The events are not assumed measurable; `P` is applied as an
+outer measure. -/
 theorem eventually_tendsto_measure_endemic (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ)
     (hR : 1 < SEIRVital.R0 β σ γ μ) (hY : ∀ N c, IsPoissonProcess (Y N c) 1 P)
     (hchain : ∀ N, ∀ᵐ ω ∂P, IsChainPath β σ γ μ N (fun c u => Y N c u ω) (S N ω) (E N ω)

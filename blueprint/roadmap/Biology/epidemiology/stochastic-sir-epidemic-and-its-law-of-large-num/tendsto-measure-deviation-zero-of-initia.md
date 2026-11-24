@@ -9,7 +9,8 @@ $\mu$-almost everywhere, and
 $$S_0(N)/N \to s(0), \qquad I_0(N)/N \to i(0), \qquad R_0(N)/N \to r(0) \qquad (N \to \infty).$$
 
 Then for every $\delta > 0$, $\mu(D_N(0) \ge \delta) \to 0$ as $N \to \infty$, where $D_N(0)$ is the
-[deviation](deviation.md) at time $0$ of $(S_N, I_N, R_N)/N$ from $(s, i, r)$. For a probability
+[deviation](deviation.md) at time $0$ of $(S_N, I_N, R_N)/N$ from $(s, i, r)$; the event is not
+assumed measurable, and $\mu$ is applied to it as an outer measure. For a probability
 measure this is the hypothesis of
 [Kurtz's law of large numbers](tendsto-measure-deviation.md) that the scaled initial state
 converges in probability to $(s(0), i(0), r(0))$.

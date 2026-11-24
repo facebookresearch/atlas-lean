@@ -1,22 +1,22 @@
 # Stochastic SIR epidemic and its law of large numbers
 
-## Sequences and product laws
+## Sequences, product laws and partial integrals
 
 - [Tail of a sequence](seq-tail.md)
 - [Joint law of the head and the tail of an i.i.d. sequence](infinite-pi-map-head-tail.md)
 - [Tonelli formula over an i.i.d. sequence, split into head and tail](lintegral-infinite-pi-head-tail.md)
 - [Resampling one coordinate preserves a product of probability laws](pi-map-update.md)
 - [Tonelli formula over a product law with one coordinate resampled](lintegral-pi-update.md)
+- [Partial integrals of jointly measurable functions against an s-finite measure are measurable](measurable-lintegral-of-uncurry.md)
 
 ## Competing exponential clocks and their null sets
 
 - [Density of the rate-one exponential law](exp-dens.md)
 - [Competing exponential clocks, joint law](lintegral-competing.md)
 - [A rate-one exponential clock is nonpositive with probability zero](exp-measure-iic-zero.md)
-- [Partial integrals of jointly measurable functions are measurable](measurable-lintegral-of-uncurry.md)
-- [Ties of two exponential clocks are null when one speed is positive](prod-exp-measure-tie.md)
-- [For $b \ge 0$, the event $b r_1 < 0$ has probability zero](prod-exp-measure-neg.md)
-- [For $a \ge 0$, the event $a r_2 < 0$ has probability zero](prod-exp-measure-neg-2.md)
+- [Ties of two independent rate-one exponential clocks are null when one speed is positive](prod-exp-measure-tie.md)
+- [For $b \ge 0$ and a rate-one exponential clock $r_1$, the event $b r_1 < 0$ has probability zero](prod-exp-measure-neg.md)
+- [For $a \ge 0$ and a rate-one exponential clock $r_2$, the event $a r_2 < 0$ has probability zero](prod-exp-measure-neg-2.md)
 
 ## Two-channel chains driven by unit clocks
 
@@ -24,8 +24,8 @@
 - [Law of a clock configuration with independent exponential clocks](clock-measure.md)
 - [Two-channel chain](two-channel.md)
 - [Valid two-channel chain](is-valid.md)
-- [Total jump rate of a two-channel chain](total-rate.md)
-- [Time to the next jump of a two-channel chain](hold.md)
+- [Total rate of a two-channel chain](total-rate.md)
+- [Holding time read off the residual clocks of a two-channel chain](hold.md)
 - [State after the next jump of a two-channel chain](next.md)
 - [Clock configuration after the next jump](next-clock.md)
 - [One jump of a two-channel chain with its clocks](step.md)
@@ -39,7 +39,7 @@
 
 - [Jump matrix of a valid two-channel chain at an active state](ctmc-jump-matrix-eq.md)
 - [Integrals against a row of the jump matrix at an active state](lintegral-ctmc-jump-pmf.md)
-- [Iterated integrals of a measurable function against the clock law](lintegral-clock-measure.md)
+- [Iterated integrals of a measurable function against the clock-configuration law](lintegral-clock-measure.md)
 - [One jump of the clocks from an active state](map-clock.md)
 
 ## Jump chain, holding times and law of the clock chain
@@ -50,9 +50,9 @@
 - [Holding times of the steps read off the clock chain](ctmc-holding-time-steps.md)
 - [The path does not depend on the auxiliary steps](ctmc-path-steps.md)
 - [First step and restarted input of the clock chain](first-step.md)
-- [The first step has the step law, independent of the restarted input](map-first-step.md)
-- [The steps read off exponential clocks are i.i.d. with the step law](map-steps.md)
-- [Under exponential clocks the path has the law of the Markov chain](map-path.md)
+- [Under independent rate-one exponential clocks and i.i.d. step-law auxiliary steps independent of them, the first step has the step law, independent of the restarted input](map-first-step.md)
+- [Under independent rate-one exponential clocks and i.i.d. step-law auxiliary steps independent of them, the read-off steps are i.i.d. with the step law](map-steps.md)
+- [Under independent rate-one exponential clocks the path has the law of the Markov chain](map-path.md)
 - [Finite-dimensional distributions of the clock chain](clock-measure-real-path-fdd.md)
 - [Transition probabilities of the clock chain](clock-measure-real-path-eq.md)
 
@@ -99,11 +99,11 @@
 
 - [Law of the interarrival times of two independent unit clocks](clock-law.md)
 - [Composing with a measure-preserving map preserves independence](i-indep-fun-comp-of-map-eq.md)
-- [Almost surely all interarrival times of the two clocks are positive](ae-clock-law-pos.md)
+- [Rate-one exponential interarrival times of two clocks are almost surely all positive](ae-clock-law-pos.md)
 - [Almost-sure existence of the SIR chain](ae-is-chain-path-sir.md)
-- [The infection clock's counting path is a rate-1 Poisson process](is-poisson-process-clock-count-fst.md)
-- [The recovery clock's counting path is a rate-1 Poisson process](is-poisson-process-clock-count-snd.md)
-- [Law of the initial clock configuration of two exponential clocks](clock-law-map-init-clock.md)
+- [With i.i.d. rate-one exponential interarrival times, the infection clock's counting path is a rate-one Poisson process](is-poisson-process-clock-count-fst.md)
+- [With i.i.d. rate-one exponential interarrival times, the recovery clock's counting path is a rate-one Poisson process](is-poisson-process-clock-count-snd.md)
+- [Law of the initial clock configuration of two independent rate-one exponential clocks](clock-law-map-init-clock.md)
 - [Law identification for the SIR chain](map-sir-path.md)
 - [Law identification for the SIR chain on any probability space](map-sir-path-of-has-law.md)
 - [Transition probabilities of the SIR chain](clock-law-real-sir-path-eq.md)

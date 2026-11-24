@@ -1,4 +1,4 @@
-# The squared distance to equilibrium is at most 2N times V
+# With infectives in both groups, the squared distance to equilibrium is at most 2N times V
 
 Let $\beta \ge 0$, $\gamma > 0$, $\varepsilon < 1$ and $N > 0$, let $(a, c)$ be an
 [endemic equilibrium](is-endemic-eq.md) at coverage $p$, and let $(S_u, I_u, S_v, I_v)$ be a

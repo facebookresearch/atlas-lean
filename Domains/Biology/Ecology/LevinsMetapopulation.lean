@@ -344,8 +344,8 @@ theorem abs_levins_sub_le (hc : 0 < c) (hec : e < c) {p₀ t : ℝ} (hp₀ : 0 <
     abs_of_pos hDpos, div_le_iff₀ hDpos, mul_comm]
   exact mul_le_mul_of_nonneg_left hD (abs_nonneg _)
 
-/-- **Exponential convergence to `p*`.** For `0 < c`, `e < c`, `p₀ > 0` and `t ≥ 0`,
-`|p(t) - p*| ≤ (p* / min p₀ p*) |p₀ - p*| e^{-(c - e) t}`. -/
+/-- **Exponential convergence to `p*`.** For `0 < c`, `e < c`, `p₀ > 0` and `t ≥ 0`, the explicit
+solution satisfies `|p(t) - p*| ≤ (p* / min p₀ p*) |p₀ - p*| e^{-(c - e) t}`. -/
 theorem abs_levins_sub_le_exp (hc : 0 < c) (hec : e < c) {p₀ t : ℝ} (hp₀ : 0 < p₀)
     (ht : 0 ≤ t) :
     |levins c e p₀ t - persistenceEq c e| ≤

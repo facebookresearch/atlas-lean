@@ -1,4 +1,4 @@
-# Phylogenetic network
+# Phylogenetic network (routing skeleton)
 
 A phylogenetic network on a finite set $V$ of nodes is an [admixture graph](admixture-graph.md) on
 $V$ together with node ages. That is, it consists of a root $\rho \in V$, a finite set

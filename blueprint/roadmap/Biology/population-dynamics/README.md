@@ -1,6 +1,6 @@
 # Population and evolutionary dynamics
 
-Differential-equation models of population growth, species interaction and evolutionary change, such as logistic growth, predator–prey systems, replicator dynamics and quasispecies.
+Differential-equation and matrix models of population growth, structure, species interaction and evolutionary change, such as logistic growth, predator–prey systems, metapopulations, replicator dynamics, quasispecies and Leslie matrices, and the life tables and direct standardization of demography.
 
 - [Eigen's quasispecies error threshold](eigen-s-quasispecies-error-threshold/README.md)
 - [Leslie matrix model](leslie-matrix-model/README.md)

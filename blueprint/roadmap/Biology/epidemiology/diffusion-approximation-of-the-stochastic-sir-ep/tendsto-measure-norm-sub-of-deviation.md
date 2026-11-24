@@ -22,4 +22,5 @@ $$
 
 the law-of-large-numbers hypothesis of the
 [diffusion approximation](tendsto-measure-fluctuation-sub.md) for the density paths
-$X_N = (S_N / N, I_N / N)$.
+$X_N = (S_N / N, I_N / N)$. The events are not assumed measurable, and $\mu$ is applied to them as
+an outer measure.

@@ -1,7 +1,8 @@
 # Goh–Volterra Lyapunov function of the SIS endemic equilibrium
 
 For real numbers $\beta$, $\gamma$, $N$, $S$ and $I$, let $S^* = N\gamma/\beta$ and
-$I^* = N(1 - \gamma/\beta)$, the endemic equilibrium of the SIS model, and
+$I^* = N(1 - \gamma/\beta)$ (for $0 < \gamma < \beta$ and $N > 0$, the endemic equilibrium of the
+SIS model), and
 
 $$V(S, I) = \left(S - S^* - S^* \log(S/S^*)\right) + \left(I - I^* - I^* \log(I/I^*)\right).$$
 

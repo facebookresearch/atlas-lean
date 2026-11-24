@@ -19,14 +19,14 @@
 - [For β, γ, ε > 0, Rᵥ ≤ 1 iff p is at least the critical coverage](rv-le-one-iff.md)
 - [For β, γ, ε > 0, Rᵥ > 1 iff p is below the critical coverage](one-lt-rv-iff.md)
 - [For ε > 0, the critical coverage is at most one iff ε ≥ 1 − γ/β](critical-coverage-le-one-iff.md)
-- [If R₀ is at most one the critical coverage is nonpositive](critical-coverage-nonpos.md)
+- [For β, γ, ε > 0, if R₀ ≤ 1 the critical coverage is nonpositive](critical-coverage-nonpos.md)
 
 ## Conservation and the reduction to the SIS model
 
 - [The unvaccinated group size is conserved](unvaccinated-total.md)
 - [The vaccinated group size is conserved](vaccinated-total.md)
 - [A vaccine of zero efficacy gives the unvaccinated SIS model](to-sis.md)
-- [With zero efficacy and γ < β, infection settles at the SIS level](tendsto-total-infected-endemic-of-effica.md)
+- [With zero efficacy and γ < β, an infection present at time 0 settles at the SIS level](tendsto-total-infected-endemic-of-effica.md)
 - [The total-infected equation](has-deriv-at-total-infected.md)
 
 ## Forward invariance of the nonnegative orthant
@@ -61,10 +61,10 @@
 - [For γ ≥ 0 the Lyapunov derivative is at most its two squared terms](lyapunov-deriv-le.md)
 - [The Lyapunov derivative along solutions](has-deriv-at-lyapunov.md)
 - [Infectives present in both groups at time zero stay positive](infected-pos.md)
-- [Along solutions the Lyapunov function never exceeds its initial value](lyapunov-le-initial.md)
-- [Uniform persistence of the unvaccinated infectives](persistence.md)
-- [With β > 0 the Lyapunov function decays exponentially](exists-lyapunov-le-exp.md)
-- [The squared distance to equilibrium is at most 2N times V](sq-add-sq-le-lyapunov.md)
+- [Along solutions with infectives in both groups, the Lyapunov function never exceeds its initial value](lyapunov-le-initial.md)
+- [The unvaccinated infectives stay bounded away from zero](persistence.md)
+- [With β > 0 and infectives in both groups, the Lyapunov function decays exponentially](exists-lyapunov-le-exp.md)
+- [With infectives in both groups, the squared distance to equilibrium is at most 2N times V](sq-add-sq-le-lyapunov.md)
 - [Attractivity of the endemic equilibrium for infections in both groups](tendsto-endemic.md)
 - [Lyapunov stability of the endemic equilibrium](endemic-stability.md)
-- [Below the critical coverage, solutions tend to an endemic equilibrium](tendsto-endemic-of-lt.md)
+- [Below the critical coverage, solutions with infectives in both groups tend to an endemic equilibrium](tendsto-endemic-of-lt.md)

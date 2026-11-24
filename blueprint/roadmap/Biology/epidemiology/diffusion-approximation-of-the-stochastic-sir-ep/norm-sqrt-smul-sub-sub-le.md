@@ -17,5 +17,5 @@ $$
 $$
 
 The proof writes $\sqrt N (F(X) - F(x)) = DF(x)\, U_N + \beta (U_N)_1 (X - x)_2\, (-1, 1)$ with
-$U_N = \sqrt N (X - x)$, by the [exact linearization](drift-add.md), and applies Gronwall's
+$U_N = \sqrt N (X - x)$, by the [exact second-order expansion](drift-add.md), and applies Gronwall's
 inequality to $\|U_N - U\|$.

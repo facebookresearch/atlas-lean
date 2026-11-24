@@ -1,4 +1,4 @@
-# For $R_0 > 1$, the SIS Lyapunov function is nonnegative
+# For $R_0 > 1$ and $S, I > 0$, the SIS Lyapunov function is nonnegative
 
 Let $0 < \gamma < \beta$ (so $R_0 = \beta/\gamma > 1$) and $N > 0$. Then the
 [Goh–Volterra Lyapunov function](lyapunov.md) satisfies $V(S, I) \ge 0$ for all $S > 0$ and $I > 0$.

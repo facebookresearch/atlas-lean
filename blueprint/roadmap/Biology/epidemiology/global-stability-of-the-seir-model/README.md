@@ -33,27 +33,27 @@
 - [Lyapunov derivative for the endemic equilibrium](lyapunov-deriv.md)
 - [Algebraic identity behind the Lyapunov derivative](lyapunov-deriv-identity.md)
 - [The Lyapunov function is nonnegative on the open orthant](lyapunov-nonneg.md)
-- [The Lyapunov function vanishes only at the endemic equilibrium](lyapunov-eq-zero-iff.md)
-- [The Lyapunov derivative is nonpositive](lyapunov-deriv-nonpos.md)
-- [Quadratic bound on the Lyapunov derivative](lyapunov-deriv-le.md)
-- [Zero set of the Lyapunov derivative](lyapunov-deriv-eq-zero-iff.md)
-- [Each Volterra term is bounded by the Lyapunov function](volterra-le-lyapunov.md)
-- [Sublevel sets of the Lyapunov function lie in a positive box](exists-box.md)
+- [The Lyapunov function vanishes on the open orthant only at the endemic equilibrium](lyapunov-eq-zero-iff.md)
+- [The Lyapunov derivative is nonpositive on the open orthant](lyapunov-deriv-nonpos.md)
+- [Quadratic bound on the Lyapunov derivative on the open orthant](lyapunov-deriv-le.md)
+- [Zero set of the Lyapunov derivative on the open orthant](lyapunov-deriv-eq-zero-iff.md)
+- [Each Volterra term is bounded by the Lyapunov function on the open orthant](volterra-le-lyapunov.md)
+- [Sublevel sets of the Lyapunov function in the open orthant lie in a positive box](exists-box.md)
 - [The Lyapunov function is continuous at the endemic equilibrium](continuous-at-lyapunov.md)
 
 ## Positivity and convergence along solutions
 
 - [Derivative of the Lyapunov function along solutions](has-deriv-at-lyapunov.md)
-- [The Lyapunov function does not increase while the solution is positive](lyapunov-le-of-pos-on.md)
+- [The Lyapunov function stays below its initial value while the solution is positive](lyapunov-le-of-pos-on.md)
 - [For R₀ > 1 the open positive orthant is forward invariant](pos.md)
-- [The Lyapunov function stays below its initial value](lyapunov-le-initial.md)
+- [For positive initial states, the Lyapunov function stays below its initial value](lyapunov-le-initial.md)
 - [Persistence and boundedness of positive solutions for R₀ > 1](exists-box-forall.md)
-- [Convergence to the endemic equilibrium when R₀ > 1](tendsto-endemic.md)
+- [Convergence to the endemic equilibrium from the open positive orthant when R₀ > 1](tendsto-endemic.md)
 
 ## Stability of the endemic equilibrium
 
 - [Lyapunov stability of the endemic equilibrium when R₀ > 1](endemic-lyapunov-stable.md)
-- [Stability and attractivity of the endemic equilibrium when R₀ > 1](endemic-globally-asymptotically-stable.md)
+- [Stability and attractivity of the endemic equilibrium relative to the open positive orthant when R₀ > 1](endemic-globally-asymptotically-stable.md)
 
 ## The removed class and the total population
 
@@ -71,13 +71,13 @@
 - [Each term is bounded by the disease-free Lyapunov function](le-dfe-lyapunov.md)
 - [The disease-free Lyapunov function is continuous at (N, 0, 0)](continuous-at-dfe-lyapunov.md)
 - [Derivative of the disease-free Lyapunov function along solutions](has-deriv-at-dfe-lyapunov.md)
-- [The disease-free Lyapunov function does not increase while positive](dfe-lyapunov-le-of-pos-on.md)
+- [The disease-free Lyapunov function stays below its initial value while the solution is positive](dfe-lyapunov-le-of-pos-on.md)
 - [For R₀ ≤ 1 the open positive orthant is forward invariant](pos-of-r0-le-one.md)
-- [The disease-free Lyapunov function stays below its initial value](dfe-lyapunov-le-initial.md)
-- [Convergence to the disease-free state when R₀ ≤ 1](tendsto-disease-free.md)
+- [For positive initial states, the disease-free Lyapunov function stays below its initial value](dfe-lyapunov-le-initial.md)
+- [Convergence to the disease-free state from the open positive orthant when R₀ ≤ 1](tendsto-disease-free.md)
 - [Convergence of the removed class to 0 when R₀ ≤ 1](tendsto-removed-disease-free.md)
-- [Lyapunov stability of the disease-free state when R₀ ≤ 1](disease-free-lyapunov-stable-of-pos.md)
-- [Stability and attractivity of the disease-free state when R₀ ≤ 1](disease-free-lyapunov-stable-and-attract.md)
+- [Lyapunov stability of the disease-free state relative to the open positive orthant when R₀ ≤ 1](disease-free-lyapunov-stable-of-pos.md)
+- [Stability and attractivity of the disease-free state from the open positive orthant when R₀ ≤ 1](disease-free-lyapunov-stable-and-attract.md)
 
 ## Forward-global existence
 

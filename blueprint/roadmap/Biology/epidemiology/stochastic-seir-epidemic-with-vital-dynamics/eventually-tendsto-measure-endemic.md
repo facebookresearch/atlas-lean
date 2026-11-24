@@ -1,4 +1,4 @@
-# When R₀ > 1, the scaled chain settles near the endemic equilibrium
+# When R₀ > 1 and the initial proportions of S, E and I tend to positive limits, the scaled chain settles near the endemic equilibrium
 
 Let `σ > 0`, `γ ≥ 0`, `μ > 0`, and let the
 [basic reproduction number](../global-stability-of-the-seir-model/r0.md) satisfy
@@ -23,5 +23,6 @@ Then for every `ε > 0` there is `t₀` such that at each fixed time `t ≥ t₀
 
 where `S* = 1 / R₀`, `E* = μ (1 - S*) / (μ + σ)` and `I* = σ E* / (μ + γ)` are the levels of the
 endemic equilibrium at scale `1`. The limit is `N → ∞` at fixed `t`; nothing is claimed uniformly in
-`t`. The proof combines Kurtz's law of large numbers with the
-[global attractivity of the endemic equilibrium](../global-stability-of-the-seir-model/tendsto-endemic.md).
+`t`. The event is not assumed measurable; `P` is applied as an outer measure. The proof combines
+Kurtz's law of large numbers with the
+[attractivity of the endemic equilibrium from the open positive orthant](../global-stability-of-the-seir-model/tendsto-endemic.md).

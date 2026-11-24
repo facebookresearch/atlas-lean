@@ -1,4 +1,4 @@
-# For $R_0 > 1$, global asymptotic stability of the endemic equilibrium
+# For $R_0 > 1$, global asymptotic stability of the endemic equilibrium on the open segment
 
 Let $\gamma > 0$, $R_0 = \beta/\gamma > 1$ and $N > 0$, and let
 $(S^*, I^*) = (N\gamma/\beta,\ N(1 - \gamma/\beta))$. For solutions $(S, I)$ of the

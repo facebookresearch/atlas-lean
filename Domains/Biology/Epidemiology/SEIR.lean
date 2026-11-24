@@ -45,15 +45,16 @@ includes the degenerate `N = 0`.
   `IsSolution.deriv_infected_pos_of_exposed`: a purely latent seed (`I(0) = 0 < E(0)`, `σ > 0`)
   gives `I'(0) = σ E(0) > 0`.
 * `exists_isSolution_nonneg`, `exists_isSolution_simplex`, `IsSolution.eq_of_initial`:
-  forward-global existence and uniqueness for nonnegative initial data, with nonnegative
-  compartments of constant total (`N` on the simplex).
+  forward-global existence for `β, σ, γ, N ≥ 0` (`N > 0` on the simplex) and nonnegative initial
+  data, with nonnegative compartments of constant total (`N` on the simplex), and forward
+  uniqueness for any real parameters.
 * `IsSolution.nonneg`, `IsSolution.susceptible_pos_iff`, `IsSolution.exposed_ge`,
   `IsSolution.infected_ge`: forward invariance, `S(t) > 0 ↔ S(0) > 0`,
   `E(t) ≥ E(0) e^{-σ t}`, `I(t) ≥ I(0) e^{-γ t}` (all but the second for `β, σ, γ, N ≥ 0` and
   nonnegative initial data). Positivity of the infected classes is not preserved compartment by
-  compartment: `IsSolution.infected_pos_of_exposed_pos` (`σ > 0` and `E(0) > 0` force
-  `I(t) > 0` for `t > 0`, even if `I(0) = 0`) and `IsSolution.exposed_pos_of_infected_pos`
-  (`β, N, S(0), I(0) > 0` force `E(t) > 0` for `t > 0`).
+  compartment: under the same nonnegativity hypotheses, `IsSolution.infected_pos_of_exposed_pos`
+  (`σ > 0` and `E(0) > 0` force `I(t) > 0` for `t > 0`, even if `I(0) = 0`) and
+  `IsSolution.exposed_pos_of_infected_pos` (`β, N, S(0), I(0) > 0` force `E(t) > 0` for `t > 0`).
 * `IsSolution.susceptible_mul_exp_eq`, `IsSolution.final_size`: `S e^{R₀ R / N}` is conserved,
   as for SIR, since `E` enters neither `S'` nor `R'`.
 * `IsSolution.tendsto_final_size`: for `β ≥ 0`, `σ, γ > 0`, `N ≥ 0` and nonnegative initial

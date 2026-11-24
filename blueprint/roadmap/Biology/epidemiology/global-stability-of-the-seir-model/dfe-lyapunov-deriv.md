@@ -6,4 +6,4 @@ first term is `0` when `S = 0`, and the quotient in the coefficient is `0` when 
 `σ > 0`, `γ ≥ 0` and `μ > 0` the coefficient of `I` is `((μ + σ) (μ + γ) / σ) (R₀ − 1)`, with `R₀`
 the [basic reproduction number](r0.md). It is the derivative of the
 [disease-free Lyapunov function](dfe-lyapunov.md) `V₀`
-[along solutions](has-deriv-at-dfe-lyapunov.md) where `S ≠ 0`.
+[along solutions](has-deriv-at-dfe-lyapunov.md) at times `t ≥ 0` with `S(t) ≠ 0`.

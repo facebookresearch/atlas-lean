@@ -1,6 +1,6 @@
-# Iterated integrals of a measurable function against the clock law
+# Iterated integrals of a measurable function against the clock-configuration law
 
-Let $\mathbb{P}$ be the [clock law](clock-measure.md) on [clock configurations](clock-config.md)
+Let $\mathbb{P}$ be the [clock-configuration law](clock-measure.md) on [clock configurations](clock-config.md)
 $((r_1, r_2), (u_1, u_2))$, with $r_1, r_2 \in \mathbb{R}$ and
 $u_1, u_2 : \mathbb{N} \to \mathbb{R}$: under $\mathbb{P}$ the residual clocks $r_1$, $r_2$ and all
 the interarrival times $u_1(n)$, $u_2(n)$ are independent with the

@@ -1,4 +1,4 @@
-# Ties of two exponential clocks are null when one speed is positive
+# Ties of two independent rate-one exponential clocks are null when one speed is positive
 
 Let `r₁, r₂` be independent exponential clocks with rate `1`: their joint law is `Exp(1) ⊗ Exp(1)`
 on `ℝ²`, each factor with [density](exp-dens.md) `exp(-x)` for `x ≥ 0` and `0` for `x < 0`. For

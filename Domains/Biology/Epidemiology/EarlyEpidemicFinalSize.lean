@@ -61,7 +61,8 @@ below).
   numbers of the `F + 1` infectives (`finalSize_eq_hits`, `totalContacts_eq_sum`,
   `sum_epiSize_eq_finalSize_add_one`).
 * *Contact counts*: the centered count `truncDev`, which sums `ξ n i - R₀` over the infectives
-  of the generations holding at most `L` infectives, has `E[truncDev²] ≤ σ² L`
+  of the generations `n` whose generations `0, …, n` hold at most `L` infectives in total, has
+  `E[truncDev²] ≤ σ² L`
   (`integral_truncDev_sq_le`): each offspring number is independent of everything that decides
   whether it is used (`integral_mul_offspring`), so the increments are orthogonal.
 * *Occupancy*: the number of hits among `c` contacts has variance at most `#S₀`
@@ -119,7 +120,8 @@ theorem epi_eq_epi_card_add_one {n : ℕ} (hn : S₀.card + 1 ≤ n) :
     epi ξ U S₀ n = epi ξ U S₀ (S₀.card + 1) :=
   epi_eq_of_epiSize_eq_zero ξ U S₀ hn (epiSize_card_add_one_eq_zero ξ U S₀)
 
-/-- The contacts made by generations `0, …, n - 1` of the epidemic. -/
+/-- The number of contacts made by generations `0, …, n - 1` of the epidemic is
+`∑_{m < n} ∑_{i < I m} ξ m i`. -/
 theorem epi_snd_eq_sum (n : ℕ) :
     (epi ξ U S₀ n).2 = ∑ m ∈ range n, ∑ i ∈ range (epiSize ξ U S₀ m), ξ m i := by
   induction n with
@@ -725,7 +727,7 @@ theorem integrable_offspring (h : IsFinalSizeEpidemic P ν N ξ U) (p : ℕ × �
   exact (integrable_map_measure (measurable_of_countable f).aestronglyMeasurable
     (h.measurable _ _).aemeasurable).1 hf
 
-/-- **Second moment of the centered contact count.**
+/-- **Second moment of the centered contact count.** With a finite second moment,
 `E[(truncDev L)²] ≤ σ² L`: the increments are orthogonal, and the gates add up to at most `L`. -/
 theorem integral_truncDev_sq_le [IsProbabilityMeasure ν] (h : IsFinalSizeEpidemic P ν N ξ U)
     (h2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) ν) (S₀ : Finset (Fin N)) (L : ℕ) :
@@ -854,9 +856,9 @@ theorem measureReal_le_abs_le {X : Ω → ℝ} (hX : Integrable (fun ω => X ω 
   change t ^ 2 ≤ X ω ^ 2
   nlinarith [abs_nonneg (X ω), sq_abs (X ω)]
 
-/-- **Second-moment bound for a count of events.** If the events `E i`, `i ∈ s`, have
-probability `p` and are pairwise at most as likely as independent events, the number of them
-that occur is within `t` of `#s p` except with probability `≤ #s p / t²`. -/
+/-- **Second-moment bound for a count of events.** If the measurable events `E i`, `i ∈ s`, have
+probability `p` and are pairwise at most as likely as independent events, then for `t > 0` the
+number of them that occur is within `t` of `#s p` except with probability `≤ #s p / t²`. -/
 theorem measureReal_le_abs_sum_indicator_sub {ι : Type*} (s : Finset ι) {E : ι → Set Ω}
     (hE : ∀ i, MeasurableSet (E i)) {p : ℝ} (hp : ∀ i ∈ s, P.real (E i) = p)
     (hpair : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → P.real (E i ∩ E j) ≤ p ^ 2) {t : ℝ} (ht : 0 < t) :
@@ -1028,8 +1030,8 @@ theorem measurableSet_forall_mem (h : IsFinalSizeEpidemic P ν N ξ U) (J : Fins
 
 variable [IsProbabilityMeasure ν]
 
-/-- **Concentration of the number of hits.** Among the first `c` contacts the number of hits is
-within `t` of its mean `#S₀ (1 - (1 - 1/N)^c)` except with probability `≤ #S₀ / t²`. -/
+/-- **Concentration of the number of hits.** For `t > 0`, among the first `c` contacts the number
+of hits is within `t` of its mean `#S₀ (1 - (1 - 1/N)^c)` except with probability `≤ #S₀ / t²`. -/
 theorem measureReal_le_abs_hits_sub (h : IsFinalSizeEpidemic P ν N ξ U) (S₀ : Finset (Fin N))
     (c : ℕ) {t : ℝ} (ht : 0 < t) :
     P.real {ω | t ≤ |(hits S₀ (U · ω) c : ℝ) - S₀.card * (1 - ((N - 1 : ℝ) / N) ^ c)|} ≤
@@ -1085,8 +1087,8 @@ theorem measureReal_le_abs_hits_sub (h : IsFinalSizeEpidemic P ν N ξ U) (S₀ 
   exact div_le_div_of_nonneg_right (mul_le_of_le_one_right (Nat.cast_nonneg _) hp1)
     (by positivity)
 
-/-- **Concentration of the contacts outside `S₀`.** Among the first `m` contacts, the number
-going outside `S₀` is within `t` of `m (N - #S₀) / N` except with probability
+/-- **Concentration of the contacts outside `S₀`.** For `t > 0`, among the first `m` contacts, the
+number going outside `S₀` is within `t` of `m (N - #S₀) / N` except with probability
 `≤ m (N - #S₀) / (N t²)`. -/
 theorem measureReal_le_abs_outsideContacts_sub (h : IsFinalSizeEpidemic P ν N ξ U)
     (S₀ : Finset (Fin N)) (m : ℕ) {t : ℝ} (ht : 0 < t) :
@@ -1198,7 +1200,7 @@ theorem integrable_truncDev_sq (h : IsFinalSizeEpidemic P ν N ξ U)
         exact mul_le_of_le_one_left (abs_nonneg _) (gate_le_one S₀ L _ p))
   exact (memLp_finsetSum (range (S₀.card + 1) ×ˢ range L) fun p _ => hG p).integrable_sq
 
-/-- **Chebyshev bound for the centered contact count.**
+/-- **Chebyshev bound for the centered contact count.** With a finite second moment,
 `P(t ≤ |truncDev L|) ≤ σ² L / t²` for `t > 0`. -/
 theorem measureReal_le_abs_truncDev (h : IsFinalSizeEpidemic P ν N ξ U)
     (h2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) ν) (S₀ : Finset (Fin N)) (L : ℕ) {t : ℝ}
@@ -1424,9 +1426,10 @@ namespace IsFinalSizeEpidemic
 
 variable [IsProbabilityMeasure ν]
 
-/-- **One dyadic block of small outbreaks.** The probability that `2^j ≤ F < 2^{j+1}` and
-`F < δ N` is at most `12 σ² / (r² 2^j) + 256 R p₀ / (r² 2^j)`, plus `64 R² 2^j / (r N)` if
-`2^j < δ N`, where `R = m > 1`, `r = R - 1` and `p₀ = (N - #S₀) / N ≤ r / (32 R)`. -/
+/-- **One dyadic block of small outbreaks.** With a finite second moment, the probability that
+`2^j ≤ F < 2^{j+1}` and `F < δ N` is at most `12 σ² / (r² 2^j) + 256 R p₀ / (r² 2^j)`, plus
+`64 R² 2^j / (r N)` if `2^j < δ N`, where `R = m > 1`, `r = R - 1` and
+`p₀ = (N - #S₀) / N ≤ r / (32 R)`. -/
 theorem measureReal_dyadic_le (h : IsFinalSizeEpidemic P ν N ξ U)
     (h2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) ν) (hm : 1 < offspringMean ν)
     (S₀ : Finset (Fin N)) (j : ℕ) (δ : ℝ)
@@ -1894,8 +1897,8 @@ private lemma tendsto_measureReal_Ioi' (μ : Measure ℕ) [IsFiniteMeasure μ] :
   exact (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp h
 
 /-- **Small outbreaks are asymptotically at least as likely as extinction.** For all `δ > 0` and
-`θ > 0`, eventually `P(F < δ N) ≥ q - θ`: an epidemic whose branching process dies out quickly
-infects a bounded number of individuals. -/
+`θ > 0`, eventually as `N → ∞`, `P(F < δ N) ≥ q - θ`: an epidemic whose branching process dies
+out quickly infects a bounded number of individuals. -/
 theorem eventually_le_measureReal_finalSize_lt
     (h : ∀ k, IsFinalSizeEpidemic (P k) ν (N k) (ξ k) (U k)) (hN : Tendsto N atTop atTop)
     {δ θ : ℝ} (hδ : 0 < δ) (hθ : 0 < θ) :
@@ -1945,8 +1948,9 @@ theorem eventually_le_measureReal_finalSize_lt
   linarith
 
 /-- **Final size: minor outbreaks.** For `R₀ = mean ν > 1` (finite variance), in the
-large-population limit the probability that less than a fraction `δ ∈ (0, τ)` of the population
-is ultimately infected converges to the extinction probability `q` of the branching process. -/
+large-population limit (`N → ∞`, `N - #S₀ = o(N)`) the probability that less than a fraction
+`δ ∈ (0, τ)` of the population is ultimately infected converges to the extinction probability `q`
+of the branching process. -/
 theorem tendsto_measureReal_finalSize_div_lt
     (h : ∀ k, IsFinalSizeEpidemic (P k) ν (N k) (ξ k) (U k))
     (h2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) ν) (hm : 1 < mean ν)
@@ -1996,11 +2000,11 @@ theorem tendsto_measureReal_finalSize_div_lt
       linarith
 
 /-- **Final size: major outbreaks.** For `R₀ = mean ν > 1` (finite variance), in the
-large-population limit the probability that the fraction of the population ultimately infected
-is within `δ` of the positive root `τ` of the final-size equation `1 - τ = e^{-R₀ τ}` converges
-to the survival probability `1 - q` of the branching process (`0 < δ < τ`). Together with
-`tendsto_measureReal_finalSize_div_lt`, the fraction ultimately infected converges in law to
-`q δ₀ + (1 - q) δ_τ`. -/
+large-population limit (`N → ∞`, `N - #S₀ = o(N)`) the probability that the fraction of the
+population ultimately infected is within `δ` of the positive root `τ` of the final-size equation
+`1 - τ = e^{-R₀ τ}` converges to the survival probability `1 - q` of the branching process
+(`0 < δ < τ`). Together with `tendsto_measureReal_finalSize_div_lt`, the fraction ultimately
+infected converges in law to `q δ₀ + (1 - q) δ_τ`. -/
 theorem tendsto_measureReal_abs_finalSize_div_sub_lt
     (h : ∀ k, IsFinalSizeEpidemic (P k) ν (N k) (ξ k) (U k))
     (h2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) ν) (hm : 1 < mean ν)

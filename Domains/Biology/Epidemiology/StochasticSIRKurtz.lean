@@ -30,7 +30,7 @@ of Kurtz's theorem (Kurtz 1970, Thm 3.1; Ethier–Kurtz 1986, ch. 11, Thm 2.1).
 ## The chain
 
 We use Kurtz's random time-change representation (Ethier–Kurtz 1986, ch. 6, §4): with
-independent unit-rate Poisson processes `Y₁`, `Y₂`,
+independent unit-rate Poisson processes `Y₁`, `Y₂` and an initial state independent of them,
 
   `S(t) = S(0) - Y₁(∫₀ᵗ β S I / N)`,  `I(t) = I(0) + Y₁(∫₀ᵗ β S I / N) - Y₂(∫₀ᵗ γ I)`,
   `R(t) = R(0) + Y₂(∫₀ᵗ γ I)`.
@@ -74,7 +74,8 @@ are `ProbabilityTheory.IsPoissonProcess` of rate `1`.
 * Only the law of large numbers is proved, with an `O(1/N)` Chebyshev bound for the clock
   errors; the central limit (diffusion) correction is not treated.
 * The events over `[0, T]` (a time with deviation at least `ε`, or the supremum at least `ε`)
-  are not assumed measurable; their probabilities are outer measures.
+  and the initial events (deviation at time `0` at least `δ`) are not assumed measurable; their
+  probabilities are outer measures.
 
 ## References
 
@@ -121,9 +122,10 @@ processes; nothing else is required of them), the counts `S, I, R : ℝ → ℕ`
   `R(t) = R(0) + y₂(∫₀ᵗ γ I)`,
 
 with `S(0) + I(0) + R(0) = N`; the clocks are truncated at `0` (`infectionClock`,
-`recoveryClock`). For `β, γ ≥ 0`, `N ≥ 1` and independent unit-rate Poisson processes `y₁`,
-`y₂`, this is the continuous-time Markov chain that jumps `(S, I, R) → (S - 1, I + 1, R)` at rate
-`β S I / N` (infection) and `(S, I, R) → (S, I - 1, R + 1)` at rate `γ I` (recovery). The
+`recoveryClock`). For `β, γ ≥ 0`, `N ≥ 1`, independent unit-rate Poisson processes `y₁`, `y₂`
+and an initial state independent of `(y₁, y₂)`, this is the continuous-time Markov chain that
+jumps `(S, I, R) → (S - 1, I + 1, R)` at rate `β S I / N` (infection) and
+`(S, I, R) → (S, I - 1, R + 1)` at rate `γ I` (recovery). The
 counts are natural numbers, so they are nonnegative by construction. The paths are required to
 be measurable (a càdlàg path is), so that the clocks are genuine Lebesgue integrals. -/
 structure IsChainPath (β γ : ℝ) (N : ℕ) (y₁ y₂ : ℝ≥0 → ℕ) (S I R : ℝ → ℕ) : Prop where
@@ -571,8 +573,9 @@ probability that the deviation reaches `ε` at some time of `[0, T]` tends to `0
 
 This event contains the strict supremum event `sup_{t ∈ [0, T]} deviation > ε`. A supremum need
 not be attained, so the non-strict supremum event `sup deviation ≥ ε` is the separate corollary
-`tendsto_measure_iSup_deviation`. The event is not assumed measurable; `μ` is applied as an outer
-measure. Independence of `Y₁ N` and `Y₂ N` is not assumed. -/
+`tendsto_measure_iSup_deviation`. The events, in the conclusion and in the hypothesis on the
+initial state, are not assumed measurable; `μ` is applied to them as an outer measure.
+Independence of `Y₁ N` and `Y₂ N` is not assumed. -/
 theorem tendsto_measure_deviation (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
     (hY₁ : ∀ N, IsPoissonProcess (Y₁ N) 1 μ) (hY₂ : ∀ N, IsPoissonProcess (Y₂ N) 1 μ)
     (hchain : ∀ N, ∀ᵐ ω ∂μ, IsChainPath β γ N (fun u => Y₁ N u ω) (fun u => Y₂ N u ω)
@@ -673,7 +676,8 @@ omit [IsProbabilityMeasure μ] in
 /-- Deterministic initial counts: for any measure `μ` (not necessarily a probability measure),
 if `μ`-almost everywhere `S N 0 = S₀ N`, `I N 0 = I₀ N`, `R N 0 = R₀ N`, and
 `S₀ N / N → s 0`, `I₀ N / N → i 0`, `R₀ N / N → r 0`, then for every `δ > 0`
-`μ {ω | δ ≤ deviation N (S N ω) (I N ω) (R N ω) s i r 0} → 0`. For a probability measure this
+`μ {ω | δ ≤ deviation N (S N ω) (I N ω) (R N ω) s i r 0} → 0`; the event is not assumed
+measurable, and `μ` is applied to it as an outer measure. For a probability measure this
 says that the scaled initial state converges to `(s 0, i 0, r 0)` in probability (the hypothesis
 `hinit` of `tendsto_measure_deviation`). -/
 theorem tendsto_measure_deviation_zero_of_initial {S₀ I₀ R₀ : ℕ → ℕ}

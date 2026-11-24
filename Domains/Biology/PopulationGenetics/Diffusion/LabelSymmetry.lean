@@ -29,9 +29,8 @@ probability of the reflection, and the absorption time is unchanged.
 Conventions are those of `Domains.Biology.PopulationGenetics.Diffusion.KimuraFixationProcess`:
 scaled genic selection coefficient `σ = 2Ns` for a diploid population of `N` individuals and
 time in units of `2N` generations, with continuous `[0, 1]`-valued paths. The formula-level
-symmetry `kimuraFixation_neg (σ x : ℝ) :
-kimuraFixation σ x = 1 - kimuraFixation (-σ) (1 - x)` proved in
-`Domains.Biology.PopulationGenetics.Diffusion.KimuraFixationSelection` is quoted, not
+symmetry `kimuraFixation_neg (σ x : ℝ) : kimuraFixation σ x = 1 - kimuraFixation (-σ) (1 - x)`
+proved in `Domains.Biology.PopulationGenetics.Diffusion.KimuraFixationSelection` is quoted, not
 restated. The neutral case, where reflection preserves the selection coefficient, is
 `NeutralMartingaleProblem.isWrightFisherSolution_one_sub` (with loss formula
 `NeutralMartingaleProblem.measureReal_loss_eq`).

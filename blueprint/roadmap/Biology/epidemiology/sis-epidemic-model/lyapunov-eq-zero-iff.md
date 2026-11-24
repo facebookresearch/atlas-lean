@@ -1,4 +1,4 @@
-# For $R_0 > 1$, the Lyapunov function vanishes exactly at equilibrium
+# For $R_0 > 1$ and $S, I > 0$, the Lyapunov function vanishes exactly at equilibrium
 
 Let $0 < \gamma < \beta$ (so $R_0 = \beta/\gamma > 1$) and $N > 0$, and let
 $(S^*, I^*) = (N\gamma/\beta,\ N(1 - \gamma/\beta))$ be the endemic equilibrium. For $S > 0$ and

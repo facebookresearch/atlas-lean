@@ -1,4 +1,4 @@
-# When R₀ ≤ 1, only minor outbreaks occur, uniformly in the population
+# When R₀ ≤ 1 and offspring numbers are not always 1, only minor outbreaks occur, uniformly in the population
 
 Let `ν` be a probability measure on `ℕ` (the offspring law) with
 [mean](../../../Probability/branching-processes/galton-watson-process/mean.md) `R₀ = ∑_k k ν({k})`,

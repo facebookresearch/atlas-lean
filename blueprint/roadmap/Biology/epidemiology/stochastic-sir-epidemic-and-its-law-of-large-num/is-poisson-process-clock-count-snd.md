@@ -1,4 +1,4 @@
-# The recovery clock's counting path is a rate-1 Poisson process
+# With i.i.d. rate-one exponential interarrival times, the recovery clock's counting path is a rate-one Poisson process
 
 Under the [clock law](clock-law.md) $\mathbb{P}$ on pairs $(e_1, e_2)$ of real sequences, the
 [counting path](clock-count.md) $Y_2$ of the second sequence $e_2$ (the recovery clock) is a

@@ -4,6 +4,7 @@
 
 - [Vector field of the Levins model on a patch network](field.md)
 - [Solution of the Levins system on a patch network](is-solution.md)
+- [Derivative of a weighted total along a solution](has-deriv-at-sum.md)
 - [Persistence number of a patch network](persistence-number.md)
 
 ## The linearization at the empty landscape
@@ -16,7 +17,6 @@
 ## Forward invariance of the unit box
 
 - [The unit box is forward invariant for nonnegative rates](mem-icc.md)
-- [Derivative of a weighted total along a solution](has-deriv-at-sum.md)
 
 ## Below the threshold
 
@@ -27,7 +27,7 @@
 
 - [Perron left vector of the colonization network](exists-perron-left.md)
 - [Uniform weak persistence above the threshold on an irreducible network](exists-lt-of-one-lt.md)
-- [Persistence above the threshold on an irreducible network](not-tendsto-zero-of-one-lt.md)
+- [No extinction above the threshold on an irreducible network occupied at the start](not-tendsto-zero-of-one-lt.md)
 
 ## The well-mixed case
 

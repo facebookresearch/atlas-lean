@@ -11,4 +11,4 @@ earlier generations) is defined by `(I_0, D_0) = (1, 0)` and
 where `c_n = ∑_{i < I_n} ξ_n(i)` is the number of contacts made by generation `n`. Generation `0` is
 the index case alone, with no earlier contacts; generation `n` makes the contacts numbered
 `D_n, …, D_n + c_n − 1`, and the next generation consists of the targets of those that
-[hits](epi-hit.md).
+[hit](epi-hit.md).

@@ -157,9 +157,11 @@ theorem inherit_eq_one_sub [DecidableEq V] {v u₁ u₂ : V} (h : N.parents v = 
     (hne : u₁ ≠ u₂) : N.inherit v u₂ = 1 - N.inherit v u₁ :=
   N.toAdmixtureGraph.prop_eq_one_sub_of_parents_eq_pair h hne
 
-/-- The **reticulation routing kernel**: `k` lineages entering `v` (backward in time) move to
-parents independently, lineage `i` to `a i`, with probability `∏ i, inherit v (a i)`. For `k = 0`
-the single empty assignment has probability `1`. This is the underlying admixture graph's routing
+/-- The **reticulation routing kernel** `∏ i, inherit v (a i)`. At a non-root node `v` it is the
+probability that `k` lineages entering `v` (backward in time) move to parents independently,
+lineage `i` to `a i`, and its row sums to `1` (`sum_routeProb`); at the root, which has no parent,
+every assignment of `k > 0` lineages has value `0` (`routeProb_root`). For `k = 0` the single empty
+assignment has probability `1`, at every node. This is the underlying admixture graph's routing
 kernel. -/
 abbrev routeProb (v : V) {k : ℕ} (a : Fin k → V) : ℝ :=
   N.toAdmixtureGraph.routeProb v a

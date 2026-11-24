@@ -37,7 +37,7 @@ reused rather than repeated.
 **Parameter domain.** The epidemiological parameters are `β ≥ 0`, `γ > 0`, `0 ≤ ε ≤ 1`,
 `0 ≤ p ≤ 1` and `N > 0`; each theorem states the hypotheses it uses. `Rv` and
 `criticalCoverage` are total functions that follow Lean's convention `x / 0 = 0`: `Rv` has its
-epidemiological meaning for `γ > 0`, and `criticalCoverage` for `β, ε > 0`.
+epidemiological meaning for `β ≥ 0` and `γ > 0`, and `criticalCoverage` for `β, ε > 0`.
 
 The **vaccinated reproduction number** is `R_v = R₀ (1 - ε p)` with `R₀ = β / γ`, and the
 **critical vaccination coverage** is `p_c = (1 - 1 / R₀) / ε`. For `β, γ, ε > 0`,
@@ -58,8 +58,8 @@ meaning. The threshold is sharp:
   of Volterra functions `V = g(I_u*, I_u) + g(I_v*, I_v)`, `g(a, x) = x - a - a log (x / a)`
   (`SEIRVital.volterra`), with
 
-    `V' = -(β/N) I (I_u - I_u*)² / I_u - ((1-ε)β/N) I (I_v - I_v*)² / I_v
-          - γ (I_u I_v* - I_v I_u*)² / ((I_u* + I_v*) I_u I_v) ≤ 0`,
+    `V' = -(β/N) I (I_u - I_u*)² / I_u - ((1-ε)β/N) I (I_v - I_v*)² / I_v`
+      `- γ (I_u I_v* - I_v I_u*)² / ((I_u* + I_v*) I_u I_v) ≤ 0`,
 
   `I = I_u + I_v`; the last term is the two-group Cauchy–Schwarz (AM–HM) defect. As in
   `SISGlobalStability`, convergence is quantitative: `V(t) ≤ V(0) e^{-κ t}`.
@@ -195,8 +195,9 @@ structure IsSolution (β γ ε N : ℝ) (Su Iu Sv Iv : ℝ → ℝ) : Prop where
     HasDerivAt Iv ((1 - ε) * β * Sv t * (Iu t + Iv t) / N - γ * Iv t) t
 
 /-- The **vaccinated reproduction number** `R_v = R₀ (1 - ε p)`, `R₀ = β / γ`: coverage `p`,
-efficacy `ε`. It has its epidemiological meaning for `γ > 0`; at `γ = 0` Lean's convention
-`β / 0 = 0` makes it `0`. -/
+efficacy `ε`. It has its epidemiological meaning for `β ≥ 0` and `γ > 0`, where `β / γ` is the
+basic reproduction number of the SIS model; at `γ = 0` Lean's convention `β / 0 = 0` makes it
+`0`. -/
 noncomputable def Rv (β γ ε p : ℝ) : ℝ := β / γ * (1 - ε * p)
 
 /-- The **critical vaccination coverage** `p_c = (1 - 1 / R₀) / ε = (1 - γ / β) / ε`. It has its
@@ -730,8 +731,9 @@ theorem lyapunov_deriv_eq (he : IsEndemicEq β γ ε N p a c) (hN : N ≠ 0) {x 
   field_simp
   ring
 
-/-- `V' ≤ -(β/N) I (x - a)² / x - ((1 - ε) β / N) I (y - c)² / y` for `x, y > 0` and `γ ≥ 0`:
-the dropped term `γ (x c - y a)² / ((a + c) x y)` is nonnegative. -/
+/-- At an endemic equilibrium `(a, c)` (so `a + c > 0`), for `x, y > 0` and `γ ≥ 0`,
+`V' ≤ -(β/N) I (x - a)² / x - ((1 - ε) β / N) I (y - c)² / y` with `I = x + y`: the dropped term
+`γ (x c - y a)² / ((a + c) x y)` is nonnegative. -/
 theorem lyapunovDeriv_le (he : IsEndemicEq β γ ε N p a c) (hγ : 0 ≤ γ) {x y : ℝ} (hx : 0 < x)
     (hy : 0 < y) :
     lyapunovDeriv β γ ε N a c x y ≤
@@ -844,9 +846,9 @@ theorem lyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
       linarith) ht
   simpa using this
 
-/-- **Uniform persistence**: `I_u(t) ≥ m := a e^{-(V(0) + a) / a} > 0` for `t ≥ 0`, for an endemic
-equilibrium `(a, c)`, `β ≥ 0`, `γ, N > 0`, `ε < 1` and a solution with group sizes `(1 - p) N` and
-`p N`, `S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0`. -/
+/-- **Persistence with an explicit bound**: `I_u(t) ≥ m := a e^{-(V(0) + a) / a} > 0` for `t ≥ 0`,
+for an endemic equilibrium `(a, c)`, `β ≥ 0`, `γ, N > 0`, `ε < 1` and a solution with group sizes
+`(1 - p) N` and `p N`, `S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0`; `m` depends on `V(0)`. -/
 theorem persistence {t : ℝ} (ht : 0 ≤ t) :
     a * exp (-(lyapunov a c (Iu 0) (Iv 0) + a) / a) ≤ Iu t := by
   have hpos := h.infected_pos hβ hγ hε hN hSu0 hSv0 hIu0 hIv0 ht
@@ -925,7 +927,7 @@ theorem sq_add_sq_le_lyapunov {t : ℝ} (ht : 0 ≤ t) :
   unfold lyapunov
   linarith
 
-/-- **Global attractivity of the endemic equilibrium.** For `β, γ, N > 0`,
+/-- **Attractivity of the endemic equilibrium for infections in both groups.** For `β, γ, N > 0`,
 `ε < 1` and an endemic equilibrium `(a, c)`, every solution with group sizes `(1 - p) N` and
 `p N`, `S_u(0), S_v(0) ≥ 0` and `I_u(0), I_v(0) > 0` converges: `S_u → (1 - p) N - a`,
 `I_u → a`, `S_v → p N - c`, `I_v → c`. -/
@@ -997,9 +999,9 @@ theorem IsEndemicEq.unique {β γ ε N p a c a' c' : ℝ} (he : IsEndemicEq β �
     (tendsto_nhds_unique tendsto_const_nhds hy).symm⟩
 
 /-- **The threshold theorem for coverage.** For `β, γ, N > 0`, `0 < p < 1` and an imperfect but
-effective vaccine `0 < ε < 1`: if `p < p_c` there is an endemic equilibrium `(a, c)` and it
-attracts every solution with group sizes `(1 - p) N` and `p N`, nonnegative susceptibles and
-positive infectives in both groups. -/
+effective vaccine `0 < ε < 1`: if `p < p_c`, every solution with group sizes `(1 - p) N` and `p N`,
+nonnegative susceptibles and positive infectives in both groups tends to an endemic equilibrium
+`(a, c)`; by `IsEndemicEq.unique` it is the same for every such solution. -/
 theorem IsSolution.tendsto_endemic_of_lt {β γ ε N p : ℝ} {Su Iu Sv Iv : ℝ → ℝ}
     (h : IsSolution β γ ε N Su Iu Sv Iv) (hβ : 0 < β) (hγ : 0 < γ) (hε0 : 0 < ε) (hε : ε < 1)
     (hN : 0 < N) (hp0 : 0 < p) (hp1 : p < 1) (hp : p < criticalCoverage β γ ε)

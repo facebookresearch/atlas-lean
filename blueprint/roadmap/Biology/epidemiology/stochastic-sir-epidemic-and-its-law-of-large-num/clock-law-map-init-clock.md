@@ -1,4 +1,4 @@
-# Law of the initial clock configuration of two exponential clocks
+# Law of the initial clock configuration of two independent rate-one exponential clocks
 
 Let $\mathbb{P}$ be the [clock law](clock-law.md) on pairs $(e_1, e_2)$ of real sequences, and let
 $\mu = \operatorname{Exp}(1)$. The image of $\mathbb{P}$ under the map sending $(e_1, e_2)$ to its

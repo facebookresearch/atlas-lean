@@ -50,19 +50,20 @@ steps of the jump-chain construction of `ProbabilityTheory.ctmcPath`, so the pat
 
 ## Main results
 
-* `isChainPath_sir`: **pathwise existence**. For all positive interarrival times `e₁`, `e₂`,
-  dependent or not, and every initial state with `S₀ + I₀ ≤ N`, the constructed counts solve the
-  time-change equations `IsChainPath β γ N (clockCount e₁) (clockCount e₂) S I R` for all
-  `t ≥ 0`. The chain is absorbed after at most `2 N` jumps (`sir_exists_absorbing`), so the
+* `isChainPath_sir`: **pathwise existence**. For `β, γ ≥ 0`, all positive interarrival times
+  `e₁`, `e₂`, dependent or not, and every initial state with `S₀ + I₀ ≤ N`, the constructed counts
+  solve the time-change equations `IsChainPath β γ N (clockCount e₁) (clockCount e₂) S I R` for
+  all `t ≥ 0`. The chain is absorbed after at most `2 N` jumps (`sir_exists_absorbing`), so the
   paths are defined for all times.
 * `ae_isChainPath_sir`: the same for almost every outcome of two independent unit Poisson
   clocks (`clockLaw`, under which both counting paths are unit-rate Poisson processes,
   `isPoissonProcess_clockCount_fst`, `isPoissonProcess_clockCount_snd`). This gives a
   non-trivial instance of the `hchain` hypothesis of Kurtz's theorem.
 * `TwoChannel.IsValid.map_path`, `map_sirPath`: **law identification**. Driven by independent
-  rate-`1` exponential clocks, the constructed path has the law, on the path space `ℝ≥0 → ι`
-  with its product σ-algebra, of `ctmcPath` under `ctmcInputMeasure`: the continuous-time
-  Markov chain with the same rate matrix built from the jump chain and holding times.
+  rate-`1` exponential clocks, the constructed path of a valid chain (for SIR, `β, γ ≥ 0`) has
+  the law, on the path space `ℝ≥0 → ι` with its product σ-algebra, of `ctmcPath` under
+  `ctmcInputMeasure`: the continuous-time Markov chain with the same rate matrix built from the
+  jump chain and holding times.
   `map_sirPath_of_hasLaw` states it on any probability space.
 * `TwoChannel.IsValid.clockMeasure_real_path_fdd`, `clockLaw_real_sirPath_eq`: consequently the
   finite-dimensional distributions of the constructed chain are products of `exp (t Q)`.
@@ -82,10 +83,10 @@ then identifies the law of the whole step sequence with `ctmcInputMeasure`
 
 ## Scope
 
-* Existence is pathwise and uses only positivity of the interarrival times; it holds for
-  dependent clocks. The law identification needs independent exponential clocks: with a single
-  clock driving both channels the first jump can be a simultaneous infection and recovery,
-  which the jump chain makes with probability `0` (see the tests).
+* Existence is pathwise and, besides `β, γ ≥ 0`, uses only positivity of the interarrival
+  times; it holds for dependent clocks. The law identification needs independent exponential
+  clocks: with a single clock driving both channels the first jump can be a simultaneous
+  infection and recovery, which the jump chain makes with probability `0` (see the tests).
 * The clocks are the canonical counting processes of exponential interarrival times. A general
   `IsPoissonProcess` only fixes finite-dimensional distributions, not path regularity, so the
   construction is not stated for it.
@@ -389,7 +390,8 @@ theorem prod_expMeasure_tie {a b : ℝ} (hab : 0 < a ∨ 0 < b) :
       · intro h; rw [h]; field_simp
     simp [this]
 
-/-- For a nonnegative speed `b`, the event `b r₁ < 0` has probability `0`. -/
+/-- For independent rate-`1` exponential clocks `r₁, r₂` and a nonnegative speed `b`, the event
+`b r₁ < 0` has probability `0`. -/
 theorem prod_expMeasure_neg {b : ℝ} (hb : 0 ≤ b) :
     ((expMeasure 1).prod (expMeasure 1)) {r : ℝ × ℝ | b * r.1 < 0 * r.2} = 0 := by
   refine measure_mono_null (t := Iic 0 ×ˢ univ) (fun r hr => ?_) ?_
@@ -399,7 +401,8 @@ theorem prod_expMeasure_neg {b : ℝ} (hb : 0 ≤ b) :
       exact absurd hr (not_lt.mpr (mul_nonneg hb (le_of_lt (not_le.mp h)))), mem_univ _⟩
   · rw [Measure.prod_prod, expMeasure_Iic_zero, zero_mul]
 
-/-- For a nonnegative speed `a`, the event `a r₂ < 0` has probability `0`. -/
+/-- For independent rate-`1` exponential clocks `r₁, r₂` and a nonnegative speed `a`, the event
+`a r₂ < 0` has probability `0`. -/
 theorem prod_expMeasure_neg' {a : ℝ} (ha : 0 ≤ a) :
     ((expMeasure 1).prod (expMeasure 1)) {r : ℝ × ℝ | a * r.2 < 0 * r.1} = 0 := by
   refine measure_mono_null (t := univ ×ˢ Iic 0) (fun r hr => ?_) ?_
@@ -494,7 +497,8 @@ noncomputable def nextClock (x : ι) (c : ClockConfig) : ClockConfig :=
     ((c.1.1 - K.rate₁ x * K.hold x c.1, c.2.2 0), (c.2.1, seqTail c.2.2))
   else ((c.2.1 0, c.2.2 0), (seqTail c.2.1, seqTail c.2.2))
 
-/-- One jump of the chain together with its clocks. -/
+/-- One jump of the chain together with its clocks; at a state of total rate `0` it leaves the
+state and the clocks unchanged. -/
 noncomputable def step (p : ι × ClockConfig) : ι × ClockConfig :=
   (K.next p.1 p.2.1, K.nextClock p.1 p.2)
 
@@ -1857,8 +1861,9 @@ instance : IsProbabilityMeasure clockLaw := by
   unfold clockLaw; infer_instance
 
 /-- Independence is preserved by composing with a measurable map that pushes the measure forward
-to the law under which the measurable variables are independent. The measures need not be
-probability measures. -/
+to the law under which the measurable variables are independent. No probability measure is
+assumed, but independence under `μ'` (for the empty set of indices) forces `μ'`, and hence `μ`,
+to have total mass `1`. -/
 theorem iIndepFun_comp_of_map_eq {Ω Ω' ι : Type*} {β : ι → Type*} [MeasurableSpace Ω]
     [MeasurableSpace Ω'] [∀ i, MeasurableSpace (β i)] {μ : Measure Ω} {μ' : Measure Ω'}
     {g : Ω → Ω'} (hg : Measurable g) (hmap : μ.map g = μ') {X : ∀ i, Ω' → β i}

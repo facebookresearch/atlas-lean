@@ -1,4 +1,4 @@
-# Extinction by generation n is likelier for the epidemic
+# Extinction by generation n is at least as likely for the epidemic as for the branching process
 
 Let `ξ` be an [offspring family](is-offspring-family.md) under `P` whose law `ν` is a probability
 measure, let the contact targets be `U_0, U_1, …` in a type `α` of individuals (contact number `j`

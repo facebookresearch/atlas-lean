@@ -16,5 +16,6 @@ $$P\left(\sup_{t \in [0, T]} D_N(t) \ge \varepsilon\right) \to 0 \quad (N \to \i
 
 The supremum is taken in $[0, \infty]$, so it exists for every path, bounded or not, and need not
 be attained; for $T < 0$ it is $0$. The event lies inside
-$\{\exists\, t \in [0, T],\ D_N(t) \ge \varepsilon / 2\}$; it is not assumed measurable, and $P$
-is applied to it as an outer measure.
+$\{\exists\, t \in [0, T],\ D_N(t) \ge \varepsilon / 2\}$; neither it nor the events
+$\{D_N(0) \ge \delta\}$ of the hypothesis are assumed measurable, and $P$ is applied to them as an
+outer measure.

@@ -118,7 +118,7 @@ needs.
 - [Lyapunov stability for the model with immigration](is-lyapunov-stable.md)
 - [Global attraction for the model with immigration](is-globally-attracting.md)
 - [Global stability for the model with immigration](is-globally-stable.md)
-- [Exponential decay of the distance to a positive equilibrium](abs-sub-le-exp-of-eq.md)
+- [For m > 0, exponential decay of the distance to a positive equilibrium](abs-sub-le-exp-of-eq.md)
 - [For m > 0, exponential decay of the distance to p̂](abs-sub-le-exp.md)
 - [For m > 0, every solution starting nonnegative tends to p̂](tendsto-immigration-eq.md)
 - [For m > 0, the immigration equilibrium is globally stable](is-globally-stable-2.md)

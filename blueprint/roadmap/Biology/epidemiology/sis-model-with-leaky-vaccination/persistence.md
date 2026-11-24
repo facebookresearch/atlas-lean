@@ -1,4 +1,4 @@
-# Uniform persistence of the unvaccinated infectives
+# The unvaccinated infectives stay bounded away from zero
 
 Let $\beta \ge 0$, $\gamma > 0$, $\varepsilon < 1$ and $N > 0$, let $(a, c)$ be an
 [endemic equilibrium](is-endemic-eq.md) at coverage $p$, and let $(S_u, I_u, S_v, I_v)$ be a
@@ -10,3 +10,5 @@ the [Volterra function](../global-stability-of-the-seir-model/volterra.md)
 $g(a, x) = x - a - a \log(x / a)$ and $V(0) = V(I_u(0), I_v(0))$, for every $t \ge 0$
 
 $$I_u(t) \ge a\, e^{-(V(0) + a) / a} > 0.$$
+
+The bound depends on the solution through $V(0)$.

@@ -1,4 +1,4 @@
-# R₀ > 1, few immune, θ > 0: a δ₀ > 0 has P(F < δ₀N) ≤ q + θ eventually
+# R₀ > 1, few immune, θ > 0: a δ₀ > 0 has P(F < δ₀N) ≤ q + θ eventually as N → ∞
 
 For each $k \in \mathbb{N}$ let the offspring numbers $\xi^{(k)}_{n,i}$ and the contact targets
 $U^{(k)}_j$ form a [final-size epidemic model](is-final-size-epidemic.md) on a probability space

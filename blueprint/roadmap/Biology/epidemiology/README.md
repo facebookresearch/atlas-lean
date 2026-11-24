@@ -1,6 +1,6 @@
 # Mathematical epidemiology
 
-Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers.
+Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.
 
 - [Branching-process approximation of early epidemics](branching-process-approximation-of-early-epidemi/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)

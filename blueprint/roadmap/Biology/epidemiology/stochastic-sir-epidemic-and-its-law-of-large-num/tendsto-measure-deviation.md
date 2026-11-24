@@ -17,10 +17,10 @@ Then for every real $T$ and every $\varepsilon > 0$,
 $$P\left(\exists\, t \in [0, T],\ D_N(t) \ge \varepsilon\right) \to 0 \quad (N \to \infty).$$
 
 The events involved are not assumed measurable; $P$ is applied to them as an outer measure. When
-$Y_{1,N}$ and $Y_{2,N}$ are independent and $N \ge 1$, $(S_N, I_N, R_N)$ is the stochastic SIR
-chain, which jumps
+$N \ge 1$, $Y_{1,N}$ and $Y_{2,N}$ are independent and the initial state $(S_N, I_N, R_N)(0)$ is
+independent of $(Y_{1,N}, Y_{2,N})$, $(S_N, I_N, R_N)$ is the stochastic SIR chain, which jumps
 $(S, I, R) \to (S - 1, I + 1, R)$ at rate $\beta S I / N$ and $(S, I, R) \to (S, I - 1, R + 1)$ at
-rate $\gamma I$; independence is not needed. The event contains
+rate $\gamma I$; the theorem assumes neither independence. The event contains
 $\{\sup_{t \in [0, T]} D_N(t) > \varepsilon\}$, so the scaled chain converges to $(s, i, r)$ in
 probability, uniformly on $[0, T]$. A supremum need not be attained, so the event
 $\{\sup_{t \in [0, T]} D_N(t) \ge \varepsilon\}$ is treated in the
