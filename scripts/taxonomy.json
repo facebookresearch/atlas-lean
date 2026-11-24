@@ -12036,6 +12036,7 @@
   "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotients": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LegendreSymbol/EisensteinJacobiSymbol": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Eisenstein's lemma"},
   "MathlibExt/NumberTheory/LegendreSymbol/LinearSum": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Sums of Legendre symbols"},
+  "MathlibExt/NumberTheory/LehmerBoundsMonotonicity": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/LexMinimalExtensionMonoid": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
   "MathlibExt/NumberTheory/LeonardoP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/Lindemann": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Hermite–Lindemann theorem"},
