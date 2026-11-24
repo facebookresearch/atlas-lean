@@ -169,10 +169,10 @@ theorem tateScalar_mul (σ τ : Galois p) (i : ℕ) :
 
 variable (X : Over (Spec (CommRingCat.of.{0} ℚ_[p])))
 
-/-- Rational pro-étale cohomology of the geometric fibre `X_{\bar{Q}_p}`. It is a separate
-definition with its own additive and `Q_p`-module instances, so that the kernel compares these
-instances by name instead of unfolding the pro-étale `Ext` instances in every declaration that
-mentions them. -/
+/-- Rational pro-étale cohomology of the geometric fibre $X_{\bar{\mathbb{Q}}_p}$. It is a
+separate definition with its own additive and $\mathbb{Q}_p$-module instances, so that the kernel
+compares these instances by name instead of unfolding the pro-étale `Ext` instances in every
+declaration that mentions them. -/
 def Etale (n : ℕ) :=
   AdicCohomology p (geometricFibre X (PadicAlgCl p)) n
 

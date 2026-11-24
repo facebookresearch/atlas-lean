@@ -20,6 +20,9 @@ module where the other was used, or make a declaration that only its own test fi
 `private`. The check also rejects a module whose directory or file name is not a Lean
 identifier, since Lean tools cannot import such a module by name, and a source path that
 Git tracks but the audit's directory walk does not find, or the reverse.
+The compiled audit runs its batches in parallel, as many as the available memory
+holds at 6 GiB each; on a shared machine, `ATLAS_AUDIT_WORKERS=N` sets the count
+(`1` runs them one after another).
 Preflight also validates the semantic Lake target graph so the archived `v1/`
 package cannot enter the root build through a glob, dependency, or extra target.
 The approved `theorem_wanted` and `def_wanted` source forms are enforced in
