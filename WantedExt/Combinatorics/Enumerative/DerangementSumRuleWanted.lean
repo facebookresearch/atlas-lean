@@ -8,31 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Exp
-public import Mathlib.Combinatorics.Derangements.Finite
+public import MathlibExt.Combinatorics.Enumerative.DerangementSumRule
 
 /-!
-# A sum rule for derangements (statement)
+# A sum rule for derangements (compatibility import)
 
-Statement-only target from Jean-Christophe Pain, *A Sum Rule for Derangements*.
-`D(n)` is Mathlib's `numDerangements n`.
+The proved result is now in `MathlibExt.Combinatorics.Enumerative.DerangementSumRule`.
 -/
-
-namespace MetaMathlibExt
-
-@[expose] public section
-
-/-- **A sum rule for derangements.** For every natural number $p$,
-$\sum_{n=0}^{p} n\, D(n) = \lfloor (p + 1)!/e \rfloor$, where $D(n)$ is the number of
-derangements of $n$ objects.
-
-Source: Jean-Christophe Pain, *A Sum Rule for Derangements*, INTEGERS 25 (2025),
-Article A84, Theorem 1 (`integers-2025-A84-thm-1`). -/
-public theorem_wanted sum_mul_numDerangements_eq_floor (p : ℕ) :
-    ((∑ n ∈ Finset.range (p + 1), n * numDerangements n : ℕ) : ℤ) =
-      ⌊((p + 1).factorial : ℝ) / Real.exp 1⌋
-
-end
-
-end MetaMathlibExt

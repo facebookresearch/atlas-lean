@@ -13,6 +13,7 @@ public import MathlibExt.Combinatorics.Enumerative.SabarFineNumberWhitt
 public import MathlibExt.Combinatorics.Enumerative.SabarFineNumber
 public import MathlibExt.Combinatorics.Enumerative.WhittGeneralizedCatalan
 public import MathlibExt.Combinatorics.Enumerative.SabarTriangle
+public import MathlibExt.Combinatorics.Enumerative.SabarWeightedBinomialSum
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.Order.Interval.Finset.Nat
@@ -37,6 +38,9 @@ Proved in `MathlibExt.Combinatorics.Enumerative.SabarTriangle`, which this modul
 definition `sabarNumber` with its checks `sabarNumber_rows_five_ten` and
 `sabarNumber_recurrence_small`, and the reciprocal binomial sum identity
 `sum_inv_choose_succ_eq_one_add_sum_sabarNumber`.
+
+The weighted binomial sum identity `sum_choose_mul_two_pow_add_succ` is proved in
+`MathlibExt.Combinatorics.Enumerative.SabarWeightedBinomialSum`, also imported here.
 -/
 
 namespace MetaMathlibExt
@@ -107,17 +111,6 @@ public theorem_wanted sabarNumber_central_eq_fineNumber (n : ℕ) (hn : 1 ≤ n)
         (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * fineNumber (n - 1) + (-1) ^ (n + 1) ∧
       (sabarNumber (2 * n - 1) n : ℚ) =
         (2 / 3) * ((2 * n - 1).choose n : ℚ) + (1 / 3) * fineNumber (n - 1) + (-1) ^ n
-
-/-- **Consecutive binomial sums weighted by powers of 2.** For a natural number $m$, let
-$V_m(2) = \sum_{k=0}^{m} \binom{m+k}{k} 2^k$. For every natural number $n \ge 1$,
-$V_n(2) + V_{n+1}(2) = 3 \cdot 2^n \binom{2n+2}{n+1}$.
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Lemma 1 (`integers-2026-A27-lem-1`). -/
-public theorem_wanted sum_choose_mul_two_pow_add_succ (n : ℕ) (hn : 1 ≤ n) :
-    ∑ k ∈ Finset.range (n + 1), (n + k).choose k * 2 ^ k +
-        ∑ k ∈ Finset.range (n + 2), (n + 1 + k).choose k * 2 ^ k =
-      3 * 2 ^ n * (2 * n + 2).choose (n + 1)
 
 /-- **Consecutive Whitt generalized Catalan numbers at $\alpha = 2$.** For every natural number
 $n \ge 1$, Whitt's generalized Catalan numbers at $\alpha = 2$ satisfy
