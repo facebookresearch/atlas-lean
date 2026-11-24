@@ -52,3 +52,13 @@ example : ¬ (8 : ℤ) ∣ ((∏ i ∈ oddBelowTwoPow 2, i : ℕ) : ℤ) - 5 := 
 -- At the lower bound the product is 105, with residue 9 modulo 16.
 example : ((∏ i ∈ oddBelowTwoPow 3, i : ℕ) : ℤ) % 16 = 9 :=
   (Int.modEq_of_dvd (oddSet_product_congr 3 (by decide))).symm
+
+-- Below the exponent bound there are only two roots of one.
+example : ({i ∈ oddBelowTwoPow 2 | i ^ 2 % 4 = 1}).card = 2 := by decide
+
+-- At the bound every odd residue squares to one.
+example : ({i ∈ oddBelowTwoPow 3 | i ^ 2 % 8 = 1}).card = 4 :=
+  square_mod_twoPower_fiber_card 3 (by decide) 1 (by decide) (by decide)
+
+-- The other admissible residue modulo sixteen has two roots in each odd class modulo four.
+example : {i ∈ oddBelowTwoPow 4 | i ^ 2 % 16 = 9} = {3, 5, 11, 13} := by decide
