@@ -33,10 +33,12 @@ $X(\mathcal{O}_v)$ for a fixed $\mathcal{O}_F$-structure.
    the rotation group $\mathrm{SO}(2) \subset \mathrm{SL}_2(\mathbb{R})$, the restriction of the twofold cover is the
    connected double cover of the circle, which has no continuous section. With
    $\omega = \omega_\psi \circ \iota$,
-   $$\theta(\varphi)(g_1, g_2) = \sum_{x \in X(F)} \bigl(\omega(g_1, g_2)\varphi\bigr)(x)$$
-   is a function on $G_1(F) \backslash G_1(\mathbb{A}) \times G_2(F) \backslash G_2(\mathbb{A})$, and
-   $\varphi \mapsto \theta(\varphi)$ is the automorphic realization of $\omega$, a map into functions on this
-   double quotient.
+
+    $$\theta(\varphi)(g_1, g_2) = \sum_{x \in X(F)} \bigl(\omega(g_1, g_2)\varphi\bigr)(x)$$
+
+    is a function on $G_1(F) \backslash G_1(\mathbb{A}) \times G_2(F) \backslash G_2(\mathbb{A})$, and
+    $\varphi \mapsto \theta(\varphi)$ is the automorphic realization of $\omega$, a map into functions on this
+    double quotient.
 
 Weil deduces the invariance in item 3, in the $\mathbb{C}^1$-extension (his Théorème 6), from a generalized
 Poisson formula (his Théorème 4 of Chapter I), which reduces to the Poisson summation formula over
