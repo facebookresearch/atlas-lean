@@ -155,36 +155,42 @@ theorem testSqDist_val : sqDist (0, 0) (3, 4) = 25 := by decide
 
 /-- sPRM vertices on four free samples. -/
 theorem testSprmVertices_allFree :
-    sprmVertices testOracles [(0, 0), (1, 0), (0, 1), (10, 10)] =
+    sprmVertices testOracles (0, 0) [(0, 0), (1, 0), (0, 1), (10, 10)] =
       [(0, 0), (1, 0), (0, 1), (10, 10)] := by decide
 
 /-- sPRM edges on four samples: three pairs within radius 2. -/
 theorem testSprmEdges_basic :
-    sprmEdges testOracles [(0, 0), (1, 0), (0, 1), (10, 10)] =
-      [((0, 0), (1, 0)), ((0, 0), (0, 1)), ((1, 0), (0, 1))] := by decide
+    sprmEdges testOracles (0, 0) [(0, 0), (1, 0), (0, 1), (10, 10)] =
+      [((0, 0), (1, 0)), ((0, 0), (0, 1)), ((1, 0), (0, 1)),
+       ((1, 0), (0, 0)), ((0, 1), (0, 0)), ((0, 1), (1, 0))] := by decide
 
 /-- sPRM vertices drop the blocked sample. -/
 theorem testSprmVertices_obstacle :
-    sprmVertices testOraclesObs [(0, 0), (1, 0), (0, 1), (10, 10)] =
+    sprmVertices testOraclesObs (0, 0) [(0, 0), (1, 0), (0, 1), (10, 10)] =
       [(0, 0), (1, 0), (0, 1)] := by decide
 
 /-- sPRM vertices deduplicate samples. -/
 theorem testSprmVertices_dedup :
-    sprmVertices testOracles [(0, 0), (1, 0), (0, 0)] =
+    sprmVertices testOracles (0, 0) [(0, 0), (1, 0), (0, 0)] =
       [(1, 0), (0, 0)] := by decide
+
+/-- sPRM vertices include the start when absent from samples. -/
+theorem testSprmVertices_startAbsent :
+    sprmVertices testOracles (0, 0) [(1, 0), (0, 1)] =
+      [(0, 0), (1, 0), (0, 1)] := by decide
 
 /-- RRT growth on three samples; the repeated sample is skipped. -/
 theorem testRrt_basic :
     rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)] =
       ([(2, 0), (1, 0), (0, 0)], [((1, 0), (2, 0)), ((0, 0), (1, 0))]) := by decide
 
-/-- Tree property instance, via the general lemma. -/
-theorem testRrt_tree :
+/-- Target uniqueness instance, via the general lemma. -/
+theorem testRrt_targets_nodup :
     ((rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2.map Prod.snd).Nodup :=
-  rrt_tree _ _ _
+  rrt_targets_nodup _ _ _
 
-/-- Tree property instance, checked computationally. -/
-theorem testRrt_tree_decide :
+/-- Target uniqueness instance, checked computationally. -/
+theorem testRrt_targets_nodup_decide :
     ((rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2.map Prod.snd).Nodup := by decide
 
 /-- Vertex-subset instance, via the general lemma (steered form: vertices are
@@ -203,8 +209,13 @@ theorem testRrt_length :
 /-- Symmetry instance: the swapped pair satisfies the edge predicate. -/
 theorem testSprm_symmetric : IsSprmEdge testOracles (1, 0) (0, 0) := by
   have h : ((0, 0), (1, 0)) ∈
-      sprmEdges testOracles [(0, 0), (1, 0), (0, 1), (10, 10)] := by decide
-  exact sprmEdges_symmetric _ _ _ _ h
+      sprmEdges testOracles (0, 0) [(0, 0), (1, 0), (0, 1), (10, 10)] := by decide
+  exact sprmEdges_symmetric _ _ _ _ _ h
+
+/-- The swapped arc is in the edge list. -/
+theorem testSprmEdges_swap_mem :
+    ((1, 0), (0, 0)) ∈
+      sprmEdges testOracles (0, 0) [(0, 0), (1, 0), (0, 1), (10, 10)] := by decide
 
 /-- RRT nearest tie-break: with tree vertices `[(2, 0), (0, 0)]` and sample
 `(1, 0)`, both at squared distance 1, the first vertex in list order wins, so
@@ -236,19 +247,68 @@ theorem testRrt_edge_of_mem :
   have h : (1, 0) ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1 := by decide
   exact rrt_edge_of_mem _ _ _ _ h (by decide)
 
-/-- PRM* with a vertex-count radius schedule connects all six pairs, unlike the
-fixed radius 2 which gives three edges (`testSprmEdges_basic`). -/
+/-- Endpoints instance, via the general lemma. -/
+theorem testRrt_endpoints :
+    ∀ e ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2,
+      e.1 ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1 ∧
+        e.2 ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1 := by
+  intro e he
+  exact rrt_edge_endpoints _ _ _ e he
+
+/-- Vertex uniqueness instance, via the general lemma. -/
+theorem testRrt_verts_nodup :
+    ((rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1).Nodup :=
+  rrt_verts_nodup _ _ _
+
+/-- No edge targets the start, checked computationally. -/
+theorem testRrt_noEdgeToStart :
+    (0, 0) ∉ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2.map Prod.snd := by
+  decide
+
+/-- Edge and vertex counts, via the general lemma. -/
+theorem testRrt_counts :
+    (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2.length + 1 =
+      (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1.length :=
+  rrt_edges_length_eq _ _ _
+
+/-- Reachability instance, via the general lemma. -/
+theorem testRrt_reachable :
+    ∃ k, Nonempty (PPath (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2
+      (0, 0) (2, 0) k) := by
+  have hmem : (2, 0) ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1 := by
+    decide
+  exact rrt_reachable _ _ _ _ hmem
+
+/-- Acyclicity instance, via the general lemma. -/
+theorem testRrt_acyclic :
+    ([(0, 0), (1, 0), (2, 0)] : List (Int × Int)).Nodup := by
+  have hchain : IsParentChain
+      (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2
+      ([(0, 0), (1, 0), (2, 0)] : List (Int × Int)) := by
+    show ((0, 0), (1, 0)) ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2 ∧
+      ((1, 0), (2, 0)) ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).2 ∧
+      True
+    decide
+  have hverts : ∀ v ∈ ([(0, 0), (1, 0), (2, 0)] : List (Int × Int)),
+      v ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1 := by decide
+  exact rrt_acyclic _ _ _ _ hchain hverts
+
+/-- PRM* with a vertex-count radius schedule connects all six pairs with twelve
+arcs, unlike the fixed radius 2 which gives six arcs (`testSprmEdges_basic`). -/
 theorem testPrmStar_edges :
     prmStarEdges testOracles (fun n => if n ≤ 3 then 2 else 200)
-        [(0, 0), (1, 0), (0, 1), (10, 10)] =
+        (0, 0) [(0, 0), (1, 0), (0, 1), (10, 10)] =
       [((0, 0), (1, 0)), ((0, 0), (0, 1)), ((0, 0), (10, 10)),
-       ((1, 0), (0, 1)), ((1, 0), (10, 10)), ((0, 1), (10, 10))] := by decide
+       ((1, 0), (0, 1)), ((1, 0), (10, 10)), ((0, 1), (10, 10)),
+       ((1, 0), (0, 0)), ((0, 1), (0, 0)), ((10, 10), (0, 0)),
+       ((0, 1), (1, 0)), ((10, 10), (1, 0)), ((10, 10), (0, 1))] := by decide
 
 /-- PRM* with a constant schedule agrees with sPRM, via the general lemma. -/
 theorem testPrmStar_const :
-    prmStarEdges testOracles (fun _ => 2) [(0, 0), (1, 0), (0, 1), (10, 10)] =
-      sprmEdges testOracles [(0, 0), (1, 0), (0, 1), (10, 10)] :=
-  prmStarEdges_const_radius _ _
+    prmStarEdges testOracles (fun _ => 2) (0, 0)
+        [(0, 0), (1, 0), (0, 1), (10, 10)] =
+      sprmEdges testOracles (0, 0) [(0, 0), (1, 0), (0, 1), (10, 10)] :=
+  prmStarEdges_const_radius _ _ _
 
 /-- Cost table fixture: two entries. -/
 def testCosts : List ((Int × Int) × (Int × Nat)) :=
@@ -512,11 +572,15 @@ theorem testRrtStar_gateFallback :
 
 #print axioms sprmVertices_all_free
 #print axioms sprmEdges_symmetric
+#print axioms sprmEdges_swap_mem
 #print axioms rrt_verts_subset
 #print axioms rrt_edges_length
-#print axioms rrt_tree
+#print axioms rrt_targets_nodup
 #print axioms rrt_edge_of_mem
+#print axioms rrt_reachable
+#print axioms rrt_acyclic
 #print axioms prmStarEdges_mem
+#print axioms prmStarEdges_swap_mem
 #print axioms prmStarEdges_const_radius
 #print axioms rrtStar_tree
 #print axioms rrtStar_cost_start

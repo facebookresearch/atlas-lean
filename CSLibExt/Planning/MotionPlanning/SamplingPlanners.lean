@@ -51,11 +51,10 @@ All four planners share one oracle bundle (`Oracles`): a point-collision test
 rationals so that examples compute by `decide`, serving both as the proximity
 measure and as the objective cost, and a connection radius `radius`.
 
-* sPRM: the vertices are the collision-free samples with duplicates removed.
-  The edges connect each unordered pair of distinct vertices once, requiring
-  the cost bound in both directions and `link` success in both directions.
-  Both directions are required (rather than one), which keeps the edge
-  relation symmetric by construction.
+* sPRM: the vertices are the initial configuration together with the
+  collision-free samples, duplicates removed. The edge list carries both
+  directed arcs of each qualifying unordered pair, requiring the cost bound
+  in both directions and `link` success in both directions.
 * RRT: a fold over the sample list. For each sample `s`, let `u` be the
   nearest current tree vertex (the first cost minimizer in list order,
   computed by `nearest`) and `x := O.steer u s` the steered configuration;
@@ -63,13 +62,16 @@ measure and as the objective cost, and a connection radius `radius`.
   links `u` to `x`, and `x` is fresh. There is no check on the raw sample
   `s` itself: a non-free sample can still extend the tree through its
   steered point, and there is no explicit skip for samples already in the
-  tree (only RRT* skips raw duplicates). The `x`-is-fresh conjunct still
-  keeps the vertex list duplicate free, and each insertion adds exactly one
-  edge into its fresh vertex, so the edge set stays a tree.
+  tree (only RRT* skips raw duplicates). The output keeps both edge
+  endpoints in the vertex list, vertices and edge targets duplicate free,
+  no edge into the start, one more vertex than edges, every vertex
+  reachable from the start, and parent chains with vertices in the RRT vertex list duplicate free
+  (`rrt_reachable`, `rrt_acyclic`).
 * PRM*: like sPRM, except the connection radius is given by `radiusOf`
-  applied to the vertex count instead of the fixed `radius`. Pairs connect
-  when the cost bound holds in both directions and `link` succeeds in both
-  directions.
+  applied to the vertex count instead of the fixed `radius`. The vertices
+  are the initial configuration together with the collision-free samples,
+  duplicates removed, and the edge list carries both directed arcs of each
+  qualifying unordered pair.
 * RRT*: a fold over the sample list threading vertices, parent edges, and a
   cost-to-come table. Each sample `s` already among the vertices is skipped;
   otherwise `s` is steered from its nearest vertex `u` (`x := O.steer u s`)
@@ -109,27 +111,39 @@ structure Oracles (C : Type) where
   /-- Costs between distinct configurations are positive. -/
   cost_pos : ∀ a b, a ≠ b → 0 < cost a b
 
-/-- sPRM vertices: the collision-free samples with duplicates removed. -/
-def sprmVertices {C : Type} [DecidableEq C] (O : Oracles C) (samples : List C) :
-    List C :=
-  (samples.filter O.free).dedup
+/-- sPRM vertices: the initial configuration together with the collision-free
+samples, duplicates removed. -/
+def sprmVertices {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
+    (samples : List C) : List C :=
+  (start :: (samples.filter O.free)).dedup
 
-/-- Membership in the sPRM vertices: a sample that is collision free. -/
+/-- Membership in the sPRM vertices: the initial configuration or a
+collision-free sample. -/
 theorem sprmVertices_mem {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) (v : C) :
-    v ∈ sprmVertices O samples ↔ v ∈ samples ∧ O.free v = true := by
+    (start : C) (samples : List C) (v : C) :
+    v ∈ sprmVertices O start samples ↔
+      v = start ∨ (v ∈ samples ∧ O.free v = true) := by
   unfold sprmVertices
-  simp only [List.mem_dedup, List.mem_filter]
+  simp only [List.mem_dedup, List.mem_cons, List.mem_filter]
 
-/-- Every sPRM vertex is collision free. -/
+/-- The initial configuration is an sPRM vertex. -/
+theorem sprmVertices_start_mem {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (samples : List C) : start ∈ sprmVertices O start samples := by
+  rw [sprmVertices_mem]
+  exact Or.inl rfl
+
+/-- Every sPRM vertex is collision free, when the initial configuration is. -/
 theorem sprmVertices_all_free {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) (v : C) (hv : v ∈ sprmVertices O samples) :
-    O.free v = true :=
-  ((sprmVertices_mem O samples v).mp hv).2
+    (start : C) (samples : List C) (hstart : O.free start = true) (v : C)
+    (hv : v ∈ sprmVertices O start samples) : O.free v = true := by
+  rw [sprmVertices_mem] at hv
+  rcases hv with rfl | ⟨_, hfree⟩
+  · exact hstart
+  · exact hfree
 
 /-- sPRM vertices have no duplicates. -/
 theorem sprmVertices_nodup {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) : (sprmVertices O samples).Nodup := by
+    (start : C) (samples : List C) : (sprmVertices O start samples).Nodup := by
   unfold sprmVertices
   exact List.nodup_dedup _
 
@@ -213,56 +227,88 @@ theorem mem_allPairs {C : Type} [DecidableEq C] (O : Oracles C) (vs : List C) :
         · exact List.mem_cons_of_mem _ hamem
         · exact List.mem_cons_of_mem _ hbmem
 
-/-- sPRM edges: each unordered pair of distinct vertices once, when the cost
-bound holds and the local planner succeeds in both directions. -/
-def sprmEdges {C : Type} [DecidableEq C] (O : Oracles C) (samples : List C) :
-    List (C × C) :=
-  allPairs O (sprmVertices O samples)
+/-- Both directed arcs of each edge: the list plus its reversals. -/
+def withReversals {C : Type} (edges : List (C × C)) : List (C × C) :=
+  edges ++ edges.map Prod.swap
+
+/-- Membership in `withReversals`: the arc or its reversal is in the input. -/
+theorem mem_withReversals {C : Type} (edges : List (C × C)) (u v : C) :
+    (u, v) ∈ withReversals edges ↔ (u, v) ∈ edges ∨ (v, u) ∈ edges := by
+  unfold withReversals
+  simp only [List.mem_append, List.mem_map]
+  constructor
+  · rintro (h | ⟨p, hmem, hpair⟩)
+    · exact Or.inl h
+    · obtain ⟨a, b⟩ := p
+      rw [Prod.swap_prod_mk] at hpair
+      rw [Prod.mk.injEq] at hpair
+      obtain ⟨rfl, rfl⟩ := hpair
+      exact Or.inr hmem
+  · rintro (h | h)
+    · exact Or.inl h
+    · exact Or.inr ⟨(v, u), h, rfl⟩
+
+/-- Reversals are closed under swapping. -/
+theorem swap_mem_withReversals {C : Type} (edges : List (C × C)) (u v : C)
+    (h : (u, v) ∈ withReversals edges) : (v, u) ∈ withReversals edges := by
+  rw [mem_withReversals] at h ⊢
+  rcases h with h | h
+  · exact Or.inr h
+  · exact Or.inl h
+
+/-- sPRM edges: both directed arcs of each qualifying unordered pair, when the
+cost bound holds and the local planner succeeds in both directions. -/
+def sprmEdges {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
+    (samples : List C) : List (C × C) :=
+  withReversals (allPairs O (sprmVertices O start samples))
 
 /-- Edges attach to vertices and satisfy the edge predicate. -/
 theorem sprmEdges_mem {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) (u v : C) (h : (u, v) ∈ sprmEdges O samples) :
-    u ∈ sprmVertices O samples ∧ v ∈ sprmVertices O samples ∧
-      IsSprmEdge O u v :=
-  mem_allPairs O (sprmVertices O samples) u v h
+    (start : C) (samples : List C) (u v : C)
+    (h : (u, v) ∈ sprmEdges O start samples) :
+    u ∈ sprmVertices O start samples ∧ v ∈ sprmVertices O start samples ∧
+      IsSprmEdge O u v := by
+  unfold sprmEdges at h
+  rw [mem_withReversals] at h
+  rcases h with h | h
+  · exact mem_allPairs O (sprmVertices O start samples) u v h
+  · obtain ⟨h1, h2, h3⟩ := mem_allPairs O (sprmVertices O start samples) v u h
+    exact ⟨h2, h1, IsSprmEdge_symm O v u h3⟩
 
 /-- sPRM edges are symmetric: the swapped pair satisfies the edge predicate. -/
 theorem sprmEdges_symmetric {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) (u v : C) (h : (u, v) ∈ sprmEdges O samples) :
-    IsSprmEdge O v u :=
-  IsSprmEdge_symm O u v (sprmEdges_mem O samples u v h).2.2
+    (start : C) (samples : List C) (u v : C)
+    (h : (u, v) ∈ sprmEdges O start samples) : IsSprmEdge O v u :=
+  IsSprmEdge_symm O u v (sprmEdges_mem O start samples u v h).2.2
 
-/-- The undirected sPRM edge set: each edge plus its reversal. -/
-def sprmEdgesUndirected {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) : List (C × C) :=
-  sprmEdges O samples ++ (sprmEdges O samples).map Prod.swap
+/-- The reversal of an edge lies in the edge list. -/
+theorem sprmEdges_swap_mem {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (samples : List C) (u v : C)
+    (h : (u, v) ∈ sprmEdges O start samples) :
+    (v, u) ∈ sprmEdges O start samples := by
+  unfold sprmEdges at h ⊢
+  exact swap_mem_withReversals _ u v h
 
-/-- The reversal of an edge lies in the undirected edge set. -/
-theorem mem_sprmEdgesUndirected_swap {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) (u v : C) (h : (u, v) ∈ sprmEdges O samples) :
-    (v, u) ∈ sprmEdgesUndirected O samples := by
-  unfold sprmEdgesUndirected
-  simp only [List.mem_append]
-  refine Or.inr ?_
-  rw [List.mem_map]
-  exact ⟨(u, v), h, rfl⟩
-
-/-- PRM* vertices: the same collision-free deduplicated samples as sPRM. The
-vertex set does not depend on the radius schedule. -/
+/-- PRM* vertices: the initial configuration together with the collision-free
+samples, duplicates removed, as in sPRM. The vertex set does not depend on the
+radius schedule. -/
 def prmStarVertices {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) : List C :=
-  sprmVertices O samples
+    (start : C) (samples : List C) : List C :=
+  sprmVertices O start samples
 
 /-- PRM* and sPRM share the same vertex set. -/
 theorem prmStarVertices_eq {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) : prmStarVertices O samples = sprmVertices O samples :=
+    (start : C) (samples : List C) :
+    prmStarVertices O start samples = sprmVertices O start samples :=
   rfl
 
-/-- Membership in the PRM* vertices: a sample that is collision free. -/
+/-- Membership in the PRM* vertices: the initial configuration or a
+collision-free sample. -/
 theorem prmStarVertices_mem {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) (v : C) :
-    v ∈ prmStarVertices O samples ↔ v ∈ samples ∧ O.free v = true :=
-  sprmVertices_mem O samples v
+    (start : C) (samples : List C) (v : C) :
+    v ∈ prmStarVertices O start samples ↔
+      v = start ∨ (v ∈ samples ∧ O.free v = true) :=
+  sprmVertices_mem O start samples v
 
 /-- Propositional PRM* edge predicate at `n` vertices: like `IsSprmEdge` with
 the connection radius `radiusOf n`. -/
@@ -270,26 +316,42 @@ abbrev IsPrmStarEdge {C : Type} (O : Oracles C) (radiusOf : Nat → Rat) (n : Na
     (u v : C) : Prop :=
   IsSprmEdge { O with radius := radiusOf n } u v
 
-/-- PRM* edges: each unordered pair of distinct vertices once, connecting when
-the cost bound at `radiusOf` (vertex count) holds in both directions and the
-local planner succeeds in both directions. -/
+/-- PRM* edges: both directed arcs of each qualifying unordered pair,
+connecting when the cost bound at `radiusOf` (vertex count) holds in both
+directions and the local planner succeeds in both directions. -/
 def prmStarEdges {C : Type} [DecidableEq C] (O : Oracles C)
-    (radiusOf : Nat → Rat) (samples : List C) : List (C × C) :=
-  allPairs { O with radius := radiusOf (prmStarVertices O samples).length }
-    (prmStarVertices O samples)
+    (radiusOf : Nat → Rat) (start : C) (samples : List C) : List (C × C) :=
+  withReversals (allPairs
+    { O with radius := radiusOf (prmStarVertices O start samples).length }
+    (prmStarVertices O start samples))
 
 /-- Edges attach to vertices and satisfy the PRM* edge predicate. -/
 theorem prmStarEdges_mem {C : Type} [DecidableEq C] (O : Oracles C)
-    (radiusOf : Nat → Rat) (samples : List C) (u v : C)
-    (h : (u, v) ∈ prmStarEdges O radiusOf samples) :
-    u ∈ prmStarVertices O samples ∧ v ∈ prmStarVertices O samples ∧
-      IsPrmStarEdge O radiusOf (prmStarVertices O samples).length u v :=
-  mem_allPairs _ _ u v h
+    (radiusOf : Nat → Rat) (start : C) (samples : List C) (u v : C)
+    (h : (u, v) ∈ prmStarEdges O radiusOf start samples) :
+    u ∈ prmStarVertices O start samples ∧ v ∈ prmStarVertices O start samples ∧
+      IsPrmStarEdge O radiusOf (prmStarVertices O start samples).length u v := by
+  unfold prmStarEdges at h
+  rw [mem_withReversals] at h
+  rcases h with h | h
+  · exact mem_allPairs _ _ u v h
+  · obtain ⟨h1, h2, h3⟩ := mem_allPairs _ _ v u h
+    refine ⟨h2, h1, ?_⟩
+    exact IsSprmEdge_symm _ v u h3
 
-/-- With a constant radius schedule, PRM* reduces to sPRM. -/
+/-- The reversal of a PRM* edge lies in the edge list. -/
+theorem prmStarEdges_swap_mem {C : Type} [DecidableEq C] (O : Oracles C)
+    (radiusOf : Nat → Rat) (start : C) (samples : List C) (u v : C)
+    (h : (u, v) ∈ prmStarEdges O radiusOf start samples) :
+    (v, u) ∈ prmStarEdges O radiusOf start samples := by
+  unfold prmStarEdges at h ⊢
+  exact swap_mem_withReversals _ u v h
+
+/-- With radius schedule `fun _ => O.radius`, PRM* reduces to sPRM. -/
 theorem prmStarEdges_const_radius {C : Type} [DecidableEq C] (O : Oracles C)
-    (samples : List C) :
-    prmStarEdges O (fun _ => O.radius) samples = sprmEdges O samples := rfl
+    (start : C) (samples : List C) :
+    prmStarEdges O (fun _ => O.radius) start samples =
+      sprmEdges O start samples := rfl
 
 /-- Nearest current vertex to `s` by cost: the first minimizer in list order,
 computed by a left fold that keeps the first vertex attaining the minimum.
@@ -299,6 +361,35 @@ def nearest {C : Type} (O : Oracles C) (verts : List C) (dflt : C) (s : C) : C :
   | [] => dflt
   | v :: vs =>
       vs.foldl (fun best w => if O.cost w s < O.cost best s then w else best) v
+
+private theorem nearest_foldl_mem {C : Type} (O : Oracles C) (s : C)
+    (verts : List C) (l : List C) (best : C)
+    (hbest : best ∈ verts) (hl : ∀ w ∈ l, w ∈ verts) :
+    l.foldl (fun best w => if O.cost w s < O.cost best s then w else best) best ∈ verts := by
+  induction l generalizing best with
+  | nil => simpa
+  | cons w ws ih =>
+      simp only [List.foldl_cons]
+      apply ih
+      · by_cases h : O.cost w s < O.cost best s
+        · simp only [h, ↓reduceIte]
+          exact hl w List.mem_cons_self
+        · simp only [h, ↓reduceIte]
+          exact hbest
+      · intro w' hw'
+        exact hl w' (List.mem_cons_of_mem w hw')
+
+/-- The nearest vertex is drawn from the vertex list when it is nonempty. -/
+theorem nearest_mem {C : Type} (O : Oracles C) {verts : List C}
+    (hne : verts ≠ []) (dflt s : C) : nearest O verts dflt s ∈ verts := by
+  match _h : verts with
+  | [] => exact absurd rfl hne
+  | v :: vs =>
+      unfold nearest
+      apply nearest_foldl_mem
+      · exact List.mem_cons_self
+      · intro w hw
+        exact List.mem_cons_of_mem v hw
 
 /-- RRT growth folded over the samples by structural recursion. For each sample
 `s`, steer from the nearest current vertex toward `s` and link to the steered
@@ -330,23 +421,36 @@ theorem rrtAux_cons {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
       else
         rrtAux O start ss verts edges) := rfl
 
-/-- Fold invariant: edge targets stay in the vertex list and the tree property
-(duplicate-free edge targets) is preserved. -/
+/-- Fold invariant: the vertex list keeps `start` and stays duplicate free,
+every edge joins two vertices, edge targets stay duplicate free with no
+self loops and no edge into `start`, and vertices outnumber edges by one. -/
 theorem rrtAux_invar {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
     (ss : List C) :
     ∀ (verts : List C) (edges : List (C × C)),
-      (∀ e ∈ edges, e.2 ∈ verts) →
+      start ∈ verts →
+      verts.Nodup →
+      (∀ e ∈ edges, e.1 ∈ verts ∧ e.2 ∈ verts) →
       (edges.map Prod.snd).Nodup →
-      (∀ e ∈ (rrtAux O start ss verts edges).2,
-        e.2 ∈ (rrtAux O start ss verts edges).1) ∧
-        (((rrtAux O start ss verts edges).2.map Prod.snd).Nodup) := by
+      (∀ e ∈ edges, e.1 ≠ e.2) →
+      (∀ e ∈ edges, e.2 ≠ start) →
+      edges.length + 1 = verts.length →
+      start ∈ (rrtAux O start ss verts edges).1 ∧
+        ((rrtAux O start ss verts edges).1).Nodup ∧
+        (∀ e ∈ (rrtAux O start ss verts edges).2,
+          e.1 ∈ (rrtAux O start ss verts edges).1 ∧
+            e.2 ∈ (rrtAux O start ss verts edges).1) ∧
+        (((rrtAux O start ss verts edges).2.map Prod.snd).Nodup) ∧
+        (∀ e ∈ (rrtAux O start ss verts edges).2, e.1 ≠ e.2) ∧
+        (∀ e ∈ (rrtAux O start ss verts edges).2, e.2 ≠ start) ∧
+        (rrtAux O start ss verts edges).2.length + 1 =
+          (rrtAux O start ss verts edges).1.length := by
   induction ss with
   | nil =>
-      intro verts edges hmem hnd
+      intro verts edges hstart hnd hend htgtnd hnoself hnotgt hlen
       rw [rrtAux_nil]
-      exact ⟨hmem, hnd⟩
+      exact ⟨hstart, hnd, hend, htgtnd, hnoself, hnotgt, hlen⟩
   | cons s ss ih =>
-      intro verts edges hmem hnd
+      intro verts edges hstart hnd hend htgtnd hnoself hnotgt hlen
       rw [rrtAux_cons]
       by_cases hcond :
         O.free (O.steer (nearest O verts start s) s) = true ∧
@@ -354,23 +458,64 @@ theorem rrtAux_invar {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
           O.steer (nearest O verts start s) s ∉ verts
       · rw [ite_eq_left hcond]
         obtain ⟨-, -, hnotmem⟩ := hcond
-        apply ih
-        · intro e he
-          simp only [List.mem_cons] at he ⊢
+        have hne : verts ≠ [] := List.ne_nil_of_mem hstart
+        have hu : nearest O verts start s ∈ verts := nearest_mem O hne start s
+        have hstart' : start ∈ O.steer (nearest O verts start s) s :: verts :=
+          List.mem_cons_of_mem _ hstart
+        have hnd' : (O.steer (nearest O verts start s) s :: verts).Nodup :=
+          List.nodup_cons.mpr ⟨hnotmem, hnd⟩
+        have hend' : ∀ e ∈ (nearest O verts start s,
+            O.steer (nearest O verts start s) s) :: edges,
+            e.1 ∈ O.steer (nearest O verts start s) s :: verts ∧
+              e.2 ∈ O.steer (nearest O verts start s) s :: verts := by
+          intro e he
+          simp only [List.mem_cons] at he
           rcases he with rfl | he
-          · exact Or.inl rfl
-          · exact Or.inr (hmem e he)
-        · simp only [List.map_cons]
-          rw [List.nodup_cons]
-          refine ⟨?_, hnd⟩
+          · exact ⟨List.mem_cons_of_mem _ hu, List.mem_cons_self⟩
+          · obtain ⟨h1, h2⟩ := hend e he
+            exact ⟨List.mem_cons_of_mem _ h1, List.mem_cons_of_mem _ h2⟩
+        have hmap : O.steer (nearest O verts start s) s ∉ edges.map Prod.snd := by
           intro hcon
           rw [List.mem_map] at hcon
           obtain ⟨e, he, heq⟩ := hcon
-          have hve := hmem e he
+          have hve := (hend e he).2
           rw [heq] at hve
           exact hnotmem hve
+        have htgtnd' : (((nearest O verts start s,
+            O.steer (nearest O verts start s) s) :: edges).map Prod.snd).Nodup := by
+          simp only [List.map_cons]
+          exact List.nodup_cons.mpr ⟨hmap, htgtnd⟩
+        have hne_ux : nearest O verts start s ≠ O.steer (nearest O verts start s) s := by
+          intro hcon
+          rw [hcon] at hu
+          exact hnotmem hu
+        have hnoself' : ∀ e ∈ (nearest O verts start s,
+            O.steer (nearest O verts start s) s) :: edges, e.1 ≠ e.2 := by
+          intro e he
+          simp only [List.mem_cons] at he
+          rcases he with rfl | he
+          · exact hne_ux
+          · exact hnoself e he
+        have hxs : O.steer (nearest O verts start s) s ≠ start := by
+          intro hcon
+          apply hnotmem
+          rw [hcon]
+          exact hstart
+        have hnotgt' : ∀ e ∈ (nearest O verts start s,
+            O.steer (nearest O verts start s) s) :: edges, e.2 ≠ start := by
+          intro e he
+          simp only [List.mem_cons] at he
+          rcases he with rfl | he
+          · exact hxs
+          · exact hnotgt e he
+        have hlen' : ((nearest O verts start s,
+            O.steer (nearest O verts start s) s) :: edges).length + 1 =
+            (O.steer (nearest O verts start s) s :: verts).length := by
+          simp only [List.length_cons]
+          omega
+        exact ih _ _ hstart' hnd' hend' htgtnd' hnoself' hnotgt' hlen'
       · rw [ite_eq_right hcond]
-        exact ih _ _ hmem hnd
+        exact ih _ _ hstart hnd hend htgtnd hnoself hnotgt hlen
 
 /-- Fold invariant: every output vertex is the start configuration, one of the
 input vertices `seen`, or `O.steer u s` for some remaining sample `s ∈ ss`
@@ -505,25 +650,70 @@ theorem rrt_verts_subset {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
   have h1 := rrtAux_subset O start samples [] [start] [] h0 v hv'
   simpa using h1
 
-/-- RRT invariant at the top level: edges attach to vertices and form a tree. -/
+/-- RRT invariant at the top level: the vertex list contains `start` and is
+duplicate free, every edge joins two vertices, edge targets are duplicate
+free with no self loops and no edge into `start`, and vertices outnumber
+edges by one. Reachability is `rrt_reachable` and acyclicity is `rrt_acyclic`. -/
 theorem rrt_invar {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
     (samples : List C) :
-    (∀ e ∈ (rrt O start samples).2, e.2 ∈ (rrt O start samples).1) ∧
-      (((rrt O start samples).2.map Prod.snd).Nodup) := by
-  have hmem : ∀ e ∈ ([] : List (C × C)), e.2 ∈ [start] := by
+    start ∈ (rrt O start samples).1 ∧
+      ((rrt O start samples).1).Nodup ∧
+      (∀ e ∈ (rrt O start samples).2,
+        e.1 ∈ (rrt O start samples).1 ∧ e.2 ∈ (rrt O start samples).1) ∧
+      (((rrt O start samples).2.map Prod.snd).Nodup) ∧
+      (∀ e ∈ (rrt O start samples).2, e.1 ≠ e.2) ∧
+      (∀ e ∈ (rrt O start samples).2, e.2 ≠ start) ∧
+      (rrt O start samples).2.length + 1 = (rrt O start samples).1.length := by
+  have hstart0 : start ∈ ([start] : List C) := List.mem_cons_self
+  have hnd0 : ([start] : List C).Nodup := by simp
+  have hend0 : ∀ e ∈ ([] : List (C × C)), e.1 ∈ [start] ∧ e.2 ∈ [start] := by
     intro e he
     simp at he
-  have hnd : (([] : List (C × C)).map Prod.snd).Nodup := by
+  have htgt0 : (([] : List (C × C)).map Prod.snd).Nodup := by
     simp only [List.map_nil]
     exact List.nodup_nil
-  have h := rrtAux_invar O start samples [start] [] hmem hnd
+  have hself0 : ∀ e ∈ ([] : List (C × C)), e.1 ≠ e.2 := by
+    intro e he
+    simp at he
+  have hnotgt0 : ∀ e ∈ ([] : List (C × C)), e.2 ≠ start := by
+    intro e he
+    simp at he
+  have hlen0 : ([] : List (C × C)).length + 1 = ([start] : List C).length := rfl
+  have h := rrtAux_invar O start samples [start] [] hstart0 hnd0 hend0 htgt0
+    hself0 hnotgt0 hlen0
   exact h
 
-/-- Tree property: edge targets are duplicate free, so every vertex has at most
-one incoming edge (existence of the incoming edge is `rrt_edge_of_mem`). -/
-theorem rrt_tree {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
-    (samples : List C) : ((rrt O start samples).2.map Prod.snd).Nodup :=
-  (rrt_invar O start samples).2
+/-- The start configuration is an RRT vertex. -/
+theorem rrt_start_mem {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
+    (samples : List C) : start ∈ (rrt O start samples).1 :=
+  (rrt_invar O start samples).1
+
+/-- RRT vertices are duplicate free. -/
+theorem rrt_verts_nodup {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
+    (samples : List C) : ((rrt O start samples).1).Nodup :=
+  (rrt_invar O start samples).2.1
+
+/-- Every RRT edge joins two RRT vertices. -/
+theorem rrt_edge_endpoints {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (samples : List C) (e : C × C)
+    (he : e ∈ (rrt O start samples).2) :
+    e.1 ∈ (rrt O start samples).1 ∧ e.2 ∈ (rrt O start samples).1 := by
+  obtain ⟨_, _, hend, _, _, _, _⟩ := rrt_invar O start samples
+  exact hend e he
+
+/-- Every RRT edge source is an RRT vertex. -/
+theorem rrt_edge_fst_mem {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (samples : List C) (e : C × C)
+    (he : e ∈ (rrt O start samples).2) : e.1 ∈ (rrt O start samples).1 :=
+  (rrt_edge_endpoints O start samples e he).1
+
+/-- Target uniqueness: edge targets are duplicate free, so every vertex has at
+most one incoming edge (existence for vertices other than the start is `rrt_edge_of_mem`). -/
+theorem rrt_targets_nodup {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (samples : List C) :
+    ((rrt O start samples).2.map Prod.snd).Nodup := by
+  obtain ⟨_, _, _, htgt, _, _, _⟩ := rrt_invar O start samples
+  exact htgt
 
 /-- Every RRT vertex other than the start is the target of some edge. -/
 theorem rrt_edge_of_mem {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
@@ -543,7 +733,28 @@ theorem rrt_edge_of_mem {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
 theorem rrt_edge_snd_mem {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
     (samples : List C) (e : C × C) (he : e ∈ (rrt O start samples).2) :
     e.2 ∈ (rrt O start samples).1 :=
-  (rrt_invar O start samples).1 e he
+  (rrt_edge_endpoints O start samples e he).2
+
+/-- No RRT edge is a self loop. -/
+theorem rrt_edge_fst_ne_snd {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (samples : List C) (e : C × C)
+    (he : e ∈ (rrt O start samples).2) : e.1 ≠ e.2 := by
+  obtain ⟨_, _, _, _, hnoself, _, _⟩ := rrt_invar O start samples
+  exact hnoself e he
+
+/-- No RRT edge targets the start configuration. -/
+theorem rrt_edge_snd_ne_start {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (samples : List C) (e : C × C)
+    (he : e ∈ (rrt O start samples).2) : e.2 ≠ start := by
+  obtain ⟨_, _, _, _, _, hnotgt, _⟩ := rrt_invar O start samples
+  exact hnotgt e he
+
+/-- RRT vertices outnumber edges by one. -/
+theorem rrt_edges_length_eq {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (samples : List C) :
+    (rrt O start samples).2.length + 1 = (rrt O start samples).1.length := by
+  obtain ⟨_, _, _, _, _, _, hlen⟩ := rrt_invar O start samples
+  exact hlen
 
 /-- RRT edge count is bounded by the sample count. -/
 theorem rrt_edges_length {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
@@ -4920,5 +5131,120 @@ theorem rrtStar_chain_ends_ne {S : Type} [DecidableEq S] (O : Oracles S)
   have hnodup := rrtStar_acyclic O radiusOf start samples [a, b] hchain hverts
   simp only [List.nodup_cons, List.mem_singleton] at hnodup
   exact hnodup.1
+
+
+/-- Fold invariant: reachability from `start` is preserved by growth. -/
+theorem rrtAux_reachable {C : Type} [DecidableEq C] (O : Oracles C)
+    (start : C) (ss : List C) :
+    ∀ (verts : List C) (edges : List (C × C)),
+      (∀ v ∈ verts, ∃ k, Nonempty (PPath edges start v k)) →
+      ∀ v ∈ (rrtAux O start ss verts edges).1,
+        ∃ k, Nonempty (PPath (rrtAux O start ss verts edges).2 start v k) := by
+  induction ss with
+  | nil =>
+      intro verts edges hreach v hv
+      rw [rrtAux_nil] at hv ⊢
+      exact hreach v hv
+  | cons s ss ih =>
+      intro verts edges hreach v hv
+      rw [rrtAux_cons] at hv ⊢
+      by_cases hcond :
+        O.free (O.steer (nearest O verts start s) s) = true ∧
+          O.link (nearest O verts start s) (O.steer (nearest O verts start s) s) = true ∧
+          O.steer (nearest O verts start s) s ∉ verts
+      · rw [ite_eq_left hcond] at hv ⊢
+        have hsub : ∀ e ∈ edges,
+            e ∈ (nearest O verts start s,
+              O.steer (nearest O verts start s) s) :: edges := by
+          intro e he
+          exact List.mem_cons_of_mem _ he
+        have hstep : ∀ w ∈ O.steer (nearest O verts start s) s :: verts,
+            ∃ k, Nonempty (PPath ((nearest O verts start s,
+              O.steer (nearest O verts start s) s) :: edges) start w k) := by
+          intro w hw
+          simp only [List.mem_cons] at hw
+          rcases hw with rfl | hw
+          · by_cases hne : verts = []
+            · subst hne
+              have hu_eq : nearest O ([] : List C) start s = start := rfl
+              have hmem : (start,
+                  O.steer (nearest O ([] : List C) start s) s) ∈
+                  (nearest O ([] : List C) start s,
+                    O.steer (nearest O ([] : List C) start s) s) ::
+                    edges := by
+                rw [hu_eq]
+                exact List.mem_cons_self
+              exact ⟨1, ⟨PPath.step (PPath.refl start) hmem⟩⟩
+            · have hu : nearest O verts start s ∈ verts :=
+                nearest_mem O hne start s
+              obtain ⟨k, ⟨p⟩⟩ := hreach _ hu
+              have p' : PPath ((nearest O verts start s,
+                  O.steer (nearest O verts start s) s) :: edges) start
+                  (nearest O verts start s) k :=
+                PPath.transfer hsub p
+              exact ⟨k + 1, ⟨PPath.step p' List.mem_cons_self⟩⟩
+          · obtain ⟨k, ⟨p⟩⟩ := hreach w hw
+            exact ⟨k, ⟨PPath.transfer hsub p⟩⟩
+        exact ih _ _ hstep v hv
+      · rw [ite_eq_right hcond] at hv ⊢
+        exact ih _ _ hreach v hv
+
+/-- Every RRT vertex is reachable from `start` along RRT edges. -/
+theorem rrt_reachable {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
+    (samples : List C) :
+    ∀ v ∈ (rrt O start samples).1,
+      ∃ k, Nonempty (PPath (rrt O start samples).2 start v k) := by
+  have h0 : ∀ v ∈ ([start] : List C),
+      ∃ k, Nonempty (PPath ([] : List (C × C)) start v k) := by
+    intro v hv
+    simp at hv
+    subst hv
+    exact ⟨0, ⟨PPath.refl _⟩⟩
+  have h := rrtAux_reachable O start samples [start] [] h0
+  exact h
+
+/-- The RRT output assembles the shared star invariant with recomputed costs. -/
+theorem rrt_starInvar {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
+    (samples : List C) :
+    StarInvar O (rrt O start samples).1 (rrt O start samples).2
+      (recomputeCosts O (rrt O start samples).1 (rrt O start samples).2 start)
+      start := by
+  refine ⟨rrt_start_mem O start samples, rrt_verts_nodup O start samples, ?_,
+    rrt_targets_nodup O start samples, ?_, ?_, ?_, ?_, rfl⟩
+  · intro e he
+    exact rrt_edge_endpoints O start samples e he
+  · intro e he
+    exact rrt_edge_fst_ne_snd O start samples e he
+  · intro e he
+    exact rrt_edge_snd_ne_start O start samples e he
+  · intro v hv hne
+    have hmem := rrt_edge_of_mem O start samples v hv hne
+    rw [List.mem_map] at hmem
+    obtain ⟨e, he, heq⟩ := hmem
+    cases e with
+    | mk u w =>
+      simp only at heq
+      subst heq
+      exact ⟨u, he⟩
+  · intro v hv
+    exact rrt_reachable O start samples v hv
+
+/-- Parent chains with vertices in the RRT vertex list visit no vertex twice. -/
+theorem rrt_acyclic {C : Type} [DecidableEq C] (O : Oracles C) (start : C)
+    (samples : List C) (l : List C)
+    (hchain : IsParentChain (rrt O start samples).2 l)
+    (hverts : ∀ v ∈ l, v ∈ (rrt O start samples).1) : l.Nodup := by
+  have hinv' : StarInvar O (rrt O start samples).1 (rrt O start samples).2
+      (recomputeCosts O (rrt O start samples).1 (rrt O start samples).2 start)
+      start :=
+    rrt_starInvar O start samples
+  have hcosted : ∀ x ∈ l,
+      x ∈ (recomputeCosts O (rrt O start samples).1 (rrt O start samples).2
+        start).map Prod.fst := by
+    intro x hx
+    exact all_costed_of_invar O _ _ _ start hinv' x (hverts x hx)
+  exact parentChain_nodup O _ _ start _ hinv'.start_mem hinv'.verts_nodup
+    (fun e he => (hinv'.edges_endpoints e he).2) hinv'.targets_nodup
+    hinv'.no_self hinv'.target_ne_start hinv'.costs_eq l hchain hcosted
 
 end Cslib.Planning.MotionPlanning.SamplingPlanners
