@@ -10525,6 +10525,7 @@
   "MathlibExt/Combinatorics/Enumerative/CatalanPerfectPower": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Arithmetic properties of Catalan numbers"},
   "MathlibExt/Combinatorics/Enumerative/CatalanTriangleStepFive": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Recurrences for step sums of binomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/CatalanWordsCapacity": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Capacity of Catalan words"},
+  "MathlibExt/Combinatorics/Enumerative/CentralBinomHarmonicRecurrence": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Central binomial sums with harmonic numbers"},
   "MathlibExt/Combinatorics/Enumerative/CentralBinomHarmonicSums": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Central binomial sums with harmonic numbers"},
   "MathlibExt/Combinatorics/Enumerative/CentralBinomialBernstein": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
   "MathlibExt/Combinatorics/Enumerative/CentralBinomialHarmonicGeneratingFunction": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Central binomial and Catalan–harmonic generating functions"},
