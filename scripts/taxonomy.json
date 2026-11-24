@@ -1620,6 +1620,7 @@
   "CSLibExt/Languages/LambdaCalculus/ClosureConversion/Flat": {"to": "ComputerScience/programming-language-semantics", "title": "Closure conversion"},
   "CSLibExt/Languages/LambdaCalculus/ClosureConversion/Source": {"to": "ComputerScience/programming-language-semantics", "title": "Closure conversion"},
   "CSLibExt/Languages/LambdaCalculus/ClosureConversion/Target": {"to": "ComputerScience/programming-language-semantics", "title": "Closure conversion"},
+  "CSLibExt/Languages/LambdaCalculus/CoC/Reduction": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Calculus of constructions"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/BigStep": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Operational semantics of the simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/Contextual": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Denotational semantics of the simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/CslibBridge": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Simply typed lambda calculus"},
