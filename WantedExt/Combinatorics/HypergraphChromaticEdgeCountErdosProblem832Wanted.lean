@@ -19,7 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Order.Filter.AtTopBot.Defs
-public import WantedExt.Combinatorics.HypergraphColoringShared
+public import MathlibExt.Combinatorics.HypergraphColoringShared
 
 @[expose] public section
 

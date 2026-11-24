@@ -32,8 +32,9 @@ Fiscal expansion raises `Y` and `r`; monetary expansion raises `Y` and lowers `r
 
 namespace MathlibExt.Economics.Macro.ISLM
 
-/-- The linear IS-LM system. Parameters: `b > 0` is the interest sensitivity of
-investment/demand, `h > 0` the interest sensitivity of money demand, `k > 0` the income
+/-- The linear IS-LM system. Parameters, unrestricted in the definition and positive in the
+results on the system: `b` is the interest sensitivity of
+investment/demand, `h` the interest sensitivity of money demand, `k` the income
 sensitivity of money demand. Variables: `Y` output, `r` interest rate. Exogenous:
 `A` autonomous spending (IS intercept), `M` real money supply (LM intercept).
 IS: `Y + b * r = A`. LM: `k * Y - h * r = M`.
@@ -64,7 +65,8 @@ theorem islm_solution {b h k A M Y r : ℝ} (hb : 0 < b) (hh : 0 < h) (hk : 0 < 
   · rw [eq_div_iff hne]
     linear_combination hr
 
-/-- **Fiscal expansion (MA06.T02).** Holding the money supply fixed, a rise in autonomous
+/-- **Fiscal expansion (MA06.T02).** For `0 < b`, `0 < h`, `0 < k` and solutions of the system,
+holding the money supply fixed, a rise in autonomous
 spending raises both output and the interest rate. -/
 theorem islm_fiscal_expansion {b h k A₁ A₂ M Y₁ Y₂ r₁ r₂ : ℝ} (hb : 0 < b) (hh : 0 < h)
     (hk : 0 < k) (hA : A₁ < A₂) (h₁ : IsISLM b h k A₁ M Y₁ r₁)
@@ -81,7 +83,8 @@ theorem islm_fiscal_expansion {b h k A₁ A₂ M Y₁ Y₂ r₁ r₂ : ℝ} (hb 
   rw [hY₁, hY₂, hr₁, hr₂]
   exact ⟨div_lt_div_of_pos_right hY hpos, div_lt_div_of_pos_right hr hpos⟩
 
-/-- **Monetary expansion (MA06.T02).** Holding autonomous spending fixed, a rise in the
+/-- **Monetary expansion (MA06.T02).** For `0 < b`, `0 < h`, `0 < k` and solutions of the
+system, holding autonomous spending fixed, a rise in the
 money supply raises output and lowers the interest rate. -/
 theorem islm_monetary_expansion {b h k A M₁ M₂ Y₁ Y₂ r₁ r₂ : ℝ} (hb : 0 < b) (hh : 0 < h)
     (hk : 0 < k) (hM : M₁ < M₂) (h₁ : IsISLM b h k A M₁ Y₁ r₁)
