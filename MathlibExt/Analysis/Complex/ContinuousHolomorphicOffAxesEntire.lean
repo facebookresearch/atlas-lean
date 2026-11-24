@@ -49,28 +49,23 @@ module
 
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.Complex.CauchyIntegral
-import Mathlib.Analysis.Complex.Norm
+import Mathlib.Analysis.Complex.HasPrimitives
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Tactic.FunProp
-import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
 
 /-! # Removability of the coordinate axes for continuous holomorphic functions
 
 Cauchy–Goursat on rectangles with one corner at zero makes the two coordinate path
-integrals agree. Continuity controls the error of the primitive along a short path,
-so it has the given function as its complex derivative everywhere.
+integrals agree. The resulting path increment identity makes the wedge integrals
+antisymmetric, so Morera's theorem applies on the whole plane.
 -/
 
 @[expose] public section
 
-open Complex MeasureTheory Set Filter Asymptotics
-open scoped Interval Topology
+open Complex MeasureTheory Set
+open scoped Interval
 
 namespace MathlibExt.Analysis.Complex.ContinuousHolomorphicOffAxesEntireWanted
 
@@ -154,79 +149,6 @@ private theorem primitive_sub {f : ℂ → ℂ} (hc : Continuous f)
   rw [← hv, ← hh]
   linear_combination hw - hz
 
-private theorem norm_point_sub_le (x y : ℝ) (z : ℂ) :
-    ‖point x y - z‖ ≤ |x - z.re| + |y - z.im| := by
-  simpa only [sub_re, sub_im, point_re, point_im] using
-    Complex.norm_le_abs_re_add_abs_im (point x y - z)
-
-private theorem abs_sub_le_interval {a b t : ℝ} (ht : t ∈ Ι a b) : |t - a| ≤ |b - a| := by
-  rcases mem_uIcc.mp (uIoc_subset_uIcc ht) with ⟨hat, htb⟩ | ⟨hbt, hta⟩
-  · rw [abs_of_nonneg (sub_nonneg.mpr hat), abs_of_nonneg (sub_nonneg.mpr (hat.trans htb))]
-    linarith
-  · rw [abs_of_nonpos (sub_nonpos.mpr hta), abs_of_nonpos (sub_nonpos.mpr (hbt.trans hta))]
-    linarith
-
-private theorem primitive_hasDerivAt {f : ℂ → ℂ} (hc : Continuous f)
-    (h : DifferentiableOn ℂ f {z : ℂ | z.re ≠ 0 ∧ z.im ≠ 0}) (z : ℂ) :
-    HasDerivAt (primitive f) (f z) z := by
-  rw [hasDerivAt_iff_isLittleO, Asymptotics.isLittleO_iff]
-  intro ε hε
-  obtain ⟨δ, hδ, hcont⟩ := Metric.continuousAt_iff.mp hc.continuousAt (ε / 2) (by positivity)
-  have hball : Metric.ball z (δ / 3) ∈ 𝓝 z :=
-    Metric.ball_mem_nhds z (div_pos hδ (by norm_num))
-  filter_upwards [hball] with w hw
-  have hw' : ‖w - z‖ < δ / 3 := by simpa only [Metric.mem_ball, dist_eq_norm] using hw
-  have hr : |w.re - z.re| ≤ ‖w - z‖ := by
-    simpa only [sub_re] using abs_re_le_norm (w - z)
-  have hi : |w.im - z.im| ≤ ‖w - z‖ := by
-    simpa only [sub_im] using abs_im_le_norm (w - z)
-  -- Subtract the constant integrand `f z` on both legs to bound the derivative error.
-  let g (u : ℂ) := f u - f z
-  have hbound (u : ℂ) (hu : ‖u - z‖ < δ) : ‖g u‖ ≤ ε / 2 := by
-    have hh := hcont (x := u) (by simpa only [dist_eq_norm] using hu)
-    exact (by simpa only [dist_eq_norm, g] using hh.le)
-  have hH : ‖horiz g z.im z.re w.re‖ ≤ (ε / 2) * |w.re - z.re| := by
-    refine intervalIntegral.norm_integral_le_of_norm_le_const ?_
-    intro t ht
-    refine hbound _ ((norm_point_sub_le t z.im z).trans_lt ?_)
-    have ht' := abs_sub_le_interval ht
-    rw [sub_self, abs_zero, add_zero]
-    linarith
-  have hV : ‖vert g w.re z.im w.im‖ ≤ (ε / 2) * |w.im - z.im| := by
-    refine intervalIntegral.norm_integral_le_of_norm_le_const ?_
-    intro t ht
-    refine hbound _ ((norm_point_sub_le w.re t z).trans_lt ?_)
-    have ht' := abs_sub_le_interval ht
-    linarith
-  have hHsub : horiz g z.im z.re w.re =
-      horiz f z.im z.re w.re - ((w.re - z.re : ℝ) : ℂ) * f z := by
-    dsimp only [horiz, g]
-    rw [intervalIntegral.integral_sub ((continuous_horiz f hc _).intervalIntegrable _ _)
-      (intervalIntegrable_const (c := f z)), intervalIntegral.integral_const]
-    rfl
-  have hVsub : vert g w.re z.im w.im =
-      vert f w.re z.im w.im - ((w.im - z.im : ℝ) : ℂ) * f z := by
-    dsimp only [vert, g]
-    rw [intervalIntegral.integral_sub ((continuous_vert f hc _).intervalIntegrable _ _)
-      (intervalIntegrable_const (c := f z)), intervalIntegral.integral_const]
-    rfl
-  have hlin : w - z = ((w.re - z.re : ℝ) : ℂ) + ((w.im - z.im : ℝ) : ℂ) * I := by
-    simpa only [sub_re, sub_im] using (re_add_im (w - z)).symm
-  have heq : primitive f w - primitive f z - (w - z) • f z =
-      horiz g z.im z.re w.re + I * vert g w.re z.im w.im := by
-    rw [primitive_sub hc h z w, hHsub, hVsub, smul_eq_mul, hlin]
-    ring
-  change ‖primitive f w - primitive f z - (w - z) • f z‖ ≤ ε * ‖w - z‖
-  rw [heq]
-  calc
-    _ ≤ ‖horiz g z.im z.re w.re‖ + ‖vert g w.re z.im w.im‖ := by
-      simpa only [norm_mul, norm_I, one_mul] using
-        norm_add_le (horiz g z.im z.re w.re) (I * vert g w.re z.im w.im)
-    _ ≤ (ε / 2) * |w.re - z.re| + (ε / 2) * |w.im - z.im| := add_le_add hH hV
-    _ ≤ ε * ‖w - z‖ := by
-      have hp : 0 ≤ ε / 2 := by positivity
-      linarith [mul_le_mul_of_nonneg_left hr hp, mul_le_mul_of_nonneg_left hi hp]
-
 /-- **Continuous functions holomorphic off the coordinate axes are entire.** Let
 $f : \mathbb{C} \to \mathbb{C}$ be continuous on all of $\mathbb{C}$ and holomorphic on the
 complement of the coordinate axes. Then $f$ is holomorphic on all of $\mathbb{C}$.
@@ -242,8 +164,15 @@ theorem differentiable_of_continuous_of_differentiableOn_compl_coordAxes
     refine hhol.mono ?_
     intro z hz
     exact not_or_intro hz.2 hz.1
-  have hd : Differentiable ℂ (primitive f) := fun z ↦ (primitive_hasDerivAt hc h z).differentiableAt
-  have hf : deriv (primitive f) = f := funext fun z ↦ (primitive_hasDerivAt hc h z).deriv
-  simpa only [hf] using hd.deriv
+  -- The wedge integral is a difference of values, so reversing the endpoints negates it.
+  have hwedge (z w : ℂ) : wedgeIntegral z w f = primitive f w - primitive f z := by
+    simpa only [wedgeIntegral, horiz, vert, point, smul_eq_mul] using
+      (primitive_sub hc h z w).symm
+  have hcon : IsConservativeOn f (Set.univ : Set ℂ) := by
+    intro z w _
+    rw [hwedge, hwedge, neg_sub]
+  exact differentiableOn_univ.mp <|
+    (isConservativeOn_and_continuousOn_iff_isDifferentiableOn isOpen_univ).mp
+      ⟨hcon, hc.continuousOn⟩
 
 end MathlibExt.Analysis.Complex.ContinuousHolomorphicOffAxesEntireWanted
