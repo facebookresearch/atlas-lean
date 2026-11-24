@@ -338,9 +338,10 @@ review:
     automated Codex review against REVIEWING.md, and in practice most are merged
     once it approves and the required CI checks pass: the Lean build with its
     axiom audit and library policy, repository integrity, source diagnostics and
-    the pin guard. A pull request that changes the wiki needs an AI review that
-    approves its current head; a code owner's approval is welcome but not
-    required.
+    the pin guard. Wiki changes need an AI review that approves the pull
+    request's current head; a code owner's approval is welcome but not required
+    for them. Code-owned files outside the wiki still need a code owner's
+    approval.
     Maintainers review some pull requests themselves, but there is no
     systematic human review of the mathematics.
 
