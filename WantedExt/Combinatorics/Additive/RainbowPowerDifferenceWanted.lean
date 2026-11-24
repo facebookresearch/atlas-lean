@@ -264,31 +264,6 @@ public theorem_wanted monochromatic_shift_of_rainbowFree_powDiff (k : ℕ) (c : 
     (∃ e : Fin 3, (e = B ∨ e = G) ∧ ∀ t < ℓ, c (i + j ^ k + t) = e) ∧
       (j ^ k < i → ∃ e : Fin 3, (e = B ∨ e = G) ∧ ∀ t < ℓ, c (i - j ^ k + t) = e)
 
-/-- **Non-dominant monochromatic strings have bounded length.** Let $k$ be a natural number, let
-$n_0 \ge 2$ be an integer, and let $c$ be a coloring of the positive integers by three colors
-with no rainbow solution of $x - y = z^k$: there are no positive integers $x, y, z$ with
-$x = y + z^k$ and $c(x)$, $c(y)$, $c(z)$ pairwise distinct. For a color $e$ write $N_e(n)$ for
-the number of $x \in \{1, \dots, n\}$ with $c(x) = e$, and assume that for every real $M$ there
-are arbitrarily large $n$ with $N_e(n) - n / n_0 > M$ for all three colors $e$, that is,
-$\limsup_{n \to \infty} \bigl(\min_e N_e(n) - n / n_0\bigr) = \infty$. Let $d$ be a dominant
-color: for all positive integers $i$ and all $\ell \ge 0$, if $c$ takes exactly two colors on
-$\{i, i + 1, \dots, i + \ell - 1\}$, then one of them is $d$. Then there is an $L$ such that for
-all positive integers $i$ and all $\ell \ge 0$, if $c(i) \ne d$ and $c(i + t) = c(i)$ for all
-$0 \le t < \ell$, then $\ell \le L$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 4
-(`integers-2024-A105-lem-4`). -/
-public theorem_wanted nondominant_string_length_bounded (k : ℕ) (c : ℕ → Fin 3)
-    (hrf : ∀ x y z : ℕ, 0 < x → 0 < y → 0 < z → x = y + z ^ k →
-      ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
-    (n₀ : ℕ) (hn₀ : 2 ≤ n₀)
-    (hdens : ∀ M : ℝ, ∀ N₀ : ℕ, ∃ n : ℕ, N₀ ≤ n ∧ ∀ e : Fin 3,
-      M < (((Finset.Icc 1 n).filter fun x => c x = e).card : ℝ) - n / n₀)
-    (d : Fin 3) (hdom : ∀ i ℓ : ℕ, 0 < i → ((Finset.Ico i (i + ℓ)).image c).card = 2 →
-      d ∈ (Finset.Ico i (i + ℓ)).image c) :
-    ∃ L : ℕ, ∀ i ℓ : ℕ, 0 < i → c i ≠ d → (∀ t < ℓ, c (i + t) = c i) → ℓ ≤ L
-
 /-- **Coprime numbers of a non-dominant color cannot both have the $A$-property.** Let $k$ be a
 natural number, let $n_0 \ge 2$ be an integer, and let $c$ be a coloring of the positive
 integers by three distinct colors $R$, $B$, $G$ with no rainbow solution of $x - y = z^k$: there

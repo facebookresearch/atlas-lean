@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
+public import MathlibExt.Combinatorics.Enumerative.ClassicalMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
@@ -51,16 +52,6 @@ Functions*, INTEGERS 25 (2025), Article A73, Proposition 3 (`integers-2025-A73-p
 public theorem_wanted isMeteredParkingFunction_iff_of_le {m n t : ℕ} (ht : m - 1 ≤ t)
     (hmn : m ≤ n) (f : Fin m → Fin n) :
     IsMeteredParkingFunction t f ↔ IsPartialParkingFunction m n f
-
-/-- **Classical parking functions are metered parking functions.** Let $m \le n$. Every partial
-parking function $f$ with $m$ cars and $n$ spots is a $t$-metered parking function for every
-$t \in \mathbb{N}$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 4 (`integers-2025-A73-prop-4`). -/
-public theorem_wanted IsPartialParkingFunction.isMeteredParkingFunction {m n : ℕ} (hmn : m ≤ n)
-    {f : Fin m → Fin n} (hf : IsPartialParkingFunction m n f) (t : ℕ) :
-    IsMeteredParkingFunction t f
 
 /-- **Displacement bound in the metered scheme.** Let $t$, $m$, $n$ be natural numbers, let
 $f : \{0, \dots, m - 1\} \to \{0, \dots, n - 1\}$ be a preference function and let $i < m$ be a
