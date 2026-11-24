@@ -14,4 +14,6 @@ over `ℝ`.
 
 ## Sources
 
-- Feinberg (1987).
+- M. Feinberg, *Chemical reaction network structure and the stability of complex isothermal
+  reactors I. The deficiency zero and deficiency one theorems*, Chem. Eng. Sci. 42 (1987)
+  2229–2268.

@@ -1,4 +1,4 @@
-# Transversal zero of G at (0, d₀): a G(a, d) = 0 iff a = 0 or d = φ(a)
+# Transversal zero (0, d₀) of G: near it, a G = 0 iff a = 0 or d = φ(a)
 
 Let $G : \mathbb{R} \times \mathbb{R} \to \mathbb{R}$ be strictly differentiable at $(0, d_0)$ with
 derivative $G'$, with $G(0, d_0) = 0$ and $\partial_d G(0, d_0) = G'(0, 1) \neq 0$ (transversality).

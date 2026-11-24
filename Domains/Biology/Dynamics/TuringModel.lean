@@ -26,14 +26,14 @@ of `Domains.Biology.Dynamics.TuringPatterns`,
 
   `u_t = d_u Δ u + f(u, v)`,   `v_t = d_v Δ v + g(u, v)`.
 
-## Frozen setting
+## Setting
 
 The statements below are proved for an **arbitrary** compact space `K` and an **arbitrary** C₀
 semigroup `H` on `C(K, ℝ)`; no statement uses the geometry of the domain or the boundary
 condition. The closure `Ω̄` and the Neumann heat semigroup `e^{τ Δ_N}` are the intended
 instances, and only for them is the result the Neumann problem below. The diffusion
-coefficients are only required to satisfy `d_u, d_v ≥ 0`, which relaxes the `dᵢ > 0` of the
-PDE-01 frozen setting (the degenerate case `dᵢ = 0` is a species that does not diffuse).
+coefficients are only required to satisfy `d_u, d_v ≥ 0`; the degenerate case `dᵢ = 0` is a
+species that does not diffuse.
 
 * **domain**: `Ω ⊆ ℝⁿ` a bounded open set with smooth boundary; the variable `K` below is the
   compact closure `Ω̄` (in the one-dimensional setting of `TuringPatterns`, `Ω̄ = [0, L]`).
@@ -46,9 +46,9 @@ PDE-01 frozen setting (the degenerate case `dᵢ = 0` is a species that does not
 * **reaction**: the Nemytskii operator `w ↦ (f, g) ∘ w` of `C¹` kinetics
   `(f, g) : ℝ² → ℝ²`, such as `schnakenberg a b`.
 
-Neither Mathlib nor Atlas constructs the Neumann heat semigroup on `C(Ω̄)` (Stewart 1974/1980;
-Lunardi, *Analytic Semigroups*, Ch. 3). It therefore enters as the hypothesis
-`hH : IsC0Semigroup H` on the scalar semigroup; everything else is proved.
+The Neumann heat semigroup on `C(Ω̄)` (Stewart 1974/1980; Lunardi, *Analytic Semigroups*,
+Ch. 3) enters as the hypothesis `hH : IsC0Semigroup H` on the scalar semigroup; everything else
+is proved.
 `diffusionSemigroup_apply_speciesEmb` records how `S` acts on an eigenfunction of `H`, which for
 `Ω̄ = [0, L]` are the Neumann modes `cos (k_n x)`, `k_n = neumannWavenumber L n`, with
 `H τ φ = e^{-k_n² τ} φ`.
@@ -69,9 +69,9 @@ Lunardi, *Analytic Semigroups*, Ch. 3). It therefore enters as the hypothesis
 * `contDiff_schnakenberg`, `schnakenberg_localFlow`: the Schnakenberg kinetics qualify.
 * `not_lipschitzOnWith_giererMeinhardt` (boundary case): the Gierer–Meinhardt kinetics
   `u² / v` are not Lipschitz on the unit ball, so the `C¹` route to `hF` is closed; a treatment
-  needs an invariant region `v ≥ v_min > 0` or a cutoff, which is not done here.
+  needs an invariant region `v ≥ v_min > 0` or a cutoff.
 
-## Not formalized here
+## Not covered
 
 The construction of the Neumann heat semigroup and its analyticity, positivity of solutions,
 invariant regions, global existence, and the nonlinear consequences of the linear Turing
@@ -147,9 +147,9 @@ private theorem coeff_le_add (du dv : ℝ≥0) (i : Fin 2) : ![du, dv] i ≤ du 
   · exact le_add_of_nonneg_right bot_le
   · exact le_add_of_nonneg_left bot_le
 
-/-- **The Turing diffusion semigroup is C₀.** If `H` is a C₀ semigroup on `C(K, ℝ)` (in the
-frozen setting, the Neumann heat semigroup), then `diag(H (d_u t), H (d_v t))` is a C₀ semigroup
-on `C(K, ℝ²)` for all diffusion coefficients `d_u, d_v ≥ 0`. -/
+/-- **The Turing diffusion semigroup is C₀.** If `H` is a C₀ semigroup on `C(K, ℝ)` (intended: the
+Neumann heat semigroup), then `diag(H (d_u t), H (d_v t))` is a C₀ semigroup on `C(K, ℝ²)` for all
+diffusion coefficients `d_u, d_v ≥ 0`. -/
 theorem isC0Semigroup_diffusionSemigroup {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)}
     (hH : IsC0Semigroup H) (du dv : ℝ≥0) : IsC0Semigroup (diffusionSemigroup H du dv) := by
   refine ⟨?_, fun s t => ?_, fun w => ?_, fun T => ?_⟩
@@ -325,7 +325,7 @@ because of the `u² / v` term near `v = 0`. So the route
 `exists_lipschitzOnWith_closedBall_of_contDiff` / `lipschitzOnWith_nemytskii` to the hypothesis `hF`
 of the flow interface is closed, and `localFlow` does not apply to them without an invariant region
 bounding `v` away from `0`. (For nonempty `K`, restricting to constant fields shows that the
-Nemytskii operator itself fails `hF`; that corollary is not formalized here.) -/
+Nemytskii operator itself fails `hF`.) -/
 theorem not_lipschitzOnWith_giererMeinhardt (a b : ℝ) (L : ℝ≥0) :
     ¬ LipschitzOnWith L (giererMeinhardt a b) (Metric.closedBall 0 1) := by
   intro hL

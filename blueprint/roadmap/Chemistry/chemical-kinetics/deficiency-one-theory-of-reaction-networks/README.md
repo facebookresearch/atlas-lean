@@ -8,11 +8,10 @@ along directed reaction paths, out of which no reaction leads). For every choice
 constants, each positive stoichiometric compatibility class then contains at most one positive
 equilibrium, and exactly one if the network is weakly reversible.
 
-The theorem itself is not proved on these pages: they cover the linear algebra of condition (2). For
-finitely many species and reactions, the linkage-class deficiencies always sum to at most `δ`, with
-equality exactly when the stoichiometric subspaces of the linkage classes are independent; the
-equilibrium equations then decouple across linkage classes, for all real rate constants and
-concentrations.
+These pages cover the linear algebra of condition (2). For finitely many species and reactions, the
+linkage-class deficiencies always sum to at most `δ`, with equality exactly when the stoichiometric
+subspaces of the linkage classes are independent; the equilibrium equations then decouple across
+linkage classes, for all real rate constants and concentrations.
 
 ## Objects attached to a linkage class
 

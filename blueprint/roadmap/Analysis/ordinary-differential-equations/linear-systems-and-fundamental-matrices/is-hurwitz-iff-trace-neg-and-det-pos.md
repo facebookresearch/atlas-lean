@@ -1,4 +1,4 @@
-# Routh–Hurwitz criterion for real 2 × 2 matrices
+# Routh–Hurwitz: a real 2 × 2 matrix is Hurwitz iff tr M < 0 < det M
 
 For a real $2 \times 2$ matrix $M$, $M$ is
 [Hurwitz](../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-hurwitz.md)

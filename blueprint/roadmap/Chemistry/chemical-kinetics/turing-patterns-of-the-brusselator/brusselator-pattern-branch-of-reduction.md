@@ -1,4 +1,4 @@
-# For a ≠ 0 and b < 1 + a², a Turing pattern branch of the Brusselator
+# For b < 1 + a², a Turing pattern branch at an admissible critical mode
 
 Let $a \ne 0$ and $b < 1 + a^2$, so that the [steady state](brusselator-steady-state.md)
 $(a, b / a)$ is stable without diffusion, and let $d_u \ge 0$. Let $\iota$ be a finite set of modes

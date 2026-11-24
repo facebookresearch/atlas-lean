@@ -14,5 +14,5 @@ holds on `ℝᴺ` in the following form. Let `F : ℝ × ℝᴺ → ℝᴺ`, an 
 
 Then for every `ε > 0` there are a parameter `μ` with `|μ − μ₀| < ε`, a period `T > 0` with
 `|T − 2π/ω₀| < ε` and a solution `γ : ℝ → ℝᴺ` of `γ' = F(μ, γ)` on all of `ℝ` that is `T`-periodic,
-not constant, and stays within `ε` of `x_e(μ₀)` in the maximum distance. The proposition is not
-proved; results that use it assume it as a hypothesis.
+not constant, and stays within `ε` of `x_e(μ₀)` in the maximum distance. Results that use it take
+it as a hypothesis.

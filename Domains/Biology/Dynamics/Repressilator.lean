@@ -40,9 +40,9 @@ rescaled by `β`, the protein concentrations `xᵢ = pᵢ` satisfy, with indices
 
   `ẋᵢ = α / (1 + xᵢ₋₁ⁿ) - xᵢ`,   `i = 0, 1, 2`,   `α > 0`, `n ∈ ℕ`.        (R)
 
-**This ODE form (R) is frozen**: `vectorField n α` is exactly its right-hand side, the state
-space is `Fin 3 → ℝ`, `α` is the maximal (dimensionless) transcription rate and `n` the Hill
-coefficient. The full six-dimensional mRNA–protein model is not treated.
+`vectorField n α` is exactly the right-hand side of (R), the state space is `Fin 3 → ℝ`, `α` is
+the maximal (dimensionless) transcription rate and `n` the Hill coefficient. The full
+six-dimensional mRNA–protein model is not treated in this file.
 
 **The reduction (R) does not cover Elowitz–Leibler's standard regime.** For the six-variable
 model (with `α₀ = 0`) and loop gain `a < 2`, Elowitz and Leibler's instability boundary is
@@ -50,8 +50,8 @@ model (with `α₀ = 0`) and loop gain `a < 2`, Elowitz and Leibler's instabilit
 boundary tends to `a = 2`, the threshold of (R). At their standard parameters `n = 2`,
 `α = 216`, `β = 5` the six-variable model is unstable (`a ≈ 1.94 < 2`, and
 `3 a² / (4 - 2 a) ≈ 103 > 36 / 5`), while (R) with `n = 2` is linearly stable for every `α`
-(`re_neg_of_le_two`). In (R) a Hopf point needs `n > 2`. These six-variable facts are quoted, not
-proved here.
+(`re_neg_of_le_two`). In (R) a Hopf point needs `n > 2`. These six-variable facts are not proved
+in this file.
 
 **Symmetric equilibrium.** For `α > 0` there is a unique `p > 0` with `p (1 + pⁿ) = α`, and the
 constant state `(p, p, p)` is an equilibrium; for `n ≥ 1` it is the only equilibrium in the
@@ -72,9 +72,9 @@ for `n > 2`, at `pⁿ = 2 / (n - 2)`; for `n ≤ 2` the symmetric equilibrium is
 for every `α > 0`. Along the curve `μ ↦ -1 + a(μ) / 2 + i (√3 / 2) a(μ)` of eigenvalues
 (`μ` the equilibrium level) the real part crosses zero with speed `a'(μ) / 2 > 0`.
 
-**Periodic orbits.** Mathlib has no Hopf bifurcation theorem (and Poincaré–Bendixson, which is
-planar, does not apply to the three-dimensional system (R)). We state the classical local Hopf
-theorem for `C^∞` families on `ℝᴺ` as an explicit hypothesis, `HopfBifurcationTheorem N`: a
+**Periodic orbits.** Poincaré–Bendixson, which is planar, does not apply to the
+three-dimensional system (R). The classical local Hopf theorem for `C^∞` families on `ℝᴺ` is
+stated as an explicit hypothesis, `HopfBifurcationTheorem N`: a
 smooth family with an equilibrium branch whose linearization has a simple pair of eigenvalues
 `±iω₀`, no other eigenvalue on the imaginary axis, and an eigenvalue curve crossing the
 imaginary axis with nonzero speed, has nonconstant periodic orbits, with periods near
@@ -87,7 +87,7 @@ for transcription rates `α` arbitrarily close to the critical rate.
 
 Linear stability means every eigenvalue of the linearization has negative real part; the
 nonlinear (Lyapunov) stability that it implies is not proved. The periodic orbit is obtained
-from `HopfBifurcationTheorem 3`, which is a hypothesis, not a theorem proved here. The
+from `HopfBifurcationTheorem 3`, which is taken as a hypothesis. The
 direction of the bifurcation (first Lyapunov coefficient), the stability of the orbits and the
 global bifurcation diagram are out of scope. The results are about the protein-only reduction
 (R) only: they do not cover Elowitz–Leibler's standard regime (`n = 2`, `α = 216`, `β = 5`),
@@ -408,8 +408,8 @@ theorem eq_of_isRoot_of_re_eq_zero {z : ℂ}
   · exact Or.inl h
   · exact Or.inr h
 
-/-- The eigenvalue curve through `i√3`: `μ ↦ -1 + a(μ) / 2 + i (√3 / 2) a(μ)`, `a = gain n`,
-parametrized by the equilibrium level `μ`. -/
+/-- The eigenvalue curve `μ ↦ -1 + a(μ) / 2 + i (√3 / 2) a(μ)`, `a = gain n`, parametrized by
+the equilibrium level `μ`; it passes through `i√3` where `a(μ) = 2`. -/
 noncomputable def hopfEigenvalue (n : ℕ) (μ : ℝ) : ℂ := rootPlus (gain n μ)
 
 lemma hopfEigenvalue_eq (n : ℕ) (μ : ℝ) :
@@ -465,7 +465,7 @@ theorem gain_lt {n : ℕ} (hn : 0 < n) {p : ℝ} (hp : 0 ≤ p) : gain n p < n :
 lemma gain_nonneg (n : ℕ) {p : ℝ} (hp : 0 ≤ p) : 0 ≤ gain n p := by
   unfold gain; have := one_add_pow_pos hp n; positivity
 
-/-- **No Hopf point for `n ≤ 2`.** The loop gain stays below `2`. -/
+/-- **No Hopf point for `n ≤ 2`.** For `p ≥ 0` the loop gain stays below `2`. -/
 theorem gain_lt_two_of_le_two {n : ℕ} (hn : n ≤ 2) {p : ℝ} (hp : 0 ≤ p) : gain n p < 2 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn0
   · simp [gain]
@@ -487,8 +487,8 @@ lemma linCharpoly_vectorField (n : ℕ) {p : ℝ} (hp : 0 ≤ p) :
       (jacobian (gain n p)).charpoly.map Complex.ofRealHom := by
   rw [linCharpoly, toMatrix'_fderiv_vectorField n hp]
 
-/-- **Linear stability.** If `gain n p < 2`, every eigenvalue of the linearization of (R) at its
-symmetric equilibrium `(p, p, p)` (with `α = p (1 + pⁿ)`) has negative real part. -/
+/-- **Linear stability.** For `p ≥ 0` with `gain n p < 2`, every eigenvalue of the linearization
+of (R) at its symmetric equilibrium `(p, p, p)` (with `α = p (1 + pⁿ)`) has negative real part. -/
 theorem re_neg_of_isRoot_linCharpoly {n : ℕ} {p : ℝ} (hp : 0 ≤ p) (hg : gain n p < 2) {z : ℂ}
     (hz : (linCharpoly (vectorField n (eqRate n p)) (fun _ => p)).IsRoot z) : z.re < 0 := by
   rw [linCharpoly_vectorField n hp] at hz

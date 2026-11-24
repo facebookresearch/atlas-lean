@@ -41,18 +41,17 @@ the normalization of `MathlibExt.Biology.Dynamics.FisherKPP.IsFront` (`0 < U < 1
   strict front, so it inherits the speed bound, the nonpositive-speed exclusion, and
   the subcritical oscillation statement with its exact complex characteristic roots.
 
-## Existence is a hypothesis
+## Existence enters as a hypothesis
 
 The existence half (Kolmogorov–Petrovsky–Piskunov 1937: a strictly decreasing front exists at
-every speed `c ≥ 2 √(r D)`) is the statement of the wanted theorem
-`MathlibExt.Biology.Dynamics.FisherKPP.exists_isFront_of_le` in
-`WantedExt/Biology/Dynamics/FisherKPPWanted.lean`, proved in a separate development. The
-classification theorems take it as the explicit hypothesis
+every speed `c ≥ 2 √(r D)`) is `MathlibExt.Biology.Dynamics.FisherKPP.exists_isFront_of_le`,
+proved in `Domains.Biology.Dynamics.FisherKPPExistence`. The classification theorems take it as
+the explicit hypothesis
 
   `hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U`,
 
 which is that theorem with `hD` and `hr` fixed; it is discharged by
-`fun c hc => exists_isFront_of_le hD hr hc` once that theorem is available.
+`fun c hc => exists_isFront_of_le hD hr hc`.
 
 ## References
 

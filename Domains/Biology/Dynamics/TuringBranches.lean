@@ -43,11 +43,12 @@ its *neutral diffusion* `d_n(k²)` (`neutralDiffusion`); on `[0, L]`, if also `0
 `g_v ≤ 0`, the homogeneous state is unstable iff some admissible Neumann mode has
 `d_n(k_n²) < d`. The onset diffusion is thus the infimum of the discrete values
 `d_n(k_n²)`, which need not be attained (for `d_u = 0` it can be `0`).
-At `d_n(k²)` the mode matrix has exactly the eigenvalues `0` and `tr (J - k² D)` (so `0` is a
-simple root of its characteristic polynomial whenever this trace is nonzero, e.g. negative), under
-non-resonance mode `n` is the only Neumann mode with eigenvalue `0`, and, for an admissible mode
-with negative trace at `d_n(k²)`, the leading real eigenvalue crosses zero with positive speed
-`(d_u k⁴ - f_u k²) / tr (J - k² D)` (transversality).
+At `d_n(k²)`, for `f_u k² ≠ d_u k⁴` (for example an admissible mode), the mode matrix has exactly
+the eigenvalues `0` and `tr (J - k² D)` (so `0` is a simple root of its characteristic polynomial
+whenever this trace is nonzero, e.g. negative), under non-resonance mode `n` is the only Neumann
+mode with eigenvalue `0`, and, for an admissible mode with negative trace at `d_n(k²)`, the leading
+real eigenvalue crosses zero with positive speed `(d_u k⁴ - f_u k²) / tr (J - k² D)`
+(transversality).
 
 **Local pattern branch.** The steady-state bifurcation from the homogeneous state at a simple
 critical mode is formalized for the *reduced bifurcation equation* `Φ(a, d) = a G(a, d)` in the
@@ -423,9 +424,9 @@ theorem leadingEigenvalue_eq_zero {M : Matrix (Fin 2) (Fin 2) ℝ} (htr : M.trac
   rw [leadingEigenvalue, hdet, mul_zero, sub_zero, Real.sqrt_sq_eq_abs, abs_of_neg htr]
   ring
 
-/-- **Transversal crossing.** At a neutral mode (`h(k²) = 0`) with negative trace, the leading
-real eigenvalue of `J - k² D`, as a function of the inhibitor diffusion `d = d_v`, has derivative
-`(d_u k⁴ - f_u k²) / tr (J - k² D)` at the neutral diffusion. -/
+/-- **Derivative of the leading eigenvalue at a neutral mode.** At a neutral mode (`h(k²) = 0`) with
+negative trace, the leading real eigenvalue of `J - k² D`, as a function of the inhibitor diffusion
+`d = d_v`, has derivative `(d_u k⁴ - f_u k²) / tr (J - k² D)` at the neutral diffusion. -/
 theorem hasDerivAt_leadingEigenvalue_modeMatrix {J : Matrix (Fin 2) (Fin 2) ℝ} {du d₀ k : ℝ}
     (htr : J.trace - k ^ 2 * (du + d₀) < 0) (hdet : dispersionDet J du d₀ (k ^ 2) = 0) :
     HasDerivAt (fun d => leadingEigenvalue (modeMatrix J du d k))

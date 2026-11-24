@@ -7,14 +7,17 @@ wavenumbers are unstable, but only finitely many Neumann modes, none on short in
 unstable band can fall between two consecutive $k_n^2$. For $\operatorname{tr} J < 0$ and
 $d_u, d \ge 0$, as the inhibitor diffusion $d$ increases, an admissible mode
 ($f_u k^2 - d_u k^4 > 0$) becomes unstable at its neutral diffusion $d_n(k^2)$, where its critical
-eigenvalue crosses zero with positive speed (when the trace there is negative). A reduced
-bifurcation equation $a\, G(a, d) = 0$ then has a local pattern branch, whose direction and
-stability in the reduced equation are fixed by the sign of the cubic coefficient. Only the selected
-mode is controlled.
+eigenvalue crosses zero with positive speed (when the trace there is negative). For such a mode, if
+a reduced bifurcation map $G$ is strictly differentiable at $(0, d_n(k^2))$ and equals the critical
+eigenvalue on the trivial branch $a = 0$ for $d$ near $d_n(k^2)$, the reduced equation
+$a\, G(a, d) = 0$ has a local pattern branch $d = \varphi(a)$. If moreover
+$G(a, d) = G(0, d) + a^2 H(a, d)$ near $(0, d_n(k^2))$, with $H$ continuous there,
+$c = H(0, d_n(k^2)) \neq 0$, and $\partial_a H$ defined near $(0, d_n(k^2))$ and continuous there,
+the direction of the branch and its stability in the reduced equation are fixed by the sign of $c$.
+Only the selected mode is controlled.
 
 ## Eigenvalues of real 2 × 2 matrices
 
-- [Eigenvalues of a real 2 × 2 matrix M: roots of μ² − (tr M)μ + det M](exists-eigenvector-iff.md)
 - [A singular real 2 × 2 matrix has exactly the eigenvalues 0 and tr M](exists-eigenvector-iff-of-det-eq-zero.md)
 
 ## Finite-domain spectrum versus the continuum of wavenumbers
@@ -51,7 +54,7 @@ mode is controlled.
 
 ## Local pattern branch of the reduced bifurcation equation
 
-- [Transversal zero of G at (0, d₀): a G(a, d) = 0 iff a = 0 or d = φ(a)](exists-pattern-branch.md)
+- [Transversal zero (0, d₀) of G: near it, a G = 0 iff a = 0 or d = φ(a)](exists-pattern-branch.md)
 - [Reduced pattern branch and sign change of the critical eigenvalue](turing-pattern-branch.md)
 - [Direction and reduced stability of the pattern branch](pattern-branch-direction-stability.md)
 - [Supercritical Turing branches are stable in the reduced equation](turing-pattern-branch-stability.md)

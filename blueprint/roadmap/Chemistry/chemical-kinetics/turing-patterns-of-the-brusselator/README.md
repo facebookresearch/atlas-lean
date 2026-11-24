@@ -27,4 +27,4 @@ coefficients that its result needs.
 - [For q > 0, a squared wavenumber is admissible iff d_u q < b − 1](brusselator-admissible-iff.md)
 - [With a ≠ 0, d_u ≥ 0, the neutral diffusion is positive when admissible](brusselator-neutral-diffusion-pos.md)
 - [For b < 1 + a², the neutral mode matrix has negative trace](trace-mode-matrix-brusselator-neg.md)
-- [For a ≠ 0 and b < 1 + a², a Turing pattern branch of the Brusselator](brusselator-pattern-branch-of-reduction.md)
+- [For b < 1 + a², a Turing pattern branch at an admissible critical mode](brusselator-pattern-branch-of-reduction.md)

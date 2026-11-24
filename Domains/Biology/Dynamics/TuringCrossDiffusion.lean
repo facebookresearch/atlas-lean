@@ -191,9 +191,9 @@ theorem crossDispersionDet_diffusionMatrix (J : Matrix (Fin 2) (Fin 2) ℝ) (du 
     Matrix.det_fin_two]
   simp
 
-/-! The next three derivative lemmas are copied from `TuringPatterns.lean`, where they are
-private (`fourierMode_hasDerivAt_space`, `fourierMode_hasDerivAt_space_second`,
-`fourierMode_hasDerivAt_time`). Delete these copies once those lemmas are public. -/
+/-! The next three derivative lemmas repeat private lemmas of `TuringPatterns.lean`
+(`fourierMode_hasDerivAt_space`, `fourierMode_hasDerivAt_space_second`,
+`fourierMode_hasDerivAt_time`). -/
 
 /-- The `x`-derivative of the Fourier mode: `-k e^{μ t} sin(k x) v` (copy of a private lemma of
 `TuringPatterns.lean`). -/

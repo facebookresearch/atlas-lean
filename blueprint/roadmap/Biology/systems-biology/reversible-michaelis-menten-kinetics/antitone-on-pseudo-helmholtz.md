@@ -1,4 +1,4 @@
-# Positive rates and totals: pseudo-Helmholtz function never increases
+# Pseudo-Helmholtz function of a positive equilibrium never increases
 
 Let $k_1, k_{-1}, k_2, k_{-2} > 0$, let $c^*$ be a zero of the [reversible field](rev-field.md) with
 positive coordinates, and let $(s, c, e, p)$ be a [solution](is-solution.md) of the reversible

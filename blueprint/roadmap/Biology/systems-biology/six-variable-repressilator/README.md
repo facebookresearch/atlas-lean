@@ -28,14 +28,14 @@
 ## The characteristic equation
 
 - [The Jacobian matrix is its block form reindexed](jacobian-eq-reindex.md)
-- [Determinant of a 3 × 3 block matrix with commuting lower blocks](det-from-blocks-of-commute.md)
+- [Determinant of a 2 × 2 block matrix with commuting 3 × 3 lower blocks](det-from-blocks-of-commute.md)
 - [Characteristic polynomial of the six-variable Jacobian matrix](charpoly-jacobian.md)
 - [Factorization of the characteristic polynomial over ℂ](charpoly-map-jacobian.md)
 - [Eigenvalues as roots of three quadratic equations](is-root-iff.md)
 
 ## The stability boundary
 
-- [Linear stability inside the Elowitz–Leibler boundary](re-neg-of-is-root.md)
+- [For a ≥ 0, linear stability inside the Elowitz–Leibler boundary](re-neg-of-is-root.md)
 - [Linear instability outside the Elowitz–Leibler boundary](exists-re-pos-of-is-root.md)
 
 ## The Hopf condition
@@ -60,7 +60,7 @@
 
 ## Stability at the symmetric equilibrium
 
-- [Linear stability at the symmetric equilibrium inside the boundary](re-neg-of-is-root-lin-charpoly.md)
+- [Linear stability at a nonnegative symmetric state inside the boundary](re-neg-of-is-root-lin-charpoly.md)
 - [Linear instability at the symmetric equilibrium outside the boundary](exists-re-pos-of-is-root-lin-charpoly.md)
 - [The standard regime n = 2, α = 216, β = 5 is linearly unstable](exists-re-pos-standard-regime.md)
 

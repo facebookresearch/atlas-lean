@@ -1,4 +1,4 @@
-# With three equilibria, the outer ones are stable, the middle a saddle
+# Three equilibria: the outer two linearly stable, the middle a saddle
 
 For `a > 0` and `b > 0`, if the toggle switch with Hill exponents `β = 1`, `γ = 2` and rates
 `a = α₁`, `b = α₂` has exactly three [equilibria](is-equilibrium.md), they are

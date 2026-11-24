@@ -3,14 +3,15 @@
 From linear to nonlinear instability for the two-species reaction–diffusion system
 $u_t = D u_{xx} + f(u)$ on $[0, L]$ with Neumann boundary conditions, in the phase space
 $C([0, L], \mathbb{R}^2)$ with the sup norm. For $\operatorname{tr} J < 0$ and $d_u, d_v \ge 0$, an
-unstable mode has a real positive growth rate with a real eigenvector. If the C₀ linearized
-semigroup acts on an unstable Neumann mode through its modal ODE and has a growth bound
-$M e^{\omega t}$ with $\omega$ below $p$ times the growth rate, the flow starts at the identity and
-steps by its time-$T$ map along orbits near the steady state, and the nonlinear time-$T$ map equals
-the linear one up to a remainder of order $p > 1$, then the homogeneous steady state is nonlinearly
-unstable. The Neumann heat semigroup and the local flow enter as hypotheses. With $\det J > 0$ as
-well (kinetics stable without diffusion), the unstable mode is non-homogeneous and the instability
-is driven by diffusion.
+unstable mode has a real positive growth rate with a real eigenvector. Under the same conditions on
+$J$, $d_u$ and $d_v$, with $L \ge 0$: if the C₀ linearized semigroup acts on an unstable Neumann
+mode through its modal ODE and has a growth bound $M e^{\omega t}$ with $\omega$ below $p$ times the
+growth rate, the flow starts at the identity and steps by its time-$T$ map ($T > 0$) along orbits in
+a ball of radius $\rho > 0$ around the steady state, and the nonlinear time-$T$ map equals the
+linear one up to a remainder $C \lVert y \rVert^p$ with $C \ge 0$ and $p > 1$ on that ball, then the
+homogeneous steady state is nonlinearly unstable. The Neumann heat semigroup and the local flow
+enter as hypotheses. With $\det J > 0$ as well (kinetics stable without diffusion), the unstable
+mode is non-homogeneous and the instability is driven by diffusion.
 
 ## The real growth rate of an unstable mode
 

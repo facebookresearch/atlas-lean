@@ -35,12 +35,12 @@
 - [Rate constants of the reversible mechanism as a network](mm-rates.md)
 - [Mass-action field of the mechanism equals the reversible field](mass-action-field-mm-network.md)
 - [Equilibria of the reversible field are complex balanced](is-complex-balanced-mm-network.md)
-- [Among nonnegative states only c* has the pseudo-Helmholtz value of c*](eq-of-pseudo-helmholtz-eq.md)
+- [Positive c*: only c* has pseudo-Helmholtz value G(c*) among states ≥ 0](eq-of-pseudo-helmholtz-eq.md)
 - [For positive rates and totals all concentrations are positive at t > 0](pos.md)
 - [Orbital derivative of the pseudo-Helmholtz function at positive states](has-deriv-at-pseudo-helmholtz-rev-field.md)
 - [Horn–Jackson inequality for the reversible Michaelis–Menten mechanism](helmholtz-rate-mm-network-nonpos.md)
 - [The pseudo-Helmholtz function is continuous](continuous-pseudo-helmholtz.md)
-- [Positive rates and totals: pseudo-Helmholtz function never increases](antitone-on-pseudo-helmholtz.md)
+- [Pseudo-Helmholtz function of a positive equilibrium never increases](antitone-on-pseudo-helmholtz.md)
 - [Positive rates and totals: nonnegative solutions tend to equilibrium](tendsto-equilibrium.md)
 
 ## Quasi-steady-state approximation
@@ -53,7 +53,7 @@
 - [With k₋₂ = 0 the reversible QSS complex is the irreversible one](rev-qsscomplex-zero.md)
 - [With k₋₂ = 0 the reduced rate is the Michaelis–Menten rate law](reduced-rate-zero.md)
 - [The reduced rate is nondecreasing between 0 and the total mass](reduced-rate-mono.md)
-- [Nonnegative data: the reversible complex stays near the QSS manifold](abs-complex-sub-qss-le.md)
+- [Nonnegative data: past an initial layer, c nears the QSS manifold](abs-complex-sub-qss-le.md)
 - [The reduced reversible equation keeps solutions between 0 and M](reduced-mem-icc.md)
 - [Nonnegative data: the reversible substrate tracks a reduced solution](abs-substrate-sub-reduced-le.md)
 - [Standard data: reversible substrate error at most C ε for 0 ≤ τ ≤ T](abs-substrate-sub-reduced-le-mul.md)

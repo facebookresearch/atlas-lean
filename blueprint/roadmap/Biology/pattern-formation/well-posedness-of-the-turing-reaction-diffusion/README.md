@@ -20,8 +20,7 @@ kinetics, singular at $v = 0$, do not.
 ## The diffusion semigroup
 
 - [Diagonal diffusion operators diag(H(d_u t), H(d_v t))](diffusion-semigroup.md)
-- [Pointwise formula for the diffusion operators](diffusion-semigroup-apply-apply.md)
-- [Each species evolves by the scalar operator at its own time](species-proj-diffusion-semigroup.md)
+- [Each species evolves by the scalar operator at its own time](diffusion-semigroup-apply-apply.md)
 - [The diffusion operators of a C₀ semigroup form a C₀ semigroup](is-c0-semigroup-diffusion-semigroup.md)
 - [Single-species eigenfunctions of the diffusion operators](diffusion-semigroup-apply-species-emb.md)
 

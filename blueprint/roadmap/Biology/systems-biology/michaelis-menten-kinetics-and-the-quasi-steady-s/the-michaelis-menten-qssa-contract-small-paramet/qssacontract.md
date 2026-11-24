@@ -1,8 +1,8 @@
 # QSSA contract for the Michaelis–Menten system
 
-For real $k_1, k_b, k_2, s_0$ and $T$, the QSSA contract is the following statement; it is a
-definition, and no result proves it. If $k_1 > 0$, $k_b \ge 0$, $k_2 > 0$ and $s_0 > 0$, then for
-every [solution of the reduced problem](is-reduced-solution-on.md) $u$ on $[0, T]$ and every
+For real $k_1, k_b, k_2, s_0$ and $T$, the QSSA contract is the following proposition. If $k_1 > 0$,
+$k_b \ge 0$, $k_2 > 0$ and $s_0 > 0$, then for every
+[solution of the reduced problem](is-reduced-solution-on.md) $u$ on $[0, T]$ and every
 $\delta \in (0, T]$ there is a constant $C$ such that, for every $e_0 > 0$ and every
 [solution](is-solution-on.md) $(s, c)$ with total enzyme $e_0$ on the window $[0, t_S T]$ with
 $s(0) = s_0$ and $c(0) = 0$,

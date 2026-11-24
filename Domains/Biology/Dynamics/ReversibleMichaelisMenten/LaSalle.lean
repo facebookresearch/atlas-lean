@@ -18,7 +18,8 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 Every solution of the reversible Michaelis–Menten system `E + S ⇌ C ⇌ E + P`
 (`Domains.Biology.Dynamics.ReversibleMichaelisMenten`) with nonnegative data and positive
-totals converges to the unique (positive) equilibrium of its compatibility class. The proof
+totals converges to the unique nonnegative equilibrium of its compatibility class, which is
+positive. The proof
 applies LaSalle's invariance principle for ODEs (`MathlibExt.Analysis.ODE.LaSalle`) with the
 pseudo-Helmholtz function of `Domains.Biology.Dynamics.ComplexBalanced` as the Lyapunov
 function.
@@ -34,7 +35,8 @@ function.
 * `IsSolution.pos`: solutions with nonnegative data and positive totals are strictly positive
   for `t > 0`;
 * `IsSolution.tendsto_equilibrium`: **every solution with nonnegative data and positive totals
-  converges to the unique (positive) equilibrium of its compatibility class.**
+  converges to the unique nonnegative equilibrium of its compatibility class**, which is
+  positive.
 
 ## Scope
 

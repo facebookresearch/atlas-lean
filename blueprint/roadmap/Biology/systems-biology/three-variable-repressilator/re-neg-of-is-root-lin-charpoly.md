@@ -1,4 +1,4 @@
-# Linear stability when the loop gain is below 2
+# For p ≥ 0 and a(p) < 2, the symmetric equilibrium is linearly stable
 
 For `n ∈ ℕ` and `p ≥ 0` with `a(p) < 2`, where `a` is the [loop gain](gain.md)
 `a(p) = n pⁿ / (1 + pⁿ)`, every complex root `z` of the

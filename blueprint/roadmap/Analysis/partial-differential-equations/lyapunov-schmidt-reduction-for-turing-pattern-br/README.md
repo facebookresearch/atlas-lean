@@ -7,12 +7,13 @@ $(0, p_0)$, is strictly differentiable there and whose state derivative $L$ has 
 the Lyapunov–Schmidt reduction solves the range part of $F = 0$ by the implicit function theorem and
 leaves a finite-dimensional bifurcation equation. When $\ker L$ is spanned by one vector and
 $\operatorname{range} L$ is the kernel of a functional (codimension at most one), this is a scalar
-equation; along a trivial branch $F(0, d) = 0$, a factorization $\tilde G(a, d) = a\, G(a, d)$ with
-$G(0, d_0) = 0$ and $\partial_d G(0, d_0) \neq 0$, and the reduced branch theorem for $G$, give the
-pattern branch of $F$. For the Turing linearization on finitely many cosine modes, a critical mode
-with $f_v \neq 0$ and no resonant mode gives a one-dimensional kernel and a range of codimension
-one. The reduction applies to any Banach-space formulation of the steady-state problem once a
-Fredholm package of its linearization is given.
+equation; along a trivial branch $F(0, d) = 0$, a factorization $\tilde G(a, d) = a\, G(a, d)$ near
+$(0, d_0)$ with $G$ strictly differentiable at $(0, d_0)$, $G(0, d_0) = 0$ and
+$\partial_d G(0, d_0) \neq 0$, and the reduced branch theorem for $G$, give the pattern branch of
+$F$. For the Turing linearization on finitely many cosine modes, a critical mode with $f_v \neq 0$
+and no resonant mode gives a one-dimensional kernel and a range of codimension one. The reduction
+applies to any Banach-space formulation of the steady-state problem once a Fredholm package of its
+linearization is given.
 
 ## Fredholm packages and projections
 

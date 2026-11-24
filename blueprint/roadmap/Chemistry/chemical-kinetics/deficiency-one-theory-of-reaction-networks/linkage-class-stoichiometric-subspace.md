@@ -9,4 +9,7 @@ the [reactions `r` of `θ`](linkage-class-of.md), that is, the
 
 ## Sources
 
-- Feinberg (1987); Feinberg (2019).
+- M. Feinberg, *Chemical reaction network structure and the stability of complex isothermal
+  reactors I. The deficiency zero and deficiency one theorems*, Chem. Eng. Sci. 42 (1987)
+  2229–2268.
+- M. Feinberg, *Foundations of Chemical Reaction Network Theory*, Springer (2019).

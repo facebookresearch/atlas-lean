@@ -1,4 +1,4 @@
-# Among nonnegative states only c* has the pseudo-Helmholtz value of c*
+# Positive c*: only c* has pseudo-Helmholtz value G(c*) among states ≥ 0
 
 Let $c^* \in \mathbb{R}^4$ have positive coordinates and $y \in \mathbb{R}^4$ nonnegative ones, and
 let $G(x) = \sum_i x_i (\log x_i - \log c^*_i - 1)$ be the

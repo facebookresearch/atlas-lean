@@ -38,7 +38,7 @@
 - [For r > 0, i r is a characteristic root at the critical delay](char-fun-critical-delay-i-mul.md)
 - [For r > 0, −i r is a characteristic root at the critical delay](char-fun-critical-delay-neg-i-mul.md)
 - [Above the critical delay a characteristic root has positive real part](exists-char-fun-eq-zero-re-pos.md)
-- [Past the critical delay the linearized equation oscillates unboundedly](exists-linearized-oscillation.md)
+- [Past the critical delay a linearized solution oscillates unboundedly](exists-linearized-oscillation.md)
 
 ## Local asymptotic stability of the nonlinear equation
 

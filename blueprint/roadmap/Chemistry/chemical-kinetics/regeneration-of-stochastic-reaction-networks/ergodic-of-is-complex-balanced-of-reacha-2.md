@@ -1,4 +1,4 @@
-# Ergodic limit from the Poisson law with a drift bound and reachability
+# Complex-balanced Poisson start, drift bound, reachability: ergodicity
 
 Let $N$ be a [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) with finite sets $S$ of species and
 $\rho$ of reactions, $\kappa \in \mathbb{R}^\rho$ with $\kappa_r \ge 0$ for every $r$, and

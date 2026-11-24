@@ -19,9 +19,10 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # Reversible Michaelis–Menten: a uniform quasi-steady-state error bound
 
-For the reversible mechanism `E + S ⇌ C ⇌ E + P` (`ReversibleMichaelisMenten.IsSolution k₁ kb
-k₂ kb₂ s c e p`, with `k₁, k₂ > 0` and `kb, kb₂ ≥ 0`), write `e_T = e(0) + c(0)` for the total
-enzyme, `M = s(0) + c(0) + p(0)` for the total mass, `D = kb + k₂`, and `A = k₁ s + kb₂ p`. The
+For the reversible mechanism `E + S ⇌ C ⇌ E + P`
+(`ReversibleMichaelisMenten.IsSolution k₁ kb k₂ kb₂ s c e p`, with `k₁, k₂ > 0` and
+`kb, kb₂ ≥ 0`), write `e_T = e(0) + c(0)` for the total enzyme, `M = s(0) + c(0) + p(0)` for the
+total mass, `D = kb + k₂`, and `A = k₁ s + kb₂ p`. The
 quasi-steady-state complex is `q(s, p) = e_T A / (A + D)` (`revQSSComplex`), and the reversible
 Michaelis–Menten rate law is
 
@@ -41,8 +42,8 @@ scalar equation `dS̄/dτ = -v(S̄, M - S̄)` (`reducedRate`), with `P̄ = M - S
 * `reduced_mem_Icc`: every solution of the reduced equation starting in `[0, M]` stays there.
 * `IsSolution.abs_substrate_sub_reduced_le` (real time, all `t ≥ 0`): the substrate tracks
   the reduced solution on the slow clock,
-  `|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ M + kb) (|c(0) - q(s(0), p(0))| / (kb + k₂)
-  + (e_T² F / (kb + k₂)² + e_T² kb₂ / (kb + k₂)) t)`.
+  `|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ M + kb) (|c(0) - q(s(0), p(0))| / (kb + k₂)`
+  `+ (e_T² F / (kb + k₂)² + e_T² kb₂ / (kb + k₂)) t)`.
 * `abs_substrate_sub_reduced_le_mul`, `abs_product_sub_reduced_le_mul`: for the standard data
   `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε`, `p(0) = p₀`, on the slow window `τ ∈ [0, T]`
   (**including** `τ = 0`), `|s(τ/ε) - S̄(τ)| ≤ revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T · ε`
@@ -414,8 +415,8 @@ theorem reduced_mem_Icc (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (
 `kb, kb₂ ≥ 0` and nonnegative initial data, for all `t ≥ 0`, with `e_T = e(0) + c(0)`,
 `M = s(0) + c(0) + p(0)`, `F = complexForcingConst k₁ kb k₂ kb₂ M`, and
 `S̄` a solution of `S̄' = -v(S̄, M - S̄)` with `S̄(0) ∈ [0, M]`,
-`|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ M + kb) (|c(0) - q(s(0), p(0))| / (kb + k₂) +
-(e_T² F / (kb + k₂)² + e_T² kb₂ / (kb + k₂)) t)`. -/
+`|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ M + kb) (|c(0) - q(s(0), p(0))| / (kb + k₂) +`
+`(e_T² F / (kb + k₂)² + e_T² kb₂ / (kb + k₂)) t)`. -/
 theorem IsSolution.abs_substrate_sub_reduced_le (h : IsSolution k₁ kb k₂ kb₂ s c e p)
     (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hkb₂ : 0 ≤ kb₂) (hs0 : 0 ≤ s 0)
     (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0) (hp0 : 0 ≤ p 0) {S : ℝ → ℝ}
@@ -590,8 +591,8 @@ theorem abs_substrate_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk
 
 /-- **Uniform QSSA for the product on a slow window, including `τ = 0`.** For the standard data
 of `abs_substrate_sub_reduced_le_mul`, the product tracks the reduced product
-`P̄ = s₀ + p₀ - S̄`: `|p(τ/ε) - (s₀ + p₀ - S̄(τ))| ≤
-(revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T + 1) · ε` for all `τ ∈ [0, T]`. -/
+`P̄ = s₀ + p₀ - S̄`: `|p(τ/ε) - (s₀ + p₀ - S̄(τ))| ≤`
+`(revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T + 1) · ε` for all `τ ∈ [0, T]`. -/
 theorem abs_product_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
     (hkb₂ : 0 ≤ kb₂) {s₀ p₀ ε T : ℝ} (hs₀ : 0 ≤ s₀) (hp₀ : 0 ≤ p₀) (hε : 0 < ε)
     (h : IsSolution k₁ kb k₂ kb₂ s c e p) (hs0 : s 0 = s₀) (hc0 : c 0 = 0) (he0 : e 0 = ε)

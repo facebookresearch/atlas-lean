@@ -115,7 +115,7 @@ theorem hasDerivAt_charFun (r τ : ℝ) (z : ℂ) :
   simp only [charFunDeriv]
   ring
 
-/-- At `(z, τ) = (i r, τ_c)` the derivative is `1 + (π / 2) i`. -/
+/-- For `r > 0`, at `(z, τ) = (i r, τ_c)` the derivative is `1 + (π / 2) i`. -/
 theorem charFunDeriv_criticalDelay {r : ℝ} (hr : 0 < r) :
     charFunDeriv r (criticalDelay r) (Complex.I * r) = 1 + ((π / 2 : ℝ) : ℂ) * Complex.I := by
   have hrτ : (r : ℂ) * (criticalDelay r : ℂ) = ((π / 2 : ℝ) : ℂ) := by
@@ -165,7 +165,7 @@ theorem eq_I_mul_or_eq_neg_I_mul_of_re_eq_zero {r : ℝ} (hr : 0 < r) {z : ℂ}
     refine Complex.ext ?_ ?_ <;> simp [hre]
     linarith
 
-/-- At `τ_c` every characteristic root other than `± i r` has negative real part. -/
+/-- For `r > 0`, at `τ_c` every characteristic root other than `± i r` has negative real part. -/
 theorem re_neg_of_charFun_criticalDelay {r : ℝ} (hr : 0 < r) {z : ℂ}
     (hz : charFun r (criticalDelay r) z = 0) (h1 : z ≠ Complex.I * r)
     (h2 : z ≠ -(Complex.I * r)) : z.re < 0 := by
@@ -327,8 +327,8 @@ noncomputable def hopfProfileDeriv (ε θ : ℝ) : ℝ :=
   -(ε * sin θ) + ε ^ 2 * (-(2 * sin (2 * θ)) / 5 + cos (2 * θ) / 5) +
     ε ^ 3 * (-(3 * sin (3 * θ)) / 80 + 9 * cos (3 * θ) / 80)
 
-/-- The approximate orbit `v_ε(s) = W_ε(ω(ε) s)` of the scaled equation
-`v'(s) = -α v(s - 1) (1 + v(s))`. -/
+/-- The approximate orbit `v_ε(s) = W_ε(ω(ε) s)`; for `|ε| ≤ 1` it solves the scaled equation
+`v'(s) = -α(ε) v(s - 1) (1 + v(s))` up to a residual of order `ε⁴`. -/
 noncomputable def hopfApprox (ε s : ℝ) : ℝ := hopfProfile ε (hopfFreq ε * s)
 
 /-- `hopfProfile` as a polynomial in `cos θ`, `sin θ`. -/
@@ -629,9 +629,9 @@ theorem hopfDelay_zero (r : ℝ) : hopfDelay r 0 = criticalDelay r := by
   simp only [hopfDelay, hopfParam, criticalDelay]
   ring
 
-/-- **Side of the approximate orbits**: for `ε ≠ 0` the approximate orbits live at delays
-`τ(ε) > τ_c`, the side on which the equilibrium is linearly unstable. The direction of the true
-bifurcation would need the Hopf theorem, which is not proved here. -/
+/-- **Side of the approximate orbits**: for `r > 0` and `ε ≠ 0` the approximate orbits live at
+delays `τ(ε) > τ_c`, the side on which the equilibrium is linearly unstable. This concerns the
+approximate orbits, not the direction of a true bifurcating orbit. -/
 theorem criticalDelay_lt_hopfDelay {r ε : ℝ} (hr : 0 < r) (hε : ε ≠ 0) :
     criticalDelay r < hopfDelay r ε := by
   have h : hopfDelay r ε - criticalDelay r = hopfAlpha2 * ε ^ 2 / r := by

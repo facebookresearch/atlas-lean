@@ -222,7 +222,7 @@ theorem ofLV_none (y : ι → ℝ) : ofLV y none = 1 / (1 + ∑ j, y j) := rfl
 @[simp]
 theorem ofLV_some (y : ι → ℝ) (i : ι) : ofLV y (some i) = y i / (1 + ∑ j, y j) := rfl
 
-/-- `ofLV` lands in the hyperplane `∑ x_k = 1`. -/
+/-- For `1 + ∑ y_j ≠ 0`, `ofLV y` lands in the hyperplane `∑ x_k = 1`. -/
 theorem sum_ofLV {y : ι → ℝ} (hy : 1 + ∑ j, y j ≠ 0) : ∑ k, ofLV y k = 1 := by
   rw [Fintype.sum_option, ofLV_none]
   simp only [ofLV_some, ← Finset.sum_div]
@@ -244,7 +244,7 @@ theorem ofLV_toLV {x : Option ι → ℝ} (h0 : x none ≠ 0) (h1 : ∑ k, x k =
     simp only [toLV]
     field_simp
 
-/-- `toLV` inverts `ofLV`. -/
+/-- For `1 + ∑ y_j ≠ 0`, `toLV` inverts `ofLV`: `toLV (ofLV y) = y`. -/
 theorem toLV_ofLV {y : ι → ℝ} (hy : 1 + ∑ j, y j ≠ 0) : toLV (ofLV y) = y := by
   ext i
   simp only [toLV, ofLV_some, ofLV_none]
@@ -419,8 +419,8 @@ omit [Fintype ι] in
 theorem timeChange_zero (x : ℝ → Option ι → ℝ) : timeChange x 0 = 0 :=
   intervalIntegral.integral_same
 
-/-- The derivative of the Lotka–Volterra time is the reference frequency: `τ'(t) = x_none(t)`
-for `t ≥ 0` (clamped at `0` for `t < 0`). -/
+/-- For a replicator solution `x`, the derivative of the Lotka–Volterra time is the reference
+frequency: `τ'(t) = x_none(t)` for `t ≥ 0` (clamped at `0` for `t < 0`). -/
 theorem hasDerivAt_timeChange (hx : IsSolution f x) (t : ℝ) :
     HasDerivAt (timeChange x) (x (max t 0) none) t :=
   ((continuous_clamp fun s hs => (hx.hasDerivAt none s hs).continuousAt).integral_hasStrictDerivAt
@@ -449,8 +449,9 @@ theorem lvTrajectory_timeChange (hx : IsSolution f x) (hf : Continuous f) (h0 : 
     (t : ℝ) : lvTrajectory x (timeChange x t) = toLV (x t) := by
   rw [lvTrajectory, leftInverse_invFun (strictMono_timeChange hx hf h0).injective t]
 
-/-- **The Lotka–Volterra trajectory solves the Lotka–Volterra equation** at every time
-`τ(t)`, `t ≥ 0`, in the image of `[0, ∞)` under the time change. -/
+/-- **The Lotka–Volterra trajectory solves the Lotka–Volterra equation**: for a replicator
+solution `x` of the game `A` with `x_none(0) > 0`, at every time `τ(t)`, `t ≥ 0`, in the image
+of `[0, ∞)` under the time change. -/
 theorem hasDerivAt_lvTrajectory {A : Matrix (Option ι) (Option ι) ℝ}
     (hx : IsSolution (fun z => A *ᵥ z) x) (h0 : 0 < x 0 none) {t : ℝ} (ht : 0 ≤ t) (i : ι) :
     HasDerivAt (fun u => lvTrajectory x u i)
@@ -529,8 +530,8 @@ variable {A : Matrix (Option ι) (Option ι) ℝ} {y : ℝ → ι → ℝ}
 theorem repTimeChange_zero (y : ℝ → ι → ℝ) : repTimeChange y 0 = 0 :=
   intervalIntegral.integral_same
 
-/-- The derivative of the replicator time is `1 + ∑ y_j(τ)` for `τ ≥ 0` (clamped at `0` for
-`τ < 0`). -/
+/-- For `y` solving the Lotka–Volterra equation on `[0, ∞)`, the derivative of the replicator
+time is `1 + ∑ y_j(τ)` for `τ ≥ 0` (clamped at `0` for `τ < 0`). -/
 theorem hasDerivAt_repTimeChange
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ) (τ : ℝ) :
@@ -561,7 +562,8 @@ theorem strictMono_repTimeChange
   strictMono_of_deriv_pos fun τ => (hasDerivAt_repTimeChange hy τ).deriv ▸
     zero_lt_one.trans_le (one_le_repTimeChange_deriv hpos τ)
 
-/-- The replicator trajectory at time `t(τ)` is `ofLV (y τ)`. -/
+/-- Along a positive solution `y` of the Lotka–Volterra equation on `[0, ∞)`, the replicator
+trajectory at time `t(τ)` is `ofLV (y τ)`, for every real `τ`. -/
 theorem repTrajectory_repTimeChange
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ)
@@ -613,7 +615,7 @@ theorem exists_repTimeChange_eq
   exact intermediate_value_Icc ht hcont.continuousOn hmem
 
 /-- **The replicator trajectory solves the replicator equation** of the game `A` for all
-times `t ≥ 0`. -/
+times `t ≥ 0`, when `y` is a positive solution of the Lotka–Volterra equation on `[0, ∞)`. -/
 theorem isSolution_repTrajectory
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ)

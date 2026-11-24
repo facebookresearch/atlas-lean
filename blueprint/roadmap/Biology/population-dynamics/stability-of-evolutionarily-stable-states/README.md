@@ -13,6 +13,7 @@
 
 ## The relative entropy Lyapunov function
 
+- [Finite Kullback–Leibler formula](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/mean-field-variational-inference/kl.md)
 - [The relative entropy is positive away from p](rel-entropy-pos.md)
 - [Derivative of the relative entropy along a replicator solution](has-deriv-at-rel-entropy.md)
 

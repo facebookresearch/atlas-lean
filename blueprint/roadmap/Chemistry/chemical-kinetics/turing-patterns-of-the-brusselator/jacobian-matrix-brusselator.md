@@ -9,4 +9,4 @@ $(f_u, f_v)$ and $(g_u, g_v)$ there, is
 $$\begin{pmatrix} b - 1 & a^2 \\ -b & -a^2 \end{pmatrix},$$
 
 the [Brusselator Jacobian](brusselator-jacobian.md). The condition $a \ne 0$ is needed: at $a = 0$
-the steady state is $(0, 0)$, where $f_u = -(b + 1)$ differs from $b - 1$.
+the steady state is $(0, 0)$, where $f_u = -(b + 1)$ differs from $b - 1$ unless $b = 0$.

@@ -1,4 +1,4 @@
-# Pointwise formula for the diffusion operators
+# Each species evolves by the scalar operator at its own time
 
 Let $K$ be a compact topological space, $H = (H(\tau))_{\tau \ge 0}$ any family of bounded linear
 operators on $C(K, \mathbb{R})$, $d_u, d_v \ge 0$ and
@@ -9,3 +9,5 @@ $x \in K$ and every species index $k \in \{0, 1\}$,
 $$\bigl(S(t)\, w\bigr)(x)_k = \bigl(H(d_k t)\, w_k\bigr)(x),$$
 
 where $w_k \in C(K, \mathbb{R})$ is the [species-$k$ field](species-proj.md) $x \mapsto w(x)_k$.
+Equivalently, as fields on $K$: the species-$k$ field of $S(t)\, w$ is $H(d_k t)$ applied to the
+species-$k$ field of $w$, $(S(t)\, w)_k = H(d_k t)\, w_k$.

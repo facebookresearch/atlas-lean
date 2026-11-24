@@ -35,9 +35,9 @@
 
 - [For positive rates and exponents 1 and 2, one to three equilibria](ncard-equilibria-mem.md)
 - [Exactly two equilibria at a tangency of the nullclines off the cusp](ncard-equilibria-eq-two-iff.md)
-- [Three roots of the cubic give two stable equilibria and a saddle](three-equilibria-of-lt.md)
-- [With three equilibria, the outer ones are stable, the middle a saddle](three-equilibria.md)
-- [Exactly three equilibria iff two distinct stable equilibria exist](ncard-equilibria-eq-three-iff-bistable.md)
+- [Three cubic roots give two linearly stable equilibria and a saddle](three-equilibria-of-lt.md)
+- [Three equilibria: the outer two linearly stable, the middle a saddle](three-equilibria.md)
+- [Exactly three equilibria iff two distinct linearly stable ones exist](ncard-equilibria-eq-three-iff-bistable.md)
 - [Saddle-node bifurcation in b](saddle-node-collision.md)
 
 ## Positive roots and sign changes

@@ -3,13 +3,14 @@
 The stochastic mass-action chain of a chemical reaction network moves on the molecule counts `ℕ^S`.
 When `c` is complex balanced for the rate constants, the product-form Poisson weights `π_c` solve
 its stationary master equation, and for `c ≥ 0` they sum to `1` over `ℕ^S` (Anderson, Craciun &
-Kurtz 2010). For a regenerative process whose cycles have finite mean length, the renewal–reward
-theorem gives almost sure limits of the time averages of bounded observables; a stationary law that
-charges the regeneration state forces cycles of finite mean length and identifies the limit as the
-mean under that law. Together: for nonnegative rate constants and a complex-balanced `c > 0`, a
-jointly measurable process on `ℕ^S`, defined on a probability space, that does not explode, has law
-`π_c` at every time `t ≥ 0` and regenerates at a state is positive recurrent, and for each bounded
-observable its time averages converge almost surely to the observable's mean under `π_c`.
+Kurtz 2010). For a jointly measurable regenerative process on a probability space whose cycles have
+finite mean length, the renewal–reward theorem gives almost sure limits of the time averages of
+bounded measurable observables; when the singletons of the state space are measurable, a stationary
+law that charges the regeneration state forces cycles of finite mean length and identifies the limit
+as the mean under that law. Together: for nonnegative rate constants and a complex-balanced `c > 0`,
+a jointly measurable process on `ℕ^S`, defined on a probability space, that does not explode, has
+law `π_c` at every time `t ≥ 0` and regenerates at a state is positive recurrent, and for each
+bounded observable its time averages converge almost surely to the observable's mean under `π_c`.
 
 ## The master equation and the product-form weights
 

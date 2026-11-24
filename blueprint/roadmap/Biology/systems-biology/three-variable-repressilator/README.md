@@ -37,20 +37,20 @@
 - [At loop gain 2 the eigenvalues are −3 and ±i√3](is-root-iff-of-gain-eq-two.md)
 - [At loop gain 2, i√3 is a simple eigenvalue](root-multiplicity-eq-one.md)
 - [At loop gain 2, the eigenvalues on the imaginary axis are ±i√3](eq-of-is-root-of-re-eq-zero.md)
-- [Eigenvalue curve through i√3](hopf-eigenvalue.md)
+- [Eigenvalue curve of the three-variable repressilator](hopf-eigenvalue.md)
 - [Derivative of the loop gain at a nonnegative level](has-deriv-at-gain.md)
 - [Derivative of the eigenvalue curve at a nonnegative level](has-deriv-at-hopf-eigenvalue.md)
-- [For n ≥ 1 and μ > 0, the eigenvalue curve crosses with positive speed](re-hopf-eigenvalue-deriv-pos.md)
+- [For n ≥ 1 and μ > 0, the eigenvalue curve has Re λ'(μ) > 0](re-hopf-eigenvalue-deriv-pos.md)
 
 ## Location of the Hopf point
 
-- [For n ≥ 1, the loop gain is below the Hill coefficient](gain-lt.md)
-- [For n ≤ 2, the loop gain stays below 2](gain-lt-two-of-le-two.md)
+- [For n ≥ 1 and p ≥ 0, the loop gain is below the Hill coefficient](gain-lt.md)
+- [For n ≤ 2 and p ≥ 0, the loop gain stays below 2](gain-lt-two-of-le-two.md)
 - [For n > 2, the loop gain is 2 exactly when pⁿ = 2/(n − 2)](gain-eq-two-iff.md)
 
 ## Stability of the symmetric equilibrium
 
-- [Linear stability when the loop gain is below 2](re-neg-of-is-root-lin-charpoly.md)
+- [For p ≥ 0 and a(p) < 2, the symmetric equilibrium is linearly stable](re-neg-of-is-root-lin-charpoly.md)
 - [Linear instability when the loop gain exceeds 2](exists-re-pos-of-is-root-lin-charpoly.md)
 - [For n ≤ 2, the nonnegative symmetric equilibrium is linearly stable](re-neg-of-le-two.md)
 

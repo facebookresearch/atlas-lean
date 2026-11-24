@@ -1,4 +1,4 @@
-# Nonnegative data: the reversible complex stays near the QSS manifold
+# Nonnegative data: past an initial layer, c nears the QSS manifold
 
 Let $k_1, k_{-1}, k_{-2} \ge 0$ and $k_2 > 0$, and let $(s, c, e, p)$ be a
 [solution](is-solution.md) of the reversible Michaelis–Menten system with

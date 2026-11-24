@@ -41,8 +41,9 @@ which constructs such a Turing map `F`:
 * **Lyapunov–Schmidt reduction**: H. Kielhöfer, *Bifurcation Theory: An Introduction with
   Applications to Partial Differential Equations*, 2nd ed., Springer (2012), §I.2 ("The Method of
   Lyapunov–Schmidt"): for `F(x, λ)` with Fredholm linearization `D_x F(0, λ₀)`, the solutions of
-  `F = 0` near `(0, λ₀)` are `x = v + ψ(v, λ)`, `v ∈ ker`, with `Φ(v, λ) = (1 - Q) F(v + ψ(v, λ), λ)
-  = 0`, the finite-dimensional bifurcation equation. Here: `lyapunovSchmidt`.
+  `F = 0` near `(0, λ₀)` are `x = v + ψ(v, λ)`, `v ∈ ker`, with
+  `Φ(v, λ) = (1 - Q) F(v + ψ(v, λ), λ) = 0`, the finite-dimensional bifurcation equation. Here:
+  `lyapunovSchmidt`.
 * **Bifurcation from a simple eigenvalue**: M. G. Crandall and P. H. Rabinowitz, *Bifurcation from
   simple eigenvalues*, J. Funct. Anal. 8 (1971) 321–340, Theorem 1.7; the reduced form is
   `TuringBranches.exists_patternBranch`, used here only through the explicit hypothesis `hCR`.

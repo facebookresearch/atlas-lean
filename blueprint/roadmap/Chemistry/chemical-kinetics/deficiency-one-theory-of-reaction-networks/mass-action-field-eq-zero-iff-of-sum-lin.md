@@ -14,4 +14,8 @@ classes.
 
 ## Sources
 
-- Feinberg (1995); Boros (2012); Feinberg (2019).
+- M. Feinberg, *The existence and uniqueness of steady states for a class of chemical reaction
+  networks*, Arch. Rational Mech. Anal. 132 (1995) 311–370.
+- B. Boros, *Notes on the deficiency-one theorem: multiple linkage classes*, Math. Biosci. 235
+  (2012) 110–122.
+- M. Feinberg, *Foundations of Chemical Reaction Network Theory*, Springer (2019).

@@ -99,8 +99,8 @@
 - [Jump times tending to infinity bound molecule counts up to each time](no-explosion-path.md)
 - [Complex balance and a drift bound give stationarity in Laplace form](tsum-poisson-weight-mul-lintegral-laplac.md)
 - [Positive complex balance, drift bound and reachability give ergodicity](ergodic-of-is-complex-balanced-of-reacha.md)
-- [Ergodic limit from the Poisson law with a drift bound and reachability](ergodic-of-is-complex-balanced-of-reacha-2.md)
+- [Complex-balanced Poisson start, drift bound, reachability: ergodicity](ergodic-of-is-complex-balanced-of-reacha-2.md)
 
 ## Related topics
 
-- [Complex balancing and the deficiency-zero theorem](../../../Biology/systems-biology/complex-balancing-and-the-deficiency-zero-theore/README.md): the deterministic theory of complex balancing: complex-balanced states are equilibria of the mass-action system, and a weakly reversible network of deficiency zero with finitely many species and reactions has a complex-balanced state with positive coordinates for every choice of positive rate constants, so the product-form results apply to it.
+- [Complex balancing and the deficiency-zero theorem](../../../Biology/systems-biology/complex-balancing-and-the-deficiency-zero-theore/README.md): the deterministic theory of complex balancing: complex-balanced states are equilibria of the mass-action system, and a weakly reversible network of deficiency zero with finitely many species and reactions has a complex-balanced state with positive coordinates for every choice of positive rate constants, so the complex-balance hypothesis of the product-form results holds for it (the stationarity and ergodic results also need a drift bound, and the ergodic results reachability).

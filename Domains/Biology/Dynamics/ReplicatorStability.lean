@@ -57,9 +57,9 @@ close to `p` stay close to `p` and converge to `p`.
 
 Every vertex of the simplex is a rest point of the replicator equation, and a boundary rest
 point need not be a Nash equilibrium (the tests exhibit a vertex of the Hawk–Dove game that is
-a rest point but not Nash). The results here are stated **only for interior ESS** (`∀ i,
-0 < p i`); the ESS → asymptotic stability implication for an ESS on the boundary of the simplex
-(Hofbauer–Sigmund 1998, Theorem 7.2.4 in full generality) is not proved here. A Nash
+a rest point but not Nash). The results here are stated **only for interior ESS**
+(`∀ i, 0 < p i`); the ESS → asymptotic stability implication for an ESS on the boundary of the
+simplex (Hofbauer–Sigmund 1998, Theorem 7.2.4 in full generality) is not proved here. A Nash
 equilibrium alone does not suffice: the tests give a two-strategy Nash equilibrium that is not
 asymptotically stable.
 
@@ -67,10 +67,9 @@ asymptotically stable.
 
 The stability argument is Lyapunov's direct method carried out directly for the replicator
 equation, using compactness of annuli `{y ∈ Δ | a ≤ ‖y - p‖ ≤ b}` and the intermediate value
-theorem. The general Lyapunov criterion of `MathlibExt/Analysis/ODE/LyapunovStability.lean`
-(atlas-lean PR #1127) is not on `main` at the base of this file, so it is not used. The
-existing definitions `Replicator.IsSolution`, `Replicator.meanFitness` and the invariance
-results `IsSolution.mem_simplex`, `IsSolution.pos_of_pos` are reused; `meanFitness` of the
+theorem, without a general Lyapunov criterion. The existing definitions
+`Replicator.IsSolution`, `Replicator.meanFitness` and the invariance results
+`IsSolution.mem_simplex`, `IsSolution.pos_of_pos` are reused; `meanFitness` of the
 fitness `y ↦ A y` is definitionally `y · A y`.
 
 `IsESS.lyapunovStable` and `IsESS.tendsto_nhds` quantify over global forward solutions

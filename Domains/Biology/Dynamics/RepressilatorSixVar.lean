@@ -31,16 +31,15 @@ The mRNA–protein model of Elowitz and Leibler's repressilator, without leak (`
 with `α > 0` the maximal transcription rate, `β > 0` the ratio of protein to mRNA decay rates and
 `n` the Hill coefficient. The state is `x : Fin 6 → ℝ` with `mᵢ = x i` and `pᵢ = x (i + 3)`, so
 gene `0` is repressed by `p₂ = x 5`, gene `1` by `p₀ = x 3` and gene `2` by `p₁ = x 4`.
-**This ODE form (EL) is frozen**: `vectorField n α β` is exactly its right-hand side.
+`vectorField n α β` is exactly the right-hand side of (EL).
 
-The protein-only reduction of `Domains.Biology.Dynamics.Repressilator` (T196) has a Hopf
-point only for `n > 2`. The six-variable model already has Hopf points for `n = 2`, the Hill
-coefficient of Elowitz and Leibler's standard regime; this file proves its Hopf condition, the
-linear stability boundary and, under the same Hopf-theorem hypothesis as T196, periodic
-orbits.
+The protein-only reduction of `Domains.Biology.Dynamics.Repressilator` has a Hopf point only for
+`n > 2`. The six-variable model already has Hopf points for `n = 2`, the Hill coefficient of
+Elowitz and Leibler's standard regime; this file proves its Hopf condition, the linear stability
+boundary and, under the same Hopf-theorem hypothesis as the reduction, periodic orbits.
 
 **Symmetric equilibrium.** With an equilibrium level `p ≥ 0` and `α = eqRate n p = p (1 + pⁿ)`
-(T196's parametrization by the equilibrium level), the constant state `x = (p, …, p)` is an
+(the reduction's parametrization by the equilibrium level), the constant state `x = (p, …, p)` is an
 equilibrium; for `n ≥ 1`, `α > 0` and `β ≠ 0` it is the only one in the closed nonnegative
 orthant. The hypothesis `p ≥ 0` is needed: for `n = 1`, `β = 1` and `p = -2`,
 `α = eqRate 1 (-2) = 2` and `(-2, …, -2)` is an equilibrium, but so is the nonnegative state
@@ -48,7 +47,7 @@ orthant. The hypothesis `p ≥ 0` is needed: for `n = 1`, `β = 1` and `p = -2`,
 
 **Linearization.** At the symmetric equilibrium the Jacobian is the block matrix
 `[[-I, -a P], [β I, -β I]]`, with `P` the cyclic shift and `a = gain n p = n pⁿ / (1 + pⁿ)` the
-loop gain of T196. Its characteristic polynomial is
+loop gain of the reduction. Its characteristic polynomial is
 
   `χ(λ) = ((λ + 1)(λ + β))³ + (a β)³ = (Q + a β) (Q - a β c) (Q - a β c̄)`,
   `Q = (λ + 1)(λ + β)`,   `c = e^{iπ/3} = 1/2 + i √3/2`.
@@ -62,16 +61,16 @@ curve `λ(μ) = (-(1 + β) + √D(μ)) / 2`, `D(μ) = (1 - β)² + 4 a(μ) β c`
 passes through `iω` at a Hopf level and its real part crosses zero with positive speed.
 
 **Standard regime.** For `n = 2`, `α = 216`, `β = 5` the symmetric equilibrium is linearly
-unstable (`exists_re_pos_standardRegime`), whereas T196's reduction with `n = 2` is linearly
+unstable (`exists_re_pos_standardRegime`), whereas the reduction with `n = 2` is linearly
 stable for every `α ≥ 0` (`Repressilator.re_neg_of_le_two`).
 
 ## Scope
 
 Linear stability means every eigenvalue of the linearization has negative real part; the
 nonlinear stability it implies is not proved. **The periodic orbits rest on the Hopf
-theorem, which is a hypothesis, not a theorem proved here**: `exists_periodicOrbit` assumes
-T196's `HopfBifurcationTheorem 6` (Mathlib has no Hopf bifurcation theorem) and verifies every
-other hypothesis of it for (EL). The direction of the bifurcation (first Lyapunov coefficient),
+theorem, which is taken as a hypothesis**: `exists_periodicOrbit` assumes
+`HopfBifurcationTheorem 6` and verifies every other hypothesis of it for (EL). The direction of
+the bifurcation (first Lyapunov coefficient),
 the stability of the orbits, the global bifurcation diagram and the leaky model `α₀ > 0` are out
 of scope.
 
@@ -516,7 +515,7 @@ lemma hopfFreq_sq {a β : ℝ} (hβ : 0 < β) (hH : IsHopf a β) :
   rw [e, div_eq_iff (by positivity)]
   linear_combination β * hH
 
-/-- At a Hopf point `Q(iω) = a β c`. -/
+/-- For `β > 0`, at a Hopf point `Q(iω) = a β c`. -/
 lemma quad_hopf {a β : ℝ} (hβ : 0 < β) (hH : IsHopf a β) :
     ((hopfFreq a β : ℂ) * Complex.I + 1) * ((hopfFreq a β : ℂ) * Complex.I + β) =
       (a * β : ℝ) * rootSix := by
@@ -526,7 +525,7 @@ lemma quad_hopf {a β : ℝ} (hβ : 0 < β) (hH : IsHopf a β) :
   · rw [re_quad]; simp [rootSix]; nlinarith
   · rw [im_quad]; simp [rootSix]; nlinarith
 
-/-- At a Hopf point, `Q - a β c = (X - iω) (X - r₂)` with `r₂ = -(1 + β) - iω`. -/
+/-- For `β > 0`, at a Hopf point, `Q - a β c = (X - iω) (X - r₂)` with `r₂ = -(1 + β) - iω`. -/
 lemma quad_sub_hopf {a β : ℝ} (hβ : 0 < β) (hH : IsHopf a β) :
     quad β - C ((a * β : ℝ) * rootSix) =
       (X - C ((hopfFreq a β : ℂ) * Complex.I)) *
@@ -581,7 +580,7 @@ theorem eq_of_isRoot_of_re_eq_zero {a β : ℝ} (ha : 0 ≤ a) (hβ : 0 < β) {z
     · rw [Complex.neg_im, Complex.mul_I_im, Complex.ofReal_re]
       exact mul_right_cancel₀ hb.ne' (by linarith)
 
-/-- **Simplicity.** At a Hopf point with `a > 0`, `iω` is a simple eigenvalue. -/
+/-- **Simplicity.** For `β > 0`, at a Hopf point with `a > 0`, `iω` is a simple eigenvalue. -/
 theorem rootMultiplicity_hopf {a β : ℝ} (ha : 0 < a) (hβ : 0 < β) (hH : IsHopf a β) :
     ((jacobian a β).charpoly.map Complex.ofRealHom).rootMultiplicity
       ((hopfFreq a β : ℂ) * Complex.I) = 1 := by
@@ -651,7 +650,7 @@ lemma hopfRoot_sq {a β : ℝ} (hβ : 0 < β) (hH : IsHopf a β) :
   · simp [hopfRoot, pow_two, rootSix]; nlinarith
   · simp [hopfRoot, pow_two, rootSix]; nlinarith
 
-/-- **The eigenvalue curve passes through `iω` at a Hopf level.** -/
+/-- **The eigenvalue curve passes through `iω` at a Hopf level** (for `β > 0`). -/
 theorem hopfEigenvalue_hopf {n : ℕ} {β μ : ℝ} (hβ : 0 < β) (hH : IsHopf (gain n μ) β) :
     hopfEigenvalue n β μ = (hopfFreq (gain n μ) β : ℂ) * Complex.I := by
   have hw : (hopfRoot (gain n μ) β ^ 2) ^ (2⁻¹ : ℂ) = hopfRoot (gain n μ) β := by
@@ -677,7 +676,7 @@ noncomputable def hopfSpeed (n : ℕ) (β μ : ℝ) : ℂ :=
 lemma hopfRoot_ne_zero {a β : ℝ} (hβ : 0 < β) : hopfRoot a β ≠ 0 := by
   intro h; have := congrArg Complex.re h; simp [hopfRoot] at this; linarith
 
-/-- **Transversality.** At a Hopf level `μ > 0` the eigenvalue curve has derivative
+/-- **Transversality.** For `β > 0`, at a Hopf level `μ > 0` the eigenvalue curve has derivative
 `a'(μ) β c / w`, `w = (1 + β) + 2iω`. -/
 theorem hasDerivAt_hopfEigenvalue {n : ℕ} {β μ : ℝ} (hβ : 0 < β) (hμ : 0 < μ)
     (hH : IsHopf (gain n μ) β) :

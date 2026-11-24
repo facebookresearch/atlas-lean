@@ -46,8 +46,8 @@ window.
   QSS manifold up to an initial-layer term,
   `|c(t) - q(s(t))| ≤ |c(0) - q(s(0))| e^{-(kb + k₂) t} + e_T² (k₁ s_T + kb) / (K (kb + k₂))`.
 * `IsSolution.abs_substrate_sub_reduced_le` (real time): the substrate tracks the reduced
-  solution run on the slow clock, `|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ s_T + kb)
-  (|c(0) - q(s(0))| / (kb + k₂) + e_T² (k₁ s_T + kb) / (K (kb + k₂)) · t)`.
+  solution run on the slow clock, `|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ s_T + kb)`
+  `(|c(0) - q(s(0))| / (kb + k₂) + e_T² (k₁ s_T + kb) / (K (kb + k₂)) · t)`.
 * `abs_substrate_sub_reduced_le_mul`, `exists_abs_substrate_sub_reduced_le`: for the standard
   data `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε`, on the slow window `τ ∈ [0, T]`
   (**including** `τ = 0`; the substrate has no initial layer),
@@ -55,8 +55,8 @@ window.
   estimate, with an explicit constant; `abs_sub_reduced_le` is its existential form.
 * `abs_rate_sub_mmRate_le`: for the same data, on the slow window `τ ∈ [τ₀, T]`, the
   slow-time product rate `dP/dτ = k₂ c(τ/ε)/ε` obeys
-  `|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ rateErrorBound k₁ kb k₂ s₀ T τ₀ ε
-  = k₂ (e^{-(kb + k₂) τ₀ / ε} + ε (…))`. The initial layer is the term
+  `|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ rateErrorBound k₁ kb k₂ s₀ T τ₀ ε`
+  `= k₂ (e^{-(kb + k₂) τ₀ / ε} + ε (…))`. The initial layer is the term
   `e^{-(kb + k₂) τ₀ / ε}`: it tends to `0` only for `τ₀ > 0` (`tendsto_rateErrorBound`).
 * `abs_rate_sub_mmRate_le_of_prepared`: for prepared data `c(0) = q(s₀)` the initial-layer
   term vanishes and the rate-law error is `≤ preparedRateBound k₁ kb k₂ s₀ T ε`, `O(ε)`
@@ -464,8 +464,8 @@ theorem IsSolution.abs_complex_sub_qss_le (h : IsSolution k₁ kb k₂ s c e p) 
 `s(0) > 0` and `c(0), e(0) ≥ 0`, for all `t ≥ 0`, with `e_T = e(0) + c(0)`, `s_T = s(0) + c(0)`,
 `q(x) = e_T x / (K + x)` and `S̄` a solution of the reduced equation `S̄' = -mmRate k₂ K S̄` on
 `τ ≥ 0` with `S̄(0) > 0`,
-`|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ s_T + kb) (|c(0) - q(s(0))| / (kb + k₂) +
-e_T² (k₁ s_T + kb) / K / (kb + k₂) · t)`. -/
+`|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ s_T + kb) (|c(0) - q(s(0))| / (kb + k₂) +`
+`e_T² (k₁ s_T + kb) / K / (kb + k₂) · t)`. -/
 theorem IsSolution.abs_substrate_sub_reduced_le (h : IsSolution k₁ kb k₂ s c e p)
     (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hs0 : 0 < s 0) (hc0 : 0 ≤ c 0)
     (he0 : 0 ≤ e 0) {S : ℝ → ℝ}
@@ -695,7 +695,7 @@ noncomputable def rateErrorBound (k₁ kb k₂ s₀ T τ₀ ε : ℝ) : ℝ :=
     ε * ((k₁ * s₀ + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) +
       substrateErrorConst k₁ kb k₂ s₀ T / michaelisConstant k₁ kb k₂))
 
-/-- **The Michaelis–Menten rate law away from the initial layer.** For `k₁, k₂ > 0`, `kb ≥ 0`,
+/-- **The Michaelis–Menten rate law on a slow window.** For `k₁, k₂ > 0`, `kb ≥ 0`,
 `s₀ > 0`, a solution `S̄` of the reduced equation on `τ ≥ 0` and the standard data
 `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε > 0`, on the slow window `τ ∈ [τ₀, T]` with `τ₀ ≥ 0`,
 `|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ rateErrorBound k₁ kb k₂ s₀ T τ₀ ε`. -/
