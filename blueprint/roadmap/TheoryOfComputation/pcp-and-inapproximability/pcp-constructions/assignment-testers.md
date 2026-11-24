@@ -6,7 +6,7 @@ assignment $a$ to Boolean variables $X$ and a set $S$ of such assignments, $\mat
 of $S$, with the convention $\mathrm{rdist}(a, \emptyset) = 1$.
 
 An *assignment tester* with alphabet $\Sigma_0$ and rejection probability $\varepsilon > 0$ is an algorithm $P$ that maps each Boolean circuit $\Phi$ over variables $X$ to a
-constraint graph $G = \langle (V, E), \Sigma_0, \mathcal{C} \rangle$ with $V \supseteq X$, such that, writing $V' = V \setminus X$ and $\mathrm{SAT}(\Phi)$ for the satisfying assignments, for every
+constraint graph $G = \langle (V, E), \Sigma_0, \mathcal{C} \rangle$ with $V \supseteq X$, where $\Sigma_0$ contains the two Boolean values $0$ and $1$ so that $a \cup b$ is an assignment $V \to \Sigma_0$, such that, writing $V' = V \setminus X$ and $\mathrm{SAT}(\Phi)$ for the satisfying assignments, for every
 $a : X \to \{0,1\}$:
 
 - (completeness) if $a \in \mathrm{SAT}(\Phi)$, some $b : V' \to \Sigma_0$ has $\mathrm{UNSAT}_{a \cup b}(G) = 0$;

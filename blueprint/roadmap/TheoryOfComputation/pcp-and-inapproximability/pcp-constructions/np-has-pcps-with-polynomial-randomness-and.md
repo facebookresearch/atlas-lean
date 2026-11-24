@@ -17,6 +17,12 @@ equations.
 
 - [Blum–Luby–Rubinfeld linearity test](../blum-luby-rubinfeld-linearity-test/blr-test.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- NP-completeness of QUADEQ (statement prerequisite; not yet stated)
+
 ## Sources
 
 - S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, <https://theory.cs.princeton.edu/complexity/>: Definition 18.1, Section 18.4, Theorem 18.21 and its proof in Section 18.4.2 (QUADEQ, Figure 18.2), Theorem 18.23 (linearity testing), and the exercise asking to show that QUADEQ is NP-complete.

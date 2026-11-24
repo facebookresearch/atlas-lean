@@ -1,6 +1,6 @@
 # The Count-Min sketch
 
-Let $0 < \varepsilon, \delta < 1$. A stream consists of updates $(j, c)$ with $j \in [n]$ and $c > 0$, the *cash-register* model, and the frequency $f_j$ is the total weight of the updates to $j$. Write $\|f_{-a}\|_1 = \sum_{j \ne a} f_j$.
+Let $0 < \varepsilon, \delta < 1$. A stream consists of updates $(j, c)$ with $j \in [n]$ and a positive integer $c$, the *cash-register* model, and the frequency $f_j$ is the total weight of the updates to $j$. Write $\|f_{-a}\|_1 = \sum_{j \ne a} f_j$.
 
 The *Count-Min sketch* keeps a $t \times k$ array $C$ of counters, with $k = \lceil 2/\varepsilon \rceil$ and $t = \lceil \log_2(1/\delta) \rceil$, and $t$ hash functions $h_1, \dots, h_t : [n] \to [k]$ drawn independently from a 2-universal family.
 - Each update $(j, c)$ adds $c$ to $C[i][h_i(j)]$ for every row $i$.

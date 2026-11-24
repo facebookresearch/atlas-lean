@@ -10,6 +10,13 @@ structure is the same for all inputs of length $n$ and can be generated in logar
 
 - [Polynomial time with polynomial advice](ppoly.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- Logspace-uniform circuit families (statement prerequisite; not yet stated)
+- Simulation of a time-$T(n)$ Turing machine by an oblivious machine in time $O(T(n)^2)$ (proof prerequisite; not yet stated)
+
 ## Sources
 
 - S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, <https://theory.cs.princeton.edu/complexity/>: Definition 6.5 (logspace-uniform circuit families), Theorem 6.7 with its proof sketch, and Remark 6.8.
