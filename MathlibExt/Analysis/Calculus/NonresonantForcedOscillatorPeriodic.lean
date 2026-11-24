@@ -56,8 +56,8 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Complex.RealDeriv
 import Mathlib.Analysis.Normed.Group.Bounded
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -117,21 +117,14 @@ private theorem wave_cont (ω : ℝ) : Continuous (wave ω) :=
 private theorem wave_period_ne_one {ω : ℝ} (hω : 0 < ω) (h : ∀ n : ℕ, ω ≠ n) :
     wave ω (2 * Real.pi) ≠ 1 := by
   intro he
-  have hc : Real.cos (ω * (2 * Real.pi)) = 1 := by
-    have hr := congrArg Complex.re he
-    have hx : carrier ω * ((2 * Real.pi : ℝ) : ℂ) = ((ω * (2 * Real.pi) : ℝ) : ℂ) * I := by
-      unfold carrier
-      push_cast
-      ring
-    rw [wave, hx, exp_mul_I, ← ofReal_cos, ← ofReal_sin] at hr
-    simpa only [Complex.add_re, Complex.mul_re, ofReal_re, ofReal_im, I_re, I_im, mul_zero,
-      zero_mul, sub_zero, add_zero, one_re] using hr
-  obtain ⟨n, hn⟩ := (Real.cos_eq_one_iff _).mp hc
-  have he' : (n : ℝ) = ω := mul_right_cancel₀ (by positivity : (2 * Real.pi) ≠ 0) hn
-  have hnR : (0 : ℝ) ≤ (n : ℝ) := he'.symm ▸ hω.le
-  have hn' : 0 ≤ n := by exact_mod_cast hnR
-  have hcast : (n.toNat : ℝ) = (n : ℝ) := by exact_mod_cast Int.toNat_of_nonneg hn'
-  exact h n.toNat (he'.symm.trans hcast.symm)
+  have him : (carrier ω * ((2 * Real.pi : ℝ) : ℂ)).im = ω * (2 * Real.pi) := by
+    simp [carrier, Complex.mul_im]
+  obtain ⟨n, hn⟩ := (Complex.exp_eq_one_iff_of_im_nonneg (by rw [him]; positivity)).mp he
+  have hn_im := congrArg Complex.im hn
+  rw [him] at hn_im
+  have hn_mul : ω * (2 * Real.pi) = (n : ℝ) * (2 * Real.pi) := by
+    simpa [Complex.mul_im, Complex.mul_re, mul_assoc] using hn_im
+  exact h n (mul_right_cancel₀ (ne_of_gt Real.two_pi_pos) hn_mul)
 
 -- The integrating factor turns the first-order complex equation into an integral.
 private def forcedState (ω : ℝ) (g : ℝ → ℝ) (a : ℂ) (x : ℝ) : ℂ :=
