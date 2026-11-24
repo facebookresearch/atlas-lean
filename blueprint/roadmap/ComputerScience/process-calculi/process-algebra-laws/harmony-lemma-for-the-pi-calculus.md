@@ -17,5 +17,4 @@ A complete machine-checked proof, in the logical framework Beluga, covers the fr
 
 ## Sources
 
-- D. Sangiorgi and D. Walker, *The π-Calculus: A Theory of Mobile Processes*, Cambridge University Press, 2001, the harmony lemma on p. 51 (; the statement is checked against the quotation in Cecilia and Momigliano below).
 - G. Cecilia and A. Momigliano, "A Beluga formalization of the harmony lemma in the π-calculus", *Logical Frameworks and Meta-Languages: Theory and Practice (LFMTP 2024)*, EPTCS 404, 2024, pp. 1–17, <https://gabrielececilia.github.io/papers/lfmpt24-paper.pdf>: Section 2 (syntax of the fragment, Figure 1 with structural congruence and reduction, the labelled transition system) and Section 2.4 (the harmony lemma as stated by Sangiorgi and Walker, parts i and ii).
