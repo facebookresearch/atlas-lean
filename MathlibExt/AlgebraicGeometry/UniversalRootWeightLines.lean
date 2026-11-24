@@ -223,6 +223,30 @@ structure PositiveRestrictionData (N : GeneratorNaturality (B := B) U)
     (R.reindexing h.hom.base) (rootObject I D j U R b) (rootObject I D j U R a)
     (rootArrow I D j U R h) v comparison
 
+/-- The model's root-line comparisons are trivial on identity arrows: positive restriction
+data on the identity arrow of an affine point has the identity pullback comparison. The
+identity and composition laws of a `Model` constrain its reindexing functors, not these
+evaluated line comparisons. -/
+def IdentityLineCoherent : Prop :=
+  ∀ (N : GeneratorNaturality (B := B) U) (a : AffinePoint R.stack) (v : B.obj.obj (op U))
+    (P : PositiveRestrictionData I D j U R N (𝟙 a) v),
+    P.comparison.hom = (Scheme.Modules.pullbackId a.obj.base.left).hom.app
+      (((rootObject I D j U R a).of.extended.chart (identityEtale a.obj.base.left)).module
+        (localGenerators B U a.obj.base v))
+
+/-- The model's root-line comparisons compose: positive restriction data on two composable
+arrows and on their composite have compatible comparisons. -/
+def CompositionLineCoherent : Prop :=
+  ∀ (N : GeneratorNaturality (B := B) U) {a b c : AffinePoint R.stack} (h : a ⟶ b) (k : b ⟶ c)
+    (v : B.obj.obj (op U)) (P : PositiveRestrictionData I D j U R N h v)
+    (Q : PositiveRestrictionData I D j U R N k v)
+    (PQ : PositiveRestrictionData I D j U R N (h ≫ k) v),
+    PQ.comparison.hom =
+      (Scheme.Modules.pullbackComp h.hom.base.left k.hom.base.left).inv.app
+        (((rootObject I D j U R c).of.extended.chart (identityEtale c.obj.base.left)).module
+          (localGenerators B U c.obj.base v)) ≫
+      (Scheme.Modules.pullback h.hom.base.left).map Q.comparison.hom ≫ P.comparison.hom
+
 abbrev positiveWeight (b : B.obj.obj (op U)) : Weight (B.obj.obj (op U)) :=
   ⟨Algebra.GrothendieckGroup.of b⟩
 

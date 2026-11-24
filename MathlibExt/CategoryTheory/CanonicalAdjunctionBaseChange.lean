@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.CategoryTheory.Adjunction.Basic
+public import Mathlib.CategoryTheory.Adjunction.Mates
 public import Mathlib.CategoryTheory.Whiskering
 
 /-!
@@ -38,6 +38,11 @@ def map : GU ⋙ BP ⟶ RP ⋙ GV :=
   whiskerLeft (GU ⋙ BP) V.unit ≫
     whiskerRight (whiskerLeft GU square.inv) GV ≫
       whiskerRight (whiskerRight U.counit RP) GV
+
+/-- It is Mathlib's adjunction mate `mateEquiv` of the inverse square. -/
+theorem map_eq_mateEquiv : map U V BP RP square = mateEquiv U V square.inv := by
+  ext x
+  simp [map]
 
 theorem component (M : A) : (map U V BP RP square).app M =
     V.unit.app (BP.obj (GU.obj M)) ≫ GV.map (square.inv.app (GU.obj M)) ≫

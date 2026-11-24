@@ -37,20 +37,22 @@ variable {X : Scheme.{0}}
   [∀ (Y Z : Scheme.{0}) (f : Y ⟶ Z), HasInverseImage f]
 
 /-- Joint construction fixes Phi on all objects, labelled weight and
-coefficient arrows, periods, units, tensors and étale restrictions. -/
+coefficient arrows, periods, units, tensors and étale restrictions, for monoid sheaves with a
+global chart (the sectionwise unit is the honest one only then). -/
 public def_wanted normalizedParabolicRootData
     (I : NativeDFImages.{0}) {A B : DeligneFaltingsSheaves.MonoidSheaf X}
-    (D : Structure A) (hD : IsDeligneFaltings D)
+    (D : Structure A) (global : IsGlobalChart A B)
     (J : DenominatorSystem A B) (G : GroupifiedDF D)
     (R : DenominatorRootStacks.Model I D J.map (𝟙 X)) :
     Data I D J.map G R
 
 /-- Canonical native monoidal Phi is an equivalence of the actual
 abelian categories, with the already fixed unit and tensor maps, for a monoidal structure on
-the parabolic category with the fixed tensor and unit (part of the result). -/
+the parabolic category with the fixed tensor and unit (part of the result), for monoid sheaves
+with a global chart. -/
 public def_wanted borneVistoliComparison
     (I : NativeDFImages.{0}) {A B : DeligneFaltingsSheaves.MonoidSheaf X}
-    (D : Structure A) (hD : IsDeligneFaltings D)
+    (D : Structure A) (global : IsGlobalChart A B)
     (J : DenominatorSystem A B) (G : GroupifiedDF D)
     (R : DenominatorRootStacks.Model I D J.map (𝟙 X))
     (E : Data I D J.map G R) : Comparison I D J.map G R E

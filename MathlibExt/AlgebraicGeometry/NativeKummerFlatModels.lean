@@ -77,7 +77,10 @@ def chartComparison {X Y : LogScheme.{0}} {f : EtaleLogSchemes.Hom X Y}
   pullback.lift f.map (schemeMap D CX) A.square
 
 /-- Actual fppf chart neighbourhoods on source and target, with strict
-log maps and the full original commuting log-section square. -/
+log maps, the full original commuting log-section square, and Kummer chart
+maps (Talpo--Vistoli, Remark 6.11). Without the Kummer condition on the chart
+map a chart in the units can make the chart comparison an isomorphism for a
+nonflat map. -/
 structure LogFlatAtlas {X Y : LogScheme.{0}} (f : EtaleLogSchemes.Hom X Y) where
   index : Type
   source : index → LogScheme.{0}
@@ -97,6 +100,8 @@ structure LogFlatAtlas {X Y : LogScheme.{0}} (f : EtaleLogSchemes.Hom X Y) where
   sourceChart : ∀ i, SmallChart (source i)
   targetChart : ∀ i, SmallChart (target i)
   chartMap : ∀ i, ChartMorphism D (localMap i) (sourceChart i) (targetChart i)
+  /-- The chart monoid maps are Kummer. -/
+  chart_kummer : ∀ i, IsKummerMonoidMap (CommMonCat.ofHom (chartMap i).monoidMap)
   comparison_flat : ∀ i, Flat (chartComparison D (chartMap i))
 
 /-- The actual characteristic maps at every separably closed geometric point. -/

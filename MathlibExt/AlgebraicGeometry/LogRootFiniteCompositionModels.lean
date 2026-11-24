@@ -37,15 +37,12 @@ variable [InverseImageTheory.{0}] (I : NativeDFImages.{0}) (D : RegularSectionCo
   {X Y : LogScheme.{0}} (f : EtaleLogSchemes.Hom X Y)
   (RX : RootRealization X D I) (RY : RootRealization Y D I)
 
-/-- The finite arrow on the original native root-line dictionaries. -/
-def nativeFiniteLineMap (F : FiniteArrow I D f RX RY) (T : Over X.scheme) (n : Exponent)
+/-- The finite arrow on the original native root-line dictionaries:
+`CanonicalLogRootArrowModels.nativeFiniteLineMap`. -/
+abbrev nativeFiniteLineMap (F : FiniteArrow I D f RX RY) (T : Over X.scheme) (n : Exponent)
     (r : (RX.finite n).stack.Fibre T) (V : T.left.Etale)
     (b : (targetMonoid D f RY.dictionary T).obj.obj (op V)) :=
-  eqToHom (congrArg (fun E => (E.chart V).module b)
-    (F.targetLanding.roots ((Over.map f.map).obj T) n ((F.functor T n).obj r)).symm) ≫
-    finiteRootLineMap I D f RX RY F T n r V b ≫
-    eqToHom (congrArg (fun E => (E.chart V).module
-      ((F.parameter T).characteristic.hom.app (op V) b)) (F.sourceLanding.roots T n r))
+  CanonicalLogRootArrowModels.nativeFiniteLineMap I D f RX RY F T n r V b
 
 local instance chainComposeIsIso {S : Scheme.{0}}
     (C : NativeRootFamilyLineMaps.IsoChain3 S) : IsIso C.compose := by

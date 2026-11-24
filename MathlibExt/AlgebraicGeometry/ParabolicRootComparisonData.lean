@@ -41,6 +41,14 @@ variable {X : Scheme.{0}}
   (D : Structure A) (j : A ⟶ B) (G : GroupifiedDF D)
   (R : DenominatorRootStacks.Model I D j (𝟙 X))
 
+/-- The monoid sheaves have a global chart: every étale restriction map is an isomorphism.
+The unit model computes the parabolic unit by sectionwise colimits over the weights of the
+sections on every étale `U`; this is the honest unit, compatible with étale pullback, only
+under a global chart. In general those colimits need not descend (already for a Galois-twisted
+Kummer system over `ℝ`); the sheafified, chart-local unit is deferred. -/
+def IsGlobalChart (A' B' : DeligneFaltingsSheaves.MonoidSheaf X) : Prop :=
+  ∀ {U V : X.Etale} (f : V ⟶ U), IsIso (A'.obj.map f.op) ∧ IsIso (B'.obj.map f.op)
+
 structure Data where
   sourceTensor : TensorLanding R.stack
   localData : EtaleRootData I D j G R

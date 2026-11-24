@@ -47,10 +47,16 @@ open MathlibExt.AlgebraicGeometry.MonoidSheafCharts
 
 universe u
 
-/-- The trivial-kernel condition distinguishes a DF structure from a pre-DF structure. -/
+/-- The trivial-kernel condition. Every `Structure` satisfies it (`isDeligneFaltings`), since
+its charts are Deligne--Faltings charts. -/
 def IsDeligneFaltings {X : Scheme.{u}}
     {A : DeligneFaltingsSheaves.MonoidSheaf X} (D : Structure A) : Prop :=
   ∀ (U : X.Etale) (a : A.obj.obj (op U)), IsIso ((D.chart U).sectionMap a) → a = 1
+
+/-- Every structure satisfies the trivial-kernel condition. -/
+theorem isDeligneFaltings {X : Scheme.{u}}
+    {A : DeligneFaltingsSheaves.MonoidSheaf X} (D : Structure A) : IsDeligneFaltings D :=
+  fun U a h => (D.chart U).trivial_kernel a ⟨(asIso ((D.chart U).sectionMap a)).symm, by simp⟩
 
 variable [∀ (T X : Scheme.{u}) (f : T ⟶ X), HasInverseImage f]
 
@@ -202,7 +208,11 @@ structure Model {Y : Scheme.{u}} (b : Y ⟶ X) where
       (reindexing f).functor.map ((mapComparison g).hom.app E) ≫
       (composition f g).hom.app ((fibre V).functor.obj E)
 
-/-- The extra local power condition needed for the DM conclusion, not for parabolic equivalence. -/
+/-- A local power condition for the DM conclusion, not needed for the parabolic equivalence:
+a multiple of each section of `B`, with an exponent invertible locally, comes from `A`. This is
+a sufficient condition, stronger than Borne--Vistoli's criterion (Proposition 4.19: the order of
+`B_x^gp / A_x^gp` is invertible at every geometric point), and differs from it for unsaturated
+denominator systems. -/
 def PrimeToCharacteristics (k : A ⟶ B) : Prop :=
   ∀ (U : X.Etale) (b : B.obj.obj (op U)),
     ∃ (J : Type u) (V : J → X.Etale) (f : ∀ i, V i ⟶ U),

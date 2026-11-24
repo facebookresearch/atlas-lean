@@ -11,6 +11,7 @@ public import Mathlib.AlgebraicGeometry.Sites.Etale
 public import Mathlib.CategoryTheory.Sites.Over
 public import MathlibExt.AlgebraicGeometry.DeligneFaltingsCategories
 public import MathlibExt.AlgebraicGeometry.ModuleTensorPullbackSections
+public import MathlibExt.AlgebraicGeometry.EtaleMonoidInverseImage
 
 /-!
 # Deligne--Faltings structures on the actual small etale site
@@ -38,7 +39,7 @@ open MathlibExt.AlgebraicGeometry.ModuleTensorPullbackSections
 
 universe u
 
-abbrev MonoidSheaf (X : Scheme.{u}) := Sheaf X.smallEtaleTopology CommMonCat.{u}
+abbrev MonoidSheaf (X : Scheme.{u}) := EtaleMonoidInverseImage.MonoidSheaf X
 
 /-- The actual local scheme below a small-etale object. -/
 abbrev localScheme {X : Scheme.{u}} (U : X.Etale) := U.left

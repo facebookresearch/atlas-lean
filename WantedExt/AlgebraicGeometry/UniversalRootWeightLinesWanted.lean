@@ -32,10 +32,13 @@ open MathlibExt.AlgebraicGeometry.EtaleMonoidInverseImage
 open MathlibExt.AlgebraicGeometry.MonoidSheafCharts
 open MathlibExt.AlgebraicGeometry.UniversalRootWeightLines
 
-/-- Universal root weight lines with actual values, section arrows and complete native diagrams. -/
+/-- Universal root weight lines with actual values, section arrows and complete native diagrams,
+for a root model whose evaluated line comparisons are coherent on identities and composites. -/
 def_wanted universalRootWeightLines
     [∀ (T Z : Scheme.{0}) (f : T ⟶ Z), HasInverseImage f]
     (I : NativeDFImages.{0}) (X : Scheme.{0})
     (A B : DeligneFaltingsSheaves.MonoidSheaf X) (D : Structure A)
-    (hD : IsDeligneFaltings D) (j : DenominatorSystem A B)
-    (U : X.Etale) (R : Model I D j.map U.hom) : StackWeights I D j.map U R
+    (j : DenominatorSystem A B)
+    (U : X.Etale) (R : Model I D j.map U.hom)
+    (identityLines : IdentityLineCoherent I D j.map U R)
+    (compositionLines : CompositionLineCoherent I D j.map U R) : StackWeights I D j.map U R

@@ -46,7 +46,7 @@ def_wanted finiteRootTower
     [∀ (T Z : Scheme.{u}) (f : T ⟶ Z), HasInverseImage f]
     (I : NativeDFImages.{u}) (X : Scheme.{u})
     (A : DeligneFaltingsSheaves.MonoidSheaf X) (D : Structure A)
-    (hD : IsDeligneFaltings D) (hA : FiniteRootTowers.IsFineSaturated A)
+    (hA : FiniteRootTowers.IsFineSaturated A)
     (R : FiniteModels I D) : GlobalTower I D R
 
 /-- The infinite-root stack has the actual compatible-root fibres and native projections. -/
@@ -54,5 +54,5 @@ def_wanted infiniteRootStack
     [∀ (T Z : Scheme.{u}) (f : T ⟶ Z), HasInverseImage f]
     (I : NativeDFImages.{u}) (X : Scheme.{u})
     (A : DeligneFaltingsSheaves.MonoidSheaf X) (D : Structure A)
-    (hD : IsDeligneFaltings D) (hA : FiniteRootTowers.IsFineSaturated A)
+    (hA : FiniteRootTowers.IsFineSaturated A)
     (R : FiniteModels I D) (K : GlobalTower I D R) : InfiniteModel I D K

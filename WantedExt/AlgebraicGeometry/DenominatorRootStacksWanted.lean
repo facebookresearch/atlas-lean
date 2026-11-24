@@ -49,7 +49,7 @@ def_wanted denominatorRootStack
     [∀ (T Z : Scheme.{u}) (f : T ⟶ Z), HasInverseImage f]
     (I : NativeDFImages.{u}) (X : Scheme.{u})
     (A B : DeligneFaltingsSheaves.MonoidSheaf X) (D : Structure A)
-    (hD : IsDeligneFaltings D) (j : DenominatorSystem A B)
+    (j : DenominatorSystem A B)
     (Y : Scheme.{u}) (b : Y ⟶ X) : Model I D j.map b
 
 /-- Coherent denominators give the actual Artin-stack conclusion. -/
@@ -57,14 +57,15 @@ theorem_wanted denominatorRootArtin
     [∀ (T Z : Scheme.{u}) (f : T ⟶ Z), HasInverseImage f]
     (I : NativeDFImages.{u}) (X : Scheme.{u})
     (A B : DeligneFaltingsSheaves.MonoidSheaf X) (D : Structure A)
-    (hD : IsDeligneFaltings D) (j : DenominatorSystem A B)
+    (j : DenominatorSystem A B)
     (Y : Scheme.{u}) (b : Y ⟶ X) (R : Model I D j.map b) : R.stack.IsArtinStack
 
-/-- Local invertible Kummer exponents give the distinct DM conclusion. -/
+/-- Local invertible Kummer exponents (a sufficient condition, stronger than Borne--Vistoli's
+stalkwise criterion) give the distinct DM conclusion. -/
 theorem_wanted denominatorRootDeligneMumford
     [∀ (T Z : Scheme.{u}) (f : T ⟶ Z), HasInverseImage f]
     (I : NativeDFImages.{u}) (X : Scheme.{u})
     (A B : DeligneFaltingsSheaves.MonoidSheaf X) (D : Structure A)
-    (hD : IsDeligneFaltings D) (j : DenominatorSystem A B)
+    (j : DenominatorSystem A B)
     (hprime : PrimeToCharacteristics j.map)
     (Y : Scheme.{u}) (b : Y ⟶ X) (R : Model I D j.map b) : R.stack.IsDeligneMumfordStack
