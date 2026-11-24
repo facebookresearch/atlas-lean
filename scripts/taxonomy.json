@@ -1120,6 +1120,7 @@
   "CSLibExt/Algorithms/Lean/MDP/PerformanceDifference": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Performance difference lemma"},
   "CSLibExt/Algorithms/Lean/MDP/PolicyIteration": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Policy iteration"},
   "CSLibExt/Algorithms/Lean/MDP/SimulationLemma": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Simulation lemma"},
+  "CSLibExt/Algorithms/Lean/MDP/SoftmaxPolicyGradient": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Policy gradients for softmax policies"},
   "CSLibExt/Algorithms/Lean/MDP/StochasticPolicy": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Stochastic policies and discounted occupancy"},
   "CSLibExt/Algorithms/Lean/MDP/StochasticShortestPath": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Stochastic shortest path problems"},
   "CSLibExt/Algorithms/Lean/MDP/ValueIteration": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Value iteration"},
