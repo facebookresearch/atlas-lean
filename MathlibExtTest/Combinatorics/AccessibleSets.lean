@@ -72,3 +72,18 @@ example {D : Set ℕ} (hD : IsAccessible D) : IsAccessible {d ∈ D | d % 2 = 0}
   omega
 
 end MetaMathlibExt.accessible_union_partition
+
+namespace MetaMathlibExt.large_union_partition
+
+-- Adjoining every odd gap cannot make a set large, even if it already contains some odd gaps.
+example {D : Set ℕ} (h : IsLarge (D ∪ {d : ℕ | d % 2 = 1})) : IsLarge D := by
+  apply (large_union_partition _ _ _ rfl h).resolve_right
+  intro hodd
+  let parity (n : ℕ+) : Fin 2 := ⟨(n : ℕ) % 2, Nat.mod_lt _ (by decide)⟩
+  obtain ⟨x, hx, a, d, hd, hgap⟩ := (hodd 2 (by decide)).2.2 parity 2 (by decide)
+  have heq : (x 0 : ℕ) % 2 = (x 1 : ℕ) % 2 := congrArg Fin.val (hx 0 1)
+  change d % 2 = 1 at hd
+  simp [hgap] at heq
+  omega
+
+end MetaMathlibExt.large_union_partition
