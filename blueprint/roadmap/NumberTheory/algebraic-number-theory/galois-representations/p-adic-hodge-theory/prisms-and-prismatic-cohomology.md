@@ -45,13 +45,14 @@ A good expansion has pages for:
 
 - [Crystalline representations](crystalline-representations.md), for the lattices in crystalline representations of $G_K$ given by the étale realization of item 4
 - Not yet a page: derived completeness of modules, for the derived $(p, I)$-completeness in the definition of a prism
-- Not yet a page: smooth $p$-adic formal schemes, for the prismatic sites of items 2 and 4
+- Not yet a page: smooth $p$-adic formal schemes over $A/I$, for the relative prismatic site of item 2
+- Not yet a page: $p$-adic formal schemes, for the absolute prismatic site and the étale realization of item 4, defined for any $p$-adic formal scheme (Bhatt–Scholze 2021, Definition 2.3 and Construction 4.8); the crystalline realization (Construction 4.12) is defined for quasi-syntomic ones
 
 ## Proof depends on
 
 - [Weakly admissible implies admissible](colmez-fontaine-theorem.md), for Fontaine's theorem that $D_{\mathrm{cris}}$ of a crystalline representation is weakly admissible, used in item 4
 - [p-divisible groups over the ring of integers of C](p-divisible-groups-over-o-c.md), for the Fargues–Fontaine curve and its vector bundles, used in item 4
-- Not yet a page: Kisin's construction of the $F$-crystal over $\mathcal{O}_C$, through Kedlaya's slope filtrations as observed by Berger, for item 4
+- Not yet a page: Bhatt–Scholze's construction of the $F$-crystal over $\mathcal{O}_C$, an $A_{\mathrm{inf}}$-variant of Kisin's argument (Bhatt–Scholze 2021, §1.1 and §6.4, n. 12), which rests on Kedlaya's slope filtration theorem through Berger's observation, for item 4
 - Not yet a page: the Beilinson fibre sequence of Antieau–Mathew–Morrow–Nikolaus, for the descent isomorphism of item 4
 - Not yet a page: the Cartier isomorphism, for the Hodge–Tate comparison over a crystalline prism in item 3
 

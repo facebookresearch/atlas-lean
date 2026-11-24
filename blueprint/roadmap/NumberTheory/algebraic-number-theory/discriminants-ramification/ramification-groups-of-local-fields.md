@@ -30,9 +30,11 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- [Hensel's lemma for complete discrete valuation rings](../../../RingTheory/valuation-rings/henselian-rings-and-hensel-s-lemma/exists-is-root-sub-mem-maximal-ideal-of.md), for the primitive $N$-th roots of unity, $N = (G_0 : G_1)$, in the fixed field $L_0$ of $G_0$, in the description of $\theta_0$ of item 3 (Fontaine–Ouyang, Remark 1.65 (b))
+- [Eisenstein criterion for total ramification of discrete valuation rings](../../../RingTheory/ramification/totally-ramified-extensions-and-eisenstein-polyn/ramification-idx-eq-finrank-iff-eisenste.md), for $\mathcal{O}_L = \mathcal{O}_{L_0}[\pi_L]$ for the totally ramified extension $L/L_0$, where $L_0$ is the fixed field of $G_0$, through which Proposition 1.62 tests $G_i$ on a uniformizer (item 2)
+- [Hensel's lemma for complete discrete valuation rings](../../../RingTheory/valuation-rings/henselian-rings-and-hensel-s-lemma/exists-is-root-sub-mem-maximal-ideal-of.md), for the primitive $N$-th roots of unity, $N = (G_0 : G_1)$, in $L_0$, in the description of $\theta_0$ on the tame, totally ramified part $L_1/L_0$ of item 3 (Fontaine–Ouyang, Remark 1.65 (b))
 - [Kummer theory for abelian extensions of exponent dividing n](../../../FieldTheory/galois-theory/kummer-theory.md), for $L_1 = L_0(\alpha)$ with $\alpha^N$ a uniformizer of $L_0$, where $L_1$ is the fixed field of $G_1$, in that description
 - Not yet a page: the Teichmüller representatives of the residue field, for the formula $g \alpha = [\varepsilon] \alpha$ through which $\theta_0$ identifies $\operatorname{Gal}(L_1/L_0)$ with $\mu_N(k_L)$ in that description
+- Not yet a page: the existence of a complement to a normal subgroup whose order is prime to its index (Schur–Zassenhaus), here to the $p$-group $G_1$ in $G_0$, for the semidirect product decomposition of item 3; the vault's Schur–Zassenhaus page states only the conjugacy of complements that already exist
 
 ## Sources
 
