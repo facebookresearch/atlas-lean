@@ -26,7 +26,7 @@ rewiring with recomputed tree costs, descendant cost freshness, the
 nearest-vertex candidate fallback, ancestor rejection on rewire, `rewireAux`
 forbid-guard isolation with a synthetic cost table, an RRT* size-dependent
 radius schedule, steering-oracle midpoint insertion for RRT and RRT*, the
-nearest-edge gate regression, the gate-fallback regression, and axiom probes
+nearest-edge gate regression, the gate-fallback regression, a 201-vertex chain cost-table scale check, and axiom probes
 on the main lemmas.
 -/
 
@@ -660,4 +660,17 @@ theorem testRrtStar_duplicateSteers :
 #print axioms testChooseParent_tieNearest
 #print axioms testRrtStar_duplicateSteers
 
-end Cslib.Planning.MotionPlanning.SamplingPlanners
+set_option maxRecDepth 16384 in
+/-- Scale check: one cost-table computation over a 201-vertex chain,
+asserting the stored cost of the last vertex, so the check evaluates the
+whole traversal. Under the former iterated-relaxation cost table, the
+same assertion at this size exhausted the default evaluation heartbeat
+budget. -/
+theorem testRecomputeCosts_chainScale :
+    costToCome (recomputeCosts testOraclesBig
+      ((List.range 201).map fun i => ((i : Int), 0))
+      ((List.range 200).map fun i => (((i : Int), 0), ((i + 1 : Int), 0))) (0, 0))
+      (200, 0) = (200, 1) := by
+  decide
+
+#print axioms testRecomputeCosts_chainScale
