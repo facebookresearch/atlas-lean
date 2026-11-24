@@ -4,10 +4,10 @@ Let $N, K, n$ be integers with $0 \le K \le N$ and $0 \le n \le N$, let $M$ be a
 $S$ be uniformly distributed on the nonempty set of $n$-element subsets of the items. Then the number $\lvert S \cap M\rvert$ of
 marked items in the sample has the hypergeometric distribution:
 
-$$P(\lvert S \cap M\rvert = k) = \binom{K}{k}\binom{N - K}{n - k}\Big/\binom{N}{n}, \qquad k \in \mathbb{N},$$
+$$P(\lvert S \cap M\rvert = k) = \binom{K}{k}\binom{N - K}{n - k}\Big/\binom{N}{n} \qquad \text{for } \max(0, n - N + K) \le k \le \min(n, K),$$
 
-which is zero unless $\max(0, n - N + K) \le k \le \min(n, K)$, since each of the $\binom{N}{n}$ samples is equally likely and
-$\binom{K}{k}\binom{N - K}{n - k}$ of them contain exactly $k$ marked items.
+and $P(\lvert S \cap M\rvert = k) = 0$ for every other $k \in \mathbb{N}$, since each of the $\binom{N}{n}$ samples is equally likely and,
+for $k$ in that range, $\binom{K}{k}\binom{N - K}{n - k}$ of them contain exactly $k$ marked items.
 
 ## Depends on
 
