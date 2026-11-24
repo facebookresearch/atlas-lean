@@ -107,24 +107,6 @@ public theorem_wanted yangChen_card_generalizedHFoldSumset_eq_four (a : Fin 4 �
 
 /-! ## Subset sums as generalized `h`-fold sumsets -/
 
-/-- **Bounded subset sums as a generalized h-fold sumset when zero is not in the set.** Let $G$
-be an abelian group and let $A = \{a_1, \dots, a_k\}$ be a set of $k$ distinct nonzero elements
-of $G$. If $\alpha, \beta$ are natural numbers with $\alpha + \beta \le k - 1$, then
-$\Sigma^\beta_\alpha(A)$, the set of sums of subsets $B \subseteq A$ with
-$\alpha \le |B| \le k - \beta$, equals the generalized $(k - \beta)$-fold sumset
-$(k - \beta)^{(\bar r)} A_0$ of $A_0 = (a_0, a_1, \dots, a_k)$, where $a_0 = 0$, with
-$\bar r = (k - \alpha - \beta, 1, \dots, 1)$, that is, the set of sums $\sum_{j=0}^{k} s_j a_j$
-with $0 \le s_j \le r_j$ for all $j$ and $\sum_j s_j = k - \beta$.
-
-Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
-(2024), Article A116, Lemma 1 (`integers-2024-A116-lem-1`). -/
-public theorem_wanted boundedSubsetSums_eq_generalizedHFoldSumset_of_zero_not_mem
-    {G : Type*} [AddCommGroup G] [DecidableEq G] {k : ℕ} (b : Fin k → G)
-    (hb : Function.Injective b) (hb0 : ∀ i, b i ≠ 0) (α β : ℕ) (hαβ : α + β + 1 ≤ k) :
-    boundedSubsetSums α β (Finset.univ.image b) =
-      generalizedHFoldSumset (Fin.cons 0 b : Fin (k + 1) → G)
-        (Fin.cons (k - α - β) fun _ => 1 : Fin (k + 1) → ℕ) (k - β)
-
 /-- **Bounded subsequence sums as a generalized h-fold sumset when zero is not a term.** Let $G$
 be an abelian group and let $a_1, \dots, a_k$ be distinct nonzero elements of $G$. Let
 $t_1, \dots, t_k$ be positive integers, let $\mathcal{A}$ be the sequence in which each $a_i$
