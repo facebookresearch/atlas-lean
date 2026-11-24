@@ -72544,6 +72544,8 @@
 "MetaMathlibExt.thinned_wallis_prime_product_tendsto_pos_iff": "b218a54ca838fcdb",
 "MetaMathlibExt.threeQR_isDCarmichael_divisibility": "701a8640b4d6888d",
 "MetaMathlibExt.threeQR_isDCarmichael_iff": "782c008b5d1baf7d",
+"MetaMathlibExt.threeQR_isDCarmichael_iff.cofactor_dvd": "61777b0b745505c7",
+"MetaMathlibExt.threeQR_isDCarmichael_iff.dvd_lucas_of_local_order_dvd": "5d4fd37b3e375b40",
 "MetaMathlibExt.threeSilent_terms": "ab104df5db63e2fd",
 "MetaMathlibExt.threeSquareRepresentationCount_eq_kronecker_classNumber": "6f38c401f0e303fc",
 "MetaMathlibExt.threeStepPatternDen": "ffba5e6a68980f98",
