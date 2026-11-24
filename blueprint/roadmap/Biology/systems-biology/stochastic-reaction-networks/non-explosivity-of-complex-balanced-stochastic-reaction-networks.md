@@ -19,4 +19,4 @@ Nothing beyond the statement above is claimed here.
 
 ## Sources
 
-- D. F. Anderson, D. Cappelletti, M. Koyama and T. G. Kurtz, Non-explosivity of stochastically modeled reaction networks that are complex balanced, Bull. Math. Biol. 80 (2018), 2561–2579. <https://doi.org/10.1007/s11538-018-0473-0>
+- D. F. Anderson, D. Cappelletti, M. Koyama and T. G. Kurtz, Non-explosivity of stochastically modeled reaction networks that are complex balanced, Bull. Math. Biol. 80 (2018), 2561–2579. <https://doi.org/10.1007/s11538-018-0473-8>
