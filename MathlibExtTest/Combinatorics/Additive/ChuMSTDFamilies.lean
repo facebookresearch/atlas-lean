@@ -11,6 +11,20 @@ module
 import MathlibExt.Combinatorics.Additive.ChuMSTDFamilies
 
 open MetaMathlibExt
+open scoped Pointwise
+
+-- At the largest allowed indices, both the terminal block and the grid endpoints are needed.
+example : 33 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 ∧
+    34 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 ∧
+    31 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 := by
+  have h := chuFamilyKLT_mem_add (k := 1) (l := 1) (t := 1) (by decide) (by decide) (by decide)
+  have h₈ := h.1 8 (by decide)
+  exact ⟨h₈.1, h₈.2, h.2 7 (by decide)⟩
+
+-- The same proposition is visible at its zero index.
+example : 1 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 :=
+  ((chuFamilyKLT_mem_add (k := 1) (l := 1) (t := 1) (by decide) (by decide)
+    (by decide)).1 0 (by decide)).1
 
 -- A zero gap repeats the previous partial sum, even when the start is negative.
 example : setOfConsecutiveDifferences (-1) [0, 2] = {-1, 1} := by decide

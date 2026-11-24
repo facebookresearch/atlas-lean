@@ -44,3 +44,16 @@ example (a : ℕ → ℤ) :
     (0 : ℕ) • (Finset.range 1).image a = sumsetTrivialElements 0 1 a ∧
       sumsetTrivialElements 0 1 a = sumsetTrivialElements 0 2 a := by
   simp [sumsetTrivialElements, Finset.singleton_zero]
+
+-- At the minimum proper multiple, the two witnesses for three summands exhaust the difference.
+example : let a : ℕ → ℤ := fun n => if n = 3 then 4 else n
+    let extras := (3 : ℕ) • (Finset.range 4).image a \ sumsetTrivialElements 3 4 a
+    2 ≤ extras.card ∧ extras = {7, 9} := by
+  intro a extras
+  constructor
+  · exact nontrivial_sumset_card_of_last_gap_eq_nsmul 3 4 (by decide) a (by decide)
+      (fun i hi => by
+        obtain rfl : i = 0 := by omega
+        decide)
+      1 (by decide) 2 (by decide) (by decide) (by decide)
+  · decide
