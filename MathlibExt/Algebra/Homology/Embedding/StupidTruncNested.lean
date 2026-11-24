@@ -187,7 +187,8 @@ theorem stupidTruncMapOfRangeLE_ιStupidTrunc
     obtain ⟨j, hj⟩ := h ⟨i, hi⟩
     simp only [HomologicalComplex.comp_f,
       stupidTruncMapOfRangeLE_f K e₁ e₂ h hi hj,
-      ιStupidTrunc_f K e₂ hj, ιStupidTrunc_f K e₁ hi,
+      ιStupidTrunc_f K e₂ k, ιStupidTrunc_f K e₁ k,
+      stupidTruncι.f_eq K e₂ hj, stupidTruncι.f_eq K e₁ hi,
       Category.assoc, Iso.inv_hom_id, Category.comp_id]
   · have hzero := K.isZero_stupidTrunc_X e₁ k (by simpa using hk)
     exact hzero.eq_of_src _ _

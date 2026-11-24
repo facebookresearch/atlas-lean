@@ -85,6 +85,8 @@ theorem ιTotal_partialTotalι (p : ℕ) (i : Fin (p + 1))
           (ComplexShape.down ℕ)).f n = _
   rw [ιTotal_map,
     HomologicalComplex.ιStupidTrunc_f B
+      (ComplexShape.embeddingDownNatInitialSegment p) i.1,
+    HomologicalComplex.stupidTruncι.f_eq B
       (ComplexShape.embeddingDownNatInitialSegment p)
       (show (ComplexShape.embeddingDownNatInitialSegment p).f i = i.1
         from rfl)]
@@ -107,7 +109,8 @@ instance partialTotalι_f_mono (p n : ℕ) : Mono ((B.partialTotalι p).f n) := 
       change Mono ((φ.f i).f j)
       by_cases hi : ∃ a, e.f a = i
       · obtain ⟨a, ha⟩ := hi
-        rw [HomologicalComplex.ιStupidTrunc_f B e ha]
+        rw [HomologicalComplex.ιStupidTrunc_f B e i,
+          HomologicalComplex.stupidTruncι.f_eq B e ha]
         infer_instance
       · have hzero := B.isZero_stupidTrunc_X e i (by simpa using hi)
         exact ((HomologicalComplex.eval C
