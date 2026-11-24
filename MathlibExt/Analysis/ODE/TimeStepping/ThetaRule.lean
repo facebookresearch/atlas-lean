@@ -21,10 +21,11 @@ import Mathlib.Analysis.SpecificLimits.Basic
 
 For `u' = -a u`, `u(0) = I`, with a constant time step `Δt > 0` and `t_n = n Δt`, the θ-rule is
 `(u^{n+1} - u^n) / Δt = -a (θ u^{n+1} + (1 - θ) u^n)`: `θ = 0` is the Forward Euler scheme,
-`θ = 1` the Backward Euler scheme and `θ = 1 / 2` the Crank–Nicolson scheme. Each step multiplies
-the numerical solution by the amplification factor `A = (1 - (1 - θ) a Δt) / (1 + θ a Δt)`, so
-`u^n = I A^n`, while the exact solution is `I e^{-a t_n} = I (e^{-a Δt})^n`. The results below
-take `θ ≥ 0` and `a ≥ 0`, and some take `a > 0`.
+`θ = 1` the Backward Euler scheme and `θ = 1 / 2` the Crank–Nicolson scheme. When
+`1 + θ a Δt ≠ 0`, each step multiplies the numerical solution by the amplification factor
+`A = (1 - (1 - θ) a Δt) / (1 + θ a Δt)`, so `u^n = I A^n`, while the exact solution is
+`I e^{-a t_n} = I (e^{-a Δt})^n`. Apart from the algebraic solution formula, the results below
+assume `θ ≥ 0` and `a ≥ 0` (strictly positive `a` for the decay criterion).
 
 ## Main results
 
@@ -33,11 +34,12 @@ take `θ ≥ 0` and `a ≥ 0`, and some take `a > 0`.
   `ThetaRule.IsSolution.antitone_of_le_one`: `A < 0` iff `(1 - θ) a Δt > 1`. For `I > 0`, the
   numerical solution then changes sign at every step; if `(1 - θ) a Δt ≤ 1`, it is nonnegative
   and nonincreasing.
-* `ThetaRule.abs_amplificationFactor_le_one_iff`, `ThetaRule.IsSolution.abs_le_iff`,
-  `ThetaRule.IsSolution.tendsto_zero_iff`, `ThetaRule.IsSolution.tendsto_abs_atTop`:
-  `|A| ≤ 1` iff `(1 - 2θ) a Δt ≤ 2`, which always holds for `θ ≥ 1 / 2`. For `I ≠ 0`, the
-  numerical solution never exceeds `|I|` in absolute value iff this holds, tends to `0` iff
-  `(1 - 2θ) a Δt < 2`, and grows without bound if `(1 - 2θ) a Δt > 2`.
+* `ThetaRule.abs_amplificationFactor_le_one_iff`, `ThetaRule.abs_amplificationFactor_lt_one_iff`,
+  `ThetaRule.IsSolution.abs_le_iff`, `ThetaRule.IsSolution.tendsto_zero_iff`,
+  `ThetaRule.IsSolution.tendsto_abs_atTop`: `|A| ≤ 1` iff `(1 - 2θ) a Δt ≤ 2`, which always holds
+  for `θ ≥ 1 / 2`. For `I ≠ 0`, the numerical solution never exceeds `|I|` in absolute value iff
+  this holds. For `a > 0` and `I ≠ 0`, it tends to `0` iff `(1 - 2θ) a Δt < 2`. For `I ≠ 0` and
+  `(1 - 2θ) a Δt > 2`, its absolute value tends to infinity.
 * `ThetaRule.abs_amplificationFactor_sub_exp_le`,
   `ThetaRule.abs_amplificationFactor_half_sub_exp_le`: `|A - e^{-a Δt}|` is at most
   `max θ (1/2) (a Δt)^2`, and at most `(a Δt)^3 / 4` for Crank–Nicolson.
@@ -45,13 +47,16 @@ take `θ ≥ 0` and `a ≥ 0`, and some take `a > 0`.
   `ThetaRule.tendsto_of_isSolution`: the global error `|u^n - I e^{-a t_n}|` is at most
   `max θ (1/2) |I| a^2 t_n Δt` if `(1 - 2θ) a Δt ≤ 2`, and at most `|I| a^3 t_n Δt^2 / 4` for
   Crank–Nicolson, so the numerical solution at a fixed time `t > 0` tends to `I e^{-a t}` as the
-  number of steps tends to infinity.
+  number of steps tends to infinity, using step `t / n` and initial value `I` for every `n ≥ 1`.
+
+The error bounds give upper rates, not signed asymptotics or leading coefficients.
 
 ## References
 
 * H. P. Langtangen, *Finite Difference Computing with Exponential Decay Models*, Springer,
-  2016: Section 1.1.5 (the θ-rule), Sections 2.2.1 and 2.2.2 (exact numerical solution and
-  stability), Sections 2.3.2 and 2.3.4 (amplification factors and global error).
+  2016: Sections 1.1.5 and 1.1.6 (the θ-rule on a uniform grid), Sections 2.2.1 and 2.2.2 (exact
+  numerical solution and stability), Sections 2.3.2 and 2.3.4 (amplification factors and global
+  error).
 -/
 
 @[expose] public section
@@ -60,15 +65,18 @@ open Filter Topology
 
 namespace ThetaRule
 
-/-- **Amplification factor of the θ-rule.** For $u' = -a u$ with time step $\Delta t$, the factor
-$A = \frac{1 - (1 - \theta) a \Delta t}{1 + \theta a \Delta t}$ by which one step of the θ-rule
-multiplies the numerical solution. -/
+/-- **Amplification factor of the θ-rule.** For real $\theta, a, \Delta t$, set
+$A = \frac{1 - (1 - \theta) a \Delta t}{1 + \theta a \Delta t}$, with division by zero defined to
+be zero. If $\Delta t \ne 0$ and $1 + \theta a \Delta t \ne 0$, one step of the θ-rule for
+$u' = -a u$ multiplies the numerical solution by $A$. -/
 noncomputable def amplificationFactor (θ a Δt : ℝ) : ℝ :=
   (1 - (1 - θ) * a * Δt) / (1 + θ * a * Δt)
 
-/-- **Solution of the θ-rule.** A sequence $u$ solves the θ-rule for $u' = -a u$ with constant time
-step $\Delta t$ if $\frac{u^{n+1} - u^n}{\Delta t} = -a (\theta u^{n+1} + (1 - \theta) u^n)$ for
-every $n \ge 0$. -/
+/-- **Solution of the θ-rule.** For real $\theta, a, \Delta t$, a sequence $u$ indexed by the
+natural numbers solves the θ-rule if and only if
+$\frac{u^{n+1} - u^n}{\Delta t} = -a (\theta u^{n+1} + (1 - \theta) u^n)$ for every $n \ge 0$.
+The step is constant, and the quotient is zero if $\Delta t = 0$. The predicate does not impose an
+initial value. -/
 def IsSolution (θ a Δt : ℝ) (u : ℕ → ℝ) : Prop :=
   ∀ n, (u (n + 1) - u n) / Δt = -a * (θ * u (n + 1) + (1 - θ) * u n)
 
