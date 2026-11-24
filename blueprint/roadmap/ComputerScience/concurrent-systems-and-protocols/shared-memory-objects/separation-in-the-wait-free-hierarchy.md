@@ -4,7 +4,7 @@ An object type $X$ solves $n$-process consensus if there is a wait-free consensu
 
 **Theorem.** If $X$ has consensus number $n$ and $Y$ has consensus number $m < n$, then there is no wait-free implementation of $X$ by $Y$ in a system of more than $m$ processes.
 
-**Proof.** Suppose $Y$ implements $X$ wait-free for $k > m$ processes. Take a wait-free consensus protocol for $k \le n$ processes that uses $X$ and registers, and replace each $X$ object by its implementation from $Y$. Composition preserves wait-freedom and correctness, so this gives a wait-free $k$-process consensus protocol from $Y$ and registers, contradicting that the consensus number of $Y$ is $m < k$.
+**Proof.** Suppose $Y$ implements $X$ wait-free for $k > m$ processes, and let $r = \min(k, n)$, so that $m < r \le n$. Take a wait-free consensus protocol for $r$ processes that uses $X$ and registers, run it on $r$ of the $k$ processes, and replace each $X$ object by its implementation from $Y$, which remains wait-free when only $r$ processes take steps. Composition preserves wait-freedom and correctness, so this gives a wait-free $r$-process consensus protocol from $Y$ and registers, contradicting that the consensus number of $Y$ is $m < r$.
 
 So objects of lower consensus number cannot implement objects of higher consensus number. For example, read/write registers have consensus number $1$; test-and-set, swap, fetch-and-add, queues and stacks have consensus number $2$; and compare-and-swap has infinite consensus number.
 
