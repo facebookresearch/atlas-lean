@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Real.GoldenRatio
+public import MathlibExt.Combinatorics.EvenFibonacciAccessibility
 public import MathlibExt.Combinatorics.HalfEvenFibonacciSet
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 public import MathlibExt.NumberTheory.LucasSequence
@@ -214,15 +215,6 @@ public theorem_wanted lucasSet_not_four_accessible :
     (∃ c : ℕ+ → Fin 4, ¬ ∃ x : Fin 3 → ℕ+,
       IsMonochromatic c x ∧ IsDDiffSequence (Set.range lucasNumber) (fun i => ((x i : ℕ) : ℤ))) ∧
     ∀ r, 4 ≤ r → ¬ IsRAccessible r (Set.range lucasNumber)
-
-/-- **The even Fibonacci numbers have degree of accessibility $1$.** The even Fibonacci set
-$\{2, 8, 34, \dots\}$ is $1$-accessible, and it is not $r$-accessible for any natural number
-$r \ge 2$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Corollary 2 (`integers-2025-A29-cor-2`). -/
-public theorem_wanted evenFibonacciSet_degreeOfAccessibility_eq_one :
-    IsRAccessible 1 evenFibonacciSet ∧ ∀ r, 2 ≤ r → ¬ IsRAccessible r evenFibonacciSet
 
 end
 
