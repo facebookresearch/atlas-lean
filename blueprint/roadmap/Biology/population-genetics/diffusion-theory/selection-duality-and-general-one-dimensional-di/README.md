@@ -78,3 +78,7 @@
 - [Neutral mean absorption time from the conditional times](mul-neutral-fixation-time-add-mul-neutra.md)
 
 - [Type of the common ancestor under selection and mutation](common-ancestor-type-distribution.md)
+
+## Further results
+
+- [Fixation probabilities under frequency-dependent selection](frequency-dependent-selection.md)

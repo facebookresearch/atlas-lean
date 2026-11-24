@@ -9,3 +9,4 @@
 - [Powers of I − E are signed powers of the forward difference](iterate-sub-shift-eq-neg-one-pow-mul-fwd.md)
 - [Consistency unrolls along a row](consistent-eq-iterate-sub-shift.md)
 - [Complete monotonicity of the diagonal rates](completely-monotone-diag-of-consistent.md)
+- [Beta-coalescents, stable trees and frequency spectra of large samples](branching-tree-connections-and-mutation-asymptotics.md)

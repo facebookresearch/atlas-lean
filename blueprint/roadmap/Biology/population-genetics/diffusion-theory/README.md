@@ -23,3 +23,6 @@ The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamic
 
 - [Transition densities of Wright–Fisher diffusions](transition-densities-of-wright-fisher-diffusions/README.md)
 - [Fleming–Viot processes](fleming-viot-processes/README.md)
+- [Additive path functionals](additive-path-functionals/README.md)
+- [Conditioned Wright–Fisher diffusions](conditioned-wright-fisher-diffusions/README.md)
+- [Time-dependent Wright–Fisher diffusions](time-dependent-wright-fisher-diffusions/README.md)

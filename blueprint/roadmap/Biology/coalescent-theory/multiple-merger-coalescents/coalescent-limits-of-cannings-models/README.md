@@ -30,3 +30,7 @@
 - [With heavy tails the limit generator differs from Kingman's for n ≥ 3](block-counting-generator-ne-kingman.md)
 - [Heavy-tailed Cannings lineage counts have a multiple-merger limit](tendsto-lineage-matrix-pow-of-heavy-tail.md)
 - [With limit measure δ₀ the lineage count converges to Kingman's](tendsto-lineage-matrix-pow-dirac-zero.md)
+
+## Further results
+
+- [Explicit skew-offspring models and their Λ-coalescent limits](explicit-skew-offspring-models.md)

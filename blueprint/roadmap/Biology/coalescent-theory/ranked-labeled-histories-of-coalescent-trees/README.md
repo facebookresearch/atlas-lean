@@ -23,3 +23,7 @@
 - [Random joining](random-joining.md)
 - [Every ranked history is equally likely under random joining](random-joining-singleton-eq-inv.md)
 - [Each ranked labeled history has probability $2^{n-1} / (n!(n-1)!)$](random-joining-singleton.md)
+
+## Further results
+
+- [Cherries of the Kingman genealogy](external-branches-and-cherries.md)

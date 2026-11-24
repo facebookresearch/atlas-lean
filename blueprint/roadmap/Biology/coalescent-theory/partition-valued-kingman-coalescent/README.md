@@ -36,3 +36,4 @@
 - [Consistency of the partition-valued coalescents](sum-time-law-restrict.md)
 - [Path probability of the Kingman coalescent jump chain](path-prob.md)
 - [Consistency of the jump chains](sum-path-prob-restrict.md)
+- [Relabeling invariance of marked coalescent genealogies](relabeling-invariance.md)

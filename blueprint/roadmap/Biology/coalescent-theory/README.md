@@ -30,3 +30,4 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Ancestral recombination graph](ancestral-recombination-graph/README.md)
 - [Identifiability of demographic histories](identifiability-of-demographic-histories/README.md)
 - [Coalescent likelihoods and sampling recursions](coalescent-likelihood-and-computation/README.md)
+- [Genealogies under selection](genealogies-under-selection/README.md)

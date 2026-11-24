@@ -39,3 +39,6 @@
 
 - [Mutation–selection balance in a haploid population](haploid-mutation-selection-balance.md)
 - [Mutation–selection balance for a recessive allele](recessive-mutation-selection-balance.md)
+- [The mutational load with epistatic gene interactions](multilocus-epistatic-mutation-load.md)
+- [Deterministic and stochastic descriptions of mutation–selection balance](mutation-selection-drift-comparisons.md)
+- [Mutation load in finite populations](finite-population-mutation-load.md)

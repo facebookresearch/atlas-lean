@@ -22,3 +22,7 @@
 - [Genotype covariance as double-centred pairwise differences](gen-cov-eq-double-center.md)
 - [McVean's genealogical model for PCA](mc-vean-model.md)
 - [McVean's theorem on expected genotype covariance](integral-gen-cov.md)
+
+## Further results
+
+- [Admixture pulses, coalescence times and f-statistics](admixture-pulse-ancestry-and-f-statistic-bridges.md)

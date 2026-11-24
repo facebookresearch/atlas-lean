@@ -5,3 +5,4 @@
 - [Identifiability from the folded site-frequency spectrum](folded-sfs-identifiability.md)
 - [Information-theoretic lower bounds for demographic inference](information-theoretic-lower-bounds.md)
 - [Identifiability is not stable estimation](identifiability-is-not-stable-estimation.md)
+- [Inverse instantaneous coalescence rate and confounding of structure with size](iicr-and-structure-size-confounding.md)

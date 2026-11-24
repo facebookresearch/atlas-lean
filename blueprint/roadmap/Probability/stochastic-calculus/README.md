@@ -15,6 +15,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Strong solutions of SDEs with Lipschitz coefficients](sde-lipschitz-exists-unique.md)
 - [Backward stochastic differential equations](backward-stochastic-differential-equations/README.md)
 - [Ornstein–Uhlenbeck process](ornstein-uhlenbeck-process/README.md)
+- [One-dimensional diffusions](one-dimensional-diffusions/README.md)
 
 ## Related topics
 

@@ -105,3 +105,8 @@
 - [Clade of a ranked history](is-clade.md)
 - [Clade probability](random-joining-is-clade.md)
 - [Clade probability under random joining for at most five genes](random-joining-is-clade-of-le-five.md)
+
+## Species-tree inference
+
+- [Quartet concordance inside larger species trees](quartet-concordance-inside-larger-trees.md)
+- [Identifiability of the rooted species tree from unrooted gene trees](rooted-species-tree-identifiability.md)

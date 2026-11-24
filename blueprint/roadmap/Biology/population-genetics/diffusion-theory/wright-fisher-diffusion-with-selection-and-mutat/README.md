@@ -27,3 +27,10 @@
 - [The variance function x(1 − x) is 1-Lipschitz on the unit interval](abs-mul-one-sub-sub-le.md)
 - [The coefficient √(x(1 − x)) is 1/2-Hölder on the unit interval](abs-sqrt-mul-one-sub-sub-le.md)
 - [Lipschitz bound for the selection–mutation drift on the unit interval](abs-genic-drift-sub-le.md)
+
+## Further stationary laws
+
+- [Stationary law of the multi-allele diffusion with diploid selection](diploid-selection-potential.md)
+- [Stationary law of the Wright–Fisher diffusion with dominance and mutation](dominance-stationary-law.md)
+- [Reversibility and the Dirichlet form of the Wright–Fisher diffusion](reversibility-and-dirichlet-form.md)
+- [Small-mutation limits of stationary laws](small-mutation-limits.md)

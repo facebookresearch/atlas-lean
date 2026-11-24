@@ -16,3 +16,6 @@
 - [Drift of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-drift.md)
 - [Infinitesimal variance of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-sq.md)
 - [Dirichlet stationary law under parent-independent mutation](dirichlet-stationary-law-under-parent-independent-mutation.md)
+- [Sampling consistency and exchangeability for diffusion samples](sampling-consistency-and-exchangeability.md)
+- [Boundary classification of the Wright–Fisher diffusion with mutation](wright-fisher-boundary-classification.md)
+- [Infinite-alleles limits of finite-allele diffusions](infinite-alleles-and-finite-allele-limits.md)
