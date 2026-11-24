@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Additive.ModularSchurNumbers
+public import MathlibExt.Combinatorics.Additive.SingletonSumFreeMod
 
 /-!
 # Wanted results on modular Schur numbers
@@ -78,17 +79,6 @@ public theorem_wanted modularSchurNumber_prime (p l : ℕ) (hp : p.Prime) (hl : 
     (hlp1 : p - 1 ≤ l) (hlp : ¬ l ≡ 1 [MOD p]) :
     (∀ k, 1 ≤ k → k ≤ p - 1 → modularSchurNumber p k l = k) ∧
       (∀ k, p - 1 ≤ k → modularSchurNumber p k l = p - 1)
-
-/-- **Singletons are sum-free modulo a prime power.** Let $p$ be a prime, let $i$ and $l$ be
-positive integers with $l \not\equiv 1 \pmod{p}$, and let $a$ be a natural number not divisible
-by $p^i$. Then the singleton $\{a\}$ is $l$-sum-free modulo $p^i$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Lemma 1
-(`integers-2025-A62-lem-1`). -/
-public theorem_wanted isSumFreeMod_singleton_prime_pow (p a i l : ℕ) (hp : p.Prime) (hi : 0 < i)
-    (hl : 0 < l) (ha : ¬ p ^ i ∣ a) (hlp : ¬ l ≡ 1 [MOD p]) :
-    IsSumFreeMod (p ^ i) l {(a : ℤ)}
 
 /-- **Modular Schur numbers modulo $2$.** For all positive integers $k$ and $l$, the modular
 Schur number $S_2(k, l)$ equals $0$ when $l$ is odd and equals $1$ when $l$ is even.

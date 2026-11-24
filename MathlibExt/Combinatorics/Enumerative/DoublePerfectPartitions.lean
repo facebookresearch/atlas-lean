@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Multiset.Powerset
 public import Mathlib.NumberTheory.Divisors
 import Mathlib.Algebra.BigOperators.Ring.Multiset
@@ -19,6 +20,8 @@ A double-perfect partition of order `r` has two distinct subpartitions at each i
 and one at each end. The theorem `isDoublePerfectOfOrder_add_replicate` shows that inserting
 copies of the total minus `r` preserves this pattern. This module also defines the perfect
 partitions associated to ordered factorizations and counts those factorizations.
+The theorem `exists_partition_unique_subsums_but_one_iff` classifies the possible counts
+when a single interior sum is allowed to have more than one subpartition.
 -/
 
 namespace MetaMathlibExt
@@ -225,6 +228,81 @@ private def subpartitions (l : Multiset ℕ) (k : ℕ) : Finset (Multiset ℕ) :
 private theorem mem_subpartitions {l s : Multiset ℕ} {k : ℕ} :
     s ∈ subpartitions l k ↔ s ≤ l ∧ s.sum = k := by
   simp [subpartitions]
+
+namespace exists_partition_unique_subsums_but_one_iff
+
+-- Removing a one or inserting a one maps the two classes into neighboring sums.
+private theorem card_le_neighbors {l : Multiset ℕ} (h₁ : 1 ∈ l) (m : ℕ) :
+    (subpartitions l m).card ≤
+      (subpartitions l (m - 1)).card + (subpartitions l (m + 1)).card := by
+  rw [← Finset.card_filter_add_card_filter_not (s := subpartitions l m) (fun s => 1 ∈ s)]
+  apply Nat.add_le_add
+  · apply Finset.card_le_card_of_injOn (fun s => s.erase 1)
+    · intro s hs
+      obtain ⟨hs, hmem⟩ := Finset.mem_filter.mp hs
+      obtain ⟨hs, hsum⟩ := mem_subpartitions.mp hs
+      refine mem_subpartitions.mpr ⟨(Multiset.erase_le _ _).trans hs, ?_⟩
+      change (s.erase 1).sum = m - 1
+      rw [← Multiset.cons_erase hmem, Multiset.sum_cons] at hsum
+      omega
+    · intro s hs t ht h
+      simpa only [Multiset.cons_erase (Finset.mem_filter.mp hs).2,
+        Multiset.cons_erase (Finset.mem_filter.mp ht).2] using congrArg (Multiset.cons 1) h
+  · apply Finset.card_le_card_of_injOn (Multiset.cons 1)
+    · intro s hs
+      obtain ⟨hs, hmem⟩ := Finset.mem_filter.mp hs
+      obtain ⟨hs, hsum⟩ := mem_subpartitions.mp hs
+      exact mem_subpartitions.mpr ⟨(Multiset.cons_le_of_notMem hmem).mpr ⟨h₁, hs⟩,
+        by simp [hsum, Nat.add_comm]⟩
+    · exact fun _ _ _ _ h => (Multiset.cons_inj_right 1).mp h
+
+end exists_partition_unique_subsums_but_one_iff
+
+/-- **Partitions with unique subsums except one.** The partitions of $m$ contained in a
+partition $\lambda$ are the distinct sub-multisets of the parts of $\lambda$ with sum $m$. Let
+$v \ge 1$. There are a natural number $n$ and a partition $\lambda$ of $n$ that contains exactly
+$v$ partitions of some $m$ with $v \le m \le n - v$ and exactly one partition of every positive
+integer $m' < n$ other than $m$ if and only if $v = 1$ or $v = 2$.
+
+The hypothesis $v \ge 1$ is needed: for $v = 0$ the partition $(2)$ of $2$ qualifies with
+$m = 1$, since it contains no partition of $1$.
+
+Source: Augustine O. Munagi, *Double Perfect Partitions of Higher Order*, INTEGERS 25 (2025),
+Article A109, Lemma 1 (`integers-2025-A109-lem-1`). -/
+theorem exists_partition_unique_subsums_but_one_iff (v : ℕ) (hv : 1 ≤ v) :
+    (∃ n : ℕ, ∃ p : n.Partition,
+      let c : ℕ → ℕ := fun m => (p.parts.powerset.toFinset.filter fun s => s.sum = m).card
+      ∃ m, v ≤ m ∧ m ≤ n - v ∧ c m = v ∧ ∀ m', 0 < m' → m' < n → m' ≠ m → c m' = 1) ↔
+      v = 1 ∨ v = 2 := by
+  constructor
+  · rintro ⟨n, p, m, hvm, hmn, hm, hother⟩
+    by_contra! h
+    have hv₃ : 3 ≤ v := by omega
+    change (subpartitions p.parts m).card = v at hm
+    change ∀ k, 0 < k → k < n → k ≠ m → (subpartitions p.parts k).card = 1 at hother
+    -- A subpartition of sum one supplies a part equal to one.
+    have hc := hother 1 (by decide) (by omega) (by omega)
+    obtain ⟨s, hs⟩ := Finset.card_pos.mp (by omega : 0 < (subpartitions p.parts 1).card)
+    obtain ⟨hs, hsum⟩ := mem_subpartitions.mp hs
+    have hne : s ≠ 0 := by rintro rfl; simp at hsum
+    obtain ⟨a, ha⟩ := Multiset.exists_mem_of_ne_zero hne
+    have hap := Multiset.mem_of_le hs ha
+    have hpos := p.parts_pos hap
+    have hle := Multiset.le_sum_of_mem ha
+    have ha₁ : a = 1 := by omega
+    have hbound := exists_partition_unique_subsums_but_one_iff.card_le_neighbors (ha₁ ▸ hap) m
+    rw [hm, hother (m - 1) (by omega) (by omega) (by omega),
+      hother (m + 1) (by omega) (by omega) (by omega)] at hbound
+    omega
+  · rintro (rfl | rfl)
+    · refine ⟨2, Nat.Partition.ofSums 2 {1, 1} (by decide), 1, by decide, by decide, by decide, ?_⟩
+      intro k hk hkn hne
+      omega
+    · refine ⟨4, Nat.Partition.ofSums 4 {1, 1, 2} (by decide), 2, by decide, by decide,
+        by decide, ?_⟩
+      intro k hk hkn hne
+      have : k = 1 ∨ k = 3 := by omega
+      rcases this with rfl | rfl <;> decide
 
 private theorem sum_le_of_le {s l : Multiset ℕ} (h : s ≤ l) : s.sum ≤ l.sum := by
   obtain ⟨t, rfl⟩ := Multiset.le_iff_exists_add.mp h

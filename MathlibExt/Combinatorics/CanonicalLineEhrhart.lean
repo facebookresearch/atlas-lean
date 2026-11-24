@@ -12,10 +12,13 @@ public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Basic.Complex.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Group.ForwardDiff
 import Mathlib.Algebra.Polynomial.Coeff
+import Mathlib.Algebra.Polynomial.Degree.Lemmas
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Nat.Factorial.Basic
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
@@ -28,6 +31,7 @@ A CL-polynomial of degree `d` takes values in `ℝ · I ^ d` on the line of real
 namespace MetaMathlibExt
 
 open Polynomial
+open scoped BigOperators
 
 @[expose] public noncomputable section
 
@@ -195,6 +199,145 @@ public theorem quadratic_mul_binomialPolynomial (d j : ℕ) (hd : 0 < d) (hj : j
   dsimp only [a]
   simp only [Nat.cast_succ, map_add, map_sub, map_mul, map_pow, map_one, map_ofNat]
   ring
+
+/-- **The h-star coefficients of a polynomial.** Let $f$ be a complex polynomial of degree $d$,
+with $d = 0$ for the zero polynomial. For a natural number $i$, the $i$-th $h^*$-coefficient of
+$f$ is
+$$h^*_i(f) = \sum_{j=0}^{i} (-1)^j \binom{d+1}{j} f(i-j),$$
+the coefficient of $t^i$ in the power series $(1-t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$.
+
+Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
+INTEGERS 25 (2025), Article A68, definition of the `h*`-polynomial.
+-/
+public def hStarCoeff (f : Polynomial ℂ) (i : ℕ) : ℂ :=
+  ∑ j ∈ Finset.range (i + 1),
+    (-1 : ℂ) ^ j * (Nat.choose (f.natDegree + 1) j : ℂ) * f.eval (i - j : ℂ)
+
+/-- **SNN polynomials.** For a complex polynomial $f$ of degree $d$ and a natural number $i$, let
+$h^*_i(f)$ be the coefficient of $t^i$ in $(1 - t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$. Then $f$ is
+SNN when $f \ne 0$ and its $h^*$-coefficients $h^*_0(f), \dots, h^*_d(f)$ are real and
+nonnegative.
+
+Coefficients beyond the degree, which vanish by the generating-series identity, are not part of
+the condition.
+
+Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
+INTEGERS 25 (2025), Article A68, definition of SNN-polynomial.
+-/
+public def IsSNN (f : Polynomial ℂ) : Prop :=
+  f ≠ 0 ∧ ∀ i ≤ f.natDegree, 0 ≤ (hStarCoeff f i).re ∧ (hStarCoeff f i).im = 0
+
+-- At the first index beyond the degree, the sum is a full forward difference
+-- evaluated at zero, with its summation order reversed.
+private theorem hStarCoeff_natDegree_add_one (f : Polynomial ℂ) :
+    hStarCoeff f (f.natDegree + 1) = 0 := by
+  let n := f.natDegree + 1
+  have h := congrFun f.fwdDiff_iter_degree_add_one_eq_zero (0 : ℂ)
+  rw [fwdDiff_iter_eq_sum_shift] at h
+  change (∑ k ∈ Finset.range (n + 1),
+    ((-1 : ℤ) ^ (n - k) * n.choose k) • f.eval (0 + k • (1 : ℂ))) = 0 at h
+  unfold hStarCoeff
+  change (∑ j ∈ Finset.range (n + 1),
+    (-1 : ℂ) ^ j * (n.choose j : ℂ) * f.eval ((n : ℂ) - (j : ℂ))) = 0
+  rw [← Finset.sum_range_reflect (fun j ↦
+    (-1 : ℂ) ^ j * (n.choose j : ℂ) * f.eval ((n : ℂ) - (j : ℂ))) (n + 1)]
+  refine Eq.trans (Finset.sum_congr rfl fun k hk ↦ ?_) h
+  have hk' : k ≤ n := Nat.le_of_lt_succ (Finset.mem_range.mp hk)
+  rw [Nat.add_sub_cancel, Nat.choose_symm hk', Nat.cast_sub hk', sub_sub_cancel]
+  simp [zsmul_eq_mul, nsmul_eq_mul]
+
+private def signedChoose (n j : ℕ) : ℂ := (-1 : ℂ) ^ j * (n.choose j : ℂ)
+
+-- Pascal's identity and the weighted binomial identity combine the two adjacent terms.
+private theorem signedChoose_mul_linear (n j : ℕ) (x : ℂ) :
+    signedChoose (n + 1) (j + 1) * (2 * (x - (j + 1 : ℕ)) + 1) =
+      (2 * x + 1) * signedChoose n (j + 1) +
+        (2 * (n : ℂ) + 1 - 2 * x) * signedChoose n j := by
+  have hPascal : signedChoose (n + 1) (j + 1) = signedChoose n (j + 1) - signedChoose n j := by
+    simp only [signedChoose, Nat.choose_succ_succ' n j, Nat.cast_add, pow_succ]
+    ring
+  have hWeighted : ((j + 1 : ℕ) : ℂ) * signedChoose (n + 1) (j + 1) =
+      -((n + 1 : ℕ) : ℂ) * signedChoose n j := by
+    have h := congrArg (fun k : ℕ ↦ (k : ℂ)) (Nat.add_one_mul_choose_eq n j)
+    push_cast at h
+    simp only [signedChoose, pow_succ, Nat.cast_add, Nat.cast_one]
+    calc
+      _ = -((-1 : ℂ) ^ j) * (↑((n + 1).choose (j + 1)) * ((j : ℂ) + 1)) := by ring
+      _ = _ := by rw [← h]; ring
+  calc
+    _ = (2 * x + 1) * signedChoose (n + 1) (j + 1) -
+        2 * (((j + 1 : ℕ) : ℂ) * signedChoose (n + 1) (j + 1)) := by ring
+    _ = _ := by rw [hWeighted, hPascal]; push_cast; ring
+
+-- The new h-star coefficient is a weighted sum of two adjacent old coefficients.
+private theorem hStarCoeff_mul_linear_succ (f : Polynomial ℂ)
+    (hd : ((2 * X + 1) * f).natDegree = f.natDegree + 1) (i : ℕ) :
+    hStarCoeff ((2 * X + 1) * f) (i + 1) =
+      (2 * ((i + 1 : ℕ) : ℂ) + 1) * hStarCoeff f (i + 1) +
+        (2 * ((f.natDegree + 1 : ℕ) : ℂ) + 1 - 2 * ((i + 1 : ℕ) : ℂ)) * hStarCoeff f i := by
+  unfold hStarCoeff
+  rw [hd]
+  let n := f.natDegree + 1
+  let x : ℂ := (i + 1 : ℕ)
+  change (∑ j ∈ Finset.range (i + 1 + 1), signedChoose (n + 1) j *
+      ((2 * X + 1) * f).eval (x - (j : ℂ))) =
+    (2 * x + 1) * (∑ j ∈ Finset.range (i + 1 + 1), signedChoose n j * f.eval (x - (j : ℂ))) +
+      (2 * (n : ℂ) + 1 - 2 * x) *
+        (∑ j ∈ Finset.range (i + 1), signedChoose n j * f.eval ((i : ℂ) - (j : ℂ)))
+  rw [Finset.sum_range_succ', Finset.mul_sum, Finset.mul_sum,
+    Finset.sum_range_succ' (n := i + 1)]
+  have hzero (m : ℕ) : signedChoose m 0 = 1 := by simp [signedChoose]
+  simp only [hzero, Nat.cast_zero, sub_zero, eval_mul, eval_add, eval_ofNat, eval_X, eval_one,
+    one_mul]
+  conv_rhs => rw [add_right_comm, ← Finset.sum_add_distrib]
+  congr 1
+  refine Finset.sum_congr rfl fun j _ ↦ ?_
+  rw [← mul_assoc, signedChoose_mul_linear,
+    show x - ((j + 1 : ℕ) : ℂ) = (i : ℂ) - (j : ℂ) by dsimp [x]; push_cast; ring]
+  ring
+
+/-- **Multiplying by $2X+1$ preserves SNN.** For every complex polynomial $f$, if $f$ is an SNN
+polynomial, then so is $(2X + 1) f$.
+
+Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
+INTEGERS 25 (2025), Article A68, Lemma 6.
+-/
+public theorem two_mul_X_add_one_preserves_snn (f : Polynomial ℂ) (hf : IsSNN f) :
+    IsSNN ((2 * X + 1) * f) := by
+  have hlinear : (2 * X + 1 : Polynomial ℂ).natDegree = 1 := by
+    rw [show (2 : Polynomial ℂ) = C (2 : ℂ) from (map_ofNat C 2).symm]
+    rw [← C_1, natDegree_add_C, natDegree_C_mul (by norm_num : (2 : ℂ) ≠ 0), natDegree_X]
+  have hne : (2 * X + 1 : Polynomial ℂ) ≠ 0 := by
+    intro h
+    simp [h] at hlinear
+  have hd : ((2 * X + 1) * f).natDegree = f.natDegree + 1 := by
+    rw [natDegree_mul hne hf.1, hlinear, add_comm]
+  refine ⟨mul_ne_zero hne hf.1, ?_⟩
+  rw [hd]
+  intro i hi
+  cases i with
+  | zero =>
+    have hzero (p : Polynomial ℂ) : hStarCoeff p 0 = p.eval 0 := by simp [hStarCoeff]
+    simpa [hzero] using hf.2 0 (Nat.zero_le _)
+  | succ i =>
+    have hi' : i ≤ f.natDegree := Nat.le_of_succ_le_succ hi
+    obtain ⟨hre₀, him₀⟩ := hf.2 i hi'
+    have hnext : 0 ≤ (hStarCoeff f (i + 1)).re ∧ (hStarCoeff f (i + 1)).im = 0 := by
+      rcases hi.lt_or_eq with hlt | heq
+      · exact hf.2 _ (Nat.le_of_lt_succ hlt)
+      · rw [heq, hStarCoeff_natDegree_add_one]
+        simp
+    obtain ⟨hre₁, him₁⟩ := hnext
+    rw [hStarCoeff_mul_linear_succ f hd]
+    have hgap : 0 ≤ (f.natDegree : ℝ) - i := sub_nonneg.mpr (by exact_mod_cast hi')
+    simp only [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.sub_re,
+      Complex.sub_im, Complex.natCast_re, Complex.natCast_im, Complex.one_re, Complex.one_im,
+      Complex.re_ofNat, Complex.im_ofNat, him₀, him₁,
+      mul_zero, zero_mul, add_zero, sub_zero, and_true]
+    push_cast
+    rw [show 2 * ((f.natDegree : ℝ) + 1) + 1 - 2 * ((i : ℝ) + 1) =
+      2 * ((f.natDegree : ℝ) - i) + 1 by ring]
+    exact add_nonneg (mul_nonneg (by positivity) hre₁) (mul_nonneg (by positivity) hre₀)
 
 end
 
