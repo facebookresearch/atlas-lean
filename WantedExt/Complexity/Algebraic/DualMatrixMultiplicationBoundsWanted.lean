@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Complexity.Algebraic.RectangularCircuitExponent
+public import CSLibExt.Complexity.Algebraic.DualMatrixMultiplicationBounds
 public import Mathlib.Algebra.CharP.Basic
 
 /-!
@@ -35,13 +35,6 @@ namespace Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted
 open Cslib.Complexity.Algebraic
 
 universe u v
-
-/-- **Dual exponent at most one.** For every field $F$, the dual matrix multiplication
-exponent $\alpha(F)$ of the arithmetic-circuit model satisfies $\alpha(F) \le 1$.
-
-Source: C15b, CLLZ2025 Figure 2, the general upper bound, not a method-specific barrier. -/
-theorem_wanted upperBoundOne :
-    ∀ (F : Type u) [Field F], dualCircuitExponent F ≤ 1
 
 /-- **Coppersmith's rectangular exponent.** For every field $F$, the rectangular matrix
 multiplication exponent of the arithmetic-circuit model at aspect $0.172$ equals $2$: an
