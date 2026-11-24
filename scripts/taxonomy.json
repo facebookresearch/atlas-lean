@@ -11683,6 +11683,7 @@
   "MathlibExt/Geometry/Spherical/SphericalLawOfCosines": {"to": "Geometry/euclidean-geometry/solid-and-spherical", "title": "Spherical law of cosines"},
   "MathlibExt/Geometry/SteinerRatio": {"to": "Geometry/discrete-geometry", "title": "Steiner ratio"},
   "MathlibExt/Geometry/TwoD": {"to": "Geometry/discrete-geometry", "title": "Convex and general position of point sets"},
+  "MathlibExt/GroupTheory/AbelianImagesUltraproducts": {"to": "GroupTheory/abelian-groups", "title": "Homomorphic images of ultraproducts of groups"},
   "MathlibExt/GroupTheory/AbelianRepresentation": {"to": "RepresentationTheory/finite-group-representations", "title": "Representations of finite abelian groups"},
   "MathlibExt/GroupTheory/AddCyclicSquarefree": {"to": "GroupTheory/orders-and-spectra", "title": "Cyclic numbers"},
   "MathlibExt/GroupTheory/AmenableGroup": {"to": "GroupTheory/geometric-group-theory", "title": "Amenable groups"},
