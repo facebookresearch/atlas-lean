@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
+public import MathlibExt.AlgebraicGeometry.RealCoefficientPerverseSheaves
 public import Mathlib.Algebra.Field.Subfield.Basic
 
 /-!
@@ -18,8 +19,14 @@ every coefficient field. The carrier is the original sheaf derived
 category on the complex-point topology, with the native algebraic
 constructibility condition. Its middle t-structure is characterized in
 every degree by the actual stalk and skyscraper-costalk supports.
-The real coefficient maps used by Hodge modules are literal inclusions
-of subfields of R into C.
+`CoefficientPerverseTheory` is the coefficient-generic form of the rational
+`PerverseSheaves.PerverseSheafTheory` and of the real-coefficient
+`RealCoefficientPerverseSheaves.PerverseTheory`: at `k = ℚ` and at `k = A` for a
+subfield `A` of ℝ the supports agree definitionally, the structures are
+equivalent (`rationalPerverseTheoryEquiv`, `realPerverseTheoryEquiv`), and an
+instance of either specific class provides the generic one. All of these
+structures are subsingletons, so the providers agree. The real coefficient
+embedding into ℂ is `RealSubfieldCoefficients.complexEmbedding`.
 
 Sources: Saito1307.2140v5, Section1.1; de Cataldo--Migliorini,
 arXiv:math/0504554, Sections3.3 and3.6, and arXiv:0712.0349,
@@ -77,6 +84,58 @@ class CoefficientPerverseTheory [IsComplexVariety X] where
 
 attribute [instance] CoefficientPerverseTheory.isTriangulated
 
+/-- The support and cosupport conditions determine the perverse t-structure. -/
+instance CoefficientPerverseTheory.instSubsingleton [IsComplexVariety X] :
+    Subsingleton (CoefficientPerverseTheory k X) where
+  allEq := by
+    rintro ⟨t₁, hle₁, hge₁⟩ ⟨t₂, hle₂, hge₂⟩
+    have hle : t₁.le = t₂.le :=
+      funext fun m ↦ funext fun K ↦ propext ((hle₁ K m).trans (hle₂ K m).symm)
+    have hge : t₁.ge = t₂.ge :=
+      funext fun m ↦ funext fun K ↦ propext ((hge₁ K m).trans (hge₂ K m).symm)
+    have ht : t₁ = t₂ := by
+      cases t₁
+      cases t₂
+      cases hle
+      cases hge
+      rfl
+    subst ht
+    rfl
+
+section Specializations
+
+variable [IsComplexVariety X]
+
+/-- At `k = ℚ` the generic structure is the rational perverse sheaf theory. -/
+noncomputable def rationalPerverseTheoryEquiv :
+    CoefficientPerverseTheory ℚ X ≃ PerverseSheaves.PerverseSheafTheory X where
+  toFun T := ⟨T.t, T.le_iff, T.ge_iff⟩
+  invFun T := ⟨T.t, T.le_iff, T.ge_iff⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- At a subfield `A` of ℝ the generic structure is the real-coefficient perverse theory. -/
+noncomputable def realPerverseTheoryEquiv (A : Subfield ℝ) :
+    CoefficientPerverseTheory A X ≃ RealCoefficientPerverseSheaves.PerverseTheory A X where
+  toFun T := ⟨T.t, T.le_iff, T.ge_iff⟩
+  invFun T := ⟨T.t, T.le_iff, T.ge_iff⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- A rational perverse sheaf theory provides the generic one at `k = ℚ`. -/
+noncomputable instance (priority := low) ofRationalPerverseTheory
+    [PerverseSheaves.PerverseSheafTheory X] :
+    CoefficientPerverseTheory ℚ X :=
+  (rationalPerverseTheoryEquiv X).symm inferInstance
+
+/-- A real-coefficient perverse theory provides the generic one at `k = A`. -/
+noncomputable instance (priority := low) ofRealPerverseTheory (A : Subfield ℝ)
+    [RealCoefficientPerverseSheaves.PerverseTheory A X] :
+    CoefficientPerverseTheory A X :=
+  (realPerverseTheoryEquiv X A).symm inferInstance
+
+end Specializations
+
 variable [IsComplexVariety X] [CoefficientPerverseTheory k X]
 
 /-- The source-characterized middle perverse t-structure. -/
@@ -96,12 +155,5 @@ def perverseCohomology (j : ℤ)
 
 /-- The original coefficient-derived object of an actual native perverse-heart object. -/
 def underlyingDerived (K : PerverseSheaf k X) : CoefficientDerived k (space X) := K.obj.obj
-
-/-- The real coefficient subfield used by Saito has its literal inclusion into C. -/
-def realCoefficientMap (A : Subfield ℝ) : A →+* ℂ := Complex.ofRealHom.comp A.subtype
-
-/-- The corresponding scalar structure is built from that fixed inclusion. -/
-@[instance_reducible] def realCoefficientAlgebra (A : Subfield ℝ) : Algebra A ℂ :=
-  (realCoefficientMap A).toAlgebra
 
 end MathlibExt.AlgebraicGeometry.CoefficientPerverseModels

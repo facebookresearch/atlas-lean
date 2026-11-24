@@ -12,7 +12,8 @@ import MathlibExt.AlgebraicGeometry.HarmonicChernWeilFormulas
 /-!
 # Low-degree evaluations of the Chern--Weil polynomial
 
-`chernWeilValue` is `chernWeilPolynomial` of the curvature (`chernWeilValue_eq_chernWeilPolynomial`).
+`chernWeilValue` is `chernWeilPolynomial` of the curvature
+(`chernWeilValue_eq_chernWeilPolynomial`).
 For diagonal curvature `diag(ω₁, ω₂)` the total Chern form is `(1 + (i/2π) ω₁)(1 + (i/2π) ω₂)`, so
 `c₁ = (i/2π)(ω₁ + ω₂)` and `c₂ = (i/2π)² ω₁ ∧ ω₂`; and every Chern form of degree above the rank
 vanishes. The evaluations below check these signs and the `2^j j!` normalization on basis vectors.
@@ -47,7 +48,8 @@ def basisForm (a b : Fin 4) (x y : Fin 4) : ℤ :=
 def diagonalCurvature (x y : Fin 4) : Matrix (Fin 2) (Fin 2) ℤ :=
   Matrix.diagonal ![basisForm 0 1 x y, basisForm 2 3 x y]
 
-/-- Degree two: the signed minor sum of `diag(e¹ ∧ e², e³ ∧ e⁴)` on `e₁, …, e₄` is `2^2 · 2! = 8`. -/
+/-- Degree two: the signed minor sum of `diag(e¹ ∧ e², e³ ∧ e⁴)` on `e₁, …, e₄` is
+`2^2 · 2! = 8`. -/
 theorem diagonal_degree_two_sum : chernWeilSum 2 2 diagonalCurvature id = 8 := by
   rw [chernWeilSum, sum_embedding_fin_two]
   decide
