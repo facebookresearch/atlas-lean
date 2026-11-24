@@ -29,7 +29,7 @@
 - [Body and inertial angular momenta have the same squared norm](com-angular-momentum-dot-product-self.md)
 - [Without torque the rotational kinetic energy is stationary](has-fderiv-at-rotational-kinetic-energy.md)
 - [Without torque the squared body angular momentum is stationary](has-fderiv-at-angular-momentum-norm-sq-o.md)
-- [Torque-free motion conserves the energy and squared angular momentum](torque-free-conserved.md)
+- [Torque-free motion conserves rotational energy and ‖L‖²](torque-free-conserved.md)
 
 ## A torque-driven rotation about a fixed axis
 

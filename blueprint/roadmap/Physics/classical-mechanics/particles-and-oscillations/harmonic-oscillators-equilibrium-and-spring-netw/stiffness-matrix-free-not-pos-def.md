@@ -1,4 +1,4 @@
-# Free networks without self-springs have no positive definite stiffness
+# Nonempty free networks without self-springs: K not positive definite
 
 Let `ι` be a finite nonempty set of nodes and `k` pair weights with `k_{ii} = 0` for every node.
 Then the [stiffness matrix](stiffness-matrix.md) of the free network (`w = 0`) is not positive

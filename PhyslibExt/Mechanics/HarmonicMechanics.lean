@@ -265,7 +265,7 @@ lemma moment2D_add {ρ : Type*} [Fintype ρ] (r F G : ρ → (Fin 2 → ℝ)) :
   simp only [Pi.add_apply]
   ring
 
-/-- Single central-pair zero moment (MC, no-body-couple model): one pair of
+/-- Single central-pair zero moment (no-body-couple model): one pair of
 forces, equal, opposite, and each a scalar multiple of the separation vector
 `q - p` (centrality hypothesis), has zero total 2D moment about any point
 `o`. Together with `moment2D_add` this is the single-pair case; the summed
@@ -659,7 +659,7 @@ lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [hcongr, Finset.sum_sub_distrib, hite]
   ring
 
-/-- Rigid-translation kernel identity (MC, free network only): without self-springs
+/-- Rigid-translation kernel identity (free network only): without self-springs
 (`k i i = 0`) and with `w = 0` the stiffness matrix sends the all-ones vector to `0`. On an
 empty node type that vector is itself `0` and the identity is trivial; see
 `stiffnessMatrix_free_not_posDef` for the nonempty case. -/
@@ -751,7 +751,7 @@ lemma innerProductM_eq_zero_of_ne {ι : Type*} [Fintype ι]
   have hne' : ω2 - μ2 ≠ 0 := sub_ne_zero.mpr hne
   exact (mul_eq_zero.mp hIP).resolve_left hne'
 
-/-- Rayleigh nonnegativity (MC, spring stiffness only): a generalized
+/-- Rayleigh nonnegativity (spring stiffness only): a generalized
 eigenvalue of a spring stiffness matrix (reciprocal nonnegative weights without self-springs,
 nonnegative wall stiffnesses) with positive masses is nonnegative for nonzero modes. This is
 NOT claimed for an arbitrary symmetric `K`; it is false in general. -/
