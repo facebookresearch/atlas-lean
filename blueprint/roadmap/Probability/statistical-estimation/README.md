@@ -13,6 +13,7 @@ Point estimation theory: bias, risk and mean squared error, likelihood and maxim
 - [Asymptotic efficiency and adaptive estimation](asymptotic-efficiency-and-adaptive-estimation/README.md)
 - [Likelihood and maximum likelihood estimators](likelihood-and-maximum-likelihood-estimators/README.md)
 - [Existence and uniqueness of the Gamma–Poisson MLE](existence-and-uniqueness-of-the-gamma-poisson-ml/README.md)
+- [Existence of maximum likelihood estimates in log-linear models](existence-of-maximum-likelihood-estimates-in-log/README.md)
 - [Likelihood equations and efficiency of the Gamma–Poisson MLE](likelihood-equations-and-efficiency-of-the-gamma/README.md)
 - [Minimax lower bounds](minimax-lower-bounds/README.md)
 - [Stein's lemma and James–Stein estimation](stein-s-lemma-and-james-stein-estimation/README.md)
