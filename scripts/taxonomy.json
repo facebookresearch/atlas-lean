@@ -9748,6 +9748,7 @@
   "MathlibExt/Analysis/Optimization/TrustRegion": {"to": "Analysis/numerical-analysis", "title": "Trust-region methods"},
   "MathlibExt/Analysis/PDE/HeatDuhamel": {"to": "Analysis/partial-differential-equations", "title": "Heat-kernel Duhamel integral"},
   "MathlibExt/Analysis/PDE/HeatDuhamelDerivatives": {"to": "Analysis/partial-differential-equations", "title": "Heat-kernel Duhamel derivatives"},
+  "MathlibExt/Analysis/PDE/HeatIteratedDerivatives": {"to": "Analysis/partial-differential-equations", "title": "Iterated heat and Duhamel derivatives"},
   "MathlibExt/Analysis/PDE/HeatKernelGradient": {"to": "Analysis/partial-differential-equations", "title": "Weighted heat gradient estimates"},
   "MathlibExt/Analysis/PDE/HeatDuhamelSeries": {"to": "Analysis/partial-differential-equations", "title": "Summation under heat integrals"},
   "MathlibExt/Analysis/PDE/PotentialHeatRegularity": {"to": "Analysis/partial-differential-equations", "title": "Potential-heat restart and spatial regularity"},
