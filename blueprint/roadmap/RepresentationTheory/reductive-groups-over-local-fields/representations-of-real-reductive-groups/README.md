@@ -12,3 +12,7 @@ Admissible representations of real reductive groups such as U(p, q): Harish-Chan
 - [Harish-Chandra's classification of the discrete series](harish-chandra-discrete-series-classification.md)
 - [Blattner's formula](blattner-formula.md)
 - [Holomorphic discrete series](holomorphic-discrete-series.md)
+- [Proof of Harish-Chandra's admissibility theorem](proof-of-harish-chandra-admissibility-theorem.md)
+- [The Dixmier–Malliavin lemma and factorization along one-parameter subgroups](dixmier-malliavin-lemma-and-factorization.md)
+- [Harish-Chandra's construction of the holomorphic discrete series](harish-chandra-construction-of-holomorphic-discrete-series.md)
+- [The Hecke algebra of a real reductive group](hecke-algebra-of-a-real-reductive-group.md)

@@ -10,3 +10,5 @@ Automorphic forms and automorphic representations of a reductive group over a nu
 - [Tensor product theorem for automorphic representations](tensor-product-theorem.md)
 - [Eisenstein series and their meromorphic continuation](eisenstein-series.md)
 - [Automorphic representations as constituents of induced representations](automorphic-representations-as-constituents-of-induced-representations.md)
+- [Compactness of adelic quotients of unipotent groups](compactness-of-unipotent-adelic-quotients.md)
+- [Harish-Chandra's convolution identity and uniform moderate growth](harish-chandra-convolution-identity.md)

@@ -8,3 +8,5 @@ Representations of infinite groups and Lie algebras: continuous and unitary repr
 - [Tensor squares of exceptional Lie algebra representations](tensor-squares-of-exceptional-lie-algebra-repres/README.md)
 - [Continuous semilinear representation](is-continuous-semilinear-representation.md)
 - [Branching from $\mathrm{GL}_{n+1}(\mathbb{C})$ to $\mathrm{GL}_n(\mathbb{C})$](gl-branching-rule.md)
+- [Smooth vectors and K-finite vectors of continuous representations](smooth-and-k-finite-vectors.md)
+- [Coefficient maps of square-integrable representations](coefficients-of-square-integrable-representations.md)

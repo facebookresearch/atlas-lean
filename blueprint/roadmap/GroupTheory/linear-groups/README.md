@@ -15,3 +15,5 @@ Groups of matrices over fields and rings: SL2, PGL2 and SU(2) and their conjugac
 - [Malcev's theorem on linear groups](malcev-residually-finite.md)
 - [Selberg's lemma](selberg-finite-index-torsion-free.md)
 - [Stable sets of linear automorphisms](has-stable-series.md)
+- [Generation of the special linear group by elementary transvections](generation-of-special-linear-groups-by-transvections.md)
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](parabolic-subgroups-and-rational-bruhat-decomposition.md)
