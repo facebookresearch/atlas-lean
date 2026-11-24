@@ -114,6 +114,17 @@ with their recorded bytes, for modules none of its inputs provided and no search
 outside the root artifact root provides now. Custody and
 growth records are trusted run state: removing or changing them invalidates
 these record-based checks. Recover from a rejection with a new output directory.
+
+Each preparation writes `lake-custody/pending.json` before its Lake process
+starts and removes it only after its listing and growth records, or its
+rejection record, are saved. If the optimizer stops in between, for example on
+SIGTERM or SIGKILL, the marker remains: a resume stops before running any child
+process, and the output directory runs no further preparation. This covers the
+optimizer process being terminated; it relies on atomic file replacement and
+makes no claim about host crashes, power loss, or filesystems without atomic
+rename. A killed optimizer can leave its Lake process group running. Make sure
+that group has exited before using the worktree for another run; a new output
+directory does not check artifacts that an interrupted preparation wrote.
 `--retry-blocked` does not relax custody: if Lake rebuilds a stale or partial
 artifact that an earlier row pinned, the retry is rejected too.
 
@@ -131,10 +142,9 @@ or ctime; a namespace, or a symlinked searched root, moved and restored inside
 a window where only endpoints are compared; module search paths other than the
 captured `LEAN_PATH` and the compiler library; or identity changes between
 processes (a resume compares bytes, so a same-byte replacement between
-invocations is accepted). A preparation
-interrupted before its growth is recorded can cause resume to fail closed, as
-can another output directory's run on the same worktree. Use a new output
-directory after such a rejection.
+invocations is accepted). Another output directory's run on the same worktree
+can cause resume to fail closed. Use a new output directory after such a
+rejection.
 
 During validation, a phase retains compilation-input derivations and the
 filesystem facts used to derive them. The facts are reread at native-command
