@@ -21,7 +21,7 @@ Concrete checks over configurations `Int × Int` with a squared-distance cost
 proxy and identity steering (plus one midpoint-steering oracle): sPRM vertices
 and edges on four samples, RRT growth on three samples (one a duplicate,
 exercising the skip), the tree property instance, the RRT nearest tie-break,
-PRM* edges under a vertex-count radius schedule, RRT* choose-parent and
+PRM* edges under a sample-count radius schedule, RRT* choose-parent and
 rewiring with recomputed tree costs, descendant cost freshness, the
 nearest-vertex candidate fallback, ancestor rejection on rewire, `rewireAux`
 forbid-guard isolation with a synthetic cost table, an RRT* size-dependent
@@ -132,6 +132,19 @@ def testOraclesGateFallback : Oracles (Int × Int) :=
   { free := fun _ => true
     link := fun a b => a == (0, 0) && (b == (9, 0) || b == (10, 0))
     steer := fun _ s => if s == (1, 0) then (10, 0) else s
+    cost := sqDist
+    radius := 100
+    cost_nonneg := sqDist_nonneg
+    cost_self := sqDist_self
+    cost_pos := sqDist_pos }
+
+/-- Oracles isolating RRT* duplicate steering: everything free and linking;
+steering sends `u = (0, 0)`, `s = (0, 0)` to `(1, 0)` and is the identity on
+the sample otherwise. -/
+def testOraclesDupSteer : Oracles (Int × Int) :=
+  { free := fun _ => true
+    link := fun _ _ => true
+    steer := fun u s => if u == (0, 0) && s == (0, 0) then (1, 0) else s
     cost := sqDist
     radius := 100
     cost_nonneg := sqDist_nonneg
@@ -293,7 +306,7 @@ theorem testRrt_acyclic :
       v ∈ (rrt testOracles (0, 0) [(1, 0), (2, 0), (1, 0)]).1 := by decide
   exact rrt_acyclic _ _ _ _ hchain hverts
 
-/-- PRM* with a vertex-count radius schedule connects all six pairs with twelve
+/-- PRM* with a sample-count radius schedule connects all six pairs with twelve
 arcs, unlike the fixed radius 2 which gives six arcs (`testSprmEdges_basic`). -/
 theorem testPrmStar_edges :
     prmStarEdges testOracles (fun n => if n ≤ 3 then 2 else 200)
@@ -309,6 +322,17 @@ theorem testPrmStar_const :
         [(0, 0), (1, 0), (0, 1), (10, 10)] =
       sprmEdges testOracles (0, 0) [(0, 0), (1, 0), (0, 1), (10, 10)] :=
   prmStarEdges_const_radius _ _ _
+
+/-- Free-count schedule: with `testOraclesObs`, start `(0, 0)` and samples
+`[(2, 0), (10, 10)]` (exactly one sample is free, since `(10, 10)` is
+blocked), the schedule `fun n => if n = 1 then 200 else 2` selects radius
+200 at free count 1, connecting `(0, 0)` and `(2, 0)` (squared distance 4)
+with both arcs; the raw sample count 2 and the vertex count 2 would both
+select radius 2 and give no edges. -/
+theorem testPrmStar_sampleCount :
+    prmStarEdges testOraclesObs (fun n => if n = 1 then 200 else 2)
+        (0, 0) [(2, 0), (10, 10)] =
+      [((0, 0), (2, 0)), ((2, 0), (0, 0))] := by decide
 
 /-- Cost table fixture: two entries. -/
 def testCosts : List ((Int × Int) × (Int × Nat)) :=
@@ -345,11 +369,22 @@ theorem testRrtStar_rewire_costs :
 
 /-- RRT* choose-parent: for sample `(9, 0)` the nearer vertex `(10, 0)` has
 cost-to-come `(100, 1)` (total `(101, 1)`) while `(0, 0)` has cost-to-come
-`(0, 1)` (total `(81, 1)`), so the non-nearest `(0, 0)` is chosen. -/
+`(0, 1)` (total `(81, 1)`), so the seeded nearer vertex `(10, 0)` gives way
+to the cheaper non-nearest `(0, 0)`. -/
 theorem testChooseParent_nonNearest :
     chooseParent testOraclesBig [(10, 0), (0, 0)]
         [((10, 0), (100, 1)), ((0, 0), (0, 1))]
-        (fun _ => testOraclesBig.radius) (0, 0) (9, 0) =
+        (fun _ => testOraclesBig.radius) (10, 0) (9, 0) =
+      some (0, 0) := by decide
+
+/-- RRT* choose-parent tie: both candidates `(2, 0)` and `(0, 0)` have total
+cost `1` for target `(1, 0)`, the earlier list element is `(2, 0)`, and the
+result is `some (0, 0)` because the supplied seed `near = (0, 0)` wins the
+tie. -/
+theorem testChooseParent_tieNearest :
+    chooseParent testOraclesBig [(2, 0), (0, 0)]
+        [((2, 0), (0, 1)), ((0, 0), (0, 1))]
+        (fun _ => 100) (0, 0) (1, 0) =
       some (0, 0) := by decide
 
 /-- RRT* tree property instance, via the general lemma. -/
@@ -569,6 +604,15 @@ theorem testRrtStar_gateFallback :
       ([(10, 0), (9, 0), (0, 0)], [((0, 0), (10, 0)), ((0, 0), (9, 0))],
        [((9, 0), (81, 1)), ((10, 0), (100, 1)), ((0, 0), (0, 1))]) := by decide
 
+/-- RRT* duplicate steering: the raw sample `(0, 0)` is already the start
+vertex, but steering moves it to the fresh `(1, 0)`, so `(1, 0)` is a vertex
+and `((0, 0), (1, 0))` is an edge of the result. A raw-sample membership
+precheck would make this fail. -/
+theorem testRrtStar_duplicateSteers :
+    (1, 0) ∈ (rrtStar testOraclesDupSteer (fun _ => 100) (0, 0)
+      [(0, 0)]).1 ∧
+    ((0, 0), (1, 0)) ∈ (rrtStar testOraclesDupSteer (fun _ => 100) (0, 0)
+      [(0, 0)]).2.1 := by decide
 
 #print axioms sprmVertices_all_free
 #print axioms sprmEdges_symmetric
@@ -613,5 +657,7 @@ theorem testRrtStar_gateFallback :
 #print axioms testRrtStar_nearestBlocked
 #print axioms testRrtStar_radiusPreInsertion
 #print axioms testRrtStar_gateFallback
+#print axioms testChooseParent_tieNearest
+#print axioms testRrtStar_duplicateSteers
 
 end Cslib.Planning.MotionPlanning.SamplingPlanners
