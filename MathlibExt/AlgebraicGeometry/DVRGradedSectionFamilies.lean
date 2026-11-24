@@ -22,22 +22,31 @@ chosen line comparison `lineIso`. All higher-degree comparisons are computed
 from these by native pullback power maps and are fixed on every local line
 generator.
 
-The filtrations are attached to the chosen line comparison. Blum--Xu's
-filtration is the one for the comparison induced by the isomorphism of the
-generic log pairs (the canonical identification of the relative
-log-pluricanonical sheaves); that normalization is not encoded here, and
-`LogAnticanonicalModels` does not determine `lineIso`. Another choice differs
-by an automorphism of the first generic line, and the degree-`m` comparison
-then changes by its `m`-th power (`powerIso_withLineAut`): for multiplication
-by `c ∈ Kˣ` the degree-`m` filtration is shifted by `m · v(c)`, which does not
-change the Rees-algebra statements requested downstream (the substitution
-`z ↦ T^(-v(c)) z` identifies the two Rees algebras).
+The filtrations here are *raw* lattice filtrations attached to the chosen line
+comparison: `forwardFiltration C u m a` is the reduction of the first lattice
+intersected with `π^a` times the second. They are not Blum--Xu's indexed
+filtrations. Even for the comparison induced by the isomorphism of the generic
+log pairs (which is not encoded here; `LogAnticanonicalModels` does not
+determine `lineIso`), Blum--Xu's filtration in degree `m` is a reindexing of the
+raw one by a discrepancy shift: in arXiv1812.03538v2, §§5.1.1--5.1.2 their map
+carries the factor `t^(m r a − p)`, with `a` from their (11), so their step `p`
+is the raw step `p − m r a` (and the reverse filtration uses `a'`). For
+example, for two models `ℙ¹_R` without boundary glued by `y = t x`, the
+anticanonical comparison sends `∂y, y ∂y, y² ∂y` to `t⁻¹ ∂x, x ∂x, t x² ∂x`, and
+the raw `F⁰` has dimension `2` while Blum--Xu's `F⁰` is everything (dimension
+`3`). Another choice of line comparison differs by an automorphism of the first
+generic line, and the degree-`m` comparison then changes by its `m`-th power
+(`powerIso_withLineAut`): for multiplication by `c ∈ Kˣ` the degree-`m` raw
+filtration is shifted by `m · v(c)`. Such linear shifts do not change the
+Rees-algebra statements requested downstream: the substitution
+`z ↦ T^(-v(c)) z` fixes `T` and the section grading and identifies the two Rees
+algebras, their coefficient descriptions and their relative `Proj`.
 
 The forward and reverse specialization filtrations are the actual
 DVR lattice intersection/rescaling/reduction operations. A relative
 log-anticanonical adapter ties these lines to the actual proper
 canonical/reflexive Hom-of-boundary-ideal power, not a free graded ring.
-Source: Blum--Xu arXiv1812.03538v2, §§2--3.
+Sources: Blum--Xu arXiv1812.03538v2, §§2--3 and §5.1 (indexing).
 Generic section/base-change/tensor/power facts remain source integration.
 -/
 
@@ -176,11 +185,15 @@ def reverseModel (C : D.GradedComparisons) (m : ℕ) :
   moduleIso := D.reversePowerIso m
   sectionComparison := C.reverse m
 
+/-- The raw forward filtration in degree `m`: reductions of the first lattice intersected with
+`π^a` times the second lattice (through `powerIso`). Blum--Xu's indexing differs by a discrepancy
+shift (module docstring). -/
 def forwardFiltration (C : D.GradedComparisons) (u : Uniformizer (R := R) (K := K))
     (m : ℕ) (a : ℤ) :=
   modelSpecializationFiltration (D.firstBase m) (D.firstInjective m) (D.firstSpecial m) u
     (D.forwardModel C m) a
 
+/-- The raw reverse filtration in degree `m`, with the roles of the two models exchanged. -/
 def reverseFiltration (C : D.GradedComparisons) (u : Uniformizer (R := R) (K := K))
     (m : ℕ) (a : ℤ) :=
   modelSpecializationFiltration (D.secondBase m) (D.secondInjective m) (D.secondSpecial m) u
@@ -192,8 +205,8 @@ variable [HasDerivedPushforwards.{0}]
 
 /-- Actual relative log-anticanonical lines and exact generic-boundary identification. These
 make both lines relative log-anticanonical; they do not determine the generic line comparison
-`D.lineIso`, whose Blum--Xu normalization (induced by the isomorphism of the generic log pairs)
-is not encoded (see the module docstring). -/
+`D.lineIso`; the pair-induced comparison is not encoded, and even for it Blum--Xu's indices
+differ from the raw ones by a discrepancy shift (see the module docstring). -/
 structure LogAnticanonicalModels (D : TwoModels (R := R) (K := K)) (n : ℕ) where
   firstReference : ProperReference D.first.hom
   secondReference : ProperReference D.second.hom
