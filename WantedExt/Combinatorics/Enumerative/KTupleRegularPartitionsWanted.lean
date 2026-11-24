@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import Mathlib.Data.Int.Interval
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProductCongruence
+public import MathlibExt.Combinatorics.Enumerative.Partition.SignedEulerProduct
 import Mathlib
 
 namespace MetaMathlibExt
@@ -268,21 +269,6 @@ f15/f22.
 public theorem_wanted qEulerProduct_fifth_power_identity :
     qEulerProduct 1 ^ 5 = qEulerProduct 2 ^ 2 * boundedBilateralSeries
       (fun m => m * (3 * m + 1) / 2) (fun m => 6 * m + 1)
-
-/--
-**A signed Euler product identity.** Write $f_k = \prod_{i \ge 1} (1 - q^{ki})$ for the Euler
-products, as integer power series in $q$, and let $(-q;-q)_\infty = \prod_{i \ge 1} (1 - (-q)^i)$
-be $f_1$ with $q$ replaced by $-q$. Then
-$$(-q;-q)_\infty \, f_1 f_4 = f_2^3.$$
-This is the identity $(-q;-q)_\infty = f_2^3 / (f_1 f_4)$ with the denominator cleared.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 4, equation
-f1-q.
--/
-public theorem_wanted rescale_neg_one_qEulerProduct_identity :
-    PowerSeries.rescale (-1) (qEulerProduct 1) * qEulerProduct 1 * qEulerProduct 4 =
-      qEulerProduct 2 ^ 3
 
 /--
 **Gauss's theta identity for the Euler products.** Write $f_k = \prod_{i \ge 1} (1 - q^{ki})$

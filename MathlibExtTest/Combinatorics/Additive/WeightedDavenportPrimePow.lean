@@ -23,4 +23,17 @@ example : weightedDavenport {2} ((i : Fin 2) → ZMod (2 ^ ((i : ℕ) + 3))) = 1
     (fun i => (i : ℕ) + 3) (fun _ _ h => Nat.add_le_add_right h 3)
     (by decide) (by decide) {2} (by decide) (by decide) (by decide)).trans (by decide)
 
+/-- In rank one the comparison with later factors is vacuous. The remainder of 32
+modulo the weight bound 10 is two, and weight eight gives threshold four. -/
+example : weightedDavenport {8} (Fin 1 → ZMod 32) = 4 :=
+  (weightedDavenport_pi_zmod_prime_pow_of_not_dvd 2 1 2 Nat.prime_two (by decide)
+    (fun _ => 5) monotone_const (by decide) (by decide) {8}
+    (by decide) (by decide) (by decide) (by decide)).trans (by decide)
+
+/-- Weights four and seven on two factors of order eight give threshold three. -/
+example : weightedDavenport {4, 7} (Fin 2 → ZMod 8) = 3 :=
+  (weightedDavenport_pi_zmod_prime_pow_of_not_dvd 2 2 1 Nat.prime_two (by decide)
+    (fun _ => 3) monotone_const (by decide) (by decide) {4, 7}
+    (by decide) (by decide) (by decide) (by decide)).trans (by decide)
+
 end MetaMathlibExt

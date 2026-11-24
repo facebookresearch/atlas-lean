@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.Partition.FixedPerimeterDistinctArmLeg
+public import MathlibExt.Combinatorics.Enumerative.Partition.FixedPerimeterDistinctMonotone
 public import MathlibExt.Combinatorics.Enumerative.Partition.FixedPerimeterPMResidueArmLeg
 
 /-!
@@ -90,22 +91,6 @@ Theorem 2. -/
 public theorem_wanted perimeterDistinctCount_le_perimeterPMResidueCount {d a n : ℕ} (hd : 0 < d)
     (hn : 0 < n) (ha : 0 < a) (had : 2 * a < d + 3) :
     perimeterDistinctCount d a n ≤ perimeterPMResidueCount d a n
-
-/-- **Monotonicity of fixed perimeter counts with $d$-distinct parts.** For natural numbers
-$d$, $a$ and $n$, let $h_d^{(a)}(n)$ be the number of partitions of perimeter $n$ (largest part
-plus number of parts minus $1$) into $d$-distinct parts, all at least $a$, where parts are
-$d$-distinct when no part repeats and any two parts differ by at least $d$. If $d$, $n$ and $a$
-are positive, then $h_d^{(a+1)}(n) \le h_d^{(a)}(n)$, $h_{d+1}^{(a)}(n) \le h_d^{(a)}(n)$ and
-$h_d^{(a)}(n) \le h_d^{(a)}(n + 1)$.
-
-Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
-Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
-Proposition 1. -/
-public theorem_wanted perimeterDistinctCount_shift_inequalities {d a n : ℕ} (hd : 0 < d)
-    (hn : 0 < n) (ha : 0 < a) :
-    perimeterDistinctCount d (a + 1) n ≤ perimeterDistinctCount d a n ∧
-      perimeterDistinctCount (d + 1) a n ≤ perimeterDistinctCount d a n ∧
-      perimeterDistinctCount d a n ≤ perimeterDistinctCount d a (n + 1)
 
 /-- **Monotonicity of fixed perimeter counts with parts $\equiv \pm a \pmod{d+3}$.** For natural
 numbers $d$, $a$ and $n$, let $\ell_d^{(a)}(n)$ be the number of partitions of perimeter $n$

@@ -46,8 +46,8 @@ fields.
 - [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md), for the factors of pairs on both sides and the Weil–Deligne representations $\mathrm{Sp}(m)$; that page uses the Weil group $W_F$ without defining it
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the representations $L(\Delta_1, \dots, \Delta_r)$ of the reductions
 - [Local class field theory: the local Artin map](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the compatibility with local class field theory for $n = 1$
-- [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil–Deligne representations and their monodromy, which that node plans
-- [Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ](../weil-groups-and-the-archimedean-local-langlands-correspondence.md), for the Weil group $W_F$ of a non-archimedean local field and its representations (Wedhorn, §1.1), for the Galois side
+- [Weil–Deligne representations](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-deligne-representations.md), for the Weil–Deligne representations and their monodromy
+- [Weil group of a p-adic field](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md), for the Weil group $W_F$ of the finite extension $F$ of $\mathbb{Q}_p$ (Wedhorn, §1.1), for the Galois side; its representations are the Weil–Deligne representations with $N = 0$
 
 ## Proof depends on
 
