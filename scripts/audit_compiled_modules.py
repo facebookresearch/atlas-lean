@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+import contextlib
 import json
 import os
 from pathlib import Path
@@ -276,6 +277,27 @@ def launch_lean(command: list[str], root: Path, environment: dict[str, str] | No
                             stderr=subprocess.STDOUT, text=True, start_new_session=environment is None)
 
 
+@contextlib.contextmanager
+def termination_interrupts():
+    """While the audit runs, SIGTERM and SIGHUP interrupt it as SIGINT does, so its batches are killed.
+
+    Only in the main thread, which alone receives signals, and only for a signal
+    still at its default action: one the caller ignores, as `nohup` does SIGHUP,
+    stays ignored. The previous handlers come back when the audit ends.
+    """
+    saved = {}
+    if threading.current_thread() is threading.main_thread():
+        for name in ('SIGTERM', 'SIGHUP'):
+            number = getattr(signal, name, None)
+            if number is not None and signal.getsignal(number) is signal.SIG_DFL:
+                saved[number] = signal.signal(number, signal.default_int_handler)
+    try:
+        yield
+    finally:
+        for number, handler in saved.items():
+            signal.signal(number, handler)
+
+
 class SkippedGroup(AuditFailure):
     """A group not started because an earlier group failed or the audit was cancelled."""
 
@@ -450,12 +472,14 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
             process = admission.launch(index, first, lambda: launch_lean(command, root, environment))
             try:
                 output, _ = process.communicate(timeout=BATCH_TIMEOUT)
-            except BaseException:  # a timeout: stop the batch, reap it, and leave its pipe undrained
-                admission.stop(process)
+            except BaseException:  # a timeout: record the failure and stop the batch at once,
+                with admission.condition:  # then reap it and leave its pipe undrained
+                    admission.fail(index)
+                    admission.kill_batch(process)
                 process.wait()
                 if process.stdout:
                     process.stdout.close()
-                admission.finished(process, failed=index)
+                admission.finished(process)
                 raise
             # Classify under the admission lock (a reentrant one), so that no batch
             # starts between this batch's end and the record of its group's failure.
@@ -491,7 +515,7 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
     # here, in the coordinating thread, finds each batch either registered, and
     # stops it, or not started, and prevents it.
     futures = []
-    with ThreadPoolExecutor(max_workers=count) as pool:
+    with termination_interrupts(), ThreadPoolExecutor(max_workers=count) as pool:
         try:
             for index, batch in enumerate(initial):
                 futures.append(pool.submit(run_group, index, batch))
@@ -515,19 +539,7 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
             'checkedModules': checked}
 
 
-def interrupt_on_termination() -> None:
-    """Make SIGTERM and SIGHUP interrupt the audit as SIGINT does, so its running batches are killed.
-
-    A signal the caller already ignores, as `nohup` does SIGHUP, stays ignored.
-    """
-    for name in ('SIGTERM', 'SIGHUP'):
-        number = getattr(signal, name, None)
-        if number is not None and signal.getsignal(number) is signal.SIG_DFL:
-            signal.signal(number, signal.default_int_handler)
-
-
 def main() -> int:
-    interrupt_on_termination()
     root = Path(__file__).resolve().parent.parent
     try:
         result = audit(root, inventory(root), (root / 'scripts/check_axioms.lean').read_text())

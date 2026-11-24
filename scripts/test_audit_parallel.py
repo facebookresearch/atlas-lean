@@ -41,7 +41,7 @@ def pidfd_supported():
 
 def listing(environment):
     """What `env -0` prints for this environment."""
-    return b''.join(f'{name}={value}'.encode() + b'\0' for name, value in environment.items())
+    return b''.join(os.fsencode(name) + b'=' + os.fsencode(value) + b'\0' for name, value in environment.items())
 
 
 class FakeProcess:
@@ -384,6 +384,39 @@ class ParallelAuditTests(unittest.TestCase):
             time.sleep(2.5)
             self.assertFalse(marker.exists(), 'Lean kept running after the timeout')
 
+    def test_no_batch_starts_while_a_timed_out_batch_is_reaped(self):
+        # Group 0 times out while group 1 runs; while group 0 is reaped, group 1's free worker
+        # must not start group 2.
+        reaping = threading.Event()
+
+        both = threading.Event()
+
+        class SlowReap(FakeProcess):
+            def communicate(self, timeout=None):
+                if self.command and 'L.Bad' in Path(self.command[-1]).read_text():
+                    both.wait(10)  # group 1 runs too
+                    raise subprocess.TimeoutExpired(self.command, timeout)
+                return super().communicate(timeout)
+
+            def wait(self):
+                reaping.set()
+                time.sleep(0.5)
+                return self.returncode
+
+        fake = FakeLean(hold={'L.M08': reaping}, launched=lambda calls: calls == 2 and both.set())
+        real_launch = fake.launch
+
+        def launch(command, root, environment):
+            process = real_launch(command, root, environment)
+            slow = SlowReap(fake, command)
+            fake.processes[next(name for name, value in fake.processes.items() if value is process)] = slow
+            return slow
+
+        fake.launch = launch
+        with self.assertRaises(subprocess.TimeoutExpired):
+            run_audit(names(32, 2, bad=[(0, 'L.Bad')]), fake, batch_size=8, workers=2)
+        self.assertEqual(sorted(fake.order), ['L.Bad', 'L.M08'])
+
     def test_a_real_batch_is_killed_through_its_pidfd_or_kill(self):
         admission = audit.Admission(gated=False)
         process = admission.launch(0, True, lambda: subprocess.Popen(['sleep', '30']))
@@ -433,12 +466,26 @@ class ParallelAuditTests(unittest.TestCase):
             self.addCleanup(signal.signal, number, handler)
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
         signal.signal(signal.SIGHUP, signal.SIG_IGN)  # as under nohup
-        audit.interrupt_on_termination()
-        self.assertIs(signal.getsignal(signal.SIGTERM), signal.default_int_handler)
-        self.assertIs(signal.getsignal(signal.SIGHUP), signal.SIG_IGN)
+        if hasattr(signal, 'pthread_sigmask'):  # even if the suite started with SIGTERM blocked
+            mask = signal.pthread_sigmask(signal.SIG_UNBLOCK, {signal.SIGTERM})
+            self.addCleanup(signal.pthread_sigmask, signal.SIG_SETMASK, mask)
+        seen = {}
+        never = threading.Event()
+
+        def launched(calls):
+            seen['SIGTERM'] = signal.getsignal(signal.SIGTERM)
+            seen['SIGHUP'] = signal.getsignal(signal.SIGHUP)
+            threading.Timer(0.2, os.kill, (os.getpid(), signal.SIGTERM)).start()
+
+        fake = FakeLean(hold={'L.M000': never}, launched=launched)
         with self.assertRaises(KeyboardInterrupt):
-            os.kill(os.getpid(), signal.SIGTERM)
-            time.sleep(5)
+            run_audit(MODULES, fake, batch_size=8, workers=1)
+        self.assertIs(seen['SIGTERM'], signal.default_int_handler)
+        self.assertIs(seen['SIGHUP'], signal.SIG_IGN)
+        self.assertTrue(fake.processes['L.M000'].killed.is_set())
+        # The handlers come back after the audit, and importing the module changes none.
+        self.assertIs(signal.getsignal(signal.SIGTERM), signal.SIG_DFL)
+        self.assertIs(signal.getsignal(signal.SIGHUP), signal.SIG_IGN)
 
     def test_override_of_one_runs_the_batches_one_by_one(self):
         fake = FakeLean(PAIRS, delay=0.02)
