@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.RingTheory.CyclicSBI
+public import MathlibExt.RingTheory.HochschildCochains
 public import Mathlib.RingTheory.Kaehler.Basic
 public import Mathlib.LinearAlgebra.ExteriorPower.Basic
 public import Mathlib.LinearAlgebra.Multilinear.Curry

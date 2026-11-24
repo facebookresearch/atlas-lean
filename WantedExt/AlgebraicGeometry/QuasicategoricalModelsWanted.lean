@@ -24,6 +24,8 @@ NativeQuasicategoryFunctors.mapping_quasicategory.
 Reference: Lurie, Higher Topos Theory, §§1.2.5 and 2.2.5.
 -/
 
+namespace WantedExt.AlgebraicGeometry.QuasicategoricalModelsWanted
+
 open CategoryTheory
 open MathlibExt.AlgebraicTopology.QuasicategoricalModels
 
@@ -41,3 +43,5 @@ def_wanted categorical_fibrant_diagram_replacement (J : Type v) [Category.{w} J]
 theorem_wanted categorical_homotopy_limit_quasicategory (J : Type v) [Category.{w} J]
     (D : J ⥤ SSet.{max u v w}) (R : CategoricalDiagramReplacement.{u, v, w} D) :
   SSet.Quasicategory (homotopyLimit.{u, v, w} R)
+
+end WantedExt.AlgebraicGeometry.QuasicategoricalModelsWanted

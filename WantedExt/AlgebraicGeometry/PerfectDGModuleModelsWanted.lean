@@ -25,6 +25,8 @@ References: Toën--Vaquié, arXiv:math/0503269v5, §2.2;
 Lurie, Higher Algebra, Construction 1.3.1.13.
 -/
 
+namespace WantedExt.AlgebraicGeometry.PerfectDGModuleModelsWanted
+
 open MathlibExt.CategoryTheory.DGModelContracts
 open MathlibExt.CategoryTheory.PerfectDGModuleModels
 
@@ -34,3 +36,4 @@ universe u v
 def_wanted small_perfect_dg_model (k : Type u) [CommRing k] (C : DGCat k) :
   SmallPerfectModel C
 
+end WantedExt.AlgebraicGeometry.PerfectDGModuleModelsWanted

@@ -23,6 +23,8 @@ Tasks whose target constructs the tensor or replacement must prove that
 construction as part of their task rather than pass it as background.
 -/
 
+namespace WantedExt.AlgebraicGeometry.DGMoritaClosedModelsWanted
+
 open MathlibExt.CategoryTheory.DGModelContracts
 open MathlibExt.CategoryTheory.DGMoritaClosedModels
 
@@ -32,3 +34,5 @@ universe u
 def_wanted dg_morita_closed_model (k : Type u) [CommRing k]
     (Q : ReplacementFunctor k) (C : DGCat k) (T : LocalizedTensorModel Q C) :
   MoritaClosedModel Q C T
+
+end WantedExt.AlgebraicGeometry.DGMoritaClosedModelsWanted

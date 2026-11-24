@@ -22,6 +22,8 @@ References: Eilenberg--Zilber, On products of complexes, §2;
 Toën--Vaquié, arXiv:math/0503269v5, §2.1.
 -/
 
+namespace WantedExt.AlgebraicGeometry.SimplicialAlgebraShuffleWanted
+
 open MathlibExt.AlgebraicGeometry.SimplicialAlgebraGeometry
 open MathlibExt.Algebra.Homology.DGCyclicBarModels
 open MathlibExt.AlgebraicTopology.SimplicialAlgebraShuffle
@@ -35,3 +37,5 @@ def_wanted simplicial_shuffle_dg_algebra (k : Type u) [CommRing k] (A : SAlg k) 
 /-- Assemble the same normalization on every actual simplicial-algebra map. -/
 def_wanted simplicial_shuffle_dg_algebra_functor (k : Type u) [CommRing k] :
   ShuffleAlgebraFunctor k
+
+end WantedExt.AlgebraicGeometry.SimplicialAlgebraShuffleWanted

@@ -22,6 +22,8 @@ splitting or ring compatibility theorem is assumed in a module isomorphism.
 Sources: Stacks 0FKF/0FKG and 0FKM; the attributed completed DeRhamSource port.
 -/
 
+namespace WantedExt.AlgebraicGeometry.OrdinaryDeRhamAlgebraModelsWanted
+
 open MathlibExt.Algebra.Homology.DGCyclicBarModels
 open MathlibExt.RingTheory.OrdinaryDeRhamAlgebraModels
 
@@ -38,3 +40,5 @@ def_wanted ordinary_deRham_coefficient_map (R S B C : Type u)
     (D : DGAlgebra R) (E : DGAlgebra S)
     (M : DeRhamAlgebraModel R B D) (N : DeRhamAlgebraModel S C E) (f : B →ₐ[R] C) :
   CoefficientMap R S B C M N f
+
+end WantedExt.AlgebraicGeometry.OrdinaryDeRhamAlgebraModelsWanted

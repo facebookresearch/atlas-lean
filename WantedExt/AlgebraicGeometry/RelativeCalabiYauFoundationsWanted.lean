@@ -23,6 +23,8 @@ Source: Brav--Dyckerhoff, arXiv:1606.00619v1, §§2--4 and6;
 Keller, Deriving DG categories, §§2--3; Hovey, Model Categories, §5.
 -/
 
+namespace WantedExt.AlgebraicGeometry.RelativeCalabiYauFoundationsWanted
+
 open CategoryTheory
 open MathlibExt.DGSource
 open MathlibExt.CategoryTheory.DGModelContracts
@@ -213,3 +215,5 @@ def_wanted relative_cy_class_maps (k : Type u) [Field k] (A B : DGCat k)
     (S : NegativeTraceSystem k) (f : A ⟶ B) (DA : CYCategoryData S A) (DB : CYCategoryData S B)
     (F : RelativeCYContext S f DA DB) (n : ℤ) (a : RelativeNegativeClass S f n)
     (C : RelativeConeContext F n) : RelativeCYMapModel F n a C
+
+end WantedExt.AlgebraicGeometry.RelativeCalabiYauFoundationsWanted

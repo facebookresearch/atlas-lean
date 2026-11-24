@@ -22,6 +22,8 @@ arXiv:math/0611623v4, §1.3. Generic cochain tensor and braiding proofs are
 already completed in MathlibExt.CategoryTheory.DGSource.
 -/
 
+namespace WantedExt.AlgebraicGeometry.DGCyclicBarModelsWanted
+
 open MathlibExt.Algebra.Homology.DGCyclicBarModels
 
 universe u
@@ -29,3 +31,5 @@ universe u
 /-- Construct the actual simplicial bar from the fixed native generators. -/
 def_wanted dg_cyclic_bar_model (k : Type u) [CommRing k] (A : DGAlgebra k) :
   CyclicBarModel A
+
+end WantedExt.AlgebraicGeometry.DGCyclicBarModelsWanted

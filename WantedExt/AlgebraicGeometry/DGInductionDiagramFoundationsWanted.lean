@@ -24,6 +24,8 @@ References: Brav--Dyckerhoff, arXiv:1606.00619v1, §§2/4/6;
 Keller, Deriving DG categories, §6; Bousfield--Kan, XII.
 -/
 
+namespace WantedExt.AlgebraicGeometry.DGInductionDiagramFoundationsWanted
+
 open CategoryTheory
 open MathlibExt.DGSource
 open MathlibExt.CategoryTheory.DGModelContracts
@@ -158,3 +160,5 @@ def_wanted dg_diagram_cone_map (k : Type u) [Field k] (C : DGCat k)
 /-- Construct the actual free DG bar/cobar index, with every word and every chain differential fixed. -/
 def_wanted dg_coherent_poset_index (k : Type u) [Field k] (J : Type u) [PartialOrder J] :
   CoherentIndexModel k J
+
+end WantedExt.AlgebraicGeometry.DGInductionDiagramFoundationsWanted

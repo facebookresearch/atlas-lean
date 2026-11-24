@@ -22,6 +22,8 @@ ungraded TauCeti Connes cochain proofs are credited as background in the
 public module, with their distinct cochain-versus-chain scope explicit.
 -/
 
+namespace WantedExt.AlgebraicGeometry.DGCyclicMixedModelsWanted
+
 open MathlibExt.Algebra.Homology.DGCyclicBarModels
 open MathlibExt.Algebra.Homology.DGCyclicMixedModels
 
@@ -30,3 +32,5 @@ universe u
 /-- Assemble the actual DG mixed total from the fixed bar and Connes formulas. -/
 def_wanted dg_hochschild_mixed_model (k : Type u) [CommRing k] (A : DGAlgebra k) :
   HochschildMixedModel A
+
+end WantedExt.AlgebraicGeometry.DGCyclicMixedModelsWanted

@@ -18,6 +18,8 @@ homogeneous tensor action. The diagonal remains the native identity graph.
 References: Toën math/0408337v7 §3; Keller, Deriving DG categories §6.
 -/
 
+namespace WantedExt.AlgebraicGeometry.DGBimoduleEnvelopingModelsWanted
+
 open MathlibExt.CategoryTheory.DGModelContracts
 open MathlibExt.CategoryTheory.DGQuasiFunctorModels
 open MathlibExt.CategoryTheory.DGBimoduleEnvelopingModels
@@ -27,3 +29,5 @@ universe u
 /-- Uncurry the actual curried DG bimodule with the specified tensor actions. -/
 def_wanted dg_bimodule_enveloping_module (k : Type u) [CommRing k]
     (C D : DGCat k) (M : Bimodule k C D) : EnvelopingModuleModel M
+
+end WantedExt.AlgebraicGeometry.DGBimoduleEnvelopingModelsWanted

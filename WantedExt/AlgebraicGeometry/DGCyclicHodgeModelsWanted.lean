@@ -21,6 +21,8 @@ and Theorem5.5. The first-page map is the completed public
 `hodgeFirstPageIso`, applied to the normalized associated-graded comparison.
 -/
 
+namespace WantedExt.AlgebraicGeometry.DGCyclicHodgeModelsWanted
+
 open CategoryTheory
 open MathlibExt.Algebra.Homology.DGCyclicBarModels
 open MathlibExt.Algebra.Homology.DGCyclicMixedModels
@@ -66,3 +68,5 @@ theorem_wanted smooth_proper_nonnegative_dg_cyclic_hodge_convergence
   ∀ p q : ℤ, ∃ r : ℤ, 1 ≤ r ∧ ∀ (r' : ℤ) (hr' : 1 ≤ r'), r ≤ r' →
     Nonempty (((hodgeSpectralSequence H).page r' hr').X (p,q) ≅
       gradedCyclicHomology H (-p) (-(p + q)))
+
+end WantedExt.AlgebraicGeometry.DGCyclicHodgeModelsWanted

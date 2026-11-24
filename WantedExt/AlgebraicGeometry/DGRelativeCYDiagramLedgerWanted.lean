@@ -31,6 +31,8 @@ Definition 4.11 and diagrams 6.5--6.7. The ground ring is a field; this
 composition theorem has no characteristic-zero restriction.
 -/
 
+namespace WantedExt.AlgebraicGeometry.DGRelativeCYDiagramLedgerWanted
+
 open CategoryTheory
 open MathlibExt.DGSource
 open MathlibExt.CategoryTheory.DGModelContracts
@@ -140,3 +142,5 @@ theorem_wanted relative_calabi_yau_cospan_composition (k : Type u) [Field k] (R 
     (leftCY : IsRelativeCalabiYau (I.realize a).classes.left)
     (rightCY : IsRelativeCalabiYau (I.realize a).classes.right) :
   IsRelativeCalabiYau (I.realize a).classes.outer
+
+end WantedExt.AlgebraicGeometry.DGRelativeCYDiagramLedgerWanted
