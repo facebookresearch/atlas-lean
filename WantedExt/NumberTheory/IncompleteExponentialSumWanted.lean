@@ -9,10 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.TwistedCompleteExponentialSum
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import MathlibExt.NumberTheory.IncompleteExponentialSum
+public import MathlibExt.NumberTheory.LogarithmicCompletion
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)
@@ -24,7 +27,9 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 `Finset.sup` of `‖·‖₊` over `Finset.range p`, and `d_p(f)` as the `natDegree` of the image of
 `f` in `(ZMod p)[X]`.
 
-Lemma 3.1 (`one_div_sin_pi_lt`) is proved in `MathlibExt.NumberTheory.IncompleteExponentialSum`.
+Lemma 2.2 is proved in `MathlibExt.NumberTheory.TwistedCompleteExponentialSum` and
+Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. The proof of Corollary 1.1 is in
+`MathlibExt.NumberTheory.LogarithmicCompletion`.
 -/
 
 namespace MetaMathlibExt
@@ -149,19 +154,6 @@ public theorem_wanted exists_incompleteSum_eq_completeSum_add (p : ℕ) (hp : p.
               ‖∑ x ∈ Icc 1 p,
                 exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) : ℂ)
 
-/-- **Lower bound for the maximal twisted complete exponential sum.** Let $p$ be a prime, let $f$
-be a polynomial with integer coefficients, and write $e_p(t) = e^{2\pi i t / p}$ for integers $t$.
-Then
-$$\max_{0 \le y \le p - 1} \left| \sum_{x=1}^{p} e_p(f(x) + yx) \right| \ge \sqrt{p}.$$
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 2.2 (`integers-2025-A48-lem-2-2`). -/
-public theorem_wanted sqrt_le_sup_norm_completeSum (p : ℕ) (hp : p.Prime) (f : Polynomial ℤ) :
-    Real.sqrt p ≤
-      (((range p).sup fun y : ℕ =>
-        ‖∑ x ∈ Icc 1 p,
-          exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
-
 /-- **Explicit completion bound for incomplete exponential sums.** Let $p$ be a prime, write
 $e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients whose reduction
 modulo $p$ has degree at least $2$, and let $B$ be an integer with $1 \le B \le p$. Put
@@ -181,23 +173,6 @@ public theorem_wanted norm_incompleteSum_le_min_mul_sup (p : ℕ) (hp : p.Prime)
         (((range p).sup fun y : ℕ =>
           ‖∑ x ∈ Icc 1 p,
             exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
-
-/-- **Logarithmic completion bound for incomplete exponential sums.** Let $p \ge 5$ be a prime,
-write $e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients whose reduction
-modulo $p$ has degree at least $2$, and let $B$ be an integer with $1 \le B \le p$. Put
-$\Phi(f, p) = \max_{0 \le y \le p-1} \left|\sum_{x=1}^{p} e_p(f(x) + yx)\right|$. Then
-$\left|\sum_{x=1}^{B} e_p(f(x))\right| < \Phi(f, p) \log p$.
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Corollary 1.1 (`integers-2025-A48-cor-1-1`). -/
-public theorem_wanted norm_incompleteSum_lt_sup_mul_log (p : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p)
-    (f : Polynomial ℤ) (hf : 2 ≤ (f.map (Int.castRingHom (ZMod p))).natDegree) (B : ℕ)
-    (hB₁ : 1 ≤ B) (hB₂ : B ≤ p) :
-    ‖∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p)‖ <
-      (((range p).sup fun y : ℕ =>
-          ‖∑ x ∈ Icc 1 p,
-            exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) *
-        Real.log p
 
 /-- **Bound for a truncated sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer
 not divisible by $p$, and let $B$ be an integer with $\sqrt{p/\pi} < B < p/2$. Then

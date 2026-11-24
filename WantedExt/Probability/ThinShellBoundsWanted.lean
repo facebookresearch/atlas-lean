@@ -158,17 +158,6 @@ Source: Klartag and Lehec, arXiv:2507.15495v1, Theorem 1.1. -/
 public theorem_wanted thinShellVarianceConstant_lt_top :
     thinShellVarianceConstant < ⊤
 
-/-- **The standard Gaussian has normalized radius variance 2.** For every dimension $n \ge 1$,
-the standard Gaussian measure $\gamma_n$ on $\mathbb{R}^n$ is isotropic log-concave (a probability
-measure with a log-concave Lebesgue density, mean $0$ and identity covariance), and its normalized
-radius variance $\frac{1}{n} \int (|x|^2 - n)^2 \, d\gamma_n(x)$ equals $2$.
-
-Source: Klartag--Lehec, arXiv:2507.15495v1, Introduction. -/
-public theorem_wanted stdGaussian_isotropic_variance (n : ℕ) (hn : 0 < n) :
-    IsIsotropicLogConcave (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) ∧
-      normalizedRadiusVariance
-        (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) = 2
-
 /-- **The isotropic cube has normalized radius variance 4/5.** For every dimension $n \ge 1$, let
 $\mu$ be the uniform probability measure on the cube $[-\sqrt{3}, \sqrt{3}]^n \subset \mathbb{R}^n$
 (Lebesgue measure restricted to the cube and divided by its volume). Then $\mu$ is isotropic

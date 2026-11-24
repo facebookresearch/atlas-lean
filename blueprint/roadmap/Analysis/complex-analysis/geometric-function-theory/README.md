@@ -18,3 +18,4 @@ Conformal and univalent maps: Riemann mapping, Koebe and Bloch theorems, Schwarz
 - [Diameter bound for the derivative at the center of the disc](two-mul-norm-deriv-le-ediam-image-ball.md)
 - [No proper holomorphic map from the unit disc to the complex plane](not-exists-differentiable-on-ball-is-com.md)
 - [Nonconstant holomorphic functions of modulus one on the unit circle cover the unit disc](ball-subset-image-of-norm-eq-one-on-sphe.md)
+- [Automorphisms of the open unit disc](unit-disc-automorphisms.md)

@@ -49,10 +49,16 @@ open Bitonic
 
 /-! ## Relabeling wires -/
 
-/-- Rename the wires of a comparator list by `e`. -/
+/-- **Relabeling the wires of a comparator list.** Given a map $e : \mathbb{N} \to \mathbb{N}$
+and a list of comparators, each a pair $(i, j)$ of wires in $\mathbb{N}$, the relabeled list
+replaces every comparator $(i, j)$ by $(e(i), e(j))$ and keeps the order of the list. -/
 def relabel (e : ℕ → ℕ) (ps : List (ℕ × ℕ)) : List (ℕ × ℕ) := ps.map fun q => (e q.1, e q.2)
 
-/-- Running a relabeled network reads the original network on the relabeled wires. -/
+/-- **Running a relabeled network.** Let $\alpha$ be a linearly ordered type and let
+$e : \mathbb{N} \to \mathbb{N}$ be injective. For every list of comparators, every
+$f : \mathbb{N} \to \alpha$ and every wire $j$, running the list relabeled by $e$ on $f$ gives at
+wire $e(j)$ the same value as running the original list on the input $i \mapsto f(e(i))$ gives at
+wire $j$. -/
 theorem runN_relabel {α : Type*} [LinearOrder α] {e : ℕ → ℕ} (he : Function.Injective e) :
     ∀ (ps : List (ℕ × ℕ)) (f : ℕ → α) (j : ℕ),
       runN (relabel e ps) f (e j) = runN ps (fun i => f (e i)) j
@@ -66,7 +72,10 @@ theorem runN_relabel {α : Type*} [LinearOrder α] {e : ℕ → ℕ} (he : Funct
       funext i
       simp only [Bitonic.cmp, he.eq_iff]
 
-/-- A relabeled network leaves the wires outside the image of `e` alone. -/
+/-- **Relabeled networks fix the wires outside the image.** Let $\alpha$ be a linearly ordered
+type, $e : \mathbb{N} \to \mathbb{N}$ any map and $f : \mathbb{N} \to \alpha$ an assignment of
+values to the wires. For every list of comparators and every wire $x$ that is not of the form
+$e(y)$, running the list relabeled by $e$ on $f$ gives the value $f(x)$ at wire $x$. -/
 theorem runN_relabel_of_not_mem {α : Type*} [LinearOrder α] {e : ℕ → ℕ} :
     ∀ (ps : List (ℕ × ℕ)) (f : ℕ → α) (x : ℕ), (∀ y, x ≠ e y) → runN (relabel e ps) f x = f x
   | [], _, _, _ => rfl
@@ -82,18 +91,29 @@ theorem length_relabel (e : ℕ → ℕ) (ps : List (ℕ × ℕ)) : (relabel e p
 
 /-! ## The networks -/
 
-/-- The last layer of the merge on `2 ^ (k + 2)` wires: compare wires `2 i + 1` and `2 i + 2`. -/
+/-- **Last layer of the odd-even merger.** For $k \in \mathbb{N}$, this is the list of comparators
+$(2i + 1, 2i + 2)$ for $i = 0, 1, \dots, 2^{k+1} - 2$, in increasing order of $i$. It compares the
+neighbouring wires $2i + 1$ and $2i + 2$ and is the last layer of the odd-even merger on
+$2^{k+2}$ wires. -/
 def finalLayer (k : ℕ) : List (ℕ × ℕ) :=
   (List.range (2 ^ (k + 1) - 1)).map fun i => (2 * i + 1, 2 * i + 2)
 
-/-- Batcher's odd-even merger on wires `0, …, 2 ^ (k + 1) - 1`: merge the even wires and the odd
-wires recursively, then compare wires `2 i + 1` and `2 i + 2`. -/
+/-- **Batcher's odd-even merger.** For $k \in \mathbb{N}$, the odd-even merger on wires
+$0, \dots, 2^{k+1} - 1$ is the comparator list defined by recursion on $k$. For $k = 0$ it is the
+single comparator $(0, 1)$. For $k + 1$ it is the merger for $k$ with each wire $i$ renamed to
+$2i$ (merging the even wires), followed by the merger for $k$ with each wire $i$ renamed to
+$2i + 1$ (merging the odd wires), followed by the comparators $(2i + 1, 2i + 2)$ for
+$i = 0, 1, \dots, 2^{k+1} - 2$ in increasing order of $i$. -/
 def oddEvenMerge : ℕ → List (ℕ × ℕ)
   | 0 => [(0, 1)]
   | k + 1 => relabel (fun i => 2 * i) (oddEvenMerge k) ++
       relabel (fun i => 2 * i + 1) (oddEvenMerge k) ++ finalLayer k
 
-/-- Batcher's odd-even merge sort on wires `0, …, 2 ^ k - 1`: sort both halves, then merge. -/
+/-- **Batcher's odd-even merge sort.** For $k \in \mathbb{N}$, odd-even merge sort on wires
+$0, \dots, 2^k - 1$ is the comparator list defined by recursion on $k$. For $k = 0$ it is empty.
+For $k + 1$ it is the sorter for $k$ (sorting wires $0, \dots, 2^k - 1$), followed by the sorter
+for $k$ with each wire $i$ renamed to $2^k + i$ (sorting wires $2^k, \dots, 2^{k+1} - 1$),
+followed by Batcher's odd-even merger on $2^{k+1}$ wires. -/
 def oddEvenSortN : ℕ → List (ℕ × ℕ)
   | 0 => []
   | k + 1 => oddEvenSortN k ++ relabel (fun i => 2 ^ k + i) (oddEvenSortN k) ++ oddEvenMerge k
@@ -111,8 +131,13 @@ private theorem runN_finalLayer_aux {α : Type*} [LinearOrder α] (f : ℕ → �
       simp only [Bitonic.cmp, ih]
       split_ifs <;> first | omega | (subst_vars; simp_all)
 
-/-- The last layer puts the minimum of wires `2 i + 1`, `2 i + 2` on the first and the maximum on
-the second, for `i < 2 ^ (k + 1) - 1`; other wires are untouched. -/
+/-- **Output of the last layer of the odd-even merger.** Let $\alpha$ be a linearly ordered type,
+$k \in \mathbb{N}$ and $f : \mathbb{N} \to \alpha$ an assignment of values to the wires. Running
+the final layer for $k$ on $f$ gives at a wire $x$ the value $\min(f(x), f(x + 1))$ if $x$ is
+odd and $\lfloor x / 2 \rfloor < 2^{k+1} - 1$; otherwise the value $\max(f(x - 1), f(x))$ if
+$x$ is even, $x > 0$ and $(x - 2) / 2 < 2^{k+1} - 1$; and the value $f(x)$ in all other cases.
+In other words, for each $i < 2^{k+1} - 1$ wire $2i + 1$ receives the minimum and wire $2i + 2$
+the maximum of the values of $f$ on these two wires, and every other wire keeps its value. -/
 theorem runN_finalLayer {α : Type*} [LinearOrder α] (k : ℕ) (f : ℕ → α) (x : ℕ) :
     runN (finalLayer k) f x =
       if x % 2 = 1 ∧ x / 2 < 2 ^ (k + 1) - 1 then min (f x) (f (x + 1))
@@ -126,8 +151,12 @@ private theorem injective_double : Function.Injective fun i : ℕ => 2 * i :=
 private theorem injective_double_add_one : Function.Injective fun i : ℕ => 2 * i + 1 :=
   fun a b h => by simp only at h; omega
 
-/-- **The odd-even merger merges**: if wires `[0, 2 ^ k)` hold `a` zeros then ones, and wires
-`[2 ^ k, 2 ^ (k + 1))` hold `c` zeros then ones, the merger leaves `a + c` zeros then ones. -/
+/-- **The odd-even merger merges.** Let $k \in \mathbb{N}$ and let $f$ assign a Boolean value to
+each wire $0, 1, 2, \dots$, with false read as $0$ and true as $1$. Let $a, c \le 2^k$ be such
+that wires $0, \dots, 2^k - 1$ hold $a$ zeros followed by ones (wire $i < 2^k$ holds $0$ exactly
+when $i < a$) and wires $2^k, \dots, 2^{k+1} - 1$ hold $c$ zeros followed by ones (wire
+$2^k + i$, for $i < 2^k$, holds $0$ exactly when $i < c$). Then after Batcher's odd-even merger
+on $2^{k+1}$ wires runs on $f$, every wire $j < 2^{k+1}$ holds $0$ exactly when $j < a + c$. -/
 theorem oddEvenMerge_merges : ∀ (k : ℕ) (f : ℕ → Bool) (a c : ℕ), a ≤ 2 ^ k → c ≤ 2 ^ k →
     (∀ i < 2 ^ k, f i = decide (a ≤ i)) → (∀ i < 2 ^ k, f (2 ^ k + i) = decide (c ≤ i)) →
     ∀ j < 2 ^ (k + 1), runN (oddEvenMerge k) f j = decide (a + c ≤ j)
@@ -215,8 +244,11 @@ theorem oddEvenMerge_merges : ∀ (k : ℕ) (f : ℕ → Bool) (a c : ℕ), a �
           simp only [← Bool.decide_and, decide_eq_decide]
           omega
 
-/-- **Odd-even merge sort sorts every `0`-`1` input**: after the network, wires `[0, 2 ^ k)` hold
-some number of zeros followed by ones. -/
+/-- **Odd-even merge sort sorts every $0$-$1$ input.** Let $k \in \mathbb{N}$ and let $f$ assign a
+Boolean value to each wire $0, 1, 2, \dots$, with false read as $0$ and true as $1$. After
+Batcher's odd-even merge sort on $2^k$ wires runs on $f$, there is $z \le 2^k$ such that every
+wire $j < 2^k$ holds $0$ exactly when $j < z$: wires $0, \dots, 2^k - 1$ hold $z$ zeros followed
+by ones. -/
 theorem oddEvenSortN_sorts : ∀ (k : ℕ) (f : ℕ → Bool),
     ∃ z ≤ 2 ^ k, ∀ j < 2 ^ k, runN (oddEvenSortN k) f j = decide (z ≤ j)
   | 0, f => by
@@ -242,6 +274,10 @@ theorem oddEvenSortN_sorts : ∀ (k : ℕ) (f : ℕ → Bool),
 
 /-! ## Wires, size, and the network on `2 ^ k` wires -/
 
+/-- **Relabeling keeps comparators within an interval.** Let $ps$ be a list of comparators,
+each a pair of natural numbers, that lies within $[l, h)$, and let $e : \mathbb{N} \to \mathbb{N}$
+satisfy $l' \le e(x) < h'$ for every $x$ with $l \le x < h$. Then the list obtained from $ps$ by
+relabeling its wires by $e$ lies within $[l', h')$. -/
 theorem relabel_within {ps : List (ℕ × ℕ)} {lo hi : ℕ} (h : Within ps lo hi) (e : ℕ → ℕ)
     {lo' hi' : ℕ} (he : ∀ x, lo ≤ x → x < hi → lo' ≤ e x ∧ e x < hi') :
     Within (relabel e ps) lo' hi' := by
@@ -286,7 +322,8 @@ theorem oddEvenSortN_within : ∀ k, Within (oddEvenSortN k) 0 (2 ^ k)
 theorem length_finalLayer (k : ℕ) : (finalLayer k).length = 2 ^ (k + 1) - 1 := by
   simp [finalLayer]
 
-/-- The merger on `2 ^ (k + 1)` wires has `k 2 ^ k + 1` comparators. -/
+/-- **Size of the odd-even merger.** For every $k \in \mathbb{N}$, Batcher's odd-even merger on
+$2^{k+1}$ wires consists of exactly $k \cdot 2^k + 1$ comparators. -/
 theorem length_oddEvenMerge : ∀ k, (oddEvenMerge k).length = k * 2 ^ k + 1
   | 0 => rfl
   | k + 1 => by
@@ -297,8 +334,11 @@ theorem length_oddEvenMerge : ∀ k, (oddEvenMerge k).length = k * 2 ^ k + 1
       have : k * 2 ^ k * 2 = k * (2 ^ k * 2) := Nat.mul_assoc _ _ _
       omega
 
-/-- The sorter on `2 ^ k` wires has `(k² - k + 4) 2 ^ k / 4 - 1` comparators (exact for every
-`k`), stated without subtraction or division: `4 (length + 1) + k 2 ^ k = (k² + 4) 2 ^ k`. -/
+/-- **Size of Batcher's odd-even merge sort.** For every $k \in \mathbb{N}$, the number $L$ of
+comparators of Batcher's odd-even merge sort on $2^k$ wires satisfies
+$4(L + 1) + k \cdot 2^k = (k^2 + 4) \cdot 2^k$, that is, $L = (k^2 - k + 4) \cdot 2^k / 4 - 1$.
+
+The identity is stated without subtraction or division, and is exact for every $k$. -/
 theorem length_oddEvenSortN : ∀ k,
     4 * ((oddEvenSortN k).length + 1) + k * 2 ^ k = (k * k + 4) * 2 ^ k
   | 0 => rfl
@@ -308,11 +348,19 @@ theorem length_oddEvenSortN : ∀ k,
         Nat.pow_succ]
       nlinarith [ih]
 
-/-- Batcher's odd-even merge sorting network on `2 ^ k` wires. -/
+/-- **Batcher's odd-even merge sorting network.** For $k \in \mathbb{N}$, this is the comparator
+network on the $2^k$ wires $0, \dots, 2^k - 1$ given by the comparators of Batcher's odd-even
+merge sort on $2^k$ wires, in the same order, with any comparator that touches a wire $\ge 2^k$
+dropped. -/
 def oddEvenSorter (k : ℕ) : Network (2 ^ k) := ofPairs (2 ^ k) (oddEvenSortN k)
 
-/-- **Batcher's odd-even merge sort sorts every input over every linear order**, via the 0-1
-principle. -/
+/-- **Batcher's odd-even merge sort sorts every input over every linear order.** For every
+$k \in \mathbb{N}$ and every linearly ordered type $\alpha$, Batcher's odd-even merge sorting
+network on $2^k$ wires sorts every input over $\alpha$: for every assignment $v$ of elements of
+$\alpha$ to the wires $0, \dots, 2^k - 1$, the output of the network on $v$ is monotone in the
+wire order.
+
+The proof goes through the 0-1 principle. -/
 theorem oddEvenSorter_sorts (k : ℕ) (α : Type*) [LinearOrder α] :
     Sorts (oddEvenSorter k) α := by
   refine sorts_of_sorts_bool (fun v i j hij => ?_) α

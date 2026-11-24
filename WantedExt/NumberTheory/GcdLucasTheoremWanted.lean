@@ -11,6 +11,13 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Real.Irrational
+public import MathlibExt.NumberTheory.ChoosePowMulModEq
+public import MathlibExt.NumberTheory.ExistsUniqueRadicalExpansionCoeffs
+public import MathlibExt.NumberTheory.GcdPowAddNegOnePow
+public import MathlibExt.NumberTheory.PrimeDvdChoosePowMulPowMul
+public import MathlibExt.NumberTheory.PrimeDvdPowAddOfDvdRadicalCoeffsGcd
+public import MathlibExt.NumberTheory.RadicalCoefficientCommonPrime
+public import MathlibExt.NumberTheory.RadicalCoefficientGcdStep
 
 /-!
 # Greatest common divisors of radical-expansion coefficients and Lucas's theorem
@@ -28,22 +35,6 @@ lines and are not restated.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Unique integer coordinates of powers of $u + v^{1/N}$.** Let $N$ be a natural number with
-at least two distinct prime divisors, let $u, v$ be coprime positive integers such that
-$x^N - v$ is irreducible over $\mathbb{Q}$, and let $\theta = v^{1/N}$ be the positive real
-$N$-th root of $v$. Then for every natural number $n$ there is exactly one tuple of integers
-$(a_0, \dots, a_{N-1})$ with $(u + \theta)^n = \sum_{i=0}^{N-1} a_i \theta^i$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 3
-(`jis-2025-25.2.2-lem-3`). -/
-public theorem_wanted existsUnique_radical_expansion_coeffs {N u v : ℕ}
-    (hN : ∃ p q : ℕ, p.Prime ∧ q.Prime ∧ p ≠ q ∧ p ∣ N ∧ q ∣ N) (hu : 0 < u) (hv : 0 < v)
-    (huv : u.Coprime v)
-    (hirr : Irreducible (Polynomial.X ^ N - Polynomial.C (v : ℚ))) (n : ℕ) :
-    ∃! a : Fin N → ℤ, ((u : ℝ) + (v : ℝ) ^ (1 / (N : ℝ))) ^ n =
-      ∑ i : Fin N, (a i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ)
 
 /-- **Coprime coefficients of $(u + v^{1/N})^n$ when $N$ has two distinct prime factors.** Let
 $N$ be a natural number with at least two distinct prime divisors, let $u, v$ be coprime positive
@@ -64,37 +55,6 @@ public theorem_wanted gcd_radical_expansion_coeffs_eq_one {N u v : ℕ}
       ∑ i : Fin N, (a n i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ))
     (n : ℕ) (hn : 1 ≤ n) :
     Finset.univ.gcd (a n) = 1
-
-/-- **$u^N + (-1)^{N+1} v$ is coprime to $u$ and to $v$.** Let $u, v$ be coprime positive integers
-and let $N \ge 1$. Then $\gcd(u^N + (-1)^{N+1} v, u) = 1$ and $\gcd(u^N + (-1)^{N+1} v, v) = 1$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 5
-(`jis-2025-25.2.2-lem-5`). -/
-public theorem_wanted gcd_pow_add_neg_one_pow_mul_eq_one {N u v : ℕ} (hN : 1 ≤ N)
-    (hu : 0 < u) (hv : 0 < v) (huv : u.Coprime v) :
-    Int.gcd ((u : ℤ) ^ N + (-1) ^ (N + 1) * v) u = 1 ∧
-      Int.gcd ((u : ℤ) ^ N + (-1) ^ (N + 1) * v) v = 1
-
-/-- **$p$ divides $\binom{p^r a}{p^s b}$ when $r > s$.** Let $p$ be a prime, let $r > s$ be
-natural numbers, and let $a, b$ be natural numbers not divisible by $p$. Then
-$p \mid \binom{p^r a}{p^s b}$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Corollary 14
-(`jis-2025-25.2.2-cor-14`). -/
-public theorem_wanted prime_dvd_choose_pow_mul_pow_mul {p a b r s : ℕ} (hp : p.Prime)
-    (hrs : s < r) (hpa : ¬p ∣ a) (hpb : ¬p ∣ b) : p ∣ (p ^ r * a).choose (p ^ s * b)
-
-/-- **Binomial coefficients $\binom{p^r a}{p^r b}$ modulo $p$.** Let $p$ be a prime, let $r \ge 1$,
-and let $a, b$ be natural numbers not divisible by $p$. Then
-$\binom{p^r a}{p^r b} \equiv \binom{a}{b} \pmod{p}$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Corollary 15
-(`jis-2025-25.2.2-cor-15`). -/
-public theorem_wanted choose_pow_mul_modEq {p a b r : ℕ} (hp : p.Prime) (hr : 1 ≤ r)
-    (hpa : ¬p ∣ a) (hpb : ¬p ∣ b) : (p ^ r * a).choose (p ^ r * b) ≡ a.choose b [MOD p]
 
 /-- **Gcd of the coefficients of $(u + \sqrt{v})^n$.** Let $u, v$ be coprime positive integers
 with $\sqrt{v}$ irrational, let $a_n, b_n$ (for natural $n$) be integers with
@@ -146,67 +106,6 @@ public theorem_wanted gcd_prime_root_expansion_coeffs {p u v : ℕ} (hp : p.Prim
       Finset.univ.gcd (a (n * p + i)) = (p : ℤ) ^ n) ∧
     (p ^ 2 ∣ u ^ p + v → ∀ n i : ℕ, 1 ≤ i → i ≤ p - 1 →
       Finset.univ.gcd (a (n * (p - 1) + i)) = (p : ℤ) ^ n)
-
-/-- **The coefficient gcd of $(u + v^{1/N})^n$ divides that of $(u + v^{1/N})^{n+1}$.** Let
-$N, u, v$ be natural numbers such that $x^N - v$ is irreducible over $\mathbb{Q}$, let
-$\theta = v^{1/N}$ be the nonnegative real $N$-th root of $v$, and let $a_{n,i}$ (for natural $n$
-and $0 \le i \le N - 1$) be integers with $(u + \theta)^n = \sum_{i=0}^{N-1} a_{n,i} \theta^i$
-for every $n \ge 1$. Write $D_n$ for the nonnegative greatest common divisor of
-$a_{n,0}, \dots, a_{n,N-1}$. Then $D_n \mid D_{n+1}$ for every $n \ge 1$.
-
-This holds without the paper's standing assumptions $N \ge 4$ and $\gcd(u, v) = 1$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 4
-(`jis-2025-25.2.2-lem-4`). -/
-public theorem_wanted gcd_radical_expansion_coeffs_dvd_succ {N u v : ℕ}
-    (hirr : Irreducible (Polynomial.X ^ N - Polynomial.C (v : ℚ))) (a : ℕ → Fin N → ℤ)
-    (ha : ∀ n, 1 ≤ n → ((u : ℝ) + (v : ℝ) ^ (1 / (N : ℝ))) ^ n =
-      ∑ i : Fin N, (a n i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ))
-    (n : ℕ) (hn : 1 ≤ n) :
-    Finset.univ.gcd (a n) ∣ Finset.univ.gcd (a (n + 1))
-
-/-- **Common prime factors of $u^N + (-1)^{N+1} v$ and the coefficient gcd divide $N$.** Let
-$N \ge 2$, let $u, v$ be coprime natural numbers such that $x^N - v$ is irreducible over
-$\mathbb{Q}$, let $\theta = v^{1/N}$ be the nonnegative real $N$-th root of $v$, and let $a_{n,i}$
-(for natural $n$ and $0 \le i \le N - 1$) be integers with
-$(u + \theta)^n = \sum_{i=0}^{N-1} a_{n,i} \theta^i$ for every $n \ge 1$. Write $D_n$ for the
-nonnegative greatest common divisor of $a_{n,0}, \dots, a_{n,N-1}$. Then for every $n \ge 1$,
-every prime $p$ dividing $\gcd(u^N + (-1)^{N+1} v, D_n)$ divides $N$.
-
-The paper assumes $N \ge 4$; the cases $N = 2, 3$ also hold, while $N = 1$ fails, since then
-$D_n = (u + v)^n$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 6
-(`jis-2025-25.2.2-lem-6`). -/
-public theorem_wanted prime_dvd_gcd_pow_add_radical_coeffs {N u v : ℕ} (hN : 2 ≤ N)
-    (huv : u.Coprime v)
-    (hirr : Irreducible (Polynomial.X ^ N - Polynomial.C (v : ℚ))) (a : ℕ → Fin N → ℤ)
-    (ha : ∀ n, 1 ≤ n → ((u : ℝ) + (v : ℝ) ^ (1 / (N : ℝ))) ^ n =
-      ∑ i : Fin N, (a n i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ))
-    (n : ℕ) (hn : 1 ≤ n) (p : ℕ) (hp : p.Prime)
-    (hpd : (p : ℤ) ∣ GCDMonoid.gcd ((u : ℤ) ^ N + (-1) ^ (N + 1) * v) (Finset.univ.gcd (a n))) :
-    p ∣ N
-
-/-- **Primes dividing the coefficient gcd of $(u + v^{1/N})^n$ divide the norm.** Let $u, v, N$
-be natural numbers such that $x^N - v$ is irreducible over $\mathbb{Q}$. Write $\theta = v^{1/N}$
-for the nonnegative real $N$-th root of $v$, and let $a_{n,i}$ be integers ($n \ge 1$,
-$0 \le i < N$) with $(u + \theta)^n = \sum_{i=0}^{N-1} a_{n,i} \theta^i$ for every $n \ge 1$. If
-$n \ge 1$ and $p$ is a prime dividing $D_n = \gcd(a_{n,0}, \dots, a_{n,N-1})$, then $p$ divides
-$u^N + (-1)^{N+1} v$, the norm of $u + \theta$.
-
-The paper's section assumes $N \ge 4$ and $u, v$ coprime; neither is needed here.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 7
-(`jis-2025-25.2.2-lem-7`). -/
-public theorem_wanted prime_dvd_pow_add_of_dvd_radical_coeffs_gcd {N u v : ℕ}
-    (hirr : Irreducible (Polynomial.X ^ N - Polynomial.C (v : ℚ))) (a : ℕ → Fin N → ℤ)
-    (ha : ∀ n, 1 ≤ n → ((u : ℝ) + (v : ℝ) ^ (1 / (N : ℝ))) ^ n =
-      ∑ i : Fin N, (a n i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ))
-    (n : ℕ) (hn : 1 ≤ n) (p : ℕ) (hp : p.Prime) (hpd : (p : ℤ) ∣ Finset.univ.gcd (a n)) :
-    (p : ℤ) ∣ (u : ℤ) ^ N + (-1) ^ (N + 1) * v
 
 /-- **Primes dividing the coefficient gcd of $(u + v^{1/N})^n$ divide $N$.** Let $N \ge 2$ and
 let $u, v$ be coprime natural numbers such that $x^N - v$ is irreducible over $\mathbb{Q}$. Write

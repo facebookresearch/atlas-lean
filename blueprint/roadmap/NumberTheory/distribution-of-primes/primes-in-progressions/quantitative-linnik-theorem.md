@@ -34,11 +34,11 @@ exceptional zero.
 ## Proof depends on
 
 - [Log-free truncated explicit formula for Dirichlet characters](../../zeta-l-functions/dirichlet-l-functions/log-free-truncated-explicit-formula.md)
-- [Classical zero-free region for Dirichlet L-functions of a fixed modulus](../../zeta-l-functions/dirichlet-l-functions/dirichlet-l-function-zero-free-region-fixed-modulus.md)
-- [Log-free zero-density estimate for Dirichlet L-functions](../../zeta-l-functions/dirichlet-l-functions/log-free-zero-density-estimate.md)
-- [Deuring–Heilbronn repulsion of zeros by an exceptional zero](../../zeta-l-functions/dirichlet-l-functions/deuring-heilbronn-repulsion.md)
+- [Classical zero-free region for Dirichlet L-functions of a fixed modulus](../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/dirichlet-l-function-zero-free-region-fixed-modulus.md)
+- [Log-free zero-density estimate for Dirichlet L-functions](../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/log-free-zero-density-estimate.md)
+- [Deuring–Heilbronn repulsion of zeros by an exceptional zero](../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/deuring-heilbronn-repulsion.md)
 
 ## Sources
 
 - T. Tao, *254A, Notes 7: Linnik's theorem on primes in arithmetic progressions* (2015), <https://terrytao.wordpress.com/2015/02/22/254a-notes-7-linniks-theorem-on-primes-in-arithmetic-progressions/>: Theorem 2 (quantitative Linnik theorem, "a special case of a more powerful theorem of Gallagher", with the hypothesis $1 - \beta \gg 1/\log q$ in its first case and effective implied constants), proved from Exercise 5 (the log-free truncated explicit formula), Proposition 6, Theorem 7 and Theorem 9 by Exercises 8 and 10; Exercise 3 deduces Theorem 1 (Linnik's theorem) from it. The notes follow H. Iwaniec and E. Kowalski, *Analytic Number Theory*, ch. 18; their proof of Theorem 9 has a gap that the author acknowledged in 2024 (see the Deuring–Heilbronn page).
-- Provenance: L. Alpöge's Lean library proving the Riemann hypothesis and the generalized Riemann hypothesis for Dirichlet L-functions, released 2026-11-20 (<https://alpo.ge/remark.pdf>; source mirror <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>, no licence), contains Linnik's theorem with an unspecified exponent, a consequence of this estimate, as `GlobalTheory.Published.Linnik`, proved as `UpperTheory.Lit.linnik`.
+- Provenance: L. Alpöge's Lean library proving the Riemann hypothesis and the generalized Riemann hypothesis for Dirichlet L-functions, released 2026-11-20 (<https://alpo.ge/remark.pdf>; source mirror <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>), contains Linnik's theorem with an unspecified exponent, a consequence of this estimate, as `GlobalTheory.Published.Linnik`, proved as `UpperTheory.Lit.linnik`.

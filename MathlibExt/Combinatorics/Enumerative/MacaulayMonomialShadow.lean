@@ -106,8 +106,9 @@ private lemma mms_exists_rep_lt (r bound n : ℕ) (hn : n < Nat.choose bound r) 
       rw [← hsum]
       omega
 
-/-- Every natural has a strict `r`-binomial cascade when `r` is positive. -/
-private lemma mms_exists_rep (r n : ℕ) (hr : 0 < r) :
+/-- Every natural has a strict `r`-binomial cascade when `r` is positive: digits
+`a₀ < a₁ < ⋯ < a_{r-1}` with `n = ∑ᵢ (aᵢ choose (i + 1))`. -/
+lemma exists_strictMono_eq_sum_choose (r n : ℕ) (hr : 0 < r) :
     ∃ digits : Fin r → ℕ, StrictMono digits ∧
       n = ∑ i, Nat.choose (digits i) (i.1 + 1) := by
   obtain ⟨digits, hstrict, -, hsum⟩ :=
@@ -184,17 +185,17 @@ private lemma mms_rep_unique (r : ℕ) (f g : Fin r → ℕ) (hf : StrictMono f)
 
 /-- The canonical strict binomial cascade, with the empty tuple at rank zero. -/
 private noncomputable def mms_digits (r n : ℕ) : Fin r → ℕ :=
-  if h : 0 < r then Classical.choose (mms_exists_rep r n h)
+  if h : 0 < r then Classical.choose (exists_strictMono_eq_sum_choose r n h)
   else fun i => Fin.elim0 (Nat.eq_zero_of_not_pos h ▸ i)
 
 private lemma mms_digits_strict (r n : ℕ) (hr : 0 < r) : StrictMono (mms_digits r n) := by
   simp only [mms_digits, dite_eq_left hr]
-  exact (Classical.choose_spec (mms_exists_rep r n hr)).1
+  exact (Classical.choose_spec (exists_strictMono_eq_sum_choose r n hr)).1
 
 private lemma mms_digits_sum (r n : ℕ) (hr : 0 < r) :
     n = ∑ i, Nat.choose (mms_digits r n i) (i.1 + 1) := by
   simp only [mms_digits, dite_eq_left hr]
-  exact (Classical.choose_spec (mms_exists_rep r n hr)).2
+  exact (Classical.choose_spec (exists_strictMono_eq_sum_choose r n hr)).2
 
 /-- The Macaulay lower function read from the canonical cascade. -/
 private noncomputable def mms_macaulay (r n : ℕ) : ℕ :=
@@ -615,7 +616,7 @@ private lemma mms_macaulay_extended (r n : ℕ) (hr : 0 < r) (ext : Fin (r + 1) 
     mms_macaulay r n =
       ∑ i, if i.1 = 0 then 0 else Nat.choose (ext i - 1) (i.1 - 1) := by
   induction r using Nat.strong_induction_on generalizing n with
-  | h r ih =>
+  | ind r ih =>
     obtain rfl | s := r
     · omega
     obtain rfl | s := s
@@ -763,7 +764,7 @@ private lemma mms_extended_or_step (r a : ℕ) (hr : 0 < r) (ha : 0 < a) :
       a = ∑ i, Nat.choose (ext i) i.1) ∨
       mms_macaulay r a = mms_macaulay r (a - 1) + 1 := by
   induction r using Nat.strong_induction_on generalizing a with
-  | h r ih =>
+  | ind r ih =>
     obtain rfl | s := r
     · omega
     let d := mms_digits (s + 1) a
@@ -1096,11 +1097,11 @@ private lemma mms_split_ineq (r n a b : ℕ) (hr : 0 < r) (hadd : a + b = n)
     (hlt : a < mms_macaulay (r + 1) n) :
     mms_macaulay r a + mms_macaulay (r + 1) b ≥ mms_macaulay (r + 1) n := by
   induction r using Nat.strong_induction_on generalizing n a b with
-  | h r ihR =>
+  | ind r ihR =>
     obtain rfl | s := r
     · omega
     induction a using Nat.strong_induction_on generalizing n b with
-    | h a ihA =>
+    | ind a ihA =>
       by_cases ha0 : a = 0
       · subst a
         have hb : b = n := by omega
@@ -1510,7 +1511,7 @@ public theorem macaulay_multiset_shadow_minimal
     (∑ i, if digits i = 0 then 0 else Nat.choose (digits i - 1) i.1) ≤
       (A.biUnion fun a => a.support.image fun i => a.update i (a i - 1)).card := by
   induction hm : k + A.card using Nat.strong_induction_on generalizing k A digits with
-  | h n ih =>
+  | ind n ih =>
   obtain rfl | k := k
   · exact macaulay_degree_one A digits hdegree hcard
   · by_cases hA : A.Nonempty

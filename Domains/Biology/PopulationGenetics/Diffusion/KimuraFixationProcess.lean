@@ -734,7 +734,9 @@ private theorem integrable_comp [IsFiniteMeasure μ] (hX : IsWrightFisherSolutio
   exact Integrable.of_bound (hf.measurable.comp (hX.measurable t)).aestronglyMeasurable B
     (ae_of_all _ fun ω => hB _ (hX.1 t ω))
 
-/-- **Dynkin's formula at a fixed time.** -/
+/-- **Dynkin's formula at a fixed time.** For a finite measure `μ`, a solution `X` and a `C²`
+function `f`, the time integral `∫₀ᵗ generator σ f (X s) ds` is `μ`-integrable and its
+`μ`-integral is `∫ f (X t) dμ - ∫ f (X 0) dμ`. -/
 theorem integral_generator [IsFiniteMeasure μ] (hX : IsWrightFisherSolution σ ℱ μ X)
     {f : ℝ → ℝ} (hf : ContDiff ℝ 2 f) (t : ℝ≥0) :
     Integrable (fun ω => ∫ s in (0 : ℝ)..(t : ℝ), generator σ f (X (Real.toNNReal s) ω)) μ ∧
@@ -908,12 +910,14 @@ theorem measureReal_fixation {σ x : ℝ} {ℱ : Filtration ℝ≥0 mΩ} {μ : M
   rw [measureReal_congr (eventuallyEqSet_iff.2 hset), ← integral_indicator_one hS']
   exact tendsto_nhds_unique hdct tendsto_const_nhds
 
-/-- **Kimura–Ohta mean absorption time, process form.** For a solution of the neutral
-Wright–Fisher martingale problem started at frequency `x`, the expected time to loss or
-fixation, in units of `2N` generations, is `-2 (x log x + (1 - x) log (1 - x))`.
+/-- **Kimura–Ohta mean absorption time, process form.** Under a probability measure, for a solution
+of the neutral Wright–Fisher martingale problem with `X 0 = x` almost surely, the absorption time
+(time to loss or fixation) is integrable and its mean, in units of `2N` generations, is
+`-2 (x log x + (1 - x) log (1 - x))`. Here `x ∈ [0, 1]`, since the solution is `[0, 1]`-valued and,
+the measure being a probability measure, `X 0 = x` holds at some point; at `x = 0` or `x = 1` the
+formula, with `0 log 0 = 0`, gives mean `0`.
 
-Source: Kimura & Ohta (1969); Ewens (2004), ch. 4. Proves the deferred entry
-`integral_absorptionTime`. -/
+Source: Kimura & Ohta (1969); Ewens (2004), ch. 4. -/
 theorem integral_absorptionTime {x : ℝ} {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {X : ℝ≥0 → Ω → ℝ} (hX : IsWrightFisherSolution 0 ℱ μ X)
     (hX0 : ∀ᵐ ω ∂μ, X 0 ω = x) :
