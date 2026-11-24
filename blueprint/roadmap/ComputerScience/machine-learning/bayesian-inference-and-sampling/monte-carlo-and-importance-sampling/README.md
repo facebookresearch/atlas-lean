@@ -7,3 +7,6 @@
 - [Change of measure for importance weights](integral-weight-mul.md)
 - [Importance sampling is unbiased](integral-is-estimate.md)
 - [Importance sampling is consistent](tendsto-is-estimate.md)
+
+- [Exact posterior marginal of a pseudo-marginal Metropolis–Hastings chain](pseudo-marginal-mh-exactness-with-unbiased-nonne.md)
+- [ABC-MCMC is reversible for the tolerance posterior](abc-mcmc-invariance-marjoram-et-al.md)
