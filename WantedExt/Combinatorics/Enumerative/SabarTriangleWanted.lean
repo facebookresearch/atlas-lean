@@ -36,8 +36,9 @@ of convergence of the hypergeometric series) is not stated; see the audit table.
 
 Proved in `MathlibExt.Combinatorics.Enumerative.SabarTriangle`, which this module imports: the
 definition `sabarNumber` with its checks `sabarNumber_rows_five_ten` and
-`sabarNumber_recurrence_small`, and the reciprocal binomial sum identity
-`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`.
+`sabarNumber_recurrence_small`, the reciprocal binomial sum identity
+`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`, and the alternating sum for harmonic numbers
+`sum_sabarNumber_div_succ_eq_harmonic`.
 
 The weighted binomial sum identity `sum_choose_mul_two_pow_add_succ` is proved in
 `MathlibExt.Combinatorics.Enumerative.SabarWeightedBinomialSum`, also imported here.
@@ -58,18 +59,6 @@ public theorem_wanted harmonic_eq_sum_inv_choose_add_sum_sabarNumber (n : ℕ) (
     harmonic n =
       (1 / (n : ℚ)) * ∑ i ∈ Finset.range n, 1 / ((n - 1).choose i : ℚ) +
         ∑ i ∈ Finset.range (n - 1), (-1 : ℚ) ^ (n - i) * sabarNumber (n - 1) i / ((n - i : ℕ) : ℚ)
-
-/-- **The harmonic numbers as an alternating sum of Sabar numbers.** For every natural number
-$n \ge 2$, writing $s(m, i)$ for Sabar's triangle and $H_n = \sum_{j=1}^{n} 1/j$ for the $n$-th
-harmonic number, in the rational numbers
-
-$$\sum_{i=0}^{2n-2} \frac{(-1)^i \, s(2n-1, i)}{i+1} = H_n.$$
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Theorem 3 (`integers-2026-A27-thm-3`). -/
-public theorem_wanted sum_sabarNumber_div_succ_eq_harmonic (n : ℕ) (hn : 2 ≤ n) :
-    ∑ i ∈ Finset.range (2 * n - 1), (-1 : ℚ) ^ i * sabarNumber (2 * n - 1) i / ((i + 1 : ℕ) : ℚ) =
-      harmonic n
 
 /-- **Fine numbers from Sabar's triangle.** For every natural number $n \ge 2$, the Fine number
 $F(n)$ is the difference of two entries of row $2n$ of Sabar's triangle $s$:
