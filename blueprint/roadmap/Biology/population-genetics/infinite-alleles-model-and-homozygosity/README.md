@@ -7,3 +7,5 @@
 - [Convergence of homozygosity to equilibrium](tendsto-iterate-homozygosity-step.md)
 - [Kimura–Crow limit](tendsto-eq-homozygosity.md)
 - [Limit $\theta/(1+\theta)$ of the equilibrium heterozygosity](tendsto-one-sub-eq-homozygosity.md)
+
+- [Identity in state under the stepwise mutation model](stepwise-mutation-model-homozygosity.md)

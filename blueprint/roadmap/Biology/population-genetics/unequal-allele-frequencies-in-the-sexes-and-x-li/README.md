@@ -23,3 +23,5 @@
 - [X-linked selection and the inheritance-weighted frequency change](x-linked-selection-and-the-1-3-2-3-weighting.md)
 
 - [Boundary invasion under sex-differential and parent-of-origin viability](protected-polymorphism-under-sex-differential-vi.md)
+
+- [Sex-differential viability selection makes the sexes' allele frequencies differ](sex-differential-viability-selection-dioecy.md)

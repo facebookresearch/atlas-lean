@@ -41,3 +41,5 @@
 - [Mutation–selection balance for a recessive allele](recessive-mutation-selection-balance.md)
 
 - [Mutation as a transition on allele frequencies](mutation-transition-on-allele-frequencies.md)
+
+- [Poisson equilibrium of multiplicative mutation–selection balance](multilocus-multiplicative-mutation-selection-poi.md)

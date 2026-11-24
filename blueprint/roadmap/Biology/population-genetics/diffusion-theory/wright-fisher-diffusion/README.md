@@ -38,3 +38,5 @@
 - [Wright's density has finite positive total mass](integral-wright-density-pos.md)
 - [Integrability of Wright's density on the unit interval](interval-integrable-wright-density.md)
 - [Heterozygosity decay in one Wright–Fisher generation](integral-binomial-heterozygosity.md)
+
+- [The mean-time-to-monomorphism equation for neutral K-allele drift](neutral-k-allele-fixation-probabilities-and-mean.md)
