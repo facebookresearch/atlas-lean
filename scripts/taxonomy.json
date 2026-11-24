@@ -11899,6 +11899,7 @@
   "MathlibExt/NumberTheory/Digits/BinomialFormTwoPowBase": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/Cohn": {"to": "Algebra/polynomials", "title": "Irreducibility criteria for integer polynomials"},
   "MathlibExt/NumberTheory/Digits/CommaParent": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
+  "MathlibExt/NumberTheory/Digits/CompleteYoungGraph": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/DigitsPowAndPowAddOne": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/DyadicMantissa": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Binary digit sums and the Trollope–Delange formula"},
   "MathlibExt/NumberTheory/Digits/ExactCoveringSystemDigraph": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
