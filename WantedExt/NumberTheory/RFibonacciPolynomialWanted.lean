@@ -15,6 +15,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
+public import MathlibExt.NumberTheory.RLucasPolynomial
 
 namespace MetaMathlibExt
 
@@ -151,62 +152,6 @@ public theorem_wanted sum_neg_one_pow_mul_rFibonacciPolynomial {K : Type*} [Fiel
           + (-1) ^ r * y * ∑ j ∈ Finset.Icc 1 r,
               (-1) ^ (n + j - r - 1) * rFibonacciPolynomial r x y (n + j - r))
         / (1 + x + (-1) ^ r * y)
-
-
-/-- **The $r$-Lucas polynomials of type $s$.** Let $R$ be a commutative semiring, let $r$ and $s$
-be natural numbers and let $x, y \in R$. The $r$-Lucas polynomials of type $s$ are the sequence
-$V_n = V^{(r,s)}_n(x, y)$, $n \ge 0$, of elements of $R$ given by $V_0 = s + 1$, $V_k = x^k$ for
-$1 \le k \le r$, and $V_{n+1} = x V_n + y V_{n-r}$ for $n \ge r$.
-
-The paper takes $1 \le s \le r$; the definition makes sense for every natural number $s$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 1. -/
-public def rLucasPolynomial {R : Type*} [CommSemiring R] (r s : ℕ) (x y : R) : ℕ → R
-  | 0 => (s : R) + 1
-  | n + 1 =>
-    if n < r then x ^ (n + 1)
-    else x * rLucasPolynomial r s x y n + y * rLucasPolynomial r s x y (n - r)
-termination_by n => n
-decreasing_by all_goals omega
-
-/-- **Initial value of the $r$-Lucas polynomials.** For every commutative semiring $R$, all natural
-numbers $r$ and $s$ and all $x, y \in R$, the $r$-Lucas polynomial of type $s$ satisfies
-$V^{(r,s)}_0(x, y) = s + 1$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 1. -/
-public theorem rLucasPolynomial_zero {R : Type*} [CommSemiring R] (r s : ℕ) (x y : R) :
-    rLucasPolynomial r s x y 0 = (s : R) + 1 := by
-  rw [rLucasPolynomial]
-
-/-- **Initial values of the $r$-Lucas polynomials.** Let $R$ be a commutative semiring, let $s$ be
-a natural number, let $x, y \in R$, and let $n < r$ be natural numbers. Then the $r$-Lucas
-polynomial of type $s$ satisfies $V^{(r,s)}_{n+1}(x, y) = x^{n+1}$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 1. -/
-public theorem rLucasPolynomial_succ_of_lt {R : Type*} [CommSemiring R] {r n : ℕ} (s : ℕ)
-    (x y : R) (h : n < r) : rLucasPolynomial r s x y (n + 1) = x ^ (n + 1) := by
-  rw [rLucasPolynomial]
-  simp [h]
-
-/-- **Recurrence for the $r$-Lucas polynomials.** Let $R$ be a commutative semiring, let $s$ be a
-natural number, let $x, y \in R$, and let $r \le n$ be natural numbers. Then the $r$-Lucas
-polynomials of type $s$, $V_m = V^{(r,s)}_m(x, y)$, satisfy $V_{n+1} = x \, V_n + y \, V_{n-r}$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 1. -/
-public theorem rLucasPolynomial_succ_of_le {R : Type*} [CommSemiring R] {r n : ℕ} (s : ℕ)
-    (x y : R) (h : r ≤ n) :
-    rLucasPolynomial r s x y (n + 1)
-      = x * rLucasPolynomial r s x y n + y * rLucasPolynomial r s x y (n - r) := by
-  rw [rLucasPolynomial]
-  simp [show ¬n < r by omega]
 
 /-- **Binet formula for the $r$-Fibonacci polynomials (distinct zeros).** Let $K$ be a field, let
 $r \ge 1$ be a natural number and let $x, y \in K$. Suppose that
@@ -671,26 +616,6 @@ public theorem_wanted sum_pow_mul_rLucasPolynomial {K : Type*} [Field K] {r n : 
           - m ^ (r + 1) * y * ∑ j ∈ Finset.Icc 1 r,
               m ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
         / (1 - m * x - m ^ (r + 1) * y) - 1
-
-/-- **Sum of the first $n$ $r$-Lucas polynomials.** Let $K$ be a field, let $r \ge 1$ and $s$ be
-natural numbers, let $x, y \in K$ with $1 - x - y \ne 0$, and write $V_j$ for the $r$-Lucas
-polynomial of type $s$, $V_j = V^{(r,s)}_j(x, y)$. Then for every natural number $n$ with
-$n \ge 1$ and $n \ge r - 1$,
-$$
-\sum_{j=1}^{n} V_j = \frac{1 + s y - V_{n+1} - y \sum_{j=1}^{r} V_{n-r+j}}{1 - x - y} - 1.
-$$
-
-The paper states $n \ge 1$; for $n < r - 1$ the right side involves $V$ at negative indices.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Corollary 4 (`integers-2025-A38-cor-4`). -/
-public theorem_wanted sum_rLucasPolynomial {K : Type*} [Field K] {r n : ℕ} (hr : 1 ≤ r)
-    (hn1 : 1 ≤ n) (hn : r ≤ n + 1) (s : ℕ) (x y : K) (hP : 1 - x - y ≠ 0) :
-    ∑ j ∈ Finset.Icc 1 n, rLucasPolynomial r s x y j
-      = (1 + s * y - rLucasPolynomial r s x y (n + 1)
-          - y * ∑ j ∈ Finset.Icc 1 r, rLucasPolynomial r s x y (n + j - r))
-        / (1 - x - y) - 1
 
 /-- **Alternating sum of $r$-Lucas polynomials.** Let $K$ be a field, let $r \ge 1$ and $s$ be
 natural numbers, let $x, y \in K$ with $1 + x + (-1)^r y \ne 0$, and write $V_j$ for the

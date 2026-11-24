@@ -14,10 +14,10 @@ $\mathfrak{a}$ of $K$ (Milne, Propositions 12.3 and 12.6), so one may take $\Lam
 
 Milne proves this together with the [Artin action on the $j$-invariants](artin-action-on-cm-j-invariants.md)
 (his Theorem 12.18). The statement also follows from that action. Let $H \subset \mathbb{C}$ be a
-Hilbert class field of $K$, which exists by the [existence theorem](../global-existence-theorem.md);
+Hilbert class field of $K$, which exists by the [existence theorem](../existence-theorem/existence-of-class-fields.md);
 then $j(\mathfrak{a}) \in H$. An element $\mathrm{art}_{H/K}(\mathfrak{b})$ of $\mathrm{Gal}(H/K)$
 fixes $j(\mathfrak{a})$ exactly when $j(\mathfrak{b}^{-1}\mathfrak{a}) = j(\mathfrak{a})$, that is,
-when $\mathfrak{b}$ is principal, and by [reciprocity](../global-artin-reciprocity.md) the Artin map
+when $\mathfrak{b}$ is principal, and by [reciprocity](../reciprocity-law/global-reciprocity-law.md) the Artin map
 of $H/K$ is surjective with kernel the principal ideals. So only the identity of $\mathrm{Gal}(H/K)$
 fixes $j(\mathfrak{a})$, and $K(j(\mathfrak{a})) = H$ by Galois theory. (This deduction is written
 out here; it is not Milne's text.)
@@ -30,8 +30,9 @@ out here; it is not Milne's text.)
 ## Proof depends on
 
 - [Artin symbols act on the j-invariants of CM lattices](artin-action-on-cm-j-invariants.md)
-- [Global Artin reciprocity](../global-artin-reciprocity.md)
-- [Existence theorem of global class field theory](../global-existence-theorem.md)
+- [Global reciprocity law](../reciprocity-law/global-reciprocity-law.md), for the Artin map of $H/K$ being surjective with kernel the principal ideals
+- [The global Artin map at unramified places](../reciprocity-law/artin-map-at-unramified-places.md), which identifies the global Artin map of $H/K$ with its Artin map on ideals
+- [Existence theorem of global class field theory](../existence-theorem/existence-of-class-fields.md), for the existence of a Hilbert class field, the class field of the idèles that are units at all finite places, whose norm group makes the kernel of the Artin map of $H/K$ the group of principal ideals
 
 ## Sources
 

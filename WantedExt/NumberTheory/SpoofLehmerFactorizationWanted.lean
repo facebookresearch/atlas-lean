@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.LehmerBoundsMonotonicity
 public import MathlibExt.NumberTheory.SpoofLehmerFactorization
 
 /-!
@@ -27,16 +28,6 @@ encoded as `Multiset.map (fun a => (a, 1)) x`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Spoof Lehmer factorizations with a base $1$ are trivial.** If a finite multiset $F$ of pairs
-$(x, a)$ of natural numbers is a $k$-Lehmer factorization for some integer $k$, and some pair in
-$F$ has base $x = 1$, then every base of $F$ equals $1$, that is, $F$ is trivial.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Proposition 1 (`integers-2026-A33-prop-1`). -/
-public theorem_wanted isTrivialSpoof_of_isSpoofLehmer_of_one_mem (F : Multiset (ℕ × ℕ))
-    (hL : ∃ k : ℤ, IsSpoofLehmer k F) (h1 : ∃ p ∈ F, p.1 = 1) :
-    IsTrivialSpoof F
 
 /-- **Nontrivial spoof Lehmer factorizations have all exponents $1$.** If $F$ is a nontrivial spoof
 $k$-Lehmer factorization for some integer $k$, then every exponent of $F$ is $1$.
@@ -116,21 +107,6 @@ public theorem_wanted lehmerLower_upper_formula :
       (t.length < r → lehmerLower t r = t.prod / (t.map (· - 1)).prod) ∧
       lehmerUpper t r = (t.dropLast.prod * t.getLast hne ^ (r - t.length + 1) - 1) /
         ((t.dropLast.map (· - 1)).prod * (t.getLast hne - 1) ^ (r - t.length + 1))
-
-/-- **Monotonicity of the Lehmer bounds.** Let $L(t; r)$ and $U(t; r)$ be the lower and upper
-Lehmer bounds: the infimum and the supremum of $\kappa_r(t_1, \dots, t_s, u_1, \dots, u_{r-s})$
-over the admissible completions $u$ of $t = (t_1, \dots, t_s)$, where $\kappa_r$ is the Lehmer
-function. Let $r$ be a natural number and let $t = (t_1, \dots, t_s)$ and
-$t' = (t'_1, \dots, t'_s)$ be nondecreasing lists of real numbers of the same length $s \le r$
-with $t_i \ge 2$ and $t_i \le t'_i$ for every $i$. Then $L(t'; r) \le L(t; r)$ and
-$U(t'; r) \le U(t; r)$.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Lemma 2 (`integers-2026-A33-lem-2`). -/
-public theorem_wanted lehmerLower_upper_antitone (r : ℕ) (t t' : List ℝ) (hs : t.length ≤ r)
-    (ht : t.Pairwise (· ≤ ·)) (ht' : t'.Pairwise (· ≤ ·)) (h2 : ∀ x ∈ t, 2 ≤ x)
-    (hle : List.Forall₂ (· ≤ ·) t t') :
-    lehmerLower t' r ≤ lehmerLower t r ∧ lehmerUpper t' r ≤ lehmerUpper t r
 
 /-- **Lehmer bounds at the initial segments of a spoof Lehmer factorization.** Let
 $x_1 \le \dots \le x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization

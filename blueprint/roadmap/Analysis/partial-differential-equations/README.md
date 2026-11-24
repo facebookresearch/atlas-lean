@@ -11,3 +11,4 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Singularity formation for the Euler equations](singularity-formation-for-the-euler-equations/README.md)
 - [Viscosity solutions of Hamilton–Jacobi equations](viscosity-solutions-of-hamilton-jacobi-equations/README.md)
 - [Weak solutions of elliptic equations](weak-solutions-of-elliptic-equations/README.md)
+- [Analytic elliptic regularity](analytic-elliptic-regularity.md)

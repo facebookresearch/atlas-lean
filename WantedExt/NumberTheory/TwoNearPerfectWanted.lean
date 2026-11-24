@@ -26,6 +26,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.TwoNearPerfectEquationSeven
 public import MathlibExt.NumberTheory.TwoNearPerfectEquationSix
+public import MathlibExt.NumberTheory.TwoNearPerfectOmittedDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
 
 namespace MetaMathlibExt
@@ -81,21 +82,6 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 public theorem_wanted eq_one_of_isSquare_discriminant {a k : ℕ} (ha : 0 < a) (hak : a ≤ k)
     (hD : IsSquare ((2 : ℤ) ^ (2 * k + 2) + 2 ^ (k + 2) - 2 ^ (a + 2) - 7)) :
     k = 1 ∧ a = 1
-
-/-- **Sum and parity of the omitted divisors of a $2$-near perfect $2^k p^2$.** Let $p$ be an odd
-prime, let $k$ be a natural number, and let $d_1 \ne d_2$ be divisors of $n = 2^k p^2$ with
-$\sigma(n) = 2n + d_1 + d_2$, where $\sigma$ denotes the sum of divisors. Then
-$d_1 + d_2 = -p^2 + (2^{k+1} - 1) p + (2^{k+1} - 1)$, and $d_1$ and $d_2$ have opposite parity.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 5
-(`integers-2024-A61-lem-5`). -/
-public theorem_wanted omitted_divisors_sum_two_pow_mul_prime_sq {k p d₁ d₂ : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (hd₁ : d₁ ∣ 2 ^ k * p ^ 2) (hd₂ : d₂ ∣ 2 ^ k * p ^ 2)
-    (hne : d₁ ≠ d₂)
-    (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) = 2 * (2 ^ k * p ^ 2) + d₁ + d₂) :
-    ((d₁ + d₂ : ℕ) : ℤ) = -(p : ℤ) ^ 2 + (2 ^ (k + 1) - 1) * p + (2 ^ (k + 1) - 1) ∧
-      d₁ % 2 ≠ d₂ % 2
 
 /-- **Odd solutions $p$ of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$ divide
 $2^k - 1$.** Let $k$ and $b$ be positive natural numbers and let $p$ be an odd natural number
