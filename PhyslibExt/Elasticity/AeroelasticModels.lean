@@ -220,8 +220,8 @@ lemma effectiveStiffness_pos_iff {K q S e CLα : ℝ} (hc : 0 < S * e * CLα) :
   unfold effectiveStiffness divergencePressure
   rw [sub_pos, lt_div_iff₀ hc]
 
-/-- Below the divergence pressure the only twist balancing the moment with zero rigid
-angle is `θ = 0`. -/
+/-- For a positive aerodynamic factor `S * e * CLα > 0`, below the divergence pressure the only
+twist balancing the moment with zero rigid angle is `θ = 0`. -/
 lemma eq_zero_of_restoringMoment_eq_zero {K q S e CLα θ : ℝ} (hc : 0 < S * e * CLα)
     (hq : q < divergencePressure K S e CLα) (hθ : restoringMoment K q S e CLα 0 θ = 0) :
     θ = 0 := by
@@ -234,7 +234,8 @@ lemma eq_zero_of_restoringMoment_eq_zero {K q S e CLα θ : ℝ} (hc : 0 < S * e
   have heq' : effectiveStiffness K q S e CLα * θ = 0 := heq.symm
   exact (mul_eq_zero.mp heq').resolve_left hne
 
-/-- At the divergence pressure every twist balances the moment with zero rigid angle. -/
+/-- For a nonzero aerodynamic factor `S * e * CLα ≠ 0`, at the divergence pressure every twist
+balances the moment with zero rigid angle. -/
 lemma restoringMoment_divergencePressure {K S e CLα : ℝ} (hc : S * e * CLα ≠ 0)
     (θ : ℝ) : restoringMoment K (divergencePressure K S e CLα) S e CLα 0 θ = 0 := by
   have heq := restoringMoment_eq K (divergencePressure K S e CLα) S e CLα 0 θ
@@ -244,8 +245,9 @@ lemma restoringMoment_divergencePressure {K S e CLα : ℝ} (hc : S * e * CLα �
   rw [heq, hK]
   simp
 
-/-- Neutral displacement: the divergence pressure is positive and a nonzero twist
-balances the moment there with zero rigid angle. -/
+/-- Neutral displacement: for `K > 0` and a positive aerodynamic factor `S * e * CLα > 0`, the
+divergence pressure is positive and a nonzero twist balances the moment there with zero rigid
+angle. -/
 lemma exists_neutral_displacement {K S e CLα : ℝ} (hK : 0 < K) (hc : 0 < S * e * CLα) :
     0 < divergencePressure K S e CLα ∧
       ∃ θ : ℝ, θ ≠ 0 ∧ restoringMoment K (divergencePressure K S e CLα) S e CLα 0 θ = 0 := by

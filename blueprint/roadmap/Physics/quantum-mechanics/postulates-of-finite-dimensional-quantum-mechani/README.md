@@ -20,7 +20,7 @@
 
 - [Simultaneous diagonalization](simultaneous-orthonormal-eigenbasis.md)
 
-## Finite-dimensional quantum states and operators with domains
+## Finite-dimensional states, Born probabilities and expectation values
 
 - [Normalized state vector](is-normalized.md)
 - [The zero vector is not normalized](not-is-normalized-zero.md)
@@ -37,6 +37,9 @@
 - [Expectation value of an observable](expectation-value.md)
 - [For a Hermitian matrix ⟨ψ, A ψ⟩ is real](im-inner-mul-vec-self-eq-zero.md)
 - [The Kronecker product of Hermitian matrices is Hermitian](is-hermitian-kronecker.md)
+
+## Operators with domains on functions of a real variable
+
 - [Operator on functions with a domain](operator-with-domain.md)
 - [Inclusion of the domain of an operator](embedding.md)
 - [The inclusion of the domain of an operator is injective](embedding-injective.md)
@@ -48,5 +51,8 @@
 - [The momentum domain is a proper subset of all functions](momentum-operator-domain-ssubset-univ.md)
 - [The constant function 1 is in the momentum domain](const-one-mem-momentum-operator-domain.md)
 - [The constant function 1 is in the Hamiltonian domain](const-one-mem-differential-hamiltonian-d.md)
+
+## Variational bounds on expectation values
+
 - [Variational bound under a given spectral decomposition](inf-le-expectation-value.md)
-- [The expectation value is at least the smallest eigenvalue](inf-eigenvalues-le-expectation-value.md)
+- [For a normalized state, ⟨A⟩ is at least the smallest eigenvalue](inf-eigenvalues-le-expectation-value.md)

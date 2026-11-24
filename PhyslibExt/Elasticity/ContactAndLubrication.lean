@@ -280,13 +280,15 @@ def IsReynoldsSolution (μ U h0 hL L : ℝ) (p p' : ℝ → ℝ) : Prop :=
     p 0 = 0 ∧ p L = 0
 
 /-- Closed-form plane-slider pressure `6 μ U L (h0 - h) (h - hL) / ((h0² - hL²) h²)` with
-`h = sliderFilm h0 hL L x`. With `a / 0 = 0` it is `0` when `h0² = hL²` or `h = 0`. -/
+`h = sliderFilm h0 hL L x`. With `a / 0 = 0` it is `0` when `h0² = hL²` or `h = 0`. The intended
+domain is `0 < h0`, `0 < hL`, `h0 ≠ hL` and `L > 0`. -/
 noncomputable def sliderPressure (μ U h0 hL L x : ℝ) : ℝ :=
   6 * μ * U * L * (h0 - sliderFilm h0 hL L x) * (sliderFilm h0 hL L x - hL) /
     ((h0 ^ 2 - hL ^ 2) * sliderFilm h0 hL L x ^ 2)
 
 /-- Plane-slider pressure gradient `6 μ U (h - 2 h0 hL / (h0 + hL)) / h³` with
-`h = sliderFilm h0 hL L x`. With `a / 0 = 0` it is `0` when `h = 0`. -/
+`h = sliderFilm h0 hL L x`. With `a / 0 = 0`, `2 h0 hL / (h0 + hL) = 0` when `h0 + hL = 0`, and
+the gradient is `0` when `h = 0`. -/
 noncomputable def sliderPressureGradient (μ U h0 hL L x : ℝ) : ℝ :=
   6 * μ * U * (sliderFilm h0 hL L x - 2 * h0 * hL / (h0 + hL)) / sliderFilm h0 hL L x ^ 3
 
@@ -894,8 +896,9 @@ below an obstacle at `g`. With `a / 0 = 0` it is `min g 0` when `k = 0`; the int
 `k > 0`. -/
 noncomputable def contactDisplacement (k g f : ℝ) : ℝ := min g (f / k)
 
-/-- The magnitude `λ = f - k u` of the contact force; the obstacle pushes on the body with `-λ`
-along increasing `u`. -/
+/-- The signed contact force multiplier `λ = f - k u`; the obstacle pushes on the body with `-λ`
+along increasing `u`. It is nonnegative at a solution of the contact problem
+(`complementarity_of_vi`), where it is the magnitude of the obstacle reaction. -/
 def contactForce (k f u : ℝ) : ℝ := f - k * u
 
 /-- The gap `g - u` between the obstacle and the body. -/

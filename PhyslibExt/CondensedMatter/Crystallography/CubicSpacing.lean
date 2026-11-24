@@ -24,9 +24,10 @@ lattice reading of the expression needs a positive lattice parameter `a > 0`
 Textbooks identify `a / √(h ^ 2 + k ^ 2 + l ^ 2)` with the interplanar spacing
 `d_hkl` of the `(hkl)` planes of a simple cubic lattice with lattice parameter
 `a` (see References). Lattices, lattice planes, and reciprocal vectors are not
-formalized in this file, so that identification is not kernel-checked: the
-theorems below are algebraic identities about the expression, not
-crystallographic results. The Bravais-lattice API of this hierarchy is
+formalized in this file: the theorems below are statements about the expression,
+not crystallographic results. The identification itself is
+`Crystallography.BravaisLattice.spacing_simpleCubic` in `MillerIndices`. The
+Bravais-lattice API of this hierarchy is
 `PhyslibExt.CondensedMatter.Crystallography.BravaisLattice`.
 
 Reciprocal convention of the cited formula: with the physics normalization

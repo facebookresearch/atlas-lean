@@ -31,7 +31,7 @@
 - [Weak solutions of the fixed-fixed bar problem](is-weak-bar-solution.md)
 - [A weak solution of the unit problem gives a weak bar solution](is-weak-bar-solution-of-unit.md)
 - [A weak bar solution pulled back solves the unit problem](to-unit-2.md)
-- [Weak fixed-fixed bar with bounded rigidity: existence and uniqueness](weak-bar-exists-unique.md)
+- [Rigidity between positive bounds: the weak bar has a unique solution](weak-bar-exists-unique.md)
 
 ## Examples and excluded data
 
@@ -40,7 +40,7 @@
 - [A positive step rigidity satisfies the bar hypotheses](step-rigidity-admissible.md)
 - [Zero rigidity has no weak solution under unit load](not-is-weak-bar-solution-zero-rigidity.md)
 - [A nonpositive rigidity has no positive lower bound](not-ae-lower-bound-of-nonpos.md)
-- [The fixed-free displacement is not in H¹₀(0, L)](not-exists-weak-h10-on-eq-on-fixed-free.md)
+- [Under a nonzero load the fixed-free displacement is not in H¹₀(0, L)](not-exists-weak-h10-on-eq-on-fixed-free.md)
 
 ## Stress divergence and face works
 

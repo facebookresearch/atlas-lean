@@ -1,4 +1,4 @@
-# Action of the quarter-turn about z on a Voigt matrix
+# Action of the −90° quarter-turn about z on a Voigt matrix
 
 For every real `6 × 6` matrix `C` and all Voigt indices `I` and `J`, the [action](voigt-rotate.md)
 of `R_zᵀ = R_z⁻¹`, the rotation by `-90°` about the `z`-axis (with [`R_z`](rz90.md) the

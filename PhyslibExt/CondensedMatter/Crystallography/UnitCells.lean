@@ -210,8 +210,10 @@ lemma volume_parallelepiped_eq_of_lattice_eq (Λ Λ' : BravaisLattice)
 /-! ## C. Sublattices and points per cell -/
 
 /-- `Λc` is a sublattice of `Λf` when its lattice is contained in that of `Λf`; its cell (the
-conventional cell) is then larger. Running example: the simple cubic lattice of side `a` is a
-sublattice of the face-centred cubic lattice with the same cube as conventional cell. -/
+conventional cell) is then at least as large, `N ≥ 1` times a primitive cell of `Λf` in volume
+(`pointsPerCell_eq_volume_ratio`), and equal to it when the lattices coincide. Running example: the
+simple cubic lattice of side `a` is a sublattice of the face-centred cubic lattice with the same
+cube as conventional cell. -/
 def IsSublatticeOf (Λc Λf : BravaisLattice) : Prop := Λc.lattice ≤ Λf.lattice
 
 /-- The closed conventional cell of `Λc`: its fundamental parallelepiped, the points with all

@@ -151,7 +151,7 @@ structure WeakH10On (L : ℝ) where
   /-- The weak derivative has integral zero over `[0, L]`, the condition `toFun L = 0`. -/
   integral_weakDeriv_eq_zero : ∫ t in (0 : ℝ)..L, weakDeriv t = 0
 
-/-- Zero displacement at both ends. -/
+/-- For `L ≥ 0`, an element of `H¹₀(0, L)` has zero displacement at both ends. -/
 lemma WeakH10On.toFun_zero_and_length {L : ℝ} (hL : 0 ≤ L) (v : WeakH10On L) :
     v.toFun 0 = 0 ∧ v.toFun L = 0 := by
   exact ⟨by rw [v.toFun_eq_integral 0 ⟨le_rfl, hL⟩]; simp,
@@ -190,7 +190,8 @@ private lemma map_inv_mul_restrict_Icc {L : ℝ} (hL : 0 < L) :
     Real.map_volume_mul_left (inv_ne_zero hL.ne'), Measure.restrict_smul, inv_inv,
     abs_of_pos hL]
 
-/-- The scaled weak derivative `ξ ↦ L * g (L * ξ)` is in `L²(0, 1)` when `g ∈ L²(0, L)`. -/
+/-- For `L > 0`, the scaled weak derivative `ξ ↦ L * g (L * ξ)` is in `L²(0, 1)` when
+`g ∈ L²(0, L)`. -/
 lemma memLp_scale_toUnit {L : ℝ} (hL : 0 < L) {g : ℝ → ℝ}
     (hg : MemLp g 2 (volume.restrict (Set.Icc 0 L))) :
     MemLp (fun ξ => L * g (L * ξ)) 2 (volume.restrict (Set.Icc 0 1)) := by
@@ -366,7 +367,8 @@ lemma integral_load_ofUnit {L : ℝ} (hL : 0 < L) (q : ℝ → ℝ) (w : WeakH10
     zero_div, div_self hL.ne', smul_eq_mul]
   field_simp
 
-/-- The unit diffusivity is a.e. strongly measurable on `[0, 1]`. -/
+/-- For `L > 0` and `EA` a.e. strongly measurable on `[0, L]`, the unit diffusivity is a.e.
+strongly measurable on `[0, 1]`. -/
 lemma aestronglyMeasurable_scaledRigidity {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ}
     (hEA : AEStronglyMeasurable EA (volume.restrict (Set.Icc 0 L))) :
     AEStronglyMeasurable (scaledRigidity EA L) (volume.restrict (Set.Icc 0 1)) := by
@@ -376,7 +378,8 @@ lemma aestronglyMeasurable_scaledRigidity {L : ℝ} (hL : 0 < L) {EA : ℝ → �
     exact hEA.smul_measure _
   exact (h1.comp_aemeasurable (measurable_const_mul L).aemeasurable).mul_const L⁻¹
 
-/-- The rigidity bounds transport to `EAmin / L ≤ κ ≤ EAmax / L` a.e. on `[0, 1]`. -/
+/-- For `L > 0`, the rigidity bounds `EAmin ≤ EA ≤ EAmax` a.e. on `[0, L]` transport to
+`EAmin / L ≤ κ ≤ EAmax / L` a.e. on `[0, 1]`. -/
 lemma ae_bounds_scaledRigidity {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ} {EAmin EAmax : ℝ}
     (hEA : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 L)), EAmin ≤ EA x ∧ EA x ≤ EAmax) :
     ∀ᵐ ξ ∂(volume.restrict (Set.Icc 0 1)),
@@ -537,7 +540,7 @@ lemma IsWeakBarSolution.eqOn_axialDisplacement {L EA q : ℝ} (hL : 0 < L) (hEA 
   unfold axialDisplacement
   field_simp
 
-/-- A positive two-valued rigidity `EA₁` on `x < a`, `EA₂` on `x ≥ a`. -/
+/-- A two-valued rigidity, `EA₁` on `x < a` and `EA₂` on `x ≥ a` (positive when `EA₁, EA₂ > 0`). -/
 noncomputable def stepRigidity (EA₁ EA₂ a x : ℝ) : ℝ :=
   if x < a then EA₁ else EA₂
 
@@ -555,7 +558,7 @@ lemma stepRigidity_admissible {EA₁ EA₂ : ℝ} (hEA₁ : 0 < EA₁) (hEA₂ :
     · exact ⟨min_le_left _ _, le_max_left _ _⟩
     · exact ⟨min_le_right _ _, le_max_right _ _⟩
 
-/-- Zero rigidity is not admissible: under the unit load it has no weak solution. -/
+/-- Zero rigidity is not admissible: for `L > 0`, under the unit load it has no weak solution. -/
 lemma not_isWeakBarSolution_zero_rigidity {L : ℝ} (hL : 0 < L) (u : WeakH10On L) :
     ¬ IsWeakBarSolution (fun _ => 0) (fun _ => 1) u := by
   intro h
@@ -574,7 +577,8 @@ lemma not_isWeakBarSolution_zero_rigidity {L : ℝ} (hL : 0 < L) (u : WeakH10On 
   rw [h2] at h1
   linarith
 
-/-- A rigidity that is nonpositive on `[0, L]` has no positive a.e. lower bound there. -/
+/-- For `L > 0`, a rigidity that is nonpositive on `[0, L]` has no positive a.e. lower bound
+there. -/
 lemma not_ae_lowerBound_of_nonpos {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ}
     (hEA : ∀ x ∈ Set.Icc (0 : ℝ) L, EA x ≤ 0) {EAmin EAmax : ℝ} (hEAmin : 0 < EAmin) :
     ¬ ∀ᵐ x ∂(volume.restrict (Set.Icc 0 L)), EAmin ≤ EA x ∧ EA x ≤ EAmax := by
@@ -586,8 +590,8 @@ lemma not_ae_lowerBound_of_nonpos {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ}
     ENNReal.ofReal_eq_zero] at hae
   linarith
 
-/-- A traction end is not covered: the fixed-free displacement `q x (2 L - x) / (2 EA)` with
-`q ≠ 0` does not vanish at `x = L`, so no element of `H¹₀(0, L)` represents it. -/
+/-- A traction end is not covered: for `L > 0`, `EA > 0` and `q ≠ 0`, the fixed-free displacement
+`q x (2 L - x) / (2 EA)` does not vanish at `x = L`, so no element of `H¹₀(0, L)` represents it. -/
 lemma not_exists_weakH10On_eqOn_fixedFree {L EA q : ℝ} (hL : 0 < L) (hEA : 0 < EA) (hq : q ≠ 0) :
     ¬ ∃ v : WeakH10On L, Set.EqOn v.toFun (fixedFreeDisplacement EA L q) (Set.Icc 0 L) := by
   rintro ⟨v, hv⟩
@@ -807,8 +811,10 @@ lemma virtualWork_box_of_lowerFace_eq_zero {a b : Fin 3 → ℝ} (hab : ∀ i, a
     ← Finset.add_sum_erase Finset.univ (fun i => lowerFaceWork a b σ v i) (Finset.mem_univ i₀),
     lowerFaceWork_eq_zero hclamp, zero_add, add_assoc]
 
-/-- A rigid virtual displacement `v x = W x` with `Wᵀ = -W` does no internal work, so its
-external virtual work vanishes. -/
+/-- Under the hypotheses of `virtualWork_box` on the stress and body force (a nondegenerate box,
+`σ` `C¹` on an open neighbourhood of the box and symmetric on it, `div σ + body = 0` on the box),
+a rigid virtual displacement `v x = W x` with `Wᵀ = -W` does no internal work, so its external
+virtual work vanishes. -/
 lemma virtualWork_box_rigid {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i) {U : Set (Fin 3 → ℝ)}
     (hU : IsOpen U) (hbox : Set.Icc a b ⊆ U) {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ}
     {body : (Fin 3 → ℝ) → Fin 3 → ℝ} (hσ : ∀ i j, ContDiffOn ℝ 1 (fun x => σ x i j) U)

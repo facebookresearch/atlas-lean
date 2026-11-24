@@ -92,8 +92,8 @@
 - [Voigt index permutation of the x ↔ z axis swap](voigt-swap02.md)
 - [Voigt index permutation of the y ↔ z axis swap](voigt-swap12.md)
 - [Voigt index permutation of the quarter-turn about z](voigt-rot-z90.md)
-- [Voigt signs of the quarter-turn about z](voigt-rot-z90-sign.md)
-- [Action of the quarter-turn about z on a Voigt matrix](voigt-rotate-rz90-transpose-apply.md)
+- [Voigt signs of the −90° quarter-turn about z](voigt-rot-z90-sign.md)
+- [Action of the −90° quarter-turn about z on a Voigt matrix](voigt-rotate-rz90-transpose-apply.md)
 
 ## Cubic elastic constants
 

@@ -39,8 +39,8 @@
 ## The pinned–pinned energy threshold
 
 - [Integration by parts for a deflection vanishing at both ends](integral-deriv-sq-eq-neg.md)
-- [Slope energy is at most (L / π)² times the curvature energy](integral-deriv-sq-le.md)
-- [A deflection that is nonzero somewhere has positive slope energy](integral-deriv-sq-pos.md)
+- [If w(0) = w(L) = 0, slope energy ≤ (L / π)² times curvature energy](integral-deriv-sq-le.md)
+- [If w(0) = 0 and w ≠ 0 somewhere, the slope energy is positive](integral-deriv-sq-pos.md)
 - [Lower bound on the quadratic energy of a pinned column](quadratic-energy-lower.md)
 - [Below the Euler load the quadratic energy is positive](quadratic-energy-pos-of-lt.md)
 - [At the Euler load the pinned mode has zero quadratic energy](pinned-mode-energy-eq-zero.md)

@@ -6,4 +6,4 @@ The table lists fourteen [entries](bravais-entry.md), indexed by `0, …, 13`: `
 (hexagonal, primitive), `hR` (trigonal, rhombohedral), `mP`, `mC` (monoclinic: primitive,
 base-centred) and `aP` (triclinic, primitive). The entries are
 [pairwise distinct](bravais-metadata-table-injective.md). The table holds metadata only, no basis
-matrices or lattices, and it is not linked to the lattice constructors of this topic.
+matrices or lattices.

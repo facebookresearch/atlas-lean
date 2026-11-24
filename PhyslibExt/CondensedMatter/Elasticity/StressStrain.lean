@@ -232,7 +232,8 @@ lemma compressionPositiveTraction_compressionPositiveStress_neg {n : ℕ}
   rw [compressionPositiveTraction_compressionPositiveStress, traction_neg]
 
 /-- Hydrostatic pressure: the compression-positive physical
-traction of the converted stress `-p • 1` is the traction
+traction of the tension-positive stress `-p • 1`, converted to
+the compression-positive stress `p • 1`, is the traction
 `-p • v`, inward for `p > 0` and an outward normal `v`. -/
 lemma compressionPositiveTraction_neg_smul_one {n : ℕ}
     (p : ℝ) (v : Fin n → ℝ) :
@@ -486,9 +487,9 @@ lemma mohr_circle (σx σy τ θ : ℝ) :
 noncomputable def principalPlaneShear (s₁ s₃ θ : ℝ) : ℝ :=
   -(s₁ - s₃) / 2 * Real.sin (2 * θ)
 
-/-- In-plane maximum shear bound: `|τ(θ)| ≤ (s₁ - s₃)/2` for `s₁ ≥ s₃`. This is the maximum
-over orientations within the 1-3 principal plane; the claim that the global 3D maximum shear is
-attained in that plane is a documented consequence (the 3D extremum argument), not proved here. -/
+/-- In-plane shear bound: `|τ(θ)| ≤ (s₁ - s₃)/2` for `s₁ ≥ s₃`. This bounds the shear over
+orientations within the 1-3 principal plane; the bound is attained at `θ = π/4`
+(`principalPlaneShear_max`). -/
 lemma principalPlaneShear_bound (s₁ s₃ θ : ℝ) (hle : s₃ ≤ s₁) :
     |principalPlaneShear s₁ s₃ θ| ≤ (s₁ - s₃) / 2 := by
   have hneg : (-(s₁ - s₃) / 2 : ℝ) ≤ 0 := by linarith

@@ -195,9 +195,9 @@ def basisLattice (n : ℕ) (P : Matrix (Fin n) (Fin n) ℝ) : Set (Fin n → ℝ
 
 /-- A matrix is a lattice symmetry if it maps a full-rank lattice onto itself:
 for some invertible basis matrix `P`, the image of `basisLattice n P` under `R`
-is `basisLattice n P`. This is the defining property of the elements of a
-lattice's point group; `IsLatticeEndomorphism` only asks for a map into the
-lattice. -/
+is `basisLattice n P`. Together with orthogonality (`Rᵀ * R = 1`), this is the
+defining property of the elements of a lattice's point group;
+`IsLatticeEndomorphism` only asks for a map into the lattice. -/
 def IsLatticeSymmetry (n : ℕ) (R : Matrix (Fin n) (Fin n) ℝ) : Prop :=
   ∃ P : Matrix (Fin n) (Fin n) ℝ, IsUnit P.det ∧
     (fun v => R *ᵥ v) '' basisLattice n P = basisLattice n P

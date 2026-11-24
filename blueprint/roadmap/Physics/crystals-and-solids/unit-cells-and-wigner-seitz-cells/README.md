@@ -29,7 +29,6 @@
 
 ## Wigner–Seitz covering and disjoint interiors
 
-- [The lattice translates of the Wigner–Seitz cell cover space](wigner-seitz-cell-cover.md)
 - [The Wigner–Seitz cell is centrally symmetric](wigner-seitz-cell-neg-mem.md)
 - [Interior Wigner–Seitz points are strictly nearest to the origin](wigner-seitz-cell-interior-strict.md)
 - [Distinct translates of the Wigner–Seitz cell have disjoint interiors](wigner-seitz-cell-disjoint-interior-tran.md)
@@ -58,7 +57,7 @@
 - [For sin β ≠ 0, the base-centred monoclinic lattice](monoclinic-c.md)
 - [For admissible angles, the triclinic lattice](triclinic-p.md)
 
-## Different centrings with equal parameters give different lattices
+## Pairs of centrings of one crystal system that give different lattices
 
 - [Simple and face-centred cubic lattices of equal side differ](lattice-ne-c-p-c-f.md)
 - [Simple and body-centred cubic lattices of equal side differ](lattice-ne-c-p-c-i.md)

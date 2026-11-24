@@ -1,4 +1,4 @@
-# For nonzero indices, adjacent lattice planes are at least d apart
+# For nonzero indices, the planes n = 0 and n = 1 are at least d apart
 
 Let a [Bravais lattice](../bravais-lattices/bravais-lattice.md) and Miller indices `h` be given,
 with the [reciprocal-lattice vector](reciprocal-vector.md) `g_h`. Suppose that `g_h ≠ 0`, which

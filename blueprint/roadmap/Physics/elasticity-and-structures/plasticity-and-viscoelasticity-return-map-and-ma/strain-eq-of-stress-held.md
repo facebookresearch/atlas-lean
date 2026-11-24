@@ -1,4 +1,4 @@
-# With stress held from t = 0, the Maxwell strain grows linearly
+# With the stress held from t = 0 the Maxwell strain is linear in time
 
 Let a [Maxwell branch](maxwell-branch.md) with modulus $E > 0$ and viscosity $\eta > 0$ and
 histories $\sigma$, $\varepsilon$ with rates $\sigma'$, $\varepsilon'$ obey the

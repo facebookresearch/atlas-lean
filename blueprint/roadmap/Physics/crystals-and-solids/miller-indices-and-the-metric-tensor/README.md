@@ -35,7 +35,7 @@
 - [Membership in a lattice plane in primitive coordinates](mem-lattice-plane-iff.md)
 - [For nonzero indices, a fixed shift moves each plane to the next](plane-shift-mem.md)
 - [For nonzero indices, the plane-to-plane shift has length d](plane-shift-norm.md)
-- [For nonzero indices, adjacent lattice planes are at least d apart](plane-dist-ge.md)
+- [For nonzero indices, the planes n = 0 and n = 1 are at least d apart](plane-dist-ge.md)
 - [For n ≠ 0, indices n h have the spacing of h over the modulus of n](interplanar-spacing-smul.md)
 
 ## Directions and the zone law
@@ -64,5 +64,5 @@
 - [Conversion of integer directions to Miller–Bravais indices](to-miller-bravais-dir.md)
 - [Converted Miller–Bravais directions satisfy U + V + T = 0](to-miller-bravais-dir-q-sum.md)
 - [Converting a rational direction to four indices and back returns it](of-miller-bravais-dir-to-miller-bravais.md)
-- [With U + V + T = 0, converting to three indices and back returns U](to-miller-bravais-dir-q-of-miller-bravai.md)
+- [If U + V + T = 0, converting to three indices and back is the identity](to-miller-bravais-dir-q-of-miller-bravai.md)
 - [Converting an integer direction to four indices and back returns it](of-miller-bravais-dir-to-miller-bravais-2.md)

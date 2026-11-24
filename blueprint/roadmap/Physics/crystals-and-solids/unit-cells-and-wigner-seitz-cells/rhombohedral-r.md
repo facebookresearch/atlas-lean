@@ -5,5 +5,7 @@ rhombohedral lattice (Pearson symbol `hR`: trigonal system, rhombohedral centrin
 [Bravais lattice](../bravais-lattices/bravais-lattice.md) whose primitive vectors (columns of the
 basis matrix) are `(a, 0, 0)`, `(a cos α, a sin α, 0)` and
 `(a cos α, a (cos α - cos² α) / sin α, a √Ω / sin α)`. These are three vectors of length `a` with
-pairwise angle `α`; the hypotheses make the divisions and the square root meaningful and the
-determinant nonzero.
+pairwise dot products `a² cos α`, so their pairwise angle is `arccos(cos α)`: it is `α` for
+`0 < α < π`, where the hypotheses force `α < 2π/3`, but not for the admissible angles outside
+`(0, π)`, such as `α = -π/3`. The hypotheses make the divisions and the square root meaningful and
+the determinant nonzero.

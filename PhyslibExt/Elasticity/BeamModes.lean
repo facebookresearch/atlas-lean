@@ -450,8 +450,8 @@ noncomputable def modeFamily (β : ℝ) (c : Fin 4 → ℝ) (x : ℝ) : ℝ :=
   c 0 * Real.cos (β * x) + c 1 * Real.sin (β * x) + c 2 * Real.cosh (β * x) +
     c 3 * Real.sinh (β * x)
 
-/-- The clamped-free boundary matrix at `z = β L`: for the family member with coefficients `c`
-its rows give `W 0`, `W' 0 / β`, `W'' L / β ^ 2` and `W''' L / β ^ 3`. -/
+/-- The clamped-free boundary matrix at `z = β L`: for `β ≠ 0` and the family member with
+coefficients `c`, its rows give `W 0`, `W' 0 / β`, `W'' L / β ^ 2` and `W''' L / β ^ 3`. -/
 noncomputable def clampedFreeMatrix (z : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
   !![1, 0, 1, 0;
     0, 1, 0, 1;
@@ -460,7 +460,8 @@ noncomputable def clampedFreeMatrix (z : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
 
 /-- The clamped-free conditions for a mode shape `W` of a beam of positive length `L`: zero
 deflection and slope at the clamp `x = 0`; zero curvature and zero third derivative at the free
-end `x = L` (zero bending moment and shear force for `EI > 0`). -/
+end `x = L` (zero bending moment and shear force for `EI > 0`). Derivatives are `0` where they
+do not exist. -/
 structure IsClampedFree (L : ℝ) (W : ℝ → ℝ) : Prop where
   span_pos : 0 < L
   zero_left : W 0 = 0

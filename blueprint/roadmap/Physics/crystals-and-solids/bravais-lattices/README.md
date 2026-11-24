@@ -14,7 +14,7 @@
 
 ## Orbits of finite group actions
 
-- [The orbits of a group action on a finite set partition it](sum-card-orbit-eq-card.md)
+- [The orbit sizes of a group action on a finite set add up to its size](sum-card-orbit-eq-card.md)
 - [With trivial stabilizer, an orbit is as large as the finite group](card-orbit-eq-card-group-of-stabilizer-e.md)
 
 ## Bravais lattices and their lattice vectors

@@ -18,8 +18,8 @@
 - [Positive aerodynamic factor: zero stiffness exactly at divergence](effective-stiffness-eq-zero-iff.md)
 - [Positive aerodynamic factor: stiffness is positive below divergence](effective-stiffness-pos-iff.md)
 - [Below the divergence pressure only zero twist is in equilibrium](eq-zero-of-restoring-moment-eq-zero.md)
-- [At the divergence pressure every twist is in equilibrium](restoring-moment-divergence-pressure.md)
-- [At the divergence pressure a nonzero twist is in equilibrium](exists-neutral-displacement.md)
+- [For S e C_Lα ≠ 0, every twist balances at the divergence pressure](restoring-moment-divergence-pressure.md)
+- [For K, S e C_Lα > 0, a nonzero twist balances at divergence pressure](exists-neutral-displacement.md)
 
 ## Nonpositive and zero aerodynamic factor
 

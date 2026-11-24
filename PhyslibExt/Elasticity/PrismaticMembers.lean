@@ -442,7 +442,8 @@ lemma isClassicalSolution_axialDisplacement_scaled {EA : ℝ} (hEA : 0 < EA) (L 
 /-! ## C. Boundary example -/
 
 /-- Fixed-free bar under the uniform load `q`: `q * x * (2 * L - x) / (2 * EA)`. With the
-convention that division by `0` gives `0`, the value is `0` when `EA = 0`. -/
+convention that division by `0` gives `0`, the value is `0` when `EA = 0`. The model has `L > 0`
+and `EA > 0`. -/
 noncomputable def fixedFreeDisplacement (EA L q x : ℝ) : ℝ :=
   q * x * (2 * L - x) / (2 * EA)
 
@@ -478,7 +479,8 @@ lemma fixedFreeDisplacement_not_isFixedFixedSolution {EA L q : ℝ} (hL : 0 < L)
 
 /-- Cantilever deflection under the uniform load `q` and the tip force `P`:
 `q * x ^ 2 * (6 * L ^ 2 - 4 * L * x + x ^ 2) / (24 * EI) + P * x ^ 2 * (3 * L - x) / (6 * EI)`.
-With the convention that division by `0` gives `0`, the value is `0` when `EI = 0`. -/
+With the convention that division by `0` gives `0`, the value is `0` when `EI = 0`. The model has
+`EI > 0` and `L > 0`. -/
 noncomputable def cantileverDeflection (EI L q P x : ℝ) : ℝ :=
   q * x ^ 2 * (6 * L ^ 2 - 4 * L * x + x ^ 2) / (24 * EI) +
     P * x ^ 2 * (3 * L - x) / (6 * EI)
@@ -712,7 +714,7 @@ def IsFixedTractionSolution (k L P : ℝ) (f u : ℝ → ℝ) : Prop :=
 
 /-- The strain of the load path, `u' x = (P + ∫ y in x..L, f y) / k`. The integral is oriented
 and is `0` for a non-integrable integrand; with the convention that division by `0` gives `0`,
-the strain is `0` when `k = 0`. -/
+the strain is `0` when `k = 0`. The model has `L > 0`, `k > 0` and `f` continuous on `[0, L]`. -/
 noncomputable def fixedTractionStrain (k L P : ℝ) (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   (P + ∫ y in x..L, f y) / k
 
@@ -1186,9 +1188,9 @@ lemma fixedTractionDisplacement_const (k L P q x : ℝ) :
 
 /-! ## I. Boundary example: two free ends -/
 
-/-- Free-free problem on `[0, L]`: end force `P₀` at `x = 0`, where the outward normal is `-x` so
-the end force is `-(k * u' 0)`, and end force `P₁ = k * u' L` at `x = L`. The model has `L > 0`
-and `k > 0`. -/
+/-- Free-free problem on `[0, L]`: both end forces are measured along `+x`. `P₀ = -(k * u' 0)` is
+the force applied at `x = 0`, where the outward normal is `-x`, so a tensile pull there gives
+`P₀ < 0`; `P₁ = k * u' L` is the force applied at `x = L`. The model has `L > 0` and `k > 0`. -/
 def IsFreeFreeSolution (k L P₀ P₁ : ℝ) (f u : ℝ → ℝ) : Prop :=
   ContDiffOn ℝ 2 u (Set.Icc 0 L) ∧
     (∀ x ∈ Set.Icc (0 : ℝ) L, -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x) = f x) ∧
@@ -1244,7 +1246,7 @@ private lemma continuousOn_f_of_freeFree {k L P₀ P₁ : ℝ} {f u : ℝ → �
   exact hneg.congr hEq
 
 /-- Equilibrium of a free-free bar of length `L > 0` requires zero net load:
-`P₀ + P₁ + ∫₀ᴸ f = 0`. -/
+`P₀ + P₁ + ∫₀ᴸ f = 0`, both end forces being measured along `+x`. -/
 lemma IsFreeFreeSolution.net_load {k L P₀ P₁ : ℝ} {f u : ℝ → ℝ} (hL : 0 < L)
     (hu : IsFreeFreeSolution k L P₀ P₁ f u) : P₀ + P₁ + ∫ x in (0 : ℝ)..L, f x = 0 := by
   have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
@@ -1310,7 +1312,7 @@ lemma resultantForce_cellWallForce (a b q : ℝ) : resultantForce (cellWallForce
   fin_cases i <;> simp
 
 /-- **Torque from the four wall resultants.** About every reference point `O`, the wall resultants
-(no free couples) have the moment `(0, 0, 2 a b q)`: the cell carries the torque
+(no free couples) have the moment `(0, 0, 2 a b q)`; for `a, b > 0` the cell carries the torque
 `T = 2 a b q = 2 A q` about the member axis `+z`, positive for counterclockwise shear flow. -/
 lemma momentAbout_cellWall (a b q : ℝ) (O : Fin 3 → ℝ) :
     momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O =
@@ -1607,7 +1609,8 @@ lemma IsSimplySupportedSolution.slopes {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0
 /-! ## N. Simply supported beam: clamped slopes change the solution -/
 
 /-- Clamped-clamped deflection under the uniform load `q`: `q * x ^ 2 * (L - x) ^ 2 / (24 * EI)`.
-With the convention that division by `0` gives `0`, the value is `0` when `EI = 0`. -/
+With the convention that division by `0` gives `0`, the value is `0` when `EI = 0`. The model has
+`EI > 0` and `L > 0`. -/
 noncomputable def clampedClampedDeflection (EI L q x : ℝ) : ℝ :=
   q * x ^ 2 * (L - x) ^ 2 / (24 * EI)
 

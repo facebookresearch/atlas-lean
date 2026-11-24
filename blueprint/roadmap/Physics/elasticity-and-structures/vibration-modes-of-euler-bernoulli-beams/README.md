@@ -28,7 +28,7 @@
 - [Every family member solves W'''' = β⁴ W](mode-family-iterated-deriv-four.md)
 - [Boundary traces of a family member through the boundary matrix](mode-family-traces.md)
 - [The boundary matrix has determinant 2 (cos z cosh z + 1)](clamped-free-matrix-det.md)
-- [A clamped–free family member exists iff cos βL cosh βL + 1 = 0](exists-is-clamped-free-iff.md)
+- [A nonzero clamped–free family member exists iff cos βL cosh βL + 1 = 0](exists-is-clamped-free-iff.md)
 
 ## The least positive root
 

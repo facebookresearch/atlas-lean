@@ -1,4 +1,4 @@
-# Weak fixed-fixed bar with bounded rigidity: existence and uniqueness
+# Rigidity between positive bounds: the weak bar has a unique solution
 
 Let `L > 0`, `EA` a function almost everywhere strongly measurable on `[0, L]` with
 `0 < EA_min ≤ EA ≤ EA_max` almost everywhere on `[0, L]`, and `q` square integrable on `[0, L]`.

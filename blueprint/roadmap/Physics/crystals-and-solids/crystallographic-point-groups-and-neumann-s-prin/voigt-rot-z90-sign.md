@@ -1,4 +1,4 @@
-# Voigt signs of the quarter-turn about z
+# Voigt signs of the −90° quarter-turn about z
 
 Voigt indices `1, …, 6` label the axis pairs `xx`, `yy`, `zz`, `yz`, `xz`, `xy`, in this order. The
 Voigt signs `s` of the quarter-turn `R_zᵀ = R_z⁻¹`, the rotation by `-90°` about the `z`-axis, are

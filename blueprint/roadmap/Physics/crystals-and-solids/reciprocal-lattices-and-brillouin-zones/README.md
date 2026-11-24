@@ -20,7 +20,6 @@
 
 - [Duality in matrix form: Bᵀ B* = 2π times the identity](transpose-mul-reciprocal-basis-matrix.md)
 - [Duality of the reciprocal basis: aᵢ · bⱼ = 2π δᵢⱼ](inner-primitive-vector-reciprocal.md)
-- [Duality with the factors swapped: bᵢ · aⱼ = 2π δᵢⱼ](inner-reciprocal-primitive-vector.md)
 - [The reciprocal basis is the only basis 2π-dual to the lattice basis](reciprocal-basis-matrix-eq-iff.md)
 - [The reciprocal basis matrix is 2π times the inverse transpose](reciprocal-basis-matrix-eq-inv-transpose.md)
 - [Oriented volume of the reciprocal cell: det B* = (2π)³ / det B](det-reciprocal-basis-matrix.md)
@@ -33,7 +32,6 @@
 - [A reciprocal lattice vector pairs with aⱼ to 2π mⱼ](inner-reciprocal-lattice-vector-primitiv.md)
 - [Reciprocal and direct lattice vectors pair to a multiple of 2π](inner-reciprocal-lattice-vector.md)
 - [G is in the reciprocal lattice iff G · R ∈ 2πℤ for all lattice R](mem-lattice-reciprocal-iff.md)
-- [G is in the reciprocal lattice iff exp(i G · R) = 1 for all lattice R](mem-lattice-reciprocal-iff-exp.md)
 - [The reciprocal lattice does not depend on the primitive vectors](lattice-reciprocal-relabel.md)
 
 ## Cubic lattices
@@ -49,7 +47,7 @@
 
 - [Wigner–Seitz cell of a Bravais lattice](wigner-seitz-cell.md)
 - [The Wigner–Seitz cell is closed](is-closed-wigner-seitz-cell.md)
-- [Every point has a nearest lattice point](exists-forall-norm-sub-le.md)
+- [Nearest lattice points exist: the Wigner–Seitz translates cover space](exists-forall-norm-sub-le.md)
 - [The Wigner–Seitz cell is a fundamental domain for lattice translations](is-add-fundamental-domain-wigner-seitz-c.md)
 - [The Wigner–Seitz cell has volume equal to the absolute determinant](volume-wigner-seitz-cell.md)
 - [First Brillouin zone](first-brillouin-zone.md)

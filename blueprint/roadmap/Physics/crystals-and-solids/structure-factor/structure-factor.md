@@ -7,7 +7,6 @@ positions on the cyclic group of order `N`. The structure factor at the wavevect
 `S(k) = ∑_{j ∈ ι} f_j exp(-2π i k r_j / N)`,
 
 where `i` is the imaginary unit, the product `k r_j` is taken in `ℤ/Nℤ`, and any integer
-representative of it may be used in the exponential. The kernel has the negative exponent, as in
-the discrete Fourier transform on `ℤ/Nℤ` and in Kittel's structure factor
-`∑_j f_j exp(-i G · r_j)`; some texts use the opposite sign. Only this finite periodic case is
-treated.
+representative of it may be used in the exponential. The kernel has the negative exponent, as in the
+discrete Fourier transform on `ℤ/Nℤ` and in Kittel's structure factor `∑_j f_j exp(-i G · r_j)`;
+some texts use the opposite sign.

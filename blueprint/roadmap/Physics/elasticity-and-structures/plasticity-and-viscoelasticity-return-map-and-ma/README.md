@@ -28,7 +28,7 @@ set of states.
 - [The Maxwell constitutive relation in relaxation form](is-history-iff-relaxation.md)
 - [Energy balance of a Maxwell branch](has-deriv-at-stored-energy.md)
 - [With strain held from t = 0, the Maxwell stress decays exponentially](stress-eq-of-strain-held.md)
-- [With stress held from t = 0, the Maxwell strain grows linearly](strain-eq-of-stress-held.md)
+- [With the stress held from t = 0 the Maxwell strain is linear in time](strain-eq-of-stress-held.md)
 - [The dashpot dissipates power exactly at nonzero stress](dissipation-rate-pos-iff.md)
 
 ## Calibrated Maxwell branches

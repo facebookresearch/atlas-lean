@@ -30,9 +30,9 @@
 - [Displacements admissible below a rigid obstacle](admissible-set.md)
 - [Linear spring as an operator on the real line](stiffness-map.md)
 - [Displacement of a spring pressed against an obstacle](contact-displacement.md)
-- [Magnitude of the obstacle contact force](contact-force.md)
+- [Obstacle contact force multiplier](contact-force.md)
 - [Gap between a body and an obstacle](contact-gap.md)
-- [The contact variational inequality on the real line](inner-stiffness-map-sub.md)
+- [The contact inequality’s inner product on ℝ is a product](inner-stiffness-map-sub.md)
 
 ## The hypotheses of Stampacchia's theorem
 
@@ -65,7 +65,7 @@
 ## Static equilibrium and non-uniqueness at rest
 
 - [Static equilibrium under Coulomb friction](coulomb-static-equilibrium-iff.md)
-- [At rest the Coulomb law does not determine the force](coulomb-stick-not-unique.md)
+- [For μ, N > 0, the Coulomb law at rest does not determine the force](coulomb-stick-not-unique.md)
 
 ## Negative friction coefficient
 

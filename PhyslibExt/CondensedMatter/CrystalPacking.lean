@@ -138,7 +138,8 @@ noncomputable def atomicPackingFactor (n : ℕ) (R Vc : ℝ) (_hR : 0 < R)
 lemma atomicPackingFactor_eq_raw (n : ℕ) (R Vc : ℝ) (hR : 0 < R) (hVc : 0 < Vc) :
     atomicPackingFactor n R Vc hR hVc = atomicPackingFactorRaw n R Vc := rfl
 
-/-- SC packing factor `π/6` from the edge-touching relation `a = 2R`. -/
+/-- SC packing factor `π/6`: for `R > 0`, the edge-touching relation `a = 2R` and the cell
+volume `Vc = a³`. -/
 lemma apf_simpleCubic (R a Vc : ℝ) (hR : 0 < R) (ha : a = 2 * R)
     (hVc : Vc = a ^ 3) :
     atomicPackingFactorRaw 1 R Vc = Real.pi / 6 := by
@@ -150,7 +151,8 @@ lemma apf_simpleCubic (R a Vc : ℝ) (hR : 0 < R) (ha : a = 2 * R)
   rw [div_eq_div_iff h2R3 h6]
   ring
 
-/-- BCC packing factor `π√3/8` from the body-diagonal touching relation. -/
+/-- BCC packing factor `π√3/8`: for `R > 0`, the body-diagonal touching relation `4R = √3 a`
+and the cell volume `Vc = a³`. -/
 lemma apf_bcc (R a Vc : ℝ) (hR : 0 < R)
     (h : 4 * R = Real.sqrt 3 * a) (hVc : Vc = a ^ 3) :
     atomicPackingFactorRaw 2 R Vc = Real.pi * Real.sqrt 3 / 8 := by
@@ -177,7 +179,8 @@ lemma apf_bcc (R a Vc : ℝ) (hR : 0 < R)
   rw [div_eq_div_iff ha3 h8]
   ring
 
-/-- FCC packing factor `π/(3√2)` from the face-diagonal touching relation. -/
+/-- FCC packing factor `π/(3√2)`: for `R > 0`, the face-diagonal touching relation `4R = √2 a`
+and the cell volume `Vc = a³`. -/
 lemma apf_fcc (R a Vc : ℝ) (hR : 0 < R)
     (h : 4 * R = Real.sqrt 2 * a) (hVc : Vc = a ^ 3) :
     atomicPackingFactorRaw 4 R Vc = Real.pi / (3 * Real.sqrt 2) := by
@@ -206,8 +209,9 @@ lemma apf_fcc (R a Vc : ℝ) (hR : 0 < R)
   linear_combination (Real.pi * a ^ 3 / 2) * hsq2
 
 /-- HCP packing factor `π/(3√2)` (same value as FCC) for the hexagonal-prism
-conventional cell, from basal-plane touching and the ideal ratio proved in
-`hcp_ideal_ratio` (taken here as the hypothesis `hc`). -/
+conventional cell: for `R > 0`, basal-plane touching `a = 2R`, the cell volume
+`Vc = (3√3/2) a² c` and the ideal ratio `c = a √(8/3)` proved in `hcp_ideal_ratio`
+(taken here as the hypothesis `hc`). -/
 lemma apf_hcp (R a c Vc : ℝ) (hR : 0 < R) (ha : a = 2 * R)
     (hVc : Vc = (3 * Real.sqrt 3 / 2) * a ^ 2 * c)
     (hc : c = a * Real.sqrt (8 / 3)) :
@@ -240,7 +244,8 @@ lemma apf_hcp (R a c Vc : ℝ) (hR : 0 < R) (ha : a = 2 * R)
   rw [hVc_simp, div_eq_div_iff hden h3s2ne]
   ring
 
-/-- Diamond packing factor `π√3/16` from the nearest-neighbour relation. -/
+/-- Diamond packing factor `π√3/16`: for `R > 0`, the nearest-neighbour relation `8R = √3 a`
+and the cell volume `Vc = a³`. -/
 lemma apf_diamond (R a Vc : ℝ) (hR : 0 < R)
     (h : 8 * R = Real.sqrt 3 * a) (hVc : Vc = a ^ 3) :
     atomicPackingFactorRaw 8 R Vc = Real.pi * Real.sqrt 3 / 16 := by
@@ -338,7 +343,7 @@ lemma equilateral_centroid_sq (a : ℝ) :
     Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)
   linear_combination (a ^ 2 / 36) * hsq3
 
-/-- Centroid-to-vertex distance of the equilateral triangle of side `a`
+/-- Centroid-to-vertex distance of the equilateral triangle of side `a ≥ 0`
 is `a/√3`, from the coordinate computation above. -/
 lemma equilateral_centroid_dist (a : ℝ) (ha : 0 ≤ a) :
     Real.sqrt ((a / 2) ^ 2 + (a * Real.sqrt 3 / 6) ^ 2) =
@@ -348,7 +353,7 @@ lemma equilateral_centroid_dist (a : ℝ) (ha : 0 ≤ a) :
 
 /-- Height of the regular tetrahedron of side `a`: with the apex above the
 centroid of the equilateral-triangle base (the ideal-HCP model hypothesis
-`hh_sq`), `h² = (2/3)a²` and `h = a√(2/3)` for `0 < a`. -/
+`hh_sq`), `h² = (2/3)a²` and `h = a√(2/3)` for `0 < a` and a height `h ≥ 0`. -/
 lemma tetrahedron_height (a h : ℝ) (ha : 0 < a) (hh_nonneg : 0 ≤ h)
     (hh_sq : h ^ 2 = a ^ 2 - (a / Real.sqrt 3) ^ 2) :
     h ^ 2 = (2 / 3) * a ^ 2 ∧ h = a * Real.sqrt (2 / 3) := by
@@ -367,8 +372,9 @@ lemma tetrahedron_height (a h : ℝ) (ha : 0 < a) (hh_nonneg : 0 ≤ h)
   rw [mul_comm] at h2
   exact h2
 
-/-- Ideal HCP ratio `c/a = √(8/3)`: the `c` axis spans two regular
-tetrahedra of side `a` (the ideal-HCP model hypothesis `hc`). -/
+/-- Ideal HCP ratio `c/a = √(8/3)` for `0 < a`: with the tetrahedron height
+`h = a √(2/3)`, the `c` axis spans two regular tetrahedra of side `a` (the ideal-HCP
+model hypothesis `hc : c = 2h`). -/
 lemma hcp_ideal_ratio (a c h : ℝ) (ha : 0 < a)
     (hh : h = a * Real.sqrt (2 / 3)) (hc : c = 2 * h) :
     c / a = Real.sqrt (8 / 3) := by
@@ -380,7 +386,7 @@ lemma hcp_ideal_ratio (a c h : ℝ) (ha : 0 < a)
   rw [hc, hh, hsqrt83, div_eq_iff ha']
   ring
 
-/-- FCC octahedral hole: with atom radius `R = a/(2√2)` (FCC touching) and
+/-- FCC octahedral hole: for `0 < a`, with atom radius `R = a/(2√2)` (FCC touching) and
 hole radius `r = a/2 - R`, `r/R = √2 - 1 ≈ 0.414`. -/
 lemma fcc_octahedral_hole (a R r : ℝ) (ha : 0 < a)
     (hR : R = a / (2 * Real.sqrt 2)) (hr : r = a / 2 - R) :
@@ -401,7 +407,7 @@ lemma fcc_octahedral_hole (a R r : ℝ) (ha : 0 < a)
   rw [abs_lt]
   constructor <;> linarith [hb.1, hb.2]
 
-/-- FCC tetrahedral hole: with atom radius `R = a/(2√2)` (FCC touching) and
+/-- FCC tetrahedral hole: for `0 < a`, with atom radius `R = a/(2√2)` (FCC touching) and
 hole radius `r = √3a/4 - R`, `r/R = √(3/2) - 1 ≈ 0.225`. -/
 lemma fcc_tetrahedral_hole (a R r : ℝ) (ha : 0 < a)
     (hR : R = a / (2 * Real.sqrt 2))
@@ -453,7 +459,7 @@ Non-goals: no Kepler/Hales densest-packing proof; no claim that real crystals
 attain the ideal ratios.
 -/
 
-/-- Algebraic consequence of the center distance `d = 2R/√3` and `r = d - R`:
+/-- Algebraic consequence, for `0 < R`, of the center distance `d = 2R/√3` and `r = d - R`:
 `r/R = 2/√3 - 1 ≈ 0.155`. -/
 lemma radiusRatio_eq_two_div_sqrt_three_sub_one (R d r : ℝ) (hR : 0 < R)
     (hd : d = 2 * R / Real.sqrt 3) (hr : r = d - R) :
@@ -477,7 +483,7 @@ lemma radiusRatio_eq_two_div_sqrt_three_sub_one (R d r : ℝ) (hR : 0 < R)
   rw [abs_lt]
   constructor <;> linarith
 
-/-- Algebraic consequence of `R = a/(2√2)`, the center distance `d = √3a/4` and
+/-- Algebraic consequence, for `0 < a`, of `R = a/(2√2)`, the center distance `d = √3a/4` and
 `r = d - R`, via `fcc_tetrahedral_hole`: `r/R = √(3/2) - 1 ≈ 0.225`. -/
 lemma radiusRatio_eq_sqrt_three_halves_sub_one (a d R r : ℝ) (ha : 0 < a)
     (hR : R = a / (2 * Real.sqrt 2))
@@ -486,7 +492,7 @@ lemma radiusRatio_eq_sqrt_three_halves_sub_one (a d R r : ℝ) (ha : 0 < a)
   rw [hd] at hr
   exact fcc_tetrahedral_hole a R r ha hR hr
 
-/-- Algebraic consequence of `R = a/(2√2)`, the center distance `d = a/2` and
+/-- Algebraic consequence, for `0 < a`, of `R = a/(2√2)`, the center distance `d = a/2` and
 `r = d - R`, via `fcc_octahedral_hole`: `r/R = √2 - 1 ≈ 0.414`. -/
 lemma radiusRatio_eq_sqrt_two_sub_one (a d R r : ℝ) (ha : 0 < a)
     (hR : R = a / (2 * Real.sqrt 2)) (hd : d = a / 2) (hr : r = d - R) :
@@ -494,7 +500,7 @@ lemma radiusRatio_eq_sqrt_two_sub_one (a d R r : ℝ) (ha : 0 < a)
   rw [hd] at hr
   exact fcc_octahedral_hole a R r ha hR hr
 
-/-- Algebraic consequence of `a = 2R`, the center distance `d = √3a/2` and
+/-- Algebraic consequence, for `0 < R`, of `a = 2R`, the center distance `d = √3a/2` and
 `r = d - R`: `r/R = √3 - 1 ≈ 0.732`. -/
 lemma radiusRatio_eq_sqrt_three_sub_one (R a d r : ℝ) (hR : 0 < R) (ha : a = 2 * R)
     (hd : d = Real.sqrt 3 * a / 2) (hr : r = d - R) :
