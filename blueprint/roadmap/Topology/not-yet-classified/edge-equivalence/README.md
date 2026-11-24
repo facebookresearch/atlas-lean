@@ -8,7 +8,6 @@
 - [To Ho Iso hom](to-ho-iso-hom.md)
 - [To Ho Iso inv](to-ho-iso-inv.md)
 - [Is Equivalence](is-equivalence-2.md)
-- [Is Equivalence of inv Struct](is-equivalence-of-inv-struct.md)
 - [Of comp Struct](of-comp-struct.md)
 
 ## Coherent Iso
