@@ -73,6 +73,16 @@ noncomputable instance preservesLimitsOfShape_map_of_exact_fibers
     apply preservesLimitsOfShape_of_evaluation _ K
     rintro ⟨j⟩
     change PreservesLimitsOfShape K (map C p ⋙ eval j)
+    let : PreservesLimitsOfShape K (piEquivalenceFunctorDiscrete I C).functor :=
+      inferInstance
+    let : PreservesLimitsOfShape K
+        ((Functor.whiskeringLeft (Discrete (p ⁻¹' {j})) (Discrete I) C).obj
+          (fiberInclusion p j)) :=
+      CategoryTheory.whiskeringLeft_preservesLimitsOfShape K (fiberInclusion p j)
+    let : PreservesFiniteLimits (colim (J := Discrete (p ⁻¹' {j})) (C := C)) :=
+      HasExactColimitsOfShape.preservesFiniteLimits
+    let : PreservesLimitsOfShape K (colim (J := Discrete (p ⁻¹' {j})) (C := C)) :=
+      inferInstance
     exact preservesLimitsOfShape_of_natIso (mapCompEvalIso (C := C) p j).symm
   exact preservesLimitsOfShape_of_reflects_of_preserves (map C p) E
 
@@ -95,6 +105,14 @@ noncomputable instance preservesColimitsOfShape_map
     apply preservesColimitsOfShape_of_evaluation _ K
     rintro ⟨j⟩
     change PreservesColimitsOfShape K (map C p ⋙ eval j)
+    let : PreservesColimitsOfShape K (piEquivalenceFunctorDiscrete I C).functor :=
+      inferInstance
+    let : PreservesColimitsOfShape K
+        ((Functor.whiskeringLeft (Discrete (p ⁻¹' {j})) (Discrete I) C).obj
+          (fiberInclusion p j)) :=
+      CategoryTheory.whiskeringLeft_preservesColimitsOfShape K (fiberInclusion p j)
+    let : PreservesColimitsOfShape K (colim (J := Discrete (p ⁻¹' {j})) (C := C)) :=
+      inferInstance
     exact preservesColimitsOfShape_of_natIso (mapCompEvalIso (C := C) p j).symm
   exact preservesColimitsOfShape_of_reflects_of_preserves (map C p) E
 
