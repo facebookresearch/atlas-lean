@@ -37,6 +37,9 @@ noetherian schemes, over one of which $A$, $B$ and $\alpha$ are defined (Robert,
 ## Proof depends on
 
 - [Rigidity lemma](rigidity-lemma.md)
+- Not yet a page: the approximation of an abelian scheme and a morphism over an affine base by ones
+  over a noetherian ring (EGA IV, §8; Robert, after Corollary 2.3.10), for the reduction of a
+  general base to the noetherian case
 
 ## Sources
 

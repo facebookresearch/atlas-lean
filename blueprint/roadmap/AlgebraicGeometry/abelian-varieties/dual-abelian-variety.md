@@ -63,6 +63,8 @@ $A$ by $K(L)$, after Mumford's *Abelian Varieties*.
 ## Depends on
 
 - [Abelian scheme](abelian-scheme.md), for abelian varieties over a field
+- [Finite locally free group schemes and Cartier duality](deformations-and-p-divisible-groups/finite-locally-free-group-schemes-and-cartier-duality.md),
+  for the Cartier dual of $\operatorname{Ker}(f)$ in 3
 
 ## Proof depends on
 
@@ -73,6 +75,8 @@ $A$ by $K(L)$, after Mumford's *Abelian Varieties*.
 - [Abelian varieties are projective](abelian-varieties-are-projective.md), for an ample line bundle
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for the kernels of isogenies and
   their degrees
+- [Finite locally free group schemes and Cartier duality](deformations-and-p-divisible-groups/finite-locally-free-group-schemes-and-cartier-duality.md),
+  for the duality of finite locally free group schemes, from which van der Geer and Moonen deduce 3
 
 ## Sources
 

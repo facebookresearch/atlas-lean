@@ -43,6 +43,14 @@ dividing $n$; the finite flat statement alone counts the rank, not geometric poi
   line bundle on a fibre
 - [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md), for
   $n_A^* L \cong L^{n^2}$ when $L$ is symmetric
+- [Intersection numbers and Riemann–Roch for nef line bundles](../birational-geometry/intersection-numbers-of-nef-line-bundles.md),
+  for the projection formula 5, which gives $((n_A^* D)^g) = \deg(n_A) (D^g)$
+- Not yet a page: the fibrewise criterion of flatness (EGA IV, Théorème (11.3.10)), for the flatness
+  of a surjective $f$ and of $n_A$ over $S$
+- Not yet a page: the flatness of a surjective homomorphism of group schemes of finite type over a
+  field onto a smooth one, for the flatness of $f$ and of $n_A$ on the fibres
+- Not yet a page: the criterion that a homomorphism of smooth group schemes over a field is étale
+  when its differential at the identity is an isomorphism, for the étaleness of $n_A$ in 2
 
 ## Sources
 

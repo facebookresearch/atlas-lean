@@ -53,6 +53,8 @@ Serre vanishing.
 - [Zhang's arithmetic ampleness theorem](../arithmetic-ampleness-theorem.md), through Moriwaki's Lemma 3.1
 - [Estimates for small sections along an effective divisor](estimates-for-small-sections-along-a-divisor.md),
   for the distortion and restriction estimates of Moriwaki's §1
+- [Standard results of coherent cohomology on projective varieties](../../birational-geometry/standard-results-of-coherent-cohomology.md),
+  for Serre vanishing, in the construction of the divisors of Moriwaki's Lemma 3.6
 
 ## Sources
 

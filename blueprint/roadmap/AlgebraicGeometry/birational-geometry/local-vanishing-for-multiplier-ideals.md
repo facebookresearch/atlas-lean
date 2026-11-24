@@ -23,6 +23,11 @@ He refers to Positivity II, §9.4.A, for an account.
 ## Proof depends on
 
 - [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md)
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for Serre vanishing and the Leray spectral sequence, by which the local vanishing follows from the
+  global one
+- Not yet a page: the reduction of the local statement to a projective $X$ with a compactified log
+  resolution (Lazarsfeld, *Positivity II*, §9.4.A), for the passage to the global setting
 
 ## Sources
 

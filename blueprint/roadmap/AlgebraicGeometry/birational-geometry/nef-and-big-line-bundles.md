@@ -60,6 +60,9 @@ curves and letting $\varepsilon \to 0$.
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
   for the Nakai–Moishezon and Seshadri criteria in the proof of Demailly's Proposition 6.10, and for the
   growth of sections and Kodaira's lemma, Esnault–Viehweg's Properties 5.4 b) and d)
+- [Geometric degrees as integrals of first Chern forms](../arakelov-geometry/geometric-degrees-as-integrals-of-chern-forms.md),
+  for the degree of $L$ on a curve as the integral of its curvature form, by which analytic nefness
+  gives nefness in Demailly's Proposition 6.10
 
 ## Sources
 

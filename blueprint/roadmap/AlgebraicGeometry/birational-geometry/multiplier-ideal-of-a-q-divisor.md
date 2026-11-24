@@ -71,6 +71,9 @@ defines it ((6.23)–(6.24′)).
   make the common refinement a log resolution
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
   for the projection formula in Lemma 1.9
+- Not yet a page: Lazarsfeld's Lemma 1.7, the computation $\mu_* \mathcal{O}_{X'}(K_{X'/X} - \lfloor
+  \mu^* D \rfloor) = \mathcal{O}_X(-\lfloor D \rfloor)$ for a divisor with snc support (*Positivity
+  II*, 9.2.19), for the independence of the log resolution
 
 ## Sources
 

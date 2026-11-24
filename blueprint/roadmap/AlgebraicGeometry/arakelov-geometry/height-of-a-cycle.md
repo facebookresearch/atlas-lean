@@ -74,6 +74,10 @@ contribution is $\frac12 \log 2$, not $0$.
 
 - [Intersection numbers and Riemann–Roch for nef line bundles](../birational-geometry/intersection-numbers-of-nef-line-bundles.md),
   for the projection formula 5 for geometric degrees
+- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for
+  the projection formula for arithmetic degrees, from which the projection formula for heights
+  follows (Chambert-Loir, Proposition (2.9); Bost–Gillet–Soulé, (3.2.1))
+
 ## Sources
 
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.

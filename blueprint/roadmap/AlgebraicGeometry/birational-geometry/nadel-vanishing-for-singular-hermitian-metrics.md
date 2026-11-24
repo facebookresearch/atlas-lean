@@ -52,6 +52,8 @@ associated with the [multiplier ideal](multiplier-ideal-of-a-q-divisor.md) $\mat
 - [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md), for its analytic
   description (Lazarsfeld, Proposition 1.8), which identifies $\mathcal{I}(\sum_j a_j \log|g_j|)$
   with the analytic sheaf of $\mathcal{J}(D)$
+- Not yet a page: the strong noetherian property of coherent analytic sheaves and Krull's lemma, for
+  the coherence of $\mathcal{I}(\varphi)$ (Demailly, Proposition 5.7)
 
 ## Sources
 
