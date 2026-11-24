@@ -1,10 +1,10 @@
 # Fast migration gives Kingman's coalescent with an effective population size
 
-Consider a structured population of demes with relative sizes $c_i > 0$, in which migration acts on a faster time scale than coalescence. Suppose the fast chain on the deme labels of all sampled lineages is irreducible and aperiodic, so its transition matrix $A$ satisfies $A^m \to P$, and let $p$ be the stationary law of the deme label of one lineage. Then, by [Möhle's lemma on Markov chains with two time scales](../../../../Probability/markov-chains/finite-markov-chains/mohle-s-separation-of-timescales-lemma-for-finit.md), the sample genealogy with deme labels collapsed converges to Kingman's coalescent with pair coalescence rate
+Consider a structured population of demes with relative sizes $c_i > 0$, in which migration acts on a faster time scale than coalescence. Suppose the sampled lineages migrate independently on the fast time scale, each by the same irreducible aperiodic chain on demes with stationary law $p$. Then the fast chain on the deme labels of all sampled lineages has the product stationary law $p \otimes \dots \otimes p$, and its transition matrix $A$ satisfies $A^m \to P$. Then, by [Möhle's lemma on Markov chains with two time scales](../../../../Probability/markov-chains/finite-markov-chains/mohle-s-separation-of-timescales-lemma-for-finit.md), the sample genealogy with deme labels collapsed converges to Kingman's coalescent with pair coalescence rate
 
 $$\sum_i \frac{p_i^2}{c_i},$$
 
-the size-weighted collision rate. The deme labels themselves converge only in the averaged sense. Periodic fast chains, such as deterministic alternation between two demes, are excluded.
+the size-weighted collision rate under the product law. Without independence of the lineages' migration, the joint stationary law need not be a product, and the rate is the expectation of $1/c_i$ on the event that two lineages share deme $i$ under that joint law. The deme labels themselves converge only in the averaged sense. Periodic fast chains, such as deterministic alternation between two demes, are excluded.
 
 ## Depends on
 
