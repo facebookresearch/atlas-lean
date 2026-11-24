@@ -2,8 +2,8 @@
 
 A concurrent history of operation invocations and responses is *linearizable* with respect to a sequential specification if it can be
 completed and reordered into a legal sequential history of the specification that preserves the real-time order of non-overlapping
-operations. An implementation is linearizable if all its histories are. An implementation is *lock-free* if, in every infinite
-execution, some operation completes infinitely often.
+operations. An implementation is linearizable if all its histories are. An implementation is *lock-free* if every infinite
+execution contains infinitely many completed operations.
 
 Treiber's stack keeps a pointer to the top node of a singly linked list. A push allocates a node, reads the top pointer, links the node to
 it and installs the node with a compare-and-swap on the top pointer, retrying if the compare-and-swap fails. A pop reads the top pointer,

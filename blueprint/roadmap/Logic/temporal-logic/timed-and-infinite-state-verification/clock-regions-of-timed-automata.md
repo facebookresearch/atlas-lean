@@ -5,7 +5,7 @@ and for each $x \in C$ let $c_x$ be the largest integer $c$ such that $x \le c$ 
 assuming every clock occurs in some constraint. For $t \in \mathbb{R}_{\ge 0}$ write $\lfloor t \rfloor$ for its integral part and $\mathrm{fract}(t)$ for its
 fractional part. Clock valuations $\nu, \nu' : C \to \mathbb{R}_{\ge 0}$ are *region equivalent*, $\nu \sim \nu'$, when:
 
-1. for all $x \in C$, either $\lfloor \nu(x) \rfloor = \lfloor \nu'(x) \rfloor$, or both $\nu(x) > c_x$ and $\nu'(x) > c_x$;
+1. for all $x \in C$, either both $\nu(x) > c_x$ and $\nu'(x) > c_x$, or both $\nu(x) \le c_x$ and $\nu'(x) \le c_x$ and $\lfloor \nu(x) \rfloor = \lfloor \nu'(x) \rfloor$;
 2. for all $x, y \in C$ with $\nu(x) \le c_x$ and $\nu(y) \le c_y$, $\mathrm{fract}(\nu(x)) \le \mathrm{fract}(\nu(y))$ if and only if
    $\mathrm{fract}(\nu'(x)) \le \mathrm{fract}(\nu'(y))$;
 3. for all $x \in C$ with $\nu(x) \le c_x$, $\mathrm{fract}(\nu(x)) = 0$ if and only if $\mathrm{fract}(\nu'(x)) = 0$.
