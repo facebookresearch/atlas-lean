@@ -7,18 +7,19 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted completed definitions and pullback diagrams from AxiomMath/Stacks,
-revision c496df0d9beea9deaeabcea8492605f9a0a2313b:
-StacksFrontier/AlgebraicGeometry/GroupScheme/Pullback.lean (reindexHom),
-Groupoids/GroupSchemeProperties/EquivariantModule.lean (IsDescentCocycle),
-Groupoids/GroupSchemeProperties/EquivariantQuasicoherentModule.lean
-(the action-coordinate cocycle and identity normalization).
-https://github.com/AxiomMath/Stacks
-Apache License 2.0; those source files have no individual author notice.
-Modification notice: specialize the native equivariant comparison to an
-invertible module isomorphism; retain actual scheme pullbacks and all
-canonical comparison maps; add the fixed invariant-section task interface.
-No source-complete equivariant descent result is requested as Wanted.
+Portions of this file are adapted from AxiomMath/Stacks
+(https://github.com/AxiomMath/Stacks), revision c496df0d9beea9deaeabcea8492605f9a0a2313b,
+licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no individual copyright or author notice.
+
+* `StacksFrontier/AlgebraicGeometry/GroupScheme/Pullback.lean`: `reindexHom`;
+* in `StacksFrontier/AlgebraicGeometry/Groupoids/GroupSchemeProperties/`:
+  `EquivariantModule.lean` (`IsDescentCocycle`) and `EquivariantQuasicoherentModule.lean`
+  (the action-coordinate cocycle and the identity normalization).
+
+Modifications: the equivariant comparison is specialized to an invertible module isomorphism,
+with the scheme pullbacks and canonical comparison maps kept; the invariant-section interface
+is new.
 -/
 module
 

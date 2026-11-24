@@ -7,12 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The exterior multiplication follows the completed public source
-AxiomMath/Stacks c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Algebra/Category/ModuleCat/Sheaf/SectionwiseAlgebras.lean,
-section ExtPowAlgebra (Apache 2.0, no individual author notice).
-Modification: construct the native tensor morphism directly and use the
-proved native sheafification-unit tensor comparison.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/Algebra/Category/ModuleCat/Sheaf/SectionwiseAlgebras.lean` (section ExtPowAlgebra)
+
+Modifications: the native tensor morphism is constructed directly, using the proved native
+sheafification-unit tensor comparison.
 -/
 module
 
