@@ -1,12 +1,11 @@
-# Membrane flux with a reflection coefficient
+# Reverse-osmosis membrane flux
 
-Take as the constitutive law of a membrane the volume flux $J_v = L_p(\Delta P - \sigma\,\Delta\pi)$, with hydraulic permeability
-$L_p > 0$, transmembrane pressure difference $\Delta P$, osmotic pressure difference $\Delta\pi$ and reflection coefficient
-$0 \le \sigma \le 1$; $\sigma = 1$ is perfect rejection, for which the law reads $J_v = L_p(\Delta P - \Delta\pi)$. The flux is
-positive (from feed to permeate) if and only if $\Delta P > \sigma\,\Delta\pi$, and reverse osmosis needs $\Delta P > \Delta\pi$
-when $\sigma = 1$. With a separator model in which the feed splits into retentate and permeate without storage or reaction, the
-component flows of retentate and permeate add up to those of the feed; the flux law alone does not imply this. Concentration
-polarization is outside this result.
+Take as the constitutive law of a reverse-osmosis membrane the solvent flux $N_A = (P_{M_A}/l_M)(\Delta P - \Delta\pi)$, with
+permeance $P_{M_A}/l_M > 0$, transmembrane pressure difference $\Delta P$ and osmotic pressure difference $\Delta\pi$. The flux is
+positive (from feed to permeate) if and only if $\Delta P > \Delta\pi$, so reverse osmosis needs an applied pressure difference
+exceeding the osmotic one. With a separator model in which the feed splits into retentate and permeate without storage or reaction,
+the component flows of retentate and permeate add up to those of the feed; the flux law alone does not imply this. Solute transport,
+partial rejection and concentration polarization are outside this result.
 
 ## Depends on
 
