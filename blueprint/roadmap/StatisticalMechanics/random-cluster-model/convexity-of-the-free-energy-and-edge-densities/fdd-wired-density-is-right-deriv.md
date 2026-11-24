@@ -1,16 +1,15 @@
-# Wired edge densities on a box as right derivatives
+# Why the wired-density condition concerns only genuine edges
 
-For $d, N \in \mathbb{N}$ and $g : \mathbb{R} \to \mathbb{R}$, the condition holds when, for every edge $e$ of the box $\Lambda_N = \{-N, \dots, N\}^d \subseteq \mathbb{Z}^d$ (a pair of nearest neighbours in $\Lambda_N$), viewed as a pair of sites of $\mathbb{Z}^d$, and every $t \in \mathbb{R}$,
+The [wired-density condition for a box](../per-box-agreement-of-free-and-wired-random-clust/fpe2-genuine-wired-is-right-deriv.md)
+compares the right derivative of a single pressure function with the wired densities of
+nearest-neighbor pairs at $q = 2$. It cannot make the same comparison for all unordered pairs.
+For example, take $t = \log(1/3)$, so the [logistic function](fsc-logistic.md) gives $p = 1/4$.
+In $\Lambda_1 \subseteq \mathbb{Z}$, the loop at $0$ has open probability $1/2$ because its
+coordinate does not enter the random-cluster weight. The genuine edge $\{0,1\}$ has open
+probability at most $p = 1/4$ by domination by Bernoulli percolation on the genuine edges.
+These two densities cannot equal the same right derivative. The same obstruction applies to
+any box with a genuine edge.
 
-$$\theta^1_e(\sigma(t)) = g'_+(t),$$
-
-where $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](fsc-logistic.md), $\theta^1_e(p)$ is the [wired edge density](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md) at $q = 2$, the probability that $e$ is open under the [wired infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) $\phi^1_{p,2}$, and $g'_+(t)$ is the [right derivative](pressure-right-deriv.md) of $g$ at $t$ (read as $0$ when it does not exist).
-
-## Depends on
-
-- [Logistic function $e^t/(1+e^t)$](fsc-logistic.md)
-- [Right derivative of the pressure](pressure-right-deriv.md)
-- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
-- [Inclusion of box edges into $\mathbb{Z}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/edge-incl.md)
-- [Wired infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md)
-- [Wired infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md)
+The [per-coordinate free energy](../per-box-agreement-of-free-and-wired-random-clust/fpe2-per-edge-g.md)
+uses the common pressure function on genuine edges and the linear function $s \mapsto s/2$ on
+non-edges, whose wired densities are $1/2$.
