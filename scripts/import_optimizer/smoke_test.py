@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -29,11 +30,11 @@ public theorem answer_eq : answer = 42 := rfl
 """
 
 
-def run(argv: list[str], root: Path) -> None:
+def run(argv: list[str], root: Path, output: str = "import-results") -> None:
     try:
         subprocess.run(argv, cwd=root, check=True)
     except subprocess.CalledProcessError:
-        journal = root / ".lake/import-results/results.jsonl"
+        journal = root / ".lake" / output / "results.jsonl"
         if journal.exists():
             for line in journal.read_text().splitlines():
                 row = json.loads(line)
@@ -88,6 +89,39 @@ def smoke_test(lake: Path, root: Path) -> None:
     assert (output / "results.jsonl").read_bytes() == journal
     assert (root / "Smoke.lean").read_text() == SOURCE
     print("PASS: real candidate verified; unused imports removed in saved patch; source unchanged; resume verified")
+    thread_settings_smoke_test(command, lean, root, journal)
+
+
+def thread_settings_smoke_test(command: list[str], lean: Path, root: Path, journal: bytes) -> None:
+    """Refuse a resume with other thread settings, then verify a nondefault run."""
+    settings = ["--lean-threads", "3", "--lake-jobs", "2"]
+    refused = subprocess.run([*command, *settings, "--resume"], cwd=root,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    assert refused.returncode == 2 and "Resume thread settings differ" in refused.stderr, refused
+    assert (root / ".lake/import-results/results.jsonl").read_bytes() == journal
+    output = root / ".lake/import-results-threads"
+    index = command.index("--output") + 1
+    threaded = [*command[:index], str(output), *command[index + 1:], *settings]
+    run(threaded, root, output.name)
+    identity = json.loads((output / "run.json").read_text())
+    assert (identity["lean_threads"], identity["lake_scheduler_threads"]) == (3, 2), identity
+    result, = [json.loads(line) for line in (output / "results.jsonl").read_bytes().splitlines()]
+    assert result["status"] == "verified" and result["declaration_differences"] == [], result
+    assert set(result["removed_imports"]) == {
+        "import Std.Data.HashMap", "import Std.Data.TreeMap",
+    }, result
+    for arm in ("baseline", "candidate"):
+        argv = result[arm]["command"]["argv"]
+        assert argv[argv.index(str(lean)) + 1] == "-j3", argv
+        assert len(result[arm]["artifacts"]) == 7, result[arm]
+    config = root / ".lake/lakefile-lean-j3.toml"
+    assert b'moreLeanArgs = ["-j3"]\n' in config.read_bytes()
+    assert identity["effective_lake_config_sha256"] == hashlib.sha256(config.read_bytes()).hexdigest()
+    threaded_journal = (output / "results.jsonl").read_bytes()
+    run([*threaded, "--resume"], root, output.name)
+    assert (output / "results.jsonl").read_bytes() == threaded_journal
+    assert (root / "Smoke.lean").read_text() == SOURCE
+    print("PASS: changed thread settings refused on resume; --lean-threads 3 --lake-jobs 2 run verified and resumed")
 
 
 def legacy_smoke_test(lake: Path, import_graph: Path, root: Path) -> None:

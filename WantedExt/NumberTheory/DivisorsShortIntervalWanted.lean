@@ -14,6 +14,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Algebra.BigOperators.PrefixSumReordering
+public import MathlibExt.NumberTheory.CohenLcmGcd
 public import MathlibExt.NumberTheory.DivisorsShortInterval
 
 namespace MetaMathlibExt
@@ -25,20 +26,6 @@ namespace MetaMathlibExt
 absolute: every dependence on `θ`, `η` and `ε` is displayed in the paper's bounds. Corollary 1
 and Proposition 5 appear only in the journal version (INTEGERS 26 (2026), A115, PDF) and are
 taken from it. -/
-
-/-- **Cohen's lcm–gcd inequality.** Let $k$ be a natural number, let $d_1, \dots, d_k$ be
-positive integers and let $t$ be an integer. Then, as an inequality of rational numbers,
-$$\prod_{i=1}^{k} d_i^{\,t} \le \operatorname{lcm}(d_1, \dots, d_k)^{t(t+1)/2}
-\prod_{1 \le i < j \le k} \gcd(d_i, d_j),$$
-where the exponent $t(t+1)/2$ is an integer.
-
-Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
-Article A115, Lemma 1 (`integers-2026-A115-lem-1`). -/
-public theorem_wanted prod_zpow_le_lcm_zpow_mul_prod_gcd {k : ℕ} (d : Fin k → ℕ)
-    (hd : ∀ i, 0 < d i) (t : ℤ) :
-    ∏ i, (d i : ℚ) ^ t ≤
-      ((Finset.univ.lcm d : ℕ) : ℚ) ^ (t * (t + 1) / 2) *
-        ∏ i, ∏ j ∈ Finset.Ioi i, ((Nat.gcd (d i) (d j) : ℕ) : ℚ)
 
 /-- **Arithmetic large sieve with prime-power moduli.** Let $N \ge 1$ be an integer and let $M$
 be a finite set of integers contained in $[a, a + N)$ for some integer $a$. Let $S$ be a finite

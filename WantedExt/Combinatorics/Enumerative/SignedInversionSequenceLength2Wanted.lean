@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.PowerSeries.Inverse
-public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC45
 
 /-!
 # Signed inversion sequences avoiding sets of length-2 signed patterns
@@ -639,22 +639,6 @@ public theorem_wanted signedInvSeq_wilf_and_gf_b1b0_b0b0_0b1_00 :
         ⟨.eq, false, false⟩}) =
       coeff n ((1 - X)⁻¹ + (1 - X)⁻¹ * ∑ j ∈ Finset.Icc 1 n, X ^ j * (1 - ((j + 1 : ℕ) : ℚ⟦X⟧) *
             X)⁻¹)
-
-/-- **Mansour–Safadi Theorem 3, class C45.** Write $\bar{I}_n(B)$ for the set of signed inversion
-sequences of length $n$ that avoid every length-2 signed pattern in $B$, where a pattern is
-one of $00$, $01$, $10$ with a bar over each barred letter. Then for every $n \ge 0$,
-$|\bar{I}_n(\{\bar{1}\bar{0}, \bar{0}\bar{0}, \bar{0}1, 01\})| =
-|\bar{I}_n(\{\bar{1}\bar{0}, \bar{0}0, \bar{0}1, 00\})|$.
-
-The generating function $C(x)$ printed in the paper is not defined there and is omitted.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 3 (C45) (`integers-2026-A74-thm-3`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b0b0_b01_01 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩,
-        ⟨.lt, false, false⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, true, false⟩,
-          ⟨.eq, false, false⟩}
 
 /-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar1, \bar00, 00\}$.** For a set $B$
 of length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of
