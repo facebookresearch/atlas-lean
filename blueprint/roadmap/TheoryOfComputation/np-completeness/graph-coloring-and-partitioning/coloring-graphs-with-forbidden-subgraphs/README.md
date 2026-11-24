@@ -52,6 +52,8 @@
 - [3-COLORABILITY OF (K4, claw, diamond)-FREE GRAPHS as a decision problem](three-colorability-k4-claw-diamond-free.md)
 - [3-COLORABILITY OF (K4, claw, diamond)-FREE GRAPHS is NP-complete](three-colorability-k4-claw-diamond-free-2.md)
 - [Well-formed instances of 3-COLORABILITY OF LINEAR DOMINO GRAPHS OF MAXIMUM DEGREE 4](well-formed-17.md)
+- [3-COLORABILITY OF LINEAR DOMINO GRAPHS OF MAXIMUM DEGREE 4 as a decision problem](three-colorability-linear-domino-dec.md)
+- [3-COLORABILITY OF LINEAR DOMINO GRAPHS OF MAXIMUM DEGREE 4 is NP-complete](three-colorability-linear-domino-np-comp.md)
 - [Well-formed instances of k-COLORABILITY OF TRIANGLE-FREE GRAPHS](well-formed-18.md)
 - [k-COLORABILITY OF TRIANGLE-FREE GRAPHS as a decision problem](triangle-free-kcolorability-dec.md)
 - [k-COLORABILITY OF TRIANGLE-FREE GRAPHS is NP-complete](triangle-free-kcolorability-np-complete.md)
