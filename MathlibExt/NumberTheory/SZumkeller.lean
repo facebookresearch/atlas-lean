@@ -187,6 +187,7 @@ theorem three_dvd_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
     _ < _ := mul_lt_mul_of_pos_left (three_dvd_of_isSZumkeller.sum_inv_sq_lt n h₃) (by positivity)
   linarith
 
+set_option linter.unusedVariables false in
 /-- **Harmonic mean of squared divisors of s-Zumkeller numbers $2^\alpha(2^{\alpha+1}-1)$.** Let
 $\alpha \ge 1$ be an integer, let $n = 2^\alpha (2^{\alpha+1} - 1)$ and let $\tau(n)$ be the
 number of positive divisors of $n$. If $n$ is s-Zumkeller, then
@@ -195,7 +196,7 @@ divisors $d$ of $n$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 10. -/
-theorem harmonicMeanSq_lt_of_isSZumkeller_mersenne (α n : ℕ) (_hα : 1 ≤ α)
+theorem harmonicMeanSq_lt_of_isSZumkeller_mersenne (α n : ℕ) (hα : 1 ≤ α)
     (hn : n = 2 ^ α * (2 ^ (α + 1) - 1)) (h : IsSZumkeller n) :
     (n.divisors.card : ℚ) / ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 < 2 ^ (2 * α + 3) / 3 := by
   obtain ⟨A, hA, hne, _, _⟩ := h
