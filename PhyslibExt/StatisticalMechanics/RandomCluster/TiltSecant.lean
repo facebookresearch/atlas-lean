@@ -30,11 +30,11 @@ The conditional marginal uniqueness result applies `fk_uniqueness_off_countable_
 ## ii. Key results
 
 - `StatMech.FK.secant_exponent_le_zero` : the volume-growth lemma.
-- `StatMech.FK.secant_b_le_a_of_finiteVolumeData` : `b ≤ a` from the eventual tilt bound.
+- `StatMech.FK.secant_b_le_a_of_eventualTiltBound` : `b ≤ a` from the eventual tilt bound.
 - `StatMech.FK.FKSecantData` : the abstract eventual tilt criterion for one box pair at `q = 2`.
 - `StatMech.FK.hsecant_discharged` : `θ^w(p') ≤ θ^f(p)` for `p' < p` under `FKSecantData`.
 - `StatMech.FK.fkSecantData_iff_secant` : equivalence of the criterion and the comparison.
-- `StatMech.FK.fk_uniqueness_q2_secant_from_finiteVolumeData` : uniqueness of the edge
+- `StatMech.FK.fk_uniqueness_q2_secant_of_eventualTiltCriterion` : uniqueness of the edge
   marginal off a countable set, under `FKSecantData`.
 
 ## iii. Table of contents
@@ -117,7 +117,7 @@ lemma secant_exponent_le_zero {q lam m ε : ℝ}
 /-- If for every `ε > 0` the bound `ε ≤ q ^ (S n) λ ^ ((b - a - 2ε) V n) / ε` holds for all
 sufficiently large `n`, with `q ≥ 1`, `0 < λ < 1`, `V n > 0`, `V n → ∞` and `S n = o(V n)`,
 then `b ≤ a`. -/
-lemma secant_b_le_a_of_finiteVolumeData {q lam a b : ℝ}
+lemma secant_b_le_a_of_eventualTiltBound {q lam a b : ℝ}
     (hq : 1 ≤ q) (hlampos : 0 < lam) (hlam1 : lam < 1)
     {S V : ℕ → ℝ} (hVpos : ∀ n, 0 < V n)
     (hSV : Tendsto (fun n => S n / V n) atTop (𝓝 0))
@@ -130,6 +130,11 @@ lemma secant_b_le_a_of_finiteVolumeData {q lam a b : ℝ}
     secant_exponent_le_zero hq hlampos hlam1 (half_pos hε) hVpos hSV hVinf
       (hfv (ε / 2) (half_pos hε))
   linarith
+
+/-- Deprecated name for `secant_b_le_a_of_eventualTiltBound`. The bound is an abstract
+hypothesis, not an estimate derived from finite-volume measures. -/
+@[deprecated (since := "2026-11-23")]
+alias secant_b_le_a_of_finiteVolumeData := secant_b_le_a_of_eventualTiltBound
 
 /-!
 
@@ -164,7 +169,7 @@ lemma hsecant_discharged (d N : ℕ) (eb : Sym2 (boxVerts d N))
   intro p hp p' hp' hlt
   have hlampos : 0 < tiltFactor p p' := tiltFactor_pos hp.1 hp.2 hp'.1 hp'.2
   have hlam1 : tiltFactor p p' < 1 := tiltFactor_lt_one hp.1 hp.2 hlt
-  exact secant_b_le_a_of_finiteVolumeData (q := (2 : ℝ)) (by norm_num) hlampos hlam1
+  exact secant_b_le_a_of_eventualTiltBound (q := (2 : ℝ)) (by norm_num) hlampos hlam1
     hVpos hSV hVinf (hineq p hp p' hp' hlt)
 
 /-- The abstract eventual tilt criterion for a box pair at $q = 2$ holds exactly when the
@@ -195,10 +200,10 @@ lemma fkSecantData_iff_secant (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
   filter_upwards [tendsto_atTop.mp htilt (ε * ε)] with n hn
   rwa [le_div_iff₀ hε, Real.rpow_zero, one_mul]
 
-/-- Under `FKSecantData` (equivalently the secant comparison), at `q = 2` there is a countable
-set `S` of parameters off which every measure `φ` whose box-edge marginal lies between the free
-and wired ones has the same marginal as both. -/
-lemma fk_uniqueness_q2_secant_from_finiteVolumeData (d N : ℕ) (eb : Sym2 (boxVerts d N))
+/-- Under the abstract eventual tilt criterion `FKSecantData` (equivalently the secant
+comparison), at `q = 2` there is a countable set `S` of parameters off which every measure `φ`
+whose box-edge marginal lies between the free and wired ones has the same marginal as both. -/
+lemma fk_uniqueness_q2_secant_of_eventualTiltCriterion (d N : ℕ) (eb : Sym2 (boxVerts d N))
     (hdata : FKSecantData d N eb) :
     ∃ S : Set ℝ, S.Countable ∧
       ∀ p ∉ S, ∀ (hp : 0 < p) (hp1 : p < 1)
@@ -216,6 +221,12 @@ lemma fk_uniqueness_q2_secant_from_finiteVolumeData (d N : ℕ) (eb : Sym2 (boxV
               = (wiredInfiniteVolume d hp hp1 (by norm_num : (0:ℝ) < 2) : Measure _).real
                   (boxRestrict d N ⁻¹' (boxEdgeOpenEvent d N eb)) :=
   fk_uniqueness_off_countable_q2_full d N eb (hsecant_discharged d N eb hdata)
+
+/-- Deprecated name for `fk_uniqueness_q2_secant_of_eventualTiltCriterion`. This is conditional
+edge-marginal uniqueness under the abstract criterion, not a finite-volume derivation. -/
+@[deprecated (since := "2026-11-23")]
+alias fk_uniqueness_q2_secant_from_finiteVolumeData :=
+  fk_uniqueness_q2_secant_of_eventualTiltCriterion
 
 end FK
 
