@@ -14,3 +14,4 @@ General bounded operators: Douglas lemma, direct sums, strong and weak operator 
 - [Lomonosov's invariant subspace theorem](lomonosov-invariant-subspace.md)
 - [Strong operator convergence characterized by weak operator convergence](tendsto-apply-iff-tendsto-inner-and-tend.md)
 - [Matrix entries of a linear operator in an orthonormal basis](orthonormal-basis-matrix-entries.md)
+- [A map between seminormed spaces is linear and continuous if and only if it is linear and bounded](bounded-iff-continuous.md)

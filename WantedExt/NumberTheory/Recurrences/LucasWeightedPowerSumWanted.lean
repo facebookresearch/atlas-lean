@@ -19,25 +19,13 @@ Fibonacci Quarterly 62 (2024), no. 3 (primary text: arXiv:2607.09105).
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.LucasRootPower
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Powers of a root of the Lucas characteristic polynomial.** Let $x$ and $y \neq 0$ be
-integers and let $(U_n)$ be the Lucas sequence with parameters $(x, y)$, given by $U_0 = 0$,
-$U_1 = 1$ and $U_{n+2} = x U_{n+1} - y U_n$. If $\alpha$ is a complex number with
-$\alpha^2 - x\alpha + y = 0$, then $\alpha^n = \alpha U_n - y U_{n-1}$ for every $n \geq 1$.
-
-Source: Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
-Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quarterly 62 (2024),
-no. 3, Lemma 2.1 (i), (ii) (`fq-2024-earplynch07182024-lem-2.1`). -/
-public theorem_wanted lucasU_root_pow (P : LucasSequenceParams) {α : ℂ}
-    (hα : α ^ 2 - P.p * α + P.q = 0) {n : ℕ} (hn : 1 ≤ n) :
-    α ^ n = α * lucasU P n - P.q * lucasU P (n - 1)
 
 /-- **The companion Lucas sequence in terms of the fundamental one.** Let $x$ and $y \neq 0$ be
 integers and let $(U_n)$ and $(V_n)$ be the Lucas sequences with parameters $(x, y)$, given by
