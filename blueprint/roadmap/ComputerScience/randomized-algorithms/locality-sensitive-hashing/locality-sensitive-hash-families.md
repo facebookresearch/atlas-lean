@@ -4,5 +4,5 @@ Let $d$ be a distance on a set $X$ and $d_1 < d_2$. A distribution over function
 
 ## Sources
 
-- J. Leskovec, A. Rajaraman and J. D. Ullman, *Mining of Massive Datasets*, 3rd ed., Cambridge University Press, 2020, Sections 3.6.1 and 3.6.2
+- J. Leskovec, A. Rajaraman and J. D. Ullman, *Mining of Massive Datasets*, 2nd ed., Cambridge University Press, 2014, Sections 3.6.1 and 3.6.2
 - Original work: P. Indyk and R. Motwani, "Approximate nearest neighbors: towards removing the curse of dimensionality", *Proceedings of the 30th ACM STOC*, 1998. The statement above follows Leskovec, Rajaraman and Ullman, who credit (Section 3.11) the original works on locality-sensitive hashing to it and to Gionis, Indyk and Motwani (VLDB 1999).

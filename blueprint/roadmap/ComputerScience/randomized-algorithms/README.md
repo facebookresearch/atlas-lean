@@ -10,4 +10,4 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Karger's algorithm](karger-s-algorithm/README.md)
 - [MinHash and Jaccard similarity](minhash-and-jaccard-similarity/README.md)
 - [Maximum load of balls into bins](maximum-load-of-balls-into-bins.md)
-- [Probabilistic analysis tools](probabilistic-analysis-tools/README.md)
+- [Locality-sensitive hashing](locality-sensitive-hashing/README.md)

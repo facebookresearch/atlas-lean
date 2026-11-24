@@ -8,4 +8,4 @@ Draw $rb$ hash functions independently from a family $\mathcal{H}$, group them i
 
 ## Sources
 
-- J. Leskovec, A. Rajaraman and J. D. Ullman, *Mining of Massive Datasets*, 3rd ed., Cambridge University Press, 2020
+- J. Leskovec, A. Rajaraman and J. D. Ullman, *Mining of Massive Datasets*, 2nd ed., Cambridge University Press, 2014
