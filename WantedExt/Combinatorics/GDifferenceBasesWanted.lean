@@ -20,18 +20,6 @@ open Filter Topology
 
 @[expose] public section
 
-/-- **Rédei–Rényi difference basis.** Let $n \ge 1$ and $k = \lceil \sqrt{n} \rceil$. The set
-of integers $B_n = \{1, \dots, k - 1\} \cup \{k, 2k, \dots, k^2, (k + 1)k\}$ has $2k$ elements,
-and every $x \in \{1, \dots, n\}$ is a difference $b - b'$ of two elements of $B_n$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 2 (`integers-2025-A77-lem-2`). -/
-public theorem_wanted redeiRenyi_diffBasis (n : ℕ) (hn : 0 < n) :
-    let k : ℕ := ⌈Real.sqrt n⌉₊
-    let B : Finset ℤ :=
-      Finset.Icc 1 ((k : ℤ) - 1) ∪ (Finset.Icc (1 : ℤ) (k + 1)).image (· * (k : ℤ))
-    B.card = 2 * k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, 1 ≤ subRepCount B x
-
 /-- **Upper bound for the $g$-difference basis number.** For natural numbers $g$ and $n$, let
 $\eta_g(n)$ be the least size of a finite set $A \subseteq \mathbb{Z}$ such that every
 $x \in \{1, \dots, n\}$ is the difference $a - a'$ of at least $g$ ordered pairs

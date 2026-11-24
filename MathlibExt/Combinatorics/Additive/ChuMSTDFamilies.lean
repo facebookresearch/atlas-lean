@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 import Batteries.Data.List.Lemmas
 
@@ -217,6 +218,49 @@ public theorem chuFamilyKLT_mem {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 
     omega
   · simp only [setOfConsecutiveDifferences, Finset.mem_insert, Finset.mem_singleton]
     omega
+
+open scoped Pointwise in
+/-- **Elements of the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive integers, let
+$A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$, and let
+$T = t(kl + l + 1)$. Then $1 + 4i$ and $2 + 4i$ lie in $A + A$ for every integer $i$ with
+$0 \le i \le 2 + 2T$, and $3 + 4i$ lies in $A + A$ for every integer $i$ with $0 \le i \le 1 + 2T$.
+
+Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
+Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 5 (`integers-2024-A32-lem-5`). -/
+public theorem chuFamilyKLT_mem_add {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
+    (∀ i : ℕ, i ≤ 2 + 2 * (t * (k * l + l + 1)) →
+        1 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t + chuFamilyKLT k l t ∧
+          2 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t + chuFamilyKLT k l t) ∧
+      ∀ i : ℕ, i ≤ 1 + 2 * (t * (k * l + l + 1)) →
+        3 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t + chuFamilyKLT k l t := by
+  let A := chuFamilyKLT k l t
+  let T := t * (k * l + l + 1)
+  change (∀ i : ℕ, i ≤ 2 + 2 * T →
+      1 + 4 * (i : ℤ) ∈ A + A ∧ 2 + 4 * (i : ℤ) ∈ A + A) ∧
+    ∀ i : ℕ, i ≤ 1 + 2 * T → 3 + 4 * (i : ℤ) ∈ A + A
+  have ⟨hgrid, hlast₂, hlast₄⟩ := chuFamilyKLT_mem hk hl ht
+  have hpoint (i : ℕ) (hi : i ≤ 1 + T) : 1 + 4 * (i : ℤ) ∈ A := hgrid i hi
+  change 2 + 4 * (T : ℤ) ∈ A at hlast₂
+  change 4 + 4 * (T : ℤ) ∈ A at hlast₄
+  have ⟨hzero, htwo⟩ : (0 : ℤ) ∈ A ∧ (2 : ℤ) ∈ A := by
+    change (0 : ℤ) ∈ chuFamilyKLT k l t ∧ (2 : ℤ) ∈ chuFamilyKLT k l t
+    cases t <;> simp [chuFamilyKLT, List.replicate_succ, List.flatten_cons,
+      List.append_assoc, setOfConsecutiveDifferences_cons]
+  have add_mem {a b c : ℤ} (ha : a ∈ A) (hb : b ∈ A) (h : a + b = c) : c ∈ A + A :=
+    h ▸ Finset.add_mem_add ha hb
+  constructor
+  · intro i hi
+    by_cases h : i ≤ 1 + T
+    · exact ⟨add_mem hzero (hpoint i h) (by omega),
+        add_mem (hpoint 0 (by omega)) (hpoint i h) (by omega)⟩
+    · -- Pair with the last block, subtracting its grid index from the other summand.
+      have hrest := hpoint (i - (1 + T)) (by omega)
+      exact ⟨add_mem hlast₄ hrest (by omega),
+        add_mem (hpoint (1 + T) le_rfl) hrest (by omega)⟩
+  · intro i hi
+    by_cases h : i ≤ 1 + T
+    · exact add_mem htwo (hpoint i h) (by omega)
+    · exact add_mem hlast₂ (hpoint (i - T) (by omega)) (by omega)
 
 -- Keep the original named hypotheses although the prefix argument does not need them.
 set_option linter.unusedVariables false in

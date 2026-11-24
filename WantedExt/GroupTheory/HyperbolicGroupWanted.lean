@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.FinitelyPresentedGroup
+public import MathlibExt.GroupTheory.FreeGroupHyperbolic
 public import MathlibExt.GroupTheory.HyperbolicGroup
 public import WantedExt.GroupTheory.WordProblemSolvableShared
 
@@ -47,14 +48,5 @@ generators and their inverses represents the identity of `G`. -/
 theorem_wanted wordProblemSolvable_of_isHyperbolic {G : Type*} [Group G]
     (h : Group.IsHyperbolic G) {n : ℕ} (P : Group.Generators G (Fin n)) :
     WordProblemSolvable P.lift
-
-/-- **Free groups are `0`-hyperbolic** (Gromov, *Hyperbolic groups*, 1987, §1.1.D and §1.4: the
-Cayley graph of a free group on a free basis is a simplicial tree, and simplicial trees are
-`0`-hyperbolic). The word metric of `FreeGroup ι` with respect to the free basis `FreeGroup.of` is
-`0`-hyperbolic. -/
-theorem_wanted freeGroup_isDeltaHyperbolic_zero (ι : Type*) :
-    @Metric.IsDeltaHyperbolic (FreeGroup ι)
-      (⟨FreeGroup.of, FreeGroup.closure_range_of ι⟩ :
-        Group.Generators (FreeGroup ι) ι).normedGroup.toPseudoMetricSpace 0
 
 end MathlibExt.GroupTheory.HyperbolicGroupWanted

@@ -15,6 +15,8 @@ public import Mathlib.Data.Int.Interval
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.RingTheory.PowerSeries.Inverse
 
+public import MathlibExt.NumberTheory.SquareRepresentationCongruences
+
 /-!
 # Congruences for representations as sums of squares and triangular numbers
 
@@ -34,16 +36,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **The square theta series.** The square theta series is the formal power series
-$\theta(q) = \sum_{m \in \mathbb{Z}} q^{m^2}$ in $\mathbb{Z}[[q]]$: for each $n \ge 0$, its
-coefficient of $q^n$ is the number of integers $m$ with $m^2 = n$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public noncomputable def squareThetaSeries : PowerSeries ℤ :=
-  PowerSeries.mk fun n => (((Finset.Icc (-(n : ℤ)) n).filter fun m : ℤ => m ^ 2 = (n : ℤ)).card : ℤ)
-
 /-- **Triangular theta series.** The triangular theta series is the formal power series
 $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$ with integer coefficients: for each natural number $n$,
 its coefficient of $q^n$ is the number of natural numbers $m$ with $m(m+1)/2 = n$.
@@ -53,19 +45,6 @@ Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
 26 (2026), Article A93, Section 1. -/
 public noncomputable def triangularThetaSeries : PowerSeries ℤ :=
   PowerSeries.mk fun n => (((Finset.range (n + 1)).filter fun m => m * (m + 1) / 2 = n).card : ℤ)
-
-/-- **First coefficients of the square theta series.** In the square theta series
-$\theta(q) = \sum_{m \in \mathbb{Z}} q^{m^2}$, the coefficients of $q^0$, $q^1$, $q^2$ and $q^4$ are
-$1$, $2$, $0$ and $2$ respectively.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public theorem coeff_squareThetaSeries_small :
-    PowerSeries.coeff 0 squareThetaSeries = 1 ∧ PowerSeries.coeff 1 squareThetaSeries = 2 ∧
-      PowerSeries.coeff 2 squareThetaSeries = 0 ∧ PowerSeries.coeff 4 squareThetaSeries = 2 := by
-  simp only [squareThetaSeries, PowerSeries.coeff_mk]
-  decide
 
 /-- **First coefficients of the triangular theta series.** In the triangular theta series
 $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$, the coefficients of $q^0$, $q^1$, $q^2$ and $q^3$ are $1$,
@@ -81,18 +60,6 @@ public theorem coeff_triangularThetaSeries_small :
   simp only [triangularThetaSeries, PowerSeries.coeff_mk]
   decide
 
-/-- **The square theta series is a unit.** The square theta series
-$\theta(q) = \sum_{m \in \mathbb{Z}} q^{m^2}$ is a unit of the ring $\mathbb{Z}[[q]]$ of formal
-power series with integer coefficients, since its constant coefficient is $1$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public theorem isUnit_squareThetaSeries : IsUnit squareThetaSeries := by
-  rw [PowerSeries.isUnit_iff_constantCoeff, ← PowerSeries.coeff_zero_eq_constantCoeff_apply,
-    coeff_squareThetaSeries_small.1]
-  exact isUnit_one
-
 /-- **The triangular theta series is a unit.** The triangular theta series
 $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$ is a unit of the ring $\mathbb{Z}[[q]]$ of formal power
 series with integer coefficients, since its constant coefficient is $1$.
@@ -104,20 +71,6 @@ public theorem isUnit_triangularThetaSeries : IsUnit triangularThetaSeries := by
   rw [PowerSeries.isUnit_iff_constantCoeff, ← PowerSeries.coeff_zero_eq_constantCoeff_apply,
     coeff_triangularThetaSeries_small.1]
   exact isUnit_one
-
-/-- **Representation numbers for sums of squares.** For an integer $k$ and a natural number $n$,
-$r_k(n)$ is the coefficient of $q^n$ in $\theta(q)^k$, where
-$\theta(q) = \sum_{m \in \mathbb{Z}} q^{m^2}$. Since $\theta$ has constant coefficient $1$, it is a
-unit of $\mathbb{Z}[[q]]$, so $\theta^k$ is a power series for negative $k$ as well.
-
-For $k \ge 1$, $r_k(n)$ is the number of ways to write $n$ as an ordered sum of $k$ squares of
-integers.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public noncomputable def sumOfSquaresRepCount (k : ℤ) (n : ℕ) : ℤ :=
-  PowerSeries.coeff n ((isUnit_squareThetaSeries.unit ^ k : (PowerSeries ℤ)ˣ) : PowerSeries ℤ)
 
 /-- **Representation numbers for sums of triangular numbers.** For an integer $k$ and a natural
 number $n$, $t_k(n)$ is the coefficient of $q^n$ in $\psi(q)^k$, where
@@ -133,18 +86,6 @@ Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
 public noncomputable def sumOfTriangularRepCount (k : ℤ) (n : ℕ) : ℤ :=
   PowerSeries.coeff n ((isUnit_triangularThetaSeries.unit ^ k : (PowerSeries ℤ)ˣ) : PowerSeries ℤ)
 
-/-- **The one-square counts are the coefficients of the square theta series.** For an integer $k$
-and $n \ge 0$, let $r_k(n)$ be the coefficient of $q^n$ in $\theta(q)^k$, where $\theta$ is the
-square theta series. Then for every $n \ge 0$, $r_1(n)$ equals the coefficient of $q^n$ in
-$\theta(q)$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Section 1. -/
-public theorem sumOfSquaresRepCount_one (n : ℕ) :
-    sumOfSquaresRepCount 1 n = PowerSeries.coeff n squareThetaSeries := by
-  simp [sumOfSquaresRepCount]
-
 /-- **Triangular representation numbers with one summand.** For an integer $k$, let $t_k(n)$ be the
 coefficient of $q^n$ in $\psi(q)^k$, where $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Then for every
 natural number $n$, $t_1(n)$ equals the coefficient of $q^n$ in $\psi(q)$.
@@ -155,19 +96,6 @@ Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
 public theorem sumOfTriangularRepCount_one (n : ℕ) :
     sumOfTriangularRepCount 1 n = PowerSeries.coeff n triangularThetaSeries := by
   simp [sumOfTriangularRepCount]
-
-/-- **Divisibility of square representation counts by a large prime is periodic.** For an integer
-$k$ and $n \ge 0$, let $r_k(n)$ be the coefficient of $q^n$ in $\theta(q)^k$, where $\theta$ is the
-square theta series; for $k \ge 1$ it is the number of representations of $n$ as an ordered sum of
-$k$ squares of integers. Let $n \ge 1$ and $k \ge 1$ be integers and let $p$ be a prime with
-$p \ge n + 1$. If $p$ divides $r_k(n)$, then $p$ divides $r_{k+jp}(n)$ for every integer $j$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 3 (`integers-2026-A93-thm-3`). -/
-public theorem_wanted sumOfSquaresRepCount_add_mul_prime {n k p : ℕ} (hn : 1 ≤ n) (hk : 1 ≤ k)
-    (hp : p.Prime) (hpn : n + 1 ≤ p) (h : (p : ℤ) ∣ sumOfSquaresRepCount k n) (r : ℤ) :
-    (p : ℤ) ∣ sumOfSquaresRepCount (k + r * p) n
 
 /-- **Prime divisibility of triangular representation numbers persists under prime shifts.** For an
 integer $k$, let $t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where
