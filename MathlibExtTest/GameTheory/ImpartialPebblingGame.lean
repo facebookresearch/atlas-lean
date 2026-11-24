@@ -33,3 +33,20 @@ example : ![0, 2, 1] ∈ pebblingMoves (⊤ : SimpleGraph (Fin 3)) 1 ![2, 1, 1] 
 example : C4PatternAAAB ![4, 1, 3, 1] ∧ C4ModFourABABHat ![1, 6, 5, 2] := by
   unfold C4PatternAAAB C4ModFourABABHat
   decide
+
+-- A rotational reply preserves the alternating pattern when both sources are emptied.
+example : C4PatternABAB ![2, 0, 2, 0] := by
+  have h := c4Pattern_invariant_rotationalSymmetric_reflectional ![1, 2, 1, 2] 3 1
+    (Or.inl rfl) (by decide) ![2, 0, 2, 0] (Or.inl ⟨by decide, by decide⟩)
+  apply h.2.1
+  unfold C4PatternABAB
+  decide
+
+/- A reflectional reply after the move from 0 to 3 preserves the adjacent repeated residue
+even as it changes from two to zero. -/
+example : C4PatternAABC ![0, 0, 1, 2] := by
+  have h := c4Pattern_invariant_rotationalSymmetric_reflectional ![2, 2, 0, 1] 0 (-1)
+    (Or.inr rfl) (by decide) ![0, 0, 1, 2] (Or.inr ⟨by decide, by decide⟩)
+  apply h.2.2.1
+  unfold C4PatternAABC
+  decide

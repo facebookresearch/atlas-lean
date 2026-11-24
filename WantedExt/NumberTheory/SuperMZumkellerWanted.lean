@@ -51,15 +51,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.SuperMZumkellerWanted
 
-/-- **Super-m-Zumkeller numbers $n \ge 2$ have at least three divisors.** If a natural number
-$n \ge 2$ is super-m-Zumkeller, then the number $\tau(n)$ of positive divisors of $n$ satisfies
-$\tau(n) \ge 3$.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 1. -/
-theorem_wanted three_le_card_divisors_of_isSuperMZumkeller (n : ℕ)
-    (hn : 2 ≤ n) (h : IsSuperMZumkeller n) :
-    3 ≤ n.divisors.card
-
 /-- **Criterion for super-m-Zumkeller numbers.** Let $n \ge 2$ be an integer, let $\tau(n)$ be the
 number of positive divisors of $n$ and $T(n)$ their product. Then $n$ is super-m-Zumkeller if and
 only if $8$ divides $\alpha \cdot \tau(n) \cdot \tau(T(n))$ for every prime $p$ dividing $n$,

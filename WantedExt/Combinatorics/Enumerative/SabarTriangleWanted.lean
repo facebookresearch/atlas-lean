@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.FineNumber
+public import MathlibExt.Combinatorics.Enumerative.SabarFineNumberWhitt
+public import MathlibExt.Combinatorics.Enumerative.SabarFineNumber
 public import MathlibExt.Combinatorics.Enumerative.WhittGeneralizedCatalan
 public import MathlibExt.Combinatorics.Enumerative.SabarTriangle
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
@@ -86,18 +87,6 @@ public theorem_wanted sum_neg_one_pow_mul_choose_eq_self (n : ℕ) (hn : 2 ≤ n
     ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k + 1) *
         (1 - 2 * (k : ℚ) / (n + 1) + (n : ℚ) / (k + 1)) * ((n + k).choose k : ℚ) = n
 
-/-- **Fine numbers as an alternating binomial sum.** For every natural number $n \ge 2$, the Fine
-number $F(n)$ satisfies
-$$F(n) = \frac{1}{2} (-1)^n +
-\frac{1}{2} \sum_{k=0}^{n} (-1)^{n-k} \left(1 - \frac{n}{k+1}\right) \binom{n+k}{k}.$$
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Corollary 3 (`integers-2026-A27-cor-3`). -/
-public theorem_wanted fineNumber_eq_half_neg_one_pow_add_sum (n : ℕ) (hn : 2 ≤ n) :
-    fineNumber n = (1 / 2) * (-1 : ℚ) ^ n +
-      (1 / 2) * ∑ k ∈ Finset.range (n + 1),
-        (-1 : ℚ) ^ (n - k) * (1 - (n : ℚ) / (k + 1)) * ((n + k).choose k : ℚ)
-
 /-- **Central entries of Sabar's triangle and Fine numbers.** Let $F(m)$ denote the Fine numbers
 and $C_m$ the Catalan numbers. For every natural number $n \ge 1$, the entries of Sabar's
 triangle $s$ satisfy
@@ -154,17 +143,6 @@ public theorem_wanted sabarNumber_central_eq_whittGeneralizedCatalan (n : ℕ) (
     (sabarNumber (2 * n) n : ℚ) =
       (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * whittGeneralizedCatalan 2 n / 2 ^ (n + 1) +
         (-1) ^ (n + 1) + (-1) ^ n / 2 ^ (n + 1)
-
-/-- **Fine numbers from Whitt's generalized Catalan numbers.** For every natural number $n \ge 1$,
-the Fine number $F(n)$, indexed so that $F(0) = 1$ and $F(1) = 0$, and Whitt's generalized Catalan
-number $C(2, n+1)$ at $\alpha = 2$ satisfy
-
-$$2^{n+2} F(n) = C(2, n+1) + 3(-1)^n.$$
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Corollary 4 (`integers-2026-A27-cor-4`). -/
-public theorem_wanted two_pow_mul_fineNumber_eq_whittGeneralizedCatalan (n : ℕ) (hn : 1 ≤ n) :
-    2 ^ (n + 2) * fineNumber n = whittGeneralizedCatalan 2 (n + 1) + 3 * (-1) ^ n
 
 end
 

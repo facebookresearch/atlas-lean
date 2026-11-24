@@ -23,6 +23,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import next_task  # noqa: E402
 
 REPO = "facebookresearch/atlas-lean"
+# The committed priorities, which only the test of their names reads: the others run with a missing file instead.
+COMMITTED = next_task.PRIORITIES
+
+
+def setUpModule() -> None:
+    folder = tempfile.TemporaryDirectory()
+    unittest.addModuleCleanup(folder.cleanup)
+    patch = mock.patch.object(next_task, "PRIORITIES", Path(folder.name) / "priorities.json")
+    patch.start()
+    unittest.addModuleCleanup(patch.stop)
 OPEN = f"{next_task.API}/repos/{REPO}/pulls?state=open&per_page=100&page="
 CLOSED = f"{next_task.API}/repos/{REPO}/pulls?state=closed&sort=updated&direction=desc&per_page=100&page="
 
@@ -101,9 +111,12 @@ class Site:
         return self.pages.get(url, b"[]")
 
 
-def run(site: Site, *args: str, env: dict | None = None) -> tuple[int, str, str]:
+def run(site: Site, *args: str, env: dict | None = None, priorities: Path | None = None) -> tuple[int, str, str]:
+    """next_task.py's exit code, output and errors, with *priorities* as the checkout's priorities file if given, and
+    otherwise the missing one setUpModule sets."""
     out, err = io.StringIO(), io.StringIO()
     with mock.patch.object(next_task, "request", site), mock.patch.dict(os.environ, env or {}, clear=True), \
+            mock.patch.object(next_task, "PRIORITIES", priorities or next_task.PRIORITIES), \
             redirect_stdout(out), redirect_stderr(err):
         code = next_task.main(list(args))
     return code, out.getvalue(), err.getvalue()
@@ -383,6 +396,116 @@ class Picking(unittest.TestCase):
     def test_the_count_is_positive(self) -> None:
         with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
             next_task.main(["-n", "0"])
+
+
+PRIORITIES = {"schema": next_task.PRIORITIES_SCHEMA, "about": "Test weights.", "default": 1,
+              "weights": {"Algebra/t7": 2, "Algebra/t1": 0.5, "Algebra/t2": 0.5}}
+
+
+class Priorities(unittest.TestCase):
+    def write(self, folder: str, data: object, name: str = "priorities.json") -> Path:
+        path = Path(folder) / name
+        path.write_text(data if isinstance(data, str) else json.dumps(data))
+        return path
+
+    def test_the_longest_name_that_starts_a_node_id_gives_its_weight(self) -> None:
+        table = {"default": 1, "weights": {"Algebra": 2, "Algebra/rings": 0.5, "Algebra/rings/p": 3, "Number": 5}}
+        cases = {"Algebra/t1": 2, "Algebra/rings/x": 0.5, "Algebra/rings/p": 3, "Algebra/rings/p/q": 3,
+                 # A name counts only up to a slash: `Algebra` is not the start of `AlgebraicGeometry`.
+                 "AlgebraicGeometry/x": 1, "Algebra/ringsx/y": 2, "Number/x": 5, "NumberTheory/x": 1}
+        for node_id, expected in cases.items():
+            self.assertEqual(next_task.priority({"node_id": node_id}, table), expected, node_id)
+        self.assertEqual(next_task.priority({"node_id": "Algebra/t1"}, None), 1)
+
+    def test_statements_still_come_first_then_higher_priorities(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            path = self.write(folder, PRIORITIES)
+            code, out, err = run(Site(), "--json", "-n", "10", "--priorities", str(path))
+            self.assertEqual((code, err), (0, ""))
+            result = json.loads(out)
+            # The free tasks are t2 (a statement), then the proofs t1, t4 and t7 in tasks.json's order.
+            self.assertEqual([task["node_id"] for task in result["next"]], ["Algebra/t2", "Algebra/t7", "Algebra/t4",
+                                                                            "Algebra/t1"])
+            self.assertEqual(result["next"][1], ITEMS[6])
+            self.assertEqual(result["priority"], {"Algebra/t2": 0.5, "Algebra/t7": 2, "Algebra/t4": 1,
+                                                  "Algebra/t1": 0.5})
+            self.assertEqual(result["priorities"], str(path))
+            code, out, _ = run(Site(), "-n", "2", "--priorities", str(path))
+        self.assertEqual(code, 0)
+        self.assertIn(f"Priorities from {path}.", out)
+        self.assertIn("proof: Task 7\n  article id   af_000000000000000000000007\n  node         Algebra/t7\n"
+                      "  Lean         Ext.p5\n  article      blueprint/roadmap/Algebra/t7.md\n  priority     2", out)
+        self.assertNotIn("Task 4", out)
+
+    def test_the_checkouts_file_is_the_default_and_without_it_all_weigh_the_same(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            path = self.write(folder, PRIORITIES)
+            _, out, _ = run(Site(), "--json", "-n", "10", priorities=path)
+            self.assertEqual([task["node_id"] for task in json.loads(out)["next"]][:2], ["Algebra/t2", "Algebra/t7"])
+            self.assertEqual(json.loads(out)["priorities"], str(path))
+            missing = Path(folder) / "missing.json"
+            _, out, _ = run(Site(), "--json", "-n", "10", priorities=missing)
+            result = json.loads(out)
+            self.assertEqual([task["node_id"] for task in result["next"]], ["Algebra/t2", "Algebra/t1", "Algebra/t4",
+                                                                            "Algebra/t7"])
+            self.assertEqual((result["priorities"], set(result["priority"].values())), (None, {1}))
+            _, out, _ = run(Site(), "-n", "1", priorities=missing)
+        self.assertIn("No priorities, so all tasks have the same priority.", out)
+        self.assertIn("  priority     1", out)
+
+    def test_priorities_are_read_from_a_url_without_the_token(self) -> None:
+        url = "https://example.org/priorities.json"
+        site = Site()
+        site.pages[url] = json.dumps(PRIORITIES).encode()
+        code, out, _ = run(site, "--json", "-n", "2", "--priorities", url, env={"GH_TOKEN": "secret"})
+        self.assertEqual(code, 0)
+        self.assertEqual([task["node_id"] for task in json.loads(out)["next"]], ["Algebra/t2", "Algebra/t7"])
+        self.assertIn((url, None), site.read)
+
+    def test_load_priorities_takes_a_path(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            path = self.write(folder, PRIORITIES)
+            self.assertEqual(next_task.load_priorities(path), PRIORITIES)
+            self.assertEqual(next_task.load_priorities(str(path)), PRIORITIES)
+
+    def test_priorities_it_cannot_read_stop_it(self) -> None:
+        base = {key: value for key, value in PRIORITIES.items() if key != "about"}
+        cases = [({**base, "schema": "atlas-task-priorities/v2"}, "is not a list of priorities"),
+                 ([base], "is not a list of priorities"),
+                 ({**base, "weight": {}}, "has a key it should not: 'weight'"),
+                 ({**base, "about": ["text"]}, "its about is not a text"),
+                 ({**base, "weights": [["Algebra", 2]]}, "its weights are not an object")]
+        for value in (0, -1, "1", True, None):
+            cases.append(({**base, "default": value}, "is not a positive number"))
+            cases.append(({**base, "weights": {"Algebra": value}}, "is not a positive number"))
+        for key in ("", "/Algebra", "Algebra/", "Algebra//rings", " Algebra", "Algebra/rings "):
+            cases.append(({**base, "weights": {key: 2}}, "is not a node id or the start of one"))
+        texts = [("{", "is not JSON"), ('{"default": NaN}', "is not JSON"),
+                 (json.dumps(base).replace('"default": 1', '"default": Infinity'), "is not JSON"),
+                 (json.dumps(base)[:-1] + ', "default": 2}', "gives 'default' twice"),
+                 (json.dumps(base).replace('"Algebra/t7": 2', '"Algebra/t7": 2, "Algebra/t7": 0.5'),
+                  "gives 'Algebra/t7' twice")]
+        with tempfile.TemporaryDirectory() as folder:
+            sources = [(self.write(folder, data, f"case{number}.json"), message)
+                       for number, (data, message) in enumerate(cases + texts)]
+            sources.append((Path(folder) / "missing.json", "missing.json:"))
+            for source, message in sources:
+                code, out, err = run(Site(), "--priorities", str(source))
+                self.assertEqual((code, out), (1, ""), source)
+                self.assertIn(message, err, source)
+                if source.exists():
+                    # The checkout's own file is read the same way.
+                    code, out, err = run(Site(), priorities=source)
+                    self.assertEqual((code, out), (1, ""), source)
+                    self.assertIn(message, err, source)
+
+    def test_the_committed_weights_name_subjects_and_fields_of_the_taxonomy(self) -> None:
+        # A name the taxonomy does not have, such as one a rename left behind, would weigh nothing.
+        taxonomy = json.loads((COMMITTED.parent.parent / "scripts" / "taxonomy.json").read_text())
+        places = set(taxonomy["subjects"]) | {f"{subject}/{field['slug']}"
+                                              for subject, entry in taxonomy["subjects"].items()
+                                              for field in entry.get("fields", [])}
+        self.assertEqual(sorted(set(next_task.load_priorities(COMMITTED)["weights"]) - places), [])
 
 
 class Requests(unittest.TestCase):

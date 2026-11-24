@@ -28,16 +28,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Spoof Lehmer factorizations with a base $1$ are trivial.** If a finite multiset $F$ of pairs
-$(x, a)$ of natural numbers is a $k$-Lehmer factorization for some integer $k$, and some pair in
-$F$ has base $x = 1$, then every base of $F$ equals $1$, that is, $F$ is trivial.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Proposition 1 (`integers-2026-A33-prop-1`). -/
-public theorem_wanted isTrivialSpoof_of_isSpoofLehmer_of_one_mem (F : Multiset (ℕ × ℕ))
-    (hL : ∃ k : ℤ, IsSpoofLehmer k F) (h1 : ∃ p ∈ F, p.1 = 1) :
-    IsTrivialSpoof F
-
 /-- **Nontrivial spoof Lehmer factorizations have all exponents $1$.** If $F$ is a nontrivial spoof
 $k$-Lehmer factorization for some integer $k$, then every exponent of $F$ is $1$.
 

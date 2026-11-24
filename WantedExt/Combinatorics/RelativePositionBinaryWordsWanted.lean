@@ -23,6 +23,7 @@ public import MathlibExt.Combinatorics.Words.EquilibriousWord
 public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
 public import MathlibExt.Combinatorics.Words.PisaEigenvector
 public import MathlibExt.Combinatorics.Words.RelativePositionBinaryWords
+public import MathlibExt.Combinatorics.Words.RelativePositionFrequency
 
 /-!
 # Relative position in binary words (Coons–Ramsey–Strungaru)
@@ -441,25 +442,6 @@ public theorem_wanted letter_frequency_tfae {w : ℕ → Bool} (hw : BothLetters
       Tendsto (fun n : ℕ => (letterPosition w true n : ℝ) / n) atTop (𝓝 (1 / (1 - d)))].TFAE
 
 open Filter Topology in
-/-- **Relative position of a word with given letter frequency.** Let
-$w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word over the letters $a$ and $b$. Let $\#_b(m)$
-be the number of letters $b$ among $\ell_0, \ldots, \ell_{m-1}$, and for $n \ge 1$ let
-$r(n) = p_b(n) - p_a(n)$, where $p_\alpha(n)$ is the position of the $n$-th occurrence of the
-letter $\alpha$ in $w$, counting positions from $0$. If $0 < d < 1$ and $\#_b(m)/m \to d$ as
-$m \to \infty$, then $r(n)/n \to 1/d - 1/(1-d)$ as $n \to \infty$.
-
-Such a word contains both letters infinitely often, so no separate hypothesis that both letters
-occur infinitely often is needed.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 31
-(`jis-2025-25.1.5-cor-31`). -/
-public theorem_wanted tendsto_relativePosition_div_of_frequency {w : ℕ → Bool} {d : ℝ}
-    (hd₀ : 0 < d) (hd₁ : d < 1)
-    (hfreq : Tendsto (fun m : ℕ => (letterCount w false m : ℝ) / m) atTop (𝓝 d)) :
-    Tendsto (fun n : ℕ => (relativePosition w n : ℝ) / n) atTop (𝓝 (1 / d - 1 / (1 - d)))
-
-open Filter Topology in
 /-- **The frequency of $b$ from the growth of the relative position.** Let $w$ be an infinite
 binary word in which both letters $a$ and $b$ occur infinitely often, let $r$ be its relative
 position function, and suppose that $r(n)/n$ converges to $L$ in the extended real line
@@ -733,28 +715,6 @@ public theorem_wanted letterPosition_diff_isomorphic_iff_fibonacci {w : ℕ → 
         letterPosition w true (n + 1) - letterPosition w true n = σa (w (n - 1)) ∧
           letterPosition w false (n + 1) - letterPosition w false n = σb (w (n - 1))) ↔
       w = (fun i => !fibInf i) ∨ w = fibInf
-
-/-- **Conjugacy of the Fibonacci and iccanobiF iterates of $b$.** Let $\varrho_F'$ be the
-iccanobiF substitution $a \mapsto ba$, $b \mapsto a$, extended to finite words by concatenation,
-and for each $k$ let $g_k$ be the finite Fibonacci word $f_k$ with each $0$ written as $a$ and
-each $1$ as $b$. For every $n \ge 1$,
-
-$$ab\,g_{2n} = (\varrho_F')^{2n+1}(b)\,ba, \qquad ba\,g_{2n-1} = (\varrho_F')^{2n}(b)\,ab.$$
-
-Since $g_k = \varrho_F^k(a) = \varrho_F^{k+1}(b)$ for the Fibonacci substitution $\varrho_F$
-($a \mapsto ab$, $b \mapsto a$), this says $ab\,\varrho_F^{2n+1}(b) = (\varrho_F')^{2n+1}(b)\,ba$
-and $ba\,\varrho_F^{2n}(b) = (\varrho_F')^{2n}(b)\,ab$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 52
-(`jis-2025-25.1.5-prop-52`). -/
-public theorem_wanted fibonacci_iccanobiF_conjugate_b (n : ℕ) (hn : 1 ≤ n) :
-    [true, false] ++ (fibWord (2 * n)).map (!·) =
-        (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 * n +
-        1] [false] ++ [false, true] ∧
-      [false, true] ++ (fibWord (2 * n - 1)).map (!·) =
-        (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 *
-            n] [false] ++ [true, false]
 
 /-- **The iccanobiF iterates approximate $abf$ and $baf$.** Let $f = abaab\cdots$ be the
 Fibonacci word, the infinite Fibonacci word with each $0$ written as $a$ and each $1$ as $b$,

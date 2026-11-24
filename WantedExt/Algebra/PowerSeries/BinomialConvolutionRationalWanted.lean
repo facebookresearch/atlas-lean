@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.LinearAlgebra.OrthogonalDescent
 public import MathlibExt.RingTheory.Polynomial.PairwiseSumResultant
 public import MathlibExt.RingTheory.PowerSeries.BinomialProductGeometric
 public import MathlibExt.RingTheory.PowerSeries.BinomialProductMonomial
@@ -48,19 +49,6 @@ public theorem_wanted exists_polynomial_quotient_of_extension {F G : Type*} [Fie
     [Algebra F G] (A : PowerSeries F) (p q : Polynomial G) (hq : q ≠ 0)
     (h : PowerSeries.map (algebraMap F G) A * (q : PowerSeries G) = p) :
     ∃ P Q : Polynomial F, Q ≠ 0 ∧ A * (Q : PowerSeries F) = P
-
-/-- **Orthogonal vectors descend from field extensions.** Let $F$ be a field, let $G$ be a field
-extension of $F$ (a field with an $F$-algebra structure), let $n \in \mathbb{N}$ and let
-$S \subseteq F^n$. If some nonzero $t \in G^n$ satisfies $\sum_{i=1}^n s_i t_i = 0$ in $G$ for
-every $s \in S$, then some nonzero $u \in F^n$ satisfies $\sum_{i=1}^n s_i u_i = 0$ for every
-$s \in S$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Lemma 3 (`jis-2024-24.1.3-lem-3`). -/
-public theorem_wanted exists_orthogonal_of_orthogonal_over_extension {F G : Type*} [Field F]
-    [Field G] [Algebra F G] {n : ℕ} (S : Set (Fin n → F)) (t : Fin n → G) (ht : t ≠ 0)
-    (horth : ∀ s ∈ S, ∑ i, algebraMap F G (s i) * t i = 0) :
-    ∃ u : Fin n → F, u ≠ 0 ∧ ∀ s ∈ S, ∑ i, s i * u i = 0
 
 /-- **Binomial product with a geometric series.** For every field $K$ of characteristic $0$, every
 power series $A(x)$ over $K$ and every $\beta \in K$,

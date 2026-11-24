@@ -13,3 +13,4 @@ General bounded operators: Douglas lemma, direct sums, strong and weak operator 
 - [Bartle–Graves theorem](bartle-graves.md)
 - [Lomonosov's invariant subspace theorem](lomonosov-invariant-subspace.md)
 - [Strong operator convergence characterized by weak operator convergence](tendsto-apply-iff-tendsto-inner-and-tend.md)
+- [Matrix entries of a linear operator in an orthonormal basis](orthonormal-basis-matrix-entries.md)

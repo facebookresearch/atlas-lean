@@ -17,6 +17,7 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 public import MathlibExt.Combinatorics.Enumerative.HsuShiueGeneralizedStirlingNumber
 public import MathlibExt.Combinatorics.Enumerative.PolynomiallyWeightedFibonacciSums
 public import MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums
+public import MathlibExt.Combinatorics.Enumerative.RisingFactorialAntiderivatives
 public import MathlibExt.NumberTheory.LucasSequence
 import MathlibExt.Combinatorics.Enumerative.StirlingSecondExplicit
 
@@ -100,17 +101,6 @@ public theorem stirlingSecond_three_eq (r : ℕ) (hr : 1 ≤ r) :
     linear_combination h / 6
   rw [Nat.add_sub_cancel_left]
   exact_mod_cast hR
-
-/-- **Greenstreet's identity.** For every natural number $N$,
-
-$$\sum_{k=1}^{N} (-1)^k \binom{N}{k} 2^{N-k} k^2 = N^2 - 2N.$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.3. -/
-public theorem_wanted sum_neg_one_pow_choose_two_pow_mul_sq (N : ℕ) :
-    ∑ k ∈ Finset.Icc 1 N, (-1 : ℤ) ^ k * (N.choose k : ℤ) * 2 ^ (N - k) * (k : ℤ) ^ 2 =
-      (N : ℤ) ^ 2 - 2 * N
 
 /-- **Power-weighted binomial sums of Lucas numbers.** Let $L_n$ denote the Lucas numbers
 ($L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$), $S(r, i)$ the Stirling numbers of the second
@@ -222,27 +212,6 @@ public theorem_wanted sum_choose_mul_pow_div_ascFactorial (N s : ℕ) (hs : 0 < 
     ∑ k ∈ Finset.range (N + 1), (N.choose k : ℝ) * x ^ (k + s) / (k + 1).ascFactorial s =
       ((1 + x) ^ (N + s) - 1) / (N + 1).ascFactorial s -
         ∑ j ∈ Finset.Icc 1 (s - 1), x ^ j / (j.factorial * (N + 1).ascFactorial (s - j))
-
-/-- **Rising-factorial weighted sums via iterated antiderivatives.** Let $N$ and $s$ be natural
-numbers, $a_0, \dots, a_N$ real numbers and $f(y) = \sum_{k=0}^{N} a_k y^k$. Let
-$I_0, I_1, I_2, \dots$ be functions $\mathbb{R} \to \mathbb{R}$ with $I_0 = f$ such that for every
-$j \ge 0$ the function $I_{j+1}$ is differentiable on $\mathbb{R}$ with derivative $I_j$ (the
-constants of integration are arbitrary). Write $m^{(i)} = m(m+1)\cdots(m+i-1)$ for the rising
-factorial. Then for every real number $x$,
-
-$$\sum_{k=0}^{N} \frac{a_k\, x^{k+s}}{(k+1)^{(s)}} =
-I_s(x) - \sum_{j=1}^{s} \frac{I_j(0)\, x^{s-j}}{(s-j)!}.$$
-
-The source assumes $s > 0$; for $s = 0$ the identity reads $f(x) = I_0(x)$.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 3.1, equation (3.2). -/
-public theorem_wanted sum_coeff_mul_pow_div_ascFactorial_eq_antideriv (a : ℕ → ℝ) (N s : ℕ)
-    (I : ℕ → ℝ → ℝ) (hI0 : ∀ y, I 0 y = ∑ k ∈ Finset.range (N + 1), a k * y ^ k)
-    (hI : ∀ j y, HasDerivAt (I (j + 1)) (I j y) y) (x : ℝ) :
-    ∑ k ∈ Finset.range (N + 1), a k * x ^ (k + s) / (k + 1).ascFactorial s =
-      I s x - ∑ j ∈ Finset.Icc 1 s, I j 0 * x ^ (s - j) / (s - j).factorial
 
 /-- **Finkel's identity.** For every natural number $n$, with $H_n = \sum_{j=1}^{n} 1/j$ the
 $n$-th harmonic number,

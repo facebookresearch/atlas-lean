@@ -14,6 +14,7 @@ public import Mathlib.LinearAlgebra.Matrix.Hadamard
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.AlphaUpperMatrix
 public import MathlibExt.Combinatorics.Enumerative.PascalStirlingGeneralization
 
 /-!
@@ -25,7 +26,8 @@ and Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4.
 For a sequence `α = (α_j)_{j ≥ 1}` (here `α : ℕ → R` with `α 0` unused) the paper's matrices
 `S_α(n)`, `𝖲_α(n)` and `𝖴_α(n)` are given by recurrences on their entries; the entry functions
 below use 0-based indices, so entry `(i, j)` here is the paper's `(i + 1, j + 1)`. Statements were
-checked with exact rational arithmetic before stating.
+checked with exact rational arithmetic before stating. The α-upper entries, matrix and determinant
+formula are in `MathlibExt.Combinatorics.Enumerative.AlphaUpperMatrix`.
 
 The factorial matrix of a power series (`powerSeriesFactorialMatrix`), the lemma on its diagonal
 entries (`powerSeriesFactorialMatrix_apply_self`) and the proved multiplicativity
@@ -79,28 +81,6 @@ def shiftedAlphaStirlingEntry (α : ℕ → R) : ℕ → ℕ → R
   | i + 1, j + 1 =>
       shiftedAlphaStirlingEntry α (i + 1) j + α (j + 2) * shiftedAlphaStirlingEntry α i (j + 1)
 
-/-- **Entries of the α-upper matrix.** Let $R$ be a commutative ring and let
-$\alpha_0, \alpha_1, \alpha_2, \dots$ be a sequence in $R$ ($\alpha_0$ is never used). The
-α-upper entries $u_{i,j} \in R$, for $i, j \ge 0$, are defined recursively by $u_{0,j} = 1$ for
-all $j$, $u_{i,0} = 0$ for $i \ge 1$, and
-$u_{i+1,j+1} = u_{i+1,j} + \alpha_{i+1} u_{i,j} + (\alpha_{j+2} - \alpha_{i+1}) u_{i,j+1}$ for
-all $i, j \ge 0$.
-
-These are the entries of the paper's matrix $\mathsf{U}_\alpha(n)$ with indices shifted to start
-at $0$; in the paper's $1$-based indexing the first row is $1$, the rest of the first column is
-$0$, and $\mathsf{U}_{i,j} = \mathsf{U}_{i,j-1} + \alpha_{i-1} \mathsf{U}_{i-1,j-1} +
-(\alpha_j - \alpha_{i-1}) \mathsf{U}_{i-1,j}$ for $i, j \ge 2$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 2,
-equation (u-1-2). -/
-def alphaUpperEntry (α : ℕ → R) : ℕ → ℕ → R
-  | 0, _ => 1
-  | _ + 1, 0 => 0
-  | i + 1, j + 1 =>
-      alphaUpperEntry α (i + 1) j + α (i + 1) * alphaUpperEntry α i j +
-        (α (j + 2) - α (i + 1)) * alphaUpperEntry α i (j + 1)
-
 /-- **Recurrence for the α-Stirling entries.** Let $R$ be a commutative ring, let $\alpha$ be a
 sequence in $R$, and let $s_{i,j}$ ($i, j \ge 0$) be the α-Stirling entries of $\alpha$. Then for
 all $i, j \ge 0$, $s_{i+1,j+1} = s_{i,j} + \alpha_{j+2} s_{i,j+1}$.
@@ -130,7 +110,8 @@ Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of t
 Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 1.4. -/
 theorem shiftedAlphaStirlingEntry_succ_succ (α : ℕ → R) (i j : ℕ) :
     shiftedAlphaStirlingEntry α (i + 1) (j + 1) =
-      shiftedAlphaStirlingEntry α (i + 1) j + α (j + 2) * shiftedAlphaStirlingEntry α i (j + 1) := by
+      shiftedAlphaStirlingEntry α (i + 1) j +
+        α (j + 2) * shiftedAlphaStirlingEntry α i (j + 1) := by
   rw [shiftedAlphaStirlingEntry]
 
 /-- **First row of the shifted α-Stirling matrix.** Let $R$ be a commutative ring, let
@@ -143,35 +124,6 @@ Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Sect
 theorem shiftedAlphaStirlingEntry_zero_left (α : ℕ → R) (j : ℕ) :
     shiftedAlphaStirlingEntry α 0 j = α 1 := by
   cases j <;> rw [shiftedAlphaStirlingEntry]
-
-/-- **Recurrence for the α-upper entries.** Let $R$ be a commutative ring, let $\alpha$ be a
-sequence in $R$, and let $u_{i,j}$ ($i, j \ge 0$) be the α-upper entries of $\alpha$. Then for all
-$i, j \ge 0$,
-$u_{i+1,j+1} = u_{i+1,j} + \alpha_{i+1} u_{i,j} + (\alpha_{j+2} - \alpha_{i+1}) u_{i,j+1}$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, equation (u-1-2). -/
-theorem alphaUpperEntry_succ_succ (α : ℕ → R) (i j : ℕ) :
-    alphaUpperEntry α (i + 1) (j + 1) =
-      alphaUpperEntry α (i + 1) j + α (i + 1) * alphaUpperEntry α i j +
-        (α (j + 2) - α (i + 1)) * alphaUpperEntry α i (j + 1) := by
-  rw [alphaUpperEntry]
-
-/-- **Small α-upper entries.** Let $R$ be a commutative ring, let $\alpha$ be a sequence in $R$,
-and let $u_{i,j}$ ($i, j \ge 0$) be the α-upper entries of $\alpha$. Then $u_{1,1} = \alpha_2$ and
-$u_{1,2} = \alpha_2 + \alpha_3$.
-
-Writing $\mathsf{U}_{i,j}$ for the entries of the paper's matrix $\mathsf{U}_\alpha(n)$ in its
-$1$-based indexing, these are $\mathsf{U}_{2,2} = \alpha_2$ and
-$\mathsf{U}_{2,3} = \alpha_2 + \alpha_3$, as in the paper's display of $\mathsf{U}_\alpha(4)$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 2. -/
-theorem alphaUpperEntry_one_one_one_two (α : ℕ → R) :
-    alphaUpperEntry α 1 1 = α 2 ∧ alphaUpperEntry α 1 2 = α 2 + α 3 := by
-  constructor
-  · simp only [alphaUpperEntry]; ring
-  · simp only [alphaUpperEntry]; ring
 
 /-- **The α-Stirling matrix.** Let $R$ be a commutative ring, let $\alpha$ be a sequence in $R$,
 and let $s_{i,j}$ ($i, j \ge 0$) be the α-Stirling entries of $\alpha$. For $n \ge 0$, the matrix
@@ -195,16 +147,6 @@ Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Sect
 def shiftedAlphaStirlingMatrix (α : ℕ → R) (n : ℕ) : Matrix (Fin n) (Fin n) R :=
   Matrix.of fun a b => shiftedAlphaStirlingEntry α a b
 
-/-- **The α-upper matrix.** Let $R$ be a commutative ring, let $\alpha$ be a sequence in $R$, and
-let $u_{i,j}$ ($i, j \ge 0$) be the α-upper entries of $\alpha$. For $n \ge 0$, the matrix
-$\mathsf{U}_\alpha(n)$ is the $n \times n$ matrix over $R$, with rows and columns indexed by
-$0, 1, \dots, n - 1$, whose $(i, j)$ entry is $u_{i,j}$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 2. -/
-def alphaUpperMatrix (α : ℕ → R) (n : ℕ) : Matrix (Fin n) (Fin n) R :=
-  Matrix.of fun a b => alphaUpperEntry α a b
-
 /-- **α-upper entries are complete homogeneous symmetric polynomials.** Let $R$ be a commutative
 ring, let $\alpha$ be a sequence in $R$, and let $u_{i,j}$ ($i, j \ge 0$) be the α-upper entries
 of $\alpha$. For all $i \le j$, $u_{i,j} = h_i(\alpha_{i+1}, \alpha_{i+2}, \dots, \alpha_{j+1})$,
@@ -222,16 +164,6 @@ public theorem_wanted alphaUpperEntry_eq_hsymm (α : ℕ → R) {i j : ℕ} (hij
     alphaUpperEntry α i j =
       MvPolynomial.eval (fun t : Fin (j - i + 1) => α (i + 1 + t))
         (MvPolynomial.hsymm (Fin (j - i + 1)) R i)
-
-/-- **Determinant of the α-upper matrix.** Let $R$ be a commutative ring and let $\alpha$ be a
-sequence in $R$. For every $n \ge 0$, the determinant of the $n \times n$ α-upper matrix
-$\mathsf{U}_\alpha(n)$ is $\det \mathsf{U}_\alpha(n) = \prod_{i=1}^{n} \alpha_i^{i-1}$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Lemma 1
-(`jis-2026-26.5.4-lem-1`). -/
-public theorem_wanted det_alphaUpperMatrix (α : ℕ → R) (n : ℕ) :
-    (alphaUpperMatrix α n).det = ∏ i : Fin n, α (i + 1) ^ (i : ℕ)
 
 /-- **LU decomposition of the shifted α-Stirling matrix.** Let $R$ be a commutative ring, let
 $\alpha = (\alpha_j)_{j \ge 1}$ be a sequence in $R$, and let $n$ be a natural number. Then

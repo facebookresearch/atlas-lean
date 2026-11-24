@@ -13,3 +13,5 @@ Exponential, logarithmic and trigonometric-type functions and their relatives: e
 - [Exponential sums have full column rank](eq-zero-of-sum-mul-exp-eq-zero.md)
 - [Parametrization of the solutions of $x^y = y^x$ with $0 < y < x$](exists-parametrization-of-rpow-eq-rpow.md)
 - [The logistic function of the log odds](sigmoid-log-sub-log.md)
+- [The complex exponential is holomorphic and equal to its own derivative](complex-exponential-derivative.md)
+- [The principal logarithm is holomorphic on the slit plane with derivative 1/z](principal-logarithm-holomorphic.md)

@@ -55,7 +55,8 @@ namespace MathlibExt.Biology.PopulationGenetics.FounderSampling
 /-- Weight of one ordered founder sample `s` of `k` gene copies drawn
 independently with replacement from a source population with allele
 frequencies `p`: the product of the frequencies of the drawn copies. Under
-admissible frequencies this is the probability of the sample `s`. -/
+admissible frequencies (`0 <= p`, `sum p = 1` on a finite allele type) this
+is the probability of the sample `s`. -/
 def sampleWeight {A : Type*} (p : A → ℝ) {k : ℕ} (s : Fin k → A) : ℝ :=
   ∏ j, p (s j)
 
@@ -104,9 +105,11 @@ theorem sum_sampleWeight {A : Type*} [Fintype A] (p : A → ℝ)
   rw [huniv, sum_weight_piFinset]
   simp [hsum]
 
-/-- **Allele loss under founder sampling.** The probability that allele
-`i` is absent from a founder sample of `k` gene copies drawn
-independently with replacement is `(1 - p i) ^ k`. -/
+/-- **Allele loss under founder sampling.** For frequencies with
+`sum p = 1` (of any sign), the absence weight of allele `i` in a founder
+sample of `k` gene copies drawn independently with replacement is
+`(1 - p i) ^ k`; for admissible frequencies (also `0 <= p`) it is the
+probability that `i` is absent. -/
 theorem probAbsent_eq {A : Type*} [Fintype A] [DecidableEq A] (p : A → ℝ)
     (hsum : ∑ a, p a = 1) (k : ℕ) (i : A) :
     probAbsent p k i = (1 - p i) ^ k := by
@@ -125,9 +128,10 @@ theorem probAbsent_eq {A : Type*} [Fintype A] [DecidableEq A] (p : A → ℝ)
     linarith
   simp only [h1, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
 
-/-- **Expected allelic richness under founder sampling.** The expected
-number of distinct alleles retained in a founder sample of `k` gene
-copies drawn independently with replacement is
+/-- **Expected allelic richness under founder sampling.** For frequencies
+with `sum p = 1` (of any sign; an expectation when also `0 <= p`), the
+expected number of distinct alleles retained in a founder sample of `k`
+gene copies drawn independently with replacement is
 `∑ i, (1 - (1 - p i) ^ k)`, the sum over alleles of the retention
 probability `1 - Q i` of Kalinowski (2004), with the with-replacement
 absence probability `Q i = (1 - p i) ^ k`. -/
@@ -213,8 +217,8 @@ theorem expectedRichness_nonneg {A : Type*} [Fintype A] [DecidableEq A]
   · exact Nat.cast_nonneg _
 
 /-- The expected retained richness is nondecreasing in the founder
-sample size `k` for admissible frequencies: a larger founder sample
-retains at least as many alleles in expectation. -/
+sample size `k` for admissible frequencies (`0 <= p`, `sum p = 1`): a
+larger founder sample retains at least as many alleles in expectation. -/
 theorem expectedRichness_mono {A : Type*} [Fintype A] [DecidableEq A]
     (p : A → ℝ) (hp : ∀ i, 0 ≤ p i) (hsum : ∑ a, p a = 1) (k : ℕ) :
     expectedRichness p k ≤ expectedRichness p (k + 1) := by

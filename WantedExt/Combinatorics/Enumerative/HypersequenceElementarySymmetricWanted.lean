@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceElementarySymmetric
 public import MathlibExt.Combinatorics.Enumerative.MitrinovicNumbers
 public import WantedExt.Combinatorics.Enumerative.HypersequenceWeightedSumsWanted
 
@@ -113,26 +114,6 @@ Section 2, display of `B(n)`. -/
 public theorem hyperseqB_row_three :
     (List.range 4).map (hyperseqB 1 3) = [24, -26, 9, -1] := by
   decide +kernel
-
-/-- **Hypersequences through elementary symmetric polynomials.** Let $a$ be a sequence of complex
-numbers and let $j, n \in \mathbb{N}$. Write $a^{(r)}_n$ for the hypersequence of generation $r$
-of $a$, write $e_{j,k}(n)$ for the elementary symmetric polynomial of degree $k$ in
-$n + 1, \dots, n + j$, and put $t_i(n) = \sum_{k=0}^{n} k^i a_k$, with $0^0 = 1$. Then
-$j! \, a^{(j+1)}_n = (-1)^j \sum_{k=0}^{j} (-1)^k e_{j,k}(n) \, t_{j-k}(n)$ and
-$j! \, a^{(j+1)}_n = \sum_{k=0}^{j} (-1)^k e_{j,j-k}(n) \, t_k(n)$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36,
-Theorem 1, Equation (2.1) (`integers-2026-A36-thm-1`). -/
-public theorem_wanted factorial_mul_hypersequence_eq_sum_esymm (a : ℕ → ℂ) (j n : ℕ) :
-    (j.factorial : ℂ) * hypersequence a (j + 1) n =
-        (-1) ^ j * ∑ k ∈ Finset.range (j + 1), (-1) ^ k *
-          (((Finset.Icc 1 j).val.map (n + ·)).esymm k : ℕ) *
-            ∑ i ∈ Finset.range (n + 1), (i : ℂ) ^ (j - k) * a i ∧
-      (j.factorial : ℂ) * hypersequence a (j + 1) n =
-        ∑ k ∈ Finset.range (j + 1), (-1) ^ k *
-          (((Finset.Icc 1 j).val.map (n + ·)).esymm (j - k) : ℕ) *
-            ∑ i ∈ Finset.range (n + 1), (i : ℂ) ^ k * a i
 
 /-- **The inverse of Parisse's matrix $C(n)$.** Let $n \in \mathbb{N}$. Let $e_{j,i}(n)$ be the
 elementary symmetric polynomial of degree $i$ in $n + 1, \dots, n + j$, let

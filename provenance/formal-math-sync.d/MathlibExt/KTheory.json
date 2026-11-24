@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "MathlibExt/KTheory/Waldhausen/K0/Basic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d3d87a72a1094110e92936ac7da573c599208d14fc07ee60a89710252862c76b", "rationale": "ATLAS imports the original weak-equivalence and cofiber quotient and documents lift uniqueness. It ports the construction and instance uses to the explicitly weaker WaldhausenCategoryWithoutGluing interface without changing the relations.", "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0", "upstream_sha256": "ca09c4b78ec0cbdd90d987cd3f302f46ad63756c2ee0a7bf2e796851dadeb730"}
+  ]
+}

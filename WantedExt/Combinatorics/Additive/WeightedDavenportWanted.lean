@@ -69,15 +69,6 @@ public theorem_wanted weightedDavenport_one_pi_zmod_prime_pow (p r : ℕ) (hp : 
     weightedDavenport {1} ((i : Fin r) → ZMod (p ^ e i)) =
       ((1 + ∑ i, (p ^ e i - 1) : ℕ) : ℕ∞)
 
-/-- **A nested ceiling identity for divisors.** For all natural numbers $m, n \ge 2$ with
-$m \mid n$, we have $\lceil n / (\lceil n/(m-1) \rceil - 1) \rceil = m$.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Lemma 1 (`integers-2026-A89-lem-1`). -/
-public theorem_wanted ceilDiv_ceilDiv_sub_one_sub_one_of_dvd (m n : ℕ) (hm : 2 ≤ m)
-    (hn : 2 ≤ n) (hdvd : m ∣ n) :
-    n ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) = m
-
 /-- **Weight sets with weighted Davenport constant $m$ on $\mathbb{Z}/n\mathbb{Z}$.** Let
 $n \ge 2$ be a natural number and $m \ge 2$ a divisor of $n$. Every finite set $A$ of natural
 numbers with $n/m \in A \subseteq \{1, \dots, \lceil n/(m-1) \rceil - 1\}$ has $A$-weighted
@@ -161,26 +152,6 @@ public theorem_wanted weightedDavenport_zmod_prod_self_of_dvd (m n : ℕ) (hm : 
     (hn : 2 ≤ n) (hdvd : m ∣ n) (A : Finset ℕ) (hmem : n / m ∈ A)
     (hsub : A ⊆ Finset.Icc 1 (n ⌈/⌉ (m - 1) - 1)) :
     weightedDavenport A (ZMod n × ZMod n) = ((2 * m - 1 : ℕ) : ℕ∞)
-
-/-- **Long weighted zero-sum free sequences in abelian $p$-groups.** Let $p$ be a prime, let
-$r \ge 1$, let $e_1 \le e_2 \le \dots \le e_r$ be natural numbers and let
-$G = \mathbb{Z}/p^{e_1}\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/p^{e_r}\mathbb{Z}$. Let $c$ be a
-natural number with $1 \le c \le e_1$ and put $\beta = \lceil p^{e_1}/(p^c - 1) \rceil - 1$. Then
-there is a sequence $s$ over $G$ of length $\sum_{i=1}^{r} (\lceil p^{e_i}/\beta \rceil - 1)$ that
-is $\{1, \dots, \beta\}$-weighted zero-sum free: for every non-empty set $I$ of positions and all
-weights $a_i \in \{1, \dots, \beta\}$, the weighted sum $\sum_{i \in I} a_i s_i$ is non-zero.
-
-In particular the $\{1, \dots, \beta\}$-weighted Davenport constant of $G$ is at least
-$1 + \sum_{i=1}^{r} (\lceil p^{e_i}/\beta \rceil - 1)$.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Lemma 3 (`integers-2026-A89-lem-3`). -/
-public theorem_wanted exists_weightedZeroSumFree_pi_zmod_prime_pow (p r c : ℕ)
-    (hp : p.Prime) (hr : 0 < r) (e : Fin r → ℕ) (hmono : Monotone e) (hc : 1 ≤ c)
-    (hce : c ≤ e ⟨0, hr⟩) :
-    ∃ s : List ((i : Fin r) → ZMod (p ^ e i)),
-      s.length = ∑ i, (p ^ e i ⌈/⌉ (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) - 1) ∧
-        IsWeightedZeroSumFree (Finset.Icc 1 (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1)) s
 
 /-- **Weighted Davenport constant of abelian $p$-groups, divisible case.** Let $p$ be a prime,
 let $r \ge 1$, let $e_1 \le e_2 \le \dots \le e_r$ be natural numbers and let

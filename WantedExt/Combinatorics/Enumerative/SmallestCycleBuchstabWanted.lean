@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Enumerative.BuchstabTaylor
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
@@ -102,39 +103,6 @@ public theorem_wanted smallest_cycle_variance_asymp (ω : ℝ → ℝ)
             (n.factorial : ℝ)) ^ 2) -
           n * (2 * ∫ x in Set.Ioi (1 : ℝ), ω x / x ^ 2)|
         ≤ C * (n : ℝ) * (n : ℝ) ^ (-ε)
-
-/-- **Recursion for the Taylor coefficients of the Buchstab function.** Let $\omega$ be a real
-function with $\omega(x) = 1/x$ for $1 \le x \le 2$ and
-$x\,\omega(x) = 1 + \int_1^{x-1} \omega(t)\,dt$ for $x \ge 2$, and let $c_{n,i}$ ($n, i \ge 0$)
-be real numbers such that for every integer $n \ge 1$ and every real $z$ with $-1 \le z < 1$ the
-series $\sum_{i \ge 0} c_{n,i} z^i$ converges absolutely to $\omega(n + (1+z)/2)$. Then
-$c_{1,i} = \frac{2}{3} \left(-\frac{1}{3}\right)^i$ for every $i \ge 0$, and for every $n \ge 1$
-
-$$c_{n+1,0} = \frac{1}{2n+3} \sum_{i \ge 0} c_{n,i} \left(2(n+1) + \frac{(-1)^i}{i+1}\right)$$
-
-and, for every $i \ge 1$,
-
-$$c_{n+1,i} = \frac{1}{2n+3} \left(\frac{c_{n,i-1}}{i} - c_{n+1,i-1}\right).$$
-
-The printed statement of Theorem 3 has $c_{n,i}/n$ in place of $c_{n,i-1}/i$; the recursion above
-is the identity $(2n+3) c_{n+1,i} + c_{n+1,i-1} = c_{n,i-1}/i$ derived in the paper's proof.
-
-Source: Claude Gravel and Daniel Panario, *Evaluating the Generalized Buchstab
-Function and Revisiting the Variance of the Distribution of the Smallest
-Components of Combinatorial Objects*, INTEGERS 24 (2024), Article A7, Theorem 3
-(`integers-2024-A7-thm-3`). -/
-public theorem_wanted buchstab_taylor_coeff_recursion (ω : ℝ → ℝ)
-    (hω₁ : ∀ x ∈ Set.Icc (1 : ℝ) 2, ω x = 1 / x)
-    (hω₂ : ∀ x : ℝ, 2 ≤ x → x * ω x = 1 + ∫ t in (1 : ℝ)..(x - 1), ω t)
-    (c : ℕ → ℕ → ℝ)
-    (hc : ∀ n : ℕ, 1 ≤ n → ∀ z ∈ Set.Ico (-1 : ℝ) 1,
-      HasSum (fun i => c n i * z ^ i) (ω (n + (1 + z) / 2))) :
-    (∀ i, c 1 i = 2 / 3 * (-1 / 3 : ℝ) ^ i) ∧
-      (∀ n : ℕ, 1 ≤ n → c (n + 1) 0 =
-        (∑' i, c n i * (2 * ((n : ℝ) + 1) + (-1 : ℝ) ^ i / ((i : ℝ) + 1))) /
-          (2 * (n : ℝ) + 3)) ∧
-      (∀ n : ℕ, 1 ≤ n → ∀ i : ℕ, 1 ≤ i →
-        c (n + 1) i = (c n (i - 1) / i - c (n + 1) (i - 1)) / (2 * (n : ℝ) + 3))
 
 /-- **Recursion for the Taylor coefficients of the generalized Buchstab function.** Let $K > 0$,
 let $\Omega$ be a real function with $\Omega(x) = 1$ for $1 \le x < 2$ and

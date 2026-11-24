@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Order.BooleanFunction.SelfDual
+public import MathlibExt.Combinatorics.Enumerative.BooleanFunctionInclusionExclusion
 public import MathlibExt.Combinatorics.Enumerative.UnateMonotoneBoolean
 
 namespace MetaMathlibExt
@@ -43,28 +44,6 @@ public theorem_wanted card_boolFun_eq_sum_choose_card_nondegenerate
     Nat.card {f : (Fin n → Bool) → Bool // P n f}
       = ∑ i ∈ Finset.range (n + 1),
           n.choose i * Nat.card {f : (Fin i → Bool) → Bool // IsNondegenerateBoolFun f ∧ P i f}
-
-/-- **Counting non-degenerate Boolean functions by inclusion–exclusion.** Let $P$ be a property
-of Boolean functions on any number of variables that is invariant under renaming variables
-along injections: for all $m, n$, every injective map $e$ from $\{1, \dots, m\}$ to
-$\{1, \dots, n\}$ and every $m$-variable function $g$, the $n$-variable function
-$x \mapsto g(x_{e(1)}, \dots, x_{e(m)})$ has $P$ if and only if $g$ has $P$. Write $P_i$ for the
-number of $i$-variable Boolean functions with $P$ and $\mathrm{nd}\text{-}P_n$ for the number of
-non-degenerate $n$-variable Boolean functions with $P$. Then for every $n \ge 0$,
-
-$$\mathrm{nd}\text{-}P_n = \sum_{i=0}^{n} (-1)^{n-i} \binom{n}{i} P_i.$$
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 1 (`jis-2025-25.3.4-prop-1`). -/
-public theorem_wanted card_nondegenerate_boolFun_eq_alternating_sum
-    (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
-    (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
-      P n (fun x => g (x ∘ e)) ↔ P m g)
-    (n : ℕ) :
-    (Nat.card {f : (Fin n → Bool) → Bool // IsNondegenerateBoolFun f ∧ P n f} : ℤ)
-      = ∑ i ∈ Finset.range (n + 1),
-          (-1) ^ (n - i) * (n.choose i : ℤ) * Nat.card {f : (Fin i → Bool) → Bool // P i f}
 
 /-- **Unate versus monotone Boolean function counts.** For $n \ge 0$, write $U_n$ and $M_n$ for
 the numbers of unate and of monotone $n$-variable Boolean functions, $BU_n$ and $BM_n$ for the
@@ -121,15 +100,6 @@ public theorem_wanted isUnateBoolFun_boolFunConcat_iff {n : ℕ}
         (∀ i : Fin n, (IsBoolFunIncreasingIn g i ∧ IsBoolFunIncreasingIn h i) ∨
           (IsBoolFunDecreasingIn g i ∧ IsBoolFunDecreasingIn h i)) ∧
         (g ≤ h ∨ h ≤ g)
-
-/-- **The negation of a unate function is unate.** If an $n$-variable Boolean function $f$ is
-unate, then so is its negation $x \mapsto \lnot f(x)$.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 7 (`jis-2025-25.3.4-prop-7`). -/
-public theorem_wanted isUnateBoolFun_not {n : ℕ} {f : (Fin n → Bool) → Bool}
-    (hf : IsUnateBoolFun f) : IsUnateBoolFun fun x => !f x
 
 /-- **Weight symmetry of unate Boolean functions.** For all $n \ge 0$ and all $w$ with
 $0 \le w \le 2^n$, the number of unate $n$-variable Boolean functions of weight $w$ equals the
