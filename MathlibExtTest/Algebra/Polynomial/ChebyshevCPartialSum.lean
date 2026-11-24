@@ -41,6 +41,17 @@ example : chebyshevCPartialSum 1 = X + 1 := by
   rw [chebyshevCPartialSum_eq_binomial_sum 1 le_rfl]
   simp
 
+-- The hypothesis `1 ≤ n` is needed: at `n = 0` truncated subtraction makes the right side
+-- `1 + 1 = 2`, while `F₀ = 1`.
+example :
+    chebyshevCPartialSum 0 ≠
+      ∑ m ∈ Finset.range (0 / 2 + 1),
+          (-1 : ℤ[X]) ^ m * ((0 - m).choose m : ℤ[X]) * X ^ (0 - 2 * m) +
+        ∑ m ∈ Finset.range ((0 - 1) / 2 + 1),
+          (-1 : ℤ[X]) ^ m * ((0 - m - 1).choose m : ℤ[X]) * X ^ (0 - 2 * m - 1) := by
+  rw [chebyshevCPartialSum_zero]
+  norm_num
+
 -- At `n = 4` both sums have nontrivial binomial coefficients: `F₄ = X⁴ + X³ - 3X² - 2X + 1`.
 example : chebyshevCPartialSum 4 = X ^ 4 + X ^ 3 - 3 * X ^ 2 - 2 * X + 1 := by
   rw [chebyshevCPartialSum_eq_binomial_sum 4 (by decide)]
