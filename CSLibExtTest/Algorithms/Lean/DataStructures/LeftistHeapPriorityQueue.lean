@@ -10,7 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.LeftistHeap
 public import CSLibExt.Algorithms.Lean.DataStructures.LeftistHeapPriorityQueue
-public import Mathlib.Tactic
+import Mathlib.Tactic
 @[expose] public section
 
 namespace Cslib.Algorithms.Lean.LHeap
@@ -36,5 +36,9 @@ example : ((extractMin dupHeap).bind fun (_, h1) =>
 example (h' : LHeap Nat) (hx : extractMin dupHeap = some (1, h')) :
     {1} + mset_tree h' = mset_tree dupHeap :=
   extractMin_mset hx
+
+example {h h' : LHeap Nat} {x y : Nat} (hh : heap h)
+    (hx : extractMin h = some (x, h')) (hy : y ∈ mset_tree h) : x ≤ y :=
+  extractMin_le hh hx hy
 
 end Cslib.Algorithms.Lean.LHeap

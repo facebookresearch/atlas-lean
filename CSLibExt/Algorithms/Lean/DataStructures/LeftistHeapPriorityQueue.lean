@@ -10,7 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.LeftistHeap
 public import Mathlib.Algebra.Order.Group.Multiset
-public import Mathlib.Tactic
+import Mathlib.Tactic
 @[expose] public section
 
 universe u
@@ -109,7 +109,7 @@ theorem extractMin_mset {α : Type u} [LinearOrder α] {h h' : LHeap α} {x : α
     simp [mset_tree, mset_merge]
 
 theorem extractMin_le {α : Type u} [LinearOrder α] {h h' : LHeap α} {x y : α} (hh : heap h)
-    (hx : extractMin h = some (x, h')) (hy : y ∈ mset_tree h') : x ≤ y := by
+    (hx : extractMin h = some (x, h')) (hy : y ∈ mset_tree h) : x ≤ y := by
   cases h with
   | E => simp [extractMin] at hx
   | N rk z l r =>
@@ -117,9 +117,13 @@ theorem extractMin_le {α : Type u} [LinearOrder α] {h h' : LHeap α} {x y : α
     obtain ⟨rfl, rfl⟩ := hx
     simp only [heap] at hh
     obtain ⟨hal, har, -, -⟩ := hh
-    rw [mset_merge] at hy
-    rcases Multiset.mem_add.mp hy with hml | hmr
-    · exact all_le_mem_le hal hml
+    simp only [mset_tree] at hy
+    rcases Multiset.mem_add.mp hy with h' | hmr
+    · rcases Multiset.mem_add.mp h' with hw | hml
+      · have hyz : y = z := Multiset.mem_singleton.mp hw
+        subst hyz
+        simp
+      · exact all_le_mem_le hal hml
     · exact all_le_mem_le har hmr
 
 theorem heap_extractMin {α : Type u} [LinearOrder α] {h h' : LHeap α} {x : α} (hh : heap h)
