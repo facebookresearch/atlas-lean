@@ -13,3 +13,4 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 
 - [Safety verification](safety-verification/README.md)
 - [Crash safety](crash-safety/README.md)
+- [Concurrency logics](concurrency-logics/README.md)
