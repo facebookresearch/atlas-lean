@@ -29,33 +29,6 @@ open Filter Polynomial Set
 
 /-! # Ehrhart polynomials with roots on the canonical line -/
 
-/-- **The h-star coefficients of a polynomial.** Let $f$ be a complex polynomial of degree $d$,
-with $d = 0$ for the zero polynomial. For a natural number $i$, the $i$-th $h^*$-coefficient of
-$f$ is
-$$h^*_i(f) = \sum_{j=0}^{i} (-1)^j \binom{d+1}{j} f(i-j),$$
-the coefficient of $t^i$ in the power series $(1-t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of the `h*`-polynomial.
--/
-public def hStarCoeff (f : Polynomial ℂ) (i : ℕ) : ℂ :=
-  ∑ j ∈ Finset.range (i + 1),
-    (-1 : ℂ) ^ j * (Nat.choose (f.natDegree + 1) j : ℂ) * f.eval (i - j : ℂ)
-
-/-- **SNN polynomials.** For a complex polynomial $f$ of degree $d$ and a natural number $i$, let
-$h^*_i(f)$ be the coefficient of $t^i$ in $(1 - t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$. Then $f$ is
-SNN when $f \ne 0$ and its $h^*$-coefficients $h^*_0(f), \dots, h^*_d(f)$ are real and
-nonnegative.
-
-Coefficients beyond the degree, which vanish by the generating-series identity, are not part of
-the condition.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of SNN-polynomial.
--/
-public def IsSNN (f : Polynomial ℂ) : Prop :=
-  f ≠ 0 ∧ ∀ i ≤ f.natDegree, 0 ≤ (hStarCoeff f i).re ∧ (hStarCoeff f i).im = 0
-
 /-- **The basis polynomials $b^d_j$.** For natural numbers $d$ and $j$, $b^d_j$ is the complex
 polynomial $b^d_j = \prod_{i=0}^{d-1} (X + d - j - i)$.
 
@@ -252,16 +225,6 @@ public def EhrhartCounts {d : ℕ} (vertices : Finset (Fin d → ℤ)) (E : Poly
     (ordinaryEhrhartCount d
       {x : Fin d → ℚ | (fun i => (x i : ℝ)) ∈ latticePolytope vertices} k : ℂ)
 
-/-- **Binomial polynomial.** For an integer $n$ and a natural number $d$, the binomial polynomial
-$\binom{X+n}{d}$ is the real polynomial $\frac{1}{d!} \prod_{i=0}^{d-1} (X + n - i)$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 7.
--/
-public def binomialPolynomial (n : ℤ) (d : ℕ) : Polynomial ℝ :=
-  ((d.factorial : ℝ)⁻¹) •
-    ∏ i ∈ Finset.range d, (X + C ((n - (i : ℤ) : ℤ) : ℝ))
-
 /-- **Complex binomial polynomial.** For an integer $n$ and a natural number $d$, the complex
 binomial polynomial $\binom{X+n}{d} \in \mathbb{C}[X]$ is
 $$\binom{X+n}{d} = \frac{1}{d!} \prod_{i=0}^{d-1} (X + n - i).$$
@@ -348,42 +311,6 @@ public theorem_wanted pBasis_zero_interlaces_perturbation (d : ℕ) (hd : 0 < d)
     (w : ℝ) (hw : 0 < w) :
     CLInterlaces (pBasis d 0)
       (pBasis (d + 1) 0 + C (w : ℂ) * (2 * X + 1) * pBasis d 0)
-
-/-- **Multiplying by $2X+1$ preserves SNN.** For every complex polynomial $f$, if $f$ is an SNN
-polynomial, then so is $(2X + 1) f$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 6.
--/
-public theorem_wanted two_mul_X_add_one_preserves_snn (f : Polynomial ℂ) (hf : IsSNN f) :
-    IsSNN ((2 * X + 1) * f)
-
-/-- **Multiplying a binomial polynomial by a quadratic.** For an integer $n$ and a natural number
-$k$, write $\binom{X+n}{k} = \frac{1}{k!} \prod_{i=0}^{k-1} (X + n - i)$ for the real binomial
-polynomial. Let $d$ and $j$ be natural numbers with $0 < d$ and $j \le d$, and let $c$ be a real
-number. Then
-$$
-(X^2 + X + c) \binom{X+d-j}{d} = \alpha \binom{X+d-j+2}{d+2} + \beta \binom{X+d-j+1}{d+2} +
-\gamma \binom{X+d-j}{d+2},
-$$
-where $\alpha = j^2 + j + c$, $\beta = 2(dj - j^2 + d + 1 - c)$ and
-$\gamma = d^2 - 2dj - j + j^2 + d + c$.
-
-The paper assumes $c \ge 1/4$; the identity holds for every real $c$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 7.
--/
-public theorem_wanted quadratic_mul_binomialPolynomial (d j : ℕ) (hd : 0 < d) (hj : j ≤ d)
-    (c : ℝ) :
-    (X ^ 2 + X + C c) * binomialPolynomial ((d : ℤ) - (j : ℤ)) d =
-      C ((j : ℝ) ^ 2 + (j : ℝ) + c) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ) + 2) (d + 2) +
-        C (2 * ((d : ℝ) * (j : ℝ) - (j : ℝ) ^ 2 + (d : ℝ) + 1 - c)) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ) + 1) (d + 2) +
-        C ((d : ℝ) ^ 2 - 2 * (d : ℝ) * (j : ℝ) - (j : ℝ) +
-            (j : ℝ) ^ 2 + (d : ℝ) + c) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ)) (d + 2)
 
 /-- **Fisk's Leibniz rule for interlacing.** Let $f, f_1, g, g_1$ be real polynomials with
 positive leading coefficients, each having only real roots, such that $f$ and $g$ have no common

@@ -49,13 +49,13 @@ namespace EarthScience
 degree of saturation `S`, void ratio `e`, and water unit weight
 `γw`. The value is the declared total-weight-to-total-volume
 convention `γ = (Gs + S * e) * γw / (1 + e)`, totalized as a real
-division (no positivity is asserted by the definition itself). -/
+division (no positivity is asserted by the definition itself): with
+the convention `x / 0 = 0` it is `0` when `e = -1`. -/
 noncomputable def bulkUnitWeight (Gs S e γw : ℝ) : ℝ :=
   (Gs + S * e) * γw / (1 + e)
 
-/-- Submerged unit weight at full saturation, declared as
-`γ_sub = (Gs - 1) * γw / (1 + e)` with the same totalized-division
-convention. -/
+/-- Submerged unit weight at full saturation, `γ_sub = (Gs - 1) * γw / (1 + e)`. With the convention
+`x / 0 = 0` it is `0` when `e = -1`; the intended domain is `Gs > 0`, `e ≥ 0` and `γw > 0`. -/
 noncomputable def submergedUnitWeight (Gs e γw : ℝ) : ℝ :=
   (Gs - 1) * γw / (1 + e)
 

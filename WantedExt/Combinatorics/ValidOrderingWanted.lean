@@ -32,24 +32,13 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Combinatorics.Additive.FreimanHom
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.ZMod.Basic
+public import MathlibExt.Combinatorics.DistinctPartialSumsOrdering
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.ValidOrderingWanted
-
-/-- **Valid orderings of finite sets of nonzero integers.** Every finite set $A$ of nonzero
-integers has a valid ordering: its elements can be listed as $a_1, \dots, a_m$, each exactly
-once, so that the partial sums $a_1, a_1 + a_2, \dots, a_1 + \cdots + a_m$ are pairwise
-distinct. The empty sum $0$ is not counted among the partial sums.
-
-Source: Noah Kravitz, "Rearranging Small Sets for
-Distinct Partial Sums", Theorem 2. -/
-theorem_wanted exists_distinct_partial_sums_ordering
-    (A : Finset ℤ) (h0 : 0 ∉ A) :
-    ∃ l : List ℤ, List.Perm l A.toList ∧
-      ((l.scanl (· + ·) 0).tail).Nodup
 
 /-- **Lev's rectification principle.** Let $\ell \ge 2$ be a natural number, $p$ a prime and
 $A$ a subset of $\mathbb{Z}/p\mathbb{Z}$ with $|A| \le \lceil \log p / \log \ell \rceil$. Then

@@ -16,7 +16,7 @@ public import Mathlib.RingTheory.PrincipalIdealDomain
 
 universe u
 
-theorem exactSource
+private theorem exactSource
     {R : Type u} [CommRing R] [IsNoetherianRing R] {𝒰 : TwoChartCech.Cover.{u, u} R}
     (S : TwoChartCech.Sections.{u, u, u} 𝒰)
     (f : 𝒰.A0) (g : 𝒰.A1) (hfg : 𝒰.ρ0 f * 𝒰.ρ1 g = 1)
