@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Tactic.FinCases
@@ -184,32 +185,45 @@ private theorem path_equation {p s : ℕ} {d r : Fin p ⊕ Fin s → ℕ}
   rw [levelSum_path, h.1.2.2.1 (.inl i), hadj]
   exact finsum_mem_union hdisj (Set.toFinite _) (Set.toFinite _)
 
--- Smoothness forces strict growth up to the central vertex. Its equation then
--- forces a positive leaf sum, including when the path consists of the centre alone.
+-- Smoothness forces growth from the empty level 0 up to the central vertex.
+private theorem levelSum_lt_succ {n s : ℕ} {d r : Fin (n + 1) ⊕ Fin s → ℕ}
+    (h : IsSmoothCoconut (n + 1) s d r) (k : ℕ) (hk : k ≤ n) :
+    levelSum r k < levelSum r (k + 1) := by
+  induction k with
+  | zero =>
+    have hempty : level (n + 1) s 0 = ∅ := by
+      ext (i | j) <;> simp [level]
+    rw [levelSum, hempty, finsum_mem_empty]
+    exact (h.1.2.1 _).trans_eq (levelSum_path r (0 : Fin (n + 1))).symm
+  | succ k ih =>
+    let i : Fin (n + 1) := ⟨k, by omega⟩
+    have heq := path_equation h i
+    have hbound := Nat.mul_le_mul_right (levelSum r (k + 1)) (h.2.1 i (Nat.succ_le_succ hk))
+    have hlt := ih (by omega)
+    change d (.inl i) * levelSum r (k + 1) = levelSum r k + levelSum r (k + 2) at heq
+    change levelSum r (k + 1) < levelSum r (k + 2)
+    omega
+
+-- The centre's equation forces a positive leaf sum, even for a one-vertex path.
 private theorem leafSum_pos {n s : ℕ} {d r : Fin (n + 1) ⊕ Fin s → ℕ}
     (h : IsSmoothCoconut (n + 1) s d r) : 0 < ∑ j, r (.inr j) := by
-  have grow (k : ℕ) (hk : k ≤ n) : levelSum r k < levelSum r (k + 1) := by
-    induction k with
-    | zero =>
-      have hempty : level (n + 1) s 0 = ∅ := by
-        ext (i | j) <;> simp [level]
-      rw [levelSum, hempty, finsum_mem_empty]
-      exact (h.1.2.1 _).trans_eq (levelSum_path r (0 : Fin (n + 1))).symm
-    | succ k ih =>
-      let i : Fin (n + 1) := ⟨k, by omega⟩
-      have heq := path_equation h i
-      have hbound := Nat.mul_le_mul_right (levelSum r (k + 1)) (h.2.1 i (Nat.succ_le_succ hk))
-      have hlt := ih (by omega)
-      change d (.inl i) * levelSum r (k + 1) = levelSum r k + levelSum r (k + 2) at heq
-      change levelSum r (k + 1) < levelSum r (k + 2)
-      omega
   have heq := path_equation h (Fin.last n)
   have hbound := Nat.mul_le_mul_right (levelSum r (n + 1)) (h.1.1 (.inl (Fin.last n)))
   simp only [Fin.val_last] at heq
   rw [← levelSum_leaves r]
   change 0 < levelSum r (n + 2)
-  have hlt := grow n le_rfl
+  have hlt := levelSum_lt_succ h n le_rfl
   omega
+
+private theorem leaf_equation {n s : ℕ} {d r : Fin (n + 1) ⊕ Fin s → ℕ}
+    (h : IsSmoothCoconut (n + 1) s d r) (j : Fin s) :
+    d (.inr j) * r (.inr j) = r (.inl (Fin.last n)) := by
+  have hadj : {w | (coconutTree (n + 1) s).Adj (.inr j) w} = {Sum.inl (Fin.last n)} := by
+    ext (k | k)
+    · rw [Set.mem_ofPred_eq, SimpleGraph.adj_comm, coconutTree_adj_inl_inr]
+      simp [Fin.ext_iff]
+    · simp [coconutTree_not_adj_inr_inr]
+  rw [h.1.2.2.1 (.inr j), hadj, finsum_mem_singleton]
 
 end IsSmoothCoconut
 
@@ -228,13 +242,7 @@ public theorem IsSmoothCoconut.eq_one_of_dvd_leaves {p s : ℕ}
   rintro (i | j)
   · obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_zero_of_lt i.isLt)
     obtain ⟨j, -⟩ := Finset.exists_ne_zero_of_sum_ne_zero (leafSum_pos h).ne'
-    have hadj : {w | (coconutTree (n + 1) s).Adj (.inr j) w} = {Sum.inl (Fin.last n)} := by
-      ext (k | k)
-      · rw [Set.mem_ofPred_eq, SimpleGraph.adj_comm, coconutTree_adj_inl_inr]
-        simp [Fin.ext_iff]
-      · simp [coconutTree_not_adj_inr_inr]
-    have hleaf := h.1.2.2.1 (.inr j)
-    rw [hadj, finsum_mem_singleton] at hleaf
+    have hleaf := leaf_equation h j
     have hpair (k : ℕ) (hk : k ≤ n + 1) :
         g ∣ levelSum r k ∧ g ∣ levelSum r (k + 1) := by
       induction hk using Nat.decreasingInduction with
@@ -250,6 +258,37 @@ public theorem IsSmoothCoconut.eq_one_of_dvd_leaves {p s : ℕ}
     rw [← levelSum_path r i]
     exact (hpair i.val i.isLt.le).2
   · exact hg j
+
+/-- **Smooth structures on coconut trees with two leaves.** Let $p \ge 1$ and let $(d, r)$ be a
+smooth arithmetical structure on the coconut tree $CT(p, 2)$, whose path is
+$v_1, \dots, v_p$ and whose two leaves are attached to the central vertex $v_p$. Then
+$d(v_p) \le 1$.
+
+Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
+Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 7
+(`integers-2025-A82-cor-7`). -/
+public theorem IsSmoothCoconut.center_le_one_of_two {p : ℕ} (hp : 0 < p)
+    {d r : Fin p ⊕ Fin 2 → ℕ} (h : IsSmoothCoconut p 2 d r) :
+    d (.inl ⟨p - 1, by omega⟩) ≤ 1 := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hp)
+  let c : Fin (n + 1) ⊕ Fin 2 := .inl (Fin.last n)
+  change d c ≤ 1
+  have hleaf (j : Fin 2) : 2 * r (.inr j) ≤ r c := calc
+    _ ≤ d (.inr j) * r (.inr j) := Nat.mul_le_mul_right _ (h.two_le_leaf j)
+    _ = r c := leaf_equation h j
+  have hsum : (∑ j, r (.inr j)) ≤ r c := by
+    rw [Fin.sum_univ_two]
+    have h₀ := hleaf 0
+    have h₁ := hleaf 1
+    omega
+  have hc : levelSum r (n + 1) = r c := levelSum_path r (Fin.last n)
+  have hprev := levelSum_lt_succ h n le_rfl
+  rw [hc] at hprev
+  have heq := path_equation h (Fin.last n)
+  simp only [Fin.val_last, hc, levelSum_leaves] at heq
+  change d c * r c = _ at heq
+  have hmul : d c * r c < 2 * r c := by omega
+  exact Nat.le_of_lt_succ ((Nat.mul_lt_mul_right (h.1.2.1 c)).mp hmul)
 
 end
 
