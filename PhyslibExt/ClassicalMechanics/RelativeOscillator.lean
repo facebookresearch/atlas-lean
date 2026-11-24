@@ -56,8 +56,8 @@ displacement `u = x - y` (all times, so `u` is identified near `t`):
 (1) `u` has velocity `xv t - yv t` at `t`, and the supplied relative
     velocity function `s ↦ xv s - yv s` has derivative
     `xa t - ya t` at `t`;
-(2) the relative equation `m * (xa t - ya t) + c * (xv t - yv t)
-    + k * u t = pf t - m * ya t` holds at `t`;
+(2) the relative equation
+    `m * (xa t - ya t) + c * (xv t - yv t) + k * u t = pf t - m * ya t` holds at `t`;
 (3) the energy expression `m/2 * (xv-yv)^2 + k/2 * u^2` has
     derivative `(xv t - yv t) * (pf t - m * ya t) - c * (xv t - yv t)^2`
     at `t`.

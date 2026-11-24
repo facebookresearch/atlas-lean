@@ -35,21 +35,33 @@ the set of inner automorphisms does not depend on the conjugation convention. Ad
 makes the refuted claim weaker, so its refutation is the stronger statement.
 -/
 
-/-- The `φ`-twisted conjugacy class of the identity, `[e]_φ = {g⁻¹ φ(g) | g ∈ G}`. -/
+/-- **Twisted conjugacy class of the identity (Kourovka 18.15).** For a group $G$ and an
+automorphism $\varphi$ of $G$, the $\varphi$-twisted conjugacy class of the identity is the set
+$[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\} \subseteq G$. -/
 def twistedUnitClass {G : Type} [Group G] (φ : G ≃* G) : Set G :=
   Set.range fun g : G => g⁻¹ * φ g
 
-/-- Kourovka 18.15 (V. G. Bardakov, M. V. Neshchadim, T. R. Nasybullov): every nontrivial group `G`
-with trivial centre has an inner automorphism `φ` (conjugation by some `a ∈ G`) such that `[e]_φ`
-is not a subgroup of `G`. -/
+/-- **Kourovka Problem 18.15: an inner twisted class that is not a subgroup.** Every nontrivial
+group $G$ with trivial centre has an element $a \in G$ such that, for the inner automorphism
+$\varphi(g) = aga^{-1}$, the twisted conjugacy class of the identity
+$[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\}$ is not a subgroup of $G$.
+
+The conjecture is due to V. G. Bardakov, M. V. Neshchadim and T. R. Nasybullov. -/
 def trivialCentreHasInnerTwistedClassNotSubgroup : Prop :=
   ∀ (G : Type) [Group G], Nontrivial G → Subgroup.center G = ⊥ →
     ∃ a : G, ¬ ∃ H : Subgroup G, (H : Set G) = twistedUnitClass (MulAut.conj a)
 
 /--
-Resolved false: the Kourovka Archive answers 18.15 "No, not always", citing V. V. Bludov's Example 2
-in Gonçalves-Nasybullov (2019): a group with trivial centre in which `[e]_φ` is a subgroup for every
-inner automorphism `φ`. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Negative answer to Kourovka Problem 18.15.** The conjecture of Kourovka Problem 18.15 is
+false: there is a nontrivial group $G$ with trivial centre such that for every $a \in G$, with
+$\varphi$ the inner automorphism $\varphi(g) = aga^{-1}$, the twisted conjugacy class of the
+identity $[e]_\varphi = \{g^{-1}\varphi(g) : g \in G\}$ is a subgroup of $G$.
+
+The Kourovka Archive answers 18.15 "No, not always", citing V. V. Bludov's Example 2 in
+Gonçalves–Nasybullov (2019), a group with trivial centre in which $[e]_\varphi$ is a subgroup for
+every inner automorphism $\varphi$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
 Problem 18.15 (V. G. Bardakov, M. V. Neshchadim, T. R. Nasybullov); resolution: V. V. Bludov,
 Example 2 in D. Gonçalves and T. Nasybullov, On groups where the twisted conjugacy class of the unit

@@ -15,3 +15,6 @@ The Fourier transform on R^n and Schwartz functions: convolution, Bochner, Hausd
 - [Convolution of two square-integrable functions is continuous and vanishes at infinity](continuous-and-tendsto-cocompact-convolu.md)
 - [Convolution theorem](convolution-theorem.md)
 - [Hausdorff–Young inequality for Schwartz functions](exists-norm-fourier-to-lp-le-norm-to-lp.md)
+- [Fourier inversion formula](fourier-inv-fourier-eq.md)
+- [Fourier transform on the Schwartz space](fourier-transform-clm.md)
+- [Paley–Wiener theorem on a real vector space](paley-wiener-theorem-on-a-real-vector-space.md)

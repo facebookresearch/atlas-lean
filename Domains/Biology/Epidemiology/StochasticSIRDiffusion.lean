@@ -89,16 +89,19 @@ takes it as hypotheses to identify the law of `U(t)`.
 * `tendsto_measure_norm_sub_of_deviation`: the `ℓ¹` law of large numbers
   `StochasticSIR.tendsto_measure_deviation` implies the law-of-large-numbers hypothesis used
   here.
-* `exists_isFluctuationPath`, `IsFluctuationPath.unique`, `IsFluctuationPath.initial`: the linear
-  fluctuation equation has exactly one continuous solution on `[0, T]` for each initial value
-  `u₀` and each continuous driving path, and it starts at `u₀`.
-* `IsLimitCovariance.eqOn`: the Lyapunov equation for the limit covariance has at most one
-  solution from a given initial covariance.
+* `exists_isFluctuationPath`, `IsFluctuationPath.unique`, `IsFluctuationPath.initial`: for
+  `β, γ ≥ 0` and `x` continuous on `[0, T]`, the linear fluctuation equation has exactly one
+  continuous solution on `[0, T]` for each initial value `u₀` and each driving path continuous on
+  `[0, T]`, and for `T ≥ 0` it starts at `u₀`.
+* `IsLimitCovariance.eqOn`: for `β, γ ≥ 0` and `x` continuous on `[0, T]`, two solutions of the
+  Lyapunov equation for the limit covariance from the same initial covariance agree on `[0, T]`.
 * `hasGaussianLaw_isFluctuationPath`, `covariance_isFluctuationPath`: **the limit is Gaussian
-  with covariance `V(t)`.** If `(U(0), M)` is jointly Gaussian as a random element of
-  `ℝ² × C([0, T], ℝ²)`, centered, with `U(0)` of covariance `V₀` and uncorrelated with `M`, and
-  `M` has the covariance `E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = ∫₀^{min s r} G(x)` (`quadCov`) of
-  the Gaussian martingale above, then `U(t)` is centered Gaussian with covariance `V(t)`.
+  with covariance `V(t)`.** Let `β, γ ≥ 0` and let `x` be continuous on `[0, T]`. If `(U(0), M)`
+  is jointly Gaussian as a random element of `ℝ² × C([0, T], ℝ²)`, centered, with `U(0)` of
+  covariance `V₀` and uncorrelated with the increments of `M`, and `M` has the covariance
+  `E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = ∫₀^{min s r} G(x)` (`quadCov`) of the Gaussian martingale
+  above for `s, r ∈ [0, T]`, then at each `t ∈ [0, T]`, `U(t)` is centered Gaussian with
+  covariance `V(t)`.
 * `IsFluctuationPath.dot_eq`: the duality identity
   `⟨y(t), U(t)⟩ = ⟨y(0), U(0)⟩ + ∫₀ᵗ ⟨y(s), dM(s)⟩` (integration-by-parts Wiener integral) for
   solutions `y` of the adjoint equation `y' = -DF(x)ᵀ y` (`exists_adjoint`).
@@ -114,8 +117,9 @@ takes it as hypotheses to identify the law of `U(t)`.
   for jointly Gaussian data is equivalent. Joint Gaussianity is assumed for the law on the Banach
   space `ℝ² × C([0, T], ℝ²)` (`HasGaussianLaw`); that a process with continuous paths and
   Gaussian finite-dimensional distributions has such a law is not proved here.
-* Probabilities of events over `[0, T]` (some time at which a deviation reaches a threshold, or
-  a supremum at least a threshold) are outer measures; those events are not assumed measurable.
+* Probabilities of the events in the convergence theorems (some time at which a deviation reaches
+  a threshold, a supremum at least a threshold, or an initial fluctuation error at least a
+  threshold) are outer measures; those events are not assumed measurable.
 
 ## References
 
@@ -172,7 +176,7 @@ theorem lyapunovField_apply (β γ : ℝ) (p : ℝ × ℝ) (c : ℝ × ℝ × �
   simp only [lyapunovField, jacobian, diffusionMatrix, Prod.mk.injEq]
   refine ⟨by ring, by ring, by ring⟩
 
-/-- **Exact linearization of the SIR drift.** The drift is quadratic, so
+/-- **Exact second-order expansion of the SIR drift.** The drift is quadratic, so
 `F(p + h) = F(p) + DF(p) h + β h₁ h₂ (-1, 1)`. -/
 theorem drift_add (β γ : ℝ) (p h : ℝ × ℝ) :
     drift β γ (p + h) = drift β γ p + jacobian β γ p h + (β * h.1 * h.2) • ((-1 : ℝ), (1 : ℝ)) := by
@@ -209,7 +213,7 @@ private theorem abs_fst_le (p : ℝ × ℝ) : |p.1| ≤ ‖p‖ := by
 private theorem abs_snd_le (p : ℝ × ℝ) : |p.2| ≤ ‖p‖ := by
   rw [← Real.norm_eq_abs]; exact norm_snd_le p
 
-/-- Operator-norm bound for the Jacobian in the sup norm of `ℝ × ℝ`:
+/-- Operator-norm bound for the Jacobian in the sup norm of `ℝ × ℝ`, for `β, γ ≥ 0`:
 `‖DF(p) h‖ ≤ (2 β ‖p‖ + γ) ‖h‖`. -/
 theorem norm_jacobian_le {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (p h : ℝ × ℝ) :
     ‖jacobian β γ p h‖ ≤ (2 * β * ‖p‖ + γ) * ‖h‖ := by
@@ -239,7 +243,7 @@ theorem norm_jacobian_le {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (p h : 
           rw [abs_mul, abs_mul, abs_of_nonneg hβ, abs_of_nonneg hγ]
       _ ≤ (2 * β * ‖p‖ + γ) * ‖h‖ := by nlinarith
 
-/-- The Jacobian bound with `‖p‖ ≤ B`. -/
+/-- The Jacobian bound with `‖p‖ ≤ B`, for `β, γ ≥ 0`. -/
 theorem norm_jacobian_le_of_le {β γ B : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {p : ℝ × ℝ}
     (hp : ‖p‖ ≤ B) (h : ℝ × ℝ) :
     ‖jacobian β γ p h‖ ≤ (2 * β * B + γ) * ‖h‖ := by
@@ -259,13 +263,14 @@ private theorem continuousOn_uIcc_of_Icc {E : Type*} [TopologicalSpace E] {f : �
 
 /-! ### The linear fluctuation equation -/
 
-/-- `U` solves the **linear fluctuation equation** on `[0, T]` driven by the path `m`, with
-initial value `u₀`, around the deterministic path `x`:
-`U(t) = u₀ + (m(t) - m(0)) + ∫₀ᵗ DF(x(s)) U(s) ds`, and `U` is continuous on `[0, T]`. The
-driving path enters only through its increments, so `U(0) = u₀` for every `m`
-(`IsFluctuationPath.initial`). With `m` the Gaussian martingale of the module docstring, which
-starts at `0`, this is the Ornstein–Uhlenbeck-type SDE `dU = DF(x(t)) U dt + dM(t)` of the
-diffusion approximation, solved pathwise. -/
+/-- `U` solves the **linear fluctuation equation** on `[0, T]` driven by the path `m`, with initial
+value `u₀`, around the deterministic path `x`: `U(t) = u₀ + (m(t) - m(0)) + ∫₀ᵗ DF(x(s)) U(s) ds`,
+and `U` is continuous on `[0, T]`. The integral is the Bochner integral, `0` when the integrand is
+not integrable; when `x` is continuous on `[0, T]` the integrand is continuous there. The driving
+path enters only through its increments, so `U(0) = u₀` for every `m` when `T ≥ 0`
+(`IsFluctuationPath.initial`). With `m` the Gaussian
+martingale of the module docstring, which starts at `0`, this is the Ornstein–Uhlenbeck-type SDE
+`dU = DF(x(t)) U dt + dM(t)` of the diffusion approximation, solved pathwise. -/
 structure IsFluctuationPath (β γ T : ℝ) (x : ℝ → ℝ × ℝ) (u₀ : ℝ × ℝ) (m U : ℝ → ℝ × ℝ) :
     Prop where
   /-- The solution is continuous on `[0, T]`. -/
@@ -282,12 +287,14 @@ private theorem continuousOn_jacobian (hxc : ContinuousOn x (Icc 0 T))
     ContinuousOn (fun s => jacobian β γ (x s) (U s)) (Icc 0 T) :=
   (continuous_jacobian β γ).comp_continuousOn (hxc.prodMk hU)
 
-/-- The solution starts at its initial value: `U(0) = u₀` for every driving path `m`. -/
+/-- The solution starts at its initial value: for `T ≥ 0`, `U(0) = u₀` for every driving path
+`m`. -/
 theorem initial (hT : 0 ≤ T) (hU : IsFluctuationPath β γ T x u₀ m U) : U 0 = u₀ := by
   simpa using hU.eq 0 ⟨le_rfl, hT⟩
 
-/-- A priori bound: if `‖u₀‖ ≤ k`, `‖m‖ ≤ k` and `‖x‖ ≤ B` on `[0, T]`, then
-`‖U(t)‖ ≤ 3 k e^{(2 β B + γ) t}` (the increment `m(t) - m(0)` contributes `2 k`). -/
+/-- A priori bound: for `β, γ ≥ 0`, `B ≥ 0` and `x` continuous on `[0, T]`, if `‖u₀‖ ≤ k`, `‖m‖ ≤ k`
+and `‖x‖ ≤ B` on `[0, T]`, then `‖U(t)‖ ≤ 3 k e^{(2 β B + γ) t}` (the increment `m(t) - m(0)`
+contributes `2 k`). -/
 theorem norm_le (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {B k : ℝ} (hB0 : 0 ≤ B)
     (hB : ∀ t ∈ Icc 0 T, ‖x t‖ ≤ B) (hxc : ContinuousOn x (Icc 0 T))
     (hU : IsFluctuationPath β γ T x u₀ m U) (hu₀ : ‖u₀‖ ≤ k) (hm : ∀ t ∈ Icc 0 T, ‖m t‖ ≤ k) :
@@ -315,7 +322,8 @@ theorem norm_le (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {B k : ℝ} (hB0 : 0 ≤ B)
     _ = 3 * k + (2 * β * B + γ) * ∫ s in (0 : ℝ)..t, ‖U s‖ := by
         rw [intervalIntegral.integral_const_mul]; ring
 
-/-- **Uniqueness** of the solution of the fluctuation equation on `[0, T]`. -/
+/-- **Uniqueness** of the solution of the fluctuation equation on `[0, T]`, for `β, γ ≥ 0` and `x`
+continuous on `[0, T]`. -/
 theorem unique (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hxc : ContinuousOn x (Icc 0 T)) {U' : ℝ → ℝ × ℝ}
     (hU : IsFluctuationPath β γ T x u₀ m U) (hU' : IsFluctuationPath β γ T x u₀ m U') :
     ∀ t ∈ Icc 0 T, U t = U' t := by
@@ -353,9 +361,10 @@ theorem unique (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hxc : ContinuousOn x (Icc 0 T)
 
 end IsFluctuationPath
 
-/-- **Existence** of the solution of the fluctuation equation on `[0, T]` for a driving path `m`
-continuous on `[0, T]`. The proof extends `x` and `m` continuously to `ℝ`, solves the globally
-Lipschitz ODE `V' = DF(x) (V + (m - m(0)))`, `V(0) = u₀`, and sets `U = V + (m - m(0))`. -/
+/-- **Existence** of the solution of the fluctuation equation on `[0, T]` for `β, γ ≥ 0`, `x`
+continuous on `[0, T]` and a driving path `m` continuous on `[0, T]`. The proof extends `x` and `m`
+continuously to `ℝ`, solves the globally Lipschitz ODE `V' = DF(x) (V + (m - m(0)))`, `V(0) = u₀`,
+and sets `U = V + (m - m(0))`. -/
 theorem exists_isFluctuationPath {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {x : ℝ → ℝ × ℝ}
     (hxc : ContinuousOn x (Icc 0 T)) (u₀ : ℝ × ℝ) {m : ℝ → ℝ × ℝ}
     (hm : ContinuousOn m (Icc 0 T)) :
@@ -437,8 +446,9 @@ theorem continuousOn_of_isSolution {β γ T : ℝ} {s i r : ℝ → ℝ}
 
 /-! ### Kurtz's pathwise estimate -/
 
-/-- **Kurtz's pathwise estimate for the fluctuations.** Let `x` solve `x(t) = x(0) + ∫₀ᵗ F(x)`
-on `[0, T]` with `‖x‖ ≤ B`, let `X` be a measurable path with `‖X - x‖ ≤ δ ≤ 1` on `[0, T]`,
+/-- **Kurtz's pathwise estimate for the fluctuations.** Let `β, γ, B ≥ 0`, let `x`, continuous on
+`[0, T]`, solve `x(t) = x(0) + ∫₀ᵗ F(x)` on `[0, T]` with `‖x‖ ≤ B`, let `X` be a measurable path
+with `‖X - x‖ ≤ δ ≤ 1` on `[0, T]`,
 and let `U` solve the fluctuation equation driven by `m` from `u₀`, with `‖u₀‖, ‖m‖ ≤ k`. If the
 initial fluctuation `√N (X(0) - x(0))` is within `ρ` of `u₀` and the scaled martingale
 `√N (X(t) - X(0) - ∫₀ᵗ F(X))` is within `ρ` of `m(t)` on `[0, T]`, then on `[0, T]`
@@ -630,11 +640,11 @@ noncomputable def fluctuation {Ω : Type*} (X : ℕ → Ω → ℝ → ℝ × �
     (ω : Ω) (t : ℝ) : ℝ × ℝ :=
   Real.sqrt N • (X N ω t - x t)
 
-/-- The scaled martingale `M_N(t) = √N (X_N(t) - X_N(0) - ∫₀ᵗ F(X_N(s)) ds)`. For the SIR chain
-in its random time-change representation this is
-`Σ_ℓ ℓ N^{-1/2} (Y_ℓ(N ∫₀ᵗ λ_ℓ(X_N)) - N ∫₀ᵗ λ_ℓ(X_N))` with unit Poisson processes `Y_ℓ`. For a
-general family `X` it is just the process above: it is a martingale only when `X` is the scaled
-SIR chain, and no result here uses the martingale property. -/
+/-- The scaled martingale `M_N(t) = √N (X_N(t) - X_N(0) - ∫₀ᵗ F(X_N(s)) ds)`, with the Bochner
+integral (`0` when the integrand is not integrable). For the SIR chain in its random time-change
+representation this is `Σ_ℓ ℓ N^{-1/2} (Y_ℓ(N ∫₀ᵗ λ_ℓ(X_N)) - N ∫₀ᵗ λ_ℓ(X_N))` with unit Poisson
+processes `Y_ℓ`. For a general family `X` it is just the process above: it is a martingale only when
+`X` is the scaled SIR chain, and no result here uses the martingale property. -/
 noncomputable def scaledMartingale {Ω : Type*} (β γ : ℝ) (X : ℕ → Ω → ℝ → ℝ × ℝ) (N : ℕ)
     (ω : Ω) (t : ℝ) : ℝ × ℝ :=
   Real.sqrt N • (X N ω t - X N ω 0 - ∫ s in (0 : ℝ)..t, drift β γ (X N ω s))
@@ -656,10 +666,10 @@ private theorem exists_rat_mem_Icc_dist_lt {T t ε : ℝ} (ht : t ∈ Icc 0 T) (
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- **Tightness of the limit data.** If `U₀` is measurable and `M` has continuous paths on
-`[0, T]` and measurable marginals, then `P(‖U₀‖ > k or ‖M(t)‖ > k for some t ∈ [0, T]) → 0` as
-`k → ∞`. (The event is measurable: by path continuity it is a countable union over rational
-times.) -/
+/-- **Tightness of the limit data.** For a finite measure `μ`, if `U₀` is measurable and `M` has
+continuous paths on `[0, T]` and measurable marginals, then
+`μ(‖U₀‖ > k or ‖M(t)‖ > k for some t ∈ [0, T]) → 0` as `k → ∞`. (The event is measurable: by path
+continuity it is a countable union over rational times.) -/
 theorem tendsto_measure_norm_gt [IsFiniteMeasure μ] {T : ℝ} {U₀ : Ω → ℝ × ℝ}
     {M : Ω → ℝ → ℝ × ℝ} (hU₀ : Measurable U₀) (hMc : ∀ ω, ContinuousOn (M ω) (Icc 0 T))
     (hMm : ∀ t, Measurable fun ω => M ω t) :
@@ -711,8 +721,10 @@ theorem tendsto_measure_norm_gt [IsFiniteMeasure μ] {T : ℝ} {U₀ : Ω → �
 Ethier–Kurtz 1986, ch. 11, Thm 2.3), with the law of large numbers and the martingale
 functional CLT as hypotheses.
 
-Let `x = (s, i)` solve the Kermack–McKendrick system in densities (`SIR.IsSolution β γ 1`), and
-let `X N ω : ℝ → ℝ × ℝ` be measurable density paths. Assume, for every `δ > 0`,
+Let `μ` be a finite measure (in applications a probability measure; `P` below denotes `μ`) and
+`β, γ ≥ 0`, let `x = (s, i)` solve the Kermack–McKendrick system in densities
+(`SIR.IsSolution β γ 1`), and let `X N ω : ℝ → ℝ × ℝ` be density paths, each measurable as a
+function of time. Assume, for every `δ > 0`,
 
 * (law of large numbers) `P(∃ t ∈ [0, T], ‖X_N(t) - x(t)‖ ≥ δ) → 0`;
 * (initial fluctuations) `P(‖U_N(0) - U₀‖ ≥ δ) → 0`, with `U₀` measurable;
@@ -721,10 +733,12 @@ let `X N ω : ℝ → ℝ × ℝ` be measurable density paths. Assume, for every
 
 and let `U` solve the linear fluctuation equation `U(t) = U₀ + (M(t) - M(0)) + ∫₀ᵗ DF(x) U`
 pathwise.
-Then the scaled fluctuations converge to `U` uniformly on `[0, T]` in probability:
+Then the scaled fluctuations converge to `U` uniformly on `[0, T]` in measure (in probability
+when `μ` is a probability measure):
 `P(∃ t ∈ [0, T], ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0` for every `ε > 0`. This event contains
 the strict supremum event `sup > ε`; the non-strict supremum event `sup ≥ ε` is
-`tendsto_measure_iSup_fluctuation_sub`. -/
+`tendsto_measure_iSup_fluctuation_sub`. The events in the hypotheses and in the conclusion are not
+assumed measurable; `μ` is applied to them as an outer measure. -/
 theorem tendsto_measure_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ} (hβ : 0 ≤ β)
     (hγ : 0 ≤ γ) {s i r : ℝ → ℝ} (hode : SIR.IsSolution β γ 1 s i r)
     {X : ℕ → Ω → ℝ → ℝ × ℝ} (hX : ∀ N ω, Measurable (X N ω))
@@ -803,9 +817,10 @@ theorem tendsto_measure_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ} (h�
 
 /-- **Diffusion approximation, supremum form.** Under the hypotheses of
 `tendsto_measure_fluctuation_sub`, the supremum over `[0, T]` of
-`‖√N (X_N(t) - x(t)) - U(t)‖` is at least `ε` with probability tending to `0`:
+`‖√N (X_N(t) - x(t)) - U(t)‖` is at least `ε` on a set whose `μ`-measure tends to `0` (its
+probability, when `μ` is a probability measure):
 
-  `P(sup_{t ∈ [0, T]} ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0`  as `N → ∞`.
+  `μ(sup_{t ∈ [0, T]} ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0`  as `N → ∞`.
 
 The supremum is taken in `ℝ≥0∞`, so it exists for every path, bounded or not, and need not be
 attained. The event lies inside the event of `tendsto_measure_fluctuation_sub` at threshold
@@ -841,8 +856,9 @@ theorem tendsto_measure_iSup_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ
   exact ⟨t, htT, ((ENNReal.ofReal_lt_ofReal_iff_of_nonneg hε2.le).1 hdev).le⟩
 
 /-- **Convergence in distribution at a fixed time.** Under the hypotheses of
-`tendsto_measure_fluctuation_sub`, and if each `X_N(t)` is a random variable, the scaled
-fluctuation `√N (X_N(t) - x(t))` converges in distribution to `U(t)` for every `t ∈ [0, T]`. -/
+`tendsto_measure_fluctuation_sub` for a probability measure `μ`, and if each `X_N(t)` is a random
+variable, the scaled fluctuation `√N (X_N(t) - x(t))` converges in distribution to `U(t)` for every
+`t ∈ [0, T]`. -/
 theorem tendstoInDistribution_fluctuation [IsProbabilityMeasure μ] {β γ T : ℝ} (hβ : 0 ≤ β)
     (hγ : 0 ≤ γ) {s i r : ℝ → ℝ} (hode : SIR.IsSolution β γ 1 s i r)
     {X : ℕ → Ω → ℝ → ℝ × ℝ} (hX : ∀ N ω, Measurable (X N ω))
@@ -873,10 +889,12 @@ theorem tendstoInDistribution_fluctuation [IsProbabilityMeasure μ] {β γ T : �
   unfold fluctuation
   exact ((hXt N t).sub (aemeasurable_const (b := (s t, i t)))).const_smul (Real.sqrt N)
 
-/-- **Interface with Kurtz's law of large numbers.** The `ℓ¹` form of Kurtz's law of large
-numbers for the count paths `(S, I, R)`, as proved by `StochasticSIR.tendsto_measure_deviation`
-(whose `StochasticSIR.deviation` is the sum below), implies the hypothesis `hLLN` of
-`tendsto_measure_fluctuation_sub` for the density paths `X_N = (S / N, I / N)`. -/
+/-- **Interface with Kurtz's law of large numbers.** The `ℓ¹` form of Kurtz's law of large numbers
+for the count paths `(S, I, R)`, as proved by `StochasticSIR.tendsto_measure_deviation` (whose
+`StochasticSIR.deviation` is the sum below), implies the hypothesis `hLLN` of
+`tendsto_measure_fluctuation_sub` for the density paths `X_N = (S / N, I / N)` (with `x / 0 = 0` at
+`N = 0`), under any measure `μ`. The events are not assumed measurable; `μ` is applied to them as
+an outer measure. -/
 theorem tendsto_measure_norm_sub_of_deviation {S I R : ℕ → Ω → ℝ → ℕ} {s i r : ℝ → ℝ} {T : ℝ}
     (h : ∀ ε, 0 < ε → Tendsto (fun N => μ {ω | ∃ t ∈ Icc 0 T,
       ε ≤ |(S N ω t : ℝ) / N - s t| + |(I N ω t : ℝ) / N - i t| + |(R N ω t : ℝ) / N - r t|})
@@ -897,9 +915,10 @@ theorem tendsto_measure_norm_sub_of_deviation {S I R : ℕ → Ω → ℝ → �
 `x`, started from `V₀`: it solves the Lyapunov equation `V' = DF(x) V + V DF(x)ᵀ + G(x)`
 (`lyapunovField`, written out in `lyapunovField_apply`) for `t ≥ 0`, with `V(0) = V₀`. The
 derivative is taken within `[0, ∞)`, so it is one-sided at `t = 0` and the values of `V` at
-negative times play no role. This is the covariance of the solution of `dU = DF(x(t)) U dt + dM`
-when `M` is a Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` and `U(0)` is centered Gaussian with
-covariance `V₀`, independent of `M`: `hasGaussianLaw_isFluctuationPath`. -/
+negative times play no role. For `β, γ ≥ 0` and `x` continuous on an interval `[0, T]`, `V(t)`
+at each `t ∈ [0, T]` is the covariance of `U(t)`, where `U` solves `dU = DF(x(t)) U dt + dM` on
+`[0, T]`, `M` is a continuous centered Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` and `U(0)` is
+centered Gaussian with covariance `V₀`, independent of `M`: `hasGaussianLaw_isFluctuationPath`. -/
 structure IsLimitCovariance (β γ : ℝ) (x : ℝ → ℝ × ℝ) (V₀ : ℝ × ℝ × ℝ) (V : ℝ → ℝ × ℝ × ℝ) :
     Prop where
   /-- The initial covariance. -/
@@ -907,7 +926,8 @@ structure IsLimitCovariance (β γ : ℝ) (x : ℝ → ℝ × ℝ) (V₀ : ℝ �
   /-- The Lyapunov equation on `[0, ∞)`, with a right derivative at `t = 0`. -/
   hasDerivWithinAt : ∀ t, 0 ≤ t → HasDerivWithinAt V (lyapunovField β γ (x t) (V t)) (Ici 0) t
 
-/-- The Lyapunov field is Lipschitz in `V` with constant `2 (2 β B + γ)` when `‖p‖ ≤ B`. -/
+/-- The Lyapunov field is Lipschitz in `V` with constant `2 (2 β B + γ)` when `‖p‖ ≤ B` and
+`β, γ ≥ 0`, in the sup norms. -/
 theorem norm_lyapunovField_sub_le {β γ B : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {p : ℝ × ℝ}
     (hp : ‖p‖ ≤ B) (c c' : ℝ × ℝ × ℝ) :
     ‖lyapunovField β γ p c - lyapunovField β γ p c'‖ ≤ 2 * (2 * β * B + γ) * ‖c - c'‖ := by
@@ -948,9 +968,9 @@ theorem norm_lyapunovField_sub_le {β γ B : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ 
       _ ≤ 2 * (2 * β * B + γ) * ‖c - c'‖ := by linarith
   · rw [abs_mul, abs_two]; linarith
 
-/-- **Uniqueness of the limit covariance.** Two solutions of the Lyapunov equation around a path
-`x` continuous on `[0, T]`, with the same initial covariance, agree on `[0, T]`. In particular
-the limit covariance `V(t)` is determined by `β`, `γ`, `x` and `V₀`. -/
+/-- **Uniqueness of the limit covariance.** For `β, γ ≥ 0`, two solutions of the Lyapunov equation
+around a path `x` continuous on `[0, T]`, with the same initial covariance, agree on `[0, T]`. In
+particular, on `[0, T]` the limit covariance `V(t)` is determined by `β`, `γ`, `x` and `V₀`. -/
 theorem IsLimitCovariance.eqOn {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {x : ℝ → ℝ × ℝ}
     (hxc : ContinuousOn x (Icc 0 T)) {V₀ : ℝ × ℝ × ℝ} {V V' : ℝ → ℝ × ℝ × ℝ}
     (hV : IsLimitCovariance β γ x V₀ V) (hV' : IsLimitCovariance β γ x V₀ V') :
@@ -1045,9 +1065,9 @@ theorem jacobianT_sub (β γ : ℝ) (p y z : ℝ × ℝ) :
   simp only [jacobianT, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, Prod.mk.injEq]
   refine ⟨by ring, by ring⟩
 
-/-- **The adjoint equation.** For every terminal time `t` and terminal value `ℓ` the backward
-linear equation `y' = -DF(x(s))ᵀ y`, `y(t) = ℓ`, has a solution on `[0, T]` (indeed a continuous
-function on `ℝ`). -/
+/-- **The adjoint equation.** For `β, γ ≥ 0`, `T ≥ 0` and `x` continuous on `[0, T]`, and for every
+terminal time `t` and terminal value `ℓ`, the backward linear equation `y' = -DF(x(s))ᵀ y`,
+`y(t) = ℓ`, has a solution on `[0, T]` (indeed a continuous function on `ℝ`). -/
 theorem exists_adjoint {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {x : ℝ → ℝ × ℝ}
     (hxc : ContinuousOn x (Icc 0 T)) (hT : 0 ≤ T) (t : ℝ) (ℓ : ℝ × ℝ) :
     ∃ y : ℝ → ℝ × ℝ, y t = ℓ ∧ Continuous y ∧
@@ -1110,10 +1130,11 @@ theorem dot_neg_left (a b : ℝ × ℝ) : dot (-a) b = -dot a b := by
 theorem continuous_dot : Continuous (fun q : (ℝ × ℝ) × (ℝ × ℝ) => dot q.1 q.2) := by
   unfold dot; fun_prop
 
-/-- **Duality identity** (the integration-by-parts Wiener integral). If `y` solves the adjoint
-equation `y' = -DF(x)ᵀ y` on `[0, t]`, then for the fluctuation path driven by `m`,
-`⟨y(t), U(t)⟩ = ⟨y(0), u₀⟩ + ⟨y(t), m(t) - m(0)⟩ + ∫₀ᵗ ⟨DF(x(s))ᵀ y(s), m(s) - m(0)⟩ ds`.
-The last two terms are `∫₀ᵗ ⟨y(s), dm(s)⟩`, integrated by parts. -/
+/-- **Duality identity** (the integration-by-parts Wiener integral). Let `x` and `m` be continuous
+on `[0, T]` and `t ∈ [0, T]`. If `y` is continuous on `[0, t]` and solves the adjoint equation
+`y' = -DF(x)ᵀ y` on `(0, t)`, then for the fluctuation path driven by `m`,
+`⟨y(t), U(t)⟩ = ⟨y(0), u₀⟩ + ⟨y(t), m(t) - m(0)⟩ + ∫₀ᵗ ⟨DF(x(s))ᵀ y(s), m(s) - m(0)⟩ ds`. The last
+two terms are `∫₀ᵗ ⟨y(s), dm(s)⟩`, integrated by parts. -/
 theorem IsFluctuationPath.dot_eq {β γ T : ℝ} {x : ℝ → ℝ × ℝ} {u₀ : ℝ × ℝ} {m U : ℝ → ℝ × ℝ}
     (hxc : ContinuousOn x (Icc 0 T)) (hm : ContinuousOn m (Icc 0 T))
     (hU : IsFluctuationPath β γ T x u₀ m U) {t : ℝ} (ht : t ∈ Icc 0 T) {y : ℝ → ℝ × ℝ}
@@ -1183,7 +1204,8 @@ theorem abs_dot_le (a v : ℝ × ℝ) : |dot a v| ≤ 2 * ‖a‖ * ‖v‖ := b
     _ = 2 * ‖a‖ * ‖v‖ := by ring
 
 /-- The functional `(u, f) ↦ ⟨c₀, u⟩ + ⟨ℓ, f(t) - f(0)⟩ + ∫₀ᵗ ⟨κ(s), f(s) - f(0)⟩ ds` on initial
-values and driving paths is continuous and linear. -/
+values and driving paths is continuous and linear, for `T ≥ 0`, `t ∈ [0, T]` and `κ` continuous on
+`[0, t]` (the path `f` extended to `ℝ`, constant outside `[0, T]`). -/
 theorem exists_drivingFunctional {T : ℝ} (hT : 0 ≤ T) {t : ℝ} (ht : t ∈ Icc 0 T) (c₀ ℓ : ℝ × ℝ)
     {κ : ℝ → ℝ × ℝ} (hκ : ContinuousOn κ (Icc 0 t)) :
     ∃ Λ : (ℝ × ℝ) × C(Icc 0 T, ℝ × ℝ) →L[ℝ] ℝ, ∀ e,
@@ -1279,7 +1301,8 @@ theorem continuousOn_quadForm {K : ℝ → ℝ × ℝ × ℝ} {u v : ℝ → ℝ
 
 /-- The deterministic half of the Wiener isometry: the second moment of the integration-by-parts
 Wiener integrals, written through the covariance `K(min s r)` of the driving path, equals
-`∫₀ᵗ ⟨y_b, G y_a⟩`. -/
+`∫₀ᵗ ⟨y_b, G y_a⟩`, for `t ≥ 0`, `K(0) = 0`, `K' = G` and `y_a' = -κ_a`, `y_b' = -κ_b` on `(0, t)`,
+`y_a(t) = a`, `y_b(t) = b`, all of them continuous on `[0, t]`. -/
 theorem wienerIsometry_aux {t : ℝ} (ht : 0 ≤ t) {a b : ℝ × ℝ} {ya yb κa κb : ℝ → ℝ × ℝ}
     {K G : ℝ → ℝ × ℝ × ℝ} (hyac : ContinuousOn ya (Icc 0 t)) (hybc : ContinuousOn yb (Icc 0 t))
     (hya : ∀ s ∈ Ioo 0 t, HasDerivAt ya (-κa s) s) (hyb : ∀ s ∈ Ioo 0 t, HasDerivAt yb (-κb s) s)
@@ -1402,7 +1425,8 @@ theorem wienerIsometry_aux {t : ℝ} (ht : 0 ≤ t) {a b : ℝ × ℝ} {ya yb κ
   rw [hout, hmid]
   linarith
 
-/-- Along the adjoint flow, the quadratic form of a limit covariance grows by the diffusion
+/-- For `t ≥ 0`, `x` continuous on `[0, t]` and `y_a`, `y_b` continuous on `[0, t]` solving the
+adjoint equation on `(0, t)`, the quadratic form of a limit covariance grows by the diffusion
 matrix: `⟨y_a(t), V(t) y_b(t)⟩ = ⟨y_a(0), V₀ y_b(0)⟩ + ∫₀ᵗ ⟨y_a, G(x) y_b⟩`. -/
 theorem IsLimitCovariance.quadForm_eq {β γ : ℝ} {x : ℝ → ℝ × ℝ} {V₀ : ℝ × ℝ × ℝ}
     {V : ℝ → ℝ × ℝ × ℝ} {t : ℝ} (hV : IsLimitCovariance β γ x V₀ V) (ht : 0 ≤ t)
@@ -1429,9 +1453,10 @@ theorem IsLimitCovariance.quadForm_eq {β γ : ℝ} {x : ℝ → ℝ × ℝ} {V�
   rw [hFTC, hV.initial]
   ring
 
-/-- The covariance of the driving martingale: `K(t) = ∫₀ᵗ G(x(s)) ds`, so that
-`E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = K(min s r)` for the Gaussian martingale of the diffusion
-approximation. -/
+/-- The covariance of the driving martingale: `K(t) = ∫₀ᵗ G(x(s)) ds` (the Bochner integral, `0`
+when the integrand is not integrable), so that `E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = K(min s r)` for
+`s, r ≥ 0` when `M` is a continuous centered Gaussian martingale with `d⟨M⟩ = G(x(t)) dt`, the
+matrix compared entry by entry with the stored triple. -/
 noncomputable def quadCov (β γ : ℝ) (x : ℝ → ℝ × ℝ) (t : ℝ) : ℝ × ℝ × ℝ :=
   ∫ s in (0 : ℝ)..t, diffusionMatrix β γ (x s)
 
@@ -1476,8 +1501,9 @@ theorem clm_integral_smul (hZ : HasGaussianLaw Z P)
   rw [← L.integral_comp_comm (integrable_smul_of_hasGaussianLaw hZ L₁)]
   simp [map_smul, smul_eq_mul]
 
-/-- Moments against a driving functional, by exchanging the expectation with the `ds` integral
-(the expectation of an `E`-valued Gaussian commutes with continuous linear maps). -/
+/-- Moments against a driving functional, for driving data `Z = (U₀, M on [0, T])` with a Gaussian
+law, `T ≥ 0` and `t ∈ [0, T]`, by exchanging the expectation with the `ds` integral (the expectation
+of an `E`-valued Gaussian commutes with continuous linear maps). -/
 theorem integral_mul_drivingFunctional (hZ : HasGaussianLaw Z P) (hT : 0 ≤ T) {t : ℝ}
     (ht : t ∈ Icc 0 T) {U₀ : Ω → ℝ × ℝ} {M : Ω → ℝ → ℝ × ℝ} (hZU₀ : ∀ ω, (Z ω).1 = U₀ ω)
     (hZM : ∀ ω (s : Icc (0 : ℝ) T), (Z ω).2 s = M ω s) {c₀ ℓ : ℝ × ℝ} {κ : ℝ → ℝ × ℝ}
@@ -1514,8 +1540,10 @@ theorem integral_mul_drivingFunctional (hZ : HasGaussianLaw Z P) (hT : 0 ≤ T) 
 
 end Moments
 
-/-- Each linear functional `⟨ℓ, U(t)⟩` of the fluctuation path is a continuous linear functional
-of the driving data `(U₀, M)`, through the adjoint solution `y` with `y(t) = ℓ`. -/
+/-- For `β, γ ≥ 0`, `x` continuous on `[0, T]`, `t ∈ [0, T]` and driving paths `M` continuous on
+`[0, T]`, each linear functional `⟨ℓ, U(t)⟩` of the fluctuation path is a continuous linear
+functional on `ℝ² × C([0, T], ℝ²)` of the driving data `(U₀, M)`, through the adjoint solution `y`
+with `y(t) = ℓ`. -/
 theorem exists_dot_eq_drivingFunctional {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
     {x : ℝ → ℝ × ℝ} (hxc : ContinuousOn x (Icc 0 T)) (hT : 0 ≤ T) {t : ℝ} (ht : t ∈ Icc 0 T)
     {Ω : Type*} {U₀ : Ω → ℝ × ℝ} {M U : Ω → ℝ → ℝ × ℝ}
@@ -1548,19 +1576,20 @@ theorem exists_dot_eq_drivingFunctional {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 
   rw [uIcc_of_le ht.1] at hs
   simp only [IccExtend_of_mem hT _ (hsub hs), hZM]
 
-/-- **The limit fluctuation is Gaussian with covariance `V(t)`.** Let the driving data `(U₀, M)`
-be jointly Gaussian as one random element `Z` of `ℝ² × C([0, T], ℝ²)` (`hZ`, `hZU₀`, `hZM`),
-centered, with `U₀` of covariance `V₀` and uncorrelated with the increments of `M`, and with
-`E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = K(min s r)` for `K(t) = ∫₀ᵗ G(x)` (`quadCov`): the
-covariance of the Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` of the diffusion approximation.
-Then the solution `U` of the fluctuation equation has, at each `t ∈ [0, T]`, a Gaussian law with
-mean `0` and second moments `E[⟨a, U(t)⟩ ⟨b, U(t)⟩] = ⟨a, V(t) b⟩`, where `V` is the limit
-covariance (`IsLimitCovariance`); `covariance_isFluctuationPath` restates the last part entrywise.
+/-- **The limit fluctuation is Gaussian with covariance `V(t)`.** Let `β, γ ≥ 0`, let `x` be
+continuous on `[0, T]`, and let the driving data `(U₀, M)` be jointly Gaussian as one random element
+`Z` of `ℝ² × C([0, T], ℝ²)` (`hZ`, `hZU₀`, `hZM`), centered, with `U₀` of covariance `V₀` and
+uncorrelated with the increments of `M`, and with `E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = K(min s r)` for
+`K(t) = ∫₀ᵗ G(x)` (`quadCov`): the covariance of the Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` of
+the diffusion approximation. Then the solution `U` of the fluctuation equation has, at each
+`t ∈ [0, T]`, a Gaussian law with mean `0` and second moments
+`E[⟨a, U(t)⟩ ⟨b, U(t)⟩] = ⟨a, V(t) b⟩`, where `V` is the limit covariance (`IsLimitCovariance`);
+`covariance_isFluctuationPath` restates the last part entrywise.
 
 The proof writes `⟨ℓ, U(t)⟩` as the integration-by-parts Wiener integral
 `⟨y(0), U₀⟩ + ∫₀ᵗ ⟨y(s), dM(s)⟩` against the adjoint solution `y' = -DF(x)ᵀ y`, `y(t) = ℓ`
-(`IsFluctuationPath.dot_eq`), a continuous linear functional of `Z`. Gaussianity follows; the
-Wiener isometry `E[(∫ y_a dM) (∫ y_b dM)] = ∫₀ᵗ ⟨y_b, G y_a⟩` follows from the covariance of `M`
+(`IsFluctuationPath.dot_eq`), a continuous linear functional of `Z`. Gaussianity follows; the Wiener
+isometry `E[(∫ y_a dM) (∫ y_b dM)] = ∫₀ᵗ ⟨y_b, G y_a⟩` follows from the covariance of `M`
 (`wienerIsometry_aux`); and the Lyapunov equation transports `⟨y_a, V y_b⟩` along the same flow
 (`IsLimitCovariance.quadForm_eq`). -/
 theorem hasGaussianLaw_isFluctuationPath {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ)

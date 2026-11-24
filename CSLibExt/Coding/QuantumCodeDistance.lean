@@ -69,7 +69,7 @@ theorem conjTranspose_pauli_mul_pauli (a b a' b' : Fin n → ZMod 2) :
     split_ifs
     · exact star_sign _
     · exact star_zero _
-  rw [mul_apply, Matrix.smul_apply, hP]
+  rw [Matrix.mul_apply, Matrix.smul_apply, hP]
   simp only [hPh, hP, ite_mul, zero_mul, mul_ite, mul_zero]
   rw [Finset.sum_ite_eq']
   simp only [Finset.mem_univ, ite_true]

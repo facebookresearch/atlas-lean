@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Probability.Percolation.PcNontrivial
+public import MathlibExt.Probability.Percolation.ThetaContinuity
 
 /-!
 # Continuity of the percolation probability
@@ -37,21 +38,11 @@ namespace MathlibExt.Probability.Percolation.ThetaContinuityWanted
 open StatMech.Percolation
 open scoped NNReal
 
-/-- **Percolation probability on the parameter interval.** The percolation probability `θ_d` as
-a function on `{p : ℝ≥0 // p ≤ 1} = [0, 1]`. -/
-noncomputable abbrev thetaOnUnit (d : ℕ) : {p : ℝ≥0 // p ≤ 1} → ℝ := fun p => theta d p.1 p.2
-
 /-- **Continuity of θ away from p_c.** For Bernoulli bond percolation on `ℤ^d`, the map
 `p ↦ θ_d(p)` is continuous on `[0, 1] \ {p_c(d)}`. Source: H. Duminil-Copin, *Introduction to
 Bernoulli percolation*, lecture notes (2018), Proposition 3.2; the proof there uses the
 uniqueness of the infinite cluster (Theorem 3.1) for continuity from the left above `p_c`. -/
 public theorem_wanted theta_continuousOn_ne_pc (d : ℕ) :
     ContinuousOn (thetaOnUnit d) {p | p.1 ≠ pc d}
-
-/-- **Right-continuity of θ at p_c.** For Bernoulli bond percolation on `ℤ^d`, the map
-`p ↦ θ_d(p)` is right-continuous at `p_c(d)`. Source: H. Duminil-Copin, *Introduction to
-Bernoulli percolation*, lecture notes (2018), Proposition 3.2. -/
-public theorem_wanted theta_continuousWithinAt_pc (d : ℕ) :
-    ContinuousWithinAt (thetaOnUnit d) {p | pc d ≤ p.1} ⟨pc d, pc_le_one⟩
 
 end MathlibExt.Probability.Percolation.ThetaContinuityWanted

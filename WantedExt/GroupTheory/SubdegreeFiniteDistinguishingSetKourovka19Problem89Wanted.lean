@@ -36,10 +36,13 @@ discrete). The minimal degree is infinite when every non-identity element moves 
 points; the setwise stabiliser of `X` is `{g ∈ G | g '' X = X}`.
 -/
 
-/-- Kourovka 19.89 (S. M. Smith), conjecture: let `Ω` be countably infinite and `G ≤ Sym(Ω)` closed
-in the topology of pointwise convergence and subdegree-finite (every orbit of every point
-stabilizer is finite). If the minimal degree of `G` is infinite (every non-identity element moves
-infinitely many points), then some subset of `Ω` has trivial setwise stabilizer in `G`. -/
+/-- **Kourovka Problem 19.89: Smith's conjecture on distinguishing sets.** The statement that for
+every countably infinite set $\Omega$ and every subgroup $G$ of the symmetric group
+$\mathrm{Sym}(\Omega)$ that is closed in the topology of pointwise convergence and
+subdegree-finite (for all $a, b \in \Omega$ the orbit of $b$ under the stabilizer of $a$ in $G$ is
+finite), if every non-identity element of $G$ moves infinitely many points of $\Omega$, then there
+is a subset $X \subseteq \Omega$ whose setwise stabilizer in $G$ is trivial: the only $g \in G$
+with $g(X) = X$ is the identity. -/
 def closedSubdegreeFiniteDistinguishingSet : Prop :=
   ∀ (Ω : Type) [Countable Ω] [Infinite Ω] (G : Subgroup (Equiv.Perm Ω)),
     @IsClosed _ Equiv.Perm.pointwiseTopology (G : Set (Equiv.Perm Ω)) →
@@ -48,10 +51,19 @@ def closedSubdegreeFiniteDistinguishingSet : Prop :=
     ∃ X : Set Ω, ∀ g ∈ G, g '' X = X → g = 1
 
 /--
-Resolved true: Lehner (Theorem 2) proves that every locally compact permutation group on a countable
-set with infinite motion has a subset with trivial setwise stabiliser, and closed subdegree-finite
-groups are locally compact; this proves Smith's conjecture, which implies Tucker's Infinite Motion
-Conjecture for graphs. The 21st issue of the Kourovka Notebook marks 19.89 solved. Source: E. I.
+**Lehner's theorem on distinguishing sets of subdegree-finite groups.** Let $\Omega$ be a
+countably infinite set and let $G$ be a subgroup of the symmetric group $\mathrm{Sym}(\Omega)$
+that is closed in the topology of pointwise convergence and subdegree-finite: for all
+$a, b \in \Omega$ the orbit of $b$ under the stabilizer of $a$ in $G$ is finite. If every
+non-identity element of $G$ moves infinitely many points of $\Omega$, then there is a subset
+$X \subseteq \Omega$ whose setwise stabilizer in $G$ is trivial: the only $g \in G$ with
+$g(X) = X$ is the identity.
+
+Lehner proves more generally that every locally compact permutation group on a countable set in
+which every non-identity element moves infinitely many points has a subset with trivial setwise
+stabilizer; closed subdegree-finite permutation groups are locally compact.
+
+Source: E. I.
 Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Problem 19.89 (S. M. Smith); resolution: F. Lehner, Asymmetric
 colouring of locally compact permutation groups, Bull. London Math. Soc. 55 (2023), 1874-1879

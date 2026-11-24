@@ -55,24 +55,34 @@ open _root_.Relation
 
 variable {State Symbol : Type*}
 
-/-- The transition graph of a Büchi automaton with the symbols forgotten. -/
+/-- **Symbol-forgetting transition graph of a Büchi automaton.** For a nondeterministic Büchi
+automaton, the transition graph has an edge from a state $s$ to a state $t$ exactly when the
+automaton has a transition from $s$ to $t$ reading some symbol. -/
 def Step (na : Buchi State Symbol) (s t : State) : Prop :=
   ∃ x, na.Tr s x t
 
-/-- A lasso: an accepting state `s`, reachable from a start state, that lies on a nonempty
-cycle. -/
+/-- **Lasso of a Büchi automaton.** A nondeterministic Büchi automaton has a lasso if there are a
+start state $s_0$ and an accepting state $s$ such that the automaton can move from $s_0$ to $s$ by
+reading some finite word $u$, and from $s$ back to $s$ by reading some nonempty finite word
+$v$. -/
 def HasLasso (na : Buchi State Symbol) : Prop :=
   ∃ s₀ ∈ na.start, ∃ s ∈ na.accept, (∃ u, na.MTr s₀ u s) ∧ ∃ v, v ≠ [] ∧ na.MTr s v s
 
 variable {na : Buchi State Symbol}
 
-/-- Membership in the language of a Büchi automaton, unfolded. -/
+/-- **Büchi acceptance condition.** A nondeterministic Büchi automaton accepts an infinite word
+$x = x_0 x_1 x_2 \cdots$ if and only if it has a run on $x$, that is, a sequence of states
+$s_0 s_1 s_2 \cdots$ with $s_0$ a start state and a transition from $s_k$ to $s_{k+1}$ reading
+$x_k$ for every $k$, such that $s_k$ is an accepting state for infinitely many $k$. -/
 theorem mem_language_iff {xs : ωSequence Symbol} :
     xs ∈ language na ↔ ∃ ss, na.Run xs ss ∧ ∃ᶠ k in atTop, ss k ∈ na.accept :=
   Iff.rfl
 
-/-- A lasso `s₀ -u-> s -v-> s` with `s₀` initial, `s` accepting and `v ≠ []` is witnessed by the
-accepted ultimately periodic word `u v^ω`. -/
+/-- **Lassos give accepted ultimately periodic words.** Let $\mathcal{A}$ be a nondeterministic
+Büchi automaton over a nonempty alphabet. Suppose $s_0$ is a start state and $s$ an accepting
+state of $\mathcal{A}$, that reading the finite word $u$ the automaton can move from $s_0$ to $s$,
+and that reading a nonempty finite word $v$ it can move from $s$ back to $s$. Then $\mathcal{A}$
+accepts the infinite word $u v^\omega = u v v v \cdots$. -/
 theorem lasso_mem_language [Inhabited Symbol] {s₀ s : State} {u v : List Symbol}
     (h₀ : s₀ ∈ na.start) (hs : s ∈ na.accept) (hu : na.MTr s₀ u s) (hv : v ≠ [])
     (hvs : na.MTr s v s) : u ++ω (const v).flatten ∈ language na := by
@@ -90,8 +100,9 @@ theorem lasso_mem_language [Inhabited Symbol] {s₀ s : State} {u v : List Symbo
   rw [← drop_frequently_iff_frequently u.length, hdrop]
   exact hfreq
 
-/-- With finitely many states, every accepted word yields a lasso: some accepting state is
-visited twice along an accepting run, and the run between the two visits is the cycle. -/
+/-- **An accepted word yields a lasso.** If a nondeterministic Büchi automaton with finitely many
+states accepts some infinite word, then it has a lasso: some accepting state is visited twice
+along an accepting run, and the run between the two visits is the cycle. -/
 theorem hasLasso_of_mem [Finite State] {xs : ωSequence Symbol} (h : xs ∈ language na) :
     na.HasLasso := by
   obtain ⟨ss, hrun, hacc⟩ := h
@@ -118,8 +129,10 @@ theorem language_nonempty_iff_hasLasso [Finite State] :
     have : Inhabited Symbol := ⟨v.head hv⟩
     exact ⟨_, lasso_mem_language h₀ hs hu hv hvs⟩
 
-/-- A nonempty Büchi language over finitely many states contains an ultimately periodic word
-`u v^ω` with `v ≠ []`. -/
+/-- **Nonempty Büchi languages contain ultimately periodic words.** Let $A$ be a
+nondeterministic Büchi automaton with finitely many states over a nonempty alphabet. If $A$
+accepts some infinite word, then there are finite words $u$ and $v$ with $v$ nonempty such that
+$A$ accepts the ultimately periodic word $u v^\omega = u v v v \cdots$. -/
 theorem exists_lasso_word_of_nonempty [Finite State] [Inhabited Symbol]
     (h : ∃ xs, xs ∈ language na) :
     ∃ u v : List Symbol, v ≠ [] ∧ u ++ω (const v).flatten ∈ language na := by
@@ -128,7 +141,10 @@ theorem exists_lasso_word_of_nonempty [Finite State] [Inhabited Symbol]
 
 /-! ## Reduction to graph reachability -/
 
-/-- Words between two states exist iff the states are connected in the transition graph. -/
+/-- **Reachability by words is reachability in the transition graph.** For states $s$ and $t$ of
+a nondeterministic Büchi automaton, the automaton can move from $s$ to $t$ by reading some finite
+word (possibly empty) if and only if $t$ is reachable from $s$ in zero or more steps of the
+transition graph, which has an edge from $p$ to $q$ when some symbol takes $p$ to $q$. -/
 theorem exists_mTr_iff_reflTransGen {s t : State} :
     (∃ u, na.MTr s u t) ↔ ReflTransGen na.Step s t := by
   constructor
@@ -144,8 +160,10 @@ theorem exists_mTr_iff_reflTransGen {s t : State} :
         obtain ⟨u, hu⟩ := ih
         exact ⟨x :: u, LTS.MTr.stepL hx hu⟩
 
-/-- Nonempty words between two states exist iff the states are connected by a nonempty path in
-the transition graph. -/
+/-- **Nonempty words and paths of positive length.** For states $s$ and $t$ of a
+nondeterministic Büchi automaton, the automaton can move from $s$ to $t$ by reading some nonempty
+finite word if and only if $t$ is reachable from $s$ in one or more steps of the transition
+graph, which has an edge from $p$ to $q$ when some symbol takes $p$ to $q$. -/
 theorem exists_ne_nil_mTr_iff_transGen {s t : State} :
     (∃ v, v ≠ [] ∧ na.MTr s v t) ↔ TransGen na.Step s t := by
   constructor
@@ -159,7 +177,11 @@ theorem exists_ne_nil_mTr_iff_transGen {s t : State} :
     obtain ⟨w, hw⟩ := exists_mTr_iff_reflTransGen.mpr hu
     exact ⟨x :: w, List.cons_ne_nil _ _, LTS.MTr.stepL hx hw⟩
 
-/-- The lasso condition in terms of the transition graph. -/
+/-- **The lasso condition in the transition graph.** A nondeterministic Büchi automaton has a
+lasso if and only if there are a start state $s_0$ and an accepting state $s$ such that $s$ is
+reachable from $s_0$ in zero or more steps of the transition graph and $s$ is reachable from
+itself in one or more steps; the transition graph has an edge from $p$ to $q$ when some symbol
+takes $p$ to $q$. -/
 theorem hasLasso_iff_reachable :
     na.HasLasso ↔ ∃ s₀ ∈ na.start, ∃ s ∈ na.accept,
       ReflTransGen na.Step s₀ s ∧ TransGen na.Step s s := by
@@ -175,13 +197,19 @@ variable [Fintype State] [DecidableEq State] [Fintype Symbol] [∀ s x t, Decida
 instance : DecidableRel na.Step := fun s t =>
   inferInstanceAs (Decidable (∃ x, na.Tr s x t))
 
-/-- The start states, as a finite set. -/
+/-- **Finite set of start states.** For a nondeterministic Büchi automaton with finitely many
+states and a decidable start set, this is the set of its start states, viewed as a finite set. -/
 def startFin (na : Buchi State Symbol) [DecidablePred (· ∈ na.start)] : Finset State :=
   Finset.univ.filter (· ∈ na.start)
 
-/-- The accepting states that are reachable from a start state and lie on a nonempty cycle. One
-reachability closure from all start states is computed, then one cycle closure for each reachable
-accepting state; each closure takes `Fintype.card State` rounds. -/
+/-- **Lasso states of a finite Büchi automaton.** For a nondeterministic Büchi automaton with
+finitely many states, decidable equality of states, a finite alphabet, and decidable transitions,
+start set and accepting set, the lasso states form the finite set of accepting states $s$ that are
+reachable from some start state in zero or more transitions and lie on a nonempty cycle, that is,
+$s$ is reachable from itself in one or more transitions.
+
+The set is computed by one reachability closure from all start states, then one cycle closure for
+each reachable accepting state; each closure takes as many rounds as there are states. -/
 def lassoStates (na : Buchi State Symbol) [∀ s x t, Decidable (na.Tr s x t)]
     [DecidablePred (· ∈ na.start)] [DecidablePred (· ∈ na.accept)] : Finset State :=
   (na.startFin ∪ Relation.transGenFinFrom na.Step na.startFin).filter fun s =>
@@ -202,7 +230,11 @@ theorem mem_lassoStates {s : State} :
     · exact Or.inl h₀
     · exact Or.inr ⟨s₀, h₀, h⟩
 
-/-- The lasso condition holds iff `lassoStates` is nonempty. -/
+/-- **Lasso detection by finite reachability.** Let $A$ be a nondeterministic Büchi automaton
+with finitely many states and finitely many symbols, with decidable equality of states, and whose
+transitions, start states and accepting states are decidable. Then $A$ has a lasso if and only if
+its set of lasso states, computed by finite reachability closures as the accepting states that are
+reachable from a start state and lie on a nonempty cycle, is nonempty. -/
 theorem hasLasso_iff_lassoStates_nonempty : na.HasLasso ↔ na.lassoStates.Nonempty := by
   rw [hasLasso_iff_reachable]
   constructor
@@ -217,14 +249,22 @@ theorem hasLasso_iff_lassoStates_nonempty : na.HasLasso ↔ na.lassoStates.Nonem
 instance instDecidableHasLasso : Decidable na.HasLasso :=
   decidable_of_iff _ hasLasso_iff_lassoStates_nonempty.symm
 
-/-- Emptiness test for a finite Büchi automaton: `true` iff no word is accepted. It computes
-`lassoStates`: with `n` states, `f` reachable accepting states and `k` symbols, at most `f + 1`
-reachability closures of `O(n³ k)` transition tests each. -/
+/-- **Büchi emptiness test.** For a nondeterministic Büchi automaton with finitely many states and
+finitely many symbols, with decidable equality of states, and whose transitions, start states and
+accepting states are decidable, the emptiness test returns true exactly when the automaton has no
+lasso. It decides this by computing the set of lasso states; by the lasso characterization, it
+returns true iff no infinite word is accepted.
+
+With $n$ states, $f$ reachable accepting states and $k$ symbols, the computation performs at most
+$f + 1$ reachability closures of $O(n^3 k)$ transition tests each. -/
 def isEmptyB (na : Buchi State Symbol) [∀ s x t, Decidable (na.Tr s x t)]
     [DecidablePred (· ∈ na.start)] [DecidablePred (· ∈ na.accept)] : Bool :=
   !decide na.HasLasso
 
-/-- `isEmptyB` decides emptiness of the accepted ω-language. -/
+/-- **Correctness of the Büchi emptiness test.** For a nondeterministic Büchi automaton with
+finitely many states and finitely many symbols, with decidable equality of states, and whose
+transitions, start states and accepting states are decidable, the emptiness test returns true if
+and only if the automaton accepts no infinite word. -/
 theorem isEmptyB_iff : na.isEmptyB = true ↔ language na = ⊥ := by
   rw [isEmptyB, Bool.not_eq_true', decide_eq_false_iff_not, ← language_nonempty_iff_hasLasso]
   constructor

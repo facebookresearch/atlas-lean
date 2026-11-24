@@ -13,9 +13,11 @@ Definitions 5.1–5.3 and Figure 1, pp. 11–13, and Theorem 5.4, p. 14.
 These are manuscript page numbers, not the Springer chapter pagination.
 The figure itself was read from the PDF, not reconstructed from search snippets.
 
-This development is a project-authored, restricted and sort-erased model
-of that binary-session discipline. It is **not a formalization of the entire
-paper**, nor is equivalence between its typing derivations and `HasType` proved.
+The typing development (`Basic`, `Communication`, `Progress`) is a project-authored,
+restricted and sort-erased model of that binary-session discipline. It is **not a
+formalization of the entire paper**, nor is equivalence between its typing derivations
+and `HasType` proved. The type-level `Branching` module is described in the last
+section.
 
 ## Lean development provenance
 
@@ -62,9 +64,12 @@ The manuscript's co-type swaps sending and receiving while fixing `1`.
 `SessionType.dual` implements this finite data-action part of co-typing.
 
 The source also includes selection/branching, recursive types and separate
-channel-passing types. None is represented here. In particular, `end` is not
-the source's `⊥`, which records a channel already composed with its peer and
-has no co-type. There is no session subtyping relation in this development.
+channel-passing types. `SessionType` represents none of them. The finite labelled
+choices of Definition 5.1 are represented separately in `Branching.lean` (see the
+last section); recursion and channel passing are represented in neither module.
+In particular, `end` is not the source's `⊥`, which records a channel already
+composed with its peer and has no co-type. There is no session subtyping relation
+in this development.
 
 ## Every typing rule
 
@@ -144,6 +149,56 @@ absence of every π reduction via the shared unguarded-output invariant.
 `finite_completion` constructs a finite path for isolated finite sessions;
 it says neither that arbitrary π processes normalize nor that recursive
 sessions terminate. All source rules omitted above remain outside this result.
+
+## Labelled branching types (`Branching.lean`)
+
+`Branching.lean` represents a finite fragment of the Definition 5.1 type grammar
+(manuscript pp. 11-12). `BranchingType S L` has `end` (inaction `1`), `send` and
+`recv` with one payload drawn from an abstract sort type `S` (in place of the sort
+vector `S̃`), and internal (`select`, `⊕`) and external (`branch`, `&`) choices over
+labels of type `L`. `BranchingType.dual` implements the co-type clauses of Definition
+5.1 for this fragment: it preserves payload sorts and labels, swaps sending with
+receiving and selection with branching, and fixes `end`. `BranchingContext` is a
+finite partial map from `Nat` channels to these types, following the paragraph after
+Definition 5.1. Passive-sort bridges relate choice-free types to `SessionType` and,
+through `Protocol.ofFinite`, to `Endpoint.Protocol`.
+
+Branches are stored as ordered association lists. Definition 5.1 writes a choice as
+a brace family `{l1 : α1, ..., ln : αn}` whose order carries no meaning, so source
+choices correspond to `WellFormed` (distinct-label) lists up to
+`BranchingType.PermEquiv`, which reorders branches at every depth. Two well-formed
+choices are equivalent exactly when they offer the same labels with equivalent
+continuations, and duality, well-formedness, advancement, the bridges and the context
+operations respect the equivalence. Syntactic `=` and the derived `DecidableEq`
+distinguish orderings and are not source equality.
+
+`BranchingType.Advances` (one-step advancement by an action) and
+`BranchingContext.Split` (union of contexts with disjoint domains) are project-specific.
+`Split` is not the compatible-map composition of Definition 5.2, which sends a channel
+common to both typings to `⊥`; that composition and the type `⊥` are not represented.
+The module has no process syntax and none of the Figure 1 typing rules, including
+`[Br]` and `[Sel]`, and claims no subject reduction, progress or subtyping. Recursion,
+delegation, tuple payloads and the sort grammar are excluded.
+
+## Multiparty projection (`Multiparty/Projection.lean`)
+
+`Multiparty/Projection.lean` formalizes a finite, synchronous,
+participant-addressed fragment of the global and local types of Honda,
+Yoshida and Carbone, *Multiparty Asynchronous Session Types*, JACM 63(1),
+2016: the global-type grammar (Fig. 4) and local-type grammar (Fig. 6)
+without parallel composition, recursion, channel indices, delegation and
+shared-name sorts, with participants in place of channel indices.
+`GlobalType.project` implements projection (Definition 4.1) with plain
+merging: a third party follows a choice only when every branch projects to
+brace-equal local types (`LocalType.braceEq`, a structural equality up to
+branch order on distinct-label lists). `GlobalType.WellFormed` is label
+well-formedness plus projectability at every participant (coherence,
+Definition 4.2, specialized to this fragment), and well-formedness is
+decidable (Theorem 4.3, specialized). `LocalType.erase` forgets peers into
+binary `BranchingType`s, and two-party projections erase to duals
+(`GlobalType.project_erase_dual`), a project-specific bridge statement.
+No LTS, subject reduction, session fidelity, asynchrony, subtyping or
+process typing is formalized here.
 
 [hvk-manuscript]: https://filipendule.github.io/mgs/honda.vasconcelos.kubo.pdf
 [lean-source]: ../../../docs/provenance/pi-scoping/finite-session-basic.lean.txt

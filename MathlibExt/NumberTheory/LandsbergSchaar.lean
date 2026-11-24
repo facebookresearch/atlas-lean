@@ -706,10 +706,14 @@ private theorem ls_sqrt_const (p q : ℕ) (hp : 1 ≤ p) (hq : 1 ≤ q) (s : ℝ
       ring
   rw [hAY, hring, hEN, hC, hLHS, mul_one]
 
-/-- Landsberg–Schaar relation (landsberg-schaar-s1): quadratic Gauss-sum reciprocity.
-See https://en.wikipedia.org/wiki/Landsberg%E2%80%93Schaar_relation.
+/-- **Landsberg–Schaar relation.** For all positive integers $p$ and $q$,
+$$
+\frac{1}{\sqrt{p}} \sum_{n=0}^{p-1} \exp\left(\frac{2 \pi i n^2 q}{p}\right) =
+\frac{e^{\pi i / 4}}{\sqrt{2q}} \sum_{n=0}^{2q-1} \exp\left(-\frac{\pi i n^2 p}{2q}\right).
+$$
 
-Proves `Wanted` entry `landsberg_schaar`.
+Source: https://en.wikipedia.org/wiki/Landsberg%E2%80%93Schaar_relation (landsberg-schaar-s1);
+proves `Wanted` entry `landsberg_schaar`.
 -/
 theorem landsberg_schaar (p q : ℕ) (hp : 1 ≤ p) (hq : 1 ≤ q) :
   (1 / (Real.sqrt (p : ℝ) : ℂ)) * ∑ n ∈ Finset.range p, Complex.exp

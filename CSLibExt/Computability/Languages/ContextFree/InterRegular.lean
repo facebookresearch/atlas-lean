@@ -426,7 +426,9 @@ private theorem interGrammar_language [Fintype σ] :
         ContextFreeRule.Rewrites.input_output⟩
     exact hstep.trans_derives (derives_main hy rfl)
 
-/-- The intersection of a context-free language with a DFA's language is
+/-- **Intersection of a context-free language with the language of a DFA.** If $L$ is a
+context-free language over an alphabet $T$ and $M$ is a deterministic finite automaton over $T$
+with finitely many states, then the intersection of $L$ with the language accepted by $M$ is
 context-free. -/
 theorem IsContextFree.inf_dfa_accepts [Finite σ] {L : Language T}
     (hL : L.IsContextFree) (M : DFA T σ) :
@@ -435,9 +437,11 @@ theorem IsContextFree.inf_dfa_accepts [Finite σ] {L : Language T}
   exact ⟨@interGrammar T σ g M (Fintype.ofFinite σ),
     @interGrammar_language T σ g M (Fintype.ofFinite σ)⟩
 
-/-- The intersection of a context-free language with a regular language is
-context-free. No finite-alphabet assumption is needed: the annotated
-grammar only ever mentions terminals from the original productions. -/
+/-- **Intersection of a context-free language with a regular language.** If $L$ is a context-free
+language and $R$ a regular language over the same alphabet, then $L \cap R$ is context-free.
+
+No finite-alphabet assumption is needed: the grammar built in the proof only mentions terminals
+that occur in the productions of the original grammar. -/
 theorem IsContextFree.inf_isRegular {L R : Language T} (hL : L.IsContextFree)
     (hR : R.IsRegular) :
     (L ⊓ R).IsContextFree := by

@@ -34,18 +34,26 @@ some `φ : G ≃* G`. A finite simple group with a simple maximal subgroup is no
 cyclic simple groups (whose only maximal subgroup is trivial) impose nothing.
 -/
 
-/-- Kourovka 18.115 (P. Schmid): in a finite simple group `G`, any two isomorphic maximal subgroups
-`X` and `Y` that are themselves simple groups are conjugate in `Aut G`, that is, `φ(X) = Y` for some
-automorphism `φ` of `G`. -/
+/-- **Schmid's question on isomorphic simple maximal subgroups (Kourovka 18.115).** The statement
+that in every finite simple group $G$, any two isomorphic maximal subgroups $X$ and $Y$ that are
+themselves simple groups are conjugate in $\operatorname{Aut} G$, that is, $\varphi(X) = Y$ for
+some automorphism $\varphi$ of $G$. -/
 def isomorphicSimpleMaximalSubgroupsAutConjugate : Prop :=
   ∀ (G : Type) [Group G] [Finite G], IsSimpleGroup G →
     ∀ X Y : Subgroup G, IsCoatom X → IsCoatom Y → IsSimpleGroup X → IsSimpleGroup Y →
       Nonempty (X ≃* Y) → ∃ φ : MulAut G, X.map φ.toMonoidHom = Y
 
 /--
-Resolved false: the Kourovka Archive answers 18.115 "No, not always": there are two `Aut G`-classes
-of `M₁₂` in `E₆(5)` (Kleidman-Wilson, 1990), and Craven (2023) found two classes of `PSL₂(11)` and
-two of `PSL₂(19)` in `E₆(q)` for certain `q`. Source: E. I. Khukhro and V. D. Mazurov (eds.),
+**Isomorphic simple maximal subgroups need not be conjugate under automorphisms.** There are a
+finite simple group $G$ and isomorphic maximal subgroups $X$ and $Y$ of $G$, both simple groups,
+such that no automorphism $\varphi$ of $G$ satisfies $\varphi(X) = Y$. That is, the answer to
+Kourovka Problem 18.115 is negative.
+
+The Kourovka Archive answers 18.115 "No, not always": there are two $\operatorname{Aut} G$-classes
+of $M_{12}$ in $E_6(5)$ (Kleidman–Wilson, 1990), and Craven (2023) found two classes of
+$\mathrm{PSL}_2(11)$ and two of $\mathrm{PSL}_2(19)$ in $E_6(q)$ for certain $q$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Archive of Solved Problems, Problem 18.115 (P. Schmid); resolution: P. B. Kleidman and R. A. Wilson,
 J. London Math. Soc. (2) 42 (1990), 555-561; D. A. Craven, Invent. Math. 234 (2023), no. 2, 637-719,

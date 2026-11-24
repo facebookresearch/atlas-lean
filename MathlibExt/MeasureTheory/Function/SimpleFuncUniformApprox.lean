@@ -35,10 +35,14 @@ Source: `v1/Atlas/IntroductionToFunctionalAnalysis/code/MeasureTheory.lean`,
 `MeasureTheory.SimpleFunc.exists_monotone_tendsto` (Theorem, March 23, 2021).
 -/
 
-/-- **Uniform approximation by `eapprox` on sets where `f` is bounded.**
-For a measurable `f : α → ℝ≥0∞`, a bound `B ≠ ⊤` and `ε ≠ 0`, there is an
-`N` such that for all `n ≥ N` and all `a` with `f a ≤ B`, the simple-function
-approximation `eapprox f n` is within `ε` of `f a` from below. -/
+/-- **The standard simple approximations converge uniformly where the function is bounded.**
+Let $\alpha$ be a measurable space and $f : \alpha \to [0, \infty]$ a measurable function. Let
+$r_0, r_1, \ldots$ be the fixed enumeration of $\mathbb{Q}$ by natural-number codes ($r_k = 0$ when
+$k$ codes no rational), put $q_k = \max(r_k, 0)$, and let
+$\varphi_n(a) = \max(\{0\} \cup \{q_k : k < n,\ q_k \le f(a)\})$ be the $n$-th standard simple
+approximation of $f$. Then for every $B \in [0, \infty)$ and every $\varepsilon \in (0, \infty]$
+there is $N \in \mathbb{N}$ such that $f(a) - \varphi_n(a) < \varepsilon$ for all $n \ge N$ and
+all $a \in \alpha$ with $f(a) \le B$, where subtraction in $[0, \infty]$ is truncated at $0$. -/
 theorem eapprox_sub_lt_of_le
     {α : Type*} [MeasurableSpace α] {f : α → ℝ≥0∞} (hf : Measurable f)
     {B ε : ℝ≥0∞} (hB : B ≠ ⊤) (hε : ε ≠ 0) :
@@ -108,11 +112,13 @@ theorem eapprox_sub_lt_of_le
         exact (ENNReal.ofReal_lt_ofReal_iff_of_nonneg (by linarith)).mpr h_diff_lt
     _ < ε := hq_lt_ε
 
-/-- **Approximation of nonnegative measurable functions by simple functions.**
-For any nonnegative measurable `f : α → ℝ≥0∞`, there is a sequence of simple
-functions `φₙ` such that: (a) `0 ≤ φ₀ ≤ φ₁ ≤ ⋯ ≤ f` pointwise; (b) `φₙ → f`
-pointwise; and (c) for every bound `B < ∞` and every `ε > 0`, `f - φₙ < ε`
-uniformly on `{a | f a ≤ B}` for all large `n`. -/
+/-- **Approximation of nonnegative measurable functions by simple functions.** Let $\alpha$ be a
+measurable space and $f : \alpha \to [0, \infty]$ a measurable function. There is a sequence of
+simple functions $\varphi_n : \alpha \to [0, \infty]$ ($n \in \mathbb{N}$) such that:
+(a) $\varphi_0 \le \varphi_1 \le \cdots \le f$ pointwise; (b) $\varphi_n(a) \to f(a)$ for every
+$a \in \alpha$; and (c) for every $B \in [0, \infty)$ and every $\varepsilon \in (0, \infty]$ there
+is $N \in \mathbb{N}$ such that $f(a) - \varphi_n(a) < \varepsilon$ for all $n \ge N$ and all
+$a \in \alpha$ with $f(a) \le B$, where the subtraction in $[0, \infty]$ is truncated at $0$. -/
 theorem exists_monotone_tendsto
     {α : Type*} [MeasurableSpace α] {f : α → ℝ≥0∞} (hf : Measurable f) :
     ∃ φ : ℕ → SimpleFunc α ℝ≥0∞,
