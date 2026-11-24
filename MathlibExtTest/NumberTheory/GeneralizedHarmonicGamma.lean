@@ -77,3 +77,10 @@ example (n : ℕ) :
       rfl
   rw [← h, (generalizedHarmonic_eq_gamma_expectation 1 one_pos n).2]
   rfl
+
+-- A shift equal to the shape gives order zero, so the weighted sum counts its terms.
+example (s : ℝ) (hs : 0 < s) (n : ℕ) :
+    ∑ k ∈ Finset.range n, ((k + 1 : ℕ) : ℝ) ^ s *
+      ∫ x, Real.exp (-(k * x)) ∂gammaMeasure s 1 = n := by
+  rw [← generalizedHarmonic_sub_eq_gamma_expectation s hs s n]
+  simp [generalizedHarmonic]

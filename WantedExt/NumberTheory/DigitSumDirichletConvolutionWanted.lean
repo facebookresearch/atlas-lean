@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.Digits.TrollopeDelange
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
@@ -54,73 +55,6 @@ theorem digitSumArith_sq_apply (q n : ℕ) :
       ∑ x ∈ n.divisorsAntidiagonal, (Nat.digits q x.1).sum * (Nat.digits q x.2).sum := by
   rw [sq, ArithmeticFunction.mul_apply]
   rfl
-
-/-- **Delange's function.** For a natural number $q$, Delange's function in base $q$ is the
-function of a real number $x$ given by
-$g(x) = \int_0^x \left(\lfloor q t \rfloor - q \lfloor t \rfloor - \frac{q - 1}{2}\right) dt$,
-where $\lfloor \cdot \rfloor$ is the floor function.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 1 (definition of `g`). -/
-noncomputable def trollopeDelangeIntegral (q : ℕ) (x : ℝ) : ℝ :=
-  ∫ t in (0 : ℝ)..x, ((⌊(q : ℝ) * t⌋ : ℝ) - q * ⌊t⌋ - ((q : ℝ) - 1) / 2)
-
-/-- **Delange's function vanishes at zero.** For every natural number $q$, Delange's function $g$
-in base $q$ satisfies $g(0) = 0$.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 1. -/
-theorem trollopeDelangeIntegral_zero (q : ℕ) : trollopeDelangeIntegral q 0 = 0 :=
-  intervalIntegral.integral_same
-
-/-- **Delange's series.** For a natural number $q$, let $g$ be Delange's function in base $q$.
-Delange's series in base $q$ is the function of a real number $x$ given by
-$h(x) = \sum_{r \ge 0} g(q^r x)/q^r$, where the sum is taken to be $0$ when the series is not
-summable.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 1 (definition of `h`). -/
-noncomputable def trollopeDelangeSeries (q : ℕ) (x : ℝ) : ℝ :=
-  ∑' r : ℕ, trollopeDelangeIntegral q ((q : ℝ) ^ r * x) / (q : ℝ) ^ r
-
-/-- **Delange's series vanishes at zero.** For every natural number $q$, Delange's series $h$ in
-base $q$ satisfies $h(0) = 0$.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 1. -/
-theorem trollopeDelangeSeries_zero (q : ℕ) : trollopeDelangeSeries q 0 = 0 := by
-  simp [trollopeDelangeSeries, trollopeDelangeIntegral_zero]
-
-/-- **Trollope–Delange fluctuation.** Let $q$ be a natural number and let $h$ be Delange's series
-in base $q$. The Trollope–Delange fluctuation in base $q$ is the function of a real number $x$
-given by $F(x) = \frac{q - 1}{2}(1 + \lfloor x \rfloor - x) +
-q^{1 + \lfloor x \rfloor - x}\, h(q^{x - \lfloor x \rfloor - 1})$, where $\lfloor x \rfloor$ is
-the floor of $x$.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 1 (definition of `F`). -/
-noncomputable def trollopeDelangeFluctuation (q : ℕ) (x : ℝ) : ℝ :=
-  ((q : ℝ) - 1) / 2 * (1 + ⌊x⌋ - x) +
-    (q : ℝ) ^ (1 + ⌊x⌋ - x) * trollopeDelangeSeries q ((q : ℝ) ^ (x - ⌊x⌋ - 1))
-
-/-- **Periodicity of the Trollope–Delange fluctuation.** For every natural number $q$ and every
-real number $x$, the Trollope–Delange fluctuation $F$ in base $q$ satisfies $F(x + 1) = F(x)$.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 1 (`F` is `1`-periodic). -/
-theorem trollopeDelangeFluctuation_add_one (q : ℕ) (x : ℝ) :
-    trollopeDelangeFluctuation q (x + 1) = trollopeDelangeFluctuation q x := by
-  have h1 : (1 + ((⌊x + 1⌋ : ℤ) : ℝ) - (x + 1)) = 1 + ⌊x⌋ - x := by
-    rw [Int.floor_add_one]; push_cast; ring
-  have h2 : (x + 1 - ((⌊x + 1⌋ : ℤ) : ℝ) - 1) = x - ⌊x⌋ - 1 := by
-    rw [Int.floor_add_one]; push_cast; ring
-  simp only [trollopeDelangeFluctuation, h1, h2]
 
 /-- **Trollope–Delange remainder.** Let $q$ be a natural number, write $s_q(n)$ for the sum of the
 base-$q$ digits of a natural number $n$ (with $s_q(n) = n$ when $q \le 1$), and let $h$ be
@@ -354,23 +288,6 @@ public theorem_wanted digitSum_auxiliary_isBigO (q : ℕ) (hq : 2 ≤ q) :
       digitSumFluctuationDoubleIntegral q =O[atTop] (fun x => log x ^ 2) ∧
       digitSumRemainderIntegral q =O[atTop] (fun _ => (1 : ℝ)) ∧
       digitSumRemainderDoubleIntegral q =O[atTop] log
-
-/-- **Bound for a weighted sum of the fluctuation.** Let $q \ge 2$ be an integer, let $s_q(n)$
-denote the sum of the base-$q$ digits of $n$, let $F$ be the Trollope–Delange fluctuation in base
-$q$, and let $F_M = \sup_{t \in \mathbb{R}} |F(t)|$ (taken to be $0$ if $|F|$ is unbounded). For
-all real numbers $x > 0$ and $y$,
-$$\sum_{n=1}^{\lfloor y \rfloor} \frac{s_q(n)}{n} \, F\left(\frac{\log(x/n)}{\log q}\right) \le
-F_M \sum_{n=1}^{\lfloor y \rfloor} \frac{s_q(n)}{n}.$$
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Lemma 4 (`integers-2026-A43-lem-4`). -/
-public theorem_wanted digitSum_reciprocal_fluctuation_sum_le (q : ℕ) (hq : 2 ≤ q) (x y : ℝ)
-    (hx : 0 < x) :
-    ∑ n ∈ Finset.Icc 1 ⌊y⌋₊,
-        ((Nat.digits q n).sum : ℝ) / n * trollopeDelangeFluctuation q (log (x / n) / log q) ≤
-      (⨆ t : ℝ, |trollopeDelangeFluctuation q t|) *
-        ∑ n ∈ Finset.Icc 1 ⌊y⌋₊, ((Nat.digits q n).sum : ℝ) / n
 
 /-- **Reciprocal digit sums weighted by powers of the logarithm.** Let $q \ge 2$ and $j \ge 1$ be
 integers, and let $s_q(n)$ denote the sum of the base-$q$ digits of $n$. As the real number $x$

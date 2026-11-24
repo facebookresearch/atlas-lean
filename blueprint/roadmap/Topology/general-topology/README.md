@@ -17,3 +17,4 @@ Point-set topology of topological and metric spaces: connectedness, separation a
 - [Kuratowski's closure-complement theorem](kuratowski-closure-complement.md)
 - [Non-strictly separated sets](is-separated.md)
 - [Normal space: points are closed and disjoint closed sets have disjoint open neighbourhoods](normal-space.md)
+- [Path component of a point](path-component.md)

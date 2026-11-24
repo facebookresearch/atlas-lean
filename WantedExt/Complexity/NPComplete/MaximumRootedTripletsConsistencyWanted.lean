@@ -20,7 +20,7 @@ Combinatorial Optimization 8 (2004), 29-39, doi:10.1023/B:JOCO.0000021936.04215.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Bioinformatics.Phylogenetics.Splits
