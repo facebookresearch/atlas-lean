@@ -41,3 +41,5 @@
 - [Mean coalescence time at locus B, path form](lintegral-coalescence-time-b.md)
 - [Product moment of the two coalescence times, path form](lintegral-coalescence-time-a-mul-coalesc.md)
 - [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
+
+- [The ancestral line count with recombination is positive recurrent](lineage-count-birth-death-chain-rho-0-positive-r.md)
