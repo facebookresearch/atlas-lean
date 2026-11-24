@@ -41,7 +41,8 @@ namespace CategoryTheory.Functor.IsWaldhausenExact
 variable {C D E : Type u}
   [Category.{v} C] [Category.{v} D] [Category.{v} E]
   [HasZeroObject C] [HasZeroObject D] [HasZeroObject E]
-  [WaldhausenCategory C] [WaldhausenCategory D] [WaldhausenCategory E]
+  [WaldhausenCategoryWithoutGluing C] [WaldhausenCategoryWithoutGluing D]
+      [WaldhausenCategoryWithoutGluing E]
 variable {F : C ⥤ D} {G : D ⥤ E}
 
 open Waldhausen.SConstruction

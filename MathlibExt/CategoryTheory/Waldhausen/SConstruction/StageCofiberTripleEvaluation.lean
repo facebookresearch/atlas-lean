@@ -35,7 +35,7 @@ universe u v
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 private theorem stageTwoExtraction_eq_zeroRowLift :
     stageTwoExtraction C =

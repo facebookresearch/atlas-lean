@@ -19,8 +19,9 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace MathlibExtTest.IteratedStageFlattenNaturality
 open CategoryTheory.Waldhausen.SConstruction
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D]
+    [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- No outer stages leaves the complete original inner carrier unchanged. -/

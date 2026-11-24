@@ -38,7 +38,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
 local instance quillenSpanFlagStageShellTestsWaldhausenC :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 example (B : Stage C 3) : QuillenStageShellData C :=

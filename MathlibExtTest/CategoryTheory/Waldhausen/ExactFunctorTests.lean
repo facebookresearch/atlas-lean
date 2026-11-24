@@ -29,9 +29,9 @@ universe v₁ u₁ v₂ u₂ v₃ u₃
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.ExactFunctorTests
 
-variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D] [WaldhausenCategory D]
-variable {E : Type u₃} [Category.{v₃} E] [HasZeroObject E] [WaldhausenCategory E]
+variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
+variable {E : Type u₃} [Category.{v₃} E] [HasZeroObject E] [WaldhausenCategoryWithoutGluing E]
 
 example : (Functor.id C).IsWaldhausenExact :=
   Functor.IsWaldhausenExact.id

@@ -72,7 +72,7 @@ end Diagram
 section Cofiber
 
 variable {B : Type uB} [Category.{vB} B]
-  {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+  {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
   (F₀ F₁ F₂ : B ⥤ C) (i : F₀ ⟶ F₁) (p : F₁ ⟶ F₂)
   (h : ∀ X : B, IsCofiberSequence (i.app X) (p.app X))
 

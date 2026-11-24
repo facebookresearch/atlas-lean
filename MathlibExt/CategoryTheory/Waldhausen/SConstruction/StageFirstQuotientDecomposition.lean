@@ -46,7 +46,7 @@ universe u v
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 namespace StageFirstQuotient
 
@@ -260,7 +260,7 @@ private theorem indexObject_eq {a b : SimplexCategory} (f : a ⟶ b)
     (indexFunctor f).obj x = y :=
   Arrow.ext h₀ h₁ (Subsingleton.elim _ _)
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 private theorem isPushout_of_vertical_isos {Z X Y P : C}
     {f : Z ⟶ X} {g : Z ⟶ Y} {inl : X ⟶ P} {inr : Y ⟶ P}
     (hg : IsIso g) (hl : IsIso inl) (w : f ≫ inl = g ≫ inr) :
@@ -350,7 +350,7 @@ private theorem stageCofibrations_of_firstIso_tailIso (n : ℕ)
     refine ⟨B.zeroRowObj (firstIndex n), Stage.zeroRowApp f (firstIndex n),
       B.zeroRowSuccMap 0, 𝟙 _, ?_, Category.comp_id _, Category.comp_id _, ?_⟩
     · exact isPushout_of_vertical_isos C hZero hFirst hNat
-    · exact WaldhausenCategory.cofibrations.id_mem _
+    · exact WaldhausenCategoryWithoutGluing.cofibrations.id_mem _
   · let a := A.zeroRowSuccMap i
     let b := B.zeroRowSuccMap i
     let f₀ := Stage.zeroRowApp f i.castSucc
@@ -411,7 +411,7 @@ private theorem prefixPushout_corner_isStageCofibration (n : ℕ)
       rw [Fin.castSucc_zero]
       exact IsZero.isIso (Q.property.diag_isZero 0) (B.property.diag_isZero 0) _
     refine ⟨B.zeroRowObj (firstIndex n), d₁, B.zeroRowSuccMap 0, 𝟙 _, ?_,
-      Category.comp_id _, Category.comp_id _, WaldhausenCategory.cofibrations.id_mem _⟩
+      Category.comp_id _, Category.comp_id _, WaldhausenCategoryWithoutGluing.cofibrations.id_mem _⟩
     exact isPushout_of_vertical_isos C hZero hD
       (d.hom.naturality (horiz (Fin.zero_le (0 : Fin (n + 1)).castSucc)
         (0 : Fin (n + 1)).castSucc_le_succ))
@@ -497,7 +497,7 @@ theorem sourceInclusion_baseCofibration (n : ℕ) {A B : Stage C (n + 1)}
     (sourceInclusion_first_isIso C n A) (sourceInclusion_first_isIso C n B)
     (firstEndo_tail_isIso C n A) (firstEndo_tail_isIso C n B)
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 private theorem pushout_map_of_index_eq (n : ℕ) (A : Ar (n + 1) ⥤ C)
     {x₀ x₁ x₂ x₃ y₀ y₁ y₂ y₃ : Ar (n + 1)}
     (f : x₀ ⟶ x₁) (g : x₀ ⟶ x₂) (r : x₁ ⟶ x₃) (b : x₂ ⟶ x₃)
@@ -650,10 +650,12 @@ theorem zeroEndo_isZero (n : ℕ) (A : Stage C (n + 1)) :
 form a cofiber sequence in the same named general stage category. -/
 theorem objectwise_isCofiberSequence (n : ℕ) (A : Stage C (n + 1)) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     IsCofiberSequence ((sourceInclusion C n).app A) ((quotientProjection C n).app A) := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let eL := (firstEndoIso C n).app A
   let eZ := (zeroEndo_isZero C n A).isoZero
   let toZero : (firstEndo C n).obj A ⟶ (0 : Stage C (n + 1)) :=
@@ -678,12 +680,14 @@ theorem objectwise_isCofiberSequence (n : ℕ) (A : Stage C (n + 1)) :
 /-- The source first-step endofunctor retains all four original exactness fields. -/
 theorem firstEndo_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     (firstEndo C n).IsWaldhausenExact := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let _ : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-  let _ : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+  let _ : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
   exact ((reindexStage_general_isWaldhausenExact C (firstTwo n)).comp
     (stageOneEval_general_isWaldhausenExact C)).comp
       ((stageOne_general_isWaldhausenExact C).comp
@@ -692,12 +696,14 @@ theorem firstEndo_isWaldhausenExact (n : ℕ) :
 /-- The actual quotient-degeneracy endofunctor retains all original exactness fields. -/
 theorem quotientEndo_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     (quotientEndo C n).IsWaldhausenExact := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let _ : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  let _ : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+  let _ : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
   exact (reindexStage_general_isWaldhausenExact C (SimplexCategory.δ (0 : Fin (n + 2)))).comp
     (reindexStage_general_isWaldhausenExact C (SimplexCategory.σ (0 : Fin (n + 1))))
 
@@ -705,11 +711,13 @@ theorem quotientEndo_isWaldhausenExact (n : ℕ) :
 source cofibration-sequence condition, including the internally earned base corner. -/
 theorem isWaldhausenCofiberFunctorSequence (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     IsWaldhausenCofiberFunctorSequence (firstEndo C n) (𝟭 (Stage C (n + 1)))
       (quotientEndo C n) (sourceInclusion C n) (quotientProjection C n) := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   refine ⟨firstEndo_isWaldhausenExact C n, Functor.IsWaldhausenExact.id,
     quotientEndo_isWaldhausenExact C n, objectwise_isCofiberSequence C n, ?_⟩
   intro A B φ hφ
@@ -720,10 +728,12 @@ theorem isWaldhausenCofiberFunctorSequence (n : ℕ) :
 /-- The stock original cofiber lift of the internally earned source sequence. -/
 def cofiberLift (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     Stage C (n + 1) ⥤ CofiberSequenceCategory (Stage C (n + 1)) := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   exact cofiberFunctorSequenceLift (firstEndo C n) (𝟭 _) (quotientEndo C n)
     (sourceInclusion C n) (quotientProjection C n)
     (isWaldhausenCofiberFunctorSequence C n).objectwise
@@ -731,55 +741,63 @@ def cofiberLift (n : ℕ) :
 /-- The same stock lift is exact for the original relative cofiber Waldhausen value. -/
 theorem cofiberLift_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
-    letI : WaldhausenCategory (CofiberSequenceCategory (Stage C (n + 1))) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory (Stage C (n + 1))) :=
       CofiberSequenceCategory.relativeWaldhausenCategory (Stage C (n + 1))
     (cofiberLift C n).IsWaldhausenExact := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
-  let _ : WaldhausenCategory (CofiberSequenceCategory (Stage C (n + 1))) :=
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory (Stage C (n + 1))) :=
     CofiberSequenceCategory.relativeWaldhausenCategory (Stage C (n + 1))
   exact (isWaldhausenCofiberFunctorSequence C n).lift_isWaldhausenExact
 
 /-- The original first-entry functor is exact for the named original stage value. -/
 theorem source_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     (source C n).IsWaldhausenExact := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let _ : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-  let _ : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+  let _ : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
   exact (reindexStage_general_isWaldhausenExact C (firstTwo n)).comp
     (stageOneEval_general_isWaldhausenExact C)
 
 /-- The original first-step insertion is exact for the named stage value. -/
 theorem insert_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     (insert C n).IsWaldhausenExact := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let _ : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-  let _ : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+  let _ : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
   exact (stageOne_general_isWaldhausenExact C).comp
     (reindexStage_general_isWaldhausenExact C (firstCut n))
 
 /-- The actual zeroth-face quotient is exact for the two original named stage values. -/
 theorem quotient_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     (quotient C n).IsWaldhausenExact := by
   exact reindexStage_general_isWaldhausenExact C (SimplexCategory.δ (0 : Fin (n + 2)))
 
 /-- The actual first degeneracy is exact for the two original named stage values. -/
 theorem degenerateReturn_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     (degenerateReturn C n).IsWaldhausenExact := by
   exact reindexStage_general_isWaldhausenExact C (SimplexCategory.σ (0 : Fin (n + 1)))
 
@@ -877,14 +895,16 @@ def insertQuotientZeroIso (n : ℕ) :
 the first-step insertion and the returned quotient. -/
 def splitReturn (n : ℕ) : C × Stage C n ⥤ Stage C (n + 1) := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   exact (insert C n).prod (degenerateReturn C n) ⋙
     Waldhausen.waldhausenCoproductFunctor (Stage C (n + 1))
 
 /-- Every whole split-return stage is the same original chosen stage coproduct. -/
 theorem splitReturn_obj (n : ℕ) (X : C) (Q : Stage C n) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     (splitReturn C n).obj (X, Q) =
       (Waldhausen.waldhausenCoproductFunctor (Stage C (n + 1))).obj
         ((insert C n).obj X, (degenerateReturn C n).obj Q) := by
@@ -894,7 +914,8 @@ theorem splitReturn_obj (n : ℕ) (X : C) (Q : Stage C n) :
 theorem splitReturn_map (n : ℕ) {X Y : C} (f : X ⟶ Y)
     {Q Q' : Stage C n} (g : Q ⟶ Q') :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     (splitReturn C n).map (X := (X, Q)) (Y := (Y, Q')) (f, g) =
       (Waldhausen.waldhausenCoproductFunctor (Stage C (n + 1))).map
         (X := ((insert C n).obj X, (degenerateReturn C n).obj Q))
@@ -909,7 +930,8 @@ def splitReturnIntervalIso (n : ℕ) (X : C) (Q : Stage C n) (x : Ar (n + 1)) :
       (Waldhausen.waldhausenCoproductFunctor C).obj
         (((insert C n).obj X).obj.obj x, ((degenerateReturn C n).obj Q).obj.obj x) := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   exact ((evalIsGeneralStageWaldhausenExact C (n + 1) x).waldhausenCoproductIso).app
     ((insert C n).obj X, (degenerateReturn C n).obj Q)
 
@@ -918,7 +940,8 @@ S1-unit and actual returned-zero comparison. -/
 def splitReturnSourceIso (n : ℕ) :
     splitReturn C n ⋙ source C n ≅ CategoryTheory.Prod.fst C (Stage C n) := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let K := (insert C n).prod (degenerateReturn C n)
   let T : C × Stage C n ⥤ C × C :=
     (CategoryTheory.Prod.fst C (Stage C n)).prod'
@@ -953,9 +976,10 @@ returned-quotient identity and original zero-left unit comparison. -/
 def splitReturnQuotientIso (n : ℕ) :
     splitReturn C n ⋙ quotient C n ≅ CategoryTheory.Prod.snd C (Stage C n) := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let _ : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  let _ : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+  let _ : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
   let K := (insert C n).prod (degenerateReturn C n)
   let T : C × Stage C n ⥤ Stage C n × Stage C n :=
     ((Functor.const (C × Stage C n)).obj (0 : Stage C n)).prod'
@@ -1042,10 +1066,12 @@ theorem zeroEndo_obj (n : ℕ) (A : Stage C (n + 1)) (x : Ar (n + 1)) :
 /-- The stock cofiber lift retains the original entire first-step endofunctor. -/
 theorem cofiberLift_source (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     cofiberLift C n ⋙ CofiberSequenceCategory.source (Stage C (n + 1)) = firstEndo C n := by
   let : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   exact cofiberFunctorSequenceLift_source (firstEndo C n) (𝟭 _) (quotientEndo C n)
     (sourceInclusion C n) (quotientProjection C n)
     (isWaldhausenCofiberFunctorSequence C n).objectwise
@@ -1053,11 +1079,13 @@ theorem cofiberLift_source (n : ℕ) :
 /-- The stock cofiber lift keeps the unchanged original stage as its whole middle functor. -/
 theorem cofiberLift_middle (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     cofiberLift C n ⋙ CofiberSequenceCategory.middle (Stage C (n + 1)) =
       𝟭 (Stage C (n + 1)) := by
   let : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   exact cofiberFunctorSequenceLift_middle (firstEndo C n) (𝟭 _) (quotientEndo C n)
     (sourceInclusion C n) (quotientProjection C n)
     (isWaldhausenCofiberFunctorSequence C n).objectwise
@@ -1066,10 +1094,12 @@ theorem cofiberLift_middle (n : ℕ) :
 as its whole quotient functor. -/
 theorem cofiberLift_quotient (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     cofiberLift C n ⋙ CofiberSequenceCategory.quotient (Stage C (n + 1)) = quotientEndo C n := by
   let : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   exact cofiberFunctorSequenceLift_quotient (firstEndo C n) (𝟭 _) (quotientEndo C n)
     (sourceInclusion C n) (quotientProjection C n)
     (isWaldhausenCofiberFunctorSequence C n).objectwise
@@ -1078,16 +1108,18 @@ theorem cofiberLift_quotient (n : ℕ) :
 named stage values and the actual componentwise product value. -/
 theorem projection_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
-    letI : WaldhausenCategory (C × Stage C n) := prodWaldhausen
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (C × Stage C n) := prodWaldhausen
     (projection C n).IsWaldhausenExact := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let _ : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  let _ : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
-  let _ : WaldhausenCategory (C × Stage C n) := prodWaldhausen
+  let _ : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
+  let _ : WaldhausenCategoryWithoutGluing (C × Stage C n) := prodWaldhausen
   let hF := source_isWaldhausenExact C n
   let hG := quotient_isWaldhausenExact C n
   exact hF.prod' hG
@@ -1096,17 +1128,19 @@ theorem projection_isWaldhausenExact (n : ℕ) :
 using the same original componentwise and general-stage Waldhausen values. -/
 theorem splitReturn_isWaldhausenExact (n : ℕ) (hGlue : WaldhausenGluingAxiom (C := C)) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
-    letI : WaldhausenCategory (C × Stage C n) := prodWaldhausen
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (C × Stage C n) := prodWaldhausen
     (splitReturn C n).IsWaldhausenExact := by
   let _ : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-  let _ : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+    generalStageWaldhausenCategory C (n + 1)
   let _ : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  let _ : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
-  let _ : WaldhausenCategory (C × Stage C n) := prodWaldhausen
-  let _ : WaldhausenCategory (Stage C (n + 1) × Stage C (n + 1)) := prodWaldhausen
+  let _ : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
+  let _ : WaldhausenCategoryWithoutGluing (C × Stage C n) := prodWaldhausen
+  let _ : WaldhausenCategoryWithoutGluing (Stage C (n + 1) × Stage C (n + 1)) := prodWaldhausen
   let f₀ : C × Stage C n ⥤ Stage C (n + 1) :=
     CategoryTheory.Prod.fst C (Stage C n) ⋙ insert C n
   let f₁ : C × Stage C n ⥤ Stage C (n + 1) :=

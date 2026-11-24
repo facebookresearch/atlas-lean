@@ -103,49 +103,49 @@ theorem levelZeroEdgeDiagram_diag_one :
 omit [HasBinaryBiproducts C] [ExactCategory C] [F.IsExact] in
 /-- The edge diagram is a finite stage: all values zero, all maps zero-isos. -/
 theorem isStage_levelZeroEdgeDiagram :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       IsStage 1 (levelZeroEdgeDiagram C D F)) := by
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact isStage_of_pointwise_zero D _ (isZero_levelZeroEdgeDiagramObj C D F)
 
 /-- Bundled degree-one stage with mapped/target diagonal faces. -/
 noncomputable def levelZeroEdgeStage :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       Stage D 1) := by
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact ⟨levelZeroEdgeDiagram C D F, isStage_levelZeroEdgeDiagram C D F⟩
 
 /-- Weak degree-one stage with mapped/target diagonal faces. -/
 noncomputable def levelZeroEdgeWeak :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       StageWeakCategory D 1) := by
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact ⟨levelZeroEdgeStage C D F⟩
 
 /-- Mapped-zero vertex in the diagonal, as `mk₀` of the mapped zero stage. -/
 noncomputable def levelZeroEdgeMappedVertex :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonal D).obj (op ⦋0⦌)) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact ComposableArrows.mk₀ ((mapStageWeak C D F 0).obj ⟨stageZero C⟩)
 
 /-- Underlying degree-one diagonal simplex from the identity on the edge stage. -/
 noncomputable def levelZeroEdgeSimplex :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonal D).obj (op ⦋1⦌)) := by
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact ComposableArrows.mk₁ (𝟙 (levelZeroEdgeWeak C D F))
 
 /-- Reindexing along `δ 1` recovers the mapped zero stage. -/
 theorem levelZeroEdge_reindex_src :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (reindexStageWeak D (SimplexCategory.δ 1)).obj (levelZeroEdgeWeak C D F) =
         (mapStageWeak C D F 0).obj ⟨stageZero C⟩) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   ext
   refine Functor.ext ?_ ?_
   · intro A
@@ -171,10 +171,10 @@ theorem levelZeroEdge_reindex_src :
 omit [HasBinaryBiproducts C] [ExactCategory C] [F.IsExact] in
 /-- Reindexing along `δ 0` recovers the target zero stage. -/
 theorem levelZeroEdge_reindex_tgt :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (reindexStageWeak D (SimplexCategory.δ 0)).obj (levelZeroEdgeWeak C D F) =
         (⟨stageZero D⟩ : StageWeakCategory D 0)) := by
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   ext
   refine Functor.ext ?_ ?_
   · intro A
@@ -198,24 +198,24 @@ theorem levelZeroEdge_reindex_tgt :
 omit [HasBinaryBiproducts C] [ExactCategory C] [F.IsExact] in
 /-- Inner nerve face of the identity is the vertex. -/
 private theorem levelZeroEdge_inner_face (i : Fin 2) :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       ((CategoryTheory.nerve (StageWeakCategory D 1)).map
         (SimplexCategory.δ i).op) (ComposableArrows.mk₁ (𝟙 (levelZeroEdgeWeak C D F))) =
         ComposableArrows.mk₀ (levelZeroEdgeWeak C D F)) := by
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   apply ComposableArrows.ext₀
   fin_cases i <;> rfl
 
 omit [F.IsExact] in
 /-- Diagonal source face is `mk₀` of the `δ 1` reindexing. -/
 theorem levelZeroEdge_diag_src :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonal D).δ 1 (levelZeroEdgeSimplex C D F) =
         ComposableArrows.mk₀
           ((reindexStageWeak D (SimplexCategory.δ 1)).obj (levelZeroEdgeWeak C D F))) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   change (stageWeakDiagonal D).map _ (levelZeroEdgeSimplex C D F) = _
   have hstep : (stageWeakDiagonal D).map (SimplexCategory.δ 1).op
       (levelZeroEdgeSimplex C D F) =
@@ -227,11 +227,11 @@ theorem levelZeroEdge_diag_src :
 omit [HasBinaryBiproducts C] [ExactCategory C] [F.IsExact] in
 /-- Diagonal target face is `mk₀` of the `δ 0` reindexing. -/
 theorem levelZeroEdge_diag_tgt :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonal D).δ 0 (levelZeroEdgeSimplex C D F) =
         ComposableArrows.mk₀
           ((reindexStageWeak D (SimplexCategory.δ 0)).obj (levelZeroEdgeWeak C D F))) := by
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   change (stageWeakDiagonal D).map _ (levelZeroEdgeSimplex C D F) = _
   have hstep : (stageWeakDiagonal D).map (SimplexCategory.δ 0).op
       (levelZeroEdgeSimplex C D F) =
@@ -242,12 +242,12 @@ theorem levelZeroEdge_diag_tgt :
 
 /-- The mapped-zero edge directly in the weak-stage diagonal, mapped → target. -/
 noncomputable def stageWeakDiagonalLevelZeroEdge :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonal D).Edge
         (levelZeroEdgeMappedVertex C D F) (stageWeakDiagonalZeroVertex D)) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   refine SSet.Edge.ofEq (SSet.Edge.mk' (levelZeroEdgeSimplex C D F)) ?_ ?_
   · rw [levelZeroEdge_diag_src, levelZeroEdge_reindex_src]
     rfl
@@ -257,19 +257,19 @@ noncomputable def stageWeakDiagonalLevelZeroEdge :
 /-- Underlying simplex computation: the edge uses `mk₁` of the identity. -/
 @[simp]
 theorem stageWeakDiagonalLevelZeroEdge_edge :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonalLevelZeroEdge C D F).edge =
         ComposableArrows.mk₁ (𝟙 (levelZeroEdgeWeak C D F))) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   rfl
 
 /-- Source of the level-zero edge is the mapped-zero vertex. -/
 @[simp]
 theorem stageWeakDiagonalLevelZeroEdge_src :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonal D).δ 1 (stageWeakDiagonalLevelZeroEdge C D F).edge =
         levelZeroEdgeMappedVertex C D F) :=
   SSet.Edge.src_eq _
@@ -277,8 +277,8 @@ theorem stageWeakDiagonalLevelZeroEdge_src :
 /-- Target of the level-zero edge is the target-zero vertex. -/
 @[simp]
 theorem stageWeakDiagonalLevelZeroEdge_tgt :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonal D).δ 0 (stageWeakDiagonalLevelZeroEdge C D F).edge =
         stageWeakDiagonalZeroVertex D) :=
   SSet.Edge.tgt_eq _

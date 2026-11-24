@@ -31,7 +31,7 @@ universe v u
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StageWeakNerveTests
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Outer degrees 0 and 1 are nerves of `StageWeakCategory C 0/1`.
 

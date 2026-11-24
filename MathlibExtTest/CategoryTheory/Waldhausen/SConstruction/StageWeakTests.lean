@@ -31,7 +31,7 @@ universe v u
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StageWeakTests
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Membership in `stageWeak` is pointwise weak equivalence. -/
 example (n : ℕ) (X Y : Stage C n) (f : X ⟶ Y) :

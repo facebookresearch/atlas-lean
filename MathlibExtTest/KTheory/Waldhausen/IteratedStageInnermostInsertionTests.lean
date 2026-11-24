@@ -19,7 +19,7 @@ open CategoryTheory CategoryTheory.Limits Opposite
 open scoped Simplicial
 namespace MathlibExtTest.IteratedStageInnermostInsertion
 open CategoryTheory.Waldhausen.SConstruction
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every finite original prior iteration has the actual innermost interval insertion. -/
 def originalInsertion (ns : List ℕ) {a : SimplexCategoryᵒᵖ}

@@ -37,8 +37,10 @@ universe u₀ v₀ u₁ v₁ u₂ v₂ u₃ v₃ uE vE
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable {C : Type (max uC vC)} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type (max uC vC)} [Category.{vC} C] [HasZeroObject C]
+    [WaldhausenCategoryWithoutGluing C]
+variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D]
+    [WaldhausenCategoryWithoutGluing D]
 variable {F G K : C ⥤ D}
 
 /-- The finite-stage isomorphism and transformation lifts have the same whole forward map. -/
@@ -222,8 +224,8 @@ theorem mapIteratedStageNatTrans_cons_app_hom_heq
   exact hm
 
 private theorem stageMap_eq_of_exact_eq
-    {A : Type (max uC vC)} [Category.{vC} A] [HasZeroObject A] [WaldhausenCategory A]
-    {B : Type (max uD vD)} [Category.{vD} B] [HasZeroObject B] [WaldhausenCategory B]
+    {A : Type (max uC vC)} [Category.{vC} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    {B : Type (max uD vD)} [Category.{vD} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
     {P Q : A ⥤ B} (hP : P.IsWaldhausenExact) (hQ : Q.IsWaldhausenExact)
     (h : P = Q) (n : ℕ) : hP.mapStage n = hQ.mapStage n := by
   subst Q
@@ -245,10 +247,12 @@ set_option backward.isDefEq.respectTransparency false in
 private theorem stageNatTrans_baseChange
     {A : Type (max u₀ v₀)} [Category.{v₀} A]
     {A' : Type (max u₁ v₁)} [Category.{v₁} A']
-    [HasZeroObject A] [HasZeroObject A'] [WaldhausenCategory A] [WaldhausenCategory A']
+    [HasZeroObject A] [HasZeroObject A'] [WaldhausenCategoryWithoutGluing A]
+        [WaldhausenCategoryWithoutGluing A']
     {B : Type (max u₂ v₂)} [Category.{v₂} B]
     {B' : Type (max u₃ v₃)} [Category.{v₃} B']
-    [HasZeroObject B] [HasZeroObject B'] [WaldhausenCategory B] [WaldhausenCategory B']
+    [HasZeroObject B] [HasZeroObject B'] [WaldhausenCategoryWithoutGluing B]
+        [WaldhausenCategoryWithoutGluing B']
     {R : A ⥤ A'} {S : B ⥤ B'} {F₀ G₀ : A ⥤ B} {F₁ G₁ : A' ⥤ B'}
     (hR : R.IsWaldhausenExact) (hS : S.IsWaldhausenExact)
     (hF₀ : F₀.IsWaldhausenExact) (hG₀ : G₀.IsWaldhausenExact)
@@ -314,13 +318,13 @@ private theorem transportedNatTransSquare
       rfl)
   have h₁ := Functor.map_retyped_heq
     ((Functor.whiskeringLeft A B E').obj RO) hF₁ hG₁ _ _ hη₁
-  have h₂ := Functor.map_whole_heq
+  have h₂ := Functor.hcongr_hom
     (congrArg (Functor.whiskeringLeft A B' E').obj hR) η₁'
   have h₃ := Functor.map_retyped_heq
     ((Functor.whiskeringLeft A A' E').obj ea.functor) hF' hG' _ _ hη'
   have h₄ := Functor.map_retyped_heq
     ((Functor.whiskeringRight A D' E').obj S) hF₀ hG₀ _ _ hη₀
-  have h₅ := Functor.map_whole_heq
+  have h₅ := Functor.hcongr_hom
     (congrArg (Functor.whiskeringRight A D E').obj hS) η₀
   apply Functor.reflect_retyped_heq
     ((Functor.whiskeringRight A E E').obj ee.functor) hF hG
@@ -409,10 +413,10 @@ private theorem iteratedNatTrans_reindex_heq
       have hab : a = b := Subsingleton.elim _ _
       subst b
       let τ := mapIteratedStageNatTrans hF hG η (stageTupleDegrees a)
-      have h₁ := Functor.map_whole_heq
+      have h₁ := Functor.hcongr_hom
         (congrArg (Functor.whiskeringLeft (StageAtTuple C a) (StageAtTuple C a)
           (StageAtTuple D a)).obj (reindexIteratedStage_zero C a α)) τ
-      have h₂ := Functor.map_whole_heq
+      have h₂ := Functor.hcongr_hom
         (congrArg (Functor.whiskeringRight (StageAtTuple C a) (StageAtTuple D a)
           (StageAtTuple D a)).obj (reindexIteratedStage_zero D a α)) τ
       have hm : Functor.whiskerLeft (𝟭 (StageAtTuple C a)) τ =
@@ -514,8 +518,8 @@ theorem mapIteratedStageNatTrans_reindex
     (mapIteratedStage_reindex hG r α)).2 (iteratedNatTrans_reindex_heq hF hG η r α)
 
 private theorem iteratedMap_eq_of_functor_eq
-    {A : Type (max u₀ v₀)} [Category.{v₀} A] [HasZeroObject A] [WaldhausenCategory A]
-    {B : Type (max u₁ v₁)} [Category.{v₁} B] [HasZeroObject B] [WaldhausenCategory B]
+    {A : Type (max u₀ v₀)} [Category.{v₀} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    {B : Type (max u₁ v₁)} [Category.{v₁} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
     {P Q : A ⥤ B} (hP : P.IsWaldhausenExact) (hQ : Q.IsWaldhausenExact)
     (h : P = Q) (ns : List ℕ) : mapIteratedStage hP ns = mapIteratedStage hQ ns := by
   cases h
@@ -534,10 +538,12 @@ private theorem iteratedMap_chart_representation
 
 set_option backward.isDefEq.respectTransparency false in
 private theorem iteratedNatTrans_baseChange
-    {A : Type (max u₀ v₀)} [Category.{v₀} A] [HasZeroObject A] [WaldhausenCategory A]
-    {A' : Type (max u₁ v₁)} [Category.{v₁} A'] [HasZeroObject A'] [WaldhausenCategory A']
-    {B : Type (max u₂ v₂)} [Category.{v₂} B] [HasZeroObject B] [WaldhausenCategory B]
-    {B' : Type (max u₃ v₃)} [Category.{v₃} B'] [HasZeroObject B'] [WaldhausenCategory B']
+    {A : Type (max u₀ v₀)} [Category.{v₀} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    {A' : Type (max u₁ v₁)} [Category.{v₁} A'] [HasZeroObject A']
+        [WaldhausenCategoryWithoutGluing A']
+    {B : Type (max u₂ v₂)} [Category.{v₂} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
+    {B' : Type (max u₃ v₃)} [Category.{v₃} B'] [HasZeroObject B']
+        [WaldhausenCategoryWithoutGluing B']
     {R : A ⥤ A'} {S : B ⥤ B'} {F₀ G₀ : A ⥤ B} {F₁ G₁ : A' ⥤ B'}
     (hR : R.IsWaldhausenExact) (hS : S.IsWaldhausenExact)
     (hF₀ : F₀.IsWaldhausenExact) (hG₀ : G₀.IsWaldhausenExact)
@@ -625,7 +631,8 @@ private theorem iteratedNatTrans_baseChange
         (iteratedStageConsEquivalence_inverse_functor A' n ns)
         (iteratedStageConsEquivalence_inverse_functor B' n ns)
 
-variable {E : Type (max uE vE)} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategory E]
+variable {E : Type (max uE vE)} [Category.{vE} E] [HasZeroObject E]
+    [WaldhausenCategoryWithoutGluing E]
 
 /-- Precomposition by an original exact functor retains the whole iterated transformation. -/
 theorem mapIteratedStageNatTrans_precomp {R : E ⥤ C} (hR : R.IsWaldhausenExact)

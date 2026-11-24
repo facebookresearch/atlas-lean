@@ -47,10 +47,10 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
   [HasZeroObject D] [HasBinaryBiproducts D] [ExactCategory D]
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]
 
-local instance : WaldhausenCategory C :=
+local instance : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
-local instance : WaldhausenCategory D :=
+local instance : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 section Symbolic

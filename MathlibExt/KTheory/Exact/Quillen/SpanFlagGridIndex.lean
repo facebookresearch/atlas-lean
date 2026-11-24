@@ -238,7 +238,7 @@ namespace CategoryTheory.Waldhausen.SConstruction
 open Limits SimplexCategory
 
 variable {C : Type u} [Category.{v} C] [HasZeroObject C]
-  [WaldhausenCategory C]
+  [WaldhausenCategoryWithoutGluing C]
 
 /-- Reindexing first by an edgewise simplex map and then by a shell equals
 restriction to the image shell. -/

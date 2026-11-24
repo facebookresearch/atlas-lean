@@ -29,15 +29,15 @@ universe u v
 open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Base gluing propagates to the actual finite stages with their original named structure. -/
 theorem generalStageWaldhausenGluingAxiom (hGlue : WaldhausenGluingAxiom (C := C)) (n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     WaldhausenGluingAxiom (C := Stage C n) := by
-  letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+  let : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
+  let : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
   constructor
   intro X Y Z P X' Y' Z' P' i f inY inZ i' f' inY' inZ' hP hP' x y z p
     hi hi' hix hfx hYP hZP hx hy hz

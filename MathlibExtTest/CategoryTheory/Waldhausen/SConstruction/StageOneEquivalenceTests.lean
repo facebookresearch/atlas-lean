@@ -32,7 +32,7 @@ universe v u
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StageOneEquivalenceTests
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Forward direction of the equivalence is `stageOne`. -/
 example : (stageOneEquivalence C).functor = stageOne C :=

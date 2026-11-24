@@ -24,7 +24,7 @@ induced maps `D.inducedMap01`/`D.inducedMap12`, the induced composite
 hypotheses, and the `.zero` field witnesses that packaged composite.
 Both `wS`/`wT` are explicit variables; omitting either fails elaboration.
 Requires only `[Category C] [HasZeroMorphisms C]`. No `Preadditive`,
-`HasZeroObject`, `ExactCategory`, or `WaldhausenCategory` hypotheses, no
+`HasZeroObject`, `ExactCategory`, or `WaldhausenCategoryWithoutGluing` hypotheses, no
 `IsPushout.hom_ext` re-proof or leg-law fixtures, no admissible-mono/exact
 or cofiber-sequence/category instance, no cokernel comparison, and no
 additivity, `K₀`/G-theory, spectra, or Q/S comparison.

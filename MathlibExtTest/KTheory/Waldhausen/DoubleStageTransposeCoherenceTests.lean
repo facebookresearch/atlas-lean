@@ -27,7 +27,7 @@ universe u v uD vD
 
 namespace MathlibExtTest.KTheory.Waldhausen.DoubleStageTransposeCoherence
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every original outer simplex operator retains its whole functor after interchange. -/
 private theorem originalOuterOperator {a b : SimplexCategory} (α : a ⟶ b) (n : ℕ) :
@@ -106,7 +106,7 @@ private theorem originalQuotientCell (m n : ℕ) :
   rfl
 
 variable {C}
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- Independent original base universes retain the whole double-stage functor square. -/

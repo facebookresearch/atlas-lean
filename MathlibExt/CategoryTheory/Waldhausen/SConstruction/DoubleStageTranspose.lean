@@ -34,10 +34,10 @@ universe u v uD vD
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 private theorem cofiberSequenceProperty_of_iso
-    {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+    {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
     {S T : ComposableArrows D 2} (e : S ≅ T) (hS : cofiberSequenceProperty D S) :
     cofiberSequenceProperty D T := by
   change IsCofiberSequence (S.map' 0 1) (S.map' 1 2) at hS
@@ -51,7 +51,7 @@ private theorem cofiberSequenceProperty_of_iso
   have w₁ : S.map' 1 2 ≫ e₂.hom = e₁.hom ≫ T.map' 1 2 :=
     e.hom.naturality (homOfLE (show (1 : Fin 3) ≤ 2 by decide))
   have hi' : IsCofibration (T.map' 0 1) :=
-    ((WaldhausenCategory.cofibrations (C := D)).arrow_mk_iso_iff
+    ((WaldhausenCategoryWithoutGluing.cofibrations (C := D)).arrow_mk_iso_iff
       (Arrow.isoMk e₀ e₁ w₀.symm)).mp hi
   refine ⟨hi', e₀.inv ≫ z, q ≫ e₂.hom, ?_⟩
   apply hP.of_iso e₀ (Iso.refl _) e₁ e₂
@@ -324,7 +324,7 @@ theorem doubleStageTransposeFunctor_stageCofibrations (m n : ℕ) :
     IsPushout (i.app A) (F₀.map φ) l r ∧
       l ≫ d = F₁.map φ ∧ r ≫ d = i.app B ∧ IsCofibration d
   let : HasPushout (i.app A) (F₀.map φ) := by
-    obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+    obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
       (C := Stage C m) (i.app A) (HS.objectwise A).1 (F₀.obj B) (F₀.map φ)
     exact hP.flip.hasPushout
   refine ⟨pushout (i.app A) (F₀.map φ), pushout.inl _ _, pushout.inr _ _,

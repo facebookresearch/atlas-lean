@@ -45,7 +45,7 @@ namespace CategoryTheory.Waldhausen.SConstruction
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance stageZeroRowWaldhausenCategory : WaldhausenCategory C :=
+local instance stageZeroRowWaldhausenCategory : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- The inclusion of the zero row in the finite Stage indexing category. -/

@@ -39,7 +39,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
 local instance quillenSpanFlagStageShellFunctorTestsWaldhausenC :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 example (a : SimplexCategory) (k : Fin (a.len + 1)) :

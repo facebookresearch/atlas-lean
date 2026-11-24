@@ -36,7 +36,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The literal ORIGINAL zero-left insertion on C objects and maps. -/
 def waldhausenZeroLeftPair : C ⥤ C × C :=
@@ -142,26 +142,26 @@ def waldhausenCoproductRightUnitIso :
     NatIso.isIso_of_isIso_app (originalCoproductZeroRightInjection C)
   exact (asIso (originalCoproductZeroRightInjection C)).symm
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 private theorem waldhausenZeroLeftPair_eq_aux :
     waldhausenZeroLeftPair C =
       ((Functor.const C).obj (0 : C)).prod' (𝟭 C) := by
   rfl
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- The WHOLE original zero-left functor is the literal constant-zero/identity pair. -/
 theorem waldhausenZeroLeftPair_eq :
     waldhausenZeroLeftPair C =
       ((Functor.const C).obj (0 : C)).prod' (𝟭 C) :=
   waldhausenZeroLeftPair_eq_aux C
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 private theorem waldhausenZeroRightPair_eq_aux :
     waldhausenZeroRightPair C =
       (𝟭 C).prod' ((Functor.const C).obj (0 : C)) := by
   rfl
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- The WHOLE original zero-right functor is the literal identity/constant-zero pair. -/
 theorem waldhausenZeroRightPair_eq :
     waldhausenZeroRightPair C =

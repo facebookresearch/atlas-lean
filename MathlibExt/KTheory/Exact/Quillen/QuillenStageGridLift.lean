@@ -44,7 +44,7 @@ namespace AlgebraicKTheory
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance quillenStageGridLiftWaldhausenC : WaldhausenCategory C :=
+local instance quillenStageGridLiftWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- Type of degree-`a` Quillen simplices. -/
@@ -160,7 +160,7 @@ def quillenStageGridProjection (C : Type u) [Category.{v} C]
     [Preadditive C] [HasZeroObject C] [HasBinaryBiproducts C]
     [ExactCategory C] (a : SimplexCategory) :
     QuillenStageGridLift C a ⥤
-      (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+      (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
         StageWeakCategory C (edgewiseQ.obj a).len) :=
   (quillenStageGridIsLift C a).ι ⋙
     Comma.fst (edgewiseStageQuillenSimplexFunctor C a)

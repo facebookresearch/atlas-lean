@@ -34,7 +34,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- An actual zero stage in every degree, from the existing canonical
 zero diagram and its already proved finite-stage property. -/
@@ -42,7 +42,8 @@ noncomputable def generalStageZero (n : ℕ) : Stage C n :=
   ⟨zeroDiagram C n, isStage_zeroDiagram C n⟩
 
 
-/-- The named original general-stage zero object's underlying diagram is the canonical constant zero. -/
+/-- The named original general-stage zero object's underlying diagram is the canonical constant
+zero. -/
 theorem generalStageZero_obj (n : ℕ) :
     (generalStageZero C n).obj = zeroDiagram C n := by
   unfold generalStageZero
@@ -66,10 +67,10 @@ theorem generalStageHasZeroObject (n : ℕ) : HasZeroObject (Stage C n) :=
 
 /-- Every original Waldhausen field on finite stages, using the genuine
 stage cofibrations and the same original pointwise weak equivalences. -/
-@[expose]
+@[expose, instance_reducible]
 noncomputable def generalStageWaldhausenCategory (n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n;
-    WaldhausenCategory (Stage C n) := by
+    WaldhausenCategoryWithoutGluing (Stage C n) := by
   letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
   exact {
     cofibrations := stageCofibrations C n
@@ -87,7 +88,7 @@ noncomputable def generalStageWaldhausenCategory (n : ℕ) :
 private theorem generalStageWaldhausenCategory_cofibration_aux (n : ℕ)
     {A B : Stage C n} (φ : A ⟶ B) :
     (letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n;
-      letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n;
+      letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n;
       IsCofibration φ) ↔ stageCofibrations C n φ := by
   unfold generalStageWaldhausenCategory
   rfl
@@ -97,14 +98,14 @@ successive-corner stage cofibrations used by its whole pushout constructor. -/
 theorem isCofibration_generalStageWaldhausenCategory_iff (n : ℕ)
     {A B : Stage C n} (φ : A ⟶ B) :
     (letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n;
-      letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n;
+      letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n;
       IsCofibration φ) ↔ stageCofibrations C n φ :=
   generalStageWaldhausenCategory_cofibration_aux C n φ
 
 private theorem generalStageWaldhausenCategory_weak_aux (n : ℕ)
     {A B : Stage C n} (φ : A ⟶ B) :
     (letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n;
-      letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n;
+      letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n;
       IsWeakEquivalence φ) ↔ stageWeak C n φ := by
   unfold generalStageWaldhausenCategory
   rfl
@@ -114,7 +115,7 @@ original pointwise weak equivalences. -/
 theorem isWeakEquivalence_generalStageWaldhausenCategory_iff (n : ℕ)
     {A B : Stage C n} (φ : A ⟶ B) :
     (letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n;
-      letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n;
+      letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n;
       IsWeakEquivalence φ) ↔ stageWeak C n φ :=
   generalStageWaldhausenCategory_weak_aux C n φ
 

@@ -24,11 +24,11 @@ universe uA vA uB vB
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.ProductExactFunctorTests
 
-variable (A : Type uA) [Category.{vA} A] [HasZeroObject A] [WaldhausenCategory A]
-variable (B : Type uB) [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
+variable (A : Type uA) [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+variable (B : Type uB) [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
 
 /-- The original componentwise product structure used by both projections. -/
-local instance originalProductWaldhausen : WaldhausenCategory (A × B) :=
+local instance originalProductWaldhausen : WaldhausenCategoryWithoutGluing (A × B) :=
   prodWaldhausen (C := A) (D := B)
 
 /-- The original first projection has its canonical exactness certificate. -/

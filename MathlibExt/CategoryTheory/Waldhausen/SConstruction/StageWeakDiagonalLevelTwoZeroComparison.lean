@@ -94,37 +94,37 @@ omit [HasBinaryBiproducts C] [HasBinaryBiproducts D] [ExactCategory C]
 /-- The comparison diagram is a finite stage: all values zero,
 all maps zero-isos. -/
 theorem isStage_levelTwoZeroComparisonDiagram :
-    (letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       IsStage 2 (levelTwoZeroComparisonDiagram C D F E G)) := by
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   exact isStage_of_pointwise_zero E _
     (isZero_levelTwoZeroComparisonDiagramObj C D F E G)
 
 /-- Bundled degree-two stage for the comparison triangle. -/
 noncomputable def levelTwoZeroComparisonStage :
-    (letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       Stage E 2) := by
-  letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   exact ⟨levelTwoZeroComparisonDiagram C D F E G, isStage_levelTwoZeroComparisonDiagram C D F E G⟩
 
 /-- Weak degree-two stage for the comparison triangle. -/
 noncomputable def levelTwoZeroComparisonWeak :
-    (letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       StageWeakCategory E 2) := by
-  letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   exact ⟨levelTwoZeroComparisonStage C D F E G⟩
 
 omit [F.IsExact] in
 /-- Reindexing along `δ 2` recovers the `G`-mapped `F` edge stage. -/
 private theorem levelTwo_reindex_d2 :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (reindexStageWeak E (SimplexCategory.δ 2)).obj (levelTwoZeroComparisonWeak C D F E G) =
         (mapStageWeak D E G 1).obj (levelZeroEdgeWeak C D F)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   ext
   refine Functor.ext ?_ ?_
   · intro A
@@ -158,13 +158,13 @@ private theorem levelTwo_reindex_d2 :
 omit [F.IsExact] [G.IsExact] in
 /-- Reindexing along `δ 0` recovers the `G` edge stage. -/
 private theorem levelTwo_reindex_d0 :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (reindexStageWeak E (SimplexCategory.δ 0)).obj (levelTwoZeroComparisonWeak C D F E G) =
         levelZeroEdgeWeak D E G) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   ext
   refine Functor.ext ?_ ?_
   · intro A
@@ -199,13 +199,13 @@ private theorem levelTwo_reindex_d0 :
 omit [F.IsExact] [G.IsExact] in
 /-- Reindexing along `δ 1` recovers the composite edge stage. -/
 private theorem levelTwo_reindex_d1 :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (reindexStageWeak E (SimplexCategory.δ 1)).obj (levelTwoZeroComparisonWeak C D F E G) =
         levelZeroEdgeWeak C E (F ⋙ G)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   ext
   refine Functor.ext ?_ ?_
   · intro A
@@ -239,23 +239,23 @@ private theorem levelTwo_reindex_d1 :
 
 /-- Underlying diagonal degree-two simplex from `mk₂ 𝟙 𝟙`. -/
 noncomputable def levelTwoZeroComparisonSimplex :
-    (letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (stageWeakDiagonal E).obj (op ⦋2⦌)) := by
-  letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   rw [stageWeakDiagonal_obj, stageWeakNerve_obj]
   exact ComposableArrows.mk₂ (𝟙 (levelTwoZeroComparisonWeak C D F E G))
     (𝟙 (levelTwoZeroComparisonWeak C D F E G))
 
 /-- Second diagonal face is the `G`-mapped `F` zero edge. -/
 theorem levelTwoZeroComparison_d2 :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (stageWeakDiagonal E).δ 2 (levelTwoZeroComparisonSimplex C D F E G) =
         (stageWeakDiagonalMapLevelZeroEdge C D F E G).edge) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   change (stageWeakDiagonal E).map _ (levelTwoZeroComparisonSimplex C D F E G) = _
   have hstep : (stageWeakDiagonal E).map (SimplexCategory.δ 2).op
       (levelTwoZeroComparisonSimplex C D F E G) =
@@ -285,13 +285,13 @@ theorem levelTwoZeroComparison_d2 :
 omit [F.IsExact] in
 /-- Zeroth diagonal face is the `G` zero edge. -/
 theorem levelTwoZeroComparison_d0 :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (stageWeakDiagonal E).δ 0 (levelTwoZeroComparisonSimplex C D F E G) =
         (stageWeakDiagonalLevelZeroEdge D E G).edge) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   change (stageWeakDiagonal E).map _ (levelTwoZeroComparisonSimplex C D F E G) = _
   have hstep : (stageWeakDiagonal E).map (SimplexCategory.δ 0).op
       (levelTwoZeroComparisonSimplex C D F E G) =
@@ -317,13 +317,13 @@ theorem levelTwoZeroComparison_d0 :
 
 /-- First diagonal face is the composite zero edge. -/
 theorem levelTwoZeroComparison_d1 :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (stageWeakDiagonal E).δ 1 (levelTwoZeroComparisonSimplex C D F E G) =
         (stageWeakDiagonalLevelZeroEdge C E (F ⋙ G)).edge) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   change (stageWeakDiagonal E).map _ (levelTwoZeroComparisonSimplex C D F E G) = _
   have hstep : (stageWeakDiagonal E).map (SimplexCategory.δ 1).op
       (levelTwoZeroComparisonSimplex C D F E G) =
@@ -354,9 +354,9 @@ theorem levelTwoZeroComparison_d1 :
 
 /-- Diagonal zero-comparison triangle with mapped, `G`, and composite faces. -/
 noncomputable def levelTwoZeroComparisonCompStruct :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       SSet.Edge.CompStruct
         (stageWeakDiagonalMapLevelZeroEdge C D F E G)
         (stageWeakDiagonalLevelZeroEdge D E G)

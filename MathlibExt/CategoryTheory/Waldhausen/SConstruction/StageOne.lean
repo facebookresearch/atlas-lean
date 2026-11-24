@@ -26,7 +26,7 @@ This assignment stops before packaging the equivalence.
 
 Reuses `Ar`, `interval`, `diag`, `horiz`, `vert`, `IsStage`, `Stage`,
 `stageProperty`, and `ObjectProperty.FullSubcategory.lift`/`homMk`;
-`WaldhausenCategory.zero_isCofibration`, identity-cofibration via
+`WaldhausenCategoryWithoutGluing.zero_isCofibration`, identity-cofibration via
 `MorphismProperty.id_mem`, the existing `IsCofibrationSequence`/pushout
 APIs (`IsPushout.of_id_fst`, `IsPushout.of_id_snd`), `Arrow.mk`,
 `Arrow.homMk'`, `homOfLE`/`leOfHom`, and finite-index case analysis.
@@ -45,20 +45,20 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Object assignment for the degree-one stage diagram: diagonals map to the
 chosen zero object, the unique off-diagonal interval maps to `X`. -/
 noncomputable def stageOneDiagramObj (X : C) (A : Ar 1) : C :=
   if A.left = A.right then (0 : C) else X
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- A diagonal `Ar 1` object is sent to the chosen zero object. -/
 theorem stageOneDiagramObj_of_eq (X : C) {A : Ar 1} (h : A.left = A.right) :
     stageOneDiagramObj C X A = (0 : C) := by
   simp [stageOneDiagramObj, h]
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- An off-diagonal `Ar 1` object is sent to the input object. -/
 theorem stageOneDiagramObj_of_ne (X : C) {A : Ar 1} (h : ¬ A.left = A.right) :
     stageOneDiagramObj C X A = X := by
@@ -191,13 +191,13 @@ noncomputable def stageOneDiagram (X : C) : Ar 1 ⥤ C where
           rw [hArg, hM]
           exact (Category.id_comp _).symm
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- The diagram sends every diagonal to the chosen zero object. -/
 theorem stageOneDiagram_diag (X : C) (i : Fin 2) :
     (stageOneDiagram C X).obj (diag i) = (0 : C) := by
   simp [stageOneDiagram, stageOneDiagramObj, diag, interval]
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- The diagram sends the `(0, 1)` interval to `X`. -/
 theorem stageOneDiagram_interval_zero_one (X : C)
     (h : (0 : Fin 2) ≤ 1) :
@@ -205,28 +205,28 @@ theorem stageOneDiagram_interval_zero_one (X : C)
   have h01 : ¬ (0 : Fin 2) = 1 := by decide
   simp [stageOneDiagram, stageOneDiagramObj, interval, h01]
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- Image of the `(0, 0, 1)` horizontal leg: the zero-to-`X` map. -/
 theorem stageOneDiagram_horiz_zero_zero_one (X : C)
     (h00 : (0 : Fin 2) ≤ 0) (h01 : (0 : Fin 2) ≤ 1) :
     (stageOneDiagram C X).map (horiz h00 h01) = (isZero_zero C).to_ X := by
   rfl
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- Image of the `(0, 0, 1)` vertical leg: the identity on `X`. -/
 theorem stageOneDiagram_vert_zero_zero_one (X : C)
     (h00 : (0 : Fin 2) ≤ 0) (h01 : (0 : Fin 2) ≤ 1) :
     (stageOneDiagram C X).map (vert h00 h01) = 𝟙 X := by
   rfl
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- Image of the `(0, 1, 1)` horizontal leg: the identity on `X`. -/
 theorem stageOneDiagram_horiz_zero_one_one (X : C)
     (h01 : (0 : Fin 2) ≤ 1) (h11 : (1 : Fin 2) ≤ 1) :
     (stageOneDiagram C X).map (horiz h01 h11) = 𝟙 X := by
   rfl
 
-omit [WaldhausenCategory C] in
+omit [WaldhausenCategoryWithoutGluing C] in
 /-- Image of the `(0, 1, 1)` vertical leg: the `X`-to-zero map. -/
 theorem stageOneDiagram_vert_zero_one_one (X : C)
     (h01 : (0 : Fin 2) ≤ 1) (h11 : (1 : Fin 2) ≤ 1) :
@@ -248,19 +248,19 @@ theorem isStage_stageOneDiagram (X : C) : IsStage 1 (stageOneDiagram C X) where
       have eV : (stageOneDiagram C X).map (vert hij hjk) = 𝟙 (0 : C) := by
         rfl
       rw [eH, eV]
-      exact ⟨WaldhausenCategory.zero_isCofibration _ _,
+      exact ⟨WaldhausenCategoryWithoutGluing.zero_isCofibration _ _,
         𝟙 (0 : C), 𝟙 (0 : C), IsPushout.of_id_fst⟩
     · have eH := stageOneDiagram_horiz_zero_zero_one C X hij hjk
       have eV := stageOneDiagram_vert_zero_zero_one C X hij hjk
       rw [eH, eV]
-      exact ⟨WaldhausenCategory.zero_isCofibration _ _,
+      exact ⟨WaldhausenCategoryWithoutGluing.zero_isCofibration _ _,
         𝟙 (0 : C), (isZero_zero C).to_ X, IsPushout.of_id_fst⟩
     · have hF : ¬ ((1 : Fin 2) ≤ (0 : Fin 2)) := by decide
       exact False.elim (hF hjk)
     · have eH := stageOneDiagram_horiz_zero_one_one C X hij hjk
       have eV := stageOneDiagram_vert_zero_one_one C X hij hjk
       rw [eH, eV]
-      exact ⟨MorphismProperty.id_mem (WaldhausenCategory.cofibrations (C := C)) _,
+      exact ⟨MorphismProperty.id_mem (WaldhausenCategoryWithoutGluing.cofibrations (C := C)) _,
         (isZero_zero C).from_ X, 𝟙 (0 : C), IsPushout.of_id_snd⟩
     · have hF : ¬ ((1 : Fin 2) ≤ (0 : Fin 2)) := by decide
       exact False.elim (hF hij)
@@ -273,7 +273,7 @@ theorem isStage_stageOneDiagram (X : C) : IsStage 1 (stageOneDiagram C X) where
       have eV : (stageOneDiagram C X).map (vert hij hjk) = 𝟙 (0 : C) := by
         rfl
       rw [eH, eV]
-      exact ⟨WaldhausenCategory.zero_isCofibration _ _,
+      exact ⟨WaldhausenCategoryWithoutGluing.zero_isCofibration _ _,
         𝟙 (0 : C), 𝟙 (0 : C), IsPushout.of_id_fst⟩
 
 /-- Functoriality in `X`: identities on diagonals, `f` on `(0, 1)`. -/

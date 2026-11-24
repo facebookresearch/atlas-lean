@@ -43,7 +43,7 @@ open AlgebraicKTheory.QuillenStageGridFiberComparison
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance connectedTestsWaldhausenCategory : WaldhausenCategory C :=
+local instance connectedTestsWaldhausenCategory : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 section ComparisonPipeline

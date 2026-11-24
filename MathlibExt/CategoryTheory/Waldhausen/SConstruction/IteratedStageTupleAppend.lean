@@ -50,7 +50,8 @@ theorem stageTupleDegrees_snoc {r : ℕ} (a : StageSimplexTuple r) (b : SimplexC
   simp only [stageTupleSnoc, Fin.snoc_castSucc, Fin.snoc_last, List.concat_eq_append,
     stageTupleDegrees]
 
-/-- The actual appended tuple map transports the original maps through the earned simplex-coordinate equalities. -/
+/-- The actual appended tuple map transports the original maps through the earned simplex-coordinate
+equalities. -/
 def stageTupleSnocMap {r : ℕ} {a b : StageSimplexTuple r} (α : a ⟶ b)
     {x y : SimplexCategoryᵒᵖ} (f : x ⟶ y) : stageTupleSnoc a x ⟶ stageTupleSnoc b y :=
   Fin.lastCases (motive := fun i => stageTupleSnoc a x i ⟶ stageTupleSnoc b y i)

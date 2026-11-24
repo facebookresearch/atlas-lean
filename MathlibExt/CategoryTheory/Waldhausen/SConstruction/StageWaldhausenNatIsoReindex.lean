@@ -36,19 +36,19 @@ namespace CategoryTheory.Functor.IsWaldhausenExact
 
 open Waldhausen.SConstruction
 
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F G : C ⥤ D}
 
 private theorem originalStageReindexObjComponentValue
-    (C : Type uC) [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+    (C : Type uC) [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
     {a b : SimplexCategory} (f : a ⟶ b) (X : Stage C b.len) (k : Ar a.len) :
     ((reindexStage (C := C) f).obj X).obj.obj k =
       X.obj.obj ((indexFunctor f).obj k) := by
   rfl
 
 private theorem originalStageReindexMapComponentValue
-    (C : Type uC) [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+    (C : Type uC) [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
     {a b : SimplexCategory} (f : a ⟶ b)
     {X Y : Stage C b.len} (eta : X ⟶ Y) (k : Ar a.len) :
     ((reindexStage (C := C) f).map eta).hom.app k =

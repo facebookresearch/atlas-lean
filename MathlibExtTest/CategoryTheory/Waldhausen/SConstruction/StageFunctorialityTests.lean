@@ -48,9 +48,9 @@ heterogeneous natural-isomorphism input. -/
 variable (H : C ⥤ D) [H.Additive] [Functor.IsExact H]
 variable (e : F ≅ H)
 
-local instance : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-local instance : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-local instance : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+local instance : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+local instance : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+local instance : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
 
 /-- Postcomposed stage evaluates through `F`: a variance check that fails if
 `mapStage` does not postcompose objects and maps. -/

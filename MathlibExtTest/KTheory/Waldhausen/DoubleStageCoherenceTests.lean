@@ -22,12 +22,12 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.DoubleStageCoherence
 
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original double identity remains the whole identity functor. -/
 theorem originalDoubleIdentity (m n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     mapDoubleStage (Functor.IsWaldhausenExact.id (C := C)) m n =
       𝟭 (Stage (Stage C n) m) :=
   mapDoubleStage_id m n

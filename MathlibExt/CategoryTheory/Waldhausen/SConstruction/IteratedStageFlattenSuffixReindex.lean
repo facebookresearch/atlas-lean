@@ -32,7 +32,7 @@ universe u v
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original onefold operator, through the unchanged source and target Cons charts. -/
 def iteratedStageSingleReindex {z w : SimplexCategoryᵒᵖ} (f : z ⟶ w) :
@@ -46,11 +46,11 @@ theorem iteratedStageSingleReindex_isWaldhausenExact {z w : SimplexCategoryᵒ�
     (f : z ⟶ w) : (iteratedStageSingleReindex C f).IsWaldhausenExact := by
   let _ : HasZeroObject (Stage (IteratedStage C []) z.unop.len) :=
     generalStageHasZeroObject (IteratedStage C []) z.unop.len
-  let _ : WaldhausenCategory (Stage (IteratedStage C []) z.unop.len) :=
+  let _ : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C []) z.unop.len) :=
     generalStageWaldhausenCategory (IteratedStage C []) z.unop.len
   let _ : HasZeroObject (Stage (IteratedStage C []) w.unop.len) :=
     generalStageHasZeroObject (IteratedStage C []) w.unop.len
-  let _ : WaldhausenCategory (Stage (IteratedStage C []) w.unop.len) :=
+  let _ : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C []) w.unop.len) :=
     generalStageWaldhausenCategory (IteratedStage C []) w.unop.len
   exact ((iteratedStageConsEquivalence_exact C z.unop.len []).1.comp
     (reindexStage_general_isWaldhausenExact (IteratedStage C []) f.unop)).comp
@@ -174,8 +174,8 @@ private theorem consMapId {r : ℕ} (a : StageSimplexTuple r) (x : SimplexCatego
   | succ i => exact consMapSucc (𝟙 a) (𝟙 x) i
 
 private theorem stageMapEq {A B : Type (max u v)}
-    [Category.{v} A] [HasZeroObject A] [WaldhausenCategory A]
-    [Category.{v} B] [HasZeroObject B] [WaldhausenCategory B]
+    [Category.{v} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    [Category.{v} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
     {F G : A ⥤ B} (hF : F.IsWaldhausenExact) (hG : G.IsWaldhausenExact)
     (h : F = G) (n : ℕ) : hF.mapStage n = hG.mapStage n := by
   subst G
@@ -278,8 +278,8 @@ private theorem reindexSnocSuffixCons {r : ℕ} (a : StageSimplexTuple r)
 
 set_option backward.isDefEq.respectTransparency false in
 private theorem mapTupleCons {A B : Type (max u v)}
-    [Category.{v} A] [HasZeroObject A] [WaldhausenCategory A]
-    [Category.{v} B] [HasZeroObject B] [WaldhausenCategory B]
+    [Category.{v} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    [Category.{v} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
     {F : A ⥤ B} (hF : F.IsWaldhausenExact) {r : ℕ}
     (x : SimplexCategoryᵒᵖ) (a : StageSimplexTuple r) :
     mapIteratedStage hF (stageTupleDegrees (Fin.cons x a)) ⋙

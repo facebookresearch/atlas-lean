@@ -37,7 +37,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original three cofiber rows and the actual first-arrow
 cofibration give the full cofiber property of the assembled pushout row. -/

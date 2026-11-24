@@ -49,14 +49,14 @@ variable (F : C ⥤ D) [F.Additive] [F.IsExact]
 section InstanceNonleak
 
 #guard_msgs (error, substring := true) in
-#synth WaldhausenCategory C
+#synth WaldhausenCategoryWithoutGluing C
 
 end InstanceNonleak
 
-local instance : WaldhausenCategory C :=
+local instance : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
-local instance : WaldhausenCategory D :=
+local instance : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 section Symbolic
@@ -159,10 +159,10 @@ variable {D₁ : Type 1} [Category.{1} D₁] [Preadditive D₁]
   [HasZeroObject D₁] [HasBinaryBiproducts D₁] [ExactCategory D₁]
 variable (G : C₀ ⥤ D₁) [G.Additive] [G.IsExact]
 
-local instance : WaldhausenCategory C₀ :=
+local instance : WaldhausenCategoryWithoutGluing C₀ :=
   ExactCategory.waldhausenCategory C₀
 
-local instance : WaldhausenCategory D₁ :=
+local instance : WaldhausenCategoryWithoutGluing D₁ :=
   ExactCategory.waldhausenCategory D₁
 
 example {a b : SimplexCategory} (α : a ⟶ b) :

@@ -48,7 +48,7 @@ namespace CategoryTheory.Waldhausen.SConstruction
 variable (C : Type u) [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance stagePushoutWaldhausenC : WaldhausenCategory C :=
+local instance stagePushoutWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- A functorial pointwise pushout of two stage maps with a common source.

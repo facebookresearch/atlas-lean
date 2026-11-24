@@ -31,7 +31,7 @@ universe v u
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StageWeakDiagonalVertexTests
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Degree-one inclusion pins the reindexed weak-category zero stage.
 

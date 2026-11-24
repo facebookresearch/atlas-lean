@@ -34,7 +34,7 @@ namespace MathlibExtTest.KTheory.Waldhausen.IteratedStageFlattenReindexTests
 
 open CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The same full tuple map has the original head and appended tail in the actual Cons chart. -/
 theorem originalAppendedOperator {r : ℕ} {a b : StageSimplexTuple r} (α : a ⟶ b)

@@ -36,7 +36,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every original arrow-index component is a base cofibration, using
 the canonical interval presentation of that same arrow object. -/
@@ -72,7 +72,7 @@ private theorem pointwiseHasColimit (φ : A ⟶ B) (ψ : A ⟶ D)
     (hφ : stageCofibrations C n φ) (x : Ar n) :
     HasColimit ((span ψ.hom φ.hom).flip.obj x) := by
   obtain ⟨P, inD, inB, hP, _⟩ :=
-    WaldhausenCategory.cofibration_pushout (C := C) (φ.hom.app x)
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C) (φ.hom.app x)
       (Stage.app_isCofibration C φ hφ x) (D.obj.obj x) (ψ.hom.app x)
   have hspan :
       span (((evaluation (Ar n) C).obj x).map ψ.hom)

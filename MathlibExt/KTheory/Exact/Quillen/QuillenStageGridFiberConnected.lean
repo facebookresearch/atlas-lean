@@ -51,7 +51,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
 local instance quillenStageGridFiberConnectedWaldhausenCategory :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 namespace QuillenStageGridFiberComparison
@@ -436,7 +436,7 @@ theorem tailKernelMaterialIso_hom_comp_kernelι
   simpa only [tailKernelMaterialIso_hom,
     QuillenSpanFlagData.transport_kernelι,
     QuillenSpanFlagData.endpointTransport_kernelι,
-    QuillenSpan.EndpointIso.endpointTransportIso_apex] using
+    QuillenSpan.EndpointIso.endpointTransportIso_hom_hom] using
       (tailFlagHom X Y k).kernelHom_kernelι
 
 set_option backward.isDefEq.respectTransparency false in

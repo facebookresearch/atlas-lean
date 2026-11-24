@@ -22,7 +22,7 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.IteratedStageReindex
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- An arbitrary number of original simplex directions earn exactness. -/
 theorem originalTupleMapExact {r : ℕ} {a b : StageSimplexTuple r} (α : a ⟶ b) :

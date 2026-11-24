@@ -33,7 +33,7 @@ open scoped ZeroObject
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original degree-one successive corner has exactly the original
 cofibration condition on the unique off-diagonal component. -/
@@ -42,8 +42,7 @@ theorem stageCofibrations_one_iff {A B : Stage C 1} (f : A ⟶ B) :
   constructor
   · intro hf
     exact Stage.intervalApp_isCofibration C f hf 0 1 (by decide)
-  · intro hf
-    intro j
+  · intro hf j
     have hj : j = 0 := Subsingleton.elim _ _
     subst j
     let P := A.obj.obj (interval (0 : Fin 2) 1 (by decide))
@@ -54,8 +53,8 @@ theorem stageCofibrations_one_iff {A B : Stage C 1} (f : A ⟶ B) :
     have hPush : IsPushout (A.zeroRowSuccMap 0) (Stage.zeroRowApp f (0 : Fin 2)) inl inr := by
       have hzA : IsZero (A.zeroRowObj (0 : Fin 2)) := A.property.diag_isZero 0
       have hzB : IsZero (B.zeroRowObj (0 : Fin 2)) := B.property.diag_isZero 0
-      letI : IsIso (Stage.zeroRowApp f (0 : Fin 2)) := IsZero.isIso hzA hzB _
-      letI : IsIso inl := by
+      let : IsIso (Stage.zeroRowApp f (0 : Fin 2)) := IsZero.isIso hzA hzB _
+      let : IsIso inl := by
         change IsIso (𝟙 P)
         exact (Iso.refl P).isIso_hom
       apply IsPushout.of_vert_isIso
@@ -90,10 +89,10 @@ theorem stageOneEval_general_pushout {A B A' P : Stage C 1}
 /-- The original degree-one evaluation is exact for the genuine general stage value. -/
 theorem stageOneEval_general_isWaldhausenExact :
     letI : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-    letI : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+    letI : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
     (stageOneEval C).IsWaldhausenExact := by
-  letI : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-  letI : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+  let : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
+  let : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
   constructor
   · intro A hA
     exact stageOneEval_general_isZero C hA
@@ -111,9 +110,9 @@ theorem stageOneEval_general_isWaldhausenExact :
 theorem stageOne_general_cofibration {X Y : C} (f : X ⟶ Y) (hf : IsCofibration f) :
     stageCofibrations C 1 ((stageOne C).map f) := by
   apply (stageCofibrations_one_iff C _).mpr
-  change (WaldhausenCategory.cofibrations (C := C))
+  change (WaldhausenCategoryWithoutGluing.cofibrations (C := C))
     (((stageOne C).map f).hom.app (interval (0 : Fin 2) 1 (by decide)))
-  simp only [stageOne_obj_interval_zero_one, stageOne_map_interval_zero_one]
+  simp only [stageOne_map_interval_zero_one]
   exact hf
 
 /-- Original degree-one insertion retains zero on every original interval. -/
@@ -132,7 +131,8 @@ theorem stageOne_general_isZero {X : C} (hX : IsZero X) : IsZero ((stageOne C).o
 theorem stageOne_general_weak {X Y : C} (f : X ⟶ Y) (hf : IsWeakEquivalence f) :
     stageWeak C 1 ((stageOne C).map f) := by
   intro a
-  change (WaldhausenCategory.weakEquivalences (C := C)) (((stageOne C).map f).hom.app a)
+  change (WaldhausenCategoryWithoutGluing.weakEquivalences (C :=
+    C)) (((stageOne C).map f).hom.app a)
   by_cases ha : a.left = a.right
   · have hzX : IsZero (((stageOne C).obj X).obj.obj a) := by
       rw [stageOne_obj_eq_zero_of_diag C X ha]
@@ -140,11 +140,11 @@ theorem stageOne_general_weak {X Y : C} (f : X ⟶ Y) (hf : IsWeakEquivalence f)
     have hzY : IsZero (((stageOne C).obj Y).obj.obj a) := by
       rw [stageOne_obj_eq_zero_of_diag C Y ha]
       exact isZero_zero C
-    letI : IsIso (((stageOne C).map f).hom.app a) := IsZero.isIso hzX hzY _
-    exact (WaldhausenCategory.weakEquivalences (C := C)).of_isIso _
+    let : IsIso (((stageOne C).map f).hom.app a) := IsZero.isIso hzX hzY _
+    exact (WaldhausenCategoryWithoutGluing.weakEquivalences (C := C)).of_isIso _
   · have heq := ar1_eq_interval01_of_ne ha
     subst a
-    simp only [stageOne_obj_interval_zero_one, stageOne_map_interval_zero_one]
+    simp only [stageOne_map_interval_zero_one]
     exact hf
 
 /-- The original insertion carries every original cofibration pushout
@@ -154,16 +154,16 @@ theorem stageOne_general_pushout {X Y X' P : C}
     (hP : IsPushout f i inl inr) :
     IsPushout ((stageOne C).map f) ((stageOne C).map i)
       ((stageOne C).map inl) ((stageOne C).map inr) := by
-  letI : (stageOne C).IsEquivalence := (stageOneEquivalence C).isEquivalence_functor
+  let : (stageOne C).IsEquivalence := (stageOneEquivalence C).isEquivalence_functor
   exact hP.map (stageOne C)
 
 /-- The original degree-one insertion is exact for the genuine general stage value. -/
 theorem stageOne_general_isWaldhausenExact :
     letI : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-    letI : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+    letI : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
     (stageOne C).IsWaldhausenExact := by
-  letI : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-  letI : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+  let : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
+  let : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
   constructor
   · intro X hX
     exact stageOne_general_isZero C hX

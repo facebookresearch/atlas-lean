@@ -35,7 +35,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Two adjacent actual cofibration corners give an actual cofibration
 corner for their horizontal composite. The second top arrow is the
@@ -58,7 +58,7 @@ theorem cofibrationCorner_paste_horiz
       IsPushout (f₀₁ ≫ f₁₂) a₀ r₂ r₀ ∧
         r₂ ≫ dR = a₂ ∧ r₀ ≫ dR = g₀₁ ≫ g₁₂ ∧ IsCofibration dR := by
   obtain ⟨R, rP, r₂, hR, _⟩ :=
-    WaldhausenCategory.cofibration_pushout (C := C) f₁₂ hf₁₂ P p₁
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C) f₁₂ hf₁₂ P p₁
   have hOuter : IsPushout (f₀₁ ≫ f₁₂) a₀ r₂ (p₀ ≫ rP) :=
     hP.paste_horiz hR.flip
   have hagree : f₁₂ ≫ q₂ = p₁ ≫ (dP ≫ q₁) := by
@@ -77,7 +77,7 @@ theorem cofibrationCorner_paste_horiz
   have he : IsCofibration e :=
     MorphismProperty.IsStableUnderCobaseChange.of_isPushout hE.flip hdP
   have hdR : IsCofibration (e ≫ dQ) :=
-    (WaldhausenCategory.cofibrations (C := C)).comp_mem e dQ he hdQ
+    (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem e dQ he hdQ
   refine ⟨R, r₂, p₀ ≫ rP, e ≫ dQ, hOuter, ?_, ?_, hdR⟩
   · rw [← Category.assoc, hr₂, hq₂]
   · calc

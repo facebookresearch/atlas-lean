@@ -37,27 +37,29 @@ namespace CategoryTheory.Waldhausen.SConstruction
 
 section
 
+universe w
+
 private structure IteratedStageData where
-  carrier : Type (max u v)
+  carrier : Type w
   category : Category.{v} carrier
   zero : @HasZeroObject carrier category
-  waldhausen : @WaldhausenCategory carrier category zero
+  waldhausen : @WaldhausenCategoryWithoutGluing carrier category zero
 
 private def iteratedStageData (C : Type (max u v)) [Category.{v} C]
-    [HasZeroObject C] [WaldhausenCategory C] : List ℕ → IteratedStageData.{u, v}
+    [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] : List ℕ → IteratedStageData.{v, max u v}
   | [] => ⟨C, inferInstance, inferInstance, inferInstance⟩
   | n :: ns =>
       let D := iteratedStageData C ns
       letI : Category.{v} D.carrier := D.category
       letI : HasZeroObject D.carrier := D.zero
-      letI : WaldhausenCategory D.carrier := D.waldhausen
+      letI : WaldhausenCategoryWithoutGluing D.carrier := D.waldhausen
       letI : HasZeroObject (Stage D.carrier n) := generalStageHasZeroObject D.carrier n
       ⟨Stage D.carrier n, inferInstance, generalStageHasZeroObject D.carrier n,
         generalStageWaldhausenCategory D.carrier n⟩
 
 end
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Successive original S-stages indexed by their actual degree list. -/
 @[no_expose]
@@ -70,7 +72,6 @@ instance iteratedStageCategory (ns : List ℕ) : Category.{v} (IteratedStage C n
   (iteratedStageData C ns).category
 
 /-- Every iteration has its actual original canonical stage zero object. -/
-@[no_expose]
 instance iteratedStageHasZeroObject (ns : List ℕ) : HasZeroObject (IteratedStage C ns) :=
   (iteratedStageData C ns).zero
 
@@ -78,7 +79,7 @@ instance iteratedStageHasZeroObject (ns : List ℕ) : HasZeroObject (IteratedSta
 cofibrations, weak maps and stage pushout constructor. -/
 @[no_expose]
 instance iteratedStageWaldhausenCategory (ns : List ℕ) :
-    WaldhausenCategory (IteratedStage C ns) :=
+    WaldhausenCategoryWithoutGluing (IteratedStage C ns) :=
   (iteratedStageData C ns).waldhausen
 
 /-- The base gluing axiom propagates through every original finite S-iteration. -/
@@ -140,13 +141,13 @@ same original named zero and Waldhausen structures. -/
 theorem iteratedStageConsEquivalence_exact (n : ℕ) (ns : List ℕ) :
     letI : HasZeroObject (Stage (IteratedStage C ns) n) :=
       generalStageHasZeroObject (IteratedStage C ns) n
-    letI : WaldhausenCategory (Stage (IteratedStage C ns) n) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C ns) n) :=
       generalStageWaldhausenCategory (IteratedStage C ns) n
     (iteratedStageConsEquivalence C n ns).functor.IsWaldhausenExact ∧
       (iteratedStageConsEquivalence C n ns).inverse.IsWaldhausenExact := by
-  letI : HasZeroObject (Stage (IteratedStage C ns) n) :=
+  let : HasZeroObject (Stage (IteratedStage C ns) n) :=
     generalStageHasZeroObject (IteratedStage C ns) n
-  letI : WaldhausenCategory (Stage (IteratedStage C ns) n) :=
+  let : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C ns) n) :=
     generalStageWaldhausenCategory (IteratedStage C ns) n
   dsimp [iteratedStageConsEquivalence, IteratedStage, iteratedStageCategory,
     iteratedStageHasZeroObject, iteratedStageWaldhausenCategory, iteratedStageData,
@@ -188,7 +189,7 @@ theorem iteratedStageConsEquivalence_obj_zero_isZero (n : ℕ) (ns : List ℕ) :
       (0 : IteratedStage C (n :: ns))) := by
   dsimp [iteratedStageConsEquivalence, IteratedStage, iteratedStageCategory,
     iteratedStageHasZeroObject, iteratedStageData, Equivalence.refl, id]
-  letI : HasZeroObject (Stage (IteratedStage C ns) n) :=
+  let : HasZeroObject (Stage (IteratedStage C ns) n) :=
     generalStageHasZeroObject (IteratedStage C ns) n
   exact isZero_zero (Stage (IteratedStage C ns) n)
 
@@ -264,13 +265,15 @@ stage structures. -/
 theorem iteratedStageOfFnSuccEquivalence_exact {r : ℕ} (d : Fin (r + 1) → ℕ) :
     letI : HasZeroObject (Stage (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)) :=
       generalStageHasZeroObject (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)
-    letI : WaldhausenCategory (Stage (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C (List.ofFn (fun i => d i.succ)))
+        (d 0)) :=
       generalStageWaldhausenCategory (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)
     (iteratedStageOfFnSuccEquivalence C d).functor.IsWaldhausenExact ∧
       (iteratedStageOfFnSuccEquivalence C d).inverse.IsWaldhausenExact := by
-  letI : HasZeroObject (Stage (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)) :=
+  let : HasZeroObject (Stage (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)) :=
     generalStageHasZeroObject (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)
-  letI : WaldhausenCategory (Stage (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)) :=
+  let : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C (List.ofFn (fun i => d i.succ)))
+      (d 0)) :=
     generalStageWaldhausenCategory (IteratedStage C (List.ofFn (fun i => d i.succ))) (d 0)
   exact ⟨((iteratedStageListEquivalence_exact C (List.ofFn_succ (f := d))).1).comp
       (iteratedStageConsEquivalence_exact C _ _).1,
@@ -303,15 +306,15 @@ theorem iteratedStageOfFnSuccEquivalence_inverse_functor {r : ℕ} (d : Fin (r +
 universe uD vD
 
 private structure IteratedStageFunctorData
-    {C : Type (max u v)} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
-    {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+    {C : Type (max u v)} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+    {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
     (ns : List ℕ) where
   functor : IteratedStage C ns ⥤ IteratedStage D ns
   exact : functor.IsWaldhausenExact
 
 private def iteratedStageFunctorData
-    {C : Type (max u v)} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
-    {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+    {C : Type (max u v)} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+    {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
     {F : C ⥤ D} (hF : F.IsWaldhausenExact) :
     (ns : List ℕ) → IteratedStageFunctorData (C := C) (D := D) ns
   | [] => by
@@ -333,7 +336,8 @@ private def iteratedStageFunctorData
       exact M.exact.mapStage_isWaldhausenExact n
 
 variable {C}
-variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D]
+    [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- Exact-functor maps on every original iterated finite S-stage. -/
@@ -391,11 +395,11 @@ charts and the exact map on the original prior iteration. -/
 theorem mapIteratedStage_cons_chart (n : ℕ) (ns : List ℕ) :
     letI : HasZeroObject (Stage (IteratedStage C ns) n) :=
       generalStageHasZeroObject (IteratedStage C ns) n
-    letI : WaldhausenCategory (Stage (IteratedStage C ns) n) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C ns) n) :=
       generalStageWaldhausenCategory (IteratedStage C ns) n
     letI : HasZeroObject (Stage (IteratedStage D ns) n) :=
       generalStageHasZeroObject (IteratedStage D ns) n
-    letI : WaldhausenCategory (Stage (IteratedStage D ns) n) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage (IteratedStage D ns) n) :=
       generalStageWaldhausenCategory (IteratedStage D ns) n
     mapIteratedStage hF (n :: ns) ⋙ (iteratedStageConsEquivalence D n ns).functor =
       (iteratedStageConsEquivalence C n ns).functor ⋙
@@ -407,8 +411,8 @@ theorem mapIteratedStage_cons_chart (n : ℕ) (ns : List ℕ) :
   rfl
 
 private theorem stageMap_eq_of_eq {A : Type u} [Category.{v} A]
-    [HasZeroObject A] [WaldhausenCategory A]
-    {B : Type uD} [Category.{vD} B] [HasZeroObject B] [WaldhausenCategory B]
+    [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    {B : Type uD} [Category.{vD} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
     {K L : A ⥤ B} (hK : K.IsWaldhausenExact) (hL : L.IsWaldhausenExact)
     (h : K = L) (n : ℕ) : hK.mapStage n = hL.mapStage n := by
   subst L
@@ -434,7 +438,7 @@ theorem mapIteratedStage_id (ns : List ℕ) :
 universe uE vE
 
 variable {E : Type (max uE vE)} [Category.{vE} E] [HasZeroObject E]
-    [WaldhausenCategory E]
+    [WaldhausenCategoryWithoutGluing E]
 variable {G : D ⥤ E}
 
 /-- Composition at every original finite iteration uses the same original
@@ -470,11 +474,11 @@ theorem mapIteratedStage_tuple_successor {r : ℕ} (d : Fin (r + 1) → ℕ) :
     let ns := List.ofFn (fun i => d i.succ)
     letI : HasZeroObject (Stage (IteratedStage C ns) (d 0)) :=
       generalStageHasZeroObject (IteratedStage C ns) (d 0)
-    letI : WaldhausenCategory (Stage (IteratedStage C ns) (d 0)) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C ns) (d 0)) :=
       generalStageWaldhausenCategory (IteratedStage C ns) (d 0)
     letI : HasZeroObject (Stage (IteratedStage D ns) (d 0)) :=
       generalStageHasZeroObject (IteratedStage D ns) (d 0)
-    letI : WaldhausenCategory (Stage (IteratedStage D ns) (d 0)) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage (IteratedStage D ns) (d 0)) :=
       generalStageWaldhausenCategory (IteratedStage D ns) (d 0)
     mapIteratedStage hF (List.ofFn d) ⋙ (iteratedStageOfFnSuccEquivalence D d).functor =
       (iteratedStageOfFnSuccEquivalence C d).functor ⋙
@@ -489,11 +493,11 @@ theorem mapIteratedStage_tuple_successor {r : ℕ} (d : Fin (r + 1) → ℕ) :
 
 variable (C)
 
-private def IteratedStageData.successor (n : ℕ) (D : IteratedStageData.{u, v}) :
-    IteratedStageData.{u, v} := by
+private def IteratedStageData.successor (n : ℕ) (D : IteratedStageData.{v, max u v}) :
+    IteratedStageData.{v, max u v} := by
   letI : Category.{v} D.carrier := D.category
   letI : HasZeroObject D.carrier := D.zero
-  letI : WaldhausenCategory D.carrier := D.waldhausen
+  letI : WaldhausenCategoryWithoutGluing D.carrier := D.waldhausen
   letI : HasZeroObject (Stage D.carrier n) := generalStageHasZeroObject D.carrier n
   exact ⟨Stage D.carrier n, inferInstance, generalStageHasZeroObject D.carrier n,
     generalStageWaldhausenCategory D.carrier n⟩
@@ -509,7 +513,7 @@ private theorem iteratedStageData_append (ns ms : List ℕ) :
         IteratedStageData.successor n (iteratedStageData C (ns ++ ms))
       exact congrArg (IteratedStageData.successor n) ih
 
-private def IteratedStageData.equivalenceOfEq (D E : IteratedStageData.{u, v}) (h : D = E) :
+private def IteratedStageData.equivalenceOfEq (D E : IteratedStageData.{v, max u v}) (h : D = E) :
     letI : Category.{v} D.carrier := D.category
     letI : Category.{v} E.carrier := E.category
     D.carrier ≌ E.carrier := by
@@ -518,66 +522,70 @@ private def IteratedStageData.equivalenceOfEq (D E : IteratedStageData.{u, v}) (
   exact Equivalence.refl
 
 private theorem IteratedStageData.equivalenceOfEq_exact
-    (D E : IteratedStageData.{u, v}) (h : D = E) :
+    (D E : IteratedStageData.{v, max u v}) (h : D = E) :
     letI : Category.{v} D.carrier := D.category
     letI : HasZeroObject D.carrier := D.zero
-    letI : WaldhausenCategory D.carrier := D.waldhausen
+    letI : WaldhausenCategoryWithoutGluing D.carrier := D.waldhausen
     letI : Category.{v} E.carrier := E.category
     letI : HasZeroObject E.carrier := E.zero
-    letI : WaldhausenCategory E.carrier := E.waldhausen
+    letI : WaldhausenCategoryWithoutGluing E.carrier := E.waldhausen
     (D.equivalenceOfEq E h).functor.IsWaldhausenExact ∧
       (D.equivalenceOfEq E h).inverse.IsWaldhausenExact := by
   subst E
-  letI : Category.{v} D.carrier := D.category
-  letI : HasZeroObject D.carrier := D.zero
-  letI : WaldhausenCategory D.carrier := D.waldhausen
+  let : Category.{v} D.carrier := D.category
+  let : HasZeroObject D.carrier := D.zero
+  let : WaldhausenCategoryWithoutGluing D.carrier := D.waldhausen
   dsimp [IteratedStageData.equivalenceOfEq, Equivalence.refl, id]
   exact ⟨Functor.IsWaldhausenExact.id, Functor.IsWaldhausenExact.id⟩
 
 private theorem IteratedStageData.equivalenceOfEq_functor_inverse
-    (D E : IteratedStageData.{u, v}) (h : D = E) :
+    (D E : IteratedStageData.{v, max u v}) (h : D = E) :
     letI : Category.{v} D.carrier := D.category
     letI : Category.{v} E.carrier := E.category
     (D.equivalenceOfEq E h).functor ⋙ (D.equivalenceOfEq E h).inverse = 𝟭 D.carrier := by
   subst E
-  letI : Category.{v} D.carrier := D.category
+  let : Category.{v} D.carrier := D.category
   dsimp [IteratedStageData.equivalenceOfEq, Equivalence.refl, id]
   rfl
 
 private theorem IteratedStageData.equivalenceOfEq_inverse_functor
-    (D E : IteratedStageData.{u, v}) (h : D = E) :
+    (D E : IteratedStageData.{v, max u v}) (h : D = E) :
     letI : Category.{v} D.carrier := D.category
     letI : Category.{v} E.carrier := E.category
     (D.equivalenceOfEq E h).inverse ⋙ (D.equivalenceOfEq E h).functor = 𝟭 E.carrier := by
   subst E
-  letI : Category.{v} D.carrier := D.category
+  let : Category.{v} D.carrier := D.category
   dsimp [IteratedStageData.equivalenceOfEq, Equivalence.refl, id]
   rfl
 
 private theorem IteratedStageData.equivalenceOfEq_successor
-    (D E : IteratedStageData.{u, v}) (h : D = E) (n : ℕ) :
+    (D E : IteratedStageData.{v, max u v}) (h : D = E) (n : ℕ) :
     letI : Category.{v} D.carrier := D.category
     letI : HasZeroObject D.carrier := D.zero
-    letI : WaldhausenCategory D.carrier := D.waldhausen
+    letI : WaldhausenCategoryWithoutGluing D.carrier := D.waldhausen
     letI : Category.{v} E.carrier := E.category
     letI : HasZeroObject E.carrier := E.zero
-    letI : WaldhausenCategory E.carrier := E.waldhausen
+    letI : WaldhausenCategoryWithoutGluing E.carrier := E.waldhausen
     letI : HasZeroObject (Stage D.carrier n) := generalStageHasZeroObject D.carrier n
-    letI : WaldhausenCategory (Stage D.carrier n) := generalStageWaldhausenCategory D.carrier n
+    letI : WaldhausenCategoryWithoutGluing (Stage D.carrier n) :=
+      generalStageWaldhausenCategory D.carrier n
     letI : HasZeroObject (Stage E.carrier n) := generalStageHasZeroObject E.carrier n
-    letI : WaldhausenCategory (Stage E.carrier n) := generalStageWaldhausenCategory E.carrier n
+    letI : WaldhausenCategoryWithoutGluing (Stage E.carrier n) :=
+      generalStageWaldhausenCategory E.carrier n
     letI : Category.{v} (D.successor n).carrier := (D.successor n).category
     letI : Category.{v} (E.successor n).carrier := (E.successor n).category
-    ((D.successor n).equivalenceOfEq (E.successor n) (congrArg (IteratedStageData.successor n) h)).functor =
+    ((D.successor n).equivalenceOfEq (E.successor n) (congrArg
+        (IteratedStageData.successor n) h)).functor =
       (IteratedStageData.equivalenceOfEq_exact D E h).1.mapStage n := by
   subst E
-  letI : Category.{v} D.carrier := D.category
-  letI : HasZeroObject D.carrier := D.zero
-  letI : WaldhausenCategory D.carrier := D.waldhausen
+  let : Category.{v} D.carrier := D.category
+  let : HasZeroObject D.carrier := D.zero
+  let : WaldhausenCategoryWithoutGluing D.carrier := D.waldhausen
   dsimp [IteratedStageData.equivalenceOfEq, IteratedStageData.successor, Equivalence.refl, id]
   rfl
 
-/-- Iteration of the actual prior S-categories is the original iteration of the concatenated degree list. -/
+/-- Iteration of the actual prior S-categories is the original iteration of the concatenated degree
+list. -/
 @[no_expose]
 def iteratedStageFlattenEquivalence (ns ms : List ℕ) :
     IteratedStage (IteratedStage C ms) ns ≌ IteratedStage C (ns ++ ms) :=
@@ -627,15 +635,16 @@ theorem iteratedStageFlattenEquivalence_map_nil (ms : List ℕ) :
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Original degree-list flattening acts in the successor exactly through the original outer S-stage. -/
+/-- Original degree-list flattening acts in the successor exactly through the original outer
+S-stage. -/
 theorem iteratedStageFlattenEquivalence_cons (n : ℕ) (ns ms : List ℕ) :
     letI : HasZeroObject (Stage (IteratedStage (IteratedStage C ms) ns) n) :=
       generalStageHasZeroObject (IteratedStage (IteratedStage C ms) ns) n
-    letI : WaldhausenCategory (Stage (IteratedStage (IteratedStage C ms) ns) n) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage (IteratedStage (IteratedStage C ms) ns) n) :=
       generalStageWaldhausenCategory (IteratedStage (IteratedStage C ms) ns) n
     letI : HasZeroObject (Stage (IteratedStage C (ns ++ ms)) n) :=
       generalStageHasZeroObject (IteratedStage C (ns ++ ms)) n
-    letI : WaldhausenCategory (Stage (IteratedStage C (ns ++ ms)) n) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C (ns ++ ms)) n) :=
       generalStageWaldhausenCategory (IteratedStage C (ns ++ ms)) n
     (iteratedStageFlattenEquivalence C (n :: ns) ms).functor =
       (iteratedStageConsEquivalence (IteratedStage C ms) n ns).functor ⋙

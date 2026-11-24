@@ -48,10 +48,10 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
   [HasZeroObject D] [HasBinaryBiproducts D] [ExactCategory D]
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]
 
-local instance quillenStageGridMapWaldhausenC : WaldhausenCategory C :=
+local instance quillenStageGridMapWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
-local instance quillenStageGridMapWaldhausenD : WaldhausenCategory D :=
+local instance quillenStageGridMapWaldhausenD : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 /-- The exact-functor action on retained Quillen simplices, regarded as a

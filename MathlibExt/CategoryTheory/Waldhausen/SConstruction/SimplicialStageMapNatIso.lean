@@ -67,11 +67,11 @@ variable (F G : C ⥤ D) [F.Additive] [G.Additive]
 /-- Degreewise weak simplicial-stage nat-iso family from `mapStageWeakNatIso`. -/
 noncomputable def simplicialStageMapWeakNatIsoFamily (e : F ≅ G)
     (a : SimplexCategoryᵒᵖ) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       mapStageWeak C D F a.unop.len ≅ mapStageWeak C D G a.unop.len) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact mapStageWeakNatIso C D F G e a.unop.len
 
 /-- Reindex coherence of the weak family via the strict `mapStageWeak_reindex`
@@ -80,26 +80,26 @@ whiskering the family at `b` on the right. Both composites are `rfl`-equal by
 `mapStageWeak_reindex`; components agree pointwise by `e.hom.naturality`. -/
 theorem simplicialStageMapWeakNatIsoFamily_reindex {a b : SimplexCategory}
     (f : a ⟶ b) (e : F ≅ G) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       Functor.isoWhiskerLeft (reindexStageWeak C f)
         (simplicialStageMapWeakNatIsoFamily C D F G e (Opposite.op a)) =
       Functor.isoWhiskerRight
         (simplicialStageMapWeakNatIsoFamily C D F G e (Opposite.op b))
         (reindexStageWeak D f)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   rfl
 
 /-- Hom-component computation for the weak family, via `mapStageNatIso_hom_app`. -/
 @[simp]
 theorem simplicialStageMapWeakNatIsoFamily_hom_app (e : F ≅ G)
     (a : SimplexCategoryᵒᵖ)
-    (X : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (X : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C a.unop.len))
     (A : Ar a.unop.len) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (((simplicialStageMapWeakNatIsoFamily C D F G e a).hom.app X).hom).hom.app A =
         e.hom.app (X.obj.obj.obj A)) := by
   rfl
@@ -108,11 +108,11 @@ theorem simplicialStageMapWeakNatIsoFamily_hom_app (e : F ≅ G)
 @[simp]
 theorem simplicialStageMapWeakNatIsoFamily_inv_app (e : F ≅ G)
     (a : SimplexCategoryᵒᵖ)
-    (X : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (X : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C a.unop.len))
     (A : Ar a.unop.len) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (((simplicialStageMapWeakNatIsoFamily C D F G e a).inv.app X).hom).hom.app A =
         e.inv.app (X.obj.obj.obj A)) := by
   rfl

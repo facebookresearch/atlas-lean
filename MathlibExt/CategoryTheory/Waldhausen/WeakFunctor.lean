@@ -29,14 +29,14 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type uC) [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type uC) [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original category `wC`, with all original objects and only original weak maps. -/
-abbrev WeakCategory := WideSubcategory (WaldhausenCategory.weakEquivalences (C := C))
+abbrev WeakCategory := WideSubcategory (WaldhausenCategoryWithoutGluing.weakEquivalences (C := C))
 
 /-- The original weak-category inclusion retains the original objects and maps. -/
 abbrev weakCategoryInclusion : WeakCategory C ⥤ C :=
-  wideSubcategoryInclusion (WaldhausenCategory.weakEquivalences (C := C))
+  wideSubcategoryInclusion (WaldhausenCategoryWithoutGluing.weakEquivalences (C := C))
 
 end CategoryTheory.Waldhausen
 
@@ -45,15 +45,15 @@ namespace CategoryTheory.Functor.IsWaldhausenExact
 
 open CategoryTheory.Waldhausen
 
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
-variable {E : Type uE} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategory E]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
+variable {E : Type uE} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategoryWithoutGluing E]
 variable {F G : C ⥤ D}
 
 /-- The actual exact functor restricts to the original weak wide categories. -/
 def mapWeakCategory (hF : F.IsWaldhausenExact) :
-    WideSubcategory (WaldhausenCategory.weakEquivalences (C := C)) ⥤
-      WideSubcategory (WaldhausenCategory.weakEquivalences (C := D)) where
+    WideSubcategory (WaldhausenCategoryWithoutGluing.weakEquivalences (C := C)) ⥤
+      WideSubcategory (WaldhausenCategoryWithoutGluing.weakEquivalences (C := D)) where
   obj X := ⟨F.obj X.obj⟩
   map f := ⟨F.map f.hom, hF.map_weakEquivalence f.hom f.property⟩
   map_id X := by apply WideSubcategory.hom_ext; exact F.map_id X.obj
@@ -68,7 +68,7 @@ theorem mapWeakCategory_eq (hF : F.IsWaldhausenExact) (hG : G.IsWaldhausenExact)
 /-- Original identity gives the actual weak-category identity. -/
 theorem mapWeakCategory_id :
     (Functor.IsWaldhausenExact.id (C := C)).mapWeakCategory =
-      𝟭 (WideSubcategory (WaldhausenCategory.weakEquivalences (C := C))) := rfl
+      𝟭 (WideSubcategory (WaldhausenCategoryWithoutGluing.weakEquivalences (C := C))) := rfl
 
 /-- Original source-first exact-functor composition gives weak restriction composition. -/
 theorem mapWeakCategory_comp {K : D ⥤ E} (hF : F.IsWaldhausenExact)

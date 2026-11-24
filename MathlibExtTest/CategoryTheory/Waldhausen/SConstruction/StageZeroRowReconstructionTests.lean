@@ -38,7 +38,7 @@ open _root_.CategoryTheory.Waldhausen.SConstruction
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance stageZeroRowTestsWaldhausenCategory : WaldhausenCategory C :=
+local instance stageZeroRowTestsWaldhausenCategory : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 section GenericCells
@@ -389,7 +389,7 @@ section UniverseZero
 variable {C₀ : Type} [Category C₀] [Preadditive C₀]
   [HasZeroObject C₀] [HasBinaryBiproducts C₀] [ExactCategory C₀]
 
-local instance universeZeroWaldhausenCategory : WaldhausenCategory C₀ :=
+local instance universeZeroWaldhausenCategory : WaldhausenCategoryWithoutGluing C₀ :=
   ExactCategory.waldhausenCategory C₀
 
 example {n : ℕ} {A B : Stage C₀ n}
@@ -403,7 +403,7 @@ section UniverseOne
 variable {C₁ : Type 1} [Category.{1} C₁] [Preadditive C₁]
   [HasZeroObject C₁] [HasBinaryBiproducts C₁] [ExactCategory C₁]
 
-local instance universeOneWaldhausenCategory : WaldhausenCategory C₁ :=
+local instance universeOneWaldhausenCategory : WaldhausenCategoryWithoutGluing C₁ :=
   ExactCategory.waldhausenCategory C₁
 
 example {n : ℕ} {A B : Stage C₁ n}
@@ -419,9 +419,9 @@ variable {C₀₁ : Type} [Category.{1} C₀₁] [Preadditive C₀₁]
 variable {C₁₀ : Type 1} [Category.{0} C₁₀] [Preadditive C₁₀]
   [HasZeroObject C₁₀] [HasBinaryBiproducts C₁₀] [ExactCategory C₁₀]
 
-local instance mixedZeroOneWaldhausenCategory : WaldhausenCategory C₀₁ :=
+local instance mixedZeroOneWaldhausenCategory : WaldhausenCategoryWithoutGluing C₀₁ :=
   ExactCategory.waldhausenCategory C₀₁
-local instance mixedOneZeroWaldhausenCategory : WaldhausenCategory C₁₀ :=
+local instance mixedOneZeroWaldhausenCategory : WaldhausenCategoryWithoutGluing C₁₀ :=
   ExactCategory.waldhausenCategory C₁₀
 
 example {n : ℕ} {A B : Stage C₀₁ n}

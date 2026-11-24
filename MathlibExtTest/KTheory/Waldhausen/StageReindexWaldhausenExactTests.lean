@@ -22,14 +22,14 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.StageReindexWaldhausenExact
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- All original simplex operators earn exactness in arbitrary Waldhausen categories. -/
 theorem originalReindexExact {a b : SimplexCategory} (α : a ⟶ b) :
     letI : HasZeroObject (Stage C a.len) := generalStageHasZeroObject C a.len
-    letI : WaldhausenCategory (Stage C a.len) := generalStageWaldhausenCategory C a.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C a.len) := generalStageWaldhausenCategory C a.len
     letI : HasZeroObject (Stage C b.len) := generalStageHasZeroObject C b.len
-    letI : WaldhausenCategory (Stage C b.len) := generalStageWaldhausenCategory C b.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C b.len) := generalStageWaldhausenCategory C b.len
     (reindexStage (C := C) α).IsWaldhausenExact :=
   reindexStage_general_isWaldhausenExact C α
 

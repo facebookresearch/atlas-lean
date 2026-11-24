@@ -29,16 +29,16 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.DoubleStage
 
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- Every outer object retains the full original inner functor map. -/
 theorem originalDoubleObject (m n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     letI : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
-    letI : WaldhausenCategory (Stage D n) := generalStageWaldhausenCategory D n
+    letI : WaldhausenCategoryWithoutGluing (Stage D n) := generalStageWaldhausenCategory D n
     ∀ A : Stage (Stage C n) m,
       ((mapDoubleStage hF m n).obj A).obj = A.obj ⋙ hF.mapStage n :=
   mapDoubleStage_obj hF m n
@@ -46,7 +46,7 @@ theorem originalDoubleObject (m n : ℕ) :
 /-- The named double-stage zero value is an actual zero-object structure. -/
 theorem originalDoubleZero (m n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     HasZeroObject (Stage (Stage C n) m) :=
   doubleStageHasZeroObject C m n
 

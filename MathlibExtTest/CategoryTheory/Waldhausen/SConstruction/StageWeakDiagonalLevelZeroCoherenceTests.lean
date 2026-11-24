@@ -46,9 +46,9 @@ variable (E : Type u) [Category.{v} E] [Preadditive E] [Limits.HasZeroObject E]
 variable (F : C ⥤ D) [F.Additive] [Functor.IsExact F]
 variable (G : D ⥤ E) [G.Additive] [Functor.IsExact G]
 
-local instance : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-local instance : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-local instance : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+local instance : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+local instance : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+local instance : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
 
 /-- Mapped edge runs from the composite mapped zero to the once-mapped zero.
 
@@ -94,7 +94,7 @@ example :
 
 Protects against an identity regression that introduces a nontrivial vertex. -/
 example :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       levelZeroEdgeMappedVertex C C (𝟭 C) = stageWeakDiagonalZeroVertex C) :=
   stageWeakDiagonalLevelZero_mappedVertex_id C
 
@@ -103,7 +103,7 @@ example :
 Protects against an identity regression that keeps the right endpoints but loses
 degeneracy. -/
 noncomputable example :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       SSet.Edge.ofEq
         (SSet.Edge.id (stageWeakDiagonalZeroVertex C))
         (stageWeakDiagonalLevelZero_mappedVertex_id C).symm rfl =

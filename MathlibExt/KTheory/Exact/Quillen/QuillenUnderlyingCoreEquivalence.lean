@@ -139,7 +139,7 @@ private theorem spanOuterLegs_isIso_of_comp_iso_id
     {X Y : C} (S : QuillenSpan X Y) (T : QuillenSpan Y X)
     (e : Span.comp S T ≅ (Span.id (c := X) : QuillenSpan X X)) :
     IsIso S.l ∧ IsIso T.r := by
-  let a := apexIsoOfSpanIso e
+  let a := Span.SpanBicat.apexIso e
   have hl : (Span.comp S T).l = a.hom := by
     change (Span.comp S T).l = e.hom.hom
     simpa using e.hom.hom_l.symm

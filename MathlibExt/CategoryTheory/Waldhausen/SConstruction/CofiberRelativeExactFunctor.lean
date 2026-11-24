@@ -35,8 +35,8 @@ universe v₁ u₁ v₂ u₂
 
 namespace CategoryTheory.Waldhausen.SConstruction.CofiberSequenceCategory
 
-variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 
 /-- The original finite cofiber row is postcomposed by the given
 Waldhausen exact functor, retaining its whole diagram and maps. -/
@@ -158,11 +158,13 @@ theorem mapOfWaldhausenExact_relativeCofibrations (F : C ⥤ D) (hF : F.IsWaldha
 Waldhausen structures; all four fields are derived from original F. -/
 theorem mapOfWaldhausenExact_isRelativeWaldhausenExact
     (F : C ⥤ D) (hF : F.IsWaldhausenExact) :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
-    letI : WaldhausenCategory (CofiberSequenceCategory D) := relativeWaldhausenCategory D;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory D) :=
+      relativeWaldhausenCategory D;
     (mapOfWaldhausenExact F hF).IsWaldhausenExact := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C
-  let : WaldhausenCategory (CofiberSequenceCategory D) := relativeWaldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) := relativeWaldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory D) := relativeWaldhausenCategory D
   refine { map_isZero := ?_, map_cofibration := ?_, map_weakEquivalence := ?_, map_pushout := ?_ }
   · intro X hX
     apply IsZero.of_full_of_faithful_of_isZero (forget D)

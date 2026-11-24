@@ -31,14 +31,14 @@ namespace CategoryTheory.Functor.IsWaldhausenExact
 
 universe uA vA uB vB
 
-variable (A : Type uA) [Category.{vA} A] [HasZeroObject A] [WaldhausenCategory A]
-  (B : Type uB) [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
+variable (A : Type uA) [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+  (B : Type uB) [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
 
 /-- The first product projection is exact for the componentwise Waldhausen structure. -/
 theorem prodFst :
-    letI : WaldhausenCategory (A × B) := prodWaldhausen (C := A) (D := B);
+    letI : WaldhausenCategoryWithoutGluing (A × B) := prodWaldhausen (C := A) (D := B);
     (CategoryTheory.Prod.fst A B).IsWaldhausenExact := by
-  let : WaldhausenCategory (A × B) := prodWaldhausen (C := A) (D := B)
+  let : WaldhausenCategoryWithoutGluing (A × B) := prodWaldhausen (C := A) (D := B)
   refine { map_isZero := ?_, map_cofibration := ?_, map_weakEquivalence := ?_, map_pushout := ?_ }
   · intro X hX
     exact ((isZero_prod_iff (C := A) (D := B)).mp hX).1
@@ -51,9 +51,9 @@ theorem prodFst :
 
 /-- The second product projection is exact for the componentwise Waldhausen structure. -/
 theorem prodSnd :
-    letI : WaldhausenCategory (A × B) := prodWaldhausen (C := A) (D := B);
+    letI : WaldhausenCategoryWithoutGluing (A × B) := prodWaldhausen (C := A) (D := B);
     (CategoryTheory.Prod.snd A B).IsWaldhausenExact := by
-  let : WaldhausenCategory (A × B) := prodWaldhausen (C := A) (D := B)
+  let : WaldhausenCategoryWithoutGluing (A × B) := prodWaldhausen (C := A) (D := B)
   refine { map_isZero := ?_, map_cofibration := ?_, map_weakEquivalence := ?_, map_pushout := ?_ }
   · intro X hX
     exact ((isZero_prod_iff (C := A) (D := B)).mp hX).2
@@ -70,14 +70,14 @@ universe v₁ u₁ v₂ u₂ v₃ u₃
 componentwise target product value. All three object and morphism universe
 roles remain independent, and all four exactness fields are retained. -/
 theorem prod'
-    {C : Type u₁} [Category.{v₁} C] [HasZeroObject C] [WaldhausenCategory C]
-    {D : Type u₂} [Category.{v₂} D] [HasZeroObject D] [WaldhausenCategory D]
-    {E : Type u₃} [Category.{v₃} E] [HasZeroObject E] [WaldhausenCategory E]
+    {C : Type u₁} [Category.{v₁} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+    {D : Type u₂} [Category.{v₂} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
+    {E : Type u₃} [Category.{v₃} E] [HasZeroObject E] [WaldhausenCategoryWithoutGluing E]
     {F : C ⥤ D} {G : C ⥤ E}
     (hF : F.IsWaldhausenExact) (hG : G.IsWaldhausenExact) :
-    (letI : WaldhausenCategory (D × E) := prodWaldhausen;
+    (letI : WaldhausenCategoryWithoutGluing (D × E) := prodWaldhausen;
       (F.prod' G).IsWaldhausenExact) := by
-  let : WaldhausenCategory (D × E) := prodWaldhausen
+  let : WaldhausenCategoryWithoutGluing (D × E) := prodWaldhausen
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro X hX
     exact (isZero_prod_iff (C := D) (D := E)).2

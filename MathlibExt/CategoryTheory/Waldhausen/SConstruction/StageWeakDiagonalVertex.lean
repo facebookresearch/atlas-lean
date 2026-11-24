@@ -38,7 +38,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Degree-zero vertex of the weak-stage diagonal from the canonical zero stage. -/
 noncomputable def stageWeakDiagonalZeroVertex :

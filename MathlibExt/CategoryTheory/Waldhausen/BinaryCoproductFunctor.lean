@@ -32,7 +32,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The actual map between the derived coproduct cocones, determined by
 the two original component maps. -/

@@ -29,8 +29,8 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.StageWaldhausenExactFunctor
 
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- The actual mapped stage retains every genuine source cofibration corner. -/
@@ -50,9 +50,9 @@ theorem originalStagePushout (n : ℕ) {A B A' P : Stage C n}
 /-- The exact stage maps use the canonical original named Waldhausen values. -/
 theorem originalStageExactness (n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     letI : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
-    letI : WaldhausenCategory (Stage D n) := generalStageWaldhausenCategory D n
+    letI : WaldhausenCategoryWithoutGluing (Stage D n) := generalStageWaldhausenCategory D n
     (hF.mapStage n).IsWaldhausenExact :=
   hF.mapStage_isWaldhausenExact n
 

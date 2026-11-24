@@ -39,8 +39,8 @@ universe uB vB uC vC
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- A cofibration sequence of exact functors in Weibel V.Definition1.1(b).
 The base pushout and its evident map are the stock constructions, with the
@@ -59,7 +59,7 @@ structure IsWaldhausenCofiberFunctorSequence (F₀ F₁ F₂ : B ⥤ C)
   F1(A) union over F0(A) F0(A') maps by the original naturality square to F1(A'). -/
   baseCofibration : ∀ {A A' : B} (f : A ⟶ A'), IsCofibration f →
     letI : HasPushout (i.app A) (F₀.map f) := (by
-      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout (C := C)
+      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C)
         (i.app A) (objectwise A).1 (F₀.obj A') (F₀.map f)
       exact hP.flip.hasPushout);
     IsCofibration (pushout.desc (F₁.map f) (i.app A') (i.naturality f).symm)
@@ -75,7 +75,7 @@ theorem map_relativeCofibration {A A' : B} (f : A ⟶ A') (hf : IsCofibration f)
     CofiberSequenceCategory.relativeCofibrations C
       ((cofiberFunctorSequenceLift F₀ F₁ F₂ i p H.objectwise).map f) := by
   let : HasPushout (i.app A) (F₀.map f) := by
-    obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout (C := C)
+    obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C)
       (i.app A) (H.objectwise A).1 (F₀.obj A') (F₀.map f)
     exact hP.flip.hasPushout
   apply (CofiberSequenceCategory.mem_relativeCofibrations_raw_iff C _).mpr
@@ -102,10 +102,10 @@ theorem stage_corners (n : ℕ) (A : Stage B n)
 /-- The original cofiber lift sends every original finite source stage
 to a genuine relative stage, with all three evaluations and corners earned. -/
 theorem isStage_lift (n : ℕ) (A : Stage B n) :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) :=
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
       CofiberSequenceCategory.relativeWaldhausenCategory C;
     IsStage n (A.obj ⋙ cofiberFunctorSequenceLift F₀ F₁ F₂ i p H.objectwise) := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) :=
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
     CofiberSequenceCategory.relativeWaldhausenCategory C
   let L := cofiberFunctorSequenceLift F₀ F₁ F₂ i p H.objectwise
   apply (CofiberSequenceCategory.isStage_relative_iff_evaluations C n (A.obj ⋙ L)).mpr
@@ -136,10 +136,10 @@ theorem isStage_lift (n : ℕ) (A : Stage B n) :
 /-- Source Definition1.1(b) internally gives the actual original exact
 functor B to E(C); no lift-exactness outcome is supplied by a caller. -/
 theorem lift_isWaldhausenExact :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) :=
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
       CofiberSequenceCategory.relativeWaldhausenCategory C;
     (cofiberFunctorSequenceLift F₀ F₁ F₂ i p H.objectwise).IsWaldhausenExact := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) :=
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
     CofiberSequenceCategory.relativeWaldhausenCategory C
   let L := cofiberFunctorSequenceLift F₀ F₁ F₂ i p H.objectwise
   refine { map_isZero := ?_, map_cofibration := ?_, map_weakEquivalence := ?_, map_pushout := ?_ }

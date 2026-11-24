@@ -36,7 +36,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 namespace StagePointwisePushoutPresentation
 
@@ -101,7 +101,7 @@ private theorem zeroRowMap_cofibration_aux
   let e : Arrow.mk R.apex.hom ≅
       Arrow.mk (P.diagram.map (horiz (Fin.zero_le i) hij)) :=
     Qselected.isPushout.isColimit.coconePointUniqueUpToIso Qraw.isPushout.isColimit
-  exact ((WaldhausenCategory.cofibrations (C := C)).arrow_mk_iso_iff e).mp R.apex.prop
+  exact ((WaldhausenCategoryWithoutGluing.cofibrations (C := C)).arrow_mk_iso_iff e).mp R.apex.prop
 
 /-- Every original initial-row arrow of the raw apex is a cofibration,
 derived from the actual relative-arrow pushout rather than assumed. -/

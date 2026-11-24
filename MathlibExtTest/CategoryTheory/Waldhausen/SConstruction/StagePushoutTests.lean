@@ -32,7 +32,7 @@ namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StagePushoutTes
 variable (C : Type u) [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance stagePushoutTestsWaldhausenC : WaldhausenCategory C :=
+local instance stagePushoutTestsWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- A componentwise pushout along a genuine stage cofibration is a stage. -/

@@ -48,8 +48,8 @@ section General
 variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C]
 variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D]
 variable {E : Type u₃} [Category.{v₃} E] [HasZeroObject E]
-variable [WaldhausenCategory C] [WaldhausenCategory D]
-  [WaldhausenCategory E]
+variable [WaldhausenCategoryWithoutGluing C] [WaldhausenCategoryWithoutGluing D]
+  [WaldhausenCategoryWithoutGluing E]
 variable {F : C ⥤ D} {G : D ⥤ E}
 variable (hF : F.IsWaldhausenExact) (hG : G.IsWaldhausenExact)
 
@@ -127,10 +127,10 @@ variable [HasBinaryBiproducts C] [HasBinaryBiproducts D]
 variable [ExactCategory C] [ExactCategory D]
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]
 
-local instance : WaldhausenCategory C :=
+local instance : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
-local instance : WaldhausenCategory D :=
+local instance : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 variable (hF : F.IsWaldhausenExact)
@@ -151,7 +151,7 @@ section TypeZero
 
 variable {C₀ D₀ : Type 0} [Category.{0} C₀] [Category.{0} D₀]
   [HasZeroObject C₀] [HasZeroObject D₀]
-  [WaldhausenCategory C₀] [WaldhausenCategory D₀]
+  [WaldhausenCategoryWithoutGluing C₀] [WaldhausenCategoryWithoutGluing D₀]
 variable {F₀ : C₀ ⥤ D₀} (hF₀ : F₀.IsWaldhausenExact)
 
 example (n : ℕ) : Stage C₀ n ⥤ Stage D₀ n :=
@@ -163,7 +163,7 @@ section TypeOne
 
 variable {C₁ D₁ : Type 1} [Category.{1} C₁] [Category.{1} D₁]
   [HasZeroObject C₁] [HasZeroObject D₁]
-  [WaldhausenCategory C₁] [WaldhausenCategory D₁]
+  [WaldhausenCategoryWithoutGluing C₁] [WaldhausenCategoryWithoutGluing D₁]
 variable {F₁ : C₁ ⥤ D₁} (hF₁ : F₁.IsWaldhausenExact)
 
 example (n : ℕ) : StageWeakCategory C₁ n ⥤ StageWeakCategory D₁ n :=

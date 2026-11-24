@@ -36,15 +36,15 @@ universe v u
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The actual coproduct functor is Waldhausen exact for the original
 named product structure, under the genuine original gluing axiom. -/
 theorem waldhausenCoproductFunctor_isWaldhausenExact
     (hG : WaldhausenGluingAxiom (C := C)) :
-    letI : WaldhausenCategory (C × C) := prodWaldhausen (C := C) (D := C);
+    letI : WaldhausenCategoryWithoutGluing (C × C) := prodWaldhausen (C := C) (D := C);
     (waldhausenCoproductFunctor C).IsWaldhausenExact := by
-  let : WaldhausenCategory (C × C) := prodWaldhausen (C := C) (D := C)
+  let : WaldhausenCategoryWithoutGluing (C × C) := prodWaldhausen (C := C) (D := C)
   refine {
     map_isZero := ?_
     map_cofibration := ?_

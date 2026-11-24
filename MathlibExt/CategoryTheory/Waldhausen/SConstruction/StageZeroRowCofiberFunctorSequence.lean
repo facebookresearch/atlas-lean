@@ -43,18 +43,19 @@ universe u v
 
 namespace CategoryTheory.Waldhausen.SConstruction.StageZeroRowCofiber
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original chosen zero value on each general source stage. -/
 local instance sourceStageZero (n : ℕ) : HasZeroObject (Stage C n) :=
   generalStageHasZeroObject C n
 
 /-- The original general Waldhausen value on each source stage. -/
-local instance sourceStageWaldhausen (n : ℕ) : WaldhausenCategory (Stage C n) :=
+local instance sourceStageWaldhausen (n : ℕ) : WaldhausenCategoryWithoutGluing (Stage C n) :=
   generalStageWaldhausenCategory C n
 
 /-- The original relative Waldhausen value on the target cofiber category. -/
-local instance targetRelativeWaldhausen : WaldhausenCategory (CofiberSequenceCategory C) :=
+local instance targetRelativeWaldhausen : WaldhausenCategoryWithoutGluing
+    (CofiberSequenceCategory C) :=
   CofiberSequenceCategory.relativeWaldhausenCategory C
 
 /-- The actual original zero-row evaluation at column `i`. -/
@@ -146,10 +147,11 @@ private theorem baseCofibration_of_corner (n : ℕ) {i j : Fin (n + 1)} (hij : i
         _ = (pushout.inr ((inclusion C n hij).app A) ((rowFunctor C n i).map φ) ≫
             e.inv) ≫ dn := congrArg (fun k : (rowFunctor C n i).obj B ⟶ P => k ≫ dn) heR.symm
         _ = _ := Category.assoc _ _ _
-  have he : IsCofibration e.inv := (WaldhausenCategory.cofibrations (C := C)).of_isIso e.inv
+  have he : IsCofibration e.inv := (WaldhausenCategoryWithoutGluing.cofibrations (C :=
+    C)).of_isIso e.inv
   have hdn : IsCofibration dn := hd
   have hcomp : IsCofibration (e.inv ≫ dn) :=
-    (WaldhausenCategory.cofibrations (C := C)).comp_mem e.inv dn he hdn
+    (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem e.inv dn he hdn
   change IsCofibration δ
   exact hδ.symm ▸ hcomp
 
@@ -163,7 +165,7 @@ theorem certificate (n : ℕ) {i j : Fin (n + 1)} (hij : i ≤ j) :
     evalIsGeneralStageWaldhausenExact C n (interval i j hij), objectwise C n hij, ?_⟩
   intro A B φ hφ
   let : HasPushout ((inclusion C n hij).app A) ((rowFunctor C n i).map φ) := by
-    obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+    obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
       (C := C) ((inclusion C n hij).app A) (objectwise C n hij A).1
       ((rowFunctor C n i).obj B) ((rowFunctor C n i).map φ)
     exact hP.flip.hasPushout
@@ -174,7 +176,7 @@ pushout existence earned from the original objectwise first arrow. -/
 theorem baseCofibration (n : ℕ) {i j : Fin (n + 1)} (hij : i ≤ j)
     {A B : Stage C n} (φ : A ⟶ B) (hφ : IsCofibration φ) :
     letI : HasPushout ((inclusion C n hij).app A) ((rowFunctor C n i).map φ) := by
-      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
         (C := C) ((inclusion C n hij).app A) (objectwise C n hij A).1
         ((rowFunctor C n i).obj B) ((rowFunctor C n i).map φ)
       exact hP.flip.hasPushout

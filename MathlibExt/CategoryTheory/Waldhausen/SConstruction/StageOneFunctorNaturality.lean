@@ -32,24 +32,27 @@ open scoped ZeroObject Simplicial
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
-/-- The actual exact functor's image of the original chosen zero has its canonical zero isomorphism. -/
+/-- The actual exact functor's image of the original chosen zero has its canonical zero isomorphism.
+-/
 def stageOneFunctorZeroIso : F.obj (0 : C) ≅ (0 : D) :=
   (hF.map_isZero (isZero_zero C)).isoZero
 
-/-- The original S₁ diagram comparison uses that zero isomorphism on diagonals and identity elsewhere. -/
+/-- The original S₁ diagram comparison uses that zero isomorphism on diagonals and identity
+elsewhere. -/
 def stageOneDiagramPostcompIsoComponent (X : C) (A : Ar 1) :
     (stageOneDiagram C X ⋙ F).obj A ≅ (stageOneDiagram D (F.obj X)).obj A := by
   by_cases h : A.left = A.right
-  · simpa only [Functor.comp_obj, stageOneDiagram, stageOneDiagramObj, if_pos h] using
+  · simpa only [Functor.comp_obj, stageOneDiagram, stageOneDiagramObj, ite_eq_left h] using
       stageOneFunctorZeroIso hF
-  · simpa only [Functor.comp_obj, stageOneDiagram, stageOneDiagramObj, if_neg h] using
+  · simpa only [Functor.comp_obj, stageOneDiagram, stageOneDiagramObj, ite_eq_right h] using
       Iso.refl (F.obj X)
 
-/-- The complete original S₁ postcomposition diagram has its actual canonical natural isomorphism. -/
+/-- The complete original S₁ postcomposition diagram has its actual canonical natural isomorphism.
+-/
 def stageOneDiagramPostcompIso (X : C) :
     stageOneDiagram C X ⋙ F ≅ stageOneDiagram D (F.obj X) :=
   NatIso.ofComponents (stageOneDiagramPostcompIsoComponent hF X) (by
@@ -75,7 +78,8 @@ def stageOneDiagramPostcompIso (X : C) :
         simp only [Functor.map_id, Category.id_comp, Category.comp_id])
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The complete diagram comparison retains the actual identity at the original coefficient interval. -/
+/-- The complete diagram comparison retains the actual identity at the original coefficient
+interval. -/
 theorem stageOneDiagramPostcompIso_hom_interval (X : C) :
     (stageOneDiagramPostcompIso hF X).hom.app (interval (0 : Fin 2) 1 (by decide)) =
       𝟙 (F.obj X) := by
@@ -122,7 +126,8 @@ theorem stageOnePostcompStageIso_naturality {X Y : C} (f : X ⟶ Y) :
         (interval (0 : Fin 2) 1 (by decide)) ≫ F.map f
     simp only [stageOneDiagramPostcompIso, NatIso.ofComponents_hom_app,
       stageOneDiagramPostcompIsoComponent]
-    simp only [interval, Arrow.mk_left, Arrow.mk_right, dite_eq_right (by decide : ¬ (0 : Fin 2) = 1),
+    simp only [interval, Arrow.mk_left, Arrow.mk_right, dite_eq_right (by decide : ¬ (0 : Fin 2)
+        = 1),
       eq_mpr_eq_cast, cast_eq, Iso.refl_hom, Category.comp_id]
     exact (Category.id_comp (F.map f)).symm
 
@@ -130,7 +135,8 @@ theorem stageOnePostcompStageIso_naturality {X Y : C} (f : X ⟶ Y) :
 def stageOnePostcompNatIso : stageOne C ⋙ hF.mapStage 1 ≅ F ⋙ stageOne D :=
   NatIso.ofComponents (stageOnePostcompStageIso hF) (stageOnePostcompStageIso_naturality hF)
 
-/-- The complete interval insertion comparison is the original S₁ comparison pulled back along its ordinal map. -/
+/-- The complete interval insertion comparison is the original S₁ comparison pulled back along its
+ordinal map. -/
 def stageOneIntervalPostcompNatIso {a : SimplexCategory} (f : a ⟶ ⦋1⦌) :
     stageOne C ⋙ reindexStage (C := C) f ⋙ hF.mapStage a.len ≅
       F ⋙ stageOne D ⋙ reindexStage (C := D) f := by
@@ -154,7 +160,7 @@ theorem stageOneFunctorZeroIso_id :
     (stageOneFunctorZeroIso (Functor.IsWaldhausenExact.id (C := C))).hom = 𝟙 (0 : C) := by
   exact (isZero_zero C).eq_of_src _ _
 
-variable {E : Type uE} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategory E]
+variable {E : Type uE} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategoryWithoutGluing E]
 variable {G : D ⥤ E}
 
 /-- Original source-first composition retains the same canonical zero-isomorphism composite. -/

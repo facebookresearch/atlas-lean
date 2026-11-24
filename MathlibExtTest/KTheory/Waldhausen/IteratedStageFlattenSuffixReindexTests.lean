@@ -33,7 +33,7 @@ namespace MathlibExtTest.KTheory.Waldhausen.IteratedStageFlattenSuffixReindexTes
 
 open CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The full original appended operator retains its moving last coordinate. -/
 theorem originalMovingCoordinates {r : ℕ} {a b : StageSimplexTuple r} (α : a ⟶ b)

@@ -27,7 +27,7 @@ universe u v
 
 namespace MathlibExtTest.KTheory.Waldhausen.DoubleStageTranspose
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Both original equivalence functors have their earned named exactness. -/
 private theorem bothOriginalExact (m n : ℕ) :

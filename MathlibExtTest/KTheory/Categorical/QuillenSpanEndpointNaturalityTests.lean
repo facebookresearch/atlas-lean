@@ -221,7 +221,7 @@ end MixedUniverses
 section DegreeTwoShell
 
 local instance degreeTwoShellWaldhausenCategory :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- The converse applies directly to interval spans cut from degree-two

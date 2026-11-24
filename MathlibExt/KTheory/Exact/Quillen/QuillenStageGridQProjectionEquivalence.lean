@@ -52,7 +52,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 /-- The canonical Waldhausen structure used for the original retained-Q projection equivalence. -/
 local instance quillenStageGridQProjectionEquivalenceWaldhausenCategory :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- At the final simplex vertex, the edgewise cross interval is exactly the

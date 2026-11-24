@@ -35,17 +35,18 @@ namespace MathlibExtTest.KTheory.Waldhausen.CofiberRelativeStageTransposeExactTe
 open CategoryTheory.Waldhausen CategoryTheory.Waldhausen.SConstruction
 open CategoryTheory.Waldhausen.SConstruction.CofiberSequenceCategory
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original relative Waldhausen value on the tested source cofiber category. -/
-local instance originalRelativeWaldhausen : WaldhausenCategory (CofiberSequenceCategory C) :=
+local instance originalRelativeWaldhausen : WaldhausenCategoryWithoutGluing
+    (CofiberSequenceCategory C) :=
   relativeWaldhausenCategory C
 
 local instance originalStageZero (n : ℕ) : HasZeroObject (Stage C n) :=
   generalStageHasZeroObject C n
 
 /-- The original general Waldhausen value on each tested target finite stage. -/
-local instance originalStageWaldhausen (n : ℕ) : WaldhausenCategory (Stage C n) :=
+local instance originalStageWaldhausen (n : ℕ) : WaldhausenCategoryWithoutGluing (Stage C n) :=
   generalStageWaldhausenCategory C n
 
 local instance originalRelativeStageZero (n : ℕ) :
@@ -54,12 +55,12 @@ local instance originalRelativeStageZero (n : ℕ) :
 
 /-- The original general stage value over the tested source relative cofiber category. -/
 local instance originalRelativeStageWaldhausen (n : ℕ) :
-    WaldhausenCategory (Stage (CofiberSequenceCategory C) n) :=
+    WaldhausenCategoryWithoutGluing (Stage (CofiberSequenceCategory C) n) :=
   generalStageWaldhausenCategory (CofiberSequenceCategory C) n
 
 /-- The original relative cofiber value over the tested target general stage category. -/
 local instance originalTargetRelativeWaldhausen (n : ℕ) :
-    WaldhausenCategory (CofiberSequenceCategory (Stage C n)) :=
+    WaldhausenCategoryWithoutGluing (CofiberSequenceCategory (Stage C n)) :=
   relativeWaldhausenCategory (Stage C n)
 
 /-- The original whole relative transpose is exact in all original degrees. -/
@@ -87,7 +88,7 @@ theorem originalBaseCofibration (n : ℕ)
     {A B : Stage (CofiberSequenceCategory C) n} (φ : A ⟶ B) (hφ : IsCofibration φ) :
     letI : HasPushout ((stageSourceToMiddle C n).app A)
         (((stageEvaluationTriangle C n).obj 0).map φ) := (by
-      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
         (C := Stage C n) ((stageSourceToMiddle C n).app A)
         (stageTriangle_isCofiberSequence C n A).1
         (((stageEvaluationTriangle C n).obj 0).obj B)

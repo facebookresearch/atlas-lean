@@ -189,7 +189,7 @@ end Associativity
 
 section StageShell
 
-local instance stageShellWaldhausenCategory : WaldhausenCategory C :=
+local instance stageShellWaldhausenCategory : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 variable {a : SimplexCategory}
@@ -335,7 +335,7 @@ end MixedUniverses
 
 section DegreeTwo
 
-local instance degreeTwoWaldhausenCategory : WaldhausenCategory C :=
+local instance degreeTwoWaldhausenCategory : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 theorem degreeTwo_h01 : (0 : Fin 3) ≤ 1 := by decide

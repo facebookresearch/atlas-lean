@@ -30,7 +30,7 @@ Requires `[Preadditive C] [HasZeroObject C] [HasBinaryBiproducts C]`
 `[ExactCategory C]`; the `[HasZeroMorphisms C]` needed by the packaged complex
 is supplied by the preadditive instance.
 
-Nonclaims: no `WaldhausenCategory (CofiberSequenceCategory C)` instance,
+Nonclaims: no `WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C)` instance,
 no gluing, additivity, `K₀`/G-theory, spectra, or Q/S comparison.
 -/
 

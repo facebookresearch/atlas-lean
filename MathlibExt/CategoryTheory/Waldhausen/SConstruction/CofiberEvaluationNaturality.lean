@@ -59,10 +59,10 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D] [HasZeroObject D]
   [HasBinaryBiproducts D] [ExactCategory D]
 
 /-- The Waldhausen category structure on `C` from its exact structure, as a local instance. -/
-local instance cofiberEvaluationNaturalityWaldhausenC : WaldhausenCategory C :=
+local instance cofiberEvaluationNaturalityWaldhausenC : WaldhausenCategoryWithoutGluing C :=
     ExactCategory.waldhausenCategory C
 /-- The Waldhausen category structure on `D` from its exact structure, as a local instance. -/
-local instance cofiberEvaluationNaturalityWaldhausenD : WaldhausenCategory D :=
+local instance cofiberEvaluationNaturalityWaldhausenD : WaldhausenCategoryWithoutGluing D :=
     ExactCategory.waldhausenCategory D
 
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]

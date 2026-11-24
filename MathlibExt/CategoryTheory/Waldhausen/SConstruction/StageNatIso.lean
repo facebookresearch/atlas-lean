@@ -62,11 +62,11 @@ variable (F G : C ⥤ D) [F.Additive] [G.Additive]
 
 /-- Natural-isomorphism transport through `mapStage` by postcomposition. -/
 noncomputable def mapStageNatIso (e : F ≅ G) (n : ℕ) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       mapStage C D F n ≅ mapStage C D G n) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   refine NatIso.ofComponents
     (fun X => ObjectProperty.isoMk _ (Functor.isoWhiskerLeft X.obj e)) ?_
   intro X Y φ
@@ -77,11 +77,11 @@ noncomputable def mapStageNatIso (e : F ≅ G) (n : ℕ) :
 
 /-- Natural-isomorphism transport through `mapStageWeak` by restriction. -/
 noncomputable def mapStageWeakNatIso (e : F ≅ G) (n : ℕ) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       mapStageWeak C D F n ≅ mapStageWeak C D G n) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   refine NatIso.ofComponents (fun X => ?_) ?_
   · let s := (mapStageNatIso C D F G e n).app X.obj
     have h_hom : IsIso s.hom := inferInstance
@@ -97,26 +97,26 @@ noncomputable def mapStageWeakNatIso (e : F ≅ G) (n : ℕ) :
 @[simp]
 theorem mapStageNatIso_hom_app
     (e : F ≅ G) (n : ℕ)
-    (X : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (X : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       Stage C n)) (A : Ar n) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       ((((mapStageNatIso C D F G e n).hom.app X).hom.app A)) = e.hom.app (X.obj.obj A)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   rfl
 
 /-- Inv component of `mapStageNatIso` computes pointwise as `e.inv`. -/
 @[simp]
 theorem mapStageNatIso_inv_app
     (e : F ≅ G) (n : ℕ)
-    (X : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (X : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       Stage C n)) (A : Ar n) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       ((((mapStageNatIso C D F G e n).inv.app X).hom.app A)) = e.inv.app (X.obj.obj A)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   rfl
 
 end CategoryTheory.Waldhausen.SConstruction

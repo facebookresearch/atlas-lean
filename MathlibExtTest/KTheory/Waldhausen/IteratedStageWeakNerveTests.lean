@@ -22,7 +22,7 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.IteratedStageWeakNerve
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every finite number of original simplex directions forms the actual weak category. -/
 def originalMultisimplicialCategory (r : ℕ) : StageSimplexTuple r ⥤ Cat.{v, max u v} :=

@@ -52,18 +52,18 @@ variable (F : C ⥤ D) [F.Additive] [Functor.IsExact F]
 
 /-- Levelwise weak-stage nerve map with components `nerveFunctor.map`. -/
 def stageWeakNerveMap :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       stageWeakNerve C ⟶ stageWeakNerve D) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact Functor.whiskerRight (simplicialStageMapWeak C D F) nerveFunctor
 
 /-- App computation for `stageWeakNerveMap`. -/
 @[simp]
 theorem stageWeakNerveMap_app (a : SimplexCategoryᵒᵖ) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakNerveMap C D F).app a =
         nerveFunctor.map ((simplicialStageMapWeak C D F).app a)) := by
   rfl
@@ -71,9 +71,9 @@ theorem stageWeakNerveMap_app (a : SimplexCategoryᵒᵖ) :
 /-- Identity functor induces the identity weak-stage nerve map. -/
 @[simp]
 theorem stageWeakNerveMap_id :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       stageWeakNerveMap C C (𝟭 C) = 𝟙 (stageWeakNerve C)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
   unfold stageWeakNerveMap
   rw [simplicialStageMapWeak_id]
   exact Functor.whiskerRight_id' _
@@ -84,14 +84,14 @@ theorem stageWeakNerveMap_comp (E : Type u) [Category.{v} E]
     [Preadditive E] [Limits.HasZeroObject E]
     [HasBinaryBiproducts E] [ExactCategory E]
     (G : D ⥤ E) [G.Additive] [Functor.IsExact G] :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       stageWeakNerveMap C E (F ⋙ G) =
         stageWeakNerveMap C D F ≫ stageWeakNerveMap D E G) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   unfold stageWeakNerveMap
   rw [simplicialStageMapWeak_comp]
   exact Functor.whiskerRight_comp _ _ _
@@ -99,10 +99,10 @@ theorem stageWeakNerveMap_comp (E : Type u) [Category.{v} E]
 /-- Action of a `stageWeakNerveMap` component on a `mk₀` simplex. -/
 @[simp]
 theorem stageWeakNerveMap_app_mk₀ (a : SimplexCategoryᵒᵖ)
-    (X : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (X : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C a.unop.len)) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       ((stageWeakNerveMap C D F).app a).app (op ⦋0⦌) (ComposableArrows.mk₀ X) =
         ComposableArrows.mk₀ ((mapStageWeak C D F a.unop.len).obj X)) := by
   rw [stageWeakNerveMap_app, simplicialStageMapWeak_app]
@@ -111,10 +111,10 @@ theorem stageWeakNerveMap_app_mk₀ (a : SimplexCategoryᵒᵖ)
 /-- Action of a `stageWeakNerveMap` component on a `mk₁` simplex. -/
 @[simp]
 theorem stageWeakNerveMap_app_mk₁ (a : SimplexCategoryᵒᵖ)
-    {X Y : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    {X Y : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C a.unop.len)} (φ : X ⟶ Y) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       ((stageWeakNerveMap C D F).app a).app (op ⦋1⦌) (ComposableArrows.mk₁ φ) =
         ComposableArrows.mk₁ ((mapStageWeak C D F a.unop.len).map φ)) := by
   rw [stageWeakNerveMap_app, simplicialStageMapWeak_app]

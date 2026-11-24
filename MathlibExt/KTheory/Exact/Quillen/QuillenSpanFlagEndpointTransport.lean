@@ -125,7 +125,7 @@ noncomputable def endpointTransportSymmIso
 @[simp]
 theorem endpointTransportReflIso_apex {X Y : C}
     (S : QuillenSpan X Y) :
-    apexIsoOfSpanIso (endpointTransportReflIso S) = Iso.refl S.apex :=
+    Span.SpanBicat.apexIso (endpointTransportReflIso S) = Iso.refl S.apex :=
   rfl
 
 @[simp]
@@ -133,7 +133,7 @@ theorem endpointTransportTransIso_apex
     {X X' X'' Y Y' Y'' : C} (S : QuillenSpan X Y)
     (eX : X ≅ X') (eY : Y ≅ Y')
     (fX : X' ≅ X'') (fY : Y' ≅ Y'') :
-    apexIsoOfSpanIso (endpointTransportTransIso S eX eY fX fY) =
+    Span.SpanBicat.apexIso (endpointTransportTransIso S eX eY fX fY) =
       Iso.refl S.apex :=
   rfl
 
@@ -141,7 +141,7 @@ theorem endpointTransportTransIso_apex
 theorem endpointTransportSymmIso_apex
     {X X' Y Y' : C} (S : QuillenSpan X Y)
     (eX : X ≅ X') (eY : Y ≅ Y') :
-    apexIsoOfSpanIso (endpointTransportSymmIso S eX eY) =
+    Span.SpanBicat.apexIso (endpointTransportSymmIso S eX eY) =
       Iso.refl S.apex :=
   rfl
 
@@ -340,7 +340,7 @@ theorem QuillenSpanFlagData.endpointTransport_refl
     QuillenSpanFlagData.transport (QuillenSpan.endpointTransportReflIso S)
         (A.endpointTransport (Iso.refl X) (Iso.refl Y)) = A := by
   apply endpointFlagData_ext <;>
-    simp
+    simp [QuillenSpan.endpointTransportReflIso, Span.mkIso]
 
 /-- Direct endpoint flag transport along composite endpoint isomorphisms is
 successive endpoint transport after the explicit raw-span comparison. -/
@@ -354,7 +354,7 @@ theorem QuillenSpanFlagData.endpointTransport_trans
         (A.endpointTransport (eX.trans fX) (eY.trans fY)) =
       (A.endpointTransport eX eY).endpointTransport fX fY := by
   apply endpointFlagData_ext <;>
-    simp [Category.assoc]
+    simp [QuillenSpan.endpointTransportTransIso, Span.mkIso, Category.assoc]
 
 /-- Endpoint flag transport followed by inverse endpoint transport is the
 original flag after the explicit raw-span inverse comparison. -/
@@ -366,7 +366,7 @@ theorem QuillenSpanFlagData.endpointTransport_symm
         ((A.endpointTransport eX eY).endpointTransport eX.symm eY.symm) =
       A := by
   apply endpointFlagData_ext <;>
-    simp
+    simp [QuillenSpan.endpointTransportSymmIso, Span.mkIso]
 
 namespace QuillenSpan.EndpointIso
 
@@ -383,7 +383,7 @@ noncomputable def endpointTransportIso
 @[simp]
 theorem endpointTransportIso_apex
     (e : QuillenSpan.EndpointIso S T eX eY) :
-    apexIsoOfSpanIso e.endpointTransportIso = e.1 :=
+    Span.SpanBicat.apexIso e.endpointTransportIso = e.1 :=
   rfl
 
 @[simp]

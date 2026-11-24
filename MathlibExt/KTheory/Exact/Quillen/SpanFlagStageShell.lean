@@ -53,7 +53,7 @@ namespace AlgebraicKTheory
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance quillenStageShellWaldhausenC : WaldhausenCategory C :=
+local instance quillenStageShellWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 set_option linter.defProp false in

@@ -19,13 +19,14 @@ open CategoryTheory CategoryTheory.Limits
 open scoped ZeroObject
 namespace MathlibExtTest.IteratedStageCanonicalZero
 open CategoryTheory.Waldhausen.SConstruction
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The complete original constant diagram is zero after every actual finite iteration. -/
 theorem originalConstructedZero (ns : List ℕ) : IsZero (iteratedStageCanonicalZero C ns) :=
   iteratedStageCanonicalZero_isZero C ns
 
-/-- The complete successor diagram is literally constant at the previously constructed original zero. -/
+/-- The complete successor diagram is literally constant at the previously constructed original
+zero. -/
 theorem originalSuccessorDiagram (n : ℕ) (ns : List ℕ) :
     ((iteratedStageConsEquivalence C n ns).functor.obj
       (iteratedStageCanonicalZero C (n :: ns))).obj =

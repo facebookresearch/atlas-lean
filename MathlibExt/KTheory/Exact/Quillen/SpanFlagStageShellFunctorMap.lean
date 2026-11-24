@@ -51,11 +51,11 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]
 
 local instance spanFlagStageShellFunctorMapWaldhausenC :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 local instance spanFlagStageShellFunctorMapWaldhausenD :
-    WaldhausenCategory D :=
+    WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 /-- The cross vertex of a mapped Stage is canonically the image of the

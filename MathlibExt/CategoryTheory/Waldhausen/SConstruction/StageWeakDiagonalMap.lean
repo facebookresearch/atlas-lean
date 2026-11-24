@@ -54,31 +54,31 @@ variable (F : C ⥤ D) [F.Additive] [Functor.IsExact F]
 
 /-- Exact-functor map on the weak-stage diagonal via the nerve map. -/
 def stageWeakDiagonalMap :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       stageWeakDiagonal C ⟶ stageWeakDiagonal D) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact SSet.simplicialDiagonalFunctor.map (stageWeakNerveMap C D F)
 
 /-- Component computation for `stageWeakDiagonalMap`. -/
 @[simp]
 theorem stageWeakDiagonalMap_app (a : SimplexCategoryᵒᵖ) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonalMap C D F).app a =
         ((stageWeakNerveMap C D F).app a).app a) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   unfold stageWeakDiagonalMap
   rfl
 
 /-- Identity functor induces the identity weak-stage diagonal map. -/
 @[simp]
 theorem stageWeakDiagonalMap_id :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       stageWeakDiagonalMap C C (𝟭 C) = 𝟙 (stageWeakDiagonal C)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
   ext a
   simp only [stageWeakDiagonalMap_app, stageWeakNerveMap_id, NatTrans.id_app,
     stageWeakDiagonal_obj]
@@ -89,14 +89,14 @@ theorem stageWeakDiagonalMap_comp (E : Type u) [Category.{v} E]
     [Preadditive E] [Limits.HasZeroObject E]
     [HasBinaryBiproducts E] [ExactCategory E]
     (G : D ⥤ E) [G.Additive] [Functor.IsExact G] :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       stageWeakDiagonalMap C E (F ⋙ G) =
         stageWeakDiagonalMap C D F ≫ stageWeakDiagonalMap D E G) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   ext a
   simp only [stageWeakDiagonalMap_app, stageWeakNerveMap_comp, NatTrans.comp_app]
   rfl
@@ -104,41 +104,41 @@ theorem stageWeakDiagonalMap_comp (E : Type u) [Category.{v} E]
 /-- Degree-zero `mk₀` action of a weak-stage diagonal map. -/
 @[simp]
 theorem stageWeakDiagonalMap_app_mk₀
-    (X : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (X : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C 0)) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonalMap C D F).app (op ⦋0⦌) (ComposableArrows.mk₀ X) =
         ComposableArrows.mk₀ ((mapStageWeak C D F 0).obj X)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   rw [stageWeakDiagonalMap_app]
   exact stageWeakNerveMap_app_mk₀ C D F (op ⦋0⦌) X
 
 /-- Degree-one `mk₁` action of a weak-stage diagonal map. -/
 @[simp]
 theorem stageWeakDiagonalMap_app_mk₁
-    {X Y : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    {X Y : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C 1)} (φ : X ⟶ Y) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonalMap C D F).app (op ⦋1⦌)
           (ComposableArrows.mk₁ φ) =
         ComposableArrows.mk₁ ((mapStageWeak C D F 1).map φ)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   rw [stageWeakDiagonalMap_app]
   exact stageWeakNerveMap_app_mk₁ C D F (op ⦋1⦌) φ
 
 /-- Mapped-zero vertex as the image of the zero vertex. -/
 @[simp]
 theorem stageWeakDiagonalMap_zeroVertex :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (stageWeakDiagonalMap C D F).app (op ⦋0⦌) (stageWeakDiagonalZeroVertex C) =
         ComposableArrows.mk₀ ((mapStageWeak C D F 0).obj ⟨stageZero C⟩)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   simp only [stageWeakDiagonalZeroVertex, stageWeakDiagonalMap_app_mk₀]
   rfl
 

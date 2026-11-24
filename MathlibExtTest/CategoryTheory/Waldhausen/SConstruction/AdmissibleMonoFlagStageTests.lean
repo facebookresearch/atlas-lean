@@ -45,10 +45,10 @@ cokernels on the ambient exact category. -/
 
 /--
 error: failed to synthesize
-  WaldhausenCategory C
+  WaldhausenCategoryWithoutGluing C
 -/
 #guard_msgs (error, substring := true) in
-#synth WaldhausenCategory C
+#synth WaldhausenCategoryWithoutGluing C
 
 /--
 error: failed to synthesize
@@ -57,7 +57,7 @@ error: failed to synthesize
 #guard_msgs (error, substring := true) in
 #synth HasCokernels C
 
-local instance : WaldhausenCategory C :=
+local instance : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- The empty zero-based flag. -/
@@ -280,7 +280,7 @@ variable {C₀ : Type} [Category C₀] [Preadditive C₀]
   [HasZeroObject C₀] [HasBinaryBiproducts C₀] [ExactCategory C₀]
 
 example (X : C₀) :
-    letI : WaldhausenCategory C₀ := ExactCategory.waldhausenCategory C₀
+    letI : WaldhausenCategoryWithoutGluing C₀ := ExactCategory.waldhausenCategory C₀
     Stage C₀ 3 := (flagThree X).toStage
 
 end UniverseZero
@@ -291,7 +291,7 @@ variable {C₁ : Type 1} [Category.{1} C₁] [Preadditive C₁]
   [HasZeroObject C₁] [HasBinaryBiproducts C₁] [ExactCategory C₁]
 
 example (X : C₁) :
-    letI : WaldhausenCategory C₁ := ExactCategory.waldhausenCategory C₁
+    letI : WaldhausenCategoryWithoutGluing C₁ := ExactCategory.waldhausenCategory C₁
     Stage C₁ 5 := (flagFive X).toStage
 
 end UniverseOne

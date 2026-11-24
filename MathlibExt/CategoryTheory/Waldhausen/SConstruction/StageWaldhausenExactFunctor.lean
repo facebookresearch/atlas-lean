@@ -35,8 +35,8 @@ namespace CategoryTheory.Functor.IsWaldhausenExact
 
 open Waldhausen.SConstruction
 
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- The original exact functor maps each genuine successive stage
@@ -60,8 +60,8 @@ theorem mapStage_cofibrations (n : ℕ) {A B : Stage C n} (f : A ⟶ B)
 interval, hence zero in the actual full stage category. -/
 theorem mapStage_isZero (n : ℕ) {A : Stage C n} (hA : IsZero A) :
     IsZero ((hF.mapStage n).obj A) := by
-  letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  letI : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
+  let : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
+  let : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
   apply IsZero.of_full_of_faithful_of_isZero (forget D n)
   apply Functor.isZero
   intro x
@@ -99,14 +99,14 @@ theorem mapStage_pushout (n : ℕ) {A B A' P : Stage C n}
 and target stage Waldhausen structures. -/
 theorem mapStage_isWaldhausenExact (n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     letI : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
-    letI : WaldhausenCategory (Stage D n) := generalStageWaldhausenCategory D n
+    letI : WaldhausenCategoryWithoutGluing (Stage D n) := generalStageWaldhausenCategory D n
     (hF.mapStage n).IsWaldhausenExact := by
-  letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
-  letI : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
-  letI : WaldhausenCategory (Stage D n) := generalStageWaldhausenCategory D n
+  let : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
+  let : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
+  let : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
+  let : WaldhausenCategoryWithoutGluing (Stage D n) := generalStageWaldhausenCategory D n
   constructor
   · intro A hA
     exact hF.mapStage_isZero n hA

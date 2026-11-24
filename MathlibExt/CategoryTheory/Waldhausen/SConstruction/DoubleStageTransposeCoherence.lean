@@ -35,7 +35,7 @@ universe u v uD vD
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The actual outer original simplex operator becomes the actual inner operator. -/
 theorem doubleStageTransposeFunctor_reindexOuter
@@ -109,7 +109,7 @@ theorem doubleStageTransposeFunctor_quotient (m n : ℕ) :
   rfl
 
 variable {C}
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- Interchange commutes with the entire original double-stage map of the original exact functor. -/

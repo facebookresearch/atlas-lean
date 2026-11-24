@@ -41,7 +41,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every diagonal `Ar 2` object equals the diagonal at its left endpoint. -/
 theorem stageTwo_ar2_eq_diag_of_eq {A : Ar 2} (ha : A.left = A.right) :

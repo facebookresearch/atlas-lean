@@ -47,8 +47,8 @@ variable (D : Type u₂) [Category.{v₂} D] [Preadditive D] [HasZeroObject D]
   [HasBinaryBiproducts D] [ExactCategory D]
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]
 
-local instance : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-local instance : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+local instance : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+local instance : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
 
 -- Generic evaluation naturality type; fails if the orientation flips.
 noncomputable example (a : Ar 2) :

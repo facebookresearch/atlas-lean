@@ -30,14 +30,16 @@ open scoped Simplicial
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
-/-- The original interval insertion, starting from the actual input category rather than its nil carrier. -/
+/-- The original interval insertion, starting from the actual input category rather than its nil
+carrier. -/
 def baseIteratedStageIntervalInsertion {a : SimplexCategoryᵒᵖ}
     (t : (Δ[1] : SSet.{max u v}).obj a) : C ⥤ IteratedStage C [a.unop.len] :=
   (iteratedStageNilEquivalence C).inverse ⋙ iteratedStageIntervalInsertion C [] t
 
-/-- Every preservation field of the actual base interval insertion is earned from its original factors. -/
+/-- Every preservation field of the actual base interval insertion is earned from its original
+factors. -/
 theorem baseIteratedStageIntervalInsertion_isWaldhausenExact {a : SimplexCategoryᵒᵖ}
     (t : (Δ[1] : SSet.{max u v}).obj a) :
     (baseIteratedStageIntervalInsertion C t).IsWaldhausenExact :=
@@ -65,7 +67,8 @@ theorem iteratedStageInnermostIntervalInsertion_isWaldhausenExact (ns : List ℕ
     (baseIteratedStageIntervalInsertion_isWaldhausenExact C t) ns).comp
       (iteratedStageFlattenEquivalence_exact C ns [a.unop.len]).1
 
-/-- Before flattening, every prior original simplex direction commutes strictly with interval insertion. -/
+/-- Before flattening, every prior original simplex direction commutes strictly with interval
+insertion. -/
 theorem unflattenedInnermostIntervalInsertion_reindex {r : ℕ}
     {b d : StageSimplexTuple r} (α : b ⟶ d) {a : SimplexCategoryᵒᵖ}
     (t : (Δ[1] : SSet.{max u v}).obj a) :
@@ -81,11 +84,13 @@ def iteratedStageWeakInnermostIntervalInsertion (ns : List ℕ) {a : SimplexCate
       CategoryTheory.Waldhausen.WeakCategory (IteratedStage C (ns ++ [a.unop.len])) :=
   (iteratedStageInnermostIntervalInsertion_isWaldhausenExact C ns t).mapWeakCategory
 
-/-- The original complete innermost action keeps the actual source-functor map followed by literal flattening. -/
+/-- The original complete innermost action keeps the actual source-functor map followed by literal
+flattening. -/
 theorem iteratedStageInnermostIntervalInsertion_obj (ns : List ℕ) {a : SimplexCategoryᵒᵖ}
     (t : (Δ[1] : SSet.{max u v}).obj a) (X : IteratedStage C ns) :
     (iteratedStageInnermostIntervalInsertion C ns t).obj X =
       (iteratedStageFlattenEquivalence C ns [a.unop.len]).functor.obj
-        ((mapIteratedStage (baseIteratedStageIntervalInsertion_isWaldhausenExact C t) ns).obj X) := rfl
+        ((mapIteratedStage (baseIteratedStageIntervalInsertion_isWaldhausenExact C t) ns).obj X) :=
+          rfl
 
 end CategoryTheory.Waldhausen.SConstruction

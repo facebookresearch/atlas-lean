@@ -44,7 +44,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [Limits.HasZeroObject C] [Limits.HasBinaryBiproducts C]
   [ExactCategory C]
 
-local instance spanFlagStageShellFunctorWaldhausenC : WaldhausenCategory C :=
+local instance spanFlagStageShellFunctorWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- The left edgewise index is bounded by the right edgewise index at every
@@ -362,10 +362,10 @@ noncomputable def edgewiseStageQuillenSimplexFunctor
     (C : Type u) [Category.{v} C] [Preadditive C]
     [Limits.HasZeroObject C] [Limits.HasBinaryBiproducts C]
     [ExactCategory C] (a : SimplexCategory) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C (edgewiseQ.obj a).len) ⥤
       ComposableArrows (QuillenQ C) a.len := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
   exact
     { obj := fun A ↦ edgewiseStageQuillenSimplex A.obj
       map := fun f ↦ edgewiseStageQuillenSimplexMap f
@@ -396,7 +396,7 @@ theorem edgewiseStageQuillenSimplexFunctor_obj
     (C : Type u) [Category.{v} C] [Preadditive C]
     [Limits.HasZeroObject C] [Limits.HasBinaryBiproducts C]
     [ExactCategory C] (a : SimplexCategory)
-    (A : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (A : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C (edgewiseQ.obj a).len)) :
     (edgewiseStageQuillenSimplexFunctor C a).obj A =
       edgewiseStageQuillenSimplex A.obj :=
@@ -407,7 +407,7 @@ theorem edgewiseStageQuillenSimplexFunctor_map
     (C : Type u) [Category.{v} C] [Preadditive C]
     [Limits.HasZeroObject C] [Limits.HasBinaryBiproducts C]
     [ExactCategory C] (a : SimplexCategory)
-    {A B : (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    {A B : (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       StageWeakCategory C (edgewiseQ.obj a).len)} (f : A ⟶ B) :
     (edgewiseStageQuillenSimplexFunctor C a).map f =
       edgewiseStageQuillenSimplexMap f :=

@@ -41,9 +41,10 @@ private theorem constantPostcomp_eq {D : Type uD} {E : Type uE}
     intro X
     simp only [Functor.constComp_hom_app, eqToHom_refl])
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
-/-- The original one-fold carrier chart sends the constructed zero to the original constant-zero stage. -/
+/-- The original one-fold carrier chart sends the constructed zero to the original constant-zero
+stage. -/
 theorem iteratedStageCanonicalZero_onefold_obj (n : ℕ) :
     (((iteratedStageNilEquivalence_exact C).1).mapStage n).obj
         ((iteratedStageConsEquivalence C n []).functor.obj

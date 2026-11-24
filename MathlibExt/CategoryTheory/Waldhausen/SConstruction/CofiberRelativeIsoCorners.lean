@@ -31,7 +31,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction.CofiberSequenceCategory
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- If the original source component is an isomorphism and the original
 middle component is a cofibration, the whole row map is a relative cofibration. -/
@@ -50,7 +50,7 @@ theorem relativeCofibrations_of_source_isIso {S T : CofiberSequenceCategory C} (
       constructor
       simp only [Category.comp_id, IsIso.hom_inv_id_assoc])
   apply (mem_relativeCofibrations_raw_iff C φ).mpr
-  refine ⟨(WaldhausenCategory.cofibrations (C := C)).of_isIso a,
+  refine ⟨(WaldhausenCategoryWithoutGluing.cofibrations (C := C)).of_isIso a,
     S.obj.obj' 1, 𝟙 _, inv a ≫ S.obj.map' 0 1, b, hPushout,
     Category.id_comp b, ?_, hMiddle⟩
   rw [Category.assoc, hNat, IsIso.inv_hom_id_assoc]

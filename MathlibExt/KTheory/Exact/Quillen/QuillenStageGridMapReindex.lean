@@ -47,10 +47,10 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
   [HasZeroObject D] [HasBinaryBiproducts D] [ExactCategory D]
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]
 
-local instance quillenStageGridMapReindexWaldhausenC : WaldhausenCategory C :=
+local instance quillenStageGridMapReindexWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
-local instance quillenStageGridMapReindexWaldhausenD : WaldhausenCategory D :=
+local instance quillenStageGridMapReindexWaldhausenD : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 private theorem edgewiseStageWeakReindex_map

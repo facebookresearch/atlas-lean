@@ -22,12 +22,12 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.StageOneWaldhausenExact
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Original S1 evaluation is exact for the actual general Waldhausen value. -/
 theorem originalEvaluationExact :
     letI : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-    letI : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+    letI : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
     (stageOneEval C).IsWaldhausenExact := stageOneEval_general_isWaldhausenExact C
 
 /-- The actual unique interval component detects original S1 cofibrations. -/

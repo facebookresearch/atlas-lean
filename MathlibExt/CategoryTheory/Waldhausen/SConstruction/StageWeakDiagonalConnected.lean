@@ -49,7 +49,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Underlying `Stage C 0` iso between the zero stage and an arbitrary stage.
 Both sides are pointwise zero, so the components are the unique zero isos. -/

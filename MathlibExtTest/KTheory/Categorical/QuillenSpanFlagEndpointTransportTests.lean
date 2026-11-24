@@ -207,7 +207,7 @@ variable (A : QuillenSpanFlagData S) (B : QuillenSpanFlagData T)
 example : QuillenSpan.endpointTransport S eX eY ≅ T :=
   e.endpointTransportIso
 
-example : apexIsoOfSpanIso e.endpointTransportIso = e.1 := by
+example : Span.SpanBicat.apexIso e.endpointTransportIso = e.1 := by
   simp
 
 example : e.endpointTransportIso.hom.hom = e.1.hom := by
@@ -303,7 +303,7 @@ end MixedUniverses
 
 section DegreeTwoShell
 
-local instance degreeTwoShellWaldhausenCategory : WaldhausenCategory C :=
+local instance degreeTwoShellWaldhausenCategory : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 example (A : Stage C 5) (k l : Fin 3) (hkl : k ≤ l)

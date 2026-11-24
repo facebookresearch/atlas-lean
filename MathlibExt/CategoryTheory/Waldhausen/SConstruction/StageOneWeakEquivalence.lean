@@ -32,18 +32,18 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Original S1 insertion restricted through the canonical exact weak-functor API. -/
 def stageOneGeneralWeak : WeakCategory C ⥤ StageWeakCategory C 1 := by
   letI : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-  letI : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+  letI : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
   exact (stageOne_general_isWaldhausenExact C).mapWeakCategory
 
 /-- Original S1 evaluation restricted through that same canonical weak-functor API. -/
 def stageOneEvalGeneralWeak : StageWeakCategory C 1 ⥤ WeakCategory C := by
   letI : HasZeroObject (Stage C 1) := generalStageHasZeroObject C 1
-  letI : WaldhausenCategory (Stage C 1) := generalStageWaldhausenCategory C 1
+  letI : WaldhausenCategoryWithoutGluing (Stage C 1) := generalStageWaldhausenCategory C 1
   exact (stageOneEval_general_isWaldhausenExact C).mapWeakCategory
 
 /-- The original weak S1 insertion retains the original stage object. -/
@@ -62,8 +62,10 @@ def stageOneGeneralWeakUnit : 𝟭 (WeakCategory C) ≅
     letI : IsIso e.hom := e.isIso_hom
     letI : IsIso e.inv := e.symm.isIso_hom
     exact WideSubcategory.isoMk e
-      ((WaldhausenCategory.weakEquivalences (C := C)).isomorphisms_le_of_containsIdentities e.hom e.isIso_hom)
-      ((WaldhausenCategory.weakEquivalences (C := C)).isomorphisms_le_of_containsIdentities e.inv e.symm.isIso_hom))
+      ((WaldhausenCategoryWithoutGluing.weakEquivalences (C :=
+        C)).isomorphisms_le_of_containsIdentities e.hom e.isIso_hom)
+      ((WaldhausenCategoryWithoutGluing.weakEquivalences (C :=
+        C)).isomorphisms_le_of_containsIdentities e.inv e.symm.isIso_hom))
     (by intro X Y f; apply WideSubcategory.hom_ext; exact (stageOneEvalUnit C).hom.naturality f.hom)
 
 /-- The actual categorical S1 counit lifts to the same original weak-stage maps. -/
@@ -76,7 +78,8 @@ def stageOneGeneralWeakCounit : stageOneEvalGeneralWeak C ⋙ stageOneGeneralWea
     exact WideSubcategory.isoMk e
       ((stageWeak C 1).isomorphisms_le_of_containsIdentities e.hom e.isIso_hom)
       ((stageWeak C 1).isomorphisms_le_of_containsIdentities e.inv e.symm.isIso_hom))
-    (by intro X Y f; apply WideSubcategory.hom_ext; exact (stageOneEvalCounit C).hom.naturality f.hom)
+    (by intro X Y f; apply WideSubcategory.hom_ext; exact
+        (stageOneEvalCounit C).hom.naturality f.hom)
 
 /-- The original S1 weak categories are equivalent through actual insertion and evaluation. -/
 def stageOneGeneralWeakEquivalence : WeakCategory C ≌ StageWeakCategory C 1 :=

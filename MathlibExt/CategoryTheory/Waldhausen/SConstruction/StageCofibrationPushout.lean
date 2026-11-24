@@ -40,7 +40,7 @@ namespace CategoryTheory.Waldhausen.SConstruction
 variable (C : Type u) [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance stageCofibrationPushoutWaldhausenC : WaldhausenCategory C :=
+local instance stageCofibrationPushoutWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- Objectwise pushout choices for two stage morphisms with common source. -/
@@ -163,7 +163,7 @@ theorem inrToStage_stageCofibrations
   have hNcof : IsCofibration (N.obj.map (horiz hij hjk)) :=
     (N.property.cofiber_triple hij hjk).1
   obtain ⟨R, rPij, rNik, hRraw, _⟩ :=
-    WaldhausenCategory.cofibration_pushout (C := C)
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C)
       (N.obj.map (horiz hij hjk)) hNcof
       (P.apex.obj (interval i j hij))
       (P.inr.app (interval i j hij))
@@ -283,7 +283,7 @@ structure ComponentChoice (x : Ar n) where
 noncomputable def componentChoice
     (hf : stageCofibrations C n f) (x : Ar n) : ComponentChoice (f := f) (g := g) x := by
   let h :=
-    WaldhausenCategory.cofibration_pushout (C := C)
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C)
       (f.hom.app x) (stageCofibrations_app C hf x)
       (N.obj.obj x) (g.hom.app x)
   let P := h.choose

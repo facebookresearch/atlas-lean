@@ -17,12 +17,12 @@ universe u v
 open CategoryTheory CategoryTheory.Limits
 namespace MathlibExtTest.StageWaldhausenGluing
 open CategoryTheory.Waldhausen.SConstruction
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every original finite stage inherits gluing from the base gluing axiom. -/
 theorem originalStageGluing (hGlue : WaldhausenGluingAxiom (C := C)) (n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     WaldhausenGluingAxiom (C := Stage C n) := generalStageWaldhausenGluingAxiom C hGlue n
 
 end MathlibExtTest.StageWaldhausenGluing

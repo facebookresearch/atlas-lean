@@ -18,11 +18,12 @@ universe u v uD vD
 open CategoryTheory CategoryTheory.Limits
 namespace MathlibExtTest.StageOneWeakFunctorNaturality
 open CategoryTheory.Waldhausen.SConstruction
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
-/-- The entire original weak insertion square is naturally isomorphic under the original exact functor. -/
+/-- The entire original weak insertion square is naturally isomorphic under the original exact
+functor. -/
 def originalWeakSquare : stageOneGeneralWeak C ⋙ hF.mapStageWeak 1 ≅
     hF.mapWeakCategory ⋙ stageOneGeneralWeak D := stageOnePostcompWeakNatIso hF
 

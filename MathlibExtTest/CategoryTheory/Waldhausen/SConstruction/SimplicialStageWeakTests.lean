@@ -29,7 +29,7 @@ universe v u
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.SimplicialStageWeakTests
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Degree-0/1/2 objects are the bundled `StageWeakCategory` categories. -/
 example :

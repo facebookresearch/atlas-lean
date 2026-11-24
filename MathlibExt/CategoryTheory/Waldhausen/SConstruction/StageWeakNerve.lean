@@ -40,7 +40,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Levelwise nerve of weak stages: `[n] ↦ nerve (StageWeakCategory C n)`. -/
 def stageWeakNerve : SimplicialObject SSet.{max u v} :=

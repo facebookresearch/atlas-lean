@@ -33,7 +33,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction.CofiberSequenceCategory
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 private theorem isPushoutOfCofiberAtZero {X Y Z O : C} {i : X ⟶ Y} {p : Y ⟶ Z}
     (h : IsCofiberSequence i p) (hO : IsZero O) (z : X ⟶ O) (q : O ⟶ Z) :
@@ -52,13 +52,14 @@ private theorem isPushoutOfCofiberAtZero {X Y Z O : C} {i : X ⟶ Y} {p : Y ⟶ 
 whole relative cofiber sequence when the genuine first relative corner is retained. -/
 theorem isCofiberSequence_relative_iff_evaluations
     {X Y Z : CofiberSequenceCategory C} (f : X ⟶ Y) (g : Y ⟶ Z) :
-    (letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
       IsCofiberSequence f g) ↔
         relativeCofibrations C f ∧
           ∀ k : Fin 3, IsCofiberSequence
             (((forget C) ⋙ (evaluation (Fin 3) C).obj k).map f)
             (((forget C) ⋙ (evaluation (Fin 3) C).obj k).map g) := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) := relativeWaldhausenCategory C
   constructor
   · intro h
     refine ⟨(isCofibration_relativeWaldhausenCategory_iff C f).mp h.1, ?_⟩

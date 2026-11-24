@@ -42,7 +42,7 @@ universe v u
 namespace CategoryTheory.Waldhausen.SConstruction
 
 variable (C : Type u) [Category.{v} C] [HasZeroObject C]
-  [WaldhausenCategory C]
+  [WaldhausenCategoryWithoutGluing C]
 
 /-- Reindexing evaluates the underlying stage diagram at the reindexed
 interval. -/
@@ -159,7 +159,7 @@ theorem IsStageCofibrationCell.refl
   · simp
   · simp
   · exact MorphismProperty.id_mem
-      (WaldhausenCategory.cofibrations (C := C)) _
+      (WaldhausenCategoryWithoutGluing.cofibrations (C := C)) _
 
 /-- Horizontally adjacent cell packets paste to a packet for their union.
 
@@ -180,7 +180,7 @@ theorem IsStageCofibrationCell.paste_horiz
       (A.obj.map (horiz (hij.trans hjk) hkl)) :=
     (A.property.cofiber_triple (hij.trans hjk) hkl).1
   obtain ⟨Q, qP, qA, hupperRaw, _⟩ :=
-    WaldhausenCategory.cofibration_pushout (C := C)
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C)
       (A.obj.map (horiz (hij.trans hjk) hkl)) hAcof P₁ inl₁
   have hupper : IsPushout
       (A.obj.map (horiz (hij.trans hjk) hkl)) inl₁ qA qP :=
@@ -206,7 +206,7 @@ theorem IsStageCofibrationCell.paste_horiz
   have he : IsCofibration e :=
     MorphismProperty.IsStableUnderCobaseChange.of_isPushout hlower hd₁
   have hed₂ : IsCofibration (e ≫ d₂) :=
-    (WaldhausenCategory.cofibrations (C := C)).comp_mem e d₂ he hd₂
+    (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem e d₂ he hd₂
   have hAcomp :
       A.obj.map (horiz hij hjk) ≫
           A.obj.map (horiz (hij.trans hjk) hkl) =
@@ -255,7 +255,7 @@ theorem IsStageCofibrationCell.comp
   have hpBcof : IsCofibration pB :=
     MorphismProperty.IsStableUnderCobaseChange.of_isPushout hpushF.flip hAcof
   obtain ⟨R, rD, rP, hR, _⟩ :=
-    WaldhausenCategory.cofibration_pushout (C := C) pB hpBcof
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C) pB hpBcof
       (D.obj.obj (interval i j hij))
       (g.hom.app (interval i j hij))
   have hpush : IsPushout (A.obj.map (horiz hij hjk))
@@ -285,7 +285,7 @@ theorem IsStageCofibrationCell.comp
   have he : IsCofibration e :=
     MorphismProperty.IsStableUnderCobaseChange.of_isPushout hlower hdf
   have hedg : IsCofibration (e ≫ dg) :=
-    (WaldhausenCategory.cofibrations (C := C)).comp_mem e dg he hdg
+    (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem e dg he hdg
   have hinl : (pA ≫ rP) ≫ (e ≫ dg) =
       (f ≫ g).hom.app (interval i k (hij.trans hjk)) := by
     change (pA ≫ rP) ≫ (e ≫ dg) =
@@ -325,7 +325,7 @@ theorem IsStageCofibrationCell.of_zeroRow
   have hb₀cof : IsCofibration b₀ :=
     MorphismProperty.IsStableUnderCobaseChange.of_isPushout hpush₀.flip hA0cof
   obtain ⟨Q, qBij, qP₀, hQ, _⟩ :=
-    WaldhausenCategory.cofibration_pushout (C := C) b₀ hb₀cof
+    WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C) b₀ hb₀cof
       (B.obj.obj (interval i j hij))
       (B.obj.map (vert (Fin.zero_le i) hij))
   have hagreeA :
@@ -564,8 +564,8 @@ theorem stageCofibrations_app_interval
     IsZero.isIso hAi hBi _
   let _ : IsIso inl := hpush.isIso_inl_of_isIso
   rw [← hinl]
-  exact (WaldhausenCategory.cofibrations (C := C)).comp_mem inl d
-    ((WaldhausenCategory.cofibrations (C := C)).of_isIso inl) hd
+  exact (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem inl d
+    ((WaldhausenCategoryWithoutGluing.cofibrations (C := C)).of_isIso inl) hd
 
 /-- Every component of a stage cofibration is a cofibration in the ambient
 category. -/
@@ -600,7 +600,7 @@ theorem stageCofibrations_of_isIso
   · simp
   · simp
   · exact MorphismProperty.id_mem
-      (WaldhausenCategory.cofibrations (C := C)) _
+      (WaldhausenCategoryWithoutGluing.cofibrations (C := C)) _
 
 /-- Identity stage morphisms are stage cofibrations. -/
 theorem stageCofibrations_id {n : ℕ} (A : Stage C n) :
@@ -666,7 +666,7 @@ private theorem stageCofibrations_of_arrowIso
   have hd' : IsCofibration
       (d ≫ e.hom.right.hom.app (interval i k (hij.trans hjk))) :=
     MorphismProperty.RespectsIso.postcomp
-      (WaldhausenCategory.cofibrations (C := C))
+      (WaldhausenCategoryWithoutGluing.cofibrations (C := C))
       (e.hom.right.hom.app (interval i k (hij.trans hjk))) d hd
   have hinl' :
       (inv (e.hom.left.hom.app (interval i k (hij.trans hjk))) ≫ inl) ≫

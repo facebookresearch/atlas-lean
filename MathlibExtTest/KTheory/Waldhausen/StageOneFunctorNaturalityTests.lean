@@ -19,11 +19,12 @@ open CategoryTheory CategoryTheory.Limits
 open scoped ZeroObject Simplicial
 namespace MathlibExtTest.StageOneFunctorNaturality
 open CategoryTheory.Waldhausen.SConstruction
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
-/-- An arbitrary original exact functor has the whole S₁ diagram comparison, without a zero equation. -/
+/-- An arbitrary original exact functor has the whole S₁ diagram comparison, without a zero
+equation. -/
 def originalDiagramComparison (X : C) :
     stageOneDiagram C X ⋙ F ≅ stageOneDiagram D (F.obj X) := stageOneDiagramPostcompIso hF X
 
@@ -41,7 +42,7 @@ def originalIntervalComparison {a : SimplexCategory} (f : a ⟶ ⦋1⦌) :
     stageOne C ⋙ reindexStage (C := C) f ⋙ hF.mapStage a.len ≅
       F ⋙ stageOne D ⋙ reindexStage (C := D) f := stageOneIntervalPostcompNatIso hF f
 
-variable {E : Type uE} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategory E]
+variable {E : Type uE} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategoryWithoutGluing E]
 variable {G : D ⥤ E}
 
 /-- Three independent object and morphism universes retain the canonical original zero composite. -/

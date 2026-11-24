@@ -51,7 +51,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
 local instance quillenStageGridFiberDegreeZeroWaldhausenCategory :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- Lift an isomorphism between the unique cross objects of two degree-one

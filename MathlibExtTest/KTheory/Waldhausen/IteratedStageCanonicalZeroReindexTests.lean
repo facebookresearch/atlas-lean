@@ -19,7 +19,7 @@ open CategoryTheory CategoryTheory.Limits Opposite
 
 namespace MathlibExtTest.IteratedStageCanonicalZeroReindex
 open CategoryTheory.Waldhausen.SConstruction
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The complete original tuple functor preserves the explicit constructed zero. -/
 theorem originalTupleZero {r : ℕ} {a b : StageSimplexTuple r} (α : a ⟶ b) :

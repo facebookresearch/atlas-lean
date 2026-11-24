@@ -32,8 +32,8 @@ namespace MathlibExtTest.KTheory.Waldhausen.StageWaldhausenNatTransTests
 
 open CategoryTheory.Waldhausen CategoryTheory.Waldhausen.SConstruction
 
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F G K : C ⥤ D}
 
 /-- The complete stage map retains both original stage-forget transports. -/

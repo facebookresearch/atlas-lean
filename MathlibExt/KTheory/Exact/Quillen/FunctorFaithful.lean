@@ -41,7 +41,7 @@ private def originalMappedSpanIsoPreimage (F : A ⥤ B)
     {a b : A} {S T : QuillenSpan a b}
     (e : QuillenSpan.map F S ≅ QuillenSpan.map F T) : S ≅ T := by
   rw [QuillenSpan.map_eq_raw F S, QuillenSpan.map_eq_raw F T] at e
-  let apexIso : F.obj S.apex ≅ F.obj T.apex := apexIsoOfSpanIso e
+  let apexIso : F.obj S.apex ≅ F.obj T.apex := Span.SpanBicat.apexIso e
   refine Span.mkIso (F.preimageIso apexIso) ?_ ?_
   · apply F.map_injective
     change F.map (F.preimage apexIso.hom ≫ T.l) = F.map S.l

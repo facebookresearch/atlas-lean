@@ -34,7 +34,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- A constructed genuine stage pushout and original stage quotient
 pushout supply the actual whole quotient and entire relative cofiber stage. -/
@@ -47,9 +47,10 @@ theorem GeneralStagePushoutPresentation.existsCofiberRow {n : ℕ}
       P.inr ≫ g = p ∧ P.inl ≫ g = hO.from_ T ≫ q ∧
         IsPushout (hO.from_ T) P.inl q g ∧
         ∃ hPoint : ∀ x : Ar n, IsCofiberSequence (P.inl.hom.app x) (g.hom.app x),
-          (letI : WaldhausenCategory (CofiberSequenceCategory C) :=
+          (letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
             CofiberSequenceCategory.relativeWaldhausenCategory C;
-            IsStage n (cofiberFunctorSequenceLift T.obj P.apex.obj Q.obj P.inl.hom g.hom hPoint)) := by
+            IsStage n (cofiberFunctorSequenceLift T.obj P.apex.obj Q.obj P.inl.hom g.hom hPoint)) :=
+              by
   let zT : T ⟶ O := hO.from_ T
   have hZero : k ≫ zT = z := hO.eq_of_tgt _ _
   have hComm : k ≫ (zT ≫ q) = i ≫ p := by
@@ -65,7 +66,7 @@ theorem GeneralStagePushoutPresentation.existsCofiberRow {n : ℕ}
     exact hOld
   have hNew : IsPushout zT P.inl q g := hOuter.of_left hInl.symm P.isPushout
   let : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  let : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+  let : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
   let e : O ≅ (0 : Stage C n) := hO.isoZero
   have hStage : IsCofiberSequence P.inl g := by
     refine ⟨(isCofibration_generalStageWaldhausenCategory_iff C n P.inl).mpr P.inlCofibration,
@@ -76,7 +77,7 @@ theorem GeneralStagePushoutPresentation.existsCofiberRow {n : ℕ}
     intro x
     exact (evalIsGeneralStageWaldhausenExact C n x).map_cofibrationSequence hStage
   refine ⟨g, hInr, hInl, hNew, hPoint, ?_⟩
-  let : WaldhausenCategory (CofiberSequenceCategory C) :=
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
     CofiberSequenceCategory.relativeWaldhausenCategory C
   exact CofiberSequenceCategory.isStage_cofiberFunctorSequence_of_stageCofibration C n
     T P.apex Q P.inl g hPoint P.inlCofibration

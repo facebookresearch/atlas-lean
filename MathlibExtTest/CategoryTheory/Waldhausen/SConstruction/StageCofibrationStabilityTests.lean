@@ -31,7 +31,7 @@ namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StageCofibratio
 
 open _root_.CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 example (n : ℕ) (A : Stage C n) : stageCofibrations C n (𝟙 A) :=
   stageCofibrations_id C (n := n) A

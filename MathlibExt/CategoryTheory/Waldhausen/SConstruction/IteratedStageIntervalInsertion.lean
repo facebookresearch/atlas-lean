@@ -32,7 +32,7 @@ open scoped Simplicial
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Insert the original interval S₁ stage after an actual finite prior degree list. -/
 def iteratedStageIntervalInsertion (ns : List ℕ) {a : SimplexCategoryᵒᵖ}
@@ -46,10 +46,11 @@ theorem iteratedStageIntervalInsertion_isWaldhausenExact (ns : List ℕ)
     {a : SimplexCategoryᵒᵖ} (t : (Δ[1] : SSet.{max u v}).obj a) :
     (iteratedStageIntervalInsertion C ns t).IsWaldhausenExact := by
   let D := IteratedStage C ns
-  letI : HasZeroObject (Stage D 1) := generalStageHasZeroObject D 1
-  letI : WaldhausenCategory (Stage D 1) := generalStageWaldhausenCategory D 1
-  letI : HasZeroObject (Stage D a.unop.len) := generalStageHasZeroObject D a.unop.len
-  letI : WaldhausenCategory (Stage D a.unop.len) := generalStageWaldhausenCategory D a.unop.len
+  let : HasZeroObject (Stage D 1) := generalStageHasZeroObject D 1
+  let : WaldhausenCategoryWithoutGluing (Stage D 1) := generalStageWaldhausenCategory D 1
+  let : HasZeroObject (Stage D a.unop.len) := generalStageHasZeroObject D a.unop.len
+  let : WaldhausenCategoryWithoutGluing (Stage D a.unop.len) :=
+    generalStageWaldhausenCategory D a.unop.len
   exact ((stageOne_general_isWaldhausenExact D).comp
     (reindexStage_general_isWaldhausenExact D (SSet.stdSimplex.objEquiv t))).comp
       (iteratedStageConsEquivalence_exact C a.unop.len ns).2

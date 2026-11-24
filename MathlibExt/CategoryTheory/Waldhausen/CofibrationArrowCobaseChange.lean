@@ -30,7 +30,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Genuine relative cofibrations of cofibration arrows are stable under
 every actual cobase change, by the original whole pushout presentation. -/

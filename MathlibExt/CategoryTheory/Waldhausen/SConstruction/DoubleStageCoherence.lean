@@ -29,9 +29,9 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
-variable {E : Type uE} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategory E]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
+variable {E : Type uE} [Category.{vE} E] [HasZeroObject E] [WaldhausenCategoryWithoutGluing E]
 
 private theorem stageMap_eq_of_functor_eq {F G : C ⥤ D}
     (hF : F.IsWaldhausenExact) (hG : G.IsWaldhausenExact) (h : F = G) (n : ℕ) :
@@ -43,11 +43,11 @@ private theorem stageMap_eq_of_functor_eq {F G : C ⥤ D}
 functor at both stage directions. -/
 theorem mapDoubleStage_id (m n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     mapDoubleStage (Functor.IsWaldhausenExact.id (C := C)) m n =
       𝟭 (Stage (Stage C n) m) := by
-  letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+  let : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
+  let : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
   have hInner := Functor.IsWaldhausenExact.mapStage_id (C := C) n
   unfold mapDoubleStage
   exact (stageMap_eq_of_functor_eq
@@ -62,18 +62,18 @@ actual double-stage maps in both original directions. -/
 theorem mapDoubleStage_comp (hF : F.IsWaldhausenExact) (hG : G.IsWaldhausenExact)
     (m n : ℕ) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
     letI : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
-    letI : WaldhausenCategory (Stage D n) := generalStageWaldhausenCategory D n
+    letI : WaldhausenCategoryWithoutGluing (Stage D n) := generalStageWaldhausenCategory D n
     letI : HasZeroObject (Stage E n) := generalStageHasZeroObject E n
-    letI : WaldhausenCategory (Stage E n) := generalStageWaldhausenCategory E n
+    letI : WaldhausenCategoryWithoutGluing (Stage E n) := generalStageWaldhausenCategory E n
     mapDoubleStage (hF.comp hG) m n = mapDoubleStage hF m n ⋙ mapDoubleStage hG m n := by
-  letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
-  letI : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
-  letI : WaldhausenCategory (Stage D n) := generalStageWaldhausenCategory D n
-  letI : HasZeroObject (Stage E n) := generalStageHasZeroObject E n
-  letI : WaldhausenCategory (Stage E n) := generalStageWaldhausenCategory E n
+  let : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
+  let : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
+  let : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
+  let : WaldhausenCategoryWithoutGluing (Stage D n) := generalStageWaldhausenCategory D n
+  let : HasZeroObject (Stage E n) := generalStageHasZeroObject E n
+  let : WaldhausenCategoryWithoutGluing (Stage E n) := generalStageWaldhausenCategory E n
   have hInner := Functor.IsWaldhausenExact.mapStage_comp hF hG n
   unfold mapDoubleStage
   exact (stageMap_eq_of_functor_eq ((hF.comp hG).mapStage_isWaldhausenExact n)

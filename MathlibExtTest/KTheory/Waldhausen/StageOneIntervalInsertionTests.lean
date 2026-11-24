@@ -23,11 +23,12 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.StageOneIntervalInsertion
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every original interval simplex acts on the original weak S-stage category. -/
 def originalIntervalInsertion {a : SimplexCategoryᵒᵖ}
-    (t : (Δ[1] : SSet.{max u v}).obj a) : CategoryTheory.Waldhausen.WeakCategory C ⥤ StageWeakCategory C a.unop.len :=
+    (t :
+        (Δ[1] : SSet.{max u v}).obj a) : CategoryTheory.Waldhausen.WeakCategory C ⥤ StageWeakCategory C a.unop.len :=
   stageOneWeakIntervalInsertion C t
 
 /-- Original simplex operators commute with the complete interval insertion map. -/

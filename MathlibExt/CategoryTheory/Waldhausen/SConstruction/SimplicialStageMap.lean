@@ -55,11 +55,11 @@ variable (F : C ⥤ D) [F.Additive] [Functor.IsExact F]
 
 /-- Levelwise simplicial stage map with components `mapStage`. -/
 def simplicialStageMap :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       simplicialStage C ⟶ simplicialStage D) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact
     { app := fun a => (mapStage C D F a.unop.len).toCatHom
       naturality := fun {a b} f => by
@@ -68,11 +68,11 @@ def simplicialStageMap :
 
 /-- Levelwise simplicial weak-stage map with components `mapStageWeak`. -/
 def simplicialStageMapWeak :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       simplicialStageWeak C ⟶ simplicialStageWeak D) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact
     { app := fun a => (mapStageWeak C D F a.unop.len).toCatHom
       naturality := fun {a b} f => by
@@ -82,8 +82,8 @@ def simplicialStageMapWeak :
 /-- App computation for `simplicialStageMap`. -/
 @[simp]
 theorem simplicialStageMap_app (a : SimplexCategoryᵒᵖ) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (simplicialStageMap C D F).app a =
         (mapStage C D F a.unop.len).toCatHom) := by
   rfl
@@ -91,8 +91,8 @@ theorem simplicialStageMap_app (a : SimplexCategoryᵒᵖ) :
 /-- App computation for `simplicialStageMapWeak`. -/
 @[simp]
 theorem simplicialStageMapWeak_app (a : SimplexCategoryᵒᵖ) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (simplicialStageMapWeak C D F).app a =
         (mapStageWeak C D F a.unop.len).toCatHom) := by
   rfl
@@ -100,9 +100,9 @@ theorem simplicialStageMapWeak_app (a : SimplexCategoryᵒᵖ) :
 /-- Identity functor induces the identity simplicial stage map. -/
 @[simp]
 theorem simplicialStageMap_id :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       simplicialStageMap C C (𝟭 C) = 𝟙 (simplicialStage C)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
   ext a
   exact mapStage_id C a.unop.len
 
@@ -112,23 +112,23 @@ theorem simplicialStageMap_comp (E : Type u) [Category.{v} E]
     [Preadditive E] [Limits.HasZeroObject E]
     [HasBinaryBiproducts E] [ExactCategory E]
     (G : D ⥤ E) [G.Additive] [Functor.IsExact G] :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       simplicialStageMap C E (F ⋙ G) =
         simplicialStageMap C D F ≫ simplicialStageMap D E G) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   ext a
   exact mapStage_comp C D F a.unop.len E G
 
 /-- Identity functor induces the identity simplicial weak-stage map. -/
 @[simp]
 theorem simplicialStageMapWeak_id :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       simplicialStageMapWeak C C (𝟭 C) = 𝟙 (simplicialStageWeak C)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
   ext a
   exact mapStageWeak_id C a.unop.len
 
@@ -138,14 +138,14 @@ theorem simplicialStageMapWeak_comp (E : Type u) [Category.{v} E]
     [Preadditive E] [Limits.HasZeroObject E]
     [HasBinaryBiproducts E] [ExactCategory E]
     (G : D ⥤ E) [G.Additive] [Functor.IsExact G] :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       simplicialStageMapWeak C E (F ⋙ G) =
         simplicialStageMapWeak C D F ≫ simplicialStageMapWeak D E G) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-  let : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
   ext a
   exact mapStageWeak_comp C D F a.unop.len E G
 

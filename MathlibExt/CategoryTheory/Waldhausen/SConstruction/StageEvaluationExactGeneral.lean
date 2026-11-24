@@ -32,16 +32,16 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every original interval evaluation is Waldhausen exact for the actual
 named stage value, with no caller stage or preservation witness. -/
 theorem evalIsGeneralStageWaldhausenExact (n : ℕ) (x : Ar n) :
     letI : HasZeroObject (Stage C n) := generalStageHasZeroObject C n;
-    letI : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n;
+    letI : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n;
     (eval C n x).IsWaldhausenExact := by
   let : HasZeroObject (Stage C n) := generalStageHasZeroObject C n
-  let : WaldhausenCategory (Stage C n) := generalStageWaldhausenCategory C n
+  let : WaldhausenCategoryWithoutGluing (Stage C n) := generalStageWaldhausenCategory C n
   refine {
     map_isZero := ?_
     map_cofibration := ?_

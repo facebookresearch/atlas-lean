@@ -42,7 +42,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 /-- The canonical Waldhausen structure used by the original span-flag Stage reindexing functor. -/
 local instance spanFlagStageShellFunctorReindexWaldhausenC :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- Stage-side contravariant reindexing along an edgewise simplex map. -/

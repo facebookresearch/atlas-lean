@@ -46,7 +46,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every zero-row component of an actual stage cofibration is a base
 cofibration, by the zero-column case and successive cobase changes. -/
@@ -62,7 +62,7 @@ theorem Stage.zeroRowApp_isCofibration {n : ℕ} {A B : Stage C n}
       change IsZero (B.obj.obj (diag (0 : Fin (n + 1))))
       exact B.property.diag_isZero 0
     let : IsIso (Stage.zeroRowApp φ 0) := IsZero.isIso hA hB _
-    exact (WaldhausenCategory.cofibrations (C := C)).of_isIso _
+    exact (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).of_isIso _
   have hstep : ∀ i : Fin n,
       IsCofibration (Stage.zeroRowApp φ i.castSucc) →
         IsCofibration (Stage.zeroRowApp φ i.succ) := by
@@ -71,7 +71,7 @@ theorem Stage.zeroRowApp_isCofibration {n : ℕ} {A B : Stage C n}
     have hInl : IsCofibration inl :=
       MorphismProperty.IsStableUnderCobaseChange.of_isPushout hP hprev
     have hcomp : IsCofibration (inl ≫ d) :=
-      (WaldhausenCategory.cofibrations (C := C)).comp_mem inl d hInl hd
+      (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem inl d hInl hd
     rwa [hinl] at hcomp
   exact Fin.induction hzero hstep j
 

@@ -43,9 +43,9 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
   [HasZeroObject D] [HasBinaryBiproducts D] [ExactCategory D]
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]
 
-local instance : WaldhausenCategory C :=
+local instance : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
-local instance : WaldhausenCategory D :=
+local instance : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 example : F.IsWaldhausenExact :=
@@ -80,11 +80,11 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
 variable {E : Type u₃} [Category.{v₃} E] [Preadditive E]
   [HasZeroObject E] [HasBinaryBiproducts E] [ExactCategory E]
 
-local instance : WaldhausenCategory C :=
+local instance : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
-local instance : WaldhausenCategory D :=
+local instance : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
-local instance : WaldhausenCategory E :=
+local instance : WaldhausenCategoryWithoutGluing E :=
   ExactCategory.waldhausenCategory E
 
 example :
@@ -111,8 +111,8 @@ variable {C₀ D₀ : Type 0} [Category.{0} C₀] [Category.{0} D₀]
 variable (F₀ : C₀ ⥤ D₀) [F₀.Additive] [F₀.IsExact]
 
 example :
-    letI : WaldhausenCategory C₀ := ExactCategory.waldhausenCategory C₀
-    letI : WaldhausenCategory D₀ := ExactCategory.waldhausenCategory D₀
+    letI : WaldhausenCategoryWithoutGluing C₀ := ExactCategory.waldhausenCategory C₀
+    letI : WaldhausenCategoryWithoutGluing D₀ := ExactCategory.waldhausenCategory D₀
     F₀.IsWaldhausenExact :=
   Functor.IsWaldhausenExact.ofExactCategory F₀
 
@@ -128,8 +128,8 @@ variable {C₁ D₁ : Type 1} [Category.{1} C₁] [Category.{1} D₁]
 variable (F₁ : C₁ ⥤ D₁) [F₁.Additive] [F₁.IsExact]
 
 example :
-    letI : WaldhausenCategory C₁ := ExactCategory.waldhausenCategory C₁
-    letI : WaldhausenCategory D₁ := ExactCategory.waldhausenCategory D₁
+    letI : WaldhausenCategoryWithoutGluing C₁ := ExactCategory.waldhausenCategory C₁
+    letI : WaldhausenCategoryWithoutGluing D₁ := ExactCategory.waldhausenCategory D₁
     F₁.IsWaldhausenExact :=
   Functor.IsWaldhausenExact.ofExactCategory F₁
 
@@ -143,16 +143,16 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
   [HasZeroObject D] [HasBinaryBiproducts D] [ExactCategory D]
 
 #guard_msgs (error, substring := true) in
-#synth WaldhausenCategory C
+#synth WaldhausenCategoryWithoutGluing C
 
 variable (F : C ⥤ D) [F.Additive]
 
 #guard_msgs (error, substring := true) in
 #synth F.IsExact
 
-local instance : WaldhausenCategory C :=
+local instance : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
-local instance : WaldhausenCategory D :=
+local instance : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 #guard_msgs (error, substring := true) in

@@ -35,7 +35,7 @@ universe v u
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StageTwoEquivalenceTests
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Forward object orientation at `(0,1)`/`(0,2)`/`(1,2)`; catches swapped `X`/`Y`/`Z`. -/
 example (S : CofiberSequenceCategory C) (h01 : (0 : Fin 3) ≤ 1)

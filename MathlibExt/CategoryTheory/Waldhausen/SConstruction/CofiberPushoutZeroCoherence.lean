@@ -26,12 +26,12 @@ rewrites each leg with the four assembly leg laws (`inl`/`inr` at levels
 packaged as a `ShortComplex` with focused `f`/`g` computation lemmas.
 
 Requires only `[Category C] [HasZeroMorphisms C]`. No `Preadditive`,
-`HasZeroObject`, `ExactCategory`, or `WaldhausenCategory` hypotheses.
+`HasZeroObject`, `ExactCategory`, or `WaldhausenCategoryWithoutGluing` hypotheses.
 `IsPushout` orientation follows the assembly file: `S`/`T` legs point into
 the pushout apices and the induced maps point forward.
 
 Nonclaims: no admissible-mono/exact/cofiber-sequence theorem, no
-`WaldhausenCategory` instance, no cokernel comparison, no additivity,
+`WaldhausenCategoryWithoutGluing` instance, no cokernel comparison, no additivity,
 no `K₀`/G-theory/spectra/Q-S comparison.
 -/
 

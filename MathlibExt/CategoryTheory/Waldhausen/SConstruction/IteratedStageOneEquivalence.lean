@@ -31,7 +31,7 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Original S1 insertion after any actual finite iteration. -/
 def iteratedStageOne : (ns : List ℕ) → IteratedStage C ns ⥤ IteratedStage C (1 :: ns)
@@ -49,9 +49,9 @@ def iteratedStageOneEquivalence (ns : List ℕ) :
 /-- The original inserted stage map preserves all original Waldhausen fields. -/
 theorem iteratedStageOne_isWaldhausenExact (ns : List ℕ) :
     (iteratedStageOne C ns).IsWaldhausenExact := by
-  letI : HasZeroObject (Stage (IteratedStage C ns) 1) :=
+  let : HasZeroObject (Stage (IteratedStage C ns) 1) :=
     generalStageHasZeroObject (IteratedStage C ns) 1
-  letI : WaldhausenCategory (Stage (IteratedStage C ns) 1) :=
+  let : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C ns) 1) :=
     generalStageWaldhausenCategory (IteratedStage C ns) 1
   exact (stageOne_general_isWaldhausenExact (IteratedStage C ns)).comp
     (iteratedStageConsEquivalence_exact C 1 ns).2
@@ -59,9 +59,9 @@ theorem iteratedStageOne_isWaldhausenExact (ns : List ℕ) :
 /-- The original evaluated stage map preserves the same original Waldhausen fields. -/
 theorem iteratedStageOneEval_isWaldhausenExact (ns : List ℕ) :
     (iteratedStageOneEval C ns).IsWaldhausenExact := by
-  letI : HasZeroObject (Stage (IteratedStage C ns) 1) :=
+  let : HasZeroObject (Stage (IteratedStage C ns) 1) :=
     generalStageHasZeroObject (IteratedStage C ns) 1
-  letI : WaldhausenCategory (Stage (IteratedStage C ns) 1) :=
+  let : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C ns) 1) :=
     generalStageWaldhausenCategory (IteratedStage C ns) 1
   exact (iteratedStageConsEquivalence_exact C 1 ns).1.comp
     (stageOneEval_general_isWaldhausenExact (IteratedStage C ns))

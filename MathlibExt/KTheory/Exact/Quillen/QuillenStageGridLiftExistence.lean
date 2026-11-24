@@ -49,7 +49,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
 local instance quillenStageGridLiftExistenceWaldhausenC :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 namespace QuillenSimplexSpanPresentation
@@ -58,20 +58,20 @@ variable {a : SimplexCategory} {q : QuillenQSimplex C a}
 
 theorem apexIsoOfSpanIso_symm
     {X Y : C} {S T : QuillenSpan X Y} (e : S ≅ T) :
-    apexIsoOfSpanIso e.symm = (apexIsoOfSpanIso e).symm := by
+    Span.SpanBicat.apexIso e.symm = (Span.SpanBicat.apexIso e).symm := by
   ext
   rfl
 
 theorem apexIsoOfSpanEq_hom
     {X Y : C} {S T : QuillenSpan X Y} (h : S = T) :
-    (apexIsoOfSpanIso (eqToIso h)).hom =
+    (Span.SpanBicat.apexIso (eqToIso h)).hom =
       eqToHom (congrArg Span.apex h) := by
   cases h
   rfl
 
 theorem apexIsoOfSpanEq_inv
     {X Y : C} {S T : QuillenSpan X Y} (h : S = T) :
-    (apexIsoOfSpanIso (eqToIso h)).inv =
+    (Span.SpanBicat.apexIso (eqToIso h)).inv =
       eqToHom (congrArg Span.apex h).symm := by
   cases h
   rfl
@@ -130,7 +130,9 @@ theorem tailKernel_apex_succ
   let spanIso : Span.comp S T ≅ tailSpanFromNat P k hk0 :=
     (eqToIso hSpan).symm
   let e : (Span.comp S T).apex ≅ (tailSpanFromNat P k hk0).apex :=
-    apexIsoOfSpanIso spanIso
+    Span.SpanBicat.apexIso
+      (X := ⟨(q.obj' k (by omega)).obj⟩)
+      (Y := ⟨(q.obj (Fin.last a.len)).obj⟩) spanIso
   have he : e.hom ≫ (tailSpanFromNat P k hk0).l = R.fst ≫ S.l :=
     spanIso.hom.hom_l.trans (tailCompositeBaseChange_comp_l S T Qnext)
   let Qcur := tailKernelPresentationFromNat P k hk0
@@ -166,11 +168,10 @@ theorem tailKernel_apex_succ
     rfl
   let hA := congrArg Span.apex hSpan
   let eF : (tailSpanFromNat P k hk0).apex ≅ (Span.comp S T).apex :=
-    apexIsoOfSpanIso (eqToIso hSpan)
-  have hE : e.hom = eF.inv := by
-    change (apexIsoOfSpanIso (eqToIso hSpan).symm).hom = _
-    rw [apexIsoOfSpanIso_symm]
-    rfl
+    Span.SpanBicat.apexIso
+      (X := ⟨(q.obj' k (by omega)).obj⟩)
+      (Y := ⟨(q.obj (Fin.last a.len)).obj⟩) (eqToIso hSpan)
+  have hE : e.hom = eF.inv := rfl
   have heHom : e.hom = eqToHom hA.symm :=
     hE.trans (apexIsoOfSpanEq_inv hSpan)
   have hApexSucc : P.tailApexSuccFromNat k hk =
@@ -713,7 +714,9 @@ noncomputable def adjacentTailQuotientData
   let spanIso : Span.comp S T ≅ tailSpanFromNat P k hk0 :=
     (eqToIso hSpan).symm
   let e : (Span.comp S T).apex ≅ (tailSpanFromNat P k hk0).apex :=
-    apexIsoOfSpanIso spanIso
+    Span.SpanBicat.apexIso
+      (X := ⟨(q.obj' k (by omega)).obj⟩)
+      (Y := ⟨(q.obj (Fin.last a.len)).obj⟩) spanIso
   have he : e.hom ≫ (tailSpanFromNat P k hk0).l = R.fst ≫ S.l :=
     spanIso.hom.hom_l.trans
       (tailCompositeBaseChange_comp_l S T Qnext)
@@ -725,11 +728,10 @@ noncomputable def adjacentTailQuotientData
     eqToHom hSource ≫ Pproj.ι ≫ eMid.hom
   let hA := congrArg Span.apex hSpan
   let eF : (tailSpanFromNat P k hk0).apex ≅ (Span.comp S T).apex :=
-    apexIsoOfSpanIso (eqToIso hSpan)
-  have hE : e.hom = eF.inv := by
-    change (apexIsoOfSpanIso (eqToIso hSpan).symm).hom = _
-    rw [apexIsoOfSpanIso_symm]
-    rfl
+    Span.SpanBicat.apexIso
+      (X := ⟨(q.obj' k (by omega)).obj⟩)
+      (Y := ⟨(q.obj (Fin.last a.len)).obj⟩) (eqToIso hSpan)
+  have hE : e.hom = eF.inv := rfl
   have heHom : e.hom = eqToHom hA.symm :=
     hE.trans (apexIsoOfSpanEq_inv hSpan)
   have hEMid : eMid.hom = eqToHom hRobj ≫ e.hom := rfl

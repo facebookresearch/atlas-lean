@@ -69,10 +69,8 @@ theorem QuillenSpanFlagData.transport_refl
   · simp
   · simp
   · simp
-  · simp only [QuillenSpanFlagData.transport_kernelι,
-      show (apexIsoOfSpanIso (Iso.refl S)).hom = 𝟙 S.apex from rfl,
-      Category.comp_id]
-    rfl
+  · change HEq (A.kernelι ≫ 𝟙 S.apex) A.kernelι
+    rw [Category.comp_id]
   · simp
   · simp
   · simp
@@ -92,10 +90,7 @@ theorem QuillenSpanFlagData.transport_trans
   · simp
   · simp
   · simp only [QuillenSpanFlagData.transport_kernelι,
-      QuillenSpanFlagData.transport_kernelObj,
-      show (apexIsoOfSpanIso (e ≪≫ e')).hom =
-        (apexIsoOfSpanIso e).hom ≫ (apexIsoOfSpanIso e').hom from rfl,
-      Category.assoc]
+      QuillenSpanFlagData.transport_kernelObj, Category.assoc]
     rfl
   · simp
   · simp

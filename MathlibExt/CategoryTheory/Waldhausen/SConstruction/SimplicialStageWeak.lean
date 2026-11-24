@@ -41,7 +41,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Simplicial stage weak-equivalence object: `[n] ↦ StageWeakCategory C n`. -/
 def simplicialStageWeak : SimplicialObject Cat.{v, max u v} where

@@ -34,7 +34,7 @@ open scoped Simplicial
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original interval simplex supplies its literal S1 pullback stage functor. -/
 def stageOneIntervalInsertion {a : SimplexCategoryᵒᵖ} (t : (Δ[1] : SSet.{max u v}).obj a) :
@@ -46,6 +46,7 @@ def stageOneWeakIntervalInsertion {a : SimplexCategoryᵒᵖ}
     (t : (Δ[1] : SSet.{max u v}).obj a) : WeakCategory C ⥤ StageWeakCategory C a.unop.len :=
   stageOneGeneralWeak C ⋙ reindexStageWeak C (SSet.stdSimplex.objEquiv t)
 
+set_option linter.checkUnivs false in
 /-- Every original interval simplex operator is the original ordinal composition. -/
 theorem intervalSimplexOperator {a b : SimplexCategoryᵒᵖ} (α : a ⟶ b)
     (t : (Δ[1] : SSet.{max u v}).obj a) :

@@ -35,12 +35,13 @@ namespace MathlibExtTest.KTheory.Waldhausen.StageFirstQuotientDecompositionTests
 open CategoryTheory.Waldhausen CategoryTheory.Waldhausen.SConstruction
 open CategoryTheory.Waldhausen.SConstruction.StageFirstQuotient
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The full source cofibration-sequence certificate uses the original named stage value. -/
 theorem originalSourceCertificate (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     IsWaldhausenCofiberFunctorSequence (firstEndo C n) (𝟭 (Stage C (n + 1)))
       (quotientEndo C n) (sourceInclusion C n) (quotientProjection C n) :=
   isWaldhausenCofiberFunctorSequence C n
@@ -48,7 +49,8 @@ theorem originalSourceCertificate (n : ℕ) :
 /-- Every original stage has the actual original first-step cofiber sequence. -/
 theorem originalObjectwiseSequence (n : ℕ) (A : Stage C (n + 1)) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     IsCofiberSequence ((sourceInclusion C n).app A) ((quotientProjection C n).app A) :=
   objectwise_isCofiberSequence C n A
 
@@ -66,8 +68,9 @@ theorem originalInclusionMap (n : ℕ) (A : Stage C (n + 1)) :
 /-- The stock relative lift has its exactness earned from the source certificate. -/
 theorem originalExactLift (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
-    letI : WaldhausenCategory (CofiberSequenceCategory (Stage C (n + 1))) :=
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory (Stage C (n + 1))) :=
       CofiberSequenceCategory.relativeWaldhausenCategory (Stage C (n + 1))
     (cofiberLift C n).IsWaldhausenExact :=
   cofiberLift_isWaldhausenExact C n
@@ -75,7 +78,8 @@ theorem originalExactLift (n : ℕ) :
 /-- The whole stock cofiber middle is the unchanged original stage functor. -/
 theorem originalWholeMiddle (n : ℕ) :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     cofiberLift C n ⋙ CofiberSequenceCategory.middle (Stage C (n + 1)) =
       𝟭 (Stage C (n + 1)) :=
   cofiberLift_middle C n
@@ -90,7 +94,8 @@ the same original stage coproduct. -/
 theorem originalSplitReturnMap (n : ℕ) {X Y : C} (f : X ⟶ Y)
     {Q Q' : Stage C n} (g : Q ⟶ Q') :
     letI : HasZeroObject (Stage C (n + 1)) := generalStageHasZeroObject C (n + 1)
-    letI : WaldhausenCategory (Stage C (n + 1)) := generalStageWaldhausenCategory C (n + 1)
+    letI : WaldhausenCategoryWithoutGluing (Stage C (n + 1)) :=
+      generalStageWaldhausenCategory C (n + 1)
     (splitReturn C n).map (X := (X, Q)) (Y := (Y, Q')) (f, g) =
       (waldhausenCoproductFunctor (Stage C (n + 1))).map
         (X := ((insert C n).obj X, (degenerateReturn C n).obj Q))

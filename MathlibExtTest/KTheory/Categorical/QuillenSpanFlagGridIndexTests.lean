@@ -73,7 +73,7 @@ namespace Stage
 open CategoryTheory.Waldhausen.SConstruction
 
 variable {C : Type u} [Category.{v} C] [HasZeroObject C]
-  [WaldhausenCategory C]
+  [WaldhausenCategoryWithoutGluing C]
 
 example {a b : SimplexCategory} (α : a ⟶ b)
     (k l : Fin (a.len + 1)) (hkl : k ≤ l) :

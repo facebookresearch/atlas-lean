@@ -22,14 +22,15 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.IteratedStage
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Zero iterations retain the actual original carrier. -/
 theorem originalIterationBase : IteratedStage C [] = C := iteratedStage_nil C
 
 /-- The actual iterated category has its earned original Waldhausen value. -/
+@[instance_reducible]
 def originalIterationStructure (ns : List ℕ) :
-    WaldhausenCategory (IteratedStage C ns) := inferInstance
+    WaldhausenCategoryWithoutGluing (IteratedStage C ns) := inferInstance
 
 /-- Successive iteration retains the literal original stage category. -/
 theorem originalIterationSuccessor (n : ℕ) (ns : List ℕ) :
@@ -38,9 +39,9 @@ theorem originalIterationSuccessor (n : ℕ) (ns : List ℕ) :
 
 variable {C}
 variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D]
-    [WaldhausenCategory D]
+    [WaldhausenCategoryWithoutGluing D]
 variable {E : Type (max uE vE)} [Category.{vE} E] [HasZeroObject E]
-    [WaldhausenCategory E]
+    [WaldhausenCategoryWithoutGluing E]
 variable {F : C ⥤ D} {G : D ⥤ E}
 
 /-- Arbitrary original exact functors earn exactness at every iteration. -/

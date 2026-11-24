@@ -59,8 +59,8 @@ variable (F : C ⥤ D) [F.Additive] [Functor.IsExact F] (n : ℕ)
 theorem isStage_postcomp (A : Ar n ⥤ C)
     (hA : @IsStage C _ _ (ExactCategory.waldhausenCategory C) n A) :
     @IsStage D _ _ (ExactCategory.waldhausenCategory D) n (A ⋙ F) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   refine { diag_isZero := ?_, cofiber_triple := ?_ }
   · intro i
     exact F.map_isZero (hA.diag_isZero i)
@@ -87,33 +87,33 @@ theorem isStage_postcomp (A : Ar n ⥤ C)
 
 `C` and `D` carry their local standard Waldhausen structures. -/
 def mapStage :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       Stage C n ⥤ Stage D n) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact (stageProperty D n).lift
     (forget C n ⋙ (Functor.whiskeringRight _ _ _).obj F)
     (fun X => isStage_postcomp C D F n X.obj X.property)
 
 /-- Underlying diagram of `mapStage`: postcomposition with `F`. -/
 @[simp]
-theorem mapStage_obj (X : (letI : WaldhausenCategory C :=
+theorem mapStage_obj (X : (letI : WaldhausenCategoryWithoutGluing C :=
     ExactCategory.waldhausenCategory C; Stage C n)) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (forget D n).obj ((mapStage C D F n).obj X)) = X.obj ⋙ F := by
   rfl
 
 /-- Underlying map of `mapStage`: postcomposition with `F`. -/
 @[simp]
-theorem mapStage_map {X Y : (letI : WaldhausenCategory C :=
+theorem mapStage_map {X Y : (letI : WaldhausenCategoryWithoutGluing C :=
     ExactCategory.waldhausenCategory C; Stage C n)}
     (φ : X ⟶ Y) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       (forget D n).map ((mapStage C D F n).map φ)) =
-      (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+      (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
         Functor.whiskerRight ((forget C n).map φ) F) := by
   rfl
 
@@ -121,16 +121,16 @@ theorem mapStage_map {X Y : (letI : WaldhausenCategory C :=
 weak equivalences are isomorphisms and functors map isomorphisms
 (`inferInstance`). -/
 theorem stageWeak_of_mapStage
-    {X Y : (letI : WaldhausenCategory C :=
+    {X Y : (letI : WaldhausenCategoryWithoutGluing C :=
       ExactCategory.waldhausenCategory C; Stage C n)}
     (φ : X ⟶ Y)
-    (h : (letI : WaldhausenCategory C :=
+    (h : (letI : WaldhausenCategoryWithoutGluing C :=
       ExactCategory.waldhausenCategory C; stageWeak C n φ)) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       stageWeak D n ((mapStage C D F n).map φ)) := by
-  let : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   rw [mem_stageWeak] at h ⊢
   intro a
   have hIso : IsIso (((forget C n).map φ).app a) := h a
@@ -139,11 +139,11 @@ theorem stageWeak_of_mapStage
 
 /-- Weak-equivalence stage functoriality by restriction of `mapStage`. -/
 def mapStageWeak :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       StageWeakCategory C n ⥤ StageWeakCategory D n) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   exact
     { obj := fun X => ⟨(mapStage C D F n).obj X.obj⟩
       map := fun {X Y} φ =>
@@ -159,8 +159,8 @@ def mapStageWeak :
 /-- Inclusion commutes with exact-stage functoriality. -/
 @[simp]
 theorem mapStageWeak_inclusion :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       mapStageWeak C D F n ⋙ stageWeakInclusion D n =
         stageWeakInclusion C n ⋙ mapStage C D F n) := by
   rfl
@@ -169,8 +169,8 @@ theorem mapStageWeak_inclusion :
 associate strictly. -/
 @[simp]
 theorem mapStage_reindex {a b : SimplexCategory} (f : a ⟶ b) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       reindexStage (C := C) f ⋙ mapStage C D F a.len =
         mapStage C D F b.len ⋙ reindexStage (C := D) f) := by
   rfl
@@ -178,8 +178,8 @@ theorem mapStage_reindex {a b : SimplexCategory} (f : a ⟶ b) :
 /-- Weak restriction commutes with weak reindexing. -/
 @[simp]
 theorem mapStageWeak_reindex {a b : SimplexCategory} (f : a ⟶ b) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
       reindexStageWeak C f ⋙ mapStageWeak C D F a.len =
         mapStageWeak C D F b.len ⋙ reindexStageWeak D f) := by
   rfl
@@ -187,7 +187,7 @@ theorem mapStageWeak_reindex {a b : SimplexCategory} (f : a ⟶ b) :
 /-- Identity additive exact functor induces the identity stage functor. -/
 @[simp]
 theorem mapStage_id :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       mapStage C C (𝟭 C) n = 𝟭 (Stage C n)) := by
   rfl
 
@@ -196,9 +196,9 @@ theorem mapStage_id :
 theorem mapStage_comp (E : Type u₃) [Category.{v₃} E] [Preadditive E]
     [Limits.HasZeroObject E] [HasBinaryBiproducts E] [ExactCategory E]
     (G : D ⥤ E) [G.Additive] [Functor.IsExact G] :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       mapStage C E (F ⋙ G) n =
         mapStage C D F n ⋙ mapStage D E G n) := by
   rfl
@@ -206,7 +206,7 @@ theorem mapStage_comp (E : Type u₃) [Category.{v₃} E] [Preadditive E]
 /-- Identity additive exact functor induces the identity weak-stage functor. -/
 @[simp]
 theorem mapStageWeak_id :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       mapStageWeak C C (𝟭 C) n = 𝟭 (StageWeakCategory C n)) := by
   rfl
 
@@ -215,9 +215,9 @@ theorem mapStageWeak_id :
 theorem mapStageWeak_comp (E : Type u₃) [Category.{v₃} E] [Preadditive E]
     [Limits.HasZeroObject E] [HasBinaryBiproducts E] [ExactCategory E]
     (G : D ⥤ E) [G.Additive] [Functor.IsExact G] :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       mapStageWeak C E (F ⋙ G) n =
         mapStageWeak C D F n ⋙ mapStageWeak D E G n) := by
   rfl

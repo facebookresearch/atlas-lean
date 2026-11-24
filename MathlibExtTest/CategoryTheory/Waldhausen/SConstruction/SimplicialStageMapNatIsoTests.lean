@@ -39,8 +39,8 @@ variable (D : Type u₂) [Category.{v₂} D] [Preadditive D] [Limits.HasZeroObje
   [HasBinaryBiproducts D] [ExactCategory D]
 variable (F : C ⥤ D) [F.Additive] [Functor.IsExact F]
 
-local instance : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-local instance : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+local instance : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+local instance : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
 
 /-- Degreewise family at `Iso.refl F` is an endo-iso on `mapStageWeak`.
 

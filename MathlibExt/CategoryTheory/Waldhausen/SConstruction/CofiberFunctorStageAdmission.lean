@@ -33,7 +33,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction.CofiberSequenceCategory
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original universal cofiber functor diagram is a genuine relative
 stage when its original first whole stage arrow has all genuine stage corners. -/
@@ -41,9 +41,10 @@ theorem isStage_cofiberFunctorSequence_of_stageCofibration (n : ℕ)
     (A₀ A₁ A₂ : Stage C n) (i : A₀ ⟶ A₁) (p : A₁ ⟶ A₂)
     (hPoint : ∀ x : Ar n, IsCofiberSequence (i.hom.app x) (p.hom.app x))
     (hi : stageCofibrations C n i) :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
     IsStage n (cofiberFunctorSequenceLift A₀.obj A₁.obj A₂.obj i.hom p.hom hPoint) := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) := relativeWaldhausenCategory C
   let F := cofiberFunctorSequenceLift A₀.obj A₁.obj A₂.obj i.hom p.hom hPoint
   have hRows : ∀ k : Fin 3,
       IsStage n (F ⋙ ((forget C) ⋙ (evaluation (Fin 3) C).obj k)) := by

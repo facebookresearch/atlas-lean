@@ -145,14 +145,14 @@ theorem stageTupleSnocMap_cons {r : ℕ} {a b : StageSimplexTuple r} (α : a ⟶
           simpa only [Category.assoc] using hLeft.trans hRight.symm
 
 private theorem stageMapEq {A : Type (max u v)} {B : Type (max u v)}
-    [Category.{v} A] [HasZeroObject A] [WaldhausenCategory A]
-    [Category.{v} B] [HasZeroObject B] [WaldhausenCategory B]
+    [Category.{v} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    [Category.{v} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
     {F G : A ⥤ B} (hF : F.IsWaldhausenExact) (hG : G.IsWaldhausenExact)
     (h : F = G) (n : ℕ) : hF.mapStage n = hG.mapStage n := by
   subst G
   rfl
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Tuple equality uses the original equal-list carrier transport. -/
 def iteratedStageTupleEquivalence {r : ℕ} {a b : StageSimplexTuple r} (h : a = b) :
@@ -188,11 +188,11 @@ private theorem flattenTransport_cons (n : ℕ) (ns bs ss ts : List ℕ)
   subst ns ts
   let _ : HasZeroObject (Stage (IteratedStage (IteratedStage C ss) bs) n) :=
     generalStageHasZeroObject (IteratedStage (IteratedStage C ss) bs) n
-  let _ : WaldhausenCategory (Stage (IteratedStage (IteratedStage C ss) bs) n) :=
+  let _ : WaldhausenCategoryWithoutGluing (Stage (IteratedStage (IteratedStage C ss) bs) n) :=
     generalStageWaldhausenCategory (IteratedStage (IteratedStage C ss) bs) n
   let _ : HasZeroObject (Stage (IteratedStage C (bs ++ ss)) n) :=
     generalStageHasZeroObject (IteratedStage C (bs ++ ss)) n
-  let _ : WaldhausenCategory (Stage (IteratedStage C (bs ++ ss)) n) :=
+  let _ : WaldhausenCategoryWithoutGluing (Stage (IteratedStage C (bs ++ ss)) n) :=
     generalStageWaldhausenCategory (IteratedStage C (bs ++ ss)) n
   have hMap := stageMapEq
     ((iteratedStageFlattenEquivalence_exact C bs ss).1.comp

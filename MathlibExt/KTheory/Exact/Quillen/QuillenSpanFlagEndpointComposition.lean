@@ -208,8 +208,8 @@ noncomputable def rebase
     (e : QuillenSpan.EndpointIso S T eX eY)
     (s : S' ≅ S) (t : T ≅ T') :
     QuillenSpan.EndpointIso S' T' eX eY := by
-  let sA := apexIsoOfSpanIso s
-  let tA := apexIsoOfSpanIso t
+  let sA := Span.SpanBicat.apexIso s
+  let tA := Span.SpanBicat.apexIso t
   refine ⟨sA.trans (e.1.trans tA), ?_, ?_⟩
   · change (s.hom.hom ≫ (e.1.hom ≫ t.hom.hom)) ≫ T'.l =
       S'.l ≫ eX.hom
@@ -270,7 +270,7 @@ noncomputable def endpointTransportIsoMap
     endpointTransport S eX eY ≅ endpointTransport T eX eY := by
   refine Span.mkIso ?_ ?_ ?_
   · change S.apex ≅ T.apex
-    exact apexIsoOfSpanIso i
+    exact Span.SpanBicat.apexIso i
   · change i.hom.hom ≫ (T.l ≫ eX.hom) = S.l ≫ eX.hom
     rw [← Category.assoc, i.hom.hom_l]
   · change i.hom.hom ≫ (T.r ≫ eY.hom) = S.r ≫ eY.hom
@@ -280,8 +280,8 @@ noncomputable def endpointTransportIsoMap
 theorem endpointTransportIsoMap_apex
     {X X' Y Y' : C} {S T : QuillenSpan X Y}
     (i : S ≅ T) (eX : X ≅ X') (eY : Y ≅ Y') :
-    apexIsoOfSpanIso (endpointTransportIsoMap i eX eY) =
-      apexIsoOfSpanIso i :=
+    Span.SpanBicat.apexIso (endpointTransportIsoMap i eX eY) =
+      Span.SpanBicat.apexIso i :=
   rfl
 
 end QuillenSpan
@@ -335,7 +335,7 @@ theorem QuillenSpanFlagData.endpointTransport_transport
         (QuillenSpan.endpointTransportIsoMap i eX eY)
         (A.endpointTransport eX eY) := by
   apply endpointCompositionFlagData_ext <;>
-    simp
+    simp [QuillenSpan.endpointTransportIsoMap, Span.mkIso]
 
 /-- Canonical material flag comparison for the ordered binary composite of
 two adjacent endpoint-compatible span comparisons. -/
@@ -352,7 +352,7 @@ noncomputable def QuillenSpanFlagHom.endpointCompCanonical
         (A.endpointTransport e0 e2) ⟶ B :=
   QuillenSpanFlagHom.endpointCanonical (c01.comp c12) A B
 
-local instance endpointCompositionWaldhausenCategory : WaldhausenCategory C :=
+local instance endpointCompositionWaldhausenCategory : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 noncomputable local instance endpointCompositionShellHasPullback
@@ -550,9 +550,9 @@ theorem edgewiseStageShellFlagEndpointComp_source {a : SimplexCategory}
   let FAE := FA.endpointTransport eK eR
   let iAE := QuillenSpan.endpointTransportIsoMap iA eK eR
   have hiB : iB.inv.hom ≫ iB.hom.hom = 𝟙 _ := by
-    change (apexIsoOfSpanIso iB).inv ≫
-        (apexIsoOfSpanIso iB).hom = 𝟙 _
-    exact (apexIsoOfSpanIso iB).inv_hom_id
+    change (Span.SpanBicat.apexIso iB).inv ≫
+        (Span.SpanBicat.apexIso iB).hom = 𝟙 _
+    exact (Span.SpanBicat.apexIso iB).inv_hom_id
   have hIso : cLong.endpointTransportIso ≪≫ iB =
       iAE ≪≫ c.endpointTransportIso := by
     apply Iso.ext

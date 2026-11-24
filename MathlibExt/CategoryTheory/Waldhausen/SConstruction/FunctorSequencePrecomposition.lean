@@ -94,7 +94,7 @@ theorem functorSequenceDiagram_precomp
 
 private theorem cofiberFunctor_eq_of_forget
     {A : Type uA} [Category.{vA} A] {D : Type uD} [Category.{vD} D]
-    [HasZeroObject D] [WaldhausenCategory D]
+    [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
     (F G : A ⥤ CofiberSequenceCategory D)
     (h : F ⋙ CofiberSequenceCategory.forget D = G ⋙ CofiberSequenceCategory.forget D) :
     F = G := by
@@ -110,7 +110,7 @@ private theorem cofiberFunctor_eq_of_forget
 /-- Precomposing the actual cofiber lift keeps the same entire diagram and cofiber rows. -/
 theorem cofiberFunctorSequenceLift_precomp
     {A : Type uA} [Category.{vA} A] {B : Type uB} [Category.{vB} B]
-    {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+    {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
     (H : A ⥤ B) (F₀ F₁ F₂ : B ⥤ D) (i : F₀ ⟶ F₁) (p : F₁ ⟶ F₂)
     (h : ∀ X : B, IsCofiberSequence (i.app X) (p.app X)) :
     H ⋙ cofiberFunctorSequenceLift F₀ F₁ F₂ i p h =

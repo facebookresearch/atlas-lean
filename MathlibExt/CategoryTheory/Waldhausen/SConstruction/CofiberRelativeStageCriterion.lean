@@ -34,17 +34,18 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction.CofiberSequenceCategory
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original three evaluated stages jointly admit the whole genuine
 relative stage when every original first triple map retains its relative corner. -/
 theorem isStage_relative_iff_evaluations (n : ℕ) (A : Ar n ⥤ CofiberSequenceCategory C) :
-    (letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
       IsStage n A) ↔
       (∀ k : Fin 3, IsStage n (A ⋙ ((forget C) ⋙ (evaluation (Fin 3) C).obj k))) ∧
         ∀ (i j l : Fin (n + 1)) (hij : i ≤ j) (hjl : j ≤ l),
           relativeCofibrations C (A.map (horiz hij hjl)) := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) := relativeWaldhausenCategory C
   constructor
   · intro hA
     refine ⟨?_, ?_⟩
@@ -69,9 +70,10 @@ theorem isStage_relative_iff_evaluations (n : ℕ) (A : Ar n ⥤ CofiberSequence
 stage when Z is pointwise zero and G is the original finite stage diagram. -/
 theorem isStage_zeroSourceFunctorSequence (n : ℕ) (Z G : Ar n ⥤ C)
     (hZ : ∀ x : Ar n, IsZero (Z.obj x)) (hG : IsStage n G) :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
     IsStage n (zeroSourceFunctorSequence C Z G hZ) := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) := relativeWaldhausenCategory C
   apply (isStage_relative_iff_evaluations C n (zeroSourceFunctorSequence C Z G hZ)).mpr
   refine ⟨?_, ?_⟩
   · intro k
@@ -93,9 +95,10 @@ theorem isStage_zeroSourceFunctorSequence (n : ℕ) (Z G : Ar n ⥤ C)
 stage when Z is pointwise zero and G is the original finite stage diagram. -/
 theorem isStage_zeroQuotientFunctorSequence (n : ℕ) (Z G : Ar n ⥤ C)
     (hZ : ∀ x : Ar n, IsZero (Z.obj x)) (hG : IsStage n G) :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
     IsStage n (zeroQuotientFunctorSequence C Z G hZ) := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) := relativeWaldhausenCategory C
   apply (isStage_relative_iff_evaluations C n (zeroQuotientFunctorSequence C Z G hZ)).mpr
   refine ⟨?_, ?_⟩
   · intro k

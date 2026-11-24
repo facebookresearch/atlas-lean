@@ -44,8 +44,8 @@ namespace CategoryTheory.Functor.IsWaldhausenExact
 variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C]
 variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D]
 variable {E : Type u₃} [Category.{v₃} E] [HasZeroObject E]
-variable [WaldhausenCategory C] [WaldhausenCategory D]
-  [WaldhausenCategory E]
+variable [WaldhausenCategoryWithoutGluing C] [WaldhausenCategoryWithoutGluing D]
+  [WaldhausenCategoryWithoutGluing E]
 variable {F : C ⥤ D} {G : D ⥤ E}
 
 open Waldhausen.SConstruction
@@ -148,7 +148,7 @@ theorem mapStageWeak_reindex (hF : F.IsWaldhausenExact)
 /-- The Waldhausen-exact identity induces the identity stage map. -/
 @[simp]
 theorem mapStage_id (C : Type u₁) [Category.{v₁} C]
-    [HasZeroObject C] [WaldhausenCategory C] (n : ℕ) :
+    [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] (n : ℕ) :
     (Functor.IsWaldhausenExact.id (C := C)).mapStage n =
       𝟭 (Stage C n) := by
   rfl
@@ -164,7 +164,7 @@ theorem mapStage_comp (hF : F.IsWaldhausenExact)
 /-- The Waldhausen-exact identity induces the identity weak-stage map. -/
 @[simp]
 theorem mapStageWeak_id (C : Type u₁) [Category.{v₁} C]
-    [HasZeroObject C] [WaldhausenCategory C] (n : ℕ) :
+    [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] (n : ℕ) :
     (Functor.IsWaldhausenExact.id (C := C)).mapStageWeak n =
       𝟭 (StageWeakCategory C n) := by
   rfl

@@ -53,7 +53,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
 local instance quillenSimplexSpanFiltrationWaldhausenC :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 /-- Adjacent raw spans and exact flags presenting every generating arrow of
@@ -414,7 +414,9 @@ noncomputable def tailKernelPresentationFromNat
     let spanIso : Span.comp S T ≅ tailSpanFromNat P k hk :=
       (eqToIso hSpan).symm
     let e : (Span.comp S T).apex ≅ (tailSpanFromNat P k hk).apex :=
-      apexIsoOfSpanIso spanIso
+      Span.SpanBicat.apexIso
+        (X := ⟨(q.obj' k (by omega)).obj⟩)
+        (Y := ⟨(q.obj (Fin.last a.len)).obj⟩) spanIso
     have he : e.hom ≫ (tailSpanFromNat P k hk).l =
         R.fst ≫ S.l :=
       spanIso.hom.hom_l.trans (tailCompositeBaseChange_comp_l S T Qnext)

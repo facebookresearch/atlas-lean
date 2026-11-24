@@ -37,7 +37,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 namespace CofiberSequenceCategory
 
@@ -47,10 +47,10 @@ private theorem relativeOfZeroSource
     Waldhausen.IsRelativeCofibration C f := by
   let e : A.left ≅ (0 : C) := hL.isoZero
   have hzero : IsCofibration (e.inv ≫ f.left) :=
-    WaldhausenCategory.zero_isCofibration _ _
+    WaldhausenCategoryWithoutGluing.zero_isCofibration _ _
   have hLeft : IsCofibration f.left := by
     have hPre := MorphismProperty.RespectsIso.precomp
-      (WaldhausenCategory.cofibrations (C := C)) e.hom _ hzero
+      (WaldhausenCategoryWithoutGluing.cofibrations (C := C)) e.hom _ hzero
     simpa only [← Category.assoc, Iso.hom_inv_id, Category.id_comp] using hPre
   let inB : A.right ⟶ B.left := hR.to_ B.left
   have hHom : A.hom = (hL.iso hR).hom := hL.eq_of_src _ _

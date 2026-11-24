@@ -443,9 +443,9 @@ theorem intervalQuotient_isZero (i : Fin (n + 1)) :
 
 /-- The quotient-completed finite Stage associated to an admissible flag. -/
 noncomputable def toStage :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       Stage C n) := by
-  letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
+  letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
   refine ⟨F.intervalDiagram, ?_⟩
   refine { diag_isZero := ?_, cofiber_triple := ?_ }
   · intro i
@@ -461,7 +461,7 @@ noncomputable def toStage :
 @[simp]
 theorem toStage_obj_interval
     (i j : Fin (n + 1)) (hij : i ≤ j) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       F.toStage.obj.obj (interval i j hij) =
         F.intervalQuotient i j hij) :=
   rfl
@@ -471,7 +471,7 @@ right endpoint. -/
 @[simp]
 theorem toStage_map_horiz
     {i j k : Fin (n + 1)} (hij : i ≤ j) (hjk : j ≤ k) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       F.toStage.obj.map (horiz hij hjk) =
         F.intervalMap hij (hij.trans hjk) le_rfl hjk) :=
   rfl
@@ -481,7 +481,7 @@ left endpoint. -/
 @[simp]
 theorem toStage_map_vert
     {i j k : Fin (n + 1)} (hij : i ≤ j) (hjk : j ≤ k) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       F.toStage.obj.map (vert hij hjk) =
         F.intervalMap (hij.trans hjk) hjk hij le_rfl) :=
   rfl
@@ -489,7 +489,7 @@ theorem toStage_map_vert
 /-- The zero row of the completed Stage recovers the original filtration
 object, with the canonical quotient projection as the forward map. -/
 noncomputable def zeroRowIso (j : Fin (n + 1)) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       F.chain.obj j ≅ F.toStage.obj.obj
         (interval 0 j (Fin.zero_le j))) := by
   let D := intervalData F j 0 (Fin.zero_le j)
@@ -501,7 +501,7 @@ noncomputable def zeroRowIso (j : Fin (n + 1)) :
 projection. -/
 @[simp]
 theorem zeroRowIso_hom (j : Fin (n + 1)) :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
       (F.zeroRowIso j).hom = F.intervalπ 0 j (Fin.zero_le j)) :=
   rfl
 

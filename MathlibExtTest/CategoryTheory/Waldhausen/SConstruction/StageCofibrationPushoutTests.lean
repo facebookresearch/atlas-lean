@@ -31,7 +31,7 @@ open _root_.CategoryTheory.Waldhausen.SConstruction
 variable (C : Type u) [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance stageCofibrationPushoutTestsWaldhausenC : WaldhausenCategory C :=
+local instance stageCofibrationPushoutTestsWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 example {n : ℕ} {A M N : Stage C n} {f : A ⟶ M} {g : A ⟶ N}

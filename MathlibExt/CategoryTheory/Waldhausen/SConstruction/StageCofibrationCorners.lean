@@ -37,7 +37,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 namespace Stage
 
@@ -142,7 +142,7 @@ theorem Stage.zeroRowPair_corner {n : ℕ} {A B : Stage C n}
         IsPushout.of_id_fst, ?_, ?_, ?_⟩
       · exact Category.comp_id _
       · exact Category.id_comp _
-      · exact (WaldhausenCategory.cofibrations (C := C)).id_mem _
+      · exact (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).id_mem _
   | succ j ih =>
       intro i hij
       by_cases heq : i = j.succ
@@ -152,7 +152,7 @@ theorem Stage.zeroRowPair_corner {n : ℕ} {A B : Stage C n}
           IsPushout.of_id_fst, ?_, ?_, ?_⟩
         · exact Category.comp_id _
         · exact Category.id_comp _
-        · exact (WaldhausenCategory.cofibrations (C := C)).id_mem _
+        · exact (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).id_mem _
       · have hip : i ≤ j.castSucc := by
           have hilt : i < j.succ := lt_of_le_of_ne hij heq
           have hval : i.val < j.val + 1 := by

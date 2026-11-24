@@ -33,7 +33,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 private theorem isPushoutOfBinaryCofans {X X' Y : C}
     {c : BinaryCofan X Y} {c' : BinaryCofan X' Y}
@@ -123,7 +123,7 @@ theorem binaryCoproductMap_isCofibration {X Y X' Y' : C}
     simpa only [Category.comp_id, Category.id_comp] using
       binaryCoproductMap_comp C f (𝟙 Y) (𝟙 X') g
   rw [hcomp]
-  exact (WaldhausenCategory.cofibrations (C := C)).comp_mem _ _ h₁ h₂
+  exact (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem _ _ h₁ h₂
 
 /-- The actual coproduct functor preserves the original component
 cofibrations, with both object transports included in its whole map. -/
@@ -131,10 +131,10 @@ theorem waldhausenCoproductFunctor_map_isCofibration {p q : C × C} (f : p ⟶ q
     (hf : IsCofibration f.1) (hg : IsCofibration f.2) :
     IsCofibration ((waldhausenCoproductFunctor C).map f) := by
   rw [waldhausenCoproductFunctor_map]
-  refine (WaldhausenCategory.cofibrations (C := C)).comp_mem _ _
-    ((WaldhausenCategory.cofibrations (C := C)).of_isIso _) ?_
-  exact (WaldhausenCategory.cofibrations (C := C)).comp_mem _ _
+  refine (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem _ _
+    ((WaldhausenCategoryWithoutGluing.cofibrations (C := C)).of_isIso _) ?_
+  exact (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem _ _
     (binaryCoproductMap_isCofibration C f.1 f.2 hf hg)
-    ((WaldhausenCategory.cofibrations (C := C)).of_isIso _)
+    ((WaldhausenCategoryWithoutGluing.cofibrations (C := C)).of_isIso _)
 
 end CategoryTheory.Waldhausen

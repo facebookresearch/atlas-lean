@@ -34,15 +34,15 @@ universe vB uB vC uC
 
 namespace CategoryTheory.Waldhausen.SConstruction.CofiberSequenceCategory
 
-variable (C : Type uC) [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type uC) [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 private theorem zeroSourceCofiber {Z Y : C} (hZ : IsZero Z) (i : Z ⟶ Y) :
     IsCofiberSequence i (𝟙 Y) := by
   let e : Z ≅ (0 : C) := hZ.isoZero
-  have hZero : IsCofibration (e.inv ≫ i) := WaldhausenCategory.zero_isCofibration _ _
+  have hZero : IsCofibration (e.inv ≫ i) := WaldhausenCategoryWithoutGluing.zero_isCofibration _ _
   have hI : IsCofibration i := by
     have hPre := MorphismProperty.RespectsIso.precomp
-      (WaldhausenCategory.cofibrations (C := C)) e.hom _ hZero
+      (WaldhausenCategoryWithoutGluing.cofibrations (C := C)) e.hom _ hZero
     simpa only [← Category.assoc, Iso.hom_inv_id, Category.id_comp] using hPre
   let z : Z ⟶ (0 : C) := hZ.to_ (0 : C)
   let q : (0 : C) ⟶ Y := (isZero_zero C).to_ Y
@@ -54,7 +54,7 @@ private theorem zeroQuotientCofiber {Y Z : C} (hZ : IsZero Z) (p : Y ⟶ Z) :
   let z : Y ⟶ (0 : C) := (isZero_zero C).from_ Y
   let q : (0 : C) ⟶ Z := hZ.from_ (0 : C)
   let : IsIso q := IsZero.isIso (isZero_zero C) hZ q
-  exact ⟨(WaldhausenCategory.cofibrations (C := C)).id_mem Y, z, q,
+  exact ⟨(WaldhausenCategoryWithoutGluing.cofibrations (C := C)).id_mem Y, z, q,
     IsPushout.of_vert_isIso ⟨hZ.eq_of_tgt _ _⟩⟩
 
 variable {B : Type uB} [Category.{vB} B] (Z G : B ⥤ C) (hZ : ∀ X : B, IsZero (Z.obj X))
@@ -135,7 +135,7 @@ theorem zeroQuotientFunctorSequence_forget :
   unfold zeroQuotientFunctorSequence
   exact cofiberFunctorSequenceLift_forget _ _ _ _ _ _
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 private theorem propertyOfFunctorEq (P : MorphismProperty C) [P.RespectsIso]
     {F₁ F₂ : B ⥤ C} (p : F₁ = F₂) {X Y : B} (f : X ⟶ Y) (h : P (F₂.map f)) :
     P (F₁.map f) := by
@@ -159,7 +159,7 @@ theorem zeroSourceFunctorSequence_map_relativeCofibration {X Y : B} (f : X ⟶ Y
     (hZ Y).of_iso (eqToIso (Functor.congr_obj (zeroSourceFunctorSequence_source C Z G hZ) Y))
   let : IsIso ((source C).map (F.map f)) := IsZero.isIso hX hY _
   have hMiddle : IsCofibration ((middle C).map (F.map f)) :=
-    propertyOfFunctorEq C (WaldhausenCategory.cofibrations (C := C))
+    propertyOfFunctorEq C (WaldhausenCategoryWithoutGluing.cofibrations (C := C))
       (zeroSourceFunctorSequence_middle C Z G hZ) f hG
   exact relativeCofibrations_of_source_isIso C (F.map f) hMiddle
 
@@ -186,13 +186,13 @@ theorem zeroQuotientFunctorSequence_map_relativeCofibration {X Y : B} (f : X ⟶
     propertyOfFunctorEq C (MorphismProperty.isomorphisms C) hRow e hRight
   let : IsIso ((F.obj X).obj.map' 0 1) := hLeft
   have hSource : IsCofibration ((source C).map (F.map f)) :=
-    propertyOfFunctorEq C (WaldhausenCategory.cofibrations (C := C))
+    propertyOfFunctorEq C (WaldhausenCategoryWithoutGluing.cofibrations (C := C))
       (zeroQuotientFunctorSequence_source C Z G hZ) f hG
   exact relativeCofibrations_of_inclusion_isIso C (F.map f) hSource
 
 universe vA uA
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 /-- The original whole unique zero-source arrow commutes strictly with
 arbitrary precomposition of the original zero-valued and target functors. -/
 theorem pointwiseZeroSourceArrow_precomp
@@ -202,7 +202,7 @@ theorem pointwiseZeroSourceArrow_precomp
   unfold pointwiseZeroSourceArrow
   rfl
 
-omit [HasZeroObject C] [WaldhausenCategory C] in
+omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
 /-- The original whole unique zero-quotient arrow commutes strictly with
 arbitrary precomposition of the original source and zero-valued functors. -/
 theorem pointwiseZeroQuotientArrow_precomp

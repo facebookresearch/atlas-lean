@@ -188,7 +188,7 @@ theorem QuillenQ.endpointIso_nonempty_of_mkHom_naturality
     apply (cancel_mono (QuillenQ.underlyingIso eY).hom).1
     exact h.trans hR.symm
   obtain ⟨E⟩ := QuillenQ.mkHom_eq_iff.mp hSR
-  refine ⟨⟨apexIsoOfSpanIso E, ?_, ?_⟩⟩
+  refine ⟨⟨Span.SpanBicat.apexIso E, ?_, ?_⟩⟩
   · apply (cancel_mono eX.inv).1
     change (E.hom.hom ≫ T.l) ≫ eX.inv =
       (S.l ≫ eX.hom) ≫ eX.inv

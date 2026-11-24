@@ -34,27 +34,30 @@ namespace MathlibExtTest.KTheory.Waldhausen.CofiberFunctorSequenceStageExactTest
 
 open CategoryTheory.Waldhausen CategoryTheory.Waldhausen.SConstruction
 
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 variable {F₀ F₁ F₂ : D ⥤ C} {i : F₀ ⟶ F₁} {p : F₁ ⟶ F₂}
 variable (H : IsWaldhausenCofiberFunctorSequence F₀ F₁ F₂ i p)
 
 /-- The original relative Waldhausen value on the tested lifted target cofiber category. -/
-local instance originalRelativeWaldhausen : WaldhausenCategory (CofiberSequenceCategory C) :=
+local instance originalRelativeWaldhausen : WaldhausenCategoryWithoutGluing
+    (CofiberSequenceCategory C) :=
   CofiberSequenceCategory.relativeWaldhausenCategory C
 
 local instance originalSourceStageZero (n : ℕ) : HasZeroObject (Stage D n) :=
   generalStageHasZeroObject D n
 
 /-- The original general Waldhausen value on each tested source finite stage. -/
-local instance originalSourceStageWaldhausen (n : ℕ) : WaldhausenCategory (Stage D n) :=
+local instance originalSourceStageWaldhausen (n : ℕ) : WaldhausenCategoryWithoutGluing
+    (Stage D n) :=
   generalStageWaldhausenCategory D n
 
 local instance originalTargetStageZero (n : ℕ) : HasZeroObject (Stage C n) :=
   generalStageHasZeroObject C n
 
 /-- The original general Waldhausen value on each tested target finite stage. -/
-local instance originalTargetStageWaldhausen (n : ℕ) : WaldhausenCategory (Stage C n) :=
+local instance originalTargetStageWaldhausen (n : ℕ) : WaldhausenCategoryWithoutGluing
+    (Stage C n) :=
   generalStageWaldhausenCategory C n
 
 local instance originalRelativeStageZero (n : ℕ) :
@@ -63,12 +66,12 @@ local instance originalRelativeStageZero (n : ℕ) :
 
 /-- The original general stage value over the tested lifted target relative cofiber category. -/
 local instance originalRelativeStageWaldhausen (n : ℕ) :
-    WaldhausenCategory (Stage (CofiberSequenceCategory C) n) :=
+    WaldhausenCategoryWithoutGluing (Stage (CofiberSequenceCategory C) n) :=
   generalStageWaldhausenCategory (CofiberSequenceCategory C) n
 
 /-- The original relative cofiber value over each tested target general stage category. -/
 local instance originalStageRelativeWaldhausen (n : ℕ) :
-    WaldhausenCategory (CofiberSequenceCategory (Stage C n)) :=
+    WaldhausenCategoryWithoutGluing (CofiberSequenceCategory (Stage C n)) :=
   CofiberSequenceCategory.relativeWaldhausenCategory (Stage C n)
 
 /-- All four original category roles give the exact original staged sequence. -/
@@ -101,7 +104,7 @@ theorem originalBaseCofibration (n : ℕ) {A B : Stage D n} (φ : A ⟶ B)
     (hφ : IsCofibration φ) :
     letI : HasPushout ((H.sourceExact.mapStageNatTrans H.middleExact i n).app A)
         ((H.sourceExact.mapStage n).map φ) := (by
-      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
         (C := Stage C n) ((H.sourceExact.mapStageNatTrans H.middleExact i n).app A)
         (H.mapStage_objectwise n A).1 ((H.sourceExact.mapStage n).obj B)
         ((H.sourceExact.mapStage n).map φ)

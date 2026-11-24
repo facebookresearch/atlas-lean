@@ -46,11 +46,11 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
 exact-category Waldhausen structures.  The structures are selected locally;
 no global instance is installed. -/
 theorem ofExactCategory (F : C ⥤ D) [F.Additive] [F.IsExact] :
-    letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-    letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+    letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+    letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
     F.IsWaldhausenExact := by
-  let _ : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-  let _ : WaldhausenCategory D := ExactCategory.waldhausenCategory D
+  let _ : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+  let _ : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
   refine
     { map_isZero := ?_
       map_cofibration := ?_

@@ -20,7 +20,7 @@ public import MathlibExt.CategoryTheory.Waldhausen.SConstruction.Reindex
 
 Pointwise weak equivalences on bundled finite stages `Stage C n`, as the
 inverse image of pointwise weak equivalences
-`WaldhausenCategory.weakEquivalences.functorCategory (Ar n)` along the
+`WaldhausenCategoryWithoutGluing.weakEquivalences.functorCategory (Ar n)` along the
 forgetful functor `forget C n`. Membership is pointwise; `IsMultiplicative` and
 `RespectsIso` are inherited via generic functor-category and `inverseImage`
 instances. Reindexing along a
@@ -37,13 +37,14 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
   (n : ℕ)
 
 /-- Pointwise stage weak equivalences: inverse image of pointwise weak
 equivalences along `forget C n`. -/
 def stageWeak : MorphismProperty (Stage C n) :=
-  (WaldhausenCategory.weakEquivalences.functorCategory (Ar n)).inverseImage (forget C n)
+  (WaldhausenCategoryWithoutGluing.weakEquivalences.functorCategory (Ar n)).inverseImage
+      (forget C n)
 
 /-- Abbreviation for membership in `stageWeak C n`. -/
 abbrev IsStageWeak {X Y : Stage C n} (f : X ⟶ Y) : Prop :=
@@ -60,7 +61,7 @@ theorem mem_stageWeak {X Y : Stage C n} {f : X ⟶ Y} :
 hold at each index `a` via the underlying weak-equivalence closure. -/
 instance stageWeak_isMultiplicative : (stageWeak C n).IsMultiplicative :=
   inferInstanceAs
-    (((WaldhausenCategory.weakEquivalences.functorCategory (Ar n)).inverseImage
+    (((WaldhausenCategoryWithoutGluing.weakEquivalences.functorCategory (Ar n)).inverseImage
       (forget C n)).IsMultiplicative)
 
 /-- `stageWeak` respects isomorphisms by pointwise inheritance: pre/post-composition
@@ -68,7 +69,7 @@ with an iso holds at each index `a` via iso-closure of the underlying weak equiv
 after transporting `IsIso` through `forget` and evaluation. -/
 instance stageWeak_respectsIso : (stageWeak C n).RespectsIso :=
   inferInstanceAs
-    (((WaldhausenCategory.weakEquivalences.functorCategory (Ar n)).inverseImage
+    (((WaldhausenCategoryWithoutGluing.weakEquivalences.functorCategory (Ar n)).inverseImage
       (forget C n)).RespectsIso)
 
 /-- Reindexing along a simplex map preserves pointwise stage weak

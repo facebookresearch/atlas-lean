@@ -36,10 +36,10 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.CofiberExactFunctorTests
 
-local instance : WaldhausenCategory (FGProjectiveCat ℚ) :=
+local instance : WaldhausenCategoryWithoutGluing (FGProjectiveCat ℚ) :=
   ExactCategory.waldhausenCategory _
 
-local instance : WaldhausenCategory (FGModuleCat ℚ) :=
+local instance : WaldhausenCategoryWithoutGluing (FGModuleCat ℚ) :=
   ExactCategory.waldhausenCategory _
 
 -- Downstream zero-object instance; fails if the `ContainsZero` transfer is missing.

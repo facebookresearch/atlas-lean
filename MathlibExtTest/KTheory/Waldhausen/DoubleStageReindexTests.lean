@@ -22,15 +22,15 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.DoubleStageReindex
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Original operators in both directions commute for all simplex maps. -/
 theorem originalDoubleInterchange {a b c d : SimplexCategory}
     (α : a ⟶ b) (β : c ⟶ d) :
     letI : HasZeroObject (Stage C c.len) := generalStageHasZeroObject C c.len
-    letI : WaldhausenCategory (Stage C c.len) := generalStageWaldhausenCategory C c.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C c.len) := generalStageWaldhausenCategory C c.len
     letI : HasZeroObject (Stage C d.len) := generalStageHasZeroObject C d.len
-    letI : WaldhausenCategory (Stage C d.len) := generalStageWaldhausenCategory C d.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C d.len) := generalStageWaldhausenCategory C d.len
     reindexDoubleStageOuter C α d.len ⋙ reindexDoubleStageInner C β a.len =
       reindexDoubleStageInner C β b.len ⋙ reindexDoubleStageOuter C α c.len :=
   reindexDoubleStage_interchange C α β
@@ -39,11 +39,11 @@ theorem originalDoubleInterchange {a b c d : SimplexCategory}
 theorem originalDoubleInnerComposition {a b c : SimplexCategory}
     (β : a ⟶ b) (γ : b ⟶ c) (m : ℕ) :
     letI : HasZeroObject (Stage C a.len) := generalStageHasZeroObject C a.len
-    letI : WaldhausenCategory (Stage C a.len) := generalStageWaldhausenCategory C a.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C a.len) := generalStageWaldhausenCategory C a.len
     letI : HasZeroObject (Stage C b.len) := generalStageHasZeroObject C b.len
-    letI : WaldhausenCategory (Stage C b.len) := generalStageWaldhausenCategory C b.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C b.len) := generalStageWaldhausenCategory C b.len
     letI : HasZeroObject (Stage C c.len) := generalStageHasZeroObject C c.len
-    letI : WaldhausenCategory (Stage C c.len) := generalStageWaldhausenCategory C c.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C c.len) := generalStageWaldhausenCategory C c.len
     reindexDoubleStageInner C (β ≫ γ) m =
       reindexDoubleStageInner C γ m ⋙ reindexDoubleStageInner C β m :=
   reindexDoubleStageInner_comp C β γ m

@@ -43,7 +43,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Inverse direction: evaluation at the unique off-diagonal `(0, 1)` interval. -/
 noncomputable def stageOneEval : Stage C 1 ⥤ C :=

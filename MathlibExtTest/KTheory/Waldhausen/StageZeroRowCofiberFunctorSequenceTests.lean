@@ -36,18 +36,19 @@ namespace MathlibExtTest.KTheory.Waldhausen.StageZeroRowCofiberFunctorSequenceTe
 open CategoryTheory.Waldhausen CategoryTheory.Waldhausen.SConstruction
 open CategoryTheory.Waldhausen.SConstruction.StageZeroRowCofiber
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original chosen zero value on every tested general finite stage. -/
 local instance originalStageZero (n : ℕ) : HasZeroObject (Stage C n) :=
   generalStageHasZeroObject C n
 
 /-- The original general Waldhausen value on every tested finite stage. -/
-local instance originalStageWaldhausen (n : ℕ) : WaldhausenCategory (Stage C n) :=
+local instance originalStageWaldhausen (n : ℕ) : WaldhausenCategoryWithoutGluing (Stage C n) :=
   generalStageWaldhausenCategory C n
 
 /-- The original relative value on the tested scalar cofiber category. -/
-local instance originalRelativeWaldhausen : WaldhausenCategory (CofiberSequenceCategory C) :=
+local instance originalRelativeWaldhausen : WaldhausenCategoryWithoutGluing
+    (CofiberSequenceCategory C) :=
   CofiberSequenceCategory.relativeWaldhausenCategory C
 
 /-- The chosen zero value on every tested prior stage of the original source stage. -/
@@ -56,7 +57,8 @@ local instance originalPriorStageZero (n k : ℕ) : HasZeroObject (Stage (Stage 
 
 /-- The original general value on every tested prior stage of the original source stage. -/
 local instance originalPriorStageWaldhausen (n k : ℕ) :
-    WaldhausenCategory (Stage (Stage C n) k) := generalStageWaldhausenCategory (Stage C n) k
+    WaldhausenCategoryWithoutGluing (Stage (Stage C n) k) :=
+      generalStageWaldhausenCategory (Stage C n) k
 
 /-- The chosen zero value on each tested prior stage of the scalar cofiber category. -/
 local instance originalRelativeStageZero (k : ℕ) :
@@ -65,12 +67,12 @@ local instance originalRelativeStageZero (k : ℕ) :
 
 /-- The original general value on each tested prior stage of the scalar cofiber category. -/
 local instance originalRelativeStageWaldhausen (k : ℕ) :
-    WaldhausenCategory (Stage (CofiberSequenceCategory C) k) :=
+    WaldhausenCategoryWithoutGluing (Stage (CofiberSequenceCategory C) k) :=
   generalStageWaldhausenCategory (CofiberSequenceCategory C) k
 
 /-- The original relative value over each tested target prior-stage category. -/
 local instance originalStageRelativeWaldhausen (k : ℕ) :
-    WaldhausenCategory (CofiberSequenceCategory (Stage C k)) :=
+    WaldhausenCategoryWithoutGluing (CofiberSequenceCategory (Stage C k)) :=
   CofiberSequenceCategory.relativeWaldhausenCategory (Stage C k)
 
 /-- All original zero-row pairs give the full SAME original evaluation sequence. -/
@@ -90,7 +92,7 @@ theorem originalObjectwise (n : ℕ) {i j : Fin (n + 1)} (hij : i ≤ j) (A : St
 theorem originalBaseDescent (n : ℕ) {i j : Fin (n + 1)} (hij : i ≤ j)
     {A B : Stage C n} (φ : A ⟶ B) (hφ : IsCofibration φ) :
     letI : HasPushout ((inclusion C n hij).app A) ((rowFunctor C n i).map φ) := by
-      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
         (C := C) ((inclusion C n hij).app A) (objectwise C n hij A).1
         ((rowFunctor C n i).obj B) ((rowFunctor C n i).map φ)
       exact hP.flip.hasPushout

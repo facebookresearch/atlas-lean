@@ -28,7 +28,7 @@ on each of `C`, `D`, plus `[F.Additive] [F.IsExact]`; file-local
 `ExactCategory.waldhausenCategory` instances interpret the source/target
 `CofiberSequenceCategory` types. No other hypotheses.
 
-Nonclaims: no identity/composition/naturality API, no `WaldhausenCategory`
+Nonclaims: no identity/composition/naturality API, no `WaldhausenCategoryWithoutGluing`
 instance on cofiber sequences, and no Stage/additivity/G-theory/spectra/Q-S
 content.
 -/
@@ -46,9 +46,9 @@ variable {C : Type u₁} [Category.{v₁} C] [Preadditive C] [HasZeroObject C]
 variable {D : Type u₂} [Category.{v₂} D] [Preadditive D] [HasZeroObject D]
   [HasBinaryBiproducts D] [ExactCategory D]
 
-local instance cofiberExactFunctorWaldhausenC : WaldhausenCategory C :=
+local instance cofiberExactFunctorWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
-local instance cofiberExactFunctorWaldhausenD : WaldhausenCategory D :=
+local instance cofiberExactFunctorWaldhausenD : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 /-- An additive exact functor lifts to cofiber-sequence categories. -/

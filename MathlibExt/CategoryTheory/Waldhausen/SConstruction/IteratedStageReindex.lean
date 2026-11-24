@@ -43,7 +43,7 @@ theorem stageTupleDegrees_succ {r : ℕ} (a : StageSimplexTuple (r + 1)) :
     stageTupleDegrees a = (a 0).unop.len :: stageTupleDegrees (fun i => a i.succ) := by
   simp only [stageTupleDegrees, List.ofFn_succ]
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Original iterated stages at their actual finite simplex tuple. -/
 abbrev StageAtTuple {r : ℕ} (a : StageSimplexTuple r) :=
@@ -68,15 +68,15 @@ private def tupleReindexData : (r : ℕ) → (a b : StageSimplexTuple r) →
       let E := StageAtTuple C tailB
       letI : HasZeroObject (Stage D (a 0).unop.len) :=
         generalStageHasZeroObject D (a 0).unop.len
-      letI : WaldhausenCategory (Stage D (a 0).unop.len) :=
+      letI : WaldhausenCategoryWithoutGluing (Stage D (a 0).unop.len) :=
         generalStageWaldhausenCategory D (a 0).unop.len
       letI : HasZeroObject (Stage D (b 0).unop.len) :=
         generalStageHasZeroObject D (b 0).unop.len
-      letI : WaldhausenCategory (Stage D (b 0).unop.len) :=
+      letI : WaldhausenCategoryWithoutGluing (Stage D (b 0).unop.len) :=
         generalStageWaldhausenCategory D (b 0).unop.len
       letI : HasZeroObject (Stage E (b 0).unop.len) :=
         generalStageHasZeroObject E (b 0).unop.len
-      letI : WaldhausenCategory (Stage E (b 0).unop.len) :=
+      letI : WaldhausenCategoryWithoutGluing (Stage E (b 0).unop.len) :=
         generalStageWaldhausenCategory E (b 0).unop.len
       let head : Stage D (a 0).unop.len ⥤ Stage E (b 0).unop.len :=
         reindexStage (C := D) (α 0).unop ⋙ M.exact.mapStage (b 0).unop.len
@@ -88,13 +88,13 @@ private def tupleReindexData : (r : ℕ) → (a b : StageSimplexTuple r) →
       letI : HasZeroObject
           (Stage (IteratedStage C (List.ofFn (fun i => (a i.succ).unop.len))) (a 0).unop.len) :=
         generalStageHasZeroObject _ _
-      letI : WaldhausenCategory
+      letI : WaldhausenCategoryWithoutGluing
           (Stage (IteratedStage C (List.ofFn (fun i => (a i.succ).unop.len))) (a 0).unop.len) :=
         generalStageWaldhausenCategory _ _
       letI : HasZeroObject
           (Stage (IteratedStage C (List.ofFn (fun i => (b i.succ).unop.len))) (b 0).unop.len) :=
         generalStageHasZeroObject _ _
-      letI : WaldhausenCategory
+      letI : WaldhausenCategoryWithoutGluing
           (Stage (IteratedStage C (List.ofFn (fun i => (b i.succ).unop.len))) (b 0).unop.len) :=
         generalStageWaldhausenCategory _ _
       exact ⟨ea.functor ⋙ head ⋙ eb.inverse,
@@ -116,8 +116,8 @@ theorem reindexIteratedStage_isWaldhausenExact {r : ℕ} {a b : StageSimplexTupl
 universe uE vE
 
 private theorem stageMap_eq_of_eq {D : Type (max u v)} {E : Type (max uE vE)} [Category.{v} D]
-    [HasZeroObject D] [WaldhausenCategory D] [Category.{vE} E]
-    [HasZeroObject E] [WaldhausenCategory E] {F G : D ⥤ E}
+    [HasZeroObject D] [WaldhausenCategoryWithoutGluing D] [Category.{vE} E]
+    [HasZeroObject E] [WaldhausenCategoryWithoutGluing E] {F G : D ⥤ E}
     (hF : F.IsWaldhausenExact) (hG : G.IsWaldhausenExact) (h : F = G) (n : ℕ) :
     hF.mapStage n = hG.mapStage n := by
   subst G
@@ -137,11 +137,14 @@ theorem reindexIteratedStage_succ {r : ℕ} {a b : StageSimplexTuple (r + 1)} (�
     let D := StageAtTuple C (fun i => a i.succ)
     let E := StageAtTuple C (fun i => b i.succ)
     letI : HasZeroObject (Stage D (a 0).unop.len) := generalStageHasZeroObject D _
-    letI : WaldhausenCategory (Stage D (a 0).unop.len) := generalStageWaldhausenCategory D _
+    letI : WaldhausenCategoryWithoutGluing (Stage D (a 0).unop.len) :=
+      generalStageWaldhausenCategory D _
     letI : HasZeroObject (Stage D (b 0).unop.len) := generalStageHasZeroObject D _
-    letI : WaldhausenCategory (Stage D (b 0).unop.len) := generalStageWaldhausenCategory D _
+    letI : WaldhausenCategoryWithoutGluing (Stage D (b 0).unop.len) :=
+      generalStageWaldhausenCategory D _
     letI : HasZeroObject (Stage E (b 0).unop.len) := generalStageHasZeroObject E _
-    letI : WaldhausenCategory (Stage E (b 0).unop.len) := generalStageWaldhausenCategory E _
+    letI : WaldhausenCategoryWithoutGluing (Stage E (b 0).unop.len) :=
+      generalStageWaldhausenCategory E _
     reindexIteratedStage C α =
       (iteratedStageOfFnSuccEquivalence C (fun i => (a i).unop.len)).functor ⋙
         (reindexStage (C := D) (α 0).unop ⋙
@@ -168,7 +171,8 @@ theorem reindexIteratedStage_succ_obj {r : ℕ} {a b : StageSimplexTuple (r + 1)
             ((iteratedStageOfFnSuccEquivalence C (fun i => (a i).unop.len)).functor.obj X))) :=
   Functor.congr_obj (reindexIteratedStage_succ C α) X
 
-/-- Every actual successor morphism is the same original head reindexing and mapped tail morphism. -/
+/-- Every actual successor morphism is the same original head reindexing and mapped tail morphism.
+-/
 theorem reindexIteratedStage_succ_map {r : ℕ} {a b : StageSimplexTuple (r + 1)}
     (α : a ⟶ b) {X Y : StageAtTuple C a} (f : X ⟶ Y) :
     HEq ((reindexIteratedStage C α).map f)
@@ -238,8 +242,8 @@ theorem reindexIteratedStage_id (r : ℕ) (a : StageSimplexTuple r) :
       have htail : (tupleReindexData C r tailA tailA (𝟙 tailA)).functor = 𝟭 _ := ht
       have hm := stageMap_eq_of_eq (tupleReindexData C r tailA tailA (𝟙 tailA)).exact
         (Functor.IsWaldhausenExact.id (C := StageAtTuple C tailA)) htail (a 0).unop.len
-      simp only [reindexStage_id, Functor.IsWaldhausenExact.mapStage_id,
-        Functor.id_comp, Functor.comp_id] at hm ⊢
+      simp only [Functor.IsWaldhausenExact.mapStage_id,
+        ] at hm ⊢
       rw [hm]
       exact iteratedStageOfFnSuccEquivalence_functor_inverse C (fun i => (a i).unop.len)
 
@@ -300,10 +304,12 @@ theorem reindexIteratedStage_comp (r : ℕ) {a b c : StageSimplexTuple r}
         (iteratedStageOfFnSuccEquivalence_inverse_functor C (fun i => (b i).unop.len))
       exact (congrArg
         (fun K => (iteratedStageOfFnSuccEquivalence C (fun i => (a i).unop.len)).functor ⋙ K ⋙
-          (iteratedStageOfFnSuccEquivalence C (fun i => (c i).unop.len)).inverse) hinner.symm).trans hc.symm
+          (iteratedStageOfFnSuccEquivalence C (fun i =>
+              (c i).unop.len)).inverse) hinner.symm).trans hc.symm
 
 variable {C}
-variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D]
+    [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- The original exact base functor commutes with every original finite

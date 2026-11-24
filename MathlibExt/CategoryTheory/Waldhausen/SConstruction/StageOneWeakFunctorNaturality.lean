@@ -28,8 +28,8 @@ open CategoryTheory CategoryTheory.Limits
 open scoped Simplicial
 
 namespace CategoryTheory.Waldhausen.SConstruction
-variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type u} [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 /-- The actual original stage comparison restricts to its original weak isomorphism. -/
@@ -57,7 +57,8 @@ theorem stageOnePostcompWeakIso_hom (X : CategoryTheory.Waldhausen.WeakCategory 
 theorem stageOnePostcompWeakIso_inv (X : CategoryTheory.Waldhausen.WeakCategory C) :
     (stageOnePostcompWeakIso hF X).inv.hom = (stageOnePostcompStageIso hF X.obj).inv := rfl
 
-/-- The original weak interval insertion comparison is the same earned S₁ square after literal pullback. -/
+/-- The original weak interval insertion comparison is the same earned S₁ square after literal
+pullback. -/
 def stageOneWeakIntervalPostcompNatIso {a : SimplexCategory} (f : a ⟶ ⦋1⦌) :
     stageOneGeneralWeak C ⋙ reindexStageWeak C f ⋙ hF.mapStageWeak a.len ≅
       hF.mapWeakCategory ⋙ stageOneGeneralWeak D ⋙ reindexStageWeak D f := by

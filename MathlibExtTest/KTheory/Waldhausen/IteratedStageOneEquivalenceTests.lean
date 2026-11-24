@@ -22,7 +22,7 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.IteratedStageOneEquivalence
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Every original finite iteration retains its actual S1 categorical comparison. -/
 def originalIteratedDegreeOne (ns : List ℕ) :

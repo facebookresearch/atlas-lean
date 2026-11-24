@@ -27,10 +27,10 @@ namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StageCofibratio
 open _root_.CategoryTheory.Waldhausen.SConstruction
 
 variable (C : Type u) [Category.{v} C] [HasZeroObject C]
-  [WaldhausenCategory C]
+  [WaldhausenCategoryWithoutGluing C]
 
 example :
-    (WaldhausenCategory.cofibrations (C := C)).IsStableUnderCobaseChange :=
+    (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).IsStableUnderCobaseChange :=
   inferInstance
 
 example {a b : SimplexCategory} (α : a ⟶ b)

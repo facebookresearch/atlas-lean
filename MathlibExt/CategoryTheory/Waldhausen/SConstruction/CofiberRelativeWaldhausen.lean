@@ -32,7 +32,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 namespace CofiberSequenceCategory
 
@@ -40,7 +40,7 @@ namespace CofiberSequenceCategory
 cofibrations and the existing three component weak equivalences. -/
 @[instance_reducible]
 noncomputable def relativeWaldhausenCategory :
-    WaldhausenCategory (CofiberSequenceCategory C) where
+    WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) where
   cofibrations := relativeCofibrations C
   weakEquivalences := levelwiseWeakEquivalences C
   cofibrations_isMultiplicative := by infer_instance
@@ -54,7 +54,8 @@ noncomputable def relativeWaldhausenCategory :
 
 private theorem relativeWaldhausenCategory_cofibration_aux
     {X Y : CofiberSequenceCategory C} (f : X ⟶ Y) :
-    (letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
       IsCofibration f) ↔ relativeCofibrations C f := by
   unfold relativeWaldhausenCategory
   rfl
@@ -63,13 +64,15 @@ private theorem relativeWaldhausenCategory_cofibration_aux
 cofibrations used by its actual pushout constructor. -/
 theorem isCofibration_relativeWaldhausenCategory_iff
     {X Y : CofiberSequenceCategory C} (f : X ⟶ Y) :
-    (letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
       IsCofibration f) ↔ relativeCofibrations C f :=
   relativeWaldhausenCategory_cofibration_aux C f
 
 private theorem relativeWaldhausenCategory_weakEquivalence_aux
     {X Y : CofiberSequenceCategory C} (f : X ⟶ Y) :
-    (letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
       IsWeakEquivalence f) ↔ levelwiseWeakEquivalences C f := by
   unfold relativeWaldhausenCategory
   rfl
@@ -78,7 +81,8 @@ private theorem relativeWaldhausenCategory_weakEquivalence_aux
 component weak equivalences. -/
 theorem isWeakEquivalence_relativeWaldhausenCategory_iff
     {X Y : CofiberSequenceCategory C} (f : X ⟶ Y) :
-    (letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    (letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
       IsWeakEquivalence f) ↔ levelwiseWeakEquivalences C f :=
   relativeWaldhausenCategory_weakEquivalence_aux C f
 

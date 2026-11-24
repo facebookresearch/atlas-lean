@@ -33,7 +33,7 @@ open scoped ZeroObject
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 private structure CanonicalZeroData (ns : List ℕ) where
   obj : IteratedStage C ns
@@ -46,7 +46,7 @@ private def canonicalZeroData : (ns : List ℕ) → CanonicalZeroData C ns
       let Z := canonicalZeroData ns
       let D := IteratedStage C ns
       letI : HasZeroObject (Stage D n) := generalStageHasZeroObject D n
-      letI : WaldhausenCategory (Stage D n) := generalStageWaldhausenCategory D n
+      letI : WaldhausenCategoryWithoutGluing (Stage D n) := generalStageWaldhausenCategory D n
       let Q : Stage D n :=
         ⟨(Functor.const (Ar n)).obj Z.obj,
           isStage_of_pointwise_zero D _ (fun _ => Z.isZero)⟩
@@ -56,7 +56,8 @@ private def canonicalZeroData : (ns : List ℕ) → CanonicalZeroData C ns
       exact ⟨(iteratedStageConsEquivalence C n ns).inverse.obj Q,
         (iteratedStageConsEquivalence_exact C n ns).2.map_isZero hQ⟩
 
-/-- The actual recursively constructed zero diagram, constant at the original base zero in every direction. -/
+/-- The actual recursively constructed zero diagram, constant at the original base zero in every
+direction. -/
 @[no_expose]
 def iteratedStageCanonicalZero (ns : List ℕ) : IteratedStage C ns :=
   (canonicalZeroData C ns).obj
@@ -65,7 +66,8 @@ def iteratedStageCanonicalZero (ns : List ℕ) : IteratedStage C ns :=
 theorem iteratedStageCanonicalZero_isZero (ns : List ℕ) :
     IsZero (iteratedStageCanonicalZero C ns) := (canonicalZeroData C ns).isZero
 
-/-- The constructed base zero is the actual original zero object after its canonical nil transport. -/
+/-- The constructed base zero is the actual original zero object after its canonical nil transport.
+-/
 theorem iteratedStageCanonicalZero_nil :
     (iteratedStageNilEquivalence C).functor.obj (iteratedStageCanonicalZero C []) = (0 : C) := by
   change (iteratedStageNilEquivalence C).functor.obj (0 : IteratedStage C []) = (0 : C)
@@ -77,13 +79,15 @@ theorem iteratedStageCanonicalZero_nil_obj :
     iteratedStageCanonicalZero C [] = (0 : IteratedStage C []) := by
   rfl
 
-/-- The actual constructed zero and the existing chosen zero have their canonical original zero isomorphism. -/
+/-- The actual constructed zero and the existing chosen zero have their canonical original zero
+isomorphism. -/
 def iteratedStageCanonicalZeroIsoChosen (ns : List ℕ) :
     iteratedStageCanonicalZero C ns ≅ (0 : IteratedStage C ns) :=
   (iteratedStageCanonicalZero_isZero C ns).isoZero
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The successor constructed zero retains the complete original constant diagram in the outer direction. -/
+/-- The successor constructed zero retains the complete original constant diagram in the outer
+direction. -/
 theorem iteratedStageCanonicalZero_cons_obj (n : ℕ) (ns : List ℕ) :
     ((iteratedStageConsEquivalence C n ns).functor.obj
       (iteratedStageCanonicalZero C (n :: ns))).obj =
@@ -96,7 +100,8 @@ theorem iteratedStageCanonicalZero_cons_obj (n : ℕ) (ns : List ℕ) :
   exact congrArg ObjectProperty.FullSubcategory.obj
     (Functor.congr_obj (iteratedStageConsEquivalence_inverse_functor C n ns) Q)
 
-/-- Equality of original degree lists transports the same actual constructed constant-zero object. -/
+/-- Equality of original degree lists transports the same actual constructed constant-zero object.
+-/
 theorem iteratedStageCanonicalZero_list_transport {ns ms : List ℕ} (h : ns = ms) :
     (iteratedStageListEquivalence C h).functor.obj (iteratedStageCanonicalZero C ns) =
       iteratedStageCanonicalZero C ms := by

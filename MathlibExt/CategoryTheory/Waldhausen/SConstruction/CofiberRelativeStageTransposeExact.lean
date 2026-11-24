@@ -269,17 +269,18 @@ private theorem fullSubcategoryHom_heq
   apply ObjectProperty.hom_ext
   exact eq_of_heq h
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original relative Waldhausen value on the source cofiber category. -/
-local instance originalRelativeWaldhausen : WaldhausenCategory (CofiberSequenceCategory C) :=
+local instance originalRelativeWaldhausen : WaldhausenCategoryWithoutGluing
+    (CofiberSequenceCategory C) :=
   relativeWaldhausenCategory C
 
 local instance originalStageZero (n : ℕ) : HasZeroObject (Stage C n) :=
   generalStageHasZeroObject C n
 
 /-- The original general Waldhausen value on each target finite stage. -/
-local instance originalStageWaldhausen (n : ℕ) : WaldhausenCategory (Stage C n) :=
+local instance originalStageWaldhausen (n : ℕ) : WaldhausenCategoryWithoutGluing (Stage C n) :=
   generalStageWaldhausenCategory C n
 
 local instance originalRelativeStageZero (n : ℕ) :
@@ -288,12 +289,12 @@ local instance originalRelativeStageZero (n : ℕ) :
 
 /-- The original general stage value over the source relative cofiber category. -/
 local instance originalRelativeStageWaldhausen (n : ℕ) :
-    WaldhausenCategory (Stage (CofiberSequenceCategory C) n) :=
+    WaldhausenCategoryWithoutGluing (Stage (CofiberSequenceCategory C) n) :=
   generalStageWaldhausenCategory (CofiberSequenceCategory C) n
 
 /-- The original relative cofiber value over the target general stage category. -/
 local instance originalTargetRelativeWaldhausen (n : ℕ) :
-    WaldhausenCategory (CofiberSequenceCategory (Stage C n)) :=
+    WaldhausenCategoryWithoutGluing (CofiberSequenceCategory (Stage C n)) :=
   relativeWaldhausenCategory (Stage C n)
 
 private abbrev rowFunctor (n : ℕ) (t : Fin 3) :
@@ -363,7 +364,7 @@ theorem stageTriangle_isCofiberSequence (n : ℕ)
   all_goals simp
 
 private theorem cofiberSequence_of_heq
-    {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+    {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
     {A B Q A' B' Q' : D} (hA : A = A') (hB : B = B') (hQ : Q = Q')
     (i : A ⟶ B) (p : B ⟶ Q) (i' : A' ⟶ B') (p' : B' ⟶ Q')
     (hi : HEq i i') (hp : HEq p p') (h : IsCofiberSequence i p) :
@@ -571,7 +572,7 @@ private theorem row_functor_sequence (n : ℕ) :
     row_isCofiberSequence C n, ?_⟩
   intro A B φ hφ
   let : HasPushout ((rowFirstArrow C n).app A) ((rowFunctor C n 0).map φ) := by
-    obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+    obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
       (C := Stage C n) ((rowFirstArrow C n).app A) (row_isCofiberSequence C n A).1
       ((rowFunctor C n 0).obj B) ((rowFunctor C n 0).map φ)
     exact hP.flip.hasPushout
@@ -581,8 +582,8 @@ private theorem row_functor_sequence (n : ℕ) :
         (CofiberSequenceCategory C) n φ).mp hφ))
 
 private theorem functorSequence_of_heq
-    {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
-    {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+    {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
+    {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
     {F₀ F₁ F₂ G₀ G₁ G₂ : B ⥤ D}
     (h₀ : F₀ = G₀) (h₁ : F₁ = G₁) (h₂ : F₂ = G₂)
     (i : F₀ ⟶ F₁) (p : F₁ ⟶ F₂) (i' : G₀ ⟶ G₁) (p' : G₁ ⟶ G₂)
@@ -696,7 +697,7 @@ theorem stageTriangle_baseCofibration (n : ℕ)
     {A B : Stage (CofiberSequenceCategory C) n} (φ : A ⟶ B) (hφ : IsCofibration φ) :
     letI : HasPushout ((stageSourceToMiddle C n).app A)
         (((stageEvaluationTriangle C n).obj 0).map φ) := (by
-      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
         (C := Stage C n) ((stageSourceToMiddle C n).app A)
         (stageTriangle_isCofiberSequence C n A).1
         (((stageEvaluationTriangle C n).obj 0).obj B)

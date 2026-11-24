@@ -33,11 +33,11 @@ open scoped Simplicial
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original weak-equivalence category on the actual iterated S-stage carrier. -/
 abbrev IteratedStageWeakAtTuple {r : ℕ} (a : StageSimplexTuple r) :=
-  WideSubcategory (WaldhausenCategory.weakEquivalences (C := StageAtTuple C a))
+  WideSubcategory (WaldhausenCategoryWithoutGluing.weakEquivalences (C := StageAtTuple C a))
 
 /-- The actual original tuple reindex map restricts to its original weak morphisms. -/
 def reindexIteratedStageWeak {r : ℕ} {a b : StageSimplexTuple r} (α : a ⟶ b) :
@@ -48,7 +48,8 @@ def reindexIteratedStageWeak {r : ℕ} {a b : StageSimplexTuple r} (α : a ⟶ b
 theorem reindexIteratedStageWeak_id (r : ℕ) (a : StageSimplexTuple r) :
     reindexIteratedStageWeak C (𝟙 a) = 𝟭 (IteratedStageWeakAtTuple C a) := by
   unfold reindexIteratedStageWeak
-  exact (Functor.IsWaldhausenExact.mapWeakCategory_eq (reindexIteratedStage_isWaldhausenExact C (𝟙 a))
+  exact (Functor.IsWaldhausenExact.mapWeakCategory_eq (reindexIteratedStage_isWaldhausenExact C
+      (𝟙 a))
     (Functor.IsWaldhausenExact.id (C := StageAtTuple C a))
     (reindexIteratedStage_id C r a)).trans (by rfl)
 
@@ -58,7 +59,8 @@ theorem reindexIteratedStageWeak_comp (r : ℕ) {a b c : StageSimplexTuple r}
     reindexIteratedStageWeak C (α ≫ β) =
       reindexIteratedStageWeak C α ⋙ reindexIteratedStageWeak C β := by
   unfold reindexIteratedStageWeak
-  exact (Functor.IsWaldhausenExact.mapWeakCategory_eq (reindexIteratedStage_isWaldhausenExact C (α ≫ β))
+  exact (Functor.IsWaldhausenExact.mapWeakCategory_eq (reindexIteratedStage_isWaldhausenExact C (α
+      ≫ β))
     ((reindexIteratedStage_isWaldhausenExact C α).comp
       (reindexIteratedStage_isWaldhausenExact C β))
     (reindexIteratedStage_comp C r α β)).trans (by rfl)

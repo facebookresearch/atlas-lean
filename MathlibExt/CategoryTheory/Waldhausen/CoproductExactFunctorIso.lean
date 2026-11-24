@@ -41,8 +41,8 @@ namespace CategoryTheory.Functor.IsWaldhausenExact
 
 open CategoryTheory.Waldhausen
 
-variable {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategory A]
-variable {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
+variable {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+variable {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
 variable {F : A ⥤ B} (hF : F.IsWaldhausenExact)
 
 /-- The actual image of the original chosen coproduct cocone is colimiting,
@@ -61,7 +61,7 @@ def mappedCoproductCoconeIsColimit (X Y : A) :
     have hY : z.isInitial.to Y = f := z.eq_of_src _ _
     rw [hX, hY] at h
     exact h
-  have hi : IsCofibration i := WaldhausenCategory.zero_isCofibration X i
+  have hi : IsCofibration i := WaldhausenCategoryWithoutGluing.zero_isCofibration X i
   have hImage : IsPushout (F.map f) (F.map i) (F.map c.inr) (F.map c.inl) :=
     hF.map_pushout i f c.inr c.inl hi hP
   exact isBinaryCoproductOfIsInitialIsPushout (pair (F.obj X) (F.obj Y))

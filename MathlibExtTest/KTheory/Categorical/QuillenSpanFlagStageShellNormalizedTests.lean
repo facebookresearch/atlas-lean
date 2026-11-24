@@ -43,7 +43,7 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
 local instance quillenSpanFlagStageShellNormalizedTestsWaldhausenC :
-    WaldhausenCategory C :=
+    WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 example {a : SimplexCategory}
@@ -157,7 +157,7 @@ section TypeZero
 variable {C₀ : Type} [Category.{0} C₀] [Preadditive C₀]
   [HasZeroObject C₀] [HasBinaryBiproducts C₀] [ExactCategory C₀]
 
-local instance typeZeroWaldhausenC₀ : WaldhausenCategory C₀ :=
+local instance typeZeroWaldhausenC₀ : WaldhausenCategoryWithoutGluing C₀ :=
   ExactCategory.waldhausenCategory C₀
 
 example (A : Stage C₀ (edgewiseQ.obj ⦋1⦌).len) :
@@ -172,7 +172,7 @@ section TypeOne
 variable {C₁ : Type 1} [Category.{1} C₁] [Preadditive C₁]
   [HasZeroObject C₁] [HasBinaryBiproducts C₁] [ExactCategory C₁]
 
-local instance typeOneWaldhausenC₁ : WaldhausenCategory C₁ :=
+local instance typeOneWaldhausenC₁ : WaldhausenCategoryWithoutGluing C₁ :=
   ExactCategory.waldhausenCategory C₁
 
 example (A : Stage C₁ (edgewiseQ.obj ⦋2⦌).len) :

@@ -46,18 +46,18 @@ variable (E : Type u) [Category.{v} E] [Preadditive E] [Limits.HasZeroObject E]
 variable (F : C ⥤ D) [F.Additive] [Functor.IsExact F]
 variable (G : D ⥤ E) [G.Additive] [Functor.IsExact G]
 
-local instance : WaldhausenCategory C := ExactCategory.waldhausenCategory C
-local instance : WaldhausenCategory D := ExactCategory.waldhausenCategory D
-local instance : WaldhausenCategory E := ExactCategory.waldhausenCategory E
+local instance : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C
+local instance : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D
+local instance : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E
 
 /-- Second diagonal face is the `G`-mapped `F` zero edge.
 
 Protects against a wrong-face (`δ₀`/`δ₁`) assignment that keeps the right
 2-simplex but reads the wrong 1-face. -/
 example :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (stageWeakDiagonal E).δ 2 (levelTwoZeroComparisonSimplex C D F E G) =
         (stageWeakDiagonalMapLevelZeroEdge C D F E G).edge) :=
   levelTwoZeroComparison_d2 C D F E G
@@ -66,8 +66,8 @@ example :
 
 Protects against swapping the `G` leg with the mapped or composite leg. -/
 example :
-    (letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (stageWeakDiagonal E).δ 0 (levelTwoZeroComparisonSimplex C D F E G) =
         (stageWeakDiagonalLevelZeroEdge D E G).edge) :=
   levelTwoZeroComparison_d0 C D F E G
@@ -77,8 +77,8 @@ example :
 Protects against a composition-order slip where the triangle closes on the
 wrong composite edge. -/
 example :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       (stageWeakDiagonal E).δ 1 (levelTwoZeroComparisonSimplex C D F E G) =
         (stageWeakDiagonalLevelZeroEdge C E (F ⋙ G)).edge) :=
   levelTwoZeroComparison_d1 C D F E G
@@ -88,9 +88,9 @@ example :
 Protects against an orientation slip that provides the right 2-simplex with
 the three edges in the wrong order. -/
 noncomputable example :
-    (letI : WaldhausenCategory C := ExactCategory.waldhausenCategory C;
-      letI : WaldhausenCategory D := ExactCategory.waldhausenCategory D;
-      letI : WaldhausenCategory E := ExactCategory.waldhausenCategory E;
+    (letI : WaldhausenCategoryWithoutGluing C := ExactCategory.waldhausenCategory C;
+      letI : WaldhausenCategoryWithoutGluing D := ExactCategory.waldhausenCategory D;
+      letI : WaldhausenCategoryWithoutGluing E := ExactCategory.waldhausenCategory E;
       SSet.Edge.CompStruct
         (stageWeakDiagonalMapLevelZeroEdge C D F E G)
         (stageWeakDiagonalLevelZeroEdge D E G)

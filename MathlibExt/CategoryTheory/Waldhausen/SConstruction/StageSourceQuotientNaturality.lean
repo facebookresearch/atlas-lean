@@ -63,9 +63,9 @@ variable {C : Type u₁} [Category.{v₁} C] [Preadditive C] [HasZeroObject C]
 variable {D : Type u₂} [Category.{v₂} D] [Preadditive D] [HasZeroObject D]
   [HasBinaryBiproducts D] [ExactCategory D]
 
-local instance stageSourceQuotientNaturalityWaldhausenC : WaldhausenCategory C :=
+local instance stageSourceQuotientNaturalityWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
-local instance stageSourceQuotientNaturalityWaldhausenD : WaldhausenCategory D :=
+local instance stageSourceQuotientNaturalityWaldhausenD : WaldhausenCategoryWithoutGluing D :=
   ExactCategory.waldhausenCategory D
 
 variable (F : C ⥤ D) [F.Additive] [F.IsExact]

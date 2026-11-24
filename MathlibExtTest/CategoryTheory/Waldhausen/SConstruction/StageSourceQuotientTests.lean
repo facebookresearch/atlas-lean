@@ -35,7 +35,7 @@ universe v u
 
 namespace MathlibExtTest.CategoryTheory.Waldhausen.SConstruction.StageSourceQuotientTests
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Object pairing computes as source `(0, 1)` and quotient `(1, 2)` evaluations. -/
 example (X : Stage C 2) :

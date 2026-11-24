@@ -38,8 +38,8 @@ namespace CategoryTheory.Functor.IsWaldhausenExact
 
 open Waldhausen.SConstruction
 
-variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type u₁} [Category.{v₁} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
+variable {D : Type u₂} [Category.{v₂} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
 variable {F G : C ⥤ D}
 
 /-- The WHOLE original stage map followed by original forgetting is the

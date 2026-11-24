@@ -39,7 +39,7 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [Limits.HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- Paired source-quotient evaluation at `(0, 1)` and `(1, 2)`. -/
 def sourceQuotientStage : Stage C 2 ⥤ C × C :=

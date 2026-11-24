@@ -29,8 +29,10 @@ open scoped ZeroObject
 
 universe uC vC uD vD
 
-variable {C : Type (max uC vC)} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
-variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
+variable {C : Type (max uC vC)} [Category.{vC} C] [HasZeroObject C]
+    [WaldhausenCategoryWithoutGluing C]
+variable {D : Type (max uD vD)} [Category.{vD} D] [HasZeroObject D]
+    [WaldhausenCategoryWithoutGluing D]
 variable {F : C ⥤ D} (hF : F.IsWaldhausenExact)
 
 example : mapIteratedStage hF [] ⋙ (iteratedStageNilEquivalence D).functor =

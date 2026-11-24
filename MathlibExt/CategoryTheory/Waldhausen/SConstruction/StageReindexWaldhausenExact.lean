@@ -35,7 +35,7 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The original reindexed underlying stage diagram is precomposition. -/
 theorem reindexStage_general_obj {a b : SimplexCategory} (α : a ⟶ b)
@@ -81,14 +81,14 @@ theorem reindexStage_general_pushout {a b : SimplexCategory} (α : a ⟶ b)
 structures, with all preservation fields earned from the original maps. -/
 theorem reindexStage_general_isWaldhausenExact {a b : SimplexCategory} (α : a ⟶ b) :
     letI : HasZeroObject (Stage C a.len) := generalStageHasZeroObject C a.len
-    letI : WaldhausenCategory (Stage C a.len) := generalStageWaldhausenCategory C a.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C a.len) := generalStageWaldhausenCategory C a.len
     letI : HasZeroObject (Stage C b.len) := generalStageHasZeroObject C b.len
-    letI : WaldhausenCategory (Stage C b.len) := generalStageWaldhausenCategory C b.len
+    letI : WaldhausenCategoryWithoutGluing (Stage C b.len) := generalStageWaldhausenCategory C b.len
     (reindexStage (C := C) α).IsWaldhausenExact := by
-  letI : HasZeroObject (Stage C a.len) := generalStageHasZeroObject C a.len
-  letI : WaldhausenCategory (Stage C a.len) := generalStageWaldhausenCategory C a.len
-  letI : HasZeroObject (Stage C b.len) := generalStageHasZeroObject C b.len
-  letI : WaldhausenCategory (Stage C b.len) := generalStageWaldhausenCategory C b.len
+  let : HasZeroObject (Stage C a.len) := generalStageHasZeroObject C a.len
+  let : WaldhausenCategoryWithoutGluing (Stage C a.len) := generalStageWaldhausenCategory C a.len
+  let : HasZeroObject (Stage C b.len) := generalStageHasZeroObject C b.len
+  let : WaldhausenCategoryWithoutGluing (Stage C b.len) := generalStageWaldhausenCategory C b.len
   constructor
   · intro A hA
     exact reindexStage_general_isZero C α hA

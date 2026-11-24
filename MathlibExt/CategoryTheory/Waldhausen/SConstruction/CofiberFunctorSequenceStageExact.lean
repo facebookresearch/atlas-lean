@@ -75,16 +75,16 @@ private theorem stageSequenceHomHEq
   exact eq_of_heq h
 
 private theorem stageMapFunctor_eq
-    {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategory A]
-    {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
+    {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
     {F G : A ⥤ B} (h : F = G) (hF : F.IsWaldhausenExact)
     (hG : G.IsWaldhausenExact) (n : ℕ) : hF.mapStage n = hG.mapStage n := by
   cases h
   rfl
 
 private theorem stageSequence_of_heq
-    {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategory A]
-    {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
+    {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
     {F₀ F₁ F₂ G₀ G₁ G₂ : A ⥤ B}
     (h₀ : F₀ = G₀) (h₁ : F₁ = G₁) (h₂ : F₂ = G₂)
     (i : F₀ ⟶ F₁) (p : F₁ ⟶ F₂) (i' : G₀ ⟶ G₁) (p' : G₁ ⟶ G₂)
@@ -99,9 +99,9 @@ private theorem stageSequence_of_heq
   exact H
 
 private theorem stageSequence_precomp
-    {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategory A]
-    {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
-    {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+    {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+    {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
+    {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
     (G : A ⥤ B) (hG : G.IsWaldhausenExact)
     {F₀ F₁ F₂ : B ⥤ C} {i : F₀ ⟶ F₁} {p : F₁ ⟶ F₂}
     (H : IsWaldhausenCofiberFunctorSequence F₀ F₁ F₂ i p) :
@@ -114,27 +114,30 @@ private theorem stageSequence_precomp
 
 namespace IsWaldhausenCofiberFunctorSequence
 
-variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategory D]
-variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategory C]
+variable {D : Type uD} [Category.{vD} D] [HasZeroObject D] [WaldhausenCategoryWithoutGluing D]
+variable {C : Type uC} [Category.{vC} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 variable {F₀ F₁ F₂ : D ⥤ C} {i : F₀ ⟶ F₁} {p : F₁ ⟶ F₂}
 variable (H : IsWaldhausenCofiberFunctorSequence F₀ F₁ F₂ i p)
 
 /-- The original relative Waldhausen value on the lifted target cofiber category. -/
-local instance originalRelativeWaldhausen : WaldhausenCategory (CofiberSequenceCategory C) :=
+local instance originalRelativeWaldhausen : WaldhausenCategoryWithoutGluing
+    (CofiberSequenceCategory C) :=
   CofiberSequenceCategory.relativeWaldhausenCategory C
 
 local instance originalSourceStageZero (n : ℕ) : HasZeroObject (Stage D n) :=
   generalStageHasZeroObject D n
 
 /-- The original general Waldhausen value on each source finite stage. -/
-local instance originalSourceStageWaldhausen (n : ℕ) : WaldhausenCategory (Stage D n) :=
+local instance originalSourceStageWaldhausen (n : ℕ) : WaldhausenCategoryWithoutGluing
+    (Stage D n) :=
   generalStageWaldhausenCategory D n
 
 local instance originalTargetStageZero (n : ℕ) : HasZeroObject (Stage C n) :=
   generalStageHasZeroObject C n
 
 /-- The original general Waldhausen value on each target finite stage. -/
-local instance originalTargetStageWaldhausen (n : ℕ) : WaldhausenCategory (Stage C n) :=
+local instance originalTargetStageWaldhausen (n : ℕ) : WaldhausenCategoryWithoutGluing
+    (Stage C n) :=
   generalStageWaldhausenCategory C n
 
 local instance originalRelativeStageZero (n : ℕ) :
@@ -143,12 +146,12 @@ local instance originalRelativeStageZero (n : ℕ) :
 
 /-- The original general stage value over the lifted target relative cofiber category. -/
 local instance originalRelativeStageWaldhausen (n : ℕ) :
-    WaldhausenCategory (Stage (CofiberSequenceCategory C) n) :=
+    WaldhausenCategoryWithoutGluing (Stage (CofiberSequenceCategory C) n) :=
   generalStageWaldhausenCategory (CofiberSequenceCategory C) n
 
 /-- The original relative cofiber value over each target general stage category. -/
 local instance originalStageRelativeWaldhausen (n : ℕ) :
-    WaldhausenCategory (CofiberSequenceCategory (Stage C n)) :=
+    WaldhausenCategoryWithoutGluing (CofiberSequenceCategory (Stage C n)) :=
   CofiberSequenceCategory.relativeWaldhausenCategory (Stage C n)
 
 private theorem triangleStageFunctor_eq (n : ℕ) (t : Fin 3) :
@@ -427,7 +430,7 @@ theorem mapStage_baseCofibration (n : ℕ) {A B : Stage D n} (φ : A ⟶ B)
     (hφ : IsCofibration φ) :
     letI : HasPushout ((H.sourceExact.mapStageNatTrans H.middleExact i n).app A)
         ((H.sourceExact.mapStage n).map φ) := (by
-      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategory.cofibration_pushout
+      obtain ⟨_, _, _, hP, _⟩ := WaldhausenCategoryWithoutGluing.cofibration_pushout
         (C := Stage C n) ((H.sourceExact.mapStageNatTrans H.middleExact i n).app A)
         (mapStage_objectwise H n A).1 ((H.sourceExact.mapStage n).obj B)
         ((H.sourceExact.mapStage n).map φ)

@@ -37,10 +37,10 @@ namespace CategoryTheory.Waldhausen.SConstruction
 def stageTupleDiagonal (r : ℕ) : SimplexCategoryᵒᵖ ⥤ StageSimplexTuple r where
   obj a := fun _ => a
   map α := fun _ => α
-  map_id a := rfl
-  map_comp α β := rfl
+  map_id _ := rfl
+  map_comp _ _ := rfl
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- All original stage directions restricted to the original common simplex degree. -/
 def iteratedStageWeakDiagonalNerve (r : ℕ) : SimplicialObject SSet.{max u v} :=

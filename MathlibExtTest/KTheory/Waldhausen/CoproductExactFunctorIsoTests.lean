@@ -30,8 +30,8 @@ universe uA vA uB vB
 
 namespace MathlibExtTest.KTheory.Waldhausen.CoproductExactFunctorIsoTests
 
-variable {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategory A]
-variable {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategory B]
+variable {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
+variable {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
 variable {F : A ⥤ B} (hF : F.IsWaldhausenExact)
 
 /-- The whole original source and target coproduct functors have the actual comparison Iso. -/

@@ -39,16 +39,17 @@ universe v u
 
 namespace CategoryTheory.Waldhausen.SConstruction
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 namespace CofiberSequenceCategory
 
 /-- Evaluation at every original row position is Waldhausen exact for the
 same named general extension-category value. -/
 theorem evaluationIsRelativeWaldhausenExact (k : Fin 3) :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
     ((forget C) ⋙ (evaluation (Fin 3) C).obj k).IsWaldhausenExact := by
-  let : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C
+  let : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) := relativeWaldhausenCategory C
   refine {
     map_isZero := ?_
     map_cofibration := ?_
@@ -91,7 +92,8 @@ theorem evaluationIsRelativeWaldhausenExact (k : Fin 3) :
 /-- The existing source evaluation is exact for the named general
 extension-category Waldhausen value. -/
 theorem sourceIsRelativeWaldhausenExact :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
     (source C).IsWaldhausenExact := by
   simpa only [source] using
     evaluationIsRelativeWaldhausenExact C (⟨0, by decide⟩ : Fin 3)
@@ -99,7 +101,8 @@ theorem sourceIsRelativeWaldhausenExact :
 /-- The existing middle evaluation is exact for the named general
 extension-category Waldhausen value. -/
 theorem middleIsRelativeWaldhausenExact :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
     (middle C).IsWaldhausenExact := by
   simpa only [middle] using
     evaluationIsRelativeWaldhausenExact C (⟨1, by decide⟩ : Fin 3)
@@ -107,7 +110,8 @@ theorem middleIsRelativeWaldhausenExact :
 /-- The existing quotient evaluation is exact for the named general
 extension-category Waldhausen value. -/
 theorem quotientIsRelativeWaldhausenExact :
-    letI : WaldhausenCategory (CofiberSequenceCategory C) := relativeWaldhausenCategory C;
+    letI : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
+      relativeWaldhausenCategory C;
     (quotient C).IsWaldhausenExact := by
   simpa only [quotient] using
     evaluationIsRelativeWaldhausenExact C (⟨2, by decide⟩ : Fin 3)

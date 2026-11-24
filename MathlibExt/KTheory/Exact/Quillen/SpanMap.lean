@@ -107,7 +107,7 @@ theorem QuillenSpan.map_r (F : C ⥤ D) [F.Additive] [F.IsExact]
 noncomputable def QuillenSpan.mapIso (F : C ⥤ D) [F.Additive] [F.IsExact]
     {X Y : C} {S S' : QuillenSpan X Y} (e : S ≅ S') :
     QuillenSpan.map F S ≅ QuillenSpan.map F S' := by
-  refine Span.mkIso (F.mapIso (apexIsoOfSpanIso e)) ?_ ?_
+  refine Span.mkIso (F.mapIso (Span.SpanBicat.apexIso e)) ?_ ?_
   · change F.map e.hom.hom ≫ F.map S'.l = F.map S.l
     rw [← F.map_comp, e.hom.hom_l]
   · change F.map e.hom.hom ≫ F.map S'.r = F.map S.r

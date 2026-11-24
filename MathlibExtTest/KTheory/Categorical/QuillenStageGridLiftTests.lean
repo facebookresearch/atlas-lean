@@ -37,7 +37,7 @@ open AlgebraicKTheory
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-local instance quillenStageGridLiftTestsWaldhausenC : WaldhausenCategory C :=
+local instance quillenStageGridLiftTestsWaldhausenC : WaldhausenCategoryWithoutGluing C :=
   ExactCategory.waldhausenCategory C
 
 example (a : SimplexCategory) :

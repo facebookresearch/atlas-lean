@@ -22,7 +22,7 @@ open CategoryTheory.Waldhausen.SConstruction
 
 namespace MathlibExtTest.IteratedStageWeakDiagonal
 
-variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type (max u v)) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- The genuine diagonal exists for every finite number of original stage directions. -/
 def originalIteratedDiagonal (r : ℕ) : SSet.{max u v} := iteratedStageWeakDiagonal C r

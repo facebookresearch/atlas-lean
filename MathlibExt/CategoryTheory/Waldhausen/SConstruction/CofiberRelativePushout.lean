@@ -41,7 +41,7 @@ namespace CategoryTheory.Waldhausen.SConstruction
 
 open CofiberSequenceCategory
 
-variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategory C]
+variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 /-- A whole cofiber-sequence pushout whose cobase leg retains the genuine
 relative cofibration property and whose three evaluations are pushouts. -/
@@ -208,7 +208,7 @@ noncomputable def ofRelativeCofibration
     have hiQuotient : IsCofibration (i.hom.app (2 : Fin 3)) :=
       (relativeCofibrations_components C i hi).2.2
     obtain ⟨Q, inT2, inS2, hQ, _⟩ :=
-      WaldhausenCategory.cofibration_pushout (C := C)
+      WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C)
         (i.hom.app (2 : Fin 3)) hiQuotient (T.obj.obj' 2) (g.hom.app (2 : Fin 3))
     let D : LevelwisePushoutData C :=
       { R := R.obj
