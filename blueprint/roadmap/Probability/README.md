@@ -56,3 +56,4 @@ Kaplan–Meier estimator and the Cox proportional hazards model.
 - [Bayesian statistics](bayesian-statistics/README.md)
 
 - [Queueing theory](queueing-theory/README.md)
+- [Interacting particle systems](interacting-particle-systems/README.md)

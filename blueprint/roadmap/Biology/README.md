@@ -44,3 +44,4 @@ compatibility class.
 - [Mathematical epidemiology](epidemiology/README.md)
 
 - [Neuroscience](neuroscience/README.md)
+- [Biophysics](biophysics/README.md)
