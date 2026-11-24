@@ -14,3 +14,5 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Normalization of the simply typed lambda calculus](normalization-of-the-simply-typed-lambda-calculu/README.md)
 - [Type checking for the simply typed lambda calculus](type-checking-for-the-simply-typed-lambda-calcul/README.md)
 - [Lambda calculus with references](lambda-calculus-with-references/README.md)
+
+- [Gödel's System T](system-t/README.md)

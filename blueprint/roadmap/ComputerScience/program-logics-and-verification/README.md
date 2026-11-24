@@ -7,3 +7,6 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Kleene algebra with tests](kleene-algebra-with-tests/README.md)
 - [Separation logic](separation-logic/README.md)
 - [Verification-condition generation](verification-condition-generation/README.md)
+
+- [Program synthesis](program-synthesis/README.md)
+- [Testing and runtime verification](testing-and-runtime-verification/README.md)

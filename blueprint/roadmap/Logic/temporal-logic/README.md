@@ -9,3 +9,5 @@ Linear and branching-time temporal logics interpreted over infinite words and tr
 - [Linear-time μ-calculus](linear-time-calculus/README.md)
 - [Model checking for computation tree logic](model-checking-for-computation-tree-logic/README.md)
 - [Model checking for linear temporal logic](model-checking-for-linear-temporal-logic/README.md)
+
+- [Temporal specifications](temporal-specification/README.md)

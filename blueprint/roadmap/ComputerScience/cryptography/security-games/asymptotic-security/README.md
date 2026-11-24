@@ -38,3 +38,7 @@
 - [Inversion experiment](invert-game.md)
 - [Success probability of the inversion experiment](win-prob-invert-game.md)
 - [One-wayness as negligible advantage](negligible-adv-invert-game.md)
+
+## Efficient adversaries
+
+- [Efficient adversaries](efficient-adversaries.md)

@@ -19,3 +19,8 @@ Specific concurrent or distributed systems and their verified properties: deadlo
 - [Two-phase commit](two-phase-commit/README.md)
 - [Two-process bakery algorithm](two-process-bakery-algorithm/README.md)
 - [Vector clocks](vector-clocks/README.md)
+
+- [Consensus and agreement](consensus-and-agreement/README.md)
+- [Distributed execution models](distributed-execution-models/README.md)
+- [Replication and consistency](replication-and-consistency/README.md)
+- [Shared-memory objects](shared-memory-objects/README.md)
