@@ -1,6 +1,6 @@
 # Finite parity games are positionally determined
 
-Let $G$ be a parity game with finitely many positions, with the max-parity winning condition. Then every position of $G$ lies in the winning region of exactly one of the two players: from each position, one of the players has a positional strategy that wins every play starting there.
+Let $G$ be a parity game with finitely many positions, with the max-parity winning condition; as in the definition of a parity game, every position has at least one move, so every play is infinite. Then every position of $G$ lies in the winning region of exactly one of the two players: from each position, one of the players has a positional strategy that wins every play starting there.
 
 At most one player wins from a position because the two winning regions are disjoint. At least one does by the memoryless determinacy theorem for the lowest-priority condition, transported to the max-parity condition by replacing each priority $p$ with $D - p$ for an even $D$ at least the largest priority of $G$.
 

@@ -1,6 +1,6 @@
 # Probabilistic polynomial-time Turing machines
 
-A *probabilistic* (randomized) Turing machine is a Turing machine with an additional read-only random tape whose cells hold independent, uniformly distributed bits. On an input $x$ its output is therefore a random variable over the choice of the random tape. It runs in time $T(n)$ if for every input $x \in \{0, 1\}^*$ and every content of the random tape it halts within $T(|x|)$ steps, and it is a *probabilistic polynomial-time* (PPT) machine if it runs in time $n^c$ for some constant $c$. A PPT machine is *uniform*: one machine serves every input length, as opposed to a non-uniform family of machines, one for each input length.
+A *probabilistic* (randomized) Turing machine is a Turing machine with an additional read-only random tape whose cells hold independent, uniformly distributed bits. On an input $x$ its output is therefore a random variable over the choice of the random tape. It runs in time $T(n)$ if for every input $x \in \{0, 1\}^*$ and every content of the random tape it halts within $T(|x|)$ steps, and it is a *probabilistic polynomial-time* (PPT) machine if it runs in time $q(n)$ for some polynomial $q$, so that the bound also covers short inputs, including the empty one. A PPT machine is *uniform*: one machine serves every input length, as opposed to a non-uniform family of machines, one for each input length.
 
 ## Depends on
 

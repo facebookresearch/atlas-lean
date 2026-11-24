@@ -5,7 +5,7 @@ Let $H : K \times S \to T$ be a keyed hash function with $K$ finite and nonempty
 $$\Pr_k[H(k, s) = H(k, s')] \le \varepsilon,$$
 
 
-where $k$ is uniformly distributed over $K$. Equivalently, no adversary, even a computationally unbounded one, that outputs two distinct inputs without seeing the key finds a collision for a uniformly random key with probability greater than $\varepsilon$. With $N = |T|$ and $\alpha \ge 0$, a $(1 + \alpha)/N$-UHF is one whose collision probability exceeds the value $1/N$ of a uniformly random function by at most the factor $1 + \alpha$.
+where $k$ is uniformly distributed over $K$. Equivalently, no adversary, even a computationally unbounded one, that outputs two distinct inputs without seeing the key finds a collision for a uniformly random key with probability greater than $\varepsilon$. When $T$ is finite, with $N = |T|$ and $\alpha \ge 0$, a $(1 + \alpha)/N$-UHF is one whose collision probability exceeds the value $1/N$ of a uniformly random function by at most the factor $1 + \alpha$.
 
 ## Sources
 
