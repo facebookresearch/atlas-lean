@@ -13,6 +13,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Fintype.Card
 
 open Finset MetaMathlibExt
+open scoped Pointwise
 
 -- The subset size can share a factor with the modulus.
 example (ℓ : ZMod 6) : ∃ a b : ZMod 6, a ≠ b ∧ a + b = ℓ := by
@@ -27,3 +28,15 @@ example (n : ℕ) (ℓ : ZMod (n + 2)) :
   have hcompl : Lᶜ.card = 1 := by rw [card_compl, ZMod.card, hcard]; omega
   obtain ⟨a, ha⟩ := card_eq_one.mp hcompl
   exact ⟨a, by simpa [← compl_singleton, ← ha] using hsum⟩
+
+-- Below the cap, the theorem gives the linear growth bound.
+example : 4 ≤ (3 • ({0, 1} : Finset (ZMod 5))).card := by
+  exact cauchy_davenport_nsmul Nat.prime_five ({0, 1} : Finset (ZMod 5))
+    (by decide) 3 (by decide)
+
+-- At the smallest prime, the cap persists after it has already been reached.
+example : (3 • ({0, 1} : Finset (ZMod 2))).card = 2 := by
+  apply Nat.le_antisymm
+  · exact (card_le_univ (s := 3 • ({0, 1} : Finset (ZMod 2)))).trans_eq (ZMod.card 2)
+  · exact cauchy_davenport_nsmul Nat.prime_two ({0, 1} : Finset (ZMod 2))
+      (by decide) 3 (by decide)
