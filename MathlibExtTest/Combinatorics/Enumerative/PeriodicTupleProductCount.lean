@@ -71,3 +71,15 @@ example : Set.ncard {x : Fin 4 → Multiplicative (ZMod 2) |
   simp only [Set.mem_singleton_iff]
   rw [Set.ncard_eq_toFinset_card', Set.ncard_eq_toFinset_card']
   decide
+
+-- The identity-product specialization counts eight period-two tuples over `C₄`.
+example : Set.ncard {x : Fin 4 → Multiplicative (ZMod 4) |
+    (List.ofFn x).prod = 1 ∧ x ∘ ⇑((finRotate 4) ^ 2) = x} = 8 := by
+  rw [card_identityProduct_period _ 4 2 (by decide) (by decide)]
+  decide
+
+-- For three entries over `C₂`, the identity is the only constant tuple with product one.
+example : Set.ncard {x : Fin 3 → Multiplicative (ZMod 2) |
+    (List.ofFn x).prod = 1 ∧ x ∘ ⇑((finRotate 3) ^ 1) = x} = 1 := by
+  rw [card_identityProduct_period _ 3 1 (by decide) (by decide)]
+  decide
