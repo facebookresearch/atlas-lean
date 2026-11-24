@@ -4,6 +4,7 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 
 - [Green's operator of the Dirichlet Laplacian on \[0, 1\]](green-s-operator-of-the-dirichlet-laplacian-on-0/README.md)
 - [Hyperbolic motions in the N-body problem](hyperbolic-motions-in-the-n-body-problem/README.md)
+- [Index-one linear differential-algebraic systems](index-one-linear-differential-algebraic-systems/README.md)
 - [Lyapunov's indirect method](lyapunov-s-indirect-method/README.md)
 - [Maximal solutions and global existence](maximal-solutions-and-global-existence/README.md)
 - [Linear systems and fundamental matrices](linear-systems-and-fundamental-matrices/README.md)

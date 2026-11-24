@@ -1,0 +1,15 @@
+# Average power of sinusoidal signals
+
+- [Peak Waveform](peak-waveform.md)
+- [Rms Waveform](rms-waveform.md)
+- [Peak Waveform at zero](peak-waveform-at-zero.md)
+- [Rms Waveform at zero](rms-waveform-at-zero.md)
+- [Rms Waveform eq sqrt two mul peak Waveform](rms-waveform-eq-sqrt-two-mul-peak-wavefo.md)
+- [Rms Waveform mul rms Waveform expansion](rms-waveform-mul-rms-waveform-expansion.md)
+- [Integral rms Waveform mul rms Waveform over period](integral-rms-waveform-mul-rms-waveform-o.md)
+- [Average rms Waveform mul rms Waveform](average-rms-waveform-mul-rms-waveform.md)
+- [Average rms Waveform mul self](average-rms-waveform-mul-self.md)
+- [Average rms Waveform mul self re im](average-rms-waveform-mul-self-re-im.md)
+- [Average rms Waveform mul quadrature](average-rms-waveform-mul-quadrature.md)
+- [Integral peak Waveform mul peak Waveform over period](integral-peak-waveform-mul-peak-waveform.md)
+- [Average peak Waveform mul peak Waveform](average-peak-waveform-mul-peak-waveform.md)

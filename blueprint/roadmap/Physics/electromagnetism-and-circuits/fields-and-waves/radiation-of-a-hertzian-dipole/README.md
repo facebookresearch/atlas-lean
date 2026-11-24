@@ -1,0 +1,18 @@
+# Radiation of a Hertzian dipole
+
+- [Short Dipole Intensity](short-dipole-intensity.md)
+- [Radiated Power](radiated-power.md)
+- [Directivity](directivity.md)
+- [Short Dipole Intensity Coeff](short-dipole-intensity-coeff.md)
+- [Radiation Resistance](radiation-resistance.md)
+- [Short-dipole radiated power](radiated-power-short-dipole-intensity.md)
+- [Short-dipole directivity](directivity-short-dipole-intensity.md)
+- [Maximum directivity](is-greatest-directivity-short-dipole-int.md)
+- [Short-dipole radiation resistance](radiation-resistance-short-dipole.md)
+- [Radiated Power directivity](radiated-power-directivity.md)
+- [Directivity short Dipole Intensity eq max iff](directivity-short-dipole-intensity-eq-ma.md)
+- [Short Dipole Intensity on axis](short-dipole-intensity-on-axis.md)
+- [Directivity short Dipole Intensity on axis](directivity-short-dipole-intensity-on-ax.md)
+- [Radiated Power directivity short Dipole Intensity](radiated-power-directivity-short-dipole.md)
+- [Radiated Power short Dipole Intensity zero](radiated-power-short-dipole-intensity-ze.md)
+- [Directivity short Dipole Intensity zero ne](directivity-short-dipole-intensity-zero.md)

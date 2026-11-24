@@ -10,6 +10,7 @@ Functions on R^n: partial derivatives, gradients, Jacobians, Hessians, implicit 
 - [Length of a curve](length-of-a-curve/README.md)
 - [Partial derivatives and symmetry of mixed partials](partial-derivatives-and-symmetry-of-mixed-partia/README.md)
 - [Tangent spaces of level sets](tangent-spaces-of-level-sets/README.md)
+- [Taylor's theorem in several variables](taylor-s-theorem-in-several-variables/README.md)
 - [A unit-norm curve in $\mathbb{R}^3$ is orthogonal to its derivative](inner-deriv-self-eq-zero-of-norm-eq-one.md)
 - [An implicit function for $x^2y_1+e^x+y_2=0$ near $(1,-1)$](exists-implicit-function-sq-mul-add-exp.md)
 - [Change of variables to spherical coordinates](integral-comp-spherical-symm.md)
