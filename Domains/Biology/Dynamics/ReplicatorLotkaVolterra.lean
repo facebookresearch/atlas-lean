@@ -157,35 +157,39 @@ def lvGame (r : ι → ℝ) (B : Matrix ι ι ℝ) : Matrix (Option ι) (Option 
     | none, _ => 0
 
 /-- Replicator to Lotka–Volterra coordinates: `y_i = x_i / x_none`. Meaningful for
-`x_none > 0`. -/
+`x_none > 0`; with `a / 0 = 0` every `y_i` is `0` when `x_none = 0`. -/
 noncomputable def toLV (x : Option ι → ℝ) : ι → ℝ :=
   fun i => x (some i) / x none
 
 /-- Lotka–Volterra to replicator coordinates: `x_none = 1 / (1 + ∑ y_j)`,
 `x_i = y_i / (1 + ∑ y_j)`. Meaningful for `1 + ∑ y_j ≠ 0`, where it lands in the affine
 hyperplane `∑ x_k = 1` (`sum_ofLV`); for positive `y` it lands in the interior of the simplex
-(`ofLV_pos`). -/
+(`ofLV_pos`). With `a / 0 = 0` every coordinate is `0` when `1 + ∑ y_j = 0`. -/
 noncomputable def ofLV (y : ι → ℝ) : Option ι → ℝ :=
   fun k => k.elim 1 y / (1 + ∑ j, y j)
 
 /-- The Lotka–Volterra time along a replicator solution `x`: `τ(t) = ∫₀ᵗ x_none(s) ds` for
 `t ≥ 0`. The speed is clamped at time `0` (`x (max s 0)`), which leaves `τ` unchanged on
-`[0, ∞)` and makes it a `C¹` function on `ℝ`. -/
+`[0, ∞)` and, for a replicator solution `x`, makes it a `C¹` function on `ℝ`. The integral of a
+non-integrable function is `0`. -/
 noncomputable def timeChange (x : ℝ → Option ι → ℝ) (t : ℝ) : ℝ :=
   ∫ s in (0 : ℝ)..t, x (max s 0) none
 
 /-- The Lotka–Volterra trajectory of a replicator solution `x`, in Lotka–Volterra time `u`:
-`toLV (x (τ⁻¹ u))` with `τ = timeChange x`. -/
+`toLV (x (τ⁻¹ u))` with `τ = timeChange x`, where `τ⁻¹ = invFun τ` is the inverse on the range of
+an injective `τ` and an unspecified value off it. -/
 noncomputable def lvTrajectory (x : ℝ → Option ι → ℝ) (u : ℝ) : ι → ℝ :=
   toLV (x (invFun (timeChange x) u))
 
 /-- The replicator time along a Lotka–Volterra solution `y`: `t(τ) = ∫₀^τ (1 + ∑ y_j(σ)) dσ`
-for `τ ≥ 0`, with the integrand clamped at time `0` as in `timeChange`. -/
+for `τ ≥ 0`, with the integrand clamped at time `0` as in `timeChange` (the integral of a
+non-integrable function is `0`). -/
 noncomputable def repTimeChange (y : ℝ → ι → ℝ) (τ : ℝ) : ℝ :=
   ∫ σ in (0 : ℝ)..τ, (1 + ∑ j, y (max σ 0) j)
 
 /-- The replicator trajectory of a Lotka–Volterra solution `y`, in replicator time `t`:
-`ofLV (y (t⁻¹ t))` with `t(·) = repTimeChange y`. -/
+`ofLV (y (t⁻¹ t))` with `t(·) = repTimeChange y`, where `t⁻¹ = invFun t(·)` is the inverse on the
+range of an injective `t(·)` and an unspecified value off it. -/
 noncomputable def repTrajectory (y : ℝ → ι → ℝ) (t : ℝ) : Option ι → ℝ :=
   ofLV (y (invFun (repTimeChange y) t))
 
@@ -422,13 +426,14 @@ theorem hasDerivAt_timeChange (hx : IsSolution f x) (t : ℝ) :
   ((continuous_clamp fun s hs => (hx.hasDerivAt none s hs).continuousAt).integral_hasStrictDerivAt
     0 t).hasDerivAt
 
-/-- The Lotka–Volterra time is `C¹`. -/
+/-- The Lotka–Volterra time of a replicator solution is `C¹`. -/
 theorem contDiff_timeChange (hx : IsSolution f x) : ContDiff ℝ 1 (timeChange x) :=
   contDiff_one_iff_deriv.2 ⟨fun t => (hasDerivAt_timeChange hx t).differentiableAt, by
     simpa only [funext fun t => (hasDerivAt_timeChange hx t).deriv] using
       continuous_clamp fun s hs => (hx.hasDerivAt none s hs).continuousAt⟩
 
-/-- The Lotka–Volterra time increases at a positive rate. -/
+/-- For a continuous fitness and `x_none(0) > 0`, the Lotka–Volterra time increases at a
+positive rate. -/
 theorem timeChange_deriv_pos (hx : IsSolution f x) (hf : Continuous f) (h0 : 0 < x 0 none)
     (t : ℝ) : 0 < x (max t 0) none :=
   hx.pos_of_pos hf h0 (le_max_right t 0)
@@ -438,8 +443,8 @@ theorem strictMono_timeChange (hx : IsSolution f x) (hf : Continuous f) (h0 : 0 
   strictMono_of_deriv_pos fun t =>
     (hasDerivAt_timeChange hx t).deriv ▸ timeChange_deriv_pos hx hf h0 t
 
-/-- The Lotka–Volterra trajectory at time `τ(t)` is the image `toLV (x t)` of the replicator
-state at time `t`. -/
+/-- For a continuous fitness and `x_none(0) > 0`, the Lotka–Volterra trajectory at time `τ(t)` is
+the image `toLV (x t)` of the replicator state at time `t`, for every real `t`. -/
 theorem lvTrajectory_timeChange (hx : IsSolution f x) (hf : Continuous f) (h0 : 0 < x 0 none)
     (t : ℝ) : lvTrajectory x (timeChange x t) = toLV (x t) := by
   rw [lvTrajectory, leftInverse_invFun (strictMono_timeChange hx hf h0).injective t]
@@ -463,8 +468,8 @@ theorem hasDerivAt_lvTrajectory {A : Matrix (Option ι) (Option ι) ℝ}
   exact hasDerivAt_comp_invFun (c := fun s => toLV (x s) i) (hasDerivAt_timeChange hx)
     (timeChange_deriv_pos hx hf h0) hc'
 
-/-- **Time is not preserved.** For a replicator solution starting in the interior of the
-simplex, with at least two strategies, the Lotka–Volterra time runs strictly slower:
+/-- **Time is not preserved.** For a replicator solution of a continuous fitness starting in the
+interior of the simplex, with at least two strategies, the Lotka–Volterra time runs strictly slower:
 `τ(t) < t` for every `t > 0`. -/
 theorem timeChange_lt_self [Nonempty ι] (hx : IsSolution f x) (hf : Continuous f)
     (h0 : ∀ k, 0 < x 0 k) (h1 : ∑ k, x 0 k = 1) {t : ℝ} (ht : 0 < t) : timeChange x t < t := by
@@ -535,7 +540,7 @@ theorem hasDerivAt_repTimeChange
       continuous_clamp fun s hs => (hy j s hs).continuousAt)
   exact (hc.integral_hasStrictDerivAt 0 τ).hasDerivAt
 
-/-- The replicator time is `C¹`. -/
+/-- The replicator time of a solution of the Lotka–Volterra equation on `[0, ∞)` is `C¹`. -/
 theorem contDiff_repTimeChange
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ) : ContDiff ℝ 1 (repTimeChange y) :=
@@ -564,8 +569,8 @@ theorem repTrajectory_repTimeChange
     repTrajectory y (repTimeChange y τ) = ofLV (y τ) := by
   rw [repTrajectory, leftInverse_invFun (strictMono_repTimeChange hy hpos).injective τ]
 
-/-- The replicator time runs at least as fast as the Lotka–Volterra time:
-`τ ≤ t(τ)` for `τ ≥ 0`. -/
+/-- Along a positive Lotka–Volterra solution, the replicator time runs at least as fast as the
+Lotka–Volterra time: `τ ≤ t(τ)` for `τ ≥ 0`. -/
 theorem le_repTimeChange_self
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ)
@@ -579,8 +584,8 @@ theorem le_repTimeChange_self
   simp only [repTimeChange_zero, sub_zero] at this
   linarith
 
-/-- **Time is not preserved.** With at least one species, the replicator time runs strictly
-faster: `τ < t(τ)` for every `τ > 0`. -/
+/-- **Time is not preserved.** Along a positive Lotka–Volterra solution with at least one
+species, the replicator time runs strictly faster: `τ < t(τ)` for every `τ > 0`. -/
 theorem lt_repTimeChange_self [Nonempty ι]
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ)
@@ -594,7 +599,8 @@ theorem lt_repTimeChange_self [Nonempty ι]
   simp only [repTimeChange_zero, sub_zero] at this
   linarith
 
-/-- Every replicator time `t ≥ 0` is reached: `t = t(τ)` for some `τ ∈ [0, t]`. -/
+/-- Along a positive Lotka–Volterra solution, every replicator time `t ≥ 0` is reached:
+`t = t(τ)` for some `τ ∈ [0, t]`. -/
 theorem exists_repTimeChange_eq
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ)

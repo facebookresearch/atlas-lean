@@ -241,13 +241,16 @@ theorem ncard_equilibria_one (ha : 0 < a) (hb : 0 < b) :
   rw [equilibria_one_eq_image ha hb]
   exact ncard_image_of_injective _ fun x y h ↦ (Prod.mk.inj h).1
 
-/-- **At most `γ + 1` equilibria** (the degree bound). -/
+/-- **At most `γ + 1` equilibria** (the degree bound), as `Set.ncard`, which is `0` for an infinite
+set; the set is finite by `one_le_ncard_equilibria_one`. -/
 theorem ncard_equilibria_one_le_degree (ha : 0 < a) (hb : 0 < b) (hγ : 0 < γ) :
     (equilibria a b 1 γ).ncard ≤ γ + 1 := by
   rw [ncard_equilibria_one ha hb, ← natDegree_equilibriumPolyOne a b hγ]
   exact ncard_setOf_pos_isRoot_le_natDegree (equilibriumPolyOne_ne_zero ha b γ)
 
-/-- **At most three equilibria** for `β = 1` and every `γ` (Descartes' rule of signs). -/
+/-- **At most three equilibria** for `β = 1` and every `γ` (Descartes' rule of signs), as
+`Set.ncard`, which is `0` for an infinite set; the set is finite by
+`one_le_ncard_equilibria_one`. -/
 theorem ncard_equilibria_one_le_three (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 1 γ).ncard ≤ 3 := by
   rw [ncard_equilibria_one ha hb]
@@ -271,7 +274,8 @@ theorem exists_pos_isRoot_equilibriumPolyOne (ha : 0 < a) (hb : 0 < b) :
   rw [eval_equilibriumPolyOne, zero_pow (Nat.succ_ne_zero γ)] at hu
   nlinarith [mul_nonneg ha.le (pow_nonneg (le_refl (0 : ℝ)) γ)]
 
-/-- **At least one equilibrium** for `β = 1` and every `γ`. -/
+/-- **At least one equilibrium** for `β = 1` and every `γ`: as `Set.ncard` is `0` for an infinite
+set, the set of equilibria is finite and nonempty. -/
 theorem one_le_ncard_equilibria_one (ha : 0 < a) (hb : 0 < b) :
     1 ≤ (equilibria a b 1 γ).ncard := by
   rw [ncard_equilibria_one ha hb, Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero,
@@ -387,13 +391,15 @@ theorem ncard_equilibria_two (ha : 0 < a) (hb : 0 < b) :
   ext u
   exact ⟨fun h ↦ ⟨pos_of_isRoot_equilibriumPolyTwo ha h, h⟩, fun h ↦ h.2⟩
 
-/-- **At most five equilibria** for `β = γ = 2` (the degree bound). -/
+/-- **At most five equilibria** for `β = γ = 2` (the degree bound), as `Set.ncard`, which is `0` for
+an infinite set; the set is finite by `one_le_ncard_equilibria_two`. -/
 theorem ncard_equilibria_two_le_five (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 2 2).ncard ≤ 5 := by
   rw [ncard_equilibria_two ha hb, ← natDegree_equilibriumPolyTwo a b]
   exact ncard_setOf_pos_isRoot_le_natDegree (equilibriumPolyTwo_ne_zero a b)
 
-/-- **At least one equilibrium** for `β = γ = 2`. -/
+/-- **At least one equilibrium** for `β = γ = 2`: as `Set.ncard` is `0` for an infinite set, the set
+of equilibria is finite and nonempty. -/
 theorem one_le_ncard_equilibria_two (ha : 0 < a) (hb : 0 < b) :
     1 ≤ (equilibria a b 2 2).ncard := by
   rw [ncard_equilibria_two ha hb, Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero,

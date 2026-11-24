@@ -97,7 +97,8 @@ def IsMixed (p : ι → ℝ) : Prop :=
 
 /-- The payoff of the behavior strategy `s = (p, q)` against `t = (p', q')` in the role game
 where a contestant is in role I with probability `ρ` and in role II with probability `1 - ρ`:
-`ρ * (p · A q') + (1 - ρ) * (q · B p')`. -/
+`ρ * (p · A q') + (1 - ρ) * (q · B p')`. The expected-payoff reading needs `0 ≤ ρ ≤ 1` and mixed
+strategies; the formula is defined for all vectors and all real `ρ`. -/
 def rolePayoff (ρ : ℝ) (A : Matrix ι κ ℝ) (B : Matrix κ ι ℝ)
     (s t : (ι → ℝ) × (κ → ℝ)) : ℝ :=
   ρ * (s.1 ⬝ᵥ A *ᵥ t.2) + (1 - ρ) * (s.2 ⬝ᵥ B *ᵥ t.1)
@@ -131,7 +132,8 @@ marginals. -/
 def marginals (x : ι × κ → ℝ) : (ι → ℝ) × (κ → ℝ) :=
   (fun i => ∑ k, x (i, k), fun k => ∑ i, x (i, k))
 
-/-- The product mixed strategy on `ι × κ` with marginals `p` and `q`. -/
+/-- The product `(i, k) ↦ p i * q k` on `ι × κ`; for mixed `p` and `q` it is a mixed strategy with
+marginals `p` and `q`. -/
 def prodStrategy (p : ι → ℝ) (q : κ → ℝ) : ι × κ → ℝ :=
   fun a => p a.1 * q a.2
 

@@ -147,13 +147,13 @@ private lemma eq_of_hasDerivAt_zero {f : ℝ → ℝ} (hf : ∀ t, 0 ≤ t → H
   constant_of_has_deriv_right_zero (fun x hx => (hf x hx.1).continuousAt.continuousWithinAt)
     (fun x hx => (hf x hx.1).hasDerivWithinAt) t ⟨ht, le_rfl⟩
 
-/-- **Enzyme conservation**: `e(t) + c(t) = e(0) + c(0)`. -/
+/-- **Enzyme conservation**: `e(t) + c(t) = e(0) + c(0)` for `t ≥ 0`. -/
 theorem IsSolution.enzyme_conservation (h : IsSolution k₁ kb k₂ kb₂ s c e p) {t : ℝ}
     (ht : 0 ≤ t) : e t + c t = e 0 + c 0 := by
   refine eq_of_hasDerivAt_zero (f := fun t => e t + c t) (fun x hx => ?_) ht
   simpa using (h.hasDerivAt_enzyme x hx).fun_add (h.hasDerivAt_complex x hx)
 
-/-- **Mass conservation**: `s(t) + c(t) + p(t) = s(0) + c(0) + p(0)`. -/
+/-- **Mass conservation**: `s(t) + c(t) + p(t) = s(0) + c(0) + p(0)` for `t ≥ 0`. -/
 theorem IsSolution.substrate_conservation (h : IsSolution k₁ kb k₂ kb₂ s c e p) {t : ℝ}
     (ht : 0 ≤ t) : s t + c t + p t = s 0 + c 0 + p 0 := by
   refine eq_of_hasDerivAt_zero (f := fun t => s t + c t + p t) (fun x hx => ?_) ht

@@ -287,7 +287,8 @@ theorem helmholtzRate_mmNetwork_nonpos (hk₁ : 0 < k₁) (hkb : 0 < kb) (hk₂ 
   rw [mmNetwork.helmholtzRate_eq_zero_iff hk hcstar (isComplexBalanced_mmNetwork hf) hx,
     massActionField_mmNetwork]
 
-/-- The pseudo-Helmholtz function is continuous on the whole space (with `0 log 0 = 0`). -/
+/-- The pseudo-Helmholtz function is continuous on the whole space (with `log 0 = 0` and
+`log x = log |x|` for `x < 0`, so `0 log 0 = 0`). -/
 theorem continuous_pseudoHelmholtz (cstar : Fin 4 → ℝ) : Continuous (pseudoHelmholtz cstar) := by
   unfold pseudoHelmholtz
   refine continuous_finsetSum _ fun i _ => ?_

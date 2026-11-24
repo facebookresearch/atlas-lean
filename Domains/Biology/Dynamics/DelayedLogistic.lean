@@ -113,7 +113,9 @@ namespace MathlibExt.Biology.Dynamics.DelayedLogistic
 
 /-- `x` solves Hutchinson's delayed logistic equation `x'(t) = r x(t) (1 - x(t - τ) / K)` with
 history `φ` on `[-τ, 0]`: `x = φ` on `[-τ, 0]`, `x` is continuous on `[-τ, ∞)`, and at every
-`t ≥ 0` the right derivative of `x` is `r x(t) (1 - x(t - τ) / K)`. -/
+`t ≥ 0` the right derivative of `x` is `r x(t) (1 - x(t - τ) / K)`. With `a / 0 = 0`, for `K = 0`
+the equation reads `x' = r x`; for `τ < 0` the history interval is empty. The intended domain is
+`τ ≥ 0`. -/
 structure IsSolution (r K τ : ℝ) (φ x : ℝ → ℝ) : Prop where
   eqOn_history : EqOn x φ (Icc (-τ) 0)
   continuousOn : ContinuousOn x (Ici (-τ))
@@ -121,7 +123,8 @@ structure IsSolution (r K τ : ℝ) (φ x : ℝ → ℝ) : Prop where
     HasDerivWithinAt x (r * x t * (1 - x (t - τ) / K)) (Ici t) t
 
 /-- **Integral representation**: a solution satisfies
-`x(t) = x(0) exp (r ∫₀ᵗ (1 - x(s - τ) / K) ds)` for every `t ≥ 0`. -/
+`x(t) = x(0) exp (r ∫₀ᵗ (1 - x(s - τ) / K) ds)` for every `t ≥ 0`. With `a / 0 = 0`, for `K = 0`
+this reads `x(t) = x(0) e^{r t}`. -/
 theorem IsSolution.eq_mul_exp_integral {r K τ : ℝ} {φ x : ℝ → ℝ} (hτ : 0 ≤ τ)
     (hx : IsSolution r K τ φ x) {t : ℝ} (ht : 0 ≤ t) :
     x t = x 0 * exp (r * ∫ s in (0 : ℝ)..t, (1 - x (s - τ) / K)) := by
@@ -198,19 +201,23 @@ theorem IsSolution.eqOn {r K τ : ℝ} {φ x y : ℝ → ℝ} (hτ : 0 < τ) (hx
 
 /-- One step of the method of steps: given the history extension `ψ` and a candidate `x`, the
 function equal to `ψ` on `(-∞, 0]` and to `ψ(0) exp (r ∫₀ᵗ (1 - x(s - τ) / K) ds)` for
-`t > 0`. A solution is a fixed point; on `[0, τ]` the right side only uses the history. -/
+`t > 0` (with `a / 0 = 0` and the integral of a non-integrable function equal to `0`). A solution
+agrees with its image on `[-τ, ∞)`; on `[0, τ]` the right side only uses the history. -/
 noncomputable def stepMap (r K τ : ℝ) (ψ x : ℝ → ℝ) : ℝ → ℝ := fun t =>
   if t ≤ 0 then ψ t else ψ 0 * exp (r * ∫ s in (0 : ℝ)..t, (1 - x (s - τ) / K))
 
-/-- The `n`-th iterate of `stepMap` started at the history; it is exact on `(-∞, n τ]`. -/
+/-- The `n`-th iterate of `stepMap` started at the history; for `τ > 0`, started at the history
+extension, it equals the method-of-steps solution on `(-∞, n τ]`. -/
 noncomputable def stepIter (r K τ : ℝ) (ψ : ℝ → ℝ) (n : ℕ) : ℝ → ℝ :=
   (stepMap r K τ ψ)^[n] ψ
 
-/-- Continuous extension of a history given on `[-τ, 0]` to the whole line (constant outside). -/
+/-- Extension of a history given on `[-τ, 0]` to the whole line (constant outside), continuous
+when `τ ≥ 0` and `φ` is continuous on `[-τ, 0]`; for `τ < 0` it is the constant `φ(-τ)`. -/
 noncomputable def historyExt (τ : ℝ) (φ : ℝ → ℝ) : ℝ → ℝ := fun t => φ (max (-τ) (min t 0))
 
 /-- The solution of the delayed logistic equation built by the method of steps from the
-history `φ` on `[-τ, 0]` (meaningful for `τ > 0`). -/
+history `φ` on `[-τ, 0]` (meaningful for `τ > 0`; for `τ = 0`, where `t / 0 = 0`, it is the
+constant `φ(0)`). -/
 noncomputable def solution (r K τ : ℝ) (φ : ℝ → ℝ) : ℝ → ℝ := fun t =>
   stepIter r K τ (historyExt τ φ) ⌈t / τ⌉₊ t
 
@@ -428,7 +435,8 @@ theorem IsSolution.hasDerivWithinAt_deviation {r K τ : ℝ} {φ x : ℝ → ℝ
 `u'(t) = -r u(t - τ)`. -/
 noncomputable def charFun (r τ : ℝ) (z : ℂ) : ℂ := z + r * Complex.exp (-(z * τ))
 
-/-- The critical delay `τ_c = π / (2 r)`. -/
+/-- The critical delay `τ_c = π / (2 r)`, for `r > 0`; with `a / 0 = 0` it is `0` when
+`r = 0`. -/
 noncomputable def criticalDelay (r : ℝ) : ℝ := π / (2 * r)
 
 /-- Real and imaginary parts of the characteristic equation: with `z = a + b i`,
@@ -487,7 +495,7 @@ theorem cos_nonpos_and_abs_im_le {r τ : ℝ} {z : ℂ} (hr : 0 < r) (hτ : 0 �
           exact abs_sin_le_one _
       _ = r := by ring
 
-/-- **Linearized asymptotic stability below the critical delay**: for `r > 0` and
+/-- **Characteristic roots below the critical delay**: for `r > 0` and
 `0 ≤ τ < τ_c = π / (2 r)`, every root of the characteristic equation `z + r e^{-z τ} = 0` has
 negative real part. -/
 theorem re_neg_of_charFun_eq_zero {r τ : ℝ} {z : ℂ} (hr : 0 < r) (hτ : 0 ≤ τ)

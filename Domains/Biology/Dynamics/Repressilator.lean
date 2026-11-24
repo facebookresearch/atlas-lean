@@ -128,8 +128,10 @@ namespace MathlibExt.Biology.Dynamics.Repressilator
 
 /-! ### The model -/
 
-/-- The right-hand side of the repressilator (R): `ẋᵢ = α / (1 + xᵢ₋₁ⁿ) - xᵢ`, indices in
-`Fin 3` with wrap-around subtraction (gene `i - 1` represses gene `i`). -/
+/-- The right-hand side of the repressilator (R): `ẋᵢ = α / (1 + xᵢ₋₁ⁿ) - xᵢ`, indices in `Fin 3`
+with wrap-around subtraction (gene `i - 1` represses gene `i`). With the convention `x / 0 = 0` the
+repression term is `0` when `xᵢ₋₁ⁿ = -1` (`n` odd, `xᵢ₋₁ = -1`); in the model the concentrations are
+nonnegative and `α > 0`. -/
 noncomputable def vectorField (n : ℕ) (α : ℝ) (x : Fin 3 → ℝ) : Fin 3 → ℝ :=
   fun i => α / (1 + x (i - 1) ^ n) - x i
 
@@ -137,8 +139,9 @@ noncomputable def vectorField (n : ℕ) (α : ℝ) (x : Fin 3 → ℝ) : Fin 3 �
 `eqRate n p = p (1 + pⁿ)`. -/
 def eqRate (n : ℕ) (p : ℝ) : ℝ := p * (1 + p ^ n)
 
-/-- The loop gain at the symmetric equilibrium of level `p`: `gain n p = n pⁿ / (1 + pⁿ)`, minus
-the slope of the repression function `y ↦ eqRate n p / (1 + yⁿ)` at `y = p`. -/
+/-- The loop gain at the symmetric equilibrium of level `p`: `gain n p = n pⁿ / (1 + pⁿ)`, for
+`p ≥ 0` minus the slope of the repression function `y ↦ eqRate n p / (1 + yⁿ)` at `y = p`. With the
+convention `x / 0 = 0` it is `0` when `pⁿ = -1`. -/
 noncomputable def gain (n : ℕ) (p : ℝ) : ℝ := n * p ^ n / (1 + p ^ n)
 
 /-- The Jacobian `-I - a P` of (R) at a symmetric equilibrium with loop gain `a` (`P` the cyclic
@@ -146,8 +149,9 @@ shift `eᵢ₋₁ ↦ eᵢ`): `-1` on the diagonal, `-a` at the entries `(i, i -
 def jacobian (a : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   Matrix.of fun i j => if j = i then -1 else if j = i - 1 then -a else 0
 
-/-- The characteristic polynomial, over `ℂ`, of the linearization of a vector field `F` on `ℝᴺ`
-at `x`. -/
+/-- The characteristic polynomial, over `ℂ`, of the linearization of a vector field `F` on `ℝᴺ` at
+`x`. When `F` is not differentiable at `x` its derivative is taken to be `0` and the polynomial is
+`Xᴺ`. -/
 noncomputable def linCharpoly {N : ℕ} (F : (Fin N → ℝ) → Fin N → ℝ) (x : Fin N → ℝ) : ℂ[X] :=
   (LinearMap.toMatrix' (fderiv ℝ F x : (Fin N → ℝ) →ₗ[ℝ] Fin N → ℝ)).charpoly.map
     Complex.ofRealHom
@@ -413,7 +417,8 @@ lemma hopfEigenvalue_eq (n : ℕ) (μ : ℝ) :
       ((-1 + gain n μ / 2 : ℝ) : ℂ) + ((√3 / 2 * gain n μ : ℝ) : ℂ) * Complex.I := by
   apply Complex.ext <;> simp [hopfEigenvalue, rootPlus]
 
-/-- The derivative of the loop gain: `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²`. -/
+/-- The derivative of the loop gain at `μ ≥ 0`: `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²`, with the natural
+subtraction `n - 1 = 0` for `n = 0` (the expression is then `0`). -/
 lemma hasDerivAt_gain (n : ℕ) {μ : ℝ} (hμ : 0 ≤ μ) :
     HasDerivAt (gain n) (n ^ 2 * μ ^ (n - 1) / (1 + μ ^ n) ^ 2) μ := by
   have hd : HasDerivAt (fun y : ℝ => y ^ n) (n * μ ^ (n - 1)) μ := hasDerivAt_pow n μ
@@ -425,8 +430,8 @@ lemma hasDerivAt_gain (n : ℕ) {μ : ℝ} (hμ : 0 ≤ μ) :
     field_simp
     ring
 
-/-- **Transversality.** The eigenvalue curve `hopfEigenvalue n` has derivative
-`(1/2 + i √3/2) a'(μ)`. -/
+/-- **Transversality.** For `μ ≥ 0` the eigenvalue curve `hopfEigenvalue n` has derivative
+`(1/2 + i √3/2) a'(μ)` at `μ`. -/
 theorem hasDerivAt_hopfEigenvalue (n : ℕ) {μ : ℝ} (hμ : 0 ≤ μ) :
     HasDerivAt (hopfEigenvalue n)
       (((n ^ 2 * μ ^ (n - 1) / (1 + μ ^ n) ^ 2 / 2 : ℝ) : ℂ) +
@@ -527,7 +532,8 @@ def HopfBifurcationTheorem (N : ℕ) : Prop :=
       IsIntegralCurve γ (fun _ x => F μ x) ∧ (∀ t, γ (t + T) = γ t) ∧ (∃ t, γ t ≠ γ 0) ∧
       ∀ t, dist (γ t) (xe μ₀) < ε
 
-/-- The open positive orthant in `(μ, x)`-space, where (R) is smooth. -/
+/-- The set of `(μ, x)` with every `x j > 0` (the parameter `μ` is arbitrary), an open set on which
+(R) is smooth in `(μ, x)`. -/
 def posOrthant : Set (ℝ × (Fin 3 → ℝ)) := {q | ∀ j, 0 < q.2 j}
 
 lemma isOpen_posOrthant : IsOpen posOrthant := by

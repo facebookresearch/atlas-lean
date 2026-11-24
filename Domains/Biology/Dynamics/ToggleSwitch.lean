@@ -93,10 +93,13 @@ namespace MathlibExt.Biology.Dynamics.ToggleSwitch
 
 /-! ### The model -/
 
-/-- Hill repression `α / (1 + x ^ n)`. -/
+/-- Hill repression `α / (1 + x ^ n)`. With the convention `x / 0 = 0` it is `0` when `x ^ n = -1`
+(`n` odd, `x = -1`); in the model `α > 0`, `n ≥ 1` and `x ≥ 0`. -/
 noncomputable def hill (α : ℝ) (n : ℕ) (x : ℝ) : ℝ := α / (1 + x ^ n)
 
-/-- The derivative of `hill α n` on `x ≥ 0` (`hasDerivAt_hill`): `-α n x^(n-1) / (1 + x^n)²`. -/
+/-- The derivative of `hill α n` on `x ≥ 0` (`hasDerivAt_hill`): `-α n x^(n-1) / (1 + x^n)²`. As a
+formula it is defined for all real `x`, with `n - 1 = 0` for `n = 0` and the convention
+`x / 0 = 0`. -/
 noncomputable def hillDeriv (α : ℝ) (n : ℕ) (x : ℝ) : ℝ :=
   -(α * n * x ^ (n - 1)) / (1 + x ^ n) ^ 2
 
@@ -194,7 +197,8 @@ section Linearization
 
 variable {α₁ α₂ : ℝ} {β γ : ℕ} {u v : ℝ}
 
-/-- The eigenvalues of the toggle-switch linearization are exactly `-1 ± √P`. -/
+/-- For `α₁, α₂ ≥ 0` and `u, v ≥ 0`, the eigenvalues of the toggle-switch linearization are exactly
+`-1 ± √P` (then `P ≥ 0`). -/
 theorem eigenvalues_eq (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu : 0 ≤ u) (hv : 0 ≤ v) :
     eigenvalues α₁ α₂ β γ u v =
       {((-1 + √(loopGain α₁ α₂ β γ u v) : ℝ) : ℂ), ((-1 - √(loopGain α₁ α₂ β γ u v) : ℝ) : ℂ)} := by
@@ -438,7 +442,8 @@ theorem ncard_equilibria (ha : 0 < a) (hb : 0 < b) :
   rw [equilibria_eq_image ha hb]
   exact ncard_image_of_injective _ fun x y h ↦ (Prod.mk.inj h).1
 
-/-- The root set of the cubic, given two distinct roots, is contained in the three Vieta roots. -/
+/-- The root set of the cubic, given two distinct roots `r ≠ s`, is the set of the three Vieta roots
+`{r, s, a - r - s}`. -/
 theorem roots_subset {r s : ℝ} (hr : cubic a b r = 0) (hs : cubic a b s = 0) (hrs : r ≠ s) :
     {u | cubic a b u = 0} = {r, s, a - r - s} := by
   ext u

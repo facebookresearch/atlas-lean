@@ -121,8 +121,9 @@ theorem speciesProj_speciesEmb (k i : Fin 2) (φ : C(K, ℝ)) :
 variable [CompactSpace K]
 
 /-- The **diffusion semigroup** `S t = diag(H (d_u t), H (d_v t))` of the Turing system on
-`C(K, ℝ²)`, built from a scalar semigroup `H` on `C(K, ℝ)` (in the frozen setting the Neumann
-heat semigroup `e^{τ Δ_N}`) and the diffusion coefficients `d_u, d_v ≥ 0`. -/
+`C(K, ℝ²)`, built from a family `H` of operators on `C(K, ℝ)` and the diffusion coefficients
+`d_u, d_v ≥ 0`. The definition does not require `H` to be a semigroup; the intended `H` is the
+Neumann heat semigroup `e^{τ Δ_N}`. -/
 noncomputable def diffusionSemigroup (H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)) (du dv : ℝ≥0)
     (t : ℝ≥0) : C(K, Fin 2 → ℝ) →L[ℝ] C(K, Fin 2 → ℝ) :=
   ∑ i, speciesEmb K i ∘L H (![du, dv] i * t) ∘L speciesProj K i
@@ -171,7 +172,7 @@ theorem isC0Semigroup_diffusionSemigroup {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(
       (norm_nonneg _) |>.trans_eq (mul_assoc _ _ _).symm
     exact mul_le_mul_of_nonneg_right hHi (norm_nonneg _)
 
-/-- **Eigenfunctions.** If `φ` is an eigenfunction of the scalar semigroup with
+/-- **Eigenfunctions.** If `φ` is an eigenfunction of the family `H` (any family) with
 `H τ φ = e^{-q τ} φ` (for the Neumann heat semigroup on `[0, L]`: `φ = cos (k_n ·)`,
 `q = k_n²`), then the single-species field `φ eᵢ` is an eigenfunction of the Turing diffusion
 semigroup with rate `q dᵢ`: `S t (φ eᵢ) = e^{-q dᵢ t} φ eᵢ`. -/
@@ -205,8 +206,8 @@ theorem exists_lipschitzOnWith_closedBall_of_contDiff {f : E → E} (hf : ContDi
 For every radius `r` there are a time `T > 0`, a bound `R`, a constant `C ≥ 0` and a solution map
 `sol` such that for `‖x₀‖ ≤ r`, `sol x₀` is a continuous mild solution on `[0, T]` of
 `w_t = D A w + f(w)`, `w 0 = x₀`, bounded by `R`, and `‖sol x₀ t - sol y₀ t‖ ≤ C ‖x₀ - y₀‖` on
-`[0, T]` for `‖x₀‖, ‖y₀‖ ≤ r`. This is the Neumann problem `w_t = D Δ_N w + f(w)` exactly when
-`H` is the Neumann heat semigroup `e^{τ Δ_N}`. -/
+`[0, T]` for `‖x₀‖, ‖y₀‖ ≤ r`. With `K = Ω̄` and `H` the Neumann heat semigroup `e^{τ Δ_N}`, this
+is the Neumann problem `w_t = D Δ_N w + f(w)` in mild form. -/
 theorem localFlow {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (hH : IsC0Semigroup H) (du dv : ℝ≥0)
     {f : (Fin 2 → ℝ) → Fin 2 → ℝ} (hf : ContDiff ℝ 1 f) (r : ℝ) :
     ∃ T > 0, ∃ R C : ℝ, 0 ≤ C ∧ ∃ sol : C(K, Fin 2 → ℝ) → ℝ → C(K, Fin 2 → ℝ),
@@ -230,7 +231,8 @@ theorem localFlow {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (hH : IsC0Semi
     exact hC _ _ _ _ (hex x₀ hx).choose_spec.2.1 (hex y₀ hy).choose_spec.2.1
       (fun s hs => ⟨(hex x₀ hx).choose_spec.2.2 s hs, (hex y₀ hy).choose_spec.2.2 s hs⟩) t ht
 
-/-- **Uniqueness** of mild solutions of the Turing system with `C¹` kinetics. -/
+/-- **Uniqueness** of mild solutions of the Turing system with `C¹` kinetics, for a C₀ semigroup
+`H`: two mild solutions on `[0, T]` from the same initial value agree on `[0, T]`. -/
 theorem isMildSolution_unique {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (hH : IsC0Semigroup H)
     {du dv : ℝ≥0} {f : (Fin 2 → ℝ) → Fin 2 → ℝ} (hf : ContDiff ℝ 1 f)
     {x₀ : C(K, Fin 2 → ℝ)} {T : ℝ} {u v : ℝ → C(K, Fin 2 → ℝ)}
@@ -241,8 +243,9 @@ theorem isMildSolution_unique {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (h
     (lipschitzOnWith_nemytskii hf.continuous (exists_lipschitzOnWith_closedBall_of_contDiff hf))
     hv
 
-/-- **Semiflow identity** for the Turing system: restarting a mild solution at time `s` from
-its state `u s` gives the shifted solution. -/
+/-- **Semiflow identity** for the Turing system (C₀ semigroup `H`, `C¹` kinetics): restarting a
+mild solution at time `s ∈ [0, T]` from its state `u s` gives the shifted solution on
+`[0, T - s]`. -/
 theorem isMildSolution_restart {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (hH : IsC0Semigroup H)
     {du dv : ℝ≥0} {f : (Fin 2 → ℝ) → Fin 2 → ℝ} (hf : ContDiff ℝ 1 f)
     {x₀ : C(K, Fin 2 → ℝ)} {T : ℝ} {u : ℝ → C(K, Fin 2 → ℝ)}
@@ -256,7 +259,7 @@ theorem isMildSolution_restart {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (
 
 end LocalFlow
 
-/-- If the scalar semigroup fixes constants (`H τ 1 = 1`, as the Neumann heat semigroup does),
+/-- If the family `H` fixes constants (`H τ 1 = 1`, as the Neumann heat semigroup does),
 then so does the Turing diffusion semigroup: `S t c = c` for every constant field `c ∈ ℝ²`,
 for all diffusion coefficients. -/
 theorem diffusionSemigroup_apply_const {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)}
@@ -270,10 +273,11 @@ theorem diffusionSemigroup_apply_const {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K,
   rw [diffusionSemigroup_apply_apply, h, map_smul, hH1]
   simp
 
-/-- **Homogeneous steady states are mild solutions** when the scalar semigroup fixes constants:
+/-- **Homogeneous steady states are mild solutions** when the family `H` fixes constants:
 if `f c = 0`, the constant field `c` is a mild solution on `[0, T]` from `c` of the Turing
 system, for all diffusion coefficients. This is the base state of the Turing instability
-analysis; it fails for semigroups that do not fix constants, such as the Dirichlet one. -/
+analysis. The hypothesis on `H` holds for the Neumann heat semigroup but not for the Dirichlet
+one. -/
 theorem isMildSolution_const {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)}
     (hH1 : ∀ τ, H τ (ContinuousMap.const K 1) = ContinuousMap.const K 1) (du dv : ℝ≥0)
     {f : (Fin 2 → ℝ) → Fin 2 → ℝ} (hf : Continuous f) {c : Fin 2 → ℝ} (hc : f c = 0)
@@ -300,7 +304,8 @@ theorem contDiff_schnakenberg (a b : ℝ) {n : WithTop ℕ∞} : ContDiff ℝ n 
   · change ContDiff ℝ n fun x : Fin 2 → ℝ => b - x 0 ^ 2 * x 1
     fun_prop
 
-/-- **Local well-posedness of the Schnakenberg–Turing system** in `C(K, ℝ²)`. -/
+/-- **Local well-posedness of the Schnakenberg–Turing system** in `C(K, ℝ²)`: `localFlow` for
+the Schnakenberg kinetics, for every C₀ semigroup `H`, all `d_u, d_v ≥ 0` and all real `a, b`. -/
 theorem schnakenberg_localFlow {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (hH : IsC0Semigroup H)
     (du dv : ℝ≥0) (a b r : ℝ) :
     ∃ T > 0, ∃ R C : ℝ, 0 ≤ C ∧ ∃ sol : C(K, Fin 2 → ℝ) → ℝ → C(K, Fin 2 → ℝ),
@@ -314,12 +319,13 @@ theorem schnakenberg_localFlow {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (
   localFlow hH du dv (contDiff_schnakenberg a b (n := 1)) r
 
 omit [CompactSpace K] in
-/-- **Boundary case: Gierer–Meinhardt.** The kinetics `(a - b u + u² / v, u² - v)` are not
-Lipschitz on the closed unit ball of `ℝ²`, because of the `u² / v` term near `v = 0`. So the
-route `exists_lipschitzOnWith_closedBall_of_contDiff` / `lipschitzOnWith_nemytskii` to the
-hypothesis `hF` of the flow interface is closed, and `localFlow` does not apply to them without
-an invariant region bounding `v` away from `0`. (For nonempty `K`, restricting to constant fields
-shows that the Nemytskii operator itself fails `hF`; that corollary is not formalized here.) -/
+/-- **Boundary case: Gierer–Meinhardt.** The kinetics `(a - b u + u² / v, u² - v)` (with
+`u² / 0 = 0`) are not Lipschitz on the closed unit ball of `ℝ²` (sup norm), for any constant,
+because of the `u² / v` term near `v = 0`. So the route
+`exists_lipschitzOnWith_closedBall_of_contDiff` / `lipschitzOnWith_nemytskii` to the hypothesis `hF`
+of the flow interface is closed, and `localFlow` does not apply to them without an invariant region
+bounding `v` away from `0`. (For nonempty `K`, restricting to constant fields shows that the
+Nemytskii operator itself fails `hF`; that corollary is not formalized here.) -/
 theorem not_lipschitzOnWith_giererMeinhardt (a b : ℝ) (L : ℝ≥0) :
     ¬ LipschitzOnWith L (giererMeinhardt a b) (Metric.closedBall 0 1) := by
   intro hL

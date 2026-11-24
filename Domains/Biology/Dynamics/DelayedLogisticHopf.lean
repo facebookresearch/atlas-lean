@@ -178,10 +178,12 @@ theorem re_neg_of_charFun_criticalDelay {r : ℝ} (hr : 0 < r) {z : ℂ}
 /-! ### The root branch through `i r` and transversality -/
 
 /-- The delay at which `z` is a characteristic root: `rootDelay r z = -log (-z / r) / z`
-(principal logarithm). `rootDelay r z = τ` with `τ ≠ 0` forces `charFun r τ z = 0`. -/
+(principal logarithm; with `a / 0 = 0` and `log 0 = 0` it is `0` when `z = 0` or `r = 0`). For
+`r ≠ 0`, `rootDelay r z = τ` with `τ ≠ 0` forces `charFun r τ z = 0`. -/
 noncomputable def rootDelay (r : ℝ) (z : ℂ) : ℂ := -Complex.log (-z / r) / z
 
-/-- The derivative `(1 + (π / 2) i) / r²` of `rootDelay r` at `i r`. -/
+/-- The derivative `(1 + (π / 2) i) / r²` of `rootDelay r` at `i r` (with `a / 0 = 0`, `0` for
+`r = 0`). -/
 noncomputable def rootDelayDeriv (r : ℝ) : ℂ :=
   ((1 / r ^ 2 : ℝ) : ℂ) + ((π / 2 / r ^ 2 : ℝ) : ℂ) * Complex.I
 
@@ -308,7 +310,8 @@ noncomputable def hopfAlpha2 : ℝ := (3 * π - 2) / 40
 /-- Frequency correction: `ω(ε) = π / 2 + ω₂ ε²` with `ω₂ = -1 / 20`. -/
 noncomputable def hopfOmega2 : ℝ := -1 / 20
 
-/-- The bifurcation parameter `α(ε) = r τ(ε)` of the scaled equation. -/
+/-- The bifurcation parameter `α(ε) = π / 2 + α₂ ε²` of the scaled equation, equal to `r τ(ε)`
+for `r ≠ 0`. -/
 noncomputable def hopfParam (ε : ℝ) : ℝ := π / 2 + hopfAlpha2 * ε ^ 2
 
 /-- The angular frequency `ω(ε)` of the approximate orbit in scaled time. -/
@@ -589,7 +592,7 @@ theorem hopfFreq_pos {ε : ℝ} (he : |ε| ≤ 1) : 0 < hopfFreq ε := by
   simp only [hopfFreq, hopfOmega2]
   linarith [pi_gt_three]
 
-/-- **Periodicity**: `v_ε` has period `2π / ω(ε)`. -/
+/-- **Periodicity**: for `|ε| ≤ 1`, `v_ε` has period `2π / ω(ε)`. -/
 theorem hopfApprox_periodic {ε : ℝ} (he : |ε| ≤ 1) :
     Function.Periodic (hopfApprox ε) (2 * π / hopfFreq ε) := by
   intro s
@@ -614,10 +617,12 @@ theorem sq_eq_hopfParam (ε : ℝ) : ε ^ 2 = 40 * (hopfParam ε - π / 2) / (3 
 
 /-! ### The approximate orbit in the original variables -/
 
-/-- The delay `τ(ε) = α(ε) / r` at which the approximate orbit of amplitude `ε` lives. -/
+/-- The delay `τ(ε) = α(ε) / r` at which the approximate orbit of amplitude `ε` lives, for
+`r > 0`; with `a / 0 = 0` it is `0` when `r = 0`. -/
 noncomputable def hopfDelay (r ε : ℝ) : ℝ := hopfParam ε / r
 
-/-- The approximate periodic orbit `x_ε(t) = K (1 + v_ε(t / τ(ε)))` of Hutchinson's equation. -/
+/-- The approximate periodic orbit `x_ε(t) = K (1 + v_ε(t / τ(ε)))` of Hutchinson's equation, for
+`r > 0`; with `a / 0 = 0` it is the constant `K (1 + v_ε(0))` when `r = 0`. -/
 noncomputable def hopfOrbit (r K ε t : ℝ) : ℝ := K * (1 + hopfApprox ε (t / hopfDelay r ε))
 
 theorem hopfDelay_zero (r : ℝ) : hopfDelay r 0 = criticalDelay r := by

@@ -434,9 +434,9 @@ theorem IsSolution.enzyme_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 �
     (ht : 0 ≤ t) : 0 < e t :=
   (h.pos hk₁ hkb hk₂ hs hc he.le ht).2.2 he
 
-/-- **Unprepared initial complex.** With `k₁ > 0` and positive initial substrate and free enzyme,
-the complex is positive at every `t > 0`, whatever its initial value `c(0) ≥ 0` and the product.
-This covers the classical unprepared start `c(0) = 0`, where `c(0)` differs from the value
+/-- **Unprepared initial complex.** With `k₁ > 0`, `kb, k₂ ≥ 0` and positive initial substrate and
+free enzyme, the complex is positive at every `t > 0`, whatever its initial value `c(0) ≥ 0` and the
+product. This covers the classical unprepared start `c(0) = 0`, where `c(0)` differs from the value
 `qssComplex k₁ kb k₂ (e(0) + c(0)) s(0) > 0`. -/
 theorem IsSolution.complex_pos_of_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂) (hs : 0 < s 0) (hc : 0 ≤ c 0) (he : 0 < e 0)

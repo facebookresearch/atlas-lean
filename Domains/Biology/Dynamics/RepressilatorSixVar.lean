@@ -108,8 +108,9 @@ open MathlibExt.Biology.Dynamics.Repressilator (eqRate gain linCharpoly HopfBifu
 
 /-! ### The model -/
 
-/-- The right-hand side of (EL): `ṁᵢ = α / (1 + pᵢ₋₁ⁿ) - mᵢ`, `ṗᵢ = -β (pᵢ - mᵢ)`, with
-`mᵢ = x i`, `pᵢ = x (i + 3)`. -/
+/-- The right-hand side of (EL): `ṁᵢ = α / (1 + pᵢ₋₁ⁿ) - mᵢ`, `ṗᵢ = -β (pᵢ - mᵢ)`, with `mᵢ = x i`,
+`pᵢ = x (i + 3)`. With the convention `x / 0 = 0` a repression term is `0` when `pⱼⁿ = -1`; in the
+model the concentrations are nonnegative and `α, β > 0`. -/
 noncomputable def vectorField (n : ℕ) (α β : ℝ) (x : Fin 6 → ℝ) : Fin 6 → ℝ :=
   ![α / (1 + x 5 ^ n) - x 0, α / (1 + x 3 ^ n) - x 1, α / (1 + x 4 ^ n) - x 2,
     -β * (x 3 - x 0), -β * (x 4 - x 1), -β * (x 5 - x 2)]
@@ -130,7 +131,8 @@ def jacobian (a β : ℝ) : Matrix (Fin 6) (Fin 6) ℝ :=
 /-- The Hopf condition (Elowitz–Leibler boundary) `3 a² β = (4 - 2 a) (1 + β)²`. -/
 def IsHopf (a β : ℝ) : Prop := 3 * a ^ 2 * β = (4 - 2 * a) * (1 + β) ^ 2
 
-/-- The Hopf frequency `ω = √3 a β / (2 (1 + β))`. -/
+/-- The Hopf frequency `ω = √3 a β / (2 (1 + β))` (`0` at `β = -1`, by the convention
+`x / 0 = 0`). -/
 noncomputable def hopfFreq (a β : ℝ) : ℝ := √3 * a * β / (2 * (1 + β))
 
 /-- The primitive sixth root of unity `c = 1/2 + i √3/2`. -/
@@ -616,8 +618,8 @@ theorem rootMultiplicity_hopf {a β : ℝ} (ha : 0 < a) (hβ : 0 < β) (hH : IsH
 noncomputable def disc (n : ℕ) (β μ : ℝ) : ℂ :=
   (((1 - β) ^ 2 : ℝ) : ℂ) + (gain n μ : ℂ) * (4 * β * rootSix)
 
-/-- The eigenvalue curve `λ(μ) = (-(1 + β) + √D(μ)) / 2` (principal square root), a root of
-`Q(λ) = a(μ) β c` for every `μ`. -/
+/-- The eigenvalue curve `λ(μ) = (-(1 + β) + √D(μ)) / 2` (principal square root `D ^ (1/2)`, with
+`0 ^ (1/2) = 0`), a root of `Q(λ) = a(μ) β c` for every `μ`. -/
 noncomputable def hopfEigenvalue (n : ℕ) (β μ : ℝ) : ℂ :=
   (-(1 + β : ℂ) + disc n β μ ^ (2⁻¹ : ℂ)) / 2
 
@@ -663,10 +665,12 @@ theorem hopfEigenvalue_hopf {n : ℕ} {β μ : ℝ} (hβ : 0 < β) (hH : IsHopf 
   rw [show disc n β μ = hopfRoot (gain n μ) β ^ 2 from (hopfRoot_sq hβ hH).symm, hw]
   apply Complex.ext <;> simp [hopfRoot]
 
-/-- The derivative of the loop gain, `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²`, for `μ ≥ 0` (T196). -/
+/-- The derivative of the loop gain, `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²`, for `μ ≥ 0`. As a formula it is
+defined for all real `μ`, with `n - 1 = 0` for `n = 0` and the convention `x / 0 = 0`. -/
 noncomputable def gainDeriv (n : ℕ) (μ : ℝ) : ℝ := n ^ 2 * μ ^ (n - 1) / (1 + μ ^ n) ^ 2
 
-/-- The crossing speed `λ'(μ) = a'(μ) β c / w` at a Hopf level. -/
+/-- The crossing speed `λ'(μ) = a'(μ) β c / w` at a Hopf level (`0` when `w = 0`, by the convention
+`x / 0 = 0`). -/
 noncomputable def hopfSpeed (n : ℕ) (β μ : ℝ) : ℂ :=
   (gainDeriv n μ * β : ℝ) * rootSix / hopfRoot (gain n μ) β
 
@@ -722,8 +726,8 @@ theorem hasDerivAt_hopfEigenvalue {n : ℕ} {β μ : ℝ} (hβ : 0 < β) (hμ : 
     rw [hopfSpeed, eq_div_iff (hopfRoot_ne_zero hβ), hLw]
   rwa [hL] at hl
 
-/-- **Nonzero crossing speed.** For `n ≥ 1`, `μ > 0`, `β > 0`, `a(μ) > 0`, the real part of the
-crossing speed is positive. -/
+/-- **Nonzero crossing speed.** For `n ≥ 1`, `μ > 0` and `β > 0` (so that `a(μ) > 0`), the real part
+of the crossing speed is positive; no Hopf condition is assumed. -/
 theorem re_hopfSpeed_pos {n : ℕ} (hn : 0 < n) {β μ : ℝ} (hβ : 0 < β) (hμ : 0 < μ) :
     0 < (hopfSpeed n β μ).re := by
   have hga : 0 < gain n μ := by unfold gain; positivity
@@ -777,7 +781,8 @@ theorem exists_re_pos_standardRegime {p : ℝ} (hp : 0 < p) (hpα : eqRate 2 p =
 
 /-! ### Periodic orbits from the Hopf theorem -/
 
-/-- The open positive orthant in `(μ, x)`-space, where (EL) is smooth. -/
+/-- The set of `(μ, x)` with every `x j > 0` (the parameter `μ` is arbitrary), an open set on which
+(EL) is smooth in `(μ, x)`. -/
 def posOrthant : Set (ℝ × (Fin 6 → ℝ)) := {q | ∀ j, 0 < q.2 j}
 
 lemma isOpen_posOrthant : IsOpen posOrthant := by
