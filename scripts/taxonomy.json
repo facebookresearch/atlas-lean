@@ -9259,6 +9259,7 @@
   "MathlibExt/AlgebraicGeometry/Immersions": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Closed and open immersions"},
   "MathlibExt/AlgebraicGeometry/LineArrangement": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Line arrangements in the projective plane"},
   "MathlibExt/AlgebraicGeometry/PointMultiplicity": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Multiplicity of a hypersurface at a point"},
+  "MathlibExt/AlgebraicGeometry/BernsteinBoxes": {"to": "AlgebraicGeometry/real-algebraic-geometry", "title": "Bernstein boxes for basic closed sets"},
   "MathlibExt/AlgebraicGeometry/PolynomialInequalities": {"to": "AlgebraicGeometry/real-algebraic-geometry", "title": "Polynomial identity soundness on basic closed sets"},
   "MathlibExt/AlgebraicGeometry/PullbackPoints": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
   "MathlibExt/AlgebraicGeometry/Sections": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
