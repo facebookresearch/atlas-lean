@@ -308,11 +308,11 @@ is advisory CI, not a standalone merge barrier.
 A graph PR changes the ATLAS wiki; its content follows the
 [graph rules](docs/BLUEPRINT.md#graph-rules). When a pull request's only wiki
 changes are what `scripts/sync_wiki.py declarations` writes for its own
-declarations, as the `graph sync` check reports, it needs no issue for them,
-and they need no code owner's approval unless GitHub requires one; Codex still
-reviews them. Any other code-owned file the pull request changes, the sync's
-own code included, still needs a code owner's approval. Any other wiki change,
-a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
+declarations, as the `graph sync` check reports, it needs no issue for them;
+Codex still reviews them. Any code-owned file outside the wiki that the pull
+request changes, the sync's own code included, still needs a code owner's
+approval. Any other wiki change, a new place in `scripts/taxonomy.json`
+included, makes it a graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`); a pull request whose only wiki changes are the sync's, as
@@ -321,13 +321,16 @@ a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
   not also review proofs.
 - **Leave what the tools own alone** ([What the tools
   own](docs/BLUEPRINT.md#what-the-tools-own)).
-- **A code owner approves it** (`.github/CODEOWNERS`), except the wiki files
-  the sync writes, as above, **and Codex reviews it:**
-  automatically for the repository's owners, members and collaborators and for
-  forks on `codex.yml`'s trusted list; on any other fork PR a maintainer
-  comments `@codex` for an advisory review. Agents produce graph changes faster
-  than people can check them, and a poor expansion spreads into every task
-  below it.
+- **An AI review approves its current head:** Codex's formal review, which
+  runs automatically for the repository's owners, members and collaborators
+  and for forks on `codex.yml`'s trusted list. On any other fork PR, where
+  Codex can give only an advisory review, an independent AI review against
+  `REVIEWING.md` as it stands on `main`, requested by a maintainer, takes its
+  place. GitHub asks the code owners (`.github/CODEOWNERS`) for a review; their
+  approval is welcome but not required. A person's change request is still a
+  finding to address, and no human approval overrides an AI reviewer's change
+  request. Agents produce graph changes faster than people can check them, and
+  a poor expansion spreads into every task below it.
 
 ## How PRs merge
 
