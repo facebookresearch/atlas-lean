@@ -1,6 +1,6 @@
 # Two-process consensus protocol from test-and-set
 
-In the two-process test-and-set consensus protocol, process $i$ writes its input to its own register, then applies test-and-set to a shared bit (setting it and returning its old value in one atomic step); if the old value was false it decides its own input, and otherwise it reads the other process's register and decides the value found there. Each write, test-and-set and read-and-decide is one atomic step of the process taking it, and the processes may interleave arbitrarily.
+In the two-process test-and-set consensus protocol, process $i$ first writes its input to its own register, and in its next step applies test-and-set to a shared bit, setting it and returning its old value in one atomic step. If the old value was false, the process has won but has not yet decided: it decides its own input in its following step. Otherwise its following step reads the other process's register and decides the value found there. Each of these steps (the write, the test-and-set, the winner's decision and the loser's read-and-decide) is one atomic step of the process taking it, a step of a process that has decided changes nothing, and the steps of the two processes may interleave arbitrarily.
 
 ## Sources
 

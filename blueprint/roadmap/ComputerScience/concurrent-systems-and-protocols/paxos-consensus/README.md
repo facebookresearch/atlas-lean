@@ -19,6 +19,7 @@ Lamport's single-decree Paxos ("the synod algorithm"), the consensus core of his
 
 - [Quorum system](quorum-system.md)
 - [Majorities form a quorum system](majority.md)
+- [Majority quorums intersect](majority-intersect.md)
 - [A Paxos voting history](voting.md)
 - [Chosen proposal](chosen-at.md)
 - [Chosen value](chosen.md)
@@ -44,6 +45,10 @@ Lamport's single-decree Paxos ("the synod algorithm"), the consensus core of his
 - [Paxos safety: at most one value is chosen](chosen-unique-of-can-reach.md)
 - [Paxos safety: only a proposed value is chosen](proposed-of-chosen-of-can-reach.md)
 
+## A single proposal step with majority quorums
+
+- [Paxos proposal-safety step](proposal-safety-step.md)
+
 ## Related topics
 
 - [FLP impossibility](../flp-impossibility/README.md): in the same asynchronous crash-failure setting no deterministic protocol guarantees termination, which is why Paxos guarantees safety unconditionally and progress only under extra assumptions (Section 2.4).
@@ -56,7 +61,3 @@ Lamport's single-decree Paxos ("the synod algorithm"), the consensus core of his
 ## Sources
 
 - L. Lamport, *Paxos Made Simple*, ACM SIGACT News 32(4), December 2001, 51–58; author's version dated 01 Nov 2001: Section 2.1 (problem and model), Section 2.2 (P1, P2, P2a, P2b, P2c, P1a, Phases 1 and 2).
-
-- [Majority quorums intersect](majority-intersect.md)
-
-- [Paxos proposal-safety step](proposal-safety-step.md)

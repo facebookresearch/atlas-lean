@@ -1,6 +1,6 @@
 # A binary tree of height d has at most 2^d leaves
 
-Every binary tree of height $d$ has at most $2^d$ leaves.
+Every binary tree of height $d$ has at most $2^d$ leaves. Here the leaves of a binary tree are its empty subtrees, and its height is the number of nodes on a longest path from the root to a leaf.
 
 ## Sources
 

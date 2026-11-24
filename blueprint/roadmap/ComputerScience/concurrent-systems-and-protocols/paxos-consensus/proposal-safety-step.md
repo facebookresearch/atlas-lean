@@ -1,6 +1,6 @@
 # Paxos proposal-safety step
 
-Suppose a majority of $n$ acceptors accepted the proposal $(b, v)$, and a proposer at ballot $b' > b$ reads a majority quorum $Q$, each member reporting the highest-ballot proposal it had accepted (or nothing). Assume every report is a proposal its acceptor accepted at a ballot below $b'$; every acceptance of a member of $Q$ below $b'$ is at a ballot no higher than its report; and every proposal accepted in $Q$ at a ballot in $[b, b')$ has value $v$. Then some member of $Q$ reports a ballot at least $b$ with value $v$, and every highest-ballot report in $Q$ has value $v$, so the proposer of $b'$ proposes $v$.
+Let $b < b'$ be ballots. Suppose a set of more than $n/2$ of the $n$ acceptors all accepted the proposal $(b, v)$, and each member of a set $Q$ of more than $n/2$ acceptors gives a report, either nothing or a proposal $(c, w)$. Assume every report $(c, w)$ of a member of $Q$ is a proposal that member accepted, with $c < b'$; every acceptance by a member of $Q$ at a ballot below $b'$ is at a ballot no higher than the ballot of its report (in particular, that member reports a proposal); and every proposal accepted by a member of $Q$ at a ballot in $[b, b')$ has value $v$. Then some member of $Q$ reports a ballot at least $b$ with value $v$, and every report in $Q$ of highest ballot among the reports in $Q$ has value $v$.
 
 ## Sources
 
