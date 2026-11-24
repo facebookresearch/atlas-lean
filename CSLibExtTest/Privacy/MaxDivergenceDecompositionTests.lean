@@ -657,6 +657,153 @@ theorem domC_atoms :
   rw [exp_log_two_dom] at e0 e1 f0 f1
   exact ⟨P₀, Q₀, e0, f0, e1, f1, hdomP 0, hdomP 1, hdomQ 0, hdomQ 1⟩
 
+/-
+Asymmetric cases for `exists_dominated_pure_pair_of_approxMaxDivLE_both`:
+(d) `PFinD = (2/5, 3/5)`, `QFinD = (4/5, 1/5)` at `(log 2, 1/5)`,
+whose capped sums `4/5 < 1` lie in the `v > u` strict interpolation
+branch; (e) the swapped pair `(QFinD, PFinD)`, covering `u > v`.
+-/
+
+/-- Case (d): `PFinD = (2/5, 3/5)` on `Fin 2`. -/
+noncomputable def PFinD : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (2 / 5), ENNReal.ofReal (3 / 5)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- Case (d): `QFinD = (4/5, 1/5)` on `Fin 2`. -/
+noncomputable def QFinD : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (4 / 5), ENNReal.ofReal (1 / 5)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+@[simp]
+theorem PFinD_zero_toReal : (PFinD 0).toReal = 2 / 5 := by
+  simp only [PFinD, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem PFinD_one_toReal : (PFinD 1).toReal = 3 / 5 := by
+  simp only [PFinD, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem QFinD_zero_toReal : (QFinD 0).toReal = 4 / 5 := by
+  simp only [QFinD, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem QFinD_one_toReal : (QFinD 1).toReal = 1 / 5 := by
+  simp only [QFinD, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+/-- Case (d): capped sum `∑ w, capEnvelope PFinD QFinD (log 2) w = 4/5`. -/
+theorem capSum_d_PQ :
+    ∑ w, capEnvelope PFinD QFinD (Real.log 2) w = 4 / 5 := by
+  have h0 : min ((2 : ℝ) / 5) (2 * (4 / 5)) = 2 / 5 :=
+    min_eq_left (by norm_num)
+  have h1 : min ((3 : ℝ) / 5) (2 * (1 / 5)) = 2 * (1 / 5) :=
+    min_eq_right (by norm_num)
+  rw [Fin.sum_univ_two]
+  simp only [capEnvelope, exp_log_two_dom, PFinD_zero_toReal,
+    PFinD_one_toReal, QFinD_zero_toReal, QFinD_one_toReal, h0, h1]
+  norm_num
+
+/-- Case (d): capped sum `∑ w, capEnvelope QFinD PFinD (log 2) w = 1`. -/
+theorem capSum_d_QP :
+    ∑ w, capEnvelope QFinD PFinD (Real.log 2) w = 1 := by
+  have h0 : min ((4 : ℝ) / 5) (2 * (2 / 5)) = 4 / 5 :=
+    min_eq_left (by norm_num)
+  have h1 : min ((1 : ℝ) / 5) (2 * (3 / 5)) = 1 / 5 :=
+    min_eq_left (by norm_num)
+  rw [Fin.sum_univ_two]
+  simp only [capEnvelope, exp_log_two_dom, PFinD_zero_toReal,
+    PFinD_one_toReal, QFinD_zero_toReal, QFinD_one_toReal, h0, h1]
+  norm_num
+
+/-- Case (d) lies in the `v > u` strict interpolation branch. -/
+theorem capSum_d_strict :
+    ∑ w, capEnvelope PFinD QFinD (Real.log 2) w <
+      ∑ w, capEnvelope QFinD PFinD (Real.log 2) w := by
+  rw [capSum_d_PQ, capSum_d_QP]
+  norm_num
+
+/-- Case (d): the `PFinD → QFinD` bound at `(log 2, 1/5)`. -/
+theorem approx_domD_PQ : approxMaxDivLE PFinD QFinD (Real.log 2) (1 / 5) := by
+  intro s
+  simp only [exp_log_two_dom]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Case (d): the `QFinD → PFinD` bound at `(log 2, 1/5)`. -/
+theorem approx_domD_QP : approxMaxDivLE QFinD PFinD (Real.log 2) (1 / 5) := by
+  intro s
+  simp only [exp_log_two_dom]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Case (d): all four conclusions asserted at each atom. -/
+theorem domD_atoms :
+    ∃ P₀ Q₀ : PMF (Fin 2),
+      (P₀ 0).toReal ≤ 2 * (Q₀ 0).toReal ∧
+      (Q₀ 0).toReal ≤ 2 * (P₀ 0).toReal ∧
+      (P₀ 1).toReal ≤ 2 * (Q₀ 1).toReal ∧
+      (Q₀ 1).toReal ≤ 2 * (P₀ 1).toReal ∧
+      (1 - 1 / 5) * (P₀ 0).toReal ≤ (PFinD 0).toReal ∧
+      (1 - 1 / 5) * (P₀ 1).toReal ≤ (PFinD 1).toReal ∧
+      (1 - 1 / 5) * (Q₀ 0).toReal ≤ (QFinD 0).toReal ∧
+      (1 - 1 / 5) * (Q₀ 1).toReal ≤ (QFinD 1).toReal := by
+  obtain ⟨P₀, Q₀, hPQ, hQP, hdomP, hdomQ⟩ :=
+    exists_dominated_pure_pair_of_approxMaxDivLE_both PFinD QFinD (Real.log 2)
+      (1 / 5) log_two_nonneg_dom (by norm_num) (by norm_num)
+      approx_domD_PQ approx_domD_QP
+  have e0 := hPQ 0
+  have e1 := hPQ 1
+  have f0 := hQP 0
+  have f1 := hQP 1
+  rw [exp_log_two_dom] at e0 e1 f0 f1
+  exact ⟨P₀, Q₀, e0, f0, e1, f1, hdomP 0, hdomP 1, hdomQ 0, hdomQ 1⟩
+
+/-- Case (e): swapped capped sum `∑ w, capEnvelope QFinD PFinD (log 2) w = 1`. -/
+theorem capSum_e_QP :
+    ∑ w, capEnvelope QFinD PFinD (Real.log 2) w = 1 :=
+  capSum_d_QP
+
+/-- Case (e): swapped capped sum `∑ w, capEnvelope PFinD QFinD (log 2) w = 4/5`. -/
+theorem capSum_e_PQ :
+    ∑ w, capEnvelope PFinD QFinD (Real.log 2) w = 4 / 5 :=
+  capSum_d_PQ
+
+/-- Case (e) lies in the `u > v` strict interpolation branch. -/
+theorem capSum_e_strict :
+    ∑ w, capEnvelope QFinD PFinD (Real.log 2) w >
+      ∑ w, capEnvelope PFinD QFinD (Real.log 2) w := by
+  rw [capSum_d_QP, capSum_d_PQ]
+  norm_num
+
+/-- Case (e): all four conclusions asserted at each atom. -/
+theorem domE_atoms :
+    ∃ P₀ Q₀ : PMF (Fin 2),
+      (P₀ 0).toReal ≤ 2 * (Q₀ 0).toReal ∧
+      (Q₀ 0).toReal ≤ 2 * (P₀ 0).toReal ∧
+      (P₀ 1).toReal ≤ 2 * (Q₀ 1).toReal ∧
+      (Q₀ 1).toReal ≤ 2 * (P₀ 1).toReal ∧
+      (1 - 1 / 5) * (P₀ 0).toReal ≤ (QFinD 0).toReal ∧
+      (1 - 1 / 5) * (P₀ 1).toReal ≤ (QFinD 1).toReal ∧
+      (1 - 1 / 5) * (Q₀ 0).toReal ≤ (PFinD 0).toReal ∧
+      (1 - 1 / 5) * (Q₀ 1).toReal ≤ (PFinD 1).toReal := by
+  obtain ⟨P₀, Q₀, hPQ, hQP, hdomP, hdomQ⟩ :=
+    exists_dominated_pure_pair_of_approxMaxDivLE_both QFinD PFinD (Real.log 2)
+      (1 / 5) log_two_nonneg_dom (by norm_num) (by norm_num)
+      approx_domD_QP approx_domD_PQ
+  have e0 := hPQ 0
+  have e1 := hPQ 1
+  have f0 := hQP 0
+  have f1 := hQP 1
+  rw [exp_log_two_dom] at e0 e1 f0 f1
+  exact ⟨P₀, Q₀, e0, f0, e1, f1, hdomP 0, hdomP 1, hdomQ 0, hdomQ 1⟩
+
 #print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.exists_dominated_pure_pair_of_approxMaxDivLE_both
 
 end CSLibExtTest.Privacy.MaxDivergenceDecompositionDominatedTests
