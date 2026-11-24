@@ -10708,6 +10708,7 @@
   "MathlibExt/Combinatorics/Enumerative/SabarFineNumber": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Sabar's triangle"},
   "MathlibExt/Combinatorics/Enumerative/SabarFineNumberWhitt": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Sabar's triangle"},
   "MathlibExt/Combinatorics/Enumerative/SabarTriangle": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Sabar's triangle"},
+  "MathlibExt/Combinatorics/Enumerative/SabarWeightedBinomialSum": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Sabar's triangle"},
   "MathlibExt/Combinatorics/Enumerative/SchreierSparseCount": {"to": "Combinatorics/elementary-enumeration", "title": "Schreier sets"},
   "MathlibExt/Combinatorics/Enumerative/SelfDualMonotoneBoolean": {"to": "Combinatorics/boolean-functions", "title": "Self-dual monotone Boolean functions"},
   "MathlibExt/Combinatorics/Enumerative/SetPartitionPeaks": {"to": "Combinatorics/set-partitions", "title": "Peaks in set partitions"},
