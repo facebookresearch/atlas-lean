@@ -30,6 +30,8 @@ and every real `x` (`MetaMathlibExt.IsCarlitzTypeWith`). Carlitz's `q`-polynomia
   difference of values of a Carlitz-type sequence.
 * `MetaMathlibExt.sum_qpow_mul_qBracket_pow_eq_carlitzEta` evaluates the finite sum of
   `q^k [k]^{n-1}` as the difference of two values of the Carlitz polynomial divided by `n`.
+* `MetaMathlibExt.sum_qpow_mul_qBracket_pow_eq_carlitzBeta` evaluates two weighted sums using
+  the Carlitz `q`-Bernoulli polynomials.
 
 ## Proof
 
@@ -418,6 +420,54 @@ Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbe
 Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Section 2.1. -/
 public theorem carlitzBetaPoly_zero {q : ℝ} (hq : q ≠ 1) (x : ℝ) : carlitzBetaPoly q 0 x = 1 := by
   simp [carlitzBetaPoly, qBracket_one hq]
+
+/-- **Weighted $q$-power sums via Carlitz's $q$-Bernoulli polynomials.** Let $q > 0$ with
+$q \ne 1$, let $[x] = (q^x - 1)/(q - 1)$, and let $\beta_n(x)$ be Carlitz's $q$-Bernoulli
+polynomials, with $\beta_n = \beta_n(0)$. Then for all natural numbers $n$ and $N$,
+$$n \sum_{k=0}^{N-1} q^{2k} [k]^{n-1} + (q - 1) \sum_{k=0}^{N-1} q^k [k]^n =
+q^N \beta_n(N) - \beta_n,$$
+where $0^0 = 1$, and the first term is $0$ when $n = 0$.
+
+Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
+Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Corollary 2.8
+(`integers-2026-A85-cor-2-8`). -/
+public theorem sum_qpow_mul_qBracket_pow_eq_carlitzBeta (q : ℝ) (hq0 : 0 < q)
+    (hq1 : q ≠ 1) (n N : ℕ) :
+    n * ∑ k ∈ range N, q ^ (2 * k) * qBracket q k ^ (n - 1) +
+        (q - 1) * ∑ k ∈ range N, q ^ k * qBracket q k ^ n =
+      q ^ N * carlitzBetaPoly q n N - carlitzBetaPoly q n 0 := by
+  have hcoeff (j : ℕ) :
+      (((j : ℝ) + 1) / qBracket q ((j : ℝ) + 1)) * (q ^ j * q - 1) =
+        (q - 1) * (j + 1) := by
+    have hpow : q ^ (j + 1) ≠ 1 :=
+      fun h => hq1 ((pow_eq_one_iff_of_nonneg hq0.le (Nat.succ_ne_zero j)).mp h)
+    rw [qBracket, ← Nat.cast_succ, Real.rpow_natCast, ← pow_succ]
+    field_simp [sub_ne_zero.mpr hq1, sub_ne_zero.mpr hpow]
+  -- The weighted forward difference multiplies coefficient j by q^(j+1) - 1.
+  have hdiff (x : ℝ) : q * carlitzBetaPoly q n (x + 1) - carlitzBetaPoly q n x =
+      q ^ x * n * qBracket q x ^ (n - 1) + (q - 1) * qBracket q x ^ n := by
+    have h := qBracket.isCarlitzTypeWith_pow hq0
+    have hpred := (isCarlitzTypeWith_closure q hq0 hq1 _ _ h).1 n x
+    have hpow := h n x
+    simp only [mul_one] at hpred hpow
+    rw [hpred, hpow, carlitzBetaPoly, carlitzBetaPoly]
+    rw [mul_left_comm q, ← mul_sub, mul_left_comm (q - 1), ← mul_add]
+    congr 1
+    rw [mul_sum, ← sum_sub_distrib, mul_sum, ← sum_add_distrib]
+    refine sum_congr rfl fun j _ => ?_
+    simp only [mul_add, mul_one, Real.rpow_add hq0, Real.rpow_natCast]
+    linear_combination
+      ((-1 : ℝ) ^ (n - j) * (n.choose j : ℝ) * q ^ ((j : ℝ) * x)) * hcoeff j
+  rw [mul_sum, mul_sum, ← sum_add_distrib]
+  calc
+    _ = ∑ k ∈ range N,
+          (q ^ (k + 1) * carlitzBetaPoly q n (k + 1 : ℕ) - q ^ k * carlitzBetaPoly q n k) := by
+      refine sum_congr rfl fun k _ => ?_
+      rw [Nat.cast_succ, pow_succ, two_mul, pow_add]
+      have hk := hdiff k
+      rw [Real.rpow_natCast] at hk
+      linear_combination -(q ^ k) * hk
+    _ = _ := by simpa using sum_range_sub (fun k : ℕ => q ^ k * carlitzBetaPoly q n k) N
 
 /-- **Extended Carlitz $q$-Bernoulli polynomials.** For real $q$, the extended Carlitz
 $q$-Bernoulli polynomials $\beta_n^{(r)}(x)$, indexed by natural numbers $r$ and $n$ and evaluated
