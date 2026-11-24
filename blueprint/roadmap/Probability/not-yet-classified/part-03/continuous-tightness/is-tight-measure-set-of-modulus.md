@@ -1,4 +1,4 @@
-# Tightness in `C((0,1))` from a modulus-of-continuity bound
+# Tightness in `C([0,1])` from a modulus-of-continuity bound
 
 **Tightness in `C([0,1])` from a modulus-of-continuity bound** (Billingsley 1999,
 Theorem 7.3, with the paths pinned at `0`). If every `W n` vanishes at time `0` and, for all
@@ -8,8 +8,3 @@ Theorem 7.3, with the paths pinned at `0`). If every `W n` vanishes at time `0` 
 The proof is Arzelà–Ascoli: the paths outside a small exceptional set lie in a closed
 uniformly bounded equicontinuous family (the bound comes from chaining the modulus from `0`),
 and the finitely many early laws are tight individually because `C([0,1])` is Polish.
-
-Moved from `MathlibExt.Probability.Martingale.isTightMeasureSet_of_modulus`
-(`MartingaleTightness`); it also replaces the inline tightness proof of
-`donsker_laws_isTightMeasureSet` in `MathlibExt.Probability.Donsker`, which used a norm-tail
-bound in place of the pinning at `0`.

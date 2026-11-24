@@ -1,5 +1,4 @@
 # Validity of the Fisher randomization test
 
-Fisher randomization test: the full symmetric-group permutation p-value of
-any measurable treatment-set statistic is valid under complete randomization.
+Let a finite population of units be assigned by complete randomization, which treats a uniformly random set of exactly $n_1$ units, where $n_1$ is at most the number of units. Then the Fisher randomization test, the permutation p-value over the full symmetric group of any measurable statistic of the treated set, is valid.
 Here the potential outcomes are fixed with no interference, the statistic is any measurable function of the treated set, and the sharp null hypothesis of no effect is the case of a difference in means of the control outcomes; the proof uses the invariance of complete randomization under relabeling of units.

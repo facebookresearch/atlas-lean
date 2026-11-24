@@ -1,4 +1,4 @@
-# Aldous's tightness criterion in `D((0,1))`
+# Aldous's tightness criterion in `D([0,1])`
 
 **Aldous's tightness criterion in `D([0,1])`** (for the step processes of triangular
 arrays).

@@ -1,4 +1,4 @@
-# Tightness in `D((0,1))` of martingale difference arrays
+# Tightness in `D([0,1])` of martingale difference arrays
 
 Let row `n` of `ξ` be a
 square-integrable martingale difference sequence for `𝓕 n` whose predictable quadratic

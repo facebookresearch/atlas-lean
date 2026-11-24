@@ -1,4 +1,4 @@
-# Transfer of functional limit theorems from `C((0,T))` to `D((0,T))` (continuous limit)
+# Transfer of functional limit theorems from `C([0,T])` to `D([0,T])` (continuous limit)
 
 Let `X n` be `D([0,T])`-valued processes and `Y n` continuous processes (for instance linear
 interpolations of `X n`). Assume
