@@ -807,3 +807,141 @@ theorem domE_atoms :
 #print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.exists_dominated_pure_pair_of_approxMaxDivLE_both
 
 end CSLibExtTest.Privacy.MaxDivergenceDecompositionDominatedTests
+
+namespace CSLibExtTest.Privacy.MaxDivergenceDecompositionCommonMassTests
+
+open CSLibExt.Privacy.MaxDivergenceDecomposition
+
+/-- `Pcm0 = (3/4, 1/4)` on `Fin 2`. -/
+noncomputable def Pcm0 : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (3 / 4), ENNReal.ofReal (1 / 4)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- `Qcm0 = (1/2, 1/2)` on `Fin 2`. -/
+noncomputable def Qcm0 : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (1 / 2), ENNReal.ofReal (1 / 2)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- `Pcm = (7/8, 1/8)` on `Fin 2`. -/
+noncomputable def Pcm : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (7 / 8), ENNReal.ofReal (1 / 8)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- `Qcm = (3/4, 1/4)` on `Fin 2`. -/
+noncomputable def Qcm : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (3 / 4), ENNReal.ofReal (1 / 4)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+@[simp]
+theorem Pcm0_zero_toReal : (Pcm0 0).toReal = 3 / 4 := by
+  simp only [Pcm0, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Pcm0_one_toReal : (Pcm0 1).toReal = 1 / 4 := by
+  simp only [Pcm0, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Qcm0_zero_toReal : (Qcm0 0).toReal = 1 / 2 := by
+  simp only [Qcm0, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Qcm0_one_toReal : (Qcm0 1).toReal = 1 / 2 := by
+  simp only [Qcm0, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Pcm_zero_toReal : (Pcm 0).toReal = 7 / 8 := by
+  simp only [Pcm, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Pcm_one_toReal : (Pcm 1).toReal = 1 / 8 := by
+  simp only [Pcm, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Qcm_zero_toReal : (Qcm 0).toReal = 3 / 4 := by
+  simp only [Qcm, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Qcm_one_toReal : (Qcm 1).toReal = 1 / 4 := by
+  simp only [Qcm, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+/-- Outer `P` dominates half the ideal mass. -/
+theorem cm_hP : ∀ w, (1 / 2 : ℝ) * (Pcm0 w).toReal ≤ (Pcm w).toReal := by
+  intro w
+  fin_cases w <;> simp <;> norm_num
+
+/-- Outer `Q` dominates half the ideal mass. -/
+theorem cm_hQ : ∀ w, (1 / 2 : ℝ) * (Qcm0 w).toReal ≤ (Qcm w).toReal := by
+  intro w
+  fin_cases w <;> simp <;> norm_num
+
+/-- Ideal bound at `(0, 1/4)`. -/
+theorem cm_hideal : approxMaxDivLE Pcm0 Qcm0 0 (1 / 4) := by
+  intro s
+  simp only [Real.exp_zero, one_mul]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Transferred conclusion at `alpha = 1/2`. -/
+theorem cm_main : approxMaxDivLE Pcm Qcm 0 ((1 / 2) * (1 / 4) + 1 - (1 / 2)) :=
+  approxMaxDivLE_of_common_mass Pcm Qcm Pcm0 Qcm0 (1 / 2) 0 (1 / 4)
+    (by norm_num) cm_hP cm_hQ cm_hideal
+
+/-- Independent check of the conclusion at all four `Fin 2` events. -/
+theorem cm_direct : approxMaxDivLE Pcm Qcm 0 ((1 / 2) * (1 / 4) + 1 - (1 / 2)) := by
+  intro s
+  simp only [Real.exp_zero, one_mul]
+  fin_cases s <;> simp <;> norm_num
+
+/-- The applied conclusion instantiated at the full event. -/
+theorem cm_at_univ : ∑ w ∈ Finset.univ, (Pcm w).toReal ≤
+    Real.exp 0 * ∑ w ∈ Finset.univ, (Qcm w).toReal +
+      ((1 / 2) * (1 / 4) + 1 - (1 / 2)) :=
+  cm_main Finset.univ
+
+/-- At `alpha = 1` the transferred budget is exactly the ideal budget. -/
+theorem cm_one_delta : ((1 : ℝ) * (1 / 4) + 1 - 1) = 1 / 4 := by norm_num
+
+theorem cm_one : approxMaxDivLE Pcm0 Qcm0 0 (1 / 4) := by
+  have h := approxMaxDivLE_of_common_mass Pcm0 Qcm0 Pcm0 Qcm0 (1 : ℝ) 0 (1 / 4)
+    (by norm_num) (by intro w; simp) (by intro w; simp) cm_hideal
+  rw [cm_one_delta] at h
+  exact h
+
+/-- Budget lemma at `k = 0`. -/
+theorem cbl_at_zero (d d' : ℝ) (hd : 0 ≤ d) (hd1 : d ≤ 1) (hd' : 0 ≤ d') :
+    (1 - d) ^ 0 * d' + 1 - (1 - d) ^ 0 ≤ ((0 : ℕ) : ℝ) * d + d' :=
+  composition_budget_le d d' 0 hd hd1 hd'
+
+/-- Budget lemma at `k = 1`. -/
+theorem cbl_at_one (d d' : ℝ) (hd : 0 ≤ d) (hd1 : d ≤ 1) (hd' : 0 ≤ d') :
+    (1 - d) ^ 1 * d' + 1 - (1 - d) ^ 1 ≤ ((1 : ℕ) : ℝ) * d + d' :=
+  composition_budget_le d d' 1 hd hd1 hd'
+
+/-- Budget lemma at `k = 3`, `delta = 1/10`. -/
+theorem cbl_at_three_tenth :
+    (1 - (1 / 10 : ℝ)) ^ 3 * (1 / 5 : ℝ) + 1 - (1 - (1 / 10 : ℝ)) ^ 3 ≤
+      ((3 : ℕ) : ℝ) * (1 / 10 : ℝ) + (1 / 5 : ℝ) :=
+  composition_budget_le _ _ _ (by norm_num) (by norm_num) (by norm_num)
+
+#print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.approxMaxDivLE_of_common_mass
+
+end CSLibExtTest.Privacy.MaxDivergenceDecompositionCommonMassTests

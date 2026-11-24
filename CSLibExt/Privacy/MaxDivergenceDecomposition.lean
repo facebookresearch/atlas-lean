@@ -1650,4 +1650,73 @@ maxDivLE P₀ Q₀ eps ∧ maxDivLE Q₀ P₀ eps ∧
     exact exists_dominated_of_common P Q eps delta _ _ _
       hf1_nonneg hr_nonneg hsum_f1 rfl hv hv_pos hfg hgf hf_le hg_le
 
+/-- Common-mass transfer: an `alpha`-fraction of ideal mass satisfying the
+approximate bound transfers it to the outer distributions, charging the
+residual mass `1 - alpha`. No `alpha ≤ 1` hypothesis is needed. -/
+theorem approxMaxDivLE_of_common_mass {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q P₀ Q₀ : PMF Outcome) (alpha E beta : ℝ)
+    (halpha : 0 ≤ alpha)
+    (hP : ∀ w, alpha * (P₀ w).toReal ≤ (P w).toReal)
+    (hQ : ∀ w, alpha * (Q₀ w).toReal ≤ (Q w).toReal)
+    (hideal : approxMaxDivLE P₀ Q₀ E beta) :
+    approxMaxDivLE P Q E (alpha * beta + 1 - alpha) := by
+  classical
+  intro s
+  have hres_le : (∑ w ∈ s, ((P w).toReal - alpha * (P₀ w).toReal)) ≤ 1 - alpha := by
+    have hsub : (∑ w ∈ s, ((P w).toReal - alpha * (P₀ w).toReal)) ≤
+        ∑ w, ((P w).toReal - alpha * (P₀ w).toReal) :=
+      Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ s) (by
+        intro w _ _
+        have h := hP w
+        linarith)
+    have htot : (∑ w, ((P w).toReal - alpha * (P₀ w).toReal)) = 1 - alpha := by
+      rw [Finset.sum_sub_distrib, pmf_toReal_sum_univ P, ← Finset.mul_sum,
+        pmf_toReal_sum_univ P₀, mul_one]
+    linarith
+  have hPsplit : (∑ w ∈ s, (P w).toReal) =
+      alpha * (∑ w ∈ s, (P₀ w).toReal) +
+        ∑ w ∈ s, ((P w).toReal - alpha * (P₀ w).toReal) := by
+    rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro w _
+    ring
+  have hideal_s := hideal s
+  have hscaled : alpha * (∑ w ∈ s, (P₀ w).toReal) ≤
+      alpha * (Real.exp E * ∑ w ∈ s, (Q₀ w).toReal + beta) :=
+    mul_le_mul_of_nonneg_left hideal_s halpha
+  have hQs : alpha * (∑ w ∈ s, (Q₀ w).toReal) ≤ ∑ w ∈ s, (Q w).toReal := by
+    rw [Finset.mul_sum]
+    exact Finset.sum_le_sum (fun w _ => hQ w)
+  have hexp : 0 ≤ Real.exp E := (Real.exp_pos E).le
+  rw [hPsplit]
+  have h2 : Real.exp E * (alpha * ∑ w ∈ s, (Q₀ w).toReal) ≤
+      Real.exp E * ∑ w ∈ s, (Q w).toReal :=
+    mul_le_mul_of_nonneg_left hQs hexp
+  linarith
+
+/-- Composition budget arithmetic: keeping a `(1 - δ)^k` fraction of an inner
+budget and paying the residual mass stays within the linear budget.
+Public for reuse by the adaptive assembly. -/
+theorem composition_budget_le (delta delta' : ℝ) (k : ℕ)
+    (hdelta : 0 ≤ delta) (hdelta_one : delta ≤ 1) (hdelta' : 0 ≤ delta') :
+    (1 - delta) ^ k * delta' + 1 - (1 - delta) ^ k ≤ (k : ℝ) * delta + delta' := by
+  have hq_le : ∀ k : ℕ, (1 - delta) ^ k ≤ 1 := fun k =>
+    pow_le_one₀ (by linarith) (by linarith)
+  have hmain : ∀ k : ℕ, 1 - (1 - delta) ^ k ≤ (k : ℝ) * delta := by
+    intro k
+    induction k with
+    | zero => norm_num
+    | succ k ih =>
+      have hqk : (1 - delta) ^ k ≤ 1 := hq_le k
+      have hqd : (1 - delta) ^ k * delta ≤ 1 * delta :=
+        mul_le_mul_of_nonneg_right hqk hdelta
+      rw [pow_succ]
+      push_cast
+      linarith
+  have hq := hq_le k
+  have hm := hmain k
+  have hqd' : (1 - delta) ^ k * delta' ≤ 1 * delta' :=
+    mul_le_mul_of_nonneg_right hq hdelta'
+  linarith
+
 end CSLibExt.Privacy.MaxDivergenceDecomposition
