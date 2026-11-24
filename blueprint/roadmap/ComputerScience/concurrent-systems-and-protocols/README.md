@@ -24,3 +24,4 @@ Specific concurrent or distributed systems and their verified properties: deadlo
 - [Distributed execution models](distributed-execution-models/README.md)
 - [Replication and consistency](replication-and-consistency/README.md)
 - [Shared-memory objects](shared-memory-objects/README.md)
+- [Weak memory models](weak-memory-models/README.md)

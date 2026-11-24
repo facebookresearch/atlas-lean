@@ -12,3 +12,4 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Testing and runtime verification](testing-and-runtime-verification/README.md)
 
 - [Safety verification](safety-verification/README.md)
+- [Crash safety](crash-safety/README.md)
