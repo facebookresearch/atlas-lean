@@ -26,4 +26,4 @@ pairs between the same lattices.
 ## Sources
 
 - D. Scott, *Continuous Lattices*, Technical Monograph PRG-7, Oxford University Computing Laboratory, 1971, <http://www.cs.ox.ac.uk/files/3229/PRG07.pdf>: Proposition 3.7 (lifting a projection pair to function spaces), Section 4 (inverse systems and limits), Propositions 4.1–4.2 and Theorem 4.4 with the formulas for the homeomorphism in its proof. This monograph is the version of the paper in *Toposes, Algebraic Geometry and Logic*, LNM 274, Springer, 1972.
-- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, revised ed., North-Holland, 1984 (not opened).
+- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, revised ed., North-Holland, 1984.

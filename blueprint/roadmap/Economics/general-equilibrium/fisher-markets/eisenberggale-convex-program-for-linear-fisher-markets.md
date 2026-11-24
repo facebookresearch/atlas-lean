@@ -32,4 +32,4 @@ For part 3, $\log$ is strictly concave, so all optimal solutions have the same u
     - Section 5.2 (Fisher's linear case, the Eisenberg–Gale program (5.1) and its KKT conditions (i)–(iv));
     - Theorem 5.1 and its proof (existence, convexity of the set of equilibrium allocations, uniqueness of equilibrium utilities and prices).
 - D. Chakrabarty, N. Devanur and V. V. Vazirani, "Rationality and strongly polynomial solvability of Eisenberg–Gale markets with two agents", <https://www-dev.ics.uci.edu/~vazirani/EG2.pdf>, Section 2.1: the market equilibrium conditions (1)–(3), program (4), and Theorem 2.1 with its KKT proof.
-- E. Eisenberg and D. Gale, "Consensus of subjective probabilities: the pari-mutuel method", *Annals of Mathematical Statistics* 30(1):165–168, 1959 (not opened).
+- E. Eisenberg and D. Gale, "Consensus of subjective probabilities: the pari-mutuel method", *Annals of Mathematical Statistics* 30(1):165–168, 1959.

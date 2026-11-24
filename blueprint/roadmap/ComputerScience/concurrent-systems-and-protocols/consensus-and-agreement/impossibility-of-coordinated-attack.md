@@ -20,5 +20,5 @@ With two processes this is Gray's Two Generals problem. Because each round has f
 ## Sources
 
 - J. Aspnes, *Notes on Theory of Distributed Systems*, Yale University, <https://cs.yale.edu/homes/aspnes/classes/4650/notes.pdf> (also arXiv:2001.04235), Chapter 8: Section 8.1 (formal description, agreement, validity and termination, with the footnote on bounded and finite termination) and Section 8.2 (the impossibility proof by a chain of indistinguishable executions).
-- N. A. Lynch, *Distributed Algorithms*, Morgan Kaufmann, 1996, Section 5.1 (not opened).
-- J. N. Gray, "Notes on data base operating systems", in *Operating Systems: An Advanced Course*, LNCS 60, Springer, 1978 (not opened).
+- N. A. Lynch, *Distributed Algorithms*, Morgan Kaufmann, 1996, Section 5.1.
+- J. N. Gray, "Notes on data base operating systems", in *Operating Systems: An Advanced Course*, LNCS 60, Springer, 1978.

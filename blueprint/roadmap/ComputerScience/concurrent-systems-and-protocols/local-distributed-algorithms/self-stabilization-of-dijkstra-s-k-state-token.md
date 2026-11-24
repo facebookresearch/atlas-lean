@@ -23,4 +23,4 @@ Dijkstra's paper also gives the general $K$-state version, with states in $\math
 ## Sources
 
 - J. Aspnes, *Notes on Theory of Distributed Systems*, Yale University, <https://cs.yale.edu/homes/aspnes/classes/4650/notes.pdf>, Chapter 32: Section 32.1 (guarded commands, the central and distributed daemons) and Section 32.2 (Algorithm 32.1, the token rule, legal configurations, Lemma 32.2.1 and the potential-function proof of stabilization in $O(n^2)$ steps).
-- E. W. Dijkstra, "Self-stabilizing systems in spite of distributed control", *Communications of the ACM* 17(11):643–644, 1974 (not opened).
+- E. W. Dijkstra, "Self-stabilizing systems in spite of distributed control", *Communications of the ACM* 17(11):643–644, 1974.

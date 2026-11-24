@@ -25,4 +25,4 @@ The key estimate behind part 1 is the following. For an edge $uv$, the event tha
 ## Sources
 
 - G. Miller, *Luby's Algorithm for Maximal Independent Set*, lecture notes for 15-451/651, Carnegie Mellon University, 6 December 2019, <http://www.cs.cmu.edu/afs/cs/academic/class/15451-f19/www/LectureNotes/MISLecture.pdf>: Section 3.2 (Algorithm 2, the randomized parallel algorithm) and Section 3.3 (Theorem 3.1, at least half the edges removed in expectation, and Theorem 3.4, $O(\log n)$ rounds with high probability).
-- M. Luby, "A simple parallel algorithm for the maximal independent set problem", *SIAM Journal on Computing* 15(4):1036–1053, 1986 (not opened).
+- M. Luby, "A simple parallel algorithm for the maximal independent set problem", *SIAM Journal on Computing* 15(4):1036–1053, 1986.

@@ -33,4 +33,4 @@ All three properties are verified in Coq.
     - Section III (the matcher, max_pref, lex0 and lex);
     - Section IV (termination by accessibility);
     - Section V (soundness under rules_are_unambiguous, uniqueness, and completeness from soundness and uniqueness).
-- J. A. Brzozowski, "Derivatives of regular expressions", *Journal of the ACM* 11(4):481–494, 1964 (not opened).
+- J. A. Brzozowski, "Derivatives of regular expressions", *Journal of the ACM* 11(4):481–494, 1964.

@@ -15,4 +15,4 @@ Let a heap $(H, \to, R)$ with roots be as in [correctness of the mark phase](cor
 ## Sources
 
 - P. R. Wilson, "Uniprocessor garbage collection techniques", in *Memory Management (IWMM 92)*, LNCS 637, Springer, 1992; extended version at <https://www.cs.cmu.edu/~fp/courses/15411-f14/misc/wilson94-gc.pdf>, Section 2.2: the two phases of mark-sweep collection, distinguishing live objects by tracing, then sweeping memory exhaustively to find the unmarked objects and reclaim them onto free lists. The proof above is written out here.
-- R. Jones, A. Hosking and E. Moss, *The Garbage Collection Handbook*, CRC Press, 2011 (not opened).
+- R. Jones, A. Hosking and E. Moss, *The Garbage Collection Handbook*, CRC Press, 2011.

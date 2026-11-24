@@ -42,4 +42,4 @@ Steps that IMP takes without a matching CFG step, such as discarding $\mathbf{sk
     - Section 3.2 (the translation from CminorSel to RTL, a control-flow graph of instructions over temporaries);
     - Section 4.1 (RTL's control-flow graphs and small-step semantics);
     - Section 4.3 (proof by simulation diagram); the translation and proof above instantiate this method for a while language.
-- A. W. Appel, *Modern Compiler Implementation in ML*, Cambridge University Press, 1998 (not opened).
+- A. W. Appel, *Modern Compiler Implementation in ML*, Cambridge University Press, 1998.

@@ -14,4 +14,4 @@ the type equivalence used by the conversion rule, exactly when their normal form
 ## Sources
 
 - H. P. Barendregt, "Introduction to generalized type systems", *Journal of Functional Programming* 1(2):125–154, 1991: Definition 2.1 and the table of rule pairs (the system $\lambda\omega$), Definition 2.2 (constructors and kinds), Theorem 2.3 (Church–Rosser) and Theorem 2.5 (strong normalization for the λ-cube). The normal-form consequence is derived on this page.
-- J.-Y. Girard, Y. Lafont and P. Taylor, *Proofs and Types*, Cambridge University Press, 1989 (not opened for $F_\omega$; its Chapter 14 treats System F).
+- J.-Y. Girard, Y. Lafont and P. Taylor, *Proofs and Types*, Cambridge University Press, 1989 ( for $F_\omega$; its Chapter 14 treats System F).

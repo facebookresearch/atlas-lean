@@ -12,5 +12,5 @@ Priority is the strongest of the usual write-conflict rules, which are undefined
 
 ## Sources
 
-- B. Parhami, *Introduction to Parallel Processing: Algorithms and Architectures*, Plenum Press, 1999, Chapter 5 (book not opened; checked against the author's lecture slides for its Part II, "Extreme Models", Fall 2008): Theorem 5.1 (emulation of a priority CRCW PRAM by an EREW PRAM with slowdown $\Theta(\log p)$), the hierarchy EREW < CRCW-D < CRCW-C < CRCW-R < CRCW-P, and sorting in $O(\log p)$ time on the EREW PRAM.
+- B. Parhami, *Introduction to Parallel Processing: Algorithms and Architectures*, Plenum Press, 1999, Chapter 5 (book; checked against the author's lecture slides for its Part II, "Extreme Models", Fall 2008): Theorem 5.1 (emulation of a priority CRCW PRAM by an EREW PRAM with slowdown $\Theta(\log p)$), the hierarchy EREW < CRCW-D < CRCW-C < CRCW-R < CRCW-P, and sorting in $O(\log p)$ time on the EREW PRAM.
 - *Parallel algorithms*, lecture notes for 6.854 Advanced Algorithms, MIT, 2020, <https://courses.csail.mit.edu/6.854/20/Notes/n32-parallel.html>: CRCW computes OR in $O(1)$ time and maximum in constant time with $n^2$ processors, while EREW requires $\log n$ time for OR and for maximum, and CRCW$(k) \subseteq$ EREW$(k+1)$.

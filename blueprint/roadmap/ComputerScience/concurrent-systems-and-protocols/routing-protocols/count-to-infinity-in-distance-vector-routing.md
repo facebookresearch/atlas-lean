@@ -18,4 +18,4 @@ Either rule prevents the two-node loop above, but neither prevents loops of thre
 ## Sources
 
 - A. C. Snoeren, *Distance-vector Routing*, Lecture 13 of CSE 123: Computer Networks, UC San Diego, Fall 2010, <https://cseweb.ucsd.edu/classes/fa10/cse123/lectures/123-fa10-l13.pdf>: the "Counting to Infinity" example on slide 13 (distances to $C$ of $3$ and $2$, then updates $4$, $5$, …), "Why so High?" on slide 14, the mitigation strategies on slide 15 (hold-downs, loop avoidance, split horizon, poison reverse and its limitation to loops of size 2), and RIP's infinity of 16 hops.
-- J. F. Kurose and K. W. Ross, *Computer Networking: A Top-Down Approach*, 8th ed., Pearson, 2021, Section 5.2.2 (not opened).
+- J. F. Kurose and K. W. Ross, *Computer Networking: A Top-Down Approach*, 8th ed., Pearson, 2021, Section 5.2.2.

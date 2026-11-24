@@ -7,6 +7,7 @@ In paging, the virtual address space of a process and physical memory are divide
 - **Translation.** To translate a virtual address with VPN $v$ and offset $o$, the hardware fetches the PTE for $v$, at the page-table base address plus $v$ times the PTE size for a linear page table:
     - if the PTE is not valid, the access raises a segmentation fault;
     - otherwise, if the protection bits forbid the access, it raises a protection fault;
+    - otherwise, if the present bit is clear because the page is not resident in physical memory, it raises a page fault;
     - otherwise the physical address is the PFN followed by the offset, $\mathrm{PFN} \cdot 2^s + o$.
 - **Translation-lookaside buffer.** A *translation-lookaside buffer* (TLB) is a hardware cache of virtual-to-physical translations in the memory-management unit, consulted before the page table:
     - on a TLB hit with permitted access, the physical address is formed from the cached PFN;

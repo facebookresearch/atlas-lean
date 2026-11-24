@@ -18,4 +18,4 @@ FIFO does not have this property. With 3 and 4 frames on the reference string $1
 ## Sources
 
 - R. H. Arpaci-Dusseau and A. C. Arpaci-Dusseau, *Operating Systems: Three Easy Pieces*, version 1.10, Chapter 22, "Beyond Physical Memory: Policies", <https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys-policy.pdf>: the aside on Belady's anomaly, with FIFO on the reference string $1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5$, and the stack property of LRU. The proof above is written out here.
-- R. L. Mattson, J. Gecsei, D. R. Slutz and I. L. Traiger, "Evaluation techniques for storage hierarchies", *IBM Systems Journal* 9(2):78–117, 1970 (not opened).
+- R. L. Mattson, J. Gecsei, D. R. Slutz and I. L. Traiger, "Evaluation techniques for storage hierarchies", *IBM Systems Journal* 9(2):78–117, 1970.
