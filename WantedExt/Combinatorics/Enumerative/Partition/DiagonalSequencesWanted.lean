@@ -97,17 +97,6 @@ public theorem_wanted ncard_diagonalSequences_eq_card_distincts (n : ℕ) :
         (Nat.Partition.distincts n).card ∧
       (Nat.Partition.distincts n).card = (Nat.Partition.odds n).card
 
-/-- **Conjugate of a partition with prescribed gaps between its parts.** Let $q \ge 0$ and let
-$s_1, \dots, s_q$ be natural numbers. The conjugate of the partition $\bar\alpha$ with parts
-$\bar\alpha_i = q - i + 1 + \sum_{k=i}^{q} s_k$ for $1 \le i \le q$ is the partition
-$\underline{\alpha} = (q^{(s_q + 1)}, (q-1)^{(s_{q-1} + 1)}, \dots, 1^{(s_1 + 1)})$, where
-$v^{(r)}$ means $r$ copies of $v$; the parts are compared as multisets.
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Proposition 2. -/
-public theorem_wanted conjugateParts_diagonalMaxPartition (q : ℕ) (s : ℕ → ℕ) :
-    conjugateParts ↑(diagonalMaxPartition q s) = ↑(diagonalMinPartition q s)
-
 /-- **Equal diagonal sequences of the maximal and minimal partitions.** Let $q \ge 0$ and
 $s_1, \dots, s_q \ge 0$ be natural numbers, write $v^{(m)}$ for $m$ copies of $v$, and let
 $\bar\alpha$ and $\underline\alpha$ be the partitions with parts

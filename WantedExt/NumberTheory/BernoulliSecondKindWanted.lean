@@ -42,7 +42,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.RingTheory.PowerSeries.Log
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
-public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKind
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirling
 
 set_option autoImplicit false
 
@@ -65,19 +65,6 @@ theorem_wanted bernoulli_poly_eq (n : ℕ) :
         ∑ k ∈ Finset.Icc 1 n, Polynomial.C
           ((n : ℚ) / k * (Nat.stirlingSecond (n - 1) (k - 1) : ℚ)) *
           descPochhammer ℚ k
-
-/-- **Bernoulli numbers in terms of Bernoulli numbers of the second kind.** Let $B_m$ be the
-Bernoulli numbers (with $B_1 = -1/2$), $B_m^*$ the Bernoulli numbers of the second kind and
-$S(m, j)$ the Stirling numbers of the second kind. For every natural number $n \ge 1$,
-$$B_n = -\sum_{k=1}^{n} \frac{n}{k} \, S(n-1, k-1) \, B_k^*.$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Corollary 2. -/
-theorem_wanted bernoulli_eq_neg_sum (n : ℕ) (hn : 1 ≤ n) :
-    bernoulli n =
-      -∑ k ∈ Finset.Icc 1 n, (n : ℚ) / k *
-        (Nat.stirlingSecond (n - 1) (k - 1) : ℚ) *
-        MetaMathlibExt.bernoulliSecond k
 
 /-- **Stirling inversion.** Let $s(m, j)$ be the signed Stirling numbers of the first kind and
 $S(m, j)$ the Stirling numbers of the second kind. For all sequences $(u_n)_{n \ge 0}$ and

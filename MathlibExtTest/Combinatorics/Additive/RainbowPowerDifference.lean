@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import Mathlib.Data.Nat.Factorization.Basic
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.Prime
 
 /-! # Tests for `MathlibExt.Combinatorics.Additive.RainbowPowerDifference` -/
@@ -16,6 +19,35 @@ import Mathlib.Tactic.NormNum.Prime
 namespace MathlibExtTest.RainbowPowerDifference
 
 open MetaMathlibExt
+
+-- For the even numbers and n₀ = 3 the recurring gap must attain the upper bound 2.
+example : ∀ i : ℕ, ∃ j : ℕ, i < j ∧ 2 ∣ j ∧ 2 ∣ j + 2 := by
+  obtain ⟨d, hd, hd', h⟩ := exists_small_gap_of_limsup_count {x | 2 ∣ x} 3 (by decide) (by
+    intro M N
+    obtain ⟨m, hm⟩ := exists_nat_gt M
+    let t := m + N
+    refine ⟨6 * t, by dsimp [t]; omega, ?_⟩
+    change M < (((Finset.Ioc 0 (6 * t)).filter (2 ∣ ·)).card : ℝ) - (6 * t : ℕ) / 3
+    rw [Nat.Ioc_filter_dvd_card_eq_div, show 6 * t / 2 = 3 * t by omega]
+    push_cast
+    have hmt : (m : ℝ) ≤ t := by exact_mod_cast Nat.le_add_right m N
+    linarith)
+  obtain ⟨j, _, hj, hjd⟩ := h 0
+  change 2 ∣ j at hj
+  change 2 ∣ j + d at hjd
+  obtain rfl : d = 2 := by omega
+  exact h
+
+-- At n₀ = 2 the even numbers realize density 1/2, but their count has no unbounded excess.
+example : ¬ ∀ M : ℝ, ∀ N : ℕ, ∃ n : ℕ, N ≤ n ∧
+    M < (((Finset.Icc 1 n).filter (2 ∣ ·)).card : ℝ) - n / 2 := by
+  intro hdens
+  obtain ⟨d, hd, hd', h⟩ :=
+    exists_small_gap_of_limsup_count {x | 2 ∣ x} 2 (by decide) (by simpa using hdens)
+  obtain ⟨j, _, hj, hjd⟩ := h 0
+  change 2 ∣ j at hj
+  change 2 ∣ j + d at hjd
+  omega
 
 private instance fact_prime_seven : Fact (Nat.Prime 7) := ⟨by norm_num⟩
 
