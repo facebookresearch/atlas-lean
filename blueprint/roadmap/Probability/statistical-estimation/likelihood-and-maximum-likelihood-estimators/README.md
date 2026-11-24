@@ -15,6 +15,9 @@
 - [Characterization of maximum likelihood estimators](is-maximum-likelihood-estimator-iff.md)
 - [Induced likelihood](induced-likelihood.md)
 - [The sample mean maximizes the normal likelihood with known variance](sample-mean-is-the-normal-mean-mle.md)
+- [Score, information and the most informative item in the two-parameter logistic model](ability-estimation-in-the-two-parameter-logistic-model.md)
+- [Linking two-parameter logistic scales and test scores](scale-indeterminacy-of-the-two-parameter-logistic-model.md)
+
 
 ## Likelihood of independent Poisson counts
 

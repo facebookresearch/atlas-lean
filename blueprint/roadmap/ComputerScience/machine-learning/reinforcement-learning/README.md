@@ -15,6 +15,8 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 
 - [Bellman values are expected discounted returns](bellman-values-are-expected-discounted-returns.md)
 - [Verification theorem for average-cost Markov decision processes](average-cost-optimality-inequality.md)
+- [Single-cue error-correction learning and zero-discount TD(0)](td0-with-zero-discount-is-error-correction-learning.md)
+
 
 ## Related topics
 
