@@ -9542,6 +9542,7 @@
 "Cslib.BusyBeaverWanted.busyBeaverSteps_five_wanted": "39ff85d89b9a15c4",
 "Cslib.BusyBeaverWanted.busyBeaverSteps_four_wanted": "5d49c0264a0e059c",
 "Cslib.BusyBeaverWanted.busyBeaverSteps_three_wanted": "357806cd78cde675",
+"Cslib.BusyBeaverWanted.busyBeaverSteps_three_wanted.machine_bounds": "092195380b8675cc",
 "Cslib.CCS.Label": "eb94d1106c2dbe37",
 "Cslib.CCS.Label.Complementary": "b84b940979444648",
 "Cslib.CCS.Label.synchronize": "0f8bdcae9a846206",

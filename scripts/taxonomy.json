@@ -1311,6 +1311,7 @@
   "CSLibExt/Computability/Automata/TwoWayNA/TwoWayDFA": {"to": "TheoryOfComputation/regular-languages/automata-and-expressions", "title": "Two-way finite automata"},
   "CSLibExt/Computability/BusyBeaver": {"to": "TheoryOfComputation/computability", "title": "Busy beaver"},
   "CSLibExt/Computability/BusyBeaverOnesThree": {"to": "TheoryOfComputation/computability", "title": "Busy beaver"},
+  "CSLibExt/Computability/BusyBeaverStepsThree": {"to": "TheoryOfComputation/computability", "title": "Busy beaver"},
   "CSLibExt/Computability/Circuit/Arithmetic/CarryLookahead": {"to": "TheoryOfComputation/circuit-complexity", "title": "Kogge–Stone adder"},
   "CSLibExt/Computability/Circuit/Arithmetic/RippleCarry": {"to": "TheoryOfComputation/circuit-complexity", "title": "Ripple-carry adder"},
   "CSLibExt/Computability/Circuit/Arithmetic/TwosComplement": {"to": "TheoryOfComputation/circuit-complexity", "title": "Two's complement subtraction and overflow"},
