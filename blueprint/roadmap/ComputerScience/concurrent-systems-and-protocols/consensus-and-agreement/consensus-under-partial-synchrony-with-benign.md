@@ -5,14 +5,8 @@ In Dwork, Lynch and Stockmeyer's basic model, in which processors are synchronou
 ## Depends on
 
 - [Partial synchrony](../distributed-execution-models/partial-synchrony.md)
-
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Consensus specification with agreement, strong unanimity and termination.
-- Statement prerequisite: Dwork–Lynch–Stockmeyer fail-stop and omission fault models.
+- [Resilient consensus protocols](resilient-consensus-protocols.md)
+- [Fail-stop, omission and Byzantine faults](../distributed-execution-models/fail-stop-omission-and-byzantine-faults.md)
 
 ## Sources
 
