@@ -40,3 +40,12 @@ example :
       ([1, 1] ++ (List.replicate j
         (2 :: (List.replicate 2 (chuBlock 1)).flatten ++ [1, 1])).flatten).sum) = {22, 42} :=
   (chuFamilyKLT_run_sums_R1_eq_R3 1 2 2).trans (by decide)
+
+-- The first and last indexed starts in the last outer block.
+example : (32 : ℤ) ∈ chuFamilyKLT 2 2 2 := by
+  simpa using chuFamilyKLT_mem_block_starts (k := 2) (l := 2) (t := 2)
+    (by decide) (by decide) (by decide) 0 1 (by decide) (by decide)
+
+example : (56 : ℤ) ∈ chuFamilyKLT 2 2 2 := by
+  simpa using chuFamilyKLT_mem_block_starts (k := 2) (l := 2) (t := 2)
+    (by decide) (by decide) (by decide) 2 1 (by decide) (by decide)

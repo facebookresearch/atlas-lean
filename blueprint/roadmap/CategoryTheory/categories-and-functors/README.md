@@ -8,3 +8,4 @@ The basic language of category theory: categories, functors, natural transformat
 - [Functors and their composition](functors-and-their-composition/README.md)
 - [Vertical composite of natural transformations](vertical-composition-natural-transformations.md)
 - [Yoneda lemma, covariant form](yoneda-lemma.md)
+- [Representing objects are unique up to isomorphism](uniqueness-of-representing-objects.md)
