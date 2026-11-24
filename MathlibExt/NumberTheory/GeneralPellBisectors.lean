@@ -11,8 +11,11 @@ module
 public import Mathlib.Algebra.Order.Ring.Abs
 public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.NumberTheory.Zsqrtd.Basic
 import Mathlib.Algebra.Group.Int.Even
 import Mathlib.Data.Int.ModEq
+import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.NumberTheory.SquareModEight
@@ -25,6 +28,7 @@ Equations and Angle Bisectors between Planar Lines with Rational
 Slopes*, INTEGERS 24 (2024), Article A111.
 
 Squaring the equality of distances to two lines gives an equation for their bisector slope.
+For slopes on the same negative Pell conic, rational solutions admit a quotient formula.
 
 Squares are `0` or `1` modulo `4`, so for `d ≡ 1 (mod 4)` the value
 `x² - d y²` is `0`, `1`, or `3` modulo `4`, and so is its negation.
@@ -33,6 +37,8 @@ Modulo `8`, squares are `0`, `1`, or `4`. If `x² ≡ 5 y² (mod 8)`, both squar
 Multiplying `x + y √d` by a solution `a + b √d` of `a² - d b² = -1` negates the value of
 `x² - d y²` and keeps the first coordinate coprime to `d` times the second, so strictly primitive
 solutions of `x² - d y² = z` give strictly primitive solutions of `x² - d y² = -z`.
+Products of strictly primitive solutions whose absolute norms are powers of distinct primes
+are strictly primitive as well.
 -/
 
 @[expose] public section
@@ -63,6 +69,53 @@ theorem bisector_slope_equation (a b c : ℝ) (hab : |a| ≠ |b|) (hc : c ≠ 0)
   have h := (div_eq_div_iff (by positivity) (by positivity)).mp hbis
   apply_fun (fun x : ℝ ↦ x ^ 2) at h
   simpa (disch := positivity) only [mul_pow, sq_abs, Real.sq_sqrt] using h
+
+-- Squarefreeness is part of the source statement. The sign choice uses only the Pell equations.
+set_option linter.unusedVariables false in
+/-- **Rational solutions of the bisector equation for square-free $d > 1$.** Let $d > 1$ be a
+square-free integer and let $a, b, c$ be rational numbers with $|a| \ne |b|$ and
+$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1).$$
+Suppose there are rational numbers $u, v$ with $a^2 - d u^2 = -1$ and $b^2 - d v^2 = -1$. Then
+there are rational numbers $a_2, b_2$ with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$ such
+that either $a_2 + b_2 \ne 0$ and $c = (a b_2 + a_2 b) / (a_2 + b_2)$, or $a b_2 + a_2 b \ne 0$
+and $c = -(a_2 + b_2) / (a b_2 + a_2 b)$.
+
+In terms of $\alpha = a + a_2 \sqrt{d}$ and $\beta = b + b_2 \sqrt{d}$, which have norm $-1$, and
+the conjugation $'$ of $\mathbb{Q}(\sqrt{d})$, the first quotient is
+$(\alpha\beta - (\alpha\beta)') / (\alpha + \beta - (\alpha + \beta)')$.
+
+Source: the theorem's second part (the factorization of $\alpha, \beta$ through $\eta$, $\xi_p$
+and $S(d)$) is not formalized.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 1(ii), first
+sentence (`integers-2024-A111-thm-1`). -/
+theorem bisector_equation_rat_solution_negPell (d : ℤ) (hd : 1 < d)
+    (hsq : Squarefree d) (a b c : ℚ) (hab : |a| ≠ |b|)
+    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1))
+    (ha : ∃ a₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1) (hb : ∃ b₂ : ℚ, b ^ 2 - d * b₂ ^ 2 = -1) :
+    ∃ a₂ b₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1 ∧ b ^ 2 - d * b₂ ^ 2 = -1 ∧
+      ((a₂ + b₂ ≠ 0 ∧ c = (a * b₂ + a₂ * b) / (a₂ + b₂)) ∨
+        (a * b₂ + a₂ * b ≠ 0 ∧ c = -(a₂ + b₂) / (a * b₂ + a₂ * b))) := by
+  obtain ⟨u, hu⟩ := ha
+  obtain ⟨v, hv⟩ := hb
+  have hd₀ : (d : ℚ) ≠ 0 := by exact_mod_cast (by omega : d ≠ 0)
+  have hs : ((a - c) * v) ^ 2 = ((b - c) * u) ^ 2 := by
+    apply mul_left_cancel₀ hd₀
+    linear_combination h - (a - c) ^ 2 * hv + (b - c) ^ 2 * hu
+  -- Choose the sign of the second coordinate paired with `a` so the two products cancel.
+  obtain ⟨u', hu', hsign⟩ : ∃ u' : ℚ, a ^ 2 - d * u' ^ 2 = -1 ∧
+      (a - c) * v = -((b - c) * u') := by
+    rcases sq_eq_sq_iff_eq_or_eq_neg.mp hs with heq | heq
+    · exact ⟨-u, by simpa using hu, by simpa using heq⟩
+    · exact ⟨u, hu, heq⟩
+  have hden : u' + v ≠ 0 := by
+    intro hz
+    apply hab
+    apply (sq_eq_sq_iff_abs_eq_abs a b).mp
+    linear_combination hu' - hv + (d : ℚ) * (u' - v) * hz
+  refine ⟨u', v, hu', hv, Or.inl ⟨hden, (eq_div_iff hden).2 ?_⟩⟩
+  linear_combination -hsign
 
 /-- **Bisector-equation solutions from two solutions of $x^2 - d y^2 = -1$.** Let $d$ be an integer
 and let $a, a_2, b, b_2$ be rational numbers with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$.
@@ -156,5 +209,60 @@ theorem strictlyPrimitive_neg (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (z : �
   refine ⟨x * a + d * y * b, x * b + y * a, ⟨-u * a + v * d * b, u * b - v * a, ?_⟩, ?_⟩
   · linear_combination (-(a ^ 2 - d * b ^ 2)) * huv - hab
   · linear_combination (x ^ 2 - d * y ^ 2) * hab
+
+-- Multiplying by the conjugate of `b` recovers the coordinates of `a` scaled by `b.norm`.
+-- The Bézout identity for `a` then expresses `b.norm` in terms of the product's coordinates.
+private theorem dvd_norm_of_dvd_mul_coords {d k : ℤ} {a b : ℤ√d}
+    (ha : IsCoprime a.re (d * a.im)) (hre : k ∣ (a * b).re) (him : k ∣ d * (a * b).im) :
+    k ∣ b.norm := by
+  obtain ⟨u, v, huv⟩ := ha
+  calc
+    k ∣ (u * b.re - v * d * b.im) * (a * b).re +
+        (v * b.re - u * b.im) * (d * (a * b).im) :=
+      dvd_add (dvd_mul_of_dvd_right hre _) (dvd_mul_of_dvd_right him _)
+    _ = b.norm := by
+      rw [Zsqrtd.re_mul, Zsqrtd.im_mul, Zsqrtd.norm_def]
+      linear_combination (b.re * b.re - d * b.im * b.im) * huv
+
+private theorem strictlyPrimitive_mul_of_coprime_norms {d : ℤ} {a b : ℤ√d}
+    (ha : IsCoprime a.re (d * a.im)) (hb : IsCoprime b.re (d * b.im))
+    (hn : IsCoprime a.norm b.norm) : IsCoprime (a * b).re (d * (a * b).im) := by
+  apply IsRelPrime.isCoprime
+  intro k hre him
+  apply hn.isUnit_of_dvd' _ (dvd_norm_of_dvd_mul_coords ha hre him)
+  rw [mul_comm a b] at hre him
+  exact dvd_norm_of_dvd_mul_coords hb hre him
+
+-- The coordinate argument works for all integers `d`.
+set_option linter.unusedVariables false in
+/-- **Products of strictly primitive solutions.** Let $d > 1$ be a square-free integer. Write
+elements of $\mathbb{Z}[\sqrt{d}]$ as $u + v\sqrt{d}$ with integers $u, v$, and let
+$N(u + v\sqrt{d}) = u^2 - d v^2$ be the norm. Let $p_1, \dots, p_r$ be distinct primes and
+$n_1, \dots, n_r$ natural numbers, and suppose that each $a_i = u_i + v_i\sqrt{d}$ satisfies
+$|N(a_i)| = p_i^{n_i}$ with $u_i$ and $d v_i$ coprime. Then $a = a_1 \cdots a_r = u + v\sqrt{d}$
+satisfies $|N(a)| = p_1^{n_1} \cdots p_r^{n_r}$ with $u$ and $d v$ coprime; that is, $a$ gives a
+strictly primitive solution of $|x^2 - d y^2| = p_1^{n_1} \cdots p_r^{n_r}$.
+
+The sign $\pm$ in the source's equation (13) is dropped; negation preserves both conclusions.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 3(a)
+(`integers-2024-A111-prop-3`). -/
+theorem strictlyPrimitive_prod (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) {r : ℕ}
+    (p : Fin r → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p) (n : Fin r → ℕ)
+    (a : Fin r → ℤ√d) (ha : ∀ i, IsCoprime (a i).re (d * (a i).im))
+    (hN : ∀ i, |(a i).norm| = (p i : ℤ) ^ n i) :
+    IsCoprime (∏ i, a i).re (d * (∏ i, a i).im) ∧ |(∏ i, a i).norm| = ∏ i, (p i : ℤ) ^ n i := by
+  suffices ∀ s : Finset (Fin r), IsCoprime (∏ i ∈ s, a i).re (d * (∏ i ∈ s, a i).im) ∧
+      |(∏ i ∈ s, a i).norm| = ∏ i ∈ s, (p i : ℤ) ^ n i from this Finset.univ
+  intro s
+  induction s using Finset.induction_on with
+  | empty => simp [isCoprime_one_left]
+  | insert i s hi ih =>
+    rw [Finset.prod_insert hi, Finset.prod_insert hi, Zsqrtd.norm_mul, abs_mul, hN, ih.2]
+    refine ⟨strictlyPrimitive_mul_of_coprime_norms (ha i) ih.1 ?_, rfl⟩
+    rw [← IsCoprime.abs_abs_iff, hN, ih.2]
+    refine IsCoprime.prod_right fun j hj ↦ IsCoprime.pow ?_
+    exact ((Nat.coprime_primes (hp i) (hp j)).mpr (hinj.ne fun h ↦ hi (h ▸ hj))).isCoprime
 
 end MetaMathlibExt

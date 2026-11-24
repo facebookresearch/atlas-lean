@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Group.Subgroup.Basic
+public import Mathlib.Algebra.Group.Subgroup.Defs
+public import Mathlib.Algebra.Group.End
+public import Mathlib.Tactic.TypeStar
 public import Mathlib.Order.Circular
 
 namespace MetaMathlibExt

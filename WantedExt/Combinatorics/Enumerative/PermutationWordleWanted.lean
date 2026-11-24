@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.PermutationWordle
+public import MathlibExt.Combinatorics.Enumerative.PermutationWordleCounts
 public import MathlibExt.NumberTheory.LucasSequence
 
 /-!
@@ -29,17 +29,6 @@ paper's guess `γ_{r+1}` is `permWordleGuess S π r`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **One- and two-guess counts for deranged strategies.** Let $n \in \mathbb{N}$ and let $S$ be
-a strategy whose component $S[m]$ has no fixed point for every $2 \le m \le n$, and write
-$[x^r] f_S$ for the number of permutations of $\{0, \dots, n-1\}$ that $S$ guesses in exactly $r$
-guesses. Then $[x^1] f_S = 1$ and $[x^2] f_S = 2^n - n - 1$, the Eulerian number $A(n, 1)$.
-
-Source: Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
-(2026), Article 26.1.7, Theorem 5 (`jis-2026-26.1.7-thm-5`). -/
-public theorem_wanted permWordleCoeff_one_and_two (n : ℕ) (S : (m : ℕ) → Equiv.Perm (Fin m))
-    (hS : ∀ m, 2 ≤ m → m ≤ n → ∀ k : Fin m, S m k ≠ k) :
-    permWordleCoeff S n 1 = 1 ∧ permWordleCoeff S n 2 = 2 ^ n - n - 1
 
 /-- **Cyclic shift maximizes three-guess solves among inductive strategies.** Let $n \ge 4$ and let
 $S$ be an inductive strategy of length $n$ whose component $S[n]$ is not the rotation

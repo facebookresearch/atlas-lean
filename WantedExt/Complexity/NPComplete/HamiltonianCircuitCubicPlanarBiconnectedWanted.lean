@@ -26,7 +26,7 @@ reference to Garey, Johnson and Tarjan (1976).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
 public import MathlibExt.Computability.BinaryNatEncoding

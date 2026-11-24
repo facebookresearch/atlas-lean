@@ -32,7 +32,7 @@ namespace CSLibExtTest.Scheduling.ProjectNetwork
 open Cslib.Scheduling.ProjectNetwork MathlibExt.Combinatorics.Graph.ArcNetwork
 
 /-- The four-job precedence table `0 → 2, 1 → 2, 1 → 3`. -/
-def g4 : Digraph (Fin 4) where
+private def g4 : Digraph (Fin 4) where
   Adj i j := (i = 0 ∧ j = 2) ∨ (i = 1 ∧ j = 2) ∨ (i = 1 ∧ j = 3)
 
 private theorem g4_adj {i j : Fin 4} :
