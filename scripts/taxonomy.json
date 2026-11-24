@@ -12739,6 +12739,7 @@
   "MathlibExt/NumberTheory/OddPartFactorialTwoAdic": {"to": "NumberTheory/p-adic-numbers", "title": "2-adic odd part of factorials of powers of two"},
   "MathlibExt/NumberTheory/OddPerfectPolynomial": {"to": "NumberTheory/function-fields", "title": "Perfect polynomials over finite fields"},
   "MathlibExt/NumberTheory/OddPrimeDeficientPerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
+  "MathlibExt/NumberTheory/OddSquareTriangular": {"to": "NumberTheory/additive-number-theory", "title": "Sums of practical and polygonal numbers"},
   "MathlibExt/NumberTheory/OddTwoPrimeFactorsDeficient": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Primitive non-deficient numbers"},
   "MathlibExt/NumberTheory/OeisA022030": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Nonlinear floor recurrences satisfying linear recurrences"},
   "MathlibExt/NumberTheory/OppermannCyclicNumbers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Distribution of cyclic numbers"},
