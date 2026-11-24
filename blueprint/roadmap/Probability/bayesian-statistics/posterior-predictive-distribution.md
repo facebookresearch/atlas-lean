@@ -7,3 +7,7 @@ Let $\pi$ be a prior probability on a standard Borel parameter space $\Theta$, l
 A sound expansion specifies the following prerequisites and links their statements.
 
 - Existence and almost-sure uniqueness of regular conditional distributions on standard Borel spaces.
+
+## Sources
+
+- A. Gelman, J. B. Carlin, H. S. Stern, D. B. Dunson, A. Vehtari and D. B. Rubin, *Bayesian Data Analysis*, 3rd ed., CRC Press, 2013, Section 1.3, equation (1.4), <http://www.stat.columbia.edu/~gelman/book/BDA3.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

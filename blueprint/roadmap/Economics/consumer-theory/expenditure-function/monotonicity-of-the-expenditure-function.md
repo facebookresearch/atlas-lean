@@ -6,3 +6,7 @@ Let $u : \mathbb{R}^L_{\ge 0} \to \mathbb{R}$ be continuous, let $p \in \mathbb{
 
 - [Expenditure is homogeneous of degree one in prices](expenditure-smul.md): homogeneity of degree one in prices.
 - [Expenditure is concave on strictly positive prices](concave-on-expenditure-pos.md): concavity in prices.
+
+## Sources
+
+- S. Athey, *Consumer Theory*, lecture notes, MIT 14.121, Fall 1998, §V, Proposition 2(ii), <http://web.mit.edu/athey/www/14.121.fall98/consumer_theory_f98.pdf>

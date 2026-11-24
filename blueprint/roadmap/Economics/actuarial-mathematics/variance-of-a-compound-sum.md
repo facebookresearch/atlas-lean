@@ -9,3 +9,7 @@ No bound on $N$ and no moment generating function is needed. Proof. By independe
 ## Background
 
 - [Wald's second equation](../../Probability/martingales/wald-s-equations/wald-s-second-equation/wald-second-equation.md): the zero-mean case for a stopping time, where $N$ need not be independent of the claims.
+
+## Sources
+
+- R. Kaas, M. Goovaerts, J. Dhaene and M. Denuit, *Modern Actuarial Risk Theory*, Springer; author recap sheet of chapters 1–6, compound distributions, <https://www1feb-uva.nl/ke/act/people/kaas/Recap123456.pdf>

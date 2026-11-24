@@ -12,3 +12,7 @@ Proof. $Q/v$ has the chi-square law with $k = n - 1$ degrees of freedom, which i
 - [Mean of the gamma law](../../distributions/continuous/gamma-distribution/gamma-moments/integral-id-gamma-measure.md): mean of the gamma law.
 - [Gamma law has finite second moment](../../distributions/continuous/gamma-distribution/gamma-moments/mem-lp-id-gamma-measure.md): finite second moment of the gamma law.
 - [Variance of the gamma law](../../distributions/continuous/gamma-distribution/gamma-moments/variance-id-gamma-measure.md): variance of the gamma law.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

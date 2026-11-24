@@ -7,3 +7,7 @@
 ## Expansion
 
 The externality example needs its own definitions before it can be stated formally: preferences that depend on the whole allocation, competitive equilibrium in which each agent takes the other agents' bundles as given, and Pareto efficiency for such preferences. The existing definition of a Walrasian equilibrium gives each agent a utility of its own bundle only and covers the satiation example.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

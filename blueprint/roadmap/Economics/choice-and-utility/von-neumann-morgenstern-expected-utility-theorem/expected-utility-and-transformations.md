@@ -10,3 +10,7 @@ Let $u : X \to \mathbb{R}$ be an expected-utility representation of a preference
 ## Background
 
 - [Expected utility is unique up to positive affine transformation](exists-pos-affine.md): the converse: representations are unique up to positive affine transformation.
+
+## Sources
+
+- A. Rubinstein, *Lecture Notes in Microeconomic Theory*, Princeton University Press, Lecture 8 (Expected utility), section "The vNM utilities are unique up to positive affine transformation", <http://assets.press.princeton.edu/rubinstein/lecture8.pdf>

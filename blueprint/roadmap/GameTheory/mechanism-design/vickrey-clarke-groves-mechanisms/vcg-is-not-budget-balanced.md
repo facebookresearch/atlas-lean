@@ -6,3 +6,7 @@ Consider a public decision between building a project and not, with two agents w
 
 - [Clarke pivot term](clarke-pivot.md): the Clarke pivot payments.
 - [VCG with Clarke pivot payments is incentive compatible](is-incentive-compatible-clarke.md): truthful reporting is dominant.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

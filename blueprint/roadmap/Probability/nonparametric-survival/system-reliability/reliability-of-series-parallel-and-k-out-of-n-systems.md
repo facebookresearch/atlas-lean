@@ -5,3 +5,9 @@ Let components $e$ of a finite nonempty system have measurable lifetimes $T_e \g
 ## Proof depends on
 
 - [Layer-cake formula for powers](../../../MeasureTheory/integration/layer-cake-formula/lintegral-rpow-eq-lintegral-meas-le-mul.md): the mean as the integral of the survival function, with $p = 1$; the sets $\{T \ge t\}$ and $\{T > t\}$ have equal probability for all but countably many $t$.
+
+## Sources
+
+- NIST/SEMATECH, *e-Handbook of Statistical Methods*, Section 8.1.8.2 (Series model), Section 8.1.8.2, <https://www.itl.nist.gov/div898/handbook/apr/section1/apr182.htm>. The source states a special case or part of the statement; the rest is derived on this page.
+- NIST/SEMATECH, *e-Handbook of Statistical Methods*, Section 8.1.8.3 (Parallel or redundant model), Section 8.1.8.3, <https://www.itl.nist.gov/div898/handbook/apr/section1/apr183.htm>. The source states a special case or part of the statement; the rest is derived on this page.
+- NIST/SEMATECH, *e-Handbook of Statistical Methods*, Section 8.1.8.4 (R out of N model), Section 8.1.8.4, <https://www.itl.nist.gov/div898/handbook/apr/section1/apr184.htm>. The source states a special case or part of the statement; the rest is derived on this page.

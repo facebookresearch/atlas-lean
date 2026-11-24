@@ -9,3 +9,7 @@ Proof. Irreflexivity of $\succ$ is immediate. If $a \succ b$ and $b \succ c$ the
 - [Strict total order](strict-total-order.md): strict total orders.
 - [Rational preference relation](../../../Economics/choice-and-utility/preference-relations-and-choice/preference.md): rational (complete and transitive) preference relations.
 - [Strict part of a rational preference](../../../Economics/choice-and-utility/preference-relations-and-choice/strict-pref-2.md): the strict part of a rational preference.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

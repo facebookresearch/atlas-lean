@@ -5,3 +5,7 @@ The cash flows $(-1, 5, -6)$ at times $0, 1, 2$ have net present value $-1 + 5/(
 ## Background
 
 - [A conventional project has a unique IRR](exists-unique-is-irr.md): uniqueness for a conventional cash-flow pattern.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

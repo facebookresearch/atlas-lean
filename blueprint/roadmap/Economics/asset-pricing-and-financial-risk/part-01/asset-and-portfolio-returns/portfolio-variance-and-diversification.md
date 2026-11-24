@@ -7,3 +7,7 @@ Proof. Expand the variance of the linear combination as the double sum of covari
 ## Proof depends on
 
 - [Variance of a linear combination as a double sum of covariances](../../../../Biology/coalescent-theory/covariances-of-the-site-frequency-spectrum/variance-sum-eq-sum-covariance.md): variance of a linear combination as a double sum of covariances.
+
+## Sources
+
+- S. R. Das, *Portfolio Optimization*, chapter of *Data Science: Theories, Models, Algorithms, and Analytics*, section "Diversification of a portfolio", <http://srdas.github.io/MLBook2/31_PortfolioOptimization.html>. The source states a special case or part of the statement; the rest is derived on this page.

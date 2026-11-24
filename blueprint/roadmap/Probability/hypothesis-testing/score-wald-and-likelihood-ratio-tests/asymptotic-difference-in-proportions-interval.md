@@ -12,3 +12,7 @@ A sound expansion specifies the following prerequisites and links their statemen
 
 - Central limit theorem for the standardized difference of two independent binomial proportions with $m/(m+n) \to \kappa \in (0,1)$.
 - Consistency of $mV$-type variance estimators by the law of large numbers.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

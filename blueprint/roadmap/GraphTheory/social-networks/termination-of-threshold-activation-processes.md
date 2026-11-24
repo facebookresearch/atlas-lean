@@ -6,3 +6,7 @@ Let $G$ be a finite graph on $n$ vertices with nonnegative edge weights $w_{uv}$
 
 - [Finite iteration from the empty set reaches a fixed point](../../Order/fixed-points-domain-theory/least-and-greatest-fixed-points-on-finite-sets/lfp-fin-fixed.md): the finite iterate $H^n(\emptyset)$ is a fixed point of $H$.
 - [The finite least fixed point lies in every pre-fixed point](../../Order/fixed-points-domain-theory/least-and-greatest-fixed-points-on-finite-sets/lfp-fin-le.md): the finite iterate lies in every set $B$ with $H(B) \subseteq B$.
+
+## Sources
+
+- D. Easley and J. Kleinberg, *Networks, Crowds, and Markets*, Cambridge University Press, 2010, Section 19.3, cascades and clusters, <https://www.cs.cornell.edu/home/kleinber/networks-book/networks-book.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

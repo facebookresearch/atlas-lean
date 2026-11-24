@@ -5,3 +5,7 @@ Let $u$ be a utility function on $\mathbb{R}^L_{\ge 0}$ and $v(p, w) = \sup\{u(x
 ## Background
 
 - [Shephard's lemma for the expenditure function](../shephard-s-lemma/has-fderiv-at-expenditure-eq-of-is-hicks.md): the companion identity for the expenditure function.
+
+## Sources
+
+- J. G. Riley, *Essential Microeconomics*, Chapter 4.3 (Consumer choice and duality), UCLA, Proposition 4.3-3 (Roy's Identity), <http://www.econ.ucla.edu/riley/ESSMICRO/R4/R4-3.pdf>

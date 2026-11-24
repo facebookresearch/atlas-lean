@@ -14,3 +14,4 @@ A sound expansion specifies the following prerequisites and links their statemen
 
 - Invariance of the two-parameter logistic response law under $\theta \mapsto A\theta + B$, $a_j \mapsto a_j/A$, $b_j \mapsto Ab_j + B$ for $A > 0$.
 - Probability integral transform and quantile transform for continuous strictly increasing distribution functions.
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

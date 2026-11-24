@@ -5,3 +5,7 @@ In a finite game, fix a mixed profile $\sigma_{-i}$ of the other players and let
 ## Proof depends on
 
 - [Mixed Nash equilibrium](is-mixed-nash.md): expected payoffs of mixed profiles.
+
+## Sources
+
+- N. Nisan, T. Roughgarden, É. Tardos and V. V. Vazirani (eds.), *Algorithmic Game Theory*, Cambridge University Press, 2007, Section 2.1.1, Theorem 2.1, <https://www.cs.cmu.edu/~sandholm/cs15-892F13/algorithmic-game-theory.pdf>

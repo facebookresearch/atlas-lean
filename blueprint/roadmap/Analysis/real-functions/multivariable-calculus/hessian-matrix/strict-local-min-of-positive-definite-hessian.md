@@ -12,3 +12,7 @@ Proof. For $n = 0$ there is nothing to prove, since no $x$ satisfies $0 < \|x - 
 
 - [Second-derivative test, necessary condition](is-local-min-hessian-quadratic-nonneg.md): the necessary second-order condition.
 - [Strict second-derivative test, minimum version](../../differential-calculus/local-extrema-and-the-second-derivative-test/is-strict-local-min-of-deriv-deriv-pos.md): the one-variable test.
+
+## Sources
+
+- D. P. Bertsekas, *Nonlinear Programming*, lecture slides, MIT 6.252, Spring 2003, Lecture 2, slide "Sufficient conditions for a local min", <https://ocw.mit.edu/courses/6-252j-nonlinear-programming-spring-2003/8bfcb0cea874f9517661e833dba7b874_6252_slides02.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

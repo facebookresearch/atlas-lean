@@ -7,3 +7,7 @@ Proof. $\mathbf 1^{\mathsf T}\Sigma^{-1}\mathbf 1 > 0$ because $\Sigma^{-1}$ is 
 ## Background
 
 - [Existence and uniqueness of the minimum-variance portfolio](exists-unique-min-variance.md): the minimum-variance portfolio for a target expected return.
+
+## Sources
+
+- R. C. Merton, "An analytic derivation of the efficient portfolio frontier", *Journal of Financial and Quantitative Analysis* 7(4):1851–1872, 1972, discussion around equations (29)–(30), <http://www.stat.ucla.edu/~nchristo/statistics_c183_c283/analytic_derivation_frontier.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

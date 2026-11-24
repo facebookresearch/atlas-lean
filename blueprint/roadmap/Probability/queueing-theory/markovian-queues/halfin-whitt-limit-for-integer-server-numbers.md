@@ -11,3 +11,7 @@ Proof. Let $0 < \varepsilon < \beta$. For large $a$, $a + (\beta - \varepsilon)\
 ## Proof depends on
 
 - [The Erlang C formula for a real number of servers](erlang-c-for-real-server-numbers.md): agreement with Erlang C at integers, monotonicity in the number of servers, and the real-server limit.
+
+## Sources
+
+- A. J. E. M. Janssen, J. S. H. van Leeuwaarden and B. Zwart, 'Refining square root staffing by expanding Erlang C', *Operations Research* 59(6), 2011 (preprint), Section 2, equation (2.1), <https://nuhagphp.univie.ac.at/janssen/data/p166.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

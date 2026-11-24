@@ -7,3 +7,7 @@ Proof. For fixed $b$ the minimizing $a$ is $E[X - bY]$, leaving $\operatorname{V
 ## Depends on
 
 - [Beta of a return relative to the market return](asset-beta.md): the beta of a return relative to the market return.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

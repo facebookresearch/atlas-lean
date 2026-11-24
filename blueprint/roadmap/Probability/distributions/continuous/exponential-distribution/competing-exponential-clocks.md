@@ -7,3 +7,7 @@ Proof. By independence, $\mathbb{P}(T > t, J = j) = \int_t^\infty q_j e^{-q_j s}
 ## Background
 
 - [Finite-dimensional distributions](../../../markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-input-measure-real-ctmc-path-fdd.md): finite-dimensional laws of the continuous-time Markov chain path.
+
+## Sources
+
+- K. Sigman, *Continuous-Time Markov Chains* (lecture notes, IEOR 6711), Columbia University, 2009, Section 1.5 (Birth and Death processes), holding time and jump probabilities, <http://www.columbia.edu/~ks20/stochastic-I/stochastic-I-CTMC.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

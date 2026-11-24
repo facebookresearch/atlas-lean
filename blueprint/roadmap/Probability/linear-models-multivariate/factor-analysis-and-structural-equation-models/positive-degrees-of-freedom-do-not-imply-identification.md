@@ -7,3 +7,7 @@ Proof. In both cases the first block is $\mathbf 1\mathbf 1^{\mathsf T} + I_3 = 
 ## Background
 
 - [Identification of a one-factor model from three indicators](identification-of-the-one-factor-model.md): identification of the one-factor model with nonzero loadings.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

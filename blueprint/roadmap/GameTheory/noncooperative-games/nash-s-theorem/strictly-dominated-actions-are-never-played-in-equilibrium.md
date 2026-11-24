@@ -6,3 +6,7 @@ In a normal-form game with nonempty action sets, suppose action $a_i$ of player 
 
 - [Pure Nash equilibrium](../potential-games/is-pure-nash.md): the pure equilibrium condition, with costs $-u_i$.
 - [Mixed Nash equilibrium](is-mixed-nash.md): the mixed equilibrium condition.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

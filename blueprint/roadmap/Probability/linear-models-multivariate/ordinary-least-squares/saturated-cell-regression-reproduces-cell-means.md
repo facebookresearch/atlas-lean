@@ -5,3 +5,7 @@ Let observations $i = 1, \dots, n$ belong to cells $c = 1, \dots, C$, and regres
 ## Proof depends on
 
 - [Least-squares fitted values are the orthogonal projection onto the column space](fitted-values-are-the-orthogonal-projection.md): least-squares solutions are exactly the solutions of the normal equations, with a unique fitted vector.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

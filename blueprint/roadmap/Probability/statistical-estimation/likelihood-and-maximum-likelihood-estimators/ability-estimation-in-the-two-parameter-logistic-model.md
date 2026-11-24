@@ -5,3 +5,7 @@ Let $J$ be a finite nonempty set of items with discriminations $a_j > 0$ and dif
 ## Proof depends on
 
 - [Fisher information is the second moment of the score](../asymptotic-normality-of-maximum-likelihood/integral-score-sq.md): the information is the second moment of the score.
+
+## Expansion
+
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

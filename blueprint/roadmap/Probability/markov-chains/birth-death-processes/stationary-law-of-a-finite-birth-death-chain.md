@@ -12,3 +12,7 @@ Proof. Detailed balance $\lambda_n\pi_n = \mu_{n+1}\pi_{n+1}$ holds by construct
 ## Background
 
 - [Normalized balance weights of a birth–death rate sequence](birth-death-balance-weights.md): the balance weights on the nonnegative integers.
+
+## Sources
+
+- K. Sigman, *Continuous-Time Markov Chains* (lecture notes, IEOR 6711), Columbia University, 2009, Section 1.13, item 2 (Birth and Death processes), equations (26)-(27), <http://www.columbia.edu/~ks20/stochastic-I/stochastic-I-CTMC.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

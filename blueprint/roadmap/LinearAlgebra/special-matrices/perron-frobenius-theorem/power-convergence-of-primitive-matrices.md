@@ -12,3 +12,4 @@ Let $A$ be a nonnegative primitive $n \times n$ matrix ($A^m$ has all entries po
 A sound expansion specifies the following prerequisites and links their statements.
 
 - A finite irreducible stochastic matrix has a stationary distribution with all entries positive.
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

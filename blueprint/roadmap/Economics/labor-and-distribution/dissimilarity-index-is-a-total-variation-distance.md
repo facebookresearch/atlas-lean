@@ -5,3 +5,7 @@ For two groups with counts $a_1, \dots, a_m \ge 0$ and $b_1, \dots, b_m \ge 0$ a
 ## Background
 
 - [Total variation and Pinsker's inequality](../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/README.md): total variation for general measures.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

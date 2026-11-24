@@ -6,3 +6,7 @@ For the recourse value $Q(x) = \inf\{q^{\mathsf T}y : Wy = h - Tx,\ y \ge 0\}$ i
 
 - [Weak duality](../../../Analysis/convex-analysis-and-variations/lagrange-duality/dual-value-le-primal-value.md): weak duality for the cut.
 - [Strong linear programming duality](strong-linear-programming-duality.md): strong duality for the attained cut, after writing the equality constraints as paired inequalities.
+
+## Expansion
+
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

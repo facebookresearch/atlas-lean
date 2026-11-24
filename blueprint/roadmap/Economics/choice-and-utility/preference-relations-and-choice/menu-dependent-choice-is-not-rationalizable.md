@@ -5,3 +5,7 @@ Let $X = \{x, y, z\}$ and define a choice correspondence on the nonempty subsets
 ## Proof depends on
 
 - [Choice by preference maximization satisfies contraction consistency](maximizing-choice-satisfies-contraction-consistency.md): maximizing choice satisfies contraction consistency.
+
+## Sources
+
+- A. Rubinstein, *Lecture Notes in Microeconomic Theory*, Princeton University Press, Lecture 3 (Choice), "Violation of condition ∗" (second-best procedure), <http://assets.press.princeton.edu/rubinstein/lecture3.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

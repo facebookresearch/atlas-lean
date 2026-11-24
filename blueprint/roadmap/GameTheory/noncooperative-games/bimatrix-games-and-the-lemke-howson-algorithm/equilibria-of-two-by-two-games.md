@@ -5,3 +5,7 @@ Consider a two-player game with actions $T, B$ for player 1 and $L, R$ for playe
 ## Proof depends on
 
 - [Mixed Nash equilibrium](../nash-s-theorem/is-mixed-nash.md): mixed equilibria.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

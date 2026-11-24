@@ -7,3 +7,7 @@ Let $S$ be a finite state set containing a nonempty set of absorbing death state
 A sound expansion specifies the following prerequisites and links their statements.
 
 - Law of a time-inhomogeneous finite Markov chain at time $x$ as the ordered product of its transition matrices.
+
+## Sources
+
+- J. Ledent, *An Improved Methodology for Constructing Increment-Decrement Life Tables from the Transition Perspective*, IIASA Working Paper WP-80-104, 1980, discussion of equation (4), <http://pure.iiasa.ac.at/id/eprint/1365/1/WP-80-104.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

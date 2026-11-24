@@ -17,3 +17,7 @@ Proof. By the finite-dimensional formula, $\mathbb P_\pi(X_{t_k} = j_k \text{ fo
 ## Background
 
 - [Stationary law of a finite birth–death chain](../../birth-death-processes/stationary-law-of-a-finite-birth-death-chain.md): the stationary law of a finite birth–death chain.
+
+## Sources
+
+- K. Sigman, *Continuous-Time Markov Chains* (lecture notes, IEOR 6711), Columbia University, 2009, Section 1.10, Proposition 1.2, <http://www.columbia.edu/~ks20/stochastic-I/stochastic-I-CTMC.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

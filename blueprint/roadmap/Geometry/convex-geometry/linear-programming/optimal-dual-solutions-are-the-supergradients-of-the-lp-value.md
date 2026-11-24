@@ -14,3 +14,8 @@ Proof of the reverse inclusion. Let $y$ be a supergradient. For $b' = b + e_i$, 
 A sound expansion specifies the following prerequisites and links their statements.
 
 - A concave function that is finite near an interior point and has exactly one supergradient there is differentiable at that point.
+
+## Sources
+
+- S. Boyd and L. Vandenberghe, *Convex Optimization*, Cambridge University Press, 2004, Section 5.6.2, A global inequality, eq. (5.57), <https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf>. The source states a special case or part of the statement; the rest is derived on this page.
+- S. Boyd and L. Vandenberghe, *Convex Optimization*, Cambridge University Press, 2004, Section 5.6.3, Local sensitivity analysis, eq. (5.58), <https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

@@ -12,3 +12,7 @@ Proof. If $w \ne v$ both attain the minimum $q$, then $(w + v)/2 \in W$ by conve
 
 - [Long-only minimum of a quadratic form is attained](exists-is-min-on-target-slice.md): existence of a minimizer.
 - [Positive definite covariance gives a unique long-only optimum](exists-unique-is-min-on-target-slice-of.md): the positive definite case.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

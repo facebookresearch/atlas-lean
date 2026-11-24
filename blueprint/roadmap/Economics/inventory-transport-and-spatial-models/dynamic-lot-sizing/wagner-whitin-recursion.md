@@ -7,3 +7,4 @@ Consider a finite horizon $1, \dots, T$ with deterministic demands $d_t \ge 0$, 
 A sound expansion specifies the following prerequisites and links their statements.
 
 - Zero-inventory-ordering property: some optimal plan orders only when entering stock is zero (exchange argument).
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

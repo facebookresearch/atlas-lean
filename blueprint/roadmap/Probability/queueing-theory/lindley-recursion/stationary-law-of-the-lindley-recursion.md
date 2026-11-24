@@ -7,3 +7,7 @@ Proof. With $M' = \sup_{k \ge 0}(X_2 + \dots + X_{k+1})$, independent of $X_1$ a
 ## Background
 
 - [Lindley's recursion and the maximum of the random walk](lindley-recursion-and-the-maximum-of-the-reversed-walk.md): the laws of $W_n$ increase to the law of $M_\infty$.
+
+## Expansion
+
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

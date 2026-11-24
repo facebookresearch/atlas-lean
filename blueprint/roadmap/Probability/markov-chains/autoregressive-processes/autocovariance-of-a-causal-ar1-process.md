@@ -7,3 +7,7 @@ Let $(\varepsilon_t)_{t \in \mathbb{Z}}$ be i.i.d. with mean $0$ and variance $\
 A sound expansion specifies the following prerequisites and links their statements.
 
 - $L^2$ and almost-sure convergence of the moving-average representation of the causal AR(1) solution.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

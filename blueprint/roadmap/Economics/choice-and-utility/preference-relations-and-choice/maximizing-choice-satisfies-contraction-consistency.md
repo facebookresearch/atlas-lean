@@ -5,3 +5,7 @@ Let $\succsim$ be a complete and transitive relation on a set $X$, and for each 
 ## Background
 
 - [Rational choice from a finite nonempty menu is nonempty](choice-nonempty.md): the choice set of a nonempty finite menu is nonempty.
+
+## Sources
+
+- A. Rubinstein, *Lecture Notes in Microeconomic Theory*, Princeton University Press, Lecture 3 (Choice), Condition ∗, <http://assets.press.princeton.edu/rubinstein/lecture3.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

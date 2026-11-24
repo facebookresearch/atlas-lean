@@ -14,3 +14,7 @@ Proof. The cross-factor covariances are $\sigma_{jk} = \lambda_j\varphi\lambda_k
 
 - [Positive degrees of freedom do not imply identification of a factor model](positive-degrees-of-freedom-do-not-imply-identification.md): the uncorrelated model, in which the loadings are not identified.
 - [Identification of a one-factor model from three indicators](identification-of-the-one-factor-model.md): identification of the first factor's loadings.
+
+## Sources
+
+- D. A. Kenny, *Identification: Overview* (SEM web notes), 2011, Rule on number of indicators per latent variable (Condition B2a), <http://davidakenny.net/cm/identify.htm>. The source states a special case or part of the statement; the rest is derived on this page.

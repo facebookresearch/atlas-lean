@@ -5,3 +5,7 @@ For a fixed between-group variance $a > 0$ and expected within-group variance $v
 ## Background
 
 - [Bühlmann credibility in a finite latent mixture](buhlmann-credibility-in-a-finite-mixture.md): the credibility factor $Z_n$.
+
+## Sources
+
+- Lecture notes *Bühlmann Model*, ACT 4630, University of Manitoba, Winter 2017, definition of Z, <https://home.cc.umanitoba.ca/~farhadi/ACT4630Winter2017/Buhlmann.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

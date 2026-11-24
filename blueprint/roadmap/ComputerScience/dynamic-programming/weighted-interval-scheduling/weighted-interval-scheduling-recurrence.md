@@ -7,3 +7,7 @@ Proof. An optimal set for the first $j$ intervals either omits interval $j$ (val
 ## Background
 
 - [Correctness and optimality of earliest-finish interval scheduling](../../greedy-algorithms-and-matroids/interval-scheduling/interval-schedule-correct.md): the unweighted greedy algorithm.
+
+## Sources
+
+- J. Kleinberg and É. Tardos, *Algorithm Design*, Pearson, 2005; lecture slides by K. Wayne, §6.1 Weighted interval scheduling, <https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/06DynamicProgrammingI.pdf>

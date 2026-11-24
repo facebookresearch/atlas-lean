@@ -5,3 +5,7 @@ With the notation of the finite identity, suppose $\sum_k v^kS_k < \infty$, $\su
 ## Proof depends on
 
 - [Endowment insurance and the annuity-due identity](endowment-insurance-and-annuity-due-identity.md): the finite identity, then pass to the limit.
+
+## Sources
+
+- E. A. Valdez, *Annuities*, lecture slides, STT 455 Actuarial Models, Michigan State University, Fall 2014, whole life annuity-due slides, <https://users.math.msu.edu/users/valdezea/stt455f14/STT455Weeks9to11-F2014.pdf>

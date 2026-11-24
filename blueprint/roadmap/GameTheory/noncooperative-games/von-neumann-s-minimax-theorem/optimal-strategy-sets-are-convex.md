@@ -5,3 +5,7 @@ In a finite two-player zero-sum game with payoff matrix $A$ ($m \times n$, row p
 ## Proof depends on
 
 - [Von Neumann's minimax theorem](matrix-game-minimax.md): existence of optimal strategies and the value.
+
+## Expansion
+
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

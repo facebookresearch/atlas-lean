@@ -18,3 +18,7 @@ A sound expansion specifies the following prerequisites and links their statemen
 ## Background
 
 - [Hoffman's circulation theorem](hoffman-circulation-theorem.md): the cut condition for the same feasibility problem.
+
+## Sources
+
+- J. Kleinberg and É. Tardos, *Algorithm Design*, Pearson, 2005; lecture slides by K. Wayne, §7.7 Circulation with supplies, demands, and lower bounds, <https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/07NetworkFlowII-2x2.pdf>

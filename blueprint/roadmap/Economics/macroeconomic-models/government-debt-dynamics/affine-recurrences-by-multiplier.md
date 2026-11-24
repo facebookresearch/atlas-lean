@@ -7,3 +7,7 @@ Proof. Induction on $t$, using $b^* = ab^* + d$ when $a \ne 1$, and $b_{t+1} = b
 ## Background
 
 - [Affine recurrence convergence](affine-recurrence-tendsto.md): the convergent case $|a| < 1$.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

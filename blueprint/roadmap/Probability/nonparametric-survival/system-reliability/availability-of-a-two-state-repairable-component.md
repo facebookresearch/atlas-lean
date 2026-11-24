@@ -8,3 +8,7 @@ Proof. For $\lambda + \mu > 0$ the transition function of the two-state generato
 
 - [Transition function of the two-state chain](../../markov-chains/finite-continuous-time-markov-chains/the-sticky-equal-input-kernel-on-a-finite-state/ctmc-transition-two-state-rate.md): transition function of the two-state chain.
 - [Long-distance limit of the sticky kernel](../../markov-chains/finite-continuous-time-markov-chains/the-sticky-equal-input-kernel-on-a-finite-state/tendsto-sticky-kernel-at-top.md): long-time limit of the sticky kernel.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

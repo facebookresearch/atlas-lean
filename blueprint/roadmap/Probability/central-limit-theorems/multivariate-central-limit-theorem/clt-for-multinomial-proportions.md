@@ -5,3 +5,7 @@ Let $p = (p_1, \dots, p_K)$ be a probability vector (zero entries allowed) and l
 ## Proof depends on
 
 - [Multivariate central limit theorem](tendsto-in-distribution-inv-sqrt-smul-su.md): applied to the one-hot vectors, whose covariance may be singular.
+
+## Sources
+
+- J. Brunner, *Random Vectors Part Two* (lecture slides, STA 442/2101), University of Toronto, Fall 2012, Slides 23-25 (multivariate CLT applied to multinomial data), <http://utstat.utoronto.ca/brunner/oldclass/appliedf12/lectures/2101f12RandomVectorsTwo.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

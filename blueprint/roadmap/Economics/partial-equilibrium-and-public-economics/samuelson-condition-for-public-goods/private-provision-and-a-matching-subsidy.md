@@ -11,3 +11,7 @@ Proof. (i) The derivative $n v' - c$ is strictly decreasing, positive at $0$ and
 ## Proof depends on
 
 - [Samuelson condition at an interior optimum](sum-marginal-benefit-eq-marginal-cost.md): the Samuelson condition at an interior optimum.
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

@@ -12,3 +12,7 @@ Proof. Let $N(t) = \max\{k : T_k \le t\}$ and $R(t)$ the up time in $[0, t]$. By
 
 - [Availability of a two-state repairable component](availability-of-a-two-state-repairable-component.md): the limiting probability of being up.
 - [Long-run cost rate of an age-replacement policy](long-run-cost-of-age-replacement.md): renewal–reward for replacement policies.
+
+## Sources
+
+- K. Sigman, *Renewal theory, inspection paradox and renewal reward theorem* (lecture notes, IEOR 6711), Columbia University, 2009, Section 2, Theorem 2.1 (Renewal Reward Theorem), applied with reward R_j = U_j, <http://www.columbia.edu/~ks20/stochastic-I/stochastic-I-RRT.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

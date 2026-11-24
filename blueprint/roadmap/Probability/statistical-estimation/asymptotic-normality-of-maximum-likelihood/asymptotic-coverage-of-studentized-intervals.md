@@ -13,3 +13,7 @@ Proof. The ratio form of Slutsky's theorem gives $T_n \to Z$ with $Z \sim N(0, 1
 A sound expansion specifies the following prerequisites and links their statements.
 
 - Convergence in distribution gives convergence of the probabilities of sets whose boundary is null for the limit law (portmanteau theorem).
+
+## Sources
+
+- J. Brunner, *Large-sample tools* (lecture slides, STA 442/2101), University of Toronto, Fall 2012, Slide 33, Slutsky theorems for convergence in distribution, <http://utstat.utoronto.ca/brunner/oldclass/appliedf12/lectures/2101f12LargeSample.pdf>. The source states a special case or part of the statement; the rest is derived on this page.

@@ -7,3 +7,7 @@ Proof. Divide the denominator by $a^c/c!$ and write $j = c - k$; each term $c!/(
 ## Depends on
 
 - [Stationarity of the Erlang loss distribution and the Erlang-B recursion](stationary-law-of-the-erlang-loss-system.md): the Erlang-B value $B(c, a)$.
+
+## Expansion
+
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

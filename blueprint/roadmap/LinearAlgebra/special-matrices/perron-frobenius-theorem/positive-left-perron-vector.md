@@ -7,3 +7,7 @@ Proof. Reversing a path with positive entries of $A$ from $i$ to $j$ gives a pat
 ## Proof depends on
 
 - [Perron–Frobenius theorem for irreducible nonnegative matrices](perron-frobenius.md): applied to the transpose.
+
+## Expansion
+
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

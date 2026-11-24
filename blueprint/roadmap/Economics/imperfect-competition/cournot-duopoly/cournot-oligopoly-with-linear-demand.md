@@ -7,3 +7,7 @@ Let inverse demand be $P(Q) = \max(a - bQ, 0)$ with $a, b > 0$, and let $n \ge 1
 A sound expansion specifies the following prerequisites and links their statements.
 
 - A differentiable concave exact potential on a Cartesian product of convex strategy sets: profiles at which no player can improve unilaterally are exactly the maximizers of the potential (for the quadratic potential here, equivalently the Karush–Kuhn–Tucker conditions).
+
+## Sources
+
+- The statement is derived on this page from its definitions and the linked results; no external source is followed.

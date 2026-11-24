@@ -8,3 +8,7 @@ Proof. Grouping the terms of the expected-payoff sum by the strategy of player $
 
 - [Expected payoff of a mixed profile](expected-payoff.md): expected payoff of a mixed profile.
 - [Mixed Nash equilibrium](is-mixed-nash.md): mixed Nash equilibrium.
+
+## Sources
+
+- N. Nisan, T. Roughgarden, É. Tardos and V. V. Vazirani (eds.), *Algorithmic Game Theory*, Cambridge University Press, 2007, Section 2.1.1, Theorem 2.1 and discussion, <https://www.cs.cmu.edu/~sandholm/cs15-892F13/algorithmic-game-theory.pdf>. The source states a special case or part of the statement; the rest is derived on this page.
