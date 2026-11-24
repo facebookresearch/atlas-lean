@@ -50,11 +50,12 @@ def piClass {β : ι → Type*} (C : ∀ i, ConceptClass α (β i)) :
   {c | ∀ i, (fun x => c x i) ∈ C i}
 
 /-- Per-sample trace bound for a finite product of classes. -/
-private theorem tracesCard_piClass_le [Fintype ι] [DecidableEq ι]
-    {β : ι → Type*} [∀ i, Fintype (β i)]
+private theorem tracesCard_piClass_le [Fintype ι]
+    {β : ι → Type*} [∀ i, Fintype (β i)] [Fintype (∀ i, β i)]
     (C : ∀ i, ConceptClass α (β i)) (s : Finset α) (m : ℕ)
     (hs : s.card = m) :
     tracesCard (piClass C) s ≤ ∏ i, growthFunctionVec (C i) m := by
+  classical
   rw [← traceSetVec_card_eq_tracesCard]
   have hcard : (traceSetVec (piClass C) s).card
       ≤ ∏ i, (traceSetVec (C i) s).card := by
@@ -103,8 +104,8 @@ private theorem tracesCard_piClass_le [Fintype ι] [DecidableEq ι]
 
 /-- Growth function of a finite product: at most the product of the
 factor growth functions. -/
-theorem growthFunctionVec_pi_le [Fintype ι] [DecidableEq ι] {β : ι → Type*}
-    [∀ i, Fintype (β i)] (C : ∀ i, ConceptClass α (β i)) (m : ℕ) :
+theorem growthFunctionVec_pi_le [Fintype ι] {β : ι → Type*}
+    [∀ i, Fintype (β i)] [Fintype (∀ i, β i)] (C : ∀ i, ConceptClass α (β i)) (m : ℕ) :
     growthFunctionVec (piClass C) m ≤ ∏ i, growthFunctionVec (C i) m := by
   apply growthFunctionVec_le_of_traces_le
   intro s hs
