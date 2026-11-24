@@ -12330,6 +12330,7 @@
   "MathlibExt/NumberTheory/OddMultiplePrimeHalfSets": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/OddPartFactorialTwoAdic": {"to": "NumberTheory/p-adic-numbers", "title": "2-adic odd part of factorials of powers of two"},
   "MathlibExt/NumberTheory/OddPerfectPolynomial": {"to": "NumberTheory/function-fields", "title": "Perfect polynomials over finite fields"},
+  "MathlibExt/NumberTheory/OddSquareTriangular": {"to": "NumberTheory/additive-number-theory", "title": "Sums of practical and polygonal numbers"},
   "MathlibExt/NumberTheory/OeisA022030": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Nonlinear floor recurrences satisfying linear recurrences"},
   "MathlibExt/NumberTheory/OppermannCyclicNumbers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Distribution of cyclic numbers"},
   "MathlibExt/NumberTheory/OresmeConvolutions": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Oresme numbers"},
