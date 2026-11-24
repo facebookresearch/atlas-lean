@@ -12337,7 +12337,7 @@
   "MathlibExt/NumberTheory/Padics/KimballWebbFibonomialCongruence": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Fibonomial coefficients"},
   "MathlibExt/NumberTheory/Padics/MoritaGamma": {"to": "NumberTheory/p-adic-numbers", "title": "Morita's p-adic gamma function"},
   "MathlibExt/NumberTheory/Padics/MoritaGammaExistsUnique": {"to": "NumberTheory/p-adic-numbers", "title": "Morita's p-adic gamma function"},
-  "MathlibExt/NumberTheory/Padics/MultivariableHensel": {"to": "NumberTheory/arithmetic-geometry", "title": "Ranks of the elliptic curves y² = x³ − 2pqx"},
+  "MathlibExt/NumberTheory/Padics/MultivariableHensel": {"to": "NumberTheory/p-adic-numbers", "title": "Multivariable Hensel lemma over the p-adic integers"},
   "MathlibExt/NumberTheory/Padics/PadicPolynomialDilatation": {"to": "NumberTheory/p-adic-numbers", "title": "p-adic valuations of polynomials"},
   "MathlibExt/NumberTheory/Padics/Polynomial": {"to": "NumberTheory/p-adic-numbers", "title": "p-adic valuations of polynomials"},
   "MathlibExt/NumberTheory/Padics/PontryaginDual": {"to": "NumberTheory/p-adic-numbers", "title": "p-adic Pontryagin duals"},
