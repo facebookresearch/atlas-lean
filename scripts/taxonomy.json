@@ -12106,6 +12106,7 @@
   "MathlibExt/NumberTheory/AlternatingBinomialTransformHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Binomial identities for harmonic numbers"},
   "MathlibExt/NumberTheory/AlternatingChooseSums": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/AlternatingFloorSqrtSum": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
+  "MathlibExt/NumberTheory/AlternatingGeometricSumDifferenceOfSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Alternating geometric sums as differences of squares"},
   "MathlibExt/NumberTheory/AlternatingHyperharmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Hyperharmonic numbers and sums over primes"},
   "MathlibExt/NumberTheory/AlternatingReciprocalIntegral": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/AlternatingSeriesContinuedFraction": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of alternating series"},
