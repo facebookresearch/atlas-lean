@@ -12832,6 +12832,7 @@
   "MathlibExt/NumberTheory/ThreePrimeDCarmichael": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Absolute Lucas pseudoprimes"},
   "MathlibExt/NumberTheory/ThueLemma": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Thue's lemma"},
   "MathlibExt/NumberTheory/ThueSiegelRoth": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
+  "MathlibExt/NumberTheory/TriangularRepresentationWindow": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by squares and triangular numbers"},
   "MathlibExt/NumberTheory/TribonacciInt": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
   "MathlibExt/NumberTheory/TribonacciSequenceWithInitialValues001": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
   "MathlibExt/NumberTheory/TribonacciSequenceWithInitialValues111": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
