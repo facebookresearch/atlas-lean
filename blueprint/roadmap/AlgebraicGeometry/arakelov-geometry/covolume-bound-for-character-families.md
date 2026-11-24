@@ -19,11 +19,12 @@ attached to them are specific to this proof and defined through many auxiliary n
 statement needs those notions stated and checked first.
 
 A good expansion has definition pages for the points of the families, their conditions and their
-lattices, a page for the bound, and pages for the steps of its proof, linking the published results
-it uses: those of the pages below, among them Fargues's integral Hodge–Tate sequence for
-$p$-divisible groups; and pages, still to be added, for the Hodge filtration of prismatic Dieudonné
-modules and for Green's generic irreducible characters of $\mathrm{GL}_N(\mathbb{F}_p)$ attached to
-squarefree polynomials with nonzero constant term, which extend the cuspidal case.
+lattices, a page for the bound, and pages for the steps of its proof, linking the inputs it uses:
+those of the pages below, some of them in exact variants that are still unsourced, among them
+Fargues's integral Hodge–Tate sequence for $p$-divisible groups; and pages, still to be added, for
+the Hodge filtration of prismatic Dieudonné modules and for Green's generic irreducible characters of
+$\mathrm{GL}_N(\mathbb{F}_p)$ attached to squarefree polynomials with nonzero constant term, which
+extend the cuspidal case.
 
 ## Depends on
 
