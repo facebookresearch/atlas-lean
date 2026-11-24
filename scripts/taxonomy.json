@@ -9226,6 +9226,7 @@
   "MathlibExt/Algebra/Polynomial/LocallyIntegerPolynomial": {"to": "RingTheory/ideals-and-constructions", "title": "Locally integer polynomial functions"},
   "MathlibExt/Algebra/Polynomial/MestreSquareDecomposition": {"to": "Algebra/polynomials", "title": "Mestre's square decomposition"},
   "MathlibExt/Algebra/Polynomial/MomentGeneratingJFraction": {"to": "Algebra/orthogonal-polynomials", "title": "Moment generating functions as J-fractions"},
+  "MathlibExt/Algebra/Polynomial/PerronIrreducibility": {"to": "Algebra/polynomials", "title": "Polynomials with coefficients in arithmetic progression"},
   "MathlibExt/Algebra/Polynomial/PrimeValueConditions": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Prime values of polynomials"},
   "MathlibExt/Algebra/Polynomial/RealRooted": {"to": "Algebra/zeros-of-polynomials", "title": "Real-rooted polynomials"},
   "MathlibExt/Algebra/Polynomial/RiordanOrthogonalPolynomials": {"to": "Algebra/orthogonal-polynomials", "title": "Riordan orthogonal polynomials"},
