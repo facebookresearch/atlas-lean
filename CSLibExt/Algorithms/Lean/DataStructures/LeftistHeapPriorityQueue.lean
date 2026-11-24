@@ -41,12 +41,16 @@ private theorem all_le_mem_le {α : Type u} [LE α] {x y : α} {t : LHeap α}
 def insert {α : Type u} [LinearOrder α] (h : LHeap α) (x : α) : LHeap α :=
   merge (singleton x) h
 
-/-- Minimum element of a leftist heap (its root), if any. -/
+/-- Root element of a leftist heap, if any. Under the `heap` invariant the
+root is a minimum of the heap's elements (see `findMin?_le`); without the
+invariant this is only root inspection. -/
 def findMin? {α : Type u} : LHeap α → Option α
   | .E => none
   | .N _ x _ _ => some x
 
-/-- Remove and return a minimum element, merging the two subtrees. -/
+/-- Remove and return the root element, merging the two subtrees. Under the
+`heap` invariant the returned element is a minimum of the original heap (see
+`extractMin_le`); without the invariant this is only root removal. -/
 def extractMin {α : Type u} [LinearOrder α] : LHeap α → Option (α × LHeap α)
   | .E => none
   | .N _ x l r => some (x, merge l r)
