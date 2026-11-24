@@ -21,6 +21,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.Analysis.Convex.HermiteHadamard
 
 /-! # Floor of a sum of cube roots
 
@@ -53,30 +54,16 @@ private theorem unit_trapezoid_eq (f : ℝ → ℝ) (a : ℝ) :
   rw [trapezoidal_integral_one]
   ring
 
--- A concave graph is above its chord on the unit interval.
-private theorem unit_average_le_integral {f : ℝ → ℝ} (hf : Continuous f)
+-- Apply the endpoint bound in Hermite–Hadamard to the negative of a concave function.
+private theorem unit_average_le_integral {f : ℝ → ℝ}
     (hc : ConcaveOn ℝ (Ici 0) f) {a : ℝ} (ha : 0 ≤ a) :
     (f a + f (a + 1)) / 2 ≤ ∫ t in a..a + 1, f t := by
-  have hcont : Continuous (fun t : ℝ => f a + (t - a) * (f (a + 1) - f a)) := by fun_prop
-  have hmono : (∫ t in a..a + 1, f a + (t - a) * (f (a + 1) - f a)) ≤
-      ∫ t in a..a + 1, f t := by
-    refine intervalIntegral.integral_mono_on (by linarith) (hcont.intervalIntegrable _ _)
-      (hf.intervalIntegrable _ _) ?_
-    intro t ht
-    have hw₀ : 0 ≤ 1 - (t - a) := by linarith only [ht.2]
-    have hw₁ : 0 ≤ t - a := sub_nonneg.mpr ht.1
-    have ha₀ : a ∈ Set.Ici (0 : ℝ) := ha
-    have ha₁ : a + 1 ∈ Set.Ici (0 : ℝ) := by
-      change 0 ≤ a + 1
-      linarith only [ha]
-    have h := hc.2 ha₀ ha₁ hw₀ hw₁ (by ring)
-    simp only [smul_eq_mul] at h
-    rw [show (1 - (t - a)) * a + (t - a) * (a + 1) = t by ring] at h
-    calc
-      _ = (1 - (t - a)) * f a + (t - a) * f (a + 1) := by ring
-      _ ≤ f t := h
-  rw [integral_unit_affine] at hmono
-  linarith only [hmono]
+  have hsub : Set.Icc a (a + 1) ⊆ Set.Ici (0 : ℝ) := fun _ ht => ha.trans ht.1
+  have hcvx := hc.neg.subset hsub (convex_Icc a (a + 1))
+  have h := (MetaMathlibExt.hermite_hadamard (by linarith : a < a + 1) hcvx).2
+  rw [show a + 1 - a = (1 : ℝ) by ring] at h
+  simp only [div_one, one_mul, Pi.neg_apply, intervalIntegral.integral_neg] at h
+  linarith only [h]
 
 -- The preceding unit chord, extended to the right, is above the graph.
 private theorem integral_unit_le_previous_chord {f : ℝ → ℝ} (hf : Continuous f)
@@ -116,8 +103,9 @@ private theorem integral_cubeRoot (a b : ℝ) :
   simpa only [cubeRoot, show (1 / 3 : ℝ) + 1 = 4 / 3 by norm_num] using
     (integral_rpow (a := a) (b := b) (r := (1 / 3 : ℝ)) (Or.inl (by norm_num)))
 
+-- Mathlib's trapezoidal error is approximation minus integral, so negate it here.
 private noncomputable def cubeRootError (n : ℕ) : ℝ :=
-  (∫ t in 0..(n : ℝ), cubeRoot t) - trapezoidal_integral cubeRoot n 0 (n : ℝ)
+  -trapezoidal_error cubeRoot n 0 (n : ℝ)
 
 private theorem cubeRootError_add_one (n : ℕ) (hn : 0 < n) :
     cubeRootError (n + 1) = cubeRootError n +
@@ -128,7 +116,7 @@ private theorem cubeRootError_add_one (n : ℕ) (hn : 0 < n) :
     (cubeRoot_continuous.intervalIntegrable (μ := volume) (n : ℝ) ((n : ℝ) + 1))
   have hT := trapezoidal_integral_ext (f := cubeRoot) (a := 0) (h := 1) hn
   simp only [mul_one, zero_add, unit_trapezoid_eq] at hT
-  unfold cubeRootError
+  unfold cubeRootError trapezoidal_error
   simp only [Nat.cast_add, Nat.cast_one]
   rw [← hI, ← hT]
   ring
@@ -145,12 +133,11 @@ private theorem cubeRootError_bounds (n : ℕ) :
       norm_num
     have hT : trapezoidal_integral cubeRoot 1 0 1 = (1 / 2 : ℝ) := by
       simpa only [zero_add, cubeRoot_zero, cubeRoot_one] using unit_trapezoid_eq cubeRoot 0
-    norm_num [cubeRootError, hI, hT]
+    norm_num [cubeRootError, trapezoidal_error, hI, hT]
   | succ n ih =>
     have hn : 0 < n + 1 := Nat.succ_pos _
     have ha : (1 : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := by exact_mod_cast hn
-    have hlow := unit_average_le_integral cubeRoot_continuous cubeRoot_concave
-      (zero_le_one.trans ha)
+    have hlow := unit_average_le_integral cubeRoot_concave (zero_le_one.trans ha)
     have hhigh := integral_unit_le_previous_chord cubeRoot_continuous cubeRoot_concave ha
     rw [cubeRootError_add_one (n + 1) hn]
     simp only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right] at hlow hhigh ⊢
@@ -180,7 +167,7 @@ private theorem cubeRoot_sum_bounds (n : ℕ) (hn : 0 < n) :
   | zero => omega
   | succ n =>
     have hE := cubeRootError_bounds n
-    unfold cubeRootError at hE
+    unfold cubeRootError trapezoidal_error at hE
     rw [cubeRoot_trapezoid_eq_sum _ (Nat.succ_pos n)] at hE
     have hm : cubeRoot (n : ℝ) ≤ cubeRoot ((n : ℝ) + 1) :=
       Real.rpow_le_rpow (by positivity) (by linarith) (by norm_num)
