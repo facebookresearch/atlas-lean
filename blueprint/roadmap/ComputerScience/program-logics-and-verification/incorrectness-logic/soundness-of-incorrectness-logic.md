@@ -40,7 +40,7 @@ some state in $p$: for every $\sigma' \in q$ there is $\sigma \in p$ with $(\sig
   not free in $p$, $C$, $q$) substituted for $x$, when $e$ and $x$ are not free in $C$.
 
 Here a variable is free in an assertion when the assertion is not invariant under changing that variable, and
-$p[e/x] = \{\sigma[x \mapsto [\![e]\!]\sigma] \mid \sigma \in p\}$.
+substitution in an assertion is the preimage $p[e/x] = \{\sigma \mid \sigma[x \mapsto [\![e]\!]\sigma] \in p\}$, so that $\sigma \in p[e/x]$ exactly when $p$ holds after $x$ is set to the value of $e$ at $\sigma$. In the assignment axiom $x'$ is a fresh variable, free in neither $p$ nor $e$.
 
 ## Sources
 

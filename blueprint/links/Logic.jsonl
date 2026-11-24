@@ -1272,7 +1272,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/temporal-logic/temporal-specification/bisimulation-preserves-ctl-and-simulation.md"}], "id": "af_20cc7c9c1c820408ab6f3535", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/temporal-logic/temporal-specification/README.md"}], "id": "af_9e46606fa75b1102d7320272"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/modal-logic/epistemic-logic/common-knowledge-as-a-greatest-fixed-point.md"}], "id": "af_7bc8dc14b16b2dbb0a0250fd", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/Logic/first-order-logic/automated-deduction/critical-pair-lemma.md"}], "id": "af_bc824cdd356840e859275f6d", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/first-order-logic/automated-deduction/critical-pair-lemma.md"}], "id": "af_bc824cdd356840e859275f6d", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/first-order-logic/automated-deduction/README.md"}], "id": "af_158b04e765bed6ddb72ec5e3"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/first-order-logic/automated-deduction/critical-pairs-of-a-term-rewriting-system.md"}], "id": "af_09db65921b9b8388e716fb24", "extensions": {"org.atlas-wiki": {"kind": "def"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/temporal-logic/model-checking-algorithms/fair-ctl-model-checking.md"}], "id": "af_eeb485571d0c68806dc529f4", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
