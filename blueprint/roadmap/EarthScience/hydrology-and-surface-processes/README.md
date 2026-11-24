@@ -39,5 +39,6 @@ Water at and below the land surface and the materials it moves through: catchmen
 - [Infinite-slope stability](part-02/infinite-slope-stability/README.md)
 - [Rankine earth pressure](part-02/rankine-earth-pressure/README.md)
 - [Modified Cam-Clay yield surface](part-02/modified-cam-clay-yield-surface/README.md)
+- [Multispecies reactive transport conservation](part-02/multispecies-reactive-transport-conservation/README.md)
 - [Unsaturated flow](part-02/unsaturated-flow/README.md)
 - [Reactive transport](part-02/reactive-transport/README.md)

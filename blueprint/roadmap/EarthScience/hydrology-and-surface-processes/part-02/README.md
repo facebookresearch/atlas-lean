@@ -17,5 +17,6 @@
 - [Infinite-slope stability](infinite-slope-stability/README.md)
 - [Rankine earth pressure](rankine-earth-pressure/README.md)
 - [Modified Cam-Clay yield surface](modified-cam-clay-yield-surface/README.md)
+- [Multispecies reactive transport conservation](multispecies-reactive-transport-conservation/README.md)
 - [Unsaturated flow](unsaturated-flow/README.md)
 - [Reactive transport](reactive-transport/README.md)
