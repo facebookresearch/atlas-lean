@@ -200,8 +200,9 @@ variable (G : CechGeometry F) (I : ModuleCat.{0} C.ring) (N : ModuleCat.{0} E.ri
 
 /-- The logarithmic coordinates of the coarse chart `a` are carried to those of the refining chart
 `b`, up to units (and a permutation of the two branches at a node). The refining chart has the same
-mode as `a`, or is ordinary: a chart away from the boundary and the nodes inside a boundary or node
-chart retains only its ordinary derivatives (as for restrictions to ordinary intersections in
+mode as `a`, or is an ordinary chart missing the transported special locus of `a` (the boundary
+coordinate becomes a unit, or the two node coordinates generate the unit ideal); such a chart
+retains only its ordinary derivatives (as for restrictions to ordinary intersections in
 `LiCechChartModules.ModuleRestriction`). An ordinary chart is never refined by a boundary or node
 chart, and boundary and node charts are never interchanged. -/
 def LogNormalized {v : Fin C.family.components} {w : Fin E.family.components}
@@ -235,8 +236,10 @@ def LogNormalized {v : Fin C.family.components} {w : Fin E.family.components}
         coefficient (LiCechChartModules.nodeLog C.family.projection C.family.boundary C.family.parameterFunction I
           old pr pure ht x (permutation i))
   | .ordinary .., .ordinary .., _ => True
-  | .boundary .., .ordinary .., _ => True
-  | .node .., .ordinary .., _ => True
+  | .boundary _ old _ _ _ _, .ordinary .., _ =>
+    IsUnit (algebraMap b.target b.source (r old.coordinate))
+  | .node old _ _ _, .ordinary .., _ =>
+    Ideal.span (Set.range fun i => algebraMap b.target b.source (r (old.coordinate i))) = ⊤
   | _, _, _ => False
 
 set_option maxHeartbeats 1000000 in
