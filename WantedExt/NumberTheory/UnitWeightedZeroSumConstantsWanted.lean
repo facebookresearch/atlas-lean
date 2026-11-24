@@ -14,6 +14,7 @@ public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
 public import MathlibExt.Combinatorics.Additive.DavenportModuleProd
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfEvenUnits
+public import MathlibExt.NumberTheory.WeightedZeroSumCosets
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Coset.Defs
@@ -168,16 +169,6 @@ Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero
 of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 4.1 (`integers-2024-A38-thm-4-1`). -/
 public theorem_wanted davenport_zmod_two_pow (a : ℕ) :
     IsLeast (davenportSet (ZMod 2) (Fin a → ZMod 2) ({1} : Set (ZMod 2))) (a + 1)
-
-/-- **A nonempty subset of $\{1, \dots, m\}$ meeting $a$ given sets evenly.** Let $a + 1 \le m$
-and let $X_1, \dots, X_a$ be finite sets of natural numbers. Then there is a nonempty set
-$Y \subseteq \{1, \dots, m\}$ such that $|Y \cap X_i|$ is even for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 4.3 (`integers-2024-A38-lem-4-3`). -/
-public theorem_wanted exists_nonempty_even_inter {a m : ℕ} (hm : a + 1 ≤ m)
-    (X : Fin a → Finset ℕ) :
-    ∃ Y : Finset ℕ, Y.Nonempty ∧ Y ⊆ Finset.Icc 1 m ∧ ∀ i, Even (Y ∩ X i).card
 
 /-- **Zero-sum subsequences of length $m$ in $\mathbb{Z}_2^a$.** Let $a$ and $m$ be natural numbers
 with $m$ even and $2^a \le m$, and write $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$. Every sequence
@@ -375,23 +366,6 @@ of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 7.5 (`integers-2024-A38-th
 public theorem_wanted davenport_unit_pow_le {k p : ℕ} (hk : k.Prime) (hk2 : k ≠ 2)
     (hp : p.Prime) (hpk : p % k = 1) (hpk2 : p % k ^ 2 ≠ 1) :
     k ∈ davenportSet (ZMod p) (ZMod p) {x : ZMod p | ∃ u : ZMod p, IsUnit u ∧ x = u ^ k}
-
-/-- **Weighted zero-sum free pairs in a field.** Let $F$ be a field, let $A$ be a subgroup of the
-multiplicative group $F^*$, and let $x, y \in F$ be nonzero. Then the sequence
-$(x_1, x_2) = (x, y)$ has no $A$-weighted zero-sum subsequence, that is, there is no nonempty
-set $I \subseteq \{1, 2\}$ with elements $a_i \in A$ for $i \in I$ such that
-$\sum_{i \in I} a_i x_i = 0$, if and only if $x$ and $-y$ lie in different cosets of $A$ in $F^*$.
-
-A zero term is by itself a zero-sum subsequence, so the cosets are taken for nonzero $x$ and $y$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 7.6 (`integers-2024-A38-lem-7-6`). -/
-public theorem_wanted pair_no_weightedZeroSum_iff {F : Type*} [Field F] (A : Subgroup Fˣ)
-    {x y : F} (hx : x ≠ 0) (hy : y ≠ 0) :
-    (¬ ∃ I : Finset (Fin 2), I.Nonempty ∧ ∃ a : Fin 2 → F,
-      (∀ i ∈ I, a i ∈ ((↑) : Fˣ → F) '' A) ∧ ∑ i ∈ I, a i * ![x, y] i = 0) ↔
-      (QuotientGroup.mk (Units.mk0 x hx) : Fˣ ⧸ A) ≠
-        QuotientGroup.mk (Units.mk0 (-y) (neg_ne_zero.mpr hy))
 
 /-- **Weighted zero-sum free pairs for a proper subgroup of $F^\times$.** Let $F$ be a field and
 $A$ a proper subgroup of the multiplicative group $F^\times$. Then some sequence $x_1, x_2$ in

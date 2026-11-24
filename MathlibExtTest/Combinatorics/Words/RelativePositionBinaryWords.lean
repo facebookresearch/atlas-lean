@@ -43,4 +43,35 @@ example (w v : ℕ → Bool) : ¬IsSubstitutionImage (fun _ => []) w v := by
     simp
   simp [erases] at hm
 
+private theorem abba_infinite : BothLettersInfinite abba := by
+  constructor
+  · refine (Set.infinite_range_of_injective (f := fun n : ℕ => 4 * n) ?_).mono ?_
+    · intro a b h
+      change 4 * a = 4 * b at h
+      omega
+    · rintro _ ⟨n, rfl⟩
+      simp [abba]
+  · refine (Set.infinite_range_of_injective (f := fun n : ℕ => 4 * n + 1) ?_).mono ?_
+    · intro a b h
+      change 4 * a + 1 = 4 * b + 1 at h
+      omega
+    · rintro _ ⟨n, rfl⟩
+      simp [abba, Nat.add_mod]
+
+-- The run bb gives both a gap greater than two between a's and adjacent b's.
+example : (∃ n, 1 ≤ n ∧ 2 < letterPosition abba true (n + 1) - letterPosition abba true n) ∧
+    ∃ n, 1 ≤ n ∧ letterPosition abba false (n + 1) - letterPosition abba false n = 1 := by
+  have run : ∃ i, ∀ j < 2, abba (i + j) = false := by
+    refine ⟨1, fun j hj => ?_⟩
+    have h : j = 0 ∨ j = 1 := by omega
+    rcases h with rfl | rfl <;> decide
+  have equivs := subword_run_iff_letterPosition_diff abba_infinite rfl (k := 2) (by decide)
+  obtain ⟨n, hn, h⟩ := equivs.2.1.mp run
+  exact ⟨equivs.1.mp run, n, hn, by simpa only [Nat.add_zero] using h 0 (by decide)⟩
+
+-- A length-one run needs no adjacent occurrence gaps.
+example : ∃ i, ∀ j < 1, abba (i + j) = true := by
+  apply (subword_run_iff_letterPosition_diff abba_infinite rfl (k := 1) (by decide)).2.2.mpr
+  exact ⟨1, by decide, fun j hj => by omega⟩
+
 end MetaMathlibExt.relativePosition_of_dimers

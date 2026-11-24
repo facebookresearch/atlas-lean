@@ -17,23 +17,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Partitions with unique subsums except one.** The partitions of $m$ contained in a
-partition $\lambda$ are the distinct sub-multisets of the parts of $\lambda$ with sum $m$. Let
-$v \ge 1$. There are a natural number $n$ and a partition $\lambda$ of $n$ that contains exactly
-$v$ partitions of some $m$ with $v \le m \le n - v$ and exactly one partition of every positive
-integer $m' < n$ other than $m$ if and only if $v = 1$ or $v = 2$.
-
-The hypothesis $v \ge 1$ is needed: for $v = 0$ the partition $(2)$ of $2$ qualifies with
-$m = 1$, since it contains no partition of $1$.
-
-Source: Augustine O. Munagi, *Double Perfect Partitions of Higher Order*, INTEGERS 25 (2025),
-Article A109, Lemma 1 (`integers-2025-A109-lem-1`). -/
-public theorem_wanted exists_partition_unique_subsums_but_one_iff (v : ℕ) (hv : 1 ≤ v) :
-    (∃ n : ℕ, ∃ p : n.Partition,
-      let c : ℕ → ℕ := fun m => (p.parts.powerset.toFinset.filter fun s => s.sum = m).card
-      ∃ m, v ≤ m ∧ m ≤ n - v ∧ c m = v ∧ ∀ m', 0 < m' → m' < n → m' ≠ m → c m' = 1) ↔
-      v = 1 ∨ v = 2
-
 /-- **Lee's form of double-perfect partitions.** Let $N \ge 4$ and let $\lambda$ be a
 double-perfect partition of $N$ of order $1$. Then there are integers $q_1 \ge 2$ and
 $q_2 \ge 1$, with $q_2 = 1$ unless $q_1 = 3$, an integer $k \ge 2$ and integers

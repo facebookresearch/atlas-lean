@@ -137,4 +137,33 @@ theorem isMPTQSet_union_neg_iff {A : Finset ℝ} (hpos : ∀ a ∈ A, 0 < a) :
     card_union_neg_of_pos hquot, card_union_neg_of_pos hprod]
   exact Nat.mul_lt_mul_left (by decide : 0 < 2)
 
+/-- **At most one square is the product of the other two.**
+Let $a$, $b$, $c$ be pairwise distinct positive real numbers. Then at most one
+of the equations $a^2 = bc$, $b^2 = ac$ and $c^2 = ab$ holds; that is, no two of
+them hold simultaneously.
+
+Source: Anupriya Shetty and B. R. Shankar,
+*On The Minimum Cardinality of MPTQ Sets*, INTEGERS 24 (2024), Article A96,
+Lemma 3 (`integers-2024-A96-lem-3`). -/
+theorem at_most_one_sq_eq_mul_of_distinct {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (hc : 0 < c) (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
+    ¬ (a ^ 2 = b * c ∧ b ^ 2 = a * c) ∧ ¬ (a ^ 2 = b * c ∧ c ^ 2 = a * b) ∧
+      ¬ (b ^ 2 = a * c ∧ c ^ 2 = a * b) := by
+  have incompatible {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
+      (hxy : x ≠ y) : ¬ (x ^ 2 = y * z ∧ y ^ 2 = x * z) := by
+    rintro ⟨hx_sq, hy_sq⟩
+    apply hxy
+    -- Both products with the same positive sum are equal.
+    apply mul_right_cancel₀ (add_pos (add_pos hx hy) hz).ne'
+    simp only [mul_add, ← pow_two, hx_sq, hy_sq]
+    ac_rfl
+  refine ⟨incompatible ha hb hc hab, ?_, ?_⟩
+  · rintro ⟨ha_sq, hc_sq⟩
+    exact incompatible ha hc hb hac
+      ⟨by simpa only [mul_comm c b] using ha_sq, hc_sq⟩
+  · rintro ⟨hb_sq, hc_sq⟩
+    exact incompatible hb hc ha hbc
+      ⟨by simpa only [mul_comm c a] using hb_sq,
+        by simpa only [mul_comm b a] using hc_sq⟩
+
 end MetaMathlibExt
