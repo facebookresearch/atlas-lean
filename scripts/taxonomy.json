@@ -13022,6 +13022,7 @@
   "MathlibExt/Probability/Statistics/UncorrelatedSumVariance": {"to": "Probability/moments", "title": "Variance of uncorrelated sums"},
   "MathlibExt/Probability/Statistics/UniversalInference": {"to": "Probability/hypothesis-testing", "title": "Universal inference"},
   "MathlibExt/Probability/Statistics/WaldInequalities": {"to": "Probability/hypothesis-testing", "title": "Sequential tests and quickest change detection"},
+  "MathlibExt/Probability/Statistics/WaldWolfowitz": {"to": "Probability/hypothesis-testing", "title": "Sequential tests and quickest change detection"},
   "MathlibExt/Probability/Statistics/WeightedConformal": {"to": "Probability/hypothesis-testing", "title": "Conformal prediction under covariate shift"},
   "MathlibExt/Probability/StieltjesMeasureConstruction": {"to": "Probability/foundations", "title": "Probability measures from distribution functions"},
   "MathlibExt/Probability/StochasticOrder": {"to": "Probability/correlation-inequalities", "title": "Stochastic domination and Strassen's theorem"},
