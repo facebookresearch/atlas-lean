@@ -4,6 +4,7 @@ Point estimation theory: bias, risk and mean squared error, likelihood and maxim
 
 - [Bias and mean squared error of estimators](bias-and-mean-squared-error-of-estimators/README.md)
 - [Bootstrap and the Mallows metric](bootstrap-and-the-mallows-metric/README.md)
+- [Completeness, ancillarity and the Lehmann–Scheffé theorem](completeness-ancillarity-and-the-lehmann-scheff/README.md)
 - [Contiguity and Le Cam's lemmas](contiguity-and-le-cam-s-lemmas/README.md)
 - [Exponential families](exponential-families/README.md)
 - [Finite-population survey sampling](finite-population-survey-sampling/README.md)
