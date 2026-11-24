@@ -53,7 +53,7 @@ Theorem 2):
 * `strictMonoOn_logMarginalLik_rateRoot`: `ℓ` strictly increases along `a ↦ (a, σ a / M)`;
 * `not_exists_isMaxOn_logMarginalLik`: `ℓ` has no maximizer on `(0, ∞)²`.
 
-The score equations themselves (T86) are the merged file's `hasDerivAt_logMarginalLik_shape`,
+The score equations themselves are `HierarchicalCountMLE`'s `hasDerivAt_logMarginalLik_shape`,
 `hasDerivAt_logMarginalLik_rate` and `score_eq_zero_iff_const`; none are taken as hypotheses.
 
 ## Proof (Levin and Reeds)
@@ -239,10 +239,11 @@ theorem rampSum_sub_le (k : ℕ) {x y : ℝ} (hxy : x ≤ y) :
 /-! ### Levin and Reeds's smoothed discrepancy -/
 
 /-- **Levin and Reeds's function `H`.** For counts `k₁, …, kₙ` with sample mean `M`,
-`H(u) = ∑ᵢ R_{kᵢ}(u) - n (u² / 2 - max (u - M) 0 ² / 2)` is `∫₀ᵘ (G - F)`, where `G` is the
-distribution function of the unit masses at `0, …, kᵢ - 1` (over all `i`) and `F` that of `n`
-times Lebesgue measure on `[0, M]`. The profile shape score is a Stieltjes-type transform of
-`H` (`profileShapeScore_eq_integral`). -/
+`H(u) = ∑ᵢ R_{kᵢ}(u) - n (u² / 2 - max (u - M) 0 ² / 2)`. For `u ≥ 0` it is `∫₀ᵘ (G - F)`, where `G`
+is the distribution function of the unit masses at `0, …, kᵢ - 1` (over all `i`) and `F` that of `n`
+times Lebesgue measure on `[0, M]`; for `u < 0` it is `-n u² / 2`. For an empty family `M = 0`
+(`x / 0 = 0`) and `H = 0`. The profile shape score is a Stieltjes-type transform of `H`
+(`profileShapeScore_eq_integral`). -/
 noncomputable def smoothedDiscrepancy (k : ι → ℕ) (u : ℝ) : ℝ :=
   ∑ i, rampSum (k i) u - Fintype.card ι * (u ^ 2 / 2 - max (u - countMean k) 0 ^ 2 / 2)
 
@@ -266,7 +267,8 @@ private lemma sum_count_sq_eq [Nonempty ι] (k : ι → ℕ) :
 private lemma countMean_nonneg (k : ι → ℕ) : 0 ≤ countMean k :=
   div_nonneg (sum_nonneg fun _ _ => by positivity) (by positivity)
 
-/-- Below the sample mean, `F(u) = n u`, so `H(u) = ∑ᵢ R_{kᵢ}(u) - n u² / 2`. -/
+/-- Below the sample mean, `H(u) = ∑ᵢ R_{kᵢ}(u) - n u² / 2` for every `u ≤ M`; on `[0, M]` this
+reflects `F(u) = n u`. -/
 theorem smoothedDiscrepancy_eq_of_le {k : ι → ℕ} {u : ℝ} (hu : u ≤ countMean k) :
     smoothedDiscrepancy k u = ∑ i, rampSum (k i) u - Fintype.card ι * (u ^ 2 / 2) := by
   rw [smoothedDiscrepancy, max_eq_right (by linarith)]
@@ -636,7 +638,8 @@ theorem profileShapeScore_neg_of_le [Nonempty ι] {k : ι → ℕ} (hMV : countM
   push Not at hc
   linarith [mul_nonneg hpos.le hc]
 
-/-- **At most one root of the profile shape score** at an overdispersed sample. -/
+/-- **At most one positive root of the profile shape score** at an overdispersed sample
+(`M < V`). -/
 theorem profileShapeScore_eq_zero_unique [Nonempty ι] {k : ι → ℕ}
     (hMV : countMean k < countVar k) {a a' : ℝ} (ha : 0 < a) (ha' : 0 < a')
     (h : profileShapeScore a k = 0) (h' : profileShapeScore a' k = 0) : a = a' := by
@@ -645,14 +648,16 @@ theorem profileShapeScore_eq_zero_unique [Nonempty ι] {k : ι → ℕ}
   · exact heq
   · exact absurd h (profileShapeScore_neg_of_le hMV ha' hgt h'.le).ne
 
-/-- Left of a root the profile shape score is positive. -/
+/-- At an overdispersed sample (`M < V`), the profile shape score is positive at every
+`a ∈ (0, â)` left of a root `â`. -/
 theorem profileShapeScore_pos_of_lt [Nonempty ι] {k : ι → ℕ} (hMV : countMean k < countVar k)
     {a ahat : ℝ} (ha : 0 < a) (hlt : a < ahat) (h : profileShapeScore ahat k = 0) :
     0 < profileShapeScore a k := by
   by_contra hc
   exact (profileShapeScore_neg_of_le hMV ha hlt (not_lt.1 hc)).ne h
 
-/-- Right of a root the profile shape score is negative. -/
+/-- At an overdispersed sample (`M < V`), the profile shape score is negative at every `a > â`
+right of a positive root `â`. -/
 theorem profileShapeScore_neg_of_gt [Nonempty ι] {k : ι → ℕ} (hMV : countMean k < countVar k)
     {a ahat : ℝ} (hahat : 0 < ahat) (hlt : ahat < a) (h : profileShapeScore ahat k = 0) :
     profileShapeScore a k < 0 :=
@@ -688,14 +693,15 @@ theorem existsUnique_score_root [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι 
 /-! ### The profile likelihood and the joint MLE -/
 
 /-- The profile log likelihood of the shape at a common size factor, up to an additive constant:
-`∑ᵢ ∑_{j<kᵢ} log (a + j) + n (a log a - (a + M) log (a + M))`, the value of
+`∑ᵢ ∑_{j<kᵢ} log (a + j) + n (a log a - (a + M) log (a + M))`, with `log 0 = 0` and
+`log x = log |x|` (intended domain `a > 0`). For `σ, a > 0` and `M > 0` it is the value of
 `ℓ(a, σ a / M) - ∑ᵢ (kᵢ log M - log kᵢ!)` (`logMarginalLik_rateRoot`). -/
 noncomputable def profileLogLik (a : ℝ) (k : ι → ℕ) : ℝ :=
   ∑ i, ∑ j ∈ range (k i), log (a + j) +
     Fintype.card ι * (a * log a - (a + countMean k) * log (a + countMean k))
 
-/-- Along the rate root `b̂(a) = σ a / M`, the log marginal likelihood is the profile log
-likelihood plus a constant. -/
+/-- For `σ, a > 0` and `M > 0`, along the rate root `b̂(a) = σ a / M` the log marginal likelihood
+is the profile log likelihood plus the constant `∑ᵢ (kᵢ log M - log kᵢ!)`. -/
 theorem logMarginalLik_rateRoot [Nonempty ι] {σ a : ℝ} (hσ : 0 < σ) (ha : 0 < a) {k : ι → ℕ}
     (hM : 0 < countMean k) :
     logMarginalLik a (σ * a / countMean k) (fun _ => σ) k =
@@ -722,7 +728,7 @@ theorem logMarginalLik_rateRoot [Nonempty ι] {σ a : ℝ} (hσ : 0 < σ) (ha : 
     ring
   rw [this]; ring
 
-/-- The profile log likelihood has derivative the profile shape score. -/
+/-- At every `a > 0` the profile log likelihood has derivative the profile shape score. -/
 theorem hasDerivAt_profileLogLik {a : ℝ} (ha : 0 < a) {k : ι → ℕ} (hM : 0 ≤ countMean k) :
     HasDerivAt (fun x => profileLogLik x k) (profileShapeScore a k) a := by
   have haM : 0 < a + countMean k := by linarith
@@ -813,8 +819,9 @@ theorem existsUnique_isMaxOn_logMarginalLik [Nonempty ι] {σ : ℝ} (hσ : 0 < 
   · by_contra hne
     exact absurd (hp.2.2 (a, b) ha hb) (not_le.2 (hmax p hp.1 hp.2.1 hne))
 
-/-- **Every joint MLE solves the score equations.** At a common size factor and an overdispersed
-sample, a maximizer of `ℓ` over `(0, ∞)²` is the root of the joint score equations. -/
+/-- **Every joint MLE solves the score equations.** At a common size factor `σ > 0` and an
+overdispersed sample (`0 < M < V`), a maximizer of `ℓ` over `(0, ∞)²` is the root of the joint score
+equations. -/
 theorem score_eq_zero_of_isMaxOn [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) (hMV : countMean k < countVar k) {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hmax : ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →
@@ -864,8 +871,9 @@ private lemma smoothedDiscrepancy_pos_of_small [Nonempty ι] {k : ι → ℕ} (h
   linarith [mul_lt_mul_of_pos_right hun hu]
 
 /-- **The profile shape score is positive when `0 < M` and `V ≤ M`** (Levin and Reeds 1977,
-Theorem 2, converse half). In `profileShapeScore_eq_integral` the boundary term is `≥ 0` by
-`smoothedDiscrepancy_nonneg`, and `H > 0` just right of `0` makes the integral positive. -/
+Theorem 2, converse half), at every `a > 0`. In `profileShapeScore_eq_integral` the boundary term
+is `≥ 0` by `smoothedDiscrepancy_nonneg`, and `H > 0` just right of `0` makes the integral
+positive. -/
 theorem profileShapeScore_pos_of_le [Nonempty ι] {k : ι → ℕ} (hM : 0 < countMean k)
     (hVM : countVar k ≤ countMean k) {a : ℝ} (ha : 0 < a) : 0 < profileShapeScore a k := by
   set T : ℝ := countMean k + ∑ i, (k i : ℝ)
@@ -926,9 +934,9 @@ theorem strictMonoOn_logMarginalLik_rateRoot [Nonempty ι] {σ : ℝ} (hσ : 0 <
   rw [logMarginalLik_rateRoot hσ ha hM, logMarginalLik_rateRoot hσ ha' hM]
   linarith [hP ha ha' h]
 
-/-- **No finite joint MLE when `V ≤ M`** (Levin and Reeds 1977, Theorem 2, converse half: the
-maximum occurs at a finite shape only if `M < V`). At a common size factor `σ > 0` and a sample
-with `0 < M` and `V ≤ M`, the log marginal likelihood has no maximizer on `(0, ∞)²`: every
+/-- **No finite joint MLE when `V ≤ M`** (Levin and Reeds 1977, Theorem 2, converse half for
+`M > 0`: the maximum occurs at a finite shape only if `M < V`). At a common size factor `σ > 0` and
+a sample with `0 < M` and `V ≤ M`, the log marginal likelihood has no maximizer on `(0, ∞)²`: every
 `(a, b)` is beaten by `(a + 1, σ (a + 1) / M)`. -/
 theorem not_exists_isMaxOn_logMarginalLik [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) (hVM : countVar k ≤ countMean k) :
