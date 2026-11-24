@@ -1,13 +1,14 @@
 # Riemann solution of the Buckley-Leverett equation
 
 This node covers the entropy solution of the Buckley-Leverett injection problem. Let $f : [0, 1] \to [0, 1]$ be smooth and increasing
-with $f(0) = 0$, $f(1) = 1$, and suppose $f$ is convex on $[0, s_i]$ and concave on $[s_i, 1]$ for a single inflection point $s_i \in (0, 1)$.
-For the scalar conservation law $s_t + f(s)_x = 0$ with initial data $s = 1$ for $x < 0$ and $s = 0$ for $x > 0$, let $s^* \in (s_i, 1)$ be the
-unique point with
+with $f(0) = 0$, $f(1) = 1$ and $f'(1) < 1$, and suppose $f$ is strictly convex on $[0, s_i]$ and strictly concave on $[s_i, 1]$ for a
+single inflection point $s_i \in (0, 1)$. Then $g(s) = s f'(s) - f(s)$ is positive on $(0, s_i]$, strictly decreasing on $[s_i, 1]$ and
+negative at $s = 1$, so there is exactly one $s^* \in (s_i, 1)$ with
 
 $$f'(s^*) = \frac{f(s^*)}{s^*} .$$
 
-Then the entropy solution is self-similar: $s = 1$ for $x/t \le f'(1)$, a rarefaction with $f'(s) = x/t$ for $f'(1) < x/t < f'(s^*)$, a shock
+For the scalar conservation law $s_t + f(s)_x = 0$ with initial data $s = 1$ for $x < 0$ and $s = 0$ for $x > 0$, the entropy solution is
+self-similar: $s = 1$ for $x/t \le f'(1)$, a rarefaction with $f'(s) = x/t$ for $f'(1) < x/t < f'(s^*)$, a shock
 from $s^*$ to $0$ moving at speed $f(s^*)/s^*$, and $s = 0$ ahead of it.
 
 ## Expansion

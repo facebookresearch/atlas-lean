@@ -13,6 +13,7 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Sampled-data systems](sampled-data-systems/README.md)
 - [Model predictive control](model-predictive-control/README.md)
 - [Robust and H-infinity control](robust-and-h-infinity-control/README.md)
+- [Adaptive control](adaptive-control/README.md)
 
 ## Single-input single-output linear systems
 

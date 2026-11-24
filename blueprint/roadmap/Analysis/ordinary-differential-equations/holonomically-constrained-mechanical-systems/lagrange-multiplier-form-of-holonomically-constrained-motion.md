@@ -2,11 +2,11 @@
 
 This node covers the equivalence of the multiplier form and the reduced form of constrained mechanics. Let $M(q)$ be a continuously
 differentiable symmetric positive-definite $n \times n$ matrix field, $F(q, \dot q, t)$ continuously differentiable, and $g : \mathbb{R}^n \to \mathbb{R}^m$
-twice continuously differentiable with $Dg(q)$ of rank $m$ on $\mathcal{M} = g^{-1}(0)$. Consider
+three times continuously differentiable with $Dg(q)$ of rank $m$ on $\mathcal{M} = g^{-1}(0)$. Consider
 
 $$M(q)\ddot q = F(q, \dot q, t) + Dg(q)^{\mathsf T}\lambda, \qquad g(q) = 0 .$$
 
-For consistent data $q_0 \in \mathcal{M}$ and $\dot q_0 \in \ker Dg(q_0)$, the multiplier is a unique continuous function
+For consistent data $q_0 \in \mathcal{M}$ and $\dot q_0 \in \ker Dg(q_0)$, the multiplier is a unique locally Lipschitz function
 $\lambda = \Lambda(q, \dot q, t)$, obtained by differentiating the constraint twice, and the system has a unique local solution, which stays on
 $\mathcal{M}$. In any local chart of $\mathcal{M}$ this solution is exactly the solution of the reduced second-order equation obtained from the
 virtual-work (Lagrange-d'Alembert) principle with the constraint forces eliminated.

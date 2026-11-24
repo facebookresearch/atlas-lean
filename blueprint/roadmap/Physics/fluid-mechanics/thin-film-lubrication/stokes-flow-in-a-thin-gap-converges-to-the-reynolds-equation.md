@@ -1,21 +1,27 @@
 # Stokes flow in a thin gap converges to the Reynolds equation
 
-This node covers the rigorous justification of the Reynolds lubrication equation. Let $h$ be a smooth positive function on $[0, L]$ and
-$\Omega_\varepsilon = \{(x, y) : 0 < x < L,\ 0 < y < \varepsilon h(x)\}$. Let $(u_\varepsilon, p_\varepsilon)$ solve the steady Stokes equations with
-viscosity $\mu > 0$ in $\Omega_\varepsilon$, with velocity $(U, 0)$ on the lower wall $y = 0$, no slip on the upper wall and the boundary
-conditions at $x = 0$ and $x = L$ that fix the pressure there to zero in the limit. After the scaling $y = \varepsilon Y$ and
-$p_\varepsilon = \varepsilon^{-2} P_\varepsilon$, the rescaled pressures $P_\varepsilon$ converge, as $\varepsilon \to 0$, to the unique solution
-$P$ of the Reynolds equation
+This node covers the derivation of the Reynolds equation of lubrication as the thin-gap limit of the steady Stokes equations. Let $h$ be
+a smooth positive function on $[0, L]$, let $\mu > 0$ and real $U$ be given, and consider Stokes flow with viscosity $\mu$ in the gap
+$\Omega_\varepsilon = \{(x, y) : 0 < x < L,\ 0 < y < \varepsilon h(x)\}$, driven by the lower wall moving with speed $U$, with the upper wall
+at rest. In the variables $Y = y/\varepsilon$ and $P = \varepsilon^2 p$ the formal limit is a pressure $P(x)$ and, in each cross-section
+$0 < Y < h(x)$, the Couette-Poiseuille profile
 
-$$\frac{d}{dx}\left(h^3\,\frac{dP}{dx}\right) = 6\mu U\,\frac{dh}{dx}, \qquad P(0) = P(L) = 0,$$
+$$u(x, Y) = \frac{1}{2\mu}\,\frac{dP}{dx}\,\big(Y^2 - Y h(x)\big) + U\Big(1 - \frac{Y}{h(x)}\Big),$$
 
-and the rescaled velocities converge to the corresponding Couette-Poiseuille profile in each cross-section.
+whose flux $\int_0^{h} u\,dY = -\frac{h^3}{12\mu}\frac{dP}{dx} + \frac{Uh}{2}$ does not depend on $x$; equivalently $P$ solves the Reynolds equation
+
+$$\frac{d}{dx}\left(h^3\,\frac{dP}{dx}\right) = 6\mu U\,\frac{dh}{dx}.$$
+
+A rigorous form of this limit depends on the boundary data at $x = 0$ and $x = L$, on the function spaces and on the topology of
+convergence.
 
 ## Expansion
 
-A good expansion fixes the exact lateral boundary conditions and function spaces of the cited proof, states the scaled a priori
-estimates, and then the convergence in the norms the source uses. The solvability of the limiting Reynolds problem, and its explicit
-solution for a plane slider, are separate nodes; only the convergence is this node's claim.
+A good expansion fixes one rigorous formulation, such as that of Bayada and Chambat: the Stokes problem in $\Omega_\varepsilon$ with
+prescribed velocity data on the whole boundary compatible with the wall motions, the scaled a priori estimates, and the spaces and
+topologies in which the scaled velocities and pressures converge to the profile and pressure above, and states that convergence as a
+theorem. The solvability of the limiting Reynolds problem with prescribed end pressures, and its explicit solution for a plane slider, are
+separate nodes.
 
 ## Sources
 

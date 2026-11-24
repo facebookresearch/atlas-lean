@@ -26,6 +26,8 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 
 - [Stability of linear systems](stability-of-linear-systems/README.md)
 - [Torque-free rigid-body motion](torque-free-rigid-body-motion/README.md)
+- [Carathéodory solutions of linear systems with locally integrable inputs](caratheodory-solutions-of-linear-systems-with-locally-integrable-inputs.md)
+- [Lyapunov's direct method](lyapunov-s-direct-method/README.md)
 
 ## Logistic traveling-wave profiles
 

@@ -1,8 +1,8 @@
 # Neumann similarity solution of the one-phase Stefan problem
 
 This node covers the similarity solution of one-dimensional melting. Let a material at its melting temperature $T_m$ occupy $x > 0$,
-and at $t = 0$ let the face $x = 0$ be held at $T_w > T_m$. With thermal diffusivity $\alpha > 0$, conductivity $k > 0$, density $\rho > 0$,
-specific heat $c > 0$ and latent heat $\mathcal{L} > 0$, consider the liquid region $0 < x < s(t)$ with
+and at $t = 0$ let the face $x = 0$ be held at $T_w > T_m$. With conductivity $k > 0$, density $\rho > 0$, specific heat
+$c > 0$, thermal diffusivity $\alpha = k/(\rho c)$ and latent heat $\mathcal{L} > 0$, consider the liquid region $0 < x < s(t)$ with
 
 $$T_t = \alpha T_{xx}, \quad T(0, t) = T_w, \quad T(s(t), t) = T_m, \quad \rho\mathcal{L}\,s'(t) = -k\,T_x(s(t), t), \quad s(0) = 0 .$$
 

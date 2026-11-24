@@ -6,8 +6,8 @@ $\mathbb{E}\|X\|^2 \le P$. Then the supremum of the mutual information $I(X; Y)$
 
 $$C = \max_{K \succeq 0,\ \operatorname{tr}K \le P}\ \tfrac12\log\det\big(I + R^{-1}HKH^{\mathsf T}\big) = \sum_i \tfrac12\log^+(\mu\,\sigma_i),$$
 
-where $\sigma_i$ are the positive eigenvalues of $H^{\mathsf T}R^{-1}H$ and the water level $\mu > 0$ is determined by
-$\sum_i (\mu - 1/\sigma_i)^+ = P$. The supremum is attained by a centred Gaussian input whose covariance is diagonal in the eigenbasis of
+where, for $H \ne 0$, $\sigma_i$ are the positive eigenvalues of $H^{\mathsf T}R^{-1}H$ and the water level $\mu > 0$ is the unique solution of
+$\sum_i (\mu - 1/\sigma_i)^+ = P$; for $H = 0$ the output is independent of the input and $C = 0$. For $H \ne 0$ the supremum is attained by a centred Gaussian input whose covariance is diagonal in the eigenbasis of
 $H^{\mathsf T}R^{-1}H$ with entries $(\mu - 1/\sigma_i)^+$.
 
 ## Expansion
