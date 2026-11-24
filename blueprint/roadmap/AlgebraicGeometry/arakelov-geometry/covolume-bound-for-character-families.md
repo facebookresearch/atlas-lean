@@ -31,7 +31,7 @@ extend the cuspidal case.
 A good expansion also states and links the following, each as Alpöge's library states it at the
 locators under Sources:
 
-- the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one through the definite-side hypotheses, so it is not linked from here), for the families that the bound quantifies over
+- the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one through the definite-side hypotheses), for the families that the bound quantifies over
 - the points of a family, with their point conditions and the tie condition, for the points at which the bound holds
 - the lattice that the argument attaches to each point, for the covolume that the statement bounds
 

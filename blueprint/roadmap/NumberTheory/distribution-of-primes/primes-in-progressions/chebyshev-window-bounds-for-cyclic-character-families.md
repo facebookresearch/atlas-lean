@@ -50,9 +50,8 @@ $Y \le y \le Y^A$, and such that the same twists of the real primitive character
 dividing $8M$ have no zero with real part greater than $1 - 1/400$ up to an explicit height. It is
 proved by showing that most primes $q$ in the relevant range are good and that, for each such $q$,
 most of the candidate primes $d$ are good, with the bound on the logarithmic derivative at $1$ from
-a separate estimate. These statements are not
-yet stated as pages because the hosts, families, scales and ties are defined by long lists of
-conditions specific to this proof; a reviewable statement needs those notions first.
+a separate estimate. A precise statement of the two intermediate results requires definitions of the hosts, families,
+scales and ties, which are given by long lists of conditions specific to this proof.
 
 A good expansion has definition pages for the scales, the hosts, the families of hosts along
 windows and the ties, a page for each of the two intermediate statements (with Green's

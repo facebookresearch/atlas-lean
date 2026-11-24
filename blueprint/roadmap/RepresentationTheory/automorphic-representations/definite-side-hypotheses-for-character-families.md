@@ -39,7 +39,7 @@ reduction of CM elliptic curves outside a prime.
 A good expansion also states and links the following, each as Alpöge's library states it at the
 locators under Sources:
 
-- the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one, so it is not linked from here), for the families that the statement quantifies over
+- the class of families of auxiliary number fields attached to scales, which are the families of the window bounds for weighted Chebyshev sums (that node uses this one), for the families that the statement quantifies over
 - the selections for the members of a family, with their Hermitian lattices over CM fields, their theta realisations on indefinite and definite unitary groups, and the rows, twists and levels of these realisations, for the data that the statement selects
 - the constants and the conditions listed above, among them the class number formulas and genus–mass volumes of the lattices and the definite-side condition, for what the statement asserts of the selections
 
