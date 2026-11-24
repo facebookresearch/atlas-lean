@@ -12702,6 +12702,7 @@
   "MathlibExt/NumberTheory/Recurrences/GeneralizedPellNumbers": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Pell numbers and compositions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciDOcagneIdentity": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciFibonacciFactorIdentity": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
+  "MathlibExt/NumberTheory/Recurrences/GibonacciFibonacciLucasIdentity": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciLucasLikeSum": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciLucasMultiplier": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciSquaresRecurrence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
