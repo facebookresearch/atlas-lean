@@ -26,14 +26,15 @@ irreducible unitary representation of $G$, with inner products linear in the fir
   from $H$ to $L^2(G)$ with the right regular representation. Carey reaches the embedding into the regular
   representation through a positive-definite convolution square root; the passage from one coefficient
   to all of them uses the unimodularity of $G$, as here.
-- **Closed operators.** A closed densely defined operator $T$ between Hilbert spaces has a polar
-  decomposition $T = U \lvert T \rvert$, with $\lvert T \rvert$ positive self-adjoint and of the same domain as $T$.
+- **Closed operators.** A closed densely defined operator $T$ between Hilbert spaces has a
+  [polar decomposition](../../Analysis/operator-theory/spectral-theory/unbounded-self-adjoint-and-trace-class-operators.md) $T = U \lvert T \rvert$, with $\lvert T \rvert$ positive
+  self-adjoint and of the same domain as $T$.
 
 ## Expansion
 
 A good expansion has pages for Schur's lemma for unitary representations (through the spectral
 theorem), for the invariance of Haar measure under inversion on unimodular groups (beyond the
-second-countable case), for closed operators and their polar decomposition, and for
+second-countable case), and for
 the square integrability of all coefficients and the boundedness of the coefficient maps, each citing the sources below with locators.
 
 It also writes out these steps of its own proof:
@@ -43,13 +44,14 @@ It also writes out these steps of its own proof:
 ## Depends on
 
 - [Unitary representations of locally compact groups and representations of compact groups](unitary-representations-and-representations-of-compact-groups.md), for unitary representations of locally compact groups, the space $L^2(G)$ and its left and right regular representations, for all the items
+- [Spectral theorem for unbounded self-adjoint operators, and trace-class operators](../../Analysis/operator-theory/spectral-theory/unbounded-self-adjoint-and-trace-class-operators.md), for the polar decomposition of closed densely defined operators
 
 ## Proof depends on
 
 - [Spectral theorem for bounded self-adjoint operators, multiplication form](../../Analysis/operator-theory/spectral-theory/spectral-theorem-for-bounded-self-adjoint-operat/bounded-self-adjoint-spectral-multiplica.md), for Schur's lemma: a bounded operator $T$ commuting with $\pi(G)$ has self-adjoint parts $(T + T^*)/2$ and $(T - T^*)/2i$, each commuting with $\pi(G)$ as $\pi$ is unitary (they need not commute with each other); a self-adjoint operator commuting with $\pi(G)$ commutes with its spectral projections, which are then $0$ or $1$ by irreducibility; for an intertwiner $T$ between inequivalent representations, $T^*T$ and $TT^*$ are scalars, and a nonzero $T$ would be a multiple of a unitary equivalence
 - [Right-invariant Haar measures are inversion-invariant](../../MeasureTheory/haar-measure/unimodular-groups/is-inv-invariant-of-is-mul-right-invaria.md), for the inversion, in the second-countable case, which covers Lie groups
 - [Uniqueness of regular left-invariant measures up to a scalar](../../MeasureTheory/haar-measure/existence-and-uniqueness-of-haar-measure/is-mul-left-invariant-eq-smul-of-regular.md), for the uniqueness of Haar measure up to a scalar, behind the invariance under inversion
-- [Spectral theorem for unbounded self-adjoint operators, and trace-class operators](../../Analysis/operator-theory/spectral-theory/unbounded-self-adjoint-and-trace-class-operators.md), for the spectral theorem for unbounded self-adjoint operators, which gives $\lvert T \rvert = (T^*T)^{1/2}$ and its spectral projections, for the polar decomposition of closed densely defined operators and the boundedness of the coefficient maps
+- [Spectral theorem for unbounded self-adjoint operators, and trace-class operators](../../Analysis/operator-theory/spectral-theory/unbounded-self-adjoint-and-trace-class-operators.md), for the polar decomposition of a closed densely defined operator $T$ between Hilbert spaces, with $\lvert T \rvert = (T^*T)^{1/2}$ of the same domain as $T$, and for the spectral projections of $\lvert T \rvert$ on an arbitrary, possibly nonseparable, Hilbert space, for the polar decomposition of the coefficient maps and their boundedness
 
 ## Sources
 

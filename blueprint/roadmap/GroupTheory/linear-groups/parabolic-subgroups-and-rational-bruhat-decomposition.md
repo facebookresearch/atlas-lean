@@ -33,15 +33,16 @@ not repeat it.
 
 A good expansion also writes out these steps of its own proof:
 
-- the theory of Borel and Tits of reductive groups over a field (conjugacy of minimal parabolic subgroups and of maximal split tori, relative root systems and their simple roots, and Tits systems), for all the items.
+- the Tits system of Borel and Tits, built from a minimal parabolic subgroup and the normalizer of a maximal split torus, from which the classification of the standard parabolic subgroups, the conjugacy of parabolic subgroups to standard ones and the rational Bruhat decomposition follow.
 
 ## Depends on
 
 - [Linear algebraic groups over local fields and their groups of rational points](../../RepresentationTheory/reductive-groups-over-local-fields/linear-algebraic-groups-over-local-fields.md), for linear algebraic groups, connected reductive groups, split tori and unipotent radicals
+- [Relative roots, root space decompositions and root subgroups of reductive groups](relative-root-systems-and-root-subgroups.md), for the relative root system of $(\mathbf{G}, A_0)$, its simple roots and the relative Weyl group
 
 ## Proof depends on
 
-Its proof consists of the steps listed under Expansion.
+- [Relative roots, root space decompositions and root subgroups of reductive groups](relative-root-systems-and-root-subgroups.md), for the conjugacy of minimal parabolic subgroups and of maximal split tori, on which the Tits system rests
 
 ## Sources
 

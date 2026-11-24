@@ -4,11 +4,12 @@ This node is still to be broken down. It covers the explicit formula for the sph
 unramified generic representation of $\mathrm{GL}_n$ over a non-archimedean local field, and the identity of
 characters of $\mathrm{GL}_n(\mathbb{C})$ with which the unramified Rankin–Selberg integrals are computed. Let $F$
 have ring of integers $\mathcal{O}$, uniformizer $\varpi$ and residue field of order $q$, $K = \mathrm{GL}_n(\mathcal{O})$, $\psi$ an
-unramified nontrivial additive character, and $\pi$ an irreducible unramified generic representation of
+additive character of conductor zero, trivial on $\mathcal{O}$ but not on $\varpi^{-1}\mathcal{O}$, and $\pi$ an irreducible unramified generic representation of
 $\mathrm{GL}_n(F)$ with [Satake parameters](../representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md) $A_\pi = \mathrm{diag}(\mu_1(\varpi), \dots, \mu_n(\varpi))$.
 
-- **Shintani's formula** (Shintani; Casselman–Shalika). The $K$-fixed vector $W^\circ$ of the
-  [Whittaker model](whittaker-models-for-gl-n.md) $\mathcal{W}(\pi, \psi)$ with $W^\circ(1) = 1$ satisfies, for
+- **Shintani's formula** (Shintani; Casselman–Shalika). The $K$-fixed vectors of the
+  [Whittaker model](whittaker-models-for-gl-n.md) $\mathcal{W}(\pi, \psi)$ form a line, containing a unique $W^\circ$ with
+  $W^\circ(1) = 1$, which satisfies, for
   $\varpi^J = \mathrm{diag}(\varpi^{j_1}, \dots, \varpi^{j_n})$, $W^\circ(\varpi^J) = 0$ unless $j_1 \ge \dots \ge j_n$, and then
   $W^\circ(\varpi^J) = \delta_{B_n}^{1/2}(\varpi^J)\, \chi_J(A_\pi)$, where $\chi_J$ is the character of the irreducible
   representation of $\mathrm{GL}_n(\mathbb{C})$ of highest weight $J$ and $\delta_{B_n}$ the modulus of the upper Borel

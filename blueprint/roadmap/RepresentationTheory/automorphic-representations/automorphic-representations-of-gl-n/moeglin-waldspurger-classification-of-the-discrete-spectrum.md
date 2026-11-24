@@ -15,7 +15,9 @@ kernel of $\lvert \det \rvert$.
 
 A good expansion has a statement page for the theorem, after a definition page for isobaric sums, citing the sources
 below with locators; Mœglin and Waldspurger prove it through the residues of the Eisenstein series induced from
-$\mu^{\otimes n}$ and the classification of the residual spectrum.
+$\mu^{\otimes n}$ and the classification of the residual spectrum. The global normalizing factors of their intertwining
+operators are Rankin–Selberg $L$-functions of pairs of cuspidal representations, whose poles locate the residues, and
+they analyse the normalized local intertwining operators separately.
 
 ## Depends on
 
@@ -25,6 +27,7 @@ $\mu^{\otimes n}$ and the classification of the residual spectrum.
 ## Proof depends on
 
 - [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the residues that span the residual spectrum
+- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the $L$-functions of pairs of cuspidal representations and their poles, which normalize the intertwining operators
 
 ## Sources
 
@@ -36,4 +39,5 @@ $\mu^{\otimes n}$ and the classification of the residual spectrum.
   Shimura Varieties*, Clay Math. Proc. 4, American Mathematical Society, 2005, 1–263,
   <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §26, Theorem 26.2 (Mœglin–Waldspurger) and the paragraph after it.
 - C. Mœglin and J.-L. Waldspurger, "Le spectre résiduel de GL(n)", Ann. Sci. École Norm. Sup. (4) 22 (1989), 605–674,
-  the original theorem, as cited by Kaletha, Mínguez, Shin and White.
+  the original theorem, as cited by Kaletha, Mínguez, Shin and White; p. 606 (the Rankin–Selberg $L$-functions of pairs in
+  the global normalizing factors), with the normalized local intertwining operators in I.8 and I.11.

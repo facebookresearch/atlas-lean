@@ -3,15 +3,18 @@
 This node is still to be broken down. It covers the two external theorems through which Atiyah and Schmid construct the
 discrete series with Dirac operators.
 
-- **$L^2$-index theorem** (Atiyah). Let a discrete group $\Gamma$ act smoothly and freely on a manifold $\tilde X$ with
-  compact quotient $X = \Gamma \backslash \tilde X$, and let $\tilde D$ be a $\Gamma$-invariant elliptic differential operator on
+- **$L^2$-index theorem** (Atiyah). Let a discrete group $\Gamma$ act smoothly, freely and properly discontinuously on a
+  manifold $\tilde X$ with compact quotient $X = \Gamma \backslash \tilde X$, so that $\tilde X \to X$ is a regular covering with group
+  $\Gamma$, and let $\tilde D$ be a $\Gamma$-invariant elliptic differential operator on
   $\tilde X$, the lift of an elliptic operator $D$ on $X$. Let $\mathcal{H}^\pm$ be the spaces of $L^2$-solutions of
   $\tilde D u = 0$ and $\tilde D^* v = 0$, whose orthogonal projections have smooth $\Gamma$-invariant kernels $K^\pm$, and
   $\dim_\Gamma \mathcal{H}^\pm = \int_{\Gamma \backslash \tilde X} \operatorname{tr} K^\pm(x, x) \, dx$. Then
-  $\dim_\Gamma \mathcal{H}^+ - \dim_\Gamma \mathcal{H}^- = \operatorname{index} D$, which the index theorem for compact manifolds computes.
-- **Cocompact lattices** (Borel). Every real semisimple Lie group $G$ has a discrete torsion-free subgroup $\Gamma$ with
-  $\Gamma \backslash G$ compact; such a $\Gamma$ meets no conjugate of a maximal compact subgroup $K$, so it acts freely on
-  $G/K$ and $\Gamma \backslash G/K$ is a compact manifold.
+  $\dim_\Gamma \mathcal{H}^+ - \dim_\Gamma \mathcal{H}^- = \operatorname{index} D$, the Fredholm index of $D$ on the compact manifold $X$, which
+  the Atiyah–Singer index theorem computes as a characteristic number.
+- **Cocompact lattices** (Borel). Every connected real semisimple Lie group $G$ with finite centre has a discrete
+  torsion-free subgroup $\Gamma$ with $\Gamma \backslash G$ compact. Such a $\Gamma$ meets every conjugate of a maximal compact
+  subgroup $K$ only in the identity, since the intersection is discrete in a compact group, hence finite, hence trivial;
+  so $\Gamma$ acts freely and properly discontinuously on $G/K$, and $\Gamma \backslash G/K$ is a compact manifold.
 
 ## Expansion
 

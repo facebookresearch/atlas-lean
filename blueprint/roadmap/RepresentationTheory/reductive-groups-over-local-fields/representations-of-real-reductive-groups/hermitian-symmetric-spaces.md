@@ -27,7 +27,8 @@ homogeneous holomorphic bundles, each citing the source below with locators.
 ## Depends on
 
 - [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for $K$ and the Cartan
-  decomposition
+  decomposition of the semisimple part; the compact centre lies in every maximal compact subgroup, which extends the
+  decomposition to $G$
 
 ## Proof depends on
 

@@ -8,3 +8,4 @@ Reductive groups over archimedean and non-archimedean local fields and their rep
 - [Linear algebraic groups over local fields and their groups of rational points](linear-algebraic-groups-over-local-fields.md)
 - [Finiteness of the connected components of real algebraic varieties and groups](connected-components-of-real-algebraic-groups.md)
 - [Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ](weil-groups-and-the-archimedean-local-langlands-correspondence.md)
+- [Local classification and the local intertwining relation for inner forms of unitary groups](local-classification-and-intertwining-relation-for-unitary-groups.md)

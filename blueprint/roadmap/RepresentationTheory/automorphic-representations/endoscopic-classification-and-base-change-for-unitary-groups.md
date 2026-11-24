@@ -65,8 +65,8 @@ Press, 2011, with locators.
 A good expansion also writes out these steps of its own proof:
 
 - the identification of the Asai $L$-function with the pole, $\mathrm{Asai}^\eta$ with $\eta = (-1)^{N-1}\kappa$ (Mok, Theorem 2.5.4 (a), p. 36, and Remark 2.5.6), for the parity: the simple pole of the product alone determines neither.
-- for the quasi-split groups, Mok's comparison of the stabilized trace formula of $U_{E/F}(N)$ with the stabilized twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_N$, with the fundamental lemmas and the weighted fundamental lemma.
-- for inner forms, the untwisted trace formula of the inner twist compared with Mok's results, under the two local hypotheses of Kaletha–Mínguez–Shin–White at every place, the local classification (their Hypothesis 3.6.3) and the local intertwining relation (their Theorem 2.6.2) (KMSW, Theorem* 1.7.1, p. 89, and Chapter 5, Theorem 5.0.5, pp. 205–206); the stabilization of this untwisted trace formula itself also needs the weighted fundamental lemma (KMSW, Introduction, p. 6).
+- for the quasi-split groups, Mok's comparison of the stabilized trace formula of $U_{E/F}(N)$ with the stabilized twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_N$, and the analysis of the parity that it gives; the classification is conditional on the stabilizations it compares.
+- for inner forms, the comparison of the untwisted trace formula of the inner twist with Mok's results (KMSW, Theorem* 1.7.1, p. 89, and Chapter 5, Theorem 5.0.5, pp. 205–206), which holds under the two local hypotheses at every place and the stabilization of that trace formula.
 
 ## Depends on
 
@@ -81,6 +81,8 @@ A good expansion also writes out these steps of its own proof:
 - [Rankin–Selberg L-functions for GLₙ × GLₘ](automorphic-representations-of-gl-n/rankin-selberg-l-functions-for-gl-n.md), for the simple pole at $s = 1$ of the Rankin–Selberg $L$-function of a conjugate self-dual cuspidal representation and its contragredient, the product of its two Asai $L$-functions (Mok, (2.5.9), pp. 35–36), which underlies the parity of these representations
 - [Asai L-functions at s = 1](automorphic-representations-of-gl-n/asai-l-functions-at-s-equal-one.md), for the non-vanishing at $s = 1$ of both Asai $L$-functions (Shahidi, as Mok cites it, p. 36), by which exactly one of them has a pole there, a simple one, for the parity
 - [Mœglin–Waldspurger classification of the discrete spectrum of GLₙ](automorphic-representations-of-gl-n/moeglin-waldspurger-classification-of-the-discrete-spectrum.md), for Mœglin–Waldspurger's classification of the discrete spectrum of $\mathrm{GL}_N$ by the blocks attached to a unitary cuspidal $\mu$ and a length $d \ge 1$, cuspidal for $d = 1$ and residual for $d > 1$ (KMSW, (1.3.2)–(1.3.3), p. 64)
+- [Stabilization of the trace formulas for unitary groups and their twisted comparison group](stabilization-of-trace-formulas-for-unitary-groups.md), for the stabilizations that Mok's comparison and that of Kaletha, Mínguez, Shin and White rest on: of the twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_N$ (Mok's Hypothesis 4.2.1) and of the trace formulas of $U_{E/F}(N)$ and of its inner twists, with the transfer and the standard and weighted fundamental lemmas
+- [Local classification and the local intertwining relation for inner forms of unitary groups](../reductive-groups-over-local-fields/local-classification-and-intertwining-relation-for-unitary-groups.md), for the local classification and the local intertwining relation at every place, the two hypotheses of Kaletha, Mínguez, Shin and White's Theorem 5.0.5 for inner forms
 
 ## Sources
 

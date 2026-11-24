@@ -13,3 +13,4 @@ Irreducible representations of GLₙ over non-archimedean local fields: derivati
 - [Local Langlands correspondence for GLₙ](local-langlands-correspondence-for-gl-n.md)
 - [Construction of the local Langlands correspondence for GLₙ](construction-of-the-local-langlands-correspondence.md)
 - [Shintani's formula for spherical Whittaker functions of GLₙ](shintani-formula-for-spherical-whittaker-functions.md)
+- [Asymptotics of Whittaker functions of GLₙ over a non-archimedean field](asymptotics-of-whittaker-functions.md)

@@ -47,7 +47,7 @@ besides the one below.
 ## Proof depends on
 
 - [Vector-valued integrals and distributions on Lie groups](../../lie-and-topological-representations/vector-valued-integrals-and-distributions-on-lie-groups.md), for the structure of distributions supported in $K$, through normal derivatives transverse to $K$, for the description of $\mathcal{H}(G, K)$ through $\mathcal{U}(\mathfrak{g}) \otimes_{\mathcal{U}(\mathfrak{k})} \mathcal{A}(K)$, with the product computed among distributions
-- [(g, K)-modules, the Poincaré–Birkhoff–Witt theorem and Harish-Chandra's homomorphism](g-k-modules-and-harish-chandra-homomorphism.md), for the Poincaré–Birkhoff–Witt theorem in that description
+- [Poincaré–Birkhoff–Witt theorem](../../../Algebra/nonassociative-algebras/poincare-birkhoff-witt-theorem.md), for the freeness of $U(\mathfrak{g})$ over $U(\mathfrak{k})$, through the ordered monomials in a basis of $\mathfrak{g}$ extending one of $\mathfrak{k}$, in that description
 - [Unitary representations of locally compact groups and representations of compact groups](../../lie-and-topological-representations/unitary-representations-and-representations-of-compact-groups.md), for the Schur orthogonality relations for the characters of irreducible representations of a compact group, for the idempotents $\xi_\tau$
 
 ## Sources

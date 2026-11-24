@@ -48,7 +48,7 @@ criterion, each citing the sources below with locators.
 
 It also writes out these steps of its own proof:
 
-- the passage from one to several variables: a locally uniform limit of holomorphic functions on an open subset of $\mathbb{C}^n$ is locally bounded and holomorphic in each variable separately, hence holomorphic by Osgood's lemma applied on polydiscs, for the Fréchet topology.
+- the passage from one to several variables: a locally uniform limit of holomorphic functions on an open subset of $\mathbb{C}^n$ is continuous and, by the one-variable theorem on slices, holomorphic in each variable separately; Osgood's lemma in its local form, proved by the iterated one-variable Cauchy integral over the distinguished boundary of a closed polydisc inside the open set, makes it holomorphic, for the Fréchet topology.
 - Harish-Chandra's construction of the square-integrable holomorphic sections (Harish-Chandra IV–VI), for the square-integrability: the nonvanishing of the Hilbert space under positivity and its infinitesimal equivalence with $\mathbf{F}_\lambda$ (Schmid, §3, (3.12), pp. 72–73).
 
 ## Depends on
@@ -60,7 +60,6 @@ It also writes out these steps of its own proof:
 
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the continuous isotypic projections in the lowest $K$-type argument
 - [Locally uniform limits of holomorphic functions are holomorphic](../../../Analysis/complex-analysis/cauchy-theory/locally-uniform-limit-of-holomorphic.md), for the Weierstrass theorem in one variable, for the Fréchet topology
-- [Osgood's lemma for functions bounded on open sets](../../../Analysis/complex-analysis/several-complex-variables/hartogs-theorem-on-separate-analyticity/differentiable-at-uncurry-of-separately-2.md), for Osgood's lemma, for the Fréchet topology
 
 ## Sources
 

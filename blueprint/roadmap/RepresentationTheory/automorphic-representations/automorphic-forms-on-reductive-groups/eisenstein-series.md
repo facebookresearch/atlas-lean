@@ -63,6 +63,9 @@ Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition a
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the Siegel-set estimates in the proof of absolute convergence
 - [Discreteness of the cuspidal spectrum](discreteness-of-the-cuspidal-spectrum.md), for the cuspidal spectrum of the Levi factors, whose cuspidal data index the wave packets of the spectral decomposition
 - [Paley–Wiener theorem on a real vector space](../../../Analysis/harmonic-analysis/fourier-transform/paley-wiener-theorem-on-a-real-vector-space.md), for the wave packets: entire functions on $\mathfrak{a}_{P,\mathbb{C}}^*$ of Paley–Wiener type, with values in a finite-dimensional space, are the Fourier–Laplace transforms of smooth compactly supported functions on $\mathfrak{a}_P$ (Arthur, §12)
+- [Square-integrable K-finite and Z-finite functions are automorphic forms](square-integrable-automorphic-forms.md), for the smooth representatives of moderate growth of the $K$-finite vectors in the discrete spectrum of the Levi factors, to which the formulas apply pointwise, and for their growth on Siegel sets in the proof of absolute convergence (Arthur, §7, Lemma 7.1, pp. 32–35)
+- [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for the rapid decay of cuspidal data on Siegel sets of the Levi factors, behind the square integrability of the pseudo-Eisenstein series and the inner products of wave packets (Arthur, §12, pp. 64–66)
+- [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), for the finite multiplicities in the whole discrete spectrum of the Levi factors, residual part included (Borel, §10, p. 28)
 
 ## Sources
 

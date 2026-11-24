@@ -38,6 +38,7 @@ It also writes out these steps of its own proof:
 ## Depends on
 
 - [ℓ-spaces, distributions and smooth representations of ℓ-groups](l-spaces-distributions-and-smooth-representations-of-l-groups.md), for smooth representations of $\ell$-groups, the subspaces $V^K$ and admissibility
+- [Haar measure](../../../MeasureTheory/haar-measure/is-haar-measure.md), for the Haar measure of the convolution product, under which $e_K$ is the indicator function of $K$ divided by its volume
 
 ## Proof depends on
 

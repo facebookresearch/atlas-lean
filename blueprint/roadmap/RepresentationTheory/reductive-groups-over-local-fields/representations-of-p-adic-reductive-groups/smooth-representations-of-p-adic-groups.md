@@ -46,6 +46,7 @@ the same distribution character.
 ## Depends on
 
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the groups $\mathbf{G}(F)$ as $\ell$-groups (the example in the first paragraph) and for connected reductive groups, the setting of Schur's lemma and central characters
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](l-spaces-distributions-and-smooth-representations-of-l-groups.md), for $\ell$-groups and smooth and admissible representations, which the first paragraph and the first two items recall
 
 ## Proof depends on
 

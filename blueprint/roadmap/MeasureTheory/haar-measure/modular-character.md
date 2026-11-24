@@ -1,6 +1,6 @@
 # Modular function of a locally compact group
 
-Let $G$ be a locally compact topological group and $\mu$ a fixed left Haar measure on $G$. For $g \in G$, the
+Let $G$ be a locally compact topological group with its Borel σ-algebra and $\mu$ a fixed left Haar measure on $G$. For $g \in G$, the
 measure $A \mapsto \mu(Ag^{-1})$, the image of $\mu$ under right multiplication $x \mapsto xg$, is again left
 invariant and finite on compact sets, and $\Delta(g) \ge 0$ is the factor with
 

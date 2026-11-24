@@ -24,7 +24,7 @@ groups take as their setting.
   $\mathbf{G}(\mathbb{R})$ has maximal compact subgroups, and they are all conjugate. For a connected linear
   semisimple Lie group this is E. Cartan's theorem (Etingof, Theorem 5.13); the extension to
   $\mathbf{G}(\mathbb{R})$, which can be disconnected and has a centre, is a separate step, through the finiteness of
-  its components and the theorem of Cartan, Iwasawa and Malcev on Lie groups with finitely many components.
+  its components and the theorem on the maximal compact subgroups of Lie groups with finitely many components.
 
 ## Expansion
 
@@ -49,7 +49,7 @@ It also writes out these steps of its own proof:
 ## Proof depends on
 
 - [Compactness of the completed ring of integers](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/is-compact-adic-completion-integers.md), for the local compactness of the completions of number fields, whose rings of integers are compact open subrings
-- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for the closed subgroup theorem, in the real case; and for E. Cartan's conjugacy theorem and the Cartan decomposition, for the conjugacy of maximal compact subgroups in the connected linear semisimple case; and for the theorem of Cartan, Iwasawa and Malcev on the existence and conjugacy of maximal compact subgroups of a connected Lie group, for the extension to $\mathbf{G}(\mathbb{R})$
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for the closed subgroup theorem, in the real case; and for E. Cartan's conjugacy theorem and the Cartan decomposition, for the conjugacy of maximal compact subgroups in the connected linear semisimple case; and for the existence and conjugacy of maximal compact subgroups of Lie groups with finitely many components, which with the finiteness of the components of $\mathbf{G}(\mathbb{R})$ gives the extension to $\mathbf{G}(\mathbb{R})$
 - [Finiteness of the connected components of real algebraic varieties and groups](connected-components-of-real-algebraic-groups.md), for the finiteness of the connected components of real algebraic sets and of $\mathbf{G}(\mathbb{R})$, in the real case
 
 ## Sources

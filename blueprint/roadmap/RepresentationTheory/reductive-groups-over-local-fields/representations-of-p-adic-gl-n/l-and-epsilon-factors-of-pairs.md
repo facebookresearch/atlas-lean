@@ -57,7 +57,7 @@ follows there, since its printed factors do not depend on the product index.
 
 A good expansion also writes out these steps of its own proof:
 
-- the asymptotic expansion of Whittaker functions on the diagonal torus, as finite sums of products of these finite functions with Schwartz functions (Cogdell, Lecture 6, §1, Proposition 6.1 and Remark 3, p. 46), from which the convergence and rationality of the local integrals follow (Proposition 6.2, p. 47); Cogdell proves these for unitary generic representations with $m < n$, the case $m = n$ being analogous.
+- the convergence and rationality of the local integrals, from the asymptotic expansion of Whittaker functions on the diagonal torus (Cogdell, Lecture 6, §1, Proposition 6.2, p. 47); Cogdell proves this for unitary generic representations with $m < n$, the case $m = n$ being analogous.
 - the existence of the Langlands–Deligne local constants, multiplicative in exact sequences and inductive in degree zero, by Deligne's global argument (Deligne 1973, as cited by Wedhorn), for the Galois side.
 - the application of Brauer's theorem type by type: a virtual representation of $W_F$ is a combination of irreducible ones, on each of which a power of Frobenius acts by a scalar, its type, and each type becomes of finite image after an unramified twist chosen for it (Česnavičius, §5.5, Lemma 5.5.1, (5.5.2)–(5.5.3), and Proposition 5.6, after Deligne); one twist for the whole representation does not suffice, as $1 \oplus \lvert \cdot \rvert$ shows.
 
@@ -65,12 +65,13 @@ A good expansion also writes out these steps of its own proof:
 
 - [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](whittaker-models-for-gl-n.md), for generic representations and Whittaker models
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the extension of the factors to all irreducible pairs
-- [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Galois side ($F$ of characteristic zero): the Weil group and Weil–Deligne representations
+- [Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ](../weil-groups-and-the-archimedean-local-langlands-correspondence.md), for the Galois side ($F$ of characteristic zero): the Weil group $W_F$ with its topology and abelianization, and the reciprocity map $\mathrm{Art}_F$ sending uniformizers to geometric Frobenius elements
+- [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Galois side ($F$ of characteristic zero): Weil–Deligne representations
 - [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the Galois side ($F$ of characteristic zero): the local Artin map $\mathrm{rec}_F$, composed with pointwise inversion, $x \mapsto \mathrm{rec}_F(x)^{-1}$, and read in the Weil group, which makes characters of $F^\times$ characters of $W_F$
 
 ## Proof depends on
 
-- [Parabolic induction and Jacquet functors](../representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for the Jacquet modules whose $A$-finite functions (characters times powers of the valuation, with Jordan blocks) are the exponents of the asymptotic expansion of Whittaker functions listed under Expansion
+- [Asymptotics of Whittaker functions of GLₙ over a non-archimedean field](asymptotics-of-whittaker-functions.md), for the expansion of Whittaker functions on the diagonal torus, uniform over the Whittaker model, from which the convergence and rationality of the local integrals follow (Cogdell, Lecture 6, §1, Proposition 6.1 and Remark 3, p. 46)
 - [Mirabolic restriction and Bernstein–Zelevinsky derivatives](bernstein-zelevinsky-derivatives.md), for the Kirillov models and the representation theory of the mirabolic subgroup, in which the uniqueness, outside finitely many values of $q^{-s}$, of the quasi-invariant bilinear forms behind the local functional equation is proved (Cogdell, Lecture 6, §3, Proposition 6.4, p. 48; Theorem 6.2 is the resulting functional equation)
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the Bruhat decomposition, which the proof of that uniqueness also uses (ibid.)
 - [Functional equation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-functional-equation.md), for the global functional equation of Hecke $L$-functions with the standard adelic character and self-dual measures, from which Deligne's global argument for the local constants starts; it does not state the local functional equations for arbitrary $(\chi, \psi, dx)$

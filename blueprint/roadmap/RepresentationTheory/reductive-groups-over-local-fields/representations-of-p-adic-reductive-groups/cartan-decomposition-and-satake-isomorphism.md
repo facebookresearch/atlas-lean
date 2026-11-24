@@ -11,8 +11,10 @@ group containing $X_*(A)$ with the same rank.
 - **Cartan decomposition** (Cartier). $\tilde K \backslash G(F) / \tilde K \cong W \backslash \tilde\Lambda_M$; for
   $\mathbf{G}$ unramified, $\tilde\Lambda_M = X_*(A)$ and $\tilde K \backslash G(F) / \tilde K \cong W \backslash X_*(A)$.
 - **Satake isomorphism** (Satake, Cartier). The Hecke algebra $\mathcal{H}_{\tilde K} = C_c^\infty(\tilde K \backslash
-  G(F) / \tilde K)$ is isomorphic, as a $\mathbb{C}$-algebra, to $\mathbb{C}[\tilde\Lambda_M]^W$; for $\mathbf{G}$
-  unramified and $\tilde K$ hyperspecial, to $\mathbb{C}[X_*(A)]^W$.
+  G(F) / \tilde K)$, under convolution for the Haar measure giving $\tilde K$ volume $1$, is isomorphic, as a
+  $\mathbb{C}$-algebra, to $\mathbb{C}[\tilde\Lambda_M]^W$; for $\mathbf{G}$ unramified and $\tilde K$ hyperspecial, to
+  $\mathbb{C}[X_*(A)]^W$. The isomorphism is the Satake transform $f \mapsto \big(m \mapsto \delta_P(m)^{1/2} \int_{N(F)} f(mn) \, dn\big)$
+  for a minimal parabolic subgroup $P = MN$, with modulus character $\delta_P$.
 - **Parahoric form** (Haines–Rostami). For the special maximal parahoric subgroup $K \subseteq \tilde K$ attached to
   $v$ and $\Lambda_M = M(F)/M(F)_1$, with $M(F)_1$ the parahoric subgroup of $M(F)$, there is a canonical isomorphism
   $\mathcal{H}_K \cong \mathbb{C}[\Lambda_M]^W$; $\tilde\Lambda_M = \Lambda_M/\text{torsion}$, and $K = \tilde K$ when $\mathbf{G}$
@@ -31,11 +33,15 @@ $\tilde K$-fixed line.
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the building, special vertices and
   the maximal split torus
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the setting
+- [Hecke-algebra corners of smooth representations and independence of their characters](hecke-algebra-corners-and-character-independence.md), for the algebra of bi-invariant locally constant compactly supported functions under convolution, with its normalized idempotent
+- [Haar measure](../../../MeasureTheory/haar-measure/is-haar-measure.md), for the Haar measure of $G(F)$ normalized by the volume of $\tilde K$
 
 ## Proof depends on
 
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the relative Weyl
   group
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for minimal parabolic
+  subgroups and their modulus characters, used in the Satake transform
 
 ## Sources
 

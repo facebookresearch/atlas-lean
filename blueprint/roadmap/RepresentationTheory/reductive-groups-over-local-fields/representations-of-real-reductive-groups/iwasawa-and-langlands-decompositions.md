@@ -40,11 +40,12 @@ $K$ and in $M$.
   $\mathbb{R}$-subgroups and their Levi factors
 - [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for $K$ and the
   Cartan decomposition
+- [Relative roots, root space decompositions and root subgroups of reductive groups](../../../GroupTheory/linear-groups/relative-root-systems-and-root-subgroups.md), for the restricted roots of $\mathfrak{a}$ in $\mathfrak{g}$ and their root spaces, the relative roots of the maximal $\mathbb{R}$-split torus whose real points contain $A$
 
 ## Proof depends on
 
 - [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for the conjugacy
-  of maximal compact subgroups
+  of maximal compact subgroups, including those of Lie groups with finitely many components
 - [Finiteness of the connected components of real algebraic varieties and groups](../connected-components-of-real-algebraic-groups.md),
   for the components of $G$ in the reductive case
 

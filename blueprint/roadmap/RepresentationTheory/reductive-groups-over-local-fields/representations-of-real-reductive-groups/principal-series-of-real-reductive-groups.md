@@ -56,14 +56,14 @@ It also writes out these steps of its own proof:
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the parabolic $\mathbb{R}$-subgroups $P = MN$ of the algebraic group and their Levi decompositions, over $k = \mathbb{R}$
 - [Iwasawa and Langlands decompositions of real reductive groups](iwasawa-and-langlands-decompositions.md), for the Langlands decompositions $P = MAN$ of real parabolic subgroups and Cartan subgroups, also for connected semisimple Lie groups with finite centre that are not linear, for the principal series and the characters
 - [Spectral theorem for unbounded self-adjoint operators, and trace-class operators](../../../Analysis/operator-theory/spectral-theory/unbounded-self-adjoint-and-trace-class-operators.md), for trace-class operators on a Hilbert space and the trace of $\pi(f)$, $f \in C_c^\infty(G)$, for distribution characters
-- [(g, K)-modules, the Poincaré–Birkhoff–Witt theorem and Harish-Chandra's homomorphism](g-k-modules-and-harish-chandra-homomorphism.md), for the definition of Harish-Chandra modules, used by the second and third items
+- [(g, K)-modules, the centre of the enveloping algebra and Harish-Chandra's homomorphism](g-k-modules-and-harish-chandra-homomorphism.md), for the definition of Harish-Chandra modules, used by the second and third items
 
 ## Proof depends on
 
 - [Admissible representations of real reductive groups](admissible-representations-of-real-reductive-groups.md), for the bound $n_i \le \dim V_i$ on $K$-multiplicities of irreducible unitary representations in the connected semisimple case, through which Atiyah and Schmid show that the operators $\pi(f)$ are of trace class (Atiyah–Schmid, §2, (2.1)); for nonlinear groups with finite centre they cite the bound directly
 - [Peter–Weyl theorem: unitary representations separate points](../../lie-and-topological-representations/representations-of-compact-groups/peter-weyl-point-separation.md), for point separation, from which the density of matrix coefficients of $K$ follows by the Stone–Weierstrass theorem
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the decomposition into $K$-types used throughout: the continuous isotypic projections and, for unitary representations, the Hilbert direct sum of the isotypic components
-- [Atiyah's L²-index theorem and cocompact lattices of semisimple groups](atiyah-l2-index-theorem-and-cocompact-lattices.md), for Atiyah's $L^2$-index theorem for an elliptic operator on a manifold with a free cocompact action of a discrete group, the index theorem on the compact quotient, and Borel's existence of cocompact torsion-free discrete subgroups, for the Atiyah–Schmid construction
+- [Atiyah's L²-index theorem and cocompact lattices of semisimple groups](atiyah-l2-index-theorem-and-cocompact-lattices.md), for Atiyah's $L^2$-index theorem for an elliptic operator on a manifold with a free, properly discontinuous and cocompact action of a discrete group, the index theorem on the compact quotient, and Borel's existence of cocompact torsion-free discrete subgroups of connected semisimple groups with finite centre, for the Atiyah–Schmid construction
 
 ## Sources
 

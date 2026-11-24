@@ -5,11 +5,13 @@ automorphic pages use beside reduction theory. Let $k$ be a number field, $\math
 $k$, $\mathbf{P} = \mathbf{M}\mathbf{N}$ a parabolic $k$-subgroup with Levi factor $\mathbf{M}$, and $G(\mathbb{A})^1$,
 $A_G$ and $H_G$ as in [reduction theory](reduction-theory-for-adelic-groups.md).
 
-- **The norm-one subgroup.** $G(\mathbb{A})$ is the direct product of $G(\mathbb{A})^1$ and $A_G(\mathbb{R})^0$, and likewise
-  $M(\mathbb{A}) = M(\mathbb{A})^1 \times A_M(\mathbb{R})^0$.
-- **Good maximal compact subgroups.** At each place $v$ where $\mathbf{G}$ is unramified, so at almost all places,
-  $G(k_v)$ has hyperspecial maximal compact subgroups, and there is a maximal compact subgroup
-  $K = \prod_v K_v$ of $G(\mathbb{A})$, hyperspecial at almost all places, with $G(\mathbb{A}) = P(\mathbb{A})K$; then
+- **The norm-one subgroup.** Here $A_G$ is the maximal $\mathbb{Q}$-split torus in the centre of the restriction of
+  scalars of $\mathbf{G}$ to $\mathbb{Q}$, embedded in $G(\mathbb{A})$ through the archimedean places. $G(\mathbb{A})$ is the
+  direct product of $G(\mathbb{A})^1$ and $A_G(\mathbb{R})^0$, and $H_G$ restricts to an isomorphism of $A_G(\mathbb{R})^0$ onto
+  $\mathfrak{a}_G$; likewise $M(\mathbb{A}) = M(\mathbb{A})^1 \times A_M(\mathbb{R})^0$.
+- **Good maximal compact subgroups.** At each finite place $v$ where $\mathbf{G}$ is unramified, so at almost all finite
+  places, $G(k_v)$ has hyperspecial maximal compact subgroups, and there is a maximal compact subgroup
+  $K = \prod_v K_v$ of $G(\mathbb{A})$, hyperspecial at almost all finite places, with $G(\mathbb{A}) = P(\mathbb{A})K$; then
   $G(\mathbb{A}) = N(\mathbb{A}) M(\mathbb{A})^1 A_M(\mathbb{R})^0 K$.
 - **Finiteness.** For every maximal compact subgroup $K$ of $G(\mathbb{A})$ the double coset space
   $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ is finite.
@@ -17,7 +19,7 @@ $A_G$ and $H_G$ as in [reduction theory](reduction-theory-for-adelic-groups.md).
 ## Expansion
 
 A good expansion has statement pages for the decomposition $G(\mathbb{A}) = G(\mathbb{A})^1 \times A_G(\mathbb{R})^0$, for the
-existence of maximal compact subgroups in good position, hyperspecial at the unramified places, and for the
+existence of maximal compact subgroups in good position, hyperspecial at the unramified finite places, and for the
 finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$, each citing the sources below with locators. The finiteness
 reduces to a product over the places: the archimedean factor is a single double coset by the real Iwasawa
 decomposition, almost all non-archimedean factors are single double cosets because $K_v$ is good there, and each

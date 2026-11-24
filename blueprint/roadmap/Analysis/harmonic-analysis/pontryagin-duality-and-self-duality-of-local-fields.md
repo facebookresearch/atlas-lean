@@ -9,8 +9,11 @@ the page on Heisenberg groups and the Stone–von Neumann theorem uses.
   isomorphism of topological groups. The dual of a compact group is discrete and the dual of a discrete group is
   compact.
 - **Self-duality of local fields.** Let $F$ be a local field (a locally compact non-discrete field) and
-  $\psi \colon F \to \mathbb{C}^\times$ a nontrivial continuous additive character. Then $a \mapsto \psi(a \,\cdot)$ is an
-  isomorphism of topological groups from $F$ onto the group of continuous characters of $F$.
+  $\psi \colon F \to \mathbb{S}^1 = \{z \in \mathbb{C} : \lvert z \rvert = 1\}$ a nontrivial continuous additive character,
+  unitary by definition. Then $a \mapsto \psi(a \,\cdot)$ is an isomorphism of topological groups from $F$ onto its
+  Pontryagin dual, the unitary characters being identified with homomorphisms to $\mathbb{T}$ through
+  $t \mapsto e^{2\pi i t}$. Non-unitary continuous characters are excluded: $x \mapsto e^x$ on $\mathbb{R}$ is not of the form
+  $\psi(a \, \cdot)$.
 
 ## Expansion
 

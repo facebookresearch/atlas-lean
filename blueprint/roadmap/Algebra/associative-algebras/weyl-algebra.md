@@ -8,13 +8,16 @@ Howe duality use. Let $U$ be a finite-dimensional complex vector space with poly
   $x_1, \dots, x_d$ and the partial derivatives $\partial_1, \dots, \partial_d$ in linear coordinates, with relations
   $[\partial_i, x_j] = \delta_{ij}$, $[x_i, x_j] = [\partial_i, \partial_j] = 0$. The monomials
   $x^\alpha \partial^\beta$ form a basis, $\mathcal{W}(U)$ is filtered by the total degree, and its associated graded algebra
-  is the polynomial algebra on $U \oplus U^*$. The degree-two elements span a Lie algebra isomorphic to
-  $\mathfrak{sp}(U \oplus U^*)$.
+  is the polynomial algebra on $U \oplus U^*$.
+- **Quadratic elements.** The Weyl-ordered quadratic operators $x_i x_j$, $\partial_i \partial_j$ and
+  $\tfrac12(x_i \partial_j + \partial_j x_i) = x_i \partial_j + \tfrac12 \delta_{ij}$ span a Lie algebra under the commutator,
+  isomorphic to $\mathfrak{sp}(U \oplus U^*)$. The span of the monomials $x_i x_j$, $x_i \partial_j$, $\partial_i \partial_j$ is not
+  closed under commutators: in one variable $[\partial^2, x^2] = 4 x \partial + 2$.
 
 ## Expansion
 
 A good expansion has a definition page for the Weyl algebra, with its basis, its filtration and the symplectic Lie
-algebra of its quadratic elements, citing the sources below with locators; Howe works with its filtered and graded
+algebra of its Weyl-ordered quadratic elements, citing the sources below with locators; Howe works with its filtered and graded
 forms.
 
 ## Depends on

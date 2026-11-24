@@ -1,28 +1,31 @@
 # Paley–Wiener theorem on a real vector space
 
 This node is still to be broken down. It covers the Paley–Wiener theorem that the wave packets of Eisenstein series use.
-Let $\mathfrak{a}$ be a finite-dimensional real vector space with a norm and a Haar measure, $\mathfrak{a}^*_{\mathbb{C}}$ the complexified dual, and
-$E$ a finite-dimensional complex vector space.
+Let $\mathfrak{a}$ be a finite-dimensional real vector space with a norm and a Haar measure, $\mathfrak{a}^*$ its dual with the dual
+norm, $\mathfrak{a}^*_{\mathbb{C}}$ the complexified dual, and $E$ a finite-dimensional complex vector space.
 
 - **Theorem** (Paley–Wiener). An entire function $\Psi \colon \mathfrak{a}^*_{\mathbb{C}} \to E$ is the Fourier–Laplace transform
-  $\Psi(\lambda) = \int_{\mathfrak{a}} \psi(H) e^{-\lambda(H)} \, dH$ of a smooth function $\psi \colon \mathfrak{a} \to E$ supported in the ball of
-  radius $R$ if and only if it is of Paley–Wiener type: for every $N$ there is $C_N$ with
-  $\lVert \Psi(\lambda) \rVert \le C_N (1 + \lVert \lambda \rVert)^{-N} e^{R \lVert \operatorname{Re} \lambda \rVert}$. The function $\psi$ is then
+  $\Psi(\lambda) = \int_{\mathfrak{a}} \psi(H) e^{-\lambda(H)} \, dH$ of a smooth function $\psi \colon \mathfrak{a} \to E$ supported in the closed ball
+  of radius $R$ if and only if it is of Paley–Wiener type: for every $N$ there is $C_N$ with
+  $\lVert \Psi(\lambda) \rVert \le C_N (1 + \lVert \lambda \rVert)^{-N} e^{R \lVert \operatorname{Re} \lambda \rVert}$, with the dual norm on $\mathfrak{a}^*$ and
+  any norm on $\mathfrak{a}^*_{\mathbb{C}}$ for $\lVert \lambda \rVert$. The function $\psi$ is then
   recovered by integration of $\Psi(\lambda) e^{\lambda(H)}$ over any translate $\Lambda + i\mathfrak{a}^*$ of the imaginary subspace, with
   the dual measure.
 
 ## Expansion
 
-A good expansion has a statement page for the theorem, in both directions, citing the sources below with locators; the
-Fourier inversion along $\Lambda + i\mathfrak{a}^*$ follows from the case $\Lambda = 0$ by Cauchy's theorem and the growth estimate.
+A good expansion has a statement page for the theorem, in both directions, citing the sources below with locators. The case
+$\Lambda = 0$ of the recovery of $\psi$ is Fourier inversion, after choosing an inner product on $\mathfrak{a}$ and identifying $\xi \in \mathfrak{a}^*$
+with $w \in \mathfrak{a}$ by $\xi(H) = 2\pi \langle H, w \rangle$, so that $\Psi(i\xi)$ becomes the Fourier transform of $\psi$ at $w$; the passage to
+$\Lambda + i\mathfrak{a}^*$ is a contour shift, by Cauchy's theorem and the growth estimate.
 
 ## Depends on
 
-- [Fourier transform and uncertainty principles](README.md), for the Fourier transform on a real vector space
+Its statement uses only the notions recalled above.
 
 ## Proof depends on
 
-Its proof is that of the sources below, as the Expansion describes.
+- [Fourier inversion formula](fourier-inv-fourier-eq.md), for the recovery of $\psi$ from the values of $\Psi$ on the imaginary subspace $i\mathfrak{a}^*$, after the identification of $\mathfrak{a}$ with a Euclidean space and the rescaling by $2\pi$ described above
 
 ## Sources
 

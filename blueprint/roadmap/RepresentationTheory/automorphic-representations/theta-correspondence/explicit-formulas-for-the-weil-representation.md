@@ -44,7 +44,7 @@ precise statement and the sources below.
 
 A good expansion also writes out these steps of its own proof:
 
-- Weil's Théorème 5 (§20, p. 169): $\gamma(f) = 1$ for a character of the second degree $f$, trivial on a closed subgroup $\Gamma$, whose associated symmetric morphism maps $(G, \Gamma)$ isomorphically onto $(G^*, \Gamma_*)$. Weil proves it from the proof of his Théorème 2 (§14): $\gamma(f)$ is the scalar by which the lifts of the two sides of relation (9) differ; under the hypotheses all factors of (9) preserve $\Gamma$, where the lifts agree with those given by the representation $r_\Gamma$ of §20, so $\gamma(f) = 1$ because $r_\Gamma$ is a representation. Théorème 4 (§19, p. 168), which contains Poisson's formula, is related but is not this proof. With $G = X_{\mathbb{A}}$, $\Gamma = X_F$ and $f = \psi \circ q$ it gives $\gamma(q) = 1$, and Corollaire 2 of Théorème 2 (§14, p. 162), applied to a factorizable Schwartz–Bruhat function and to its local factors, almost all the characteristic functions of the unit lattices, gives $\gamma(q) = \prod_v \gamma_{\psi_v}(q_v)$ (§30, the proof of Proposition 5, p. 179), for the product formula for Weil indices.
+- the specialization of Weil's theorems on characters of the second degree to $G = X_{\mathbb{A}}$, $\Gamma = X_F$ and $f = \psi \circ q$: Théorème 5 gives $\gamma(q) = 1$, and Corollaire 2 of Théorème 2, applied to a factorizable Schwartz–Bruhat function and to its local factors, almost all the characteristic functions of the unit lattices, gives $\gamma(q) = \prod_v \gamma_{\psi_v}(q_v)$ (§30, the proof of Proposition 5, p. 179), for the product formula for Weil indices.
 
 ## Depends on
 
@@ -55,6 +55,7 @@ A good expansion also writes out these steps of its own proof:
 
 - [Hilbert's Theorem 90 for the multiplicative group](../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for the character twists of the splittings when $E/F$ is a quadratic field extension, through the norm-one elements $x/\sigma(x)$ (Harris–Kudla–Sweet, (1.7)–(1.8)); for the split algebra $E = F \times F$ the analogous map is $(a, b) \mapsto (a/b, b/a)$, with no field extension
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality of $\mathbb{A}_F$ under which $F$ is its own annihilator, which Weil extends to $X_{\mathbb{A}}$ and $X_F$ coordinatewise (Weil, §29, p. 178)
+- [Weil's theorems on characters of the second degree](../../../Analysis/harmonic-analysis/weil-characters-of-the-second-degree.md), for Weil's Théorème 5 (§20, p. 169), the triviality of the Weil index of a character of the second degree trivial on a closed subgroup that its symmetric morphism maps onto the orthogonal, and Corollaire 2 of his Théorème 2 (§14, p. 162), which the product formula for Weil indices specializes to the adelic quadratic space
 
 ## Sources
 

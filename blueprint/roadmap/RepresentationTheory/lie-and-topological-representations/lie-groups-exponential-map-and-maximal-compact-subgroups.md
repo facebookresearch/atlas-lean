@@ -17,6 +17,9 @@ representations of Lie groups and of real reductive groups use. Let $G$ be a rea
 - **Maximal compact subgroups.** If $G$ is connected, it has maximal compact subgroups, every compact subgroup
   is contained in one of them, they are connected, any two are conjugate by an inner automorphism, and $G$ is
   homeomorphic to $K \times \mathbb{R}^s$ for a maximal compact subgroup $K$ (E. Cartan, Iwasawa, Malcev).
+- **Lie groups with finitely many components.** If $G$ has finitely many connected components, it has maximal compact
+  subgroups, any two are conjugate by an inner automorphism, and $G$ is homeomorphic to $K \times \mathbb{R}^s$ for a maximal
+  compact subgroup $K$, which therefore meets every connected component of $G$.
 - **Real semisimple groups** (E. Cartan). Let $G$ be a real form of a connected complex semisimple group, with
   Cartan decomposition $\mathfrak{g} = \mathfrak{k} \oplus \mathfrak{p}$ and $K$ the compact subgroup with Lie algebra
   $\mathfrak{k}$ acting unitarily on $\mathfrak{g}$. Every compact subgroup of $G$ is conjugate to a subgroup of $K$,
@@ -28,8 +31,8 @@ representations of Lie groups and of real reductive groups use. Let $G$ be a rea
 
 A good expansion has statement pages for the exponential map and the flows of invariant vector fields, for
 the coordinates of the second kind, for the closed subgroup theorem, for the existence and conjugacy of
-maximal compact subgroups of connected Lie groups, and for E. Cartan's conjugacy theorem and the Cartan
-decomposition of real semisimple groups, each citing the sources below with locators. Etingof states the
+maximal compact subgroups of connected Lie groups and of Lie groups with finitely many components, and for
+E. Cartan's conjugacy theorem and the Cartan decomposition of real semisimple groups, each citing the sources below with locators. Etingof states the
 Cartan decomposition for the adjoint group and notes (Remark 44.14) its extension to reductive groups. The coordinates
 of the second kind follow from the inverse function theorem: the differential at $0$ of the product map
 sends the $i$-th coordinate vector to $X_i$, since $\exp(t_i X_i)$ has derivative $X_i$ at $t_i = 0$.
@@ -41,7 +44,7 @@ sends the $i$-th coordinate vector to $X_i$, since $\exp(t_i X_i)$ has derivativ
 
 ## Proof depends on
 
-Its proof is that of the sources below, as the Expansion describes.
+- [Surjective differential gives a submersion between finite-dimensional manifolds](../../Geometry/differential-topology/submersions/submersion-at-of-surjective-mfderiv.md), for the inverse function theorem behind the coordinates of the second kind: in equal dimensions the normal form of a submersion is a local diffeomorphism
 
 ## Sources
 
@@ -56,3 +59,8 @@ Its proof is that of the sources below, as the Expansion describes.
   (for a connected Lie group: existence of maximal compact subgroups containing every compact subgroup, their
   connectedness and conjugacy, and $G \cong K \times \mathbb{R}^s$; the existence of the decomposition is due to
   Iwasawa, the rest to E. Cartan for semisimple and simply connected groups and to Iwasawa and Malcev in general).
+- A. Borel, *Semisimple groups and Riemannian symmetric spaces*, Texts and Readings in Mathematics 16, Hindustan Book
+  Agency, 1998, Chapter VII, "Maximal compact subgroups of Lie groups", §1 (for a Lie group with finitely many connected
+  components: existence of maximal compact subgroups, their conjugacy by inner automorphisms, and the homeomorphism with
+  the product of one of them by a euclidean space) and §2 (its proof, through a theorem of Iwasawa on extensions of
+  vector groups by compact groups).
