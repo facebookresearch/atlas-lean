@@ -11657,6 +11657,7 @@
   "MathlibExt/LinearAlgebra/Matrix/CarrollIdentity": {"to": "LinearAlgebra/determinants-and-matrix-identities", "title": "Desnanot–Jacobi identity"},
   "MathlibExt/LinearAlgebra/Matrix/CholeskyNoGrowth": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Rounding error analysis"},
   "MathlibExt/LinearAlgebra/Matrix/CirculantDetFour": {"to": "GroupTheory/characters-of-finite-groups", "title": "Integer group determinants"},
+  "MathlibExt/LinearAlgebra/Matrix/CirculantDetFourCongruences": {"to": "GroupTheory/characters-of-finite-groups", "title": "Integer group determinants"},
   "MathlibExt/LinearAlgebra/Matrix/CirculantSpectrum": {"to": "LinearAlgebra/special-matrices", "title": "Circulant matrices"},
   "MathlibExt/LinearAlgebra/Matrix/ComplexSVD": {"to": "LinearAlgebra/matrix-decompositions", "title": "Singular value decomposition"},
   "MathlibExt/LinearAlgebra/Matrix/ConjugateGradient": {"to": "LinearAlgebra/matrix-decompositions", "title": "Conjugate gradient method"},
