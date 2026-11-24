@@ -30,7 +30,6 @@ universe uC vC uD vD uD' vD' uE vE uE' vE' uE'' vE''
 
 namespace CategoryTheory.Functor
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
 
 variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {D : Type uD} [Category.{vD} D] [Abelian D]
@@ -53,19 +52,19 @@ def composeLeftDerivedSquare : U₀ ⋙ F ⟶ H ⋙ V₀ :=
     (Functor.associator H V' V).hom ≫ whiskerLeft H eV.hom
 
 omit [Abelian C] [Abelian D] [Abelian D'] [Abelian E] [Abelian E'] [Abelian E'']
-  [U.Additive] [U'.Additive] [U₀.Additive] [V.Additive] [V'.Additive] [V₀.Additive] [F.Additive] [G.Additive]
-    [H.Additive] in
+  [U.Additive] [U'.Additive] [U₀.Additive] [V.Additive] [V'.Additive] [V₀.Additive]
+    [F.Additive] [G.Additive] [H.Additive] in
 /-- Its original component is the ordered four-map composite. -/
 theorem composeLeftDerivedSquare_app (Z : D') :
     (composeLeftDerivedSquare U U' U₀ eU V V' V₀ eV F G H α β).app Z =
       F.map (eU.inv.app Z) ≫ α.app (U'.obj Z) ≫ V.map (β.app Z) ≫ eV.hom.app (H.obj Z) := by
   change F.map (eU.inv.app Z) ≫ (𝟙 _) ≫ α.app (U'.obj Z) ≫ (𝟙 _) ≫
     V.map (β.app Z) ≫ (𝟙 _) ≫ eV.hom.app (H.obj Z) = _
-  simp only [Category.id_comp, Category.comp_id, Category.assoc]
+  simp only [Category.id_comp]
 
 omit [Abelian C] [Abelian D] [Abelian D'] [Abelian E] [Abelian E'] [Abelian E'']
-  [U.Additive] [U'.Additive] [U₀.Additive] [V.Additive] [V'.Additive] [V₀.Additive] [F.Additive] [G.Additive]
-    [H.Additive] in
+  [U.Additive] [U'.Additive] [U₀.Additive] [V.Additive] [V'.Additive] [V₀.Additive]
+    [F.Additive] [G.Additive] [H.Additive] in
 /--
 The source comparison gives the forward component equation, with no universal property about
 derived maps supplied as a hypothesis.
@@ -106,9 +105,9 @@ theorem leftDerivedSquareHom_comp_with_input
   let ρQ := mapChainAugmentation U Q.π
   let ρT := mapChainAugmentation U' T.π
   let ρ₀ := mapChainAugmentation U₀ T.π
-  letI : QuasiIso ρQ := mapChainAugmentation_quasiIso U Q.π
-  letI : QuasiIso ρT := mapChainAugmentation_quasiIso U' T.π
-  letI : QuasiIso ρ₀ := mapChainAugmentation_quasiIso U₀ T.π
+  let : QuasiIso ρQ := mapChainAugmentation_quasiIso U Q.π
+  let : QuasiIso ρT := mapChainAugmentation_quasiIso U' T.π
+  let : QuasiIso ρ₀ := mapChainAugmentation_quasiIso U₀ T.π
   let a := (P.comparisonToAugmentedExact
     ((U.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q.complex) ρQ f).val
   let b := (Q.comparisonToAugmentedExact
@@ -295,17 +294,17 @@ theorem leftDerivedSquareHom_cube_inverse
         eV.inv.app ((G₀.leftDerived n).obj Y) =
       (leftDerivedSquareHom I K F₁ F₀ eF.hom n).app (U₀.obj Y) ≫
         K.map ((leftDerivedSquareHom U₀ V₀ F₀ G₀ α₀ n).app Y) := by
-  letI : (U₀ ⋙ I).PreservesHomology := by
-    letI : PreservesFiniteLimits U₀ := preservesFiniteLimits_of_preservesHomology U₀
-    letI : PreservesFiniteColimits U₀ := preservesFiniteColimits_of_preservesHomology U₀
-    letI : PreservesFiniteLimits I := preservesFiniteLimits_of_preservesHomology I
-    letI : PreservesFiniteColimits I := preservesFiniteColimits_of_preservesHomology I
+  let : (U₀ ⋙ I).PreservesHomology := by
+    let : PreservesFiniteLimits U₀ := preservesFiniteLimits_of_preservesHomology U₀
+    let : PreservesFiniteColimits U₀ := preservesFiniteColimits_of_preservesHomology U₀
+    let : PreservesFiniteLimits I := preservesFiniteLimits_of_preservesHomology I
+    let : PreservesFiniteColimits I := preservesFiniteColimits_of_preservesHomology I
     exact preservesHomologyOfExact (U₀ ⋙ I)
-  letI : (V₀ ⋙ K).PreservesHomology := by
-    letI : PreservesFiniteLimits V₀ := preservesFiniteLimits_of_preservesHomology V₀
-    letI : PreservesFiniteColimits V₀ := preservesFiniteColimits_of_preservesHomology V₀
-    letI : PreservesFiniteLimits K := preservesFiniteLimits_of_preservesHomology K
-    letI : PreservesFiniteColimits K := preservesFiniteColimits_of_preservesHomology K
+  let : (V₀ ⋙ K).PreservesHomology := by
+    let : PreservesFiniteLimits V₀ := preservesFiniteLimits_of_preservesHomology V₀
+    let : PreservesFiniteColimits V₀ := preservesFiniteColimits_of_preservesHomology V₀
+    let : PreservesFiniteLimits K := preservesFiniteLimits_of_preservesHomology K
+    let : PreservesFiniteColimits K := preservesFiniteColimits_of_preservesHomology K
     exact preservesHomologyOfExact (V₀ ⋙ K)
   have hLeft := leftDerivedSquareHom_comp_with_input
     I U₀ (U₀ ⋙ I) (Iso.refl _) K V₀ (V₀ ⋙ K) (Iso.refl _)
@@ -314,7 +313,7 @@ theorem leftDerivedSquareHom_cube_inverse
     U₁ J (U₀ ⋙ I) eU.symm V₁ L (V₀ ⋙ K) eV.symm
     F₁ G₁ G₀ α₁ eG.hom (eU.hom.app Y) (𝟙 (J.obj Y)) n
   simp only [Functor.map_id, Iso.refl_hom, NatTrans.id_app,
-    Category.id_comp, Category.comp_id, Iso.symm_hom, Iso.symm_inv,
+    Category.id_comp, Iso.symm_hom,
     Iso.hom_inv_id_app, Category.assoc] at hLeft hRight
   rw [hCube] at hLeft
   let Cmp := (leftDerivedSquareHom (U₀ ⋙ I) (V₀ ⋙ K) F₁ G₀

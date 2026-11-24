@@ -24,8 +24,6 @@ resolution.
 noncomputable section
 open CategoryTheory CategoryTheory.Limits
 
-attribute [local implicit_reducible] HomologicalComplex.homologyFunctor
-
 attribute [local instance 100] Functor.preservesFiniteLimits_of_preservesHomology
   Functor.preservesFiniteColimits_of_preservesHomology
 
