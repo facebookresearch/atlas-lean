@@ -117,4 +117,25 @@ example : ∑ k ∈ Finset.Icc 1 1, k ^ 4 * (1 : ℕ).choose k * Nat.fib k = 1 :
 example : ∑ k ∈ Finset.Icc 1 4, k ^ 4 * (4 : ℕ).choose k * Nat.fib k = 1516 :=
   (sum_pow_mul_choose_mul_fib_small 4).2.2.2.trans (by decide)
 
+-- At x = r = 0, the constant coefficient survives by the convention 0^0 = 1.
+example (a : ℕ → ℝ) :
+    ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (0 : ℕ) * a k * (0 : ℝ) ^ k = a 0 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Polynomial.eval_add, Polynomial.eval_mul]
+
+-- At x = 0 and positive weight exponent, even the constant coefficient contributes zero.
+example (a : ℕ → ℝ) :
+    ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (2 : ℕ) * a k * (0 : ℝ) ^ k = 0 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond]
+
+-- For 1 + X + X² at x = -2 and r = 3, the third derivative vanishes;
+-- the two lower positive-order terms give 6 + 24 = 30.
+example : ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (3 : ℕ) * 1 * (-2 : ℝ) ^ k = 30 := by
+  rw [sum_pow_mul_coeff_eq_sum_stirlingSecond_derivative (fun _ => 1) 2 3 (-2)]
+  simp only [Polynomial.iterate_derivative_sum, Polynomial.eval_finsetSum,
+    Polynomial.iterate_derivative_C_mul, Polynomial.iterate_derivative_X_pow_eq_C_mul,
+    Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
+  norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial]
+
 end MathlibExtTest.RationallyWeightedBinomialSums
