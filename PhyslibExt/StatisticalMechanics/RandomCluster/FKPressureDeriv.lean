@@ -196,7 +196,7 @@ density of every edge of `Λ_N`, at every `t`.
 -/
 def fpd_AvgDensityCollapse (d N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj] : Prop :=
-  ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
+  ∀ e' ∈ (boxGraph d N).edgeFinset, ∀ t : ℝ,
     Tendsto (fun n => fpd_avgDensity (Gn n) t) atTop
       (𝓝 (freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t)))
 
@@ -206,12 +206,12 @@ lemma fpd_freeDensity_at_diff_of_collapse (d N : ℕ)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ)
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ)
     (hdiff : pressureLeftDeriv g t = pressureRightDeriv g t) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t := by
   have hderiv := fpd_ambientLogZDeriv_eq_avgDensity_limit Gn hE g hg hlim t hdiff
   rw [hdiff]
-  exact tendsto_nhds_unique (hcol e' t) hderiv
+  exact tendsto_nhds_unique (hcol e' he' t) hderiv
 
 /-- The wired and free `q = 2` infinite-volume densities of every edge of `Λ_N` at `p =
 logistic(t)`
