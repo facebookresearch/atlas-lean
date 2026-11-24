@@ -23,7 +23,7 @@ bounded dimension", Computing Science Notes 93/46, Eindhoven University of Techn
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

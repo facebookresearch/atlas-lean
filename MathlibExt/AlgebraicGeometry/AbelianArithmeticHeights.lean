@@ -134,8 +134,9 @@ def naiveHeight (P : RationalPoint A) : ℝ :=
 def heightSequence (P : RationalPoint A) (n : ℕ) : ℝ :=
   M.naiveHeight ((2 ^ n) • P) / 4 ^ n
 
-/-- A normalized canonical height is a value of this exact sequence, with
-quadratic and torsion laws. Its construction is deliberately unresolved. -/
+/-- A normalized canonical (Néron–Tate) height: at every point it is the limit of the
+multiplication-by-two height sequence, and it is nonnegative and satisfies the parallelogram
+law, quadratic scaling and the torsion criterion (`height P = 0` exactly for torsion points). -/
 structure CanonicalHeight where
   height : RationalPoint A → ℝ
   convergence : ∀ P, Tendsto (M.heightSequence P) atTop (𝓝 (height P))

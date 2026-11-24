@@ -15,9 +15,9 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 public import MathlibExt.Combinatorics.SimpleGraph.Domination
 
 /-!
-# Domination polynomials of grids
+# Domination polynomials of grids and cylinders
 
-The domination polynomial of a grid is the sum of its almost dominating polynomials over
+The domination polynomial of a grid or cylinder is the sum of its almost dominating polynomials over
 last-row signatures without uncovered vertices. We also define the row transfer matrix
 and describe its column at the all-covered signature.
 -/
@@ -274,27 +274,17 @@ private noncomputable def GridDominationTransfer.lastRowSignature {V : Type*} (R
     split at hi <;> contradiction⟩
 
 open scoped Classical in
-/-- **Grid domination polynomial as a sum of almost dominating polynomials.** For all natural
-numbers $m$ and $n$, let $P_k$ denote the path on the vertices $0, \dots, k - 1$. Then the
-domination polynomial of the grid $P_m \mathbin{\square} P_{n+1}$ equals $\sum_\sigma G^\sigma(z)$,
-the sum running over the signatures $\sigma$ of the row graph $P_m$ with no uncovered vertex,
-where $G^\sigma(z)$ is the almost dominating polynomial of $P_m$ with $n + 1$ rows and last-row
-state $\sigma$.
-
-The grid is taken with at least one row, so that the last row carrying $\sigma$ exists.
-
-Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
-King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Lemma 4
-(`jis-2024-24.7.6-lem-4`). -/
-theorem dominationPolynomial_grid_eq_sum_almostDominatingPolynomial (m n : ℕ) :
-    dominationPolynomial (pathGraph m □ pathGraph (n + 1)) =
-      ∑ σ ∈ (Finset.univ : Finset (DominationSignature (pathGraph m))).filter
+/-- Partition the dominating sets by the signature of the last row. -/
+private theorem GridDominationTransfer.dominationPolynomial_eq_sum {m : ℕ}
+    (R : SimpleGraph (Fin m)) (n : ℕ) :
+    dominationPolynomial (R □ pathGraph (n + 1)) =
+      ∑ σ ∈ (Finset.univ : Finset (DominationSignature R)).filter
           (fun σ => ∀ i, σ.1 i ≠ uncovered),
-        almostDominatingPolynomial (pathGraph m) n σ.1 := by
+        almostDominatingPolynomial R n σ.1 := by
   classical
-  let G := pathGraph m □ pathGraph (n + 1)
-  let sig := GridDominationTransfer.lastRowSignature (pathGraph m) n
-  let complete := (Finset.univ : Finset (DominationSignature (pathGraph m))).filter
+  let G := R □ pathGraph (n + 1)
+  let sig := GridDominationTransfer.lastRowSignature R n
+  let complete := (Finset.univ : Finset (DominationSignature R)).filter
     (fun σ => ∀ i, σ.1 i ≠ uncovered)
   let earlier (S : Finset (Fin m × Fin (n + 1))) :=
     ∀ v : Fin m × Fin (n + 1), v.2 ≠ Fin.last n → vertexDominationState G S v ≠ uncovered
@@ -326,6 +316,46 @@ theorem dominationPolynomial_grid_eq_sum_almostDominatingPolynomial (m n : ℕ) 
       ext S
       simp only [partialSets, Finset.mem_filter, Finset.mem_univ, true_and]
       exact and_congr_right' (Subtype.ext_iff.trans funext_iff)
+
+open scoped Classical in
+/-- **Grid domination polynomial as a sum of almost dominating polynomials.** For all natural
+numbers $m$ and $n$, let $P_k$ denote the path on the vertices $0, \dots, k - 1$. Then the
+domination polynomial of the grid $P_m \mathbin{\square} P_{n+1}$ equals $\sum_\sigma G^\sigma(z)$,
+the sum running over the signatures $\sigma$ of the row graph $P_m$ with no uncovered vertex,
+where $G^\sigma(z)$ is the almost dominating polynomial of $P_m$ with $n + 1$ rows and last-row
+state $\sigma$.
+
+The grid is taken with at least one row, so that the last row carrying $\sigma$ exists.
+
+Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
+King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Lemma 4
+(`jis-2024-24.7.6-lem-4`). -/
+theorem dominationPolynomial_grid_eq_sum_almostDominatingPolynomial (m n : ℕ) :
+    dominationPolynomial (pathGraph m □ pathGraph (n + 1)) =
+      ∑ σ ∈ (Finset.univ : Finset (DominationSignature (pathGraph m))).filter
+          (fun σ => ∀ i, σ.1 i ≠ uncovered),
+        almostDominatingPolynomial (pathGraph m) n σ.1 :=
+  GridDominationTransfer.dominationPolynomial_eq_sum (pathGraph m) n
+
+open scoped Classical in
+/-- **Cylinder domination polynomial as a sum of almost dominating polynomials.** For all
+natural numbers $m$ and $n$, let $C_m$ be the cycle graph on the vertices $0, \dots, m - 1$, in
+which distinct $i$ and $j$ are adjacent when $i - j \equiv \pm 1 \pmod m$, and let $P_{n+1}$ be
+the path on the vertices $0, \dots, n$. Then the domination polynomial of the cylinder
+$C_m \mathbin{\square} P_{n+1}$ equals $\sum_\sigma G^\sigma(z)$, the sum running over the
+signatures $\sigma$ of the row graph $C_m$ with no uncovered vertex, where $G^\sigma(z)$ is the
+almost dominating polynomial of $C_m$ with $n + 1$ rows and last-row state $\sigma$.
+
+Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
+King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Lemma 4
+(`jis-2024-24.7.6-lem-4`). -/
+theorem dominationPolynomial_cylinder_eq_sum_almostDominatingPolynomial
+    (m n : ℕ) :
+    dominationPolynomial (cycleGraph m □ pathGraph (n + 1)) =
+      ∑ σ ∈ (Finset.univ : Finset (DominationSignature (cycleGraph m))).filter
+          (fun σ => ∀ i, σ.1 i ≠ uncovered),
+        almostDominatingPolynomial (cycleGraph m) n σ.1 :=
+  GridDominationTransfer.dominationPolynomial_eq_sum (cycleGraph m) n
 
 end
 

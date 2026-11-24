@@ -125,21 +125,6 @@ public theorem_wanted weightedFileNumber_eq_levelRookNumber_of_singleton (m : �
     (b : List ℕ) (hb : IsSingletonBoard m b) (k : ℕ) :
     weightedFileNumber m b k = (levelRookNumber m b k : ℤ)
 
-/-- **Size of the block $P(F_0)$.** Let $m \ge 2$, let $B$ be a singleton board for $m$, and call
-the rows $r$ with $\lfloor r/m \rfloor = l$ level $l$. Let $F_0$ be a file placement on $B$ that is
-not an $m$-level rook placement, let $l$ and $c_0$ be its chosen level and the leftmost cell of
-$F_0$ in that level, and suppose level $l$ contains $n$ cells of $F_0$. Then the block $P(F_0)$
-determined by $l$ and $c_0$ has exactly $m^{n-1}$ members.
-
-Source: Kenny Barrese, *Weighted File Placements on Singleton Boards*, INTEGERS 24 (2024),
-Article A58, Lemma 7 (`integers-2024-A58-lem-7`). -/
-public theorem_wanted filePlacementBlock_card (m : ℕ) (hm : 2 ≤ m) (b : List ℕ)
-    (hb : IsSingletonBoard m b) (F₀ : Finset (ℕ × ℕ)) (hF₀ : F₀ ∈ filePlacements b)
-    (hF₀r : F₀ ∉ levelRookPlacements m b) (l : ℕ) (c₀ : ℕ × ℕ)
-    (hl : IsChosenLevelAndLeftmost m F₀ l c₀) (n : ℕ)
-    (hn : (F₀.filter fun c => c.2 / m = l).card = n) :
-    (filePlacementBlock m b F₀ l c₀).card = m ^ (n - 1)
-
 /-- **Weights cancel on a block with two rooks in the chosen level.** Let $m \ge 2$, let $B$ be a
 singleton board for $m$, with rows numbered from $0$ and row $r$ in level $\lfloor r/m \rfloor$,
 and let $F_0$ be a file placement on $B$. Let $l$ be the chosen level of $F_0$ (among the levels

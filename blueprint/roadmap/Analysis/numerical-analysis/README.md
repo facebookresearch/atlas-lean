@@ -10,6 +10,7 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Euler method](euler-method/README.md)
 - [Finite element method in one dimension](finite-element-method-in-one-dimension/README.md)
 - [Line search methods](line-search-methods/README.md)
+- [Method of manufactured solutions](method-of-manufactured-solutions/README.md)
 - [Newton's method](newton-s-method/README.md)
 - [Nonlinear conjugate gradient methods](nonlinear-conjugate-gradient-methods/README.md)
 - [Quasi-Newton methods](quasi-newton-methods/README.md)
@@ -24,6 +25,7 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Monotone explicit schemes as convex combinations (discrete maximum principle)](remaining-clauses-of-monotone-explicit-schemes-as-convex-com.md)
 - [delta-weakening is monotone](delta-weakening-is-monotone.md)
 - [Nonconvergence of schemes violating the CFL condition](nonconvergence-of-schemes-violating-the-cfl-condition.md)
+- [Upwind scheme](upwind-scheme/README.md)
 
 ## Related topics
 
