@@ -15,8 +15,8 @@ public import MathlibExt.NumberTheory.Diophantine.Linear
 /-!
 # Palapies, triangular arrays at negative row indices — wishlist
 
-The remaining statements from Lars Palapies' INTEGERS 26 (2026) paper concern dualities
-between extensions of triangular arrays to negative indices. A triangular
+The remaining statement from Lars Palapies' INTEGERS 26 (2026) paper concerns reflection
+of triangular arrays extended to negative indices. A triangular
 array `a_{n,k}` (`n, k ≥ 0`) satisfies the linear recurrence (1)
 `a_{n,k} = (αn + βk + γ) a_{n-1,k} + (α'n + β'k + γ') a_{n-1,k-1}` with
 `a_{n,-1} = 0`, `a_{0,k} = δ_{k=0}` and integer parameters. Definitions 1 and 2 of
@@ -35,19 +35,6 @@ branch and domain the paper does not pin down.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Knuth-type duality.** For integers $\alpha, \beta, \gamma$, let $a$ and $b$ be the arrays with
-parameters $(\alpha, \beta, \gamma; 0, 0, 1)$ and $(\beta, \alpha, -\gamma; 0, 0, 1)$. Then their
-negative-negative numbers satisfy $a^{NN}_{-n,-k} = b^{NN}_{k-1,n-1}$ for all $n, k \in \mathbb{Z}$.
-
-This generalizes the identity $[-n, -k] = \{k, n\}$ between the Stirling numbers $[n, k]$ of the
-first kind and $\{n, k\}$ of the second kind.
-
-Source: Lars Palapies, *On Extensions of Triangular Arrays to Negative Row Indices
-and Their Generating Functions*, INTEGERS 26 (2026), Article A83, Proposition 2. -/
-public theorem_wanted TriangularRecurrence.negNeg_duality (α β γ : ℤ) (n k : ℤ) :
-    TriangularRecurrence.negNeg ⟨α, β, γ, 0, 0, 1⟩ (-n) (-k) =
-      TriangularRecurrence.negNeg ⟨β, α, -γ, 0, 0, 1⟩ (k - 1) (n - 1)
 
 /-- **NP/NN duality.** Let $a$ be the array of a triangular recurrence with parameters
 $(\alpha, \beta, \gamma; \alpha', \beta', \gamma')$, with weights
