@@ -53,6 +53,7 @@ public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.RascalNumbers
+public import MathlibExt.Combinatorics.Enumerative.RascalWordEnds
 public import MathlibExt.Combinatorics.Enumerative.RascalWords
 
 set_option autoImplicit false
@@ -61,16 +62,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
 
-/-- **Rascal numbers count binary words with at most one ascent.** For all integers $n$ and $k$,
-$R_{n,k} = b_k(n)$, where $R_{n,k}$ is the Rascal number and $b_k(n)$ is the number of binary
-words of length $n$ with exactly $k$ ones and at most one ascent (taken to be $0$ unless
-$0 \le k \le n$).
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 1. -/
-theorem_wanted rascalZ_eq_rascalGenZ_one (n k : ℤ) :
-    rascalZ n k = rascalGenZ 1 n k
-
 /-- **Symmetry of Rascal numbers.** For integers $n$ and $k$ with $0 \le k \le n$, the Rascal
 numbers satisfy $R_{n,k} = R_{n,n-k}$.
 
@@ -78,22 +69,6 @@ Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
 Interpretations of Rascal Numbers", Theorem 2. -/
 theorem_wanted rascalZ_symm (n k : ℤ) (h0 : 0 ≤ k) (h1 : k ≤ n) :
     rascalZ n k = rascalZ n (n - k)
-
-/-- **Binary words with a prefix of ones and a suffix of zeros.** Let $n, k, \ell, u$ be natural
-numbers with $\ell \le k$ and $k + u \le n$, and let $B_k(n)$ be the set of binary words $w$ of
-length $n$ with exactly $k$ ones and at most one ascent (a position $i$ with $w_i < w_{i+1}$).
-The number of words in $B_k(n)$ whose first $\ell$ letters are all $1$ and whose last $u$
-letters are all $0$ equals the Rascal number $R_{n-u-\ell, k-\ell}$, where
-$R_{a,b} = b(a-b) + 1$ for $0 \le b \le a$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Lemma 3. -/
-theorem_wanted card_prefixOnes_suffixZeros (n k ℓ u : ℕ)
-    (hℓ : ℓ ≤ k) (hu : k + u ≤ n) :
-    (Nat.card { w : RascalWord 1 k n //
-        (∀ x ∈ w.1.take ℓ, x = 1) ∧
-          (∀ x ∈ w.1.drop (n - u), x = 0) } : ℤ) =
-      rascalZ (n - u - ℓ : ℕ) (k - ℓ : ℕ)
 
 /-- **Fleron's recurrence for Rascal numbers.** For integers $n$ and $k$ with $n \ge 2$ and
 $0 < k < n$, the Rascal numbers $R_{n,k}$ satisfy

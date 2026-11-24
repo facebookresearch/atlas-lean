@@ -43,6 +43,7 @@ polynomials (`powerSeriesOp`); Lemma 2.2's closed form for
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.EulerPolynomialBinomialAverage
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Basic.Complex.Basic
@@ -63,18 +64,6 @@ set_option autoImplicit false
 open Polynomial
 
 namespace MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/-- **Euler polynomials.** Let $B_m(x)$ denote the $m$-th Bernoulli polynomial. For $n \ge 0$,
-the Euler polynomial $E_n(x)$ is the polynomial with rational coefficients
-$E_n(x) = \frac{2}{n + 1} \left(B_{n+1}(x) - 2^{n+1} B_{n+1}(x/2)\right)$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Section 1 (Euler polynomials). -/
-noncomputable def eulerPoly (n : ℕ) : ℚ[X] :=
-  (2 / (n + 1 : ℚ)) • (Polynomial.bernoulli (n + 1) -
-    (2 : ℚ) ^ (n + 1) •
-      (Polynomial.bernoulli (n + 1)).comp (C (1 / 2) * X))
 
 /-- **Generalized Stirling polynomial.** For natural numbers $n$ and $k$, the generalized
 Stirling polynomial $S(n, k, x)$ is the polynomial in $x$ with rational coefficients
@@ -180,25 +169,6 @@ theorem_wanted eulerPolyGen_recurrence (α : ℂ) (n : ℕ)
           C ((Nat.choose (n - 1) k : ℂ) * (-1) ^ (n - k) *
             (((eulerPoly (n - 1 - k)).eval (0 : ℚ) : ℚ) : ℂ)) *
             eulerPolyGen α k
-
-/-- **Euler polynomials as alternating sums of shifted powers.** Let $E_n(x)$ denote the Euler
-polynomial. For all natural numbers $m \ge 2$ and $n \le 2m + 1$,
-$E_n(x) = \sum_{k=0}^{m} \frac{(-1)^k}{2^k} \binom{m+1}{k+1}
-\sum_{j=0}^{k} \binom{k}{j} \left(x + j - \frac{k+1}{2}\right)^n$
-as polynomials in $x$ with rational coefficients.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Theorem 4.1. -/
-theorem_wanted eulerPoly_eq_binomial_average (m n : ℕ)
-    (hm : 2 ≤ m) (hn : n ≤ 2 * m + 1) :
-    eulerPoly n =
-      ∑ k ∈ Finset.range (m + 1),
-        ((-1) ^ k * (Nat.choose (m + 1) (k + 1) : ℚ) /
-            (2 : ℚ) ^ k) •
-          ∑ j ∈ Finset.range (k + 1),
-            (Nat.choose k j : ℚ) •
-              (X + C ((j : ℚ) - (k + 1 : ℚ) / 2)) ^ n
 
 /-- **Euler polynomials via generalized Stirling polynomials.** Let $E_n(x)$ denote the Euler
 polynomial, $\alpha_k$ the Taylor coefficients of $(2 + 2z)/(2 + 2z + z^2)$, and

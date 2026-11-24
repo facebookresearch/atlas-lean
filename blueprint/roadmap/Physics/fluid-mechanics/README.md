@@ -6,4 +6,5 @@ Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, B
 - [Buoyancy and flotation of a prism](buoyancy-and-flotation-of-a-prism/README.md)
 - [Hydrostatic pressure in a fluid column](hydrostatic-pressure-in-a-fluid-column/README.md)
 - [Pipe-flow networks](pipe-flow-networks/README.md)
+- [Resultant of a linear pressure distribution](resultant-of-a-linear-pressure-distribution/README.md)
 - [Stokes settling velocity](stokes-settling-velocity/README.md)
