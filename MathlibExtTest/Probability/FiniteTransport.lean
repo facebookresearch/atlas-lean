@@ -79,7 +79,7 @@ def delta1D : {p : Fin 2 → ℝ // IsDist p} :=
       by_cases h : i = 0 <;> simp [h]
     · norm_num [Fin.sum_univ_two]⟩
 
-/-- G3: the earthmover distance between the two opposite point masses is
+/-- G3: the earthmover value between the two opposite point masses is
 `1`, computed directly: the coupling is unique and has cost `1`. -/
 theorem g3_earthmover_point_masses :
     earthmover d2 delta0D delta1D = 1 := by
@@ -126,7 +126,7 @@ theorem g4_bias_le_earthmover_example :
   intro x y
   fin_cases x <;> fin_cases y <;> norm_num [d2]
 
-/-- G5: the earthmover distance is at most the cost of the exhibited
+/-- G5: the earthmover value is at most the cost of the exhibited
 coupling, by direct application of `earthmover_le_transportCost`. -/
 theorem g5_earthmover_le_transportCost_example :
     earthmover d2 delta0D delta1D ≤ 1 := by
@@ -142,7 +142,8 @@ def dSigned : Fin 2 → Fin 2 → ℝ := fun x y => if x = y then -2 else -1
 
 /-- G6: `earthmover_le_transportCost` needs no sign assumption on the
 ground cost: for the signed cost above, the same coupling bounds the
-earthmover distance by `-1`. -/
+earthmover value by `-1`, so for signed ground costs the value can
+be negative and is not a distance. -/
 theorem g6_earthmover_le_transportCost_signed :
     earthmover dSigned delta0D delta1D ≤ -1 := by
   have h : earthmover dSigned delta0D delta1D ≤
@@ -154,6 +155,40 @@ theorem g6_earthmover_le_transportCost_signed :
       = -1 := by
     norm_num [transportCost, dSigned, Fin.sum_univ_two]
   rwa [hcost] at h
+
+/-- G7: for the signed ground cost, the earthmover value between the
+point masses is exactly `-1`: the coupling is unique and has cost
+`-1`, so the value is negative and is not a distance. -/
+theorem g7_earthmover_signed_eq :
+    earthmover dSigned delta0D delta1D = -1 := by
+  have hcost : ∀ π : {π // IsCoupling delta0D.1 delta1D.1 π},
+      transportCost dSigned π.1 = -1 := by
+    intro π
+    obtain ⟨hnn, hrow, hcol⟩ := π.2
+    have r0 := hrow 0
+    have r1 := hrow 1
+    have c0 := hcol 0
+    have c1 := hcol 1
+    simp only [delta0D, delta1D, Fin.sum_univ_two] at r0 r1 c0 c1
+    norm_num at r0 r1 c0 c1
+    have n00 := hnn 0 0
+    have n01 := hnn 0 1
+    have n10 := hnn 1 0
+    have n11 := hnn 1 1
+    have h01 : π.1 0 1 = 1 := by linarith
+    have h00 : π.1 0 0 = 0 := by linarith
+    have h10 : π.1 1 0 = 0 := by linarith
+    have h11 : π.1 1 1 = 0 := by linarith
+    unfold transportCost
+    norm_num [Fin.sum_univ_two, dSigned, h00, h01, h10, h11]
+  unfold earthmover
+  have hne : Nonempty {π // IsCoupling delta0D.1 delta1D.1 π} :=
+    ⟨⟨_, g2_coupling_cost.1⟩⟩
+  have hfun : (fun π : {π // IsCoupling delta0D.1 delta1D.1 π} =>
+      transportCost dSigned π.1) = fun _ => (-1 : ℝ) :=
+    funext hcost
+  rw [hfun]
+  exact ciInf_const
 
 end
 

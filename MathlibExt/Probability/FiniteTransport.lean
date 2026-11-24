@@ -20,12 +20,12 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Finite probability vectors, couplings and earthmover distance
+# Finite probability vectors, couplings and the earthmover value
 
 Finite probability vectors as raw real-valued functions (the convention
 of `MathlibExt.Probability.MarkovMixing.tvDist`), kernel pushforwards of
 such vectors, couplings between two such vectors, transport cost, and
-the earthmover distance between two probability distributions, together
+the earthmover (optimal-transport) value between two probability distributions, together
 with the basic total-variation lemmas and the transport bound for the
 expectation gap of a `1`-Lipschitz score.
 
@@ -34,6 +34,10 @@ probability vectors, so its defining infimum ranges over a nonempty set
 of couplings (`exists_coupling`). The auxiliary `bias S T f` is the
 expectation gap of a single real-valued score between the two
 distributions `S` and `T`.
+
+The ground cost `d` is unconstrained throughout, so for signed costs
+the earthmover value can be negative and is not a distance; it is the
+earthmover distance when `d` is a metric.
 -/
 
 set_option autoImplicit false
@@ -82,15 +86,18 @@ def IsCoupling {V : Type*} [Fintype V] (S T : V → ℝ) (π : V → V → ℝ) 
     Prop :=
   (∀ x y, 0 ≤ π x y) ∧ (∀ x, ∑ y, π x y = S x) ∧ (∀ y, ∑ x, π x y = T y)
 
-/-- Transport cost of a matrix `π` under the ground distance `d`. -/
+/-- Transport cost of a matrix `π` under the ground cost `d`. -/
 def transportCost {V : Type*} [Fintype V] (d : V → V → ℝ) (π : V → V → ℝ) :
     ℝ :=
   ∑ x, ∑ y, π x y * d x y
 
-/-- Earthmover distance between two probability distributions: the infimum
-of transport costs over all couplings. The marginals range over the
-subtype of probability vectors, so a coupling always exists
-(`exists_coupling`) and the infimum is over a nonempty index set. -/
+/-- Earthmover (optimal-transport) value between two probability
+distributions: the infimum of transport costs over all couplings. The
+ground cost `d` is unconstrained, so for signed costs this value can be
+negative and is not in general a distance; it is the earthmover
+distance when `d` is a metric. The marginals range over the subtype of
+probability vectors, so a coupling always exists (`exists_coupling`)
+and the infimum is over a nonempty index set. -/
 noncomputable def earthmover {V : Type*} [Fintype V] (d : V → V → ℝ)
     (S T : {p : V → ℝ // IsDist p}) : ℝ :=
   ⨅ π : {π // IsCoupling S.1 T.1 π}, transportCost d π
@@ -255,7 +262,7 @@ theorem nonempty_couplingSubtype {V : Type*} [Fintype V]
   obtain ⟨π, hπ⟩ := exists_coupling S.2 T.2
   exact ⟨⟨π, hπ⟩⟩
 
-/-- Anything below every coupling cost is below the earthmover distance. -/
+/-- Anything below every coupling cost is below the earthmover value. -/
 theorem le_earthmover {V : Type*} [Fintype V] {d : V → V → ℝ}
     {S T : {p : V → ℝ // IsDist p}} {a : ℝ}
     (h : ∀ π, IsCoupling S.1 T.1 π → a ≤ transportCost d π) :
@@ -264,7 +271,7 @@ theorem le_earthmover {V : Type*} [Fintype V] {d : V → V → ℝ}
   unfold earthmover
   exact @le_ciInf _ _ _ hne _ _ (fun π' => h π'.1 π'.2)
 
-/-- The earthmover distance is at most the cost of any one coupling. -/
+/-- The earthmover value is at most the cost of any one coupling. -/
 theorem earthmover_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ}
     {S T : {p : V → ℝ // IsDist p}} {π : V → V → ℝ}
     (hπ : IsCoupling S.1 T.1 π) :
@@ -361,7 +368,7 @@ theorem bias_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ}
         intro y _
         exact mul_le_mul_of_nonneg_left (hf x y) (hπ_nonneg x y)
 
-/-- The score-gap bound against the earthmover distance: the expectation
+/-- The score-gap bound against the earthmover value: the expectation
 gap is below every coupling cost, hence below their infimum. -/
 theorem bias_le_earthmover {V : Type*} [Fintype V]
     {d : V → V → ℝ} {S T : {p : V → ℝ // IsDist p}} {f : V → ℝ}
