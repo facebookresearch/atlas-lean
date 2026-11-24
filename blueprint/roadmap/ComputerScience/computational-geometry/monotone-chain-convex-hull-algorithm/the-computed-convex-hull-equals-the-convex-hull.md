@@ -5,6 +5,8 @@ Let $P$ be a finite set of points in the plane, not all on one line. Andrew's mo
 ## Proof depends on
 
 - [The monotone chain hull of non-collinear points turns strictly left at every vertex](convex-hull-turns-left.md)
+- [The hull's vertices are input points](convex-hull-subset.md)
+- [The hull polygon contains every input point](convex-hull-left-of-edges.md)
 
 ## Sources
 

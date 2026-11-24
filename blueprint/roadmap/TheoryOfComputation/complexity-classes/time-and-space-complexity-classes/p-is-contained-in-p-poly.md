@@ -8,7 +8,7 @@ structure is the same for all inputs of length $n$ and can be generated in logar
 
 ## Depends on
 
-- [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [Polynomial time with polynomial advice](ppoly.md)
 
 ## Sources
 

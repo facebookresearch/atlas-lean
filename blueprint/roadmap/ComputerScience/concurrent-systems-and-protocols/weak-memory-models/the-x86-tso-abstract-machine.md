@@ -6,7 +6,7 @@ In the x86-TSO abstract machine, each hardware thread $p$ has a FIFO store buffe
 - A thread may append a write to its buffer at any time.
 - A thread that is not blocked may remove the oldest write from its buffer and perform it on memory.
 - A thread may execute MFENCE only when its buffer is empty.
-- A thread may begin a LOCK'd instruction when the lock is not held, acquiring it, and may end it, releasing the lock, only when it holds the lock and its buffer is empty.
+- A thread may begin a LOCK'd instruction, acquiring the lock, only when the lock is not held and its buffer is empty, and may end it, releasing the lock, only when it holds the lock and its buffer is empty.
 
 ## Sources
 

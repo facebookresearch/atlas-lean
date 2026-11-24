@@ -1,6 +1,6 @@
 # Safety is decidable for mono-operational protection systems
 
-A protection system is *mono-operational* if the body of every command consists of a single primitive operation. For mono-operational protection systems the safety question (given a configuration and a generic right $r$, can some sequence of commands enter $r$ into a cell of the access matrix that did not contain it) is decidable: if a leak exists, one exists by a command sequence in which delete and destroy operations are removed and at most one create-subject operation remains (needed, for example, when the initial configuration has no subject), and whose length is therefore bounded by a computable function of the number of generic rights and of the initial numbers of subjects and objects.
+A protection system is *mono-operational* if the body of every command consists of a single primitive operation. For mono-operational protection systems the safety question (given a configuration and a generic right $r$, can some sequence of commands enter $r$ into a cell of the access matrix that did not contain it) is decidable: if a leak exists, then one exists by a command sequence whose length is bounded by a computable function of the number of generic rights and of the initial numbers of subjects and objects, so a search over all sequences up to that length decides safety.
 
 ## Depends on
 

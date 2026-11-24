@@ -9,7 +9,7 @@ Suppose there is a constant $c$ and a family of functions $G_m : \{0,1\}^{c \log
 
 ## Proof depends on
 
-- [P is contained in P/poly](../../circuit-complexity/constant-depth-circuit-lower-bounds/p-is-contained-in-p-poly.md)
+- [P is contained in P/poly](../../complexity-classes/time-and-space-complexity-classes/p-is-contained-in-p-poly.md)
 
 ## Sources
 
