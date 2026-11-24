@@ -77,8 +77,8 @@ theorem isUnit_one_sub_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq �
     exact hrow i
   exact ⟨Units.mk _ _ (mul_neg_geom_series A hnorm) (geom_series_mul_neg A hnorm), rfl⟩
 
-/-- **Neumann series.** Under the same row-sum contraction bound, the power series
-`∑ n, A ^ n` converges (entrywise) to the Leontief inverse `(1 - A)⁻¹`. -/
+/-- **Neumann series.** If `A` is entrywise nonnegative with every row sum below `1`, the power
+series `∑ n, A ^ n` converges (entrywise) to the Leontief inverse `(1 - A)⁻¹`. -/
 theorem hasSum_pow_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     {A : Matrix ι ι ℝ} (hA0 : ∀ i j, 0 ≤ A i j) (hrow : ∀ i, ∑ j, A i j < 1) :
     HasSum (fun n : ℕ => A ^ n) (1 - A)⁻¹ := by
@@ -121,8 +121,8 @@ theorem hasSum_pow_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     exact hφ.hasSum hsum_mat
   exact Pi.hasSum.mpr fun i => Pi.hasSum.mpr fun j => hentry i j
 
-/-- **Nonnegative Leontief inverse.** Under the same bound, every entry of `(1 - A)⁻¹` is
-nonnegative. -/
+/-- **Nonnegative Leontief inverse.** If `A` is entrywise nonnegative with every row sum below
+`1`, every entry of `(1 - A)⁻¹` is nonnegative. -/
 theorem inv_one_sub_nonneg_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     {A : Matrix ι ι ℝ} (hA0 : ∀ i j, 0 ≤ A i j) (hrow : ∀ i, ∑ j, A i j < 1) (i j : ι) :
     0 ≤ (1 - A)⁻¹ i j := by
