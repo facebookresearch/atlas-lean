@@ -4,7 +4,7 @@ For a fixed between-group variance $a > 0$ and expected within-group variance $v
 
 ## Background
 
-- [Bühlmann credibility in a finite latent mixture](buhlmann-credibility-in-a-finite-mixture.md): the credibility factor $Z_n$.
+- [Moment identities of the Bühlmann model in a finite latent mixture](moments-of-the-buhlmann-model-in-a-finite-mixture.md): the moments $a$ and $\bar v$ from which the credibility factor is formed.
 
 ## Sources
 

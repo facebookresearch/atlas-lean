@@ -9,3 +9,4 @@
 - [Quantile and Rockafellar–Uryasev expected shortfalls agree](quantile-expected-shortfall-eq-expected.md)
 - [Subadditivity of expected shortfall](expected-shortfall-add-le.md)
 - [CVaR minimization over finitely many scenarios as a linear program](cvar-minimization-as-a-linear-program.md)
+- [Union-bound approximation of a joint chance constraint](union-bound-approximation-of-joint-chance-constraints.md)

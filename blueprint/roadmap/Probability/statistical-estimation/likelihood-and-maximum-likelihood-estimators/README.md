@@ -16,7 +16,9 @@
 - [Induced likelihood](induced-likelihood.md)
 - [The sample mean maximizes the normal likelihood with known variance](sample-mean-is-the-normal-mean-mle.md)
 - [Score, information and the most informative item in the two-parameter logistic model](ability-estimation-in-the-two-parameter-logistic-model.md)
-- [Linking two-parameter logistic scales and test scores](scale-indeterminacy-of-the-two-parameter-logistic-model.md)
+- [Invariance of a finite-mixture two-parameter logistic model under a change of ability scale](scale-invariance-of-a-finite-mixture-two-parameter-logistic-model.md)
+- [Linear linking of score scales](linear-linking-of-score-scales.md)
+- [Equipercentile linking of score distributions](equipercentile-linking-of-score-distributions.md)
 
 
 ## Likelihood of independent Poisson counts

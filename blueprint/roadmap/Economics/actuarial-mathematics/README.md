@@ -8,6 +8,6 @@ Mathematics of insurance and pensions: life tables and survival functions, life 
 - [Existence and uniqueness of the adjustment coefficient](existence-and-uniqueness-of-the-adjustment-coefficient.md)
 - [Lundberg's inequality for the classical risk process](lundberg-s-inequality-for-the-classical-risk-process.md)
 - [Variance of a compound sum](variance-of-a-compound-sum.md)
-- [Bühlmann credibility in a finite latent mixture](buhlmann-credibility-in-a-finite-mixture.md)
+- [Moment identities of the Bühlmann model in a finite latent mixture](moments-of-the-buhlmann-model-in-a-finite-mixture.md)
 - [Limit of the Bühlmann credibility factor](limit-of-the-buhlmann-credibility-factor.md)
 - [Chain-ladder completion of a run-off triangle](chain-ladder-completion.md)

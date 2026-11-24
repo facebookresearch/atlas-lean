@@ -1,3 +1,4 @@
 # Product-form queueing networks
 
-- [Product-form stationary distributions of Jackson and Gordon–Newell networks](jackson-and-gordon-newell-networks.md)
+- [Product-form stationary distribution of a Jackson network](jackson-networks.md)
+- [Product-form stationary distribution of a Gordon–Newell network](gordon-newell-networks.md)
