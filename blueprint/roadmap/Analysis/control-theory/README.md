@@ -13,6 +13,7 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Feedback stability and classical design](feedback-stability-and-classical-design/README.md)
 - [Steady-state step response of a stable linear system](dc-gain-of-a-stable-linear-system.md)
 - [Linear-quadratic control](linear-quadratic-control/README.md)
+- [Average consensus on a connected undirected graph](average-consensus-on-a-connected-undirected-graph.md)
 
 ## Single-input single-output linear systems
 

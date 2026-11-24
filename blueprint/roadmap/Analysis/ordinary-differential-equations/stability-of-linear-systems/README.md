@@ -5,3 +5,4 @@
 - [Exponential stability of linear differential equations](asymptotic-stability-linear-differential-equations.md)
 - [The Stein equation: series solution and uniqueness](stein-equation-series-solution-and-uniqueness.md)
 - [Lyapunov, asymptotic and bounded-input bounded-output stability of linear systems](lyapunov-asymptotic-and-bounded-input-bounded-output-stability-of-linear-systems.md)
+- [Real and complex stability of a real linear system agree](real-and-complex-stability-of-a-real-linear-system-agree.md)
