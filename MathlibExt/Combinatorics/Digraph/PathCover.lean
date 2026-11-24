@@ -17,6 +17,7 @@ module
 
 public import Mathlib.Combinatorics.Digraph.Basic
 public import MathlibExt.Combinatorics.Order.Dilworth
+public import MathlibExt.Combinatorics.Digraph.FiniteDAG
 import Mathlib.Logic.Relation
 import Mathlib.Order.Preorder.Finite
 
@@ -76,12 +77,6 @@ structure IsTransitiveDAG (D : Digraph V) : Prop where
   /-- Arcs compose. -/
   trans : ∀ x y z, D.Adj x y → D.Adj y z → D.Adj x z
 
-/-- A digraph is a DAG when its reachability relation is irreflexive: no vertex
-reaches itself by a nontrivial directed walk. This is the standard
-acyclicity notion for the path-cover development. -/
-def IsDAG (D : Digraph V) : Prop :=
-  ∀ x, ¬ Relation.TransGen D.Adj x x
-
 /-- The transitive closure of a digraph as a digraph: arcs are reachability
 (`Relation.TransGen`) steps. -/
 def transClosure (D : Digraph V) : Digraph V :=
@@ -94,15 +89,15 @@ theorem transClosure_adj (D : Digraph V) (a b : V) :
   Iff.rfl
 
 /-- The transitive closure of a DAG is a transitive DAG. -/
-theorem isTransitiveDAG_transClosure (D : Digraph V) (hD : IsDAG D) :
+theorem isTransitiveDAG_transClosure (D : Digraph V) (hD : D.IsAcyclic) :
     IsTransitiveDAG (transClosure D) where
   irrefl := fun x h => hD x h
   trans := fun _ _ _ hab hbc => Relation.TransGen.trans hab hbc
 
 /-- The transitive closure of a DAG is again a DAG: a reachability cycle in
 the closure collapses to a reachability cycle in the original digraph. -/
-theorem IsDAG_transClosure (D : Digraph V) (hD : IsDAG D) :
-    IsDAG (transClosure D) := by
+theorem isAcyclic_transClosure (D : Digraph V) (hD : D.IsAcyclic) :
+    (transClosure D).IsAcyclic := by
   have collapse : ∀ a b, Relation.TransGen (transClosure D).Adj a b →
       Relation.TransGen D.Adj a b := by
     intro a b hab
@@ -114,8 +109,8 @@ theorem IsDAG_transClosure (D : Digraph V) (hD : IsDAG D) :
 
 /-- A transitive DAG is a DAG: a reachability cycle would compose (by
 transitivity) to a loop, contradicting irreflexivity. -/
-theorem IsDAG_of_isTransitiveDAG (D : Digraph V) (hD : IsTransitiveDAG D) :
-    IsDAG D := by
+theorem isAcyclic_of_isTransitiveDAG (D : Digraph V) (hD : IsTransitiveDAG D) :
+    D.IsAcyclic := by
   have collapse : ∀ a b, Relation.TransGen D.Adj a b → D.Adj a b := by
     intro a b hab
     induction hab with
