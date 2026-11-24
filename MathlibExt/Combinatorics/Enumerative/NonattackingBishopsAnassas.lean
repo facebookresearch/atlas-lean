@@ -768,4 +768,666 @@ public theorem bishopsSquare_eq_sum (m k : ℕ) :
   simp only [extra, Nat.add_sub_cancel, Nat.sub_zero]
   rw [show (m : ℤ) - (k - j : ℕ) = m - k + j by omega]
 
+namespace AnassaRooks
+
+open scoped Classical
+
+variable {α β : Type*} [DecidableEq α] [DecidableEq β]
+
+private noncomputable def rooks (b : Finset (α × β)) (mark : α × β → Prop) (k p : ℕ) :
+    Finset (Finset (α × β)) :=
+  (b.powersetCard k).filter fun s =>
+    Set.InjOn Prod.fst (s : Set (α × β)) ∧ Set.InjOn Prod.snd (s : Set (α × β)) ∧
+      (s.filter mark).card = p
+
+private theorem mem_rooks {b s : Finset (α × β)} {mark : α × β → Prop} {k p : ℕ} :
+    s ∈ rooks b mark k p ↔ s ⊆ b ∧ s.card = k ∧ Set.InjOn Prod.fst (s : Set (α × β)) ∧
+      Set.InjOn Prod.snd (s : Set (α × β)) ∧ (s.filter mark).card = p := by
+  simp only [rooks, mem_filter, mem_powersetCard, and_assoc]
+
+private theorem card_filter_insert_rook (mark : α × β → Prop) {s : Finset (α × β)}
+    {x : α × β} (hx : x ∉ s) :
+    ((insert x s).filter mark).card = (s.filter mark).card + (if mark x then 1 else 0) := by
+  by_cases hm : mark x <;> simp [filter_insert, hm, hx]
+
+private theorem injOn_insert_rook {γ : Type*} {f : α × β → γ} {s : Finset (α × β)}
+    {x : α × β} (hi : Set.InjOn f (s : Set (α × β)))
+    (hf : ∀ y ∈ s, f y ≠ f x) : Set.InjOn f (↑(insert x s) : Set (α × β)) := by
+  intro a ha b hb h
+  change a ∈ insert x s at ha
+  change b ∈ insert x s at hb
+  rcases mem_insert.mp ha with rfl | ha' <;> rcases mem_insert.mp hb with rfl | hb'
+  · rfl
+  · exact (hf _ hb' h.symm).elim
+  · exact (hf _ ha' h).elim
+  · exact hi ha' hb' h
+
+-- A placement either avoids the new row or comes from inserting a rook in a free column.
+private theorem rook_step (b : Finset (α × β)) (mark : α × β → Prop) (r : α)
+    (cols : Finset β) (k p d c : ℕ) (fresh : ∀ x ∈ b, x.1 ≠ r)
+    (hmark : ∀ y ∈ cols, (if mark (r, y) then 1 else 0) = d)
+    (havail : ∀ s ∈ rooks b mark k p, (cols \ s.image Prod.snd).card = c) :
+    (rooks (b ∪ cols.image (Prod.mk r)) mark (k + 1) (p + d)).card =
+      (rooks b mark (k + 1) (p + d)).card + c * (rooks b mark k p).card := by
+  let old := rooks b mark (k + 1) (p + d)
+  let choices := (rooks b mark k p).sigma fun s => cols \ s.image Prod.snd
+  let assemble : Finset (α × β) ⊕ (Σ _ : Finset (α × β), β) → Finset (α × β) :=
+    Sum.elim id fun x => insert (r, x.2) x.1
+  have hrow {s : Finset (α × β)} {j q : ℕ} (hs : s ∈ rooks b mark j q) {x : α × β}
+      (hx : x ∈ s) : x.1 ≠ r := fresh x ((mem_rooks.mp hs).1 hx)
+  have hcol {x : α × β} (hx : x ∈ cols.image (Prod.mk r)) : x.1 = r ∧ x.2 ∈ cols := by
+    obtain ⟨t, ht, rfl⟩ := mem_image.mp hx
+    exact ⟨rfl, ht⟩
+  have hbij : (old.disjSum choices).card =
+      (rooks (b ∪ cols.image (Prod.mk r)) mark (k + 1) (p + d)).card := by
+    apply card_nbij assemble
+    · intro a ha
+      cases a with
+      | inl s =>
+        obtain ⟨hb, hs, hr, hc, hp⟩ := mem_rooks.mp (inl_mem_disjSum.mp ha)
+        exact mem_rooks.mpr ⟨fun x hx => mem_union_left _ (hb hx), hs, hr, hc, hp⟩
+      | inr a =>
+        obtain ⟨s, t⟩ := a
+        obtain ⟨hs, ht⟩ := mem_sigma.mp (inr_mem_disjSum.mp ha)
+        obtain ⟨hb, hk, hr, hc, hp⟩ := mem_rooks.mp hs
+        obtain ⟨ht, hf⟩ := mem_sdiff.mp ht
+        have hn : (r, t) ∉ s := fun h => hrow hs h rfl
+        refine mem_rooks.mpr ⟨?_, by simp [assemble, hn, hk],
+          injOn_insert_rook hr (fun _ hx => hrow hs hx),
+          injOn_insert_rook hc (fun x hx he => hf (mem_image.mpr ⟨x, hx, he⟩)), ?_⟩
+        · intro x hx
+          rcases mem_insert.mp hx with rfl | hx
+          · exact mem_union_right _ (mem_image.mpr ⟨t, ht, rfl⟩)
+          · exact mem_union_left _ (hb hx)
+        · change ((insert (r, t) s).filter mark).card = p + d
+          rw [card_filter_insert_rook mark hn, hp, hmark _ ht]
+    · intro a ha e he h
+      cases a with
+      | inl s =>
+        cases e with
+        | inl z => exact congrArg Sum.inl h
+        | inr z =>
+          change s = insert (r, z.2) z.1 at h
+          have hx : (r, z.2) ∈ s := h.symm ▸ mem_insert_self ..
+          exact (hrow (inl_mem_disjSum.mp ha) hx rfl).elim
+      | inr a =>
+        cases e with
+        | inl z =>
+          change insert (r, a.2) a.1 = z at h
+          have hx : (r, a.2) ∈ z := h ▸ mem_insert_self ..
+          exact (hrow (inl_mem_disjSum.mp he) hx rfl).elim
+        | inr e =>
+          obtain ⟨s, t⟩ := a
+          obtain ⟨z, u⟩ := e
+          change insert (r, t) s = insert (r, u) z at h
+          have hs := (mem_sigma.mp (inr_mem_disjSum.mp ha)).1
+          have hz := (mem_sigma.mp (inr_mem_disjSum.mp he)).1
+          have hx : (r, t) ∈ insert (r, u) z := h ▸ mem_insert_self ..
+          rcases mem_insert.mp hx with heq | hx
+          · obtain rfl : t = u := congrArg Prod.snd heq
+            have hn : (r, t) ∉ s := fun hx => hrow hs hx rfl
+            have hn' : (r, t) ∉ z := fun hx => hrow hz hx rfl
+            have herase := congrArg (fun v : Finset (α × β) => v.erase (r, t)) h
+            have : s = z := by simpa [hn, hn'] using herase
+            subst z
+            rfl
+          · exact (hrow hz hx rfl).elim
+    · intro s hs
+      obtain ⟨hb, hk, hr, hc, hp⟩ := mem_rooks.mp hs
+      by_cases h : ∃ t, (r, t) ∈ s
+      · obtain ⟨t, ht⟩ := h
+        let z := s.erase (r, t)
+        have htcol : t ∈ cols := by
+          rcases mem_union.mp (hb ht) with ht' | ht'
+          · exact (fresh _ ht' rfl).elim
+          · exact (hcol ht').2
+        have hz : z ∈ rooks b mark k p := by
+          refine mem_rooks.mpr ⟨?_, by simp [z, card_erase_of_mem ht, hk],
+            hr.mono (erase_subset ..), hc.mono (erase_subset ..), ?_⟩
+          · intro x hx
+            obtain ⟨hne, hx⟩ := mem_erase.mp hx
+            rcases mem_union.mp (hb hx) with hx' | hx'
+            · exact hx'
+            · exact (hne (hr hx ht (hcol hx').1)).elim
+          · have hn : (r, t) ∉ z := fun hx => (mem_erase.mp hx).1 rfl
+            have hcount := card_filter_insert_rook mark hn
+            rw [show insert (r, t) z = s from insert_erase ht, hp, hmark _ htcol] at hcount
+            exact Nat.add_right_cancel hcount.symm
+        have hf : t ∉ z.image Prod.snd := by
+          intro hf
+          obtain ⟨x, hx, he⟩ := mem_image.mp hf
+          exact (mem_erase.mp hx).1 (hc (mem_erase.mp hx).2 ht he)
+        exact ⟨.inr ⟨z, t⟩, inr_mem_disjSum.mpr
+          (mem_sigma.mpr ⟨hz, mem_sdiff.mpr ⟨htcol, hf⟩⟩), insert_erase ht⟩
+      · refine ⟨.inl s, inl_mem_disjSum.mpr (mem_rooks.mpr ⟨?_, hk, hr, hc, hp⟩), rfl⟩
+        rintro ⟨x, t⟩ hx
+        rcases mem_union.mp (hb hx) with hx' | hx'
+        · exact hx'
+        · have he : x = r := (hcol hx').1
+          exact (h ⟨t, he ▸ hx⟩).elim
+  rw [← hbij, card_disjSum, card_sigma]
+  congr 1
+  rw [sum_congr rfl fun s hs => havail s hs]
+  simp [mul_comm]
+
+private theorem image_swap_image (s : Finset (α × β)) :
+    (s.image Prod.swap).image Prod.swap = s := by
+  simp [image_image, Function.comp_def]
+
+private theorem mem_rooks_swap {b s : Finset (α × β)} {mark : α × β → Prop} {k p : ℕ}
+    (hs : s ∈ rooks b mark k p) :
+    s.image Prod.swap ∈ rooks (b.image Prod.swap) (fun x => mark x.swap) k p := by
+  obtain ⟨hb, hk, hr, hc, hp⟩ := mem_rooks.mp hs
+  refine mem_rooks.mpr ⟨image_subset_image hb, ?_, ?_, ?_, ?_⟩
+  · rwa [card_image_of_injective _ Prod.swap_injective]
+  · intro x hx y hy he
+    obtain ⟨a, ha, rfl⟩ := mem_image.mp hx
+    obtain ⟨b, hb, rfl⟩ := mem_image.mp hy
+    exact congrArg Prod.swap (hc ha hb he)
+  · intro x hx y hy he
+    obtain ⟨a, ha, rfl⟩ := mem_image.mp hx
+    obtain ⟨b, hb, rfl⟩ := mem_image.mp hy
+    exact congrArg Prod.swap (hr ha hb he)
+  · simpa only [filter_image, Prod.swap_swap, card_image_of_injective _ Prod.swap_injective]
+      using hp
+
+-- Transposing exchanges row- and column-injectivity without changing the number of tags.
+private theorem rooks_swap (b : Finset (α × β)) (mark : α × β → Prop) (k p : ℕ) :
+    (rooks (b.image Prod.swap) (fun x => mark x.swap) k p).card =
+      (rooks b mark k p).card := by
+  symm
+  apply card_nbij (fun s => s.image Prod.swap)
+  · exact fun _ hs => mem_rooks_swap hs
+  · intro s _ t _ h
+    simpa only [image_swap_image] using congrArg (fun z : Finset (β × α) => z.image Prod.swap) h
+  · intro s hs
+    refine ⟨s.image Prod.swap, ?_, image_swap_image s⟩
+    change s.image Prod.swap ∈ rooks b mark k p
+    simpa only [image_swap_image, Prod.swap_swap] using mem_rooks_swap hs
+
+-- A column is an anassa diagonal: retain the positive differences, and label
+-- nonpositive differences from the other end of the square. The two signs are
+-- disjoint, and the labels of the old columns do not change in the rook board.
+private abbrev Cell := ℤ × ℤ
+private def below (x : Cell) : Prop := 0 < x.2
+
+private def board (m : ℕ) : Finset Cell :=
+  (Icc 1 (m : ℤ) ×ˢ Icc (-(m : ℤ)) (m : ℤ)).filter fun x =>
+    (0 < x.2 ∧ x.2 < x.1) ∨ x.2 ≤ -x.1
+
+private theorem mem_board {m : ℕ} {x : Cell} :
+    x ∈ board m ↔ 1 ≤ x.1 ∧ x.1 ≤ (m : ℤ) ∧
+      ((1 ≤ x.2 ∧ x.2 < x.1) ∨ (-(m : ℤ) ≤ x.2 ∧ x.2 ≤ -x.1)) := by
+  simp only [board, mem_filter, mem_product, mem_Icc]
+  omega
+
+private def encode (m : ℕ) (x : Cell) : Cell :=
+  let d := x.1 - x.2
+  (x.1, if 0 < d then d else -((m : ℤ) + d))
+
+private noncomputable def decode (m : ℕ) (x : Cell) : Cell :=
+  (x.1, if below x then x.1 - x.2 else (m : ℤ) + x.1 + x.2)
+
+private theorem mem_square {m : ℕ} {x : Cell} :
+    x ∈ squareBoard m ↔ 1 ≤ x.1 ∧ x.1 ≤ (m : ℤ) ∧ 1 ≤ x.2 ∧ x.2 ≤ (m : ℤ) := by
+  simp [squareBoard, and_assoc]
+
+private theorem encode_below {m : ℕ} {x : Cell} (hx : x ∈ squareBoard m) :
+    below (encode m x) ↔ x.2 < x.1 := by
+  obtain ⟨_, _, _, _⟩ := mem_square.mp hx
+  simp only [below, encode]
+  split <;> omega
+
+private theorem encode_mem {m : ℕ} {x : Cell} (hx : x ∈ squareBoard m) :
+    encode m x ∈ board m := by
+  obtain ⟨_, _, _, _⟩ := mem_square.mp hx
+  simp only [mem_board, encode]
+  split <;> omega
+
+private theorem decode_mem {m : ℕ} {x : Cell} (hx : x ∈ board m) :
+    decode m x ∈ squareBoard m := by
+  obtain ⟨_, _, h⟩ := mem_board.mp hx
+  simp only [mem_square, decode, below]
+  split_ifs <;> omega
+
+private theorem encode_decode {m : ℕ} {x : Cell} (hx : x ∈ board m) :
+    encode m (decode m x) = x := by
+  obtain ⟨_, _, _⟩ := mem_board.mp hx
+  refine Prod.ext (show (encode m (decode m x)).1 = x.1 from rfl) ?_
+  simp only [encode, decode, below]
+  split_ifs <;> omega
+
+private theorem encode_snd {m : ℕ} {x y : Cell} (hx : x ∈ squareBoard m)
+    (hy : y ∈ squareBoard m) :
+    (encode m x).2 = (encode m y).2 ↔ x.1 - x.2 = y.1 - y.2 := by
+  obtain ⟨_, _, _, _⟩ := mem_square.mp hx
+  obtain ⟨_, _, _, _⟩ := mem_square.mp hy
+  simp only [encode]
+  split_ifs <;> omega
+
+private theorem encode_inj {m : ℕ} : Set.InjOn (encode m) (squareBoard m : Set Cell) := by
+  intro x hx y hy he
+  have h₁ := congrArg Prod.fst he
+  change x.1 = y.1 at h₁
+  have h₂ := (encode_snd hx hy).mp (congrArg Prod.snd he)
+  exact Prod.ext h₁ (by omega)
+
+private theorem encode_image (m : ℕ) : (squareBoard m).image (encode m) = board m := by
+  ext x
+  rw [mem_image]
+  exact ⟨fun ⟨y, hy, h⟩ => h ▸ encode_mem hy,
+    fun h => ⟨decode m x, decode_mem h, encode_decode h⟩⟩
+
+private theorem mem_anassas {m k p : ℕ} {s : Finset Cell} :
+    s ∈ (nonattackingPlacements (squareBoard m) anassaMoves k).filter
+        (fun S => (S.filter fun x => x.2 < x.1).card = p) ↔
+      s ⊆ squareBoard m ∧ s.card = k ∧
+      Set.InjOn Prod.fst (s : Set Cell) ∧ Set.InjOn (fun x => x.1 - x.2) (s : Set Cell) ∧
+      (s.filter fun x => x.2 < x.1).card = p := by
+  simp only [nonattackingPlacements, mem_filter, mem_powersetCard, anassaMoves,
+    List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq,
+    mul_one, mul_zero, and_assoc]
+  rw [← and_assoc (a := Set.InjOn Prod.fst (s : Set Cell))]
+  refine and_congr_right fun _ => and_congr_right fun _ => and_congr_left' ?_
+  constructor
+  · intro h
+    constructor
+    · intro x hx y hy he
+      by_contra hn
+      exact (h x hx y hy hn).1 (by omega)
+    · intro x hx y hy he
+      by_contra hn
+      change x.1 - x.2 = y.1 - y.2 at he
+      exact (h x hx y hy hn).2 (by omega)
+  · rintro ⟨h₁, h₂⟩ x hx y hy hn
+    refine ⟨fun h => hn (h₁ hx hy (by omega)), fun h => hn (h₂ hx hy ?_)⟩
+    change x.1 - x.2 = y.1 - y.2
+    omega
+
+private theorem card_filter_image {α β : Type*} [DecidableEq β]
+    {f : α → β} {s : Finset α} (hf : Set.InjOn f (s : Set α))
+    {p : α → Prop} {q : β → Prop} [DecidablePred p] [DecidablePred q]
+    (h : ∀ x ∈ s, q (f x) ↔ p x) : ((s.image f).filter q).card = (s.filter p).card := by
+  rw [filter_image, card_image_of_injOn (hf.mono (filter_subset ..))]
+  congr 1
+  exact filter_congr h
+
+private theorem anassas_eq_rooks (m k p : ℕ) :
+    anassasBelow m k p = (rooks (board m) below k p).card := by
+  have he {s : Finset Cell} (hs : s ⊆ squareBoard m) :
+      s.image (encode m) ∈ rooks (board m) below k p ↔
+        s ∈ (nonattackingPlacements (squareBoard m) anassaMoves k).filter
+          (fun S => (S.filter fun x => x.2 < x.1).card = p) := by
+    have hb : s.image (encode m) ⊆ board m := encode_image m ▸ image_subset_image hs
+    have hi := encode_inj.mono hs
+    rw [mem_rooks, mem_anassas, and_iff_right hb, and_iff_right hs,
+      card_image_of_injOn hi,
+      bishopsSquare_eq_sum.injOn_image_iff hi (g := Prod.fst) (h := Prod.fst)
+        (fun _ _ _ _ => Iff.rfl),
+      bishopsSquare_eq_sum.injOn_image_iff hi (fun _ hx _ hy => encode_snd (hs hx) (hs hy)),
+      card_filter_image hi (fun _ hx => encode_below (hs hx))]
+  unfold anassasBelow
+  apply card_nbij (image (encode m))
+  · intro s hs
+    exact (he (mem_anassas.mp hs).1).2 hs
+  · intro s hs t ht h
+    exact (image_eq_image_iff_of_injOn encode_inj
+      (mem_anassas.mp hs).1 (mem_anassas.mp ht).1).mp h
+  · intro t ht
+    have hb := (mem_rooks.mp ht).1
+    rw [← encode_image m, subset_image_iff] at hb
+    obtain ⟨s, hs, rfl⟩ := hb
+    exact ⟨s, (he hs).1 ht, rfl⟩
+
+-- The added positive row comes first, and then the new negative column,
+-- which meets every row including the new one.
+private def indices (m : ℕ) : Finset ℤ := Icc 1 (m : ℤ)
+
+private def withRow (m : ℕ) : Finset Cell :=
+  board m ∪ (indices m).image (Prod.mk ((m : ℤ) + 1))
+
+private def withCol (b : Finset Cell) (m : ℕ) : Finset Cell :=
+  b ∪ (indices (m + 1)).image (fun x => (x, -((m : ℤ) + 1)))
+
+private theorem mem_withRow {m : ℕ} {x : Cell} :
+    x ∈ withRow m ↔ x ∈ board m ∨
+      (x.1 = (m : ℤ) + 1 ∧ x.2 ∈ indices m) := by
+  rcases x with ⟨i, j⟩
+  simp [withRow, mem_image, Prod.mk.injEq, eq_comm, and_comm]
+
+private theorem mem_withCol {b : Finset Cell} {m : ℕ} {x : Cell} :
+    x ∈ withCol b m ↔ x ∈ b ∨
+      (x.1 ∈ indices (m + 1) ∧ x.2 = -((m : ℤ) + 1)) := by
+  rcases x with ⟨i, j⟩
+  simp [withCol, mem_image, Prod.mk.injEq, eq_comm]
+
+private theorem board_succ (m : ℕ) : board (m + 1) = withCol (withRow m) m := by
+  ext x
+  simp only [mem_withCol, mem_withRow, mem_board, indices, mem_Icc, Nat.cast_add, Nat.cast_one]
+  omega
+
+private noncomputable def upper (m : ℕ) : Finset Cell := (board m).filter (fun x => ¬ below x)
+
+private theorem mem_upper {m : ℕ} {x : Cell} :
+    x ∈ upper m ↔ 1 ≤ x.1 ∧ -(m : ℤ) ≤ x.2 ∧ x.2 ≤ -x.1 := by
+  simp [upper, below, mem_board]
+  omega
+
+private theorem upper_succ (m : ℕ) : upper (m + 1) = withCol (upper m) m := by
+  ext x
+  simp only [mem_withCol, mem_upper, indices, mem_Icc, Nat.cast_add, Nat.cast_one]
+  omega
+
+private theorem card_indices (m : ℕ) : (indices m).card = m := by
+  simp [indices, Int.card_Icc]
+
+private theorem rooks_empty (k p : ℕ) :
+    (rooks (∅ : Finset Cell) below k p).card = (if k = 0 ∧ p = 0 then 1 else 0) := by
+  have : rooks (∅ : Finset Cell) below k p = if k = 0 ∧ p = 0 then {∅} else ∅ := by
+    ext s
+    rw [mem_rooks]
+    simp only [subset_empty]
+    by_cases h : k = 0 ∧ p = 0
+    · obtain ⟨rfl, rfl⟩ := h
+      rw [show (if 0 = 0 ∧ 0 = 0 then ({∅} : Finset (Finset Cell)) else ∅) = {∅} by simp]
+      exact ⟨fun hs => mem_singleton.mpr hs.1, by intro hs; obtain rfl := mem_singleton.mp hs; simp⟩
+    · simp only [ite_eq_right h, notMem_empty, iff_false]
+      rintro ⟨rfl, hk, _, _, hp⟩
+      exact h ⟨by simpa using hk.symm, by simpa using hp.symm⟩
+  rw [this]
+  split <;> simp
+
+private theorem rooks_zero (b : Finset Cell) (p : ℕ) :
+    (rooks b below 0 p).card = (if p = 0 then 1 else 0) := by
+  have : rooks b below 0 p = if p = 0 then {∅} else ∅ := by
+    ext s
+    rw [mem_rooks, card_eq_zero]
+    by_cases h : p = 0
+    · rw [ite_eq_left h, mem_singleton]
+      exact ⟨fun hs => hs.2.1, by rintro rfl; simp [h]⟩
+    · simp only [ite_eq_right h, notMem_empty, iff_false]
+      rintro ⟨_, rfl, _, _, hp⟩
+      exact h (by simpa using hp.symm)
+  rw [this]
+  split <;> simp
+
+-- With no marked rooks, the original placement is supported on the unmarked subboard.
+private theorem rooks_unmarked (m k : ℕ) :
+    rooks (board m) below k 0 = rooks (upper m) below k 0 := by
+  ext s
+  simp only [mem_rooks, card_eq_zero]
+  refine ⟨?_, fun ⟨hs, h⟩ => ⟨hs.trans (filter_subset ..), h⟩⟩
+  rintro ⟨hs, hk, hr, hc, hz⟩
+  refine ⟨?_, hk, hr, hc, hz⟩
+  intro x hx
+  apply mem_filter.mpr ⟨hs hx, ?_⟩
+  intro hm
+  have := mem_filter.mpr (⟨hx, hm⟩ : x ∈ s ∧ below x)
+  rw [hz] at this
+  exact notMem_empty _ this
+
+private theorem rooks_one (b : Finset Cell) (p : ℕ) :
+    (rooks b below 1 p).card = (b.filter fun x => (if below x then 1 else 0) = p).card := by
+  symm
+  apply card_nbij (fun x => {x})
+  · intro x hx
+    obtain ⟨h, ht⟩ := mem_filter.mp hx
+    simpa [mem_rooks, Finset.filter_singleton, apply_ite card] using And.intro h ht
+  · intro x _ y _ h
+    simpa using h
+  · intro s hs
+    obtain ⟨x, rfl⟩ := card_eq_one.mp (mem_rooks.mp hs).2.1
+    refine ⟨x, ?_, rfl⟩
+    simpa [mem_rooks, Finset.filter_singleton, apply_ite card] using hs
+
+private theorem board_zero : board 0 = ∅ := by
+  ext x
+  simp only [mem_board, notMem_empty, Nat.cast_zero, iff_false]
+  omega
+
+private theorem upper_zero : upper 0 = ∅ := by
+  simp [upper, board_zero]
+
+private theorem positive_card (m : ℕ) :
+    ((board (m + 1)).filter below).card = (upper m).card := by
+  apply card_nbij (fun x : Cell => (x.2, 1 - x.1))
+  · intro x hx
+    change x ∈ (board (m + 1)).filter below at hx
+    change (x.2, 1 - x.1) ∈ upper m
+    simp only [mem_filter, mem_board, Nat.cast_add, Nat.cast_one, below] at hx
+    simp only [mem_upper]
+    omega
+  · intro x _ y _ h
+    simp only [Prod.mk.injEq] at h
+    exact Prod.ext (by omega) h.1
+  · intro x hx
+    have hx' := mem_upper.mp (show x ∈ upper m from hx)
+    refine ⟨(1 - x.2, x.1), ?_, Prod.ext rfl (by simp)⟩
+    change (1 - x.2, x.1) ∈ (board (m + 1)).filter below
+    simp only [mem_filter, mem_board, Nat.cast_add, Nat.cast_one, below]
+    omega
+
+private theorem rows_withRow {m : ℕ} {x : Cell} (hx : x ∈ withRow m) :
+    x.1 ∈ indices (m + 1) := by
+  rw [mem_withRow, mem_board] at hx
+  simp only [indices, mem_Icc, Nat.cast_add, Nat.cast_one]
+  omega
+
+private theorem cols_withRow {m : ℕ} {x : Cell} (hx : x ∈ withRow m) :
+    x.2 ≠ -((m : ℤ) + 1) := by
+  rw [mem_withRow, mem_board] at hx
+  simp only [indices, mem_Icc] at hx
+  omega
+
+private theorem positive_columns {m : ℕ} {s : Finset Cell} (hs : s ⊆ board m) :
+    (s.filter below).image Prod.snd ⊆ indices m := by
+  intro j hj
+  obtain ⟨x, hx, rfl⟩ := mem_image.mp hj
+  obtain ⟨hx, hb⟩ := mem_filter.mp hx
+  have h := mem_board.mp (hs hx)
+  simp only [below] at hb
+  simp only [indices, mem_Icc]
+  omega
+
+private theorem row_step_nat (m k p : ℕ) :
+    (rooks (withRow m) below (k + 1) (p + 1)).card =
+      (rooks (board m) below (k + 1) (p + 1)).card +
+        (m - p) * (rooks (board m) below k p).card := by
+  apply rook_step
+  · intro x hx he
+    have h := (mem_board.mp hx).2.1
+    omega
+  · intro j hj
+    simp only [indices, mem_Icc] at hj
+    simp [below, show (0 : ℤ) < j by omega]
+  · intro s hs
+    have hm := mem_rooks.mp hs
+    have hdiff : indices m \ s.image Prod.snd = indices m \ (s.filter below).image Prod.snd := by
+      ext j
+      rw [mem_sdiff, mem_sdiff]
+      refine and_congr_right fun hj => not_congr ⟨?_, ?_⟩
+      · intro h
+        obtain ⟨x, hx, rfl⟩ := mem_image.mp h
+        exact mem_image_of_mem _ (mem_filter.mpr ⟨hx, by
+          simp only [below]
+          have hh := (mem_Icc.mp hj).1
+          omega⟩)
+      · intro h
+        exact image_subset_image (f := Prod.snd) (filter_subset below s) h
+    rw [hdiff, card_sdiff_of_subset (positive_columns hm.1),
+      card_image_of_injOn (hm.2.2.2.1.mono (filter_subset below s)), card_indices, hm.2.2.2.2]
+
+private theorem rook_row_image {b s : Finset Cell} {m k p : ℕ}
+    (hb : ∀ x ∈ b, x.1 ∈ indices (m + 1)) (hs : s ∈ rooks b below k p) :
+    s.image Prod.fst ⊆ indices (m + 1) := by
+  intro i hi
+  obtain ⟨x, hx, rfl⟩ := mem_image.mp hi
+  exact hb x ((mem_rooks.mp hs).1 hx)
+
+private theorem col_step_nat (b : Finset Cell) (m k p : ℕ)
+    (hf : ∀ x ∈ b, x.2 ≠ -((m : ℤ) + 1)) (hb : ∀ x ∈ b, x.1 ∈ indices (m + 1)) :
+    (rooks (withCol b m) below (k + 1) p).card =
+      (rooks b below (k + 1) p).card + (m + 1 - k) * (rooks b below k p).card := by
+  let t := -((m : ℤ) + 1)
+  have hboard : (withCol b m).image Prod.swap =
+      b.image Prod.swap ∪ (indices (m + 1)).image (Prod.mk t) := by
+    simp [withCol, t, image_union, image_image, Function.comp_def]
+  have hstep := rook_step (b.image Prod.swap) (fun x => below x.swap) t
+    (indices (m + 1)) k p 0 (m + 1 - k) (by
+      intro x hx
+      obtain ⟨y, hy, rfl⟩ := mem_image.mp hx
+      exact hf y hy) (by
+      intro j _
+      simp [below, t]) (by
+      intro s hs
+      have hm := mem_rooks.mp hs
+      have hsub : s.image Prod.snd ⊆ indices (m + 1) := by
+        intro j hj
+        obtain ⟨x, hx, rfl⟩ := mem_image.mp hj
+        obtain ⟨y, hy, rfl⟩ := mem_image.mp (hm.1 hx)
+        exact hb y hy
+      rw [card_sdiff_of_subset hsub, card_image_of_injOn hm.2.2.2.1, card_indices, hm.2.1])
+  simpa only [← hboard, Nat.add_zero, rooks_swap] using hstep
+
+-- A negative integer coefficient can occur only in front of an empty count.
+private theorem cast_mul_sub (n j a : ℕ) (ha : a ≠ 0 → j ≤ n) :
+    ((n - j : ℕ) : ℤ) * (a : ℤ) = ((n : ℤ) - j) * a := by
+  by_cases h : a = 0
+  · simp [h]
+  · rw [Nat.cast_sub (ha h)]
+
+private theorem row_step (m k p : ℕ) :
+    ((rooks (withRow m) below (k + 1) (p + 1)).card : ℤ) =
+      (rooks (board m) below (k + 1) (p + 1)).card +
+        ((m : ℤ) - p) * (rooks (board m) below k p).card := by
+  rw [row_step_nat, Nat.cast_add, Nat.cast_mul, cast_mul_sub]
+  intro h
+  obtain ⟨s, hs⟩ := card_pos.mp (Nat.pos_of_ne_zero h)
+  have hm := mem_rooks.mp hs
+  have hcard := card_le_card (positive_columns hm.1)
+  rwa [card_indices, card_image_of_injOn (hm.2.2.2.1.mono (filter_subset ..)), hm.2.2.2.2] at hcard
+
+private theorem col_step (m k p : ℕ) :
+    ((rooks (withCol (withRow m) m) below (k + 1) p).card : ℤ) =
+      (rooks (withRow m) below (k + 1) p).card +
+        ((m : ℤ) + 1 - k) * (rooks (withRow m) below k p).card := by
+  rw [col_step_nat _ _ _ _ (fun _ => cols_withRow) (fun _ => rows_withRow),
+    Nat.cast_add, Nat.cast_mul, cast_mul_sub, Nat.cast_add, Nat.cast_one]
+  intro h
+  obtain ⟨s, hs⟩ := card_pos.mp (Nat.pos_of_ne_zero h)
+  have hcard := card_le_card (rook_row_image (fun _ => rows_withRow) hs)
+  have hm := mem_rooks.mp hs
+  rwa [card_indices, card_image_of_injOn hm.2.2.1, hm.2.1] at hcard
+
+-- The p = 0 subboard is a staircase. Its one-column extension gives the
+-- Stirling recurrence directly, with the empty board giving the initial row.
+private theorem upper_count (m k : ℕ) :
+    (rooks (upper m) below k 0).card = extStirlingSecond (m + 1 : ℕ) ((m : ℤ) - k + 1) := by
+  induction m generalizing k with
+  | zero =>
+    rw [upper_zero, rooks_empty]
+    rcases k with _ | _ | k
+    · decide
+    · decide
+    · simp [extStirlingSecond, show ¬ (k : ℤ) ≤ -1 by omega]
+  | succ m ih =>
+    cases k with
+    | zero =>
+      rw [rooks_zero, show ((m + 1 : ℕ) : ℤ) - (0 : ℕ) + 1 = ((m + 1 + 1 : ℕ) : ℤ) by omega,
+        extStirlingSecond_natCast, Nat.stirlingSecond_self]
+      rfl
+    | succ k =>
+      rw [upper_succ, col_step_nat _ _ _ _ (by
+        intro x hx
+        have h := mem_upper.mp hx
+        omega) (by
+        intro x hx
+        have h := mem_upper.mp hx
+        simp only [indices, mem_Icc, Nat.cast_add, Nat.cast_one]
+        omega), ih, ih]
+      let d : ℤ := (m : ℤ) - k + 1
+      have h1 : ((m + 1 : ℕ) : ℤ) - ((k + 1 : ℕ) : ℤ) + 1 = d := by dsimp [d]; omega
+      have h2 : (m : ℤ) - ((k + 1 : ℕ) : ℤ) + 1 = d - 1 := by dsimp [d]; omega
+      have h3 : m + 1 - k = d.toNat := by dsimp [d]; omega
+      rw [h1, h2, h3, show ((m + 1 + 1 : ℕ) : ℤ) = ((m + 1 : ℕ) : ℤ) + 1 by omega,
+        bishopsSquare_eq_sum.stirling_step _ _ (by omega), add_comm]
+
+private theorem one_count (m p : ℕ) :
+    (rooks (board m) below 1 p).card =
+      (if p = 0 then Nat.stirlingSecond (m + 1) m else 0) +
+        (if p = 1 then extStirlingSecond m ((m : ℤ) - 1) else 0) := by
+  rcases p with _ | _ | p
+  · rw [rooks_unmarked, upper_count, show (m : ℤ) - (1 : ℕ) + 1 = (m : ℤ) by omega,
+      extStirlingSecond_natCast]
+    simp
+  · simp only [show (if (1 : ℕ) = 0 then Nat.stirlingSecond (m + 1) m else 0) = 0 by simp,
+      zero_add]
+    rw [rooks_one]
+    have he : ((board m).filter fun x => (if below x then 1 else 0) = 1) =
+        (board m).filter below := by
+      ext x
+      by_cases h : below x <;> simp [h]
+    rw [he]
+    cases m with
+    | zero => rw [board_zero]; decide
+    | succ m =>
+      rw [positive_card, ← show (rooks (upper m) below 1 0).card = (upper m).card by
+        rw [rooks_one]
+        congr 1
+        refine filter_eq_self.mpr fun x hx => ?_
+        have h := mem_upper.mp hx
+        have hn : ¬ below x := by unfold below; omega
+        simp [hn]]
+      rw [upper_count]
+      congr 1
+      omega
+  · rw [rooks_one]
+    have he : (board m).filter (fun x => (if below x then 1 else 0) = p + 1 + 1) = ∅ := by
+      ext x
+      by_cases h : below x <;> simp [h]
+    simp [he]
+
+private theorem recurrence (m k p : ℕ) :
+    ((anassasBelow (m + 1) (k + 2) (p + 1) : ℤ)) =
+      anassasBelow m (k + 2) (p + 1) + ((m : ℤ) - k) * anassasBelow m (k + 1) (p + 1) +
+        ((m : ℤ) - p) * anassasBelow m (k + 1) p +
+        ((m : ℤ) - p) * ((m : ℤ) - k) * anassasBelow m k p := by
+  simp only [anassas_eq_rooks]
+  rw [board_succ, show k + 2 = (k + 1) + 1 by omega, col_step, row_step, row_step]
+  push_cast
+  ring
+
+end AnassaRooks
+
+/-- **Recurrence for anassas below the diagonal.** Let $A(m, k, p)$ be the number of
+nonattacking placements of $k$ anassas on the square board $\{1, \dots, m\}^2$ with exactly $p$
+of them strictly below the main diagonal, let ${n \brace j}$ be Knuth's extended Stirling
+numbers of the second kind, and let $\delta$ be the Kronecker delta. For $m \ge 1$, $k \ge 2$
+and $p \ge 1$,
+$$A(m, k, p) = A(m-1, k, p) + (m-k+1) A(m-1, k-1, p) + (m-p) A(m-1, k-1, p-1) +
+(m-p)(m-k+1) A(m-1, k-2, p-1)$$
+in the integers. Moreover, for all natural numbers $m$, $k$ and $p$,
+$A(0, k, p) = \delta_{k0} \delta_{p0}$, $A(m, 0, p) = \delta_{p0}$,
+$A(m, 1, p) = {m+1 \brace m} \delta_{p0} + {m \brace m-1} \delta_{p1}$ and
+$A(m, k, 0) = {m+1 \brace m-k+1}$.
+
+Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
+Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 11 (`jis-2025-25.8.6-thm-11`). -/
+public theorem anassasBelow_recurrence (m k p : ℕ) :
+    ((anassasBelow (m + 1) (k + 2) (p + 1) : ℤ) =
+        anassasBelow m (k + 2) (p + 1) + ((m : ℤ) - k) * anassasBelow m (k + 1) (p + 1) +
+          ((m : ℤ) - p) * anassasBelow m (k + 1) p +
+          ((m : ℤ) - p) * ((m : ℤ) - k) * anassasBelow m k p) ∧
+      anassasBelow 0 k p = (if k = 0 ∧ p = 0 then 1 else 0) ∧
+      anassasBelow m 0 p = (if p = 0 then 1 else 0) ∧
+      anassasBelow m 1 p =
+        (if p = 0 then Nat.stirlingSecond (m + 1) m else 0) +
+          (if p = 1 then extStirlingSecond m ((m : ℤ) - 1) else 0) ∧
+      anassasBelow m k 0 = extStirlingSecond (m + 1 : ℕ) ((m : ℤ) - k + 1) := by
+  refine ⟨AnassaRooks.recurrence m k p, ?_, ?_, ?_, ?_⟩
+  · rw [AnassaRooks.anassas_eq_rooks, AnassaRooks.board_zero, AnassaRooks.rooks_empty]
+  · rw [AnassaRooks.anassas_eq_rooks, AnassaRooks.rooks_zero]
+  · rw [AnassaRooks.anassas_eq_rooks, AnassaRooks.one_count]
+  · rw [AnassaRooks.anassas_eq_rooks, AnassaRooks.rooks_unmarked, AnassaRooks.upper_count]
+
 end MetaMathlibExt

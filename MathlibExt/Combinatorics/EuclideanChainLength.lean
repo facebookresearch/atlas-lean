@@ -172,6 +172,19 @@ public theorem euclideanChainLength_add_mul {x : ℕ} (hx : 0 < x) (y k : ℕ) :
   | succ k ih =>
     rw [Nat.succ_mul, Nat.add_right_comm (k * x) x y, add_right, ih, Nat.add_assoc]
 
+-- The proof also works for `y = 0`; retain the original positive-`y` hypothesis.
+set_option linter.unusedVariables false in
+/-- **Euclidean chain function when the first argument divides the second.** For natural numbers
+$x, y \ge 1$ with $x \mid y$, the Euclidean chain function $F$ satisfies $F(x, y) = 1 + y / x$.
+
+Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
+Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 4
+(`integers-2025-A82-cor-4`). -/
+public theorem euclideanChainLength_of_dvd {x y : ℕ} (hx : 0 < x) (hy : 0 < y)
+    (hxy : x ∣ y) : euclideanChainLength x y = 1 + y / x := by
+  simpa only [Nat.add_zero, Nat.div_mul_cancel hxy, euclideanChainLength_zero] using
+    (euclideanChainLength_add_mul hx 0 (y / x)).2
+
 end
 
 end MetaMathlibExt
