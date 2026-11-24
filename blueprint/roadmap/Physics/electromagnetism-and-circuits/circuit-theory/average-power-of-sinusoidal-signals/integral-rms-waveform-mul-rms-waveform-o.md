@@ -1,5 +1,5 @@
-# Integral rms Waveform mul rms Waveform over period
+# Integral of a product of RMS waveforms over one period
 
-The integral of the product of two RMS waveforms over any complete
-period `2 * π / ω`, starting at an arbitrary `a`, is the period times
-`Re (V * conj I)`.
+For all complex `V` and `I`, a real `ω > 0` and every real `a`, the
+[RMS waveforms](rms-waveform.md) `v` and `i` of `V` and `I` at frequency `ω` satisfy
+`∫_a^{a + 2π/ω} v(t) i(t) dt = (2π / ω) Re(V Ī)`, where `Ī` is the complex conjugate of `I`.

@@ -1,5 +1,5 @@
-# Net Port Power eq zero polarity reversed secondary
+# Reversing both secondary variables keeps zero net power
 
-Polarity reversal of both secondary variables: negating `V2` and
-`I2` together, primary variables unchanged, preserves zero
-net instantaneous port power.
+For real numbers `n ≠ 0`, `V₁`, `V₂`, `I₁` and `I₂` with `V₁ = n V₂` and `I₂ = -n I₁`, the
+[net instantaneous port power](net-port-power.md) with the secondary variables replaced by `-V₂` and
+`-I₂`, the primary variables unchanged, is `V₁ I₁ + (-V₂)(-I₂) = 0`.

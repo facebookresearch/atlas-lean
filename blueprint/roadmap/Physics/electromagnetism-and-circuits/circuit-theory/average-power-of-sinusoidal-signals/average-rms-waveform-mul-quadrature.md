@@ -1,4 +1,5 @@
-# Average rms Waveform mul quadrature
+# Waveforms of phasors in quadrature have zero average product
 
-Quadrature validation case: a waveform averaged against the
-waveform of the phasor rotated by `i` gives zero.
+For every complex `V`, a real `ω > 0` and every real `a`, the average over the period
+`[a, a + 2π/ω]` of the product of the [RMS waveforms](rms-waveform.md) of `V` and of `i V` (the phasor
+rotated by a quarter turn) is `0`.

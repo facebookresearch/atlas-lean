@@ -1,8 +1,8 @@
-# Is Network Trajectory On
+# Trajectories obeying the network laws on a set of times
 
-The trajectory obeys the network laws of the plant at every time in
-`S`: potential voltage, node current balance for the independent
-injection, and the resistor, capacitor and inductor laws.
-The capacitor and inductor laws use derivatives within `S` and
-differentiability within `S`, so the relation depends only on the signal
-values at times of `S`; at an endpoint of an interval they are one-sided.
+For a set `S` of times, a [trajectory](network-trajectory.md) obeys the laws of a
+[network plant](network-plant.md) on `S` when, at every `t ∈ S`: `v(t) = Bᵀ φ(t)`; `B i(t) = j(t)`;
+`v_e(t) = R_e i_e(t)` for `e ∈ R`; for `e ∈ C`, `v_e` is differentiable within `S` at `t` and
+`i_e(t) = C_e v_e'(t)`; and for `e ∈ L`, `i_e` is differentiable within `S` at `t` and
+`v_e(t) = L_e i_e'(t)`, the derivatives being taken within `S` (one-sided at an endpoint of an
+interval). The relation depends only on the values of the signals at times of `S`.

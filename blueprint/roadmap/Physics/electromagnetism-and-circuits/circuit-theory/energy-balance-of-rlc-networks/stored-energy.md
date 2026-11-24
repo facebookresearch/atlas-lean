@@ -1,5 +1,9 @@
-# Stored Energy
+# Stored energy of the capacitor and inductor branches
 
-Stored energy: capacitor energy plus inductor energy,
-`sum_C C_e * (v_e)^2 / 2 + sum_L L_e * (i_e)^2 / 2`. Diagonal only;
-no mutual inductance.
+For `n_B` branches, sets `C` and `L` of capacitor and inductor branches, real values `C_e` and
+`L_e` and real branch voltages `v` and currents `i`, the stored energy is
+
+`E = ∑_{e ∈ C} C_e v_e² / 2 + ∑_{e ∈ L} L_e i_e² / 2`,
+
+capacitor energy plus inductor energy, with no mutual inductance. In the physical reading the
+capacitances and inductances are positive; the formula is defined for all real values.

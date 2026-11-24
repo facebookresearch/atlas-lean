@@ -1,42 +1,42 @@
 # Passivity of network plants
 
-## A. The plant read-off interface
+## Plants, trajectories and their power terms
 
-- [Network Plant](network-plant.md)
-- [Network Trajectory](network-trajectory.md)
-- [Plant Storage](plant-storage.md)
-- [Plant Supply Rate](plant-supply-rate.md)
-- [Plant Loss Rate](plant-loss-rate.md)
-- [Is Network Trajectory](is-network-trajectory.md)
-- [Is Network Trajectory On](is-network-trajectory-on.md)
-- [Is Network Trajectory On](is-network-trajectory-on-2.md)
-- [Congr](congr.md)
-- [Finite Horizon Passive On](finite-horizon-passive-on.md)
-- [Is Finite Horizon Passive](is-finite-horizon-passive.md)
-- [Plant Of Network](plant-of-network.md)
-- [Trajectory Of Signals](trajectory-of-signals.md)
+- [Network plant](network-plant.md)
+- [Signals of a network trajectory](network-trajectory.md)
+- [Stored energy of a network plant along a trajectory](plant-storage.md)
+- [Supply rate of a network plant along a trajectory](plant-supply-rate.md)
+- [Resistive loss rate of a network plant along a trajectory](plant-loss-rate.md)
+- [Trajectories obeying the network laws at every time](is-network-trajectory.md)
+- [Trajectories obeying the network laws on a set of times](is-network-trajectory-on.md)
+- [A network trajectory obeys the laws on sets with unique derivatives](is-network-trajectory-on-2.md)
+- [The network laws on a set depend only on the signals on that set](congr.md)
+- [Finite-horizon passivity of a trajectory on an interval](finite-horizon-passive-on.md)
+- [Finite-horizon passivity of a network plant](is-finite-horizon-passive.md)
 
-## B. Representation preservation
+## Network data as plants
 
-- [Plant Of Network storage eq](plant-of-network-storage-eq.md)
-- [Plant Of Network supply And Loss eq](plant-of-network-supply-and-loss-eq.md)
-- [Trajectory Of Signals eq](trajectory-of-signals-eq.md)
+- [Network data as a network plant](plant-of-network.md)
+- [Network signals as a trajectory](trajectory-of-signals.md)
+- [A plant built from network data has the network stored energy](plant-of-network-storage-eq.md)
+- [A plant built from network data has the network supply and loss](plant-of-network-supply-and-loss-eq.md)
+- [A trajectory built from signals returns them](trajectory-of-signals-eq.md)
 
-## C. Storage balance and finite-horizon passivity
+## Storage balance and finite-horizon passivity
 
-- [Plant Storage nonneg](plant-storage-nonneg.md)
-- [Plant Loss Rate nonneg](plant-loss-rate-nonneg.md)
-- [Plant Storage deriv eq supply sub loss](plant-storage-deriv-eq-supply-sub-loss.md)
-- [Continuous On plant Storage](continuous-on-plant-storage.md)
-- [Has Deriv At plant Storage](has-deriv-at-plant-storage.md)
-- [Plant finite Horizon Passive of trajectory On](plant-finite-horizon-passive-of-trajecto.md)
-- [Network Plant is Finite Horizon Passive](network-plant-is-finite-horizon-passive.md)
-- [Finite Horizon Passive zero Length](finite-horizon-passive-zero-length.md)
-- [Plant finite Horizon Passive](plant-finite-horizon-passive.md)
-- [Network Plant passivity](network-plant-passivity.md)
+- [The storage of a network plant is nonnegative](plant-storage-nonneg.md)
+- [The resistive loss rate of a network plant is nonnegative](plant-loss-rate-nonneg.md)
+- [Along the network laws the storage is continuous](continuous-on-plant-storage.md)
+- [At interior times the storage changes at supply minus loss](has-deriv-at-plant-storage.md)
+- [Along a network trajectory the storage changes at supply minus loss](plant-storage-deriv-eq-supply-sub-loss.md)
+- [Finite-horizon passivity when the network laws hold on an interval](plant-finite-horizon-passive-of-trajecto.md)
+- [Finite-horizon passivity of a network trajectory](plant-finite-horizon-passive.md)
+- [A network plant with passive elements is finite-horizon passive](network-plant-is-finite-horizon-passive.md)
+- [Passivity of a network plant with passive elements](network-plant-passivity.md)
 
-## D. Validation cases
+## Boundary cases
 
-- [Plant Storage constant of zero supply loss of trajectory On](plant-storage-constant-of-zero-supply-lo.md)
-- [Plant Storage constant of zero supply loss](plant-storage-constant-of-zero-supply-lo-2.md)
-- [Partition no branch counted twice](partition-no-branch-counted-twice.md)
+- [Every trajectory is passive on a zero-length interval](finite-horizon-passive-zero-length.md)
+- [With zero supply and loss on an interval the storage is constant](plant-storage-constant-of-zero-supply-lo.md)
+- [A network trajectory with zero supply and loss keeps its storage](plant-storage-constant-of-zero-supply-lo-2.md)
+- [A source branch of a plant is in no other class](partition-no-branch-counted-twice.md)

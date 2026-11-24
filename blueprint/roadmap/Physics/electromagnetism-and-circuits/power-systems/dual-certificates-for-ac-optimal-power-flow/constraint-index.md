@@ -1,4 +1,4 @@
-# Constraint Index
+# Enumeration of the relaxation constraints
 
-Enumeration of the inequalities by `Fin (6 * nN + nE)`, the index type of the factored
-certificate bound.
+For `n_N` buses and `n_E` branches, the constraints indexed by a pair (one of six groups, bus) or by
+a branch are put in bijection with `{0, …, 6 n_N + n_E - 1}`: the pairs first, then the branches.

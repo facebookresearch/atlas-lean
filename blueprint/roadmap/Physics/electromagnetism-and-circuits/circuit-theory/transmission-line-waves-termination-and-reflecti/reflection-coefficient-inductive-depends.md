@@ -1,6 +1,6 @@
-# Reflection Coefficient inductive depends on frequency
+# An inductive load's reflection coefficient depends on frequency
 
-An inductive load can have a frequency-dependent coefficient: the
-reactance `i * omega * L` with `L = 1`, `Z0 = 1` gives different
-coefficients at `omega = 1` and `omega = 2`. This is one example, not a
-general statement about reactive loads.
+For the inductive load `Z_L = iωL` with `L = 1` on a line with `Z₀ = 1`, the
+[reflection coefficients](reflection-coefficient.md) at `ω = 1` and `ω = 2` differ:
+`(i − 1) / (i + 1) ≠ (2i − 1) / (2i + 1)`. This is one example, not a statement about all reactive
+loads.

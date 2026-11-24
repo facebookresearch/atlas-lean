@@ -1,4 +1,5 @@
-# The statistic is the whitened matched-filter output
+# The matched statistic is the output of the matched weight
 
-For positive definite `R`,
-`(s1 - s0)ᵀ R⁻¹ y = wᵀ y` with the matched weight `w = R⁻¹ (s1 - s0)`.
+For a finite index set `ι`, `s₀, s₁, y ∈ ℝ^ι` and a positive definite `ι × ι` matrix `R`, the
+[matched statistic](matched-statistic.md) satisfies `(s₁ - s₀)ᵀ R⁻¹ y = wᵀ y` with the matched weight
+`w = R⁻¹ (s₁ - s₀)`.

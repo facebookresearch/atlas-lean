@@ -1,3 +1,4 @@
-# Rectangular Guide PECTraces zero
+# The zero fields satisfy the traces for positive widths
 
-The zero fields satisfy the PEC traces for any positive widths.
+For `a > 0` and `b > 0`, the zero fields `E = B = 0` satisfy the
+[PEC trace conditions](rectangular-guide-pectraces.md).

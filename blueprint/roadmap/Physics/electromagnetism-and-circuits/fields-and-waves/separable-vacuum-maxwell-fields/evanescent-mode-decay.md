@@ -1,6 +1,4 @@
-# Evanescence for positive attenuation
+# For positive attenuation the exponential mode decays along the guide
 
-When `0 < alpha` the
-amplitude `exp (-alpha z)` of the exponential mode is strictly
-decreasing along the guide, and at every time the mode
-`cos (freq t) exp (-alpha z)` tends to zero as `z → ∞`.
+For `α > 0` and every real `ω`, `z ↦ exp(−α z)` is strictly decreasing, and for every time `t`,
+`cos(ω t) exp(−α z) → 0` as `z → ∞`.

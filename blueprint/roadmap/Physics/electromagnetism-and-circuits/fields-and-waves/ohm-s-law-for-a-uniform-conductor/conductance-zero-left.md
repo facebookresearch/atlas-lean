@@ -1,3 +1,3 @@
-# Conductance zero left
+# Zero conductivity gives zero conductance
 
-`σ = 0` gives zero conductance, with no division by `σ`.
+For all reals `A` and `ℓ`, the [conductance](conductance.md) with `σ = 0` is `0`.

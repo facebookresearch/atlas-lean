@@ -1,9 +1,12 @@
-# Per Unit Complex Power
+# Complex power per unit on a direct power base
 
-Complex power in per-unit on a direct real base power `Sbase`: the
-existing `powerPerUnit` with phase voltage base `1` and phase current base
-`Sbase / 3`, that is, `S / Sbase`. `Sbase` is the base of the same
-quantity as `S`: a per-phase base for per-phase power such as
-`nodeComplexPower`, a three-phase base for three-phase power. Dividing by
-a positive real base scales the real and reactive parts by the same
-positive factor and does not rotate them.
+For a complex power $S$ and a real base power $S_{\mathrm{base}}$, the per-unit power is
+$S / S_{\mathrm{base}}$, the base read as a complex number: the
+[per-unit power](../per-unit-system-for-three-phase-quantities/power-per-unit.md) for the phase
+bases $V_b = 1$ and $I_b = S_{\mathrm{base}} / 3$, whose three-phase power base is
+$S_{\mathrm{base}}$. With the convention $x / 0 = 0$, it is $0$ when $S_{\mathrm{base}} = 0$.
+
+The base must be the base of the same quantity as $S$: a per-phase base for a per-phase power such
+as the [power supplied by a node](node-complex-power.md), a three-phase base for a three-phase
+power. Dividing by a positive base scales the real and the reactive part by the same positive factor
+and does not rotate $S$.

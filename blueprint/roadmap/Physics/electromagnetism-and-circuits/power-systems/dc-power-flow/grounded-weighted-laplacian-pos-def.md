@@ -1,5 +1,14 @@
-# Grounded weighted Laplacian pos Def
+# Positive definite grounded Laplacian of nonnegative connected networks
 
-Grounded block: with nonnegative susceptances and every node reachable
-from the reference `r` through positive-susceptance branches, `L_b` with
-the row and column of `r` deleted is positive definite.
+Consider a network with nodes `0, …, n_N - 1` and branches `0, …, n_E - 1`, branch `e` running from
+its tail `t(e)` to its head `h(e)` (loops `t(e) = h(e)` and parallel branches allowed), with real
+branch susceptances `b_e` and `L_b` the [susceptance-weighted Laplacian](weighted-laplacian.md).
+Suppose that `b_e ≥ 0` for every branch `e` and that the reference node `r` is joined to every node
+by a walk in the
+[graph of positive-susceptance branches](../../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/positive-arc-graph.md),
+in which distinct nodes are adjacent when some branch with `b_e > 0` joins them in either
+orientation. Let `L_b^{(r)}` be the matrix indexed by the nodes other than `r` obtained from `L_b`
+by deleting the row and the column of `r`. Then `L_b^{(r)}` is positive definite: it is symmetric
+and `yᵀ L_b^{(r)} y > 0` for every nonzero real vector `y` indexed by the nodes other than `r`. This
+is a special case of the
+[positive definiteness of the grounded weighted Laplacian of an arc network](../../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/grounded-weighted-laplacian-pos-def.md).

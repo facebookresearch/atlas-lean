@@ -1,6 +1,9 @@
-# Decide 1 iff the matched statistic exceeds the threshold
+# The Bayes rule for two Gaussian laws is the matched-filter test
 
-For positive definite `R`,
-positive priors and costs with `C00 < C10`, `C11 < C01`, the finite-cost Bayes rule of the
-adapter applied to the Gaussian densities of `N(s0, R)` and `N(s1, R)` is, at every observation
-and including the tie branch, the explicit matched-filter threshold rule.
+Let `ι` be a finite index set, `s₀, s₁ ∈ ℝ^ι`, `R` a positive definite `ι × ι` matrix, `π₀, π₁ > 0`,
+and costs with `C₀₀ < C₁₀` and `C₁₁ < C₀₁`. With `p₀` and `p₁` the
+[densities](../../distributions/continuous/multivariate-normal-distribution/gaussian-density/multivariate-gaussian-pdfreal.md)
+of `N(s₀, R)` and `N(s₁, R)`, the finite-cost rule that decides `true` where
+`π₀ (C₁₀ - C₀₀) p₀(y) < π₁ (C₀₁ - C₁₁) p₁(y)`, the tie decision where the two sides are equal and
+`false` otherwise agrees at every observation `y`, including the tie branch, with the
+[matched-filter rule](matched-filter-rule.md).

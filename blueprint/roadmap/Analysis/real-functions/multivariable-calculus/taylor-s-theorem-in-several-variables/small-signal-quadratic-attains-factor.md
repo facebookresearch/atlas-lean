@@ -1,5 +1,4 @@
-# Small Signal quadratic attains factor
+# For the square law the remainder at 0 is a²
 
-Sharpness: the one-terminal square law at the origin attains the half
-factor: its remainder at perturbation `a` is exactly `a ^ 2`, i.e. the
-bound `M * ‖dv‖^2 / 2` with `M = 2` and `‖dv‖ = |a|` is an equality.
+For the square law $i(v) = v_0^2$ on $\mathbb{R}^1$, the [remainder](small-signal-remainder.md) at
+the operating point $0$ with the perturbation $(a)$ is $a^2$, for every real $a$.

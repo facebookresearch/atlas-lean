@@ -1,3 +1,4 @@
-# Cast Vec
+# Real values of a rational vector
 
-Real reading of a rational vector: the entrywise cast.
+For a rational vector `v` indexed by any set, `castVec v` is the real vector with entries the real
+values of the entries of `v`.

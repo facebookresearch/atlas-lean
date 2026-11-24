@@ -1,34 +1,34 @@
 # Energy balance of a DC motor
 
-## A. Stored energy
+## Stored energy
 
-- [Motor Energy](motor-energy.md)
-- [Motor Energy nonneg](motor-energy-nonneg.md)
+- [Stored energy of a DC motor](motor-energy.md)
+- [The stored energy of a DC motor is nonnegative](motor-energy-nonneg.md)
 
-## B. Electrical embedding
+## The motor loop as an electrical network
 
-- [Motor Incidence](motor-incidence.md)
-- [Motor Potentials](motor-potentials.md)
-- [Motor is Branch Partition](motor-is-branch-partition.md)
-- [Motor Incidence transpose mul Vec](motor-incidence-transpose-mul-vec.md)
-- [Motor Incidence mul Vec const](motor-incidence-mul-vec-const.md)
-- [Motor source Absorbed Power](motor-source-absorbed-power.md)
-- [Motor resistive Loss](motor-resistive-loss.md)
-- [Motor stored Energy](motor-stored-energy.md)
-- [Motor inductor law iff](motor-inductor-law-iff.md)
-- [Electrical network storage balance of the embedding](deriv-motor-network-stored-energy.md)
+- [Incidence matrix of the series DC motor loop](motor-incidence.md)
+- [Node potentials of the DC motor loop](motor-potentials.md)
+- [Branch partition of the DC motor loop](motor-is-branch-partition.md)
+- [Branch voltages of the DC motor loop](motor-incidence-transpose-mul-vec.md)
+- [The same current in every branch satisfies Kirchhoff's current law](motor-incidence-mul-vec-const.md)
+- [Power absorbed by the sources of the DC motor loop](motor-source-absorbed-power.md)
+- [Resistive loss of the DC motor loop](motor-resistive-loss.md)
+- [Network stored energy of the DC motor loop](motor-stored-energy.md)
+- [The inductor law of the loop is the armature equation](motor-inductor-law-iff.md)
+- [Network energy balance of the DC motor loop](deriv-motor-network-stored-energy.md)
 
-## C. Mechanical kinetic-energy derivative
+## Rotor kinetic energy
 
-- [Rotor kinetic-energy derivative](has-deriv-at-rotor-kinetic-energy.md)
+- [Rate of change of the rotor kinetic energy](has-deriv-at-rotor-kinetic-energy.md)
 
-## D. Electromechanical energy balance
+## Electromechanical energy balance
 
-- [DC motor energy identity](has-deriv-at-motor-energy.md)
-- [Reciprocal coupling](has-deriv-at-motor-energy-of-ke-eq-kt.md)
-- [Dissipation inequality](deriv-motor-energy-le-of-ke-eq-kt.md)
+- [Energy identity of a DC motor](has-deriv-at-motor-energy.md)
+- [Energy balance of a DC motor with equal motor constants](has-deriv-at-motor-energy-of-ke-eq-kt.md)
+- [Dissipation inequality of a DC motor with equal motor constants](deriv-motor-energy-le-of-ke-eq-kt.md)
 
-## E. Validation: unequal coupling constants
+## Unequal motor constants
 
-- [Unequal coupling retains the cross term](deriv-motor-energy-ne-of-cross-ne-zero.md)
-- [Concrete `ke ≠ kt` fixture](unequal-coupling-fixture.md)
+- [With a nonzero coupling residual the reciprocal balance fails](deriv-motor-energy-ne-of-cross-ne-zero.md)
+- [Example of a DC motor with unequal motor constants](unequal-coupling-fixture.md)

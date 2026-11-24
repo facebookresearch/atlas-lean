@@ -1,15 +1,20 @@
 # Average power of sinusoidal signals
 
-- [Peak Waveform](peak-waveform.md)
-- [Rms Waveform](rms-waveform.md)
-- [Peak Waveform at zero](peak-waveform-at-zero.md)
-- [Rms Waveform at zero](rms-waveform-at-zero.md)
-- [Rms Waveform eq sqrt two mul peak Waveform](rms-waveform-eq-sqrt-two-mul-peak-wavefo.md)
-- [Rms Waveform mul rms Waveform expansion](rms-waveform-mul-rms-waveform-expansion.md)
-- [Integral rms Waveform mul rms Waveform over period](integral-rms-waveform-mul-rms-waveform-o.md)
-- [Average rms Waveform mul rms Waveform](average-rms-waveform-mul-rms-waveform.md)
-- [Average rms Waveform mul self](average-rms-waveform-mul-self.md)
-- [Average rms Waveform mul self re im](average-rms-waveform-mul-self-re-im.md)
-- [Average rms Waveform mul quadrature](average-rms-waveform-mul-quadrature.md)
-- [Integral peak Waveform mul peak Waveform over period](integral-peak-waveform-mul-peak-waveform.md)
-- [Average peak Waveform mul peak Waveform](average-peak-waveform-mul-peak-waveform.md)
+## Waveforms of RMS and peak phasors
+
+- [Sinusoidal waveform of an RMS phasor](rms-waveform.md)
+- [Sinusoidal waveform of a peak phasor](peak-waveform.md)
+- [The RMS waveform at time zero](rms-waveform-at-zero.md)
+- [The peak waveform at time zero](peak-waveform-at-zero.md)
+- [The RMS waveform is √2 times the peak waveform](rms-waveform-eq-sqrt-two-mul-peak-wavefo.md)
+- [Product of two RMS waveforms in trigonometric form](rms-waveform-mul-rms-waveform-expansion.md)
+
+## Average power over a period
+
+- [Integral of a product of RMS waveforms over one period](integral-rms-waveform-mul-rms-waveform-o.md)
+- [Average power of two RMS waveforms over one period](average-rms-waveform-mul-rms-waveform.md)
+- [Mean square of an RMS waveform over one period](average-rms-waveform-mul-self.md)
+- [Mean square of an RMS waveform in coordinates](average-rms-waveform-mul-self-re-im.md)
+- [Waveforms of phasors in quadrature have zero average product](average-rms-waveform-mul-quadrature.md)
+- [Integral of a product of peak waveforms over one period](integral-peak-waveform-mul-peak-waveform.md)
+- [Average power of two peak waveforms carries the factor one half](average-peak-waveform-mul-peak-waveform.md)

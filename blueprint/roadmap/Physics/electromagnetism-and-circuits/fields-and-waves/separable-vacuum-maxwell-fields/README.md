@@ -1,44 +1,67 @@
 # Separable vacuum Maxwell fields
 
-- [Separable Guide Potential](separable-guide-potential.md)
-- [Separable Guide Potential apply](separable-guide-potential-apply.md)
-- [Scalar Potential separable Guide Potential](scalar-potential-separable-guide-potenti.md)
-- [Vector Potential separable Guide Potential](vector-potential-separable-guide-potenti.md)
-- [Electric Field separable Guide Potential](electric-field-separable-guide-potential.md)
-- [Magnetic Field separable Guide Potential](magnetic-field-separable-guide-potential.md)
-- [Cont Diff separable Guide Potential](cont-diff-separable-guide-potential.md)
-- [Fields of the separable guide potential](separable-guide-potential-fields.md)
-- [Sinusoidal Guide Potential](sinusoidal-guide-potential.md)
-- [Sinusoidal electric Field](sinusoidal-electric-field.md)
-- [Sinusoidal magnetic Field](sinusoidal-magnetic-field.md)
-- [Sinusoidal fields at point](sinusoidal-fields-at-point.md)
-- [Sinusoidal reversed curl sign fails](sinusoidal-reversed-curl-sign-fails.md)
-- [Unconverted Potential electric Field](unconverted-potential-electric-field.md)
-- [Partial Time](partial-time.md)
-- [Partial Z](partial-z.md)
-- [Profile Equation](profile-equation.md)
-- [Mode Equation](mode-equation.md)
-- [Separable Electric Field](separable-electric-field.md)
-- [Separable Magnetic Field](separable-magnetic-field.md)
-- [Space Divergence](space-divergence.md)
-- [Space Curl](space-curl.md)
-- [Time Derivative Component](time-derivative-component.md)
-- [Source Free Vacuum Maxwell](source-free-vacuum-maxwell.md)
-- [Separable divergence electric](separable-divergence-electric.md)
-- [Separable divergence magnetic](separable-divergence-magnetic.md)
-- [Separable faraday](separable-faraday.md)
-- [Separable ampere](separable-ampere.md)
-- [Source-free vacuum Maxwell equations for the separable fields](separable-fields-source-free-vacuum-maxw.md)
-- [Source Free Vacuum Maxwell Fields](source-free-vacuum-maxwell-fields.md)
-- [Div curl deriv eq of components](div-curl-deriv-eq-of-components.md)
-- [Bridge to Physlib's canonical fields](source-free-vacuum-maxwell-fields-of-com.md)
-- [Separable Guide Potential electric Field apply](separable-guide-potential-electric-field.md)
-- [Separable Guide Potential magnetic Field apply](separable-guide-potential-magnetic-field.md)
-- [Source-free vacuum Maxwell equations for the canonical fields](separable-guide-potential-source-free-va.md)
-- [Extremum form with the free-space constants](separable-fields-is-extrema-with-free-sp.md)
-- [Not source Free of mode Equation failure](not-source-free-of-mode-equation-failure.md)
-- [Propagating Mode satisfies scalar Equations](propagating-mode-satisfies-scalar-equati.md)
-- [Propagating Mode source Free Vacuum Maxwell](propagating-mode-source-free-vacuum-maxw.md)
-- [Evanescent Mode satisfies mode Equation](evanescent-mode-satisfies-mode-equation.md)
-- [Evanescent Mode source Free Vacuum Maxwell](evanescent-mode-source-free-vacuum-maxwe.md)
-- [Evanescence for positive attenuation](evanescent-mode-decay.md)
+## The separable guide potential
+
+- [Separable guide potential with vector potential along y](separable-guide-potential.md)
+- [Components of the separable guide potential at a spacetime point](separable-guide-potential-apply.md)
+- [The separable guide potential has zero scalar potential](scalar-potential-separable-guide-potenti.md)
+- [Vector potential of the separable guide potential in physical time](vector-potential-separable-guide-potenti.md)
+- [Where f is differentiable in time, E has the single component −a ∂f/∂t](electric-field-separable-guide-potential.md)
+- [Where a and f are differentiable, B has components −a ∂f/∂z and a′f](magnetic-field-separable-guide-potential.md)
+- [For smooth a and f the separable guide potential is smooth](cont-diff-separable-guide-potential.md)
+- [Fields of the separable guide potential for smooth a and f](separable-guide-potential-fields.md)
+
+## Sinusoidal guide potential
+
+- [Sinusoidal example of the separable guide potential](sinusoidal-guide-potential.md)
+- [Electric field of the sinusoidal guide potential](sinusoidal-electric-field.md)
+- [Magnetic field of the sinusoidal guide potential](sinusoidal-magnetic-field.md)
+- [Values of the sinusoidal fields at two points](sinusoidal-fields-at-point.md)
+- [The sign-reversed formula for the x component of B fails](sinusoidal-reversed-curl-sign-fails.md)
+- [Without the time conversion the electric field gains a factor c](unconverted-potential-electric-field.md)
+
+## Partial derivatives and the scalar equations
+
+- [Time partial derivative of a mode](partial-time.md)
+- [Guide-coordinate partial derivative of a mode](partial-z.md)
+- [Profile equation a'' = −kc² a](profile-equation.md)
+- [Mode equation of a separable guided wave](mode-equation.md)
+
+## Separable fields and coordinate Maxwell operators
+
+- [Separable electric field](separable-electric-field.md)
+- [Separable magnetic field](separable-magnetic-field.md)
+- [Divergence from coordinate derivatives](space-divergence.md)
+- [Curl from coordinate derivatives](space-curl.md)
+- [Time derivative of a field component](time-derivative-component.md)
+- [Source-free vacuum Maxwell equations in component form](source-free-vacuum-maxwell.md)
+
+## Source-free vacuum Maxwell equations for the separable fields
+
+- [The separable electric field is divergence-free](separable-divergence-electric.md)
+- [The separable magnetic field is divergence-free](separable-divergence-magnetic.md)
+- [Faraday's law for the separable fields of a smooth mode](separable-faraday.md)
+- [Ampère's law for the separable fields under the scalar equations](separable-ampere.md)
+- [Separable fields satisfy the source-free vacuum Maxwell equations](separable-fields-source-free-vacuum-maxw.md)
+
+## Fields on space and time
+
+- [Source-free vacuum Maxwell equations for fields on space and time](source-free-vacuum-maxwell-fields.md)
+- [Divergence, curl and time derivative from components](div-curl-deriv-eq-of-components.md)
+- [The component form of vacuum Maxwell gives the field form](source-free-vacuum-maxwell-fields-of-com.md)
+- [Components of the electric field of the separable guide potential](separable-guide-potential-electric-field.md)
+- [Components of the magnetic field of the separable guide potential](separable-guide-potential-magnetic-field.md)
+- [Fields of the separable guide potential satisfy vacuum Maxwell](separable-guide-potential-source-free-va.md)
+
+## Extremum form with the free-space constants
+
+- [At the free-space speed of light the guide potential is an extremum](separable-fields-is-extrema-with-free-sp.md)
+
+## Failure of the mode equation and concrete modes
+
+- [A mode-equation failure where a ≠ 0 breaks vacuum Maxwell](not-source-free-of-mode-equation-failure.md)
+- [The cosine mode solves the scalar equations iff ω² = c0² (β² + kc²)](propagating-mode-satisfies-scalar-equati.md)
+- [The travelling cosine mode satisfies vacuum Maxwell under dispersion](propagating-mode-source-free-vacuum-maxw.md)
+- [The exponential mode solves the mode equation iff ω² = c0² (kc² − α²)](evanescent-mode-satisfies-mode-equation.md)
+- [The exponential mode satisfies vacuum Maxwell under its dispersion](evanescent-mode-source-free-vacuum-maxwe.md)
+- [For positive attenuation the exponential mode decays along the guide](evanescent-mode-decay.md)

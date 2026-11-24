@@ -1,6 +1,6 @@
-# Reversed Load Sign counterexample
+# With the load current reversed the divider formula fails
 
-Reversed load-current sign fails: under the wrong convention
-`K * V = jEff + I` with `K = 1`, `jEff = 1`, the load `RL = 2` admits
-the operating point `V = 2`, `I = 1`, which differs from the divider
-value `Vth * RL / (Rth + RL) = 2/3`.
+Under the wrong sign convention `K V = j_eff + I`, with `K = 1` and `j_eff = 1`, the load
+`R_L = 2` admits the operating point `V = 2`, `I = 1`: it satisfies `V = 1 + I` and `V = 2 I`, but
+`V` differs from the divider value `V_th R_L / (R_th + R_L) = 2/3` of the
+[resistive-load formula](one-port-resistive-load.md).

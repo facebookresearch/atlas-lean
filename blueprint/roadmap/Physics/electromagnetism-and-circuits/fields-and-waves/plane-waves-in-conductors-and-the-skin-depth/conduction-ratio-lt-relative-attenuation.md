@@ -1,5 +1,6 @@
-# Conduction Ratio lt relative Attenuation Error zero sigma
+# At zero conductivity the error bound fails
 
-Violated premise: at `sigma = 0` the error bound fails for the
-library's total division, since the ratio is `0` and the relative error
-is `1`. The positive-conductivity hypothesis is therefore needed.
+For `ε > 0`, `μ > 0` and `ω > 0`, at `σ = 0` the [conduction ratio](conduction-ratio.md) is smaller
+than the [relative attenuation error](relative-attenuation-error.md): by the convention `x / 0 = 0`
+the ratio is `0` and the error is `1`. The hypothesis `σ > 0` of the
+[error bounds](skin-depth-approximation-error.md) is needed.

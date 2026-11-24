@@ -1,5 +1,4 @@
-# Nodal Capacitance single Capacitor
+# Nodal capacitance of a single capacitor
 
-A single capacitor branch on a single node with unit incidence
-stamps to the scalar nodal capacitance `3` for capacitance value
-`3`.
+For one node, one branch with incidence `1` and the capacitance value `3`, the
+[nodal capacitance matrix](nodal-capacitance.md) is the `1 × 1` matrix `(3)`.

@@ -1,8 +1,14 @@
-# Kron reduction reindex interior
+# Kron reduction under relabelling of the interior nodes
 
-Kron reduction is invariant under relabeling of the interior
-nodes. Relabeling by `e : q ≃ p` reindexes `B`, `D` and the interior
-injection `jI`; the relabeled network has the same Schur complement,
-the same reduced port equation right-hand side, the relabeled
-reconstruction of the interior potentials, and the same retained
-interior source term.
+Let `m`, `p` and `q` be finite index sets, `e : q → p` a bijection, and `A`, `B` and `D` real
+matrices of sizes `m × m`, `m × p` and `p × p`, relabelled as `B'(i, k) = B(i, e(k))`,
+`D'(k, l) = D(e(k), e(l))` and `j'_I = j_I ∘ e`. For all `φ_P`, `j_P` and `j_I`:
+
+- the [Schur complements](schur-complement-reindex-interior.md) agree,
+  `A - B' D'⁻¹ B'ᵀ = A - B D⁻¹ Bᵀ`;
+- the reduced right-hand sides agree, `j_P - B' D'⁻¹ j'_I = j_P - B D⁻¹ j_I`;
+- the reconstructed interior potentials correspond,
+  `D'⁻¹ (j'_I - B'ᵀ φ_P) = (D⁻¹ (j_I - Bᵀ φ_P)) ∘ e`;
+- the retained interior source terms agree, `j'_I · (D'⁻¹ j'_I) = j_I · (D⁻¹ j_I)`.
+
+The matrix inverse is taken to be `0` for a singular matrix; the identities hold for every `D`.

@@ -1,7 +1,5 @@
-# Rms Waveform mul rms Waveform expansion
+# Product of two RMS waveforms in trigonometric form
 
-Pointwise expansion of the product of two RMS waveforms in the
-`cos (ω * t) ^ 2`, `sin (ω * t) ^ 2`, `sin (ω * t) * cos (ω * t)`
-basis supported by Mathlib's endpoint integral lemmas
-`integral_cos_sq`, `integral_sin_sq`, and `integral_sin_mul_cos₁`
-after scaling the argument by `ω`.
+For all complex `V` and `I` and all real `ω` and `t`, the [RMS waveforms](rms-waveform.md) `v` and `i`
+of `V` and `I` satisfy `v(t) i(t) = 2 (A cos²(ω t) + B sin²(ω t) - C sin(ω t) cos(ω t))`, where
+`A = Re V Re I`, `B = Im V Im I` and `C = Re V Im I + Im V Re I`.

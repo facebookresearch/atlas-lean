@@ -1,7 +1,8 @@
-# Small Signal remainder le of segment bound
+# Remainder bound from a second-derivative bound along the segment
 
-Segment form: if `i` is differentiable at `v0`, the pullback
-`g t = i (v0 + t • dv)` is `C²` on `ℝ`, and the second-derivative
-bound `|g'' t| <= M * ‖dv‖^2` holds on `[0,1]` (sup norm), then
-`|r| <= M * ‖dv‖^2 / 2`. No box or global `C²` hypothesis on `i`
-itself; only the bound, not the smoothness, is segment-local.
+Let $n \in \mathbb{N}$, $i : \mathbb{R}^n \to \mathbb{R}$ and $v_0, dv \in \mathbb{R}^n$. If $i$ is
+differentiable at $v_0$, the [restriction](segment-pullback.md) $g(t) = i(v_0 + t\,dv)$ is twice
+continuously differentiable on $\mathbb{R}$, and $|g''(t)| \le M \|dv\|^2$ for every $t \in [0, 1]$,
+with the sup norm $\|dv\| = \max_j |dv_j|$, then the [remainder](small-signal-remainder.md)
+$r = i(v_0 + dv) - i(v_0) - Di(v_0)[dv]$ satisfies $|r| \le M \|dv\|^2 / 2$. Only the bound is local
+to the segment; no hypothesis on $i$ away from $v_0$ is made beyond the smoothness of $g$.

@@ -1,4 +1,4 @@
-# Voltage Phasor at zero
+# At the load plane the voltage phasor is the amplitude sum
 
-The voltage phasor at the load plane is the sum of the two wave
-amplitudes.
+For all complex `A₊`, `A₋` and real `β`, the [voltage phasor](voltage-phasor.md)
+`V(x) = A₊ e^{−iβx} + A₋ e^{iβx}` at the load plane `x = 0` is `V(0) = A₊ + A₋`.

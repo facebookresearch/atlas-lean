@@ -1,3 +1,4 @@
-# Cont Diff te10 Profile
+# The TE10 profile is infinitely differentiable
 
-The TE10 profile is smooth.
+For every real `a`, the [TE10 profile](te10-profile.md) `x ↦ sin(k_c x)` is infinitely
+differentiable.

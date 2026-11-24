@@ -1,6 +1,7 @@
-# Buck Branch Current
+# Branch currents of the ideal buck converter
 
-Currents of the four network branches in the same order: source
-current opposite to the inductor current, inductor current,
-capacitor current, resistor current. The passive source sign is
-the negative entry.
+For real numbers `R` (load resistance), `C` (capacitance), `i` (inductor current), `v'` (capacitor
+voltage derivative) and `v` (output voltage), the branch currents of the four-branch network, in the
+order source, inductor, capacitor, resistor, are `(-i, i, C v', v / R)`: the source carries the
+inductor current with the passive sign. With the convention `a / 0 = 0`, the resistor current is `0`
+when `R = 0`; the intended domain is `R > 0`.

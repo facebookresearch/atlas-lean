@@ -1,6 +1,5 @@
-# Network Trajectory
+# Signals of a network trajectory
 
-A candidate signal tuple for a network with `nN` nodes and `nB`
-branches: node potentials, independent node injections, branch voltages
-and branch currents as functions of time. New definition owned by this
-leaf.
+For `n` nodes and `m` branches, a network trajectory consists of four functions of time: node
+potentials `φ(t) ∈ ℝ^n`, independent node injections `j(t) ∈ ℝ^n`, branch voltages
+`v(t) ∈ ℝ^m` and branch currents `i(t) ∈ ℝ^m`. No network law is imposed.

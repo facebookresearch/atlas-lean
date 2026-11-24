@@ -1,30 +1,30 @@
 # Synchronizer settling budgets
 
-## A. Observation events and the settling guarantee
+## Observation events and the settling guarantee
 
-- [Invalid Observation](invalid-observation.md)
-- [Settling Guarantee](settling-guarantee.md)
-- [Invalid Event](invalid-event.md)
-- [Resolution Exceeds Event](resolution-exceeds-event.md)
+- [Invalid observation of a voltage between the logic thresholds](invalid-observation.md)
+- [Settling guarantee of a family of synchronizer observations](settling-guarantee.md)
+- [Event that one synchronizer observation is invalid](invalid-event.md)
+- [Event that the resolution time of one observation exceeds its budget](resolution-exceeds-event.md)
 
-## B. Within-budget observation
+## Within-budget observation
 
-- [Observe observed Voltage eq some of le](observe-observed-voltage-eq-some-of-le.md)
-- [Not invalid Observation of le](not-invalid-observation-of-le.md)
+- [Within its budget, an observation is observed as its expected bit](observe-observed-voltage-eq-some-of-le.md)
+- [Within its budget, an observation is not invalid](not-invalid-observation-of-le.md)
 
-## C. Invalid observations and budget expiry
+## Invalid observations and budget expiry
 
-- [Invalid implies unresolved](resolution-exceeds-of-invalid-observatio.md)
-- [Invalid Event subset resolution Exceeds Event](invalid-event-subset-resolution-exceeds.md)
-- [Measure invalid Event le of tail](measure-invalid-event-le-of-tail.md)
+- [An invalid observation has a resolution time beyond its budget](resolution-exceeds-of-invalid-observatio.md)
+- [The invalid event lies inside the budget-expiry event](invalid-event-subset-resolution-exceeds.md)
+- [An exponential tail bound on budget expiry bounds the invalid event](measure-invalid-event-le-of-tail.md)
 
-## D. Tail bounds and the finite union bound
+## Tail bounds and the finite union bound
 
-- [Finite union bound, unequal budgets](measure-bi-union-invalid-event-le-sum.md)
-- [Synchronizer observation budget](any-invalid-measure-le-min-one-sum.md)
-- [Equal budgets](measure-bi-union-invalid-event-le-min-on.md)
+- [Union bound on invalid observations with unequal budgets](measure-bi-union-invalid-event-le-sum.md)
+- [Capped union bound on any invalid synchronizer observation](any-invalid-measure-le-min-one-sum.md)
+- [Capped union bound for equal budgets, $\min(1, N c\, e^{-b/\tau})$](measure-bi-union-invalid-event-le-min-on.md)
 
-## E. Validation cases
+## An empty index set and a mid-band voltage
 
-- [Measure bi Union invalid Event eq zero of is Empty](measure-bi-union-invalid-event-eq-zero-o.md)
-- [Invalid Observation one two three halves](invalid-observation-one-two-three-halves.md)
+- [With no observations, the invalid event has measure zero](measure-bi-union-invalid-event-eq-zero-o.md)
+- [With thresholds $1$ and $2$, the voltage $3/2$ is invalid](invalid-observation-one-two-three-halves.md)

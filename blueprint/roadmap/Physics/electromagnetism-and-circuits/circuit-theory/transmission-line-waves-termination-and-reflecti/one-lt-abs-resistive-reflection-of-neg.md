@@ -1,3 +1,5 @@
-# One lt abs resistive Reflection of neg
+# A negative resistance reflects more than fully
 
-A negative resistance `R < 0` with `R != -Z0` gives `|Gamma_R| > 1`.
+For `Z₀ > 0` and a negative resistance `R < 0` with `R ≠ −Z₀`, the
+[resistive reflection coefficient](resistive-reflection.md) `Γ_R = (R − Z₀) / (R + Z₀)` satisfies
+`|Γ_R| > 1`.

@@ -1,4 +1,6 @@
-# Forward Root re eq attenuation Constant
+# A root with positive imaginary part has real part α
 
-Any root of the squared propagation equation with positive imaginary
-part is the forward root, so its real part is the attenuation constant.
+For `ε > 0`, `μ > 0`, `ω > 0` and `σ ≥ 0`, every complex `γ` with `γ² = −ω² μ ε + i ω μ σ` (the
+[squared propagation equation](satisfies-dispersion-equation.md)) and `Im γ > 0` has `Re γ = α`, the
+[attenuation constant](attenuation-constant.md) `α = ω √(μ ε / 2) √(√(1 + (σ / (ω ε))²) − 1)`: it is
+the forward root.

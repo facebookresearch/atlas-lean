@@ -1,3 +1,5 @@
-# Std Add Char one eq alpha
+# The DFT kernel modulo 3 at 1 is α
 
-The DFT kernel on `ZMod 3` at `1` is `α`: `ZMod.stdAddChar 1 = α`.
+The standard additive character of the integers modulo 3, `j ↦ e^(2πi j/3)`, which builds the kernel
+of the discrete Fourier transform on the integers modulo 3, takes the value `α = e^(2πi/3)` at
+`j = 1`.

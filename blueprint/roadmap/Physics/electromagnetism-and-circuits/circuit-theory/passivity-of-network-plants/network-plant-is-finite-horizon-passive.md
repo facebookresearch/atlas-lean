@@ -1,5 +1,4 @@
-# Network Plant is Finite Horizon Passive
+# A network plant with passive elements is finite-horizon passive
 
-Plant passivity: a plant with nonnegative resistances and positive
-reactive values is finite-horizon passive along every admissible
-trajectory on every interval.
+Every [network plant](network-plant.md) with `R_e ≥ 0` on resistor branches, `L_e > 0` on inductor
+branches and `C_e > 0` on capacitor branches is [finite-horizon passive](is-finite-horizon-passive.md).

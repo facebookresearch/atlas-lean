@@ -1,5 +1,9 @@
-# Exponential decay on the half-guide
+# On z ≥ 0 the evanescent fields decay at least like e^−κz
 
-For a guide of positive width, `ω > 0` and a rate
-`κ ≥ 0`, on `z ≥ 0` every electric component is bounded by `|E0| exp (-κ z)` and every magnetic
-component by `((κ + kc) |E0| / ω) exp (-κ z)`.
+Let `a > 0`, `ω > 0`, `κ ≥ 0` and `E₀` real, with the [cutoff wavenumber](cutoff-wavenumber.md)
+`k_c = π/a`. For every time `t`, every point `(x, y, z)` with `z ≥ 0` and every component `i`, the
+[evanescent electric field](evanescent-electric-field.md) and the
+[evanescent magnetic field](evanescent-magnetic-field.md) with amplitude `E₀`, frequency `ω` and
+rate `κ` satisfy
+
+`|E_i(t, x, y, z)| ≤ |E₀| e^{-κz}` and `|B_i(t, x, y, z)| ≤ ((κ + k_c)|E₀|/ω) e^{-κz}`.

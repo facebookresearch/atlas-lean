@@ -1,5 +1,5 @@
-# Net Port Power
+# Net instantaneous power into a two-port
 
-Net instantaneous port power `V1 * I1 + V2 * I2` for primary pair
-`(V1, I1)` and secondary pair `(V2, I2)`, both currents entering their
-labeled ports.
+For real voltages and currents `(V₁, I₁)` at the primary port and `(V₂, I₂)` at the secondary port,
+both currents entering their ports, the net instantaneous power into the two-port is
+`V₁ I₁ + V₂ I₂`.

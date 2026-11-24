@@ -1,4 +1,4 @@
-# Normal Magnetic On XWall
+# Normal magnetic field on an x-wall
 
-Normal magnetic field on an `x`-wall at `p`: the `x` magnetic
-component vanishes.
+For a field `B : ℝ³ → ℝ³` and a point `p`, the normal magnetic field of an `x`-wall vanishes at `p`
+if `B(p)_x = 0`.

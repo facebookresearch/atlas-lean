@@ -1,5 +1,6 @@
-# Average rms Waveform mul rms Waveform
+# Average power of two RMS waveforms over one period
 
-Headline result: the average of `v * i` over any complete period
-`2 * π / ω`, for RMS phasors `v` and `i` sharing the frequency `ω` and
-the `exp (+i * ω * t)` convention, is `Re (V * conj I)`.
+For all complex `V` and `I`, a real `ω > 0` and every real `a`, the average of the product of the
+[RMS waveforms](rms-waveform.md) `v` and `i` over the period `[a, a + 2π/ω]` is
+`(ω / 2π) ∫_a^{a + 2π/ω} v(t) i(t) dt = Re(V Ī)`, the average power for RMS phasors of voltage and
+current sharing the frequency `ω`.

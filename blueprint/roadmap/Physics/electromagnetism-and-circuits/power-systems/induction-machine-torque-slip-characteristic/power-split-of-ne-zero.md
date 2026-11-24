@@ -1,10 +1,9 @@
-# Power Split of ne zero
+# At nonzero slip, the split of the air-gap power
 
-Power split for any rotor current `I2`, at any nonzero slip and nonzero
-synchronous speed, motoring or generating: the converted power is the
-torque times the rotor speed `(1 - s) * ws` and the fraction `1 - s` of
-the air-gap power, and the rotor copper loss is the fraction `s`. With
-`s ≠ 0`, the copper term `3 ‖I2‖² R2` is `s` times the air-gap term
-`3 ‖I2‖² (R2 / s)`, and the remaining difference is `1 - s` times that
-air-gap term. The torque form then follows from `developedTorque`, using
-`ws ≠ 0`.
+For every complex rotor current `I₂`, real `R₂`, slip `s ≠ 0` and synchronous speed `ω_s ≠ 0`,
+motoring or generating:
+
+- the [converted power](converted-power.md) is the [developed torque](developed-torque.md) times the
+  rotor speed `(1 - s) ω_s`;
+- the converted power is `(1 - s)` times the [air-gap power](air-gap-power.md);
+- the [rotor copper loss](rotor-copper-loss.md) is `s` times the air-gap power.

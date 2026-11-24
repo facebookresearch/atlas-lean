@@ -1,4 +1,6 @@
-# Total Complex Power
+# Three-phase complex power at the generator terminals
 
-Three-phase complex power at the terminals: three times the per-phase
-RMS complex power of the terminal voltage phasor and the current.
+For a real terminal voltage `V` and a complex current `I`, the three-phase complex power is
+`S = 3 V conj(I)`, three times the per-phase
+[complex power](../balanced-three-phase-power/complex-power.md) `V conj(I)` of RMS phasors. With the
+generator current directed out toward the bus, `S` is the power delivered to the bus.

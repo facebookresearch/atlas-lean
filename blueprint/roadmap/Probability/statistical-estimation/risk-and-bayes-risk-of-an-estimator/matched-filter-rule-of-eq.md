@@ -1,5 +1,6 @@
-# Equal means: a prior/cost-only decision
+# With equal means the matched-filter rule ignores the observation
 
-With `s1 = s0`, positive priors and costs with
-`C00 < C10`, `C11 < C01`, the rule ignores the observation: it decides `true` iff
-`pi0 (C10 - C00) < pi1 (C01 - C11)`, `tie` on equality, `false` otherwise.
+For a finite index set `ι`, a mean `s ∈ ℝ^ι`, every real `ι × ι` matrix `R`, priors `π₀, π₁ > 0`,
+costs with `C₀₀ < C₁₀` and `C₁₁ < C₀₁`, a tie decision and every observation `y`, the
+[matched-filter rule](matched-filter-rule.md) with `s₀ = s₁ = s` decides `true` if
+`π₀ (C₁₀ - C₀₀) < π₁ (C₀₁ - C₁₁)`, the tie decision if the two are equal, and `false` otherwise.

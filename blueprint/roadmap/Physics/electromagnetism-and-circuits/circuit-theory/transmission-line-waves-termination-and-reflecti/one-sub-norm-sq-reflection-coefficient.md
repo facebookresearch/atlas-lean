@@ -1,4 +1,8 @@
-# One sub norm sq reflection Coefficient
+# Power-balance identity for the reflection coefficient
 
-Power-balance identity:
-`1 - |Gamma| ^ 2 = 4 * Z0 * Re ZL / |ZL + Z0| ^ 2`.
+Let `Z_L` be complex and `Z₀` real with `Z_L + Z₀ ≠ 0`. Then the
+[reflection coefficient](reflection-coefficient.md) `Γ = (Z_L − Z₀) / (Z_L + Z₀)` satisfies
+
+`1 − |Γ|² = 4 Z₀ Re Z_L / |Z_L + Z₀|²`.
+
+No sign condition on `Z₀` is needed.

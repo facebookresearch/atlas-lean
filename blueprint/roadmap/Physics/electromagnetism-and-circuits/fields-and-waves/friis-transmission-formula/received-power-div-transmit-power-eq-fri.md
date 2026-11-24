@@ -1,4 +1,5 @@
-# Declared Friis power ratio
+# Friis power ratio for positive transmit power
 
-**Declared Friis power ratio**, stated only for `Pt > 0`:
-`Pr / Pt = Gt Gr (λ / (4π r))²`.
+Let `r > 0`, `λ > 0`, `Pt > 0`, `Gt ≥ 0` and `Gr ≥ 0`, and assume the declared far-field flux
+`S = Pt Gt / (4π r²)`, the effective aperture `Ae = Gr λ² / (4π)` and the matched received power
+`Pr = S Ae`. Then `Pr / Pt = Gt Gr (λ / (4π r))²`.

@@ -1,8 +1,10 @@
-# Rotor Current
+# Rotor current of the induction machine Thevenin model
 
-Rotor current in the Thevenin equivalent: the Thevenin voltage divided
-by the impedance with real part `Rth + R2 / s` and reactance `Xeq`. It is
-written with the slip division cleared, as `Vth s / (Rth s + R2 + i Xeq s)`,
-so that no reciprocal of the slip appears: at nonzero slip it equals the
-quotient (`rotorCurrent_eq_div`), and at zero slip it is zero
-(`rotorCurrent_zero_slip`), the physical value at synchronous speed.
+For a complex Thevenin voltage `V_th` and real `R_th`, `R₂`, `X_eq` and slip `s`, the rotor current
+is `I₂ = V_th s / (R_th s + R₂ + i X_eq s)`. For `s ≠ 0` it is `V_th / (R_th + R₂ / s + i X_eq)`,
+the Thevenin voltage over the impedance with real part `R_th + R₂ / s` and reactance `X_eq`
+([quotient form](rotor-current-eq-div.md)); at `s = 0`, synchronous speed, it is `0`
+([zero slip](rotor-current-zero-slip.md)). With the convention `z / 0 = 0` it is also `0` where
+`R_th s + R₂ = 0` and `X_eq s = 0`. In the model the rotor resistance `R₂` and the synchronous speed
+`ω_s` are positive and the Thevenin resistance `R_th` is nonnegative; the slip is in `(0, 1]` for a
+motor.

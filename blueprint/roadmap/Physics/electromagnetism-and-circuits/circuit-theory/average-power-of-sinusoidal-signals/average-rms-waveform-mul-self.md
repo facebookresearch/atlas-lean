@@ -1,5 +1,4 @@
-# Average rms Waveform mul self
+# Mean square of an RMS waveform over one period
 
-In-phase validation case: a waveform averaged against itself
-gives the canonical norm square `Complex.normSq V`, i.e.
-`Re (V * conj V)`.
+For every complex `V`, a real `ω > 0` and every real `a`, the average of the square of the
+[RMS waveform](rms-waveform.md) `v` of `V` over the period `[a, a + 2π/ω]` is `|V|² = Re(V V̄)`.

@@ -1,5 +1,5 @@
-# Open Circuit reflection
+# Zero load current gives equal forward and backward amplitudes
 
-Open-circuit limit: zero load current forces the backward
-amplitude to equal the forward amplitude. This is the separate
-infinite-impedance limit; no infinite impedance value is used.
+Let `Z₀ > 0` and let `A₊` and `A₋` be complex amplitudes whose load-plane current vanishes,
+`(A₊ − A₋) / Z₀ = 0`. Then `A₋ = A₊`. This is the open-circuit case, stated without an infinite
+load impedance.

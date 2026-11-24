@@ -1,4 +1,5 @@
-# Received Power eq friis iff flux
+# The Friis value holds exactly for the declared far-field flux
 
-Validation, near-field use violates the model: under the aperture and matching premises with
-`Gr > 0`, the Friis value holds exactly when the flux is the declared far-field flux.
+Let `r > 0`, `λ > 0` and `Gr > 0`, and assume the aperture `Ae = Gr λ² / (4π)` and `Pr = S Ae`. Then
+`Pr = Pt Gt Gr (λ / (4π r))²` if and only if `S = Pt Gt / (4π r²)`, for all real `Pt` and `Gt`: a
+flux other than the far-field one (near-field use) gives another received power.

@@ -1,4 +1,5 @@
-# Shunt Discharge is Telegrapher Solution
+# A uniform shunt discharge solves the telegrapher equations
 
-Lossy example: with no current, a uniform voltage `V e^{-(G/C) t}` solves the
-telegrapher equations (shunt-conductance discharge).
+Let `C > 0` and let `R`, `L`, `G` and `V` be real. The uniform voltage `v(x, t) = V exp(−(G / C) t)`
+with zero current `i = 0` [solve the telegrapher equations](is-telegrapher-solution.md) with
+constants `R`, `L`, `G`, `C` at every point `(x, t)` of the plane.

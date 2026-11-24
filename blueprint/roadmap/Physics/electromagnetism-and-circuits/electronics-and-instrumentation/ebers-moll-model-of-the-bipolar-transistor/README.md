@@ -1,40 +1,46 @@
 # Ebers–Moll model of the bipolar transistor
 
-- [Forward Branch Current](forward-branch-current.md)
-- [Reverse Branch Current](reverse-branch-current.md)
-- [Collector Current](collector-current.md)
-- [Emitter Current](emitter-current.md)
-- [Base Current](base-current.md)
-- [Terminal current balance (KCL)](terminal-current-balance.md)
-- [Terminal Currents zero bias](terminal-currents-zero-bias.md)
+Terminal currents of the Ebers–Moll model of a bipolar transistor as functions of real saturation
+currents, common-base current gains, thermal voltage and junction voltages, with the collector and
+base currents counted into the device and the emitter current out of it.
 
-## Small-signal derivatives (positive thermal voltage)
+## Branch and terminal currents
 
-- [Has Deriv At collector Current vbe](has-deriv-at-collector-current-vbe.md)
-- [Has Deriv At collector Current vbc](has-deriv-at-collector-current-vbc.md)
-- [Has Deriv At emitter Current vbe](has-deriv-at-emitter-current-vbe.md)
-- [Has Deriv At emitter Current vbc](has-deriv-at-emitter-current-vbc.md)
-- [Has Deriv At base Current vbe](has-deriv-at-base-current-vbe.md)
-- [Has Deriv At base Current vbc](has-deriv-at-base-current-vbc.md)
-- [Collector Transconductance mul thermal Voltage](collector-transconductance-mul-thermal-v.md)
-- [Collector Transconductance of vbc zero](collector-transconductance-of-vbc-zero.md)
+- [Forward branch current of the Ebers–Moll model](forward-branch-current.md)
+- [Reverse branch current of the Ebers–Moll model](reverse-branch-current.md)
+- [Collector current of the Ebers–Moll model](collector-current.md)
+- [Emitter current of the Ebers–Moll model](emitter-current.md)
+- [Base current of the Ebers–Moll model](base-current.md)
+- [The collector and base currents add up to the emitter current](terminal-current-balance.md)
+- [At zero junction voltages all three terminal currents vanish](terminal-currents-zero-bias.md)
 
-## Bias-region examples
+## Small-signal derivatives at positive thermal voltage
 
-- [Forward Active currents pos](forward-active-currents-pos.md)
-- [Collector eq alpha F mul emitter of vbc zero](collector-eq-alpha-f-mul-emitter-of-vbc.md)
-- [Reverse Active currents neg](reverse-active-currents-neg.md)
-- [Emitter eq alpha R mul collector of vbe zero](emitter-eq-alpha-r-mul-collector-of-vbe.md)
+- [Derivative of the collector current in the base-emitter voltage](has-deriv-at-collector-current-vbe.md)
+- [Derivative of the collector current in the base-collector voltage](has-deriv-at-collector-current-vbc.md)
+- [Derivative of the emitter current in the base-emitter voltage](has-deriv-at-emitter-current-vbe.md)
+- [Derivative of the emitter current in the base-collector voltage](has-deriv-at-emitter-current-vbc.md)
+- [Derivative of the base current in the base-emitter voltage](has-deriv-at-base-current-vbe.md)
+- [Derivative of the base current in the base-collector voltage](has-deriv-at-base-current-vbc.md)
+- [Transconductance times thermal voltage at any bias](collector-transconductance-mul-thermal-v.md)
+- [Transconductance from collector current at zero base-collector voltage](collector-transconductance-of-vbc-zero.md)
 
-## Sign-error test: emitter-out value read as emitter-in, `Ib` fixed
+## Forward-active and reverse-active bias
 
-- [Collector add base add emitter Out eq](collector-add-base-add-emitter-out-eq.md)
-- [Collector add base add emitter Out ne zero of forward Active](collector-add-base-add-emitter-out-ne-ze.md)
+- [In forward-active bias, collector and emitter currents are positive](forward-active-currents-pos.md)
+- [At $V_{BC} = 0$, $I_C = \alpha_F I_E$ and $I_B = (1 - \alpha_F) I_E$](collector-eq-alpha-f-mul-emitter-of-vbc.md)
+- [In reverse-active bias, collector and emitter currents are negative](reverse-active-currents-neg.md)
+- [At $V_{BE} = 0$, $I_E = \alpha_R I_C$](emitter-eq-alpha-r-mul-collector-of-vbe.md)
 
-## Reciprocal parameterization
+## The emitter current counted with the wrong sign
 
-- [Reciprocal parameterization](reciprocal-parameterization.md)
-- [Collector Current of transport Saturation](collector-current-of-transport-saturatio.md)
-- [Emitter Current of transport Saturation](emitter-current-of-transport-saturation.md)
-- [Collector Current transport form](collector-current-transport-form.md)
-- [Emitter Current transport form](emitter-current-transport-form.md)
+- [With the emitter current counted outward, $I_C + I_B + I_E = 2 I_E$](collector-add-base-add-emitter-out-eq.md)
+- [In forward-active bias, $I_C + I_B + I_E$ is not zero](collector-add-base-add-emitter-out-ne-ze.md)
+
+## Reciprocity and the transport form
+
+- [Reciprocity is equivalent to a common transport saturation current](reciprocal-parameterization.md)
+- [Collector current from a transport saturation current](collector-current-of-transport-saturatio.md)
+- [Emitter current from a transport saturation current](emitter-current-of-transport-saturation.md)
+- [Under reciprocity, the collector current takes transport form](collector-current-transport-form.md)
+- [Under reciprocity, the emitter current takes transport form](emitter-current-transport-form.md)

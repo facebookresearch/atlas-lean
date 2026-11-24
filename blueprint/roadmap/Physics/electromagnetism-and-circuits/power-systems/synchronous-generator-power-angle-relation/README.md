@@ -1,20 +1,22 @@
 # Synchronous generator power–angle relation
 
-- [Synchronous Current](synchronous-current.md)
-- [Total Complex Power](total-complex-power.md)
-- [Real Power](real-power.md)
-- [Reactive Power](reactive-power.md)
-- [Synchronous Current eq](synchronous-current-eq.md)
+## Current and complex power
 
-## B. Power-angle formulas
+- [Generator current in the synchronous machine model](synchronous-current.md)
+- [Three-phase complex power at the generator terminals](total-complex-power.md)
+- [Real power of the synchronous generator](real-power.md)
+- [Reactive power of the synchronous generator](reactive-power.md)
+- [For positive reactance, the generator current in rectangular form](synchronous-current-eq.md)
 
-- [Real Power eq](real-power-eq.md)
-- [Reactive Power eq](reactive-power-eq.md)
-- [Total Complex Power eq](total-complex-power-eq.md)
-- [Synchronous Generator power Angle](synchronous-generator-power-angle.md)
+## Power–angle formulas
 
-## C. Validation cases
+- [Power–angle relation for the real power](real-power-eq.md)
+- [Power–angle relation for the reactive power](reactive-power-eq.md)
+- [Real and imaginary parts of the generator complex power](total-complex-power-eq.md)
+- [Power–angle relations of the synchronous generator](synchronous-generator-power-angle.md)
 
-- [Power at zero angle](power-at-zero-angle.md)
-- [Real Power pos of angle pos](real-power-pos-of-angle-pos.md)
-- [Total Complex Power neg current](total-complex-power-neg-current.md)
+## Validation cases
+
+- [At zero load angle no real power is transferred](power-at-zero-angle.md)
+- [For load angles between 0 and π, the real power is positive](real-power-pos-of-angle-pos.md)
+- [Reversing the current direction negates the complex power](total-complex-power-neg-current.md)

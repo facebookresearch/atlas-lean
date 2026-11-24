@@ -1,4 +1,5 @@
-# Mismatched Power eq friis iff
+# With a loss factor p, the Friis value holds exactly when p = 1
 
-Validation, mismatch violates the model: with a polarization/impedance loss factor `p`
-(`Pr = p S Ae`) and `Pt, Gt, Gr > 0`, the Friis value holds exactly when `p = 1`.
+Let `r, λ, Pt, Gt, Gr > 0`, the flux `S = Pt Gt / (4π r²)` and the aperture `Ae = Gr λ² / (4π)`. For
+a polarization or impedance loss factor `p`, `p S Ae = Pt Gt Gr (λ / (4π r))²` if and only if
+`p = 1`.

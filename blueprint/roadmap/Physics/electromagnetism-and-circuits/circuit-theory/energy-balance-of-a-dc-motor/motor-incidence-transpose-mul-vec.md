@@ -1,4 +1,6 @@
-# Motor Incidence transpose mul Vec
+# Branch voltages of the DC motor loop
 
-KVL branch voltages of the motor loop: supply branch `-u`, resistance `R i`, inductance
-`u - R i - ke ω`, back-EMF `ke ω`.
+For all real `u`, `R`, `i`, `ke` and `ω`, the branch voltages `Bᵀ φ` of the
+[motor loop](motor-incidence.md) `B` with the [node potentials](motor-potentials.md) `φ` are
+`-u` (supply), `R i` (resistance), `u - R i - ke ω` (inductance) and `ke ω` (back-EMF): Kirchhoff's
+voltage law with these potentials.

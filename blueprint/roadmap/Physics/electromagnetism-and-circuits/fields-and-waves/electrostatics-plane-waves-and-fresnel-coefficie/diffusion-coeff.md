@@ -1,3 +1,5 @@
-# Diffusion Coeff
+# Einstein diffusion coefficient
 
-Diffusion coefficient `D = mu * kB * T / |q|` (Einstein relation, solved for `D`).
+For reals `μ` (mobility), `kB` (Boltzmann constant), `T` (temperature) and `q` (signed carrier
+charge), `D = μ kB T / |q|`, the Einstein relation solved for `D`. With the convention `x / 0 = 0`
+it is `0` when `q = 0`.

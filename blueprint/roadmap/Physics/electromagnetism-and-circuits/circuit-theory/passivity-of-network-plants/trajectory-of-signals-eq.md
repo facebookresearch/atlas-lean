@@ -1,5 +1,4 @@
-# Trajectory Of Signals eq
+# A trajectory built from signals returns them
 
-Representation preserves signals: the trajectory built from network
-signals has the same potentials, injections, branch voltages and branch
-currents as the signals.
+For all signals `φ`, `j`, `v` and `i`, the [trajectory built from them](trajectory-of-signals.md) has
+potentials `φ`, injections `j`, branch voltages `v` and branch currents `i`.

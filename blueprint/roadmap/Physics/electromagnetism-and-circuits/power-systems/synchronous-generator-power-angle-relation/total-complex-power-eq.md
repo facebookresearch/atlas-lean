@@ -1,4 +1,6 @@
-# Total Complex Power eq
+# Real and imaginary parts of the generator complex power
 
-Complex power in rectangular form: its real and imaginary parts are
-the two power angle formulas.
+Let `E > 0`, `V > 0` and `X_s > 0`, and let `δ` be real. With `I` the
+[generator current](synchronous-current.md) `I = (E e^(iδ) - V) / (i X_s)`, the
+[three-phase complex power](total-complex-power.md) `S = 3 V conj(I)` has real part
+`3 V E sin δ / X_s` and imaginary part `3 V (E cos δ - V) / X_s`.

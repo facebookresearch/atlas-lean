@@ -1,5 +1,11 @@
-# Branch Drop
+# Branch voltage drop
 
-Branch voltage drop: the signed sum of node voltages through the real
-incidence transpose, with each real incidence entry read as a complex
-scalar. New definition owned by this module.
+For natural numbers $n_N$ and $n_E$, a real $n_N \times n_E$ matrix $B$, complex node voltages
+$V \in \mathbb{C}^{n_N}$ and a branch $e$, the voltage drop on $e$ is
+
+$$d_e = \sum_{v} B_{ve} V_v,$$
+
+the $e$-th entry of $B^{\mathsf T} V$, each real entry of $B$ read as a complex number. In the model
+$B$ is the signed incidence matrix of the network, with entries $+1$ and $-1$ at the two ends of
+each branch and $0$ elsewhere, so $d_e$ is the difference of the end voltages; the definition allows
+any real matrix.

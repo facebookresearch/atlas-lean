@@ -1,4 +1,6 @@
-# Face Flux box Face Sets
+# The plane-parametrized face flux equals the box outward flux
 
-The interface face flux of the transported box data is the outward
-flux through the actual box face.
+For all `a, b ∈ ℝ³`, every current density `J : ℝ³ → ℝ³` and every face `f`, the
+[face flux](face-flux.md) of the [face densities](box-face-densities.md) of `J` over the
+[face sets](box-face-sets.md) of `[a, b]` is the [outward flux](box-outward-flux.md) of `J` through
+face `f`.

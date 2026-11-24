@@ -1,5 +1,5 @@
-# Rotor Current eq div
+# At nonzero slip, the rotor current is a voltage over an impedance
 
-At nonzero slip the rotor current is the Thevenin voltage divided by
-the impedance with real part `Rth + R2 / s` and reactance `Xeq`. The
-proof multiplies that impedance by `s`.
+For every complex `V_th`, real `R_th`, `R₂`, `X_eq` and slip `s ≠ 0`, the
+[rotor current](rotor-current.md) `I₂ = V_th s / (R_th s + R₂ + i X_eq s)` equals
+`V_th / (R_th + R₂ / s + i X_eq)`.

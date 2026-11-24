@@ -1,3 +1,4 @@
-# Capacitor phasor iff impedance
+# For ω, C > 0 the capacitor law in impedance form
 
-Capacitor impedance form `V = I / (i ω C)`, valid for `ω > 0` and `C > 0`.
+Let `ω > 0`, `C > 0` and let `V` and `I` be complex phasors. Then `I = iωC V` exactly when
+`V = I / (iωC)`.

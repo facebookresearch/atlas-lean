@@ -1,4 +1,4 @@
-# One add mul pos
+# For positive gain and feedback, $1 + A\beta$ is positive
 
-The loop denominator `1 + A * beta` is strictly positive for
-finite positive gain and feedback.
+For real numbers $A > 0$ and $\beta > 0$, the loop factor satisfies $1 + A\beta > 0$; in particular
+the denominator of the [linear candidate](linear-candidate.md) does not vanish.

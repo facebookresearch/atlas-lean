@@ -1,8 +1,9 @@
-# Load power eq re mul norm sq
+# Load power from the load impedance and the current
 
-Real part of the complex power at the load plane from the load law:
-`Re (V * conj I) = Re ZL * |I| ^ 2`. This is the time-averaged load
-power only for RMS phasors
-(`average_rmsWaveform_load_power_eq_re_mul_norm_sq`); for peak phasors
-the average is half of it
-(`average_peakWaveform_load_power_eq_re_mul_norm_sq`).
+For complex `V`, `I` and `Z_L` with the load law `V = Z_L I`,
+
+`Re(V Ī) = Re Z_L |I|²`,
+
+with `Ī` the complex conjugate of `I`. It is the time-averaged load power when `V` and `I` are
+RMS phasors ([average](average-rms-waveform-load-power-eq-re-mu.md)), and twice it when they are
+peak phasors ([average](average-peak-waveform-load-power-eq-re-m.md)).

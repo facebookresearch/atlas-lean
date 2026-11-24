@@ -1,7 +1,7 @@
-# Stamping correctness
+# Correctness of modified nodal analysis stamping
 
-Under the stamping hypotheses, with
-differentiable node potentials, the stamped equations hold for
-given inductor and voltage-source currents if and only if branch
-voltages and branch currents satisfying the carrier equations exist
-with those restricted currents.
+Assume the [stamping hypotheses](satisfies-stamping-hypotheses.md), and let the node potentials `v`
+and the inductor currents `i_L` be differentiable on `ℝ`. For all voltage-source currents `i_V`, the
+[stamped equations](satisfies-stamped-equations.md) hold if and only if there are branch voltages
+and currents satisfying the [branch equations](satisfies-branch-equations.md) whose restrictions to
+the inductor and source branches are `i_L` and `i_V` at every time.

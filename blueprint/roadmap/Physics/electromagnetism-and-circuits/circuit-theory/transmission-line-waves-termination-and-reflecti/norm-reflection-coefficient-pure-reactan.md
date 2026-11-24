@@ -1,4 +1,5 @@
-# Norm reflection Coefficient pure reactance
+# A pure reactance reflects fully
 
-A pure reactance `ZL = i * X` gives `|Gamma| = 1`; the denominator is
-automatically nonzero.
+For `Z₀ > 0` and every real `X`, the pure reactance `Z_L = iX` has a
+[reflection coefficient](reflection-coefficient.md) of modulus `|Γ| = 1`; its denominator `iX + Z₀`
+is nonzero.

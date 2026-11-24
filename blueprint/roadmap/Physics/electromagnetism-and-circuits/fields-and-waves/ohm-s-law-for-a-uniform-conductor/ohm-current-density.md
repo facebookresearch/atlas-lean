@@ -1,3 +1,3 @@
-# Ohm Current Density
+# Local Ohm law for the current density
 
-Local scalar Ohm law: current density `J = σ E`.
+For reals `σ` (conductivity) and `E` (axial field), the axial current density `J = σ E`.

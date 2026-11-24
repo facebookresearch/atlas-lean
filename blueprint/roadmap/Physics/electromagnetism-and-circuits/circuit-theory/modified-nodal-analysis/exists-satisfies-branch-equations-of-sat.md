@@ -1,5 +1,7 @@
-# Exists satisfies Branch Equations of satisfies Stamped Equations
+# Stamped equations come from branch equations
 
-Backward assembly: stamped equations with differentiable node
-potentials come from branch voltages and branch currents satisfying
-the carrier equations, with the prescribed restricted currents.
+Assume the [stamping hypotheses](satisfies-stamping-hypotheses.md), node potentials `v` and inductor
+currents `i_L` differentiable on `ℝ`, and voltage-source currents `i_V`, such that the
+[stamped equations](satisfies-stamped-equations.md) hold. Then there are branch voltages `v_b` and
+branch currents `i_b` satisfying the [branch equations](satisfies-branch-equations.md) with
+`(i_b(t)_e)_{e ∈ L} = i_L(t)` and `(i_b(t)_e)_{e ∈ S} = i_V(t)` for every `t`.
