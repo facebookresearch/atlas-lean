@@ -19,7 +19,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 # Zurita's polynomials for reciprocal central binomial series
 
 The coefficient recurrences define Zurita's polynomials and constants.
-`hasDerivAt_zurita_antiderivative_one` proves the first arcsine antiderivative on $(0,1)$.
+`hasDerivAt_zurita_antiderivative_one` proves the first arcsine antiderivative and
+`hasDerivAt_zurita_antiderivative_two` proves the second on $(0,1)$.
 -/
 
 open Finset
@@ -323,6 +324,86 @@ private theorem factor_deriv (n : ℕ) {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) :
   rw [Real.sq_sqrt hx0.le]
   linear_combination 2 * x * s_identity n x
 
+-- With n = m + 1, the recurrence cancels consecutive powers in the derivative.
+private theorem m_step (m k : ℕ) (hk : k < m) :
+    ((k : ℝ) + 1 - m - 1 / 2) * (zuritaMCoeff (m + 1) (k + 1) : ℝ) =
+      ((k : ℝ) - m) * (zuritaMCoeff (m + 1) k : ℝ) := by
+  have hkm : (k : ℝ) + 1 ≤ m := by exact_mod_cast hk
+  rw [zuritaMCoeff]
+  push_cast
+  field_simp (disch := linarith)
+  ring
+
+private theorem m_identity (m : ℕ) (x : ℝ) :
+    (1 - x) * weightedSum (zuritaMCoeff (m + 1)) (m + 1) m x -
+      zuritaM (m + 1) x / 2 = -1 := by
+  have partial_sum (l : ℕ) (hl : l ≤ m) :
+      (1 - x) * weightedSum (zuritaMCoeff (m + 1)) (l + 1) m x -
+        (∑ k ∈ range (l + 1), (zuritaMCoeff (m + 1) k : ℝ) * x ^ k) / 2 =
+          -1 - ((l : ℝ) - m) * (zuritaMCoeff (m + 1) l : ℝ) * x ^ (l + 1) := by
+    induction l with
+    | zero =>
+      simp [weightedSum, zuritaMCoeff]
+      field_simp [show 2 * ((m : ℝ) + 1) - 1 ≠ 0 by linarith [Nat.cast_nonneg (α := ℝ) m]]
+      ring
+    | succ l ih =>
+      unfold weightedSum at *
+      rw [sum_range_succ, sum_range_succ (f := fun k => (zuritaMCoeff (m + 1) k : ℝ) * x ^ k)]
+      push_cast
+      rw [pow_succ x (l + 1)]
+      linear_combination ih (by omega) + x ^ (l + 1) * m_step m l hl
+  simpa [zuritaM] using partial_sum m le_rfl
+
+-- The final coefficient of M gives d, and all earlier coefficients come from N.
+private theorem n_identity (m : ℕ) (x : ℝ) :
+    weightedSum (zuritaNCoeff (m + 1)) m m x + (zuritaD (m + 1) : ℝ) * x ^ m =
+      zuritaM (m + 1) x / 2 := by
+  rw [zuritaM, sum_range_succ, add_div, zuritaD]
+  simp only [Nat.add_sub_cancel, Rat.cast_div, Rat.cast_ofNat]
+  rw [weightedSum, sum_div]
+  congr 1
+  · apply sum_congr rfl
+    intro k hk
+    have hkm : (k : ℝ) < m := by exact_mod_cast mem_range.mp hk
+    rw [zuritaNCoeff]
+    push_cast
+    field_simp [show (k : ℝ) - (m + 1) + 1 ≠ 0 by linarith]
+    ring
+  · ring
+
+private theorem m_factor_deriv (m : ℕ) {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) :
+    HasDerivAt (fun y => zuritaM (m + 1) y / y ^ m * (Real.sqrt (1 - y) / Real.sqrt y))
+      (-1 / (x ^ (m + 1) * Real.sqrt x * Real.sqrt (1 - x))) x := by
+  have hpos := sub_pos.mpr hx1
+  have hs := Real.sqrt_pos.2 hx0
+  have ht := Real.sqrt_pos.2 hpos
+  have hr : HasDerivAt (fun y : ℝ => Real.sqrt (1 - y) / Real.sqrt y)
+      (-1 / (2 * x * Real.sqrt x * Real.sqrt (1 - x))) x := by
+    apply ((((hasDerivAt_id x).const_sub 1).sqrt hpos.ne').fun_div
+      (Real.hasDerivAt_sqrt hx0.ne') hs.ne').congr_deriv
+    dsimp
+    field_simp
+    rw [Real.sq_sqrt hx0.le, Real.sq_sqrt hpos.le]
+    ring
+  have hM : HasDerivAt (fun y => zuritaM (m + 1) y / y ^ m)
+      (weightedSum (zuritaMCoeff (m + 1)) (m + 1) m x / x ^ (m + 1)) x :=
+    quotient_deriv _ _ _ hx0.ne'
+  apply (hM.fun_mul hr).congr_deriv
+  rw [pow_succ]
+  field_simp
+  rw [Real.sq_sqrt hpos.le]
+  linear_combination 2 * m_identity m x
+
+private theorem arcsin_sqrt_deriv {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) :
+    HasDerivAt (fun y => Real.arcsin (Real.sqrt y))
+      (1 / (2 * Real.sqrt x * Real.sqrt (1 - x))) x := by
+  have hs := Real.sqrt_pos.2 hx0
+  have hs1 : Real.sqrt x < 1 := by nlinarith only [Real.sq_sqrt hx0.le, hx1]
+  apply ((Real.hasDerivAt_arcsin (by linarith : Real.sqrt x ≠ -1) hs1.ne).comp x
+    (Real.hasDerivAt_sqrt hx0.ne')).congr_deriv
+  rw [Real.sq_sqrt hx0.le]
+  ring
+
 end ZuritaAntiderivative
 
 open ZuritaAntiderivative
@@ -348,13 +429,7 @@ theorem hasDerivAt_zurita_antiderivative_one {n : ℕ} (hn : 1 ≤ n) {x : ℝ}
   have hpos := sub_pos.mpr hx1
   have hs := Real.sqrt_pos.2 hx0
   have ht := Real.sqrt_pos.2 hpos
-  have hs1 : Real.sqrt x < 1 := by nlinarith only [Real.sq_sqrt hx0.le, hx1]
-  have ha : HasDerivAt (fun y => Real.arcsin (Real.sqrt y))
-      (1 / (2 * Real.sqrt x * Real.sqrt (1 - x))) x := by
-    apply ((Real.hasDerivAt_arcsin (by linarith : Real.sqrt x ≠ -1) hs1.ne).comp x
-      (Real.hasDerivAt_sqrt hx0.ne')).congr_deriv
-    rw [Real.sq_sqrt hx0.le]
-    ring
+  have ha := arcsin_sqrt_deriv hx0 hx1
   have hT : HasDerivAt (fun y => zuritaT (m + 1) y / y ^ m)
       (weightedSum (zuritaTCoeff (m + 1)) m m x / x ^ (m + 1)) x :=
     quotient_deriv _ _ _ hx0.ne'
@@ -384,6 +459,55 @@ theorem hasDerivAt_zurita_antiderivative_one {n : ℕ} (hn : 1 ≤ n) {x : ℝ}
     rw [Real.rpow_sub hy, Real.rpow_natCast, ← Real.sqrt_eq_rpow]
     simp only [div_eq_mul_inv, mul_inv_rev, inv_inv]
     ring
+
+/-- **Zurita's antiderivative of $x^{-n-1/2}\arcsin(\sqrt{x})/\sqrt{1-x}$.** Let $n \ge 1$, let
+$d_n$ be Zurita's constant and let $M_{n-1}$ and $N_{n-2}$ be Zurita's polynomials (with
+$N_{-1} = 0$). For every real $x$ with $0 < x < 1$, the function
+$$
+G(y) = d_n \log y - \frac{\arcsin(\sqrt{y}) \sqrt{y(1 - y)}\, M_{n-1}(y)}{y^n} +
+\frac{N_{n-2}(y)}{y^{n-1}}
+$$
+has derivative $x^{-n-1/2} \arcsin(\sqrt{x}) / \sqrt{1 - x}$ at $x$.
+
+Source: Rimer Zurita, *Power Series Associated with Reciprocals of Generalized Central Binomial
+Coefficients*, INTEGERS 26 (2026), Article A2, Lemma 2 (`integers-2026-A2-lem-2`). -/
+theorem hasDerivAt_zurita_antiderivative_two {n : ℕ} (hn : 1 ≤ n) {x : ℝ}
+    (hx0 : 0 < x) (hx1 : x < 1) :
+    HasDerivAt (fun y => (zuritaD n : ℝ) * Real.log y -
+        Real.arcsin (Real.sqrt y) * Real.sqrt (y * (1 - y)) * zuritaM n y / y ^ n +
+        zuritaN n y / y ^ (n - 1))
+      (x ^ (-(n : ℝ) - 1 / 2) * Real.arcsin (Real.sqrt x) / Real.sqrt (1 - x)) x := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  have hpos := sub_pos.mpr hx1
+  have hs := Real.sqrt_pos.2 hx0
+  have ht := Real.sqrt_pos.2 hpos
+  have hN : HasDerivAt (fun y => zuritaN (m + 1) y / y ^ m)
+      (weightedSum (zuritaNCoeff (m + 1)) m m x / x ^ (m + 1)) x :=
+    quotient_deriv _ _ _ hx0.ne'
+  have hcross : 1 / (2 * Real.sqrt x * Real.sqrt (1 - x)) *
+      (zuritaM (m + 1) x / x ^ m * (Real.sqrt (1 - x) / Real.sqrt x)) =
+        zuritaM (m + 1) x / (2 * x ^ (m + 1)) := by
+    rw [pow_succ]
+    field_simp
+    rw [Real.sq_sqrt hx0.le]
+  have hrest : (zuritaD (m + 1) : ℝ) * x⁻¹ +
+      weightedSum (zuritaNCoeff (m + 1)) m m x / x ^ (m + 1) -
+      zuritaM (m + 1) x / (2 * x ^ (m + 1)) = 0 := by
+    rw [pow_succ]
+    field_simp
+    linear_combination 2 * n_identity m x
+  have h := (((Real.hasDerivAt_log hx0.ne').const_mul (zuritaD (m + 1) : ℝ)).sub
+    ((arcsin_sqrt_deriv hx0 hx1).fun_mul (m_factor_deriv m hx0 hx1))).add hN
+  apply (h.congr_of_eventuallyEq ?_).congr_deriv
+  · dsimp
+    rw [Real.rpow_sub hx0, Real.rpow_neg hx0.le, Real.rpow_natCast, ← Real.sqrt_eq_rpow, hcross]
+    linear_combination hrest
+  · filter_upwards [lt_mem_nhds hx0] with y hy
+    dsimp
+    rw [Real.sqrt_mul hy.le, pow_succ]
+    field_simp
+    linear_combination -Real.arcsin (Real.sqrt y) * Real.sqrt (1 - y) *
+      zuritaM (m + 1) y * Real.sq_sqrt hy.le
 
 end
 
