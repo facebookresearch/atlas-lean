@@ -160,8 +160,9 @@ theorem partialTotalι_f_isIso_of_le (p k : ℕ) (hkp : k ≤ p) :
     change i + j = k at hij
     let a : Fin (p + 1) := ⟨i, by omega⟩
     change Epi ((φ.f i).f j)
-    rw [HomologicalComplex.ιStupidTrunc_f B e
-      (show e.f a = i from rfl)]
+    let : IsIso (φ.f i) := HomologicalComplex.isIso_ιStupidTrunc_f B e
+      (show e.f a = i from rfl)
+    change Epi ((HomologicalComplex.eval C (ComplexShape.down ℕ) j).map (φ.f i))
     infer_instance
   have hEpi' : Epi ((B.partialTotalι p).f k) := by
     change Epi (GradedObject.mapMap θ π k)
