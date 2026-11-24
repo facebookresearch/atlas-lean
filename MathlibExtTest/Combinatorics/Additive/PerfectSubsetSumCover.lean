@@ -23,6 +23,16 @@ example :
   have hs : IsPerfectMCover 2 s := by decide +revert
   exact isPerfectMCover_fst_snd (m := 1) (n := 2) (by decide) (by decide) hs
 
+/-- A nonzero adjoiner can repeat the value of an existing index. -/
+example : IsPerfectMCover 2 (Fin.cons (1 : ZMod 4) (![1, 2] : Fin 2 → ZMod 4)) := by
+  have hs : IsPerfectMCover 1 (![1, 2] : Fin 2 → ZMod 4) := by decide
+  exact isPerfectMCover_cons hs 1
+
+/-- A zero adjoiner doubles the multiplicity of a cover with repeated entries. -/
+example : IsPerfectMCover 4 (Fin.cons (0 : ZMod 2) (![1, 1] : Fin 2 → ZMod 2)) := by
+  have hs : IsPerfectMCover 2 (![1, 1] : Fin 2 → ZMod 2) := by decide
+  exact isPerfectMCover_cons hs 0
+
 /-- The empty family covers zero exactly once, through the empty subset. -/
 example : coverCount (Fin.elim0 : Fin 0 → ZMod 2) 0 = 1 ∧
     coverCount (Fin.elim0 : Fin 0 → ZMod 2) 1 = 0 := by decide

@@ -38,3 +38,15 @@ example : stirlingTotalDisplacement (n := 0) Fin.elim0 = 0 :=
 
 -- In 332211 the first car takes spot 3 and the last car travels from spot 1 to spot 6.
 example : stirlingTotalDisplacement (n := 3) ![3, 3, 2, 2, 1, 1] = 9 := by decide
+
+-- At order one the two bounds coincide.
+example : (Finset.univ.filter fun i => stirlingDisplacement (n := 1) ![1, 1] i = 0).card = 1 := by
+  have h := stirling_card_zero_displacement 1 (by decide) ![1, 1]
+    (by unfold IsStirlingPermutation; decide)
+  exact le_antisymm h.2 h.1
+
+-- At order two the two bounds are distinct and both are attained.
+example :
+    (Finset.univ.filter fun i => stirlingDisplacement (n := 2) ![1, 1, 2, 2] i = 0).card = 1 ∧
+      (Finset.univ.filter fun i => stirlingDisplacement (n := 2) ![1, 2, 2, 1] i = 0).card = 2 :=
+  by decide
