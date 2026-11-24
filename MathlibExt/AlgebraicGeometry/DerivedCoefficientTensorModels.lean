@@ -85,7 +85,10 @@ def relationRight {M N : RightModule R C} (L : ActionModel C o N) :
       value C o M ⊗ value C o N :=
   (α_ (value C o M) (coefficientAlgebra C o).X (value C o N)).hom ≫ (𝟙 _ ⊗ₘ L.map)
 
-/-- The actual balanced tensor cochain complex, not a freely chosen carrier. -/
+/-- The coequalizer of the two coefficient actions on `M ⊗ N`. It is the balanced tensor
+`M ⊗_A N` when the coefficient algebra `A` is graded-commutative (`IsCommutativeCoefficient`),
+since the action of `A` on the second right module is then also a left action. Without this
+hypothesis the coequalizer need not compute `M ⊗_A N`; `DerivedTensorModel` requires it. -/
 def balancedTensor {M N : RightModule R C}
     (L : ActionModel C o M) (K : ActionModel C o N) : Cochains R :=
   coequalizer (relationLeft C o (N := N) L) (relationRight C o (M := M) K)
@@ -129,7 +132,8 @@ def mapValue {M N : RightModule R C} {r p q : ℤ} (f : DGHom R r M N) (h : p + 
   ((DGFunctor.dgApp R r (op o) f : Cochain (value C o M) (value C o N) r).v p q h).hom m
 
 /-- A derived tensor enhancement keeps the actual quotient in every object,
-and the source cochain tensor sign in every homogeneous map. -/
+and the source cochain tensor sign in every homogeneous map. The coefficient algebra is
+graded-commutative, so that the quotient is the balanced tensor of right modules. -/
 structure DerivedTensorModel where
   action : ∀ M : RightModule R C, ActionModel C o M
   functor : EnrichedFunctor (Cochains R)
@@ -153,5 +157,7 @@ structure DerivedTensorModel where
         (show (p + r) + (q + s) = n + t by omega)
         (mapValue C o (M := M.obj) (N := M'.obj) f rfl m)
         (mapValue C o (M := N.obj) (N := N'.obj) g rfl v)
+  /-- The coefficient algebra is graded-commutative (see `balancedTensor`). -/
+  commutative : IsCommutativeCoefficient C o
 
 end MathlibExt.AlgebraicGeometry.DerivedCoefficientTensorModels
