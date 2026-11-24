@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import MathlibExt.NumberTheory.Digits.BinomialDigits
 import Mathlib.Algebra.Order.Floor.Semiring
+import Mathlib.Data.Nat.Choose.Bounds
 import Mathlib.Tactic.Linarith
 
 /-!
