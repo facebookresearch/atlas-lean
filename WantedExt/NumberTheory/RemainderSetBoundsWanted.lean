@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
-public import MathlibExt.NumberTheory.PierceExpansion
+public import MathlibExt.NumberTheory.IteratedRemainderSet
 
 /-!
 # Bounds for sets of remainders (statements)
@@ -24,8 +24,9 @@ structural lemmas, its `O(log log n)` drop bound, and its iterated-set bounds ar
 `FormalizedPapers/NumberTheory/BaraskarVukusic2026` (there `S 1 n` is this `remainderSet n`);
 `WantedExt` may not import `FormalizedPapers`, so the set is restated here. This file states
 the results that are not proved there: the asymptotic `s(n) = cn + O(n/(log n log log n))`,
-unbounded drops, the three auxiliary analytic lemmas, and Lemma 19 (iterated remainder sets
-`S_j(n)` versus the Pierce length `P(n)`, in corrected form).
+unbounded drops, and the three auxiliary analytic lemmas. The iterated remainder sets `S_j(n)`
+are defined, and Lemma 19 (`S_j(n)` versus the Pierce length `P(n)`, in corrected form) is
+proved, in `MathlibExt.NumberTheory.IteratedRemainderSet`.
 -/
 
 namespace MetaMathlibExt
@@ -156,16 +157,6 @@ public theorem_wanted tsum_inv_sq_primes_gt_isBigO :
     (fun n : ℕ => ∑' p : {p : ℕ // p.Prime ∧ n < p}, (1 : ℝ) / ((p : ℕ) : ℝ) ^ 2)
       =O[Filter.atTop] (fun n : ℕ => 1 / ((n : ℝ) * Real.log n))
 
-/-- **Iterated remainder sets.** For a natural number $n$, the iterated remainder sets
-$S_j(n)$, $j \ge 0$, are defined by $S_0(n) = \{1, \dots, \lfloor n/2 \rfloor\}$ and, for
-$j \ge 0$, $S_{j+1}(n) = \{n \bmod k : k \in S_j(n),\ k \ne 0\}$.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Section 2 (definition of `S_j(n)`). -/
-public def iteratedRemainderSet : ℕ → ℕ → Finset ℕ
-  | 0, n => Finset.Icc 1 (n / 2)
-  | j + 1, n => ((iteratedRemainderSet j n).erase 0).image (n % ·)
-
 /-- **The first iterated remainder set is the remainder set.** For every natural number $n$, the
 iterated remainder set $S_1(n)$ equals the remainder set
 $S(n) = \{n \bmod k : 1 \le k \le \lfloor n/2 \rfloor\}$.
@@ -183,29 +174,6 @@ Integer Sequences 29 (2026), Article 26.1.4, Section 2 (definition of `S_j(n)`).
 public theorem iteratedRemainderSet_thirtyFive :
     iteratedRemainderSet 6 35 = {0} ∧ iteratedRemainderSet 7 35 = ∅ := by
   decide
-
-/-- **Maximal Pierce length via iterated remainder sets.** Let $n \ge 3$ and $t$ be natural
-numbers, let $P(n)$ be the maximal Pierce length of $n$ and let $S_j(n)$ be the iterated
-remainder sets of $n$. Then the following are equivalent: $P(n) = t + 1$; $S_t(n) = \{0\}$;
-$S_t(n)$ has exactly one element and $S_{t+j}(n) = \emptyset$ for every $j \ge 1$.
-
-This corrects the index of the printed lemma, $P(n) = t \iff S_{t+1}(n) = \{0\}$, which fails
-for every $n \ge 3$: for example $P(5) = 3$, $S_2(5) = \{0\}$ and $S_4(5) = \emptyset$. The
-paper derives the lemma from its Lemma 18 ($r \in S_j(n)$ if and only if $a_{j+1} = r$ for some
-$\lfloor n/2 \rfloor + 1 \le a \le n$, where $a_0 = a$ and $a_{i+1} = n \bmod a_i$), which
-gives the index $P(n) - 1$. Lemma 18, and hence this lemma, needs $n \ge 3$: $P(2) = 1$ but
-$S_0(2) = \{1\}$.
-
-Source: the forward direction of the first equivalence (for `t ≥ 1`) is proved as
-`S_eq_singleton_zero_of_maxLength_eq` in
-`FormalizedPapers/NumberTheory/BaraskarGokhaleJainKiezun2026`.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Lemma 19. -/
-public theorem_wanted pierce_maxLength_eq_succ_iff (n t : ℕ) (hn : 3 ≤ n) :
-    (PierceExpansion.maxLength n = t + 1 ↔ iteratedRemainderSet t n = {0}) ∧
-      (PierceExpansion.maxLength n = t + 1 ↔ (iteratedRemainderSet t n).card = 1 ∧
-        ∀ j, 1 ≤ j → iteratedRemainderSet (t + j) n = ∅)
 
 end
 

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.SimpleGraph.GridDominationTransferMatrix
 public import MathlibExt.Combinatorics.SimpleGraph.TorusDominationTransfer
 
 /-!
@@ -32,26 +33,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open DominationState
-
-open scoped Classical in
-/-- **Transfer-matrix formula for the domination polynomial of the grid.** For all natural
-numbers $m$ and $n$, let $P_k$ denote the path on the vertices $0, \dots, k - 1$, let $A$ be the
-domination transfer matrix of the row graph $P_m$, indexed by the signatures of $P_m$, and let
-$\sigma_\bullet$ be the all-covered signature. Then the domination polynomial of the grid
-$P_m \mathbin{\square} P_n$ is
-
-$$\sum_\sigma (A^n)_{\sigma, \sigma_\bullet},$$
-
-the sum running over the signatures $\sigma$ of $P_m$ with no uncovered vertex.
-
-Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
-King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Theorem 7
-(`jis-2024-24.7.6-thm-7`). -/
-public theorem_wanted dominationPolynomial_grid_eq_sum_transferMatrix_pow (m n : ℕ) :
-    dominationPolynomial (pathGraph m □ pathGraph n) =
-      ∑ σ ∈ (Finset.univ : Finset (DominationSignature (pathGraph m))).filter
-          (fun σ => ∀ i, σ.1 i ≠ uncovered),
-        (dominationTransferMatrix (pathGraph m) ^ n) σ (allCoveredSignature _)
 
 open scoped Classical in
 /-- **Transfer-matrix formula for the domination polynomial of the cylinder.** For all natural

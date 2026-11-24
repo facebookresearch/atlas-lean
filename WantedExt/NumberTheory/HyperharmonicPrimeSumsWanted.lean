@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.AlternatingHyperharmonic
 public import MathlibExt.Analysis.Asymptotics.Jakimczuk
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
@@ -137,90 +138,6 @@ public theorem_wanted sum_pow_mul_log_pow_isEquivalent (m n k : ℕ) :
         (l : ℝ) ^ m * Real.log l ^ n / Real.log (Real.log l) ^ k) ~[atTop]
       fun x : ℕ => (x : ℝ) ^ (m + 1) * Real.log x ^ n /
         ((m + 1) * Real.log (Real.log x) ^ k))
-
-
-/-- **Alternating generalized harmonic numbers.** For a real number $s$ and a natural number $n$,
-the alternating generalized harmonic number is
-$\overline{H}_n^{(s)} = \sum_{j=1}^{n} (-1)^{j-1} / j^s$, which is $0$ for $n = 0$.
-
-For $s = -p$ with $p$ a natural number this is $\sum_{j=1}^{n} (-1)^{j-1} j^p$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (definition of `H̄_n^{(p)}` and `H̄_n^{(-p)}`). -/
-public noncomputable def alternatingGeneralizedHarmonic (s : ℝ) (n : ℕ) : ℝ :=
-  ∑ j ∈ Icc 1 n, (-1 : ℝ) ^ (j - 1) * ((j : ℝ) ^ s)⁻¹
-
-/-- **Alternating generalized harmonic numbers of index zero.** For every real number $s$, the
-alternating generalized harmonic number $\overline{H}_0^{(s)}$ is $0$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (definition of `H̄_n^{(p)}`). -/
-@[simp]
-public theorem alternatingGeneralizedHarmonic_zero (s : ℝ) :
-    alternatingGeneralizedHarmonic s 0 = 0 := by
-  simp [alternatingGeneralizedHarmonic]
-
-/-- **Signed iterated partial sums.** Let $(b_n)_{n \ge 0}$ be a real sequence and fix a choice of
-signs, either alternating, $\varepsilon_k = (-1)^{k-1}$, or constant, $\varepsilon_k = 1$. The
-signed iterated partial sums $S^{(r)}_n$ of $b$, for orders $r \in \mathbb{N}$ and
-$n \in \mathbb{N}$, are defined by $S^{(0)}_n = 0$, $S^{(1)}_n = b_n$ and, for $r \ge 1$,
-$$S^{(r+1)}_n = \sum_{k=1}^{n} \varepsilon_k \, S^{(r)}_k.$$
-The value $0$ at order $0$ is a convention and is not used.
-
-With $b_n = H_n^{(p)} = \sum_{j=1}^{n} j^{-p}$, constant signs give the generalized hyperharmonic
-numbers $H_n^{(p,r)}$ and alternating signs give the type I alternating ones $H_n^{(p,r,1)}$; with
-$b_n = \bar H_n^{(p)} = \sum_{j=1}^{n} (-1)^{j-1} j^{-p}$, constant signs give type II,
-$H_n^{(p,r,2)}$, and alternating signs give type III, $H_n^{(p,r,3)}$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (definitions of `H_n^{(p,r)}` and `H_n^{(p,r,i)}`, `i = 1, 2, 3`). -/
-public noncomputable def signedIteratedPartialSum (alt : Bool) (b : ℕ → ℝ) : ℕ → ℕ → ℝ
-  | 0, _ => 0
-  | 1, n => b n
-  | r + 2, n => ∑ k ∈ Icc 1 n, (if alt then (-1 : ℝ) ^ (k - 1) else 1) *
-      signedIteratedPartialSum alt b (r + 1) k
-
-/-- **Order one of the signed iterated partial sums.** For every real sequence
-$(b_n)_{n \ge 0}$, either choice of signs and every $n \in \mathbb{N}$, the signed iterated partial
-sum of $b$ of order $1$ at $n$ equals $b_n$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (`H_n^{(p,1)} = H_n^{(p)}`, `H_n^{(p,1,1)} = H_n^{(p)}`,
-`H_n^{(p,1,2)} = H_n^{(p,1,3)} = H̄_n^{(p)}`). -/
-public theorem signedIteratedPartialSum_one (alt : Bool) (b : ℕ → ℝ) (n : ℕ) :
-    signedIteratedPartialSum alt b 1 n = b n := rfl
-
-/-- **Recursion for the signed iterated partial sums.** Let $(b_n)_{n \ge 0}$ be a real sequence,
-fix a choice of signs, either $\varepsilon_k = (-1)^{k-1}$ for all $k$ or $\varepsilon_k = 1$ for
-all $k$, and let $S^{(r)}_n$ denote the signed iterated partial sum of $b$ of order $r$ at $n$ for
-this choice. Then for every $r \ge 1$ and every $n \in \mathbb{N}$,
-$$S^{(r+1)}_n = \sum_{k=1}^{n} \varepsilon_k \, S^{(r)}_k.$$
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (definitions of `H_n^{(p,r)}` and `H_n^{(p,r,i)}`). -/
-public theorem signedIteratedPartialSum_succ (alt : Bool) (b : ℕ → ℝ) (r n : ℕ) :
-    signedIteratedPartialSum alt b (r + 2) n = ∑ k ∈ Icc 1 n,
-      (if alt then (-1 : ℝ) ^ (k - 1) else 1) * signedIteratedPartialSum alt b (r + 1) k := rfl
-
-/-- **Alternating zeta values.** For a natural number $p$, the alternating zeta value
-$\bar\zeta(p)$ is defined by $\bar\zeta(1) = \log 2$, by $\bar\zeta(p) = (1 - 2^{1-p})\,\zeta(p)$
-for $p \ge 2$, where $\zeta(p) = \sum_{n \ge 1} 1/n^p$, and by $\bar\zeta(0) = 0$.
-
-For every $p \ge 1$ this is the alternating series $\bar\zeta(p) = \sum_{n \ge 1} (-1)^{n-1}/n^p$;
-the value at $p = 0$ is not used.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 10 (definition of `ζ̄(s)`). -/
-public noncomputable def alternatingZeta (p : ℕ) : ℝ :=
-  if p = 1 then Real.log 2 else (1 - 2 ^ (1 - (p : ℝ))) * ∑' n : ℕ, 1 / (n : ℝ) ^ p
-
-/-- **Alternating zeta value at one.** The alternating zeta value at $1$ is $\bar\zeta(1) = \log 2$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 10 (definition of `ζ̄(s)`). -/
-@[simp]
-public theorem alternatingZeta_one : alternatingZeta 1 = Real.log 2 := by
-  simp [alternatingZeta]
 
 /-- **Li's coefficients $a(r, m, j)$.** The rational numbers $a(r, m, j)$, for natural numbers
 $r$, $m$, $j$, are defined by recursion on $r$. For all $m$ and $j$, $a(0, m, j) = 0$; moreover
@@ -533,20 +450,6 @@ public theorem_wanted alternatingHyperharmonic_typeI_isEquivalent {y p : ℕ} (h
     ((fun n : ℕ => HI p (2 * y) (2 * n - 1)) ~[atTop]
       fun n : ℕ => (n : ℝ) ^ (y - 1) * (ζp + alternatingZeta p) /
         ((2 * (y - 1).factorial : ℕ) : ℝ))
-
-/-- **Asymptotic of type II alternating hyperharmonic numbers.** For a natural number $p$ let
-$\overline{H}_n^{(p)} = \sum_{i=1}^{n} (-1)^{i-1}/i^p$ be the alternating generalized harmonic
-numbers, and let the type II generalized alternating hyperharmonic numbers be
-$H_n^{(p,1,2)} = \overline{H}_n^{(p)}$ and $H_n^{(p,r+1,2)} = \sum_{k=1}^{n} H_k^{(p,r,2)}$. Let
-$\bar\zeta(p)$ be the alternating zeta value at $p$, so that $\bar\zeta(1) = \log 2$. Then for all
-natural numbers $r, p \ge 1$, $H_n^{(p,r,2)} \sim n^{r-1} \bar\zeta(p) / (r-1)!$ as $n \to \infty$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 13 (`jis-2024-24.4.1-lem-13`). -/
-public theorem_wanted alternatingHyperharmonic_typeII_isEquivalent {r p : ℕ} (hr : 1 ≤ r)
-    (hp : 1 ≤ p) :
-    (fun n : ℕ => signedIteratedPartialSum false (alternatingGeneralizedHarmonic p) r n) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (r - 1) * alternatingZeta p / (r - 1).factorial
 
 /-- **Asymptotics of type III alternating hyperharmonic numbers.** For real $s$ let
 $\overline{H}_n^{(s)} = \sum_{i=1}^{n} (-1)^{i-1}/i^s$ be the alternating generalized harmonic
