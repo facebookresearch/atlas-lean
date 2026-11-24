@@ -26,6 +26,7 @@
 - [Tree-shaped admixture graph](is-tree.md)
 - [Visit probabilities on a tree are zero or one](visit-eq-zero-or-one.md)
 - [Lineage weights on a tree are zero or one](weight-eq-zero-or-one.md)
+- [Donor-edge ancestry under repeated pulses and its constant-rate limit](continuous-gene-flow-as-limits-of-pulse-graphs.md)
 
 ## The routing kernel
 

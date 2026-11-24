@@ -6,3 +6,5 @@
 - [Finite-state Markov chains satisfy the general one-step Markov property](cond-exp-indicator.md)
 - [Finite Markov chains satisfy the general Markov property](to-is-markov-chain.md)
 - [One-step forward equation](map-succ-eq-bind.md)
+
+- [Möhle's lemma on Markov chains with two time scales](mohle-s-separation-of-timescales-lemma-for-finit.md)
