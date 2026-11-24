@@ -169,16 +169,6 @@ of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 4.1 (`integers-2024-A38-th
 public theorem_wanted davenport_zmod_two_pow (a : ℕ) :
     IsLeast (davenportSet (ZMod 2) (Fin a → ZMod 2) ({1} : Set (ZMod 2))) (a + 1)
 
-/-- **A nonempty subset of $\{1, \dots, m\}$ meeting $a$ given sets evenly.** Let $a + 1 \le m$
-and let $X_1, \dots, X_a$ be finite sets of natural numbers. Then there is a nonempty set
-$Y \subseteq \{1, \dots, m\}$ such that $|Y \cap X_i|$ is even for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 4.3 (`integers-2024-A38-lem-4-3`). -/
-public theorem_wanted exists_nonempty_even_inter {a m : ℕ} (hm : a + 1 ≤ m)
-    (X : Fin a → Finset ℕ) :
-    ∃ Y : Finset ℕ, Y.Nonempty ∧ Y ⊆ Finset.Icc 1 m ∧ ∀ i, Even (Y ∩ X i).card
-
 /-- **Zero-sum subsequences of length $m$ in $\mathbb{Z}_2^a$.** Let $a$ and $m$ be natural numbers
 with $m$ even and $2^a \le m$, and write $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$. Every sequence
 $(x_1, \dots, x_{m+a})$ of length $m + a$ in $\mathbb{Z}_2^a$ has a zero-sum subsequence of length

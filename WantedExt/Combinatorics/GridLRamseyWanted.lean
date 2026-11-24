@@ -15,18 +15,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Grid Ramsey theorem for Ls.** Write $[n] = \{1, \dots, n\}$. For every positive integer
-$k$ there is a positive integer $n$ such that every coloring of the grid $[n] \times [n]$ with
-$k$ colors contains a monochromatic L: positive integers $x$, $y$, $d$ with $x + d \le n$ and
-$y + d \le n$ such that the points $(x, y)$, $(x + d, y)$ and $(x + d, y + d)$ all have the
-same color.
-
-Source: Isaac Mammel, William Smith, and Carl Yerger, *Ramsey Theory on the Integer
-Grid: The "L" Problem*, INTEGERS 25 (2025), Article A21, Theorem 1 (quoted there
-from earlier work). -/
-public theorem_wanted exists_gridLRamseyProperty (k : ℕ) (hk : 0 < k) :
-    ∃ n : ℕ, 0 < n ∧ GridLRamseyProperty k n
-
 /-- **Three-coloring the 2593 × 2593 grid forces a monochromatic L.** Write
 $[n] = \{1, \dots, n\}$. Every coloring of the grid $[2593] \times [2593]$ with $3$ colors contains
 a monochromatic L: positive integers $x$, $y$, $d$ with $x + d \le 2593$ and $y + d \le 2593$ such

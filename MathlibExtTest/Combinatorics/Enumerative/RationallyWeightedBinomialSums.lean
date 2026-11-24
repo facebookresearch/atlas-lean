@@ -97,6 +97,26 @@ example : ∑ k ∈ Finset.Icc 1 2, (-1 : ℚ) ^ (k - 1) * (2 : ℕ).choose k / 
   rw [show Finset.Icc 1 2 = {1, 2} from by decide]
   norm_num [harmonic, Finset.sum_range_succ]
 
+-- The inverse-square polynomial sum is empty at n = 0, for every x.
+example (x : ℝ) :
+    ∑ k ∈ Finset.Icc 1 0, ((0 : ℕ).choose k : ℝ) * x ^ k / (k : ℝ) ^ 2 = 0 := by
+  rw [sum_choose_mul_pow_div_sq]
+  simp
+
+-- At x = 0, the two nested sums agree for every n.
+example (n : ℕ) :
+    ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * (0 : ℝ) ^ k / (k : ℝ) ^ 2 = 0 := by
+  rw [sum_choose_mul_pow_div_sq]
+  simp
+
+-- At n = 2 and x = -1 the identity gives -2 + 1/4 = -7/4.
+example :
+    ∑ k ∈ Finset.Icc 1 2, ((2 : ℕ).choose k : ℝ) * (-1 : ℝ) ^ k / (k : ℝ) ^ 2 = -7 / 4 := by
+  rw [sum_choose_mul_pow_div_sq]
+  simp only [show Finset.Icc 1 2 = {1, 2} from by decide, Finset.sum_insert (by decide :
+    (1 : ℕ) ∉ ({2} : Finset ℕ)), Finset.sum_singleton, Finset.Icc_self]
+  norm_num
+
 -- Exponent zero recovers the unweighted sum, including the zero-index term.
 example (N : ℕ) : ∑ k ∈ Finset.range (N + 1), N.choose k * Nat.fib k = Nat.fib (2 * N) := by
   simpa using sum_pow_mul_choose_mul_fib N 0
