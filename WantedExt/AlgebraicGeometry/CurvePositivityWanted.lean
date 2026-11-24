@@ -48,7 +48,7 @@ theorem_wanted semiample_iff (k : Type u) [Field k] [IsAlgClosed k]
     [SmoothOfRelativeDimension 1 C.hom] [IsIntegral C.left]
     (L : C.left.Modules)
     (hL : IsLineBundle L) :
-    IsSemiample L ↔ 0 < degree C.hom L hL ∨ IsTorsion L
+    IsSemiample L hL ↔ 0 < degree C.hom L hL ∨ IsTorsion L hL
 
 /-- Positive asymptotic section growth agrees with numerical positive degree. -/
 theorem_wanted big_iff (k : Type u) [Field k] [IsAlgClosed k]
