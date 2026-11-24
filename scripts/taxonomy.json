@@ -9766,6 +9766,8 @@
   "MathlibExt/Analysis/Optimization/LineSearch": {"to": "Analysis/numerical-analysis", "title": "Line search methods"},
   "MathlibExt/Analysis/Optimization/QuasiNewton": {"to": "Analysis/numerical-analysis", "title": "Quasi-Newton methods"},
   "MathlibExt/Analysis/Optimization/TrustRegion": {"to": "Analysis/numerical-analysis", "title": "Trust-region methods"},
+  "MathlibExt/Analysis/PDE/PotentialHeatGauge": {"to": "Analysis/partial-differential-equations", "title": "Time-only gauges for potential heat"},
+  "MathlibExt/Analysis/PDE/ForcedBurgersGauge": {"to": "Analysis/partial-differential-equations", "title": "Time-only potential compatibility for forced Burgers"},
   "MathlibExt/Analysis/PDE/ForcedBurgersUniqueness": {"to": "Analysis/partial-differential-equations", "title": "Bounded classical uniqueness for forced Burgers"},
   "MathlibExt/Analysis/PDE/InitialForcedInverseColeHopf": {"to": "Analysis/partial-differential-equations", "title": "Initial-time forced inverse Cole–Hopf normalization"},
   "MathlibExt/Analysis/PDE/ForcedBurgersBounds": {"to": "Analysis/partial-differential-equations", "title": "Uniform bounds for forced Burgers"},

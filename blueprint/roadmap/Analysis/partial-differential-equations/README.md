@@ -23,6 +23,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Radial symmetry of semilinear elliptic equations](radial-symmetry-of-semilinear-elliptic-equations/README.md)
 - [Singularity formation for the Euler equations](singularity-formation-for-the-euler-equations/README.md)
 - [Summation under heat integrals](summation-under-heat-integrals/README.md)
+- [Time-only potential compatibility for forced Burgers](time-only-potential-compatibility-for-forced-bur/README.md)
 - [Uniform bounds for forced Burgers](uniform-bounds-for-forced-burgers/README.md)
 - [Viscosity solutions of Hamilton–Jacobi equations](viscosity-solutions-of-hamilton-jacobi-equations/README.md)
 - [Weak solutions of elliptic equations](weak-solutions-of-elliptic-equations/README.md)
@@ -30,3 +31,4 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Whole-line heat comparison](whole-line-heat-comparison/README.md)
 - [Whole-line potential-heat comparison](whole-line-potential-heat-comparison/README.md)
 - [Analytic elliptic regularity](analytic-elliptic-regularity.md)
+- [Time-only gauge for the actual potential-heat solution](potential-heat-solution-add-time-potenti.md)
