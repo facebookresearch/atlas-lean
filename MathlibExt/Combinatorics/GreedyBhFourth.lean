@@ -523,7 +523,8 @@ $a \ge v(h)$, where $v(h) = (h^3 + 3h^2 + 3h + 1)/2$ if $h$ is odd and
 $v(h) = (h^3 + 2h^2 + 3h + 2)/2$ if $h$ is even.
 
 Source: Melvyn B. Nathanson and Kevin O'Bryant, "The Fourth Positive
-Element in the Greedy `B_h`-Set", Lemma 2. -/
+Element in the Greedy `B_h`-Set", *Journal of Integer Sequences* 27 (2024), Article 24.7.3,
+Lemma 2; arXiv:2311.14021, Lemma 1. -/
 theorem fourthValue_le_of_isFourthGreedyBh
     (h a : ℕ) (hh : 2 ≤ h) (ha : IsFourthGreedyBh h a) :
     fourthValue h ≤ a := by
