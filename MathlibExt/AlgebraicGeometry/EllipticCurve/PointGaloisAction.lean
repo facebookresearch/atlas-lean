@@ -27,6 +27,12 @@ The source is machine-generated proof code built around a
 proof-extraction framework; the statements and proofs are reused
 here with that machinery removed and the names restated in
 Mathlib style.
+
+`Definitions/Def_FLTPrelim_GaloisRep.lean` carries its own header:
+Copyright (c) 2024 Imperial College London FLT project contributors.
+Released under Apache 2.0 license.
+Adapted from the Imperial College London FLT formalization
+(https://github.com/ImperialCollegeLondon/FLT).
 -/
 
 module
