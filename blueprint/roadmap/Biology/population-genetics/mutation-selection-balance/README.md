@@ -45,3 +45,5 @@
 - [Poisson equilibrium of multiplicative mutation–selection balance](multilocus-multiplicative-mutation-selection-poi.md)
 
 - [Background selection reduces the effective size to the mutation-free class](background-selection-deterministic-reduction-fac.md)
+
+- [Almost-sure repeated clicking of a finite mutation ratchet](muller-s-ratchet-model-and-almost-sure-clicking.md)
