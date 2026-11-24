@@ -7,6 +7,8 @@
 - [Tajima's $c_2$ vanishes for three genes](tajima-c2-three.md)
 - [Positivity of Tajima's $c_1$ for at least four genes](tajima-c1-pos.md)
 - [Positivity of Tajima's $c_2$ for at least four genes](tajima-c2-pos.md)
+- [Positivity of Tajima's $e_1$ for at least four genes](tajima-e1-pos.md)
+- [Positivity of Tajima's $e_2$ for at least four genes](tajima-e2-pos.md)
 - [Positivity of the denominator of Tajima's D](tajima-var-estimator-pos.md)
 - [Chebyshev test of neutrality](tajima-chebyshev-test.md)
 - [Level of the Chebyshev test](measure-tajima-chebyshev-test-le.md)
