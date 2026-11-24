@@ -11499,6 +11499,7 @@
   "MathlibExt/NumberTheory/EKGSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "EKG sequence"},
   "MathlibExt/NumberTheory/EgyptianFraction": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Egyptian fraction underapproximations"},
   "MathlibExt/NumberTheory/EllipticCurveNaiveHeightLowerBounds": {"to": "NumberTheory/arithmetic-geometry", "title": "Heights of rational points on elliptic curves"},
+  "MathlibExt/NumberTheory/EllipticCurveNaiveHeightUnitCoeff": {"to": "NumberTheory/arithmetic-geometry", "title": "Heights of rational points on elliptic curves"},
   "MathlibExt/NumberTheory/EngelExpansion": {"to": "NumberTheory/continued-fractions-expansions", "title": "Engel expansions"},
   "MathlibExt/NumberTheory/ErdosGrahamCovering": {"to": "NumberTheory/congruences/covering-systems", "title": "Covering systems"},
   "MathlibExt/NumberTheory/ErdosMinimumOverlapConstant": {"to": "NumberTheory/additive-number-theory", "title": "Erdős minimum overlap problem"},
