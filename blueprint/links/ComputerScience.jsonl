@@ -9261,3 +9261,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/concurrent-systems-and-protocols/weak-memory-models/the-x86-tso-abstract-machine.md"}], "id": "af_77ed2da3751550cd15b47ff0", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/program-logics-and-verification/crash-safety/README.md"}], "id": "af_23963285e20806e060f562ba"}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/program-logics-and-verification/crash-safety/the-asynchronous-disk-model-of-crash-hoare-logic.md"}], "id": "af_d1f660a8b763b788fb994301", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/concurrent-systems-and-protocols/shared-memory-objects/the-asynchronous-shared-memory-model.md"}], "id": "af_47a90441866d02bafbed7830", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/concurrent-systems-and-protocols/shared-memory-objects/progress-conditions-for-concurrent.md"}], "id": "af_a0501d3631f170c66f9fe1cb", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
