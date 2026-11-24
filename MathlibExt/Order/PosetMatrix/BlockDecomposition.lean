@@ -8,37 +8,21 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
-public import MathlibExt.Order.PosetMatrix.BlockLengths
-public import MathlibExt.Order.PosetMatrix.Connected
-public import MathlibExt.Order.PosetMatrix.Sums
-public import MathlibExt.Order.QuasiFullRootedTree
 public import Mathlib.Data.Matrix.Block
-public import Mathlib.SetTheory.Cardinal.Finite
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import MathlibExt.Order.PosetMatrix
 
 /-!
-# Poset matrices and quasi-full rooted trees (statements)
+# Block decomposition of a poset matrix
 
-Statement-only targets from Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder,
-*Recognition and Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28
-(2025), Article 25.6.3. Poset matrices are `MetaMathlibExt.IsPosetMatrix` (Boolean, `true` for
-`1`). A poset matrix `M` of order `n` *represents* a poset `P` when some `e : Fin n ≃ P` has
-`e i ≤ e j ↔ M i j = true`; relabeling equivalence is `M' = M.submatrix σ σ` for a permutation
-`σ`. The direct sum `M ⊕ N` and ordinal sum `M ⊞ N` are `Matrix.fromBlocks M 0 0 N` and
-`Matrix.fromBlocks M 1 0 N` (all-`false` / all-`true` off-diagonal blocks), reindexed along
-`finSumFinEquiv`. The block of `0`s (`1`s) property of length `r`, `1 ≤ r < n`, says that
-`M i j = false` (`true`) for all `i < r ≤ j` (zero-based indices).
-
-The arity of quasi-full rooted trees (`quasiFullTree_arity`) is proved in
-`MathlibExt.Order.QuasiFullRootedTree`, which this module imports.
+A constant upper-right block characterizes the direct and ordinal sums of poset matrices.
 -/
 
 namespace MetaMathlibExt
 
 open Matrix
 
-@[expose] public section
-
+set_option linter.unusedVariables false in
 /-- **Block decomposition of a poset matrix.** Let $m, k \ge 1$ and let $M$ be a poset matrix of
 order $m + k$, a Boolean matrix with rows and columns indexed by $0, \dots, m + k - 1$. Then
 $M_{ij}$ is false for all $i < m \le j$ if and only if there are poset matrices $A$ of order $m$
@@ -54,7 +38,7 @@ iterating it.
 Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
 Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),
 Article 25.6.3, Theorem 3 (`jis-2025-25.6.3-thm-3`). -/
-public theorem_wanted isPosetMatrix_block_iff_directSum_ordinalSum (m k : ℕ) (hm : 1 ≤ m)
+public theorem isPosetMatrix_block_iff_directSum_ordinalSum (m k : ℕ) (hm : 1 ≤ m)
     (hk : 1 ≤ k) (M : Matrix (Fin (m + k)) (Fin (m + k)) Bool) (hM : IsPosetMatrix (m + k) M) :
     ((∀ i j : Fin (m + k), (i : ℕ) < m → m ≤ (j : ℕ) → M i j = false) ↔
       ∃ A : Matrix (Fin m) (Fin m) Bool, ∃ B : Matrix (Fin k) (Fin k) Bool,
@@ -65,8 +49,30 @@ public theorem_wanted isPosetMatrix_block_iff_directSum_ordinalSum (m k : ℕ) (
       ∃ A : Matrix (Fin m) (Fin m) Bool, ∃ B : Matrix (Fin k) (Fin k) Bool,
         IsPosetMatrix m A ∧ IsPosetMatrix k B ∧
           M = reindex finSumFinEquiv finSumFinEquiv
-            (fromBlocks A (Matrix.of fun _ _ => true) (Matrix.of fun _ _ => false) B))
-
-end
+            (fromBlocks A (Matrix.of fun _ _ => true) (Matrix.of fun _ _ => false) B)) := by
+  have restrict {n : ℕ} (f : Fin n → Fin (m + k)) (hf : StrictMono f) :
+      IsPosetMatrix n (M.submatrix f f) :=
+    ⟨fun i j hij => hM.upper _ _ (hf hij), fun i => hM.diagonal (f i),
+      fun i j l => hM.transitive (f i) (f j) (f l)⟩
+  have block (b : Bool) :
+      (∀ i j : Fin (m + k), i.val < m → m ≤ j.val → M i j = b) ↔
+        ∃ A : Matrix (Fin m) (Fin m) Bool, ∃ B : Matrix (Fin k) (Fin k) Bool,
+          IsPosetMatrix m A ∧ IsPosetMatrix k B ∧
+            M = reindex finSumFinEquiv finSumFinEquiv
+              (fromBlocks A (Matrix.of fun _ _ => b) (Matrix.of fun _ _ => false) B) := by
+    constructor
+    · intro h
+      refine ⟨_, _, restrict _ (Fin.strictMono_castAdd k), restrict _ (Fin.strictMono_natAdd m), ?_⟩
+      ext i j
+      induction i using Fin.addCases <;> induction j using Fin.addCases
+      · simp [submatrix]
+      · rename_i i j
+        simpa [submatrix] using h _ _ i.isLt (Nat.le_add_right m j.val)
+      · rename_i i j
+        simpa [submatrix] using hM.upper _ _ (j.isLt.trans_le (Nat.le_add_right m i.val))
+      · simp [submatrix]
+    · rintro ⟨A, B, _, _, rfl⟩ i j
+      induction i using Fin.addCases <;> induction j using Fin.addCases <;> simp [submatrix]
+  exact ⟨block false, block true⟩
 
 end MetaMathlibExt
