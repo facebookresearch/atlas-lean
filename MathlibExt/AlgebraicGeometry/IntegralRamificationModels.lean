@@ -12,6 +12,7 @@ public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.RepresentationTheory.Invariants
 
 /-!
 # Actual lower ramification groups on integral closures
@@ -81,20 +82,11 @@ variable {κ V : Type*} [Field κ] [AddCommGroup V] [Module κ V]
   [finiteV : Module.Finite κ V]
   (ρ : Gal(L/K) →* Module.End κ V)
 
-/-- Fixed vectors are the literal kernels of the original linear actions. -/
-def fixedSpace (H : Subgroup Gal(L/K)) : Submodule κ V where
-  carrier := {v | ∀ g : H, ρ g.val v = v}
-  zero_mem' := by intro g; exact map_zero _
-  add_mem' := by
-    intro x y hx hy g
-    rw [map_add, hx g, hy g]
-  smul_mem' := by
-    intro a x hx g
-    rw [map_smul, hx g]
-
 include finiteV in
+/-- The codimension of the vectors fixed by `H`: the invariants of the restricted
+representation. -/
 def fixedCodimension (H : Subgroup Gal(L/K)) : ℕ :=
-  Module.finrank κ V - Module.finrank κ (fixedSpace K L ρ H)
+  Module.finrank κ V - Module.finrank κ (Representation.invariants (ρ.comp H.subtype))
 
 include finiteV in
 /-- The source Swan sum, preserving every positive lower ramification term. -/

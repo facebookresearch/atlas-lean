@@ -95,7 +95,7 @@ triangles, with the zero/cover base-change maps and both deck monodromies
 fixed by the completed core definitions. This requests the existence of a
 compatible comparison: its vanishing-cycle component is any completion to a
 triangle isomorphism intertwining monodromy, not a specified cone map. -/
-public def_wanted properCycleFunctoriality
+public def_wanted properCycleComparison
     (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
     (s : Γ(X.left, ⊤)) (t : Γ(Y.left, ⊤))
     (A : ZeroFiber X s) (B : ZeroFiber Y t)
@@ -104,7 +104,7 @@ public def_wanted properCycleFunctoriality
     (R₂ : FunctorialResolution (exponentialCover Y t))
     (E₁ : DeckResolutionComparison R₁ (deckIso X s 1))
     (E₂ : DeckResolutionComparison R₂ (deckIso Y t 1)) :
-    CanonicalProperCycleComparison G R₁ R₂ E₁ E₂
+    ProperCycleComparison G R₁ R₂ E₁ E₂
       (specializationDeckCompatibility A R₁ E₁)
       (specializationDeckCompatibility B R₂ E₂)
 
