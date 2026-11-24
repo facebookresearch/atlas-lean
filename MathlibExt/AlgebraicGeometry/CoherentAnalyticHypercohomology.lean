@@ -57,8 +57,8 @@ variable [PreservesFiniteLimits (pullback X d)]
 
 /-- Exactness of this specified pullback entails additivity. -/
 instance pullback_additive : (pullback X d).Additive :=
-  leftExactFunctor_le_additiveFunctor _ _ _
-    ((leftExactFunctor_iff _).2 inferInstance)
+  preservesFiniteLimits_le_additiveFunctor _ _ _
+    ((ObjectProperty.preservesFiniteLimits_iff _).2 inferInstance)
 
 /-- The actual exact analytic pullback on derived categories. -/
 abbrev derivedPullback :
