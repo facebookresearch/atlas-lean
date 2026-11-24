@@ -852,38 +852,4 @@ theorem gallopRight_correct_of_sorted (state : MergeState κ ν)
     horder (gallopSortedRange_of_sorted state.key_compare source n keys hkeys
       hsorted) hn hhint hnmax
 
-/-! ## Equality-bias regressions -/
-
-private def gallopDuplicateRegressionSlice : SortSlice Nat PUnit :=
-  { entries := #[
-      { key := 1, value := none },
-      { key := 2, value := none },
-      { key := 2, value := none },
-      { key := 3, value := none }] }
-
-private def gallopDuplicateRegressionState : MergeState Nat PUnit :=
-  { min_gallop := 7
-    listlen := 4
-    basekeys := 0
-    data := gallopDuplicateRegressionSlice
-    a := { cells := #[], backing := .inline, hasValues := false }
-    alloced := 0
-    pending := #[]
-    key_compare := fun left right => decide (left < right)
-    mr_current := 0
-    mr_e := 0
-    mr_mask := 0 }
-
-/-- On `[1, 2, 2, 3]`, left galloping for `2` returns the first equal key. -/
-theorem gallopLeft_duplicate_boundary_regression :
-    gallopLeft? gallopDuplicateRegressionState gallopDuplicateRegressionSlice
-      0 2 4 2 = some { index := 1, fuelExhausted := false } := by
-  decide
-
-/-- On `[1, 2, 2, 3]`, right galloping for `2` returns after the last equal key. -/
-theorem gallopRight_duplicate_boundary_regression :
-    gallopRight? gallopDuplicateRegressionState gallopDuplicateRegressionSlice
-      0 2 4 2 = some { index := 3, fuelExhausted := false } := by
-  decide
-
 end CPythonListsort
