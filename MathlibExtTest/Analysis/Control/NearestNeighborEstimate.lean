@@ -52,6 +52,19 @@ example : nearestNeighborEstimate (n := 2) ![7, 1, 3, 2] ![50, 10, 20] = -7 := b
     · change toLex (|(2 : ℝ) - 1|, (1 : Fin 3)) ≤ toLex (|(2 : ℝ) - 3|, (2 : Fin 3))
       norm_num [Prod.Lex.toLex_le_toLex]
 
+-- Indices 0 and 2 both record the current value; keep the earlier transition, not the latest.
+example : nearestNeighborEstimate (n := 2) ![1, 5, 1, 1] ![2, 0, 2] = 3 := by
+  rw [estimate_eq_of_le _ _ (0 : Fin 3)]
+  · change (5 : ℝ) - 2 = 3
+    norm_num
+  · intro j
+    fin_cases j
+    · exact le_rfl
+    · change toLex (|(1 : ℝ) - 1|, (0 : Fin 3)) ≤ toLex (|(1 : ℝ) - 5|, (1 : Fin 3))
+      norm_num [Prod.Lex.toLex_le_toLex]
+    · change toLex (|(1 : ℝ) - 1|, (0 : Fin 3)) ≤ toLex (|(1 : ℝ) - 1|, (2 : Fin 3))
+      norm_num [Prod.Lex.toLex_le_toLex]
+
 -- At t = 2 the last past transition is uniquely closest regardless of future observations and
 -- controls, even when y₃ is a perfect match for y₂.
 example (y₃ y₄ u₂ u₃ : ℝ) :
