@@ -11,6 +11,7 @@ public import MathlibExt.AlgebraicGeometry.DegenerationParameterModels
 public import MathlibExt.AlgebraicGeometry.RelativeMapGluingGeometry
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 public import Mathlib.AlgebraicGeometry.Morphisms.FinitePresentation
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 
 /-!
 # Projective one-parameter degenerations and their standard expansions
@@ -54,7 +55,7 @@ variable {k : Type} [Field k]
 
 /-- A genuine relative closed projective embedding over the given curve. -/
 def IsProjectiveOver {X C : Over (Spec (.of k))} (p : X ⟶ C) : Prop :=
-  ∃ n : ℕ, ∃ i : X ⟶ prod (SurfaceHilbertSchemes.projectiveSpace k n) C,
+  ∃ n : ℕ, ∃ i : X ⟶ prod (ProjectiveSpace.projectiveSpace k n) C,
     IsClosedImmersion i.left ∧ i ≫ prod.snd = p
 
 def coefficientStructure (B : Type) [CommRing B] [Algebra k B] : Spec (.of B) ⟶ Spec (.of k) :=
