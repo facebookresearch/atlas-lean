@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Combinatorics.Enumerative.Composition
+public import MathlibExt.Combinatorics.Enumerative.PositionalColoredCompositions
 public import Mathlib.Data.Set.Card
 
 /-!
@@ -27,31 +27,6 @@ string avoids `01` and `12` when neither occurs as a contiguous factor (`List.Is
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Positional colored compositions.** For natural numbers $m$, $k$ and $\ell$, $c_{m,k}(\ell)$
-is the number of $(m, k)$-colored compositions of $\ell$: compositions of $\ell$ in which every
-part whose position, counted from $1$, is congruent to $k$ modulo $m$ gets one of $p$ colors,
-where $p$ is the part, and the other parts are uncolored. Equivalently, $c_{m,k}(\ell)$ is the
-sum, over all compositions $(p_1, \dots, p_r)$ of $\ell$, of the product of the parts $p_i$ with
-$i \equiv k \pmod m$.
-
-The paper takes $m \ge 1$. For $m = 0$, congruence modulo $0$ is equality, so only the part at
-position exactly $k$ is colored.
-
-Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
-(2026), Article A49, Definition 1. -/
-public def positionalColoredCompositionCount (m k ℓ : ℕ) : ℕ :=
-  ∑ c : Composition ℓ, (c.blocks.mapIdx fun i p => if (i + 1) % m = k % m then p else 1).prod
-
-/-- **Colored compositions of zero.** For all natural numbers $m$ and $k$, $c_{m,k}(0) = 1$: the
-only composition of $0$ is the empty one.
-
-Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
-(2026), Article A49, Definition 1. -/
-public theorem positionalColoredCompositionCount_zero (m k : ℕ) :
-    positionalColoredCompositionCount m k 0 = 1 := by
-  have h : (Finset.univ : Finset (Composition 0)) = {Composition.ones 0} := by decide
-  simp [positionalColoredCompositionCount, h, Composition.ones]
 
 /-- **Avoiding color 2 counts even colored compositions.** For every $k \ge 0$, the number of
 $n$-color compositions of $k$ that do not use the color $2$ equals the number
@@ -131,23 +106,6 @@ public theorem_wanted odd_eq_sum_runLength_prod (k : ℕ) (hk : 1 ≤ k) :
     positionalColoredCompositionCount 2 1 k =
       ∑ f ∈ (Finset.univ : Finset (Fin k → Bool)).filter (fun f => (List.ofFn f).head? = some true),
         ((((List.ofFn f).splitOn false).map List.length).filter (· ≠ 0)).prod
-
-/-- **A recurrence for positional colored compositions.** For natural numbers $m$, $k$ and $\ell$
-with $m \ge 1$, $m \nmid k$ and $\ell \ge 1$,
-$c_{m,k+1}(\ell + 1) = c_{m,k+1}(\ell) + c_{m,k}(\ell)$.
-
-The paper prints the hypotheses $k \ge 1$, $\ell \ge 2$ and $1 \le m \le \ell - 1$, which allow
-$m \mid k$; there the identity fails: for $m = 1$, $k = 1$ and $\ell = 2$ one has
-$c_{1,2}(3) = 8$ but $c_{1,2}(2) + c_{1,1}(2) = 6$. The paper's argument (remove a first part
-$1$ or decrease the first part) needs the first part to be uncolored, which is the condition
-$m \nmid k$.
-
-Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
-(2026), Article A49, Theorem 6 (`integers-2026-A49-thm-6`). -/
-public theorem_wanted positionalColoredCompositionCount_succ (m k ℓ : ℕ) (hm : 1 ≤ m)
-    (hmk : ¬ m ∣ k) (hℓ : 1 ≤ ℓ) :
-    positionalColoredCompositionCount m (k + 1) (ℓ + 1) =
-      positionalColoredCompositionCount m (k + 1) ℓ + positionalColoredCompositionCount m k ℓ
 
 /-- **Even colored compositions and 321-avoiding separable permutations.** For every $k \ge 0$,
 the number $e(k) = c_{2,0}(k)$ of even colored compositions of $k$, in which only the parts at

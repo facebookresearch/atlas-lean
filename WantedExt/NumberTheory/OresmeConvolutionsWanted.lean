@@ -88,22 +88,6 @@ public theorem_wanted pellLucasSequence_oresme_convolution (n : ℕ) :
       2 / 49 * (5 * (pellLucasSequence (n + 1) : ℚ) - 4 * pellLucasSequence n) +
         1 / 49 * ((7 * (n : ℚ) - 2) / 2 ^ n)
 
-/-- **Oresme–Pell–Lucas congruence modulo 49.** Let $Q_n$ denote the Pell–Lucas numbers, with
-$Q_0 = Q_1 = 1$. For every natural number $n$,
-$2^{n+1} (5 Q_{n+1} - 4 Q_n) \equiv 2 - 7n \pmod{49}$ as integers.
-
-The paper prints $2^{n+1}(5Q_{n+1} - 4Q_n) \equiv 2 - 7n \equiv 0$. Its proof (base values $2$ and
-$44$ on both sides, inductive hypothesis $2^{n+1}(5Q_{n+1} - 4Q_n) - (2 - 7n) \equiv 0$)
-establishes the single congruence above, while the second link $2 - 7n \equiv 0 \pmod{49}$ fails
-at $n = 0$.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Corollary 5.5 (`fq-2024-cookbacon061124-cor-5.5`). -/
-public theorem_wanted two_pow_succ_mul_pellLucasSequence_combination_modEq (n : ℕ) :
-    2 ^ (n + 1) * (5 * (pellLucasSequence (n + 1) : ℤ) - 4 * pellLucasSequence n) ≡
-      2 - 7 * n [ZMOD 49]
-
 /-- **Jacobsthal–Oresme convolution.** Let $J_m$ denote the Jacobsthal numbers, the terms of the
 Lucas sequence $U(1, -2)$, and let $O_m = m/2^m$ denote the Oresme numbers. For every natural
 number $n$,

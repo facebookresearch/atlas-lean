@@ -53,7 +53,7 @@ the residual, and the absolute bound follows from nonnegativity of `2 h²`.
 namespace EarthScience
 
 /-- Manufactured solution `u(x) = x⁴` for the central second difference:
-the difference quotient equals `12 x² + 2 h²`. -/
+for `h ≠ 0`, the difference quotient equals `12 x² + 2 h²`. -/
 theorem manufactured_central_second_diff {x h : ℝ} (hh : h ≠ 0) :
     ((x + h) ^ 4 - 2 * x ^ 4 + (x - h) ^ 4) / h ^ 2 = 12 * x ^ 2 + 2 * h ^ 2 := by
   have h2 : h ^ 2 ≠ 0 := pow_ne_zero 2 hh
@@ -61,7 +61,7 @@ theorem manufactured_central_second_diff {x h : ℝ} (hh : h ≠ 0) :
   ring
 
 /-- Residual of the central second difference on the manufactured solution
-`u(x) = x⁴`: the residual `D²u - u''(x)` is exactly `2 h²`, i.e. second
+`u(x) = x⁴`: for `h ≠ 0`, the residual `D²u - u''(x)` is exactly `2 h²`, i.e. second
 order in `h`. -/
 theorem manufactured_central_second_diff_residual {x h : ℝ} (hh : h ≠ 0) :
     ((x + h) ^ 4 - 2 * x ^ 4 + (x - h) ^ 4) / h ^ 2 - 12 * x ^ 2 = 2 * h ^ 2 := by
@@ -69,7 +69,7 @@ theorem manufactured_central_second_diff_residual {x h : ℝ} (hh : h ≠ 0) :
   ring
 
 /-- Residual order bound: `|D²u - u''(x)| ≤ 2 h²` for the manufactured
-solution `u(x) = x⁴`. -/
+solution `u(x) = x⁴` and `h ≠ 0`. -/
 theorem manufactured_central_second_diff_residual_le {x h : ℝ} (hh : h ≠ 0) :
     |((x + h) ^ 4 - 2 * x ^ 4 + (x - h) ^ 4) / h ^ 2 - 12 * x ^ 2| ≤ 2 * h ^ 2 := by
   rw [manufactured_central_second_diff_residual hh]

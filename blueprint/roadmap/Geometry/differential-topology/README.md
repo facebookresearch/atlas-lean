@@ -15,3 +15,4 @@ Smooth manifolds and smooth maps between them: immersions, submersions, transver
 - [Hairy ball theorem](hairy-ball-even-sphere-ambient.md)
 - [Lie group](lie-group.md)
 - [Smooth retraction onto a closed embedded manifold in $\mathbb{R}^n$](tubular-smooth-retraction.md)
+- [Existence of smooth partitions of unity](partition-of-unity-existence.md)
