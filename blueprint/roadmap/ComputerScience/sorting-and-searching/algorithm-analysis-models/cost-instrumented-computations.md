@@ -4,5 +4,4 @@ A cost-instrumented computation with cost values in $T$ and results in $\alpha$ 
 
 ## Sources
 
-- N. A. Danielsson, "Lightweight semiformal time complexity analysis for purely functional data structures", *Proceedings of the 35th ACM POPL*, 2008
-- MIT 6.046J *Design and Analysis of Algorithms*, Spring 2015, course outcomes, <https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/pages/syllabus>
+- N. A. Danielsson, "Lightweight semiformal time complexity analysis for purely functional data structures", *Proceedings of the 35th ACM POPL*, 2008, the reference given by the formal development for this design (a monad that pairs results with trusted, user-annotated costs)
