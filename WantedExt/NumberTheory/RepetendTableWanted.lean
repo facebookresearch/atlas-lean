@@ -21,6 +21,7 @@ public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.BaseShift
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
 public import MathlibExt.NumberTheory.RepetendTable.InversePairs
+public import MathlibExt.NumberTheory.RepetendTable.OrderCount
 public import MathlibExt.NumberTheory.RepetendTable.OrderSix
 public import MathlibExt.Analysis.Series.InversePowerTail
 
@@ -43,6 +44,9 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `MetaMathlibExt.even_card_small_bases_orderOf` is proved in
 `MathlibExt.NumberTheory.RepetendTable.InversePairs`.
 
+`MetaMathlibExt.totient_dvd_card_orderOf_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderCount`.
+
 `MetaMathlibExt.orderOf_eq_six_ne_small_residues` is proved in
 `MathlibExt.NumberTheory.RepetendTable.OrderSix`.
 
@@ -53,15 +57,6 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The number of units of order $L$ is a multiple of $\varphi(L)$.** For natural numbers
-$n \ge 1$ and $L$, the number $E(L, n)$ of elements of order $L$ in the unit group
-$(\mathbb{Z}/n\mathbb{Z})^\times$ is divisible by Euler's totient $\varphi(L)$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 4 (`integers-2025-A26-cor-4`). -/
-public theorem_wanted totient_dvd_card_orderOf_eq (L n : ℕ) [NeZero n] : L.totient ∣
-    (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = L).card
 
 /-- **Moduli with exactly $\varphi(L)$ units of even order $L$.** Let $n \ge 1$ and let $L \ge 2$
 be even. If the number of elements of multiplicative order $L$ in
