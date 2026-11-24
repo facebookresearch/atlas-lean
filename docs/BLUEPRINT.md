@@ -320,6 +320,7 @@ python -m unittest \
   scripts.test_generate_wiki_navigation \
   scripts.test_generate_wiki_docstrings \
   scripts.test_sync_wiki \
+  scripts.test_graph_work \
   scripts.test_import_mathgraph \
   scripts.test_extract_v2_lean_dependencies \
   scripts.test_extract_mathlib_graph \
