@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.PDE.PotentialHeatSpatial
+import MathlibExt.Analysis.Calculus.IteratedDerivPartial
 import Mathlib.Analysis.Calculus.FDeriv.Partial
 import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 
@@ -130,29 +131,10 @@ theorem potentialHeatSolution_iteratedDeriv_hasDerivAt_time
   have hfinal := hlocal.comp t ((hasDerivAt_id t).sub_const a)
   simpa only [Function.comp_def, id_eq, mul_one, ← add_sub_assoc, add_sub_cancel_left] using hfinal
 
-private theorem spatial_jet_eq_frechet {q : ℝ → ℝ → ℝ}
-    (hq : ContDiff ℝ ∞ (Function.uncurry q)) (n : ℕ) (p : ℝ × ℝ) :
-    iteratedDeriv n (q p.1) p.2 =
-      iteratedFDeriv ℝ n (Function.uncurry q) p (fun _ => ((0,1) : ℝ × ℝ)) := by
-  let L : ℝ →L[ℝ] ℝ × ℝ := (0 : ℝ →L[ℝ] ℝ).prod (ContinuousLinearMap.id ℝ ℝ)
-  let F := fun z : ℝ × ℝ => Function.uncurry q ((p.1,0)+z)
-  have hF : ContDiff ℝ ∞ F := hq.comp (contDiff_const.add contDiff_id)
-  have he : q p.1 = F ∘ L := by
-    funext x
-    simp [F, L]
-  rw [he, iteratedDeriv_eq_iteratedFDeriv,
-    L.iteratedFDeriv_comp_right hF p.2 (i := n) (by simp)]
-  simp only [ContinuousMultilinearMap.compContinuousLinearMap_apply]
-  dsimp only [F]
-  rw [iteratedFDeriv_comp_add_left]
-  simp [L]
-
 private theorem spatial_jet_contDiff {q : ℝ → ℝ → ℝ}
     (hq : ContDiff ℝ ∞ (Function.uncurry q)) (n : ℕ) :
-    ContDiff ℝ ∞ (fun p : ℝ × ℝ => iteratedDeriv n (q p.1) p.2) := by
-  simp_rw [spatial_jet_eq_frechet hq]
-  exact (ContinuousMultilinearMap.apply ℝ (fun _ : Fin n => ℝ × ℝ) ℝ
-    (fun _ => (0,1))).contDiff.comp (hq.iteratedFDeriv_right (by simp))
+    ContDiff ℝ ∞ (fun p : ℝ × ℝ => iteratedDeriv n (q p.1) p.2) :=
+  hq.contDiff_iteratedDeriv_snd n
 
 private theorem spatial_jet_bound {q : ℝ → ℝ → ℝ} {T : ℝ}
     (hq : ContDiff ℝ ∞ (Function.uncurry q))
@@ -161,13 +143,11 @@ private theorem spatial_jet_bound {q : ℝ → ℝ → ℝ} {T : ℝ}
     ∃ M, ∀ t ∈ Icc 0 T, ∀ x, |iteratedDeriv n (q t) x| ≤ M := by
   obtain ⟨M, hM⟩ := hb n
   refine ⟨M, fun t ht x => ?_⟩
-  rw [spatial_jet_eq_frechet hq n (t,x)]
-  have he := (iteratedFDeriv ℝ n (Function.uncurry q) (t,x)).le_opNorm
-    (fun _ => ((0,1) : ℝ × ℝ))
-  have hb' := hM (t,x) ⟨ht, mem_univ x⟩
-  have he' : |iteratedFDeriv ℝ n (Function.uncurry q) (t,x) (fun _ => (0,1))| ≤
-      ‖iteratedFDeriv ℝ n (Function.uncurry q) (t,x)‖ := by simpa using he
-  exact he'.trans hb'
+  have h := (hq.of_le (by simp : (n : WithTop ℕ∞) ≤ ∞)).norm_iteratedDeriv_snd_le (t,x)
+  have he : |iteratedDeriv n (q t) x| ≤
+      ‖iteratedFDeriv ℝ n (Function.uncurry q) (t,x)‖ := by
+    simpa only [Real.norm_eq_abs] using h
+  exact he.trans (hM (t,x) ⟨ht, mem_univ x⟩)
 
 private theorem joint_contDiff_succ {u ut ux : ℝ → ℝ → ℝ} {s : Set (ℝ × ℝ)} {m : ℕ}
     (hs : IsOpen s)

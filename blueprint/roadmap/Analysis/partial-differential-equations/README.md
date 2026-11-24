@@ -5,6 +5,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Airy equation and Kato smoothing](airy-equation-and-kato-smoothing/README.md)
 - [Cauchy–Kovalevskaya theorem](cauchy-kovalevskaya-theorem/README.md)
 - [Duhamel spatial smoothing](duhamel-spatial-smoothing/README.md)
+- [Forced Burgers initial-value construction](forced-burgers-initial-value-construction/README.md)
 - [Heat equation](heat-equation/README.md)
 - [Heat semigroup and restart](heat-semigroup-and-restart/README.md)
 - [Heat-kernel Duhamel derivatives](heat-kernel-duhamel-derivatives/README.md)
