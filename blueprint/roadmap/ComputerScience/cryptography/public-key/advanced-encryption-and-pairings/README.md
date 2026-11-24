@@ -4,3 +4,4 @@
 - [Pairing-based assumptions: BDH and t-SDH](pairing-based-assumptions-bdh-and-t-sdh.md)
 - [Security of the Boneh–Franklin identity-based encryption scheme](security-of-the-bonehfranklin-identity-based.md)
 - [Homomorphic encryption: correctness and compactness](homomorphic-encryption-correctness-and.md)
+- [Gentry's bootstrapping theorem](gentry-s-bootstrapping-theorem.md)

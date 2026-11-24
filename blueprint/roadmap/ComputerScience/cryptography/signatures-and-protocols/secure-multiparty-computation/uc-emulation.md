@@ -1,0 +1,16 @@
+# UC emulation
+
+In Canetti's universally composable security framework, protocols run in the presence of an environment $E$, which chooses inputs and reads outputs and
+has an input $z$, and an adversary that interacts with the protocol through its backdoor interface. A protocol $\pi$ *UC-emulates* a protocol $\phi$ if for every
+polynomial-time adversary $A$ there is a polynomial-time adversary $S$ such that for every polynomial-time environment $E$ and every input $z$,
+$\mathrm{Exec}(\pi, E, A, z) \approx \mathrm{Exec}(\phi, E, S, z)$, the output distributions of $E$ being indistinguishable.
+
+In a quantitative form, $\pi$ UC-emulates $\phi$ with simulation overhead $\delta$ and emulation slack $\varepsilon$ if for every $A$ running in time $t_A$ there is $S$ running in
+time $\delta\, t_A$ such that for every $E$ running in time $t_E$ and every $z$, the total variation distance between $\mathrm{Exec}(\pi, E, A, z)$ and $\mathrm{Exec}(\phi, E, S, z)$
+is less than $\varepsilon(t_E)$. A protocol *UC-realizes* an ideal functionality $\mathcal{F}$ if it UC-emulates the ideal protocol for $\mathcal{F}$. It suffices to simulate the
+dummy adversary, which only forwards messages between the environment and the backdoor interface.
+
+## Sources
+
+- R. Canetti, *Universally Composable Security: A Tutorial*, UC/EasyUC summer school, Boston University, 2025, <https://www.bu.edu/riscs/files/2025/08/Canetti.pdf>: the definitions of UC emulation (qualitative and quantitative) and ideal functionalities, and the dummy-adversary claim.
+- R. Canetti, "Universally composable security: a new paradigm for cryptographic protocols", *Proceedings of the 42nd IEEE FOCS*, 2001; full version ePrint 2000/067 (not opened; the general framework adds further technical conditions).

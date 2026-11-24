@@ -40,3 +40,4 @@
 - [Black-box constructions and oracle separations](black-box-constructions-and-oracle-separations.md)
 - [Regev's public-key encryption from learning with errors](regev-s-public-key-encryption-from-learning.md)
 - [No relativizing construction of key agreement from one-way permutations](no-relativizing-construction-of-key-agreement.md)
+- [Shoup's generic lower bound for discrete logarithms](shoup-s-generic-lower-bound-for-discrete.md)
