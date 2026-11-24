@@ -33,13 +33,23 @@ explicit argument instead; fixing the samples is the standard way to formalize
 the algorithmic content of these planners deterministically. PRM* and RRT* are
 likewise formalized as deterministic functions over an explicit sample list:
 the finite-sample form of the Karaman-Frazzoli algorithms, with no
-asymptotic-optimality claim.
+asymptotic-optimality claim. This formalization uses the single rational
+`cost` both as the proximity measure (nearest-vertex selection, near-vertex
+sets, radius tests, and roadmap adjacency bounds) and as the objective cost
+accumulated in cost-to-come; its laws assume neither symmetry nor the
+triangle inequality. This is the cost-induced-proximity specialization of
+the Karaman-Frazzoli algorithms (in their Euclidean path-length setting the
+two roles coincide), not the general metric-plus-cost form. Steering is an
+unconstrained oracle with no steering bound modelled. With an asymmetric
+cost, parent candidates test the directed cost from candidate to steered
+point while rewiring tests the directed cost from the new vertex to the old
+vertex.
 
 All four planners share one oracle bundle (`Oracles`): a point-collision test
 `free`, a local planner `link` between configurations, a steering function
-`steer` from a vertex toward a sample, a cost proxy `cost` valued in
-the rationals so that examples compute by `decide`, and a connection
-radius `radius`.
+`steer` from a vertex toward a sample, a cost proxy `cost`, valued in the
+rationals so that examples compute by `decide`, serving both as the proximity
+measure and as the objective cost, and a connection radius `radius`.
 
 * sPRM: the vertices are the collision-free samples with duplicates removed.
   The edges connect each unordered pair of distinct vertices once, requiring
@@ -66,7 +76,8 @@ radius `radius`.
   and skipped unless `x` is free, the nearest edge links, `x` is fresh, and
   `x` has a parent. The parent is the first minimizer in list order of
   cost-to-come plus edge cost among vertices that link to `x` and are
-  `radiusOf`-near it, falling back to the vertex nearest `x` when it links;
+  `radiusOf`-near it, falling back to the vertex nearest the raw sample
+  when it links;
   then nearby vertices that `x` links to are rewired through `x` when that
   is strictly cheaper (sequential per-flip recompute, no cascade), and costs
   are fully recomputed.
@@ -85,7 +96,9 @@ structure Oracles (C : Type) where
       toward sample `s` (identity steering `steer u s = s` is the
       unbounded-step case). -/
   steer : C → C → C
-  /-- Cost proxy between configurations, valued in `Rat` so examples compute. -/
+  /-- Cost proxy between configurations, valued in `Rat` so examples compute.
+      It serves both as the proximity measure and as the objective cost
+      accumulated in cost-to-come. -/
   cost : C → C → Rat
   /-- Connection radius for the roadmap. -/
   radius : Rat
@@ -608,6 +621,36 @@ theorem pairVal_ccAdd (p : Int × Nat) (r : Rat) (hp : (p.2 : ℚ) ≠ 0) :
   rw [← hn, ← hdd, hr]
   push_cast
   field_simp [hp, hd, hpd]
+
+/-- Add two unnormalized cost pairs by cross multiplication. -/
+def ccAddPair (p q : Int × Nat) : Int × Nat :=
+  (p.1 * (q.2 : Int) + q.1 * (p.2 : Int), p.2 * q.2)
+
+/-- Unnormalized pair for the rational difference `pairVal p - pairVal q`. -/
+def pairDelta (p q : Int × Nat) : Int × Nat :=
+  (p.1 * (q.2 : Int) - q.1 * (p.2 : Int), p.2 * q.2)
+
+theorem pairVal_ccAddPair (p q : Int × Nat) (hp : (p.2 : ℚ) ≠ 0)
+    (hq : (q.2 : ℚ) ≠ 0) :
+    pairVal (ccAddPair p q) = pairVal p + pairVal q := by
+  have hpd : (p.2 : ℚ) * (q.2 : ℚ) ≠ 0 := mul_ne_zero hp hq
+  unfold pairVal ccAddPair
+  push_cast
+  field_simp [hp, hq, hpd]
+
+theorem pairVal_pairDelta (p q : Int × Nat) (hp : (p.2 : ℚ) ≠ 0)
+    (hq : (q.2 : ℚ) ≠ 0) :
+    pairVal (pairDelta p q) = pairVal p - pairVal q := by
+  have hpd : (p.2 : ℚ) * (q.2 : ℚ) ≠ 0 := mul_ne_zero hp hq
+  unfold pairVal pairDelta
+  push_cast
+  field_simp [hp, hq, hpd]
+
+theorem ccAddPair_den_pos (p q : Int × Nat) (hp : 0 < p.2) (hq : 0 < q.2) :
+    0 < (ccAddPair p q).2 := by
+  unfold ccAddPair
+  simp only
+  exact Nat.mul_pos hp hq
 
 /-- Strict pair order reflects to strict rational order. -/
 theorem ccLt_pairVal {p q : Int × Nat} (hp : 0 < (p.2 : ℚ))
@@ -1885,15 +1928,15 @@ theorem parentChain_nodup {C : Type} [DecidableEq C] (O : Oracles C)
 -- Design (intentional deviations from an earlier draft):
 -- * Costs are recomputed at each `extendStar` step, twice: the post-insertion
 --   guard table handed to `rewireAux` and the final table over the new edges;
---   inside `rewireAux` the guard table is recomputed after every flip
---   (sequential per-flip recompute, not a pass-start snapshot). At step
---   boundaries `costs` is exactly the recomputed table, so `chooseParent`
---   never reads stale descendant costs.
+--   inside `rewireAux` the guard table is maintained by subtree shifts after
+--   each flip (sequential per-flip shift, not a recomputation or a pass-start
+--   snapshot). At step boundaries `costs` is exactly the recomputed table, so
+--   `chooseParent` never reads stale descendant costs.
 -- * Steering and the nearest-edge gate: `extendStar` steers the raw sample
 --   `s` from its nearest vertex `u` to `x := O.steer u s` and proceeds only
 --   when `x` is free, the nearest edge `u ~ x` links, and `x` is fresh.
 -- * `candidates` is a single filter over `verts`. `chooseParent` computes it
---   internally and returns the first minimizer, or `none` when empty.
+--   internally and returns the nearest-seeded minimizer, or `none` when empty.
 -- * `radiusOf : ℕ → ℚ` is threaded through `candidates`, `chooseParent`,
 --   `rewireAux`, `extendStar`, `rrtStarAux` and `rrtStar`. It is evaluated
 --   once at the pre-insertion vertex count `verts.length`, shared by parent
@@ -1905,38 +1948,38 @@ theorem parentChain_nodup {C : Type} [DecidableEq C] (O : Oracles C)
 -- No declarations are dropped; `firstTightParent` (prefix) is not used here.
 
 /-- Candidate parents for `s`: linked vertices within `radiusOf` at the
-    current count (`verts.length`, before adding), plus the nearest vertex
-    as fallback when it links (in its list position). -/
+    current count (`verts.length`, before adding), plus the fallback vertex
+    `near` when it links (in its list position). `near` is the fallback
+    candidate (the vertex nearest the raw sample, supplied by the caller). -/
 def candidates {S : Type} [DecidableEq S] (O : Oracles S) (verts : List S)
-    (radiusOf : ℕ → ℚ) (start s : S) : List S :=
+    (radiusOf : ℕ → ℚ) (near s : S) : List S :=
   verts.filter (fun v =>
     O.link v s &&
       (decide (O.cost v s ≤ radiusOf verts.length) ||
-        decide (v = nearest O verts start s)))
+        decide (v = near)))
 
 /-- Membership characterization for `candidates`. -/
 theorem mem_candidates {S : Type} [DecidableEq S] (O : Oracles S)
-    (verts : List S) (radiusOf : ℕ → ℚ) (start s v : S) :
-    v ∈ candidates O verts radiusOf start s ↔
+    (verts : List S) (radiusOf : ℕ → ℚ) (near s v : S) :
+    v ∈ candidates O verts radiusOf near s ↔
       v ∈ verts ∧ O.link v s = true ∧
         (O.cost v s ≤ radiusOf verts.length ∨
-          v = nearest O verts start s) := by
+          v = near) := by
   simp only [candidates, List.mem_filter, Bool.and_eq_true, Bool.or_eq_true,
     decide_eq_true_eq]
 
 theorem candidates_subset_verts {S : Type} [DecidableEq S] (O : Oracles S)
-    (verts : List S) (radiusOf : ℕ → ℚ) (start s v : S)
-    (h : v ∈ candidates O verts radiusOf start s) : v ∈ verts :=
-  ((mem_candidates O verts radiusOf start s v).mp h).1
+    (verts : List S) (radiusOf : ℕ → ℚ) (near s v : S)
+    (h : v ∈ candidates O verts radiusOf near s) : v ∈ verts :=
+  ((mem_candidates O verts radiusOf near s v).mp h).1
 
-/-- The nearest vertex is a candidate iff it links to `s`.
-    `hmem` holds when `verts` is nonempty by `nearest`'s head-seeded fold;
-    the caller supplies it to avoid depending on unstated prefix lemmas. -/
-theorem nearest_mem_candidates_iff {S : Type} [DecidableEq S] (O : Oracles S)
-    (verts : List S) (radiusOf : ℕ → ℚ) (start s : S)
-    (hmem : nearest O verts start s ∈ verts) :
-    nearest O verts start s ∈ candidates O verts radiusOf start s ↔
-      O.link (nearest O verts start s) s = true := by
+/-- The fallback vertex is a candidate iff it links to `s`, given membership
+    supplied by the caller. -/
+theorem near_mem_candidates_iff {S : Type} [DecidableEq S] (O : Oracles S)
+    (verts : List S) (radiusOf : ℕ → ℚ) (near s : S)
+    (hmem : near ∈ verts) :
+    near ∈ candidates O verts radiusOf near s ↔
+      O.link near s = true := by
   rw [mem_candidates]
   constructor
   · rintro ⟨_, hlink, _⟩
@@ -1944,20 +1987,22 @@ theorem nearest_mem_candidates_iff {S : Type} [DecidableEq S] (O : Oracles S)
   · intro hlink
     exact ⟨hmem, hlink, Or.inr rfl⟩
 
-/-- First minimizer of `ccAdd (costToCome costs ·) (O.cost · s)` over the
-    candidates, by a head-seeded fold; `none` iff candidates are empty.
-    Strict `ccLt` keeps the earliest vertex on ties. -/
+/-- Minimizer of `ccAdd (costToCome costs ·) (O.cost · s)` over the
+    candidates, by a fold seeded at `near` when `near` is a candidate
+    (otherwise at the head); `none` iff candidates are empty.
+    Strict `ccLt` improvement is required to replace the current best,
+    so ties against `near` keep `near`. -/
 def chooseParent {S : Type} [DecidableEq S] (O : Oracles S) (verts : List S)
-    (costs : List (S × Int × Nat)) (radiusOf : ℕ → ℚ) (start s : S) :
+    (costs : List (S × Int × Nat)) (radiusOf : ℕ → ℚ) (near s : S) :
     Option S :=
-  match candidates O verts radiusOf start s with
+  match candidates O verts radiusOf near s with
   | [] => none
   | h :: t =>
-      some (t.foldl
+      some ((h :: t).foldl
         (fun best v =>
           if ccLt (ccAdd (costToCome costs v) (O.cost v s))
             (ccAdd (costToCome costs best) (O.cost best s)) then v
-          else best) h)
+          else best) (if near ∈ h :: t then near else h))
 
 /-- A fold that always keeps one of its two inputs stays in the list. -/
 theorem foldl_mem {S : Type} (f : S → S → S)
@@ -1983,36 +2028,66 @@ theorem foldl_mem {S : Type} (f : S → S → S)
 
 theorem chooseParent_eq_none_iff {S : Type} [DecidableEq S] (O : Oracles S)
     (verts : List S) (costs : List (S × Int × Nat)) (radiusOf : ℕ → ℚ)
-    (start s : S) :
-    chooseParent O verts costs radiusOf start s = none ↔
-      candidates O verts radiusOf start s = [] := by
-  cases hc : candidates O verts radiusOf start s with
+    (near s : S) :
+    chooseParent O verts costs radiusOf near s = none ↔
+      candidates O verts radiusOf near s = [] := by
+  cases hc : candidates O verts radiusOf near s with
   | nil => simp [chooseParent, hc]
   | cons h t => simp [chooseParent, hc]
 
 theorem chooseParent_mem {S : Type} [DecidableEq S] (O : Oracles S)
     (verts : List S) (costs : List (S × Int × Nat)) (radiusOf : ℕ → ℚ)
-    (start s p : S) (h : chooseParent O verts costs radiusOf start s = some p) :
-    p ∈ candidates O verts radiusOf start s := by
-  cases hc : candidates O verts radiusOf start s with
+    (near s p : S) (h : chooseParent O verts costs radiusOf near s = some p) :
+    p ∈ candidates O verts radiusOf near s := by
+  cases hc : candidates O verts radiusOf near s with
   | nil =>
       simp only [chooseParent, hc] at h
       contradiction
   | cons hd tl =>
       simp only [chooseParent, hc] at h
-      have hmem : tl.foldl
+      cases h
+      have hseed : (if near ∈ hd :: tl then near else hd) ∈ hd :: tl := by
+        by_cases hnear : near ∈ hd :: tl
+        · simp [hnear]
+        · simp [hnear]
+      have hmem : (hd :: tl).foldl
           (fun best v =>
             if ccLt (ccAdd (costToCome costs v) (O.cost v s))
               (ccAdd (costToCome costs best) (O.cost best s)) then v
-            else best) hd ∈ hd :: tl := by
+            else best) (if near ∈ hd :: tl then near else hd) ∈
+          (if near ∈ hd :: tl then near else hd) :: (hd :: tl) := by
         apply foldl_mem
         intro a b
         by_cases hcLt : ccLt (ccAdd (costToCome costs b) (O.cost b s))
           (ccAdd (costToCome costs a) (O.cost a s))
         · simp [hcLt]
         · simp [hcLt]
-      cases h
-      exact hmem
+      have hmem_or := List.mem_cons.mp hmem
+      cases hmem_or with
+      | inl heq =>
+          rw [heq]
+          exact hseed
+      | inr hmem_tl =>
+          exact hmem_tl
+
+/-- If the fallback vertex links, parent search succeeds. -/
+theorem chooseParent_isSome_of_gate {S : Type} [DecidableEq S] (O : Oracles S)
+    (verts : List S) (costs : List (S × Int × Nat)) (radiusOf : ℕ → ℚ)
+    (near s : S) (hmem : near ∈ verts) (hlink : O.link near s = true) :
+    (chooseParent O verts costs radiusOf near s).isSome := by
+  have hcand : near ∈ candidates O verts radiusOf near s :=
+    (near_mem_candidates_iff O verts radiusOf near s hmem).mpr hlink
+  have hne : candidates O verts radiusOf near s ≠ [] := by
+    intro hemp
+    rw [hemp] at hcand
+    simp at hcand
+  have hnn : chooseParent O verts costs radiusOf near s ≠ none := by
+    intro hnone
+    rw [chooseParent_eq_none_iff] at hnone
+    exact hne hnone
+  cases ho : chooseParent O verts costs radiusOf near s with
+  | none => exact absurd ho hnn
+  | some p => rfl
 
 /-- Replace every edge targeting `w` with `(s, w)`. Under `Nodup` targets at
     most one edge changes. -/
@@ -2112,13 +2187,1008 @@ theorem parentChain_mem_verts {S : Type} [DecidableEq S] (edges : List (S × S))
             | inr hmem => exact ih (v := u) hu_verts x hmem
 
 
+/-- Last of verts is the target. -/
+private theorem PPath.verts_getLast_some {C : Type} {edges : List (C × C)} {u v : C} {k : Nat}
+    (p : PPath edges u v k) : p.verts.getLast? = some v := by
+  induction p with
+  | refl =>
+      simp [PPath.verts_refl]
+  | step p' hmem ih =>
+      rw [PPath.verts_step, List.getLast?_concat]
+
+/-- Source lies in verts. -/
+private theorem PPath.mem_source {C : Type} {edges : List (C × C)} {u v : C} {k : Nat}
+    (p : PPath edges u v k) : u ∈ p.verts := by
+  induction p with
+  | refl =>
+      simp [PPath.verts_refl]
+  | step p' hmem ih =>
+      rw [PPath.verts_step]
+      exact List.mem_append_left _ ih
+
+/-- Two edges with the same target in a target-nodup list are equal. -/
+private theorem pair_eq_of_snd_mem_of_nodup {C : Type} {edges : List (C × C)}
+    (hnd : (edges.map Prod.snd).Nodup) {e1 e2 : C × C}
+    (h1 : e1 ∈ edges) (h2 : e2 ∈ edges) (hsnd : e1.2 = e2.2) : e1 = e2 := by
+  induction edges generalizing e1 e2 with
+  | nil => simp at h1
+  | cons hd tl ih =>
+      simp only [List.map_cons] at hnd
+      rw [List.nodup_cons] at hnd
+      obtain ⟨hnmem, hnd_tl⟩ := hnd
+      simp only [List.mem_cons] at h1 h2
+      rcases h1 with rfl | h1 <;> rcases h2 with rfl | h2
+      · rfl
+      · exfalso
+        apply hnmem
+        rw [hsnd]
+        exact List.mem_map_of_mem h2
+      · exfalso
+        apply hnmem
+        rw [← hsnd]
+        exact List.mem_map_of_mem h1
+      · exact ih hnd_tl h1 h2 hsnd
+
+/-- Predecessors with the same target coincide. -/
+private theorem pred_eq_of_mem_of_nodup {C : Type} {edges : List (C × C)}
+    (hnd : (edges.map Prod.snd).Nodup) {w w' v : C}
+    (h1 : (w, v) ∈ edges) (h2 : (w', v) ∈ edges) : w = w' := by
+  have hpair : (w, v) = (w', v) :=
+    pair_eq_of_snd_mem_of_nodup hnd h1 h2 rfl
+  simpa using congrArg Prod.fst hpair
+
+/-- Tail vertex is fresh in a simple path. -/
+private theorem not_mem_of_nodup_append_singleton {C : Type} {l : List C} {a : C}
+    (h : (l ++ [a]).Nodup) : a ∉ l := by
+  intro hmem
+  have hdisj := (List.nodup_append.mp h).2.2
+  have hne := hdisj a hmem a (by simp)
+  exact hne rfl
+
+private theorem pcost_eq_of_verts_eq_aux {C : Type} (O : Oracles C)
+    {edges : List (C × C)} {u : C} {v : C} {k : Nat} (p : PPath edges u v k) :
+    ∀ {j : Nat} (q : PPath edges u v j),
+      p.verts = q.verts → pcost O p = pcost O q := by
+  induction p with
+  | refl =>
+      intro j q h
+      cases q with
+      | refl =>
+          rfl
+      | step q' hmem' =>
+          exfalso
+          simp [PPath.verts_refl, PPath.verts_step] at h
+          have hlen := congrArg List.length h
+          simp [q'.verts_length] at hlen
+  | step p' hmem ih =>
+      intro j q h
+      cases q with
+      | refl =>
+          exfalso
+          simp [PPath.verts_refl, PPath.verts_step] at h
+          have hlen := congrArg List.length h
+          simp [p'.verts_length] at hlen
+      | step q' hmem2 =>
+          rw [PPath.verts_step, PPath.verts_step] at h
+          have hpre : p'.verts = q'.verts := List.append_cancel_right h
+          have hgl := congrArg List.getLast? hpre
+          rw [p'.verts_getLast_some, q'.verts_getLast_some] at hgl
+          have hww : _ = _ := Option.some_inj.mp hgl
+          subst hww
+          have iheq : pcost O p' = pcost O q' := ih q' hpre
+          simp [pcost_step, iheq]
+
+private theorem verts_eq_of_simple_aux {C : Type} {edges : List (C × C)} {u : C}
+    (hnd : (edges.map Prod.snd).Nodup) {v : C} {k : Nat} (p : PPath edges u v k) :
+    ∀ {j : Nat} (q : PPath edges u v j),
+      p.verts.Nodup → q.verts.Nodup → p.verts = q.verts := by
+  induction p with
+  | refl =>
+      intro j q hp hq
+      cases q with
+      | refl =>
+          simp [PPath.verts_refl]
+      | step q' hmem' =>
+          exfalso
+          rw [PPath.verts_step] at hq
+          have hnem : _ ∉ q'.verts := not_mem_of_nodup_append_singleton hq
+          have hmem : _ ∈ q'.verts := q'.mem_source
+          exact hnem hmem
+  | step p' hmem ih =>
+      intro j q hp hq
+      cases q with
+      | refl =>
+          exfalso
+          rw [PPath.verts_step] at hp
+          have hnem : _ ∉ p'.verts := not_mem_of_nodup_append_singleton hp
+          have hmemsrc : _ ∈ p'.verts := p'.mem_source
+          exact hnem hmemsrc
+      | step q' hmem2 =>
+          have hww : _ = _ := pred_eq_of_mem_of_nodup hnd hmem hmem2
+          subst hww
+          rw [PPath.verts_step] at hp hq
+          have hp' : p'.verts.Nodup := List.Nodup.of_append_left hp
+          have hq' : q'.verts.Nodup := List.Nodup.of_append_left hq
+          have heq : p'.verts = q'.verts := ih q' hp' hq'
+          simp [PPath.verts_step, heq]
+
+/-- Path cost depends only on the vertex sequence. -/
+theorem pcost_eq_of_verts_eq {C : Type} (O : Oracles C) {edges : List (C × C)}
+    {u v : C} {k j : ℕ} (p : PPath edges u v k) (q : PPath edges u v j)
+    (h : p.verts = q.verts) : pcost O p = pcost O q := by
+  exact pcost_eq_of_verts_eq_aux O p q h
+
+/-- In a target-nodup edge list, two simple paths with the same endpoints
+    have the same vertex sequence. -/
+theorem PPath.verts_eq_of_simple {C : Type} {edges : List (C × C)} {u v : C}
+    {k j : ℕ} (hnd : (edges.map Prod.snd).Nodup)
+    (p : PPath edges u v k) (q : PPath edges u v j)
+    (hp : p.verts.Nodup) (hq : q.verts.Nodup) : p.verts = q.verts := by
+  exact verts_eq_of_simple_aux hnd p q hp hq
+
+/-- Simple paths with the same endpoints in a tree cost the same. -/
+theorem pcost_eq_of_simple {C : Type} (O : Oracles C) {edges : List (C × C)}
+    {u v : C} {k j : ℕ} (hnd : (edges.map Prod.snd).Nodup)
+    (p : PPath edges u v k) (q : PPath edges u v j)
+    (hp : p.verts.Nodup) (hq : q.verts.Nodup) : pcost O p = pcost O q := by
+  exact pcost_eq_of_verts_eq O p q (PPath.verts_eq_of_simple hnd p q hp hq)
+
+theorem pairVal_costToCome_recomputeCosts {S : Type} [DecidableEq S]
+    (O : Oracles S) (verts : List S) (edges : List (S × S)) (start v : S)
+    (h_end : ∀ e ∈ edges, e.1 ∈ verts ∧ e.2 ∈ verts)
+    (hnd : (edges.map Prod.snd).Nodup)
+    (hvnd : verts.Nodup) (hstart : start ∈ verts) (hv : v ∈ verts)
+    (k : ℕ) (p : PPath edges start v k) (hsimple : p.verts.Nodup) :
+    pairVal (costToCome (recomputeCosts O verts edges start) v) = pcost O p := by
+  have htgt : ∀ e ∈ edges, e.2 ∈ verts := fun e he => (h_end e he).2
+  have hlen : k + 1 ≤ verts.length :=
+    PPath.simple_length_le verts hstart htgt hvnd p hsimple
+  have hkn : k ≤ verts.length := by omega
+  have hbell := bellmanFord_upper O edges start v k p verts.length hkn
+  unfold recomputeCosts
+  apply le_antisymm
+  · exact hbell.2
+  · obtain ⟨c, hmem, heq⟩ := costToCome_mem_entry _ v hbell.1
+    obtain ⟨k2, q, -, hq⟩ := relaxPasses_entry_path O edges start verts.length v c hmem
+    obtain ⟨k', q', hnod', hle'⟩ := PPath.exists_simple_le O q
+    have heq' : pcost O q' = pcost O p := pcost_eq_of_simple O hnd q' p hnod' hsimple
+    rw [heq, hq, ← heq']
+    exact hle'
+
+private theorem findParent_cons_eq_aux {S : Type} [DecidableEq S]
+    (e : S × S) (rest : List (S × S)) (x : S) (h : e.2 = x) :
+    findParent (e :: rest) x = some e.1 := by
+  simp [findParent, h]
+
+private theorem findParent_cons_ne_aux {S : Type} [DecidableEq S]
+    (e : S × S) (rest : List (S × S)) (x : S) (h : ¬ e.2 = x) :
+    findParent (e :: rest) x = findParent rest x := by
+  simp [findParent, h]
+
+private theorem findParent_some_of_mem_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (u x : S)
+    (hmem : (u, x) ∈ edges) (hnd : (edges.map Prod.snd).Nodup) :
+    findParent edges x = some u := by
+  induction edges with
+  | nil =>
+    simp at hmem
+  | cons e rest ih =>
+    simp only [List.map] at hnd
+    rw [List.nodup_cons] at hnd
+    obtain ⟨hnotin, hndTail⟩ := hnd
+    simp at hmem
+    cases hmem with
+    | inl heq =>
+      have heq2 : e.2 = x := by
+        have h := congrArg Prod.snd heq
+        simp at h
+        exact h.symm
+      have heq1 : e.1 = u := by
+        have h := congrArg Prod.fst heq
+        simp at h
+        exact h.symm
+      rw [findParent_cons_eq_aux _ _ _ heq2, heq1]
+    | inr htail =>
+      have hne : ¬ e.2 = x := by
+        intro heq
+        rw [heq] at hnotin
+        have hmemMap : x ∈ rest.map Prod.snd := by
+          rw [List.mem_map]
+          exact ⟨(u, x), htail, rfl⟩
+        exact hnotin hmemMap
+      rw [findParent_cons_ne_aux _ _ _ hne]
+      exact ih htail hndTail
+
+private theorem parentChain_zero_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) :
+    parentChain edges start v 0 = [v] := rfl
+
+private theorem parentChain_succ_of_eq_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) (n : Nat) (h : v = start) :
+    parentChain edges start v (n + 1) = [v] := by
+  simp [parentChain, h]
+
+private theorem parentChain_succ_of_ne_none_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) (n : Nat)
+    (hne : ¬ v = start) (hfind : findParent edges v = none) :
+    parentChain edges start v (n + 1) = [v] := by
+  simp [parentChain, hne, hfind]
+
+private theorem parentChain_succ_of_ne_some_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v u : S) (n : Nat)
+    (hne : ¬ v = start) (hfind : findParent edges v = some u) :
+    parentChain edges start v (n + 1) = v :: parentChain edges start u n := by
+  simp [parentChain, hne, hfind]
+
+private theorem parentChain_mem_self_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) (n : Nat) :
+    v ∈ parentChain edges start v n := by
+  cases n with
+  | zero =>
+    rw [parentChain_zero_aux]
+    simp
+  | succ n =>
+    by_cases h : v = start
+    · rw [parentChain_succ_of_eq_aux _ _ _ _ h]
+      simp
+    · match hfind : findParent edges v with
+      | none =>
+        rw [parentChain_succ_of_ne_none_aux _ _ _ _ h hfind]
+        simp
+      | some u =>
+        rw [parentChain_succ_of_ne_some_aux _ _ _ _ _ h hfind]
+        simp
+
+private theorem parentChain_mono_succ_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start : S) (k : Nat) :
+    ∀ (v w : S), w ∈ parentChain edges start v k → w ∈ parentChain edges start v (k + 1) := by
+  induction k with
+  | zero =>
+    intro v w hmem
+    rw [parentChain_zero_aux] at hmem
+    simp at hmem
+    subst hmem
+    apply parentChain_mem_self_aux
+  | succ k ih =>
+    intro v w hmem
+    by_cases heq : v = start
+    · rw [parentChain_succ_of_eq_aux _ _ _ _ heq] at hmem
+      rw [parentChain_succ_of_eq_aux _ _ _ _ heq]
+      exact hmem
+    · match hfind : findParent edges v with
+      | none =>
+        rw [parentChain_succ_of_ne_none_aux _ _ _ _ heq hfind] at hmem
+        rw [parentChain_succ_of_ne_none_aux _ _ _ _ heq hfind]
+        exact hmem
+      | some u =>
+        rw [parentChain_succ_of_ne_some_aux _ _ _ _ _ heq hfind] at hmem
+        rw [parentChain_succ_of_ne_some_aux _ _ _ _ _ heq hfind]
+        simp [List.mem_cons] at hmem ⊢
+        cases hmem with
+        | inl heq2 => exact Or.inl heq2
+        | inr htail => exact Or.inr (ih u w htail)
+
+private theorem parentChain_mono_le_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v w : S) (k n : Nat)
+    (hle : k ≤ n) (hmem : w ∈ parentChain edges start v k) :
+    w ∈ parentChain edges start v n := by
+  induction n generalizing k with
+  | zero =>
+    have heq : k = 0 := Nat.le_zero.mp hle
+    subst heq
+    exact hmem
+  | succ n ih =>
+    by_cases heq : k = n + 1
+    · subst heq
+      exact hmem
+    · have hle' : k ≤ n := by omega
+      have hmid := ih k hle' hmem
+      exact parentChain_mono_succ_aux edges start n v w hmid
+
+private theorem parentChain_stable_succ_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start : S) (k : Nat) :
+    ∀ (v : S), start ∈ parentChain edges start v k →
+      parentChain edges start v (k + 1) = parentChain edges start v k := by
+  induction k with
+  | zero =>
+    intro v hmem
+    rw [parentChain_zero_aux] at hmem
+    simp at hmem
+    subst hmem
+    rw [parentChain_succ_of_eq_aux _ _ _ _ rfl]
+    rw [parentChain_zero_aux]
+  | succ k ih =>
+    intro v hmem
+    by_cases heq : v = start
+    · rw [parentChain_succ_of_eq_aux _ _ _ _ heq]
+      rw [parentChain_succ_of_eq_aux _ _ _ _ heq]
+    · match hfind : findParent edges v with
+      | none =>
+        rw [parentChain_succ_of_ne_none_aux _ _ _ _ heq hfind]
+        rw [parentChain_succ_of_ne_none_aux _ _ _ _ heq hfind]
+      | some u =>
+        rw [parentChain_succ_of_ne_some_aux _ _ _ _ _ heq hfind] at hmem
+        rw [parentChain_succ_of_ne_some_aux _ _ _ _ _ heq hfind]
+        rw [parentChain_succ_of_ne_some_aux _ _ _ _ _ heq hfind]
+        simp [List.mem_cons] at hmem
+        cases hmem with
+        | inl heq2 =>
+          subst heq2
+          contradiction
+        | inr htail =>
+          rw [ih u htail]
+
+private theorem parentChain_stable_le_aux {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) (k n : Nat)
+    (hmem : start ∈ parentChain edges start v k) (hle : k ≤ n) :
+    parentChain edges start v n = parentChain edges start v k := by
+  induction n generalizing k with
+  | zero =>
+    have heq : k = 0 := Nat.le_zero.mp hle
+    subst heq
+    rfl
+  | succ n ih =>
+    by_cases heq : k = n + 1
+    · subst heq
+      rfl
+    · have hle' : k ≤ n := by omega
+      have heqMid := ih k hmem hle'
+      have hmemMid : start ∈ parentChain edges start v n := by
+        rw [heqMid]
+        exact hmem
+      have hstep := parentChain_stable_succ_aux edges start n v hmemMid
+      rw [hstep]
+      exact heqMid
+
+private theorem ppath_start_mem_aux {S : Type} [DecidableEq S]
+    {edges : List (S × S)} {start v : S} {k : Nat}
+    (p : PPath edges start v k) : start ∈ p.verts := by
+  induction p with
+  | refl =>
+    rw [PPath.verts_refl]
+    simp
+  | step q _ ih =>
+    rw [PPath.verts_step]
+    simp [List.mem_append, ih]
+
+private theorem nodup_append_singleton_left_aux {S : Type}
+    (l : List S) (a : S) (h : (l ++ [a]).Nodup) : l.Nodup := by
+  induction l with
+  | nil =>
+    exact List.nodup_nil
+  | cons hd tl ih =>
+    simp only [List.cons_append, List.nodup_cons] at h ⊢
+    obtain ⟨hnotin, htail⟩ := h
+    have hnotin_tl : hd ∉ tl := by
+      intro hmem
+      apply hnotin
+      rw [List.mem_append]
+      exact Or.inl hmem
+    exact ⟨hnotin_tl, ih htail⟩
+
+private theorem not_mem_of_nodup_append_singleton_aux {S : Type}
+    (l : List S) (a : S) (h : (l ++ [a]).Nodup) : a ∉ l := by
+  induction l with
+  | nil =>
+    simp
+  | cons hd tl ih =>
+    simp only [List.cons_append, List.nodup_cons] at h
+    obtain ⟨hnotin, htail⟩ := h
+    have hne : hd ≠ a := by
+      intro heq
+      apply hnotin
+      rw [List.mem_append]
+      exact Or.inr (by simp [heq])
+    intro hmem
+    simp [List.mem_cons] at hmem
+    cases hmem with
+    | inl heq =>
+      exact hne heq.symm
+    | inr hmem_tl =>
+      exact (ih htail) hmem_tl
+
+private theorem ppath_verts_reverse_eq_parentChain_aux {S : Type} [DecidableEq S]
+    {edges : List (S × S)} {start : S} {v : S} {k : Nat}
+    (p : PPath edges start v k)
+    (hnd : (edges.map Prod.snd).Nodup) (hp : p.verts.Nodup) :
+    p.verts.reverse = parentChain edges start v k := by
+  induction p with
+  | refl =>
+    rw [PPath.verts_refl, List.reverse_singleton, parentChain_zero_aux]
+  | step q hmem ih =>
+    rename_i u w kk
+    rw [PPath.verts_step] at hp
+    have hq : q.verts.Nodup := nodup_append_singleton_left_aux _ _ hp
+    have ih' := ih hq
+    have hne : w ≠ start := by
+      intro heq
+      subst heq
+      have hstart := ppath_start_mem_aux q
+      have hnot := not_mem_of_nodup_append_singleton_aux _ _ hp
+      exact hnot hstart
+    have hfind : findParent edges w = some u := findParent_some_of_mem_aux edges u w hmem hnd
+    rw [PPath.verts_step]
+    rw [List.reverse_append, List.reverse_singleton]
+    simp only [List.singleton_append]
+    rw [parentChain_succ_of_ne_some_aux _ _ _ _ _ hne hfind]
+    rw [ih']
+
+theorem mem_parentChain_iff_mem_verts {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (verts : List S) (start v w : S)
+    (hnd : (edges.map Prod.snd).Nodup) (hvnd : verts.Nodup)
+    (h_end : ∀ e ∈ edges, e.1 ∈ verts ∧ e.2 ∈ verts)
+    (hstart : start ∈ verts) (hv : v ∈ verts)
+    (k : ℕ) (p : PPath edges start v k) (hp : p.verts.Nodup) :
+    w ∈ p.verts ↔ w ∈ parentChain edges start v verts.length := by
+  have hle1 : k + 1 ≤ verts.length :=
+    PPath.simple_length_le verts hstart (fun e he => (h_end e he).2) hvnd p hp
+  have hle : k ≤ verts.length := Nat.le_of_succ_le hle1
+  have hrev := ppath_verts_reverse_eq_parentChain_aux p hnd hp
+  have hstart_mem := ppath_start_mem_aux p
+  have hstart_chain : start ∈ parentChain edges start v k := by
+    rw [← hrev]
+    exact List.mem_reverse.mpr hstart_mem
+  have hstable := parentChain_stable_le_aux edges start v k verts.length hstart_chain hle
+  constructor
+  · intro hmem
+    have hmem_rev : w ∈ p.verts.reverse := List.mem_reverse.mpr hmem
+    rw [hrev] at hmem_rev
+    exact parentChain_mono_le_aux edges start v w k verts.length hle hmem_rev
+  · intro hmemL
+    rw [hstable] at hmemL
+    rw [← hrev] at hmemL
+    exact List.mem_reverse.mp hmemL
+
+private theorem ppath_split {S : Type} [DecidableEq S] (O : Oracles S)
+    {edges : List (S × S)} {start v w : S} {k : ℕ}
+    (p : PPath edges start v k) (hp : p.verts.Nodup) (hw : w ∈ p.verts) :
+    ∃ (i j : ℕ) (pfx : PPath edges start w i) (sfx : PPath edges w v j),
+      pfx.verts.Nodup ∧ sfx.verts.Nodup ∧
+      (∀ x ∈ sfx.verts, x ∈ p.verts) ∧
+      pcost O p = pcost O pfx + pcost O sfx := by
+  revert hp hw
+  induction p with
+  | refl =>
+      intro hp hw
+      rw [PPath.verts_refl] at hp hw
+      have hww : w = start := List.mem_singleton.mp hw
+      subst hww
+      refine ⟨0, 0, PPath.refl _, PPath.refl _, ?_, ?_, ?_, ?_⟩
+      · rw [PPath.verts_refl]
+        exact List.nodup_singleton _
+      · rw [PPath.verts_refl]
+        exact List.nodup_singleton _
+      · rw [PPath.verts_refl]
+        intro x hx
+        exact hx
+      · simp [pcost_refl]
+  | step p' hmem ih =>
+      rename_i hinst mid tgt len
+      intro hp hw
+      rw [PPath.verts_step] at hp hw
+      by_cases heq : tgt = w
+      · subst heq
+        refine ⟨_, 0, PPath.step p' hmem, PPath.refl _, ?_, ?_, ?_, ?_⟩
+        · rw [PPath.verts_step]
+          exact hp
+        · rw [PPath.verts_refl]
+          exact List.nodup_singleton _
+        · intro x hx
+          rw [PPath.verts_refl] at hx
+          rw [List.mem_singleton] at hx
+          subst hx
+          rw [PPath.verts_step]
+          exact hw
+        · rw [pcost_refl, add_zero]
+      · have hwq : w ∈ p'.verts := by
+          have hdisj := List.mem_append.mp hw
+          cases hdisj with
+          | inl hleft => exact hleft
+          | inr hright =>
+              have heq2 : w = tgt := List.mem_singleton.mp hright
+              exact absurd heq2.symm heq
+        have hpq : p'.verts.Nodup := (List.nodup_append.mp hp).1
+        have hcnotin : tgt ∉ p'.verts := by
+          have hdisj := (List.nodup_append.mp hp).2.2
+          intro hmem2
+          have hcself : tgt ∈ [tgt] := List.mem_singleton.mpr rfl
+          exact hdisj tgt hmem2 tgt hcself rfl
+        obtain ⟨i, j', pfx, sfx', hpfx, hsfx', hsub', hcost'⟩ := ih hpq hwq
+        have hcnotin2 : tgt ∉ sfx'.verts := by
+          intro hmem2
+          exact hcnotin (hsub' tgt hmem2)
+        have hnod : (sfx'.verts ++ [tgt]).Nodup :=
+          nodup_append_singleton _ _ hsfx' hcnotin2
+        refine ⟨_, _, pfx, PPath.step sfx' hmem, hpfx, ?_, ?_, ?_⟩
+        · rw [PPath.verts_step]
+          exact hnod
+        · rw [PPath.verts_step, PPath.verts_step]
+          intro x hx
+          have hdisj := List.mem_append.mp hx
+          cases hdisj with
+          | inl hleft =>
+              have hmemq := hsub' x hleft
+              exact List.mem_append.mpr (Or.inl hmemq)
+          | inr hright =>
+              exact List.mem_append.mpr (Or.inr hright)
+        · rw [pcost_step, pcost_step, hcost', add_assoc]
+
+theorem ppath_split_pcost {S : Type} [DecidableEq S] (O : Oracles S)
+    {edges : List (S × S)} {start v w : S} {k jw : ℕ}
+    (hnd : (edges.map Prod.snd).Nodup)
+    (p : PPath edges start v k) (hp : p.verts.Nodup) (hw : w ∈ p.verts)
+    (pw : PPath edges start w jw) (hpw : pw.verts.Nodup) :
+    ∃ (j : ℕ) (p2 : PPath edges w v j),
+      p2.verts.Nodup ∧ (∀ x ∈ p2.verts, x ∈ p.verts) ∧
+      pcost O p = pcost O pw + pcost O p2 := by
+  obtain ⟨i, j, pfx, p2, hpfx, hnod, hsub, hcost⟩ := ppath_split O p hp hw
+  have heq : pcost O pfx = pcost O pw := pcost_eq_of_simple O hnd pfx pw hpfx hpw
+  exact ⟨j, p2, hnod, hsub, by rw [hcost, heq]⟩
+
+/-- Shift the entries of `costs` whose vertex lies in the subtree rooted at
+    `w` (membership read off `parentChain`) by the rational delta `d`. -/
+def shiftCosts {S : Type} [DecidableEq S] (edges : List (S × S)) (start w : S)
+    (n : ℕ) (d : Rat) (costs : List (S × Int × Nat)) : List (S × Int × Nat) :=
+  costs.map (fun e =>
+    if w ∈ parentChain edges start e.1 n then (e.1, ccAdd e.2 d) else e)
+
+theorem shiftCosts_cons {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Rat) (a : S) (b : Int × Nat)
+    (tl : List (S × Int × Nat)) :
+    shiftCosts edges start w n d ((a, b) :: tl) =
+      (if w ∈ parentChain edges start a n then (a, ccAdd b d) else (a, b)) ::
+        shiftCosts edges start w n d tl := rfl
+
+theorem shiftCosts_cons_of_mem {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Rat) (a : S) (b : Int × Nat)
+    (tl : List (S × Int × Nat)) (hmem : w ∈ parentChain edges start a n) :
+    shiftCosts edges start w n d ((a, b) :: tl) =
+      (a, ccAdd b d) :: shiftCosts edges start w n d tl := by
+  rw [shiftCosts_cons, ite_eq_left hmem]
+
+theorem shiftCosts_cons_of_notmem {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Rat) (a : S) (b : Int × Nat)
+    (tl : List (S × Int × Nat)) (hmem : w ∉ parentChain edges start a n) :
+    shiftCosts edges start w n d ((a, b) :: tl) =
+      (a, b) :: shiftCosts edges start w n d tl := by
+  rw [shiftCosts_cons, ite_eq_right hmem]
+
+theorem costToCome_shiftCosts_of_mem {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start w v : S) (n : ℕ) (d : Rat)
+    (costs : List (S × Int × Nat)) (hcosted : v ∈ costs.map Prod.fst)
+    (hmem : w ∈ parentChain edges start v n) :
+    costToCome (shiftCosts edges start w n d costs) v = ccAdd (costToCome costs v) d
+  := by
+  induction costs with
+  | nil =>
+    simp at hcosted
+  | cons hd tl ih =>
+    obtain ⟨a, b⟩ := hd
+    have hcc : ∀ (x y : S) (c : Int × Nat) (r : List (S × (Int × Nat))),
+        costToCome ((x, c) :: r) y = (if x = y then c else costToCome r y) :=
+      fun x y c r => rfl
+    by_cases hav : a = v
+    · rw [← hav] at hmem
+      rw [shiftCosts_cons_of_mem _ _ _ _ _ _ _ _ hmem, hcc, hcc, ite_eq_left hav, ite_eq_left hav]
+    · have hne : v ≠ a := fun h => hav h.symm
+      have hcosted_tl : v ∈ tl.map Prod.fst := by
+        have h := hcosted
+        simp only [List.map_cons, List.mem_cons] at h
+        exact h.resolve_left hne
+      by_cases hchain : w ∈ parentChain edges start a n
+      · rw [shiftCosts_cons_of_mem _ _ _ _ _ _ _ _ hchain, hcc, hcc, ite_eq_right hav, ite_eq_right hav]
+        exact ih hcosted_tl
+      · rw [shiftCosts_cons_of_notmem _ _ _ _ _ _ _ _ hchain, hcc, hcc, ite_eq_right hav,
+          ite_eq_right hav]
+        exact ih hcosted_tl
+
+theorem costToCome_shiftCosts_of_notmem {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start w v : S) (n : ℕ) (d : Rat)
+    (costs : List (S × Int × Nat))
+    (hmem : w ∉ parentChain edges start v n) :
+    costToCome (shiftCosts edges start w n d costs) v = costToCome costs v
+  := by
+  induction costs with
+  | nil =>
+    rfl
+  | cons hd tl ih =>
+    obtain ⟨a, b⟩ := hd
+    have hcc : ∀ (x y : S) (c : Int × Nat) (r : List (S × (Int × Nat))),
+        costToCome ((x, c) :: r) y = (if x = y then c else costToCome r y) :=
+      fun x y c r => rfl
+    by_cases hav : a = v
+    · rw [← hav] at hmem
+      rw [shiftCosts_cons_of_notmem _ _ _ _ _ _ _ _ hmem, hcc, hcc, ite_eq_left hav, ite_eq_left hav]
+    · by_cases hchain : w ∈ parentChain edges start a n
+      · rw [shiftCosts_cons_of_mem _ _ _ _ _ _ _ _ hchain, hcc, hcc, ite_eq_right hav, ite_eq_right hav]
+        exact ih
+      · rw [shiftCosts_cons_of_notmem _ _ _ _ _ _ _ _ hchain, hcc, hcc, ite_eq_right hav,
+          ite_eq_right hav]
+        exact ih
+
+theorem shiftCosts_keys {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Rat) (costs : List (S × Int × Nat)) :
+    (shiftCosts edges start w n d costs).map Prod.fst = costs.map Prod.fst
+  := by
+  induction costs with
+  | nil =>
+    rfl
+  | cons hd tl ih =>
+    obtain ⟨a, b⟩ := hd
+    rw [shiftCosts_cons]
+    simp only [List.map_cons]
+    by_cases h : w ∈ parentChain edges start a n
+    · rw [ite_eq_left h, ih]
+    · rw [ite_eq_right h, ih]
+
+theorem pairVal_costToCome_shiftCosts {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start w v : S) (n : ℕ) (d : Rat)
+    (costs : List (S × Int × Nat)) (hcosted : v ∈ costs.map Prod.fst)
+    (hden : ((costToCome costs v).2 : ℚ) ≠ 0)
+    (hmem : w ∈ parentChain edges start v n) :
+    pairVal (costToCome (shiftCosts edges start w n d costs) v) =
+      pairVal (costToCome costs v) + (d : ℚ)
+  := by
+  rw [costToCome_shiftCosts_of_mem _ _ _ _ _ _ _ hcosted hmem]
+  exact pairVal_ccAdd _ _ hden
+
+/-- Shift subtree entries by an unnormalized pair delta. This is the
+    executable form used by `rewireAux`: it stays in pair arithmetic, so kernel
+    evaluation does not normalize rational additions. -/
+def shiftCostsPair {S : Type} [DecidableEq S] (edges : List (S × S)) (start w : S)
+    (n : ℕ) (d : Int × Nat) (costs : List (S × Int × Nat)) : List (S × Int × Nat) :=
+  costs.map (fun e =>
+    if w ∈ parentChain edges start e.1 n then (e.1, ccAddPair e.2 d) else e)
+
+private theorem shiftCostsPair_cons {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Int × Nat) (a : S) (b : Int × Nat)
+    (tl : List (S × Int × Nat)) :
+    shiftCostsPair edges start w n d ((a, b) :: tl) =
+      (if w ∈ parentChain edges start a n then (a, ccAddPair b d) else (a, b)) ::
+        shiftCostsPair edges start w n d tl := rfl
+
+private theorem shiftCostsPair_cons_of_mem {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Int × Nat) (a : S) (b : Int × Nat)
+    (tl : List (S × Int × Nat)) (hmem : w ∈ parentChain edges start a n) :
+    shiftCostsPair edges start w n d ((a, b) :: tl) =
+      (a, ccAddPair b d) :: shiftCostsPair edges start w n d tl := by
+  rw [shiftCostsPair_cons, ite_eq_left hmem]
+
+private theorem shiftCostsPair_cons_of_notmem {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Int × Nat) (a : S) (b : Int × Nat)
+    (tl : List (S × Int × Nat)) (hmem : w ∉ parentChain edges start a n) :
+    shiftCostsPair edges start w n d ((a, b) :: tl) =
+      (a, b) :: shiftCostsPair edges start w n d tl := by
+  rw [shiftCostsPair_cons, ite_eq_right hmem]
+
+theorem costToCome_shiftCostsPair_of_mem {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start w v : S) (n : ℕ) (d : Int × Nat)
+    (costs : List (S × Int × Nat)) (hcosted : v ∈ costs.map Prod.fst)
+    (hmem : w ∈ parentChain edges start v n) :
+    costToCome (shiftCostsPair edges start w n d costs) v =
+      ccAddPair (costToCome costs v) d
+  := by
+  induction costs with
+  | nil =>
+    simp at hcosted
+  | cons hd tl ih =>
+    obtain ⟨a, b⟩ := hd
+    have hcc : ∀ (x y : S) (c : Int × Nat) (r : List (S × (Int × Nat))),
+        costToCome ((x, c) :: r) y = (if x = y then c else costToCome r y) :=
+      fun x y c r => rfl
+    by_cases hav : a = v
+    · rw [← hav] at hmem
+      rw [shiftCostsPair_cons_of_mem _ _ _ _ _ _ _ _ hmem, hcc, hcc, ite_eq_left hav, ite_eq_left hav]
+    · have hne : v ≠ a := fun h => hav h.symm
+      have hcosted_tl : v ∈ tl.map Prod.fst := by
+        have h := hcosted
+        simp only [List.map_cons, List.mem_cons] at h
+        exact h.resolve_left hne
+      by_cases hchain : w ∈ parentChain edges start a n
+      · rw [shiftCostsPair_cons_of_mem _ _ _ _ _ _ _ _ hchain, hcc, hcc, ite_eq_right hav, ite_eq_right hav]
+        exact ih hcosted_tl
+      · rw [shiftCostsPair_cons_of_notmem _ _ _ _ _ _ _ _ hchain, hcc, hcc, ite_eq_right hav,
+          ite_eq_right hav]
+        exact ih hcosted_tl
+
+theorem costToCome_shiftCostsPair_of_notmem {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start w v : S) (n : ℕ) (d : Int × Nat)
+    (costs : List (S × Int × Nat))
+    (hmem : w ∉ parentChain edges start v n) :
+    costToCome (shiftCostsPair edges start w n d costs) v = costToCome costs v
+  := by
+  induction costs with
+  | nil =>
+    rfl
+  | cons hd tl ih =>
+    obtain ⟨a, b⟩ := hd
+    have hcc : ∀ (x y : S) (c : Int × Nat) (r : List (S × (Int × Nat))),
+        costToCome ((x, c) :: r) y = (if x = y then c else costToCome r y) :=
+      fun x y c r => rfl
+    by_cases hav : a = v
+    · rw [← hav] at hmem
+      rw [shiftCostsPair_cons_of_notmem _ _ _ _ _ _ _ _ hmem, hcc, hcc, ite_eq_left hav, ite_eq_left hav]
+    · by_cases hchain : w ∈ parentChain edges start a n
+      · rw [shiftCostsPair_cons_of_mem _ _ _ _ _ _ _ _ hchain, hcc, hcc, ite_eq_right hav, ite_eq_right hav]
+        exact ih
+      · rw [shiftCostsPair_cons_of_notmem _ _ _ _ _ _ _ _ hchain, hcc, hcc, ite_eq_right hav,
+          ite_eq_right hav]
+        exact ih
+
+theorem pairVal_costToCome_shiftCostsPair {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start w v : S) (n : ℕ) (d : Int × Nat)
+    (costs : List (S × Int × Nat)) (hcosted : v ∈ costs.map Prod.fst)
+    (hden : ((costToCome costs v).2 : ℚ) ≠ 0) (hd : ((d.2 : Nat) : ℚ) ≠ 0)
+    (hmem : w ∈ parentChain edges start v n) :
+    pairVal (costToCome (shiftCostsPair edges start w n d costs) v) =
+      pairVal (costToCome costs v) + pairVal d
+  := by
+  rw [costToCome_shiftCostsPair_of_mem _ _ _ _ _ _ _ hcosted hmem]
+  exact pairVal_ccAddPair _ _ hden hd
+
+theorem shiftCostsPair_denoms {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Int × Nat) (costs : List (S × Int × Nat))
+    (hd : 0 < d.2) (h : DenomsPos costs) :
+    DenomsPos (shiftCostsPair edges start w n d costs) := by
+  induction costs with
+  | nil =>
+    intro kv hmem
+    simp [shiftCostsPair] at hmem
+  | cons hhead tl ih =>
+    obtain ⟨a, b⟩ := hhead
+    have h_head : 0 < b.2 := h (a, b) (by simp)
+    have h_tail : DenomsPos tl := fun kv hmem => h kv (by simp [hmem])
+    have ih' := ih h_tail
+    by_cases hchain : w ∈ parentChain edges start a n
+    · rw [shiftCostsPair_cons_of_mem _ _ _ _ _ _ _ _ hchain]
+      intro kv hmem
+      simp only [List.mem_cons] at hmem
+      cases hmem with
+      | inl heq =>
+        rw [heq]
+        exact ccAddPair_den_pos b d h_head hd
+      | inr hmem_tl =>
+        exact ih' kv hmem_tl
+    · rw [shiftCostsPair_cons_of_notmem _ _ _ _ _ _ _ _ hchain]
+      intro kv hmem
+      simp only [List.mem_cons] at hmem
+      cases hmem with
+      | inl heq =>
+        rw [heq]
+        exact h_head
+      | inr hmem_tl =>
+        exact ih' kv hmem_tl
+
+private theorem start_mem_verts {S : Type} {edges : List (S × S)} {u v : S}
+    {k : ℕ} (p : PPath edges u v k) : u ∈ p.verts := by
+  induction p with
+  | refl => simp [PPath.verts_refl]
+  | step q _ ih => simp [PPath.verts_step, ih]
+
+private theorem step_target_ne_of_nodup {S : Type} {edges : List (S × S)}
+    {w u V : S} {k : ℕ} (q' : PPath edges w u k)
+    (h : (q'.verts ++ [V]).Nodup) : V ≠ w := by
+  have hw : w ∈ q'.verts := start_mem_verts q'
+  obtain ⟨_, _, hdisj⟩ := List.nodup_append.mp h
+  exact Ne.symm (hdisj w hw V (by simp))
+
+private theorem replaceParent_mem_of_target_ne {S : Type} [DecidableEq S]
+    {edges : List (S × S)} (s : S) {w u V : S} (hmem : (u, V) ∈ edges)
+    (hne : V ≠ w) : (u, V) ∈ replaceParent edges s w := by
+  simp only [replaceParent, List.mem_map]
+  exact ⟨(u, V), hmem, ite_eq_right hne⟩
+
+private theorem tail_append_singleton {S : Type} (l : List S) (V : S)
+    (hne : l ≠ []) : (l ++ [V]).tail = l.tail ++ [V] := by
+  cases l with
+  | nil => exact absurd rfl hne
+  | cons hd tl => rfl
+
+private theorem parentChain_zero_eq {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) :
+    parentChain edges start v 0 = [v] := rfl
+
+private theorem parentChain_succ_start_eq {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) (n : ℕ) (h : v = start) :
+    parentChain edges start v (n + 1) = [v] := by
+  have hunfold : parentChain edges start v (n + 1) =
+      (if v = start then [v] else match findParent edges v with
+        | none => [v]
+        | some u => v :: parentChain edges start u n) := rfl
+  rw [hunfold, ite_eq_left h]
+
+private theorem parentChain_succ_none_eq {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) (n : ℕ)
+    (hne : v ≠ start) (hfp : findParent edges v = none) :
+    parentChain edges start v (n + 1) = [v] := by
+  have hunfold : parentChain edges start v (n + 1) =
+      (if v = start then [v] else match findParent edges v with
+        | none => [v]
+        | some u => v :: parentChain edges start u n) := rfl
+  rw [hunfold, ite_eq_right hne, hfp]
+
+private theorem parentChain_succ_some_eq {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v u : S) (n : ℕ)
+    (hne : v ≠ start) (hfp : findParent edges v = some u) :
+    parentChain edges start v (n + 1) = v :: parentChain edges start u n := by
+  have hunfold : parentChain edges start v (n + 1) =
+      (if v = start then [v] else match findParent edges v with
+        | none => [v]
+        | some u => v :: parentChain edges start u n) := rfl
+  rw [hunfold, ite_eq_right hne, hfp]
+
+private theorem parentChain_suffix_and_mem {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start : S) (n : ℕ) (z x : S)
+    (hx : x ∈ parentChain edges start z n)
+    (hz : start ∈ parentChain edges start z n) :
+    (∃ pre, parentChain edges start z n = pre ++ parentChain edges start x n)
+      ∧ start ∈ parentChain edges start x n := by
+  induction n generalizing z x with
+  | zero =>
+    rw [parentChain_zero_eq] at hx
+    simp only [List.mem_singleton] at hx
+    subst hx
+    exact ⟨⟨[], by simp⟩, hz⟩
+  | succ n ih =>
+    by_cases hzz : z = start
+    · subst hzz
+      rw [parentChain_succ_start_eq _ _ _ _ rfl] at hx
+      simp only [List.mem_singleton] at hx
+      subst hx
+      exact ⟨⟨[], by simp⟩, hz⟩
+    · cases hfp : findParent edges z with
+      | none =>
+        rw [parentChain_succ_none_eq _ _ _ _ hzz hfp] at hx
+        simp only [List.mem_singleton] at hx
+        subst hx
+        exact ⟨⟨[], by simp⟩, hz⟩
+      | some u =>
+        have hchain : parentChain edges start z (n + 1) =
+            z :: parentChain edges start u n :=
+          parentChain_succ_some_eq _ _ _ _ _ hzz hfp
+        rw [hchain] at hx
+        simp only [List.mem_cons] at hx
+        rcases hx with rfl | hxmem
+        · exact ⟨⟨[], by simp⟩, hz⟩
+        · have hstart_u : start ∈ parentChain edges start u n := by
+            have hz' : start ∈ z :: parentChain edges start u n := by
+              rw [← hchain]; exact hz
+            simp only [List.mem_cons] at hz'
+            rcases hz' with h | h
+            · exact (hzz h.symm).elim
+            · exact h
+          obtain ⟨⟨pre, hpre⟩, hstart_x⟩ := ih u x hxmem hstart_u
+          have hstab : parentChain edges start x (n + 1) =
+              parentChain edges start x n :=
+            parentChain_stable_le_aux _ _ _ _ _ hstart_x (by omega)
+          have hmono : start ∈ parentChain edges start x (n + 1) :=
+            parentChain_mono_le_aux _ _ _ _ _ _ (by omega) hstart_x
+          refine ⟨⟨z :: pre, ?_⟩, hmono⟩
+          simp only [hchain, hpre, hstab, List.cons_append]
+
+private theorem parentChain_suffix_of_mem {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start : S) (n : ℕ) (z x : S)
+    (hx : x ∈ parentChain edges start z n)
+    (hz : start ∈ parentChain edges start z n) :
+    ∃ pre, parentChain edges start z n = pre ++ parentChain edges start x n :=
+  (parentChain_suffix_and_mem _ _ _ _ _ hx hz).1
+
+/-- A path from `w` whose steps never target `w` (as a simple path from `w`
+    guarantees) keeps all its edges under `replaceParent · s w`, with the same
+    vertex sequence. -/
+private theorem ppath_replaceParent_of_target_ne {S : Type} [DecidableEq S]
+    {edges : List (S × S)} {s w v : S} {j : ℕ} (q : PPath edges w v j)
+    (hq : q.verts.Nodup) :
+    ∃ q' : PPath (replaceParent edges s w) w v j, q'.verts = q.verts := by
+  induction q with
+  | refl =>
+    exact ⟨PPath.refl _, rfl⟩
+  | step q' hmem ih =>
+    rw [PPath.verts_step] at hq
+    obtain ⟨hqnodup, _, _⟩ := List.nodup_append.mp hq
+    have hVw := step_target_ne_of_nodup q' hq
+    have hmem' := replaceParent_mem_of_target_ne s hmem hVw
+    obtain ⟨q'', hverts⟩ := ih hqnodup
+    exact ⟨q''.step hmem', by simp [PPath.verts_step, hverts]⟩
+
+/-- Chaining: extend a base path by a path starting at its endpoint,
+    adding costs and concatenating vertex lists at the junction. -/
+private theorem ppath_chain {S : Type} [DecidableEq S] (O : Oracles S)
+    {edges : List (S × S)} {a w v : S} {i j : ℕ}
+    (base : PPath edges a w i) (q : PPath edges w v j) :
+    ∃ r : PPath edges a v (i + j),
+      pcost O r = pcost O base + pcost O q ∧
+      r.verts = base.verts ++ q.verts.tail := by
+  induction q generalizing a i base with
+  | refl =>
+    exact ⟨base, by simp [pcost_refl], by simp [PPath.verts_refl]⟩
+  | step q' hmem ih =>
+    obtain ⟨r', hr'cost, hr'verts⟩ := ih base
+    have hne : q'.verts ≠ [] := by
+      intro hnil
+      have hlen := PPath.verts_length q'
+      rw [hnil] at hlen
+      simp at hlen
+    refine ⟨r'.step hmem, ?_, ?_⟩
+    · simp only [pcost_step, hr'cost]
+      exact add_assoc _ _ _
+    · rw [PPath.verts_step, hr'verts, PPath.verts_step, tail_append_singleton _ _ hne,
+        List.append_assoc]
+
+/-- Ancestor transitivity along parent chains at a complete fuel. -/
+private theorem mem_parentChain_trans {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start x y z : S) (n : ℕ)
+    (hz : start ∈ parentChain edges start z n)
+    (hx : x ∈ parentChain edges start z n)
+    (hy : y ∈ parentChain edges start x n) :
+    y ∈ parentChain edges start z n := by
+  obtain ⟨pre, hpre⟩ := parentChain_suffix_of_mem _ _ _ _ _ hx hz
+  rw [hpre]
+  exact List.mem_append_right pre hy
+
+private theorem mem_parentChain_self {S : Type} [DecidableEq S]
+    (edges : List (S × S)) (start v : S) (n : ℕ) :
+    v ∈ parentChain edges start v n := by
+  cases n with
+  | zero => simp [parentChain]
+  | succ n =>
+    simp only [parentChain]
+    by_cases h : v = start
+    · simp [h]
+    · simp [h]
+      cases hfp : findParent edges v
+      · simp
+      · simp
+
+private theorem end_mem_verts {S : Type} {edges : List (S × S)} {u v : S} {k : Nat}
+    (p : PPath edges u v k) : v ∈ PPath.verts p := by
+  induction p with
+  | refl => simp [PPath.verts]
+  | step p _ ih =>
+    rw [PPath.verts_step]
+    simp
+
+private theorem mem_parentChain_of_ppath_fixed {S : Type} [DecidableEq S]
+    {edges : List (S × S)} {start w x : S} {j : ℕ}
+    (hnd : (edges.map Prod.snd).Nodup)
+    (q : PPath edges w x j) (hq : q.verts.Nodup) (m : ℕ)
+    (hm : start ∈ parentChain edges start w m) (hx : x ≠ start)
+    (hns : start ∉ q.verts) :
+    w ∈ parentChain edges start x (j + m) := by
+  revert hq hm hx hns
+  induction q generalizing m with
+  | refl =>
+    intro hq hm hx hns
+    simp only [Nat.zero_add]
+    exact mem_parentChain_self edges start _ m
+  | step p hmem ih =>
+    intro hq hm hx hns
+    rename_i u v j'
+    rw [PPath.verts_step] at hq hns
+    have hq' : p.verts.Nodup := (List.nodup_append.mp hq).1
+    have hns' : start ∉ p.verts := by
+      intro hmem2
+      exact hns (List.mem_append_left _ hmem2)
+    have hu : u ∈ p.verts := end_mem_verts p
+    have hx' : u ≠ start := by
+      intro hcon
+      subst hcon
+      exact hns' hu
+    have ihw := ih m hq' hm hx' hns'
+    have hfuel : j' + 1 + m = (j' + m).succ := by omega
+    rw [hfuel]
+    have hfp : findParent edges v = some u :=
+      findParent_some_of_mem_aux edges u v hmem hnd
+    simp only [parentChain, ite_eq_right hx, hfp, List.mem_cons]
+    exact Or.inr ihw
+
 /-- One rewire pass over all the old vertices `ws`: flip `w`'s parent to the
     new vertex `s` (the `x` passed by `extendStar`) when `w` is admissible
     (`w` differs from `start`, `s`, and `p`; `w ∉ forbid`; `w` is within
     `radiusOf n` of `s`; `s` links to `w`) and routing through `s` is strictly
-    cheaper by the current guard table. The guard table is recomputed after
-    each flip; the parent `p`, the new vertex `s`, and the `forbid` chain are
-    never reparented. -/
+    cheaper by the current guard table. The guard table is maintained after
+    each flip by shifting the rewired subtree; the parent `p`, the new vertex
+    `s`, and the `forbid` chain are never reparented. -/
 def rewireAux {S : Type} [DecidableEq S] (O : Oracles S)
     (costs : List (S × Int × Nat)) (radiusOf : ℕ → ℚ) (n : ℕ) (forbid : List S) (start s p : S) :
     List S → List (S × S) → List (S × S)
@@ -2127,7 +3197,9 @@ def rewireAux {S : Type} [DecidableEq S] (O : Oracles S)
       if w ≠ start ∧ w ≠ s ∧ w ≠ p ∧ w ∉ forbid ∧ O.cost s w ≤ radiusOf n ∧
         O.link s w = true ∧
         ccLt (ccAdd (costToCome costs s) (O.cost s w)) (costToCome costs w)
-      then rewireAux O (relaxPasses O (replaceParent edges s w) n [(start, (0, 1))])
+      then rewireAux O (shiftCostsPair edges start w (n + 1)
+        (pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+          (costToCome costs w)) costs)
         radiusOf n forbid start s p ws (replaceParent edges s w)
       else rewireAux O costs radiusOf n forbid start s p ws edges
 
@@ -2144,7 +3216,9 @@ theorem rewireAux_cons {S : Type} [DecidableEq S] (O : Oracles S)
       (if w ≠ start ∧ w ≠ s ∧ w ≠ p ∧ w ∉ forbid ∧ O.cost s w ≤ radiusOf n ∧
         O.link s w = true ∧
         ccLt (ccAdd (costToCome costs s) (O.cost s w)) (costToCome costs w)
-      then rewireAux O (relaxPasses O (replaceParent edges s w) n [(start, (0, 1))])
+      then rewireAux O (shiftCostsPair edges start w (n + 1)
+        (pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+          (costToCome costs w)) costs)
         radiusOf n forbid start s p ws (replaceParent edges s w)
       else rewireAux O costs radiusOf n forbid start s p ws edges) :=
   rfl
@@ -2308,7 +3382,9 @@ theorem rewireAux_invar {S : Type} [DecidableEq S] (O : Oracles S)
         have h_parent' :=
           replaceParent_has_parent edges verts s w start hw_mem hw_start h_parent
         exact ih (edges := replaceParent edges s w)
-          (costs := relaxPasses O (replaceParent edges s w) n [(start, (0, 1))])
+          (costs := shiftCostsPair edges start w (n + 1)
+            (pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+              (costToCome costs w)) costs)
           (hws := hws')
           (h_end := h_end') (h_nodup := h_nodup') (h_noself := h_noself')
           (h_nestart := h_nestart') (h_parent := h_parent')
@@ -2415,7 +3491,9 @@ theorem ppath_rewireAux_all {S : Type} [DecidableEq S] (O : Oracles S)
           exact hverts
         obtain ⟨k1, ⟨P1⟩⟩ := ppath_replaceParent edges0 s w start k0 hs1 v k P
         exact ih (edges0 := replaceParent edges0 s w) (k0 := k0) (hs0 := hs1)
-          (costs := relaxPasses O (replaceParent edges0 s w) n [(start, (0, 1))])
+          (costs := shiftCostsPair edges0 start w (n + 1)
+            (pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+              (costToCome costs w)) costs)
           hverts1 v k1 P1
       · rw [rewireAux_cons, ite_eq_right hcond]
         exact ih (edges0 := edges0) (k0 := k0) (hs0 := hs0) (costs := costs) hverts v k P
@@ -2800,12 +3878,507 @@ theorem parentChain_cons_eq {S : Type} [DecidableEq S] (edges : List (S × S))
             have hu_verts := (hend (u, v) hu_mem).1
             exact congrArg (v :: ·) (ih (v := u) hu_verts)
 
+private theorem ppath_vert_source_or_edge_target {S : Type} {edges : List (S × S)}
+    {a v : S} {k : ℕ} (p : PPath edges a v k) :
+    ∀ x ∈ p.verts, x = a ∨ ∃ e ∈ edges, e.2 = x := by
+  induction p with
+  | refl =>
+      intro x hx
+      rw [PPath.verts_refl] at hx
+      simp at hx
+      exact Or.inl hx
+  | @step w v _ _ hmem ih =>
+      intro x hx
+      rw [PPath.verts_step] at hx
+      rw [List.mem_append] at hx
+      cases hx with
+      | inl hx =>
+          obtain rfl | ⟨e, he, heq⟩ := ih x hx
+          · exact Or.inl rfl
+          · exact Or.inr ⟨e, he, heq⟩
+      | inr hx =>
+          simp at hx
+          rw [hx]
+          exact Or.inr ⟨(w, v), hmem, rfl⟩
+
+private theorem shiftCosts_start_absent_of_source {S : Type} {edges : List (S × S)}
+    {start w v : S} {j : ℕ} (q : PPath edges w v j)
+    (hnostart : ∀ e ∈ edges, e.2 ≠ start) (hwne : w ≠ start) :
+    start ∉ q.verts := by
+  intro hmem
+  obtain heq | ⟨e, he, heq⟩ := ppath_vert_source_or_edge_target q start hmem
+  · exact hwne heq.symm
+  · exact hnostart e he heq
+
+private theorem ppath_verts_rev_head {S : Type} {edges : List (S × S)} {a v : S}
+    {k : ℕ} (p : PPath edges a v k) : p.verts.reverse.head? = some v := by
+  induction p with
+  | refl => simp [PPath.verts_refl]
+  | step p _ ih => simp [PPath.verts_step, List.reverse_append]
+
+private theorem shiftCosts_pcost_of_verts_eq {S : Type} (O : Oracles S)
+    {e₁ e₂ : List (S × S)} {a b : S} {k j : ℕ}
+    (p : PPath e₁ a b k) (q : PPath e₂ a b j)
+    (h : p.verts = q.verts) : pcost O p = pcost O q := by
+  induction p generalizing j with
+  | refl =>
+      cases q with
+      | refl => rfl
+      | step q' hmem =>
+          exfalso
+          have hlen := congrArg List.length h
+          rw [PPath.verts_refl, PPath.verts_step] at hlen
+          simp only [List.length_cons, List.length_nil, List.length_append] at hlen
+          rw [PPath.verts_length] at hlen
+          simp at hlen
+  | @step w _ _ p' hmem' ih =>
+      cases q with
+      | refl =>
+          exfalso
+          have hlen := congrArg List.length h
+          rw [PPath.verts_refl, PPath.verts_step] at hlen
+          simp only [List.length_cons, List.length_nil, List.length_append] at hlen
+          rw [PPath.verts_length] at hlen
+          simp at hlen
+      | step q' hmem'' =>
+          simp only [PPath.verts_step] at h
+          have h' : p'.verts = q'.verts := List.append_cancel_right h
+          have hlast : p'.verts.reverse.head? = q'.verts.reverse.head? := by rw [h']
+          simp only [ppath_verts_rev_head] at hlast
+          replace hlast := Option.some_inj.mp hlast
+          subst hlast
+          have ih' : pcost O p' = pcost O q' := ih _ h'
+          rw [pcost_step O p' hmem', pcost_step O q' hmem'', ih']
+
+private theorem ppath_verts_cons {S : Type} {edges : List (S × S)} {a v : S} {k : ℕ}
+    (p : PPath edges a v k) : ∃ t, p.verts = a :: t := by
+  induction p with
+  | refl => exact ⟨[], PPath.verts_refl _⟩
+  | @step _ v _ _ _ ih =>
+      obtain ⟨t, ht⟩ := ih
+      refine ⟨t ++ [v], ?_⟩
+      simp [PPath.verts_step, ht]
+
+theorem shiftCosts_exact {S : Type} [DecidableEq S] (O : Oracles S)
+    (verts : List S) (edges : List (S × S)) (start s w : S)
+    (h_end : ∀ e ∈ edges, e.1 ∈ verts ∧ e.2 ∈ verts)
+    (hnd : (edges.map Prod.snd).Nodup)
+    (hnoself : ∀ e ∈ edges, e.1 ≠ e.2)
+    (hnostart : ∀ e ∈ edges, e.2 ≠ start)
+    (hparent : ∀ x ∈ verts, x ≠ start → ∃ u, (u, x) ∈ edges)
+    (hvnd : verts.Nodup) (hstart : start ∈ verts)
+    (hreach : ∀ v ∈ verts, ∃ k, Nonempty (PPath edges start v k))
+    (hs : s ∈ verts) (hw : w ∈ verts) (hwne : w ≠ start) (hsw : s ≠ w)
+    (hnotanc : w ∉ parentChain edges start s verts.length)
+    (v : S) (hv : v ∈ verts) :
+    pairVal (costToCome (shiftCosts edges start w verts.length
+        (pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s)
+          (O.cost s w)) -
+          pairVal (costToCome (recomputeCosts O verts edges start) w))
+        (recomputeCosts O verts edges start)) v) =
+      pairVal (costToCome
+        (recomputeCosts O verts (replaceParent edges s w) start) v) := by
+  obtain ⟨kv, hne_v⟩ := hreach v hv
+  obtain ⟨pv0⟩ := hne_v
+  obtain ⟨kv', pv, hpv, _⟩ := PPath.exists_simple_le O pv0
+  have hkv'_succ : kv' + 1 ≤ verts.length :=
+    PPath.simple_length_le verts hstart (fun e he => (h_end e he).2) hvnd pv hpv
+  have hkv'_le : kv' ≤ verts.length := Nat.le_of_succ_le hkv'_succ
+  have hcosted_v :=
+    (bellmanFord_upper O edges start v kv' pv verts.length hkv'_le).1
+  have hchar_v := pairVal_costToCome_recomputeCosts O verts edges start v
+    h_end hnd hvnd hstart hv kv' pv hpv
+  obtain ⟨ks, hne_s⟩ := hreach s hs
+  obtain ⟨ps0⟩ := hne_s
+  obtain ⟨ks', ps, hps, _⟩ := PPath.exists_simple_le O ps0
+  have hks'_succ : ks' + 1 ≤ verts.length :=
+    PPath.simple_length_le verts hstart (fun e he => (h_end e he).2) hvnd ps hps
+  have hks'_le : ks' ≤ verts.length := Nat.le_of_succ_le hks'_succ
+  have hcosted_s :=
+    (bellmanFord_upper O edges start s ks' ps verts.length hks'_le).1
+  have hchar_s := pairVal_costToCome_recomputeCosts O verts edges start s
+    h_end hnd hvnd hstart hs ks' ps hps
+  obtain ⟨kw, hne_w⟩ := hreach w hw
+  obtain ⟨pw0⟩ := hne_w
+  obtain ⟨kw', pw, hpw, _⟩ := PPath.exists_simple_le O pw0
+  have hchar_w := pairVal_costToCome_recomputeCosts O verts edges start w
+    h_end hnd hvnd hstart hw kw' pw hpw
+  have hdenoms := recomputeCosts_denoms O verts edges start
+  have hmem_v : v ∈ (recomputeCosts O verts edges start).map Prod.fst :=
+    hcosted_v
+  have hmem_s : s ∈ (recomputeCosts O verts edges start).map Prod.fst :=
+    hcosted_s
+  have hden_v : 0 < (costToCome (recomputeCosts O verts edges start) v).2 :=
+    denomsPos_costToCome _ _ hdenoms hmem_v
+  have hden_s : 0 < (costToCome (recomputeCosts O verts edges start) s).2 :=
+    denomsPos_costToCome _ _ hdenoms hmem_s
+  have hne_v : (((costToCome (recomputeCosts O verts edges start) v).2 : Nat) : ℚ) ≠ 0 := by
+    exact_mod_cast (ne_of_gt hden_v)
+  have hne_s : (((costToCome (recomputeCosts O verts edges start) s).2 : Nat) : ℚ) ≠ 0 := by
+    exact_mod_cast (ne_of_gt hden_s)
+  have hd : pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s)
+        (O.cost s w)) - pairVal (costToCome (recomputeCosts O verts edges start) w)
+        = (pcost O ps + O.cost s w) - pcost O pw := by
+    rw [pairVal_ccAdd _ _ hne_s, hchar_s, hchar_w]
+  have h_end' : ∀ e ∈ replaceParent edges s w, e.1 ∈ verts ∧ e.2 ∈ verts :=
+    replaceParent_endpoints edges verts s w hs hw h_end
+  have hnd' : ((replaceParent edges s w).map Prod.snd).Nodup :=
+    replaceParent_nodup edges s w hnd
+  by_cases hwmem : w ∈ pv.verts
+  · obtain ⟨i, j, pfx, sfx, hpfx_nodup, hsfx_nodup, hsfx_sub, hpcost_split⟩ :=
+      ppath_split O pv hpv hwmem
+    have hpcost_pfx : pcost O pfx = pcost O pw :=
+      pcost_eq_of_simple O hnd pfx pw hpfx_nodup hpw
+    have hpcost_pv : pcost O pv = pcost O pw + pcost O sfx := by
+      rw [hpcost_split, hpcost_pfx]
+    have hL1_v := mem_parentChain_iff_mem_verts edges verts start v w
+      hnd hvnd h_end hstart hv kv' pv hpv
+    have hchain_mem : w ∈ parentChain edges start v verts.length :=
+      hL1_v.mp hwmem
+    have hLHS : pairVal (costToCome (shiftCosts edges start w verts.length
+            (pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s)
+              (O.cost s w)) -
+              pairVal (costToCome (recomputeCosts O verts edges start) w))
+            (recomputeCosts O verts edges start)) v)
+          = pcost O pv + ((pcost O ps + O.cost s w) - pcost O pw) := by
+      rw [pairVal_costToCome_shiftCosts edges start w v verts.length _ _ hmem_v hne_v
+        hchain_mem, hchar_v, hd]
+    have hL1_s := mem_parentChain_iff_mem_verts edges verts start s w
+      hnd hvnd h_end hstart hs ks' ps hps
+    have hw_not_ps : w ∉ ps.verts := fun hc => hnotanc (hL1_s.mp hc)
+    obtain ⟨psT, hpsT_verts⟩ :=
+      ppath_replaceParent_of_notmem edges s w start s ks' ps hw_not_ps
+    have hsw_mem : (s, w) ∈ replaceParent edges s w := by
+      obtain ⟨u, hu⟩ := hparent w hw hwne
+      exact replaceParent_mem_parent edges s w u hu
+    obtain ⟨sfxT, hsfxT_verts⟩ :=
+      ppath_replaceParent_of_target_ne (s := s) sfx hsfx_nodup
+    obtain ⟨r, hpcost_r, hverts_r⟩ :=
+      ppath_chain O (PPath.step psT hsw_mem) sfxT
+    have hpcost_mid :
+        pcost O (PPath.step psT hsw_mem) = pcost O psT + O.cost s w :=
+      pcost_step O psT hsw_mem
+    have hpcost_psT : pcost O psT = pcost O ps :=
+      shiftCosts_pcost_of_verts_eq O psT ps hpsT_verts
+    have hpcost_sfxT : pcost O sfxT = pcost O sfx :=
+      shiftCosts_pcost_of_verts_eq O sfxT sfx hsfxT_verts
+    have hpcost_r_eq :
+        pcost O r = (pcost O ps + O.cost s w) + pcost O sfx := by
+      rw [hpcost_r, hpcost_mid, hpcost_psT, hpcost_sfxT]
+    have hmid_verts : (PPath.step psT hsw_mem).verts = psT.verts ++ [w] :=
+      PPath.verts_step psT hsw_mem
+    have hverts_r_eq : r.verts = (ps.verts ++ [w]) ++ sfx.verts.tail := by
+      rw [hverts_r, hmid_verts, hpsT_verts, hsfxT_verts]
+    obtain ⟨t_sfx, ht_sfx⟩ := ppath_verts_cons sfx
+    have hsfx_tail : sfx.verts.tail = t_sfx := by simp [ht_sfx]
+    have hsfx_cons_nodup : (w :: t_sfx).Nodup := by
+      rw [← ht_sfx]; exact hsfx_nodup
+    have hw_not_t : w ∉ t_sfx := (List.nodup_cons.mp hsfx_cons_nodup).1
+    have ht_nodup : t_sfx.Nodup := (List.nodup_cons.mp hsfx_cons_nodup).2
+    have hstart_not_sfx : start ∉ sfx.verts :=
+      shiftCosts_start_absent_of_source sfx hnostart hwne
+    have hdisj_ps_t : ∀ x ∈ ps.verts, x ∉ t_sfx := by
+      intro x hx_ps hx_t
+      have hx_tail : x ∈ sfx.verts.tail := by rw [hsfx_tail]; exact hx_t
+      have hx_sfx : x ∈ sfx.verts := List.mem_of_mem_tail hx_tail
+      have hx_pv : x ∈ pv.verts := hsfx_sub x hx_sfx
+      have hx_ne_w : x ≠ w := by
+        intro heq
+        rw [heq] at hx_ps
+        exact hw_not_ps hx_ps
+      have hx_ne_start : x ≠ start := by
+        intro heq
+        rw [heq] at hx_sfx
+        exact hstart_not_sfx hx_sfx
+      obtain ⟨jpre, _, pre, _, hpre_nodup, _, _, _⟩ :=
+        ppath_split O sfx hsfx_nodup hx_sfx
+      have hL1_w_start := mem_parentChain_iff_mem_verts edges verts start w start
+        hnd hvnd h_end hstart hw kw' pw hpw
+      have hm : start ∈ parentChain edges start w verts.length :=
+        hL1_w_start.mp (start_mem_verts pw)
+      have hns : start ∉ pre.verts :=
+        shiftCosts_start_absent_of_source pre hnostart hwne
+      have hw_chain_x := mem_parentChain_of_ppath_fixed hnd pre hpre_nodup
+        verts.length hm hx_ne_start hns
+      obtain ⟨ix, _, pfx_x, _, hpfx_x_nodup, _, _, _⟩ :=
+        ppath_split O pv hpv hx_pv
+      have hx_verts : x ∈ verts :=
+        PPath.verts_mem verts ps hstart (fun e he => (h_end e he).2) x hx_ps
+      have hL1_x := mem_parentChain_iff_mem_verts edges verts start x start
+        hnd hvnd h_end hstart hx_verts ix pfx_x hpfx_x_nodup
+      have hstart_chain_x : start ∈ parentChain edges start x verts.length :=
+        hL1_x.mp (start_mem_verts pfx_x)
+      have hstab := parentChain_stable_le_aux edges start x verts.length
+        (jpre + verts.length) hstart_chain_x (Nat.le_add_left _ _)
+      have hw_chain_x' : w ∈ parentChain edges start x verts.length := by
+        rw [hstab] at hw_chain_x
+        exact hw_chain_x
+      have hL1_s_x := mem_parentChain_iff_mem_verts edges verts start s x
+        hnd hvnd h_end hstart hs ks' ps hps
+      have hx_chain_s : x ∈ parentChain edges start s verts.length :=
+        hL1_s_x.mp hx_ps
+      have hL1_s_start := mem_parentChain_iff_mem_verts edges verts start s start
+        hnd hvnd h_end hstart hs ks' ps hps
+      have hstart_chain_s : start ∈ parentChain edges start s verts.length :=
+        hL1_s_start.mp (start_mem_verts ps)
+      have hw_chain_s : w ∈ parentChain edges start s verts.length :=
+        mem_parentChain_trans edges start x w s verts.length hstart_chain_s
+          hx_chain_s hw_chain_x'
+      exact hnotanc hw_chain_s
+    have hps_w_nodup : (ps.verts ++ [w]).Nodup := by
+      apply List.Nodup.append hps _ _
+      · simp
+      · intro x hx_mem hcontra
+        simp at hcontra
+        rw [hcontra] at hx_mem
+        exact hw_not_ps hx_mem
+    have hdisj_outer : (ps.verts ++ [w]).Disjoint t_sfx := by
+      intro x hx_mem
+      rw [List.mem_append] at hx_mem
+      cases hx_mem with
+      | inl hx_ps => exact hdisj_ps_t x hx_ps
+      | inr hx_w =>
+        simp at hx_w
+        rw [hx_w]
+        exact hw_not_t
+    have hr_nodup : r.verts.Nodup := by
+      rw [hverts_r_eq, hsfx_tail]
+      exact List.Nodup.append hps_w_nodup ht_nodup hdisj_outer
+    have hchar_r := pairVal_costToCome_recomputeCosts O verts
+      (replaceParent edges s w) start v h_end' hnd' hvnd hstart hv _ r
+      hr_nodup
+    rw [hLHS, hchar_r, hpcost_r_eq, hpcost_pv]
+    linarith
+  · have hL1 := mem_parentChain_iff_mem_verts edges verts start v w
+      hnd hvnd h_end hstart hv kv' pv hpv
+    have hchain_notmem : w ∉ parentChain edges start v verts.length :=
+      fun hc => hwmem (hL1.mpr hc)
+    obtain ⟨qv, hqv_verts⟩ :=
+      ppath_replaceParent_of_notmem edges s w start v kv' pv hwmem
+    have hqv_nodup : qv.verts.Nodup := by rw [hqv_verts]; exact hpv
+    have hchar_v' := pairVal_costToCome_recomputeCosts O verts
+      (replaceParent edges s w) start v h_end' hnd' hvnd hstart hv _ qv
+      hqv_nodup
+    have hpcost_qv : pcost O qv = pcost O pv :=
+      shiftCosts_pcost_of_verts_eq O qv pv hqv_verts
+    rw [costToCome_shiftCosts_of_notmem edges start w v verts.length _ _
+      hchain_notmem, hchar_v, hchar_v', hpcost_qv]
+
+theorem shiftCosts_denoms {S : Type} [DecidableEq S] (edges : List (S × S))
+    (start w : S) (n : ℕ) (d : Rat) (costs : List (S × Int × Nat))
+    (h : DenomsPos costs) :
+    DenomsPos (shiftCosts edges start w n d costs) := by
+  intro kv hmem
+  unfold shiftCosts at hmem
+  obtain ⟨e, he_mem, he_eq⟩ := List.mem_map.mp hmem
+  by_cases hif : w ∈ parentChain edges start e.1 n
+  · simp [hif] at he_eq
+    subst he_eq
+    have hpos : 0 < e.2.2 := h e he_mem
+    have hden : 0 < d.den := Nat.pos_of_ne_zero (rat_den_ne_zero d)
+    exact ccAdd_den_pos e.2 d hpos hden
+  · simp [hif] at he_eq
+    subst he_eq
+    exact h e he_mem
+
+theorem shiftCosts_pairVal_eq_recomputeCosts {S : Type} [DecidableEq S] (O : Oracles S)
+    (verts : List S) (edges : List (S × S)) (start s w : S)
+    (costs : List (S × Int × Nat))
+    (h_end : ∀ e ∈ edges, e.1 ∈ verts ∧ e.2 ∈ verts)
+    (hnd : (edges.map Prod.snd).Nodup)
+    (hnoself : ∀ e ∈ edges, e.1 ≠ e.2)
+    (hnostart : ∀ e ∈ edges, e.2 ≠ start)
+    (hparent : ∀ x ∈ verts, x ≠ start → ∃ u, (u, x) ∈ edges)
+    (hvnd : verts.Nodup) (hstart : start ∈ verts)
+    (hreach : ∀ v ∈ verts, ∃ k, Nonempty (PPath edges start v k))
+    (hs : s ∈ verts) (hw : w ∈ verts) (hwne : w ≠ start) (hsw : s ≠ w)
+    (hnotanc : w ∉ parentChain edges start s verts.length)
+    (hden : DenomsPos costs)
+    (hcosted : ∀ v ∈ verts, v ∈ costs.map Prod.fst)
+    (heq : ∀ v ∈ verts, pairVal (costToCome costs v) =
+      pairVal (costToCome (recomputeCosts O verts edges start) v))
+    (v : S) (hv : v ∈ verts) :
+    pairVal (costToCome (shiftCosts edges start w verts.length
+        (pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+          pairVal (costToCome costs w)) costs) v) =
+      pairVal (costToCome
+        (recomputeCosts O verts (replaceParent edges s w) start) v) := by
+  have hmem_recomp : ∀ u ∈ verts, u ∈ (recomputeCosts O verts edges start).map Prod.fst := by
+    intro u hu
+    obtain ⟨k, ⟨p⟩⟩ := hreach u hu
+    obtain ⟨k', p', hnodup, _hcost⟩ := PPath.exists_simple_le O p
+    have hlen : k' + 1 ≤ verts.length :=
+      PPath.simple_length_le verts hstart (fun e he => (h_end e he).2) hvnd p' hnodup
+    have hle : k' ≤ verts.length := by omega
+    have hbell := bellmanFord_upper O edges start u k' p' verts.length hle
+    unfold recomputeCosts
+    exact hbell.1
+  have hden_recomp : DenomsPos (recomputeCosts O verts edges start) :=
+    recomputeCosts_denoms O verts edges start
+  have hpos_costs_s : 0 < (costToCome costs s).2 :=
+    denomsPos_costToCome costs s hden (hcosted s hs)
+  have hne_costs_s : ((costToCome costs s).2 : ℚ) ≠ 0 :=
+    by exact_mod_cast (ne_of_gt hpos_costs_s)
+  have hpos_recomp_s : 0 < (costToCome (recomputeCosts O verts edges start) s).2 :=
+    denomsPos_costToCome _ s hden_recomp (hmem_recomp s hs)
+  have hne_recomp_s : ((costToCome (recomputeCosts O verts edges start) s).2 : ℚ) ≠ 0 :=
+    by exact_mod_cast (ne_of_gt hpos_recomp_s)
+  have hpos_costs_v : 0 < (costToCome costs v).2 :=
+    denomsPos_costToCome costs v hden (hcosted v hv)
+  have hne_costs_v : ((costToCome costs v).2 : ℚ) ≠ 0 :=
+    by exact_mod_cast (ne_of_gt hpos_costs_v)
+  have hpos_recomp_v : 0 < (costToCome (recomputeCosts O verts edges start) v).2 :=
+    denomsPos_costToCome _ v hden_recomp (hmem_recomp v hv)
+  have hne_recomp_v : ((costToCome (recomputeCosts O verts edges start) v).2 : ℚ) ≠ 0 :=
+    by exact_mod_cast (ne_of_gt hpos_recomp_v)
+  have hcc_costs : pairVal (ccAdd (costToCome costs s) (O.cost s w)) =
+      pairVal (costToCome costs s) + (O.cost s w : ℚ) :=
+    pairVal_ccAdd (costToCome costs s) (O.cost s w) hne_costs_s
+  have hcc_recomp : pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s) (O.cost s w)) =
+      pairVal (costToCome (recomputeCosts O verts edges start) s) + (O.cost s w : ℚ) :=
+    pairVal_ccAdd (costToCome (recomputeCosts O verts edges start) s) (O.cost s w) hne_recomp_s
+  have hdelta : (pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+      pairVal (costToCome costs w)) =
+      (pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s) (O.cost s w)) -
+        pairVal (costToCome (recomputeCosts O verts edges start) w)) := by
+    rw [hcc_costs, hcc_recomp, heq s hs, heq w hw]
+  have hexact := shiftCosts_exact O verts edges start s w h_end hnd hnoself hnostart hparent hvnd hstart hreach hs hw hwne hsw hnotanc v hv
+  by_cases hmem : w ∈ parentChain edges start v verts.length
+  · have hshift_costs := pairVal_costToCome_shiftCosts edges start w v verts.length
+      (pairVal (ccAdd (costToCome costs s) (O.cost s w)) - pairVal (costToCome costs w))
+      costs (hcosted v hv) hne_costs_v hmem
+    have hshift_recomp := pairVal_costToCome_shiftCosts edges start w v verts.length
+      (pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s) (O.cost s w)) -
+        pairVal (costToCome (recomputeCosts O verts edges start) w))
+      (recomputeCosts O verts edges start) (hmem_recomp v hv) hne_recomp_v hmem
+    calc pairVal (costToCome (shiftCosts edges start w verts.length
+          (pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+            pairVal (costToCome costs w)) costs) v)
+        = pairVal (costToCome costs v) +
+          ((pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+            pairVal (costToCome costs w)) : ℚ) := hshift_costs
+      _ = pairVal (costToCome (recomputeCosts O verts edges start) v) +
+          ((pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s) (O.cost s w)) -
+            pairVal (costToCome (recomputeCosts O verts edges start) w)) : ℚ) := by
+            rw [heq v hv, hdelta]
+      _ = pairVal (costToCome (shiftCosts edges start w verts.length
+          (pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s) (O.cost s w)) -
+            pairVal (costToCome (recomputeCosts O verts edges start) w))
+          (recomputeCosts O verts edges start)) v) := hshift_recomp.symm
+      _ = pairVal (costToCome
+          (recomputeCosts O verts (replaceParent edges s w) start) v) := hexact
+  · have hcost_eq : costToCome (shiftCosts edges start w verts.length
+        (pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+          pairVal (costToCome costs w)) costs) v = costToCome costs v :=
+      costToCome_shiftCosts_of_notmem edges start w v verts.length _ costs hmem
+    have hrecomp_eq : costToCome (shiftCosts edges start w verts.length
+        (pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s) (O.cost s w)) -
+          pairVal (costToCome (recomputeCosts O verts edges start) w))
+        (recomputeCosts O verts edges start)) v =
+        costToCome (recomputeCosts O verts edges start) v :=
+      costToCome_shiftCosts_of_notmem edges start w v verts.length _ _ hmem
+    calc pairVal (costToCome (shiftCosts edges start w verts.length
+          (pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+            pairVal (costToCome costs w)) costs) v)
+        = pairVal (costToCome costs v) := by rw [hcost_eq]
+      _ = pairVal (costToCome (recomputeCosts O verts edges start) v) := heq v hv
+      _ = pairVal (costToCome (shiftCosts edges start w verts.length
+          (pairVal (ccAdd (costToCome (recomputeCosts O verts edges start) s) (O.cost s w)) -
+            pairVal (costToCome (recomputeCosts O verts edges start) w))
+          (recomputeCosts O verts edges start)) v) := by rw [hrecomp_eq]
+      _ = pairVal (costToCome
+          (recomputeCosts O verts (replaceParent edges s w) start) v) := hexact
+
+theorem shiftCostsPair_pairVal_eq_recomputeCosts {S : Type} [DecidableEq S] (O : Oracles S)
+    (verts : List S) (edges : List (S × S)) (start s w : S)
+    (costs : List (S × Int × Nat))
+    (h_end : ∀ e ∈ edges, e.1 ∈ verts ∧ e.2 ∈ verts)
+    (hnd : (edges.map Prod.snd).Nodup)
+    (hnoself : ∀ e ∈ edges, e.1 ≠ e.2)
+    (hnostart : ∀ e ∈ edges, e.2 ≠ start)
+    (hparent : ∀ x ∈ verts, x ≠ start → ∃ u, (u, x) ∈ edges)
+    (hvnd : verts.Nodup) (hstart : start ∈ verts)
+    (hreach : ∀ v ∈ verts, ∃ k, Nonempty (PPath edges start v k))
+    (hs : s ∈ verts) (hw : w ∈ verts) (hwne : w ≠ start) (hsw : s ≠ w)
+    (hnotanc : w ∉ parentChain edges start s verts.length)
+    (hden : DenomsPos costs)
+    (hcosted : ∀ v ∈ verts, v ∈ costs.map Prod.fst)
+    (heq : ∀ v ∈ verts, pairVal (costToCome costs v) =
+      pairVal (costToCome (recomputeCosts O verts edges start) v))
+    (v : S) (hv : v ∈ verts) :
+    pairVal (costToCome (shiftCostsPair edges start w verts.length
+        (pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+          (costToCome costs w)) costs) v) =
+      pairVal (costToCome
+        (recomputeCosts O verts (replaceParent edges s w) start) v) := by
+  have hRat := shiftCosts_pairVal_eq_recomputeCosts O verts edges start s w costs
+    h_end hnd hnoself hnostart hparent hvnd hstart hreach hs hw hwne hsw hnotanc
+    hden hcosted heq v hv
+  have hcosted_s : s ∈ costs.map Prod.fst := hcosted s hs
+  have hcosted_w : w ∈ costs.map Prod.fst := hcosted w hw
+  have hcosted_v : v ∈ costs.map Prod.fst := hcosted v hv
+  have hpos_s : 0 < (costToCome costs s).2 :=
+    denomsPos_costToCome costs s hden hcosted_s
+  have hpos_w : 0 < (costToCome costs w).2 :=
+    denomsPos_costToCome costs w hden hcosted_w
+  have hpos_v : 0 < (costToCome costs v).2 :=
+    denomsPos_costToCome costs v hden hcosted_v
+  have hden_rat : 0 < (O.cost s w).den :=
+    Nat.pos_of_ne_zero (rat_den_ne_zero (O.cost s w))
+  have hpos_A : 0 < (ccAdd (costToCome costs s) (O.cost s w)).2 := by
+    unfold ccAdd
+    simp only
+    exact Nat.mul_pos hpos_s hden_rat
+  have hA_ne : (((ccAdd (costToCome costs s) (O.cost s w)).2 : Nat) : ℚ) ≠ 0 := by
+    exact_mod_cast ne_of_gt hpos_A
+  have hB_ne : (((costToCome costs w).2 : Nat) : ℚ) ≠ 0 := by
+    exact_mod_cast ne_of_gt hpos_w
+  have hV_ne : (((costToCome costs v).2 : Nat) : ℚ) ≠ 0 := by
+    exact_mod_cast ne_of_gt hpos_v
+  have hPairVal : pairVal (pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+      (costToCome costs w)) =
+      pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+        pairVal (costToCome costs w) :=
+    pairVal_pairDelta _ _ hA_ne hB_ne
+  have hpos_dPair : 0 < (pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+      (costToCome costs w)).2 := by
+    unfold pairDelta
+    simp only
+    exact Nat.mul_pos hpos_A hpos_w
+  have hdPair_ne : ((((pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+      (costToCome costs w)).2 : Nat)) : ℚ) ≠ 0 := by
+    exact_mod_cast ne_of_gt hpos_dPair
+  by_cases hmem : w ∈ parentChain edges start v verts.length
+  · have hPair := pairVal_costToCome_shiftCostsPair edges start w v verts.length
+      (pairDelta (ccAdd (costToCome costs s) (O.cost s w)) (costToCome costs w))
+      costs hcosted_v hV_ne hdPair_ne hmem
+    have hRatRead := pairVal_costToCome_shiftCosts edges start w v verts.length
+      (pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+        pairVal (costToCome costs w)) costs hcosted_v hV_ne hmem
+    rw [hPairVal] at hPair
+    rw [hPair]
+    rw [hRatRead] at hRat
+    exact hRat
+  · have hPairUn : costToCome (shiftCostsPair edges start w verts.length
+        (pairDelta (ccAdd (costToCome costs s) (O.cost s w))
+          (costToCome costs w)) costs) v = costToCome costs v :=
+      costToCome_shiftCostsPair_of_notmem _ _ _ _ _ _ _ hmem
+    have hRatUn : costToCome (shiftCosts edges start w verts.length
+        (pairVal (ccAdd (costToCome costs s) (O.cost s w)) -
+          pairVal (costToCome costs w)) costs) v = costToCome costs v :=
+      costToCome_shiftCosts_of_notmem _ _ _ _ _ _ _ hmem
+    rw [hPairUn]
+    rw [hRatUn] at hRat
+    exact hRat
+
 /-- Extend the tree by one steered sample: steer `s` from its nearest vertex
     `u` to `x`, and if `x` is free, the nearest edge links, `x` is fresh, and
-    `x` has a parent `p`, add `x` and `(p, x)`, rewire over the old vertices
+    `x` has a parent `p` (parent search falls back to `u`), add `x` and
+    `(p, x)`, rewire over the old vertices
     at the pre-insertion count `verts.length` while refusing `p`'s ancestor
     chain, judging flips by the post-insertion recomputed guard table
-    (recomputed again after each flip inside `rewireAux`); the final costs
+    (maintained by subtree shifts after each flip inside `rewireAux`,
+    agreeing in rational value with per-flip recomputation); the final costs
     are the recomputation over the new edges. -/
 def extendStar {S : Type} [DecidableEq S] (O : Oracles S) (verts : List S)
     (edges : List (S × S)) (costs : List (S × (Int × Nat))) (radiusOf : ℕ → ℚ)
@@ -2813,7 +4386,7 @@ def extendStar {S : Type} [DecidableEq S] (O : Oracles S) (verts : List S)
   let u := nearest O verts start s
   let x := O.steer u s
   if O.free x = true ∧ O.link u x = true ∧ x ∉ verts then
-    match chooseParent O verts costs radiusOf start x with
+    match chooseParent O verts costs radiusOf u x with
     | none => (verts, edges, costs)
     | some p =>
         let verts' := x :: verts
@@ -2839,13 +4412,13 @@ theorem extendStar_invar {S : Type} [DecidableEq S] (O : Oracles S)
   set x := O.steer u s with hx
   by_cases hgate : O.free x = true ∧ O.link u x = true ∧ x ∉ verts
   · rw [ite_eq_left hgate]
-    cases hcp : chooseParent O verts costs radiusOf start x with
+    cases hcp : chooseParent O verts costs radiusOf u x with
     | none =>
         exact h
     | some p =>
-        have hpmem : p ∈ candidates O verts radiusOf start x :=
-          chooseParent_mem O verts costs radiusOf start x p hcp
-        have hmem := (mem_candidates O verts radiusOf start x p).mp hpmem
+        have hpmem : p ∈ candidates O verts radiusOf u x :=
+          chooseParent_mem O verts costs radiusOf u x p hcp
+        have hmem := (mem_candidates O verts radiusOf u x p).mp hpmem
         obtain ⟨hp_verts, _, _⟩ := hmem
         have hx_fresh : x ∉ verts := hgate.2.2
         have hx_ne : x ≠ start := fun heq => hx_fresh (heq.symm ▸ h.start_mem)
@@ -3008,7 +4581,7 @@ theorem extendStar_cost_start {S : Type} [DecidableEq S] (O : Oracles S)
   set x := O.steer u s with hx
   by_cases hgate : O.free x = true ∧ O.link u x = true ∧ x ∉ verts
   · rw [ite_eq_left hgate]
-    cases hcp : chooseParent O verts costs radiusOf start x with
+    cases hcp : chooseParent O verts costs radiusOf u x with
     | none =>
         dsimp only
         rw [h.costs_eq]
@@ -3114,8 +4687,8 @@ theorem rrtStarAux_subset {S : Type} [DecidableEq S] (O : Oracles S)
                 (O.steer (nearest O verts start s) s) = true ∧
               O.steer (nearest O verts start s) s ∉ verts)
             · rw [ite_eq_left hcond] at hv
-              cases hcp : chooseParent O verts costs radiusOf start
-                (O.steer (nearest O verts start s) s) with
+              cases hcp : chooseParent O verts costs radiusOf
+                (nearest O verts start s) (O.steer (nearest O verts start s) s) with
               | none =>
                   simp only [hcp] at hv
                   exact Or.inl hv

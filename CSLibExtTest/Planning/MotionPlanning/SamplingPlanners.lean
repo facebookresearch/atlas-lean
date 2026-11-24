@@ -26,7 +26,8 @@ rewiring with recomputed tree costs, descendant cost freshness, the
 nearest-vertex candidate fallback, ancestor rejection on rewire, `rewireAux`
 forbid-guard isolation with a synthetic cost table, an RRT* size-dependent
 radius schedule, steering-oracle midpoint insertion for RRT and RRT*, the
-nearest-edge gate regression, and axiom probes on the main lemmas.
+nearest-edge gate regression, the gate-fallback regression, and axiom probes
+on the main lemmas.
 -/
 
 /-- Squared Euclidean distance on `Int × Int`, as the RRT/sPRM cost proxy,
@@ -118,6 +119,19 @@ def testOraclesStarGate : Oracles (Int × Int) :=
   { free := fun _ => true
     link := fun a b => a == (0, 0) && (b == (5, 0) || b == (6, 0))
     steer := fun _ s => s
+    cost := sqDist
+    radius := 100
+    cost_nonneg := sqDist_nonneg
+    cost_self := sqDist_self
+    cost_pos := sqDist_pos }
+
+/-- Oracles isolating the RRT* gate fallback: only the start links, to `(9, 0)`
+and to the steered point `(10, 0)`, while `(9, 0)` links to nothing; steering
+sends the raw sample `(1, 0)` to `(10, 0)` and is the identity otherwise. -/
+def testOraclesGateFallback : Oracles (Int × Int) :=
+  { free := fun _ => true
+    link := fun a b => a == (0, 0) && (b == (9, 0) || b == (10, 0))
+    steer := fun _ s => if s == (1, 0) then (10, 0) else s
     cost := sqDist
     radius := 100
     cost_nonneg := sqDist_nonneg
@@ -373,6 +387,18 @@ theorem testRewireAux_forbidAbsentFlips :
       [((0, 0), (10, 0)), ((0, 0), (9, 0))] =
       [((9, 0), (10, 0)), ((0, 0), (9, 0))] := by decide
 
+def testShiftCosts : List ((Int × Int) × (Int × Nat)) :=
+  [((9, 0), (0, 1)), ((10, 0), (100, 1)), ((11, 0), (101, 1)), ((0, 0), (0, 1))]
+
+/-- Descendant shift: `(10, 0)` flips to the new vertex `(9, 0)` while
+`(11, 0)`, a child of `(10, 0)`, has its table entry shifted down and then
+does not flip. With a stale unshifted table the descendant would flip. -/
+theorem testRewireAux_shiftDescendant :
+    rewireAux testOraclesBig testShiftCosts (fun _ => testOraclesBig.radius)
+      3 [] (0, 0) (9, 0) (0, 0) [(10, 0), (11, 0)]
+      [((0, 0), (10, 0)), ((10, 0), (11, 0)), ((0, 0), (9, 0))] =
+      [((9, 0), (10, 0)), ((10, 0), (11, 0)), ((0, 0), (9, 0))] := by decide
+
 /-- Convention: `extendStar` evaluates `radiusOf` at `verts.length` (the
 pre-insertion vertex count) for both parent selection (`candidates` via
 `chooseParent`) and the rewire pass, so the two agree. The schedule below is
@@ -472,6 +498,17 @@ theorem testRrtStar_radiusPreInsertion :
       [(10, 0), (9, 0)]).2.1 =
       [((0, 0), (9, 0)), ((9, 0), (10, 0))] := by decide
 
+/-- RRT* gate fallback: with `testOraclesGateFallback`, sample `(9, 0)` inserts
+through the allowed link; sample `(1, 0)` has nearest `(0, 0)` and steers to
+`(10, 0)`, which the gate admits and the fallback parent `(0, 0)` adopts, even
+though `(9, 0)` — the vertex nearest the steered point — does not link to it.
+A fallback computed from the steered point would leave no candidate and
+discard the extension. -/
+theorem testRrtStar_gateFallback :
+    rrtStar testOraclesGateFallback (fun _ => 0) (0, 0) [(9, 0), (1, 0)] =
+      ([(10, 0), (9, 0), (0, 0)], [((0, 0), (10, 0)), ((0, 0), (9, 0))],
+       [((9, 0), (81, 1)), ((10, 0), (100, 1)), ((0, 0), (0, 1))]) := by decide
+
 
 #print axioms sprmVertices_all_free
 #print axioms sprmEdges_symmetric
@@ -499,6 +536,7 @@ theorem testRrtStar_radiusPreInsertion :
 #print axioms testRewireAux_improvementHolds
 #print axioms testRewireAux_forbidBlocks
 #print axioms testRewireAux_forbidAbsentFlips
+#print axioms testRewireAux_shiftDescendant
 #print axioms testRrtStar_schedule_verts
 #print axioms testRrtStar_schedule_edges
 #print axioms testRrtStar_schedule_constLo_edges
@@ -510,5 +548,6 @@ theorem testRrtStar_radiusPreInsertion :
 #print axioms testRrtStar_steerMidpoint
 #print axioms testRrtStar_nearestBlocked
 #print axioms testRrtStar_radiusPreInsertion
+#print axioms testRrtStar_gateFallback
 
 end Cslib.Planning.MotionPlanning.SamplingPlanners
