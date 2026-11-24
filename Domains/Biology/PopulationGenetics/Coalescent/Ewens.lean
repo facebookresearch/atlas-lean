@@ -92,9 +92,13 @@ def alleleCount {n : ℕ} (π : n.Partition) (j : ℕ) : ℕ := π.parts.count j
 /-- The **Ewens sampling formula** written on an allele-count configuration
 `a = (a_1, …, a_n)` (Ewens 1972):
 `P(a_1, …, a_n) = n! / (θ (θ + 1) ⋯ (θ + n - 1)) · ∏_{j=1}^n (θ / j) ^ {a_j} / a_j!`.
-Only the values `a 1, …, a n` enter. The formula is the probability of the configuration `a`
-when `∑_{j=1}^n j a_j = n` (`sum_ewensProb_alleleCount_eq`); otherwise no sample has
-configuration `a`. -/
+Only the values `a 1, …, a n` enter. It is defined for every real `θ`: when
+`θ (θ + 1) ⋯ (θ + n - 1) = 0`, that is when `θ = -i` for an integer `0 ≤ i < n`, the convention
+`x / 0 = 0` makes it `0`; for `n = 0` the products are empty and it is `1` for every `θ`. For
+`θ > 0` the formula is the probability that the configuration of the sample agrees with `a` at
+`1, …, n` when `∑_{j=1}^n j a_j = n` (`sum_ewensProb_alleleCount_eq`); otherwise no sample has
+such a configuration, although the formula need not vanish (`n = 1`, `a 1 = 0` and `θ = 1`
+give `1`). -/
 def ewensConfigProb (θ : ℝ) (n : ℕ) (a : ℕ → ℕ) : ℝ :=
   (n ! : ℝ) / (ascPochhammer ℝ n).eval θ * ∏ j ∈ Icc 1 n, (θ / j) ^ a j / ((a j)! : ℝ)
 
@@ -154,9 +158,12 @@ private lemma sum_configParts (a : ℕ → ℕ) :
 
 open scoped Classical in
 /-- **The Ewens sampling formula as the law of the allele-count configuration.** If
-`∑_{j=1}^n j a_j = n`, exactly one allelic partition has configuration `a`, and its Ewens
-probability is `ewensConfigProb θ n a`; so the probability that the sample has configuration
-`a` is `n! / θ^{(n)} · ∏_j (θ / j) ^ {a_j} / a_j!`. -/
+`∑_{j=1}^n j a_j = n`, exactly one allelic partition has a configuration agreeing with `a` at
+`1, …, n`, and its Ewens weight is `ewensConfigProb θ n a`, for every real `θ` (with the
+convention `x / 0 = 0` both are `0` when `θ = -i` for an integer `0 ≤ i < n`; for `n = 0` the
+products are empty and the common value is `1` for every `θ`); so, for `θ > 0`,
+the probability that the configuration of the sample agrees with `a` at `1, …, n` is
+`n! / θ^{(n)} · ∏_j (θ / j) ^ {a_j} / a_j!`. -/
 theorem sum_ewensProb_alleleCount_eq (θ : ℝ) {a : ℕ → ℕ} (ha : ∑ j ∈ Icc 1 n, j * a j = n) :
     ∑ π : n.Partition with ∀ j ∈ Icc 1 n, alleleCount π j = a j, ewensProb θ π =
       ewensConfigProb θ n a := by
@@ -179,8 +186,9 @@ theorem sum_ewensProb_alleleCount_eq (θ : ℝ) {a : ℕ → ℕ} (ha : ∑ j �
   exact prod_congr rfl fun j hj ↦ by rw [h₀ j hj]
 
 open scoped Classical in
-/-- A configuration with `∑_{j=1}^n j a_j ≠ n` is the configuration of no sample of `n` genes,
-so it has probability zero. -/
+/-- A configuration with `∑_{j=1}^n j a_j ≠ n` agrees at `1, …, n` with the configuration of no
+sample of `n` genes, so the Ewens weights of the matching partitions sum to zero (the probability
+of such a configuration, for `θ > 0`); `ewensConfigProb θ n a` itself need not vanish. -/
 theorem sum_ewensProb_alleleCount_eq_zero (θ : ℝ) {a : ℕ → ℕ}
     (ha : ∑ j ∈ Icc 1 n, j * a j ≠ n) :
     ∑ π : n.Partition with ∀ j ∈ Icc 1 n, alleleCount π j = a j, ewensProb θ π = 0 := by
@@ -188,8 +196,8 @@ theorem sum_ewensProb_alleleCount_eq_zero (θ : ℝ) {a : ℕ → ℕ}
   simp only [mem_filter, mem_univ, true_and] at hπ
   exact (sum_congr rfl fun j hj ↦ by rw [hπ j hj]).trans (sum_mul_alleleCount π)
 
-/-- **Expected number of alleles**, in configuration form: under the Ewens sampling formula,
-`E[K_n] = E[∑_{j=1}^n a_j] = ∑_{i=0}^{n-1} θ / (θ + i)` (Ewens 1972). -/
+/-- **Expected number of alleles**, in configuration form: under the Ewens sampling formula with
+`θ > 0`, `E[K_n] = E[∑_{j=1}^n a_j] = ∑_{i=0}^{n-1} θ / (θ + i)` (Ewens 1972). -/
 theorem sum_ewensProb_mul_sum_alleleCount (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
     ∑ π : n.Partition, ewensProb θ π * ∑ j ∈ Icc 1 n, (alleleCount π j : ℝ) =
       ∑ i ∈ range n, θ / (θ + i) := by
@@ -213,7 +221,11 @@ number of lineages to `k - 1`: a coalescence merges two lineages, and a mutation
 allele carried by exactly the genes descending from that lineage, which is then removed
 ("killed") because earlier mutations on it are invisible in the sample. By memorylessness the
 clocks restart at each level, so one independent pair of clocks per level determines the
-sequence of events. The values of `C k`, `M k` for `k ∉ [2, n]` are irrelevant. -/
+sequence of events. The values of `C k`, `M k` for `k ∉ [2, n]` are irrelevant. The exponential
+law `expMeasure λ` of a rate `λ ≤ 0` is the zero measure, so the conditions are meant for
+`θ > 0`: for `n ≥ 2` and `θ ≤ 0` no such structure exists, since the laws of `C 2` and `M 2` are
+both images of `μ`, of equal total mass, but have masses `1` and `0`. For `n < 2` there are no
+levels and `θ` plays no role. -/
 structure KillingCoalescent (μ : Measure Ω) (n : ℕ) (θ : ℝ) where
   /-- `C k` is the waiting time to the next coalescence with `k` lineages. -/
   C : ℕ → Ω → ℝ
@@ -244,8 +256,8 @@ the Ewens statistic `π.parts.card` of the empty partition. -/
 def numAlleles (ω : Ω) : ℕ :=
   if n = 0 then 0 else 1 + #{k ∈ Icc 2 n | K.M k ω < K.C k ω}
 
-/-- With `k ≥ 2` lineages, the next event back in time is a mutation with probability
-`θ / (θ + k - 1)`. -/
+/-- On a probability space, for `θ > 0` and `2 ≤ k ≤ n`: with `k` lineages, the next event back in
+time is a mutation with probability `θ / (θ + k - 1)`. -/
 theorem measureReal_mutation_first [IsProbabilityMeasure μ] (hθ : 0 < θ) {k : ℕ}
     (hk : k ∈ Icc 2 n) :
     μ.real {ω | K.M k ω < K.C k ω} = θ / (θ + (k - 1 : ℝ)) := by
@@ -266,9 +278,10 @@ private lemma sum_Icc_two (θ : ℝ) (hθ : 0 < θ) {n : ℕ} (hn : 1 ≤ n) :
     push_cast
     ring_nf
 
-/-- **Expected number of alleles from the coalescent** (Ewens 1972; Durrett 2008, §1.3):
-`E[K_n] = ∑_{i=0}^{n-1} θ / (θ + i)`, summing the probability `θ / (θ + k - 1)` that the event
-at level `k` is a killing. -/
+/-- **Expected number of alleles from the coalescent** (Ewens 1972; Durrett 2008, §1.3): on a
+probability space, for `θ > 0` and `n ≥ 1`, `E[K_n] = ∑_{i=0}^{n-1} θ / (θ + i)`: `1` (the term
+`i = 0`) for the allele of the last remaining lineage, plus the probabilities `θ / (θ + k - 1)`,
+`2 ≤ k ≤ n`, that the event at level `k` is a killing. For `n = 1` both sides are `1`. -/
 theorem integral_numAlleles [IsProbabilityMeasure μ] (hθ : 0 < θ) (hn : 1 ≤ n) :
     ∫ ω, (K.numAlleles ω : ℝ) ∂μ = ∑ i ∈ range n, θ / (θ + i) := by
   classical
@@ -295,7 +308,7 @@ theorem integral_numAlleles [IsProbabilityMeasure μ] (hθ : 0 < θ) (hn : 1 ≤
     K.measureReal_mutation_first hθ hk]
 
 /-- The coalescent with killing and the Ewens sampling formula give the same expected number of
-alleles. -/
+alleles, on a probability space, for `θ > 0` and `n ≥ 1`. -/
 theorem integral_numAlleles_eq_ewens [IsProbabilityMeasure μ] (hθ : 0 < θ) (hn : 1 ≤ n) :
     ∫ ω, (K.numAlleles ω : ℝ) ∂μ = ∑ π : n.Partition, ewensProb θ π * (π.parts.card : ℝ) := by
   rw [K.integral_numAlleles hθ hn, sum_ewensProb_mul_card_parts θ hθ n]
@@ -321,7 +334,10 @@ theorem killingRate_pos {n : ℕ} {θ : ℝ} (hθ : 0 < θ) (i : Icc 2 n ⊕ Icc
     exact Nat.choose_pos (by grind)
 
 /-- The canonical probability space for the coalescent with killing: independent exponential
-clocks with rates `killingRate n θ`. -/
+clocks with rates `killingRate n θ`, for `θ > 0` (the exponential law `expMeasure λ` of a rate
+`λ ≤ 0` is the zero measure). For `n ≥ 2` and `θ ≤ 0` some mutation rate is `≤ 0` and the product
+is the zero measure; for `n < 2` there are no clocks and it is the unit point mass, for every
+`θ`. -/
 def killingMeasure (n : ℕ) (θ : ℝ) : Measure (Icc 2 n ⊕ Icc 2 n → ℝ) :=
   Measure.pi fun i => expMeasure (killingRate n θ i)
 

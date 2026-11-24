@@ -13,6 +13,7 @@ Approximation and interpolation of functions: Chebyshev equioscillation, best ap
 - [Lagrange interpolation](lagrange-interpolation/README.md)
 - [Low-rank matrix recovery](low-rank-matrix-recovery/README.md)
 - [Matching pursuit](matching-pursuit/README.md)
+- [Polynomial approximation with derivatives in several variables](polynomial-approximation-with-derivatives-in-sev/README.md)
 - [Sparse recovery by orthogonal matching pursuit](sparse-recovery-by-orthogonal-matching-pursuit/README.md)
 - [Sparse recovery under the restricted isometry property](sparse-recovery-under-the-restricted-isometry-pr/README.md)
 - [Uniform approximation by partial sums of one power series](uniform-approximation-by-partial-sums-of-one-pow/README.md)

@@ -97,26 +97,33 @@ namespace MathlibExt.Biology.PopulationGenetics.SocialSelection
 variable {ι : Type*} [Fintype ι]
 
 /-- The population covariance `𝔼 i, (x i - x̄) (y i - ȳ)` (population means, divisor `|ι|`). This
-is the covariance term of `Selection.price`; `popCov z z` is the population variance of `z`. -/
+is the covariance term of `Selection.price`; `popCov z z` is the population variance of `z`.
+For an empty `ι` every average, and so the covariance, is `0`. -/
 noncomputable def popCov (x y : ι → ℝ) : ℝ := 𝔼 i, (x i - 𝔼 j, x j) * (y i - 𝔼 j, y j)
 
 /-- Regression relatedness: the regression coefficient `Cov(y, z) / Var(z)` of partner trait `y`
-on own trait `z` (Queller 1992). It is `0` when `Var(z) = 0`, by Lean's `a / 0 = 0`. -/
+on own trait `z` (Queller 1992). It is `0` when `Var(z) = 0`, by the convention `x / 0 = 0`; the
+intended domain is `Var(z) > 0`. -/
 noncomputable def relatedness (y z : ι → ℝ) : ℝ := popCov y z / popCov z z
 
 /-- The change `Δz̄ = ∑ i, w i z' i / ∑ i, w i - 𝔼 i, z i` in mean trait from parents to
-offspring, for fitnesses `w`, parental traits `z` and mean offspring traits `z'`. -/
+offspring, for fitnesses `w`, parental traits `z` and mean offspring traits `z'`. When
+`∑ i, w i = 0` the convention `x / 0 = 0` makes the first term `0`, so the value is `-𝔼 i, z i`
+(for an empty `ι` that average is `0` too, so the value is `0`); the intended domain is
+`∑ i, w i ≠ 0`. -/
 noncomputable def meanTraitChange (w z z' : ι → ℝ) : ℝ :=
   (∑ i, w i * z' i) / (∑ i, w i) - 𝔼 i, z i
 
-/-- The transmission term `E[w (z' - z)] = 𝔼 i, w i (z' i - z i)` of the Price equation. -/
+/-- The transmission term `E[w (z' - z)] = 𝔼 i, w i (z' i - z i)` of the Price equation; it is `0`
+for an empty `ι`. -/
 noncomputable def transmission (w z z' : ι → ℝ) : ℝ := 𝔼 i, w i * (z' i - z i)
 
 /-- Additive social fitness `α + b y - c z + e`: baseline `α`, benefit `b` per unit of partner
 trait `y`, cost `c` per unit of own trait `z`, residual `e`. -/
 def additiveFitness (α b c : ℝ) (y z e : ι → ℝ) (i : ι) : ℝ := α + b * y i - c * z i + e i
 
-/-- The Price equation `w̄ Δz̄ = Cov(w, z) + E[w (z' - z)]`, restated from `Selection.price`. -/
+/-- The Price equation `w̄ Δz̄ = Cov(w, z) + E[w (z' - z)]` for fitnesses with `∑ i, w i ≠ 0`,
+restated from `Selection.price`. -/
 theorem price_eq (w z z' : ι → ℝ) (hw : ∑ i, w i ≠ 0) :
     (𝔼 i, w i) * meanTraitChange w z z' = popCov w z + transmission w z z' :=
   Selection.price w z z' hw
@@ -124,7 +131,8 @@ theorem price_eq (w z z' : ι → ℝ) (hw : ∑ i, w i ≠ 0) :
 theorem popCov_self_nonneg (z : ι → ℝ) : 0 ≤ popCov z z :=
   expect_nonneg fun _ _ => mul_self_nonneg _
 
-/-- `Cov(x, y) = 𝔼[x y] - x̄ ȳ`. -/
+/-- `Cov(x, y) = 𝔼[x y] - x̄ ȳ`, with `𝔼` the average over `ι`; for an empty `ι` every average is
+`0` and both sides are `0`. -/
 theorem popCov_eq_expect_mul_sub (x y : ι → ℝ) :
     popCov x y = (𝔼 i, x i * y i) - (𝔼 i, x i) * 𝔼 i, y i := by
   rcases isEmpty_or_nonempty ι with hι | hι
@@ -155,7 +163,7 @@ theorem sum_ne_zero_of_expect_pos {w : ι → ℝ} (hw : 0 < 𝔼 i, w i) : ∑ 
   exact lt_irrefl 0 hw
 
 /-- Hamilton's rule as an identity. In the additive model `w = α + b y - c z + e` with
-`Var(z) ≠ 0`, `w̄ Δz̄ = Var(z) (r b - c) + Cov(e, z) + E[w (z' - z)]`. -/
+`∑ i, w i ≠ 0` and `Var(z) ≠ 0`, `w̄ Δz̄ = Var(z) (r b - c) + Cov(e, z) + E[w (z' - z)]`. -/
 theorem price_hamilton {w y z z' e : ι → ℝ} {α b c : ℝ} (hw : w = additiveFitness α b c y z e)
     (hsum : ∑ i, w i ≠ 0) (hV : popCov z z ≠ 0) :
     (𝔼 i, w i) * meanTraitChange w z z' =
@@ -163,7 +171,9 @@ theorem price_hamilton {w y z z' e : ι → ℝ} {α b c : ℝ} (hw : w = additi
   rw [price_eq w z z' hsum, hw, popCov_additiveFitness, relatedness]
   field_simp
 
-/-- `w̄ Δz̄ = Var(z) (r b - c + (Cov(e, z) + E[w (z' - z)]) / Var(z))`. -/
+/-- In the additive model `w = α + b y - c z + e` with `∑ i, w i ≠ 0` and `Var(z) ≠ 0`,
+`w̄ Δz̄ = Var(z) (r b - c + (Cov(e, z) + E[w (z' - z)]) / Var(z))`, the variance factored out of
+`w̄ Δz̄ = Var(z) (r b - c) + Cov(e, z) + E[w (z' - z)]`. -/
 theorem expect_mul_meanTraitChange {w y z z' e : ι → ℝ} {α b c : ℝ}
     (hw : w = additiveFitness α b c y z e) (hsum : ∑ i, w i ≠ 0) (hV : popCov z z ≠ 0) :
     (𝔼 i, w i) * meanTraitChange w z z' = popCov z z *
@@ -182,7 +192,8 @@ theorem meanTraitChange_pos_iff {w y z z' e : ι → ℝ} {α b c : ℝ}
   have h := expect_mul_meanTraitChange (z' := z') hw (sum_ne_zero_of_expect_pos hw₀) hV
   rw [← mul_pos_iff_of_pos_left hw₀, h, mul_pos_iff_of_pos_left hV₀]
 
-/-- The exact sign criterion for a decrease. -/
+/-- The exact sign criterion for a decrease. With additive fitness, `w̄ > 0` and `Var(z) ≠ 0`,
+the mean trait decreases iff `r b - c + (Cov(e, z) + E[w (z' - z)]) / Var(z) < 0`. -/
 theorem meanTraitChange_neg_iff {w y z z' e : ι → ℝ} {α b c : ℝ}
     (hw : w = additiveFitness α b c y z e) (hw₀ : 0 < 𝔼 i, w i) (hV : popCov z z ≠ 0) :
     meanTraitChange w z z' < 0 ↔
@@ -200,24 +211,26 @@ theorem meanTraitChange_neg_iff {w y z z' e : ι → ℝ} {α b c : ℝ}
     nlinarith [mul_nonneg hw₀.le hΔ, mul_neg_of_pos_of_neg hV₀ hX]
 
 /-- **Hamilton's rule.** In the additive social fitness model with positive mean fitness, nonzero
-trait variance, a residual uncorrelated with the trait, and faithful transmission, the mean trait
-increases iff `r b > c`. -/
+trait variance, a residual uncorrelated with the trait, and a zero transmission term (e.g. faithful
+transmission), the mean trait increases iff `r b > c`. -/
 theorem hamilton_rule {w y z z' e : ι → ℝ} {α b c : ℝ}
     (hw : w = additiveFitness α b c y z e) (hw₀ : 0 < 𝔼 i, w i) (hV : popCov z z ≠ 0)
     (he : popCov e z = 0) (hT : transmission w z z' = 0) :
     0 < meanTraitChange w z z' ↔ c < relatedness y z * b := by
   rw [meanTraitChange_pos_iff hw hw₀ hV, he, hT, zero_add, zero_div, add_zero, sub_pos]
 
-/-- Hamilton's rule, decrease: under the same hypotheses, the mean trait decreases iff
-`r b < c`. -/
+/-- Hamilton's rule, decrease: in the additive social fitness model with positive mean fitness,
+nonzero trait variance, a residual uncorrelated with the trait, and a zero transmission term, the
+mean trait decreases iff `r b < c`. -/
 theorem hamilton_rule_neg {w y z z' e : ι → ℝ} {α b c : ℝ}
     (hw : w = additiveFitness α b c y z e) (hw₀ : 0 < 𝔼 i, w i) (hV : popCov z z ≠ 0)
     (he : popCov e z = 0) (hT : transmission w z z' = 0) :
     meanTraitChange w z z' < 0 ↔ relatedness y z * b < c := by
   rw [meanTraitChange_neg_iff hw hw₀ hV, he, hT, zero_add, zero_div, add_zero, sub_neg]
 
-/-- Robust Hamilton's rule, increase: if the residual and transmission terms are controlled by
-`|Cov(e, z) + E[w (z' - z)]| ≤ ε Var(z)`, then `r b - c > ε` forces the mean trait to increase. -/
+/-- Robust Hamilton's rule, increase: in the additive model with `w̄ > 0` and `Var(z) ≠ 0`, if the
+residual and transmission terms are controlled by `|Cov(e, z) + E[w (z' - z)]| ≤ ε Var(z)`, then
+`r b - c > ε` forces the mean trait to increase. -/
 theorem meanTraitChange_pos_of_bound {w y z z' e : ι → ℝ} {α b c ε : ℝ}
     (hw : w = additiveFitness α b c y z e) (hw₀ : 0 < 𝔼 i, w i) (hV : popCov z z ≠ 0)
     (hbound : |popCov e z + transmission w z z'| ≤ ε * popCov z z)
@@ -229,8 +242,8 @@ theorem meanTraitChange_pos_of_bound {w y z z' e : ι → ℝ} {α b c ε : ℝ}
     linarith [neg_abs_le (popCov e z + transmission w z z')]
   linarith
 
-/-- Robust Hamilton's rule, decrease: under the same control, `r b - c < -ε` forces the mean
-trait to decrease. -/
+/-- Robust Hamilton's rule, decrease: in the additive model with `w̄ > 0` and `Var(z) ≠ 0`, if
+`|Cov(e, z) + E[w (z' - z)]| ≤ ε Var(z)`, then `r b - c < -ε` forces the mean trait to decrease. -/
 theorem meanTraitChange_neg_of_bound {w y z z' e : ι → ℝ} {α b c ε : ℝ}
     (hw : w = additiveFitness α b c y z e) (hw₀ : 0 < 𝔼 i, w i) (hV : popCov z z ≠ 0)
     (hbound : |popCov e z + transmission w z z'| ≤ ε * popCov z z)
@@ -242,7 +255,8 @@ theorem meanTraitChange_neg_of_bound {w y z z' e : ι → ℝ} {α b c ε : ℝ}
     linarith [le_abs_self (popCov e z + transmission w z z')]
   linarith
 
-/-- Zero trait variance makes the trait constant, so it covaries with nothing. -/
+/-- If `Var(z) = 0` then `Cov(x, z) = 0` for every `x`: zero trait variance makes the trait
+constant, so it covaries with nothing. -/
 theorem popCov_eq_zero_of_popCov_self_eq_zero {z : ι → ℝ} (hV : popCov z z = 0) (x : ι → ℝ) :
     popCov x z = 0 := by
   have h := (expect_eq_zero_iff_of_nonneg (s := univ)
@@ -250,9 +264,9 @@ theorem popCov_eq_zero_of_popCov_self_eq_zero {z : ι → ℝ} (hV : popCov z z 
   refine expect_eq_zero fun i hi => ?_
   rw [mul_self_eq_zero.mp (h i hi), mul_zero]
 
-/-- With zero trait variance there is no selection on the trait: `w̄ Δz̄ = E[w (z' - z)]` for any
-fitness, additive or not, and any `b`, `c`. Regression relatedness is then `0` by convention, so
-Hamilton's rule does not describe the response. -/
+/-- With `∑ i, w i ≠ 0` and zero trait variance there is no selection on the trait:
+`w̄ Δz̄ = E[w (z' - z)]` for any fitness, additive or not, and any `b`, `c`. Regression relatedness
+is then `0` by convention, so Hamilton's rule does not describe the response. -/
 theorem price_of_popCov_self_eq_zero {w z z' : ι → ℝ} (hsum : ∑ i, w i ≠ 0)
     (hV : popCov z z = 0) :
     (𝔼 i, w i) * meanTraitChange w z z' = transmission w z z' := by

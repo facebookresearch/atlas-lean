@@ -1,0 +1,18 @@
+# Inner-product geometry and realizability of f-statistics
+
+- [Conditionally negative semidefinite matrix](is-cond-neg-semidef.md)
+- [Matrix realized by f2 statistics of a drift model](is-f2-realizable.md)
+- [f2 matrices of single frequency vectors in the unit cube](unit-f2-points.md)
+- [Matrix realized by f2 statistics of frequencies in the unit interval](is-f2-realizable-unit.md)
+- [Two populations at f2 distance four](two-f2.md)
+- [Squared distances between the corners of the unit square](square-f2.md)
+- [A symmetric 3×3 matrix that is not conditionally negative semidefinite](non-cnd-f2.md)
+- [Admixture fit of a symmetric zero-diagonal 3×3 CND matrix](exists-admix-three.md)
+- [Drift model realizing a symmetric zero-diagonal 3×3 CND matrix](exists-drift-model-admix-three.md)
+- [Strict Thales criterion in a real inner product space](inner-sub-sub-neg-iff-mem-ball.md)
+- [f4 as an L² inner product](f4-eq-inner.md)
+- [f3 as an L² inner product](f3-eq-inner.md)
+- [f2 as a squared L² distance](f2-eq-norm-sq.md)
+- [Cauchy–Schwarz inequality for f-statistics](sq-f4-le-f2-mul-f2.md)
+- [Equality case of the Cauchy–Schwarz inequality for f-statistics](sq-f4-eq-f2-mul-f2-iff.md)
+- [Thales criterion for a negative f3](f3-neg-iff-mem-ball.md)

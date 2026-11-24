@@ -51,7 +51,7 @@ namespace MathlibExt.Biology.PopulationGenetics.Classical.QuantMutationSelection
 
 /-- Parameters of the haploid continuum-of-alleles model: Gaussian stabilizing selection of
 width `Vs`, mutation probability `mu`, Gaussian mutational effects of standard deviation
-`gamma`. -/
+`gamma`, with `Vs > 0`, `0 < mu < 1` and `gamma > 0`. -/
 structure Params where
   Vs : ℝ
   mu : ℝ
@@ -65,29 +65,33 @@ namespace Params
 
 variable (P : Params)
 
-/-- Log-fitness `-x² / (2 Vs)`. -/
+/-- Log-fitness `-x² / (2 Vs)`, for the selection width `Vs > 0` of the parameters. -/
 noncomputable def logFitness (x : ℝ) : ℝ := -x ^ 2 / (2 * P.Vs)
 
-/-- Gaussian stabilizing fitness `w(x) = exp(-x² / (2 Vs))`. -/
+/-- Gaussian stabilizing fitness `w(x) = exp(-x² / (2 Vs))`; as `Vs > 0`, `0 < w(x) ≤ 1`. -/
 noncomputable def fitness (x : ℝ) : ℝ := Real.exp (P.logFitness x)
 
-/-- Mutational variance `γ²`. -/
+/-- Mutational variance `γ²` (positive, as `γ > 0`), as a nonnegative real number. -/
 noncomputable def mutVar : ℝ≥0 := ⟨P.gamma ^ 2, sq_nonneg _⟩
 
-/-- Law of a mutational increment, `N(0, γ²)`. -/
+/-- Law of a mutational increment, `N(0, γ²)` with `γ > 0`. -/
 noncomputable def mutationLaw : Measure ℝ := gaussianReal 0 P.mutVar
 
 instance isProbabilityMeasure_mutationLaw : IsProbabilityMeasure P.mutationLaw := by
   unfold mutationLaw; infer_instance
 
-/-- Selection: `ν_w = w ν / ∫ w dν`. -/
+/-- Selection: `ν_w = w ν / ∫ w dν`. It is the zero measure when `w` is not `ν`-integrable or
+`ν = 0`. -/
 noncomputable def select (ν : Measure ℝ) : Measure ℝ := ν.tilted P.logFitness
 
-/-- Mutation: `(1 - μ) ρ + μ (ρ ∗ N(0, γ²))`. -/
+/-- Mutation, for `0 < μ < 1` and `γ > 0`: `(1 - μ) ρ + μ (ρ ∗ N(0, γ²))`. -/
 noncomputable def mutate (ρ : Measure ℝ) : Measure ℝ :=
   ENNReal.ofReal (1 - P.mu) • ρ + ENNReal.ofReal P.mu • (ρ ∗ P.mutationLaw)
 
-/-- One generation, selection then mutation: `T ν = (1-μ) ν_w + μ (ν_w ∗ N(0, γ²))`. -/
+/-- One generation, selection then mutation, for `Vs > 0`, `0 < μ < 1` and `γ > 0`:
+`T ν = (1-μ) ν_w + μ (ν_w ∗ N(0, γ²))`, where `ν_w = w ν / ∫ w dν` with the fitness
+`w(x) = exp(-x² / (2 Vs))`, and `ν_w` is the zero measure when `w` is not `ν`-integrable or
+`ν = 0`. -/
 noncomputable def step (ν : Measure ℝ) : Measure ℝ := P.mutate (P.select ν)
 
 theorem fitness_eq (x : ℝ) : P.fitness x = Real.exp (-x ^ 2 / (2 * P.Vs)) := rfl
@@ -111,7 +115,7 @@ lemma fitness_le_one (x : ℝ) : P.fitness x ≤ 1 := by
   have := P.Vs_pos
   exact div_nonpos_of_nonpos_of_nonneg (by nlinarith [sq_nonneg x]) (by linarith)
 
-/-- `x^(2k) w(x) ≤ k! (2 Vs)^k`. -/
+/-- For `Vs > 0`, every natural `k` and every real `x`: `x^(2k) w(x) ≤ k! (2 Vs)^k`. -/
 lemma pow_two_mul_fitness_le (k : ℕ) (x : ℝ) :
     x ^ (2 * k) * P.fitness x ≤ (k ! : ℝ) * (2 * P.Vs) ^ k := by
   have ha : 0 < 2 * P.Vs := by linarith [P.Vs_pos]
@@ -177,7 +181,9 @@ theorem isProbabilityMeasure_step (ν : Measure ℝ) [IsProbabilityMeasure ν] :
   have := P.isProbabilityMeasure_select ν
   exact P.isProbabilityMeasure_mutate _
 
-/-- The generation map on probability measures. -/
+/-- The generation map on probability measures. For `Vs > 0`, `0 < μ < 1` and `γ > 0`, the mean
+fitness `∫ w dν` of a probability measure `ν` is positive and finite (`0 < w ≤ 1`), so `ν_w` and
+`T ν` are again probability measures. -/
 noncomputable def stepPM (ν : ProbabilityMeasure ℝ) : ProbabilityMeasure ℝ :=
   ⟨P.step ν, P.isProbabilityMeasure_step ν⟩
 

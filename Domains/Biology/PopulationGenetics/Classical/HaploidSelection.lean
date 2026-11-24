@@ -225,7 +225,8 @@ end MathlibExt.Biology.PopulationGenetics.Classical.HaploidSelection
 namespace MathlibExt.Biology.PopulationGenetics.Selection
 
 /-- Closed form for iterating `Selection.select` with constant positive
-fitnesses. -/
+fitnesses, from initial frequencies `p₀ ≥ 0` summing to `1`:
+`p_t i = p₀ i * w i ^ t / ∑ j, p₀ j * w j ^ t`. -/
 theorem iterate_select {ι : Type*} [Fintype ι] {w p₀ : ι → ℝ}
     (hw : ∀ i, 0 < w i) (hp₀ : ∀ i, 0 ≤ p₀ i) (hsum : ∑ i, p₀ i = 1)
     (t : ℕ) (i : ι) :
@@ -234,7 +235,9 @@ theorem iterate_select {ι : Type*} [Fintype ι] {w p₀ : ι → ℝ}
   MathlibExt.Biology.PopulationGenetics.Classical.HaploidSelection.iterate_select_apply
     w p₀ (fun p => select p w) (fun _ _ => rfl) hw hp₀ hsum t i
 
-/-- Log-odds form for iterating `Selection.select` on two types. -/
+/-- Log-odds form for iterating `Selection.select` on two types, with positive fitnesses and
+positive initial frequencies summing to `1`: the log-odds of type `true` grow by
+`log (w true / w false)` per generation. -/
 theorem log_odds_iterate_select {w p₀ : Bool → ℝ}
     (hw : ∀ i, 0 < w i) (hp₀ : ∀ i, 0 < p₀ i) (hsum : ∑ i, p₀ i = 1)
     (t : ℕ) :
@@ -245,9 +248,9 @@ theorem log_odds_iterate_select {w p₀ : Bool → ℝ}
   MathlibExt.Biology.PopulationGenetics.Classical.HaploidSelection.log_odds_iterate_select
     w p₀ (fun p => select p w) (fun _ _ => rfl) hw hp₀ hsum t
 
-/-- A type that is initially present and strictly fitter than every other
-initially present type goes to fixation under iterated `Selection.select`;
-initially absent types remain absent. -/
+/-- With positive fitnesses and initial frequencies `p₀ ≥ 0` summing to `1`, a type that is
+initially present and strictly fitter than every other initially present type goes to fixation
+under iterated `Selection.select`: the frequency vector tends to `Pi.single k 1`. -/
 theorem tendsto_iterate_select_pi_single {ι : Type*} [Fintype ι] [DecidableEq ι]
     {w p₀ : ι → ℝ} (hw : ∀ i, 0 < w i) (hp₀ : ∀ i, 0 ≤ p₀ i)
     (hsum : ∑ i, p₀ i = 1) (k : ι) (hk : 0 < p₀ k)

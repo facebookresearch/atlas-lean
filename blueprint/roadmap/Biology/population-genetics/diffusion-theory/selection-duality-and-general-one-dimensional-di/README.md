@@ -34,14 +34,21 @@
 - [Scale function is positive at one](scale-function-one-pos.md)
 - [Dirichlet ratio equals one at $p = 1$](fixation-prob-one.md)
 - [Dirichlet ratio lies between 0 and 1](fixation-prob-mem-icc.md)
+- [The scale density of a regular diffusion is C¹ on (0, 1)](cont-diff-on-scale-density.md)
+- [The scale function of a regular diffusion is C² on (0, 1)](cont-diff-on-scale-function.md)
+- [The scale-function ratio of a regular diffusion is C² on (0, 1)](cont-diff-on-fixation-prob.md)
+- [The scale-function ratio is continuous up to the boundary](continuous-on-fixation-prob.md)
 - [Dirichlet ratio vanishes at $p = 0$](fixation-prob-zero.md)
 - [The scale-function ratio solves the backward equation](diffusion-generator-fixation-prob.md)
 - [Solutions of the homogeneous backward equation](eq-of-diffusion-generator-eq-zero.md)
 - [Uniqueness of the scale-function ratio](eq-fixation-prob-of-diffusion-generator.md)
+- [The scale-function ratio solves the Dirichlet problem](fixation-prob-solves.md)
+- [Uniqueness of the scale-function ratio among C² solutions](eq-fixation-prob-of-cont-diff-on.md)
 - [Uniqueness for the Dirichlet problem](eq-of-diffusion-generator-eq.md)
 - [Green's representation for a regular diffusion](diffusion-generator-integral-green-funct.md)
 - [Dirichlet condition of the Green's function at zero](integral-green-function-zero-left.md)
 - [Dirichlet condition of the Green's function at one](integral-green-function-one-left.md)
+- [Uniqueness of the Green integral solution of L u = −g](eq-integral-green-function-of-diffusion.md)
 
 ## Genic selection and dominance
 

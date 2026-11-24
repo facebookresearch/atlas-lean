@@ -465,7 +465,9 @@ private theorem isCompact_simplex {n : ℕ} :
   exact hcube.of_isClosed_subset hclosed hsub
 
 /-- **`C²` polynomial approximation on the simplex** `Δ_{K-1} = {x ∈ ℝ^{K-1} | xᵢ ≥ 0, ∑ xᵢ ≤ 1}`
-(record shape, `n = K - 1`). -/
+(`n = K - 1`): if `f` is `C²` on an open set `U ⊇ Δ`, then for every `ε > 0` some polynomial `p`
+satisfies, at every `x ∈ Δ`, `|p(x) - f(x)| ≤ ε`, `|∂ᵢ p(x) - ∂ᵢ f(x)| ≤ ε` for every `i` and
+`|∂ᵢ∂ⱼ p(x) - ∂ᵢ∂ⱼ f(x)| ≤ ε` for all `i, j`, with the formal partial derivatives of `p`. -/
 theorem exists_mvPolynomial_near_contDiffOn_two_simplex {n : ℕ} {U : Set (Fin n → ℝ)}
     (hU : IsOpen U) (hΔU : {x : Fin n → ℝ | (∀ i, 0 ≤ x i) ∧ ∑ i, x i ≤ 1} ⊆ U)
     {f : (Fin n → ℝ) → ℝ} (hf : ContDiffOn ℝ 2 f U) {ε : ℝ} (hε : 0 < ε) :
