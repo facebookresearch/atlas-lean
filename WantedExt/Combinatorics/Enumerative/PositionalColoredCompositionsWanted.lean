@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.PositionalColoredCompositions
+public import MathlibExt.Combinatorics.Enumerative.PositionalColoredCompositionRuns
 public import Mathlib.Data.Set.Card
 
 /-!
@@ -81,19 +81,6 @@ public theorem_wanted even_eq_ternaryStrings_avoiding (k : ℕ) :
     positionalColoredCompositionCount 2 0 k =
       {w : List (Fin 3) | w.length = k ∧ ¬ [0, 1] <:+: w ∧ ¬ [1, 2] <:+: w ∧
         w.head? ≠ some 2 ∧ w.getLast? ≠ some 0}.ncard
-
-/-- **Even colored compositions and runs in binary strings.** For every $k \ge 0$, the number
-$e(k + 1) = c_{2,0}(k + 1)$ of even colored compositions of $k + 1$, in which only the parts at
-even positions are colored, equals the sum, over all binary strings of length $k$, of the
-product of the lengths of the maximal runs of $1$s in the string; a string without a $1$
-contributes the empty product $1$.
-
-Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
-(2026), Article A49, Theorem 4 (`integers-2026-A49-thm-4`). -/
-public theorem_wanted even_succ_eq_sum_runLength_prod (k : ℕ) :
-    positionalColoredCompositionCount 2 0 (k + 1) =
-      ∑ f : Fin k → Bool,
-        ((((List.ofFn f).splitOn false).map List.length).filter (· ≠ 0)).prod
 
 /-- **Odd colored compositions and runs in binary strings.** For every $k \ge 1$, the number
 $o(k) = c_{2,1}(k)$ of odd colored compositions of $k$, in which only the parts at odd positions
