@@ -46,7 +46,7 @@ noncomputable def K1.unitsFunctor : CommRingCat.{u} ⥤ AddCommGrpCat.{u} :=
 /-- Determinant homomorphism `K₁ R →+ Additive Rˣ` induced by
 `Abelianization.lift (StableGL.det)`. -/
 noncomputable def K1.detHom (R : Type u) [CommRing R] : K1 R →+ Additive Rˣ :=
-  (Abelianization.lift (StableGL.det (R := R))).toAdditive
+  (Group.Abelianization.lift (StableGL.det (R := R))).toAdditive
 
 @[simp]
 theorem K1.detHom_proj {R : Type u} [CommRing R] (g : StableGL R) :
@@ -76,18 +76,18 @@ theorem K1.detHom_surjective (R : Type u) [CommRing R] :
 theorem K1.detHom_injective_of_commutator_eq_ker {R : Type u} [CommRing R]
     (hCommKer : commutator (StableGL R) = MonoidHom.ker (StableGL.det (R := R))) :
     Function.Injective (K1.detHom (R := R)) := by
-  have hLiftInjective : Function.Injective (Abelianization.lift (StableGL.det (R := R))) :=
+  have hLiftInjective : Function.Injective (Group.Abelianization.lift (StableGL.det (R := R))) :=
     (QuotientGroup.injective_lift_iff (commutator (StableGL R)) (StableGL.det (R := R))
-      (Abelianization.commutator_subset_ker _)).mpr hCommKer
+      (Group.Abelianization.commutator_le_ker _)).mpr hCommKer
   intro x y hxy
-  have h1 : Additive.ofMul (Abelianization.lift (StableGL.det (R := R)) (Additive.toMul x)) =
-      Additive.ofMul (Abelianization.lift (StableGL.det (R := R)) (Additive.toMul y)) := hxy
-  have h2 : Abelianization.lift (StableGL.det (R := R)) (Additive.toMul x) =
-      Abelianization.lift (StableGL.det (R := R)) (Additive.toMul y) := by
+  have h1 : Additive.ofMul (Group.Abelianization.lift (StableGL.det (R := R)) (Additive.toMul x)) =
+      Additive.ofMul (Group.Abelianization.lift (StableGL.det (R := R)) (Additive.toMul y)) := hxy
+  have h2 : Group.Abelianization.lift (StableGL.det (R := R)) (Additive.toMul x) =
+      Group.Abelianization.lift (StableGL.det (R := R)) (Additive.toMul y) := by
     have h := congrArg (Additive.toMul (α := Rˣ)) h1
     simpa using h
   have h3 : Additive.toMul x = Additive.toMul y := hLiftInjective h2
-  exact (Additive.toMul (α := Abelianization (StableGL R))).injective h3
+  exact (Additive.toMul (α := Group.Abelianization (StableGL R))).injective h3
 
 /-- Determinant natural transformation `K₁ ⇒ Units` on `CommRingCat`. -/
 noncomputable def K1.determinant : K1.commRingFunctor.{u} ⟶ K1.unitsFunctor.{u} where
