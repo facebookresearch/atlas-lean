@@ -37,7 +37,7 @@ two. If `n` is a perfect square, every unit lies in `S(n)`.
 
 * Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to the Jacobi
   Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Proposition 11 and Lemma 14
-  (arXiv:2111.14477, where the lifting lemma is Lemma 2.5).
+  (arXiv:2111.14477v3, Proposition 2.2 and Lemma 2.5).
 -/
 
 namespace MetaMathlibExt

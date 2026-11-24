@@ -36,6 +36,12 @@ example : ∃ H : Subgroup (ZMod 15)ˣ, H.index = 2 ∧ ZMod.unitOfCoprime 2 (by
   obtain ⟨H, hH, hidx⟩ := (jacobi_kernel_index_two 15 (by decide)).1 (by norm_num)
   refine ⟨H, hidx, ?_, ?_⟩ <;> rw [hH, ZMod.coe_unitOfCoprime, ZMod.val_natCast] <;> norm_num
 
+-- 45 = 3 ^ 2 * 5 is neither squarefree nor a square: (4/45) = 1 and (2/45) = (2/5) = -1.
+example : ∃ H : Subgroup (ZMod 45)ˣ, H.index = 2 ∧ ZMod.unitOfCoprime 4 (by decide) ∈ H ∧
+    ZMod.unitOfCoprime 2 (by decide) ∉ H := by
+  obtain ⟨H, hH, hidx⟩ := (jacobi_kernel_index_two 45 (by decide)).1 (by norm_num)
+  refine ⟨H, hidx, ?_, ?_⟩ <;> rw [hH, ZMod.coe_unitOfCoprime, ZMod.val_natCast] <;> norm_num
+
 -- Modulo the prime 3 the subgroup has index two in a group of two units: 2 is not in it.
 example : ∃ H : Subgroup (ZMod 3)ˣ, H.index = 2 ∧ ZMod.unitOfCoprime 2 (by decide) ∉ H := by
   obtain ⟨H, hH, hidx⟩ := (jacobi_kernel_index_two 3 (by decide)).1 (by norm_num)
