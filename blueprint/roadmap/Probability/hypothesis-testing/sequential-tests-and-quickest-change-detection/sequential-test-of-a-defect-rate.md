@@ -24,13 +24,16 @@ assumptions, not conclusions about observed production data.
 
 ## Proof depends on
 
+- [Doob's maximal inequality for nonnegative submartingales](../../martingales/doob-s-lp-maximal-inequality/maximal-ineq.md)
+
 ## Expansion
 
-Link the existing results for the Bernoulli likelihood-ratio process (nonnegative supermartingale with initial mean one)
-and for Ville's maximal inequality once their pages exist, and use them for the alarm bound. Construct the product-law
-family and prove its coordinate marginals and independence; keep the zero extension outside binary values when matching
-the existing process. The displayed mean-one calculation also gives the stronger martingale statement. Do not create a
-second generic likelihood-ratio or Ville theorem.
+Ville's bound follows from the linked maximal inequality: $E^\theta$ is a nonnegative martingale with mean one under
+$P_\theta$, so for each $n$, $P_\theta(\max_{k\le n}E_k^\theta\ge1/\alpha)\le\alpha\,E_{P_\theta}E_n^\theta=\alpha$, and these events
+increase to $\{\exists n:\ E_n^\theta\ge1/\alpha\}$, so continuity from below gives the displayed bound. Link the existing result
+for the Bernoulli likelihood-ratio process (nonnegative supermartingale with initial mean one) once its page exists.
+Construct the product-law family and prove its coordinate marginals and independence; keep the zero extension outside
+binary values when matching the existing process. Do not create a second generic likelihood-ratio or Ville theorem.
 
 ## Sources
 
