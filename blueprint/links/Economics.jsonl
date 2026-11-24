@@ -1091,3 +1091,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Economics/actuarial-mathematics/life-contingencies/README.md"}], "id": "af_6f2ec7af93322fc49f04bd8b"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Economics/actuarial-mathematics/multiple-state-models/README.md"}], "id": "af_d773f21561b5ae0a4e93fb4a"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Economics/asset-pricing-and-financial-risk/part-02/optimal-execution/README.md"}], "id": "af_f8bf159d40fbe310ef27ee4e"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/actuarial-mathematics/existence-and-uniqueness-of-the-adjustment-coefficient.md"}], "id": "af_c8934f89954c3ab4815f7cf5", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/actuarial-mathematics/lundberg-s-inequality-for-the-classical-risk-process.md"}], "id": "af_85983ca3380fea74f6f9906c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/actuarial-mathematics/limit-of-the-buhlmann-credibility-factor.md"}], "id": "af_1296f9727d20c6a6dc87066c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/actuarial-mathematics/variance-of-a-compound-sum.md"}], "id": "af_08e29a267f8cbcc9e4a42b8e", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
