@@ -156,7 +156,6 @@ private theorem homologyMap_smul_moduleCat
     ext <;> rfl
   dsimp only [HomologicalComplex.homologyMap]
   rw [hmap, ShortComplex.homologyMap_smul]
-  rfl
 
 /-- Scalar multiplication by any coefficient value acts by zero on every
 Koszul homology object. -/
