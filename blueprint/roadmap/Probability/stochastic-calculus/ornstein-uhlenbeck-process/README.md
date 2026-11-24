@@ -40,3 +40,4 @@
 - [The pathwise Langevin solution driven by Brownian motion is Gaussian](is-gaussian-process-ou-path-solution.md)
 - [The pathwise Langevin solution is an Ornstein–Uhlenbeck process](is-ornstein-uhlenbeck-from-zero-ou-path.md)
 - [Stationary start of the pathwise Langevin solution](is-stationary-ornstein-uhlenbeck-ou-path.md)
+- [Ornstein–Uhlenbeck process from a deterministic start](ornstein-uhlenbeck-process-from-a-deterministic-start.md)

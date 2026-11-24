@@ -11,3 +11,4 @@ Sinkhorn's algorithm alternately rescales the rows and the columns of $A$ to sum
 - [Sinkhorn's scaling theorem](sinkhorn-scaling.md)
 - [Csima–Datta theorem](exists-symmetric-balancing-iff-has-total.md): the symmetric variant: the Csima–Datta theorem
 - [Csima–Datta: sufficiency of total support](exists-symmetric-balancing-of-has-total.md): its sufficiency half
+- [Scaling to prescribed row and column sums](scaling-to-prescribed-row-and-column-sums.md): a stronger form: rectangular nonnegative matrices and general positive margins (Menon; Brualdi; Sinkhorn–Knopp)
