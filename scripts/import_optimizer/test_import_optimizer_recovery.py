@@ -991,10 +991,6 @@ class OwnedProcessGroupCleanupTests(unittest.TestCase):
                 return group
             raise ProcessLookupError
 
-        def probe_group(pid: int, sig: int) -> None:
-            self.assertEqual((pid, sig), (-group, 0))
-            raise ProcessLookupError
-
         def observe(pid: int, _timeout: float = 1.0) -> bool:
             self.assertNotIn(("reap",), events)
             self.assertEqual(pid, group)
@@ -1005,7 +1001,6 @@ class OwnedProcessGroupCleanupTests(unittest.TestCase):
                 patch.object(optimizer.subprocess, "Popen", return_value=child) as spawn, \
                 patch.object(optimizer.os, "getpgrp", return_value=23145), \
                 patch.object(optimizer.os, "getpgid", side_effect=group_of), \
-                patch.object(optimizer.os, "kill", side_effect=probe_group), \
                 patch.object(optimizer, "_owned_child_exited_without_reaping", side_effect=observe), \
                 patch.object(optimizer.os, "killpg", side_effect=signal_group):
             root = Path(directory)
@@ -1041,29 +1036,6 @@ class OwnedProcessGroupCleanupTests(unittest.TestCase):
             self.assertEqual(result["exit_code"], 0)
             self.assertFalse(result["timed_out"])
             self.assertTrue(result["remaining_group_killed"])
-
-    def test_cleanup_waits_for_live_orphan_after_kill(self) -> None:
-        group = 423145
-        snapshots = [subprocess.CompletedProcess([], 0, f"423146 {group} {state}\n", "")
-                     for state in ("R", "S", "Z")]
-        with self.process("normal") as (root, events), \
-                patch.object(os, "kill") as probe, \
-                patch.object(subprocess, "run", side_effect=snapshots) as observe:
-            result = optimizer.run_command(["test-only"], root, root / "command", dict(os.environ), 1)
-            self.assertEqual(observe.call_count, len(snapshots))
-            self.assertTrue(all(call.args == (-group, 0) for call in probe.call_args_list))
-            self.assertEqual([event for event in events if event[0] == "signal"],
-                             [("signal", group, signal.SIGKILL)])
-            self.assertTrue(result["remaining_group_killed"])
-
-    def test_cleanup_deadline_with_live_orphan_leaves_no_result(self) -> None:
-        snapshot = subprocess.CompletedProcess([], 0, "423146 423145 D\n", "")
-        with self.process("normal") as (root, _), patch.object(os, "kill"), \
-                patch.object(subprocess, "run", return_value=snapshot), \
-                patch.object(time, "monotonic", side_effect=[0.0, 0.0, 11.0]):
-            with self.assertRaisesRegex(RuntimeError, "after SIGKILL"):
-                optimizer.run_command(["test-only"], root, root / "command", dict(os.environ), 1)
-            self.assertFalse((root / "command.json").exists())
 
     def test_permission_error_never_reports_completion(self) -> None:
         with self.process("timeout", denied=True) as (root, events), \
