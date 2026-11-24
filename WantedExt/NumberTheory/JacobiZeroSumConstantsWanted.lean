@@ -156,21 +156,6 @@ public theorem_wanted davenport_constant_add_le (m q : ℕ) (A : Set (ZMod (m * 
     (hCd : IsLeast (davenportSet q C) dC) :
     dB + dC - 1 ≤ dA
 
-/-- **The index of the Jacobi symbol kernel.** Let $n$ be an odd natural number, let $U(n)$
-be the group of units of $\mathbb{Z}_n = \mathbb{Z}/n\mathbb{Z}$, and let
-$S(n) = \{u \in U(n) : (u/n) = 1\}$, where $(u/n)$ is the Jacobi symbol $(a/n)$ of the
-representative $0 \le a < n$ of $u$. If $n$ is not a perfect square, then $S(n)$ is a subgroup of
-$U(n)$ of index $2$. If $n$ is a perfect square, then $S(n) = U(n)$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7,
-Proposition 11 (`jis-2024-24.1.7-prop-11`). -/
-public theorem_wanted jacobi_kernel_index_two (n : ℕ) (hn : Odd n) :
-    (¬ IsSquare n → ∃ H : Subgroup (ZMod n)ˣ,
-      (∀ u : (ZMod n)ˣ, u ∈ H ↔ jacobiSym (((u : ZMod n).val : ℕ) : ℤ) n = 1) ∧
-        H.index = 2) ∧
-    (IsSquare n → ∀ u : (ZMod n)ˣ, jacobiSym (((u : ZMod n).val : ℕ) : ℤ) n = 1)
-
 /-- **Lifting weighted zero sums along a coprime factor.** Let $d$ and $n'$ be coprime natural
 numbers, put $n = d n'$, and let $f : \mathbb{Z}/n\mathbb{Z} \to \mathbb{Z}/n'\mathbb{Z}$ be
 reduction modulo $n'$. Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and
