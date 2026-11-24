@@ -1,0 +1,5 @@
+# Examples where a Walrasian equilibrium is not Pareto optimal
+
+(Externality.) Two agents, two goods, endowments $e_A = (1, 0)$, $e_B = (0, 1)$, utilities $u_A = x_{A1} + x_{A2}$ and $u_B = x_{B1} + x_{B2} - 3x_{A2}$, where $B$ treats $x_{A2}$ as given. At prices $(1, 1)$ the allocation $x_A = (0, 1)$, $x_B = (1, 0)$ is a Walrasian equilibrium: each bundle costs the agent's wealth $1$ and maximizes the agent's own utility on the budget set, and markets clear. It gives utilities $(1, -2)$, while the feasible allocation $x_A = (1, 0)$, $x_B = (0, 1)$ gives $(1, 1)$, a Pareto improvement.
+
+(Satiation.) Two agents, two goods, $e_A = (2, 2)$, $e_B = (0, 0)$, $u_A = \min(x_{A1}, 1) + \min(x_{A2}, 1)$, which is satiated at every bundle at least $(1, 1)$, and $u_B = x_{B1} + x_{B2}$. At any prices with both entries positive, $x_A = (2, 2)$, $x_B = (0, 0)$ is a Walrasian equilibrium, with utilities $(2, 0)$; the allocation $x_A = x_B = (1, 1)$ gives $(2, 2)$. In both examples a hypothesis of the first welfare theorem fails: no externalities in the first, local nonsatiation in the second.

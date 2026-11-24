@@ -10,6 +10,7 @@ A bimatrix game is a two-player game given by a payoff matrix for each player. T
 - [A nondegenerate bimatrix game has an odd number of Nash equilibria](odd-ncard-is-bimatrix-nash.md)
 
 - [Correctness of support enumeration for bimatrix games](correctness-of-support-enumeration-for-bimatrix-games.md)
+- [Classification of Nash equilibria of 2×2 games](equilibria-of-two-by-two-games.md)
 
 ## Related topics
 

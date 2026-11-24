@@ -2,6 +2,7 @@
 
 - [Saddle point of a matrix game](matrix-game-exists-is-saddle-point-on.md)
 - [Von Neumann's minimax theorem](matrix-game-minimax.md)
+- [Optimal strategy sets of a finite zero-sum game are convex polytopes](optimal-strategy-sets-are-convex.md)
 
 ## Related topics
 

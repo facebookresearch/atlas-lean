@@ -4,6 +4,7 @@
 
 - [Squared normalized Gaussian is chi-square with one degree of freedom](gaussian-real-map-sq-div.md)
 - [Law of the positive part squared of a standard normal variable](gaussian-real-map-max-zero-sq.md)
+- [Asymptotic law of the Pearson chi-square test of independence](pearson-chi-square-test-of-independence.md)
 
 ## Asymptotic tests
 
