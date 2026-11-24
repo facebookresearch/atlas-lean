@@ -1,6 +1,6 @@
 # Existence and uniqueness of Haar measure
 
-Every locally compact group carries a left Haar measure, and a regular one is unique up to a positive scalar.
+Every locally compact group, Hausdorff or not, carries a left Haar measure, and a regular one is unique up to a positive scalar.
 
 ## Statements
 
