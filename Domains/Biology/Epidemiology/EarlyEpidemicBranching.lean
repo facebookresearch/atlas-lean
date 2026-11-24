@@ -17,15 +17,15 @@ public import Mathlib.Probability.Distributions.Uniform
 /-!
 # Early epidemic and its branching-process approximation
 
-A generation-based SIR epidemic in a population `α` (finite, `N` individuals) is started by one
-*index case*: an infective who is not an individual of `α` (an external ancestor, such as an
-imported case). The individuals of `S₀ ⊆ α` are initially susceptible; the others are immune and
-are never infected. The `i`-th infective of generation `n` (generation `0` is the index case)
-makes `ξ n i` contacts; the contacts of the epidemic are numbered `0, 1, 2, …` in the order they
-are made (generation by generation, and within a generation infective by infective), and contact
-number `j` goes to the individual `U j`. A contact infects its target iff the target is initially
-susceptible (`U j ∈ S₀`) and has not been contacted before (`epiHit`); the infected targets form
-the next generation.
+A generation-based SIR epidemic in a population `α` (an arbitrary type; `Fin N`, with `N`
+individuals, when the contact targets are uniform) is started by one *index case*: an infective who
+is not an individual of `α` (an external ancestor, such as an imported case). The individuals of
+`S₀ ⊆ α` are initially susceptible; the others are immune and are never infected. The `i`-th
+infective of generation `n` (generation `0` is the index case) makes `ξ n i` contacts; the contacts
+of the epidemic are numbered `0, 1, 2, …` in the order they are made (generation by generation, and
+within a generation infective by infective), and contact number `j` goes to the individual `U j`. A
+contact infects its target iff the target is initially susceptible (`U j ∈ S₀`) and has not been
+contacted before (`epiHit`); the infected targets form the next generation.
 
 An index case who is an individual `i₀` of the population is the special case `i₀ ∉ S₀`:
 contacts to `i₀` never infect, and the infectives of all generations, index case included, never
