@@ -43,7 +43,7 @@ public def_wanted nativeInfiniteLogRootArrow [InverseImageTheory.{0}]
     (f : EtaleLogSchemes.Hom X Y) (RX : RootRealization X D I) (RY : RootRealization Y D I)
     [HasBaseChanges RY.infinite.stack] [∀ n : Exponent, HasBaseChanges (RY.finite n).stack]
     (F : FiniteArrow I D f RX RY) (HT : TowerLineNormalization I D f RX RY F)
-    (HF : FamilyLineNormalization I D f RX RY F) :
+    (HF : FamilyLineNormalization I D f RX RY F) (HA : FamilyAssembles I D f RX RY F) :
     InfiniteArrow I D f RX RY F
 
 public theorem_wanted nativeLogRootPreservation [InverseImageTheory.{0}]

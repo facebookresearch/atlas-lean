@@ -10,16 +10,14 @@ module
 public import MathlibExt.AlgebraicGeometry.GlobalParabolicRootModels
 
 /-!
-# Native unit and tensor maps for the normalized Phi functor
+# Native tensor maps for the normalized Phi functor
 
 The tensor component is the actual direct-image lax tensor map followed
 by the native root tensor rearrangement and universal root multiplication.
 The global comparison is its lift through the actual balanced bilinear
-tensor universal property. The unit legs are the actual adjunction mates
-of the base-root line comparison and universal root-section arrows; its
-global comparison is fixed by the native DF-weight unit colimit.
-
-Isomorphism/equivalence conclusions are separate theorem requests.
+tensor universal property. The unit comparison and the Borne--Vistoli
+equivalence are left to a separate development, which needs the parabolic
+unit on fixed chart data.
 Reference: Borne–Vistoli arXiv:1001.0466v2, Section5.3 and Theorem6.1.
 -/
 
@@ -122,36 +120,5 @@ def tensorComparison (T : ParabolicBilinearTensorModels.TensorModel G j)
     (T.functor.obj (P.functor.obj F)).obj (P.functor.obj H) ⟶
       P.functor.obj (((CartesianStackTensorProducts.tensor R.stack TG).obj F).obj H) :=
   T.lift (B.bilinear F H)
-
-def unitLeg (U : X.Etale) (p : Weight (A.obj.obj (op U))) (w : Weight (B.obj.obj (op U)))
-    (a : (weightMap (j.hom.app (op U)).hom).obj p ⟶ w) :
-    (G.chart U).line p.value ⟶ ((C.localPhi U).obj (CartesianStackModules.structureModule R.stack)).obj w := by
-  letI := CartesianStackTensorComparisons.monoidal (C.localRoot U).stack (C.tensor U)
-  let L := (C.baseLift U).object (C.dictionary U) p.value
-  let F := (C.restrict U).obj (CartesianStackModules.structureModule R.stack)
-  let m : (pullback (C.projection U).morphism).obj L ⟶ F ⊗ (C.weights U).line.obj w :=
-    ((C.periods U).base p.value).hom ≫ (C.weights U).line.map a ≫
-      (λ_ ((C.weights U).line.obj w)).inv ≫
-        (whiskerRightIso (eqToIso (S.unit_eq U).symm) ((C.weights U).line.obj w)).hom
-  exact ((C.baseLift U).moduleIso (C.dictionary U) p.value).inv ≫
-    (C.dictionary U).toModules.map (((C.directImage U).adjunction.homEquiv L _ ) m)
-
-variable (K : ∀ U : X.Etale, LineFunctorLaws (G.chart U))
-  (UO : UnitModel G j K)
-
-structure UnitCocones where
-  cocone : ∀ (U : X.Etale) (w : Weight (B.obj.obj (op U))), Cocone (unitDiagram G j K U w)
-  point : ∀ (U : X.Etale) (w : Weight (B.obj.obj (op U))),
-    (cocone U w).pt = ((C.localPhi U).obj (CartesianStackModules.structureModule R.stack)).obj w
-  legs : ∀ (U : X.Etale) (w : Weight (B.obj.obj (op U)))
-    (a : CostructuredArrow (weightMap (j.hom.app (op U)).hom) w),
-    (cocone U w).ι.app a ≫ eqToHom (point U w) = unitLeg I D j G R TG C S U a.left w a.hom
-
-structure UnitComparison (N : UnitCocones I D j G R TG C S K) where
-  map : UO.object ⟶ P.functor.obj (CartesianStackModules.structureModule R.stack)
-  normalized : ∀ (U : X.Etale) (w : Weight (B.obj.obj (op U))),
-    (map.localMap U).map.app w = eqToHom (UO.point U w).symm ≫
-      (UO.isColimit U w).desc (N.cocone U w) ≫ eqToHom (N.point U w) ≫
-        ((P.localIso U).inv.app (CartesianStackModules.structureModule R.stack)).app w
 
 end MathlibExt.AlgebraicGeometry.ParabolicRootComparisonMaps

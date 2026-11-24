@@ -12,7 +12,7 @@ public import MathlibExt.AlgebraicGeometry.RootWeightEvaluations
 public import Mathlib.CategoryTheory.Comma.StructuredArrow.Basic
 
 /-!
-# Native balanced bilinear tensors and the DF parabolic unit
+# Native balanced bilinear tensors of parabolic sheaves
 
 Tensor bilinear maps use actual scheme-module tensors, every labelled
 weight arrow, all group periods of A and every étale restriction. The
@@ -21,10 +21,10 @@ native symmetry and associator. A tensor object is characterized by the
 universal property of exactly these concrete bilinear maps in the actual
 parabolic category.
 
-The unit is characterized by the actual colimit of the groupified DF line
-functor along A^wt → B^wt, with its weight and étale arrow formulas fixed
-on every colimit leg. Neither operator is defined using a presumed
-root/parabolic equivalence.
+The tensor is not defined using a presumed root/parabolic equivalence.
+The parabolic unit and the Borne--Vistoli comparison are left to a separate
+development: a sectionwise colimit over the weights of the sections on
+every étale `U` need not descend, so the unit needs fixed chart data.
 
 Reference: Borne–Vistoli arXiv:1001.0466v2, Definitions5.6/5.8,
 Section5.3 and Theorem6.1.
@@ -140,35 +140,5 @@ structure TensorModel where
     (universal E F).map U v w ≫
       ((((functor.map a).app F) ≫ (functor.obj E').map b).localMap U).map.app (weightProduct v w) =
     tensorMap ((a.localMap U).map.app v) ((b.localMap U).map.app w) ≫ (universal E' F').map U v w
-
-variable (K : ∀ U : X.Etale, LineFunctorLaws (G.chart U))
-
-def unitDiagram (U : X.Etale) (w : Weight (B.obj.obj (op U))) :
-    CostructuredArrow (weightMap (j.hom.app (op U)).hom) w ⥤ U.left.Modules :=
-  CostructuredArrow.proj _ _ ⋙ lineFunctor (K U)
-
-/-- The source unit has its literal DF-weight left-Kan colimit and every
-weight/étale leg normalization. It is independent of the root equivalence. -/
-structure UnitModel where
-  object : Parabolic G j
-  cocone : ∀ (U : X.Etale) (w : Weight (B.obj.obj (op U))), Cocone (unitDiagram G j K U w)
-  point : ∀ (U : X.Etale) (w : Weight (B.obj.obj (op U))),
-    (cocone U w).pt = (object.localObject U).functor.obj w
-  isColimit : ∀ (U : X.Etale) (w : Weight (B.obj.obj (op U))), IsColimit (cocone U w)
-  weight_arrows : ∀ (U : X.Etale) {v w : Weight (B.obj.obj (op U))} (a : v ⟶ w)
-    (s : CostructuredArrow (weightMap (j.hom.app (op U)).hom) v),
-    (cocone U v).ι.app s ≫ eqToHom (point U v) ≫ (object.localObject U).functor.map a =
-      (cocone U w).ι.app (CostructuredArrow.mk (s.hom ≫ a)) ≫ eqToHom (point U w)
-  restriction : ∀ {U V : X.Etale} (f : V ⟶ U)
-    (p : Weight (A.obj.obj (op U))) (w : Weight (B.obj.obj (op U)))
-    (a : (weightMap (j.hom.app (op U)).hom).obj p ⟶ w)
-    (a' : (weightMap (j.hom.app (op V)).hom).obj ((weightMap (A.obj.map f.op).hom).obj p) ⟶
-      (weightMap (B.obj.map f.op).hom).obj w),
-    a'.label = (B.obj.map f.op).hom a.label →
-    (Scheme.Modules.pullback f.left).map
-      ((cocone U w).ι.app (CostructuredArrow.mk a) ≫ eqToHom (point U w)) ≫ (object.reindex f).hom.app w =
-      (G.reindex f p.value).hom ≫
-        (cocone V ((weightMap (B.obj.map f.op).hom).obj w)).ι.app (CostructuredArrow.mk a') ≫
-          eqToHom (point V ((weightMap (B.obj.map f.op).hom).obj w))
 
 end MathlibExt.AlgebraicGeometry.ParabolicBilinearTensorModels
