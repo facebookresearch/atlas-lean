@@ -14,6 +14,14 @@ Let $H$ be a keyed hash function over $(K_H, M, T)$ with $T = \mathbb{Z}_N$. In 
   The difference condition cannot be weakened to universality: instantiated with $H_{\mathrm{poly}}$ the Carter–Wegman MAC is insecure.
 - *One-time MACs.* $H$ over $(K, M, T)$ is an *$\varepsilon$-PUF* (pairwise unpredictable) if no adversary, even an inefficient one, that learns $H(k, m_0)$ for one message $m_0$ of its choice can output $m_1 \ne m_0$ and $H(k, m_1)$ with probability above $\varepsilon$. If $H$ is an $\varepsilon$-DUF over $T = \mathbb{Z}_N$, then $H'((k_1, k_2), m) = H(k_1, m) + k_2$ is an $\varepsilon$-PUF, and the MAC that tags $m$ with $H(k, m)$ for an $\varepsilon$-PUF $H$ is unconditionally secure for one message: every adversary allowed one signing query forges with probability at most $\varepsilon$. In particular the Carter–Wegman MAC with a truly random pad in place of the PRF is an unconditionally secure one-time MAC.
 
+## Expansion
+
+This page collects several results; it becomes ready once each is stated separately:
+
+- Polynomial hashing as a universal and a difference-unpredictable hash, as a page of its own
+- The PRF(UHF) composition bound, as a page of its own
+- Security of the Carter–Wegman MAC, as a page of its own
+
 ## Depends on
 
 - [Bounded universal hash functions](../../hash-functions/bounded-universal-hash-functions.md)
