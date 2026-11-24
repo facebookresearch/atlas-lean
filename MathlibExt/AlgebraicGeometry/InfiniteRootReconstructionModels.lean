@@ -21,6 +21,10 @@ up to native invertible modification.
 
 Source: Talpo--Vistoli1410.1164v2, Definitions5.20--5.21 and Theorem5.24.
 The scheme base is an input and is never reconstructed from field points.
+Constructing the canonical reconstruction for arbitrary root realizations is
+left to a separate development: it needs realizations whose evaluated root
+comparisons are coherent over the whole tower (identities, composites, base
+change and the mixed base/exponent squares), which they do not record.
 -/
 
 set_option autoImplicit false

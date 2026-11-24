@@ -22,6 +22,10 @@ comparisons; no unrelated site functor is selected.
 
 Source: Talpo--Vistoli1410.1164v2, Section6, Proposition6.14 and Theorem6.16.
 Local inverse refinements and sheaf equivalence are separate conclusions.
+Constructing the canonical site functor for arbitrary root realizations is
+left to a separate development: it needs realizations whose evaluated root
+comparisons are coherent over the whole tower (identities, composites, base
+change and the mixed base/exponent squares), which they do not record.
 -/
 
 set_option autoImplicit false
