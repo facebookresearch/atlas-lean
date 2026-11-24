@@ -41,6 +41,7 @@ public import MathlibExt.Data.Nat.Choose.AlternatingShiftedSum
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 public import MathlibExt.NumberTheory.Recurrences.FloorPowBinomialSum
 public import MathlibExt.NumberTheory.Recurrences.GFPLucasCatalan
+public import MathlibExt.NumberTheory.Recurrences.OddBinomialAlternatingSum
 
 namespace MetaMathlibExt
 
@@ -93,20 +94,6 @@ public theorem_wanted choose_sub_sub_one_eq_two_zpow_mul_sum {m n : ℕ} (hmn : 
     ((n - m - 1).choose m : ℚ) =
       (2 : ℚ) ^ (2 * (m : ℤ) - n + 1) *
         ∑ j ∈ Icc m ((n - 1) / 2), (j.choose m : ℚ) * (n.choose (2 * j + 1) : ℚ)
-
-/-- **Binomial coefficients of odd lower index as an alternating sum.** For natural numbers $n$
-and $k$ with $k < \lfloor (n-1)/2 \rfloor$,
-$$\binom{n}{2k+1} = \sum_{i=k}^{\lfloor (n-1)/2 \rfloor} (-1)^{i-k} \, 2^{n-2i-1}
-  \binom{n-i-1}{i} \binom{i}{k}.$$
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Lemma 3.2 (2) (`fq-2024-florez11012023-lem-3.2`). -/
-public theorem_wanted choose_two_mul_add_one_eq_alternating_sum {n k : ℕ}
-    (hk : k < (n - 1) / 2) :
-    (n.choose (2 * k + 1) : ℤ) =
-      ∑ i ∈ Icc k ((n - 1) / 2),
-        (-1) ^ (i - k) * 2 ^ (n - 2 * i - 1) * ((n - i - 1).choose i : ℤ) * (i.choose k : ℤ)
 
 /-- **Binomial coefficients of even lower index as an alternating sum.** For natural numbers $n$
 and $k$ with $k < \lfloor n/2 \rfloor$,
