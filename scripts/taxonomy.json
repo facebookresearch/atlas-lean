@@ -9240,6 +9240,7 @@
   "MathlibExt/Algebra/QuadraticForm/NormForm": {"to": "Algebra/associative-algebras", "title": "Splitting of quaternion algebras"},
   "MathlibExt/Algebra/Quaternion/Split": {"to": "Algebra/associative-algebras", "title": "Splitting of quaternion algebras"},
   "MathlibExt/Algebra/Quandle": {"to": "Algebra/nonassociative-algebras", "title": "Virtual racks and quandles"},
+  "MathlibExt/Algebra/RealZerosParityChangeBound": {"to": "Algebra/zeros-of-polynomials", "title": "Parity-change bound on real zeros"},
   "MathlibExt/Algebra/Ring/CandidoIdentity": {"to": "Algebra/algebraic-identities", "title": "Candido's identity"},
   "MathlibExt/Algebra/Ring/JacobsonCommutativity": {"to": "Algebra/associative-algebras", "title": "Jacobson's commutativity theorem"},
   "MathlibExt/Algebra/ScottishBook171": {"to": "Algebra/algebraic-identities", "title": "Associative operations on self-maps"},
