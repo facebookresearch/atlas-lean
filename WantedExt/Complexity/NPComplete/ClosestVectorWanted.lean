@@ -21,7 +21,7 @@ constant", SIAM J. Comput. 30 (2001), 2008-2035, doi:10.1137/S0097539700373039, 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

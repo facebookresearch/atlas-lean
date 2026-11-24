@@ -23,7 +23,7 @@ doi:10.1016/B978-1-4832-1447-4.50034-1. The interval algebra is that of J. F. Al
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Basic.Real.Basic
