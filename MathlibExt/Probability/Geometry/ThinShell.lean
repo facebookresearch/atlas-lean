@@ -21,8 +21,8 @@ public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Positivity
 
 import Mathlib.Analysis.Convex.Mul
-import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.Tactic.Ring
+import MathlibExt.Probability.BrownianQuadraticVariation
+import MathlibExt.Probability.Distributions.GaussianDensity
 
 @[expose] public section
 
@@ -193,45 +193,11 @@ section
 open ProbabilityTheory WithLp
 open scoped ProbabilityTheory
 
-private theorem pi_gaussianReal_eq_withDensity (n : ℕ) :
-    (Measure.pi (fun _ : Fin n ↦ gaussianReal 0 1)) =
-      (volume : Measure (Fin n → ℝ)).withDensity
-        (fun x ↦ ENNReal.ofReal (∏ i, gaussianPDFReal 0 1 (x i))) := by
-  apply Measure.pi_eq
-  intro s hs
-  rw [withDensity_apply _ (MeasurableSet.univ_pi hs), volume_pi, Measure.restrict_pi_pi]
-  have hi (i : Fin n) : Integrable (gaussianPDFReal 0 1) (volume.restrict (s i)) :=
-    (integrable_gaussianPDFReal 0 1).restrict
-  rw [← ofReal_integral_eq_lintegral_ofReal (Integrable.fintype_prod hi)
-    (ae_of_all _ (fun x ↦ Finset.prod_nonneg (fun i _ ↦ gaussianPDFReal_nonneg 0 1 (x i))))]
-  rw [integral_fintype_prod_eq_prod]
-  have hnonneg (i : Fin n) : 0 ≤ ∫ x in s i, gaussianPDFReal 0 1 x :=
-    integral_nonneg (gaussianPDFReal_nonneg 0 1)
-  calc
-    _ = ∏ i : Fin n, ENNReal.ofReal (∫ x in s i, gaussianPDFReal 0 1 x) := by
-      classical
-      let a (i : Fin n) := ∫ x in s i, gaussianPDFReal 0 1 x
-      change ENNReal.ofReal (∏ i ∈ Finset.univ, a i) = ∏ i ∈ Finset.univ, ENNReal.ofReal (a i)
-      generalize Finset.univ (α := Fin n) = u
-      induction u using Finset.induction_on with
-      | empty => simp
-      | insert i u hi ih => simp [Finset.prod_insert hi, ENNReal.ofReal_mul (hnonneg i), a, ih]
-    _ = _ := Finset.prod_congr rfl fun i _ ↦
-      (gaussianReal_apply_eq_integral 0 (v := 1) one_ne_zero (s i)).symm
-
-private noncomputable def stdGaussianDensity (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) : ℝ :=
-  (√(2 * Real.pi))⁻¹ ^ n * Real.exp (-‖x‖ ^ 2 / 2)
-
-private theorem stdGaussianDensity_eq_prod {n : ℕ} (x : EuclideanSpace ℝ (Fin n)) :
-    stdGaussianDensity n x = ∏ i, gaussianPDFReal 0 1 (x i) := by
-  simp only [stdGaussianDensity, gaussianPDFReal, NNReal.coe_one, mul_one, sub_zero]
-  rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin,
-    ← Real.exp_sum, EuclideanSpace.real_norm_sq_eq, ← Finset.sum_neg_distrib, Finset.sum_div]
-
-private theorem isLogConcaveDensity_stdGaussianDensity (n : ℕ) :
-    IsLogConcaveDensity (stdGaussianDensity n) := by
-  have hc : 0 < (√(2 * Real.pi))⁻¹ ^ n := by positivity
-  refine ⟨by unfold stdGaussianDensity; fun_prop, fun x ↦ mul_nonneg hc.le (Real.exp_pos _).le, ?_⟩
+private theorem isLogConcaveDensity_stdGaussianPDFReal (n : ℕ) :
+    IsLogConcaveDensity (MetaMathlibExt.stdGaussianPDFReal (ι := Fin n)) := by
+  have hc : 0 < ((√(2 * Real.pi)) ^ Fintype.card (Fin n))⁻¹ := by positivity
+  refine ⟨MetaMathlibExt.measurable_stdGaussianPDFReal,
+    MetaMathlibExt.stdGaussianPDFReal_nonneg, ?_⟩
   intro x y t ht ht₁
   have hsq : ‖(1 - t) • x + t • y‖ ^ 2 ≤ (1 - t) * ‖x‖ ^ 2 + t * ‖y‖ ^ 2 := by
     simp only [EuclideanSpace.real_norm_sq_eq, Finset.mul_sum, ← Finset.sum_add_distrib]
@@ -241,54 +207,15 @@ private theorem isLogConcaveDensity_stdGaussianDensity (n : ℕ) :
       exact (even_two : Even (2 : ℕ)).convexOn_pow
     exact hs.2 (Set.mem_univ (x i)) (Set.mem_univ (y i)) (sub_nonneg.mpr ht₁.le) ht.le
       (sub_add_cancel 1 t)
-  change (stdGaussianDensity n x) ^ (1 - t) * (stdGaussianDensity n y) ^ t ≤
-    stdGaussianDensity n ((1 - t) • x + t • y)
-  unfold stdGaussianDensity
+  change (MetaMathlibExt.stdGaussianPDFReal x) ^ (1 - t) *
+    (MetaMathlibExt.stdGaussianPDFReal y) ^ t ≤
+      MetaMathlibExt.stdGaussianPDFReal ((1 - t) • x + t • y)
+  unfold MetaMathlibExt.stdGaussianPDFReal
   rw [Real.mul_rpow hc.le (Real.exp_pos _).le, Real.mul_rpow hc.le (Real.exp_pos _).le,
     ← Real.exp_mul, ← Real.exp_mul, mul_mul_mul_comm, ← Real.rpow_add hc, sub_add_cancel,
     Real.rpow_one, ← Real.exp_add]
   apply mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr ?_) hc.le
   linarith only [hsq]
-
-private theorem stdGaussian_hasLogConcaveDensity (n : ℕ) :
-    ∃ f : EuclideanSpace ℝ (Fin n) → ℝ, IsLogConcaveDensity f ∧
-      stdGaussian (EuclideanSpace ℝ (Fin n)) =
-        volume.withDensity (fun x ↦ ENNReal.ofReal (f x)) := by
-  refine ⟨stdGaussianDensity n, isLogConcaveDensity_stdGaussianDensity n, ?_⟩
-  rw [← map_pi_eq_stdGaussian, pi_gaussianReal_eq_withDensity]
-  ext s hs
-  have hmp := PiLp.volume_preserving_toLp (Fin n)
-  rw [Measure.map_apply hmp.measurable hs, withDensity_apply _ (hmp.measurable hs),
-    withDensity_apply _ hs, ← hmp.setLIntegral_comp_preimage hs
-      ((isLogConcaveDensity_stdGaussianDensity n).1.ennreal_ofReal)]
-  refine lintegral_congr fun x ↦ ?_
-  rw [stdGaussianDensity_eq_prod]
-
-private lemma integral_pow_four_gaussianReal : ∫ x, x ^ 4 ∂gaussianReal 0 1 = 3 := by
-  -- The fourth derivative at zero of the standard Gaussian MGF is its fourth moment.
-  change (∫ x, (id ^ (4 : ℕ)) x ∂gaussianReal 0 1) = 3
-  rw [← iteratedDeriv_mgf_zero (X := id) (μ := gaussianReal 0 1)
-      (by simp [integrableExpSet_id_gaussianReal]) 4, mgf_id_gaussianReal]
-  simp only [zero_mul, NNReal.coe_one, one_mul, zero_add]
-  let f := fun t : ℝ ↦ Real.exp (t ^ 2 / 2)
-  change iteratedDeriv 4 f 0 = 3
-  have hf (t : ℝ) : HasDerivAt f (t * f t) t := by
-    have h := (((hasDerivAt_id t).fun_pow 2).div_const 2).exp
-    exact h.congr_deriv (by dsimp [f, id]; ring)
-  have h₁ : iteratedDeriv 1 f = fun t ↦ t * f t := funext fun t ↦ by
-    simpa only [iteratedDeriv_one] using (hf t).deriv
-  have h₂ : iteratedDeriv 2 f = fun t ↦ (1 + t ^ 2) * f t := by
-    rw [show (2 : ℕ) = 1 + 1 by rfl, iteratedDeriv_succ, h₁]
-    funext t
-    exact (((hasDerivAt_id t).fun_mul (hf t)).congr_deriv (by dsimp [id]; ring)).deriv
-  have h₃ : iteratedDeriv 3 f = fun t ↦ (3 * t + t ^ 3) * f t := by
-    rw [show (3 : ℕ) = 2 + 1 by rfl, iteratedDeriv_succ, h₂]
-    funext t
-    have hp := ((hasDerivAt_id t).fun_pow 2).const_add 1
-    exact ((hp.fun_mul (hf t)).congr_deriv (by dsimp [id]; ring)).deriv
-  rw [show (4 : ℕ) = 3 + 1 by rfl, iteratedDeriv_succ, h₃]
-  have hp := ((hasDerivAt_id (0 : ℝ)).const_mul 3).fun_add ((hasDerivAt_id (0 : ℝ)).fun_pow 3)
-  exact ((hp.fun_mul (hf 0)).congr_deriv (by norm_num [f, id])).deriv
 
 private lemma integral_sq_gaussianReal : ∫ x, x ^ 2 ∂gaussianReal 0 1 = 1 := by
   have h := variance_fun_id_gaussianReal (μ := 0) (v := 1)
@@ -305,7 +232,7 @@ private lemma variance_sq_gaussianReal : Var[fun x : ℝ ↦ x ^ 2; gaussianReal
   rw [variance_eq_sub memLp_sq_gaussianReal]
   change (∫ x, (x ^ 2) ^ 2 ∂gaussianReal 0 1) - (∫ x, x ^ 2 ∂gaussianReal 0 1) ^ 2 = 2
   simp_rw [← pow_mul]
-  norm_num [integral_pow_four_gaussianReal, integral_sq_gaussianReal]
+  norm_num [ProbabilityTheory.integral_pow_four_gaussianReal, integral_sq_gaussianReal]
 
 private lemma measurePreserving_stdGaussian_eval {n : ℕ} (i : Fin n) :
     MeasurePreserving (fun x : EuclideanSpace ℝ (Fin n) ↦ x i)
@@ -383,7 +310,9 @@ public theorem stdGaussian_isotropic_variance (n : ℕ) (hn : 0 < n) :
     IsIsotropicLogConcave (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) ∧
       normalizedRadiusVariance
         (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) = 2 := by
-  refine ⟨⟨inferInstance, stdGaussian_hasLogConcaveDensity n, ?_, ?_⟩, ?_⟩
+  refine ⟨⟨inferInstance, ?_, ?_, ?_⟩, ?_⟩
+  · exact ⟨MetaMathlibExt.stdGaussianPDFReal, isLogConcaveDensity_stdGaussianPDFReal n,
+      MetaMathlibExt.stdGaussian_eq_withDensity⟩
   · intro i
     exact ⟨(stdGaussian_coordinate_memLp i).integrable (by norm_num), integral_stdGaussian_eval i⟩
   · intro i j
