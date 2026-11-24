@@ -32,15 +32,23 @@ A group topology on `(ℤ, +)` is a topology making it a topological additive gr
 (`IsTopologicalAddGroup`); Hausdorff is `T2Space`; the sequence is indexed by `n ∈ ℕ`.
 -/
 
-/-- Kourovka 15.79 (I. V. Protasov): there is a Hausdorff group topology on `ℤ` in which
-`2ⁿ + 3ⁿ → 0`. -/
+/-- **Kourovka Problem 15.79 (Protasov's question on the integers).** The statement that there is a
+topology on $\mathbb{Z}$ that makes $(\mathbb{Z}, +)$ a Hausdorff topological group and in which
+the sequence $(2^n + 3^n)_{n \in \mathbb{N}}$ converges to $0$. -/
 def integerGroupTopologyPowSumTendstoZero : Prop :=
   ∃ t : TopologicalSpace ℤ, letI := t; IsTopologicalAddGroup ℤ ∧ T2Space ℤ ∧
     Filter.Tendsto (fun n : ℕ => (2 : ℤ) ^ n + 3 ^ n) Filter.atTop (nhds 0)
 
 /--
-Resolved true: the Kourovka Archive answers 15.79 "Yes, there does", as follows from Theorem 3 of
-Ruzsa; another solution is due to Skresanov. Source: E. I. Khukhro and V. D. Mazurov (eds.),
+**A Hausdorff group topology on the integers in which 2ⁿ + 3ⁿ tends to zero.** There is a
+topology on $\mathbb{Z}$ that makes $(\mathbb{Z}, +)$ a Hausdorff topological group and in which
+the sequence $(2^n + 3^n)_{n \in \mathbb{N}}$ converges to $0$. That is, Kourovka Problem 15.79 has
+a positive answer.
+
+The Kourovka Archive answers 15.79 "Yes, there does", as follows from Theorem 3 of Ruzsa; another
+solution is due to Skresanov.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Archive of Solved Problems, Problem 15.79 (I. V. Protasov); resolution: I. Z. Ruzsa, in: Proc. Conf.
 Number Theory (Budapest, 1987), Vol. I, Colloq. Math. Soc. János Bolyai 51, North-Holland,

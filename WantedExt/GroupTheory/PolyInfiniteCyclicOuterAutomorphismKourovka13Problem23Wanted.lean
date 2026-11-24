@@ -36,8 +36,10 @@ infinite cyclic factors. `G` is required to be nontrivial: the trivial group has
 inner.
 -/
 
-/-- `G` has a finite series `1 = H₀ ≤ H₁ ≤ ⋯ ≤ Hₙ = G` of normal subgroups of `G` whose factors
-`Hᵢ₊₁ ⧸ Hᵢ` are infinite cyclic. -/
+/-- **Normal series with infinite cyclic factors.** A group $G$ has a normal series with infinite
+cyclic factors when there are a natural number $n$ and subgroups
+$1 = H_0 \le H_1 \le \cdots \le H_n = G$, each normal in $G$, such that every factor
+$H_{i+1}/H_i$ is infinite cyclic. -/
 def HasNormalSeriesInfiniteCyclicFactors (G : Type*) [Group G] : Prop :=
   ∃ (n : ℕ) (H : Fin (n + 1) → Subgroup G), H 0 = ⊥ ∧ H (Fin.last n) = ⊤ ∧
     (∀ i, (H i).Normal) ∧ ∀ i : Fin n, H i.castSucc ≤ H i.succ ∧
@@ -45,22 +47,30 @@ def HasNormalSeriesInfiniteCyclicFactors (G : Type*) [Group G] : Prop :=
         IsCyclic (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ)) ∧
           Infinite (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ))
 
-/-- Kourovka 13.23 (F. de Giovanni): every nontrivial group with a finite normal series with
-infinite cyclic factors has a non-trivial outer automorphism (an automorphism that is not
-inner). -/
+/-- **Outer automorphisms of groups with an infinite cyclic normal series (Kourovka 13.23).** The
+conjecture that every nontrivial group with a normal series with infinite cyclic factors has an
+automorphism that is not inner.
+
+This is Kourovka Problem 13.23 (F. de Giovanni). -/
 def polyInfiniteCyclicHasOuterAutomorphism : Prop :=
   ∀ (G : Type) [Group G], Nontrivial G → HasNormalSeriesInfiniteCyclicFactors G →
     ∃ φ : MulAut G, ∀ g : G, φ ≠ MulAut.conj g
 
 /--
-Resolved false: Brescia, Ingrosso and Trombetti (arXiv:2607.11775) construct a torsion-free group
-`G` of Hirsch length 14 with a series `1 = G₀ ◁ ⋯ ◁ G₁₄ = G` of normal subgroups of `G` with
-infinite cyclic factors and `Out(G) = 1`; the Kourovka Notebook (21st issue) marks 13.23 solved,
-"No, not always". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory:
-The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 13.23 (F. de Giovanni);
-resolution: M. Brescia, E. Ingrosso and M. Trombetti, A torsion-free supersoluble group with trivial
-outer automorphism group, preprint (2026), arXiv:2607.11775, abstract: a torsion-free group of
-Hirsch length 14 with a series 1 = G_0 ◁ ⋯ ◁ G_14 = G of normal subgroups of G with infinite cyclic
+**Only inner automorphisms despite an infinite cyclic normal series (Kourovka 13.23 refuted).**
+There is a nontrivial group $G$ with a normal series with infinite cyclic factors such that every
+automorphism of $G$ is inner. So the conjecture of Kourovka Problem 13.23 is false.
+
+Brescia, Ingrosso and Trombetti construct a torsion-free group $G$ of Hirsch length $14$ with a
+series $1 = G_0 \trianglelefteq \cdots \trianglelefteq G_{14} = G$ of normal subgroups of $G$
+with infinite cyclic factors and $\mathrm{Out}(G) = 1$; the Kourovka Notebook (21st issue)
+marks 13.23 solved, "No, not always".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 13.23 (F. de Giovanni); resolution: M.
+Brescia, E. Ingrosso and M. Trombetti, A torsion-free supersoluble group with trivial outer
+automorphism group, preprint (2026), arXiv:2607.11775, abstract: a torsion-free group of Hirsch
+length 14 with a series 1 = G_0 ◁ ⋯ ◁ G_14 = G of normal subgroups of G with infinite cyclic
 factors and Out(G) = 1; the Kourovka Notebook (21st issue) marks 13.23 solved,
 https://arxiv.org/abs/2607.11775.
 -/

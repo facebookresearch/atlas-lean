@@ -22,9 +22,11 @@ Matrices*, Journal of Integer Sequences 15 (2012),
 [`kaygisiz3.tex`](https://cs.uwaterloo.ca/journals/JIS/VOL15/Kaygisiz/kaygisiz3.tex).
 -/
 
-/-- The Pell--Lucas sequence, initialized by `Q₀ = Q₁ = 2` and satisfying
-`Qₙ₊₂ = 2 Qₙ₊₁ + Qₙ`. This is the source's specialization
-`L_{1,n}(2,1)`. -/
+/-- **Pell–Lucas numbers.** The Pell–Lucas numbers are the natural numbers $Q_n$ defined by
+$Q_0 = Q_1 = 2$ and $Q_{n+2} = 2 Q_{n+1} + Q_n$ for every natural number $n$.
+
+They are the specialization $L_{1,n}(2,1)$ of the generalized bivariate Lucas $p$-polynomials
+$L_{p,n}(x,y)$ of Kaygisiz and Şahin. -/
 public def pellLucas : Nat → Nat
   | 0 => 2
   | 1 => 2

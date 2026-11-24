@@ -85,3 +85,61 @@ example (M'' : Type 1) [AddCommGroup M''] [Module ℚ M''] (ψ : ℚ →ₗ[ℚ]
       Algebra.PointDerivations.map (aeval 2) ψ
         (Algebra.PointDerivations.map (aeval 2) (scale 2) (evalDerivativeAtPoint 2)) :=
   Algebra.PointDerivations.map_comp (aeval 2) (scale 2) ψ (evalDerivativeAtPoint 2)
+
+open scoped TensorProduct
+
+universe u w
+
+/-- Consumer with the original binders: the field, algebra and coefficient
+modules share one universe, as in the source statement. -/
+private theorem exactSource (k : Type u) [Field k] (A : Type u) [CommRing A]
+    [Algebra k A] [Algebra.FiniteType k A] (ev : A →ₐ[k] k) :
+    ∃ Ψ : ∀ (M : Type u) [AddCommGroup M] [Module k M],
+        ↥(Algebra.PointDerivations k A ev M) ≃ₗ[k]
+          (↥(Algebra.PointDerivations k A ev k) ⊗[k] M),
+      (∀ (M M' : Type u) [AddCommGroup M] [Module k M] [AddCommGroup M']
+          [Module k M'] (g : M →ₗ[k] M')
+          (δ : ↥(Algebra.PointDerivations k A ev M)),
+        Ψ M' (Algebra.PointDerivations.map ev g δ) =
+          LinearMap.lTensor (↥(Algebra.PointDerivations k A ev k)) g
+            (Ψ M δ)) ∧
+      (∀ δ : ↥(Algebra.PointDerivations k A ev k),
+        Ψ k δ = δ ⊗ₜ[k] (1 : k)) :=
+  Algebra.PointDerivations.exists_linearEquiv_tensor_forall_map_eq_of_finiteType
+    ev
+
+/-- The coefficient module may live in a higher universe than the field and
+the algebra. -/
+example (k : Type u) [Field k] (A : Type u) [CommRing A] [Algebra k A]
+    [Algebra.FiniteType k A] (ev : A →ₐ[k] k) (M : Type (u + 1))
+    [AddCommGroup M] [Module k M] :
+    Nonempty (↥(Algebra.PointDerivations k A ev M) ≃ₗ[k]
+      (↥(Algebra.PointDerivations k A ev k) ⊗[k] M)) := by
+  exact ⟨Algebra.PointDerivations.tensorEquiv ev M⟩
+
+/-- Naturality and the self-case also hold with coefficient modules in
+higher universes, through the universe-polymorphic identification. -/
+example (k : Type u) [Field k] (A : Type u) [CommRing A] [Algebra k A]
+    [Algebra.FiniteType k A] (ev : A →ₐ[k] k) (M : Type (u + 1))
+    (M' : Type (u + 2)) [AddCommGroup M] [Module k M] [AddCommGroup M']
+    [Module k M'] (g : M →ₗ[k] M')
+    (δ : ↥(Algebra.PointDerivations k A ev M))
+    (δk : ↥(Algebra.PointDerivations k A ev k)) :
+    Algebra.PointDerivations.tensorEquiv ev M'
+        (Algebra.PointDerivations.map ev g δ) =
+      LinearMap.lTensor (↥(Algebra.PointDerivations k A ev k)) g
+        (Algebra.PointDerivations.tensorEquiv ev M δ) ∧
+    Algebra.PointDerivations.tensorEquiv ev k δk = δk ⊗ₜ[k] (1 : k) :=
+  ⟨Algebra.PointDerivations.tensorEquiv_natural ev g δ,
+   Algebra.PointDerivations.tensorEquiv_self ev δk⟩
+
+/-- On polynomial derivations at `2`, the tensor identification sends a
+derivation to itself tensored with `1`. -/
+example : True := by
+  obtain ⟨Ψ, -, hself⟩ :=
+    Algebra.PointDerivations.exists_linearEquiv_tensor_forall_map_eq_of_finiteType
+      (aeval (2 : ℚ) : ℚ[X] →ₐ[ℚ] ℚ)
+  have h := hself (evalDerivativeAtPoint 2)
+  guard_hyp h : Ψ ℚ (evalDerivativeAtPoint 2) =
+    evalDerivativeAtPoint 2 ⊗ₜ[ℚ] (1 : ℚ)
+  trivial

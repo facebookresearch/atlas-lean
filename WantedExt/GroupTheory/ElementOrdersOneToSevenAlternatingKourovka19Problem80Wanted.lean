@@ -32,16 +32,18 @@ Shi). UnsolvedMath record UM-00701628 (`KOU-19.80`), dataset ulamai/UnsolvedMath
 periodic. `G : Type` is not assumed finite (the finite case was known).
 -/
 
-/-- Kourovka 19.80 (W. J. Shi): every `OC₇`-group, that is, every group whose set of element orders
-is exactly `{1, 2, …, 7}` (such a group is periodic), is isomorphic to the alternating group
-`A₇`. -/
+/-- **Kourovka Problem 19.80 ($OC_7$-groups).** The proposition, asked by W. J. Shi, that every
+$OC_7$-group, that is, every group whose set of element orders is exactly $\{1, 2, \dots, 7\}$
+(such a group is periodic), is isomorphic to the alternating group $A_7$. -/
 def ocSevenGroupIsAlternating : Prop :=
   ∀ (G : Type) [Group G], Set.range (fun g : G => orderOf g) = Set.Icc 1 7 →
     Nonempty (G ≃* alternatingGroup (Fin 7))
 
 /--
-Resolved true: the Kourovka Archive answers 19.80 "Yes, it is true", citing Jabara and Mamontov:
-every (possibly infinite) group with element orders exactly `{1, …, 7}` is isomorphic to `A₇`.
+**Groups with element orders $1$ to $7$ are isomorphic to $A_7$.** Every group, finite or
+infinite, whose set of element orders is exactly $\{1, 2, \dots, 7\}$ is isomorphic to the
+alternating group $A_7$. This answers Kourovka Problem 19.80 positively (Mamontov and Jabara).
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.80 (W. J.
 Shi); resolution: A. S. Mamontov and E. Jabara, Recognizing A₇ by its set of element orders,

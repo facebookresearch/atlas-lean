@@ -45,19 +45,27 @@ open Cslib.Algorithms.Lean.SortingNetworks
 
 variable {n : ℕ} {α : Type*} [LinearOrder α]
 
-/-- The comparator on wires `i, i + 1`, if both exist. -/
+/-- **Adjacent comparator.** For $n$ wires and an index $i$, this is the comparator on
+wires $i$ and $i + 1$ when $i + 1 < n$, and nothing when wire $i + 1$ does not exist. -/
 def adjacent (n i : ℕ) : Option (Fin n × Fin n) :=
   if h : i + 1 < n then some (⟨i, by omega⟩, ⟨i + 1, h⟩) else none
 
-/-- One bubble pass: the comparators `(0, 1), (1, 2), …, (m - 1, m)`. -/
+/-- **Bubble pass.** On $n$ wires, the bubble pass ending at wire $m$ is the comparator
+network $(0, 1), (1, 2), \ldots, (m - 1, m)$, applied in this order, where a comparator
+$(i, i + 1)$ is left out when wire $i + 1$ does not exist (that is, when $i + 1 \ge n$). -/
 def pass (n m : ℕ) : Network n := (List.range m).filterMap (adjacent n)
 
-/-- The passes ending at wires `m - 1, m - 2, …, 0`. -/
+/-- **Successive bubble passes.** On $n$ wires and for a number $m$, this is the comparator
+network obtained by concatenating the bubble passes ending at wires $m - 1, m - 2, \ldots, 0$,
+in this order; for $m = 0$ it is empty. -/
 def passes (n : ℕ) : ℕ → Network n
   | 0 => []
   | m + 1 => pass n m ++ passes n m
 
-/-- The bubble sorting network on `n` wires: passes ending at wires `n - 1, n - 2, …, 0`. -/
+/-- **Bubble sorting network.** The bubble sorting network on $n$ wires is the comparator
+network obtained by concatenating the bubble passes ending at wires $n - 1, n - 2, \ldots, 0$,
+in this order, where the bubble pass ending at wire $k$ consists of the comparators
+$(0, 1), (1, 2), \ldots, (k - 1, k)$. -/
 def bubble (n : ℕ) : Network n := passes n n
 
 theorem run_append (a b : Network n) (v : Fin n → α) : run (a ++ b) v = run b (run a v) := by
@@ -67,9 +75,11 @@ theorem pass_succ {m : ℕ} (hm : m + 1 < n) :
     pass n (m + 1) = pass n m ++ [(⟨m, by omega⟩, ⟨m + 1, hm⟩)] := by
   simp [pass, List.range_succ, List.filterMap_append, adjacent, hm]
 
-/-- **One pass carries the maximum of wires `0..m` to wire `m`**: wires above `m` are untouched,
-every wire up to `m` ends at most wire `m`, and each holds one of the input values of wires
-`0..m`. -/
+/-- **Effect of one bubble pass.** Let $w$ be an input on $n$ wires with values in a linearly
+ordered type, let $m < n$, and let $w'$ be the output of the bubble pass ending at wire $m$
+(the comparators $(0, 1), \ldots, (m - 1, m)$) run on $w$. Then $w'_i = w_i$ for every wire
+$i > m$; $w'_i \le w'_m$ for every wire $i \le m$; and for every wire $i \le m$ there is a wire
+$j \le m$ with $w'_i = w_j$. -/
 theorem pass_spec : ∀ (m : ℕ) (hm : m < n) (w : Fin n → α),
     (∀ i : Fin n, m < i.val → run (pass n m) w i = w i) ∧
     (∀ i : Fin n, i.val ≤ m → run (pass n m) w i ≤ run (pass n m) w ⟨m, hm⟩) ∧
@@ -118,8 +128,11 @@ theorem pass_spec : ∀ (m : ℕ) (hm : m < n) (w : Fin n → α),
         · obtain ⟨j, hj, e⟩ := hc i (by omega)
           exact ⟨j, by omega, e⟩
 
-/-- The invariant before the pass ending at wire `m - 1`: wires `m..n-1` are sorted and hold the
-largest values. -/
+/-- **Settled top wires.** Let $w$ assign to each of $n$ wires a value in a linearly ordered
+type, and let $m$ be a natural number. Then $w$ is settled from $m$ when $w_i \le w_j$ for all
+wires $m \le i \le j$ (the wires $m, \ldots, n - 1$ are sorted) and $w_i \le w_j$ for all
+wires $i < m \le j$ (they hold the largest values). This is the invariant before the bubble
+pass ending at wire $m - 1$. -/
 def Settled (m : ℕ) (w : Fin n → α) : Prop :=
   (∀ i j : Fin n, m ≤ i.val → i ≤ j → w i ≤ w j) ∧
     (∀ i j : Fin n, i.val < m → m ≤ j.val → w i ≤ w j)
@@ -159,7 +172,8 @@ theorem bubble_sorts : Sorts (bubble n) α := by
     fun _ j _ hj => absurd j.isLt (by omega)⟩
   exact (settled_passes n le_rfl v h).1 i j (Nat.zero_le _) hij
 
-/-- One pass ending at wire `m` has `m` comparators. -/
+/-- **Size of a bubble pass.** On $n$ wires, for every $m < n$ the bubble pass ending at wire
+$m$ has exactly $m$ comparators. -/
 theorem length_pass {m : ℕ} (hm : m < n) : (pass n m).length = m := by
   induction m with
   | zero => rfl
@@ -175,7 +189,8 @@ theorem length_passes : ∀ m, m ≤ n → 2 * (passes n m).length = m * (m - 1)
       · simp only [Nat.add_sub_cancel]
         ring
 
-/-- The bubble network has `n (n - 1) / 2` comparators. -/
+/-- **Size of the bubble sorting network.** For every $n$, the bubble sorting network on $n$
+wires has $n(n - 1)/2$ comparators: twice its number of comparators is $n(n - 1)$. -/
 theorem length_bubble : 2 * (bubble n).length = n * (n - 1) := length_passes n le_rfl
 
 end Cslib.Algorithms.Lean.SortingNetworks.Bubble

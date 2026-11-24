@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Enumerative.LinearRecurrenceLogBehavior
 
 /-!
 # Log-behavior of sequences related to A005773
@@ -25,28 +26,27 @@ recurrence (1); OEIS A005773, `1, 1, 2, 5, 13, 35, …`). Forward differences ar
 `Δ³A n = A (n + 3) - 3 A (n + 2) + 3 A (n + 1) - A n`. A sequence `(z n)_{n ≥ m}` is
 log-convex (log-concave) if `z n ^ 2 ≤ z (n - 1) z (n + 1)` (`≥`) for every `n ≥ m + 1`, and
 log-balanced (Došlić) if it is log-convex and `(z n / n!)_{n ≥ m}` is log-concave.
+
+Proved in `MathlibExt.Combinatorics.Enumerative.LinearRecurrenceLogBehavior`: Lemma 1
+(`MetaMathlibExt.a005773Recurrence_ratio_bounds`), Theorem 2 on third differences
+(`MetaMathlibExt.a005773Recurrence_thirdDiff_logConvex_logBalanced`), the weighted log-concavity
+result (`MetaMathlibExt.a005773Recurrence_weighted_logConcave`), and Theorem 4
+(`MetaMathlibExt.a005773Recurrence_pow_logConvex`).
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- With `x n = A (n + 1) / A n` and `φ n = 3 (2n + 1) / (2 (n + 1))`, for every `n ≥ 0`:
-`x n ≤ φ n` (2) and `x (n + 1) / x n ≥ 2 (3n² + 6n + 2) / ((n + 2)(2n + 1) φ n)` (3).
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Lemma 1. -/
-public theorem_wanted a005773Recurrence_ratio_bounds (A : ℕ → ℝ) (h0 : A 0 = 1) (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
-    (n : ℕ) :
-    A (n + 1) / A n ≤ 3 * (2 * n + 1) / (2 * (n + 1)) ∧
-      2 * (3 * (n : ℝ) ^ 2 + 6 * n + 2) / ((n + 2) * (2 * n + 1) * (3 * (2 * n + 1) / (2 * (n + 1))))
-        ≤ (A (n + 2) / A (n + 1)) / (A (n + 1) / A n)
-
-/-- The sequences `(ΔA n)_{n ≥ 3}` and `(Δ²A n)_{n ≥ 3}` are log-balanced: for every `n ≥ 4`,
-both satisfy `z n ^ 2 ≤ z (n - 1) z (n + 1)` and
-`(z (n - 1) / (n - 1)!) (z (n + 1) / (n + 1)!) ≤ (z n / n!) ^ 2`.
+/-- **The first and second differences of A005773 are log-balanced.**
+Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
+$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and write
+$\Delta A_n = A_{n+1} - A_n$ and $\Delta^2 A_n = A_{n+2} - 2A_{n+1} + A_n$. Then for every
+$n \ge 4$, each of the sequences $z = \Delta A$ and $z = \Delta^2 A$ satisfies
+$z_n^2 \le z_{n-1} z_{n+1}$ and
+$$\frac{z_{n-1}}{(n-1)!} \cdot \frac{z_{n+1}}{(n+1)!} \le \left(\frac{z_n}{n!}\right)^2.$$
+That is, $(\Delta A_n)_{n \ge 3}$ and $(\Delta^2 A_n)_{n \ge 3}$ are log-balanced: log-convex, with
+$(z_n / n!)_{n \ge 3}$ log-concave.
 
 Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
 Sequence*, INTEGERS 25 (2025), Article A100, Theorem 1. -/
@@ -63,52 +63,6 @@ public theorem_wanted a005773Recurrence_diff_logBalanced (A : ℕ → ℝ) (h0 :
       D₂ n ^ 2 ≤ D₂ (n - 1) * D₂ (n + 1) ∧
         D₂ (n - 1) / (n - 1).factorial * (D₂ (n + 1) / (n + 1).factorial) ≤
           (D₂ n / n.factorial) ^ 2
-
-/-- `(Δ³A n)_{n ≥ 2}` is log-convex (`z n ^ 2 ≤ z (n - 1) z (n + 1)` for `n ≥ 3`) and
-`(Δ³A n)_{n ≥ 3}` is log-balanced (additionally
-`(z (n - 1) / (n - 1)!) (z (n + 1) / (n + 1)!) ≤ (z n / n!) ^ 2` for `n ≥ 4`).
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Theorem 2. -/
-public theorem_wanted a005773Recurrence_thirdDiff_logConvex_logBalanced (A : ℕ → ℝ)
-    (h0 : A 0 = 1) (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1)) :
-    let D₃ : ℕ → ℝ := fun m => A (m + 3) - 3 * A (m + 2) + 3 * A (m + 1) - A m
-    (∀ n, 3 ≤ n → D₃ n ^ 2 ≤ D₃ (n - 1) * D₃ (n + 1)) ∧
-      ∀ n, 4 ≤ n →
-        D₃ (n - 1) / (n - 1).factorial * (D₃ (n + 1) / (n + 1).factorial) ≤
-          (D₃ n / n.factorial) ^ 2
-
-/-- The sequences `(n A n)_{n ≥ 1}`, `(Δ(n A n))_{n ≥ 1}`, `(n ΔA n)_{n ≥ 1}` and
-`(n Δ²A n)_{n ≥ 1}` are log-concave: `z (n - 1) z (n + 1) ≤ z n ^ 2` for every `n ≥ 2`.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Theorem 3. -/
-public theorem_wanted a005773Recurrence_weighted_logConcave (A : ℕ → ℝ) (h0 : A 0 = 1)
-    (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
-    (n : ℕ) (hn : 2 ≤ n) :
-    let W : ℕ → ℝ := fun m => m * A m
-    let V : ℕ → ℝ := fun m => (m + 1 : ℕ) * A (m + 1) - m * A m
-    let U : ℕ → ℝ := fun m => m * (A (m + 1) - A m)
-    let T : ℕ → ℝ := fun m => m * (A (m + 2) - 2 * A (m + 1) + A m)
-    W (n - 1) * W (n + 1) ≤ W n ^ 2 ∧ V (n - 1) * V (n + 1) ≤ V n ^ 2 ∧
-      U (n - 1) * U (n + 1) ≤ U n ^ 2 ∧ T (n - 1) * T (n + 1) ≤ T n ^ 2
-
-/-- The sequence `(nⁿ A nⁿ)_{n ≥ 1} = ((n A n)ⁿ)_{n ≥ 1}` is log-convex:
-`z n ^ 2 ≤ z (n - 1) z (n + 1)` for every `n ≥ 2`.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Theorem 4. -/
-public theorem_wanted a005773Recurrence_pow_logConvex (A : ℕ → ℝ) (h0 : A 0 = 1)
-    (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
-    (n : ℕ) (hn : 2 ≤ n) :
-    let z : ℕ → ℝ := fun m => ((m : ℝ) * A m) ^ m
-    z n ^ 2 ≤ z (n - 1) * z (n + 1)
 
 end
 

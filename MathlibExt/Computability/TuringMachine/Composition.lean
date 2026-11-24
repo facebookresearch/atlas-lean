@@ -58,37 +58,74 @@ attribute [local instance] FinTM2.kFin FinTM2.ΛFin FinTM2.σFin FinTM2.Γk₀Fi
 
 variable (M₁ M₂ : FinTM2)
 
-/-- Stack indices of the composite machine: `M₁`'s stacks, `M₂`'s stacks, one scratch stack. -/
+/-- **Stack indices of the composite machine.** For finite multi-stack Turing machines $M_1$ and
+$M_2$ with stack index sets $K_1$ and $K_2$, the stacks of their composite machine are indexed by
+the disjoint union $K_1 \sqcup K_2 \sqcup \{\ast\}$: the stacks of $M_1$, the stacks of $M_2$, and
+one scratch stack $\ast$. -/
 abbrev CK := M₁.K ⊕ M₂.K ⊕ Unit
 
-/-- `M₂`'s input alphabet, used for the scratch stack and for symbols held in the control. -/
+/-- **Intermediate alphabet of the composite machine.** For a multi-stack Turing machine (a TM2
+machine) $M_2$ with input stack $k_0$, this is the alphabet of the symbols on stack $k_0$ of $M_2$.
+
+When a machine $M_1$ is composed with $M_2$, the composite machine uses this alphabet for its
+scratch stack and for the symbol held in its control state. -/
 abbrev X := M₂.Γ M₂.k₀
 
-/-- Stack alphabets of the composite machine. -/
+/-- **Stack alphabets of the composite machine.** Let $M_1$ and $M_2$ be finite multi-stack Turing
+machines and let $X$ be the alphabet of the input stack of $M_2$. The stacks of their composite
+machine are the stacks of $M_1$, the stacks of $M_2$ and one scratch stack. Each stack of $M_1$
+keeps its alphabet from $M_1$, each stack of $M_2$ keeps its alphabet from $M_2$, and the scratch
+stack has alphabet $X$. -/
 @[reducible] def CΓ : CK M₁ M₂ → Type
   | .inl k => M₁.Γ k
   | .inr (.inl k) => M₂.Γ k
   | .inr (.inr _) => X M₂
 
-/-- Labels: `M₁`'s, `M₂`'s, and the two copy loops (`none` = pop, `some x` = push `x`). -/
+/-- **Labels of the composite machine.** Let $M_1$ and $M_2$ be finite multi-stack Turing
+machines with label sets $\Lambda_1$ and $\Lambda_2$, and let $X$ be the alphabet of the input
+stack of $M_2$. The label set of their composite machine is the disjoint union of $\Lambda_1$,
+$\Lambda_2$ and two copies of $X \sqcup \{\bot\}$, one for each copy loop: in each copy, $\bot$
+labels the step that pops and $x \in X$ labels the step that pushes $x$. -/
 abbrev CΛ := M₁.Λ ⊕ M₂.Λ ⊕ (Option (X M₂) ⊕ Option (X M₂))
 
-/-- States: `M₁`'s state, `M₂`'s state, and the symbol just popped by a copy loop. -/
+/-- **States of the composite machine.** Let $M_1$ and $M_2$ be finite multi-stack Turing machines
+with internal state sets $\sigma_1$ and $\sigma_2$, and let $X$ be the alphabet of the input stack
+of $M_2$. The internal states of their composite machine are the triples in
+$\sigma_1 \times \sigma_2 \times (X \sqcup \{\bot\})$: a state of $M_1$, a state of $M_2$, and
+either the symbol just popped by a copy loop or $\bot$ when there is none. -/
 abbrev Cσ := M₁.σ × M₂.σ × Option (X M₂)
 
-/-- Label: pop from `M₁`'s output stack. -/
+/-- **Pop label of the first copy loop.** In the composite machine of $M_1$ and $M_2$, this is
+the label $\mathrm{none}$ in the first copy-loop part of the label set; the composite program
+uses it to pop a symbol from $M_1$'s output stack. -/
 abbrev pop1 : CΛ M₁ M₂ := .inr (.inr (.inl none))
-/-- Label: push `x` on the scratch stack. -/
+/-- **Push labels of the first copy loop.** In the composite machine of $M_1$ and $M_2$, for a
+symbol $x$ of $M_2$'s input alphabet, this is the label $\mathrm{some}\ x$ in the first copy-loop
+part of the label set; the composite program uses it to push $x$ on the scratch stack. -/
 abbrev push1 (x : X M₂) : CΛ M₁ M₂ := .inr (.inr (.inl (some x)))
-/-- Label: pop from the scratch stack. -/
+/-- **Pop label of the second copy loop.** In the composite machine of $M_1$ and $M_2$, this is
+the label $\mathrm{none}$ in the second copy-loop part of the label set; the composite program
+uses it to pop a symbol from the scratch stack. -/
 abbrev pop2 : CΛ M₁ M₂ := .inr (.inr (.inr none))
-/-- Label: push `x` on `M₂`'s input stack. -/
+/-- **Push labels of the second copy loop.** In the composite machine of $M_1$ and $M_2$, for a
+symbol $x$ of $M_2$'s input alphabet, this is the label $\mathrm{some}\ x$ in the second
+copy-loop part of the label set; the composite program uses it to push $x$ on $M_2$'s input
+stack. -/
 abbrev push2 (x : X M₂) : CΛ M₁ M₂ := .inr (.inr (.inr (some x)))
 
-/-- The scratch stack index. -/
+/-- **Scratch stack of the composite machine.** For multi-stack Turing machines (TM2 machines)
+$M_1$ and $M_2$ with stack index types $K_1$ and $K_2$, the composite machine has stack indices
+$K_1 \oplus K_2 \oplus \mathrm{Unit}$; its scratch stack is the index given by the unique element
+of the $\mathrm{Unit}$ summand. -/
 abbrev tmp : CK M₁ M₂ := .inr (.inr ())
 
-/-- Lift a statement of `M₁`; halting jumps to the first copy loop instead. -/
+/-- **Lifting a statement of the first machine.** Given finite multi-stack Turing machines
+$M_1$ and $M_2$, a statement of $M_1$ is translated into a statement of their composite
+machine, whose state is a triple $(v_1, v_2, o)$, by recursion on the statement: an operation
+on a stack $k$ of $M_1$ acts on the copy of $k$ among the composite stacks, every read or update
+of $M_1$'s state reads or updates the component $v_1$ and leaves $v_2$ and $o$ unchanged, a
+branch tests $v_1$, a jump to a label $l$ of $M_1$ becomes a jump to the copy of $l$, and
+halting becomes a jump to the pop label of the first copy loop, which moves $M_1$'s output. -/
 def lift₁ : TM2.Stmt M₁.Γ M₁.Λ M₁.σ → TM2.Stmt (CΓ M₁ M₂) (CΛ M₁ M₂) (Cσ M₁ M₂)
   | .push k f q => .push (.inl k) (fun s => f s.1) (lift₁ q)
   | .peek k f q => .peek (.inl k) (fun s o => (f s.1 o, s.2)) (lift₁ q)
@@ -98,7 +135,13 @@ def lift₁ : TM2.Stmt M₁.Γ M₁.Λ M₁.σ → TM2.Stmt (CΓ M₁ M₂) (CΛ
   | .goto f => .goto (fun s => .inl (f s.1))
   | .halt => .goto (fun _ => pop1 M₁ M₂)
 
-/-- Lift a statement of `M₂`; halting halts. -/
+/-- **Lifting a statement of the second machine.** Given finite multi-stack Turing machines
+$M_1$ and $M_2$, a statement of $M_2$ is translated into a statement of their composite
+machine, whose state is a triple $(v_1, v_2, o)$, by recursion on the statement: an operation
+on a stack $k$ of $M_2$ acts on the copy of $k$ among the composite stacks, every read or update
+of $M_2$'s state reads or updates the component $v_2$ and leaves $v_1$ and $o$ unchanged, a
+branch tests $v_2$, a jump to a label $l$ of $M_2$ becomes a jump to the copy of $l$, and
+halting stays halting. -/
 def lift₂ : TM2.Stmt M₂.Γ M₂.Λ M₂.σ → TM2.Stmt (CΓ M₁ M₂) (CΛ M₁ M₂) (Cσ M₁ M₂)
   | .push k f q => .push (.inr (.inl k)) (fun s => f s.2.1) (lift₂ q)
   | .peek k f q => .peek (.inr (.inl k)) (fun s o => (s.1, f s.2.1 o, s.2.2)) (lift₂ q)
@@ -110,7 +153,18 @@ def lift₂ : TM2.Stmt M₂.Γ M₂.Λ M₂.σ → TM2.Stmt (CΓ M₁ M₂) (CΛ
 
 variable (φ : M₁.Γ M₁.k₁ → X M₂)
 
-/-- The composite program. `φ` translates `M₁`'s output symbols into `M₂`'s input symbols. -/
+/-- **The program of the composite machine.** Let $M_1$ and $M_2$ be finite multi-stack Turing
+machines and $\varphi$ a map from $M_1$'s output alphabet to $M_2$'s input alphabet. At a label
+of $M_1$ or of $M_2$ the composite program runs the lifted statement of that machine at that
+label. At the pop label of the first copy loop it pops $M_1$'s output stack, stores the image
+under $\varphi$ of the popped symbol (or nothing) in the third state component, and jumps to the
+push label of the first loop for that image, or to the pop label of the second loop if the
+stack was empty. At the push label of the first loop for $x$ it pushes $x$ on the scratch stack
+and jumps to the first pop label. At the pop label of the second loop it pops the scratch
+stack, stores the popped symbol (or nothing) in the third state component, and jumps to the
+push label of the second loop for that symbol, or to the copy of $M_2$'s main label if the
+scratch stack was empty. At the push label of the second loop for $x$ it pushes $x$ on $M_2$'s
+input stack and jumps to the second pop label. -/
 def prog : CΛ M₁ M₂ → TM2.Stmt (CΓ M₁ M₂) (CΛ M₁ M₂) (Cσ M₁ M₂)
   | .inl l => lift₁ M₁ M₂ (M₁.m l)
   | .inr (.inl l) => lift₂ M₁ M₂ (M₂.m l)
@@ -129,7 +183,14 @@ def prog : CΛ M₁ M₂ → TM2.Stmt (CΓ M₁ M₂) (CΛ M₁ M₂) (Cσ M₁ 
   | .inr (.inr (.inr (some x))) =>
       .push (.inr (.inl M₂.k₀)) (fun _ => x) (.goto fun _ => pop2 M₁ M₂)
 
-/-- The composite machine. -/
+/-- **The composite machine.** Let $M_1$ and $M_2$ be finite multi-stack Turing machines, let $X$ be
+the alphabet of the input stack of $M_2$, and let $\varphi$ map the output alphabet of $M_1$ to $X$.
+The composite machine has the stacks of $M_1$, the stacks of $M_2$ and one scratch stack with
+alphabet $X$; its input stack is that of $M_1$ and its output stack is that of $M_2$. It starts
+at the main label of $M_1$, in the state made of the initial states of $M_1$ and $M_2$ and no held
+symbol. It runs $M_1$; when $M_1$ halts, it pops the output stack of $M_1$ onto the scratch stack,
+translating each symbol by $\varphi$, then pops the scratch stack onto the input stack of $M_2$,
+then runs $M_2$ from its main label, and it halts when $M_2$ halts. -/
 noncomputable def compTM : FinTM2 where
   K := CK M₁ M₂
   k₀ := .inl M₁.k₀
@@ -144,7 +205,11 @@ noncomputable def compTM : FinTM2 where
 
 /-! ### Stacks of the composite machine -/
 
-/-- Assemble composite stacks from `M₁`'s stacks, `M₂`'s stacks and the scratch stack. -/
+/-- **Assembling the stacks of the composite machine.** Given finite multi-stack Turing machines
+$M_1$ and $M_2$, contents $S_1$ for the stacks of $M_1$, contents $S_2$ for the stacks of $M_2$,
+and a list $t$ of symbols of $M_2$'s input alphabet, the stack contents of their composite
+machine put $S_1(k)$ on the copy of each stack $k$ of $M_1$, $S_2(k)$ on the copy of each stack
+$k$ of $M_2$, and $t$ on the scratch stack. -/
 def mkStk (S₁ : ∀ k, List (M₁.Γ k)) (S₂ : ∀ k, List (M₂.Γ k)) (t : List (X M₂)) :
     ∀ k : CK M₁ M₂, List (CΓ M₁ M₂ k)
   | .inl k => S₁ k
@@ -186,7 +251,9 @@ theorem update_mkStk_tmp (S₁ : ∀ k, List (M₁.Γ k)) (S₂ : ∀ k, List (M
 
 /-! ### Simulating one statement of `M₁` or `M₂` -/
 
-/-- Composite label of a (possibly halted) `M₁` label: halting becomes the first copy loop. -/
+/-- **Composite label of an $M_1$ label.** A label $l$ of $M_1$ is sent to $l$ viewed as a label of
+the $M_1$ part of the composite of $M_1$ and $M_2$, and the halted label is sent to the label that
+pops $M_1$'s output stack, which starts the first copy loop. -/
 def lab₁ : Option M₁.Λ → CΛ M₁ M₂
   | some l => .inl l
   | none => pop1 M₁ M₂
@@ -241,11 +308,21 @@ theorem stepAux_lift₂ (q : TM2.Stmt M₂.Γ M₂.Λ M₂.σ) (v : M₂.σ) (S�
 
 /-! ### Phase embeddings and one-step simulation -/
 
-/-- Composite configuration while running `M₁` (all other stacks empty). -/
+/-- **Embedding of $M_1$'s configurations into the composite machine.** A configuration $c$ of $M_1$
+is sent to the configuration of the composite of $M_1$ and $M_2$ whose label is the label of $c$
+viewed as a label of the $M_1$ part, or the label that pops $M_1$'s output stack (the start of the
+first copy loop) if $c$ is halted, whose state is $(v, q_2, \mathrm{none})$ with $v$ the state of
+$c$ and $q_2$ the initial state of $M_2$, and whose stacks are the stacks of $c$ on $M_1$'s stacks,
+with $M_2$'s stacks and the scratch stack empty. -/
 def emb₁ (c : TM2.Cfg M₁.Γ M₁.Λ M₁.σ) : TM2.Cfg (CΓ M₁ M₂) (CΛ M₁ M₂) (Cσ M₁ M₂) :=
   ⟨some (lab₁ c.l), (c.var, M₂.initialState, none), mkStk M₁ M₂ c.stk (fun _ => []) []⟩
 
-/-- Composite configuration while running `M₂` (all other stacks empty). -/
+/-- **Embedding of $M_2$'s configurations into the composite machine.** A configuration $c$ of $M_2$
+is sent to the configuration of the composite of $M_1$ and $M_2$ whose label is the label of $c$
+viewed as a label of the $M_2$ part (halted if $c$ is halted), whose state is
+$(q_1, v, \mathrm{none})$ with $q_1$ the initial state of $M_1$ and $v$ the state of $c$, and whose
+stacks are the stacks of $c$ on $M_2$'s stacks, with $M_1$'s stacks and the scratch stack
+empty. -/
 def emb₂ (c : TM2.Cfg M₂.Γ M₂.Λ M₂.σ) : TM2.Cfg (CΓ M₁ M₂) (CΛ M₁ M₂) (Cσ M₁ M₂) :=
   ⟨c.l.map (fun l => .inr (.inl l)), (M₁.initialState, c.var, none),
     mkStk M₁ M₂ (fun _ => []) c.stk []⟩
@@ -275,8 +352,13 @@ theorem iter_step {σ : Type} {f : σ → Option σ} {c c' : σ} (h : f c = some
   change (flip bind f)^[n] (f c) = _
   rw [h]
 
-/-- A step-respecting embedding transports runs. Halted configurations are absorbing, so every
-intermediate configuration of a run that ends in `some d` is live. -/
+/-- **Simulation transports runs.** Let $f : \alpha \to \mathrm{Option}\,\alpha$ and
+$g : \beta \to \mathrm{Option}\,\beta$ be partial step functions (a value $\mathrm{none}$ means
+halting) and $e : \alpha \to \beta$ a map such that $f(c) = c'$ implies $g(e(c)) = e(c')$ for all
+$c, c'$. Then for every $n$ and all $c, d \in \alpha$, if $n$ steps of $f$ starting from $c$ end
+at $d$, then $n$ steps of $g$ starting from $e(c)$ end at $e(d)$.
+
+Halted configurations are absorbing, so every intermediate configuration of such a run is live. -/
 theorem iter_sim {α β : Type} {f : α → Option α} {g : β → Option β} (e : α → β)
     (H : ∀ c c', f c = some c' → g (e c) = some (e c')) :
     ∀ (n : ℕ) (c d : α), (flip bind f)^[n] (some c) = some d →
@@ -338,7 +420,14 @@ theorem step_push2 (x : X M₂) (s : Cσ M₁ M₂) :
 
 end copy
 
-/-- First copy loop: move `M₁`'s output onto the scratch stack (reversing it). -/
+/-- **First copy loop of the composite machine.** Consider the composite program of machines $M_1$
+and $M_2$ with symbol translation $\varphi$. Suppose it is at the label that pops $M_1$'s output
+stack, with state $(v_1, v_2, o)$, with $M_1$'s stacks holding $S_1$, $M_2$'s stacks holding $S_2$,
+the scratch stack holding $t$, and $M_1$'s output stack holding the list $y$. Then after exactly
+$2|y| + 1$ steps it is at the label that pops the scratch stack, with state
+$(v_1, v_2, \mathrm{none})$, $M_1$'s output stack empty and its other stacks unchanged, $M_2$'s
+stacks still $S_2$, and the scratch stack holding the reverse of the list obtained by applying
+$\varphi$ to each symbol of $y$, followed by $t$. -/
 theorem copy₁ (ys : List (M₁.Γ M₁.k₁)) (v₁ : M₁.σ) (v₂ : M₂.σ) (o : Option (X M₂))
     (S₁ : ∀ k, List (M₁.Γ k)) (S₂ : ∀ k, List (M₂.Γ k)) (t : List (X M₂))
     (hy : S₁ M₁.k₁ = ys) :
@@ -357,7 +446,13 @@ theorem copy₁ (ys : List (M₁.Γ M₁.k₁)) (v₁ : M₁.σ) (v₂ : M₂.σ
         ih _ _ _ (update_self _ _ _)]
       simp [update_idem]
 
-/-- Second copy loop: move the scratch stack onto `M₂`'s input stack (reversing it back). -/
+/-- **Second copy loop of the composite machine.** Consider the composite program of machines
+$M_1$ and $M_2$ with symbol translation $\varphi$. Suppose it is at the label that pops the
+scratch stack, with state $(v_1, v_2, o)$, with $M_1$'s stacks holding $S_1$, $M_2$'s stacks
+holding $S_2$, and the scratch stack holding the list $t$. Then after exactly $2|t| + 1$ steps it
+is at the start label of $M_2$, with state $(v_1, v_2, \mathrm{none})$, $M_1$'s stacks still
+$S_1$, $M_2$'s input stack holding the reverse of $t$ followed by its previous contents, $M_2$'s
+other stacks unchanged, and the scratch stack empty. -/
 theorem copy₂ (t : List (X M₂)) (v₁ : M₁.σ) (v₂ : M₂.σ) (o : Option (X M₂))
     (S₁ : ∀ k, List (M₁.Γ k)) (S₂ : ∀ k, List (M₂.Γ k)) :
     (flip bind (TM2.step (prog M₁ M₂ φ)))^[2 * t.length + 1]
@@ -380,7 +475,12 @@ section length
 
 variable {K : Type} [DecidableEq K] {Γ : K → Type} {Λ σ : Type}
 
-/-- Number of `push` nodes in a statement tree: an upper bound on pushes per step. -/
+/-- **Number of push instructions in a TM2 statement.** For a statement $q$ of a multi-stack
+Turing machine (Mathlib's TM2 model), this is the number of push nodes in $q$: a push node counts
+$1$ plus the count of its continuation; peek, pop and load nodes count as their continuation; a
+branch counts the sum of its two branches; goto and halt count $0$.
+
+It is an upper bound on the number of symbols pushed in one step. -/
 def pushes : TM2.Stmt Γ Λ σ → ℕ
   | .push _ _ q => pushes q + 1
   | .peek _ _ q => pushes q
@@ -417,7 +517,12 @@ theorem length_stepAux (k : K) (q : TM2.Stmt Γ Λ σ) (v : σ) (S : ∀ k, List
 
 end length
 
-/-- Per-step push budget of a machine. -/
+/-- **Push bound of a finite multi-stack Turing machine.** For a finite multi-stack Turing
+machine $M$ (Mathlib's TM2 model with finitely many labels), the push bound of $M$ is the sum,
+over all labels $l$ of $M$, of the number of push instructions in the statement that $M$
+assigns to $l$.
+
+No stack of $M$ grows by more than the push bound in a single step. -/
 noncomputable def pushBound (M : FinTM2) : ℕ := ∑ l, pushes (M.m l)
 
 theorem length_step (M : FinTM2) (k : M.K) {c c' : M.Cfg} (h : M.step c = some c') :
@@ -455,6 +560,8 @@ theorem length_iter (M : FinTM2) (k : M.K) :
 
 /-! ### Monotonicity of `Polynomial ℕ` evaluation -/
 
+/-- **Evaluation of a natural-number polynomial is monotone.** For every polynomial $p$ with
+coefficients in $\mathbb{N}$ and all natural numbers $a \le b$, we have $p(a) \le p(b)$. -/
 theorem eval_mono (p : Polynomial ℕ) {a b : ℕ} (h : a ≤ b) : p.eval a ≤ p.eval b := by
   induction p using Polynomial.induction_on' with
   | add p q hp hq => simp only [Polynomial.eval_add]; omega
@@ -464,6 +571,13 @@ theorem eval_mono (p : Polynomial ℕ) {a b : ℕ} (h : a ≤ b) : p.eval a ≤ 
 
 /-! ### Initial and halting configurations -/
 
+/-- **Stacks of the initial configuration are no longer than the input.** Let $M$ be a finite
+multi-stack Turing machine (Mathlib's TM2 model with finitely many stacks, function labels and
+internal states, and a finite input alphabet) with input stack $k_0$, and let $l$ be a list of
+symbols from the alphabet of stack $k_0$. Then for every stack $k$ of $M$, the stack $k$ in the
+initial configuration of $M$ on input $l$ has length at most the length of $l$.
+
+The initial configuration holds $l$ on stack $k_0$ and leaves every other stack empty. -/
 theorem initList_stk_length_le (M : FinTM2) (l : List (M.Γ M.k₀)) (k : M.K) :
     ((initList M l).stk k).length ≤ l.length := by
   by_cases h : k = M.k₀
@@ -518,22 +632,46 @@ section main
 variable {α β γ αΓ βΓ γΓ : Type} {eα : α → List αΓ} {eβ : β → List βΓ} {eγ : γ → List γΓ}
   {f : α → β} {g : β → γ}
 
-/-- Symbol translation from `M₁`'s output alphabet to `M₂`'s input alphabet. -/
+/-- **Symbol translation between composed machines.** Let $h_1$ be a polynomial-time TM2
+computation of $f : \alpha \to \beta$ and $h_2$ one of $g : \beta \to \gamma$, where $\beta$ is
+encoded by lists over an alphabet $\Gamma_\beta$. A symbol $y$ of the output-stack alphabet of
+$h_1$'s machine is sent to the symbol of the input-stack alphabet of $h_2$'s machine that
+corresponds, under $h_2$'s input alphabet bijection with $\Gamma_\beta$, to the letter that $y$
+corresponds to under $h_1$'s output alphabet bijection with $\Gamma_\beta$. -/
 def glue (h₁ : TM2ComputableInPolyTime eα eβ f) (h₂ : TM2ComputableInPolyTime eβ eγ g) :
     h₁.tm.Γ h₁.tm.k₁ → X h₂.tm :=
   fun y => h₂.inputAlphabet.symm (h₁.outputAlphabet y)
 
-/-- `n + c·p₁(n)`: a bound on the length of the intermediate string. -/
+/-- **Intermediate length bound of the composite machine.** Let $h_1$ be a polynomial-time TM2
+computation of $f : \alpha \to \beta$ with polynomial time bound $p_1 \in \mathbb{N}[X]$, and let
+$c$ be the push bound of the machine of $h_1$. This is the polynomial
+$X + c\,p_1 \in \mathbb{N}[X]$.
+
+Evaluated at the length $n$ of an input, its value $n + c\,p_1(n)$ bounds the length of the
+intermediate string that the machine of $h_1$ writes for the composite machine. -/
 noncomputable def midPoly (h₁ : TM2ComputableInPolyTime eα eβ f) : Polynomial ℕ :=
   Polynomial.X + Polynomial.C (pushBound h₁.tm) * h₁.time
 
-/-- Time bound of the composite machine: `p₁ + 4·(X + c·p₁) + 2 + p₂ ∘ (X + c·p₁)`
-(two copy loops of `2m + 1` steps each, with `m ≤ n + c·p₁(n)`). -/
+/-- **Time bound of the composite machine.** Let $p_1, p_2 \in \mathbb{N}[X]$ be the polynomial time
+bounds of a machine $M_1$ computing $f$ and a machine $M_2$ computing $g$, and let $c$ be the sum,
+over the labels of $M_1$, of the number of push instructions in the statement at that label. The
+composite time bound is the polynomial $p_1 + 4(X + c\,p_1) + 2 + p_2 \circ (X + c\,p_1)$.
+
+The two copy loops take $2m + 1$ steps each on an intermediate string of length
+$m \le n + c\,p_1(n)$, where $n$ is the input length. -/
 noncomputable def compTime (h₁ : TM2ComputableInPolyTime eα eβ f)
     (h₂ : TM2ComputableInPolyTime eβ eγ g) : Polynomial ℕ :=
   h₁.time + Polynomial.C 4 * midPoly h₁ + Polynomial.C 2 + h₂.time.comp (midPoly h₁)
 
-/-- The composite machine computes `g ∘ f` within `compTime`. -/
+/-- **The composite machine computes the composite function in time.** Let $M_1$ compute
+$f : \alpha \to \beta$ in polynomial time from the encoding $e_\alpha$ to $e_\beta$, and let $M_2$
+compute $g : \beta \to \gamma$ in polynomial time from $e_\beta$ to $e_\gamma$. For every
+$a \in \alpha$, let $n$ be the length of $e_\alpha(a)$ and $T$ the composite time bound. Started on
+$e_\alpha(a)$, written in the input alphabet of $M_1$, the composite machine of $M_1$ and $M_2$
+(with the glue map from output symbols of $M_1$ to input symbols of $M_2$) reaches within
+$T(n)$ steps the halted configuration whose output stack holds $e_\gamma(g(f(a)))$, written in the
+output alphabet of $M_2$, whose other stacks are empty and whose internal state is the initial
+one. -/
 noncomputable def compOutputs (h₁ : TM2ComputableInPolyTime eα eβ f)
     (h₂ : TM2ComputableInPolyTime eβ eγ g) (a : α) :
     TM2OutputsInTime (compTM h₁.tm h₂.tm (glue h₁ h₂))
@@ -611,7 +749,15 @@ noncomputable def compOutputs (h₁ : TM2ComputableInPolyTime eα eβ f)
       Nat.add_zero, hL]
     omega
 
-/-- `TM2ComputableInPolyTime` is closed under composition (Mathlib's `proof_wanted`). -/
+/-- **The composite polynomial-time TM2 computation.** Let $h_1$ be a polynomial-time TM2
+computation of $f : \alpha \to \beta$ with respect to encodings $e_\alpha$ and $e_\beta$, and
+let $h_2$ be one of $g : \beta \to \gamma$ with respect to $e_\beta$ and $e_\gamma$. This is the
+polynomial-time TM2 computation of $g \circ f$ with respect to $e_\alpha$ and $e_\gamma$ whose
+machine is the composite machine of the machines of $h_1$ and $h_2$ with the glue map between
+them, whose input alphabet bijection is that of $h_1$, whose output alphabet bijection is that of
+$h_2$, and whose time bound is the composite time bound of $h_1$ and $h_2$.
+
+It witnesses that polynomial-time TM2 computability is closed under composition. -/
 noncomputable def compComputable (h₁ : TM2ComputableInPolyTime eα eβ f)
     (h₂ : TM2ComputableInPolyTime eβ eγ g) : TM2ComputableInPolyTime eα eγ (g ∘ f) where
   tm := compTM h₁.tm h₂.tm (glue h₁ h₂)
@@ -628,8 +774,14 @@ namespace MetaMathlibExt
 
 open Turing
 
-/-- Composition of polynomial-time TM2-computable functions is polynomial-time
-TM2-computable. Mathlib PR #44441 states the same result as `TM2ComputableInPolyTime.comp`. -/
+/-- **Polynomial-time TM2-computable functions are closed under composition.** Let $\alpha$,
+$\beta$, $\gamma$ be types encoded as lists over alphabets by $e_\alpha$, $e_\beta$, $e_\gamma$.
+If $f : \alpha \to \beta$ is computable in polynomial time by a multi-stack Turing machine (a
+TM2 machine) with respect to $e_\alpha$ and $e_\beta$, and $g : \beta \to \gamma$ is computable
+in polynomial time by a TM2 machine with respect to $e_\beta$ and $e_\gamma$, then there is a TM2
+machine computing $g \circ f$ in polynomial time with respect to $e_\alpha$ and $e_\gamma$.
+
+Source: Mathlib PR #44441 states the same result as `TM2ComputableInPolyTime.comp`. -/
 theorem tm2ComputableInPolyTime_comp {α β γ αΓ βΓ γΓ : Type} {eα : α → List αΓ}
     {eβ : β → List βΓ} {eγ : γ → List γΓ} {f : α → β} {g : β → γ}
     (h₁ : TM2ComputableInPolyTime eα eβ f) (h₂ : TM2ComputableInPolyTime eβ eγ g) :
@@ -640,7 +792,12 @@ namespace ComplexityTheory
 
 open Computability
 
-/-- Polynomial-time computability under explicit encodings is closed under composition. -/
+/-- **Composition of polynomial-time functions under encodings.** Let $e_\alpha$, $e_\beta$,
+$e_\gamma$ be encodings of types $\alpha$, $\beta$, $\gamma$ as lists over alphabets
+$\Gamma_\alpha$, $\Gamma_\beta$, $\Gamma_\gamma$. If $f : \alpha \to \beta$ is polynomial-time
+computable with respect to $e_\alpha$ and $e_\beta$, and $g : \beta \to \gamma$ is polynomial-time
+computable with respect to $e_\beta$ and $e_\gamma$, then $g \circ f$ is polynomial-time
+computable with respect to $e_\alpha$ and $e_\gamma$. -/
 theorem IsPolyTimeWithEncoding.comp {α β γ Γα Γβ Γγ : Type} {ea : Encoding α Γα}
     {eb : Encoding β Γβ} {ec : Encoding γ Γγ} {f : α → β} {g : β → γ}
     (hf : IsPolyTimeWithEncoding ea eb f) (hg : IsPolyTimeWithEncoding eb ec g) :
@@ -649,14 +806,17 @@ theorem IsPolyTimeWithEncoding.comp {α β γ Γα Γβ Γγ : Type} {ea : Encod
   let ⟨h₂⟩ := hg
   tm2ComputableInPolyTime_comp h₁ h₂
 
-/-- `IsPolyTime` is closed under composition. -/
+/-- **Polynomial-time functions are closed under composition.** Let $\alpha$, $\beta$, $\gamma$ be
+types with canonical bitstring encodings. If $f : \alpha \to \beta$ and $g : \beta \to \gamma$ are
+polynomial-time computable, then so is $g \circ f$. -/
 theorem IsPolyTime.comp {α β γ : Type} [BitstringEncoding α] [BitstringEncoding β]
     [BitstringEncoding γ] {f : α → β} {g : β → γ} (hf : IsPolyTime f) (hg : IsPolyTime g) :
     IsPolyTime (g ∘ f) :=
   IsPolyTimeWithEncoding.comp hf hg
 
-/-- `P` is closed under polynomial-time preimages: if `L ∈ P` and `f` is polynomial-time,
-then `L ∘ f ∈ P`. In particular `P` is closed under polynomial-time many-one reductions. -/
+/-- **P is closed under polynomial-time preimages.** Let $L$ be a decision problem on bitstrings and
+let $f$ be a polynomial-time computable function from bitstrings to bitstrings. If $L$ is in P,
+then $L \circ f$ is in P. In particular P is closed under polynomial-time many-one reductions. -/
 theorem comp_mem_P {L : DecisionProblem} {f : List Bool → List Bool} (hL : L ∈ P)
     (hf : IsPolyTime f) : L ∘ f ∈ P :=
   IsPolyTime.comp hf hL

@@ -50,16 +50,23 @@ lemmas for the definition.
 
 open scoped Topology
 
-/-- The modulus of continuity of a function `f : ℝ → ℝ` on `[a, b]` at scale
-`η`: `ω_f(η) = sup {|f x - f y| | x, y ∈ [a, b], |x - y| ≤ η}`.
+/-- **Modulus of continuity.** For a function $f : \mathbb{R} \to \mathbb{R}$, real numbers $a$
+and $b$, and a scale $\eta \in \mathbb{R}$, the modulus of continuity of $f$ on $[a, b]$ at scale
+$\eta$ is
+
+$$\omega_f(\eta) = \sup \{|f(x) - f(y)| : x, y \in [a, b],\ |x - y| \le \eta\},$$
+
+where the supremum is taken in $\mathbb{R}$ with the convention that it is $0$ when the set is
+empty or not bounded above.
 
 Source: `v1/Atlas/RealAnalysis/targets.yaml`, Definition (Modulus of
 Continuity), "The Riemann Integral section". -/
 noncomputable def modulusOfContinuity (f : ℝ → ℝ) (a b η : ℝ) : ℝ :=
   sSup {|f x - f y| | (x ∈ Set.Icc a b) (y ∈ Set.Icc a b) (_ : |x - y| ≤ η)}
 
-/-- The set defining the modulus of continuity is bounded above when `f` is
-continuous on `[a, b]`. -/
+/-- **The set defining the modulus of continuity is bounded above.** Let
+$f : \mathbb{R} \to \mathbb{R}$ be continuous on $[a, b]$. Then for every $\eta \in \mathbb{R}$ the
+set $\{|f(x) - f(y)| : x, y \in [a, b],\ |x - y| \le \eta\}$ is bounded above. -/
 theorem modulusOfContinuity_bddAbove (f : ℝ → ℝ) (a b η : ℝ)
     (hf : ContinuousOn f (Set.Icc a b)) :
     BddAbove {|f x - f y| | (x ∈ Set.Icc a b) (y ∈ Set.Icc a b) (_ : |x - y| ≤ η)} := by
@@ -70,16 +77,21 @@ theorem modulusOfContinuity_bddAbove (f : ℝ → ℝ) (a b η : ℝ)
   have h := hC ⟨x, hx, rfl⟩ ⟨y, hy, rfl⟩
   rwa [Real.dist_eq] at h
 
-/-- For `x, y ∈ [a, b]` with `|x - y| ≤ η`, the absolute difference
-`|f x - f y|` is bounded by the modulus of continuity `ω_f(η)`. -/
+/-- **The modulus of continuity bounds increments.** Let $f : \mathbb{R} \to \mathbb{R}$ be
+continuous on $[a, b]$, let $\eta \in \mathbb{R}$, and let $\omega_f(\eta)$ be the modulus of
+continuity of $f$ on $[a, b]$ at scale $\eta$. For all $x, y \in [a, b]$ with $|x - y| \le \eta$,
+we have $|f(x) - f(y)| \le \omega_f(\eta)$. -/
 theorem le_modulusOfContinuity (f : ℝ → ℝ) (a b : ℝ) (η : ℝ)
     (hf : ContinuousOn f (Set.Icc a b))
     {x : ℝ} (hx : x ∈ Set.Icc a b) {y : ℝ} (hy : y ∈ Set.Icc a b) (hxy : |x - y| ≤ η) :
     |f x - f y| ≤ modulusOfContinuity f a b η :=
   le_csSup (modulusOfContinuity_bddAbove f a b η hf) ⟨x, hx, y, hy, hxy, rfl⟩
 
-/-- The modulus of continuity is nonnegative at nonnegative scales: the
-defining set contains `|f a - f a| = 0` when `a ≤ b` and `0 ≤ η`. -/
+/-- **Nonnegativity of the modulus of continuity.** Let $a \le b$ and let
+$f : \mathbb{R} \to \mathbb{R}$ be continuous on $[a, b]$. For every $\eta \ge 0$, the modulus of
+continuity $\omega_f(\eta)$ of $f$ on $[a, b]$ at scale $\eta$ satisfies $0 \le \omega_f(\eta)$.
+
+The defining set contains $|f(a) - f(a)| = 0$. -/
 theorem modulusOfContinuity_nonneg (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b)
     (hf : ContinuousOn f (Set.Icc a b)) {η : ℝ} (hη : 0 ≤ η) :
     0 ≤ modulusOfContinuity f a b η := by
@@ -91,8 +103,12 @@ theorem modulusOfContinuity_nonneg (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b)
     · simp
   exact le_csSup (modulusOfContinuity_bddAbove f a b η hf) hmem
 
-/-- The modulus of continuity is monotone in the scale: a smaller scale
-quantifies over a smaller set of pairs. -/
+/-- **Monotonicity of the modulus of continuity.** Let $a \le b$, let
+$f : \mathbb{R} \to \mathbb{R}$ be continuous on $[a, b]$, and write $\omega_f(\eta)$ for the
+modulus of continuity of $f$ on $[a, b]$ at scale $\eta$. If $0 \le \eta_1 \le \eta_2$, then
+$\omega_f(\eta_1) \le \omega_f(\eta_2)$.
+
+A smaller scale takes the supremum over a smaller set of pairs. -/
 theorem modulusOfContinuity_mono (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b)
     (hf : ContinuousOn f (Set.Icc a b)) {η₁ η₂ : ℝ} (hη₁ : 0 ≤ η₁) (h : η₁ ≤ η₂) :
     modulusOfContinuity f a b η₁ ≤ modulusOfContinuity f a b η₂ := by
@@ -103,8 +119,9 @@ theorem modulusOfContinuity_mono (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b)
   · rintro d ⟨x, hx, y, hy, hxy, rfl⟩
     exact ⟨x, hx, y, hy, le_trans hxy h, rfl⟩
 
-/-- **Theorem I (Modulus of continuity vanishes).** For `f` continuous on
-`[a, b]`, `ω_f(η) → 0` as `η → 0⁺`.
+/-- **Theorem I (Modulus of continuity vanishes).** Let $a \le b$ and let
+$f : \mathbb{R} \to \mathbb{R}$ be continuous on $[a, b]$. Then the modulus of continuity
+$\omega_f(\eta)$ of $f$ on $[a, b]$ tends to $0$ as $\eta \to 0^+$.
 
 Source: `v1/Atlas/RealAnalysis/targets.yaml`, Theorem I, "The Riemann
 Integral section": for all `f ∈ C([a, b])`, `lim_{η → 0} w_f(η) = 0`. -/
