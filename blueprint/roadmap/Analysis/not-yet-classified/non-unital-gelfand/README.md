@@ -1,0 +1,18 @@
+# Non Unital Gelfand
+
+- [Character apply star of nonunital](character-apply-star-of-nonunital.md)
+- [Non Unital Gelfand Star Transform](non-unital-gelfand-star-transform.md)
+- [Non Unital Gelfand Star Transform to Non Unital Alg Hom](non-unital-gelfand-star-transform-to-non.md)
+- [Non Unital Gelfand Star Transform apply](non-unital-gelfand-star-transform-apply.md)
+- [Norm apply le](norm-apply-le.md)
+- [Norm le one](norm-le-one.md)
+- [Union zero is Compact](union-zero-is-compact.md)
+- [Locally Compact Space Non Unital](locally-compact-space-non-unital.md)
+- [Is Compact norm superlevel](is-compact-norm-superlevel.md)
+- [Eval zero at infty](eval-zero-at-infty.md)
+- [Non Unital Gelfand Transform](non-unital-gelfand-transform.md)
+- [Non Unital Gelfand Transform apply](non-unital-gelfand-transform-apply.md)
+- [Norm non Unital Gelfand Transform le](norm-non-unital-gelfand-transform-le.md)
+- [Non Unital Gelfand Transform CLM](non-unital-gelfand-transform-clm.md)
+- [Non Unital Gelfand Transform CLM apply](non-unital-gelfand-transform-clm-apply.md)
+- [Continuous non Unital Gelfand Transform](continuous-non-unital-gelfand-transform.md)

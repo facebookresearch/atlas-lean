@@ -12,4 +12,6 @@ Topics added since this subject's fields were last revised.
 - [Localized Lattices](localized-lattices/README.md)
 - [Reindex](reindex/README.md)
 - [Ring](ring/README.md)
+- [Unitary Between](unitary-between/README.md)
+- [Zero Extension](zero-extension/README.md)
 - [Hermitian Flags](standard-matrices.md)

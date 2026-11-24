@@ -1,0 +1,3 @@
+# Precomp
+
+Precomposition preserves homotopy.

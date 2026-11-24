@@ -1,0 +1,3 @@
+# Postcomp
+
+Postcomposition preserves homotopy.

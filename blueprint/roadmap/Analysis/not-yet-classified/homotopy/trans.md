@@ -1,0 +1,3 @@
+# Trans
+
+Homotopy is transitive.

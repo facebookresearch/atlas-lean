@@ -1,0 +1,18 @@
+# Algebraic Laws
+
+- [Mul add](mul-add.md)
+- [Add mul](add-mul.md)
+- [Mul zero](mul-zero.md)
+- [Zero mul](zero-mul.md)
+- [Smul mul](smul-mul.md)
+- [Mul smul](mul-smul.md)
+- [Star add](star-add.md)
+- [Star smul](star-smul.md)
+- [Mul assoc](mul-assoc.md)
+- [Star involutive](star-involutive.md)
+- [Star mul](star-mul.md)
+- [Generator mul](generator-mul.md)
+- [Generator star](generator-star.md)
+- [Generator Star Alg Equiv](generator-star-alg-equiv.md)
+- [Grading Action Hom](grading-action-hom.md)
+- [Grading Action Hom apply](grading-action-hom-apply.md)
