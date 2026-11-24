@@ -163,7 +163,7 @@ theorem evalLetterInStableE_mapRingHom
     StableE.mapRingHom_elementary, WeylLetter.mapRingHom_left,
     WeylLetter.mapRingHom_right, WeylLetter.mapRingHom_unit]
   congr 2
-  all_goals simp
+  simp
 
 /-- Naturality of stable-Steinberg word evaluation under a same-universe ring
 homomorphism. -/
