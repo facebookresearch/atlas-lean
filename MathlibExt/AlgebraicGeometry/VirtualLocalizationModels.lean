@@ -46,17 +46,19 @@ open AlgebraicMovingEulerModels RationalSchemeChowComparisonModels EquivariantPr
 open EquivariantCharacterLineModels StackCycleRelations StackChowGroups
 open scoped DirectSum
 
-/-- This is exactly the additional ambient hypothesis in the source localization theorem. -/
+/-- The additional ambient hypothesis of the source localization theorem: an equivariant closed
+embedding into a nonsingular variety (here: a smooth, separated, finite-type complex scheme). -/
 structure EquivariantSmoothEmbedding (X : Over base) [ModObj Gm X] where
   ambient : SchemeData
   [action : ModObj Gm ambient.scheme]
   [smooth : Smooth ambient.scheme.hom]
+  [separated : IsSeparated ambient.scheme.hom]
   embedding : X ⟶ ambient.scheme
   [closed : IsClosedImmersion embedding.left]
   equivariant : γ[Gm,X] ≫ embedding = (Gm ◁ embedding) ≫ γ[Gm,ambient.scheme]
 
 attribute [instance] EquivariantSmoothEmbedding.action EquivariantSmoothEmbedding.smooth
-  EquivariantSmoothEmbedding.closed
+  EquivariantSmoothEmbedding.separated EquivariantSmoothEmbedding.closed
 
 theorem componentFixed {X : Over base} [ModObj Gm X] {S : FixedSchemeModel Gm X}
     (Z : FixedComponent Gm X S) : FixedPoint Gm X (Z.toAmbient Gm X) :=
