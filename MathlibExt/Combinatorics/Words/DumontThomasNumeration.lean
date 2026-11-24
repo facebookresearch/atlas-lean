@@ -182,6 +182,7 @@ private theorem read_with_suffix {A : Type*} (η : A → List A) (s : ℕ → Li
 
 end morphIterate_getElem_eq_substitutionAutomaton_tail
 
+set_option linter.unusedVariables false in
 /-- **Letters of an iterated image are read by the automaton.** Let $\eta$ be a substitution
 on an alphabet $A$, let $p \ge 1$ and $x \in A$, let $(m_i, a_i)_{i = 0, \dots, p-1}$ be an
 $x$-admissible sequence, and put $\ell = \sum_{j=0}^{p-1} |\eta^j(m_j)|$. Let
@@ -196,7 +197,7 @@ $x$-admissible sequences correspond bijectively to the positions $\ell < |\eta^p
 Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
 ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.11. -/
 public theorem morphIterate_getElem_eq_substitutionAutomaton_tail {A : Type*}
-    (η : A → List A) (_hη : IsSubstitution η) (p : ℕ) (_hp : 1 ≤ p) (x : A)
+    (η : A → List A) (hη : IsSubstitution η) (p : ℕ) (hp : 1 ≤ p) (x : A)
     (s : ℕ → List A × A) (hs : IsLetterAdmissibleSequence η x s (p - 1)) :
     (morphIterate η p [x])[∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length]? =
       substitutionAutomaton η x ((List.range p).reverse.map fun j => (s j).1.length) := by
