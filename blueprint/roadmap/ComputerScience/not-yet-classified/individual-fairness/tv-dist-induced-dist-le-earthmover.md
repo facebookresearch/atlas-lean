@@ -2,4 +2,4 @@
 
 For an individually fair
 classifier, the total variation distance between the induced outcome
-distributions on two populations is at most their earthmover distance.
+distributions on two populations is at most their earthmover value.
