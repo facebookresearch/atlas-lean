@@ -10410,6 +10410,7 @@
   "MathlibExt/Combinatorics/BinomialPartialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Bounds on partial sums of binomial coefficients"},
   "MathlibExt/Combinatorics/BivariateLorentzian": {"to": "Combinatorics/matroid-theory", "title": "Lorentzian polynomials"},
   "MathlibExt/Combinatorics/BridgeTorchParityInterpolation": {"to": "Combinatorics/elementary-enumeration", "title": "Bridge and torch problem"},
+  "MathlibExt/Combinatorics/BridgeTorchReturnInequality": {"to": "Combinatorics/elementary-enumeration", "title": "Bridge and torch problem"},
   "MathlibExt/Combinatorics/BridgeTorchThreeUpperBound": {"to": "Combinatorics/elementary-enumeration", "title": "Bridge and torch problem"},
   "MathlibExt/Combinatorics/BridgeTorchTwo": {"to": "Combinatorics/elementary-enumeration", "title": "Bridge and torch problem"},
   "MathlibExt/Combinatorics/BridgeTorchWeights": {"to": "Combinatorics/elementary-enumeration", "title": "Bridge and torch problem"},

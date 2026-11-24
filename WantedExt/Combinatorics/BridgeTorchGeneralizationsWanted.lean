@@ -31,6 +31,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Combinatorics.BridgeTorchParityInterpolation
+public import MathlibExt.Combinatorics.BridgeTorchReturnInequality
 public import MathlibExt.Combinatorics.BridgeTorchThreeUpperBound
 public import MathlibExt.Combinatorics.BridgeTorchTwo
 public import MathlibExt.Combinatorics.BridgeTorchWeights
@@ -121,18 +122,6 @@ theorem forwardCrossings_returnCrossings_rightBank_example :
       returnCrossings ([{1, 2}, {1}, {1, 3}, {1}, {1, 4}] : List (Finset ℕ)) = [{1}, {1}] ∧
       rightBank 4 [{1, 2}, {1}] = {2} := by
   decide
-
-/-- **Return inequality for the capacity-3 weights.** Let $y_i$ be the weights of the capacity-3
-lower bound. For every nonempty set $R$ of positive integers with $|R| \le 3$,
-$$\frac{9}{2}(|R| - 1) + \max R + \sum_{i \in R} (y_i - i) \ge 0.$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Lemma 16 (`jis-2026-26.5.6-lem-16`). -/
-public theorem_wanted bridgeWeight_return_inequality (R : Finset ℕ) (hR : R.Nonempty)
-    (hR3 : R.card ≤ 3) (hpos : 0 ∉ R) :
-    0 ≤ 9 / 2 * ((R.card : ℚ) - 1) + ((R.max' hR : ℕ) : ℚ) +
-      ∑ i ∈ R, (bridgeWeight i - (i : ℚ))
 
 /-- **Fewest crossings of the fastest person in an optimal schedule.** For bridge capacity $2$
 and $n \ge 1$ people $1, \dots, n$ (person $i$ has crossing time $i$), the least number $a(n)$
