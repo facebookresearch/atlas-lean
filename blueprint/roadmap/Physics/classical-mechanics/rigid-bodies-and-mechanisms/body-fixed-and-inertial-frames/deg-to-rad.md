@@ -1,3 +1,3 @@
-# Deg To Rad
+# Radian measure of an angle given in degrees
 
-The radian measure `θ π / 180` of an angle of `θ` degrees.
+For a real number `θ`, the radian measure of an angle of `θ` degrees is `θ π / 180`.

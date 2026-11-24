@@ -1,4 +1,4 @@
-# Frame Rotation transpose mul
+# The frame transformation is orthogonal: transpose times matrix
 
-For direction cosines on the unit circle, the frame
-transform is orthogonal in the transpose-left order.
+For real `c` and `s` with `c² + s² = 1`, the [frame transformation](frame-rotation.md) `T` satisfies
+`Tᵀ T = I`.

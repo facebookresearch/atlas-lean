@@ -1,58 +1,58 @@
 # Rigid-body motion, angular momentum and Euler's equations
 
-## A.2. The transport law
+## The transport law
 
-- [Deriv body To Inertial Vec](deriv-body-to-inertial-vec.md)
+- [Transport law for a vector given in body components](deriv-body-to-inertial-vec.md)
 
-## B. Acceleration in a rotating and translating frame
+## Acceleration in a rotating and translating frame
 
-- [Deriv deriv body To Inertial](deriv-deriv-body-to-inertial.md)
-- [Deriv deriv body To Inertial of const](deriv-deriv-body-to-inertial-of-const.md)
+- [Acceleration of a point in a rotating and translating frame](deriv-deriv-body-to-inertial.md)
+- [Acceleration in a frame with constant rotation rate and fixed origin](deriv-deriv-body-to-inertial-of-const.md)
 
-## C. Angular momentum about the centre of mass
+## Angular momentum about the centre of mass
 
-- [Com Angular Momentum](com-angular-momentum.md)
-- [Angular Momentum About](angular-momentum-about.md)
-- [Com Angular Momentum eq](com-angular-momentum-eq.md)
-- [Deriv com Angular Momentum](deriv-com-angular-momentum.md)
+- [Angular momentum of a rigid body about its centre of mass](com-angular-momentum.md)
+- [Angular momentum about the centre of mass in body components](com-angular-momentum-eq.md)
+- [Rate of change of the angular momentum about the centre of mass](deriv-com-angular-momentum.md)
 
-## D. Other reference points
+## Other reference points
 
-- [Angular Momentum About eq](angular-momentum-about-eq.md)
-- [Inertia Tensor About mul Vec eq add orbital](inertia-tensor-about-mul-vec-eq-add-orbi.md)
+- [Angular momentum of a rigid body about a fixed point](angular-momentum-about.md)
+- [Angular momentum about a fixed point adds the orbital term](angular-momentum-about-eq.md)
+- [Parallel-axis theorem for angular momentum](inertia-tensor-about-mul-vec-eq-add-orbi.md)
 
-## E.2. Euler's equations and torque-free motion
+## Euler's equations and torque-free motion
 
-- [Deriv com Angular Momentum eq iff euler](deriv-com-angular-momentum-eq-iff-euler.md)
-- [Euler solve iff](euler-solve-iff.md)
-- [Deriv com Angular Momentum eq iff deriv body Angular Velocity](deriv-com-angular-momentum-eq-iff-deriv.md)
-- [Com Angular Momentum dot Product self](com-angular-momentum-dot-product-self.md)
-- [Has FDeriv At rotational Kinetic Energy of torque Free](has-fderiv-at-rotational-kinetic-energy.md)
-- [Has FDeriv At angular Momentum norm Sq of torque Free](has-fderiv-at-angular-momentum-norm-sq-o.md)
-- [Torque Free conserved](torque-free-conserved.md)
+- [The angular momentum balance law is equivalent to Euler's equations](deriv-com-angular-momentum-eq-iff-euler.md)
+- [A positive definite inertia determines the angular acceleration](euler-solve-iff.md)
+- [For positive definite inertia, balance gives the angular acceleration](deriv-com-angular-momentum-eq-iff-deriv.md)
+- [Body and inertial angular momenta have the same squared norm](com-angular-momentum-dot-product-self.md)
+- [Without torque the rotational kinetic energy is stationary](has-fderiv-at-rotational-kinetic-energy.md)
+- [Without torque the squared body angular momentum is stationary](has-fderiv-at-angular-momentum-norm-sq-o.md)
+- [Torque-free motion conserves rotational energy and ‖L‖²](torque-free-conserved.md)
 
-## F. A constructed torque-driven rotation about a fixed principal axis
+## A torque-driven rotation about a fixed axis
 
-- [Fixed Axis Angle](fixed-axis-angle.md)
-- [Fixed Axis Motion](fixed-axis-motion.md)
-- [Fixed Axis Torque](fixed-axis-torque.md)
-- [Cont Diff fixed Axis Motion orientation apply](cont-diff-fixed-axis-motion-orientation.md)
-- [Deriv fixed Axis Angle](deriv-fixed-axis-angle.md)
-- [Deriv fixed Axis Motion orientation](deriv-fixed-axis-motion-orientation.md)
-- [Fixed Axis Motion body Angular Velocity](fixed-axis-motion-body-angular-velocity.md)
-- [Deriv fixed Axis Motion body Angular Velocity](deriv-fixed-axis-motion-body-angular-vel.md)
-- [Fixed Axis Motion euler](fixed-axis-motion-euler.md)
-- [Deriv com Angular Momentum fixed Axis Motion](deriv-com-angular-momentum-fixed-axis-mo.md)
-- [Fixed Axis Motion power port](fixed-axis-motion-power-port.md)
-- [Fixed Axis Motion torque ne zero](fixed-axis-motion-torque-ne-zero.md)
-- [Fixed Axis Motion neg torque](fixed-axis-motion-neg-torque.md)
+- [Rotation angle with constant angular acceleration](fixed-axis-angle.md)
+- [Rotation of a rigid body about a fixed axis through its centre of mass](fixed-axis-motion.md)
+- [Body torque driving the fixed-axis rotation](fixed-axis-torque.md)
+- [The fixed-axis orientation is smooth](cont-diff-fixed-axis-motion-orientation.md)
+- [Rate and acceleration of the rotation angle](deriv-fixed-axis-angle.md)
+- [Derivative of the fixed-axis orientation](deriv-fixed-axis-motion-orientation.md)
+- [Body angular velocity of the fixed-axis motion](fixed-axis-motion-body-angular-velocity.md)
+- [Body angular acceleration of the fixed-axis motion](deriv-fixed-axis-motion-body-angular-vel.md)
+- [About a principal axis, Euler's equations hold with the axial torque](fixed-axis-motion-euler.md)
+- [About a principal axis the balance law holds with the axial torque](deriv-com-angular-momentum-fixed-axis-mo.md)
+- [The axial torque delivers the rate of rotational kinetic energy](fixed-axis-motion-power-port.md)
+- [With positive axial inertia, nonzero angular acceleration needs torque](fixed-axis-motion-torque-ne-zero.md)
+- [For α ≠ 0 the sign-flipped torque does not drive the fixed-axis motion](fixed-axis-motion-neg-torque.md)
 
-## G. Torque-free axisymmetric precession
+## Torque-free axisymmetric precession
 
-- [Axisymmetric Precession Rate](axisymmetric-precession-rate.md)
-- [Axisymmetric Precession](axisymmetric-precession.md)
-- [Deriv axisymmetric Precession](deriv-axisymmetric-precession.md)
-- [Axisymmetric Precession euler](axisymmetric-precession-euler.md)
-- [Axisymmetric Precession gyroscopic zero](axisymmetric-precession-gyroscopic-zero.md)
-- [Axisymmetric Precession gyroscopic ne zero](axisymmetric-precession-gyroscopic-ne-ze.md)
-- [Axisymmetric Precession euler solve](axisymmetric-precession-euler-solve.md)
+- [Precession rate of a torque-free axisymmetric body](axisymmetric-precession-rate.md)
+- [Precessing body angular velocity of an axisymmetric body](axisymmetric-precession.md)
+- [Derivative of the precessing body angular velocity](deriv-axisymmetric-precession.md)
+- [The precessing angular velocity solves torque-free Euler's equations](axisymmetric-precession-euler.md)
+- [Gyroscopic term of the precessing angular velocity at time 0](axisymmetric-precession-gyroscopic-zero.md)
+- [The gyroscopic term at 0 is nonzero for unequal inertias and A ω₃ ≠ 0](axisymmetric-precession-gyroscopic-ne-ze.md)
+- [For positive inertias, Euler's equations recover the precession](axisymmetric-precession-euler-solve.md)

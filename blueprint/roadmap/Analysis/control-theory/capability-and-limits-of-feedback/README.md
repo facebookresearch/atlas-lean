@@ -14,6 +14,8 @@ polynomial $z^2 - (L + 1/2) z + L$ of the recursion $a_{n+1} = (L + 1/2) a_n - L
 (Int. J. Adapt. Control Signal Process. 16 (2002), remark after Theorem 3) relates stabilisability to the behaviour of
 the solutions of this recursion.
 
+- [Nearest-neighbor estimate from past transitions](nearest-neighbor-estimate.md)
+- [Switching feedback from a nearest-neighbor estimate](switching-feedback.md)
 - [Feedback can stabilise every system with uncertainty below $3/2 + \sqrt 2$](exists-feedback-bdd-above-of-lt.md)
 - [No feedback stabilises every system with uncertainty at least $3/2 + \sqrt 2$](exists-unbounded-of-le.md)
 

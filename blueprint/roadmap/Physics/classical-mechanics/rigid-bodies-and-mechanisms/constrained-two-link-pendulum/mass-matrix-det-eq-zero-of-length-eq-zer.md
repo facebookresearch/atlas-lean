@@ -1,3 +1,4 @@
-# Mass Matrix det eq zero of length eq zero
+# A zero link length makes the mass matrix singular
 
-A zero link length makes the reduced mass matrix singular.
+If `l₁ = 0` or `l₂ = 0`, then for all real `m₁`, `m₂`, `q₁` and `q₂` the determinant of the
+[reduced mass matrix](mass-matrix.md) is `0`.

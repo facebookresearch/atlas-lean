@@ -1,4 +1,6 @@
-# Kinetic Energy eq mass Matrix
+# The kinetic energy is half the mass-matrix quadratic form
 
-The Cartesian kinetic energy is the quadratic form `wᵀ M(q) w / 2` of the reduced mass
-matrix.
+For all real `m₁`, `m₂`, `l₁`, `l₂`, `q₁`, `q₂`, `w₁` and `w₂`, the
+[kinetic energy](kinetic-energy.md) equals `wᵀ M(q) w / 2`, where `w = (w₁, w₂)` and
+`M(q) = [[(m₁ + m₂) l₁², m₂ l₁ l₂ cos (q₁ - q₂)], [m₂ l₁ l₂ cos (q₁ - q₂), m₂ l₂²]]` is the
+[reduced mass matrix](mass-matrix.md).

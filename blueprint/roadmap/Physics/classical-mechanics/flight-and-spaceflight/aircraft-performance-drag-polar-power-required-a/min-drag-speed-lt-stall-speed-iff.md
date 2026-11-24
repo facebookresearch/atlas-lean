@@ -1,4 +1,5 @@
-# Min Drag Speed lt stall Speed iff
+# The minimum-drag speed is below V_s iff CLmax < √(CD0 / k)
 
-The stall speed exceeds the minimum-drag speed exactly when the lift coefficient at minimum
-drag, `√(CD0 / k)`, exceeds `CLmax`.
+For `W > 0` and `ρ, S, CD0, k, CLmax > 0`, the [minimum-drag speed](min-drag-speed.md) `V_md` is
+below the [stall speed](stall-speed.md) `V_s = √(2 W / (ρ S CLmax))` if and only if
+`CLmax < √(CD0 / k)`, the lift coefficient at minimum drag.

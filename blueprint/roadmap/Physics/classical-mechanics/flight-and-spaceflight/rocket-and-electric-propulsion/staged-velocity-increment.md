@@ -1,9 +1,10 @@
-# Staged velocity increment
+# Velocity gained over staged burns with jettisons
 
-Staged burn and jettison accounting. Burns `i ≤ n` on `[0, tb i]` with positive mass, exhaust
-speed `ve i` and the reduced law; between burn `i` and burn `i + 1` a jettison with zero relative
-velocity from mass `m i (tb i)` to mass `m (i + 1) 0 ≤ m i (tb i)` that conserves momentum. The
-velocity gained from the start of burn `0` to the end of burn `n` is the sum of the burn increments
-`ve i * log (m i 0 / m i (tb i))`; the jettisoned masses enter no logarithm. Neither the mass drop
-nor the sign of the exhaust speeds is needed for the identity: the drop restricts the statement to
-jettisons, and the model's positive stage-specific `ve i` are a special case.
+Let `n ∈ ℕ`, and for each burn `i ≤ n` let `tb_i ≥ 0`, let `m_i` and `v_i` have derivatives `m_i'`
+and `v_i'` at every `t ∈ [0, tb_i]`, with `m_i > 0` on `[0, tb_i]` and the reduced law
+`m_i(t) v_i'(t) = −ve_i m_i'(t)` there, for reals `ve_i`. Between burn `i` and burn `i + 1`
+(`i < n`) assume a jettison, `m_{i+1}(0) ≤ m_i(tb_i)`, that conserves momentum with zero relative
+velocity: `m_{i+1}(0) v_{i+1}(0) + (m_i(tb_i) − m_{i+1}(0)) v_i(tb_i) = m_i(tb_i) v_i(tb_i)`. Then
+`v_n(tb_n) − v_0(0) = ∑_{i=0}^{n} ve_i log(m_i(0) / m_i(tb_i))`: the velocity gained is the sum of
+the burn increments, and no jettisoned mass enters a logarithm. Neither the mass drop nor the sign
+of the exhaust speeds is used; in the model `ve_i > 0`.

@@ -1,5 +1,10 @@
-# Wheel Admissible iff integral
+# Wheel admissibility as a condition on the command and initial momentum
 
-The momentum limit as a condition on the input: along the wheel equation `h' = u` on `[0, T]`,
-with `u` integrable there, the command is admissible on `[0, T]` exactly when `0 ≤ T` and
-`|u t| ≤ umax` and `|h 0 + ∫₀ᵗ u| ≤ hmax` for every `t ∈ [0, T]`.
+Let `umax`, `hmax` and `T` be real numbers and `u`, `h` real functions of time such that `h` has
+the derivative `u(t)` at every `t ∈ [0, T]` and `u` is integrable on the interval between `0` and
+`T`. Then the command `u` with momentum `h` is [admissible](wheel-admissible.md) on `[0, T]` for
+the limits `umax` and `hmax` exactly when `T ≥ 0` and, for every `t ∈ [0, T]`,
+
+`|u(t)| ≤ umax` and `|h(0) + ∫₀ᵗ u(s) ds| ≤ hmax`.
+
+The momentum limit thus becomes a condition on the command and the initial momentum alone.

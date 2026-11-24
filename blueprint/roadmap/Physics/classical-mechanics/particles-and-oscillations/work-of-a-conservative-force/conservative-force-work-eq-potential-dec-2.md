@@ -1,10 +1,12 @@
-# Conservative force work eq potential decrease
+# Work of minus a gradient in a Hilbert space is the potential drop
 
-Work of a conservative force along an admissible path equals the
-potential decrease: if `F = -g` where `g` is the gradient field of `U`
-(`HasGradientAt U (g x) x`), `γ` is differentiable on `[a, b]` with
-derivative `γ'`, and the work integrand is interval-integrable, then
-`∫ t in a..b, ⟪F (γ t), γ' t⟫ = -(U (γ b) - U (γ a))`. The space is
-complete because Mathlib's `HasGradientAt` requires it; see
-`conservative_force_work_eq_potential_decrease_of_hasFDerivAt` for the
-general form.
+Let `E` be a complete real inner product space, `U : E → ℝ` a potential with gradient `g(x)` at
+every `x`, and `F = -g`. Let `γ, γ' : ℝ → E` and real `a`, `b` be such that `γ` has derivative
+`γ'(t)` at every `t` between `a` and `b` (in either order, ends included), and suppose the work
+integrand `t ↦ ⟨F(γ(t)), γ'(t)⟩` is integrable on that interval. Then
+
+`∫ₐᵇ ⟨F(γ(t)), γ'(t)⟩ dt = -(U(γ(b)) - U(γ(a)))`.
+
+Completeness is needed only to speak of the gradient; with the derivative of `U` represented by
+`g` as `w ↦ ⟨g(x), w⟩`, the identity holds in every real inner product space
+([general form](conservative-force-work-eq-potential-dec.md)).

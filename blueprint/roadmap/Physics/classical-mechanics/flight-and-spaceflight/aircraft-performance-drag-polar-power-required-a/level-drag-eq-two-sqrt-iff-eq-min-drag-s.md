@@ -1,4 +1,6 @@
-# Level Drag eq two sqrt iff eq min Drag Speed
+# For positive weight, least drag exactly at the minimum-drag speed
 
-For positive weight and `ρ, S, CD0, k > 0`, among positive speeds the bound is attained
-exactly at the minimum-drag speed.
+For `W > 0` and `ρ, S, CD0, k > 0` and a speed `V > 0`, the [level-flight drag](level-drag.md)
+`D(V) = a V² + b / V²` equals its lower bound `2 √(a b)` if and only if `V = V_md`, the
+[minimum-drag speed](min-drag-speed.md); here `a = ρ S CD0 / 2` and `b = 2 k W² / (ρ S)` (the
+[parasite-drag](parasite-drag-factor.md) and [induced-drag](induced-drag-factor.md) factors).

@@ -1,66 +1,65 @@
 # Impacts, restitution and the bouncing ball
 
-## A. The two-body event map
+## The two-body event map
 
-- [Impact Velocity₁](impact-velocity.md)
-- [Impact Velocity₂](impact-velocity-2.md)
-- [Impact solve iff](impact-solve-iff.md)
+- [Velocity of the first body just after a two-body impact](impact-velocity.md)
+- [Velocity of the second body just after a two-body impact](impact-velocity-2.md)
+- [For positive masses, the impact laws determine the outgoing velocities](impact-solve-iff.md)
 
-## B. Kinetic energy across the event
+## Kinetic energy across the event
 
-- [Pair Kinetic Energy](pair-kinetic-energy.md)
-- [Impact energy loss](impact-energy-loss.md)
-- [Impact energy le](impact-energy-le.md)
-- [Impact energy eq of elastic](impact-energy-eq-of-elastic.md)
-- [Impact energy lt of one lt](impact-energy-lt-of-one-lt.md)
+- [Kinetic energy of the two bodies](pair-kinetic-energy.md)
+- [For positive masses, the kinetic energy lost in a two-body impact](impact-energy-loss.md)
+- [For 0 ≤ e ≤ 1, a two-body impact does not increase the kinetic energy](impact-energy-le.md)
+- [An elastic two-body impact conserves the kinetic energy](impact-energy-eq-of-elastic.md)
+- [With e > 1 and unequal velocities, an impact gains kinetic energy](impact-energy-lt-of-one-lt.md)
 
-## C. Event ports and the continuous phase
+## Impulses and the motion after the event
 
-- [Impact impulse](impact-impulse.md)
-- [Impact then flight momentum](impact-then-flight-momentum.md)
-- [Impact then free flight energy](impact-then-free-flight-energy.md)
+- [Equal and opposite impulses in a two-body impact](impact-impulse.md)
+- [Momentum after an impact followed by constant forces](impact-then-flight-momentum.md)
 
-## D. The fixed-wall event
+## The fixed-wall event
 
-- [Wall Rebound Velocity](wall-rebound-velocity.md)
-- [Wall Impulse](wall-impulse.md)
-- [Wall Rebound Velocity nonneg](wall-rebound-velocity-nonneg.md)
-- [Wall Impulse eq](wall-impulse-eq.md)
-- [Wall Impulse pos](wall-impulse-pos.md)
-- [Body momentum ne](body-momentum-ne.md)
+- [Rebound velocity at a fixed wall](wall-rebound-velocity.md)
+- [Impulse of a fixed wall on a body](wall-impulse.md)
+- [For e ≥ 0, an incoming body leaves the wall or rests on it](wall-rebound-velocity-nonneg.md)
+- [Formula for the wall impulse in terms of the incoming velocity](wall-impulse-eq.md)
+- [For e ≥ 0, the wall impulse on an incoming body points outward](wall-impulse-pos.md)
+- [For e ≥ 0 and a nonzero incoming velocity, a wall changes the momentum](body-momentum-ne.md)
 
-## E. Kinetic energy of the body
+## Kinetic energy at the wall
 
-- [Body Kinetic Energy](body-kinetic-energy.md)
-- [Wall energy change](wall-energy-change.md)
-- [Wall energy cases](wall-energy-cases.md)
+- [Kinetic energy of a single body](body-kinetic-energy.md)
+- [Kinetic energy change of a body at a fixed wall](wall-energy-change.md)
+- [For e ≥ 0 and nonzero velocity, the sign of the wall energy change](wall-energy-cases.md)
 
-## F. The wall impulse and the continuous phase
+## The wall impulse and the motion after the event
 
-- [Rebound then flight momentum](rebound-then-flight-momentum.md)
+- [Momentum after a wall impact followed by a constant force](rebound-then-flight-momentum.md)
 
-## G. Ballistic arcs and the bounce sequence
+## Ballistic arcs and the bounce sequence
 
-- [Bounce Speed](bounce-speed.md)
-- [Flight Duration](flight-duration.md)
-- [Zeno Time](zeno-time.md)
-- [Bounce Speed eq](bounce-speed-eq.md)
-- [Is Active Arc](is-active-arc.md)
-- [Is Active Arc of pos](is-active-arc-of-pos.md)
-- [Arc and event](bounce-arc.md)
-- [Flight Duration eq](flight-duration-eq.md)
+- [Take-off speeds of the bouncing ball](bounce-speed.md)
+- [Flight durations of the bouncing ball](flight-duration.md)
+- [Accumulation time of the bouncing ball](zeno-time.md)
+- [The n-th take-off speed is eⁿ u₀](bounce-speed-eq.md)
+- [Active arc of the bouncing ball](is-active-arc.md)
+- [For e > 0 and u₀ > 0, every arc is active](is-active-arc-of-pos.md)
+- [For positive m and g, each active arc is a ballistic flight](bounce-arc.md)
+- [The n-th flight duration is 2 u₀ eⁿ / g](flight-duration-eq.md)
 
-## H. The finite sum and Zeno accumulation
+## The finite sum and Zeno accumulation
 
-- [Finite sum](has-sum-flight-duration.md)
-- [Zeno accumulation](zeno-accumulation.md)
-- [Summable flight Duration iff](summable-flight-duration-iff.md)
+- [For 0 < e < 1, the flight durations sum to the accumulation time](has-sum-flight-duration.md)
+- [For g, u₀ > 0 and 0 < e < 1, the contact times accumulate](zeno-accumulation.md)
+- [For g, u₀ > 0 and e ≥ 0, the flight durations are summable iff e < 1](summable-flight-duration-iff.md)
 
-## I. No dwell-time lower bound for the Zeno family
+## No dwell-time lower bound for the Zeno family
 
-- [Zeno no dwell](zeno-no-dwell.md)
+- [For g, u₀ > 0 and 0 < e < 1, the flights have no dwell-time bound](zeno-no-dwell.md)
 
-## J. The boundary cases `e = 1` and `e = 0`
+## The boundary cases e = 1 and e = 0
 
-- [Elastic events finite](elastic-events-finite.md)
-- [Termination for `e = 0`](inelastic-stops.md)
+- [For e = 1, finitely many impacts occur before any time](elastic-events-finite.md)
+- [For e = 0, the ball stops after the first impact](inelastic-stops.md)

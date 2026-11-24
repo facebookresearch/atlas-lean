@@ -1,6 +1,8 @@
 # Rigid bodies, frames and mechanisms
 
-Frames and rigid bodies: body-fixed and inertial frames, rotating frames and the Coriolis force, rigid-body motion, angular momentum and Euler's equations, statics of force systems, a constrained two-link pendulum, gear trains and linkages, and impacts.
+Frames and rigid bodies: body-fixed and inertial frames, rotating frames and the Coriolis force,
+rigid-body motion, angular momentum and Euler's equations, statics of force systems, a constrained
+two-link pendulum, gear trains and linkages, and impacts.
 
 - [Body-fixed and inertial frames](body-fixed-and-inertial-frames/README.md)
 - [Constrained two-link pendulum](constrained-two-link-pendulum/README.md)

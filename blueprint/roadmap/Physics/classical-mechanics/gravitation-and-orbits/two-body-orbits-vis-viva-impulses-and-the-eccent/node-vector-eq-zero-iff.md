@@ -1,4 +1,7 @@
-# Node Vector eq zero iff
+# The node vector vanishes iff h lies along the pole
 
-The node direction is undefined exactly when the specific angular momentum lies along the
-pole: `n = 0` iff `h₁ = h₂ = 0` for `h = x ⨯₃ v`, an orbit in the reference plane or `h = 0`.
+For every state `(x, v)` with `x, v ∈ ℝ³`, the [ascending-node vector](node-vector.md) `n = k × h`,
+with `k = (0, 0, 1)` and `h = x × v = (h₁, h₂, h₃)`, vanishes if and only if the first two
+components of `h` vanish, `h₁ = h₂ = 0`: the specific angular momentum is a multiple of the pole `k`
+(possibly `0`), as for a state whose position and velocity lie in the reference plane. The node
+direction is then undefined.

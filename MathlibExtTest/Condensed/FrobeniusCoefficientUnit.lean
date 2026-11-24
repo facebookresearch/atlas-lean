@@ -42,6 +42,17 @@ example (N : GeometricNormalization p P π F) : IsGeometricallyNormalized p P π
 example (A : CompactUnit p P π h M F U) : IsGeometricallyNormalized p P π F :=
   A.source_normalization p P π h M F
 
+/-- The coefficient representable is cofibrant with no further data, so the source of every
+compact unit is that representable. -/
+example (U : UnitInductionModel p P π M) :
+    (unitSource p P π M U).obj = unitRepresentable p P π M U :=
+  rfl
+
+example (U : UnitInductionModel p P π M) :
+    MathlibExt.CategoryTheory.DGQuasiFunctorModels.IsCofibrantModule
+      (unitRepresentable p P π M U) :=
+  unitRepresentable_cofibrant p P π M U
+
 /-- The derived class of the unit arrow is determined by the bundled normalization (its derived
 extension and its comparison at the coefficient unit) and the unit identification. -/
 theorem cocycle_class_eq (A : CompactUnit p P π h M F U) :

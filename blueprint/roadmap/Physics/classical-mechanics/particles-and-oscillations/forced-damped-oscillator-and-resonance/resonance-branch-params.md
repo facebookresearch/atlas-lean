@@ -1,4 +1,6 @@
-# Resonance branch params
+# Forcing at ω₀ with k = m ω₀² is forcing at the natural frequency
 
-Forcing at the angular frequency `ω₀` of `k = m ω₀ ^ 2` is forcing at the convention's natural
-frequency `√(k / m)`, and zero damping is the convention's damping rate `0`.
+Let `m > 0`, `ω₀ > 0` and `k = m ω₀²`. Then the
+[natural angular frequency](atlas-natural-frequency.md) of the forced-oscillator convention is
+`√(k / m) = ω₀`, and zero damping has [damping rate](atlas-damping.md) `0 / (2 m) = 0`: forcing at
+the angular frequency `ω₀` without damping is the undamped exact resonance.

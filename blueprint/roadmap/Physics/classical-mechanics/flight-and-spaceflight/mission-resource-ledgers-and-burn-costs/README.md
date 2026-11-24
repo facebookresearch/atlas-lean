@@ -1,38 +1,44 @@
 # Mission resource ledgers and burn costs
 
-## A. Model
+## Resource stocks and schedules
 
-- [Stock](stock.md)
-- [Gains](gains.md)
-- [Draws](draws.md)
-- [Prefix Feasible](prefix-feasible.md)
-- [List Flow](list-flow.md)
+- [Stock of a resource after the first t steps](stock.md)
+- [Gains of a resource at a step](gains.md)
+- [Draws of a resource at a step](draws.md)
+- [Prefix feasibility of a resource schedule](prefix-feasible.md)
+- [Flow schedule given by a finite list](list-flow.md)
 
-## B. Prefix stocks and terminal accounting
+## Prefix stocks
 
-- [Stock zero](stock-zero.md)
-- [Stock succ](stock-succ.md)
+- [Before any step the stock is the initial stock](stock-zero.md)
+- [Each step adds its signed flow to the stock](stock-succ.md)
 
-## C. Prefix bounds and the reserve
+## Prefix bounds and the reserve
 
-- [Terminal](terminal.md)
-- [Lo le stock](lo-le-stock.md)
-- [Prefix Feasible iff reserve deducted once](prefix-feasible-iff-reserve-deducted-onc.md)
-- [Stock reserve every step](stock-reserve-every-step.md)
+- [Prefix feasibility includes the terminal check](terminal.md)
+- [A prefix-feasible schedule never takes a stock below its floor up to N](lo-le-stock.md)
+- [A reserve in the floor is one deduction from the initial stock](prefix-feasible-iff-reserve-deducted-onc.md)
+- [Deducting the reserve at every step removes it t times](stock-reserve-every-step.md)
 
-## D. Burn cost and fuel consumption
+## Burn cost and net velocity change
 
-- [Burn Cost](burn-cost.md)
-- [Net Velocity Change](net-velocity-change.md)
-- [Admissible Stage Masses](admissible-stage-masses.md)
-- [Stage Increment](stage-increment.md)
-- [Burn Cost nonneg](burn-cost-nonneg.md)
-- [Cost is not the net change](norm-net-velocity-change-le-burn-cost.md)
-- [Two opposite equal burns](opposite-burns.md)
-- [Stage Increment nonneg](stage-increment-nonneg.md)
-- [A depleted or negative intermediate mass is rejected](stage-masses-rejects-depleted.md)
-- [Cost from actual stage masses](burn-cost-staged.md)
-- [Collinear staged burns](net-velocity-change-staged-collinear.md)
-- [Equal exhaust speed composes burns](remaining-fraction-burns.md)
-- [Fuel follows the cost, not the net change](fuel-burn-cost.md)
-- [Fuel consumption of actual stage masses](stage-remaining-fraction.md)
+- [Delta-v cost of a sequence of burns](burn-cost.md)
+- [Net velocity change of a sequence of burns](net-velocity-change.md)
+- [The delta-v cost is nonnegative](burn-cost-nonneg.md)
+- [The net velocity change is at most the delta-v cost](norm-net-velocity-change-le-burn-cost.md)
+- [Two opposite equal burns cost twice the magnitude with zero net change](opposite-burns.md)
+
+## Burn cost from stage masses
+
+- [Admissible stage masses of a sequence of burns](admissible-stage-masses.md)
+- [Ideal velocity increment of a burn](stage-increment.md)
+- [At positive exhaust speed admissible burns have nonnegative increments](stage-increment-nonneg.md)
+- [A depleted or negative stage mass is not admissible](stage-masses-rejects-depleted.md)
+- [Delta-v cost of staged burns from their stage masses](burn-cost-staged.md)
+- [For collinear staged burns the net change has the norm of the cost](net-velocity-change-staged-collinear.md)
+
+## Fuel consumption
+
+- [Remaining mass fractions of burns at one exhaust speed multiply](remaining-fraction-burns.md)
+- [Fuel consumption follows the delta-v cost, not the net change](fuel-burn-cost.md)
+- [Remaining mass fraction of admissible staged burns](stage-remaining-fraction.md)

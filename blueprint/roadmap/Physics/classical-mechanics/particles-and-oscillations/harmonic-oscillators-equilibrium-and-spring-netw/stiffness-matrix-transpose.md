@@ -1,4 +1,4 @@
-# Stiffness Matrix transpose
+# For reciprocal weights, the stiffness matrix is symmetric
 
-Symmetry (MC): the stiffness matrix is symmetric for symmetric pair
-stiffness, stated as transpose equality.
+For a finite set `ι` of nodes, pair weights with `k_{ij} = k_{ji}` for all nodes and any wall
+stiffnesses `w`, the [stiffness matrix](stiffness-matrix.md) is symmetric: `Kᵀ = K`.

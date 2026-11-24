@@ -1,3 +1,4 @@
-# Sense
+# Sense factor of a gear mesh
 
-Sense factor of a mesh kind: `-1` for an external mesh, `1` for an internal mesh.
+The sense factor of a [mesh kind](mesh-kind.md) is `-1` for an external mesh and `1` for an
+internal mesh.

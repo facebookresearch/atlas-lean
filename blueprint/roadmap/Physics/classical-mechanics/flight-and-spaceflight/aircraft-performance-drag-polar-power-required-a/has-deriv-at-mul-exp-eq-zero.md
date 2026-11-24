@@ -1,4 +1,4 @@
-# Has Deriv At mul exp eq zero
+# Integrating factor for the fuel law
 
-Integrating factor: along a solution of `W' = -cW * W / Λ` the product
-`W(t) * exp ((cW / Λ) * t)` has derivative `0`.
+For reals `cW`, `Λ` and `t`, if a function `W` has derivative `−cW W(t) / Λ` at `t`, then
+`s ↦ W(s) exp((cW / Λ) s)` has derivative `0` at `t`.

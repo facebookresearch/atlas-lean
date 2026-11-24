@@ -15,26 +15,29 @@ import Mathlib.Data.Nat.PrimeFin
 import Mathlib.FieldTheory.Finite.Basic
 
 /-!
-# Square-weighted zero-sum free unit pairs modulo the prime divisors of an odd number
+# Square-weighted zero sums modulo integers
 
-For a natural number $n$, write $S(n)$ for the set of nonzero squares in $\mathbb{Z}/n\mathbb{Z}$.
-A sequence $(x_1, \dots, x_k)$ in $\mathbb{Z}/n\mathbb{Z}$ has an $A$-weighted zero-sum
-subsequence when there are a nonempty set $J$ of indices and weights $a_i \in A$ for $i \in J$
-with $\sum_{i \in J} a_i x_i = 0$.
+For a natural number $n$, write $S(n)$ for the set of nonzero squares in $\mathbb{Z}/n\mathbb{Z}$
+and $U(n)^2$ for the squares of its units. An $A$-weighted zero sum uses a weight from $A$ at
+each term of a sequence; an $A$-weighted zero-sum subsequence uses weights at a nonempty set of
+indices. In either case the weighted terms sum to zero.
 
-This file proves Proposition 17 of Paul and Paul: for odd $n \ge 2$ there are units $u, v$ of
-$\mathbb{Z}/n\mathbb{Z}$ such that, for every prime $p$ dividing $n$, the reduction
-$(u \bmod p, v \bmod p)$ has no $S(p)$-weighted zero-sum subsequence.
+This file proves two results of Paul and Paul. For odd $n \ge 2$, Proposition 17 gives units
+$u, v$ whose reductions modulo every prime $p$ dividing $n$ have no $S(p)$-weighted zero-sum
+subsequence. Lemma 13 lifts a $U(p^2)^2$-weighted zero sum modulo $p^2$ to an $S(p^r)$-weighted
+zero sum modulo $p^r$ when $p \ge 2$ and $r$ is positive and even; $p$ need not be prime.
 
 ## Main definitions
 
-* `MetaMathlibExt.squareSet`: the set $S(n)$ of nonzero squares of $\mathbb{Z}/n\mathbb{Z}$.
-* `MetaMathlibExt.HasWeightedZeroSumSubseq`: a finite sequence in $\mathbb{Z}/n\mathbb{Z}$ has an
-  $A$-weighted zero-sum subsequence.
+* `MetaMathlibExt.squareSet`: the nonzero squares of $\mathbb{Z}/n\mathbb{Z}$.
+* `MetaMathlibExt.unitSquareSet`: the squares of units of $\mathbb{Z}/n\mathbb{Z}$.
+* `MetaMathlibExt.HasWeightedZeroSum`: a sequence is an $A$-weighted zero sum.
+* `MetaMathlibExt.HasWeightedZeroSumSubseq`: a sequence has an $A$-weighted zero-sum subsequence.
 
 ## Main results
 
 * `MetaMathlibExt.exists_pair_units_avoiding_prime_squareWeights`: Proposition 17.
+* `MetaMathlibExt.squareWeightedZeroSum_of_reduction_square`: Lemma 13.
 
 ## Implementation notes
 
@@ -43,6 +46,10 @@ remainder theorem. Modulo an odd prime $p$ we take the pair $(1, c_p)$, where $-
 square: a single nonzero term has no weighted zero sum, and $a \cdot 1 + b c_p = 0$ with nonzero
 squares $a, b$ would make $-c_p = a / b$ a square. So $u = 1$, and $v$ is congruent to $c_p$
 modulo every prime $p \mid n$.
+
+For the lifting lemma, lift the unit square roots and scale their squares by $p^{r-2}$.
+The even exponent makes this scale a square; multiplying by it lifts the zero-sum congruence
+from modulo $p^2$ to modulo $p^r$ without making any weight zero.
 
 ## References
 
@@ -73,6 +80,23 @@ public def HasWeightedZeroSumSubseq {n k : ℕ} (A : Set (ZMod n))
     (S : Fin k → ZMod n) : Prop :=
   ∃ J : Finset (Fin k), J.Nonempty ∧
     ∃ a : Fin k → ZMod n, (∀ i ∈ J, a i ∈ A) ∧ ∑ i ∈ J, a i * S i = 0
+
+/-- **Squares of units modulo n.** For a natural number $n$, $U(n)^2$ is the set of elements of
+$\mathbb{Z}/n\mathbb{Z}$ of the form $u^2$ with $u$ a unit of $\mathbb{Z}/n\mathbb{Z}$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Introduction. -/
+public def unitSquareSet (n : ℕ) : Set (ZMod n) := {x | ∃ u, IsUnit u ∧ x = u ^ 2}
+
+/-- **Weighted zero-sum sequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
+$S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ is an $A$-weighted
+zero-sum sequence if there are weights $a_1, \dots, a_k \in A$ with
+$a_1 x_1 + a_2 x_2 + \dots + a_k x_k = 0$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Introduction. -/
+public def HasWeightedZeroSum {n k : ℕ} (A : Set (ZMod n)) (S : Fin k → ZMod n) : Prop :=
+  ∃ a : Fin k → ZMod n, (∀ i, a i ∈ A) ∧ ∑ i, a i * S i = 0
 
 end
 
@@ -161,5 +185,68 @@ public theorem exists_pair_units_avoiding_prime_squareWeights (n : ℕ)
       · simp [ZMod.cast_natCast hpn, hkp p hpmem]
     rw [hS]
     exact not_hasWeightedZeroSumSubseq_one_pair (hc p hpmem)
+
+/-- **Lifting weighted zero sums from p² to an even power of p.** Let $p \ge 2$, $r \ne 0$
+and $k$ be natural numbers with $r$ even, and let $t_1, \dots, t_k$ be elements of
+$\mathbb{Z}/p^r\mathbb{Z}$, with reductions $\bar t_1, \dots, \bar t_k$ modulo $p^2$. Write
+$U(p^2)^2$ for the set of squares of units of $\mathbb{Z}/p^2\mathbb{Z}$ and $S(p^r)$ for the
+set of nonzero squares of $\mathbb{Z}/p^r\mathbb{Z}$. If there are
+$a_1, \dots, a_k \in U(p^2)^2$ with $a_1 \bar t_1 + \dots + a_k \bar t_k = 0$ in
+$\mathbb{Z}/p^2\mathbb{Z}$, then there are $b_1, \dots, b_k \in S(p^r)$ with
+$b_1 t_1 + \dots + b_k t_k = 0$ in $\mathbb{Z}/p^r\mathbb{Z}$.
+
+The arXiv preprint states $p > 0$, but the published lemma assumes $p \ge 2$, as in this
+statement. The restriction matters: if $p = 1$ and $k > 0$, the only residue is a unit and
+its square is $0$, so the hypothesis holds but there are no nonzero square weights.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Lemma 13. -/
+public theorem squareWeightedZeroSum_of_reduction_square (p r k : ℕ)
+    (hp : 2 ≤ p) (hr0 : r ≠ 0) (hrEven : Even r)
+    (T : Fin k → ZMod (p ^ r))
+    (hT : HasWeightedZeroSum (unitSquareSet (p ^ 2))
+      (fun i => (ZMod.cast (T i) : ZMod (p ^ 2)))) :
+    HasWeightedZeroSum (squareSet (p ^ r)) T := by
+  obtain ⟨j, hj⟩ : ∃ j : ℕ, r = 2 * j + 2 := by
+    obtain ⟨t, ht⟩ := hrEven
+    exact ⟨t - 1, by omega⟩
+  subst r
+  have hp0 : 0 < p := by omega
+  have hm : 1 < p ^ 2 := one_lt_pow₀ (by omega : 1 < p) (by decide)
+  have : Fact (1 < p ^ 2) := ⟨hm⟩
+  have : NeZero (p ^ 2) := ⟨by omega⟩
+  have : NeZero (p ^ (2 * j + 2)) := ⟨(pow_pos hp0 _).ne'⟩
+  let d := p ^ (2 * j)
+  have hd : 0 < d := pow_pos hp0 _
+  have hmod : p ^ (2 * j + 2) = d * p ^ 2 := pow_add p _ _
+  obtain ⟨a, ha, hsum⟩ := hT
+  choose u hu heq using ha
+  let z := ∑ i : Fin k, (u i).val ^ 2 * (T i).val
+  have hz : (z : ZMod (p ^ 2)) = 0 := by
+    rw [← hsum]
+    simp only [z, Nat.cast_sum, Nat.cast_mul, Nat.cast_pow, ZMod.natCast_zmod_val,
+      ZMod.cast_eq_val, heq]
+  -- Scaling by d transports the divisibility of the sum to modulus d * p².
+  have hdz : ((d * z : ℕ) : ZMod (p ^ (2 * j + 2))) = 0 := by
+    apply (ZMod.natCast_eq_zero_iff _ _).mpr
+    rw [hmod]
+    exact Nat.mul_dvd_mul_left d ((ZMod.natCast_eq_zero_iff z _).mp hz)
+  refine ⟨fun i => (d : ZMod (p ^ (2 * j + 2))) * ((u i).val : ZMod _) ^ 2, ?_, ?_⟩
+  · intro i
+    refine ⟨?_, ⟨(p : ZMod (p ^ (2 * j + 2))) ^ j * ((u i).val : ZMod _), ?_⟩⟩
+    · intro he
+      have he' : ((d * (u i).val ^ 2 : ℕ) : ZMod (p ^ (2 * j + 2))) = 0 := by
+        push_cast
+        exact he
+      have hbig := (ZMod.natCast_eq_zero_iff _ (p ^ (2 * j + 2))).mp he'
+      rw [hmod] at hbig
+      have hsmall := (ZMod.natCast_eq_zero_iff ((u i).val ^ 2) (p ^ 2)).mpr
+        (Nat.dvd_of_mul_dvd_mul_left hd hbig)
+      exact ((hu i).pow 2).ne_zero
+        (by simpa only [Nat.cast_pow, ZMod.natCast_zmod_val] using hsmall)
+    · rw [mul_pow, ← pow_mul]
+      simp [d, Nat.mul_comm]
+  · simpa only [z, Nat.cast_mul, Nat.cast_sum, Nat.cast_pow, ZMod.natCast_zmod_val,
+      Finset.mul_sum, ← mul_assoc] using hdz
 
 end MetaMathlibExt

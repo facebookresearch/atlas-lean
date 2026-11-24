@@ -1,7 +1,6 @@
-# Section Moment fully Plastic div first Yield
+# Shape factor of a rectangular section
 
-Shape factor of the rectangular section: for positive width, height and
-yield stress, the fully plastic moment divided by the elastic first-yield
-moment is `3 / 2`. The premises make the denominator `σy * b * h ^ 2 / 6`
-nonzero (real division is totalized) and fix the orientation of the
-section.
+For a width `b > 0`, a height `h > 0` and a yield stress `σy > 0`, the
+[fully plastic moment](section-moment-fully-plastic-stress.md) divided by the
+[elastic first-yield moment](section-moment-first-yield-stress.md) is `3 / 2`. The hypotheses make
+the denominator `σy * b * h ^ 2 / 6` nonzero.

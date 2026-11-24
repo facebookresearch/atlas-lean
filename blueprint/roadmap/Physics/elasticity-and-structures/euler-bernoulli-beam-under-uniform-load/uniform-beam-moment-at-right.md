@@ -1,4 +1,5 @@
-# Uniform Beam Moment at right
+# Zero bending moment at the right support
 
-Zero bending moment at the right support. As at the left
-support, no nondegeneracy hypothesis on `EI` is needed.
+For all real `w`, `EI` and `L`, the [bending moment](uniform-beam-moment.md) `M(x) = -EI * y''(x)`
+of the uniformly loaded simply supported beam vanishes at the right support: `M(L) = 0`. No
+condition on `EI` is needed.

@@ -1,5 +1,7 @@
-# Integral mechanism Deflection
+# External work of the uniform load through the mechanism
 
-Work bridge: the work of the uniform load of intensity `w` through the mechanism
-deflection with central deflection `δ` is `(w • f) ⬝ᵥ ![δ]`, that is `w * (L / 2) * δ`
-(Neal, p. 27: the load moves on average half the central deflection).
+For a span `L > 0` and all real `w` and `δ`, the work of the uniform load of intensity `w` through
+the [mechanism deflection](mechanism-deflection.md) with central deflection `δ` is
+`∫_0^L w * (2 * δ / L * min x (L - x)) dx = (w f) · δ = w * (L / 2) * δ`, with the
+[work vector](uniform-load-work.md) `f = (L / 2)`: the load moves on average half the central
+deflection (Neal, p. 27).

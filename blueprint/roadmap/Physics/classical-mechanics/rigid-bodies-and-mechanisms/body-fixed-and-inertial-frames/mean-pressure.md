@@ -1,4 +1,6 @@
-# Mean Pressure
+# Mean pressure of a tension-positive stress tensor
 
-The mean pressure `p = -σₘ` of a stress tensor `σ` written with the tension-positive sign
-convention: the negative of the mean stress `Elasticity.meanStress σ = tr σ / 3`.
+For a real 3 × 3 matrix `σ`, the mean pressure is `p = -σₘ = -tr σ / 3`, the negative of the mean
+stress `σₘ = tr σ / 3`. In the physical reading `σ` is a Cauchy stress tensor in an orthonormal
+frame with tension counted positive, so a compressive state has positive pressure; the definition
+applies to every real matrix.

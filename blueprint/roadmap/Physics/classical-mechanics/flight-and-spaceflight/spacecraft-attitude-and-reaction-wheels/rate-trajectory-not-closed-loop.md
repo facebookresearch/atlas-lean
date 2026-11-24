@@ -1,6 +1,7 @@
-# Outside the unsaturated interval the exponential is not a closed-loop solution
+# Outside the unclipped interval the exponential fails the closed loop
 
-For
-`I, k, U_max > 0` and `|ω₀| > U_max / k` the feedback `-k ω₀` is clipped, and the exponential `ω`
-does not have the closed-loop derivative `τ_b(ω(0)) / I` at `t = 0`: this branch needs another
-argument.
+Let `I > 0`, `k > 0` and `U_max > 0` be real numbers and `|ω₀| > U_max / k`, so that the feedback
+`−k ω₀` is clipped. Then the [rate trajectory](rate-trajectory.md) `ω(t) = ω₀ exp(−k t / I)`
+does not have the derivative `τ_b(ω(0)) / I` at `t = 0`, where `τ_b` is the
+[body torque](body-torque.md): the exponential is not a solution of the saturated closed loop
+`ω' = τ_b(ω) / I` at `t = 0`.

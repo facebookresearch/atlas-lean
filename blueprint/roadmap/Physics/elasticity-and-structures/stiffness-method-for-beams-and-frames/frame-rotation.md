@@ -1,7 +1,7 @@
-# Frame Rotation
+# Global-to-local transformation of a planar frame element
 
-Global-to-local planar frame transform for one element whose
-local axial direction has global direction cosines `(c, s)`.
-At each end it maps global translations `(u, v)` to axial and
-transverse components `(c*u + s*v, -s*u + c*v)` and leaves the
-in-plane rotation coordinate unchanged.
+For real numbers `c` and `s`, the frame transformation is the 6 × 6 block-diagonal matrix `T` with
+two copies of the block `[[c, s, 0], [-s, c, 0], [0, 0, 1]]`, acting on `(u1, v1, θ1, u2, v2, θ2)`:
+at each end it maps the global translation `(u, v)` to the axial and transverse components
+`(c u + s v, -s u + c v)` and leaves the rotation unchanged. In the physical reading `(c, s)` are
+the direction cosines of the element axis in global coordinates, with `c² + s² = 1`.

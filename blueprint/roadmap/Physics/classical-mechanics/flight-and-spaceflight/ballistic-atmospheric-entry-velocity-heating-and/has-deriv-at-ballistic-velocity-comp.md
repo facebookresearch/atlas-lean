@@ -1,5 +1,12 @@
-# Has Deriv At ballistic Velocity comp
+# Along altitude trajectories the profile speed solves the drag equation
 
-Converse: for `H ≠ 0`, `β > 0` and a downward path, `sin γ > 0`, along an altitude trajectory
-with `h' = -v * sin γ` for `v = ballisticVelocity ∘ h`, the speed `ballisticVelocity ∘ h`
-satisfies the drag equation `v' = -ρ(h) * v ^ 2 / (2 * β)`.
+Let `H ≠ 0`, `β > 0` and `sin γ > 0`, a downward path, and let `ρ₀`, `h_e`, `v_e` and `t` be
+real. Write `v` for the [finite-entry ballistic velocity profile](ballistic-velocity.md) and
+`ρ(z) = ρ₀ exp(−z / H)` for the [exponential density](exponential-density.md). If an altitude
+trajectory `h` has the derivative `h'(t) = −v(h(t)) sin γ` at `t`, then the speed `τ ↦ v(h(τ))`
+has at `t` the derivative
+
+`−ρ(h(t)) v(h(t))² / (2 β)`,
+
+so it satisfies the drag equation `v' = −ρ(h) v² / (2 β)` at `t`. This is the converse of
+[the derivation of the profile](ballistic-velocity-of-ode.md) from the equations of motion.

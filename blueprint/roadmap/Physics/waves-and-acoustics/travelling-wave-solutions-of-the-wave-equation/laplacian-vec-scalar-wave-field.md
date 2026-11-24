@@ -1,5 +1,9 @@
-# Laplacian Vec scalar Wave Field
+# The vector Laplacian of the field is the second x-derivative
 
-On `Space 1`, the vector Laplacian of a transported field is the second `x`-derivative:
-if the slice `φ t.val` has derivative `φx t.val y` at every `y`, and `φx t.val` has derivative
-`φxx t.val (x 0)` at `x 0`, then `Δᵥ (scalarWaveField φ t) x` has component `φxx t.val (x 0)`.
+Let `φ`, `φ_x` and `φ_xx` be real functions of `(t, y)`, fix a time `t` and a point `x` of
+one-dimensional space with coordinate `x₀`, and let `u` be the
+[one-component vector field](scalar-wave-field.md) of `φ`. Suppose that, at the time `t`, the
+slice `y ↦ φ(t, y)` has derivative `φ_x(t, y)` at every real `y`, and `y ↦ φ_x(t, y)` has
+derivative `φ_xx(t, x₀)` at `x₀`. Then the vector Laplacian of `u(t, ·)` at `x`, the Laplacian of
+each component, here the second derivative in the single coordinate, is the vector with single
+component `φ_xx(t, x₀)`.

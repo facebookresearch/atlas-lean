@@ -1,5 +1,8 @@
-# Has Deriv At oscillator Energy
+# For m ≠ 0, the energy has zero derivative where x′ = v, v′ = −(k/m) x
 
-Energy derivative (MC): if at time `t` the position has derivative `v t` and the velocity
-has derivative `-(k / m) * x t` (Newton's equation in divided form, MOD), then the oscillator
-energy has derivative `0` at `t`. `oscillatorEnergy_const` turns this into conservation.
+Let `m ≠ 0` and `k` be real numbers, `x, v : ℝ → ℝ` functions and `t` a time at which `x` has
+derivative `v(t)` and `v` has derivative `-(k / m) x(t)` (Newton's equation `m x'' = -k x` in
+divided form). Then `s ↦ E(m, k, x(s), v(s))`, with
+`E(m, k, x, v) = (1/2) m v² + (1/2) k x²` the [oscillator energy](oscillator-energy.md), has
+derivative `0` at `t`. The hypotheses concern the one time `t`; with them at every time the energy
+is [conserved](oscillator-energy-const.md).

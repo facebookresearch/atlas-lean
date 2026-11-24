@@ -1,4 +1,6 @@
-# Burn Velocity increment
+# Ideal rocket equation for the burn: the velocity gain is log 2
 
-The ideal rocket equation `velocity_increment_eq_log` for this burn: the velocity gained on
-`[0, 1]` is `ve * log (m 0 / m 1)` with `ve = 1`.
+The [burn velocity](burn-velocity.md) gained over the burn interval `[0, 1]` is
+`v(1) - v(0) = 1 · log (m(0) / m(1))`, with `m` the [burn mass](burn-mass.md): the
+[ideal rocket equation](../../flight-and-spaceflight/rocket-and-electric-propulsion/velocity-increment-eq-log.md)
+`ve log (m(0) / m(1))` at exhaust speed `ve = 1`. Since `m(0) / m(1) = 2`, the gain is `log 2`.

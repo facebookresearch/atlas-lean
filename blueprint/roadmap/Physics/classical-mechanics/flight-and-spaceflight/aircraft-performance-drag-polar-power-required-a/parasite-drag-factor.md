@@ -1,3 +1,3 @@
-# Parasite Drag Factor
+# Parasite-drag factor
 
-Parasite-drag factor `a = ρ * S * CD0 / 2`: the zero-lift drag at speed `V` is `a * V ^ 2`.
+For reals `ρ`, `S` and `CD0`, `a = ρ S CD0 / 2`: the zero-lift drag at speed `V` is `a V²`.

@@ -1,4 +1,4 @@
-# Effective Exhaust Velocity
+# Effective exhaust velocity
 
-The effective exhaust velocity `c = T / ṁ_out` of a thrust `T` at the exhaust mass flow
-`ṁ_out`.
+For reals `T` (thrust) and `ṁ_out` (exhaust mass flow), `c = T / ṁ_out`. With the convention
+`x / 0 = 0`, `c = 0` when `ṁ_out = 0`.

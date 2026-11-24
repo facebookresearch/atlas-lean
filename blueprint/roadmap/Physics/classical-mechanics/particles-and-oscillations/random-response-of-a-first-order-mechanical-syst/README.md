@@ -1,31 +1,31 @@
 # Random response of a first-order mechanical system
 
-## A. Dimensions of the physical parameters
+## Dimensions of the physical parameters
 
-- [Damping Dim](damping-dim.md)
-- [Force Noise Dim](force-noise-dim.md)
-- [Damping Dim exponent](damping-dim-exponent.md)
-- [Force Noise Dim exponent](force-noise-dim-exponent.md)
-- [Stiffness div damping](stiffness-div-damping.md)
-- [Force Noise div damping](force-noise-div-damping.md)
-- [Stationary Variance Dim](stationary-variance-dim.md)
-- [Stationary Variance coord dim Scale](stationary-variance-coord-dim-scale.md)
+- [Dimension of a viscous damping coefficient](damping-dim.md)
+- [Exponents of the damping dimension](damping-dim-exponent.md)
+- [Dimension of the white-noise force coefficient](force-noise-dim.md)
+- [Exponents of the white-noise force dimension](force-noise-dim-exponent.md)
+- [Stiffness over damping coefficient is a rate](stiffness-div-damping.md)
+- [Noise coefficient over damping coefficient has dimension L T^(−1/2)](force-noise-div-damping.md)
+- [The stationary variance σ² / (2 c k) is a squared displacement](stationary-variance-dim.md)
+- [The stationary-variance formula commutes with a change of units](stationary-variance-coord-dim-scale.md)
 
-## B. Pathwise form of the physical equation
+## Pathwise form of the damper equation
 
-- [Physical and Langevin forms agree](physical-iff-langevin.md)
-- [Ou Path Solution solves physical](ou-path-solution-solves-physical.md)
-- [Uniqueness](eq-ou-path-solution-of-physical.md)
+- [For c > 0, the integral damper equation is the Langevin equation](physical-iff-langevin.md)
+- [The pathwise Ornstein–Uhlenbeck solution solves the damper equation](ou-path-solution-solves-physical.md)
+- [A continuous solution of the damper equation is the pathwise solution](eq-ou-path-solution-of-physical.md)
 
-## C. The stationary response law
+## Stationary response
 
-- [Existence of a pathwise stationary response](exists-stationary-response.md)
-- [Covariance of the stationary response](stationary-response-covariance.md)
-- [Stationary variance](stationary-response-variance.md)
-- [Stationary law](stationary-response-has-law.md)
+- [For c, k > 0, a pathwise stationary response exists](exists-stationary-response.md)
+- [Covariance of the stationary damper response](stationary-response-covariance.md)
+- [Variance of the stationary damper response is σ² / (2 c k)](stationary-response-variance.md)
+- [The stationary damper response is Gaussian N(0, σ² / (2 c k))](stationary-response-has-law.md)
+- [The stationary variance vanishes exactly when σ = 0](stationary-response-variance-eq-zero-iff.md)
 
-## D. Nonzero noise and the white-noise boundary
+## White-noise boundary
 
-- [Nonzero noise gives nonzero variance](stationary-response-variance-eq-zero-iff.md)
-- [Variance of a Brownian difference quotient](variance-brownian-diff-quot.md)
-- [Unbounded difference-quotient variance](not-bdd-variance-brownian-diff-quot.md)
+- [A Brownian difference quotient over a step h has variance 1 / h](variance-brownian-diff-quot.md)
+- [The variances of Brownian difference quotients are unbounded](not-bdd-variance-brownian-diff-quot.md)

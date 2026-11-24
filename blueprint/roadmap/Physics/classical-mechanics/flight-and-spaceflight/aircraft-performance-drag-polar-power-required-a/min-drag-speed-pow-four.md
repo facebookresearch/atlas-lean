@@ -1,4 +1,5 @@
-# Min Drag Speed pow four
+# For nonzero weight the minimum-drag speed solves V⁴ = b / a
 
-Identity for the formula `minDragSpeed`: for `W ≠ 0` and `ρ, S, CD0, k > 0` it solves
-`V ^ 4 = b / a`. It depends on `W` only through `W ^ 2`.
+For `W ≠ 0` and `ρ, S, CD0, k > 0`, the [minimum-drag speed](min-drag-speed.md) `V_md` satisfies
+`V_md⁴ = b / a`, with `a = ρ S CD0 / 2` and `b = 2 k W² / (ρ S)` (the
+[parasite-drag](parasite-drag-factor.md) and [induced-drag](induced-drag-factor.md) factors).

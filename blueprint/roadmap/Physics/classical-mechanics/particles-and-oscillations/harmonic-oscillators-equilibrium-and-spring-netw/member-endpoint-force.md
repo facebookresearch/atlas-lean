@@ -1,13 +1,10 @@
-# Member Endpoint Force
+# Internal endpoint forces of an axial-member table
 
-Internal endpoint force of one axial member table entry,
-read as the force the member exerts on the joint. For member
-`e`, `c e` is the signed coefficient along the separation
-vector `r (b e) - r (a e)`: the force at `a e` is
-`c e • (r (b e) - r (a e))` and the force at `b e` is its
-negative, so positive `c e` is tension. This separation-vector
-form is the totalized model; for a genuine two-force member the
-endpoints are distinct and `c e` is the axial force divided by
-the member length. Joint-only loading is the physical reason a
-pin-jointed member carries only such an endpoint axial pair;
-external loads are outside this internal-force sum.
+Let `J` be a set of joints with positions `r : J → ℝ²`, `M` a set of members, member `e` joining
+the joints `a(e)` and `b(e)`, and `c : M → ℝ` signed coefficients. The internal force at the
+endpoint `(e, false)` (the joint `a(e)`) is `c(e) (r(b(e)) - r(a(e)))`, and at `(e, true)` (the
+joint `b(e)`) its negative `-c(e) (r(b(e)) - r(a(e)))`: the force the member exerts on each joint,
+along the separation vector. Positive `c(e)` pulls the two joints towards each other (tension).
+The formula is defined for every table; when `r(a(e)) = r(b(e))` both forces are `0`. For a
+genuine two-force member the endpoints are distinct and `c(e)` is the axial force divided by the
+member length. External loads are not part of this internal-force family.
