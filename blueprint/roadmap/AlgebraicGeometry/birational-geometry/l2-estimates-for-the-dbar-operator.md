@@ -23,16 +23,19 @@ A good expansion has pages for:
   inequality (4.7) and the computation (4.10) of the curvature term for line bundles;
 - the $L^2$ existence theorem (5.1) on Kähler manifolds with complete geodesic distance; its form
   (5.2) for a line bundle with positive curvature on a weakly pseudoconvex Kähler manifold, with the
-  estimate by the sum $\gamma_1 + \dots + \gamma_q$ of the smallest curvature eigenvalues; and
-  Corollary (5.3) on a weakly pseudoconvex Kähler manifold, for a line bundle with a singular metric
-  written as the quadratic form $H = e^{-\varphi}$ with $\varphi \in L^1_{\mathrm{loc}}$ and
-  $i\Theta_{F,h} = i\partial\bar\partial \varphi \ge \varepsilon\omega$ for a constant $\varepsilon >
-  0$: every $D''$-closed $g \in L^2(X, \Lambda^{n,q} T^*_X \otimes F)$, $q \ge 1$, is $D'' f$ with
-  $\int_X |f|^2 e^{-\varphi} \, dV_\omega \le \frac{1}{q\varepsilon} \int_X |g|^2 e^{-\varphi} \,
-  dV_\omega$. Here the weight is $e^{-\varphi}$, whereas the Nadel vanishing theorem writes the norm
-  as $|\theta(\xi)| e^{-\varphi}$, with weight $e^{-2\varphi}$, and allows a continuous positive
-  function $\varepsilon$; the coherence of multiplier ideal sheaves (5.7) and the Nadel vanishing
-  theorem (5.11) rest on this corollary;
+  estimate by the sum $\gamma_1 + \dots + \gamma_q$ of the smallest curvature eigenvalues, which
+  extends to singular metrics with positive curvature current by regularization (the remark after
+  (5.2)); and Corollary (5.3) on a weakly pseudoconvex Kähler manifold, for a line bundle with a
+  singular metric written as the quadratic form $H = e^{-\varphi}$ with $\varphi \in
+  L^1_{\mathrm{loc}}$ and $i\Theta_{F,h} = i\partial\bar\partial \varphi \ge \varepsilon\omega$ for
+  a constant $\varepsilon > 0$: every $D''$-closed $g \in L^2(X, \Lambda^{n,q} T^*_X \otimes F)$, $q
+  \ge 1$, is $D'' f$ with $\int_X |f|^2 e^{-\varphi} \, dV_\omega \le \frac{1}{q\varepsilon} \int_X
+  |g|^2 e^{-\varphi} \, dV_\omega$. Here the weight is $e^{-\varphi}$, whereas the Nadel vanishing
+  theorem writes the norm as $|\theta(\xi)| e^{-\varphi}$, with weight $e^{-2\varphi}$, and allows a
+  continuous positive function $\varepsilon$, which on a noncompact manifold need not be bounded
+  below by a positive constant; the coherence of multiplier ideal sheaves (5.7) and the local
+  exactness in the proof of the Nadel vanishing theorem (5.11) rest on this corollary, and the
+  global step of (5.11) on (5.2) for singular metrics;
 - Ohsawa's twisted a priori inequality (Demailly, Lemma 13.1 and (13.3)), the existence theorem
   (13.4) deduced from it and its approximate form (13.5), which Demailly uses for the extension
   theorem (13.6); and, for Ohsawa and Takegoshi's own proof, the identities of their §1 (after
@@ -47,8 +50,10 @@ A good expansion has pages for:
   is nef. With the Riemann–Roch formula $\chi(X, kL) = \frac{(L^n)}{n!} k^n + o(k^n)$ this gives
   $\operatorname{Vol}(L) = (L^n)$ for nef $L$ (proof of Corollary (6.19)). The remark after (6.13)
   refers to Corollary (8.4) as "Corollary 8.3";
-- the Riemann–Roch formula $\chi(X, kL) = \frac{(L^n)}{n!} k^n + o(k^n)$, a consequence of the
-  Hirzebruch–Riemann–Roch theorem, which Esnault and Viehweg also use for their Lemma 5.8;
+- the Riemann–Roch formula $\chi(X, kL) = \frac{(L^n)}{n!} k^n + o(k^n)$ on a compact complex
+  manifold, a consequence of the Hirzebruch–Riemann–Roch theorem in that generality, which the
+  standard results of coherent cohomology state only for smooth projective varieties; Esnault and
+  Viehweg also use it, for their Lemma 5.8;
 - complete Kähler metrics: every weakly pseudoconvex Kähler manifold carries one (Demailly, the
   observation before (5.2), p. 34), and so does $X_c \setminus Y$ for $X$ weakly pseudoconvex
   Kähler, exhausted by the sublevel sets $X_c$, and $Y = \sigma^{-1}(0)$ an analytic subset defined
@@ -57,11 +62,37 @@ A good expansion has pages for:
   Z$ is complete Kähler whenever $\Omega$ is a relatively compact open subset of a Kähler manifold
   and $\Omega$ itself carries a complete Kähler metric, in particular for the sublevel sets $\Omega
   = X_c$ of a weakly pseudoconvex $X$ (Demailly 1982, Théorème 1.5 and Remarque 1.6, p. 464);
-- the Serre–Siegel lemma (Demailly (6.13), p. 45, proved from the Schwarz lemma): for a holomorphic
-  line bundle $L$ on a compact complex manifold with $\kappa(L) \ge 0$, $h^0(X, mL) =
-  O(m^{\kappa(L)})$ for $m \ge 1$ and $\kappa(L)$ is the smallest exponent with this property, while
-  $h^0(X, mL) = 0$ for all $m \ge 1$ when $\kappa(L) = -\infty$; the volume is finite, and $L$ is
-  big if and only if its volume is positive.
+- the Serre–Siegel lemma (Demailly (6.13), p. 45, proved from the Schwarz lemma on polydiscs, which
+  reduces to the unit disc along complex lines through the centre): for a holomorphic line bundle
+  $L$ on a compact complex manifold with $\kappa(L) \ge 0$, $h^0(X, mL) = O(m^{\kappa(L)})$ for $m
+  \ge 1$ and $\kappa(L)$ is the smallest exponent with this property, while $h^0(X, mL) = 0$ for all
+  $m \ge 1$ when $\kappa(L) = -\infty$; the volume is finite, and $L$ is big if and only if its
+  volume is positive.
+
+## Depends on
+
+- [Currents of integration and the support theorems](currents-of-integration.md), for the curvature
+  currents of singular metrics in Corollary (5.3)
+
+## Proof depends on
+
+- [Schwarz–Pick lemma](../../Analysis/complex-analysis/geometric-function-theory/schwarz-pick-lemma/schwarz-pick.md),
+  for the Schwarz bound $|f(z)| \le |z|$ on the unit disc, its case $w = 0$ when $f(0) = 0$, to
+  which the Schwarz lemma on polydiscs behind the Serre–Siegel lemma (6.13) reduces
+- [Hahn–Banach extension with the same norm](../../Analysis/banach-spaces/duality-and-weak-topologies/hahn-banach-theorem/hahn-banach-norm-preserving-extension.md),
+  for the extension of the bounded functional $D''^* v \mapsto \langle v, g \rangle$ from the range
+  of $D''^*$ to the whole $L^2$ space with the same norm, in the proof of (5.1)
+- [Riesz representation theorem](../../Analysis/hilbert-spaces/riesz-representation-hilbert.md), for
+  the vector of the Hilbert space that represents the extended functional, in the proof of (5.1)
+
+## Expansion
+
+A good expansion also states and links:
+
+- Kähler manifolds with complete metrics and hermitian vector bundles with their curvature operators
+  on $L^2$ forms (Demailly, §§4–5), for the statement
+- the cut-off functions that the completeness of the metric provides (Demailly, proof of (5.1)),
+  for the passage from the a priori inequality (4.7) to (5.1)
 
 ## Sources
 

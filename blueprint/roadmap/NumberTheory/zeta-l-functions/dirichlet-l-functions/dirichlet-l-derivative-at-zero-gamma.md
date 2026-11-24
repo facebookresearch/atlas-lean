@@ -7,15 +7,21 @@ $$L(0, \chi) = -\frac{1}{k} \sum_{r=1}^{k-1} r \chi(r), \qquad L'(0, \chi) = \su
 
 Indeed $L(s, \chi) = k^{-s} \sum_{r=1}^{k-1} \chi(r) \zeta(s, r/k)$ for all $s \neq 1$, where $\zeta(s, a)$ is the Hurwitz zeta
 function, as one sees by grouping the terms of the Dirichlet series by residue classes modulo $k$ when
-$\operatorname{Re} s > 1$. Differentiating at $s = 0$ and inserting
+$\operatorname{Re} s > 1$, and then by the [identity theorem](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md) on $\mathbb{C} \setminus \{1\}$. Differentiating at $s = 0$ and inserting
 [Lerch's formulas](lerch-formula-hurwitz-zeta.md) $\zeta(0, a) = \frac{1}{2} - a$ and
 $\frac{\partial \zeta}{\partial s}(0, a) = \log \Gamma(a) - \frac{1}{2} \log(2\pi)$ gives both formulas, because
-$\sum_{r=1}^{k-1} \chi(r) = 0$ for a non-principal character. (The computation is carried out here; the
+$S = \sum_{r=1}^{k-1} \chi(r) = 0$ for a non-principal character: choosing $u$ prime to $k$ with $\chi(u) \neq 1$,
+multiplication by $u$ permutes the residues prime to $k$, at which alone $\chi$ is nonzero, so $S = \chi(u) S$, whence $S = 0$. (The computation is carried out here; the
 sources give its two ingredients.)
+
+## Depends on
+
+- [Dirichlet character of a given modulus](conductors-and-primitive-dirichlet-characters/is-dirichlet-character-modulus.md), for Dirichlet characters modulo $k$
 
 ## Proof depends on
 
 - [Lerch's formula for the Hurwitz zeta function at $s = 0$](lerch-formula-hurwitz-zeta.md)
+- [Identity theorem for holomorphic maps](../../../Geometry/complex-and-symplectic-geometry/identity-and-open-mapping-theorems-for-holomorph/holomorphic-identity-on-connected-comple.md), for extending the expression through the Hurwitz zeta function from $\operatorname{Re} s > 1$
 
 ## Sources
 

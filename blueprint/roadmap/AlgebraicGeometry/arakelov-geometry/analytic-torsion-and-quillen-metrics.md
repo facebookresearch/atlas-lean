@@ -65,6 +65,11 @@ expansion has pages for:
 
 - [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
 
+## Proof depends on
+
+- [Arithmetic characteristic classes of hermitian vector bundles](arithmetic-chern-classes.md), for
+  the secondary Bott–Chern classes in the anomaly formulas
+
 ## Sources
 
 - H. Gillet and C. Soulé, "An arithmetic Riemann–Roch theorem", Invent. Math. 110 (1992), 473–543,

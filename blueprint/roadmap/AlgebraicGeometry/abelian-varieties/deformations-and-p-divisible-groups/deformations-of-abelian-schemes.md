@@ -35,14 +35,20 @@ is nilpotent, for instance for $R = \mathbb{Q}[\varepsilon]/(\varepsilon^2)$ and
 with the square-zero ideal $(\varepsilon)$, neither theorem applies; the statements are then those
 of Grothendieck's deformation theory of abelian schemes through the Gauss–Manin connection, for
 which a source covering divided power thickenings of arbitrary rings in the generality above has not
-been identified. This generalization is recorded here as an open target, not as a consequence of the
-$p$-nilpotent case.
+been identified; only the comparison in 1 holds in this generality, through the geometric comparison
+of the node on the
+[crystalline nature of the de Rham cohomology of abelian schemes](crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md)
+(Masullo, Theorem 6.2.1). This generalization is recorded here as an open target, not as a
+consequence of the $p$-nilpotent case.
 
 ## Depends on
 
 - [Abelian scheme](../abelian-scheme.md)
 - [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the de Rham
-  homology $H_1$, its filtration $\operatorname{Fil} = \omega^\perp$ and its crystalline nature
+  homology $H_1$ and its filtration $\operatorname{Fil} = \omega^\perp$ (item 2)
+- [Crystalline nature of the de Rham cohomology of abelian schemes](crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md),
+  for the crystalline cohomology of $A_0$, through which 1 compares the de Rham homologies of two
+  lifts
 - [Grothendieck–Messing deformation theorem](grothendieck-messing-theorem.md), for nilpotent divided
   power thickenings
 
@@ -50,6 +56,9 @@ $p$-nilpotent case.
 
 - [Serre–Tate theorem](serre-tate-theorem.md)
 - [Grothendieck–Messing deformation theorem](grothendieck-messing-theorem.md)
+- [Crystalline nature of the de Rham cohomology of abelian schemes](crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md),
+  for the comparison in 1 over every ring of the statement: the de Rham homologies of two lifts are
+  both dual to the first crystalline cohomology of $A_0$
 
 ## Sources
 

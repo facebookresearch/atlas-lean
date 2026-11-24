@@ -29,10 +29,14 @@ $\operatorname{div}(s)$ that meet the generic fibre contribute.
 
 - [Poincaré–Lelong formula](poincare-lelong-formula.md), for divisors of meromorphic sections and
   currents of integration
+- [Currents of integration and the support theorems](currents-of-integration.md), for the integrals
+  over the regular loci of the $Z_j$
 
 ## Proof depends on
 
 - [Poincaré–Lelong formula](poincare-lelong-formula.md)
+- [Currents of integration and the support theorems](currents-of-integration.md), for the
+  derivatives of currents, defined by duality
 
 ## Sources
 

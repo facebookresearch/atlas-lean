@@ -1,7 +1,7 @@
 # Serre–Tate theorem
 
-This node is still to be broken down: the statement is precise, but three inputs of its proof are
-not yet pages.
+This node is still to be broken down: the statement is precise, and the proof is outlined below; its
+inputs remain to be separated.
 
 Let $p$ be a prime, $R$ a ring in which $p$ is nilpotent, $I \subset R$ a nilpotent ideal and $R_0 =
 R/I$. Let $\mathrm{AV}_R$ be the category of [abelian schemes](../abelian-scheme.md) over $R$, and

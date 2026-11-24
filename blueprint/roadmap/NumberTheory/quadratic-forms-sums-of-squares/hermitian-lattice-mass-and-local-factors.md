@@ -36,19 +36,14 @@ otherwise. The local factor of $L$ at $\mathfrak{p}$ is
 
 $$\lambda(L_{\mathfrak{p}}) = \frac{q^{t_{\mathfrak{p}} m/2 + a_{\mathfrak{p}}} \, c_{\mathfrak{p}}}{\beta(L_{\mathfrak{p}})}.$$
 
-In the notation of Gan, Hanke and Yu, $c_{\mathfrak{p}}$ is the normalising factor
-$q^{-\dim \overline{H}} \, \# \overline{H}(\mathbb{F}_q)$ of their formula (2.11), for the connected reductive quotient $\overline{H}$
-of the reference group at $\mathfrak{p}$: $\mathrm{GL}_m$ if $\mathfrak{p}$ splits, the unitary group $\mathrm{U}_m$ of a nondegenerate
-Hermitian form over $\mathbb{F}_{q^2}$ if $\mathfrak{p}$ is inert, and $\mathrm{SO}_m$ for odd $m$ and $\mathrm{Sp}_m$ for even $m$ if
-$\mathfrak{p}$ ramifies.
-
 ## Depends on
 
 - [Discriminant ideal of a Dedekind extension](../../RingTheory/ramification/different-and-discriminant-ideals/discriminant-ideal.md), for the relative discriminant $\mathfrak{d}_{E/K}$
+- [Absolute norm of an ideal](../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the norm $q$ of a prime ideal $\mathfrak{p}$
 
 ## Proof depends on
 
-- [Order of the unitary group over a finite field](finite-unitary-group-order.md), only for the identification of the inert coefficient $c_{\mathfrak{p}}$ with $q^{-\dim \overline{H}} \, \# \overline{H}(\mathbb{F}_q)$ for $\overline{H} = \mathrm{U}_m$
+This node has no prerequisites.
 
 ## Sources
 
@@ -59,8 +54,3 @@ $\mathfrak{p}$ ramifies.
   $\mathfrak{d}_{E/K} = N(\mathfrak{D})$ at the start of the chapter, Definition 4.2.1 (mass), Definition 4.2.2 (local density),
   Definition 4.2.6 (local factors) and the table of the types of $H_{\mathfrak{p}}$ after it, and the table of dimensions
   and numbers of points after Lemma 4.2.5 (p. 53).
-- W. T. Gan, J. P. Hanke and J.-K. Yu, *On an exact mass formula of Shimura*, Duke Math. J. 107 (2001), 103–133,
-  <https://www.jonhanke.com/Hanke--all_papers__as_of_2015-01-14/exact-mass-shimura-paper.pdf>: formula (2.11), the
-  normalising factor $q^{-\dim \overline{H}^0} \# \overline{H}^0(A/\pi)$ of the connected reductive quotient of the reference
-  model, and §3, Tables 1 and 2, its type $\mathrm{SO}_{2n+1}$ (odd rank) and $\mathrm{Sp}_{2n}$ (even rank) at a ramified
-  place and $\mathrm{U}_m$ at an unramified one.

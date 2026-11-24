@@ -19,6 +19,20 @@ inseparable extension $L$, the identity has a one-point image but does not facto
 has no morphism to $V'$. The lemma shows that
 [morphisms of abelian schemes preserving the zero section are homomorphisms](homomorphisms-of-abelian-schemes.md).
 
+## Depends on
+
+- [Abelian scheme](abelian-scheme.md), for the conventions on varieties
+
+## Proof depends on
+
+- [Morphisms into the spectrum of an algebra](../schemes-and-morphisms/affine-group-schemes-and-hopf-algebras/morphisms-to-the-spectrum-of-an-algebra.md),
+  for the case of an affine target over an affine open subscheme $\operatorname{Spec} R$ of $S$,
+  where morphisms into $\operatorname{Spec} B$ over $\operatorname{Spec} R$ are the $R$-algebra maps
+  from $B$ to global sections; these glue over $S$ to the correspondence of Robert, Remark 2.3.9,
+  and the cohomological flatness of $\pi$ is a further input
+
+## Expansion
+
 A good expansion has pages for: the cohomological flatness of $\pi$ in dimension zero, that is,
 $\mathcal{O}_{S'} \cong (\pi_{S'})_* \mathcal{O}_{V \times_S S'}$ for the base change $\pi_{S'}
 \colon V \times_S S' \to S'$ of $\pi$ along every $S' \to S$, under the hypothesis on the fibres
@@ -27,10 +41,6 @@ homomorphisms of unital quasi-coherent $\mathcal{O}_S$-algebras $\pi'_* \mathcal
 \mathcal{O}_V$, for $\pi' \colon V' \to S$ the structure morphism of $V'$ (Robert, Remark 2.3.9);
 and Mumford's argument reducing the general case to an affine neighbourhood of the image of a fibre
 (*Geometric Invariant Theory*, Proposition 6.1).
-
-## Depends on
-
-- [Abelian scheme](abelian-scheme.md), for the conventions on varieties
 
 ## Sources
 

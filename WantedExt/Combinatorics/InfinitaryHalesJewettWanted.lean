@@ -14,7 +14,7 @@ public import Mathlib.Algebra.Free
 public import Mathlib.Basic.Finite.Defs
 public import Mathlib.Data.Finset.Defs
 public import Mathlib.Data.List.OfFn
-public import MathlibExt.Combinatorics.SemigroupLargeness
+public import MathlibExt.Combinatorics.InfinitaryHalesJewett
 
 /-!
 # Infinitary Hales–Jewett theorems for variable words
@@ -95,26 +95,6 @@ Theorem*, INTEGERS 24 (2024), Article A74, Lemma 3.3. -/
 public theorem_wanted exists_variableWord_subst_mem_of_isMulPiecewiseSyndetic {α : Type*}
     (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i) (m n : ℕ)
     {D : Set (FreeSemigroup α)} (hD : IsMulPiecewiseSyndetic D) :
-    ∃ w : FreeSemigroup (α ⊕ Fin n), (∀ i, Sum.inr i ∈ w.head :: w.tail) ∧
-      ∀ a : Fin n → α, (∀ i, a i ∈ A m) → FreeSemigroup.map (Sum.elim id a) w ∈ D
-
-/-- **J-sets contain Hales–Jewett configurations.** Let $A_0 \subseteq A_1 \subseteq \cdots$ be
-finite sets whose union $A$ is nonempty, and let $S_0$ be the semigroup of nonempty finite words
-over $A$ under concatenation. For $n \in \mathbb{N}$, an $n$-variable word over $A$ is a nonempty
-finite word over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct variables $v_i \notin A$, in which
-every $v_i$ occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in $A^n$, the word $w(\vec a) \in S_0$
-is obtained from $w$ by replacing each $v_i$ by $a_i$. If $D \subseteq S_0$ is a $J$-set, then
-for all $m, n \in \mathbb{N}$ there is an $n$-variable word $w$ over $A$ with $w(\vec a) \in D$
-for every $\vec a \in A_m^n$.
-
-The alphabet must be nonempty: over the empty alphabet every subset of $S_0 = \emptyset$ is
-vacuously a $J$-set, and there is no $0$-variable word.
-
-Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
-Theorem*, INTEGERS 24 (2024), Article A74, Lemma 3.4. -/
-public theorem_wanted exists_variableWord_subst_mem_of_isMulJSet {α : Type*} [Nonempty α]
-    (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i) (m n : ℕ)
-    {D : Set (FreeSemigroup α)} (hD : IsMulJSet D) :
     ∃ w : FreeSemigroup (α ⊕ Fin n), (∀ i, Sum.inr i ∈ w.head :: w.tail) ∧
       ∀ a : Fin n → α, (∀ i, a i ∈ A m) → FreeSemigroup.map (Sum.elim id a) w ∈ D
 
@@ -210,37 +190,6 @@ public theorem_wanted exists_variableWords_prod_mem_sum_count_mem_finiteSums_of_
           (· * ·) (FreeSemigroup.map (Sum.elim id fun _ => a 0) (w (m 0))) ∈ D) ∧
       ∀ G : Finset ℕ, G.Nonempty → ∃ H : Finset ℕ, H.Nonempty ∧
         ∑ k ∈ G, ((w k).head :: (w k).tail).countP Sum.isRight = ∑ j ∈ H, x j
-
-/-- **Variable patterns of variable words in J-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
-be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
-under concatenation. Let $1 \le k < n$. An $n$-variable word over $A$ is a nonempty finite word
-over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct variables $v_i \notin A$, in which every $v_i$
-occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in $A^n$, the word $w(\vec a) \in S_0$ is obtained
-from $w$ by replacing each $v_i$ by $a_i$, and $\tau(w)$ is the word over
-$\{v_0, \dots, v_{k-1}\}$ obtained from $w$ by deleting the letters of $A$ and the variables $v_i$
-with $i \ge k$. Let $y_0, y_1, \dots$ be finite words over $\{v_0, \dots, v_{k-1}\}$ in each of
-which every $v_i$ with $i < k$ occurs. If $D \subseteq S_0$ is a $J$-set, then there is a
-sequence $w_0, w_1, \dots$ of $n$-variable words over $A$ such that $w_m(\vec a) \in D$ for all
-$m \in \mathbb{N}$ and $\vec a \in A_m^n$, and such that for all $l \in \mathbb{N}$ and
-$m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$ there are $r \in \mathbb{N}$ and
-$t_0 < t_1 < \cdots < t_r$ in $\mathbb{N}$ with
-$\tau(w_{m_0}) \tau(w_{m_1}) \cdots \tau(w_{m_l}) = y_{t_0} y_{t_1} \cdots y_{t_r}$, where
-juxtaposition is concatenation of words.
-
-Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
-Theorem*, INTEGERS 24 (2024), Article A74, Theorem 3.9. -/
-public theorem_wanted exists_variableWords_subst_mem_prod_pattern_mem_finiteProducts_of_isMulJSet
-    {α : Type*} (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i)
-    {k n : ℕ} (hk : 1 ≤ k) (hkn : k < n) (y : ℕ → List (Fin k)) (hy : ∀ t i, i ∈ y t)
-    {D : Set (FreeSemigroup α)} (hD : IsMulJSet D) :
-    ∃ w : ℕ → FreeSemigroup (α ⊕ Fin n), (∀ m i, Sum.inr i ∈ (w m).head :: (w m).tail) ∧
-      (∀ m (a : Fin n → α), (∀ i, a i ∈ A m) → FreeSemigroup.map (Sum.elim id a) (w m) ∈ D) ∧
-      ∀ (l : ℕ) (m : Fin (l + 1) → ℕ), StrictMono m →
-        ∃ (r : ℕ) (t : Fin (r + 1) → ℕ), StrictMono t ∧
-          (List.ofFn fun j => ((w (m j)).head :: (w (m j)).tail).filterMap
-              (Sum.elim (fun _ => none) fun i : Fin n =>
-                if h : (i : ℕ) < k then some ⟨i, h⟩ else none)).flatten =
-            (List.ofFn fun j => y (t j)).flatten
 
 /-- **Variable patterns of variable words in C-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
 be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$

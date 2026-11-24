@@ -45,6 +45,38 @@ application to Picard functors; Grothendieck's construction through Hilbert and 
 projective case; Raynaud's theorem; and the passage from a quasi-separated group algebraic space
 over a field to a scheme, through its dense schematic open subspace.
 
+## Depends on
+
+- [Abelian scheme](abelian-scheme.md), for the abelian schemes of 4 and the abelian varieties of 5
+- [The fppf topology on schemes](../grothendieck-topologies/fppf-topology-on-schemes.md), for the
+  fppf sheaves in which the statement places the relative Picard functors
+- [The topology induced on an over category](../../CategoryTheory/sites-and-sheaves/topology-on-an-over-category.md),
+  for the fppf site of schemes over $S$, on which the relative Picard functors are sheaves,
+  evaluated at $S$-schemes $T \to S$
+
+## Proof depends on
+
+- [Standard results of coherent cohomology on projective varieties](../birational-geometry/standard-results-of-coherent-cohomology.md),
+  for the finiteness of coherent cohomology on a proper scheme over a field and its invariance under
+  extension of the base field (item 2), by which van der Geer and Moonen pass to an algebraic
+  closure in 5 ((6.14)–(6.15))
+
+## Expansion
+
+A good expansion also states and links:
+
+- algebraic spaces over $S$, or over $T$ after base change along $T \to S$, presented as quotients
+  of étale equivalence relations (stated in the project as
+  `AlgebraicGeometry.GeneralStackGeometry.AlgebraicSpaceOver`,
+  MathlibExt/AlgebraicGeometry/GeneralStackGeometry.lean:181–185, and
+  `AlgebraicGeometry.EtaleSpacePresentations.EtaleEquivalencePresentation`,
+  MathlibExt/AlgebraicGeometry/EtaleSpacePresentations.lean:65–76), in which the statement places
+  the relative Picard functors defined above, for the statement
+- the Künneth formula for the cohomology of the structure sheaf, which gives the coproduct, and the
+  vanishing of coherent cohomology above the dimension (van der Geer–Moonen, (6.14)–(6.15)), for 5
+- the Borel–Hopf structure theorem for graded bialgebras over a perfect field (van der Geer–Moonen,
+  (6.12)–(6.13)), for 5
+
 ## Sources
 
 - D. Robert, *Theory of abelian varieties and their moduli spaces*, draft book (version of 7 March

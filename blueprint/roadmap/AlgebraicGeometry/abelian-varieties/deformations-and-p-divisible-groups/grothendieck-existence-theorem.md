@@ -35,6 +35,20 @@ abelian scheme one also algebraizes its group law, by item (2), and checks separ
 algebraized scheme is flat and smooth with abelian fibres: item (2) algebraizes morphisms and
 identities between them, and does not by itself give smoothness.
 
+## Depends on
+
+- [Adically complete modules](../../../RingTheory/local-rings/adic-completion/adically-complete-module.md),
+  for the noetherian adic ring $A$ of the statement, which is $I$-adically complete for an ideal of
+  definition $I$
+
+## Proof depends on
+
+- [Standard results of coherent cohomology on projective varieties](../../birational-geometry/standard-results-of-coherent-cohomology.md),
+  for the finiteness theorem, on which the comparison theorem for the cohomology of completions
+  rests
+
+## Expansion
+
 A good expansion has pages for: the comparison theorem for the cohomology of the completion of a
 coherent sheaf (EGA III, §4); the existence theorem for projective morphisms (§5.2); the lemmas
 (5.3.1)–(5.3.4) and the end of the proof (5.3.5), through Chow's lemma and noetherian induction;
@@ -42,8 +56,18 @@ Corollary (5.1.8) on closed subschemes, from which Theorem (5.4.1) follows by al
 of a formal morphism; and Theorem (5.4.5), proved by embedding $\mathfrak{X}$ in a projective space
 by lifted sections of a power of $\mathcal{L}$ and algebraizing the coherent ideal of its image.
 
+A good expansion also states and links:
+
+- formal schemes, formal completions and coherent sheaves on them (EGA I, chapter 0, §7, and chapter
+  I, §10), and the adic thickenings $X \times_S \operatorname{Spec}(A / I^{n+1})$ (stated in the
+  project as `AlgebraicGeometry.adicThickening`,
+  MathlibExt/AlgebraicGeometry/AdicThickening.lean:61–63), for the statement
+
 ## Sources
 
+- A. Grothendieck and J. Dieudonné, "Éléments de géométrie algébrique I. Le langage des schémas",
+  Publ. Math. IHÉS 4 (1960), 5–228, <http://www.numdam.org/item?id=PMIHES_1960__4__5_0>: chapter 0,
+  §7 (adic rings), and chapter I, §10 (formal schemes).
 - A. Grothendieck (with J. Dieudonné), "Éléments de géométrie algébrique III. Étude cohomologique
   des faisceaux cohérents, première partie", Publ. Math. IHÉS 11 (1961), 5–167,
   <http://www.numdam.org/item?id=PMIHES_1961__11__5_0>: §5, Théorème (5.1.4) and Corollaire (5.1.6)

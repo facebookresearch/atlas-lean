@@ -10,17 +10,31 @@ $\mathcal{J}(D)$, so that $\mathcal{O}_{X'}(K_{X'/X} - \lfloor \mu^* D \rfloor)$
 $\mathcal{J}(D)$ without higher direct images.
 
 Lazarsfeld sketches the proof: one reduces to the case where $X$ is projective and applies the
-[Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md) in that global setting.
-He refers to Positivity II, §9.4.A, for an account.
+Kawamata–Viehweg vanishing theorem in that global setting (Positivity II, §9.4.A). Esnault and
+Viehweg carry out this argument for the
+[relative vanishing theorem for birational morphisms](relative-vanishing-for-birational-morphisms.md),
+which gives the statement. On each connected component of $X$, write $D = \Delta / N$ with $\Delta$
+an effective integral divisor, Cartier as $X$ is smooth; $\mu^* \Delta$ has snc support, $\mu$ being
+a log resolution, and $\lfloor \mu^* \Delta / N \rfloor = \lfloor \mu^* D \rfloor$, so $R^j
+\mu_*(\omega_{X'} \otimes \mathcal{O}_{X'}(-\lfloor \mu^* D \rfloor)) = 0$ for $j > 0$. As
+$\mathcal{O}_{X'}(K_{X'/X}) = \omega_{X'} \otimes \mu^* \omega_X^{-1}$, the projection formula gives
+the vanishing above.
 
 ## Depends on
 
 - [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md), for log
   resolutions, the relative canonical divisor and $\mathcal{J}(D)$
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the underlying smooth complex variety; the statement is local on $X$
 
 ## Proof depends on
 
-- [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md)
+- [Relative vanishing theorem for birational morphisms](relative-vanishing-for-birational-morphisms.md),
+  applied on each connected component of $X$ to $\mu$ and an effective Cartier $\Delta$ with $D =
+  \Delta / N$ (Esnault–Viehweg, Corollary 6.11 b)); its proof contains the reduction to a projective
+  $X$ and the global Kawamata–Viehweg vanishing
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
+  for the projection formula (item 1)
 
 ## Sources
 
@@ -29,3 +43,6 @@ He refers to Positivity II, §9.4.A, for an account.
   Theorem 2.4, pp. 11–12. See also R. Lazarsfeld, *Positivity in Algebraic Geometry I, II*, Ergebnisse
   der Mathematik und ihrer Grenzgebiete 48, 49, Springer, 2004: the chapter "Multiplier Ideal Sheaves"
   (volume II, pp. 139–231), whose §9.4.A the short course cites for the proof.
+- H. Esnault and E. Viehweg, *Lectures on Vanishing Theorems*, DMV Seminar 20, Birkhäuser, 1992;
+  electronic version on H. Esnault's page, <https://page.mi.fu-berlin.de/esnault/books/esvibuch.pdf>
+  (page numbers of the electronic version): Corollary 6.11 b), p. 59.

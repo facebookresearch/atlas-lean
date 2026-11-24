@@ -60,6 +60,14 @@ Rham homology for abelian schemes, and the bijection and lifting criterion of (4
 
 - [p-divisible group](p-divisible-group.md)
 - [Abelian scheme](../abelian-scheme.md), for item (3)
+- [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the de Rham
+  homology of $A$ and its Hodge filtration in item (3)
+
+## Proof depends on
+
+- [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the
+  classical Hodge sequence of de Rham homology, through universal vector extensions (its items 1–2),
+  with which (3) compares the crystal
 
 ## Sources
 

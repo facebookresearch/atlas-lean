@@ -89,6 +89,14 @@ A good expansion has pages for:
 
 - [Height of a cycle](height-of-a-cycle.md)
 
+## Proof depends on
+
+- [Height of a cycle](height-of-a-cycle.md), for the projection formula for heights in the upper
+  bound
+- [Logarithmic Mahler measure](../../NumberTheory/heights-mahler-measure/multivariable-mahler-measure/logarithmic-mahler-measure.md),
+  for the logarithmic Mahler measure, with which the second item of the plan above compares the
+  heights $h_0$ and $h_{\mathrm{Herm}}$
+
 ## Sources
 
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.

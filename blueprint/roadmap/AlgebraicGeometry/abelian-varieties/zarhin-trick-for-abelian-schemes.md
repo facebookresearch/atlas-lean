@@ -36,11 +36,19 @@ polarization, a bridge for which no source has yet been identified.
 
 ## Depends on
 
-- [Zarhin's trick](zarhin-trick.md)
 - [Dual abelian scheme](dual-abelian-scheme.md)
 - [Polarization](polarization.md), for polarizations of abelian schemes
 - [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md), for
   the Mumford bundle over a field; 2 needs its relative form over $R$, a page of the expansion
+
+## Proof depends on
+
+- [Dual abelian scheme](dual-abelian-scheme.md), for the dual abelian scheme and dual homomorphisms
+  over $S$, from which $(A \otimes M)^t \cong A^t \otimes M^*$ follows (Moret-Bailly, IX, 1.2)
+- [Lagrange's four-square theorem](../../NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares/lagrange-four-square-theorem.md),
+  for the representation of an integer as a sum of four squares in Moret-Bailly's IX, 1.4–1.6
+
+The theorem over a field of Zarhin's trick is the case of a point, not a step of these two proofs.
 
 ## Sources
 

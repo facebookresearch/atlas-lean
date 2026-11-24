@@ -19,19 +19,21 @@ Let $S$ be a scheme and $A$, $B$ [abelian schemes](abelian-scheme.md) over $S$.
 
 For 1, a surjective homomorphism of group schemes from a flat to a smooth group scheme is flat on
 the fibres, hence flat; the kernel is the inverse image of the zero section, closed because $B$ is
-separated, so proper over $S$, and it is quasi-finite when $f$ is fibrewise an isogeny, hence
-finite; being finite and flat, it has locally constant rank. For 2, $n_A$ is flat because $A$ is
+separated, so proper over $S$, and it has finite fibres when $f$ is fibrewise an isogeny, hence it
+is finite; being finite and flat, it has locally constant rank. For 2, $n_A$ is flat because $A$ is
 flat over $S$ and $n_A$ is flat on every fibre, by the fibrewise criterion of flatness; it is proper
 with finite fibres, hence finite; and on a fibre over a field it is an isogeny of degree $n^{2g}$
 (Milne's Theorem I.7.2, proved with a symmetric very ample divisor $D$, for which $n_A^* D \sim n^2
 D$: the projection formula $((n_A^* D)^g) = \deg(n_A) (D^g)$, with $((n^2 D)^g) = n^{2g} (D^g)$ and
 $(D^g) > 0$, gives $\deg(n_A) = n^{2g}$; the degree of the pulled-back divisor is not that of $D$,
-for an elliptic curve and $n = 2$, $\deg 3[0] = 3$ but $\deg 2^* (3[0]) = 12$). It is étale on a
-fibre $A_s$ exactly when its differential, multiplication by $n$ on the tangent space
-$\operatorname{Lie}(A_s)$ of dimension $g(s)$, is an isomorphism: when $n$ is invertible in $k(s)$
-or $g(s) = 0$. For 3, a finite étale group scheme over a separably closed field is the constant
-group scheme of its $k$-points, so the rank $n^{2g}$ of $A[n]$ is the number of points of order
-dividing $n$; the finite flat statement alone counts the rank, not geometric points.
+for an elliptic curve and $n = 2$, $\deg 3[0] = 3$ but $\deg 2^* (3[0]) = 12$). Being flat and of
+finite presentation, $n_A$ is étale at the points of a fibre $A_s$ exactly when its restriction to
+$A_s$ is, and, $A$ being commutative, so that $n_A$ is a homomorphism, it is étale on $A_s$ exactly
+when its differential, multiplication by $n$ on the tangent space $\operatorname{Lie}(A_s)$ of
+dimension $g(s)$, is an isomorphism: when $n$ is invertible in $k(s)$ or $g(s) = 0$. For 3, a finite
+étale group scheme over a separably closed field is the constant group scheme of its $k$-points, so
+the rank $n^{2g}$ of $A[n]$ is the number of points of order dividing $n$; the finite flat statement
+alone counts the rank, not geometric points.
 
 ## Depends on
 
@@ -43,6 +45,19 @@ dividing $n$; the finite flat statement alone counts the rank, not geometric poi
   line bundle on a fibre
 - [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md), for
   $n_A^* L \cong L^{n^2}$ when $L$ is symmetric
+- [Intersection numbers and Riemann–Roch for nef line bundles](../birational-geometry/intersection-numbers-of-nef-line-bundles.md),
+  for the projection formula 5, which gives $((n_A^* D)^g) = \deg(n_A) (D^g)$
+- [Finite morphisms are the proper locally quasi-finite morphisms](../schemes-and-morphisms/zariski-s-main-theorem/finite-iff-proper-and-locally-quasi-finite.md),
+  for the finiteness of the kernel when $f$ is fibrewise an isogeny, and of $n_A$: both are proper
+  with finite fibres
+- [Flatness and étaleness criteria for homomorphisms of group schemes](flatness-and-etaleness-criteria-for-group-schemes.md),
+  for the fibrewise criterion of flatness (item 1), applied to a surjective $f$ and to $n_A$; for
+  the flatness on the fibres of a surjective homomorphism onto a smooth group scheme and the
+  étaleness of $n_A$ on a fibre through its differential (item 3); and for the passage from the
+  fibres to $S$ (item 2)
+- [Homomorphisms of abelian schemes and commutativity](homomorphisms-of-abelian-schemes.md), for the
+  commutativity of $A$ (item 3), which makes $n_A$ a homomorphism, to which the criteria for
+  homomorphisms of group schemes apply
 
 ## Sources
 

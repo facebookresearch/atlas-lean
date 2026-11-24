@@ -1,7 +1,8 @@
 # Nadel vanishing theorem
 
-Let $X$ be a smooth complex projective variety, $L$ an integral divisor and $D$ an effective
-$\mathbb{Q}$-divisor on $X$ such that $L - D$ is [nef and big](nef-and-big-line-bundles.md). Then
+Let $X$ be an integral smooth complex projective variety, $L$ an integral divisor and $D$ an
+effective $\mathbb{Q}$-divisor on $X$ such that $L - D$ is
+[nef and big](nef-and-big-line-bundles.md). Then
 
 $$H^i\bigl(X, \mathcal{O}_X(K_X + L) \otimes \mathcal{J}(D)\bigr) = 0 \qquad (i > 0),$$
 
@@ -28,6 +29,8 @@ images of this sheaf vanish, so the two cohomology groups agree.
 
 - [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md)
 - [Nef and big line bundles](nef-and-big-line-bundles.md), for nef and big $\mathbb{Q}$-divisors
+- [Geometrically reduced variety over a field](../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the underlying complex variety, which the statement takes smooth, projective and integral
 
 ## Proof depends on
 

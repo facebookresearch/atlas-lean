@@ -20,7 +20,7 @@ Informatica 23 (1986), 311-323, doi:10.1007/BF00289116.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Bioinformatics.Phylogenetics.Splits

@@ -19,8 +19,10 @@ More generally (Godement), let $\pi$ and $\pi'$ be square-integrable irreducible
 representations of a unimodular locally compact group $G$, that is, irreducible subrepresentations
 of the left regular representation on $L^2(G)$. Then for all vectors $\xi, \eta$ of $\pi$ and
 $\xi', \eta'$ of $\pi'$,
+
 $$\int_G \langle \pi(g)\xi, \eta \rangle \, \overline{\langle \pi'(g)\xi', \eta' \rangle} \, dg =
 \begin{cases} 0 & \text{if } \pi \not\cong \pi', \\ d_\pi^{-1} \langle \xi, \xi' \rangle \overline{\langle \eta, \eta' \rangle} & \text{if } \pi = \pi', \end{cases}$$
+
 with a constant $d_\pi > 0$, the formal degree, depending on the Haar measure (inner products are
 linear in the first variable). Here $\pi = \pi'$ means the same representation on the same space;
 if $\pi'$ is only equivalent to $\pi$, through a unitary intertwiner $T$ from the space of $\pi$ to
@@ -38,6 +40,13 @@ two different representations, whose integrands need not be invariant under $Z$,
 ## Depends on
 
 - [Admissible representations of real reductive groups](admissible-representations-of-real-reductive-groups.md), for irreducible unitary representations and $K$-finite vectors
+
+## Proof depends on
+
+- [Coefficient maps of square-integrable representations](../../lie-and-topological-representations/coefficients-of-square-integrable-representations.md), for the square-integrability of all coefficients once one diagonal coefficient is square-integrable, and for the boundedness of the coefficient maps $T_\eta \colon \xi \mapsto \langle \pi(\cdot)\xi, \eta \rangle$ into $L^2(G)$, which intertwine $\pi$ with the right regular representation; also for the inversion on an arbitrary unimodular group in Godement's general statement
+- [Spectral theorem for bounded self-adjoint operators, multiplication form](../../../Analysis/operator-theory/spectral-theory/spectral-theorem-for-bounded-self-adjoint-operat/bounded-self-adjoint-spectral-multiplica.md), for Schur's lemma for irreducible unitary representations: a bounded operator commuting with $\pi$ is a scalar, applied to $T_\eta^* T_{\eta'}$, which commutes with $\pi$ since both maps intertwine $\pi$ with the right regular representation (it need not be positive: for $\eta' = -\eta$ it is $-T_\eta^* T_\eta$); and a bounded intertwiner between inequivalent irreducible unitary representations vanishes, which gives the two cases of the relations
+- [Right-invariant Haar measures are inversion-invariant](../../../MeasureTheory/haar-measure/unimodular-groups/is-inv-invariant-of-is-mul-right-invaria.md), for unimodular $G$ in the second-countable case, which covers the Lie groups of the first paragraph: $\langle \pi(g^{-1})\xi, \eta \rangle = \overline{\langle \pi(g)\eta, \xi \rangle}$ and the invariance of $dg$ under inversion exchange the roles of the two vectors
+- [Integration over quotients of locally compact groups](../../../MeasureTheory/haar-measure/integration-over-quotients-of-locally-compact-groups.md), for $\int_G = \int_{G/Z}$ on functions invariant under a compact centre $Z$ with Haar measure of mass one, which is what the compact-centre paragraph uses; nothing is claimed for a noncompact centre
 
 ## Sources
 

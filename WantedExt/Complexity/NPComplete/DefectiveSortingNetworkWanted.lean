@@ -23,7 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Algorithms.Lean.SortingNetworks.ZeroOne
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Int.Order.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

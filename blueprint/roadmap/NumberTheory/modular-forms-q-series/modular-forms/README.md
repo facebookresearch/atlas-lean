@@ -14,6 +14,7 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Weight-two cusp forms on Γ₀(2)](weight-two-cusp-forms-on-2/README.md)
 - [Kronecker's first limit formula](kronecker-first-limit-formula.md)
 - [Functional equation of the Epstein zeta function of a binary form](epstein-zeta-binary-functional-equation.md)
+- [The modular discriminant in terms of Eisenstein series](discriminant-eq-eisenstein-cube-sub-sq.md)
 - [Jacobi's product formula for the discriminant of a lattice](lattice-discriminant-eta-product.md)
 - [Partial zeta functions of an imaginary quadratic field as Epstein zeta functions](imaginary-quadratic-partial-zeta-epstein.md)
 - [Kronecker's limit formula for an imaginary quadratic field at $s = 0$](kronecker-limit-formula-imaginary-quadratic.md)

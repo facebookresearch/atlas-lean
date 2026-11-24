@@ -1,7 +1,7 @@
 # Resolution of singularities of quasi-projective varieties
 
-Let $X$ be a quasi-projective variety over a field of characteristic zero. There is a birational
-projective morphism $\Pi \colon R(X) \to X$ such that
+Let $X$ be an integral quasi-projective variety over a field of characteristic zero. There is a
+birational projective morphism $\Pi \colon R(X) \to X$ such that
 
 1. $R(X)$ is smooth;
 2. $\Pi$ is an isomorphism over the smooth locus $X^{\mathrm{ns}} = X \setminus \operatorname{Sing}
@@ -49,12 +49,16 @@ and Aside 46).
 ## Depends on
 
 - [Simple normal crossing divisor](../simple-normal-crossing-divisor.md)
+- [Geometrically reduced variety over a field](../../schemes-and-morphisms/varieties-over-a-field/is-variety.md),
+  for the underlying variety over a field, which the statement takes integral and quasi-projective
 
 ## Proof depends on
 
 - [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), for
   the case $E = \emptyset$ of Theorems 26 and 35, applied to the ideal sheaf of the closure of $X$ in a
   smooth ambient variety
+- [Blow-ups along smooth centres and total transforms](blow-ups-along-smooth-centres.md), for the
+  total exceptional set of the earlier blow-ups
 
 ## Sources
 

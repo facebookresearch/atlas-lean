@@ -6,11 +6,13 @@ $\phi_K \colon \mathbb{I}_K \to \mathrm{Gal}(K^{\mathrm{ab}}/K)$ be its
 
 1. $\phi_K(K^\times) = 1$, so $\phi_K$ factors through $C_K$;
 2. for every finite abelian extension $L/K$, $\phi_{L/K}$ induces an isomorphism
-   $$\mathbb{I}_K / K^\times \mathrm{Nm}_{L/K}(\mathbb{I}_L) \xrightarrow{\ \sim\ } \mathrm{Gal}(L/K),$$
-   where $\mathrm{Nm}_{L/K} \colon \mathbb{I}_L \to \mathbb{I}_K$ is the idèle norm,
-   $\mathrm{Nm}_{L/K}(b)_v = \prod_{w \mid v} \mathrm{Nm}_{L_w/K_v}(b_w)$; equivalently, an isomorphism
-   $C_K / \mathrm{Nm}_{L/K}(C_L) \to \mathrm{Gal}(L/K)$. In particular
-   $(C_K : \mathrm{Nm}_{L/K}(C_L)) = [L : K]$.
+
+    $$\mathbb{I}_K / K^\times \mathrm{Nm}_{L/K}(\mathbb{I}_L) \xrightarrow{\ \sim\ } \mathrm{Gal}(L/K),$$
+
+    where $\mathrm{Nm}_{L/K} \colon \mathbb{I}_L \to \mathbb{I}_K$ is the idèle norm,
+    $\mathrm{Nm}_{L/K}(b)_v = \prod_{w \mid v} \mathrm{Nm}_{L_w/K_v}(b_w)$; equivalently, an isomorphism
+    $C_K / \mathrm{Nm}_{L/K}(C_L) \to \mathrm{Gal}(L/K)$. In particular
+    $(C_K : \mathrm{Nm}_{L/K}(C_L)) = [L : K]$.
 
 Milne's proof (the paragraph after Theorem VII.8.1). Part 1 is the
 [triviality on principal idèles](artin-map-trivial-on-principal-ideles.md). The norms lie in the kernel by

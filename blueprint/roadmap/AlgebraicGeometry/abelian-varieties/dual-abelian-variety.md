@@ -55,14 +55,17 @@ connected components, from the general theory, and show that $\operatorname{Pic}
 reduced: for an ample $L$, $\varphi_L$ has the finite kernel $K(L)$, so $\dim
 \operatorname{Pic}^0_{A/k} \ge \dim A$, while the dimension of the Picard scheme is at most $\dim_k
 H^1(A, \mathcal{O}_A)$, with equality only if it is smooth, and $\dim_k H^1(A, \mathcal{O}_A) \le
-\dim A$ for the abelian variety $A$. They deduce 3 from the universal property and the duality of
-finite flat group schemes, and 4 from $\varphi_L = \varphi_L^\vee \circ \kappa_A$ and a comparison
-of degrees. Over an algebraically closed field Milne constructs $A^\vee$ instead as the quotient of
-$A$ by $K(L)$, after Mumford's *Abelian Varieties*.
+\dim A$ for the abelian variety $A$. They deduce 3 from the universal property and their Proposition
+(7.4), which describes the line bundles with trivial pull-back along the quotient $A \to A /
+\operatorname{Ker}(f) = B$ by the characters of $\operatorname{Ker}(f)$, and 4 from $\varphi_L =
+\varphi_L^\vee \circ \kappa_A$ and a comparison of degrees. Over an algebraically closed field Milne
+constructs $A^\vee$ instead as the quotient of $A$ by $K(L)$, after Mumford's *Abelian Varieties*.
 
 ## Depends on
 
 - [Abelian scheme](abelian-scheme.md), for abelian varieties over a field
+- [Finite locally free group schemes and Cartier duality](deformations-and-p-divisible-groups/finite-locally-free-group-schemes-and-cartier-duality.md),
+  for the Cartier dual of $\operatorname{Ker}(f)$ in 3
 
 ## Proof depends on
 
@@ -73,6 +76,9 @@ $A$ by $K(L)$, after Mumford's *Abelian Varieties*.
 - [Abelian varieties are projective](abelian-varieties-are-projective.md), for an ample line bundle
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for the kernels of isogenies and
   their degrees
+- [Finite locally free group schemes and Cartier duality](deformations-and-p-divisible-groups/finite-locally-free-group-schemes-and-cartier-duality.md),
+  for its item 3 (van der Geer–Moonen, Proposition (7.4)), applied to the quotient of $A$ by
+  $\operatorname{Ker}(f)$, from which van der Geer and Moonen deduce 3 (their Theorem (7.5))
 
 ## Sources
 
@@ -80,8 +86,8 @@ $A$ by $K(L)$, after Mumford's *Abelian Varieties*.
   an abelian variety", <https://www.math.ru.nl/personal/bmoonen/BookAV/DualAV1.pdf>: §3, the
   rigidified Picard functor, the Poincaré bundle and $\varphi_L$, Theorem (6.18) and Definition and
   Notation (6.19), pp. 95–96; and Chapter VII, "Duality",
-  <https://www.math.ru.nl/personal/bmoonen/BookAV/DualAV2.pdf>: Theorem (7.5), (7.7), Lemma (7.8),
-  Theorem (7.9) and Corollary (7.17), pp. 99–104.
+  <https://www.math.ru.nl/personal/bmoonen/BookAV/DualAV2.pdf>: Proposition (7.4), Theorem (7.5),
+  (7.7), Lemma (7.8), Theorem (7.9) and Corollary (7.17), pp. 99–104.
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),
   <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, §8: Proposition 8.4 and the
   definition of $\operatorname{Pic}^0(A)$, the definition of the dual abelian variety and the
