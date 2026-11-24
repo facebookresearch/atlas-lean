@@ -7,6 +7,10 @@ Social choice theory studies rules that aggregate individual preferences into a 
 - [Gibbard–Satterthwaite theorem](gibbard-satterthwaite-theorem/README.md)
 
 - [Computational social choice](computational-social-choice/README.md)
+- [Cake cutting in the Robertson-Webb query model](cake-cutting-in-the-robertson-webb-query-model.md)
+- [Cut-and-choose and Dubins-Spanier](cut-and-choose-and-dubins-spanier.md)
+- [Even-Paz proportional protocol](even-paz-proportional-protocol.md)
+- [May's theorem](may-s-theorem.md)
 
 ## Related topics
 

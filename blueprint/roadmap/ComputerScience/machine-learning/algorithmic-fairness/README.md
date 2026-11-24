@@ -2,3 +2,6 @@
 
 - [Group fairness criteria for scores and classifiers](group-fairness-criteria-for-scores-and-classifiers.md)
 - [Kleinberg–Mullainathan–Raghavan trade-off theorem](kleinbergmullainathanraghavan-trade-off-theorem.md)
+- [Predictive parity versus error-rate balance](predictive-parity-versus-error-rate-balance.md)
+- [Predictive parity, error-rate balance and their relations](remaining-clauses-of-group-fairness-criteria-for-risk-scores.md)
+- [Individual fairness: maximal bias and the linear-programming formulation](remaining-clauses-of-individual-fairness-as-a-lipschitz-cond.md)

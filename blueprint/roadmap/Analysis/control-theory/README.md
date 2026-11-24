@@ -10,6 +10,11 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Observability of linear systems](observability-of-linear-systems/README.md)
 - [Realization theory](realization-theory/README.md)
 - [Sampled-data systems](sampled-data-systems/README.md)
+- [Discrete-time systems and safety](discrete-time-systems-and-safety/README.md)
+- [Hybrid systems](hybrid-systems/README.md)
+- [Advisory and handoff criteria for human-in-the-loop controllers](advisory-handoff-contract-criteria.md)
+- [Human-in-the-loop controller model](human-in-the-loop-controller-model.md)
+- [Conditional correctness of prescient advisories (safety case)](conditional-correctness-of-prescient-advisories.md)
 
 ## Single-input single-output linear systems
 

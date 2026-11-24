@@ -21,6 +21,7 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [Generalization bound for norm-bounded linear predictors with Lipschitz loss](generalization-bound-for-norm-bounded-linear-predictors-with.md)
 - [Stability of regularized loss minimization](stability-of-regularized-loss-minimization.md)
 - [Shattering lower bound for PAC learning](shattering-lower-bound-for-pac-learning.md)
+- [Learning a discrete distribution in total variation](remaining-clauses-of-learning-a-discrete-distribution-in-tot.md)
 
 ## Related topics
 

@@ -19,3 +19,10 @@ Probabilistic classes (RP, BPP), Arthur–Merlin and interactive proofs (AM, MA,
 - [Path-sum expansion of quantum circuit amplitudes](path-sum-expansion-of-quantum-circuit-amplitudes.md)
 
 - [Hardness of the planted clique problem](hardness-of-the-planted-clique-problem.md)
+- [BQP error reduction](bqp-error-reduction.md)
+- [History-state completeness bound](history-state-completeness-bound.md)
+- [Acceptance probabilities of Gaussian-rational circuits as GapP ratios](remaining-clauses-of-path-sum-expansion-of-circuit-amplitude.md)
+- [Propagation Hamiltonian spectral gap](propagation-hamiltonian-spectral-gap.md)
+- [Quantum interaction semantics](quantum-interaction-semantics.md)
+- [Quantum interactive proofs (QIP) and IP subset QIP](quantum-interactive-proofs-and-ip-subset-qip.md)
+- [QMA error reduction by parallel repetition](qma-error-reduction-by-parallel-repetition.md)

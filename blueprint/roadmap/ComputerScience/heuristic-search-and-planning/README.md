@@ -14,6 +14,7 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [Partially observable planning](partially-observable-planning/README.md)
 - [STRIPS planning complexity](strips-planning-complexity/README.md)
 - [Sampling-based motion planning](sampling-based-motion-planning/README.md)
+- [Combinatorial motion planning](motion-planning/README.md)
 
 ## Related topics
 

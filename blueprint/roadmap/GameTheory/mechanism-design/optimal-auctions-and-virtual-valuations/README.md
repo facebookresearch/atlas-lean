@@ -13,6 +13,7 @@ For a value with continuous positive density $f$ and distribution function $F$ o
 - [Posted prices are incentive compatible](is-incentive-compatible-on-posted-price.md)
 - [Revenue of a posted price](integral-posted-price-payment-mul-densit.md)
 - [The optimal mechanism for one bidder](integral-payment-mul-density-le-posted-p.md)
+- [Optimal auctions for regular distributions](remaining-clauses-of-optimal-auctions-for-regular-distributi.md)
 
 ## Related topics
 

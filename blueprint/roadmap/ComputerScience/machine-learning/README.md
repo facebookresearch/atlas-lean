@@ -15,3 +15,4 @@ Mathematical theory of learning from data, including the probabilistic modelling
 - [Generalization bounds and concentration](generalization-bounds-and-concentration/README.md)
 
 - [Algorithmic fairness](algorithmic-fairness/README.md)
+- [Distribution shift and robustness](distribution-shift-and-robustness/README.md)

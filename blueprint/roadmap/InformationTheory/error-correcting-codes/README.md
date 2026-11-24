@@ -10,3 +10,8 @@ Codes that detect or correct transmission errors, including linear codes, Hammin
 - [Locally testable codes](locally-testable-codes/README.md)
 - [Low-density parity-check codes](low-density-parity-check-codes/README.md)
 - [Reed–Solomon codes](reed-solomon-codes/README.md)
+- [Code concatenation distance bound](code-concatenation-distance-bound.md)
+- [Expander code distance](expander-code-distance.md)
+- [Sipser-Spielman expander codes](sipser-spielman-expander-codes.md)
+- [MacWilliams identity](macwilliams-identity.md)
+- [Reed-Muller codes and Hadamard local decoding](reed-muller-codes-and-hadamard-local-decoding.md)
