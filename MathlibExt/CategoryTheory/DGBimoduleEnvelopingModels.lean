@@ -90,8 +90,13 @@ structure EnvelopingModuleModel {C D : DGCat k} (M : Bimodule k C D) where
 /-- The actual curried diagonal, without an arbitrary bimodule carrier. -/
 def diagonal (C : DGCat k) : Bimodule k C C := graph (𝟙 C)
 
-/-- Homological smoothness is genuine perfection of the fixed diagonal over Cᵒᵖ⊗C. -/
-def IsHomologicallySmooth (C : DGCat k) (D : EnvelopingModuleModel (diagonal C)) : Prop :=
+/-- Homological smoothness over a field: the fixed diagonal is perfect over the enveloping
+category `Cᵒᵖ ⊗ C`. Over a field every cochain complex is K-flat, so this underived tensor computes
+the derived envelope `Cᵒᵖ ⊗ᴸ C` of Toën--Vaquié, Definition 2.4(4). Over a general base the two
+differ (for `𝔽_p` over `ℤ` the derived envelope has an exterior generator in degree `-1`), so the
+predicate is only stated over fields. -/
+def IsHomologicallySmooth {k : Type u} [Field k] (C : DGCat k)
+    (D : EnvelopingModuleModel (diagonal C)) : Prop :=
   IsPerfectModule (enveloping C C) D.module
 
 /-- A native cofibrant diagonal augmentation, with no CY comparison in its input. -/

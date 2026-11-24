@@ -155,8 +155,7 @@ def qcohPullback {N : ShuffleAlgebraFunctor k} {S : AffineScalarSystem N}
 to a cofibrant localized finite-cell retraction. -/
 def IsPerfectAt {N : ShuffleAlgebraFunctor k} {S : AffineScalarSystem N}
     (M : AffineModuleFibration N S) (A : SAlg k) (x : M.total _⦋0⦌) : Prop :=
-  ∃ P : DGDerivedModules k (coefficientCategory N A), IsPerfectModule (coefficientCategory N
-    A) P.obj ∧
+  ∃ P : DGDerivedModules k (coefficientCategory N A), IsPerfectModule (coefficientCategory N A) P.obj ∧
     ∃ e : M.total _⦋1⦌,
       M.total.δ 1 e =
         ((M.realization A) ≫ pullback.fst M.projection (algebraPoint A)).app (op ⦋0⦌)
