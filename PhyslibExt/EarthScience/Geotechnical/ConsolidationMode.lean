@@ -216,7 +216,8 @@ theorem consolidationMode_pde {u0 H cv : ℝ} (hH : H ≠ 0) (t z : ℝ) :
   rw [hsinarg]
   field_simp
 
-/-- Drained face value at `z = 0`: the mode vanishes there. -/
+/-- Drained face value at `z = 0`: for all real `u0`, `H`, `cv` and `t`, the mode vanishes there.
+This includes `H = 0`, where the convention `x / 0 = 0` makes the mode identically `0`. -/
 theorem consolidationMode_zero_left (u0 H cv t : ℝ) :
     consolidationMode u0 H cv t 0 = 0 := by
   unfold consolidationMode heatMode sineBasisFun
@@ -429,7 +430,9 @@ private theorem consolidationModeSettlementOfStress_nonneg {n : ℕ} {mv : ℝ}
 of the increase of the vertical (index `k`)
 compression-positive effective stress, for any
 time-constant total stress field `σ` and any index `k`:
-the two total-stress terms cancel pointwise. -/
+the two total-stress terms cancel pointwise. This holds for all real `mv`, `u0`, `H`, `cv` and `t`;
+when `H = 0` both integrals run over an empty range and both sides are `0` (the mode itself is then
+identically `0`, by the convention `x / 0 = 0`). -/
 lemma consolidationModeSettlement_eq_effectiveStress_integral {n : ℕ} (mv : ℝ)
     (σ : ℝ → Matrix (Fin n) (Fin n) ℝ) (k : Fin n) (u0 H cv t : ℝ) :
     consolidationModeSettlement mv u0 H cv t

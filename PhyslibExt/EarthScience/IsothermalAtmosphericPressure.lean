@@ -91,12 +91,14 @@ lemma hasDerivAt_isothermalPressure (p0 g R T z : ℝ) :
   convert hmul using 1
   ring
 
-/-- Surface condition: the isothermal profile has `p(0) = p0`. -/
+/-- Surface condition: for all real `p0`, `g`, `R` and `T`, the isothermal profile has `p(0) = p0`.
+This includes `R * T = 0`, where the convention `x / 0 = 0` makes the profile the constant `p0`. -/
 lemma isothermalPressure_zero (p0 g R T : ℝ) : isothermalPressure p0 g R T 0 = p0 := by
   simp [isothermalPressure]
 
 /-- Positivity: with surface pressure `p0 > 0`, the isothermal profile is
-positive at every height. -/
+positive at every height, for all real `g`, `R` and `T`. This includes `R * T = 0`, where the
+convention `x / 0 = 0` makes the profile the constant `p0`. -/
 lemma isothermalPressure_pos {p0 : ℝ} (hp0 : 0 < p0) (g R T z : ℝ) :
     0 < isothermalPressure p0 g R T z :=
   mul_pos hp0 (Real.exp_pos _)

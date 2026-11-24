@@ -2,4 +2,5 @@
 
 For `es0 > 0`, `L > 0`, `Rv > 0` and every real `T0`, the saturation vapour pressure
 `es(T) = es0 exp((L / Rv) (1 / T0 - 1 / T))` is strictly increasing on the positive
-temperatures `T > 0`.
+temperatures `T > 0`. For `T0 = 0`, `1 / T0 = 0` by the convention `x / 0 = 0`, so that
+`es(T) = es0 exp(-L / (Rv T))`.

@@ -73,8 +73,8 @@ lemma poreVelocity_mul {q n : ℝ} (hn : n ≠ 0) :
   unfold poreVelocity
   exact div_mul_cancel₀ q hn
 
-/-- The Courant number is nonnegative for a nonnegative time step
-and positive cell width. -/
+/-- For every `q` and `n`, the Courant number is nonnegative for a nonnegative time step and
+positive cell width. At `n = 0` it is `0`, by the convention `x / 0 = 0`. -/
 lemma courantNumber_nonneg {q n dt dx : ℝ} (hdt : 0 ≤ dt)
     (hdx : 0 < dx) : 0 ≤ courantNumber q n dt dx := by
   unfold courantNumber

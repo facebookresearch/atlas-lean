@@ -56,7 +56,8 @@ and initial storage `S0`. The physical decay regime has `0 < k`. With the conven
 noncomputable def linearReservoirStorage (I k S0 t : ℝ) : ℝ :=
   I / k + (S0 - I / k) * Real.exp (-k * t)
 
-/-- Storage at time `0` is the initial storage `S0`. -/
+/-- For all real `I`, `k` and `S0`, storage at time `0` is the initial storage `S0`. This includes
+`k = 0`, where the convention `x / 0 = 0` makes the storage constantly `S0`. -/
 theorem storage_initial (I k S0 : ℝ) :
     linearReservoirStorage I k S0 0 = S0 := by
   simp only [linearReservoirStorage, mul_zero, Real.exp_zero, mul_one]

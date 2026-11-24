@@ -155,8 +155,10 @@ lemma vanGenuchtenSe_lt_one {α n h : ℝ} (hα : 0 < α) (hn : 1 < n)
   unfold vanGenuchtenSe
   exact Real.rpow_lt_one_of_one_lt_of_neg hbase hexp
 
-/-- Control, `n = 1`: the Mualem exponent vanishes and `S_e ≡ 1`, so the
-retention curve degenerates and the strict unsaturated bound fails. -/
+/-- Control, `n = 1`: for all real `α` and `h` the Mualem exponent vanishes and `S_e ≡ 1`, so the
+retention curve degenerates and the strict unsaturated bound fails. The value `1` uses `x ^ 0 = 1`
+for every real `x`, so it also holds where the base `1 + α * |h|` is `0` or negative, which happens
+for some `h` when `α < 0`. -/
 lemma vanGenuchtenSe_exponent_one (α h : ℝ) :
     vanGenuchtenSe α 1 h = 1 := by
   have he : (-(1 - 1 / (1 : ℝ)) : ℝ) = 0 := by norm_num
@@ -183,7 +185,10 @@ water-content form is Eq. [21] with [22] on p. 894): for residual and
 saturated water contents `θr < θs`, a
 water content `θ` has effective saturation `(θ - θr) / (θs - θr)` equal to the
 van Genuchten value at head `h` exactly when
-`θ = θr + (θs - θr) * vanGenuchtenSe α n h`. -/
+`θ = θr + (θs - θr) * vanGenuchtenSe α n h`. The equivalence holds for all real `θ`, `α`, `n` and
+`h` and every value of `vanGenuchtenSe α n h`, including the values that its conventions
+(`1 / 0 = 0`, `x ^ 0 = 1`, `0 ^ y = 0` for `y ≠ 0` and `x ^ y = |x| ^ y * cos (π y)` for `x < 0`)
+give outside the intended domain `α > 0`, `n > 1`, `h ≤ 0`. -/
 theorem vanGenuchtenSe_eq_div_iff_waterContent {θr θs θ α n h : ℝ}
     (hθ : θr < θs) :
     (θ - θr) / (θs - θr) = vanGenuchtenSe α n h ↔

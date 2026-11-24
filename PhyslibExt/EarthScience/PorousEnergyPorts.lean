@@ -597,8 +597,9 @@ private lemma fracFlowBound_pos {μo μw : ℝ} (hμo : 0 < μo) (hμw : 0 < μw
   simp only [fracFlowBound]
   positivity
 
-/-- Endpoint values for `μo > 0`: no water flows at connate water, `f 0 = 0`, and only water
-flows at residual oil, `f 1 = 1`. -/
+/-- Endpoint values for `μo > 0` and every real `μw`: no water flows at connate water, `f 0 = 0`,
+and only water flows at residual oil, `f 1 = 1`. For `μw = 0`, `f 0` is `0 / 0`, which the
+convention `x / 0 = 0` makes `0`. -/
 lemma fracFlow_zero_one {μo : ℝ} (μw : ℝ) (hμo : 0 < μo) :
     fracFlow μo μw 0 = 0 ∧ fracFlow μo μw 1 = 1 := by
   have hμo' : μo ≠ 0 := ne_of_gt hμo
@@ -788,13 +789,15 @@ lemma normSat_mem_Icc_iff {Swc Sor : ℝ} (hΔS : 0 < 1 - Sor - Swc) (S : ℝ) :
 /-! ## H. The upwind step: monotonicity, interval and balance -/
 
 /-- Local upwind update of a cell with normalized saturation `a` whose left neighbor (upwind
-state) is `b`: `a - ν (f a - f b)`. -/
+state) is `b`: `a - ν (f a - f b)`. It is defined for all real arguments; where the denominator of
+`f` vanishes, `f` is `0` by the convention `x / 0 = 0`. -/
 noncomputable def upwindUpdate (μo μw ν a b : ℝ) : ℝ :=
   a - ν * (fracFlow μo μw a - fracFlow μo μw b)
 
 /-- One normalized upwind step on the chain `s : Fin (n + 1) → ℝ` with inflow state `sIn` at the
 left boundary: cell `i` uses `Matrix.vecCons sIn s i.castSucc`, which is `sIn` for the first cell
-and `s (i - 1)` otherwise. -/
+and `s (i - 1)` otherwise. It is defined for all real arguments, the fractional flow being `0` where
+its denominator vanishes, by the convention `x / 0 = 0`. -/
 noncomputable def upwindStep (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) → ℝ)
     (i : Fin (n + 1)) : ℝ :=
   upwindUpdate μo μw ν (s i) (Matrix.vecCons sIn s i.castSucc)
@@ -874,7 +877,11 @@ lemma upwindStep_mem_Icc {μo μw ν sIn : ℝ} {n : ℕ} {s : Fin (n + 1) → �
   exact ⟨hLo, hHi⟩
 
 /-- **Rescaling.** The physical step normalizes to the upwind step with the CFL number
-`ν = Q dt / (φ A dx ΔS)`, `ΔS = 1 - Sor - Swc`, and the normalized inflow state. -/
+`ν = Q dt / (φ A dx ΔS)`, `ΔS = 1 - Sor - Swc`, and the normalized inflow state. This holds for all
+real arguments, with the convention `x / 0 = 0`: when `ΔS = 0`, every normalized saturation and `ν`
+are `0`, so both sides are `0`; when `φ A dx = 0`, the physical step leaves the saturations
+unchanged and `ν = 0`, so both sides are the normalized saturation of `S i`; and the fractional flow
+is `0` where its denominator vanishes. -/
 lemma normSat_satStep (μo μw Swc Sor Q dt φ A dx Sin : ℝ) {n : ℕ} (S : Fin (n + 1) → ℝ)
     (i : Fin (n + 1)) :
     normSat Swc Sor (satStep μo μw Swc Sor Q dt φ A dx Sin S i) =
@@ -926,7 +933,9 @@ lemma satStep_mem_Icc {μo μw Swc Sor Q dt φ A dx Sin : ℝ} {n : ℕ} {S : Fi
 
 /-- **Conservative form.** The upwind step is the finite-volume step with unit cell width and
 time step `ν` for the face fluxes `f (Matrix.vecCons sIn s j)`: face `j` carries the fractional
-flow of its left (upwind) state, the inflow state at the boundary face `0`. -/
+flow of its left (upwind) state, the inflow state at the boundary face `0`. This holds for all real
+arguments, including those for which the denominator of `f` vanishes, where `f` is `0` by the
+convention `x / 0 = 0`. -/
 lemma upwindStep_eq_discreteBalance (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) → ℝ)
     (i : Fin (n + 1)) :
     upwindStep μo μw ν sIn s i =
@@ -938,7 +947,8 @@ lemma upwindStep_eq_discreteBalance (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n
 
 /-- **Inlet-minus-outlet balance (normalized).** The interior fluxes cancel: the sum of the
 normalized saturations changes by `ν (f sIn - f s_out)`, `s_out = s (Fin.last n)` the outlet
-cell. -/
+cell. This holds for all real arguments, including those for which the denominator of `f` vanishes,
+where `f` is `0` by the convention `x / 0 = 0`. -/
 lemma sum_upwindStep (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) → ℝ) :
     ∑ i, upwindStep μo μw ν sIn s i =
       ∑ i, s i + ν * (fracFlow μo μw sIn - fracFlow μo μw (s (Fin.last n))) := by
@@ -954,7 +964,9 @@ lemma sum_upwindStep (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) → ℝ) 
 
 /-- **Inlet-minus-outlet water volume balance.** For positive pore volume `φ A dx`, one physical
 step changes the water volume `φ A dx ∑ i, S i` by the inlet water volume `Q dt f (s_in)` minus
-the outlet water volume `Q dt f (s_out)`. -/
+the outlet water volume `Q dt f (s_out)`. The other arguments are any real numbers: with the
+convention `x / 0 = 0`, every normalized saturation is `0` when `ΔS = 1 - Sor - Swc = 0`, and `f` is
+`0` where its denominator vanishes. -/
 lemma satStep_volume_balance {μo μw Swc Sor Q dt φ A dx Sin : ℝ} {n : ℕ} (S : Fin (n + 1) → ℝ)
     (hpv : 0 < φ * A * dx) :
     φ * A * dx * ∑ i, satStep μo μw Swc Sor Q dt φ A dx Sin S i =

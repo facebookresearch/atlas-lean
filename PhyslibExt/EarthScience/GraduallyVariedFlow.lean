@@ -98,7 +98,9 @@ equation in a rectangular channel (Chow 1959, `α = 1`):
 `0 < b`, `0 < n`, `0 < S0`, `0 < g`, `0 < y`, `y ≠ yc`; at
 `y = yc` the totalized division returns `0`, which is not a
 physical slope. With the convention `a / 0 = 0`, the term
-`(Q / b) ^ 2 / (g * y ^ 3)` is `0` when `b = 0`, `g = 0` or `y = 0`. -/
+`(Q / b) ^ 2 / (g * y ^ 3)` is `0` when `b = 0`, `g = 0` or `y = 0`. Inside `Sf`, a negative
+hydraulic radius `R = (b * y) / (b + 2 * y)` enters as `R ^ (2 / 3) = -|R| ^ (2 / 3) / 2`, by the
+convention `a ^ r = |a| ^ r * cos (π r)` for `a < 0`. -/
 noncomputable def gvfSlope (n S0 b Q g y : ℝ) : ℝ :=
   (S0 - frictionSlope n b Q y) / (1 - (Q / b) ^ 2 / (g * y ^ 3))
 
@@ -156,10 +158,11 @@ lemma manningDischarge_frictionSlope {n b Q y : ℝ} (hn : 0 < n)
 /-- Bridge to the rectangular discharge: for a downhill bed
 `0 < S0`, the friction slope equals
 `S0 * (Q / rectangularDischarge (sqrt S0 / n) b y) ^ 2`, the bed slope
-scaled by the squared ratio of the carried discharge to the uniform-
-flow discharge at depth `y`. It also holds where a denominator
-vanishes, with the convention `x / 0 = 0` (both sides are `0` when
-`n = 0`). -/
+scaled by the squared ratio of the carried discharge to the uniform-flow discharge at depth `y`. It
+also holds where a denominator vanishes, with the convention `x / 0 = 0` (both sides are `0` when
+`n = 0`), and for a negative hydraulic radius `R = (b * y) / (b + 2 * y)`, which enters both sides
+as `R ^ (2 / 3) = -|R| ^ (2 / 3) / 2` by the convention `x ^ r = |x| ^ r * cos (π r)` for
+`x < 0`. -/
 lemma frictionSlope_eq_rectangularDischarge {n S0 b Q y : ℝ}
     (hS0 : 0 < S0) :
     frictionSlope n b Q y
