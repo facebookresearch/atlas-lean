@@ -238,9 +238,9 @@ theorem shift_fundamentalClass_aux {C : Type*} [Category C] [HasShift C ℤ] (U 
 
 /-- The shift adjoint of the fundamental class is the inverse purity. -/
 theorem bmAdjoint_fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
-    (e : D.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧) :
-    bmAdjoint k Z D (2*d) (fundamentalClass k Z D d e) =
-      (DerivedCategory.Plus.ι.commShiftIso (2*d : ℤ)).hom.app (unitPlus k Z) ≫ e.inv := by
+    (e : D.obj ≅ (coefficientUnit k Z)⟦(2 * d : ℤ)⟧) :
+    bmAdjoint k Z D (2 * d) (fundamentalClass k Z D d e) =
+      (DerivedCategory.Plus.ι.commShiftIso (2 * d : ℤ)).hom.app (unitPlus k Z) ≫ e.inv := by
   simp only [bmAdjoint, fundamentalClass, LinearMap.coe_mk, AddHom.coe_mk]
   congr 1
   exact shift_fundamentalClass_aux _ _ _ e
@@ -248,10 +248,10 @@ theorem bmAdjoint_fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex k Z) (
 /-- The fundamental class corresponds, under the dualizing representation, to the top trace
 induced by the same purity. -/
 theorem bmDualHomEquiv_fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
-    (e : D.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧) :
-    bmDualHomEquiv k Z D (2*d) (fundamentalClass k Z D d e) = topTrace k Z D d e := by
-  show (D.representation.app (Opposite.op ((unitPlus k Z)⟦(2*d : ℤ)⟧))).toLinearEquiv
-    (bmAdjoint k Z D (2*d) (fundamentalClass k Z D d e)) = _
+    (e : D.obj ≅ (coefficientUnit k Z)⟦(2 * d : ℤ)⟧) :
+    bmDualHomEquiv k Z D (2 * d) (fundamentalClass k Z D d e) = topTrace k Z D d e := by
+  change (D.representation.app (Opposite.op ((unitPlus k Z)⟦(2 * d : ℤ)⟧))).toLinearEquiv
+    (bmAdjoint k Z D (2 * d) (fundamentalClass k Z D d e)) = _
   rw [bmAdjoint_fundamentalClass]
   rfl
 
@@ -259,12 +259,12 @@ theorem bmDualHomEquiv_fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex k
 pullback carries the one top trace to the other. -/
 theorem borelMoorePushforward_fundamentalClass {Z W : TopCat.{0}} {f : Z ⟶ W}
     (P : ProperPullback k f) (DZ : DualizingComplex k Z) (DW : DualizingComplex k W) (d : ℕ)
-    (eZ : DZ.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧)
-    (eW : DW.obj ≅ (coefficientUnit k W)⟦(2*d : ℤ)⟧)
-    (h : compactPullback k P (2*d) ≫ topTrace k Z DZ d eZ = topTrace k W DW d eW) :
-    borelMoorePushforward k P DZ DW (2*d) (fundamentalClass k Z DZ d eZ) =
+    (eZ : DZ.obj ≅ (coefficientUnit k Z)⟦(2 * d : ℤ)⟧)
+    (eW : DW.obj ≅ (coefficientUnit k W)⟦(2 * d : ℤ)⟧)
+    (h : compactPullback k P (2 * d) ≫ topTrace k Z DZ d eZ = topTrace k W DW d eW) :
+    borelMoorePushforward k P DZ DW (2 * d) (fundamentalClass k Z DZ d eZ) =
       fundamentalClass k W DW d eW := by
-  apply (bmDualHomEquiv k W DW (2*d)).injective
+  apply (bmDualHomEquiv k W DW (2 * d)).injective
   simp only [borelMoorePushforward, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
     LinearEquiv.apply_symm_apply, bmDualHomEquiv_fundamentalClass]
   exact h

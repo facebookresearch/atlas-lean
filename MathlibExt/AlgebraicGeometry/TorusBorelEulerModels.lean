@@ -56,30 +56,33 @@ theorem cohomologyCast_eq {Z : TopCat.{0}} {i j : ℤ} (h : i = j) (x : Cohomolo
   subst h
   simp [cohomologyCast]
 
-/-- The purity identification sends the fundamental class to the unit class (in degree `2d - 2d`). -/
+/-- The purity identification sends the fundamental class to the unit class (in degree
+`2d - 2d`). -/
 theorem purityHomologyEquiv_fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex ℂ Z)
-    (d : ℕ) (e : D.obj ≅ (coefficientUnit ℂ Z)⟦(2*d : ℤ)⟧) :
-    purityHomologyEquiv ℂ Z D d e (2*d) (fundamentalClass ℂ Z D d e) =
+    (d : ℕ) (e : D.obj ≅ (coefficientUnit ℂ Z)⟦(2 * d : ℤ)⟧) :
+    purityHomologyEquiv ℂ Z D d e (2 * d) (fundamentalClass ℂ Z D d e) =
       cohomologyCast (by omega) (unitClass ℂ Z) := by
   rw [cohomologyCast_eq]
   simp only [purityHomologyEquiv, fundamentalClass, unitClass, LinearEquiv.coe_mk,
-    Iso.trans_hom, Functor.mapIso_hom, Iso.app_hom, Iso.symm_hom, Category.assoc]
+    Iso.trans_hom, Functor.mapIso_hom, Iso.app_hom, Iso.symm_hom]
   simp [shiftFunctorAdd', eqToHom_app]
 
-/-- Orientation data: a dualizing representation with smooth purity for every smooth complex
-variety, compatible with isomorphisms (the actual compact pullback along an isomorphism carries
-one top trace to the other). Fundamental classes and Poincaré duality, hence the Euler classes
-below, are relative to it. The complex orientation is one such datum; it is not encoded here. -/
+/-- Orientation data: a dualizing representation with smooth purity for every smooth separated
+complex variety of finite type (so that its analytic space is a Hausdorff manifold), compatible
+with isomorphisms (the actual compact pullback along an isomorphism carries one top trace to the
+other). Fundamental classes and Poincaré duality, hence the Euler classes below, are relative to
+it. The complex orientation is one such datum; it is not encoded here. -/
 structure OrientationData where
-  /-- The dualizing representation of a smooth variety of dimension `d`. -/
-  duality : ∀ (Y : Over base) (d : ℕ) [SmoothOfRelativeDimension d Y.hom],
-    DualizingComplex ℂ (space Y)
+  /-- The dualizing representation of a smooth separated variety of dimension `d`. -/
+  duality : ∀ (Y : Over base) (d : ℕ) [SmoothOfRelativeDimension d Y.hom] [IsSeparated Y.hom]
+    [QuasiCompact Y.hom], DualizingComplex ℂ (space Y)
   /-- Its smooth purity. -/
-  purity : ∀ (Y : Over base) (d : ℕ) [SmoothOfRelativeDimension d Y.hom],
-    (duality Y d).obj ≅ (coefficientUnit ℂ (space Y))⟦(2*d : ℤ)⟧
+  purity : ∀ (Y : Over base) (d : ℕ) [SmoothOfRelativeDimension d Y.hom] [IsSeparated Y.hom]
+    [QuasiCompact Y.hom], (duality Y d).obj ≅ (coefficientUnit ℂ (space Y))⟦(2*d : ℤ)⟧
   /-- Isomorphisms preserve the induced top compact-support traces. -/
   isomorphism : ∀ {Y Y' : Over base} (f : Y ⟶ Y') [IsIso f] (d : ℕ)
-    [SmoothOfRelativeDimension d Y.hom] [SmoothOfRelativeDimension d Y'.hom]
+    [SmoothOfRelativeDimension d Y.hom] [IsSeparated Y.hom] [QuasiCompact Y.hom]
+    [SmoothOfRelativeDimension d Y'.hom] [IsSeparated Y'.hom] [QuasiCompact Y'.hom]
     (P : ProperPullback ℂ (spaceMap f)),
     compactPullback ℂ P (2*d) ≫ topTrace ℂ (space Y) (duality Y d) d (purity Y d) =
       topTrace ℂ (space Y') (duality Y' d) d (purity Y' d)
@@ -91,14 +94,18 @@ structure ZeroEulerGeometry (O : OrientationData) (X : SchemeData) (E : X.scheme
   bundle : GlobalZeroSectionRecipe.VectorBundleModel X.scheme E r
   dimension : ℕ
   [baseSmooth : SmoothOfRelativeDimension dimension X.scheme.hom]
+  [baseSeparated : IsSeparated X.scheme.hom]
+  [baseQuasiCompact : QuasiCompact X.scheme.hom]
   [totalSmooth : SmoothOfRelativeDimension (dimension+r) bundle.total.hom]
+  [totalSeparated : IsSeparated bundle.total.hom]
+  [totalQuasiCompact : QuasiCompact bundle.total.hom]
   [closed : IsClosedImmersion (GlobalZeroSectionRecipe.zeroSection bundle).left]
   zeroPullback : ProperPullback ℂ (spaceMap (GlobalZeroSectionRecipe.zeroSection bundle))
   homotopy : ∀ n : ℤ, Function.Bijective
     (cohomologyPullback ℂ (spaceMap bundle.projection) n)
 
 attribute [instance] ZeroEulerGeometry.baseSmooth ZeroEulerGeometry.totalSmooth
-  ZeroEulerGeometry.closed
+  ZeroEulerGeometry.totalSeparated ZeroEulerGeometry.totalQuasiCompact ZeroEulerGeometry.closed
 
 section ZeroEuler
 
@@ -107,6 +114,8 @@ variable {O : OrientationData} {X : SchemeData} {E : X.scheme.left.Modules} {r :
 /-- The base duality is the orientation datum's. -/
 abbrev ZeroEulerGeometry.baseDuality (G : ZeroEulerGeometry O X E r) :
     DualizingComplex ℂ (space X.scheme) :=
+  haveI := G.baseSeparated
+  haveI := G.baseQuasiCompact
   O.duality X.scheme G.dimension
 
 /-- The total-space duality is the orientation datum's. -/
@@ -117,6 +126,8 @@ abbrev ZeroEulerGeometry.totalDuality (G : ZeroEulerGeometry O X E r) :
 /-- The base purity is the orientation datum's. -/
 abbrev ZeroEulerGeometry.basePurity (G : ZeroEulerGeometry O X E r) :
     G.baseDuality.obj ≅ (coefficientUnit ℂ (space X.scheme))⟦(2*G.dimension : ℤ)⟧ :=
+  haveI := G.baseSeparated
+  haveI := G.baseQuasiCompact
   O.purity X.scheme G.dimension
 
 /-- The total-space purity is the orientation datum's. -/
@@ -125,8 +136,8 @@ abbrev ZeroEulerGeometry.totalPurity (G : ZeroEulerGeometry O X E r) :
   O.purity G.bundle.total (G.dimension+r)
 
 /-- The zero-section class is computed from native proper push and the datum's smooth purity. -/
-def ZeroEulerGeometry.zeroClass (G : ZeroEulerGeometry O X E r) : CoefficientBettiModels.Cohomology ℂ (space G.bundle.total) (2*r)
-      :=
+def ZeroEulerGeometry.zeroClass (G : ZeroEulerGeometry O X E r) :
+    CoefficientBettiModels.Cohomology ℂ (space G.bundle.total) (2*r) :=
   cohomologyCast (show (2*(G.dimension+r) : ℤ)-(2*G.dimension : ℤ) = (2*r : ℤ) by omega)
     ((purityHomologyEquiv ℂ (space G.bundle.total) G.totalDuality (G.dimension+r)
       G.totalPurity (2*G.dimension)).toLinearMap
@@ -135,7 +146,8 @@ def ZeroEulerGeometry.zeroClass (G : ZeroEulerGeometry O X E r) : CoefficientBet
 
 /-- The Euler class, relative to the orientation datum, is the inverse actual bundle pullback of
 that zero-section class. -/
-def ZeroEulerGeometry.euler (G : ZeroEulerGeometry O X E r) : CoefficientBettiModels.Cohomology ℂ (space X.scheme) (2*r) :=
+def ZeroEulerGeometry.euler (G : ZeroEulerGeometry O X E r) :
+    CoefficientBettiModels.Cohomology ℂ (space X.scheme) (2*r) :=
   (LinearEquiv.ofBijective (cohomologyPullback ℂ (spaceMap G.bundle.projection) (2*r))
     (G.homotopy (2*r))).symm G.zeroClass
 
@@ -147,6 +159,8 @@ theorem ZeroEulerGeometry.euler_eq_unitClass {O : OrientationData} {X : SchemeDa
     [IsIso (GlobalZeroSectionRecipe.zeroSection G.bundle)] :
     G.euler = unitClass ℂ (space X.scheme) := by
   haveI : SmoothOfRelativeDimension G.dimension G.bundle.total.hom := G.totalSmooth
+  haveI := G.baseSeparated
+  haveI := G.baseQuasiCompact
   have hpush := borelMoorePushforward_fundamentalClass ℂ G.zeroPullback
     (O.duality X.scheme G.dimension) (O.duality G.bundle.total G.dimension) G.dimension
     (O.purity X.scheme G.dimension) (O.purity G.bundle.total G.dimension)

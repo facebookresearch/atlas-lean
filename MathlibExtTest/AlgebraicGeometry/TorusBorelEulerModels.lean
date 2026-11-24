@@ -24,6 +24,8 @@ variable {O : OrientationData} {X : SchemeData} {E : X.scheme.left.Modules} {r :
 -- The duality and purity of a zero-section geometry are those of its orientation datum: the
 -- Euler class depends on orientations only through the one shared datum.
 example (G : ZeroEulerGeometry O X E r) :
+    haveI := G.baseSeparated
+    haveI := G.baseQuasiCompact
     G.basePurity = O.purity X.scheme G.dimension := rfl
 
 example (G : ZeroEulerGeometry O X E r) :

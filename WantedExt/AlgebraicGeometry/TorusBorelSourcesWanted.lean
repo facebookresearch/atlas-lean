@@ -49,7 +49,7 @@ def_wanted actual_polynomial_coefficient_action (T : Over base) [GrpObj T] (M : 
     (AX : AnalyticTorusAction M X.scheme) : PolynomialAction M P X.scheme AX
 
 def_wanted actual_zero_section_euler_geometry (O : OrientationData) (X : SchemeData)
-    [IsSeparated X.scheme.hom]
+    [IsSeparated X.scheme.hom] [QuasiCompact X.scheme.hom]
     (d : ℕ) [SmoothOfRelativeDimension d X.scheme.hom]
     (E : X.scheme.left.Modules) (r : ℕ) (_bundle : AlgebraicBundleGeometry.IsBundle E r) :
     {G : ZeroEulerGeometry O X E r // G.dimension = d}
