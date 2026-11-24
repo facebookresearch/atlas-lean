@@ -283,10 +283,18 @@ private lemma valid_initial {Key : Type u} {Satellite : Type v} {capacity : Nat}
 
 
 
-/-- Runs CLRS sentinel search in source order, returning the modified pool and first
-matching data identity. Only the sentinel key is overwritten; its old key is not restored.
-The input circle witness is erased. Cost counts the write, initialization, comparisons,
-mismatch advances and final identity test, not physical storage/bit operations. -/
+/-- **Search in a circular list with a sentinel.** Let a store have cells indexed by
+$\{0, \dots, m-1\}$, each empty or holding a node that carries a key, satellite data and optional
+next and prev links, and let the cell $s$ be the sentinel of some list of data nodes that the
+store circularly represents. Sentinel search for a key $k$ first overwrites the key of the
+sentinel with $k$, keeping its satellite data and links, then starts at the successor of $s$ and
+follows next links until it reaches a node whose key is $k$. It returns the modified store
+together with that node, or no node if the scan stopped at $s$.
+
+Only the sentinel key is overwritten, and its old key is not restored. The cost charges one unit
+for the key write, one for initializing the cursor, one for each key comparison, one for each
+advance past a mismatching node and one for the final test against $s$; reads and result
+construction are free, and physical storage or bit operations are not counted. -/
 public def listSearchSentinel {Key : Type u} {Satellite : Type v} {capacity : Nat} [DecidableEq Key]
     (store : Vector (Option (Node (Key × Satellite) (Fin capacity))) capacity)
     (s : Fin capacity) (key : Key) (valid : ∃ ids, CircularRepresents store s ids) :
@@ -511,8 +519,10 @@ private lemma mask_find {α : Type*} [DecidableEq α] (s : α) (ids : List α)
     have has : a ≠ s := fun he => hsnot (he ▸ ha)
     simp [has]
 
-/-- The returned identity is the first pre-run data-node key match in circle order.
-The sentinel is a stopping device, never a successful returned data identity. -/
+/-- **Sentinel search returns the first matching node.** If a store circularly represents the list
+$L$ of data nodes with sentinel $s$, then sentinel search for a key $k$ returns the first node of
+$L$ (in list order, which starts at the successor of $s$) whose key in the input store is $k$, and
+returns no node if no node of $L$ has key $k$. In particular, the sentinel is never returned. -/
 public theorem listSearchSentinel_ret {Key : Type u} {Satellite : Type v} {capacity : Nat}
     [DecidableEq Key]
     (store : Vector (Option (Node (Key × Satellite) (Fin capacity))) capacity)
@@ -550,8 +560,13 @@ public theorem listSearchSentinel_ret {Key : Type u} {Satellite : Type v} {capac
   change (if scan.ret = s then none else some scan.ret) = _
   rw [hf, mask_find s ids _ rep'.2.1, keyWrite_find store s key hs ids rep.2.1]
 
-/-- Exact selected-event cost: two events per preceding mismatching data node plus
-four fixed events. An absent query scans the complete data circle. -/
+/-- **Cost of sentinel search.** If a store circularly represents the list $L$ of $n$ data nodes
+with sentinel $s$, then sentinel search for a key $k$ costs exactly $2i + 4$, where $i$ is the
+position, counting from $0$, of the first node of $L$ whose key is $k$, and $i = n$ if no node of
+$L$ has key $k$.
+
+That is, two units for each mismatching data node before the match plus four fixed units; an
+unsuccessful search scans all $n$ data nodes. -/
 public theorem listSearchSentinel_time {Key : Type u} {Satellite : Type v} {capacity : Nat}
     [DecidableEq Key]
     (store : Vector (Option (Node (Key × Satellite) (Fin capacity))) capacity)
@@ -591,8 +606,11 @@ public theorem listSearchSentinel_time {Key : Type u} {Satellite : Type v} {capa
   rw [ht, keyWrite_findIdx store s key hs ids rep.2.1]
   omega
 
-/-- The complete returned pool differs only in the sentinel key; all other cells and
-all next/prev links and satellite payloads are unchanged. -/
+/-- **Sentinel search changes only the sentinel's key.** Let $s$ be the sentinel of some list of
+data nodes that a store circularly represents, and let $k$ be a key. In the store returned by
+sentinel search for $k$, the cell $s$ holds the original sentinel node with its key replaced by
+$k$ and its satellite data and next and prev links unchanged, and every cell $z \ne s$ holds
+exactly what it held in the input store. -/
 public theorem listSearchSentinel_get {Key : Type u} {Satellite : Type v} {capacity : Nat}
     [DecidableEq Key]
     (store : Vector (Option (Node (Key × Satellite) (Fin capacity))) capacity)
@@ -612,7 +630,9 @@ public theorem listSearchSentinel_get {Key : Type u} {Satellite : Type v} {capac
   · have hsz : s ≠ z := fun he => hz he.symm
     rw [ite_eq_right hsz, ite_eq_right hz]
 
-/-- Sentinel search preserves the same canonical represented circle. -/
+/-- **Sentinel search preserves the circular list.** If a store circularly represents the list $L$
+of data nodes with sentinel $s$, then for every key $k$ the store returned by sentinel search for
+$k$ still circularly represents $L$ with sentinel $s$. -/
 public theorem listSearchSentinel_circular {Key : Type u} {Satellite : Type v} {capacity : Nat}
     [DecidableEq Key]
     (store : Vector (Option (Node (Key × Satellite) (Fin capacity))) capacity)

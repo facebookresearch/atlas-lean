@@ -22,7 +22,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The Pell–Lucas (associated Pell) sequence `1, 1, 3, 7, 17, …` (OEIS A001333).
+/-- **Pell–Lucas sequence.** The Pell–Lucas (associated Pell) numbers $Q_n$, for natural numbers
+$n$, are defined by $Q_0 = 1$, $Q_1 = 1$ and $Q_{n+2} = 2Q_{n+1} + Q_n$ for every $n$. They begin
+$1, 1, 3, 7, 17, \dots$ (OEIS A001333).
 
 Source: aBa Mbirika, Janee Schrader, and Jürgen Spilker, *Pell and Associated Pell Braid
 Sequences as GCDs of Sums of k Consecutive Pell, Balancing, and Related Numbers*,
@@ -37,7 +39,8 @@ def pellLucasSequence : ℕ → ℕ
 
 @[simp] theorem pellLucasSequence_one : pellLucasSequence 1 = 1 := rfl
 
-/-- The defining recurrence of the Pell–Lucas sequence. -/
+/-- **Recurrence for the Pell–Lucas numbers.** Write $Q_n$ for the $n$-th Pell–Lucas (associated
+Pell) number. For every natural number $n$, $Q_{n+2} = 2Q_{n+1} + Q_n$. -/
 theorem pellLucasSequence_succ_succ (n : ℕ) :
     pellLucasSequence (n + 2) =
       2 * pellLucasSequence (n + 1) + pellLucasSequence n := rfl

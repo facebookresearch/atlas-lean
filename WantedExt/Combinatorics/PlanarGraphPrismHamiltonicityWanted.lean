@@ -23,7 +23,10 @@ namespace MathlibExt.Combinatorics.PlanarGraphPrismHamiltonicityWanted
 
 /-! Source record `OPG-47285`. -/
 
-/-- The prism over every finite 3-connected planar graph has a Hamilton cycle. -/
+/-- **Prism-Hamiltonicity conjecture for 3-connected planar graphs.** For every finite simple
+graph $G$ that is $3$-vertex-connected and straight-line planar, the prism
+$G \mathbin{\square} K_2$, the Cartesian product of $G$ with the complete graph on two
+vertices, is Hamiltonian. -/
 def conjecture : Prop :=
   ∀ (V : Type) (_ : Fintype V) (_ : DecidableEq V)
       (G : SimpleGraph V) (_ : DecidableRel G.Adj),
@@ -31,8 +34,12 @@ def conjecture : Prop :=
       (G □ SimpleGraph.completeGraph (Fin 2)).IsHamiltonian
 
 /--
-Resolved false: Spacapan constructed a 3-connected planar graph whose prism is not Hamiltonian,
-refuting the universal statement. Source: S. Špacapan, A counterexample to prism-hamiltonicity
+**Špacapan's counterexample to prism-Hamiltonicity.** The prism-Hamiltonicity conjecture for
+3-connected planar graphs is false: there is a finite simple graph $G$ that is
+$3$-vertex-connected and straight-line planar whose prism $G \mathbin{\square} K_2$ is not
+Hamiltonian.
+
+Source: S. Špacapan, A counterexample to prism-hamiltonicity
 of 3-connected planar graphs, Journal of Combinatorial Theory, Series B 148 (2021), 46–52,
 https://arxiv.org/abs/1906.06683. Moved from
 `OpenConjectures/Combinatorics/PlanarGraphPrismHamiltonicity`.

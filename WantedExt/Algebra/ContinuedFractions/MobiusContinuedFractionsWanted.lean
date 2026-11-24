@@ -18,13 +18,13 @@ namespace MetaMathlibExt
 
 open Filter Topology
 
-/-- Śleszyński–Pringsheim convergence criterion, as quoted by Mennen: if the partial numerators
-`a k` and partial denominators `b k` satisfy `1 + |a k| ≤ |b k|` for every `k`, then the
-continued fraction `a₀ / (b₀ + a₁ / (b₁ + ⋯))` converges to a value `v` with `|v| ≤ 1`.
+/-- **Śleszyński–Pringsheim convergence criterion.** Let $a_0, a_1, a_2, \dots$ and
+$b_0, b_1, b_2, \dots$ be complex numbers with $1 + |a_k| \le |b_k|$ for every $k$. For $n \ge 0$
+let $f_n$ be the $n$-th approximant of the continued fraction $a_0 / (b_0 + a_1 / (b_1 + \cdots))$,
+that is $f_0 = 0$ and $f_n = a_0 / (b_0 + a_1 / (b_1 + \cdots + a_{n-1} / b_{n-1}))$ for $n \ge 1$.
+Then there is a complex number $v$ with $|v| \le 1$ such that $f_n \to v$ as $n \to \infty$.
 
-The continued fraction is Mathlib's `GenContFract` with head `0` and pairs `⟨a k, b k⟩`; its
-`n`-th approximant is the nested finite fraction `convs' n`. Stated over `ℂ` (the classical
-setting of the criterion), which contains the real case. Zero partial numerators are admitted.
+Zero partial numerators are admitted.
 
 Source: Carminda M. Mennen, *Möbius Maps and Continued Fractions*, INTEGERS 24 (2024),
 Article A52, Theorem 1 (`integers-2024-A52-thm-1`). -/

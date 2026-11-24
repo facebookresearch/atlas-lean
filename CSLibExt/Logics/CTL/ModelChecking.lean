@@ -71,10 +71,12 @@ private theorem exists_minimal_index {p : ℕ → Prop} (hex : ∃ n, p n) :
   exact ⟨Nat.find hex, Nat.find_spec hex,
     fun i hi => Nat.find_min hex hi⟩
 
-/-- Every state starts a maximal path: either an infinite run, or a
-finite run ending at a deadlocked state.  The path iterates a chosen
-successor function, stopping being impossible unless a deadlock is
-reached; the construction depends on `Classical.choice`. -/
+/-- **Every state starts a maximal path.** In a labelled transition system, for every state $s$
+there is an infinite run $s_0, s_1, s_2, \dots$ with $s_0 = s$, or there are a sequence of states
+$s_0, s_1, s_2, \dots$ with $s_0 = s$ and a $k$ such that $s_0, \dots, s_k$ is a finite run of
+length $k$ and $s_k$ is deadlocked, that is, has no outgoing transition.
+
+The proof iterates a chosen successor function and uses the axiom of choice. -/
 theorem exists_maximalPath (s : State) :
     (∃ ss, ss 0 = s ∧ lts.OmegaRun ss) ∨
       (∃ ss k, ss 0 = s ∧ lts.FiniteRun ss k ∧
@@ -121,7 +123,10 @@ theorem exists_maximalPath (s : State) :
 
 namespace Satisfies
 
-/-- `¬EX ⊤` holds exactly at deadlocked states. -/
+/-- **Deadlocked states are exactly those satisfying ¬EX ⊤.** A state $s$ of a labelled transition
+system satisfies the CTL formula $\neg\mathsf{EX}\,\top$, under any valuation of the atoms, if and
+only if $s$ is deadlocked: there is no label $a$ and state $t$ with a transition from $s$ to $t$
+labelled $a$. -/
 theorem not_existsNext_top_iff {s : State} :
     Satisfies lts valuation s (.not (.existsNext .top)) ↔
       ∀ label t, ¬lts.Tr s label t := by
@@ -132,8 +137,12 @@ theorem not_existsNext_top_iff {s : State} :
   · rintro h ⟨label, t, hstep, -⟩
     exact h label t hstep
 
-/-- The bad target of the deadlock-correct `AU` duality: `¬ψ` holds and
-either `φ` fails or the state is deadlocked. -/
+/-- **Bad target of the deadlock-correct until duality.** Let $\varphi$ and $\psi$ be CTL
+formulas, and write $t \models \chi$ when the state $t$ of a labelled transition system satisfies
+the formula $\chi$ under a given valuation of the atoms. Then
+$t \models \neg\psi \land (\neg\varphi \lor \neg\mathsf{EX}\,\top)$ if and only if
+$t \not\models \psi$ and either $t \not\models \varphi$ or $t$ is deadlocked, that is, there is no
+label $a$ and state $u$ with a transition from $t$ to $u$ labelled $a$. -/
 theorem forallUntil_bad_iff {φ ψ : Formula Atom} {t : State} :
     Satisfies lts valuation t
         (.and (.not ψ) (Formula.or (.not φ) (.not (.existsNext .top)))) ↔
@@ -142,12 +151,13 @@ theorem forallUntil_bad_iff {φ ψ : Formula Atom} {t : State} :
           ∀ label u, ¬lts.Tr t label u) := by
   rw [and_iff, or_iff, not_existsNext_top_iff, not_iff, not_iff]
 
-/-- The forward direction of the one-step expansion of `A[φ U ψ]`: if
-`ψ` does not hold now, then `φ` holds now, the state is not deadlocked,
-and `A[φ U ψ]` holds at every successor.  Successor instances are
-proved by prepending the step to maximal paths from the successor;
-`φ` at the current state is read off any one maximal path
-(`exists_maximalPath`), whose first `ψ`-index is positive. -/
+/-- **One-step unfolding of universal until, forward direction.** Let $\varphi$ and $\psi$ be CTL
+formulas, and write $s \models \chi$ when the state $s$ of a labelled transition system satisfies
+the formula $\chi$ under a given valuation of the atoms. If
+$s \models \mathsf{A}[\varphi \mathbin{\mathsf{U}} \psi]$, then either $s \models \psi$, or
+$s \models \varphi$, $s$ has at least one outgoing transition, and every state $t$ reached from $s$
+by a single transition with any label satisfies
+$t \models \mathsf{A}[\varphi \mathbin{\mathsf{U}} \psi]$. -/
 theorem forallUntil_expansion_forward {s : State} {φ ψ : Formula Atom}
     (hAU : Satisfies lts valuation s (.forallUntil φ ψ)) :
     Satisfies lts valuation s ψ ∨
@@ -213,15 +223,17 @@ theorem forallUntil_expansion_forward {s : State} {φ ψ : Formula Atom}
         obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
         exact ⟨j', by omega, hψj, fun i hi => hφj (i + 1) (by omega)⟩
 
-/-- The deadlock-correct duality for `A[φ U ψ]`: it fails exactly when
-some maximal path either stays in `¬ψ` forever (`EG ¬ψ`) or reaches a
-`¬ψ`-state at which `φ` fails or which is deadlocked, with `¬ψ` before
-(an `EU` witness to the bad target of `forallUntil_bad_iff`).  The
-forward direction propagates `A[φ U ψ]` along an `EU` witness run by
-`forallUntil_expansion_forward`; the backward direction takes, on each
-maximal path, the least `ψ`-index and an earlier `¬φ`-index if one
-exists, and uses the deadlocked endpoint when a finite maximal path
-never reaches `ψ`. -/
+/-- **Deadlock-correct duality for universal until.** Let $\varphi$ and $\psi$ be CTL formulas,
+and write $s \models \chi$ when the state $s$ of a labelled transition system satisfies the
+formula $\chi$ under a given valuation of the atoms. Then
+$s \models \mathsf{A}[\varphi \mathbin{\mathsf{U}} \psi]$ if and only if neither
+$s \models \mathsf{E}[\neg\psi \mathbin{\mathsf{U}} (\neg\psi \land (\neg\varphi \lor
+\neg\mathsf{EX}\,\top))]$ nor $s \models \mathsf{EG}\,\neg\psi$.
+
+Here $\neg\mathsf{EX}\,\top$ holds exactly at the deadlocked states, those with no outgoing
+transition. So $\mathsf{A}[\varphi \mathbin{\mathsf{U}} \psi]$ fails at $s$ exactly when some
+infinite run starting at $s$ stays in $\neg\psi$ forever, or some finite run starting at $s$ stays
+in $\neg\psi$ up to a $\neg\psi$-state at which $\varphi$ fails or which is deadlocked. -/
 theorem forallUntil_iff_not {s : State} {φ ψ : Formula Atom} :
     Satisfies lts valuation s (.forallUntil φ ψ) ↔
       ¬(Satisfies lts valuation s
@@ -327,8 +339,11 @@ theorem forallUntil_iff_not {s : State} {φ ψ : Formula Atom} :
           · intro i hi
             exact hnoψ i (by omega)
 
-/-- `EU` is congruent in its target formula under pointwise
-satisfaction equivalence. -/
+/-- **Congruence of existential until in its target.** In a labelled transition system with a
+valuation of atoms, let $\rho$, $\alpha$ and $\beta$ be CTL formulas such that every state
+satisfies $\alpha$ if and only if it satisfies $\beta$. Then every state $s$ satisfies
+$\mathsf{E}[\rho \,\mathsf{U}\, \alpha]$ if and only if it satisfies
+$\mathsf{E}[\rho \,\mathsf{U}\, \beta]$. -/
 theorem existsUntil_congr {ρ α β : Formula Atom}
     (h : ∀ t, Satisfies lts valuation t α ↔ Satisfies lts valuation t β)
     {s : State} :
@@ -338,8 +353,14 @@ theorem existsUntil_congr {ρ α β : Formula Atom}
   · exact ⟨ss, k, h0, hrun, (h _).mp htgt, hside⟩
   · exact ⟨ss, k, h0, hrun, (h _).mpr htgt, hside⟩
 
-/-- The deadlock-correct duality for `AF`, the case `φ = ⊤` of
-`forallUntil_iff_not`: the bad target simplifies to `¬φ ∧ ¬EX ⊤`. -/
+/-- **Deadlock-correct duality for AF.** In a labelled transition system with a valuation of
+atoms, let $\varphi$ be a CTL formula. A state $s$ satisfies $\mathsf{AF}\,\varphi$ if and only
+if $s$ satisfies neither $\mathsf{E}[\neg\varphi \,\mathsf{U}\, (\neg\varphi \wedge
+\neg\mathsf{EX}\,\top)]$ nor $\mathsf{EG}\,\neg\varphi$.
+
+This is the case $\mathsf{A}[\top \,\mathsf{U}\, \varphi]$ of the duality for universal until.
+The formula $\neg\mathsf{EX}\,\top$ holds exactly at deadlocked states, so the first disjunct
+catches finite maximal paths that end at a deadlock without reaching $\varphi$. -/
 theorem forallFinally_iff_not {s : State} {φ : Formula Atom} :
     Satisfies lts valuation s φ.forallFinally ↔
       ¬(Satisfies lts valuation s
@@ -365,12 +386,21 @@ theorem forallFinally_iff_not {s : State} {φ : Formula Atom} :
   show Satisfies lts valuation s (.forallUntil .top φ) ↔ _
   rw [forallUntil_iff_not, existsUntil_congr hχ]
 
-/-- `EX φ` is `PreExists` of the satisfaction predicate of `φ`. -/
+/-- **Existential next via the predecessor operator.** In a labelled transition system with a
+valuation of atoms, let $\varphi$ be a CTL formula and write $\mathrm{Sat}(\varphi)$ for the set
+of states satisfying $\varphi$. A state $s$ satisfies $\mathsf{EX}\,\varphi$ if and only if $s$
+belongs to the existential predecessor set of $\mathrm{Sat}(\varphi)$, that is, some transition
+leads from $s$ to a state satisfying $\varphi$. -/
 theorem existsNext_iff_preExists {s : State} {φ : Formula Atom} :
     Satisfies lts valuation s (.existsNext φ) ↔
       PreExists lts (fun t => Satisfies lts valuation t φ) s := Iff.rfl
 
-/-- The functional whose least fixed point is `E[φ U ψ]`. -/
+/-- **The existential-until functional.** In a labelled transition system with a valuation of
+atoms, let $\varphi$ and $\psi$ be CTL formulas. The existential-until functional sends a set $Z$
+of states to the set of states $s$ such that either $s$ satisfies $\psi$, or $s$ satisfies
+$\varphi$ and some transition leads from $s$ to a state in $Z$.
+
+Its least fixed point is the set of states satisfying $\mathsf{E}[\varphi \,\mathsf{U}\, \psi]$. -/
 def existsUntilFun (lts : LTS State Label)
     (valuation : State → Atom → Prop) (φ ψ : Formula Atom)
     (Z : State → Prop) : State → Prop :=
@@ -385,18 +415,28 @@ theorem existsUntilFun_mono (lts : LTS State Label)
   · exact Or.inl h
   · exact Or.inr ⟨hφ, label, t, hstep, hle t hZ⟩
 
-/-- The `EU` functional packaged as a monotone operator. -/
+/-- **The existential-until functional as a monotone map.** In a labelled transition system with
+a valuation of atoms, let $\varphi$ and $\psi$ be CTL formulas. The map sending a set $Z$ of
+states to the set of states $s$ such that either $s$ satisfies $\psi$, or $s$ satisfies $\varphi$
+and some transition leads from $s$ to a state in $Z$, is monotone for inclusion; this is that
+map, regarded as an order-preserving map on sets of states. -/
 def existsUntilOrderHom (lts : LTS State Label)
     (valuation : State → Atom → Prop) (φ ψ : Formula Atom) :
     (State → Prop) →o (State → Prop) :=
   ⟨existsUntilFun lts valuation φ ψ,
     existsUntilFun_mono lts valuation φ ψ⟩
 
-/-- `E[φ U ψ]` is the least fixed point of
-`Z ↦ ⟦ψ⟧ ∪ (⟦φ⟧ ∩ PreExists Z)`.  The inclusion of the fixed point in
-`E[φ U ψ]` is Park induction via `existsUntil_expansion`; the other
-inclusion is induction on the length of the witnessing finite run,
-unfolding the fixed point once per step. -/
+/-- **Existential until as a least fixed point.** In a labelled transition system with a
+valuation of atoms, let $\varphi$ and $\psi$ be CTL formulas, write $\mathrm{Sat}(\chi)$ for the
+set of states satisfying a formula $\chi$, and write $\mathrm{Pre}_\exists(Z)$ for the set of
+states having a transition into a set $Z$ of states. Then the set of states satisfying
+$\mathsf{E}[\varphi \,\mathsf{U}\, \psi]$ is the least fixed point of the monotone map
+$Z \mapsto \mathrm{Sat}(\psi) \cup (\mathrm{Sat}(\varphi) \cap \mathrm{Pre}_\exists(Z))$ on sets
+of states.
+
+One inclusion is Park induction via the one-step expansion of
+$\mathsf{E}[\varphi \,\mathsf{U}\, \psi]$; the other is induction on the length of the
+witnessing finite run, unfolding the fixed point once per step. -/
 theorem existsUntil_eq_lfp (φ ψ : Formula Atom) :
     (fun s => Satisfies lts valuation s (.existsUntil φ ψ)) =
       (existsUntilOrderHom lts valuation φ ψ).lfp := by
@@ -445,9 +485,12 @@ variable [Fintype Label] {lts : LTS State Label}
   {valuation : State → Atom → Prop}
 variable [∀ s μ t, Decidable (lts.Tr s μ t)]
 
-/-- The finite existential predecessor set: states with a step into
-`Z`.  It computes `PreExists` of the membership predicate of `Z`
-(`mem_preExistsFin`). -/
+/-- **Finite existential predecessor set.** Let a labelled transition system have finitely many
+states and finitely many labels, with decidable transitions. For a finite set $Z$ of states, its
+existential predecessor set is the finite set of states $s$ for which there are a label $a$ and a
+state $t \in Z$ with a transition from $s$ to $t$ labelled $a$.
+
+It agrees with the existential predecessor operator applied to membership in $Z$. -/
 def preExistsFin (lts : LTS State Label)
     [∀ s μ t, Decidable (lts.Tr s μ t)] (Z : Finset State) :
     Finset State :=
@@ -473,16 +516,31 @@ theorem preExistsFin_mono {Z₁ Z₂ : Finset State} (h : Z₁ ⊆ Z₂) :
 
 variable [DecidableEq State]
 
-/-- The finite set of states satisfying an existential until with side
-set `A` and target set `B`, as the least fixed point of
-`Z ↦ B ∪ (A ∩ preExistsFin Z)`. -/
+/-- **Finite existential-until set.** Let $\mathcal{T}$ be a labelled transition system with
+finitely many states and finitely many labels, decidable transitions and decidable equality of
+states, and let $A$ and $B$ be sets of states. For a set $Z$ of states write
+$\mathrm{Pre}_\exists(Z)$ for the set of states having a transition into $Z$. The
+existential-until set with side set $A$ and target set $B$ is obtained by applying the map
+$Z \mapsto B \cup (A \cap \mathrm{Pre}_\exists(Z))$ to the empty set $n$ times, where $n$ is the
+number of states.
+
+Since this map is monotone, the iteration has stabilized after $n$ steps and the result is its
+least fixed point. -/
 def eUntilFin (lts : LTS State Label)
     [∀ s μ t, Decidable (lts.Tr s μ t)] (A B : Finset State) :
     Finset State :=
   Finset.lfpFin (fun Z => B ∪ (A ∩ preExistsFin lts Z))
 
-/-- The finite set of states satisfying an existential globally with
-set `A`, as the greatest fixed point of `Z ↦ A ∩ preExistsFin Z`. -/
+/-- **Finite existential-globally set.** Let $\mathcal{T}$ be a labelled transition system with
+finitely many states and finitely many labels, decidable transitions and decidable equality of
+states, and let $A$ be a set of states. For a set $Z$ of states write
+$\mathrm{Pre}_\exists(Z)$ for the set of states having a transition into $Z$. The
+existential-globally set of $A$ is obtained by applying the map
+$Z \mapsto A \cap \mathrm{Pre}_\exists(Z)$ to the set of all states $n$ times, where $n$ is the
+number of states.
+
+Since this map is monotone, the iteration has stabilized after $n$ steps and the result is its
+greatest fixed point. -/
 def eGloballyFin (lts : LTS State Label)
     [∀ s μ t, Decidable (lts.Tr s μ t)] (A : Finset State) :
     Finset State :=
@@ -503,8 +561,16 @@ theorem eGloballyFin_fun_mono (lts : LTS State Label)
   exact Finset.inter_subset_inter (Finset.Subset.refl _)
     (preExistsFin_mono hZ)
 
-/-- `eUntilFin` computes `E[φ U ψ]` from sets computing `φ` and `ψ`,
-via `Finset.mem_lfpFin_iff_lfp` and `Satisfies.existsUntil_eq_lfp`. -/
+/-- **Correctness of the finite fixed-point computation of EU.** Let a labelled transition system
+have finitely many states and finitely many labels, with decidable transitions and decidable
+equality of states, and fix a valuation of the atoms. For a finite set $Z$ of states let
+$\mathrm{Pre}_\exists(Z)$ be the set of states with a transition into $Z$, and for finite sets
+$A$ and $B$ of states let $\mathrm{EU}_{\mathrm{fin}}(A, B)$ be the least fixed point of
+$Z \mapsto B \cup (A \cap \mathrm{Pre}_\exists(Z))$, computed by finite iteration. Let $\varphi$
+and $\psi$ be CTL formulas and $A$ and $B$ finite sets of states such that a state lies in $A$
+exactly when it satisfies $\varphi$, and lies in $B$ exactly when it satisfies $\psi$. Then every
+state $s$ lies in $\mathrm{EU}_{\mathrm{fin}}(A, B)$ if and only if $s$ satisfies
+$\mathsf{E}[\varphi \mathbin{\mathsf{U}} \psi]$. -/
 theorem mem_eUntilFin_iff {A B : Finset State} {φ ψ : Formula Atom}
     (hA : ∀ t, t ∈ A ↔ Satisfies lts valuation t φ)
     (hB : ∀ t, t ∈ B ↔ Satisfies lts valuation t ψ) (s : State) :
@@ -529,8 +595,15 @@ theorem mem_eUntilFin_iff {A B : Finset State} {φ ψ : Formula Atom}
     (lts := lts) (valuation := valuation) φ ψ) s
   exact hconv.trans (iff_of_eq heq).symm
 
-/-- `eGloballyFin` computes `EG φ` from a set computing `φ`, via
-`Finset.mem_gfpFin_iff_gfp` and `Satisfies.existsGlobally_eq_gfp`. -/
+/-- **Correctness of the finite fixed-point computation of EG.** Let a labelled transition system
+have finitely many states and finitely many labels, with decidable transitions and decidable
+equality of states, and fix a valuation of the atoms. For a finite set $Z$ of states let
+$\mathrm{Pre}_\exists(Z)$ be the set of states with a transition into $Z$, and for a finite set
+$A$ of states let $\mathrm{EG}_{\mathrm{fin}}(A)$ be the greatest fixed point of
+$Z \mapsto A \cap \mathrm{Pre}_\exists(Z)$, computed by finite iteration. Let $\varphi$ be a CTL
+formula and $A$ a finite set of states such that a state lies in $A$ exactly when it satisfies
+$\varphi$. Then every state $s$ lies in $\mathrm{EG}_{\mathrm{fin}}(A)$ if and only if $s$
+satisfies $\mathsf{EG}\,\varphi$. -/
 theorem mem_eGloballyFin_iff {A : Finset State} {φ : Formula Atom}
     (hA : ∀ t, t ∈ A ↔ Satisfies lts valuation t φ) (s : State) :
     s ∈ eGloballyFin lts A ↔
@@ -586,13 +659,15 @@ def sat (lts : LTS State Label)
       Finset.univ \
         (eUntilFin lts notψ badTarget ∪ eGloballyFin lts notψ)
 
-/-- Correctness of `sat`: membership in the computed set is
-satisfaction.  The induction is on the formula; temporal cases go
-through `mem_eUntilFin_iff` and `mem_eGloballyFin_iff`, and the
-`AU` case additionally identifies the hand-written bad-target set
-with satisfaction of the bad-target formula, via the induction
-hypotheses and `mem_preExistsFin` at `Finset.univ` (membership there
-is existence of a successor). -/
+/-- **Correctness of the CTL model checker.** Let a labelled transition system have finitely many
+states and finitely many labels, with decidable transitions and decidable equality of states, and
+let the valuation of the atoms be decidable. For every CTL formula $\varphi$ and every state $s$,
+the state $s$ lies in the set $\mathrm{sat}(\varphi)$ computed by the model checker if and only if
+$s$ satisfies $\varphi$.
+
+The proof is by induction on $\varphi$. The temporal cases use the correctness of the finite
+fixed-point computations of $\mathsf{EU}$ and $\mathsf{EG}$, and the $\mathsf{AU}$ case also
+identifies the computed bad-target set with the states satisfying the bad-target formula. -/
 theorem mem_sat {φ : Formula Atom} {s : State} :
     s ∈ sat lts valuation φ ↔ Satisfies lts valuation s φ := by
   induction φ generalizing s with
@@ -673,8 +748,12 @@ theorem mem_sat {φ : Formula Atom} {s : State} :
         true_and]
       rw [mem_eUntilFin_iff hA hbad s, mem_eGloballyFin_iff hA s]
 
-/-- The model checker as a boolean decision procedure: decide
-membership in the computed satisfaction set. -/
+/-- **The CTL model checker as a Boolean decision procedure.** Let $\mathcal{T}$ be a labelled
+transition system with finitely many states and finitely many labels, decidable transitions and
+decidable equality of states, and let $V$ be a decidable valuation of atoms at states. For a state
+$s$ and a CTL formula $\varphi$, the model checker returns true exactly when $s$ belongs to the
+set of states that the satisfaction-set algorithm computes for $\varphi$ in $\mathcal{T}$ under
+$V$. -/
 def check (lts : LTS State Label)
     (valuation : State → Atom → Prop)
     [∀ s μ t, Decidable (lts.Tr s μ t)]

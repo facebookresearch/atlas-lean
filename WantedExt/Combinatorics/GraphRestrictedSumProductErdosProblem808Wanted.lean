@@ -32,9 +32,12 @@ in `A` (one pair per edge); sums and products are taken along `E`. formal-conjec
 statement of this problem.
 -/
 
-/-- Erdős Problem 808: for all `c, ε > 0` and all large `n`, if `A` is a set of `n` positive
-integers and `E` is a graph on `A` (edges `(a, b)` with `a < b`) with at least `n^{1+c}` edges, then
-`max(|A +_E A|, |A ·_E A|) ≥ n^{1+c-ε}`. -/
+/-- **Erdős Problem 808 (sums and products along graphs).** The statement that for all real
+numbers $c > 0$ and $\varepsilon > 0$ and all sufficiently large natural numbers $n$ the following
+holds. Let $A$ be a set of $n$ positive integers and let $E$ be a finite set of pairs $(a, b)$ with
+$a, b \in A$ and $a < b$ (the edges of a graph on $A$) such that $|E| \ge n^{1+c}$. Write
+$A +_E A = \{a + b : (a, b) \in E\}$ and $A \cdot_E A = \{ab : (a, b) \in E\}$. Then
+$\max(|A +_E A|, |A \cdot_E A|) \ge n^{1+c-\varepsilon}$. -/
 def restrictedSumProductAlongGraphs : Prop :=
   ∀ c ε : ℝ, 0 < c → 0 < ε → ∀ᶠ n : ℕ in Filter.atTop, ∀ A : Finset ℕ, 0 ∉ A → A.card = n →
     ∀ E : Finset (ℕ × ℕ), (∀ p ∈ E, p.1 ∈ A ∧ p.2 ∈ A ∧ p.1 < p.2) →
@@ -42,11 +45,17 @@ def restrictedSumProductAlongGraphs : Prop :=
         (n : ℝ) ^ (1 + c - ε) ≤
           max ((E.image fun p => p.1 + p.2).card : ℝ) ((E.image fun p => p.1 * p.2).card : ℝ)
 
-/--
-Resolved false: Alon, Ruzsa and Solymosi constructed, for arbitrarily large `n`, sets of `n`
-integers with graphs of `≫ n^{5/3 - o(1)}` edges along which `max(|A +_G A|, |A ·_G A|) ≪ n^{4/3 +
-o(1)}`, and counterexamples in `ℕ` for every `0 < c < 1`; erdosproblems.com/808 lists the problem as
-disproved. Source: T. F. Bloom, Erdős Problems, Problem #808, https://www.erdosproblems.com/808
+/-- **Erdős Problem 808 is false.** There are real numbers $c > 0$ and $\varepsilon > 0$ such
+that for infinitely many natural numbers $n$ there are a set $A$ of $n$ positive integers and a
+finite set $E$ of pairs $(a, b)$ with $a, b \in A$ and $a < b$ (the edges of a graph on $A$)
+such that $|E| \ge n^{1+c}$ and
+$\max(|\{a + b : (a, b) \in E\}|, |\{ab : (a, b) \in E\}|) < n^{1+c-\varepsilon}$.
+
+Alon, Ruzsa and Solymosi constructed, for arbitrarily large $n$, sets of $n$ integers with
+graphs of $n^{5/3 - o(1)}$ edges along which both the sums and the products take at most
+$n^{4/3 + o(1)}$ values, and counterexamples in $\mathbb{N}$ for every $0 < c < 1$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #808, https://www.erdosproblems.com/808
 (status DISPROVED); resolution: N. Alon, I. Ruzsa and J. Solymosi, Sums, products and ratios along
 the edges of a graph, Publ. Mat. 64 (2020), 143-155, Theorem 3: for arbitrarily large m_0 there are
 a set A of m ≥ m_0 integers and a graph on A with Ω(m^{5/3}/log^{1/3} m) edges such that |A +_G A| +

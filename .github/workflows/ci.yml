@@ -1,3 +1,9 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
+
 name: CI
 
 on:
@@ -6,6 +12,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
   merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
 permissions:
@@ -19,7 +26,8 @@ jobs:
   preflight:
     name: repository integrity
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    # The import optimizer's subprocess and recovery regressions add several minutes.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -49,8 +57,40 @@ jobs:
           "$work_dir/venv/bin/python" scripts/check_algebra_notes_migration.py \
             --source-revision HEAD
 
+  # The graph as committed, with no Lean build. The wiki build's own check runs
+  # after `lean-facts` has unlinked any stale link, so it cannot catch one.
+  graph:
+    name: check the graph
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/v1/
+            !/Atlas/
+          sparse-checkout-cone-mode: false
+
+      - name: Read the reviewed Autoform pin
+        run: |
+          set -euo pipefail
+          ref="$(cat .github/autoform-ref)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid Autoform pin" >&2; exit 1; }
+          echo "AUTOFORM_REF=$ref" >> "$GITHUB_ENV"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+
+      - name: Check the declarations and dependencies
+        run: >-
+          uvx --from "git+https://github.com/facebookresearch/autoform-bot.git@${AUTOFORM_REF}"
+          autoform check blueprint --lean-root .
+
   build:
-    needs: preflight
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
@@ -58,12 +98,21 @@ jobs:
         with:
           persist-credentials: false
 
+      # A cold build of the libraries and their dependencies peaks at about
+      # 40 GB on this disk. Deleting unused SDKs takes one to three minutes, so
+      # do it only when less than 60 GiB is known to be free (the runner had
+      # 85 GB in November 2026).
       - name: Free disk space for Lean caches
         run: |
           set -euo pipefail
-          df -h /
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
-          df -h /
+          df -h / || true
+          # Unknown free space counts as too little: the second line of the
+          # report must be one decimal number.
+          free_kib="$(df --output=avail -k / | awk 'NR == 2 && NF == 1 && $1 ~ /^[0-9]+$/ { print $1 }')" || free_kib=""
+          if [[ -z "$free_kib" ]] || (( 10#$free_kib < 60 * 1024 * 1024 )); then
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h / || true
+          fi
 
       - name: Add swap for cold Lean builds
         run: |
@@ -96,14 +145,95 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
 
+      # Upstream packages that the Mathlib cache does not cover. They change only
+      # with lake-manifest.json or the toolchain; main's push run saves them.
+      - name: Restore package builds
+        id: package-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .lake/packages/cslib/.lake/build
+            .lake/packages/Physlib/.lake/build
+          key: lake-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      # A pull request or merge group first restores the build of the commit it
+      # is tested against: the first parent of the commit it checks out. Other
+      # runs first look for their own commit. All fall back to main's newest.
+      - name: Find the base build
+        id: base
+        run: |
+          set -euo pipefail
+          sha="$GITHUB_SHA"
+          if [[ "$GITHUB_EVENT_NAME" == pull_request || "$GITHUB_EVENT_NAME" == merge_group ]]; then
+            sha="$(git cat-file -p HEAD | awk '/^parent / && !seen {print $2; seen = 1}')"
+          fi
+          echo "sha=${sha:-$GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
       - name: Restore local build
         id: local-build-cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lake/build
-          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ steps.base.outputs.sha }}
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # A pull request audits only the modules its build rewrites; pushes and
+      # merge groups audit everything. The restored build passed the full audit
+      # of its own commit, so the scope needs that commit's audit policy.
+      - name: Record the restored build for a scoped audit
+        if: github.event_name == 'pull_request' && steps.local-build-cache.outputs.cache-matched-key != ''
+        continue-on-error: true
+        env:
+          RESTORED_KEY: ${{ steps.local-build-cache.outputs.cache-matched-key }}
+        run: |
+          set -euo pipefail
+          git fetch --quiet --no-tags --depth=1 origin "${RESTORED_KEY##*-}"
+          if python3 scripts/audit_rebuilt_modules.py record "$RUNNER_TEMP/restored-build.json" FETCH_HEAD; then
+            echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
+          fi
+
+      # The native tests of the audit tools depend only on the runner image and on
+      # the files fingerprinted here: this workflow, which runs them, the pins,
+      # every tracked script except JSON data, and the modules
+      # test_compiled_audit_native.py builds. The fingerprint holds their modes
+      # and the bytes checked out, which the tests run. Pull requests and builds
+      # of main always run the tests, and a build of main that passes them saves
+      # the fingerprint in main's cache. A merge group with a saved fingerprint
+      # skips them. With no image version or no fingerprint, the tests run.
+      - name: Fingerprint the audit tools' inputs
+        id: audit-tools-inputs
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          [[ -n "${ImageVersion:-}" ]] || exit 0
+          specs=(
+            .github/workflows/ci.yml lean-toolchain lakefile.toml lake-manifest.json
+            scripts ':(exclude,glob)scripts/**/*.json' ':(exclude,glob)scripts/**/*.jsonl'
+            MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean
+            MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean
+            MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean
+            MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean
+          )
+          # Any failure leaves no fingerprint, so the tests run.
+          digest="$({
+            git ls-files --stage -z -- "${specs[@]}" || exit 1
+            git ls-files -z -- "${specs[@]}" | xargs -0 -r sha256sum --
+          } | sha256sum | cut -d ' ' -f 1)"
+          echo "key=audit-tools-tested-${RUNNER_OS}-${ImageVersion}-${digest}" >> "$GITHUB_OUTPUT"
+
+      - name: Look for a build of main that passed the audit tools' tests
+        id: audit-tools
+        if: github.event_name == 'merge_group' && steps.audit-tools-inputs.outputs.key != ''
+        continue-on-error: true
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/audit-tools-tested
+          key: ${{ steps.audit-tools-inputs.outputs.key }}
+
+      - name: Test the declaration collision check
+        if: steps.audit-tools.outputs.cache-hit != 'true'
+        run: python3 -m unittest discover -s scripts -p test_declaration_collisions_native.py -v
 
       # Each of these peaks at 13-15 GB when built alone. Lake builds several
       # modules at once; on this 16 GB runner the three together exhaust memory
@@ -112,7 +242,21 @@ jobs:
       # one fails, the full build is skipped: it would retry that module
       # alongside the others.
       - name: Test initialized compiled-audit isolation
+        if: steps.audit-tools.outputs.cache-hit != 'true'
         run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
+
+      - name: Write the record of the audit tools' tests
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.audit-tools-inputs.outputs.key != ''
+        continue-on-error: true
+        run: printf '%s\n' "$GITHUB_SHA" > "$RUNNER_TEMP/audit-tools-tested"
+
+      - name: Save that a build of main passed the audit tools' tests
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.audit-tools-inputs.outputs.key != ''
+        continue-on-error: true
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/audit-tools-tested
+          key: ${{ steps.audit-tools-inputs.outputs.key }}
 
       - name: Build memory-heavy modules one at a time
         run: |
@@ -126,7 +270,14 @@ jobs:
           done
           exit "$status"
 
+      # In a merge group, scripts/check.sh stops at its first failing check,
+      # so `build` reports the failure without waiting for the checks after
+      # it (the compiled audit takes minutes); the queue acts only on check
+      # conclusions. Pull requests and pushes run every check, so an author
+      # sees every failure in one run.
       - name: Build extension libraries
+        env:
+          ATLAS_CHECK_FAIL_FAST: ${{ github.event_name == 'merge_group' && '1' || '0' }}
         run: scripts/check.sh build
 
       - name: Check the bounded codec lesson
@@ -138,9 +289,46 @@ jobs:
       - name: Check the IMP invariant and variant lesson
         run: lake env lean -DwarningAsError=true docs/teaching/examples/IMPInvariants.lean
 
+      # About three quarters of the build's bytes are per-module setup files
+      # that Lake writes and reads only while it compiles that module.
+      - name: Drop Lake's setup files before saving the build
+        if: success() && github.event_name != 'pull_request'
+        continue-on-error: true
+        run: find .lake -path '*.lake/build/ir/*' -name '*.setup.json' -delete
+
       - name: Save local build from main
         if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.local-build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lake/build
           key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+
+      - name: Save package builds from main
+        if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.package-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .lake/packages/cslib/.lake/build
+            .lake/packages/Physlib/.lake/build
+          key: lake-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      # Merge-group caches are scoped to the queue's ref, where pull requests
+      # cannot read them. build-cache.yml saves this fully checked build for
+      # main once the queue fast-forwards main to this commit.
+      - name: Pack the merge group's build
+        id: pack
+        if: success() && github.event_name == 'merge_group'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          tar -C .lake -cf - build | zstd -T0 -q -o "$RUNNER_TEMP/lake-build.tar.zst"
+
+      - name: Upload the merge group's build
+        if: success() && steps.pack.outcome == 'success'
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lake-build-${{ github.sha }}
+          path: ${{ runner.temp }}/lake-build.tar.zst
+          retention-days: 1
+          compression-level: 0

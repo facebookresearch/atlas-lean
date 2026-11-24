@@ -30,7 +30,7 @@ equivalent. This file proves
   `GL ⊢ H ↔ A(H)`. This covers `¬□p` (fixed point `¬□¬⊤`, equivalent to `¬□⊥`), `□p`,
   `□(p → q)` and `□¬p`. The explicit formula is derived here.
 
-The general existence theorem (any number of boxed occurrences) is recorded in `WantedExt`.
+The general existence theorem is proved in `ProvabilityLogic/FixedPointExistence.lean`.
 
 Both proofs are GL-derivations obtained from finitely many instances of Löb's axiom and the
 completeness of K4 (`derivable_K4_iff`): the K4 part is checked on transitive Kripke models, where

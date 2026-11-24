@@ -16,8 +16,8 @@ public import Mathlib.Logic.Relation
 /-!
 # Termination of CDCL without restarts or clause deletion
 
-The abstract CDCL system over the canonical CNF representation `Cslib.Logic.PL.CNF`, in which a
-literal is a pair `(variable, polarity)` and a clause is a list of literals. A state is a trail
+The abstract CDCL system over the canonical CNF representation `Cslib.Logic.LegacyPL.CNF`, in which
+a literal is a pair `(variable, polarity)` and a clause is a list of literals. A state is a trail
 of assigned literals, newest first, together with the finite set of learned clauses
 (`Finset CNFClause`). `CDCLStep F` has two rules:
 
@@ -42,7 +42,7 @@ pushed by a later `decide`. Restarts and clause deletion are excluded.
 
 namespace Cslib.Algorithms.SAT.CDCL
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- The clause `C` is a semantic consequence of the formula `F`: every assignment satisfying `F`
 satisfies `C`. -/

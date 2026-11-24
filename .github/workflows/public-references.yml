@@ -1,0 +1,206 @@
+name: Public references
+
+# merge_group uses the event ref's workflow definition, not the base checkout's
+# workflow. Before requiring this check, protect workflow changes with enforced
+# trusted review, or require a workflow from a separately protected ruleset source.
+# Checking out base code below protects the scanner, not this workflow definition.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+  merge_group:
+    types: [checks_requested]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: public-references-${{ github.event_name }}-${{ github.event.merge_group.head_sha || github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  public-references:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      GIT_TERMINAL_PROMPT: "0"
+      GIT_NO_LAZY_FETCH: "1"
+    steps:
+      - name: Validate event
+        id: event
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import urllib.parse
+          import urllib.request
+
+          def require(condition):
+              if not condition:
+                  raise ValueError("invalid event")
+
+          def sha(value):
+              require(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{40}", value))
+              return value
+
+          def ref(value):
+              require(isinstance(value, str) and value.startswith("refs/heads/"))
+              subprocess.run(["git", "check-ref-format", value], check=True,
+                             capture_output=True, timeout=30)
+              return value
+
+          try:
+              with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as source:
+                  event = json.load(source)
+              repository = os.environ["GITHUB_REPOSITORY"]
+              require(re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository))
+              require(event["repository"]["full_name"] == repository)
+              kind = os.environ["GITHUB_EVENT_NAME"]
+              event_sha = sha(os.environ["GITHUB_SHA"])
+              number, head_ref = "", ""
+              if kind == "merge_group":
+                  require(event["action"] == "checks_requested")
+                  group = event["merge_group"]
+                  base, head = sha(group["base_sha"]), sha(group["head_sha"])
+                  require(base != head and head == event_sha)
+                  ref(group["base_ref"])
+                  head_ref = ref(group["head_ref"])
+                  require(head_ref.startswith("refs/heads/gh-readonly-queue/"))
+                  require(head_ref == os.environ["GITHUB_REF"])
+              elif kind == "pull_request_target":
+                  require(event["action"] in (
+                      "opened", "synchronize", "reopened", "edited", "ready_for_review"))
+                  pr = event["pull_request"]
+                  require(type(pr["number"]) is int and pr["number"] > 0)
+                  require(type(event["number"]) is int and event["number"] == pr["number"])
+                  require(pr["base"]["repo"]["full_name"] == repository)
+                  base, head = sha(pr["base"]["sha"]), sha(pr["head"]["sha"])
+                  base_ref = ref("refs/heads/" + pr["base"]["ref"])
+                  # A run for a PR into a non-default branch can carry the
+                  # default branch's ref; either way the scanner below is the
+                  # default branch and the range comes from the PR's API record.
+                  default_ref = "refs/heads/" + event["repository"]["default_branch"]
+                  require(os.environ["GITHUB_REF"] in (base_ref, default_ref))
+                  number = str(pr["number"])
+              else:
+                  raise ValueError("unsupported event")
+              # Resolve the protected default branch to one immutable scanner
+              # commit; a PR targeting another branch cannot choose scanner code.
+              default_branch = event["repository"]["default_branch"]
+              ref("refs/heads/" + default_branch)
+              token = os.environ["GH_TOKEN"]
+              require(bool(token))
+              request = urllib.request.Request(
+                  "https://api.github.com/repos/" + repository + "/commits/"
+                  + urllib.parse.quote(default_branch, safe=""),
+                  headers={"Authorization": "Bearer " + token,
+                           "Accept": "application/vnd.github+json",
+                           "X-GitHub-Api-Version": "2022-11-28"},
+              )
+              with urllib.request.urlopen(request, timeout=45) as response:
+                  scanner_sha = sha(json.load(response)["sha"])
+              with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+                  for key, value in (("kind", kind), ("base_sha", base),
+                                     ("head_sha", head), ("head_ref", head_ref),
+                                     ("pr_number", number), ("scanner_sha", scanner_sha)):
+                      output.write(f"{key}={value}\n")
+          except (KeyError, TypeError, ValueError, OSError, subprocess.SubprocessError):
+              raise SystemExit("Invalid public-reference event")
+          PY
+
+      # Only protected default-branch code is checked out, pinned to its resolved
+      # commit. Proposed code is fetched as Git data, never checked out.
+      - name: Check out trusted base
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ steps.event.outputs.scanner_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check complete public PR content
+        if: steps.event.outputs.kind == 'pull_request_target'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.event.outputs.pr_number }}
+          PR_HEAD: ${{ steps.event.outputs.head_sha }}
+        run: >-
+          python3 scripts/check_public_references.py
+          --github-repository "$REPOSITORY"
+          --pr "$PR_NUMBER"
+          --expected-head "$PR_HEAD"
+
+      - name: Check complete merge group
+        if: steps.event.outputs.kind == 'merge_group'
+        env:
+          BASE_SHA: ${{ steps.event.outputs.base_sha }}
+          HEAD_SHA: ${{ steps.event.outputs.head_sha }}
+          HEAD_REF: ${{ steps.event.outputs.head_ref }}
+          SCANNER_SHA: ${{ steps.event.outputs.scanner_sha }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          import subprocess
+          import sys
+
+          def git(*args):
+              return subprocess.run(
+                  ["git", "-c", "core.hooksPath=/dev/null", *args],
+                  check=True, capture_output=True, timeout=180,
+              ).stdout.decode("utf-8").strip()
+
+          def require(condition):
+              if not condition:
+                  raise ValueError("invalid merge group")
+
+          try:
+              base, head, head_ref = (os.environ[k] for k in ("BASE_SHA", "HEAD_SHA", "HEAD_REF"))
+              scanner = os.environ["SCANNER_SHA"]
+              require(all(re.fullmatch(r"[0-9a-f]{40}", value) for value in (base, head, scanner)))
+              require(head == os.environ["GITHUB_SHA"] and head_ref == os.environ["GITHUB_REF"])
+              require(head_ref.startswith("refs/heads/gh-readonly-queue/"))
+              git("check-ref-format", head_ref)
+              repository = os.environ["GITHUB_REPOSITORY"]
+              require(re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository))
+              origin = "https://github.com/" + repository
+              require(git("remote", "get-url", "origin") in (origin, origin + ".git"))
+              require(git("rev-parse", "HEAD") == scanner)
+              require(git("rev-parse", "--is-shallow-repository") == "false")
+              git("fetch", "--no-tags", "origin", base)
+              git("fetch", "--no-tags", "origin", head_ref)
+              require(git("rev-parse", "FETCH_HEAD") == head)
+              require(all(git("cat-file", "-t", value) == "commit" for value in (base, head)))
+              git("merge-base", "--is-ancestor", base, head)
+              # Keep the trusted worktree; the existing CLI reads the combined
+              # range, including intermediate commits, without executing it.
+              status = subprocess.run([
+                  sys.executable, "scripts/check_public_references.py",
+                  "--base", base, "--head", head,
+              ], check=False).returncode
+              # ls-remote patterns also match suffixes of other refs. Accept
+              # exactly one row for this full queue ref, never a suffix alias.
+              remote = git("ls-remote", "--exit-code", "origin", head_ref)
+              exact = []
+              for row in remote.splitlines():
+                  fields = row.split("\t")
+                  require(len(fields) == 2)
+                  advertised_sha, advertised_ref = fields
+                  require(re.fullmatch(r"[0-9a-f]{40}", advertised_sha))
+                  git("check-ref-format", advertised_ref)
+                  if advertised_ref == head_ref:
+                      exact.append(advertised_sha)
+              require(exact == [head])
+              require(git("rev-parse", "HEAD") == scanner)
+          except (KeyError, TypeError, ValueError, OSError, subprocess.SubprocessError):
+              raise SystemExit("Merge-group scan could not verify the complete event range")
+          raise SystemExit(status)
+          PY

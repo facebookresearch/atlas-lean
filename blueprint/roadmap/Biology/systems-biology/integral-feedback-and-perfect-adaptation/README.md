@@ -2,9 +2,7 @@
 
 ## Linear time-invariant systems
 
-- [Single-input single-output linear time-invariant system](linear-system.md)
-- [Vector field of a linear time-invariant system](field.md)
-- [Output of a linear time-invariant system](output.md)
+See [single-input single-output linear systems](../../../Analysis/control-theory/README.md#single-input-single-output-linear-systems) in Analysis.
 
 ## Perfect adaptation and integral feedback
 

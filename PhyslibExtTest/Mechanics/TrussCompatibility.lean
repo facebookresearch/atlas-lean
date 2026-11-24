@@ -24,7 +24,7 @@ unit row, supported virtual work on the mechanism
 on a triangle and its supported null mode, and unique
 supported response on triangle and focused fixtures,
 and reciprocal work on the focused fixture, and
-load-parameter identifiability checks, unit-load response checks, finite load hull checks, and absolute envelope checks.
+load-parameter identifiability checks, unit-load response checks, finite load hull checks, absolute envelope checks, and reduced determinate statics checks.
 
 ## i. Overview
 
@@ -44,6 +44,7 @@ No new definitions or results are introduced here.
 - F. Load-parameter identifiability
 - G. Unit-load response
 - H. Finite load hull
+- I. Reduced determinate statics
 
 ## iv. References
 
@@ -136,7 +137,7 @@ example : (axialCompatibility r3 ![0] ![1] * S6)ᵀ *ᵥ (![2] : Fin 1 → ℝ)
   obtain ⟨j, k⟩ := q
   fin_cases j <;> fin_cases k <;>
     simp [Matrix.mulVec_apply, Matrix.transpose_apply, axialCompatibility,
-      Matrix.of_apply, dotProduct, fB, r3] <;> norm_num
+      Matrix.of_apply, dotProduct, fB, r3, -Matrix.transpose_of] <;> norm_num
 
 /-- Forward direction at the nonzero virtual displacement
 `u6`: internal and external virtual work are both `16`.
@@ -151,7 +152,7 @@ example : (![2] : Fin 1 → ℝ)
     obtain ⟨j, k⟩ := q
     fin_cases j <;> fin_cases k <;>
       simp [Matrix.mulVec_apply, Matrix.transpose_apply, axialCompatibility,
-        Matrix.of_apply, dotProduct, fB, r3] <;> norm_num
+        Matrix.of_apply, dotProduct, fB, r3, -Matrix.transpose_of] <;> norm_num
   refine ⟨(supported_virtualWork_iff r3 ![0] ![1] S6 _ _).mp heq u6, ?_⟩
   simp only [dotProduct, u6, fB, Fintype.sum_prod_type, Fin.sum_univ_three,
     Fin.sum_univ_two]
@@ -502,7 +503,7 @@ private lemma supportedStiffnessF :
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.diagonal,
-      axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two] <;> norm_num
+      axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;> norm_num
 
 /-- Focused check as a truss instance:
 `K *ᵥ ![3, 5] = ![0, 6]`, with `![3, 5]` the unique
@@ -1113,7 +1114,7 @@ example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1, 1] ![2, 0]
       ext i j
       fin_cases i <;> fin_cases j <;>
         simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.diagonal,
-          axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two] <;>
+          axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;>
         norm_num
     rw [hK]
     funext i
@@ -1632,6 +1633,211 @@ example :
   rw [hv]
   norm_num
 
+/-! ## I. Reduced determinate statics -/
+
+/-- W1 data: `Bs = !![2, 0; 1, -1]` is invertible. -/
+private lemma detBsW1 :
+    IsUnit (!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ).det := by
+  rw [isUnit_iff_ne_zero, Matrix.det_fin_two]
+  norm_num
+
+/-- W1 first solution: weights `![1/2, 3]`, displacement
+`![3, 5]`, load `![0, 6]`. -/
+private lemma w1SolutionOne :
+    ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ
+      * Matrix.diagonal ![1 / 2, 3] * !![2, 0; 1, -1]) *ᵥ ![3, 5]
+        = ![0, 6] := by
+  funext i
+  fin_cases i <;>
+    norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+      Matrix.mulVec_mulVec, Matrix.mulVec_diagonal, Matrix.mul_apply,
+      Matrix.transpose_apply, Matrix.diagonal]
+
+/-- W1 second solution: weights `![1, 1]`, displacement
+`![3/2, 15/2]`, same load. -/
+private lemma w1SolutionTwo :
+    ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ
+      * Matrix.diagonal ![1, 1] * !![2, 0; 1, -1]) *ᵥ ![3 / 2, 15 / 2]
+        = ![0, 6] := by
+  funext i
+  fin_cases i <;>
+    norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+      Matrix.mulVec_mulVec, Matrix.mulVec_diagonal, Matrix.mul_apply,
+      Matrix.transpose_apply, Matrix.diagonal]
+
+/-- Both W1 elastic force vectors are `![3, -6]`, while
+the displacements differ. -/
+example : Matrix.diagonal ![1 / 2, 3]
+      *ᵥ ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3, 5])
+        = ![3, -6]
+    ∧ Matrix.diagonal ![1, 1]
+      *ᵥ ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3 / 2, 15 / 2])
+        = ![3, -6]
+    ∧ (![3, 5] : Fin 2 → ℝ) ≠ ![3 / 2, 15 / 2] := by
+  refine ⟨?_, ?_, by norm_num⟩ <;>
+    · funext i
+      fin_cases i <;>
+        norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+          Matrix.mulVec_diagonal]
+
+/-- W1 through the statics identification: the elastic
+force is `(Bsᵀ)⁻¹ *ᵥ f`. -/
+example : Matrix.diagonal ![1 / 2, 3]
+      *ᵥ ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3, 5])
+    = ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ)⁻¹ *ᵥ ![0, 6] :=
+  reduced_memberForce_eq_inv_mulVec _ detBsW1 _ w1SolutionOne
+
+/-- W1 force independence of the axial weights. -/
+example : Matrix.diagonal ![1 / 2, 3]
+      *ᵥ ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3, 5])
+    = Matrix.diagonal ![1, 1]
+      *ᵥ ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3 / 2, 15 / 2]) :=
+  reduced_memberForce_indep_of_diagonal _ detBsW1 _ _
+    w1SolutionOne w1SolutionTwo
+
+/-- W1 unique supported solution. -/
+example : ∃! u : Fin 2 → ℝ,
+    ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ
+      * Matrix.diagonal ![1 / 2, 3] * !![2, 0; 1, -1]) *ᵥ u = ![0, 6] :=
+  reduced_stiffness_existsUnique _ detBsW1 _
+    (by intro e; fin_cases e <;> norm_num) _
+
+/-- Transpose guard at W1: equilibrium uses `Bsᵀ`, not
+`Bs` (`Bs *ᵥ N = ![6, 9] ≠ f`). -/
+example : (!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3, -6]
+      = ![6, 9]
+    ∧ (!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ *ᵥ ![3, -6]
+      = ![0, 6] := by
+  constructor <;>
+    · funext i
+      fin_cases i <;>
+        norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+          Matrix.transpose_apply]
+
+/-- The focused supported compatibility matrix is the
+W1 matrix `!![2, 0; 1, -1]`. -/
+private lemma supportedBsF :
+    axialCompatibility rF ![0, 1] ![1, 2] * SF = !![2, 0; 1, -1] := by
+  ext e f
+  fin_cases e <;> fin_cases f <;>
+    simp [Matrix.mul_apply, axialCompatibility, SF, Matrix.of_apply] <;>
+    norm_num
+
+/-- W1 as a truss: the separation-form elastic
+coefficient vector is the reduced statics solution. -/
+example : Matrix.diagonal ![1 / 2, 3]
+      *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5])
+    = ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ)⁻¹ *ᵥ ![0, 6] := by
+  have hdet : IsUnit (axialCompatibility rF ![0, 1] ![1, 2] * SF).det := by
+    rw [supportedBsF]
+    exact detBsW1
+  have hu : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]
+      = ![0, 6] := by
+    rw [supportedStiffnessF]
+    funext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  exact (truss_reduced_memberCoefficient_eq_inv_mulVec rF ![0, 1] ![1, 2] SF
+    hdet _ hu).1
+
+/-- W1 as a truss: virtual-work equilibrium at the two
+basis supported displacements. -/
+example : (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]))
+      ⬝ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![1, 0])
+        = (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![1, 0]
+    ∧ (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]))
+      ⬝ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![0, 1])
+        = (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![0, 1] := by
+  have hdet : IsUnit (axialCompatibility rF ![0, 1] ![1, 2] * SF).det := by
+    rw [supportedBsF]
+    exact detBsW1
+  have hu : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]
+      = ![0, 6] := by
+    rw [supportedStiffnessF]
+    funext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  have h := (truss_reduced_memberCoefficient_eq_inv_mulVec rF ![0, 1] ![1, 2] SF
+    hdet _ hu).2
+  exact ⟨h _, h _⟩
+
+/-- W1 physical axial forces: member lengths `2` and
+`√2` rescale the coefficient vector `![3, -6]` to
+`![6, -6 √2]`. -/
+example : (fun e => (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5])) e
+      * memberLength rF ![0, 1] ![1, 2] e)
+    = ![6, -6 * Real.sqrt 2] := by
+  funext e
+  fin_cases e
+  · simp [memberLength, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+      supportedBsF]
+    norm_num
+  · simp [memberLength, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+      supportedBsF]
+    norm_num
+
+/-- Singular control: `Bs = !![1, 1; 1, 1]` is not
+invertible, and two positive weight choices give two
+distinct equilibrating elastic forces for `f = ![1, 1]`
+(determinacy does real work). -/
+example : ¬ IsUnit (!![1, 1; 1, 1] : Matrix (Fin 2) (Fin 2) ℝ).det := by
+  rw [isUnit_iff_ne_zero, Matrix.det_fin_two]
+  norm_num
+
+example : ((!![1, 1; 1, 1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ
+        * Matrix.diagonal ![1, 1] * !![1, 1; 1, 1]) *ᵥ ![1 / 4, 1 / 4]
+      = ![1, 1]
+    ∧ Matrix.diagonal ![1, 1]
+        *ᵥ ((!![1, 1; 1, 1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![1 / 4, 1 / 4])
+      = ![1 / 2, 1 / 2]
+    ∧ ((!![1, 1; 1, 1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ
+        * Matrix.diagonal ![1, 3] * !![1, 1; 1, 1]) *ᵥ ![1 / 8, 1 / 8]
+      = ![1, 1]
+    ∧ Matrix.diagonal ![1, 3]
+        *ᵥ ((!![1, 1; 1, 1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![1 / 8, 1 / 8])
+      = ![1 / 4, 3 / 4]
+    ∧ (![1 / 2, 1 / 2] : Fin 2 → ℝ) ≠ ![1 / 4, 3 / 4] := by
+  refine ⟨?_, ?_, ?_, ?_, by norm_num⟩ <;>
+    · funext i
+      fin_cases i <;>
+        norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+          Matrix.mulVec_mulVec, Matrix.mulVec_diagonal,
+          Matrix.transpose_apply, Matrix.mul_apply, Matrix.diagonal]
+
+/-- Zero-weight control: with `Bs = 1` and weights
+`![1, 0]`, the load `![0, 1]` has no supported solution,
+so the nonvanishing hypothesis of the existence result
+is essential. -/
+example : ¬ ∃ u : Fin 2 → ℝ,
+    (((1 : Matrix (Fin 2) (Fin 2) ℝ))ᵀ * Matrix.diagonal ![1, 0]
+      * (1 : Matrix (Fin 2) (Fin 2) ℝ)) *ᵥ u = ![0, 1] := by
+  rintro ⟨u, hu⟩
+  have h1 := congrFun hu 1
+  simp [Matrix.mulVec, dotProduct] at h1
+
+/-- Rectangular (indeterminate) shadow, outside the
+square statements: two members, one free coordinate; the
+elastic force split depends on the weights
+(`(1/2, 1/2)` vs `(1/4, 3/4)`). -/
+example : Matrix.diagonal ![1, 1]
+      *ᵥ ((!![1; 1] : Matrix (Fin 2) (Fin 1) ℝ) *ᵥ ![1 / 2])
+        = ![1 / 2, 1 / 2]
+    ∧ Matrix.diagonal ![1, 3]
+      *ᵥ ((!![1; 1] : Matrix (Fin 2) (Fin 1) ℝ) *ᵥ ![1 / 4])
+        = ![1 / 4, 3 / 4] := by
+  constructor <;>
+    · funext i
+      fin_cases i <;>
+        norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+          Matrix.mulVec_diagonal]
+
 #print axioms Mechanics.TrussCompatibility.supported_posDef_iff
 #print axioms
   Mechanics.TrussCompatibility.supported_posDef_iff_ker_eq_bot
@@ -1691,5 +1897,17 @@ example :
   Mechanics.TrussCompatibility.supported_abs_unitLoadResponse_sum_smul_le_sup'_abs
 #print axioms
   Mechanics.TrussCompatibility.supported_abs_convexCombination_output_le_sup'_abs
+
+#print axioms Mechanics.TrussCompatibility.reduced_equilibrium_of_elastic
+#print axioms Mechanics.TrussCompatibility.reduced_equilibrium_iff_eq_inv
+#print axioms Mechanics.TrussCompatibility.reduced_memberForce_eq_inv_mulVec
+#print axioms
+  Mechanics.TrussCompatibility.reduced_memberForce_indep_of_diagonal
+#print axioms Mechanics.TrussCompatibility.reduced_stiffness_existsUnique
+#print axioms
+  Mechanics.TrussCompatibility.reduced_stiffness_existsUnique_of_pos
+#print axioms
+  Mechanics.TrussCompatibility.truss_reduced_memberCoefficient_eq_inv_mulVec
+#print axioms Mechanics.TrussCompatibility.truss_reduced_axialForce_eq
 
 end PhyslibExtTest.Mechanics.TrussCompatibility
