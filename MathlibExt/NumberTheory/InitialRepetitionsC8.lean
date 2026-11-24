@@ -781,8 +781,15 @@ private theorem thetaPairs_card (primed : Bool) (N : ℕ) :
     change (u x, v y) = (a, b)
     congr 1 <;> cases primed <;> norm_num [residue] at * <;> omega
 
-/-- The coefficient counting an even staircase and a subset of its optional parts vanishes
-when the discriminant is nonsquare. -/
+/-- Let $N$ be a natural number such that $15N + 4$ is not a square in $\mathbb{N}$. For each
+$0 \le j \le N$, put $A_{j,N} = \{1,\ldots,j\} \cup \{2i \mid i \in \mathbb{N},\ j < i \le N\}$.
+Writing $[X^N]$ for the coefficient of $X^N$ in a formal power series over
+$\mathbb{Z}/2\mathbb{Z}$, we have
+
+$$
+[X^N]\left(\sum_{j=0}^{N} X^{j^2+j} \prod_{a \in A_{j,N}} (1+X^a)\right) = 0.
+$$
+-/
 public theorem coeff_staircase_eq_zero (N : ℕ) (hN : ¬ IsSquare (15 * N + 4)) :
     coeff N (∑ j ∈ range (N + 1), (X : PowerSeries (ZMod 2)) ^ (j ^ 2 + j) *
       ∏ a ∈ Icc 1 j ∪ (Ioc j N).image (fun i => 2 * i), (1 + X ^ a)) = 0 := by
