@@ -4,7 +4,7 @@ Quantities computed from an estimated genealogy are conditional expectations or 
 
 ## Depends on
 
-- [Duality between site and branch statistics](../../../Biology/coalescent-theory/ancestral-recombination-graph/site-versus-branch-statistics.md)
+- [Duality between site and branch statistics](site-versus-branch-statistics.md)
 
 ## Expansion
 

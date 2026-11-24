@@ -4,9 +4,9 @@ Let a favored allele $B$ at a selected locus sweep through a population of $2N$ 
 
 ## Depends on
 
-- [Logistic trajectory of a selective sweep](../../../Biology/detecting-selection/selective-sweeps/sweep-traj.md)
-- [Duration of a complete deterministic sweep](../../../Biology/detecting-selection/selective-sweeps/sweep-duration-full.md)
-- [Joint escape of sampled lineages from a selective sweep](../../../Biology/coalescent-theory/genealogies-under-selection/escape-from-a-sweep-by-recombination.md)
+- [Logistic trajectory of a selective sweep](../../../detecting-selection/selective-sweeps/sweep-traj.md)
+- [Duration of a complete deterministic sweep](../../../detecting-selection/selective-sweeps/sweep-duration-full.md)
+- [Joint escape of sampled lineages from a selective sweep](escape-from-a-sweep-by-recombination.md)
 
 ## Expansion
 

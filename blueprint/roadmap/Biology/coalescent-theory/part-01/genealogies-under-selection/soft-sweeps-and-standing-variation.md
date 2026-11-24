@@ -8,8 +8,8 @@ For adaptation from standing variation, Hermisson and Pennings (2005) approximat
 
 ## Depends on
 
-- [Ewens sampling formula](../../../Biology/population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md)
-- [Law of the number of alleles](../../../Biology/detecting-selection/ewens-watterson-test/num-alleles-prob-eq.md)
+- [Ewens sampling formula](../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md)
+- [Law of the number of alleles](../../../detecting-selection/ewens-watterson-test/num-alleles-prob-eq.md)
 
 ## Expansion
 

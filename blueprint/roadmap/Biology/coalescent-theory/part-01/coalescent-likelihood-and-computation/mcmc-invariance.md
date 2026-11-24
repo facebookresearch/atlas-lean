@@ -8,7 +8,7 @@ $$h = \min\Bigl(1, \frac{\pi(G')\,Q(G' \to G)}{\pi(G)\,Q(G \to G')}\Bigr)$$
 
 ## Depends on
 
-- [Detailed balance for Metropolis–Hastings](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/markov-chain-monte-carlo/mh-detailed-balance.md)
+- [Detailed balance for Metropolis–Hastings](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/markov-chain-monte-carlo/mh-detailed-balance.md)
 
 ## Expansion
 

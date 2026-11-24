@@ -26,8 +26,10 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under a population bottleneck](site-frequency-spectrum-under-a-population-bottl/README.md)
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
-- [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
-- [Ancestral recombination graph](ancestral-recombination-graph/README.md)
-- [Identifiability of demographic histories](identifiability-of-demographic-histories/README.md)
-- [Coalescent likelihoods and sampling recursions](coalescent-likelihood-and-computation/README.md)
-- [Genealogies under selection](genealogies-under-selection/README.md)
+## [Part 1](part-01/README.md)
+
+- [Recoverable demographic history from finite genomic samples](part-01/recoverable-demographic-history-from-finite-genomic-samples.md)
+- [Ancestral recombination graph](part-01/ancestral-recombination-graph/README.md)
+- [Identifiability of demographic histories](part-01/identifiability-of-demographic-histories/README.md)
+- [Coalescent likelihoods and sampling recursions](part-01/coalescent-likelihood-and-computation/README.md)
+- [Genealogies under selection](part-01/genealogies-under-selection/README.md)

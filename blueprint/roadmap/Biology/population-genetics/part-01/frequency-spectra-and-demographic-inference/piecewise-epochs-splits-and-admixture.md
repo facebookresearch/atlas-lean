@@ -8,8 +8,8 @@ with $\delta$ the Dirac delta (their equation (2)), and a population is removed 
 
 ## Depends on
 
-- [Joint site-frequency spectra of several populations](../../../Biology/population-genetics/frequency-spectra-and-demographic-inference/joint-multi-population-sfs.md)
-- [Piecewise-constant population-size history](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/piecewise-history.md)
+- [Joint site-frequency spectra of several populations](joint-multi-population-sfs.md)
+- [Piecewise-constant population-size history](../../../coalescent-theory/site-frequency-spectrum-under-variable-populatio/piecewise-history.md)
 
 ## Expansion
 

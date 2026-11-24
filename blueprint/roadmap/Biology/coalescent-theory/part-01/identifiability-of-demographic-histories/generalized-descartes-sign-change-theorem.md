@@ -8,7 +8,7 @@ Bhaskar and Song (2014, Theorem 4) prove a generalized Descartes rule of signs: 
 2. The first-coalescence means as values of a Laplace transform: $c_m = \int_0^\infty\tilde\eta(\tau)e^{-\binom m2\tau}\,d\tau$ for the time-rescaled history $\tilde\eta$ (their eq. (4)).
 3. Sign-change complexity of a function family, and its value for the constant, exponential and generalized-exponential families.
 4. The identifiability theorem: two distinct histories with $K$ pieces have distinct $(c_2, \dots, c_n)$ for $n$ above the explicit bound.
-5. Identifiability of piecewise-constant histories (the [Bhaskar–Song identifiability](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/size-fn-eq-of-first-coal-mean-eq.md)) as the special case.
+5. Identifiability of piecewise-constant histories (the [Bhaskar–Song identifiability](../../site-frequency-spectrum-under-variable-populatio/size-fn-eq-of-first-coal-mean-eq.md)) as the special case.
 
 ## Sources
 

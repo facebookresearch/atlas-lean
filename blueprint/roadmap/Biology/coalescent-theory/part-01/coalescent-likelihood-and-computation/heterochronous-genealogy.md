@@ -8,7 +8,7 @@ The sampling times enter only as fixed times at which lineages are added. Drummo
 
 ## Depends on
 
-- [Log-likelihood of one coalescent interval in the skyline model](../../../Biology/coalescent-theory/skyline-plot-estimates-of-population-size/skyline-log-lik.md)
+- [Log-likelihood of one coalescent interval in the skyline model](../../skyline-plot-estimates-of-population-size/skyline-log-lik.md)
 
 ## Expansion
 

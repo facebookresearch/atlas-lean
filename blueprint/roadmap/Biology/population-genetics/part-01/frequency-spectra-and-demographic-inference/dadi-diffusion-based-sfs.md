@@ -4,9 +4,9 @@ Given the expected joint site-frequency spectrum $M(\Theta)$ of a demographic mo
 
 ## Depends on
 
-- [Joint site-frequency spectra of several populations](../../../Biology/population-genetics/frequency-spectra-and-demographic-inference/joint-multi-population-sfs.md)
-- [Composition across demographic epochs, splits and admixture](../../../Biology/population-genetics/frequency-spectra-and-demographic-inference/piecewise-epochs-splits-and-admixture.md)
-- [Site-frequency counts in the Poisson random field are independent Poisson](../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/independent-poisson-site-counts.md)
+- [Joint site-frequency spectra of several populations](joint-multi-population-sfs.md)
+- [Composition across demographic epochs, splits and admixture](piecewise-epochs-splits-and-admixture.md)
+- [Site-frequency counts in the Poisson random field are independent Poisson](../../diffusion-theory/poisson-random-field-model/independent-poisson-site-counts.md)
 
 ## Expansion
 

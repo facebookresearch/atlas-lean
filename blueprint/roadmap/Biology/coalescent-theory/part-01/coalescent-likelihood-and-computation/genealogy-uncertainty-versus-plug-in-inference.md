@@ -4,7 +4,7 @@ Inference that fixes one estimated genealogy and treats it as observed discards 
 
 ## Depends on
 
-- [Jensen's inequality](../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+- [Jensen's inequality](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
 
 ## Expansion
 

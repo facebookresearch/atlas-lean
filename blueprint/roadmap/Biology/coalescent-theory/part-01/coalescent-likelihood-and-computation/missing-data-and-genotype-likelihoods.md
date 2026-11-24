@@ -4,7 +4,7 @@ Spectrum-based inference compares an observed site-frequency spectrum with its e
 
 ## Depends on
 
-- [Hypergeometric projection of the site-frequency spectrum](../../../Biology/coalescent-theory/expected-site-frequency-spectrum/spectrum-subsampling-operator.md)
+- [Hypergeometric projection of the site-frequency spectrum](../../expected-site-frequency-spectrum/spectrum-subsampling-operator.md)
 
 ## Expansion
 

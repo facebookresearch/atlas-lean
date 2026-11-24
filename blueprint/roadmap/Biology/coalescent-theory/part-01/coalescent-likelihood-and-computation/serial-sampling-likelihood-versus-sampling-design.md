@@ -8,7 +8,7 @@ $\beta_1 = 0$ gives sampling times independent of $N_\gamma$ and $\beta_1 = 1$ a
 
 ## Depends on
 
-- [Coalescent likelihood of a serially sampled genealogy](../../../Biology/coalescent-theory/coalescent-likelihood-and-computation/heterochronous-genealogy.md)
+- [Coalescent likelihood of a serially sampled genealogy](heterochronous-genealogy.md)
 
 ## Expansion
 

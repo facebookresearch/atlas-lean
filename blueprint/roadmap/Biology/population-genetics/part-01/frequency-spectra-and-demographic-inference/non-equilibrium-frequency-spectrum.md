@@ -8,8 +8,8 @@ $$\lim_{x \downarrow 0}xf(x, t) = \theta\rho(t)$$
 
 ## Depends on
 
-- [ODE characterization of the Poisson random field density](../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/eq-prf-density-of-forward.md)
-- [Expected site frequency spectrum under variable population size](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/variable-sfs.md)
+- [ODE characterization of the Poisson random field density](../../diffusion-theory/poisson-random-field-model/eq-prf-density-of-forward.md)
+- [Expected site frequency spectrum under variable population size](../../../coalescent-theory/site-frequency-spectrum-under-variable-populatio/variable-sfs.md)
 
 ## Expansion
 

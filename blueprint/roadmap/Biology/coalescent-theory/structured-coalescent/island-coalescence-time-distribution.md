@@ -11,7 +11,7 @@ Hence, for a start in state $i$, $P_i(T > t) = e_i^{\top} e^{tS}\mathbf 1$, and 
 - [Transition rates of the two-lineage structured coalescent](../../../Biology/coalescent-theory/structured-coalescent/rate.md)
 - [Exit rate of a structured-coalescent state](../../../Biology/coalescent-theory/structured-coalescent/exit-rate.md)
 - [Closed-form mean coalescence times in the island model](../../../Biology/coalescent-theory/structured-coalescent/mean-coalescence-time.md)
-- [Inverse instantaneous coalescence rate and confounding of structure with size](../../../Biology/coalescent-theory/identifiability-of-demographic-histories/iicr-and-structure-size-confounding.md)
+- [Inverse instantaneous coalescence rate and confounding of structure with size](../part-01/identifiability-of-demographic-histories/iicr-and-structure-size-confounding.md)
 
 ## Expansion
 

@@ -8,9 +8,9 @@ each specified merger contributing rate $1$ and each interval its survival facto
 
 ## Depends on
 
-- [Clock and epoch lengths of the variable-size coalescent](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/deterministic-coalescent-time-change.md)
-- [Number of ranked labeled histories](../../../Biology/coalescent-theory/ranked-labeled-histories-of-coalescent-trees/card-ranked-history.md)
-- [Log-likelihood of one coalescent interval in the skyline model](../../../Biology/coalescent-theory/skyline-plot-estimates-of-population-size/skyline-log-lik.md)
+- [Clock and epoch lengths of the variable-size coalescent](../../site-frequency-spectrum-under-variable-populatio/deterministic-coalescent-time-change.md)
+- [Number of ranked labeled histories](../../ranked-labeled-histories-of-coalescent-trees/card-ranked-history.md)
+- [Log-likelihood of one coalescent interval in the skyline model](../../skyline-plot-estimates-of-population-size/skyline-log-lik.md)
 
 ## Expansion
 

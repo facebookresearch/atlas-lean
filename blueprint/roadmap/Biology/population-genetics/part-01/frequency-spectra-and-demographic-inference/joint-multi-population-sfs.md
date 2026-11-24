@@ -8,8 +8,8 @@ When ancestral alleles cannot be determined, the folded spectrum indexed by mino
 
 ## Depends on
 
-- [Expected site frequency spectrum under the Poisson random field](../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/expected-sfs.md)
-- [Folded site frequency spectrum](../../../Biology/coalescent-theory/expected-site-frequency-spectrum/folded-count.md)
+- [Expected site frequency spectrum under the Poisson random field](../../diffusion-theory/poisson-random-field-model/expected-sfs.md)
+- [Folded site frequency spectrum](../../../coalescent-theory/expected-site-frequency-spectrum/folded-count.md)
 
 ## Expansion
 

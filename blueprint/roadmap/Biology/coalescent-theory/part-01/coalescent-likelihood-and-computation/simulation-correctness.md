@@ -4,8 +4,8 @@ Tavaré (2004, Section 2.4, Algorithm 2.1) simulates the holding times $T^v_n, \
 
 ## Depends on
 
-- [Clock and epoch lengths of the variable-size coalescent](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/deterministic-coalescent-time-change.md)
-- [Cumulative coalescence intensity](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/cum-rate.md)
+- [Clock and epoch lengths of the variable-size coalescent](../../site-frequency-spectrum-under-variable-populatio/deterministic-coalescent-time-change.md)
+- [Cumulative coalescence intensity](../../site-frequency-spectrum-under-variable-populatio/cum-rate.md)
 
 ## Expansion
 

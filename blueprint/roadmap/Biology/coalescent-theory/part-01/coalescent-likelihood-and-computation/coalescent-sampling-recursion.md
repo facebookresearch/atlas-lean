@@ -11,7 +11,7 @@ with boundary conditions $q(\mathbf e_i) = \pi_i^*$, the probability that the mo
 1. The $K$-allele model on a coalescent genealogy and the first-event probabilities $\theta/(n + \theta - 1)$ and $(n - 1)/(n + \theta - 1)$.
 2. The configurations that lead to $\mathbf n$ after a mutation or a coalescence, and the coefficients above.
 3. The boundary conditions and the non-singularity of each level's linear system, hence uniqueness of the solution.
-4. The infinite-alleles recursion and the [Ewens sampling formula](../../../Biology/population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md).
+4. The infinite-alleles recursion and the [Ewens sampling formula](../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md).
 5. Monte Carlo solution of the recursion as an importance sampler, as a separate statement.
 
 ## Sources

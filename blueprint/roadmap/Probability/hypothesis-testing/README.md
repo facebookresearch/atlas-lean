@@ -36,15 +36,13 @@ These procedures base inference on counts, ranks or random reassignments of the 
 
 - [Fisher's exact test](fisher-s-exact-test/README.md)
 - [Exact test for Hardy–Weinberg equilibrium](exact-test-for-hardy-weinberg-equilibrium/README.md)
-- [Mann–Whitney statistic and ROC area](mann-whitney-statistic-and-roc-area/README.md)
 - [Permutation tests](permutation-tests/README.md)
 - [Split conformal prediction](split-conformal-prediction/README.md)
 - [Full conformal prediction](full-conformal-prediction/README.md)
 - [Conformalized quantile regression](conformalized-quantile-regression/README.md)
 - [Exact binomial tests and the Clopper–Pearson interval](exact-binomial-tests-and-the-clopper-pearson-int/README.md)
 - [Conformal prediction under covariate shift](conformal-prediction-under-covariate-shift/README.md)
-- [Rank tests](rank-tests/README.md)
-- [Mantel–Haenszel summary odds ratio and test](mantel-haenszel-summary-odds-ratio-and-test.md)
+- [Rank statistics and tests](rank-tests/README.md)
 
 ## Other topics in hypothesis testing
 

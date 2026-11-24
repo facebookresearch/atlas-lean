@@ -6,8 +6,8 @@ In the neutral ancestral recombination graph for $n$ sampled sequences, the marg
 
 1. The marginal process at one position: the partition of the sample by ancestral lineages carrying material at that position.
 2. Recombination as a relabelling that leaves this partition unchanged, and coalescence of two lineages carrying that position's material as a merger at rate $1$ per pair.
-3. Equality in law with Kingman's partition-valued coalescent (via its [rate matrix](../../../Biology/coalescent-theory/partition-valued-kingman-coalescent/partition-rate.md)).
-4. Two positions: the joint law, and the [two-locus covariance](../../../Biology/coalescent-theory/two-locus-coalescent/two-locus-cov.md) with its [path form](../../../Biology/coalescent-theory/two-locus-coalescent/covariance-coalescence-times.md).
+3. Equality in law with Kingman's partition-valued coalescent (via its [rate matrix](../../partition-valued-kingman-coalescent/partition-rate.md)).
+4. Two positions: the joint law, and the [two-locus covariance](../../two-locus-coalescent/two-locus-cov.md) with its [path form](../../two-locus-coalescent/covariance-coalescence-times.md).
 
 ## Sources
 

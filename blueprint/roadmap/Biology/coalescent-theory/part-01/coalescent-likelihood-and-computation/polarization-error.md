@@ -8,10 +8,10 @@ while the folded spectrum $\eta_i = \xi_i + \xi_{n-i}$, which counts the sites a
 
 ## Depends on
 
-- [Expected site frequency spectrum](../../../Biology/coalescent-theory/expected-site-frequency-spectrum/integral-sfs.md)
-- [Folded site frequency spectrum](../../../Biology/coalescent-theory/expected-site-frequency-spectrum/folded-count.md)
-- [Fay and Wu's H statistic](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/fay-wu-h.md)
-- [Fay and Wu's H has mean zero at constant size](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/integral-fay-wu-h.md)
+- [Expected site frequency spectrum](../../expected-site-frequency-spectrum/integral-sfs.md)
+- [Folded site frequency spectrum](../../expected-site-frequency-spectrum/folded-count.md)
+- [Fay and Wu's H statistic](../../site-frequency-spectrum-under-variable-populatio/fay-wu-h.md)
+- [Fay and Wu's H has mean zero at constant size](../../site-frequency-spectrum-under-variable-populatio/integral-fay-wu-h.md)
 
 ## Expansion
 

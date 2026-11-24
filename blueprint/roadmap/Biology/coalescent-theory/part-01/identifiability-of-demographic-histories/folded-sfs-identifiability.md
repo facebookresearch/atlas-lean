@@ -4,7 +4,7 @@ When the ancestral state of each site is unknown, only the folded spectrum is ob
 
 ## Expansion
 
-1. The [folded spectrum](../../../Biology/coalescent-theory/expected-site-frequency-spectrum/folded-count.md) and its expectation.
+1. The [folded spectrum](../../expected-site-frequency-spectrum/folded-count.md) and its expectation.
 2. The linear map from expected epoch lengths to the expected folded spectrum, and its rank.
 3. Theorem 12 for $K$-piece families of finite sign-change complexity, via the symmetry of Lemma 13.
 4. Whether the folded bound is tight, as a separate question.

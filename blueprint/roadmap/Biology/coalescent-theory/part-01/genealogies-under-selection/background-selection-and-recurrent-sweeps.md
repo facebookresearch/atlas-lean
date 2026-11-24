@@ -10,7 +10,7 @@ Recurrent selective sweeps can change the form of the genealogy. Durrett and Sch
 
 ## Depends on
 
-- [Pitman's merger rate](../../../Biology/coalescent-theory/coalescents/merger-rate.md)
+- [Pitman's merger rate](../../coalescents/merger-rate.md)
 
 Reduction of the effective size to the mutation-free class in a non-recombining genome under multiplicative mutation–selection balance is a separate statement.
 

@@ -8,8 +8,8 @@ and $p_{k,k} \to (1 - p)^k + kp(1 - p)^{k-1}$ (Proposition 2): the trapped linea
 
 ## Depends on
 
-- [Logistic trajectory of a selective sweep](../../../Biology/detecting-selection/selective-sweeps/sweep-traj.md)
-- [Probability of escaping a selective sweep](../../../Biology/detecting-selection/composite-selection-scores/escape-prob.md)
+- [Logistic trajectory of a selective sweep](../../../detecting-selection/selective-sweeps/sweep-traj.md)
+- [Probability of escaping a selective sweep](../../../detecting-selection/composite-selection-scores/escape-prob.md)
 
 ## Expansion
 
