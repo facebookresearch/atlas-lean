@@ -9,3 +9,4 @@
 - [Adic completion of a Noetherian ring is Noetherian](is-noetherian-ring-of-is-noetherian-ring.md)
 - [Adic completeness of multivariate power series](is-adic-complete-maximal-ideal.md)
 - [Adically complete modules](adically-complete-module.md)
+- [The adic completion of a Noetherian ring is flat over the ring](completion-flat.md)
