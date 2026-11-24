@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Digits.Defs
-public import MathlibExt.NumberTheory.CommaSequence
+public import MathlibExt.NumberTheory.Digits.CommaParent
 
 namespace MetaMathlibExt
 
@@ -76,16 +76,6 @@ Quarterly 62 (2024), no. 3, Theorem 5.4 (`fq-2024-sloane05302024-thm-5.4`). -/
 public theorem_wanted not_commaSucc_iff (b n : ℕ) (hb : 3 ≤ b) (hn : b ^ 2 - 1 ≤ n) :
     (¬ ∃ k : ℕ, 0 < k ∧ IsCommaSucc b k n) ↔
       ∃ c i : ℕ, 2 ≤ i ∧ 2 ≤ c ∧ c ≤ b - 1 ∧ n = c * b ^ i
-
-/-- **Every number at least the square of the base is a comma-child.** Let $b \ge 2$ and
-$n \ge b^2$. Then there are a positive integer $k$ and a comma candidate digit $y$ of $k$ in
-base $b$ with $n = k + b\,(k \bmod b) + y$, that is, $n$ is a comma-child of $k$.
-
-Source: Éric Angelini, Michael S. Branicky, Giovanni Resta, N. J. A. Sloane, and
-David W. Wilson, *The Comma Sequence: A Simple Sequence with Bizarre Properties*, The Fibonacci
-Quarterly 62 (2024), no. 3, Theorem 5.5 (`fq-2024-sloane05302024-thm-5.5`). -/
-public theorem_wanted exists_commaParent_of_sq_le (b n : ℕ) (hb : 2 ≤ b) (hn : b ^ 2 ≤ n) :
-    ∃ k : ℕ, 0 < k ∧ ∃ y : Fin b, IsCommaCandidate b k y ∧ n = k + b * (k % b) + y.val
 
 /-- **The comma-child graph has an infinite path.** For every base $b \ge 2$ there is a sequence
 $a_0, a_1, \dots$ of positive integers such that for every $i$ there is a comma candidate digit
