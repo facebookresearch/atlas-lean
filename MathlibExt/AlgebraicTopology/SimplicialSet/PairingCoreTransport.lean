@@ -132,11 +132,13 @@ def ofIso : B.PairingCore where
       rw [← SSet.δ_naturality_apply]
       exact (((S.equivOfIso e).symm_apply_eq).mpr hs.symm).symm
 
-/-- The transported type-I simplex is exactly the inverse image of the same original native simplex. -/
+/-- The transported type-I simplex is exactly the inverse image of the same original native
+  simplex. -/
 theorem ofIso_type₁ (s : h.ι) :
     (h.ofIso e hA).type₁ s = (Subcomplex.N.orderIsoOfIso e hA).symm (h.type₁ s) := rfl
 
-/-- The transported type-II simplex retains the original whole face under the same inverse isomorphism. -/
+/-- The transported type-II simplex retains the original whole face under the same inverse
+  isomorphism. -/
 theorem ofIso_type₂ (s : h.ι) :
     (h.ofIso e hA).type₂ s = (Subcomplex.N.orderIsoOfIso e hA).symm (h.type₂ s) := by
   apply (Subcomplex.N.ext_iff _ _).mpr
@@ -145,7 +147,8 @@ theorem ofIso_type₂ (s : h.ι) :
     S.mk (e.inv.app _ (X.δ (h.index s) (h.simplex s)))
   rw [← SSet.δ_naturality_apply]
 
-/-- The original ancestral relation and original index family are unchanged by the entire simplex isomorphism. -/
+/-- The original ancestral relation and original index family are unchanged by the entire simplex
+  isomorphism. -/
 theorem ofIso_ancestralRel_iff (s t : h.ι) :
     (h.ofIso e hA).AncestralRel s t ↔ h.AncestralRel s t := by
   change (s ≠ t ∧ (h.ofIso e hA).type₂ s < (h.ofIso e hA).type₁ t) ↔

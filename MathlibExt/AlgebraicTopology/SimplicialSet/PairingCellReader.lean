@@ -38,8 +38,8 @@ private theorem index_val_eq_of_eq {X : SSet.{u}} {x y x' y' : X.S}
 
 private theorem simplex_map_eq_of_eq {X : SSet.{u}} {A : X.Subcomplex} {x y : A.N} (h : x = y) :
     yonedaEquiv.symm x.simplex =
-      eqToHom (congrArg (fun d => (Δ[d] : SSet.{u})) (congrArg (fun z : A.N => z.dim) h)) ≫ yonedaEquiv.symm
-        y.simplex := by
+      eqToHom (congrArg (fun d => (Δ[d] : SSet.{u})) (congrArg (fun z : A.N => z.dim) h)) ≫
+        yonedaEquiv.symm y.simplex := by
   subst y
   simp only [eqToHom_refl, Category.id_comp]
 
@@ -69,7 +69,8 @@ theorem rankCell_index :
   apply Fin.ext
   exact rankCell_index_val h f s hs
 
-/-- The original attaching map is the same entire core simplex after the proved literal source-dimension transport. -/
+/-- The original attaching map is the same entire core simplex after the proved literal
+  source-dimension transport. -/
 theorem rankCell_map :
     (⟨h.equivII s, hs⟩ : f.Cell j).map =
       eqToHom (congrArg (fun d => (Δ[d + 1] : SSet.{u})) (rankCell_dim h f s hs)) ≫
@@ -86,7 +87,8 @@ namespace SSet.Subcomplex.Pairing.RankFunction.Cell
 variable {X : SSet.{u}} {A : X.Subcomplex} {P : A.Pairing} [P.IsProper]
     {ι : Type v} [LinearOrder ι] (f : P.RankFunction ι) {j : ι} (c : f.Cell j)
 
-/-- The original horn-to-stage map reads exactly the same whole edge as the native attaching simplex. -/
+/-- The original horn-to-stage map reads exactly the same whole edge as the native attaching
+  simplex. -/
 theorem mapHorn_app_ι (e : c.horn.toSSet _⦋1⦌) :
     (f.filtration j).ι.app (Opposite.op ⦋1⦌) (c.mapHorn.app (Opposite.op ⦋1⦌) e) =
       c.map.app (Opposite.op ⦋1⦌) (c.horn.ι.app (Opposite.op ⦋1⦌) e) :=

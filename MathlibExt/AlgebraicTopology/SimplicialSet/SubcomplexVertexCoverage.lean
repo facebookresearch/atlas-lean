@@ -22,7 +22,8 @@ open scoped Simplicial
 
 namespace SSet.Subcomplex
 
-/-- Full original vertex coverage excludes zero-dimensional simplices from the native relative nondegenerate index. -/
+/-- Full original vertex coverage excludes zero-dimensional simplices from the native relative
+  nondegenerate index. -/
 theorem N.one_le_dim_of_vertices {X : SSet.{u}} {A : X.Subcomplex}
     (hA : ∀ x : X _⦋0⦌, x ∈ A.obj (Opposite.op ⦋0⦌)) (s : A.N) : 1 ≤ s.dim := by
   obtain ⟨n, x, hx, hx', rfl⟩ := N.mk_surjective s
