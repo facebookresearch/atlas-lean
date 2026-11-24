@@ -12102,6 +12102,7 @@
   "MathlibExt/NumberTheory/ContinuedFractions/Folding": {"to": "NumberTheory/continued-fractions-expansions", "title": "Folding lemma and paperfolding continued fractions"},
   "MathlibExt/NumberTheory/ContinuedFractions/LagrangePeriodic": {"to": "NumberTheory/continued-fractions-expansions", "title": "Periodic continued fractions"},
   "MathlibExt/NumberTheory/ConwayHofstadterLikeSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Conway–Hofstadter sequences"},
+  "MathlibExt/NumberTheory/CoprimePrimeSquareCubeSplit": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Consecutive powerful numbers"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressions": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressionsFreeCount": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
   "MathlibExt/NumberTheory/CountingOppermannPrimes": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Oppermann's conjecture"},
