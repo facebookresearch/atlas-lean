@@ -68,7 +68,8 @@ theorem alternating_sum_of_consecutive_ranges
       rw [hstep n (Nat.lt_succ_self n), pow_succ]
       ring
 
-/-- A finite exact module chain with zero endpoints has zero alternating length sum. -/
+/-- A finite exact module chain with zero endpoints in which each module `M i` with `i ≤ n`
+has finite length has zero alternating length sum. -/
 theorem alternating_length_of_exact_chain
     (M : ℕ → Type v) [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
     (d : ∀ i, M i →ₗ[R] M (i + 1)) (n : ℕ)
