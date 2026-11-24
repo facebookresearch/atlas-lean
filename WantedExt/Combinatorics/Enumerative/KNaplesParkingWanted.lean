@@ -14,6 +14,8 @@ public import Mathlib.Combinatorics.Enumerative.DyckWord
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.DescendingNaplesDyckPath
+public import MathlibExt.Combinatorics.Enumerative.KNaplesParking
 public import MathlibExt.Combinatorics.Enumerative.KNaplesParkingInt
 public import MathlibExt.Combinatorics.FineNumber
 public import MathlibExt.Combinatorics.NoncrossingPartition.Basic
@@ -22,52 +24,6 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The $k$-Naples rule.** On the spots $1, \dots, n$, when the spots in a list $O$ of natural
-numbers are occupied, a car preferring $a$ parks in $a$ if $a$ is free; otherwise in the first
-free spot among those of $a - 1, \dots, a - k$ that are at least $1$, checked in decreasing
-order; otherwise in the first free spot among $a + 1, \dots, n$, checked in increasing order.
-The car cannot park if none of these is free, or if $a$ is not one of the spots $1, \dots, n$.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 1. -/
-public def naplesSpot (n k : ℕ) (occ : List ℕ) (a : ℕ) : Option ℕ :=
-  if ¬ (1 ≤ a ∧ a ≤ n) then none else
-  if a ∉ occ then some a else
-    match ((List.range k).map fun j => a - (j + 1)).find? (fun s => decide (1 ≤ s ∧ s ∉ occ)) with
-    | some s => some s
-    | none => (List.range' (a + 1) (n - a)).find? (fun s => decide (s ∉ occ))
-
-/-- **Naples parking.** Starting from a list of occupied spots, cars with preferences
-$a_1, \dots, a_m \in \mathbb{N}$ arrive in order, and each takes the spot given by the $k$-Naples
-rule on the spots $1, \dots, n$ for the spots occupied when it arrives. If every car parks, the
-result is the final list of occupied spots: the spots of the cars, most recent first, followed by
-the initially occupied spots. If some car cannot park, there is no result.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 1. -/
-public def naplesPark (n k : ℕ) : List ℕ → List ℕ → Option (List ℕ)
-  | occ, [] => some occ
-  | occ, a :: as => (naplesSpot n k occ a).bind fun s => naplesPark n k (s :: occ) as
-
-/-- **$k$-Naples parking function.** A preference $\alpha = (a_1, \dots, a_n)$ of length $n$
-is a $k$-Naples parking function if $1 \le a_i \le n$ for every $i$ and all $n$ cars park on
-the spots $1, \dots, n$ when they arrive in order and follow the $k$-Naples rule: car $i$ takes
-spot $a_i$ if it is free; otherwise the first free spot among $a_i - 1, \dots, a_i - k$, checked
-in decreasing order and only among spots at least $1$; otherwise the first free spot after
-$a_i$, if there is one. For $k = 0$ these are the ordinary parking functions.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 1. -/
-public def IsNaplesParkingFunction (k : ℕ) {n : ℕ} (α : Fin n → ℕ) : Prop :=
-  (∀ i, 1 ≤ α i ∧ α i ≤ n) ∧ (naplesPark n k [] (List.ofFn α)).isSome
-
-public instance (k n : ℕ) : DecidablePred (IsNaplesParkingFunction k (n := n)) := fun α => by
-  unfold IsNaplesParkingFunction
-  infer_instance
 
 /-- **A $2$-Naples parking example.** Under the $2$-Naples rule on the spots $1, \dots, 7$, the
 cars with preferences $(6, 6, 6, 5, 5, 2, 1)$, arriving in order into an empty lot, all park, in
@@ -115,18 +71,6 @@ public def ascendingNaplesOneCount (n k : ℕ) : ℕ :=
     (∀ i j : Fin n, i ≤ j → α i ≤ α j) ∧ IsNaplesParkingFunction k α ∧
       ∃ i : Fin n, i.val = 0 ∧ α i = 1).card
 
-/-- **Number of descending $k$-Naples parking functions.** For natural numbers $n$ and $k$, this
-is the number of $k$-Naples parking functions $\alpha = (a_1, \dots, a_n)$ of length $n$ (so
-$a_i \in \{1, \dots, n\}$ for all $i$) that are descending, that is, weakly decreasing:
-$a_1 \ge a_2 \ge \dots \ge a_n$.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Proposition 2. -/
-public def descendingNaplesCount (n k : ℕ) : ℕ :=
-  ((Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun α =>
-    (∀ i j : Fin n, i ≤ j → α j ≤ α i) ∧ IsNaplesParkingFunction k α).card
-
 /-- **Number of descending strictly $k$-Naples parking functions.** For natural numbers $n$ and
 $k$, this is the number of preferences $\alpha = (a_1, \dots, a_n) \in \{1, \dots, n\}^n$ that
 are descending ($a_1 \ge a_2 \ge \dots \ge a_n$), are $k$-Naples parking functions, and are not
@@ -155,16 +99,6 @@ public theorem naplesCount_two_one :
       descendingNaplesCount 2 1 = 3 ∧ descendingStrictNaplesCount 2 1 = 1 := by
   decide
 
-/-- **Height of a lattice path.** For a lattice path $p$ of $m$ steps, each an Up step $(1, 1)$
-or a Down step $(1, -1)$, and a natural number $j$, the height of $p$ after $j$ steps is the
-number of Up steps minus the number of Down steps among the first $\min(j, m)$ steps of $p$.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 3. -/
-public def latticeHeight {m : ℕ} (p : Fin m → Bool) (j : ℕ) : ℤ :=
-  ∑ i : Fin m, if i.val < j then (if p i then 1 else -1) else 0
-
 /-- **Height of a sequence of Dyck steps.** For a finite sequence $l$ of Up steps $U$ and Down
 steps $D$ and a natural number $j$, the height of $l$ after $j$ steps is the integer obtained as
 the number of $U$ minus the number of $D$ among the first $j$ steps of $l$ (among all of $l$
@@ -175,22 +109,6 @@ Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vinda
 Article A44, Section 3. -/
 public def dyckStepHeight (l : List DyckStep) (j : ℕ) : ℤ :=
   ((l.take j).count DyckStep.U : ℤ) - ((l.take j).count DyckStep.D : ℤ)
-
-/-- **$k$-Dyck path.** Let $n$ and $k$ be natural numbers. A lattice path of $2n$ steps, each
-an Up step $(1, 1)$ or a Down step $(1, -1)$, is a $k$-Dyck path of semilength $n$ if its height
-after all $2n$ steps is $0$, its height after its first $j$ steps is at least $-k$ for every
-$j \le 2n$, and, when $n \ge 1$, its last step is a Down step.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 3. -/
-public def IsKDyckPath (n k : ℕ) (p : Fin (2 * n) → Bool) : Prop :=
-  latticeHeight p (2 * n) = 0 ∧ (∀ j ≤ 2 * n, -(k : ℤ) ≤ latticeHeight p j) ∧
-    ∀ i : Fin (2 * n), i.val + 1 = 2 * n → p i = false
-
-public instance (n k : ℕ) : DecidablePred (IsKDyckPath n k) := fun p => by
-  unfold IsKDyckPath
-  infer_instance
 
 /-- **A $1$-Dyck path that is not a $0$-Dyck path.** Write $U$ for an Up step $(1, 1)$ and $D$
 for a Down step $(1, -1)$. The path $DUUD$ is a $1$-Dyck path of semilength $2$ but not a
@@ -236,18 +154,6 @@ Article A44, Section 2, Remark 2. -/
 public theorem naplesParkInt_example_three :
     naplesParkInt 3 [] [1, 2, 2, 5, 7, 7, 7, 3] = [3, 4, 6, 7, 5, 0, 2, 1] := by
   decide
-
-/-- **Descending $k$-Naples parking functions and $k$-Dyck paths.** For all natural numbers
-$n \ge 1$ and $k \ge 1$, the number of weakly decreasing $k$-Naples parking functions of length
-$n$ equals the number of $k$-Dyck paths of length $n$: sequences of $2n$ Up and Down steps that
-end at height $0$, never go below height $-k$, and end with a Down step.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Proposition 2 (citing Christensen et al., Theorem 1.3). -/
-public theorem_wanted descendingNaplesCount_eq_card_kDyckPath {n k : ℕ} (hn : 1 ≤ n)
-    (hk : 1 ≤ k) :
-    descendingNaplesCount n k = (Finset.univ.filter (IsKDyckPath n k)).card
 
 open Classical in
 /-- **Descending $k$-Naples parking functions and Dyck paths.** For all natural numbers $n \ge 1$
@@ -390,23 +296,6 @@ public theorem preferencePath_example :
     preferencePath ![1, 3, 3, 5, 6, 6] =
       ![true, false, false, true, true, false, false, true, false, true, true, false] := by
   decide
-
-/-- **Remaining cars still park after moving a car to an earlier spot.** Let $(a_1, \dots, a_n)$
-be a parking preference with $1 \le a_j \le n$ for every $j$, with which all $n$ cars, arriving in
-order into an empty lot, park under the $k$-Naples rule on the spots $1, \dots, n$, car $j$ in
-spot $d_j$. Let $1 \le l \le i \le n$, and let $q$ be a spot with $1 \le q < d_l$ and $q \ne d_j$
-for every $j \le i$ with $j \ne l$. If exactly the spots $d_1, \dots, d_i$, with $d_l$ replaced
-by $q$, are occupied, then the remaining cars $a_{i+1}, \dots, a_n$, arriving in order, all park
-under the $k$-Naples rule.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Lemma 2.3. -/
-public theorem_wanted naplesPark_drop_set_isSome {n k i l q : ℕ} {α : Fin n → ℕ}
-    {d : List ℕ} (hα : ∀ j, 1 ≤ α j ∧ α j ≤ n)
-    (hd : naplesPark n k [] (List.ofFn α) = some d.reverse) (hl : l < i) (hi : i ≤ n)
-    (hq : 1 ≤ q) (hql : q < d.getD l 0) (hqd : ∀ j < i, j ≠ l → d.getD j 0 ≠ q) :
-    (naplesPark n k ((d.take i).set l q) ((List.ofFn α).drop i)).isSome
 
 /-- **Lattice-path criterion for ascending $k$-Naples parking functions.** Let
 $\alpha = (a_1, \dots, a_n)$ be a weakly increasing preference with $1 \le a_i \le n$ for every

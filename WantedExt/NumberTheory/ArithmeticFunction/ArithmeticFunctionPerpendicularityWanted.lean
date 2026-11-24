@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.ArithmeticFunction.Antimultiplicative
-public import MathlibExt.NumberTheory.RearickLogarithm
+public import MathlibExt.NumberTheory.ArithmeticFunction.DirichletRealPower
 
 /-!
 # Perpendicularities of arithmetical functions
@@ -44,30 +44,6 @@ public theorem_wanted existsUnique_multiplicative_mul_antimultiplicative
     (f : ArithmeticFunction ℝ) (hf : f 1 = 1) :
     ∃! gh : ArithmeticFunction ℝ × ArithmeticFunction ℝ,
       gh.1.IsMultiplicative ∧ IsAntimultiplicative gh.2 ∧ gh.1 * gh.2 = f
-
-/-- **Rearick's real power and its vector space laws.** Let $L$ denote the Rearick logarithm and
-$*$ the Dirichlet convolution. There is a map $(\alpha, f) \mapsto f^{(\alpha)}$, sending a real
-number $\alpha$ and a real arithmetical function $f$ to a real arithmetical function, such that:
-for every real $\alpha$ and every real arithmetical function $f$ with $f(1) = 1$, we have
-$f^{(\alpha)}(1) = 1$ and $L(f^{(\alpha)}) = \alpha L(f)$; and for all real arithmetical functions
-$f$, $g$ with $f(1) = g(1) = 1$ and all real $\alpha$, $\beta$, we have
-$(f^{(\alpha)})^{(\beta)} = f^{(\alpha\beta)}$, $f^{(\alpha+\beta)} = f^{(\alpha)} * f^{(\beta)}$,
-$(f * g)^{(\alpha)} = f^{(\alpha)} * g^{(\alpha)}$ and $f^{(1)} = f$.
-
-In the source this is the statement that the real arithmetical functions $f$ with $f(1) = 1$ form
-a real vector space, with Dirichlet convolution as addition and the real power as scalar
-multiplication.
-
-Source: Pentti Haukkanen and Timo Tossavainen, *Some Perpendicularities of Arithmetical
-Functions*, INTEGERS 25 (2025), Article A33, Theorem 1 (`integers-2025-A33-thm-1`). -/
-public theorem_wanted dirichletRealPower_vectorSpace :
-    ∃ pow : ℝ → ArithmeticFunction ℝ → ArithmeticFunction ℝ,
-      (∀ (α : ℝ) (f : ArithmeticFunction ℝ), f 1 = 1 → pow α f 1 = 1 ∧
-        ∀ (hp : 0 < pow α f 1) (hf : 0 < f 1),
-          rearickLog (pow α f) hp = α • rearickLog f hf) ∧
-      ∀ f g : ArithmeticFunction ℝ, f 1 = 1 → g 1 = 1 → ∀ α β : ℝ,
-        pow β (pow α f) = pow (α * β) f ∧ pow (α + β) f = pow α f * pow β f ∧
-          pow α (f * g) = pow α f * pow α g ∧ pow 1 f = f
 
 /-- **Real powers preserve multiplicativity and antimultiplicativity.** Let $L$ denote the
 Rearick logarithm. Let $f$ and $F$ be real arithmetical functions with $f(1) = F(1) = 1$, and let
