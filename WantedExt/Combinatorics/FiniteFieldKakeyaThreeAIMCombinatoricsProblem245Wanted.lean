@@ -18,7 +18,7 @@ known from the work of Wolff that `|E| ≳ |F|^{5/2}`; prove the better lower bo
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Combinatorics.FraserKakeyaWanted
+public import MathlibExt.Combinatorics.FraserKakeya
 
 @[expose] public section
 

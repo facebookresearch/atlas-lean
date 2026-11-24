@@ -12,7 +12,6 @@
 - [A reciprocal-sum identity for generalized binomial coefficients](mul-pow-pred-sub-pow-mul-sum-inv-eq-sum.md)
 - [The Alzer–Richards binomial sum as a ${}_3F_2$ series](sum-choose-mul-choose-div-choose-eq-hype.md)
 - [A binomial sum as a terminating ${}_2F_1$ series](sum-choose-mul-choose-div-choose-eq-hype-2.md)
-- [Closed form of the Alzer–Richards binomial sum for even $m$](sum-choose-mul-choose-div-choose-of-even.md)
 - [Closed form of the Alzer–Richards binomial sum for odd $m$](sum-choose-mul-choose-div-choose-of-odd.md)
 - [Closed form of the shifted Alzer–Richards binomial sum](sum-choose-mul-choose-div-choose-shifted.md)
 - [Derivatives at zero of powers of $(1 - e^x)/x$](iterated-deriv-pow-one-sub-exp-div-self.md)

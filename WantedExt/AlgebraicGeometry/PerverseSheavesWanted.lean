@@ -50,10 +50,12 @@ public instance_wanted perverseSheafAbelianWanted (X : ComplexScheme)
     [IsComplexVariety X] [PerverseSheafTheory X] : Abelian (PerverseSheaf X)
 
 /-- Construct the rational middle perverse t-structure and the closure
-properties needed for the bounded constructible category.
+properties needed for the bounded constructible category: `PerverseSheafTheory X`,
+stated as the coefficient-generic class at `k = ℚ` that it abbreviates.
 Source: de Cataldo–Migliorini (2005), §§3.3, 3.6. -/
 public instance_wanted perverseSheafTheoryWanted (X : ComplexScheme)
-    [IsComplexVariety X] : PerverseSheafTheory X
+    [IsComplexVariety X] :
+    MathlibExt.AlgebraicGeometry.CoefficientPerverseModels.CoefficientPerverseTheory ℚ X
 
 end
 
