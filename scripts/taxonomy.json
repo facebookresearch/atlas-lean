@@ -11861,6 +11861,7 @@
   "MathlibExt/NumberTheory/Cyclotomic/LehmerMinpolyDegree": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Real cyclotomic polynomials and 2cos(2πk/n)"},
   "MathlibExt/NumberTheory/Cyclotomic/LehmerMinpolyTrace": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Real cyclotomic polynomials and 2cos(2πk/n)"},
   "MathlibExt/NumberTheory/Cyclotomic/PrimeDivisorCongruence": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},
+  "MathlibExt/NumberTheory/Cyclotomic/PrimePowerDivisibility": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},
   "MathlibExt/NumberTheory/Cyclotomic/TwoPowRamifiedBound": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},
   "MathlibExt/NumberTheory/Cyclotomic/RealCyclotomicPolynomial": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Real cyclotomic polynomials and 2cos(2πk/n)"},
   "MathlibExt/NumberTheory/Cyclotomic/TwoCosAlgebraicDegree": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Real cyclotomic polynomials and 2cos(2πk/n)"},
