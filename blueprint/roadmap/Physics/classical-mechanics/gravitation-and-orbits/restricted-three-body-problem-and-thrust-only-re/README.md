@@ -2,6 +2,7 @@
 
 ## The rotating frame, the primaries and the effective potential
 
+- [Orientation of the frame rotating with the primaries](rotating-frame.md)
 - [Inertial coordinates of a point given in rotating coordinates](rotating-to-inertial.md)
 - [Gravitational acceleration toward a point mass](point-mass-pull.md)
 - [Gravitational field of the two primaries in the inertial frame](primary-gravity.md)

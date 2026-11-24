@@ -8,7 +8,7 @@ is
 the sum of the [point-mass pulls](point-mass-pull.md) of the first primary, of mass `1 - μ` at
 `P₁(t) = R(t) (-μ, 0, 0)`, and of the second, of mass `μ` at `P₂(t) = R(t) (1 - μ, 0, 0)`, with
 gravitational constant one, the Euclidean length `|·|` and `R(t)` the
-[orientation of the rotating frame](../../flight-and-spaceflight/six-degree-of-freedom-flight-dynamics-trim-and-l/pitch-orientation.md). The primaries are fixed in the rotating
+[orientation of the rotating frame](rotating-frame.md). The primaries are fixed in the rotating
 frame, a unit distance apart, and their barycenter is the origin. The intended domain is off both
 primaries: at `X = P₁(t)` the first term is the zero vector, so the value is the second primary's
 pull alone, and at `X = P₂(t)` it is the first primary's pull alone. In the physical reading

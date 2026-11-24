@@ -2,7 +2,7 @@
 
 For every real `μ` and every time `t`, the inertial positions `P₁(t) = R(t) (-μ, 0, 0)` of the
 first primary, of mass `1 - μ`, and `P₂(t) = R(t) (1 - μ, 0, 0)` of the second, of mass `μ`, with
-`R(t)` the [orientation of the rotating frame](../../flight-and-spaceflight/six-degree-of-freedom-flight-dynamics-trim-and-l/pitch-orientation.md), satisfy
+`R(t)` the [orientation of the rotating frame](rotating-frame.md), satisfy
 
 `P₁'' = -μ (P₁ - P₂) / |P₁ - P₂|³` and `P₂'' = -(1 - μ) (P₂ - P₁) / |P₂ - P₁|³`
 

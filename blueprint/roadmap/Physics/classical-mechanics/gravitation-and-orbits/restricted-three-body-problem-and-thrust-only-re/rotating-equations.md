@@ -4,7 +4,7 @@ Let `μ` and `t` be real, and let the rotating-frame coordinates `x, y : ℝ →
 in the orbital plane be twice continuously differentiable on `ℝ`. Suppose that at the time `t` the
 particle is off both primaries, `r₁ > 0` and `r₂ > 0` at `(x(t), y(t))`, and that its inertial
 position `X(s) = R(s) (x(s), y(s), 0)`, with `R(s)` the
-[orientation of the rotating frame](../../flight-and-spaceflight/six-degree-of-freedom-flight-dynamics-trim-and-l/pitch-orientation.md), obeys Newton's law `X''(t) = g(X(t), t)`
+[orientation of the rotating frame](rotating-frame.md), obeys Newton's law `X''(t) = g(X(t), t)`
 under the [field of the two primaries](primary-gravity.md) `g`. Then, at the time `t`,
 
 `x'' - 2 y' = Ω_x` and `y'' + 2 x' = Ω_y`,
