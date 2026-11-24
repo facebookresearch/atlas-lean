@@ -84,9 +84,36 @@ The other inputs are the following pages; those that are nodes are themselves st
 [uniqueness of cuspidal support](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/uniqueness-of-cuspidal-support.md),
 [depth under parabolic induction and Jacquet functors](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/depth-under-parabolic-induction-and-jacquet-functors.md),
 [Galois cohomology and p-adic Hodge theory](../../algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md),
-[vanishing theorems and resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md),
-[arithmetic intersection theory, heights and arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes.md)
-and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-varieties/abelian-schemes-and-their-moduli.md).
+[principalization of ideal sheaves in characteristic zero](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/principalization-of-ideal-sheaves.md),
+[principalization relative to a simple normal crossing divisor](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/principalization-relative-to-a-simple-normal-crossing-divisor.md),
+[functorial resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/functorial-resolution-of-schemes-of-finite-type.md),
+[the integrated Poincaré–Lelong formula](../../../AlgebraicGeometry/birational-geometry/integrated-poincare-lelong-formula.md),
+[the Poincaré–Lelong formula on arithmetic cycles](../../../AlgebraicGeometry/arakelov-geometry/poincare-lelong-formula-on-arithmetic-cycles.md),
+[the Kawamata–Viehweg vanishing theorem](../../../AlgebraicGeometry/birational-geometry/kawamata-viehweg-vanishing-theorem.md) (its case $D = 0$, over an algebraically closed field of characteristic zero),
+[Nadel vanishing for pairs and separation of points by sections](../../../AlgebraicGeometry/birational-geometry/nadel-vanishing-for-klt-pairs-and-point-separation.md),
+[L² extension from subvarieties defined by log canonical weights](../../../AlgebraicGeometry/birational-geometry/l2-extension-from-log-canonical-subvarieties.md),
+[intersection numbers and Riemann–Roch for nef line bundles](../../../AlgebraicGeometry/birational-geometry/intersection-numbers-of-nef-line-bundles.md),
+[standard results of coherent cohomology](../../../AlgebraicGeometry/birational-geometry/standard-results-of-coherent-cohomology.md) (for GAGA),
+[the arithmetic Hilbert–Samuel formula for nef hermitian line bundles](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-volumes/arithmetic-hilbert-samuel-formula-for-nef-hermitian-line-bundles.md),
+[the generalized Hodge index theorem for arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-volumes/generalized-hodge-index-theorem.md),
+[arithmetic intersection numbers](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-numbers.md),
+[geometric degrees as integrals of first Chern forms](../../../AlgebraicGeometry/arakelov-geometry/geometric-degrees-as-integrals-of-chern-forms.md),
+[heights of cycles](../../../AlgebraicGeometry/arakelov-geometry/height-of-a-cycle.md),
+[heights of Chow forms](../../../AlgebraicGeometry/arakelov-geometry/heights-of-chow-forms.md),
+[small sections and lattices of homogeneous coordinate rings](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-volumes/small-sections-and-coordinate-lattices.md),
+[good hermitian metrics and Chern numbers](../../../AlgebraicGeometry/abelian-varieties/moduli-and-compactifications/good-hermitian-metrics-and-chern-numbers.md),
+[the Hodge bundle on toroidal compactifications of Siegel moduli schemes](../../../AlgebraicGeometry/abelian-varieties/moduli-and-compactifications/hodge-bundle-on-siegel-toroidal-compactifications.md),
+[toroidal compactifications of unitary Shimura varieties](../../../AlgebraicGeometry/abelian-varieties/moduli-and-compactifications/toroidal-compactifications-of-unitary-shimura-varieties.md),
+[homomorphisms and Lie algebras of semi-abelian schemes](../../../AlgebraicGeometry/abelian-varieties/homomorphisms-and-lie-algebras-of-semi-abelian-schemes.md),
+[line bundles on abelian varieties](../../../AlgebraicGeometry/abelian-varieties/line-bundles-on-abelian-varieties.md),
+[isogenies of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/isogenies-of-abelian-schemes.md),
+[the dual abelian scheme](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-scheme.md),
+[Zarhin's trick for abelian schemes](../../../AlgebraicGeometry/abelian-varieties/zarhin-trick-for-abelian-schemes.md),
+[the semistable reduction theorem for abelian varieties](../../../AlgebraicGeometry/abelian-varieties/semistable-reduction-theorem.md),
+[deformations of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/deformations-of-abelian-schemes.md),
+[de Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/de-rham-cohomology-of-abelian-schemes.md),
+[the crystalline nature of the de Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md)
+and [Grothendieck's existence theorem](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/grothendieck-existence-theorem.md).
 
 ## Proof depends on
 
@@ -131,9 +158,36 @@ and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-variet
 - [Global reciprocity law](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the global Artin map, whose reciprocal is used to construct the compatible local Artin map in the partial correspondence
 - [The global Artin map on the Galois group of the maximal abelian extension](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/artin-map-on-the-maximal-abelian-extension.md), for the surjectivity, openness, kernel and local properties of that reciprocal map, which the partial correspondence uses
 - [Galois cohomology and p-adic Hodge theory](../../algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md)
-- [Vanishing theorems and resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md)
-- [Arithmetic intersection theory, heights and arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes.md)
-- [Abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-varieties/abelian-schemes-and-their-moduli.md)
+- [Principalization of ideal sheaves in characteristic zero](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/principalization-of-ideal-sheaves.md), for an empty boundary
+- [Principalization relative to a simple normal crossing divisor](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/principalization-relative-to-a-simple-normal-crossing-divisor.md), for an arbitrary simple normal crossing boundary, with an isomorphism off the cosupport of the ideal
+- [Functorial resolution of schemes of finite type in characteristic zero](../../../AlgebraicGeometry/birational-geometry/resolution-of-singularities/functorial-resolution-of-schemes-of-finite-type.md), for reduced schemes
+- [Integrated Poincaré–Lelong formula](../../../AlgebraicGeometry/birational-geometry/integrated-poincare-lelong-formula.md), on compact complex manifolds
+- [Poincaré–Lelong formula on arithmetic cycles](../../../AlgebraicGeometry/arakelov-geometry/poincare-lelong-formula-on-arithmetic-cycles.md), for the library's form on possibly singular horizontal cycles, summed over the relevant horizontal components of the divisor with their lengths, which is unsourced
+- [Kawamata–Viehweg vanishing theorem](../../../AlgebraicGeometry/birational-geometry/kawamata-viehweg-vanishing-theorem.md), for $D = 0$ over an algebraically closed field of characteristic zero
+- [Nadel vanishing for pairs and separation of points by sections](../../../AlgebraicGeometry/birational-geometry/nadel-vanishing-for-klt-pairs-and-point-separation.md), for Nadel vanishing on normal varieties, isolated non-klt centres and the separation of two points
+- [L² extension from subvarieties defined by log canonical weights](../../../AlgebraicGeometry/birational-geometry/l2-extension-from-log-canonical-subvarieties.md), for the extension from the finite set of transverse common zeros of $n \ge 1$ sections with nonzero Jacobians and squared norms summing to at most $1$, on a compact manifold with a positive line bundle, under the curvature condition for every $\alpha \in [1, 1 + \delta]$, with the constant $34/\delta$, the inverse squared Jacobians and the factor $2^{n+1}\pi^n/(n-1)!$, which bounds the residue measure from above
+- [Intersection numbers and Riemann–Roch for nef line bundles](../../../AlgebraicGeometry/birational-geometry/intersection-numbers-of-nef-line-bundles.md), for projective schemes over algebraically closed fields of any characteristic, and for the limit of the ranks of normalized chart lattices, which is unsourced
+- [Standard results of coherent cohomology on projective varieties](../../../AlgebraicGeometry/birational-geometry/standard-results-of-coherent-cohomology.md), for GAGA for sections of line bundles
+- [Arithmetic Hilbert–Samuel formula for nef hermitian line bundles](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-volumes/arithmetic-hilbert-samuel-formula-for-nef-hermitian-line-bundles.md), for the asymptotic of the logarithm of the number of sections of sup norm at most $1$ of $m\bar L + \bar N$, with a fixed twist $\bar N$, as $m \to \infty$ through all integers
+- [Moriwaki's generalized Hodge index theorem](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-volumes/generalized-hodge-index-theorem.md), for its corollary on hermitian line bundles that are nef on the fibres and have semipositive curvature
+- [Arithmetic degree and arithmetic intersection numbers](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-numbers.md), for the change of metric and the projection formula
+- [Geometric degrees as integrals of first Chern forms](../../../AlgebraicGeometry/arakelov-geometry/geometric-degrees-as-integrals-of-chern-forms.md), for the unweighted identity
+- [Height of a cycle](../../../AlgebraicGeometry/arakelov-geometry/height-of-a-cycle.md), for heights of cycles, their normalization by the geometric degree and their projection formula, with the residue degree, the vanishing on a drop of dimension holding for the unnormalized height
+- [Heights of Chow forms](../../../AlgebraicGeometry/arakelov-geometry/heights-of-chow-forms.md), for the existence of Chow forms and the comparison of the height of a cycle with the Fubini–Study height of its Chow form
+- [Small sections and lattices of homogeneous coordinate rings](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-volumes/small-sections-and-coordinate-lattices.md), for the nonnegativity and the three bounds for small elements of chart lattices, which are unsourced
+- [Good hermitian metrics and Chern numbers](../../../AlgebraicGeometry/abelian-varieties/moduli-and-compactifications/good-hermitian-metrics-and-chern-numbers.md), for the Chern integrals of good metrics and the flag push-forward identity on flag refinements, which is unsourced in the form used
+- [Hodge bundle on toroidal compactifications of Siegel moduli schemes](../../../AlgebraicGeometry/abelian-varieties/moduli-and-compactifications/hodge-bundle-on-siegel-toroidal-compactifications.md), for odd level $n \ge 3$ over $\mathbb{Z}[\zeta_n, 1/n]$, with one boundary divisor for all charts and for the ample twist
+- [Toroidal compactifications of unitary Shimura varieties](../../../AlgebraicGeometry/abelian-varieties/moduli-and-compactifications/toroidal-compactifications-of-unitary-shimura-varieties.md), for the charts given by a fan and the logarithmic Kodaira–Spencer isomorphism on every affine open of the compactification
+- [Homomorphisms and Lie algebras of semi-abelian schemes](../../../AlgebraicGeometry/abelian-varieties/homomorphisms-and-lie-algebras-of-semi-abelian-schemes.md), for the extension of homomorphisms over normal bases and the seminegativity of the Lie algebra over a curve in characteristic zero
+- [Line bundles on abelian varieties](../../../AlgebraicGeometry/abelian-varieties/line-bundles-on-abelian-varieties.md), for the global sections of a principal polarization over an algebraically closed field
+- [Isogenies of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/isogenies-of-abelian-schemes.md), for the number of $n$-torsion points over a separably closed field of characteristic prime to $n$, through the finite étale group scheme $A[n]$
+- [Dual abelian scheme](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-scheme.md), for the dual over an arbitrary base, with its Poincaré bundle, biduality and the duals of homomorphisms
+- [Zarhin's trick for abelian schemes](../../../AlgebraicGeometry/abelian-varieties/zarhin-trick-for-abelian-schemes.md), for its form over the valuation rings of real-valued valuations, with a symmetric polarizing line bundle
+- [Semistable reduction theorem for abelian varieties](../../../AlgebraicGeometry/abelian-varieties/semistable-reduction-theorem.md), with the identity component of the Néron model as semi-abelian model
+- [Deformations of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/deformations-of-abelian-schemes.md), for rings in which $p$ is nilpotent and, unsourced, for arbitrary rings
+- [De Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/de-rham-cohomology-of-abelian-schemes.md), for de Rham homology with the annihilator filtration, its base change and the polarization forms, the clauses `Free`, `Hodge`, `BaseChange` and `Duality` of the library's `AbelianDeRham`, unsourced as a package over arbitrary rings
+- [Crystalline nature of the de Rham cohomology of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/crystalline-nature-of-the-de-rham-cohomology-of-abelian-schemes.md), for the clause `Rigid` of the same package: the geometric comparison of first crystalline and de Rham cohomology, which Masullo proves over general divided power bases, and its identification with the library's primitive cohomology and pullback map, which is unsourced
+- [Grothendieck's existence theorem](../../../AlgebraicGeometry/abelian-varieties/deformations-and-p-divisible-groups/grothendieck-existence-theorem.md), for the algebraization of morphisms and of proper formal schemes with a line bundle ample on the closed fibre
 
 ## Sources
 

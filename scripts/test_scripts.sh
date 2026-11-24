@@ -569,6 +569,7 @@ python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_merge_queue_checks.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_ci_build_trims.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_bump_cache_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_next_task.py -v
 python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
