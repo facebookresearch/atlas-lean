@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.NormNum
 import MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330
 
@@ -44,5 +46,30 @@ example : (∑ m ∈ Finset.Icc 1 (1 : ℕ),
     (-1 : ℚ) ^ m * ((Nat.factorial (m - 1) : ℚ) ^ 2 / ((2 * m).factorial : ℚ)) *
       (arrayR 1 m : ℚ)) = -1 / 2 := by
   norm_num [show arrayR 1 1 = 1 by decide, Nat.factorial]
+
+-- At m = 1 the only admissible tuple is (0, 0, 1), so the closed form gives R(3, 1) = 1.
+example : (arrayR 3 1 : ℚ) = 1 := by
+  rw [arrayR_eq_closedForm 3 1 le_rfl (by norm_num),
+    show (Finset.univ.filter fun b : Fin 3 → Fin 4 =>
+      (∑ r : Fin 3, (r.val + 1) * (b r).val) = 3 ∧ (∑ r : Fin 3, (b r).val) = 1) =
+      {![0, 0, 1]} by decide]
+  norm_num [Fin.prod_univ_three, Nat.factorial]
+
+-- At m = k the only admissible tuple is (3, 0, 0), so the closed form gives R(3, 3) = 6! / 2.
+example : (arrayR 3 3 : ℚ) = 360 := by
+  rw [arrayR_eq_closedForm 3 3 (by norm_num) le_rfl,
+    show (Finset.univ.filter fun b : Fin 3 → Fin 4 =>
+      (∑ r : Fin 3, (r.val + 1) * (b r).val) = 3 ∧ (∑ r : Fin 3, (b r).val) = 3) =
+      {![3, 0, 0]} by decide]
+  norm_num [Fin.prod_univ_three, Nat.factorial]
+
+-- At k = 4 and m = 2 two tuples are admissible, (1, 0, 1, 0) and (0, 2, 0, 0), and their
+-- terms add up to R(4, 2) = 252.
+example : (arrayR 4 2 : ℚ) = 252 := by
+  rw [arrayR_eq_closedForm 4 2 (by norm_num) (by norm_num),
+    show (Finset.univ.filter fun b : Fin 4 → Fin 5 =>
+      (∑ r : Fin 4, (r.val + 1) * (b r).val) = 4 ∧ (∑ r : Fin 4, (b r).val) = 2) =
+      {![1, 0, 1, 0], ![0, 2, 0, 0]} by decide +kernel]
+  norm_num [Fin.prod_univ_four, Nat.factorial]
 
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
