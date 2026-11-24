@@ -13,6 +13,9 @@ public import MathlibExt.Analysis.SpectralRadiusSummable
 
 open Filter
 
+section
+attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
+
 theorem spectralRadius_zero_matrix_fin_two_lt_one :
     spectralRadius ℂ (0 : Matrix (Fin 2) (Fin 2) ℂ) < 1 := by simp
 
@@ -28,5 +31,6 @@ example : ¬ spectralRadius ℂ (1 : Matrix (Fin 2) (Fin 2) ℂ) < 1 := by
   rw [spectrum.spectralRadius_one]
   simp
 
+end
 end
 public section
