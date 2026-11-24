@@ -28,3 +28,13 @@ example (T : PowerSeries ℚ) (hT : S = X * T) : ¬ 13 ∣ (coeff 9 T⁻¹).den 
     simp [hT]
   have h := (sl_hurwitz_numbers_den_coprime S C hS hC hS0 hC0 13 (by decide)).2 rfl
   rwa [hshift] at h
+
+-- The first nonlinear coefficient of Sl has reduced denominator dividing 4!.
+example : (coeff 4 S).den ∣ 24 := by
+  obtain ⟨z, hz⟩ := factorial_mul_coeff_sl_isInt S C hS hC hS0 hC0 1
+  change 24 * coeff 4 S = z at hz
+  have h : coeff 4 S = Rat.divInt z 24 := by
+    rw [Rat.divInt_eq_div, eq_div_iff (by norm_num)]
+    simpa [mul_comm] using hz
+  rw [h]
+  exact_mod_cast Rat.den_dvd z 24
