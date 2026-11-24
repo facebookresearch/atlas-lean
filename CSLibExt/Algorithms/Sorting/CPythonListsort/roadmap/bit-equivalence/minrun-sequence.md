@@ -14,7 +14,7 @@ theorem that their length is exactly `2^mr_e`, every entry is either the floor
 or ceiling of `listSize.toNat / 2^mr_e`, their sum is `listSize.toNat`, the
 residual returns to zero, and every recorded assertion has passed. The
 premises are explicit in `minrunSequence` at
-`Equivalence/MinrunResults.lean:651`.
+`Equivalence/MinrunResults.lean:639`.
 
 This is a conditional statement about the exact-arithmetic generator cycle,
 not a full-domain property of the selected 32-bit transcription mask and not a claim that

@@ -931,20 +931,4 @@ theorem CanonicalMirroredScanRemainderEntriesMatch.unmirror
     rw [sortSliceRangeEntries_mirror]
     simpa using h.entries_eq
 
-/-! ## Kernel-checkable nonidentity regression -/
-
-private def originRelabelRegressionOccurrence : Occurrence Nat :=
-  { value := 17, origin := 0 }
-
-/-- The relabeling is observably nonidentity inside the mirrored extent, and
-applying it twice restores the original occurrence.  This is a kernel-reduced
-regression proved by `decide`. -/
-theorem mirrorOccurrence_nonidentity_regression :
-    mirrorOccurrence 4 originRelabelRegressionOccurrence =
-        ({ value := 17, origin := 3 } : Occurrence Nat) ∧
-      mirrorOccurrence 4
-          (mirrorOccurrence 4 originRelabelRegressionOccurrence) =
-        originRelabelRegressionOccurrence := by
-  decide
-
 end CPythonListsort

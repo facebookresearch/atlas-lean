@@ -1767,10 +1767,9 @@ end MergeLoMachineInvariant
 
 /-! ## Concrete adversarial-comparator hedge fixtures -/
 
-/-- The concrete non-irreflexive-comparator machine used by
-`mergeLo_inconsistentComparator_naZero_succeed_regression` satisfies the full
-assembly invariant, not merely the cursor arithmetic visible in the
-transcription fixture. -/
+/-- The concrete non-irreflexive-comparator machine used by the `mergeLo?` zero-`na`
+regression satisfies the full assembly invariant, not merely the cursor arithmetic
+visible in the transcription fixture. -/
 theorem mergeLoNaZeroHedgeRegressionMachine_invariant :
     MergeLoMachineInvariant mergeLoNaZeroHedgeRegressionState 2 3
       mergeLoNaZeroHedgeRegressionMachine := by

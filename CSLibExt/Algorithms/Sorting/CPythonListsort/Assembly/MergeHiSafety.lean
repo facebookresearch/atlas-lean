@@ -2191,9 +2191,9 @@ end MergeHiCursorInvariant
 
 /-! ## Concrete adversarial-comparator hedge fixtures -/
 
-/-- The concrete non-irreflexive-comparator cursor used by
-`mergeHi_inconsistentComparator_nbZero_succeed_regression` satisfies the full
-assembly invariant, including its subtraction-sensitive cursor geometry. -/
+/-- The concrete non-irreflexive-comparator cursor used by the `mergeHi?` zero-`nb`
+regression satisfies the full assembly invariant, including its subtraction-sensitive
+cursor geometry. -/
 theorem mergeHiNbZeroHedgeRegressionCursor_invariant :
     MergeHiCursorInvariant mergeHiNbZeroHedgeRegressionState 2
       mergeHiNbZeroHedgeRegressionCursor := by

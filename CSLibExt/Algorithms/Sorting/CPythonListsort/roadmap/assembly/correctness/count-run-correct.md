@@ -81,15 +81,15 @@ and final tail/whole reversal plus ascending extension
 
 - The adversarial tagged run `[3, 2a, 2b, 1]` returns
   `[1, 2a, 2b, 3]`, pinning equal-block origin order through both reversal
-  phases (`Correctness/CountRunCorrectness.lean:1822`).
+  phases (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/CountRunCorrectness.lean:85`).
 - An all-equal run remains in canonical origin order
-  (`Correctness/CountRunCorrectness.lean:1845`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/CountRunCorrectness.lean:108`).
 - A normalized descending prefix is extended by the actual final ascending
   scan, including stable placement of an equivalent boundary value
-  (`Correctness/CountRunCorrectness.lean:1867`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/CountRunCorrectness.lean:130`).
 - A nonzero-base execution reverses only its selected run and leaves both
   outside sentinels untouched
-  (`Correctness/CountRunCorrectness.lean:1861`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/CountRunCorrectness.lean:124`).
 
 These four items are executable theorem regressions, not proof-body
 observations.

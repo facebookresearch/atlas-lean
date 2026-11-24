@@ -15,7 +15,7 @@ emitted lengths sum to `(k * listSize.toNat) / 2^mr_e`, the stored residual is
 addition stays below `2^63`, and every recorded assertion has passed. Those
 facts are the loop invariant needed to invoke the conditional one-step equivalence. The
 exponent premise is explicit in `minrunPrefixSum` at
-`Equivalence/MinrunResults.lean:478`. This exact prefix result
+`Equivalence/MinrunResults.lean:466`. This exact prefix result
 is not the output-band fact used by the top-level scan.
 
 ## Depends on

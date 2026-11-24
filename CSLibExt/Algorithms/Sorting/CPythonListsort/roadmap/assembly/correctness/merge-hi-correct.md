@@ -158,22 +158,22 @@ inhabiting the enclosing post is `mergeAt_correct` at
   equal A occurrence earlier in forward order; the equation and the concrete
   payload-bearing framed result are pinned at
   `Transcription/MergeHi.lean:945` and
-  `Correctness/MergeHiCorrectness.lean:1533`.
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeHiCorrectness.lean:92`.
 - The gallop fixture pins stable equal-key ordering and payload pairing in the
   final raw-evaluator output
-  (`Transcription/MergeHi.lean:1347`). It does not by itself
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/MergeHi.lean:41`). It does not by itself
   observably pin branch entry; the two gallop-phase semantic theorems are at
   `Correctness/MergeHiCorrectness.lean:973` and
   `Correctness/MergeHiCorrectness.lean:777`.
 - The raw inconsistent-comparator `nb = 0` hedge is observably exercised, while
   strict-order correctness proves the gallop-left insertion index positive and
   therefore excludes that outcome
-  (`Transcription/MergeHi.lean:1412` and
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/MergeHi.lean:60` and
   `Correctness/MergeHiInvariant.lean:1565`).
 - The concrete raw evaluator reaches the exact expected result, and its
   temporary allocation satisfies `TempStorageInv`
-  (`Correctness/MergeHiCorrectness.lean:1524` and
-  `Correctness/MergeHiCorrectness.lean:1488`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeHiCorrectness.lean:83` and
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeHiCorrectness.lean:47`).
 - Persistent whole-entry snapshot preservation follows from the exported local
   permutation, range bound, and frame
   (`Correctness/MergeHiCorrectness.lean:163`).

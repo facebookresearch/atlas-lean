@@ -1351,27 +1351,4 @@ theorem mergeHiMemcpyTempToData_materialized_source_of_eq_some
     _ = materialized.entries[tempSrc.toNat + i]? :=
       hcells (tempSrc.toNat + i) (by omega)
 
-/-! ## Executable overlap regression -/
-
-private def mergeMovementOverlapInput : SortSlice Nat Nat :=
-  { entries :=
-      #[{ key := 1, value := some 10 },
-        { key := 2, value := some 20 },
-        { key := 3, value := some 30 },
-        { key := 4, value := some 40 },
-        { key := 5, value := some 50 }] }
-
-/-- A rightward overlapping merge move reads every entry from the pre-move
-snapshot; an increasing-address implementation would not produce this array. -/
-theorem mergeDataMemmove_overlap_snapshot_regression :
-    mergeDataMemmove? .loCopyBTail mergeMovementOverlapInput 1 0 4 =
-      some
-        { entries :=
-            #[{ key := 1, value := some 10 },
-              { key := 1, value := some 10 },
-              { key := 2, value := some 20 },
-              { key := 3, value := some 30 },
-              { key := 4, value := some 40 }] } := by
-  decide
-
 end CPythonListsort

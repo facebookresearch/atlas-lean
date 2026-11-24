@@ -64,7 +64,7 @@ unmirroring recovers the exact signed forward predicates
 The nonidentity regression uses kernel reduction via `decide`: origin zero at
 extent four becomes origin three, and the second application restores the
 original occurrence
-(`Correctness/OriginRelabelEquivariance.lean:942`).
+(`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/OriginRelabelEquivariance.lean:23`).
 
 This primitive support node does not assert merge or whole-scan commutation.
 Those peer-scale obligations are explicit downstream nodes:

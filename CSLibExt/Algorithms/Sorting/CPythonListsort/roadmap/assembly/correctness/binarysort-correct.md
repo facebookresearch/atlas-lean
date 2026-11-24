@@ -35,10 +35,10 @@ that suffix is inserted.
 - Equality takes the upper-bound/right branch: the actual traced search
   returns position `2` past two older equal occurrences, and the actual traced
   sort inserts the pivot after them
-  (`Correctness/BinarysortCorrectness.lean:1310`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/BinarysortCorrectness.lean:75`).
 - A nonzero-base execution sorts only `[1,4)`, leaves both outside sentinels
   unchanged, and retains equal-key origin order
-  (`Correctness/BinarysortCorrectness.lean:1313`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/BinarysortCorrectness.lean:78`).
 
 These are executable theorem regressions, not observations from the proof
 body.

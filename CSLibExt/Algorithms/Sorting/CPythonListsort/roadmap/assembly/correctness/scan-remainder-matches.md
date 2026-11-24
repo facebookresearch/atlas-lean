@@ -41,7 +41,7 @@ still be rejected because its unscanned suffix is wrong.
   `tagSortSliceOccurrences_payloads`
   (`Correctness/ScanRemainder.lean:61`).  The concrete keyed
   constructor regression keeps `some 42` paired with key `7@0`
-  (`Correctness/ScanRemainder.lean:407`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/ScanRemainder.lean:17`).
 - Initialization for an arbitrary validated `ListSortInput`, with its exact
   `hasKeyfunc` mode, is proved by
   `scanRemainderEntriesMatch_initial_listSortInput`
@@ -53,10 +53,10 @@ still be rejected because its unscanned suffix is wrong.
   (`Correctness/ScanRemainder.lean:299`).
 - The wrong-suffix anti-vacuity regression exhibits a state accepted by
   `PendingRunsCorrect` and rejected by `ScanRemainderMatches`
-  (`Correctness/ScanRemainder.lean:471`).
+  (`Correctness/ScanRemainder.lean:461`).
 - The nonzero-base regression has matching visible values and a deliberately
   matching zero-based prefix, but is rejected for the wrong absolute origin
-  (`Correctness/ScanRemainder.lean:520`).
+  (`Correctness/ScanRemainder.lean:510`).
 
 Each item above cites its theorem or executable regression; the two predicate
 locations in the opening section are definitions, not pinning theorems.

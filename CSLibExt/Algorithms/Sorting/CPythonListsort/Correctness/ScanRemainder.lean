@@ -402,16 +402,6 @@ theorem scanRemainderEntriesMatch_initial_listSortInput
     scanRemainderEntriesMatch_initial keyCompare input.hasKeyfunc
       input.slice hsize
 
-/-- Concrete keyed-input pin: occurrence tagging keeps the payload `42`
-paired with key `7` while attaching absolute origin zero. -/
-theorem listSortInput_keyed_occurrence_payload_regression :
-    let input := ListSortInput.keyed (#[(7, 42)] : Array (Nat × Nat))
-    input.withOccurrenceKeys.hasKeyfunc = true ∧
-      input.withOccurrenceKeys.slice.entries =
-        #[{ key := { value := 7, origin := 0 }, value := some 42 }] := by
-  norm_num [ListSortInput.withOccurrenceKeys, ListSortInput.keyed,
-    tagSortSliceOccurrences]
-
 /-- `initialMergeState` establishes the complete unscanned snapshot invariant
 at `scanned = 0` for every source-admitted occurrence-carrying input. -/
 theorem scanRemainderMatches_initial

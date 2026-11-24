@@ -35,7 +35,7 @@ quotient/remainder equivalence once the mask truncates.
 
 The kernel-checked executable regression
 `minrun_cIntMask_truncation_regression` at
-`Equivalence/MinrunResults.lean:350` makes the distinction
+`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Equivalence/MinrunResults.lean:19` makes the distinction
 observable: at exponent 33 its first two actual targets are `[63, 63]`, while
 the ideal full-width trace emits `[63, 64]`. It is kernel-checked by `decide`
 rather than left to an interpreted runtime check, and is review evidence

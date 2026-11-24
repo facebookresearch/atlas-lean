@@ -15,11 +15,12 @@ python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_excerpts.py
 scripts/check.sh
 ```
 
-Building `CSLibExtTest.Algorithms.Sorting.CPythonListsort` compiles both
-fixed-input gallop examples and executes the twelve asserting `IO Unit`
-witnesses through their `#eval` calls; a false assertion raises an `IO` error
-and fails that build. The IO witnesses are not theorem axioms, and no
-production declaration depends on them. The last command is the repository's
+Building `CSLibExtTest.Algorithms.Sorting.CPythonListsort` compiles the
+fixed-input checks in the mirrored test modules, including the gallop examples.
+It also executes the twelve asserting `IO Unit` witnesses through their `#eval`
+calls; a false assertion raises an `IO` error and fails that build. The IO
+witnesses are not theorem axioms, and no production declaration depends on them.
+The last command is the repository's
 own gate: `scripts/check_axioms.sh` reruns `scripts/check_axioms.lean` over
 every compiled module of every root library, and `scripts/check_diagnostics.sh`
 rejects `sorry` and `native_decide` diagnostics.
@@ -31,8 +32,8 @@ and the twelve original propositions are in
 
 ### What the integration was checked against
 
-- 117 production and 11 test modules compile on Lean 4.36.0 with the root Mathlib pin.
-- The compiled policy audit imports all 128 modules together and reports no
+- 117 production and 30 test modules compile on Lean 4.36.0 with the root Mathlib pin.
+- The compiled policy audit imports all 147 modules together and reports no
   forbidden axiom, unsafe declaration or `implemented_by` attribute outside the
   compiler-generated exceptions, wanted declaration outside `WantedExt`, or
   forbidden cross-library import. All ten local verifier unit tests pass.

@@ -149,16 +149,16 @@ inhabiting the enclosing post is `mergeAt_correct` at
   fixture retains the left equal occurrence before the right while preserving
   payloads and both outside sentinels
   (`Transcription/MergeLo.lean:798` and
-  `Correctness/MergeLoCorrectness.lean:1187`).
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoCorrectness.lean:19`).
 - The min-gallop-one fixture pins the final stable equal-key/payload result
-  (`Correctness/MergeLoCorrectness.lean:1205`). It does not by
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoCorrectness.lean:37`). It does not by
   itself observably pin entry into galloping mode; gallop semantics are instead
   covered parametrically by the theorem at
   `Correctness/MergeLoCorrectness.lean:585`.
 - The raw inconsistent-comparator `na = 0` hedge is observably exercised with
   a continuation that always fails, while the strict-order correctness proof
   excludes that outcome through the strict gallop bound
-  (`Transcription/MergeLo.lean:1298` and
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/MergeLo.lean:90` and
   `Correctness/MergeLoInvariant.lean:1919`).
 - The concrete fixture's declared temporary allocation satisfies
   `TempStorageInv`
