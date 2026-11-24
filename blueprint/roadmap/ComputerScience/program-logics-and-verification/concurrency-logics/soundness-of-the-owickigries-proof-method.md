@@ -4,10 +4,6 @@ Consider a while language with basic atomic state transformations, sequential co
 
 **Theorem (strong soundness for parallel composition).** If $\vdash c_i\ Q_i$ for each $i$ and the outlines are interference free, then for every computation of $c_1 \parallel \cdots \parallel c_n$ from a state in $\bigcap_i \mathrm{pre}(c_i)$, at every point each unfinished component's current command has its precondition true and each finished component $c_j$ has $Q_j$ true. In particular, a terminating computation ends in a state satisfying $\bigcap_i Q_i$, so $\{\bigcap_i \mathrm{pre}(c_i)\}\ c_1 \parallel \cdots \parallel c_n\ \{\bigcap_i Q_i\}$ holds in the sense of partial correctness.
 
-## Proof depends on
-
-- [Soundness of Hoare logic for partial correctness](../hoare-logic/sound.md)
-
 ## Sources
 
 - T. Nipkow and L. Prensa Nieto, "Owicki/Gries in Isabelle/HOL", in *Fundamental Approaches to Software Engineering (FASE 1999)*, LNCS 1577, Springer, 1999, <https://www21.in.tum.de/~nipkow/pubs/fase99.html>, Sections 4 and 5, Theorems 2 and 3
