@@ -16,6 +16,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPolynomial
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
+public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
 public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
 
 /-!
@@ -122,18 +123,6 @@ Sums*, INTEGERS 26 (2026), Article A19, Lemma 1 (`integers-2026-A19-lem-1`). -/
 public theorem_wanted integral_sin_half_cpow (u : ℂ) (hu : -1 < u.re) :
     ∫ x in (0 : ℝ)..Real.pi, ((Real.sin (x / 2) : ℂ)) ^ u =
       (2 : ℂ) ^ (-u) * Real.pi * gammaBinom u (u / 2)
-
-/-- **Integral of $\cos^m x$ over $[0, \pi]$.** For every natural number $m$,
-$\int_0^\pi \cos^m x \, dx$ equals $\pi \binom{m}{m/2} / 2^m$ if $m$ is even and $0$ if $m$ is
-odd.
-
-This is equation (9) of the source.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Lemma 1 (`integers-2026-A19-lem-1`). -/
-public theorem_wanted integral_cos_pow_zero_pi (m : ℕ) :
-    ∫ x in (0 : ℝ)..Real.pi, Real.cos x ^ m =
-      if Even m then Real.pi * (m.choose (m / 2) : ℝ) / 2 ^ m else 0
 
 /-- **Integral of $\cos^u(x/2)\sin^v(x/2)$ over $[0, \pi]$.** For all complex numbers $u$ and $v$
 with $\operatorname{Re} u > -1$ and $\operatorname{Re} v > -1$,

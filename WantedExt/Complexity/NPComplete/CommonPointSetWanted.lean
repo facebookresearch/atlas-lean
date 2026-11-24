@@ -20,7 +20,7 @@ doi:10.1007/3-540-58325-4_205).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Topology.MetricSpace.Congruence
 public import MathlibExt.Computability.BinaryNatEncoding
