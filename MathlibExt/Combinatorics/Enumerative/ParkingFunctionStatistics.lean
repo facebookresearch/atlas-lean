@@ -8,12 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Data.Fin.Tuple.Sort
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.Sort
 import Mathlib.Data.Set.Order
 import Mathlib.Order.SuccPred.Archimedean
 import Mathlib.Order.SuccPred.Fin
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
 
@@ -24,6 +25,8 @@ Cut a word after each position in a prescribed set. A word has descents only at 
 exactly when it is weakly increasing within each block. Reversing the blocks in place
 gives a word with ascents only at the cuts and preserves the parking condition.
 Induction over subsets then gives the equality of the counts for exact sets.
+Sorting by preference partitions the parking functions with a given descent set
+according to their multiset of entries.
 -/
 
 namespace MetaMathlibExt
@@ -32,6 +35,11 @@ set_option quotPrecheck false in
 /-- The parking functions of length `n`. -/
 local notation "pfSet" n:max =>
   Finset.filter (fun f : Fin n → Fin n => IsParkingFunction n f) Finset.univ
+
+set_option quotPrecheck false in
+/-- The nondecreasing parking functions of length `n`. -/
+local notation "ndpfSet" n:max =>
+  Finset.filter (fun f : Fin n → Fin n => IsParkingFunction n f ∧ Monotone f) Finset.univ
 
 set_option quotPrecheck false in
 /-- Descent set (1-based positions) of a word `w : Fin m → Fin n`. -/
@@ -187,5 +195,54 @@ public theorem parkingFunction_descentSet_card_eq_ascentSet (n : ℕ) (I : Finse
     change D I = A I
     unfold Finset.ssubsets at smaller
     omega
+
+namespace sum_ndpf_multisetDescent_eq
+
+private lemma content_eq_iff_sorted_eq {n : ℕ} (w β : Fin n → Fin n) (hβ : Monotone β) :
+    Finset.univ.val.map w = Finset.univ.val.map β ↔ w ∘ Tuple.sort w = β := by
+  rw [Fin.univ_val_map, Fin.univ_val_map, Multiset.coe_eq_coe]
+  have hperm := (Tuple.sort w).ofFn_comp_perm w
+  constructor
+  · intro h
+    exact List.ofFn_injective ((hperm.trans h).eq_of_pairwise'
+      (Tuple.monotone_sort w).sortedLE_ofFn.pairwise hβ.sortedLE_ofFn.pairwise)
+  · rintro rfl
+    exact hperm.symm
+
+end sum_ndpf_multisetDescent_eq
+
+open Classical sum_ndpf_multisetDescent_eq in
+set_option linter.unusedVariables false in
+/-- **Counting parking functions with a given descent set by their content.** The descent set
+of a word $w = (w_1, \dots, w_n)$ is $\{i : 1 \le i \le n - 1,\ w_i > w_{i+1}\}$. Let
+$n \in \mathbb{N}$ and $I \subseteq \{1, \dots, n - 1\}$. Then the number of parking functions of
+length $n$ with descent set $I$ equals the sum, over the nondecreasing parking functions $\beta$
+of length $n$, of the number of words of length $n$ with descent set $I$ whose multiset of
+letters is the multiset of entries of $\beta$.
+
+Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
+Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
+Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Lemma 17
+(`jis-2024-24.8.6-lem-17`). -/
+public theorem sum_ndpf_multisetDescent_eq (n : ℕ) (I : Finset ℕ)
+    (hI : I ⊆ Finset.Ico 1 n) :
+    ∑ β ∈ ndpfSet n, (Finset.univ.filter (fun w : Fin n → Fin n =>
+        Finset.univ.val.map w = Finset.univ.val.map β ∧ desSet w = I)).card =
+      ((pfSet n).filter (fun f => desSet f = I)).card := by
+  let words := Finset.univ.filter (fun w : Fin n → Fin n => desSet w = I)
+  calc
+    _ = ∑ β ∈ ndpfSet n, (words.filter (fun w => w ∘ Tuple.sort w = β)).card := by
+      apply Finset.sum_congr rfl
+      intro β hβ
+      congr 1
+      ext w
+      simp only [words, Finset.mem_filter, Finset.mem_univ, true_and,
+        content_eq_iff_sorted_eq w β (Finset.mem_filter.mp hβ).2.2]
+      exact and_comm
+    _ = _ := by
+      rw [Finset.sum_card_fiberwise_eq_card_filter]
+      congr 1
+      ext w
+      simp [words, Tuple.monotone_sort, ← parking_comp_perm, and_comm]
 
 end MetaMathlibExt
