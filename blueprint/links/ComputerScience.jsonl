@@ -9605,3 +9605,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/concurrency-control-and-recovery/README.md"}], "id": "af_b8804495dd6aeebc4a6c6fa1"}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/concurrency-control-and-recovery/starvation-under-wait-die-without-its-liveness-assumptions.md"}], "id": "af_efda58ee3d2bae2bb3adb2fd", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/machine-learning/algorithmic-fairness/lipschitz-randomized-classifiers-form-a-convex-set.md"}], "id": "af_dcd5e2751d8f6415ff832a7a", "extensions": {"org.atlas-wiki": {"kind": "lemma"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/syntax-with-binders/README.md"}], "id": "af_5def7e8c9332e4c6a58b32b6"}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/syntax-with-binders/abstract-binding-trees-and-alpha-equivalence.md"}], "id": "af_cbc542e008ed97f65f5915fe", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
