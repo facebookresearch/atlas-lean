@@ -35,7 +35,7 @@ example : (morphIterate letterMap 2 [false])[2]? =
     obtain rfl : i = 0 := by omega
     exact ⟨[false], rfl⟩
   exact morphIterate_getElem_eq_substitutionAutomaton_tail
-    letterMap hη 2 (by decide) false path hadm
+    letterMap (hη := hη) 2 (hp := by decide) false path hadm
 
 example : substitutionAutomaton letterMap false [1, 0] = some true ∧
     substitutionAutomaton letterMap false [0, 1] = some false ∧
