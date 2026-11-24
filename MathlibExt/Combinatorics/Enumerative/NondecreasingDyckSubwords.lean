@@ -792,6 +792,115 @@ public theorem nondecreasingDyck_subword_DU :
     unfold nondecreasingDyck_subword_UUU.closedForm at h
     linear_combination h⟩
 
+namespace nondecreasingDyck_subword_UD
+
+open nondecreasingDyck_subword_UUU (value slope_Y slope_F total closedForm total_rec closedForm_rec)
+open PowerSeries
+
+private lemma count_pair_cons (s t a b : DyckStep) (l : List DyckStep) :
+    dyckSubwordCount [s, t] (a :: b :: l) =
+      dyckSubwordCount [s, t] (b :: l) + (if a = s ∧ b = t then 1 else 0) := by
+  unfold dyckSubwordCount
+  rw [List.tails_cons, List.countP_cons]
+  congr 1
+  cases s <;> cases t <;> cases a <;> cases b <;> rfl
+
+-- Each adjacent transition changes the indicator of an up step by its signed contribution.
+private lemma transition_balance (l : List DyckStep) :
+    dyckSubwordCount [U, D] l + (if l.getLast? = some U then 1 else 0) =
+      dyckSubwordCount [D, U] l + (if l.head? = some U then 1 else 0) := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    cases l with
+    | nil => cases a <;> decide
+    | cons b l =>
+      simp only [count_pair_cons, List.getLast?_cons_cons, List.head?_cons]
+      simp only [List.head?_cons] at ih
+      cases a <;> cases b <;> simp_all
+      omega
+
+private lemma count_eq (p : DyckWord) (hp : p ≠ 0) :
+    dyckSubwordCount [U, D] p.toList = dyckSubwordCount [D, U] p.toList + 1 := by
+  have h := DyckWord.toList_ne_nil.mpr hp
+  simpa [List.head?_eq_some_head h, List.getLast?_eq_some_getLast h,
+    p.head_eq_U h, p.getLast_eq_D h] using transition_balance p.toList
+
+local notation "FUD" => nondecreasingDyckSubwordBivariateGF [U, D]
+local notation "FDU" => nondecreasingDyckSubwordBivariateGF [D, U]
+local notation "TUD" => nondecreasingDyckSubwordTotalGF [U, D]
+local notation "TDU" => nondecreasingDyckSubwordTotalGF [D, U]
+
+private lemma bivariate_shift : FUD = 𝒚 * FDU := by
+  ext1 n
+  by_cases hn : n = 0
+  · simp [nondecreasingDyckSubwordBivariateGF, coeff_C_mul, hn]
+  · simp only [nondecreasingDyckSubwordBivariateGF, coeff_C_mul, coeff_mk, hn, ↓reduceIte,
+      Finset.mul_sum]
+    refine Finset.sum_congr rfl fun p _ => ?_
+    have hp : p.val ≠ 0 := by
+      intro h
+      exact hn (by simpa [h] using p.property.symm)
+    rw [count_eq _ hp, pow_succ']
+
+private lemma bivariate : (1 - 2 * 𝒙 + 𝒙 ^ 2 - 𝒙 * 𝒚) * FUD = (1 - 𝒙) * 𝒙 * 𝒚 := by
+  rw [bivariate_shift, mul_left_comm, nondecreasingDyck_subword_DU.1, mul_comm]
+
+private lemma totalGF : (1 - 3 * 𝒛 + 𝒛 ^ 2) ^ 2 * TUD = 𝒛 * (1 - 𝒛) ^ 3 := by
+  have hvalue : (1 - 3 * 𝒛 + 𝒛 ^ 2) * value FDU = (1 - 𝒛) * 𝒛 := by
+    have h := congrArg value nondecreasingDyck_subword_DU.1
+    simp [value, PowerSeries.map_X, PowerSeries.map_C, map_ofNat] at h
+    linear_combination h
+  have htotal : TUD = value FDU + TDU := by
+    rw [← slope_F [U, D] (by decide +kernel), bivariate_shift, slope_Y,
+      slope_F [D, U] (by decide +kernel)]
+  rw [htotal]
+  linear_combination (1 - 3 * 𝒛 + 𝒛 ^ 2) * hvalue + nondecreasingDyck_subword_DU.2.1
+
+private lemma closed (n : ℕ) (hn : 1 ≤ n) : 10 * total [U, D] n = closedForm 5 (-7) (-1) 5 n := by
+  induction n using Nat.strong_induction_on with
+  | ind n ih =>
+    match n with
+    | 0 => omega
+    | 1 | 2 | 3 | 4 => decide +kernel
+    | k + 5 =>
+      have hpoly : 𝒛 * (1 - 𝒛) ^ 3 = 𝒛 ^ 1 - 3 * 𝒛 ^ 2 + 3 * 𝒛 ^ 3 - 𝒛 ^ 4 := by ring
+      have hz : coeff ((k + 1) + 4) (𝒛 * (1 - 𝒛) ^ 3) = 0 := by
+        simp only [hpoly, map_sub, map_add, coeff_X_pow, coeff_ofNat_mul]
+        split_ifs <;> omega
+      rw [total_rec _ _ totalGF (k + 1) hz, closedForm_rec 5 (-7) (-1) 5 (k + 1)]
+      linear_combination 6 * ih (k + 1 + 3) (by omega) (by omega) -
+        11 * ih (k + 1 + 2) (by omega) (by omega) +
+        6 * ih (k + 1 + 1) (by omega) (by omega) - ih (k + 1) (by omega) (by omega)
+
+end nondecreasingDyck_subword_UD
+
+/-- **Generating functions and closed form for the subword $UD$ in non-decreasing Dyck paths.**
+For $n \ge 0$ let $\mathcal{D}_n$ be the set of non-decreasing Dyck paths of semilength $n$, let
+$\#_{UD}(P)$ be the number of occurrences of the subword $UD$ in a path $P$, and let
+$d_{UD}(n) = \sum_{P \in \mathcal{D}_n} \#_{UD}(P)$. Let
+$F_{UD}(x, y) = \sum_{n \ge 1} \sum_{P \in \mathcal{D}_n} y^{\#_{UD}(P)} x^n$, a power series in
+$x$ with coefficients in $\mathbb{Z}[y]$, and $D_{UD}(x) = \sum_{n \ge 0} d_{UD}(n) x^n$ in
+$\mathbb{Z}[[x]]$. Then $(1 - 2x + x^2 - xy) F_{UD}(x, y) = (1 - x) x y$ and
+$(1 - 3x + x^2)^2 D_{UD}(x) = x (1 - x)^3$, and for every $n \ge 1$,
+$$10\, d_{UD}(n) = (5n - 7) F_{2n} - (n - 5) L_{2n},$$
+where $F_k$ and $L_k$ are the Fibonacci and Lucas numbers ($F_0 = 0$, $F_1 = 1$, $L_0 = 2$,
+$L_1 = 1$).
+
+Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
+Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 1
+(`jis-2025-25.1.6-thm-1`). -/
+public theorem nondecreasingDyck_subword_UD :
+    (1 - 2 * 𝒙 + 𝒙 ^ 2 - 𝒙 * 𝒚) * nondecreasingDyckSubwordBivariateGF [U, D] = (1 - 𝒙) * 𝒙 * 𝒚 ∧
+    ((1 - 3 * 𝒛 + 𝒛 ^ 2) ^ 2) * nondecreasingDyckSubwordTotalGF [U, D] = 𝒛 * (1 - 𝒛) ^ 3 ∧
+    ∀ n : ℕ, 1 ≤ n →
+      10 * (nondecreasingDyckSubwordTotal [U, D] n : ℤ) =
+        (5 * (n : ℤ) - 7) * (Nat.fib (2 * n) : ℤ) - ((n : ℤ) - 5) * (lucasNumber (2 * n) : ℤ) :=
+  ⟨nondecreasingDyck_subword_UD.bivariate, nondecreasingDyck_subword_UD.totalGF, fun n hn => by
+    have h := nondecreasingDyck_subword_UD.closed n hn
+    unfold nondecreasingDyck_subword_UUU.closedForm at h
+    linear_combination h⟩
+
 end
 
 end MetaMathlibExt
