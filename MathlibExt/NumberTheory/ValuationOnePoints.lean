@@ -13,6 +13,9 @@ public import Mathlib.Algebra.Polynomial.Derivative
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Nat.Prime.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.Polynomial.Taylor
 import Mathlib.Data.Int.ModEq
 import Mathlib.Data.Nat.Prime.Int
@@ -23,7 +26,8 @@ import Mathlib.Tactic.Ring
 # Polynomial lifts modulo a prime square
 
 A simple root modulo `p` has at most one lift to a root modulo `p²`. For a bivariate
-polynomial, all lifts of a singular point have the same value modulo `p²`.
+polynomial, a nonsingular point has exactly `p * (p - 1)` lifts of valuation one, and all lifts
+of a singular point have the same value modulo `p²`.
 See the [authors' preprint](https://arxiv.org/abs/2411.05366).
 -/
 
@@ -76,6 +80,79 @@ private lemma exists_eval_lift_remainder (f : MvPolynomial (Fin 2) ℤ) (r s k l
     let d := k * eval ![r, s] (pderiv 0 f) + l * eval ![r, s] (pderiv 1 f)
     refine ⟨q * ![r + k * p, s + l * p] i + d * ![k, l] i, ?_⟩
     fin_cases i <;> simp [d, hq] <;> ring
+
+/-- An affine function with nonzero slope has one zero among the residue representatives. -/
+private lemma sum_affine_ne_zero {p : ℕ} [Fact p.Prime] (a b : ZMod p) (ha : a ≠ 0) :
+    (∑ k ∈ Finset.range p, if (k : ZMod p) * a + b ≠ 0 then 1 else 0) = p - 1 := by
+  let root := -b / a
+  have eq_root (k : ℕ) (hk : k < p) : (k : ZMod p) * a + b = 0 ↔ k = root.val := by
+    rw [add_eq_zero_iff_eq_neg, ← eq_div_iff ha]
+    exact ⟨fun h => (ZMod.val_natCast_of_lt hk).symm.trans (congrArg ZMod.val h),
+      fun h => h ▸ ZMod.natCast_zmod_val root⟩
+  rw [← Finset.card_filter]
+  calc
+    _ = ((Finset.range p).filter fun k => k ≠ root.val).card := by
+      apply congrArg Finset.card
+      exact Finset.filter_congr fun k hk => (eq_root k (Finset.mem_range.mp hk)).not
+    _ = p - 1 := by
+      rw [Finset.filter_ne', Finset.card_erase_of_mem (Finset.mem_range.mpr root.val_lt)]
+      simp
+
+set_option linter.unusedVariables false in
+/-- **Lifts of a nonsingular point with valuation one.** Let $p$ be a prime, let
+$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $r, s$ be integers in
+$\{0, \dots, p - 1\}$ with $p \mid f(r, s)$ such that $f_x(r, s)$ and $f_y(r, s)$ are not both
+divisible by $p$. Then exactly $p(p - 1)$ of the pairs $(k, l)$ with $0 \le k, l < p$ satisfy
+$p \mid f(r + kp, s + lp)$ and $p^2 \nmid f(r + kp, s + lp)$, that is,
+$\nu_p(f(r + kp, s + lp)) = 1$.
+
+Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
+Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Proposition 2
+(`integers-2026-A82-prop-2`). -/
+public theorem card_lift_padicVal_eq_one {p : ℕ} (hp : p.Prime)
+    (f : MvPolynomial (Fin 2) ℤ) {r s : ℕ} (hr : r < p) (hs : s < p)
+    (hcurve : (p : ℤ) ∣ MvPolynomial.eval ![(r : ℤ), s] f)
+    (hgrad : ¬ ((p : ℤ) ∣ MvPolynomial.eval ![(r : ℤ), s] (MvPolynomial.pderiv 0 f) ∧
+      (p : ℤ) ∣ MvPolynomial.eval ![(r : ℤ), s] (MvPolynomial.pderiv 1 f))) :
+    ((Finset.range p ×ˢ Finset.range p).filter fun kl : ℕ × ℕ =>
+        (p : ℤ) ∣ MvPolynomial.eval ![(r : ℤ) + kl.1 * p, (s : ℤ) + kl.2 * p] f ∧
+          ¬ (p : ℤ) ^ 2 ∣ MvPolynomial.eval ![(r : ℤ) + kl.1 * p, (s : ℤ) + kl.2 * p] f).card =
+      p * (p - 1) := by
+  let : Fact p.Prime := ⟨hp⟩
+  let a := eval ![(r : ℤ), s] (pderiv 0 f)
+  let b := eval ![(r : ℤ), s] (pderiv 1 f)
+  obtain ⟨c, hc⟩ := hcurve
+  -- Dividing the first-order expansion by p leaves an affine function modulo p.
+  have lift (k l : ℕ) :
+      (p : ℤ) * (k * a + l * b + c) ≡
+        eval ![(r : ℤ) + k * p, (s : ℤ) + l * p] f [ZMOD (p : ℤ) ^ 2] := by
+    obtain ⟨q, hq⟩ := exists_eval_lift_remainder f r s k l p
+    rw [Int.modEq_iff_dvd, hq, hc]
+    exact ⟨q, by dsimp [a, b]; ring⟩
+  calc
+    _ = ((Finset.range p ×ˢ Finset.range p).filter fun kl : ℕ × ℕ =>
+        (kl.1 : ZMod p) * a + kl.2 * b + c ≠ 0).card := by
+      apply congrArg Finset.card
+      apply Finset.filter_congr
+      intro ⟨k, l⟩ _
+      have h := lift k l
+      have hd := (h.of_dvd (dvd_pow_self _ (by decide))).dvd_iff.mp (dvd_mul_right _ _)
+      rw [and_iff_right hd, ← h.dvd_iff, sq,
+        mul_dvd_mul_iff_left (Int.natCast_ne_zero.mpr hp.ne_zero),
+        ← ZMod.intCast_zmod_eq_zero_iff_dvd]
+      simp
+    _ = p * (p - 1) := by
+      rw [Finset.card_filter]
+      by_cases ha : (a : ZMod p) = 0
+      · have hb : (b : ZMod p) ≠ 0 := fun h =>
+          hgrad ⟨(ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp ha,
+            (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp h⟩
+        rw [Finset.sum_product]
+        simp only [ha, mul_zero, zero_add, sum_affine_ne_zero _ _ hb, Finset.sum_const,
+          Finset.card_range, smul_eq_mul]
+      · rw [Finset.sum_product_right]
+        simp only [add_assoc, sum_affine_ne_zero _ _ ha, Finset.sum_const,
+          Finset.card_range, smul_eq_mul]
 
 set_option linter.unusedVariables false in
 /-- **Lifts of a singular point with valuation one.** Let $p$ be a prime, let

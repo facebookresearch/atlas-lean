@@ -1,4 +1,4 @@
-# Closed subspaces of $L^2((0,1))$ inside $C((0,1))$ are finite-dimensional
+# Closed subspaces of $L^2([0,1])$ inside $C([0,1])$ are finite-dimensional
 
 Let $H$ be a
 closed linear subspace of the real space $L^2([0,1])$ with respect to Lebesgue measure, and

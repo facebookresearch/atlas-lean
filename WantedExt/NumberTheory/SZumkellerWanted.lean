@@ -32,51 +32,11 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.SZumkeller
+public import MathlibExt.NumberTheory.SumSquaredDivisorsProduct
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Product formulas for the sum of divisors.** Let $n \ne 0$ be a natural number, let
-$\sigma(n)$ be the sum of the divisors of $n$, and for each prime $p$ dividing $n$ let $k_p$ be
-the exponent of $p$ in $n$. Then, with products over the primes $p$ dividing $n$,
-$$\sigma(n) = \prod_{p \mid n} \frac{p^{k_p + 1} - 1}{p - 1}$$
-and
-$$\frac{\sigma(n)}{n} = \prod_{p \mid n} \frac{p^{k_p + 1} - 1}{p^{k_p} (p - 1)}.$$
-If moreover $n > 1$, then $\sigma(n)/n < \prod_{p \mid n} p/(p - 1)$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Lemma 1(i) (quoting Peng and
-Bhaskara Rao). -/
-public theorem_wanted sigma_one_prod_formulas (n : ℕ) (hn : n ≠ 0) :
-    (ArithmeticFunction.sigma 1 n : ℚ) =
-        ∏ p ∈ n.primeFactors, ((p : ℚ) ^ (n.factorization p + 1) - 1) / (p - 1) ∧
-      (ArithmeticFunction.sigma 1 n : ℚ) / n =
-        ∏ p ∈ n.primeFactors,
-          ((p : ℚ) ^ (n.factorization p + 1) - 1) / ((p : ℚ) ^ n.factorization p * (p - 1)) ∧
-      (1 < n → (ArithmeticFunction.sigma 1 n : ℚ) / n < ∏ p ∈ n.primeFactors, (p : ℚ) / (p - 1))
-
-/-- **Product formulas for the sum of squared divisors.** Let $n \ne 0$ be a natural number,
-let $\sigma_2(n)$ be the sum of the squares of the divisors of $n$, and for each prime $p$
-dividing $n$ let $k_p$ be the exponent of $p$ in $n$. Then, with products over the primes $p$
-dividing $n$,
-$$\sigma_2(n) = \prod_{p \mid n} \frac{p^{2(k_p + 1)} - 1}{p^2 - 1}$$
-and
-$$\frac{\sigma_2(n)}{n^2} = \prod_{p \mid n} \frac{p^{2(k_p + 1)} - 1}{p^{2k_p} (p^2 - 1)}.$$
-If moreover $n > 1$, then $\sigma_2(n)/n^2 < \prod_{p \mid n} p^2/(p^2 - 1)$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Lemma 1(ii) (quoting Peng and
-Bhaskara Rao). -/
-public theorem_wanted sigma_two_prod_formulas (n : ℕ) (hn : n ≠ 0) :
-    (ArithmeticFunction.sigma 2 n : ℚ) =
-        ∏ p ∈ n.primeFactors, ((p : ℚ) ^ (2 * (n.factorization p + 1)) - 1) / (p ^ 2 - 1) ∧
-      (ArithmeticFunction.sigma 2 n : ℚ) / n ^ 2 =
-        ∏ p ∈ n.primeFactors,
-          ((p : ℚ) ^ (2 * (n.factorization p + 1)) - 1) /
-            ((p : ℚ) ^ (2 * n.factorization p) * (p ^ 2 - 1)) ∧
-      (1 < n → (ArithmeticFunction.sigma 2 n : ℚ) / n ^ 2 <
-        ∏ p ∈ n.primeFactors, (p : ℚ) ^ 2 / (p ^ 2 - 1))
 
 /-- **Number of unitary divisors.** A positive integer $n$ with $m$ distinct prime factors has
 exactly $2^m$ unitary divisors.
