@@ -17,6 +17,3 @@ times are outside this result.
 - [Makespan](makespan.md)
 
 ## Proof depends on
-
-## Sources
-

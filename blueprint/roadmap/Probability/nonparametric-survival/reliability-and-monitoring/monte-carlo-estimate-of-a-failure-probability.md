@@ -19,3 +19,4 @@ is small; relative-error guarantees, importance sampling and variance reduction 
 
 ## Sources
 
+- W. Hoeffding, "Probability inequalities for sums of bounded random variables", *Journal of the American Statistical Association* 58 (1963), 13–30, Theorem 2.

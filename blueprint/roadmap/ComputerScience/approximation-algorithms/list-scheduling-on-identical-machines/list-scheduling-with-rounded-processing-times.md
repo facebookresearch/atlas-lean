@@ -19,3 +19,4 @@ or that its makespan decreases as $\delta$ decreases.
 
 ## Sources
 
+- R. L. Graham, "Bounds for certain multiprocessing anomalies", *Bell System Technical Journal* 45(9) (1966), 1563–1581.
