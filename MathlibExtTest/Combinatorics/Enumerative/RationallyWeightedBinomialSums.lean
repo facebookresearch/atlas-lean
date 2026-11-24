@@ -49,6 +49,23 @@ example (n : ℕ) :
   push_cast at h
   exact_mod_cast h
 
+-- The sum is empty at N = 0, and it is negative at N = 1.
+example :
+    ∑ k ∈ Finset.Icc 1 0,
+      (-1 : ℤ) ^ k * ((0 : ℕ).choose k : ℤ) * 2 ^ (0 - k) * (k : ℤ) ^ 2 = 0 :=
+  (sum_neg_one_pow_choose_two_pow_mul_sq 0).trans (by decide)
+
+example :
+    ∑ k ∈ Finset.Icc 1 1,
+      (-1 : ℤ) ^ k * ((1 : ℕ).choose k : ℤ) * 2 ^ (1 - k) * (k : ℤ) ^ 2 = -1 :=
+  (sum_neg_one_pow_choose_two_pow_mul_sq 1).trans (by decide)
+
+-- At N = 3 the three terms give -12 + 24 - 9 = 3.
+example :
+    ∑ k ∈ Finset.Icc 1 3,
+      (-1 : ℤ) ^ k * ((3 : ℕ).choose k : ℤ) * 2 ^ (3 - k) * (k : ℤ) ^ 2 = 3 :=
+  (sum_neg_one_pow_choose_two_pow_mul_sq 3).trans (by decide)
+
 -- Rows zero and one give the empty sum and a single term, respectively.
 example : ∑ k ∈ Finset.Icc 1 0, (-1 : ℚ) ^ (k - 1) * (0 : ℕ).choose k / k = 0 :=
   (sum_neg_one_pow_choose_div_eq_harmonic 0).trans harmonic_zero
