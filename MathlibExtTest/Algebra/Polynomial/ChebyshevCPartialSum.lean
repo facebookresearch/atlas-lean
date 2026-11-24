@@ -35,3 +35,25 @@ example : chebyshevCPartialSum 2 = X ^ 2 + X - 1 := by
   rw [chebyshevCPartialSum_recurrence 1 (by decide), chebyshevCPartialSum_one_two.1,
     chebyshevCPartialSum_zero]
   ring
+
+-- At the boundary `n = 1` the expansion is `X + 1`, matching `chebyshevCPartialSum_one_two`.
+example : chebyshevCPartialSum 1 = X + 1 := by
+  rw [chebyshevCPartialSum_eq_binomial_sum 1 le_rfl]
+  simp
+
+-- At `n = 4` both sums have nontrivial binomial coefficients: `F₄ = X⁴ + X³ - 3X² - 2X + 1`.
+example : chebyshevCPartialSum 4 = X ^ 4 + X ^ 3 - 3 * X ^ 2 - 2 * X + 1 := by
+  rw [chebyshevCPartialSum_eq_binomial_sum 4 (by decide)]
+  simp [Finset.sum_range_succ]
+  ring
+
+-- At `X = 2` every `T̄_k` equals `2`, so the two binomial sums add up to `2 * n + 1`.
+example (n : ℕ) (hn : 1 ≤ n) :
+    (∑ m ∈ Finset.range (n / 2 + 1),
+          (-1 : ℤ[X]) ^ m * ((n - m).choose m : ℤ[X]) * X ^ (n - 2 * m) +
+        ∑ m ∈ Finset.range ((n - 1) / 2 + 1),
+          (-1 : ℤ[X]) ^ m * ((n - m - 1).choose m : ℤ[X]) * X ^ (n - 2 * m - 1)).eval 2 =
+      2 * (n : ℤ) + 1 := by
+  rw [← chebyshevCPartialSum_eq_binomial_sum n hn]
+  simp [chebyshevCPartialSum, eval_finsetSum]
+  ring
