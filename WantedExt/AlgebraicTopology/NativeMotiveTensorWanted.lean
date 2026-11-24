@@ -38,11 +38,7 @@ def_wanted native_nerve_natural_transformation {C D : Type 1} [Category.{0} C] [
 def_wanted native_spectrum_tensor_source (S : SpectrumInfinitySource) (R : SpectrumReplacements S) :
     SpectrumTensorSource S R
 
-def_wanted native_inverse_edge (C : SSet.{1}) (e : C _⦋1⦌) (h : IsEquivalenceEdge C e) :
-    InverseEdgeSource C e
-
-variable [HasLimits SymmetricSpectrum]
-    {A : StableCategoryEnrichment} {k : Cardinal.{0}} {T : SpectralCompactSource A k}
+variable {A : StableCategoryEnrichment} {k : Cardinal.{0}} {T : SpectralCompactSource A k}
     {S : SpectrumInfinitySource} (V : MotivePresheafSetup T S) (R : SpectrumReplacements S)
 
 def_wanted native_raw_scalar_presheaf_tensor : RawScalarTensor V R

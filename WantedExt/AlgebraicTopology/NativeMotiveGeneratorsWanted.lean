@@ -30,7 +30,6 @@ open NativeKParametrizedSource NativeMotivePresheafSources NativeMotiveLocalizat
 open StableSpectraInfinitySource StableInfinityFilteredColimits
 open scoped Cardinal
 
-variable [HasLimits SymmetricSpectrum]
 
 def_wanted native_motive_presheaf_setup {A : StableCategoryEnrichment} {k : Cardinal.{0}}
     (T : SpectralCompactSource A k) (S : SpectrumInfinitySource) : MotivePresheafSetup T S

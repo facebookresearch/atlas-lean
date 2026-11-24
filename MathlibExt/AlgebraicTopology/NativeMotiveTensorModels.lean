@@ -144,8 +144,7 @@ structure SpectrumTensorSource (S : SpectrumInfinitySource) (R : SpectrumReplace
   unit_composite : (mapping _ _).δ 1 unit_triangle =
     (precomposition S.source S.category.toSSet).app (op ⦋1⦌) unit
 
-variable [HasLimits SymmetricSpectrum]
-  {A : NativeKParametrizedSource.StableCategoryEnrichment} {k : Cardinal.{0}}
+variable {A : NativeKParametrizedSource.StableCategoryEnrichment} {k : Cardinal.{0}}
   {T : SpectralCompactSource A k} {S : SpectrumInfinitySource} (V : MotivePresheafSetup T S)
   (R : SpectrumReplacements S)
 
@@ -241,6 +240,23 @@ structure InverseEdgeSource (C : SSet.{1}) (e : C _⦋1⦌) where
   second_source : C.δ 2 second = edge
   second_target : C.δ 0 second = e
   second_identity : C.δ 1 second = C.σ 0 (C.δ 0 e)
+
+/-- An equivalence edge carries its displayed inverse-edge data. -/
+noncomputable def inverseEdgeSource (C : SSet.{1}) (e : C _⦋1⦌) (h : IsEquivalenceEdge C e) :
+    InverseEdgeSource C e :=
+  let g := h.choose
+  let a := h.choose_spec.choose
+  let b := h.choose_spec.choose_spec.choose
+  have hab := h.choose_spec.choose_spec.choose_spec
+  { edge := g
+    first := a
+    second := b
+    first_source := hab.1
+    first_target := hab.2.1
+    first_identity := hab.2.2.1
+    second_source := hab.2.2.2.1
+    second_target := hab.2.2.2.2.1
+    second_identity := hab.2.2.2.2.2 }
 
 def chainValue {n : ℕ} {C : SSet.{1}} (d : indexNerve.{1} (Fin (n + 1)) ⟶ C)
     (i : Fin (n + 1)) : C _⦋0⦌ := d.app (op ⦋0⦌) (ULift.up (ComposableArrows.mk₀ i))

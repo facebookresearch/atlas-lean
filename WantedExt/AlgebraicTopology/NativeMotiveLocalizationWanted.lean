@@ -35,12 +35,10 @@ def_wanted native_zero_stable_category : ZeroCategorySource
 
 def_wanted native_perfect_completion (C : StableInfinityCategory.{0}) : PerfectCompletion C
 
-variable (C : Type) [EnrichedCategory SymmetricSpectrum C] [HasLimits SymmetricSpectrum]
+variable (C : Type) [EnrichedCategory SymmetricSpectrum C]
   (S : SpectrumInfinitySource) (P : NativeSpectralPresheafModels.PresheafInfinitySource C S)
 
 def_wanted native_presheaf_zero : PresheafZeroSource P
-
-def_wanted native_presheaf_raw_representative (x : P.category.toSSet _⦋0⦌) : RawRepresentative P x
 
 def_wanted native_presheaf_cofiber {E F Z : RawPresheaf C} (f : E ⟶ F) (t : E ⟶ Z)
     (zero : StableInfinityMappingSpaces.IsZeroObject P.category.toSSet (presheafVertex P Z)) :

@@ -19,6 +19,10 @@ one according to whether it includes the middle vertex. The resulting
 map to Delta[1] pulls back the specified native function-spectrum
 homotopy. This fixes all parameter simplices, not only the three edges.
 
+The triangle through the zero corner is the ordinary two-simplex
+`E ⟶ 0 ⟶ G`, whose two-cell is constant at the actual zero map. Otherwise it
+could carry any based loop in `Map(E, G)` and change the boundary map.
+
 Stable zero triangles are then the image of that entire coherent source
 square under the fixed coherent stable localization.
 
@@ -80,6 +84,11 @@ def topSourceChain : (indexNerve.{1} SquareCorner) _⦋2⦌ :=
   ULift.up (ComposableArrows.mk₂ (homOfLE (originLE .horizontal))
     (homOfLE (finalLE .horizontal)))
 
+/-- The actual zero source chain is the vertical two-arrow composite through the zero corner. -/
+def zeroSourceChain : (indexNerve.{1} SquareCorner) _⦋2⦌ :=
+  ULift.up (ComposableArrows.mk₂ (homOfLE (originLE .vertical))
+    (homOfLE (finalLE .vertical)))
+
 /-- The actual coherent source vertex of the specified native spectrum. -/
 def coherentVertex (N : SpectrumSimplicialEnrichment) (E : SymmetricSpectrum) :
     (spectrumCoherentNerve N) _⦋0⦌ :=
@@ -128,6 +137,13 @@ structure CoherentZeroSquare (N : SpectrumSimplicialEnrichment)
   zero_map : diagram.app (op ⦋1⦌)
     (ULift.up (nerve.edgeMk (homOfLE (finalLE .vertical))).edge) =
       spectrumCoherentEdge N (initialSpectrumMap G)
+  /-- The triangle through the zero corner is the ordinary composable pair
+  `E ⟶ 0 ⟶ G`: its diagonal is the actual zero map and its two-cell is constant,
+  so it carries no loop in `Map(E, G)` and the null-homotopy of the composite is
+  exactly the prescribed `t`. -/
+  zero_triangle : diagram.app (op ⦋2⦌) zeroSourceChain =
+    (spectrumOrdinaryToCoherent N).app (op ⦋2⦌)
+      (ComposableArrows.mk₂ (toZeroSpectrum Z E) (initialSpectrumMap G))
   top_first : topFirst N diagram = E
   top_last : topLast N diagram = G
   whole_homotopy : topFunctionMap N diagram ≫

@@ -46,9 +46,6 @@ theorem_wanted native_k0_relation_descent : K0RelationDescent G K C
 theorem_wanted native_k0_group_comparison (h : K0RelationDescent G K C) :
   Function.Bijective (k0Comparison G K C h)
 
-theorem_wanted native_k0_object_class (h : K0RelationDescent G K C) (x : C.toSSet _⦋0⦌) :
-  k0Comparison G K C h (objectClass C x) = nativeObjectClass G K C x
-
 theorem_wanted native_k0_exact_naturality {C D : StableInfinityCategory.{0}} (f : ExactFunctor C D)
     (hC : K0RelationDescent G K C) (hD : K0RelationDescent G K D) :
   (spectrumPi0Map G (connectiveKMap K f)).comp (k0Comparison G K C hC) =

@@ -45,7 +45,6 @@ open NativeSpectralPresheafModels NativeMotivePresheafSources NativeMotiveLocali
 open StableInfinitySParametrizedAction StableSpectraInfinitySource
 open scoped Simplicial Cardinal
 
-variable [HasLimits SymmetricSpectrum]
 
 /-- A convenience source bundle; every field refers to the already fixed native carrier/map.
 It contains no motive category, corepresentability or K equivalence assumption. -/

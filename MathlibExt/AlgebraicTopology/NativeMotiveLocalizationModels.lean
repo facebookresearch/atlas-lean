@@ -114,7 +114,7 @@ structure SplitPerfectExactSequence (E : PerfectExactSequence) where
   quotient_section : NaturallyEquivalentMaps (sectionMap.map ≫ E.quotientMap.map)
     (𝟙 E.right.toStableInfinityCategory.toSSet)
 
-variable {C : Type} [EnrichedCategory SymmetricSpectrum C] [HasLimits SymmetricSpectrum]
+variable {C : Type} [EnrichedCategory SymmetricSpectrum C]
   {S : SpectrumInfinitySource} (P : NativeSpectralPresheafModels.PresheafInfinitySource C S)
 
 /-- These are the original raw object and arrow images in the fixed localization. -/
@@ -128,6 +128,15 @@ def presheafEdge {E F : RawPresheaf C} (f : E ⟶ F) : P.category.toSSet _⦋1�
 structure RawRepresentative (x : P.category.toSSet _⦋0⦌) where
   presheaf : RawPresheaf C
   normalized : presheafVertex P presheaf = x
+
+/-- Every object of the localization is the image of a raw presheaf, since the source map is
+bijective on objects. -/
+noncomputable def rawRepresentative (x : P.category.toSSet _⦋0⦌) : RawRepresentative P x where
+  presheaf := nerveEquiv (P.source_objects.2 x).choose
+  normalized := by
+    unfold presheafVertex
+    conv_rhs => rw [← (P.source_objects.2 x).choose_spec]
+    exact congrArg (P.source.app (op ⦋0⦌)) (nerveEquiv.symm_apply_apply _)
 
 /-- The raw zero is both native categorical zero and pointwise the original zero spectrum. -/
 structure PresheafZeroSource where

@@ -35,7 +35,6 @@ open NativeSpectrumHoClosedModels NativeIKFunctorSources BGTNativeNonconnectiveM
 open NativeSpectraSimplicialSource NativeEnrichedSpectrumReplacements NativeSpectrumConeSources
 open StableInfinityCategoryModels StableInfinityFilteredColimits NativeDerivedSpectrumModels StableSpectraInfinitySource
 
-variable [HasLimits SymmetricSpectrum]
 
 def_wanted native_compact_sphere_index {A : StableCategoryEnrichment} {k : Cardinal.{0}}
     (T : SpectralCompactSource A k) (S : SpectrumInfinitySource) (P : CompactSpectraSource S)

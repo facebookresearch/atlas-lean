@@ -66,8 +66,8 @@ def SphereIndexSource.sphere {A : StableCategoryEnrichment} {k : Cardinal.{0}}
     {T : SpectralCompactSource A k} {S : SpectrumInfinitySource} (P : SphereIndexSource T S) :
     (T.represented P.index).toSSet _⦋0⦌ := P.fromSource.map.app (op ⦋0⦌) P.source.sphere
 
-variable [HasLimits SymmetricSpectrum]
-    {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment} {S : SpectrumInfinitySource}
+variable {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment}
+    {S : SpectrumInfinitySource}
     {Z : SpectrumZeroSource S} {ki : UncountableRegularCardinal}
     {K : ParametrizedKSource A N} {R : EnrichedSpectrumReplacements N S}
     {L : SpectrumCoherentLocalization N S} {P : SigmaKappaSystem ki}

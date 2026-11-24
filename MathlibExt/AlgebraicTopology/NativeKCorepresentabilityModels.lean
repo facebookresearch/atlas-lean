@@ -67,8 +67,7 @@ def exactCoreToMapping (B A : StableInfinityCategory.{0}) :
     ExactFunctorCore B A ⟶ mapping B.toSSet A.toSSet :=
   (coreSubcomplex (exactFunctorCategory B A)).ι ≫ exactFunctorInclusion B A
 
-variable [HasLimits SymmetricSpectrum]
-  {A : StableCategoryEnrichment} {k : Cardinal.{0}} {T : SpectralCompactSource A k}
+variable {A : StableCategoryEnrichment} {k : Cardinal.{0}} {T : SpectralCompactSource A k}
   {S : SpectrumInfinitySource} (V : MotivePresheafSetup T S)
 
 /-- Precomposition is normalized on every simplex of the FULL exact-functor category.

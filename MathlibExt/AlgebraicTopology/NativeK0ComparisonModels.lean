@@ -131,4 +131,10 @@ def k0Comparison (h : K0RelationDescent G K C) :
     GrothendieckGroup C →+ spectrumPi0 G (connectiveK K C) :=
   QuotientAddGroup.lift (relations C) (objectCycleMap G K C) h
 
+/-- The comparison sends the class of an object to its native object class. -/
+theorem k0Comparison_objectClass (h : K0RelationDescent G K C) (x : C.toSSet _⦋0⦌) :
+    k0Comparison G K C h (objectClass C x) = nativeObjectClass G K C x := by
+  rw [k0Comparison, objectClass, QuotientAddGroup.lift_mk, objectCycleMap,
+    FreeAbelianGroup.lift_apply_of]
+
 end MathlibExt.AlgebraicTopology.NativeK0ComparisonModels

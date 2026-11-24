@@ -33,7 +33,7 @@ open StableSpectraInfinitySource
 open scoped MonoidalClosed
 
 variable (C : Type) [EnrichedCategory SymmetricSpectrum C]
-  [HasLimits SymmetricSpectrum] (S : SpectrumInfinitySource)
+  (S : SpectrumInfinitySource)
 
 def_wanted native_spectral_representable (c : C) : RepresentableSource C c
 

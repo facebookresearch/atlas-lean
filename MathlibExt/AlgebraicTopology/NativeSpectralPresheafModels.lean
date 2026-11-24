@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicTopology.NativeSpectrumFunctionEvaluation
+public import MathlibExt.CategoryTheory.Monoidal.ModLimits
 public import Mathlib.CategoryTheory.Monoidal.Closed.Enrichment
 public import Mathlib.CategoryTheory.Enriched.Opposite
 public import Mathlib.CategoryTheory.Limits.Shapes.Products
@@ -86,7 +87,6 @@ def relationRight (E F : RawPresheaf C) (c d : C) :
       (α_ (value C E d) (componentFunctions C E F d) (c ⟶[SymmetricSpectrum] d)).inv ≫
       (ihom.ev (value C E d)).app (value C F d) ▷ (c ⟶[SymmetricSpectrum] d) ≫ action C F c d)
 
-variable [HasLimits SymmetricSpectrum]
 
 def leftRelations (E F : RawPresheaf C) : piObj (componentFunctions C E F) ⟶ piObj (actionFunctions C E F) :=
   Pi.lift (fun cd => Pi.π (componentFunctions C E F) cd.1 ≫ relationLeft C E F cd.1 cd.2)

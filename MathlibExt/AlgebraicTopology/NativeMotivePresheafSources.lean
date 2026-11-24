@@ -46,7 +46,7 @@ open NativeSpectraSimplicialSource NativeKParametrizedSource NativeCompactSource
 open NativeSpectralPresheafModels
 open scoped Simplicial MonoidalClosed
 
-variable (C : Type) [EnrichedCategory SymmetricSpectrum C] [HasLimits SymmetricSpectrum]
+variable (C : Type) [EnrichedCategory SymmetricSpectrum C]
 
 /-- The original internal-Hom precomposition on every component of the full end. -/
 def precompositionComponents {E F : RawPresheaf C} (f : E ⟶ F) (G : RawPresheaf C) :

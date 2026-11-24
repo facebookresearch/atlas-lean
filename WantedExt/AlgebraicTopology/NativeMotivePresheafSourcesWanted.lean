@@ -28,7 +28,7 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits
 open MathlibExt.SpectraSource
 open NativeKParametrizedSource StableSpectraInfinitySource NativeSpectralPresheafModels
 
-variable (C : Type) [EnrichedCategory SymmetricSpectrum C] [HasLimits SymmetricSpectrum]
+variable (C : Type) [EnrichedCategory SymmetricSpectrum C]
 
 theorem_wanted native_end_precomposition {E F : RawPresheaf C} (f : E ⟶ F) (G : RawPresheaf C) :
   PrecompositionCompatible C f G

@@ -39,8 +39,7 @@ def_wanted native_full_stable_exact_functor_input (B A : StableInfinityCategory.
 
 def_wanted native_core_to_zero_fold (C : StableInfinityCategory.{0}) : CoreToZeroFold C
 
-variable [HasLimits SymmetricSpectrum]
-    {A : StableCategoryEnrichment} {k : Cardinal.{0}} {T : SpectralCompactSource A k}
+variable {A : StableCategoryEnrichment} {k : Cardinal.{0}} {T : SpectralCompactSource A k}
     {S : SpectrumInfinitySource} (V : MotivePresheafSetup T S) {D : StableInfinityCategory.{0}}
     {N : SpectrumSimplicialEnrichment} (K : ParametrizedKSource A N)
 
