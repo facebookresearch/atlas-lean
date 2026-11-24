@@ -9993,6 +9993,7 @@
   "MathlibExt/Analysis/SpecialFunctions/SigmoidLogOdds": {"to": "Analysis/special-functions/elementary-transcendental-functions", "title": "Logistic function"},
   "MathlibExt/Analysis/SpecialFunctions/TakagiFunction": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Takagi function"},
   "MathlibExt/Analysis/SpecialFunctions/Trigonometric/ArcsinQuotientDerivatives": {"to": "Analysis/real-functions/integration", "title": "Areas between cosine powers"},
+  "MathlibExt/Analysis/SpecialFunctions/Trigonometric/CosineAlternatingIntegralLimit": {"to": "Analysis/real-functions/integration", "title": "Areas between cosine powers"},
   "MathlibExt/Analysis/SpecialFunctions/Trigonometric/CotangentLimit": {"to": "Analysis/real-functions/integration", "title": "Areas between cosine powers"},
   "MathlibExt/Analysis/SpecialFunctions/Trigonometric/HalfPeriodSineSumEven": {"to": "Analysis/real-functions/integration", "title": "Areas between cosine powers"},
   "MathlibExt/Analysis/SpecialFunctions/WeierstrassFunction": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Weierstrass function"},
