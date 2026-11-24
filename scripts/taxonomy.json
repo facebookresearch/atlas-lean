@@ -10416,6 +10416,7 @@
   "MathlibExt/Combinatorics/Additive/MinimumRestrictedAdditiveBasis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Restricted additive bases"},
   "MathlibExt/Combinatorics/Additive/ModularSchurNumbers": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Modular Schur numbers"},
   "MathlibExt/Combinatorics/Additive/MonochromaticProgressionLargeDifference": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Monochromatic progressions with large common difference"},
+  "MathlibExt/Combinatorics/Additive/NathansonMSTD": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Alternating sum- and difference-dominated sets"},
   "MathlibExt/Combinatorics/Additive/NathansonRestrictedSumset": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sumsets with at least r distinct terms"},
   "MathlibExt/Combinatorics/Additive/NoSmallSumDominantSet": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Minimum size of a sum-dominant set"},
   "MathlibExt/Combinatorics/Additive/PerfectSubsetSumCover": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Perfect subset-sum covers of abelian 2-groups"},
