@@ -1,0 +1,17 @@
+# Restriction Inverse Pair
+
+- [Restriction comp](restriction-comp.md)
+- [Restriction id](restriction-id.md)
+- [Source Recovery](source-recovery.md)
+- [Target Recovery](target-recovery.md)
+- [Unit Nat Iso](unit-nat-iso.md)
+- [Counit Nat Iso](counit-nat-iso.md)
+- [Source triangle](source-triangle.md)
+- [Target triangle](target-triangle.md)
+- [Diagram Equivalence](diagram-equivalence.md)
+- [Unit Nat Iso eq](unit-nat-iso-eq.md)
+- [Counit Nat Iso eq](counit-nat-iso-eq.md)
+- [Equivalence functor](equivalence-functor.md)
+- [Equivalence inverse](equivalence-inverse.md)
+- [Equivalence unit](equivalence-unit.md)
+- [Equivalence counit](equivalence-counit.md)

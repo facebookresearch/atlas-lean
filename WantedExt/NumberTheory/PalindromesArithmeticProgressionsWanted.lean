@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
+public import MathlibExt.NumberTheory.DigitSumCongruenceCount
 public import MathlibExt.NumberTheory.FloorIdentities
 public import MathlibExt.NumberTheory.PalindromesArithmeticProgressions
 
@@ -51,19 +52,6 @@ public def palindromicHalfCopy (b m : ℕ) : ℕ :=
   ∑ j ∈ Finset.range (Nat.digits b m).length,
     (Nat.digits b m).getD (max j ((Nat.digits b m).length - 1 - j)) 0 * b ^ j
 
-/-- **Digit-sum congruence count.** For natural numbers $b$, $k$, $q$, $x$, $y$ and an integer $r$,
-$N_b(k, q, r, x, y)$ is the number of tuples $(x_1, \dots, x_k)$ of natural numbers with
-$x \le x_1 < y$ and $x_i < b$ for $2 \le i \le k$ such that $x_1 + \dots + x_k \equiv r \pmod q$.
-The count is meant for $k \ge 1$; for $k = 0$ it is defined to equal its value for $k = 1$, the
-number of natural numbers $x_1$ with $x \le x_1 < y$ and $x_1 \equiv r \pmod q$.
-
-Source: K. Onphaeng, T. Khemaratchatakumthorn, P. N. Phunphayap and P. Pongsriiam, *Exact
-Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Journal of Integer
-Sequences 27 (2024), Article 24.4.8, Definition 3. -/
-public def digitSumCongruenceCount (b k q : ℕ) (r : ℤ) (x y : ℕ) : ℕ :=
-  ((Finset.Ico x y ×ˢ Fintype.piFinset fun _ : Fin (k - 1) => Finset.range b).filter
-    fun p => ((p.1 + ∑ i, p.2 i : ℕ) : ℤ) ≡ r [ZMOD q]).card
-
 /-- **Two small palindrome counts.** Write $A_b(m, q, r)$ for the number of base-$b$ palindromes
 $n$ with $1 \le n \le m$ and $n \equiv r \pmod q$. Then $A_{10}(100, 1, 0) = 18$, the palindromes
 being $1, \dots, 9$ and $11, 22, \dots, 99$, and $A_2(9, 2, 1) = 5$, the odd base-$2$ palindromes
@@ -96,38 +84,6 @@ Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Jour
 Sequences 27 (2024), Article 24.4.8, Definition 3. -/
 public theorem digitSumCongruenceCount_small : digitSumCongruenceCount 3 2 2 0 0 3 = 5 := by
   decide +kernel
-
-/-- **Counting digit tuples by their sum modulo a divisor of the base minus one.** Let $a$, $b$,
-$k$ and $q$ be natural numbers, all at least $1$, with $b \equiv 1 \pmod q$, and let $r$ be an
-integer. For natural numbers $x$ and $y$ write $N_b(k, q, r, x, y)$ for the number of tuples
-$(x_1, \dots, x_k)$ of natural numbers with $x \le x_1 < y$, $x_i < b$ for $2 \le i \le k$, and
-$x_1 + \dots + x_k \equiv r \pmod q$. Write $[P]$ for $1$ if $P$ holds and $0$ otherwise,
-$\lfloor a/q \rfloor$ for the integer part of $a/q$, and $r \bmod q$ and $a \bmod q$ for the least
-nonnegative residues modulo $q$. Then, as rational numbers,
-
-$$N_b(k, q, r, 0, b) = \frac{b^k - 1}{q} + [r \equiv 0 \pmod q],$$
-
-$$N_b(k, q, r, 1, b) = \frac{b^k - b^{k-1}}{q},$$
-
-$$N_b(k, q, r, 0, a) = \frac{a (b^{k-1} - 1)}{q} + \lfloor a/q \rfloor + [r \bmod q < a \bmod q],$$
-
-$$N_b(k, q, r, 1, a) = \frac{(a - 1)(b^{k-1} - 1)}{q} + \lfloor a/q \rfloor +
-[r \bmod q < a \bmod q] - [r \equiv 0 \pmod q].$$
-
-Source: K. Onphaeng, T. Khemaratchatakumthorn, P. N. Phunphayap and P. Pongsriiam, *Exact
-Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Journal of Integer
-Sequences 27 (2024), Article 24.4.8, Lemma 5. -/
-public theorem_wanted digitSumCongruenceCount_of_modEq_one {a b k q : ℕ} (ha : 1 ≤ a)
-    (hb : 1 ≤ b) (hk : 1 ≤ k) (hq : 1 ≤ q) (hbq : b ≡ 1 [MOD q]) (r : ℤ) :
-    (digitSumCongruenceCount b k q r 0 b : ℚ) =
-        ((b : ℚ) ^ k - 1) / q + (if r ≡ 0 [ZMOD q] then 1 else 0) ∧
-      (digitSumCongruenceCount b k q r 1 b : ℚ) = ((b : ℚ) ^ k - (b : ℚ) ^ (k - 1)) / q ∧
-      (digitSumCongruenceCount b k q r 0 a : ℚ) =
-        (a : ℚ) * ((b : ℚ) ^ (k - 1) - 1) / q + ((a / q : ℕ) : ℚ) +
-          (if r % q < ((a % q : ℕ) : ℤ) then 1 else 0) ∧
-      (digitSumCongruenceCount b k q r 1 a : ℚ) =
-        ((a : ℚ) - 1) * ((b : ℚ) ^ (k - 1) - 1) / q + ((a / q : ℕ) : ℚ) +
-          (if r % q < ((a % q : ℕ) : ℤ) then 1 else 0) - (if r ≡ 0 [ZMOD q] then 1 else 0)
 
 /-- **Palindromes in residue classes modulo a divisor of the base.** Let $b \ge 2$, $m \ge 1$ and
 $q \ge 1$ be natural numbers with $q \mid b$. Write $m = (a_k a_{k-1} \cdots a_0)_b$ in base $b$,

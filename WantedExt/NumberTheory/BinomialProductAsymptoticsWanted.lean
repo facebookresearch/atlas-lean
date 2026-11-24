@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Nat.Choose.Multinomial
-public import MathlibExt.NumberTheory.BinomialProductAsymptotics
+public import MathlibExt.NumberTheory.CentralBinomialProductAsymptotics
 
 namespace MetaMathlibExt
 
@@ -107,29 +106,6 @@ public theorem_wanted tendsto_prod_choose_div (a b : ℕ) (hb : 1 ≤ b) (hab : 
       factorialProductConstant a /
           (factorialProductConstant b * factorialProductConstant (a - b)) ∈
         Set.Ico (factorialProductConstant 2 / factorialProductConstant 1 ^ 2) 1
-
-/-- **Asymptotics of products of central binomial coefficients and Catalan numbers.** Let $A$ be
-the Glaisher–Kinkelin constant, let $\mathrm{Cat}_n$ denote the $n$-th Catalan number, and put
-$C_{2,1} = 2^{5/24} A^{3/2} / \left((2\pi)^{1/2} e^{1/8}\right)$. As $m \to \infty$, the ratio of
-$\prod_{n=1}^{m} \binom{2n}{n}$ to $2^{m^2} (4e/\pi)^{m/2} / m^{m/2 + 3/8}$ tends to $C_{2,1}$,
-and the ratio of $\prod_{n=1}^{m} \mathrm{Cat}_n$ to
-$2^{m^2} (4e^3/\pi)^{m/2} / m^{3m/2 + 15/8}$ tends to $C_{2,1} (2\pi)^{-1/2}$.
-
-The decimal approximations of the constants are not part of this statement.
-
-Source: Bernd C. Kellner, *Asymptotic Products of Binomial and Multinomial Coefficients
-Revisited*, INTEGERS 24 (2024), Article A59, Corollary 7. -/
-public theorem_wanted tendsto_prod_centralBinom_catalan_div :
-    Tendsto (fun m : ℕ => (∏ n ∈ Finset.Icc 1 m, (n.centralBinom : ℝ)) /
-        (2 ^ ((m : ℝ) ^ 2) * (4 * Real.exp 1 / Real.pi) ^ ((m : ℝ) / 2) /
-          (m : ℝ) ^ ((m : ℝ) / 2 + 3 / 8)))
-      atTop (𝓝 (2 ^ ((5 : ℝ) / 24) * glaisherKinkelinConstant ^ ((3 : ℝ) / 2) /
-        ((2 * Real.pi) ^ ((1 : ℝ) / 2) * Real.exp (1 / 8)))) ∧
-    Tendsto (fun m : ℕ => (∏ n ∈ Finset.Icc 1 m, (catalan n : ℝ)) /
-        (2 ^ ((m : ℝ) ^ 2) * (4 * Real.exp 3 / Real.pi) ^ ((m : ℝ) / 2) /
-          (m : ℝ) ^ (3 * (m : ℝ) / 2 + 15 / 8)))
-      atTop (𝓝 (2 ^ ((5 : ℝ) / 24) * glaisherKinkelinConstant ^ ((3 : ℝ) / 2) /
-        ((2 * Real.pi) ^ ((1 : ℝ) / 2) * Real.exp (1 / 8)) * (2 * Real.pi) ^ (-(1 : ℝ) / 2)))
 
 /-- **Asymptotics of the product of a row of Pascal's triangle.** Let $F_1$ be the first factorial
 product constant and $A$ the Glaisher–Kinkelin constant, and put
