@@ -1,0 +1,15 @@
+# Brousseau sums of k-Fibonacci numbers
+
+- [The numbers $A_k^{(p)}$ for $k$-Fibonacci Brousseau sums](brousseau-a.md)
+- [The initial value $A_k^{(0)} = 1$](brousseau-a-zero.md)
+- [The value $A_k^{(1)} = 2/k$](brousseau-a-one.md)
+- [The value $A_k^{(2)} = 8/k^2$](brousseau-a-two.md)
+- [The coefficient polynomials $C_k^{(p)}$ for $k$-Fibonacci Brousseau sums](brousseau-coeff.md)
+- [The polynomial $C_k^{(0)}$ is constant $1$](brousseau-coeff-zero.md)
+- [The polynomial $C_k^{(1)}(n) = n - 2/k$](brousseau-coeff-one.md)
+- [$k$-Fibonacci numbers as a power-weighted convolution](k-fibonacci-eq-pow-add-convolution.md)
+- [Power-weighted convolution of k-Fibonacci numbers](k-fibonacci-power-convolution.md)
+- [Brousseau sums of $k$-Fibonacci numbers](k-fibonacci-brousseau-sum.md)
+- [Brousseau sums of Fibonacci numbers along an odd step](fibonacci-brousseau-sum-mul-odd.md)
+- [Power-weighted Pell sums along odd multiples](pell-brousseau-sum-mul-odd.md)
+- [Shifted power-weighted sums of k-Fibonacci numbers](k-fibonacci-shifted-brousseau-sum.md)

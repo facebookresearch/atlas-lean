@@ -49,9 +49,6 @@ assumption on the residual.
   function, here the inverse calibration line.
 
 ## A. Inverse calibration budget
-
-Discharges ECE roadmap leaf `ECE.SEN.CALIBRATION.L1` (sensor
-calibration error budget).
 -/
 
 @[expose] public section

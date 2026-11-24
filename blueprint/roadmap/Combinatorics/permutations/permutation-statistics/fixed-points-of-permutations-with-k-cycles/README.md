@@ -1,0 +1,17 @@
+# Fixed points of permutations with k cycles
+
+- [Permutations counted by cycles and fixed points](k-perm-fixed-point-count.md)
+- [A permutation has at most as many fixed points as cycles](k-perm-fixed-point-count-eq-zero-of-lt.md)
+- [Counting the empty permutation](k-perm-fixed-point-count-zero-zero-zero.md)
+- [Fixed points split off a derangement](k-perm-fixed-point-count-eq-choose-mul-d.md)
+- [Recurrence for permutations counted by cycles and fixed points](mul-k-perm-fixed-point-count.md)
+- [Stirling numbers from fixed-point counts](sum-k-perm-fixed-point-count.md)
+- [Total number of fixed points of permutations with a given number of cycles](sum-mul-k-perm-fixed-point-count.md)
+- [Variance of the number of fixed points of a permutation with a given number of cycles](k-perm-fixed-point-variance.md)
+- [Newton's inequalities](newton-inequality-of-real-roots.md)
+- [Schur's composition theorem for real-rooted polynomials](schur-factorial-hadamard-real-roots.md)
+- [Real-rootedness of the derangement cycle polynomial](derangement-cycle-polynomial-real-roots.md)
+- [Positive sequences satisfying Newton's inequalities are unimodal](unimodal-of-newton-inequalities.md)
+- [Unimodality of fixed-point counts for permutations with a given number of cycles](k-perm-fixed-point-count-unimodal.md)
+- [Central limit theorem for polynomials with nonpositive real zeros](coeff-tendsto-gaussian-cdf-of-neg-real-r.md)
+- [Real zeros of the fixed-point polynomial](k-perm-fixed-point-polynomial-real-roots.md)

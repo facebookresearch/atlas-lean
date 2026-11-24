@@ -31,17 +31,26 @@ closed unit disc at `0`). Sums are counted by sign vector. Compared with the for
 statement `ErdosProblems/498.lean` (equivalent; no code imported).
 -/
 
-/-- Erdős Problem 498 (strong Littlewood-Offord): for `z₁, …, zₙ ∈ ℂ` with `|zᵢ| ≥ 1` and every
-open disc `D` of radius `1`, at most `C(n, ⌊n / 2⌋)` of the `2 ^ n` signed sums `∑ εᵢ zᵢ`
-(`εᵢ = ±1`, counted by sign vector) lie in `D`. -/
+/-- **Strong Littlewood–Offord bound in the plane.** The statement that for every natural
+number $n$, all complex numbers $z_1, \dots, z_n$ with $|z_i| \ge 1$ for every $i$, and every
+open disc $D$ of radius $1$ in $\mathbb{C}$, at most $\binom{n}{\lfloor n/2 \rfloor}$ of the
+$2^n$ sign vectors $(\varepsilon_1, \dots, \varepsilon_n) \in \{1, -1\}^n$ satisfy
+$\sum_i \varepsilon_i z_i \in D$ (Erdős Problem 498). -/
 def signedSumsInUnitDiscBound : Prop :=
   ∀ (n : ℕ) (z : Fin n → ℂ), (∀ i, 1 ≤ ‖z i‖) → ∀ c : ℂ,
     {ε : Fin n → Bool | ∑ i, (if ε i then (1 : ℂ) else -1) * z i ∈ Metric.ball c 1}.ncard ≤
       n.choose (n / 2)
 
 /--
-Resolved true: Kleitman proved the bound `C(n, ⌊n/2⌋)` for complex `zᵢ` (later for vectors in any
-Hilbert space); Erdős had proved it for real `zᵢ`. Source: T. F. Bloom, Erdős Problems, Problem
+**Kleitman's theorem on signed sums in the plane.** For every natural number $n$, all complex
+numbers $z_1, \dots, z_n$ with $|z_i| \ge 1$ for every $i$, and every open disc $D$ of radius $1$
+in $\mathbb{C}$, at most $\binom{n}{\lfloor n/2 \rfloor}$ of the $2^n$ sign vectors
+$(\varepsilon_1, \dots, \varepsilon_n) \in \{1, -1\}^n$ satisfy $\sum_i \varepsilon_i z_i \in D$.
+
+Kleitman proved this bound for complex $z_i$ (later for vectors in any Hilbert space); Erdős had
+proved it for real $z_i$.
+
+Source: T. F. Bloom, Erdős Problems, Problem
 #498, https://www.erdosproblems.com/498 (status PROVED (LEAN)); resolution: D. J. Kleitman, On a
 lemma of Littlewood and Offord on the distribution of certain sums, Math. Z. (1965), 251-259,
 erdosproblems.com/498: solved in the affirmative by Kleitman; generalized to Hilbert spaces

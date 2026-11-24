@@ -1,0 +1,17 @@
+# Borsuk's conjecture
+
+- [Borsuk covers](has-borsuk-cover.md)
+- [Borsuk number of a set](set-borsuk-number.md)
+- [Borsuk number of a Euclidean space](dimension-borsuk-number.md)
+- [First Borsuk failure dimension](first-borsuk-failure-dimension.md)
+- [A Borsuk cover bounds the Borsuk number](set-borsuk-number-le-of-cover.md)
+- [Borsuk covers by subsets](has-borsuk-cover-iff-exact-union.md)
+- [Borsuk covers by closed sets](has-borsuk-cover-iff-closed-cover.md)
+- [Borsuk covers of nonempty sets have at least one piece](has-borsuk-cover-pos.md)
+- [Enlarging a Borsuk cover](has-borsuk-cover-mono.md)
+- [Bounds on the Borsuk number of a set](set-borsuk-number-le-iff.md)
+- [Upper bounds on the Borsuk number of a Euclidean space](dimension-borsuk-number-le-iff.md)
+- [Borsuk's conjecture in a given dimension](borsuk-conjecture-in-dimension.md)
+- [When the first Borsuk failure dimension is infinite](first-borsuk-failure-dimension-eq-top-if.md)
+- [Two-distance sets](is-two-distance-set.md)
+- [Two-distance Borsuk number in dimension $n$](two-distance-borsuk-number.md)

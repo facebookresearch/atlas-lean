@@ -1,0 +1,7 @@
+# Secant bound gives $q = 2$ edge-event uniqueness off a countable set
+
+Let $d, N \in \mathbb{N}$ and let $e$ be an unordered pair $e$ of vertices of $\Lambda_N = \{-N, \dots, N\}^d$ (viewed as a pair of sites of $\mathbb{Z}^d$). Suppose $\theta^1_e(p') \le \theta^0_e(p)$ for all $p, p' \in (0, 1)$ with $p' < p$. Then there is a countable set $S \subseteq \mathbb{R}$ such that for every $p \in (0, 1) \setminus S$ and every measure $\phi$ on configurations of $\mathbb{Z}^d$ with
+
+$$\phi^0_{p,2}(e \text{ open}) \le \phi(e \text{ open}) \le \phi^1_{p,2}(e \text{ open}),$$
+
+one has $\phi(e \text{ open}) = \phi^0_{p,2}(e \text{ open}) = \phi^1_{p,2}(e \text{ open})$ (real values of the measures). Here $\theta^0_e(p)$ is the [free edge density](free-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the free infinite-volume random-cluster measure on $\mathbb{Z}^d$, a chosen subsequential weak limit of the free box measures), $\theta^1_e(p)$ is the [wired edge density](wired-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the wired infinite-volume random-cluster measure on $\mathbb{Z}^d$), and $\phi^0_{p,2}$, $\phi^1_{p,2}$ are the [free](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md) and [wired infinite-volume measures](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md).

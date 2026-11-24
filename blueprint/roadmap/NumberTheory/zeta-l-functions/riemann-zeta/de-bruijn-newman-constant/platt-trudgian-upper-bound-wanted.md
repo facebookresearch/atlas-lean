@@ -1,0 +1,9 @@
+# All zeros of the de Bruijn–Newman deformation are real at time 1/5
+
+Every zero of the
+de Bruijn–Newman deformation $H_{1/5}$ is real: every complex $z$ with $H_{1/5}(z) = 0$ has
+imaginary part $0$.
+
+## Sources
+
+- Platt and Trudgian, *The Riemann hypothesis is true up to 3·10¹²*, Bull. Lond. Math. Soc. 53 (2021), via the Polymath15 criterion: at time `1 / 5` all zeros of `H` are real (catalogue upper bound `0.2`).

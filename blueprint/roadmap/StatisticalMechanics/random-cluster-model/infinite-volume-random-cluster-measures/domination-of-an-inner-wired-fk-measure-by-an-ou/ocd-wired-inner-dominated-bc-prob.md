@@ -1,0 +1,7 @@
+# Inner wired domination of the restricted outer wired measure
+
+Let $G_{\mathrm{in}}$ and $G_{\mathrm{out}}$ be simple graphs on finite sets $V_{\mathrm{in}}$ and $V_{\mathrm{out}}$, and $\iota : V_{\mathrm{in}} \to V_{\mathrm{out}}$ an injective map that [matches adjacency](ocd-adj-match.md) ($x \sim y$ in $G_{\mathrm{in}}$ if and only if $\iota x \sim \iota y$ in $G_{\mathrm{out}}$), and let $\partial_{\mathrm{out}} \subseteq V_{\mathrm{out}}$ be a set of boundary vertices, let $\partial_{\mathrm{in}} \subseteq V_{\mathrm{in}}$, and let $0 < p < 1$ and $q \ge 1$. Suppose that for every configuration $\psi$ on $V_{\mathrm{out}}$ the [induced wiring](ocd-induced-wiring.md) $W_\psi$ is a subgraph of the clique on $\partial_{\mathrm{in}}$. Then for every increasing set $A$ of configurations on $V_{\mathrm{in}}$,
+
+$$\sum_{\rho :\ \rho|_{\mathrm{in}} \in A} \phi^K_{G_{\mathrm{out}}}(\rho) \le \phi^w_{G_{\mathrm{in}},\partial_{\mathrm{in}}}(A),$$
+
+where $\rho|_{\mathrm{in}}$ is the [restriction](ocd-inner-restrict.md) $e \mapsto \rho(\iota e)$, $\phi^{K}_{G_{\mathrm{out}}}$ is the random-cluster probability on $G_{\mathrm{out}}$ with boundary wiring the clique $K$ on $\partial_{\mathrm{out}}$ (the wired measure; see [random-cluster probability with a boundary wiring](../../fkg-inequality-and-monotonicity-of-random-cluste/bc-prob.md)), and $\phi^w_{G_{\mathrm{in}},\partial_{\mathrm{in}}}$ is the [wired random-cluster probability](../finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) on $G_{\mathrm{in}}$ with boundary $\partial_{\mathrm{in}}$.

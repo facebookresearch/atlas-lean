@@ -26,17 +26,26 @@ universe u
 
 variable {α : Type u}
 
-/-- `MatchAt pattern text offset` means that `pattern` is a prefix of `text` starting at the
-zero-based `offset`. The explicit bound excludes offsets beyond the end for an empty pattern. -/
+/-- **Pattern match at an offset.** For lists $p$ (the pattern) and $t$ (the text) over a type
+$\alpha$ and a natural number $k$, the pattern $p$ matches the text $t$ at the zero-based offset
+$k$ when $k$ is at most the length of $t$ and $p$ is a prefix of the list obtained from $t$ by
+dropping its first $k$ entries.
+
+The explicit bound on $k$ excludes offsets beyond the end of the text for an empty pattern. -/
 def MatchAt (pattern text : List α) (offset : Nat) : Prop :=
   offset ≤ text.length ∧ pattern <+: text.drop offset
 
-/-- The definition of a match at a zero-based offset. -/
+/-- **Characterization of a match at an offset.** For lists $p$ and $t$ and a natural number $k$,
+the pattern $p$ matches the text $t$ at the zero-based offset $k$ if and only if $k$ is at most
+the length of $t$ and $p$ is a prefix of the list obtained from $t$ by dropping its first $k$
+entries. -/
 theorem matchAt_iff (pattern text : List α) (offset : Nat) :
     MatchAt pattern text offset ↔ offset ≤ text.length ∧ pattern <+: text.drop offset :=
   Iff.rfl
 
-/-- A pattern occurs as an infix exactly when it matches at some bounded offset. -/
+/-- **A pattern occurs in a text iff it matches at some offset.** For lists $p$ and $t$, there
+is an offset $k$ such that the pattern $p$ matches the text $t$ at $k$ if and only if $p$ is an
+infix of $t$, that is, $t$ is the concatenation of some list $u$, then $p$, then some list $v$. -/
 theorem exists_matchAt_iff_isInfix (pattern text : List α) :
     (∃ offset, MatchAt pattern text offset) ↔ pattern <:+: text := by
   rw [List.infix_iff_prefix_suffix]

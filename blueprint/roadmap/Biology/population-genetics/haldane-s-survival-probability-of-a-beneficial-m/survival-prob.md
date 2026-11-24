@@ -1,0 +1,3 @@
+# Haldane's survival probability of a mutant
+
+For a real number $s$, let $\pi(s) = 1 - q(s)$, where $q(s)$ is the extinction probability (the supremum over $n$ of the probability that generation $n$ is empty) of the Galton–Watson process started from one individual whose offspring numbers are Poisson with mean $\max(1 + s, 0)$. For $s \ge -1$, $\pi(s)$ is the survival probability of a mutant with selective advantage $s$ per generation whose number of copies in the next generation is Poisson with mean $1 + s$; for $s < -1$ the mean is replaced by $0$, the mutant leaves no copies and $\pi(s) = 0$.

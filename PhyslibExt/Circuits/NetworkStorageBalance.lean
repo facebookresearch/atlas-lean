@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Matrix.Mul
+public import PhyslibExt.Circuits.TellegenPowerBalance
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
@@ -37,7 +38,9 @@ used.
 ## ii. Key results
 
 - `branch_power_eq_node_power`: Tellegen's identity
-  `v ⬝ᵥ iB = phi ⬝ᵥ j` from KVL and KCL.
+  `v ⬝ᵥ iB = phi ⬝ᵥ j` from KVL and KCL, the `Fin`-indexed
+  specialization of
+  `PhyslibExt.Circuits.TellegenPowerBalance.branchPower_eq_nodePower`.
 - `storedEnergy_nonneg`: stored energy is nonnegative for
   nonnegative capacitance and inductance values.
 - `hasDerivAt_storedEnergy`: the stored-energy derivative is the
@@ -60,9 +63,6 @@ used.
   power sign conventions.
 
 ## A. The branch-partition storage carrier
-
-Discharges ECE roadmap leaf `ECE.NET.ENERGY.L1` (network energy
-storage balance).
 -/
 
 @[expose] public section
@@ -99,14 +99,15 @@ def sourceAbsorbedPower (nB : ℕ) (Sset : Finset (Fin nB))
 
 /-- Tellegen / matrix power balance: under KVL `v = B^T phi` and
 KCL `B i = j`, total branch absorbed power `v ⬝ᵥ i` equals supplied
-node power `phi ⬝ᵥ j`. -/
+node power `phi ⬝ᵥ j`. This is the `Fin`-indexed specialization of
+`PhyslibExt.Circuits.TellegenPowerBalance.branchPower_eq_nodePower`. -/
 lemma branch_power_eq_node_power (nN nB : ℕ)
     (B : Matrix (Fin nN) (Fin nB) ℝ) (phi : Fin nN → ℝ)
     (j : Fin nN → ℝ) (v iB : Fin nB → ℝ)
     (hKVL : v = Matrix.mulVec (Matrix.transpose B) phi)
     (hKCL : Matrix.mulVec B iB = j) :
-    dotProduct v iB = dotProduct phi j := by
-  rw [hKVL, dotProduct_comm, Matrix.dotProduct_transpose_mulVec, hKCL]
+    dotProduct v iB = dotProduct phi j :=
+  PhyslibExt.Circuits.TellegenPowerBalance.branchPower_eq_nodePower B phi j v iB hKVL hKCL
 
 /-- Total branch absorbed power splits over the four partition
 classes exactly once. -/

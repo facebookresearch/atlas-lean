@@ -1,0 +1,16 @@
+# Number of infinite clusters
+
+- [Shift-invariant countably valued functions are a.s. constant under ergodicity](ergodic-ae-const-of-shift-invariant.md)
+- [Translation of the open subgraph as a graph homomorphism](translate-hom.md)
+- [Inverse translation of the open subgraph](translate-hom-inv.md)
+- [Set of infinite open clusters](infinite-clusters.md)
+- [Number of infinite open clusters](num-infinite-clusters.md)
+- [Measurability of the one-arm event](measurable-set-crossing-event.md)
+- [Representative sites of the infinite clusters](rep-set.md)
+- [Number of infinite clusters is almost surely constant](num-infinite-clusters-ae-const.md)
+- [Event of at least two infinite open clusters](at-least-two-infinite.md)
+- [Configuration with a finite edge set forced open](force-open-finset.md)
+- [Endpoints of a finite edge set](anchor-sites.md)
+- [Configurations with $k$ infinite clusters, two merged by opening $F$](merge-witness.md)
+- [Finite energy for opening finite edge sets](has-finite-energy-merge.md)
+- [Zero or one infinite cluster, given ergodicity and $\mu(N \ge 2) = 0$](num-infinite-clusters-zero-or-one.md)

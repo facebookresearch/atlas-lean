@@ -11,6 +11,10 @@ module
 public import CSLibExt.MachineLearning.LatentVariable.ExpectationMaximization
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Calculus.Gradient.Basic
+import Mathlib.Analysis.InnerProductSpace.Calculus
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 /-!
 # EM for Gaussian mixtures
@@ -37,6 +41,11 @@ Main results:
   `KMeans.sum_sq_eq`) and the variance update (`compTerm_le`).
 * `logLik_le_emStep`: **each EM step does not decrease the log-likelihood**;
   `logLik_iterate_emStep_monotone`: the log-likelihood is monotone along the EM iterates.
+* `hasGradientAt_log_marginal_joint`: **the score of a mixture whose components share one
+  variance `v`** is `∇ log p_θ(x) = (∑ k, r k • μ k - x) / v`, with `r k` the responsibilities at
+  `x`. `hasGradientAt_log_marginal_joint_of_mean_eq_smul`: with means `λ xₖ`, this is the
+  finite-support Tweedie identity `∇ log p(z) = (λ m(z) - z) / σ²`, where `m(z)` is the
+  responsibility-weighted mean of the atoms `xₖ`.
 
 Only the isotropic case (covariance `σ k² I`) is proved; full covariances are not treated.
 
@@ -66,8 +75,12 @@ variable {d K N : ℕ}
 
 /-! ## The isotropic Gaussian density -/
 
-/-- The isotropic Gaussian density `N(x | μ, v I)` on `EuclideanSpace ℝ (Fin d)`: the product of
-Mathlib's one-dimensional densities `gaussianPDFReal` over the coordinates. -/
+/-- **Isotropic Gaussian density.** For a mean $\mu \in \mathbb{R}^d$ and a variance $v \ge 0$,
+the isotropic Gaussian density at $x \in \mathbb{R}^d$ is
+$\mathcal{N}(x \mid \mu, v I) = \prod_{i=1}^{d} \varphi_{\mu_i, v}(x_i)$, where
+$\varphi_{m, v}$ is the one-dimensional Gaussian density with mean $m$ and variance $v$.
+
+For $v = 0$ the one-dimensional density is identically $0$, following Mathlib's convention. -/
 noncomputable def isoGaussPDF (μ : EuclideanSpace ℝ (Fin d)) (v : ℝ≥0)
     (x : EuclideanSpace ℝ (Fin d)) : ℝ :=
   ∏ i, gaussianPDFReal (μ i) v (x i)
@@ -76,7 +89,10 @@ theorem isoGaussPDF_pos (μ : EuclideanSpace ℝ (Fin d)) {v : ℝ≥0} (hv : v 
     (x : EuclideanSpace ℝ (Fin d)) : 0 < isoGaussPDF μ v x :=
   Finset.prod_pos fun _ _ => gaussianPDFReal_pos _ _ _ hv
 
-/-- The log-density: `log N(x | μ, v I) = -(d / 2) log (2 π v) - ‖x - μ‖² / (2 v)`. -/
+/-- **Log-density of the isotropic Gaussian.** For $\mu, x \in \mathbb{R}^d$ and a variance
+$v > 0$, the isotropic Gaussian density $\mathcal{N}(x \mid \mu, v I)$ with mean $\mu$ and
+covariance $v I$ satisfies
+$\log \mathcal{N}(x \mid \mu, v I) = -\tfrac{d}{2} \log(2 \pi v) - \|x - \mu\|^2 / (2 v)$. -/
 theorem log_isoGaussPDF (μ : EuclideanSpace ℝ (Fin d)) {v : ℝ≥0} (hv : v ≠ 0)
     (x : EuclideanSpace ℝ (Fin d)) :
     log (isoGaussPDF μ v x) = -(d / 2) * log (2 * π * v) - ‖x - μ‖ ^ 2 / (2 * v) := by
@@ -96,8 +112,12 @@ theorem log_isoGaussPDF (μ : EuclideanSpace ℝ (Fin d)) {v : ℝ≥0} (hv : v 
 
 /-! ## The mixture model -/
 
-/-- Parameters of a `K`-component isotropic Gaussian mixture in `d` dimensions: mixing weights,
-means and variances. -/
+/-- **Parameters of an isotropic Gaussian mixture.** Parameters of a $K$-component isotropic
+Gaussian mixture in $d$ dimensions consist, for each component $k < K$, of a mixing weight
+$\pi_k \in \mathbb{R}$, a mean $\mu_k \in \mathbb{R}^d$ and a variance $\sigma_k^2 \ge 0$; component
+$k$ has covariance $\sigma_k^2 I$.
+
+No constraint is placed on the weights here; validity is a separate condition. -/
 structure Params (d K : ℕ) where
   /-- The mixing weights `π k`. -/
   weight : Fin K → ℝ
@@ -106,16 +126,26 @@ structure Params (d K : ℕ) where
   /-- The component variances `σ k²` (isotropic: covariance `σ k² I`). -/
   var : Fin K → ℝ≥0
 
-/-- Valid parameters: positive weights summing to one, positive variances. -/
+/-- **Validity of isotropic Gaussian mixture parameters.** Parameters of a $K$-component
+isotropic Gaussian mixture in $d$ dimensions, with mixing weights $\pi_k$, means $\mu_k$ and
+variances $\sigma_k^2 \ge 0$, are valid when every $\pi_k > 0$, $\sum_k \pi_k = 1$, and every
+$\sigma_k^2 > 0$. -/
 structure Params.Valid (θ : Params d K) : Prop where
   weight_pos : ∀ k, 0 < θ.weight k
   weight_sum : ∑ k, θ.weight k = 1
   var_ne_zero : ∀ k, θ.var k ≠ 0
 
-/-- The valid parameters, the parameter space of EM. -/
+/-- **The parameter space of isotropic Gaussian mixture EM.** For a $K$-component isotropic
+Gaussian mixture in $d$ dimensions, the parameter space of EM is the set of parameters (mixing
+weights $\pi_k$, means $\mu_k \in \mathbb{R}^d$ and variances $\sigma_k^2 \ge 0$) that are
+valid: every $\pi_k > 0$, $\sum_k \pi_k = 1$, and every $\sigma_k^2 > 0$. -/
 abbrev ValidParams (d K : ℕ) := {θ : Params d K // θ.Valid}
 
-/-- The joint density `p_θ(x, k) = π k N(x | μ k, σ k² I)`. -/
+/-- **Joint density of an isotropic Gaussian mixture.** For valid parameters $\theta$ of a
+$K$-component isotropic Gaussian mixture in $\mathbb{R}^d$, with weights $\pi_k$, means $\mu_k$
+and variances $\sigma_k^2$, the joint density of a point $x \in \mathbb{R}^d$ and a component $k$
+is $p_\theta(x, k) = \pi_k \, \mathcal{N}(x \mid \mu_k, \sigma_k^2 I)$, where
+$\mathcal{N}(\cdot \mid \mu, v I)$ is the isotropic Gaussian density. -/
 noncomputable def joint (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) (k : Fin K) : ℝ :=
   θ.1.weight k * isoGaussPDF (θ.1.mean k) (θ.1.var k) x
 
@@ -123,11 +153,20 @@ theorem joint_pos (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) (k : F
     0 < joint θ x k :=
   mul_pos (θ.2.weight_pos k) (isoGaussPDF_pos _ (θ.2.var_ne_zero k) x)
 
-/-- The mixture density `p_θ(x) = ∑ k, π k N(x | μ k, σ k² I)`. -/
+/-- **Mixture density of an isotropic Gaussian mixture.** For valid parameters $\theta$ with
+mixing weights $\pi_k$, means $\mu_k$ and variances $\sigma_k^2$, and every $x \in \mathbb{R}^d$,
+the marginal $p_\theta(x) = \sum_k p_\theta(x, k)$ of the joint density equals
+$\sum_k \pi_k \, \mathcal{N}(x \mid \mu_k, \sigma_k^2 I)$, where $\mathcal{N}(x \mid \mu, v I)$
+is the isotropic Gaussian density. -/
 theorem marginal_joint (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) :
     marginal joint θ x = ∑ k, θ.1.weight k * isoGaussPDF (θ.1.mean k) (θ.1.var k) x := rfl
 
-/-- The responsibilities `r n k = P(z = k | xₙ)` (the E-step): the posterior of the mixture. -/
+/-- **Responsibilities in an isotropic Gaussian mixture.** For valid parameters $\theta$ with mixing
+weights $\pi_k$, means $\mu_k$ and variances $\sigma_k^2$, a point $x \in \mathbb{R}^d$ and a
+component $k$, the responsibility of $k$ for $x$ is the posterior
+$p_\theta(k \mid x) = \pi_k \mathcal{N}(x \mid \mu_k, \sigma_k^2 I) /
+\sum_j \pi_j \mathcal{N}(x \mid \mu_j, \sigma_j^2 I)$, where $\mathcal{N}(x \mid \mu, v I)$ is the
+isotropic Gaussian density. Computing it at each data point is the E-step. -/
 noncomputable def resp (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) (k : Fin K) : ℝ :=
   posterior joint θ x k
 
@@ -135,7 +174,8 @@ theorem resp_pos (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) (k : Fi
     0 < resp θ x k :=
   div_pos (joint_pos θ x k) (Finset.sum_pos (fun k _ => joint_pos θ x k) ⟨k, Finset.mem_univ k⟩)
 
-/-- Valid parameters have at least one component. -/
+/-- **Valid mixture parameters have at least one component.** If $\theta$ is a valid parameter of
+a $K$-component isotropic Gaussian mixture in $d$ dimensions, then $K \ge 1$. -/
 theorem nonempty_of_valid (θ : ValidParams d K) : Nonempty (Fin K) := by
   by_contra h
   have : IsEmpty (Fin K) := not_nonempty_iff.1 h
@@ -150,21 +190,54 @@ theorem sum_resp (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) : ∑ k
 
 variable (xs : Fin N → EuclideanSpace ℝ (Fin d))
 
-/-- The effective number of points of component `k`, `N k = ∑ n, r n k`. -/
+/-- **Effective number of points in an isotropic Gaussian mixture.** Given data points
+$x_0, \dots, x_{N-1}$ in $\mathbb{R}^d$, valid parameters $\theta$ of a $K$-component isotropic
+Gaussian mixture and a component $k$, the effective number of points of $k$ is
+$N_k = \sum_n r_{nk}$, where $r_{nk}$ is the responsibility of component $k$ for $x_n$ under
+$\theta$, the posterior probability of $k$ given $x_n$. -/
 noncomputable def mass (θ : ValidParams d K) (k : Fin K) : ℝ := ∑ n, resp θ (xs n) k
 
-/-- The responsibility-weighted mean `μ k' = (∑ n, r n k xₙ) / N k`. -/
+/-- **M-step mean update for an isotropic Gaussian mixture.** Given data points
+$x_0, \dots, x_{N-1}$ in $\mathbb{R}^d$, valid parameters $\theta$ of a $K$-component isotropic
+Gaussian mixture and a component $k$, the updated mean of $k$ is the responsibility-weighted
+mean $\mu_k' = N_k^{-1} \sum_n r_{nk} x_n$, where $r_{nk}$ is the responsibility of component $k$
+for $x_n$ under $\theta$ and $N_k = \sum_n r_{nk}$.
+
+The inverse of $0$ is read as $0$. -/
 noncomputable def newMean (θ : ValidParams d K) (k : Fin K) : EuclideanSpace ℝ (Fin d) :=
   (mass xs θ k)⁻¹ • ∑ n, resp θ (xs n) k • xs n
 
-/-- The responsibility-weighted scatter `S k = ∑ n, r n k ‖xₙ - μ k'‖²`. -/
+/-- **Responsibility-weighted scatter in an isotropic Gaussian mixture.** Given data points
+$x_0, \dots, x_{N-1}$ in $\mathbb{R}^d$, valid parameters $\theta$ of a $K$-component isotropic
+Gaussian mixture and a component $k$, the scatter of $k$ is
+$S_k = \sum_n r_{nk} \lVert x_n - \mu_k' \rVert^2$, where $r_{nk}$ is the responsibility of
+component $k$ for $x_n$ under $\theta$, $N_k = \sum_n r_{nk}$ and
+$\mu_k' = N_k^{-1} \sum_n r_{nk} x_n$ is the responsibility-weighted mean. -/
 noncomputable def scatter (θ : ValidParams d K) (k : Fin K) : ℝ :=
   ∑ n, resp θ (xs n) k * ‖xs n - newMean xs θ k‖ ^ 2
 
-/-- The isotropic variance update `σ k'² = S k / (d N k)`. -/
+/-- **M-step variance update for an isotropic Gaussian mixture.** Given data points
+$x_0, \dots, x_{N-1}$ in $\mathbb{R}^d$, valid parameters $\theta$ of a $K$-component isotropic
+Gaussian mixture and a component $k$, the updated variance of $k$ is
+$\sigma_k'^2 = S_k / (d N_k)$, where $r_{nk}$ is the responsibility of component $k$ for $x_n$
+under $\theta$, $N_k = \sum_n r_{nk}$, $\mu_k' = N_k^{-1} \sum_n r_{nk} x_n$ and
+$S_k = \sum_n r_{nk} \lVert x_n - \mu_k' \rVert^2$.
+
+Division by zero is read as $0$. -/
 noncomputable def newVar (θ : ValidParams d K) (k : Fin K) : ℝ := scatter xs θ k / (d * mass xs θ k)
 
-/-- The M-step: `π k' = N k / N`, `μ k'` the weighted mean, `σ k'² = S k / (d N k)`. -/
+/-- **M-step of EM for an isotropic Gaussian mixture.** Let $x_0, \dots, x_{N-1}$ be data
+points in $\mathbb{R}^d$, let $\theta$ be valid parameters of a $K$-component isotropic Gaussian
+mixture, and let $r_{nk}$ be the responsibility of component $k$ for $x_n$ under $\theta$. With
+$N_k = \sum_n r_{nk}$, the M-step returns the parameters with mixing weights
+$\pi_k' = N_k / N$, means $\mu_k' = N_k^{-1} \sum_n r_{nk} x_n$ and variances
+$\sigma_k'^2 = S_k / (d N_k)$, where $S_k = \sum_n r_{nk} \lVert x_n - \mu_k' \rVert^2$.
+
+Division by zero is read as $0$.
+
+The result is a parameter record; it is a valid parameter (positive weights summing to $1$ and
+positive variances) when the data are not all equal (`mStep_valid`). For an empty sample
+($N = 0$) every weight is $0$, so the weights do not form a distribution. -/
 noncomputable def mStep (θ : ValidParams d K) : Params d K where
   weight k := mass xs θ k / N
   mean := newMean xs θ
@@ -172,9 +245,13 @@ noncomputable def mStep (θ : ValidParams d K) : Params d K where
 
 /-! ## Weighted means -/
 
-/-- **The weighted centroid decomposition**: `∑ w ‖x - c‖² = ∑ w ‖x - m‖² + W ‖m - c‖²` for
-`m = W⁻¹ ∑ w x`, `W = ∑ w ≠ 0` (the weighted version of `KMeans.sum_sq_eq`). When `W > 0` the
-weighted mean is a minimizer (`sum_mul_norm_sub_sq_mean_le`). -/
+/-- **The weighted centroid decomposition.** Let $F$ be a real inner product space, $s$ a finite
+index set, $w_i \in \mathbb{R}$ weights with $W = \sum_{i \in s} w_i \ne 0$, and $x_i \in F$
+points for $i \in s$, and let $m = W^{-1} \sum_{i \in s} w_i x_i$. Then for every $c \in F$,
+$$\sum_{i \in s} w_i \|x_i - c\|^2 = \sum_{i \in s} w_i \|x_i - m\|^2 + W \|m - c\|^2.$$
+
+This is the weighted version of the centroid decomposition behind $k$-means. When $W > 0$ it
+shows that $m$ minimizes $c \mapsto \sum_{i \in s} w_i \|x_i - c\|^2$. -/
 theorem sum_mul_norm_sub_sq {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
     {ι : Type*} (s : Finset ι) (w : ι → ℝ) (x : ι → F) (hW : ∑ i ∈ s, w i ≠ 0) (c : F) :
     ∑ i ∈ s, w i * ‖x i - c‖ ^ 2 =
@@ -200,7 +277,12 @@ theorem sum_mul_norm_sub_sq {F : Type*} [NormedAddCommGroup F] [InnerProductSpac
   ring
 
 /-- **With positive total weight, the weighted mean minimizes the weighted sum of squared
-distances.** -/
+distances.** Let $F$ be a real inner product space, $s$ a finite index set, $w_i \in \mathbb{R}$
+weights with $W = \sum_{i \in s} w_i > 0$, and $x_i \in F$ points for $i \in s$, and let
+$m = W^{-1} \sum_{i \in s} w_i x_i$ be the weighted mean. Then for every $c \in F$,
+$$\sum_{i \in s} w_i \|x_i - m\|^2 \le \sum_{i \in s} w_i \|x_i - c\|^2.$$
+
+The individual weights need not be nonnegative; only their total is assumed positive. -/
 theorem sum_mul_norm_sub_sq_mean_le {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
     {ι : Type*} (s : Finset ι) {w : ι → ℝ} (hW : 0 < ∑ i ∈ s, w i)
     (x : ι → F) (c : F) :
@@ -214,7 +296,8 @@ theorem sum_mul_norm_sub_sq_mean_le {F : Type*} [NormedAddCommGroup F] [InnerPro
 
 variable {xs}
 
-/-- Data that are not all equal. -/
+/-- **Data that are not all equal.** A finite family of points $x_0, \dots, x_{N-1}$ in
+$\mathbb{R}^d$ is not all equal when there are indices $n$ and $n'$ with $x_n \ne x_{n'}$. -/
 def NotAllEqual (xs : Fin N → EuclideanSpace ℝ (Fin d)) : Prop := ∃ n n', xs n ≠ xs n'
 
 theorem NotAllEqual.pos (hx : NotAllEqual xs) : 0 < N := by
@@ -266,20 +349,46 @@ theorem mStep_valid (hx : NotAllEqual xs) (θ : ValidParams d K) : (mStep xs θ)
     exact newVar_pos hx θ k
 
 variable (xs) in
-/-- One EM step for the Gaussian mixture (E-step then M-step), on data that are not all equal. -/
+/-- **The EM step for isotropic Gaussian mixtures.** Let $x_1, \dots, x_N$ be points of
+$\mathbb{R}^d$ that are not all equal and let $\theta$ be valid parameters of a $K$-component
+isotropic Gaussian mixture. With $r_{nk}$ the responsibility of component $k$ for $x_n$ under
+$\theta$ (the E-step), the EM step sends $\theta$ to the valid parameters with weights
+$\pi_k' = N_k / N$, means $\mu_k' = N_k^{-1} \sum_n r_{nk} x_n$ and variances
+$v_k' = S_k / (d N_k)$, where $N_k = \sum_n r_{nk}$ and $S_k = \sum_n r_{nk} \|x_n - \mu_k'\|^2$
+(the M-step). -/
 noncomputable def emStep (hx : NotAllEqual xs) (θ : ValidParams d K) : ValidParams d K :=
   ⟨mStep xs θ, mStep_valid hx θ⟩
 
 /-! ## The M-step maximizes `Q` -/
 
 variable (xs) in
-/-- The component term of `Q`: `∑ n, r n k log N(xₙ | μ, v I)`, written out for `v > 0`. -/
+/-- **Component term of the EM objective for isotropic Gaussian mixtures.** Given points
+$x_1, \dots, x_N$ of $\mathbb{R}^d$, valid parameters $\theta$ of a $K$-component isotropic
+Gaussian mixture, a component $k$, a mean $\mu \in \mathbb{R}^d$ and a real number $v$, the
+component term is
+$$
+C_k(\mu, v) = \sum_n r_{nk} \bigl(-\tfrac{d}{2} \log(2\pi v) - \|x_n - \mu\|^2 / (2v)\bigr),
+$$
+where $r_{nk}$ is the responsibility of component $k$ for $x_n$ under $\theta$.
+
+For $v > 0$ this is $\sum_n r_{nk} \log \mathcal{N}(x_n \mid \mu, v I)$, where
+$\mathcal{N}(\cdot \mid \mu, v I)$ is the isotropic Gaussian density with mean $\mu$ and
+covariance $v I$. -/
 noncomputable def compTerm (θ : ValidParams d K) (k : Fin K) (μ : EuclideanSpace ℝ (Fin d))
     (v : ℝ) : ℝ :=
   ∑ n, resp θ (xs n) k * (-(d / 2) * log (2 * π * v) - ‖xs n - μ‖ ^ 2 / (2 * v))
 
 variable (xs) in
-/-- `Q(θ' | θ)` splits into a weights term and one term per component. -/
+/-- **The EM objective of an isotropic Gaussian mixture splits by component.** Let
+$x_1, \dots, x_N$ be points of $\mathbb{R}^d$, and let $\theta'$ and $\theta$ be valid parameters
+of a $K$-component isotropic Gaussian mixture, where $\theta'$ has weights $\pi_k'$, means
+$\mu_k'$ and variances $v_k'$. Then the EM objective of the mixture's joint density satisfies
+$$
+Q(\theta' \mid \theta) = \sum_k \bigl(N_k \log \pi_k' + C_k(\mu_k', v_k')\bigr),
+$$
+where $r_{nk}$ is the responsibility of component $k$ for $x_n$ under $\theta$,
+$N_k = \sum_n r_{nk}$ and
+$C_k(\mu, v) = \sum_n r_{nk} \bigl(-\tfrac{d}{2} \log(2\pi v) - \|x_n - \mu\|^2 / (2v)\bigr)$. -/
 theorem emQ_eq (θ' θ : ValidParams d K) :
     emQ joint xs θ' θ = ∑ k, (mass xs θ k * log (θ'.1.weight k) +
       compTerm xs θ k (θ'.1.mean k) (θ'.1.var k)) := by
@@ -294,8 +403,13 @@ theorem emQ_eq (θ' θ : ValidParams d K) :
       log (2 * π * (θ'.1.var k)) - ‖xs n - θ'.1.mean k‖ ^ 2 / (2 * (θ'.1.var k))))]
   simp only [Finset.sum_mul, resp]
 
-/-- **The weight update maximizes the weights term**: over all mixing weights,
-`∑ k, N k log π k` is largest at `π k = N k / N` (Gibbs' inequality). -/
+/-- **Isotropic Gaussian mixtures: the weight update maximizes the weights term.** Let
+$x_1, \dots, x_N$ be $N > 0$ points of $\mathbb{R}^d$, let $\theta$ be valid parameters of a
+$K$-component isotropic Gaussian mixture in $d$ dimensions, and let $N_k = \sum_n r_{nk}$ be the
+mass of component $k$, where $r_{nk}$ is the responsibility of component $k$ for $x_n$ under
+$\theta$. Then for all real $w_1, \dots, w_K > 0$ with $\sum_k w_k = 1$,
+$$\sum_k N_k \log w_k \le \sum_k N_k \log \frac{N_k}{N}.$$
+That is, the M-step weights $N_k / N$ maximize the weights term (Gibbs' inequality). -/
 theorem sum_mass_mul_log_le (hN0 : 0 < N) (θ : ValidParams d K) {w : Fin K → ℝ}
     (hw : ∀ k, 0 < w k) (hsum : ∑ k, w k = 1) :
     ∑ k, mass xs θ k * log (w k) ≤ ∑ k, mass xs θ k * log (mass xs θ k / N) := by
@@ -322,9 +436,17 @@ theorem compTerm_eq (θ : ValidParams d K) (k : Fin K) (μ : EuclideanSpace ℝ 
   · exact Finset.sum_congr rfl fun n _ => by ring
   · exact Finset.sum_congr rfl fun n _ => by ring
 
-/-- **The mean and variance updates maximize each component term**: over all means `μ` and
-variances `v > 0`, `∑ n, r n k log N(xₙ | μ, v I)` is largest at the weighted mean and
-`v = S k / (d N k)`. -/
+/-- **The mean and variance updates maximize each component term.** Let $x_1, \dots, x_N$ be
+points of $\mathbb{R}^d$ that are not all equal, let $\theta$ be valid parameters of a
+$K$-component isotropic Gaussian mixture, let $k$ be a component, and let $r_{nk}$ be the
+responsibility of component $k$ for $x_n$ under $\theta$. For every $\mu \in \mathbb{R}^d$ and
+every real $v > 0$, the component term
+$$
+C_k(\mu, v) = \sum_n r_{nk} \bigl(-\tfrac{d}{2} \log(2\pi v) - \|x_n - \mu\|^2 / (2v)\bigr)
+$$
+satisfies $C_k(\mu, v) \le C_k(\mu_k', v_k')$, where $N_k = \sum_n r_{nk}$,
+$\mu_k' = N_k^{-1} \sum_n r_{nk} x_n$ is the responsibility-weighted mean,
+$S_k = \sum_n r_{nk} \|x_n - \mu_k'\|^2$ and $v_k' = S_k / (d N_k)$. -/
 theorem compTerm_le (hx : NotAllEqual xs) (θ : ValidParams d K) (k : Fin K)
     (μ : EuclideanSpace ℝ (Fin d)) {v : ℝ} (hv : 0 < v) :
     compTerm xs θ k μ v ≤ compTerm xs θ k (newMean xs θ k) (newVar xs θ k) := by
@@ -361,8 +483,12 @@ theorem compTerm_le (hx : NotAllEqual xs) (θ : ValidParams d K) (k : Fin K)
   nlinarith
 
 variable (xs) in
-/-- **The M-step maximizes `Q(· | θ)`**: no valid parameter `θ'` has a larger `Q(θ' | θ)` than the
-EM update `emStep xs hx θ`. -/
+/-- **The M-step for isotropic Gaussian mixtures maximizes the EM objective.** Let
+$x_1, \dots, x_N$ be points of $\mathbb{R}^d$ that are not all equal, let $\theta$ be valid
+parameters of a $K$-component isotropic Gaussian mixture, and let $\theta^+$ be the result of
+the EM step applied to $\theta$. Then every valid parameter $\theta'$ satisfies
+$Q(\theta' \mid \theta) \le Q(\theta^+ \mid \theta)$, where $Q$ is the EM objective of the
+mixture's joint density. -/
 theorem emQ_le_emStep (hx : NotAllEqual xs) (θ' θ : ValidParams d K) :
     emQ joint xs θ' θ ≤ emQ joint xs (emStep xs hx θ) θ := by
   rw [emQ_eq, emQ_eq, Finset.sum_add_distrib, Finset.sum_add_distrib]
@@ -376,19 +502,99 @@ theorem emQ_le_emStep (hx : NotAllEqual xs) (θ' θ : ValidParams d K) :
   exact compTerm_le hx θ k _ hv
 
 variable (xs) in
-/-- **Each EM step for the Gaussian mixture does not decrease the log-likelihood** (from the EM
-theorem `logLik_le_of_emQ_le`). -/
+/-- **Each EM step for the Gaussian mixture does not decrease the log-likelihood.** Let
+$x_1, \dots, x_N$ be points of $\mathbb{R}^d$ that are not all equal and let $\theta$ be valid
+parameters of a $K$-component isotropic Gaussian mixture. Then $\ell(\theta) \le \ell(\theta^+)$,
+where $\ell$ is the log-likelihood of the data under the mixture and $\theta^+$ is the result of
+the EM step applied to $\theta$. -/
 theorem logLik_le_emStep (hx : NotAllEqual xs) (θ : ValidParams d K) :
     logLik joint xs θ ≤ logLik joint xs (emStep xs hx θ) := by
   have := nonempty_of_valid θ
   exact logLik_le_of_emQ_le (fun θ x k => joint_pos θ x k) xs (emQ_le_emStep xs hx θ θ)
 
 variable (xs) in
-/-- **The log-likelihood is monotone along the EM iterates** of the Gaussian mixture. -/
+/-- **The log-likelihood is monotone along the EM iterates of an isotropic Gaussian mixture.**
+Let $x_1, \dots, x_N$ be points of $\mathbb{R}^d$ that are not all equal, let $\theta_0$ be valid
+parameters of a $K$-component isotropic Gaussian mixture, and let $\theta_t$ be the result of $t$
+EM steps from $\theta_0$. Then $\ell(\theta_t)$ is nondecreasing in $t \in \mathbb{N}$, where
+$\ell$ is the log-likelihood of the data under the mixture. -/
 theorem logLik_iterate_emStep_monotone (hx : NotAllEqual xs) (θ₀ : ValidParams d K) :
     Monotone fun t => logLik joint xs ((emStep xs hx)^[t] θ₀) := by
   have := nonempty_of_valid θ₀
   exact logLik_iterate_monotone (fun θ x k => joint_pos θ x k) xs (fun θ => emQ_le_emStep xs hx θ θ)
     θ₀
+
+/-! ## The score of a mixture with a common variance -/
+
+/-- **The score of an isotropic Gaussian mixture with a common variance.** If every component
+has variance `v`, the gradient of the log mixture density is
+`∇ log p_θ(x) = (∑ k, r k • μ k - x) / v`, where `r k = resp θ x k` are the responsibilities
+(posterior component weights) at `x`. -/
+theorem hasGradientAt_log_marginal_joint (θ : ValidParams d K) {v : ℝ≥0}
+    (hv : ∀ k, θ.1.var k = v) (x : EuclideanSpace ℝ (Fin d)) :
+    HasGradientAt (fun y => log (marginal joint θ y))
+      ((v : ℝ)⁻¹ • (∑ k, resp θ x k • θ.1.mean k - x)) x := by
+  obtain ⟨k₀⟩ := nonempty_of_valid θ
+  have hv0 : v ≠ 0 := hv k₀ ▸ θ.2.var_ne_zero k₀
+  have hvpos : (0 : ℝ) < v := lt_of_le_of_ne v.2 (Ne.symm (by exact_mod_cast hv0))
+  set C := exp (-(d / 2) * log (2 * π * v)) with hC
+  have hjoint : ∀ k y, joint θ y k =
+      θ.1.weight k * C * exp (-(‖y - θ.1.mean k‖ ^ 2 * (2 * (v : ℝ))⁻¹)) := by
+    intro k y
+    rw [joint, hv k, ← exp_log (isoGaussPDF_pos (θ.1.mean k) hv0 y), log_isoGaussPDF _ hv0,
+      sub_eq_add_neg, exp_add, hC]
+    simp only [div_eq_mul_inv]
+    ring
+  have hterm : ∀ k ∈ Finset.univ, HasFDerivAt (fun y => joint θ y k)
+      ((joint θ x k * (-(2 * (v : ℝ))⁻¹ * 2)) • innerSL ℝ (x - θ.1.mean k)) x := by
+    intro k _
+    have h1 := ((hasFDerivAt_id x).sub_const (θ.1.mean k)).norm_sq
+    have h2 := ((h1.mul_const (2 * (v : ℝ))⁻¹).fun_neg.exp).const_mul (θ.1.weight k * C)
+    rw [show (fun y => joint θ y k) =
+      fun y => θ.1.weight k * C * exp (-(‖y - θ.1.mean k‖ ^ 2 * (2 * (v : ℝ))⁻¹)) from
+        funext fun y => hjoint k y]
+    refine h2.congr_fderiv ?_
+    rw [hjoint k x]
+    ext y
+    simp only [smul_apply, innerSL_apply_apply, smul_eq_mul, neg_apply,
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_id', id_eq]
+    ring
+  have hsum := HasFDerivAt.fun_sum hterm
+  have hpos : 0 < ∑ k, joint θ x k :=
+    Finset.sum_pos (fun k _ => joint_pos θ x k) ⟨k₀, Finset.mem_univ _⟩
+  have hlog := hsum.log hpos.ne'
+  rw [hasGradientAt_iff_hasFDerivAt]
+  refine hlog.congr_fderiv ?_
+  ext y
+  have hr : ∑ k, resp θ x k = 1 := sum_resp θ x
+  simp only [resp, posterior, marginal] at hr ⊢
+  rw [InnerProductSpace.toDual_apply_apply]
+  simp only [smul_apply, sum_apply, innerSL_apply_apply, smul_eq_mul,
+    inner_smul_left, inner_sub_left, sum_inner, RCLike.conj_to_real]
+  conv_rhs => rw [← mul_one (inner ℝ x y), ← hr]
+  simp only [Finset.mul_sum, ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  field_simp
+  ring
+
+/-- **Finite-support Tweedie score identity.** Let `X` take the value `xs k` with probability
+`π k` (positive, summing to one), let `G` be a standard Gaussian vector independent of `X`, let
+`λ` be real and `σ² = v > 0`, and let `Z = λ X + σ G`, whose density (not proved here) is the
+mixture `p(z) = ∑ k, π k N(z | λ xs k, σ² I)`, here `marginal joint θ` with means `λ xs k` and
+common variance `v`. Then `∇ log p(z) = (λ m(z) - z) / σ²`, where `m(z) = ∑ k, r k(z) • xs k` is
+the mean of the atoms under the posterior weights `r k(z) = resp θ z k`.
+
+Only the finite-sum calculus is formalized. That `p` is the density of `λ X + σ G`, and that
+`m(z)` is a version of `E[X | Z = z]`, are not proved here. This is the finite-support case of
+the identity that S. Mei and Y. Wu, *Deep networks as denoising algorithms: sample-efficient
+learning of diffusion models in high-dimensional graphical models*, arXiv:2309.11420 (version 1),
+page 5, state without proof for general laws of `X`; the general case is not proved here. -/
+theorem hasGradientAt_log_marginal_joint_of_mean_eq_smul (θ : ValidParams d K) {v : ℝ≥0}
+    (hv : ∀ k, θ.1.var k = v) (lam : ℝ) (xs : Fin K → EuclideanSpace ℝ (Fin d))
+    (hmean : ∀ k, θ.1.mean k = lam • xs k) (z : EuclideanSpace ℝ (Fin d)) :
+    HasGradientAt (fun y => log (marginal joint θ y))
+      ((v : ℝ)⁻¹ • (lam • ∑ k, resp θ z k • xs k - z)) z := by
+  convert hasGradientAt_log_marginal_joint θ hv z using 3
+  simp only [hmean, Finset.smul_sum, smul_comm lam]
 
 end Cslib.MachineLearning.LatentVariable.GaussianMixture

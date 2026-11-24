@@ -1,0 +1,17 @@
+# Tame and wild ramification
+
+- [Residue separability at a prime](is-residue-separable-at.md)
+- [Tamely ramified prime](is-tamely-ramified-at.md)
+- [Wildly ramified prime](is-wildly-ramified-at.md)
+- [Residue separability, unfolded](is-residue-separable-at-iff.md)
+- [Characterization of tame ramification](is-tamely-ramified-at-iff.md)
+- [Wild ramification is the failure of tame ramification](is-wildly-ramified-at-iff.md)
+- [Criterion for tame ramification](is-tamely-ramified-at-mk.md)
+- [Tame primes are residue separable](is-separable.md)
+- [The residue characteristic of a tame prime does not divide its ramification index](not-dvd.md)
+- [Wild ramification under residue separability](is-wildly-ramified-at-iff-char-dvd.md)
+- [Divisibility of the ramification index forces wild ramification](is-wildly-ramified-at-of-char-dvd.md)
+- [An inseparable residue field extension forces wild ramification](is-wildly-ramified-at-of-not-is-residue.md)
+- [Unramified primes are residue separable](is-residue-separable-at-of-is-unramified.md)
+- [Unramified primes are tamely ramified](is-tamely-ramified-at-of-is-unramified-a.md)
+- [Tameness in residue characteristic zero](is-tamely-ramified-at-iff-is-separable-o.md)

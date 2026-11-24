@@ -290,9 +290,11 @@ private theorem ramsey_aux {r : ℕ} (hr : 0 < r) (t : Fin r → ℕ) :
         rw [hScard', hScard]
         exact Function.update_of_ne hji _ _
 
-/-- Finite Ramsey theorem for pairs: for `r ≥ 1` colors and every `k` there is
-an `N` such that every coloring of 2-subsets of `Fin N` has a monochromatic
-size-`k` set.
+/-- **Finite Ramsey theorem for pairs.** For every number of colors $r \ge 1$ and every natural
+number $k$ there is a natural number $N$ such that for every coloring of the subsets of
+$\{0, 1, \dots, N - 1\}$ with $r$ colors there are a $k$-element subset $S$ and a color $c$ such
+that every $2$-element subset of $S$ has color $c$.
+
 Source: F. P. Ramsey, On a Problem of Formal Logic, Proc. London Math. Soc.
 s2-30 (1930), 264-286, DOI 10.1112/PLMS/S2-30.1.264. -/
 public theorem ramsey_two_uniform {r k : ℕ} (hr : 0 < r) :

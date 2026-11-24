@@ -37,13 +37,20 @@ normal `p`-complement is a normal subgroup that is a complement of a Sylow `p`-s
 `MonoidHom.ker_transferSylow_isComplement'`). Groups are in `Type`.
 -/
 
-/-- `G` has a normal `p`-complement: a normal subgroup that is a complement of a Sylow
-`p`-subgroup. -/
+/-- **Groups with a normal p-complement.** A group $G$ has a normal $p$-complement when it has a
+normal subgroup $N$ and a Sylow $p$-subgroup $P$ that are complements of each other: every element
+of $G$ can be written uniquely as $nq$ with $n \in N$ and $q \in P$. -/
 def HasNormalPComplement (p : ℕ) (G : Type*) [Group G] : Prop :=
   ∃ (N : Subgroup G) (P : Sylow p G), N.Normal ∧ N.IsComplement' P
 
-/-- Kourovka 20.27 (I. B. Gorshkov): if a `p`-element `g` of a finite group `G` has
-`|g^G|_p = max_{x ∈ G} |x^G|_p`, then `G` has a normal `p`-complement. -/
+/-- **Gorshkov's problem on maximal p-parts of class sizes.** For a prime $p$, the $p$-part of a
+positive integer $m$ is the largest power of $p$ dividing $m$. This is the statement that for
+every finite group $G$, every prime $p$ and every $p$-element $g$ of $G$ (that is, $g^{p^k} = 1$
+for some natural number $k$), if for every $x \in G$ the $p$-part of the size of the conjugacy
+class of $x$ is at most the $p$-part of the size of the conjugacy class of $g$, then $G$ has a
+normal $p$-complement.
+
+This is Kourovka Notebook Problem 20.27 (I. B. Gorshkov). -/
 def maximalClassSizePElementGivesNormalComplement : Prop :=
   ∀ (G : Type) [Group G] [Finite G] (p : ℕ), p.Prime → ∀ g : G, (∃ k : ℕ, g ^ p ^ k = 1) →
     (∀ x : G, ordProj[p] (Nat.card (ConjClasses.mk x).carrier) ≤
@@ -51,11 +58,19 @@ def maximalClassSizePElementGivesNormalComplement : Prop :=
     HasNormalPComplement p G
 
 /--
-Resolved false: the Kourovka Notebook answers 20.27 "No, not necessarily": Sambale's counterexample
-is `SmallGroup(192, 945)` (`SL(2, 3) ⋊ Q₈`) with `p = 2`. In it an element of order `4` has class
-size `24`, whose `2`-part `8` is the largest `2`-part of a class size, while the eight elements of
-order `3` form one conjugacy class, so there is no normal subgroup of order `3`, that is, no normal
-`2`-complement (class data from the degree-16 permutation representation of LMFDB group 192.945).
+**A maximal p-part of a class size does not force a normal p-complement.** For a prime $p$, the
+$p$-part of a positive integer $m$ is the largest power of $p$ dividing $m$. There exist a finite
+group $G$, a prime $p$ and a $p$-element $g$ of $G$ (that is, $g^{p^k} = 1$ for some natural
+number $k$) such that for every $x \in G$ the $p$-part of the size of the conjugacy class of $x$
+is at most the $p$-part of the size of the conjugacy class of $g$, but $G$ has no normal
+$p$-complement.
+
+Sambale's counterexample is the group $\mathrm{SL}(2, 3) \rtimes Q_8$ of order $192$ (number $945$
+in the GAP library of small groups) with $p = 2$. In it an element of order $4$ has class size
+$24$, whose $2$-part $8$ is the largest $2$-part of a class size, while the eight elements of
+order $3$ form one conjugacy class, so there is no normal subgroup of order $3$, that is, no
+normal $2$-complement.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.27 (I. B. Gorshkov); resolution: B.
 Sambale, letter of 16 February 2022, recorded in the Kourovka Notebook (21st issue), Problem 20.27:

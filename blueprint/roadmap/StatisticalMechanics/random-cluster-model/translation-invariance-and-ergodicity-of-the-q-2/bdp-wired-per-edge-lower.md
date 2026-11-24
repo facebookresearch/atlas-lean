@@ -1,0 +1,3 @@
+# Wired $q = 2$ box edge marginals are at least the wired density
+
+Let $d, n \in \mathbb{N}$, $e$ an unordered pair of vertices of $\Lambda_n = \{-n, \dots, n\}^d$, and $0 < p < 1$. Then $\theta^1_e(p) \le \phi^w_n(e \text{ open})$, where $\theta^1_e(p)$ is the [wired edge density](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md) of $e$ at $q = 2$ and $\phi^w_n(e \text{ open})$ is the [edge marginal](../fkg-inequality-and-monotonicity-of-random-cluste/edge-marg-prob.md) of the wired random-cluster probability on $\Lambda_n = \{-n, \dots, n\}^d$ with boundary $\partial\Lambda_n = \Lambda_n \setminus \Lambda_{n-1}$ at $(p, 2)$.

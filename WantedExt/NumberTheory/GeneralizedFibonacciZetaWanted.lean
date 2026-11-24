@@ -30,10 +30,13 @@ function satisfying its initial window and recurrence, rather than by a new recu
 definition.
 -/
 
-/-- `IsLGeneralizedFibonacci ℓ F` says that `F : ℤ → ℤ` has the paper's zero initial
-window from `2 - ℓ` through `0`, has `F 1 = 1`, and satisfies the ℓ-step recurrence
-at every index greater than one.  Values below `2 - ℓ` are deliberately unconstrained,
-because the paper defines the sequence only from that index onward.
+/-- **ℓ-generalized Fibonacci sequence.** Let $\ell$ be a natural number. A function
+$F : \mathbb{Z} \to \mathbb{Z}$ is an $\ell$-generalized Fibonacci sequence when $F(n) = 0$ for
+every integer $n$ with $2 - \ell \le n \le 0$, $F(1) = 1$, and
+$F(n) = \sum_{i=0}^{\ell-1} F(n-1-i)$ for every integer $n > 1$.
+
+The values of $F$ below $2 - \ell$ are unconstrained, since the sequence is defined only from
+that index onward.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Definition
@@ -44,8 +47,10 @@ public def IsLGeneralizedFibonacci (ℓ : ℕ) (F : ℤ → ℤ) : Prop :=
     ∀ n : ℤ, 1 < n →
       F n = ∑ i ∈ Finset.range ℓ, F (n - 1 - (i : ℤ))
 
-/-- The characteristic polynomial `φ_ℓ(X) = X^ℓ - ∑_{i < ℓ} X^i`, which is the
-paper's `X^ℓ - X^(ℓ-1) - ⋯ - X - 1`, over `ℂ`.
+/-- **Characteristic polynomial of the ℓ-generalized Fibonacci recurrence.** For a natural number
+$\ell$, the characteristic polynomial of the $\ell$-generalized Fibonacci recurrence is the
+polynomial $\varphi_\ell(X) = X^\ell - \sum_{i=0}^{\ell-1} X^i$ in $\mathbb{C}[X]$; for
+$\ell \ge 2$ this is $X^\ell - X^{\ell-1} - \cdots - X - 1$.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85,
@@ -53,7 +58,10 @@ Characteristic polynomial definition. -/
 public noncomputable def lGeneralizedFibonacciCharacteristic (ℓ : ℕ) : Polynomial ℂ :=
   Polynomial.X ^ ℓ - ∑ i ∈ Finset.range ℓ, Polynomial.X ^ i
 
-/-- The Dresden--Du coefficient `c(β) = (β - 1) / (2 + (ℓ + 1)(β - 2))`.
+/-- **Dresden–Du coefficient.** For a natural number $\ell$ and a complex number $\beta$, the
+Dresden–Du coefficient is the complex number
+$c(\beta) = \frac{\beta - 1}{2 + (\ell + 1)(\beta - 2)}$, taken to be $0$ when the denominator
+vanishes.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85,
@@ -61,9 +69,12 @@ Coefficient definition preceding Lemma 1. -/
 public noncomputable def lGeneralizedFibonacciCoefficient (ℓ : ℕ) (β : ℂ) : ℂ :=
   (β - 1) / (2 + ((ℓ : ℂ) + 1) * (β - 2))
 
-/-- The finset of roots of `φ_ℓ` other than the distinguished real root `α`.
-Multiplicity is intentionally discarded with `toFinset`, as requested: the paper's
-roots are simple, but simplicity is not reproved in this statement-only formalization.
+/-- **Other roots of the ℓ-generalized Fibonacci characteristic polynomial.** For a natural number
+$\ell$ and a real number $\alpha$, this is the finite set of distinct complex roots of the
+characteristic polynomial $\varphi_\ell(X) = X^\ell - \sum_{i=0}^{\ell-1} X^i$ other than $\alpha$.
+In applications $\alpha$ is the dominant real root of $\varphi_\ell$.
+
+Each root is listed once, without multiplicity; the roots of $\varphi_\ell$ are in fact simple.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85,
@@ -71,10 +82,17 @@ Root notation preceding Proposition 1. -/
 public noncomputable def lGeneralizedFibonacciOtherRoots (ℓ : ℕ) (α : ℝ) : Finset ℂ :=
   ((lGeneralizedFibonacciCharacteristic ℓ).roots.toFinset).erase (α : ℂ)
 
-/-- The possible pole indexed by the exponent tuple `κ` and integer `n`.  The natural
-number called `k` in the paper is represented by the sum of `κ` over the non-dominant
-roots.  Only the values of the unrestricted function `κ : ℂ → ℕ` on that finite root
-set enter this definition.
+/-- **Possible pole of the ℓ-generalized Fibonacci zeta function at a given index.** Let $\ell$
+be a natural number, let $\alpha$ be a real number, and let $R$ be the set of complex roots of
+$X^\ell - \sum_{i<\ell} X^i$ other than $\alpha$. For a function $\kappa$ from $\mathbb{C}$ to the
+natural numbers and an integer $n$, the possible pole indexed by $(\kappa, n)$ is
+$$
+s_{\kappa,n} = -\sum_{\beta \in R} \kappa(\beta) +
+\frac{2 n \pi i + \sum_{\beta \in R} \kappa(\beta) \log \beta}{\log \alpha},
+$$
+where $\log$ is the principal branch of the complex logarithm.
+
+Only the values of $\kappa$ on $R$ enter; their sum is the number called $k$ in the paper.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Theorem 1. -/
@@ -85,7 +103,9 @@ public noncomputable def lGeneralizedFibonacciZetaPole
         ∑ β ∈ lGeneralizedFibonacciOtherRoots ℓ α, (κ β : ℂ) * Complex.log β) /
       Complex.log (α : ℂ)
 
-/-- For `ℓ = 2` the characteristic polynomial is the Fibonacci polynomial `X² - X - 1`.
+/-- **The ℓ-generalized Fibonacci characteristic polynomial for ℓ = 2.** For $\ell = 2$ the
+characteristic polynomial $\varphi_2$ of the $\ell$-generalized Fibonacci recurrence is the
+Fibonacci polynomial $X^2 - X - 1$ in $\mathbb{C}[X]$.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Equation (3). -/
@@ -94,7 +114,9 @@ public theorem lGeneralizedFibonacciCharacteristic_two :
   simp [lGeneralizedFibonacciCharacteristic, Finset.sum_range_succ]
   ring
 
-/-- The index `κ = 0`, `n = 0` gives the possible pole `s = 0`.
+/-- **The possible pole at the zero index is zero.** For every natural number $\ell$ and every
+real number $\alpha$, the possible pole $s_{\kappa,n}$ of the $\ell$-generalized Fibonacci zeta
+function indexed by the identically zero function $\kappa$ and $n = 0$ equals $0$.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Theorem 1. -/
@@ -102,19 +124,35 @@ public theorem lGeneralizedFibonacciZetaPole_zero (ℓ : ℕ) (α : ℝ) :
     lGeneralizedFibonacciZetaPole ℓ α (fun _ => 0) 0 = 0 := by
   simp [lGeneralizedFibonacciZetaPole]
 
-/-- The set `S` of all possible poles from Theorem 1.  Exponent functions which agree
-on the non-dominant-root finset describe the same tuple; values elsewhere are ignored.
+/-- **Set of possible poles of the ℓ-generalized Fibonacci zeta function.** For a natural number
+$\ell$ and a real number $\alpha$, let $R$ be the set of distinct complex roots of the
+characteristic polynomial $X^\ell - \sum_{i=0}^{\ell-1} X^i$ other than $\alpha$. The set $S$ of
+possible poles is the set of all complex numbers $-K + (2n\pi i + L)/\log\alpha$, where $n$ is
+an integer, $(\kappa_\beta)_{\beta \in R}$ is a family of natural numbers,
+$K = \sum_{\beta \in R} \kappa_\beta$ and $L = \sum_{\beta \in R} \kappa_\beta \log \beta$. Here
+$\log$ is the principal complex logarithm.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Theorem 1. -/
 public noncomputable def lGeneralizedFibonacciZetaPoleSet (ℓ : ℕ) (α : ℝ) : Set ℂ :=
   {s | ∃ (κ : ℂ → ℕ) (n : ℤ), s = lGeneralizedFibonacciZetaPole ℓ α κ n}
 
-/-- The residue expression in Theorem 1, with `k = ∑ κ(β)`.  `Ring.choose` encodes
-the generalized binomial coefficient, the factorial quotient encodes the multinomial
-coefficient, natural powers encode the product over non-dominant roots, and complex
-powers encode the two generally nonintegral exponents.  As in the paper, all logarithms
-are principal `Complex.log` values.
+/-- **Residue expression of the ℓ-generalized Fibonacci zeta function.** Let $\ell$ be a natural
+number, let $\alpha$ be a real number, let $R$ be the set of complex roots of
+$X^\ell - \sum_{i<\ell} X^i$ other than $\alpha$, let
+$c(\beta) = (\beta - 1)/(2 + (\ell + 1)(\beta - 2))$ be the Dresden–Du coefficient, and put
+$d = c(\alpha)/\alpha$. For a function $\kappa$ from $\mathbb{C}$ to the natural numbers and an
+integer $n$, let $k = \sum_{\beta \in R} \kappa(\beta)$ and let $s_0$ be the possible pole
+indexed by $(\kappa, n)$. The residue expression indexed by $(\kappa, n)$ is
+$$
+\rho_{\kappa,n} = d^{-s_0} \binom{-s_0}{k} d^{-k} \cdot
+\frac{k!}{\prod_{\beta \in R} \kappa(\beta)!} \cdot
+\prod_{\beta \in R} \left(\frac{c(\beta)}{\beta}\right)^{\kappa(\beta)} \cdot
+\frac{1}{\log \alpha},
+$$
+where $\binom{-s_0}{k} = (-s_0)(-s_0 - 1)\cdots(-s_0 - k + 1)/k!$ is the generalized binomial
+coefficient, $d^{-s_0}$ and $d^{-k}$ are principal complex powers, and $\log$ is the principal
+branch of the complex logarithm.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Theorem 1. -/
@@ -134,10 +172,12 @@ public noncomputable def lGeneralizedFibonacciZetaResidue
       (lGeneralizedFibonacciCoefficient ℓ β * β⁻¹) ^ κ β) *
     (1 / Complex.log (α : ℂ))
 
-/-- The point printed in Corollary 1.  The even branch is
-`-(k + k/(ℓ-1)) + iπ(2n + k/(ℓ-1))/log α`; the odd branch is
-`-(k + k/(ℓ-1)) + i2nπ/log α`.  Natural division is legitimate under the
-corollary's divisibility hypothesis.
+/-- **Corollary pole of the ℓ-generalized Fibonacci zeta function.** For natural numbers $\ell$
+and $k$, a real number $\alpha$ and an integer $n$, let $q$ be the quotient of $k$ by $\ell - 1$
+in natural-number division, with $q = 0$ when $\ell \le 1$ (so $q = k/(\ell - 1)$ when
+$\ell \ge 2$ and $\ell - 1$ divides $k$). The corollary pole is the complex number
+$-(k + q) + i\pi(2n + q)/\log \alpha$ if $\ell$ is even and $-(k + q) + 2\pi i n/\log \alpha$ if
+$\ell$ is odd, where $\log$ is the principal complex logarithm.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Corollary 1. -/
@@ -152,10 +192,10 @@ public noncomputable def lGeneralizedFibonacciZetaCorollaryPole
       Complex.I * (2 * (n : ℂ) * (Real.pi : ℂ)) /
         Complex.log (α : ℂ)
 
-/-- Proposition 1: for an ℓ-generalized Fibonacci sequence with `ℓ ≥ 2`, the series
-of norms of `(F_n)^{-s}` is summable whenever `Re(s) > 0`.  Reindexing by `j ↦ j+1`
-expresses the paper's indices `n ≥ 1` as a Lean sum over `j : ℕ`; the complex power is
-`Complex.cpow` through `HPow ℂ ℂ`.
+/-- **Absolute convergence of the ℓ-generalized Fibonacci zeta series.** Let $\ell \ge 2$ and let
+$F$ be an $\ell$-generalized Fibonacci sequence. For every complex number $s$ with
+$\operatorname{Re} s > 0$, the series $\sum_{n \ge 1} |F_n^{-s}|$ converges, where $F_n^{-s}$ is
+the principal complex power of $F_n$ viewed as a complex number.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Proposition 1. -/
@@ -164,14 +204,16 @@ public theorem_wanted lGeneralizedFibonacciZeta_summable
     (hF : IsLGeneralizedFibonacci ℓ F) (s : ℂ) (hs : 0 < s.re) :
     Summable (fun j : ℕ => ‖((F ((j : ℤ) + 1) : ℂ) ^ (-s))‖)
 
-/-- Theorem 1, continuation and possible-pole clauses: there is a function agreeing
-with the defining zeta series on `Re(s) > 0`, differentiable away from the explicitly
-defined set `S`, and having a finite punctured limit of `(s-s₀)f(s)` at every point of
-`S`.  The last clause formalizes “at most simple poles”; the residue value is separated
-into `lGeneralizedFibonacciZeta_residue` so collision handling can be stated explicitly.
-The real root `α` is hypothesis-characterized by `1 < α` and its characteristic
-equation, while irreducibility, uniqueness outside the unit circle, and root simplicity
-are not reproved or added as redundant hypotheses.
+/-- **Meromorphic continuation of the ℓ-generalized Fibonacci zeta function.** Let $\ell \ge 2$,
+let $F$ be an $\ell$-generalized Fibonacci sequence, let $\alpha > 1$ be a real number with
+$\alpha^\ell = \sum_{i=0}^{\ell-1} \alpha^i$, and let $S$ be the set of possible poles determined
+by $\ell$ and $\alpha$. Then there is a function $f : \mathbb{C} \to \mathbb{C}$ such that
+$f(s) = \sum_{n \ge 1} F(n)^{-s}$ for every complex $s$ with $\operatorname{Re} s > 0$, $f$ is
+complex differentiable at every point outside $S$, and for every $s_0 \in S$ the limit of
+$(s - s_0) f(s)$ as $s \to s_0$ with $s \ne s_0$ exists in $\mathbb{C}$.
+
+The last clause says that $f$ has at most simple poles, all lying in $S$; the residues are
+stated separately.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Theorem 1. -/
@@ -188,13 +230,22 @@ public theorem_wanted lGeneralizedFibonacciZeta_meromorphicContinuation
         ∃ r : ℂ,
           Tendsto (fun s : ℂ => (s - s₀) * f s) (𝓝[≠] s₀) (𝓝 r)
 
-/-- The residue clause of Theorem 1: if `(κ,n)` is the unique pole index modulo
-equality of exponent values on the non-dominant-root finset, then every continuation
-which agrees with the series on the right half-plane and is differentiable off `S`
-has the stated punctured residue limit.  The uniqueness hypothesis is an explicit
-deviation from the paper: when different tuples collide, their residue contributions
-must be added, a case the printed formula does not address.  Equality deliberately
-does not compare `κ` away from the finite root set.
+/-- **Residues of the ℓ-generalized Fibonacci zeta function.** Let $\ell \ge 2$, let $F$ be an
+$\ell$-generalized Fibonacci sequence, and let $\alpha > 1$ be a real number with
+$\alpha^\ell = \sum_{i<\ell} \alpha^i$. Let $R$ be the set of complex roots of
+$X^\ell - \sum_{i<\ell} X^i$ other than $\alpha$, let $s_{\kappa,n}$ be the possible pole and
+$\rho_{\kappa,n}$ the residue expression indexed by a function $\kappa$ from $\mathbb{C}$ to the
+natural numbers and an integer $n$, and let $S$ be the set of all possible poles $s_{\kappa,n}$.
+Fix $\kappa$ and $n$ such that whenever $s_{\kappa',n'} = s_{\kappa,n}$, we have $n' = n$ and
+$\kappa'(\beta) = \kappa(\beta)$ for every $\beta \in R$. Let $f : \mathbb{C} \to \mathbb{C}$
+satisfy $f(s) = \sum_{m \ge 1} F_m^{-s}$ (principal complex powers) for every $s$ with
+$\operatorname{Re} s > 0$, and let $f$ be complex differentiable at every point outside $S$.
+Then $(s - s_{\kappa,n}) f(s)$ tends to $\rho_{\kappa,n}$ as $s$ tends to $s_{\kappa,n}$ with
+$s \ne s_{\kappa,n}$.
+
+The hypothesis that $(\kappa, n)$ is the only index of its pole is not in the paper: when
+different indices give the same pole, their residue contributions add up, a case the printed
+formula does not address.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Theorem 1
@@ -220,10 +271,15 @@ public theorem_wanted lGeneralizedFibonacciZeta_residue
       (𝓝[≠] lGeneralizedFibonacciZetaPole ℓ α κ n)
       (𝓝 (lGeneralizedFibonacciZetaResidue ℓ α κ n))
 
-/-- Corollary 1: if `(ℓ-1) ∣ k`, then for every integer `n` the point printed by the
-paper (using its even/odd alternatives) belongs to the possible-pole set `S` of
-Theorem 1.  In the witnessing tuple `κ` is constant `k/(ℓ-1)` on all
-non-dominant roots in the witnessing tuple.
+/-- **Explicit possible poles of the ℓ-generalized Fibonacci zeta function.** Let $\ell \ge 2$, let
+$\alpha > 1$ be a real number with $\alpha^\ell = \sum_{i=0}^{\ell-1} \alpha^i$, and let $k$ be a
+natural number divisible by $\ell - 1$; write $q = k/(\ell - 1)$. Then for every integer $n$, the
+point $-(k + q) + i\pi(2n + q)/\log \alpha$ if $\ell$ is even, and $-(k + q) + 2\pi i n/\log \alpha$
+if $\ell$ is odd, belongs to the set $S$ of possible poles of the $\ell$-generalized Fibonacci
+zeta function determined by $\ell$ and $\alpha$.
+
+A witnessing exponent tuple takes the constant value $q$ at every root of the characteristic
+polynomial other than $\alpha$.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Corollary 1. -/
@@ -234,11 +290,13 @@ public theorem_wanted lGeneralizedFibonacciZeta_corollaryPole_mem
     lGeneralizedFibonacciZetaCorollaryPole ℓ k α n ∈
       lGeneralizedFibonacciZetaPoleSet ℓ α
 
-/-- Theorem 2: at a positive integer `m`, any continuation agreeing with the zeta
-series on the right half-plane and differentiable away from `S` takes a rational value
-at `-m`, provided it is differentiable there.  The final differentiability hypothesis
-is the formal “`-m` is not a pole” premise, and rationality is expressed by equality
-with the complex coercion of some `q : ℚ`.
+/-- **Rational values of the ℓ-generalized Fibonacci zeta function at negative integers.** Let
+$\ell \ge 2$, let $F$ be an $\ell$-generalized Fibonacci sequence, let $\alpha > 1$ be a real
+number with $\alpha^\ell = \sum_{i=0}^{\ell-1} \alpha^i$, and let $S$ be the set of possible
+poles determined by $\ell$ and $\alpha$. Let $m$ be a positive integer and let
+$f : \mathbb{C} \to \mathbb{C}$ be a function that satisfies $f(s) = \sum_{n \ge 1} F(n)^{-s}$
+whenever $\operatorname{Re} s > 0$ and is complex differentiable at every point outside $S$. If
+$f$ is complex differentiable at $-m$, then $f(-m)$ is a rational number.
 
 Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
 ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Theorem 2. -/

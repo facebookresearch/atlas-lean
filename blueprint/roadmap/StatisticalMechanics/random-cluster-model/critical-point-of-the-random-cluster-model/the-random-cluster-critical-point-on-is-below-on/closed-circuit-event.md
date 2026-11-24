@@ -1,0 +1,3 @@
+# Closed-circuit event of a dual circuit
+
+Identify each site $f \in \mathbb{Z}^2$ with the unit face of $\mathbb{Z}^2$ whose lower left corner is $f$; two lattice-adjacent faces $f, g$ share one primal edge $e(f, g)$ (if $f$ and $g$ differ in the second coordinate, $e(f, g)$ is the horizontal edge from $(f_1, \max(f_2, g_2))$ to $(f_1 + 1, \max(f_2, g_2))$; otherwise the vertical edge from $(\max(f_1, g_1), f_2)$ to $(\max(f_1, g_1), f_2 + 1)$). For a closed walk $c$ in the nearest-neighbour graph of $\mathbb{Z}^2$, read as a walk of faces, the closed-circuit event of $c$ is the set of configurations of $\mathbb{Z}^2$ in which $e(f, g)$ is closed for every edge $\{f, g\}$ of $c$.

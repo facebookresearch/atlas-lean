@@ -1,0 +1,27 @@
+# p-adic numbers and local fields
+
+p-adic integers and expansions, valuations of integer sequences, Hensel lifting, Strassmann's theorem, Hilbert symbols, p-adic gamma, local fields.
+
+- [2-adic odd part of factorials of powers of two](2-adic-odd-part-of-factorials-of-powers-of-two/README.md)
+- [Absolute values on fields](absolute-values-on-fields/README.md)
+- [Hilbert symbol](hilbert-symbol/README.md)
+- [Krasner's lemma](krasner-s-lemma/README.md)
+- [Morita's p-adic gamma function](morita-s-p-adic-gamma-function/README.md)
+- [p-adic expansions](p-adic-expansions/README.md)
+- [p-adic Pontryagin duals](p-adic-pontryagin-duals/README.md)
+- [p-adic valuations of polynomials](p-adic-valuations-of-polynomials/README.md)
+- [Points of valuation one of two-variable polynomials](points-of-valuation-one-of-two-variable-polynomi/README.md)
+- [Spectral norm on algebraic extensions](spectral-norm-on-algebraic-extensions/README.md)
+- [Cassels' embedding theorem](exists-injective-ring-hom-closure-padic.md)
+- [p-adic integrality is equivalent to norm at most one](is-integral-padic-int-iff-norm-le-one.md)
+- [Strassmann's theorem](strassmann.md)
+- [The p-adic exponential on a neighbourhood of zero](p-adic-exponential.md)
+- [Index of the n-th powers in a local field of characteristic zero](index-of-n-th-powers.md)
+- [Local class field theory: the local Artin map](local-class-field-theory.md)
+- [Local class field theory: cohomology and the existence theorem](local-class-field-theory-cohomology.md)
+- [Local class field theory: functoriality and explicit reciprocity](local-class-field-theory-functoriality.md)
+- [The ring of p-adic integers](p-adic-integers.md)
+- [A p-adic integer is a unit if and only if its p-adic absolute value is 1](p-adic-integers-units-absolute-value-one.md)
+- [The p-adic valuation of a product of nonzero integers is the sum of their p-adic valuations](p-adic-order-integer-additive.md)
+- [Power series identities over complete non-archimedean fields](power-series-identities-over-complete-nonarchimedean-fields.md)
+- [The field of p-adic numbers](p-adic-numbers.md)

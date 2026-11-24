@@ -19,9 +19,11 @@ namespace MathlibExt.GroupTheory.ScottishBook142Wanted
 
 universe u
 
-/-- `G` is the full automorphism group of the binary relation `X` on `Z`:
-there is an injective homomorphism from `G` into the permutation group of
-`Z` whose image is exactly the set of permutations preserving `X`. -/
+/-- **Full automorphism group of a binary relation.** Let $G$ be a group, $Z$ a set and
+$X \subseteq Z \times Z$ a binary relation on $Z$. Then $G$ is the full automorphism group of
+$X$ when there is an injective group homomorphism $\varphi$ from $G$ to the group of
+permutations of $Z$ whose image is exactly the set of permutations $f$ of $Z$ with
+$(x, y) \in X \iff (f(x), f(y)) \in X$ for all $x, y \in Z$. -/
 def IsAutomorphismGroupOf (G : Type u) [Group G] (Z : Type u) (X : Set (Z × Z)) :
     Prop :=
   ∃ φ : G → Equiv.Perm Z, Function.Injective φ ∧
@@ -30,10 +32,14 @@ def IsAutomorphismGroupOf (G : Type u) [Group G] (Z : Type u) (X : Set (Z × Z))
     ∀ f : Equiv.Perm Z, (∀ x y : Z, (x, y) ∈ X ↔ (f x, f y) ∈ X) → ∃ g : G, φ g = f
 
 /--
-Every abstract group is the group of all injective transformations of some
-set preserving some binary relation: for every group `G` there are a set
-`Z` and a subset `X` of `Z × Z` such that `G` is isomorphic to the
-automorphism group of the binary relation `X` on `Z`.
+**Birkhoff's theorem: every group is the automorphism group of a binary relation.** For every
+group $G$ there are a set $Z$ and a binary relation $X \subseteq Z \times Z$ such that $G$ is
+the full automorphism group of $X$: there is an injective group homomorphism $\varphi$ from $G$
+to the group of permutations of $Z$ whose image is exactly the set of permutations $f$ of $Z$
+with $(x, y) \in X \iff (f(x), f(y)) \in X$ for all $x, y \in Z$.
+
+The set $Z$ lies in the same universe as $G$.
+
 Source: S. Ulam, Problem 142 of the Scottish Book, headed "Problem (Ulam) -
 Theorem (Garrett Birkhoff)"; the representation is Birkhoff's theorem.
 -/

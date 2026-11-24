@@ -43,7 +43,13 @@ namespace MathlibExt.MeasureTheory.Integral.LyapunovConvexityWanted
 Records Lyapunov's convexity theorem for the range of a finite-dimensional vector measure.
 -/
 
-/-- Set of integrals of `f` over measurable sets. -/
+/-- **Lyapunov range.** For a measure $\mu$ on a measurable space $\alpha$ and a function
+$f : \alpha \to E$ into a real normed space $E$, the Lyapunov range of $f$ with respect to $\mu$ is
+the set $\lbrace \int_s f \, d\mu : s \subseteq \alpha \text{ measurable} \rbrace$ of integrals of
+$f$ over measurable subsets of $\alpha$.
+
+Here $\int_s f \, d\mu$ is the Bochner integral, which is $0$ when $f$ is not integrable on $s$
+or when $E$ is not complete. -/
 noncomputable def lyapunovRange {α : Type*} [MeasurableSpace α] {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] (μ : Measure α) (f : α → E) :
     Set E :=
@@ -1792,12 +1798,16 @@ private theorem lyapunovRange_isClosed {α : Type*} [MeasurableSpace α] :
         exact ⟨P ∪ (t ∩ Z), hPUmeas, hy_eq⟩
 
 /--
-If `μ` is atomless finite and `f : α → E` is Bochner-integrable with `E` finite-dimensional over
-`ℝ`, then `lyapunovRange μ f` is compact and convex. Source: A. Lyapunov, Izv. Akad. Nauk SSSR 4
-(1940) 465–478; Diestel-Uhl, Vector Measures; Lean states atomless finite measure case with
-Bochner integrable finite-dim integrand, infinite-dim fails.
+**Lyapunov convexity theorem.** Let $\mu$ be a finite atomless measure on a measurable space
+$\alpha$, let $E$ be a finite-dimensional real normed space, and let $f : \alpha \to E$ be Bochner
+integrable with respect to $\mu$. Then the Lyapunov range of $f$ with respect to $\mu$, the set of
+integrals $\int_s f \, d\mu$ over measurable sets $s \subseteq \alpha$, is compact and convex.
 
 Proves `Wanted` entry `lyapunov_convexity`.
+
+Source: A. Lyapunov, Izv. Akad. Nauk SSSR 4
+(1940) 465–478; Diestel-Uhl, Vector Measures; Lean states atomless finite measure case with
+Bochner integrable finite-dim integrand, infinite-dim fails.
 -/
 theorem lyapunov_convexity
     {α : Type*} [MeasurableSpace α] {μ : Measure α} [IsFiniteMeasure μ]

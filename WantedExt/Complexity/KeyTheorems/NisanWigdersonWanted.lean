@@ -7,18 +7,24 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Nisan-Wigderson: exponential hardness in E derandomizes BPP
+# Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP
 
-Source:
+Sources:
+R. Impagliazzo and A. Wigderson, "P = BPP if E requires exponential circuits: Derandomizing the
+XOR lemma", Proceedings of the 29th Annual ACM Symposium on Theory of Computing (STOC 1997),
+220-229.
 N. Nisan and A. Wigderson, "Hardness vs randomness", Journal of Computer and System Sciences 49
 (1994), 149-167 (FOCS 1988).
+S. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science 7 (2012),
+Theorem 7.19, Corollary 7.20, Corollary 7.64 (1) and Section 7.9.
 -/
+
 module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Computability.BinaryNatEncoding
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Classes
 
 
@@ -30,17 +36,30 @@ open Cslib.Complexity.Classes
 open MetaMathlibExt.ComplexityTheory
 
 /-!
-# Nisan-Wigderson: exponential hardness in E derandomizes BPP
+# Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP
 
 If `E` contains a function requiring exponential-size mod-free circuits for every input length
-(size `≥ 2 ^ (n / c)` for some constant `c`), then `BPP = P`: the hard function builds a
-pseudorandom generator that derandomizes every bounded-error algorithm. Hardness is stated for
-well-formed mod-free flat circuits computing the function on `n`-bit inputs.
+(size `≥ 2 ^ (n / c)` for some constant `c`), then `BPP = P`. This worst-case hardness form is the
+theorem of Impagliazzo and Wigderson (1997): derandomized hardness amplification turns the hard
+function into one that is hard on average, which feeds the Nisan-Wigderson pseudorandom generator.
+Nisan and Wigderson (1994) had derived `BPP = P` from exponential *average-case* hardness. Hardness
+is stated for well-formed mod-free flat circuits computing the function on `n`-bit inputs. The
+declaration keeps its original name `nisan_wigderson`.
 -/
 
-/-- **Nisan-Wigderson: exponential hardness in E derandomizes BPP.** Source: N. Nisan and A.
-Wigderson, "Hardness vs randomness", Journal of Computer and System Sciences 49 (1994),
-149-167 (FOCS 1988). -/
+/-- **Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP.** Suppose there are
+a decision problem $f$ in E and a natural number $c > 0$ such that, for every $n$, every well-formed
+flat Boolean circuit $C$ on $n$ inputs without mod gates that computes $f$ on all bitstrings of
+length $n$ (for every bitstring $x$ of length $n$, the value of its last gate on input $x$ is
+$f(x)$) satisfies $|C|^c \ge 2^n$, where $|C|$ is its number of gates; that is, $C$ has at least
+$2^{n/c}$ gates. Then BPP equals P.
+
+R. Impagliazzo and A. Wigderson, "P = BPP if E requires exponential circuits: Derandomizing the XOR
+lemma", STOC 1997; S. Vadhan, *Pseudorandomness*, Foundations and Trends in Theoretical Computer
+Science 7 (2012), Corollary 7.64 (1), attributed to Impagliazzo and Wigderson in Section 7.9. The
+proof builds the Nisan-Wigderson generator (N. Nisan and A. Wigderson, "Hardness vs randomness",
+Journal of Computer and System Sciences 49 (1994), 149-167), which yields `BPP = P` from exponential
+average-case hardness (Vadhan, Theorem 7.19 and Corollary 7.20). -/
 public theorem_wanted nisan_wigderson :
     (∃ f : List Bool → Bool, f ∈ E ∧ ∃ c : ℕ, 0 < c ∧
       ∀ n : ℕ, ∀ C : List (ACGate n), WellFormedCircuit C → IsModFree C →

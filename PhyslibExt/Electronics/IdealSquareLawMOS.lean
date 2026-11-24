@@ -63,9 +63,6 @@ geometry, mobility and temperature are fixed.
   regional small-signal conductances `gm` and `gds`.
 
 ## A. The square-law current model
-
-Discharges ECE roadmap leaf `ECE.DEV.MOS.L1` (ideal square-law MOS
-device model).
 -/
 
 @[expose] public section

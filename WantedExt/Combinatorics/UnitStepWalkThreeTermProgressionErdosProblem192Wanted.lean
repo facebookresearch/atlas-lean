@@ -33,26 +33,39 @@ for `d = 0` no such walk exists and `0 ≤ 3`. Compared with the formal-conjectu
 `ErdosProblems/192.lean` (answer `Set.Iic 3`, equivalent; no code imported).
 -/
 
-/-- `a` is a walk in `ℝ^d` whose steps `a (i + 1) - a i` are standard unit vectors. -/
+/-- **Unit-step walks.** Let $d$ be a natural number. A sequence
+$a_0, a_1, a_2, \dots$ of points of $\mathbb{R}^d$ is a unit-step walk when for every $i$ the
+step $a_{i+1} - a_i$ is a standard unit vector $e_j$ of $\mathbb{R}^d$ for some $j$. -/
 def IsUnitStepWalk (d : ℕ) (a : ℕ → Fin d → ℝ) : Prop :=
   ∀ i, ∃ j : Fin d, a (i + 1) = a i + Pi.single j 1
 
-/-- The points of `a` contain a three-term arithmetic progression `x, y, z` with `x ≠ y`,
-`x + z = 2 y`. -/
+/-- **Three-term arithmetic progressions in a sequence of points.** Let $d$ be a natural number
+and let $a_0, a_1, a_2, \dots$ be a sequence of points of $\mathbb{R}^d$. The sequence contains a
+three-term arithmetic progression when there are indices $i$, $j$, $k$ with $a_i \ne a_j$ and
+$a_i + a_k = 2 a_j$. -/
 def HasThreeAP {d : ℕ} (a : ℕ → Fin d → ℝ) : Prop :=
   ∃ i j k : ℕ, a i ≠ a j ∧ a i + a k = 2 • a j
 
-/-- Erdős Problem 192: every infinite walk in `ℝ^d` with standard unit vector steps contains a
-three-term arithmetic progression if and only if `d ≤ 3`. -/
+/-- **Erdős Problem 192 on three-term progressions in unit-step walks.** The statement that for
+every natural number $d$, every sequence $a_0, a_1, a_2, \dots$ of points of $\mathbb{R}^d$ whose
+steps $a_{i+1} - a_i$ are all standard unit vectors contains a three-term arithmetic progression
+(indices $i$, $j$, $k$ with $a_i \ne a_j$ and $a_i + a_k = 2 a_j$) if and only if $d \le 3$. -/
 def unitStepWalkThreeAPIff : Prop :=
   ∀ d : ℕ, (∀ a : ℕ → Fin d → ℝ, IsUnitStepWalk d a → HasThreeAP a) ↔ d ≤ 3
 
 /--
-Resolved true: the progression is forced exactly when `d ≤ 3`. Points `aᵢ, aⱼ, a_k` form a
-progression exactly when the step words from `i` to `j` and from `j` to `k` are permutations of each
-other (an abelian square). Over at most three letters every long enough word contains an abelian
-square, and Keränen's infinite abelian-square-free word over four letters gives, for every `d ≥ 4`,
-a walk with no three-term progression. erdosproblems.com/192 lists the problem as solved. Source: T.
+**Solution of Erdős Problem 192 on three-term progressions in unit-step walks.** For every
+natural number $d$, every sequence $a_0, a_1, a_2, \dots$ of points of $\mathbb{R}^d$ whose steps
+$a_{i+1} - a_i$ are all standard unit vectors contains a three-term arithmetic progression
+(indices $i$, $j$, $k$ with $a_i \ne a_j$ and $a_i + a_k = 2 a_j$) if and only if $d \le 3$.
+
+Points $a_i, a_j, a_k$ form a progression exactly when the step words from $i$ to $j$ and from
+$j$ to $k$ are permutations of each other (an abelian square). Over at most three letters every
+long enough word contains an abelian square, and Keränen's infinite abelian-square-free word over
+four letters gives, for every $d \ge 4$, a walk with no three-term progression.
+erdosproblems.com/192 lists the problem as solved.
+
+Source: T.
 F. Bloom, Erdős Problems, Problem #192, https://www.erdosproblems.com/192 (status SOLVED (LEAN));
 resolution: V. Keränen, Abelian squares are avoidable on 4 letters, Automata, Languages and
 Programming (ICALP 1992), Lecture Notes in Comput. Sci. 623, Springer (1992), 41-52,

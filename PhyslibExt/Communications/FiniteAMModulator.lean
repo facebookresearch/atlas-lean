@@ -52,9 +52,6 @@ disjoint.
 Systems*, fifth edition, Oxford University Press, 2019: amplitude modulation and its spectrum.
 
 ## A. The finite AM model and its spectrum
-
-Discharges ECE roadmap leaf `ECE.COM.MODULATION.AM` (finite AM
-sidebands).
 -/
 
 @[expose] public section

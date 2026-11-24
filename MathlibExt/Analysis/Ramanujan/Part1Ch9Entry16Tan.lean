@@ -245,30 +245,6 @@ private lemma chap9_norm_term_le (t : ℝ) (ht : ‖t‖ ≤ 1) (k : ℕ) :
       _ ≤ 1 / (((k : ℝ) + 1) ^ 2) :=
           one_div_le_one_div_of_le hqpos hbase
 
-private lemma chap9_cosSeries_summable (x : ℝ) :
-    Summable (fun k : ℕ => (Nat.choose (2 * k) k : ℝ) * Real.cos x ^ (2 * k + 1) /
-      ((2 : ℝ) ^ (2 * k) * ((((2 * k + 1 : ℕ)) : ℝ) ^ 2))) := by
-  have hcos : ‖Real.cos x‖ ≤ 1 := by
-    rw [Real.norm_eq_abs]
-    exact Real.abs_cos_le_one x
-  have h : Summable (fun k : ℕ => ‖(Nat.choose (2 * k) k : ℝ) * Real.cos x ^ (2 * k + 1) /
-      ((2 : ℝ) ^ (2 * k) * ((((2 * k + 1 : ℕ)) : ℝ) ^ 2))‖) :=
-    Summable.of_nonneg_of_le (fun k => norm_nonneg _)
-      (fun k => chap9_norm_term_le _ hcos k) chap9_aux_summable
-  exact Summable.of_norm h
-
-private lemma chap9_sinSeries_summable (x : ℝ) :
-    Summable (fun k : ℕ => (Nat.choose (2 * k) k : ℝ) * Real.sin x ^ (2 * k + 1) /
-      ((2 : ℝ) ^ (2 * k) * ((((2 * k + 1 : ℕ)) : ℝ) ^ 2))) := by
-  have hsin : ‖Real.sin x‖ ≤ 1 := by
-    rw [Real.norm_eq_abs]
-    exact Real.abs_sin_le_one x
-  have h : Summable (fun k : ℕ => ‖(Nat.choose (2 * k) k : ℝ) * Real.sin x ^ (2 * k + 1) /
-      ((2 : ℝ) ^ (2 * k) * ((((2 * k + 1 : ℕ)) : ℝ) ^ 2))‖) :=
-    Summable.of_nonneg_of_le (fun k => norm_nonneg _)
-      (fun k => chap9_norm_term_le _ hsin k) chap9_aux_summable
-  exact Summable.of_norm h
-
 private def chap9Fcoeff (n : ℕ) : ℝ := (Nat.choose (2 * n) n : ℝ) / (2 : ℝ) ^ (2 * n)
 
 private lemma chap9Fcoeff_nonneg (n : ℕ) : 0 ≤ chap9Fcoeff n := by
@@ -1881,9 +1857,14 @@ private lemma chap9_main_nonneg {x : ℝ} (hx0 : 0 ≤ x) (hx : x ≤ Real.pi / 
     rw [hA_eq] at hA
     linear_combination -hA
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
+/-- **The central binomial series in $\sin x$ and $x \log|2\sin x|$.** Let $x$ be a real number
+with $|x| \le \pi/2$, and let $L(x) = x \log|2\sin x|$ for $x \ne 0$ and $L(0) = 0$. Then
+$|2\sin x| > 0$ if $x \ne 0$, the series
+$S(x) = \sum_{k=0}^{\infty} \binom{2k}{k} \frac{\sin^{2k+1} x}{2^{2k} (2k+1)^2}$ and
+$F(x) = \sum_{k=1}^{\infty} \frac{\sin 2kx}{k^2}$ are both summable, and
+$S(x) = L(x) + \frac{1}{2} F(x)$.
 
-Proves `Wanted` entry `ramanujan_part1_ch9_entry16_tan`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
 -/
 theorem ramanujan_part1_ch9_entry16_tan (x : ℝ) (hx : |x| ≤ Real.pi / 2) :
     (x ≠ 0 → 0 < |2 * Real.sin x|) ∧

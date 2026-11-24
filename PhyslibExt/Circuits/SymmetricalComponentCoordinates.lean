@@ -48,9 +48,6 @@ to the negative sequence.
   unbalanced systems.
 
 ## A. Sequence coordinates as a DFT
-
-Discharges ECE roadmap leaf `ECE.POW.PERUNIT.COMPONENTS`
-(symmetrical components).
 -/
 
 @[expose] public section

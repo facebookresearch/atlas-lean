@@ -43,21 +43,25 @@ open scoped FourierTransform
 
 namespace MathlibExt.Analysis.Fourier.HomogeneousSobolevHolderEmbeddingWanted
 
-/-- The homogeneous Sobolev seminorm `‖f‖_{Ḣˢ} = (∫ |ξ| ^ (2 s) * ‖𝓕 f ξ‖ ^ 2 dξ) ^ (1 / 2)` of a
-Schwartz function. -/
+/-- **Homogeneous Sobolev seminorm for the Hölder embedding.** For a real number $s$ and a
+Schwartz function $f : \mathbb{R} \to \mathbb{C}$ with Fourier transform
+$\hat f(\xi) = \int_{\mathbb{R}} e^{-2\pi i x \xi} f(x) \, dx$, the homogeneous Sobolev seminorm
+of $f$ is
+$$
+\|f\|_{\dot H^s} = \left( \int_{\mathbb{R}} |\xi|^{2s} \, |\hat f(\xi)|^2 \, d\xi \right)^{1/2},
+$$
+where the integral is taken to be $0$ when the integrand is not integrable. -/
 noncomputable def dotHSeminorm (s : ℝ) (f : SchwartzMap ℝ ℂ) : ℝ :=
   Real.sqrt (∫ ξ : ℝ, Real.rpow ‖ξ‖ (2 * s) * ‖(𝓕 f) ξ‖ ^ 2)
 
-/-- Fix $s\in \left(\tfrac12,1\right]$. For a Schwartz function $f:\mathbb{R}\to\mathbb{C}$, define
-\[
-\|f\|_{\dot H^{s}(\mathbb{R})} = \left( \int_{\mathbb{R}} |\xi|^{2s} |\widehat{f}|^{2}(\xi)\, d\xi
-\right)^{1/2}.
-\]
-Prove that there exists $C_3>0$ such that the following holds for all $f\in
-\mathcal{S}(\mathbb{R})$:
- \[
- \sup_{x\ne y} \frac{|f(x)-f(y)|}{|x-y|^{\,s-\frac12}} \le C_3 \|f\|_{\dot H^{s}(\mathbb{R})}.
- \]
+/-- **The homogeneous Sobolev seminorm controls the Hölder seminorm.** Let $s \in (\tfrac12, 1]$,
+and for a Schwartz function $f : \mathbb{R} \to \mathbb{C}$ with Fourier transform $\hat f$ let
+$\|f\|_{\dot H^s} = \left( \int_{\mathbb{R}} |\xi|^{2s} |\hat f(\xi)|^2 \, d\xi \right)^{1/2}$
+be its homogeneous Sobolev seminorm. There is a constant $C_3 > 0$ such that for every Schwartz
+function $f : \mathbb{R} \to \mathbb{C}$,
+$$
+\sup_{x \ne y} \frac{|f(x) - f(y)|}{|x - y|^{s - \frac12}} \le C_3 \, \|f\|_{\dot H^s}.
+$$
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis; Linear
 function spaces and their duals), `benchmark/level2/ma_proofbench_l2_21.lean` at

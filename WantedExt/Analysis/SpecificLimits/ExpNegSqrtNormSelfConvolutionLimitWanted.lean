@@ -44,20 +44,16 @@ open scoped Convolution
 
 namespace MathlibExt.Analysis.SpecificLimits.ExpNegSqrtNormSelfConvolutionLimitWanted
 
-/-- `f x = exp (-√‖x‖)` on the plane. -/
+/-- **The function $e^{-\sqrt{\|x\|}}$ on the plane.** Let $f : \mathbb{R}^2 \to \mathbb{R}$ be
+$f(x) = e^{-\sqrt{\|x\|}}$, where $\|x\|$ is the Euclidean norm of $x$. -/
 noncomputable def f : EuclideanSpace ℝ (Fin 2) → ℝ := fun x =>
   Real.exp (-(Real.sqrt ‖x‖))
 
-/-- Define $f:\mathbb{R}^2\to\mathbb{R}$ as
-\[
-f(x)=e^{-\sqrt{\|x\|}},\qquad x\in\mathbb{R}^2
-\]
-where $\|x\|$ is the Euclidean norm of $x$ in $\mathbb{R}^2$. Prove
-\[
-\lim_{\|a\|\to+\infty}\frac{(f*f)(a)}{f(a)}=2\int_{\mathbb{R}^2}e^{-\sqrt{\|x\|}}\,dx,\qquad
-x\in\mathbb{R}^2,\qquad a\in\mathbb{R}^2.
-\]
-Here the $*$ operation stands for the convolution.
+/-- **Asymptotics of the self-convolution of $e^{-\sqrt{\|x\|}}$.** Let $f : \mathbb{R}^2 \to
+\mathbb{R}$ be $f(x) = e^{-\sqrt{\|x\|}}$, where $\|x\|$ is the Euclidean norm, and let $f * f$ be
+the convolution of $f$ with itself with respect to Lebesgue measure. Then
+
+$$\lim_{\|a\| \to \infty} \frac{(f * f)(a)}{f(a)} = 2 \int_{\mathbb{R}^2} f(x)\,dx.$$
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis; Measures,
 integration, derivative, holomorphy), `benchmark/level2/ma_proofbench_l2_90.lean` at

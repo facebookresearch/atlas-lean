@@ -1,0 +1,3 @@
+# Box symmetries preserve the wired $q = 2$ density of any pair of sites
+
+Let $d \in \mathbb{N}$, a [box symmetry](../random-cluster-measures-on-finite-graphs/box-sym.md) $\tau$ of $\mathbb{Z}^d$ (a bijection of $\mathbb{Z}^d$ preserving nearest-neighbour adjacency and mapping every box $\Lambda_n = \{-n, \dots, n\}^d$ onto itself), $e$ an unordered pair of sites, and $0 < p < 1$. Then $\theta^1_{\tau(e)}(p) = \theta^1_e(p)$, where $\theta^1_e(p)$ is the [wired edge density](wired-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the wired infinite-volume random-cluster measure on $\mathbb{Z}^d$).

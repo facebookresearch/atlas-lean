@@ -1,0 +1,15 @@
+# Linear birth–death process
+
+- [Kendall's extinction probability for the birth–death process](extinction-prob.md)
+- [Kendall's geometric tail ratio](geom-ratio.md)
+- [Kendall's law of the linear birth–death process](prob.md)
+- [Linear birth–death law at time zero](prob-zero-time.md)
+- [Nonnegativity of Kendall's probabilities](prob-nonneg.md)
+- [Kendall's probabilities sum to one](has-sum-prob.md)
+- [Mean population size of the linear birth–death process](has-sum-mul-prob.md)
+- [Forward Kolmogorov equation for the empty state](has-deriv-at-prob-zero.md)
+- [Forward Kolmogorov equation for positive states](has-deriv-at-prob-succ.md)
+- [Backward Kolmogorov equation for the extinction probability](has-deriv-at-extinction-prob.md)
+- [Uniqueness of the extinction probability solving the backward equation](eq-extinction-prob-of-has-deriv-within-a.md)
+- [Limiting extinction probability in the supercritical case](tendsto-extinction-prob-of-lt.md)
+- [Certain extinction in the critical and subcritical cases](tendsto-extinction-prob-of-le.md)

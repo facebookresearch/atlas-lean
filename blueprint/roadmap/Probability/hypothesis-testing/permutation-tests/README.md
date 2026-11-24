@@ -1,0 +1,13 @@
+# Permutation tests
+
+- [Permutation p-value](permutation-pvalue.md)
+- [Counting lemma for rank counts](card-filter-rank-count-le.md)
+- [Validity of permutation p-values](is-valid-pvalue-permutation-pvalue.md)
+- [Monte Carlo permutation p-value](monte-carlo-permutation-pvalue.md)
+- [Validity of Monte Carlo permutation p-values](is-valid-pvalue-monte-carlo-permutation.md)
+- [Counting $t$-subsets with a prescribed inside and outside](card-powerset-card-filter-subset-disjoin.md)
+- [Counting $t$-subsets with a prescribed inside and outside, in general](card-powerset-card-filter-subset-disjoin-2.md)
+- [Mean edge cut of a uniform $t$-subset](mean-card-interedges-compl-powerset-card.md)
+- [Sum of the edge cut over all $t$-subsets](sum-card-interedges-compl-powerset-card.md)
+- [Variance of the edge cut of a uniform $t$-subset](variance-card-interedges-compl-powerset.md)
+- [Averaging over an invariant finite group](measure-eq-card-div-of-ae-card-filter-sm.md)

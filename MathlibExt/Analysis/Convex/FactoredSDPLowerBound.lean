@@ -24,9 +24,6 @@ The key positivity input is the canonical
 `Matrix.PosSemidef.trace_mul_nonneg_re`. A two-dimensional
 example attains the bound `1/2`, and perturbed multipliers and a
 wrong factorization are shown to break it.
-
-Discharges ECE roadmap leaf `ECE.G.OPF.L5` (factored SDP
-certificate).
 -/
 
 @[expose] public section

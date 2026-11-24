@@ -16,10 +16,9 @@ public import Mathlib.Topology.Basic
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook173Wanted
 
-/-- Eidelheit's Problem 173 from the Scottish Book, in its original form:
-in the ring `A` of all bounded linear operations of a Banach space into
-itself, the operations possessing a continuous (two-sided) inverse are
-dense in `A` under the usual operator norm. -/
+/-- **Scottish Book Problem 173.** Eidelheit's claim that for every real Banach space $E$, the
+bounded linear operators $E \to E$ that have a bounded linear two-sided inverse are dense, for
+the operator norm, in the space of all bounded linear operators on $E$. -/
 def ScottishBookProblem173Claim : Prop :=
   ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E],
     Dense {T : E →L[ℝ] E |
@@ -28,10 +27,16 @@ def ScottishBookProblem173Claim : Prop :=
           ContinuousLinearMap.comp S T = ContinuousLinearMap.id ℝ E}
 
 /--
-Eidelheit's Problem 173 is false in general: in an infinite-dimensional
-Hilbert space the invertible operators are not dense, e.g. by the
-Fredholm-index obstruction (the unilateral shift cannot be approximated
-by invertible operators). Source: M. Eidelheit, Problem 173 of the
+**Negative answer to Scottish Book Problem 173.** Eidelheit's claim in Problem 173 is false:
+there is a real Banach space $E$ in which the bounded linear operators $E \to E$ that have a
+bounded linear two-sided inverse are not dense, for the operator norm, in the space of all
+bounded linear operators on $E$.
+
+For instance, in an infinite-dimensional Hilbert space the invertible operators are not dense,
+by the Fredholm-index obstruction: the unilateral shift cannot be approximated by invertible
+operators.
+
+Source: M. Eidelheit, Problem 173 of the
 Scottish Book; see P. Halmos, A Hilbert Space Problem Book, Problem 109.
 -/
 theorem_wanted eidelheit173_refuted : ¬ ScottishBookProblem173Claim

@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Module.Pi
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Data.Finset.Max
+public import Mathlib.Analysis.Convex.Extreme
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
@@ -29,7 +30,7 @@ finitely many (`finite_basic`), and the minimum is attained at one of them
 (`exists_basic_optimal`).
 
 These results are stated for a general real module `E` and were moved here
-from `MathlibExt.Biology.Dynamics.FluxBalanceValue`, which uses them for the
+from `Domains.Biology.Dynamics.FluxBalanceValue`, which uses them for the
 flux balance dual.
 -/
 
@@ -46,7 +47,7 @@ variable {ι E : Type*} [Finite ι] [AddCommGroup E] [Module ℝ E]
 /-- `z` is a basic point for the linear map `L`: the only kernel direction of `L` that vanishes
 wherever `z` vanishes is `0`.
 
-Moved from `MathlibExt.Biology.Dynamics.FluxBalanceValue`. -/
+Moved from `Domains.Biology.Dynamics.FluxBalanceValue`. -/
 def IsBasicPt (L : (ι → ℝ) →ₗ[ℝ] E) (z : ι → ℝ) : Prop :=
   ∀ d : ι → ℝ, L d = 0 → (∀ i, z i = 0 → d i = 0) → d = 0
 
@@ -82,7 +83,7 @@ private theorem exists_pos_nonneg_add_sub {z d : ι → ℝ} (hz : 0 ≤ z)
 /-- A linear objective that attains its minimum on `{z ≥ 0 | L z = c}` attains it at a basic
 point.
 
-Moved from `MathlibExt.Biology.Dynamics.FluxBalanceValue`. -/
+Moved from `Domains.Biology.Dynamics.FluxBalanceValue`. -/
 theorem exists_basic_optimal (L : (ι → ℝ) →ₗ[ℝ] E) (φ : (ι → ℝ) →ₗ[ℝ] ℝ) (c : E)
     {z : ι → ℝ} (hz : 0 ≤ z) (hLz : L z = c)
     (hopt : ∀ z' : ι → ℝ, 0 ≤ z' → L z' = c → φ z ≤ φ z') :
@@ -172,7 +173,7 @@ theorem exists_basic_optimal (L : (ι → ℝ) →ₗ[ℝ] E) (φ : (ι → ℝ)
 
 /-- There are finitely many basic points of `{z ≥ 0 | L z = c}`.
 
-Moved from `MathlibExt.Biology.Dynamics.FluxBalanceValue`. -/
+Moved from `Domains.Biology.Dynamics.FluxBalanceValue`. -/
 theorem finite_basic (L : (ι → ℝ) →ₗ[ℝ] E) (c : E) :
     {z : ι → ℝ | 0 ≤ z ∧ L z = c ∧ IsBasicPt L z}.Finite := by
   classical
@@ -186,6 +187,61 @@ theorem finite_basic (L : (ι → ℝ) →ₗ[ℝ] E) (c : E) :
   have := hb₁ (z₁ - z₂) (by rw [map_sub, hL₁, hL₂, sub_self]) (fun i hi => by
     simp [hi, (heq' i).1 hi])
   exact sub_eq_zero.1 this
+
+/-- A feasible point of `{z ≥ 0 | L z = c}` is basic iff it is an extreme point of the
+feasible set. -/
+theorem isBasicPt_iff_mem_extremePoints (L : (ι → ℝ) →ₗ[ℝ] E) (c : E)
+    {z : ι → ℝ} (hz : 0 ≤ z) (hLz : L z = c) :
+    IsBasicPt L z ↔ z ∈ Set.extremePoints ℝ {w | 0 ≤ w ∧ L w = c} := by
+  constructor
+  · intro hbasic
+    rw [mem_extremePoints_iff_left]
+    refine ⟨⟨hz, hLz⟩, fun x₁ hx₁ x₂ hx₂ hzseg => ?_⟩
+    obtain ⟨hx₁0, hL₁⟩ := hx₁
+    obtain ⟨hx₂0, _hL₂⟩ := hx₂
+    obtain ⟨a, b, ha, hb, _hab, hzcomb⟩ := hzseg
+    have hLd : L (x₁ - z) = 0 := by rw [map_sub, hL₁, hLz, sub_self]
+    have hsupp : ∀ i, z i = 0 → (x₁ - z) i = 0 := by
+      intro i hzi
+      have hfun := congrFun hzcomb i
+      simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul] at hfun
+      have hsum0 : a * x₁ i + b * x₂ i = 0 := hfun.trans hzi
+      have h1nn : 0 ≤ a * x₁ i := mul_nonneg ha.le (hx₁0 i)
+      have h2nn : 0 ≤ b * x₂ i := mul_nonneg hb.le (hx₂0 i)
+      have h10 : a * x₁ i = 0 := ((add_eq_zero_iff_of_nonneg h1nn h2nn).1 hsum0).1
+      have hx₁i : x₁ i = 0 := by
+        rcases mul_eq_zero.1 h10 with h | h
+        · exact absurd h ha.ne'
+        · exact h
+      simp [Pi.sub_apply, hx₁i, hzi]
+    have hdz : x₁ - z = 0 := hbasic _ hLd hsupp
+    exact sub_eq_zero.1 hdz
+  · intro hext
+    rw [mem_extremePoints_iff_left] at hext
+    intro d hLd hsupp
+    by_contra hd0
+    obtain ⟨ε, hε, hp, hm⟩ := exists_pos_nonneg_add_sub hz hsupp hd0
+    have hLp : L (z + ε • d) = c := by
+      rw [map_add, map_smul, hLd, smul_zero, add_zero, hLz]
+    have hLm : L (z - ε • d) = c := by
+      rw [map_sub, map_smul, hLd, smul_zero, sub_zero, hLz]
+    have : Invertible (2 : ℝ) := invertibleOfNonzero two_ne_zero
+    have hzmem : z ∈ openSegment ℝ (z - ε • d) (z + ε • d) :=
+      mem_openSegment_sub_add (𝕜 := ℝ) z (ε • d)
+    have hx₁mem : (z - ε • d) ∈ {w | 0 ≤ w ∧ L w = c} := ⟨hm, hLm⟩
+    have hx₂mem : (z + ε • d) ∈ {w | 0 ≤ w ∧ L w = c} := ⟨hp, hLp⟩
+    have hEq : z - ε • d = z := hext.2 _ hx₁mem _ hx₂mem hzmem
+    have hεd : ε • d = 0 := by
+      have h3 := congrArg (fun w => z - w) hEq
+      rwa [sub_sub_cancel, sub_self] at h3
+    have hd : d = 0 := by
+      funext i
+      have hi := congrFun hεd i
+      simp only [Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at hi
+      rcases mul_eq_zero.1 hi with h | h
+      · exact absurd h hε.ne'
+      · exact h
+    exact hd0 hd
 
 end Basic
 

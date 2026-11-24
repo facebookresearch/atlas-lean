@@ -1,0 +1,17 @@
+# ℓ-regular overpartitions
+
+- [Number of $\ell$-regular overpartitions](regular-overpartition-count.md)
+- [One $\ell$-regular overpartition of zero](regular-overpartition-count-zero.md)
+- [Two $\ell$-regular overpartitions of one](regular-overpartition-count-one.md)
+- [Truncated generating function for $\ell$-regular overpartitions](regular-overpartition-count-eq-coeff-tru.md)
+- [$p$-regular overpartitions are almost always divisible by $2^j$](regular-overpartition-prime-power-two-de.md)
+- [Almost all $3p$-regular overpartition counts are divisible by $2^j$](regular-overpartition-three-mul-prime-po.md)
+- [Almost all $3 \cdot 2^\alpha$-regular overpartition counts are divisible by $2^j$](regular-overpartition-three-mul-two-powe.md)
+- [Congruences modulo powers of two for $3 \cdot 2^\alpha$-regular overpartitions](regular-overpartition-three-mul-two-powe-2.md)
+- [$\ell$-regular overpartitions vanish modulo $4$ along families of primes](regular-overpartition-mod-four-prime-fam.md)
+- [$\ell$-regular overpartitions vanish modulo $4$ along powers of one prime](regular-overpartition-mod-four-single-pr.md)
+- [$\ell$-regular overpartitions vanish modulo $4$ on progressions modulo $4\ell$](regular-overpartition-mod-four-progressi.md)
+- [Self-similarity modulo 7 of 7-regular overpartition counts](regular-overpartition-seven-self-similar.md)
+- [Ramanujan-type congruences modulo 7 for 7-regular overpartitions](regular-overpartition-seven-ramanujan-co.md)
+- [Prime-power congruence for truncated Euler products](finite-euler-product-prime-power-congrue.md)
+- [Double coset representatives for $\Gamma_0(N)$](exists-gamma0-lower-unipotent-t-zpow-dec.md)

@@ -186,8 +186,9 @@ theorem tendstoInDistribution_score {ν : Measure 𝓧} {p : ℝ → 𝓧 → �
   simpa [hmean', Z] using h
 
 open Set in
-/-- Second-order Taylor bound from a bound `m` on the second derivative on a ball. -/
-private theorem abs_sub_sub_mul_deriv_le {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
+/-- If `f` and `deriv f` are differentiable on `ball θ₀ δ` and `|deriv (deriv f)| ≤ m` there, then
+for `θ` in the ball, `|f θ - f θ₀ - (θ - θ₀) * deriv f θ₀| ≤ m * (θ - θ₀) ^ 2`. -/
+theorem abs_sub_sub_mul_deriv_le {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
     (hf : ∀ t ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ f t)
     (hf' : ∀ t ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (deriv f) t)
     (hm : ∀ t ∈ Metric.ball θ₀ δ, |deriv (deriv f) t| ≤ m) (hθ : θ ∈ Metric.ball θ₀ δ) :
@@ -500,5 +501,64 @@ theorem tendstoInDistribution_sqrt_mul_sub_of_likelihoodEquation
     hs'_diff hM_meas hM_int hM hs_meas hs_sq hs_mean hs'_meas hs'_int
     (by rw [h_info]; exact neg_ne_zero.2 hI_pos.ne') hθ_meas hroot hcons ?_
   rwa [hvar]
+
+open scoped NNReal
+
+/-- The affine Gaussian location density `N(c t + m, v)` is differentiable in the parameter `t`,
+with derivative the density times `c (x - (c θ + m)) / v`. -/
+private theorem hasDerivAt_gaussianPDFReal_affine (c m : ℝ) (v : ℝ≥0) (θ x : ℝ) :
+    HasDerivAt (fun t => gaussianPDFReal (c * t + m) v x)
+      (gaussianPDFReal (c * θ + m) v x * (c * (x - (c * θ + m)) / v)) θ := by
+  have h : HasDerivAt (fun t => -(x - (c * t + m)) ^ 2 / (2 * (v : ℝ)))
+      (c * (x - (c * θ + m)) / v) θ := by
+    have h0 : HasDerivAt (fun t => x - (c * t + m)) (-c) θ := by
+      simpa using (((hasDerivAt_id θ).const_mul c).add_const m).const_sub x
+    refine ((h0.fun_pow 2).fun_neg.div_const (2 * (v : ℝ))).congr_deriv ?_
+    rcases eq_or_ne (v : ℝ) 0 with hv | hv
+    · simp [hv]
+    · field_simp; ring
+  unfold gaussianPDFReal
+  exact (h.exp.const_mul (√(2 * Real.pi * v))⁻¹).congr_deriv (by ring)
+
+/-- The law with density `N(c θ + m, v)` with respect to Lebesgue measure is
+`gaussianReal (c θ + m) v`. -/
+private theorem lawOf_gaussianPDFReal_affine (c m : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (θ : ℝ) :
+    lawOf volume (fun t x => gaussianPDFReal (c * t + m) v x) θ =
+      gaussianReal (c * θ + m) v := by
+  rw [gaussianReal_of_var_ne_zero _ hv]
+  rfl
+
+/-- **Score of the affine Gaussian location family.** For the densities `N(c t + m, v)` with
+respect to Lebesgue measure, with known variance `v > 0` not depending on the parameter and
+arbitrary real slope `c` and offset `m` (`c = 0` allowed), the score `∂_θ log p θ x` is
+`c (x - (c θ + m)) / v`. -/
+theorem score_gaussianPDFReal_affine (c m : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (θ x : ℝ) :
+    score (fun t x => gaussianPDFReal (c * t + m) v x) θ x = c * (x - (c * θ + m)) / v := by
+  have hpos : 0 < gaussianPDFReal (c * θ + m) v x := gaussianPDFReal_pos _ _ x hv
+  rw [score, ((hasDerivAt_gaussianPDFReal_affine c m v θ x).log hpos.ne').deriv]
+  field_simp
+
+/-- **Fisher information of the affine Gaussian location family.** For the densities
+`N(c t + m, v)` with respect to Lebesgue measure, with known variance `v > 0` not depending on the
+parameter and arbitrary real slope `c` and offset `m`, the Fisher information of one observation
+is `I(θ) = c² / v` at every `θ`; it vanishes when `c = 0`. It is the second moment of the score
+`c (X - (c θ + m)) / v` under `X ∼ N(c θ + m, v)` (`integral_score_sq`). -/
+theorem fisherInformation_gaussianPDFReal_affine (c m : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (θ : ℝ) :
+    fisherInformation volume (fun t x => gaussianPDFReal (c * t + m) v x) θ = c ^ 2 / v := by
+  rw [← integral_score_sq (fun x => gaussianPDFReal_pos _ _ x hv)
+    (measurable_gaussianPDFReal _ _)
+    (fun x => (hasDerivAt_gaussianPDFReal_affine c m v θ x).differentiableAt),
+    lawOf_gaussianPDFReal_affine c m hv]
+  simp_rw [score_gaussianPDFReal_affine c m hv]
+  have hvar := variance_id_gaussianReal (μ := c * θ + m) (v := v)
+  rw [variance_eq_integral measurable_id.aemeasurable] at hvar
+  simp only [id] at hvar
+  rw [integral_id_gaussianReal] at hvar
+  have e : ∀ x : ℝ, (c * (x - (c * θ + m)) / v) ^ 2
+      = c ^ 2 / (v : ℝ) ^ 2 * (x - (c * θ + m)) ^ 2 := fun x => by ring
+  simp_rw [e]
+  rw [integral_const_mul, hvar]
+  have hv' : (v : ℝ) ≠ 0 := by exact_mod_cast hv
+  field_simp
 
 end MathlibExt.Probability.Statistics.MLEAsymptoticNormality

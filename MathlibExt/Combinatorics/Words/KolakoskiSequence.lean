@@ -22,15 +22,24 @@ Bordellès and Benoit Cloitre, *Bounds for the Kolakoski Sequence*:
 
 namespace MetaMathlibExt
 
-/-- The one-indexed starting position of block `n` in a candidate Kolakoski
-sequence. Index zero is outside the source's domain. -/
+/-- **Starting positions of Kolakoski blocks.** For a sequence $K_1, K_2, K_3, \ldots$ of natural
+numbers, the starting positions $s_n$ of its blocks are defined by $s_1 = 1$ and
+$s_{n+1} = s_n + K_n$ for every $n \ge 1$, together with the convention $s_0 = 0$.
+
+Block $n$ of a candidate Kolakoski sequence $K$ consists of the positions $i$ with
+$s_n \le i < s_n + K_n$; index $0$ lies outside the one-indexed sequence. -/
 def kolakoskiBlockStart (K : ℕ → ℕ) : ℕ → ℕ
   | 0 => 0
   | 1 => 1
   | n + 2 => kolakoskiBlockStart K (n + 1) + K (n + 1)
 
-/-- A one-indexed Kolakoski sequence: its values are one or two, its blocks
-alternate between ones and twos, and block `n` has length `K n`. -/
+/-- **Kolakoski sequences.** A sequence $K_1, K_2, K_3, \ldots$ of natural numbers is a Kolakoski
+sequence when $K_1 = 1$, every $K_n$ with $n \ge 1$ is $1$ or $2$, and $K$ describes its own runs
+in the following sense. Let $s_1 = 1$ and $s_{n+1} = s_n + K_n$ for $n \ge 1$, and call block $n$
+the set of positions $i$ with $s_n \le i < s_n + K_n$. For every $n \ge 1$, every term $K_i$ with
+$i$ in block $n$ equals $1$ if $n$ is odd and $2$ if $n$ is even.
+
+The sequence is indexed from $1$; its value at index $0$ is unconstrained. -/
 def IsKolakoski (K : ℕ → ℕ) : Prop :=
   K 1 = 1 ∧
     (∀ n : ℕ, 1 ≤ n → K n = 1 ∨ K n = 2) ∧

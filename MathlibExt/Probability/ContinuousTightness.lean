@@ -38,6 +38,8 @@ This file proves the modulus-of-continuity tightness criterion for random contin
   at most `⌈1/δ⌉`.
 * `isTightMeasureSet_of_modulus`: tightness of the laws of paths pinned at `0` from an
   eventual modulus-of-continuity bound (Billingsley 1999, Theorem 7.3).
+* `isTightMeasureSet_of_modulus_of_isTight_initial`: the same criterion with pinning replaced
+  by tightness of the initial laws, proved by recentring each path at its starting value.
 
 The results were previously private copies in `MathlibExt.Probability.Donsker` (used for the
 tightness step of Donsker's invariance principle) and
@@ -46,9 +48,10 @@ call this file.
 
 ## What is weakened or deferred
 
-* Billingsley's Theorem 7.3 asks for tightness of the initial values `W n 0`; here the paths are
-  pinned, `W n 0 = 0`. Both current callers (Donsker's polygonal process and the polygons of a
-  triangular array) start at `0`.
+* Billingsley's Theorem 7.3 asks for tightness of the initial values `W n 0`;
+  `isTightMeasureSet_of_modulus` uses the stronger pinning `W n 0 = 0` (both current callers,
+  Donsker's polygonal process and the polygons of a triangular array, start at `0`), while
+  `isTightMeasureSet_of_modulus_of_isTight_initial` assumes only tight initial laws.
 * The time interval is `[0,1]` and the state space is `ℝ`; general compact time sets and Polish
   state spaces are not treated.
 
@@ -212,7 +215,7 @@ theorem norm_le_of_modulus (f : C(Set.Icc (0 : ℝ) 1, ℝ))
   have hchain : ∀ k, |f (p k)| ≤ k := by
     intro k
     induction k with
-    | zero => simp [hp0, hf0]
+    | zero => rw [hp0, hf0]; simp
     | succ k ih =>
       have := hosc _ _ (hstep k)
       rw [Real.dist_eq] at this
@@ -358,6 +361,74 @@ theorem isTightMeasureSet_of_modulus [MeasurableSpace Ω] {P : Measure Ω}
   rw [Measure.map_apply_of_aemeasurable (hW n).aemeasurable hK.isClosed.measurableSet.compl]
   apply (ENNReal.toReal_le_toReal (measure_ne_top P _) hζtop).1
   simpa only [measureReal_def, b] using hreal
+
+/-- **Tightness in `C([0,1])` from tight initial values and a modulus of continuity**
+(Billingsley 1999, Theorem 7.3, sufficiency). If the laws of the starting values `W n 0` are
+tight and the same eventual oscillation bound as in `isTightMeasureSet_of_modulus` holds, then
+the laws of the paths `W n` are tight.
+
+The proof recentres each path at its starting value, `V n ω = W n ω - W n ω 0`. The recentred
+paths are pinned at `0` and have the same oscillation sets, so the pinned criterion gives a
+compact set capturing `V n`; tight initial laws give a compact set of starting values; adding
+the constant starting path back is continuous, so the sum image is compact and captures `W n`
+up to the sum of the two exceptional probabilities. -/
+theorem isTightMeasureSet_of_modulus_of_isTight_initial [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] (W : ℕ → Ω → C(Set.Icc (0 : ℝ) 1, ℝ))
+    (hW : ∀ n, Measurable (W n))
+    (hinit : IsTightMeasureSet
+      (Set.range fun n => P.map (fun ω => W n ω ⟨0, le_rfl, zero_le_one⟩)))
+    (hosc : ∀ ε : ℝ, 0 < ε → ∀ b : ℝ, 0 < b → ∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n in atTop,
+      P.real {ω | ∃ s t : Set.Icc (0 : ℝ) 1, dist s t ≤ δ ∧ ε ≤ dist (W n ω s) (W n ω t)} ≤
+        b) :
+    IsTightMeasureSet (Set.range fun n => P.map (W n)) := by
+  set x₀ : Set.Icc (0 : ℝ) 1 := ⟨0, le_rfl, zero_le_one⟩
+  let r : C(Set.Icc (0 : ℝ) 1, ℝ) → C(Set.Icc (0 : ℝ) 1, ℝ) :=
+    fun f => f - ContinuousMap.const _ (f x₀)
+  let g : C(Set.Icc (0 : ℝ) 1, ℝ) × ℝ → C(Set.Icc (0 : ℝ) 1, ℝ) :=
+    fun p => p.1 + ContinuousMap.const _ p.2
+  have hconst : Continuous (ContinuousMap.const (Set.Icc (0 : ℝ) 1) : ℝ → C(_, ℝ)) :=
+    ContinuousMap.continuous_const'
+  have hr : Continuous r :=
+    continuous_id.sub (hconst.comp (continuous_eval_const x₀))
+  have hg : Continuous g := continuous_fst.add (hconst.comp continuous_snd)
+  have hgr : ∀ f, g (r f, f x₀) = f := fun f => by ext x; simp [g, r]
+  set V : ℕ → Ω → C(Set.Icc (0 : ℝ) 1, ℝ) := fun n ω => r (W n ω)
+  have hV : ∀ n, Measurable (V n) := fun n => hr.measurable.comp (hW n)
+  have hV0 : ∀ n ω, V n ω x₀ = 0 := fun n ω => by simp [V, r]
+  have hVosc : ∀ ε : ℝ, 0 < ε → ∀ b : ℝ, 0 < b → ∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n in atTop,
+      P.real {ω | ∃ s t : Set.Icc (0 : ℝ) 1, dist s t ≤ δ ∧ ε ≤ dist (V n ω s) (V n ω t)} ≤
+        b := by
+    intro ε hε b hb
+    obtain ⟨δ, hδ, hev⟩ := hosc ε hε b hb
+    refine ⟨δ, hδ, hev.mono fun n hn => ?_⟩
+    convert hn using 5
+    simp [V, r, Real.dist_eq]
+  have hVt := isTightMeasureSet_of_modulus V hV hV0 hVosc
+  rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le] at hVt hinit ⊢
+  intro ε hε
+  obtain ⟨K₁, hK₁, hK₁le⟩ := hVt (ε / 2) (ENNReal.half_pos hε.ne')
+  obtain ⟨K₂, hK₂, hK₂le⟩ := hinit (ε / 2) (ENNReal.half_pos hε.ne')
+  refine ⟨g '' (K₁ ×ˢ K₂), (hK₁.prod hK₂).image hg, ?_⟩
+  rintro _ ⟨n, rfl⟩
+  have hW0 : Measurable fun ω => W n ω x₀ :=
+    (continuous_eval_const x₀).measurable.comp (hW n)
+  have hsub : W n ⁻¹' (g '' (K₁ ×ˢ K₂))ᶜ ⊆
+      V n ⁻¹' K₁ᶜ ∪ (fun ω => W n ω x₀) ⁻¹' K₂ᶜ := by
+    intro ω hω
+    by_contra hcon
+    simp only [Set.mem_union, Set.mem_preimage, Set.mem_compl_iff, not_or, not_not] at hcon
+    exact hω ⟨(V n ω, W n ω x₀), ⟨hcon.1, hcon.2⟩, hgr _⟩
+  have hK : MeasurableSet (g '' (K₁ ×ˢ K₂))ᶜ :=
+    ((hK₁.prod hK₂).image hg).isClosed.measurableSet.compl
+  calc P.map (W n) (g '' (K₁ ×ˢ K₂))ᶜ
+      = P (W n ⁻¹' (g '' (K₁ ×ˢ K₂))ᶜ) := Measure.map_apply (hW n) hK
+    _ ≤ P (V n ⁻¹' K₁ᶜ ∪ (fun ω => W n ω x₀) ⁻¹' K₂ᶜ) := measure_mono hsub
+    _ ≤ P (V n ⁻¹' K₁ᶜ) + P ((fun ω => W n ω x₀) ⁻¹' K₂ᶜ) := measure_union_le _ _
+    _ = P.map (V n) K₁ᶜ + P.map (fun ω => W n ω x₀) K₂ᶜ := by
+      rw [Measure.map_apply (hV n) hK₁.isClosed.measurableSet.compl,
+        Measure.map_apply hW0 hK₂.isClosed.measurableSet.compl]
+    _ ≤ ε / 2 + ε / 2 := add_le_add (hK₁le _ ⟨n, rfl⟩) (hK₂le _ ⟨n, rfl⟩)
+    _ = ε := ENNReal.add_halves ε
 
 end
 

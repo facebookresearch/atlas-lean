@@ -1,0 +1,3 @@
+# Tail of an orthonormal eigenbasis
+
+Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $E$ be an inner product space over $\mathbb{K}$ of finite dimension $n$, and let $T$ be a self-adjoint linear operator on $E$, with eigenvalues $\lambda_0 \ge \lambda_1 \ge \dots \ge \lambda_{n-1}$ (repeated according to multiplicity, in decreasing order) and a corresponding orthonormal eigenbasis $e_0, \dots, e_{n-1}$, $T e_i = \lambda_i e_i$. For $k < n$, the tail of the eigenbasis is the family $(e_k, e_{k+1}, \dots, e_{n-1})$ of eigenvectors with index at least $k$, indexed by $j < n - k$ as $j \mapsto e_{k+j}$.

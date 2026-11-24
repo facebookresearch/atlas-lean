@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -/
 /-
-Author: @toskua and an AI assistant
+Author: @toskua, Meta Muse
 -/
 module
 

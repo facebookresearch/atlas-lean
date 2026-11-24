@@ -50,6 +50,35 @@ example : bhRejections (1 / 10) p3 = {0, 1} := by
 example : (bhRejections (1 / 10) p3).card = 2 := by
   rw [card_bhRejections (by norm_num), bhIndex_p3]
 
+/-- Leave-one-out, rejected case: replacing the rejected p-value `p3 0` by `0` keeps the
+index `2`. -/
+example : bhIndex (1 / 10) (Function.update p3 0 0) = 2 := by
+  have h0 : (0 : Fin 3) ∈ bhRejections (1 / 10) p3 := by
+    rw [bhRejections, bhIndex_p3]
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    norm_num [p3]
+  rw [← (mem_bhRejections_iff_bhIndex_eq_update (by norm_num) p3 0).1 h0, bhIndex_p3]
+
+/-- Leave-one-out, non-rejected case: replacing the non-rejected p-value `p3 2` by `0` changes
+the index, and `p3 2` exceeds the threshold computed from the modified p-values. -/
+example : bhIndex (1 / 10) (Function.update p3 2 0) ≠ 2 ∧
+    1 / 10 * (bhIndex (1 / 10) (Function.update p3 2 0) : ℝ) / ((3 : ℕ) : ℝ) < p3 2 := by
+  have h2 : (2 : Fin 3) ∉ bhRejections (1 / 10) p3 := by
+    rw [bhRejections, bhIndex_p3]
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    norm_num [p3]
+  refine ⟨fun h => h2 ?_, lt_of_not_ge fun h => h2 ?_⟩
+  · rw [mem_bhRejections_iff_bhIndex_eq_update (by norm_num), h, bhIndex_p3]
+  · exact (mem_bhRejections_iff_le_bhIndex_update (by norm_num) p3 2).2 h
+
+/-- No sign condition: at any level `q ≥ 0` (including `q = 0`), a p-value `≤ 0` (negative, or
+tied at `0`) is rejected, and replacing it by `0` leaves the BH index unchanged. -/
+example {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ) (i : Fin m) (hi : p i ≤ 0) :
+    i ∈ bhRejections q p ∧ bhIndex q p = bhIndex q (Function.update p i 0) := by
+  have h : i ∈ bhRejections q p :=
+    (mem_bhRejections_iff_le_bhIndex_update hq p i).2 (hi.trans (by positivity))
+  exact ⟨h, (mem_bhRejections_iff_bhIndex_eq_update hq p i).1 h⟩
+
 /-- The uniform law on `[0, 1]` is a probability measure. -/
 instance : IsProbabilityMeasure (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
   ⟨by simp⟩
@@ -272,6 +301,11 @@ instance : IsFiniteMeasure three := by
   unfold three
   infer_instance
 
+instance : NeZero three := ⟨by
+  intro h
+  have := congrArg (fun μ : Measure (Fin 3) => μ {0}) h
+  simp [three] at this⟩
+
 /-- `p 0 = (0, 1, 1)` and `p 1 = (1, 1, 0)` on the outcomes `0, 1, 2`. -/
 noncomputable def slabP : Fin 2 → Fin 3 → ℝ := ![![0, 1, 1], ![1, 1, 0]]
 
@@ -366,5 +400,30 @@ example : (Finset.range (3 + 1)).sup
 /-- `measurable_bhIndex` for the coordinate projections. -/
 example (q : ℝ) : Measurable fun x : Fin 3 → ℝ => bhIndex q x :=
   measurable_bhIndex (fun i (x : Fin 3 → ℝ) => x i) (fun i => measurable_pi_apply i) q
+
+/-! PRDS is stated for a nonzero measure: under the zero measure, for which every p-value
+vector would be PRDS, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  NeZero 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+example : Prop := IsPRDSOn (0 : Measure (Fin 3)) slabP {0}
+
+/-- For a p-value that is not almost everywhere measurable, `μ.map (p i)` is Mathlib's fallback
+Dirac mass and the PRDS condition holds with a constant `g`, as the docstring of `IsPRDSOn`
+states; the theorems therefore assume measurable p-values. -/
+example {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] [NeZero μ]
+    (p : Fin 1 → Ω → ℝ) (hp : ¬ AEMeasurable (p 0) μ) : IsPRDSOn μ p {0} := by
+  intro i hi D _ _
+  have hi0 : i = 0 := by simpa using hi
+  subst hi0
+  rw [Measure.map_of_not_aemeasurable_of_ne_zero hp (NeZero.ne μ)]
+  refine ⟨fun _ => condDistrib (fun ω j => p j ω) (p 0) μ Classical.ofNonempty D,
+    monotone_const, ?_⟩
+  rw [Filter.EventuallyEq, ae_dirac_eq, Filter.eventually_pure]
 
 end MathlibExtTest.Probability.Statistics.MultipleTesting.BenjaminiHochberg
