@@ -96,9 +96,17 @@ leaves only the constants, not all of $L^2$ of the compact quotient.
   writes $\delta^2 = \delta_P$). This twist by $\delta_P^{-1/2}$ comes from the normalization of induction and is
   distinct from $\nu$: in the unitary model, $\sigma$ is $\nu$ times the unitary right translation on $\nu^{-1} H$.
 
+## Expansion
+
 A good expansion has a statement page for the decomposition, proved from the discreteness of the cuspidal
 spectrum by the twist and the restriction to $M(\mathbb{A})^1$ above, and leaves the use, with the choice of the
 component, to the page on constituents of induced representations, with the locators below.
+
+A good expansion also states and links these inputs of the proof:
+
+- the real Iwasawa decomposition $G_\infty = P_\infty K_\infty$ for every maximal compact subgroup $K_\infty$, the goodness of $K_v$ at almost all places, and the resulting finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ (Langlands, p. 3), for the seed spaces in the use.
+- the regularity of square-integrable $K$-finite, $\mathcal{Z}$-finite functions on a finite-volume arithmetic quotient, which are smooth and of moderate growth, hence automorphic forms (Borel, Proposition 4.1, p. 6, and pp. 27–28), for the projections of the seed spaces in the use.
+- the decomposition $M(\mathbb{A}) = A_{M,\infty}^+ \times M(\mathbb{A})^1$ (Arthur, p. 16), the compactness of $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$, and the decomposition of a unitary representation of a compact abelian group into its character spaces, for steps (b) and (c).
 
 ## Depends on
 
@@ -115,9 +123,6 @@ component, to the page on constituents of induced representations, with the loca
 - [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), applied to $M$ at the level $L_M$, the finitely many $K_{M,\infty}$-types and the ideal $J$, for the finitely many components met by the slices of $V$ in the use
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the finiteness of $M(k) \backslash M(\mathbb{A}_f) / L_M$, by which the functions of level $L_M$ on the norm-one quotient live on finitely many arithmetic quotients, in the use
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compactness of $P(k_v) \backslash G(k_v)$ and the decomposition $G(k_v) = P_0(k_v) K_v$ for a good maximal compact subgroup $K_v$, at the finite places, in the finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ used in the use
-- Not yet a page: the real Iwasawa decomposition $G_\infty = P_\infty K_\infty$ for every maximal compact subgroup $K_\infty$, the goodness of $K_v$ at almost all places, and the resulting finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ (Langlands, p. 3), for the seed spaces in the use
-- Not yet a page: the regularity of square-integrable $K$-finite, $\mathcal{Z}$-finite functions on a finite-volume arithmetic quotient, which are smooth and of moderate growth, hence automorphic forms (Borel, Proposition 4.1, p. 6, and pp. 27–28), for the projections of the seed spaces in the use
-- Not yet a page: the decomposition $M(\mathbb{A}) = A_{M,\infty}^+ \times M(\mathbb{A})^1$ (Arthur, p. 16), the compactness of $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$, and the decomposition of a unitary representation of a compact abelian group into its character spaces, for steps (b) and (c)
 
 ## Sources
 

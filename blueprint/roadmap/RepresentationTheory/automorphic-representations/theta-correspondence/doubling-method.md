@@ -64,6 +64,8 @@ through the trace), Tamagawa measures, and local pairings and measures whose pro
   the range considered here, the complementary space in the tower of $V$ would also need Witt index
   $n - (m - r) < 0$; for $n = 1$, $m = 2$, $r = 0$, the tower of an anisotropic plane does not contain the zero space.)
 
+## Expansion
+
 A good expansion has pages, in this order, for the global zeta integral and its continuation, the basic
 identity (open orbit and vanishing of the other orbits) and the Euler product, the local zeta integrals
 with their rationality and good sections, the local $L$- and $\varepsilon$-factors of Lapid and Rallis and Yamana's gcd
@@ -74,6 +76,12 @@ refinement: Yamana's pole theorem for $L(s + \tfrac12, \pi \times \chi_V)$, whic
 gives a non-zero lift to a space of the complementary dimension $2n - m$ with the same splitting character, the
 vanishing of the lower lifts, which excludes the tower of $V$, and the local conservation relation, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
 Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact statements.
+
+A good expansion also states and links these inputs of the proof:
+
+- the orbits of $Q(F)$ on $\mathrm{U}(W_n)(F) / \iota(\mathrm{U}(U) \times \mathrm{U}(U))(F)$ and the vanishing, by cuspidality, of the contributions of all but the open orbit (Piatetski-Shapiro and Rallis), for the basic identity.
+- the step of Gan–Qiu–Takeda's proof of Theorem 11.4 (ii) (TeX lines 4237–4245) that gives a nonzero theta lift of $\pi$ to a Hermitian space $V^\#$ of dimension $2n - m$ with the same splitting character in another Witt tower; it combines three inputs: Yamana's Theorem 10.1 (2) [Y4], as Gan, Qiu and Takeda use it, by which a pole of $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ gives, with the persistence above, a nonzero lift to such a space, and the hypothesis that the lower lifts in the tower of $V$ vanish, which excludes that tower, for the refinement.
+- the local conservation relation, used at a place $v$ where $V$ and $V^\#$ lie in different local Witt towers (a non-split place; at a split place they cannot differ): if $\pi_v$ has nonzero theta lifts to these two localized spaces, of two different Witt towers with the same splitting character, their dimensions sum to at least $2n + 2$, whereas here they sum to $m + (2n - m) = 2n$ (Gan–Qiu–Takeda, TeX lines 4245–4252; Sun–Zhu, Theorem 1.10, and §7, Theorem 7.6, (84)–(85)); nothing is claimed about all the Witt towers at a place, for the refinement.
 
 ## Depends on
 
@@ -87,9 +95,6 @@ Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact st
 ## Proof depends on
 
 - [Constant terms of theta lifts for unitary groups](constant-terms-of-theta-lifts.md), for the persistence of a nonzero theta lift up a Witt tower, in the refinement: if the lift $\theta_{n,r}(\varphi, f)$ is nonzero, extending $\varphi$ by a Schwartz factor equal to $1$ at zero gives a datum for $V_{r+1}$ whose lift has $\theta_{n,r}(\varphi, f)$ in its constant term (its constant term formula), so the higher lift is nonzero too (Wu, §3, Proposition 3.1); cuspidality at the first occurrence alone would allow a zero lift
-- Not yet a page: the orbits of $Q(F)$ on $\mathrm{U}(W_n)(F) / \iota(\mathrm{U}(U) \times \mathrm{U}(U))(F)$ and the vanishing, by cuspidality, of the contributions of all but the open orbit (Piatetski-Shapiro and Rallis), for the basic identity
-- Not yet a page: the step of Gan–Qiu–Takeda's proof of Theorem 11.4 (ii) (TeX lines 4237–4245) that gives a nonzero theta lift of $\pi$ to a Hermitian space $V^\#$ of dimension $2n - m$ with the same splitting character in another Witt tower; it combines three inputs: Yamana's Theorem 10.1 (2) [Y4], as Gan, Qiu and Takeda use it, by which a pole of $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ gives, with the persistence above, a nonzero lift to such a space, and the hypothesis that the lower lifts in the tower of $V$ vanish, which excludes that tower, for the refinement
-- Not yet a page: the local conservation relation, used at a place $v$ where $V$ and $V^\#$ lie in different local Witt towers (a non-split place; at a split place they cannot differ): if $\pi_v$ has nonzero theta lifts to these two localized spaces, of two different Witt towers with the same splitting character, their dimensions sum to at least $2n + 2$, whereas here they sum to $m + (2n - m) = 2n$ (Gan–Qiu–Takeda, TeX lines 4245–4252; Sun–Zhu, Theorem 1.10, and §7, Theorem 7.6, (84)–(85)); nothing is claimed about all the Witt towers at a place, for the refinement
 
 ## Sources
 

@@ -19,10 +19,18 @@ $\psi(n) = \psi(n_{12} + \dots + n_{n-1,n})$.
 - **Kirillov model** (Jacquet–Shalika). The restriction of Whittaker functions to the mirabolic subgroup
   $P_n$ is injective.
 
+## Expansion
+
 A good expansion has pages for the uniqueness of continuous Whittaker functionals, for the Whittaker model
 of the contragredient and for the injectivity of the restriction to $P_n$, with the sources below and
 J. A. Shalika, "The multiplicity one theorem for $\mathrm{GL}_n$", Ann. of Math. 100 (1974), 171–193, checked
 for the exact hypotheses.
+
+A good expansion also states and links these inputs of the proof:
+
+- the archimedean Gelfand–Kazhdan criterion: if a continuous anti-automorphism $\sigma$ of $\mathrm{GL}_n(F)$ fixes every tempered generalized function $f$ that is an eigendistribution of the invariant differential operators and satisfies $f(n_1 g n_2) = \psi(n_1) f(g) \psi(n_2)$, then $\dim \mathrm{Hom}_N(\pi, \psi) \cdot \dim \mathrm{Hom}_N(\tilde\pi, \psi^{-1}) \le 1$ (Sun–Zhu, Theorem 2.3 (a); Cogdell, Lecture 4, §2, Remark (i)), with $\sigma(g) = w_n\, {}^t g\, w_n^{-1}$, an anti-automorphism preserving $N$ and $\psi$ (transpose-inverse twisted by $w_n$ is an automorphism and sends $\psi$ to $\psi^{-1}$), and the invariance of these distributions under $\sigma$ (Shalika, 1974), for the uniqueness.
+- an independent proof that $\pi$ and $\tilde\pi$ are generic together, for instance through $\tilde\pi \cong \pi \circ \theta$ with $\theta(g) = {}^t g^{-1}$ and the change of variables by $w_n$; the bound on the product alone does not bound either factor when the other could vanish, and with this implication each is at most $1$, for the uniqueness.
+- the Whittaker model of the contragredient (Cogdell, Lecture 4, §2, Remark (iii), p. 32) and the injectivity of the restriction to $P_n$ for generic $\pi$ (Cogdell, Lecture 4, §4, Theorem 4.4, p. 34, after Jacquet and Shalika), each with its own argument.
 
 ## Depends on
 
@@ -30,9 +38,7 @@ for the exact hypotheses.
 
 ## Proof depends on
 
-- Not yet a page: the archimedean Gelfand–Kazhdan criterion: if a continuous anti-automorphism $\sigma$ of $\mathrm{GL}_n(F)$ fixes every tempered generalized function $f$ that is an eigendistribution of the invariant differential operators and satisfies $f(n_1 g n_2) = \psi(n_1) f(g) \psi(n_2)$, then $\dim \mathrm{Hom}_N(\pi, \psi) \cdot \dim \mathrm{Hom}_N(\tilde\pi, \psi^{-1}) \le 1$ (Sun–Zhu, Theorem 2.3 (a); Cogdell, Lecture 4, §2, Remark (i)), with $\sigma(g) = w_n\, {}^t g\, w_n^{-1}$, an anti-automorphism preserving $N$ and $\psi$ (transpose-inverse twisted by $w_n$ is an automorphism and sends $\psi$ to $\psi^{-1}$), and the invariance of these distributions under $\sigma$ (Shalika, 1974), for the uniqueness
-- Not yet a page: an independent proof that $\pi$ and $\tilde\pi$ are generic together, for instance through $\tilde\pi \cong \pi \circ \theta$ with $\theta(g) = {}^t g^{-1}$ and the change of variables by $w_n$; the bound on the product alone does not bound either factor when the other could vanish, and with this implication each is at most $1$, for the uniqueness
-- Not yet a page: the Whittaker model of the contragredient (Cogdell, Lecture 4, §2, Remark (iii), p. 32) and the injectivity of the restriction to $P_n$ for generic $\pi$ (Cogdell, Lecture 4, §4, Theorem 4.4, p. 34, after Jacquet and Shalika), each with its own argument
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

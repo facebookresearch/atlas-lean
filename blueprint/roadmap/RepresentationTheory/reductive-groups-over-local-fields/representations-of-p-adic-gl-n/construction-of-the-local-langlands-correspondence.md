@@ -30,12 +30,18 @@ supercuspidal representations.
   of $p$-divisible groups, through the cohomology of Shimura varieties of unitary groups of
   signature $(1, n-1)$, following Kottwitz.
 
+## Expansion
+
 A good expansion has pages for the reductions, each stated for a family of maps on supercuspidal
 representations with the five properties and citing Wedhorn's (4.2.2)–(4.2.5) and Henniart's
 papers with locators, a page for Henniart's numerical local Langlands correspondence, and further
 nodes for the geometric and global inputs of the proofs (Lubin–Tate spaces and their vanishing
 cycles, the Jacquet–Langlands correspondence, the Shimura varieties used), placed in their own
 fields.
+
+A good expansion also states and links these inputs of the statement:
+
+- the Weil group $W_F$ of a non-archimedean local field and its representations, defined on their own (Wedhorn, §1.1), for the Galois side.
 
 ## Depends on
 
@@ -45,7 +51,6 @@ fields.
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the representations $L(\Delta_1, \dots, \Delta_r)$ of the reductions
 - [Local class field theory: the local Artin map](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the compatibility with local class field theory for $n = 1$
 - [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil–Deligne representations and their monodromy, which that node plans
-- Not yet a page: the Weil group $W_F$ of a non-archimedean local field and its representations (Wedhorn, §1.1), which no planned page defines on its own, for the Galois side
 
 ## Proof depends on
 

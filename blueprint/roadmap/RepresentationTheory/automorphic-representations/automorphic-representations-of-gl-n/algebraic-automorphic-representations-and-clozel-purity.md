@@ -29,6 +29,8 @@ attached to $\pi_v$ by the archimedean local Langlands correspondence.
   character of $\mathbb{R}^\times$, has zero $(\mathfrak{g}, \mathrm{O}(1))$-cohomology with coefficients in every
   algebraic representation. This is a separate statement from the purity lemma.
 
+## Expansion
+
 A good expansion has pages for the definitions of algebraic, regular algebraic and cohomological
 representations, for the purity lemma, and for Clozel's criterion that a cuspidal regular algebraic
 representation is cohomological up to a quadratic twist (Lemme 3.14), citing L. Clozel, "Motifs et formes automorphes :
@@ -36,16 +38,23 @@ applications du principe de fonctorialité", in *Automorphic Forms, Shimura Vari
 Vol. I, Perspect. Math. 10, Academic Press, 1990, 77–159, with locators once it has been consulted, and
 the archimedean local Langlands correspondence for $\mathrm{GL}_n$ as a page of its own.
 
+A good expansion also states and links these inputs of the statement:
+
+- the archimedean local Langlands correspondence for $\mathrm{GL}_n$, which attaches $\sigma_v$ to $\pi_v$; the algebraicity, regularity and weight conditions are conditions on $\sigma_v$.
+
+It also states and links these inputs of the proof:
+
+- Clozel's proof of the purity lemma, which Ramakrishnan quotes as a result; its inputs are to be named after reading Clozel (1990), not reconstructed.
+- Clozel's Lemme 3.14, as Buzzard and Gee report it (§7.2, p. 37): a regular algebraic cuspidal representation of $\mathrm{GL}_n$ is cohomological after possibly twisting by a quadratic character, which the third item uses; Ramakrishnan's introduction quotes purity, not this.
+
 ## Depends on
 
 - [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for the archimedean components, their infinitesimal characters and their $(\mathfrak{g}, K)$-modules
 - [Tensor product theorem for automorphic representations](../automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for the archimedean components $\pi_v$ of an automorphic representation
-- Not yet a page: the archimedean local Langlands correspondence for $\mathrm{GL}_n$, which attaches $\sigma_v$ to $\pi_v$; the algebraicity, regularity and weight conditions are conditions on $\sigma_v$
 
 ## Proof depends on
 
-- Not yet a page: Clozel's proof of the purity lemma, which Ramakrishnan quotes as a result; its inputs are to be named after reading Clozel (1990), not reconstructed
-- Not yet a page: Clozel's Lemme 3.14, as Buzzard and Gee report it (§7.2, p. 37): a regular algebraic cuspidal representation of $\mathrm{GL}_n$ is cohomological after possibly twisting by a quadratic character, which the third item uses; Ramakrishnan's introduction quotes purity, not this
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

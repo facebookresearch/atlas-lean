@@ -29,23 +29,32 @@ and $\mathcal{U}(\mathfrak{g})$ the enveloping algebra.
   with $M = \bigcup_S \xi_S M$, the idempotent $\xi_\tau$ acting as the projection onto the
   $\tau$-isotypic component.
 
+## Expansion
+
 A good expansion has pages for the algebra of bi-$K$-finite distributions supported in $K$ with the
 multiplier action of $\mathcal{U}(\mathfrak{g})$, for its description through
 $\mathcal{U}(\mathfrak{g}) \otimes_{\mathcal{U}(\mathfrak{k})} \mathcal{A}(K)$, for the idempotents of irreducible
 $K$-types, and for the equivalence of module categories, each citing a pinned source with locators
 besides the one below.
 
+A good expansion also states and links these inputs of the statement:
+
+- distributions on a Lie group, their convolution, and the enveloping algebra as the distributions supported at the identity, acting by convolution, for the algebra.
+
+It also states and links these inputs of the proof:
+
+- the structure of distributions supported in $K$, through normal derivatives transverse to $K$ and the Poincaré–Birkhoff–Witt theorem, for the description of $\mathcal{H}(G, K)$ through $\mathcal{U}(\mathfrak{g}) \otimes_{\mathcal{U}(\mathfrak{k})} \mathcal{A}(K)$, with the product computed among distributions.
+- the Schur orthogonality relations for the characters of irreducible representations of a compact group, for the idempotents $\xi_\tau$.
+
 ## Depends on
 
-- Not yet a page: distributions on a Lie group, their convolution, and the enveloping algebra as the distributions supported at the identity, acting by convolution, for the algebra
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the real points of a connected reductive group and their maximal compact subgroups
 - [Harish-Chandra modules](harish-chandra-modules.md), for the definition of $(\mathfrak{g}, K)$-modules in the module item
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for $K$-finite functions, isotypic components and the projections $\dim(\tau) \int_K \overline{\chi_\tau(k)}\, \pi(k) \, dk$
 
 ## Proof depends on
 
-- Not yet a page: the structure of distributions supported in $K$, through normal derivatives transverse to $K$ and the Poincaré–Birkhoff–Witt theorem, for the description of $\mathcal{H}(G, K)$ through $\mathcal{U}(\mathfrak{g}) \otimes_{\mathcal{U}(\mathfrak{k})} \mathcal{A}(K)$, with the product computed among distributions
-- Not yet a page: the Schur orthogonality relations for the characters of irreducible representations of a compact group, for the idempotents $\xi_\tau$
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

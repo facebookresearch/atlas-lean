@@ -25,10 +25,17 @@ mirabolic subgroup $P_n$ of matrices with last row $(0, \dots, 0, 1)$, which the
   and the description of contragredients by $g \mapsto {}^t g^{-1}$, and Bernstein's
   $P$-invariant distributions.
 
+## Expansion
+
 A good expansion has definition pages for the functors and for derivatives, and statement pages
 for the exactness and adjunctions, the Gelfand–Kazhdan theorem on derivatives, the Leibniz rule,
 the derivatives of $\langle \Delta \rangle$, the irreducibility of highest derivatives and the
 Gelfand–Kazhdan theorem on invariant distributions, each citing the sources below with locators.
+
+A good expansion also states and links these inputs of the proof:
+
+- Bernstein and Zelevinsky's Theorem 5.2 (1977), the filtration of a composition of an induction functor and a restriction functor with characters, of which the parabolic geometric lemma is the case of trivial characters (their §6.4); applied in the mirabolic situations of their Proposition 4.13 (proved in their §7), it gives the filtration of the derivatives of a product by products of derivatives (their Lemma 4.5, proved in 4.14 (c)), and Corollary 4.6 in the Grothendieck group, for the Leibniz rule.
+- distributions on $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1) and the method of invariant distributions (ibid., Chapter III), for the Gelfand–Kazhdan method and Bernstein's $P$-invariant distributions.
 
 ## Depends on
 
@@ -38,8 +45,7 @@ Gelfand–Kazhdan theorem on invariant distributions, each citing the sources be
 
 ## Proof depends on
 
-- Not yet a page: Bernstein and Zelevinsky's Theorem 5.2 (1977), the filtration of a composition of an induction functor and a restriction functor with characters, of which the parabolic geometric lemma is the case of trivial characters (their §6.4); applied in the mirabolic situations of their Proposition 4.13 (proved in their §7), it gives the filtration of the derivatives of a product by products of derivatives (their Lemma 4.5, proved in 4.14 (c)), and Corollary 4.6 in the Grothendieck group, for the Leibniz rule
-- Not yet a page: distributions on $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1) and the method of invariant distributions (ibid., Chapter III), for the Gelfand–Kazhdan method and Bernstein's $P$-invariant distributions
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

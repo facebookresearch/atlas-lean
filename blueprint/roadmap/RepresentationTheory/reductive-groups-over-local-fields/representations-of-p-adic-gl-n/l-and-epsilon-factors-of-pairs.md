@@ -41,6 +41,8 @@ since it uses the local Artin isomorphism of local class field theory in that ca
   prints the last determinant as $\det(-\Phi \mid V^{I_F}/V_N^{I_F})$, without $q^{-s}$, which
   already gives a wrong $s$-dependence for $\rho = \mathrm{Sp}(2)$ in his example (3.2.3).
 
+## Expansion
+
 A good expansion has definition pages for the local Rankin–Selberg integrals and their
 convergence and rationality, for the factors of generic pairs and their functional equation, for
 the extension to all irreducible pairs, for the conductor, for Tate's local factors, for the
@@ -53,6 +55,13 @@ representations of
 The recursion in Wedhorn's (2.5.2) (3) should be checked against Kudla's survey, which Wedhorn
 follows there, since its printed factors do not depend on the product index.
 
+A good expansion also states and links these inputs of the proof:
+
+- the asymptotic expansion of Whittaker functions on the diagonal torus, as finite sums of products of these finite functions with Schwartz functions (Cogdell, Lecture 6, §1, Proposition 6.1 and Remark 3, p. 46), from which the convergence and rationality of the local integrals follow (Proposition 6.2, p. 47); Cogdell proves these for unitary generic representations with $m < n$, the case $m = n$ being analogous.
+- Tate's local functional equation for every nontrivial additive character $\psi$ and Haar measure $dx$ (Poonen, Theorem 4.18 (e), pp. 19–20), for Tate's local factors.
+- the existence of the Langlands–Deligne local constants, multiplicative in exact sequences and inductive in degree zero, by Deligne's global argument (Deligne 1973, as cited by Wedhorn), for the Galois side.
+- Brauer's induction theorem in the virtual form needed for inductivity in degree zero (the virtual characters of degree zero of a finite group are integral combinations of $\mathrm{Ind}_H^G(\chi - 1_H)$ for elementary subgroups $H$ and characters $\chi$; Česnavičius, Proposition 5.3 (b), after Deligne), applied type by type: a virtual representation of $W_F$ is a combination of irreducible ones, on each of which a power of Frobenius acts by a scalar, its type, and each type becomes of finite image after an unramified twist chosen for it (Česnavičius, §5.5, Lemma 5.5.1, (5.5.2)–(5.5.3), and Proposition 5.6, after Deligne); one twist for the whole representation does not suffice, as $1 \oplus \lvert \cdot \rvert$ shows.
+
 ## Depends on
 
 - [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](whittaker-models-for-gl-n.md), for generic representations and Whittaker models
@@ -63,13 +72,9 @@ follows there, since its printed factors do not depend on the product index.
 ## Proof depends on
 
 - [Parabolic induction and Jacquet functors](../representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for the Jacquet modules whose $A$-finite functions (characters times powers of the valuation, with Jordan blocks) are the exponents of the asymptotic expansion of Whittaker functions below
-- Not yet a page: the asymptotic expansion of Whittaker functions on the diagonal torus, as finite sums of products of these finite functions with Schwartz functions (Cogdell, Lecture 6, §1, Proposition 6.1 and Remark 3, p. 46), from which the convergence and rationality of the local integrals follow (Proposition 6.2, p. 47); Cogdell proves these for unitary generic representations with $m < n$, the case $m = n$ being analogous
 - [Mirabolic restriction and Bernstein–Zelevinsky derivatives](bernstein-zelevinsky-derivatives.md), for the Kirillov models and the representation theory of the mirabolic subgroup, in which the uniqueness, outside finitely many values of $q^{-s}$, of the quasi-invariant bilinear forms behind the local functional equation is proved (Cogdell, Lecture 6, §3, Proposition 6.4, p. 48; Theorem 6.2 is the resulting functional equation)
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the Bruhat decomposition, which the proof of that uniqueness also uses (ibid.)
 - [Functional equation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-functional-equation.md), for the global functional equation of Hecke $L$-functions with the standard adelic character and self-dual measures, from which Deligne's global argument for the local constants starts; it does not state the local functional equations for arbitrary $(\chi, \psi, dx)$
-- Not yet a page: Tate's local functional equation for every nontrivial additive character $\psi$ and Haar measure $dx$ (Poonen, Theorem 4.18 (e), pp. 19–20), for Tate's local factors
-- Not yet a page: the existence of the Langlands–Deligne local constants, multiplicative in exact sequences and inductive in degree zero, by Deligne's global argument (Deligne 1973, as cited by Wedhorn), for the Galois side
-- Not yet a page: Brauer's induction theorem in the virtual form needed for inductivity in degree zero (the virtual characters of degree zero of a finite group are integral combinations of $\mathrm{Ind}_H^G(\chi - 1_H)$ for elementary subgroups $H$ and characters $\chi$; Česnavičius, Proposition 5.3 (b), after Deligne), applied type by type: a virtual representation of $W_F$ is a combination of irreducible ones, on each of which a power of Frobenius acts by a scalar, its type, and each type becomes of finite image after an unramified twist chosen for it (Česnavičius, §5.5, Lemma 5.5.1, (5.5.2)–(5.5.3), and Proposition 5.6, after Deligne); one twist for the whole representation does not suffice, as $1 \oplus \lvert \cdot \rvert$ shows
 
 ## Sources
 

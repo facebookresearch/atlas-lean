@@ -26,21 +26,30 @@ test functions and for vectors of continuous representations on Fréchet spaces.
   Proposition 6.1); this is the vector form, item 2 of the theorem, and is not a consequence of the
   factorization of functions alone.
 
+## Expansion
+
 A good expansion has pages for the Schwartz property of the reciprocal infinite products, for the lemma on
 $\delta$ with its support and convergence statements, for the factorization along a flow, for the passage
 to kernels on $G$ in product coordinates, and for the vector form with its seminorm estimates, each citing
 the sources below with locators.
 
+A good expansion also states and links these inputs of the statement:
+
+- compactly supported distributions on $\mathbb{R}$ and their weak convergence, and flows of complete vector fields on manifolds, for the first two items.
+
+It also states and links these inputs of the proof:
+
+- the Fourier transform on the Schwartz space of $\mathbb{R}$, and the shift of contour across an unbounded region with the decay estimates of the infinite products that it needs (Casselman, §§2, 4 and 5; Francis, Theorem 6 and the rescaling after it), for the Schwartz property of the reciprocal infinite products.
+- product coordinates of the second kind on a Lie group, $(t_1, \dots, t_d) \mapsto e^{t_1 X_1} \cdots e^{t_d X_d}$, a diffeomorphism near $0$, for the passage to kernels on $G$ with their Jacobian.
+- the diagonal choice of the coefficients that makes the series converge in each of the countably many seminorms of $V^\infty$ (Casselman, §6), for the vector form.
+
 ## Depends on
 
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for smooth vectors and the integrated action $\pi(f)$ in the vector form
-- Not yet a page: compactly supported distributions on $\mathbb{R}$ and their weak convergence, and flows of complete vector fields on manifolds, for the first two items
 
 ## Proof depends on
 
-- Not yet a page: the Fourier transform on the Schwartz space of $\mathbb{R}$, and the shift of contour across an unbounded region with the decay estimates of the infinite products that it needs (Casselman, §§2, 4 and 5; Francis, Theorem 6 and the rescaling after it), for the Schwartz property of the reciprocal infinite products
-- Not yet a page: product coordinates of the second kind on a Lie group, $(t_1, \dots, t_d) \mapsto e^{t_1 X_1} \cdots e^{t_d X_d}$, a diffeomorphism near $0$, for the passage to kernels on $G$ with their Jacobian
-- Not yet a page: the diagonal choice of the coefficients that makes the series converge in each of the countably many seminorms of $V^\infty$ (Casselman, §6), for the vector form
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

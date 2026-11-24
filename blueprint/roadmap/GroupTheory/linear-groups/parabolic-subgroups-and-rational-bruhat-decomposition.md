@@ -23,11 +23,17 @@ reductive group over a field $k$.
   upper triangular groups attached to the compositions $n = n_1 + \dots + n_r$, the maximal proper ones those of
   block sizes $(n_1, n_2)$, and $W$ is the symmetric group $S_n$.
 
+## Expansion
+
 A good expansion has definition pages for parabolic subgroups, Levi decompositions and standard
 parabolic subgroups, statement pages for the conjugacy of parabolic subgroups to standard ones, for the
 rational Bruhat decomposition and for the description of the parabolic subgroups of $\mathrm{GL}_n$, each
 citing the sources below with locators; it serves both the local and the global pages, so that they need
 not repeat it.
+
+A good expansion also states and links these inputs of the proof:
+
+- the theory of Borel and Tits of reductive groups over a field (conjugacy of minimal parabolic subgroups and of maximal split tori, relative root systems and their simple roots, and Tits systems), for all the items.
 
 ## Depends on
 
@@ -35,7 +41,7 @@ not repeat it.
 
 ## Proof depends on
 
-- Not yet a page: the theory of Borel and Tits of reductive groups over a field (conjugacy of minimal parabolic subgroups and of maximal split tori, relative root systems and their simple roots, and Tits systems), for all the items
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

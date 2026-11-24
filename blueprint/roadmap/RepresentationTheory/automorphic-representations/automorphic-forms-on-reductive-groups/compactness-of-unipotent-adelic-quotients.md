@@ -21,9 +21,15 @@ $P = MN$ a parabolic $k$-subgroup with unipotent radical $N$.
   group of block upper unitriangular matrices, and $N(k) \backslash N(\mathbb{A})$ is a tower of fibrations whose
   fibres are products of copies of $k \backslash \mathbb{A}$.
 
+## Expansion
+
 A good expansion has pages for the filtration of a $k$-split unipotent group by vector groups, for the
 compactness of $N(k) \backslash N(\mathbb{A})$ and for its invariant probability measure, each citing a pinned
 source with locators besides the one below.
+
+A good expansion also states and links these inputs of the proof:
+
+- the filtration of a $k$-split unipotent group by normal $k$-subgroups with vector-group quotients, and for each step a section $N'' \to N$ that is a morphism of $k$-varieties defined everywhere, which gives the surjectivity of $N(k) \to N''(k)$ and of $N(\mathbb{A}) \to N''(\mathbb{A})$ and compact lifts of compact sets, for the induction.
 
 ## Depends on
 
@@ -34,7 +40,6 @@ source with locators besides the one below.
 ## Proof depends on
 
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the compactness of $k \backslash \mathbb{A}$, the case of a vector group
-- Not yet a page: the filtration of a $k$-split unipotent group by normal $k$-subgroups with vector-group quotients, and for each step a section $N'' \to N$ that is a morphism of $k$-varieties defined everywhere, which gives the surjectivity of $N(k) \to N''(k)$ and of $N(\mathbb{A}) \to N''(\mathbb{A})$ and compact lifts of compact sets, for the induction
 
 ## Sources
 

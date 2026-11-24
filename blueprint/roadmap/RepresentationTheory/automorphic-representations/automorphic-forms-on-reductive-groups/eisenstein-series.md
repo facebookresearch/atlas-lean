@@ -34,6 +34,8 @@ $\mathfrak{a}_P$ and $\mathfrak{a}_{P,\mathbb{C}}^*$ as usual.
 - **Vanishing lemma** (Langlands). An automorphic form whose constant terms along all parabolic
   subgroups (including $G$) are orthogonal to cusp forms is zero.
 
+## Expansion
+
 A good expansion has pages for the definition and absolute convergence of Eisenstein series and
 intertwining operators, for the constant term formula, for the meromorphic continuation and functional
 equations, for the automorphy of Eisenstein series, for the spectral decomposition, and for the vanishing
@@ -49,6 +51,10 @@ should cite Langlands's *On the functional equations satisfied by Eisenstein ser
 Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition and Eisenstein series*
 (Cambridge, 1995) with locators, besides the sources below.
 
+A good expansion also states and links these inputs of the proof:
+
+- the Paley–Wiener theorem on $\mathfrak{a}_P$: entire functions on $\mathfrak{a}_{P,\mathbb{C}}^*$ of Paley–Wiener type, with values in a finite-dimensional space, are the Fourier–Laplace transforms of smooth compactly supported functions on $\mathfrak{a}_P$, for the wave packets (Arthur, §12).
+
 ## Depends on
 
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms, cusp forms and constant terms
@@ -60,7 +66,6 @@ Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition a
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the decomposition of $G(k)$ into the double cosets $P(k) w Q(k)$, which unfolds the constant terms
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the Siegel-set estimates in the proof of absolute convergence
 - [Discreteness of the cuspidal spectrum](discreteness-of-the-cuspidal-spectrum.md), for the cuspidal spectrum of the Levi factors, whose cuspidal data index the wave packets of the spectral decomposition
-- Not yet a page: the Paley–Wiener theorem on $\mathfrak{a}_P$: entire functions on $\mathfrak{a}_{P,\mathbb{C}}^*$ of Paley–Wiener type, with values in a finite-dimensional space, are the Fourier–Laplace transforms of smooth compactly supported functions on $\mathfrak{a}_P$, for the wave packets (Arthur, §12)
 
 ## Sources
 

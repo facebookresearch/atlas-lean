@@ -26,23 +26,32 @@ groups take as their setting.
   $\mathbf{G}(\mathbb{R})$, which can be disconnected and has a centre, is a separate step, through the finiteness of
   its components and the theorem of Cartan, Iwasawa and Malcev on Lie groups with finitely many components.
 
+## Expansion
+
 A good expansion has definition pages for linear algebraic groups, connected reductive groups and split
 tori, statement pages for the topology of rational points over a local field (the $\ell$-group property
 in the non-archimedean case and the Lie group structure in the real case) and for the existence and
 conjugacy of maximal compact subgroups of real points, each citing a pinned source with locators
 besides those below.
 
+A good expansion also states and links these inputs of the statement:
+
+- affine group schemes, or varieties, over a field, and the Zariski topology, for the definitions.
+- real Lie groups, for the real case.
+
+It also states and links these inputs of the proof:
+
+- the local compactness of a local field and of $\mathrm{M}_N(F)$, and the closedness of the image of a closed embedding; in the real case, the closed subgroup theorem and the finiteness of the connected components of real algebraic sets, for the topology of rational points.
+- Cartan's fixed point theorem for compact groups acting on Riemannian symmetric spaces of nonpositive curvature, or the Cartan decomposition, for the conjugacy of maximal compact subgroups in the connected linear semisimple case.
+- the theorem of Cartan, Iwasawa and Malcev that maximal compact subgroups of a Lie group with finitely many components exist and are conjugate, for the extension to $\mathbf{G}(\mathbb{R})$.
+
 ## Depends on
 
 - [Topological group](../../Topology/topological-groups/topological-group.md), for the topology of rational points
-- Not yet a page: affine group schemes, or varieties, over a field, and the Zariski topology, for the definitions
-- Not yet a page: real Lie groups, for the real case
 
 ## Proof depends on
 
-- Not yet a page: the local compactness of a local field and of $\mathrm{M}_N(F)$, and the closedness of the image of a closed embedding; in the real case, the closed subgroup theorem and the finiteness of the connected components of real algebraic sets, for the topology of rational points
-- Not yet a page: Cartan's fixed point theorem for compact groups acting on Riemannian symmetric spaces of nonpositive curvature, or the Cartan decomposition, for the conjugacy of maximal compact subgroups in the connected linear semisimple case
-- Not yet a page: the theorem of Cartan, Iwasawa and Malcev that maximal compact subgroups of a Lie group with finitely many components exist and are conjugate, for the extension to $\mathbf{G}(\mathbb{R})$
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

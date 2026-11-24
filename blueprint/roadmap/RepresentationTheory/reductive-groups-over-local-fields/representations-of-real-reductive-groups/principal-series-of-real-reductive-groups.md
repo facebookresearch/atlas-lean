@@ -35,11 +35,23 @@ connected semisimple Lie group with finite centre, linear or not.
   on $G/K$, and Zuckerman's tensoring with finite-dimensional representations, with which Atiyah
   and Schmid prove Harish-Chandra's theorem and the lowest $K$-type theorem.
 
+## Expansion
+
 A good expansion has definition pages for distribution characters, invariant eigendistributions
 and principal series, and statement pages for the regularity theorem, the matching conditions, the
 Plancherel theorem, Casselman's subrepresentation theorem, the automatic continuity theorem, the
 Langlands classification, the character identities used by Hecht and Schmid and the steps of the
 Atiyah–Schmid construction, each citing the sources below with locators.
+
+A good expansion also states and links these inputs of the statement:
+
+- the Langlands decompositions $P = MAN$ of real parabolic subgroups, and Cartan subgroups, also for connected semisimple Lie groups with finite centre that are not linear, for the principal series and the characters.
+- trace-class operators on a Hilbert space and the trace of $\pi(f)$, $f \in C_c^\infty(G)$, for distribution characters.
+- the definition of Harish-Chandra modules, used by the second and third items, split off from the page on Harish-Chandra modules, whose proof uses this node.
+
+It also states and links these inputs of the proof:
+
+- Atiyah's $L^2$-index theorem for an elliptic operator on a manifold with a free cocompact action of a discrete group, the index theorem on the compact quotient, and Borel's existence of cocompact torsion-free discrete subgroups, which Atiyah and Schmid apply to the Dirac operators on $G/K$ in §3 (p. 8); §§4–5 then use its output, for the Atiyah–Schmid construction.
 
 ## Depends on
 
@@ -48,16 +60,12 @@ Atiyah–Schmid construction, each citing the sources below with locators.
 - [Holomorphic discrete series](holomorphic-discrete-series.md), for the modules $\mathbf{F}_\lambda$ of the Hermitian symmetric case, whose characters the first item uses
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the real points of Zariski-connected reductive groups and their maximal compact subgroups
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the parabolic $\mathbb{R}$-subgroups $P = MN$ of the algebraic group and their Levi decompositions, over $k = \mathbb{R}$
-- Not yet a page: the Langlands decompositions $P = MAN$ of real parabolic subgroups, and Cartan subgroups, also for connected semisimple Lie groups with finite centre that are not linear, for the principal series and the characters
-- Not yet a page: trace-class operators on a Hilbert space and the trace of $\pi(f)$, $f \in C_c^\infty(G)$, for distribution characters
-- Not yet a page apart from a cycle: the definition of Harish-Chandra modules, used by the second and third items; the page on Harish-Chandra modules depends on this node in its proof, so the definition must be split from it before a link can be added
 
 ## Proof depends on
 
 - [Admissible representations of real reductive groups](admissible-representations-of-real-reductive-groups.md), for the bound $n_i \le \dim V_i$ on $K$-multiplicities of irreducible unitary representations in the connected semisimple case, through which Atiyah and Schmid show that the operators $\pi(f)$ are of trace class (Atiyah–Schmid, §2, (2.1)); for nonlinear groups with finite centre they cite the bound directly
 - [Peter–Weyl theorem: unitary representations separate points](../../lie-and-topological-representations/representations-of-compact-groups/peter-weyl-point-separation.md), for point separation, from which the density of matrix coefficients of $K$ follows by the Stone–Weierstrass theorem
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the decomposition into $K$-types used throughout: the continuous isotypic projections and, for unitary representations, the Hilbert direct sum of the isotypic components
-- Not yet a page: Atiyah's $L^2$-index theorem for an elliptic operator on a manifold with a free cocompact action of a discrete group, the index theorem on the compact quotient, and Borel's existence of cocompact torsion-free discrete subgroups, which Atiyah and Schmid apply to the Dirac operators on $G/K$ in §3 (p. 8); §§4–5 then use its output, for the Atiyah–Schmid construction
 
 ## Sources
 

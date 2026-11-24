@@ -19,9 +19,15 @@ trivial there. Let $F$ be a field and $n \ge 1$.
   homomorphism from $\mathrm{GL}_n(F)$ to an abelian group that is trivial on the upper unitriangular
   matrices is trivial on $\mathrm{SL}_n(F)$, and factors through $\det$.
 
+## Expansion
+
 A good expansion has a statement page for the generation by elementary transvections, with the row
 reduction as its proof, and one for the consequence on homomorphisms to abelian groups, each citing a
 pinned source with locators besides the one below.
+
+A good expansion also states and links these inputs of the proof:
+
+- Gaussian elimination by elementary row operations, multiplication on the left by elementary transvections, for the generation.
 
 ## Depends on
 
@@ -29,7 +35,7 @@ pinned source with locators besides the one below.
 
 ## Proof depends on
 
-- Not yet a page: Gaussian elimination by elementary row operations, multiplication on the left by elementary transvections, for the generation
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

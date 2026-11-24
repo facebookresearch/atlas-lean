@@ -33,22 +33,30 @@ which the substitution conditions above are met, such as $\lvert x \rvert < p^{-
 $\lvert x - 1 \rvert < p^{-1/(p-1)}$ for $\log$, for the absolute value extending the normalized one of $\mathbb{Q}_p$ (Conrad,
 Theorem 8.13 and Example 8.14).
 
+## Expansion
+
 A good expansion has pages for the convergence criterion and rearrangements, for Cauchy products and the
 evaluation of products of power series, for substitution, and for the two formal identities, each citing a
 pinned source with locators besides those below.
+
+A good expansion also states and links these inputs of the statement:
+
+- fields complete for a non-archimedean absolute value, for all the items.
+
+It also states and links these inputs of the proof:
+
+- the formal logarithmic derivative and the chain rule in $\mathbb{Q}[[X]]$, the coefficient recursion and the uniqueness of solutions of $F' = F$, $F(0) = 1$, for the formal identities.
+- completeness and the summation of families tending to $0$ in any order (Conrad, §2, Theorems 2.5 and 2.9, Corollaries 2.10 and 2.11), for the convergence criterion, Cauchy products and substitution.
 
 ## Depends on
 
 - [Exponential of a power series with zero constant coefficient](../../RingTheory/formal-power-series/exponential-of-multivariate-formal-power-series/exp-of-constant-coeff-zero.md), for the formal exponential
 - [The logarithm series ln(1 + T)](../zeta-l-functions/multiple-zeta-values/q-analogues-of-multiple-zeta-values/part-05/log-one-add-series.md), for the formal logarithm over $\mathbb{Q}$
 - [Nonarchimedean criterion for absolute values](absolute-values-on-fields/is-nonarchimedean-iff-nat-cast-le-one.md), for non-archimedean absolute values and the ultrametric inequality
-- Not yet a page: fields complete for a non-archimedean absolute value, for all the items
 
 ## Proof depends on
 
 - [Partial derivative of the formal exponential](../../RingTheory/formal-power-series/exponential-of-multivariate-formal-power-series/pderiv-exp-of-constant-coeff-zero.md), for $(\exp w)' = w' \exp w$ in the formal identities
-- Not yet a page: the formal logarithmic derivative and the chain rule in $\mathbb{Q}[[X]]$, the coefficient recursion and the uniqueness of solutions of $F' = F$, $F(0) = 1$, for the formal identities
-- Not yet a page: completeness and the summation of families tending to $0$ in any order (Conrad, §2, Theorems 2.5 and 2.9, Corollaries 2.10 and 2.11), for the convergence criterion, Cauchy products and substitution
 
 ## Sources
 

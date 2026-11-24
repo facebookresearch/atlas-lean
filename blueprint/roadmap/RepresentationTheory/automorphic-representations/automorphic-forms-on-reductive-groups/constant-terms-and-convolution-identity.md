@@ -33,10 +33,17 @@ Let $k$, $G$, $K = K_\infty K_f$, $G_\infty$ and the centre $\mathcal{Z}$ of the
   [weighted cuspidal spectrum with a fixed central character](weighted-cuspidal-spectrum-with-a-fixed-central-character.md),
   which comes after the discreteness of the cuspidal spectrum; it is not a statement of this node.
 
+## Expansion
+
 A good expansion has pages for Harish-Chandra's convolution identity and uniform moderate growth, for the
 behaviour along the split centre, for the automorphy of constant terms on the Levi factors with
 Harish-Chandra's homomorphism, and for the choice of a central character for an irreducible subquotient, each
 with a precise statement and the locators below.
+
+A good expansion also states and links these inputs of the proof:
+
+- Harish-Chandra's homomorphism $\mathcal{Z}(\mathfrak{g}) \to \mathcal{Z}(\mathfrak{m})$ with $(z\varphi)_P = \nu(z)\varphi_P$, and the finiteness of $\mathcal{Z}(\mathfrak{m})$ as a module over its image, which give the finite codimension of the annihilator of a constant term (Borel, 7.4 (c)).
+- the expansion $\varphi(xa) = \sum_i Q_i(a) (P_i \varphi)(x)$ of a smooth $\mathcal{Z}$-finite function along $A_G(\mathbb{R})^0$, with exponential polynomials $Q_i$ (Borel, 6.6), for the split centre.
 
 ## Depends on
 
@@ -47,8 +54,6 @@ with a precise statement and the locators below.
 
 - [Harish-Chandra's convolution identity and uniform moderate growth](harish-chandra-convolution-identity.md), for the convolution identity and uniform moderate growth of automorphic forms
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the stability of moderate growth under right translation by the compact support of $\alpha$, used through $D(\varphi \star \alpha) = \varphi \star D\alpha$ (Borel, §4.3), which does not prove the convolution identity itself; and for the finiteness of class numbers, applied to the centre, behind the finiteness under $Z_G(\mathbb{A})$ (Langlands's Lemma 3)
-- Not yet a page: Harish-Chandra's homomorphism $\mathcal{Z}(\mathfrak{g}) \to \mathcal{Z}(\mathfrak{m})$ with $(z\varphi)_P = \nu(z)\varphi_P$, and the finiteness of $\mathcal{Z}(\mathfrak{m})$ as a module over its image, which give the finite codimension of the annihilator of a constant term (Borel, 7.4 (c))
-- Not yet a page: the expansion $\varphi(xa) = \sum_i Q_i(a) (P_i \varphi)(x)$ of a smooth $\mathcal{Z}$-finite function along $A_G(\mathbb{R})^0$, with exponential polynomials $Q_i$ (Borel, 6.6), for the split centre
 
 ## Sources
 

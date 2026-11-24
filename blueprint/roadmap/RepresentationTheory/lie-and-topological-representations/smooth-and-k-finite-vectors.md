@@ -26,6 +26,8 @@ with Haar measure of total mass $1$.
   $L^2(K)$ this is the Peter–Weyl theorem, and the matrix coefficients of the finite-dimensional
   representations of $K$ are dense in $C(K)$ for the uniform norm.
 
+## Expansion
+
 A good expansion has pages for the integrated action and the smoothness of $\pi(f)v$, for Dirac
 sequences on Lie groups, for the density of smooth vectors, for the isotypic projections and the
 density of $K$-finite vectors (from the density of matrix coefficients in $C(K)$, which follows from
@@ -33,18 +35,25 @@ density of $K$-finite vectors (from the density of matrix coefficients in $C(K)$
 Stone–Weierstrass theorem, the coefficients forming a unital algebra closed under conjugation), and
 for the Hilbert direct sum in the unitary case, each citing the sources below with locators.
 
+A good expansion also states and links these inputs of the statement:
+
+- Lie groups, their Haar measures and Lie algebras, and integrals of continuous compactly supported functions with values in a complete locally convex space, for all the items.
+- irreducible representations of compact groups and their characters, for the isotypic subspaces and projections.
+
+It also states and links these inputs of the proof:
+
+- the complex Stone–Weierstrass theorem, for the density of the matrix coefficients.
+- differentiation under the integral sign for vector-valued integrals, applied to $g \mapsto \pi(g)\pi(f)v = \int_G f(g^{-1}x)\pi(x)v \, dx$, the translated smoothing kernel, not to $g \mapsto \pi(g)v$ itself, for the smoothness of $\pi(f)v$.
+- the Schur orthogonality relations for the characters of a compact group, for $E_\tau^2 = E_\tau$ and $E_\tau E_{\tau'} = 0$.
+
 ## Depends on
 
-- Not yet a page: Lie groups, their Haar measures and Lie algebras, and integrals of continuous compactly supported functions with values in a complete locally convex space, for all the items
-- Not yet a page: irreducible representations of compact groups and their characters, for the isotypic subspaces and projections
+Its statement uses the inputs listed under Expansion.
 
 ## Proof depends on
 
 - [Peter–Weyl theorem: unitary representations separate points](representations-of-compact-groups/peter-weyl-point-separation.md), for the density of the matrix coefficients in $C(K)$, through the Stone–Weierstrass theorem
 - [Representations of compact groups are semisimple](representations-of-compact-groups/compact-group-semisimple.md), for the complete reducibility of the finite-dimensional $K$-stable subspaces spanned by $K$-finite vectors (its real form; the complex case is the same argument with an invariant Hermitian form)
-- Not yet a page: the complex Stone–Weierstrass theorem, for the density of the matrix coefficients
-- Not yet a page: differentiation under the integral sign for vector-valued integrals, applied to $g \mapsto \pi(g)\pi(f)v = \int_G f(g^{-1}x)\pi(x)v \, dx$, the translated smoothing kernel, not to $g \mapsto \pi(g)v$ itself, for the smoothness of $\pi(f)v$
-- Not yet a page: the Schur orthogonality relations for the characters of a compact group, for $E_\tau^2 = E_\tau$ and $E_\tau E_{\tau'} = 0$
 
 ## Sources
 

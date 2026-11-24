@@ -56,6 +56,8 @@ $G = \mathbf{G}(F)$ uses.
   principal congruence subgroup $\ker(\mathrm{GL}_m(\mathcal{O}_F) \to \mathrm{GL}_m(\mathfrak{f}))$,
   and every $G_{y,0+}$ contains a conjugate of it.
 
+## Expansion
+
 A good expansion has definition pages for parabolic subgroups and their Levi decompositions, for
 standard parabolic and Levi subgroups with their Weyl groups, for the Bruhat–Tits building, for
 parahoric and Iwahori subgroups and for the Moy–Prasad filtrations of groups and lattices, and
@@ -65,17 +67,23 @@ $G_{x,r}$, $r > 0$), the chains of elementary maps, the conjugacy of Iwahori sub
 products and of $\mathrm{GL}_m$, and the properties of the filtrations
 listed above, each citing the sources below with locators.
 
+A good expansion also states and links these inputs of the statement:
+
+- relative roots and Lie algebras of reductive groups over $F$, for the affine roots and the lattices $\mathfrak{g}_{x,r}$.
+- $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1; Bernstein–Zelevinsky 1977, §5), for the filtration of induced representations along the Bruhat decomposition.
+
+It also states and links these inputs of the proof:
+
+- Bruhat–Tits theory, on which Moy and Prasad construct the filtrations: the affine building (Bruhat–Tits I, §§2 and 7), the smooth integral models (II, 4.6.2) and the fixers of bounded subsets of an apartment (II, 4.6.26–4.6.28); Moy–Prasad, §3.2, cite II, Proposition 4.6.28 (iii), for the transitivity on the apartments containing $x$, which makes $G_{x,r}$ independent of the apartment.
+
 ## Depends on
 
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for connected reductive groups over $F$, their maximal split tori and the topology of $G = \mathbf{G}(F)$
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for parabolic $F$-subgroups, Levi decompositions, standard parabolic and Levi subgroups and Weyl groups
-- Not yet a page: relative roots and Lie algebras of reductive groups over $F$, for the affine roots and the lattices $\mathfrak{g}_{x,r}$
-- Not yet a page: $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1; Bernstein–Zelevinsky 1977, §5), for the filtration of induced representations along the Bruhat decomposition
 
 ## Proof depends on
 
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the Bruhat decomposition of $G$ into double cosets of standard parabolic subgroups (Borel–Tits, 5.15 and 5.20, as cited by Bernstein–Zelevinsky 1977, §6.4)
-- Not yet a page: Bruhat–Tits theory, on which Moy and Prasad construct the filtrations: the affine building (Bruhat–Tits I, §§2 and 7), the smooth integral models (II, 4.6.2) and the fixers of bounded subsets of an apartment (II, 4.6.26–4.6.28); Moy–Prasad, §3.2, cite II, Proposition 4.6.28 (iii), for the transitivity on the apartments containing $x$, which makes $G_{x,r}$ independent of the apartment
 
 ## Sources
 

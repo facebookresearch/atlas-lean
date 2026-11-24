@@ -45,6 +45,8 @@ splitting characters $(\chi_V, \chi_W)$, and Jacquet functors and parabolic indu
   of $\mathrm{GL}_n(F) \times \mathrm{GL}_m(F)$ on $\mathcal{S}(\mathrm{M}_{n \times m}(F))$ by rank and the unique-socle lemma
   used by Mínguez.
 
+## Expansion
+
 A good expansion has pages for Kudla's filtration of the Jacquet modules of the Weil representation, for
 the orbit filtration of the doubled degenerate principal series, for the reducibility points and module
 structure of the Siegel degenerate principal series $I_n(s, \chi)$ (non-archimedean and archimedean), for
@@ -53,6 +55,10 @@ twisted see-saw identity, for the invariant distribution theorem with the cases 
 MVW involution, for Bernstein's second adjointness and for Mínguez's rank filtration, each with a precise
 statement and the sources below.
 
+A good expansion also states and links these inputs of the proof:
+
+- the exact sequences of Schwartz–Bruhat functions attached to an open subset and its closed complement in an $\ell$-space (Bernstein–Zelevinsky 1976, Chapter I, §1, as cited by Mínguez), for Kudla's filtration and the orbit filtrations.
+
 ## Depends on
 
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for the local Weil representation
@@ -60,7 +66,7 @@ statement and the sources below.
 
 ## Proof depends on
 
-- Not yet a page: the exact sequences of Schwartz–Bruhat functions attached to an open subset and its closed complement in an $\ell$-space (Bernstein–Zelevinsky 1976, Chapter I, §1, as cited by Mínguez), for Kudla's filtration and the orbit filtrations
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

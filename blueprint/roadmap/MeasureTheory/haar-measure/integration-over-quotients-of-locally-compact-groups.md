@@ -21,17 +21,27 @@ basis, but the source below assumes it; the general case needs a source of its o
   of a representation with a unitary central character. For a noncompact centre, square-integrability
   over $G/Z$ is not square-integrability over $G$.
 
+## Expansion
+
 A good expansion has a page for the existence and uniqueness of the invariant measure on $G/H$ with
 Weil's formula, and one for the case of a compact normal subgroup, each citing a pinned source with
 locators.
 
+A good expansion also states and links these inputs of the statement:
+
+- Radon measures on locally compact spaces, Haar measures and modular functions, for both items.
+
+It also states and links these inputs of the proof:
+
+- the existence and uniqueness of Haar measure, and the averaging map $C_c(G) \to C_c(G/H)$, $f \mapsto \int_H f(\cdot\, h) \, dh$, being onto, for Weil's formula.
+
 ## Depends on
 
-- Not yet a page: Radon measures on locally compact spaces, Haar measures and modular functions, for both items
+Its statement uses the inputs listed under Expansion.
 
 ## Proof depends on
 
-- Not yet a page: the existence and uniqueness of Haar measure, and the averaging map $C_c(G) \to C_c(G/H)$, $f \mapsto \int_H f(\cdot\, h) \, dh$, being onto, for Weil's formula
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

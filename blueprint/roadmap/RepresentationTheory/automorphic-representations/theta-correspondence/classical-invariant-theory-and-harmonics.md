@@ -43,6 +43,8 @@ multiplication, degree-preserving and differentiation operators.
   gives the admissibility of the algebraic theta lifts in [Howe duality over the reals](howe-duality-over-the-reals.md)
   (Howe, Transcending, p. 547).
 
+## Expansion
+
 A good expansion has pages for the first fundamental theorem for the classical groups listed, for the
 decomposition of the isotypic components, for the theory of harmonics, for the correspondence of
 infinitesimal characters and for Harish-Chandra's admissibility theorem, each with a precise statement and
@@ -51,15 +53,21 @@ model. Howe's general theorems for $\mathcal{A}(U, W) = S(U) \otimes \Lambda(W)$
 $\mathbb{Z}/2$-graded oscillator algebra (for $U = 0$ and $W = \mathbb{C}$ the module has dimension $2$), are not needed
 and should get their own pages if wanted.
 
+A good expansion also states and links these inputs of the statement:
+
+- the Weyl algebra of polynomial-coefficient differential operators on $U$, for all the items.
+
+It also states and links these inputs of the proof:
+
+- Harish-Chandra's theorem that a finitely generated $(\mathfrak{g}, K)$-module annihilated by an ideal of finite codimension of the centre of $U(\mathfrak{g})$ is admissible, for the admissibility of the algebraic theta lifts.
+
 ## Depends on
 
 - [Explicit formulas for the Weil representation](explicit-formulas-for-the-weil-representation.md), for the Fock model, on which the members of a dual pair act in the last item
 - [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for $(\mathfrak{g}, K)$-modules in the last item
-- Not yet a page: the Weyl algebra of polynomial-coefficient differential operators on $U$, for all the items
 
 ## Proof depends on
 
-- Not yet a page: Harish-Chandra's theorem that a finitely generated $(\mathfrak{g}, K)$-module annihilated by an ideal of finite codimension of the centre of $U(\mathfrak{g})$ is admissible, for the admissibility of the algebraic theta lifts
 - [Representations of compact groups are semisimple](../../lie-and-topological-representations/representations-of-compact-groups/compact-group-semisimple.md), for the complete reducibility of the finite-dimensional representations of the compact real forms, from which that of the polynomial representations of the complex classical groups follows by taking complex-linear complements and the Zariski density of the compact form (Weyl's unitarian trick), for the isotypic decompositions
 
 ## Sources

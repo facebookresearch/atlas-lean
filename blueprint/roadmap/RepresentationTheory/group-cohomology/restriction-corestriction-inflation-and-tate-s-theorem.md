@@ -41,13 +41,18 @@ contains the following statements.
    $\hat H^{-1}(G, \mathbb{Z}) = 0$ (the norm is multiplication by $|G|$) and $H^1(G, \mathbb{Z}) = 0$
    (Milne, Lemma II.3.3(b)).
 
+## Expansion
+
 A good expansion has a page for each numbered item, splitting the first into the formula
 $\mathrm{Cor} \circ \mathrm{Res} = (G : H)$ and its consequences.
+
+A good expansion also states and links these inputs of the statement:
+
+- Tate cohomology of finite groups as a definition of the groups $\hat H^n(G, M)$, not only of their orders and of the Herbrand quotient, and cup products, for all the items.
 
 ## Depends on
 
 - [Abelianization of a group](../../GroupTheory/commutators-and-engel-conditions/abelianization.md), for $G^{\mathrm{ab}}$ and $H^{\mathrm{ab}}$ and the map $H^{\mathrm{ab}} \to G^{\mathrm{ab}}$ in items 1 and 4
-- Not yet a page: Tate cohomology of finite groups as a definition (the vault has the cardinality of $\hat H^n(G, M)$ and the Herbrand quotient, not the groups), and cup products, for all the items
 
 ## Proof depends on
 

@@ -24,19 +24,28 @@ Applied to finitely many pairwise inequivalent irreducible admissible representa
 $K$ small enough that every $V_i^K$ is nonzero (intersect finitely many stabilizers), these give the linear
 independence of the distribution characters.
 
+## Expansion
+
 A good expansion has pages for the corner module $V^K$, for its simplicity, for the transfer of
 inequivalence, and for the surjectivity onto the product of endomorphism algebras with the independence
 of traces, each citing the sources below with locators.
 
+A good expansion also states and links these inputs of the statement:
+
+- smooth representations of $\ell$-groups, the subspaces $V^K$ and admissibility, as definitions split off from the page on smooth and admissible representations, whose proof uses this node.
+
+It also states and links these inputs of the proof:
+
+- the Chinese remainder theorem for pairwise comaximal two-sided ideals of a ring, for the surjectivity onto the product.
+- the averaging projections $\pi(e_K)$ and the argument of Casselman's Proposition 2.2.2, for the corners, their simplicity and the transfer of inequivalence.
+
 ## Depends on
 
-- Not yet a page: smooth representations of $\ell$-groups, the subspaces $V^K$ and admissibility; there is no separate definitions-only page: the page on smooth and admissible representations defines them but uses this node, so linking it here would close a cycle, and splitting its definitions off would close the gap
+Its statement uses the inputs listed under Expansion.
 
 ## Proof depends on
 
 - [Burnside's theorem on matrix algebras](../../../Algebra/associative-algebras/burnside-matrix.md), for the image of $A$ in each $\mathrm{End}_{\mathbb{C}}(M_i)$
-- Not yet a page: the Chinese remainder theorem for pairwise comaximal two-sided ideals of a ring, for the surjectivity onto the product
-- Not yet a page: the averaging projections $\pi(e_K)$ and the argument of Casselman's Proposition 2.2.2, for the corners, their simplicity and the transfer of inequivalence
 
 ## Sources
 

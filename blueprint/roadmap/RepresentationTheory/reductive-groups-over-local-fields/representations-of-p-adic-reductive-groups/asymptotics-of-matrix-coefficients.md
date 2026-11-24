@@ -26,9 +26,15 @@ supported matrix coefficients, the
 - Langlands's classification of irreducible admissible representations by tempered
   representations of Levi subgroups and exponents, for p-adic groups.
 
+## Expansion
+
 A good expansion has statement pages for Jacquet's lemmas, the canonical pairing, the asymptotic
 expansion, Casselman's square-integrability and temperedness criteria and the Langlands
 classification, each citing the sources below with locators.
+
+A good expansion also states and links these inputs of the proof:
+
+- a Cartan decomposition for every connected reductive group, in terms of the minimal Levi subgroup $M = Z_G(A_\emptyset)$ rather than the split torus: for the special maximal compact subgroup $\tilde K$ fixing a special vertex in the apartment of $A_\emptyset$ (this compatibility is needed; an independently chosen $\tilde K$ may fail), $\tilde K \backslash G / \tilde K \cong W \backslash M(F)/M(F)^1$, where $M(F)^1$ is the maximal compact open subgroup of $M(F)$ and $M(F)/M(F)^1$ is a free abelian group containing $X_*(A_\emptyset)$ with the same rank (Haines–Rostami, Introduction, pp. 1–2, after Cartier). Each $W$-orbit meets the closed chamber of $A_\emptyset^-$, whose points in $M(F)/M(F)^1$ lie in finitely many translates of its points in $X_*(A_\emptyset)$; so $G = \bigcup_{t \in T} \tilde K\, t A_\emptyset^- \tilde K$ for a finite subset $T$ of $M(F)$, and the asymptotics are studied on each $t A_\emptyset^-$, which leaves Casselman's square-integrability criterion unaffected. For unramified groups, $\mathrm{GL}_n$ among them, $M(F)/M(F)^1 = X_*(A_\emptyset)$ and $G = \tilde K A_\emptyset^- \tilde K$. Casselman's Lemma 1.4.5 and Proposition 1.4.6 (p. 15), used in the proof of his Theorem 4.4.6 (p. 45), take the middle factor in $A_\emptyset^-$ itself, which fails in general: for $G = \mathrm{R}_{E/\mathbb{Q}_3}\mathrm{SL}_2$ with $E = \mathbb{Q}_3(\sqrt 3)$, whose centre is finite, no open subgroup $\Gamma$, compact modulo the centre and containing $A_\emptyset(\mathcal{O})$, satisfies $G = \Gamma A_\emptyset^- \Gamma$: in a basis of a $\Gamma$-stable $\mathcal{O}_E$-lattice, $\mathrm{diag}(\pi_E, \pi_E^{-1})$ is not in $\Gamma A_\emptyset^- \Gamma$, because the elements $\mathrm{diag}(t, t^{-1})$, $t \in \mathbb{Q}_3^\times$, of $A_\emptyset(F)$ have even $E$-valuations.
 
 ## Depends on
 
@@ -39,7 +45,6 @@ classification, each citing the sources below with locators.
 ## Proof depends on
 
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compact open subgroups with an Iwahori factorization in Jacquet's lemmas and for the cones $A^-_\Theta$
-- Not yet a page: a Cartan decomposition for every connected reductive group, in terms of the minimal Levi subgroup $M = Z_G(A_\emptyset)$ rather than the split torus: for the special maximal compact subgroup $\tilde K$ fixing a special vertex in the apartment of $A_\emptyset$ (this compatibility is needed; an independently chosen $\tilde K$ may fail), $\tilde K \backslash G / \tilde K \cong W \backslash M(F)/M(F)^1$, where $M(F)^1$ is the maximal compact open subgroup of $M(F)$ and $M(F)/M(F)^1$ is a free abelian group containing $X_*(A_\emptyset)$ with the same rank (Haines–Rostami, Introduction, pp. 1–2, after Cartier). Each $W$-orbit meets the closed chamber of $A_\emptyset^-$, whose points in $M(F)/M(F)^1$ lie in finitely many translates of its points in $X_*(A_\emptyset)$; so $G = \bigcup_{t \in T} \tilde K\, t A_\emptyset^- \tilde K$ for a finite subset $T$ of $M(F)$, and the asymptotics are studied on each $t A_\emptyset^-$, which leaves Casselman's square-integrability criterion unaffected. For unramified groups, $\mathrm{GL}_n$ among them, $M(F)/M(F)^1 = X_*(A_\emptyset)$ and $G = \tilde K A_\emptyset^- \tilde K$. Casselman's Lemma 1.4.5 and Proposition 1.4.6 (p. 15), used in the proof of his Theorem 4.4.6 (p. 45), take the middle factor in $A_\emptyset^-$ itself, which fails in general: for $G = \mathrm{R}_{E/\mathbb{Q}_3}\mathrm{SL}_2$ with $E = \mathbb{Q}_3(\sqrt 3)$, whose centre is finite, no open subgroup $\Gamma$, compact modulo the centre and containing $A_\emptyset(\mathcal{O})$, satisfies $G = \Gamma A_\emptyset^- \Gamma$: in a basis of a $\Gamma$-stable $\mathcal{O}_E$-lattice, $\mathrm{diag}(\pi_E, \pi_E^{-1})$ is not in $\Gamma A_\emptyset^- \Gamma$, because the elements $\mathrm{diag}(t, t^{-1})$, $t \in \mathbb{Q}_3^\times$, of $A_\emptyset(F)$ have even $E$-valuations
 
 ## Sources
 

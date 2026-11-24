@@ -20,22 +20,31 @@ Zariski-connected reductive group over $\mathbb{R}$, $K$ a maximal compact subgr
 - **A worked alternative.** Garrett gives a different proof for real linear reductive groups. The
   expansion should take one route with its exact hypotheses, sources and locators.
 
+## Expansion
+
 A good expansion has pages for the action of $Z(\mathfrak{g})$ by scalars on the smooth vectors of an
 irreducible unitary representation, for Harish-Chandra's bound on $K$-multiplicities of quasi-simple
 irreducible representations, and for the reduction to the stated real points, each with its group and
 domain hypotheses and a pinned source.
 
+A good expansion also states and links these inputs of the statement:
+
+- the enveloping algebra of $\mathfrak{g}$ and its centre $Z(\mathfrak{g})$, for quasi-simplicity.
+
+It also states and links these inputs of the proof:
+
+- the action of $Z(\mathfrak{g})$ by scalars on the smooth vectors of an irreducible unitary representation (Segal; Harish-Chandra), with its domain argument.
+- Harish-Chandra's bound $n_i \le \dim V_i$ for irreducible quasi-simple representations of connected semisimple groups with finite centre.
+- the reduction (c) from connected semisimple groups with finite centre to the real points of a Zariski-connected reductive group, through the centre, the derived group and the finitely many components, for the theorem in the stated generality.
+
 ## Depends on
 
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the real points of a Zariski-connected reductive group and their maximal compact subgroups
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for smooth vectors and $K$-multiplicities
-- Not yet a page: the enveloping algebra of $\mathfrak{g}$ and its centre $Z(\mathfrak{g})$, for quasi-simplicity
 
 ## Proof depends on
 
-- Not yet a page: the action of $Z(\mathfrak{g})$ by scalars on the smooth vectors of an irreducible unitary representation (Segal; Harish-Chandra), with its domain argument
-- Not yet a page: Harish-Chandra's bound $n_i \le \dim V_i$ for irreducible quasi-simple representations of connected semisimple groups with finite centre
-- Not yet a page: the reduction (c) from connected semisimple groups with finite centre to the real points of a Zariski-connected reductive group, through the centre, the derived group and the finitely many components, for the theorem in the stated generality
+Its proof uses the inputs listed under Expansion.
 
 ## Sources
 

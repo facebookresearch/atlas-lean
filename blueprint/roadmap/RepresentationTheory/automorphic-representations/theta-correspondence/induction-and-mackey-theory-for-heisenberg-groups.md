@@ -23,11 +23,18 @@ $W = X \oplus Y$ and a non-trivial character $\psi$ of $F$.
   of it; the comparison with $H(W)$ by pushing out its centre $F$ along $\psi$; the identification of $Y$ with the
   Pontryagin dual of $X$ through $\psi$ and the pairing.
 
+## Expansion
+
 A good expansion has pages for smooth and compact induction of representations of $\ell$-groups with the
 correct adjunctions, for the irreducibility and the decomposition of the representation induced from a
 polarization, and for the unitary Stone–von Neumann–Mackey theorem, each with a precise statement and the
 sources below; it should not add a second statement of the classification in the Stone–von Neumann
 theorem.
+
+A good expansion also states and links these inputs of the proof:
+
+- the same self-duality for every local field and nontrivial character (Poonen, §4.3, Theorem 4.4), for the local fields of positive characteristic that the statement allows, such as $\mathbb{F}_3((t))$.
+- Pontryagin duality for locally compact abelian groups, and the decomposition of every strongly continuous unitary representation of a compact abelian group into the orthogonal sum of its character spaces, with arbitrary multiplicities (A. Prasad, §4.2, p. 4, applies it to the given representation restricted to $G \times G^\perp$), for compact abelian groups that need not be Lie groups, such as the profinite groups of the non-archimedean case, for the unitary form; the decomposition of $L^2$ of the group, where each character occurs once, is not enough.
 
 ## Depends on
 
@@ -36,8 +43,6 @@ theorem.
 ## Proof depends on
 
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of the completions of number fields (its local duality), which identifies $Y$ with the Pontryagin dual of $X$ for local fields of characteristic $0$
-- Not yet a page: the same self-duality for every local field and nontrivial character (Poonen, §4.3, Theorem 4.4), for the local fields of positive characteristic that the page allows, such as $\mathbb{F}_3((t))$
-- Not yet a page: Pontryagin duality for locally compact abelian groups, and the decomposition of every strongly continuous unitary representation of a compact abelian group into the orthogonal sum of its character spaces, with arbitrary multiplicities (A. Prasad, §4.2, p. 4, applies it to the given representation restricted to $G \times G^\perp$), for the unitary form; the decomposition of $L^2$ of the group, where each character occurs once, is not enough, and the page on smooth and $K$-finite vectors treats compact subgroups of Lie groups only, not the profinite groups of the non-archimedean case
 
 ## Sources
 

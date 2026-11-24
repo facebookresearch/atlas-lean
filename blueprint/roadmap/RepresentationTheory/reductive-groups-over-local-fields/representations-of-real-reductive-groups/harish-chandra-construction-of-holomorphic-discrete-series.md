@@ -39,21 +39,29 @@ of holomorphic sections over $G/K \subseteq G^{\mathbb{C}}/K^{\mathbb{C}} P_+$.
   compact group $G = K$, such as $\mathrm{SU}(2)$, $G/K$ is a point and the finite-dimensional space of sections is closed
   in both topologies.
 
+## Expansion
+
 A good expansion has pages for the decomposition $P_- K^{\mathbb{C}} P_+$ and the bounded realization,
 for the polynomial model with the duality of $\mathfrak{p}_\pm$, for the Fréchet topology of spaces of
 holomorphic sections, for the lowest $K$-type argument, and for Harish-Chandra's square-integrability
 criterion, each citing the sources below with locators.
 
+A good expansion also states and links these inputs of the statement:
+
+- Hermitian symmetric spaces $G/K$, compact Cartan subgroups and compact and noncompact roots, the complexification $G^{\mathbb{C}}$ and its compact dual, and homogeneous holomorphic vector bundles, for all the items.
+
+It also states and links these inputs of the proof:
+
+- the Weierstrass theorem that locally uniform limits of holomorphic functions of several variables are holomorphic, for the Fréchet topology.
+- Harish-Chandra's construction of the square-integrable holomorphic sections (Harish-Chandra IV–VI), for the square-integrability: the nonvanishing of the Hilbert space under positivity and its infinitesimal equivalence with $\mathbf{F}_\lambda$ (Schmid, §3, (3.12), pp. 72–73).
+
 ## Depends on
 
-- Not yet a page: Hermitian symmetric spaces $G/K$, compact Cartan subgroups and compact and noncompact roots, the complexification $G^{\mathbb{C}}$ and its compact dual, and homogeneous holomorphic vector bundles, for all the items
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for $K$-finite vectors and isotypic components
 
 ## Proof depends on
 
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the continuous isotypic projections in the lowest $K$-type argument
-- Not yet a page: the Weierstrass theorem that locally uniform limits of holomorphic functions of several variables are holomorphic, for the Fréchet topology
-- Not yet a page: Harish-Chandra's construction of the square-integrable holomorphic sections (Harish-Chandra IV–VI), for the square-integrability: the nonvanishing of the Hilbert space under positivity and its infinitesimal equivalence with $\mathbf{F}_\lambda$ (Schmid, §3, (3.12), pp. 72–73)
 
 ## Sources
 
