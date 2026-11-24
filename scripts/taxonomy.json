@@ -10973,6 +10973,7 @@
   "MathlibExt/Combinatorics/LoomisWhitney": {"to": "Combinatorics/extremal-set-theory", "title": "Loomis–Whitney and Brascamp–Lieb inequalities"},
   "MathlibExt/Combinatorics/MajorityIsLeastStable": {"to": "Combinatorics/boolean-functions", "title": "Majority is least stable conjecture"},
   "MathlibExt/Combinatorics/LorentzianPolynomials": {"to": "Combinatorics/matroid-theory", "title": "Lorentzian polynomials"},
+  "MathlibExt/Combinatorics/ManyThreeTermProgressionsErdosProblem179": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Number of arithmetic progressions in dense sets"},
   "MathlibExt/Combinatorics/Matching/BergeLemma": {"to": "GraphTheory/matchings-and-flows", "title": "Berge's lemma"},
   "MathlibExt/Combinatorics/Matching/GaleShapley": {"to": "GraphTheory/matchings-and-flows", "title": "Stable marriage problem"},
   "MathlibExt/Combinatorics/MatrixDiscrepancy": {"to": "Combinatorics/discrepancy-theory", "title": "Komlós conjecture"},
