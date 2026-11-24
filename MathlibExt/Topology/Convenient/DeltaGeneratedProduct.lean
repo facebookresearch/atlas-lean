@@ -57,8 +57,8 @@ instance prod_finPi_isGeneratedBy (m n : ℕ) :
     IsGeneratedBy (fun n : ℕ => Fin n → ℝ) ((Fin m → ℝ) × (Fin n → ℝ)) :=
   (Fin.appendHomeomorph m n).symm.isQuotientMap.isGeneratedBy
 
-/-- The ordinary product is `DeltaGeneratedSpace` when the left factor is locally compact.
-No claim is made for arbitrary products of Delta-generated spaces. -/
+/-- The ordinary product of two Delta-generated spaces is Delta-generated when the left factor
+is locally compact. No claim is made for arbitrary products of Delta-generated spaces. -/
 theorem prod_of_locallyCompact_left
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [LocallyCompactSpace X] [DeltaGeneratedSpace X] [DeltaGeneratedSpace Y] :
