@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Data.Nat.Factorial.DoubleFactorial
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
 
 namespace MetaMathlibExt
 
@@ -143,20 +144,6 @@ public theorem_wanted iteratedDeriv_arcsin_div_one_sub_doubleFactorial (n : ℕ)
     (Even n → 0 < n → iteratedDeriv n (fun x => arcsin x ^ 2 / (2 * (1 - x))) 0 =
       n.factorial * ∑ j ∈ Finset.range ((n - 2) / 2 + 1),
         ((2 * j).doubleFactorial : ℝ) / ((2 * j + 1).doubleFactorial * (2 * j + 2)))
-
-/-- **Half-period sine sum for even modulus.** Let $N$ be a positive even natural number. For
-every natural number $q$, $\sum_{\ell=1}^{N/2} \sin(2\pi q \ell / N)$ equals $0$ if $q$ is even
-and $\cot(q\pi / N)$ if $q$ is odd.
-
-The paper also assumes $q > 0$; for $q = 0$ both sides are $0$.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 5
-(`jis-2025-25.2.3-lem-5`). -/
-public theorem_wanted sum_sin_two_pi_mul_div_of_even {N : ℕ} (hN : 0 < N) (hNe : Even N)
-    (q : ℕ) :
-    ∑ l ∈ Finset.Icc 1 (N / 2), sin (q * l * 2 * π / N) =
-      if Even q then 0 else cot (q * π / N)
 
 /-- **Half-period sine sum for odd modulus.** Let $N$ be an odd natural number. For every
 natural number $q$, $\sum_{\ell=1}^{(N-1)/2} \sin(2\pi q \ell / N)$ equals

@@ -10,7 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.GraphLimits.Graphon
-public import WantedExt.Combinatorics.FinitelyForcibleOptimumOWR4212Problem011Wanted
+public import MathlibExt.Combinatorics.FinitelyForcibleGraphons
 
 /-!
 # Graph limits: the limit theorem, compactness and uniqueness (wanted)

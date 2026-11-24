@@ -15,7 +15,9 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import MathlibExt.Combinatorics.Enumerative.HsuShiueGeneralizedStirlingNumber
+public import MathlibExt.Combinatorics.Enumerative.PolynomiallyWeightedFibonacciSums
 public import MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums
+public import MathlibExt.Combinatorics.Enumerative.RisingFactorialAntiderivatives
 public import MathlibExt.NumberTheory.LucasSequence
 import MathlibExt.Combinatorics.Enumerative.StirlingSecondExplicit
 
@@ -111,37 +113,6 @@ public theorem_wanted sum_neg_one_pow_choose_two_pow_mul_sq (N : ℕ) :
     ∑ k ∈ Finset.Icc 1 N, (-1 : ℤ) ^ k * (N.choose k : ℤ) * 2 ^ (N - k) * (k : ℤ) ^ 2 =
       (N : ℤ) ^ 2 - 2 * N
 
-/-- **Polynomially weighted Fibonacci sums via derivatives.** Let $F_n$ denote the Fibonacci
-numbers and $S(r, i)$ the Stirling numbers of the second kind. Let $t$ and $N$ be natural numbers,
-let $A_0, \dots, A_t$ be complex numbers, let $h(y) = \sum_{r=0}^{t} A_r y^r$, and let $P$ be the
-polynomial $P(y) = \sum_{j=0}^{N} F_j y^j$, with $i$-th derivative $P^{(i)}$. Then for every
-$x \in \mathbb{C}$,
-$$\sum_{k=0}^{N} h(k) F_k x^k = \sum_{r=0}^{t} A_r \sum_{i=0}^{r} S(r, i) \, x^i P^{(i)}(x).$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.4. -/
-public theorem_wanted sum_poly_mul_fib_pow_eq_sum_stirlingSecond_derivative (A : ℕ → ℂ)
-    (t N : ℕ) (x : ℂ) :
-    ∑ k ∈ Finset.range (N + 1),
-        (∑ r ∈ Finset.range (t + 1), A r * (k : ℂ) ^ r) * (Nat.fib k : ℂ) * x ^ k =
-      ∑ r ∈ Finset.range (t + 1), A r * ∑ i ∈ Finset.range (r + 1),
-        (Nat.stirlingSecond r i : ℂ) * x ^ i *
-          (derivative^[i] (∑ j ∈ Finset.range (N + 1), C (Nat.fib j : ℂ) * X ^ j)).eval x
-
-/-- **Power-weighted binomial sums of Fibonacci numbers.** Let $F_n$ denote the Fibonacci numbers,
-$S(r, i)$ the Stirling numbers of the second kind and $(N)_i = N(N-1) \cdots (N-i+1)$ the falling
-factorial, with $(N)_0 = 1$. For all natural numbers $N$ and $r$,
-$$\sum_{k=0}^{N} k^r \binom{N}{k} F_k = \sum_{i=0}^{r} S(r, i) \, (N)_i \, F_{2N-i},$$
-where the terms with $i > N$ vanish because $(N)_i = 0$.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.5. -/
-public theorem_wanted sum_pow_mul_choose_mul_fib (N r : ℕ) :
-    ∑ k ∈ Finset.range (N + 1), k ^ r * N.choose k * Nat.fib k =
-      ∑ i ∈ Finset.range (r + 1), Nat.stirlingSecond r i * N.descFactorial i * Nat.fib (2 * N - i)
-
 /-- **Power-weighted binomial sums of Lucas numbers.** Let $L_n$ denote the Lucas numbers
 ($L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$), $S(r, i)$ the Stirling numbers of the second
 kind and $(N)_i = N(N-1) \cdots (N-i+1)$ the falling factorial, with $(N)_0 = 1$. For all natural
@@ -173,31 +144,6 @@ public theorem_wanted sum_pow_mul_choose_mul_secondOrder (a b : ℝ) (W : ℕ �
     ∑ k ∈ Finset.range (N + 1), (k : ℝ) ^ r * N.choose k * a ^ k * b ^ (N - k) * W k =
       ∑ i ∈ Finset.range (r + 1),
         (Nat.stirlingSecond r i : ℝ) * N.descFactorial i * a ^ i * W (2 * N - i)
-
-/-- **Weighted binomial Fibonacci sums for the powers one to four.** Let $F_n$ denote the Fibonacci
-numbers. For every natural number $N$,
-$$\sum_{k=1}^{N} k \binom{N}{k} F_k = N F_{2N-1},$$
-$$\sum_{k=1}^{N} k^2 \binom{N}{k} F_k = N F_{2N-1} + N(N-1) F_{2N-2},$$
-$$\sum_{k=1}^{N} k^3 \binom{N}{k} F_k = N F_{2N-1} + 3N(N-1) F_{2N-2} + N(N-1)(N-2) F_{2N-3},$$
-$$\sum_{k=1}^{N} k^4 \binom{N}{k} F_k = N F_{2N-1} + 7N(N-1) F_{2N-2} +
-6N(N-1)(N-2) F_{2N-3} + N(N-1)(N-2)(N-3) F_{2N-4}.$$
-
-Every term with a negative Fibonacci index has coefficient zero.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.6. -/
-public theorem_wanted sum_pow_mul_choose_mul_fib_small (N : ℕ) :
-    (∑ k ∈ Finset.Icc 1 N, k * N.choose k * Nat.fib k = N * Nat.fib (2 * N - 1)) ∧
-    (∑ k ∈ Finset.Icc 1 N, k ^ 2 * N.choose k * Nat.fib k =
-      N * Nat.fib (2 * N - 1) + N * (N - 1) * Nat.fib (2 * N - 2)) ∧
-    (∑ k ∈ Finset.Icc 1 N, k ^ 3 * N.choose k * Nat.fib k =
-      N * Nat.fib (2 * N - 1) + 3 * N * (N - 1) * Nat.fib (2 * N - 2) +
-        N * (N - 1) * (N - 2) * Nat.fib (2 * N - 3)) ∧
-    ∑ k ∈ Finset.Icc 1 N, k ^ 4 * N.choose k * Nat.fib k =
-      N * Nat.fib (2 * N - 1) + 7 * N * (N - 1) * Nat.fib (2 * N - 2) +
-        6 * N * (N - 1) * (N - 2) * Nat.fib (2 * N - 3) +
-        N * (N - 1) * (N - 2) * (N - 3) * Nat.fib (2 * N - 4)
 
 /-- **Polynomially weighted binomial Fibonacci sums.** Let $F_n$ denote the Fibonacci numbers,
 $S(j, i)$ the Stirling numbers of the second kind and $(N)_i = N(N-1)\cdots(N-i+1)$ the falling
@@ -278,27 +224,6 @@ public theorem_wanted sum_choose_mul_pow_div_ascFactorial (N s : ℕ) (hs : 0 < 
       ((1 + x) ^ (N + s) - 1) / (N + 1).ascFactorial s -
         ∑ j ∈ Finset.Icc 1 (s - 1), x ^ j / (j.factorial * (N + 1).ascFactorial (s - j))
 
-/-- **Rising-factorial weighted sums via iterated antiderivatives.** Let $N$ and $s$ be natural
-numbers, $a_0, \dots, a_N$ real numbers and $f(y) = \sum_{k=0}^{N} a_k y^k$. Let
-$I_0, I_1, I_2, \dots$ be functions $\mathbb{R} \to \mathbb{R}$ with $I_0 = f$ such that for every
-$j \ge 0$ the function $I_{j+1}$ is differentiable on $\mathbb{R}$ with derivative $I_j$ (the
-constants of integration are arbitrary). Write $m^{(i)} = m(m+1)\cdots(m+i-1)$ for the rising
-factorial. Then for every real number $x$,
-
-$$\sum_{k=0}^{N} \frac{a_k\, x^{k+s}}{(k+1)^{(s)}} =
-I_s(x) - \sum_{j=1}^{s} \frac{I_j(0)\, x^{s-j}}{(s-j)!}.$$
-
-The source assumes $s > 0$; for $s = 0$ the identity reads $f(x) = I_0(x)$.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 3.1, equation (3.2). -/
-public theorem_wanted sum_coeff_mul_pow_div_ascFactorial_eq_antideriv (a : ℕ → ℝ) (N s : ℕ)
-    (I : ℕ → ℝ → ℝ) (hI0 : ∀ y, I 0 y = ∑ k ∈ Finset.range (N + 1), a k * y ^ k)
-    (hI : ∀ j y, HasDerivAt (I (j + 1)) (I j y) y) (x : ℝ) :
-    ∑ k ∈ Finset.range (N + 1), a k * x ^ (k + s) / (k + 1).ascFactorial s =
-      I s x - ∑ j ∈ Finset.Icc 1 s, I j 0 * x ^ (s - j) / (s - j).factorial
-
 /-- **Finkel's identity.** For every natural number $n$, with $H_n = \sum_{j=1}^{n} 1/j$ the
 $n$-th harmonic number,
 
@@ -324,20 +249,6 @@ public theorem_wanted sum_choose_mul_pow_div_sq (n : ℕ) (x : ℝ) :
     ∑ k ∈ Finset.Icc 1 n, (n.choose k : ℝ) * x ^ k / (k : ℝ) ^ 2 =
       ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, (1 + x) ^ j / j -
         ∑ k ∈ Finset.Icc 1 n, 1 / (k : ℝ) * ∑ j ∈ Finset.Icc 1 k, 1 / (j : ℝ)
-
-/-- **Alternating binomial sum with inverse-square weights.** For every natural number $n$, with
-$H_k = \sum_{j=1}^{k} 1/j$ the $k$-th harmonic number,
-
-$$\sum_{k=1}^{n} (-1)^{k-1} \frac{1}{k^2} \binom{n}{k} = \sum_{k=1}^{n} \frac{H_k}{k}.$$
-
-This is the case $x = -1$ of identity (3.6) of the source.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
-public theorem_wanted sum_neg_one_pow_choose_div_sq_eq_sum_harmonic (n : ℕ) :
-    ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k - 1) * n.choose k / (k : ℚ) ^ 2 =
-      ∑ k ∈ Finset.Icc 1 n, harmonic k / k
 
 end
 

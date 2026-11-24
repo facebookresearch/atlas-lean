@@ -53,12 +53,6 @@ number $\sum_{i=1}^{n} i^k = 1^k + 2^k + \cdots + n^k$, which is $0$ when $n = 0
 def powerSum (k n : ℕ) : ℚ :=
   ∑ i ∈ Finset.Icc 1 n, (i : ℚ) ^ k
 
-/-- **The array $R(k, m)$.** For natural numbers $k$ and $m$, $R(k, m)$ is the integer
-$\sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. -/
-def arrayR (k m : ℕ) : ℤ :=
-  ∑ j ∈ Finset.range (m + 1),
-    (-1 : ℤ) ^ j * (Nat.choose (2 * m) j : ℤ) * ((m : ℤ) - j) ^ (2 * k)
-
 /-- **The array $U(k, m)$.** For natural numbers $k$ and $m$, $U(k, m)$ is the rational number
 $\frac{2}{(2m)!} \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. -/
 def arrayU (k m : ℕ) : ℚ :=
@@ -159,17 +153,6 @@ theorem_wanted powerSum_odd_eq_sum (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
         (arrayR k m : ℚ) * (1 / (m : ℚ)) *
           (Nat.choose (n + m) (2 * m) : ℚ)
 
-/-- **Sum of $2i \binom{2i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
-$$\sum_{i=1}^{n} 2i \binom{2i + k - 1}{2k - 1} = k \binom{2n + k + 1}{2k + 1}.$$
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Lemma 4. -/
-theorem_wanted sum_two_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) :
-    (∑ i ∈ Finset.Icc 1 n,
-      (2 * i) * Nat.choose (2 * i + k - 1) (2 * k - 1)) =
-      k * Nat.choose (2 * n + k + 1) (2 * k + 1)
-
 /-- **Inversion formula for the arrays $u(k, m)$ and $U(k, m)$ (Butzer et al.).** For natural
 numbers $k$ and $m$, let $u(k, m)$ be the first-kind Jacobi–Stirling number $J(k, m; 0)$, the
 coefficient of $x^m$ in $\prod_{i=0}^{k-1} (x - i^2)$, and let
@@ -248,18 +231,5 @@ theorem_wanted powerSum_odd_faulhaber (k : ℕ) (hk : 1 ≤ k)
     powerSum (2 * k + 1) n =
       (powerSum 1 n) ^ 2 * ∑ r ∈ Finset.Icc 1 k,
         faulhaberC k r * (powerSum 1 n) ^ (r - 1)
-
-/-- **Vanishing alternating sum of the A304330 array.** For every natural number $k \ge 2$,
-$$\sum_{m=1}^{k} (-1)^m \frac{((m-1)!)^2}{(2m)!} R(k, m) = 0,$$
-where $R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$ is the array of OEIS A304330.
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Proposition 15. -/
-theorem_wanted sum_neg_factorial_sq_div_arrayR_eq_zero (k : ℕ)
-    (hk : 2 ≤ k) :
-    (∑ m ∈ Finset.Icc 1 k,
-      (-1 : ℚ) ^ m *
-        ((Nat.factorial (m - 1) : ℚ) ^ 2 /
-          (Nat.factorial (2 * m) : ℚ)) * (arrayR k m : ℚ)) = 0
 
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted

@@ -11,7 +11,9 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.MulLogUpperBound
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.RpowLowerBound
+public import MathlibExt.Data.Nat.Factorial.Iterate
 
 namespace MetaMathlibExt
 
@@ -36,14 +38,6 @@ public theorem_wanted iterate_logb_tetration_strictMono_and_converges {a b : ℝ
     StrictMono (fun n : ℕ => (Real.logb a)^[n] ((fun x : ℝ => b ^ x)^[n] 1)) ∧
       ∃ L : ℝ, Tendsto (fun n : ℕ => (Real.logb a)^[n] ((fun x : ℝ => b ^ x)^[n] 1))
         atTop (𝓝 L)
-
-/-- **Upper bound $\Gamma(x + 1) \ln \Gamma(x + 1) \le \Gamma(x)^{\Gamma(x)}$.** For every real
-number $x > 4$, $\Gamma(x + 1) \ln \Gamma(x + 1) \le \Gamma(x)^{\Gamma(x)}$.
-
-Source: Karol Gryszka, *Exponential versus Factorial Revisited*, Journal of
-Integer Sequences 28 (2025), Article 25.2.8, Lemma 9 (`jis-2025-25.2.8-lem-9`). -/
-public theorem_wanted Gamma_add_one_mul_log_le_Gamma_rpow_self {x : ℝ} (hx : 4 < x) :
-    Real.Gamma (x + 1) * Real.log (Real.Gamma (x + 1)) ≤ Real.Gamma x ^ Real.Gamma x
 
 /-- **Normalization of power towers.** Let $a, b > e^{1/e}$ be real numbers with $a \ne b$. For
 a real number $c$ and $m \ge 0$ let $E_m(b, c)$ be the $m$-fold iterate of $x \mapsto b^x$
@@ -77,16 +71,6 @@ public theorem_wanted exists_tetration_eq_iterate_rpow {a b : ℝ}
     (ha : Real.exp (1 / Real.exp 1) < a) (hb : Real.exp (1 / Real.exp 1) < b) {n : ℕ}
     (hn : 0 < n) :
     ∃ p : ℕ, ∃ c ∈ Set.Ioc 1 b, (fun x : ℝ => a ^ x)^[n] 1 = (fun x : ℝ => b ^ x)^[p] c
-
-/-- **Comparison of iterated factorials.** For natural numbers $j$ and $m$ let $F_j(m)$ be the
-$j$-fold iterated factorial $m!\cdots!$ (with $j$ factorials). Let $n, n' \ge 3$ and $k > k'$ be
-natural numbers. If $n' < F_{k-k'}(n)$, then $F_{k'}(n') < F_k(n)$.
-
-Source: Karol Gryszka, *Exponential versus Factorial Revisited*, Journal of Integer
-Sequences 28 (2025), Article 25.2.8, Theorem 4 (`jis-2025-25.2.8-thm-4`). -/
-public theorem_wanted iterate_factorial_lt_iterate_factorial {n n' k k' : ℕ} (hn : 3 ≤ n)
-    (hn' : 3 ≤ n') (hk : k' < k) (h : n' < Nat.factorial^[k - k'] n) :
-    Nat.factorial^[k'] n' < Nat.factorial^[k] n
 
 /-- **Iterated factorials as base-$10$ power towers.** Let $k \ge 3$ be a natural number, let
 $F_n(k)$ be the $n$-fold iterated factorial of $k$, viewed as a real number, and for a real

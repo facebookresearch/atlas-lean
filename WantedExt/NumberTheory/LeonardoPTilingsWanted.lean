@@ -20,8 +20,8 @@ are the generalized Leonardo `p`-numbers `leonardoPK p p` of
 are not restated.
 
 New here: the Lucas `p`-numbers `lucasP`, the Lucas-Leonardo `p`-numbers
-`lucasLeonardoP`, the incomplete Leonardo and Lucas-Leonardo `p`-numbers (the paper's
-displays (4) and (8)), the hyper Leonardo `p`-numbers (display (12)), the hyper
+`lucasLeonardoP`, the incomplete Lucas-Leonardo `p`-numbers (the paper's
+display (8)), the hyper Leonardo `p`-numbers (display (12)), the hyper
 Lucas-Leonardo `p`-numbers (Definition 2), the tiling sets `K_{p,n}` and the bracelet sets
 `B_{p,n}`.
 -/
@@ -32,6 +32,9 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.NumberTheory.IncompleteLeonardoP
+public import MathlibExt.NumberTheory.IncompleteLeonardoPBinomialSum
+public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
 public import WantedExt.NumberTheory.LeonardoPWanted
 
 namespace MetaMathlibExt
@@ -188,25 +191,6 @@ theorem lucasP_lucasLeonardoP_one_values :
     (List.range 6).map (lucasP 1) = [2, 1, 3, 4, 7, 11] ∧
       (List.range 6).map (lucasLeonardoP 1) = [3, 1, 5, 7, 13, 21] := by
   decide
-
-/-- **Incomplete Leonardo p-numbers.** For natural numbers $p$, $n$ and $k$, the incomplete
-Leonardo $p$-number is the integer
-$$
-\mathcal{L}_{p,n}(k) = (p + 1) \sum_{i=0}^{k} \binom{\max(n - pi, 0)}{i} - p.
-$$
-On the paper's range $0 \le k \le \lfloor n/(p+1) \rfloor$ the maximum is always $n - pi$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, display (4). -/
-def incompleteLeonardoP (p n k : ℕ) : ℤ :=
-  (p + 1) * ∑ i ∈ Finset.range (k + 1), ((n - p * i).choose i : ℤ) - p
-
-/-- **Incomplete Leonardo p-numbers at zero.** For all natural numbers $p$ and $n$, the
-incomplete Leonardo $p$-number $\mathcal{L}_{p,n}(0)$ equals $1$.
-
-Source: Belkhir and Tan, INTEGERS 25 (2025), Article A57, display (4). -/
-theorem incompleteLeonardoP_zero (p n : ℕ) : incompleteLeonardoP p n 0 = 1 := by
-  simp [incompleteLeonardoP]
 
 /-- **Incomplete Lucas-Leonardo p-numbers.** For natural numbers $p$, $n$ and $k$, the
 incomplete Lucas-Leonardo $p$-number is the rational number
@@ -413,52 +397,6 @@ public theorem_wanted leonardoPK_self_homogeneous (p : ℕ) (hp : 1 ≤ p) :
         leonardoPK p p (n - 1) + leonardoPK p p (n - p) - leonardoPK p p (n - 2 * p - 1)) ∧
     (∀ i, i ≤ p → leonardoPK p p i = 1) ∧
     (∀ j, 1 ≤ j → j ≤ p → leonardoPK p p (p + j) = (j : ℤ) + 1 + j * p)
-
-/-- **Recurrence for incomplete Leonardo p-numbers.** For natural numbers $p \ge 1$, $n > p$ and
-$k \le \lfloor n/(p+1) \rfloor$, the incomplete Leonardo $p$-numbers $\mathcal{L}_{p,m}(j)$
-satisfy
-$$
-\mathcal{L}_{p,n}(k + 1) = \mathcal{L}_{p,n-1}(k + 1) + \mathcal{L}_{p,n-p-1}(k) + p.
-$$
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 6. -/
-public theorem_wanted incompleteLeonardoP_succ (p n k : ℕ) (hp : 1 ≤ p) (hn : p < n)
-    (hk : k ≤ n / (p + 1)) :
-    incompleteLeonardoP p n (k + 1) =
-      incompleteLeonardoP p (n - 1) (k + 1) + incompleteLeonardoP p (n - p - 1) k + p
-
-/-- **Binomial sum identity for incomplete Leonardo p-numbers.** For natural numbers $p \ge 1$,
-$n$, $r$ and $k$ with $n \ge p + r$ and $k \le \lfloor (n - p - r)/(p + 1) \rfloor$, the
-incomplete Leonardo $p$-numbers $\mathcal{L}_{p,m}(j)$ satisfy
-$$
-\sum_{i=0}^{r} \binom{r}{i} \mathcal{L}_{p,n+pi}(k + i) + (2^r - 1) p =
-\mathcal{L}_{p,n+(p+1)r}(k + r).
-$$
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 7. -/
-public theorem_wanted sum_choose_mul_incompleteLeonardoP (p n r k : ℕ) (hp : 1 ≤ p)
-    (hnr : p + r ≤ n) (hk : k ≤ (n - p - r) / (p + 1)) :
-    ∑ i ∈ Finset.range (r + 1), (r.choose i : ℤ) * incompleteLeonardoP p (n + p * i) (k + i) +
-        ((2 : ℤ) ^ r - 1) * p =
-      incompleteLeonardoP p (n + (p + 1) * r) (k + r)
-
-/-- **Partial sums of incomplete Leonardo p-numbers.** For natural numbers $p \ge 1$, $n$, $k$ and
-$r$ with $n \ge (p + 1)(k + 1)$, the incomplete Leonardo $p$-numbers $\mathcal{L}_{p,m}(j)$
-satisfy
-$$
-\sum_{i=0}^{r-1} \mathcal{L}_{p,n-p+i}(k) + rp =
-\mathcal{L}_{p,n+r}(k + 1) - \mathcal{L}_{p,n}(k + 1),
-$$
-where the sum is empty when $r = 0$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 8. -/
-public theorem_wanted sum_incompleteLeonardoP (p n k r : ℕ) (hp : 1 ≤ p)
-    (hn : (p + 1) * (k + 1) ≤ n) :
-    ∑ i ∈ Finset.range r, incompleteLeonardoP p (n - p + i) k + (r : ℤ) * p =
-      incompleteLeonardoP p (n + r) (k + 1) - incompleteLeonardoP p n (k + 1)
 
 /-- **Binomial addition formula for hyper Leonardo $p$-numbers.** For natural numbers $p \ge 1$,
 $n \ge 1$, $m \ge 1$ and $k \ge m$, the hyper Leonardo $p$-numbers satisfy
