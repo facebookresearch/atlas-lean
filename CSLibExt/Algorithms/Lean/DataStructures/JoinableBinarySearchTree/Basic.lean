@@ -124,23 +124,31 @@ public def join2 (l r : Tree α β) : Tree α β :=
   | some (m, r') => J.join l m r'
 
 /-- `split x t = (l, b, r)`: `l` holds the elements `< x`, `r` the elements
-`> x`, and `b` says whether `x` was present (book §10.2). -/
+`> x`, and `b` says whether `x` was present (book §10.2). The recursive
+result is bound once with `let`, so the work is linear in the height
+(calling it separately for each projection would be exponential). -/
 public def split (x : α) : Tree α β → Tree α β × Bool × Tree α β
   | .Leaf => (Tree.Leaf, false, Tree.Leaf)
   | .Node l (a, _) r =>
     if x < a then
-      ((split x l).1, (split x l).2.1, J.join (split x l).2.2 a r)
+      let s := split x l
+      (s.1, s.2.1, J.join s.2.2 a r)
     else if x = a then (l, true, r)
     else
-      (J.join l a (split x r).1, (split x r).2.1, (split x r).2.2)
+      let s := split x r
+      (J.join l a s.1, s.2.1, s.2.2)
 
-/-- `insert x t = join (split x t).1 x (split x t).2.2` (book §10.2). -/
+/-- `insert x t = join (split x t).1 x (split x t).2.2` (book §10.2).
+The `split` result is shared with `let`. -/
 public def insert (x : α) (t : Tree α β) : Tree α β :=
-  J.join (split J x t).1 x (split J x t).2.2
+  let s := split J x t
+  J.join s.1 x s.2.2
 
-/-- `delete x t = join2 (split x t).1 (split x t).2.2` (book §10.2). -/
+/-- `delete x t = join2 (split x t).1 (split x t).2.2` (book §10.2).
+The `split` result is shared with `let`. -/
 public def delete (x : α) (t : Tree α β) : Tree α β :=
-  join2 J (split J x t).1 (split J x t).2.2
+  let s := split J x t
+  join2 J s.1 s.2.2
 
 /-- `union` (book Fig. 10.3): divide and conquer on the first tree,
 splitting the second at each pivot. Both base cases of Fig. 10.3 are
@@ -151,25 +159,29 @@ public def union : Tree α β → Tree α β → Tree α β
   | .Leaf, t₂ => t₂
   | t₁, .Leaf => t₁
   | .Node l₁ (a, _) r₁, t₂ =>
-    J.join (union l₁ (split J a t₂).1) a (union r₁ (split J a t₂).2.2)
+    let s := split J a t₂
+    J.join (union l₁ s.1) a (union r₁ s.2.2)
 
-/-- `inter` (book Fig. 10.3). -/
+/-- `inter` (book Fig. 10.3). The `split` result is shared with `let`. -/
 public def inter : Tree α β → Tree α β → Tree α β
   | .Leaf, _ => Tree.Leaf
   | _, .Leaf => Tree.Leaf
   | .Node l₁ (a, _) r₁, t₂ =>
-    if (split J a t₂).2.1 then
-      J.join (inter l₁ (split J a t₂).1) a (inter r₁ (split J a t₂).2.2)
+    let s := split J a t₂
+    if s.2.1 then
+      J.join (inter l₁ s.1) a (inter r₁ s.2.2)
     else
-      join2 J (inter l₁ (split J a t₂).1) (inter r₁ (split J a t₂).2.2)
+      join2 J (inter l₁ s.1) (inter r₁ s.2.2)
 
 /-- `diff` (book Fig. 10.3): divide and conquer on the *second* tree,
 splitting the first at each pivot. Defined by recursion on the second
-argument, so `diff t₁ Leaf = t₁` holds definitionally. -/
+argument, so `diff t₁ Leaf = t₁` holds definitionally. The `split`
+result is shared with `let`. -/
 public def diff (t₁ : Tree α β) : Tree α β → Tree α β
   | .Leaf => t₁
   | .Node l₂ (a, _) r₂ =>
-    join2 J (diff (split J a t₁).1 l₂) (diff (split J a t₁).2.2 r₂)
+    let s := split J a t₁
+    join2 J (diff s.1 l₂) (diff s.2.2 r₂)
 
 /-! ### Auxiliary lemmas about `set_tree` and `bst` -/
 
@@ -936,16 +948,23 @@ public theorem singleton_bst (x : α) : bst (singleton J x) := by
 public theorem singleton_inv (x : α) : J.inv (singleton J x) :=
   J.inv_join _ _ _ J.inv_leaf J.inv_leaf
 
-/-- Exercise 10.1: `insert'` via `union` and `join`. -/
-public def insert' (x : α) (t : Tree α β) : Tree α β := union J t (singleton J x)
+/-- Exercise 10.1: `insert'` via `union` and `join`. The singleton comes
+first: `union` recurses on its first argument, so this walks only the
+singleton (one `split` of `t`), instead of traversing all of `t`. -/
+public def insert' (x : α) (t : Tree α β) : Tree α β := union J (singleton J x) t
 
-public theorem insert'_set (x : α) (t : Tree α β) (_hbst : bst t) :
+public theorem insert'_set (x : α) (t : Tree α β) (hbst : bst t) :
     set_tree (insert' J x t) = set_tree t ∪ {x} := by
-  simp [insert', union_set J t (singleton J x) (singleton_bst J x), singleton_set]
+  simp only [insert', union_set J (singleton J x) t hbst, singleton_set]
+  exact Set.union_comm _ _
 
 public theorem insert'_bst (x : α) (t : Tree α β) (hbst : bst t) :
     bst (insert' J x t) :=
-  union_bst J t (singleton J x) hbst (singleton_bst J x)
+  union_bst J (singleton J x) t (singleton_bst J x) hbst
+
+public theorem insert'_inv (x : α) (t : Tree α β) (hinv : J.inv t) :
+    J.inv (insert' J x t) :=
+  union_inv J (singleton J x) t (singleton_inv J x) hinv
 
 /-- Exercise 10.1: `delete'` via `diff`. -/
 public def delete' (x : α) (t : Tree α β) : Tree α β := diff J t (singleton J x)
@@ -958,6 +977,10 @@ public theorem delete'_bst (x : α) (t : Tree α β) (hbst : bst t) :
     bst (delete' J x t) :=
   diff_bst J t (singleton J x) hbst (singleton_bst J x)
 
+public theorem delete'_inv (x : α) (t : Tree α β) (hinv : J.inv t) :
+    J.inv (delete' J x t) :=
+  diff_inv J t (singleton J x) hinv (singleton_inv J x)
+
 /-- Exercise 10.2: `diff1` — pattern-match on `t₁`, split `t₂`. Unlike
 `diff` (whose pivot comes from `t₂`, so it is always present), the pivot
 `a` here comes from `t₁` and may or may not be in `t₂`: include it via
@@ -966,10 +989,11 @@ present (`b = true`). -/
 public def diff1 : Tree α β → Tree α β → Tree α β
   | .Leaf, _ => Tree.Leaf
   | .Node l₁ (a, _) r₁, t₂ =>
-    if (split J a t₂).2.1 then
-      join2 J (diff1 l₁ (split J a t₂).1) (diff1 r₁ (split J a t₂).2.2)
+    let s := split J a t₂
+    if s.2.1 then
+      join2 J (diff1 l₁ s.1) (diff1 r₁ s.2.2)
     else
-      J.join (diff1 l₁ (split J a t₂).1) a (diff1 r₁ (split J a t₂).2.2)
+      J.join (diff1 l₁ s.1) a (diff1 r₁ s.2.2)
 
 public theorem diff1_set (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ : bst t₂) :
     set_tree (diff1 J t₁ t₂) = set_tree t₁ \ set_tree t₂ := by
@@ -1051,6 +1075,23 @@ public theorem diff1_bst (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ 
           rw [hs₂] at hy
           simp only [Set.mem_sdiff] at hy
           exact hbst₁'.2.2.2 y hy.1⟩
+
+/-- `diff1` preserves `inv` (Exercise 10.2). -/
+public theorem diff1_inv (t₁ t₂ : Tree α β) (hinv₁ : J.inv t₁) (hinv₂ : J.inv t₂) :
+    J.inv (diff1 J t₁ t₂) := by
+  induction t₁ generalizing t₂ with
+  | Leaf => exact J.inv_leaf
+  | Node l₁ kv r₁ ihl ihr =>
+    obtain ⟨a, b⟩ := kv
+    have hinv₁' : J.inv l₁ ∧ J.inv r₁ := J.inv_node l₁ (a, b) r₁ hinv₁
+    have hspi := split_inv J t₂ a hinv₂
+    by_cases hb : (split J a t₂).2.1 = true
+    · simp only [diff1, ite_eq_left hb]
+      exact join2_inv J (ihl (split J a t₂).1 hinv₁'.1 hspi.1)
+        (ihr (split J a t₂).2.2 hinv₁'.2 hspi.2)
+    · simp only [diff1, ite_eq_right hb]
+      exact J.inv_join _ _ _ (ihl (split J a t₂).1 hinv₁'.1 hspi.1)
+        (ihr (split J a t₂).2.2 hinv₁'.2 hspi.2)
 
 
 

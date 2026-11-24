@@ -100,5 +100,11 @@ example : naiveJoinData.inv (union naiveJoinData t1 t2) :=
 example : naiveJoinData.inv (split naiveJoinData 2 t1).1 ∧
     naiveJoinData.inv (split naiveJoinData 2 t1).2.2 :=
   split_inv naiveJoinData t1 2 trivial
+example : naiveJoinData.inv (insert' naiveJoinData 2 t1) :=
+  insert'_inv naiveJoinData 2 t1 trivial
+example : naiveJoinData.inv (delete' naiveJoinData 1 t1) :=
+  delete'_inv naiveJoinData 1 t1 trivial
+example : naiveJoinData.inv (diff1 naiveJoinData t1 t2) :=
+  diff1_inv naiveJoinData t1 t2 trivial trivial
 
 end Cslib.Algorithms.Lean.JoinableBinarySearchTree.Tests.Basic
