@@ -9,3 +9,4 @@ Category theory organizes mathematical structures through morphisms, functors, u
 - [Limits and colimits](limits-and-colimits/README.md)
 - [Categories, functors and natural transformations](categories-and-functors/README.md)
 - [Adjunctions and Kan extensions](adjunctions-and-kan-extensions/README.md)
+- [Algebraic K-theory](algebraic-k-theory/README.md)

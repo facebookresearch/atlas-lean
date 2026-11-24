@@ -192,6 +192,7 @@
      {"slug": "resolutions-and-derived-functors", "title": "Resolutions and derived functors", "description": "Projective and injective objects, resolutions and dimensions, left and right derived functors of additive functors, Ext and Tor, and derived functors between localized categories via derivability structures."},
      {"slug": "spectral-sequences", "title": "Spectral sequences", "description": "Spectral objects and spectral sequences, their pages and convergence, and the spectral sequences of filtered and double complexes."}
     ]},
+    {"slug": "algebraic-k-theory", "title": "Algebraic K-theory", "description": "K-groups of rings and exact or Waldhausen categories: Grothendieck groups, stable general linear groups and their abelianization, higher K-theory via plus and Q constructions, Milnor symbols and Steinberg relations, and functoriality. Topological K-theory belongs to algebraic topology.", "msc": ["19A", "19B", "19C", "19D", "19F"], "subfields": []},
     {"slug": "condensed-mathematics", "title": "Condensed mathematics", "description": "Sheaves on profinite sets and compact Hausdorff spaces for the coherent topology: condensed and light condensed sets and modules, discrete condensed objects, solid modules, and the comparison with topological spaces.", "msc": ["18F10", "18F20", "18F60", "54B30"], "subfields": []}
    ]
   },
@@ -11671,6 +11672,7 @@
   "MathlibExt/InformationTheory/ShannonSourceCoding": {"to": "InformationTheory/source-coding", "title": "Shannon's source coding theorem"},
   "MathlibExt/InformationTheory/Shearer": {"to": "InformationTheory/information-inequalities", "title": "Shearer's entropy inequality"},
   "MathlibExt/InformationTheory/StrongDataProcessing": {"to": "InformationTheory/information-inequalities", "title": "Strong data processing and Dobrushin's coefficient"},
+  "MathlibExt/KTheory": {"to": "CategoryTheory/algebraic-k-theory", "title": "Algebraic K-theory"},
   "MathlibExt/LinearAlgebra/AffineEvaluation": {"to": "LinearAlgebra/linear-maps-and-duality", "title": "Two-point interpolation of affine functions"},
   "MathlibExt/LinearAlgebra/BilinearForm/DualLattice": {"to": "LinearAlgebra/bilinear-and-quadratic-forms", "title": "Dual lattices"},
   "MathlibExt/LinearAlgebra/BilinearForm/DualLatticeReflexive": {"to": "LinearAlgebra/bilinear-and-quadratic-forms", "title": "Dual lattices"},
