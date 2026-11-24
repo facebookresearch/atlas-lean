@@ -30,3 +30,8 @@
 - [Squared-heterozygosity functional of the neutral realization](integral-sq-two-mul-one-sub-absorption-t-2.md)
 
 - [Qualifications of the neutral substitution rate: generation time, linkage and units](k-u-qualifications-generation-time-linkage-and-u.md)
+
+## Stability of stopped occupation under uniform limits
+
+- [Occupation identity until absorption persists under uniform limits](integral-absorption-time-of-generator-eq-3.md)
+- [Uniform-limit occupation identity for the neutral realization](integral-absorption-time-of-generator-eq-2-2.md)

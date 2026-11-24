@@ -62,16 +62,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
 
-/-- **Rascal numbers count binary words with at most one ascent.** For all integers $n$ and $k$,
-$R_{n,k} = b_k(n)$, where $R_{n,k}$ is the Rascal number and $b_k(n)$ is the number of binary
-words of length $n$ with exactly $k$ ones and at most one ascent (taken to be $0$ unless
-$0 \le k \le n$).
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 1. -/
-theorem_wanted rascalZ_eq_rascalGenZ_one (n k : ℤ) :
-    rascalZ n k = rascalGenZ 1 n k
-
 /-- **Symmetry of Rascal numbers.** For integers $n$ and $k$ with $0 \le k \le n$, the Rascal
 numbers satisfy $R_{n,k} = R_{n,n-k}$.
 
