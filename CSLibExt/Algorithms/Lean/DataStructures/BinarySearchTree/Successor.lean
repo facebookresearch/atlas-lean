@@ -11,11 +11,12 @@ module
 public import CSLibExt.Algorithms.Lean.DataStructures.BinarySearchTree
 
 /-!
-# Successor queries in binary search trees
+# Successor and predecessor queries in binary search trees
 
-The successor of a key `x` is the least stored key strictly greater than `x`, and `none`
-exactly when no stored key exceeds `x`. Like `rank` and `select`, `successor` is a
-traversal specification via the inorder traversal; it claims no navigation cost.
+The successor of a key `x` is the least stored key strictly greater than `x`, and the
+predecessor the greatest stored key strictly smaller than `x`; each is `none` exactly
+when no such key exists. Like `rank` and `select`, these are traversal specifications
+via the inorder traversal; they claim no navigation cost.
 -/
 
 set_option autoImplicit false
@@ -384,6 +385,201 @@ public theorem successor_eq_none_iff {α : Type u} [LinearOrder α] {x : α}
       exact hmin y (mem_inorder.mpr hy)
     · intro hmin y hy
       exact hmin y (mem_inorder.mp hy)
+
+/-- **Predecessor in a binary search tree.** For a linearly ordered type `α`, a
+key `x` and a binary tree `t`, the predecessor of `x` in `t` is the last entry
+of the inorder traversal of `t` that is strictly less than `x`; equivalently
+the greatest key of `t` strictly smaller than `x` on ordered trees. This is a
+traversal specification; it claims no navigation cost. -/
+public def predecessor {α : Type u} [LinearOrder α] (x : α) (tree : BinaryTree α) :
+    Option α :=
+  if h : 0 < rank x tree then select tree (rank x tree - 1) else none
+
+private theorem le_of_filter_length_eq_zero {α : Type u} [LinearOrder α] {x : α}
+    {xs : List α} (h : ((xs.filter (· < x)).length) = 0) {z : α} (hz : z ∈ xs) :
+    x ≤ z := by
+  have hnil : xs.filter (· < x) = [] := List.eq_nil_of_length_eq_zero h
+  have hall := (List.filter_eq_nil_iff.mp hnil) z hz
+  simp only [decide_eq_true_eq] at hall
+  exact le_of_not_gt hall
+
+private theorem predSome_of_pos {α : Type u} [LinearOrder α] {x y : α} {xs : List α}
+    (hxs : List.Pairwise (· < ·) xs) (hpos : 0 < ((xs.filter (· < x)).length)) :
+    xs[((xs.filter (· < x)).length) - 1]? = some y ↔
+      y ∈ xs ∧ y < x ∧ ∀ z ∈ xs, z < x → z ≤ y := by
+  induction xs with
+  | nil =>
+      simp at hpos
+  | cons a as ih =>
+      rw [List.pairwise_cons] at hxs
+      rcases hxs with ⟨ha, has⟩
+      rcases lt_trichotomy a x with hax | hax | hax
+      · -- The head is below the queried key: it is the predecessor unless the tail
+        -- holds a smaller key that is still below the queried key.
+        have hlen : (((a :: as).filter (· < x)).length)
+            = ((as.filter (· < x)).length) + 1 := by simp [hax]
+        rw [hlen, Nat.add_sub_cancel]
+        by_cases hj : (as.filter (· < x)).length = 0
+        · -- No smaller key in the tail is below the queried key: the head is the
+          -- predecessor.
+          rw [hj]
+          simp only [List.getElem?_cons_zero]
+          constructor
+          · intro h
+            have hay : a = y := by simpa using h
+            subst hay
+            refine ⟨by simp, hax, ?_⟩
+            intro z hz hzx
+            rw [List.mem_cons] at hz
+            rcases hz with rfl | hz
+            · exact le_rfl
+            · exact (not_le_of_gt hzx (le_of_filter_length_eq_zero hj hz)).elim
+          · rintro ⟨hy, hyx, hmax⟩
+            rw [List.mem_cons] at hy
+            rcases hy with rfl | hy
+            · rfl
+            · exact (not_le_of_gt hyx (le_of_filter_length_eq_zero hj hy)).elim
+        · -- The tail holds a smaller key below the queried key: recurse into it.
+          have hpos' : 0 < (as.filter (· < x)).length := Nat.pos_of_ne_zero hj
+          obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero hj
+          have hk' : (as.filter (· < x)).length = k + 1 := by omega
+          rw [hk', List.getElem?_cons_succ]
+          have hIH := ih has hpos'
+          rw [hk'] at hIH
+          simp only [Nat.add_sub_cancel] at hIH
+          rw [hIH]
+          constructor
+          · rintro ⟨hy, hyx, hmax⟩
+            refine ⟨List.mem_cons.mpr (Or.inr hy), hyx, ?_⟩
+            intro z hz hzx
+            rw [List.mem_cons] at hz
+            rcases hz with rfl | hz
+            · exact le_of_lt (ha y hy)
+            · exact hmax z hz hzx
+          · rintro ⟨hy, hyx, hmax⟩
+            rw [List.mem_cons] at hy
+            rcases hy with hya | hy
+            · -- The head cannot be maximal: the tail holds a key below `x`
+              -- which exceeds the head.
+              have hne : (as.filter (· < x)) ≠ [] := by
+                intro hnil
+                simp [hnil] at hpos'
+              obtain ⟨w, hw⟩ := List.exists_mem_of_ne_nil _ hne
+              rw [List.mem_filter] at hw
+              simp only [decide_eq_true_eq] at hw
+              have hwa : w ≤ y :=
+                hmax w (List.mem_cons.mpr (Or.inr hw.1)) hw.2
+              have hwa' : w ≤ a := by
+                rw [hya] at hwa
+                exact hwa
+              exact (lt_irrefl a (lt_of_lt_of_le (ha w hw.1) hwa')).elim
+            · refine ⟨hy, hyx, ?_⟩
+              intro z hz hzx
+              exact hmax z (List.mem_cons.mpr (Or.inr hz)) hzx
+      · -- The head equals the queried key: it is the minimum, so no smaller key
+        -- exists.
+        have h1 : ¬ a < x := by
+          rw [hax]
+          exact lt_irrefl x
+        have hflt : (a :: as).filter (· < x) = as.filter (· < x) := by simp [h1]
+        have hall : ∀ b ∈ as, x < b := by
+          intro b hb
+          rw [← hax]
+          exact ha b hb
+        have hnil : as.filter (· < x) = [] := filter_lt_nil_of_forall_gt hall
+        have hlen0 : (((a :: as).filter (· < x)).length) = 0 := by simp [hflt, hnil]
+        omega
+      · -- The head is above the queried key: no smaller key exists.
+        have hall : ∀ b ∈ a :: as, x < b := by
+          intro b hb
+          rw [List.mem_cons] at hb
+          rcases hb with rfl | hb
+          · exact hax
+          · exact lt_trans hax (ha b hb)
+        have hnil : (a :: as).filter (· < x) = [] :=
+          filter_lt_nil_of_forall_gt hall
+        have hlen0 : (((a :: as).filter (· < x)).length) = 0 := by simp [hnil]
+        omega
+
+private theorem predNone_of_pos {α : Type u} [LinearOrder α] {x : α} {xs : List α}
+    (hxs : List.Pairwise (· < ·) xs) (hpos : 0 < ((xs.filter (· < x)).length)) :
+    xs[((xs.filter (· < x)).length) - 1]? = none ↔ ∀ y ∈ xs, x ≤ y := by
+  have hlt : ((xs.filter (· < x)).length) - 1 < xs.length := by
+    have hle := List.length_filter_le (· < x) xs
+    omega
+  have hsome := List.getElem?_eq_getElem hlt
+  have hw := (predSome_of_pos hxs hpos).mp hsome
+  rcases hw with ⟨hmem, hwlt, -⟩
+  constructor
+  · intro hnone
+    rw [hsome] at hnone
+    simp at hnone
+  · intro hall
+    exact absurd (hall _ hmem) (not_le_of_gt hwlt)
+
+public theorem predecessor_eq_some_iff {α : Type u} [LinearOrder α] {x y : α}
+    {tree : BinaryTree α} (hTree : Ordered tree) :
+    predecessor x tree = some y ↔
+      y ∈ tree ∧ y < x ∧ ∀ z ∈ tree, z < x → z ≤ y := by
+  have hord := ordered_inorder hTree
+  by_cases hpos : 0 < rank x tree
+  · have hpred : predecessor x tree = select tree (rank x tree - 1) := by
+      simp [predecessor, hpos]
+    have hpos' : 0 < (((inorder tree).filter (· < x)).length) := by
+      rw [← rank_eq_count_inorder]
+      exact hpos
+    rw [hpred, select_eq_getElem?_inorder, rank_eq_count_inorder,
+      predSome_of_pos hord hpos']
+    constructor
+    · rintro ⟨hy, hyx, hmax⟩
+      refine ⟨mem_inorder.mp hy, hyx, ?_⟩
+      intro z hz hzx
+      exact hmax z (mem_inorder.mpr hz) hzx
+    · rintro ⟨hy, hyx, hmax⟩
+      refine ⟨mem_inorder.mpr hy, hyx, ?_⟩
+      intro z hz hzx
+      exact hmax z (mem_inorder.mp hz) hzx
+  · have hpred : predecessor x tree = none := by
+      simp [predecessor, hpos]
+    have hzero : (((inorder tree).filter (· < x)).length) = 0 := by
+      rw [← rank_eq_count_inorder]
+      omega
+    rw [hpred]
+    constructor
+    · intro h
+      simp at h
+    · rintro ⟨hy, hyx, -⟩
+      exact absurd (le_of_filter_length_eq_zero hzero (mem_inorder.mpr hy))
+        (not_le_of_gt hyx)
+
+public theorem predecessor_eq_none_iff {α : Type u} [LinearOrder α] {x : α}
+    {tree : BinaryTree α} (hTree : Ordered tree) :
+    predecessor x tree = none ↔ ∀ y ∈ tree, x ≤ y := by
+  have hord := ordered_inorder hTree
+  by_cases hpos : 0 < rank x tree
+  · have hpred : predecessor x tree = select tree (rank x tree - 1) := by
+      simp [predecessor, hpos]
+    have hpos' : 0 < (((inorder tree).filter (· < x)).length) := by
+      rw [← rank_eq_count_inorder]
+      exact hpos
+    rw [hpred, select_eq_getElem?_inorder, rank_eq_count_inorder,
+      predNone_of_pos hord hpos']
+    constructor
+    · intro hall y hy
+      exact hall y (mem_inorder.mpr hy)
+    · intro hall y hy
+      exact hall y (mem_inorder.mp hy)
+  · have hpred : predecessor x tree = none := by
+      simp [predecessor, hpos]
+    have hzero : (((inorder tree).filter (· < x)).length) = 0 := by
+      rw [← rank_eq_count_inorder]
+      omega
+    rw [hpred]
+    constructor
+    · intro _ y hy
+      exact le_of_filter_length_eq_zero hzero (mem_inorder.mpr hy)
+    · intro _
+      rfl
 
 end BinarySearchTree
 end Cslib.Algorithms.Lean
