@@ -1250,12 +1250,12 @@ def record_root_custody(tools: Tools, receipts: Iterable[object]) -> None:
 SAVED_INPUT_MANIFEST = re.compile(r"[0-9a-f]{64}\.json")
 
 
-def saved_root_receipts(root: Path, output: Path, growth: dict[str, dict[str, object]]
-                        ) -> dict[str, dict[str, object]]:
+def saved_root_receipts(root: Path, output: Path, growth: dict[str, dict[str, object]],
+                        rewrites: dict[str, dict[str, object]] | None = None) -> dict[str, dict[str, object]]:
     """Every root-package artifact receipt an earlier invocation of this run saved.
 
-    These are the additions its accepted Lake preparations recorded
-    (`lake-growth/`) and the root-package entries of every compilation input
+    These are the additions and rewrites its accepted Lake preparations
+    recorded (`lake-growth/`) and the root-package entries of every compilation input
     manifest it pinned (`inputs/`), whether or not a successful row refers
     to them. Each path must have one receipt.
     """
@@ -1269,7 +1269,7 @@ def saved_root_receipts(root: Path, output: Path, growth: dict[str, dict[str, ob
         if receipts.setdefault(receipt["path"], receipt) != receipt:
             raise ValueError(f"Saved receipts disagree on a root-package artifact: {receipt['path']}")
 
-    for path, receipt in growth.items():
+    for path, receipt in [*growth.items(), *(rewrites or {}).items()]:
         if not is_root_artifact_path(path, prefixes) or not Path(path).is_absolute():
             raise ValueError(f"Recorded Lake growth is outside the root artifact root: {path}")
         add(receipt, output / LAKE_GROWTH_DIRECTORY)
@@ -1357,9 +1357,12 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
     after it, each keeps its directory node and resolved path, pinned
     artifacts are checked again, nothing may be removed, and only artifacts
     of new modules among `modules` (the requested targets and their frozen
-    local dependencies) may be added. Root inventories are then taken again
-    with new directory custody, and the additions are taken into custody and
-    recorded under the output directory for resume. Compiler and dependency inventories stay
+    local dependencies) may be added. Every existing root artifact is stated
+    before the build; one whose identity changed was rewritten, which only a
+    module among `modules` may be, and never a pinned one. Root inventories
+    are then taken again with new directory custody, and the additions and
+    rewrites are taken into custody and recorded under the output directory
+    for resume. Compiler and dependency inventories stay
     cached. Independently of any cache, every artifact path of each module
     in `modules` under every searched root (`LEAN_PATH` entries under both
     spellings, the root artifact root and the compiler library) is probed
@@ -1378,6 +1381,7 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
         raise ValueError(f"An earlier Lake preparation was rejected: {tools.lake_custody_failure[0]}")
     cached_before = dict(tools.library_inventories)
     released: dict[Path, tuple[tuple[str, ...], dict[Path, SourceIdentity]]] = {}
+    rewritten: dict[str, dict[str, object]] = {}
     try:
         for paths, directories in tools.library_inventories.values():
             verify_library_directories(directories, paths)
@@ -1434,6 +1438,10 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
                 absent_names.setdefault(ancestor, set()).add((rest / path.name).parts[0])
         for parent in absent_names:
             identities.setdefault(parent, path_component_identity(parent))
+        # Every existing root artifact, stated (not hashed): an identity that
+        # changes through the build is a rewrite.
+        states = {path: path_state(Path(path)) for paths, _ in released.values() for path in paths}
+        states.update((str(path), path_state(path)) for path in files_before)
         # From here until every record below is saved, an interruption leaves this marker.
         write_json(custody_directory / PENDING_PREPARATION, {"preparation": str(label), "modules": sorted(modules)})
         with guard_path_component_moves(identities, mutable_roots=(*watched, build_root, tools.output),
@@ -1471,6 +1479,16 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
         for path in sorted(added):
             if build_artifact_module(tools, path) not in modules:
                 raise ValueError(f"Lake preparation added an artifact outside its requested modules: {path}")
+        for path, before in states.items():
+            if path not in custody and path_state(Path(path)) != before:
+                rewritten[path] = file_pin(Path(path), tools.file_cache)
+        for path in sorted(rewritten):
+            own = build_artifact_module(tools, path)
+            if own not in modules:
+                raise ValueError(f"Lake preparation rewrote an artifact outside its requested modules: {path}")
+            aliases = sorted(set(artifact_module_names(path, roots)) - {own})
+            if aliases:
+                raise ValueError(f"Lake preparation rewrote an artifact visible as module {aliases[0]}: {path}")
         shadow = shadowed_provider(tools, added, existing)
         if shadow is not None:
             raise ValueError(f"Lake preparation added an artifact for an existing module: {shadow}")
@@ -1493,11 +1511,12 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
     write_json(custody_directory / "listing.json",
                {"namespaces": sorted(path.name for path in namespaces_after),
                 "files": sorted(path.name for path in files_after)})
-    if added:
-        # Accepted growth is under custody from now on, as if it had been pinned.
-        record_root_custody(tools, added.values())
+    if added or rewritten:
+        # Accepted growth and rewrites are under custody from now on, as if pinned.
+        record_root_custody(tools, [*added.values(), *rewritten.values()])
         write_json(tools.output / LAKE_GROWTH_DIRECTORY / f"{time.time_ns()}.json",
-                   {"preparation": str(label), "added": [added[path] for path in sorted(added)]})
+                   {"preparation": str(label), "added": [added[path] for path in sorted(added)],
+                    "rewritten": [rewritten[path] for path in sorted(rewritten)]})
     (custody_directory / PENDING_PREPARATION).unlink()
     return result
 
@@ -1518,11 +1537,12 @@ def local_dependency_closure(inventory: list[dict[str, object]], targets: set[st
     return frozenset(closure)
 
 
-def read_lake_growth(output: Path) -> dict[str, dict[str, object]]:
+def read_lake_growth(output: Path, key: str = "added") -> dict[str, dict[str, object]]:
+    """Recorded additions (`added`) or rewrites of existing artifacts (`rewritten`), by path."""
     growth: dict[str, dict[str, object]] = {}
     directory = output / LAKE_GROWTH_DIRECTORY
     for record in sorted(directory.glob("*.json")) if directory.is_dir() else ():
-        added = read_json(record).get("added")
+        added = read_json(record).get(key, [] if key == "rewritten" else None)
         if not isinstance(added, list):
             raise ValueError(f"Invalid recorded Lake growth: {record}")
         for pin in added:
@@ -5326,7 +5346,7 @@ def main() -> int:
         # earlier invocation recorded as Lake growth or pinned as a compilation input must still have
         # its receipt. The identities hashed here become this process's custody below.
         recorded_growth = read_lake_growth(output)
-        saved_receipts = saved_root_receipts(root, output, recorded_growth)
+        saved_receipts = saved_root_receipts(root, output, recorded_growth, read_lake_growth(output, "rewritten"))
         if saved_receipts and not (output / "run.json").exists():
             raise ValueError("Refusing saved artifact receipts without their original run identity")
         verify_saved_root_receipts(saved_receipts, source_cache)

@@ -22,6 +22,10 @@ Build every dependency package before optimizing. Each Lake preparation watches
 the module paths it may add under every captured `LEAN_PATH` entry, including
 entries that do not exist yet, so a preparation that creates a dependency's
 artifact root is rejected, and the output directory refuses later preparations.
+Build the root package's own modules up to date as well: a preparation may
+rebuild an existing artifact of a requested module only while nothing has pinned
+it, so a stale root artifact that an earlier batch pinned blocks the run when a
+later batch's Lake rebuilds it.
 
 Run from the repository root. The inventory includes tracked root-package Lean
 sources and read-only helpers under `scripts/`. It excludes `Atlas/`, `v1/`, and
@@ -96,15 +100,23 @@ an earlier batch pinned. Around each preparation (batched or per row):
   the requested targets and their frozen local dependencies, in existing or new
   namespaces or at the top level. An addition's module must have had no
   artifact under any searched root, and the addition may not be visible as
-  another module under a nested or enclosing searched root.
+  another module under a nested or enclosing searched root. Every existing root
+  artifact is stated before the build (no hashing); one whose identity changed,
+  even with the same bytes, was rewritten. Only artifacts of the requested
+  targets and their frozen local dependencies may be rewritten, never a pinned
+  one, and a rewritten artifact may not be visible as another module. A root
+  namespace that resolves outside the root artifact root is checked like the
+  compiler and dependency libraries, by its directories, not file by file.
 
 The first rejection blocks that batch, and every later preparation is refused,
 in this invocation and in later `--resume` invocations of the same output
 directory; nothing taken during the rejected attempt is trusted. The rejection
 and the top-level listing after the last accepted preparation are recorded
-under `lake-custody/`, and accepted additions under `lake-growth/`, in the
-output directory. Accepted additions are under custody from their preparation
-on, like pinned artifacts. A resumed invocation starts from that listing, and
+under `lake-custody/`, and accepted additions and rewrites under `lake-growth/`,
+in the output directory. Accepted additions and rewrites are under custody from
+their preparation on, like pinned artifacts. A root artifact present before the
+run that nothing pinned or rewrote is trusted when first used, as at the start
+of a run. A resumed invocation starts from that listing, and
 before any child process runs, whatever its journal holds, every root-package
 artifact an earlier invocation recorded under `lake-growth/` or pinned in a
 compilation input manifest under `inputs/` must still have its saved bytes; the

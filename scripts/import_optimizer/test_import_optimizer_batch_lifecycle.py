@@ -835,6 +835,17 @@ class SearchedProviderTests(unittest.TestCase):
                                  f"{provider.format(root=root)})")
                 self.assertEqual(optimizer.read_lake_growth(tools.output), {})
 
+    def test_a_rewrite_visible_under_another_searched_root_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            build = root / ".lake/build/lib/lean"
+            tools, build, _ = self.setup_tree(root, [str(build), str(build / "Lib")])
+            with self.assertRaises(ValueError) as raised:
+                self.prepare(tools, lambda: (build / "Lib/Base.olean").write_bytes(b"rebuilt\n"), {"Lib.Base", "Base"})
+            self.assertEqual(str(raised.exception),
+                             f"Lake preparation rewrote an artifact visible as module Base: {build / 'Lib/Base.olean'}")
+            self.assertEqual(optimizer.read_lake_growth(tools.output, "rewritten"), {})
+
     def test_warm_providers_keep_their_existing_rejection(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
@@ -1412,6 +1423,123 @@ class InterruptedPreparationTests(ResumeHarness):
                                (("--resume",), [["C"]]), (("--resume",), [])):
             self.assertEqual(self.invoke(*step), (0, expected))
             self.assertFalse(os.path.lexists(self.pending()))
+
+
+class UnpinnedRewriteTests(ResumeHarness):
+    """Existing root artifacts nothing has pinned yet, rewritten during a Lake preparation."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.base = self.root / ".lake/build/lib/lean/Lib/Base.olean"
+        self.other = self.root / ".lake/build/lib/lean/Lib/Other.olean"
+        self.other.write_bytes(b"Lib.Other artifact, in no closure\n")
+
+    def rewrites(self) -> dict[str, dict[str, object]]:
+        return optimizer.read_lake_growth(self.root / "output", "rewritten")
+
+    def rebuild(self, path: Path, during: str = "A", same_bytes: bool = False):
+        def during_build(target: str) -> None:
+            if target == during:
+                if same_bytes:
+                    replace_same_bytes(path)
+                else:
+                    path.write_bytes(path.read_bytes() + b"rebuilt\n")
+        return during_build
+
+    def test_a_requested_rebuild_is_accepted_and_recorded(self) -> None:
+        for same_bytes in (False, True):
+            with self.subTest(same_bytes=same_bytes):
+                self.setUp()
+                before = self.base.read_bytes()
+                self.assertEqual(self.invoke("--max-batches", "1", failing=frozenset({"A"}),
+                                             during_build=self.rebuild(self.base, same_bytes=same_bytes)), (1, [["A"]]))
+                self.assertEqual(self.base.read_bytes() == before, same_bytes)
+                self.assertEqual(self.rewrites(), {str(self.base): optimizer.file_pin(self.base)})
+                self.assertEqual(self.invoke("--resume"), (1, [["B"], ["C"]]))
+
+    def test_a_recorded_rebuild_is_verified_on_resume(self) -> None:
+        for extra in ((), ("--retry-blocked",)):
+            with self.subTest(extra=extra):
+                self.setUp()
+                self.assertEqual(self.invoke("--max-batches", "1", failing=frozenset({"A"}),
+                                             during_build=self.rebuild(self.base)), (1, [["A"]]))
+                self.change(self.base, "bytes")
+                self.refused("missing or changed since it was pinned: " + str(self.base), *extra)
+
+    def test_a_rebuilt_stale_target_with_no_additions_is_recorded(self) -> None:
+        stale = self.sub / "A.olean"
+        stale.parent.mkdir(exist_ok=True)
+        stale.write_bytes(b"Lib.Sub.A artifact from an older source\n")
+        self.assertEqual(self.invoke("--max-batches", "1", failing=frozenset({"A"}),
+                                     during_build=self.rebuild(stale)), (1, [["A"]]))
+        self.assertEqual(optimizer.read_lake_growth(self.root / "output"), {})
+        self.assertEqual(list(self.rewrites()), [str(stale)])
+        self.change(stale, "bytes")
+        self.refused("missing or changed since it was pinned: " + str(stale))
+
+    def test_a_rebuild_before_an_interruption_is_verified_with_an_empty_journal(self) -> None:
+        with self.assertRaises(KeyboardInterrupt):
+            self.invoke(interrupt_after_preparation=True, during_build=self.rebuild(self.base))
+        self.assertEqual((self.root / "output/results.jsonl").read_text(), "")
+        self.assertIn(str(self.base), self.rewrites())
+        self.change(self.base, "bytes")
+        self.refused("missing or changed since it was pinned: " + str(self.base))
+
+    def test_a_rebuild_is_under_custody_in_the_same_process(self) -> None:
+        journal_path = self.root / "output/results.jsonl"
+        validate = optimizer.validate_inventory_sources
+
+        def change_after_first_row(*args: object, **kwargs: object) -> None:
+            if journal_path.exists() and len(journal_path.read_text().splitlines()) == 1 and \
+                    not self.base.read_bytes().endswith(b"tampered\n"):
+                before = self.base.stat()
+                self.base.write_bytes(b"X" * (before.st_size - 9) + b"tampered\n")
+                os.utime(self.base, ns=(before.st_atime_ns, before.st_mtime_ns))
+            return validate(*args, **kwargs)
+
+        with patch.object(optimizer, "validate_inventory_sources", side_effect=change_after_first_row):
+            self.assertEqual(self.invoke(failing=frozenset({"A"}), during_build=self.rebuild(self.base)),
+                             (1, [["A"]]))
+        rows = journal(self.root)
+        self.assertEqual(rows[1]["error"], f"Pinned root-package artifact changed (ctime): {self.base}")
+
+    def test_an_unrequested_rewrite_is_rejected(self) -> None:
+        for same_bytes in (False, True):
+            with self.subTest(same_bytes=same_bytes):
+                self.setUp()
+                self.assertEqual(self.invoke(during_build=self.rebuild(self.other, same_bytes=same_bytes)),
+                                 (1, [["A"]]))
+                rows = journal(self.root)
+                self.assertEqual(rows[0]["error"],
+                                 f"Lake preparation rewrote an artifact outside its requested modules: {self.other}")
+                self.assertTrue(rows[1]["error"].startswith("An earlier Lake preparation was rejected"))
+                self.assertEqual(self.rewrites(), {})
+                self.assertFalse(os.path.lexists(self.root / "output/lake-custody/pending.json"))
+
+    def test_top_level_root_module_artifacts(self) -> None:
+        top = self.root / ".lake/build/lib/lean/Top.olean"
+        top.write_bytes(b"Top artifact\n")
+        manifest = self.root / "manifest.jsonl"
+        rows = [json.loads(line) for line in manifest.read_text().splitlines()]
+        for row in rows:
+            if row["module"] == "A":
+                row["direct_local_dependencies"].append("Top")
+        manifest.write_text("".join(json.dumps(row) + "\n" for row in rows))
+        self.assertEqual(self.invoke("--max-batches", "1", during_build=self.rebuild(top)), (0, [["A"]]))
+        self.assertEqual(list(self.rewrites()), [str(top)])
+        self.assertEqual(self.invoke("--resume", during_build=self.rebuild(top, during="B")), (1, [["B"]]))
+        self.assertEqual(journal(self.root)[-2]["error"],
+                         f"Pinned root-package artifact changed (ctime, mtime, size): {top}")
+
+    def test_untouched_artifacts_record_no_rewrite(self) -> None:
+        spare = self.root / ".lake/build/lib/lean/Spare/X.olean"
+        spare.parent.mkdir()
+        spare.write_bytes(b"Spare.X artifact, never imported\n")
+        self.assertEqual(self.invoke(), (0, [["A"], ["B"], ["C"]]))
+        self.assertEqual(self.rewrites(), {})
+        # Never pinned and never rewritten: trusted like any input present before the run.
+        spare.write_bytes(b"changed between invocations\n")
+        self.assertEqual(self.invoke("--resume"), (0, []))
 
 
 if __name__ == "__main__":
