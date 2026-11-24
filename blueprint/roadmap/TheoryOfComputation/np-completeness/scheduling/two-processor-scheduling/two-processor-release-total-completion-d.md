@@ -1,0 +1,3 @@
+# TWO PARALLEL MACHINES WITH RELEASE DATES, TOTAL COMPLETION TIME as a decision problem
+
+The decision problem TWO PARALLEL MACHINES WITH RELEASE DATES, TOTAL COMPLETION TIME accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of pairs $(T, K)$ (a list of pairs of natural numbers and a natural number), to an instance that is well-formed for sequencing with release times to minimize total completion time (positive lengths, $K > 0$) and feasible for TWO PARALLEL MACHINES WITH RELEASE DATES, TOTAL COMPLETION TIME. It rejects every bitstring that does not decode to such an instance.

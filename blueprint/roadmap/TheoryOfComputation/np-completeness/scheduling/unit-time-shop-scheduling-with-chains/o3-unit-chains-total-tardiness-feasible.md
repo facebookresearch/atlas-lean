@@ -1,0 +1,3 @@
+# Feasible instances of THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, MINIMIZING TOTAL TARDINESS
+
+An instance $(d, A, K)$ is feasible when there is a unit-time open-shop schedule on three machines respecting the chains: start times $\sigma_k(j)$ for job $j$ on machine $k$ such that each machine starts its operations at pairwise different times, each job starts its three operations at pairwise different times, and if $(i, j) \in A$ then every operation of $j$ starts at or after every operation of $i$ completes ($\sigma_k(i) + 1 \le \sigma_{k'}(j)$) whose total tardiness $\sum_j (C_j - d_j)$, with $C_j = \max_k \sigma_k(j) + 1$ and truncated subtraction, is at most $K$.

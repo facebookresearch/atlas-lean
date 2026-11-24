@@ -1,0 +1,3 @@
+# THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, MINIMIZING TOTAL TARDINESS as a decision problem
+
+The decision problem THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, MINIMIZING TOTAL TARDINESS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(d, A, K)$ (a list of natural numbers, a list of pairs of natural numbers and a natural number), to an instance that is well-formed (the arcs form chains on the jobs) and feasible for THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, MINIMIZING TOTAL TARDINESS. It rejects every bitstring that does not decode to such an instance.

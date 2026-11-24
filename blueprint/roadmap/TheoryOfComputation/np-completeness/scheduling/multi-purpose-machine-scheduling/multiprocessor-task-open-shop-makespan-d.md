@@ -1,0 +1,3 @@
+# MULTIPROCESSOR TASK OPEN SHOP, MAKESPAN as a decision problem
+
+The decision problem MULTIPROCESSOR TASK OPEN SHOP, MAKESPAN accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(m, \mu, P, K)$ (a natural number, two lists of lists of natural numbers and a natural number), to an instance that is well-formed for MULTIPROCESSOR TASK OPEN SHOP, MAKESPAN and feasible for multiprocessor task open-shop makespan (an open-shop schedule with machine-sharing operations disjoint, every job completed by $K$). It rejects every bitstring that does not decode to such an instance.

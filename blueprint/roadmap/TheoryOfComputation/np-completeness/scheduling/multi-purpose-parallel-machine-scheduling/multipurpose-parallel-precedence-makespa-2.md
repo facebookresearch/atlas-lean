@@ -1,0 +1,5 @@
+# Feasible instances of MULTIPURPOSE-MACHINE PARALLEL SCHEDULING WITH PRECEDENCE AND UNIT TIMES
+
+An instance consists of a number $m$ of machines, a list of jobs, each a list of operations $(p, \mu)$ with a processing time $p$ and a list $\mu$ of machines, a bound $K$, and a list of arcs $(i, k)$ between jobs. It is feasible when every operation $o$ of every job can be given a machine $a(o)$ and a start time $\sigma(o) \in \mathbb{N}$ such that: $a(o)$ is in the machine list of $o$; two different operations of positive length on the same machine do not overlap; each operation of a job starts no earlier than the preceding operation of that job completes; for every listed arc $(i, k)$, every operation of job $i$ completes no later than any operation of job $k$ starts; and every operation completes by $K$.
+
+Jobs may have any number of operations of any lengths here. The restriction to a single operation per job (of unit length, in this problem) is part of well-formedness and is combined with this condition only in the decision problem.

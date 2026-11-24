@@ -1,0 +1,3 @@
+# Feasible instances of TWO-PROCESSOR NO-WAIT OPEN SHOP, TOTAL COMPLETION TIME
+
+An instance $(m, J, K)$ is feasible when there is an open-shop schedule meeting the bound: start times $\sigma_p(j)$ of job $j$'s task on processor $p$, pairwise different on each processor, such that a task starting after another task $k$ on the same processor starts no earlier than $k$ finishes, the tasks of each job occupy pairwise disjoint time intervals, and every task finishes by $K$, in which every job has two tasks, on different processors $p \ne q$, run back to back ($\sigma_q(j) = \sigma_p(j) + l(t_p[j])$), and the completion times $C_j = \max_p (\sigma_p(j) + l(t_p[j]))$ sum to at most $K$.
