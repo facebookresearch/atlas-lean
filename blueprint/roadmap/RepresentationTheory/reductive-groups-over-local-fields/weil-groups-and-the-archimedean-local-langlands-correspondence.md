@@ -1,20 +1,15 @@
 # Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ
 
-This node is still to be broken down. It covers the Weil groups and Langlands parameters that the pages on the
-local Langlands correspondence, on base change and on archimedean $L$-factors use.
+This node is still to be broken down. It covers the representations of the Weil groups of $p$-adic fields, the Weil
+groups of the archimedean fields and the Langlands parameters that the pages on the local Langlands correspondence,
+on base change and on archimedean $L$-factors use.
 
-- **Weil groups of $p$-adic fields.** Let $F$ be a finite extension of $\mathbb{Q}_p$, with algebraic closure $\bar F$ and
-  residue field of order $q$. The Weil group $W_F$ is the subgroup of $\mathrm{Gal}(\bar F/F)$ of the elements acting on
-  the residue field of $\bar F$ by an integral power of Frobenius. It is topologized so that the inertia subgroup $I_F$
-  is open with its profinite topology; this is not the topology induced from $\mathrm{Gal}(\bar F/F)$, but the inclusion
-  is continuous with dense image. Its abelianization $W_F^{\mathrm{ab}}$ is the quotient by the closure of the commutator
-  subgroup, its maximal abelian Hausdorff quotient. The reciprocity map $\mathrm{Art}_F \colon F^\times \to W_F^{\mathrm{ab}}$ is an
-  isomorphism of topological groups, mapping $\mathcal{O}_F^\times$ onto the image of $I_F$ and uniformizers to geometric
-  Frobenius elements. Followed by the injection of $W_F^{\mathrm{ab}}$ into $\mathrm{Gal}(\bar F/F)^{\mathrm{ab}}$, it is
-  $x \mapsto \theta_F(x)^{-1}$, where $\theta_F$ is the local Artin map normalized by arithmetic Frobenius. For a finite
-  extension $E/F$, $W_E$ is an open subgroup of finite index of $W_F$, so representations of $W_E$ induce to $W_F$.
-  Representations of $W_F$ are continuous and finite dimensional. An unramified representation is one trivial on
-  inertia; an unramified semisimple representation of dimension $n$ is determined by the conjugacy class of the image
+- **Representations of Weil groups of $p$-adic fields.** Let $F$ be a finite extension of $\mathbb{Q}_p$ with residue field
+  of order $q$, and let $W_F$ be its Weil group, with its inertia subgroup $I_F$, its geometric Frobenius elements and
+  the reciprocity isomorphism $\mathrm{Art}_F \colon F^\times \cong W_F^{\mathrm{ab}}$ of the [Weil group of a p-adic field](../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md).
+  For a finite extension $E/F$, the open subgroup $W_E$ of finite index of $W_F$ lets representations of $W_E$ induce
+  to $W_F$. Representations of $W_F$ are continuous and finite dimensional. An unramified representation is one
+  trivial on inertia; an unramified semisimple representation of dimension $n$ is determined by the conjugacy class of the image
   of a geometric Frobenius element.
 - **Unramified parameters.** Every irreducible representation $\pi$ of $\mathrm{GL}_n(F)$ with a nonzero
   $\mathrm{GL}_n(\mathcal{O}_F)$-fixed vector is the unramified constituent of the representation
@@ -61,8 +56,8 @@ local Langlands correspondence, on base change and on archimedean $L$-factors us
 
 ## Expansion
 
-A good expansion has definition pages for the Weil groups of $p$-adic and archimedean local fields and for unramified
-parameters, and statement pages for the unramified correspondence, for the archimedean local Langlands correspondence
+A good expansion has definition pages for the representations of the Weil groups of $p$-adic fields, for the Weil
+groups of the archimedean local fields and for unramified parameters, and statement pages for the unramified correspondence, for the archimedean local Langlands correspondence
 for $\mathrm{GL}_n$ and for Weil's archimedean $L$- and $\varepsilon$-factors, each citing the sources below with locators.
 Langlands's classification of real groups is by $L$-packets; that the packets of $\mathrm{GL}_n(k)$ are single
 representations, so that the correspondence is a bijection, is due to Knapp and Zuckerman with Knapp and Stein for
@@ -72,9 +67,10 @@ read as the central exponent, and the order above is the one for determinant exp
 
 ## Depends on
 
-- [Local class field theory: the local Artin map](../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the local Artin map $\theta_F$ of a finite
-  extension of $\mathbb{Q}_p$, normalized by arithmetic Frobenius; the reciprocity map $\mathrm{Art}_F$ is its composite with
-  inversion, with values in the dense subgroup $W_F^{\mathrm{ab}}$
+- [Weil group of a p-adic field](../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md), for the Weil group $W_F$ of a finite extension $F$ of $\mathbb{Q}_p$ with its
+  topology, its inertia subgroup, its geometric Frobenius elements, the open subgroups $W_E$ of finite index and the
+  reciprocity isomorphism $\mathrm{Art}_F \colon F^\times \cong W_F^{\mathrm{ab}}$ sending uniformizers to geometric Frobenius
+  elements, which the representations and unramified parameters of this node use
 - [Admissible representations of real reductive groups](representations-of-real-reductive-groups/admissible-representations-of-real-reductive-groups.md), for the representations of
   $\mathrm{GL}_n(\mathbb{R})$ and $\mathrm{GL}_n(\mathbb{C})$
 - [Casselman–Wallach globalization theorem](representations-of-real-reductive-groups/casselman-wallach-globalization.md), for the equivalence between representations of moderate growth and $(\mathfrak{g}, K)$-modules
@@ -89,10 +85,9 @@ read as the central exponent, and the order above is the one for determinant exp
 ## Sources
 
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
-  arXiv:math/0011210 (version 2), for $p$-adic fields: (1.1.6)–(1.1.10) (the Weil group as the inverse image of the
-  integral powers of Frobenius, its topology, the alternative definition through Weil classes, the maximal abelian
-  Hausdorff quotient, and $\mathrm{Art}_K \colon K^\times \cong W_K^{\mathrm{ab}}$ sending uniformizers to geometric Frobenius
-  elements), (3.1.5) (restriction and induction along $W_L \subset W_K$), and (4.1.1)–(4.1.8) (unramified representations,
+  arXiv:math/0011210 (version 2), for $p$-adic fields: (1.1.6)–(1.1.10) (the Weil group, its topology and
+  $\mathrm{Art}_K$, which this node uses), (3.1.5) (restriction and induction along $W_L \subset W_K$), and
+  (4.1.1)–(4.1.8) (unramified representations,
   Casselman's theorem, the Satake parameter and the unramified correspondence, normalized through $\mathrm{Art}_K$).
 - J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in
   *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,

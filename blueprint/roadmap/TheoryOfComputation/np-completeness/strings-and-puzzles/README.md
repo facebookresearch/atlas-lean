@@ -11,6 +11,7 @@ String problems (closest string, longest common subsequence, shortest common sup
 - [Longest common subsequence of many strings](longest-common-subsequence-of-many-strings/README.md)
 - [Macro data compression](macro-data-compression/README.md)
 - [Minesweeper consistency](minesweeper-consistency/README.md)
+- [N-queens completion](n-queens-completion/README.md)
 - [Nonogram](nonogram/README.md)
 - [Shortest common supersequence](shortest-common-supersequence/README.md)
 - [Single-letter context-free language membership](single-letter-context-free-language-membership/README.md)
