@@ -24,8 +24,6 @@ $\mathrm{choice}(\emptyset) = \mathrm{RETREAT}$. In algorithm $\mathrm{SM}(m)$ e
 - IC1: all loyal lieutenants obey the same order;
 - IC2: if the commander is loyal, every loyal lieutenant obeys the order he sends.
 
-The problem is vacuous with fewer than $m + 2$ generals.
-
 ## Sources
 
 - L. Lamport, R. Shostak and M. Pease, "The Byzantine generals problem", *ACM Transactions on Programming Languages and Systems* 4(3):382–401, 1982, <https://lamport.azurewebsites.net/pubs/byz.pdf>: Section 1 (IC1 and IC2), Section 3 (assumptions A1–A3), Section 4 (assumption A4, the function choice, algorithm SM(m) and Theorem 2).
