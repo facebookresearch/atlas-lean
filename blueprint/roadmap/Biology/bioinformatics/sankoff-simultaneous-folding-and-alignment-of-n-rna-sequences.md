@@ -1,0 +1,15 @@
+# Simultaneous folding, alignment and protosequence reconstruction of RNA (Sankoff)
+
+Sankoff (1985) combines free-energy secondary structure prediction with parsimony alignment over a given phylogeny. Restrict structures so that interior loops (2-loops) have at most $U$ unpaired positions and multiple loops have energy linear in their degree $k$ and number $u$ of unpaired positions, $e(s) = A + (k - 1)P + uQ$ (equation (8), Theorem 3). For two sequences he gives dynamic-programming recurrences over 4-tuples of positions computing the minimum cost, the sum of the free energies and a constrained alignment cost, of a pair of equivalent secondary structures, structures whose loops correspond under the alignment (Theorem 4). For $N$ sequences at the leaves of a tree, a recursion over the vertices of the tree reconstructs the protosequences at interior vertices for most parsimonious alignments (Theorem 5), and the $2N$-dimensional generalization of Theorem 4 computes the minimum total cost of $N$ equivalent structures together with alignments and protosequences (Theorem 6). For fixed $N$ and sequences of length $n$, letting all positions vary freely requires time proportional to $n^{3N}$, with an extra factor $U^{2N}$ from the search over 2-loops, and memory of order $n^{2N}$; under the band constraint (21) of width $W$ on corresponding positions ("cutting corners"), time becomes proportional to $n^3(U^2W)^N$ and memory to $n^2(U^2W)^N$.
+
+## Expansion
+
+1. The model: sequences, alignments and their costs (Section 2, Theorem 1), secondary structures with their loop decomposition and the energy restrictions (Theorems 2–3), and equivalence of structures under an alignment.
+2. Theorem 4: the recurrences (13)–(15) for two sequences and their correctness.
+3. Theorem 5: protosequence reconstruction on a tree via the recursion (16)–(17), with effort proportional to $N$ and the square of the alphabet size.
+4. Theorem 6 and the recurrences (18)–(20) for $N$ sequences.
+5. The time and memory bounds (Sections 5–6), the banded variant with (21), and the generalization to the multiple-loop energy (12).
+
+## Sources
+
+- D. Sankoff, Simultaneous solution of the RNA folding, alignment and protosequence problems, SIAM J. Appl. Math. 45 (1985), 810–825, Theorems 3–6, equations (8) and (21), Sections 5–6. <https://doi.org/10.1137/0145048>

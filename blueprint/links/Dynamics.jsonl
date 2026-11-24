@@ -347,3 +347,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Dynamics/complex-dynamics/julia-sets-of-positive-area/README.md"}], "id": "af_bb11b1533116ef254260e875", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Dynamics/complex-dynamics/local-connectivity-of-quadratic-julia-sets/README.md"}], "id": "af_f39e46583ff43a1bc0977bc3", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Dynamics/smooth-dynamics/finiteness-of-six-body-central-configurations.md"}], "id": "af_69ed8f746ae0bd6daa83d9ee", "extensions": {"org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Dynamics/low-dimensional-dynamics/li-yorke-period-three-implies-chaos.md"}], "id": "af_f52cf4d4d737a2e234395e44", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}

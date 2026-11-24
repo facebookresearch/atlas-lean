@@ -9,3 +9,4 @@
 - [The (k-1)-mer walk of a string is an Eulerian trail](zip-tail-kmers-perm.md)
 - [The (k-1)-mer walk of a string spells the string](spell-kmers.md)
 - [Every Eulerian trail spells a string with the same k-mer multiset](kmers-spell-perm.md)
+- [Strings with the same q-gram composition are related by transpositions and rotations](strings-with-the-same-q-gram-composition-are-related-by-transpositions.md)

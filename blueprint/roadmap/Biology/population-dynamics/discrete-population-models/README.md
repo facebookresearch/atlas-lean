@@ -1,3 +1,6 @@
 # Discrete-time population models
 
 - [Global stability of the Ricker map for 0 < r ≤ 2](ricker-map-global-stability-of-x-for-0-r-2.md)
+- [Beverton–Holt dynamics and the Cushing–Henson conjectures](beverton-holt-global-convergence-and-the-cushing-henson-theorem-for-pe.md)
+- [Instability of the Nicholson–Bailey equilibrium](nicholson-bailey-host-parasitoid-equilibrium-is-always-unstable.md)
+- [Stability of May's negative-binomial host–parasitoid model](mays-negative-binomial-host-parasitoid-model-local-stability-iff-k-1.md)

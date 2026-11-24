@@ -20,3 +20,6 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Approximation ratio for sorting by transpositions](approximation-ratio-for-sorting-by-transpositions.md)
 
 - [Genome rearrangements](genome-rearrangements/README.md)
+- [Repeat-limited versus coverage-limited threshold for shotgun assembly](repeat-limited-vs-coverage-limited-threshold-for-optimal-shotgun-assem.md)
+- [Asymptotics of RNA secondary structure statistics](asymptotics-of-rna-secondary-structure-statistics-hofacker-schuster-st.md)
+- [Simultaneous folding, alignment and protosequence reconstruction of RNA (Sankoff)](sankoff-simultaneous-folding-and-alignment-of-n-rna-sequences.md)

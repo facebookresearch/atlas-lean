@@ -12,3 +12,6 @@ Differential-equation models of population growth, species interaction and evolu
 
 - [Matrix population models](matrix-population-models/README.md)
 - [Discrete-time population models](discrete-population-models/README.md)
+- [Stable population theory](stable-population-theory/README.md)
+- [Competition and coexistence](competition-and-coexistence/README.md)
+- [Optimal foraging and life history](optimal-foraging-and-life-history/README.md)

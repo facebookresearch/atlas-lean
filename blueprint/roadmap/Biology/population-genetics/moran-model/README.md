@@ -23,3 +23,4 @@
 
 - [Minimum fixation probability of the Moran process on graphs](minimum-fixation-probability-on-graphs.md)
 - [Worst-case absorption time of the Moran process on graphs](worst-case-absorption-time-on-graphs.md)
+- [Fixation probability on isothermal graphs](isothermal-theorem-for-evolutionary-graphs.md)

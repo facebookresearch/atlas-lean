@@ -26,3 +26,4 @@
 - [Unrooted binary trees correspond to binary hierarchies](quot-equiv-hierarchy.md)
 - [Number of unrooted binary phylogenetic trees from two taxa on](nat-card-unrooted-binary-tree-of-two-le.md)
 - [The number of unrooted binary phylogenetic trees](nat-card-unrooted-binary-tree.md)
+- [Cherry distribution of uniformly random unrooted binary trees](cherry-distribution-under-the-uniform-pda-model-on-unrooted-binary-phy.md)

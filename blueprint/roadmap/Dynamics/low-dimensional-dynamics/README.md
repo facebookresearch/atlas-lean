@@ -8,3 +8,4 @@ Low-dimensional dynamics covers maps of the interval and circle, continued-fract
 - [Poincaré–Bendixson theorem](poincar-bendixson-theorem/README.md)
 - [Simplicity conjecture](simplicity-conjecture/README.md)
 - [Li–Yorke theorem: period three implies all periods](li-yorke-period-three-implies-periods.md)
+- [Li–Yorke: period three implies chaos](li-yorke-period-three-implies-chaos.md)

@@ -17,6 +17,8 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Blackwell approachability](blackwell-approachability/README.md)
 - [Adaptive heuristics](adaptive-heuristics/README.md)
 - [Mean field games](mean-field-games/README.md)
+- [Evolutionarily stable strategies](evolutionarily-stable-strategies/README.md)
+- [Press–Dyson zero-determinant strategies](press-dyson-zero-determinant-strategies-enforce-linear-payoff-relation.md)
 
 ## Related topics
 

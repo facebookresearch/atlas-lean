@@ -14,3 +14,4 @@
 - [The SP score is the sum of the induced pairwise scores](msa-score-eq-sum-induced.md)
 - [The sum-of-pairs score is bounded by the pairwise optima](msa-score-le-sum-nw-score.md)
 - [Every family of sequences has a multiple alignment](exists-is-msalignment.md)
+- [Center-star alignment approximates sum-of-pairs within 2 − 2/k](center-star-multiple-alignment-is-a-2-2-k-approximation-for-sum-of-pai.md)
