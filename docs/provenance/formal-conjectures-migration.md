@@ -1,13 +1,14 @@
 # Formal Conjectures migration record
 
 The nine Lean files that lived in `Atlas/FC/` (and, for one revision, in
-`OpenConjectures/FormalConjectures/`) are now part of the root Lake build. This
-file records the destination of every one of them, the declarations that were
-extracted along the way, and how each statement relates to its source in
+`OpenConjectures/FormalConjectures/`) are accounted for in the root Lake build.
+Eight developments are moved into root libraries; the A022030 result is
+already in `MathlibExt`. This file records the destination or disposition of
+each file, the declarations extracted along the way, and the relation to
 [google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
 
-Every destination module keeps the original declaration names and namespaces
-(`Erdos138`, `Erdos337`, `Green25`, `OeisA108081`, `OeisA211417`, `OeisA22030`,
+Each moved destination keeps the original main declaration names and namespaces
+(`Erdos138`, `Erdos337`, `Green25`, `OeisA108081`, `OeisA211417`,
 `OpenQuantumProblem35`, `WrittenOnTheWallII.GraphConjecture100`,
 `WrittenOnTheWallII.GraphConjecture314`), keeps the Meta header and the
 Apache-2.0 adaptation notice for the Formal Conjectures portions, and states in
@@ -22,7 +23,7 @@ its module docstring which declarations are verbatim copies.
 | `Green25_upper_solution.lean` | `MathlibExt/Combinatorics/Additive/RestrictedSumsetPartition.lean` |
 | `OeisA108081_count_words_in_x_is_a_shifted.lean` | `MathlibExt/Combinatorics/Words/ReversalShiftWordCount.lean` |
 | `OeisA211417_supercongruence_solution.lean` | `MathlibExt/NumberTheory/FactorialRatioSupercongruence.lean` |
-| `OeisA22030_conjecture.lean` | `MathlibExt/NumberTheory/NonlinearRecurrenceA22030.lean` |
+| `OeisA22030_conjecture.lean` | Reuse [`MathlibExt/NumberTheory/OeisA022030.lean`](../../MathlibExt/NumberTheory/OeisA022030.lean); retire the duplicate |
 | `WrittenOnTheWallII_GraphConjecture100_conjecture100.lean` | `MathlibExt/Combinatorics/SimpleGraph/IndependenceNumberCeilingBound.lean` |
 | `WrittenOnTheWallII_GraphConjecture314_conjecture314.lean` | `MathlibExt/Combinatorics/SimpleGraph/WellTotallyDominatedP5Free.lean` |
 | `OpenQuantumProblem35_ame_9_10_open_solution.lean` | `PhyslibExt/QuantumInfo/AbsolutelyMaximallyEntangled.lean`, with general helpers in `MathlibExt` (below) |
@@ -68,14 +69,22 @@ opens.
 
 ## Statement faithfulness
 
-Each migrated main statement was compared with its source in
-google-deepmind/formal-conjectures at commit
-`d8d031d4998c78575159ccab9a7a9e95ce043883`. Eight of the nine are verbatim
-copies; `MathlibExtTest`/`PhyslibExtTest` carries, for each of them, an `example`
-that writes the upstream statement out and proves it by the migrated
-declaration.
+Each main statement was compared with its source in
+[google-deepmind/formal-conjectures at `d8d031d4998c78575159ccab9a7a9e95ce043883`](https://github.com/google-deepmind/formal-conjectures/tree/d8d031d4998c78575159ccab9a7a9e95ce043883).
+Seven are moved verbatim; the test modules write out each source statement and
+prove it using the corresponding declaration.
 
-The exception is `Green25.green_25.upper`. Upstream states it as a value
+For OEIS A022030, the existing `MathlibExt.NumberTheory.OeisA022030Wanted.a`
+uses the same initial values and recursive equations as the standalone
+`OeisA22030.a`. Its `conjecture_holds` proves the same recurrence with
+natural-number subtraction for every `n ≥ 4`. The canonical test module
+checks that statement and the original initial-term examples. The
+[standalone proof](https://github.com/facebookresearch/atlas-lean/blob/c658bb723bf1aee258ccbfe8487c6c5764397432/Atlas/FC/OeisA22030_conjecture.lean)
+remains in the repository history; the root build does not register a second
+sequence, proof, or roadmap entry.
+
+The statement that differs from its upstream source is `Green25.green_25.upper`.
+Upstream states it as a value
 question with an opaque `green_25.upper.answer : ℕ → ℕ` left as `sorry`, so the
 upstream form cannot be proved without choosing the witness, and at
 `d8d031d4998c78575159ccab9a7a9e95ce043883` it is still
@@ -94,10 +103,11 @@ All nine statements carried the Formal Conjectures category `research open` at
 the revision these developments were written against. At
 `d8d031d4998c78575159ccab9a7a9e95ce043883` the upstream categories are:
 
-- `research solved` for the eight verbatim statements
-  (`erdos_138.variants.dvd_two_pow`, `erdos_337.variants.ruzsa_turjanyi`,
+- `research solved` for the eight results with the upstream statement
+  (seven moves and the existing A022030 formalization):
+  `erdos_138.variants.dvd_two_pow`, `erdos_337.variants.ruzsa_turjanyi`,
   `count_words_in_x_is_a_shifted`, `supercongruence`, `OeisA22030.conjecture`,
-  `conjecture100`, `conjecture314`, `ame_9_10_open`). Four of them
+  `conjecture100`, `conjecture314`, and `ame_9_10_open`. Four of them
   (`erdos_138.variants.dvd_two_pow`, `count_words_in_x_is_a_shifted`,
   `supercongruence`, `ame_9_10_open`) cite Lean proofs derived from these Atlas
   proofs; the rest cite independent proofs.

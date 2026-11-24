@@ -52,9 +52,9 @@ regression clients in `CSLibExtTest`. It uses the root toolchain rather than an
 independent package; its original source and verification provenance are retained.
 
 The [Formal Conjectures migration record](docs/provenance/formal-conjectures-migration.md)
-links the eight mathematical developments now in `MathlibExt` and the
-absolutely-maximally-entangled-state development in `PhyslibExt`, with their
-matching tests and source-statement comparisons.
+links the seven mathematical developments moved into `MathlibExt`, the
+existing A022030 proof reused there, and the absolutely-maximally-entangled-state
+development in `PhyslibExt`, with their tests and source-statement comparisons.
 
 Remaining `Atlas/` development material and the archived `v1/` release are not
 part of this root build. `v1/` retains its original build configuration.
