@@ -11344,6 +11344,7 @@
   "MathlibExt/GameTheory/Matching/RuralHospitals": {"to": "GameTheory/matching-markets", "title": "Rural hospitals theorem"},
   "MathlibExt/GameTheory/Matching/StableMatchingLattice": {"to": "GameTheory/matching-markets", "title": "Lattice of stable matchings"},
   "MathlibExt/GameTheory/Matching/StableMechanism": {"to": "GameTheory/matching-markets", "title": "Stable matching mechanisms and incentives"},
+  "MathlibExt/GameTheory/Matching/StableMechanismIncentives": {"to": "GameTheory/matching-markets", "title": "Stable matching mechanisms and incentives"},
   "MathlibExt/GameTheory/MeanFieldEquilibrium": {"to": "GameTheory/noncooperative-games", "title": "Mean field games"},
   "MathlibExt/GameTheory/MeanFieldEquilibriumExistence": {"to": "GameTheory/noncooperative-games", "title": "Mean field games"},
   "MathlibExt/GameTheory/MeanFieldGameSystem": {"to": "GameTheory/noncooperative-games", "title": "Mean field games"},
