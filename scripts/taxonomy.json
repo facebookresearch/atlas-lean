@@ -9258,6 +9258,7 @@
   "MathlibExt/Algebra/Polynomial/Taylor": {"to": "Algebra/zeros-of-polynomials", "title": "Taylor expansion and double roots"},
   "MathlibExt/Algebra/Polynomial/UnsignedCharlierPolynomialsOfOrder0": {"to": "Algebra/orthogonal-polynomials", "title": "Charlier polynomials"},
   "MathlibExt/Algebra/Polynomial/ZeroOneSquareComposition": {"to": "Algebra/polynomials", "title": "Reciprocal 0,1-polynomials"},
+  "MathlibExt/Algebra/PowerSeries/BinomialConvolutionCubicDenominator": {"to": "Algebra/polynomials", "title": "Binomial convolutions of rational power series"},
   "MathlibExt/Algebra/PowerSeries/CatalanTypeMatrixDeterminant": {"to": "Algebra/orthogonal-polynomials", "title": "Catalan-type polynomials"},
   "MathlibExt/Algebra/PowerSeries/UnifiedCatalanTypePolynomials": {"to": "Algebra/orthogonal-polynomials", "title": "Catalan-type polynomials"},
   "MathlibExt/Algebra/QuadraticForm/NormForm": {"to": "Algebra/associative-algebras", "title": "Splitting of quaternion algebras"},
