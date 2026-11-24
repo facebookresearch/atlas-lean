@@ -137,20 +137,25 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    so a later dispatch, and the bump's own CI, start from the newest saved
    build and rebuild only what changed since.
 
+   It runs on a 64-core runner, which GitHub bills at about $0.16 a minute:
+   about $8 for a cold build. The bump's own CI stays on the standard runner:
+   a run of it whose "Restore local build" step found no build on the new pins
+   is a cold build of several hours, so re-run it once the warm-up reports
+   `Saved`.
+
    - Dispatch first as soon as the bump's head passes the guard. That run is a
-     cold build, about five hours on a CI runner, and nobody needs to wait for
-     it. A run that runs out of time saves a checkpoint, which only a dispatch
-     for the same SHA can resume, and only while that SHA is still the pull
-     request's head. So leave the branch alone until the first run finishes; a
-     dispatch for a newer head starts from the newest complete build on the new
-     pins, or from scratch if there is none yet.
+     cold build, about 50 minutes, and nobody needs to wait for it. A run that
+     runs out of time saves a checkpoint, which only a dispatch for the same
+     SHA can resume, and only while that SHA is still the pull request's head.
+     So leave the branch alone until the first run finishes; a dispatch for a
+     newer head starts from the newest complete build on the new pins, or from
+     scratch if there is none yet.
    - Dispatch again after merging main into the bump. Starting from the last
-     saved build, it takes about as long as an ordinary pull request build
-     (30 to 40 minutes on 22 November) when a few hours of main came in since,
-     and it keeps a recent build in the cache: GitHub evicts the least recently
-     used entries first. On 22 November main saved a new entry every 30 to 60
-     minutes and about five fitted; if main saves one on every push, as #6159
-     proposes, an entry nobody uses may last only tens of minutes.
+     saved build, it rebuilds only what came in since, and it keeps a recent
+     build in the cache: GitHub evicts the least recently used entries first.
+     On 22 November main saved a new entry every 30 to 60 minutes and about
+     five fitted; if main saves one on every push, as #6159 proposes, an entry
+     nobody uses may last only tens of minutes.
    - Dispatch last for the head you will queue. Queue it (step 6) once that run
      reports `Saved` (or `Already warm`, if that exact head was warmed before)
      and the required checks are green. If a merge group still builds from

@@ -37,6 +37,36 @@ def generalizedHFoldSumset {G : Type*} [AddCommMonoid G] [DecidableEq G] {k : �
   ((Fintype.piFinset fun i => Finset.range (r i + 1)).filter fun s => ∑ i, s i = h).image
     fun s => ∑ i, s i • a i
 
+/-- **Reordering invariance of the generalized $h$-fold sumset.** Let $G$ be an additive
+commutative monoid, $a_0, \dots, a_{k-1} \in G$, $r_0, \dots, r_{k-1}$ and $h$ natural numbers,
+and write $h^{(\bar r)}A = \{\sum_j s_j a_j : 0 \le s_j \le r_j, \sum_j s_j = h\}$ for the
+generalized $h$-fold sumset of $A = (a_0, \dots, a_{k-1})$ with $\bar r = (r_0, \dots, r_{k-1})$.
+For every permutation $\pi$ of $\{0, \dots, k-1\}$, the generalized $h$-fold sumset of
+$(a_{\pi(0)}, \dots, a_{\pi(k-1)})$ with $(r_{\pi(0)}, \dots, r_{\pi(k-1)})$ equals
+$h^{(\bar r)}A$.
+
+The paper assumes $h \ge 2$, all $r_j$ positive and the $a_j$ distinct; none of this is assumed
+here.
+
+Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
+(2024), Article A116, Lemma 3 (`integers-2024-A116-lem-3`). -/
+public theorem generalizedHFoldSumset_comp_perm {G : Type*} [AddCommMonoid G]
+    [DecidableEq G] {k : ℕ} (a : Fin k → G) (r : Fin k → ℕ) (h : ℕ) (π : Equiv.Perm (Fin k)) :
+    generalizedHFoldSumset (a ∘ π) (r ∘ π) h = generalizedHFoldSumset a r h := by
+  ext x
+  simp only [generalizedHFoldSumset, Finset.mem_image, Finset.mem_filter,
+    Fintype.mem_piFinset, Finset.mem_range, Nat.lt_succ_iff]
+  constructor
+  · rintro ⟨s, ⟨hs, htotal⟩, hsum⟩
+    refine ⟨s ∘ π.symm, ⟨?_, (Equiv.sum_comp π.symm s).trans htotal⟩, ?_⟩
+    · intro i
+      simpa only [Function.comp_apply, Equiv.apply_symm_apply] using hs (π.symm i)
+    · have hreindex := Equiv.sum_comp π.symm (fun i => s i • a (π i))
+      simpa only [Function.comp_apply, Equiv.apply_symm_apply] using hreindex.trans hsum
+  · rintro ⟨s, ⟨hs, htotal⟩, hsum⟩
+    exact ⟨s ∘ π, ⟨fun i => hs (π i), (Equiv.sum_comp π s).trans htotal⟩,
+      (Equiv.sum_comp π (fun i => s i • a i)).trans hsum⟩
+
 /-- **The Yang–Chen bound.** Let $k, h \in \mathbb{N}$ and $\bar r = (r_0, \dots, r_{k-1})$ with
 all $r_j \in \mathbb{N}$; all sums below run over indices $j \in \{0, \dots, k-1\}$. Let $\mu$ be
 the largest $m \in \{0, \dots, k\}$ with $\sum_{j < m} r_j \le h$, let $\eta$ be the integer such
@@ -331,6 +361,58 @@ public theorem boundedSubsetSums_eq_generalizedHFoldSumset_of_zero_mem
         ⟨Finset.insert_subset_insert _ hTsub, ?_⟩, ?_⟩
       · rw [Finset.card_insert_of_notMem hz, hTcard]
       · simp [hz]
+
+/-- **Bounded subset sums as a generalized h-fold sumset when zero is not in the set.** Let $G$
+be an abelian group and let $A = \{a_1, \dots, a_k\}$ be a set of $k$ distinct nonzero elements
+of $G$. If $\alpha, \beta$ are natural numbers with $\alpha + \beta \le k - 1$, then
+$\Sigma^\beta_\alpha(A)$, the set of sums of subsets $B \subseteq A$ with
+$\alpha \le |B| \le k - \beta$, equals the generalized $(k - \beta)$-fold sumset
+$(k - \beta)^{(\bar r)} A_0$ of $A_0 = (a_0, a_1, \dots, a_k)$, where $a_0 = 0$, with
+$\bar r = (k - \alpha - \beta, 1, \dots, 1)$, that is, the set of sums $\sum_{j=0}^{k} s_j a_j$
+with $0 \le s_j \le r_j$ for all $j$ and $\sum_j s_j = k - \beta$.
+
+Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
+(2024), Article A116, Lemma 1 (`integers-2024-A116-lem-1`). -/
+public theorem boundedSubsetSums_eq_generalizedHFoldSumset_of_zero_not_mem
+    {G : Type*} [AddCommGroup G] [DecidableEq G] {k : ℕ} (b : Fin k → G)
+    (hb : Function.Injective b) (hb0 : ∀ i, b i ≠ 0) (α β : ℕ) (hαβ : α + β + 1 ≤ k) :
+    boundedSubsetSums α β (Finset.univ.image b) =
+      generalizedHFoldSumset (Fin.cons 0 b : Fin (k + 1) → G)
+        (Fin.cons (k - α - β) fun _ => 1 : Fin (k + 1) → ℕ) (k - β) := by
+  have hA : Finset.univ.image (Fin.cons 0 b : Fin (k + 1) → G) =
+      insert 0 (Finset.univ.image b) := by
+    ext x
+    simp [Fin.exists_fin_succ, eq_comm]
+  have hzero : 0 ∉ Finset.univ.image b := by simpa using hb0
+  have hcard : (Finset.univ.image b).card = k := by
+    simp [Finset.card_image_of_injective _ hb]
+  have hcardInsert : (insert 0 (Finset.univ.image b)).card = k + 1 := by
+    rw [Finset.card_insert_of_notMem hzero, hcard]
+  -- Adjoining zero raises the lower size bound by one without changing the upper bound.
+  have hpad : boundedSubsetSums α β (Finset.univ.image b) =
+      boundedSubsetSums (α + 1) (β + 1) (insert 0 (Finset.univ.image b)) := by
+    ext x
+    simp only [boundedSubsetSums, Finset.mem_biUnion, Finset.mem_Icc, restrictedSumset,
+      Finset.mem_image, Finset.mem_powersetCard, hcard, hcardInsert]
+    constructor
+    · rintro ⟨n, ⟨hlo, hhi⟩, S, ⟨hS, hScard⟩, rfl⟩
+      by_cases h : α + 1 ≤ n
+      · exact ⟨n, ⟨h, by omega⟩, S, ⟨hS.trans (Finset.subset_insert ..), hScard⟩, rfl⟩
+      · have hz : 0 ∉ S := fun hz => hzero (hS hz)
+        refine ⟨n + 1, ⟨by omega, by omega⟩, insert 0 S,
+          ⟨Finset.insert_subset_insert _ hS, ?_⟩, ?_⟩
+        · rw [Finset.card_insert_of_notMem hz, hScard]
+        · simp [hz]
+    · rintro ⟨n, ⟨hlo, hhi⟩, S, ⟨hS, hScard⟩, rfl⟩
+      have hlower := Finset.pred_card_le_card_erase (s := S) (a := 0)
+      have hupper := Finset.card_erase_le (s := S) (a := 0)
+      exact ⟨(S.erase 0).card, ⟨by omega, by omega⟩, S.erase 0,
+        ⟨Finset.subset_insert_iff.mp hS, rfl⟩, Finset.sum_erase S (f := fun a => a) rfl⟩
+  rw [hpad, ← hA]
+  have h := boundedSubsetSums_eq_generalizedHFoldSumset_of_zero_mem b hb hb0
+    (α + 1) (β + 1) (by omega) (by omega) (by omega)
+  rwa [show k + 1 - (α + 1) - (β + 1) + 1 = k - α - β by omega,
+    show k + 1 - (β + 1) = k - β by omega] at h
 
 end
 

@@ -16,6 +16,7 @@ public import Mathlib.Data.ZMod.Defs
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.Combinatorics.AP.Basic
 public import MathlibExt.Combinatorics.Additive.AtLeastDistinctSumset
+public import MathlibExt.Combinatorics.Additive.NathansonRestrictedSumset
 public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumset
 public import MathlibExt.Combinatorics.Additive.SumsetsMinimumDistinctTerms
 
@@ -46,17 +47,6 @@ theorem atLeastDistinctSumset_three_two_zero_one_two :
     atLeastDistinctSumset 3 2 ({0, 1, 2} : Finset ℤ) = {1, 2, 3, 4, 5} := by
   decide
 
-/-- **Cauchy–Davenport theorem for $h$-fold sumsets.** Let $p$ be a prime, $A$ a nonempty subset
-of $\mathbb{Z}/p\mathbb{Z}$ with $|A| = k$, and $h \ge 1$ a natural number. Then the $h$-fold
-sumset $hA = \{a_1 + \dots + a_h : a_1, \dots, a_h \in A\}$ satisfies
-$|hA| \ge \min(p,\ hk - h + 1)$.
-
-Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
-Article A12, Theorem 1 (Cauchy–Davenport theorem) (`integers-2025-A12-thm-1`). -/
-public theorem_wanted cauchy_davenport_nsmul {p : ℕ} (hp : p.Prime) (A : Finset (ZMod p))
-    (hA : A.Nonempty) (h : ℕ) (hh : 1 ≤ h) :
-    min p (h * A.card - h + 1) ≤ (h • A).card
-
 /-- **Dias da Silva–Hamidoune theorem.** Let $p$ be a prime, $A$ a nonempty subset of
 $\mathbb{Z}/p\mathbb{Z}$ with $|A| = k$, and $h$ a natural number with $1 \le h \le k$. Then the
 restricted sumset $h^{\wedge}A$ of sums of $h$ distinct elements of $A$ satisfies
@@ -80,18 +70,6 @@ public theorem_wanted vosper_nsmul {p : ℕ} (hp : p.Prime) (A : Finset (ZMod p)
     (hk : 2 ≤ A.card) (h : ℕ) (hh : 2 ≤ h) (hcard : (h • A).card = h * A.card - h + 1)
     (hsmall : h * A.card - h + 1 ≤ p - 2) :
     (A : Set (ZMod p)).IsAPOfLength A.card
-
-/-- **Nathanson's inverse theorem for restricted sumsets.** Let $A$ be a finite set of integers
-with $k = |A| \ge 5$ elements and let $h$ be an integer with $2 \le h \le k - 2$. Write
-$h^{\wedge} A$ for the restricted sumset of $A$, the set of sums of $h$ distinct elements of
-$A$. If $|h^{\wedge} A| = hk - h^2 + 1$, then $A$ is an arithmetic progression of length $k$.
-
-Source: Jagannath Bhanja, *Sumsets with a Minimum Number of Distinct Terms*, INTEGERS 25 (2025),
-Article A12, Theorem 4 (Nathanson) (`integers-2025-A12-thm-4`). -/
-public theorem_wanted nathanson_restrictedSumset_inverse (A : Finset ℤ) (hk : 5 ≤ A.card)
-    (h : ℕ) (hh : 2 ≤ h) (hhk : h ≤ A.card - 2)
-    (hcard : (restrictedSumset h A).card = h * A.card - h ^ 2 + 1) :
-    (A : Set ℤ).IsAPOfLength A.card
 
 /-- **Freiman's $3k - 4$ theorem.** Let $A$ be a finite set of integers with $|A| = k \ge 3$,
 $\min A = 0$ and $\gcd(A) = 1$, and let $b$ be a natural number. If

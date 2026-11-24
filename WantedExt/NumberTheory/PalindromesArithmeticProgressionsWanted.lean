@@ -14,6 +14,7 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import MathlibExt.NumberTheory.FloorIdentities
+public import MathlibExt.NumberTheory.PalindromesArithmeticProgressions
 
 /-!
 # Palindromes in arithmetic progressions (statements)
@@ -36,17 +37,6 @@ namespace MetaMathlibExt
 open Int
 
 @[expose] public section
-
-/-- **Palindromes in an arithmetic progression.** For natural numbers $b$, $m$, $q$ and $r$,
-$A_b(m, q, r)$ is the number of base-$b$ palindromes $n$ with $1 \le n \le m$ and
-$n \equiv r \pmod q$, where a natural number is a base-$b$ palindrome when its string of base-$b$
-digits reads the same in both directions.
-
-Source: K. Onphaeng, T. Khemaratchatakumthorn, P. N. Phunphayap and P. Pongsriiam, *Exact
-Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Journal of Integer
-Sequences 27 (2024), Article 24.4.8, Section 1. -/
-public def palindromeAPCount (b m q r : ℕ) : ℕ :=
-  ((Finset.Icc 1 m).filter fun n => (Nat.digits b n).Palindrome ∧ n ≡ r [MOD q]).card
 
 /-- **Palindromic half copy.** For natural numbers $b$ and $m \ge 1$, write
 $m = (a_k a_{k-1} \cdots a_0)_b$ for the base-$b$ digits of $m$. The palindromic half copy of $m$
@@ -318,24 +308,6 @@ public theorem_wanted palindromeAPCount_base_pow {b k q r : ℕ} (hb : 2 ≤ b) 
         if Odd q then ((b : ℚ) ^ ((k + 1) / 2) + (b : ℚ) ^ (k / 2) - 2) / q
         else if Odd r then ((b : ℚ) - 1) * (b : ℚ) ^ ((k - 1) / 2) / q
         else (((b : ℚ) + 1) * (b : ℚ) ^ ((k - 1) / 2) + 2 * (b : ℚ) ^ (k / 2) - 4) / q)
-
-/-- **Palindromes in residue classes: a logarithmic error bound.** Let $b \ge 2$ be a natural
-number, let $q$ be an odd natural number with $b \equiv 1 \pmod q$, and let $r$ be a natural
-number with $r < q$. For natural numbers $m$, $q'$ and $r'$, write $A_b(m, q', r')$ for the number
-of base-$b$ palindromes $n$ with $1 \le n \le m$ and $n \equiv r' \pmod{q'}$; thus $A_b(m, 1, 0)$
-is the number of all base-$b$ palindromes in $[1, m]$. Then for every natural number $m \ge 1$,
-
-$$\left| A_b(m, q, r) - \frac{A_b(m, 1, 0)}{q} \right| \le \frac{\log m}{2 \log b} + 2,$$
-
-where $\log$ is the natural logarithm.
-
-Source: K. Onphaeng, T. Khemaratchatakumthorn, P. N. Phunphayap and P. Pongsriiam, *Exact
-Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Journal of Integer
-Sequences 27 (2024), Article 24.4.8, Corollary 12. -/
-public theorem_wanted abs_palindromeAPCount_sub_le {b q r : ℕ} (hb : 2 ≤ b) (hq : Odd q)
-    (hr : r < q) (hbq : b ≡ 1 [MOD q]) {m : ℕ} (hm : 1 ≤ m) :
-    |(palindromeAPCount b m q r : ℝ) - (palindromeAPCount b m 1 0 : ℝ) / q| ≤
-      Real.log m / (2 * Real.log b) + 2
 
 end
 

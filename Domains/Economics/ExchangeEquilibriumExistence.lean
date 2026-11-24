@@ -332,8 +332,8 @@ end MathlibExt.Economics.ExchangeEquilibriumExistence
 namespace MathlibExt.Economics.ExchangeEquilibriumExistence.ExchangeEconomy
 
 /-- Existence of a normalized competitive equilibrium with free disposal (Gale–Nikaido–Debreu):
-if every consumer's demand is continuous on the price simplex and exhausts the consumer's
-budget there, an equilibrium exists. -/
+with at least one good, if every consumer's demand is continuous on the price simplex and exhausts
+the consumer's budget there, an equilibrium exists. -/
 theorem exists_isFreeDisposalEquilibrium {I L : Type*} [Fintype I] [Fintype L]
     [Nonempty L]
     (E : ExchangeEconomy I L) (hcont : ∀ i, ContinuousOn (E.demand i) (priceSimplex L))
