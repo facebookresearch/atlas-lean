@@ -72537,6 +72537,7 @@
 "MetaMathlibExt.goormaghtigh_primes_finite_of_abc": "6e41bddceb5f8a39",
 "MetaMathlibExt.gould_bernoulli_identity": "070596e7f2c9a74e",
 "MetaMathlibExt.gradientDescent_descent_lemma": "5d54bb88c6f0fa05",
+"MetaMathlibExt.gradientDescent_norm_gradient_sq_le": "2662c6b8a29f613d",
 "MetaMathlibExt.gradientDescent_sufficient_decrease": "325636e050e79f14",
 "MetaMathlibExt.gradient_comp": "29c73892a683af5f",
 "MetaMathlibExt.gradient_descent_convex_sublinear_rate": "03678f8b749a14cb",
