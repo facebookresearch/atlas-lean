@@ -52,10 +52,8 @@ theorems `Hom.isIso_hcMap_of_isIso_hMap`, `Hom.isIso_hcMap_of_isIso_hMap_le` and
 `Hom.isIso_hMap_iff_isIso_hcMap` are then applied to the negation endomorphism of this diagram.
 This diagram is built directly; it is not computed from the mixed complex above.
 
-The file does not cover `ConnesSBI`. Instantiating `ConnesSBIPresentation` needs a short exact
-sequence of `ℕ`-graded complexes, a quasi-isomorphic ordinary model, and an isomorphism between
-two `extend`s along shifted `ℕ → ℤ` embeddings, and any value check passes through homology
-objects and the connecting map of the long exact sequence in `ModuleCat`.
+Chain-level `ConnesSBIPresentation`s, which produce such diagrams, are exercised in
+`MathlibExtTest/Algebra/Homology/ConnesSBIFocusedClients.lean`.
 -/
 
 open CategoryTheory
