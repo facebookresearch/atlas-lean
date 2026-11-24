@@ -11245,6 +11245,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/StrongSquareCycle": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Fleischner's theorem"},
   "MathlibExt/Combinatorics/SimpleGraph/StronglyRegular": {"to": "GraphTheory/algebraic-graph-theory", "title": "Strongly regular graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/SubgraphIsomorphism": {"to": "GraphTheory/extremal-graph-theory", "title": "Unique subgraphs"},
+  "MathlibExt/Combinatorics/SimpleGraph/TorusDominationTransfer": {"to": "GraphTheory/independence-and-domination", "title": "Domination polynomials of grids"},
   "MathlibExt/Combinatorics/SimpleGraph/TransferMatrixOfGRH": {"to": "GraphTheory/independence-and-domination", "title": "Fibonacci numbers of graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/TreeDecomposition": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Tree-width"},
   "MathlibExt/Combinatorics/SimpleGraph/TreeMetric": {"to": "GraphTheory/graph-families-and-operations", "title": "Tree metrics and the four-point condition"},
