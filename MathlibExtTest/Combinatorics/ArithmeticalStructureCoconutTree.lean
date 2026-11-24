@@ -15,7 +15,7 @@ import Mathlib.Tactic.FinCases
 import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree
 
 /-!
-# Tests for common divisors of coconut tree leaf labels
+# Tests for smooth arithmetical structures on coconut trees
 -/
 
 open MetaMathlibExt
@@ -42,3 +42,20 @@ example {g : ℕ} (h₂ : g ∣ 2) (h₃ : g ∣ 3) : g = 1 := by
 example {p : ℕ} {d r : Fin p ⊕ Fin 0 → ℕ} : ¬ IsSmoothCoconut p 0 d r := by
   intro h
   exact Nat.zero_ne_one (h.eq_one_of_dvd_leaves (g := 0) fun j => Fin.elim0 j)
+
+-- When p = 1 the centre has no path predecessor, and both leaf bounds are sharp.
+example : ∃ d r : Fin 1 ⊕ Fin 2 → ℕ, IsSmoothCoconut 1 2 d r ∧ d (.inl 0) ≤ 1 := by
+  let d : Fin 1 ⊕ Fin 2 → ℕ := Sum.elim (fun _ => 1) (fun _ => 2)
+  let r : Fin 1 ⊕ Fin 2 → ℕ := Sum.elim (fun _ => 2) (fun _ => 1)
+  have h : IsSmoothCoconut 1 2 d r := by
+    refine ⟨⟨by decide, by decide, ?_, ?_⟩, by decide, by decide⟩
+    · intro v
+      classical
+      rw [finsum_mem_def, finsum_eq_sum_of_fintype, Fintype.sum_sum_type, Fin.sum_univ_one,
+        Fin.sum_univ_two]
+      simp only [Set.indicator_apply]
+      rcases v with i | i <;> fin_cases i <;>
+        simp [coconutTree, SimpleGraph.fromRel_adj, d, r]
+    · intro g hg
+      exact Nat.dvd_one.mp (hg (.inr 0))
+  exact ⟨d, r, h, h.center_le_one_of_two (by decide)⟩

@@ -410,7 +410,7 @@ private theorem linOccAux_some_of_succ (s t : ℕ) (f : Fin s → Fin t) (n : �
 private theorem linOccAux_none_of_le (s t : ℕ) (f : Fin s → Fin t) (m k : ℕ)
     (hle : m ≤ k) (hm : linOccAux s t f m = none) :
     linOccAux s t f k = none :=
-  Nat.le_induction (P := fun n _ => linOccAux s t f n = none) hm
+  Nat.le_induction (motive := fun n _ => linOccAux s t f n = none) hm
     (fun n _ ih => linOccAux_succ_failed s t f n ih) k hle
 
 private theorem linOccAux_some_of_le (s t : ℕ) (f : Fin s → Fin t) (m : ℕ)
@@ -456,7 +456,7 @@ private theorem linOcc_val_subset (s t : ℕ) (f : Fin s → Fin t) (a b : ℕ)
         linOccAux s t f n = some on → oa.val ⊆ on.val := by
     intro n
     exact Nat.le_induction
-      (P := fun n _ => n ≤ b →
+      (motive := fun n _ => n ≤ b →
         ∀ (on : { occ : Finset (Fin t) // occ.card ≤ n }),
           linOccAux s t f n = some on → oa.val ⊆ on.val)
       (fun hnb on hon => by
@@ -622,7 +622,7 @@ private theorem linOcc_val_subset_of_some (s t : ℕ) (f : Fin s → Fin t) (a b
     (ha : linOccAux s t f a = some oa) (hb : linOccAux s t f b = some ob)
     (hab : a ≤ b) (hbs : b ≤ s) : oa.val ⊆ ob.val := by
   exact Nat.le_induction
-    (P := fun m _ => m ≤ b →
+    (motive := fun m _ => m ≤ b →
       ∀ om : { occ : Finset (Fin t) // occ.card ≤ m },
         linOccAux s t f m = some om → oa.val ⊆ om.val)
     (fun _ om hom => by

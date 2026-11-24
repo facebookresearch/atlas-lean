@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.WellKnown
 public import MathlibExt.NumberTheory.GenLeonardo
+import Mathlib.Tactic.Ring
 
 /-!
 # Hyper-Leonardo numbers
@@ -156,6 +157,29 @@ theorem hyperLeonardo_generatingFunction (r : ℕ) :
         simp only [map_sub, coeff_succ_mul_X, F, coeff_mk, hyperLeonardo_succ]
         rw [Finset.sum_range_succ, add_sub_cancel_left]
     rw [pow_succ' _ r, mul_left_comm _ (1 - X : ℤ⟦X⟧), ← mul_assoc, step, ih]
+
+/-- **Generating function of the Leonardo numbers.** Let $Le_n$ be the Leonardo numbers
+($Le_0 = Le_1 = 1$ and $Le_{n+2} = Le_{n+1} + Le_n + 1$), and let
+$L(t) = \sum_{n \ge 0} Le_n t^n$ in the ring $\mathbb{Z}[[t]]$ of formal power series. Then
+$L(t)(1 - 2t + t^3) = 1 - t + t^2$ and $L(t)(1 - t - t^2)(1 - t) = 2(1 - t) - (1 - t - t^2)$.
+
+Equivalently, $L(t) = \frac{2}{1-t-t^2} - \frac{1}{1-t} = \frac{1-t+t^2}{1-2t+t^3}$; the
+identities above are this equality with the denominators cleared.
+
+Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
+Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Corollary 2
+(`integers-2026-A48-cor-2`). -/
+theorem leonardo_generatingFunction :
+    PowerSeries.mk (fun n => genLeonardo 1 n) * (1 - 2 * X + X ^ 3) = 1 - X + X ^ 2 ∧
+      PowerSeries.mk (fun n => genLeonardo 1 n) * ((1 - X - X ^ 2) * (1 - X)) =
+        2 * (1 - X) - (1 - X - X ^ 2) := by
+  have h := hyperLeonardo_generatingFunction 0
+  simp only [hyperLeonardo_zero, pow_zero, mul_one] at h
+  refine ⟨h, ?_⟩
+  calc
+    _ = PowerSeries.mk (genLeonardo 1) * (1 - 2 * X + X ^ 3) := by ring
+    _ = 1 - X + X ^ 2 := h
+    _ = _ := by ring
 
 /-- **Generating functions of the hyper-Leonardo numbers of orders one and two.** In the ring
 $\mathbb{Z}[[t]]$ of formal power series, the hyper-Leonardo numbers $Le^{(r)}_n$ satisfy

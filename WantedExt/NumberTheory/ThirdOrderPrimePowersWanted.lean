@@ -9,53 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.LinearRecurrence
-public import Mathlib.Data.Nat.Prime.Basic
-public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Tactic.NormNum
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
 public import MathlibExt.NumberTheory.PadovanSequence
 public import MathlibExt.NumberTheory.PerrinSequence
+public import MathlibExt.NumberTheory.ThirdOrderPrimePowers
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 public import WantedExt.NumberTheory.GenLeonardoWanted
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Sums of two prime powers.** An integer $n$ is a sum of two prime powers if
-$n = p^a + q^b$ for some primes $p$ and $q$ and some natural numbers $a$ and $b$. Since the
-exponents may be $0$, the number $1 = p^0$ counts as a prime power here.
-
-Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
-Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
-of Integer Sequences 29 (2026), Article 26.2.3. -/
-public def IsSumOfTwoPrimePowers (n : ℤ) : Prop :=
-  ∃ p q a b : ℕ, p.Prime ∧ q.Prime ∧ n = (p : ℤ) ^ a + (q : ℤ) ^ b
-
-/-- **$2$ is a sum of two prime powers.** The integer $2$ is a sum of two prime powers, since
-$2 = 2^0 + 2^0$.
-
-Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
-Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
-of Integer Sequences 29 (2026), Article 26.2.3. -/
-public theorem isSumOfTwoPrimePowers_two : IsSumOfTwoPrimePowers 2 :=
-  ⟨2, 2, 0, 0, Nat.prime_two, Nat.prime_two, by norm_num⟩
-
-/-- **Integers below $2$ are not sums of two prime powers.** If $n$ is an integer with $n < 2$,
-then $n$ is not a sum of two prime powers, since every prime power $p^a$ is at least $1$.
-
-Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
-Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
-of Integer Sequences 29 (2026), Article 26.2.3. -/
-public theorem not_isSumOfTwoPrimePowers_of_lt_two {n : ℤ} (hn : n < 2) :
-    ¬ IsSumOfTwoPrimePowers n := by
-  rintro ⟨p, q, a, b, hp, hq, rfl⟩
-  have hp1 : (1 : ℤ) ≤ (p : ℤ) ^ a :=
-    one_le_pow₀ (by exact_mod_cast hp.pos)
-  have hq1 : (1 : ℤ) ≤ (q : ℤ) ^ b :=
-    one_le_pow₀ (by exact_mod_cast hq.pos)
-  omega
 
 /-- **Infinitely many Tribonacci numbers are not sums of two prime powers.** Let $(T_n)_{n \ge 0}$
 be the Tribonacci sequence, given by $T_0 = 0$, $T_1 = 0$, $T_2 = 1$ and
@@ -150,29 +114,6 @@ public theorem_wanted narayanaCows_not_isSumOfTwoPrimePowers_of_modEq :
       ∃ K : ℕ, ∀ k : ℕ, K ≤ k → k ≡ 137042 [MOD 718391520] →
         ¬ IsSumOfTwoPrimePowers (narayanaCowsSequence k : ℤ)
 
-/-- **Third-order recurrences with infinitely many terms not sums of two prime powers.** There
-are infinitely many sequences $(s_n)_{n \ge 0}$ of positive integers with all of the following
-properties: each value is taken by $s_n$ for only finitely many $n$; there are integers
-$c_0, c_1, c_2$ with $c_0 \ne 0$ and $s_{n+3} = c_0 s_n + c_1 s_{n+1} + c_2 s_{n+2}$ for all
-$n \ge 0$; there are no integers $d_0, d_1$ with $s_{n+2} = d_0 s_n + d_1 s_{n+1}$ for all
-$n \ge 0$; and $s_k$ is not a sum of two prime powers for infinitely many $k$.
-
-The condition that each value is taken only finitely often excludes trivial examples such as
-periodic sequences taking the value $1$ infinitely often: no integer below $2$ is a sum of two
-prime powers.
-
-Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
-Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
-of Integer Sequences 29 (2026), Article 26.2.3, Corollary 1
-(`jis-2026-26.2.3-cor-1`). -/
-public theorem_wanted infinite_thirdOrderRecurrence_with_infinite_not_isSum :
-    Set.Infinite {s : ℕ → ℕ |
-      (∀ n : ℕ, 0 < s n) ∧ (∀ m : ℕ, Set.Finite {k : ℕ | s k = m}) ∧
-      (∃ c : Fin 3 → ℤ, c 0 ≠ 0 ∧
-        (LinearRecurrence.mk 3 c).IsSolution (fun n => (s n : ℤ))) ∧
-      (¬ ∃ d : Fin 2 → ℤ,
-        (LinearRecurrence.mk 2 d).IsSolution (fun n => (s n : ℤ))) ∧
-      Set.Infinite {k : ℕ | ¬ IsSumOfTwoPrimePowers (s k : ℤ)}}
 end
 
 end MetaMathlibExt

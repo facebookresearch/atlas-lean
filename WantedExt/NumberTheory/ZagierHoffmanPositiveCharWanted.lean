@@ -103,7 +103,7 @@ noncomputable def 𝒵 (w : ℕ) : Submodule (RatFunc F) (CompletionAtInfty F) :
 elements, $w$ a natural number and $r$ a positive integer. This is the set of multiple zeta
 values $\zeta_A(s_1, \dots, s_r)$ over $F$ with positive integers $s_1, \dots, s_r$ such that
 $s_1 + \dots + s_r = w$, $s_i \le q$ for $1 \le i \le r - 1$, and $s_r < q$. -/
-def 𝒯_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
+noncomputable def 𝒯_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
   let q := Nat.card F
   let 𝔖'_w := {𝔰 ∈ 𝔖_w w r | (∀ i : Fin r, i < (r - 1 : ℕ) → 𝔰 i ≤ q) ∧ 𝔰 ⟨r - 1, by simp⟩ < q}
   {ζ_A F s | s ∈ 𝔖'_w}
@@ -113,13 +113,13 @@ elements of the finite field $F$. For $w \in \mathbb{N}$, $\mathcal{T}_w$ is the
 zeta values $\zeta_A(s_1, \dots, s_r)$, over all $r \ge 1$ and all positive integers
 $s_1, \dots, s_r$ with $s_1 + \dots + s_r = w$, $s_i \le q$ for $1 \le i \le r - 1$,
 and $s_r < q$. -/
-def 𝒯 (w : ℕ) : Set (CompletionAtInfty F) := ⋃ r : ℕ+, 𝒯_aux F w r
+noncomputable def 𝒯 (w : ℕ) : Set (CompletionAtInfty F) := ⋃ r : ℕ+, 𝒯_aux F w r
 
 /-- **Multiple zeta values of given depth with small entries.** Let $F$ be a finite field with
 $q$ elements, $w$ a natural number and $r$ a positive integer. This is the set of multiple
 zeta values $\zeta_A(s_1, \dots, s_r)$ over $F$ with positive integers $s_1, \dots, s_r$ such
 that $s_1 + \dots + s_r = w$ and $s_i < q$ for all $i$. -/
-def 𝒯0_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
+noncomputable def 𝒯0_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
   let q := Nat.card F
   let 𝔖'_w := {𝔰 ∈ 𝔖_w w r | ∀ i, 𝔰 i < q}
   {ζ_A F s | s ∈ 𝔖'_w}
@@ -128,7 +128,7 @@ def 𝒯0_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
 $w$ a natural number. The set $\mathcal{T}^0_w$ consists of the multiple zeta values
 $\zeta_A(s_1, \dots, s_r)$ over $F$, for all positive integers $r$ and $s_1, \dots, s_r$ such
 that $s_1 + \dots + s_r = w$ and $s_i < q$ for all $i$. -/
-def 𝒯0 (w : ℕ) : Set (CompletionAtInfty F) := ⋃ r : ℕ+, 𝒯0_aux F w r
+noncomputable def 𝒯0 (w : ℕ) : Set (CompletionAtInfty F) := ⋃ r : ℕ+, 𝒯0_aux F w r
 
 /-- **Dimension sequence for multiple zeta values.** Let $F$ be a finite field with $q$ elements.
 The sequence $d(w)$, for natural numbers $w$, is defined by $d(0) = 1$, $d(w) = 2^{w-1}$ for

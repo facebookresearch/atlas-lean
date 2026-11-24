@@ -164,11 +164,10 @@ theorem Submartingale.uniformIntegrable_tfae
     ] := by
   tfae_have 1 → 2 := by
     intro hUI
-    obtain ⟨R, hR⟩ := hUI.2
     have hmeas : ∀ n, AEStronglyMeasurable (X n) μ := hUI.aestronglyMeasurable
     set X_inf := ℱ.limitProcess X μ
     have hint_lim : Integrable X_inf μ :=
-      (Filtration.memLp_limitProcess_of_eLpNorm_bdd hmeas hR).integrable le_rfl
+      (Filtration.memLp_limitProcess_of_eLpNorm_bdd hmeas hUI.iSup_eLpNorm_lt).integrable le_rfl
     have hae := hsub.ae_tendsto_limitProcess_of_uniformIntegrable hUI
     have hL1 := hsub.tendsto_eLpNorm_one_limitProcess hUI
     exact ⟨X_inf, hint_lim, hae,
@@ -185,8 +184,9 @@ theorem Submartingale.uniformIntegrable_tfae
     have hint_sub : ∀ n, Integrable (X n - X_inf) μ := fun n =>
       (hsub.integrable n).sub hint
     have heLpNorm := tendsto_eLpNorm_of_tendsto_integral_norm_zero hint_sub hL1
+    obtain ⟨C, hC⟩ := eLpNorm_bound_of_L1_tendsto hMemLp_n hMemLp_inf heLpNorm
     exact ⟨unifIntegrable_of_tendsto_Lp le_rfl ENNReal.one_ne_top hMemLp_n hMemLp_inf heLpNorm,
-      eLpNorm_bound_of_L1_tendsto hMemLp_n hMemLp_inf heLpNorm⟩
+      (iSup_le hC).trans_lt ENNReal.coe_lt_top⟩
   tfae_finish
 
 /-- **Equivalent conditions for uniform integrability of a martingale.** Let $(\Omega, \mu)$ be a
@@ -217,11 +217,10 @@ theorem Martingale.uniformIntegrable_tfae
   have hsub := hmart.submartingale
   tfae_have 1 → 2 := by
     intro hUI
-    obtain ⟨R, hR⟩ := hUI.2
     have hmeas : ∀ n, AEStronglyMeasurable (X n) μ := hUI.aestronglyMeasurable
     set X_inf := ℱ.limitProcess X μ
     have hint_lim : Integrable X_inf μ :=
-      (Filtration.memLp_limitProcess_of_eLpNorm_bdd hmeas hR).integrable le_rfl
+      (Filtration.memLp_limitProcess_of_eLpNorm_bdd hmeas hUI.iSup_eLpNorm_lt).integrable le_rfl
     have hae := hsub.ae_tendsto_limitProcess_of_uniformIntegrable hUI
     have hL1 := hsub.tendsto_eLpNorm_one_limitProcess hUI
     exact ⟨X_inf, hint_lim, hae,

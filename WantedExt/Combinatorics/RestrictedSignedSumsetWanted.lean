@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Combinatorics.AP.Basic
 public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumset
+public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumsetFour
 
 /-!
 # Restricted signed sumsets (statements)
@@ -28,27 +29,7 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Set of values of a finite integer sequence.** For a sequence $a_0, \dots, a_{k-1}$ of
-integers, this is the finite set $\{a_i : 0 \le i < k\}$ of its values.
-
-No order or injectivity is assumed; the statements that use it assume what they need.
-
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
-Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, notation for
-ordered finite sets. -/
-public def orderedFinset {k : ℕ} (a : Fin k → ℤ) : Finset ℤ :=
-  Finset.univ.image a
-
-/-- **Initial segment of a finite integer sequence.** For a sequence $a_0, \dots, a_{k-1}$ of
-integers and a natural number $n$, the initial segment of length $n$ is the set
-$\{a_i : 0 \le i < k,\ i < n\}$ of the values at indices below $n$; it is the set of all values
-of the sequence when $n \ge k$.
-
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
-Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, notation for
-initial subsets. -/
-public def initialSegment {k : ℕ} (a : Fin k → ℤ) (n : ℕ) : Finset ℤ :=
-  (Finset.univ.filter fun i : Fin k => (i : ℕ) < n).image a
+-- `orderedFinset`, `initialSegment`, and the extension bound are re-exported above.
 
 /-- **Finite integer sequences in arithmetic progression.** A sequence $a_0, \dots, a_{k-1}$ of
 integers is an arithmetic progression with common difference $d$ if $d > 0$ and
@@ -388,38 +369,6 @@ public theorem_wanted card_restrictedSignedSumset_four_five_ge
     ((restrictedSignedSumset 4 A).card : ℤ) ≥ 25 ∧
     (((restrictedSignedSumset 4 A).card : ℤ) = 25 ↔
       ∃ m ∈ A, (∀ a ∈ A, m ≤ a) ∧ A = scaleFinset m (oddProgression 5))
-
-/-- **Lower bound for restricted signed 4-fold sumsets of nonnegative sets containing zero.**
-Let $k \ge 5$, let $A$ be a set of $k$ nonnegative integers with $0 \in A$, and write
-$4^{\wedge}_{\pm} A$ for the restricted signed 4-fold sumset of $A$. Then
-$|4^{\wedge}_{\pm} A| \ge 8k - 19$.
-
-The inverse statement of the source, that equality forces $A = d \cdot \{0, 1, \dots, k - 1\}$
-for some integer $d$ (where $d \cdot B = \{db : b \in B\}$), is omitted: $A = \{0, 1, 2, 4, 6\}$
-has $|4^{\wedge}_{\pm} A| = 21 = 8 \cdot 5 - 19$ but is not of that form.
-
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
-Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Theorem 11. -/
-public theorem_wanted card_restrictedSignedSumset_four_nonnegative_ge
-    (k : ℕ) (A : Finset ℤ) (hk : 5 ≤ k) (hcard : A.card = k)
-    (hnonneg : ∀ a ∈ A, 0 ≤ a) (hzero : 0 ∈ A) :
-    ((restrictedSignedSumset 4 A).card : ℤ) ≥ 8 * (k : ℤ) - 19
-
-/-- **Extending a restricted signed sumset bound from the first $h+1$ elements.** Let $h \ge 3$
-and $k \ge h + 1$, let $a_1 < a_2 < \dots < a_k$ be positive integers, and let $t \ge 0$ be an
-integer. Put $A = \{a_1, \dots, a_k\}$ and $A_{h+1} = \{a_1, \dots, a_{h+1}\}$, and write
-$h^{\wedge}_{\pm} B$ for the restricted signed $h$-fold sumset of a finite set $B$. If
-$|h^{\wedge}_{\pm} A_{h+1}| \ge (h+1)^2 + t$, then $|h^{\wedge}_{\pm} A| \ge 2hk - h^2 + 1 + t$.
-
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
-Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Lemma 1. -/
-public theorem_wanted card_restrictedSignedSumset_ge_of_initialSegment
-    (h k : ℕ) (hh : 3 ≤ h) (hk : h ≤ k - 1) (a : Fin k → ℤ) (t : ℤ)
-    (ha : StrictMono a) (hpos : ∀ i, 0 < a i) (ht : 0 ≤ t)
-    (hinitial : ((restrictedSignedSumset h (initialSegment a (h + 1))).card : ℤ) ≥
-      ((h + 1 : ℕ) : ℤ) ^ 2 + t) :
-    ((restrictedSignedSumset h (orderedFinset a)).card : ℤ) ≥
-      2 * (h : ℤ) * k - (h : ℤ) ^ 2 + 1 + t
 
 /-- **Restricted signed 4-fold sumsets when exactly one gap differs from twice the minimum.**
 Let $a_1 < a_2 < a_3 < a_4 < a_5$ be integers with $a_1 > 0$, let $A = \{a_1, \dots, a_5\}$,
