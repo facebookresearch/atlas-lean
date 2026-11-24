@@ -18,7 +18,7 @@
 - [Softplus function $\log(1+e^t)$](fsc-softplus.md)
 - [A convex function with both one-sided derivatives logistic](fsc-free-energy-data-satisfiable.md)
 - [Edge-marginal uniqueness off a countable set from convex free energy](fk-uniqueness-q2-secant-from-free-energy.md)
-- [Free edge densities on a box as left derivatives](fdd-free-density-is-left-deriv.md)
+- [Why the free-density condition concerns only genuine edges](fdd-free-density-is-left-deriv.md)
 - [Wired edge densities on a box as right derivatives](fdd-wired-density-is-right-deriv.md)
 - [Wired edge densities on a box bounded by right derivatives](fdd-wired-density-upper-bound.md)
 - [Average edge density of the $q = 2$ random-cluster measure](fpd-avg-density.md)
