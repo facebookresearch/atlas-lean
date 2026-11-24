@@ -999,6 +999,8 @@ class OwnedProcessGroupCleanupTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as directory, \
                 patch.object(optimizer.subprocess, "Popen", return_value=child) as spawn, \
+                patch.object(optimizer.subprocess, "run", return_value=subprocess.CompletedProcess(
+                    [], 0, "23145 23145 S\n", "")), \
                 patch.object(optimizer.os, "getpgrp", return_value=23145), \
                 patch.object(optimizer.os, "getpgid", side_effect=group_of), \
                 patch.object(optimizer, "_owned_child_exited_without_reaping", side_effect=observe), \
@@ -1036,6 +1038,24 @@ class OwnedProcessGroupCleanupTests(unittest.TestCase):
             self.assertEqual(result["exit_code"], 0)
             self.assertFalse(result["timed_out"])
             self.assertTrue(result["remaining_group_killed"])
+
+    def test_cleanup_waits_for_orphan_to_exit(self) -> None:
+        snapshots = [subprocess.CompletedProcess([], 0, f"423146 423145 {state}\n", "")
+                     for state in ("S", "Z")]
+        with self.process("normal") as (root, _), \
+                patch.object(optimizer.subprocess, "run", side_effect=snapshots) as observe:
+            result = optimizer.run_command(["test-only"], root, root / "command", dict(os.environ), 1)
+            self.assertEqual(observe.call_count, 2)
+            self.assertTrue(result["remaining_group_killed"])
+
+    def test_unconfirmed_cleanup_writes_no_receipt(self) -> None:
+        with self.process("normal") as (root, _), \
+                patch.object(optimizer.subprocess, "run", return_value=subprocess.CompletedProcess(
+                    [], 0, "423146 423145 D\n", "")), \
+                patch.object(optimizer.time, "monotonic", side_effect=[0, 0, 11]):
+            with self.assertRaisesRegex(RuntimeError, "confirm exit"):
+                optimizer.run_command(["test-only"], root, root / "command", dict(os.environ), 1)
+            self.assertFalse((root / "command.json").exists())
 
     def test_permission_error_never_reports_completion(self) -> None:
         with self.process("timeout", denied=True) as (root, events), \
