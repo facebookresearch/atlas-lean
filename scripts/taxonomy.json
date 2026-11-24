@@ -12709,6 +12709,7 @@
   "MathlibExt/NumberTheory/Recurrences/WeightedFibonacciBinet": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/WeightedHigherFibSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Self-convolutions of m-step Fibonacci numbers"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAP": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
+  "MathlibExt/NumberTheory/ReducedResiduePrimeBound": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/RegularResidues": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Regular integers modulo n"},
   "MathlibExt/NumberTheory/RepetendTable": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/BaseShift": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
