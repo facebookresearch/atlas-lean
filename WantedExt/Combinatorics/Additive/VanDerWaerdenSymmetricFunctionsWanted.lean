@@ -78,18 +78,6 @@ to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 2
 public theorem_wanted isVanishingFamily_sumAddMulProd_one_four_eight {n : ℕ}
     (hn : n = 4 ∨ n = 8) : IsVanishingFamily (sumAddMulProdFamily (1 : ZMod n))
 
-/-- **The sum-plus-product family is $1$-vanishing over $\mathbb{Z}/6\mathbb{Z}$.** Let $F_1$ be
-the family over $\mathbb{Z}/6\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to
-$\sum_i b_i + \prod_i b_i$. Then $F_1$ is $1$-vanishing: every sequence over
-$\mathbb{Z}/6\mathbb{Z}$ contains a block of consecutive terms, of some length $l > 1$, on which
-$F_1$ vanishes.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 3
-(`integers-2026-A25-lem-3`). -/
-public theorem_wanted isMVanishingFamily_one_sumAddMulProd_one_six :
-    IsMVanishingFamily 1 (sumAddMulProdFamily (1 : ZMod 6))
-
 /-- **$F_{\pm 1}$ over $\mathbb{Z}/6$ is not $m$-vanishing for $m > 1$.** For every $m > 1$,
 neither of the sum-plus-product families $F_{-1}$ and $F_1$ over $\mathbb{Z}/6$, where
 $F_c(b_1, \dots, b_l) = b_1 + \dots + b_l + c\, b_1 \cdots b_l$, is $m$-vanishing.
