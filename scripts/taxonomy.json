@@ -9877,6 +9877,7 @@
   "MathlibExt/Analysis/SpecialFunctions/DickmanDeBruijnExistsUnique": {"to": "Analysis/special-functions/elementary-transcendental-functions", "title": "Dickman–de Bruijn function"},
   "MathlibExt/Analysis/SpecialFunctions/Elliptic": {"to": "Analysis/special-functions", "title": "Elliptic functions"},
   "MathlibExt/Analysis/SpecialFunctions/EntireExponentialIntegral": {"to": "Analysis/special-functions/elementary-transcendental-functions", "title": "Exponential integral"},
+  "MathlibExt/Analysis/SpecialFunctions/Exp/Zelinsky": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
   "MathlibExt/Analysis/SpecialFunctions/ExpOfContinuousAddMul": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Exponential functional equation"},
   "MathlibExt/Analysis/SpecialFunctions/ExpSubExpUniqueFixedPoint": {"to": "Analysis/real-functions/differential-calculus", "title": "Fixed point of a shifted hyperbolic sine"},
   "MathlibExt/Analysis/SpecialFunctions/ExpSubOneMittagLeffler": {"to": "Analysis/special-functions/elementary-transcendental-functions", "title": "Mittag-Leffler expansion of 1/(e^u − 1)"},
