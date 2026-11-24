@@ -102,17 +102,6 @@ public theorem stirlingSecond_three_eq (r : ℕ) (hr : 1 ≤ r) :
   rw [Nat.add_sub_cancel_left]
   exact_mod_cast hR
 
-/-- **Greenstreet's identity.** For every natural number $N$,
-
-$$\sum_{k=1}^{N} (-1)^k \binom{N}{k} 2^{N-k} k^2 = N^2 - 2N.$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 2.3. -/
-public theorem_wanted sum_neg_one_pow_choose_two_pow_mul_sq (N : ℕ) :
-    ∑ k ∈ Finset.Icc 1 N, (-1 : ℤ) ^ k * (N.choose k : ℤ) * 2 ^ (N - k) * (k : ℤ) ^ 2 =
-      (N : ℤ) ^ 2 - 2 * N
-
 /-- **Power-weighted binomial sums of Lucas numbers.** Let $L_n$ denote the Lucas numbers
 ($L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$), $S(r, i)$ the Stirling numbers of the second
 kind and $(N)_i = N(N-1) \cdots (N-i+1)$ the falling factorial, with $(N)_0 = 1$. For all natural
