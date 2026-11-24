@@ -47,6 +47,7 @@ Chain and cochain complexes indexed by complex shapes, short complexes, homology
 - [Inverse naturality for shifted-extension homology](inverse-naturality-for-shifted-extension-homolog/README.md)
 - [Linear maps on Hom cochains](linear-maps-on-hom-cochains/README.md)
 - [Local diagonal tensor homology and Kähler forms](local-diagonal-tensor-homology-and-k-hler-forms/README.md)
+- [Map Extend](map-extend/README.md)
 - [Maps between nested stupid truncations](maps-between-nested-stupid-truncations/README.md)
 - [Maps of Hom complexes](maps-of-hom-complexes/README.md)
 - [Mixed complexes](mixed-complexes/README.md)

@@ -45,8 +45,8 @@ section GenericFamily
 
 variable {I : Type v} [Fintype I]
 
-/-- The original augmentation of a regular Koszul complex is an actual
-quasi-isomorphism, including its degree-zero cokernel. -/
+/-- The augmentation of the Koszul complex of a finite weakly regular family
+is a quasi-isomorphism, including in degree zero. -/
 theorem augmentation_quasiIso_of_isWeaklyRegular
     {n : ℕ} (a : I → R) (e : Fin n ≃ I)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn fun i => a (e i))) :
@@ -71,8 +71,8 @@ theorem augmentation_quasiIso_of_isWeaklyRegular
       · exact familyComplex_exactAt_of_isWeaklyRegular R a e ha j
       · exact ChainComplex.exactAt_succ_single_obj _ _
 
-/-- The actual regular Koszul complex resolves its original categorical
-quotient target, retaining the existing universe lift of the augmentation. -/
+/-- The Koszul complex of a finite weakly regular family gives a projective
+resolution of the universe-lifted quotient by the generated ideal. -/
 def familyProjectiveResolutionOfIsWeaklyRegular
     {n : ℕ} (a : I → R) (e : Fin n ≃ I)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn fun i => a (e i))) :
@@ -94,9 +94,9 @@ theorem familyProjectiveResolution_complex
 
 end GenericFamily
 
-/-- The actual tensor of a finite-rank regular Koszul resolution computes
-Tor in the native category of modules over the original ring. The ring's
-universe is arbitrary; only the finite list index is `Fin n`. -/
+/-- For a weakly regular family indexed by `Fin n`, the degree-`q` homology
+of its Koszul complex tensored on the left with `N` computes `Tor` of `N`
+with the universe-lifted quotient by the generated ideal. -/
 def regularFiniteFamilyTensorHomologyIsoTor
     {n : ℕ} (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))
@@ -125,9 +125,9 @@ def finiteFamilyProjectiveResolutionQuotient
       projective := P.projective
       π := P.π ≫ (ChainComplex.single₀ (ModuleCat.{u} R)).map e.hom }
 
-/-- Tensoring the actual finite-rank regular Koszul complex computes Tor
-with the original generated-ideal quotient in the original module
-category of the ring. -/
+/-- For a weakly regular family indexed by `Fin n`, the degree-`q` homology
+of its Koszul complex tensored on the left with `N` computes `Tor` of `N`
+with the quotient by the generated ideal, without a universe lift. -/
 def regularFiniteFamilyTensorHomologyIsoTorQuotient
     {n : ℕ} (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))
