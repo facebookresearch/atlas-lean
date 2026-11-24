@@ -11256,6 +11256,7 @@
   "MathlibExt/FieldTheory/Finite/BinaryModulusSearch": {"to": "FieldTheory/finite-fields", "title": "Searching for irreducible polynomials over GF(2)"},
   "MathlibExt/FieldTheory/Finite/FiniteFieldSquare": {"to": "FieldTheory/finite-fields", "title": "Squares in finite fields"},
   "MathlibExt/FieldTheory/Finite/IrreducibleFingerprint": {"to": "FieldTheory/finite-fields", "title": "Fingerprinting with irreducible polynomials"},
+  "MathlibExt/FieldTheory/Finite/MonomialPermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PrimitivePolynomial": {"to": "FieldTheory/finite-fields", "title": "Primitive polynomials over finite fields"},
   "MathlibExt/FieldTheory/Galois/Abelian": {"to": "FieldTheory/galois-theory", "title": "Intermediate fields of abelian extensions"},
