@@ -11943,6 +11943,7 @@
   "MathlibExt/NumberTheory/CyclotomicTraceMetric": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Trace metric on cyclotomic fields"},
   "MathlibExt/NumberTheory/DPRM": {"to": "TheoryOfComputation/undecidable-problems", "title": "Diophantine sets and Hilbert's tenth problem"},
   "MathlibExt/NumberTheory/DeBruijnNewman": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "De Bruijn–Newman constant"},
+  "MathlibExt/NumberTheory/DelannoyBinomialCongruence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Congruences for Delannoy numbers"},
   "MathlibExt/NumberTheory/DelannoyBinomialSum": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Congruences for Delannoy numbers"},
   "MathlibExt/NumberTheory/Digits/BinaryDigitSum": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Takagi function"},
   "MathlibExt/NumberTheory/Digits/BinomialDigits": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
