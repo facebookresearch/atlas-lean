@@ -18,3 +18,6 @@ Operational and denotational semantics of programming languages and correctness 
 - [Compiler correctness](compiler-correctness/README.md)
 - [Abstract machines and equivalence](abstract-machines-and-equivalence/README.md)
 - [Effects modules and logic programming](effects-modules-and-logic-programming/README.md)
+- [Domain theoretic models](domain-theoretic-models/README.md)
+- [Intermediate representations](intermediate-representations/README.md)
+- [Garbage collection](garbage-collection/README.md)

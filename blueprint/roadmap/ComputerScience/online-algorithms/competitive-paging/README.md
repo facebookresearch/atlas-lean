@@ -47,3 +47,4 @@
 - [The ratio $k$ is tight for FIFO](fifo-not-competitive-of-lt.md)
 - [Belady's anomaly for FIFO page replacement](belady-s-anomaly-for-fifo-page-replacement.md)
 - [Resource-augmented competitiveness of LRU](resource-augmented-competitiveness-of-lru.md)
+- [The randomized marking algorithm and the harmonic lower bound for paging](randomized-marking-algorithm-and-the-harmonic-lower-bound.md)
