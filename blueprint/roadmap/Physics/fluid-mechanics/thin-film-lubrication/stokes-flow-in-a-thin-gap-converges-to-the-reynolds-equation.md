@@ -1,27 +1,29 @@
-# Stokes flow in a thin gap converges to the Reynolds equation
+# The Reynolds equation from the lubrication approximation
 
-This node covers the derivation of the Reynolds equation of lubrication as the thin-gap limit of the steady Stokes equations. Let $h$ be
-a smooth positive function on $[0, L]$, let $\mu > 0$ and real $U$ be given, and consider Stokes flow with viscosity $\mu$ in the gap
-$\Omega_\varepsilon = \{(x, y) : 0 < x < L,\ 0 < y < \varepsilon h(x)\}$, driven by the lower wall moving with speed $U$, with the upper wall
-at rest. In the variables $Y = y/\varepsilon$ and $P = \varepsilon^2 p$ the formal limit is a pressure $P(x)$ and, in each cross-section
-$0 < Y < h(x)$, the Couette-Poiseuille profile
+Let $h$ be a smooth positive function on $[0, L]$, let $\mu > 0$ and real $U$ be given, and let $P$ be twice continuously differentiable on
+$[0, L]$. In the lubrication approximation of a thin gap $0 < Y < h(x)$ whose lower wall moves with speed $U$ and whose upper wall is at rest,
+the velocity $u(x, Y)$ in each cross-section solves
+
+$$\mu\,\frac{\partial^2 u}{\partial Y^2} = \frac{dP}{dx} \quad (0 < Y < h(x)), \qquad u(x, 0) = U, \quad u(x, h(x)) = 0 .$$
+
+For each $x$ this two-point problem has exactly one solution, the Couette-Poiseuille profile
 
 $$u(x, Y) = \frac{1}{2\mu}\,\frac{dP}{dx}\,\big(Y^2 - Y h(x)\big) + U\Big(1 - \frac{Y}{h(x)}\Big),$$
 
-whose flux $\int_0^{h} u\,dY = -\frac{h^3}{12\mu}\frac{dP}{dx} + \frac{Uh}{2}$ does not depend on $x$; equivalently $P$ solves the Reynolds equation
+with flux $q(x) = \int_0^{h(x)} u\,dY = -\frac{h^3}{12\mu}\frac{dP}{dx} + \frac{Uh}{2}$. The flux is constant on $[0, L]$ if and only if $P$ solves the
+Reynolds equation
 
-$$\frac{d}{dx}\left(h^3\,\frac{dP}{dx}\right) = 6\mu U\,\frac{dh}{dx}.$$
+$$\frac{d}{dx}\left(h^3\,\frac{dP}{dx}\right) = 6\mu U\,\frac{dh}{dx},$$
 
-A rigorous form of this limit depends on the boundary data at $x = 0$ and $x = L$, on the function spaces and on the topology of
-convergence.
+and for given end pressures $P(0) = P_0$ and $P(L) = P_L$ the Reynolds equation has exactly one solution, namely
+$P' = 6\mu U/h^2 - 12\mu q/h^3$ with the constant $q$ fixed by $P_L - P_0 = \int_0^L \big(6\mu U h^{-2} - 12\mu q h^{-3}\big)\,dx$.
 
 ## Expansion
 
-A good expansion fixes one rigorous formulation, such as that of Bayada and Chambat: the Stokes problem in $\Omega_\varepsilon$ with
-prescribed velocity data on the whole boundary compatible with the wall motions, the scaled a priori estimates, and the spaces and
-topologies in which the scaled velocities and pressures converge to the profile and pressure above, and states that convergence as a
-theorem. The solvability of the limiting Reynolds problem with prescribed end pressures, and its explicit solution for a plane slider, are
-separate nodes.
+A good expansion proves that this reduced model is the thin-gap limit of the steady Stokes equations in one rigorous formulation, such as
+that of Bayada and Chambat: the Stokes problem in $\{(x, y) : 0 < x < L,\ 0 < y < \varepsilon h(x)\}$ with prescribed velocity data on the
+whole boundary compatible with the wall motions, the scaled a priori estimates in the variables $Y = y/\varepsilon$ and $P = \varepsilon^2 p$,
+and the spaces and topologies in which the scaled velocities and pressures converge to the profile and pressure above.
 
 ## Sources
 

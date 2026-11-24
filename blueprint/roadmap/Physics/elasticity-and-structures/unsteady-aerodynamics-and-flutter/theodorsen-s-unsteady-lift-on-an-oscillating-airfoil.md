@@ -1,10 +1,12 @@
 # Theodorsen's unsteady lift on an oscillating airfoil
 
 This node covers Theodorsen's linearized unsteady lift. Consider a flat-plate airfoil of semichord $b > 0$ in incompressible inviscid
-flow of speed $U > 0$ and density $\rho$, performing small harmonic plunge $h(t)$ and pitch $\alpha(t)$ about an axis at $x = ab$ measured from
-midchord, at reduced frequency $k = \omega b/U > 0$, with a planar wake and the Kutta condition. Then the lift per unit span is
+flow of speed $U > 0$ and density $\rho$, performing small harmonic plunge $h(t) = \operatorname{Re}(\bar h\,e^{i\omega t})$ and pitch $\alpha(t) = \operatorname{Re}(\bar\alpha\,e^{i\omega t})$,
+with complex amplitudes $\bar h, \bar\alpha$, about an axis at $x = ab$ measured from midchord, at reduced frequency $k = \omega b/U > 0$,
+with a planar wake and the Kutta condition. Then the lift per unit span is $L(t) = \operatorname{Re}(\bar L\,e^{i\omega t})$ with complex
+amplitude
 
-$$L = \pi\rho b^2\big(\ddot h + U\dot\alpha - ba\ddot\alpha\big) + 2\pi\rho U b\,C(k)\Big[\dot h + U\alpha + b\big(\tfrac12 - a\big)\dot\alpha\Big],$$
+$$\bar L = \pi\rho b^2\big(-\omega^2\bar h + i\omega U\bar\alpha + ab\,\omega^2\bar\alpha\big) + 2\pi\rho U b\,C(k)\Big[i\omega\bar h + U\bar\alpha + i\omega b\big(\tfrac12 - a\big)\bar\alpha\Big],$$
 
 with $h$ positive downward and Theodorsen's function $C(k) = H_1^{(2)}(k)/\big(H_1^{(2)}(k) + i H_0^{(2)}(k)\big)$, where $H_n^{(2)}$ are Hankel
 functions of the second kind.
