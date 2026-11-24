@@ -140,24 +140,6 @@ theorem traceSetVec_card_mono {C : ConceptClass α β} {s t : Finset α}
   have hcard := Fintype.card_le_of_surjective _ hsurj
   rwa [Fintype.card_coe, Fintype.card_coe] at hcard
 
-/-- Every finset has a subset of each smaller cardinality. -/
-private theorem exists_subset_card_eq {α : Type*} (s : Finset α) :
-    ∀ (k : ℕ), k ≤ s.card → ∃ t ⊆ s, t.card = k := by
-  classical
-  refine Finset.induction_on s ?_ ?_
-  · intro k h
-    rw [Finset.card_empty] at h
-    obtain rfl : k = 0 := Nat.le_zero.mp h
-    exact ⟨∅, fun x hx => hx, Finset.card_empty⟩
-  · intro a s' ha ih k h
-    rw [Finset.card_insert_of_notMem ha] at h
-    by_cases hk : k ≤ s'.card
-    · obtain ⟨t, hts, htcard⟩ := ih k hk
-      exact ⟨t, fun x hx => Finset.mem_insert_of_mem (hts hx), htcard⟩
-    · have hkk : k = s'.card + 1 := by omega
-      refine ⟨insert a s', fun x hx => hx, ?_⟩
-      rw [Finset.card_insert_of_notMem ha, hkk]
-
 /-- A `k`-set extends to an `m`-set when an `m`-set exists. -/
 private theorem exists_superset_card_eq {α : Type*} (t s0 : Finset α)
     {k m : ℕ} (ht : t.card = k) (hs0 : s0.card = m) (hkm : k ≤ m) :
@@ -181,7 +163,7 @@ private theorem exists_superset_card_eq {α : Type*} (t s0 : Finset α)
     rw [← ht]
     exact Finset.card_le_card (fun x hx => (Finset.mem_inter.mp hx).2)
   have hge : m - k ≤ (s0 \ t).card := by omega
-  obtain ⟨v, hvu, hvcard⟩ := exists_subset_card_eq (s0 \ t) (m - k) hge
+  obtain ⟨v, hvu, hvcard⟩ := Finset.exists_subset_card_eq hge
   have hd : Disjoint t v := by
     rw [Finset.disjoint_left]
     rintro x hxt hxv
