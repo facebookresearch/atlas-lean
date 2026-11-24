@@ -32,6 +32,7 @@ public import MathlibExt.Combinatorics.Enumerative.StirlingFirstHigherColumns
 public import MathlibExt.Combinatorics.Enumerative.StirlingFirstShiftedExpansion
 public import MathlibExt.Combinatorics.Enumerative.StirlingFirstSmallerRows
 public import MathlibExt.Combinatorics.Enumerative.StirlingSecondAlternatingRowSum
+public import MathlibExt.Combinatorics.Enumerative.StirlingSecondSignedBinomialTransform
 public import MathlibExt.Combinatorics.Enumerative.StirlingSecondSmallerRows
 
 set_option autoImplicit false
@@ -41,19 +42,6 @@ set_option autoImplicit false
 open scoped BigOperators
 
 namespace MathlibExt.Combinatorics.Enumerative.StirlingIdentitiesWanted
-
-/-- **Lee's alternating expansion of Stirling numbers of the second kind.** Write $S(n, k)$ for
-the Stirling number of the second kind, the number of partitions of an $n$-element set into $k$
-nonempty blocks. For natural numbers $m \le n$, the following identity of integers holds:
-$$S(n, m) = \sum_{k=m}^{n} (-1)^{k-m} \binom{n}{k}\, m^{n-k}\, S(k, m).$$
-
-Source: Kwankyu Lee, "Some New Identities for Stirling Numbers", Theorem 2
-(TeX label `thm:kscasc`). -/
-theorem_wanted stirlingSecond_eq_sum_choose_pow {m n : ℕ} (hmn : m ≤ n) :
-    (Nat.stirlingSecond n m : ℤ) =
-      ∑ k ∈ Finset.Icc m n,
-        (Nat.choose n k : ℤ) * (Nat.stirlingSecond k m : ℤ) *
-          (m : ℤ) ^ (n - k) * (-1 : ℤ) ^ (k - m)
 
 /-- **Lee's identity for Stirling numbers of the second kind from higher columns.** Write
 $S(n, k)$ for the Stirling number of the second kind, the number of partitions of an $n$-element
