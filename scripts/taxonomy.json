@@ -12695,6 +12695,7 @@
   "MathlibExt/NumberTheory/Recurrences/MStepFibonacciConvolution": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/MStepFibonacciPartialSums": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Keyword substitutions on binary words"},
   "MathlibExt/NumberTheory/Recurrences/NondegenerateLucasPair": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
+  "MathlibExt/NumberTheory/Recurrences/OddBinomialAlternatingSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Catalan identities for generalized Fibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/OesperWeavingDeterminant": {"to": "Topology/knot-theory", "title": "Determinants of weaving knots"},
   "MathlibExt/NumberTheory/Recurrences/PellBinomialTransform": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
   "MathlibExt/NumberTheory/Recurrences/PrimitiveDivisor": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Primitive divisors"},
