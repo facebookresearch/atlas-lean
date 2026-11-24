@@ -11,9 +11,11 @@ module
 public import Mathlib.Algebra.Ring.Parity
 public import MathlibExt.Combinatorics.Additive.BhSet
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Group.List.Lemmas
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Tauto
 
 /-!
 # The fourth positive element in the greedy `B_h`-set
@@ -24,7 +26,8 @@ and `h² + h + 1`. This file expresses the greedy choice stage by stage (`IsNext
 `IsFourthGreedyBh`) with `AdditiveCombinatorics.IsBhSet`, defines the quasipolynomial
 `fourthValue h`, equal to `(h³ + 3h² + 3h + 1)/2` for odd `h` and `(h³ + 2h² + 3h + 2)/2` for even
 `h`, and proves the upper bound `a₄(h) ≤ fourthValue h` for every `h ≥ 1`
-(`isFourthGreedyBh_le_fourthValue`).
+(`isFourthGreedyBh_le_fourthValue`), and proves the matching lower bound for `h ≥ 2`
+(`fourthValue_le_of_isFourthGreedyBh`).
 
 ## Proof of the upper bound
 
@@ -43,6 +46,14 @@ the same sum.
   reduction to summands that do not occur on both sides.
 * When the counts of `v` agree, the remaining counts are the digits of the same number in the mixed
   base `1, h + 1, h² + h + 1`, so they agree too.
+
+## Proof of the lower bound
+
+For `h ≥ 2`, every candidate below `fourthValue h` and above the third term admits
+an equality of two `h`-term sums, with the candidate appearing on only one side.
+Fix the number of copies of the third term. Varying the numbers of copies of `1`
+and `h + 1` covers an integer interval of candidates. These intervals meet up to
+the midpoint index, and one final interval reaches `fourthValue h - 1`.
 
 ## References
 
@@ -282,5 +293,247 @@ theorem isFourthGreedyBh_le_fourthValue
   intro x hx
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
   rcases hx with rfl | rfl | rfl | rfl <;> omega
+
+section
+
+open AdditiveCombinatorics
+
+-- Pad both lists with zeros. The candidate occurs only on the left.
+private theorem not_isBhSet_of_collision {h b : ℕ} (hb : h ^ 2 + h + 1 < b)
+    {x₁ x₂ y₁ y₂ y₃ : ℕ} (hx : 1 + x₁ + x₂ ≤ h) (hy : y₁ + y₂ + y₃ ≤ h)
+    (heq : b + x₁ + x₂ * (h + 1) = y₁ + y₂ * (h + 1) + y₃ * (h ^ 2 + h + 1)) :
+    ¬ IsBhSet (insert b ({0, 1, h + 1, h ^ 2 + h + 1} : Set ℕ)) h := by
+  intro hbh
+  let l := b :: (List.replicate x₁ 1 ++ List.replicate x₂ (h + 1) ++
+    List.replicate (h - (1 + x₁ + x₂)) 0)
+  let r := List.replicate y₁ 1 ++ List.replicate y₂ (h + 1) ++
+    List.replicate y₃ (h ^ 2 + h + 1) ++ List.replicate (h - (y₁ + y₂ + y₃)) 0
+  have hlmem (j : ℕ) (hj : j ∈ l) :
+      j ∈ (insert b {0, 1, h + 1, h ^ 2 + h + 1} : Set ℕ) := by
+    simp only [l, List.mem_cons, List.mem_append, List.mem_replicate] at hj
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  have hrmem (j : ℕ) (hj : j ∈ r) :
+      j ∈ (insert b {0, 1, h + 1, h ^ 2 + h + 1} : Set ℕ) := by
+    simp only [r, List.mem_append, List.mem_replicate] at hj
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  have hllen : l.length = h := by
+    simp only [l, List.length_cons, List.length_append, List.length_replicate]
+    omega
+  have hrlen : r.length = h := by
+    simp only [r, List.length_append, List.length_replicate]
+    omega
+  have hln : l ≠ [] := by simp [l]
+  have hrn : r ≠ [] := by
+    intro hr
+    rw [hr, List.length_nil] at hrlen
+    omega
+  have hsum : l.sum = r.sum := by
+    simp only [l, r, List.sum_cons, List.sum_append, List.sum_replicate, nsmul_eq_mul,
+      Nat.cast_id, mul_one, mul_zero, add_zero]
+    omega
+  have hp := hbh.2.2 l r hlmem hrmem hllen hrlen hln hrn
+    (by simpa only [sumNE_eq_sum] using hsum)
+  have hbr : b ∈ r := hp.mem_iff.mp (by simp [l])
+  simp only [r, List.mem_append, List.mem_replicate] at hbr
+  omega
+
+-- Integer counts make the interval arithmetic independent of casts.
+private def HasCollision (h : ℕ) (b : ℤ) : Prop :=
+  ∃ x₁ x₂ y₁ y₂ y₃ : ℤ, 0 ≤ x₁ ∧ 0 ≤ x₂ ∧ 0 ≤ y₁ ∧ 0 ≤ y₂ ∧ 0 ≤ y₃ ∧
+    1 + x₁ + x₂ ≤ (h : ℤ) ∧ y₁ + y₂ + y₃ ≤ (h : ℤ) ∧
+    b + x₁ + x₂ * ((h : ℤ) + 1) = y₁ + y₂ * ((h : ℤ) + 1) + y₃ * ((h : ℤ) ^ 2 + h + 1)
+
+private theorem HasCollision.not_isBhSet {h b : ℕ} (hc : HasCollision h (b : ℤ))
+    (hb : h ^ 2 + h + 1 < b) :
+    ¬ IsBhSet (insert b ({0, 1, h + 1, h ^ 2 + h + 1} : Set ℕ)) h := by
+  obtain ⟨x₁, x₂, y₁, y₂, y₃, hx₁, hx₂, hy₁, hy₂, hy₃, hx, hy, heq⟩ := hc
+  refine not_isBhSet_of_collision (x₁ := x₁.toNat) (x₂ := x₂.toNat)
+    (y₁ := y₁.toNat) (y₂ := y₂.toNat) (y₃ := y₃.toNat) hb ?_ ?_ ?_
+  · exact_mod_cast (show (1 : ℤ) + x₁.toNat + x₂.toNat ≤ h by
+      simpa only [Int.toNat_of_nonneg hx₁, Int.toNat_of_nonneg hx₂] using hx)
+  · exact_mod_cast (show (y₁.toNat : ℤ) + y₂.toNat + y₃.toNat ≤ h by
+      simpa only [Int.toNat_of_nonneg hy₁, Int.toNat_of_nonneg hy₂,
+        Int.toNat_of_nonneg hy₃] using hy)
+  · exact_mod_cast (show (b : ℤ) + x₁.toNat + x₂.toNat * ((h : ℤ) + 1) =
+        (y₁.toNat : ℤ) + y₂.toNat * ((h : ℤ) + 1) + y₃.toNat * ((h : ℤ) ^ 2 + h + 1) by
+      simpa only [Int.toNat_of_nonneg hx₁, Int.toNat_of_nonneg hx₂, Int.toNat_of_nonneg hy₁,
+        Int.toNat_of_nonneg hy₂, Int.toNat_of_nonneg hy₃] using heq)
+
+-- Integer intervals whose successive endpoints are at most one apart leave no gap.
+private theorem covers_int_interval (P : ℤ → Prop) (l u : ℕ → ℤ) (n : ℕ)
+    (hJ : ∀ k, k ≤ n → ∀ z, l k ≤ z → z ≤ u k → P z)
+    (hAdj : ∀ k, k < n → l (k + 1) ≤ u k + 1) :
+    ∀ z, l 0 ≤ z → z ≤ u n → P z := by
+  induction n with
+  | zero => exact hJ 0 le_rfl
+  | succ n ih =>
+    intro z hl hu
+    by_cases hn : z ≤ u n
+    · exact ih (fun k hk => hJ k (by omega)) (fun k hk => hAdj k (by omega)) z hl hn
+    · have hadj := hAdj n (by omega)
+      exact hJ (n + 1) le_rfl z (by omega) hu
+
+-- The residual is the difference of the two numbers of ones.
+private theorem hasCollision_of_block {h : ℕ} {b x y t : ℤ}
+    (hx : 0 ≤ x) (hy : 0 ≤ y) (ht : 0 ≤ t)
+    (hxH : 1 + x ≤ (h : ℤ)) (hyH : y + t ≤ (h : ℤ))
+    (hl : t * ((h : ℤ) ^ 2 + h + 1) + (y - x) * ((h : ℤ) + 1) - (h - 1 - x) ≤ b)
+    (hu : b ≤ t * ((h : ℤ) ^ 2 + h + 1) + (y - x) * ((h : ℤ) + 1) + (h - y - t)) :
+    HasCollision h b := by
+  let z := b - (t * ((h : ℤ) ^ 2 + h + 1) + (y - x) * ((h : ℤ) + 1))
+  have hzl : -(h - 1 - x) ≤ z := by dsimp [z]; linarith only [hl]
+  have hzu : z ≤ (h : ℤ) - y - t := by dsimp [z]; linarith only [hu]
+  have hz : z + max (-z) 0 = max z 0 := by omega
+  refine ⟨max (-z) 0, x, max z 0, y, t, by omega, hx, by omega, hy, ht,
+    by omega, by omega, ?_⟩
+  dsimp [z] at hz
+  linarith only [hz]
+
+private def blockLo (h t : ℕ) : ℤ := (t : ℤ) * ((h : ℤ) + 1) ^ 2 - (h : ℤ) ^ 2 - h + 1
+private def blockHi (h t : ℕ) : ℤ := (t : ℤ) * (h : ℤ) ^ 2 + (h : ℤ) ^ 2 + h
+
+-- For fixed `t`, the blocks from adding or removing copies of `h + 1` cover one interval.
+private theorem hasCollision_of_middle_interval {h t : ℕ} (ht₀ : 1 ≤ t) (htH : t ≤ h)
+    {b : ℤ} (hl : blockLo h t ≤ b) (hu : b ≤ blockHi h t) : HasCollision h b := by
+  let H : ℤ := h
+  let T : ℤ := t
+  let A := H ^ 2 + H + 1
+  let m := h - t
+  have hmt : (m : ℤ) = H - T := by
+    have hm : t + m = h := Nat.add_sub_of_le htH
+    have hm' : (t : ℤ) + (m : ℤ) = (h : ℤ) := by exact_mod_cast hm
+    change (m : ℤ) = (h : ℤ) - (t : ℤ)
+    omega
+  have hT₀ : 1 ≤ T := by
+    change (1 : ℤ) ≤ (t : ℤ)
+    exact_mod_cast ht₀
+  have hTH : T ≤ H := by
+    change (t : ℤ) ≤ (h : ℤ)
+    exact_mod_cast htH
+  let loPos (j : ℕ) : ℤ := T * A + (j : ℤ) * (H + 1) - (H - 1)
+  let hiPos (j : ℕ) : ℤ := T * A + (j : ℤ) * H + H - T
+  have hp : ∀ z, loPos 0 ≤ z → z ≤ hiPos m → HasCollision h z := by
+    apply covers_int_interval
+    · intro j hj z hzL hzU
+      have hj' : (j : ℤ) ≤ m := by exact_mod_cast hj
+      refine hasCollision_of_block (x := 0) (y := (j : ℤ)) (t := T)
+        le_rfl (by positivity) (by omega) (by omega) (by omega) ?_ ?_
+      · simpa [loPos, A, H, sub_zero] using hzL
+      · dsimp [hiPos, A, H] at hzU
+        nlinarith only [hzU]
+    · intro j hj
+      have hj' : (j : ℤ) < m := by exact_mod_cast hj
+      dsimp [loPos, hiPos]
+      nlinarith only [hj', hmt]
+  let loNeg (j : ℕ) : ℤ := T * A - ((m : ℤ) - j) * H - H + 1
+  let hiNeg (j : ℕ) : ℤ := T * A - ((m : ℤ) - j) * (H + 1) + H - T
+  have hn : ∀ z, loNeg 0 ≤ z → z ≤ hiNeg m → HasCollision h z := by
+    apply covers_int_interval
+    · intro j hj z hzL hzU
+      have hj' : (j : ℤ) ≤ m := by exact_mod_cast hj
+      have hj₀ : 0 ≤ (j : ℤ) := by positivity
+      refine hasCollision_of_block (x := (m : ℤ) - j) (y := 0) (t := T)
+        (by omega) le_rfl (by omega) (by omega) (by omega) ?_ ?_
+      · dsimp [loNeg, A, H] at hzL
+        nlinarith only [hzL]
+      · dsimp [hiNeg, A, H] at hzU
+        nlinarith only [hzU]
+    · intro j hj
+      have hj₀ : 0 ≤ (j : ℤ) := by positivity
+      dsimp [loNeg, hiNeg]
+      nlinarith only [hmt, hj₀]
+  have hleft : loNeg 0 = blockLo h t := by
+    dsimp [loNeg, blockLo, A, H, T]
+    rw [show (m : ℤ) = (h : ℤ) - (t : ℤ) from hmt]
+    ring
+  have hright : hiPos m = blockHi h t := by
+    dsimp [hiPos, blockHi, A, H, T]
+    rw [show (m : ℤ) = (h : ℤ) - (t : ℤ) from hmt]
+    ring
+  by_cases hb : loPos 0 ≤ b
+  · exact hp b hb (hright ▸ hu)
+  · refine hn b (hleft ▸ hl) ?_
+    have hj : loPos 0 ≤ hiNeg m := by
+      dsimp [loPos, hiNeg]
+      nlinarith only [hT₀, hTH]
+    omega
+
+private def lastMiddleIndex (h : ℕ) : ℕ := (h - 1) / 2
+
+private def tailHi (h : ℕ) : ℤ :=
+  ((lastMiddleIndex h : ℤ) + 2) * (h : ℤ) ^ 2 + 2 * (h : ℤ) - ((lastMiddleIndex h : ℤ) + 1)
+
+-- The main intervals reach the midpoint index; one final negative-side block fills the tail.
+private theorem hasCollision_up_to_tail {h : ℕ} (hh : 2 ≤ h) {b : ℤ}
+    (hl : (h : ℤ) + 2 ≤ b) (hu : b ≤ tailHi h) : HasCollision h b := by
+  let q := lastMiddleIndex h
+  have hq : 2 * q + 1 ≤ h := by dsimp [q, lastMiddleIndex]; omega
+  have hq₂ : q + 2 ≤ h := by omega
+  have hqZ : (q : ℤ) + 2 ≤ (h : ℤ) := by exact_mod_cast hq₂
+  have hq' : 2 * (q : ℤ) + 1 ≤ (h : ℤ) := by exact_mod_cast hq
+  have hhZ : (2 : ℤ) ≤ (h : ℤ) := by exact_mod_cast hh
+  have hcover : ∀ z, blockLo h 1 ≤ z → z ≤ blockHi h (q + 1) → HasCollision h z := by
+    refine covers_int_interval (HasCollision h) (fun k => blockLo h (k + 1))
+      (fun k => blockHi h (k + 1)) q ?_ ?_
+    · intro k hk z hzL hzU
+      exact hasCollision_of_middle_interval (by omega) (by omega) hzL hzU
+    · intro k hk
+      have hk' : (k : ℤ) + 1 ≤ (q : ℤ) := by exact_mod_cast (show k + 1 ≤ q by omega)
+      have hk₂ : 2 * ((k : ℤ) + 1) ≤ (h : ℤ) - 1 := by omega
+      have hmul := mul_le_mul_of_nonneg_left hk₂ (by positivity : 0 ≤ 2 * (h : ℤ) + 1)
+      dsimp [blockLo, blockHi]
+      nlinarith only [hmul, hhZ]
+  by_cases hb : b ≤ blockHi h (q + 1)
+  · refine hcover b ?_ hb
+    dsimp [blockLo]
+    nlinarith only [hl]
+  · have hb' : blockHi h (q + 1) + 1 ≤ b := by omega
+    refine hasCollision_of_block (x := (q : ℤ) + 1) (y := 0) (t := (q : ℤ) + 2)
+      (by positivity) le_rfl (by positivity) (by omega) (by omega) ?_ ?_
+    · dsimp [blockHi] at hb'
+      nlinarith only [hb', hqZ]
+    · change b ≤ ((q : ℤ) + 2) * (h : ℤ) ^ 2 + 2 * (h : ℤ) - ((q : ℤ) + 1) at hu
+      nlinarith only [hu]
+
+private theorem tailHi_add_one_eq_fourthValue {h : ℕ} (hh : 2 ≤ h) :
+    tailHi h + 1 = (fourthValue h : ℤ) := by
+  rcases Nat.even_or_odd h with ⟨m, rfl⟩ | ⟨m, rfl⟩
+  · have hparity : ¬Odd (m + m) := Nat.not_odd_iff_even.mpr ⟨m, rfl⟩
+    have hIdx : lastMiddleIndex (m + m) + 1 = m := by unfold lastMiddleIndex; omega
+    have hIdxZ : (lastMiddleIndex (m + m) : ℤ) + 1 = (m : ℤ) := by exact_mod_cast hIdx
+    rw [fourthValue, ite_eq_right hparity,
+      show (m + m) ^ 3 + 2 * (m + m) ^ 2 + 3 * (m + m) + 2 =
+        2 * (4 * m ^ 3 + 4 * m ^ 2 + 3 * m + 1) by ring,
+      Nat.mul_div_cancel_left _ two_pos, tailHi,
+      show (lastMiddleIndex (m + m) : ℤ) + 2 = (m : ℤ) + 1 by omega, hIdxZ]
+    push_cast
+    ring
+  · have hIdx : lastMiddleIndex (2 * m + 1) = m := by unfold lastMiddleIndex; omega
+    rw [fourthValue, ite_eq_left (show Odd (2 * m + 1) from ⟨m, rfl⟩),
+      show (2 * m + 1) ^ 3 + 3 * (2 * m + 1) ^ 2 + 3 * (2 * m + 1) + 1 =
+        2 * (4 * (m + 1) ^ 3) by ring, Nat.mul_div_cancel_left _ two_pos, tailHi, hIdx]
+    push_cast
+    ring
+
+/-- **Lower bound for the fourth greedy $B_h$ term.** Let $h$ and $a$ be natural numbers with
+$h \ge 2$. If $a$ is the fourth positive element $a_4(h)$ of the greedy $B_h$-set, then
+$a \ge v(h)$, where $v(h) = (h^3 + 3h^2 + 3h + 1)/2$ if $h$ is odd and
+$v(h) = (h^3 + 2h^2 + 3h + 2)/2$ if $h$ is even.
+
+Source: Melvyn B. Nathanson and Kevin O'Bryant, "The Fourth Positive
+Element in the Greedy `B_h`-Set", Lemma 2. -/
+theorem fourthValue_le_of_isFourthGreedyBh
+    (h a : ℕ) (hh : 2 ≤ h) (ha : IsFourthGreedyBh h a) :
+    fourthValue h ≤ a := by
+  by_contra! hn
+  have hthird : h ^ 2 + h + 1 < a := ha.2.2.2.1 _ (by simp)
+  have hl : (h : ℤ) + 2 ≤ (a : ℤ) := by exact_mod_cast (show h + 2 ≤ a by omega)
+  have hu : (a : ℤ) < (fourthValue h : ℤ) := by exact_mod_cast hn
+  have htail := tailHi_add_one_eq_fourthValue hh
+  exact (hasCollision_up_to_tail hh hl (by omega)).not_isBhSet hthird ha.2.2.2.2.1
+
+end
 
 end MathlibExt.Combinatorics.GreedyBhFourthWanted
