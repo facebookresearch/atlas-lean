@@ -12,6 +12,7 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Sampled-data systems](sampled-data-systems/README.md)
 - [Feedback stability and classical design](feedback-stability-and-classical-design/README.md)
 - [Steady-state step response of a stable linear system](dc-gain-of-a-stable-linear-system.md)
+- [Linear-quadratic control](linear-quadratic-control/README.md)
 
 ## Single-input single-output linear systems
 

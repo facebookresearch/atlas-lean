@@ -14,3 +14,4 @@ the uniqueness of a canonical realization up to similarity.
 - [Laplace transform of the matrix exponential and of the state of a linear system](laplace-transform-of-the-state-of-a-linear-system.md)
 - [The transfer matrix as a rational function, and its invariance under similarity](transfer-matrix-as-a-rational-function-and-its-similarity-invariance.md)
 - [Transfer poles of a minimal realization are its eigenvalues](transfer-poles-of-a-minimal-realization-are-its-eigenvalues.md)
+- [The z-transform of the state of a discrete-time linear system](z-transform-of-the-state-of-a-discrete-time-linear-system.md)
