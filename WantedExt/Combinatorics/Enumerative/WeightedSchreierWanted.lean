@@ -133,18 +133,6 @@ public theorem_wanted iteratedPartialSum_fib_add_two (k l : ℕ) :
     iteratedPartialSum k (fun n => Nat.fib (n + 2)) l =
       iteratedPartialSum k Nat.fib l + iteratedPartialSum k Nat.fib (l + 1)
 
-/-- **Weighted Schreier counts for $n < k$.** For all natural numbers $n < k$, the weighted
-Schreier count satisfies $a_{k,n} = F_{n+1}$, where $F_j$ is the $j$-th Fibonacci number
-($F_0 = 0$, $F_1 = 1$).
-
-This includes $n = 0$, where $a_{k,0} = 1 = F_1$; the source takes $n$ positive.
-
-Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
-Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Proposition 3.5
-(`fq-2024-chu08302024rev-prop-3.5`). -/
-public theorem_wanted weightedSchreierCount_of_lt {k n : ℕ} (hnk : n < k) :
-    weightedSchreierCount k n = Nat.fib (n + 1)
-
 end
 
 end MetaMathlibExt
