@@ -7,3 +7,7 @@
 - [Fisherian runaway](fisherian-runaway.md)
 - [Stability and runaway in a linear preference–trait model](runaway-criterion-in-a-linear-model-of-female-pr.md)
 - [Sexual antagonism and intragenomic conflict](sexual-antagonism-and-intragenomic-conflict.md)
+
+- [Selfish genetic elements: separate transmission-conflict models](selfish-genetic-elements-and-suppressors.md)
+- [A recessive lethal limits meiotic drive except at complete transmission](meiotic-drive-with-a-recessive-lethal-converges.md)
+- [Invasion and loss in a specified maternal-transmission model](invasion-of-a-maternally-inherited-element.md)
