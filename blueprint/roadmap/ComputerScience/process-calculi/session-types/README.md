@@ -10,3 +10,4 @@ Session types for the π-calculus: binary protocols and their duality, linear en
 - [Session typing with shared services](session-typing-with-shared-services/README.md)
 - [Recursive sessions through replicated services](recursive-sessions-through-replicated-services/README.md)
 - [Classical Processes](classical-processes/README.md)
+- [Multiparty and classical processes](multiparty-and-classical-processes/README.md)

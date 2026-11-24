@@ -16,3 +16,5 @@ Operational and denotational semantics of programming languages and correctness 
 - [Lexing and parsing](lexing-and-parsing/README.md)
 - [Static analysis](static-analysis/README.md)
 - [Compiler correctness](compiler-correctness/README.md)
+- [Abstract machines and equivalence](abstract-machines-and-equivalence/README.md)
+- [Effects modules and logic programming](effects-modules-and-logic-programming/README.md)

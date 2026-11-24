@@ -7,3 +7,7 @@
 - [The CAP theorem](the-cap-theorem.md)
 - [Reliable broadcast](reliable-broadcast.md)
 - [Monotonic semilattice objects](monotonic-semilattice-objects.md)
+- [Broadcast abstractions](broadcast-abstractions.md)
+- [The CAP theorem under partial synchrony](the-cap-theorem-under-partial-synchrony.md)
+- [Counter and set CRDTs](counter-and-set-crdts.md)
+- [Convergence of state-based CRDTs](convergence-of-state-based-crdts.md)

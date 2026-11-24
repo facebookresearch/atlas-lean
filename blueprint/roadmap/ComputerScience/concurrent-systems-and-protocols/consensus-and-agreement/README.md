@@ -8,3 +8,6 @@
 - [The Raft consensus protocol](the-raft-consensus-protocol.md)
 - [Election safety and log matching in Raft](election-safety-and-log-matching-in-raft.md)
 - [Leader completeness and state machine safety in Raft](leader-completeness-and-state-machine-safety-in.md)
+- [Ben-Or's randomized consensus](ben-or-s-randomized-consensus.md)
+- [Consensus under partial synchrony needs a majority](consensus-under-partial-synchrony-needs-a.md)
+- [k-set agreement](k-set-agreement.md)
