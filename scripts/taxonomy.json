@@ -12319,6 +12319,7 @@
   "MathlibExt/NumberTheory/ErdosProblem818": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sum-product estimates for sets of small doubling"},
   "MathlibExt/NumberTheory/ErdosStrausDivisorPatterns": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Erdős–Straus conjecture"},
   "MathlibExt/NumberTheory/EulerFermatPrimePower": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Euler–Fermat congruences modulo prime powers"},
+  "MathlibExt/NumberTheory/EulerPolynomialBinomialAverage": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Higher-order Euler polynomials"},
   "MathlibExt/NumberTheory/EulerPrime": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
   "MathlibExt/NumberTheory/EvenPerfectNumbers": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Euclid–Euler theorem"},
   "MathlibExt/NumberTheory/EvenPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Even pseudoprimes"},
