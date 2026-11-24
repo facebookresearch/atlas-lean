@@ -1187,6 +1187,7 @@
   "CSLibExt/Algorithms/Quantum/SearchLowerBound": {"to": "ComputerScience/quantum-algorithms", "title": "Lower bound for quantum search"},
   "CSLibExt/Algorithms/Quantum/Shor/ContinuedFractions": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's order-finding algorithm"},
   "CSLibExt/Algorithms/Quantum/Shor/OrderToFactor": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's reduction of factoring to order finding"},
+  "CSLibExt/Algorithms/Quantum/Shor/OrderToFactorProbability": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's reduction of factoring to order finding"},
   "CSLibExt/Algorithms/SAT/DPLL": {"to": "Logic/propositional-logic", "title": "DPLL algorithm"},
   "CSLibExt/Algorithms/SAT/DavisPutnam/Basic": {"to": "Logic/propositional-logic", "title": "Davis–Putnam algorithm"},
   "CSLibExt/Algorithms/SAT/Horn/Basic": {"to": "Logic/propositional-logic", "title": "Horn satisfiability"},
