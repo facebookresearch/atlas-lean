@@ -243,8 +243,8 @@ lemma regime_iff {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k) :
     constructor <;> intro h <;> linarith
 
 /-- The selected Physlib free trajectory for engineering initial data `x₀`, `v₀` solves the
-equation of motion, starts at `x₀` with velocity `v₀`, and is the only smooth solution that
-does. -/
+equation of motion, starts at `x₀` with velocity `v₀`, and every smooth solution that does is
+equal to it. -/
 lemma trajectory_initial_data {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k) (x₀ v₀ : ℝ) :
     (massSpringDamper m c k hm hc hk).EquationOfMotion
         ((massSpringDamper m c k hm hc hk).trajectory (initialConditions x₀ v₀)) ∧

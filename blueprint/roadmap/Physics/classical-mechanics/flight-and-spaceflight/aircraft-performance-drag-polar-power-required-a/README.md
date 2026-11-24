@@ -68,7 +68,7 @@
 - [Minimum-power speed](min-power-speed.md)
 - [For nonzero weight the minimum-power speed is positive](min-power-speed-pos.md)
 - [For nonzero weight the minimum-power speed solves V⁴ = b / (3a)](min-power-speed-pow-four.md)
-- [For positive weight, the minimum-power speed is the unique minimizer](level-power-min-power-speed-lt.md)
+- [For W > 0, the minimum-power speed is the unique minimizer among V > 0](level-power-min-power-speed-lt.md)
 - [For positive weight, the least power required is P(V_mp)](is-least-level-power.md)
 - [For positive weight, power decreases up to the minimum-power speed](level-power-strict-anti-on.md)
 - [For positive weight, power increases from the minimum-power speed on](level-power-strict-mono-on.md)

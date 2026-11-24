@@ -21,7 +21,7 @@
 ## Damping regimes, free trajectories and dissipation
 
 - [Damping regimes of the mass–spring–damper](regime-iff.md)
-- [The free trajectory with given initial data is the unique smooth one](trajectory-initial-data.md)
+- [Smooth solutions with given initial data equal the free trajectory](trajectory-initial-data.md)
 - [The energy of a smooth free solution decreases at the rate c x′²](energy-dissipation.md)
 
 ## Steady-state response
