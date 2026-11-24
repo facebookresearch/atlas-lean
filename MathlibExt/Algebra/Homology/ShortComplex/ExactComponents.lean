@@ -1,0 +1,62 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+
+-- Author: @toskua
+module
+
+public import Mathlib.Algebra.Homology.ShortComplex.Abelian
+public import Mathlib.Algebra.Homology.ShortComplex.Exact
+public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
+
+/-! Actual zero objects, monomorphisms and exactness in the category of short complexes. -/
+@[expose] public section
+noncomputable section
+set_option autoImplicit false
+universe u v
+open CategoryTheory CategoryTheory.Limits
+
+namespace CategoryTheory.ShortComplex
+variable {C : Type u} [Category.{v} C] [Abelian C]
+
+/-- A short complex is a zero object when all its actual coefficient objects are zero. -/
+theorem isZero_of_components (S : ShortComplex C)
+    (h₁ : IsZero S.X₁) (h₂ : IsZero S.X₂) (h₃ : IsZero S.X₃) : IsZero S := by
+  apply (IsZero.iff_id_eq_zero S).mpr
+  apply ShortComplex.hom_ext
+  · exact h₁.eq_of_src _ _
+  · exact h₂.eq_of_src _ _
+  · exact h₃.eq_of_src _ _
+
+/-- Componentwise monomorphisms give an actual monomorphism of short complexes. -/
+theorem mono_of_components {S T : ShortComplex C} (f : S ⟶ T)
+    [Mono f.τ₁] [Mono f.τ₂] [Mono f.τ₃] : Mono f where
+  right_cancellation {X} a b h := by
+    apply ShortComplex.hom_ext
+    · exact (cancel_mono f.τ₁).mp (congrArg ShortComplex.Hom.τ₁ h)
+    · exact (cancel_mono f.τ₂).mp (congrArg ShortComplex.Hom.τ₂ h)
+    · exact (cancel_mono f.τ₃).mp (congrArg ShortComplex.Hom.τ₃ h)
+
+/-- Actual exactness of all three component rows gives exactness in the abelian
+category of short complexes. -/
+theorem exact_of_components (S : ShortComplex (ShortComplex C))
+    (h₁ : (S.map (ShortComplex.π₁ : ShortComplex C ⥤ C)).Exact)
+    (h₂ : (S.map (ShortComplex.π₂ : ShortComplex C ⥤ C)).Exact)
+    (h₃ : (S.map (ShortComplex.π₃ : ShortComplex C ⥤ C)).Exact) : S.Exact := by
+  have hz₁ : IsZero ((ShortComplex.π₁ : ShortComplex C ⥤ C).obj S.homology) :=
+    IsZero.of_iso ((S.map _).exact_iff_isZero_homology.mp h₁)
+      (S.mapHomologyIso (ShortComplex.π₁ : ShortComplex C ⥤ C)).symm
+  have hz₂ : IsZero ((ShortComplex.π₂ : ShortComplex C ⥤ C).obj S.homology) :=
+    IsZero.of_iso ((S.map _).exact_iff_isZero_homology.mp h₂)
+      (S.mapHomologyIso (ShortComplex.π₂ : ShortComplex C ⥤ C)).symm
+  have hz₃ : IsZero ((ShortComplex.π₃ : ShortComplex C ⥤ C).obj S.homology) :=
+    IsZero.of_iso ((S.map _).exact_iff_isZero_homology.mp h₃)
+      (S.mapHomologyIso (ShortComplex.π₃ : ShortComplex C ⥤ C)).symm
+  exact S.exact_iff_isZero_homology.mpr (isZero_of_components S.homology hz₁ hz₂ hz₃)
+
+end CategoryTheory.ShortComplex
