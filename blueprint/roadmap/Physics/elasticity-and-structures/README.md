@@ -6,4 +6,5 @@ Linear elasticity and the mechanics of structures: Cauchy stress, small strain a
 - [Isotropic elastic energy](isotropic-elastic-energy/README.md)
 - [Pin-jointed trusses](pin-jointed-trusses/README.md)
 - [Rigid footing on a Winkler foundation](rigid-footing-on-a-winkler-foundation/README.md)
+- [Vibrations of a monatomic chain](vibrations-of-a-monatomic-chain/README.md)
 - [Kern rule for eccentrically loaded footings](kern-condition-iff.md)
