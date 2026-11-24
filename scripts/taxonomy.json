@@ -10929,6 +10929,7 @@
   "MathlibExt/Geometry/LatticePointEnumerator": {"to": "Geometry/discrete-geometry", "title": "Lattice points in dilated regions"},
   "MathlibExt/Geometry/LebesgueUniversalCoveringConstant": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
   "MathlibExt/Geometry/LensCurvatureRecurrence": {"to": "Geometry/euclidean-geometry/circles-and-conics", "title": "Lens sequences of tangent circles"},
+  "MathlibExt/Geometry/LinearProgramming": {"to": "Geometry/convex-geometry", "title": "Linear programming"},
   "MathlibExt/Geometry/LipschitzImageCubeCount": {"to": "Geometry/discrete-geometry", "title": "Lattice points in dilated regions"},
   "MathlibExt/Geometry/Manifold/CollarNeighborhood": {"to": "Geometry/differential-topology", "title": "Collar neighbourhood theorem"},
   "MathlibExt/Geometry/Manifold/Finsler": {"to": "Geometry/riemannian-geometry", "title": "Finsler metrics"},
