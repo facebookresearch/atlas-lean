@@ -28,3 +28,18 @@ example (f : ℕ → ℚ) (hf : ∀ i, 1 ≤ i → f (i + 2) = f i) :
     show Icc 1 2 = {1, 2} from by decide, show 5 % 2 = 1 from rfl]
   simp
   ring
+
+-- The tail is empty when the sum stops immediately before the period starts.
+example (f : ℕ → ℚ) (hf : ∀ i, 3 ≤ i → f (i + 2) = f i) :
+    ∑ i ∈ Icc 1 2, f i = f 1 + f 2 := by
+  rw [sum_Icc_of_eventually_periodic f (by decide : 0 < 2) (by decide : 1 ≤ 3) hf
+    (by decide : 3 - 1 ≤ 2)]
+  simp [show Icc 1 2 = {1, 2} by decide]
+
+-- The prefix is unrestricted and the last term comes from the start of the period.
+example (f : ℕ → ℚ) (hf : ∀ i, 3 ≤ i → f (i + 2) = f i) :
+    ∑ i ∈ Icc 1 7, f i = f 1 + f 2 + 3 * f 3 + 2 * f 4 := by
+  rw [sum_Icc_of_eventually_periodic f (by decide : 0 < 2) (by decide : 1 ≤ 3) hf
+    (by decide : 3 - 1 ≤ 7)]
+  norm_num [show Icc 1 2 = {1, 2} by decide, show Ico 3 5 = {3, 4} by decide]
+  ring

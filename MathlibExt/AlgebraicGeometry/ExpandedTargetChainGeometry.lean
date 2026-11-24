@@ -44,7 +44,7 @@ structure RelativePair where
   inclusion : divisor ⟶ target
   [closed : IsClosedImmersion inclusion.left]
   targetSmooth : Smooth target.hom
-  targetProjective : ProjectiveLineSystems.IsProjectiveVariety target
+  targetProjective : ProjectiveSpace.IsProjective target
   divisorSmooth : Smooth divisor.hom
   divisorConnected : GeometricallyConnected divisor.hom
   cartier : IsEffectiveCartier inclusion.left.ker
