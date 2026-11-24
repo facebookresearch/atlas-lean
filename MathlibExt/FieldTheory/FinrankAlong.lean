@@ -1,0 +1,97 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`Theorems/Thm_ModularCurve_finrankAlong_x1LevelInclBar_eq_
+  finrankAlong_x1LevelSubstBar.lean`
+and
+`P2M/Sol/S_ModularCurve_finrankAlong_x1LevelInclBar_eq_
+  finrankAlong_x1LevelSubstBar.lean`
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
+The source is machine-generated proof code built around a proof-extraction
+framework; the statements and proofs are reused here with that machinery
+removed and the names restated in Mathlib style.
+-/
+
+module
+
+public import Mathlib.Algebra.Algebra.Hom
+public import Mathlib.LinearAlgebra.Dimension.Free
+public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+
+@[expose] public section
+
+namespace AlgebraicCurve
+
+variable {K F F' F'' : Type*} [Field K] [Field F] [Field F'] [Field F'']
+  [Algebra K F] [Algebra K F'] [Algebra K F'']
+
+/-- The degree of a field homomorphism, viewed along the homomorphism:
+the dimension of the target field over the source field, where the
+source acts through the homomorphism. -/
+noncomputable def finrankAlong (φ : F →ₐ[K] F') : ℕ :=
+  letI := φ.toRingHom.toAlgebra
+  Module.finrank F F'
+
+/-- The degree along a composite is the product of the degrees. -/
+theorem finrankAlong_comp (φ : F →ₐ[K] F') (χ : F' →ₐ[K] F'') :
+    finrankAlong (χ.comp φ) = finrankAlong φ * finrankAlong χ := by
+  letI := φ.toRingHom.toAlgebra
+  letI := χ.toRingHom.toAlgebra
+  letI := (χ.comp φ).toRingHom.toAlgebra
+  have h : IsScalarTower F F' F'' :=
+    IsScalarTower.of_algebraMap_eq fun x => by
+      show χ (φ x) = χ (φ x)
+      rfl
+  exact (Module.finrank_mul_finrank F F' F'').symm
+
+/-- Two homomorphisms that factor through a common homomorphism, with
+first factors of equal degree along them, have equal degree. -/
+theorem finrankAlong_eq_of_comp_eq_of_finrankAlong_eq
+    {M : Type*} [Field M] [Algebra K M]
+    (γ : M →ₐ[K] F') (α β : F →ₐ[K] M)
+    (h : finrankAlong α = finrankAlong β) :
+    finrankAlong (γ.comp α) = finrankAlong (γ.comp β) := by
+  rw [finrankAlong_comp, finrankAlong_comp, h]
+
+end AlgebraicCurve
+
+namespace ModularCurve
+
+open AlgebraicCurve
+
+variable {K F M T : Type*} [Field K] [Field F] [Field M] [Field T]
+  [Algebra K F] [Algebra K M] [Algebra K T]
+
+/-- The two prime-level degeneracy embeddings of a level-`Γ₁` function
+field into the level raised by a prime not dividing the level have
+equal field degree.  Both embeddings factor through the common
+intermediate degeneracy map, and the two first factors have equal
+degree along them (in the modular-curve application, both degrees
+are `p + 1` for a prime `p` not dividing the level). -/
+theorem finrankAlong_x1LevelInclBar_eq_finrankAlong_x1LevelSubstBar
+    (incl subst : F →ₐ[K] T) (common : M →ₐ[K] T)
+    (alpha beta : F →ₐ[K] M)
+    (hincl : incl = common.comp alpha) (hsubst : subst = common.comp beta)
+    (hab : finrankAlong alpha = finrankAlong beta) :
+    finrankAlong incl = finrankAlong subst := by
+  rw [hincl, hsubst]
+  exact finrankAlong_eq_of_comp_eq_of_finrankAlong_eq common alpha beta hab
+
+end ModularCurve
