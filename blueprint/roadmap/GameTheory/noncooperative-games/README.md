@@ -13,6 +13,7 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Atomic congestion games with affine delays](atomic-congestion-games-with-affine-delays/README.md)
 - [No-regret dynamics](no-regret-dynamics/README.md)
 - [Correlated equilibria](correlated-equilibria/README.md)
+- [Evolutionarily stable strategies in asymmetric games](evolutionarily-stable-strategies-in-asymmetric-g/README.md)
 - [Common knowledge and the agreement theorem](common-knowledge-and-the-agreement-theorem/README.md)
 - [Blackwell approachability](blackwell-approachability/README.md)
 - [Adaptive heuristics](adaptive-heuristics/README.md)
