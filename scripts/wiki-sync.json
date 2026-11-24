@@ -73450,6 +73450,7 @@
 "MetaMathlibExt.exists_iterate_factorial_eq_iterate_rpow_ten": "dc07c9ca6c4aa3a2",
 "MetaMathlibExt.exists_iterate_factorial_eq_tetration": "adb04cb8c3c81675",
 "MetaMathlibExt.exists_iterate_negBaseSqDigitSum_lt": "dade3c7b7ff2c452",
+"MetaMathlibExt.exists_knight_path_on_box": "28c854f42dc60c18",
 "MetaMathlibExt.exists_lStarBlockSum_of_properLStarBlock": "a55eb3cbfcf81bb7",
 "MetaMathlibExt.exists_lambertSequence": "f637fdd56b20be49",
 "MetaMathlibExt.exists_large_Jrr_free_cells": "037873433e66e665",
