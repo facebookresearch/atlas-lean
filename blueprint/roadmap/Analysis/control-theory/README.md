@@ -8,6 +8,12 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Recursive least squares](recursive-least-squares/README.md)
 - [Capability and limits of feedback](capability-and-limits-of-feedback/README.md)
 
+## Single-input single-output linear systems
+
+- [Single-input single-output linear time-invariant system](linear-system.md)
+- [Vector field of a linear time-invariant system](field.md)
+- [Output of a linear time-invariant system](output.md)
+
 ## Related topics
 
 - [Linear quadratic regulator](../../ComputerScience/machine-learning/reinforcement-learning/linear-quadratic-regulator/README.md): optimal state feedback for linear systems with quadratic cost, by dynamic programming (Recht).

@@ -44,27 +44,27 @@ namespace MathlibExt.Combinatorics.BalanceableBoundedPartitionsWanted
 namespace Combinatorics
 
 /--
-A partition is `k`-bounded if all of its members are at most `k`.
+**$k$-bounded partition.** A partition of $n$ is $k$-bounded if each of its parts is at most $k$.
 
-For example, `12 = 3 + 2 + 2 + 2 + 2 + 1` is a `3`-bounded partition
-of `12`.
+For example, $12 = 3 + 2 + 2 + 2 + 2 + 1$ is a $3$-bounded partition of $12$.
 -/
 def Bounded {n : ℕ} (k : ℕ) (p : n.Partition) : Prop :=
   ∀ i ∈ p.parts, i ≤ k
 
 /--
-A partition is balanceable if it can be decomposed into two multisets of
-the same size.
+**Balanceable partition.** A partition of $n$ is balanceable if its multiset of parts can be split
+as $s_1 + s_2$ into two multisets $s_1$ and $s_2$ whose elements have equal sums.
 
-For example, `12 = (3 + 2 + 1) + (2 + 2 + 2)` is a balanceable partition
-of `12`.
+For example, $12 = (3 + 2 + 1) + (2 + 2 + 2)$ is a balanceable partition of $12$.
 -/
 def Balanceable {n : ℕ} (p : n.Partition) : Prop :=
   ∃ s₁ s₂, s₁ + s₂ = p.parts ∧ s₁.sum = s₂.sum
 
 /--
-For any `k`, the smallest `n` such that any `k`-bounded partition of `n` is
-also balanceable is given by `2 * lcm(1, ..., k)`.
+**Smallest size forcing bounded partitions to be balanceable.** For every integer $k \ge 1$, the
+smallest positive integer $n$ such that every $k$-bounded partition of $n$ is balanceable is
+$2 \operatorname{lcm}(1, 2, \ldots, k)$.
+
 Source: https://projecteuler.net/problem=772 Via leanprover/lean-eval@38361be, problem `balanceable_bounded_partitions`.
 -/
 public theorem_wanted minimal_balanceable_of_bounded (k : ℕ) (hk : 0 < k) :

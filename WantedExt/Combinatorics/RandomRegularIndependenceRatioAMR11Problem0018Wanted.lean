@@ -41,29 +41,49 @@ Theorem 3 covers every `r ∈ ℤ₊`.
 open Filter Topology
 
 open scoped Classical in
-/-- The `d`-regular simple graphs on the vertex set `Fin n`: the support of the uniformly random
-`d`-regular graph on `n` vertices (empty when `n d` is odd or `n ≤ d`). -/
+/-- **Regular simple graphs on a labelled vertex set.** For natural numbers $n$ and $d$, the
+finite set of all $d$-regular simple graphs on the vertex set $\{0, \dots, n - 1\}$; the uniformly
+random $d$-regular graph on $n$ vertices is uniform on this set. It is empty when $nd$ is odd or
+$1 \le n \le d$. -/
 noncomputable def regularGraphs (n d : ℕ) : Finset (SimpleGraph (Fin n)) :=
   Finset.univ.filter fun G => G.IsRegularOfDegree d
 
 open scoped Classical in
-/-- The probability that the independence ratio `α(G) / n` of the uniformly random `d`-regular
-graph `G` on `n` vertices differs from `c` by more than `ε` (`0` when there is no such graph). -/
+/-- **Deviation probability of the independence ratio of a random regular graph.** For natural
+numbers $n$ and $d$ and real numbers $c$ and $\varepsilon$, the probability that the independence
+ratio $\alpha(G)/n$ of a uniformly random $d$-regular simple graph $G$ on the vertex set
+$\{0, \dots, n - 1\}$ differs from $c$ by more than $\varepsilon$, where $\alpha(G)$ is the
+independence number of $G$: the number of $d$-regular simple graphs $G$ on this vertex set with
+$|\alpha(G)/n - c| > \varepsilon$ divided by the number of all $d$-regular simple graphs on it,
+or $0$ when there is no $d$-regular simple graph on it. For $n = 0$ the ratio $\alpha(G)/n$ is
+read as $0$. -/
 noncomputable def ratioDeviationProb (n d : ℕ) (c ε : ℝ) : ℝ :=
   ((regularGraphs n d).filter fun G => ε < |(G.indepNum : ℝ) / n - c|).card /
     (regularGraphs n d).card
 
-/-- Bollobás's question (Abért, Question 18): for each `d ≥ 1`, the independence ratio of the
-uniformly random `d`-regular graph on `n` vertices converges in probability to a constant as
-`n → ∞`. -/
+/-- **Bollobás's question on the independence ratio of random regular graphs.** The statement
+that for every integer $d \ge 1$ there is a real number $c$ such that, for every $\varepsilon > 0$,
+the probability that the independence ratio $\alpha(G)/n$ of a uniformly random $d$-regular simple
+graph $G$ on the vertex set $\{0, \dots, n - 1\}$ differs from $c$ by more than $\varepsilon$
+tends to $0$ as $n \to \infty$. Here $\alpha(G)$ is the independence number of $G$, the largest
+size of an independent set of vertices, and the probability is taken to be $0$ for the $n$ with
+no $d$-regular simple graph on $n$ vertices.
+
+The question whether this holds is due to Bollobás and is Question 18 in Abért's list of problems.
+-/
 def independenceRatioConverges : Prop :=
   ∀ d : ℕ, 1 ≤ d → ∃ c : ℝ, ∀ ε : ℝ, 0 < ε →
     Tendsto (fun n : ℕ => ratioDeviationProb n d c ε) atTop (𝓝 0)
 
-/--
-Resolved true: Bayati, Gamarnik and Tetali proved that for each `d ≥ 1` the normalized size of a
-largest independent set of the uniformly random `d`-regular graph converges in probability (w.h.p.)
-to a constant. Source: M. Abért, Some questions (2010), Question 18 (B. Bollobás),
+/-- **The independence ratio of random regular graphs converges.** For every integer $d \ge 1$
+there is a real number $c$ such that, for every $\varepsilon > 0$, the probability that the
+independence ratio $\alpha(G)/n$ of a uniformly random $d$-regular simple graph $G$ on the vertex
+set $\{0, \dots, n - 1\}$ differs from $c$ by more than $\varepsilon$ tends to $0$ as
+$n \to \infty$. Here $\alpha(G)$ is the independence number of $G$, the largest size of an
+independent set of vertices, and the probability is taken to be $0$ for the $n$ with no
+$d$-regular simple graph on $n$ vertices.
+
+Source: M. Abért, Some questions (2010), Question 18 (B. Bollobás),
 https://www.renyi.hu/~abert/questions.pdf; resolution: M. Bayati, D. Gamarnik and P. Tetali,
 Combinatorial approach to the interpolation method and scaling limits in sparse random graphs, Ann.
 Probab. 41 (2013), no. 3, 1803-1826, DOI 10.1214/12-AOP816, arXiv:0912.2444, Theorem 3: for every r

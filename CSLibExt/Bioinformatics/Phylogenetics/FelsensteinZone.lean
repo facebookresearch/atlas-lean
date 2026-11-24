@@ -11,13 +11,13 @@ module
 public import CSLibExt.Bioinformatics.Phylogenetics.NeighborJoining
 public import CSLibExt.Bioinformatics.Phylogenetics.Parsimony
 public import CSLibExt.MachineLearning.Sampling.MonteCarlo
-public import MathlibExt.Biology.Phylogenetics.SubstitutionModels
+public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.EqualRates
 import CSLibExt.Bioinformatics.Phylogenetics.NeighborJoiningRobustness
 
 /-!
-# The pulley principle, LogDet distances, the Felsenstein zone, and consistency of NJ
+# The pulley principle, LogDet distances, the Felsenstein zone, and neighbor-joining recovery
 
-Four classical facts about tree reconstruction from sequences.
+Reconstruction results for phylogenetic trees from sequences.
 
 **The pulley principle** (Felsenstein 1981). For a substitution model whose transition matrices
 `P t` satisfy the Chapman–Kolmogorov equation `P s * P t = P (s + t)` and detailed balance
@@ -49,18 +49,9 @@ Fitch parsimony score (`expectedScore_wrong_lt`), and with independent sites par
 the wrong tree for all long enough alignments, almost surely (`ae_eventually_parsimony_wrong`):
 it is statistically inconsistent.
 
-**Consistency of neighbor joining under Jukes–Cantor** (Jukes & Cantor 1969; Saitou & Nei 1987;
-Atteson 1999). Along a path with branch lengths `t₁, …, t_k` the JC transition matrices multiply
-to the matrix of length `t₁ + ⋯ + t_k` (`jcPath_eq`), so the JC-corrected difference
-probability of two leaves is `μ` times their path length (`jcDistance_jcPath`). With independent
-sites, the empirical p-distances converge almost surely (strong law), hence so do the corrected
-distances; if neighbor joining recovers the tree from every dissimilarity within a radius
-`r > 0` of the scaled tree metric, then almost surely every complete run of neighbor joining on
-the corrected empirical distances returns the true splits for all long enough alignments
-(`ae_eventually_njRun_splits_jcHat`). For `μ > 0` and internal edge lengths at least `m > 0`,
-Atteson's theorem (`njRun_splits_of_abs_sub_lt` in `NeighborJoiningRobustness.lean`) gives the
-radius `r = μ m / 2` (`njRecoversWithin_of_le`), so the consistency holds unconditionally
-(`ae_eventually_njRun_splits_jcHat_of_le`).
+The JC path product `jcPath` and the empirical distance `jcHat` use the four-state equal-rates
+kernel. The consistency theorem for neighbor joining under the Jukes–Cantor substitution model
+is in `Domains.Biology.Phylogenetics.NeighborJoiningConsistency`.
 
 ## Main results
 
@@ -68,10 +59,8 @@ radius `r = μ m / 2` (`njRecoversWithin_of_le`), so the consistency holds uncon
 * `paralinear_threePoint`, `paralinear_pathProd`: additivity of the LogDet distance.
 * `splitFreq_wrong_sub_true`, `expectedScore_wrong_lt`, `ae_eventually_parsimony_wrong`: the
   Felsenstein zone and the inconsistency of parsimony.
-* `jcDistance_jcPath`, `ae_eventually_njRun_splits_jcHat`: JC-corrected distances are path
-  lengths, and neighbor joining on them is statistically consistent given a robustness radius.
-* `njRecoversWithin_of_le`, `ae_eventually_njRun_splits_jcHat_of_le`: Atteson's radius, and the
-  unconditional consistency of neighbor joining under Jukes–Cantor.
+* `ae_tendsto_pHat`: empirical mismatch frequencies converge to the mismatch probabilities.
+* `njRecoversWithin_of_le`: Atteson's recovery radius for the scaled tree metric.
 
 ## References
 
@@ -233,7 +222,7 @@ private lemma colSum_diagonal_mul (p : ι → ℝ) (A : Matrix ι ι ℝ) (j : �
 omit [DecidableEq ι] in
 private lemma rowSum_mul {A B : Matrix ι ι ℝ} (hA : ∀ i, ∑ j, A i j = 1)
     (hB : ∀ i, ∑ j, B i j = 1) (i : ι) : ∑ j, (A * B) i j = 1 := by
-  simp only [mul_apply]
+  simp only [Matrix.mul_apply]
   rw [Finset.sum_comm]
   simp [← Finset.mul_sum, hB, hA]
 
@@ -270,13 +259,13 @@ theorem paralinear_threePoint {p : ι → ℝ} (hp : ∀ i, 0 < p i) {M N : Matr
     rw [transpose_mul, diagonal_transpose]
   have r1 : ∀ x, ∑ z, (Mᵀ * diagonal p * N) x z = (p ᵥ* M) x := fun x => by
     rw [hT]
-    simp only [mul_apply, transpose_apply]
+    simp only [Matrix.mul_apply, transpose_apply]
     rw [Finset.sum_comm]
     simp only [← Finset.mul_sum, hNrow, mul_one]
     exact colSum_diagonal_mul p M x
   have c1 : ∀ z, ∑ x, (Mᵀ * diagonal p * N) x z = (p ᵥ* N) z := fun z => by
     rw [hT]
-    simp only [mul_apply, transpose_apply]
+    simp only [Matrix.mul_apply, transpose_apply]
     rw [Finset.sum_comm]
     simp only [← Finset.sum_mul]
     simp only [vecMul, dotProduct]
@@ -335,11 +324,11 @@ theorem paralinear_pathProd {p : ι → ℝ} (hp : ∀ i, 0 < p i) {M : ℕ → 
       (pathProd M n).det ≠ 0 := by
     intro n
     induction n with
-    | zero => exact ⟨fun i j => by simp [pathProd, one_apply]; split_ifs <;> norm_num,
-        fun i => by simp [pathProd, one_apply], by simp [pathProd]⟩
+    | zero => exact ⟨fun i j => by simp [pathProd, Matrix.one_apply]; split_ifs <;> norm_num,
+        fun i => by simp [pathProd, Matrix.one_apply], by simp [pathProd]⟩
     | succ n ih =>
       refine ⟨fun i j => ?_, rowSum_mul ih.2.1 (hrow n), ?_⟩
-      · simp only [pathProd, mul_apply]
+      · simp only [pathProd, Matrix.mul_apply]
         exact Finset.sum_nonneg fun k _ => mul_nonneg (ih.1 i k) (hM n k j)
       · simp only [pathProd, det_mul]
         exact mul_ne_zero ih.2.2 (hdet n)
@@ -607,32 +596,13 @@ end Zone
 
 section NJ
 
-open MathlibExt.Biology.Phylogenetics.JukesCantor NeighborJoining
+open NeighborJoining
 
 /-- The JC transition matrix along a path whose branch lengths are listed in `ts`: the product
-of the branch transition matrices `jcProb μ t`. -/
+of the four-state equal-rates transition matrices. -/
 noncomputable def jcPath (μ : ℝ) : List ℝ → Matrix (Fin 4) (Fin 4) ℝ
   | [] => 1
-  | t :: ts => Matrix.of (jcProb μ t) * jcPath μ ts
-
-/-- **Chapman–Kolmogorov along a path**: the JC transition matrix along a path is the
-transition matrix of the total length. -/
-theorem jcPath_eq (μ : ℝ) (ts : List ℝ) : jcPath μ ts = Matrix.of (jcProb μ ts.sum) := by
-  induction ts with
-  | nil =>
-    ext i j
-    simp [jcPath, jcProb_zero, Matrix.one_apply]
-  | cons t ts ih =>
-    ext i j
-    rw [jcPath, ih, Matrix.mul_apply, List.sum_cons]
-    exact sum_jcProb_mul_jcProb μ t ts.sum i j
-
-/-- **JC-corrected distances are path lengths** (Jukes & Cantor 1969): the JC distance of the
-probability that the two ends of a path differ is `μ` times the total branch length. -/
-theorem jcDistance_jcPath (μ : ℝ) (ts : List ℝ) (i : Fin 4) :
-    jcDistance (∑ j ∈ univ.erase i, jcPath μ ts i j) = μ * ts.sum := by
-  rw [jcPath_eq]
-  exact jcDistance_pDiff μ ts.sum i
+  | t :: ts => Matrix.of (equalRatesProb 3 μ t) * jcPath μ ts
 
 /-- The empirical p-distance of the taxa `x, y` over the first `n` sites of the alignment
 `seq` (`seq i x` is the base of taxon `x` at site `i`): the proportion of sites where they
@@ -642,7 +612,7 @@ noncomputable def pHat {X : Type*} (seq : ℕ → X → Fin 4) (n : ℕ) (x y : 
 
 /-- The JC-corrected empirical distance `jcDistance (pHat seq n x y)`. -/
 noncomputable def jcHat {X : Type*} (seq : ℕ → X → Fin 4) (n : ℕ) (x y : X) : ℝ :=
-  jcDistance (pHat seq n x y)
+  equalRatesDistance 3 (pHat seq n x y)
 
 /-- Neighbor joining **recovers the tree within radius `r`** of the dissimilarity `d`: every
 complete run of neighbor joining on a symmetric dissimilarity `D` with zero diagonal and
@@ -690,81 +660,6 @@ theorem ae_tendsto_pHat {X : Type*} [Finite X] {Ω : Type*} [MeasurableSpace Ω]
   filter_upwards [h] with ω hω
   simpa [pHat] using hω
 
-/-- **Statistical consistency of neighbor joining under Jukes–Cantor** (Saitou & Nei 1987;
-Atteson 1999). Let `(G, ι)` be a binary phylogenetic `X`-tree with path-length metric `d` for
-edge lengths `w`, and let the sites be pairwise independent and identically distributed, with
-the two-leaf marginals of the JC model with rate `μ` and uniform root: for every path `p` from
-`x` to `y`, `ℙ(site x = i, site y = j) = jcPath μ (lengths of p) i j / 4`. If neighbor joining
-recovers the tree within some radius `r > 0` of the scaled metric `μ d` (for `μ > 0`, Atteson's
-theorem gives `r = μ m / 2`, `m` the shortest internal edge length), then almost surely, for all
-long enough alignments, every complete run of neighbor joining on the JC-corrected empirical
-distances returns exactly the splits of the internal edges of the tree. -/
-theorem ae_eventually_njRun_splits_jcHat {X : Type*} [DecidableEq X] [Fintype X] {V : Type*}
-    [Fintype V] {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V}
-    (hT : IsBinaryPhylogeneticTree G ι) {w : Sym2 V → ℝ} {d : X → X → ℝ}
-    (hd : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → d x y = (p.edges.map w).sum)
-    {μ r : ℝ} (hr : 0 < r) (hNJ : NJRecoversWithin G ι (fun x y => μ * d x y) r)
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    (site : ℕ → Ω → X → Fin 4) (hmeas : ∀ i, Measurable (site i))
-    (hident : ∀ i, IdentDistrib (site i) (site 0) P P)
-    (hindep : Pairwise fun i j => IndepFun (site i) (site j) P)
-    (hpair : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → ∀ i j,
-      P.real {ω | site 0 ω x = i ∧ site 0 ω y = j} = jcPath μ (p.edges.map w) i j / 4) :
-    ∀ᵐ ω ∂P, ∀ᶠ n in atTop, ∀ S Dc C, NJRun (jcHat (fun i => site i ω) n) S Dc C →
-      S.card ≤ 3 → ∀ A : Finset X,
-        ((A ∈ C ∨ univ \ A ∈ C) ↔
-          ∃ a b, G.Adj a b ∧ a ∉ Set.range ι ∧ b ∉ Set.range ι ∧
-            ∀ x, x ∈ A ↔ (G.deleteEdges {s(a, b)}).Reachable (ι x) a) := by
-  classical
-  have hdiff : ∀ x y, P.real {ω | site 0 ω x ≠ site 0 ω y} = pDiff μ (d x y) 0 := by
-    intro x y
-    obtain ⟨p, hp⟩ := (hT.1.connected.preconnected (ι x) (ι y)).exists_isPath
-    have hg : Measurable fun ω => (site 0 ω x, site 0 ω y) :=
-      ((measurable_pi_apply x).comp (hmeas 0)).prodMk ((measurable_pi_apply y).comp (hmeas 0))
-    have hsum := sum_measureReal_preimage_singleton (μ := P)
-      (univ.filter fun q : Fin 4 × Fin 4 => q.1 ≠ q.2)
-      (fun q _ => hg (measurableSet_singleton q))
-    have hset : (fun ω => (site 0 ω x, site 0 ω y)) ⁻¹'
-        ↑(univ.filter fun q : Fin 4 × Fin 4 => q.1 ≠ q.2) = {ω | site 0 ω x ≠ site 0 ω y} := by
-      ext ω
-      simp
-    have hfib : ∀ q : Fin 4 × Fin 4, (fun ω => (site 0 ω x, site 0 ω y)) ⁻¹' {q} =
-        {ω | site 0 ω x = q.1 ∧ site 0 ω y = q.2} := by
-      intro q
-      ext ω
-      simp [Prod.ext_iff]
-    rw [hset] at hsum
-    rw [← hsum]
-    simp only [hfib, hpair x y p hp, jcPath_eq, ← hd x y p hp, Matrix.of_apply]
-    rw [Finset.sum_filter, Fintype.sum_prod_type, pDiff_eq]
-    simp [Fin.sum_univ_four, jcProb]
-    ring
-  filter_upwards [ae_tendsto_pHat site hmeas hident hindep] with ω hω
-  have hjc : ∀ x y, Tendsto (fun n => jcHat (fun i => site i ω) n x y) atTop
-      (𝓝 (μ * d x y)) := by
-    intro x y
-    have h1 := hω x y
-    rw [hdiff] at h1
-    have hpos : 1 - 4 / 3 * pDiff μ (d x y) 0 ≠ 0 := by
-      have := pDiff_lt_three_quarters μ (d x y) 0
-      linarith
-    rw [← jcDistance_pDiff μ (d x y) 0]
-    exact ((tendsto_const_nhds.sub (h1.const_mul (4 / 3))).log hpos).const_mul (-(3 / 4))
-  have hev : ∀ᶠ n in atTop, ∀ x y, |jcHat (fun i => site i ω) n x y - μ * d x y| < r := by
-    rw [eventually_all]
-    intro x
-    rw [eventually_all]
-    intro y
-    filter_upwards [(hjc x y).eventually (Metric.ball_mem_nhds _ hr)] with n hn
-    simpa [Real.dist_eq] using hn
-  filter_upwards [hev] with n hn
-  intro S Dc C hrun hS A
-  refine hNJ _ (fun x y => ?_) (fun x => ?_) (fun x y _ => hn x y) S Dc C hrun hS A
-  · unfold jcHat pHat
-    rw [Finset.sum_congr rfl fun i _ => if_congr eq_comm rfl rfl]
-  · simp [jcHat, pHat, jcDistance]
-
-
 /-- **Atteson's radius for the scaled tree metric.** Let `d` be the path-length metric of a
 binary phylogenetic `X`-tree `(G, ι)` with positive edge lengths `w` whose internal edges (no
 taxon at either end) have length at least `m`. For `μ > 0`, neighbor joining recovers the tree
@@ -783,34 +678,6 @@ theorem njRecoversWithin_of_le {X : Type*} [DecidableEq X] [Fintype X] {V : Type
     (μ := μ * m) (fun a b h ha hb => mul_le_mul_of_nonneg_left (hm a b h ha hb) hμ.le)
     hsymm h0 hDd hrun hS A
   rw [hd x y p hp, List.sum_map_mul_left]
-
-/-- **Statistical consistency of neighbor joining under Jukes–Cantor** (Saitou & Nei 1987;
-Atteson 1999), without a robustness hypothesis. Let `(G, ι)` be a binary phylogenetic `X`-tree
-with path-length metric `d` for positive edge lengths `w`, whose internal edges have length at
-least `m > 0`, and let the sites be pairwise independent and identically distributed, with the
-two-leaf marginals of the JC model with rate `μ > 0` and uniform root. Then almost surely, for
-all long enough alignments, every complete run of neighbor joining on the JC-corrected
-empirical distances returns exactly the splits of the internal edges of the tree. -/
-theorem ae_eventually_njRun_splits_jcHat_of_le {X : Type*} [DecidableEq X] [Fintype X]
-    {V : Type*} [Fintype V] {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V}
-    (hT : IsBinaryPhylogeneticTree G ι) {w : Sym2 V → ℝ} (hw : ∀ e ∈ G.edgeSet, 0 < w e)
-    {d : X → X → ℝ}
-    (hd : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → d x y = (p.edges.map w).sum)
-    {μ m : ℝ} (hμ : 0 < μ) (hm0 : 0 < m)
-    (hm : ∀ a b, G.Adj a b → a ∉ Set.range ι → b ∉ Set.range ι → m ≤ w s(a, b))
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    (site : ℕ → Ω → X → Fin 4) (hmeas : ∀ i, Measurable (site i))
-    (hident : ∀ i, IdentDistrib (site i) (site 0) P P)
-    (hindep : Pairwise fun i j => IndepFun (site i) (site j) P)
-    (hpair : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → ∀ i j,
-      P.real {ω | site 0 ω x = i ∧ site 0 ω y = j} = jcPath μ (p.edges.map w) i j / 4) :
-    ∀ᵐ ω ∂P, ∀ᶠ n in atTop, ∀ S Dc C, NJRun (jcHat (fun i => site i ω) n) S Dc C →
-      S.card ≤ 3 → ∀ A : Finset X,
-        ((A ∈ C ∨ univ \ A ∈ C) ↔
-          ∃ a b, G.Adj a b ∧ a ∉ Set.range ι ∧ b ∉ Set.range ι ∧
-            ∀ x, x ∈ A ↔ (G.deleteEdges {s(a, b)}).Reachable (ι x) a) :=
-  ae_eventually_njRun_splits_jcHat hT hd (by positivity) (njRecoversWithin_of_le hT hw hd hμ hm)
-    site hmeas hident hindep hpair
 
 end NJ
 

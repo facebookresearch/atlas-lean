@@ -44,8 +44,9 @@ open scoped Topology
 
 variable {α : Type*} {f : ℕ → α}
 
-/-- **Cauchy's root test, absolute convergence case.** If `‖f n‖ ^ (1 / n)` tends
-to a limit `l < 1`, then `∑ n, ‖f n‖` converges. -/
+/-- **Cauchy's root test, absolute convergence case.** Let $f : \mathbb{N} \to \alpha$ be a
+sequence in a normed additive commutative group $\alpha$. If $\|f(n)\|^{1/n}$ tends to a real
+limit $l$ with $l < 1$ as $n \to \infty$, then the series $\sum_n \|f(n)\|$ converges. -/
 theorem summable_norm_of_root_test_tendsto_lt_one [NormedAddCommGroup α]
     {l : ℝ} (hl : l < 1)
     (h : Filter.Tendsto (fun n => ‖f n‖ ^ ((1 : ℝ) / n)) Filter.atTop (𝓝 l)) :
@@ -74,16 +75,20 @@ theorem summable_norm_of_root_test_tendsto_lt_one [NormedAddCommGroup α]
     exact le_of_lt hn_lt
   rwa [Real.rpow_inv_natCast_pow (norm_nonneg _) hn_ne] at h1
 
-/-- **Cauchy's root test, convergence case.** If `‖f n‖ ^ (1 / n)` tends to a
-limit `l < 1`, then `∑ n, f n` converges. -/
+/-- **Cauchy's root test, convergence case.** Let $f : \mathbb{N} \to \alpha$ be a sequence in a
+complete normed additive commutative group $\alpha$. If $\|f(n)\|^{1/n}$ tends to a real limit
+$l$ with $l < 1$ as $n \to \infty$, then $f$ is summable, that is, the series $\sum_n f(n)$
+converges unconditionally. -/
 theorem summable_of_root_test_tendsto_lt_one [NormedAddCommGroup α] [CompleteSpace α]
     {l : ℝ} (hl : l < 1)
     (h : Filter.Tendsto (fun n => ‖f n‖ ^ ((1 : ℝ) / n)) Filter.atTop (𝓝 l)) :
     Summable f :=
   (summable_norm_of_root_test_tendsto_lt_one hl h).of_norm
 
-/-- **Cauchy's root test, divergence case.** If `‖f n‖ ^ (1 / n)` tends to a
-limit `l > 1`, then `∑ n, f n` diverges. -/
+/-- **Cauchy's root test, divergence case.** Let $f : \mathbb{N} \to \alpha$ be a sequence in a
+seminormed additive commutative group $\alpha$. If $\|f(n)\|^{1/n}$ tends to a real limit $l$ with
+$l > 1$ as $n \to \infty$, then $f$ is not summable, that is, the series $\sum_n f(n)$ does not
+converge unconditionally. -/
 theorem not_summable_of_root_test_tendsto_gt_one [SeminormedAddCommGroup α]
     {l : ℝ} (hl : 1 < l)
     (h : Filter.Tendsto (fun n => ‖f n‖ ^ ((1 : ℝ) / n)) Filter.atTop (𝓝 l)) :

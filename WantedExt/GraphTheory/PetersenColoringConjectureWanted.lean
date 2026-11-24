@@ -40,41 +40,61 @@ Petersen coloring maps edges between simple graphs, so this entry uses a
 Bridgelessness uses the canonical `SimpleGraph.IsBridgeless` predicate.
 -/
 
-/-- Vertices of the Petersen graph: `false` marks the outer 5-cycle and `true`
-marks the inner 5-star. -/
+/-- **Vertices of the Petersen graph.** The vertex set of the Petersen graph is
+$\mathbb{Z}/5\mathbb{Z} \times \{\mathrm{false}, \mathrm{true}\}$; the vertices
+$(i, \mathrm{false})$ with $i \in \mathbb{Z}/5\mathbb{Z}$ form the outer 5-cycle and the vertices
+$(i, \mathrm{true})$ form the inner 5-star. -/
 abbrev PVertex := ZMod 5 × Bool
 
-/-- The undirected edge set of the Petersen graph: outer-cycle edges, spokes,
-and inner-star edges. -/
+/-- **Edges of the Petersen graph.** The edge set of the Petersen graph on
+$\mathbb{Z}/5\mathbb{Z} \times \{\mathrm{false}, \mathrm{true}\}$ consists of the unordered
+pairs $\{(i, \mathrm{false}), (i + 1, \mathrm{false})\}$ (the outer 5-cycle),
+$\{(i, \mathrm{false}), (i, \mathrm{true})\}$ (the spokes) and
+$\{(i, \mathrm{true}), (i + 2, \mathrm{true})\}$ (the inner 5-star), for
+$i \in \mathbb{Z}/5\mathbb{Z}$. -/
 def petersenEdgeSet : Set (Sym2 PVertex) :=
   {e | ∃ i : ZMod 5, e = s((i, false), (i + 1, false))} ∪
     {e | ∃ i : ZMod 5, e = s((i, false), (i, true))} ∪
       {e | ∃ i : ZMod 5, e = s((i, true), (i + 2, true))}
 
-/-- The Petersen graph on `ZMod 5 × Bool`. -/
+/-- **Petersen graph.** The Petersen graph is the simple graph on
+$\mathbb{Z}/5\mathbb{Z} \times \{\mathrm{false}, \mathrm{true}\}$ whose edges are the outer
+5-cycle edges $\{(i, \mathrm{false}), (i + 1, \mathrm{false})\}$, the spokes
+$\{(i, \mathrm{false}), (i, \mathrm{true})\}$ and the inner 5-star edges
+$\{(i, \mathrm{true}), (i + 2, \mathrm{true})\}$ for $i \in \mathbb{Z}/5\mathbb{Z}$. -/
 def petersenGraph : SimpleGraph PVertex := SimpleGraph.fromEdgeSet petersenEdgeSet
 
-/-- A Petersen coloring of `G`: an edge map sending graph edges to Petersen
-edges whose restriction at every graph vertex is bijective onto the incidence
-set of some Petersen vertex. -/
+/-- **Petersen coloring.** Let $G$ be a simple graph on a vertex type $V$ and let $P$ be the
+Petersen graph. A map $f$ from unordered pairs of vertices of $G$ to unordered pairs of vertices
+of $P$ is a Petersen coloring of $G$ when $f$ sends every edge of $G$ to an edge of $P$ and, for
+every vertex $v$ of $G$, there is a vertex $w$ of $P$ such that $f$ maps the set of edges of $G$
+incident to $v$ bijectively onto the set of edges of $P$ incident to $w$. -/
 def IsPetersenColoring {V : Type*} (G : SimpleGraph V)
     (f : Sym2 V → Sym2 PVertex) : Prop :=
   (∀ e ∈ G.edgeSet, f e ∈ petersenGraph.edgeSet) ∧
     ∀ v : V, ∃ w : PVertex,
       Set.BijOn f (G.incidenceSet v) (petersenGraph.incidenceSet w)
 
-/-- The Petersen coloring conjecture: every finite bridgeless cubic simple
-graph (every vertex has exactly three neighbors) admits a Petersen coloring. -/
+/-- **Petersen coloring conjecture.** For every finite vertex type $V$ and every simple graph $G$
+on $V$, if every vertex of $G$ has exactly three neighbors and $G$ is bridgeless, then $G$ admits
+a Petersen coloring. -/
 def conjecture : Prop :=
   ∀ (V : Type) [Finite V] (G : SimpleGraph V),
     (∀ v, (G.neighborSet v).ncard = 3) → G.IsBridgeless →
       ∃ f : Sym2 V → Sym2 PVertex, IsPetersenColoring G f
 
-/--
-Resolved false: Jaeger's conjecture is false: Putman (arXiv:2608.10012, Aug 2026) gave
-112-vertex counterexamples with SAT/DRAT certificates, and Goedgebeur, Jooken, Macajova,
-Mattiolo, Mazzuoccolo and Ulyanov (arXiv:2608.10028, Theorem 6) prove two simple bridgeless
-cubic 52-vertex graphs have no Petersen colouring. Source: Jan Goedgebeur, Jorik Jooken, Edita
+/-- **The Petersen coloring conjecture is false.** There are a finite vertex type $V$ and a
+simple graph $G$ on $V$ in which every vertex has exactly three neighbors and no edge is a bridge,
+such that $G$ has no Petersen coloring: no map $f$ from unordered pairs of vertices of $G$ to
+unordered pairs of vertices of the Petersen graph $P$ sends every edge of $G$ to an edge of $P$
+and, for every vertex $v$ of $G$, maps the edges of $G$ at $v$ bijectively onto the edges of $P$
+at some vertex $w$ of $P$.
+
+Putman (arXiv:2608.10012, Aug 2026) gave 112-vertex counterexamples with SAT/DRAT certificates,
+and Goedgebeur, Jooken, Macajova, Mattiolo, Mazzuoccolo and Ulyanov (arXiv:2608.10028,
+Theorem 6) prove two simple bridgeless cubic 52-vertex graphs have no Petersen colouring.
+
+Source: Jan Goedgebeur, Jorik Jooken, Edita
 Macajova, Davide Mattiolo, Giuseppe Mazzuoccolo and Nikolay Ulyanov, Disproving the Petersen
 Coloring Conjecture: Theoretical Analysis and an Infinite Family of Counterexamples, arXiv
 preprint (2026), arXiv:2608.10028, https://arxiv.org/abs/2608.10028; Bryce Putman, A 112-Vertex

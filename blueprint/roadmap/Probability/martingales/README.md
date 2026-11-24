@@ -2,16 +2,20 @@
 
 Discrete-time martingales, sub- and supermartingales: convergence theorems (almost sure, L^p, backwards, Lévy's downward theorem), uniform integrability, Doob's maximal inequalities, orthogonality and conditional variance of increments, optional stopping in all its forms, and Wald's equations for stopped sums. Finite-horizon optimal stopping by the Snell envelope, and the secretary problem. Martingale measures and the fundamental theorem of asset pricing.
 
-- [Backwards martingales and Lévy's downward theorem](backwards-martingales-and-l-vy-s-downward-theore/README.md)
+- [Backwards martingale convergence theorem](backwards-martingales-and-l-vy-s-downward-theore/README.md)
 - [Convex functions of martingales](convex-functions-of-martingales/README.md)
-- [Doob's maximal inequalities](doob-s-maximal-inequalities/README.md)
-- [Fundamental theorem of asset pricing](fundamental-theorem-of-asset-pricing/README.md)
-- [Martingale convergence theorems](martingale-convergence-theorems/README.md)
+- [Doob's $L^2$ maximal inequality](doob-s-maximal-inequalities/README.md)
+- [One-period fundamental theorem of asset pricing](fundamental-theorem-of-asset-pricing/README.md)
+- [Martingale convergence theorem](martingale-convergence-theorems/README.md)
 - [Optimal stopping and the Snell envelope](optimal-stopping-and-the-snell-envelope/README.md)
 - [Optional stopping theorem](optional-stopping-theorem/README.md)
-- [Secretary problem](secretary-problem/README.md)
-- [Square-integrable martingales](square-integrable-martingales/README.md)
+- [Secretary problem: the $1/e$ law](secretary-problem/README.md)
+- [Orthogonality of martingale increments](square-integrable-martingales/README.md)
 - [Wald's equations](wald-s-equations/README.md)
+- [Martingales, submartingales and supermartingales](martingales-submartingales-and-supermartingales/README.md)
+- [Doob's $L^p$ maximal inequality](doob-s-lp-maximal-inequality/README.md)
+- [Lévy's upward theorem](levy-s-upward-theorem/README.md)
+- [Uniform integrability](uniform-integrability/README.md)
 
 ## Related topics
 

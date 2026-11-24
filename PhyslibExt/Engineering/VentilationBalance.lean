@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.Biology.Biophysics.CompartmentKinetics
+public import MathlibExt.Analysis.ODE.ConstantInputRelaxation
 import Mathlib.Tactic.FieldSimp
 
 /-!
@@ -19,7 +19,7 @@ A well-mixed room of constant volume `V` with volumetric flow `Q`,
 outdoor concentration `c_out`, constant indoor source `G`, and no
 reactive sink is a one-compartment balance: with the canonical
 compartment `amount` from
-`MathlibExt.Biology.Biophysics.CompartmentKinetics`, the indoor
+`MathlibExt.Analysis.ODE.ConstantInputRelaxation`, the indoor
 concentration is `amount (Q / V) ((Q * c_out + G) / V) c0 t`. Its
 equilibrium is `c_out + G / Q` (meaningful for `Q > 0`).
 Concentrations are mass per volume in one consistent unit; a ppm
@@ -54,7 +54,7 @@ or variable-volume model.
 
 ## iv. References
 
-- `MathlibExt.Biology.Biophysics.CompartmentKinetics` for the
+- `MathlibExt.Analysis.ODE.ConstantInputRelaxation` for the
   compartment amount, steady amount, explicit formula, envelope,
   and limit facts.
 - `PhyslibExt.EarthScience.Reactors` for the CSTR balance whose

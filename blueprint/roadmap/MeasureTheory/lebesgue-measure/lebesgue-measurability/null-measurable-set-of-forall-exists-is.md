@@ -12,7 +12,7 @@ measurable set, and the conclusion is null-measurability.
 
 - [Open outer approximation gives a $G_\delta$ hull](exists-is-g-of-forall-exists-is-open.md):
   the first step of the proof.
-- [Subsets of a $G_\delta$ set with null difference are measurable](null-measurable-set-of-is-g.md):
+- [Subsets of a $G_\delta$ set with null difference are null-measurable](null-measurable-set-of-is-g.md):
   the second step.
 
 ## Sources

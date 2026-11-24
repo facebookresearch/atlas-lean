@@ -5,7 +5,7 @@ Let $X_0, \dots, X_n$ be i.i.d. real random variables with a law $\nu$ that has 
 ## Informally uses
 
 - [Bootstrap probability that the maximum is reproduced](bootstrap-prob-max-eq.md): the identity for distinct data.
-- [Atomless i.i.d. scores are almost surely distinct](../../distributions/discrete/negative-binomial-and-beta-binomial-distribution/ae-injective-pi.md): almost sure distinctness of the observations.
+- [Atomless i.i.d. scores are almost surely distinct](../../distributions/discrete/negative-binomial-and-beta-binomial-distribution/sample-rank-law/ae-injective-pi.md): almost sure distinctness of the observations.
 
 ## Sources
 

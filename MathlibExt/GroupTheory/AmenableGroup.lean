@@ -36,16 +36,21 @@ below.
 Reference: Følner, *On groups with full Banach mean value* (1955);
 cf. Ceccherini-Silberstein–Coornaert, *Cellular Automata and Groups*, Ch. 4. -/
 
-/-- A discrete group `G` is **amenable** if it satisfies the Følner condition: for
-every finite set `K` and every `ε > 0` there is a finite nonempty set `F` with
-`|s • F ∆ F| / |F| < ε` for all `s ∈ K`. -/
+/-- **Amenable group (Følner condition).** A discrete group $G$ is *amenable* if it satisfies the
+Følner condition: for every finite subset $K \subseteq G$ and every real $\varepsilon > 0$ there is
+a finite nonempty subset $F \subseteq G$ such that
+$|sF \mathbin{\triangle} F| / |F| < \varepsilon$ for every $s \in K$. Here
+$sF = \{sf : f \in F\}$ is the left translate of $F$ by $s$, $\triangle$ is symmetric difference
+and $|\cdot|$ is cardinality. -/
 def IsAmenable (G : Type*) [Group G] : Prop :=
   ∀ (K : Finset G) (ε : ℝ), 0 < ε →
     ∃ F : Finset G, F.Nonempty ∧
       ∀ s ∈ K, (((s • F) ∆ F).card : ℝ) / (F.card : ℝ) < ε
 
-/-- Every finite group is amenable: the whole group `Finset.univ` is invariant under
-left translation, so it is a Følner set with symmetric-difference ratio `0`. -/
+/-- **Finite groups are amenable.** Every finite group is amenable.
+
+The whole group $F = G$ is invariant under left translation, so it is a Følner set whose
+symmetric-difference ratio is $0$. -/
 theorem isAmenable_of_finite (G : Type*) [Group G] [Finite G] : IsAmenable G := by
   letI := Fintype.ofFinite G
   intro K ε hε
@@ -53,7 +58,8 @@ theorem isAmenable_of_finite (G : Type*) [Group G] [Finite G] : IsAmenable G := 
   rw [Finset.smul_finset_univ, symmDiff_self]
   simpa using hε
 
-/-- Every trivial (subsingleton) group is amenable, witnessed by `F = {1}`. -/
+/-- **Trivial groups are amenable.** Every group with at most one element is amenable; the set
+$F = \{1\}$ witnesses the Følner condition. -/
 theorem isAmenable_of_subsingleton (G : Type*) [Group G] [Subsingleton G] :
     IsAmenable G := by
   intro K ε hε
