@@ -15,26 +15,29 @@ import Mathlib.Data.Nat.PrimeFin
 import Mathlib.FieldTheory.Finite.Basic
 
 /-!
-# Square-weighted zero-sum free unit pairs modulo the prime divisors of an odd number
+# Square-weighted zero sums modulo integers
 
-For a natural number $n$, write $S(n)$ for the set of nonzero squares in $\mathbb{Z}/n\mathbb{Z}$.
-A sequence $(x_1, \dots, x_k)$ in $\mathbb{Z}/n\mathbb{Z}$ has an $A$-weighted zero-sum
-subsequence when there are a nonempty set $J$ of indices and weights $a_i \in A$ for $i \in J$
-with $\sum_{i \in J} a_i x_i = 0$.
+For a natural number $n$, write $S(n)$ for the set of nonzero squares in $\mathbb{Z}/n\mathbb{Z}$
+and $U(n)^2$ for the squares of its units. An $A$-weighted zero sum uses a weight from $A$ at
+each term of a sequence; an $A$-weighted zero-sum subsequence uses weights at a nonempty set of
+indices. In either case the weighted terms sum to zero.
 
-This file proves Proposition 17 of Paul and Paul: for odd $n \ge 2$ there are units $u, v$ of
-$\mathbb{Z}/n\mathbb{Z}$ such that, for every prime $p$ dividing $n$, the reduction
-$(u \bmod p, v \bmod p)$ has no $S(p)$-weighted zero-sum subsequence.
+This file proves two results of Paul and Paul. For odd $n \ge 2$, Proposition 17 gives units
+$u, v$ whose reductions modulo every prime $p$ dividing $n$ have no $S(p)$-weighted zero-sum
+subsequence. Lemma 13 lifts a $U(p^2)^2$-weighted zero sum modulo $p^2$ to an $S(p^r)$-weighted
+zero sum modulo $p^r$ when $p \ge 2$ and $r$ is positive and even; $p$ need not be prime.
 
 ## Main definitions
 
-* `MetaMathlibExt.squareSet`: the set $S(n)$ of nonzero squares of $\mathbb{Z}/n\mathbb{Z}$.
-* `MetaMathlibExt.HasWeightedZeroSumSubseq`: a finite sequence in $\mathbb{Z}/n\mathbb{Z}$ has an
-  $A$-weighted zero-sum subsequence.
+* `MetaMathlibExt.squareSet`: the nonzero squares of $\mathbb{Z}/n\mathbb{Z}$.
+* `MetaMathlibExt.unitSquareSet`: the squares of units of $\mathbb{Z}/n\mathbb{Z}$.
+* `MetaMathlibExt.HasWeightedZeroSum`: a sequence is an $A$-weighted zero sum.
+* `MetaMathlibExt.HasWeightedZeroSumSubseq`: a sequence has an $A$-weighted zero-sum subsequence.
 
 ## Main results
 
 * `MetaMathlibExt.exists_pair_units_avoiding_prime_squareWeights`: Proposition 17.
+* `MetaMathlibExt.squareWeightedZeroSum_of_reduction_square`: Lemma 13.
 
 ## Implementation notes
 
@@ -43,6 +46,10 @@ remainder theorem. Modulo an odd prime $p$ we take the pair $(1, c_p)$, where $-
 square: a single nonzero term has no weighted zero sum, and $a \cdot 1 + b c_p = 0$ with nonzero
 squares $a, b$ would make $-c_p = a / b$ a square. So $u = 1$, and $v$ is congruent to $c_p$
 modulo every prime $p \mid n$.
+
+For the lifting lemma, lift the unit square roots and scale their squares by $p^{r-2}$.
+The even exponent makes this scale a square; multiplying by it lifts the zero-sum congruence
+from modulo $p^2$ to modulo $p^r$ without making any weight zero.
 
 ## References
 
