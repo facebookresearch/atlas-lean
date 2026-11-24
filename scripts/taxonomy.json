@@ -1808,6 +1808,7 @@
   "CSLibExt/Logics/Modal/MuCalculusEncoding": {"to": "Logic/modal-logic", "title": "Modal μ-calculus"},
   "CSLibExt/Logics/Modal/MuCalculusGame": {"to": "Logic/modal-logic", "title": "Model-checking game for the modal μ-calculus"},
   "CSLibExt/Logics/Modal/ProvabilityLogic": {"to": "Logic/modal-logic", "title": "Provability logic GL"},
+  "CSLibExt/Logics/Modal/ProvabilityLogic/FrameCorrespondence": {"to": "Logic/modal-logic", "title": "Provability logic GL"},
   "CSLibExt/Logics/Modal/ReflectionCalculus": {"to": "Logic/modal-logic", "title": "Reflection calculus and worms"},
   "CSLibExt/Logics/Modal/Sahlqvist": {"to": "Logic/modal-logic", "title": "Sahlqvist formulas"},
   "CSLibExt/Logics/Modal/StandardTranslation": {"to": "Logic/modal-logic", "title": "Standard translation of modal logic"},
