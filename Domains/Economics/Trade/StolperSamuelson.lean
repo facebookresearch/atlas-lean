@@ -98,7 +98,9 @@ theorem IsCostMinimizingAt.hasFDerivAt {c : ℝ × ℝ → ℝ} {aL aK : ℝ} {x
 /-- Stolper–Samuelson, response to the price of the labor-intensive good 1.
 Goods prices `p = (p₁, p₂)` determine factor prices `f p = (w, r)` through both
 zero-profit conditions `c₁ (f p) = p₁`, `c₂ (f p) = p₂` near `p₀` (locally
-diversified production). If good 1 is labor-intensive at `p₀`
+diversified production). Assume the unit bundles `(aLᵢ, aKᵢ)` are cost-minimizing for `cᵢ` at
+`f p₀`, `c₁`, `c₂` are differentiable at `f p₀` and `f` at `p₀`, and `w`, `r`, `aK₁`, `aL₂`, `aK₂`
+are positive. If good 1 is labor-intensive at `p₀`
 (`aL₂ / aK₂ < aL₁ / aK₁`, no intensity reversal), then the wage rises more than
 proportionally (`(p₁ / w) ∂w/∂p₁ > 1`) and the rental rate falls
 (`∂r/∂p₁ < 0`). -/
