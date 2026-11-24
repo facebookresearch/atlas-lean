@@ -1,0 +1,16 @@
+# Shih Boundary Positive Reindex
+
+- [Shih Positive Prefix Coordinate sum eq zero](shih-positive-prefix-coordinate-sum-eq-z.md)
+- [Shih Positive Boundary sum eq residual](shih-positive-boundary-sum-eq-residual.md)
+- [Shih Positive Boundary sum eq partitioned](shih-positive-boundary-sum-eq-partitione.md)
+- [Shih Positive Boundary sum eq reindexed](shih-positive-boundary-sum-eq-reindexed.md)
+- [Shih Positive Face Identity](shih-positive-face-identity.md)
+- [Shih Reindexed Positive Face Identity](shih-reindexed-positive-face-identity.md)
+- [Shih Positive Face Identity iff reindexed](shih-positive-face-identity-iff-reindexe.md)
+- [Shih Upper Active Data](shih-upper-active-data.md)
+- [Shih Lower Left Data](shih-lower-left-data.md)
+- [Shih Lower Right Data](shih-lower-right-data.md)
+- [Shih Upper Positive Transition Equiv](shih-upper-positive-transition-equiv.md)
+- [Shih Upper Positive Active Equiv](shih-upper-positive-active-equiv.md)
+- [Shih Lower Positive Left Equiv](shih-lower-positive-left-equiv.md)
+- [Shih Lower Positive Right Equiv](shih-lower-positive-right-equiv.md)

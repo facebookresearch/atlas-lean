@@ -264,3 +264,46 @@ Files:
   MathlibExtTest/CategoryTheory/Enriched/EnrichedProductInclusionsCompatibility.lean
 
 Author: @toskua
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplexCategory/ZeroAddSuccIso.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/BoundaryMatching.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/BoundaryMatchingLift.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ProperFaceBoundary.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/SSetULiftContainedIso.lean
+
+Authors: @toskua
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/SmallObject.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ProdStdSimplexOneCompat.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/RealizationPresentation.lean
+  MathlibExtTest/AlgebraicTopology/SimplicialSet/BoundaryDescTests.lean
+  MathlibExtTest/AlgebraicTopology/SimplicialSet/RealizationPresentationTests.lean
+
+Authors: @toskua, Avocado
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Basic.lean
+
+Authors: @toskua, Avocado, Joël Riou
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplexCategory/EpiInsertion.lean
+  MathlibExt/AlgebraicTopology/SimplexCategory/Reedy.lean
+  MathlibExt/AlgebraicTopology/SimplexCategory/ReedyComparison.lean
+
+Authors: @toskua, Codex
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialObject/DataEvaluation.lean
+  MathlibExt/CategoryTheory/CategoryBar/Basic.lean
+  MathlibExt/CategoryTheory/CategoryBar/Change.lean
+  MathlibExt/CategoryTheory/CategoryBar/Functoriality.lean
+  MathlibExt/CategoryTheory/CategoryBar/SimplicialReplacement.lean
+  MathlibExtTest/AlgebraicTopology/SimplicialObject/DataEvaluationTests.lean
+  MathlibExtTest/CategoryTheory/CategoryBar/BasicTests.lean
+  MathlibExtTest/CategoryTheory/CategoryBar/FunctorialityTests.lean
+  MathlibExtTest/CategoryTheory/CategoryBar/SimplicialReplacementTests.lean
+
+Authors: @toskua, Avocado
