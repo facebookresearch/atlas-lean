@@ -208,12 +208,48 @@ def derivationMapLift {B : DerivationBase X} {E F : SquareZeroFamily X}
     (fun j => ⟨DE.replacement.mono j, DE.replacement.weak j⟩)
     (derivationDiagramMap f h ≫ DF.replacement.map))
 
-/-- Native limit functoriality gives the actual global map of derivations. -/
+/-- `ℓ` extends the replacement of `DE` along `f`: it lifts the map of derivation diagrams through
+the augmentation of `DF`. Such lifts exist by injective fibrancy (`derivationMapLift` chooses one)
+but are not unique. -/
+def IsDerivationLift {B : DerivationBase X} {E F : SquareZeroFamily X}
+    (f : SquareZeroFamilyMap E F)
+    (h : liftMap f ≫ liftProjection X F = liftProjection X E)
+    (DE : DerivationModel B E) (DF : DerivationModel B F)
+    (ℓ : DE.replacement.diagram ⟶ DF.replacement.diagram) : Prop :=
+  DE.replacement.map ≫ ℓ = derivationDiagramMap f h ≫ DF.replacement.map
+
+theorem derivationMapLift_spec {B : DerivationBase X} {E F : SquareZeroFamily X}
+    (f : SquareZeroFamilyMap E F)
+    (h : liftMap f ≫ liftProjection X F = liftProjection X E)
+    (DE : DerivationModel B E) (DF : DerivationModel B F) :
+    IsDerivationLift f h DE DF (derivationMapLift f h DE DF) := by
+  unfold IsDerivationLift derivationMapLift
+  exact Classical.choose_spec (DF.replacement.fibrant _ _ DE.replacement.map
+    (fun j => ⟨DE.replacement.mono j, DE.replacement.weak j⟩)
+    (derivationDiagramMap f h ≫ DF.replacement.map))
+
+/-- The map of global derivation spaces defined by a lift `ℓ`. Different lifts agree after
+inverting weak equivalences, and these maps are functorial there; these are requested in
+`WantedExt.AlgebraicGeometry.DerivedPullbackFunctorialityWanted`. -/
+def derivationMapOf {B : DerivationBase X} {E F : SquareZeroFamily X}
+    {DE : DerivationModel B E} {DF : DerivationModel B F}
+    (ℓ : DE.replacement.diagram ⟶ DF.replacement.diagram) :
+    derivationSpace DE ⟶ derivationSpace DF := limMap ℓ
+
+/-- Native limit functoriality and the chosen lift `derivationMapLift` give the global map of
+derivations (`derivationMapOf` with that lift); it is canonical only after inverting weak
+equivalences. -/
 def derivationMap {B : DerivationBase X} {E F : SquareZeroFamily X}
     (f : SquareZeroFamilyMap E F)
     (h : liftMap f ≫ liftProjection X F = liftProjection X E)
     (DE : DerivationModel B E) (DF : DerivationModel B F) :
     derivationSpace DE ⟶ derivationSpace DF := limMap (derivationMapLift f h DE DF)
+
+theorem derivationMap_eq_derivationMapOf {B : DerivationBase X} {E F : SquareZeroFamily X}
+    (f : SquareZeroFamilyMap E F)
+    (h : liftMap f ≫ liftProjection X F = liftProjection X E)
+    (DE : DerivationModel B E) (DF : DerivationModel B F) :
+    derivationMap f h DE DF = derivationMapOf (derivationMapLift f h DE DF) := rfl
 
 /-- The canonical split lift of the entire tautological family. -/
 def splitLift (E : SquareZeroFamily X) :
@@ -257,7 +293,9 @@ def homZero (L K : G.category) : (Δ[0] : SSet.{u + 1}) ⟶ homSpace G L K :=
           (op ⦋0⦌)) PUnit.unit)
 
 /-- Global cotangent corepresentability is a natural equivalence on the actual
-whole-family derivation functor. Nothing is asserted from pointwise fibre names. -/
+whole-family derivation functor. Nothing is asserted from pointwise fibre names. Naturality is
+asserted after inverting weak equivalences, for every lift defining the map of derivation spaces
+(the lifts are not unique). -/
 structure GlobalCotangentMappingData (B : DerivationBase X) where
   object : G.category
   map : ∀ (E : SquareZeroFamily X) (K : KernelFamily N E)
@@ -275,8 +313,9 @@ structure GlobalCotangentMappingData (B : DerivationBase X) where
     (f : SquareZeroFamilyMap E F) (a : KernelFamilyMap K L f)
     (H : KernelNaturalHomotopy a) (g : KernelDGMap G R KD LD H)
     (h : liftMap f ≫ liftProjection X F = liftProjection X E)
-    (DE : DerivationModel B E) (DF : DerivationModel B F),
+    (DE : DerivationModel B E) (DF : DerivationModel B F)
+    (ℓ : DE.replacement.diagram ⟶ DF.replacement.diagram) (_ : IsDerivationLift f h DE DF ℓ),
     (spaceQ.{u}).map (homPostcompose G object g.map g.closed ≫ map F L LQ LD DF) =
-      (spaceQ.{u}).map (map E K KQ KD DE ≫ derivationMap f h DE DF)
+      (spaceQ.{u}).map (map E K KQ KD DE ≫ derivationMapOf ℓ)
 
 end MathlibExt.AlgebraicGeometry.DerivedGlobalCotangentModels
