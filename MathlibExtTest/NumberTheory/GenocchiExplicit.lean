@@ -37,3 +37,20 @@ example : (-1 : ℚ) ^ 4 * bernoulli 4 = -1 / 30 := by
   rw [neg_one_pow_mul_bernoulli_eq_sum_one 4 1 (by decide) (by decide) (by decide)]
   norm_num [Finset.sum_range_succ, diffPowEval, Function.iterate_succ_apply,
     Nat.factorial, Nat.stirlingSecond]
+
+-- At n = r + 1 the outer sum is the single first difference of the identity at zero.
+example : (-1 : ℚ) ^ 2 * bernoulli 2 = 1 / 6 := by
+  rw [neg_one_pow_mul_bernoulli_eq_sum_zero 2 1 (by decide) (by decide) (by decide)]
+  norm_num [Finset.sum_range_succ, diffPowEval, Nat.factorial, Nat.stirlingSecond]
+
+-- For n = 4 and r = 1 the differences of the cube at zero have orders one, two and three.
+example : (-1 : ℚ) ^ 4 * bernoulli 4 = -1 / 30 := by
+  rw [neg_one_pow_mul_bernoulli_eq_sum_zero 4 1 (by decide) (by decide) (by decide)]
+  norm_num [Finset.sum_Icc_succ_top, Finset.sum_range_succ, diffPowEval,
+    Function.iterate_succ_apply, Nat.factorial, Nat.stirlingSecond]
+
+-- For n = 4 and r = 2 the weight of the first difference vanishes.
+example : (-1 : ℚ) ^ 4 * bernoulli 4 = -1 / 30 := by
+  rw [neg_one_pow_mul_bernoulli_eq_sum_zero 4 2 (by decide) (by decide) (by decide)]
+  norm_num [Finset.sum_Icc_succ_top, Finset.sum_range_succ, diffPowEval,
+    Function.iterate_succ_apply, Nat.factorial, Nat.stirlingSecond]

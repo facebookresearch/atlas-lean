@@ -30,6 +30,13 @@
 - [Haldane's 2s approximation holds only in the joint regime](tendsto-zero-and-tendsto-at-top-of-tends.md)
 - [At fixed s > 0 the new-mutant limit is 1 − exp(−2s) < 2s](tendsto-kimura-fixation-nat-cast-mul-one.md)
 
+## Allele-label symmetry of the Wright–Fisher martingale problem
+
+- [Reflecting the frequency negates σ in the Wright–Fisher generator](generator-neg-one-sub.md)
+- [Reflecting a Wright–Fisher solution negates the selection coefficient](one-sub.md)
+- [Reflecting the frequency path leaves the absorption time unchanged](absorption-time-one-sub.md)
+- [Kimura's loss probability, process form](measure-real-loss.md)
+
 ## Research directions
 
 - [Fixation probability in a population of changing size](fixation-probability-in-a-population-of-changing-size.md)

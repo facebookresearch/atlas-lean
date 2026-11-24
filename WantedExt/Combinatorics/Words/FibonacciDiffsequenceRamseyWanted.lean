@@ -10,8 +10,11 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Real.GoldenRatio
+public import MathlibExt.Combinatorics.EvenFibonacciAccessibility
 public import MathlibExt.Combinatorics.HalfEvenFibonacciSet
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
+public import MathlibExt.NumberTheory.FibonacciDivGoldenRatio
+public import MathlibExt.NumberTheory.FractGoldenRatioDifferences
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.WesleyFractionalConstant
 public import WantedExt.Combinatorics.AccessibleSetsWanted
@@ -128,17 +131,6 @@ public theorem_wanted fibonacci_gap_progressions_not_two_regular :
       IsMonochromatic c x ∧ IsDAP positiveFibonacciSet 5 x) ∧
     IsRLarge 1 positiveFibonacciSet ∧ ∀ r, 2 ≤ r → ¬ IsRLarge r positiveFibonacciSet
 
-/-- **Fibonacci numbers divided by the golden ratio.** Let $F_n$ be the $n$-th Fibonacci number,
-with $F_0 = 0$ and $F_1 = 1$, and let $\varphi = (1 + \sqrt{5})/2$ be the golden ratio. For every
-natural number $n \ge 2$,
-$$\frac{F_n}{\varphi} - F_{n-1} = (-1)^{n+1} \varphi^{-n}.$$
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Corollary 1 (`integers-2025-A29-cor-1`). -/
-public theorem_wanted fib_div_goldenRatio_sub_fib (n : ℕ) (hn : 2 ≤ n) :
-    (Nat.fib n : ℝ) / Real.goldenRatio - Nat.fib (n - 1) =
-      (-1) ^ (n + 1) * Real.goldenRatio ^ (-(n : ℤ))
-
 /-- **Beatty-sequence descriptions of the words $F_\infty$, $S$ and $T$.** Let
 $\varphi = (1 + \sqrt{5})/2$ be the golden ratio and $F_\infty = 010010100\cdots$ the infinite
 Fibonacci word. Let $S = \mu(F_\infty)$ be its image under the morphism $\mu$ with $\mu(0) = 10$
@@ -168,41 +160,6 @@ public theorem_wanted fibonacciWord_beatty_properties :
     ∀ n : ℕ, 1 ≤ n → (wesleyWordT (n - 1) = true ↔
       ∃ m : ℤ, (n : ℤ) = 2 * ⌊m * Real.goldenRatio⌋ - m)
 
-/-- **Differences of fractional parts of multiples of the golden ratio.** Let $F_m$ be the $m$-th
-Fibonacci number, with $F_0 = 0$ and $F_1 = 1$, let $\varphi = (1 + \sqrt{5})/2$ be the golden
-ratio, and write $\{y\} = y - \lfloor y \rfloor$ for the fractional part. Let $i \ge 1$ be a
-natural number, put $g_i = F_{3i}/2$ (an integer, since $F_{3i}$ is even), and let
-$x_1, x_2, m_1, m_2$ be integers. Then:
-(i) if $g_i$ is even, $2(x_2 - x_1) = g_i$, $x_1 = \lfloor m_1\varphi \rfloor$ and
-$x_2 = \lfloor m_2\varphi \rfloor$, then
-$\{m_2\varphi\} - \{m_1\varphi\} \le (\varphi^{-3i+1} - \varphi)/4 < -0.38$;
-(ii) if $g_i$ is odd, $2(x_2 - x_1) = g_i + 1$, $x_1 = \lfloor m_1\varphi \rfloor$ and
-$x_2 + 1 = \lfloor m_2\varphi \rfloor$, then
-$\{m_2\varphi\} - \{m_1\varphi\} < (3\varphi - 6)/4 < -0.28$;
-(iii) if $g_i$ is odd, $i > 1$, $2(x_2 - x_1) = g_i - 1$, $x_1 + 1 = \lfloor m_1\varphi \rfloor$
-and $x_2 = \lfloor m_2\varphi \rfloor$, then
-$\{m_2\varphi\} - \{m_1\varphi\} < (-5\varphi + 6)/4 < -0.52$.
-
-The paper states (i) with a strict inequality, but equality occurs: $i = 2$, $m_1 = 1$, $m_2 = 2$,
-$x_1 = 1$, $x_2 = 3$ give $\{2\varphi\} - \{\varphi\} = (\varphi^{-5} - \varphi)/4$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Lemma 4 (`integers-2025-A29-lem-4`). -/
-public theorem_wanted fract_goldenRatio_differences (i : ℕ) (hi : 1 ≤ i) (x₁ x₂ m₁ m₂ : ℤ) :
-    (Even (Nat.fib (3 * i) / 2) → 2 * (x₂ - x₁) = (Nat.fib (3 * i) / 2 : ℕ) →
-      x₁ = ⌊m₁ * Real.goldenRatio⌋ → x₂ = ⌊m₂ * Real.goldenRatio⌋ →
-      Int.fract (m₂ * Real.goldenRatio) - Int.fract (m₁ * Real.goldenRatio) ≤
-        (Real.goldenRatio ^ (-(3 * i : ℤ) + 1) - Real.goldenRatio) / 4 ∧
-      (Real.goldenRatio ^ (-(3 * i : ℤ) + 1) - Real.goldenRatio) / 4 < -0.38) ∧
-    (Odd (Nat.fib (3 * i) / 2) → 2 * (x₂ - x₁) = (Nat.fib (3 * i) / 2 : ℕ) + 1 →
-      x₁ = ⌊m₁ * Real.goldenRatio⌋ → x₂ + 1 = ⌊m₂ * Real.goldenRatio⌋ →
-      Int.fract (m₂ * Real.goldenRatio) - Int.fract (m₁ * Real.goldenRatio) <
-        (3 * Real.goldenRatio - 6) / 4 ∧ (3 * Real.goldenRatio - 6) / 4 < -0.28) ∧
-    (Odd (Nat.fib (3 * i) / 2) → 1 < i → 2 * (x₂ - x₁) = (Nat.fib (3 * i) / 2 : ℕ) - 1 →
-      x₁ + 1 = ⌊m₁ * Real.goldenRatio⌋ → x₂ = ⌊m₂ * Real.goldenRatio⌋ →
-      Int.fract (m₂ * Real.goldenRatio) - Int.fract (m₁ * Real.goldenRatio) <
-        (-5 * Real.goldenRatio + 6) / 4 ∧ (-5 * Real.goldenRatio + 6) / 4 < -0.52)
-
 /-- **The Lucas numbers are not $4$-accessible.** Let $L = \{2, 1, 3, 4, 7, \dots\}$ be the set of
 Lucas numbers $L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$. There is a coloring of the positive
 integers with the colors $0, 1, 2, 3$ for which no sequence $x_0, x_1, x_2$ of positive integers is
@@ -214,15 +171,6 @@ public theorem_wanted lucasSet_not_four_accessible :
     (∃ c : ℕ+ → Fin 4, ¬ ∃ x : Fin 3 → ℕ+,
       IsMonochromatic c x ∧ IsDDiffSequence (Set.range lucasNumber) (fun i => ((x i : ℕ) : ℤ))) ∧
     ∀ r, 4 ≤ r → ¬ IsRAccessible r (Set.range lucasNumber)
-
-/-- **The even Fibonacci numbers have degree of accessibility $1$.** The even Fibonacci set
-$\{2, 8, 34, \dots\}$ is $1$-accessible, and it is not $r$-accessible for any natural number
-$r \ge 2$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Corollary 2 (`integers-2025-A29-cor-2`). -/
-public theorem_wanted evenFibonacciSet_degreeOfAccessibility_eq_one :
-    IsRAccessible 1 evenFibonacciSet ∧ ∀ r, 2 ≤ r → ¬ IsRAccessible r evenFibonacciSet
 
 end
 
