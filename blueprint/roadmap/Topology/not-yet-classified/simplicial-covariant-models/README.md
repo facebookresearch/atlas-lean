@@ -1,0 +1,17 @@
+# Simplicial Covariant Models
+
+- [Prepend Map](prepend-map.md)
+- [Prepend](prepend.md)
+- [Initial Vertex](initial-vertex.md)
+- [Initial Vertex prepend](initial-vertex-prepend.md)
+- [Left Slice](left-slice.md)
+- [Target Projection](target-projection.md)
+- [Is Left Fibration](is-left-fibration.md)
+- [Mapping Over Subcomplex](mapping-over-subcomplex.md)
+- [Mapping Over](mapping-over.md)
+- [Over Map Vertex](over-map-vertex.md)
+- [Mapping Over Map](mapping-over-map.md)
+- [Is Covariant Weak Equivalence](is-covariant-weak-equivalence.md)
+- [Covariant Replacement](covariant-replacement.md)
+- [Fibre](fibre.md)
+- [Fibre Map](fibre-map.md)

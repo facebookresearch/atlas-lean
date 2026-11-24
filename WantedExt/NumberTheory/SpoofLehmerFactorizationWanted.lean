@@ -13,8 +13,10 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.LehmerBoundsFormula
 public import MathlibExt.NumberTheory.LehmerBoundsMonotonicity
 public import MathlibExt.NumberTheory.SpoofLehmerFactorization
+public import MathlibExt.NumberTheory.SpoofLehmerResidues
 
 /-!
 # Spoof Lehmer factorizations (wanted statements)
@@ -36,25 +38,6 @@ Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 2
 Article A33, Theorem 3 (`integers-2026-A33-thm-3`). -/
 public theorem_wanted spoofLehmer_exponents_eq_one (F : Multiset (ℕ × ℕ))
     (k : ℤ) (hL : IsSpoofLehmer k F) (hnt : ¬ IsTrivialSpoof F) : ∀ p ∈ F, p.2 = 1
-
-/-- **Bases of a spoof Lehmer factorization modulo divisors of its evaluation.** Let
-$x_1, \dots, x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization with
-these bases, all with exponent $1$. Suppose $F$ is a nontrivial spoof $k$-Lehmer factorization for
-some integer $k$. If $n$ is an integer with $n \ne \pm 1$ that divides the spoof evaluation
-$\tilde e(F)$, then $x_i \not\equiv 1 \pmod n$ for every $i$.
-
-The source states this for every integer $n$ dividing $\tilde e(F)$, but the hypothesis
-$n \ne \pm 1$ cannot be dropped: $3 \cdot 3$ is a nontrivial spoof $2$-Lehmer factorization
-($2 \cdot 4 = 9 - 1$), $1$ divides $\tilde e(3 \cdot 3) = 9$, and $3 \equiv 1 \pmod 1$. The source's
-proof reaches $0 \equiv -1 \pmod n$, which is a contradiction only when $n \nmid 1$.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Theorem 4 (`integers-2026-A33-thm-4`). -/
-public theorem_wanted spoofLehmer_base_not_modEq_one (x : Multiset ℕ) (k : ℤ)
-    (hL : IsSpoofLehmer k (spoofOfBases x))
-    (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) (n : ℤ)
-    (hn : n ∣ spoofEval (spoofOfBases x)) (hunit : ¬ IsUnit n) :
-    ∀ a ∈ x, ¬ (a : ℤ) ≡ 1 [ZMOD n]
 
 /-- **Bases of a nontrivial spoof Lehmer factorization are not $1$ modulo one another.** Let
 $x_1, \dots, x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization with
@@ -82,31 +65,6 @@ public theorem_wanted spoofLehmer_base_not_modEq_one_prime (x : Multiset ℕ) (k
     (∀ p : ℕ, p.Prime → (p : ℤ) ∣ spoofEval (spoofOfBases x) →
       ∀ a ∈ x, ¬ a ≡ 1 [MOD p]) ∧
     (¬ IsOddSpoof (spoofOfBases x) → ∀ a ∈ x, Even a)
-
-/-- **Formulas for the Lehmer bounds.** Let $L(t; r)$ and $U(t; r)$ be the lower and upper
-Lehmer bounds of a list $t$ of real numbers, and write $\emptyset$ for the empty list. Then
-$L(\emptyset; r) = 1$ for every $r \ge 1$, and $U(\emptyset; r) = 2^r - 1$ for every natural
-number $r$. Let $t = (t_1, \dots, t_s)$ with $s \ge 1$ and $2 \le t_1 \le \dots \le t_s$, and
-let $r \ge s$ be a natural number. Then
-$$U(t; r) = \frac{t_1 \cdots t_{s-1} t_s^{r-s+1} - 1}
-{(t_1 - 1) \cdots (t_{s-1} - 1)(t_s - 1)^{r-s+1}},$$
-and if moreover $r > s$, then
-$$L(t; r) = \frac{t_1 \cdots t_s}{(t_1 - 1) \cdots (t_s - 1)}.$$
-
-The condition $r > s$ for $L$ is needed: for $s = r$ the only admissible completion of $t$ is the
-empty list, so $L(t; r) = \kappa_r(t)$, where $\kappa_r$ is the Lehmer function; for $t = (2)$
-and $r = 1$ this is $\kappa_1(2) = 1$, while the formula gives $2$. Likewise
-$L(\emptyset; 0) = \kappa_0 = 0$.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Lemma 1 (`integers-2026-A33-lem-1`). -/
-public theorem_wanted lehmerLower_upper_formula :
-    (∀ r : ℕ, 1 ≤ r → lehmerLower [] r = 1) ∧ (∀ r : ℕ, lehmerUpper [] r = 2 ^ r - 1) ∧
-    ∀ (t : List ℝ) (r : ℕ) (hne : t ≠ []), t.Pairwise (· ≤ ·) → (∀ x ∈ t, 2 ≤ x) →
-      t.length ≤ r →
-      (t.length < r → lehmerLower t r = t.prod / (t.map (· - 1)).prod) ∧
-      lehmerUpper t r = (t.dropLast.prod * t.getLast hne ^ (r - t.length + 1) - 1) /
-        ((t.dropLast.map (· - 1)).prod * (t.getLast hne - 1) ^ (r - t.length + 1))
 
 /-- **Lehmer bounds at the initial segments of a spoof Lehmer factorization.** Let
 $x_1 \le \dots \le x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization

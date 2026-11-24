@@ -56,11 +56,15 @@ through the trace), Tamagawa measures, and local pairings and measures whose pro
   $\langle \theta(\varphi_1, f_1), \theta(\varphi_2, f_2) \rangle = [E : F] \cdot \mathrm{Val}_{s = s_{m,n}}\bigl(L(s + \tfrac12, \pi \times \chi_V)\, Z^*(s, \varphi_1 \otimes \overline{\varphi_2}, f_1, f_2)\bigr)$,
   the value at $s_{m,n} = \tfrac{m-n}{2}$ of the product (not a residue). If moreover the local theta lift of
   $\pi_v$ is non-zero at every place, then $L(s + \tfrac12, \pi \times \chi_V)$ is holomorphic at $s_{m,n}$ and the
-  value is $[E : F]\, L(s_{m,n} + \tfrac12, \pi \times \chi_V)\, Z^*(s_{m,n}, \dots)$; the proof of this refinement also uses
-  Yamana's theorem that a pole gives a non-zero lift of $\pi$ to a Hermitian space of the complementary dimension
-  $2n - m$ with the same splitting character, the tower property and the local conservation relation. That space
-  lies in a different Witt tower from $V$: the complementary space in the tower of $V$ would need Witt index
-  $n - (m - r) < 0$ (for $n = 1$, $m = 2$, $r = 0$, the tower of an anisotropic plane does not contain the zero space).
+  value is $[E : F]\, L(s_{m,n} + \tfrac12, \pi \times \chi_V)\, Z^*(s_{m,n}, \dots)$; the proof of this refinement combines
+  Yamana's pole theorem with the persistence of theta lifts up a Witt tower, which together give a non-zero lift of
+  $\pi$ to a Hermitian space of the complementary dimension $2n - m$ with the same splitting character, and the vanishing
+  of the lower lifts in the tower of $V$, which excludes that tower; it then uses, separately, the local conservation
+  relation. (In
+  the range considered here, the complementary space in the tower of $V$ would also need Witt index
+  $n - (m - r) < 0$; for $n = 1$, $m = 2$, $r = 0$, the tower of an anisotropic plane does not contain the zero space.)
+
+## Expansion
 
 A good expansion has pages, in this order, for the global zeta integral and its continuation, the basic
 identity (open orbit and vanishing of the other orbits) and the Euler product, the local zeta integrals
@@ -68,10 +72,16 @@ with their rationality and good sections, the local $L$- and $\varepsilon$-facto
 theorem, the unramified computation with its normalizations and orientation (inert and split places), the
 factorization $Z = L Z^*$ for factorizable sections (extended to finite sums of them by linearity), the
 $L$-function form of the Rallis inner product formula with all its hypotheses, and the inputs of its
-refinement: Yamana's theorem relating a pole of $L(s + \tfrac12, \pi \times \chi_V)$ to a non-zero lift to a space of the
-complementary dimension $2n - m$ with the same splitting character (in another Witt tower), the tower property
-and the local conservation relation, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
+refinement: Yamana's pole theorem for $L(s + \tfrac12, \pi \times \chi_V)$, which together with persistence up the tower
+gives a non-zero lift to a space of the complementary dimension $2n - m$ with the same splitting character, the
+vanishing of the lower lifts, which excludes the tower of $V$, and the local conservation relation, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
 Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact statements.
+
+A good expansion also writes out these steps of its own proof:
+
+- the orbits of $Q(F)$ on $\mathrm{U}(W_n)(F) / \iota(\mathrm{U}(U) \times \mathrm{U}(U))(F)$ and the vanishing, by cuspidality, of the contributions of all but the open orbit (Piatetski-Shapiro and Rallis), for the basic identity.
+- the step of Gan–Qiu–Takeda's proof of Theorem 11.4 (ii) (TeX lines 4237–4245) that places the space $V^\#$ given by the pole in another Witt tower: the hypothesis that the lower lifts in the tower of $V$ vanish excludes that tower, for the refinement.
+- the place $v$ where $V$ and $V^\#$ lie in different local Witt towers (a non-split place; at a split place they cannot differ), at which the two localized spaces have dimensions summing to $m + (2n - m) = 2n$, below the bound $2n + 2$ of the conservation relation (Gan–Qiu–Takeda, TeX lines 4245–4252); nothing is claimed about all the Witt towers at a place, for the refinement.
 
 ## Depends on
 
@@ -81,6 +91,13 @@ Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact st
 - [Meromorphic continuation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for the Hecke $L$-factors in $d_v(s, \chi_v)$
 - [Rallis inner product formula in Weil's convergent range](rallis-inner-product-formula.md), for the integral form of the Rallis inner product formula, from which the $L$-function form follows
 - [Global theta lifts of cusp forms](global-theta-lifts.md), for the theta lifts and the tower hypothesis in the $L$-function form
+
+## Proof depends on
+
+- [Constant terms of theta lifts for unitary groups](constant-terms-of-theta-lifts.md), for the persistence of a nonzero theta lift up a Witt tower, in the refinement: if the lift $\theta_{n,r}(\varphi, f)$ is nonzero, extending $\varphi$ by a Schwartz factor equal to $1$ at zero gives a datum for $V_{r+1}$ whose lift has $\theta_{n,r}(\varphi, f)$ in its constant term (its constant term formula), so the higher lift is nonzero too (Wu, §3, Proposition 3.1); cuspidality at the first occurrence alone would allow a zero lift
+- [Poles of L-functions and nonvanishing of global theta lifts](poles-of-doubling-l-functions-and-nonvanishing-of-theta-lifts.md), for Yamana's Theorem 10.1 (2) [Y4], as Gan, Qiu and Takeda use it with the tower property, by which, for $n < m \le 2n$ and $r \le n$ with the lower lifts vanishing, a pole of $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ gives a nonzero theta lift of $\pi$ to a Hermitian space $V^\#$ of dimension $2n - m$ with the same splitting character, for the refinement
+- [Conservation relations for the local theta correspondence](conservation-relations-for-local-theta-correspondence.md), for the lower bound for unitary dual pairs: if $\pi_v$ has nonzero theta lifts, for the same additive and splitting characters, to Hermitian spaces in different Witt towers, their dimensions, which are at least the first occurrence indices of the two towers, sum to at least $2n + 2$ (Sun–Zhu, Theorem 1.10 at a non-archimedean place, and the inequality (85) of Theorem 7.6 at an archimedean one)
+- [Local–global principle for Hermitian spaces over a quadratic extension](../../../NumberTheory/quadratic-forms-sums-of-squares/hermitian-local-global-principle.md), for the existence of a place where $V$ and $V^\#$ lie in different local Witt towers: if they lay in the same tower at every place, adding hyperbolic planes to reach equal dimensions would give spaces isometric at every place, hence isometric, and $V^\#$ would lie in the tower of $V$
 
 ## Sources
 
@@ -95,7 +112,12 @@ Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact st
   $Z_v^*(s_1) \ne 0$ for $\operatorname{Re} s_1 \ge 0$, unramified computation with $d_v$ from [LR, p. 334, Remark 3],
   absolute convergence of $Z^*$ for $\operatorname{Re} s > 0$), Theorem 1.3 and Theorem 11.4 with its proof (the
   $L \cdot Z^*$ form of the Rallis inner product formula, its hypotheses, and the holomorphy of
-  $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ under local non-vanishing).
+  $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ under local non-vanishing; TeX lines 4237–4252 of that proof:
+  Yamana's [Y4, Theorem 10.1 (2)] with the tower property, the vanishing of the lower lifts, and the conservation
+  relation, citing Kudla–Rallis, Gan–Ichino [GI2, Theorem 5.4] and Sun–Zhu).
+- B. Sun and C.-B. Zhu, "Conservation relations for local theta correspondence", arXiv:1204.2969 (version 3):
+  Theorem 1.10 (the conservation relations for the first occurrences in two Witt towers) and §7, Theorem 7.6,
+  (84)–(85).
 - S. Yamana, "The Siegel–Weil formula for unitary groups", Pacific J. Math. 264 (2013), 235–257,
   <https://doi.org/10.2140/pjm.2013.264.235>: §1, the factor $b(s, \chi) = \prod_{j=1}^{n} L(2s + j, \chi^0 \epsilon_{E/F}^{n+j})$
   (for $\delta = 1$); Appendix (zeta integrals for $\mathrm{GL}_n(D)$ at the split places, with the ordinary

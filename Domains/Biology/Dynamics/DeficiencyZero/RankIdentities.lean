@@ -43,7 +43,7 @@ connected components of the undirected reaction graph `G` on `K`. Write
   `Set.range src ∪ Set.range prod` and the linkage graph
   `SimpleGraph.fromRel (fun c c' => ∃ r, src r = c ∧ prod r = c')`, i.e. for the exact
   unfolded form of `ReactionNetwork.deficiency` in
-  `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`; the second also gives the
+  `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`; the second also gives the
   deficiency with `rank Γ` in place of `s`.
 
 The complexes, linkage graph and deficiency are taken as explicit data and hypotheses here;
@@ -269,8 +269,8 @@ private lemma fromRel_adj_iff (c c' : ↥(Set.range N.src ∪ Set.range N.prod))
 /-- **The deficiency is nonnegative, exact form.** For the complexes
 `C = range src ∪ range prod` and the linkage graph `G = fromRel (y ⟶ y')` on `C`,
 `0 ≤ #C - #(linkage classes) - dim (stoichiometric subspace)`; this is the unfolded statement
-`0 ≤ N.deficiency` for `ReactionNetwork.deficiency` of
-`WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`.
+`0 ≤ N.deficiency` for `ReactionNetwork.deficiency` in
+`MathlibExt.Dynamics.PolynomialNetworks.Deficiency`.
 
 Source: Feinberg (2019), § 6.4; Feinberg (1987), § 3. -/
 theorem complexes_linkage_finrank_nonneg [Finite ρ] (C : Set (S → ℕ))
