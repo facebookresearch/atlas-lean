@@ -381,7 +381,9 @@ noncomputable def lyapunov (β σ γ μ N S E I : ℝ) : ℝ :=
 
 /-- The derivative of `lyapunov` along the SEIR vector field (`IsSolution.hasDerivAt_lyapunov`):
 `V̇ = -μ (S - S*)² / S - (β S* I* / N) (S* / S + S I E* / (S* I* E) + E I* / (E* I) - 3)`, with the
-convention `x / 0 = 0` in every quotient. -/
+convention `x / 0 = 0` in every quotient. Under the standing hypotheses (`σ > 0`, `γ ≥ 0`, `μ > 0`,
+`N > 0` and `R₀ > 1`) it is the derivative of `lyapunov` along solutions at times `t ≥ 0` with
+`S(t), E(t), I(t) > 0`. -/
 noncomputable def lyapunovDeriv (β σ γ μ N S E I : ℝ) : ℝ :=
   -(μ * (S - endemicS β σ γ μ N) ^ 2 / S) -
     β * endemicS β σ γ μ N * endemicI β σ γ μ N / N *
@@ -653,8 +655,9 @@ namespace IsSolution
 
 variable {β σ γ μ N : ℝ} {S E I R : ℝ → ℝ}
 
-/-- **Derivative of the Lyapunov function along solutions.** At a time `t ≥ 0` with
-`S(t), E(t), I(t) > 0`, `d/dt V(S(t), E(t), I(t)) = lyapunovDeriv (S(t), E(t), I(t))`. -/
+/-- **Derivative of the Lyapunov function along solutions.** Under the standing hypotheses
+(`σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1`), at a time `t ≥ 0` with `S(t), E(t), I(t) > 0`,
+`d/dt V(S(t), E(t), I(t)) = lyapunovDeriv (S(t), E(t), I(t))`. -/
 theorem hasDerivAt_lyapunov (h : IsSolution β σ γ μ N S E I R) (hσ : 0 < σ) (hγ : 0 ≤ γ)
     (hμ : 0 < μ) (hN : 0 < N) (hR : 1 < R0 β σ γ μ) {t : ℝ} (ht : 0 ≤ t) (hSt : 0 < S t)
     (hEt : 0 < E t) (hIt : 0 < I t) :
@@ -1104,9 +1107,9 @@ noncomputable def dfeLyapunov (σ μ N S E I : ℝ) : ℝ :=
 
 /-- The derivative of `dfeLyapunov` along the vector field (`IsSolution.hasDerivAt_dfeLyapunov`):
 `V̇₀ = -μ (S - N)² / S + (β - (μ + σ) (μ + γ) / σ) I`. For `σ > 0`, `γ ≥ 0` and `μ > 0` the
-coefficient of `I` is `((μ + σ) (μ + γ) / σ) (R₀ - 1)`. Meaningful for `S > 0` and `σ > 0`, where it
-is the derivative; with the convention `x / 0 = 0`, the first term is `0` at `S = 0` and the
-quotient in the coefficient is `0` at `σ = 0`. -/
+coefficient of `I` is `((μ + σ) (μ + γ) / σ) (R₀ - 1)`. Meaningful for `S > 0`, `σ > 0` and
+`N > 0`, where it is the derivative; with the convention `x / 0 = 0`, the first term is `0` at
+`S = 0` and the quotient in the coefficient is `0` at `σ = 0`. -/
 noncomputable def dfeLyapunovDeriv (β σ γ μ N S I : ℝ) : ℝ :=
   -(μ * (S - N) ^ 2 / S) + (β - (μ + σ) * (μ + γ) / σ) * I
 
@@ -1161,8 +1164,8 @@ namespace IsSolution
 
 variable {β σ γ μ N : ℝ} {S E I R : ℝ → ℝ}
 
-/-- **Derivative of `V₀` along solutions**: at a time `t ≥ 0` with `S(t) ≠ 0`,
-`d/dt V₀(S(t), E(t), I(t)) = dfeLyapunovDeriv (S(t), I(t))`. -/
+/-- **Derivative of `V₀` along solutions**: for `σ ≠ 0` and `N ≠ 0`, at a time `t ≥ 0` with
+`S(t) ≠ 0`, `d/dt V₀(S(t), E(t), I(t)) = dfeLyapunovDeriv (S(t), I(t))`. -/
 theorem hasDerivAt_dfeLyapunov (h : IsSolution β σ γ μ N S E I R) (hσ : σ ≠ 0) (hN : N ≠ 0)
     {t : ℝ} (ht : 0 ≤ t) (hSt : S t ≠ 0) :
     HasDerivAt (fun s => dfeLyapunov σ μ N (S s) (E s) (I s))

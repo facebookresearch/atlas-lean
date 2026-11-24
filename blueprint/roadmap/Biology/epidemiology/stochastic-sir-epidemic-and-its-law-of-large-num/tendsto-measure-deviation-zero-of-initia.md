@@ -1,4 +1,4 @@
-# With deterministic initial counts, the initial deviation tends to zero
+# Deterministic initial counts with convergent scaled values satisfy Kurtz's initial condition
 
 Let $\mu$ be a measure on $\Omega$, not necessarily a probability measure. For each natural
 number $N$ let $S_N, I_N, R_N$ be random paths $\mathbb{R} \to \mathbb{N}$ on $\Omega$, and let $s$,

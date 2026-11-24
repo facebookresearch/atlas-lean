@@ -973,7 +973,7 @@ theorem tendsto_measure_deviation_zero_of_initial {S₀ E₀ I₀ R₀ : ℕ →
       (X := fun N ω => toPath (S N ω) (E N ω) (I N ω) (R N ω)) (x := odePath s e i r)
       (z₀ := fun N => vec4 (S₀ N) (E₀ N) (I₀ N) (R₀ N)) hX₀ hz₀ hδ
 
-/-- **When `R₀ > 1` and the initial proportions of `S`, `E` and `I` tend to positive limits, the
+/-- **When `R₀ > 1` and the scaled initial counts of `S`, `E` and `I` tend to positive limits, the
 scaled chain settles near the endemic equilibrium.** Combine Kurtz's theorem (with `P`, `Y` and
 the chains as in `tendsto_measure_deviation`) with the attractivity of the endemic equilibrium
 from the open positive orthant (`SEIRVital.IsSolution.tendsto_endemic`): if `σ > 0`,

@@ -218,8 +218,8 @@ theorem lyapunovDeriv_nonpos (hβ : 0 ≤ β) {S : ℝ} (hS : 0 < S) :
     -(β * (S - N * γ / β) ^ 2 / S) ≤ 0 :=
   neg_nonpos.2 (div_nonneg (mul_nonneg hβ (sq_nonneg _)) hS.le)
 
-/-- **The Lyapunov derivative vanishes exactly at the equilibrium**: on the line `S + I = N`
-with `S > 0` and `β > 0` (no sign condition on `I`, `γ` or `N`), `-β (S - S*)² / S = 0` iff
+/-- **For `β > 0`, on the line `S + I = N` with `S > 0`, the Lyapunov derivative vanishes exactly
+at the equilibrium** (no sign condition on `I`, `γ` or `N`): `-β (S - S*)² / S = 0` iff
 `(S, I) = (S*, I*)`. -/
 theorem lyapunovDeriv_eq_zero_iff (hβ : 0 < β) {S I : ℝ} (hS : 0 < S) (hSI : S + I = N) :
     -(β * (S - N * γ / β) ^ 2 / S) = 0 ↔ S = N * γ / β ∧ I = N * (1 - γ / β) := by
@@ -326,10 +326,10 @@ theorem persistence {t : ℝ} (ht : 0 ≤ t) :
   rw [le_div_iff₀ ha] at this
   linarith
 
-/-- **Exponential decay of the Lyapunov function.** For `0 < γ < β`, `N > 0` and a solution
-with `S(0) + I(0) = N`, `S(0), I(0) > 0`, there is `c > 0` with
-`V(S(t), I(t)) ≤ V(S(0), I(0)) e^{-c t}` for all `t ≥ 0` (take `c = β m / N`, `m` the
-persistence bound). -/
+/-- **For `R₀ > 1`, exponential decay of the Lyapunov function along solutions from the open
+segment.** For `0 < γ < β`, `N > 0` and a solution with `S(0) + I(0) = N`, `S(0), I(0) > 0`, there
+is `c > 0` with `V(S(t), I(t)) ≤ V(S(0), I(0)) e^{-c t}` for all `t ≥ 0` (take `c = β m / N`, `m`
+the persistence bound). -/
 theorem exists_lyapunov_le_exp :
     ∃ c > 0, ∀ t, 0 ≤ t →
       lyapunov β γ N (S t) (I t) ≤ lyapunov β γ N (S 0) (I 0) * exp (-(c * t)) := by

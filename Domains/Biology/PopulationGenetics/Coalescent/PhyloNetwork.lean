@@ -88,7 +88,8 @@ parent of `v` (edges run from ancestor to descendant). -/
 def toDigraph : Digraph V where
   Adj u v := u ∈ N.parents v
 
-/-- The digraph of the network (the name under which it was originally recorded). -/
+/-- The parent-to-child digraph of the network, `toDigraph`: `Adj u v` iff `u` is a parent of `v`
+(edges run from ancestor to descendant). -/
 abbrev G : Digraph V := N.toDigraph
 
 /-- Adjacency in the derived digraph is decidable once equality on `V` is. -/

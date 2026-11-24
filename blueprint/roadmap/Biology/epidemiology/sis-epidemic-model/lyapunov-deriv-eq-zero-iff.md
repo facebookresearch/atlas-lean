@@ -1,4 +1,4 @@
-# On $S + I = N$ with $S > 0$, the Lyapunov derivative vanishes exactly at equilibrium
+# For $\beta, S > 0$ on $S + I = N$, the Lyapunov derivative vanishes exactly at equilibrium
 
 Let $\beta > 0$, let $\gamma$ and $N$ be real, and let $S^* = N\gamma/\beta$ and
 $I^* = N(1 - \gamma/\beta)$. For real $S > 0$ and $I$ with $S + I = N$,

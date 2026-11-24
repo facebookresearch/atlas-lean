@@ -5,5 +5,5 @@ The exponential law `Exp(1)` with rate `1`, the probability measure on `ℝ` wit
 mass `0`: `Exp(1)((-∞, 0]) = 0`. So a rate-`1` exponential clock is nonpositive with probability
 `0`.
 
-Equivalently, almost every `s ∈ ℝ` satisfies `s > 0` under `Exp(1)`: a rate-`1` exponential clock is positive
-almost surely.
+Equivalently, almost every `s ∈ ℝ` satisfies `s > 0` under `Exp(1)`: a rate-`1` exponential clock
+is positive almost surely.

@@ -53,7 +53,7 @@
 ## Stability of the endemic equilibrium
 
 - [Lyapunov stability of the endemic equilibrium when R₀ > 1](endemic-lyapunov-stable.md)
-- [Stability and attractivity of the endemic equilibrium relative to the open positive orthant when R₀ > 1](endemic-globally-asymptotically-stable.md)
+- [Stability and attractivity of the endemic equilibrium from the open positive orthant when R₀ > 1](endemic-globally-asymptotically-stable.md)
 
 ## The removed class and the total population
 

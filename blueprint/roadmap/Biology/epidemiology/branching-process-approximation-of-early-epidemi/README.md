@@ -47,6 +47,6 @@
 - [An offspring law with mean above 1 is not the point mass at 1](measure-one-ne-one-of-one-lt-mean.md)
 - [When R₀ > 1, major outbreaks have positive probability](one-sub-extinction-prob-pos.md)
 - [Almost-sure eventual extinction with finitely many susceptibles](measure-real-exists-epi-size-eq-zero.md)
-- [When R₀ ≤ 1 and offspring numbers are not always 1, only minor outbreaks occur, uniformly in the population](exists-forall-measure-real-epi-size-eq-z.md)
+- [For R₀ ≤ 1 and offspring numbers not always 1, outbreaks stay minor uniformly in the population](exists-forall-measure-real-epi-size-eq-z.md)
 - [Large-population limit of extinction by generation n](tendsto-measure-real-epi-size-eq-zero.md)
 - [Survival in the large-population limit](tendsto-measure-real-epi-size-ne-zero.md)

@@ -1,4 +1,4 @@
-# The unvaccinated infectives stay bounded away from zero
+# With an endemic equilibrium and infectives in both groups, Iᵤ stays bounded away from zero
 
 Let $\beta \ge 0$, $\gamma > 0$, $\varepsilon < 1$ and $N > 0$, let $(a, c)$ be an
 [endemic equilibrium](is-endemic-eq.md) at coverage $p$, and let $(S_u, I_u, S_v, I_v)$ be a

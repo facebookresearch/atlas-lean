@@ -83,7 +83,7 @@ then identifies the law of the whole step sequence with `ctmcInputMeasure`
 
 ## Scope
 
-* Existence is pathwise and, besides `β, γ ≥ 0`, uses only positivity of the interarrival
+* Existence is pathwise and, besides `β, γ ≥ 0` and `S₀ + I₀ ≤ N`, needs only positive interarrival
   times; it holds for dependent clocks. The law identification needs independent exponential
   clocks: with a single clock driving both channels the first jump can be a simultaneous
   infection and recovery, which the jump chain makes with probability `0` (see the tests).

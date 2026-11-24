@@ -39,3 +39,7 @@ rates into a rate effect and a composition effect.
 - [Directly standardized rate is the crude rate with the standard's sizes](directly-standardized-rate-eq-crude-rate.md)
 - [Crude-rate difference as a rate effect plus a composition effect](crude-rate-sub-crude-rate.md)
 - [With common category rates, the crude-rate gap is a composition effect](crude-rate-sub-crude-rate-of-same-rates.md)
+
+## Related topics
+
+- [Weighted mean](../../statistical-genetics/mendelian-randomization/weighted-mean.md): the crude rate and the directly standardized rate are weighted means of the category rates, with the sizes of the population or of the standard as weights.

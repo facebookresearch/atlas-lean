@@ -10,6 +10,6 @@ $$\tau_1(n) = \sum_{j=0}^{n-1} \mathrm{rate}_1(x_j)\, d(x_j, r_j),$$
 
 where $d(y, r)$ is the [duration of the jump](dur.md) from $y$ with residual clocks $r$: it is
 $0$ when the total rate $\mathrm{rate}_1(y) + \mathrm{rate}_2(y)$ is $0$ (an absorbing state) and
-the [time to the next jump](hold.md) otherwise. In particular $\tau_1(0) = 0$. When the
+the [holding time](hold.md) otherwise. In particular $\tau_1(0) = 0$. When the
 durations are nonnegative, $\tau_1(n)$ is the rate of channel 1 integrated over the time taken
 by the first $n$ jumps.

@@ -2,7 +2,7 @@
 
 For a [two-channel chain](two-channel.md), a state `x` and a
 [clock configuration](clock-config.md) `c = ((r₁, r₂), (u₁, u₂))`, write `a = rate₁ x`,
-`b = rate₂ x`, and `h` for the [time to the next jump](hold.md) from `x` with residuals
+`b = rate₂ x`, and `h` for the [holding time](hold.md) from `x` with residuals
 `(r₁, r₂)`, defined with the convention `t / 0 = 0`. The clock configuration after the next jump
 is `c` itself if `a + b = 0`. Otherwise it is
 

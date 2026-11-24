@@ -61,7 +61,7 @@
 - [For $R_0 > 1$ and $S, I > 0$, the SIS Lyapunov function is nonnegative](lyapunov-nonneg.md)
 - [For $R_0 > 1$ and $S, I > 0$, the Lyapunov function vanishes exactly at equilibrium](lyapunov-eq-zero-iff.md)
 - [The Lyapunov derivative is nonpositive](lyapunov-deriv-nonpos.md)
-- [On $S + I = N$ with $S > 0$, the Lyapunov derivative vanishes exactly at equilibrium](lyapunov-deriv-eq-zero-iff.md)
+- [For $\beta, S > 0$ on $S + I = N$, the Lyapunov derivative vanishes exactly at equilibrium](lyapunov-deriv-eq-zero-iff.md)
 - [Solutions from the open segment keep both compartments positive](pos-of-pos.md)
 - [Derivative of the Lyapunov function along solutions](has-deriv-at-lyapunov.md)
 - [Along solutions from the open segment, the Lyapunov function never exceeds its initial value](lyapunov-le-initial.md)

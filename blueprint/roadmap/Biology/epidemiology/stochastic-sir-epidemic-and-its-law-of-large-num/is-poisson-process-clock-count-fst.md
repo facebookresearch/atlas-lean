@@ -1,4 +1,4 @@
-# With i.i.d. rate-one exponential interarrival times, the infection clock's counting path is a rate-one Poisson process
+# With i.i.d. Exp(1) interarrival times, the infection clock is a rate-one Poisson process
 
 Under the [clock law](clock-law.md) $\mathbb{P}$ on pairs $(e_1, e_2)$ of real sequences, the
 [counting path](clock-count.md) $Y_1$ of the first sequence $e_1$ (the infection clock) is a

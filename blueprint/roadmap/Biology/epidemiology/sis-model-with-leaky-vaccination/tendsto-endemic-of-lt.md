@@ -1,4 +1,4 @@
-# Below the critical coverage, solutions with infectives in both groups tend to an endemic equilibrium
+# For β > 0 and 0 < ε < 1, below the critical coverage, infections in both groups become endemic
 
 Let $\beta, \gamma, N > 0$, $0 < \varepsilon < 1$ and $0 < p < 1$, with $p < p_c$ for the
 [critical coverage](critical-coverage.md) $p_c = (1 - \gamma / \beta) / \varepsilon$. Then every

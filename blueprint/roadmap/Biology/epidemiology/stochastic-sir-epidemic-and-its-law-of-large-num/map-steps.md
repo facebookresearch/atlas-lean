@@ -1,4 +1,4 @@
-# Under independent rate-one exponential clocks and i.i.d. step-law auxiliary steps independent of them, the read-off steps are i.i.d. with the step law
+# Independent Exp(1) clocks and i.i.d. step-law auxiliary steps give i.i.d. step-law read-off steps
 
 Let $K$ be a [valid](is-valid.md) [two-channel chain](two-channel.md) on a finite set $\iota$ with
 the discrete σ-algebra (nonnegative rates, and rate $0$ for a channel whose jump would not move the

@@ -51,5 +51,5 @@ counts with the SEIR system with vital dynamics at scale `1`.
 - [Kurtz's pathwise estimate for SEIR with vital dynamics](deviation-le.md)
 - [Kurtz's law of large numbers for SEIR with vital dynamics](tendsto-measure-deviation.md)
 - [Kurtz's theorem for SEIR with vital dynamics, supremum form](tendsto-measure-i-sup-deviation.md)
-- [Deterministic initial counts with convergent scaled values satisfy the initial condition of Kurtz's theorem](tendsto-measure-deviation-zero-of-initia.md)
-- [When R₀ > 1 and the initial proportions of S, E and I tend to positive limits, the scaled chain settles near the endemic equilibrium](eventually-tendsto-measure-endemic.md)
+- [Deterministic initial counts with convergent scaled values satisfy Kurtz's initial condition](tendsto-measure-deviation-zero-of-initia.md)
+- [If R₀ > 1 and scaled initial counts tend to positive S, E, I, the chain nears the endemic state](eventually-tendsto-measure-endemic.md)

@@ -1,4 +1,4 @@
-# When R₀ > 1 and the initial proportions of S, E and I tend to positive limits, the scaled chain settles near the endemic equilibrium
+# If R₀ > 1 and scaled initial counts tend to positive S, E, I, the chain nears the endemic state
 
 Let `σ > 0`, `γ ≥ 0`, `μ > 0`, and let the
 [basic reproduction number](../global-stability-of-the-seir-model/r0.md) satisfy

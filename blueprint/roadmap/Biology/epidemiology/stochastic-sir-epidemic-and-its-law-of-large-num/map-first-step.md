@@ -1,4 +1,4 @@
-# Under independent rate-one exponential clocks and i.i.d. step-law auxiliary steps independent of them, the first step has the step law, independent of the restarted input
+# Independent Exp(1) clocks and step-law auxiliary steps give a first step with the step law
 
 Let $K$ be a [valid](is-valid.md) [two-channel chain](two-channel.md) on a finite set $\iota$ with
 the discrete σ-algebra (nonnegative rates, and rate $0$ for a channel whose jump would not move the

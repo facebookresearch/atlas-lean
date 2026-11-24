@@ -1,4 +1,4 @@
-# Deterministic initial counts with convergent scaled values satisfy the initial condition of Kurtz's theorem
+# Deterministic initial counts with convergent scaled values satisfy Kurtz's initial condition
 
 Let `P` be a measure on a space `Ω`, let `S_N, E_N, I_N, R_N` be count paths depending on `ω ∈ Ω`,
 and let `s`, `e`, `i`, `r` be real functions. Suppose that for each `N`, almost surely,
