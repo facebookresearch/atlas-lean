@@ -14,7 +14,7 @@ uniform on $[-1/2, 1/2]$, each with mean $0$ and variance $1/12$. By the central
 $(U_1 + \dots + U_n)/\sqrt{n}$ converges in law to $N(0, 1/12)$, and $\mathbb{E}|Z| = \sigma\sqrt{2/\pi}$
 for $Z$ with law $N(0, \sigma^2)$, which gives $\sqrt{1/12}\,\sqrt{2/\pi} = 1/\sqrt{6\pi}$. To pass from
 convergence in law to convergence of the means, note that the second moment of
-$(U_1 + \dots + U_n)/\sqrt{n}$ is $1/12$ for every $n$, so the absolute values are uniformly integrable.
+$(U_1 + \dots + U_n)/\sqrt{n}$ is $1/12$ for $n > 0$, so the absolute values are uniformly integrable.
 The statement is a concrete case of the central limit theorem evaluating a high-dimensional integral.
 
 ## Statements
