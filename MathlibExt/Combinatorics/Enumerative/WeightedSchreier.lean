@@ -216,6 +216,27 @@ public theorem iteratedPartialSum_succ_succ {M : Type*} [AddCommMonoid M] (a : �
       iteratedPartialSum (k + 1) a m + iteratedPartialSum k a m := by
   simp [iteratedPartialSum, seededPartialSums, Finset.sum_range_succ]
 
+/-- **Iterated partial sums of shifted Fibonacci numbers.** Let $F_n$ denote the Fibonacci
+numbers, with $F_0 = 0$ and $F_1 = 1$, and write $P^{(k)}(x)(m)$ for the $k$-fold iterated
+partial sum of a sequence $x$ of natural numbers at $m$. Then for all $k, \ell \ge 0$,
+$P^{(k)}((F_{n+2})_{n \ge 0})(\ell) = P^{(k)}((F_n)_{n \ge 0})(\ell) +
+P^{(k)}((F_n)_{n \ge 0})(\ell + 1)$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.4
+(`fq-2024-chu08302024rev-lem-3.4`). -/
+public theorem iteratedPartialSum_fib_add_two (k l : ℕ) :
+    iteratedPartialSum k (fun n => Nat.fib (n + 2)) l =
+      iteratedPartialSum k Nat.fib l + iteratedPartialSum k Nat.fib (l + 1) := by
+  unfold iteratedPartialSum
+  induction k generalizing l with
+  | zero => exact Nat.fib_add_two
+  | succ k ih =>
+    have hzero : seededPartialSums 0 Nat.fib k 0 = 0 := by
+      cases k <;> simp [seededPartialSums]
+    simp only [seededPartialSums, Pi.zero_apply, zero_add, ih, Finset.sum_add_distrib]
+    rw [Finset.sum_range_succ' (seededPartialSums 0 Nat.fib k) l, hzero, Nat.add_zero]
+
 end
 
 end MetaMathlibExt

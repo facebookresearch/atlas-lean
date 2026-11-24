@@ -78,7 +78,7 @@ private theorem batch_melting_denom_pos_aux {F D : ℝ} (hD : 0 < D) (hF₀ : 0 
   · have hFpos : 0 < F := lt_of_le_of_ne hF₀ (Ne.symm hF)
     linarith
 
-/-- Batch melting: conservation `C₀ = F * Cl + (1 - F) * Cs` plus
+/-- Batch melting: for `D > 0` and `0 ≤ F ≤ 1`, conservation `C₀ = F * Cl + (1 - F) * Cs` plus
 `Cs = D * Cl` gives `Cl = C₀ / (D + F * (1 - D))`. -/
 theorem batch_melting_liquid {C₀ F D Cl Cs : ℝ} (hD : 0 < D) (hF₀ : 0 ≤ F) (hF₁ : F ≤ 1)
     (hcons : C₀ = F * Cl + (1 - F) * Cs) (hpart : Cs = D * Cl) :
@@ -95,7 +95,8 @@ theorem batch_melting_denominator_pos {F D : ℝ} (hD : 0 < D) (hF₀ : 0 ≤ F)
     0 < D + F * (1 - D) := by
   exact batch_melting_denom_pos_aux hD hF₀ hF₁
 
-/-- Batch melting: solid concentration `Cs = D * C₀ / (D + F * (1 - D))`. -/
+/-- Batch melting: for `D > 0` and `0 ≤ F ≤ 1`, conservation `C₀ = F * Cl + (1 - F) * Cs` plus
+`Cs = D * Cl` gives the solid concentration `Cs = D * C₀ / (D + F * (1 - D))`. -/
 theorem batch_melting_solid {C₀ F D Cl Cs : ℝ} (hD : 0 < D) (hF₀ : 0 ≤ F) (hF₁ : F ≤ 1)
     (hcons : C₀ = F * Cl + (1 - F) * Cs) (hpart : Cs = D * Cl) :
     Cs = D * C₀ / (D + F * (1 - D)) := by
