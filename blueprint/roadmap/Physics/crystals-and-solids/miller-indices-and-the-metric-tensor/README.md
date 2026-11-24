@@ -1,0 +1,72 @@
+# Miller indices and the metric tensor
+
+## A. The metric tensor: lengths and angles
+
+- [Metric Tensor](metric-tensor.md)
+- [Metric Tensor apply](metric-tensor-apply.md)
+- [Metric Tensor eq](metric-tensor-eq.md)
+- [Metric Tensor symmetric](metric-tensor-symmetric.md)
+- [Metric Tensor inv](metric-tensor-inv.md)
+- [Lengths from the metric tensor](norm-sq-fractional.md)
+- [Inner products from the metric tensor](inner-fractional.md)
+- [Normalized inner product, numerator from the metric tensor](inner-div-norm-mul-norm-fractional.md)
+- [Angles from the metric tensor](cos-angle-fractional.md)
+
+## B. Reciprocal vectors and interplanar spacing
+
+- [Cryst Reciprocal](cryst-reciprocal.md)
+- [Inner primitive Vector cryst Reciprocal](inner-primitive-vector-cryst-reciprocal.md)
+- [Inner cryst Reciprocal primitive Vector](inner-cryst-reciprocal-primitive-vector.md)
+- [Inner cryst Reciprocal](inner-cryst-reciprocal.md)
+- [Reciprocal Vector](reciprocal-vector.md)
+- [Reciprocal Vector zero](reciprocal-vector-zero.md)
+- [Inner reciprocal Vector primitive Vector](inner-reciprocal-vector-primitive-vector.md)
+- [Reciprocal Vector injective](reciprocal-vector-injective.md)
+- [Reciprocal Vector smul](reciprocal-vector-smul.md)
+- [Inner reciprocal Vector eq](inner-reciprocal-vector-eq.md)
+- [Norm Sq reciprocal Vector](norm-sq-reciprocal-vector.md)
+- [Interplanar Spacing](interplanar-spacing.md)
+- [Interplanar Spacing pos](interplanar-spacing-pos.md)
+- [Interplanar spacing from the inverse metric](inv-sq-interplanar-spacing.md)
+- [Reciprocal Vector eq phys smul](reciprocal-vector-eq-phys-smul.md)
+- [Metric Tensor simple Cubic](metric-tensor-simple-cubic.md)
+- [Metric Tensor simple Cubic apply](metric-tensor-simple-cubic-apply.md)
+- [Metric Tensor inv simple Cubic](metric-tensor-inv-simple-cubic.md)
+- [Metric Tensor inv simple Cubic apply](metric-tensor-inv-simple-cubic-apply.md)
+- [Cubic interplanar spacing](spacing-simple-cubic.md)
+- [Lattice Plane](lattice-plane.md)
+- [Mem lattice Plane iff](mem-lattice-plane-iff.md)
+- [Plane Shift mem](plane-shift-mem.md)
+- [Plane Shift norm](plane-shift-norm.md)
+- [Plane Dist ge](plane-dist-ge.md)
+- [Interplanar Spacing smul](interplanar-spacing-smul.md)
+
+## C. Directions and the zone law
+
+- [Zone Axis](zone-axis.md)
+- [Dot Product zone Axis left](dot-product-zone-axis-left.md)
+- [Dot Product zone Axis right](dot-product-zone-axis-right.md)
+- [Lattice Direction](lattice-direction.md)
+- [Lattice Direction eq lattice Vector](lattice-direction-eq-lattice-vector.md)
+- [Lattice Direction eq sum](lattice-direction-eq-sum.md)
+- [Inner lattice Direction primitive Vector](inner-lattice-direction-primitive-vector.md)
+- [Inner reciprocal Vector lattice Direction](inner-reciprocal-vector-lattice-directio.md)
+- [Weiss zone law](weiss-zone-law.md)
+- [Weiss Zone Law smul](weiss-zone-law-smul.md)
+- [The index cross product satisfies the zone law for both planes](zone-axis-mem.md)
+- [Zone axis of two non-parallel plane families](zone-axis-unique.md)
+- [Lattice Direction eq smul reciprocal Vector cubic](lattice-direction-eq-smul-reciprocal-vec.md)
+- [Exists lattice Direction not parallel reciprocal Vector](exists-lattice-direction-not-parallel-re.md)
+
+## D. Miller-Bravais indices
+
+- [Miller Bravais Plane](miller-bravais-plane.md)
+- [Miller Bravais Plane third](miller-bravais-plane-third.md)
+- [Miller Bravais Plane sum](miller-bravais-plane-sum.md)
+- [To Miller Bravais Dir Q](to-miller-bravais-dir-q.md)
+- [Of Miller Bravais Dir](of-miller-bravais-dir.md)
+- [To Miller Bravais Dir](to-miller-bravais-dir.md)
+- [To Miller Bravais Dir Q sum](to-miller-bravais-dir-q-sum.md)
+- [Of Miller Bravais Dir to Miller Bravais Dir Q](of-miller-bravais-dir-to-miller-bravais.md)
+- [To Miller Bravais Dir Q of Miller Bravais Dir](to-miller-bravais-dir-q-of-miller-bravai.md)
+- [Of Miller Bravais Dir to Miller Bravais Dir](of-miller-bravais-dir-to-miller-bravais-2.md)
