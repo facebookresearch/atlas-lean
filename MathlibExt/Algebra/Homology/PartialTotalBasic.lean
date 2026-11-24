@@ -36,6 +36,10 @@ universe v u
 
 namespace HomologicalComplex₂
 
+/-- The initial-segment embedding preserves the retained natural degree. -/
+private theorem initialSegmentEmbedding_f (p : ℕ) (i : Fin (p + 1)) :
+    (ComplexShape.embeddingDownNatInitialSegment p).f i = i.1 := rfl
+
 section PartialTotal
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
@@ -74,7 +78,7 @@ theorem ιTotal_partialTotalι (p : ℕ) (i : Fin (p + 1))
       ((B.stupidTruncXIso
         (ComplexShape.embeddingDownNatInitialSegment p)
         (show (ComplexShape.embeddingDownNatInitialSegment p).f i = i.1
-          from rfl)).hom.f j) ≫
+          from initialSegmentEmbedding_f p i)).hom.f j) ≫
         B.ιTotal (ComplexShape.down ℕ) i.1 j n h := by
   change
     HomologicalComplex₂.ιTotal
@@ -83,13 +87,17 @@ theorem ιTotal_partialTotalι (p : ℕ) (i : Fin (p + 1))
         (total.map
           (B.ιStupidTrunc (ComplexShape.embeddingDownNatInitialSegment p))
           (ComplexShape.down ℕ)).f n = _
-  rw [ιTotal_map,
-    HomologicalComplex.ιStupidTrunc_f B
-      (ComplexShape.embeddingDownNatInitialSegment p) i.1,
-    HomologicalComplex.stupidTruncι.f_eq B
-      (ComplexShape.embeddingDownNatInitialSegment p)
-      (show (ComplexShape.embeddingDownNatInitialSegment p).f i = i.1
-        from rfl)]
+  rw [ιTotal_map, HomologicalComplex.ιStupidTrunc_f B
+    (ComplexShape.embeddingDownNatInitialSegment p) i.1]
+  have hComponent :
+      B.ιStupidTruncf (ComplexShape.embeddingDownNatInitialSegment p) i.1 =
+        (B.stupidTruncXIso (ComplexShape.embeddingDownNatInitialSegment p)
+          (initialSegmentEmbedding_f p i)).hom := by
+    simpa only [HomologicalComplex.stupidTruncXIso, HomologicalComplex.restrictionXIso,
+      Iso.trans_hom] using
+      (HomologicalComplex.ιStupidTruncf'_eq B
+        (ComplexShape.embeddingDownNatInitialSegment p) (initialSegmentEmbedding_f p i))
+  exact congrArg (fun φ => φ.f j ≫ B.ιTotal (ComplexShape.down ℕ) i.1 j n h) hComponent
 
 /-- Each degree of the partial-total inclusion is a monomorphism. -/
 instance partialTotalι_f_mono (p n : ℕ) : Mono ((B.partialTotalι p).f n) := by
@@ -109,8 +117,8 @@ instance partialTotalι_f_mono (p n : ℕ) : Mono ((B.partialTotalι p).f n) := 
       change Mono ((φ.f i).f j)
       by_cases hi : ∃ a, e.f a = i
       · obtain ⟨a, ha⟩ := hi
-        rw [HomologicalComplex.ιStupidTrunc_f B e i,
-          HomologicalComplex.stupidTruncι.f_eq B e ha]
+        let : IsIso (φ.f i) := HomologicalComplex.isIso_ιStupidTrunc_f B e ha
+        change Mono ((HomologicalComplex.eval C (ComplexShape.down ℕ) j).map (φ.f i))
         infer_instance
       · have hzero := B.isZero_stupidTrunc_X e i (by simpa using hi)
         exact ((HomologicalComplex.eval C
