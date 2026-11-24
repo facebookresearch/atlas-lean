@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Set.Card
 public import MathlibExt.Combinatorics.Enumerative.ExtraTribLeftExtension
 public import MathlibExt.Combinatorics.Enumerative.FibternarySums
+public import MathlibExt.Combinatorics.Enumerative.TrithoffPrecolumns
 public import MathlibExt.Combinatorics.Enumerative.TrithoffRowDifference
 public import MathlibExt.Combinatorics.InfiniteWord.Tribonacci
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
@@ -297,26 +298,6 @@ Lemma 12 (`jis-2025-25.5.4-lem-12`). -/
 public theorem_wanted tribonacciValue_cons_zero_of_noncanonical (w v : List ℕ) (n : ℕ)
     (hw : ∀ d ∈ w, d ≤ 1) (hwn : tribonacciValue w = n) (hv : IsTribonacciRepr v n) :
     tribonacciValue (0 :: w) = tribonacciValue (0 :: v)
-
-/-- **Precolumns of the Trithoff array.** Write $[u]_T$ for the Tribonacci value of a digit
-word $u$, written most significant digit first. Let $n$ have Tribonacci representation $abc1$,
-where $a$ is a digit word and $b$, $c$ are digits. Let $\mathrm{out}(n) = [abc10]_T$ and
-$\mathrm{out}^2(n) = [abc100]_T$ be the next two entries of the Trithoff row of $n$, and extend
-the row to the left by the Tribonacci rule: in the integers, the wall is
-$W = \mathrm{out}^2(n) - \mathrm{out}(n) - n$ and the seed is $S = \mathrm{out}(n) - n - W$.
-Then $W = [abc]_T + 1$, $S = [ab]_T + c$, and the pre-seed $n - W - S$ equals $[a]_T + b$.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Lemma 13 (`jis-2025-25.5.4-lem-13`). -/
-public theorem_wanted trithoff_precolumns (a : List ℕ) (b c n : ℕ)
-    (h : IsTribonacciRepr (1 :: c :: b :: a) n) :
-    let g₂ : ℤ := tribonacciValue (0 :: 1 :: c :: b :: a)
-    let g₃ : ℤ := tribonacciValue (0 :: 0 :: 1 :: c :: b :: a)
-    let wall := g₃ - g₂ - n
-    let seed := g₂ - n - wall
-    wall = tribonacciValue (c :: b :: a) + 1 ∧ seed = tribonacciValue (b :: a) + c ∧
-      (n : ℤ) - wall - seed = tribonacciValue a + b
 
 /-- **Wall, seed and pre-seed of the Trithoff array via the Tribonacci word.** Let
 $f_1 < f_2 < \cdots$ be the positive integers whose Tribonacci representation ends in $1$ (the
