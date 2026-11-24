@@ -1,0 +1,14 @@
+Retained source attribution notices
+===================================
+
+The following notice reproduces the authorship line from the Formal-Math
+source headers for the listed ATLAS modules. It does not replace or extend
+any applicable license terms.
+
+Files:
+  MathlibExt/CategoryTheory/Waldhausen/Basic.lean
+  MathlibExt/CategoryTheory/Waldhausen/SConstruction/FiniteStage.lean
+  MathlibExt/KTheory/Waldhausen/K0/Basic.lean
+  MathlibExtTest/CategoryTheory/Waldhausen/SConstruction/FiniteStageTests.lean
+
+Author: @toskua, Avocado
