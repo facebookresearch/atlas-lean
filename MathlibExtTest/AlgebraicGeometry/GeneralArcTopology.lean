@@ -14,8 +14,8 @@ import Mathlib.Algebra.GroupWithZero.Idempotent
 # Arc covers by finite families
 
 The two components `Spec A → Spec (A × A)` jointly cover `Spec (A × A)` in the arc topology,
-although neither does alone: a point with values in a valuation ring factors through one of them,
-because a domain has no idempotents other than `0` and `1`. The empty family covers the empty
+although for nonzero `A` neither does alone: a point with values in a valuation ring factors
+through one of them, because a domain has no idempotents other than `0` and `1`. The empty family covers the empty
 scheme, which has no valuation points.
 -/
 
