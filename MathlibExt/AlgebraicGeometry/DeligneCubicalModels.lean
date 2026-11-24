@@ -142,7 +142,7 @@ The cocycle/symmetry laws use shared cochains and shared exterior coordinates;
 regular normalization uses actual acyclic torsion. There is no symbol word. -/
 structure CubicalSources where
   projective : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y),
-    AdelicSemipositiveClosures.IsProjectiveOver (pullback.snd f a)
+    RelativePolynomialProjectivity.IsProjective (pullback.snd f a)
   finiteTor : FiniteTorDimension f
   pureDimension : IsPureRelativeDimension f n
   cube : ∀ (L : Fin (n+2) → X.Modules), (∀ i, IsLineBundle (L i)) →

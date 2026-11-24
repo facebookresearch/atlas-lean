@@ -126,21 +126,27 @@ variable {Y : Over (Spec (.of K))} (f : Y ⟶ X) (C : EffectiveBoundary A Y)
 projective `K`-scheme; a proper compactification alone does not give the projective models
 that nef models require) preserves strong nefness under boundary domination. -/
 public def_wanted stronglyNefPullback (D : BoundaryDominated B f C)
-    (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z), IsProjectiveOver Z.hom ∧ IsOpenImmersion j.left)
+    (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z),
+      MathlibExt.AlgebraicGeometry.RelativePolynomialProjectivity.IsProjective Z.hom ∧
+        IsOpenImmersion j.left)
     (m : FixedGaugeAdelicMetric (L := L) B) (H : IsStronglyNef G B m) :
     {R : PullbackResult B f C m F // IsStronglyNef G C R.metric}
 
 /-- The same actual pullback to a quasi-projective variety preserves the source
 auxiliary-line nef property under boundary domination. -/
 public def_wanted nefPullback (D : BoundaryDominated B f C)
-    (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z), IsProjectiveOver Z.hom ∧ IsOpenImmersion j.left)
+    (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z),
+      MathlibExt.AlgebraicGeometry.RelativePolynomialProjectivity.IsProjective Z.hom ∧
+        IsOpenImmersion j.left)
     (m : FixedGaugeAdelicMetric (L := L) B) (H : IsNef G B m) :
     {R : PullbackResult B f C m F // IsNef G C R.metric}
 
 /-- Actual tensor and dual presentations make integrability stable under scheme pullback to a
 quasi-projective variety, under boundary domination. -/
 public def_wanted integrablePullback (D : BoundaryDominated B f C)
-    (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z), IsProjectiveOver Z.hom ∧ IsOpenImmersion j.left)
+    (hY : ∃ (Z : Over (Spec (.of K))) (j : Y ⟶ Z),
+      MathlibExt.AlgebraicGeometry.RelativePolynomialProjectivity.IsProjective Z.hom ∧
+        IsOpenImmersion j.left)
     (m : FixedGaugeAdelicMetric (L := L) B) (H : IsIntegrable G B m) :
     {R : PullbackResult B f C m F // IsIntegrable G C R.metric}
 

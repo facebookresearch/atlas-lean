@@ -9,7 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.ArithmeticModelCurveDegrees
 public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperations
-public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
+public import MathlibExt.AlgebraicGeometry.RelativePolynomialProjectivity
 
 /-!
 # Strongly nef, nef and integrable fixed-gauge metrics
@@ -43,16 +43,11 @@ open CoherentCurveLinearSeries PlacewiseMetrizedLineModels BoundaryMetricComplet
 open RationalAdelicModelMetrics AdelicCompletionOperations ArithmeticModelHermitianMetrics
 open HermitianModelRestrictions
 
-/-- Projectivity is an actual closed embedding into the native homogeneous Proj:
-`ProjectiveSpace.IsProjectiveHom`. -/
-abbrev IsProjectiveOver {R : Type} [CommRing R] {Y : Scheme.{0}} (f : Y ⟶ Spec (.of R)) : Prop :=
-  ProjectiveSpace.IsProjectiveHom f
-
 variable {K : Type} [Field K] {A : AdelicField K} {X : Over (Spec (.of K))}
   {L : X.left.Modules}
 
 structure ArithmeticNefModel (m : ModelMetric (A := A) (X := X) (L := L)) where
-  projective : IsProjectiveOver (integerMap m.integral.model.scheme)
+  projective : RelativePolynomialProjectivity.IsProjective (integerMap m.integral.model.scheme)
   flat : Flat (integerMap m.integral.model.scheme)
   archimedean : ArchimedeanPoints (A := A) (X := X)
   hermitian : HermitianLine m.integral.model.line
@@ -87,7 +82,7 @@ structure GeometricNefModel (m : ModelMetric (A := A) (X := X) (L := L)) where
   baseMap : m.integral.model.base.scheme ⟶ Spec (.of k)
   generic_normalized : m.integral.model.base.generic ≫ baseMap =
     Spec.map (CommRingCat.ofHom embedding)
-  projective : IsProjectiveOver (m.integral.model.structureMap ≫ baseMap)
+  projective : RelativePolynomialProjectivity.IsProjective (m.integral.model.structureMap ≫ baseMap)
   nef : ∀ C : GeometricCurve k m.integral.model.scheme
     (m.integral.model.structureMap ≫ baseMap) m.integral.model.line,
     0 ≤ CoherentCurveLinearSeries.degree (C.inclusion ≫ m.integral.model.structureMap ≫ baseMap)

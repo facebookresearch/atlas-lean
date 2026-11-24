@@ -11,7 +11,7 @@ public import MathlibExt.AlgebraicGeometry.GlobalBoundedDeterminantModels
 public import MathlibExt.AlgebraicGeometry.FinitePointNormLines
 public import MathlibExt.AlgebraicGeometry.DeterminantZeroUnits
 public import MathlibExt.AlgebraicGeometry.MetrizedFibrePowerModels
-public import MathlibExt.AlgebraicGeometry.AdelicPicardVectors
+public import MathlibExt.AlgebraicGeometry.RelativePolynomialProjectivity
 public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminants
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 public import Mathlib.Algebra.Homology.DerivedCategory.HomologySequence
@@ -58,7 +58,7 @@ open scoped TensorProduct
 /-- The exact relative geometric scope of the source Deligne pairing. -/
 structure RelativeScope {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ) : Prop where
   projective : ∀ (S : CommRingCat.{0}) (a : Spec S ⟶ Y),
-    AdelicSemipositiveClosures.IsProjectiveOver (pullback.snd f a)
+    RelativePolynomialProjectivity.IsProjective (pullback.snd f a)
   flat : Flat f
   pureDimension : IsPureRelativeDimension f n
   integral : IsIntegral X
@@ -547,7 +547,7 @@ be nonreduced/nonintegral and f need not be flat; the actual normal integral
 base fixes extension of the canonical regular section from a dense open. -/
 structure FiniteTorRelativeScope {Z T : Scheme.{0}} (g : Z ⟶ T) (d : ℕ) : Prop where
   projective : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ T),
-    AdelicSemipositiveClosures.IsProjectiveOver (pullback.snd g a)
+    RelativePolynomialProjectivity.IsProjective (pullback.snd g a)
   finiteTor : FiniteTorDimension g
   pureDimension : IsPureRelativeDimension g d
   targetIntegral : IsIntegral T
