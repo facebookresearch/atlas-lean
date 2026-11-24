@@ -1374,6 +1374,7 @@
   "CSLibExt/Computability/Complexity/Karp/ThreeSatEmit": {"to": "TheoryOfComputation/np-completeness/satisfiability", "title": "3-satisfiability"},
   "CSLibExt/Computability/Complexity/Karp/ThreeSatFilter": {"to": "TheoryOfComputation/np-completeness/satisfiability", "title": "3-satisfiability"},
   "CSLibExt/Computability/Complexity/Karp/TokThen": {"to": "TheoryOfComputation/np-completeness/satisfiability", "title": "3-satisfiability"},
+  "CSLibExt/Computability/Complexity/NPSubsetPP": {"to": "TheoryOfComputation/counting-complexity", "title": "Unbounded-error probabilistic time (PP)"},
   "CSLibExt/Computability/Complexity/PairEncodingConverter": {"to": "TheoryOfComputation/np-completeness/cook-levin", "title": "Conversions between bit-string encodings"},
   "CSLibExt/Computability/Complexity/Path": {"to": "TheoryOfComputation/polynomial-time-problems", "title": "Graph reachability"},
   "CSLibExt/Computability/Complexity/PathCorrect": {"to": "TheoryOfComputation/polynomial-time-problems", "title": "Graph reachability"},
