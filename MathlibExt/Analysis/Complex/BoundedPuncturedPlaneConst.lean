@@ -1,5 +1,18 @@
 /-
-# Bounded holomorphic functions on the punctured plane are constant
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_84.lean` (openbmb/ma-proofbench, commit
+31bab4c78fd1b0c464e767d62e9202163d1e9029): the theorem statement and its description.
+Authors: L. Pu et al. (MA-ProofBench)
+MIT License
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +33,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_84.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_84 … := by sorry` into the Batteries `theorem_wanted`
-`eqOn_const_of_differentiableOn_compl_zero_of_bounded`; moved the informal problem statement
-docstring onto it and placed the declarations in namespace
-`MathlibExt.Analysis.Complex.BoundedPuncturedPlaneConstWanted`; replaced `import Mathlib` by
-`public import Mathlib` under the module system.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Calculus.FDeriv.Basic
+import Mathlib.Analysis.Complex.Liouville
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
-@[expose] public section
+/-!
+# Bounded holomorphic functions on the punctured plane
+
+A bounded holomorphic function on the punctured plane is constant there. Composing with the
+complex exponential gives a bounded entire function to which Liouville's theorem applies.
+-/
 
 namespace MathlibExt.Analysis.Complex.BoundedPuncturedPlaneConstWanted
 
@@ -50,9 +61,20 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functions of a 
 variable; Entire and meromorphic functions of one complex variable, and related topics),
 `benchmark/level1/ma_proofbench_l1_84.lean` at openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted eqOn_const_of_differentiableOn_compl_zero_of_bounded
+public theorem eqOn_const_of_differentiableOn_compl_zero_of_bounded
     (f : ℂ → ℂ) (hHol : DifferentiableOn ℂ f ({0}ᶜ))
     (hBdd : ∃ C : ℝ, ∀ z : ℂ, z ≠ 0 → ‖f z‖ ≤ C) :
-    ∃ c : ℂ, Set.EqOn f (fun _ => c) ({0}ᶜ)
+    ∃ c : ℂ, Set.EqOn f (fun _ => c) ({0}ᶜ) := by
+  obtain ⟨C, hC⟩ := hBdd
+  have hEntire : Differentiable ℂ (f ∘ Complex.exp) :=
+    differentiableOn_univ.mp (hHol.comp Complex.differentiable_exp.differentiableOn
+      (fun z _ => Complex.exp_ne_zero z))
+  have hBound : Bornology.IsBounded (Set.range (f ∘ Complex.exp)) := by
+    refine isBounded_iff_forall_norm_le.mpr ⟨C, ?_⟩
+    rintro _ ⟨z, rfl⟩
+    exact hC _ (Complex.exp_ne_zero z)
+  obtain ⟨c, hc⟩ := hEntire.exists_const_forall_eq_of_bounded hBound
+  refine ⟨c, fun z hz => ?_⟩
+  simpa only [Function.comp_apply, Complex.exp_log hz] using hc (Complex.log z)
 
 end MathlibExt.Analysis.Complex.BoundedPuncturedPlaneConstWanted
