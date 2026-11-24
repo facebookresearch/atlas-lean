@@ -301,7 +301,8 @@ theorem beamMode_beamEquation {EI ρA L : ℝ} (hEI : 0 < EI) (hρ : 0 < ρA)
   ring
 
 /-- Beam energy of the mode at time `t`: the integral over `[0, L]` (an oriented interval integral)
-of `(ρA * w_t^2 + EI * w_xx^2) / 2`. -/
+of `(ρA * w_t^2 + EI * w_xx^2) / 2`. It is `0` when `L = 0`. In the physical reading `L > 0`,
+`EI > 0` and `ρA > 0`; the definition allows all real values. -/
 noncomputable def beamModeEnergy (EI ρA L ω : ℝ) (k : ℕ+) (t : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..L,
     (ρA * deriv (fun s : ℝ => beamMode k L ω x s) t ^ 2 +
@@ -674,7 +675,8 @@ private lemma cantileverRoot_spec :
 lemma cantileverRoot_mem_Ioo : cantileverRoot ∈ Set.Ioo (Real.pi / 2) Real.pi := by
   exact cantileverRoot_spec.1
 
-/-- The least positive root is the only root in `(π / 2, π)`. -/
+/-- Every root in `(π / 2, π)` is the least positive root; since that root lies in `(π / 2, π)`
+(`cantileverRoot_mem_Ioo`), it is the only root there. -/
 lemma eq_cantileverRoot_of_mem_Ioo {z : ℝ} (hz : z ∈ Set.Ioo (Real.pi / 2) Real.pi)
     (h : cantileverChar z = 0) : z = cantileverRoot := by
   exact cantileverChar_strictAntiOn.injOn hz cantileverRoot_spec.1

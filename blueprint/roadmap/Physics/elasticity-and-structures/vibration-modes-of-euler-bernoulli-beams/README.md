@@ -37,7 +37,7 @@
 - [Least positive root of cos z cosh z + 1 = 0](cantilever-root.md)
 - [The infimum of the positive roots is the least positive root](is-least-cantilever-root.md)
 - [The least positive root lies in (π / 2, π)](cantilever-root-mem-ioo.md)
-- [The least positive root is the only root in (π / 2, π)](eq-cantilever-root-of-mem-ioo.md)
+- [Each root of cos z cosh z + 1 in (π / 2, π) is the least positive root](eq-cantilever-root-of-mem-ioo.md)
 
 ## The clamped–free mode and its frequency
 

@@ -31,7 +31,7 @@
 - [Weak solutions of the fixed-fixed bar problem](is-weak-bar-solution.md)
 - [A weak solution of the unit problem gives a weak bar solution](is-weak-bar-solution-of-unit.md)
 - [A weak bar solution pulled back solves the unit problem](to-unit-2.md)
-- [The weak fixed-fixed bar problem with bounded rigidity is well posed](weak-bar-exists-unique.md)
+- [Weak fixed-fixed bar with bounded rigidity: existence and uniqueness](weak-bar-exists-unique.md)
 
 ## Examples and excluded data
 

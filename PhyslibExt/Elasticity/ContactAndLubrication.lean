@@ -270,7 +270,8 @@ noncomputable def sliderFilm (h0 hL L x : ℝ) : ℝ :=
 /-- The stated Reynolds model on `[0, L]`: within `[0, L]` (one-sided at the ends) the pressure
 `p` has derivative `p'` and the flux `h³ p'` has derivative `6 μ U h'` with the film slope
 `h' = (hL - h0) / L`, and `p` vanishes at both ends. The predicate depends only on the values of
-`p` and `p'` on `[0, L]`. -/
+`p` and `p'` on `[0, L]`. With `a / 0 = 0` the slope is `0` when `L = 0`; the intended domain is
+`L > 0`, and for `L < 0` the interval is empty, so only `p 0 = 0` and `p L = 0` remain. -/
 def IsReynoldsSolution (μ U h0 hL L : ℝ) (p p' : ℝ → ℝ) : Prop :=
   (∀ x ∈ Set.Icc 0 L, HasDerivWithinAt p (p' x) (Set.Icc 0 L) x) ∧
     (∀ x ∈ Set.Icc 0 L,
