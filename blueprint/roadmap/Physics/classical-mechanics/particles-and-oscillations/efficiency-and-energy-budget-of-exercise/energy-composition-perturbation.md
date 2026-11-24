@@ -1,4 +1,4 @@
-# Energy-preserving perturbations of the stores change the total mass
+# Energy-preserving store perturbations change the mass by (ρ_L − ρ_F) s
 
 For all real numbers `ρ_F`, `ρ_L`, `F`, `L` and `s`, perturbing the stores `(F, L)` to
 `(F + ρ_L s, L - ρ_F s)` leaves the stored energy unchanged and changes the total mass by

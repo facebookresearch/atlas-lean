@@ -56,8 +56,8 @@ body rate is constant, so a motor-torque limit bounds `u` only up to `I_w |ω'|`
 momentum has rate `τ_ext`, so without external torque it is conserved whatever the command, and
 the body rate changes by `-(h(t) - h(0)) / J`. The limits `|u| ≤ umax` on the commanded rate and
 `|h| ≤ hmax` on the relative momentum, a wheel-speed limit, over a horizon `[0, T]` with `T ≥ 0`
-become a condition on the command alone, `|h(0) + ∫₀ᵗ u| ≤ hmax`, which every command with
-`|u| ≤ umax` meets once `|h(0)| + umax T ≤ hmax`. A constant command `c` drives
+become a condition on the command and the initial momentum, `|h(0) + ∫₀ᵗ u| ≤ hmax`, which every
+command with `|u| ≤ umax` meets once `|h(0)| + umax T ≤ hmax`. A constant command `c` drives
 `h(t) = h(0) + c t`; for `c ≠ 0` it reaches the momentum limit at a finite time and is
 inadmissible on every longer horizon, whatever the command limit.
 

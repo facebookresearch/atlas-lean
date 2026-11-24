@@ -10,8 +10,9 @@ is the derivative of `w` at `t`. Then
 
 Here `×` is the cross product of `ℝ³`, `x × y = (x₁ y₂ - x₂ y₁, x₂ y₀ - x₀ y₂, x₀ y₁ - x₁ y₀)` for
 components indexed `0, 1, 2`. In the rotating-frame reading, `r`, `v` and `a` are the position,
-velocity and acceleration measured in a frame rotating with constant angular velocity `Ω`, `w` is
-the inertial velocity expressed in that frame, and `a_I` the inertial acceleration: it is the
+velocity and acceleration measured in a frame rotating with constant angular velocity `Ω` about a
+fixed origin shared with the inertial frame, `w` is the inertial velocity expressed in that frame,
+and `a_I` the inertial acceleration, expressed in that frame: it is the
 rotating-frame acceleration plus the Coriolis term `2 (Ω × v)` and the centripetal term
 `Ω × (Ω × r)` ([algebraic decomposition](rotating-acceleration-decomposition.md)). The transport law
-is a hypothesis of the statement, not derived from it.
+is assumed, not derived.

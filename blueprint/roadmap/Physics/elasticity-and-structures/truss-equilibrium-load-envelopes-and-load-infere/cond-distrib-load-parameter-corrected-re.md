@@ -5,8 +5,8 @@ Let `J` and `M` be finite sets, with joint positions `r_j` in the plane, member 
 and member weights `k`, such that the supported stiffness `K = (B S)ᵀ diag(k) (B S)` is positive
 definite, `B` being the separation-form
 [compatibility matrix](../pin-jointed-trusses/axial-compatibility.md). Let `C` be an `n_m × n_f`
-sensor matrix, `B_load` an `n_f × n_p` load basis and `f₀` a known load on the free coordinates, and
-let `H = C K⁻¹ B_load` be the
+sensor matrix, `B_load` an `n_f × n_p` load matrix and `f₀` a known load on the free coordinates,
+and let `H = C K⁻¹ B_load` be the
 [load observation matrix](../pin-jointed-trusses/load-observation-matrix.md).
 
 On a probability space, let `θ` (in `ℝ^{n_p}`) and the sensor noise `v` (in `ℝ^{n_m}`) be

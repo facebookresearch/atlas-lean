@@ -69,10 +69,10 @@ theorem effectivePowerTransmission_eq {ι : Type*} (I A tau : ι → ℝ)
   simp only [effectivePowerTransmission, Finset.centerMass, smul_eq_mul,
     div_eq_inv_mul]
 
-/-- Under uniform incident intensity `I0 > 0`, the effective coefficient
-is the area-weighted average `(∑ i, A i * tau i) / (∑ i, A i)`. No
-positivity of areas or nonemptiness is needed for this identity: when
-`∑ i ∈ s, A i = 0` both sides are `0`, with the convention `x / 0 = 0`. -/
+/-- Under uniform incident intensity `I0 > 0` on the patches of `s`, the effective coefficient is
+the area-weighted average `(∑ i ∈ s, A i * tau i) / (∑ i ∈ s, A i)`. No positivity of areas or
+nonemptiness is needed for this identity: when `∑ i ∈ s, A i = 0` both sides are `0`, with the
+convention `x / 0 = 0`. -/
 theorem effectivePowerTransmission_eq_of_uniform {ι : Type*}
     (I A tau : ι → ℝ) (s : Finset ι) {I0 : ℝ} (hI0 : 0 < I0)
     (hI : ∀ i : ι, i ∈ s → I i = I0) :

@@ -16,7 +16,7 @@
 ## Prefix bounds and the reserve
 
 - [Prefix feasibility includes the terminal check](terminal.md)
-- [A prefix-feasible schedule keeps every stock above its floor](lo-le-stock.md)
+- [A prefix-feasible schedule never takes a stock below its floor up to N](lo-le-stock.md)
 - [A reserve in the floor is one deduction from the initial stock](prefix-feasible-iff-reserve-deducted-onc.md)
 - [Deducting the reserve at every step removes it t times](stock-reserve-every-step.md)
 

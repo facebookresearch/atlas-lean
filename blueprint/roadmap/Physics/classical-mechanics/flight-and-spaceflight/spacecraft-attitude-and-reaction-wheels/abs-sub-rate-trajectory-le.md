@@ -9,4 +9,6 @@ distance to the [rate trajectory](rate-trajectory.md) `ω(t) = ω₀ exp(−k t 
 `|φ(t) − ω(t)| ≤ δ exp(k T / I) + ε (I / k) (exp(k T / I) − 1)`.
 
 With `ω` and `δ` in rad/s, `ε` in rad/s², `I` in kg m² and `k` in N m s/rad, the time constant
-`I / k` is in s and both terms are rates in rad/s. The bound grows with the horizon `T`.
+`I / k` is in s and both terms are rates in rad/s. With `δ, ε ≥ 0`, forced by the hypotheses when
+`T > 0`, the bound is nondecreasing in `T` and, unless `δ = ε = 0`, grows exponentially with it:
+it is not uniform in time.

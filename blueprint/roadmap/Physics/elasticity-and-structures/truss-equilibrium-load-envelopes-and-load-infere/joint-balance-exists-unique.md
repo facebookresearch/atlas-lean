@@ -6,6 +6,6 @@ at joint `sj_s` along the direction `sd_s` (a vector of the plane, not necessari
 For a bijection `e` from the unknowns (members, then reaction components) to the joint coordinates,
 let `A_sq` be the [square equilibrium matrix](square-equilibrium-matrix.md), with row `u` equal to
 row `e(u)` of the [equilibrium matrix](equilibrium-matrix.md). If `det A_sq ≠ 0`, then for every
-external load `f` there is exactly one pair of member forces `N` and reaction magnitudes `ρ` in
+external load `f` there is exactly one pair of member forces `N` and reaction coefficients `ρ` in
 [joint balance](joint-balance.md). A zero-length member would give a zero column, so the hypothesis
 excludes it.

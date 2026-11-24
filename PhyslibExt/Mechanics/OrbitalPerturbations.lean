@@ -23,16 +23,16 @@ excluded ball.
 
 ## ii. Key results
 
-- `OrbitalPerturbations.norm_inverseSquareField`: away from the origin
-  the field has magnitude `μ / ‖r‖^2`.
-- `OrbitalPerturbations.inverseSquareField_lipschitz_exterior`: outside
-  the ball of radius `rmin > 0`, the field is Lipschitz with the
-  conservative constant `4μ / rmin^3`.
-- `OrbitalPerturbations.inverseSquareField_lipschitzOnWith`: the same
-  bound in Mathlib's bundled `LipschitzOnWith` form on
+- `OrbitalPerturbations.norm_inverseSquareField`: for `μ ≥ 0`, away from
+  the origin the field has magnitude `μ / ‖r‖^2`.
+- `OrbitalPerturbations.inverseSquareField_lipschitz_exterior`: for
+  `μ ≥ 0`, outside the ball of radius `rmin > 0`, the field is Lipschitz
+  with the conservative constant `4μ / rmin^3`.
+- `OrbitalPerturbations.inverseSquareField_lipschitzOnWith`: for `μ ≥ 0`
+  and `rmin > 0`, the same bound in Mathlib's bundled `LipschitzOnWith` form on
   `{r | rmin ≤ ‖r‖}`, for downstream Lipschitz API consumers.
-- `OrbitalPerturbations.j2Accel_norm_le`: the J2 perturbing
-  acceleration is bounded by `3 * |J2| * μ * R^2 / rmin^4` outside
+- `OrbitalPerturbations.j2Accel_norm_le`: for `μ > 0` and `rmin > 0`, the
+  J2 perturbing acceleration is bounded by `3 * |J2| * μ * R^2 / rmin^4` outside
   the ball of radius `rmin`, from the normalized squared magnitude
   `5u^2 - 2u + 1 ≤ 4` for `u = z^2 / ‖r‖^2 ∈ [0, 1]`.
 

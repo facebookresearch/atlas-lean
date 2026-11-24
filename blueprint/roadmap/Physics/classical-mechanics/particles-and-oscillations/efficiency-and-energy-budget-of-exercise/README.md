@@ -11,5 +11,5 @@
 
 ## Composition of the energy stores
 
-- [Energy-preserving perturbations of the stores change the total mass](energy-composition-perturbation.md)
+- [Energy-preserving store perturbations change the mass by (ρ_L − ρ_F) s](energy-composition-perturbation.md)
 - [Two compositions with equal energy and different masses](energy-composition-witness.md)

@@ -12,12 +12,12 @@
 ## Angular momentum about the centre of mass
 
 - [Angular momentum of a rigid body about its centre of mass](com-angular-momentum.md)
-- [Angular momentum of a rigid body about a fixed point](angular-momentum-about.md)
 - [Angular momentum about the centre of mass in body components](com-angular-momentum-eq.md)
 - [Rate of change of the angular momentum about the centre of mass](deriv-com-angular-momentum.md)
 
 ## Other reference points
 
+- [Angular momentum of a rigid body about a fixed point](angular-momentum-about.md)
 - [Angular momentum about a fixed point adds the orbital term](angular-momentum-about-eq.md)
 - [Parallel-axis theorem for angular momentum](inertia-tensor-about-mul-vec-eq-add-orbi.md)
 
@@ -29,7 +29,7 @@
 - [Body and inertial angular momenta have the same squared norm](com-angular-momentum-dot-product-self.md)
 - [Without torque the rotational kinetic energy is stationary](has-fderiv-at-rotational-kinetic-energy.md)
 - [Without torque the squared body angular momentum is stationary](has-fderiv-at-angular-momentum-norm-sq-o.md)
-- [Torque-free motion conserves rotational energy and angular momentum](torque-free-conserved.md)
+- [Torque-free motion conserves the energy and squared angular momentum](torque-free-conserved.md)
 
 ## A torque-driven rotation about a fixed axis
 
@@ -41,11 +41,11 @@
 - [Derivative of the fixed-axis orientation](deriv-fixed-axis-motion-orientation.md)
 - [Body angular velocity of the fixed-axis motion](fixed-axis-motion-body-angular-velocity.md)
 - [Body angular acceleration of the fixed-axis motion](deriv-fixed-axis-motion-body-angular-vel.md)
-- [Euler's equations hold on the fixed-axis motion with the axial torque](fixed-axis-motion-euler.md)
-- [The fixed-axis motion satisfies the balance law with the axial torque](deriv-com-angular-momentum-fixed-axis-mo.md)
+- [About a principal axis, Euler's equations hold with the axial torque](fixed-axis-motion-euler.md)
+- [About a principal axis the balance law holds with the axial torque](deriv-com-angular-momentum-fixed-axis-mo.md)
 - [The axial torque delivers the rate of rotational kinetic energy](fixed-axis-motion-power-port.md)
-- [A nonzero angular acceleration needs a nonzero axial torque](fixed-axis-motion-torque-ne-zero.md)
-- [The sign-flipped axial torque does not drive the fixed-axis motion](fixed-axis-motion-neg-torque.md)
+- [With positive axial inertia, nonzero angular acceleration needs torque](fixed-axis-motion-torque-ne-zero.md)
+- [For α ≠ 0 the sign-flipped torque does not drive the fixed-axis motion](fixed-axis-motion-neg-torque.md)
 
 ## Torque-free axisymmetric precession
 
@@ -54,5 +54,5 @@
 - [Derivative of the precessing body angular velocity](deriv-axisymmetric-precession.md)
 - [The precessing angular velocity solves torque-free Euler's equations](axisymmetric-precession-euler.md)
 - [Gyroscopic term of the precessing angular velocity at time 0](axisymmetric-precession-gyroscopic-zero.md)
-- [The gyroscopic term at time 0 is nonzero for unequal inertias](axisymmetric-precession-gyroscopic-ne-ze.md)
-- [Euler's equations recover the precession from zero torque](axisymmetric-precession-euler-solve.md)
+- [The gyroscopic term at 0 is nonzero for unequal inertias and A ω₃ ≠ 0](axisymmetric-precession-gyroscopic-ne-ze.md)
+- [For positive inertias, Euler's equations recover the precession](axisymmetric-precession-euler-solve.md)

@@ -7,7 +7,8 @@ such that for all `x, f : ℝ → ℝⁿ` and every time `t`,
 
 `M x''(t) + (α M + β K) x'(t) + K x(t) = f(t)`
 
-holds if and only if `q_j''(t) + (α + β μ_j) q_j'(t) + μ_j q_j(t) = (Φᵀ f(t))_j` for every `j`,
-with `q = Φᵀ M x` ([decoupling](rayleigh-modal-decoupling.md)). Derivatives take the value `0`
-where the function is not differentiable. Repeated eigenvalues and rigid modes (`μ_j = 0`) are
+holds if and only if `(q'')_j(t) + (α + β μ_j) (q')_j(t) + μ_j q_j(t) = (Φᵀ f(t))_j` for every
+`j`, with `q = Φᵀ M x` ([decoupling](rayleigh-modal-decoupling.md)). Derivatives take the value `0`
+where the function is not differentiable, and `(q')_j`, `(q'')_j` are the `j`-th components of the
+derivatives of the vector `q`. Repeated eigenvalues and rigid modes (`μ_j = 0`) are
 included.

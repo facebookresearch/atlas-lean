@@ -1,4 +1,4 @@
-# The inverse weights recover the member elongations
+# The inverse weights recover member length times elongation
 
 Let `J` (joints), `M` (members) and `F` (free coordinates) be finite sets, with joint positions
 `r_j` in the plane, member `e` joining joint `a_e` to joint `b_e`, a matrix `S` from the free

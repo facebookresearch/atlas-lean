@@ -272,7 +272,8 @@ private lemma exists_aux (n : ℕ) (m : Fin n → Mesh) (ω₀ : ℝ) :
       simp only [m'] at hi
       exact hi
 
-/-- The speed of the last shaft is the train ratio times the speed of the first shaft. -/
+/-- For speeds satisfying the no-slip constraints, the speed of the last shaft is the train ratio
+times the speed of the first shaft. -/
 lemma IsNoSlip.last_eq {m : Fin n → Mesh} {ω : Fin (n + 1) → ℝ} (h : IsNoSlip m ω) :
     ω (Fin.last n) = trainRatio m * ω 0 := by
   exact last_eq_aux n m ω h
@@ -376,8 +377,8 @@ lemma IsLossless.mesh_torque {m : Fin n → Mesh} {a b : Fin n → ℝ} (h : IsL
   rw [hc] at h1
   exact h1
 
-/-- Total power balance: on every no-slip motion the power into the train through its shaft
-ports, `∑ j, shaftLoad a b j * ω j`, vanishes. -/
+/-- Total power balance: for lossless meshes, on every no-slip motion the power into the train
+through its shaft ports, `∑ j, shaftLoad a b j * ω j`, vanishes. -/
 lemma power_balance {m : Fin n → Mesh} {a b : Fin n → ℝ} {ω : Fin (n + 1) → ℝ}
     (hl : IsLossless m a b) (hω : IsNoSlip m ω) :
     ∑ j, shaftLoad a b j * ω j = 0 := by
@@ -428,7 +429,7 @@ lemma power_balance {m : Fin n → Mesh} {a b : Fin n → ℝ} {ω : Fin (n + 1)
   rw [hwk]
   exact hlk
 
-/-- Port torque relation of a train loaded only at its first and last shafts:
+/-- Port torque relation of a train with lossless meshes, loaded only at its first and last shafts:
 `τ_in + R * τ_out = 0`. -/
 lemma torque_relation {m : Fin n → Mesh} {a b : Fin n → ℝ} (hl : IsLossless m a b)
     (htwo : ∀ j : Fin (n + 1), j ≠ 0 → j ≠ Fin.last n → shaftLoad a b j = 0) :
@@ -484,7 +485,8 @@ lemma torque_relation {m : Fin n → Mesh} {a b : Fin n → ℝ} (hl : IsLossles
     rw [hComm] at hPower
     simpa using hPower
 
-/-- The output port torque is `τ_out = -τ_in / R`. -/
+/-- For lossless meshes and a train loaded only at its first and last shafts, the output port
+torque is `τ_out = -τ_in / R`. -/
 lemma torque_out_eq {m : Fin n → Mesh} {a b : Fin n → ℝ} (hl : IsLossless m a b)
     (htwo : ∀ j : Fin (n + 1), j ≠ 0 → j ≠ Fin.last n → shaftLoad a b j = 0) :
     shaftLoad a b (Fin.last n) = -shaftLoad a b 0 / trainRatio m := by
@@ -497,7 +499,7 @@ lemma torque_out_eq {m : Fin n → Mesh} {a b : Fin n → ℝ} (hl : IsLossless 
   linarith [hRel, hC]
 
 /-- Swapping the orientation of the last shaft negates its signed speed, so the reoriented
-speed follows the negated ratio; keeping the old sign is rejected on every motion with a
+speed follows the negated ratio; keeping the old sign is rejected on every no-slip motion with a
 nonzero first-shaft speed. -/
 lemma orientation_swap {m : Fin n → Mesh} {ω : Fin (n + 1) → ℝ} (hω : IsNoSlip m ω)
     (h0 : ω 0 ≠ 0) :
@@ -555,9 +557,9 @@ noncomputable def dependentJacobian (θ₃ θ₄ : ℝ) : Matrix (Fin 2) (Fin 2)
   !![-(L.coupler * Real.sin θ₃), L.rocker * Real.sin θ₄;
     L.coupler * Real.cos θ₃, -(L.rocker * Real.cos θ₄)]
 
-/-- Velocity ratios `(ω₃ / ω₂, ω₄ / ω₂) =
-(b sin (θ₄ - θ₂) / (c sin (θ₃ - θ₄)), b sin (θ₃ - θ₂) / (d sin (θ₃ - θ₄)))`. With `a / 0 = 0` both
-are `0` at a dead center, `sin (θ₃ - θ₄) = 0`; the intended domain is the regular configurations. -/
+/-- Velocity ratios `ω₃ / ω₂ = b sin (θ₄ - θ₂) / (c sin (θ₃ - θ₄))` and
+`ω₄ / ω₂ = b sin (θ₃ - θ₂) / (d sin (θ₃ - θ₄))`. With `a / 0 = 0` both are `0` at a dead center,
+`sin (θ₃ - θ₄) = 0`; the intended domain is the regular configurations. -/
 noncomputable def velocityRatio (θ₂ θ₃ θ₄ : ℝ) : ℝ × ℝ :=
   (L.crank * Real.sin (θ₄ - θ₂) / (L.coupler * Real.sin (θ₃ - θ₄)),
     L.crank * Real.sin (θ₃ - θ₂) / (L.rocker * Real.sin (θ₃ - θ₄)))

@@ -6,8 +6,7 @@
 - [The beam element stiffness matrix is symmetric](beam-stiffness-transpose.md)
 - [A rigid translation produces no beam end forces](beam-stiffness-mul-vec-translation.md)
 - [A rigid rotation produces no beam end forces](beam-stiffness-mul-vec-rotation.md)
-- [Quadratic form of the beam element stiffness matrix](beam-stiffness-quad-form.md)
-- [The beam stiffness quadratic form as a sum of two squares](beam-stiffness-quad-form-factor.md)
+- [Quadratic form of the beam element stiffness matrix](beam-stiffness-quad-form-factor.md)
 - [The beam element stiffness matrix is positive semidefinite](beam-stiffness-pos-semidef.md)
 - [The kernel of the beam stiffness matrix is the rigid motions](beam-stiffness-mul-vec-eq-zero-iff.md)
 

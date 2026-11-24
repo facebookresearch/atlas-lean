@@ -296,7 +296,8 @@ by `u / 0 = 0`). -/
 noncomputable def steadyStateSin (m c k F Ω : ℝ) : ℝ :=
   F * (c * Ω) / steadyStateDenominator m c k Ω
 
-/-- The particular (steady-state) response `A cos (Ω t) + B sin (Ω t)`. -/
+/-- The particular (steady-state) response `A cos (Ω t) + B sin (Ω t)`; with the convention
+`u / 0 = 0` it is identically `0` when the denominator `D` is `0`. -/
 noncomputable def particularResponse (m c k F Ω t : ℝ) : ℝ :=
   steadyStateCos m c k F Ω * Real.cos (Ω * t) + steadyStateSin m c k F Ω * Real.sin (Ω * t)
 
@@ -307,7 +308,9 @@ noncomputable def particularVelocity (m c k F Ω t : ℝ) : ℝ :=
 
 /-- The forced response with initial position `x₀` and velocity `v₀`: the particular response
 plus the Physlib free trajectory whose initial position and velocity are both corrected by the
-particular response, read on the real time line. -/
+particular response, read on the real time line. With the convention `u / 0 = 0`, at `D = 0`
+(undamped exact resonance) the particular response vanishes and this is the free trajectory from
+`(x₀, v₀)`. -/
 noncomputable def forcedResponse (m c k : ℝ) (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k)
     (F Ω x₀ v₀ t : ℝ) : ℝ :=
   particularResponse m c k F Ω t +
@@ -599,7 +602,8 @@ open Filter
 noncomputable def resonantResponse (m ω₀ F t : ℝ) : ℝ :=
   F * t * Real.sin (ω₀ * t) / (2 * m * ω₀)
 
-/-- The velocity `F (sin (ω₀ t) + ω₀ t cos (ω₀ t)) / (2 m ω₀)` of the resonant response. -/
+/-- The velocity `F (sin (ω₀ t) + ω₀ t cos (ω₀ t)) / (2 m ω₀)` of the resonant response; with the
+convention `u / 0 = 0` it is identically `0` when `m ω₀ = 0`. -/
 noncomputable def resonantVelocity (m ω₀ F t : ℝ) : ℝ :=
   F * (Real.sin (ω₀ * t) + ω₀ * t * Real.cos (ω₀ * t)) / (2 * m * ω₀)
 
@@ -671,7 +675,8 @@ lemma hasDerivAt_resonantResponse (m ω₀ F t : ℝ) :
   convert h4 using 1
   ring
 
-/-- The resonant velocity has derivative `F (2 ω₀ cos (ω₀ t) - ω₀ ^ 2 t sin (ω₀ t)) / (2 m ω₀)`. -/
+/-- The resonant velocity has derivative `F (2 ω₀ cos (ω₀ t) - ω₀ ^ 2 t sin (ω₀ t)) / (2 m ω₀)`;
+with the convention `u / 0 = 0` both sides are `0` when `m ω₀ = 0`. -/
 lemma hasDerivAt_resonantVelocity (m ω₀ F t : ℝ) :
     HasDerivAt (resonantVelocity m ω₀ F)
       (F * (2 * ω₀ * Real.cos (ω₀ * t) - ω₀ ^ 2 * t * Real.sin (ω₀ * t)) / (2 * m * ω₀)) t := by

@@ -1,6 +1,6 @@
 # Elasticity and structural mechanics
 
-Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, trusses and frames, buckling, plasticity, laminates, contact and aeroelasticity, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.
+Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, the stiffness method for beams and frames, trusses and their load envelopes, plastic collapse of beams, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.
 
 - [Boussinesq point load on an elastic half-space](boussinesq-point-load-on-an-elastic-half-space/README.md)
 - [Euler–Bernoulli beam under uniform load](euler-bernoulli-beam-under-uniform-load/README.md)

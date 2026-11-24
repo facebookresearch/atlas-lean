@@ -21,8 +21,9 @@ comparing them.
 ## i. Overview
 
 The wave is the repository's plane-wave model
-`PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave A k omega x t
-= A * cos (k * x - omega * t)` with `omega = c * k`, i.e. `planeWave A k (c * k)`.
+`planeWave A k omega x t = A * cos (k * x - omega * t)`
+(`PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave`) with `omega = c * k`, i.e.
+`planeWave A k (c * k)`.
 Derivatives are iterated `deriv` with the other variable held fixed. The
 first-derivative helpers are stated as separate lemmas so the second
 derivatives can be computed by rewriting the inner derivative. Zero

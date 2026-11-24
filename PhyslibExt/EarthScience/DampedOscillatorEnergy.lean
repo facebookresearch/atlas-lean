@@ -82,7 +82,8 @@ theorem damped_oscillator_energy_hasDerivAt {γ ω₀ : ℝ} {x : ℝ → ℝ} (
   · rw [hxx]
     ring
 
-/-- Damping gives nonincreasing energy: for `γ ≥ 0`, the damped-oscillator
+/-- Damping gives nonincreasing energy: for `γ ≥ 0`, if `x` is differentiable with a
+differentiable derivative and solves `x'' + 2γ x' + ω₀² x = 0` at every `t`, the damped-oscillator
 energy `E(t) = (x'(t))²/2 + ω₀² (x(t))²/2` is antitone in `t`. -/
 theorem damped_oscillator_energy_antitone {γ ω₀ : ℝ} {x : ℝ → ℝ}
     (hx1 : ∀ t, HasDerivAt x (deriv x t) t)

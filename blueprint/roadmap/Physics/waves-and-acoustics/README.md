@@ -1,6 +1,6 @@
 # Waves and acoustics
 
-Linear waves and acoustics: frequency, wavenumber and wavelength, travelling-wave solutions of the wave equation, sound intensity and pressure levels, transmission of sound through patches and limp panels, Sabine reverberation and the energy of coupled structural–acoustic systems. Electromagnetic waves are under Electromagnetism and circuits, water hammer under Fluid mechanics and water waves under Earth Science.
+Linear waves and acoustics: frequency, wavenumber and wavelength, travelling-wave solutions of the wave equation, sound intensity and pressure levels, transmission of sound through patches and limp panels, Sabine reverberation and the energy of coupled structural–acoustic systems. Water waves are under Earth Science.
 
 - [Frequency, wavenumber and wavelength](frequency-wavenumber-and-wavelength/README.md)
 - [Travelling-wave solutions of the wave equation](travelling-wave-solutions-of-the-wave-equation/README.md)

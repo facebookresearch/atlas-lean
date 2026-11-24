@@ -1,4 +1,4 @@
-# For c ≥ 0, every Duffing energy sublevel set is forward invariant
+# For m, k, β > 0, c ≥ 0, Duffing energy sublevels are forward invariant
 
 Let `m > 0`, `k > 0`, `β > 0` and `c ≥ 0`, and let `r` be a real number. Then the sublevel set
 `S = {p | V(p) ≤ r}` of the [Duffing energy](duffing-energy.md) is forward invariant for the

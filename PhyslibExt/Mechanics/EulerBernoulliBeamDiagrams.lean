@@ -23,9 +23,10 @@ load `w` (sagging sign convention, bending moment `M = -EI *
 y''`, shear `V = M'`), the bending moment is `(w / 2) * (L * x -
 x ^ 2)` and the shear is `(w / 2) * (L - 2 * x)`. End moments
 vanish, end shears are opposite, `V' = -w` as a function
-identity, and the maximum moment on `[0, L]` is `w * L ^ 2 / 8`
-at the midpoint. Moment and shear are built directly on the
-canonical deflection `uniformLoadDeflection`.
+identity, and for `w ≥ 0` (with `EI ≠ 0` and `L ≥ 0`) the
+maximum moment on `[0, L]` is `w * L ^ 2 / 8` at the midpoint.
+Moment and shear are built directly on the canonical deflection
+`uniformLoadDeflection`.
 
 ## ii. Key results
 
@@ -41,7 +42,7 @@ canonical deflection `uniformLoadDeflection`.
   end shears, and `V' = -w` (convenience conjunction; the
   individual endpoint facts are also named separately).
 - `Mechanics.EulerBernoulli.uniformBeamMoment_midpoint_max`:
-  maximum moment `w * L ^ 2 / 8` at the midpoint.
+  maximum moment `w * L ^ 2 / 8` at the midpoint, for `w ≥ 0`.
 
 ## iii. Table of contents
 
@@ -247,8 +248,9 @@ theorem uniformBeamShear_deriv {w EI L : ℝ} (hEI : EI ≠ 0) :
     deriv (uniformBeamShear w EI L) = fun _ => -w :=
   (uniformBeam_endpoints hEI).2.2.2.2
 
-/-- The maximum bending moment on `[0, L]` is `w * L ^ 2 / 8`,
-attained at the midpoint. -/
+/-- For `EI ≠ 0`, a load `w ≥ 0` and a span `L ≥ 0`, the maximum
+bending moment on `[0, L]` is `w * L ^ 2 / 8`, attained at the
+midpoint. -/
 theorem uniformBeamMoment_midpoint_max {w EI L : ℝ} (hEI : EI ≠ 0)
     (hw : 0 ≤ w) (hL : 0 ≤ L) :
     uniformBeamMoment w EI L (L / 2) = w * L ^ 2 / 8

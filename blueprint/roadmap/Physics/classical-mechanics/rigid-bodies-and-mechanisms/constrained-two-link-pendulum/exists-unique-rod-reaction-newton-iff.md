@@ -1,4 +1,4 @@
-# Newton's equations with a unique rod reaction iff the reduced ODE
+# For m, l > 0, Newton admits a unique rod reaction iff the reduced ODE
 
 Let `m₁, m₂, l₁, l₂ > 0`, `g` real, and `q` a trajectory of angle vectors that is twice continuously
 differentiable at `t`. Let `p₁`, `p₂` be the [Cartesian motion](cartesian-motion.md) of the two

@@ -4,7 +4,7 @@ Plane trusses of members joined by pins: the compatibility of member extensions 
 displacements, the equilibrium of member forces with joint loads, and the principle of virtual work
 that relates them.
 
-## Compatibility and equilibrium matrices
+## Compatibility matrices and force collection
 
 - [Joint at an endpoint of a truss member](endpoint-joint.md)
 - [Separation-form compatibility matrix of a planar truss](axial-compatibility.md)
@@ -35,7 +35,7 @@ that relates them.
 - [Positive weights and no null mode give a unique displacement](supported-exists-unique.md)
 - [Unique displacement and residual reaction for a full joint load](supported-residual-exists-unique-of-pos.md)
 - [A null mode rules out a unique supported displacement](supported-not-exists-unique-of-kernel.md)
-- [Unique response of a supported truss with axial weights](supported-response-of-axial.md)
+- [Supported truss with axial weights and no null mode: unique response](supported-response-of-axial.md)
 
 ## Reciprocal work
 
@@ -44,21 +44,21 @@ that relates them.
 ## Load observation and identifiability
 
 - [Load observation matrix of a supported truss](load-observation-matrix.md)
-- [Sensor readings are the observation matrix applied to the load](load-observation-eq-of-supported-eq.md)
+- [Sensor readings are the observation matrix times the load parameters](load-observation-eq-of-supported-eq.md)
 - [The inverse-stiffness response solves the system and is observed](load-observation-supported-response.md)
-- [Load parameters on an affine space are identifiable from sensors](load-observation-identifiable-on-affine.md)
+- [With trivial sensor and load kernels, load parameters are identifiable](load-observation-identifiable-on-affine.md)
 - [The inverse is not affine on the positive reals](inv-not-affine-on-pos.md)
 
 ## Unit-load method
 
 - [Influence vector of a fixed output of a supported truss](influence-vector.md)
 - [Unit-load response of a supported truss](unit-load-response.md)
-- [The inverse weights recover the member elongations](supported-inv-diagonal-mul-vec-member-co.md)
+- [The inverse weights recover member length times elongation](supported-inv-diagonal-mul-vec-member-co.md)
 - [The influence vector solves the unit-load system](supported-influence-vector-mul-vec.md)
 - [Scaling the output scales the influence vector](supported-influence-vector-smul.md)
 - [The unit-load response equals the output of the displacement](supported-unit-load-response-eq.md)
 - [Unit-load identity in separation form](supported-unit-load-identity-separation.md)
-- [Unit-load identity with member compliances](supported-unit-load-identity.md)
+- [Unit-load identity with inverse member weights](supported-unit-load-identity.md)
 - [Unit-load identity for positive weights and no null mode](supported-unit-load-identity-of-kernel.md)
 - [Unit-load identity in physical axial forces](supported-unit-load-axial-force-identity.md)
 

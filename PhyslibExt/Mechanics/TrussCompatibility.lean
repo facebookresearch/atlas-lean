@@ -242,8 +242,8 @@ private theorem axialCompatibilityUnit_transpose_mulVec_apply_of
 /-! ## C. Supported quadratic form -/
 
 /-- Supported stiffness quadratic form (twice the linearized
-stored energy) is the member sum
-`∑ e, k e * ((B S *ᵥ u) e)^2`. -/
+stored energy, for positive weights) is the member sum
+`∑ e, k e * ((B S *ᵥ u) e)^2`, for all real weights `k`. -/
 theorem supported_quad_form_eq_sum {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -667,13 +667,13 @@ theorem supported_reciprocalWork {J M F : Type*} [Fintype J]
 /-! ## H. Load-parameter identifiability -/
 
 /-- Load-parameter observation matrix at fixed supported stiffness:
-`Cmat * K⁻¹ * Bload`, where `K` is the supported stiffness
-`(axialCompatibility r a b * S)ᵀ * Matrix.diagonal k *
-(axialCompatibility r a b * S)`. The truss data and weights `k` are
-fixed knowns; only the load parameters multiplied by `Bload` are
-unknown, so the parameter-to-observation map is linear. At a
-non-invertible `K` the inverse is the totalized matrix inverse and the
-physical reading needs positive definiteness, as in the theorems
+`Cmat * K⁻¹ * Bload`, where `K = (B S)ᵀ * Matrix.diagonal k * (B S)`
+is the supported stiffness, with `B S = axialCompatibility r a b * S`.
+The truss data and weights `k` are fixed knowns; only the load
+parameters multiplied by `Bload` are unknown, so the
+parameter-to-observation map is linear. At a non-invertible `K` the
+totalized matrix inverse is `0`, so the observation matrix is `0`;
+the physical reading needs positive definiteness, as in the theorems
 below. -/
 noncomputable def loadObservationMatrix {J M : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] {nf np nm : ℕ}
@@ -684,9 +684,10 @@ noncomputable def loadObservationMatrix {J M : Type*} [Fintype J]
     Matrix (Fin nm) (Fin np) ℝ :=
   Cmat * ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
       * (axialCompatibility r a b * S))⁻¹ * Bload
-/-- Forward observation at fixed supported stiffness: a supported
-displacement `u` solving the supported system at load `Bload *ᵥ θ`
-is observed as the linear observation matrix applied to `θ`.
+/-- Forward observation at fixed positive-definite supported
+stiffness: a supported displacement `u` solving the supported system
+at load `Bload *ᵥ θ` is observed as the linear observation matrix
+applied to `θ`.
 Uses the supported inverse characterization
 `supported_mulVec_eq_iff_inv_mulVec`. -/
 lemma loadObservation_eq_of_supported_eq {J M : Type*} [Fintype J]
@@ -921,8 +922,9 @@ private theorem dotProduct_diag_mulVec {M : Type*} [Fintype M]
 /-- Unit-load identity in separation form: for positive-definite
 supported stiffness and a supported solution `K *ᵥ u = f`, the fixed
 output `aout ⬝ᵥ u` equals the unit-load separation-form coefficients
-paired with `(B S) *ᵥ u` (member length times elongation; the
-coefficients are axial force divided by member length).
+paired with `(B S) *ᵥ u` (member length times elongation; for a
+member of positive length the coefficients are axial force divided
+by member length).
 The vector `K⁻¹ *ᵥ aout` is the influence vector by definition. No
 inverse diagonal occurs, so no sign premise on the weights beyond
 the positive-definiteness certificate is used. -/
@@ -955,8 +957,8 @@ lemma supported_unitLoad_identity_separationForm {J M F : Type*}
 member weights and positive-definite certificate, a supported
 solution `K *ᵥ u = f` with separation-form coefficient vectors
 `N = Matrix.diagonal k *ᵥ ((B S) *ᵥ u)` and
-`n = Matrix.diagonal k *ᵥ ((B S) *ᵥ (K⁻¹ *ᵥ aout))` (axial force
-divided by member length) satisfies
+`n = Matrix.diagonal k *ᵥ ((B S) *ᵥ (K⁻¹ *ᵥ aout))` (for a member
+of positive length, axial force divided by member length) satisfies
 `aout ⬝ᵥ u = n ⬝ᵥ (D⁻¹ *ᵥ N)`, where `D⁻¹` is the pointwise inverse
 diagonal `Matrix.diagonal (fun e => (k e)⁻¹)` (generalized
 compliances for the separation-form weights — for physical weights
@@ -1333,7 +1335,8 @@ theorem reduced_memberForce_eq_inv_mulVec {n : Type*}
   exact (reduced_equilibrium_iff_eq_inv Bs hBs).mp
     (reduced_equilibrium_of_elastic Bs d hu)
 
-/-- Member forces are independent of the axial weights: two
+/-- Member forces are independent of the axial weights for a
+square invertible `Bs` (the statically determinate case): two
 axial diagonals and supported solutions for the same
 geometry, supports and load give the same elastic member-force
 vector. The displacements may differ; the forces do not. -/

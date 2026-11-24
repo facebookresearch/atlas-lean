@@ -317,8 +317,8 @@ lemma kineticEnergy_eq_massMatrix (m₁ m₂ l₁ l₂ q₁ q₂ w₁ w₂ : ℝ
   simp [massMatrix]
   ring
 
-/-- On an actual angle trajectory the kinetic energy of the actual Cartesian velocities, the time
-derivatives of the positions, is `q'ᵀ M(q) q' / 2`. -/
+/-- If `q₁, q₂` have derivatives `w₁, w₂` at `t`, the kinetic energy of the actual Cartesian
+velocities (the derivatives of the positions at `t`) is `wᵀ M(q(t)) w / 2`. -/
 lemma kineticEnergy_actual {q₁ q₂ : ℝ → ℝ} {w₁ w₂ t : ℝ} (m₁ m₂ l₁ l₂ : ℝ)
     (h₁ : HasDerivAt q₁ w₁ t) (h₂ : HasDerivAt q₂ w₂ t) :
     m₁ * ‖deriv (fun s => pos₁ l₁ (q₁ s)) t‖ ^ 2 / 2 +
@@ -418,7 +418,8 @@ noncomputable def posMap (l₁ l₂ : ℝ) (q : ℝ × ℝ) : ℝ² × ℝ² :=
   (pos₁ l₁ q.1, pos₂ l₁ l₂ q.1 q.2)
 
 /-- The rod constraints on a Cartesian configuration `p = (p₁, p₂)`:
-`g(p) = (‖p₁‖² - l₁², ‖p₂ - p₁‖² - l₂²)`; the rods of lengths `l₁, l₂` hold where `g(p) = 0`. -/
+`g(p) = (‖p₁‖² - l₁², ‖p₂ - p₁‖² - l₂²)`; the rods, of lengths `|l₁|` and `|l₂|`, hold exactly where
+`g(p) = 0`. -/
 noncomputable def rodConstraint (l₁ l₂ : ℝ) (p : ℝ² × ℝ²) : ℝ × ℝ :=
   (‖p.1‖ ^ 2 - l₁ ^ 2, ‖p.2 - p.1‖ ^ 2 - l₂ ^ 2)
 
@@ -504,8 +505,8 @@ lemma hasFDerivAt_rodConstraint (l₁ l₂ : ℝ) (p : ℝ² × ℝ²) :
       refine Prod.ext ?_ ?_ <;> simp [rodJacobian, nsmul_eq_mul])
   exact h
 
-/-- The angle derivative sends angular velocities to the Cartesian velocities of the two-link
-module. -/
+/-- The angle derivative sends angular velocities to the Cartesian velocities `(vel₁, vel₂)` of the
+two masses. -/
 lemma angleJacobian_apply (l₁ l₂ : ℝ) (q w : ℝ × ℝ) :
     angleJacobian l₁ l₂ q w = (vel₁ l₁ q.1 w.1, vel₂ l₁ l₂ q.1 q.2 w.1 w.2) := by
   simp [angleJacobian, vel₁, vel₂, smul_smul, mul_comm]
@@ -936,8 +937,8 @@ lemma eulerLagrangeOp_angleLagrangian (m₁ m₂ l₁ l₂ g : ℝ) {q : Time �
   ext i; fin_cases i <;>
     simp [generalizedForce, massMatrix, dotProduct, Fin.sum_univ_two] <;> ring
 
-/-- For positive masses and lengths the Euler-Lagrange equation at `t` is the reduced ODE
-`q̈ = M(q)⁻¹ f(q, q̇)`. -/
+/-- For positive masses and lengths and an angle trajectory that is `C²` at `t`, the Euler-Lagrange
+equation at `t` is the reduced ODE `q̈ = M(q)⁻¹ f(q, q̇)`. -/
 lemma eulerLagrangeOp_angleLagrangian_eq_zero_iff {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
     (hl₁ : 0 < l₁) (hl₂ : 0 < l₂) (g : ℝ) {q : Time → ℝ²} {t : Time} (hq : ContDiffAt ℝ 2 q t) :
     eulerLagrangeOp (angleLagrangian m₁ m₂ l₁ l₂ g) q t = 0 ↔
@@ -1093,7 +1094,8 @@ lemma existsUnique_rodReaction_newton_iff {m₁ m₂ l₁ l₂ : ℝ} (hm₁ : 0
 /-! ## J. Local regularity and the local initial value problem -/
 
 /-- The reduced first-order field on states `x = (q, w)` of angles and angular velocities:
-`(q, w) ↦ (w, M(q)⁻¹ f(q, w))`. -/
+`(q, w) ↦ (w, M(q)⁻¹ f(q, w))`. Where `det M(q) = 0` (for example `m₂ = 0` or a length `0`),
+`M(q)⁻¹ = 0` and the field is `(w, 0)`. -/
 noncomputable def reducedField (m₁ m₂ l₁ l₂ g : ℝ) (x : ℝ² × ℝ²) : ℝ² × ℝ² :=
   (x.2, reducedAccel m₁ m₂ l₁ l₂ g x.1 x.2)
 

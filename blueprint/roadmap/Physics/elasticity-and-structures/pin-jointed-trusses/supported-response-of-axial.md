@@ -1,4 +1,4 @@
-# Unique response of a supported truss with axial weights
+# Supported truss with axial weights and no null mode: unique response
 
 Let `J`, `M` and `F` be finite sets, with joint positions `r_j` in the plane, member `e` joining
 joint `a_e` to joint `b_e`, and a matrix `S` from the free coordinates to the joint displacement

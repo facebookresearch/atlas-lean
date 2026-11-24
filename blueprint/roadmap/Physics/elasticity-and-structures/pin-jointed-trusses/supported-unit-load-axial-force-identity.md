@@ -12,4 +12,4 @@ that its Euclidean length `L_e` is positive. Let `aout` be a fixed output functi
 `K u = f`, then `aout · u = ∑_e (n_e L_e) (N_e L_e) / (k_e L_e²)`, where `N_e L_e` and `n_e L_e` are
 the physical axial forces (tension positive). For the physical weights `k_e = E_e A_e / L_e³` the
 denominator `k_e L_e²` is `E_e A_e / L_e`, and the sum is the classical unit-load sum
-`∑ n N L / (E A)`.
+`∑_e (n_e L_e) (N_e L_e) L_e / (E_e A_e)` of the physical axial forces.

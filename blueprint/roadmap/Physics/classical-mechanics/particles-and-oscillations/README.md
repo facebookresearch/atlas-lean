@@ -1,9 +1,6 @@
 # Particles, work and oscillations
 
-Newtonian dynamics of particles and lumped systems: kinetic energy, power and the work of
-conservative forces, harmonic, damped, forced, base-excited and nonlinear oscillators, modal
-analysis of linear multi-degree-of-freedom systems, the random response of a first-order mechanical
-system, and elementary models of muscle power and the energy budget of exercise.
+Newtonian dynamics of particles and lumped systems: kinetic energy, power and the work of conservative forces, harmonic, damped, forced, base-excited and nonlinear oscillators, modal analysis of linear multi-degree-of-freedom systems, the random response of a first-order mechanical system, and elementary models of muscle power and the energy budget of exercise.
 
 - [Base-excited oscillator](base-excited-oscillator/README.md)
 - [Efficiency and energy budget of exercise](efficiency-and-energy-budget-of-exercise/README.md)

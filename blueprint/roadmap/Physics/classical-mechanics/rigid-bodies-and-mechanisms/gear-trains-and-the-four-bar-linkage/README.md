@@ -23,7 +23,6 @@
 - [Torque relation of an ideal lossless mesh](mesh-torque.md)
 - [Power balance of an ideal gear train](power-balance.md)
 - [Port torques of a gear train loaded only at its end shafts](torque-relation.md)
-- [Output torque of a gear train loaded only at its end shafts](torque-out-eq.md)
 
 ## Four-bar loop closure and the local branch
 

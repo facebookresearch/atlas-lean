@@ -153,7 +153,7 @@ lemma inertialToBodyVec_eq_rotateActive_inv (R : Matrix.specialOrthogonalGroup (
   simp only [inertialToBodyVec, rotateActive]
   congr 1
 
-/-- The inverse of `x_B ↦ o + R x_B` is `x_I ↦ Rᵀ (x_I - o)`: body coordinates are recovered. -/
+/-- `x_I ↦ Rᵀ (x_I - o)` is a left inverse of `x_B ↦ o + R x_B`: body coordinates are recovered. -/
 lemma inertialToBody_bodyToInertial (o : Fin 3 → ℝ)
     (R : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (xB : Fin 3 → ℝ) :
     inertialToBody o R (bodyToInertial o R xB) = xB := by
@@ -321,7 +321,9 @@ lemma degToRad_ne_dimScale_one_mul (u1 u2 : UnitScale ISQDimensionBase) {θ : �
   have h2 : Real.pi = 180 := mul_left_cancel₀ hθ h1
   linarith [Real.pi_le_four]
 
-/-- The rotation matrix by the angle `θ` (in radians) about the third axis. -/
+/-- The rotation matrix by the angle `θ` (in radians) about the third axis. It turns `e₁` towards
+`e₂`, counterclockwise seen from the positive third axis (`rotZ θ *ᵥ e₁ = (cos θ, sin θ, 0)`), and
+fixes `e₃`. -/
 noncomputable def rotZ (θ : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   !![Real.cos θ, -Real.sin θ, 0; Real.sin θ, Real.cos θ, 0; 0, 0, 1]
 
@@ -346,7 +348,8 @@ lemma rotZ_degToRad_ninety : rotZ (degToRad 90) = !![0, -1, 0; 1, 0, 0; 0, 0, 1]
 
 /-! ## F. Quarter-turn fixtures and the reflection boundary -/
 
-/-- The ninety-degree rotation about the third axis, as a frame orientation. -/
+/-- The ninety-degree rotation about the third axis, as a frame orientation: the matrix with rows
+`(0, -1, 0)`, `(1, 0, 0)`, `(0, 0, 1)` (`e₁ ↦ e₂`). -/
 noncomputable def quarterTurnZ : Matrix.specialOrthogonalGroup (Fin 3) ℝ :=
   ⟨rotZ (degToRad 90), rotZ_mem_specialOrthogonalGroup _⟩
 
@@ -416,7 +419,7 @@ lemma reflectX_not_mem_specialOrthogonalGroup :
   simp [reflectX, Matrix.det_diagonal, Fin.prod_univ_three] at hdet
   norm_num at hdet
 
-/-- A determinant `-1` reflection reverses cross-product orientation:
+/-- The reflection `reflectX`, of determinant `-1`, reverses cross-product orientation:
 `(P a) ⨯₃ (P b) = -(P (a ⨯₃ b))`. -/
 lemma reflectX_cross (a b : Fin 3 → ℝ) :
     (reflectX *ᵥ a) ⨯₃ (reflectX *ᵥ b) = -(reflectX *ᵥ (a ⨯₃ b)) := by

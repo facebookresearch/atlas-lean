@@ -268,7 +268,8 @@ lemma impact_impulse {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (e 
 /-- Momentum across the event and the following continuous phase, for positive masses: after the
 event body `i` follows the actual constant-force trajectory with initial velocity its post-impact
 velocity and external force `Fᵢ`; at time `t` after the event the total momentum is the pre-impact
-total plus the external impulse `t (F₁ + F₂)`. -/
+total plus the external impulse `t (F₁ + F₂)`. The identity holds for every real `t`; the physical
+reading is `t ≥ 0`. -/
 lemma impact_then_flight_momentum {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
     (e v₁ v₂ F₁ F₂ t : ℝ) :
     m₁ * constForceVelocity m₁ (impactVelocity₁ m₁ m₂ e v₁ v₂) F₁ t +
@@ -310,16 +311,18 @@ lemma impact_then_free_flight_energy {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂
 
 /-! ## D. The fixed-wall event -/
 
-/-- Normal velocity just after the impact on a stationary wall, `v⁺ = -e v⁻`. -/
+/-- Normal velocity just after the impact on a stationary wall, `v⁺ = -e v⁻` (normal axis from the
+wall into the body's side, so an incoming body has `v⁻ < 0`). -/
 def wallReboundVelocity (e v : ℝ) : ℝ :=
   -e * v
 
-/-- Impulse of the wall on a body of mass `m`, `J = m (v⁺ - v⁻)`. -/
+/-- Impulse of the wall on a body of mass `m`, `J = m (v⁺ - v⁻)` (normal axis from the wall into the
+body's side, so an incoming body has `v⁻ < 0`). -/
 def wallImpulse (m e v : ℝ) : ℝ :=
   m * (wallReboundVelocity e v - v)
 
-/-- For `e ≥ 0` an incoming body leaves the wall or rests on it: `v⁺ ≥ 0`, with `v⁺ > 0` exactly
-when `e > 0`. -/
+/-- For `e ≥ 0` an incoming body (`v⁻ < 0`, with the normal axis from the wall into the body's side)
+leaves the wall or rests on it: `v⁺ ≥ 0`, with `v⁺ > 0` exactly when `e > 0`. -/
 lemma wallReboundVelocity_nonneg {e v : ℝ} (he : 0 ≤ e) (hv : v < 0) :
     0 ≤ wallReboundVelocity e v ∧ (0 < wallReboundVelocity e v ↔ 0 < e) := by
   unfold wallReboundVelocity
@@ -341,7 +344,8 @@ lemma wallImpulse_eq (m e v : ℝ) : wallImpulse m e v = -((1 + e) * m * v) := b
   unfold wallImpulse wallReboundVelocity
   ring
 
-/-- For `m > 0`, `e ≥ 0` and an incoming body the wall impulse points out of the wall. -/
+/-- For `m > 0`, `e ≥ 0` and an incoming body (`v⁻ < 0`, with the normal axis from the wall into the
+body's side) the wall impulse points out of the wall. -/
 lemma wallImpulse_pos {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v < 0) :
     0 < wallImpulse m e v := by
   rw [wallImpulse_eq]
@@ -454,7 +458,8 @@ lemma wall_energy_cases {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v ≠ 0)
 
 /-- For `m > 0`: after the event the body follows the actual constant-force trajectory started at
 `v⁺` under the external force `F`; at time `t` after the event its momentum is the incoming
-momentum plus the wall impulse plus the impulse `t F` of the force. -/
+momentum plus the wall impulse plus the impulse `t F` of the force. The identity holds for every
+real `t`; the physical reading is `t ≥ 0`. -/
 lemma rebound_then_flight_momentum {m : ℝ} (hm : 0 < m) (e v F t : ℝ) :
     m * constForceVelocity m (wallReboundVelocity e v) F t = m * v + wallImpulse m e v + t * F := by
   have hm' : m ≠ 0 := ne_of_gt hm
@@ -499,7 +504,8 @@ def IsActiveArc (e u₀ : ℝ) (n : ℕ) : Prop :=
   0 < bounceSpeed e u₀ n
 
 /-- For `e > 0` and `u₀ > 0` every arc is active: the take-off speeds `e ^ n u₀` stay positive,
-so the bounces never stop. -/
+so no arc is a rest and the bounce sequence does not terminate (for `g > 0` and `e < 1` its
+infinitely many bounces occur before the finite time `zenoTime`). -/
 lemma isActiveArc_of_pos {e u₀ : ℝ} (he : 0 < e) (hu : 0 < u₀) (n : ℕ) : IsActiveArc e u₀ n := by
   rw [IsActiveArc, bounceSpeed_eq]
   positivity
@@ -509,7 +515,7 @@ lemma isActiveArc_of_pos {e u₀ : ℝ} (he : 0 < e) (hu : 0 < u₀) (n : ℕ) :
 `-(m g)`, has the positive duration `T_n`, is back on the floor at `T_n`, stays above it on
 `(0, T_n)` and arrives with velocity `-u_n`; the fixed-wall event applied to that arrival velocity
 gives the take-off speed `u_(n+1)` of the next arc. For `e > 0` and `u₀ > 0` every arc is active
-(`isActiveArc_of_pos`); for `e = 0` only the first one is (`inelastic_stops`). -/
+(`isActiveArc_of_pos`); for `e = 0` and `u₀ > 0` only the first one is (`inelastic_stops`). -/
 lemma bounce_arc {m g e u₀ : ℝ} {n : ℕ} (hm : 0 < m) (hg : 0 < g) (hact : IsActiveArc e u₀ n) :
     0 < flightDuration g e u₀ n ∧
       constForcePosition m 0 (bounceSpeed e u₀ n) (-(m * g)) (flightDuration g e u₀ n) = 0 ∧
@@ -560,8 +566,8 @@ lemma flightDuration_eq (g e u₀ : ℝ) (n : ℕ) : flightDuration g e u₀ n =
 
 /-- **Finite sum.** For `0 < e < 1` the flight durations sum to `t_∞ = 2 u₀ / (g (1 - e))`. The
 identity holds for every `g` and `u₀` (at `g = 0` both sides are `0`, by the convention
-`x / 0 = 0`); it is the
-accumulation time of the bounces for `g > 0` and `u₀ > 0` (`zeno_accumulation`). -/
+`x / 0 = 0`); it is the accumulation time of the bounces for `g > 0` and `u₀ > 0`
+(`zeno_accumulation`). -/
 lemma hasSum_flightDuration {g e u₀ : ℝ} (he0 : 0 < e) (he1 : e < 1) :
     HasSum (flightDuration g e u₀) (zenoTime g e u₀) := by
   have hgeom : HasSum (fun n => e ^ n) ((1 - e)⁻¹) :=

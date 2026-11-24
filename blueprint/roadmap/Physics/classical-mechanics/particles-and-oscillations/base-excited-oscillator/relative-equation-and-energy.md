@@ -18,5 +18,5 @@ holds. Then, at `t`:
 
 When `x_v` and `y_v` are the velocities of `x` and `y` on a neighbourhood of `t`, `x_a(t) - y_a(t)`
 is `u''(t)` and the function in (3) is the relative energy, whose rate is the power of the
-effective force `p - m a_g` minus the viscous dissipation. In the physical reading `m > 0`, `c ≥ 0`
+effective force `p - m y_a` minus the viscous dissipation. In the physical reading `m > 0`, `c ≥ 0`
 and `k > 0`; the identities hold for all real `m`, `c` and `k`.

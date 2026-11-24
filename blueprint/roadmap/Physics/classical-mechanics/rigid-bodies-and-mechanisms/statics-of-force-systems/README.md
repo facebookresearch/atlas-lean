@@ -7,7 +7,6 @@
 - [Wrench of a finite load system about a reference point](wrench-about.md)
 - [Transport of a wrench to another reference point](transport.md)
 - [Changing the reference point of a moment](moment-about-eq-add-cross.md)
-- [The wrench about a new point is the transported wrench](wrench-about-eq-transport.md)
 - [With zero resultant the moment is the same about every point](moment-about-eq-of-resultant-force-eq-ze.md)
 - [With nonzero resultant some reference point changes the moment](exists-moment-about-ne-of-resultant-forc.md)
 - [Scaling lengths and forces scales the wrench](wrench-about-smul.md)

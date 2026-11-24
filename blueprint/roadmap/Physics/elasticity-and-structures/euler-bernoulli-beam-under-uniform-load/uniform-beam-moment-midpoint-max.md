@@ -1,4 +1,4 @@
-# The bending moment is greatest at mid-span
+# The bending moment is greatest at mid-span for a nonnegative load
 
 For a bending stiffness `EI ≠ 0`, a load `w ≥ 0` and a span `L ≥ 0`, the
 [bending moment](uniform-beam-moment.md) `M(x) = -EI * y''(x)` of the uniformly loaded simply

@@ -319,8 +319,8 @@ Density has dimension `M L⁻³`, gravity `L T⁻²`, the mass-specific gas cons
 `L² T⁻² Θ⁻¹`, temperature `Θ` and height `L`. -/
 
 /-- For `Rs, T > 0`, the density formula commutes with a change of units with length, time and
-temperature factors `l, s, k > 0`, for every mass factor `m`: rescaled inputs give the rescaled
-density. -/
+temperature factors `l, s, k > 0`, for every real `m` (the mass factor of a change of units when
+`m > 0`): rescaled inputs give the rescaled density. -/
 lemma isothermalDensity_unitChange (m : ℝ) {l s k Rs T : ℝ} (hl : 0 < l) (hs : 0 < s)
     (hk : 0 < k) (hRs : 0 < Rs) (hT : 0 < T) (ρ0 g z : ℝ) :
     isothermalDensity (m / l ^ 3 * ρ0) (l / s ^ 2 * g) (l ^ 2 / (s ^ 2 * k) * Rs) (k * T)
@@ -468,10 +468,11 @@ private lemma two_sqrt_mul_eq_add_iff {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) 
 /-- Minimum-drag speed `V_md = √(√(b / a))`. For positive weight and `ρ, S, CD0, k > 0` it is the
 unique positive speed of least level-flight drag (`levelDrag_eq_two_sqrt_iff_eq_minDragSpeed`). As a
 formula it is the positive root of `V ^ 4 = b / a` whenever `W ≠ 0` and `ρ, S, CD0, k > 0`
-(`minDragSpeed_pos`, `minDragSpeed_pow_four`). If `CD0 = 0`, `k = 0` or `W = 0` (or `b / a < 0`),
-the conventions `x / 0 = 0` and `√x = 0` for `x ≤ 0` give the value `0`, which is not a positive
-speed: with `ρ, S > 0` and `CD0, k ≥ 0` the drag then has no minimum over positive speeds when
-exactly one of its two terms vanishes, and every positive speed is a minimizer when both vanish. -/
+(`minDragSpeed_pos`, `minDragSpeed_pow_four`). If `ρ`, `S`, `CD0`, `k` or `W` is `0` (or
+`b / a < 0`), the conventions `x / 0 = 0` and `√x = 0` for `x ≤ 0` give the value `0`, which is not
+a positive speed: with `ρ, S > 0` and `CD0, k ≥ 0` the drag then has no minimum over positive speeds
+when exactly one of its two terms vanishes, and every positive speed is a minimizer when both
+vanish. -/
 noncomputable def minDragSpeed (W ρ S CD0 k : ℝ) : ℝ :=
   Real.sqrt (Real.sqrt (inducedDragFactor W ρ S k / parasiteDragFactor ρ S CD0))
 
@@ -641,8 +642,9 @@ lemma two_sqrt_mul_dragFactor_eq {W ρ S CD0 k : ℝ} (hρ : ρ ≠ 0) (hS : S �
 /-! ## F. The stall-validity interval -/
 
 /-- Stall speed `V_s = √(2 * W / (ρ * S * CLmax))` for the polar's maximum lift coefficient
-`CLmax`. The physical regime is `W, ρ, S, CLmax > 0`; for `W ≤ 0` the radicand is not positive
-and `Real.sqrt` returns the meaningless value `0`, so the stall results assume `0 < W`. -/
+`CLmax`. The physical regime is `W, ρ, S, CLmax > 0`; for `W ≤ 0` (with `ρ, S, CLmax > 0`) the
+radicand is not positive and `Real.sqrt` returns the meaningless value `0`, so the stall results
+assume `0 < W`. -/
 noncomputable def stallSpeed (W ρ S CLmax : ℝ) : ℝ :=
   Real.sqrt (2 * W / (ρ * S * CLmax))
 
@@ -890,7 +892,7 @@ lemma isMinOn_levelPower_iff {W ρ S CD0 k V : ℝ} (hρ : 0 < ρ) (hS : 0 < S) 
 /-- Minimum-power speed `V_mp = √(√(b / (3 * a)))`. For positive weight and `ρ, S, CD0, k > 0` it is
 the unique positive speed of least power required (`levelPower_minPowerSpeed_lt`). As a formula it
 is the positive root of `V ^ 4 = b / (3 * a)` whenever `W ≠ 0` and `ρ, S, CD0, k > 0`
-(`minPowerSpeed_pos`, `minPowerSpeed_pow_four`). If `CD0 = 0`, `k = 0` or `W = 0` (or
+(`minPowerSpeed_pos`, `minPowerSpeed_pow_four`). If `ρ`, `S`, `CD0`, `k` or `W` is `0` (or
 `b / (3 * a) < 0`), the conventions `x / 0 = 0` and `√x = 0` for `x ≤ 0` give the value `0`, which
 is not a positive speed. -/
 noncomputable def minPowerSpeed (W ρ S CD0 k : ℝ) : ℝ :=
@@ -1336,7 +1338,8 @@ lemma polarDrag_eq_div_polarLiftToDrag {W ρ S CD0 k CL V : ℝ} (hCL : CL ≠ 0
 
 /-- Weight `W(t) = Wi * exp (-(cW / Λ) * t)` at time `t` of the cruise that starts at the weight
 `Wi`, with weight-based fuel coefficient `cW` (an inverse time) and lift-to-drag ratio `Λ`; with the
-convention `x / 0 = 0` it is the constant `Wi` when `Λ = 0`. -/
+convention `x / 0 = 0` it is the constant `Wi` when `Λ = 0`. In the physical reading
+`Wi, cW, Λ > 0`. -/
 noncomputable def cruiseWeight (Wi cW Λ t : ℝ) : ℝ :=
   Wi * Real.exp (-(cW / Λ) * t)
 
@@ -1438,9 +1441,9 @@ lemma cruiseWeight_eq_iff {Wi Wf cW Λ t : ℝ} (hWi : 0 < Wi) (hWf : 0 < Wf) (h
     rw [h]
     field_simp
 
-/-- Duration: a cruise that obeys `W' = -cW * W / Λ` on `[0, t₁]`, with `cW, Λ > 0` and positive
-initial weight, lasts `t₁ = Λ / cW * log (W 0 / W t₁)`, the time to burn from `Wi = W 0` down to
-`Wf = W t₁`. -/
+/-- Duration: for `cW, Λ > 0` and `t₁ ≥ 0`, a cruise that obeys `W' = -cW * W / Λ` on `[0, t₁]`
+with positive initial weight lasts `t₁ = Λ / cW * log (W 0 / W t₁)`, the time to burn from
+`Wi = W 0` down to `Wf = W t₁`. -/
 lemma cruise_duration_eq {W : ℝ → ℝ} {cW Λ t₁ : ℝ} (hcW : 0 < cW) (hΛ : 0 < Λ) (ht₁ : 0 ≤ t₁)
     (hW : ∀ t ∈ Set.Icc 0 t₁, HasDerivAt W (-cW * W t / Λ) t) (hW0 : 0 < W 0) :
     t₁ = breguetDuration Λ cW (W 0) (W t₁) := by
@@ -1497,7 +1500,7 @@ lemma hasDerivAt_weight_of_mass {m : ℝ → ℝ} {cm g T t : ℝ} (hm : HasDeri
   exact (hm.const_mul g).congr_deriv (by ring)
 
 /-- Mass form of the duration: if the mass obeys `m' = -cm * (g * m / Λ)` on `[0, t₁]` (thrust
-`W / Λ` for the weight `W = g * m`) with `cm, g, Λ > 0` and `m 0 > 0`, the cruise lasts
+`W / Λ` for the weight `W = g * m`) with `cm, g, Λ > 0`, `t₁ ≥ 0` and `m 0 > 0`, the cruise lasts
 `t₁ = Λ / (g * cm) * log (m 0 / m t₁)`. -/
 lemma cruise_duration_mass_eq {m : ℝ → ℝ} {cm g Λ t₁ : ℝ} (hcm : 0 < cm) (hg : 0 < g)
     (hΛ : 0 < Λ) (ht₁ : 0 ≤ t₁)
@@ -1567,8 +1570,9 @@ lemma lift_cruiseClimb {ρ0 g Rs T V S CL Wi cW Λ z₀ : ℝ} (hg : 0 < g) (hRs
         * Real.exp (-(cW / Λ) * t) := by ring
   rw [hring, h0]
 
-/-- The cruise-climb is forced: with `ρ0, g, Rs, T > 0` and nonzero `V, S, CL`, a height at which
-the lift balances the cruise weight at time `t` is `z₀ + H * (cW / Λ) * t`. -/
+/-- The cruise-climb is forced: with `ρ0, g, Rs, T > 0` and nonzero `V, S, CL`, if the lift at the
+height `z₀` balances the initial weight `Wi`, a height at which the lift balances the cruise weight
+at time `t` is `z₀ + H * (cW / Λ) * t`. -/
 lemma eq_cruiseClimb_of_lift_eq {ρ0 g Rs T V S CL Wi cW Λ z₀ z t : ℝ} (hρ0 : 0 < ρ0)
     (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T) (hV : V ≠ 0) (hS : S ≠ 0) (hCL : CL ≠ 0)
     (h0 : isothermalDensity ρ0 g Rs T z₀ * V ^ 2 / 2 * S * CL = Wi)

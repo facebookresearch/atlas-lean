@@ -1,4 +1,4 @@
-# For positive lengths, each kernel vector is one angle-line velocity
+# For positive lengths each kernel vector has a unique angular velocity
 
 Let `l₁ > 0` and `l₂ > 0`, `q` a pair of angles, and `v` a pair of plane vectors in the kernel of
 the [rod constraint Jacobian](rod-jacobian.md) at the configuration given by the

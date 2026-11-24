@@ -190,8 +190,8 @@ lemma beamMassFlow_molar {M e NA z Ib : ℝ} (he : 0 < e) (hNA : 0 < NA) (hz : 0
   · field_simp
 
 /-- **Energy port.** For `m_i, q_i, V_b > 0` each ion leaves with the kinetic energy
-`m_i v_e² / 2 = q_i V_b`, and a beam of current `I_b` carries the kinetic power
-`ṁ v_e² / 2 = I_b V_b = P_beam`. -/
+`m_i v_e² / 2 = q_i V_b`, and `ṁ v_e² / 2 = I_b V_b = P_beam` for every current `I_b`: for
+`I_b ≥ 0` the kinetic power the beam carries. -/
 lemma beam_energy_port {mi qi Vb : ℝ} (hmi : 0 < mi) (hqi : 0 < qi) (hVb : 0 < Vb) (Ib : ℝ) :
     mi * ionExhaustSpeed mi qi Vb ^ 2 / 2 = qi * Vb ∧
       beamMassFlow mi qi Ib * ionExhaustSpeed mi qi Vb ^ 2 / 2 = beamPower Vb Ib := by

@@ -55,7 +55,7 @@
 - [Bounds on the second derivatives of the reduced field on a box](norm-fderiv-fderiv-reduced-field-le.md)
 - [Second-derivative bound on the remainder of the reduced field](jacobian-remainder-reduced-field-le-of-h.md)
 - [Sup and Euclidean norms of a state](norm-of-lp-le-norm-le-two-mul.md)
-- [The Euclidean ball lies in the box](abs-of-lp-le-of-norm-le.md)
+- [The Euclidean ball of radius r lies in the box of radius r](abs-of-lp-le-of-norm-le.md)
 - [Euclidean-norm bounds on the remainder near the trim](longitudinal-remainder-bounds-euclidean.md)
 - [A planar plant solution moves forward at rate at least 99/100](planar-six-dof-plant-forward-rate.md)
 
@@ -80,7 +80,6 @@
 ## Local existence and decay of the nonlinear reduced flight
 
 - [Nonlinear reduced field on the Euclidean state space](nonlinear-reduced-field.md)
-- [The nonlinear field is the linear plant plus the remainder](of-lp-nonlinear-reduced-field.md)
 - [Orbital derivative of the Lyapunov function along the nonlinear field](fderiv-longitudinal-lyapunov-nonlinear-r.md)
 - [On the ball of radius 1/100 the orbital derivative is at most −V/4](fderiv-longitudinal-lyapunov-nonlinear-r-2.md)
 - [In the ball the orbital derivative is negative exactly off the trim](fderiv-longitudinal-lyapunov-nonlinear-r-3.md)

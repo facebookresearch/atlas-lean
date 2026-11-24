@@ -1,4 +1,4 @@
-# For c ≥ 0, the origin of the Duffing oscillator is Lyapunov stable
+# For m, k, β > 0, c ≥ 0, the Duffing origin is Lyapunov stable
 
 Let `m > 0`, `k > 0`, `β > 0` and `c ≥ 0`, and let `ε > 0`. Then there is `δ > 0` such that every
 forward solution `γ` on `[0, ∞)` of the [Duffing field](duffing-field.md) (at every `t ≥ 0`, `γ`

@@ -59,7 +59,6 @@
 
 - [Power required in level flight](level-power.md)
 - [The power required is a V³ + b / V](level-power-eq.md)
-- [In level flight the polar drag times speed is the power required](polar-drag-mul-eq-level-power.md)
 - [Derivative of the power required at a nonzero speed](has-deriv-at-level-power.md)
 
 ## Minimum power

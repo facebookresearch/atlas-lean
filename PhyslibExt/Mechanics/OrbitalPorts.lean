@@ -215,9 +215,9 @@ noncomputable def specificEnergy (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
   speedSq v / 2 - μ / radius x
 
 /-- Energy-defined semi-major axis `a = -μ / (2 E)`. It is a positive length for `μ > 0` and
-`E < 0`, negative for `μ > 0` and `E > 0`, and `0` for `μ = 0`; at `E = 0` (parabolic) the
-convention `c / 0 = 0` gives the meaningless value `0`. At `x = 0` the energy `E` is its
-conventional value `|v|² / 2`. -/
+`E < 0`, negative for `μ > 0` and `E > 0`, and `0` for `μ = 0`; at `E = 0` (for example a parabolic
+state, `μ > 0`, `x ≠ 0`) the convention `c / 0 = 0` gives the meaningless value `0`. At `x = 0` the
+energy `E` is its conventional value `|v|² / 2`. -/
 noncomputable def semiMajorAxis (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
   -μ / (2 * specificEnergy μ x v)
 
@@ -242,8 +242,9 @@ lemma visViva {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x
   field_simp
   ring
 
-/-- A parabolic state (`E = 0`) has no finite semi-major axis: `-μ / (2 E)` is the junk value
-`0`, so `a > 0` fails and `E < 0` cannot be weakened to `E ≤ 0`. -/
+/-- A state with `E = 0` (for example a parabolic state, with `μ > 0` and `x ≠ 0`) has no finite
+semi-major axis: `-μ / (2 E)` is the junk value `0`, so `a > 0` fails and `E < 0` cannot be
+weakened to `E ≤ 0`. -/
 lemma semiMajorAxis_of_specificEnergy_eq_zero {μ : ℝ} {x v : Fin 3 → ℝ}
     (hE : specificEnergy μ x v = 0) :
     semiMajorAxis μ x v = 0 ∧ ¬ 0 < semiMajorAxis μ x v := by

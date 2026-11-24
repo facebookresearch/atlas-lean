@@ -52,9 +52,9 @@
 - [For reciprocal weights, the stiffness matrix is symmetric](stiffness-matrix-transpose.md)
 - [Without self-springs, the stiffness matrix maps the ones vector to w](stiffness-matrix-mul-vec-one.md)
 - [Without self-springs, rigid translation is a free network's zero mode](stiffness-matrix-free-zero-mode.md)
-- [On nonempty nodes, a free network's stiffness is not positive definite](stiffness-matrix-free-not-pos-def.md)
+- [Free networks without self-springs have no positive definite stiffness](stiffness-matrix-free-not-pos-def.md)
 - [Constant displacements of a free network carry zero energy](spring-energy-free-const.md)
-- [A node fixed to the wall rules out the rigid-translation zero mode](stiffness-matrix-fixed-ends-row-nonzero.md)
+- [Without self-springs, a wall-fixed node rules out the rigid zero mode](stiffness-matrix-fixed-ends-row-nonzero.md)
 
 ## Normal modes
 

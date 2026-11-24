@@ -142,20 +142,21 @@ open AircraftPerformance
 /-! ## A. Exponential density and the profile -/
 
 /-- Exponential density `ρ(h) = ρ0 * exp (-h / H)` with reference density `ρ0` at `h = 0` and
-scale height `H`, height `h` measured upward. With the convention `x / 0 = 0`, at `H = 0` the
-density is the constant `ρ0`. -/
+scale height `H`, height `h` measured upward. In the physical reading `ρ0 > 0` and `H > 0`. With
+the convention `x / 0 = 0`, at `H = 0` the density is the constant `ρ0`. -/
 noncomputable def exponentialDensity (ρ0 H h : ℝ) : ℝ :=
   ρ0 * Real.exp (-h / H)
 
 /-- Ballistic entry constant `K = ρ0 * H / (2 * β * sin γ)` for ballistic coefficient `β` and
-downward flight-path angle `γ`; it is dimensionless. With the convention `x / 0 = 0`, `K = 0` when
-`β * sin γ = 0`. -/
+downward flight-path angle `γ`; it is dimensionless. In the physical reading `ρ0, H, β > 0` and
+`sin γ > 0`. With the convention `x / 0 = 0`, `K = 0` when `β * sin γ = 0`. -/
 noncomputable def ballisticK (ρ0 H β γ : ℝ) : ℝ :=
   ρ0 * H / (2 * β * Real.sin γ)
 
-/-- Finite-entry ballistic velocity profile
-`v(h) = ve * exp (K * (exp (-he / H) - exp (-h / H)))` for entry altitude `he` and entry speed
-`ve`. With the convention `x / 0 = 0`, it is the constant `ve` when `H = 0` or `β * sin γ = 0`. -/
+/-- Finite-entry ballistic velocity profile `v(h) = ve * exp (K * (exp (-he / H) - exp (-h / H)))`
+for entry altitude `he` and entry speed `ve`. In the physical reading `ρ0, H, β, ve > 0` and
+`sin γ > 0`. With the convention `x / 0 = 0`, it is the constant `ve` when `H = 0` or
+`β * sin γ = 0`. -/
 noncomputable def ballisticVelocity (ρ0 H β γ he ve h : ℝ) : ℝ :=
   ve * Real.exp (ballisticK ρ0 H β γ * (Real.exp (-he / H) - Real.exp (-h / H)))
 
@@ -172,8 +173,9 @@ lemma ballisticVelocity_entry (ρ0 H β γ he ve : ℝ) :
   rw [sub_self, mul_zero, Real.exp_zero, mul_one]
 
 /-- Column mass between two heights, for `H ≠ 0`: `∫ ρ = ρ0 * H * (exp (-he / H) - exp (-h / H))`
-over `[he, h]`, by the fundamental theorem of calculus. The integral is oriented: for `h < he` it
-is minus the column mass between `h` and `he`. -/
+over `[he, h]`, by the fundamental theorem of calculus. For `ρ0 ≥ 0` it is the column mass per unit
+area between `he` and `h` when `he ≤ h`, and minus the column mass between `h` and `he` when
+`h < he`. -/
 lemma integral_exponentialDensity {H : ℝ} (hH : H ≠ 0) (ρ0 he h : ℝ) :
     ∫ s in he..h, exponentialDensity ρ0 H s =
       ρ0 * H * (Real.exp (-he / H) - Real.exp (-h / H)) := by
@@ -198,7 +200,8 @@ lemma integral_exponentialDensity {H : ℝ} (hH : H ≠ 0) (ρ0 he h : ℝ) :
   ring
 
 /-- Integrated form of `dv/dh = ρ(h) * v / (2 * β * sin γ)`: the exponent of the profile is the
-column mass between `he` and `h` divided by `2 * β * sin γ`. The identity of the two formulas
+integral of the density from `he` to `h` (for `ρ0 ≥ 0` the oriented column mass) divided by
+`2 * β * sin γ`. The identity of the two formulas
 holds for `H ≠ 0`, all other parameters arbitrary (with the convention `x / 0 = 0`, both sides are
 `ve` when `β * sin γ = 0`); it is the integrated drag equation only for `β > 0` and `sin γ > 0`,
 where `2 * β * sin γ ≠ 0` (`hasDerivAt_ballisticVelocity`). -/
@@ -349,8 +352,9 @@ lemma ballisticVelocity_pos {ve : ℝ} (hve : 0 < ve) (ρ0 H β γ he h : ℝ) :
   unfold ballisticVelocity
   exact mul_pos hve (Real.exp_pos _)
 
-/-- Descent decelerates: the profile is strictly increasing in altitude, so the speed falls as
-the vehicle descends below the entry altitude. -/
+/-- Descent decelerates: for `ρ0, H, β, ve > 0` and a downward path, `sin γ > 0`, the profile is
+strictly increasing in altitude, so the speed falls as the vehicle descends below the entry
+altitude. -/
 lemma ballisticVelocity_strictMono {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H) (hβ : 0 < β)
     (hγ : 0 < Real.sin γ) (hve : 0 < ve) (he : ℝ) :
     StrictMono (ballisticVelocity ρ0 H β γ he ve) := by
@@ -369,8 +373,9 @@ lemma ballisticVelocity_strictMono {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH :
     Real.exp_lt_exp.mpr s4
   exact mul_lt_mul_of_pos_left s5 hve
 
-/-- Infinite-entry normalization is not finite entry data: dropping the `exp (-he / H)` term from
-the exponent gives a profile whose value at the entry altitude is not `ve`. -/
+/-- Infinite-entry normalization is not finite entry data: for `ρ0, H, β > 0`, `sin γ > 0` and
+`ve ≠ 0`, dropping the `exp (-he / H)` term from the exponent gives a profile whose value at the
+entry altitude is not `ve`. -/
 lemma omitted_entry_term_ne {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H) (hβ : 0 < β)
     (hγ : 0 < Real.sin γ) (hve : ve ≠ 0) (he : ℝ) :
     ve * Real.exp (ballisticK ρ0 H β γ * -Real.exp (-he / H)) ≠ ve := by
@@ -708,8 +713,8 @@ lemma deriv_ballisticDeceleration_eq_zero_iff {ρ0 H β γ ve : ℝ} (hρ0 : 0 <
   · intro hh
     rw [hh, sub_self, zero_div, Real.exp_zero, sub_self, mul_zero, zero_div]
 
-/-- Below `hstar` the deceleration is strictly increasing in altitude: as the vehicle descends
-below `hstar`, the deceleration falls. -/
+/-- For `ρ0, H, β, ve > 0` and `sin γ > 0`, below `hstar` the deceleration is strictly increasing in
+altitude: as the vehicle descends below `hstar`, the deceleration falls. -/
 lemma ballisticDeceleration_strictMonoOn {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
     (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hve : 0 < ve) (he : ℝ) :
     StrictMonoOn (ballisticDeceleration ρ0 H β γ he ve)
@@ -729,8 +734,8 @@ lemma ballisticDeceleration_strictMonoOn {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0)
       exact Real.exp_lt_exp.mpr hpos
     exact div_pos (mul_pos ha (sub_pos.mpr h1)) hH
 
-/-- Above `hstar` the deceleration is strictly decreasing in altitude: as the vehicle descends
-toward `hstar`, the deceleration grows. -/
+/-- For `ρ0, H, β, ve > 0` and `sin γ > 0`, above `hstar` the deceleration is strictly decreasing in
+altitude: as the vehicle descends toward `hstar`, the deceleration grows. -/
 lemma ballisticDeceleration_strictAntiOn {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
     (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hve : 0 < ve) (he : ℝ) :
     StrictAntiOn (ballisticDeceleration ρ0 H β γ he ve)
@@ -751,7 +756,8 @@ lemma ballisticDeceleration_strictAntiOn {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0)
       exact Real.exp_lt_exp.mpr hneg
     exact div_neg_of_neg_of_pos (mul_neg_of_pos_of_neg ha (sub_neg.mpr h1)) hH
 
-/-- `hstar` is the strict global maximum of the deceleration over all altitudes. -/
+/-- For `ρ0, H, β, ve > 0` and `sin γ > 0`, `hstar` is the strict global maximum of the deceleration
+over all altitudes. -/
 lemma ballisticDeceleration_lt_peak {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H) (hβ : 0 < β)
     (hγ : 0 < Real.sin γ) (hve : 0 < ve) (he : ℝ) {h : ℝ}
     (hne : h ≠ peakDecelerationAltitude ρ0 H β γ) :
@@ -777,7 +783,8 @@ lemma bandPeakAltitude_of_lt {ρ0 H β γ hmin he : ℝ}
   unfold bandPeakAltitude
   exact max_eq_left ((min_le_left _ _).trans hlt.le)
 
-/-- Selection above the band: when `he < hstar` the band peak is the entry altitude `he`. -/
+/-- Selection above a nonempty band: when `hmin < he` and `he < hstar` the band peak is the entry
+altitude `he`. -/
 lemma bandPeakAltitude_of_gt {ρ0 H β γ hmin he : ℝ} (hband : hmin < he)
     (hgt : he < peakDecelerationAltitude ρ0 H β γ) :
     bandPeakAltitude ρ0 H β γ hmin he = he := by
@@ -807,8 +814,9 @@ lemma isMaxOn_bandPeakAltitude {ρ0 H β γ ve hmin he : ℝ} (hρ0 : 0 < ρ0) (
       exact (ballisticDeceleration_strictMonoOn hρ0 hH hβ hγ hve he).monotoneOn
         (Set.mem_Iic.2 (hx.2.trans h2.le)) (Set.mem_Iic.2 h2.le) hx.2
 
-/-- The selected altitude is the only maximizer on the band: every other altitude of the band has
-a strictly smaller deceleration. -/
+/-- For `ρ0, H, β, ve > 0` and `sin γ > 0` and a nonempty band, `hmin < he`, the selected altitude
+is the only maximizer on the band: every other altitude of the band has a strictly smaller
+deceleration. -/
 lemma ballisticDeceleration_lt_bandPeakAltitude {ρ0 H β γ ve hmin he : ℝ} (hρ0 : 0 < ρ0)
     (hH : 0 < H) (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hve : 0 < ve) (hband : hmin < he) {h : ℝ}
     (hh : h ∈ Set.Icc hmin he) (hne : h ≠ bandPeakAltitude ρ0 H β γ hmin he) :

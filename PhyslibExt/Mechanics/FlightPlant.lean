@@ -453,12 +453,14 @@ noncomputable def flightSpeed (x z : ℝ) : ℝ := Real.sqrt ((1 + x) ^ 2 + z ^ 
 
 /-- The lift at the velocity `(1 + x, z, 0)` with unit air density and reference area: magnitude
 `½ V² C_L`, along the velocity turned a quarter turn from forward toward up, written as
-`½ V C_L (-z, 1 + x, 0)`. -/
+`½ V C_L (-z, 1 + x, 0)`: in inertial components, independent of the attitude, and `0` at
+`V = 0`. -/
 noncomputable def liftForce (x z : ℝ) : Fin 3 → ℝ :=
   (flightSpeed x z * liftCoeff / 2) • ![-z, 1 + x, 0]
 
 /-- The drag at the velocity `(1 + x, z, 0)` with unit air density and reference area: magnitude
-`½ V² C_D`, against the velocity, written as `-½ V C_D (1 + x, z, 0)`. -/
+`½ V² C_D`, against the velocity, written as `-½ V C_D (1 + x, z, 0)`: in inertial components,
+independent of the attitude, and `0` at `V = 0`. -/
 noncomputable def dragForce (x z : ℝ) : Fin 3 → ℝ :=
   -(flightSpeed x z * dragCoeff / 2) • ![1 + x, z, 0]
 
@@ -482,7 +484,9 @@ noncomputable def reducedField (e : Fin 4 → ℝ) : Fin 4 → ℝ :=
 absolute value. -/
 def actuatorBox : Set (Fin 4 → ℝ) := {e | ∀ i, |e i| ≤ 1 / 100}
 
-/-- The pitch orientation `Rz(θ)`, the rotation by `θ` about the third axis. -/
+/-- The pitch orientation `Rz(θ)`, the rotation by `θ` about the third axis. With the first two axes
+spanning the forward/up plane, `θ > 0` turns the body forward axis `Rz(θ) e₁ = (cos θ, sin θ, 0)`
+from forward toward up (nose up). -/
 noncomputable def pitchOrientation (θ : ℝ) : Matrix.specialOrthogonalGroup (Fin 3) ℝ :=
   ⟨rotZ θ, rotZ_mem_specialOrthogonalGroup θ⟩
 

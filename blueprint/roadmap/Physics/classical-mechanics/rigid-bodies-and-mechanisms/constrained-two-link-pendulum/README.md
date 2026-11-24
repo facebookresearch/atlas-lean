@@ -51,7 +51,7 @@
 - [For positive lengths, the angle derivative is injective](ker-angle-jacobian.md)
 - [For positive lengths, the angle derivative maps onto the rod kernel](range-angle-jacobian.md)
 - [Velocities of constrained curves lie in the rod kernel](rod-jacobian-velocity-eq-zero.md)
-- [For positive lengths, each kernel vector is one angle-line velocity](exists-unique-has-deriv-at-pos-map.md)
+- [For positive lengths each kernel vector has a unique angular velocity](exists-unique-has-deriv-at-pos-map.md)
 
 ## Rod reactions and virtual work
 
@@ -74,8 +74,8 @@
 
 - [Cartesian motion of the masses along an angle trajectory](cartesian-motion.md)
 - [Gravity forces on the two masses](gravity-force.md)
-- [Newton's equations with some rod reaction iff the reduced ODE holds](exists-rod-reaction-newton-iff.md)
-- [Newton's equations with a unique rod reaction iff the reduced ODE](exists-unique-rod-reaction-newton-iff.md)
+- [For m, l > 0, Newton admits some rod reaction iff the reduced ODE](exists-rod-reaction-newton-iff.md)
+- [For m, l > 0, Newton admits a unique rod reaction iff the reduced ODE](exists-unique-rod-reaction-newton-iff.md)
 
 ## Local regularity and the local initial value problem
 

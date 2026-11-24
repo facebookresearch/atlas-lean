@@ -42,25 +42,25 @@
 - [Parcel steps of a burning mass history and their continuum limit](parcel-continuum.md)
 - [Parcel steps of a linear burning mass history](parcel-continuum-linear.md)
 - [With no expelled mass the parcel step is the fixed-mass velocity](parcel-velocity-zero-flow.md)
-- [A positive flow at positive exhaust speed gives positive acceleration](parcel-accel-pos.md)
+- [With F = 0, positive flow and exhaust speed give positive acceleration](parcel-accel-pos.md)
 
 ## Ignoring the expelled momentum
 
 - [Velocity after one step that ignores the expelled momentum](naive-parcel-velocity.md)
 - [Ignoring the expelled momentum, the slope tends to (q v + F) / m](naive-slope-tendsto.md)
-- [Ignoring the expelled momentum gives the wrong acceleration](naive-limit-ne.md)
+- [Ignoring expelled momentum gives a wrong acceleration if q ≠ 0, v ≠ ve](naive-limit-ne.md)
 
 ## Separate-flow thrust from the port balance
 
 - [Separate-flow thrust of an engine at rest](separate-flow-thrust.md)
 - [Stand force from the axial momentum balance](stand-force-eq-separate-flow-thrust-add.md)
 - [Steady with no feed momentum, the stand force is the thrust](stand-force-eq-separate-flow-thrust.md)
-- [Side-wall force of a steady flow through a box is the thrust](wall-force-eq-separate-flow-thrust.md)
+- [Side-wall force on a steady flow through a box is the thrust](wall-force-eq-separate-flow-thrust.md)
 
 ## Rocket and air-breather
 
 - [Thrust of a rocket](separate-flow-thrust-rocket.md)
-- [A rocket with positive flow and exhaust speed has positive thrust](separate-flow-thrust-rocket-pos.md)
+- [A rocket with ṁ_f, v_e > 0 and p_e ≥ p_a has positive thrust](separate-flow-thrust-rocket-pos.md)
 - [Thrust of an air-breather](separate-flow-thrust-air-breather.md)
 - [With fuel, the exhaust flow of an air-breather exceeds the inlet flow](air-breather-exhaust-flow.md)
 

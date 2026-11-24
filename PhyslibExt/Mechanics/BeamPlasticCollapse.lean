@@ -183,11 +183,12 @@ theorem collapseMechanism_kinematicCertificate {L : ℝ} (Mp : ℝ) (hL : 0 < L)
     field_simp
     ring
 
-/-- The static and kinematic certificates match: at each critical section the moment `-Mp`, `Mp`,
-`-Mp` has the sign of the hinge rotation of the normalized mechanism, so `Mp * |θ e| = σ e * θ e`
-(no slack). This is the complementarity hypothesis of `PlasticWork.loadFactor_eq_of_complementary`;
-it holds for all real `L` and `Mp` (at `L = 0` the rotations are `0` by the convention `x / 0 = 0`
-and both sides vanish). -/
+/-- The static and kinematic certificates match: at each critical section, for the moments
+`σ = ![-Mp, Mp, -Mp]` and the hinge rotations `θ` of the normalized mechanism,
+`Mp * |θ e| = σ e * θ e` (no slack). This is the complementarity hypothesis of
+`PlasticWork.loadFactor_eq_of_complementary`; it holds for all real `L` and `Mp` (at `L = 0` the
+rotations are `0` by the convention `x / 0 = 0` and both sides vanish). For `L ≠ 0`,
+`σ e = Mp * sign (θ e)`, so for `Mp > 0` each moment has the sign of its hinge rotation. -/
 lemma collapseCertificates_complementary (L Mp : ℝ) (e : Fin 3) :
     Mp * |(hingeRotation L *ᵥ ![2 / L]) e| =
       ![-Mp, Mp, -Mp] e * (hingeRotation L *ᵥ ![2 / L]) e := by

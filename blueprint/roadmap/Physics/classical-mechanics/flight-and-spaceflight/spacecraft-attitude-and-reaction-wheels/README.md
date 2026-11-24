@@ -14,7 +14,7 @@
 - [Admissible reaction-wheel command on a finite horizon](wheel-admissible.md)
 - [Rate of the total angular momentum of a body with a reaction wheel](has-deriv-at-wheel-total-momentum.md)
 - [Without external torque, wheel and body exchange angular momentum](wheel-momentum-exchange.md)
-- [Wheel admissibility as a condition on the command alone](wheel-admissible-iff-integral.md)
+- [Wheel admissibility as a condition on the command and initial momentum](wheel-admissible-iff-integral.md)
 - [A momentum reserve makes every bounded wheel command admissible](wheel-admissible-of-reserve.md)
 - [A constant wheel command is admissible iff the endpoint limits hold](const-command-admissible-iff.md)
 - [A nonzero constant wheel command saturates the momentum in finite time](const-command-momentum-limit.md)

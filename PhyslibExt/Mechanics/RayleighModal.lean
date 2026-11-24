@@ -196,8 +196,10 @@ private lemma deriv_unit_mulVec {n : Type*} [Fintype n] [DecidableEq n]
 pencil `(K, M)` with `Φᵀ * K * Φ = diagonal μ`, a trajectory `x` satisfies
 `M x'' + (α M + β K) x' + K x = f` at time `t` iff its modal coordinates
 `q = Φᵀ * M *ᵥ x` satisfy the decoupled equations
-`q_j'' + (α + β * μ j) q_j' + μ j q_j = (Φᵀ *ᵥ f t) j` at `t`, for every mode `j`.
-Proportional damping only; holds for every real `α`, `β` and any load `f`. -/
+`(q'')_j + (α + β * μ j) (q')_j + μ j q_j = (Φᵀ *ᵥ f t) j` at `t`, for every mode `j`, where
+`(q')_j` and `(q'')_j` are the `j`-th components of the derivatives of the vector `q` (each
+derivative `0` where the function is not differentiable). Proportional damping only; holds for
+every real `α`, `β` and any load `f`. -/
 theorem rayleigh_modal_decoupling {M K Φ : Matrix n n ℝ} {μ : n → ℝ}
     (hMΦ : Φᵀ * M * Φ = 1) (hKΦ : Φᵀ * K * Φ = diagonal μ) (α β : ℝ)
     (x f : ℝ → n → ℝ) (t : ℝ) :
@@ -276,7 +278,9 @@ stiffness `K` and Rayleigh coefficients `α, β ≥ 0`, the canonical modal-basi
 theorem (`PhyslibExt.Mechanics.ModalResponse.exists_modalBasis`) yields an invertible
 mass-orthonormal basis `Φ` with `Φᵀ * K * Φ = diagonal μ`, nonnegative `μ j` and
 nonnegative modal damping `α + β * μ j`, in which every trajectory and load decouple as in
-`rayleigh_modal_decoupling`. Repeated eigenvalues and rigid modes (`μ j = 0`) included. -/
+`rayleigh_modal_decoupling` (components of the derivatives of the vector `q`, each derivative `0`
+where the function is not differentiable). Repeated eigenvalues and rigid modes (`μ j = 0`)
+included. -/
 theorem exists_rayleigh_modal_decoupling
     {M K : Matrix n n ℝ} (hM : M.PosDef) (hK : K.PosSemidef) {α β : ℝ}
     (hα : 0 ≤ α) (hβ : 0 ≤ β) :

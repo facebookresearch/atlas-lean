@@ -27,8 +27,7 @@
 
 ## Speed and period on a circular orbit
 
-- [On a circular orbit the squared speed is μ / R at every time](norm-vel-sq.md)
-- [On a circular orbit the speed is √(μ / R) at every time](norm-vel-eq.md)
+- [On a circular orbit the speed squared is μ / R and the speed √(μ / R)](norm-vel-sq.md)
 - [Kepler's third law for a circular orbit: T² = 4 π² R³ / μ](period-sq.md)
 
 ## Change of units

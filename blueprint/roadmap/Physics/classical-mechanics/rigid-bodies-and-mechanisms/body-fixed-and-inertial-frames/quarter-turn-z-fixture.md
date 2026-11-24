@@ -7,6 +7,6 @@ basis of `ℝ³`:
   `R e₂ = -e₁`;
 - the moment `e₁ × e₂ = e₃` has inertial components `R (e₁ × e₂) = e₃`, which is also
   `(R e₁) × (R e₂)`;
-- the [active rotation](body-to-inertial-vec.md) turns `e₁` to `e₂`, while the
+- the [active rotation](rotate-active.md) turns `e₁` to `e₂`, while the
   [body components](inertial-to-body-vec.md) of `e₁` are `Rᵀ e₁ = -e₂`: the passive map to body
   components turns the other way.

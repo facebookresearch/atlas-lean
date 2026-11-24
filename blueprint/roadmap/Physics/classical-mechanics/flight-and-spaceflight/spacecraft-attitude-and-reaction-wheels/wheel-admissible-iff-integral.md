@@ -1,4 +1,4 @@
-# Wheel admissibility as a condition on the command alone
+# Wheel admissibility as a condition on the command and initial momentum
 
 Let `umax`, `hmax` and `T` be real numbers and `u`, `h` real functions of time such that `h` has
 the derivative `u(t)` at every `t ∈ [0, T]` and `u` is integrable on the interval between `0` and

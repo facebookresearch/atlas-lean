@@ -20,10 +20,10 @@ public import Mathlib.Tactic.Ring
 ## i. Overview
 
 For the forced damped oscillator `x'' + 2γx' + ω₀²x = F cos(ωt)` with `γ > 0`, `ω₀ > 0`, `ω ≥ 0`,
-  the harmonic steady-state coefficients `A = F(ω₀² - ω²)/D`, `B = F(2γω)/D` with `D = (ω₀² - ω²)²
-  + (2γω)²` give amplitude `|F| / √D`. The oscillator equation is proved from the harmonic
-  derivative formulas of `A cos(ωt) + B sin(ωt)`; this is a toy dynamical tide, not an equilibrium
-  astronomical prediction.
+the harmonic steady-state coefficients `A = F(ω₀² - ω²)/D`, `B = F(2γω)/D` with
+`D = (ω₀² - ω²)² + (2γω)²` give amplitude `|F| / √D`. The oscillator equation is proved from the
+harmonic derivative formulas of `A cos(ωt) + B sin(ωt)`; this is a toy dynamical tide, not an
+equilibrium astronomical prediction.
 
 ## ii. Key results
 

@@ -1,4 +1,4 @@
-# The fixed-axis motion satisfies the balance law with the axial torque
+# About a principal axis the balance law holds with the axial torque
 
 For a rigid body in three dimensions with centre of mass `c = 0` and inertia tensor
 `diag(I_xx, I_yy, I_zz)` about it, all real numbers `ω₀` and `α` and every time `t`, the

@@ -14,4 +14,4 @@ of a body of mass `m` leaving the floor (height `0`) with upward velocity `u_n` 
   speed of the next arc.
 
 For `e > 0` and `u₀ > 0` every arc is active ([all arcs active](is-active-arc-of-pos.md)); for
-`e = 0` only the first one is ([termination](inelastic-stops.md)).
+`e = 0` and `u₀ > 0` only the first one is ([termination](inelastic-stops.md)).

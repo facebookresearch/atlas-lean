@@ -213,9 +213,8 @@ lemma physical_iff_langevin {c : ℝ} (hc : 0 < c) (k σ x₀ : ℝ) (x w : ℝ 
     ring
 
 /-- For `c > 0`, the existing OU path solution with `θ = k / c` and `σ' = σ / c` solves the
-physical equation
-`c (x t - x₀) = -k ∫₀ᵗ x + σ (w t - w 0)` for every continuous driving path `w` and every
-`t`. -/
+physical equation `c (x t - x₀) = -k ∫₀ᵗ x + σ (w t - w 0)` for every continuous driving path `w`
+and every `t`. -/
 lemma ouPathSolution_solves_physical {c : ℝ} (hc : 0 < c) (k σ x₀ : ℝ) {w : ℝ → ℝ}
     (hw : Continuous w) (t : ℝ) :
     c * (ouPathSolution (k / c) (σ / c) x₀ w t - x₀) =

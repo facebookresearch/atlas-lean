@@ -152,8 +152,8 @@ lemma constForcePosition_hasDerivAt (m : ℝ) (x₀ v₀ F : E) (t : ℝ) :
   rw [hfun]
   simpa using h
 
-/-- The velocity has derivative the acceleration `m⁻¹ • F` (both `0` at `m = 0`, by
-`0⁻¹ = 0`). -/
+/-- The velocity has derivative the acceleration `m⁻¹ • F`; with the convention `0⁻¹ = 0` the
+acceleration is `0` when `m = 0`, where the velocity is the constant `v₀`. -/
 lemma constForceVelocity_hasDerivAt (m : ℝ) (v₀ F : E) (t : ℝ) :
     HasDerivAt (constForceVelocity m v₀ F) (m⁻¹ • F) t := by
   unfold constForceVelocity
@@ -171,8 +171,8 @@ lemma constForceVelocity_hasDerivAt (m : ℝ) (v₀ F : E) (t : ℝ) :
   rw [hfun]
   simpa using h
 
-/-- The force port agrees with Newton's law: the trajectory starts at `x₀` with velocity `v₀`
-and satisfies `m • x'' = F` at every time. -/
+/-- The force port agrees with Newton's law: for `m > 0`, the trajectory starts at `x₀` with
+velocity `v₀` and satisfies `m • x'' = F` at every time. -/
 lemma constForce_actual_trajectory {m : ℝ} (hm : 0 < m) (x₀ v₀ F : E) :
     constForcePosition m x₀ v₀ F 0 = x₀ ∧ deriv (constForcePosition m x₀ v₀ F) 0 = v₀ ∧
       ∀ t, m • deriv (deriv (constForcePosition m x₀ v₀ F)) t = F := by
@@ -196,7 +196,7 @@ lemma constForce_actual_trajectory {m : ℝ} (hm : 0 < m) (x₀ v₀ F : E) :
 
 /-! ## C. Power port, work and impulse -/
 
-/-- Power port: on the actual trajectory the kinetic energy has derivative the power
+/-- Power port: for `m > 0`, on the actual trajectory the kinetic energy has derivative the power
 `⟪F, v t⟫` delivered by the force. -/
 lemma constForce_power_port {m : ℝ} (hm : 0 < m) (v₀ F : E) (t : ℝ) :
     HasDerivAt (fun s => m * ‖constForceVelocity m v₀ F s‖ ^ 2 / 2)
@@ -263,7 +263,7 @@ lemma constForce_impulse [CompleteSpace E] {m : ℝ} (hm : 0 < m) (v₀ F : E) (
 /-! ## D. Spring example on the existing oscillator trajectory -/
 
 /-- Power port of the spring force `-k x` on the oscillator trajectory `x t = A * cos (ω t)`,
-`v t = -A * ω * sin (ω t)`, `ω = √(k / m)`. -/
+`v t = -A * ω * sin (ω t)`, `ω = √(k / m)`, for `m > 0` and `k > 0`. -/
 lemma spring_power_port {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = Real.sqrt (k / m))
     (t : ℝ) :
     HasDerivAt (fun s : ℝ => m * ‖-A * ω * Real.sin (ω * s)‖ ^ 2 / 2)
@@ -279,8 +279,9 @@ lemma spring_power_port {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = R
     field_simp
   rwa [heq] at h
 
-/-- Spring work from `t₀` to `t₁` (oriented integral, either order): the change of kinetic
-energy, and the decrease of the potential `k x ^ 2 / 2 + C`, whatever the constant `C`. -/
+/-- Spring work from `t₀` to `t₁` (oriented integral, either order) on the oscillator trajectory
+with `ω = √(k / m)`, for `m > 0` and `k > 0`: the change of kinetic energy, and the decrease of the
+potential `k x ^ 2 / 2 + C`, whatever the constant `C`. -/
 lemma spring_work {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = Real.sqrt (k / m))
     (t₀ t₁ C : ℝ) :
     ∫ t in t₀..t₁, inner ℝ (-k * (A * Real.cos (ω * t))) (-A * ω * Real.sin (ω * t)) =
@@ -448,8 +449,9 @@ lemma planarRigid_power_port {m J : ℝ} (_hm : 0 < m) (_hJ : 0 < J) {V F : ℝ 
     ring
   exact htr.add hrot
 
-/-- A wrong torque sign fails the power balance: where `τ θ' ≠ 0`, the kinetic energy of the
-planar body does not have the rate `⟪F, V⟫ + (-τ) θ'`. -/
+/-- A wrong torque sign fails the power balance: for the planar body (`m, J > 0`, `V` of class
+`C¹`, `θ` of class `C²`, `m V' = F` and `J θ'' = τ` at every time), where `τ θ' ≠ 0` the kinetic
+energy does not have the rate `⟪F, V⟫ + (-τ) θ'`. -/
 lemma planarRigid_power_port_neg_torque {m J : ℝ} (hm : 0 < m) (hJ : 0 < J) {V F : ℝ → E}
     {θ τ : ℝ → ℝ} (hV : ContDiff ℝ 1 V) (hθ : ContDiff ℝ 2 θ) (hF : ∀ t, m • deriv V t = F t)
     (hτ : ∀ t, J * deriv (deriv θ) t = τ t) {t : ℝ} (hτθ : τ t * deriv θ t ≠ 0) :
@@ -462,10 +464,10 @@ lemma planarRigid_power_port_neg_torque {m J : ℝ} (hm : 0 < m) (hJ : 0 < J) {V
   linarith
 
 /-- Link to Physlib's kinetic-energy split: a rigid motion of positive mass, with body frame
-centered at its centre of mass and body angular velocity `(0, 0, ω)` at `t` (rotation about the
-third body axis), has Physlib's total kinetic energy `T = m ‖V‖² / 2 + J ω² / 2`, with `V` the
-centre-of-mass velocity and `J = (I_B)₃₃` the moment of inertia about the axis through the centre
-of mass. -/
+centered at its centre of mass, orientation differentiable at `t` and body angular velocity
+`(0, 0, ω)` at `t` (rotation about the third body axis), has Physlib's total kinetic energy
+`T = m ‖V‖² / 2 + J ω² / 2`, with `V` the centre-of-mass velocity and `J = (I_B)₃₃` the moment of
+inertia about the axis through the centre of mass. -/
 lemma kineticEnergy_eq_planar (M : RigidBodyMotion 3) (t : Time) (hm : 0 < M.mass)
     (hR : DifferentiableAt ℝ (fun s => (M.orientation s).1) t) (hc : M.centerOfMass = 0)
     {ω : ℝ} (hω : M.bodyAngularVelocity t = ![0, 0, ω]) :

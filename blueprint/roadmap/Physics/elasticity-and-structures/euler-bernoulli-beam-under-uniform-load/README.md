@@ -12,7 +12,7 @@
 ## Bending-moment and shear-force diagrams
 
 - [Bending moment of the uniformly loaded beam](uniform-beam-moment.md)
-- [The moment as stiffness times the second iterated derivative](uniform-beam-moment-eq-iterated-deriv.md)
+- [The moment as minus the stiffness times the second iterated derivative](uniform-beam-moment-eq-iterated-deriv.md)
 - [Shear force of the uniformly loaded beam](uniform-beam-shear.md)
 - [Explicit bending-moment diagram under uniform load](uniform-beam-moment-eq.md)
 - [Explicit shear-force diagram under uniform load](uniform-beam-shear-eq.md)
@@ -25,7 +25,7 @@
 
 ## Maxima
 
-- [The bending moment is greatest at mid-span](uniform-beam-moment-midpoint-max.md)
+- [The bending moment is greatest at mid-span for a nonnegative load](uniform-beam-moment-midpoint-max.md)
 - [Mid-span deflection under uniform load](uniform-load-deflection-midpoint.md)
 - [The deflection is greatest at mid-span for a nonnegative load](uniform-load-deflection-le-midpoint.md)
 

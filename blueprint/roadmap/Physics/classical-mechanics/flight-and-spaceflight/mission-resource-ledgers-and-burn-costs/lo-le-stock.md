@@ -1,4 +1,4 @@
-# A prefix-feasible schedule keeps every stock above its floor
+# A prefix-feasible schedule never takes a stock below its floor up to N
 
 For a type `ι` of resources, floors `lo` and capacities `hi : ι → ℝ`, nonnegative reserves
 `r : ι → [0, ∞)`, initial stocks `s₀ : ι → ℝ`, signed flows `flow : ι → ℕ → ℝ` and a horizon

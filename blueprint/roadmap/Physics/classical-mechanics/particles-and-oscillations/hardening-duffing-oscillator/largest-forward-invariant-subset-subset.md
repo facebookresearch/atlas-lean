@@ -1,4 +1,4 @@
-# For c > 0, only the origin is invariant where the energy rate vanishes
+# For m, k, β, c > 0, only the origin is invariant at zero energy rate
 
 Let `m > 0`, `k > 0`, `β > 0` and `c > 0`, and let `K ⊆ ℝ²` be any set. Let `Z` be the set of
 states `p ∈ K` at which the energy rate `DV(p) f(p)` vanishes, with `V` the

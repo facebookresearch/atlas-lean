@@ -183,9 +183,10 @@ noncomputable def rotatingFrame (t : ℝ) : Matrix.specialOrthogonalGroup (Fin 3
 noncomputable def rotatingToInertial (ξ : Fin 3 → ℝ) (t : ℝ) : Fin 3 → ℝ :=
   bodyToInertial 0 (rotatingFrame t) ξ
 
-/-- Newtonian attraction `-m d / |d|³` toward a point mass `m`, where `d` is the position of the
+/-- Newtonian acceleration `-m d / |d|³` due to a point mass `m`, where `d` is the position of the
 attracted point relative to the mass, with gravitational constant one and the Euclidean length
-`|d| = √(d ⬝ᵥ d)`. At `d = 0` the value is the zero vector, not a physical attraction. -/
+`|d| = √(d ⬝ᵥ d)`. For `m > 0` and `d ≠ 0` it points toward the mass (an attraction); the definition
+takes any real `m`. At `d = 0` the value is the zero vector, not a physical attraction. -/
 noncomputable def pointMassPull (m : ℝ) (d : Fin 3 → ℝ) : Fin 3 → ℝ :=
   -(m / Real.sqrt (d ⬝ᵥ d) ^ 3) • d
 

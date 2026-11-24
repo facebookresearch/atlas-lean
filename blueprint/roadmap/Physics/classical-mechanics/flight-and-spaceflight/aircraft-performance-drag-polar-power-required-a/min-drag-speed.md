@@ -6,7 +6,7 @@ For reals `W`, `ρ`, `S`, `CD0` and `k`, `V_md = √(√(b / a))` with `a = ρ S
 [positive](min-drag-speed-pos.md) root of [`V⁴ = b / a`](min-drag-speed-pow-four.md), and for
 `W > 0` it is the unique positive speed of
 [least level-flight drag](level-drag-eq-two-sqrt-iff-eq-min-drag-s.md). With the conventions
-`x / 0 = 0` and `√x = 0` for `x ≤ 0`, `V_md = 0` when `CD0 = 0`, `k = 0` or `W = 0` (and when
-`b / a < 0`); `0` is not a positive speed. With `ρ, S > 0` and `CD0, k ≥ 0`, the drag then has no
-minimum over positive speeds when exactly one of its two terms vanishes, and every positive speed
-minimizes it when both vanish.
+`x / 0 = 0` and `√x = 0` for `x ≤ 0`, `V_md = 0` when `a = 0` or `b = 0`, that is when `ρ`, `S`,
+`CD0`, `k` or `W` is `0`, and when `b / a < 0`; `0` is not a positive speed. With `ρ, S > 0` and
+`CD0, k ≥ 0`, the drag then has no minimum over positive speeds when exactly one of its two terms
+vanishes, and every positive speed minimizes it when both vanish.

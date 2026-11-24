@@ -14,17 +14,17 @@
 
 ## Energy rate
 
-- [The Duffing energy is differentiable with the stated derivative](has-fderiv-at-duffing-energy.md)
+- [The Duffing energy has derivative (δx, δv) ↦ (k x + β x³) δx + m v δv](has-fderiv-at-duffing-energy.md)
 - [Along the Duffing field, the energy changes at the rate −c v²](duffing-energy-orbital.md)
 - [For c ≥ 0, the Duffing energy is nonincreasing along forward solutions](duffing-energy-antitone-on.md)
 - [The Duffing energy rate gives no exponential decay bound](not-exponential-energy-decay.md)
 
 ## Global continuation in a sublevel
 
-- [For c ≥ 0, every Duffing energy sublevel set is forward invariant](is-forward-invariant-duffing-sublevel.md)
+- [For m, k, β > 0, c ≥ 0, Duffing energy sublevels are forward invariant](is-forward-invariant-duffing-sublevel.md)
 
 ## Convergence and stability of the origin
 
-- [For c > 0, only the origin is invariant where the energy rate vanishes](largest-forward-invariant-subset-subset.md)
-- [For c > 0, every forward Duffing solution tends to the origin](tendsto-zero-of-is-integral-curve-on.md)
-- [For c ≥ 0, the origin of the Duffing oscillator is Lyapunov stable](stable-zero.md)
+- [For m, k, β, c > 0, only the origin is invariant at zero energy rate](largest-forward-invariant-subset-subset.md)
+- [For m, k, β, c > 0, every forward Duffing solution tends to the origin](tendsto-zero-of-is-integral-curve-on.md)
+- [For m, k, β > 0, c ≥ 0, the Duffing origin is Lyapunov stable](stable-zero.md)

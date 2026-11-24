@@ -45,10 +45,11 @@ Section F assembles the simplest case from the spring networks of
 of stiffness `k`, with `M = diag(m₁, m₂)` and `K = k [[1, -1], [-1, 1]]`. The rigid translation
 `(1, 1)` is a zero mode with no spring energy; the mode `(m₂, -m₁)`, mass-orthogonal to it, has
 `ω² = k (m₁ + m₂) / (m₁ m₂)`. Scaled to unit modal mass the two modes form an explicit modal
-matrix, whose response is the centre-of-mass drift plus the oscillation of the spring extension.
-Holding either mass at zero displacement leaves the one-degree-of-freedom stiffness `k`, positive
-for `k > 0`. This uses the connection of the two masses: in a network with a component not
-connected to the grounded mass, the remaining stiffness keeps a zero mode.
+matrix, whose response is the centre-of-mass drift plus the modal response of the spring extension,
+an oscillation for `k > 0` and a drift for `k ≤ 0`. Holding either mass at zero displacement leaves
+the one-degree-of-freedom stiffness `k`, positive for `k > 0`. This uses the connection of the two
+masses: in a network with a component not connected to the grounded mass, the remaining stiffness
+keeps a zero mode.
 
 ## ii. Key results
 
@@ -421,10 +422,12 @@ noncomputable def twoMassModalMatrix (m₁ m₂ : ℝ) : Matrix (Fin 2) (Fin 2) 
   !![1 / Real.sqrt (m₁ + m₂), m₂ / Real.sqrt (m₁ * m₂ * (m₁ + m₂));
     1 / Real.sqrt (m₁ + m₂), -m₁ / Real.sqrt (m₁ * m₂ * (m₁ + m₂))]
 
-/-- The free response as centre-of-mass drift plus relative oscillation: the centre of mass
-`X = (m₁ x₁ + m₂ x₂) / (m₁ + m₂)` follows the zero-mode response from `X₀` with velocity `V₀`
-along `(1, 1)`, and the spring extension `r = x₂ - x₁` follows the modal response at `ω²` from
-`r₀` with rate `ṙ₀`, along `(-m₂, m₁) / (m₁ + m₂)`. -/
+/-- The free response as centre-of-mass drift plus the modal response of the extension: the
+centre of mass `X = (m₁ x₁ + m₂ x₂) / (m₁ + m₂)` follows the zero-mode response from `X₀` with
+velocity `V₀` along `(1, 1)`, and the spring extension `r = x₂ - x₁` follows the modal response at
+`ω²` from `r₀` with rate `ṙ₀`, along `(-m₂, m₁) / (m₁ + m₂)`. For `m₁, m₂ > 0` the extension
+oscillates when `k > 0` and drifts when `k ≤ 0`. In the physical reading `m₁, m₂ > 0` and
+`k ≥ 0`; the formula uses the convention `u / 0 = 0`. -/
 noncomputable def twoMassResponse (m₁ m₂ k : ℝ) (x₀ v₀ : Fin 2 → ℝ) (t : ℝ) : Fin 2 → ℝ :=
   modalCoordinate 0 ((m₁ * x₀ 0 + m₂ * x₀ 1) / (m₁ + m₂)) ((m₁ * v₀ 0 + m₂ * v₀ 1) / (m₁ + m₂))
       t • ![1, 1] +
@@ -527,7 +530,8 @@ lemma twoMass_modalBasis {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂)
     · linear_combination (-(k * (m₁ + m₂))) * hb
 
 /-- For `m₁, m₂ > 0`, the modal response of the explicit basis, with initial position `x₀` and
-velocity `v₀`, is the centre-of-mass drift plus the relative oscillation. -/
+velocity `v₀`, is the centre-of-mass drift plus the modal response of the extension, an
+oscillation when `k > 0` and a drift when `k ≤ 0`. -/
 lemma modalResponse_twoMass {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (k : ℝ)
     (x₀ v₀ : Fin 2 → ℝ) :
     modalResponse (twoMassModalMatrix m₁ m₂) ![0, twoMassFrequencySq m₁ m₂ k] x₀ v₀ =

@@ -660,7 +660,11 @@ private lemma supportedStiffness_mulVec_nodalSlopes_of
     supportInjection_transpose_scatter, hmeq, add_comm]
 
 /-- The exact nodal slopes of two quartic span solutions
-solve the supported finite-element system. -/
+solve the supported finite-element system, for positive
+rigidities and lengths, quartic spans with `EI * y'''' = w` on
+each span, deflection and slope continuous at the middle node,
+zero deflection at the three supports, and `m` the nodal moments
+of the span end forces. -/
 theorem supportedStiffness_mulVec_nodalSlopes
     {EI1 L1 w1 EI2 L2 w2 : ℝ} (hEI1 : 0 < EI1) (hL1 : 0 < L1)
     (hEI2 : 0 < EI2) (hL2 : 0 < L2)
@@ -728,9 +732,13 @@ private lemma continuousBeam_nodal_exact_of
   rw [heq, hSu]
   exact hg
 
-/-- Main result: for the simply supported two-span beam,
-every solution of the supported finite-element system has
-the exact end data of both quartic spans. The deflection
+/-- Main result: for the simply supported two-span beam, with
+positive rigidities and lengths, quartic spans with
+`EI * y'''' = w` on each span, deflection and slope continuous at
+the middle node, zero deflection at the three supports, and `m`
+the nodal moments of the span end forces, every solution of the
+supported finite-element system has the exact end data of both
+quartic spans. The deflection
 entries are support zeros; the nontrivial content is the
 three rotations. This is exactness for the linear
 small-deflection model and asserts nothing about the

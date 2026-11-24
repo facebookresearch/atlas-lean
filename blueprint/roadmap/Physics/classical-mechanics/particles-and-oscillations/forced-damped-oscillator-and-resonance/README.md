@@ -50,12 +50,12 @@
 ## Undamped exact resonance
 
 - [Forcing at ω₀ with k = m ω₀² is forcing at the natural frequency](resonance-branch-params.md)
-- [For k = m ω₀² and Ω ≥ 0, the denominator vanishes iff c = 0 and Ω = ω₀](steady-state-denominator-eq-zero-iff.md)
+- [If m, ω₀ > 0, k = m ω₀², Ω ≥ 0, the denominator is 0 iff c = 0, Ω = ω₀](steady-state-denominator-eq-zero-iff.md)
 - [Secular response at undamped exact resonance](resonant-response.md)
 - [Velocity of the secular resonant response](resonant-velocity.md)
 - [The resonant response has the resonant velocity as derivative](has-deriv-at-resonant-response.md)
 - [Derivative of the resonant velocity](has-deriv-at-resonant-velocity.md)
-- [For k = m ω₀², the secular response solves m x″ + k x = F cos(ω₀ t)](resonant-response-solves.md)
+- [The secular response solves m x″ + m ω₀² x = F cos(ω₀ t) for m, ω₀ > 0](resonant-response-solves.md)
 - [The secular response starts from rest at the origin](resonant-response-initial.md)
 - [With damping c ≠ 0 and F ≠ 0, the secular response is not a solution](resonant-response-not-solves-damped.md)
 
@@ -66,4 +66,4 @@
 - [Value of the resonant response at the envelope-touch times](resonant-response-resonance-envelope-tim.md)
 - [The resonant response meets its envelope at the envelope-touch times](abs-resonant-response-resonance-envelope.md)
 - [For ω₀ > 0, the envelope-touch times tend to infinity](tendsto-resonance-envelope-time.md)
-- [For F ≠ 0, the resonant amplitude grows without bound](tendsto-abs-resonant-response-resonance.md)
+- [For m, ω₀ > 0 and F ≠ 0, the resonant amplitude grows without bound](tendsto-abs-resonant-response-resonance.md)

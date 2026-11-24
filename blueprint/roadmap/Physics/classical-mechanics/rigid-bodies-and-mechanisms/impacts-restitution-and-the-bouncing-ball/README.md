@@ -18,7 +18,6 @@
 
 - [Equal and opposite impulses in a two-body impact](impact-impulse.md)
 - [Momentum after an impact followed by constant forces](impact-then-flight-momentum.md)
-- [Kinetic energy after an impact followed by free flight](impact-then-free-flight-energy.md)
 
 ## The fixed-wall event
 

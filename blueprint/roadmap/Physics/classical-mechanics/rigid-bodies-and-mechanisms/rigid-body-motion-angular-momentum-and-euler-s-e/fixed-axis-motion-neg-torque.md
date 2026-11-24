@@ -1,4 +1,4 @@
-# The sign-flipped axial torque does not drive the fixed-axis motion
+# For α ≠ 0 the sign-flipped torque does not drive the fixed-axis motion
 
 For a rigid body in three dimensions with centre of mass `c = 0` and inertia tensor
 `I_B = diag(I_xx, I_yy, I_zz)` about it with `I_zz > 0`, real numbers `ω₀` and `α ≠ 0`, and every

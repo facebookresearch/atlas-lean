@@ -115,9 +115,9 @@ burn cost, about which nothing is stated here.
   step that leaves positive mass, where the constant-flow step is the actual parcel step.
 - `parcelVelocity_zero_flow`: for `m > 0` and no expelled mass, the fixed-mass constant-force
   velocity.
-- `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0`, a positive flow at a
-  positive exhaust speed accelerates the vehicle, and ignoring the expelled momentum gives the
-  wrong derivative whenever `q (v - ve) ≠ 0`.
+- `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0` and no external force,
+  a positive flow at a positive exhaust speed accelerates the vehicle, and ignoring the expelled
+  momentum gives the wrong derivative whenever `q (v - ve) ≠ 0`.
 - `separateFlowThrust`, `standForce_eq_separateFlowThrust_add`, `standForce_eq_separateFlowThrust`:
   the thrust expression and the stand force from the port balance, with the storage and feed
   terms, and the steady thrust.
@@ -315,7 +315,7 @@ open Filter Topology PhyslibExt.Mechanics.PowerPorts
 /-- Vehicle velocity after one parcel step of length `h` from the state `(m, v)`: the momentum
 balance `(m - q h) v_h + q h (v - ve) = m v + F h` solved for `v_h`, which needs the remaining mass
 `m - q h` to be nonzero; with the convention `x / 0 = 0` the formula gives `0` when
-`m - q h = 0`. -/
+`m - q h = 0`. In the physical reading `m - q h > 0`, `q ≥ 0` and `h > 0`. -/
 noncomputable def parcelVelocity (m v q ve F h : ℝ) : ℝ :=
   (m * v + F * h - q * h * (v - ve)) / (m - q * h)
 
@@ -520,7 +520,8 @@ lemma parcel_accel_pos {m q ve F : ℝ} (hm : 0 < m) (hq : 0 < q) (hve : 0 < ve)
 
 /-- Velocity after one step of the balance that ignores the expelled momentum,
 `(m - q h) w_h = m v + F h`, which needs the remaining mass `m - q h` to be nonzero; with the
-convention `x / 0 = 0` the formula gives `0` when `m - q h = 0`. -/
+convention `x / 0 = 0` the formula gives `0` when `m - q h = 0`. In the physical reading
+`m - q h > 0`, `q ≥ 0` and `h > 0`. -/
 noncomputable def naiveParcelVelocity (m v q F h : ℝ) : ℝ :=
   (m * v + F * h) / (m - q * h)
 
