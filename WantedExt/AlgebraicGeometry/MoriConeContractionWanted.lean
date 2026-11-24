@@ -91,7 +91,7 @@ theorem_wanted basepointFree (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
       (moduleTensor X.left (power L.val a) Kinv.inverse.val))
     (ample : IsAmpleLine
       ⟨moduleTensor X.left (power L.val a) Kinv.inverse.val, hLine⟩) :
-    IsSemiample L.val
+    IsSemiample L.val L.property
 
 /-- Contraction of an actual K-negative extremal ray. -/
 def_wanted contraction (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
