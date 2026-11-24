@@ -22,3 +22,4 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
   the complexity of the problem behind the graph-isomorphism zero-knowledge proof.
 
 - [Entropy and randomness extraction](randomness-extraction/README.md)
+- [Program obfuscation](program-obfuscation/README.md)
