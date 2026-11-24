@@ -12,6 +12,7 @@ Foundations of point-set topology: open and closed sets, closure and interior, n
 - [Subspace, quotient and dependent product topologies](subspace-quotient-and-dependent-product-topologi/README.md)
 - [Inducing maps, embeddings and quotient maps](inducing-maps-embeddings-and-quotient-maps/README.md)
 - [Topological bases and countability axioms](topological-bases-and-countability-axioms/README.md)
+- [Lattice of topologies and induced topologies](lattice-of-topologies-and-induced-topologies/README.md)
 - [The closure of a subset of a topological space is closed](closure-is-closed.md)
 - [The composite of two quotient maps is a quotient map](composition-quotient-maps-quotient.md)
 - [A set closed in a closed subspace is closed in the whole space](closed-in-closed-subspace-closed.md)
