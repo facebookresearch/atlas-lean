@@ -6,17 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# Shared hypergraph coloring predicate
-
-Proper vertex colorings of finite hypergraphs (no monochromatic edge), shared by the WantedExt
-entries for Erdős Problems 832 and 833 so that both speak about the same notion of chromatic
-number.
--/
-
 module
 
 public import Mathlib.Data.Finset.Defs
+
+/-!
+# Proper colorings of finite hypergraphs
+
+`HypergraphColorable` expresses that every edge has two differently colored vertices.
+-/
 
 @[expose] public section
 

@@ -109,6 +109,34 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem isLarge_iff (D : Set ℕ) : IsLarge D ↔ ∀ r : ℕ, 1 ≤ r → IsRLarge r D :=
   Iff.rfl
 
+/-- **Largeness is partition regular.** If $D_1, D_2 \subseteq \mathbb{N}$ and their union
+$D = D_1 \cup D_2$ is large, then $D_1$ is large or $D_2$ is large.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Theorem 4. -/
+public theorem large_union_partition (D D₁ D₂ : Set ℕ)
+    (hD : D = D₁ ∪ D₂) (hlarge : IsLarge D) :
+    IsLarge D₁ ∨ IsLarge D₂ := by
+  subst D
+  have hpos := (hlarge 1 le_rfl).1
+  refine or_iff_not_imp_left.mpr fun h₁ r₂ hr₂ =>
+    ⟨Set.Subset.trans Set.subset_union_right hpos, hr₂, ?_⟩
+  obtain ⟨r₁, hr₁, c₁, k₁, _, hbad⟩ :
+      ∃ r, 1 ≤ r ∧ ∃ (c : ℕ+ → Fin r) (k : ℕ), 1 ≤ k ∧
+        ¬ ∃ x : Fin k → ℕ+, IsMonochromatic c x ∧ IsDAP D₁ k x := by
+    by_contra! hall
+    exact h₁ fun r hr => ⟨Set.Subset.trans Set.subset_union_left hpos, hr, hall r hr⟩
+  intro c₂ k₂ hk₂
+  -- A single progression for the product coloring has both required lengths as prefixes.
+  obtain ⟨x, hx, a, d, hd, hgap⟩ := (hlarge (r₁ * r₂) (Nat.mul_pos hr₁ hr₂)).2.2
+    (fun n => finProdFinEquiv (c₁ n, c₂ n)) (max k₁ k₂) (hk₂.trans (le_max_right ..))
+  have hpair (i j : Fin (max k₁ k₂)) := Prod.mk.inj (finProdFinEquiv.injective (hx i j))
+  rcases hd with hd | hd
+  · let ι := Fin.castLE (le_max_left k₁ k₂)
+    exact (hbad ⟨x ∘ ι, fun i j => (hpair (ι i) (ι j)).1, a, d, hd, fun i => hgap (ι i)⟩).elim
+  · let ι := Fin.castLE (le_max_right k₁ k₂)
+    exact ⟨x ∘ ι, fun i j => (hpair (ι i) (ι j)).2, a, d, hd, fun i => hgap (ι i)⟩
+
 /-- **$D$-diffsequences.** Let $D$ be a set of natural numbers and $k$ a natural number. A
 finite sequence $x_0, \dots, x_{k-1}$ of integers is a $D$-diffsequence when for every $i$ with
 $i + 1 < k$ there is $d \in D$ with $x_{i+1} - x_i = d$.
