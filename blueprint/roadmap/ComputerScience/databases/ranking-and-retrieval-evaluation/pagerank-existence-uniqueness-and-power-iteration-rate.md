@@ -8,8 +8,11 @@ vectors (more generally on vectors with coordinate sum zero), not on all vectors
 ## Proof
 
 If $\mathbf{1}^{\mathsf T} z = 0$ then $G z = \alpha P z + (1-\alpha) v (\mathbf{1}^{\mathsf T} z) = \alpha P z$, and $\lVert P z \rVert_1 \le \sum_j \lvert z_j \rvert \sum_i P_{ij} = \lVert z \rVert_1$
-for a column-stochastic $P$; apply this to $z = x - y$. $G$ maps the probability simplex, a closed subset of $(\mathbb{R}^n, \lVert \cdot \rVert_1)$, into itself, so by the
-contraction mapping theorem it has a unique fixed point $\pi$ there, and $\lVert G^k x_0 - \pi \rVert_1 = \lVert G^k x_0 - G^k \pi \rVert_1 \le \alpha^k \lVert x_0 - \pi \rVert_1$.
+for a column-stochastic $P$; apply this to $z = x - y$. $G$ maps the probability simplex $\Delta$ into itself, since its entries are nonnegative and $\mathbf{1}^{\mathsf T} G = \mathbf{1}^{\mathsf T}$.
+*Uniqueness:* if $\pi, \pi' \in \Delta$ are fixed by $G$, then $\lVert \pi - \pi' \rVert_1 = \lVert G\pi - G\pi' \rVert_1 \le \alpha \lVert \pi - \pi' \rVert_1$, so $\pi = \pi'$.
+*Existence:* for $x_0 \in \Delta$ and $x_k = G^k x_0$, $\lVert x_{k+1} - x_k \rVert_1 \le \alpha^k \lVert x_1 - x_0 \rVert_1$, so $\lVert x_l - x_k \rVert_1 \le \alpha^k \lVert x_1 - x_0 \rVert_1/(1 - \alpha)$
+for $l \ge k$ and $(x_k)$ is a Cauchy sequence in $\mathbb{R}^n$. Its limit $\pi$ lies in the closed set $\Delta$, and $G\pi = \pi$ by continuity of $G$.
+*Rate:* $\lVert G^k x_0 - \pi \rVert_1 = \lVert G^k x_0 - G^k \pi \rVert_1 \le \alpha^k \lVert x_0 - \pi \rVert_1$ by $k$ applications of the contraction bound.
 
 ## Depends on
 
