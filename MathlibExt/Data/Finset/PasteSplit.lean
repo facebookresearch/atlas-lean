@@ -20,20 +20,14 @@ import Mathlib.Logic.Equiv.Prod
 
 `pasteOn A x z` glues a function on a finset `A` and a function on its complement into a
 function on the whole index type, `splitOnEquiv` packages this as an equivalence, and
-`finsetMapEquiv` / `finsetMapComplEquiv` transport a finset and its complement along an
-equivalence of the index type.
+`finsetMapComplEquiv` transports the complement of a finset along a permutation.
+Mathlib's `Finset.equivMap` transports the finset itself.
 
 Extracted from the absolutely-maximally-entangled-state development now in
 `PhyslibExt.QuantumInfo.AbsolutelyMaximallyEntangled`.
 -/
 
 namespace MetaMathlibExt
-
-/-- An equivalence `e : α ≃ β` restricts to an equivalence between a finset `S` and its
-image `S.map e.toEmbedding`. -/
-def finsetMapEquiv {α β : Type*} [DecidableEq α] [DecidableEq β]
-    (e : α ≃ β) (S : Finset α) : S ≃ S.map e.toEmbedding :=
-  e.subtypeEquiv fun x => by simp only [Finset.mem_map_equiv, Equiv.symm_apply_apply]
 
 /-- A permutation `e` of `α` restricts to an equivalence between the complement of a
 finset `S` and the complement of its image `S.map e.toEmbedding`. -/

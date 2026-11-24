@@ -39,10 +39,7 @@ example (A : Finset (Fin 3)) (x : A → ℕ) (z : {i : Fin 3 // i ∉ A} → ℕ
 example (A : Finset (Fin 3)) (f : Fin 3 → ℕ) :
     (splitOnEquiv (R := ℕ) A).symm f = (fun i => f i.1, fun i => f i.1) := rfl
 
--- A forward and inverse application use the underlying maps of the supplied permutation.
-example (S : Finset (Fin 3)) (e : Equiv.Perm (Fin 3)) (x : S) :
-    (finsetMapEquiv e S x).1 = e x.1 := rfl
-
+-- The inverse on the complement uses the inverse of the supplied permutation.
 example (S : Finset (Fin 3)) (e : Equiv.Perm (Fin 3)) (y : ↥((S.map e.toEmbedding)ᶜ)) :
     ((finsetMapComplEquiv e S).symm y).1 = e.symm y.1 := rfl
 

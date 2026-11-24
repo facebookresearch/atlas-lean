@@ -420,8 +420,9 @@ lemma q5CutMatrix_det_map (A : Finset (Fin 10)) (hA : A.card = 5)
   let eB := B.orderIsoOfFin hB
   let eC := Aᶜ.orderIsoOfFin hAc
   let eD := Bᶜ.orderIsoOfFin hBc
+  let mapA := Finset.equivMap g.toEmbedding A
   let pA : Equiv.Perm (Fin 5) :=
-    eA.toEquiv.trans ((finsetMapEquiv g A).trans eB.toEquiv.symm)
+    eA.toEquiv.trans (mapA.trans eB.toEquiv.symm)
   let pC : Equiv.Perm (Fin 5) :=
     eC.toEquiv.trans ((finsetMapComplEquiv g A).trans eD.toEquiv.symm)
   have hmat : q5CutMatrix A hA =
@@ -429,9 +430,8 @@ lemma q5CutMatrix_det_map (A : Finset (Fin 10)) (hA : A.card = 5)
     ext i j
     show q5Graph (eC i).1 (eA j).1 = q5Graph (eD (pC i)).1 (eB (pA j)).1
     have hpA : (eB (pA j)).1 = g (eA j).1 := by
-      change (eB (eB.symm ((finsetMapEquiv g A) (eA j)))).1 =
-        ((finsetMapEquiv g A) (eA j)).1
-      exact congrArg Subtype.val (eB.apply_symm_apply ((finsetMapEquiv g A) (eA j)))
+      change (eB (eB.symm (mapA (eA j)))).1 = (mapA (eA j)).1
+      exact congrArg Subtype.val (eB.apply_symm_apply (mapA (eA j)))
     have hpC : (eD (pC i)).1 = g (eC i).1 := by
       change (eD (eD.symm ((finsetMapComplEquiv g A) (eC i)))).1 =
         ((finsetMapComplEquiv g A) (eC i)).1

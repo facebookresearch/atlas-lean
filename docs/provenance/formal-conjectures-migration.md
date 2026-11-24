@@ -63,7 +63,8 @@ opens.
 | Declarations | Destination |
 | --- | --- |
 | `detFinThreeInt`, `detFinFourInt`, `detFinFiveInt` and their `_eq` lemmas | `MathlibExt/LinearAlgebra/Matrix/DetFinSmall.lean` |
-| `pasteOn`, `pasteOn_mem`, `pasteOn_not_mem`, `splitOnEquiv`, `finsetMapEquiv`, `finsetMapComplEquiv` | `MathlibExt/Data/Finset/PasteSplit.lean` |
+| `pasteOn`, `pasteOn_mem`, `pasteOn_not_mem`, `splitOnEquiv`, `finsetMapComplEquiv` | `MathlibExt/Data/Finset/PasteSplit.lean` |
+| `finsetMapEquiv` | Replaced at its use site by Mathlib's `Finset.equivMap`. |
 | `sum_stdAddChar_dot`, `sum_stdAddChar_affine`, `stdAddChar_mul_star`, `norm_stdAddChar` | `MathlibExt/Analysis/Fourier/ZModAddCharSum.lean` |
 | `sum_four_comm`, `sum_separable`, `sum_product_separable` | `MathlibExt/Algebra/BigOperators/SeparableSum.lean` |
 
