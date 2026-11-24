@@ -13,7 +13,9 @@ public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Data.Set.Card
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Card
+public import Mathlib.Logic.Equiv.Fin.Rotate
 import Mathlib.Algebra.Torsor.Defs
+import Mathlib.Dynamics.PeriodicPts.Defs
 import Mathlib.GroupTheory.SpecificGroups.Cyclic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
@@ -938,6 +940,66 @@ theorem identity_product_necklace_count (G : Type*) [Group G] [Fintype G]
         {x : Fin n → G // (List.ofFn x).prod = 1})) : ℚ) * (n : ℚ)) / (n : ℚ)) := by
         field_simp
     _ = _ := by rw [hc]; ring
+
+-- Retain the existing `[Fintype G]` binder for callers of the wanted statement.
+set_option linter.unusedFintypeInType false in
+/-- **Splitting periodic identity-product tuples by smallest period.** Let $G$ be a finite
+group, $n$ a natural number and $k \ge 1$. Say that $x = (x_0, \dots, x_{n-1}) \in G^n$ has
+period $l$ if $x_{i+l} = x_i$ for all $i$, with indices taken mod $n$. Let $A_k$ be the set of
+tuples $x$ with $x_0 x_1 \cdots x_{n-1} = 1$ and period $k$, and for $d \ge 1$ let $P_d$ be the
+set of tuples $x$ with $x_0 x_1 \cdots x_{n-1} = 1$ that have period $d$ but no period $l$ with
+$0 < l < d$. Then $|A_k| = \sum_{d \mid k} |P_d|$.
+
+Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
+Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 14, with `A_k`, `P_k` as in
+equation (9) of the arXiv text (`jis-2026-26.4.6-lem-14`). -/
+theorem card_identityProduct_period_eq_sum_smallestPeriod (G : Type*) [Group G]
+    [Fintype G] (n k : ℕ) (hk : 0 < k) :
+    Set.ncard {x : Fin n → G | (List.ofFn x).prod = 1 ∧ x ∘ ⇑((finRotate n) ^ k) = x} =
+      ∑ d ∈ k.divisors, Set.ncard {x : Fin n → G | (List.ofFn x).prod = 1 ∧
+        x ∘ ⇑((finRotate n) ^ d) = x ∧ ∀ l, 0 < l → l < d → x ∘ ⇑((finRotate n) ^ l) ≠ x} := by
+  classical
+  let rotate (x : Fin n → G) := x ∘ finRotate n
+  have hiterate (d : ℕ) (x : Fin n → G) : rotate^[d] x = x ∘ ⇑((finRotate n) ^ d) := by
+    induction d with
+    | zero => rfl
+    | succ d ih =>
+      rw [Function.iterate_succ_apply', ih, pow_succ, Equiv.Perm.coe_mul]
+      rfl
+  have hperiod (d : ℕ) (x : Fin n → G) :
+      Function.IsPeriodicPt rotate d x ↔ x ∘ ⇑((finRotate n) ^ d) = x := by
+    change rotate^[d] x = x ↔ _
+    rw [hiterate]
+  let A : Set (Fin n → G) :=
+    {x | (List.ofFn x).prod = 1 ∧ x ∘ ⇑((finRotate n) ^ k) = x}
+  have hA : A.Finite := Set.toFinite A
+  have hmaps : (↑hA.toFinset : Set (Fin n → G)).MapsTo
+      (Function.minimalPeriod rotate) k.divisors := by
+    intro x hx
+    have hxk := (hA.mem_toFinset.mp hx).2
+    -- Mathlib's divisibility lemma uses the remainder as a smaller period.
+    exact Nat.mem_divisors.mpr ⟨((hperiod k x).mpr hxk).minimalPeriod_dvd, hk.ne'⟩
+  change A.ncard = _
+  rw [Set.ncard_eq_toFinset_card A hA, Finset.card_eq_sum_card_fiberwise hmaps]
+  refine Finset.sum_congr rfl fun d hd => ?_
+  have hdvd := (Nat.mem_divisors.mp hd).1
+  have hdpos := Nat.pos_of_dvd_of_pos hdvd hk
+  rw [Set.ncard_eq_toFinset_card]
+  congr 1
+  ext x
+  simp only [Finset.mem_filter, Set.Finite.mem_toFinset, A, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨⟨hx, _⟩, rfl⟩
+    refine ⟨hx, (hperiod _ _).mp (Function.isPeriodicPt_minimalPeriod rotate x), ?_⟩
+    intro l hl hlt hfix
+    exact Function.not_isPeriodicPt_of_pos_of_lt_minimalPeriod hl.ne' hlt
+      ((hperiod l x).mpr hfix)
+  · rintro ⟨hx, hfix, hsmall⟩
+    have hp := (hperiod d x).mpr hfix
+    refine ⟨⟨hx, (hperiod k x).mp (hp.trans_dvd hdvd)⟩, ?_⟩
+    apply (hp.minimalPeriod_le hdpos).antisymm
+    exact Nat.le_of_not_gt fun hlt => hsmall _ (hp.minimalPeriod_pos hdpos) hlt
+      ((hperiod _ _).mp (Function.isPeriodicPt_minimalPeriod rotate x))
 
 end MetaMathlibExt
 
