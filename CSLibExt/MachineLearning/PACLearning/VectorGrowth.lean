@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.PACLearning.GrowthFunction
+public import CSLibExt.MachineLearning.PACLearning.Natarajan
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.Pi
@@ -39,9 +40,10 @@ noncomputable def traceSetVec (C : ConceptClass α β) (s : Finset α) :
   Finset.univ.filter fun t => ∃ c ∈ C, ∀ x : s, t x = c x
 
 /-- The vector-valued growth function: supremum of trace counts over
-`m`-subsets of the domain. `0` when no `m`-subset exists. -/
+`m`-subsets of the domain. `0` when no `m`-subset exists. Per-sample
+counts use `tracesCard`. -/
 noncomputable def growthFunctionVec (C : ConceptClass α β) (m : ℕ) : ℕ :=
-  sSup { (traceSetVec C s).card | (s : Finset α) (_ : s.card = m) }
+  sSup { tracesCard C s | (s : Finset α) (_ : s.card = m) }
 
 /-- A labeling is a trace iff some concept in `C` realizes it. -/
 @[simp] theorem mem_traceSetVec {C : ConceptClass α β} {s : Finset α}
@@ -49,6 +51,20 @@ noncomputable def growthFunctionVec (C : ConceptClass α β) (m : ℕ) : ℕ :=
     t ∈ traceSetVec C s ↔ ∃ c ∈ C, ∀ x : s, t x = c x := by
   classical
   simp [traceSetVec]
+
+/-- Trace counts agree with `tracesCard`. -/
+theorem traceSetVec_card_eq_tracesCard (C : ConceptClass α β) (s : Finset α) :
+    (traceSetVec C s).card = tracesCard C s := by
+  classical
+  unfold traceSetVec tracesCard
+  congr 1
+  ext t
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨c, hc, h⟩
+    exact ⟨c, hc, fun x => (h x).symm⟩
+  · rintro ⟨c, hc, h⟩
+    exact ⟨c, hc, fun x => (h x).symm⟩
 
 /-- Trace counts are bounded by the number of all labelings. -/
 theorem traceSetVec_card_le (C : ConceptClass α β) (s : Finset α) :
@@ -63,11 +79,12 @@ theorem traceSetVec_card_le (C : ConceptClass α β) (s : Finset α) :
 theorem traceSetVec_card_le_growthFunctionVec (C : ConceptClass α β)
     (s : Finset α) :
     (traceSetVec C s).card ≤ growthFunctionVec C s.card := by
+  rw [traceSetVec_card_eq_tracesCard]
   unfold growthFunctionVec
   refine le_csSup ?_ ⟨s, rfl, rfl⟩
   refine ⟨(Fintype.card β) ^ s.card, ?_⟩
   rintro k ⟨t, ht, rfl⟩
-  rw [← ht]
+  rw [← ht, ← traceSetVec_card_eq_tracesCard]
   exact traceSetVec_card_le C t
 
 /-- The growth function is bounded by `(card β) ^ m`. -/
@@ -76,7 +93,7 @@ theorem growthFunctionVec_le_pow (C : ConceptClass α β) (m : ℕ) :
   unfold growthFunctionVec
   apply csSup_le'
   rintro k ⟨t, ht, rfl⟩
-  rw [← ht]
+  rw [← ht, ← traceSetVec_card_eq_tracesCard]
   exact traceSetVec_card_le C t
 
 /-- When an `m`-subset exists, the supremum is attained on one. -/
@@ -84,18 +101,18 @@ theorem exists_traceSetVec_card_eq_growthFunctionVec (C : ConceptClass α β)
     (m : ℕ) (hex : ∃ s0 : Finset α, s0.card = m) :
     ∃ s, s.card = m ∧ (traceSetVec C s).card = growthFunctionVec C m := by
   obtain ⟨s0, hs0⟩ := hex
-  have hne :
-      { (traceSetVec C t).card | (t : Finset α) (_ : t.card = m) }.Nonempty :=
-    ⟨(traceSetVec C s0).card, s0, hs0, rfl⟩
-  have hbdd :
-      BddAbove { (traceSetVec C t).card | (t : Finset α) (_ : t.card = m) } := by
+  have hne : { tracesCard C t | (t : Finset α) (_ : t.card = m) }.Nonempty :=
+    ⟨tracesCard C s0, s0, hs0, rfl⟩
+  have hbdd : BddAbove { tracesCard C t | (t : Finset α) (_ : t.card = m) } := by
     refine ⟨(Fintype.card β) ^ m, ?_⟩
     rintro k ⟨t, ht, rfl⟩
-    rw [← ht]
+    rw [← ht, ← traceSetVec_card_eq_tracesCard]
     exact traceSetVec_card_le C t
   have hmem := Nat.sSup_mem hne hbdd
   obtain ⟨s, hs, hcard⟩ := hmem
-  exact ⟨s, hs, hcard⟩
+  refine ⟨s, hs, ?_⟩
+  rw [traceSetVec_card_eq_tracesCard]
+  exact hcard
 
 /-- Larger samples realize at least as many traces. -/
 theorem traceSetVec_card_mono {C : ConceptClass α β} {s t : Finset α}
@@ -186,11 +203,14 @@ theorem growthFunctionVec_mono {C : ConceptClass α β} {k m : ℕ}
   apply csSup_le'
   rintro j ⟨t, ht, rfl⟩
   obtain ⟨s, hts, hs⟩ := exists_superset_card_eq t s0 ht hs0 hkm
-  refine (traceSetVec_card_mono hts).trans ?_
+  have hmono : (traceSetVec C t).card ≤ (traceSetVec C s).card :=
+    traceSetVec_card_mono hts
+  rw [traceSetVec_card_eq_tracesCard, traceSetVec_card_eq_tracesCard] at hmono
+  refine hmono.trans ?_
   refine le_csSup ?_ ⟨s, hs, rfl⟩
   refine ⟨(Fintype.card β) ^ m, ?_⟩
   rintro k' ⟨u, hu, rfl⟩
-  rw [← hu]
+  rw [← hu, ← traceSetVec_card_eq_tracesCard]
   exact traceSetVec_card_le C u
 
 /-- At `β = Bool` this is the merged `growthFunction`. -/
@@ -250,15 +270,19 @@ theorem growthFunctionVec_bool_eq (C : ConceptClass α Bool) (m : ℕ) :
             simp only [Finset.mem_filter, Finset.mem_univ, true_and,
               decide_eq_true_eq] }
     rwa [Fintype.card_coe, Fintype.card_coe] at hcard
+  have key' : ∀ s : Finset α, tracesCard C s = (traceFamily C s).card := by
+    intro s
+    rw [← traceSetVec_card_eq_tracesCard]
+    exact key s
   have hset :
-      { (traceSetVec C s).card | (s : Finset α) (_ : s.card = m) } =
+      { tracesCard C s | (s : Finset α) (_ : s.card = m) } =
         { (traceFamily C s).card | (s : Finset α) (_ : s.card = m) } := by
     ext k
     constructor
     · rintro ⟨s, hs, rfl⟩
-      exact ⟨s, hs, (key s).symm⟩
+      exact ⟨s, hs, (key' s).symm⟩
     · rintro ⟨s, hs, rfl⟩
-      exact ⟨s, hs, key s⟩
+      exact ⟨s, hs, key' s⟩
   unfold growthFunctionVec growthFunction
   rw [hset]
 
@@ -312,10 +336,15 @@ theorem growthFunctionVec_prod_le [Fintype β₁] [Fintype β₂]
   unfold growthFunctionVec
   apply csSup_le'
   rintro k ⟨t, ht, rfl⟩
-  refine (hcard t).trans ?_
+  have hcard' := hcard t
+  rw [traceSetVec_card_eq_tracesCard, traceSetVec_card_eq_tracesCard,
+    traceSetVec_card_eq_tracesCard] at hcard'
+  refine hcard'.trans ?_
   have h1 := traceSetVec_card_le_growthFunctionVec C₁ t
   have h2 := traceSetVec_card_le_growthFunctionVec C₂ t
   rw [ht] at h1 h2
+  rw [traceSetVec_card_eq_tracesCard] at h1
+  rw [traceSetVec_card_eq_tracesCard] at h2
   exact Nat.mul_le_mul h1 h2
 
 /-- Growth function of a composition (SSBD Exercise 20.4). The
@@ -413,6 +442,7 @@ theorem growthFunctionVec_comp_le [Fintype γ]
   unfold growthFunctionVec
   apply csSup_le'
   rintro k ⟨t, ht, rfl⟩
+  rw [← traceSetVec_card_eq_tracesCard]
   exact hcard t ht
 
 end Cslib.MachineLearning.PACLearning
