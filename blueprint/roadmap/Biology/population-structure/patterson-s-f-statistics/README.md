@@ -45,6 +45,11 @@
 - [Converting neutral lineage f2 to population-scaled generations](drift-length-to-generation-conversion-absolute-d.md)
 - [Hudson F_ST need not add along a neutral lineage](f-st-is-not-additive-along-a-path-while-f2-is.md)
 
+## Ascertainment
+
+- [Ascertainment in an outgroup keeps f3 of an unadmixed target nonnegative](outgroup-ascertained-f3-positivity-patterson-app.md)
+- [Heterozygote ascertainment keeps f3 of an unadmixed target nonnegative](heterozygote-ascertained-f3-positivity-patterson.md)
+
 ## The Wahlund effect
 
 - [Mean allele frequency of a subdivided population](mean-freq.md)

@@ -54,3 +54,5 @@
 - [The unpolarized D-statistic numerator vanishes on a tree](integral-sample-expect-abba-eq-baba.md)
 - [qpAdm model equation in the drift model](f4-affine-combination-2.md)
 - [Frequencies mix like lineage weights in the drift model](freq-eq-sum-of-weight-eq-sum.md)
+
+- [Conditioning on an ascertainment event can correlate drift increments](ascertainment-as-conditioning-breaks-the-second.md)
