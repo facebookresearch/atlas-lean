@@ -101,4 +101,36 @@ public theorem X_sub_one_pow_dvd_alternating_sum_prod_X_pow_add_C (n : ℕ) (a :
     congrArg ((-1 : ℝ[X]) ^ i * (n.choose i : ℝ[X]) * ·)
       (eval_divX_prod_add_C _ t hi).symm
 
+/-- **The factor $(x - 1)^n$ for polynomials with distinct real roots.** Let $c$ be a real
+number, let $s$ be a finite set of real numbers, and let $f(x) = c \prod_{r \in s} (x - r)$ in
+$\mathbb{R}[x]$. For every natural number $n$, the polynomial $(x - 1)^n$ divides the polynomial
+$$\sum_{i=0}^{n} (-1)^i \binom{n}{i} \prod_{0 \le k \le n,\ k \ne i} f(x^k).$$
+
+For $c \ne 0$ and $1 \notin s$ (the paper's conditions), this polynomial is the numerator of
+$Q_n(x; f) = \sum_{i=0}^{n} (-1)^i \binom{n}{i} / f(x^i)$ over the common denominator
+$\prod_{k=0}^{n} f(x^k)$; for $c = 0$ or $1 \in s$ some $f(x^k)$ is zero and only the
+polynomial statement remains.
+
+Source: Takashi Agoh, *An Intrinsic Factor of an Alternating Sum Involving Certain Rational
+Functions*, INTEGERS 26 (2026), Article A9, Theorem 3.1 (`integers-2026-A9-thm-3-1`). -/
+public theorem X_sub_one_pow_dvd_alternating_sum_prod_comp_X_pow (n : ℕ) (c : ℝ)
+    (s : Finset ℝ) :
+    (X - 1 : ℝ[X]) ^ n ∣ ∑ i ∈ Finset.range (n + 1),
+      (-1 : ℝ[X]) ^ i * (n.choose i : ℝ[X]) *
+        ∏ k ∈ (Finset.range (n + 1)).erase i, (C c * ∏ r ∈ s, (X - C r)).comp (X ^ k) := by
+  let f : ℝ[X] := C c * ∏ r ∈ s, (X - C r)
+  let t (i : ℕ) : ℝ[X] := f.comp (X ^ i)
+  let p : (ℝ[X])[X] := (∏ j ∈ range (n + 1), (X + C (t j))).divX
+  let F : (ℝ[X])[X] := f.map C
+  have hF (i : ℕ) : F.eval (X ^ i) = t i := by
+    change (f.map C).eval (X ^ i) = f.eval₂ C (X ^ i)
+    rw [eval_map]
+  have hprod (i : ℕ) (hi : i ∈ range (n + 1)) :
+      (p.comp (-F)).eval (X ^ i) = ∏ k ∈ (range (n + 1)).erase i, t k := by
+    rw [eval_comp, eval_neg, hF]
+    exact eval_divX_prod_add_C _ t hi
+  convert X_sub_one_pow_dvd_alternating_sum_eval n (p.comp (-F)) using 1
+  exact sum_congr rfl fun i hi ↦
+    congrArg ((-1 : ℝ[X]) ^ i * (n.choose i : ℝ[X]) * ·) (hprod i hi).symm
+
 end MetaMathlibExt
