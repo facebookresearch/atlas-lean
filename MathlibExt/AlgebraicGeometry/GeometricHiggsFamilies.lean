@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.DeligneFaltingsCategories
+public import MathlibExt.AlgebraicGeometry.NativeTensorComparisons
 public import MathlibExt.AlgebraicGeometry.AlgebraicDifferentialSheaves
 public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
@@ -49,13 +50,7 @@ open scoped BigOperators
 
 universe u
 
-/-- Tensoring actual module isomorphisms, on the fixed sheaf tensor. -/
-def tensorIso {X : Scheme.{u}} {E E' F F' : X.Modules}
-    (a : E ≅ E') (b : F ≅ F') : moduleTensor X E F ≅ moduleTensor X E' F' where
-  hom := tensorMap a.hom b.hom
-  inv := tensorMap a.inv b.inv
-  hom_inv_id := by rw [← tensorMap_comp]; simp
-  inv_hom_id := by rw [← tensorMap_comp]; simp
+export NativeTensorComparisons (tensorIso)
 
 /-- A native locally free sheaf with an actual line-valued endomorphism. -/
 structure TwistedBundle (X : Scheme.{u}) (L : X.Modules) (r : ℕ) where
