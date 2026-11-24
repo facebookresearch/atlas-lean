@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Coding.FrameLengthDiscipline
+public import CSLibExtTest.Coding.UnreflectedSerialCRC
 
 /-!
 # Tests for the frame length and termination discipline
@@ -28,7 +29,8 @@ frame body has three bits:
 * from the fresh state, bodies of at most 6 bits give the serial register and the saturating
   count.
 
-The general theorems are then instantiated at the same parameters.
+The general theorems are then instantiated at the same parameters. The file ends with CRC-3
+validation statements at `l = 3`, `r = 3`, taps `011` (generator `X ^ 3 + X + 1`).
 -/
 
 @[expose] public section
@@ -36,6 +38,7 @@ The general theorems are then instantiated at the same parameters.
 open CSLibExt.Coding.UnreflectedSerialCRC
 open CSLibExt.Coding.FixedLengthCRCFrames
 open CSLibExt.Coding.FrameLengthDiscipline
+open CSLibExtTest.Coding.UnreflectedSerialCRC
 
 namespace CSLibExtTest.Coding.FrameLengthDiscipline
 
@@ -184,5 +187,145 @@ example :
     (FrameToken.start :: ([false, false, false].map FrameToken.bit ++
       [FrameToken.endTok]))).phase = ParserPhase.done
   decide +kernel
+
+/-! ### Validation statements (CRC-3, `l = 3`, `r = 3`; the clean body of payload `101`
+is `101100`) -/
+
+/-- Truncated header: the empty input and a lone `start` are rejected. -/
+theorem crc3_truncated_header_rejected (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates [] out ∧
+      ¬ (frameParser 3 3 crc3Taps).Translates [FrameToken.start] out := by
+  constructor
+  · intro h
+    have happ : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+        []).phase = ParserPhase.done := h.1
+    exact absurd happ (by decide)
+  · intro h
+    have happ : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+        [FrameToken.start]).phase = ParserPhase.done := h.1
+    exact absurd happ (by decide)
+
+/-- Truncated body: the payload bits alone, closed by `endTok`, are rejected. -/
+theorem crc3_truncated_body_rejected (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates
+      (FrameToken.start :: [true, false, true].map FrameToken.bit ++ [FrameToken.endTok])
+      out := by
+  intro h
+  have happ : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (FrameToken.start :: [true, false, true].map FrameToken.bit ++
+        [FrameToken.endTok])).phase = ParserPhase.done := h.1
+  exact absurd happ (by decide)
+
+/-- Truncated tail: the clean frame without its last check bit, closed by `endTok`, and
+the clean frame without its `endTok` (missing `endTok`) are both rejected. -/
+theorem crc3_truncated_tail_rejected (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates
+        (FrameToken.start :: [true, false, true, true, false].map FrameToken.bit ++
+          [FrameToken.endTok]) out ∧
+      ¬ (frameParser 3 3 crc3Taps).Translates
+        ((encodeFrame 3 crc3Taps [true, false, true]).dropLast) out := by
+  constructor
+  · intro h
+    have happ : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+        (FrameToken.start :: [true, false, true, true, false].map FrameToken.bit ++
+          [FrameToken.endTok])).phase = ParserPhase.done := h.1
+    exact absurd happ (by decide)
+  · intro h
+    have happ : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+        ((encodeFrame 3 crc3Taps [true, false, true]).dropLast)).phase =
+        ParserPhase.done := h.1
+    exact absurd happ (by decide)
+
+/-- One extra bit: the clean body followed by one more bit is rejected, whatever the bit. -/
+theorem crc3_one_extra_bit_rejected (b : Bool) (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates
+      (FrameToken.start ::
+        (encodedBody 3 crc3Taps [true, false, true] ++ [b]).map FrameToken.bit ++
+          [FrameToken.endTok]) out := by
+  cases b
+  · intro h
+    have happ : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+        (FrameToken.start ::
+          (encodedBody 3 crc3Taps [true, false, true] ++ [false]).map FrameToken.bit ++
+            [FrameToken.endTok])).phase = ParserPhase.done := h.1
+    exact absurd happ (by decide)
+  · intro h
+    have happ : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+        (FrameToken.start ::
+          (encodedBody 3 crc3Taps [true, false, true] ++ [true]).map FrameToken.bit ++
+            [FrameToken.endTok])).phase = ParserPhase.done := h.1
+    exact absurd happ (by decide)
+
+/-- A bit outside any frame: a stray bit after an accepted frame is rejected. -/
+theorem crc3_stray_bit_after_frame_rejected (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates
+      (encodeFrame 3 crc3Taps [true, false, true] ++ [FrameToken.bit true]) out := by
+  intro h
+  have happ : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (encodeFrame 3 crc3Taps [true, false, true] ++ [FrameToken.bit true])).phase =
+      ParserPhase.done := h.1
+  exact absurd happ (by decide)
+
+/-- Resynchronizing `start`: a frame cut off after two body bits, followed by the clean
+frame of `011`, is accepted; the output is the two emitted bits followed by `011`. -/
+theorem crc3_resync_start_accepted :
+    (frameParser 3 3 crc3Taps).Translates
+      (FrameToken.start :: [true, false].map FrameToken.bit ++
+        encodeFrame 3 crc3Taps [false, true, true])
+      [true, false, false, true, true] := by
+  have hacc : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (FrameToken.start :: [true, false].map FrameToken.bit ++
+        encodeFrame 3 crc3Taps [false, true, true])).phase =
+      ParserPhase.done := by decide
+  have hout : (frameParser 3 3 crc3Taps).runOut (frameParser 3 3 crc3Taps).start
+      (FrameToken.start :: [true, false].map FrameToken.bit ++
+        encodeFrame 3 crc3Taps [false, true, true]) =
+      [true, false, false, true, true] := by decide
+  refine ⟨hacc, ?_⟩
+  have hinit : (frameParser 3 3 crc3Taps).initOut = [] := rfl
+  have hfinal : ∀ q, (frameParser 3 3 crc3Taps).finalOut q = [] := fun q => rfl
+  rw [hinit, hfinal, List.nil_append, List.append_nil, hout]
+
+/-- Missing `endTok` followed by a new frame: the complete but unclosed clean body of
+`101` is discarded by the next `start`, and the following clean frame of `000` is
+accepted. -/
+theorem crc3_missing_end_then_frame_accepted :
+    (frameParser 3 3 crc3Taps).Translates
+      (FrameToken.start :: (encodedBody 3 crc3Taps [true, false, true]).map FrameToken.bit ++
+        encodeFrame 3 crc3Taps [false, false, false])
+      [true, false, true, false, false, false] := by
+  have hacc : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (FrameToken.start ::
+        (encodedBody 3 crc3Taps [true, false, true]).map FrameToken.bit ++
+        encodeFrame 3 crc3Taps [false, false, false])).phase =
+      ParserPhase.done := by decide
+  have hout : (frameParser 3 3 crc3Taps).runOut (frameParser 3 3 crc3Taps).start
+      (FrameToken.start ::
+        (encodedBody 3 crc3Taps [true, false, true]).map FrameToken.bit ++
+        encodeFrame 3 crc3Taps [false, false, false]) =
+      [true, false, true, false, false, false] := by decide
+  refine ⟨hacc, ?_⟩
+  have hinit : (frameParser 3 3 crc3Taps).initOut = [] := rfl
+  have hfinal : ∀ q, (frameParser 3 3 crc3Taps).finalOut q = [] := fun q => rfl
+  rw [hinit, hfinal, List.nil_append, List.append_nil, hout]
+
+/-- Two valid frames, the second with leading zeros, are accepted in order. -/
+theorem crc3_two_frames_accepted :
+    (frameParser 3 3 crc3Taps).Translates
+      (encodeFrame 3 crc3Taps [true, false, true] ++
+        encodeFrame 3 crc3Taps [false, false, true])
+      [true, false, true, false, false, true] := by
+  have hacc : ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (encodeFrame 3 crc3Taps [true, false, true] ++
+        encodeFrame 3 crc3Taps [false, false, true])).phase =
+      ParserPhase.done := by decide
+  have hout : (frameParser 3 3 crc3Taps).runOut (frameParser 3 3 crc3Taps).start
+      (encodeFrame 3 crc3Taps [true, false, true] ++
+        encodeFrame 3 crc3Taps [false, false, true]) =
+      [true, false, true, false, false, true] := by decide
+  refine ⟨hacc, ?_⟩
+  have hinit : (frameParser 3 3 crc3Taps).initOut = [] := rfl
+  have hfinal : ∀ q, (frameParser 3 3 crc3Taps).finalOut q = [] := fun q => rfl
+  rw [hinit, hfinal, List.nil_append, List.append_nil, hout]
 
 end CSLibExtTest.Coding.FrameLengthDiscipline

@@ -9,23 +9,27 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Coding.FixedLengthCRCFrames
+public import CSLibExtTest.Coding.UnreflectedSerialCRC
 
 @[expose] public section
 
 open CSLibExt.Coding.UnreflectedSerialCRC
 open CSLibExt.Coding.FixedLengthCRCFrames
+open CSLibExtTest.Coding.UnreflectedSerialCRC
 
 namespace CSLibExtTest.Coding.FixedLengthCRCFrames
 
-/-- CRC-3 check register of payload `101` is `0b100`. -/
-example : finalRegister 3 crc3Taps [true, false, true] = 0b100#3 :=
-  (crc3Frame_example).1
-
-/-- Encoded CRC-3 frame for `101` is accepted and returns `101`. -/
-example :
-    (frameParser 3 3 crc3Taps).Translates
-      (encodeFrame 3 crc3Taps [true, false, true]) [true, false, true] :=
-  (crc3Frame_example).2
+/-- CRC-3 fixture: payload `101` at declared length `3` has check
+register `0b100`, and its encoded frame is accepted and returns the
+payload. -/
+theorem crc3Frame_example :
+    finalRegister 3 crc3Taps [true, false, true] = 0b100#3 ∧
+      (frameParser 3 3 crc3Taps).Translates
+        (encodeFrame 3 crc3Taps [true, false, true])
+        [true, false, true] := by
+  constructor
+  · decide
+  · exact encodedFrame_translates_to_payload 3 3 crc3Taps [true, false, true] rfl
 
 /-- Payload `01` round-trips with its leading zero. -/
 example :

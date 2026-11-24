@@ -863,16 +863,4 @@ theorem nonzeroRemainderBody_rejected (l r : ℕ) (taps : BitVec r)
   obtain ⟨⟨_, hReg⟩, _⟩ := hTrans
   exact hrem hReg
 
-/-- CRC-3 fixture: payload `101` at declared length `3` has check
-register `0b100`, and its encoded frame is accepted and returns the
-payload. -/
-theorem crc3Frame_example :
-    finalRegister 3 crc3Taps [true, false, true] = 0b100#3 ∧
-      (frameParser 3 3 crc3Taps).Translates
-        (encodeFrame 3 crc3Taps [true, false, true])
-        [true, false, true] := by
-  constructor
-  · decide
-  · exact encodedFrame_translates_to_payload 3 3 crc3Taps [true, false, true] rfl
-
 end CSLibExt.Coding.FixedLengthCRCFrames

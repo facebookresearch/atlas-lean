@@ -118,7 +118,7 @@ private theorem coeff_bitPoly_mul_X_pow (b : Bool) (i k : ℕ) :
 private theorem eq_zero_of_toPolynomial_eq_zero {r : ℕ} (w : BitVec r)
     (h : w.toPolynomial = 0) : w = 0#r := by
   have hw := BitVec.toBitVec_toPolynomial w
-  rw [h, ← toPolynomial_zero_register r, BitVec.toBitVec_toPolynomial] at hw
+  rw [h, ← BitVec.toPolynomial_zero r, BitVec.toBitVec_toPolynomial] at hw
   exact hw.symm
 
 /-- The register is zero exactly when the generator divides the shifted message. -/
@@ -128,7 +128,7 @@ private theorem finalRegister_eq_zero_iff {r : ℕ} (taps : BitVec r) (bits : Li
     ← final_register_represents_shifted_message_remainder]
   constructor
   · intro h
-    rw [h, toPolynomial_zero_register]
+    rw [h, BitVec.toPolynomial_zero]
   · exact eq_zero_of_toPolynomial_eq_zero _
 
 private theorem toBitsBE_succ (r n : ℕ) :
