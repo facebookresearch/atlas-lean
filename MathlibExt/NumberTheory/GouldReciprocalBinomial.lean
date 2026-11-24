@@ -19,8 +19,7 @@ import Mathlib.Tactic.Ring
 
 This is Lemma 7, equation (2.4), in the published version of Horst Alzer and Man Kam Kwong,
 *Ramanujan and a Combinatorial Identity Involving Harmonic Numbers*,
-*Journal of Integer Sequences* 29 (2026), Article 26.4.8. The declaration docstring retains
-its original numbering.
+*Journal of Integer Sequences* 29 (2026), Article 26.4.8.
 
 Pascal's identity gives a difference of two sums with one fewer term, at `x` and `x - 1`.
 Their falling product denominators differ by the first and last factors of the next product.
@@ -106,7 +105,7 @@ private lemma fallingProduct_eq_factorial_mul_choose (n : ℕ) (x : ℝ) :
     descPochhammer_eval_eq_prod_range]
   rfl
 
-/-- **Gould's reciprocal binomial identity (Alzer–Kwong, Lemma 4).** Let $N$ be a natural number
+/-- **Gould's reciprocal binomial identity (Alzer–Kwong, Lemma 7).** Let $N$ be a natural number
 and $x$ a real number with $x \ne \nu$ for every $\nu \in \{0, 1, \dots, N\}$. Then
 $$
 \sum_{\nu=0}^{N} \frac{(-1)^\nu}{x - \nu} \binom{N}{\nu} = \frac{(-1)^N}{(x - N) \binom{x}{N}},
@@ -115,7 +114,7 @@ where $\binom{x}{N} = x(x-1)\cdots(x-N+1)/N!$ is the generalized binomial coeffi
 
 Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
 Combinatorial Identity Involving Harmonic Numbers",
-Lemma 4. -/
+Lemma 7, equation (2.4). -/
 public theorem sum_neg_one_pow_div_mul_choose_eq
     (N : ℕ) (x : ℝ)
     (hx : ∀ ν ∈ Finset.Icc 0 N, x ≠ (ν : ℝ)) :
