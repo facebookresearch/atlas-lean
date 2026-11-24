@@ -12166,6 +12166,7 @@
   "MathlibExt/NumberTheory/EvenPerfectNumbers": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Euclid–Euler theorem"},
   "MathlibExt/NumberTheory/EvenPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Even pseudoprimes"},
   "MathlibExt/NumberTheory/EvenPseudoprimeWieferich": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Even pseudoprimes"},
+  "MathlibExt/NumberTheory/EvenPseudoprimesInfinite": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Even pseudoprimes"},
   "MathlibExt/NumberTheory/ExistsUniqueRadicalExpansionCoeffs": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/ExponentialPascalMatrix": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Exponential Riordan arrays of Pascal type"},
   "MathlibExt/NumberTheory/ExtendedContinuant": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
