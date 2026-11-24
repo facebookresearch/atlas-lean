@@ -9607,3 +9607,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/machine-learning/algorithmic-fairness/lipschitz-randomized-classifiers-form-a-convex-set.md"}], "id": "af_dcd5e2751d8f6415ff832a7a", "extensions": {"org.atlas-wiki": {"kind": "lemma"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/syntax-with-binders/README.md"}], "id": "af_5def7e8c9332e4c6a58b32b6"}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/syntax-with-binders/abstract-binding-trees-and-alpha-equivalence.md"}], "id": "af_cbc542e008ed97f65f5915fe", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/ranking-and-retrieval-evaluation/google-matrix.md"}], "id": "af_063d404824a821e806a45784", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/ranking-and-retrieval-evaluation/pagerank-existence-uniqueness-and-power-iteration-rate.md"}], "id": "af_aa69b93557f67ade76061bc6", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
