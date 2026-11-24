@@ -17,6 +17,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.Squarefree.Basic
 public import MathlibExt.Combinatorics.Additive.WeightedDavenport
+public import MathlibExt.Combinatorics.Additive.SquareWeightedZeroSum
 
 namespace MetaMathlibExt
 
@@ -24,7 +25,9 @@ namespace MetaMathlibExt
 
 open Pointwise
 
-/-! This file formalizes statements, not proofs, from Paul and Paul. -/
+/-! This file formalizes statements, not proofs, from Paul and Paul. The nonzero squares
+`squareSet` and weighted zero-sum subsequences `HasWeightedZeroSumSubseq` are defined, next to the
+proved results of the paper, in `MathlibExt.Combinatorics.Additive.SquareWeightedZeroSum`. -/
 
 /-- **Units modulo n.** For a natural number $n$, $U(n)$ is the set of units of the ring
 $\mathbb{Z}/n\mathbb{Z}$ of integers modulo $n$.
@@ -40,14 +43,6 @@ Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, 
 Sequences 27 (2024), Article 24.6.6, Introduction. -/
 public def unitSquareSet (n : ℕ) : Set (ZMod n) := {x | ∃ u, IsUnit u ∧ x = u ^ 2}
 
-/-- **Nonzero squares modulo $n$.** For a natural number $n$, $S(n)$ is the set of elements $x$
-of $\mathbb{Z}_n = \mathbb{Z}/n\mathbb{Z}$ with $x \neq 0$ and $x = y^2$ for some
-$y \in \mathbb{Z}_n$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Introduction. -/
-public def squareSet (n : ℕ) : Set (ZMod n) := {x | x ≠ 0 ∧ ∃ y, x = y ^ 2}
-
 /-- **Weighted zero-sum sequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
 $S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ is an $A$-weighted
 zero-sum sequence if there are weights $a_1, \dots, a_k \in A$ with
@@ -57,18 +52,6 @@ Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, 
 Sequences 27 (2024), Article 24.6.6, Introduction. -/
 public def HasWeightedZeroSum {n k : ℕ} (A : Set (ZMod n)) (S : Fin k → ZMod n) : Prop :=
   ∃ a : Fin k → ZMod n, (∀ i, a i ∈ A) ∧ ∑ i, a i * S i = 0
-
-/-- **Weighted zero-sum subsequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
-$S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ has an $A$-weighted
-zero-sum subsequence if there are a nonempty set $J \subseteq \{1, \dots, k\}$ of indices and
-weights $a_i \in A$ for $i \in J$ with $\sum_{i \in J} a_i x_i = 0$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Introduction. -/
-public def HasWeightedZeroSumSubseq {n k : ℕ} (A : Set (ZMod n))
-    (S : Fin k → ZMod n) : Prop :=
-  ∃ J : Finset (Fin k), J.Nonempty ∧
-    ∃ a : Fin k → ZMod n, (∀ i ∈ J, a i ∈ A) ∧ ∑ i ∈ J, a i * S i = 0
 
 /-- **Consecutive weighted zero-sum subsequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
 $S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ has an $A$-weighted
@@ -371,20 +354,6 @@ public theorem_wanted squareSet_constants_evenSquare (n : ℕ) (hn : 2 ≤ n)
     (weightedConsecutiveDefiningSet n (squareSet n)).Nonempty ∧
       weightedDavenport (zmodWeightReps (squareSet n)) (ZMod n) = 4 ∧
       weightedConsecutiveConstant n (squareSet n) = 4
-
-/-- **Two units without square-weighted zero sums modulo any prime divisor.** Let $n \ge 2$ be
-odd, and write $S(m)$ for the set of nonzero squares in $\mathbb{Z}/m\mathbb{Z}$. Then there are
-units $u, v$ of $\mathbb{Z}/n\mathbb{Z}$ such that for every prime $p$ dividing $n$, the sequence
-$(u \bmod p, v \bmod p)$ in $\mathbb{Z}/p\mathbb{Z}$ has no $S(p)$-weighted zero-sum subsequence.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Proposition 17. -/
-public theorem_wanted exists_pair_units_avoiding_prime_squareWeights (n : ℕ)
-    (hn : 2 ≤ n) (hnOdd : Odd n) :
-    ∃ u v : ZMod n, IsUnit u ∧ IsUnit v ∧
-      ∀ p : ℕ, p.Prime → p ∣ n →
-        ¬HasWeightedZeroSumSubseq (squareSet p)
-          (fun i : Fin 2 => (ZMod.cast (![u, v] i) : ZMod p))
 
 /-- **Square-weighted zero-sum free unit pairs lift to odd prime powers.** Let $p$ be an odd
 prime, let $r \ge 1$, and let $x_1, x_2$ be units of $\mathbb{Z}_{p^r}$. Write $S(m)$ for the set
