@@ -1,0 +1,18 @@
+# Finite Transport
+
+- [Induced Dist](induced-dist.md)
+- [Induced Dist is Dist](induced-dist-is-dist.md)
+- [Is Coupling](is-coupling.md)
+- [Transport Cost](transport-cost.md)
+- [Earthmover](earthmover.md)
+- [Bias](bias.md)
+- [Tv Dist nonneg](tv-dist-nonneg.md)
+- [Tv Dist triangle](tv-dist-triangle.md)
+- [Abs event sub le tv Dist](abs-event-sub-le-tv-dist.md)
+- [Tv Dist le one](tv-dist-le-one.md)
+- [Exists coupling](exists-coupling.md)
+- [Nonempty coupling Subtype](nonempty-coupling-subtype.md)
+- [Le earthmover](le-earthmover.md)
+- [Earthmover le transport Cost](earthmover-le-transport-cost.md)
+- [Bias le transport Cost](bias-le-transport-cost.md)
+- [Bias le earthmover](bias-le-earthmover.md)

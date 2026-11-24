@@ -12,6 +12,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import MathlibExt.Probability.FiniteDist
 public import MathlibExt.Probability.MarkovMixing
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Order.ConditionallyCompleteLattice.Indexed
@@ -45,9 +46,7 @@ namespace MathlibExt.Probability.FiniteTransport
 
 noncomputable section
 
-/-- A probability vector on a finite type: nonnegative entries summing to 1. -/
-def IsDist {α : Type*} [Fintype α] (p : α → ℝ) : Prop :=
-  (∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1
+export MathlibExt.Probability.FiniteDist (IsDist)
 
 /-- The distribution obtained by pushing a mass function `S` forward
 along a kernel `M`: outcome `o` has mass `∑ x, S x * M x o`. -/

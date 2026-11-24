@@ -12,7 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fintype.BigOperators
 public import MathlibExt.InformationTheory.LogSum
-public import MathlibExt.Probability.FiniteTransport
+public import MathlibExt.Probability.FiniteDist
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -61,7 +61,7 @@ namespace Cslib.MachineLearning.LatentVariable.ExpectationMaximization
 
 open Real
 
-export MathlibExt.Probability.FiniteTransport (IsDist)
+export MathlibExt.Probability.FiniteDist (IsDist)
 
 variable {Θ X Z : Type*} [Fintype Z]
 
