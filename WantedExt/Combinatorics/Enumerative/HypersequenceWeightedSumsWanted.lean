@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRecurrences
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumStirling
+public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
@@ -39,36 +40,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Finset
-
-/-- **Hypersequence.** Let $(a_n)_{n \ge 0}$ be a sequence in an additive commutative monoid.
-Its hypersequence of generation $r$, written $a^{(r)}_n$, is defined by recursion on $r$:
-$a^{(0)}_n = a_n$ and $a^{(r+1)}_n = \sum_{k=0}^{n} a^{(r)}_k$ for all natural numbers $r$ and
-$n$. Thus each generation is the sequence of partial sums of the previous one.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Section 1, Equation (1.1). -/
-public def hypersequence {R : Type*} [AddCommMonoid R] (a : ℕ → R) : ℕ → ℕ → R
-  | 0, n => a n
-  | r + 1, n => ∑ k ∈ range (n + 1), hypersequence a r k
-
-/-- **Each hypersequence generation sums the previous one.** Let $(a_n)$ be a sequence in an
-additive commutative monoid and let $a^{(r)}_n$ denote its hypersequence of generation $r$. For
-all natural numbers $r$ and $n$, $a^{(r+1)}_n = \sum_{k=0}^{n} a^{(r)}_k$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Section 1, Equation (1.1). -/
-public theorem hypersequence_succ {R : Type*} [AddCommMonoid R] (a : ℕ → R) (r n : ℕ) :
-    hypersequence a (r + 1) n = ∑ k ∈ range (n + 1), hypersequence a r k :=
-  rfl
-
-/-- **First hypersequence at index zero.** Let $(a_n)$ be a sequence in an additive commutative
-monoid and let $a^{(1)}_n$ denote its hypersequence of generation $1$. Then $a^{(1)}_0 = a_0$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Section 1, Equation (1.1). -/
-public theorem hypersequence_one_zero {R : Type*} [AddCommMonoid R] (a : ℕ → R) :
-    hypersequence a 1 0 = a 0 := by
-  simp [hypersequence]
 
 /-- **Hyperfibonacci numbers are the hypersequences of the Fibonacci numbers.** Let $F_k$ denote
 the $k$th Fibonacci number. For all natural numbers $r$ and $n$, the hyperfibonacci number
