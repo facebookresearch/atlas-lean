@@ -28,3 +28,5 @@
 - [Neutral generator of the squared-heterozygosity potential](generator-zero-heterozygosity-sq-potenti.md)
 - [Expected integral of squared heterozygosity until absorption](integral-sq-two-mul-one-sub-absorption-t.md)
 - [Squared-heterozygosity functional of the neutral realization](integral-sq-two-mul-one-sub-absorption-t-2.md)
+
+- [Qualifications of the neutral substitution rate: generation time, linkage and units](k-u-qualifications-generation-time-linkage-and-u.md)

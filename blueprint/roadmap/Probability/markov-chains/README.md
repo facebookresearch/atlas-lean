@@ -16,3 +16,6 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Convergence theorem for finite Markov chains](convergence-theorem-for-finite-markov-chains/README.md)
 
 - [Birth–death balance weights](birth-death-processes/README.md)
+
+- [Martingale problems](martingale-problems/README.md)
+- [Density-dependent Markov chains](density-dependent-markov-chains/README.md)
