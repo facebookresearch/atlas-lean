@@ -20,6 +20,13 @@ boundary transport. Its Leibniz, literal curvature and Griffiths
 properties are OUTPUT proofs, on native higher de Rham cohomology.
 
 Source: Scholze, arXiv:1205.3463v2, Proposition 8.5 and Theorem 8.8(ii).
+
+The exactness hypotheses (`PullbackSourceUnit`) and normalized derived adjunctions
+(`DerivedAdjunctionSource`) below are all for module inverse images along the unit to an
+inverse-image ring, which are exact; they are requested by
+`RelativeIntegralPeriodComparisonWanted.inverseUnitPullbackExact` and
+`inverseUnitDerivedAdjunction`. No request here assumes the exactness of a `B_dR⁺` or structural
+period scalar extension.
 -/
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 3000000
@@ -118,9 +125,6 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
     (scalarX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX))).IsRightAdjoint]
   [EnoughInjectives (Modules (Zhat p X.left PX))] [EnoughInjectives (Modules (Zhat p Y.left PY))]
   [EnoughInjectives (Modules SX.absolutePositive)] [EnoughInjectives (Modules SY.absolutePositive)]
-  [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
-    (coefficientScalar p K B X Y f PX PY E Q N PS)]
-  [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
 variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX.regularSheaf)
   SX.regular (ProEtaleDeRhamSources.originalUnit p K B X PX SX)).IsRightAdjoint]
@@ -179,16 +183,12 @@ variable [EnoughInjectives (Modules SY.regular)]
   [(pushforward Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular)).IsRightAdjoint]
 
-
 variable (H : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M))
 
-
-
 variable [IsIso (constantInverseMap (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
   Q.functor (BaseField.carrier p K))]
-
 
 include H
 public proof_wanted originalKScalarCompatibility (h : RelativeScope p B X Y f) :
@@ -215,7 +215,6 @@ variable [PullbackSourceUnit Q.functor SY.regular (ProEtaleDeRhamSources.relativ
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (ax (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
       (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (H := H))).Additive]
-
 
 public def_wanted nativeBaseCotangentMap (h : RelativeScope p B X Y f) :
   { beta : BaseCotangentType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
@@ -257,7 +256,6 @@ variable [(NativeRestrictionCohomologyMaps.restrictY (AnalyticAbsoluteDeRhamSour
   [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (AnalyticAbsoluteDeRhamSources.constantK p K B X PX) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (ax (E := E) (Q := Q) (H := H)))]
   [ExactCochainUnit (NativeTensorProjectionMaps.tensorX Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY))]
 
-
 public def_wanted originalScalarRestrictionSquare (h : RelativeScope p B X Y f) :
   RestrictionSquareType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
     (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (H := H)
@@ -269,7 +267,6 @@ public def_wanted nativeBaseFormTensorSquare (h : RelativeScope p B X Y f) :
 variable (RS : RestrictionSquareType (E := E) (Q := Q) (H := H))
   (NS : TensorSquareType (E := E) (Q := Q) (H := H))
   (AO : DerivedAdjunctionSource Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular))
-
 
 /-- Assemble the fixed native cofactor and finite-form projection before higher outputs. -/
 public def_wanted originalGaussManinFactory (h : RelativeScope p B X Y f)

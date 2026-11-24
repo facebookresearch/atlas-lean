@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
-public import MathlibExt.AlgebraicGeometry.AnalyticGroupTorsorSites
 public import MathlibExt.AlgebraicGeometry.GeneralPadicCoefficientFields
 public import MathlibExt.CategoryTheory.RingedDerivedCoefficientOperations
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.LocallyFree

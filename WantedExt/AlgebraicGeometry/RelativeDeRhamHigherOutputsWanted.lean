@@ -113,9 +113,6 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
     (scalarX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX))).IsRightAdjoint]
   [EnoughInjectives (Modules (Zhat p X.left PX))] [EnoughInjectives (Modules (Zhat p Y.left PY))]
   [EnoughInjectives (Modules SX.absolutePositive)] [EnoughInjectives (Modules SY.absolutePositive)]
-  [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
-    (coefficientScalar p K B X Y f PX PY E Q N PS)]
-  [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
 variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX.regularSheaf)
   SX.regular (ProEtaleDeRhamSources.originalUnit p K B X PX SX)).IsRightAdjoint]
@@ -173,7 +170,6 @@ variable [EnoughInjectives (Modules SY.regular)]
   [EnoughInjectives (Modules (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q))]
   [(pushforward Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular)).IsRightAdjoint]
-
 
 public def_wanted originalGradedExact (h : RelativeScope p B X Y f) :
   GradedExactType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)

@@ -129,7 +129,6 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
   [EnoughInjectives (Modules SX.absolutePositive)] [EnoughInjectives (Modules SY.absolutePositive)]
   [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
     (coefficientScalar p K B X Y f PX PY E Q N PS)]
-  [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
 variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX.regularSheaf)
   SX.regular (ProEtaleDeRhamSources.originalUnit p K B X PX SX)).IsRightAdjoint]
@@ -316,7 +315,7 @@ abbrev AugmentationType := AssociatedPeriodAugmentationSources.Source
     (NaturalPeriodMaps.structuralFullMap p K B X Y f PX PY SX SY E Q N hp PM)) PD.fullTerms
 
 variable [PullbackSourceUnit Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q)]
-  [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)]
+
   [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))]
   [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY))]
   [PreservesFiniteLimits (NativeScalarProjectionMaps.scalarY SY.regular SY.naiveStructuralFull SY.scalars.originalToFull)]
@@ -377,6 +376,12 @@ local instance augmentationScalarPullbackUnit :
     (basePeriod p K B X Y f PX PY SY E Q)
     (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY))
   infer_instance
+
+/-! The coherent comparison below also uses the derived scalar extension along `baseScalar`
+(from the inverse image of `O_Y` to that of the naive structural periods), whose exactness
+(`PullbackSourceUnit`, a flatness statement) is a hypothesis here and is not requested. -/
+
+variable [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)]
 
 variable (SO : NativeScalarProjectionMaps.SourceSquare Q.functor SY.regular SY.naiveStructuralFull
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) SY.scalars.originalToFull (baseScalar p K B X Y f PX PY SY E Q) (originalUnitY p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q))

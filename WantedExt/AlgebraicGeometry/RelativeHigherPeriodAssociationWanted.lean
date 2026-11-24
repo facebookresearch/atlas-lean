@@ -23,6 +23,13 @@ Definition 6.8, erratum item (3)), for which the Taylor comparison behind them f
 the corrected finite-stage construction. No unrestricted rational relative 8.8 is asserted.
 
 Source: Scholze, arXiv:1205.3463v2, Definition 8.3 and Theorem 8.8.
+
+The exactness hypotheses (`PullbackSourceUnit`) and normalized derived adjunctions
+(`DerivedAdjunctionSource`) below are all for module inverse images along the unit to an
+inverse-image ring, which are exact; they are requested by
+`RelativeIntegralPeriodComparisonWanted.inverseUnitPullbackExact` and
+`inverseUnitDerivedAdjunction`. No request here assumes the exactness of a `B_dR⁺` or structural
+period scalar extension.
 -/
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 3000000
@@ -124,9 +131,6 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
     (scalarX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX))).IsRightAdjoint]
   [EnoughInjectives (Modules (Zhat p X.left PX))] [EnoughInjectives (Modules (Zhat p Y.left PY))]
   [EnoughInjectives (Modules SX.absolutePositive)] [EnoughInjectives (Modules SY.absolutePositive)]
-  [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
-    (coefficientScalar p K B X Y f PX PY E Q N PS)]
-  [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
 variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX.regularSheaf)
   SX.regular (ProEtaleDeRhamSources.originalUnit p K B X PX SX)).IsRightAdjoint]
@@ -260,9 +264,9 @@ variable (CLX : CompositionSource (Zhat p X.left PX) SX.absolutePositive SX.naiv
 variable (PD : PeriodComplexType p K B X Y f PX PY SX SY E Q N Ω M D DS FS hp PM PC FC)
 
 variable [PullbackSourceUnit Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q)]
-  [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)]
+
   [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))]
-  [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY))]
+
   [PreservesFiniteLimits (NativeScalarProjectionMaps.scalarY SY.regular SY.naiveStructuralFull SY.scalars.originalToFull)]
   [PreservesFiniteColimits (NativeScalarProjectionMaps.scalarY SY.regular SY.naiveStructuralFull SY.scalars.originalToFull)]
   [PreservesFiniteLimits (NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.naiveStructuralFull (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)))]
@@ -307,21 +311,6 @@ local instance augmentationPeriodPullbackUnit :
     (periodUnitY p K B X Y f PX PY SY E Q)
   infer_instance
 
-local instance augmentationScalarPullbackUnit :
-    PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
-      (AssociatedPeriodAugmentationSources.baseAbsolute (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
-        Q.functor (Zhat p Y.left PY))
-      (AssociatedPeriodAugmentationSources.basePeriod (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
-        Q.functor SY.naiveStructuralFull)
-      (AssociatedPeriodAugmentationSources.scalar (J := proTopology p Y.left PY) (T := proTopology p X.left PX)
-        Q.functor (Zhat p Y.left PY) SY.naiveStructuralFull
-          (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))) := by
-  change PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left))
-    (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))
-    (basePeriod p K B X Y f PX PY SY E Q)
-    (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY))
-  infer_instance
-
 include H
 
 public def_wanted originalCoherentScalarSquare (h : RelativeScope p B X Y f) :
@@ -335,16 +324,6 @@ public def_wanted originalAssociatedAugmentation (hBase : BaseData (p := p) (K :
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M)) (h : RelativeScope p B X Y f) :
   AugmentationType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX)
-
-variable (SO : NativeScalarProjectionMaps.SourceSquare Q.functor SY.regular SY.naiveStructuralFull
-    (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) SY.scalars.originalToFull (baseScalar p K B X Y f PX PY SY E Q) (originalUnitY p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q))
-  (AZO : DerivedAdjunctionSource Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (originalUnitY p K B X Y f PX PY SY E Q))
-  (AZF : DerivedAdjunctionSource Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q))
-  (ASO : DerivedAdjunctionSource (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q))
-  (SZ : NativeScalarProjectionMaps.SourceSquare Q.functor (Zhat p Y.left PY) SY.naiveStructuralFull (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (zFullY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (periodUnitY p K B X Y f PX PY SY E Q))
-  (AZZ : DerivedAdjunctionSource Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)))
-  (ASZ : DerivedAdjunctionSource (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY)))
-  (AL : AugmentationType (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D) (DS := DS) (FS := FS) (hp := hp) (PM := PM) (PC := PC) (FC := FC) (PD := PD) (FX := FX) (FY := FY) (IX := IX) (IY := IY) (PS := PS) (T := T) (TQ := TQ) (L := L) (H := H) (CLX := CLX))
 
 local instance originalZRestrictionAdditive :
     (NativeRestrictionCohomologyMaps.restrictX (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS))).Additive := by

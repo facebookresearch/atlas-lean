@@ -11,18 +11,21 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison
 
 /-!
-# Integral relative Theorem 8.8 on native higher coefficients
+# Exactness requests for the relative integral period comparison
 
-The coefficient is the native degree-zero realization of the actual
-finite inverse-image tower. The higher-lisse guard is that ACTUAL native R^i f_* L is lisse in the
-sense of `ProEtaleIntegralLisseModules.IsLisse`, locally a finite `ℤ_p`-module (torsion allowed,
-as in Scholze's Definition 8.1), not that it is finite locally free. Scalar maps, the original derived
-adjunction units/counits and the comparison arrow are fixed constructions.
-The final IsIso is an OUTPUT proof request.
+The comparison of integral relative Theorem 8.8(i) (`RelativeIntegralPeriodComparison.comparison`)
+also uses the derived pullback of `B_dR⁺`-modules along the relative map, whose exactness (a
+flatness of `B_dR⁺` on `X` over the inverse image of `B_dR⁺` on `Y`) is not established; the
+comparison isomorphism and its scalar square are therefore not requested here, so as not to make a
+request conditional on a hypothesis that may fail. What is requested are the exactness statements
+that do hold: the scalar extension of `Ẑ_p`-modules, and the module inverse image along the unit to
+an inverse-image ring (the sheaf inverse image), with their normalized derived adjunctions. They
+discharge the corresponding hypotheses of the Gauss–Manin and higher-association requests.
 
-This is integral relative 8.8(i). Full Qhat objects and native maps are
-available without a global integral lattice; no unrestricted rational
-relative 8.8 theorem is asserted.
+The higher-lisse guard (`RelativeIntegralPeriodComparison.HigherLisseAt`) is that ACTUAL native
+R^i f_* L is lisse in the sense of `ProEtaleIntegralLisseModules.IsLisse`, locally a finite
+`ℤ_p`-module (torsion allowed, as in Scholze's Definition 8.1), not that it is finite locally
+free.
 
 Source: Scholze, arXiv:1205.3463v2, Definitions 8.1--8.3 and Theorem 8.8.
 -/
@@ -120,37 +123,48 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
     (scalarX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX))).IsRightAdjoint]
   [EnoughInjectives (Modules (Zhat p X.left PX))] [EnoughInjectives (Modules (Zhat p Y.left PY))]
   [EnoughInjectives (Modules SX.absolutePositive)] [EnoughInjectives (Modules SY.absolutePositive)]
-  [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
-    (coefficientScalar p K B X Y f PX PY E Q N PS)]
-  [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
-/-- Construct the original ordinary/derived scalar square, normalized on all native cochain units. -/
-public def_wanted integralScalarSquare (h : RelativeScope p B X Y f) :
-  SourceSquare Q.functor (Zhat p Y.left PY) SY.absolutePositive (Zhat p X.left PX) SX.absolutePositive
-    (scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))
-    (scalarX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX))
-    (coefficientScalar p K B X Y f PX PY E Q N PS) PM.absolutePositive
+/-- The scalar extension of `Ẑ_p`-modules along the relative pro-étale map is exact: `Ẑ_p` on `X`
+is the inverse image of `Ẑ_p` on `Y`, so the derived pullback is computed termwise. -/
+public def_wanted coefficientPullbackExact (h : RelativeScope p B X Y f) :
+    PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
+      (coefficientScalar p K B X Y f PX PY E Q N PS)
 
-variable (SC : SourceSquare Q.functor (Zhat p Y.left PY) SY.absolutePositive
-    (Zhat p X.left PX) SX.absolutePositive (scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))
-    (scalarX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX)) (coefficientScalar p K B X Y f PX PY E Q N PS) PM.absolutePositive)
-  (AZ : DerivedAdjunctionSource Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
-    (coefficientScalar p K B X Y f PX PY E Q N PS))
-  (AB : DerivedAdjunctionSource Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive)
-  [PreservesFiniteLimits (MathlibExt.CategoryTheory.NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.absolutePositive
-    (scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)))]
-  [PreservesFiniteColimits (MathlibExt.CategoryTheory.NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.absolutePositive
-    (scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)))]
+/-- The normalized derived adjunction of `Ẑ_p`-modules along the relative pro-étale map. -/
+public def_wanted coefficientDerivedAdjunction (h : RelativeScope p B X Y f)
+    [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
+      (coefficientScalar p K B X Y f PX PY E Q N PS)] :
+    DerivedAdjunctionSource Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
+      (coefficientScalar p K B X Y f PX PY E Q N PS)
 
+/-- The module inverse image along the unit to the inverse-image ring of a ring sheaf on `Y` is
+the sheaf inverse image along the relative pro-étale map, which is exact. This provides the
+exactness hypotheses of the Gauss–Manin and higher-association requests (for `O_Y`, `Ẑ_p` and the
+naive structural periods). -/
+public def_wanted inverseUnitPullbackExact (h : RelativeScope p B X Y f)
+    (S : Sheaf (proTopology p Y.left PY) CommRingCat.{1}) [EnoughInjectives (Modules S)]
+    [EnoughInjectives (Modules (inverseRing (J := proTopology p Y.left PY)
+      (T := proTopology p X.left PX) Q.functor S))]
+    [(pushforward Q.functor S (inverseRing (J := proTopology p Y.left PY)
+      (T := proTopology p X.left PX) Q.functor S)
+      (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor S)).IsRightAdjoint] :
+    PullbackSourceUnit Q.functor S
+      (inverseRing (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor S)
+      (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor S)
 
-/-- The source higher-lisse hypothesis is on the actual native R^i f_* coefficient. -/
-public proof_wanted integralRelativePeriodProjection (h : RelativeScope p B X Y f) (i : ℤ)
-    (hHigher : HigherLisseAt (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
-      (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS) (T := T) (TQ := TQ) (L := L) i) :
-  IsIso (MathlibExt.AlgebraicGeometry.RelativeIntegralPeriodComparison.comparison
-    (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY)
-    (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (PS := PS) (hp := hp) (PM := PM)
-    (FX := FX) (FY := FY) (IX := IX) (IY := IY) (T := T) (TQ := TQ) (L := L)
-    (SC := SC) (AZ := AZ) (AB := AB) i)
+/-- The normalized derived adjunction along the unit to an inverse-image ring. -/
+public def_wanted inverseUnitDerivedAdjunction (h : RelativeScope p B X Y f)
+    (S : Sheaf (proTopology p Y.left PY) CommRingCat.{1}) [EnoughInjectives (Modules S)]
+    [EnoughInjectives (Modules (inverseRing (J := proTopology p Y.left PY)
+      (T := proTopology p X.left PX) Q.functor S))]
+    [(pushforward Q.functor S (inverseRing (J := proTopology p Y.left PY)
+      (T := proTopology p X.left PX) Q.functor S)
+      (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor S)).IsRightAdjoint]
+    [PullbackSourceUnit Q.functor S
+      (inverseRing (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor S)
+      (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor S)] :
+    DerivedAdjunctionSource Q.functor S
+      (inverseRing (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor S)
+      (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor S)
 
 end WantedExt.AlgebraicGeometry.RelativeIntegralPeriodComparison

@@ -120,7 +120,6 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
   [EnoughInjectives (Modules SX.absolutePositive)] [EnoughInjectives (Modules SY.absolutePositive)]
   [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
     (coefficientScalar p K B X Y f PX PY E Q N PS)]
-  [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
 variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX.regularSheaf)
   SX.regular (ProEtaleDeRhamSources.originalUnit p K B X PX SX)).IsRightAdjoint]
@@ -179,12 +178,9 @@ variable [EnoughInjectives (Modules SY.regular)]
   [(pushforward Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular)).IsRightAdjoint]
 
-
 variable (H : BaseData (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
   (PX := PX) (PY := PY) (SX := SX) (SY := SY)
   (FX := FX) (IX := IX) (T := T) (TQ := TQ) (L := L) (Ω := Ω) (M := M))
-
-
 
 abbrev G := Q.functor
 abbrev OY := SY.regular
@@ -309,8 +305,6 @@ abbrev CofactorType := MathlibExt.CategoryTheory.NativeGaussManinOutputs.Cofacto
     (nativeRelative (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f)
       (PX := PX) (PY := PY) (SX := SX) (SY := SY) (E := E) (Q := Q) (N := N) (Ω := Ω) (M := M) (D := D))
 
-
-
 variable (beta : BaseCotangentType (E := E) (Q := Q) (N := N) (H := H))
 
 abbrev CotangentNormalization := GaussManinCofactorNormalization.IsCotangentSource
@@ -377,7 +371,6 @@ def higherConnection (i : ℤ) [IsIso (gaussManinTarget
 
 abbrev BaseOneFormType := AnalyticAbsoluteDeRhamSources.OneFormSource
   p K B Y PY SY H.absoluteFormsY H.scalarY H.formSourceY
-
 
 /-- The actual original cofactor and intermediate finite-form projection source. This factory
 contains no higher vector bundle, connection or period comparison oracle. -/

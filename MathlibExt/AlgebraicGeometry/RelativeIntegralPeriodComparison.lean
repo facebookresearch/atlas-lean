@@ -134,7 +134,6 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
   [EnoughInjectives (Modules SX.absolutePositive)] [EnoughInjectives (Modules SY.absolutePositive)]
   [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
     (coefficientScalar p K B X Y f PX PY E Q N PS)]
-  [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
 def integralComplex : Derived (Zhat p X.left PX) :=
   (DerivedCategory.Plus.singleFunctor (Modules (Zhat p X.left PX)) 0).obj L.module
@@ -149,6 +148,12 @@ def higherIntegral (i : ℤ) : Modules (Zhat p Y.left PY) :=
 def HigherLisseAt (i : ℤ) : Prop :=
   ProEtaleIntegralLisseModules.IsLisse p Y.left PY
     (higherIntegral p K B X Y f PX PY E Q N PS T TQ L i)
+
+/-! The comparison below also uses the derived pullback of `B_dR⁺`-modules, whose exactness
+(`PullbackSourceUnit` for `PM.absolutePositive`, a flatness statement) is a hypothesis here and
+is not requested. -/
+
+variable [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
 variable (SC : SourceSquare Q.functor (Zhat p Y.left PY) SY.absolutePositive
     (Zhat p X.left PX) SX.absolutePositive (scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))

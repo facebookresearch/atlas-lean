@@ -135,7 +135,6 @@ variable [∀ U : AnalyticProObjectSites.Etale p X.left,
   [EnoughInjectives (Modules SX.absolutePositive)] [EnoughInjectives (Modules SY.absolutePositive)]
   [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
     (coefficientScalar p K B X Y f PX PY E Q N PS)]
-  [PullbackSourceUnit Q.functor SY.absolutePositive SX.absolutePositive PM.absolutePositive]
 
 /-- The integral coefficient complex of `RelativeIntegralPeriodComparison`. -/
 abbrev integralComplex : Derived (Zhat p X.left PX) :=
