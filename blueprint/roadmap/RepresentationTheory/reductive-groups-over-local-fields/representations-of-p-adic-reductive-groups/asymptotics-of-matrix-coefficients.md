@@ -39,7 +39,7 @@ classification, each citing the sources below with locators.
 ## Proof depends on
 
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compact open subgroups with an Iwahori factorization in Jacquet's lemmas and for the cones $A^-_\Theta$
-- Not yet a page: Casselman's Proposition 1.4.6 (p. 15): there is an open subgroup $\Gamma$ of $G$, compact modulo the centre and containing $A_\emptyset(\mathcal{O})$, with $G = \Gamma A_\emptyset^- \Gamma$; the proof of his Theorem 4.4.6 (p. 45) covers $G$ by finitely many sets $K \gamma_i A_\emptyset^- \gamma_j K$ with it. The decomposition $G = K A^- K$ with $K$ maximal compact holds when the centre is anisotropic (his Lemma 1.4.5, p. 15) and for $\mathrm{GL}_n$, but not for every connected reductive group: for $\mathrm{R}_{E/F}\mathbb{G}_m$ with $E/F$ ramified quadratic, $K = \mathcal{O}_E^\times$ and $A^- = F^\times$, every element of $K A^- K$ has even $E$-valuation
+- Not yet a page: a Cartan decomposition for every connected reductive group, in terms of the minimal Levi subgroup $M = Z_G(A_\emptyset)$ rather than the split torus: for a special maximal compact subgroup $\tilde K$, $\tilde K \backslash G / \tilde K \cong W \backslash M(F)/M(F)^1$, where $M(F)^1$ is the maximal compact open subgroup of $M(F)$ and $M(F)/M(F)^1$ is a free abelian group containing $X_*(A_\emptyset)$ with the same rank (Haines–Rostami, Introduction, pp. 1–2, after Cartier). Each $W$-orbit meets the closed chamber of $A_\emptyset^-$, whose points in $M(F)/M(F)^1$ lie in finitely many translates of its points in $X_*(A_\emptyset)$; so $G = \bigcup_{t \in T} \tilde K\, t A_\emptyset^- \tilde K$ for a finite subset $T$ of $M(F)$, and the asymptotics are studied on each $t A_\emptyset^-$, which leaves Casselman's square-integrability criterion unaffected. For unramified groups, $\mathrm{GL}_n$ among them, $M(F)/M(F)^1 = X_*(A_\emptyset)$ and $G = \tilde K A_\emptyset^- \tilde K$. Casselman's Lemma 1.4.5 and Proposition 1.4.6 (p. 15), used in the proof of his Theorem 4.4.6 (p. 45), take the middle factor in $A_\emptyset^-$ itself, which fails in general: for $G = \mathrm{R}_{E/\mathbb{Q}_3}\mathrm{SL}_2$ with $E = \mathbb{Q}_3(\sqrt 3)$, whose centre is finite, no open subgroup $\Gamma$, compact modulo the centre and containing $A_\emptyset(\mathcal{O})$, satisfies $G = \Gamma A_\emptyset^- \Gamma$: in a basis of a $\Gamma$-stable $\mathcal{O}_E$-lattice, $\mathrm{diag}(\pi_E, \pi_E^{-1})$ is not in $\Gamma A_\emptyset^- \Gamma$, because the elements $\mathrm{diag}(t, t^{-1})$, $t \in \mathbb{Q}_3^\times$, of $A_\emptyset(F)$ have even $E$-valuations
 
 ## Sources
 
@@ -51,6 +51,12 @@ classification, each citing the sources below with locators.
 - W. Casselman, "The unramified principal series of p-adic groups I. The spherical function",
   Compositio Math. 40 (1980), 387–406, <http://www.numdam.org/item?id=CM_1980__40_3_387_0>: the
   proof of Proposition 2.4 (the use of Lemma 4.1.3 of an earlier version of the notes above).
+- T. J. Haines and S. Rostami, "The Satake isomorphism for special maximal parahoric Hecke algebras",
+  arXiv:0907.4506 (version 2): Introduction, pp. 1–2 (for a connected reductive group over a
+  non-archimedean local field, a special maximal compact subgroup $\tilde K$ and $M = \mathrm{Cent}_G(A)$, the Cartan
+  decomposition $\tilde K \backslash G(F) / \tilde K \cong W(G, A) \backslash \tilde\Lambda_M$ of Cartier, where
+  $\tilde\Lambda_M = M(F)/M(F)^1$ is free abelian, contains $X_*(A)$ and has the same rank; for unramified groups it
+  is $W(G, A) \backslash X_*(A)$).
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
   arXiv:math/0011210 (version 2): (2.3.1)–(2.3.4) (essentially $L^r$ and tempered representations,
   after A. J. Silberger) and (2.3.9) (the Langlands classification for general reductive groups,

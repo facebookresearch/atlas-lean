@@ -47,7 +47,8 @@ Atiyah–Schmid construction, each citing the sources below with locators.
 - [Discrete series representations and formal degrees](discrete-series-and-formal-degrees.md), for discrete series and square-integrable representations (square-integrability modulo the centre is not membership in $L^2(G)$ when the centre is noncompact)
 - [Holomorphic discrete series](holomorphic-discrete-series.md), for the modules $\mathbf{F}_\lambda$ of the Hermitian symmetric case, whose characters the first item uses
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the real points of Zariski-connected reductive groups and their maximal compact subgroups
-- Not yet a page: parabolic subgroups of real reductive groups with their Langlands decompositions, and Cartan subgroups, also for connected semisimple Lie groups with finite centre that are not linear, for the principal series and the characters
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the parabolic $\mathbb{R}$-subgroups $P = MN$ of the algebraic group and their Levi decompositions, over $k = \mathbb{R}$
+- Not yet a page: the Langlands decompositions $P = MAN$ of real parabolic subgroups, and Cartan subgroups, also for connected semisimple Lie groups with finite centre that are not linear, for the principal series and the characters
 - Not yet a page: trace-class operators on a Hilbert space and the trace of $\pi(f)$, $f \in C_c^\infty(G)$, for distribution characters
 - Not yet a page apart from a cycle: the definition of Harish-Chandra modules, used by the second and third items; the page on Harish-Chandra modules depends on this node in its proof, so the definition must be split from it before a link can be added
 

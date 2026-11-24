@@ -5,19 +5,22 @@ reductive group over a field, which the pages on automorphic forms, Eisenstein s
 and $p$-adic groups use over number fields and local fields alike. Let $\mathbf{G}$ be a connected
 reductive group over a field $k$.
 
-- **Parabolic subgroups.** Parabolic $k$-subgroups $P$ and their Levi decompositions $P = M N$, with $N$
-  the unipotent radical, a $k$-split unipotent group, and $M$ a Levi $k$-subgroup; a minimal parabolic
-  $k$-subgroup $P_0$ containing a maximal $k$-split torus $A_0$; the standard parabolic subgroups, those
-  containing $P_0$, each with a unique Levi subgroup containing $A_0$; every parabolic $k$-subgroup is
-  $\mathbf{G}(k)$-conjugate to exactly one standard parabolic subgroup, and is contained in a maximal one;
-  the relative Weyl group $W = N_{\mathbf{G}}(A_0)(k)/Z_{\mathbf{G}}(A_0)(k)$ and the Weyl groups $W_M$ of
+- **Parabolic subgroups.** Parabolic $k$-subgroups $P$, $\mathbf{G}$ itself among them, and their Levi
+  decompositions $P = M N$, with $N$ the unipotent radical, a $k$-split unipotent group, and $M$ a Levi
+  $k$-subgroup; a minimal parabolic $k$-subgroup $P_0$ containing a maximal $k$-split torus $A_0$, which
+  determines the set $\Delta_0$ of simple roots of the relative root system of $(\mathbf{G}, A_0)$; the standard
+  parabolic subgroups, those containing $P_0$, which correspond to the subsets of $\Delta_0$ ($P_0$ to the empty
+  set and $\mathbf{G}$ to $\Delta_0$), each with a unique Levi subgroup containing $A_0$; every parabolic $k$-subgroup
+  is $\mathbf{G}(k)$-conjugate to exactly one standard parabolic subgroup, and every proper one is contained in a
+  maximal proper parabolic $k$-subgroup ($\mathbf{G}$ itself lies in no proper one, and a torus has no proper
+  parabolic subgroup); the relative Weyl group $W = N_{\mathbf{G}}(A_0)(k)/Z_{\mathbf{G}}(A_0)(k)$ and the Weyl groups $W_M$ of
   standard Levi subgroups.
 - **Rational Bruhat decomposition.** For standard parabolic subgroups $P$ and $Q$ with standard Levi
   subgroups $M$ and $L$, $\mathbf{G}(k)$ is the disjoint union of the double cosets $P(k)\, w\, Q(k)$ for
   $w$ in a set of representatives of $W_M \backslash W / W_L$.
 - **The general linear group.** For $\mathbf{G} = \mathrm{GL}_n$ the parabolic subgroups are the stabilizers
   of flags of subspaces of $k^n$; with $P_0$ the upper triangular group, the standard ones are the block
-  upper triangular groups attached to the compositions $n = n_1 + \dots + n_r$, the maximal ones those of
+  upper triangular groups attached to the compositions $n = n_1 + \dots + n_r$, the maximal proper ones those of
   block sizes $(n_1, n_2)$, and $W$ is the symmetric group $S_n$.
 
 A good expansion has definition pages for parabolic subgroups, Levi decompositions and standard
@@ -32,13 +35,15 @@ not repeat it.
 
 ## Proof depends on
 
-- Not yet a page: the theory of Borel and Tits of reductive groups over a field (conjugacy of minimal parabolic subgroups and of maximal split tori, relative root systems and Tits systems), for all the items
+- Not yet a page: the theory of Borel and Tits of reductive groups over a field (conjugacy of minimal parabolic subgroups and of maximal split tori, relative root systems and their simple roots, and Tits systems), for all the items
 
 ## Sources
 
-- A. Borel and J. Tits, "Groupes réductifs", Publ. Math. IHÉS 27 (1965), 55–150: §§4–5, in particular
-  5.15 and 5.20 (the Bruhat decomposition and the bijection $W_M \backslash W / W_L \cong P \backslash G / Q$),
-  as cited by Bernstein and Zelevinsky (1977), §6.4.
+- A. Borel and J. Tits, "Groupes réductifs", Publ. Math. IHÉS 27 (1965), 55–150,
+  <http://www.numdam.org/item?id=PMIHES_1965__27__55_0>: §§4–5, in particular 5.12, p. 99 (the standard parabolic
+  $k$-subgroups attached to the subsets of the simple $k$-roots, minimal for the empty set and equal to $G$ for
+  all of them), 5.15, p. 100 (the Bruhat decomposition) and 5.20, p. 102 (the bijection
+  $W_M \backslash W / W_L \cong P \backslash G / Q$), also cited by Bernstein and Zelevinsky (1977), §6.4.
 - I. N. Bernstein and A. V. Zelevinsky, "Induced representations of reductive p-adic groups. I",
   Ann. Sci. École Norm. Sup. (4) 10 (1977), 441–472,
   <http://www.numdam.org/item?id=ASENS_1977_4_10_4_441_0>: §2.1 (minimal parabolic subgroups, maximal

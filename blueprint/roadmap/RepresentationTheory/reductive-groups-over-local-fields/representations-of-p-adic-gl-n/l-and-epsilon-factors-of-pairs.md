@@ -63,12 +63,12 @@ follows there, since its printed factors do not depend on the product index.
 ## Proof depends on
 
 - [Parabolic induction and Jacquet functors](../representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for the Jacquet modules whose $A$-finite functions (characters times powers of the valuation, with Jordan blocks) govern the asymptotic expansion of Whittaker functions on the diagonal torus (Cogdell, Lecture 6, §1, Proposition 6.1 and Remark 3, p. 46), which gives the convergence and rationality of the local integrals (Proposition 6.2, p. 47); the expansion itself is a further result, and Cogdell proves these for unitary generic representations with $m < n$, the case $m = n$ being analogous
-- [Mirabolic restriction and Bernstein–Zelevinsky derivatives](bernstein-zelevinsky-derivatives.md), for the Kirillov models and the representation theory of the mirabolic subgroup, in which the uniqueness of the quasi-invariant bilinear forms behind the local functional equation is proved (Cogdell, Lecture 6, §3, Proposition 6.4, p. 48; Theorem 6.2 is the resulting functional equation)
+- [Mirabolic restriction and Bernstein–Zelevinsky derivatives](bernstein-zelevinsky-derivatives.md), for the Kirillov models and the representation theory of the mirabolic subgroup, in which the uniqueness, outside finitely many values of $q^{-s}$, of the quasi-invariant bilinear forms behind the local functional equation is proved (Cogdell, Lecture 6, §3, Proposition 6.4, p. 48; Theorem 6.2 is the resulting functional equation)
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the Bruhat decomposition, which the proof of that uniqueness also uses (ibid.)
 - [Functional equation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-functional-equation.md), for the global functional equation of Hecke $L$-functions with the standard adelic character and self-dual measures, from which Deligne's global argument for the local constants starts; it does not state the local functional equations for arbitrary $(\chi, \psi, dx)$
 - Not yet a page: Tate's local functional equation for every nontrivial additive character $\psi$ and Haar measure $dx$ (Poonen, Theorem 4.18 (e), pp. 19–20), for Tate's local factors
 - Not yet a page: the existence of the Langlands–Deligne local constants, multiplicative in exact sequences and inductive in degree zero, by Deligne's global argument (Deligne 1973, as cited by Wedhorn), for the Galois side
-- Not yet a page: Brauer's induction theorem in the virtual form needed for inductivity in degree zero (the virtual characters of degree zero of a finite group are integral combinations of $\mathrm{Ind}_H^G(\chi - 1_H)$ for elementary subgroups $H$ and characters $\chi$), applied after reducing representations of $W_F$ to representations with finite image up to an unramified twist
+- Not yet a page: Brauer's induction theorem in the virtual form needed for inductivity in degree zero (the virtual characters of degree zero of a finite group are integral combinations of $\mathrm{Ind}_H^G(\chi - 1_H)$ for elementary subgroups $H$ and characters $\chi$; Česnavičius, Proposition 5.3 (b), after Deligne), applied type by type: a virtual representation of $W_F$ is a combination of irreducible ones, on each of which a power of Frobenius acts by a scalar, its type, and each type becomes of finite image after an unramified twist chosen for it (Česnavičius, §5.5, Lemma 5.5.1, (5.5.2)–(5.5.3), and Proposition 5.6, after Deligne); one twist for the whole representation does not suffice, as $1 \oplus \lvert \cdot \rvert$ shows
 
 ## Sources
 
@@ -99,6 +99,11 @@ follows there, since its printed factors do not depend on the product index.
   and rationality of the local integrals), and §3, p. 48 (Proposition 6.4, the uniqueness principle behind the local
   functional equation, whose proof "takes place in the Kirillov models and involves the representation
   theory of the mirabolic subgroup P and Bruhat theory", and Theorem 6.2).
+- K. Česnavičius, "Local factors valued in normal domains", author's version of 15 October 2014,
+  <https://webusers.imj-prg.fr/~kestutis.cesnavicius/epsilon-schemes.pdf>: Proposition 5.3 (after Deligne 1973, 1.5:
+  the virtual representations of degree zero of a finite group are spanned by the $\mathrm{Ind}_H^G([\chi] - [1_H])$, $H$
+  elementary), §5.5 (types of Weil representations, after Deligne 1973, 4.10: Lemma 5.5.1, the decomposition (5.5.2)
+  by types and the twist (5.5.3) by an unramified character of each type) and Proposition 5.6.
 - P. Deligne, "Les constantes des équations fonctionnelles des fonctions L", in *Modular Functions
   of One Variable II*, Lecture Notes in Math. 349, Springer, 1973, 501–596, the source of the local
   constants, as cited by Wedhorn ([De2]).

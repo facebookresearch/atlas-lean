@@ -12,32 +12,38 @@ irreducible unitary representation of $G$, with inner products linear in the fir
 - **Inversion.** $\int_G f(g^{-1}) \, dg = \int_G f(g) \, dg$ for every integrable $f$ on a unimodular
   $G$, so that $g \mapsto \langle \pi(g^{-1})\xi, \eta \rangle = \overline{\langle \pi(g)\eta, \xi \rangle}$
   and $g \mapsto \langle \pi(g)\eta, \xi \rangle$ have the same $L^2$-norm.
-- **Coefficient maps.** If $g \mapsto \langle v, \pi(g)v \rangle$ is square-integrable for one
-  $v \ne 0$, then every coefficient $g \mapsto \langle \pi(g)\xi, \eta \rangle$ is square-integrable,
-  and for each $\eta$ the map $T_\eta \colon \xi \mapsto \langle \pi(\cdot)\xi, \eta \rangle$ is an
-  everywhere defined closed, hence bounded, $G$-equivariant map from $H$ to $L^2(G)$ with the left
-  regular representation; the passage from the initial coefficient to all vectors (through
-  irreducibility, the closedness of the set of good vectors, or Carey's embedding of a cyclic
-  representation into $L^2(G)$ by a positive-definite convolution square root) precedes the closed graph
-  theorem, which applies only to an everywhere defined map.
-- **Closed graph theorem.** A linear map between Banach spaces with closed graph is bounded.
+- **Coefficient maps.** For $\eta \in H$ let $D_\eta$ be the space of $\xi$ such that
+  $T_\eta \xi = \langle \pi(\cdot)\xi, \eta \rangle$ is square-integrable. Then
+  $T_\eta(\pi(h)\xi)(g) = (T_\eta \xi)(gh)$: $T_\eta$ intertwines $\pi$ with the right regular representation
+  $(R(h)f)(g) = f(gh)$, not with the left one (composing with $f \mapsto f(\cdot^{-1})$ gives the left one). The
+  space $D_\eta$ is $\pi(G)$-invariant, and $T_\eta$ is closed on it: if $\xi_n \to \xi$ and $T_\eta \xi_n \to F$ in
+  $L^2(G)$, then $T_\eta \xi_n \to T_\eta \xi$ pointwise and a subsequence converges to $F$ almost everywhere. If
+  $D_\eta \ne 0$, it is dense by irreducibility, $\lvert T_\eta \rvert = (T_\eta^* T_\eta)^{1/2}$ is a positive self-adjoint
+  operator commuting with $\pi(G)$, hence a scalar by its spectral projections, so $D_\eta = H$ and $T_\eta$ is
+  bounded. Consequently, if $g \mapsto \langle \pi(g)v, v \rangle$ is square-integrable for one $v \ne 0$, then
+  $D_v = H$; by inversion $v \in D_\xi$ for every $\xi$, so $D_\xi = H$ too: every coefficient
+  $g \mapsto \langle \pi(g)\xi, \eta \rangle$ is square-integrable and every $T_\eta$ is a bounded $G$-equivariant map
+  from $H$ to $L^2(G)$ with the right regular representation. Carey reaches the embedding into the regular
+  representation through a positive-definite convolution square root; the passage from one coefficient
+  to all of them uses the unimodularity of $G$, as here.
+- **Closed operators.** A closed densely defined operator $T$ between Hilbert spaces has a polar
+  decomposition $T = U \lvert T \rvert$, with $\lvert T \rvert$ positive self-adjoint and of the same domain as $T$.
 
 A good expansion has pages for Schur's lemma for unitary representations (through the spectral
 theorem), for the invariance of Haar measure under inversion on unimodular groups (beyond the
-second-countable case already in the vault), for the closed graph theorem, and for the square
-integrability of all coefficients and the boundedness of the coefficient maps, following Carey's proof
-or Godement's, each citing the sources below with locators.
+second-countable case already in the vault), for closed operators and their polar decomposition, and for
+the square integrability of all coefficients and the boundedness of the coefficient maps, each citing the sources below with locators.
 
 ## Depends on
 
-- Not yet a page: unitary representations of locally compact groups, the space $L^2(G)$ and the left regular representation, for all the items
+- Not yet a page: unitary representations of locally compact groups, the space $L^2(G)$ and its left and right regular representations, for all the items
 
 ## Proof depends on
 
-- [Spectral theorem for bounded self-adjoint operators, multiplication form](../../Analysis/operator-theory/spectral-theory/spectral-theorem-for-bounded-self-adjoint-operat/bounded-self-adjoint-spectral-multiplica.md), for Schur's lemma: a self-adjoint operator commuting with $\pi(G)$ commutes with its spectral projections, which are then $0$ or $1$ by irreducibility; a commuting operator is a combination of two commuting self-adjoint ones, and for an intertwiner $T$ between inequivalent representations, $T^*T$ and $TT^*$ are such scalars
+- [Spectral theorem for bounded self-adjoint operators, multiplication form](../../Analysis/operator-theory/spectral-theory/spectral-theorem-for-bounded-self-adjoint-operat/bounded-self-adjoint-spectral-multiplica.md), for Schur's lemma: a bounded operator $T$ commuting with $\pi(G)$ has self-adjoint parts $(T + T^*)/2$ and $(T - T^*)/2i$, each commuting with $\pi(G)$ as $\pi$ is unitary (they need not commute with each other); a self-adjoint operator commuting with $\pi(G)$ commutes with its spectral projections, which are then $0$ or $1$ by irreducibility; for an intertwiner $T$ between inequivalent representations, $T^*T$ and $TT^*$ are scalars, and a nonzero $T$ would be a multiple of a unitary equivalence
 - [Right-invariant Haar measures are inversion-invariant](../../MeasureTheory/haar-measure/unimodular-groups/is-inv-invariant-of-is-mul-right-invaria.md), for the inversion, in the second-countable case, which covers Lie groups
 - Not yet a page: the invariance of Haar measure under inversion on an arbitrary unimodular locally compact group, from the uniqueness of Haar measure up to a scalar, for Godement's general setting
-- Not yet a page: the closed graph theorem for Banach spaces, for the boundedness of the coefficient maps
+- Not yet a page: the spectral theorem for unbounded self-adjoint operators and the polar decomposition of closed densely defined operators, for the boundedness of the coefficient maps
 
 ## Sources
 

@@ -35,6 +35,7 @@ domain hypotheses and a pinned source.
 
 - Not yet a page: the action of $Z(\mathfrak{g})$ by scalars on the smooth vectors of an irreducible unitary representation (Segal; Harish-Chandra), with its domain argument
 - Not yet a page: Harish-Chandra's bound $n_i \le \dim V_i$ for irreducible quasi-simple representations of connected semisimple groups with finite centre
+- Not yet a page: the reduction (c) from connected semisimple groups with finite centre to the real points of a Zariski-connected reductive group, through the centre, the derived group and the finitely many components, for the theorem in the stated generality
 
 ## Sources
 

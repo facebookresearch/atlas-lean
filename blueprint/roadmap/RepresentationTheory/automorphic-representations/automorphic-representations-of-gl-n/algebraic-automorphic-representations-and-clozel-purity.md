@@ -20,8 +20,9 @@ attached to $\pi_v$ by the archimedean local Langlands correspondence.
   $\tau$ and at its conjugate $\bar\tau$, the corresponding statement is a symmetry $z \mapsto w' - z$ for an integer
   $w'$ determined by $w$ and $n$ through this shift.
 - **Cohomological representations** (Clozel). A cuspidal regular algebraic representation is
-  cohomological after possibly twisting by a quadratic character: some such twist has an archimedean
-  component with non-zero $(\mathfrak{g}, K)$-cohomology with coefficients in an algebraic representation,
+  cohomological after possibly twisting by a quadratic character: some such twist has archimedean
+  component $\pi_\infty$, equivalently every $\pi_v$ with $v \mid \infty$, with non-zero $(\mathfrak{g}, K)$-cohomology with
+  coefficients in an algebraic representation,
   $K$ the full maximal compact subgroup, so that it contributes to the cohomology of the locally symmetric
   spaces of $\mathrm{GL}_n$. The twist cannot be omitted: over $\mathbb{Q}$, an odd finite-order Hecke
   character of $\mathrm{GL}_1$ is cuspidal and regular algebraic, but its archimedean component, the sign
@@ -29,8 +30,8 @@ attached to $\pi_v$ by the archimedean local Langlands correspondence.
   algebraic representation. This is a separate statement from the purity lemma.
 
 A good expansion has pages for the definitions of algebraic, regular algebraic and cohomological
-representations, for the purity lemma, and for the equivalence of regular algebraicity and
-cohomologicality for cuspidal representations, citing L. Clozel, "Motifs et formes automorphes :
+representations, for the purity lemma, and for Clozel's criterion that a cuspidal regular algebraic
+representation is cohomological up to a quadratic twist (Lemme 3.14), citing L. Clozel, "Motifs et formes automorphes :
 applications du principe de fonctorialité", in *Automorphic Forms, Shimura Varieties, and L-functions*,
 Vol. I, Perspect. Math. 10, Academic Press, 1990, 77–159, with locators once it has been consulted, and
 the archimedean local Langlands correspondence for $\mathrm{GL}_n$ as a page of its own.

@@ -3,7 +3,7 @@
 This node is still to be broken down. It covers the basic facts on continuous representations of Lie
 groups and of their compact subgroups that the pages on real reductive groups use. Let $G$ be a Lie
 group with a left Haar measure $dg$, $(\pi, V)$ a continuous representation of $G$ on a complete
-locally convex Hausdorff space $V$ (a Fréchet space where stated) and $K$ a compact subgroup of $G$
+locally convex Hausdorff complex vector space $V$ (a Fréchet space where stated) and $K$ a compact subgroup of $G$
 with Haar measure of total mass $1$.
 
 - **Integrated action and smoothing.** For $f \in C_c(G)$ and $v \in V$ the integral
@@ -43,7 +43,7 @@ for the Hilbert direct sum in the unitary case, each citing the sources below wi
 - [Peter–Weyl theorem: unitary representations separate points](representations-of-compact-groups/peter-weyl-point-separation.md), for the density of the matrix coefficients in $C(K)$, through the Stone–Weierstrass theorem
 - [Representations of compact groups are semisimple](representations-of-compact-groups/compact-group-semisimple.md), for the complete reducibility of the finite-dimensional $K$-stable subspaces spanned by $K$-finite vectors (its real form; the complex case is the same argument with an invariant Hermitian form)
 - Not yet a page: the complex Stone–Weierstrass theorem, for the density of the matrix coefficients
-- Not yet a page: differentiation under the integral sign for vector-valued integrals, for the smoothness of $\pi(f)v$
+- Not yet a page: differentiation under the integral sign for vector-valued integrals, applied to $g \mapsto \pi(g)\pi(f)v = \int_G f(g^{-1}x)\pi(x)v \, dx$, the translated smoothing kernel, not to $g \mapsto \pi(g)v$ itself, for the smoothness of $\pi(f)v$
 - Not yet a page: the Schur orthogonality relations for the characters of a compact group, for $E_\tau^2 = E_\tau$ and $E_\tau E_{\tau'} = 0$
 
 ## Sources

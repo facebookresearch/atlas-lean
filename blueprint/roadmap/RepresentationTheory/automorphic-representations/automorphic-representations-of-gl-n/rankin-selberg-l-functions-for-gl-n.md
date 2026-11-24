@@ -59,17 +59,21 @@ Rankin–Selberg integrals", 2009) consulted for hypotheses.
 - [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the Eisenstein series used when $m = n$
 - [Rapid decay of cusp forms](../automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md), for the convergence of the global integrals
 - [Poisson summation formula for adeles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-poisson-summation.md), for the functional equation of the mirabolic Eisenstein series $E(g, \Phi, s)$ used when $m = n$ (Cogdell, Proposition 5.4)
+- Not yet a page: the archimedean local Langlands correspondence for $\mathrm{GL}_n$ and the $\Gamma$-factors of pairs of Langlands parameters, for the archimedean $L$-factors of the statement (Cogdell, Lecture 8, §§1–2)
 
 ## Proof depends on
 
-- [Fourier expansion and global Whittaker models of cusp forms on GLₙ](whittaker-fourier-expansion.md), for the unfolding of the global integrals into Euler products of local Whittaker integrals
+- [Fourier expansion and global Whittaker models of cusp forms on GLₙ](whittaker-fourier-expansion.md), for the unfolding of the global integrals into Euler products of local Whittaker integrals, through the global Whittaker expansion and the factorization of global Whittaker functions
 - [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/l-and-epsilon-factors-of-pairs.md), for the local generators and local functional equations at the finite places
 - [Rapid decay of cusp forms](../automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md), for the convergence of the global integrals
 - [Poisson summation formula for adeles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-poisson-summation.md), for the functional equation of the mirabolic Eisenstein series $E(g, \Phi, s)$ when $m = n$
 - [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the holomorphy of Eisenstein series on the imaginary axis, used in the non-vanishing on $\operatorname{Re} s = 1$
+- [Compactness of adelic quotients of unipotent groups](../automorphic-forms-on-reductive-groups/compactness-of-unipotent-adelic-quotients.md), for the compactness of $N(k) \backslash N(\mathbb{A})$, through which the holomorphy of the Eisenstein series passes to its Whittaker coefficient (Shahidi, p. 352)
+- [Whittaker models for GLₙ over archimedean fields](archimedean-whittaker-models-for-gl-n.md), for the Whittaker model of the contragredient, $W \mapsto W(w_n\, {}^t g^{-1})$, in the archimedean local functional equations
 - Not yet a page: Shintani's formula for the normalized spherical Whittaker functions of $\mathrm{GL}_n$ (Shintani; Casselman–Shalika), with $W(1) = 1$, the Cauchy identity for products of Schur polynomials, and the test function $1_{\mathcal{O}_v^n}$ when $m = n$, for the unramified computation (Cogdell, Lecture 7)
 - Not yet a page: the boundedness of $L(s, \pi \times \pi')$ in vertical strips of finite width away from its poles (Gelbart–Shahidi, J. Amer. Math. Soc. 14 (2001)), which Cogdell, Lecture 9, §5, uses for the lower ranks
-- Not yet a page: Shahidi's non-vanishing on $\operatorname{Re} s = 1$, through the non-degenerate Whittaker Fourier coefficient, not the constant term, of the Eisenstein series on $\mathrm{GL}_{n+m}$ induced from $\pi \otimes \pi'$ on a maximal parabolic subgroup, which unfolds to the reciprocal of the partial $L$-function, with nonzero local data at the excluded places (Shahidi, Amer. J. Math. 103 (1981), as cited by Jacquet–Shalika II, §3.7, p. 804)
+- Not yet a page: Shahidi's non-vanishing on $\operatorname{Re} s = 1$. In his convention the Eisenstein series on $\mathrm{GL}_{n+m}$ is induced from $\pi \otimes \tilde\pi'$ on the upper block-diagonal Levi subgroup $\mathrm{GL}_n \times \mathrm{GL}_m$, whose dual acts on the dual unipotent radical by $r = \rho_n \otimes \tilde\rho_m$, $X \mapsto aXb^{-1}$, so that $L(z, \pi \otimes \tilde\pi', r) = L(z, \pi \times \pi')$. Its non-degenerate Whittaker Fourier coefficient, not its constant term, at the spectral parameter $u$ is a product of local Whittaker values at the places of $S$ times $L^S(1 + (n+m)u, \pi \times \pi')^{-1}$, and the shift $z = 1 + (n+m)u$ takes the imaginary axis to $\operatorname{Re} z = 1$. With local data that are nonzero at $S$ and the holomorphy of the Eisenstein series on the imaginary axis, this rules out zeros there, not poles (Shahidi, Amer. J. Math. 103 (1981), §2.3, pp. 324–325, and §5, Theorems 5.1–5.2, pp. 351–353; Jacquet–Shalika II, §3.7, p. 804, for the statement away from the poles)
+- Not yet a page: the archimedean local theory of the integrals: their local functional equations, and for each $s_1$ a normalized local integral that is nonzero at $s_1$, in all ranks (Cogdell, Corollary 8.3.2; finite sums of ordinary integrals only for $m = n, n - 1$, Theorem 8.5, p. 66), with which Cogdell, Lecture 9, §§2–4, detects the poles of the completed $L$-function
 
 ## Sources
 
@@ -87,6 +91,11 @@ Rankin–Selberg integrals", 2009) consulted for hypotheses.
 - H. Jacquet and J. A. Shalika, "On Euler products and the classification of automorphic representations
   I", Amer. J. Math. 103 (1981), 499–558, <https://doi.org/10.2307/2374103>: Theorem (5.3) (absolute
   convergence and non-vanishing of the partial Euler product for unitary cuspidal $\pi$, $\pi'$ in $\operatorname{Re} s > 1$).
+- F. Shahidi, "On certain L-functions", Amer. J. Math. 103 (1981), 297–355:
+  §2.3, pp. 324–325 (for the upper parabolic of $\mathrm{GL}_{n+m}$, $\pi = \pi_1 \otimes \tilde\pi_2$ on the Levi
+  subgroup and $r = \rho_n \otimes \tilde\rho_m$, with $L(s, \pi, r) = L(s, \pi_1 \times \pi_2)$), and §5, Theorem 5.1,
+  pp. 351–352 (the non-degenerate Fourier coefficient of the Eisenstein series and the non-vanishing on the line), and
+  Theorem 5.2, p. 353 (the case of $\mathrm{GL}_n \times \mathrm{GL}_m$).
 - H. Jacquet and J. A. Shalika, "On Euler products and the classification of automorphic forms II", Amer. J.
   Math. 103 (1981), 777–815: §3.7, p. 804 (non-vanishing on $\operatorname{Re} s = 1$ away from the poles, attributed to
-  F. Shahidi, "On certain L-functions", Amer. J. Math. 103 (1981), 297–356).
+  F. Shahidi, "On certain L-functions", Amer. J. Math. 103 (1981), 297–355).

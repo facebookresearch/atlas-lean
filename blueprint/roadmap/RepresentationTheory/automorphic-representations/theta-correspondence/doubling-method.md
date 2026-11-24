@@ -69,8 +69,8 @@ theorem, the unramified computation with its normalizations and orientation (ine
 factorization $Z = L Z^*$ for factorizable sections (extended to finite sums of them by linearity), the
 $L$-function form of the Rallis inner product formula with all its hypotheses, and the inputs of its
 refinement: Yamana's theorem relating a pole of $L(s + \tfrac12, \pi \times \chi_V)$ to a non-zero lift to a space of the
-complementary dimension $2n - m$ with the same splitting character (in another Witt tower), the tower property
-and the local conservation relation, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
+complementary dimension $2n - m$ with the same splitting character, the tower property, the vanishing of the
+lower lifts (which puts that space in another Witt tower) and the local conservation relation, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
 Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact statements.
 
 ## Depends on
@@ -86,8 +86,8 @@ Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact st
 
 - [Constant terms of theta lifts for unitary groups](constant-terms-of-theta-lifts.md), for the persistence of a nonzero theta lift up a Witt tower, in the refinement: if the lift $\theta_{n,r}(\varphi, f)$ is nonzero, extending $\varphi$ by a Schwartz factor equal to $1$ at zero gives a datum for $V_{r+1}$ whose lift has $\theta_{n,r}(\varphi, f)$ in its constant term (its constant term formula), so the higher lift is nonzero too (Wu, §3, Proposition 3.1); cuspidality at the first occurrence alone would allow a zero lift
 - Not yet a page: the orbits of $Q(F)$ on $\mathrm{U}(W_n)(F) / \iota(\mathrm{U}(U) \times \mathrm{U}(U))(F)$ and the vanishing, by cuspidality, of the contributions of all but the open orbit (Piatetski-Shapiro and Rallis), for the basic identity
-- Not yet a page: Yamana's theorem that a pole of $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ gives a nonzero theta lift of $\pi$ to a Hermitian space of dimension $2n - m$ with the same splitting character, in another Witt tower (Gan–Qiu–Takeda, the proof of Theorem 11.4 (ii)), for the refinement
-- Not yet a page: the local conservation relation between the first occurrences of $\pi_v$ in the two Witt towers with the same splitting character, for the refinement
+- Not yet a page: the step of Gan–Qiu–Takeda's proof of Theorem 11.4 (ii) (TeX lines 4237–4245) that gives a nonzero theta lift of $\pi$ to a Hermitian space $V^\#$ of dimension $2n - m$ with the same splitting character in another Witt tower; it combines three inputs: Yamana's Theorem 10.1 (2) [Y4], as Gan, Qiu and Takeda use it, by which a pole of $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ gives, with the persistence above, a nonzero lift to such a space, and the hypothesis that the lower lifts in the tower of $V$ vanish, which excludes that tower, for the refinement
+- Not yet a page: the local conservation relation, used at a place $v$ where $V$ and $V^\#$ lie in different local Witt towers (a non-split place; at a split place they cannot differ): if $\pi_v$ has nonzero theta lifts to these two localized spaces, of two different Witt towers with the same splitting character, their dimensions sum to at least $2n + 2$, whereas here they sum to $m + (2n - m) = 2n$ (Gan–Qiu–Takeda, TeX lines 4245–4252; Sun–Zhu, Theorem 1.10, and §7, Theorem 7.6, (84)–(85)); nothing is claimed about all the Witt towers at a place, for the refinement
 
 ## Sources
 
@@ -102,7 +102,12 @@ Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact st
   $Z_v^*(s_1) \ne 0$ for $\operatorname{Re} s_1 \ge 0$, unramified computation with $d_v$ from [LR, p. 334, Remark 3],
   absolute convergence of $Z^*$ for $\operatorname{Re} s > 0$), Theorem 1.3 and Theorem 11.4 with its proof (the
   $L \cdot Z^*$ form of the Rallis inner product formula, its hypotheses, and the holomorphy of
-  $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ under local non-vanishing).
+  $L(s + \tfrac12, \pi \times \chi_V)$ at $s_{m,n}$ under local non-vanishing; TeX lines 4237–4252 of that proof:
+  Yamana's [Y4, Theorem 10.1 (2)] with the tower property, the vanishing of the lower lifts, and the conservation
+  relation, citing Kudla–Rallis, Gan–Ichino [GI2, Theorem 5.4] and Sun–Zhu).
+- B. Sun and C.-B. Zhu, "Conservation relations for local theta correspondence", arXiv:1204.2969 (version 3):
+  Theorem 1.10 (the conservation relations for the first occurrences in two Witt towers) and §7, Theorem 7.6,
+  (84)–(85).
 - S. Yamana, "The Siegel–Weil formula for unitary groups", Pacific J. Math. 264 (2013), 235–257,
   <https://doi.org/10.2140/pjm.2013.264.235>: §1, the factor $b(s, \chi) = \prod_{j=1}^{n} L(2s + j, \chi^0 \epsilon_{E/F}^{n+j})$
   (for $\delta = 1$); Appendix (zeta integrals for $\mathrm{GL}_n(D)$ at the split places, with the ordinary

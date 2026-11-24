@@ -52,7 +52,7 @@ Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition a
 ## Depends on
 
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms, cusp forms and constant terms
-- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for $H_P$, $\mathfrak{a}_P$ and the Siegel sets on which the convergence is proved
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for $H_P$, $\mathfrak{a}_P$ and the definition of Siegel sets
 
 ## Proof depends on
 

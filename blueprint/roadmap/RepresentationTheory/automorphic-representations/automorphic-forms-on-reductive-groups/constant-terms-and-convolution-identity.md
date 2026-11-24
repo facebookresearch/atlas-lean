@@ -26,17 +26,17 @@ Let $k$, $G$, $K = K_\infty K_f$, $G_\infty$ and the centre $\mathcal{Z}$ of the
   This is a statement about a given irreducible subquotient: $\mathcal{A}^\circ_P$ itself need not be a direct sum of irreducible
   subspaces, nor of eigenspaces of the centre (for $P = M = G = \mathrm{GL}_1$ over $\mathbb{Q}$, the functions $1$ and $\log \lvert x \rvert_{\mathbb{A}}$
   are $K$-finite, $\mathcal{Z}$-finite cusp forms of moderate growth, and translation by $a$ sends $\log \lvert x \rvert$ to $\log \lvert x \rvert + \log \lvert a \rvert$,
-  a non-split extension that no twist by a character splits). (b) With $\chi$ fixed, let $\nu$ be the positive character of
-  $M(\mathbb{A})$ with $\nu = \lvert \chi \rvert$ on $A_M(\mathbb{A})$, and $L^2_0(M(k) \backslash M(\mathbb{A}), \chi)$ the Hilbert space of measurable cuspidal functions $\psi$
-  with $\psi(am) = \chi(a) \psi(m)$ and $\int_{A_M(\mathbb{A}) M(k) \backslash M(\mathbb{A})} \nu^{-2} \lvert \psi \rvert^2 < \infty$. This space is a Hilbert direct sum of irreducible
-  invariant subspaces, and for $\psi$ in $V$ the functions $m \mapsto \psi(mg)$ lie in it; projecting to an irreducible
-  component realizes the subquotient in an induced representation (Langlands, pp. 3–4).
+  a non-split extension that no twist by a character splits). (b) With $\chi$ fixed, the decomposition of the
+  cuspidal Hilbert space with central character $\chi$ on the Levi factor, weighted by $\nu^{-2}$ for the positive
+  character $\nu$ of $M(\mathbb{A})$ with $\nu = \lvert \chi \rvert$ on $A_M(\mathbb{A})$, into which the functions
+  $m \mapsto \psi(mg)$, $\psi \in V$, fall, is the page on the
+  [weighted cuspidal spectrum with a fixed central character](weighted-cuspidal-spectrum-with-a-fixed-central-character.md),
+  which comes after the discreteness of the cuspidal spectrum; it is not a statement of this node.
 
 A good expansion has pages for Harish-Chandra's convolution identity and uniform moderate growth, for the
 behaviour along the split centre, for the automorphy of constant terms on the Levi factors with
-Harish-Chandra's homomorphism, for the choice of a central character for an irreducible subquotient, and for
-the decomposition of the weighted cuspidal Hilbert space with fixed central character on the Levi, each with a
-precise statement and the locators below.
+Harish-Chandra's homomorphism, and for the choice of a central character for an irreducible subquotient, each
+with a precise statement and the locators below.
 
 ## Depends on
 
@@ -46,9 +46,9 @@ precise statement and the locators below.
 ## Proof depends on
 
 - [Harish-Chandra's convolution identity and uniform moderate growth](harish-chandra-convolution-identity.md), for the convolution identity and uniform moderate growth of automorphic forms
-- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the stability of moderate growth under right translation by the compact support of $\alpha$, used through $D(\varphi \star \alpha) = \varphi \star D\alpha$ (Borel, §4.3); this does not prove the convolution identity itself
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the stability of moderate growth under right translation by the compact support of $\alpha$, used through $D(\varphi \star \alpha) = \varphi \star D\alpha$ (Borel, §4.3), which does not prove the convolution identity itself; and for the finiteness of class numbers, applied to the centre, behind the finiteness under $Z_G(\mathbb{A})$ (Langlands's Lemma 3)
 - Not yet a page: Harish-Chandra's homomorphism $\mathcal{Z}(\mathfrak{g}) \to \mathcal{Z}(\mathfrak{m})$ with $(z\varphi)_P = \nu(z)\varphi_P$, and the finiteness of $\mathcal{Z}(\mathfrak{m})$ as a module over its image, which give the finite codimension of the annihilator of a constant term (Borel, 7.4 (c))
-- Not yet a page: the decomposition of the Hilbert space $L^2_0(M(k) \backslash M(\mathbb{A}), \chi)$ of cuspidal functions with central character $\chi$, weighted by $\nu^{-2}$, into irreducible invariant subspaces (Langlands, pp. 3–4), for the second step of the last item; the page on discreteness of the cuspidal spectrum depends on this node through rapid decay, so it cannot be linked here, and the fixed-character subquotient lemma (Langlands, Lemma 6) is a separate step
+- Not yet a page: the expansion $\varphi(xa) = \sum_i Q_i(a) (P_i \varphi)(x)$ of a smooth $\mathcal{Z}$-finite function along $A_G(\mathbb{R})^0$, with exponential polynomials $Q_i$ (Borel, 6.6), for the split centre
 
 ## Sources
 
@@ -61,6 +61,4 @@ precise statement and the locators below.
   and L-functions*, Proc. Sympos. Pure Math. 33, Part 1, American Mathematical Society, 1979, 203–207;
   author's version <https://sunsite.ubc.ca/DigitalMathArchive/Langlands/pdf/notion-ps.pdf>: Lemma 3
   ($Z(\mathbb{A})$-finiteness), Lemma 4 (constant terms on $M(\mathbb{A})$), the definition of $\mathcal{A}^\circ_P$ and Lemma 6 (a central
-  character for a generator of a given irreducible subquotient), and pp. 3–4 after Lemma 6 (the Hilbert space
-  $L^2_0(M(F) \backslash M(\mathbb{A}), \chi)$ weighted by $\nu^{-2}$, its decomposition into irreducible invariant subspaces, and the
-  projection to a component).
+  character for a generator of a given irreducible subquotient).

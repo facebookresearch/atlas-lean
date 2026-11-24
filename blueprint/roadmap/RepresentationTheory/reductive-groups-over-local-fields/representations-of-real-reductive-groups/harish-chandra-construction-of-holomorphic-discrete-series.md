@@ -26,9 +26,15 @@ of holomorphic sections over $G/K \subseteq G^{\mathbb{C}}/K^{\mathbb{C}} P_+$.
   point is a $K$-equivariant map onto the irreducible fibre $V_\mu$, nonzero on the $V_\mu$-isotypic
   part of $W$ (obtained by the continuous isotypic projection), which is contained in the unique copy
   of $V_\mu$ in $\mathbf{F}_\lambda$.
-- **Square-integrability** (Harish-Chandra). If $(\lambda, \alpha) > 0$ for every $\alpha \in \Psi$,
-  the square-integrable holomorphic sections form a nonzero closed $G$-invariant subspace on which $G$
-  acts by a discrete series representation infinitesimally equivalent to $\mathbf{F}_\lambda$.
+- **Square-integrability** (Harish-Chandra). Fix a $G$-invariant measure on $G/K$ and a $K$-invariant
+  Hermitian inner product on $V_\mu$, which give the Hilbert space of square-integrable sections of the
+  bundle. If $(\lambda, \alpha) > 0$ for every $\alpha \in \Psi$, the square-integrable holomorphic sections form a
+  nonzero $G$-invariant subspace of this Hilbert space, closed in it (point evaluations are continuous on
+  holomorphic sections for the $L^2$ norm), on which $G$ acts by a discrete series representation
+  infinitesimally equivalent to $\mathbf{F}_\lambda$ (Schmid, (3.12)). This subspace is not closed in
+  $\mathbf{F}_\lambda$ for the topology of uniform convergence on compact sets: for $\mathrm{SU}(1, 1)$ in the scalar
+  case of weight $2$ it is the Bergman space of the disk, which contains the partial sums of
+  $\sum_j z^j$, and these converge uniformly on compact sets to $1/(1 - z)$, which is not square-integrable.
 
 A good expansion has pages for the decomposition $P_- K^{\mathbb{C}} P_+$ and the bounded realization,
 for the polynomial model with the duality of $\mathfrak{p}_\pm$, for the Fréchet topology of spaces of
@@ -44,7 +50,7 @@ criterion, each citing the sources below with locators.
 
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the continuous isotypic projections in the lowest $K$-type argument
 - Not yet a page: the Weierstrass theorem that locally uniform limits of holomorphic functions of several variables are holomorphic, for the Fréchet topology
-- Not yet a page: Harish-Chandra's construction of the square-integrable holomorphic sections (Harish-Chandra IV–VI), for the square-integrability
+- Not yet a page: Harish-Chandra's construction of the square-integrable holomorphic sections (Harish-Chandra IV–VI), for the square-integrability: the nonvanishing of the Hilbert space under positivity and its infinitesimal equivalence with $\mathbf{F}_\lambda$ (Schmid, §3, (3.12), pp. 72–73)
 
 ## Sources
 

@@ -30,7 +30,7 @@ of traces, each citing the sources below with locators.
 
 ## Depends on
 
-- Not yet a page: smooth representations of $\ell$-groups, the subspaces $V^K$ and admissibility, which the page on smooth and admissible representations defines; linking that page here would close a cycle, as it uses this node
+- Not yet a page: smooth representations of $\ell$-groups, the subspaces $V^K$ and admissibility; there is no separate definitions-only page: the page on smooth and admissible representations defines them but uses this node, so linking it here would close a cycle, and splitting its definitions off would close the gap
 
 ## Proof depends on
 

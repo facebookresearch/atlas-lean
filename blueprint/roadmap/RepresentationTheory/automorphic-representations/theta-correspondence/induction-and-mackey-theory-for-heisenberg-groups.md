@@ -37,7 +37,7 @@ theorem.
 
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of the completions of number fields (its local duality), which identifies $Y$ with the Pontryagin dual of $X$ for local fields of characteristic $0$
 - Not yet a page: the same self-duality for every local field and nontrivial character (Poonen, §4.3, Theorem 4.4), for the local fields of positive characteristic that the page allows, such as $\mathbb{F}_3((t))$
-- Not yet a page: Pontryagin duality for locally compact abelian groups, and the decomposition of $L^2$ of a compact abelian group into character spaces (A. Prasad, §4.2), for the unitary form
+- Not yet a page: Pontryagin duality for locally compact abelian groups, and the decomposition of every strongly continuous unitary representation of a compact abelian group into the orthogonal sum of its character spaces, with arbitrary multiplicities (A. Prasad, §4.2, p. 4, applies it to the given representation restricted to $G \times G^\perp$), for the unitary form; the decomposition of $L^2$ of the group, where each character occurs once, is not enough, and the page on smooth and $K$-finite vectors treats compact subgroups of Lie groups only, not the profinite groups of the non-archimedean case
 
 ## Sources
 
@@ -49,7 +49,8 @@ theorem.
   Théorème I.2, pp. 28–31, as cited by Kudla.
 - A. Prasad, "An easy proof of the Stone–von Neumann–Mackey theorem", arXiv:0912.0574 (2009): §4.1 (the
   theorem for Heisenberg groups of locally compact abelian groups, with the tautological action of the
-  circle), §4.2 (groups with compact open subgroups), §4.3 ($\mathbb{R}^n$) and §4.4 (general locally compact abelian
+  circle), §4.2, p. 4 (groups with compact open subgroups; the given representation decomposed under the compact
+  abelian group $G \times G^\perp$ by the Peter–Weyl theorem), §4.3 ($\mathbb{R}^n$) and §4.4 (general locally compact abelian
   groups); §§4.2–4.3 suffice for local fields.
 - I. N. Bernstein and A. V. Zelevinsky, "Induced representations of reductive p-adic groups. I", Ann. Sci.
   Éc. Norm. Supér. (4) 10 (1977), 441–472, <http://www.numdam.org/item?id=ASENS_1977_4_10_4_441_0>: §1.8 and

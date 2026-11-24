@@ -38,8 +38,9 @@ the sources below with locators.
 
 ## Proof depends on
 
-- Not yet a page: the Fourier transform on the Schwartz space of $\mathbb{R}$ and the residue computation of Casselman's §2, for the Schwartz property of the reciprocal infinite products
-- Not yet a page: product coordinates of the second kind on a Lie group, $(t_1, \dots, t_d) \mapsto e^{t_1 X_1} \cdots e^{t_d X_d}$, a diffeomorphism near $0$, for the passage to kernels on $G$
+- Not yet a page: the Fourier transform on the Schwartz space of $\mathbb{R}$, and the shift of contour across an unbounded region with the decay estimates of the infinite products that it needs (Casselman, §§2, 4 and 5; Francis, Theorem 6 and the rescaling after it), for the Schwartz property of the reciprocal infinite products
+- Not yet a page: product coordinates of the second kind on a Lie group, $(t_1, \dots, t_d) \mapsto e^{t_1 X_1} \cdots e^{t_d X_d}$, a diffeomorphism near $0$, for the passage to kernels on $G$ with their Jacobian
+- Not yet a page: the diagonal choice of the coefficients that makes the series converge in each of the countably many seminorms of $V^\infty$ (Casselman, §6), for the vector form
 
 ## Sources
 

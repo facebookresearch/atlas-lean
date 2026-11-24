@@ -10,11 +10,15 @@ $P = MN$ a parabolic $k$-subgroup with unipotent radical $N$.
   measure. More generally this holds for every $k$-split unipotent $k$-group.
 - **Route.** $N$ has a filtration by normal $k$-subgroups with successive quotients isomorphic to vector
   groups $\mathbb{G}_a^{r}$; for a vector group the statement is the compactness of $k \backslash \mathbb{A}$,
-  and the general case follows by induction along the filtration, lifting rational points of each
-  quotient and assembling compact fundamental sets.
+  and the general case follows by induction along $1 \to N' \to N \to N'' \to 1$: a $k$-rational section
+  $N'' \to N$ of varieties lifts the rational and the adelic points of $N''$ and carries compact sets to compact
+  sets, so that compact fundamental sets assemble. $N(k) \backslash N(\mathbb{A})$ is then a tower of fibrations with
+  compact fibres; it is a homogeneous space, not a group, as $N(k)$ need not be normal in $N(\mathbb{A})$: in the
+  $3 \times 3$ upper unitriangular group, conjugating $1 + e_{23}$ by $1 + t e_{12}$, $t \in \mathbb{A} \setminus k$, gives
+  $1 + e_{23} + t e_{13} \notin N(k)$.
 - **The general linear group.** For $\mathbf{G} = \mathrm{GL}_n$ and a standard parabolic subgroup, $N$ is a
-  group of block upper unitriangular matrices, and $N(k) \backslash N(\mathbb{A})$ is a successive extension
-  of products of copies of $k \backslash \mathbb{A}$.
+  group of block upper unitriangular matrices, and $N(k) \backslash N(\mathbb{A})$ is a tower of fibrations whose
+  fibres are products of copies of $k \backslash \mathbb{A}$.
 
 A good expansion has pages for the filtration of a $k$-split unipotent group by vector groups, for the
 compactness of $N(k) \backslash N(\mathbb{A})$ and for its invariant probability measure, each citing a pinned
@@ -29,7 +33,7 @@ source with locators besides the one below.
 ## Proof depends on
 
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the compactness of $k \backslash \mathbb{A}$, the case of a vector group
-- Not yet a page: the filtration of a $k$-split unipotent group by normal $k$-subgroups with vector-group quotients, and the surjectivity of $N(\mathbb{A}) \to (N/N')(\mathbb{A})$ on adelic points for such quotients, for the induction
+- Not yet a page: the filtration of a $k$-split unipotent group by normal $k$-subgroups with vector-group quotients, and for each step a $k$-rational section $N'' \to N$ of varieties, which gives the surjectivity of $N(k) \to N''(k)$ and of $N(\mathbb{A}) \to N''(\mathbb{A})$ and compact lifts of compact sets, for the induction
 
 ## Sources
 
@@ -38,3 +42,9 @@ source with locators besides the one below.
   2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 2, §5,
   pp. 19–20 ("for any of these unipotent radicals, $U(k) \backslash U(\mathbb{A})$ is compact", for the
   standard parabolic subgroups of $\mathrm{GL}_n$, before Definition 2.5).
+- A. Borel, "Some finiteness properties of adele groups over number fields", Publ. Math. IHÉS 16 (1963),
+  5–30, <http://www.numdam.org/item?id=PMIHES_1963__16__5_0>: Lemma 5.5 (unimodularity and the invariant
+  measure) and Theorem 5.6, p. 21 ($G_{\mathbb{A}}/G_k$ has finite invariant volume if and only if $X_k(G^\circ) = 1$, and is
+  compact if moreover every unipotent element of $G_k$ lies in the radical): both conditions hold for a connected
+  unipotent group, which gives the compactness for every unipotent $k$-group directly, by another route than
+  the induction above.

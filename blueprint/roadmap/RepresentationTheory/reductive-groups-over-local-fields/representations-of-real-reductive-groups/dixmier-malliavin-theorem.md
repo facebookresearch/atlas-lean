@@ -17,7 +17,7 @@ $(f * \psi)(y) = \int_G f(x)\psi(x^{-1}y) \, dx$.
 
 ## Depends on
 
-This node has no prerequisites.
+- [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for continuous representations of a Lie group on a Fréchet space, smooth vectors and the integrated action $\pi(f)v$ in item 2
 
 ## Proof depends on
 

@@ -30,7 +30,9 @@ for the exact hypotheses.
 
 ## Proof depends on
 
-- Not yet a page: an archimedean Gelfand–Kazhdan argument for $\mathrm{GL}_n(F)$: a distribution criterion together with the symmetry of the relevant bi-$(N, \psi)$-equivariant distributions under transpose-inverse twisted by $w_n$, which bounds the product of the dimensions of the continuous Whittaker functionals of $\pi$ and of its contragredient by $1$, hence each by $1$ (Shalika, 1974; Sun–Zhu); the Whittaker model of the contragredient and the injectivity of the restriction to $P_n$ need separate arguments (Cogdell, Lecture 4, §§4.2–4.4)
+- Not yet a page: the archimedean Gelfand–Kazhdan criterion: if a continuous anti-automorphism $\sigma$ of $\mathrm{GL}_n(F)$ fixes every tempered generalized function $f$ that is an eigendistribution of the invariant differential operators and satisfies $f(n_1 g n_2) = \psi(n_1) f(g) \psi(n_2)$, then $\dim \mathrm{Hom}_N(\pi, \psi) \cdot \dim \mathrm{Hom}_N(\tilde\pi, \psi^{-1}) \le 1$ (Sun–Zhu, Theorem 2.3 (a); Cogdell, Lecture 4, §2, Remark (i)), with $\sigma(g) = w_n\, {}^t g\, w_n^{-1}$, an anti-automorphism preserving $N$ and $\psi$ (transpose-inverse twisted by $w_n$ is an automorphism and sends $\psi$ to $\psi^{-1}$), and the invariance of these distributions under $\sigma$ (Shalika, 1974), for the uniqueness
+- Not yet a page: an independent proof that $\pi$ and $\tilde\pi$ are generic together, for instance through $\tilde\pi \cong \pi \circ \theta$ with $\theta(g) = {}^t g^{-1}$ and the change of variables by $w_n$; the bound on the product alone does not bound either factor when the other could vanish, and with this implication each is at most $1$, for the uniqueness
+- Not yet a page: the Whittaker model of the contragredient (Cogdell, Lecture 4, §2, Remark (iii), p. 32) and the injectivity of the restriction to $P_n$ for generic $\pi$ (Cogdell, Lecture 4, §4, Theorem 4.4, p. 34, after Jacquet and Shalika), each with its own argument
 
 ## Sources
 
@@ -41,3 +43,8 @@ for the exact hypotheses.
   model), Remarks (i)–(iii) (Bessel distributions; the algebraic functionals, of which only one line extends
   continuously; the contragredient), Definition 4.1, and Theorem 4.4 ("Bernstein and Zelevinsky if $v < \infty$ and Jacquet
   and Shalika if $v \mid \infty$").
+- B. Sun and C.-B. Zhu, "A general form of Gelfand–Kazhdan criterion", arXiv:0903.1409 (version 6):
+  Theorem 2.3 (a), pp. 5–6 (for closed subgroups $S_1, S_2$ with characters $\chi_1, \chi_2$ and a continuous
+  anti-automorphism fixing the relevant tempered eigendistributions,
+  $\dim \mathrm{Hom}_{S_1}(U^\infty, \mathbb{C}_{\chi_1}) \dim \mathrm{Hom}_{S_2}(V^\infty, \mathbb{C}_{\chi_2}) \le 1$ for contragredient
+  irreducible Casselman–Wallach representations), and Remark 2.4.
