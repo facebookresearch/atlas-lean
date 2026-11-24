@@ -32,6 +32,7 @@
 
 - [Canonical probability space for Kingman holding times](pi-measure.md)
 - [Kingman coalescent from coordinate projections](of-pi.md)
+- [Hudson's algorithm without recombination samples Kingman's coalescent](hudson-s-algorithm-without-recombination-samples.md)
 
 ## Wright–Fisher → Kingman
 
