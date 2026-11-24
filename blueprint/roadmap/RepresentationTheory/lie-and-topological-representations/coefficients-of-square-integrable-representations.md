@@ -36,23 +36,20 @@ theorem), for the invariance of Haar measure under inversion on unimodular group
 second-countable case), for closed operators and their polar decomposition, and for
 the square integrability of all coefficients and the boundedness of the coefficient maps, each citing the sources below with locators.
 
-A good expansion also states and links these inputs of the statement:
+It also writes out these steps of its own proof:
 
-- unitary representations of locally compact groups, the space $L^2(G)$ and its left and right regular representations, for all the items.
-
-It also states and links these inputs of the proof:
-
-- the invariance of Haar measure under inversion on an arbitrary unimodular locally compact group, from the uniqueness of Haar measure up to a scalar, for Godement's general setting.
-- the spectral theorem for unbounded self-adjoint operators and the polar decomposition of closed densely defined operators, for the boundedness of the coefficient maps.
+- the invariance of Haar measure under inversion on an arbitrary unimodular locally compact group: the image of a Haar measure under inversion is a right, hence left, Haar measure, a multiple $c$ of the original with $c^2 = 1$, for Godement's general setting.
 
 ## Depends on
 
-Its statement uses the inputs listed under Expansion.
+- [Unitary representations of locally compact groups and representations of compact groups](unitary-representations-and-representations-of-compact-groups.md), for unitary representations of locally compact groups, the space $L^2(G)$ and its left and right regular representations, for all the items
 
 ## Proof depends on
 
 - [Spectral theorem for bounded self-adjoint operators, multiplication form](../../Analysis/operator-theory/spectral-theory/spectral-theorem-for-bounded-self-adjoint-operat/bounded-self-adjoint-spectral-multiplica.md), for Schur's lemma: a bounded operator $T$ commuting with $\pi(G)$ has self-adjoint parts $(T + T^*)/2$ and $(T - T^*)/2i$, each commuting with $\pi(G)$ as $\pi$ is unitary (they need not commute with each other); a self-adjoint operator commuting with $\pi(G)$ commutes with its spectral projections, which are then $0$ or $1$ by irreducibility; for an intertwiner $T$ between inequivalent representations, $T^*T$ and $TT^*$ are scalars, and a nonzero $T$ would be a multiple of a unitary equivalence
 - [Right-invariant Haar measures are inversion-invariant](../../MeasureTheory/haar-measure/unimodular-groups/is-inv-invariant-of-is-mul-right-invaria.md), for the inversion, in the second-countable case, which covers Lie groups
+- [Uniqueness of regular left-invariant measures up to a scalar](../../MeasureTheory/haar-measure/existence-and-uniqueness-of-haar-measure/is-mul-left-invariant-eq-smul-of-regular.md), for the uniqueness of Haar measure up to a scalar, behind the invariance under inversion
+- [Spectral theorem for unbounded self-adjoint operators, and trace-class operators](../../Analysis/operator-theory/spectral-theory/unbounded-self-adjoint-and-trace-class-operators.md), for the spectral theorem for unbounded self-adjoint operators, which gives $\lvert T \rvert = (T^*T)^{1/2}$ and its spectral projections, for the polar decomposition of closed densely defined operators and the boundedness of the coefficient maps
 
 ## Sources
 

@@ -34,24 +34,23 @@ in the non-archimedean case and the Lie group structure in the real case) and fo
 conjugacy of maximal compact subgroups of real points, each citing a pinned source with locators
 besides those below.
 
-A good expansion also states and links these inputs of the statement:
+It also writes out these steps of its own proof:
 
-- affine group schemes, or varieties, over a field, and the Zariski topology, for the definitions.
-- real Lie groups, for the real case.
-
-It also states and links these inputs of the proof:
-
-- the local compactness of a local field and of $\mathrm{M}_N(F)$, and the closedness of the image of a closed embedding; in the real case, the closed subgroup theorem and the finiteness of the connected components of real algebraic sets, for the topology of rational points.
-- Cartan's fixed point theorem for compact groups acting on Riemannian symmetric spaces of nonpositive curvature, or the Cartan decomposition, for the conjugacy of maximal compact subgroups in the connected linear semisimple case.
-- the theorem of Cartan, Iwasawa and Malcev that maximal compact subgroups of a Lie group with finitely many components exist and are conjugate, for the extension to $\mathbf{G}(\mathbb{R})$.
+- the local compactness of $\mathrm{M}_N(F) \cong F^{N^2}$ for a local field $F$, and the closedness of the image of a closed embedding, for the topology of rational points.
+- the passage from the identity component $\mathbf{G}(\mathbb{R})^0$ to $\mathbf{G}(\mathbb{R})$, which has finitely many components, for the extension to $\mathbf{G}(\mathbb{R})$.
 
 ## Depends on
 
 - [Topological group](../../Topology/topological-groups/topological-group.md), for the topology of rational points
+- [Geometrically reduced variety over a field](../../AlgebraicGeometry/schemes-and-morphisms/varieties-over-a-field/is-variety.md), for varieties over a field and their Zariski topology, for the definitions
+- [Lie group](../../Geometry/differential-topology/lie-group.md), for real Lie groups, for the real case
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for their Lie algebras and closed subgroups, for the real case
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Compactness of the completed ring of integers](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/is-compact-adic-completion-integers.md), for the local compactness of the completions of number fields, whose rings of integers are compact open subrings
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for the closed subgroup theorem, in the real case; and for E. Cartan's conjugacy theorem and the Cartan decomposition, for the conjugacy of maximal compact subgroups in the connected linear semisimple case; and for the theorem of Cartan, Iwasawa and Malcev on the existence and conjugacy of maximal compact subgroups of a connected Lie group, for the extension to $\mathbf{G}(\mathbb{R})$
+- [Finiteness of the connected components of real algebraic varieties and groups](connected-components-of-real-algebraic-groups.md), for the finiteness of the connected components of real algebraic sets and of $\mathbf{G}(\mathbb{R})$, in the real case
 
 ## Sources
 

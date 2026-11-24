@@ -51,10 +51,6 @@ should cite Langlands's *On the functional equations satisfied by Eisenstein ser
 Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition and Eisenstein series*
 (Cambridge, 1995) with locators, besides the sources below.
 
-A good expansion also states and links these inputs of the proof:
-
-- the Paley–Wiener theorem on $\mathfrak{a}_P$: entire functions on $\mathfrak{a}_{P,\mathbb{C}}^*$ of Paley–Wiener type, with values in a finite-dimensional space, are the Fourier–Laplace transforms of smooth compactly supported functions on $\mathfrak{a}_P$, for the wave packets (Arthur, §12).
-
 ## Depends on
 
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms, cusp forms and constant terms
@@ -66,6 +62,7 @@ A good expansion also states and links these inputs of the proof:
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the decomposition of $G(k)$ into the double cosets $P(k) w Q(k)$, which unfolds the constant terms
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the Siegel-set estimates in the proof of absolute convergence
 - [Discreteness of the cuspidal spectrum](discreteness-of-the-cuspidal-spectrum.md), for the cuspidal spectrum of the Levi factors, whose cuspidal data index the wave packets of the spectral decomposition
+- [Paley–Wiener theorem on a real vector space](../../../Analysis/harmonic-analysis/fourier-transform/paley-wiener-theorem-on-a-real-vector-space.md), for the wave packets: entire functions on $\mathfrak{a}_{P,\mathbb{C}}^*$ of Paley–Wiener type, with values in a finite-dimensional space, are the Fourier–Laplace transforms of smooth compactly supported functions on $\mathfrak{a}_P$ (Arthur, §12)
 
 ## Sources
 

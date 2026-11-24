@@ -62,12 +62,11 @@ recorded; the base change for definite unitary groups should also be checked aga
 "Changement de base CM et séries discrètes", in *On the Stabilization of the Trace Formula*, International
 Press, 2011, with locators.
 
-A good expansion also states and links these inputs of the proof:
+A good expansion also writes out these steps of its own proof:
 
-- the non-vanishing at $s = 1$ of both Asai $L$-functions (Shahidi, as Mok cites it, p. 36), by which exactly one of them has a pole there, a simple one, and the identification of that one, $\mathrm{Asai}^\eta$ with $\eta = (-1)^{N-1}\kappa$ (Mok, Theorem 2.5.4 (a), p. 36, and Remark 2.5.6), for the parity: the simple pole of the product alone determines neither.
+- the identification of the Asai $L$-function with the pole, $\mathrm{Asai}^\eta$ with $\eta = (-1)^{N-1}\kappa$ (Mok, Theorem 2.5.4 (a), p. 36, and Remark 2.5.6), for the parity: the simple pole of the product alone determines neither.
 - for the quasi-split groups, Mok's comparison of the stabilized trace formula of $U_{E/F}(N)$ with the stabilized twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_N$, with the fundamental lemmas and the weighted fundamental lemma.
 - for inner forms, the untwisted trace formula of the inner twist compared with Mok's results, under the two local hypotheses of Kaletha–Mínguez–Shin–White at every place, the local classification (their Hypothesis 3.6.3) and the local intertwining relation (their Theorem 2.6.2) (KMSW, Theorem* 1.7.1, p. 89, and Chapter 5, Theorem 5.0.5, pp. 205–206); the stabilization of this untwisted trace formula itself also needs the weighted fundamental lemma (KMSW, Introduction, p. 6).
-- Mœglin–Waldspurger's classification of the discrete spectrum of $\mathrm{GL}_N$ by the blocks attached to a unitary cuspidal $\mu$ and a length $d \ge 1$, cuspidal for $d = 1$ and residual for $d > 1$ (KMSW, (1.3.2)–(1.3.3), p. 64).
 
 ## Depends on
 
@@ -80,6 +79,8 @@ A good expansion also states and links these inputs of the proof:
 
 - [Jacquet–Shalika classification of automorphic representations of GLₙ](automorphic-representations-of-gl-n/jacquet-shalika-classification.md), for the bijection between the parameters $\psi$ and the families of Satake parameters they determine, which with Mœglin–Waldspurger's theorem Mok uses to separate the global parameters (Mok, Example 4.3.1, (4.3.5))
 - [Rankin–Selberg L-functions for GLₙ × GLₘ](automorphic-representations-of-gl-n/rankin-selberg-l-functions-for-gl-n.md), for the simple pole at $s = 1$ of the Rankin–Selberg $L$-function of a conjugate self-dual cuspidal representation and its contragredient, the product of its two Asai $L$-functions (Mok, (2.5.9), pp. 35–36), which underlies the parity of these representations
+- [Asai L-functions at s = 1](automorphic-representations-of-gl-n/asai-l-functions-at-s-equal-one.md), for the non-vanishing at $s = 1$ of both Asai $L$-functions (Shahidi, as Mok cites it, p. 36), by which exactly one of them has a pole there, a simple one, for the parity
+- [Mœglin–Waldspurger classification of the discrete spectrum of GLₙ](automorphic-representations-of-gl-n/moeglin-waldspurger-classification-of-the-discrete-spectrum.md), for Mœglin–Waldspurger's classification of the discrete spectrum of $\mathrm{GL}_N$ by the blocks attached to a unitary cuspidal $\mu$ and a length $d \ge 1$, cuspidal for $d = 1$ and residual for $d > 1$ (KMSW, (1.3.2)–(1.3.3), p. 64)
 
 ## Sources
 

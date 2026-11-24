@@ -53,22 +53,16 @@ model. Howe's general theorems for $\mathcal{A}(U, W) = S(U) \otimes \Lambda(W)$
 $\mathbb{Z}/2$-graded oscillator algebra (for $U = 0$ and $W = \mathbb{C}$ the module has dimension $2$), are not needed
 and should get their own pages if wanted.
 
-A good expansion also states and links these inputs of the statement:
-
-- the Weyl algebra of polynomial-coefficient differential operators on $U$, for all the items.
-
-It also states and links these inputs of the proof:
-
-- Harish-Chandra's theorem that a finitely generated $(\mathfrak{g}, K)$-module annihilated by an ideal of finite codimension of the centre of $U(\mathfrak{g})$ is admissible, for the admissibility of the algebraic theta lifts.
-
 ## Depends on
 
 - [Explicit formulas for the Weil representation](explicit-formulas-for-the-weil-representation.md), for the Fock model, on which the members of a dual pair act in the last item
 - [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for $(\mathfrak{g}, K)$-modules in the last item
+- [Weyl algebra of polynomial differential operators](../../../Algebra/associative-algebras/weyl-algebra.md), for the Weyl algebra of polynomial-coefficient differential operators on $U$, for all the items
 
 ## Proof depends on
 
 - [Representations of compact groups are semisimple](../../lie-and-topological-representations/representations-of-compact-groups/compact-group-semisimple.md), for the complete reducibility of the finite-dimensional representations of the compact real forms, from which that of the polynomial representations of the complex classical groups follows by taking complex-linear complements and the Zariski density of the compact form (Weyl's unitarian trick), for the isotypic decompositions
+- [(g, K)-modules, the Poincaré–Birkhoff–Witt theorem and Harish-Chandra's homomorphism](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/g-k-modules-and-harish-chandra-homomorphism.md), for Harish-Chandra's theorem that a finitely generated $(\mathfrak{g}, K)$-module annihilated by an ideal of finite codimension of the centre of $U(\mathfrak{g})$ is admissible, for the admissibility of the algebraic theta lifts
 
 ## Sources
 

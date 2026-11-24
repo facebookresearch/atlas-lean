@@ -39,11 +39,7 @@ A good expansion has pages for the convergence criterion and rearrangements, for
 evaluation of products of power series, for substitution, and for the two formal identities, each citing a
 pinned source with locators besides those below.
 
-A good expansion also states and links these inputs of the statement:
-
-- fields complete for a non-archimedean absolute value, for all the items.
-
-It also states and links these inputs of the proof:
+It also writes out these steps of its own proof:
 
 - the formal logarithmic derivative and the chain rule in $\mathbb{Q}[[X]]$, the coefficient recursion and the uniqueness of solutions of $F' = F$, $F(0) = 1$, for the formal identities.
 - completeness and the summation of families tending to $0$ in any order (Conrad, §2, Theorems 2.5 and 2.9, Corollaries 2.10 and 2.11), for the convergence criterion, Cauchy products and substitution.
@@ -53,6 +49,7 @@ It also states and links these inputs of the proof:
 - [Exponential of a power series with zero constant coefficient](../../RingTheory/formal-power-series/exponential-of-multivariate-formal-power-series/exp-of-constant-coeff-zero.md), for the formal exponential
 - [The logarithm series ln(1 + T)](../zeta-l-functions/multiple-zeta-values/q-analogues-of-multiple-zeta-values/part-05/log-one-add-series.md), for the formal logarithm over $\mathbb{Q}$
 - [Nonarchimedean criterion for absolute values](absolute-values-on-fields/is-nonarchimedean-iff-nat-cast-le-one.md), for non-archimedean absolute values and the ultrametric inequality
+- [Complete uniform space](../../Topology/uniform-spaces/complete-space.md), for the completeness of the field, for all the items
 
 ## Proof depends on
 

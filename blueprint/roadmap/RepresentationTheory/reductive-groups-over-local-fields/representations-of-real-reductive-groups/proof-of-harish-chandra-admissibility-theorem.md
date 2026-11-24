@@ -27,11 +27,7 @@ irreducible unitary representation, for Harish-Chandra's bound on $K$-multiplici
 irreducible representations, and for the reduction to the stated real points, each with its group and
 domain hypotheses and a pinned source.
 
-A good expansion also states and links these inputs of the statement:
-
-- the enveloping algebra of $\mathfrak{g}$ and its centre $Z(\mathfrak{g})$, for quasi-simplicity.
-
-It also states and links these inputs of the proof:
+It also writes out these steps of its own proof:
 
 - the action of $Z(\mathfrak{g})$ by scalars on the smooth vectors of an irreducible unitary representation (Segal; Harish-Chandra), with its domain argument.
 - Harish-Chandra's bound $n_i \le \dim V_i$ for irreducible quasi-simple representations of connected semisimple groups with finite centre.
@@ -41,10 +37,11 @@ It also states and links these inputs of the proof:
 
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the real points of a Zariski-connected reductive group and their maximal compact subgroups
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for smooth vectors and $K$-multiplicities
+- [Universal enveloping algebra of a Lie algebra](../../../Algebra/nonassociative-algebras/universal-enveloping-algebra.md), for the enveloping algebra of $\mathfrak{g}$ and its centre $Z(\mathfrak{g})$, for quasi-simplicity
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+Its proof consists of the steps listed under Expansion.
 
 ## Sources
 

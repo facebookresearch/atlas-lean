@@ -27,21 +27,20 @@ A good expansion has a page for the existence and uniqueness of the invariant me
 Weil's formula, and one for the case of a compact normal subgroup, each citing a pinned source with
 locators.
 
-A good expansion also states and links these inputs of the statement:
+It also writes out these steps of its own proof:
 
-- Radon measures on locally compact spaces, Haar measures and modular functions, for both items.
-
-It also states and links these inputs of the proof:
-
-- the existence and uniqueness of Haar measure, and the averaging map $C_c(G) \to C_c(G/H)$, $f \mapsto \int_H f(\cdot\, h) \, dh$, being onto, for Weil's formula.
+- the averaging map $C_c(G) \to C_c(G/H)$, $f \mapsto \int_H f(\cdot\, h) \, dh$, being onto, for Weil's formula.
 
 ## Depends on
 
-Its statement uses the inputs listed under Expansion.
+- [Haar measure](is-haar-measure.md), for Haar measures
+- [Modular function of a locally compact group](modular-character.md), for the modular function
+- [Regular measure](../measures/regular-measures/radon-measures/regular.md), for Radon measures, the regular measures, for both items
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Existence of Haar measure](existence-and-uniqueness-of-haar-measure/is-haar-measure-haar-measure.md), for the existence of Haar measure, for Weil's formula
+- [Uniqueness of regular left-invariant measures up to a scalar](existence-and-uniqueness-of-haar-measure/is-mul-left-invariant-eq-smul-of-regular.md), for the uniqueness of Haar measure up to a scalar, for Weil's formula
 
 ## Sources
 

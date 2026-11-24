@@ -53,22 +53,15 @@ the correspondence of unramified representations among corresponding pairs, for 
 Satake parameters with its normalization, and for the split case, each with a precise statement and the
 sources below, with the Satake isomorphism for hyperspecial subgroups as a prerequisite.
 
-A good expansion also states and links these inputs of the statement:
-
-- the Satake isomorphism for the spherical Hecke algebras of the unramified unitary groups and their hyperspecial subgroups, in whose coordinates the Satake parameters of the statements are written (Liu, Appendix).
-
-It also states and links these inputs of the proof:
-
-- the Satake isomorphism for hyperspecial maximal compact subgroups, for the calculation in the Hecke algebras behind the matching of Satake parameters.
-
 ## Depends on
 
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for the Weil representation of a unitary dual pair
 - [Howe duality for unitary dual pairs over p-adic fields](howe-duality-over-p-adic-fields.md), for the local theta correspondence and the split case
+- [Cartan decomposition and Satake isomorphism for special maximal compact subgroups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md), for the Satake isomorphism for the spherical Hecke algebras of the unramified unitary groups and their hyperspecial subgroups, in whose coordinates the Satake parameters of the statements are written (Liu, Appendix)
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Cartan decomposition and Satake isomorphism for special maximal compact subgroups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md), for the Satake isomorphism for hyperspecial maximal compact subgroups, for the calculation in the Hecke algebras behind the matching of Satake parameters
 
 ## Sources
 

@@ -67,12 +67,7 @@ $G_{x,r}$, $r > 0$), the chains of elementary maps, the conjugacy of Iwahori sub
 products and of $\mathrm{GL}_m$, and the properties of the filtrations
 listed above, each citing the sources below with locators.
 
-A good expansion also states and links these inputs of the statement:
-
-- relative roots and Lie algebras of reductive groups over $F$, for the affine roots and the lattices $\mathfrak{g}_{x,r}$.
-- $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1; Bernstein–Zelevinsky 1977, §5), for the filtration of induced representations along the Bruhat decomposition.
-
-It also states and links these inputs of the proof:
+It also writes out these steps of its own proof:
 
 - Bruhat–Tits theory, on which Moy and Prasad construct the filtrations: the affine building (Bruhat–Tits I, §§2 and 7), the smooth integral models (II, 4.6.2) and the fixers of bounded subsets of an apartment (II, 4.6.26–4.6.28); Moy–Prasad, §3.2, cite II, Proposition 4.6.28 (iii), for the transitivity on the apartments containing $x$, which makes $G_{x,r}$ independent of the apartment.
 
@@ -80,6 +75,8 @@ It also states and links these inputs of the proof:
 
 - [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for connected reductive groups over $F$, their maximal split tori and the topology of $G = \mathbf{G}(F)$
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for parabolic $F$-subgroups, Levi decompositions, standard parabolic and Levi subgroups and Weyl groups
+- [Relative roots, root space decompositions and root subgroups of reductive groups](../../../GroupTheory/linear-groups/relative-root-systems-and-root-subgroups.md), for relative roots and the root space decomposition of the Lie algebra, for the affine roots and the lattices $\mathfrak{g}_{x,r}$
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](l-spaces-distributions-and-smooth-representations-of-l-groups.md), for $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1; Bernstein–Zelevinsky 1977, §5), for the filtration of induced representations along the Bruhat decomposition
 
 ## Proof depends on
 

@@ -27,10 +27,6 @@ A good expansion has pages for the filtration of a $k$-split unipotent group by 
 compactness of $N(k) \backslash N(\mathbb{A})$ and for its invariant probability measure, each citing a pinned
 source with locators besides the one below.
 
-A good expansion also states and links these inputs of the proof:
-
-- the filtration of a $k$-split unipotent group by normal $k$-subgroups with vector-group quotients, and for each step a section $N'' \to N$ that is a morphism of $k$-varieties defined everywhere, which gives the surjectivity of $N(k) \to N''(k)$ and of $N(\mathbb{A}) \to N''(\mathbb{A})$ and compact lifts of compact sets, for the induction.
-
 ## Depends on
 
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for parabolic subgroups and their unipotent radicals
@@ -40,6 +36,7 @@ A good expansion also states and links these inputs of the proof:
 ## Proof depends on
 
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the compactness of $k \backslash \mathbb{A}$, the case of a vector group
+- [Unipotent groups in characteristic zero: central series, exponential map and sections](../../../GroupTheory/linear-groups/unipotent-groups-in-characteristic-zero.md), for the filtration of a unipotent group over the number field $k$ by normal $k$-subgroups with vector-group quotients and, for each step, a section $N'' \to N$ that is a morphism of $k$-varieties defined everywhere, which gives the surjectivity of $N(k) \to N''(k)$ and of $N(\mathbb{A}) \to N''(\mathbb{A})$ and compact lifts of compact sets, for the induction
 
 ## Sources
 

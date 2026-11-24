@@ -102,12 +102,6 @@ A good expansion has a statement page for the decomposition, proved from the dis
 spectrum by the twist and the restriction to $M(\mathbb{A})^1$ above, and leaves the use, with the choice of the
 component, to the page on constituents of induced representations, with the locators below.
 
-A good expansion also states and links these inputs of the proof:
-
-- the real Iwasawa decomposition $G_\infty = P_\infty K_\infty$ for every maximal compact subgroup $K_\infty$, the goodness of $K_v$ at almost all places, and the resulting finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ (Langlands, p. 3), for the seed spaces in the use.
-- the regularity of square-integrable $K$-finite, $\mathcal{Z}$-finite functions on a finite-volume arithmetic quotient, which are smooth and of moderate growth, hence automorphic forms (Borel, Proposition 4.1, p. 6, and pp. 27–28), for the projections of the seed spaces in the use.
-- the decomposition $M(\mathbb{A}) = A_{M,\infty}^+ \times M(\mathbb{A})^1$ (Arthur, p. 16), the compactness of $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$, and the decomposition of a unitary representation of a compact abelian group into its character spaces, for steps (b) and (c).
-
 ## Depends on
 
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms and cusp forms on $M(\mathbb{A})$
@@ -121,8 +115,12 @@ A good expansion also states and links these inputs of the proof:
 - [Integration over quotients of locally compact groups](../../../MeasureTheory/haar-measure/integration-over-quotients-of-locally-compact-groups.md), for the compatible measures on $Z_M(\mathbb{A}) M(k) \backslash M(\mathbb{A})$ and $M(k) \backslash M(\mathbb{A})^1$ in step (b)
 - [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for the square integrability of the slices, twisted by $\nu^{-1}$, in the use
 - [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), applied to $M$ at the level $L_M$, the finitely many $K_{M,\infty}$-types and the ideal $J$, for the finitely many components met by the slices of $V$ in the use
-- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the finiteness of $M(k) \backslash M(\mathbb{A}_f) / L_M$, by which the functions of level $L_M$ on the norm-one quotient live on finitely many arithmetic quotients, in the use
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the finiteness of $M(k) \backslash M(\mathbb{A}_f) / L_M$, by which the functions of level $L_M$ on the norm-one quotient live on finitely many arithmetic quotients, in the use; and for the compactness of $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$: the compactness criterion applies to the identity component of $Z_M$, a torus with no proper parabolic subgroup, and its finite component group contributes a compact factor, for step (b)
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compactness of $P(k_v) \backslash G(k_v)$ and the decomposition $G(k_v) = P_0(k_v) K_v$ for a good maximal compact subgroup $K_v$, at the finite places, in the finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ used in the use
+- [Iwasawa and Langlands decompositions of real reductive groups](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/iwasawa-and-langlands-decompositions.md), for the real Iwasawa decomposition $G_\infty = P_\infty K_\infty$ for every maximal compact subgroup $K_\infty$, for the seed spaces in the use
+- [Adelic points of reductive groups: the norm-one subgroup and maximal compact subgroups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-points-of-reductive-groups.md), for the goodness of $K_v$ at almost all places and the finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ (Langlands, p. 3), for the seed spaces in the use; and for the decomposition $M(\mathbb{A}) = A_{M,\infty}^+ \times M(\mathbb{A})^1$ (Arthur, p. 16), for steps (b) and (c)
+- [Square-integrable K-finite and Z-finite functions are automorphic forms](square-integrable-automorphic-forms.md), for the regularity of square-integrable $K$-finite, $\mathcal{Z}$-finite functions on a finite-volume arithmetic quotient, which are automorphic forms (Borel, Proposition 4.1, p. 6, and pp. 27–28), for the projections of the seed spaces in the use
+- [Unitary representations of locally compact groups and representations of compact groups](../../lie-and-topological-representations/unitary-representations-and-representations-of-compact-groups.md), for the decomposition of a unitary representation of the compact abelian group $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$ into its character spaces, for step (c)
 
 ## Sources
 

@@ -35,25 +35,21 @@ density of $K$-finite vectors (from the density of matrix coefficients in $C(K)$
 Stone–Weierstrass theorem, the coefficients forming a unital algebra closed under conjugation), and
 for the Hilbert direct sum in the unitary case, each citing the sources below with locators.
 
-A good expansion also states and links these inputs of the statement:
-
-- Lie groups, their Haar measures and Lie algebras, and integrals of continuous compactly supported functions with values in a complete locally convex space, for all the items.
-- irreducible representations of compact groups and their characters, for the isotypic subspaces and projections.
-
-It also states and links these inputs of the proof:
-
-- the complex Stone–Weierstrass theorem, for the density of the matrix coefficients.
-- differentiation under the integral sign for vector-valued integrals, applied to $g \mapsto \pi(g)\pi(f)v = \int_G f(g^{-1}x)\pi(x)v \, dx$, the translated smoothing kernel, not to $g \mapsto \pi(g)v$ itself, for the smoothness of $\pi(f)v$.
-- the Schur orthogonality relations for the characters of a compact group, for $E_\tau^2 = E_\tau$ and $E_\tau E_{\tau'} = 0$.
-
 ## Depends on
 
-Its statement uses the inputs listed under Expansion.
+- [Lie group](../../Geometry/differential-topology/lie-group.md), for Lie groups, for all the items
+- [Haar measure](../../MeasureTheory/haar-measure/is-haar-measure.md), for their Haar measures
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](lie-groups-exponential-map-and-maximal-compact-subgroups.md), for their Lie algebras and the exponential map
+- [Vector-valued integrals and distributions on Lie groups](vector-valued-integrals-and-distributions-on-lie-groups.md), for integrals of continuous compactly supported functions with values in a complete locally convex space
+- [Unitary representations of locally compact groups and representations of compact groups](unitary-representations-and-representations-of-compact-groups.md), for irreducible representations of compact groups and their characters, for the isotypic subspaces and projections
 
 ## Proof depends on
 
 - [Peter–Weyl theorem: unitary representations separate points](representations-of-compact-groups/peter-weyl-point-separation.md), for the density of the matrix coefficients in $C(K)$, through the Stone–Weierstrass theorem
 - [Representations of compact groups are semisimple](representations-of-compact-groups/compact-group-semisimple.md), for the complete reducibility of the finite-dimensional $K$-stable subspaces spanned by $K$-finite vectors (its real form; the complex case is the same argument with an invariant Hermitian form)
+- [Stone–Weierstrass theorem for star subalgebras](../../Topology/function-spaces/stone-weierstrass-star-subalgebra.md), for the density of the matrix coefficients
+- [Vector-valued integrals and distributions on Lie groups](vector-valued-integrals-and-distributions-on-lie-groups.md), for differentiation under the integral sign for vector-valued integrals, applied to $g \mapsto \pi(g)\pi(f)v = \int_G f(g^{-1}x)\pi(x)v \, dx$, the translated smoothing kernel, not to $g \mapsto \pi(g)v$ itself, for the smoothness of $\pi(f)v$
+- [Unitary representations of locally compact groups and representations of compact groups](unitary-representations-and-representations-of-compact-groups.md), for the Schur orthogonality relations for the characters of a compact group, for $E_\tau^2 = E_\tau$ and $E_\tau E_{\tau'} = 0$
 
 ## Sources
 

@@ -33,23 +33,25 @@ $\delta$ with its support and convergence statements, for the factorization alon
 to kernels on $G$ in product coordinates, and for the vector form with its seminorm estimates, each citing
 the sources below with locators.
 
-A good expansion also states and links these inputs of the statement:
+A good expansion also covers these notions of its own statement:
 
-- compactly supported distributions on $\mathbb{R}$ and their weak convergence, and flows of complete vector fields on manifolds, for the first two items.
+- a definition page for the flow of a complete vector field on a manifold, which the second item uses in Francis's generality.
 
-It also states and links these inputs of the proof:
+It also writes out these steps of its own proof:
 
-- the Fourier transform on the Schwartz space of $\mathbb{R}$, and the shift of contour across an unbounded region with the decay estimates of the infinite products that it needs (Casselman, §§2, 4 and 5; Francis, Theorem 6 and the rescaling after it), for the Schwartz property of the reciprocal infinite products.
-- product coordinates of the second kind on a Lie group, $(t_1, \dots, t_d) \mapsto e^{t_1 X_1} \cdots e^{t_d X_d}$, a diffeomorphism near $0$, for the passage to kernels on $G$ with their Jacobian.
+- the shift of contour across an unbounded region with the decay estimates of the infinite products that it needs (Casselman, §§2, 4 and 5; Francis, Theorem 6 and the rescaling after it), for the Schwartz property of the reciprocal infinite products.
 - the diagonal choice of the coefficients that makes the series converge in each of the countably many seminorms of $V^\infty$ (Casselman, §6), for the vector form.
 
 ## Depends on
 
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for smooth vectors and the integrated action $\pi(f)$ in the vector form
+- [Vector-valued integrals and distributions on Lie groups](../../lie-and-topological-representations/vector-valued-integrals-and-distributions-on-lie-groups.md), for compactly supported distributions and their weak convergence, for the first item
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for one-parameter subgroups and the flows of invariant vector fields, along which the second item is applied
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Fourier transform on the Schwartz space](../../../Analysis/harmonic-analysis/fourier-transform/fourier-transform-clm.md), for the Fourier transform on the Schwartz space of $\mathbb{R}$
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md), for product coordinates of the second kind on a Lie group, $(t_1, \dots, t_d) \mapsto e^{t_1 X_1} \cdots e^{t_d X_d}$, a diffeomorphism near $0$, for the passage to kernels on $G$ with their Jacobian
 
 ## Sources
 

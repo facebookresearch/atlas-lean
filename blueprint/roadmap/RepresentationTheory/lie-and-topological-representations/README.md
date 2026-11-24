@@ -10,3 +10,6 @@ Representations of infinite groups and Lie algebras: continuous and unitary repr
 - [Branching from $\mathrm{GL}_{n+1}(\mathbb{C})$ to $\mathrm{GL}_n(\mathbb{C})$](gl-branching-rule.md)
 - [Smooth vectors and K-finite vectors of continuous representations](smooth-and-k-finite-vectors.md)
 - [Coefficient maps of square-integrable representations](coefficients-of-square-integrable-representations.md)
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](lie-groups-exponential-map-and-maximal-compact-subgroups.md)
+- [Unitary representations of locally compact groups and representations of compact groups](unitary-representations-and-representations-of-compact-groups.md)
+- [Vector-valued integrals and distributions on Lie groups](vector-valued-integrals-and-distributions-on-lie-groups.md)

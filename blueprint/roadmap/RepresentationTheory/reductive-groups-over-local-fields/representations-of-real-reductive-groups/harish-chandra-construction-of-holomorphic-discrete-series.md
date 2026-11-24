@@ -46,22 +46,21 @@ for the polynomial model with the duality of $\mathfrak{p}_\pm$, for the Fréche
 holomorphic sections, for the lowest $K$-type argument, and for Harish-Chandra's square-integrability
 criterion, each citing the sources below with locators.
 
-A good expansion also states and links these inputs of the statement:
+It also writes out these steps of its own proof:
 
-- Hermitian symmetric spaces $G/K$, compact Cartan subgroups and compact and noncompact roots, the complexification $G^{\mathbb{C}}$ and its compact dual, and homogeneous holomorphic vector bundles, for all the items.
-
-It also states and links these inputs of the proof:
-
-- the Weierstrass theorem that locally uniform limits of holomorphic functions of several variables are holomorphic, for the Fréchet topology.
+- the passage from one to several variables: a locally uniform limit of holomorphic functions on an open subset of $\mathbb{C}^n$ is locally bounded and holomorphic in each variable separately, hence holomorphic by Osgood's lemma applied on polydiscs, for the Fréchet topology.
 - Harish-Chandra's construction of the square-integrable holomorphic sections (Harish-Chandra IV–VI), for the square-integrability: the nonvanishing of the Hilbert space under positivity and its infinitesimal equivalence with $\mathbf{F}_\lambda$ (Schmid, §3, (3.12), pp. 72–73).
 
 ## Depends on
 
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for $K$-finite vectors and isotypic components
+- [Hermitian symmetric spaces and their compact duals](hermitian-symmetric-spaces.md), for Hermitian symmetric spaces $G/K$, compact Cartan subgroups and compact and noncompact roots, the complexification $G^{\mathbb{C}}$ and its compact dual, and homogeneous holomorphic vector bundles, for all the items
 
 ## Proof depends on
 
 - [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the continuous isotypic projections in the lowest $K$-type argument
+- [Locally uniform limits of holomorphic functions are holomorphic](../../../Analysis/complex-analysis/cauchy-theory/locally-uniform-limit-of-holomorphic.md), for the Weierstrass theorem in one variable, for the Fréchet topology
+- [Osgood's lemma for functions bounded on open sets](../../../Analysis/complex-analysis/several-complex-variables/hartogs-theorem-on-separate-analyticity/differentiable-at-uncurry-of-separately-2.md), for Osgood's lemma, for the Fréchet topology
 
 ## Sources
 

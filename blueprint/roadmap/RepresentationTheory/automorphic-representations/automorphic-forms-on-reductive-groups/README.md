@@ -13,3 +13,4 @@ Automorphic forms and automorphic representations of a reductive group over a nu
 - [Tensor product theorem for automorphic representations](tensor-product-theorem.md)
 - [Eisenstein series and their meromorphic continuation](eisenstein-series.md)
 - [Automorphic representations as constituents of induced representations](automorphic-representations-as-constituents-of-induced-representations.md)
+- [Square-integrable K-finite and Z-finite functions are automorphic forms](square-integrable-automorphic-forms.md)

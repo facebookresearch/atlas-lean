@@ -32,10 +32,10 @@ for the exactness and adjunctions, the Gelfand–Kazhdan theorem on derivatives,
 the derivatives of $\langle \Delta \rangle$, the irreducibility of highest derivatives and the
 Gelfand–Kazhdan theorem on invariant distributions, each citing the sources below with locators.
 
-A good expansion also states and links these inputs of the proof:
+A good expansion also writes out these steps of its own proof:
 
-- Bernstein and Zelevinsky's Theorem 5.2 (1977), the filtration of a composition of an induction functor and a restriction functor with characters, of which the parabolic geometric lemma is the case of trivial characters (their §6.4); applied in the mirabolic situations of their Proposition 4.13 (proved in their §7), it gives the filtration of the derivatives of a product by products of derivatives (their Lemma 4.5, proved in 4.14 (c)), and Corollary 4.6 in the Grothendieck group, for the Leibniz rule.
-- distributions on $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1) and the method of invariant distributions (ibid., Chapter III), for the Gelfand–Kazhdan method and Bernstein's $P$-invariant distributions.
+- the application of Bernstein and Zelevinsky's Theorem 5.2 in the mirabolic situations of their Proposition 4.13 (proved in their §7), which gives the filtration of the derivatives of a product by products of derivatives (their Lemma 4.5, proved in 4.14 (c)), and Corollary 4.6 in the Grothendieck group, for the Leibniz rule.
+- Bernstein's $P$-invariant distributions, by the method of invariant distributions.
 
 ## Depends on
 
@@ -45,7 +45,8 @@ A good expansion also states and links these inputs of the proof:
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [The Bernstein–Zelevinsky filtration of a restriction of an induced representation](../representations-of-p-adic-reductive-groups/bernstein-zelevinsky-filtration-theorem.md), for Bernstein and Zelevinsky's Theorem 5.2 (1977), the filtration of a composition of an induction functor and a restriction functor with characters, of which the parabolic geometric lemma is the case of trivial characters (their §6.4), for the Leibniz rule
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](../representations-of-p-adic-reductive-groups/l-spaces-distributions-and-smooth-representations-of-l-groups.md), for distributions on $\ell$-spaces and $\ell$-sheaves (Bernstein–Zelevinsky 1976, Chapter I, §1) and the theorems on invariant distributions (ibid., Chapter III, §6), for the Gelfand–Kazhdan method
 
 ## Sources
 

@@ -11,3 +11,5 @@ Automorphic representations of GLₙ over a number field: Whittaker models and t
 - [Jacquet–Shalika bounds on Satake parameters](jacquet-shalika-bounds.md)
 - [Algebraic automorphic representations and Clozel's purity lemma](algebraic-automorphic-representations-and-clozel-purity.md)
 - [Base change and automorphic induction for GLₙ](base-change-and-automorphic-induction-for-gl-n.md)
+- [Asai L-functions at s = 1](asai-l-functions-at-s-equal-one.md)
+- [Mœglin–Waldspurger classification of the discrete spectrum of GLₙ](moeglin-waldspurger-classification-of-the-discrete-spectrum.md)

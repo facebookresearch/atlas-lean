@@ -55,10 +55,6 @@ twisted see-saw identity, for the invariant distribution theorem with the cases 
 MVW involution, for Bernstein's second adjointness and for Mínguez's rank filtration, each with a precise
 statement and the sources below.
 
-A good expansion also states and links these inputs of the proof:
-
-- the exact sequences of Schwartz–Bruhat functions attached to an open subset and its closed complement in an $\ell$-space (Bernstein–Zelevinsky 1976, Chapter I, §1, as cited by Mínguez), for Kudla's filtration and the orbit filtrations.
-
 ## Depends on
 
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for the local Weil representation
@@ -66,7 +62,7 @@ A good expansion also states and links these inputs of the proof:
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/l-spaces-distributions-and-smooth-representations-of-l-groups.md), for the exact sequences of Schwartz–Bruhat functions attached to an open subset and its closed complement in an $\ell$-space (Bernstein–Zelevinsky 1976, Chapter I, §1, as cited by Mínguez), for Kudla's filtration and the orbit filtrations
 
 ## Sources
 

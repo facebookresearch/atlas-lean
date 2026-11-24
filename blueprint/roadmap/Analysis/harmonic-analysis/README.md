@@ -8,3 +8,4 @@ Fourier series, the Fourier transform on R^n, Fourier analysis on finite groups 
 - [Wavelets and multiscale analysis](wavelets/README.md)
 - [Integral transforms and moment problems](integral-transforms/README.md)
 - [Real-variable methods](real-variable-methods/README.md)
+- [Pontryagin duality and the self-duality of local fields](pontryagin-duality-and-self-duality-of-local-fields.md)

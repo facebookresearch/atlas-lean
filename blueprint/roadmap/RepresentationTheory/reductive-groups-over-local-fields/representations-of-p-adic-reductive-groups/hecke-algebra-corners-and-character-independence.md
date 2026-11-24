@@ -30,18 +30,14 @@ A good expansion has pages for the corner module $V^K$, for its simplicity, for 
 inequivalence, and for the surjectivity onto the product of endomorphism algebras with the independence
 of traces, each citing the sources below with locators.
 
-A good expansion also states and links these inputs of the statement:
-
-- smooth representations of $\ell$-groups, the subspaces $V^K$ and admissibility, as definitions split off from the page on smooth and admissible representations, whose proof uses this node.
-
-It also states and links these inputs of the proof:
+It also writes out these steps of its own proof:
 
 - the Chinese remainder theorem for pairwise comaximal two-sided ideals of a ring, for the surjectivity onto the product.
 - the averaging projections $\pi(e_K)$ and the argument of Casselman's Proposition 2.2.2, for the corners, their simplicity and the transfer of inequivalence.
 
 ## Depends on
 
-Its statement uses the inputs listed under Expansion.
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](l-spaces-distributions-and-smooth-representations-of-l-groups.md), for smooth representations of $\ell$-groups, the subspaces $V^K$ and admissibility
 
 ## Proof depends on
 

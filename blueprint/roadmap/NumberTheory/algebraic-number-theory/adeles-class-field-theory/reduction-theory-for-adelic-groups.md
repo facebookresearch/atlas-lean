@@ -60,11 +60,7 @@ Harish-Chandra, "Arithmetic subgroups of algebraic groups", Ann. of Math. 75 (19
 A. Borel's monograph *Introduction aux groupes arithmétiques*, Hermann, 1969, with locators, besides the
 sources below.
 
-A good expansion also states and links these inputs of the statement:
-
-- the Iwasawa decomposition of the real points at the archimedean places, also used to define $H_P$.
-
-It also states and links these inputs of the proof:
+It also writes out these steps of its own proof:
 
 - the classical proof of reduction theory, as distinct from its statement on this page: the covering of $\mathrm{GL}_n(\mathbb{R})$ by the $\mathrm{GL}_n(\mathbb{Z})$-translates of a Siegel set (Minkowski, Siegel), its transfer to $G$ through a faithful representation (Borel and Harish-Chandra), and the assembly over the finite adeles from finitely many classes, with the archimedean Iwasawa decomposition and the local decompositions above, for the covering and the finiteness statements.
 
@@ -74,6 +70,7 @@ It also states and links these inputs of the proof:
 - [Product formula for principal ideles](adeles-and-ideles/adelic-norm-principal-embedding.md), for the product formula on $k^\times$
 - [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the minimal and standard parabolic $k$-subgroups, Levi decompositions and simple roots
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the decomposition $G(k_v) = P_0(k_v) K_v$ at the finite places, through which $H_P$ is defined
+- [Iwasawa and Langlands decompositions of real reductive groups](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-real-reductive-groups/iwasawa-and-langlands-decompositions.md), for the Iwasawa decomposition of the real points at the archimedean places, also used to define $H_P$
 
 ## Proof depends on
 

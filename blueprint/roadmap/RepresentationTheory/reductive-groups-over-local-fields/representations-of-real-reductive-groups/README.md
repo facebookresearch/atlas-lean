@@ -16,3 +16,8 @@ Admissible representations of real reductive groups such as U(p, q): Harish-Chan
 - [The Dixmier–Malliavin lemma and factorization along one-parameter subgroups](dixmier-malliavin-lemma-and-factorization.md)
 - [Harish-Chandra's construction of the holomorphic discrete series](harish-chandra-construction-of-holomorphic-discrete-series.md)
 - [The Hecke algebra of a real reductive group](hecke-algebra-of-a-real-reductive-group.md)
+- [Iwasawa and Langlands decompositions of real reductive groups](iwasawa-and-langlands-decompositions.md)
+- [Archimedean Gelfand–Kazhdan criterion](archimedean-gelfand-kazhdan-criterion.md)
+- [(g, K)-modules, the Poincaré–Birkhoff–Witt theorem and Harish-Chandra's homomorphism](g-k-modules-and-harish-chandra-homomorphism.md)
+- [Hermitian symmetric spaces and their compact duals](hermitian-symmetric-spaces.md)
+- [Atiyah's L²-index theorem and cocompact lattices of semisimple groups](atiyah-l2-index-theorem-and-cocompact-lattices.md)

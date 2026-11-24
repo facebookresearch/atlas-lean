@@ -53,13 +53,9 @@ statement and the sources below with locators, and with the original papers (Jac
 and Shalika, Amer. J. Math. 105 (1983); Jacquet and Shalika, Amer. J. Math. 103 (1981); Jacquet, "Archimedean
 Rankin–Selberg integrals", 2009) consulted for hypotheses.
 
-A good expansion also states and links these inputs of the statement:
+It also writes out these steps of its own proof:
 
-- the archimedean local Langlands correspondence for $\mathrm{GL}_n$ and the $\Gamma$-factors of pairs of Langlands parameters, for the archimedean $L$-factors of the statement (Cogdell, Lecture 8, §§1–2).
-
-It also states and links these inputs of the proof:
-
-- Shintani's formula for the normalized spherical Whittaker functions of $\mathrm{GL}_n$ (Shintani; Casselman–Shalika), with $W(1) = 1$, the Cauchy identity for products of Schur polynomials, and the test function $1_{\mathcal{O}_v^n}$ when $m = n$, for the unramified computation (Cogdell, Lecture 7).
+- the test function $1_{\mathcal{O}_v^n}$ when $m = n$, for the unramified computation (Cogdell, Lecture 7).
 - the boundedness of $L(s, \pi \times \pi')$ in vertical strips of finite width away from its poles (Gelbart–Shahidi, J. Amer. Math. Soc. 14 (2001)), which Cogdell, Lecture 9, §5, uses for the lower ranks.
 - Shahidi's non-vanishing on $\operatorname{Re} s = 1$. In his convention the Eisenstein series on $\mathrm{GL}_{n+m}$ is induced from $\pi \otimes \tilde\pi'$ on the upper block-diagonal Levi subgroup $\mathrm{GL}_n \times \mathrm{GL}_m$, whose dual acts on the dual unipotent radical by $r = \rho_n \otimes \tilde\rho_m$, $X \mapsto aXb^{-1}$, so that $L(z, \pi \otimes \tilde\pi', r) = L(z, \pi \times \pi')$. Its non-degenerate Whittaker Fourier coefficient, not its constant term, at the spectral parameter $u$ is a product of local Whittaker values at the places of $S$ times $L^S(1 + (n+m)u, \pi \times \pi')^{-1}$, and the shift $z = 1 + (n+m)u$ takes the imaginary axis to $\operatorname{Re} z = 1$. With local data that are nonzero at $S$ and the holomorphy of the Eisenstein series on the imaginary axis, this rules out zeros there, not poles (Shahidi, Amer. J. Math. 103 (1981), §2.3, pp. 324–325, and §5, Theorems 5.1–5.2, pp. 351–353; Jacquet–Shalika II, §3.7, p. 804, for the statement away from the poles).
 - the archimedean local theory of the integrals: their local functional equations, and for each $s_1$ a normalized local integral that is nonzero at $s_1$, in all ranks (Cogdell, Corollary 8.3.2; finite sums of ordinary integrals only for $m = n, n - 1$, Theorem 8.5, p. 66), with which Cogdell, Lecture 9, §§2–4, detects the poles of the completed $L$-function.
@@ -72,6 +68,7 @@ It also states and links these inputs of the proof:
 - [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the Eisenstein series used when $m = n$
 - [Rapid decay of cusp forms](../automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md), for the convergence of the global integrals
 - [Poisson summation formula for adeles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-poisson-summation.md), for the functional equation of the mirabolic Eisenstein series $E(g, \Phi, s)$ used when $m = n$ (Cogdell, Proposition 5.4)
+- [Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ](../../reductive-groups-over-local-fields/weil-groups-and-the-archimedean-local-langlands-correspondence.md), for the archimedean local Langlands correspondence for $\mathrm{GL}_n$ and the $\Gamma$-factors of pairs of Langlands parameters, for the archimedean $L$-factors of the statement (Cogdell, Lecture 8, §§1–2)
 
 ## Proof depends on
 
@@ -82,6 +79,7 @@ It also states and links these inputs of the proof:
 - [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the holomorphy of Eisenstein series on the imaginary axis, used in the non-vanishing on $\operatorname{Re} s = 1$
 - [Compactness of adelic quotients of unipotent groups](../automorphic-forms-on-reductive-groups/compactness-of-unipotent-adelic-quotients.md), for the compactness of $N(k) \backslash N(\mathbb{A})$, through which the holomorphy of the Eisenstein series passes to its Whittaker coefficient (Shahidi, p. 352)
 - [Whittaker models for GLₙ over archimedean fields](archimedean-whittaker-models-for-gl-n.md), for the Whittaker model of the contragredient, $W \mapsto W(w_n\, {}^t g^{-1})$, in the archimedean local functional equations
+- [Shintani's formula for spherical Whittaker functions of GLₙ](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/shintani-formula-for-spherical-whittaker-functions.md), for Shintani's formula for the normalized spherical Whittaker functions of $\mathrm{GL}_n$ (Shintani; Casselman–Shalika), with $W(1) = 1$, and the Cauchy identity for products of Schur polynomials, for the unramified computation (Cogdell, Lecture 7)
 
 ## Sources
 

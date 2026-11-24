@@ -31,7 +31,7 @@ rational Bruhat decomposition and for the description of the parabolic subgroups
 citing the sources below with locators; it serves both the local and the global pages, so that they need
 not repeat it.
 
-A good expansion also states and links these inputs of the proof:
+A good expansion also writes out these steps of its own proof:
 
 - the theory of Borel and Tits of reductive groups over a field (conjugacy of minimal parabolic subgroups and of maximal split tori, relative root systems and their simple roots, and Tits systems), for all the items.
 
@@ -41,7 +41,7 @@ A good expansion also states and links these inputs of the proof:
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+Its proof consists of the steps listed under Expansion.
 
 ## Sources
 

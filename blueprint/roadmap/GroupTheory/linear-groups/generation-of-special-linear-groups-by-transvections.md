@@ -25,9 +25,9 @@ A good expansion has a statement page for the generation by elementary transvect
 reduction as its proof, and one for the consequence on homomorphisms to abelian groups, each citing a
 pinned source with locators besides the one below.
 
-A good expansion also states and links these inputs of the proof:
+A good expansion also writes out these steps of its own proof:
 
-- Gaussian elimination by elementary row operations, multiplication on the left by elementary transvections, for the generation.
+- the reduction of a diagonal matrix of determinant one to a product of transvections, for the generation.
 
 ## Depends on
 
@@ -35,7 +35,7 @@ A good expansion also states and links these inputs of the proof:
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Every square matrix is a product of transvections and a diagonal matrix](transvection-diagonal-factorization.md), for the row reduction: every matrix is a product of transvections, a diagonal matrix and transvections
 
 ## Sources
 

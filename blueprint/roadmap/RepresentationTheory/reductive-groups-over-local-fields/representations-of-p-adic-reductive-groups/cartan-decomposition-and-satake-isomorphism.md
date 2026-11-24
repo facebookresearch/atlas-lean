@@ -1,0 +1,48 @@
+# Cartan decomposition and Satake isomorphism for special maximal compact subgroups
+
+This node is still to be broken down. It covers the Cartan decomposition and the Satake isomorphism that the
+pages on asymptotics of matrix coefficients, on the unramified theta correspondence and on base change use.
+Let $F$ be a non-archimedean local field, $\mathbf{G}$ a connected reductive group over $F$, $A$ a maximal $F$-split
+torus, $M = \mathrm{Cent}_{\mathbf{G}}(A)$, $W = W(\mathbf{G}, A)$ the relative Weyl group, $v$ a special vertex of
+the Bruhat–Tits building in the apartment of $A$, and $\tilde K$ the special maximal compact open subgroup fixing
+$v$. Let $M(F)^1$ be the maximal compact open subgroup of $M(F)$ and $\tilde\Lambda_M = M(F)/M(F)^1$, a free abelian
+group containing $X_*(A)$ with the same rank.
+
+- **Cartan decomposition** (Cartier). $\tilde K \backslash G(F) / \tilde K \cong W \backslash \tilde\Lambda_M$; for
+  $\mathbf{G}$ unramified, $\tilde\Lambda_M = X_*(A)$ and $\tilde K \backslash G(F) / \tilde K \cong W \backslash X_*(A)$.
+- **Satake isomorphism** (Satake, Cartier). The Hecke algebra $\mathcal{H}_{\tilde K} = C_c^\infty(\tilde K \backslash
+  G(F) / \tilde K)$ is isomorphic, as a $\mathbb{C}$-algebra, to $\mathbb{C}[\tilde\Lambda_M]^W$; for $\mathbf{G}$
+  unramified and $\tilde K$ hyperspecial, to $\mathbb{C}[X_*(A)]^W$.
+- **Parahoric form** (Haines–Rostami). For the special maximal parahoric subgroup $K \subseteq \tilde K$ attached to
+  $v$ and $\Lambda_M = M(F)/M(F)_1$, with $M(F)_1$ the parahoric subgroup of $M(F)$, there is a canonical isomorphism
+  $\mathcal{H}_K \cong \mathbb{C}[\Lambda_M]^W$; $\tilde\Lambda_M = \Lambda_M/\text{torsion}$, and $K = \tilde K$ when $\mathbf{G}$
+  is unramified or semisimple and simply connected.
+
+## Expansion
+
+A good expansion has statement pages for the Cartan decomposition and for the Satake isomorphism, first for
+unramified groups and hyperspecial subgroups, then for special maximal compact and special maximal parahoric
+subgroups, each citing the sources below with locators. The unramified Satake parameters of an unramified
+representation are read off from the character of $\mathbb{C}[X_*(A)]^W$ by which $\mathcal{H}_{\tilde K}$ acts on its
+$\tilde K$-fixed line.
+
+## Depends on
+
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the building, special vertices and
+  the maximal split torus
+- [Linear algebraic groups over local fields and their groups of rational points](../linear-algebraic-groups-over-local-fields.md), for the setting
+
+## Proof depends on
+
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the relative Weyl
+  group
+
+## Sources
+
+- T. J. Haines and S. Rostami, "The Satake isomorphism for special maximal parahoric Hecke algebras",
+  arXiv:0907.4506 (version 2): Abstract, Introduction, pp. 1–2 (the Satake isomorphism
+  $\mathcal{H}_{\tilde K} \cong \mathbb{C}[X_*(A)]^W$ and the Cartan decomposition for unramified groups, after Cartier; for
+  general connected reductive groups, Cartier's $\mathcal{H}_{\tilde K} \cong \mathbb{C}[\tilde\Lambda_M]^W$ and
+  $\tilde K \backslash G(F) / \tilde K \cong W \backslash \tilde\Lambda_M$), and Theorem 1.0.1 with the paragraph after it.
+- P. Cartier, "Representations of p-adic groups: a survey", Proc. Sympos. Pure Math. 33, Part 1, 1979, 111–155,
+  as cited by Haines and Rostami ([Car]).

@@ -14,3 +14,6 @@ Smooth and admissible representations of the groups of points of connected reduc
 - [Depth under parabolic induction and Jacquet functors](depth-under-parabolic-induction-and-jacquet-functors.md)
 - [Borel–Casselman theorem on Iwahori-fixed vectors](borel-casselman-theorem.md)
 - [Hecke-algebra corners of smooth representations and independence of their characters](hecke-algebra-corners-and-character-independence.md)
+- [Cartan decomposition and Satake isomorphism for special maximal compact subgroups](cartan-decomposition-and-satake-isomorphism.md)
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](l-spaces-distributions-and-smooth-representations-of-l-groups.md)
+- [The Bernstein–Zelevinsky filtration of a restriction of an induced representation](bernstein-zelevinsky-filtration-theorem.md)

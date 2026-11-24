@@ -13,7 +13,7 @@ $W = X \oplus Y$ and a non-trivial character $\psi$ of $F$.
   $H(Y) = Y \oplus F$ (trivial on $Y$); the smooth representation of $H(W)$ smoothly induced from it, whose
   functions are shown to have compact support modulo $H(Y)$ because of the central character (in compact
   induction this support condition is imposed instead); its realization on the Schwartz–Bruhat functions on $X$;
-  its irreducibility and admissibility; and, for an arbitrary smooth irreducible representation of $H(W)$ with
+  its irreducibility and admissibility; and for an arbitrary smooth irreducible representation of $H(W)$ with
   central character $\psi$, the construction of a non-zero $H(Y)$-equivariant functional to $\psi_Y$, through which
   Frobenius reciprocity identifies the representation with the induced one. These are the inputs of the smooth
   existence and uniqueness statements of the Stone–von Neumann theorem, which this node does not restate.
@@ -31,11 +31,6 @@ polarization, and for the unitary Stone–von Neumann–Mackey theorem, each wit
 sources below; it should not add a second statement of the classification in the Stone–von Neumann
 theorem.
 
-A good expansion also states and links these inputs of the proof:
-
-- the same self-duality for every local field and nontrivial character (Poonen, §4.3, Theorem 4.4), for the local fields of positive characteristic that the statement allows, such as $\mathbb{F}_3((t))$.
-- Pontryagin duality for locally compact abelian groups, and the decomposition of every strongly continuous unitary representation of a compact abelian group into the orthogonal sum of its character spaces, with arbitrary multiplicities (A. Prasad, §4.2, p. 4, applies it to the given representation restricted to $G \times G^\perp$), for compact abelian groups that need not be Lie groups, such as the profinite groups of the non-archimedean case, for the unitary form; the decomposition of $L^2$ of the group, where each character occurs once, is not enough.
-
 ## Depends on
 
 - [Smooth and admissible representations of p-adic groups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for smooth representations of $\ell$-groups
@@ -43,6 +38,8 @@ A good expansion also states and links these inputs of the proof:
 ## Proof depends on
 
 - [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of the completions of number fields (its local duality), which identifies $Y$ with the Pontryagin dual of $X$ for local fields of characteristic $0$
+- [Pontryagin duality and the self-duality of local fields](../../../Analysis/harmonic-analysis/pontryagin-duality-and-self-duality-of-local-fields.md), for the self-duality $a \mapsto \psi(a\,\cdot)$ of every local field, for every nontrivial character $\psi$ (Poonen, §4.3, Theorem 4.4), for the local fields of positive characteristic that the statement allows, such as $\mathbb{F}_3((t))$; and for Pontryagin duality for locally compact abelian groups, for the unitary form
+- [Unitary representations of locally compact groups and representations of compact groups](../../lie-and-topological-representations/unitary-representations-and-representations-of-compact-groups.md), for the decomposition of every strongly continuous unitary representation of a compact abelian group into the orthogonal sum of its character spaces, with arbitrary multiplicities, which A. Prasad (§4.2, p. 4) applies to the given representation restricted to $G \times G^\perp$, for the unitary form; the decomposition of $L^2$ of the group, where each character occurs once, is not enough
 
 ## Sources
 

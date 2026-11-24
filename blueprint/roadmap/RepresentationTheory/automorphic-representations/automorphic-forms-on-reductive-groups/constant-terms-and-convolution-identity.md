@@ -40,9 +40,8 @@ behaviour along the split centre, for the automorphy of constant terms on the Le
 Harish-Chandra's homomorphism, and for the choice of a central character for an irreducible subquotient, each
 with a precise statement and the locators below.
 
-A good expansion also states and links these inputs of the proof:
+A good expansion also writes out these steps of its own proof:
 
-- Harish-Chandra's homomorphism $\mathcal{Z}(\mathfrak{g}) \to \mathcal{Z}(\mathfrak{m})$ with $(z\varphi)_P = \nu(z)\varphi_P$, and the finiteness of $\mathcal{Z}(\mathfrak{m})$ as a module over its image, which give the finite codimension of the annihilator of a constant term (Borel, 7.4 (c)).
 - the expansion $\varphi(xa) = \sum_i Q_i(a) (P_i \varphi)(x)$ of a smooth $\mathcal{Z}$-finite function along $A_G(\mathbb{R})^0$, with exponential polynomials $Q_i$ (Borel, 6.6), for the split centre.
 
 ## Depends on
@@ -54,6 +53,7 @@ A good expansion also states and links these inputs of the proof:
 
 - [Harish-Chandra's convolution identity and uniform moderate growth](harish-chandra-convolution-identity.md), for the convolution identity and uniform moderate growth of automorphic forms
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the stability of moderate growth under right translation by the compact support of $\alpha$, used through $D(\varphi \star \alpha) = \varphi \star D\alpha$ (Borel, §4.3), which does not prove the convolution identity itself; and for the finiteness of class numbers, applied to the centre, behind the finiteness under $Z_G(\mathbb{A})$ (Langlands's Lemma 3)
+- [(g, K)-modules, the Poincaré–Birkhoff–Witt theorem and Harish-Chandra's homomorphism](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/g-k-modules-and-harish-chandra-homomorphism.md), for Harish-Chandra's homomorphism $\mathcal{Z}(\mathfrak{g}) \to \mathcal{Z}(\mathfrak{m})$ with $(z\varphi)_P = \nu(z)\varphi_P$ and the finiteness of $\mathcal{Z}(\mathfrak{m})$ as a module over its image, which give the finite codimension of the annihilator of a constant term (Borel, 7.4 (c))
 
 ## Sources
 

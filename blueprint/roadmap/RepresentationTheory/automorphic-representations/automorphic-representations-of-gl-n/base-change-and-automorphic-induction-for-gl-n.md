@@ -54,11 +54,7 @@ works: Chapter 3, (2.1)–(2.4), p. 200, Theorem 3.1, p. 201, Definition 4.1 and
 with its construction, pp. 215–217; Chapter 1, §§4, 6 and 7; Chapter 2, Theorems A and B, with the gap at p. 196
 that Arthur points out.
 
-A good expansion also states and links these inputs of the statement:
-
-- unramified Langlands parameters for $\mathrm{GL}_n$, the Satake parameters of unramified representations as unramified representations of the Weil group, and induction from $W_E$ to $W_F$, for the description of automorphic induction at the unramified places.
-
-It also states and links these inputs of the proof:
+It also writes out these steps of its own proof:
 
 - the comparison of the invariant trace formula of $\mathrm{GL}_n$ over $F$ with the $\sigma$-twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_n$, through the matching of twisted orbital integrals by the norm map, the fundamental lemma for base change (for the unit element, then for spherical Hecke functions, with the simple forms of the two trace formulas), the local base change lifting and the averaging over the twists by powers of $\eta$; it needs the twisted form of the archimedean trace Paley–Wiener theorem of Clozel and Delorme, the one condition Arthur names for the invariant twisted trace formula (p. 189), which Rogawski established in the $p$-adic case and Arthur–Clozel prove in the case at hand (Chapter 1, §7, Proposition 7.1, p. 72), and the density argument of Arthur–Clozel (p. 196 there) has a gap that Arthur's "A stable trace formula III", Lemma 8.2, fills (Arthur, §26, p. 191) (Clozel's ICM report, §2, Theorems 2.1–2.3, Theorem 2.3 being the identity of traces; Arthur, §26, pp. 189–191).
 
@@ -66,6 +62,8 @@ It also states and links these inputs of the proof:
 
 - [Jacquet–Shalika classification of automorphic representations of GLₙ](jacquet-shalika-classification.md), for induced cuspidal (isobaric) representations and their Satake parameters
 - [Global reciprocity law](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the character $\eta$ attached to $E/F$
+- [Cartan decomposition and Satake isomorphism for special maximal compact subgroups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md), for the Satake parameters of unramified representations, for the description of automorphic induction at the unramified places
+- [Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ](../../reductive-groups-over-local-fields/weil-groups-and-the-archimedean-local-langlands-correspondence.md), for unramified Langlands parameters as unramified representations of the Weil group and for induction from $W_E$ to $W_F$, for the description of automorphic induction at the unramified places
 
 ## Proof depends on
 

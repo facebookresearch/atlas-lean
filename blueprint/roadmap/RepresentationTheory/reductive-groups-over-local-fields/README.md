@@ -6,3 +6,5 @@ Reductive groups over archimedean and non-archimedean local fields and their rep
 - [Representations of p-adic GLₙ and the local Langlands correspondence](representations-of-p-adic-gl-n/README.md)
 - [Representations of real reductive groups](representations-of-real-reductive-groups/README.md)
 - [Linear algebraic groups over local fields and their groups of rational points](linear-algebraic-groups-over-local-fields.md)
+- [Finiteness of the connected components of real algebraic varieties and groups](connected-components-of-real-algebraic-groups.md)
+- [Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ](weil-groups-and-the-archimedean-local-langlands-correspondence.md)

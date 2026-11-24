@@ -15,6 +15,7 @@ Contour integrals, Cauchy's theorem, residues, argument principle, Rouché, Laur
 - [Casorati–Weierstrass theorem](casorati-weierstrass.md)
 - [Classification of isolated singularities](isolated-singularity-trichotomy.md)
 - [Laurent expansion on an annulus](laurent-expansion.md)
+- [Locally uniform limits of holomorphic functions are holomorphic](locally-uniform-limit-of-holomorphic.md)
 - [Looman–Menchoff theorem](looman-menchoff.md)
 - [Residue theorem on a disc](residue-theorem-closed-ball.md)
 - [Schwarz reflection principle](schwarz-reflection.md)

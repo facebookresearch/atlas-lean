@@ -42,7 +42,7 @@ non-splitting, for the real Fock model, for Kudla's splittings of unitary dual p
 compatibility, for the doubling intertwiner, and for the product formula for Weil indices, each with a
 precise statement and the sources below.
 
-A good expansion also states and links these inputs of the proof:
+A good expansion also writes out these steps of its own proof:
 
 - Weil's Théorème 5 (§20, p. 169): $\gamma(f) = 1$ for a character of the second degree $f$, trivial on a closed subgroup $\Gamma$, whose associated symmetric morphism maps $(G, \Gamma)$ isomorphically onto $(G^*, \Gamma_*)$. Weil proves it from the proof of his Théorème 2 (§14): $\gamma(f)$ is the scalar by which the lifts of the two sides of relation (9) differ; under the hypotheses all factors of (9) preserve $\Gamma$, where the lifts agree with those given by the representation $r_\Gamma$ of §20, so $\gamma(f) = 1$ because $r_\Gamma$ is a representation. Théorème 4 (§19, p. 168), which contains Poisson's formula, is related but is not this proof. With $G = X_{\mathbb{A}}$, $\Gamma = X_F$ and $f = \psi \circ q$ it gives $\gamma(q) = 1$, and Corollaire 2 of Théorème 2 (§14, p. 162), applied to a factorizable Schwartz–Bruhat function and to its local factors, almost all the characteristic functions of the unit lattices, gives $\gamma(q) = \prod_v \gamma_{\psi_v}(q_v)$ (§30, the proof of Proposition 5, p. 179), for the product formula for Weil indices.
 

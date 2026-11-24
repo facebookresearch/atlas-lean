@@ -46,13 +46,11 @@ contains the following statements.
 A good expansion has a page for each numbered item, splitting the first into the formula
 $\mathrm{Cor} \circ \mathrm{Res} = (G : H)$ and its consequences.
 
-A good expansion also states and links these inputs of the statement:
-
-- Tate cohomology of finite groups as a definition of the groups $\hat H^n(G, M)$, not only of their orders and of the Herbrand quotient, and cup products, for all the items.
-
 ## Depends on
 
 - [Abelianization of a group](../../GroupTheory/commutators-and-engel-conditions/abelianization.md), for $G^{\mathrm{ab}}$ and $H^{\mathrm{ab}}$ and the map $H^{\mathrm{ab}} \to G^{\mathrm{ab}}$ in items 1 and 4
+- [Tate cohomology groups of a finite group](tate-cohomology-and-the-herbrand-quotient/tate-cohomology.md), for the Tate cohomology groups of a finite group, for all the items
+- [Cup products in Tate cohomology](cup-products-in-tate-cohomology.md), for cup products, for all the items
 
 ## Proof depends on
 
