@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.CharP.Algebra
+import Mathlib.Algebra.CharP.Lemmas
 public import Mathlib.Algebra.Module.Torsion.Free
 public import Mathlib.Algebra.MonoidAlgebra.MapDomain
 public import Mathlib.Data.ZMod.Basic
@@ -17,6 +19,8 @@ public import Mathlib.Data.ZMod.Basic
 
 Kohen's Cartier operator extracts the coefficients at multiples of an exponent scale.
 It transfers a dilation of exponents from one factor of a constant term to the other.
+Under Kohen's defining congruence for $\tilde P$, the constant terms of $P^n$ and $\tilde P^n$
+agree modulo $p$ for every $n$.
 -/
 
 namespace MetaMathlibExt
@@ -136,6 +140,70 @@ public theorem constantTerm_tilde_pow_mul_modEq_laurentCartier {r p a : ℕ}
       [ZMOD (p : ℤ) ^ a] := by
   rw [pow_add, pow_mul, mul_assoc, ← Nat.cast_pow]
   exact pow_mul_modEq_cartier hp.ne_zero _ Pt _ (by simpa using hPt) n
+
+namespace exists_constantTerm_pow_dvd_iff_tilde
+
+open AddMonoidAlgebra
+
+private theorem constantTerm_pow_prime_pow_modEq {r p : ℕ} (hp : p.Prime) (k : ℕ)
+    (F : AddMonoidAlgebra ℤ (Fin r → ℤ)) : (F ^ p ^ k).coeff 0 ≡ F.coeff 0 [ZMOD p] := by
+  have : Fact p.Prime := ⟨hp⟩
+  let A := AddMonoidAlgebra (ZMod p) (Fin r → ℤ)
+  let : CharP A p := charP_of_injective_ringHom
+    (f := singleZeroRingHom (R := ZMod p)) single_right_injective p
+  let dilate := mapDomainRingHom (ZMod p) (nsmulAddMonoidHom (α := Fin r → ℤ) (p ^ k))
+  -- The iterated Frobenius fixes the prime field and scales each monomial's exponent.
+  have hfrob : iterateFrobenius A p k = dilate := by
+    apply AddMonoidAlgebra.ringHom_ext' (Subsingleton.elim _ _)
+    apply MonoidHom.ext
+    intro m
+    change (single m.toAdd (1 : ZMod p)) ^ p ^ k = dilate (single m.toAdd 1)
+    simp [dilate]
+  let reduce := mapRingHom (Fin r → ℤ) (Int.castRingHom (ZMod p))
+  rw [← ZMod.intCast_eq_intCast_iff]
+  change (reduce (F ^ p ^ k)).coeff 0 = (reduce F).coeff 0
+  rw [map_pow]
+  change (iterateFrobenius A p k (reduce F)).coeff 0 = _
+  rw [hfrob]
+  change Finsupp.mapDomain (fun j => p ^ k • j) (reduce F).coeff 0 = _
+  simpa only [smul_zero] using Finsupp.mapDomain_apply_of_injective
+    (smul_right_injective (Fin r → ℤ) (pow_ne_zero k hp.ne_zero)) (reduce F).coeff 0
+
+private theorem cartier_one {r q : ℕ} (hq : q ≠ 0) :
+    laurentCartier q (1 : AddMonoidAlgebra ℤ (Fin r → ℤ)) = 1 := by
+  simpa only [laurentCartier, dite_eq_right hq, one_def, comapDomain, smul_zero] using
+    comapDomain_single_map (fun j : Fin r → ℤ => q • j) (smul_right_injective (Fin r → ℤ) hq)
+      0 (1 : ℤ)
+
+end exists_constantTerm_pow_dvd_iff_tilde
+
+open exists_constantTerm_pow_dvd_iff_tilde
+
+/-- **Divisibility of constant terms of powers of $P$ and $\tilde P$.** Let $p$ be a prime, let
+$a \ge 1$ and $\ell$ be natural numbers, and let $P$ and $\tilde P$ be Laurent polynomials in $r$
+variables with integer coefficients such that $P^{p^{a-1}} \equiv \tilde P(x^{p^\ell}) \pmod{p^a}$
+coefficientwise, where $\tilde P(x^q)$ is obtained from $\tilde P$ by replacing each monomial
+$x^e$ with $x^{qe}$. Write $\operatorname{ct}[F]$ for the constant term of a Laurent polynomial
+$F$. Then $p$ divides $\operatorname{ct}[P^{n_0}]$ for some natural number $n_0$ if and only if
+$p$ divides $\operatorname{ct}[\tilde P^{n_1}]$ for some natural number $n_1$; moreover, for every
+natural number $n_0$ with $p \mid \operatorname{ct}[P^{n_0}]$, also
+$p \mid \operatorname{ct}[\tilde P^{n_0}]$.
+
+Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
+Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
+Lemma 22 (`jis-2026-26.4.2-lem-22`). -/
+public theorem exists_constantTerm_pow_dvd_iff_tilde {r p a ℓ : ℕ} (hp : p.Prime)
+    (ha : 0 < a) (P Pt : AddMonoidAlgebra ℤ (Fin r → ℤ))
+    (hPt : ∀ j, (P ^ (p ^ (a - 1))).coeff j ≡
+      (AddMonoidAlgebra.mapDomain (fun j => p ^ ℓ • j) Pt).coeff j [ZMOD (p : ℤ) ^ a]) :
+    ((∃ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0) ↔ ∃ n₁, (p : ℤ) ∣ (Pt ^ n₁).coeff 0) ∧
+      ∀ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0 → (p : ℤ) ∣ (Pt ^ n₀).coeff 0 := by
+  have same (n : ℕ) : (P ^ n).coeff 0 ≡ (Pt ^ n).coeff 0 [ZMOD p] := by
+    apply (constantTerm_pow_prime_pow_modEq hp (a - 1) (P ^ n)).symm.trans
+    apply Int.ModEq.of_dvd (dvd_pow_self (p : ℤ) ha.ne')
+    simpa only [pow_zero, add_zero, mul_one, cartier_one (pow_ne_zero ℓ hp.ne_zero),
+      ← pow_mul, Nat.mul_comm n] using constantTerm_pow_mul_modEq_tilde hp ha P Pt hPt 1 n 0
+  exact ⟨exists_congr fun n => (same n).dvd_iff, fun n => (same n).dvd_iff.mp⟩
 
 end
 

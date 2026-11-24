@@ -9,8 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Order.Interval.Finset.Basic
+import Mathlib.Algebra.Order.Ring.Int
+import Mathlib.Data.Nat.Cast.Order.Field
 import Mathlib.Data.Nat.Totient
+import Mathlib.Order.Filter.AtTopBot.Basic
+import Mathlib.Order.Filter.Finite
 import Mathlib.Tactic.Ring
 
 /-!
@@ -39,6 +44,8 @@ use the hypothesis that `p` is odd, which the statement keeps.
 
 ## Main results
 
+* `MetaMathlibExt.exists_small_gap_of_limsup_count` gives a recurring positive gap below `n₀`
+  when the count of a set in `[1, n]` exceeds `n / n₀` by arbitrarily large amounts.
 * `MetaMathlibExt.color_dominant_powStrings_of_rainbowFree_zmod`: in an exact rainbow-free
   3-coloring of `ℤ/pℤ` for `x - y = z ^ k`, every bichromatic `aᵏ`-string with `a ≠ 0` contains
   the color `c a`.
@@ -61,6 +68,63 @@ instance rather than `ZMod.commRing`, so the cycle-vertex proof works in the uni
 public section
 
 namespace MetaMathlibExt
+
+namespace exists_small_gap_of_limsup_count
+
+/-- More points than blocks of length `k` force a pair less than `k` apart. -/
+private theorem exists_close_pair {s : Finset ℕ} {n k : ℕ} (hk : 0 < k)
+    (hs : ∀ x ∈ s, x ≤ n) (hc : n / k + 1 < s.card) :
+    ∃ x ∈ s, ∃ y ∈ s, x < y ∧ y < x + k := by
+  by_contra! hsep
+  have hmono : StrictMonoOn (· / k) (s : Set ℕ) := by
+    intro x hx y hy hxy
+    calc
+      x / k < (x + k) / k := by rw [Nat.add_div_right _ hk]; omega
+      _ ≤ y / k := Nat.div_le_div_right (hsep x hx y hy hxy)
+  have hmap : Set.MapsTo (· / k) s (Finset.range (n / k + 1)) := by
+    intro x hx
+    exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Nat.div_le_div_right (hs x hx)))
+  have hle := Finset.card_le_card_of_injOn _ hmap hmono.injOn
+  exact hc.not_ge (by simpa using hle)
+
+end exists_small_gap_of_limsup_count
+
+open Filter exists_small_gap_of_limsup_count in
+/-- **Zhan's small-gap lemma.** Let $S$ be a set of natural numbers, let $n_0 \ge 2$ be an
+integer, and write $S(n)$ for the number of elements of $S \cap \{1, \dots, n\}$. If
+$\limsup_{n \to \infty} (S(n) - n / n_0) = \infty$, that is, for every real $M$ there are
+arbitrarily large $n$ with $S(n) - n / n_0 > M$, then there is an integer $d$ with
+$1 \le d \le n_0 - 1$ such that $j$ and $j + d$ both lie in $S$ for arbitrarily large $j$.
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 3
+(`integers-2024-A105-lem-3`). -/
+theorem exists_small_gap_of_limsup_count (S : Set ℕ) [DecidablePred (· ∈ S)]
+    (n₀ : ℕ) (hn₀ : 2 ≤ n₀)
+    (hS : ∀ M : ℝ, ∀ N₀ : ℕ, ∃ n : ℕ, N₀ ≤ n ∧
+      M < (((Finset.Icc 1 n).filter (· ∈ S)).card : ℝ) - n / n₀) :
+    ∃ d : ℕ, 1 ≤ d ∧ d ≤ n₀ - 1 ∧ ∀ i : ℕ, ∃ j : ℕ, i < j ∧ j ∈ S ∧ j + d ∈ S := by
+  let gaps := Finset.Icc 1 (n₀ - 1)
+  suffices h : ∃ᶠ j in atTop, ∃ d ∈ gaps, j ∈ S ∧ j + d ∈ S by
+    obtain ⟨d, hd, hj⟩ := gaps.frequently_exists.mp h
+    exact ⟨d, (Finset.mem_Icc.mp hd).1, (Finset.mem_Icc.mp hd).2, frequently_atTop'.mp hj⟩
+  apply frequently_atTop'.mpr
+  intro i
+  obtain ⟨n, -, hn⟩ := hS (i + 1) i
+  let s := (Finset.Icc 1 n).filter (· ∈ S)
+  -- Discarding the first `i` positions still leaves more points than quotient blocks.
+  have hcount : i + 1 + n / n₀ < s.card := by
+    have hdiv : ((n / n₀ : ℕ) : ℝ) ≤ n / n₀ := Nat.cast_div_le
+    exact_mod_cast (add_le_add_right hdiv ((i : ℝ) + 1)).trans_lt (lt_sub_iff_add_lt.mp hn)
+  have htail : n / n₀ + 1 < (s \ Finset.Icc 1 i).card := by
+    have hle := Finset.card_le_card_sdiff_add_card (s := s) (t := Finset.Icc 1 i)
+    simp only [Nat.card_Icc, Nat.add_sub_cancel] at hle
+    omega
+  obtain ⟨x, hx, y, hy, hxy, hdist⟩ := exists_close_pair (by omega : 0 < n₀)
+    (fun x hx => (Finset.mem_Icc.mp (Finset.mem_filter.mp (Finset.mem_sdiff.mp hx).1).1).2) htail
+  simp only [Finset.mem_sdiff, Finset.mem_filter, Finset.mem_Icc] at hx hy
+  refine ⟨x, by omega, y - x, Finset.mem_Icc.mpr ⟨by omega, by omega⟩, hx.1.2, ?_⟩
+  simpa [Nat.add_sub_of_le hxy.le] using hy.1.2
 
 namespace color_dominant_powStrings_of_rainbowFree_zmod
 
@@ -249,5 +313,21 @@ theorem isCycleVertex_powMap_iff_orderOf_dvd (p k : ℕ) [Fact p.Prime]
     exact hl ▸ Nat.dvd_lcm_left _ _
   · intro hdvd
     exact exists_pow_modEq_one hn (Nat.Coprime.coprime_dvd_left hdvd htk).symm
+
+/-- **Large multiples of the gcd are nonnegative combinations.** Let $i$ and $j$ be positive
+integers. There is an $n_0$ such that every integer $m > n_0$ divisible by $\gcd(i, j)$ can be
+written as $m = ui + vj$ with nonnegative integers $u$ and $v$.
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 2
+(`integers-2024-A105-thm-2`). -/
+theorem exists_forall_gcd_dvd_eq_add_mul (i j : ℕ) (hi : 0 < i) (hj : 0 < j) :
+    ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → Nat.gcd i j ∣ m → ∃ u v : ℕ, m = u * i + v * j := by
+  obtain ⟨a, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hi.ne'
+  obtain ⟨b, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hj.ne'
+  refine ⟨(a * b).pred, fun m hm hdvd ↦ ?_⟩
+  obtain ⟨u, v, huv⟩ :=
+    Nat.exists_add_mul_eq_of_gcd_dvd_of_mul_pred_le a.succ b.succ m hdvd (Nat.le_of_pred_lt hm)
+  exact ⟨u, v, huv.symm⟩
 
 end MetaMathlibExt

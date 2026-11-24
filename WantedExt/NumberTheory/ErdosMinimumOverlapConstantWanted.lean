@@ -10,7 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
-public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstant
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
 
 @[expose] public section
 
@@ -21,9 +21,8 @@ Source: Optimization Problems, Constant 1b, frozen at commit
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`, `constants/1b.md`, SHA-256
 `1c51678108c90a2e841e1b49fa97940e4e1870324e1d949ddcb5b4345a0153ec`.
 The source gives an optimization problem with known bounds and a known discrete
-equivalence, but no supported exact-value conjecture. The half upper bound is
-proved in the upstream model; the seventeen other claims are explicit
-`theorem_wanted` declarations.
+equivalence, but no supported exact-value conjecture. The half upper bound and quarter lower bound
+are proved in MathlibExt. The remaining claims are explicit `theorem_wanted` declarations.
 The decimal payloads are literal source requests, not certified rounded bounds.
 Full primary-paper and numerical-certificate verification remains deferred.
 -/
@@ -55,12 +54,6 @@ the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 1/
 
 Source: Erdős 1955; Optimization Problems, Constant 1b. -/
 def upperBound_E1955_half : Prop := C₁ᵦ ≤ (1 : ℝ) / 2
-
-/-- **Erdős's unpublished upper bound $4/9$ for the minimum-overlap constant (statement).** The
-statement that the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 4/9$.
-
-Source: Erdős, unpublished; Optimization Problems, Constant 1b. -/
-def upperBound_Erdos_unpublished_fourNinths : Prop := C₁ᵦ ≤ (4 : ℝ) / 9
 
 /-- **Statement of the Motzkin–Ralston–Selfridge upper bound $5/12$ for the minimum-overlap
 constant.** The proposition that the continuous Erdős minimum-overlap constant $C_{1b}$
@@ -121,12 +114,6 @@ proposition that the continuous Erdős minimum-overlap constant $C_{1b}$ is at m
 Source: Ye et al. 2026 (SimpleTES); Optimization Problems, Constant 1b. -/
 def upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES : Prop :=
   C₁ᵦ ≤ (380868 : ℝ) / 1000000
-
-/-- **The proposition $1/4 \le C_{1b}$.** This is the proposition that the continuous Erdős
-minimum-overlap constant $C_{1b}$ satisfies $1/4 \le C_{1b}$.
-
-Source: Erdős 1955; Optimization Problems, Constant 1b. -/
-def lowerBound_E1955_quarter : Prop := (1 : ℝ) / 4 ≤ C₁ᵦ
 
 /-- **Scherk's lower bound for the minimum-overlap constant (statement).** The statement that the
 continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $1 - 1/\sqrt{2} \le C_{1b}$.
@@ -238,12 +225,6 @@ Erdős minimum-overlap constant $C_{1b}$ is at most $0.380868$.
 Source: Ye et al. 2026 and Optimization Problems 1b. -/
 public theorem_wanted upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES_holds :
   upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES
-
-/-- **Erdős's lower bound $C_{1b} \ge 1/4$.** The continuous Erdős minimum-overlap constant
-$C_{1b}$ satisfies $1/4 \le C_{1b}$.
-
-Source: Erdős 1955 and Optimization Problems 1b. -/
-public theorem_wanted lowerBound_E1955_quarter_holds : lowerBound_E1955_quarter
 
 /-- **Scherk's lower bound for the minimum-overlap constant.** The continuous Erdős
 minimum-overlap constant $C_{1b}$ satisfies $1 - 1/\sqrt{2} \le C_{1b}$.

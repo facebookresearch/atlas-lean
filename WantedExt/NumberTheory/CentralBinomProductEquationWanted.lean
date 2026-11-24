@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.CentralBinomProductEquationOne
 public import MathlibExt.NumberTheory.CentralBinomProductEquationSmall
 public import MathlibExt.NumberTheory.CentralBinomProductEquationSubOne
+public import MathlibExt.NumberTheory.CentralBinomProductInequality
 
 /-!
 # Solvability of `C(2k, k) = C(2a, a) C(x + 2b, b)`
@@ -40,18 +41,6 @@ INTEGERS 26 (2026), Article A26, Theorem 1 (`integers-2026-A26-thm-1`). -/
 public theorem_wanted centralBinom_add_eq_centralBinom_mul_choose_iff (x a b : ℕ) (hx : 0 < x)
     (hb : 0 < b) :
     (a + b).centralBinom = a.centralBinom * (x + 2 * b).choose b ↔ x = 1 ∧ a = 1
-
-/-- **Allen's inequality for central binomial products.** Let $x$ and $b$ be positive integers
-and let $a$ be a nonnegative integer with $a \le x$. Then
-$\binom{2(a+b)}{a+b} \le \binom{2a}{a}\binom{x+2b}{b}$, and equality holds if and only if
-$x = 1$ and $a = 1$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Proposition 1 (`integers-2026-A26-prop-1`). -/
-public theorem_wanted centralBinom_add_le_centralBinom_mul_choose_of_le (x a b : ℕ) (hx : 0 < x)
-    (hb : 0 < b) (hax : a ≤ x) :
-    (a + b).centralBinom ≤ a.centralBinom * (x + 2 * b).choose b ∧
-      ((a + b).centralBinom = a.centralBinom * (x + 2 * b).choose b ↔ x = 1 ∧ a = 1)
 
 /-- **Central binomial products with $a + b \le 10$.** Let $x$, $a$, $b$ be positive integers
 with $a + b \le 10$. Then $\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{x+2b}{b}$ if and only if

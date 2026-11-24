@@ -5,3 +5,4 @@ Riemann zeta and xi, Dirichlet characters and L-functions, Dedekind and Artin L-
 - [Riemann zeta function](riemann-zeta/README.md)
 - [Dirichlet characters and L-functions](dirichlet-l-functions/README.md)
 - [Multiple zeta values](multiple-zeta-values/README.md)
+- [Tate's local functional equation](tate-local-functional-equation.md)

@@ -9,12 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.Binomial
+public import MathlibExt.Combinatorics.Enumerative.BinomialHarmonicStirling
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomHarmonicSums
 public import MathlibExt.Combinatorics.Enumerative.RStirlingSecond
+public import MathlibExt.Combinatorics.Enumerative.StirlingSecondExpDeriv
 public import MathlibExt.NumberTheory.Harmonic.OddHarmonic
 
 /-!
@@ -125,52 +126,6 @@ public theorem_wanted centralBinomPowSum_harmonic_two_mul_recursion (n : ℕ) :
       centralBinomPowSum (fun k => harmonic (2 * k)) 1 n =
         1 / 9 * ((n.centralBinom : ℚ) / 4 ^ n) *
             (3 * n * (2 * n + 1) * harmonic (2 * n) - 4 * n ^ 2 + 7 * n + 3) - 1 / 3
-
-/-- **Odd harmonic central binomial sums for powers one to three.** For every natural number $n$,
-let $O_m = \sum_{i=1}^{m} 1/(2i-1)$ be the odd harmonic numbers, $c_n = \binom{2n}{n}/4^n$, and
-$S_r^O(n) = \sum_{k=0}^{n} \binom{2k}{k} 4^{-k} k^r O_k$. Then
-$$S_1^O(n) = (2n+1)\, c_n \frac{n}{3} \Big(O_{n+1} - \frac{1}{3}\Big),$$
-$$S_2^O(n) = (2n+1)\, c_n \frac{n}{15} \Big((3n+2) O_{n+1} - \frac{9n+16}{15}\Big),$$
-$$S_3^O(n) = (2n+1)\, c_n \frac{n}{105} \Big((15n^2 + 18n + 2) O_{n+1} -
-\frac{225n^2 + 648n + 352}{105}\Big).$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
-Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
-Corollary 1 (`integers-2026-A109-cor-1`). -/
-public theorem_wanted centralBinomPowSum_oddHarmonic_one_two_three (n : ℕ) :
-    centralBinomPowSum oddHarmonic 1 n =
-        (2 * n + 1) * ((n.centralBinom : ℚ) / 4 ^ n) * (n / 3) * (oddHarmonic (n + 1) - 1 / 3) ∧
-      centralBinomPowSum oddHarmonic 2 n =
-        (2 * n + 1) * ((n.centralBinom : ℚ) / 4 ^ n) * (n / 15) *
-          ((3 * n + 2) * oddHarmonic (n + 1) - (9 * n + 16) / 15) ∧
-      centralBinomPowSum oddHarmonic 3 n =
-        (2 * n + 1) * ((n.centralBinom : ℚ) / 4 ^ n) * (n / 105) *
-          ((15 * n ^ 2 + 18 * n + 2) * oddHarmonic (n + 1) -
-            (225 * n ^ 2 + 648 * n + 352) / 105)
-
-/-- **Stirling numbers from derivatives of powers of one minus the exponential.** For all natural
-numbers $k$, $r$ and $v$, write ${a \brace b}$ for the Stirling numbers of the second kind and
-${a \brace b}_v$ for the r-Stirling numbers of the second kind with parameter $v$, and use the
-convention $0^0 = 1$. Then the real functions $x \mapsto (1 - e^x)^k$ and
-$x \mapsto (1 - e^x)^k e^{vx}$ satisfy
-$$\frac{d^r}{dx^r} (1 - e^x)^k \Big|_{x=0} = \sum_{p=0}^{k} (-1)^p \binom{k}{p} p^r =
-(-1)^k k! {r \brace k}$$
-and
-$$\frac{d^r}{dx^r} (1 - e^x)^k e^{vx} \Big|_{x=0} = \sum_{p=0}^{k} (-1)^p \binom{k}{p} (v+p)^r =
-(-1)^k k! {r+v \brace k+v}_v.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
-Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
-Lemma 1 (`integers-2026-A109-lem-1`). -/
-public theorem_wanted iteratedDeriv_one_sub_exp_pow (k r v : ℕ) :
-    (iteratedDeriv r (fun x : ℝ => (1 - Real.exp x) ^ k) 0 =
-        ∑ p ∈ range (k + 1), (-1 : ℝ) ^ p * (k.choose p : ℝ) * (p : ℝ) ^ r ∧
-      ∑ p ∈ range (k + 1), (-1 : ℝ) ^ p * (k.choose p : ℝ) * (p : ℝ) ^ r =
-        (-1) ^ k * k.factorial * (Nat.stirlingSecond r k : ℝ)) ∧
-    (iteratedDeriv r (fun x : ℝ => (1 - Real.exp x) ^ k * Real.exp (v * x)) 0 =
-        ∑ p ∈ range (k + 1), (-1 : ℝ) ^ p * (k.choose p : ℝ) * ((v + p : ℕ) : ℝ) ^ r ∧
-      ∑ p ∈ range (k + 1), (-1 : ℝ) ^ p * (k.choose p : ℝ) * ((v + p : ℕ) : ℝ) ^ r =
-        (-1) ^ k * k.factorial * (rStirlingSecond (r + v) (k + v) v : ℝ))
 
 /-- **Power sums of $\binom{t}{k}(H_t - H_{t-k})$ in r-Stirling form.** Let $t$ be a complex
 number that is not an integer. For complex $x$ write $\binom{x}{k} = x(x-1)\cdots(x-k+1)/k!$,
@@ -341,27 +296,6 @@ public theorem_wanted sum_alternating_inv_centralBinom_oddHarmonic_sub_eq_stirli
       1 / (n.centralBinom : ℚ) * ∑ k ∈ range (min (r + 1) n),
         (-1) ^ k / (2 * ((n - k : ℕ) : ℚ) - 1) * k.factorial * (Nat.stirlingSecond r k : ℚ) *
           4 ^ k * ((n - k).centralBinom : ℚ) * (1 - oddHarmonic (n - k - 1))
-
-/-- **Power sums of $\binom{t}{n-k}(H_t - H_{t-n+k})$ in Stirling form.** Let $t$ be a complex
-number that is not an integer. For complex $x$ write $\binom{x}{k} = x(x-1)\cdots(x-k+1)/k!$,
-and write $H_x = \psi(x+1) + \gamma$, where $\psi$ is the digamma function and $\gamma$ is the
-Euler–Mascheroni constant (only differences $H_x - H_y = \psi(x+1) - \psi(y+1)$ occur below).
-Let ${r \brace k}$ denote the Stirling numbers of the second kind. For all natural numbers $n$
-and $r$ (with $0^0 = 1$),
-$$\sum_{k=0}^{n} (-1)^k \binom{t}{n-k} k^r (H_t - H_{t-n+k}) =
-(-1)^n \sum_{k=0}^{\min(r,n)} k! {r \brace k} \binom{n-t}{n-k} (H_{k-t} - H_{n-t}).$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
-Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
-Theorem 5 (`integers-2026-A109-thm-5`). -/
-public theorem_wanted sum_choose_sub_harmonic_diff_stirling (n r : ℕ) (t : ℂ)
-    (ht : ∀ m : ℤ, t ≠ m) :
-    ∑ k ∈ range (n + 1),
-        (-1 : ℂ) ^ k * Ring.choose t (n - k) * (k : ℂ) ^ r *
-          (Complex.digamma (t + 1) - Complex.digamma (t - n + k + 1)) =
-      (-1) ^ n * ∑ k ∈ range (min r n + 1),
-        (k.factorial : ℂ) * (Nat.stirlingSecond r k : ℂ) * Ring.choose ((n : ℂ) - t) (n - k) *
-          (Complex.digamma (k - t + 1) - Complex.digamma (n - t + 1))
 
 /-- **Power sums of $\binom{n-t}{n-k}(H_{k-t} - H_{n-t})$ in Stirling form.** Let $t$ be a
 complex number that is not an integer. For complex $x$ write

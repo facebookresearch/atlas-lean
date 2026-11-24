@@ -157,12 +157,14 @@ def links_digest(files: dict[str, bytes | None]) -> str:
 
 
 def receipt(commit: str, rows: str, cards: dict[str, str], links: dict[str, bytes | None] | None = None,
-            complete: bool = True) -> dict:
-    """The receipt `scripts/cards.py moves` writes for the commit, the ledger ``rows``, the links folder's files and
-    the cards it lists."""
-    return {"schema": "atlas-card-moves/v1", "commit": commit,
+            complete: bool = True, replacements: dict[str, dict[str, str]] | None = None) -> dict:
+    """The receipt `scripts/cards.py moves` writes for the commit, the ledger ``rows``, the links folder's files, the
+    cards it lists and the replacements of the ledger's retirements (by default, every listed card, as a folder)."""
+    if replacements is None:
+        replacements = {card: {"kind": "folder", "node": folder} for card, folder in cards.items()}
+    return {"schema": "atlas-card-moves/v2", "commit": commit,
             "ledger_sha256": hashlib.sha256(rows.encode()).hexdigest(), "annotations_sha256": links_digest(links or {}),
-            "cards": cards, "cards_complete": complete}
+            "cards": cards, "cards_complete": complete, "replacements": replacements}
 
 
 T = "A/f/t"
@@ -631,6 +633,136 @@ class RedirectTests(unittest.TestCase):
             with self.subTest(rows=rows), self.assertRaises(card_pages.CardDataError):
                 self.site([leaf(f"{T}/c/x")], [card(1, f"{T}/c", ["x"])], *rows)
 
+    @staticmethod
+    def retired(entries: list[dict], replacements: dict[str, tuple[str, str]], *rows: dict) -> card_pages.Site:
+        """The redirects of ``rows``, with no card, the ledger check giving each retirement's replacement."""
+        with tempfile.TemporaryDirectory() as docs:
+            return card_pages.build(rollup([]), index(*entries), ledger(*rows), Path(docs), listed={},
+                                    replacements=replacements)
+
+    def test_a_retired_statement_leads_to_its_replacement(self) -> None:
+        # The node T/node was expanded and its page deleted; its replacement, a statement boxed on the topic's page or
+        # one with a page of its own. Both routes the node may have had lead there.
+        retire = {"statement": af(20), "page": f"{T}/node", "replaced_by": af(21)}
+        for replacement, own_page, target in ((f"{T}/node-a", False, "index.html#node-a"),
+                                              (f"{T}/node-b", True, "node-b.html")):
+            with self.subTest(replacement):
+                site = self.retired([leaf(replacement, own_page=own_page)], {af(21): ("page", replacement)}, retire)
+                notice = site.files[f"roadmap/{T}/node.md"]
+                self.assertIn(f'<p><a href="{target}">Continue to the mathematical page</a></p>', notice)
+                anchor = target.removeprefix("index.html")
+                self.assertEqual(self.elements(site.anchors[f"roadmap/{T}/index.html"][0][1]), [("node", anchor)])
+                self.assertEqual(self.moves(site), {f"{T}/node": replacement})
+
+    def test_a_retired_statement_may_lead_to_a_folder(self) -> None:
+        # Expanded into a folder of its own name, whose folder page replaces it, or into a folder elsewhere. An
+        # explorer link to the node's address names the folder of its own name already, and needs no rewrite.
+        retire = {"statement": af(20), "page": f"{T}/node", "replaced_by": af(25)}
+        for replacement, target in ((f"{T}/node", "node/index.html"), (f"{T}/elsewhere", "elsewhere/index.html")):
+            with self.subTest(replacement):
+                site = self.retired([leaf(f"{replacement}/part"), folder(replacement, "Replacement")],
+                                    {af(25): ("folder", replacement)}, retire)
+                notice = site.files[f"roadmap/{T}/node.md"]
+                self.assertIn(f'<p><a href="{target}">Continue to the mathematical page</a></p>', notice)
+                self.assertIn(f'<meta http-equiv="refresh" content="0; url={target}">', notice)
+                self.assertEqual(self.elements(site.anchors[f"roadmap/{T}/index.html"][0][1]), [("node", target)])
+                if replacement == f"{T}/node":
+                    self.assertEqual((card_pages.SCRIPT in site.files, site.head), (False, {}))
+                else:
+                    self.assertEqual(self.moves(site), {f"{T}/node": replacement})
+
+    def test_a_retired_statement_s_replacements_are_followed(self) -> None:
+        # node-a replaced the node and was retired in turn, for node-b; and a statement replaced by card 7, which was
+        # retired for card 1.
+        site = self.retired([leaf(f"{T}/node-b")], {af(22): ("page", f"{T}/node-b")},
+                            {"statement": af(20), "page": f"{T}/node", "replaced_by": af(21)},
+                            {"statement": af(21), "page": f"{T}/node-a", "replaced_by": af(22)})
+        self.assertEqual(self.moves(site), {f"{T}/node": f"{T}/node-b", f"{T}/node-a": f"{T}/node-b"})
+        site = self.retired([leaf(f"{T}/c/c-main"), folder(f"{T}/c", "Card C")], {af(1): ("folder", f"{T}/c")},
+                            {"statement": af(20), "page": f"{T}/node", "replaced_by": af(7)},
+                            {"card": af(7), "folder": f"{T}/z", "replaced_by": af(1)})
+        self.assertEqual(self.moves(site), {f"{T}/node": f"{T}/c", f"{T}/z": f"{T}/c"})
+
+    def test_a_statement_replaced_in_place_keeps_the_route_its_replacement_lacks(self) -> None:
+        # The node T/node is replaced by a new statement at its address, whose route may be the other form: the node's
+        # old route of that form leads to it, and its own route is left alone, never redirected to itself.
+        retire = {"statement": af(20), "page": f"{T}/node", "replaced_by": af(24)}
+        # Boxed: the node may have had a page of its own, which now leads to the box.
+        site = self.retired([leaf(f"{T}/node"), leaf(f"{T}/other")], {af(24): ("page", f"{T}/node")}, retire)
+        self.assertEqual(list(site.files), [f"roadmap/{T}/node.md"])
+        self.assertIn('<p><a href="index.html#node">Continue to the mathematical page</a></p>',
+                      site.files[f"roadmap/{T}/node.md"])
+        self.assertEqual((site.anchors, site.head), ({}, {}))
+        # On a page of its own: the node may have been boxed on the topic's page, whose old anchor now leads to the
+        # page; no notice takes the page's place.
+        site = self.retired([leaf(f"{T}/node", own_page=True), leaf(f"{T}/other")],
+                            {af(24): ("page", f"{T}/node")}, retire)
+        self.assertEqual(site.files, {})
+        self.assertEqual(self.elements(site.anchors[f"roadmap/{T}/index.html"][0][1]), [("node", "node.html")])
+        self.assertEqual(site.head, {})
+
+    def test_an_address_has_one_owner(self) -> None:
+        # Two statements retired at one address in favour of different articles, whatever their order, and two cards
+        # retired at one folder likewise: two owners, no redirect.
+        entries = [leaf(f"{T}/a"), leaf(f"{T}/b"), leaf(f"{T}/c/c-main"), leaf(f"{T}/d/d-main"),
+                   folder(f"{T}/c", "Card C"), folder(f"{T}/d", "Card D")]
+        replacements = {af(21): ("page", f"{T}/a"), af(22): ("page", f"{T}/b"), af(1): ("folder", f"{T}/c"),
+                        af(2): ("folder", f"{T}/d")}
+        for name, rows in (
+            ("two statements", [{"statement": af(20), "page": f"{T}/gone", "replaced_by": af(21)},
+                                {"statement": af(30), "page": f"{T}/gone", "replaced_by": af(22)}]),
+            ("two statements, the other way", [{"statement": af(30), "page": f"{T}/gone", "replaced_by": af(22)},
+                                               {"statement": af(20), "page": f"{T}/gone", "replaced_by": af(21)}]),
+            ("two cards", [{"card": af(7), "folder": f"{T}/z", "replaced_by": af(1)},
+                           {"card": af(8), "folder": f"{T}/z", "replaced_by": af(2)}]),
+        ):
+            with self.subTest(name), self.assertRaises(card_pages.CardDataError) as refused:
+                self.retired(entries, replacements, *rows)
+            self.assertIn("an address has one owner", str(refused.exception))
+        # One history at one address, each retired in place by the next, leads to the last replacement.
+        site = self.retired(entries, replacements, {"statement": af(20), "page": f"{T}/gone", "replaced_by": af(30)},
+                            {"statement": af(30), "page": f"{T}/gone", "replaced_by": af(22)})
+        self.assertEqual(self.moves(site), {f"{T}/gone": f"{T}/b"})
+
+    def test_a_replacement_that_moves_into_the_retired_address(self) -> None:
+        # The node is retired in favour of the lemma, which then moves into the node's address: the lemma's old
+        # address leads there, and the node's keeps the route form the lemma lacks.
+        site = self.retired([leaf(f"{T}/node", own_page=True)], {af(21): ("page", f"{T}/node")},
+                            {"statement": af(20), "page": f"{T}/node", "replaced_by": af(21)},
+                            {"page": f"{T}/lemma", "to": f"{T}/node", "article_id": af(21)})
+        self.assertEqual(self.moves(site), {f"{T}/lemma": f"{T}/node"})
+        self.assertEqual(sorted(site.files), [card_pages.SCRIPT, f"roadmap/{T}/lemma.md"])
+        self.assertEqual(sorted(slug for slug, _ in site.anchors[f"roadmap/{T}/index.html"]), ["lemma", "node"])
+
+    def test_a_retired_statement_needs_its_replacement_and_a_well_formed_row(self) -> None:
+        retire = {"statement": af(20), "page": f"{T}/node", "replaced_by": af(21)}
+        entries = [leaf(f"{T}/node-a"), leaf(f"{T}/c/c-main")]
+        for name, replacements, rows in (
+            ("a replacement not listed", {}, [retire]),
+            ("a page the site does not publish", {af(21): ("page", f"{T}/gone")}, [retire]),
+            ("a page given as a folder", {af(21): ("folder", f"{T}/node-a")}, [retire]),
+            ("a card's replacement that is a page", {af(1): ("page", f"{T}/c/c-main")},
+             [{"card": af(7), "folder": f"{T}/z", "replaced_by": af(1)}]),
+            ("replacements that go round", {}, [retire, {"statement": af(21), "page": f"{T}/node-a",
+                                                         "replaced_by": af(20)}]),
+            ("a malformed id", {af(21): ("page", f"{T}/node-a")}, [{**retire, "statement": "af_20"}]),
+            ("a page address with `.md`", {af(21): ("page", f"{T}/node-a")}, [{**retire, "page": f"{T}/node.md"}]),
+            ("a statement retired twice", {af(21): ("page", f"{T}/node-a")}, [retire, retire]),
+            ("a statement retired as a card too", {af(21): ("page", f"{T}/node-a")},
+             [retire, {"card": af(20), "folder": f"{T}/z", "replaced_by": af(1)}]),
+            ("an address that moved too", {af(21): ("page", f"{T}/node-a")},
+             [retire, {"page": f"{T}/node", "to": f"{T}/node-a", "article_id": af(21)}]),
+            ("an address a retired card had", {af(21): ("page", f"{T}/node-a"), af(1): ("folder", f"{T}/c")},
+             [retire, {"card": af(7), "folder": f"{T}/node", "replaced_by": af(1)}]),
+        ):
+            with self.subTest(name), self.assertRaises(card_pages.CardDataError):
+                self.retired(entries + [folder(f"{T}/c", "Card C")], replacements, *rows)
+        # Another article at the retired address, live there or moved in.
+        for rows in ([retire], [retire, {"page": f"{T}/q", "to": f"{T}/node", "article_id": af(23)}]):
+            with self.subTest(rows=rows), self.assertRaises(card_pages.CardDataError) as refused:
+                self.retired(entries + [leaf(f"{T}/node")], {af(21): ("page", f"{T}/node-a")}, *rows)
+            self.assertIn(f"the last address {T}/node of", str(refused.exception))
+
     def test_an_old_anchor_that_names_an_element_of_the_page_is_left_to_it(self) -> None:
         site = self.site([leaf(f"{T}/other"), leaf(f"{T}/c/idea"), leaf(f"{T}/c/x")],
                          [card(1, f"{T}/c", ["idea", "x"])],
@@ -767,6 +899,25 @@ class ReceiptTests(unittest.TestCase):
         self.assertEqual((site.blocks, printed), ({}, self.STILL.format(
             "build/card-moves.json lists only the cards with an article id no other article has, not all of them")))
 
+    def test_a_retired_statement_leads_where_the_receipt_says(self) -> None:
+        # The ledger retires the node T/old-note in favour of the lemma, which the receipt places: its old page of its
+        # own and its old box both lead there, whatever the card data.
+        rows = self.ROWS + ledger({"statement": af(40), "page": f"{T}/old-note", "replaced_by": af(11)})
+
+        def replaced(made: dict, root: Path) -> dict:
+            return {**made, "replacements": {**made["replacements"], af(11): {"kind": "page", "node": f"{T}/a/lemma"}}}
+
+        site, printed = self.hook(change=replaced, rows=rows)
+        self.assertEqual(printed, self.STILL.format(self.NO_DATA))
+        self.assertIn('<p><a href="a/index.html#lemma">Continue to the mathematical page</a></p>',
+                      site.files[f"roadmap/{T}/old-note.md"])
+        self.assertEqual(RedirectTests.moves(site), {**self.MOVES, f"{T}/old-note": f"{T}/a/lemma"})
+        # Without the replacement in the receipt, nothing is kept.
+        site, printed = self.hook(rows=rows)
+        self.assertIsNone(site)
+        self.assertIn(f"::error title=Moved addresses not kept::scripts/card-moves.jsonl: a retired statement's "
+                      f"replacements end at {af(11)}, which build/card-moves.json does not list\n", printed)
+
     def test_a_missing_ledger_is_no_empty_one(self) -> None:
         # A receipt of an empty ledger shows the card data; with the ledger then deleted at the same commit, the hook
         # keeps no moved address and shows no card, as card data needs the moved addresses.
@@ -782,7 +933,7 @@ class ReceiptTests(unittest.TestCase):
                                   "::error title=Moved addresses not kept::there is no scripts/card-moves.jsonl\n")
 
     def test_without_this_receipt_no_moved_address_is_kept(self) -> None:
-        not_this = "build/card-moves.json is not a receipt of atlas-card-moves/v1"
+        not_this = "build/card-moves.json is not a receipt of atlas-card-moves/v2"
         for name, change, reason in (
             ("no receipt", lambda made, root: None,
              "there is no build/card-moves.json (the ledger check writes none when the ledger is invalid)"),
@@ -812,10 +963,31 @@ class ReceiptTests(unittest.TestCase):
              "build/card-moves.json's cards are not a list of card ids and their folders, one card a folder"),
             ("a completeness that is no flag", lambda made, root: {**made, "cards_complete": 1},
              "build/card-moves.json's cards are not a list of card ids and their folders, one card a folder"),
-            ("a replacement it does not list", lambda made, root: {**made, "cards": {af(2): f"{T}/b"}},
+            ("replacements that are no table", lambda made, root: {**made, "replacements": [af(1)]},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("a replacement of another kind", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "card", "node": f"{T}/a"}}},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("a replacement with a key too many", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "folder", "node": f"{T}/a", "title": "A"}}},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("a replacement at no address", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "folder", "node": f"{T}/a.md"}}},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("two replacements at one address", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "folder", "node": f"{T}/a"}, af(2): {"kind": "folder", "node": f"{T}/a"}}},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("a replacement it does not list", lambda made, root: {**made, "replacements": {
+                af(2): {"kind": "folder", "node": f"{T}/b"}}},
              f"scripts/card-moves.jsonl: a retired card's replacements end at {af(1)}, which build/card-moves.json "
              "does not list"),
-            ("a replacement in no published folder", lambda made, root: {**made, "cards": {af(1): f"{T}/gone"}},
+            ("a replacement in no published folder", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "folder", "node": f"{T}/gone"}}},
              f"scripts/card-moves.jsonl: a retired card's replacements end at {af(1)}, whose folder {T}/gone the site "
              "does not publish"),
         ):
