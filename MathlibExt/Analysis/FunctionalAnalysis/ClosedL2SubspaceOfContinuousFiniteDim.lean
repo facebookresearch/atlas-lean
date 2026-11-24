@@ -42,22 +42,19 @@ module
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Mathlib.MeasureTheory.Function.LpSpace.ContinuousFunctions
-import Mathlib.Analysis.InnerProductSpace.GramSchmidtOrtho
 import Mathlib.Analysis.Normed.Operator.Banach
-import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.Tactic.Linarith
+import MathlibExt.MeasureTheory.Function.LpDimensionBound
 
 /-!
 # Closed subspaces of L² with continuous representatives
 
-On the closed unit interval the bounded inverse theorem bounds the supremum norm of a continuous
-representative by its L² norm. Applying that bound to finite linear combinations of orthonormal
-vectors bounds their pointwise squared sum. Its integral counts the vectors, so the dimensions of
-finite spans in the subspace are uniformly bounded.
+On the closed unit interval the bounded inverse theorem controls the supremum norm of each
+continuous representative by its L² norm. This gives the almost-everywhere pointwise bound
+needed by the existing finite-dimensionality criterion for subspaces of L².
 -/
 
 open MeasureTheory Set
-open scoped ENNReal RealInnerProductSpace
+open scoped ENNReal
 
 noncomputable section
 
@@ -119,55 +116,6 @@ private theorem exists_representative_map (H : Submodule ℝ L)
   rw [← hy]
   exact ContinuousMap.coeFn_toLp (volume : Measure I) (T y)
 
-/-- Apply evaluation to the linear combination with the evaluation values as coefficients. -/
-private theorem pointwise_sum_sq_le {H : Submodule ℝ L}
-    (T : H →L[ℝ] C(I, ℝ)) {ι : Type*} [Fintype ι] (e : ι → H)
-    (he : Orthonormal ℝ e) (x : I) : ∑ i, (T (e i) x) ^ 2 ≤ ‖T‖ ^ 2 := by
-  classical
-  let a : ι → ℝ := fun i ↦ T (e i) x
-  let v : H := ∑ i, a i • e i
-  have hq : ‖v‖ ^ 2 = ∑ i, (a i) ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq]
-    simpa only [v, starRingEnd_apply, star_trivial, pow_two] using
-      he.inner_sum a a Finset.univ
-  have hv : T v x = ∑ i, (a i) ^ 2 := by
-    simp only [v, map_sum, map_smul, ContinuousMap.sum_apply,
-      ContinuousMap.smul_apply, smul_eq_mul, pow_two, a]
-  have hb : ‖T v x‖ ≤ ‖T‖ * ‖v‖ :=
-    (ContinuousMap.norm_coe_le_norm (T v) x).trans (T.le_opNorm v)
-  have hb' : ‖v‖ ^ 2 ≤ ‖T‖ * ‖v‖ := by
-    rw [hv, ← hq, Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)] at hb
-    exact hb
-  have hvT : ‖v‖ ≤ ‖T‖ := by
-    by_contra! hgt
-    have hp : 0 < ‖v‖ := (norm_nonneg T).trans_lt hgt
-    nlinarith [mul_pos hp (sub_pos.mpr hgt)]
-  exact hq ▸ (pow_le_pow_left₀ (norm_nonneg v) hvT 2)
-
-/-- Integrating the pointwise bound gives one unit of mass per orthonormal vector. -/
-private theorem card_le_of_orthonormal {H : Submodule ℝ L}
-    (T : H →L[ℝ] C(I, ℝ)) (hT : ∀ y : H, (y : L) =ᵐ[volume] T y)
-    {ι : Type*} [Fintype ι] {e : ι → H} (he : Orthonormal ℝ e) :
-    (Fintype.card ι : ℝ) ≤ ‖T‖ ^ 2 := by
-  classical
-  have hi (i : ι) : Integrable (fun x : I ↦ (T (e i) x) ^ 2) volume :=
-    ((T (e i)).continuous.pow 2).integrable_of_hasCompactSupport
-      (HasCompactSupport.of_compactSpace _)
-  have hone (i : ι) : ∫ x : I, (T (e i) x) ^ 2 = 1 := by
-    have hinner : inner ℝ (e i : L) (e i : L) = 1 := by
-      rw [real_inner_self_eq_norm_sq]
-      change ‖e i‖ ^ 2 = 1
-      rw [he.norm_eq_one i, one_pow]
-    rw [L2.inner_def] at hinner
-    refine (integral_congr_ae ?_).trans hinner
-    filter_upwards [hT (e i)] with x hx
-    rw [hx]
-    simp [Real.norm_eq_abs, sq_abs]
-  have h := integral_mono (integrable_finsetSum Finset.univ fun i _ ↦ hi i)
-    (integrable_const (‖T‖ ^ 2)) (pointwise_sum_sq_le T e he)
-  rw [integral_finsetSum _ (fun i _ ↦ hi i)] at h
-  simpa [hone] using h
-
 /-- **Closed subspaces of $L^2([0,1])$ inside $C([0,1])$ are finite-dimensional.** Let $H$ be a
 closed linear subspace of the real space $L^2([0,1])$ with respect to Lebesgue measure, and
 suppose that every element of $H$ is the class of a continuous function $[0,1] \to \mathbb{R}$.
@@ -185,17 +133,13 @@ public theorem finiteDimensional_of_isClosed_of_le_range_toLp
     (hsubset : H ≤ (ContinuousMap.toLp (E := ℝ) (p := (2 : ENNReal))
         (MeasureTheory.volume : MeasureTheory.Measure (Set.Icc (0 : ℝ) 1)) ℝ).range) :
     FiniteDimensional ℝ ↥H := by
-  classical
   obtain ⟨T, hT⟩ := exists_representative_map H hclosed hsubset
-  apply Module.rank_lt_aleph0_iff.mp
-  refine lt_of_le_of_lt (rank_le (n := ⌈‖T‖ ^ 2⌉₊) ?_) Cardinal.natCast_lt_aleph0
-  intro s hs
-  let j : Fin s.card ≃ ↥s := (Finset.equivFinOfCardEq (s := s) rfl).symm
-  let e : Fin s.card → H := fun i ↦ j i
-  have he : LinearIndependent ℝ e := hs.comp j j.injective
-  have hon := InnerProductSpace.gramSchmidtNormed_orthonormal he
-  have hb := card_le_of_orthonormal T hT hon
-  have hc : (s.card : ℝ) ≤ ‖T‖ ^ 2 := by simpa only [Fintype.card_fin] using hb
-  exact_mod_cast hc.trans (Nat.le_ceil (‖T‖ ^ 2))
+  refine (Lp.finiteDimensional_and_finrank_le_of_forall_ae_norm_le_mul_norm H ‖T‖ ?_).1
+  intro φ hφ
+  let y : H := ⟨φ, hφ⟩
+  filter_upwards [hT y] with x hx
+  change ‖(y : L) x‖ ≤ ‖T‖ * ‖y‖
+  rw [hx]
+  exact (ContinuousMap.norm_coe_le_norm (T y) x).trans (T.le_opNorm y)
 
 end MathlibExt.Analysis.FunctionalAnalysis.ClosedL2SubspaceOfContinuousFiniteDimWanted
