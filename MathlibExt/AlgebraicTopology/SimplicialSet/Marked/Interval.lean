@@ -58,7 +58,8 @@ def intervalMapOfMarkedEdge {Y : Marked.{u}} (e : Y.toSSet _⦋1⦌) (he : e ∈
       rw [← h, SSet.σ_naturality_apply]
       exact Y.degenerate_mem _
 
-/-- Marked interval maps and actual marked edges are equivalent, through original Yoneda evaluation. -/
+/-- Marked interval maps and actual marked edges are equivalent, through original Yoneda
+  evaluation. -/
 def maxIntervalHomEquiv (Y : Marked.{u}) : (max (Δ[1] : SSet.{u}) ⟶ Y) ≃ Y.marking where
   toFun f := ⟨SSet.yonedaEquiv f.hom, f.preserve (Set.mem_univ _)⟩
   invFun e := intervalMapOfMarkedEdge e.val e.property

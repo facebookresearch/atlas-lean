@@ -41,8 +41,8 @@ def prodIsLimit (X Y : Marked.{u}) : IsLimit (BinaryFan.mk (prodFst X Y) (prodSn
       · exact hm₀
       · exact hm₁))
 
-/-- Native chosen finite products make the original marked carrier Cartesian monoidal without a global
-  instance registration. -/
+/-- Native chosen finite products make the original marked carrier Cartesian monoidal without a
+  global instance registration. -/
 @[instance_reducible]
 def cartesianMonoidalCategory : CartesianMonoidalCategory Marked.{u} :=
   CartesianMonoidalCategory.ofChosenFiniteProducts
@@ -67,7 +67,8 @@ theorem cartesianMonoidal_tensorHom {X X' Y Y' : Marked.{u}} (f : X ⟶ X') (g :
 @[simp]
 theorem cartesianMonoidal_unit : 𝟙_ Marked.{u} = max (Δ[0] : SSet.{u}) := rfl
 
-/-- The same original marked internal Hom supplies the native closed structure, with no global instance registration. -/
+/-- The same original marked internal Hom supplies the native closed structure, with no global
+  instance registration. -/
 @[instance_reducible]
 def monoidalClosed : MonoidalClosed Marked.{u} where
   closed X :=

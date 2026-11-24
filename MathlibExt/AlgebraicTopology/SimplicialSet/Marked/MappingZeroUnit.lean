@@ -45,7 +45,8 @@ def parameterZeroIsTerminal (k : ParameterMarking) : IsTerminal ((simplexParamet
   IsTerminal.ofUniqueHom (toParameterZero k) (fun X f => by
     cases k <;> apply Hom.ext <;> exact SSet.stdSimplex.isTerminalObj₀.hom_ext _ _)
 
-/-- The actual zero-parameter product projection and lift form the original marked unit isomorphism. -/
+/-- The actual zero-parameter product projection and lift form the original marked unit
+  isomorphism. -/
 def zeroParameterUnitIso (k : ParameterMarking) (X : Marked.{u}) :
     prod ((simplexParameter k).obj ⦋0⦌) X ≅ X where
   hom := prodSnd _ _
