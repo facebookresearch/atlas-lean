@@ -10,24 +10,28 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.GroupTheory.Perm.Centralizer
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# Mean bubble size in linear chord diagrams
+# Bubble sizes in linear chord diagrams
 
 The theorem `MetaMathlibExt.mean_bubble_size` computes the mean by counting vertices
-and starts of maximal intervals free of short chords.
+and starts of maximal intervals free of short chords. The theorem
+`MetaMathlibExt.sum_mul_bubbleCount` gives the total size of these intervals over all diagrams.
 
 Among the $D$ diagrams on $2n$ vertices, a prescribed chord occurs in $D/(2n-1)$ diagrams,
 by symmetry of the possible partners. After fixing that chord, a remaining vertex has $2n-3$
 possible partners. These two counts suffice because a bubble starts either at a free first vertex
-or immediately after a short chord whose next vertex is free.
+or immediately after a short chord whose next vertex is free. Each diagram is a product of $n$
+disjoint transpositions, giving $D = (2n)!/(2^n n!)$.
 -/
 
 namespace MetaMathlibExt
@@ -564,6 +568,82 @@ private theorem moments {n : ℕ} (hn : 2 ≤ n) :
 
 end mean_bubble_size
 
+namespace sum_mul_bubbleCount
+
+open Finset Equiv.Perm mean_bubble_size
+
+private theorem weighted_moment {n : ℕ} (hn : 2 ≤ n) :
+    moment n false = (2 * n - 2) * (diagrams n).card := by
+  have hq : (2 : ℚ) ≤ n := by exact_mod_cast hn
+  rw [(moments hn).1]
+  field_simp [show (2 * n - 1 : ℚ) ≠ 0 by linarith]
+  ring
+
+-- The nontrivial cycles of a diagram are its chords, and they cover all vertices.
+private theorem diagram_iff_cycleType {n : ℕ} (π : Equiv.Perm (Fin (2 * n))) :
+    IsLinearChordDiagram n π ↔ π.cycleType = Multiset.replicate n 2 := by
+  have hsum := π.sum_cycleType
+  constructor
+  · intro h
+    have hs : π.support = univ := eq_univ_of_forall fun i => mem_support.mpr (h i).1
+    have hpow : π ^ 2 = 1 := Equiv.ext fun i => (h i).2
+    have htype := cycleType_of_pow_prime_eq_one hpow
+    rw [htype, hs] at hsum
+    simp at hsum
+    rwa [show π.cycleType.card = n by omega] at htype
+  · intro h
+    have hpow : π ^ 2 = 1 := pow_prime_eq_one_iff.mpr fun c hc =>
+      Multiset.eq_of_mem_replicate (h ▸ hc)
+    have hs : π.support = univ := by
+      apply eq_univ_of_card
+      simp [← hsum, h, mul_comm]
+    intro i
+    exact ⟨mem_support.mp (hs ▸ mem_univ i), DFunLike.congr_fun hpow i⟩
+
+private theorem diagram_count {n : ℕ} (hn : n ≠ 0) :
+    ((diagrams n).card : ℚ) = (2 * n).factorial / (2 ^ n * n.factorial) := by
+  classical
+  let perms := univ.filter fun π : Equiv.Perm (Fin (2 * n)) =>
+    π.cycleType = Multiset.replicate n 2
+  have hcard : perms.card = (diagrams n).card := by
+    apply card_nbij (fun π : Equiv.Perm (Fin (2 * n)) => (π : Fin (2 * n) → Fin (2 * n)))
+    · intro π hπ
+      exact mem_filter.mpr ⟨mem_univ _, (diagram_iff_cycleType π).mpr (mem_filter.mp hπ).2⟩
+    · exact fun _ _ _ _ h => DFunLike.coe_injective h
+    · intro σ hσ
+      have hd := (mem_filter.mp hσ).2
+      let π := Function.Involutive.toPerm σ (fun i => (hd i).2)
+      exact ⟨π, mem_filter.mpr ⟨mem_univ _, (diagram_iff_cycleType π).mp hd⟩, rfl⟩
+  have h : perms.card * (2 ^ n * n.factorial) = (2 * n).factorial := by
+    simpa [perms, Multiset.toFinset_replicate, Multiset.mem_replicate, hn, mul_comm n 2] using
+      card_of_cycleType_mul_eq (Fin (2 * n)) (Multiset.replicate n 2)
+  rw [← hcard]
+  apply (eq_div_iff (by positivity)).mpr
+  exact_mod_cast h
+
+end sum_mul_bubbleCount
+
+open mean_bubble_size sum_mul_bubbleCount in
+/-- **First moment of bubble sizes in linear chord diagrams.** For every natural number
+$n \ge 2$, let $B_{n,p}$ be the total number of bubbles of size $p$ over all linear chord diagrams
+on $2n$ vertices. Then
+$$\sum_{p=1}^{2n} p\,B_{n,p} = \frac{(2n-1)!}{2^{n-2}\,(n-2)!}.$$
+
+The hypothesis $n \ge 2$ is added because the right side involves $(n-2)!$.
+
+Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
+Sequences 27 (2024), Article 24.4.2, Lemma 4 (`jis-2024-24.4.2-lem-4`). -/
+theorem sum_mul_bubbleCount (n : ℕ) (hn : 2 ≤ n) :
+    (∑ p ∈ Finset.Icc 1 (2 * n), (p : ℚ) * bubbleCount n p) =
+      (2 * n - 1).factorial / (2 ^ (n - 2) * (n - 2).factorial) := by
+  change moment n false = _
+  rw [weighted_moment hn, diagram_count (by omega), ← Nat.mul_factorial_pred (by omega : 2 * n ≠ 0)]
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
+  simp only [Nat.add_sub_cancel, Nat.factorial_succ, pow_succ]
+  push_cast
+  field_simp
+  ring
+
 open mean_bubble_size in
 /-- **Mean bubble size.** Let $B_{n,p}$ be the total number of bubbles of size $p$ in all linear
 chord diagrams on $2n$ vertices. For every integer $n \ge 2$, the mean bubble size satisfies
@@ -580,19 +660,14 @@ theorem mean_bubble_size (n : ℕ) (hn : 2 ≤ n) :
   have hq : (2 : ℚ) ≤ n := by exact_mod_cast hn
   have hD : (0 : ℚ) < (diagrams n).card := by exact_mod_cast diagrams_pos (by omega : 0 < n)
   have h1 : (2 * n - 1 : ℚ) ≠ 0 := by linarith
-  obtain ⟨hvertices, hstarts⟩ := moments hn
-  have hv : moment n false = (2 * n - 2) * (diagrams n).card := by
-    rw [hvertices]
-    field_simp [h1]
-    ring
   have hs : moment n true = (4 * n - 5) * (diagrams n).card / (2 * n - 1) := by
-    rw [hstarts]
+    rw [(moments hn).2]
     have h3 : (2 * n - 3 : ℚ) ≠ 0 := by linarith
     field_simp [h1, h3]
     ring
   simpa only [moment, Bool.false_eq_true, ↓reduceIte, one_mul] using
     (show moment n false / moment n true = _ by
-      rw [hv, hs]
+      rw [sum_mul_bubbleCount.weighted_moment hn, hs]
       have h4 : (4 * n - 5 : ℚ) ≠ 0 := by linarith
       field_simp [h1, h4, hD.ne'])
 
