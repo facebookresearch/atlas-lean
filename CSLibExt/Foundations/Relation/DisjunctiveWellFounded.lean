@@ -21,6 +21,19 @@ import Mathlib.Order.Monotone.Basic
 import Mathlib.Order.WellFounded
 import Mathlib.Tactic.Choose
 
+/-! # Disjunctive well-foundedness
+
+Mathematical source: Podelski and Rybalchenko, _Transition Invariants_,
+LICS 2004, pp. 32-41.
+
+This file formalizes the bare-relation soundness direction only: if
+`Relation.TransGen R` is pointwise contained in a finite union of
+well-founded relations, then `WellFounded R`.
+
+No program syntax, initial or accessible states, liveness property, or
+relative-completeness direction is formalized.
+-/
+
 @[expose] public section
 
 namespace Cslib
