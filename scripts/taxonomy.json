@@ -12781,6 +12781,7 @@
   "MathlibExt/NumberTheory/RidoutPadicRoth": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
   "MathlibExt/NumberTheory/RieselRepdigit101": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/RothAuxiliary": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
+  "MathlibExt/NumberTheory/RoughNumberSieve": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Euler's function and divisor sums along linear recurrences"},
   "MathlibExt/NumberTheory/RoughNumbers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Rough numbers"},
   "MathlibExt/NumberTheory/RoundQuotientOddCount": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/RunLengthTransformLinearRecurrence": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomial coefficient sums modulo 2"},
