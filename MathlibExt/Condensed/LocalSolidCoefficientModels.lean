@@ -77,6 +77,8 @@ structure LocalModel (P : AffineUntilting p) where
   completion : CompletionModel (Coefficient p P) (adicIdeal p parameter)
   compact : IntegralCompactModel p P.pair restriction analytic (adicIdeal p parameter) completion
   almost : AlmostIdealData p P.pair
+  /-- The almost localization of modified modules onto the almost-local ones. -/
+  localization : AlmostLocalization (Coefficient p P) compact almost.ideal
   [analyticShift : analytic.functor.CommShift ℤ]
   [analyticUnitShift : NatTrans.CommShift analytic.unit ℤ]
   [completionShift : completion.functor.CommShift ℤ]
@@ -160,11 +162,9 @@ def shiftedComparison {A B : Type 1} [CommRing A] [TopologicalSpace A]
         ((DerivedCategory.Q.commShiftIso n).app Y).symm
 
 /-- A coefficient pullback retains actual compact geometry and the complete module adjunction.
-The enhanced pullback is the raw DG-module extension along the strict pullback of dictionaries,
-not followed by an almost localization; the field `almost` requires the chosen models to make this
-raw extension preserve almost-local modules. That is a requirement on the models: Mann instead
-composes the raw extension with the target almost localization (Mann, proof of Lemma 2.2.22(ii)),
-and this preservation is not derived from that construction. -/
+The raw DG-module extension along the strict pullback of dictionaries need not preserve almost-local
+modules; the enhanced pullback (`PullbackModel.localExtension`) is the target almost localization
+after the raw extension (Mann, proof of Lemma 2.2.22(ii)). -/
 structure PullbackModel {P Q : AffineUntilting p} (f : P ⟶ Q)
     (MP : LocalModel p P) (MQ : LocalModel p Q) where
   input : ExtensionInput p f
@@ -172,10 +172,6 @@ structure PullbackModel {P Q : AffineUntilting p} (f : P ⟶ Q)
     MQ.compact.objectsᵒᵖ MP.compact.objectsᵒᵖ
   restriction : RestrictionModel (coefficientMap p f) compactFunctor
   extension : ExtensionModel (coefficientMap p f) restriction
-  /-- The raw extension preserves almost-local modules (a requirement on the chosen models). -/
-  almost : ∀ N : DGDerivedModules (Coefficient p Q) MQ.compact.objects,
-    IsAlmostLocal (Coefficient p Q) MQ.almost.ideal N.obj →
-      IsAlmostLocal (Coefficient p P) MP.almost.ideal (extension.functor.obj N).obj
   geometry : ∀ x : MQ.compact.objects,
     (completedGeometricExtension p f input MP).obj
       (DerivedCategory.Q.obj (compactComplex p MQ x)) ≅
@@ -193,22 +189,36 @@ structure PullbackModel {P Q : AffineUntilting p} (f : P ⟶ Q)
         (compactComplex p MQ y) (compactComplex p MP (compactFunctor.obj (op y)).unop)
         (geometry y) n).hom = (geometry x).hom ≫ cochainClass c
 
-/-- The actual local enhanced pullback, on cofibrant almost-local modules and all Hom degrees. -/
+/-- The actual local enhanced pullback, on cofibrant almost-local modules and all Hom degrees:
+the raw extension followed by the target almost localization. -/
 def PullbackModel.localExtension {P Q : AffineUntilting p} {f : P ⟶ Q}
     {MP : LocalModel p P} {MQ : LocalModel p Q} (B : PullbackModel p f MP MQ) :
     SemilinearFunctor (coefficientMap p f) (LocalCategory p MQ) (LocalCategory p MP) where
-  obj N :=
-    let N' : DGDerivedModules (Coefficient p Q) MQ.compact.objects := ⟨N.obj, N.property.1⟩
-    let M := B.extension.functor.obj N'
-    ⟨M.obj, M.property, B.almost N' N.property.2⟩
-  map M N := B.extension.functor.map ⟨M.obj, M.property.1⟩ ⟨N.obj, N.property.1⟩
+  obj N := MP.localization.functor.obj (B.extension.functor.obj ⟨N.obj, N.property.1⟩)
+  map M N := B.extension.functor.map ⟨M.obj, M.property.1⟩ ⟨N.obj, N.property.1⟩ ≫
+    (restrictCochains (coefficientMap p f)).map
+      (MP.localization.functor.map (B.extension.functor.obj ⟨M.obj, M.property.1⟩)
+        (B.extension.functor.obj ⟨N.obj, N.property.1⟩))
   identity M := by
-    simpa only [DGFullSubcategory.dgHomComplex_eq, DGFullSubcategory.dgId_eq] using
-      B.extension.functor.identity ⟨M.obj, M.property.1⟩
+    have h1 := B.extension.functor.identity ⟨M.obj, M.property.1⟩
+    have h2 := MP.localization.functor.dgMap_dgId
+      (B.extension.functor.obj ⟨M.obj, M.property.1⟩)
+    rw [EnrichedFunctor.dgMap_apply] at h2
+    simp only [DGFullSubcategory.dgId_eq] at h1 h2 ⊢
+    exact (congrArg (fun z ↦ ((MP.localization.functor.map
+      (B.extension.functor.obj ⟨M.obj, M.property.1⟩)
+      (B.extension.functor.obj ⟨M.obj, M.property.1⟩)).f 0).hom z) h1).trans h2
   composition M N P i j k a b h := by
-    simpa only [DGFullSubcategory.dgHomComplex_eq, DGFullSubcategory.dgComp_eq] using
-      B.extension.functor.composition ⟨M.obj, M.property.1⟩
-        ⟨N.obj, N.property.1⟩ ⟨P.obj, P.property.1⟩ i j k a b h
+    have h1 := B.extension.functor.composition ⟨M.obj, M.property.1⟩
+      ⟨N.obj, N.property.1⟩ ⟨P.obj, P.property.1⟩ i j k a b h
+    have h2 := MP.localization.functor.dgMap_dgComp
+      (((B.extension.functor.map ⟨M.obj, M.property.1⟩ ⟨N.obj, N.property.1⟩).f i).hom a)
+      (((B.extension.functor.map ⟨N.obj, N.property.1⟩ ⟨P.obj, P.property.1⟩).f j).hom b) h
+    simp only [EnrichedFunctor.dgMap_apply] at h2
+    simp only [DGFullSubcategory.dgComp_eq] at h1 h2 ⊢
+    exact (congrArg (fun z ↦ ((MP.localization.functor.map
+      (B.extension.functor.obj ⟨M.obj, M.property.1⟩)
+      (B.extension.functor.obj ⟨P.obj, P.property.1⟩)).f k).hom z) h1).trans h2
 
 /-- Native postcomposition gives the actual local coefficient nerve map. -/
 def PullbackModel.nerveMap {P Q : AffineUntilting p} {f : P ⟶ Q}

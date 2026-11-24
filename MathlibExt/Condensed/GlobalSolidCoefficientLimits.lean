@@ -211,11 +211,14 @@ def hyperdescentMap {G : LocalDiagram p} (M : GlobalModel p G)
     M.functor.obj (op F) ⟶ categoricalLimit R :=
   limit.lift _ (hypercoverCone p M H) ≫ limitComparison R
 
-/-- Hypercompleteness is a conclusion about these actual prescribed comparison maps. -/
+/-- Hypercompleteness is a conclusion about these actual prescribed comparison maps: every
+hypercover diagram has a replacement model, and for every replacement the hyperdescent comparison
+is a categorical equivalence. -/
 def IsHypercomplete {G : LocalDiagram p} (M : GlobalModel p G) : Prop :=
   ∀ (F : Sheaf (originalVTopology p) (Type 1))
-    (H : MathlibExt.CategoryTheory.SheafHypercoverModels.Hypercover F)
-    (R : DiagramModel.{2, 0, 0} (hypercoverDiagram p M H)),
-    IsCategoricalEquivalence (hyperdescentMap p M H R)
+    (H : MathlibExt.CategoryTheory.SheafHypercoverModels.Hypercover F),
+    Nonempty (DiagramModel.{2, 0, 0} (hypercoverDiagram p M H)) ∧
+      ∀ R : DiagramModel.{2, 0, 0} (hypercoverDiagram p M H),
+        IsCategoricalEquivalence (hyperdescentMap p M H R)
 
 end MathlibExt.Condensed.GlobalSolidCoefficientLimits

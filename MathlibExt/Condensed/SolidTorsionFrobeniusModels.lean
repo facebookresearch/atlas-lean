@@ -119,6 +119,8 @@ structure TorsionModel where
   compact : CompactDGModel (TorsionRing p P π)
     (analyticGenerator (TorsionRing p P π) ⊤ restriction analytic)
   almost : AlmostIdealData p P.pair
+  /-- The almost localization of modified modules onto the almost-local ones. -/
+  localization : AlmostLocalization (TorsionRing p P π) compact (torsionAlmostIdeal p P π almost)
   [analyticShift : analytic.functor.CommShift ℤ]
   [analyticUnitShift : NatTrans.CommShift analytic.unit ℤ]
 
@@ -164,18 +166,13 @@ abbrev torsionComplex (M : TorsionModel p P π) (x : M.compact.objects) :=
   (M.compact.realization.obj x).obj
 
 /-- A scalar-Frobenius model is the full actual module adjunction on the fixed coefficient map. As
-for local pullbacks, the enhanced Frobenius is the raw DG-module extension, and the field `almost`
-requires the chosen model to make it preserve almost-local modules, rather than composing with the
-target almost localization as in Mann's construction. -/
+for local pullbacks, the raw extension need not preserve almost-local modules; the enhanced
+Frobenius (`FrobeniusModel.localExtension`) is the almost localization after the raw extension. -/
 structure FrobeniusModel (h : π.element ∣ (p : P.pair.plus)) (M : TorsionModel p P π) where
   compactFunctor : SemilinearFunctor (coefficientFrobenius p P π h)
     M.compact.objectsᵒᵖ M.compact.objectsᵒᵖ
   restriction : RestrictionModel (coefficientFrobenius p P π h) compactFunctor
   extension : ExtensionModel (coefficientFrobenius p P π h) restriction
-  almost : ∀ N : DGDerivedModules (TorsionRing p P π) M.compact.objects,
-    IsAlmostLocal (TorsionRing p P π) (torsionAlmostIdeal p P π M.almost) N.obj →
-      IsAlmostLocal (TorsionRing p P π) (torsionAlmostIdeal p P π M.almost)
-        (extension.functor.obj N).obj
 
 /-- Comparison isomorphisms `e` for the derived extension `E` (followed by analytic reflection)
 on all realized compact objects are compatible with every homogeneous cocycle class. -/
@@ -229,23 +226,37 @@ def IsGeometricallyNormalized {h : π.element ∣ (p : P.pair.plus)}
     {M : TorsionModel p P π} (F : FrobeniusModel p P π h M) : Prop :=
   Nonempty (GeometricNormalization p P π F)
 
-/-- The actual enhanced Frobenius scalar extension on almost-local modules. -/
+/-- The actual enhanced Frobenius scalar extension on almost-local modules: the raw extension
+followed by the almost localization. -/
 def FrobeniusModel.localExtension {h : π.element ∣ (p : P.pair.plus)}
     {M : TorsionModel p P π} (F : FrobeniusModel p P π h M) :
     SemilinearFunctor (coefficientFrobenius p P π h)
       (TorsionCategory p P π M) (TorsionCategory p P π M) where
-  obj N :=
-    let N' : DGDerivedModules (TorsionRing p P π) M.compact.objects := ⟨N.obj, N.property.1⟩
-    let K := F.extension.functor.obj N'
-    ⟨K.obj, K.property, F.almost N' N.property.2⟩
-  map K L := F.extension.functor.map ⟨K.obj, K.property.1⟩ ⟨L.obj, L.property.1⟩
+  obj N := M.localization.functor.obj (F.extension.functor.obj ⟨N.obj, N.property.1⟩)
+  map K L := F.extension.functor.map ⟨K.obj, K.property.1⟩ ⟨L.obj, L.property.1⟩ ≫
+    (restrictCochains (coefficientFrobenius p P π h)).map
+      (M.localization.functor.map (F.extension.functor.obj ⟨K.obj, K.property.1⟩)
+        (F.extension.functor.obj ⟨L.obj, L.property.1⟩))
   identity K := by
-    simpa only [DGFullSubcategory.dgHomComplex_eq, DGFullSubcategory.dgId_eq] using
-      F.extension.functor.identity ⟨K.obj, K.property.1⟩
+    have h1 := F.extension.functor.identity ⟨K.obj, K.property.1⟩
+    have h2 := M.localization.functor.dgMap_dgId
+      (F.extension.functor.obj ⟨K.obj, K.property.1⟩)
+    rw [EnrichedFunctor.dgMap_apply] at h2
+    simp only [DGFullSubcategory.dgId_eq] at h1 h2 ⊢
+    exact (congrArg (fun z ↦ ((M.localization.functor.map
+      (F.extension.functor.obj ⟨K.obj, K.property.1⟩)
+      (F.extension.functor.obj ⟨K.obj, K.property.1⟩)).f 0).hom z) h1).trans h2
   composition K L N i j k a b e := by
-    simpa only [DGFullSubcategory.dgHomComplex_eq, DGFullSubcategory.dgComp_eq] using
-      F.extension.functor.composition ⟨K.obj, K.property.1⟩ ⟨L.obj, L.property.1⟩
-        ⟨N.obj, N.property.1⟩ i j k a b e
+    have h1 := F.extension.functor.composition ⟨K.obj, K.property.1⟩
+      ⟨L.obj, L.property.1⟩ ⟨N.obj, N.property.1⟩ i j k a b e
+    have h2 := M.localization.functor.dgMap_dgComp
+      (((F.extension.functor.map ⟨K.obj, K.property.1⟩ ⟨L.obj, L.property.1⟩).f i).hom a)
+      (((F.extension.functor.map ⟨L.obj, L.property.1⟩ ⟨N.obj, N.property.1⟩).f j).hom b) e
+    simp only [EnrichedFunctor.dgMap_apply] at h2
+    simp only [DGFullSubcategory.dgComp_eq] at h1 h2 ⊢
+    exact (congrArg (fun z ↦ ((M.localization.functor.map
+      (F.extension.functor.obj ⟨K.obj, K.property.1⟩)
+      (F.extension.functor.obj ⟨N.obj, N.property.1⟩)).f k).hom z) h1).trans h2
 
 /-- Its actual endomorphism of the full coefficient coherent nerve. -/
 def FrobeniusModel.nerveMap {h : π.element ∣ (p : P.pair.plus)}

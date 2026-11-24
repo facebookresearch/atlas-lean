@@ -118,7 +118,10 @@ def CompactUnit.linearization {U : UnitInductionModel p P π M}
   ((F.extension.homIso (A.source p P π h M F) (unitRepresentable p P π M U)).inv.f 0) c
 
 set_option maxHeartbeats 1200000 in
-/-- The almost-local coefficient phi unit and the normalized localization square. -/
+/-- The almost-local coefficient phi unit and the normalized localization square. The square is
+stated before almost localization: the linearized structure map of the φ-object is precomposed with
+the unit of the almost localization at the raw extension, the same unit that defines the enhanced
+Frobenius. -/
 structure AlmostUnit (U : UnitInductionModel p P π M)
     (A : CompactUnit p P π h M F U) where
   object : PhiObject p P π h M F
@@ -131,9 +134,9 @@ structure AlmostUnit (U : UnitInductionModel p P π M)
       (Z := object.module.obj) (TorsionRing p P π)
       (((F.extension.functor.map (A.source p P π h M F)
         ⟨object.module.obj, object.module.property.1⟩).f 0) (closedModuleHom localization))
-      (closedModuleHom (C := M.compact.objects) (show
-        (F.extension.functor.obj ⟨object.module.obj, object.module.property.1⟩).obj ⟶
-          object.module.obj from object.linearized)) (by omega) -
+      (closedModuleHom (C := M.compact.objects)
+        (M.localization.unit (F.extension.functor.obj
+          ⟨object.module.obj, object.module.property.1⟩) ≫ object.linearized)) (by omega) -
     dgComp (C := RightModule (TorsionRing p P π) M.compact.objects)
       (TorsionRing p P π) (A.linearization p P π h M F)
       (closedModuleHom localization) (by omega) ∈

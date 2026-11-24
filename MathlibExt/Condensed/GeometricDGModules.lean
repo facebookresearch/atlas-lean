@@ -124,4 +124,30 @@ abbrev AlmostModifiedModules {G : Profinite.{0} → GeometricDerived A}
   DGFullSubcategory (fun K : RightModule A M.objects ↦
     IsCofibrantModule K ∧ IsAlmostLocal A I K)
 
+/-- An almost localization of the modified modules: an `A`-linear DG functor onto cofibrant
+almost-local modules, with a unit at every module which is a closed module map, DG-natural, and
+whose cone is almost zero on every component. Hence the value at `X` is the almost localization of
+`X` (Mann, Lemma 2.2.22): almost-local and receiving an almost isomorphism from `X`, so that
+precomposition with the unit identifies maps into almost-local modules. -/
+structure AlmostLocalization {G : Profinite.{0} → GeometricDerived A}
+    (M : CompactDGModel A G) (I : Ideal A) where
+  /-- The localization functor. -/
+  functor : EnrichedFunctor (CochainComplex (ModuleCat.{1} A) ℤ)
+    (ModifiedModules A M) (AlmostModifiedModules A M I)
+  /-- The unit `X → L X`, a closed module map. -/
+  unit : ∀ X : ModifiedModules A M, X.obj ⟶ (functor.obj X).obj
+  /-- The unit is natural for homogeneous maps of every degree. -/
+  unit_natural : ∀ (X Y : ModifiedModules A M) (n : ℤ) (a : DGHom A n X Y),
+    dgComp A (C := RightModule A M.objects) (X := X.obj) (Y := (functor.obj X).obj)
+        (Z := (functor.obj Y).obj)
+        ((DGFunctor.homEquivDGCycles A X.obj (functor.obj X).obj (unit X)).val)
+        (functor.dgMap n a) (zero_add n) =
+      dgComp A (C := RightModule A M.objects) (X := X.obj) (Y := Y.obj)
+        (Z := (functor.obj Y).obj) a
+        ((DGFunctor.homEquivDGCycles A Y.obj (functor.obj Y).obj (unit Y)).val) (add_zero n)
+  /-- The cone of the unit is almost zero on every component. -/
+  almost_cone : ∀ (X : ModifiedModules A M) (x : M.objectsᵒᵖ) (n : ℤ) (a : A), a ∈ I →
+    ∀ z : ((HomologicalComplex.homologyFunctor (ModuleCat.{1} A) (ComplexShape.up ℤ) n).obj
+      (CochainComplex.mappingCone (moduleComponent (unit X) x))), a • z = 0
+
 end MathlibExt.Condensed.GeometricDGModules
