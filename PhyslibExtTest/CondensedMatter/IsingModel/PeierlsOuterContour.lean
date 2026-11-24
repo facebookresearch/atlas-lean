@@ -18,7 +18,11 @@ public import PhyslibExt.CondensedMatter.IsingModel.PeierlsSquareLattice
   cycle through every edge of the face-boundary graph of its filled minus cluster, based at an
   anchor on the positive axis; the interior of a cycle is the connected cluster in `Λ_n` through
   the origin whose crossing bonds it traces, which is unique.
-* `poc_probOriginMinus_le_two_peierls` and `poc_peierls_long_range_order` then apply in every box.
+* `poc_probOriginMinus_le_two_peierls` then gives the uniform Peierls bound: once
+  `peierlsRatio 2 β < 1`, the origin is minus with probability at most `twoPeierlsBound 2 β` in
+  every box. `poc_peierls_long_range_order` applies too, but its conclusion
+  `plusMeasure 2 n β 0 ≠ minusMeasure 2 n β 0` is weak: the plus and minus box measures fix
+  opposite spins outside `Λ_n`, so they always differ.
 -/
 
 @[expose] public section
@@ -145,12 +149,14 @@ lemma outerContourMap (n : ℕ) : OuterContourMap n := by
     rw [dite_eq_left hex, hint]
     exact ⟨hbox, rfl, hev⟩
 
-/-- The outer-contour Peierls bound applies in every box. -/
+/-- The outer-contour Peierls bound holds in every box, uniformly in `n`. -/
 example (n : ℕ) (β : ℝ) (hx : peierlsRatio 2 β < 1) :
     probOriginMinus (plusField 2) n (bondFinsetTouch 2 n) β 0 ≤ twoPeierlsBound 2 β :=
   poc_probOriginMinus_le_two_peierls n β hx (outerContourMap n)
 
-/-- Long-range order on `ℤ²` follows from the outer contour map with no further hypothesis. -/
+/-- `poc_peierls_long_range_order` applies with no further hypothesis. Its conclusion is a weak
+form of long-range order, as the plus and minus box measures fix opposite spins outside `Λ_n`; the
+informative statement is the uniform bound above. -/
 example : ∃ β₀ : ℝ, ∀ (n : ℕ) (β : ℝ), β₀ ≤ β →
     plusMeasure 2 n β 0 ≠ minusMeasure 2 n β 0 :=
   poc_peierls_long_range_order outerContourMap
