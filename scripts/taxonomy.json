@@ -11884,6 +11884,7 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/TotienomialCoefficient": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Totienomial coefficients"},
   "MathlibExt/NumberTheory/ArithmeticFunction/TotientSqrtLowerBound": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Large Zsigmondy primes"},
   "MathlibExt/NumberTheory/ArithmeticFunction/UnitaryConvolution": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Unitary convolution"},
+  "MathlibExt/NumberTheory/ArithmeticFunction/WeightedDirichletConvolution": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Weighted sums of Dirichlet convolutions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/WintnerMeanValue": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Wintner's mean-value theorem"},
   "MathlibExt/NumberTheory/ArithmeticFunction/WintnerMeanValueMultivariable": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Wintner's mean-value theorem"},
   "MathlibExt/NumberTheory/AscFactorialBounds": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Complementary sequences"},
