@@ -12178,6 +12178,7 @@
   "MathlibExt/NumberTheory/ExtendedContinuant": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
   "MathlibExt/NumberTheory/ExtremelyAbundantNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Extremely abundant numbers"},
   "MathlibExt/NumberTheory/FactorialDivisor": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Brocard–Ramanujan equation"},
+  "MathlibExt/NumberTheory/FactorialDivisorBound": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Brocard–Ramanujan equation"},
   "MathlibExt/NumberTheory/FactorialRatio": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Integral factorial ratios"},
   "MathlibExt/NumberTheory/Farey": {"to": "NumberTheory/continued-fractions-expansions", "title": "Farey sequences"},
   "MathlibExt/NumberTheory/FareyNumerator": {"to": "NumberTheory/continued-fractions-expansions", "title": "Farey fractions with a given numerator"},
