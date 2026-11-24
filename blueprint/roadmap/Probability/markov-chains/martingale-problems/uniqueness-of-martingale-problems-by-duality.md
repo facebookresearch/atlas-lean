@@ -21,11 +21,6 @@ A full proof page must establish:
 - Measurability and integrability of $(x,\omega)\mapsto H(x,Y_t(\omega))$, so the right-hand side is defined.
 - The application of the one-time-to-finite-dimensional lemma, which needs one-time uniqueness for every initial law.
 
-Prerequisites:
-
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [Uniqueness of one-time marginals implies uniqueness of finite-dimensional distributions for martingale problems](from-one-time-marginal-uniqueness-to-fdd-uniquen.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316658>, Ch. 4 (duality).

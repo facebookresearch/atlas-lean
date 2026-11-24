@@ -12,15 +12,13 @@ has the law of the [continuous realization constructed from the transition semig
 - [Uniqueness in law for the neutral martingale problem (well-posedness)](uniqueness-in-law-for-the-neutral-martingale-pro.md)
 - [Continuous modification selected by Kolmogorov's theorem](../construction-of-the-neutral-wright-fisher-diffus/continuous-realization-2.md)
 
+## Proof depends on
+
+- [Kimura–Ohta mean absorption time of a neutral allele](../wright-fisher-diffusion/mean-absorption-time.md)
+
 ## Expansion
 
 A full proof page must still check that the realization solves the same martingale problem with the same test-function class, and transfer the mean absorption time to weak solutions of the SDE.
-
-Prerequisites:
-
-- [Weak solutions of the Wright–Fisher SDE solve the Wright–Fisher martingale problem](weak-solutions-of-the-wright-fisher-sde-solve-th.md)
-- [Uniqueness in law for the neutral martingale problem (well-posedness)](uniqueness-in-law-for-the-neutral-martingale-pro.md)
-- [Kimura–Ohta mean absorption time of a neutral allele](../wright-fisher-diffusion/mean-absorption-time.md)
 
 ## Sources
 

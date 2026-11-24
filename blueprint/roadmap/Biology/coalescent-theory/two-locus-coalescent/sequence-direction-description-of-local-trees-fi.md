@@ -19,13 +19,6 @@ The sequential algorithm of Wiuf and Hein and the equality of its law with that 
 
 The three parts follow from the pages they cite. A full proof page assembles them for homogeneous $\rho\, dx$ only.
 
-Prerequisites:
-
-- [Finitely many breakpoints and a jointly measurable local-tree field](../pairwise-differences-under-poisson-mutation/finitely-many-breakpoints-and-a-jointly-measurab.md)
-- [Continuum ARG with homogeneous recombination: finite-locus marginals and two-point law](continuum-arg-homogeneous-rho-dx-finite-locus-ma.md)
-- [Candidate and visible local-tree changes along the chromosome](../pairwise-differences-under-poisson-mutation/candidate-vs-visible-local-tree-changes-expected.md)
-- [Local trees are not Markov along the sequence](local-trees-are-not-markov-along-the-sequence-ve.md)
-
 ## Sources
 
 - C. Wiuf and J. Hein, Recombination as a point process along sequences, *Theor. Popul. Biol.* 55 (1999), 248–259, <https://pubmed.ncbi.nlm.nih.gov/10366550/> (the spatial algorithm).

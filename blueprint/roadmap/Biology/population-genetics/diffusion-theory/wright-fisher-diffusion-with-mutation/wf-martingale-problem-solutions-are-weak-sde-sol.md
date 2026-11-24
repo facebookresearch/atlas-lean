@@ -15,11 +15,6 @@ This is the special case $a(x) = x(1 - x)$, continuous on $[0, 1]$, of [the weak
 
 The coefficients of [the general representation](../../../../Probability/stochastic-calculus/stochastic-differential-equations/weak-sde-representation-of-one-dimensional-marti.md) instantiate to the Wright–Fisher drift and variance.
 
-Prerequisites:
-
-- [Weak SDE representation of one-dimensional martingale-problem solutions](../../../../Probability/stochastic-calculus/stochastic-differential-equations/weak-sde-representation-of-one-dimensional-marti.md)
-- [Martingale problem for the Wright–Fisher diffusion with selection and two-way mutation](two-way-mutation-and-selection-wright-fisher-mar.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://doi.org/10.1002/9780470316658>, Chapter 5, Section 3 (stochastic equations and martingale problems).

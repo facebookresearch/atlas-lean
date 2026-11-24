@@ -7,17 +7,18 @@ Let $K \ge 2$ and $\Delta$ the simplex of allele frequencies, with neutral evolu
 - [Limits of uniform contractions extend from a dense set](tendsto-apply-of-dense.md)
 - [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
 
+## Proof depends on
+
+- [Neutral Wright–Fisher diffusion semigroup](wf-semigroup.md)
+
 ## Expansion
 
 1. Invariance and triangularity of the polynomials of degree at most $n$ under one multinomial generation, and the limit on them.
 2. Extension to $C(\Delta)$ by contraction and density.
 3. Projection consistency: the coordinate $x_i$ evolves as the two-allele diffusion, neutral without mutation and with the induced two-type mutation rates under parent-independent mutation, as for [the neutral two-allele semigroup](wf-semigroup.md).
 
-Prerequisites:
+It also uses:
 
-- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
-- [Neutral Wright–Fisher diffusion semigroup](wf-semigroup.md)
-- [Limits of uniform contractions extend from a dense set](tendsto-apply-of-dense.md)
 - Finite partitions and their combinatorics.
 
 ## Sources

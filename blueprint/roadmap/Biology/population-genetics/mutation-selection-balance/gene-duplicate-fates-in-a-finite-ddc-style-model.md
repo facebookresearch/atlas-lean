@@ -18,6 +18,11 @@ These classes partition the state space. The nonfunctionalized and subfunctional
 
 - [Path of a continuous-time Markov chain](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
 
+## Proof depends on
+
+- [Mutation transition on allele frequencies](mutation-transition-on-allele-frequencies.md)
+- [Backward equations for the mean hitting time](../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/ctmc-hitting-time-backward.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -28,12 +33,9 @@ A full proof page must establish:
 - For $z=1$, the only allowed transitions from $\{1,2\}$ lead to a state where one copy carries nothing.
 - Absorption probabilities through the embedded jump chain and its [absorption equations](../../../Probability/markov-chains/finite-markov-chains/absorption-probabilities-and-mean-absorption-tim.md), or through the continuous-time hitting-time equations.
 
-Prerequisites:
+It also uses:
 
 - Neutral substitution: expected origination flux of eventual fixers equals the mutation rate
-- [Mutation transition on allele frequencies](mutation-transition-on-allele-frequencies.md)
-- [Path of a continuous-time Markov chain](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
-- [Backward equations for the mean hitting time](../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/ctmc-hitting-time-backward.md)
 
 ## Sources
 

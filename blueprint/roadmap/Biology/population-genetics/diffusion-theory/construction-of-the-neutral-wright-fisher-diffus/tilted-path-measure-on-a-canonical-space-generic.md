@@ -7,6 +7,10 @@ Let $E$ be a compact metric space, such as $[0, 1]$ or a simplex, and let $Q_x$,
 - [Exponential martingale for positive test functions in a martingale problem](../../../../Probability/markov-chains/martingale-problems/exponential-martingale-for-positive-test-functio.md)
 - [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [Law of a continuous modification on the space of continuous paths, measurable in the initial point](law-of-a-continuous-modification-on-c-0-infinity.md)
+
 ## Expansion
 
 A full proof page must still establish:
@@ -15,11 +19,8 @@ A full proof page must still establish:
 - the extension to the canonical $\sigma$-field of $C([0, \infty), E)$ and its uniqueness;
 - measurability in $x$, and the constant case.
 
-Prerequisites:
+It also uses:
 
-- [Exponential martingale for positive test functions in a martingale problem](../../../../Probability/markov-chains/martingale-problems/exponential-martingale-for-positive-test-functio.md)
-- [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
-- [Law of a continuous modification on the space of continuous paths, measurable in the initial point](law-of-a-continuous-modification-on-c-0-infinity.md)
 - measure-theoretic prerequisites: extension of consistent families of measures on a filtration
 
 ## Sources

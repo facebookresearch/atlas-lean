@@ -13,6 +13,12 @@ For $d=1$ and $M$ a true martingale with $M_t^2-t$ a martingale, this is [Lévy'
 - [Multidimensional Brownian motion](multidimensional-brownian-motion.md)
 - [Quadratic variation process $\langle M\rangle$ for continuous local martingales](../../martingales/quadratic-variation-of-continuous-local-martingales/quadratic-variation-process-m-for-continuous-loc.md)
 
+## Proof depends on
+
+- [Itô's formula for continuous semimartingales with bounded derivatives](../it-s-formula/ito-formula-for-continuous-semimartingales-bound.md)
+- [Existence of Brownian motion](exists-is-brownian-real.md)
+- [Lévy's continuity theorem](../../characteristic-functions/levy-continuity-theorem/levy-continuity-of-char-fun.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -21,13 +27,6 @@ A full proof page must establish the following.
 - Hence $\mathbb E[\exp(i\langle u,M_t-M_s\rangle)\mid\mathcal F_s]=\exp(-\frac12|u|^2(t-s))$, which identifies the conditional law of the increment as $\mathcal N(0,(t-s)I_d)$ and gives independence of $\mathcal F_s$.
 - Independent Gaussian increments and continuous paths make $M$ a standard Brownian motion, with independent coordinates because the covariance matrix is diagonal.
 - The one-dimensional martingale case as a special case.
-
-Prerequisites:
-
-- [Itô's formula for continuous semimartingales with bounded derivatives](../it-s-formula/ito-formula-for-continuous-semimartingales-bound.md)
-- [Existence of Brownian motion](exists-is-brownian-real.md)
-- [Multidimensional Brownian motion](multidimensional-brownian-motion.md)
-- [Lévy's continuity theorem](../../characteristic-functions/levy-continuity-theorem/levy-continuity-of-char-fun.md)
 
 ## Sources
 

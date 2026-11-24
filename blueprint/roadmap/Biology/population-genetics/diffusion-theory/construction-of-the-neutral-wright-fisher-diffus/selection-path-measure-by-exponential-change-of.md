@@ -6,6 +6,11 @@ Let $\alpha \in \mathbb R$, let $P^0_x$ be the law on $C([0, \infty), [0, 1])$ o
 
 - [Selection density on neutral path space without stochastic integrals](selection-density-on-neutral-path-space-no-stoch.md)
 
+## Proof depends on
+
+- [Law of a continuous modification on the space of continuous paths, measurable in the initial point](law-of-a-continuous-modification-on-c-0-infinity.md)
+- [Canonical path measure of the raw Wright–Fisher process](raw-measure.md)
+
 ## Expansion
 
 A full proof page must still establish:
@@ -13,12 +18,6 @@ A full proof page must still establish:
 - consistency from the martingale property of $Z^\alpha$;
 - the extension of the consistent family to the canonical $\sigma$-field of $C([0, \infty), [0, 1])$, and measurability in $x$;
 - the case $\alpha = 0$.
-
-Prerequisites:
-
-- [Selection density on neutral path space without stochastic integrals](selection-density-on-neutral-path-space-no-stoch.md)
-- [Law of a continuous modification on the space of continuous paths, measurable in the initial point](law-of-a-continuous-modification-on-c-0-infinity.md)
-- [Canonical path measure of the raw Wright–Fisher process](raw-measure.md)
 
 ## Sources
 

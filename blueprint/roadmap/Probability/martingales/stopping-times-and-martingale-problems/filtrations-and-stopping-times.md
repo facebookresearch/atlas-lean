@@ -14,7 +14,7 @@ For $\iota=\mathbb N$ (or any countable well-ordered index set), a process $u$ a
 
 A full page proves that the hitting times above are stopping times for a countable index set, that constant times and minima and maxima of two stopping times are stopping times, and that stopped values of adapted processes at stopping times with countably many values are $\mathcal F_\tau$-measurable, where $\mathcal F_\tau=\{A\in\mathcal A:A\cap\{\tau\le i\}\in\mathcal F_i\text{ for all }i\}$. It should establish that the absorption time $\inf\{n:Y_n\in\{0,M\}\}$ of a Markov chain $Y$ on $\{0,\dots,M\}$ is a stopping time for the natural filtration of $Y$.
 
-Prerequisites:
+It also uses:
 
 - Measure, probability, integration and product $\sigma$-algebras
 

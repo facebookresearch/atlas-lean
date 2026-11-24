@@ -10,17 +10,16 @@ the size-weighted collision rate. The deme labels themselves converge only in th
 
 - [Möhle's lemma on Markov chains with two time scales](../../../../Probability/markov-chains/finite-markov-chains/mohle-s-separation-of-timescales-lemma-for-finit.md)
 
+## Proof depends on
+
+- [Structured coalescent for n lineages with a general migration matrix](../../structured-coalescent/structured-coalescent-for-n-lineages-with-a-gene.md)
+- [Under Möhle–Sagitov, transition matrices converge to Kingman's](tendsto-ancestral-matrix-pow.md)
+
 ## Expansion
 
 1. The collapse of the deme labels and the pair rate, from the two-time-scale lemma applied to the joint chain.
 2. Checks: for relative sizes $c = (1, 2)$ and $p = (1/2, 1/2)$ the rate is $3/8$, not $1/2$. For the symmetric island model with $d$ demes of size $N$ and fast migration, the effective size is $N_e = dN$.
 3. The excluded cases: the identity fast chain, and periodic two-deme alternation, under which lineages in different demes never meet.
-
-Prerequisites:
-
-- [Structured coalescent for n lineages with a general migration matrix](../../structured-coalescent/structured-coalescent-for-n-lineages-with-a-gene.md)
-- [Under Möhle–Sagitov, transition matrices converge to Kingman's](tendsto-ancestral-matrix-pow.md)
-- [Möhle's lemma on Markov chains with two time scales](../../../../Probability/markov-chains/finite-markov-chains/mohle-s-separation-of-timescales-lemma-for-finit.md)
 
 ## Sources
 

@@ -14,6 +14,10 @@ $$\sum_{k}\bigl(X_{t_{k+1}}-X_{t_k}\bigr)^2\longrightarrow[X]_t=\int_0^t\sigma_s
 
 - [Localized Ito integral and integrals up to stopping times](../it-integral/localized-ito-integral-and-integrals-up-to-stopp.md)
 
+## Proof depends on
+
+- [Local martingales and localization](../../martingales/quadratic-variation-of-continuous-local-martingales/local-martingales-and-localization.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -21,11 +25,6 @@ A full proof page must establish the following.
 - Continuity and adaptedness of $X$.
 - Item 1: the finite-variation part contributes nothing to the limit; for the stochastic integral, localize to stopping times at which $\int_0^\cdot\sigma^2ds$ is bounded, prove the $L^2$ statement there, and remove the localization.
 - Item 2: the difference $\int_0^\cdot(\sigma_s-\sigma'_s)\,dB_s=\int_0^\cdot(b'_s-b_s)\,ds$ is a continuous local martingale of finite variation started at $0$, hence identically zero; its quadratic variation $\int_0^t(\sigma-\sigma')^2ds$ then vanishes, and the drifts agree as derivatives of equal absolutely continuous functions. This uses that a continuous local martingale of finite variation is constant.
-
-Prerequisites:
-
-- [Localized Ito integral and integrals up to stopping times](../it-integral/localized-ito-integral-and-integrals-up-to-stopp.md)
-- [Local martingales and localization](../../martingales/quadratic-variation-of-continuous-local-martingales/local-martingales-and-localization.md)
 
 ## Sources
 

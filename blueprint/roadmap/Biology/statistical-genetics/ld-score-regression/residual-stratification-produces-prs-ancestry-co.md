@@ -14,6 +14,10 @@ $$\mathbb E_\beta\bigl[\operatorname{Cov}_{\mathrm{pop}}(\mathrm{PRS},A)\bigr]=b
 
 In particular, with no residual stratification ($b=0$) the expected covariance is $0$; if $b\ne0$ and $\sum_jc_j\Delta_j\ne0$ (for example $c_j=\Delta_j$ with some $\Delta_j\ne0$), the score covaries with ancestry in expectation although no selection acts on the trait.
 
+## Proof depends on
+
+- [Covariance induced by population stratification](population-stratification-creates-spurious-assoc.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -23,10 +27,9 @@ A full proof page must establish the following.
 - That the non-vanishing condition $\sum_jc_j\Delta_j\ne0$ is needed: with $b\ne0$ and loadings orthogonal to the differentiation vector the expectation is $0$.
 - The relation with the single-locus [covariance induced by population stratification](population-stratification-creates-spurious-assoc.md), which explains how residual stratification enters $\hat\beta_j$ as a shift proportional to $c_j$.
 
-Prerequisites:
+It also uses:
 
 - Polygenic score accuracy, calibration and portability caveat
-- [Covariance induced by population stratification](population-stratification-creates-spurious-assoc.md)
 
 ## Sources
 

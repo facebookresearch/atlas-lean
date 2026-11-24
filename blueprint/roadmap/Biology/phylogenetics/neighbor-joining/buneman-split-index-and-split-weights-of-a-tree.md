@@ -15,6 +15,11 @@ For example, on a star tree with three leaves $x,y,z$ and pendant lengths $w_x,w
 
 - [Tree metric](../../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/is-tree-metric.md)
 
+## Proof depends on
+
+- [Buneman's four-point theorem](../../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/is-tree-metric-iff-four-point-condition.md)
+- [Tree metrics satisfy the four-point condition](../../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/four-point-condition-2.md)
+
 ## Expansion
 
 A proof page must establish the following.
@@ -23,11 +28,6 @@ A proof page must establish the following.
 - For an edge split, every such joining path contains $e$, so $\beta\ge w(e)$; choosing $a,a'$ whose path passes through the $A$-side endpoint of $e$, and $b,b'$ likewise on the $B$ side (possible because unlabeled vertices have degree at least $3$), gives a summand equal to $w(e)$.
 - If $A\mid B$ is not an edge split, the subtrees spanned by $\iota(A)$ and $\iota(B)$ share a vertex, which lies on some path $a\to a'$ and some path $b\to b'$, so some summand is at most $0$.
 - The two worked examples above: pendant weights are recovered on a three-leaf tree, and a non-split bipartition of a four-leaf tree has nonpositive index.
-
-Prerequisites:
-
-- [Buneman's four-point theorem](../../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/is-tree-metric-iff-four-point-condition.md)
-- [Tree metrics satisfy the four-point condition](../../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/four-point-condition-2.md)
 
 ## Sources
 

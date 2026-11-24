@@ -13,7 +13,7 @@ Construction: since $\sum_{m \ge 2} 1/\binom{m}{2} = 2 < \infty$, the Müntz–S
 3. The substitution, which maps the annihilation identity to the Laplace-transform identity.
 4. The requirement that $g$ be nonzero on a set of positive measure, which excludes a function nonzero only on a null set, such as the indicator of $\{0\}$.
 
-Prerequisites:
+It also uses:
 
 - Measure, probability, integration and product measures.
 - The Müntz–Szász theorem in $L^1[0, 1]$.

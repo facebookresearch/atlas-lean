@@ -21,15 +21,6 @@ For finite $E$ with parent-independent mutation the solution is the $K$-allele W
 
 A full proof page must still check that the interfaces of the four results match exactly (test-function class, initial laws, path space) and that the restriction to finite $E$ agrees with the finite-type correspondence.
 
-Prerequisites:
-
-- [Finite-type Fleming–Viot and Wright–Fisher martingale problems](finite-type-fleming-viot-k-allele-wright-fisher.md)
-- [Finite-type / Moran approximation of the Fleming-Viot generator](finite-type-moran-approximation-of-the-fleming-v.md)
-- [Tightness of measure-valued approximations in C([0,T], M1(E))](tightness-of-measure-valued-approximations-in-c.md)
-- [Limit martingale-problem identification for M1(E)-valued processes](limit-martingale-problem-identification-for-m1-e.md)
-- [Fleming-Viot uniqueness by function-valued (coalescent-with-mutation) duality](fleming-viot-uniqueness-by-function-valued-coale.md)
-- [Moran particle system with Feller mutation on a compact type space](moran-particle-system-with-feller-mutation-on-a.md)
-
 ## Sources
 
 - D. A. Dawson, "Measure-valued Markov processes", in *École d'Été de Probabilités de Saint-Flour XXI–1991*, Lecture Notes in Mathematics 1541, Springer, 1993, Fleming–Viot processes via martingale problems, <https://link.springer.com/chapter/10.1007/BFb0084190>

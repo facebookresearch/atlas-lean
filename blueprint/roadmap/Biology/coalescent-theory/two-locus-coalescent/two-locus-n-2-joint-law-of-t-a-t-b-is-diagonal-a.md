@@ -22,10 +22,6 @@ A full proof page must still establish:
 - absolute continuity of $T$ and of $\mu_\rho$, from the exponential holding times of the chain;
 - the disintegration statement for the conditional law of $T_B$ given $T_A$.
 
-Prerequisites:
-
-- [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
-
 ## Sources
 
 - R. R. Hudson, "Properties of a neutral allele model with intragenic recombination", *Theoretical Population Biology* 23(2):183–201, 1983, <https://pubmed.ncbi.nlm.nih.gov/6612631/>. The value of $p(\rho)$ is derived above from the rate matrix of the two-locus coalescent.

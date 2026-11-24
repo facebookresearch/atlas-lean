@@ -14,13 +14,6 @@ Let $E$ be a finite type space with $K$ types and parent-independent mutation. T
 
 A full proof page must still check that the initial law, the mutation parameters and the path space of the identification and of the uniqueness result match, and that the limit is the $K$-allele diffusion of the finite-type correspondence.
 
-Prerequisites:
-
-- [Infinite-level lookdown process (finite type space)](infinite-level-lookdown-process-finite-type-spac.md)
-- [Common directing process of the infinite lookdown: existence and path regularity](common-directing-process-of-the-infinite-lookdow.md)
-- [Martingale-problem identification of the lookdown directing process](martingale-problem-identification-of-the-lookdow.md)
-- [Uniqueness in law for the K-allele martingale problem with general bounded Q](../neutral-wright-fisher-martingale-problem/uniqueness-in-law-for-the-k-allele-martingale-pr.md)
-
 ## Sources
 
 - P. Donnelly and T. G. Kurtz, "A countable representation of the Fleming–Viot measure-valued diffusion", *Annals of Probability* 24(2):698–742, 1996, <https://www.ndm.ox.ac.uk/publications/69455>

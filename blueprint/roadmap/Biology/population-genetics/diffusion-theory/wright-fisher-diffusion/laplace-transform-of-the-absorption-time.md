@@ -11,17 +11,16 @@ and the family $(u_\lambda)_{\lambda > 0}$ determines the law of $\tau$ under $\
 - [Absorption time of a frequency path](../fixation-and-absorption-in-the-wright-fisher-dif/absorption-time.md)
 - [Absorption in finite time](../fixation-and-absorption-in-the-wright-fisher-dif/ae-exists-absorbed.md)
 
+## Proof depends on
+
+- [Spatial and time integrals of the neutral spectral series](distribution-of-absorption-time-from-the-spectra.md)
+- [Optional stopping theorem in continuous time](../../../../Probability/martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
+
 ## Expansion
 
 1. Existence: a solution of the boundary-value problem exists, and by Itô's formula and optional stopping $e^{-\lambda (t \wedge \tau)} u(X_{t \wedge \tau})$ is a bounded martingale, so $u(x) = \mathbb{E}_x[e^{-\lambda \tau}]$.
 2. Uniqueness: the difference $w$ of two solutions vanishes at $0$ and $1$ and satisfies $\frac{1}{2} x(1 - x) w'' = \lambda w$, so it has no positive interior maximum and no negative interior minimum.
 3. The law of $\tau$ from its Laplace transform, and the agreement with [the spectral representation](distribution-of-absorption-time-from-the-spectra.md).
-
-Prerequisites:
-
-- [Absorption in finite time](../fixation-and-absorption-in-the-wright-fisher-dif/ae-exists-absorbed.md)
-- [Spatial and time integrals of the neutral spectral series](distribution-of-absorption-time-from-the-spectra.md)
-- [Optional stopping theorem in continuous time](../../../../Probability/martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
 
 ## Sources
 

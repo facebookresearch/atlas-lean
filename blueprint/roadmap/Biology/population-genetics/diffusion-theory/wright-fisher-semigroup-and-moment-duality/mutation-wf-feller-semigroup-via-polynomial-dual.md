@@ -10,18 +10,17 @@ Let $\theta_1, \theta_2 \ge 0$ and $\theta = \theta_1 + \theta_2$, with no selec
 
 - [Limits of uniform contractions extend from a dense set](tendsto-apply-of-dense.md)
 
+## Proof depends on
+
+- [Martingale problem for the Wright–Fisher diffusion with selection and two-way mutation](../wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
+- [Uniform generator convergence of the Wright–Fisher chain with selection and mutation](../wright-fisher-diffusion-with-mutation/uniform-generator-convergence-with-selection-and.md)
+- [One generation of the neutral Wright–Fisher chain](wf-step.md)
+
 ## Expansion
 
 1. Triangularity of $\mathcal{L}_{0, \theta}$ on polynomials, and convergence on polynomials from [the uniform generator convergence](../wright-fisher-diffusion-with-mutation/uniform-generator-convergence-with-selection-and.md).
 2. Extension to $C[0, 1]$ by contraction and density.
 3. Checks: $\theta = 0$ recovers the neutral Wright–Fisher semigroup, and for $\theta > 0$, $P^{\theta}_t x = \theta_1/\theta + (x - \theta_1/\theta)\, e^{-\theta t/2}$.
-
-Prerequisites:
-
-- [Martingale problem for the Wright–Fisher diffusion with selection and two-way mutation](../wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
-- [Uniform generator convergence of the Wright–Fisher chain with selection and mutation](../wright-fisher-diffusion-with-mutation/uniform-generator-convergence-with-selection-and.md)
-- [Limits of uniform contractions extend from a dense set](tendsto-apply-of-dense.md)
-- [One generation of the neutral Wright–Fisher chain](wf-step.md)
 
 ## Sources
 

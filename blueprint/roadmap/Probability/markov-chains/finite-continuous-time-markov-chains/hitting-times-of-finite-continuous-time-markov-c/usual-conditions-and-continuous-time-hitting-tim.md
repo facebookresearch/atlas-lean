@@ -24,9 +24,8 @@ A full proof page must establish:
 - The counterexample with $X_t=t\xi$.
 - The absorption-time corollary from the closed-set case.
 
-Prerequisites:
+It also uses:
 
-- [Filtrations and stopping times](../../../martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
 - Topology of metric spaces
 
 ## Sources

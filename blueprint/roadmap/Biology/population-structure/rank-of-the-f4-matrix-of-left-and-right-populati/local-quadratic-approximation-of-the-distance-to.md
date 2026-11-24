@@ -17,7 +17,7 @@ A proof page must establish:
 - uniformity of the constants for $W$ in a compact set of positive definite matrices, which the minimum-distance chi-square limit needs;
 - the affine case and the circle example with its explicit bound.
 
-Prerequisites:
+It also uses:
 
 - Taylor expansion of $C^2$ maps and the implicit function theorem
 

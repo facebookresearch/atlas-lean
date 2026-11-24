@@ -16,6 +16,11 @@ Special case: for one direction $\Lambda=\{1\}$ with constant rate $\beta\equiv\
 
 - [Exponential interarrivals give a Poisson process](../../point-processes/poisson-processes/is-poisson-process-count.md)
 
+## Proof depends on
+
+- [Path of a continuous-time Markov chain](../finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
+- [Non-explosion criteria and Kolmogorov equations on a countable state space](../finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/non-explosion-criteria-and-kolmogorov-equations.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -24,12 +29,6 @@ A full proof page must establish the following.
 - Non-explosion from the bounded total rate.
 - The Markov property and the rates: the clocks $\tau_l(t)$ are stopping times for the multiparameter filtration of $(Y_l)$, and the strong Markov property of Poisson processes at these times gives exponential holding times of rate $N\sum_l\beta_l(x)$ and jump to $x+l/N$ with probability $\beta_l(x)/\sum_{l'}\beta_{l'}(x)$; identify the law with the minimal chain of the rate matrix $q$.
 - The constant-rate special case.
-
-Prerequisites:
-
-- [Exponential interarrivals give a Poisson process](../../point-processes/poisson-processes/is-poisson-process-count.md)
-- [Path of a continuous-time Markov chain](../finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
-- [Non-explosion criteria and Kolmogorov equations on a countable state space](../finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/non-explosion-criteria-and-kolmogorov-equations.md)
 
 ## Sources
 

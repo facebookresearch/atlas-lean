@@ -14,14 +14,13 @@ and in particular $\pi_T^N(f)\to\pi_T(f)$ in probability as $N\to\infty$. For $T
 
 - [Sequential Monte Carlo samplers give unbiased normalizing-constant estimates](smc-sampler-unbiasedness-of-the-normalizing-cons.md)
 
+## Proof depends on
+
+- [Self-normalized importance sampling: ratio consistency, O(1/n) bias, effective sample size](self-normalized-importance-sampling-ratio-consis.md)
+
 ## Expansion
 
 A proof inducts on $t$, controlling separately the error of the mutation step (conditionally iid draws given the resampled particles), of the reweighting step (a ratio of two averages whose denominator is bounded below in probability because its mean is $Z_t/Z_{t-1}>0$ and the weights are bounded), and of multinomial resampling (conditionally iid draws from the weighted empirical measure). The page should make $c_T$ explicit and show that the event of zero total weight has probability at most $e^{-\kappa N}$ for some $\kappa>0$. The central limit theorem of the source, with the asymptotic variance in its Proposition 2, is a separate statement.
-
-Prerequisites:
-
-- [Sequential Monte Carlo samplers give unbiased normalizing-constant estimates](smc-sampler-unbiasedness-of-the-normalizing-cons.md)
-- [Self-normalized importance sampling: ratio consistency, O(1/n) bias, effective sample size](self-normalized-importance-sampling-ratio-consis.md)
 
 ## Sources
 

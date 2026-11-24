@@ -19,10 +19,9 @@ For $E=\mathbb R$ with $r(a,b)=|a-b|$ this is the [Skorokhod space of real paths
 
 A full page must establish that $d$ is a metric, the $1$-Lipschitz inclusion and the fact that J1 convergence to a continuous path is uniform convergence (which gives the embedding), continuity of $\pi_t$ at paths continuous at $t$, and Borel measurability of $\pi_t$, for instance by writing $f\circ\pi_t$, for bounded Lipschitz $f$, as a limit of the J1-continuous maps $x\mapsto\varepsilon^{-1}\int_t^{t+\varepsilon}f(x(s))\,ds$ (for $t<T$).
 
-Prerequisites:
+It also uses:
 
 - Topology and metric spaces
-- [Skorokhod space D[0,T] with J1 metric](skorokhod-space-d-0-t-with-j1-metric.md)
 
 ## Sources
 

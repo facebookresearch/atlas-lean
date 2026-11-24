@@ -17,6 +17,10 @@ The convergence in hypothesis 2 cannot be dropped: constant processes $X^N_t=x$ 
 - [Aldous tightness criterion in D([0,T],E) with initial and compact-containment conditions](../../convergence-of-measures/skorokhod-space/aldous-tightness-criterion-in-d-0-t-e-with-initi.md)
 - [Martingale problems](martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [Limits of rescaled Markov chains solve the limit martingale problem](existence-by-approximation-limits-of-chains-solv.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -24,12 +28,6 @@ A full proof page must establish:
 - Replacing $A_Nf$ by $Af$ inside $\mathbb E\bigl[(f(X^N_t)-f(X^N_s)-\int_s^tA_Nf(X^N_u)\,du)H\bigr]$: on the compact-containment event the error is at most $(t-s)\sup_K|A_Nf-Af|$, and off it at most $(t-s)\bigl(\sup_N\lVert A_Nf\rVert_\infty+\lVert Af\rVert_\infty\bigr)\eta\lVert H\rVert_\infty$.
 - Passage to the limit along the subsequence, using continuity of the limit paths, as in [the approximation theorem on a compact space](existence-by-approximation-limits-of-chains-solv.md); a monotone-class step to the natural filtration.
 - The constant-process guard.
-
-Prerequisites:
-
-- [Limits of rescaled Markov chains solve the limit martingale problem](existence-by-approximation-limits-of-chains-solv.md)
-- [Aldous tightness criterion in D([0,T],E) with initial and compact-containment conditions](../../convergence-of-measures/skorokhod-space/aldous-tightness-criterion-in-d-0-t-e-with-initi.md)
-- [A countable bounded-pointwise core of the graph suffices for a martingale problem](countable-bounded-pointwise-graph-core-for-marti.md)
 
 ## Sources
 

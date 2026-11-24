@@ -13,15 +13,14 @@ In the island model, $q_{ij} = m/(d - 1)$ for $i \ne j$; then $M_{\mathrm{mig}} 
 
 - [Closed-form mean coalescence times in the island model](mean-coalescence-time.md)
 
+## Proof depends on
+
+- [Rate matrix of Kingman's partition-valued coalescent](../partition-valued-kingman-coalescent/partition-rate.md)
+
 ## Expansion
 
 1. The rate matrix on deme-labelled partitions and its lumping to deme counts.
 2. Checks: $d = 1$ recovers [the rate matrix of Kingman's partition-valued coalescent](../partition-valued-kingman-coalescent/partition-rate.md). Two lineages in the symmetric island model recover the pair-state rates of [the island model](mean-coalescence-time.md). The island specialization of the per-lineage rate is $M_{\mathrm{mig}}/(2(d - 1))$ to each other deme.
-
-Prerequisites:
-
-- [Closed-form mean coalescence times in the island model](mean-coalescence-time.md)
-- [Rate matrix of Kingman's partition-valued coalescent](../partition-valued-kingman-coalescent/partition-rate.md)
 
 ## Sources
 

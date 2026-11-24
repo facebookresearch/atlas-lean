@@ -17,6 +17,10 @@ The stopping at $\tau_n$ controls the integrals of the coefficients but not the 
 - [Itô processes and their quadratic variation](ito-processes-and-their-quadratic-variation.md)
 - [Localized Ito integral and integrals up to stopping times](../it-integral/localized-ito-integral-and-integrals-up-to-stopp.md)
 
+## Proof depends on
+
+- [Itô's formula for Itô processes with bounded coefficients](ito-formula-for-ito-processes-with-bounded-coeff.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -25,12 +29,6 @@ A full proof page must establish the following.
 - The martingale term by Doob's $L^2$ maximal inequality and the isometry: $\mathbb E\sup_{t\le T}|\int_0^{t\wedge\tau_n}(\sigma^K-\sigma)dB|^2\le4\,\mathbb E\int_0^{T\wedge\tau_n}\sigma^2\mathbf 1_{\{|\sigma|>K\}}ds\to0$ by dominated convergence with bound $n$.
 - Uniform convergence of $X^K$ to $X$ on $[0,T\wedge\tau_n]$ along a subsequence almost surely; hence $X^K$ eventually stays in $[-n-1,n+1]$ there, where $f$ and its derivatives are bounded and uniformly continuous; convergence of each term of Itô's formula, applying the [bounded-coefficient formula](ito-formula-for-ito-processes-with-bounded-coeff.md) to a $C^{1,2}_b$ modification of $f$ that agrees with $f$ on $[0,T]\times[-n-1,n+1]$.
 - The deterministic example and its variance computation.
-
-Prerequisites:
-
-- [Itô's formula for Itô processes with bounded coefficients](ito-formula-for-ito-processes-with-bounded-coeff.md)
-- [Localized Ito integral and integrals up to stopping times](../it-integral/localized-ito-integral-and-integrals-up-to-stopp.md)
-- [Itô processes and their quadratic variation](ito-processes-and-their-quadratic-variation.md)
 
 ## Sources
 

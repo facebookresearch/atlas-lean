@@ -10,17 +10,16 @@ In particular, if $A$ maps polynomials of degree at most $1$ into themselves, th
 
 - [Martingale problems](martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [Chapman–Kolmogorov equation for the transition semigroup](../finite-continuous-time-markov-chains/the-transition-semigroup-of-a-finite-continuous/ctmc-transition-add.md)
+
 ## Expansion
 
 A full proof page must establish:
 
 - Taking expectations in the martingale identity (polynomials are bounded on compact $E$) and Fubini give the integral equation; $m$ is then continuous, and uniqueness for the linear equation gives $m(t)=e^{tC}m(0)$.
 - The degree-one case and the Wright–Fisher heterozygosity example.
-
-Prerequisites:
-
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [Chapman–Kolmogorov equation for the transition semigroup](../finite-continuous-time-markov-chains/the-transition-semigroup-of-a-finite-continuous/ctmc-transition-add.md)
 
 ## Sources
 

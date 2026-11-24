@@ -16,17 +16,16 @@ For a finite set $E$ with rate matrix $Q$, the rational linear span of $\{(\math
 
 - [Martingale problems](martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [Conditional expectation](../../foundations/conditional-expectation/README.md)
+
 ## Expansion
 
 A full proof page must establish:
 
 - The limit: for $s\le t$ and bounded $\mathcal F_s$-measurable $H$, $\mathbb E\bigl[\bigl(f_{k_m}(X_t)-f_{k_m}(X_s)-\int_s^tg_{k_m}(X_u)\,du\bigr)H\bigr]=0$, and dominated convergence in $\omega$ and in the time integral (joint measurability of $(u,\omega)\mapsto X_u(\omega)$ from càdlàg paths) passes to the limit pair.
 - The finite-state example and the failure of the finite generating set.
-
-Prerequisites:
-
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [Conditional expectation](../../foundations/conditional-expectation/README.md)
 
 ## Sources
 

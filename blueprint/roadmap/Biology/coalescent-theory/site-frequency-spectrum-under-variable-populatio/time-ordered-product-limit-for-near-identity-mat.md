@@ -6,15 +6,18 @@ $$\prod_{g < tM} \Bigl(I + \frac{1}{M}\, Y_M(g/M)\Bigr) \to \mathcal{T} \exp\Big
 
 the time-ordered exponential of $Y$ on $[0, t]$: the value at time $t$ of the solution $\Phi$ of $\Phi' = \Phi Y$, $\Phi(0) = I$, with the factors of the product taken in the order of increasing $g$. For piecewise-constant $Y$ it is the product of the matrix exponentials of the pieces.
 
+## Proof depends on
+
+- [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
+
 ## Expansion
 
 1. Existence and uniqueness of $\Phi$, from [global existence for globally Lipschitz equations](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md).
 2. The convergence, by comparing one step of the product with $\Phi(s + 1/M)\Phi(s)^{-1}$ and summing the errors.
 3. Checks: constant $Y$ gives $e^{tY}$, and $Y$ with two constant pieces gives the product of two exponentials.
 
-Prerequisites:
+It also uses:
 
-- [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
 - Linear algebra of finite matrices and the operator norm.
 
 ## Sources

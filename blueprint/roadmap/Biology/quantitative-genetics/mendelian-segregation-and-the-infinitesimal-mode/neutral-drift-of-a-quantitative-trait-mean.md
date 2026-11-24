@@ -17,6 +17,10 @@ The closed recursion $1-G_{t+1}=\bigl(1-\frac1{2N}\bigr)(1-G_t)$ holds for the p
 
 - [The infinitesimal model of inheritance](infinitesimal-model-definition.md)
 
+## Proof depends on
+
+- [One-step martingale property of the Wright–Fisher allele count](../../population-genetics/wright-fisher-markov-chain/sum-prob-mul-wright-fisher.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -26,11 +30,6 @@ A full proof page must establish:
 - The common-residual comparison.
 - The gene-copy identity recursion for $G_t$ (the probability that two distinct copies share a parental copy is $1/(2N)$, as in the [geometric decay of heterozygosity](../../population-genetics/wright-fisher-markov-chain/sum-mat-pow-mul-heterozygosity.md)), and the $N=2$ computation for $\bar F_1$ (a selfed offspring of a non-inbred parent has inbreeding $\tfrac12$).
 - The relation between $\mathbb E[\bar F_{t+1}]$ and $G_t$, distinguishing within- and between-individual identity.
-
-Prerequisites:
-
-- [The infinitesimal model of inheritance](infinitesimal-model-definition.md)
-- [One-step martingale property of the Wright–Fisher allele count](../../population-genetics/wright-fisher-markov-chain/sum-prob-mul-wright-fisher.md)
 
 ## Sources
 

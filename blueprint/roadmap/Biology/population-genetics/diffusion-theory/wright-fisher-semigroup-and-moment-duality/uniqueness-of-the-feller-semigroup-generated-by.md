@@ -15,11 +15,6 @@ By [the necessity half of the Hille–Yosida theorem](../../../../Probability/ma
 2. Equality of resolvents, then of semigroups.
 3. A check: applied to the limit semigroup of the Bernstein operators, it gives the identity map between the two constructions.
 
-Prerequisites:
-
-- [Polynomials form a core for the neutral Wright–Fisher semigroup](polynomials-form-a-core-for-the-neutral-wf-semig.md)
-- [Necessity half of Hille-Yosida: generators of contraction semigroups are dissipative](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/necessity-half-of-hille-yosida-generators-of-con.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://doi.org/10.1002/9780470316658>, Chapter 1, Sections 2 and 3 (the Hille–Yosida theorem and cores).

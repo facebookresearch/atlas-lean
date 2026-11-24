@@ -23,16 +23,16 @@ Indeed $S_1\le0$ with equality at $g=f$, which $\mathcal T_{\mathrm{adm}}$ attai
 - [Nonnegativity of the matching star-tree edge lengths](star-len-nonneg.md)
 - [Star tree and admixture model have equal f2](f2-star-eq-f2-admix.md)
 
-## Expansion
-
-A full page proves the theorem from the f2 equality, the expressions of f3 and f4 in terms of f2, and the sign of $S_1$, and records the toy example. It should also treat estimated statistics with bounded error: for every $f$, $S(\mathcal T_\star)\ge S_1(g_{\mathcal T_{\mathrm{adm}}}(\alpha,a,b,c))$ for all admissible parameters with $c\ge\alpha(1-\alpha)(a+b)$, so whenever such parameters are $\varepsilon$-optimal for the admixture topology, the star is $\varepsilon$-optimal too.
-
-Prerequisites:
+## Proof depends on
 
 - [Profiling the admixture proportions in the qpGraph fit](../fitting-admixture-graphs-by-least-squares/outer-optimization-over-admixture-proportions.md)
 - [Which drift models have the f-statistics of a star tree](f-equivalence-classes-of-drift-models.md)
 - [Star tree with matching lengths and admixture model have equal f3](f3-star-eq-f3-admix.md)
 - [Star tree and admixture model have equal f4](f4-star-eq-f4-admix.md)
+
+## Expansion
+
+A full page proves the theorem from the f2 equality, the expressions of f3 and f4 in terms of f2, and the sign of $S_1$, and records the toy example. It should also treat estimated statistics with bounded error: for every $f$, $S(\mathcal T_\star)\ge S_1(g_{\mathcal T_{\mathrm{adm}}}(\alpha,a,b,c))$ for all admissible parameters with $c\ge\alpha(1-\alpha)(a+b)$, so whenever such parameters are $\varepsilon$-optimal for the admixture topology, the star is $\varepsilon$-optimal too.
 
 ## Sources
 

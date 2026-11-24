@@ -12,14 +12,16 @@ This applies to the Wright–Fisher diffusion with $\sigma(x)=\sqrt{x(1-x)}$ on 
 
 - [Yamada–Watanabe pathwise uniqueness for Hölder-type diffusion coefficients](yamada-watanabe-pathwise-uniqueness-holder-1-2-d.md)
 
+## Proof depends on
+
+- [Strong solutions solve the martingale problem](../../markov-chains/martingale-problems/strong-solutions-solve-the-martingale-problem.md)
+
 ## Expansion
 
 A full proof uses the comparison theorem for one-dimensional SDEs (same diffusion coefficient satisfying the Yamada–Watanabe condition, ordered drifts, one of them Lipschitz, ordered initial values): the constant $0$ solves the equation with drift $b-b(0)\le b$, so $X\ge0$; symmetrically the constant $1$ solves the equation with drift $b-b(1)\ge b$, so $X\le1$. Absorption follows from pathwise uniqueness for the process $X_{\tau+\cdot}$, which solves the equation driven by $B_{\tau+\cdot}-B_\tau$ for the shifted filtration, as does the constant $X_\tau$. The hypotheses on the extension outside $[0,1]$ cannot be dropped: with $\sigma\equiv0$, $b=0$ on $[0,1]$ and $b(x)=-3|x|^{2/3}$ for $x<0$, the path $X_t=-t^3$ solves the equation from $0$ and leaves $[0,1]$.
 
-Prerequisites:
+It also uses:
 
-- [Strong solutions solve the martingale problem](../../markov-chains/martingale-problems/strong-solutions-solve-the-martingale-problem.md)
-- [Yamada–Watanabe pathwise uniqueness for Hölder-type diffusion coefficients](yamada-watanabe-pathwise-uniqueness-holder-1-2-d.md)
 - Comparison theorem for one-dimensional SDEs
 
 ## Sources

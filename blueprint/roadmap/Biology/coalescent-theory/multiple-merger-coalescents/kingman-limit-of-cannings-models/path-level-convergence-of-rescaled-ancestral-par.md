@@ -17,17 +17,15 @@ Proof of the bound:
 - [Under Möhle–Sagitov, transition matrices converge to Kingman's](tendsto-ancestral-matrix-pow.md)
 - [Finite-dimensional distributions](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-input-measure-real-ctmc-path-fdd.md)
 
+## Proof depends on
+
+- [J1 tightness criterion for finite-state pure-jump processes (jump separation)](../../../../Probability/convergence-of-measures/skorokhod-space/j1-tightness-criterion-for-finite-state-pure-jum.md)
+
 ## Expansion
 
 1. The bound above, using the exact pair probability $c_N$ with no $o(1)$ term.
 2. Tightness and convergence from the bound and the finite-dimensional limit. The limit has no fixed jump times.
 3. A numerical check: for Kingman's coalescent with $n = 12$ and $\delta = 10^{-4}$, the exact short-gap probability is at least $0.02176$, below $n \binom{n}{2} \delta = 0.0792$.
-
-Prerequisites:
-
-- [Under Möhle–Sagitov, transition matrices converge to Kingman's](tendsto-ancestral-matrix-pow.md)
-- [Finite-dimensional distributions](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-input-measure-real-ctmc-path-fdd.md)
-- [J1 tightness criterion for finite-state pure-jump processes (jump separation)](../../../../Probability/convergence-of-measures/skorokhod-space/j1-tightness-criterion-for-finite-state-pure-jum.md)
 
 ## Sources
 

@@ -25,11 +25,6 @@ A full proof page must establish:
 - The quadratic-variation formula, from the $L^2$ isometry applied to stopped integrals, and the stopping identity.
 - Consistency with the localized Brownian integral when $M=B$.
 
-Prerequisites:
-
-- [Extension of the stochastic integral against a continuous square-integrable martingale to $L^2(d\langle M\rangle\otimes d\mathbb P)$](l2-d-m-x-dp-extension-of-the-stochastic-integral.md)
-- [Local martingales and localization](../../martingales/quadratic-variation-of-continuous-local-martingales/local-martingales-and-localization.md)
-
 ## Sources
 
 - D. Revuz and M. Yor, *Continuous Martingales and Brownian Motion*, 3rd ed., Grundlehren 293, Springer (1999), <https://link.springer.com/book/10.1007/978-3-662-06400-9> (stochastic integration with respect to continuous local martingales).

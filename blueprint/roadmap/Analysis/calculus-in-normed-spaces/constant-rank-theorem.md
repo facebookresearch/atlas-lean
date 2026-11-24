@@ -29,7 +29,7 @@ A proof page must establish:
 - The construction of $\psi$, the fibre-dimension corollary, and the boundary
   cases $r=0$ and $r=\min(d,m)$.
 
-Prerequisites:
+It also uses:
 
 - The inverse function theorem for $C^k$ maps between open subsets of
   $\mathbb R^d$.

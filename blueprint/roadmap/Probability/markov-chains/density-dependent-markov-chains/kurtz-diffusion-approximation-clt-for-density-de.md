@@ -21,6 +21,10 @@ The limit $V$ is Gaussian when $V_0$ is Gaussian or deterministic; in general it
 - [Kurtz's law of large numbers for density-dependent chains](kurtz-law-of-large-numbers-for-density-dependent.md)
 - [Random time-change representation of density-dependent chains](random-time-change-representation-of-density-dep.md)
 
+## Proof depends on
+
+- [Functional law of large numbers for the unit Poisson process](../../point-processes/poisson-processes/functional-lln-and-clt-for-the-unit-poisson-proc.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -30,12 +34,6 @@ A full proof page must establish the following.
 - Existence, uniqueness and the explicit solution $V_t=\Phi(t,0)V_0+\int_0^t\Phi(t,s)G(x(s))^{1/2}dW_s$ of the linear equation, with $\Phi$ the fundamental matrix of $\dot y=DF(x(t))y$, and continuity of the solution map, which gives convergence in distribution.
 - Independence of $V_0$ and $W$ from the independence of $X^N_0$ and the clocks.
 - The two guards above, and the linear birth–death example $\beta_1(x)=\lambda x$, $\beta_{-1}(x)=\mu x$, $\lambda\ne\mu$, $V_0=0$: $\operatorname{Var}V_t=\frac{\lambda+\mu}{\lambda-\mu}\,x_0\,e^{(\lambda-\mu)t}\bigl(e^{(\lambda-\mu)t}-1\bigr)$, which agrees with the exact variance of the linear birth–death process scaled by $N$. Its rates are unbounded, so it needs the version of the theorem localized to a neighbourhood of the trajectory.
-
-Prerequisites:
-
-- [Kurtz's law of large numbers for density-dependent chains](kurtz-law-of-large-numbers-for-density-dependent.md)
-- [Functional law of large numbers for the unit Poisson process](../../point-processes/poisson-processes/functional-lln-and-clt-for-the-unit-poisson-proc.md)
-- [Random time-change representation of density-dependent chains](random-time-change-representation-of-density-dep.md)
 
 ## Sources
 

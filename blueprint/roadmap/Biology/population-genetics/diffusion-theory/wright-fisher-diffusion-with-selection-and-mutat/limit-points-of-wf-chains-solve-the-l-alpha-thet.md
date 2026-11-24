@@ -20,13 +20,6 @@ This is the special case $E = [0, 1]$ of [existence by approximation](../../../.
 
 The statement follows from the general theorem once its four hypotheses are checked from the pages cited.
 
-Prerequisites:
-
-- [Existence by approximation: limits of chains solve the limit martingale problem](../../../../Probability/markov-chains/martingale-problems/existence-by-approximation-limits-of-chains-solv.md)
-- [A countable polynomial core for the Wright–Fisher generator with selection and mutation](countable-polynomial-graph-core-for-l-alpha-thet.md)
-- [Uniform generator convergence of the Wright–Fisher chain with selection and mutation](../wright-fisher-diffusion-with-mutation/uniform-generator-convergence-with-selection-and.md)
-- [C-tightness of rescaled Wright–Fisher chains with selection and mutation](../wright-fisher-diffusion-with-mutation/c-tightness-of-rescaled-wf-chains-with-selection.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://doi.org/10.1002/9780470316658>, Chapter 4, Section 8 (convergence via martingale problems).

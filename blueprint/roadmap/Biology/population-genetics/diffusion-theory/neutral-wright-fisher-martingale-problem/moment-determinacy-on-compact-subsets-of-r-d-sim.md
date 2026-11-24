@@ -10,7 +10,7 @@ then $\mu = \nu$. By the Stone–Weierstrass theorem the polynomials are dense i
 
 A full proof page must still establish the density of polynomials in $C(E)$ and the identification of finite Borel measures on $E$ from their integrals of continuous functions, and record the case $E = \Delta_{K-1}^k \subseteq \mathbb R^{kK}$.
 
-Prerequisites:
+It also uses:
 
 - the Stone–Weierstrass theorem on a compact subset of $\mathbb R^d$
 - uniqueness of finite Borel measures on a compact metric space from their integrals of continuous functions

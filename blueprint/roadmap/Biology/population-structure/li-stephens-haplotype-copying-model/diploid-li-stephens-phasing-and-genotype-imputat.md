@@ -21,6 +21,11 @@ is computed from the posterior state probabilities $\alpha_t\beta_t/\sum\alpha_t
 - [Li–Stephens copying transition probability](trans.md)
 - [The Li–Stephens copying model](hmm.md)
 
+## Proof depends on
+
+- [Collapse of the sum over predecessor haplotypes](sum-mul-trans.md)
+- [The likelihood from the forward and backward variables](../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood-eq-sum-forward-mul-backward.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -29,11 +34,6 @@ A full proof page must establish:
 - The collapsed forward step, by applying the [haploid collapse](sum-mul-trans.md) in each coordinate, and its $O(K^2)$ cost.
 - The posterior state law from forward and backward variables, and the dosage formula.
 - Optimality of the posterior mean under squared loss, the bound $0\le\hat d_t\le2$, and the deterministic case $K=1$.
-
-Prerequisites:
-
-- [Collapse of the sum over predecessor haplotypes](sum-mul-trans.md)
-- [The likelihood from the forward and backward variables](../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood-eq-sum-forward-mul-backward.md)
 
 ## Sources
 

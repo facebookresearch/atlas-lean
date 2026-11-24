@@ -16,17 +16,16 @@ for every choice of the two priors. For $n=2$ and $x=(2,0)$ the factor is $\tfra
 
 - [Rejection ABC returns the tolerance-conditioned posterior](abc-rejection-target-law-and-zero-tolerance-disc.md)
 
+## Proof depends on
+
+- [Prokhorov's theorem, sequential form on $\mathbb{R}$](../../../../Probability/convergence-of-measures/prokhorov-theorem/prokhorov-sequential.md)
+
 ## Expansion
 
 A full proof page must establish:
 
 - Part 1: an isolated support point of a Borel probability measure on a separable metric space is an atom; the gap $\gamma$ is positive; for $\varepsilon<\gamma$ the acceptance event $\{d(S,s_{\rm obs})\le\varepsilon\}$ equals $\{S=s_{\rm obs}\}$ up to a $\nu$-null set, so the acceptance probabilities and the ABC target coincide with those at $\varepsilon=0$.
 - Part 2: the two conditional laws of the data given $S$, the factorization of each marginal likelihood as (marginal likelihood of $S$) times (conditional probability of $x$ given $S$), which does not involve the parameter, and the numerical case $n=2$, $x=(2,0)$.
-
-Prerequisites:
-
-- [Rejection ABC returns the tolerance-conditioned posterior](abc-rejection-target-law-and-zero-tolerance-disc.md)
-- [Prokhorov's theorem, sequential form on $\mathbb{R}$](../../../../Probability/convergence-of-measures/prokhorov-theorem/prokhorov-sequential.md)
 
 ## Sources
 

@@ -28,11 +28,6 @@ A full proof page must establish:
 - The local-martingale property and the stopping identity for the localized integral.
 - Agreement with the square-integrable integral under the integrability hypothesis.
 
-Prerequisites:
-
-- [Continuous modification of the Itô integral](ito-integral-continuous-modification.md)
-- [Local martingales and localization](../../martingales/quadratic-variation-of-continuous-local-martingales/local-martingales-and-localization.md)
-
 ## Sources
 
 - I. Karatzas and S. E. Shreve, *Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in Mathematics 113, Springer (1991), <https://link.springer.com/book/10.1007/978-1-4612-0949-2>, Sec. 3.2.D (localization).

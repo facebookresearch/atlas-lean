@@ -11,18 +11,16 @@ is an $(\mathcal F_t)$-martingale with $Z_0=1$, and $0\le Z_t\le\frac{\lVert g\r
 - [Martingale problems](martingale-problems-generic-definition.md)
 - [Product rule for martingale-problem martingales and continuous finite-variation factors](product-rule-for-mp-martingales-and-continuous-f.md)
 
+## Proof depends on
+
+- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
+
 ## Expansion
 
 A full proof page must establish:
 
 - The product rule applied to $f=g$ and $k=Lg/g$, which is bounded measurable: then $Lg-kg=0$, so $g(X_t)V_t$ with $V_t=\exp(-\int_0^tk(X_s)\,ds)$ is a martingale; dividing by the bounded positive $\mathcal F_0$-measurable $g(X_0)$ preserves the martingale property.
 - The bound on $Z_t$ and the constant case.
-
-Prerequisites:
-
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
-- [Product rule for martingale-problem martingales and continuous finite-variation factors](product-rule-for-mp-martingales-and-continuous-f.md)
 
 ## Sources
 

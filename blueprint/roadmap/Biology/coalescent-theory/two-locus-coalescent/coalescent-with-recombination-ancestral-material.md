@@ -9,6 +9,11 @@ The conventions are fixed explicitly. Under the reduced convention, material at 
 
 For two loci and a sample of two this is [the two-locus coalescent](two-locus-rate.md) on its six states.
 
+## Proof depends on
+
+- [Rate matrix of Kingman's partition-valued coalescent](../partition-valued-kingman-coalescent/partition-rate.md)
+- [Transition function of a rate matrix is stochastic](../../../Probability/markov-chains/finite-continuous-time-markov-chains/the-transition-semigroup-of-a-finite-continuous/ctmc-transition-mem-row-stochastic.md)
+
 ## Expansion
 
 1. The generator is a rate matrix: its rows sum to $0$.
@@ -16,10 +21,8 @@ For two loci and a sample of two this is [the two-locus coalescent](two-locus-ra
 3. For $\rho = 0$ the generator lumps to [the rate matrix of Kingman's partition-valued coalescent](../partition-valued-kingman-coalescent/partition-rate.md).
 4. For $n = 2$ and $\rho = 0$, under the reduced convention the number of lineages jumps from $2$ to $0$ at the coalescence: there is no state with one lineage.
 
-Prerequisites:
+It also uses:
 
-- [Rate matrix of Kingman's partition-valued coalescent](../partition-valued-kingman-coalescent/partition-rate.md)
-- [Transition function of a rate matrix is stochastic](../../../Probability/markov-chains/finite-continuous-time-markov-chains/the-transition-semigroup-of-a-finite-continuous/ctmc-transition-mem-row-stochastic.md)
 - Finite graphs and finite directed acyclic graphs.
 
 ## Sources

@@ -16,16 +16,14 @@ Let $(\hat{\mathcal F}_t)$ be the usual augmentation under $\hat P$ of $\sigma(y
 
 - [Regular conditional distribution (measure-valued family)](../../foundations/regular-conditional-distributions/regular-conditional-distribution.md)
 
+## Proof depends on
+
+- [Continuous modification of the Itô integral](../it-integral/ito-integral-continuous-modification.md)
+- [Martingales and martingale problems are preserved by the usual augmentation](../../martingales/stopping-times-and-martingale-problems/martingales-and-martingale-problems-are-preserve.md)
+
 ## Expansion
 
 A full proof shows that for $A\in\sigma(y|_{[0,t]})$ the map $(x_0,w)\mapsto Q_i(x_0,w;A)$ is measurable for the $\nu$-completion of $\sigma(x_0,w|_{[0,t]})$, because the future increments $(B^i_{t+s}-B^i_t)_{s\ge0}$ are independent of $(X^i_0,X^i|_{[0,t]},B^i|_{[0,t]})$. From this it checks that the canonical coordinate $w$ has increments after $t$ independent of $\hat{\mathcal F}_t$, so it is an $(\hat{\mathcal F}_t)$-Brownian motion, and that the stochastic integrals $\int\sigma(y_i)\,dw$ under $\hat P$ have the law of $\int\sigma(X^i)\,dB^i$, which transfers the integral equation.
-
-Prerequisites:
-
-- [Regular conditional distribution (measure-valued family)](../../foundations/regular-conditional-distributions/regular-conditional-distribution.md)
-- [Donsker's invariance principle](../../central-limit-theorems/donsker-s-invariance-principle/donsker-invariance-principle.md)
-- [Continuous modification of the Itô integral](../it-integral/ito-integral-continuous-modification.md)
-- [Martingales and martingale problems are preserved by the usual augmentation](../../martingales/stopping-times-and-martingale-problems/martingales-and-martingale-problems-are-preserve.md)
 
 ## Sources
 

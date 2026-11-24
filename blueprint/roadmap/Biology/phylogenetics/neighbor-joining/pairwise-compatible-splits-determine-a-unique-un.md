@@ -8,6 +8,10 @@ Let $\mathcal S$ be a set of nontrivial splits of $X$ that are pairwise compatib
 
 - [Compatible splits](../splits-compatibility-ultrametrics-and-upgma/compatible.md)
 
+## Proof depends on
+
+- [Splits-equivalence theorem](../splits-compatibility-ultrametrics-and-upgma/splits-equivalence.md)
+
 ## Expansion
 
 A proof page must establish:
@@ -19,9 +23,8 @@ A proof page must establish:
 
 The [splits-equivalence theorem](../splits-compatibility-ultrametrics-and-upgma/splits-equivalence.md) states the existence of an unrooted binary tree whose splits contain $\mathcal S$; the result here is the exact, unique realization by a not necessarily binary $X$-tree.
 
-Prerequisites:
+It also uses:
 
-- [Splits-equivalence theorem](../splits-compatibility-ultrametrics-and-upgma/splits-equivalence.md)
 - Finite trees and graph isomorphism
 
 ## Sources

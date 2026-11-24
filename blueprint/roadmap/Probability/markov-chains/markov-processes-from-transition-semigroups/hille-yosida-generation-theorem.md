@@ -14,10 +14,9 @@ then $A$ is the generator of a strongly continuous semigroup of contractions on 
 
 A proof page must establish: $\lambda(\lambda-A)^{-1}x\to x$ as $\lambda\to\infty$, first for $x\in D(A)$ and then by density; $A_\lambda x\to Ax$ for $x\in D(A)$; $\|e^{tA_\lambda}\|\le1$ from $\|e^{tA_\lambda}\|\le e^{-\lambda t}e^{\lambda t\|\lambda(\lambda-A)^{-1}\|}$; the Cauchy estimate $\|e^{tA_\lambda}x-e^{tA_\mu}x\|\le t\|A_\lambda x-A_\mu x\|$ for $x\in D(A)$, using that the Yosida approximations commute; strong continuity and contractivity of the limit; identification of its generator with $A$ through the resolvent; and uniqueness of the semigroup with a given generator.
 
-Prerequisites:
+It also uses:
 
 - Deterministic operator semigroups
-- [Necessity half of Hille-Yosida: generators of contraction semigroups are dissipative](necessity-half-of-hille-yosida-generators-of-con.md)
 
 ## Sources
 

@@ -31,10 +31,6 @@ A full proof page must establish the following.
 - The bound (b)2 from the uniform estimate $|\Phi_{p,\varepsilon}(0)|\le C\varepsilon$ and the contraction constant.
 - The tracking bound (b)3: first the uniform bound of the dependency page gives $|D_t|=O(\varepsilon/r_0)$ after $O(\log(1/\varepsilon)/r_0)$ generations; then compare $D_{t+1}=\Phi_{p_t,\varepsilon}(D_t)+O(\varepsilon^2)$ (allele frequencies move by $O(\varepsilon)$ per generation and $D^*$ is Lipschitz in $p$ with constant $O(\varepsilon)$) with the fixed point, and iterate the contraction for a further $O(\log(1/\varepsilon)/r_0)$ generations.
 
-Prerequisites:
-
-- [A uniform weak-selection bound on two-locus linkage disequilibrium](two-locus-ld-contraction-under-weak-selection.md)
-
 ## Sources
 
 - T. Nagylaki, *The evolution of multilocus systems under weak selection*, Genetics 134 (1993), 627–647, <https://pmc.ncbi.nlm.nih.gov/articles/PMC1205503/> (statement and proof; the abstract distinguishes the $O(s)$ disequilibrium regime after time $t_1\sim(\ln s)/\ln(1-c_{\min})$ and the $O(s^2)$ quasi-equilibrium regime after $t_2\sim2t_1$).

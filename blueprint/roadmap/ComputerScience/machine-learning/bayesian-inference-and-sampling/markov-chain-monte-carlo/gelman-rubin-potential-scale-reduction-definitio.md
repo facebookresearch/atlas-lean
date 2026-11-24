@@ -10,6 +10,10 @@ the within-chain variance and the between-chain variance of the means. The poole
 - **Stationarity limit.** If $m$ is fixed and each chain is a strictly stationary ergodic sequence (for instance independent draws) whose common marginal law has finite variance $\sigma^2>0$, then $\widehat R\to1$ in probability as $n\to\infty$: each $s_i^2\to\sigma^2$ and each $\bar x_{i\cdot}$ converges to the common mean.
 - **No certificate.** $\widehat R$ close to $1$ does not certify convergence to the target: for a multimodal target, chains that all remain in the neighbourhood of one mode can give $\widehat R\approx1$.
 
+## Proof depends on
+
+- [Strong law of large numbers from the ergodic theorem](../../../../Dynamics/ergodic-theory/birkhoff-ergodic-theorem/tendsto-average-coordinates-ae.md)
+
 ## Expansion
 
 A full page must establish:
@@ -18,10 +22,6 @@ A full page must establish:
 - the stationarity limit from the ergodic theorem for $\bar x_{i\cdot}$ and $s_i^2$, so that $W\to\sigma^2$ and $B/n\to0$, together with continuity of the square root;
 - an explicit multimodal counterexample, for instance a chain whose kernel never leaves one of two components of the target's support, started in that component: $\widehat R\to1$ while the chain does not converge to the target;
 - the relation to the source's corrected statistic, which also tends to $1$ under the same hypotheses since the degrees of freedom tend to infinity.
-
-Prerequisites:
-
-- [Strong law of large numbers from the ergodic theorem](../../../../Dynamics/ergodic-theory/birkhoff-ergodic-theorem/tendsto-average-coordinates-ae.md)
 
 ## Sources
 

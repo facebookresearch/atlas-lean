@@ -18,6 +18,11 @@ Without mutation ($\theta=0$) the jumps are $n\to n+1$ at rate $(n+1)\sigma$ and
 
 - [Type of the common ancestor under selection and mutation](../../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/common-ancestor-type-distribution.md)
 
+## Proof depends on
+
+- [The ancestral selection graph line count as a non-explosive chain](../../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/realized-asg-line-counting-process-countable-ctm.md)
+- [Minimal continuous-time Markov chain on a countable state space](minimal-ctmc-on-a-countable-state-space.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -26,11 +31,6 @@ A full proof page must establish the following.
 - The rates above, including the boundary state $0$, where the downward formula does not apply. The source displays the downward rates for $n\in\mathbb N_0$; they are meaningful only for $n\ge1$, and this restriction is the one consistent with the total exit rate the source uses.
 - That the rate matrix is stable and conservative on $\mathbb N_0$, so that it determines a [minimal chain](minimal-ctmc-on-a-countable-state-space.md).
 - The reduction without mutation to the ancestral selection graph line count, with the change of time scale and of $\sigma$ between the two conventions.
-
-Prerequisites:
-
-- [The ancestral selection graph line count as a non-explosive chain](../../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/realized-asg-line-counting-process-countable-ctm.md)
-- [Minimal continuous-time Markov chain on a countable state space](minimal-ctmc-on-a-countable-state-space.md)
 
 ## Sources
 

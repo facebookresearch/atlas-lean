@@ -20,14 +20,6 @@ The argument has four steps. The sequence is C-tight by [compact containment and
 
 A full proof checks each hypothesis of the limit theorem for this sequence, including a countable core of test functions in $C_c^2$. The state space $[0,\infty)$ is not compact, so the proof uses localization or the one-point compactification, and the weak SDE representation is applied on the open-ended interval with test functions in $C_c^2(\mathbb R)$. Absorption at $0$ follows from pathwise uniqueness, since $X\equiv0$ solves the SDE from $0$ and the solution can be restarted at the hitting time of $0$.
 
-Prerequisites:
-
-- [Compact containment and C-tightness for rescaled critical binary branching](compact-containment-and-c-tightness-for-critical.md)
-- [Martingale-problem limits on a locally compact state space](../../markov-chains/martingale-problems/martingale-problem-limits-on-a-locally-compact-s.md)
-- [Weak SDE representation of one-dimensional martingale-problem solutions](../../stochastic-calculus/stochastic-differential-equations/weak-sde-representation-of-one-dimensional-marti.md)
-- [Yamada–Watanabe pathwise uniqueness](../../stochastic-calculus/stochastic-differential-equations/yamada-watanabe-pathwise-uniqueness-holder-1-2-d.md)
-- [Yamada–Watanabe theorem](../../stochastic-calculus/stochastic-differential-equations/yamada-watanabe-theorem-weak-existence-pathwise.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley, 1986, <https://doi.org/10.1002/9780470316658>, branching process limits (topic).

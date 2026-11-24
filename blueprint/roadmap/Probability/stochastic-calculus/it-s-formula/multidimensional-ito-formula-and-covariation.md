@@ -19,6 +19,10 @@ Example: if $X$ takes values in the simplex and $\sigma\sigma^{\mathsf T}(X_s)=\
 - [Multidimensional Brownian motion](../construction-and-sample-paths-of-brownian-motion/multidimensional-brownian-motion.md)
 - [Itô processes and their quadratic variation](ito-processes-and-their-quadratic-variation.md)
 
+## Proof depends on
+
+- [Itô's formula for Itô processes with locally integrable coefficients](ito-formula-for-ito-processes-time-dependent-loc.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -26,11 +30,6 @@ A full proof page must establish the following.
 - Item 1 by polarization, $[X^i,X^j]=\frac14\bigl([X^i+X^j]-[X^i-X^j]\bigr)$, from the one-dimensional quadratic variation of Itô processes, together with $[B^k,B^l]_t=\delta_{kl}t$ for independent coordinates.
 - Item 2 by the multivariate second-order Taylor expansion along partitions, after the same localization and truncation steps as in the [one-dimensional localized formula](ito-formula-for-ito-processes-time-dependent-loc.md).
 - The simplex example.
-
-Prerequisites:
-
-- [Itô's formula for Itô processes with locally integrable coefficients](ito-formula-for-ito-processes-time-dependent-loc.md)
-- [Multidimensional Brownian motion](../construction-and-sample-paths-of-brownian-motion/multidimensional-brownian-motion.md)
 
 ## Sources
 

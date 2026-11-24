@@ -14,6 +14,10 @@ Letting $\varepsilon \to 0$, the tilted measures are $\mathbb P(\,\cdot \mid \te
 - [Kimura's fixation probability, process form](measure-real-fixation.md)
 - [Martingale problem for the Wright–Fisher diffusion](is-wright-fisher-solution.md)
 
+## Proof depends on
+
+- [Optional stopping theorem in continuous time](../../../../Probability/martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
+
 ## Expansion
 
 A full proof page must still establish:
@@ -21,13 +25,6 @@ A full proof page must still establish:
 - the existence of the positive extensions $h_\varepsilon$ and the identity $Z_{t \wedge \tau_\varepsilon} = h(X_{t \wedge \tau_\varepsilon})/h(p)$;
 - that the tilted probability of $\{\tau_\varepsilon < \infty\}$ tends to $0$ as $\varepsilon \to 0$, and the identification of the limit with conditioning on fixation, by optional stopping;
 - the neutral case.
-
-Prerequisites:
-
-- [Martingale problem under exponential tilt (generic)](../../../../Probability/markov-chains/martingale-problems/martingale-problem-under-exponential-tilt-generi.md)
-- [Hitting times of closed sets by continuous adapted processes are stopping times (continuous time)](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/hitting-times-of-closed-sets-by-continuous-adapt.md)
-- [Kimura's fixation probability, process form](measure-real-fixation.md)
-- [Optional stopping theorem in continuous time](../../../../Probability/martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
 
 ## Sources
 

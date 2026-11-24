@@ -16,13 +16,6 @@ The proof assembles, by [the diffusion-approximation framework](../../../../Prob
 1. The assembly from the pages cited.
 2. The tightness bound, uniform in $(\alpha, \theta)$ on compact sets.
 
-Prerequisites:
-
-- [Limit points of Wright–Fisher chains solve the martingale problem with selection and mutation](limit-points-of-wf-chains-solve-the-l-alpha-thet.md)
-- [Existence by approximation: limits of chains solve the limit martingale problem](../../../../Probability/markov-chains/martingale-problems/existence-by-approximation-limits-of-chains-solv.md)
-- [Diffusion-approximation framework (process-level convergence)](../../../../Probability/markov-chains/martingale-problems/diffusion-approximation-framework-process-level.md)
-- [Uniqueness for the selection–mutation martingale problem by an inverse tilt](../wright-fisher-diffusion-with-mutation/uniqueness-for-the-selection-mutation-martingale.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://doi.org/10.1002/9780470316658>, Chapter 10, Sections 1 and 2, and Chapter 4, Section 8.

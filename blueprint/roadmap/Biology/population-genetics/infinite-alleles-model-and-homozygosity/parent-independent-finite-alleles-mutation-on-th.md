@@ -19,6 +19,11 @@ Special cases. For the uniform law $\pi_i=1/K$, the identity probability is $\fr
 - [Kingman's coalescent on the natural numbers](../../coalescent-theory/partition-valued-kingman-coalescent/kingman-coalescent-on-n-as-a-time-indexed-cadlag.md)
 - [Poisson point process with finite intensity](../../../Probability/point-processes/poisson-point-processes/poisson-point-process.md)
 
+## Proof depends on
+
+- [Kimura–Crow limit](tendsto-eq-homozygosity.md)
+- [The Dirichlet law is stationary for parent-independent mutation](../diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/dirichlet-stationary-law-for-parent-independent.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -30,12 +35,6 @@ A full proof page must establish the following.
   $$S+\frac{1-S}{1+\theta}+\frac{2\theta\,(\pi_a-S)}{(1+\theta)(2+\theta)},$$
   which differs from item 1 whenever $\pi_a\ne S$; for the uniform law $\pi_a=S$ and the two agree. This probe is a local derivation, not a claim of the cited sources.
 - Consistency with the infinite-alleles limit: letting $\max_i\pi_i\to0$ gives identity probability $1/(1+\theta)$, the value of the [Kimura–Crow limit](tendsto-eq-homozygosity.md).
-
-Prerequisites:
-
-- [Poisson point process with finite intensity](../../../Probability/point-processes/poisson-point-processes/poisson-point-process.md)
-- [Kimura–Crow limit](tendsto-eq-homozygosity.md)
-- [The Dirichlet law is stationary for parent-independent mutation](../diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/dirichlet-stationary-law-for-parent-independent.md)
 
 ## Sources
 

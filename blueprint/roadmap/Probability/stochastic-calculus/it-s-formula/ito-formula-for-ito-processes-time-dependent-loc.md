@@ -16,6 +16,13 @@ so the heterozygosity has drift $-X(1-X)$.
 
 - [Itô processes and their quadratic variation](ito-processes-and-their-quadratic-variation.md)
 
+## Proof depends on
+
+- [Itô's formula for $f(t,B_t)$ with bounded derivatives](ito-formula-for-f-t-b-t-with-bounded-derivatives.md)
+- [Itô's formula for Itô processes with bounded coefficients](ito-formula-for-ito-processes-with-bounded-coeff.md)
+- [Usual conditions and continuous-time hitting times](../../markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/usual-conditions-and-continuous-time-hitting-tim.md)
+- [Coefficient truncation stability for Itô processes](coefficient-truncation-stability-for-ito-process.md)
+
 ## Expansion
 
 A full proof page must establish the following, in this order.
@@ -26,14 +33,6 @@ A full proof page must establish the following, in this order.
 4. Compact modification of $f$: replace $f$ by a $C^{1,2}_b$ function equal to $f$ on $[0,T]\times[-n-1,n+1]$, and let $n\to\infty$ using $\tau_n\to\infty$.
 5. Indistinguishability: both sides are continuous in $t$, so the identity holds for all $t$ simultaneously.
 6. The two examples.
-
-Prerequisites:
-
-- [Itô processes and their quadratic variation](ito-processes-and-their-quadratic-variation.md)
-- [Itô's formula for $f(t,B_t)$ with bounded derivatives](ito-formula-for-f-t-b-t-with-bounded-derivatives.md)
-- [Itô's formula for Itô processes with bounded coefficients](ito-formula-for-ito-processes-with-bounded-coeff.md)
-- [Usual conditions and continuous-time hitting times](../../markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/usual-conditions-and-continuous-time-hitting-tim.md)
-- [Coefficient truncation stability for Itô processes](coefficient-truncation-stability-for-ito-process.md)
 
 ## Sources
 

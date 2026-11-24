@@ -28,10 +28,6 @@ A full proof page must establish:
 - The exact rational computation of part 2, and that this $f$ is not of product form ($a(AA)b(aa)=1$ and $a(aa)b(AA)=1$ force $a(AA)b(AA)>0$, while $f(AA,AA)=0$).
 - Whether there exist a fertility matrix $f$ and an initial state for which mean fertility $\bar f$ decreases from one generation to the next; if so, an explicit exact rational example.
 
-Prerequisites:
-
-- [Sex-differential viability selection makes the sexes' allele frequencies differ](sex-differential-viability-selection-dioecy.md)
-
 ## Sources
 
 - R. Bürger, *The Mathematical Theory of Selection, Recombination, and Mutation*, Wiley (2000) (fertility selection).

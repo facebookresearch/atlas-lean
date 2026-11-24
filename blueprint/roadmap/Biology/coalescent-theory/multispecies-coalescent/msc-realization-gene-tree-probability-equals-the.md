@@ -15,11 +15,6 @@ The law of the cluster set of the resulting gene tree equals the gene tree proba
 2. The equality of laws, by induction over the branches of $S$ from the leaves.
 3. Checks: the three-species gene tree probabilities are recovered, and in the root population the lineages coalesce to one almost surely.
 
-Prerequisites:
-
-- [The multispecies coalescent](gene-tree-prob.md)
-- [One species-tree branch: exit law and merge order from the realized coalescent](one-species-tree-branch-exit-law-and-merge-order.md)
-
 ## Sources
 
 - J. H. Degnan and L. A. Salter, Gene tree distributions under the coalescent process, *Evolution* 59 (2005), 24–37 (gene tree distributions).

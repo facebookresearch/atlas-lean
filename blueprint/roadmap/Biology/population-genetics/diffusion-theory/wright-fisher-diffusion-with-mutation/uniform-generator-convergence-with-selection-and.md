@@ -11,15 +11,14 @@ with $\mathcal{L}_{\alpha, \theta} f = \frac{1}{2} x(1 - x) f'' + \bigl(\alpha x
 - [Allele frequency after one generation of two-way mutation](mutated-freq.md)
 - [Drift of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-drift.md)
 
+## Proof depends on
+
+- [Wright–Fisher diffusion limit, generator form](../diffusion-limit-of-the-wright-fisher-model/tendsto-wf-generator.md)
+
 ## Expansion
 
 1. A third-order Taylor expansion of $f$ with the first two moments of one generation of the chain and a bound on its third absolute moment, uniformly in $x$.
 2. A check: for $\alpha = \theta = 0$ it reduces to [the generator form of the diffusion limit](../diffusion-limit-of-the-wright-fisher-model/tendsto-wf-generator.md).
-
-Prerequisites:
-
-- [Drift of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-drift.md)
-- [Wright–Fisher diffusion limit, generator form](../diffusion-limit-of-the-wright-fisher-model/tendsto-wf-generator.md)
 
 ## Sources
 

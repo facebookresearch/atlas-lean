@@ -10,14 +10,13 @@ and the solution is unique: any other such pair $(X',\zeta')$ has $\zeta'=\zeta$
 
 - [Strong solutions of SDEs with Lipschitz coefficients](../sde-lipschitz-exists-unique.md)
 
+## Proof depends on
+
+- [Usual conditions and continuous-time hitting times](../../markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/usual-conditions-and-continuous-time-hitting-tim.md)
+
 ## Expansion
 
 A full proof takes globally Lipschitz $b_n,\sigma_n$ agreeing with $b,\sigma$ on $[\ell_n,r_n]$, solves the truncated equations, shows by pathwise uniqueness that the $n$-th and $(n+1)$-th solutions agree up to $\tau_n$, and defines $X$ consistently on $[0,\zeta)$. It should also show that on $\{\zeta<\infty\}$, $X_t$ converges to $\ell$ or $r$ as $t\uparrow\zeta$, and that $\zeta$ does not depend on the choice of the compacts.
-
-Prerequisites:
-
-- [Strong solutions of SDEs with Lipschitz coefficients](../sde-lipschitz-exists-unique.md)
-- [Usual conditions and continuous-time hitting times](../../markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/usual-conditions-and-continuous-time-hitting-tim.md)
 
 ## Sources
 

@@ -12,6 +12,10 @@ No converse is claimed: with $E=\{0,1\}$, the family $\{\mathbf 1_{\{t\ge s\}}:s
 
 - [Endpoint-aware modulus w'_T of finite-valued cadlag paths](endpoint-aware-modulus-w-t-of-finite-valued-cadl.md)
 
+## Proof depends on
+
+- [D([0,T],E) is Polish for Polish E](d-0-t-e-is-polish-for-polish-e.md)
+
 ## Expansion
 
 A proof page must establish:
@@ -19,11 +23,6 @@ A proof page must establish:
 - that $w'_T(x,\delta)=0$ forces the Ethier–Kurtz modulus $w'(x,\delta,S)$ to vanish for every $S\le T$, so the hypothesis of (a), holding on an unbounded set of horizons, gives their relative compactness criterion for all horizons;
 - (b) from (a) and the corresponding tightness criterion, using that $\{w'_T(\cdot,\delta)=0\}$ is the relevant event because the modulus of a finite-valued path is $0$ or at least the minimal distance;
 - that separated jumps, with no jump at the horizon, give $w'_T=0$ on the event; that a pulse of width $1/m$ violates the hypothesis of (b); and the compact family above, showing that no converse holds.
-
-Prerequisites:
-
-- [Endpoint-aware modulus w'_T of finite-valued cadlag paths](endpoint-aware-modulus-w-t-of-finite-valued-cadl.md)
-- [D([0,T],E) is Polish for Polish E](d-0-t-e-is-polish-for-polish-e.md)
 
 ## Sources
 

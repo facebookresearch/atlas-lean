@@ -18,6 +18,11 @@ where $G$ is the Green function of the [occupation-time formula](../sojourn-time
 - [Kimura's fixation probability, process form](measure-real-fixation.md)
 - [Occupation-time formula and mean absorption time with selection](../sojourn-times-of-the-wright-fisher-diffusion/occupation-time-formula-and-mean-absorption-time.md)
 
+## Proof depends on
+
+- [Localized h-transform for nonnegative harmonic h (conditioning on fixation)](localized-h-transform-for-nonnegative-harmonic-h.md)
+- [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
+
 ## Expansion
 
 A full proof page must still establish:
@@ -25,13 +30,6 @@ A full proof page must still establish:
 - the conditioned martingale problem, by the [localized h-transform](localized-h-transform-for-nonnegative-harmonic-h.md) with $h = u_\alpha$;
 - the conditioned occupation density $G(p, x)\, u_\alpha(x)/u_\alpha(p)$ and the formula for the conditional mean absorption time;
 - the neutral case.
-
-Prerequisites:
-
-- [Kimura's fixation probability, process form](measure-real-fixation.md)
-- [Occupation-time formula and mean absorption time with selection](../sojourn-times-of-the-wright-fisher-diffusion/occupation-time-formula-and-mean-absorption-time.md)
-- [Localized h-transform for nonnegative harmonic h (conditioning on fixation)](localized-h-transform-for-nonnegative-harmonic-h.md)
-- [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 
 ## Sources
 

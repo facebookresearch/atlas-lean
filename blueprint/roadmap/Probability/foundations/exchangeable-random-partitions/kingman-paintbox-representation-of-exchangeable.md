@@ -8,14 +8,14 @@ $$\operatorname{freq}(B)=\lim_{n\to\infty}\frac{|B\cap[n]|}{n},$$
 
 and if $S$ denotes the decreasing rearrangement of the frequencies of the blocks (a random mass partition, with singletons contributing frequency $0$), then conditionally on $S=s$ the partition $\Pi$ has law $\rho_s$. Hence the law of $\Pi$ is the mixture $\int\rho_s\,\nu(ds)$, where $\nu$ is the law of $S$, and the total frequency of singletons is $1-\sum_iS_i$.
 
+## Proof depends on
+
+- [De Finetti theorem for exchangeable sequences in a standard Borel space](../exchangeable-sequences/de-finetti-theorem-for-exchangeable-sequences-in.md)
+- Finite set partitions and the [multinomial distribution](../../distributions/discrete/multinomial-distribution/multinomial.md)
+
 ## Expansion
 
 A full proof labels each integer by the smallest element of its block, applies [de Finetti's theorem](../exchangeable-sequences/de-finetti-theorem-for-exchangeable-sequences-in.md) to an exchangeable sequence constructed from $\Pi$ and independent uniform labels, reads off the directing measure's atoms as the block frequencies, and identifies the conditional law with the paintbox. It should also show that the Ewens partition with parameter $\theta>0$ corresponds to the Poisson–Dirichlet($\theta$) mass partition.
-
-Prerequisites:
-
-- [De Finetti theorem for exchangeable sequences in a standard Borel space](../exchangeable-sequences/de-finetti-theorem-for-exchangeable-sequences-in.md)
-- Finite set partitions and the [multinomial distribution](../../distributions/discrete/multinomial-distribution/README.md)
 
 ## Sources
 

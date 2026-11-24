@@ -21,12 +21,6 @@ A full proof page must still establish:
 - that the units of $\theta$ and of time agree with those of the $K$-allele Wright–Fisher pages;
 - the extension of the martingale problem from continuous test functions to bounded Borel test functions by bounded pointwise approximation, which makes $z_i = \mu(E_i)$ admissible for every Borel partition.
 
-Prerequisites:
-
-- [Finite-type Fleming–Viot and Wright–Fisher martingale problems](finite-type-fleming-viot-k-allele-wright-fisher.md)
-- [Fleming-Viot well-posedness on a compact type space](fleming-viot-well-posedness-on-a-compact-type-sp.md)
-- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, "The infinitely-many-neutral-alleles diffusion model", *Advances in Applied Probability* 13(3):429–452, 1981, <https://doi.org/10.2307/1426779>

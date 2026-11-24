@@ -22,12 +22,6 @@ A full proof page must still establish:
 - the exponential-growth example, using $\mathbb E\, Y_1 = x$ and $\mathbb P_x(0 < Y_1 < 1) > 0$;
 - the explicit case of a piecewise-constant $\nu$ (a bottleneck).
 
-Prerequisites:
-
-- [Deterministic clock change for martingale problems](deterministic-clock-change-for-martingale-proble.md)
-- [Continuous modification selected by Kolmogorov's theorem](../construction-of-the-neutral-wright-fisher-diffus/continuous-realization-2.md)
-- [A neutral solution started at x is fixed with probability x](../absorption-of-the-neutral-wright-fisher-martinga/measure-real-fixation-eq.md)
-
 ## Sources
 
 - S. P. Otto and M. C. Whitlock, "The probability of fixation in populations of changing size", *Genetics*, 1997, <https://docslib.org/download/3490747/the-probability-of-fixation-in-populations-of-changing-size> (background)

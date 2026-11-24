@@ -21,9 +21,8 @@ A full proof page must establish:
 - The semigroup identity $T_sf-f=\int_0^sT_uAf\,du$ in $C(E)$ for $f\in\mathcal D(A)$.
 - For $t,s\ge0$: $\mathbb E[f(X_{t+s})-f(X_t)\mid\mathcal F_t]=T_sf(X_t)-f(X_t)=\int_0^sT_uAf(X_t)\,du=\mathbb E\bigl[\int_t^{t+s}Af(X_u)\,du\bigm|\mathcal F_t\bigr]$, the last step by Fubini and the Markov property, using joint measurability of $(u,\omega)\mapsto Af(X_u(\omega))$ from càdlàg paths.
 
-Prerequisites:
+It also uses:
 
-- [Martingale problems](martingale-problems-generic-definition.md)
 - Strongly continuous operator semigroups and their generators
 
 ## Sources

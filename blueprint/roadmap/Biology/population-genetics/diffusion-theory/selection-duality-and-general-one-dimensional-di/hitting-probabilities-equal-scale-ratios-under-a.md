@@ -16,12 +16,6 @@ This is the special case $[l, r] = [0, 1]$ of [the scale function and exit proba
 
 The statement follows from the two results it cites: the accessibility lemma gives almost sure hitting, and the exit-probability theorem then gives the ratio.
 
-Prerequisites:
-
-- [Scale function and exit probabilities for one-dimensional diffusions (process level)](scale-function-and-exit-probabilities-for-one-di.md)
-- [Accessible endpoints give almost sure exit with finite mean exit time](finite-accessibility-integrals-at-both-endpoints.md)
-- [Scale density of a one-dimensional diffusion](scale-density.md)
-
 ## Sources
 
 - S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press (1981), Chapter 15 (hitting probabilities).

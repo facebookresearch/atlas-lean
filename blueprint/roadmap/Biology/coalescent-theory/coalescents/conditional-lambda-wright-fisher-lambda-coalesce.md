@@ -24,15 +24,14 @@ The statement assumes a solution; it does not assert that one exists. Existence 
 - [Pitman's merger rate](merger-rate.md)
 - [Generator of the Λ-coalescent block-counting process](block-counting-generator.md)
 
+## Proof depends on
+
+- [Pitman's consistency relation](merger-rate-consistent.md)
+
 ## Expansion
 
 1. The generator identity, by expanding $x(x + y(1 - x))^n + (1 - x)(x(1 - y))^n - x^n$ in powers of $y$ and integrating against $y^{-2} \Lambda(dy)$, with the atom at $0$ giving the Kingman term. Check the identity symbolically for $n \le 4$ and for $\Lambda = \delta_0$, $\delta_1$ and the uniform measure.
 2. The duality from the generator identity for any solution of the martingale problem, with the solution carried as a hypothesis.
-
-Prerequisites:
-
-- [Pitman's consistency relation](merger-rate-consistent.md)
-- [Martingale problems](../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 
 ## Sources
 

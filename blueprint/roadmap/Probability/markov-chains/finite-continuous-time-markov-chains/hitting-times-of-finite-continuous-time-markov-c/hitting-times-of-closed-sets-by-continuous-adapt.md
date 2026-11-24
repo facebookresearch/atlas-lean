@@ -22,9 +22,8 @@ A full proof page must establish:
 - The special cases listed above.
 - The boundary of the claim: hitting times of open sets are not stopping times for every filtration; they are under right-continuity, as in [usual conditions and continuous-time hitting times](usual-conditions-and-continuous-time-hitting-tim.md).
 
-Prerequisites:
+It also uses:
 
-- [Filtrations and stopping times](../../../martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
 - Topology of metric spaces (continuity of the distance to a set)
 
 ## Sources

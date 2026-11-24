@@ -13,19 +13,17 @@ Then every subsequential limit in law of $(\mu^N)$ has continuous paths and solv
 - [Finite-type / Moran approximation of the Fleming-Viot generator](finite-type-moran-approximation-of-the-fleming-v.md)
 - [Tightness of measure-valued approximations in C([0,T], M1(E))](tightness-of-measure-valued-approximations-in-c.md)
 
+## Proof depends on
+
+- [Existence by approximation: limits of chains solve the limit martingale problem](../../../../Probability/markov-chains/martingale-problems/existence-by-approximation-limits-of-chains-solv.md)
+- [Countable bounded-pointwise graph core for martingale problems](../../../../Probability/markov-chains/martingale-problems/countable-bounded-pointwise-graph-core-for-marti.md)
+
 ## Expansion
 
 A full proof page must still establish:
 
 - the passage to the limit in the martingale identities along the countable core;
 - the finite-type case.
-
-Prerequisites:
-
-- [Finite-type / Moran approximation of the Fleming-Viot generator](finite-type-moran-approximation-of-the-fleming-v.md)
-- [Tightness of measure-valued approximations in C([0,T], M1(E))](tightness-of-measure-valued-approximations-in-c.md)
-- [Existence by approximation: limits of chains solve the limit martingale problem](../../../../Probability/markov-chains/martingale-problems/existence-by-approximation-limits-of-chains-solv.md)
-- [Countable bounded-pointwise graph core for martingale problems](../../../../Probability/markov-chains/martingale-problems/countable-bounded-pointwise-graph-core-for-marti.md)
 
 ## Sources
 

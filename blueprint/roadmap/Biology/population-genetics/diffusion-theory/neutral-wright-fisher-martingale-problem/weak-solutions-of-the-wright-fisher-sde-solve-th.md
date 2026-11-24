@@ -16,11 +16,6 @@ Then $X$ solves the [martingale problem for the Wright–Fisher diffusion with s
 1. The coefficient check: $A f$ from [the general result](../../../../Probability/markov-chains/martingale-problems/strong-solutions-solve-the-martingale-problem.md) equals $\mathcal{L}_{\alpha, \theta} f$ on $[0, 1]$.
 2. The extension of test functions from $C^2[0, 1]$ to $C^2_b(\mathbb{R})$, which does not change $A f$ on $[0, 1]$.
 
-Prerequisites:
-
-- [Strong solutions solve the martingale problem](../../../../Probability/markov-chains/martingale-problems/strong-solutions-solve-the-martingale-problem.md)
-- [Martingale problem for the Wright–Fisher diffusion with selection and two-way mutation](../wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://doi.org/10.1002/9780470316658>, Chapter 5, Section 3 (stochastic equations and martingale problems).

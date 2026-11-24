@@ -17,6 +17,11 @@ on the bounded test functions $F(x)=e^{-\langle f,x\rangle}$, $f\in(0,\infty)^E$
 - [Compact containment and C-tightness for critical binary branching (concrete scaling)](../linear-birth-death-process/compact-containment-and-c-tightness-for-critical.md)
 - [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
 
+## Proof depends on
+
+- [Martingale-problem limits on a locally compact state space](../../markov-chains/martingale-problems/martingale-problem-limits-on-a-locally-compact-s.md)
+- [Feller branching diffusion as the scaling limit of critical binary branching](../linear-birth-death-process/feller-branching-diffusion-as-the-scaling-limit.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -26,13 +31,9 @@ A full proof page must establish:
 - The duality computation $\frac{d}{ds}\mathbb E\bigl[e^{-\langle u_{t-s},X_s\rangle}\bigr]=0$ from the martingale problem, giving the Laplace-functional identity.
 - Consistency with the total mass: for $A$ with zero row sums and $f\equiv\lambda$, $u_t\equiv\lambda/(1+\gamma\lambda t/2)$, the log-Laplace function of [Feller's branching diffusion](../linear-birth-death-process/feller-branching-diffusion-as-the-scaling-limit.md).
 
-Prerequisites:
+It also uses:
 
 - Galton–Watson process realization of the particle system
-- [Compact containment and C-tightness for critical binary branching (concrete scaling)](../linear-birth-death-process/compact-containment-and-c-tightness-for-critical.md)
-- [Martingale-problem limits on a locally compact state space](../../markov-chains/martingale-problems/martingale-problem-limits-on-a-locally-compact-s.md)
-- [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
-- [Feller branching diffusion as the scaling limit of critical binary branching](../linear-birth-death-process/feller-branching-diffusion-as-the-scaling-limit.md)
 
 ## Sources
 

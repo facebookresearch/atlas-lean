@@ -21,11 +21,6 @@ The finiteness comes from the occupation estimate $\mathbb{E} \int_0^{T_1} K_s\,
 2. The expected number of events, from the clock-event count identity for a uniformized pure-jump Markov process on a Polish state space. No page states that identity yet. For $n = 2$, give the bound explicitly.
 3. Joint measurability of $(x, \omega) \mapsto T_x$ for $n = 2$, then of $G_x$ in general. $G_x$ is right-continuous in $x$.
 
-Prerequisites:
-
-- [Marked whole-chromosome ARG on [0,1) with homogeneous recombination: construction](marked-whole-chromosome-arg-on-0-1-with-homogene.md)
-- [The ancestral line count with recombination is positive recurrent](../two-locus-coalescent/lineage-count-birth-death-chain-rho-0-positive-r.md)
-
 ## Sources
 
 - R. C. Griffiths and P. Marjoram, An ancestral recombination graph, in *Progress in Population Genetics and Human Evolution*, IMA Vol. Math. Appl. 87, Springer (1997), 257–270, <https://research.monash.edu/en/publications/an-ancestral-recombination-graph/> (local trees).

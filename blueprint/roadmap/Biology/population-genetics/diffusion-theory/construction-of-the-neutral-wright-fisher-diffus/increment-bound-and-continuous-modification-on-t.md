@@ -10,17 +10,16 @@ with a constant $C_K$ computed from the simplex generator applied to the polynom
 
 - [K-allele transition kernel and canonical path measure on the simplex](k-allele-transition-kernel-and-canonical-path-me.md)
 
+## Proof depends on
+
+- [Neutral K-allele semigroup on the simplex via multinomial duality](../wright-fisher-semigroup-and-moment-duality/neutral-k-allele-semigroup-on-the-simplex-via-mu.md)
+
 ## Expansion
 
 A full proof page must still establish:
 
 - the computation of the generator on $(y_i - x_i)^4$ and $(y_i - x_i)^2$ and the resulting bound with $C_K$ explicit;
 - the coordinatewise use of the Kolmogorov–Chentsov theorem and the closedness argument that keeps the modification in the simplex.
-
-Prerequisites:
-
-- [K-allele transition kernel and canonical path measure on the simplex](k-allele-transition-kernel-and-canonical-path-me.md)
-- [Neutral K-allele semigroup on the simplex via multinomial duality](../wright-fisher-semigroup-and-moment-duality/neutral-k-allele-semigroup-on-the-simplex-via-mu.md)
 
 ## Sources
 

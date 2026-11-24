@@ -13,15 +13,14 @@ $$\mathbb{P}\bigl(T_{x_3} = T_{x_1} \ne T_{x_2}\bigr) = \mathbb{E}\bigl[\mathbf{
 
 - [Two-locus n = 2: joint law of the coalescence times is a diagonal atom plus an absolutely continuous part](two-locus-n-2-joint-law-of-t-a-t-b-is-diagonal-a.md)
 
+## Proof depends on
+
+- [Continuum ARG with homogeneous recombination: finite-locus marginals and two-point law](continuum-arg-homogeneous-rho-dx-finite-locus-ma.md)
+
 ## Expansion
 
 1. An explicit positive lower bound on $\mathbb{P}(T_{x_3} = T_{x_1} \ne T_{x_2})$ from the composite event of step 3.
 2. The argument of step 2, using an event probability rather than pointwise conditional laws.
-
-Prerequisites:
-
-- [Continuum ARG with homogeneous recombination: finite-locus marginals and two-point law](continuum-arg-homogeneous-rho-dx-finite-locus-ma.md)
-- [Two-locus n = 2: joint law of the coalescence times is a diagonal atom plus an absolutely continuous part](two-locus-n-2-joint-law-of-t-a-t-b-is-diagonal-a.md)
 
 ## Sources
 

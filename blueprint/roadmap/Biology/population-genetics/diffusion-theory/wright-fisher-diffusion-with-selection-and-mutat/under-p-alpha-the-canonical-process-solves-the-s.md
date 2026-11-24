@@ -13,12 +13,6 @@ Let $\alpha \in \mathbb{R}$ and $\theta = 0$, and let $P^\alpha$ be the [selecti
 1. The application of the generic tilt with $g = e^{\alpha x}$.
 2. Checks: the statement is nonvacuous for $\alpha = 1$, and under $P^\alpha$ the fixation probability from $x$ is the diffusion value $u_\alpha(x)$.
 
-Prerequisites:
-
-- [Selection path measure by exponential change of measure](../construction-of-the-neutral-wright-fisher-diffus/selection-path-measure-by-exponential-change-of.md)
-- [Martingale problem under exponential tilt (generic)](../../../../Probability/markov-chains/martingale-problems/martingale-problem-under-exponential-tilt-generi.md)
-- [Martingale problem for the Wright–Fisher diffusion](../fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://doi.org/10.1002/9780470316658>, Chapter 4, Section 3 and Chapter 10.

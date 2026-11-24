@@ -11,17 +11,16 @@ Both follow from the substitution $r = \Lambda(s)$, $dr = \nu(s)^{-1}\, ds$, in 
 
 - [Time-inhomogeneous martingale problem](time-inhomogeneous-martingale-problem.md)
 
+## Proof depends on
+
+- [Martingale problem for the Wright–Fisher diffusion](is-wright-fisher-solution.md)
+
 ## Expansion
 
 A full proof page must still establish:
 
 - the change of variables in the compensator integral and the transfer of the martingale property between the filtrations $(\mathcal G_{\Lambda(t)})$ and $(\mathcal F_{\Lambda^{-1}(r)})$;
 - the restriction of the converse to $[0, \Lambda(\infty))$ when $\Lambda(\infty) < \infty$.
-
-Prerequisites:
-
-- [Time-inhomogeneous martingale problem](time-inhomogeneous-martingale-problem.md)
-- [Martingale problem for the Wright–Fisher diffusion](is-wright-fisher-solution.md)
 
 ## Sources
 

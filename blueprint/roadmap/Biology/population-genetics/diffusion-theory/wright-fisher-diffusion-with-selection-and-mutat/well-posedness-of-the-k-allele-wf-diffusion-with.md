@@ -14,19 +14,15 @@ $$x_i\bigl((W x)_i - x^{\top} W x\bigr) = (a \nabla V)_i.$$
 - [K-allele realization solves the K-allele martingale problem](../neutral-wright-fisher-martingale-problem/k-allele-realization-solves-the-k-allele-marting.md)
 - [Uniqueness in law for the K-allele martingale problem with general bounded Q](../neutral-wright-fisher-martingale-problem/uniqueness-in-law-for-the-k-allele-martingale-pr.md)
 
+## Proof depends on
+
+- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](k-allele-wright-fisher-generator-on-the-simplex.md)
+
 ## Expansion
 
 1. The gradient identity for the selection drift.
 2. Boundedness of $\mathcal{L} e^{V} / e^{V}$ on the simplex, and the two parts above.
 3. A check against [the generator of the $K$-allele diffusion with mutation and genic selection](k-allele-wright-fisher-generator-on-the-simplex.md) when $W$ comes from genic fitnesses.
-
-Prerequisites:
-
-- [Tilted path measure on a canonical space (generic consistent extension)](../construction-of-the-neutral-wright-fisher-diffus/tilted-path-measure-on-a-canonical-space-generic.md)
-- [Martingale problem under exponential tilt (generic)](../../../../Probability/markov-chains/martingale-problems/martingale-problem-under-exponential-tilt-generi.md)
-- [K-allele realization solves the K-allele martingale problem](../neutral-wright-fisher-martingale-problem/k-allele-realization-solves-the-k-allele-marting.md)
-- [Uniqueness in law for the K-allele martingale problem with general bounded Q](../neutral-wright-fisher-martingale-problem/uniqueness-in-law-for-the-k-allele-martingale-pr.md)
-- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](k-allele-wright-fisher-generator-on-the-simplex.md)
 
 ## Sources
 

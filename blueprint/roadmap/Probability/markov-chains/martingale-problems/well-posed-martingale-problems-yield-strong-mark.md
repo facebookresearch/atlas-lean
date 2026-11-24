@@ -10,6 +10,10 @@ $$\mathbb P_x\bigl((Y_{\tau+t})_{t\ge0}\in\Gamma\bigm|\mathcal F_\tau\bigr)=\mat
 - [Martingale problems](martingale-problems-generic-definition.md)
 - [A countable bounded-pointwise core of the graph suffices for a martingale problem](countable-bounded-pointwise-graph-core-for-marti.md)
 
+## Proof depends on
+
+- [Uniqueness for martingale problems by duality](uniqueness-of-martingale-problems-by-duality.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -17,11 +21,6 @@ A full proof page must establish:
 - By the regular-conditional-law theorem, for $\mathbb P_x$-almost every $\omega$ the conditional law of the shifted path given $\mathcal F_\tau$ solves the $(A,\delta_{Y_\tau(\omega)})$ martingale problem; by uniqueness it equals $\mathbb P_{Y_\tau(\omega)}$.
 - Measurability of $\omega\mapsto\mathbb P_{Y_\tau(\omega)}(\Gamma)$ from the measurability of $x\mapsto\mathbb P_x(\Gamma)$, so the right-hand side is a version of the conditional probability.
 - The application recovering the strong Markov property of the Wright–Fisher diffusion with selection from uniqueness of its martingale problem, without first constructing its semigroup.
-
-Prerequisites:
-
-- [Uniqueness for martingale problems by duality](uniqueness-of-martingale-problems-by-duality.md)
-- [Regular conditional laws of a martingale-problem solution at a stopping time](regular-conditional-laws-of-a-martingale-problem.md)
 
 ## Sources
 

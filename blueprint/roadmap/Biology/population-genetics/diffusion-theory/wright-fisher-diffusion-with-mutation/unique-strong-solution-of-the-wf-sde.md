@@ -21,13 +21,6 @@ By the [Yamada–Watanabe theorem](../../../../Probability/stochastic-calculus/s
 
 The statement assembles the results it cites; a full proof page checks that their hypotheses match for all $\alpha \in \mathbb{R}$ and $\theta_i \ge 0$.
 
-Prerequisites:
-
-- [Yamada–Watanabe theorem: weak existence and pathwise uniqueness give a strong solution and uniqueness in law](../../../../Probability/stochastic-calculus/stochastic-differential-equations/yamada-watanabe-theorem-weak-existence-pathwise.md)
-- [Wright–Fisher martingale-problem solutions are weak solutions of the equation](wf-martingale-problem-solutions-are-weak-sde-sol.md)
-- [Pathwise uniqueness for the Wright–Fisher equation](../wright-fisher-diffusion-with-selection-and-mutat/pathwise-uniqueness-for-the-wf-sde.md)
-- [Existence of the Wright–Fisher diffusion with selection and mutation by an exponential tilt](existence-of-the-selection-mutation-wf-diffusion.md)
-
 ## Sources
 
 - T. Yamada and S. Watanabe, On the uniqueness of solutions of stochastic differential equations, *J. Math. Kyoto Univ.* 11 (1971), 155–167, <https://doi.org/10.1215/kjm/1250523691> (the Yamada–Watanabe principle).

@@ -7,15 +7,14 @@ In the [coalescent with recombination on $L$ loci](../two-locus-coalescent/coale
 - [Generator-level lumpability of the ancestral recombination graph to one locus](generator-level-lumpability-of-the-arg-to-each-l.md)
 - [Coalescent with recombination: ancestral-material state space and generator](../two-locus-coalescent/coalescent-with-recombination-ancestral-material.md)
 
+## Proof depends on
+
+- [Finite-dimensional distributions](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-input-measure-real-ctmc-path-fdd.md)
+
 ## Expansion
 
 1. The equality in law from [the lumpability of the generator](generator-level-lumpability-of-the-arg-to-each-l.md) and the [finite-dimensional distributions](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-input-measure-real-ctmc-path-fdd.md) of the two chains.
 2. Checks: for $L = 1$ the map is the identity, and for two loci and two samples the pair coalescence time at one locus has mean $1$.
-
-Prerequisites:
-
-- [Generator-level lumpability of the ancestral recombination graph to one locus](generator-level-lumpability-of-the-arg-to-each-l.md)
-- [Finite-dimensional distributions](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-input-measure-real-ctmc-path-fdd.md)
 
 ## Sources
 

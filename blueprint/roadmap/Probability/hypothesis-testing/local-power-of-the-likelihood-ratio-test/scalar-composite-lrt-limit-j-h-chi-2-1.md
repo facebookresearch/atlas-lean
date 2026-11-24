@@ -14,15 +14,18 @@ the law of $(J/H)\,Z^2$ with $Z$ standard normal. Hence, for consistent estimato
 
 - [The square of a centred Gaussian of variance v has law v χ²₁](../score-wald-and-likelihood-ratio-tests/gaussian-real-map-sq.md)
 
+## Proof depends on
+
+- [Wilks' theorem (simple null)](../score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-two-mul-log-like.md)
+
 ## Expansion
 
 A proof page must establish the expansion $W_n=n^{-1}\bigl(\sum_iu(\theta_0;Y_i)\bigr)^2/H+o_P(1)$ from a second-order Taylor expansion around $\widehat\theta_n$, the central limit theorem $n^{-1/2}\sum_iu(\theta_0;Y_i)\to\mathcal N(0,J)$, the identification of the limit of $\bigl(n^{-1/2}\sum_iu\bigr)^2/H$ as $(J/H)\chi^2_1$, Slutsky's lemma for the adjusted statistic, and the case $J=H$.
 
-Prerequisites:
+It also uses:
 
 - Composite likelihood: Godambe information, consistency and sandwich asymptotics
 - Nonparametric bootstrap for smooth statistics; block bootstrap for linked sites
-- [Wilks' theorem (simple null)](../score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-two-mul-log-like.md)
 
 ## Sources
 

@@ -11,15 +11,18 @@ where $\tau_{xy}$ is the meeting time of the walks started at $x$ and $y$.
 
 A single vertex is trivially absorbing and is excluded.
 
+## Proof depends on
+
+- [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
+
 ## Expansion
 
 1. The graphical construction of the voter model from Poisson clocks and its time reversal, which gives the duality.
 2. The identity-in-state formula from the duality, conditioning on whether the two walks have met by time $t$.
 3. A check: on the complete graph the meeting of the walks reduces to the Moran model and Kingman's coalescent after scaling.
 
-Prerequisites:
+It also uses:
 
-- [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - Finite graphs and finite directed acyclic graphs.
 
 ## Sources

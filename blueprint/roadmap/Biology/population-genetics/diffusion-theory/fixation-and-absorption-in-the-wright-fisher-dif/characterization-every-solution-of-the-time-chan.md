@@ -17,13 +17,6 @@ A full proof page must still establish:
 - the transfer of the law of $X \circ \Lambda^{-1}$ back to $X$, and of the fixation statements to every solution;
 - the case $\nu \equiv 1$.
 
-Prerequisites:
-
-- [Deterministic clock change for martingale problems](deterministic-clock-change-for-martingale-proble.md)
-- [Uniqueness in law for the neutral martingale problem (well-posedness)](../neutral-wright-fisher-martingale-problem/uniqueness-in-law-for-the-neutral-martingale-pro.md)
-- [Time-inhomogeneous martingale problem](time-inhomogeneous-martingale-problem.md)
-- [Time-changed neutral diffusion under deterministic population-size change: construction and fixation](time-changed-neutral-diffusion-under-determinist.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley, 1986, Chapter 4 (uniqueness) and Chapter 6 (random time changes), <https://doi.org/10.1002/9780470316658>

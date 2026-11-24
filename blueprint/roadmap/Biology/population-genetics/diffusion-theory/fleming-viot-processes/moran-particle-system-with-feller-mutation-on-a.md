@@ -11,6 +11,10 @@ For finite $E$ the system is a finite-state continuous-time Markov chain. Unboun
 
 - [Bounded-rate jump Markov process on a compact space by uniformization](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/bounded-rate-jump-markov-process-on-a-compact-sp.md)
 
+## Proof depends on
+
+- [Finite interacting particle systems (graphical construction)](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/finite-interacting-particle-systems-graphical-co.md)
+
 ## Expansion
 
 A full proof page must still establish:
@@ -18,11 +22,6 @@ A full proof page must still establish:
 - the bounded-rate construction on $E^N$ and the Markov property of the empirical measure, by exchangeability of the particle dynamics;
 - the formula for $A_N \Phi_f$;
 - the finite-type case as a [finite interacting particle system](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/finite-interacting-particle-systems-graphical-co.md).
-
-Prerequisites:
-
-- [Bounded-rate jump Markov process on a compact space by uniformization](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/bounded-rate-jump-markov-process-on-a-compact-sp.md)
-- [Finite interacting particle systems (graphical construction)](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/finite-interacting-particle-systems-graphical-co.md)
 
 ## Sources
 

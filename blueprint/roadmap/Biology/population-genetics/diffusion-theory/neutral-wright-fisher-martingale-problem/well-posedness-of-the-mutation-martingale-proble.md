@@ -27,13 +27,6 @@ Remark, not used in the proof: at a regular boundary, as at $0$ when $0 < \theta
 1. The triangularity identity above.
 2. Existence and uniqueness from the pages cited.
 
-Prerequisites:
-
-- [Conditional polynomial-semigroup identity for martingale-problem solutions with triangular generators](conditional-polynomial-semigroup-identity-for-ma.md)
-- [Conditional polynomial identity implies Markov property and uniqueness in law](conditional-polynomial-identity-implies-markov-p.md)
-- [Mutation Wright–Fisher Feller semigroup via polynomial duality and chain limits](../wright-fisher-semigroup-and-moment-duality/mutation-wf-feller-semigroup-via-polynomial-dual.md)
-- [Mutation realization solves the mutation martingale problem](mutation-realization-solves-the-mutation-marting.md)
-
 ## Sources
 
 - S. N. Ethier, A class of degenerate diffusion processes occurring in population genetics, *Comm. Pure Appl. Math.* 29 (1976), 483–493, <https://doi.org/10.1002/cpa.3160290503> (well-posedness).

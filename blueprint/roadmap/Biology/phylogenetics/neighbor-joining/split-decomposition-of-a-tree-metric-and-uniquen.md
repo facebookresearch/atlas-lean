@@ -13,6 +13,10 @@ The distance identity for a given tree with edge lengths, as a sum over darts, i
 - [Pairwise compatible splits determine a unique unrooted X-tree](pairwise-compatible-splits-determine-a-unique-un.md)
 - [Buneman split index and split weights of a tree metric](buneman-split-index-and-split-weights-of-a-tree.md)
 
+## Proof depends on
+
+- [Split decomposition of a tree metric](dist-eq-sum-darts.md)
+
 ## Expansion
 
 A proof page must establish:
@@ -21,11 +25,6 @@ A proof page must establish:
 - the distance formula from the path-length identity of [Split decomposition of a tree metric](dist-eq-sum-darts.md);
 - linear independence of the split pseudometrics of an $X$-tree, by induction or by evaluating at pairs of taxa adjacent across a single edge;
 - an exact reconstruction of a four-leaf tree metric, and the linear independence of the five split pseudometrics of a four-leaf binary tree.
-
-Prerequisites:
-
-- [Pairwise compatible splits determine a unique unrooted X-tree](pairwise-compatible-splits-determine-a-unique-un.md)
-- [Split decomposition of a tree metric](dist-eq-sum-darts.md)
 
 ## Sources
 

@@ -12,6 +12,10 @@ For $n<\tau$, $S_n$ is the number of vertices discovered but not yet explored af
 
 - [Labelled Galton–Watson trees and projection to generation counts](ulam-harris-labelled-galton-watson-trees-and-pro.md)
 
+## Proof depends on
+
+- [Markov property](../../markov-chains/markov-and-strong-markov-properties/markov-property-full.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -20,11 +24,6 @@ A full proof page must establish the following.
 - Item 1: conditionally on the first $i-1$ explored offspring numbers and on $\{i\le\tau\}$, the next explored word is determined and its offspring variable has not been inspected, so it is $\nu$-distributed and independent of the past; on $\{i>\tau\}$ the fresh sequence supplies the variable. This is a strong-Markov-type argument for the iid array along a sequence of random indices.
 - Item 2: by induction, $S_n$ counts discovered unexplored vertices for $n<\tau$, the forest is exhausted exactly when this count first reaches zero, and $S_n\ge1$ for $n<\tau$ because each step decreases $S$ by at most one.
 - The two special cases.
-
-Prerequisites:
-
-- [Labelled Galton–Watson trees and projection to generation counts](ulam-harris-labelled-galton-watson-trees-and-pro.md)
-- [Markov property](../../markov-chains/markov-and-strong-markov-properties/markov-property-full.md)
 
 ## Sources
 

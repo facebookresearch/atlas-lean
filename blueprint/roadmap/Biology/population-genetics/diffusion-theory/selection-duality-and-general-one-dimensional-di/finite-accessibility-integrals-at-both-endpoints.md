@@ -14,18 +14,18 @@ Hence $\lim_n \tau_n$ is finite almost surely and, by continuity of the paths, e
 - [Optional stopping theorem in continuous time](../../../../Probability/martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
 - [Dirichlet Green's function of a one-dimensional diffusion](green-function.md)
 
+## Proof depends on
+
+- [Martingale problems](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
+
 ## Expansion
 
 1. The three steps above.
 2. A check: in the Wright–Fisher case with genic selection the weighted integral is finite, since $s(y) \sim y$ and $m(dy) \sim 2\, dy / y$ near $0$.
 
-Prerequisites:
+It also uses:
 
 - The Feller boundary classification for allele-frequency diffusions.
-- [Dirichlet Green's function of a one-dimensional diffusion](green-function.md)
-- [Hitting times of closed sets by continuous adapted processes are stopping times (continuous time)](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/hitting-times-of-closed-sets-by-continuous-adapt.md)
-- [Optional stopping theorem in continuous time](../../../../Probability/martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
-- [Martingale problems](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 
 ## Sources
 

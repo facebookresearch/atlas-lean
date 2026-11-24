@@ -12,6 +12,11 @@ A solution with respect to some filtration is a solution with respect to the nat
 
 For $E=[0,1]$, continuous paths, test functions $C^2$ and $A=L_\sigma$ the Wright–Fisher backward generator with scaled selection coefficient $\sigma$, this is the [martingale problem for the Wright–Fisher diffusion](../../../Biology/population-genetics/diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md).
 
+## Proof depends on
+
+- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
+- [Filtrations and stopping times](../../martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
+
 ## Expansion
 
 A full definition page must fix:
@@ -19,11 +24,6 @@ A full definition page must fix:
 - The path class and the measurability of $X$ needed for the time integral (càdlàg or continuous paths suffice).
 - The equivalence between solutions with respect to a filtration and with respect to the natural filtration.
 - The bridge to the Wright–Fisher instance: a process solves the Wright–Fisher martingale problem with parameter $\sigma$ exactly when it solves the generic problem for $A=L_\sigma$ on $C^2$ test functions (a $C^2$ function on $\mathbb R$ and its restriction to $[0,1]$ give the same compensated process).
-
-Prerequisites:
-
-- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
-- [Filtrations and stopping times](../../martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
 
 ## Sources
 

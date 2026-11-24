@@ -19,6 +19,13 @@ For the neutral haploid Wright–Fisher chain with $M$ gene copies, state the al
 - [Skorokhod space D([0,T],E) for a metric space E: J1 topology and embeddings](../../convergence-of-measures/skorokhod-space/skorokhod-space-d-0-t-e-for-a-metric-space-e-j1.md)
 - [Martingale problems](martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [Prokhorov's theorem, sequential form on $\mathbb{R}$](../../convergence-of-measures/prokhorov-theorem/prokhorov-sequential.md)
+- [Skorokhod space D[0,T] with J1 metric](../../convergence-of-measures/skorokhod-space/skorokhod-space-d-0-t-with-j1-metric.md)
+- [D([0,T],E) is Polish for Polish E](../../convergence-of-measures/skorokhod-space/d-0-t-e-is-polish-for-polish-e.md)
+- [Borel sigma-algebra of D equals the coordinate sigma-algebra; fdd determine laws](../../convergence-of-measures/skorokhod-space/borel-sigma-algebra-of-d-equals-the-coordinate-s.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -27,14 +34,6 @@ A full proof page must establish:
 - Every subsequential limit has the same law, by hypotheses 2 and 3 and because finite-dimensional distributions determine laws on $D$; hence the whole sequence converges.
 - C-tightness implies continuity of the limit paths.
 - The Wright–Fisher normalization check, including that a time unit of $M$ generations gives the factor $\tfrac12$.
-
-Prerequisites:
-
-- [Prokhorov's theorem, sequential form on $\mathbb{R}$](../../convergence-of-measures/prokhorov-theorem/prokhorov-sequential.md)
-- [Skorokhod space D[0,T] with J1 metric](../../convergence-of-measures/skorokhod-space/skorokhod-space-d-0-t-with-j1-metric.md)
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [D([0,T],E) is Polish for Polish E](../../convergence-of-measures/skorokhod-space/d-0-t-e-is-polish-for-polish-e.md)
-- [Borel sigma-algebra of D equals the coordinate sigma-algebra; fdd determine laws](../../convergence-of-measures/skorokhod-space/borel-sigma-algebra-of-d-equals-the-coordinate-s.md)
 
 ## Sources
 

@@ -10,16 +10,16 @@ $$\mathbb E\sup_{t\le T}\bigl|Q^n_t-Q^m_t\bigr|^2\to0\qquad(n,m\to\infty),$$
 
 and so converges in $L^2$ uniformly on $[0,T]$. Two estimates drive the proof: increments of $M$ over disjoint intervals are orthogonal, and $\mathbb E(Q^n_T)^2\le CK^4$ with an absolute constant $C$ (one may take $C=48$).
 
-## Expansion
-
-A full proof bounds $\mathbb E(Q^n_T)^2=\sum_k\mathbb E\Delta_k^4+2\sum_{j<k}\mathbb E\Delta_j^2\Delta_k^2$, where $\Delta_k$ are the dyadic increments, using $\mathbb E[\sum_{k>j}\Delta_k^2\mid\mathcal F_{(j+1)2^{-n}}]\le4K^2$ and $\mathbb E\sum_k\Delta_k^2\le4K^2$. Since $M_t^2-M_0^2-Q^n_t=2\sum_kM_{k2^{-n}}\bigl(M_{t\wedge(k+1)2^{-n}}-M_{t\wedge k2^{-n}}\bigr)$ is a martingale, so is $Q^n-Q^m$; the fourth-moment bound and uniform continuity of the paths on $[0,T]$ give $\mathbb E(Q^n_T-Q^m_T)^2\to0$, and Doob's $L^2$ maximal inequality makes the convergence uniform on $[0,T]$. It should check that for Brownian motion $B$ stopped at $\tau=\inf\{t:|B_t|\ge K\}$ the limit is $t\wedge\tau$.
-
-Prerequisites:
+## Proof depends on
 
 - [Optional stopping theorem in continuous time](../optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
 - [Local martingales and localization](local-martingales-and-localization.md)
 - [Doob's $L^2$ maximal inequality in continuous time](../doob-s-maximal-inequalities/lintegral-i-sup-sq-le-of-continuous.md)
 - [Orthogonality of martingale increments](../square-integrable-martingales/integral-sub-mul-eq-zero.md)
+
+## Expansion
+
+A full proof bounds $\mathbb E(Q^n_T)^2=\sum_k\mathbb E\Delta_k^4+2\sum_{j<k}\mathbb E\Delta_j^2\Delta_k^2$, where $\Delta_k$ are the dyadic increments, using $\mathbb E[\sum_{k>j}\Delta_k^2\mid\mathcal F_{(j+1)2^{-n}}]\le4K^2$ and $\mathbb E\sum_k\Delta_k^2\le4K^2$. Since $M_t^2-M_0^2-Q^n_t=2\sum_kM_{k2^{-n}}\bigl(M_{t\wedge(k+1)2^{-n}}-M_{t\wedge k2^{-n}}\bigr)$ is a martingale, so is $Q^n-Q^m$; the fourth-moment bound and uniform continuity of the paths on $[0,T]$ give $\mathbb E(Q^n_T-Q^m_T)^2\to0$, and Doob's $L^2$ maximal inequality makes the convergence uniform on $[0,T]$. It should check that for Brownian motion $B$ stopped at $\tau=\inf\{t:|B_t|\ge K\}$ the limit is $t\wedge\tau$.
 
 ## Sources
 

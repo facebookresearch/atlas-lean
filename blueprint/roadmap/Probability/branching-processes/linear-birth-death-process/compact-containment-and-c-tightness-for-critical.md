@@ -24,18 +24,18 @@ Consequently the laws of $(M^N)_{N\ge1}$ satisfy compact containment in $[0,\inf
 - [Predictable quadratic variation of Dynkin martingales for bounded-generator jump processes](../../martingales/stopping-times-and-martingale-problems/predictable-quadratic-variation-of-dynkin-martin.md)
 - [Aldous tightness criterion in D([0,T],E) with initial and compact-containment conditions](../../convergence-of-measures/skorokhod-space/aldous-tightness-criterion-in-d-0-t-e-with-initi.md)
 
+## Proof depends on
+
+- [Non-explosion criteria and Kolmogorov equations (countable state)](../../markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/non-explosion-criteria-and-kolmogorov-equations.md)
+
 ## Expansion
 
 A full proof computes the generator of $M^N$: jumps $\pm1/N$, each at total rate $\gamma N^2M/2$, so the drift vanishes and the jump variance rate is $\gamma M$. It should establish the exact second moment from $\mathbb E(M^N_t)^2=\mathbb E(M^N_0)^2+\gamma\int_0^t\mathbb E M^N_s\,ds$, the maximal bound from Doob's $L^2$ inequality, and the increment bound from optional stopping for the martingale $(M^N)^2-\langle M^N\rangle$. Optional stopping and Doob's $L^2$ maximal inequality are needed for right-continuous martingales, not only continuous ones. The containment bound alone is not C-tightness: the increment estimate and the vanishing jump size are separate steps.
 
-Prerequisites:
+It also uses:
 
-- [Kendall's law of the linear birth–death process](prob.md)
-- [Non-explosion criteria and Kolmogorov equations (countable state)](../../markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/non-explosion-criteria-and-kolmogorov-equations.md)
-- [Predictable quadratic variation of Dynkin martingales for bounded-generator jump processes](../../martingales/stopping-times-and-martingale-problems/predictable-quadratic-variation-of-dynkin-martin.md)
 - Optional stopping for right-continuous martingales
 - Doob's $L^2$ maximal inequality for right-continuous martingales
-- [Aldous tightness criterion in D([0,T],E) with initial and compact-containment conditions](../../convergence-of-measures/skorokhod-space/aldous-tightness-criterion-in-d-0-t-e-with-initi.md)
 
 ## Sources
 

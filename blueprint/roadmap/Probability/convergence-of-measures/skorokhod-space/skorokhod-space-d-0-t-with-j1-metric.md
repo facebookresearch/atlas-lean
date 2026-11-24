@@ -10,7 +10,7 @@ It is a metric on $D[0,T]$, with finite values since càdlàg functions are boun
 
 A full page must establish the metric axioms (symmetry through $\varphi^{-1}$, the triangle inequality through composition, and $d(f,g)=0\Rightarrow f=g$ from right-continuity), finiteness, and the $1$-Lipschitz inclusion of $C[0,T]$. Separability and completeness under an equivalent metric, and the description of the Borel $\sigma$-algebra by evaluations, are separate pages.
 
-Prerequisites:
+It also uses:
 
 - Topology and metric spaces
 

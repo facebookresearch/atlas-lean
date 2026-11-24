@@ -10,17 +10,16 @@ Since $B$ is bounded, no restriction of $f$ to a core of $B$ is needed. For a fi
 
 - [Moran particle system with Feller mutation on a compact type space](moran-particle-system-with-feller-mutation-on-a.md)
 
+## Proof depends on
+
+- [Finite-type Fleming–Viot and Wright–Fisher martingale problems](finite-type-fleming-viot-k-allele-wright-fisher.md)
+
 ## Expansion
 
 A full proof page must still establish:
 
 - the computation of $A_N \Phi_f$ for the Moran system, with its sampling-without-replacement corrections of order $1/N$, uniformly in $\mu$;
 - the finite-type case.
-
-Prerequisites:
-
-- [Moran particle system with Feller mutation on a compact type space](moran-particle-system-with-feller-mutation-on-a.md)
-- [Finite-type Fleming–Viot and Wright–Fisher martingale problems](finite-type-fleming-viot-k-allele-wright-fisher.md)
 
 ## Sources
 

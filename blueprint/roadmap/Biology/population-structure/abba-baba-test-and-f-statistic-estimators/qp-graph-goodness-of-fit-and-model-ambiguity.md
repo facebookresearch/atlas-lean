@@ -19,6 +19,15 @@ the [chi-square law of the Gaussian projection statistic](../../../Probability/l
 - [qpGraph design matrix of basis f4 statistics](../fitting-admixture-graphs-by-least-squares/design-matrix.md)
 - [Which drift models have the f-statistics of a star tree](../centred-population-covariance-and-f-statistics/f-equivalence-classes-of-drift-models.md)
 
+## Proof depends on
+
+- [Asymptotic rank test for qpWave and qpAdm](rank-test-for-qp-wave-qp-adm.md)
+- [Basis independence of the qpGraph score S1](../fitting-admixture-graphs-by-least-squares/score-s1-basis-change.md)
+- [Multivariate central limit theorem with a constructed limit](../../../Probability/central-limit-theorems/multivariate-central-limit-theorem/exists-tendsto-in-distribution-inv-sqrt.md)
+- [Studentization with a consistent covariance estimator](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/studentization-for-an-explicitly-supplied-depend.md)
+- [Delete-one-block jackknife covariance of a mean](delete-one-block-jackknife-covariance-of-a-vecto.md)
+- [The scaled block jackknife is consistent for independent identically distributed blocks](consistency-of-the-scaled-block-jackknife-covari.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -28,16 +37,6 @@ A full proof page must establish the following.
 - The asymptotic version: a multivariate central limit theorem for the genome-wide f-statistics (independent blocks), consistency of the block-jackknife covariance, studentization, and continuity of the projection statistic in $(V,z)$ at positive definite $V$.
 - A flagged boundary case: an example in which the constrained optimum has an active nonnegativity constraint and the statistic is not $\chi^2_{q-p}$.
 - An example of two f-equivalent drift models with different topologies.
-
-Prerequisites:
-
-- [Asymptotic rank test for qpWave and qpAdm](rank-test-for-qp-wave-qp-adm.md)
-- [Basis independence of the qpGraph score S1](../fitting-admixture-graphs-by-least-squares/score-s1-basis-change.md)
-- [Chi-square law of the Gaussian projection statistic](../../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/map-gauss-proj-stat-multivariate-gaussia.md)
-- [Multivariate central limit theorem with a constructed limit](../../../Probability/central-limit-theorems/multivariate-central-limit-theorem/exists-tendsto-in-distribution-inv-sqrt.md)
-- [Studentization with a consistent covariance estimator](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/studentization-for-an-explicitly-supplied-depend.md)
-- [Delete-one-block jackknife covariance of a mean](delete-one-block-jackknife-covariance-of-a-vecto.md)
-- [The scaled block jackknife is consistent for independent identically distributed blocks](consistency-of-the-scaled-block-jackknife-covari.md)
 
 ## Sources
 

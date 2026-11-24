@@ -12,9 +12,8 @@ Let $P_t$ be the neutral Wright–Fisher semigroup on $C[0, 1]$, without selecti
 2. $P_t$ maps polynomials to polynomials, from [the generator on polynomials](tendsto-wf-semigroup-sub-div.md).
 3. The core property from the range condition and the invariance.
 
-Prerequisites:
+It also uses:
 
-- [Generator of the Wright–Fisher diffusion on polynomials](tendsto-wf-semigroup-sub-div.md)
 - Deterministic operator semigroups and their cores.
 
 ## Sources

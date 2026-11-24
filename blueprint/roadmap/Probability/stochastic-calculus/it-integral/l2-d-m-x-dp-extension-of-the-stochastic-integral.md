@@ -21,10 +21,6 @@ A full proof page must establish:
 - Doob's $L^2$ maximal inequality and the elementary isometry: the elementary integrals form a Cauchy sequence in $L^2(\mathbb P;C[0,T])$, and continuity, the martingale property, linearity and the isometry pass to the limit.
 - For $M$ a Brownian motion, the construction agrees almost surely with the Brownian Itô integral built from [density of elementary integrands](is-ito-approximable-of-is-progressive.md) and the [elementary Itô integral](ito-integral.md).
 
-Prerequisites:
-
-- [Elementary stochastic integral against a continuous square-integrable martingale and its isometry](elementary-stochastic-integral-against-a-continu.md)
-
 ## Sources
 
 - I. Karatzas and S. E. Shreve, *Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in Mathematics 113, Springer (1991), <https://link.springer.com/book/10.1007/978-1-4612-0949-2>, Sec. 3.2.

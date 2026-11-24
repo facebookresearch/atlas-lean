@@ -14,10 +14,6 @@ where $\Lambda_T$ is the set of increasing homeomorphisms of $[0,T]$. Hence $D([
 
 A full page must establish that $d^\circ$ is a metric, that $d$ and $d^\circ$ have the same convergent sequences, completeness of $d^\circ$ (a $d^\circ$-Cauchy sequence has a subsequence with summable time changes whose composition converges), and separability from a countable dense set of step paths with rational jump times and values in a countable dense subset of $E$. The case $E=\mathbb R$ should be stated as a corollary. Since $D([0,T],E)$ is Polish, Prokhorov's theorem on Polish spaces identifies tight families of laws on $D([0,T],E)$ with relatively compact ones; the [real-line form](../prokhorov-theorem/prokhorov-sequential.md) is the case of $\mathbb R$ only, so this consequence needs the Polish-space form.
 
-Prerequisites:
-
-- [Skorokhod space D([0,T],E) for a metric space E: J1 topology and embeddings](skorokhod-space-d-0-t-e-for-a-metric-space-e-j1.md)
-
 ## Sources
 
 - P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley (1999), <https://en.wikipedia.org/wiki/Convergence_of_Probability_Measures> (book description), Chapter 3 (separability and completeness of $D$; the metric $d^\circ$).

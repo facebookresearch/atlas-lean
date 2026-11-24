@@ -14,15 +14,13 @@ For two continuous local martingales $M,N$ vanishing at $0$, polarization $\lang
 - [Local martingales and localization](local-martingales-and-localization.md)
 - [Dyadic quadratic variation of bounded continuous martingales](dyadic-quadratic-variation-of-bounded-continuous.md)
 
+## Proof depends on
+
+- [Itô processes and their quadratic variation](../../stochastic-calculus/it-s-formula/ito-processes-and-their-quadratic-variation.md)
+
 ## Expansion
 
 A full proof shows consistency of the localized limits, uniqueness from the fact that a continuous local martingale of finite variation vanishing at $0$ is identically $0$ (shared with [Itô processes and their quadratic variation](../../stochastic-calculus/it-s-formula/ito-processes-and-their-quadratic-variation.md)), and item 4 by monotone and dominated convergence. It should check $\langle B\rangle_t=t$ for Brownian motion $B$, and the guard example $M_t=ZB_t$ with $Z$ independent of $B$, $\mathcal F_0$-measurable and $\mathbb EZ^2=\infty$: then $\langle M\rangle_t=Z^2t$ and $M_t^2-\langle M\rangle_t$ is not integrable, so only the local-martingale conclusion holds.
-
-Prerequisites:
-
-- [Dyadic quadratic variation of bounded continuous martingales](dyadic-quadratic-variation-of-bounded-continuous.md)
-- [Local martingales and localization](local-martingales-and-localization.md)
-- [Itô processes and their quadratic variation](../../stochastic-calculus/it-s-formula/ito-processes-and-their-quadratic-variation.md)
 
 ## Sources
 

@@ -19,11 +19,6 @@ A full proof page must establish the following.
 - Second-order Taylor expansion along partitions with mesh tending to $0$: the first-order terms converge to the stochastic and Stieltjes integrals, the second-order terms $\frac12\sum f''(X_{t_k})(X_{t_{k+1}}-X_{t_k})^2$ converge to $\frac12\int f''(X)\,d\langle M\rangle$ in probability (cross terms with $A$ and the $A$-squared terms vanish by continuity and finite variation), and the remainder vanishes by uniform continuity of $f''$ on compacts.
 - Passage to a version holding simultaneously for all $t$, by continuity of both sides.
 
-Prerequisites:
-
-- [Stochastic integral against continuous local martingales (localized)](../it-integral/stochastic-integral-against-continuous-local-mar.md)
-- [Quadratic variation process $\langle M\rangle$ for continuous local martingales](../../martingales/quadratic-variation-of-continuous-local-martingales/quadratic-variation-process-m-for-continuous-loc.md)
-
 ## Sources
 
 - D. Revuz and M. Yor, *Continuous Martingales and Brownian Motion*, 3rd ed., Grundlehren der mathematischen Wissenschaften 293, Springer (1999), <https://link.springer.com/book/10.1007/978-3-662-06400-9>, Itô's formula for continuous semimartingales (statement and proof).

@@ -24,12 +24,6 @@ uniformly in $N \ge 1$, and every jump of $\langle f, \mu^N \rangle$ has size at
 
 A full proof page must still establish the semimartingale decomposition, the computation of $\Gamma_N(f)$ and the increment bound by optional stopping.
 
-Prerequisites:
-
-- [Moran particle system with Feller mutation on a compact type space](moran-particle-system-with-feller-mutation-on-a.md)
-- [Predictable quadratic variation of Dynkin martingales for bounded-generator jump processes](../../../../Probability/martingales/stopping-times-and-martingale-problems/predictable-quadratic-variation-of-dynkin-martin.md)
-- [Aldous tightness criterion in D([0,T],E) with initial and compact-containment conditions](../../../../Probability/convergence-of-measures/skorokhod-space/aldous-tightness-criterion-in-d-0-t-e-with-initi.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley, 1986, tightness via martingale decompositions, <https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316658>

@@ -17,6 +17,12 @@ Then every subsequential limit in law $X$ of $(X^N)$ has continuous paths and so
 - [A countable bounded-pointwise core of the graph suffices for a martingale problem](countable-bounded-pointwise-graph-core-for-marti.md)
 - [Martingale problems](martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [Diffusion approximation: tightness and a well-posed limit martingale problem give process-level convergence](diffusion-approximation-framework-process-level.md)
+- [Dynkin martingale of a discrete-time Markov chain](../markov-and-strong-markov-properties/dynkin-martingale-of-a-discrete-time-markov-chai.md)
+- [Borel sigma-algebra of D equals the coordinate sigma-algebra; fdd determine laws](../../convergence-of-measures/skorokhod-space/borel-sigma-algebra-of-d-equals-the-coordinate-s.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -28,13 +34,9 @@ the error from the grid being at most $2\sup|A_Nf|/M_N$.
 - A monotone-class argument from the cylinder functions $H$ to the natural filtration, and the extension from $\mathcal G$ to all of $A$ by the countable core lemma.
 - Application to Wright–Fisher chains with selection, which constructs a solution of the selection Wright–Fisher martingale problem (compare the [existence of the selection-mutation Wright–Fisher diffusion](../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/existence-of-the-selection-mutation-wf-diffusion.md)).
 
-Prerequisites:
+It also uses:
 
-- [Diffusion approximation: tightness and a well-posed limit martingale problem give process-level convergence](diffusion-approximation-framework-process-level.md)
 - Tightness criteria in $D$ and C-tightness
-- [Dynkin martingale of a discrete-time Markov chain](../markov-and-strong-markov-properties/dynkin-martingale-of-a-discrete-time-markov-chai.md)
-- [A countable bounded-pointwise core of the graph suffices for a martingale problem](countable-bounded-pointwise-graph-core-for-marti.md)
-- [Borel sigma-algebra of D equals the coordinate sigma-algebra; fdd determine laws](../../convergence-of-measures/skorokhod-space/borel-sigma-algebra-of-d-equals-the-coordinate-s.md)
 
 ## Sources
 

@@ -17,12 +17,6 @@ Let the loci carry breakpoint rates $\rho_i \ge 0$ with $\rho = \sum_i \rho_i$. 
 2. The pathwise reduction and the equality in law with the reduced process.
 3. Checks: for $n = 2$ and $L = 2$ there are two marked histories with the same path of the line count but different reduced states, so the count alone does not determine the reduction. For $\rho = 0$ the time of the grand most recent common ancestor equals that of the most recent common ancestor, and the chain is absorbed at one lineage. For $n = 2$ the reduction of the marked path reproduces [the two-locus rate matrix](two-locus-rate.md).
 
-Prerequisites:
-
-- [Coalescent with recombination: ancestral-material state space and generator](coalescent-with-recombination-ancestral-material.md)
-- [Minimal CTMC on a countable state space](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/minimal-ctmc-on-a-countable-state-space.md)
-- [The ancestral line count with recombination is positive recurrent](lineage-count-birth-death-chain-rho-0-positive-r.md)
-
 ## Sources
 
 - R. C. Griffiths and P. Marjoram, An ancestral recombination graph, in *Progress in Population Genetics and Human Evolution*, IMA Vol. Math. Appl. 87, Springer (1997), 257–270, <https://research.monash.edu/en/publications/an-ancestral-recombination-graph/> (the ancestral recombination graph and the grand most recent common ancestor).

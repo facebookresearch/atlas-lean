@@ -14,10 +14,6 @@ is an $(\mathcal F_t)$-martingale. When $A_t = A$ for all $t$, this is the [mart
 
 A full page must still check that the constant family $A_t = A$ recovers the generic definition exactly, including its measurability conventions.
 
-Prerequisites:
-
-- [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley, 1986, Chapter 4 (martingale problems; time-dependent generators via the space-time process), <https://doi.org/10.1002/9780470316658>

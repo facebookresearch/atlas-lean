@@ -9,17 +9,15 @@ This is convergence of the processes, stronger than [the generator form of the d
 - [Finite-dimensional convergence of rescaled neutral Wright–Fisher chains](finite-dimensional-convergence-of-rescaled-wf-ch.md)
 - [Tightness of interpolated rescaled Wright–Fisher chains in C([0,T])](tightness-of-interpolated-rescaled-wf-chains-in.md)
 
+## Proof depends on
+
+- [Continuous modification selected by Kolmogorov's theorem](../construction-of-the-neutral-wright-fisher-diffus/continuous-realization-2.md)
+- [Diffusion-approximation framework (process-level convergence)](../../../../Probability/markov-chains/martingale-problems/diffusion-approximation-framework-process-level.md)
+
 ## Expansion
 
 1. Finite-dimensional convergence and tightness give convergence in $C([0, T])$, with the limit identified through [the continuous realization](../construction-of-the-neutral-wright-fisher-diffus/continuous-realization-2.md) and [the diffusion-approximation framework](../../../../Probability/markov-chains/martingale-problems/diffusion-approximation-framework-process-level.md).
 2. A corollary by continuous mapping: the law of $\max_{t \le T} Y^M(t)$ converges.
-
-Prerequisites:
-
-- [Finite-dimensional convergence of rescaled neutral Wright–Fisher chains](finite-dimensional-convergence-of-rescaled-wf-ch.md)
-- [Tightness of interpolated rescaled Wright–Fisher chains in C([0,T])](tightness-of-interpolated-rescaled-wf-chains-in.md)
-- [Continuous modification selected by Kolmogorov's theorem](../construction-of-the-neutral-wright-fisher-diffus/continuous-realization-2.md)
-- [Diffusion-approximation framework (process-level convergence)](../../../../Probability/markov-chains/martingale-problems/diffusion-approximation-framework-process-level.md)
 
 ## Sources
 

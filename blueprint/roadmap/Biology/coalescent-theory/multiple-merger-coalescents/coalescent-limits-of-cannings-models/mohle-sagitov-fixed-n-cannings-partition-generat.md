@@ -18,10 +18,6 @@ The raw-moment hypothesis of Möhle and Sagitov, together with the transform fro
 2. The finite-dimensional distributions from the matrix limit and the Markov property.
 3. Checks against the existing special cases: in the Λ case it reproduces the [Möhle–Sagitov limit of the lineage count](tendsto-lineage-matrix-pow.md), in the Kingman case the [convergence of transition matrices to Kingman's](../kingman-limit-of-cannings-models/tendsto-ancestral-matrix-pow.md), and the sweepstake model has the rates of $\Lambda = \delta_1$.
 
-Prerequisites:
-
-- [Generator convergence of Cannings ancestral partition chains under pattern limits](generator-convergence-of-cannings-partition-chai.md)
-
 ## Sources
 
 - M. Möhle and S. Sagitov, A classification of coalescent processes for haploid exchangeable population models, *Ann. Probab.* 29 (2001), 1547–1562, <https://doi.org/10.1214/aop/1015345761> (classification).

@@ -21,11 +21,8 @@ A full proof page must still establish:
 - that the polynomials separate the points of $\mathcal M_1(E)$ and the density argument on the compact space $\mathcal M_1(E)$ with the weak topology;
 - the cases $n = 1$ and finite $E$.
 
-Prerequisites:
+It also uses:
 
-- [Fleming-Viot moment hierarchy: triangular bounded Volterra system and unique solvability](fleming-viot-moment-hierarchy-triangular-bounded.md)
-- [Fleming-Viot martingale-problem solutions satisfy the moment hierarchy (bounded mutation)](fleming-viot-martingale-problem-solutions-satisf.md)
-- [From one-time marginal uniqueness to fdd uniqueness for martingale problems](../../../../Probability/markov-chains/martingale-problems/from-one-time-marginal-uniqueness-to-fdd-uniquen.md)
 - the Stone–Weierstrass theorem and compactness of $\mathcal M_1(E)$ in the weak topology
 
 ## Sources

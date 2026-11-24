@@ -10,15 +10,17 @@ Integrability is automatic since $E$ is compact. Proof sketch: for $F \in \mathc
 
 - [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [Global existence and uniqueness for globally Lipschitz ODEs](../../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
+
 ## Expansion
 
 A full proof page must still establish the linear equation for $m$ from the martingale property, its unique solvability, and the case of a random initial state.
 
-Prerequisites:
+It also uses:
 
-- [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 - The matrix exponential of a finite matrix.
-- [Global existence and uniqueness for globally Lipschitz ODEs](../../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
 - conditional expectation
 
 ## Sources

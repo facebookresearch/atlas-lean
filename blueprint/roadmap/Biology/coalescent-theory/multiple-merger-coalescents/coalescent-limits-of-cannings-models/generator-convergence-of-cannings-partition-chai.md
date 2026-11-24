@@ -23,10 +23,6 @@ $$\frac{1}{c_N} (\Pi_N - I) \to Q_n \qquad \text{entrywise}.$$
 2. The rows of $Q_n$ sum to $0$ and its off-diagonal entries are nonnegative.
 3. For the sweepstake model (with probability $c_N$ all children share one uniform parent, otherwise parents are a uniform bijection), $q(\{1,2\}\{3\}) = 0$ and $q(\{1,2,3\}) = 1$: the rates of the Λ-coalescent with $\Lambda = \delta_1$, for which $\lambda_{3,2} = 0$.
 
-Prerequisites:
-
-- [One-generation sampling identity for Cannings partitions](../cannings-models/exact-one-generation-sampling-identity-for-canni.md)
-
 ## Sources
 
 - M. Möhle and S. Sagitov, A classification of coalescent processes for haploid exchangeable population models, *Ann. Probab.* 29 (2001), 1547–1562, <https://doi.org/10.1214/aop/1015345761> (generator limit).

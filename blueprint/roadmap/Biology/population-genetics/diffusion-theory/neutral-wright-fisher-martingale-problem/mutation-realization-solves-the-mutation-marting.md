@@ -13,17 +13,14 @@ is a martingale. For polynomials $p$ this follows from $\frac{d}{dt} P^\theta_t 
 - [Two-way mutation (and selection) Wright-Fisher martingale problem](../wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
 - [Mutation Wright–Fisher transition kernel and canonical path measure](../construction-of-the-neutral-wright-fisher-diffus/mutation-wf-transition-kernel-and-canonical-path.md)
 
+## Proof depends on
+
+- [Mutation WF Feller semigroup via polynomial duality and chain limits](../wright-fisher-semigroup-and-moment-duality/mutation-wf-feller-semigroup-via-polynomial-dual.md)
+- [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
+
 ## Expansion
 
 A full proof page must still establish the polynomial case from the semigroup identity and the Markov property, and the $C^2$ extension by simultaneous polynomial approximation of $f$, $f'$ and $f''$.
-
-Prerequisites:
-
-- [Fourth-moment increment bound and continuous modification for the mutation diffusion](../construction-of-the-neutral-wright-fisher-diffus/fourth-moment-increment-bound-and-continuous-mod.md)
-- [Markov property of the continuous canonical process of a Chapman-Kolmogorov family](../strong-markov-property-of-the-wright-fisher-diff-2/markov-property-of-the-continuous-canonical-proc.md)
-- [Mutation WF Feller semigroup via polynomial duality and chain limits](../wright-fisher-semigroup-and-moment-duality/mutation-wf-feller-semigroup-via-polynomial-dual.md)
-- [Two-way mutation (and selection) Wright-Fisher martingale problem](../wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
-- [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 
 ## Sources
 

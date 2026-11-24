@@ -13,7 +13,7 @@ A full proof page must still establish:
 - uniqueness of $Q_x$ from its finite-dimensional laws, and measurability in $x$ on cylinder sets, extended by a $\pi$–$\lambda$ argument;
 - the neutral case: $Q_x$ is the law of the [continuous modified Wright–Fisher process](modified-process.md) started at $x$.
 
-Prerequisites:
+It also uses:
 
 - Continuous-time Markov processes defined by a family of transition kernels.
 - measure-theoretic prerequisites (product $\sigma$-fields, the $\pi$–$\lambda$ theorem) and the topology of locally uniform convergence

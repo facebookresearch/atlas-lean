@@ -17,11 +17,6 @@ $$\mathbb{P}(\text{identical in state}) = \sum_i \pi_i\, \mathbb{E}\bigl[(e^{\th
 2. The two-sample formula: the two lineages are joined by a path of length $2\tau$, and reversibility turns the sum over the root type into $\sum_i \pi_i (e^{\theta \tau Q})_{ii}$. Reversibility is needed only for this closed formula.
 3. Checks: the parent-independent model is the special case $Q = \mathbf{1} \pi^{\top} - I$, and the Jukes–Cantor model on four states has a closed form.
 
-Prerequisites:
-
-- [Transition function of a rate matrix is stochastic](../../../Probability/markov-chains/finite-continuous-time-markov-chains/the-transition-semigroup-of-a-finite-continuous/ctmc-transition-mem-row-stochastic.md)
-- [Detailed balance](../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/detailed-balance.md)
-
 ## Sources
 
 - R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed., Springer (2008), <https://doi.org/10.1007/978-0-387-78168-6> (finite sites).

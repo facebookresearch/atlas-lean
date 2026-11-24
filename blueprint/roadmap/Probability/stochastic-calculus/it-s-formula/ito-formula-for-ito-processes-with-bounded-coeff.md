@@ -14,6 +14,10 @@ For $b=0$, $\sigma=1$ and $X_0=0$ this is [Itô's formula for $f(t,B_t)$](ito-fo
 
 - [Itô processes and their quadratic variation](ito-processes-and-their-quadratic-variation.md)
 
+## Proof depends on
+
+- [Itô's formula for $f(t,B_t)$ with bounded derivatives](ito-formula-for-f-t-b-t-with-bounded-derivatives.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -22,11 +26,6 @@ A full proof page must establish the following.
 - The weighted quadratic-variation limit $\sum_kg(t_k)\bigl(\int_{t_k}^{t_{k+1}}\sigma\,dB\bigr)^2\to\int_0^tg(s)\sigma_s^2\,ds$ in probability for bounded continuous adapted $g$, using the Itô isometry and the bound $|\sigma|\le C$.
 - Convergence of the first-order stochastic terms by the isometry, of the drift terms pathwise, and vanishing of the remainder by uniform continuity.
 - Checks: the case $b=0$, $\sigma=1$; and for deterministic $\sigma$ with $b=0$, $X_0=0$, the formula applied to $x^2$ (after truncation) gives $\mathbb EX_t^2=\int_0^t\sigma_s^2\,ds$.
-
-Prerequisites:
-
-- [Itô's formula for $f(t,B_t)$ with bounded derivatives](ito-formula-for-f-t-b-t-with-bounded-derivatives.md)
-- [Itô processes and their quadratic variation](ito-processes-and-their-quadratic-variation.md)
 
 ## Sources
 

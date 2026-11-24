@@ -16,6 +16,10 @@ so no right limit is taken at the terminal time. Then:
 - [Martingale problems (generic definition)](../../markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 - [Usual conditions and continuous-time hitting times](../../markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/usual-conditions-and-continuous-time-hitting-tim.md)
 
+## Proof depends on
+
+- [General optional stopping for uniformly integrable martingales](../optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
+
 ## Expansion
 
 A full proof establishes that $\mathbb E[Y\mid\sigma(\mathcal G\cup\mathcal N)]=\mathbb E[Y\mid\mathcal G]$ almost surely, the backward (Lévy downward) martingale convergence theorem, right-continuity of $(\mathcal F^{\mathrm{aug}}_t)$ for $t<T$, and the hitting-time statements. It should also check:
@@ -23,13 +27,6 @@ A full proof establishes that $\mathbb E[Y\mid\sigma(\mathcal G\cup\mathcal N)]=
 - without right-continuity of $M$ the identity $\mathbb E[M_t\mid\mathcal F_{s+}]=M_s$ can fail;
 - a non-dyadic horizon such as $T=1/3$, where $\mathcal F^{\mathrm{aug}}_T=\mathcal F^P_T$ and right limits are taken only at $t<1/3$;
 - for a filtration that jumps exactly at $T$, $\mathcal F^{\mathrm{aug}}_T$ is the completed $\mathcal F_T$, with no intersection over $u>T$.
-
-Prerequisites:
-
-- [Filtrations and stopping times](filtrations-and-stopping-times.md)
-- [General optional stopping for uniformly integrable martingales](../optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
-- [Martingale problems (generic definition)](../../markov-chains/martingale-problems/martingale-problems-generic-definition.md)
-- [Usual conditions and continuous-time hitting times](../../markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/usual-conditions-and-continuous-time-hitting-tim.md)
 
 ## Sources
 

@@ -16,11 +16,8 @@ Its finite-dimensional laws are those of the [path-space measure of the semigrou
 
 A proof page must establish: the kernels $K_t$ and their Chapman–Kolmogorov equations from the semigroup property; a càdlàg modification of the canonical process under the path measure, for instance from supermartingale regularization of $t\mapsto e^{-\lambda t}R_\lambda f(X_t)$ for the resolvent $R_\lambda=\int_0^\infty e^{-\lambda t}T_t\,dt$ and a countable separating family of $f$; the transfer of the law to $D([0,\infty),E)$ and measurability in $x$; and the strong Markov property, first for stopping times with countably many values and then by right-continuity and the Feller property.
 
-Prerequisites:
+It also uses:
 
-- [Path-space measure of a Markov semigroup](path-measure.md)
-- [Positive operators on $C(E)$ are given by Markov kernels](exists-markov-kernel-of-positive-operato.md)
-- [Skorokhod space D([0,T],E) for a metric space E: J1 topology and embeddings](../../convergence-of-measures/skorokhod-space/skorokhod-space-d-0-t-e-for-a-metric-space-e-j1.md)
 - Optional stopping for right-continuous martingales
 
 ## Sources

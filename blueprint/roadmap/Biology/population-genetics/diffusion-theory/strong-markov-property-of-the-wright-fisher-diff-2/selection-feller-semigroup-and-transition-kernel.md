@@ -10,16 +10,15 @@ Let $\alpha \in \mathbb{R}$, with no mutation ($\theta = 0$), and let $P^\alpha_
 
 - [Uniqueness for the selection martingale problem by an inverse change of measure](../wright-fisher-diffusion-with-selection-and-mutat/uniqueness-for-the-selection-martingale-problem.md)
 
+## Proof depends on
+
+- [Strong Markov property of the neutral Wright–Fisher diffusion](../strong-markov-property-of-the-wright-fisher-diff/cond-exp-stopped-value-add-ae-eq.md)
+
 ## Expansion
 
 1. The Feller continuity of $x \mapsto P^\alpha_t f(x)$, from the continuity in $x$ of the neutral path law.
 2. The Chapman–Kolmogorov equations and the Markov property, from the [strong Markov property of the neutral diffusion](../strong-markov-property-of-the-wright-fisher-diff/cond-exp-stopped-value-add-ae-eq.md) and the multiplicativity of $Z^\alpha$.
 3. A check: $\alpha = 0$ recovers the neutral kernels.
-
-Prerequisites:
-
-- [Uniqueness for the selection martingale problem via inverse change of measure](../wright-fisher-diffusion-with-selection-and-mutat/uniqueness-for-the-selection-martingale-problem.md)
-- [Strong Markov property of the neutral Wright–Fisher diffusion](../strong-markov-property-of-the-wright-fisher-diff/cond-exp-stopped-value-add-ae-eq.md)
 
 ## Sources
 

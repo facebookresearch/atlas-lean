@@ -17,13 +17,6 @@ Since the drift is linear and the diffusion coefficients are quadratic, $L$ maps
 
 A full proof page must still check the degree-preservation property of $L$ and assemble the three lemmas. Existence for mutation matrices that are not parent-independent is a separate result.
 
-Prerequisites:
-
-- [Conditional polynomial-semigroup identity for martingale-problem solutions with triangular generators](conditional-polynomial-semigroup-identity-for-ma.md)
-- [Semigroup-free uniqueness: conditional polynomial identities determine finite-dimensional laws](semigroup-free-uniqueness-conditional-polynomial.md)
-- [Moment determinacy on compact subsets of Euclidean space](moment-determinacy-on-compact-subsets-of-r-d-sim.md)
-- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
-
 ## Sources
 
 - S. N. Ethier, "A class of degenerate diffusion processes occurring in population genetics", *Communications on Pure and Applied Mathematics* 29(5):483–493, 1976, <https://doi.org/10.1002/cpa.3160290503> (background)

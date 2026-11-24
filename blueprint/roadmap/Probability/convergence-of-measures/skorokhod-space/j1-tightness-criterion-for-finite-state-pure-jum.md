@@ -19,11 +19,9 @@ The jump-separation condition cannot be dropped. The deterministic pulses $x_m=\
 
 A proof page must establish: tightness from the jump-separation condition; Prokhorov's theorem on the Polish space $D([0,\infty),E)$, so that every subsequence has a further subsequence converging in law to some $Y$; equality of the finite-dimensional distributions of $Y$ and $X$ at the times of $T_0$ that are not fixed discontinuities of $Y$, which are dense; determination of the law by those times, where the cited determination on $[0,T]$ must be transferred to $[0,\infty)$ through restriction maps; and the three counterexamples.
 
-Prerequisites:
+It also uses:
 
 - Topology and metric spaces
-- [Sufficient criterion for relative compactness and tightness in D([0,infinity),E), finite E](sufficient-criterion-for-relative-compactness-an.md)
-- [Borel sigma-algebra of D equals the coordinate sigma-algebra; fdd determine laws](borel-sigma-algebra-of-d-equals-the-coordinate-s.md)
 
 ## Sources
 

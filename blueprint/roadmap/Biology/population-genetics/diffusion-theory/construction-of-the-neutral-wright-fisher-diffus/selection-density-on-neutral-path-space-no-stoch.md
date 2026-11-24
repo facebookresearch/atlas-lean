@@ -19,11 +19,6 @@ A full proof page must still establish:
 - the identity $L_0 g / g = \frac{\alpha^2}{2} x(1-x)$ and the resulting form of $Z^\alpha$;
 - the bound $Z^\alpha_t \le e^{|\alpha|}$, from $|X_t - X_0| \le 1$ and the nonnegativity of the integral.
 
-Prerequisites:
-
-- [Exponential martingale for positive test functions in a martingale problem](../../../../Probability/markov-chains/martingale-problems/exponential-martingale-for-positive-test-functio.md)
-- [Continuous modification selected by Kolmogorov's theorem](continuous-realization-2.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley, 1986, Chapter 4 (change of measure), <https://doi.org/10.1002/9780470316658>

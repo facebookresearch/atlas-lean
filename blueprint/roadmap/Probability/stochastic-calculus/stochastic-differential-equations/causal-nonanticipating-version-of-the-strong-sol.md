@@ -9,16 +9,14 @@ Consequently, let $(\Omega',\mathcal A',P',(\mathcal F'_t))$ be a filtered proba
 - [Gluing two weak solutions over a common initial value and Brownian motion](gluing-two-weak-solutions-over-a-common-initial.md)
 - [Pathwise equality under gluing gives a measurable strong-solution functional](pathwise-equality-under-gluing-gives-a-measurabl.md)
 
+## Proof depends on
+
+- [Regular conditional distributions](../../foundations/regular-conditional-distributions/is-regular-conditional-distribution.md)
+- [Martingales and martingale problems are preserved by the usual augmentation](../../martingales/stopping-times-and-martingale-problems/martingales-and-martingale-problems-are-preserve.md)
+
 ## Expansion
 
 A full proof uses that, in the glued construction, $Q(x_0,w;A)$ is measurable for the completion of $\sigma(x_0,w|_{[0,t]})$ whenever $A\in\sigma(y|_{[0,t]})$, together with $Q=\delta_{F}$, to obtain the causal measurability of $F|_{[0,t]}$. The transfer uses completeness of $\mathcal F'_t$ to absorb the $\nu$-null modification, and the equality of the laws of $(\xi,B',X')$ and $(X_0,B,X)$ to transfer the integral equation. It should exhibit the guard: on $[0,T]$, the map $F(w)_t=w_T$ for $t<T$ is measurable but anticipating, and is excluded by the conclusion.
-
-Prerequisites:
-
-- [Gluing two weak solutions over a common initial value and Brownian motion](gluing-two-weak-solutions-over-a-common-initial.md)
-- [Pathwise equality under gluing gives a measurable strong-solution functional](pathwise-equality-under-gluing-gives-a-measurabl.md)
-- [Regular conditional distributions](../../foundations/regular-conditional-distributions/is-regular-conditional-distribution.md)
-- [Martingales and martingale problems are preserved by the usual augmentation](../../martingales/stopping-times-and-martingale-problems/martingales-and-martingale-problems-are-preserve.md)
 
 ## Sources
 

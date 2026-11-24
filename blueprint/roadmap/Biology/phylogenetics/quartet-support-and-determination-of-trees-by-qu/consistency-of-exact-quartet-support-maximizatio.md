@@ -14,11 +14,6 @@ The statement concerns the unrooted topology only: quartets do not identify the 
 
 A proof page combines the two dependencies: the first gives, almost surely, an $n_0$ such that $f_n$ is a strict plurality for $S$ for all $n\ge n_0$; the second then gives $\sum_qf_n(q,T|_q)<\sum_qf_n(q,S|_q)$ for every $T$ not isomorphic to $S$, so every maximizer is isomorphic to $S$. It should also record the excluded boundary case $t_q=0$ and the repeated-gene-tree counter-probe.
 
-Prerequisites:
-
-- [Under strict plurality other topologies have smaller support](quartet-score-lt-of-not-iso.md)
-- [Positive quartet margin and eventual strict plurality under i.i.d. gene trees](positive-quartet-margin-and-eventual-strict-plur.md)
-
 ## Sources
 
 - S. Mirarab, R. Reaz, Md. S. Bayzid, T. Zimmermann, M. S. Swenson and T. Warnow, *ASTRAL: genome-scale coalescent-based species tree estimation*, Bioinformatics 30 (2014), i541–i548 (quartet-support maximization).

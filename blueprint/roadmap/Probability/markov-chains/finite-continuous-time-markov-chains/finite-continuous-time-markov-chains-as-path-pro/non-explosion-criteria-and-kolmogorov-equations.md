@@ -24,10 +24,6 @@ A full proof page must establish the following.
 - Item 3: honesty from non-explosion and the row-sum identity of the minimal chain; the backward equation from the minimal construction; the forward equation from the last-jump decomposition, with justification of the termwise differentiation and of the convergence of $\sum_jp_{kj}(t)q_{jl}$.
 - The linear birth–death example.
 
-Prerequisites:
-
-- [Minimal continuous-time Markov chain on a countable state space](minimal-ctmc-on-a-countable-state-space.md)
-
 ## Sources
 
 - J. R. Norris, *Markov Chains*, Cambridge University Press (1997), <https://www.statslab.cam.ac.uk/~jrn10//Markov/>, Theorem 2.7.1 and Section 2.8 (statement and proof).

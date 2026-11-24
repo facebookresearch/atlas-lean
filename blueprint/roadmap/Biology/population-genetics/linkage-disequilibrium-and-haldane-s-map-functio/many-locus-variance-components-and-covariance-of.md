@@ -23,18 +23,18 @@ that is, the covariance is the [Cockerham form](../../quantitative-genetics/cova
 - [Cockerham–Kempthorne variance components](../../quantitative-genetics/covariance-between-relatives/cockerham-components.md)
 - [Genetic covariance of relatives in Cockerham form](../../quantitative-genetics/covariance-between-relatives/cov.md)
 
+## Proof depends on
+
+- [Parent–offspring covariance is half the additive variance](../../quantitative-genetics/fisher-s-decomposition-of-genetic-variance/cov-parent-offspring-eq.md)
+- [Single-locus covariance between relatives in Cockerham form](../../quantitative-genetics/covariance-between-relatives/rel-cov-eq-cov.md)
+- [Multi-allelic linkage disequilibria after $t$ generations](linkage-diseq-iterate-2.md)
+
 ## Expansion
 
 A full proof establishes the one-locus orthogonal decomposition, takes tensor products using the independence of the $2L$ alleles, and computes the covariance of two components: $\operatorname{Cov}(G_{c,X},G_{c',Y})=0$ for $c\ne c'$, and for $c=c'$ the covariance factors over loci, contributing $k_1/2+k_2$ at an additive locus, $k_2$ at a dominance locus and $1$ at a constant locus. It should also
 
 - compute the two-locus additive-by-additive case explicitly, showing that its contribution is $(2\varphi)^2V_{20}$;
 - construct the Cockerham–Kempthorne components from the genotype model above, so that the many-locus Cockerham form becomes a theorem rather than a hypothesis on the components.
-
-Prerequisites:
-
-- [Parent–offspring covariance is half the additive variance](../../quantitative-genetics/fisher-s-decomposition-of-genetic-variance/cov-parent-offspring-eq.md)
-- [Single-locus covariance between relatives in Cockerham form](../../quantitative-genetics/covariance-between-relatives/rel-cov-eq-cov.md)
-- [Multi-allelic linkage disequilibria after $t$ generations](linkage-diseq-iterate-2.md)
 
 ## Sources
 

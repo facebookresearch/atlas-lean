@@ -9,13 +9,13 @@ Two basic consequences belong to the definition:
 
 Some sources instead require $M^{\tau_n}-M_0$, or $M^{\tau_n}\mathbf 1_{\{\tau_n>0\}}$, to be a (uniformly integrable) martingale; the versions differ only in integrability of $M_0$.
 
+## Proof depends on
+
+- [Optional stopping theorem in continuous time](../optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
+
 ## Expansion
 
 A full page defines the localization operator on properties of processes, proves that a stopped martingale is a martingale (via [optional stopping in continuous time](../optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)), that localizing sequences can be combined by taking minima, and the two consequences above, and that for a continuous local martingale the times $\inf\{t:|M_t|\ge n\}$ form a localizing sequence when $M_0$ is bounded.
-
-Prerequisites:
-
-- [Optional stopping theorem in continuous time](../optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
 
 ## Sources
 

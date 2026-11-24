@@ -22,10 +22,6 @@ General finite recombination measures, with atoms, are a separate target: [the c
 3. The number of lineages is exactly [the ancestral line count with recombination](../two-locus-coalescent/lineage-count-birth-death-chain-rho-0-positive-r.md) (coalescence at rate $\binom{k}{2}$, recombination at rate $\rho k/2$), which is positive recurrent for $\rho > 0$ and absorbed at $1$ for $\rho = 0$.
 4. The half-open cut convention.
 
-Prerequisites:
-
-- [The ancestral line count with recombination is positive recurrent](../two-locus-coalescent/lineage-count-birth-death-chain-rho-0-positive-r.md)
-
 ## Sources
 
 - R. C. Griffiths and P. Marjoram, An ancestral recombination graph, in *Progress in Population Genetics and Human Evolution*, IMA Vol. Math. Appl. 87, Springer (1997), 257–270, <https://research.monash.edu/en/publications/an-ancestral-recombination-graph/> (the ancestral recombination graph).

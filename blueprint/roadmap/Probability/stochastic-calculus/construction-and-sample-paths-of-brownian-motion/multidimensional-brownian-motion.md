@@ -23,9 +23,8 @@ A full proof page must establish the following.
 - Item 2: linear images of Gaussian vectors are Gaussian, $\operatorname{Cov}(AB_s,AB_t)=\min(s,t)AA^{\mathsf T}$, and a centred Gaussian law is determined by its covariance; continuity of paths transfers through the linear map.
 - Item 3, including the case of singular $C$, where $B^C$ lives in the range of $C$.
 
-Prerequisites:
+It also uses:
 
-- [Existence of Brownian motion](exists-is-brownian-real.md)
 - Linear algebra of positive semidefinite matrices and quadratic forms (square roots and factorizations $AA^{\mathsf T}=C$)
 
 ## Sources

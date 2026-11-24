@@ -20,10 +20,6 @@ If in addition the weighted integral $\int_l^r (s(y) - s(l))(s(r) - s(y))\, m(dy
 2. Checks: Brownian motion on $(0, 1)$ has $\mathbb{E}_x \tau = x(1 - x)$. For the neutral Wright–Fisher diffusion, $s(y) = y$ and $m(dy) = 2\, dy/(y(1 - y))$ has infinite total mass, but $\int_0^1 y(1 - y)\, m(dy) = 2 < \infty$, so the real-valued clause applies.
 3. Signed $g$ without the weighted integrability is excluded from the real-valued claim.
 
-Prerequisites:
-
-- [Scale function and exit probabilities for one-dimensional diffusions (process level)](scale-function-and-exit-probabilities-for-one-di.md)
-
 ## Sources
 
 - S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press (1981), <https://shop.elsevier.com/books/a-second-course-in-stochastic-processes/karlin/978-0-08-057050-1> (Green function and speed measure).

@@ -16,7 +16,7 @@ A proof page must establish:
 - smoothness of the graph map $(A,B,C)\mapsto CA^{-1}B$, and the dimension count $k^2+k(r-k)+k(n-k)=k(n+r-k)$, so the codimension is $nr-k(n+r-k)=(n-k)(r-k)$;
 - the case $n=r=2$, $k=1$.
 
-Prerequisites:
+It also uses:
 
 - Linear algebra: block matrices, Schur complements and rank
 - Smooth embedded submanifolds of Euclidean space given as graphs

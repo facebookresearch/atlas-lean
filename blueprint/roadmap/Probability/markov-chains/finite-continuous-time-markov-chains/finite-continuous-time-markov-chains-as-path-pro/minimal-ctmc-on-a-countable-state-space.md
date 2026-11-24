@@ -12,6 +12,10 @@ every nonnegative solution $\tilde p$ satisfies $\tilde p_{ij}(t)\ge p_{ij}(t)$.
 
 Examples: the pure-birth chain on $\{1,2,\ldots\}$ with rates $q_{n,n+1}=\lambda_n$, started at $1$, explodes almost surely when $\lambda_n=n^2$, since $\sum_n1/\lambda_n<\infty$, and does not explode when $\lambda_n=n$, since $\sum_n1/\lambda_n=\infty$.
 
+## Proof depends on
+
+- [Path of a continuous-time Markov chain](ctmc-path.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -20,10 +24,6 @@ A full proof page must establish the following.
 - The first-jump decomposition $p_{ij}(t)=e^{-q_it}\delta_{ij}+\int_0^tq_ie^{-q_is}\sum_{k\ne i}\pi_{ik}p_{kj}(t-s)\,ds$, its equivalence with the backward equation, and minimality by comparing any nonnegative solution with the probabilities $\mathbb P_i(X_t=j,\ t<J_n)$ by induction on $n$.
 - The row-sum identity.
 - The pure-birth examples: $\mathbb E_1\zeta=\sum_n1/\lambda_n$ when finite, and $\sum_n1/\lambda_n=\infty$ forces $\zeta=\infty$ almost surely.
-
-Prerequisites:
-
-- [Path of a continuous-time Markov chain](ctmc-path.md)
 
 ## Sources
 

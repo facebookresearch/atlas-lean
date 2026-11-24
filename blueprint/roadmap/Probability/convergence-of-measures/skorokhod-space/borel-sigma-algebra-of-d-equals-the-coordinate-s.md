@@ -18,9 +18,8 @@ A full page must establish:
 - the uniqueness of laws from the $\pi$-$\lambda$ theorem applied to finite-dimensional cylinder sets;
 - the rational-times corollary and the counterexample at an irrational terminal time.
 
-Prerequisites:
+It also uses:
 
-- [D([0,T],E) is Polish for Polish E](d-0-t-e-is-polish-for-polish-e.md)
 - Measure, probability, integration and product measures
 
 ## Sources

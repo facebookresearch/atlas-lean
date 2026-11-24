@@ -18,11 +18,6 @@ The proof: polynomials approximate $f$, $f'$ and $f''$ uniformly on $[0, 1]$, po
 1. The approximation of $f \in C^2[0, 1]$ by polynomials in the $C^2$ norm, then by polynomials with rational coefficients.
 2. Uniform, hence bounded-pointwise, convergence of $\mathcal{L}_{\alpha, \theta}\, p_n$ to $\mathcal{L}_{\alpha, \theta} f$ when $p_n \to f$ in $C^2$.
 
-Prerequisites:
-
-- [Countable bounded-pointwise graph core for martingale problems](../../../../Probability/markov-chains/martingale-problems/countable-bounded-pointwise-graph-core-for-marti.md)
-- [Generator of the Wright–Fisher diffusion with selection and mutation](selection-mutation-generator.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://doi.org/10.1002/9780470316658>, Chapter 4 (cores and martingale problems).

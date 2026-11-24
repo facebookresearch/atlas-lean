@@ -16,6 +16,11 @@ Application to Wright–Fisher diffusions. For genic selection without mutation,
 
 - [Exponential martingale for bounded integrands](exponential-martingale-for-bounded-integrands.md)
 
+## Proof depends on
+
+- [Itô's formula for Itô processes with locally integrable coefficients](ito-formula-for-ito-processes-time-dependent-loc.md)
+- [Optional stopping theorem in continuous time](../../martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -24,12 +29,6 @@ A full proof page must establish the following.
 - The characteristic-function identity: apply [Itô's formula for Itô processes](ito-formula-for-ito-processes-time-dependent-loc.md) to the product $Z_t\exp\bigl(iuW_t+\frac12u^2t\bigr)$ (real and imaginary parts); the drift terms cancel, so the product is a $\mathbb P$-martingale on $[0,T]$, bounded in $L^2$ by the bound on $\mathbb EZ_T^2$.
 - Continuity of $W$ and the identity give independent Gaussian increments under $\mathbb Q$.
 - The two Wright–Fisher computations.
-
-Prerequisites:
-
-- [Exponential martingale for bounded integrands](exponential-martingale-for-bounded-integrands.md)
-- [Itô's formula for Itô processes with locally integrable coefficients](ito-formula-for-ito-processes-time-dependent-loc.md)
-- [Optional stopping theorem in continuous time](../../martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
 
 ## Sources
 

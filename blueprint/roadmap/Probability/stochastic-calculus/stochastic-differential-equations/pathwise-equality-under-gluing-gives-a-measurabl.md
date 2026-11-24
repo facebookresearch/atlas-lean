@@ -14,10 +14,6 @@ and hence $y_1=y_2=F(x_0,w)$ $\hat P$-almost surely, and $X^i=F(X^i_0,B^i)$ $P_i
 
 The proof rests on a generic measure lemma: if $\mu_1,\mu_2$ are probability measures on a standard Borel space with $(\mu_1\otimes\mu_2)(\{(y,y)\})=1$, then $\mu_1=\mu_2$ is a Dirac mass. Applied for $\nu$-almost every $(x_0,w)$ to $Q_1\otimes Q_2$, it gives the Dirac masses; the atom depends measurably on $(x_0,w)$ on a measurable set of full measure, and $F$ is extended by a constant elsewhere. The transfer to the original spaces uses that the law of $(X^i,X^i_0,B^i)$ is $Q_i\,\nu$.
 
-Prerequisites:
-
-- [Gluing two weak solutions over a common initial value and Brownian motion](gluing-two-weak-solutions-over-a-common-initial.md)
-
 ## Sources
 
 - T. Yamada and S. Watanabe, *On the uniqueness of solutions of stochastic differential equations*, J. Math. Kyoto Univ. 11 (1971), 155–167, main theorem argument.

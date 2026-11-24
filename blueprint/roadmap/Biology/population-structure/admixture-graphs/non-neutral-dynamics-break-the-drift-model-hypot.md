@@ -18,6 +18,11 @@ Hence, under selection, the drift increments of distinct edges can be correlated
 
 - [Admixture-graph drift model](../patterson-s-f-statistics/drift-model.md)
 
+## Proof depends on
+
+- [A pulse followed by binomial resampling realizes the drift model](neutral-wright-fisher-on-an-admixture-graph-real.md)
+- [Martingale problem for the Wright–Fisher diffusion](../../population-genetics/diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md), for a diffusion-scale analogue of the computation
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -26,11 +31,6 @@ A full proof page must establish the following.
 - The exact example: $\varphi_{1/10}(\frac14)=\frac{11}{41}$, so $p_X=\frac12$ with probability $2\cdot\frac{11}{41}\cdot\frac{30}{41}=\frac{660}{1681}$, while $p_X\in\{0,1\}$ contributes nothing; with $\varphi_{1/10}(\frac12)-\frac12=\frac1{42}$ this gives $\frac{660}{1681}\cdot\frac14\cdot\frac1{42}=\frac{55}{23534}$. With $\mathbb E\delta_1=\frac3{164}$ and $\mathbb E\delta_2=\frac{110}{11767}$ the covariance is $\frac{1045}{482447}$.
 - The role of the root: with $r=\frac12$ and $M=2$ the uncentred cross moment vanishes for every $s$, although the covariance does not ($-\frac{55}{194481}$ at $s=\frac1{10}$), so the example must fix $r$.
 - Why neutrality matters: under neutrality the frequency process is a martingale with independent update randomness, which is exactly what makes increments on distinct edges orthogonal.
-
-Prerequisites:
-
-- [A pulse followed by binomial resampling realizes the drift model](neutral-wright-fisher-on-an-admixture-graph-real.md)
-- [Martingale problem for the Wright–Fisher diffusion](../../population-genetics/diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md), for a diffusion-scale analogue of the computation
 
 ## Sources
 

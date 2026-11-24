@@ -16,6 +16,14 @@ A small P-value is evidence against $\operatorname{rank}F\le k$. P-values test a
 - [qpWave matrix of f4-statistics](f4-matrix.md)
 - [Asymptotic chi-square for minimum-distance rank statistics (assembly)](../rank-of-the-f4-matrix-of-left-and-right-populati/asymptotic-chi-square-for-minimum-distance-rank.md)
 
+## Proof depends on
+
+- [Eckart–Young theorem in operator norm](../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md); the unweighted case needs its Frobenius-norm form, that a truncated singular value decomposition is a best rank-$k$ approximation in Frobenius norm
+- [Delete-one-block jackknife covariance of a mean](delete-one-block-jackknife-covariance-of-a-vecto.md)
+- [The scaled block jackknife is consistent for independent identically distributed blocks](consistency-of-the-scaled-block-jackknife-covari.md)
+- [Multivariate central limit theorem with a constructed limit](../../../Probability/central-limit-theorems/multivariate-central-limit-theorem/exists-tendsto-in-distribution-inv-sqrt.md)
+- [Studentization with a consistent covariance estimator](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/studentization-for-an-explicitly-supplied-depend.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -24,16 +32,6 @@ A full proof page must establish the following.
 - The central limit theorem for $\operatorname{vec}\hat F_L$ under independent blocks of loci and the consistency of the block-jackknife covariance estimate.
 - The reduction to the minimum-distance theorem, including the unweighted case, where the minimum is attained by the best rank-$k$ approximation (Eckart–Young).
 - That no finite-sample exactness follows.
-
-Prerequisites:
-
-- [qpWave rank bound](rank-f4-matrix-le.md)
-- [Eckart–Young theorem in operator norm](../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md); the unweighted case needs its Frobenius-norm form, that a truncated singular value decomposition is a best rank-$k$ approximation in Frobenius norm
-- [Asymptotic chi-square for minimum-distance rank statistics (assembly)](../rank-of-the-f4-matrix-of-left-and-right-populati/asymptotic-chi-square-for-minimum-distance-rank.md)
-- [Delete-one-block jackknife covariance of a mean](delete-one-block-jackknife-covariance-of-a-vecto.md)
-- [The scaled block jackknife is consistent for independent identically distributed blocks](consistency-of-the-scaled-block-jackknife-covari.md)
-- [Multivariate central limit theorem with a constructed limit](../../../Probability/central-limit-theorems/multivariate-central-limit-theorem/exists-tendsto-in-distribution-inv-sqrt.md)
-- [Studentization with a consistent covariance estimator](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/studentization-for-an-explicitly-supplied-depend.md)
 
 ## Sources
 

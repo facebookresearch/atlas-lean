@@ -14,18 +14,17 @@ Consequently the coordinate process under the [canonical path measure of the mut
 
 - [Mutation WF transition kernel and canonical path measure](mutation-wf-transition-kernel-and-canonical-path.md)
 
+## Proof depends on
+
+- [Mutation WF Feller semigroup via polynomial duality and chain limits](../wright-fisher-semigroup-and-moment-duality/mutation-wf-feller-semigroup-via-polynomial-dual.md)
+- [Kolmogorov continuity condition for the raw Wright–Fisher process](is-kolmogorov-process-raw-process.md), the neutral case
+
 ## Expansion
 
 A full proof page must still establish:
 
 - the polynomial computation of $L_\theta (y - x)^4$ and $L_\theta (y - x)^2$ and the Gronwall argument on the polynomial semigroup, with $C_\theta$ explicit in $\theta_1$ and $\theta_2$;
 - the passage from the one-step bound to the two-time bound by the Markov property, and Kolmogorov's continuity theorem.
-
-Prerequisites:
-
-- [Mutation WF transition kernel and canonical path measure](mutation-wf-transition-kernel-and-canonical-path.md)
-- [Mutation WF Feller semigroup via polynomial duality and chain limits](../wright-fisher-semigroup-and-moment-duality/mutation-wf-feller-semigroup-via-polynomial-dual.md)
-- [Kolmogorov continuity condition for the raw Wright–Fisher process](is-kolmogorov-process-raw-process.md), the neutral case
 
 ## Sources
 

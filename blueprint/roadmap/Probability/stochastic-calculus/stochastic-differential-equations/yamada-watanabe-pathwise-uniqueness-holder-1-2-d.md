@@ -13,16 +13,15 @@ The condition covers $h(u)=C\sqrt u$. In particular it covers the Wright–Fishe
 - [Yamada–Watanabe approximating functions](yamada-watanabe-approximating-functions-determin.md)
 - [Gluing two weak solutions over a common initial value and Brownian motion](gluing-two-weak-solutions-over-a-common-initial.md)
 
-## Expansion
-
-A full proof applies Itô's formula to $\varphi_n(X_t-Y_t)$ with the [approximating functions](yamada-watanabe-approximating-functions-determin.md), localized at exit times of compacts. The second-order term is at most $\frac12\mathbb E\int_0^t\varphi_n''(X_s-Y_s)\,h(|X_s-Y_s|)^2\,ds\le t/n$; the stochastic integral has mean zero after localization; and the drift term is at most $L\int_0^t\mathbb E|X_s-Y_s|\,ds$. Letting $n\to\infty$ and applying the [Gronwall inequality](../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md) to $u(t)=\mathbb E|X_{t\wedge\tau}-Y_{t\wedge\tau}|$ gives $X=Y$ up to each localizing time, and continuity of paths gives indistinguishability.
-
-Prerequisites:
+## Proof depends on
 
 - [Ito formula for Ito processes (time-dependent, localized)](../it-s-formula/ito-formula-for-ito-processes-time-dependent-loc.md)
 - [Strong solutions of SDEs with Lipschitz coefficients](../sde-lipschitz-exists-unique.md)
-- [Yamada–Watanabe approximating functions](yamada-watanabe-approximating-functions-determin.md)
 - [Gronwall inequality in integral form](../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
+## Expansion
+
+A full proof applies Itô's formula to $\varphi_n(X_t-Y_t)$ with the [approximating functions](yamada-watanabe-approximating-functions-determin.md), localized at exit times of compacts. The second-order term is at most $\frac12\mathbb E\int_0^t\varphi_n''(X_s-Y_s)\,h(|X_s-Y_s|)^2\,ds\le t/n$; the stochastic integral has mean zero after localization; and the drift term is at most $L\int_0^t\mathbb E|X_s-Y_s|\,ds$. Letting $n\to\infty$ and applying the [Gronwall inequality](../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md) to $u(t)=\mathbb E|X_{t\wedge\tau}-Y_{t\wedge\tau}|$ gives $X=Y$ up to each localizing time, and continuity of paths gives indistinguishability.
 
 ## Sources
 

@@ -24,11 +24,6 @@ A full proof page must still establish:
 - that for $n = 2$ the chain has exactly the rate matrix $Q_\rho$ of the two-locus coalescent;
 - the first-step equations for $\mathbb E[T_A T_B]$ for general $n$.
 
-Prerequisites:
-
-- [Coalescent with recombination: ancestral-material state space and generator](coalescent-with-recombination-ancestral-material.md)
-- [Rate matrix of the two-locus coalescent](two-locus-rate.md)
-
 ## Sources
 
 - N. L. Kaplan and R. R. Hudson, "The use of sample genealogies for studying a selectively neutral m-loci model with recombination", *Theoretical Population Biology* 28(3):382–396, 1985

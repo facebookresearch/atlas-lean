@@ -16,6 +16,10 @@ Exactness with the true slope: suppose that, for $s$ in the window $\{\lVert s-s
 
 - [Rejection ABC returns the tolerance-conditioned posterior](abc-rejection-target-law-and-zero-tolerance-disc.md)
 
+## Proof depends on
+
+- [Weighted means and scatter matrices](../../../../Probability/linear-models-multivariate/weighted-means-and-scatter-matrices/README.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -24,11 +28,6 @@ A full proof page must establish:
 - The case $b=0$ recovers kernel rejection ABC.
 - Exactness with the true slope under the affine-mean, location-residual hypothesis.
 - A counterexample with a nonlinear conditional mean for which the adjusted sample is biased.
-
-Prerequisites:
-
-- [Rejection ABC returns the tolerance-conditioned posterior](abc-rejection-target-law-and-zero-tolerance-disc.md)
-- [Weighted means and scatter matrices](../../../../Probability/linear-models-multivariate/weighted-means-and-scatter-matrices/README.md)
 
 ## Sources
 

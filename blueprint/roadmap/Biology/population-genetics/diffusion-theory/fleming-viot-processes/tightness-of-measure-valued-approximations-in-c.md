@@ -13,16 +13,18 @@ The jump bound alone does not give tightness; it gives continuity of limits only
 - [Uniform Aldous bounds for Moran empirical-measure projections](uniform-aldous-bounds-for-moran-empirical-measur.md)
 - [Moran particle system with bounded mutation on a compact type space](moran-particle-system-with-feller-mutation-on-a.md)
 
+## Proof depends on
+
+- [Aldous tightness criterion in D([0,T],E) with initial and compact-containment conditions](../../../../Probability/convergence-of-measures/skorokhod-space/aldous-tightness-criterion-in-d-0-t-e-with-initi.md)
+- [D([0,T],E) is Polish for Polish E](../../../../Probability/convergence-of-measures/skorokhod-space/d-0-t-e-is-polish-for-polish-e.md)
+- [Borel sigma-algebra of D equals the coordinate sigma-algebra; fdd determine laws](../../../../Probability/convergence-of-measures/skorokhod-space/borel-sigma-algebra-of-d-equals-the-coordinate-s.md)
+
 ## Expansion
 
 A full proof page must still establish the extension from the countable family of projections to the measure-valued processes and the continuity of the limit points.
 
-Prerequisites:
+It also uses:
 
-- [Uniform Aldous bounds for Moran empirical-measure projections](uniform-aldous-bounds-for-moran-empirical-measur.md)
-- [Aldous tightness criterion in D([0,T],E) with initial and compact-containment conditions](../../../../Probability/convergence-of-measures/skorokhod-space/aldous-tightness-criterion-in-d-0-t-e-with-initi.md)
-- [D([0,T],E) is Polish for Polish E](../../../../Probability/convergence-of-measures/skorokhod-space/d-0-t-e-is-polish-for-polish-e.md)
-- [Borel sigma-algebra of D equals the coordinate sigma-algebra; fdd determine laws](../../../../Probability/convergence-of-measures/skorokhod-space/borel-sigma-algebra-of-d-equals-the-coordinate-s.md)
 - Prokhorov's theorem on a Polish space.
 
 ## Sources

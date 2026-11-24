@@ -22,11 +22,6 @@ $$S \mid \text{graph} \sim \operatorname{Poisson}\Bigl(\theta \int_0^1 T_x\, dx\
 2. Finiteness of the total mass.
 3. For $n = 2$, the conditional Poisson law of $S$, with conditional mean $\theta \int_0^1 T_x\, dx$.
 
-Prerequisites:
-
-- [Finitely many breakpoints and a jointly measurable local-tree field](../pairwise-differences-under-poisson-mutation/finitely-many-breakpoints-and-a-jointly-measurab.md)
-- [Poisson point process with finite intensity](../../../Probability/point-processes/poisson-point-processes/poisson-point-process.md)
-
 ## Sources
 
 - R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed., Springer (2008), <https://doi.org/10.1007/978-0-387-78168-6> (mutation on genealogies).

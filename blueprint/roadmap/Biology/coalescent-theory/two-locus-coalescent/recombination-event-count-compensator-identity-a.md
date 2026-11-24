@@ -20,18 +20,16 @@ computed with [the two-locus rate matrix](two-locus-rate.md).
 - [Expected transition counts of a finite Markov chain up to a hitting time](../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/expected-transition-counts-of-a-finite-ctmc-up-t.md)
 - [Rate matrix of the two-locus coalescent](two-locus-rate.md)
 
+## Proof depends on
+
+- [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
+
 ## Expansion
 
 1. The compensator identity under convention C.
 2. The two-locus value by first-step analysis. Exact checks: $\rho = 1$ gives $11/16$, $\rho = 3$ gives $15/11$ and $\rho = 1/2$ gives $40/99$. As $\rho \to 0$, $\mathbb{E}[R] \sim \rho$, and as $\rho \to \infty$, $\mathbb{E}[R] \to 4$.
 3. A three-locus check of the convention: with $\rho_1 = \rho_2 = 1$, a lineage whose material spans only loci $1$ and $2$ contributes split rate $1/2$, not $\rho/2 = 1$.
 4. The relation between convention C and the counting convention of Hudson and Kaplan (1985), and the comparison of part 2 with their closed form.
-
-Prerequisites:
-
-- [Coalescent with recombination: ancestral-material state space and generator](coalescent-with-recombination-ancestral-material.md)
-- [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
-- [Expected transition counts of a finite Markov chain up to a hitting time](../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/expected-transition-counts-of-a-finite-ctmc-up-t.md)
 
 ## Sources
 

@@ -14,6 +14,10 @@ No aperiodicity hypothesis is needed in continuous time. When $I$ is finite the 
 - [Minimal continuous-time Markov chain on a countable state space](minimal-ctmc-on-a-countable-state-space.md)
 - [Non-explosion criteria and Kolmogorov equations on a countable state space](non-explosion-criteria-and-kolmogorov-equations.md)
 
+## Proof depends on
+
+- [Triangle inequality for total variation distance](../../../convergence-of-measures/total-variation-distance/total-variation-dist-triangle.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -21,12 +25,6 @@ A full proof page must establish the following.
 - Items 1 and 2: for an irreducible $Q$, non-explosion together with an invariant distribution $\pi Q=0$ is equivalent to positive recurrence, and then $\pi_j=1/(q_jm_j)$ with $m_j$ the mean return time to $j$; uniqueness follows.
 - Item 3: pointwise convergence $p_{ij}(t)\to\pi_j$, from the discrete skeleton $P(\delta)$, which is irreducible and aperiodic because $p_{jj}(\delta)\ge e^{-q_j\delta}>0$, or by coupling; then total-variation convergence by Scheffé's lemma, and monotonicity of the distance in $t$ by contraction under the semigroup.
 - The finite irreducible case, and the detailed-balance corollary: $\sum_i\theta_iq_{ij}=\theta_j\sum_iq_{ji}=0$, the series converging absolutely because $\sum_{i\ne j}q_{ji}=q_j<\infty$.
-
-Prerequisites:
-
-- [Minimal continuous-time Markov chain on a countable state space](minimal-ctmc-on-a-countable-state-space.md)
-- [Non-explosion criteria and Kolmogorov equations on a countable state space](non-explosion-criteria-and-kolmogorov-equations.md)
-- [Triangle inequality for total variation distance](../../../convergence-of-measures/total-variation-distance/total-variation-dist-triangle.md)
 
 ## Sources
 

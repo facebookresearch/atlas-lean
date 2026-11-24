@@ -14,6 +14,10 @@ No commutation of the semigroup $e^{tB^{(n)}}$ with the diagonal maps $\Phi_{ij}
 
 - [Bounded-rate jump Markov process on a compact space by uniformization](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/bounded-rate-jump-markov-process-on-a-compact-sp.md)
 
+## Proof depends on
+
+- [Gronwall inequality (integral form)](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Expansion
 
 A full proof page must still establish:
@@ -23,10 +27,8 @@ A full proof page must still establish:
 
 Unbounded Feller mutation is a separate target, since it needs an approximation of the diagonal maps on the graph of the generator.
 
-Prerequisites:
+It also uses:
 
-- [Bounded-rate jump Markov process on a compact space by uniformization](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/bounded-rate-jump-markov-process-on-a-compact-sp.md)
-- [Gronwall inequality (integral form)](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
 - exponentials of bounded operators on a Banach space
 
 ## Sources

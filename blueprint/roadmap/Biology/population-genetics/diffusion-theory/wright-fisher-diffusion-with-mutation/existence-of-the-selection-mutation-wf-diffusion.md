@@ -21,12 +21,6 @@ is bounded on $[0, 1]$, the [martingale problem under an exponential tilt](../..
 2. The application of the generic tilt.
 3. A check: $\alpha = 0$ recovers [the mutation realization](../neutral-wright-fisher-martingale-problem/mutation-realization-solves-the-mutation-marting.md).
 
-Prerequisites:
-
-- [Tilted path measure on a canonical space (generic consistent extension)](../construction-of-the-neutral-wright-fisher-diffus/tilted-path-measure-on-a-canonical-space-generic.md)
-- [Martingale problem under exponential tilt (generic)](../../../../Probability/markov-chains/martingale-problems/martingale-problem-under-exponential-tilt-generi.md)
-- [Well-posedness of the Wright–Fisher martingale problem with mutation](../neutral-wright-fisher-martingale-problem/well-posedness-of-the-mutation-martingale-proble.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), <https://doi.org/10.1002/9780470316658>, Chapter 4, Section 3 (exponential change of measure) and Chapter 10.

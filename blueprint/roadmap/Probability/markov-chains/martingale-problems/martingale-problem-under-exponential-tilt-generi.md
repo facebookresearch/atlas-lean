@@ -18,6 +18,10 @@ Examples on $E=[0,1]$ with $a(x)=x(1-x)$: for $g(x)=e^{\alpha x}$, $L^g$ has dri
 - [Product rule for martingale-problem martingales and continuous finite-variation factors](product-rule-for-mp-martingales-and-continuous-f.md)
 - [Martingale problems](martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -26,13 +30,6 @@ A full proof page must establish:
 - The [product rule](product-rule-for-mp-martingales-and-continuous-f.md) applied to $fg$ and $k=Lg/g$: $f(X_t)Z_t-f(X_0)-\int_0^tZ_s\,L^gf(X_s)\,ds$ is a $\mathbb P$-martingale (no semimartingale product rule is needed).
 - The change of measure: a process $Y$ with $YZ$ a $\mathbb P$-martingale is a $\mathbb Q$-martingale on $[0,t_0]$, applied to $f(X_t)-f(X_0)-\int_0^tL^gf(X_s)\,ds$ via Fubini; the initial law is unchanged since $Z_0=1$.
 - The examples and the inverse tilt.
-
-Prerequisites:
-
-- [Exponential martingale of a positive test function in a martingale problem](exponential-martingale-for-positive-test-functio.md)
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
-- [Product rule for martingale-problem martingales and continuous finite-variation factors](product-rule-for-mp-martingales-and-continuous-f.md)
 
 ## Sources
 

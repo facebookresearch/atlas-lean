@@ -12,17 +12,16 @@ Dividing by the [expected number of size-$i$ mutations](integral-sfs.md), $\math
 
 - [Expected site frequency spectrum](integral-sfs.md)
 
+## Proof depends on
+
+- [Poisson point process with finite intensity](../../../Probability/point-processes/poisson-point-processes/poisson-point-process.md)
+
 ## Expansion
 
 1. The time of a mutation on a period-$k$ branch, from the Poisson construction conditional on the genealogy.
 2. The weight $k \binom{n-i-1}{k-2} / \binom{n-1}{k-1}$, from the independence of the topology and the holding times.
 3. The moments $\mathbb{E}[T_k] = 1/c_k$, $\mathbb{E}[T_k^2] = 2/c_k^2$ and the independence of $T_k$ from $V_{k+1}$, which give the bracket.
 4. The checks: for $n = 2$, $i = 1$ the total is $\theta$ and the mean age is $1$. For $n = 3$, $i = 1$ the total is $5\theta/6$.
-
-Prerequisites:
-
-- [Expected site frequency spectrum](integral-sfs.md)
-- [Poisson point process with finite intensity](../../../Probability/point-processes/poisson-point-processes/poisson-point-process.md)
 
 ## Sources
 

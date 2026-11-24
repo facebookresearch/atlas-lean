@@ -30,13 +30,6 @@ For $\theta_1, \theta_2 > 0$ the reversible stationary density is proportional t
 2. Existence by the tilt and uniqueness by the inverse tilt.
 3. The stationary density from the speed density for $\theta_1, \theta_2 > 0$.
 
-Prerequisites:
-
-- [Tilted path measure on a canonical space (generic consistent extension)](../construction-of-the-neutral-wright-fisher-diffus/tilted-path-measure-on-a-canonical-space-generic.md)
-- [Martingale problem under exponential tilt (generic)](../../../../Probability/markov-chains/martingale-problems/martingale-problem-under-exponential-tilt-generi.md)
-- [Mutation WF transition kernel and canonical path measure](../construction-of-the-neutral-wright-fisher-diffus/mutation-wf-transition-kernel-and-canonical-path.md)
-- [Well-posedness of the Wright–Fisher martingale problem with mutation](../neutral-wright-fisher-martingale-problem/well-posedness-of-the-mutation-martingale-proble.md)
-
 ## Sources
 
 - Y. S. Song and M. Steinrücken, A simple method for finding explicit analytic transition densities of diffusion processes with general diploid selection, *Genetics* 190 (2012), 1117–1129 (general diploid selection).

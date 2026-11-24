@@ -18,10 +18,6 @@ Examples: for $E=\{0,1\}$ with $r(0,1)=1$, a single jump at $s\in(\delta,T-\delt
 
 A proof page must establish: a path with finitely many jumps has zero oscillation on $[a,b)$ exactly when it has no jump in $(a,b)$, and on $[a,T]$ exactly when it has no jump in $(a,T]$; the partition formed by $0$, the jump times and $T$ is admissible under the stated conditions; conversely any partition with all oscillations zero has every jump time among $t_1,\dots,t_{k-1}$, which forces the conditions; and since every oscillation of a finite-valued path is $0$ or at least $\rho$, the infimum is $0$ or at least $\rho$. The three examples should be checked.
 
-Prerequisites:
-
-- [Skorokhod space D([0,T],E) for a metric space E: J1 topology and embeddings](skorokhod-space-d-0-t-e-for-a-metric-space-e-j1.md)
-
 ## Sources
 
 - S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), Chapter 3 (the modulus $w'$ of the Skorokhod topology; the endpoint-aware variant on a compact interval is the one defined above).

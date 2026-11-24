@@ -19,6 +19,11 @@ The multilocus contraction of linkage disequilibrium, the multilocus quasi-linka
 - [Two-locus quasi-linkage equilibrium approximation](two-locus-quasi-linkage-equilibrium-approximatio.md)
 - [Diploid two-locus viability selection followed by meiosis](two-locus-viability-selection-with-recombination.md)
 
+## Proof depends on
+
+- [A uniform weak-selection bound on two-locus linkage disequilibrium](two-locus-ld-contraction-under-weak-selection.md)
+- [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md), for comparing the recursion with the continuous-time LD-free flow $\dot p=g(p)$
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -27,13 +32,6 @@ A full proof page must establish the following.
 - $g=h\circ\hat x$, and $h$ is Lipschitz on the simplex with a constant independent of the fitness array; since $x_t=\hat x(p_t)+D_te$, the error is at most $\varepsilon(L|D_t|\,\|e\|+C\varepsilon)$.
 - $|D_t|=O(\varepsilon)$ for $t\ge T(\varepsilon)$, from part (b) of the quasi-linkage-equilibrium approximation. The weaker bound $|D_t|\le(1-r_0)^t/4+6\varepsilon/r_0$ of the [uniform LD bound](two-locus-ld-contraction-under-weak-selection.md) already gives $|D_t|=O(\varepsilon/r_0)$ after $O(\log(1/\varepsilon)/r_0)$ generations, so the full tracking estimate is not needed for this step.
 - The neutral case, treated separately.
-
-Prerequisites:
-
-- [Diploid two-locus viability selection followed by meiosis](two-locus-viability-selection-with-recombination.md)
-- [A uniform weak-selection bound on two-locus linkage disequilibrium](two-locus-ld-contraction-under-weak-selection.md)
-- [Two-locus quasi-linkage equilibrium approximation](two-locus-quasi-linkage-equilibrium-approximatio.md)
-- [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md), for comparing the recursion with the continuous-time LD-free flow $\dot p=g(p)$
 
 ## Sources
 

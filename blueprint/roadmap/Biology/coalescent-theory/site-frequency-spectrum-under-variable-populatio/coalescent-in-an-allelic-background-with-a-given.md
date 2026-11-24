@@ -21,11 +21,6 @@ and each pair of lineages in background $A$ coalesces at rate $1/x$, each pair i
 3. Checks: for constant $x$ and $\theta = 0$ this is a two-deme structured coalescent, with detailed balance $x \cdot \frac{\rho}{2}(1 - x) = (1 - x) \cdot \frac{\rho}{2} x$. For constant $x$ at the mutation equilibrium $x = \theta_{BA}/(\theta_{AB} + \theta_{BA})$, the background law $(x, 1 - x)$ of one lineage is stationary.
 4. The boundary cases, handled separately.
 
-Prerequisites:
-
-- [Time-ordered product limit for near-identity matrices](time-ordered-product-limit-for-near-identity-mat.md)
-- [Rate matrices of the coalescent in an allelic background with a frozen frequency path](background-coalescent-rate-matrices-for-a-frozen.md)
-
 ## Sources
 
 - N. L. Kaplan, T. Darden and R. R. Hudson, The coalescent process in models with selection, *Genetics* 120 (1988), 819–829 (background coalescent).

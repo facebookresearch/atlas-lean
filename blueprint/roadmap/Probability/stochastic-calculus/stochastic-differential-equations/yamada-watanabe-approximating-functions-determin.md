@@ -18,7 +18,7 @@ with $\varphi_n''$ supported in $\{a_n<|x|<a_{n-1}\}$. For $h(u)=\sqrt u$ one ma
 
 A full proof chooses $a_n$ by continuity and divergence of $u\mapsto\int_u^{a_{n-1}}h^{-2}$, picks a continuous $\psi_n\ge0$ supported in $(a_n,a_{n-1})$ with $\psi_n\le2/(n\,h^2)$ and $\int\psi_n=1$ (possible because $\int_{a_n}^{a_{n-1}}2/(nh^2)=2$), and sets $\varphi_n(x)=\int_0^{|x|}\int_0^y\psi_n(u)\,du\,dy$. Then $|x|-a_{n-1}\le\varphi_n(x)\le|x|$, which gives the convergence.
 
-Prerequisites:
+It also uses:
 
 - The fundamental theorem of calculus and continuous bump functions with prescribed integral
 

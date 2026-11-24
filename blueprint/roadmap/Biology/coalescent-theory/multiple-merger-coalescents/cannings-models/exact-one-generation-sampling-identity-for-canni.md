@@ -19,10 +19,6 @@ In particular, the probability that two sampled children share a parent is $P_N(
 3. A sweepstake example: with probability $c_N$ all children choose one uniform parent, and otherwise parents are a uniform bijection. Then $P_N(\{1,2\}\{3\}) = 0$ and $P_N(\{1,2,3\}) = c_N$ exactly.
 4. A check that the five partitions of $[3]$ have probabilities summing to $1$.
 
-Prerequisites:
-
-- [Cannings model](cannings-model.md)
-
 ## Sources
 
 - M. Möhle and S. Sagitov, A classification of coalescent processes for haploid exchangeable population models, *Ann. Probab.* 29 (2001), 1547–1562, <https://doi.org/10.1214/aop/1015345761> (sampling identities).

@@ -10,6 +10,11 @@ In particular, for $S=\{0,1\}$ and every $A\subseteq\Lambda$, $\mathbb P^{\eta_0
 
 The Moran model with $N$ individuals and types in $S$ is the voter model on $\Lambda=\{1,\ldots,N\}$ with $p(x,y)$ constant, and its dual is the coalescing random walk on the complete graph.
 
+## Proof depends on
+
+- [Path of a continuous-time Markov chain](ctmc-path.md)
+- [Superposition](../../../point-processes/poisson-processes/add.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -18,11 +23,6 @@ A full proof page must establish the following.
 - Item 2: thinning and [superposition](../../../point-processes/poisson-processes/add.md) of Poisson processes; the total number of clock rings on $[0,T]$ is finite almost surely, so the path is defined by finitely many updates; the jump rates of the resulting process at $\eta$ are $c_x(\eta,s)$, which identifies its law with that of the [path of a continuous-time Markov chain](ctmc-path.md) with the same rate matrix.
 - Item 3: the backward paths are coalescing random walks by time reversal of Poisson processes on $[0,t]$; the identity follows by induction over the finitely many arrows in $[0,t]$; the duality formula is its consequence for indicator functions.
 - The Moran-model instance.
-
-Prerequisites:
-
-- [Path of a continuous-time Markov chain](ctmc-path.md)
-- [Superposition](../../../point-processes/poisson-processes/add.md)
 
 ## Sources
 

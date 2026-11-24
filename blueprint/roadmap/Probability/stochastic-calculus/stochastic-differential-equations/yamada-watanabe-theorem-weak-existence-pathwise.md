@@ -17,12 +17,6 @@ Both follow by gluing two solutions over the common law of $(X_0,B)$ and applyin
 
 A full page assembles the three lemmas: uniqueness in law because $X^i=F(X^i_0,B^i)$ with the same $F$ and the same law of $(X^i_0,B^i)$, and existence of a strong solution from the causal version. Path spaces are standard Borel throughout. A standard application is [Yamada–Watanabe pathwise uniqueness](yamada-watanabe-pathwise-uniqueness-holder-1-2-d.md), which supplies the pathwise-uniqueness hypothesis for Hölder-$\frac12$ diffusion coefficients.
 
-Prerequisites:
-
-- [Gluing two weak solutions over a common initial value and Brownian motion](gluing-two-weak-solutions-over-a-common-initial.md)
-- [Pathwise equality under gluing gives a measurable strong-solution functional](pathwise-equality-under-gluing-gives-a-measurabl.md)
-- [Causal version of the strong-solution functional](causal-nonanticipating-version-of-the-strong-sol.md)
-
 ## Sources
 
 - T. Yamada and S. Watanabe, *On the uniqueness of solutions of stochastic differential equations*, J. Math. Kyoto Univ. 11 (1971), 155–167, main theorem.

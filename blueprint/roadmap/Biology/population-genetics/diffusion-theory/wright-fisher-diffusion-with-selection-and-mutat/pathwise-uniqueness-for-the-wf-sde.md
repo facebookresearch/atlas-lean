@@ -16,11 +16,6 @@ This is a special case of [Yamada–Watanabe pathwise uniqueness](../../../../Pr
 1. The extended $\sigma$ satisfies $\lvert \sigma(x) - \sigma(y) \rvert \le \sqrt{\lvert x - y \rvert}$ on $\mathbb{R}$.
 2. The extended $b$ is Lipschitz on $\mathbb{R}$.
 
-Prerequisites:
-
-- [Yamada–Watanabe pathwise uniqueness (Hölder-1/2 diffusion coefficient)](../../../../Probability/stochastic-calculus/stochastic-differential-equations/yamada-watanabe-pathwise-uniqueness-holder-1-2-d.md)
-- [The coefficient √(x(1 − x)) is 1/2-Hölder on the unit interval](abs-sqrt-mul-one-sub-sub-le.md)
-
 ## Sources
 
 - T. Yamada and S. Watanabe, On the uniqueness of solutions of stochastic differential equations, *J. Math. Kyoto Univ.* 11 (1971), 155–167, <https://doi.org/10.1215/kjm/1250523691> (pathwise uniqueness).

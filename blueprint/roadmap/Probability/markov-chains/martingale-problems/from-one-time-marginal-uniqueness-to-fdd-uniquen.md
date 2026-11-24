@@ -8,6 +8,10 @@ The key step is tilting by the past. Let $X$ solve the $(A,\nu)$ martingale prob
 
 - [Martingale problems](martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -15,11 +19,6 @@ A full proof page must establish:
 - The tilting lemma: for $(f,g)\in A$, $u\le v$ and bounded $\mathcal F_{s+u}$-measurable $H$, $\mathbb E_{\mathbb Q}\bigl[(f(X_{s+v})-f(X_{s+u})-\int_u^vg(X_{s+r})\,dr)H\bigr]=\mathbb E_{\mathbb P}[\,\cdots\,ZH]/\mathbb EZ=0$, since $ZH$ is bounded and $\mathcal F_{s+u}$-measurable; and the shifted process stays in the path class.
 - The induction: with $Z=\prod_{i<r}h_i(X_{t_i})$ and $s=t_{r-1}$, both solutions give tilted solutions whose initial laws agree by the induction hypothesis, so their one-time marginals at $t_r-t_{r-1}$ agree; the case $\mathbb EZ=0$ is trivial.
 - Equality of the products for all bounded nonnegative $h_i$ determines the finite-dimensional distributions.
-
-Prerequisites:
-
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
 
 ## Sources
 

@@ -15,15 +15,15 @@ For $\mu=0$: $\Lambda=1$, $K(x,\cdot)=\delta_x$, $B=0$ and $X_t=X_0$ for all $t$
 
 - [A Markov kernel run on a Poisson clock is a pure-jump Markov process](../construction-of-markov-chains/uniformized-pure-jump-markov-process-on-a-polish.md)
 
-## Expansion
-
-A proof page must establish: boundedness of $B$ on $C(E)$ and $Bf\in C(E)$ by weak continuity; the Feller property of $e^{tB}=e^{-\Lambda t}\sum_k(\Lambda t)^kK^k/k!$, using that $K$ maps $C(E)$ into itself and is positive and unital; the identification $T_tf(x)=\mathbb E_xf(X_t)$ by conditioning on the number of clock rings; the Dynkin martingale; independence of the law from $\Lambda>\lambda$; and the two examples.
-
-Prerequisites:
+## Proof depends on
 
 - [Exponential interarrivals give a Poisson process](../../point-processes/poisson-processes/is-poisson-process-count.md)
 - [Markov chain construction theorem](../construction-of-markov-chains/markov-chain-construction.md) (Ionescu-Tulcea trajectories)
 - [Skorokhod space D([0,T],E) for a metric space E: J1 topology and embeddings](../../convergence-of-measures/skorokhod-space/skorokhod-space-d-0-t-e-for-a-metric-space-e-j1.md)
+
+## Expansion
+
+A proof page must establish: boundedness of $B$ on $C(E)$ and $Bf\in C(E)$ by weak continuity; the Feller property of $e^{tB}=e^{-\Lambda t}\sum_k(\Lambda t)^kK^k/k!$, using that $K$ maps $C(E)$ into itself and is positive and unital; the identification $T_tf(x)=\mathbb E_xf(X_t)$ by conditioning on the number of clock rings; the Dynkin martingale; independence of the law from $\Lambda>\lambda$; and the two examples.
 
 ## Sources
 

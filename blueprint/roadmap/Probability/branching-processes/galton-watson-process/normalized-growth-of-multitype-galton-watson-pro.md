@@ -22,6 +22,10 @@ For $K=1$ this is the [Galton–Watson martingale and its finite-variance limit]
 - [Mean identity for multitype Galton–Watson processes](multitype-galton-watson-processes.md)
 - [Perron–Frobenius theorem for primitive nonnegative matrices](../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
 
+## Proof depends on
+
+- [The Galton–Watson martingale and its finite-variance limit](galton-watson-martingale-w-n-z-n-m-n.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -31,12 +35,6 @@ A full proof page must establish the following.
 - The vector limit: decompose $Z_n$ along $v$ and the complementary $M$-invariant subspace, and use $\rho^{-n}M^n\to uv^{\mathsf T}$ together with a second-moment bound on the complementary component to get $Z_n/\rho^n-W_nv\to0$ almost surely.
 - The reduction to one type.
 - A guard showing that the hypothesis on $Z_0$ is needed for $L^2$ convergence: with one type, deterministic offspring number $2$ and a random $Z_0$ with $\mathbb EZ_0^2=\infty$, one has $W_n=Z_0$ for all $n$, which converges but is not in $L^2$.
-
-Prerequisites:
-
-- [Mean identity for multitype Galton–Watson processes](multitype-galton-watson-processes.md)
-- [Perron–Frobenius theorem for primitive nonnegative matrices](../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
-- [The Galton–Watson martingale and its finite-variance limit](galton-watson-martingale-w-n-z-n-m-n.md)
 
 ## Sources
 

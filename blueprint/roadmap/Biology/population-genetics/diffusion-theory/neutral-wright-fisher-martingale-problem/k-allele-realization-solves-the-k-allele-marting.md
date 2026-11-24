@@ -13,6 +13,12 @@ is a martingale with respect to the natural filtration, so $X$ solves the [$K$-a
 - [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
 - [Increment bound and continuous modification on the simplex](../construction-of-the-neutral-wright-fisher-diffus/increment-bound-and-continuous-modification-on-t.md)
 
+## Proof depends on
+
+- [Markov property of the continuous canonical process of a Chapman-Kolmogorov family](../strong-markov-property-of-the-wright-fisher-diff-2/markov-property-of-the-continuous-canonical-proc.md)
+- [Neutral K-allele semigroup on the simplex via multinomial duality](../wright-fisher-semigroup-and-moment-duality/neutral-k-allele-semigroup-on-the-simplex-via-mu.md)
+- [C² polynomial approximation on the simplex](../../../../Analysis/approximation-theory/polynomial-approximation-with-derivatives-in-sev/exists-mv-polynomial-near-cont-diff-on-t-2.md)
+
 ## Expansion
 
 A full proof page must still establish:
@@ -20,13 +26,6 @@ A full proof page must still establish:
 - the martingale identity for polynomials from the Markov property and the semigroup;
 - the $C^2$ extension by simultaneous approximation of values and first and second derivatives;
 - that each coordinate $X^i$ solves the two-allele martingale problem, neutral without mutation and with the induced two-type mutation rates under parent-independent mutation.
-
-Prerequisites:
-
-- [Increment bound and continuous modification on the simplex](../construction-of-the-neutral-wright-fisher-diffus/increment-bound-and-continuous-modification-on-t.md)
-- [Markov property of the continuous canonical process of a Chapman-Kolmogorov family](../strong-markov-property-of-the-wright-fisher-diff-2/markov-property-of-the-continuous-canonical-proc.md)
-- [Neutral K-allele semigroup on the simplex via multinomial duality](../wright-fisher-semigroup-and-moment-duality/neutral-k-allele-semigroup-on-the-simplex-via-mu.md)
-- [C² polynomial approximation on the simplex](../../../../Analysis/approximation-theory/polynomial-approximation-with-derivatives-in-sev/exists-mv-polynomial-near-cont-diff-on-t-2.md)
 
 ## Sources
 

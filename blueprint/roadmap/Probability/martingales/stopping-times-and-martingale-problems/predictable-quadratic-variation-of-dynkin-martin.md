@@ -22,9 +22,8 @@ Since $B$ is bounded on $C(E)$, $f^2$ lies in its domain for every $f\in C(E)$. 
 
 A full proof derives the Dynkin martingale from the semigroup ($\frac d{dt}e^{tB}f=e^{tB}Bf$ in norm), applies it to $f^2$, and expands $(M^f_t)^2$ to identify the compensator $\int\Gamma(f)(X_s)\,ds$. The increment bound follows from optional stopping at $\tau$ and $\tau+\delta$ for the martingales $M^f$ and $(M^f)^2-\int\Gamma(f)(X_s)\,ds$; this needs optional stopping for right-continuous martingales, not only continuous ones.
 
-Prerequisites:
+It also uses:
 
-- [Bounded-rate jump Markov process on a compact space by uniformization](../../markov-chains/markov-processes-from-transition-semigroups/bounded-rate-jump-markov-process-on-a-compact-sp.md)
 - Optional stopping for right-continuous martingales
 
 ## Sources

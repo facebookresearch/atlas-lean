@@ -20,6 +20,11 @@ If moreover $K_t(\theta',\theta)\ge c_t\,\pi(\theta)$ for all $\theta$, all $\th
 
 - [Rejection ABC returns the tolerance-conditioned posterior](../rejection-sampling/abc-rejection-target-law-and-zero-tolerance-disc.md)
 
+## Proof depends on
+
+- [SMC sampler: unbiasedness of the normalizing-constant estimator](smc-sampler-unbiasedness-of-the-normalizing-cons.md)
+- [Self-normalized importance sampling: ratio consistency, O(1/n) bias, effective sample size](self-normalized-importance-sampling-ratio-consis.md)
+
 ## Expansion
 
 A full page proves the conditional law of an accepted particle (a rejection step applied to the mixture proposal $q_t$), the importance-weight identity, and consistency from the conditional variance of a self-normalized estimator with weights bounded by $1/c_t$. It should
@@ -27,12 +32,6 @@ A full page proves the conditional law of an accepted particle (a rejection step
 - verify the identity on a two-point prior with explicit acceptance probabilities;
 - show that $T=1$ reduces to rejection ABC;
 - compare the bounded-ratio hypothesis with the conditions of Beaumont et al. (2009) and replace it by theirs if weaker.
-
-Prerequisites:
-
-- [SMC sampler: unbiasedness of the normalizing-constant estimator](smc-sampler-unbiasedness-of-the-normalizing-cons.md)
-- [Rejection ABC returns the tolerance-conditioned posterior](../rejection-sampling/abc-rejection-target-law-and-zero-tolerance-disc.md)
-- [Self-normalized importance sampling: ratio consistency, O(1/n) bias, effective sample size](self-normalized-importance-sampling-ratio-consis.md)
 
 ## Sources
 

@@ -14,15 +14,17 @@ For example, a simulator that returns a biased coin with probability $p\ne p_0$ 
 - [The Bonferroni procedure controls the FWER](../bonferroni-correction/measure-bonferroni-familywise-error-le.md)
 - [Holm's procedure controls the FWER](../holm-bonferroni-method/measure-holm-familywise-error-le.md)
 
+## Proof depends on
+
+- [Hudson's algorithm without recombination samples Kingman's coalescent](../../../Biology/coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/hudson-s-algorithm-without-recombination-samples.md)
+
 ## Expansion
 
 A proof page must establish: the size bound from the coverage of the Clopper–Pearson interval (or from validity of the exact binomial p-values); consistency against a fixed $p\ne p_0$, since $X/B\to p$ almost surely and both Clopper–Pearson endpoints converge to $p$; the familywise combination; and the two-lineage example, where $T_{\mathrm{MRCA}}$ is exponential with rate $1$ under the exact sampler.
 
-Prerequisites:
+It also uses:
 
 - Exact binomial tests and the Clopper–Pearson interval
-- [The Bonferroni procedure controls the FWER](../bonferroni-correction/measure-bonferroni-familywise-error-le.md)
-- [Hudson's algorithm without recombination samples Kingman's coalescent](../../../Biology/coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/hudson-s-algorithm-without-recombination-samples.md)
 
 ## Sources
 

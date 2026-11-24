@@ -15,17 +15,16 @@ For $M$ a Brownian motion, $\langle M\rangle_t=t$ and this is the [Itô integral
 - [Quadratic variation process $\langle M\rangle$ for continuous local martingales](../../martingales/quadratic-variation-of-continuous-local-martingales/quadratic-variation-process-m-for-continuous-loc.md)
 - [Elementary integrand](elementary-integrand.md)
 
+## Proof depends on
+
+- [Filtrations and stopping times](../../martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
+
 ## Expansion
 
 A full proof page must establish:
 
 - Continuity and square integrability, and the martingale property of each summand $\xi_i(M_{t_{i+1}\wedge t}-M_{t_i\wedge t})$, from boundedness and $\mathcal F_{t_i}$-measurability of $\xi_i$.
 - Orthogonality of the summands, and $\mathbb E\bigl[\xi_i^2(M_b-M_a)^2\bigr]=\mathbb E\bigl[\xi_i^2(\langle M\rangle_b-\langle M\rangle_a)\bigr]$ for $t_i\le a\le b$, since $M^2-\langle M\rangle$ is a martingale.
-
-Prerequisites:
-
-- [Quadratic variation process $\langle M\rangle$ for continuous local martingales](../../martingales/quadratic-variation-of-continuous-local-martingales/quadratic-variation-process-m-for-continuous-loc.md)
-- [Filtrations and stopping times](../../martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
 
 ## Sources
 

@@ -18,7 +18,7 @@ $$u(t)\le a\sum_{k=0}^{n-1}\frac{(bt)^k}{k!}+\frac{(bt)^n}{n!}\,\sup_{[0,T]}u\qq
 
 since substituting the bound into $\int_0^t u$ and integrating the polynomial terms raises each power by one. Boundedness of $u$ makes the remainder tend to $0$ as $n\to\infty$, and the partial sums tend to $e^{bt}$. Measurability is needed only so that $\int_0^tu$ is defined. The inequality is the uniqueness step of [Global existence and uniqueness for globally Lipschitz ODEs](../maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md) and of pathwise uniqueness arguments for stochastic differential equations, where it is applied to $u(t)=\mathbb E\,|X_t-Y_t|$ or $\mathbb E\,|X_t-Y_t|^2$.
 
-Prerequisites:
+It also uses:
 
 - Lebesgue integration on intervals and monotonicity of the integral
 - The exponential series $e^{x}=\sum_{k\ge0}x^k/k!$

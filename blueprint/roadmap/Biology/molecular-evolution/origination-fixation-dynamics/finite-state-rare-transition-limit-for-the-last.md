@@ -21,6 +21,10 @@ The neighbourhood in (a) is needed: for $Q_0=\begin{pmatrix}0&0\\1&-1\end{pmatri
 - [Path of a continuous-time Markov chain](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
 - [Backward equations for the mean hitting time](../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/ctmc-hitting-time-backward.md)
 
+## Proof depends on
+
+- [Transition function of a rate matrix is stochastic](../../../Probability/markov-chains/finite-continuous-time-markov-chains/the-transition-semigroup-of-a-finite-continuous/ctmc-transition-mem-row-stochastic.md)
+
 ## Expansion
 
 A proof page must establish:
@@ -31,12 +35,6 @@ A proof page must establish:
 - convergence of the trace chains with generators $S_\varepsilon/\varepsilon$ to the chain with generator $\bar q$ from convergence of the generators on a finite state space.
 
 The related discrete-time result for two time scales is [Möhle's lemma](../../../Probability/markov-chains/finite-markov-chains/mohle-s-separation-of-timescales-lemma-for-finit.md).
-
-Prerequisites:
-
-- [Transition function of a rate matrix is stochastic](../../../Probability/markov-chains/finite-continuous-time-markov-chains/the-transition-semigroup-of-a-finite-continuous/ctmc-transition-mem-row-stochastic.md)
-- [Path of a continuous-time Markov chain](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
-- [Backward equations for the mean hitting time](../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/ctmc-hitting-time-backward.md)
 
 ## Sources
 

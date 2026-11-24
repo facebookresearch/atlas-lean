@@ -13,11 +13,6 @@ Let $\eta$ be measurable and piecewise continuous with $a \le \eta \le b$ for co
 2. The limit by [the time-ordered product limit](time-ordered-product-limit-for-near-identity-mat.md).
 3. Checks: constant $\eta$ recovers [Kingman's theorem for the lineage count](../ancestral-lineage-counting-and-tavar-s-formula/tendsto-wf-lineage-matrix-pow-floor.md), and piecewise-constant $\eta$ gives a product of matrix exponentials.
 
-Prerequisites:
-
-- [Kingman's theorem for the lineage count](../ancestral-lineage-counting-and-tavar-s-formula/tendsto-wf-lineage-matrix-pow-floor.md)
-- [Time-ordered product limit for near-identity matrices](time-ordered-product-limit-for-near-identity-mat.md)
-
 ## Sources
 
 - R. C. Griffiths and S. Tavaré, Sampling theory for neutral alleles in a varying environment, *Philos. Trans. R. Soc. Lond. B* 344 (1994), 403–410, <https://pubmed.ncbi.nlm.nih.gov/7800710/> (variable size).

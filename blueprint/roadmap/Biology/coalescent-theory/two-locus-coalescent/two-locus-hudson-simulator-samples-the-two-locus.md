@@ -6,17 +6,16 @@ Fix two loci, a population of constant size and scaled recombination rate $\rho 
 
 - [Coalescent with recombination: ancestral-material state space and generator](coalescent-with-recombination-ancestral-material.md)
 
+## Proof depends on
+
+- [Hudson's algorithm without recombination samples the Kingman genealogy](../kingman-s-coalescent-and-watterson-s-estimator/hudson-s-algorithm-without-recombination-samples.md)
+
 ## Expansion
 
 A full proof page must still establish:
 
 - that the jump rates of the algorithm are those of the two-locus ancestral process, and that the thinned version with proposals at rate $k\rho/2$ has the same law;
 - for $\rho = 0$, that the two marginal trees are identical and the algorithm reduces to the one-locus algorithm.
-
-Prerequisites:
-
-- [Hudson's algorithm without recombination samples the Kingman genealogy](../kingman-s-coalescent-and-watterson-s-estimator/hudson-s-algorithm-without-recombination-samples.md)
-- [Coalescent with recombination: ancestral-material state space and generator](coalescent-with-recombination-ancestral-material.md)
 
 ## Sources
 

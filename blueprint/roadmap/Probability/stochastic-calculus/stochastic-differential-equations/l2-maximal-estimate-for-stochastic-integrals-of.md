@@ -12,16 +12,16 @@ $$\mathbb E\sup_{s\le t}\Bigl|\int_0^s\bigl(b(X_u)-b(Y_u)\bigr)\,du\Bigr|^2\le L
 
 - [Itô integral process](../it-integral/ito-integral-2.md)
 
-## Expansion
-
-A full proof combines [Doob's $L^2$ maximal inequality](../../martingales/doob-s-maximal-inequalities/lintegral-i-sup-sq-le-of-continuous.md) for the continuous martingale $\int_0^\cdot(\sigma(X)-\sigma(Y))\,dB$ with the [Itô isometry](../it-integral/lintegral-ito-integral-sq-of-is-progress.md) and the Lipschitz bound. It should check that a constant $\sigma$ gives $0$, and test the constant with $\sigma(x)=x$ and $X-Y$ deterministic.
-
-Prerequisites:
+## Proof depends on
 
 - [Continuous modification of the Itô integral](../it-integral/ito-integral-continuous-modification.md)
 - [Optional stopping theorem in continuous time](../../martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
 - [Doob's $L^2$ maximal inequality in continuous time](../../martingales/doob-s-maximal-inequalities/lintegral-i-sup-sq-le-of-continuous.md)
 - [Itô isometry for progressive integrands](../it-integral/lintegral-ito-integral-sq-of-is-progress.md)
+
+## Expansion
+
+A full proof combines [Doob's $L^2$ maximal inequality](../../martingales/doob-s-maximal-inequalities/lintegral-i-sup-sq-le-of-continuous.md) for the continuous martingale $\int_0^\cdot(\sigma(X)-\sigma(Y))\,dB$ with the [Itô isometry](../it-integral/lintegral-ito-integral-sq-of-is-progress.md) and the Lipschitz bound. It should check that a constant $\sigma$ gives $0$, and test the constant with $\sigma(x)=x$ and $X-Y$ deterministic.
 
 ## Sources
 

@@ -10,6 +10,10 @@ The countable core is what makes this possible: the martingale identities for th
 - [Martingale problems](martingale-problems-generic-definition.md)
 - [Regular conditional distributions](../../foundations/regular-conditional-distributions/is-regular-conditional-distribution.md)
 
+## Proof depends on
+
+- [Optional stopping theorem in continuous time](../../martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -18,13 +22,6 @@ A full proof page must establish:
 - For each $k$, rational $0\le u<v$ and each $H$ in a countable family of bounded continuous cylinder functions of the path up to time $u$: optional stopping at the bounded stopping times $(\tau\wedge n)+u\le(\tau\wedge n)+v$ gives $\mathbb E\bigl[\mathbf 1_B\,\mathbb E_{P_\omega}[(f_k(Y_v)-f_k(Y_u)-\int_u^vg_k(Y_r)\,dr)H]\bigr]=0$ for $B\in\mathcal F_\tau$, hence the inner expectation vanishes off a null set.
 - Extension to all real times by right-continuity and to the natural filtration by a monotone-class argument, then to $A$ by the core lemma.
 - A continuous probe: Brownian motion, $A=\tfrac12f''$ on $C_c^2(\mathbb R)$, at a hitting time. Continuous-time Markov chains need a càdlàg version of the statement, which is not claimed here.
-
-Prerequisites:
-
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [Regular conditional distributions](../../foundations/regular-conditional-distributions/is-regular-conditional-distribution.md)
-- [Optional stopping theorem in continuous time](../../martingales/optional-stopping-theorem/stopped-value-ae-eq-cond-exp-of-le-of-co.md)
-- [A countable bounded-pointwise core of the graph suffices for a martingale problem](countable-bounded-pointwise-graph-core-for-marti.md)
 
 ## Sources
 

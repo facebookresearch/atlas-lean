@@ -14,12 +14,6 @@ Let $T>0$ and let $X$ be a process with continuous paths that, with respect to i
 
 A full page matches each hypothesis of the general theorem: continuity of paths, the finite horizon (the Wright–Fisher pages are stated on $[0,\infty)$ and are restricted to $[0,T]$), and boundedness and continuity of $(f,Lf)$ on the compact state space. It does not repeat the proof of the general theorem.
 
-Prerequisites:
-
-- [Martingales and martingale problems are preserved by the usual augmentation](martingales-and-martingale-problems-are-preserve.md)
-- [Hitting times of closed sets by continuous adapted processes are stopping times (continuous time)](../../markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/hitting-times-of-closed-sets-by-continuous-adapt.md)
-- [Martingale problem for the Wright–Fisher diffusion](../../../Biology/population-genetics/diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md)
-
 ## Sources
 
 - I. Karatzas and S. E. Shreve, *Brownian Motion and Stochastic Calculus*, 2nd ed., Springer, 1991, <https://doi.org/10.1007/978-1-4612-0949-2>, usual augmentation (Ch. 1, topic level).

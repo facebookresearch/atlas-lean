@@ -16,17 +16,14 @@ General recombination measures are a separate target: [the continuum ARG with a 
 - [Coalescent with recombination: ancestral-material state space and generator](coalescent-with-recombination-ancestral-material.md)
 - [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
 
+## Proof depends on
+
+- [Finitely many breakpoints and a jointly measurable local-tree field](../pairwise-differences-under-poisson-mutation/finitely-many-breakpoints-and-a-jointly-measurab.md)
+
 ## Expansion
 
 1. The projection and reduction maps, and the equality of the generators of the projected process and of the finite-locus process.
 2. Checks: with three loci, the rate at which $x_1$ is separated from $x_3$ is $\rho(x_3 - x_1)$, the sum of the rates of the two gaps. The two-point covariance is $f(\rho \lvert x - y \rvert)$.
-
-Prerequisites:
-
-- [Marked whole-chromosome ARG on [0,1) with homogeneous recombination: construction](../pairwise-differences-under-poisson-mutation/marked-whole-chromosome-arg-on-0-1-with-homogene.md)
-- [Finitely many breakpoints and a jointly measurable local-tree field](../pairwise-differences-under-poisson-mutation/finitely-many-breakpoints-and-a-jointly-measurab.md)
-- [Coalescent with recombination: ancestral-material state space and generator](coalescent-with-recombination-ancestral-material.md)
-- [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
 
 ## Sources
 

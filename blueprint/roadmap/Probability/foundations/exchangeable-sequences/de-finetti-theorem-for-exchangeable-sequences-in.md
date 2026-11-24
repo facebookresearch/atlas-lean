@@ -10,6 +10,12 @@ $$\frac1n\sum_{i=1}^n\delta_{X_i}\Longrightarrow\Lambda\qquad\text{almost surely
 
 Clause 1 needs only the standard Borel structure; clause 2 needs the choice of a compatible Polish topology.
 
+## Proof depends on
+
+- [De Finetti's theorem for binary sequences](../de-finetti-theorem/de-finetti-binary.md)
+- [Regular conditional distributions](../regular-conditional-distributions/is-regular-conditional-distribution.md)
+- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -18,12 +24,6 @@ A full proof page must establish the following.
 - Conditional independence: for bounded measurable $f_1,\ldots,f_n$, $\mathbb E[\prod_if_i(X_i)\mid\mathcal T]=\prod_i\int f_i\,d\Lambda$, by reverse martingale convergence of symmetrized averages $\binom Nn^{-1}\sum f_1(X_{j_1})\cdots f_n(X_{j_n})$ over distinct indices, or by the Hewitt–Savage route through the exchangeable $\sigma$-algebra, which coincides with $\mathcal T$ up to null sets.
 - Clause 2: for each $f$ in a countable convergence-determining class of bounded continuous functions, $\frac1n\sum_{i\le n}f(X_i)\to\int f\,d\Lambda$ almost surely, by the conditional strong law; then intersect the countably many almost-sure events.
 - The binary specialization: for $S=\{0,1\}$, $\Lambda=\mathrm{Bernoulli}(P)$ with $P$ the limiting frequency, and integrating clause 1 gives [de Finetti's theorem for binary sequences](../de-finetti-theorem/de-finetti-binary.md) with mixing measure the law of $P$.
-
-Prerequisites:
-
-- [De Finetti's theorem for binary sequences](../de-finetti-theorem/de-finetti-binary.md)
-- [Regular conditional distributions](../regular-conditional-distributions/is-regular-conditional-distribution.md)
-- [General optional stopping for uniformly integrable martingales](../../martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
 
 ## Sources
 

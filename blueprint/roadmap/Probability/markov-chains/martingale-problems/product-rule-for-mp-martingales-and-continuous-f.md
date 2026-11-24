@@ -14,6 +14,11 @@ For $k=0$, $V\equiv1$ and the statement is the martingale property of $f(X_t)-f(
 
 - [Martingale problems](martingale-problems-generic-definition.md)
 
+## Proof depends on
+
+- [Conditional expectation](../../foundations/conditional-expectation/README.md)
+- [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
+
 ## Expansion
 
 A full proof page must establish the displayed identity:
@@ -22,12 +27,6 @@ A full proof page must establish the displayed identity:
 - In the first term, $\mathbf 1_BV_s$ is bounded and $\mathcal F_s$-measurable, so the martingale identity gives $\mathbb E\bigl[\mathbf 1_BV_s\int_s^tLf(X_u)\,du\bigr]$.
 - In the second term, condition on $\mathcal F_r$ for each $r$: $\mathbb E[f(X_t)\mid\mathcal F_r]=f(X_r)+\mathbb E\bigl[\int_r^tLf(X_u)\,du\bigm|\mathcal F_r\bigr]$; Fubini over $s\le r\le u\le t$ and $V_s-V_u=\int_s^uk(X_r)V_r\,dr$ combine the two terms into the right-hand side.
 - The case $k=0$.
-
-Prerequisites:
-
-- [Martingale problems](martingale-problems-generic-definition.md)
-- [Conditional expectation](../../foundations/conditional-expectation/README.md)
-- [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
 
 ## Sources
 

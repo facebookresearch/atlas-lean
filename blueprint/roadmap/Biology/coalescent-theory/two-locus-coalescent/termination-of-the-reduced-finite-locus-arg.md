@@ -17,11 +17,6 @@ A full proof page must still establish:
 - the bound $\mathbb E\,\tau_{\mathrm{red}} \le \mathbb E_n T_1$ from the line-count chain, for $\rho > 0$ and for $\rho = 0$;
 - for $\rho = 0$, the identity $\tau_{\mathrm{red}} = T_{\mathrm{GMRCA}}$.
 
-Prerequisites:
-
-- [Marked whole-chromosome (unreduced) finite-locus ARG and the reduction map](marked-whole-chromosome-unreduced-finite-locus-a.md)
-- [The ancestral line count with recombination is positive recurrent](lineage-count-birth-death-chain-rho-0-positive-r.md)
-
 ## Sources
 
 - R. C. Griffiths and P. Marjoram, "An ancestral recombination graph", 1997, <https://research.monash.edu/en/publications/an-ancestral-recombination-graph/>

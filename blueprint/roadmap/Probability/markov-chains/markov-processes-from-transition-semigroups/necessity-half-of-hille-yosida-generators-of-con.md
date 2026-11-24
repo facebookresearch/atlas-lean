@@ -12,7 +12,7 @@ The resolvent bound is equivalent to dissipativity of $A$: $\|(\lambda-A)x\|\ge\
 
 A proof page must establish: density of $D(A)$ through the averages $t^{-1}\int_0^tS(s)x\,ds\in D(A)$; closedness from $S(t)x-x=\int_0^tS(s)Ax\,ds$ for $x\in D(A)$; that the Laplace integral $R_\lambda x$ lies in $D(A)$ with $(\lambda-A)R_\lambda x=x$, and $R_\lambda(\lambda-A)x=x$ for $x\in D(A)$; the bound $\|R_\lambda\|\le\int_0^\infty e^{-\lambda t}\,dt=1/\lambda$; and the finite-dimensional case.
 
-Prerequisites:
+It also uses:
 
 - Deterministic operator semigroups (strong continuity, generators, vector-valued Riemann integrals)
 

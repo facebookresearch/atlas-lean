@@ -17,9 +17,8 @@ A full proof page must still establish:
 - the consistency of the finite-dimensional laws and the extension;
 - projection consistency: for each $i$, the coordinate $X^i$ under $P_x$ is the two-allele Wright–Fisher process started at $x_i$: neutral when there is no mutation, and with the induced two-type mutation rates under parent-independent mutation.
 
-Prerequisites:
+It also uses:
 
-- [Neutral K-allele semigroup on the simplex via multinomial duality](../wright-fisher-semigroup-and-moment-duality/neutral-k-allele-semigroup-on-the-simplex-via-mu.md)
 - Continuous-time Markov processes defined by a family of transition kernels.
 - measure-theoretic prerequisites: the Riesz representation theorem and Kolmogorov's extension theorem
 

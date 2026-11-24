@@ -25,10 +25,6 @@ This gives the pair of histories of the [non-identifiability of general historie
 2. The change of variables that turns $c_m$ into the Laplace transform of $h_i$ at $\binom{m}{2}$.
 3. The transport of the positive-measure difference through the bi-Lipschitz map $R_2$.
 
-Prerequisites:
-
-- [A bounded function whose Laplace transform vanishes at every binomial coefficient](bounded-function-nonzero-on-a-set-of-positive-me.md)
-
 ## Sources
 
 - S. Myers, C. Fefferman and N. Patterson, Can one learn history from the allelic spectrum?, *Theor. Popul. Biol.* 73 (2008), 342–348 (construction).

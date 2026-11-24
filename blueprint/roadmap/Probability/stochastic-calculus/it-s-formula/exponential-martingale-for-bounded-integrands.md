@@ -12,6 +12,11 @@ Then:
 
 If $\theta$ is deterministic, $\int_0^T\theta\,dB\sim\mathcal N(0,v)$ with $v=\int_0^T\theta_s^2\,ds$, so $Z_T$ is lognormal with mean $1$.
 
+## Proof depends on
+
+- [Itô's formula for Itô processes with locally integrable coefficients](ito-formula-for-ito-processes-time-dependent-loc.md)
+- [Localized Ito integral and integrals up to stopping times](../it-integral/localized-ito-integral-and-integrals-up-to-stopp.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -20,11 +25,6 @@ A full proof page must establish the following.
 - Item 2: $Z$ is a nonnegative local martingale, hence a supermartingale; a uniform bound on $\mathbb EZ_t^2$ (item 3 for every $t$) gives $\mathbb E\int_0^TZ_s^2\theta_s^2\,ds<\infty$, so the stochastic integral is a square-integrable martingale. Alternatively Novikov's criterion holds trivially since $\int_0^T\theta^2\le C^2T$.
 - Item 3: $Z_T^2=\exp\bigl(\int_0^T\theta^2ds\bigr)\,Z^{(2\theta)}_T\le e^{C^2T}Z^{(2\theta)}_T$, where $Z^{(2\theta)}$ is the exponential of $2\theta$, which has expectation at most $1$ as a nonnegative supermartingale.
 - The deterministic case.
-
-Prerequisites:
-
-- [Itô's formula for Itô processes with locally integrable coefficients](ito-formula-for-ito-processes-time-dependent-loc.md)
-- [Localized Ito integral and integrals up to stopping times](../it-integral/localized-ito-integral-and-integrals-up-to-stopp.md)
 
 ## Sources
 

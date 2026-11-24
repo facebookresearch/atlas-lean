@@ -16,6 +16,11 @@ A tolerance that does not tend to zero gives no concentration: for fixed $\varep
 
 - [Rejection ABC returns the tolerance-conditioned posterior](abc-rejection-target-law-and-zero-tolerance-disc.md)
 
+## Proof depends on
+
+- [ABC with discrete summaries: exact limit and a model-choice counterexample](abc-with-discrete-summaries-exact-limit-and-a-mo.md)
+- [Asymptotic normality of a consistent root of an estimating equation](../../../../Probability/statistical-estimation/asymptotic-normality-of-maximum-likelihood/tendsto-in-distribution-sqrt-mul-sub-of.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -23,11 +28,6 @@ A full proof page must establish:
 - The acceptance probability $L_n(\theta)=\Phi\bigl(\sqrt n(s+\varepsilon_n-\theta)\bigr)-\Phi\bigl(\sqrt n(s-\varepsilon_n-\theta)\bigr)$, its integral $\int L_n\,d\theta=2\varepsilon_n$, and the bound $L_n(\theta)\le2\varepsilon_n\sqrt n\,\varphi\bigl(\sqrt n(|\theta-s|-\varepsilon_n)^+\bigr)$ together with the Gaussian tail bound; with continuity of $\pi$ near $\theta_0$ and $S_n-\theta_0=O_P(n^{-1/2})$ these give part 1 in both regimes $\sqrt n\varepsilon_n\to\infty$ and $\sqrt n\varepsilon_n$ bounded.
 - Part 2: $L_n(\theta)/(2\varepsilon_n\sqrt n)\to\varphi(\sqrt n(\theta-s))$ uniformly on the $n^{-1/2}$ scale when $\sqrt n\varepsilon_n\to0$, the Bernstein–von Mises theorem for the exact posterior given $S_n$, and the passage to total variation. The source's general theorem states convergence on sets; the total-variation form is a Gaussian-model computation.
 - The fixed-tolerance counterexample.
-
-Prerequisites:
-
-- [ABC with discrete summaries: exact limit and a model-choice counterexample](abc-with-discrete-summaries-exact-limit-and-a-mo.md)
-- [Asymptotic normality of a consistent root of an estimating equation](../../../../Probability/statistical-estimation/asymptotic-normality-of-maximum-likelihood/tendsto-in-distribution-sqrt-mul-sub-of.md)
 
 ## Sources
 

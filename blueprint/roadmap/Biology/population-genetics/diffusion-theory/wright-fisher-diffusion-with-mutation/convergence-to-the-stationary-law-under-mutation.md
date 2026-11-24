@@ -16,18 +16,17 @@ with $\pi$ the Beta law, so the slowest rate in every raw moment is $\lambda_1 =
 
 - [Polynomial spectrum of the neutral Wright–Fisher generator with mutation](spectral-structure-of-l-0-theta-on-polynomials.md)
 
+## Proof depends on
+
+- [Mutation realization solves the mutation martingale problem](../neutral-wright-fisher-martingale-problem/mutation-realization-solves-the-mutation-marting.md)
+- [Compactly supported measures are determined by their moments](../../../../Analysis/harmonic-analysis/integral-transforms/moment-problem-for-compactly-supported-measures/ext-of-forall-integral-pow-eq-of-compl-i.md)
+- [Zero probability flux of the Beta density](flux-beta-pdfreal.md)
+
 ## Expansion
 
 1. The eigenfunction decay, from the [mutation realization](../neutral-wright-fisher-martingale-problem/mutation-realization-solves-the-mutation-marting.md) and the spectral structure.
 2. Convergence of all moments and then weak convergence, since [compactly supported measures are determined by their moments](../../../../Analysis/harmonic-analysis/integral-transforms/moment-problem-for-compactly-supported-measures/ext-of-forall-integral-pow-eq-of-compl-i.md). The Beta law is stationary by [the zero probability flux of the Beta density](flux-beta-pdfreal.md).
 3. Checks: $\mathbb{E}_x[X_t] = \theta_1/\theta + (x - \theta_1/\theta)\, e^{-\theta t/2}$. For $\theta_1 = \theta_2 = 1$ and $x = 0$, $\mathbb{E}[X_t^2] - 1/3 = -\frac{1}{2} e^{-t} + \frac{1}{6} e^{-3t}$. The limit does not depend on $x$.
-
-Prerequisites:
-
-- [Mutation realization solves the mutation martingale problem](../neutral-wright-fisher-martingale-problem/mutation-realization-solves-the-mutation-marting.md)
-- [Compactly supported measures are determined by their moments](../../../../Analysis/harmonic-analysis/integral-transforms/moment-problem-for-compactly-supported-measures/ext-of-forall-integral-pow-eq-of-compl-i.md)
-- [Zero probability flux of the Beta density](flux-beta-pdfreal.md)
-- [Polynomial spectrum of the neutral Wright–Fisher generator with mutation](spectral-structure-of-l-0-theta-on-polynomials.md)
 
 ## Sources
 

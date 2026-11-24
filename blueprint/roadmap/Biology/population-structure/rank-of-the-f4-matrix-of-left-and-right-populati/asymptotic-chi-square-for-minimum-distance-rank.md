@@ -18,6 +18,11 @@ with $\widehat V_L^{-1}$ replaced by any fixed matrix on the event, of probabili
 - [Local quadratic approximation of the distance to a smooth submanifold](local-quadratic-approximation-of-the-distance-to.md)
 - [Chi-square law of the Gaussian projection statistic](../../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/map-gauss-proj-stat-multivariate-gaussia.md)
 
+## Proof depends on
+
+- [Continuous mapping theorem, integral form](../../../Probability/convergence-of-measures/continuous-mapping-theorem/continuous-mapping.md)
+- [Studentization with a consistent covariance estimator](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/studentization-for-an-explicitly-supplied-depend.md)
+
 ## Expansion
 
 A proof page must establish:
@@ -28,12 +33,8 @@ A proof page must establish:
 - the special case $k=0$, where the constraint set is $\{0\}$ and $D_L$ is the Wald statistic $L\operatorname{vec}(\widehat F_L)^{\mathsf T}\widehat V_L^{-1}\operatorname{vec}(\widehat F_L)$ with $nr$ degrees of freedom (here $F=0$);
 - consistency: if $\operatorname{rank}F>k$ under the same hypotheses, then $D_L\to\infty$ in probability, since the minimum distance converges to a positive constant.
 
-Prerequisites:
+It also uses:
 
-- [Chi-square law of the Gaussian projection statistic](../../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/map-gauss-proj-stat-multivariate-gaussia.md)
-- [Local quadratic approximation of the distance to a smooth submanifold](local-quadratic-approximation-of-the-distance-to.md)
-- [Continuous mapping theorem, integral form](../../../Probability/convergence-of-measures/continuous-mapping-theorem/continuous-mapping.md)
-- [Studentization with a consistent covariance estimator](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/studentization-for-an-explicitly-supplied-depend.md)
 - Statistical estimation and likelihood primitives
 
 ## Sources

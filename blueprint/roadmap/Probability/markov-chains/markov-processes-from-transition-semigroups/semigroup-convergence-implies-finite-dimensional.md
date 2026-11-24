@@ -11,14 +11,13 @@ Then for all $0\le t_1<\dots<t_k$ the law of $\bigl(X^N_{\lfloor a_Nt_1\rfloor},
 
 - [Path-space measure of a Markov semigroup](path-measure.md)
 
+## Proof depends on
+
+- [Trotter-Kurtz: chain semigroups converge to a limit semigroup](trotter-kurtz-chain-semigroups-converge-to-a-lim.md)
+
 ## Expansion
 
 A proof page must establish, by induction on $k$, the convergence of $\mathbb E\prod_{i\le k}f_i\bigl(X^N_{\lfloor a_Nt_i\rfloor}\bigr)$ for $f_i\in C(E)$, using the Markov property at the time $\lfloor a_Nt_{k-1}\rfloor$; the number of steps $\lfloor a_Nt_k\rfloor-\lfloor a_Nt_{k-1}\rfloor$ equals $\lfloor a_Ns_N\rfloor$ for some $s_N\to t_k-t_{k-1}$, which is where local uniformity in $t$ and continuity of $t\mapsto T(t)f$ are used; convergence of products in $C(E)^{\otimes k}$ determines weak convergence on the compact space $E^k$. A test case is a finite-state chain with $T_N=I+a_N^{-1}Q$ for a rate matrix $Q$ (stochastic for large $N$), where $T_N^{\lfloor a_Nt\rfloor}\to e^{tQ}$ directly.
-
-Prerequisites:
-
-- [Trotter-Kurtz: chain semigroups converge to a limit semigroup](trotter-kurtz-chain-semigroups-converge-to-a-lim.md)
-- [Path-space measure of a Markov semigroup](path-measure.md)
 
 ## Sources
 

@@ -30,14 +30,6 @@ A full proof applies the martingale property to cutoffs of $f(x)=x$ and $f(x)=x^
 - the full test domain is needed: on the domain spanned by $1$ and $x$, Brownian motion stopped at a hitting time solves the zero operator, and with such a domain the conclusion $dX=0$ would be false;
 - for Feller's diffusion, $a(x)=\gamma x$ vanishes at $0$, and the enlargement by $W'$ handles the set $\{a(X)=0\}$.
 
-Prerequisites:
-
-- [Stochastic integral against continuous local martingales (localized)](../it-integral/stochastic-integral-against-continuous-local-mar.md)
-- [Lévy characterization of Brownian motion](../construction-and-sample-paths-of-brownian-motion/levy-characterization-of-brownian-motion.md)
-- [Quadratic variation of continuous local martingales](../../martingales/quadratic-variation-of-continuous-local-martingales/quadratic-variation-process-m-for-continuous-loc.md)
-- [Martingale problems (generic definition)](../../markov-chains/martingale-problems/martingale-problems-generic-definition.md)
-- [Martingales and martingale problems are preserved by the usual augmentation](../../martingales/stopping-times-and-martingale-problems/martingales-and-martingale-problems-are-preserve.md)
-
 ## Sources
 
 - D. W. Stroock and S. R. S. Varadhan, *Multidimensional Diffusion Processes*, Grundlehren 233, Springer, 1979, <https://books.google.com/books?id=vKC1BwAAQBAJ>, weak solutions from martingale problems.

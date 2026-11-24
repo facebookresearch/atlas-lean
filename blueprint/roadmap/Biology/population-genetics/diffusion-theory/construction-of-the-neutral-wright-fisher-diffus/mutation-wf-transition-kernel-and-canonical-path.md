@@ -19,9 +19,8 @@ A full proof page must still establish:
 - the mean formula, from the generator $\tfrac12 y(1-y) f'' + \tfrac12(\theta_1(1-y) - \theta_2 y) f'$ applied to $f(y) = y$;
 - the consistency of the finite-dimensional laws and the extension.
 
-Prerequisites:
+It also uses:
 
-- [Mutation WF Feller semigroup via polynomial duality and chain limits](../wright-fisher-semigroup-and-moment-duality/mutation-wf-feller-semigroup-via-polynomial-dual.md)
 - Continuous-time Markov processes defined by a family of transition kernels.
 - measure-theoretic prerequisites: the Riesz representation theorem and Kolmogorov's extension theorem
 

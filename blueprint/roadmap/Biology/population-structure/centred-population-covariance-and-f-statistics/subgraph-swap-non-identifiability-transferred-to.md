@@ -22,19 +22,18 @@ Both give $\Gamma(v,v)=x$, $\Gamma(v,h)=\gamma_2x$ and $\Gamma(h,h)=\gamma_1^2y+
 - [f2 statistic](../patterson-s-f-statistics/f2.md)
 - [Which drift models have the f-statistics of a star tree](f-equivalence-classes-of-drift-models.md)
 
+## Proof depends on
+
+- [f2 in the drift model](../patterson-s-f-statistics/f2-freq.md)
+- [f-statistics determine exactly the centred leaf covariance](f2-eq-iff-centred-cov-eq.md)
+- [f2, independent-lineage distance and average network distance differ on admixture graphs](f2-drift-metric-versus-network-average-distance.md)
+
 ## Expansion
 
 A proof writes every leaf frequency as $p_X=r+\sum_{e\notin E(A)}w(X,e)\,\delta_e+\sum_{a\in\partial A}\lambda(X,a)\,(p_a-p_u)$, where $\lambda(X,a)$ is the total proportion of the paths from $a$ to $X$ whose first edge leaves $A$. The coefficients $w(X,e)$ for $e\notin E(A)$ and $\lambda(X,a)$ are the same in both graphs, because the total proportion of the paths from $u$ to any $a\in A$ inside $A$ is $1$ in each graph. Orthogonality of the increments inside and outside $A$ then gives $f_2(X,Y)$ as a sum of a term outside $A$ and the quadratic form of $\Gamma_A$ in $(\lambda(X,\cdot)-\lambda(Y,\cdot))$. The page should also
 
 - check the 3-cycle instance numerically, including the f2 matrices of a four-leaf example with leaves below $u$'s parent, $u$, $v$ and $h$;
 - treat subgraphs with several entry nodes, the setting of Xu and Ané's swap lemma, where the boundary data must include the proportions of paths between boundary nodes.
-
-Prerequisites:
-
-- [f2 in the drift model](../patterson-s-f-statistics/f2-freq.md)
-- [f-statistics determine exactly the centred leaf covariance](f2-eq-iff-centred-cov-eq.md)
-- [f2, independent-lineage distance and average network distance differ on admixture graphs](f2-drift-metric-versus-network-average-distance.md)
-- [Which drift models have the f-statistics of a star tree](f-equivalence-classes-of-drift-models.md)
 
 ## Sources
 

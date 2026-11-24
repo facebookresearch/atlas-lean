@@ -32,6 +32,11 @@ so $\hat N\to+\infty$ as $\hat m\downarrow0$. For a heterogeneous design no such
 
 - [Inbreeding, variance and eigenvalue effective population sizes](effective-population-size-definitions.md)
 
+## Proof depends on
+
+- [Classical form of the recombination recursion](../linkage-disequilibrium-and-haldane-s-map-functio/recombine-eq-sub.md)
+- [Prokhorov's theorem, sequential form on $\mathbb{R}$](../../../Probability/convergence-of-measures/prokhorov-theorem/prokhorov-sequential.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -42,12 +47,9 @@ A full proof page must establish:
 - The two-point design $c=(0.01,0.5)$: $m_K(100)=\tfrac12(1/5+1/201)\approx0.10249$, while $(1/0.10249-1)/0.04\approx218.9\ne100$, so no single-$c$ inversion formula applies.
 - With population $r^2=0$ and positive finite-sample $\mathbb E\,\hat r^2$, the idealized map returns a finite $\hat N$ (downward bias), so a sampling term in the calibration is necessary.
 
-Prerequisites:
+It also uses:
 
-- [Classical form of the recombination recursion](../linkage-disequilibrium-and-haldane-s-map-functio/recombine-eq-sub.md)
-- [Inbreeding, variance and eigenvalue effective population sizes](effective-population-size-definitions.md)
 - Multinomial law of genotype and allele counts and the multi-allele maximum-likelihood estimator
-- [Prokhorov's theorem, sequential form on $\mathbb{R}$](../../../Probability/convergence-of-measures/prokhorov-theorem/prokhorov-sequential.md)
 
 ## Sources
 

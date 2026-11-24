@@ -15,6 +15,11 @@ Example (selection in a large Moran population): for $d=1$, $\Lambda=\{1,-1\}$, 
 - [Random time-change representation of density-dependent chains](random-time-change-representation-of-density-dep.md)
 - [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
 
+## Proof depends on
+
+- [Functional law of large numbers for the unit Poisson process](../../point-processes/poisson-processes/functional-lln-and-clt-for-the-unit-poisson-proc.md)
+- [Gronwall inequality (integral form)](../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Expansion
 
 A full proof page must establish the following.
@@ -23,13 +28,6 @@ A full proof page must establish the following.
 - Since the internal times are at most $NT\sup\beta_l$, the [functional law of large numbers for the unit Poisson process](../../point-processes/poisson-processes/functional-lln-and-clt-for-the-unit-poisson-proc.md) makes the martingale terms tend to zero uniformly on $[0,T]$ almost surely.
 - Gronwall's inequality with the Lipschitz constant of $F$ then bounds $\sup_{t\le T}|X^N_t-x(t)|$ by $(|X^N_0-x_0|+\varepsilon_N)e^{\mathrm{Lip}(F)T}$ with $\varepsilon_N\to0$.
 - The Moran example: compute $F(x)=s\,x(1-x)$; the rates are given on $[0,1]$ and are extended to bounded continuous functions with Lipschitz drift outside it, which does not affect the chain started in $[0,1]$.
-
-Prerequisites:
-
-- [Random time-change representation of density-dependent chains](random-time-change-representation-of-density-dep.md)
-- [Functional law of large numbers for the unit Poisson process](../../point-processes/poisson-processes/functional-lln-and-clt-for-the-unit-poisson-proc.md)
-- [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
-- [Gronwall inequality (integral form)](../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
 
 ## Sources
 

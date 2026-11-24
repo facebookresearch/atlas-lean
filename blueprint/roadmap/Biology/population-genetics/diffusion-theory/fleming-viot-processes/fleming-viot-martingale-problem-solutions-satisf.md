@@ -23,11 +23,6 @@ A full proof page must still establish:
 - the case $n = 1$;
 - for finite $E$ with parent-independent mutation, the reduction to the $K$-allele moment equations.
 
-Prerequisites:
-
-- [Fleming-Viot moment hierarchy: triangular bounded Volterra system and unique solvability](fleming-viot-moment-hierarchy-triangular-bounded.md)
-- [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
-
 ## Sources
 
 - D. A. Dawson, "Measure-valued Markov processes", in *École d'Été de Probabilités de Saint-Flour XXI–1991*, Lecture Notes in Mathematics 1541, Springer, 1993, duality for Fleming–Viot, <https://link.springer.com/chapter/10.1007/BFb0084190>

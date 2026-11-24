@@ -24,13 +24,6 @@ and $\mathbb{E}_p \tau = T_\alpha(p) < \infty$, the [mean absorption time under 
 1. The normalization check: $G(p, y)\, m(y)$ reproduces $2 S(\min)(S(1) - S(\max))/(S(1)\, a\, \psi)$ of [the Dirichlet Green's function](../selection-duality-and-general-one-dimensional-di/green-function.md).
 2. $g = 1$ gives $T_\alpha$, and $\alpha = 0$ gives the mean absorption time of Kimura and Ohta.
 
-Prerequisites:
-
-- [Green function, occupation times and mean exit times of a one-dimensional diffusion](../selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md)
-- [Absorption in finite time](../fixation-and-absorption-in-the-wright-fisher-dif/ae-exists-absorbed.md)
-- [Dirichlet Green's function of a one-dimensional diffusion](../selection-duality-and-general-one-dimensional-di/green-function.md)
-- [Mean absorption time of the Wright–Fisher diffusion with selection](selection-mean-absorption-time.md)
-
 ## Sources
 
 - W. J. Ewens, *Mathematical Population Genetics I: Theoretical Introduction*, 2nd ed., Springer (2004), <https://doi.org/10.1007/978-0-387-21822-9>, Chapter 4 (sojourn times).

@@ -17,11 +17,6 @@ with $\Pi_x$ read as the matrix of the map. This is Dynkin's lumpability criteri
 2. Coalescence transitions of two lineages both ancestral at $x$ map to the merger of the two blocks at rate $1$. Those of lineages not both ancestral at $x$ leave $\Pi_x$ unchanged.
 3. The case $L = 1$ is trivial.
 
-Prerequisites:
-
-- [Coalescent with recombination: ancestral-material state space and generator](../two-locus-coalescent/coalescent-with-recombination-ancestral-material.md)
-- [Rate matrix of Kingman's partition-valued coalescent](partition-rate.md)
-
 ## Sources
 
 - R. C. Griffiths and P. Marjoram, An ancestral recombination graph, in *Progress in Population Genetics and Human Evolution*, IMA Vol. Math. Appl. 87, Springer (1997), 257–270, <https://research.monash.edu/en/publications/an-ancestral-recombination-graph/> (marginal trees).

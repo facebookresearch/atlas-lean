@@ -12,14 +12,13 @@ Two probes delimit it. Reflected Brownian motion on $[0,1]$, $K_t(x,\cdot)=$ law
 
 - [Path-space measure of a Markov semigroup](path-measure.md)
 
+## Proof depends on
+
+- [Kolmogorov extension theorem](../../foundations/kolmogorov-extension-theorem/kolmogorov-extension.md)
+
 ## Expansion
 
 A proof page must establish: the increment bound $\mathbb E_x|X_t-X_s|^p\le C|t-s|^{1+a}$ for $|t-s|\le1$, from the Markov property of the path measure, and a bound by $(r-l)^p|t-s|^{1+a}$ for $|t-s|>1$; a continuous modification on each $[0,N]$ by the Kolmogorov–Chentsov theorem, patched over $N$; the Markov property of the modification, which has the same finite-dimensional laws; the sure start at $x$ after modifying on a null set; and the two probes. The cited Kolmogorov–Chentsov theorem is stated for processes with values in complete (pseudo)metric spaces, so the extension to compact metric $E$ uses the same argument.
-
-Prerequisites:
-
-- [Path-space measure of a Markov semigroup](path-measure.md)
-- [Kolmogorov extension theorem](../../foundations/kolmogorov-extension-theorem/kolmogorov-extension.md)
 
 ## Sources
 
