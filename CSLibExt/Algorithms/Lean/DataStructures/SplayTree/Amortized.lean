@@ -44,11 +44,14 @@ nodes of the subtree (`potential`).
 * `balance_theorem`: any `m` successive splays starting from an `n`-node tree cost in total
   at most `m (3 log₂ n + 1) + n log₂ n`, the explicit form of Theorem 1 (Balance Theorem).
 * `amortized_splayMax_le`: the amortized cost of `splayMax t` is at most `3 log₂ n + 1`
-  (Nipkow, FDSA Theorem 21.1, with the Sleator–Tarjan potential).
+  in the repo's rotation-based cost model (the FDSA/AFP `A_splay_max` analogue; AFP
+  states `3 * φ t + 1` with `φ t = log₂ (size1 t)`).
 * `amortized_delete_le`: the amortized cost of `delete x t` is at most `5 log₂ n + 2`
-  (Nipkow, FDSA §21.3).
+  in the repo's rotation-based cost model (the FDSA/AFP `A_delete` analogue; AFP
+  states `6 log₂ (size1 t) + 2`).
 * `amortized_nipkowInsert_le`: the amortized cost of the book's `nipkowInsert x t`
-  is at most `4 log₂ n + 2` (Nipkow, FDSA §21.3).
+  is at most `4 log₂ n + 2` in the repo's rotation-based cost model (the FDSA/AFP
+  `A_insert` analogue; AFP states `4 log₂ (size1 t) + 2`).
 
 **On the splaying variant.** `SplayTree.splay` is recursive and consumes two levels of the
 search path per step starting from the root, so when the access depth is odd its single
@@ -1038,8 +1041,11 @@ public theorem exists_max_splay [LinearOrder α] {t : BinaryTree α}
 
 /-- **Amortized cost of `splayMax` is at most `3 log₂ n + 1`.** Splaying the maximum
 to the root costs, in the amortized sense, at most `3 log₂ n + 1` on an `n`-node
-search tree (Nipkow, FDSA Theorem 21.1, with the Sleator–Tarjan potential):
-`splayMax t` is `splay a t` for the maximum key `a`, and the access lemma applies. -/
+search tree in this file's rotation-based cost model (rotations, or 1 if none;
+`potential` sums `log₂` of subtree sizes): `splayMax t` is `splay a t` for the
+maximum key `a`, and the access lemma applies. This is the repo's analogue of the
+FDSA/AFP `A_splay_max` bound, not FDSA's statement: AFP's `A_splay_max_ub3`
+states `3 * φ t + 1`, with `φ t = log₂ (size1 t)`. -/
 public theorem amortized_splayMax_le [LinearOrder α] (t : BinaryTree α)
     (hOrd : BinarySearchTree.Ordered t) :
     (costMax t : ℝ) + potential (splayMax t) - potential t ≤
@@ -1056,11 +1062,14 @@ public theorem amortized_splayMax_le [LinearOrder α] (t : BinaryTree α)
       linarith
 
 /-- **Amortized cost of `delete` is at most `5 log₂ n + 2`.** Deleting from an `n`-node
-search tree costs, in the amortized sense, at most `5 log₂ n + 2` (Nipkow, FDSA §21.3,
-the `A_delete` bound, with the Sleator–Tarjan potential): the splay contributes at
-most `3 log₂ n + 1` (access lemma), the `splayMax` on the left subtree at most
-`3 log₂ |l| + 1`, and the potential bookkeeping for replacing the root by the
-maximum of the left subtree costs at most `2 log₂ n` more. -/
+search tree costs, in the amortized sense, at most `5 log₂ n + 2` in this file's
+rotation-based cost model (rotations, or 1 if none; `potential` sums `log₂` of
+subtree sizes): the splay contributes at most `3 log₂ n + 1` (access lemma), the
+`splayMax` on the left subtree at most `3 log₂ |l| + 1`, and the potential
+bookkeeping for replacing the root by the maximum of the left subtree costs at
+most `2 log₂ n` more. This is the repo's analogue of the FDSA/AFP `A_delete`
+bound, not FDSA's statement: AFP's `amor_delete` proves
+`6 * log 2 (size1 t) + 2` in AFP's own time-function and potential model. -/
 public theorem amortized_delete_le [LinearOrder α] (x : α) (t : BinaryTree α)
     (hOrd : BinarySearchTree.Ordered t) :
     (costDelete x t : ℝ) + potential (delete x t) - potential t ≤
@@ -1126,11 +1135,14 @@ public theorem amortized_delete_le [LinearOrder α] (x : α) (t : BinaryTree α)
         linarith
 
 /-- **Amortized cost of the book's insert is at most `4 log₂ n + 2`.** Inserting into an
-`n`-node tree costs, in the amortized sense, at most `4 log₂ n + 2` (Nipkow, FDSA
-§21.3, the `A_insert` bound, with the Sleator–Tarjan potential): the splay contributes
-at most `3 log₂ n + 1`, and the new root adds at most `log₂ n + 1` of potential
-(the new subtree of the old root contributes at most `log₂ n`, and the new tree is
-at most one node larger). No search-tree ordering is needed. -/
+`n`-node tree costs, in the amortized sense, at most `4 log₂ n + 2` in this file's
+rotation-based cost model (rotations, or 1 if none; `potential` sums `log₂` of
+subtree sizes): the splay contributes at most `3 log₂ n + 1`, and the new root adds
+at most `log₂ n + 1` of potential (the new subtree of the old root contributes at
+most `log₂ n`, and the new tree is at most one node larger). No search-tree
+ordering is needed. This is the repo's analogue of the FDSA/AFP `A_insert` bound,
+not FDSA's statement: AFP's `amor_insert` proves `4 * log 2 (size1 t) + 2` in AFP's
+own time-function and potential model. -/
 public theorem amortized_nipkowInsert_le [LinearOrder α] (x : α) (t : BinaryTree α) :
     (costInsert x t : ℝ) + potential (nipkowInsert x t) - potential t ≤
       4 * Real.logb 2 (t.numNodes : ℝ) + 2 := by
